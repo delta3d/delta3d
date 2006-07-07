@@ -25,7 +25,6 @@
 
 #include <QtGui/QSound>
 #include "dtEditQt/resourceabstractbrowser.h"
-#include <osg/ref_ptr>
 
 class QAction;
 class QGroupBox;

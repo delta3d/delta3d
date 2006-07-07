@@ -25,9 +25,8 @@
 #include <map>
 #include <fstream>
 
-
 #include <osg/Referenced>
-#include <osg/ref_ptr>
+#include <dtCore/refptr.h>
 #include <dtUtil/export.h>
 
 namespace dtUtil 

@@ -87,5 +87,5 @@ void initActorProxyBindings()
       .def( "GetActor", GetActorConst, DefaultGetActorConst, return_internal_reference<>() )
 		;
 
-	register_ptr_to_python< osg::ref_ptr< ActorProxy > >();
+	register_ptr_to_python< dtCore::RefPtr< ActorProxy > >();
 }

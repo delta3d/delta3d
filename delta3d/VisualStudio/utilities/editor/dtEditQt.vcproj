@@ -313,6 +313,9 @@
 				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\texturebrowser.h">
 			</File>
 			<File
+				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\typedefs.h">
+			</File>
+			<File
 				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\uiresources.h">
 			</File>
 			<File

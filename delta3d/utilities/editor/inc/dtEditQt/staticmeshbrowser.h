@@ -24,7 +24,6 @@
 #define __StaticMeshBrowser_h
 
 #include "dtEditQt/resourceabstractbrowser.h"
-#include <osg/ref_ptr>
 
 class QAction;
 class QGroupBox;
@@ -139,9 +138,9 @@ namespace dtEditQt {
         // Viewports
         ViewportContainer *container;
         PerspectiveViewport *perspView;
-        osg::ref_ptr<dtCore::Scene> meshScene;
-        osg::ref_ptr<Camera> camera;
-        osg::ref_ptr<dtCore::Object> previewObject;
+        dtCore::RefPtr<dtCore::Scene> meshScene;
+        dtCore::RefPtr<Camera> camera;
+        dtCore::RefPtr<dtCore::Object> previewObject;
 
         // Layout Objects
         QGridLayout *grid;

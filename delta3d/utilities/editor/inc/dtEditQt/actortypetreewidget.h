@@ -24,7 +24,6 @@
 
 #include <QtGui/QTreeWidgetItem>
 #include <QtGui/QTreeWidget>
-#include <osg/ref_ptr>
 #include <dtDAL/actortype.h>
 
 namespace dtEditQt {
@@ -46,7 +45,7 @@ namespace dtEditQt {
         * @param parent The parent of this tree widget 
         * @param actorType The Actor type of this tree entry. 
         */
-        ActorTypeTreeWidget(ActorTypeTreeWidget* parent, osg::ref_ptr<dtDAL::ActorType> actorType);
+        ActorTypeTreeWidget(ActorTypeTreeWidget* parent, dtCore::RefPtr<dtDAL::ActorType> actorType);
 
         /**
         * Constructor - Use this for internal, NON leaf nodes.  These are considered to be 
@@ -73,7 +72,7 @@ namespace dtEditQt {
         *
         * @return The actor type for this leaf node
         */
-        osg::ref_ptr<dtDAL::ActorType> getActorType();
+        dtCore::RefPtr<dtDAL::ActorType> getActorType();
 
         /**
         * Returns true if this is a leaf node. You can check this by checking the actor type for NULL.
@@ -114,13 +113,13 @@ namespace dtEditQt {
         * @return True if we succcessfully added it, false if some error or already exists.
         */
         bool recursivelyAddCategoryAndActorTypeAsChildren(
-            QMutableStringListIterator *listIterator, osg::ref_ptr<dtDAL::ActorType> actorType);
+            QMutableStringListIterator *listIterator, dtCore::RefPtr<dtDAL::ActorType> actorType);
 
     private:
 
         // the actor type for this tree element.  Note that only leaf nodes have actors
         // In fact, if the actor type is null, it's assumed to be an internal node
-        osg::ref_ptr<dtDAL::ActorType> myActorType;
+        dtCore::RefPtr<dtDAL::ActorType> myActorType;
 
         // the portion of the category segment that this tree widget represents.
         // This is only valid if it's an internal node (ie, myActorType == null).

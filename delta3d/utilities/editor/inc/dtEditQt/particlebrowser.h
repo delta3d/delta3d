@@ -24,7 +24,6 @@
 #define __ParticleBrowser_h
 
 #include "dtEditQt/resourceabstractbrowser.h"
-#include <osg/ref_ptr>
 
 class QGroupBox;
 class QGridLayout;
@@ -111,9 +110,9 @@ namespace dtEditQt
         // Viewports
         ViewportContainer *container;
         PerspectiveViewport *perspView;
-        osg::ref_ptr<dtCore::Scene> particleScene;
-        osg::ref_ptr<Camera> camera;
-        osg::ref_ptr<dtCore::Object> previewObject;
+        dtCore::RefPtr<dtCore::Scene> particleScene;
+        dtCore::RefPtr<Camera> camera;
+        dtCore::RefPtr<dtCore::Object> previewObject;
         
         // Layout Objects
         QGridLayout *grid;

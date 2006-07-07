@@ -29,9 +29,9 @@
 #include <QtGui/QIcon>
 
 #include <dtDAL/project.h>
-#include <osg/ref_ptr>
 
-namespace dtEditQt{
+namespace dtEditQt
+{
 
     class ResourceTreeNode;
 

@@ -24,7 +24,6 @@
 
 #include <QtGui/QColor>
 #include <osg/Referenced>
-#include <osg/ref_ptr>
 #include <vector>
 #include <string>
 #include <list>
@@ -72,7 +71,7 @@ namespace dtEditQt
          *
          * @return Returns the current map that was set when opening or creating a new map
          */
-        osg::ref_ptr<dtDAL::Map> getCurrentMap();
+        dtCore::RefPtr<dtDAL::Map> getCurrentMap();
 
 
         /**
@@ -369,12 +368,12 @@ namespace dtEditQt
         EditorData &operator=(EditorData &rhs);
 
         //Singleton instance of this class.
-        static osg::ref_ptr<EditorData> instance;
+        static dtCore::RefPtr<EditorData> instance;
 
         // data
-        // NOTE - This should be an osg::ref_ptr, however QT is managing MainWindow, so we don't have to.
+        // NOTE - This should be an dtCore::RefPtr, however QT is managing MainWindow, so we don't have to.
         MainWindow *mainWindow;
-        osg::ref_ptr<dtDAL::Map> myMap;
+        dtCore::RefPtr<dtDAL::Map> myMap;
         std::string currentLibraryDirectory;
         std::string currentProjectContext;
 

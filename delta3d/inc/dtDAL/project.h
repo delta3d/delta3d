@@ -27,7 +27,6 @@
 #include <map>
 
 #include <osg/Referenced>
-#include <osg/ref_ptr>
 #include <dtCore/scene.h>
 
 #include <dtUtil/tree.h>
@@ -62,7 +61,7 @@ namespace dtDAL
    class DT_DAL_EXPORT Project : public osg::Referenced
    {
       private:
-         static osg::ref_ptr<Project> mInstance; //< the instance of the project.
+         static dtCore::RefPtr<Project> mInstance; //< the instance of the project.
 
          static const std::string LOG_NAME;
          static const std::string MAP_DIRECTORY;
@@ -84,14 +83,14 @@ namespace dtDAL
          std::map<std::string,std::string> mMapList; //< The list of maps by name mapped to the file names.
          mutable std::set<std::string> mMapNames; //< The list of map names.
 
-         std::map<std::string, osg::ref_ptr<Map> > mOpenMaps; //< A vector of the maps currently loaded.
+         std::map<std::string, dtCore::RefPtr<Map> > mOpenMaps; //< A vector of the maps currently loaded.
          mutable dtUtil::tree<ResourceTreeNode> mResources; //< a tree of all the resources.  This is more of a cache.
 
          dtCore::RefPtr<MapParser> mParser;
          dtCore::RefPtr<MapWriter> mWriter;
          //This is here to make sure the library manager is deleted AFTER the maps are closed.
          //so that libraries won't be closed and the proxies deleted out from under the map.
-         osg::ref_ptr<LibraryManager> libraryManager;
+         dtCore::RefPtr<LibraryManager> libraryManager;
          ResourceHelper mResourceHelper;
 
          dtUtil::Log* mLogger;
@@ -391,7 +390,7 @@ namespace dtDAL
           * @return The resource types that are available for the given handler.
           * @throws ExceptionEnum::ProjectResourceError if the datatype is a primitive type, not a resource type.
           */
-         void GetHandlersForDataType(const DataType& resourceType, std::vector<osg::ref_ptr<const ResourceTypeHandler> >& toFill) const;
+         void GetHandlersForDataType(const DataType& resourceType, std::vector<dtCore::RefPtr<const ResourceTypeHandler> >& toFill) const;
 
          /**
           * Registers a new type handler.  The method will get the datatype and applicable filters from

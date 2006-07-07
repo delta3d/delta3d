@@ -134,7 +134,7 @@ namespace dtDAL
       mRegistries.insert(std::make_pair(libName,newEntry));
 
       //Second we map actor type to the registry that owns it.
-      std::vector<osg::ref_ptr<ActorType> > actorTypes;
+      std::vector<dtCore::RefPtr<ActorType> > actorTypes;
       newEntry.registry->RegisterActorTypes();
       newEntry.registry->GetSupportedActorTypes(actorTypes);
       int numUniqueActors = 0;
@@ -268,8 +268,8 @@ namespace dtDAL
 
       //First remove all the actor types this registry supports.
       RegistryEntry regEntry = regItor->second;
-      std::vector<osg::ref_ptr<ActorType> > actorTypes;
-      std::vector<osg::ref_ptr<ActorType> >::iterator actorItor;
+      std::vector<dtCore::RefPtr<ActorType> > actorTypes;
+      std::vector<dtCore::RefPtr<ActorType> >::iterator actorItor;
 
       regEntry.registry->GetSupportedActorTypes(actorTypes);
       for (actorItor=actorTypes.begin(); actorItor!=actorTypes.end(); ++actorItor)

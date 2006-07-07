@@ -290,7 +290,7 @@ namespace dtEditQt
             EXCEPT(dtDAL::ExceptionEnum::BaseException,
                    "Scene is invalid.  Cannot pick objects from an invalid scene.");
 
-        osg::ref_ptr<dtDAL::Map> currMap = EditorData::getInstance().getCurrentMap();
+        dtCore::RefPtr<dtDAL::Map> currMap = EditorData::getInstance().getCurrentMap();
         if (!currMap.valid() || getCamera() == NULL)
             return;
 
@@ -302,7 +302,7 @@ namespace dtEditQt
 
         mIsector->Reset();
         mIsector->SetScene( getScene() );
-        std::vector<osg::ref_ptr<dtDAL::ActorProxy> > toSelect;
+        std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > toSelect;
         osg::Vec3 nearPoint,farPoint;
         int yLoc = this->sceneView->getViewport()->height()-y;
 
@@ -334,9 +334,9 @@ namespace dtEditQt
 
         //If its not an actor then it may be a billboard placeholder for an actor.
         if (newSelection == NULL) {
-            const std::map<dtCore::UniqueId, osg::ref_ptr<dtDAL::ActorProxy> > &proxyList =
+            const std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> > &proxyList =
                 currMap->GetAllProxies();
-            std::map<dtCore::UniqueId, osg::ref_ptr<dtDAL::ActorProxy> >::const_iterator proxyItor;
+            std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> >::const_iterator proxyItor;
 
             //Loop through the proxies searching for the one with billboard geometry
             //matching what was selected.
@@ -376,7 +376,7 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void Viewport::onGotoActor(osg::ref_ptr<dtDAL::ActorProxy> proxy)
+    void Viewport::onGotoActor(dtCore::RefPtr<dtDAL::ActorProxy> proxy)
     {
         dtDAL::TransformableActorProxy *tProxy = dynamic_cast<dtDAL::TransformableActorProxy *>(proxy.get());
         if (tProxy != NULL && getCamera() != NULL) {
@@ -513,8 +513,8 @@ namespace dtEditQt
         connect(ga.actionSelectionTranslateActor,SIGNAL(triggered()),this,SLOT(setActorTranslateMode()));
         connect(ga.actionSelectionRotateActor,SIGNAL(triggered()),this,SLOT(setActorRotateMode()));
 
-        connect(&ge,SIGNAL(gotoActor(proxyRefPtr)),
-                this,SLOT(onGotoActor(proxyRefPtr)));
+        connect(&ge,SIGNAL(gotoActor(ActorProxyRefPtr)),
+                this,SLOT(onGotoActor(ActorProxyRefPtr)));
         connect(&ge,SIGNAL(beginChangeTransaction()), this,SLOT(onBeginChangeTransaction()));
         connect(&ge,SIGNAL(endChangeTransaction()), this,SLOT(onEndChangeTransaction()));
     }
@@ -531,8 +531,8 @@ namespace dtEditQt
         disconnect(ga.actionSelectionTranslateActor,SIGNAL(triggered()),this,SLOT(setActorTranslateMode()));
         disconnect(ga.actionSelectionRotateActor,SIGNAL(triggered()),this,SLOT(setActorRotateMode()));
 
-        disconnect(&ge,SIGNAL(gotoActor(proxyRefPtr)),
-                  this,SLOT(onGotoActor(proxyRefPtr)));
+        disconnect(&ge,SIGNAL(gotoActor(ActorProxyRefPtr)),
+                  this,SLOT(onGotoActor(ActorProxyRefPtr)));
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -609,8 +609,8 @@ namespace dtEditQt
     void Viewport::updateActorProxyBillboards()
     {
         dtDAL::Map *currentMap = EditorData::getInstance().getCurrentMap().get();
-        std::vector<osg::ref_ptr<dtDAL::ActorProxy> > proxies;
-        std::vector<osg::ref_ptr<dtDAL::ActorProxy> >::iterator itor;
+        std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > proxies;
+        std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >::iterator itor;
 
         if (currentMap == NULL || getCamera() == NULL)
             return;

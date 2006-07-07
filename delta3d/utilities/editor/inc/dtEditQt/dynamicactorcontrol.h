@@ -107,7 +107,7 @@ namespace dtEditQt
           */
          virtual bool updateData(QWidget *widget);
 
-         void actorPropertyChanged(proxyRefPtr proxy, propertyRefPtr property);
+         void actorPropertyChanged(ActorProxyRefPtr proxy, ActorPropertyRefPtr property);
 
          /**
           * Called when the user selects an item in the combo box
@@ -124,7 +124,7 @@ namespace dtEditQt
           * @param className The class name to search for
           * @return A vector with the name and proxy pointer mapped 
           */
-         std::vector<osg::ref_ptr<dtDAL::ActorProxy> > GetActorProxies(const std::string &className);
+         std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > GetActorProxies(const std::string &className);
 
          dtDAL::ActorActorProperty *myProperty;
 

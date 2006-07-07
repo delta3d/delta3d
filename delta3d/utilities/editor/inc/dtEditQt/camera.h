@@ -23,7 +23,6 @@
 #define __Camera__h
 
 #include <osg/Referenced>
-#include <osg/ref_ptr>
 #include <osg/Vec3>
 #include <osg/Quat>
 #include <osg/Matrix>
@@ -269,7 +268,7 @@ namespace dtEditQt
     protected:
 
         struct ActorAttachment {
-            osg::ref_ptr<dtDAL::TransformableActorProxy> actor;
+            dtCore::RefPtr<dtDAL::TransformableActorProxy> actor;
             osg::Vec3 positionOffset;
             osg::Quat rotationOffset;
             osg::Vec3 initialCameraHPR;

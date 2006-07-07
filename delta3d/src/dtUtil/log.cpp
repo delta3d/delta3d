@@ -20,10 +20,11 @@
 */
 #include <dtUtil/log.h>
 #include <dtUtil/bits.h>
+
 #include <iomanip>
 #include <iostream>
-#include <stdarg.h>
-#include <time.h>
+#include <cstdarg>
+#include <ctime>
 
 namespace dtUtil 
 {
@@ -133,12 +134,12 @@ static const char *sTitle = "Delta 3D Engine Log File";
 
       bool AddInstance(const std::string& name, Log* log) 
       {
-         return mInstances.insert(std::make_pair(name, osg::ref_ptr<Log>(log))).second;
+         return mInstances.insert(std::make_pair(name, dtCore::RefPtr<Log>(log))).second;
       }
 
       Log* GetInstance(const std::string& name) 
       {
-         std::map<std::string, osg::ref_ptr<Log> >::iterator i = mInstances.find(name);
+         std::map<std::string, dtCore::RefPtr<Log> >::iterator i = mInstances.find(name);
          if (i == mInstances.end()) 
          {
             return NULL;
@@ -147,10 +148,10 @@ static const char *sTitle = "Delta 3D Engine Log File";
       }
 
    private:
-      std::map<std::string, osg::ref_ptr<Log> > mInstances;
+      std::map<std::string, dtCore::RefPtr<Log> > mInstances;
    };
 
-   static osg::ref_ptr<LogManager> manager(NULL);
+   static dtCore::RefPtr<LogManager> manager(NULL);
 
    /** This will close the existing file (if opened) and create a new file with
     *  the supplied filename.
