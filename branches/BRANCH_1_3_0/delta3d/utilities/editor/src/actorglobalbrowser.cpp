@@ -64,10 +64,10 @@ namespace dtEditQt
             this, SLOT(refreshAll()));
         connect(&EditorEvents::getInstance(), SIGNAL(mapLibraryAboutToBeRemoved()),
             this, SLOT(refreshAll()));
-        connect(&EditorEvents::getInstance(), SIGNAL(actorProxyCreated(proxyRefPtr, bool)), 
-            this, SLOT(onActorProxyCreated(proxyRefPtr, bool)));   
-        connect(&EditorEvents::getInstance(), SIGNAL(actorProxyDestroyed(proxyRefPtr)), 
-            this, SLOT(onActorProxyDestroyed(proxyRefPtr)));
+        connect(&EditorEvents::getInstance(), SIGNAL(actorProxyCreated(ActorProxyRefPtr, bool)), 
+            this, SLOT(onActorProxyCreated(ActorProxyRefPtr, bool)));   
+        connect(&EditorEvents::getInstance(), SIGNAL(actorProxyDestroyed(ActorProxyRefPtr)), 
+            this, SLOT(onActorProxyDestroyed(ActorProxyRefPtr)));
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -100,7 +100,7 @@ namespace dtEditQt
     {
         EditorData::getInstance().getMainWindow()->startWaitCursor();
 
-        std::vector<osg::ref_ptr<dtDAL::ActorProxy> > globalProxies;
+        std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > globalProxies;
         dtDAL::Map *map = EditorData::getInstance().getCurrentMap().get();
 
         // empty out our table, just in case - Must happen BEFORE libraries are removed
@@ -116,13 +116,13 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void ActorGlobalBrowser::onActorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy> proxy, bool forceNoAdjustments)
+    void ActorGlobalBrowser::onActorProxyCreated(dtCore::RefPtr<dtDAL::ActorProxy> proxy, bool forceNoAdjustments)
     {
         if (!proxy->IsPlaceable())
             resultsTable->addProxy(proxy);
     }
 
-    void ActorGlobalBrowser::onActorProxyDestroyed(osg::ref_ptr<dtDAL::ActorProxy> proxy)
+    void ActorGlobalBrowser::onActorProxyDestroyed(dtCore::RefPtr<dtDAL::ActorProxy> proxy)
     {
         if(!proxy->IsPlaceable())
             refreshAll();

@@ -1,7 +1,7 @@
-#include <osg/ref_ptr>
+#include <dtCore/refptr.h>
 #include <dtDAL/actorproxy.h>
 #include <vector>
 
-typedef osg::ref_ptr<dtDAL::ActorProxy>                proxyRefPtr;
-typedef std::vector< osg::ref_ptr<dtDAL::ActorProxy> > proxyRefPtrVector;
-typedef osg::ref_ptr<dtDAL::ActorProperty>             propertyRefPtr;
+typedef dtCore::RefPtr<dtDAL::ActorProxy> ActorProxyRefPtr;
+typedef std::vector< ActorProxyRefPtr > ActorProxyRefPtrVector;
+typedef dtCore::RefPtr<dtDAL::ActorProperty> ActorPropertyRefPtr;

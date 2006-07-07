@@ -68,7 +68,7 @@ namespace dtEditQt {
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void ViewportOverlay::onActorsSelected(std::vector<osg::ref_ptr<dtDAL::ActorProxy> > &actors)
+    void ViewportOverlay::onActorsSelected(std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &actors)
     {
         if (actors.empty()) {
             clearCurrentSelection();
@@ -281,8 +281,8 @@ namespace dtEditQt {
     {
         EditorEvents &ge = EditorEvents::getInstance();
 
-        connect(&ge,SIGNAL(selectedActors(proxyRefPtrVector&)),
-                this,SLOT(onActorsSelected(proxyRefPtrVector&)));
+        connect(&ge,SIGNAL(selectedActors(ActorProxyRefPtrVector&)),
+                this,SLOT(onActorsSelected(ActorProxyRefPtrVector&)));
 
         connect(&ge, SIGNAL(editorPreferencesChanged()),
                 this,SLOT(onEditorPreferencesChanged()));

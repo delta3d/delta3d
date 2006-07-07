@@ -30,7 +30,7 @@ namespace dtEditQt
 {
 
     //Singleton global variable for this class.
-    osg::ref_ptr<EditorData> EditorData::instance(NULL);
+    dtCore::RefPtr<EditorData> EditorData::instance(NULL);
     ///////////////////////////////////////////////////////////////////////////////
     EditorData::EditorData()
     {
@@ -78,7 +78,7 @@ namespace dtEditQt
         myMap = map;
     }
     //////////////////////////////////////////////////////////////////////////////
-    osg::ref_ptr<dtDAL::Map> EditorData::getCurrentMap()
+    dtCore::RefPtr<dtDAL::Map> EditorData::getCurrentMap()
     {
         return myMap;
     }

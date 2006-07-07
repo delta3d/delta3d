@@ -157,9 +157,9 @@ namespace dtDAL
             }
             DefaultResourceTypeHandler* def = new DefaultResourceTypeHandler(d, description, defFilter);
             mDefaultTypeHandlers.insert(std::make_pair(&d,
-                                                       osg::ref_ptr<ResourceTypeHandler>(def)));
+                                                       dtCore::RefPtr<ResourceTypeHandler>(def)));
          }
-         std::map<std::string, osg::ref_ptr<ResourceTypeHandler> > extMap;
+         std::map<std::string, dtCore::RefPtr<ResourceTypeHandler> > extMap;
 
          mTypeHandlers.insert(std::make_pair(&d, extMap));
 
@@ -244,7 +244,7 @@ namespace dtDAL
 
                //if ext is empty or the ResourceDirectoryTypeHandlers map had no matches, look at all
                //the directory importers to see if there is a match.
-               for (std::multimap<DataType*, osg::ref_ptr<ResourceTypeHandler> >::const_iterator i = mDirectoryImportingTypeHandlers.find(dt);
+               for (std::multimap<DataType*, dtCore::RefPtr<ResourceTypeHandler> >::const_iterator i = mDirectoryImportingTypeHandlers.find(dt);
                     i != mDirectoryImportingTypeHandlers.end() && i->first == dt; ++i)
                {
                   if (i->second->HandlesFile(filePath, dtUtil::DIRECTORY))
@@ -266,16 +266,16 @@ namespace dtDAL
 
    //////////////////////////////////////////////////////////
    const ResourceTypeHandler* ResourceHelper::FindHandlerForDataTypeAndExtension(
-      const std::map<DataType*, std::map<std::string, osg::ref_ptr<ResourceTypeHandler> > >& mapToSearch,
+      const std::map<DataType*, std::map<std::string, dtCore::RefPtr<ResourceTypeHandler> > >& mapToSearch,
       DataType& dt, const std::string& ext) const
    {
-      std::map<DataType*, std::map<std::string, osg::ref_ptr<ResourceTypeHandler> > >::const_iterator found
+      std::map<DataType*, std::map<std::string, dtCore::RefPtr<ResourceTypeHandler> > >::const_iterator found
          = mapToSearch.find(&dt);
 
       if (found != mapToSearch.end())
       {
-         const std::map<std::string, osg::ref_ptr<ResourceTypeHandler> >& handlerMap = found->second;
-         std::map<std::string, osg::ref_ptr<ResourceTypeHandler> >::const_iterator extFound = handlerMap.find(ext);
+         const std::map<std::string, dtCore::RefPtr<ResourceTypeHandler> >& handlerMap = found->second;
+         std::map<std::string, dtCore::RefPtr<ResourceTypeHandler> >::const_iterator extFound = handlerMap.find(ext);
          if (extFound != handlerMap.end())
          {
             return extFound->second.get();
@@ -287,29 +287,29 @@ namespace dtDAL
    //////////////////////////////////////////////////////////
    void ResourceHelper::GetHandlersForDataType(
       const DataType& resourceType,
-      std::vector<osg::ref_ptr<const ResourceTypeHandler> >& toFill) const
+      std::vector<dtCore::RefPtr<const ResourceTypeHandler> >& toFill) const
    {
       if (resourceType.IsResource())
       {
          toFill.clear();
-         std::set<osg::ref_ptr<const ResourceTypeHandler> > tempSet;
+         std::set<dtCore::RefPtr<const ResourceTypeHandler> > tempSet;
          //so I can use it as a lookup key in the map.
          DataType* dt = const_cast<DataType*>(&resourceType);
 
          //insert the default handler
-         tempSet.insert(osg::ref_ptr<const ResourceTypeHandler>(mDefaultTypeHandlers.find(dt)->second.get()));
+         tempSet.insert(dtCore::RefPtr<const ResourceTypeHandler>(mDefaultTypeHandlers.find(dt)->second.get()));
 
          //lookup the handlers by type.
-         std::map<DataType*, std::map<std::string, osg::ref_ptr<ResourceTypeHandler> > >::const_iterator found
+         std::map<DataType*, std::map<std::string, dtCore::RefPtr<ResourceTypeHandler> > >::const_iterator found
             = mTypeHandlers.find(dt);
 
          if (found != mTypeHandlers.end())
          {
-            const std::map<std::string, osg::ref_ptr<ResourceTypeHandler> >& extMap = found->second;
-            for (std::map<std::string, osg::ref_ptr<ResourceTypeHandler> >::const_iterator i = extMap.begin();
+            const std::map<std::string, dtCore::RefPtr<ResourceTypeHandler> >& extMap = found->second;
+            for (std::map<std::string, dtCore::RefPtr<ResourceTypeHandler> >::const_iterator i = extMap.begin();
                  i != extMap.end(); ++i)
             {
-               tempSet.insert(osg::ref_ptr<const ResourceTypeHandler>(i->second.get()));
+               tempSet.insert(dtCore::RefPtr<const ResourceTypeHandler>(i->second.get()));
             }
          }
 
@@ -318,19 +318,19 @@ namespace dtDAL
 
          if (found != mResourceDirectoryTypeHandlers.end())
          {
-            const std::map<std::string, osg::ref_ptr<ResourceTypeHandler> >& extMap = found->second;
-            for (std::map<std::string, osg::ref_ptr<ResourceTypeHandler> >::const_iterator i = extMap.begin();
+            const std::map<std::string, dtCore::RefPtr<ResourceTypeHandler> >& extMap = found->second;
+            for (std::map<std::string, dtCore::RefPtr<ResourceTypeHandler> >::const_iterator i = extMap.begin();
                  i != extMap.end(); ++i)
             {
-               tempSet.insert(osg::ref_ptr<const ResourceTypeHandler>(i->second.get()));
+               tempSet.insert(dtCore::RefPtr<const ResourceTypeHandler>(i->second.get()));
             }
          }
 
          //get all directory importers too.
-         for (std::multimap<DataType*, osg::ref_ptr<ResourceTypeHandler> >::const_iterator i = mDirectoryImportingTypeHandlers.find(dt);
+         for (std::multimap<DataType*, dtCore::RefPtr<ResourceTypeHandler> >::const_iterator i = mDirectoryImportingTypeHandlers.find(dt);
               i != mDirectoryImportingTypeHandlers.end() && i->first == dt; ++i)
          {
-            tempSet.insert(osg::ref_ptr<const ResourceTypeHandler>(i->second.get()));
+            tempSet.insert(dtCore::RefPtr<const ResourceTypeHandler>(i->second.get()));
          }
 
          toFill.insert(toFill.begin(), tempSet.begin(), tempSet.end());
@@ -351,12 +351,12 @@ namespace dtDAL
          EXCEPT(dtDAL::ExceptionEnum::ProjectResourceError, "The datatype of resource handlers must a resource type.");
 
       //get the map for the
-      std::map<DataType*, std::map<std::string, osg::ref_ptr<ResourceTypeHandler> > >::iterator found
+      std::map<DataType*, std::map<std::string, dtCore::RefPtr<ResourceTypeHandler> > >::iterator found
          = mTypeHandlers.find(dt);
 
       if (found != mTypeHandlers.end())
       {
-         std::map<std::string, osg::ref_ptr<ResourceTypeHandler> >& extMap = found->second;
+         std::map<std::string, dtCore::RefPtr<ResourceTypeHandler> >& extMap = found->second;
          const std::map<std::string, std::string>& filters = handler.GetFileFilters();
 
          for (std::map<std::string, std::string>::const_iterator i = filters.begin(); i != filters.end(); ++i)
@@ -370,11 +370,11 @@ namespace dtDAL
                continue;
             }
 
-            std::map<std::string, osg::ref_ptr<ResourceTypeHandler> >::iterator extFound = extMap.find(i->first);
+            std::map<std::string, dtCore::RefPtr<ResourceTypeHandler> >::iterator extFound = extMap.find(i->first);
             if (extFound == extMap.end())
             {
                //actually insert the handler.
-               extMap.insert(std::make_pair(i->first, osg::ref_ptr<ResourceTypeHandler>(&handler)));
+               extMap.insert(std::make_pair(i->first, dtCore::RefPtr<ResourceTypeHandler>(&handler)));
             }
             else
             {
@@ -393,22 +393,22 @@ namespace dtDAL
       }
 
       if (handler.ImportsDirectory())
-         mDirectoryImportingTypeHandlers.insert(std::make_pair(dt, osg::ref_ptr<ResourceTypeHandler>(&handler)));
+         mDirectoryImportingTypeHandlers.insert(std::make_pair(dt, dtCore::RefPtr<ResourceTypeHandler>(&handler)));
 
       if (handler.ResourceIsDirectory())
       {
          //get the map for the
-         std::map<DataType*, std::map<std::string, osg::ref_ptr<ResourceTypeHandler> > >::iterator foundRDMap = mResourceDirectoryTypeHandlers.find(dt);
+         std::map<DataType*, std::map<std::string, dtCore::RefPtr<ResourceTypeHandler> > >::iterator foundRDMap = mResourceDirectoryTypeHandlers.find(dt);
 
          if (foundRDMap != mResourceDirectoryTypeHandlers.end())
          {
-            std::map<std::string, osg::ref_ptr<ResourceTypeHandler> >& dirExtMap = foundRDMap->second;
+            std::map<std::string, dtCore::RefPtr<ResourceTypeHandler> >& dirExtMap = foundRDMap->second;
 
-            std::map<std::string, osg::ref_ptr<ResourceTypeHandler> >::iterator dirExtFound = dirExtMap.find(handler.GetResourceDirectoryExtension());
+            std::map<std::string, dtCore::RefPtr<ResourceTypeHandler> >::iterator dirExtFound = dirExtMap.find(handler.GetResourceDirectoryExtension());
             if (dirExtFound == dirExtMap.end())
             {
                //actually insert the handler.
-               dirExtMap.insert(std::make_pair(handler.GetResourceDirectoryExtension(), osg::ref_ptr<ResourceTypeHandler>(&handler)));
+               dirExtMap.insert(std::make_pair(handler.GetResourceDirectoryExtension(), dtCore::RefPtr<ResourceTypeHandler>(&handler)));
             }
             else
             {

@@ -61,20 +61,20 @@ namespace dtEditQt
             this, SLOT(clearAllHistories()));
 
         // trap destry, create, change, and about to change
-        connect(&EditorEvents::getInstance(), SIGNAL(actorProxyDestroyed(proxyRefPtr)),
-            this, SLOT(onActorProxyDestroyed(proxyRefPtr)));
-        connect(&EditorEvents::getInstance(), SIGNAL(actorProxyCreated(proxyRefPtr, bool)),
-            this, SLOT(onActorProxyCreated(proxyRefPtr, bool)));
+        connect(&EditorEvents::getInstance(), SIGNAL(actorProxyDestroyed(ActorProxyRefPtr)),
+            this, SLOT(onActorProxyDestroyed(ActorProxyRefPtr)));
+        connect(&EditorEvents::getInstance(), SIGNAL(actorProxyCreated(ActorProxyRefPtr, bool)),
+            this, SLOT(onActorProxyCreated(ActorProxyRefPtr, bool)));
         connect(&EditorEvents::getInstance(),
-            SIGNAL(actorPropertyChanged(proxyRefPtr, propertyRefPtr)),
-            this, SLOT(onActorPropertyChanged(proxyRefPtr, propertyRefPtr)));
+            SIGNAL(actorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)),
+            this, SLOT(onActorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)));
         connect(&EditorEvents::getInstance(),
-            SIGNAL(actorPropertyAboutToChange(proxyRefPtr, propertyRefPtr,
+            SIGNAL(actorPropertyAboutToChange(ActorProxyRefPtr, ActorPropertyRefPtr,
             std::string, std::string)),
-            this, SLOT(actorPropertyAboutToChange(proxyRefPtr, propertyRefPtr,
+            this, SLOT(actorPropertyAboutToChange(ActorProxyRefPtr, ActorPropertyRefPtr,
             std::string, std::string)));
-        connect(&EditorEvents::getInstance(), SIGNAL(proxyNameChanged(proxyRefPtr, std::string)),
-            this, SLOT(onProxyNameChanged(proxyRefPtr, std::string)));
+        connect(&EditorEvents::getInstance(), SIGNAL(proxyNameChanged(ActorProxyRefPtr, std::string)),
+            this, SLOT(onProxyNameChanged(ActorProxyRefPtr, std::string)));
     }
 
 
@@ -84,8 +84,8 @@ namespace dtEditQt
     }
 
     //////////////////////////////////////////////////////////////////////////////
-    void UndoManager::onActorPropertyChanged(osg::ref_ptr<dtDAL::ActorProxy> proxy,
-        osg::ref_ptr<dtDAL::ActorProperty> property)
+    void UndoManager::onActorPropertyChanged(dtCore::RefPtr<dtDAL::ActorProxy> proxy,
+        dtCore::RefPtr<dtDAL::ActorProperty> property)
     {
         if (!recursePrevent)
         {
@@ -98,7 +98,7 @@ namespace dtEditQt
                 ChangeEvent::PROPERTY_CHANGED && aboutToChangeEvent->undoPropData.size() > 0)
             {
                 // double check the actual property.
-                osg::ref_ptr<UndoPropertyData> propData = aboutToChangeEvent->undoPropData[0];
+                dtCore::RefPtr<UndoPropertyData> propData = aboutToChangeEvent->undoPropData[0];
                 if (propData->propertyName == property->GetName())
                 {
                     // FINALLY, we get to add it to our undo list.
@@ -113,8 +113,8 @@ namespace dtEditQt
     }
 
     //////////////////////////////////////////////////////////////////////////////
-    void UndoManager::actorPropertyAboutToChange(osg::ref_ptr<dtDAL::ActorProxy> proxy,
-        osg::ref_ptr<dtDAL::ActorProperty> property, std::string oldValue, std::string newValue)
+    void UndoManager::actorPropertyAboutToChange(dtCore::RefPtr<dtDAL::ActorProxy> proxy,
+        dtCore::RefPtr<dtDAL::ActorProperty> property, std::string oldValue, std::string newValue)
     {
         if (!recursePrevent)
         {
@@ -141,7 +141,7 @@ namespace dtEditQt
     }
 
     //////////////////////////////////////////////////////////////////////////////
-    void UndoManager::onActorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy> proxy, bool forceNoAdjustments)
+    void UndoManager::onActorProxyCreated(dtCore::RefPtr<dtDAL::ActorProxy> proxy, bool forceNoAdjustments)
     {
         if (!recursePrevent)
         {
@@ -161,7 +161,7 @@ namespace dtEditQt
     }
 
     //////////////////////////////////////////////////////////////////////////////
-    void UndoManager::onProxyNameChanged(osg::ref_ptr<dtDAL::ActorProxy> proxy, std::string oldName)
+    void UndoManager::onProxyNameChanged(dtCore::RefPtr<dtDAL::ActorProxy> proxy, std::string oldName)
     {
         if (!recursePrevent)
         {
@@ -185,7 +185,7 @@ namespace dtEditQt
     }
 
     //////////////////////////////////////////////////////////////////////////////
-    void UndoManager::onActorProxyDestroyed(osg::ref_ptr<dtDAL::ActorProxy> proxy)
+    void UndoManager::onActorProxyDestroyed(dtCore::RefPtr<dtDAL::ActorProxy> proxy)
     {
         if (!recursePrevent)
         {
@@ -216,7 +216,7 @@ namespace dtEditQt
 
         if (!redoStack.empty())
         {
-            osg::ref_ptr<ChangeEvent> redoEvent = redoStack.top();
+            dtCore::RefPtr<ChangeEvent> redoEvent = redoStack.top();
             redoStack.pop();
 
             handleUndoRedoEvent(redoEvent.get(), false);
@@ -233,7 +233,7 @@ namespace dtEditQt
 
         if (!undoStack.empty())
         {
-            osg::ref_ptr<ChangeEvent> undoEvent = undoStack.top();
+            dtCore::RefPtr<ChangeEvent> undoEvent = undoStack.top();
             undoStack.pop();
 
             handleUndoRedoEvent(undoEvent.get(), true);
@@ -246,7 +246,7 @@ namespace dtEditQt
     //////////////////////////////////////////////////////////////////////////////
     void UndoManager::handleUndoRedoEvent(ChangeEvent *event, bool isUndo)
     {
-        osg::ref_ptr<dtDAL::Map> currMap = EditorData::getInstance().getCurrentMap();
+        dtCore::RefPtr<dtDAL::Map> currMap = EditorData::getInstance().getCurrentMap();
 
         if (currMap.valid())
         {
@@ -291,9 +291,9 @@ namespace dtEditQt
         // do the undo
         proxy->SetName(event->oldName);
         // notify the world of our change to the data.
-        osg::ref_ptr<dtDAL::ActorProxy> proxyRefPtr = proxy;
+        dtCore::RefPtr<dtDAL::ActorProxy> ActorProxyRefPtr = proxy;
         recursePrevent = true;
-        EditorEvents::getInstance().emitProxyNameChanged(proxyRefPtr, currentName);
+        EditorEvents::getInstance().emitProxyNameChanged(ActorProxyRefPtr, currentName);
         recursePrevent = false;
 
         // now turn the undo into a redo event
@@ -338,11 +338,11 @@ namespace dtEditQt
         // Delete the sucker
         recursePrevent = true;
         EditorData::getInstance().getMainWindow()->startWaitCursor();
-        osg::ref_ptr<dtDAL::Map> currMap = EditorData::getInstance().getCurrentMap();
+        dtCore::RefPtr<dtDAL::Map> currMap = EditorData::getInstance().getCurrentMap();
         EditorActions::getInstance().deleteProxy(proxy, currMap);
 
         //We are deleting an object, so clear the current selection for safety.
-        std::vector<osg::ref_ptr<dtDAL::ActorProxy> > emptySelection;
+        std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > emptySelection;
         EditorEvents::getInstance().emitActorsSelected(emptySelection);
 
         EditorData::getInstance().getMainWindow()->endWaitCursor();
@@ -359,11 +359,11 @@ namespace dtEditQt
         // delete event.  Which means, we need to recreate the object and set all its
         // properties. Then, we need to add a CREATE change event to the REDO list.
 
-        std::vector<osg::ref_ptr < UndoPropertyData > >::const_iterator undoPropIter;
-        osg::ref_ptr<dtDAL::Map> currMap = EditorData::getInstance().getCurrentMap();
+        std::vector<dtCore::RefPtr < UndoPropertyData > >::const_iterator undoPropIter;
+        dtCore::RefPtr<dtDAL::Map> currMap = EditorData::getInstance().getCurrentMap();
 
         // figure out the actor type
-        osg::ref_ptr<dtDAL::ActorType> actorType = dtDAL::LibraryManager::GetInstance().
+        dtCore::RefPtr<dtDAL::ActorType> actorType = dtDAL::LibraryManager::GetInstance().
             FindActorType(event->actorTypeCategory, event->actorTypeName).get();
 
         if (currMap.valid() && actorType.valid())
@@ -371,14 +371,14 @@ namespace dtEditQt
             EditorData::getInstance().getMainWindow()->startWaitCursor();
 
             // recreate the actor!
-            osg::ref_ptr<dtDAL::ActorProxy> proxy =
+            dtCore::RefPtr<dtDAL::ActorProxy> proxy =
                     dtDAL::LibraryManager::GetInstance().CreateActorProxy(*actorType.get()).get();
             if (proxy.valid())
             {
                 // set all of our old properties before telling anyone else about it
                 for (undoPropIter = event->undoPropData.begin(); undoPropIter != event->undoPropData.end(); ++undoPropIter)
                 {
-                    osg::ref_ptr < UndoPropertyData> undoProp = (*undoPropIter);
+                    dtCore::RefPtr < UndoPropertyData> undoProp = (*undoPropIter);
                     // find the prop on the real actor
                     dtDAL::ActorProperty *actorProp = proxy->GetProperty(undoProp->propertyName);
 
@@ -425,7 +425,7 @@ namespace dtEditQt
             return;
 
         // for property changed, simply find the old property and reset the value
-        osg::ref_ptr<UndoPropertyData> propData = event->undoPropData[0];
+        dtCore::RefPtr<UndoPropertyData> propData = event->undoPropData[0];
         if (propData.valid())
         {
             dtDAL::ActorProperty *property = proxy->GetProperty(propData->propertyName);
@@ -435,11 +435,11 @@ namespace dtEditQt
                 property->SetStringValue(propData->oldValue);
 
                 // notify the world of our change to the data.
-                osg::ref_ptr<dtDAL::ActorProxy> proxyRefPtr = proxy;
-                osg::ref_ptr<dtDAL::ActorProperty> propertyRefPtr = property;
+                dtCore::RefPtr<dtDAL::ActorProxy> ActorProxyRefPtr = proxy;
+                dtCore::RefPtr<dtDAL::ActorProperty> ActorPropertyRefPtr = property;
                 recursePrevent = true;
                 EditorData::getInstance().getMainWindow()->startWaitCursor();
-                EditorEvents::getInstance().emitActorPropertyChanged(proxyRefPtr, propertyRefPtr);
+                EditorEvents::getInstance().emitActorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr);
                 EditorData::getInstance().getMainWindow()->endWaitCursor();
                 recursePrevent = false;
 
@@ -512,7 +512,7 @@ namespace dtEditQt
         // clear undo
         while (!undoStack.empty())
         {
-            osg::ref_ptr<ChangeEvent> undoEvent = undoStack.top();
+            dtCore::RefPtr<ChangeEvent> undoEvent = undoStack.top();
             undoStack.pop();
         }
 
@@ -524,7 +524,7 @@ namespace dtEditQt
         // clear redo
         while (!redoStack.empty())
         {
-            osg::ref_ptr<ChangeEvent> redoEvent = redoStack.top();
+            dtCore::RefPtr<ChangeEvent> redoEvent = redoStack.top();
             redoStack.pop();
         }
 

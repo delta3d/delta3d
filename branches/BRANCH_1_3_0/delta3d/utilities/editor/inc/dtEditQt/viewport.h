@@ -379,7 +379,7 @@ namespace dtEditQt
         void setActorRotateMode();
 
         ///Moves the camera such that the actor is clearly visible.
-        void onGotoActor(proxyRefPtr proxy);
+        void onGotoActor(ActorProxyRefPtr proxy);
 
         // starts a larger transaction to prevent excessive refreshes
         void onBeginChangeTransaction();
@@ -507,7 +507,7 @@ namespace dtEditQt
          *  This is not created by this viewport.  It must be created by
          *  classes extending the base viewport.
          */
-        osg::ref_ptr<Camera> camera;
+        dtCore::RefPtr<Camera> camera;
 
         /**
          * Tracks whether we are currently in a batch change transaction
@@ -543,8 +543,8 @@ namespace dtEditQt
         // be set in BeginEdit and cleared in EndEdit
         std::map<std::string,std::vector<std::string> > selectedActorOrigValues;
 
-        osg::ref_ptr<ViewportOverlay> overlay;
-        osg::ref_ptr<dtCore::Scene> scene;
+        dtCore::RefPtr<ViewportOverlay> overlay;
+        dtCore::RefPtr<dtCore::Scene> scene;
         osg::ref_ptr<osg::FrameStamp> frameStamp;
         osg::ref_ptr<osgUtil::SceneView> sceneView;
         osg::ref_ptr<osg::StateSet> globalStateSet;

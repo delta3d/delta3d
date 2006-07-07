@@ -105,7 +105,7 @@ namespace dtDAL
          mXercesParser->setErrorHandler(mHandler.get());
          mXercesParser->parse(path.c_str());
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Parsing complete.\n");
-         osg::ref_ptr<Map> mapRef = mHandler->GetMap();
+         dtCore::RefPtr<Map> mapRef = mHandler->GetMap();
          mHandler->ClearMap();
          return mapRef.release();
       }
@@ -1084,7 +1084,7 @@ namespace dtDAL
       {
          try
          {
-            osg::ref_ptr<ActorProxy> proxy = mMap->GetProxyById(mEnvActorId);
+            dtCore::RefPtr<ActorProxy> proxy = mMap->GetProxyById(mEnvActorId);
             if(!proxy.valid())
             {
                if(mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
@@ -1436,8 +1436,8 @@ namespace dtDAL
             EndElement();
          }
 
-         const std::map<dtCore::UniqueId, osg::ref_ptr<ActorProxy> >& proxies = map.GetAllProxies();
-         for (std::map<dtCore::UniqueId, osg::ref_ptr<ActorProxy> >::const_iterator i = proxies.begin();
+         const std::map<dtCore::UniqueId, dtCore::RefPtr<ActorProxy> >& proxies = map.GetAllProxies();
+         for (std::map<dtCore::UniqueId, dtCore::RefPtr<ActorProxy> >::const_iterator i = proxies.begin();
               i != proxies.end(); i++)
          {
             const ActorProxy& proxy = *i->second.get();

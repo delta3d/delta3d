@@ -23,7 +23,6 @@
 #define DELTA_DYNAMICGROUPCONTROL
 
 #include "dtEditQt/dynamicabstractparentcontrol.h"
-#include <osg/ref_ptr>
 #include <vector>
 
 

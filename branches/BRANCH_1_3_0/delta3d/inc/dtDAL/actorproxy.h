@@ -26,7 +26,6 @@
 #include <vector>
 #include <set>
 #include <osg/Referenced>
-#include <osg/ref_ptr>
 #include <dtUtil/enumeration.h>
 #include <dtCore/uniqueid.h>
 #include <dtCore/refptr.h>
@@ -324,7 +323,7 @@ namespace dtDAL
           * to the newly created clone.
           * @return The cloned actor proxy.
           */
-         virtual osg::ref_ptr<ActorProxy> Clone();
+         virtual dtCore::RefPtr<ActorProxy> Clone();
 
          /**
           * Allow access to the ActorPluginRegistry.  This is so it can set the
@@ -334,7 +333,7 @@ namespace dtDAL
          friend class ActorPluginRegistry;
 
       protected:
-         ///Keep the destructor protected since we use osg::ref_ptr to
+         ///Keep the destructor protected since we use dtCore::RefPtr to
          ///track any object created.
          virtual ~ActorProxy();
 

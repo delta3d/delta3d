@@ -47,7 +47,7 @@ class TestMap : public Application
       //Project::GetInstance().LoadMapIntoScene(myMap, *GetScene());
       
       // Get the proxies from the map
-      std::vector< osg::ref_ptr<ActorProxy> > proxies;
+      std::vector< dtCore::RefPtr<ActorProxy> > proxies;
       myMap.FindProxies(proxies, "StaticMesh*");
       
       // Initialization

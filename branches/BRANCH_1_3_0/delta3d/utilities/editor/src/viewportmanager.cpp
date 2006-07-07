@@ -61,13 +61,13 @@ namespace dtEditQt
 
         EditorEvents* editorEvents = &EditorEvents::getInstance();
 
-        connect(editorEvents, SIGNAL(actorProxyCreated(proxyRefPtr, bool)),
-                this,SLOT(onActorProxyCreated(proxyRefPtr, bool)));
+        connect(editorEvents, SIGNAL(actorProxyCreated(ActorProxyRefPtr, bool)),
+                this,SLOT(onActorProxyCreated(ActorProxyRefPtr, bool)));
 
         connect(editorEvents,
-                SIGNAL(actorPropertyChanged(proxyRefPtr,propertyRefPtr)),
+                SIGNAL(actorPropertyChanged(ActorProxyRefPtr,ActorPropertyRefPtr)),
                 this,
-                SLOT(onActorPropertyChanged(proxyRefPtr,propertyRefPtr)));
+                SLOT(onActorPropertyChanged(ActorProxyRefPtr,ActorPropertyRefPtr)));
 
         connect(editorEvents,SIGNAL(projectChanged()),
                 this,SLOT(refreshAllViewports()));
@@ -176,9 +176,9 @@ namespace dtEditQt
 
     ///////////////////////////////////////////////////////////////////////////////
     void ViewportManager::clearMasterScene(
-            const std::map<dtCore::UniqueId, osg::ref_ptr<dtDAL::ActorProxy> > &proxies)
+            const std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> > &proxies)
     {
-        std::map<dtCore::UniqueId,osg::ref_ptr<dtDAL::ActorProxy> >::const_iterator itor;
+        std::map<dtCore::UniqueId,dtCore::RefPtr<dtDAL::ActorProxy> >::const_iterator itor;
 
         for (itor = proxies.begin(); itor != proxies.end(); ++itor)
         {
@@ -262,8 +262,8 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void ViewportManager::onActorPropertyChanged(osg::ref_ptr<dtDAL::ActorProxy> proxy,
-            osg::ref_ptr<dtDAL::ActorProperty> property)
+    void ViewportManager::onActorPropertyChanged(dtCore::RefPtr<dtDAL::ActorProxy> proxy,
+            dtCore::RefPtr<dtDAL::ActorProperty> property)
     {
         unsigned int billBoardIndex, actorIndex;
         const dtDAL::ActorProxy::RenderMode &renderMode = proxy->GetRenderMode();
@@ -355,7 +355,7 @@ namespace dtEditQt
 
     ///////////////////////////////////////////////////////////////////////////////
     void ViewportManager::onActorProxyCreated(
-            osg::ref_ptr<dtDAL::ActorProxy> proxy, bool forceNoAdjustments)
+            dtCore::RefPtr<dtDAL::ActorProxy> proxy, bool forceNoAdjustments)
     {
         dtCore::Scene *scene = this->masterScene.get();
         dtDAL::ActorProxyIcon *billBoard = NULL;

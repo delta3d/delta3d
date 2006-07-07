@@ -71,7 +71,7 @@
 namespace dtEditQt
 {
     //Singleton global variable for the library manager.
-    osg::ref_ptr<EditorActions> EditorActions::instance(NULL);
+    dtCore::RefPtr<EditorActions> EditorActions::instance(NULL);
 
     ///////////////////////////////////////////////////////////////////////////////
     EditorActions::EditorActions() :
@@ -94,9 +94,9 @@ namespace dtEditQt
                  this, SLOT(slotRestartAutosave()));
 
         connect(&EditorEvents::getInstance(),
-            SIGNAL(selectedActors(proxyRefPtrVector&)),
+            SIGNAL(selectedActors(ActorProxyRefPtrVector&)),
             this,
-            SLOT(slotSelectedActors(proxyRefPtrVector&)));
+            SLOT(slotSelectedActors(ActorProxyRefPtrVector&)));
 
         timer = new QTimer((QWidget*)EditorData::getInstance().getMainWindow());
         timer->setInterval(saveMilliSeconds);
@@ -118,7 +118,7 @@ namespace dtEditQt
     }
 
     //////////////////////////////////////////////////////////////////////////////
-    void EditorActions::slotSelectedActors(std::vector< osg::ref_ptr<dtDAL::ActorProxy> > &newActors)
+    void EditorActions::slotSelectedActors(std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > &newActors)
     {
         actors.clear();
         actors.reserve(newActors.size());
@@ -449,7 +449,7 @@ namespace dtEditQt
             }
 
             //Finally, change to the requested map.
-            osg::ref_ptr<dtDAL::Map> mapRef = newMap;
+            dtCore::RefPtr<dtDAL::Map> mapRef = newMap;
             EditorData::getInstance().getMainWindow()->checkAndLoadBackup(newMap->GetName());
             newMap->SetModified(false);
         }
@@ -624,7 +624,7 @@ namespace dtEditQt
         ViewportOverlay::ActorProxyList &selection =
                 ViewportManager::getInstance().getViewportOverlay()->getCurrentActorSelection();
         dtCore::Scene *scene = ViewportManager::getInstance().getMasterScene();
-        osg::ref_ptr<dtDAL::Map> currMap = EditorData::getInstance().getCurrentMap();
+        dtCore::RefPtr<dtDAL::Map> currMap = EditorData::getInstance().getCurrentMap();
         Camera *worldCam = ViewportManager::getInstance().getWorldViewCamera();
 
         //Make sure we have valid data.
@@ -655,11 +655,11 @@ namespace dtEditQt
         //clone each proxy, add it to the scene, make the newly cloned
         //proxy(s) the current selection.
         ViewportOverlay::ActorProxyList::iterator itor;
-        std::vector<osg::ref_ptr<dtDAL::ActorProxy> > newSelection;
+        std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > newSelection;
         for (itor=selection.begin(); itor!=selection.end(); ++itor)
         {
             dtDAL::ActorProxy *proxy = const_cast<dtDAL::ActorProxy *>(itor->get());
-            osg::ref_ptr<dtDAL::ActorProxy> copy = proxy->Clone();
+            dtCore::RefPtr<dtDAL::ActorProxy> copy = proxy->Clone();
             if (!copy.valid())
             {
                 LOG_ERROR("Error duplicating proxy: " + proxy->GetName());
@@ -702,7 +702,7 @@ namespace dtEditQt
 
         ViewportOverlay::ActorProxyList selection =
                 ViewportManager::getInstance().getViewportOverlay()->getCurrentActorSelection();
-        osg::ref_ptr<dtDAL::Map> currMap = EditorData::getInstance().getCurrentMap();
+        dtCore::RefPtr<dtDAL::Map> currMap = EditorData::getInstance().getCurrentMap();
 
         //Make sure we have valid data.
         if (!currMap.valid()) {
@@ -728,7 +728,7 @@ namespace dtEditQt
         }
 
         //Now that we have removed the selected objects, clear the current selection.
-        std::vector<osg::ref_ptr<dtDAL::ActorProxy> > emptySelection;
+        std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > emptySelection;
         EditorEvents::getInstance().emitActorsSelected(emptySelection);
         EditorEvents::getInstance().emitEndChangeTransaction();
 
@@ -737,14 +737,14 @@ namespace dtEditQt
 
 
     //////////////////////////////////////////////////////////////////////////////
-    bool EditorActions::deleteProxy(dtDAL::ActorProxy *proxy, osg::ref_ptr<dtDAL::Map> currMap)
+    bool EditorActions::deleteProxy(dtDAL::ActorProxy *proxy, dtCore::RefPtr<dtDAL::Map> currMap)
     {
         dtCore::Scene *scene = ViewportManager::getInstance().getMasterScene();
         bool result = false;
 
         if (proxy != NULL && scene != NULL)
         {
-            osg::ref_ptr<dtDAL::ActorProxy> tempRef = proxy;
+            dtCore::RefPtr<dtDAL::ActorProxy> tempRef = proxy;
             scene->RemoveDrawable(proxy->GetActor());
             if (proxy->GetBillBoardIcon() != NULL)
                 scene->RemoveDrawable(proxy->GetBillBoardIcon()->GetDrawable());
@@ -933,7 +933,7 @@ namespace dtEditQt
         name += projDir;
 
         // if we have a map, append the name
-        osg::ref_ptr<dtDAL::Map> map = EditorData::getInstance().getCurrentMap();
+        dtCore::RefPtr<dtDAL::Map> map = EditorData::getInstance().getCurrentMap();
         if (map.valid())
         {
             name += " - " + map->GetName();
@@ -1080,7 +1080,7 @@ namespace dtEditQt
         ViewportManager::getInstance().EnablePaging(true);        
         
         //Now that we have changed maps, clear the current selection.
-        std::vector<osg::ref_ptr<dtDAL::ActorProxy> > emptySelection;
+        std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > emptySelection;
         EditorEvents::getInstance().emitActorsSelected(emptySelection);
     }
 

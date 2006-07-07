@@ -26,7 +26,6 @@
 #include <QtCore/QObject>
 #include <vector>
 #include <osg/Referenced>
-#include <osg/ref_ptr>
 #include <dtDAL/actorproxy.h>
 #include "dtEditQt/typedefs.h"
 #include <dtCore/refptr.h>
@@ -89,7 +88,7 @@ namespace dtEditQt
      * the proxy from the scene and map and clears up the billboard.  Finally, it emits
      * the appropriate about to and delete proxy events.
      */
-    bool deleteProxy(dtDAL::ActorProxy *proxy, osg::ref_ptr<dtDAL::Map> currMap);
+    bool deleteProxy(dtDAL::ActorProxy *proxy, dtCore::RefPtr<dtDAL::Map> currMap);
 
     /**
     * The actions for this class are public.  Essentially, this whole class is here
@@ -334,7 +333,7 @@ namespace dtEditQt
     // helper method to keep track of the selected actors. this is needed in order to
     // be able to call the goto actor functionality from the menu. The signal requires
     // an argument. 
-    void slotSelectedActors(proxyRefPtrVector &actors);
+    void slotSelectedActors(ActorProxyRefPtrVector &actors);
 
   protected:
     /**
@@ -383,10 +382,10 @@ namespace dtEditQt
     void setupWindowActions();
 
     QTimer *timer;
-    std::vector< osg::ref_ptr<dtDAL::ActorProxy> > actors;
+    std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > actors;
 
     ///Singleton instance of this class.
-    static osg::ref_ptr<EditorActions> instance;
+    static dtCore::RefPtr<EditorActions> instance;
 
     dtCore::RefPtr<dtCore::Isector> mIsector;
   };

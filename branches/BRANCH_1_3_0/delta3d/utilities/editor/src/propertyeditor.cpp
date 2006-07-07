@@ -69,9 +69,8 @@
 #include <dtUtil/tree.h>
 
 #include <osg/Referenced>
-#include <osg/ref_ptr>
 #include <vector>
-#include <math.h>
+#include <cmath>
 
 
 namespace dtEditQt
@@ -95,19 +94,19 @@ namespace dtEditQt
         setupUI();
 
         // listen for selection changed event
-        connect(&EditorEvents::getInstance(), SIGNAL(selectedActors(proxyRefPtrVector &)),
-            this, SLOT(handleActorsSelected(proxyRefPtrVector&)));
+        connect(&EditorEvents::getInstance(), SIGNAL(selectedActors(ActorProxyRefPtrVector &)),
+            this, SLOT(handleActorsSelected(ActorProxyRefPtrVector&)));
 
         // listen for property change events and update the tree.  These can be generated
         // by the viewports, or the tree itself.
-        connect(&EditorEvents::getInstance(), SIGNAL(actorPropertyChanged(proxyRefPtr,
-            propertyRefPtr)),
-            this, SLOT(actorPropertyChanged(proxyRefPtr,
-            propertyRefPtr)));
+        connect(&EditorEvents::getInstance(), SIGNAL(actorPropertyChanged(ActorProxyRefPtr,
+            ActorPropertyRefPtr)),
+            this, SLOT(actorPropertyChanged(ActorProxyRefPtr,
+            ActorPropertyRefPtr)));
 
         // listen for name changes so we can update our group box label or handle undo changes
-        connect(&EditorEvents::getInstance(), SIGNAL(proxyNameChanged(proxyRefPtr, std::string)),
-            this, SLOT(proxyNameChanged(proxyRefPtr, std::string)));
+        connect(&EditorEvents::getInstance(), SIGNAL(proxyNameChanged(ActorProxyRefPtr, std::string)),
+            this, SLOT(proxyNameChanged(ActorProxyRefPtr, std::string)));
 
         controlFactory = new dtUtil::ObjectFactory<dtDAL::DataType *, DynamicAbstractControl>;
 
@@ -168,9 +167,9 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void PropertyEditor::handleActorsSelected(std::vector<osg::ref_ptr<dtDAL::ActorProxy> > &actors)
+    void PropertyEditor::handleActorsSelected(std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &actors)
     {
-        std::vector<osg::ref_ptr<dtDAL::ActorProxy > >::const_iterator iter;
+        std::vector<dtCore::RefPtr<dtDAL::ActorProxy > >::const_iterator iter;
 
         // get the currently open tree branches and current caret position so we
         // can scroll back to it as best as we can.  Only do this if we have
@@ -184,7 +183,7 @@ namespace dtEditQt
         // copy passed in actors to our internal list.
         for(iter = actors.begin(); iter != actors.end(); ++iter)
         {
-            osg::ref_ptr<dtDAL::ActorProxy> myProxy = (*iter);
+            dtCore::RefPtr<dtDAL::ActorProxy> myProxy = (*iter);
             selectedActors.push_back(myProxy);
             LOG_INFO(std::string("Selected Actors found a proxy") + myProxy->GetName());
         }
@@ -206,7 +205,7 @@ namespace dtEditQt
     /////////////////////////////////////////////////////////////////////////////////
     void PropertyEditor::refreshSelectedActors()
     {
-        std::vector<osg::ref_ptr<dtDAL::ActorProxy > >::const_iterator iter;
+        std::vector<dtCore::RefPtr<dtDAL::ActorProxy > >::const_iterator iter;
         bool isMultiSelect = selectedActors.size() > 1;
 
         // QT has an issue when you remove children.  If you have created an
@@ -246,7 +245,7 @@ namespace dtEditQt
         // Walk our selection items.
         for(iter = selectedActors.begin(); iter != selectedActors.end(); ++iter)
         {
-            osg::ref_ptr<dtDAL::ActorProxy> myProxy = (*iter);
+            dtCore::RefPtr<dtDAL::ActorProxy> myProxy = (*iter);
 
             // build the dynamic controls
             if (!isMultiSelect)
@@ -292,7 +291,7 @@ namespace dtEditQt
         else if (selectedActors.size() == 1)
         {
             // set the name in the group box.
-            osg::ref_ptr<dtDAL::ActorProxy> myProxy = selectedActors[0];
+            dtCore::RefPtr<dtDAL::ActorProxy> myProxy = selectedActors[0];
             QString label = baseGroupBoxName + " ('" + tr(myProxy->GetName().c_str()) + "' selected)";
             actorPropBox->setTitle(label);
         }
@@ -306,7 +305,7 @@ namespace dtEditQt
 
 
     /////////////////////////////////////////////////////////////////////////////////
-    void PropertyEditor::buildDynamicControls(osg::ref_ptr<dtDAL::ActorProxy> proxy)
+    void PropertyEditor::buildDynamicControls(dtCore::RefPtr<dtDAL::ActorProxy> proxy)
     {
         dtDAL::ActorProperty *curProp;
         std::vector<dtDAL::ActorProperty *> propList;
@@ -502,8 +501,8 @@ namespace dtEditQt
     }
 
     /////////////////////////////////////////////////////////////////////////////////
-    void PropertyEditor::actorPropertyChanged(osg::ref_ptr<dtDAL::ActorProxy> proxy,
-        osg::ref_ptr<dtDAL::ActorProperty> property)
+    void PropertyEditor::actorPropertyChanged(dtCore::RefPtr<dtDAL::ActorProxy> proxy,
+        dtCore::RefPtr<dtDAL::ActorProperty> property)
     {
         propertyTree->viewport()->update();
 
@@ -523,7 +522,7 @@ namespace dtEditQt
     }
 
     /////////////////////////////////////////////////////////////////////////////////
-    void PropertyEditor::proxyNameChanged(osg::ref_ptr<dtDAL::ActorProxy> proxy, std::string oldName)
+    void PropertyEditor::proxyNameChanged(dtCore::RefPtr<dtDAL::ActorProxy> proxy, std::string oldName)
     {
         resetGroupBoxLabel();
         propertyTree->viewport()->update();
