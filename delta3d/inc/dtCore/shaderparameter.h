@@ -171,7 +171,7 @@ namespace dtCore
           * Sets the shader owning this shader parameter.
           * @param shader The shader owning this parameter.
           */
-         void SetParentShader(Shader *shader) { mParentShader = shader; }
+        void SetParentShader(Shader *shader);
 
          /**
           * Gets the shader currently managing this shader parameter.
@@ -189,7 +189,7 @@ namespace dtCore
           *   values depending on the complexity of the underlying data of a particular parameter
           *   implementation.
           */
-         void SetUniformParam(osg::Uniform &uniform) { mUniform = &uniform; }
+         void SetUniformParam(osg::Uniform &uniform);
 
          /**
           * Gets the uniform parameter currently bound to this shader parameter.
