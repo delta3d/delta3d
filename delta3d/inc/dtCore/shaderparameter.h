@@ -21,7 +21,7 @@
 #ifndef DELTA_SHADERPARAMETER
 #define DELTA_SHADERPARAMETER
 
-#include "dtCore/export.h"
+#include <dtCore/export.h>
 #include <dtUtil/enumeration.h>
 #include <dtCore/refptr.h>
 #include <osg/Referenced>
@@ -204,6 +204,13 @@ namespace dtCore
          dtCore::RefPtr<osg::Uniform> mUniform;
 
          friend class Shader;
+
+         // Disallowed to prevent compile errors on VS2003. It apparently
+         // creates this functions even if they are not used, and if
+         // this class is forward declared, these implicit functions will
+         // cause compiler errors for missing calls to "ref".
+         ShaderParameter& operator=( const ShaderParameter& ); 
+         ShaderParameter( const ShaderParameter& );
    };
 }
 
