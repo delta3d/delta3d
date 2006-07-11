@@ -29,7 +29,7 @@ class ActorPropertyWrap : public ActorProperty, public wrapper<ActorProperty>
 
       DataType& GetPropertyType() const
       {
-         #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+         #if defined( _MSC_VER ) // MSVC 7.1 & 8.0
          return call<DataType&>( this->get_override("GetPropertyType").ptr() );
          #else
          return this->get_override( "GetPropertyType" )();
