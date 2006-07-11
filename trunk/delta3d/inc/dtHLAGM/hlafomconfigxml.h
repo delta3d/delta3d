@@ -181,6 +181,7 @@ namespace dtHLAGM
 
          static const std::string HEADER_ELEMENT;
          static const std::string HEADER_NAME_ELEMENT;
+         static const std::string WAYPOINT_FILENAME_ELEMENT;
          static const std::string HEADER_USE_DIS_ENTITIES_ELEMENT;
          static const std::string HEADER_DIS_ENTITIES_ATTR_ELEMENT;
          static const std::string HEADER_DESCRIPTION_ELEMENT;

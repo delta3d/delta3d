@@ -81,6 +81,9 @@ namespace dtDAL
          bool mContextReadOnly;
          mutable bool mResourcesIndexed;
 
+         //set to true if we are running via stage - banderegg 
+         bool mEditMode;
+
          std::map<std::string,std::string> mMapList; //< The list of maps by name mapped to the file names.
          mutable std::set<std::string> mMapNames; //< The list of map names.
 
@@ -134,6 +137,9 @@ namespace dtDAL
 
 
          const std::string GetBackupDir() const;
+
+         ///added support for waypoints
+         void CreateWaypointActors(Map& pMap);
 
          //Later
    /*    dtUtil::tree<ResourceTreeNode>* getMatchingBranch(
@@ -508,6 +514,16 @@ namespace dtDAL
           */
          bool IsReadOnly() const;
 
+
+         /**
+         * This flag will alert actors whether or not there proxy is being loaded into STAGE
+         * as a note this should only be set from dtEditQt namespace
+         * potential refactor would be to ensure only dtEditQt could set it
+         * another implementation would be to have a project state which could
+         * control whether we are editing or not
+         * if need be we can add a getter for this
+         */
+         void SetEditMode(bool pInStage);
 
    };
 

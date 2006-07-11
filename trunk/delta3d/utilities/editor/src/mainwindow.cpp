@@ -67,7 +67,11 @@ namespace dtEditQt
         EditorActions::getInstance();
         EditorEvents::getInstance();
         EditorData::getInstance();
-        dtDAL::Project::GetInstance();
+        
+        //alert the project instance that we are working within STAGE
+        //changed on 7/10/2006 banderegg
+        dtDAL::Project::GetInstance().SetEditMode(true);
+
         ViewportManager::getInstance();
 
         connectSlots();

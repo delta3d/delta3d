@@ -583,6 +583,7 @@ namespace dtEditQt
         else
         {
             mapPropsDialog.getMapName()->setText(map->GetName().c_str());
+            mapPropsDialog.getPathNodeFileName()->setText(map->GetPathNodeFileName().c_str());
             mapPropsDialog.getMapDescription()->setText(map->GetDescription().c_str());
             mapPropsDialog.getMapAuthor()->setText(map->GetAuthor().c_str());
             mapPropsDialog.getMapCopyright()->setText(map->GetCopyright().c_str());
@@ -593,6 +594,7 @@ namespace dtEditQt
         if (mapPropsDialog.exec() == QDialog::Accepted)
         {
             map->SetName(mapPropsDialog.getMapName()->text().toStdString());
+            map->SetPathNodeFileName(mapPropsDialog.getPathNodeFileName()->text().toStdString());
             map->SetDescription(mapPropsDialog.getMapDescription()->text().toStdString());
             map->SetAuthor(mapPropsDialog.getMapAuthor()->text().toStdString());
             map->SetCopyright(mapPropsDialog.getMapCopyright()->text().toStdString());

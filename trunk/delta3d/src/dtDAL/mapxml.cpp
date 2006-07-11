@@ -279,6 +279,10 @@ namespace dtDAL
                //this flag is only used when the parser is just looking for the map name.
                mFoundMapName = true;
             }
+            else if (topEl == MapXMLConstants::WAYPOINT_FILENAME_ELEMENT)
+            {
+               mMap->SetPathNodeFileName(dtUtil::XMLStringConverter(chars).ToString());
+            }
             else if (topEl == MapXMLConstants::DESCRIPTION_ELEMENT)
             {
                mMap->SetDescription(dtUtil::XMLStringConverter(chars).ToString());
@@ -1381,6 +1385,11 @@ namespace dtDAL
          BeginElement(MapXMLConstants::MAP_NAME_ELEMENT);
          AddCharacters(map.GetName());
          EndElement();
+         if(!map.GetPathNodeFileName().empty())
+         {  BeginElement(MapXMLConstants::WAYPOINT_FILENAME_ELEMENT);
+            AddCharacters(map.GetPathNodeFileName());
+            EndElement();
+         }
          BeginElement(MapXMLConstants::DESCRIPTION_ELEMENT);
          AddCharacters(map.GetDescription());
          EndElement();
@@ -1470,6 +1479,11 @@ namespace dtDAL
 
                // If the property is read only, skip it
                if(property.IsReadOnly())
+                  continue;
+
+               //ghost proxies arent saved
+               //added 7/10/06 -banderegg
+               if(proxy.IsGhostProxy()) 
                   continue;
 
                BeginElement(MapXMLConstants::ACTOR_PROPERTY_ELEMENT);
@@ -1868,6 +1882,7 @@ namespace dtDAL
 
    XMLCh* MapXMLConstants::HEADER_ELEMENT = NULL;
    XMLCh* MapXMLConstants::MAP_NAME_ELEMENT = NULL;
+   XMLCh* MapXMLConstants::WAYPOINT_FILENAME_ELEMENT = NULL;
    XMLCh* MapXMLConstants::DESCRIPTION_ELEMENT = NULL;
    XMLCh* MapXMLConstants::AUTHOR_ELEMENT = NULL;
    XMLCh* MapXMLConstants::COMMENT_ELEMENT = NULL;
@@ -1932,6 +1947,7 @@ namespace dtDAL
 
       HEADER_ELEMENT = XMLString::transcode("header");
       MAP_NAME_ELEMENT = XMLString::transcode("name");
+      WAYPOINT_FILENAME_ELEMENT = XMLString::transcode("waypointFileName");
       DESCRIPTION_ELEMENT = XMLString::transcode("description");
       AUTHOR_ELEMENT = XMLString::transcode("author");
       COMMENT_ELEMENT = XMLString::transcode("comment");
@@ -1996,6 +2012,7 @@ namespace dtDAL
 
       XMLString::release(&HEADER_ELEMENT);
       XMLString::release(&MAP_NAME_ELEMENT);
+      XMLString::release(&WAYPOINT_FILENAME_ELEMENT);
       XMLString::release(&DESCRIPTION_ELEMENT);
       XMLString::release(&AUTHOR_ELEMENT);
       XMLString::release(&COMMENT_ELEMENT);
