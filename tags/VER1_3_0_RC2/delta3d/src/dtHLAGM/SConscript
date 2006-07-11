@@ -1,0 +1,12 @@
+Import('*')
+
+if env.get('rti') != 0 :
+
+   srcs = SGlob( '*.cpp' )                  
+   deps = [ 'dtGame', 'dtDAL', 'dtABC', 'dtCore', 'osgSim', 'winsock' ] + rtiLibs
+         
+   defines = []
+   if OS == 'windows':
+      defines = ['DT_HLAGM_LIBRARY']
+
+   env.BuildLib( 'dtHLAGM', srcs, deps, defines )
