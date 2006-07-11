@@ -98,6 +98,12 @@ namespace dtDAL
    }
 
    //////////////////////////////////////////////////////////////////////////
+   bool ActorProxy::IsGhostProxy() const
+   {
+      return false;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    ResourceDescriptor* ActorProxy::GetResource(const std::string &name)
    {
       std::map<std::string, ResourceDescriptor>::iterator itor = mResourceMap.find(name);

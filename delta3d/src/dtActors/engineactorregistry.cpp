@@ -19,36 +19,37 @@
  * @author Matthew W. Campbell
  * @author Chris Osborn
 */
-#include "dtActors/engineactorregistry.h"
-#include "dtActors/infinitelightactorproxy.h"
-#include "dtActors/deltaobjectactorproxy.h"
-#include "dtActors/staticmeshactorproxy.h"
-#include "dtActors/particlesystemactorproxy.h"
-#include "dtActors/positionallightactorproxy.h"
-#include "dtActors/spotlightactorproxy.h"
-#include "dtActors/characteractorproxy.h"
-#include "dtActors/infiniteterrainactorproxy.h"
-#include "dtActors/autotriggeractorproxy.h"
-#include "dtActors/beziercontrolleractorproxy.h"
-#include "dtActors/meshterrainactorproxy.h"
-#include "dtActors/clouddomeactorproxy.h"
-#include "dtActors/cloudplaneactorproxy.h"
-#include "dtActors/skyboxactorproxy.h"
-#include "dtActors/skydomeactorproxy.h"
-#include "dtActors/beziernodeactorproxy.h"
-#include "dtActors/beziercontrolpointactorproxy.h"
-#include "dtActors/triggeractorproxy.h"
-#include "dtActors/proximitytriggeractorproxy.h"
-#include "dtActors/cameraactorproxy.h"
-#include "dtActors/tripodactorproxy.h"
-#include "dtActors/taskactor.h"
-#include "dtActors/taskactorgameevent.h"
-#include "dtActors/taskactorrollup.h"
-#include "dtActors/taskactorordered.h"
-#include "dtActors/basicenvironmentactorproxy.h"
-#include "dtActors/coordinateconfigactor.h"
-#include "dtActors/playerstartactorproxy.h"
-#include "dtActors/gamemeshactor.h"
+#include <dtActors/engineactorregistry.h>
+#include <dtActors/infinitelightactorproxy.h>
+#include <dtActors/deltaobjectactorproxy.h>
+#include <dtActors/staticmeshactorproxy.h>
+#include <dtActors/particlesystemactorproxy.h>
+#include <dtActors/positionallightactorproxy.h>
+#include <dtActors/spotlightactorproxy.h>
+#include <dtActors/characteractorproxy.h>
+#include <dtActors/infiniteterrainactorproxy.h>
+#include <dtActors/autotriggeractorproxy.h>
+#include <dtActors/beziercontrolleractorproxy.h>
+#include <dtActors/meshterrainactorproxy.h>
+#include <dtActors/clouddomeactorproxy.h>
+#include <dtActors/cloudplaneactorproxy.h>
+#include <dtActors/skyboxactorproxy.h>
+#include <dtActors/skydomeactorproxy.h>
+#include <dtActors/beziernodeactorproxy.h>
+#include <dtActors/beziercontrolpointactorproxy.h>
+#include <dtActors/triggeractorproxy.h>
+#include <dtActors/proximitytriggeractorproxy.h>
+#include <dtActors/cameraactorproxy.h>
+#include <dtActors/tripodactorproxy.h>
+#include <dtActors/taskactor.h>
+#include <dtActors/taskactorgameevent.h>
+#include <dtActors/taskactorrollup.h>
+#include <dtActors/taskactorordered.h>
+#include <dtActors/basicenvironmentactorproxy.h>
+#include <dtActors/coordinateconfigactor.h>
+#include <dtActors/playerstartactorproxy.h>
+#include <dtActors/gamemeshactor.h>
+#include <dtDAL/waypointactorproxy.h>
 
 namespace dtActors
 {
@@ -78,6 +79,7 @@ namespace dtActors
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::ENVIRONMENT_ACTOR_TYPE(new dtDAL::ActorType("Environment", "dtcore.Environment", "dtCore::BasicEnvironment Actor."));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::COORDINATE_CONFIG_ACTOR_TYPE(new dtDAL::ActorType("Coordinate Config", "dtutil", "dtUtil::Coordinates Actor"));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::PLAYER_START_ACTOR_TYPE(new dtDAL::ActorType("Player Start", "dtcore", "This can be dropped into a map and the player actor will spawn himself there on startup"));
+   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::WAYPOINT_ACTOR_TYPE(new dtDAL::ActorType("Waypoint", "dtai.waypoint", "dtAI::Waypoint Actor"));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::GAME_MESH_ACTOR_TYPE(
       new dtDAL::ActorType("Game Mesh Actor", "dtcore.Game.Actors", 
       "Simple base Game Actor that supports a Mesh - you should not typically use this directly"));
@@ -155,6 +157,7 @@ namespace dtActors
       mActorFactory->RegisterType<BasicEnvironmentActorProxy>(ENVIRONMENT_ACTOR_TYPE.get());
       mActorFactory->RegisterType<CoordinateConfigActorProxy>(COORDINATE_CONFIG_ACTOR_TYPE.get());
       mActorFactory->RegisterType<PlayerStartActorProxy>(PLAYER_START_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<dtDAL::WaypointActorProxy>(WAYPOINT_ACTOR_TYPE.get());
 
       // Base Game Mesh actor - typically subclassed (maybe shouldn't even be registered
       mActorFactory->RegisterType<GameMeshActorProxy>(GAME_MESH_ACTOR_TYPE.get());

@@ -97,6 +97,18 @@ namespace dtDAL
           */
          void SetAuthor(const std::string& newAuthor) { mModified = true; mAuthor = newAuthor; }
 
+
+         /**
+         * @return The name of the file containing waypoints or pathnodes
+         */
+         const std::string& GetPathNodeFileName() const { return mPathNodeFile; }
+
+         /**
+         * Sets the name of the file used for loading and saving pathnodes.
+         * @param newFilename the new filename.
+         */
+         void SetPathNodeFileName(const std::string& newFilename) { mModified = true;  mPathNodeFile = newFilename; }
+
          /**
           * @return The map comments.  This is intended to be the long comments.
           */
@@ -383,6 +395,7 @@ namespace dtDAL
          //The name set when it was created/last saved.
          std::string mSavedName;
          std::string mFileName;
+         std::string mPathNodeFile;
          std::string mDescription;
          std::string mAuthor;
          std::string mComment;

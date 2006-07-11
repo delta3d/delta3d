@@ -22,7 +22,8 @@
 #include <string>
 #include <sstream>
 #include <set>
-#include <stdio.h>
+#include <cstdio>
+#include <cassert>
 
 #ifdef _MSC_VER
 #	pragma warning(push)
@@ -57,6 +58,9 @@
 #include "dtDAL/actorproxyicon.h"
 #include "dtDAL/environmentactor.h"
 
+#include <dtAI/waypointmanager.h>
+#include <dtDAL/waypointactorproxy.h>
+
 #if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
    #ifndef snprintf
       #define snprintf _snprintf
@@ -73,7 +77,8 @@ namespace dtDAL
 
    //////////////////////////////////////////////////////////
    Project::Project() : mValidContext(false), mContext(""),
-                        mContextReadOnly(true), mResourcesIndexed(false)
+                        mContextReadOnly(true), mResourcesIndexed(false),
+                        mEditMode(false)
    {
       MapParser::StaticInit();
       MapXMLConstants::StaticInit();
@@ -374,6 +379,14 @@ namespace dtDAL
          map->AddMissingLibraries(mParser->GetMissingLibraries());
          map->AddMissingActorTypes(mParser->GetMissingActorTypes());
 
+         //added support for waypoint files- banderegg 7-10-06
+         if(!map->GetPathNodeFileName().empty())
+         {
+            dtAI::WaypointManager::GetInstance()->OnMapLoad(map->GetPathNodeFileName());
+            
+            //if we are running within stage we need to make proxies as well
+            if(mEditMode) CreateWaypointActors(*map);
+         }
       }
       catch (const dtUtil::Exception& e)
       {
@@ -686,6 +699,12 @@ namespace dtDAL
       if (!mValidContext)
          EXCEPT(dtDAL::ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
 
+      //added support for waypoint files- banderegg 7/10/06
+      if(!map.GetPathNodeFileName().empty())
+      {
+         dtAI::WaypointManager::GetInstance()->OnMapClose();
+      }
+
       //bool
       std::map<std::string, osg::ref_ptr<Map> >::iterator j = mOpenMaps.find(map.GetSavedName());
       if (j == mOpenMaps.end() || (j->second.get() != &map))
@@ -942,6 +961,24 @@ namespace dtDAL
          mw.Save(map, fullPathSaving);
          //if it's successful, move it to the final file name
          fileUtils.FileMove(fullPathSaving, fullPath, true);
+
+         //save the waypoint file- banderegg 7/10/06
+         //if there is no filename given, we arent going to save any waypoints
+         //lets check to see if there are waypoints in the scene and if so create 
+         //a default waypoints filename for the user
+         if(map.GetPathNodeFileName().empty() && (!dtAI::WaypointManager::GetInstance()->GetWaypoints().empty()))         
+         {
+            std::string mapName("Waypoints_");            
+            mapName += map.GetName();
+            mapName += ".ai";
+            map.SetPathNodeFileName(mapName);
+         }
+
+         //alert the waypoint manager to save the waypoint file
+         if(!map.GetPathNodeFileName().empty())
+         {
+            dtAI::WaypointManager::GetInstance()->OnMapSave(map.GetPathNodeFileName());
+         }
       }
       catch (const dtUtil::Exception& e)
       {
@@ -1464,4 +1501,51 @@ namespace dtDAL
       return mContextReadOnly;
    }
 
+   //////////////////////////////////////////////////////////
+   void Project::SetEditMode(bool pInStage)
+   {
+      mEditMode = pInStage;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void Project::CreateWaypointActors(Map& pMap)
+   {
+      if(dtAI::WaypointManager::GetInstance()->ObtainLock())
+      {
+         dtAI::WaypointManager::WaypointMap pWaypoints = dtAI::WaypointManager::GetInstance()->GetWaypoints();
+         dtAI::WaypointManager::WaypointIterator iter = pWaypoints.begin();
+         dtAI::WaypointManager::WaypointIterator endOfVector = pWaypoints.end();
+
+         unsigned counter = 0;
+
+         while(iter != endOfVector)
+         {
+            osg::ref_ptr<dtDAL::ActorProxy> proxy =
+               dtDAL::LibraryManager::GetInstance().CreateActorProxy("dtai.waypoint", "Waypoint").get();
+
+            if (proxy.valid())
+            {            
+               dtAI::WaypointActor* pActor = dynamic_cast<dtAI::WaypointActor*>(proxy->GetActor());
+               assert(pActor);
+
+               osg::Vec3 vec = (*iter).second->GetPosition();
+
+               dtDAL::WaypointActorProxy* pActorProxy = dynamic_cast<dtDAL::WaypointActorProxy*>(proxy.get());
+               assert(pActorProxy);
+
+               //note.. this will crash if we dont set the index first
+               //cause setting the translation will trigger a callback in our move waypoint function
+               pActor->SetIndex(counter);
+               pActorProxy->SetTranslation(vec);            
+
+               pMap.AddProxy(*proxy);    
+               ++counter;
+            }
+
+            ++iter;
+         }
+      }
+
+      dtAI::WaypointManager::GetInstance()->ReleaseLock();
+   }
 }

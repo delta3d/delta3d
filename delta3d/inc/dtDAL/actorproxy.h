@@ -317,6 +317,14 @@ namespace dtDAL
           */
          virtual bool IsPlaceable() const = 0;
 
+
+         /**
+         * if this returns true, this proxy will not be saved into the map
+         * useful for having proxies that own other proxies
+         */
+         virtual bool IsGhostProxy() const;
+
+
          /**
           * Creates a copy of this actor proxy and returns it.  The method uses the
           * library manager to create the clone and then iterates though the
