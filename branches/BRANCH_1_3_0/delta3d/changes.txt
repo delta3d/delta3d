@@ -133,6 +133,8 @@ Both functions now take a MouseButton enum rather than an integer (breaking chan
 
 -New data package 1.3.0
 
+-Mouse's 3rd axis is now updated in response to mouse scrolling.
+
 Bug Fixes
 ---------
 
@@ -165,6 +167,10 @@ Bug Fixes
 -Cleaned up FPSMotionModel.  Integrated changes from the user "gcw".
 
 -Transformables now correctly collide with InfiniteTerrain.
+  
+-Replaced all osg::ref_ptrs holding Delta3D classes with dtCore::RefPtr. Fixes a bug in VS2005 as well.
+
+-STAGE no longer forces all of the textures units on. Fixes a case with using terrex terrains where the scene would render very strangely, i.e. flashing colors, etc.
   
 ---------
 | 1.2.0 |
