@@ -130,7 +130,7 @@ class IsectorTests : public CPPUNIT_NS::TestFixture
          mIsector->SetEndPosition(point2);
 
          CPPUNIT_ASSERT(mIsector->GetDirection() == (point2 - point1));
-         CPPUNIT_ASSERT_EQUAL( mIsector->GetLength(), mIsector->GetDirection().length() );
+         CPPUNIT_ASSERT_DOUBLES_EQUAL( mIsector->GetLength(), mIsector->GetDirection().length(), 0.001f );
          
       }
 
