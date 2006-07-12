@@ -61,7 +61,6 @@ public:
    void TestGetCollisionGeomDimensions();
    void TestSetCollisionBox();
    void TestSetTransform();
-   void TestSceneAddDrawable();
    void TestReplaceMatrixNode();
 
 private:
@@ -212,12 +211,6 @@ void TransformableTests::TestSetTransform()
       osg::equivalent( dimensions[0], mBoxLengths[0]*scale[0], 1e-2f ) && 
       osg::equivalent( dimensions[1], mBoxLengths[1]*scale[1], 1e-2f ) && 
       osg::equivalent( dimensions[2], mBoxLengths[2]*scale[2], 1e-2f ) );
-}
-
-void TransformableTests::TestSceneAddDrawable()
-{
-   //dtCore::RefPtr<dtCore::Scene> scene = new dtCore::Scene("TestScene"); 
-   //scene->AddDrawable( mTransformable.get() );
 }
 
 bool HasChild( dtCore::DeltaDrawable* parent, dtCore::DeltaDrawable* child )
