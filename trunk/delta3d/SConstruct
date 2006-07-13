@@ -443,6 +443,7 @@ def TOOL_BUNDLE(env):
              lib = envLib.Install( '$prefix/lib', builtlib )
     
        incDirDict = { 'dtABC'       : 'dtABC',
+                      'dtAI'        : 'dtAI',
                       'dtActors'    : 'dtActors',
                       'dtAudio'     : 'dtAudio',
                       'dtChar'      : 'dtChar',
@@ -842,23 +843,24 @@ def CheckLibOrFramework(context, lib, autoadd = 0):
 
 depsHash = {}
 
-dtLibs = { 'dtABC'       : 'dtABC',
-           'dtActors'    : 'dtActors',
-           'dtAudio'     : 'dtAudio',
-           'dtChar'      : 'dtChar',
-           'dtCore'      : 'dtCore',
-           'dtDAL'       : 'dtDAL',
-           'dtHLA'       : 'dtHLA',
-           'dtHLAGM'     : 'dtHLAGM',
-           'dtGUI'       : 'dtGUI',
-           'dtNet'       : 'dtNet',
-           'dtScript'    : 'dtScript',
-           'dtUtil'      : 'dtUtil',
-           'dtBSP'       : 'dtBSP',
-           'dtInspector' : 'dtInspector',
-           'dtTerrain'   : 'dtTerrain', 
-           'dtGame'      : 'dtGame',
-	   'testGameActorLibrary' : 'testGameActorLibrary' }
+dtLibs = { 'dtABC'                : 'dtABC',
+           'dtAI'                 : 'dtAI',
+           'dtActors'             : 'dtActors',
+           'dtAudio'              : 'dtAudio',
+           'dtChar'               : 'dtChar',
+           'dtCore'               : 'dtCore',
+           'dtDAL'                : 'dtDAL',
+           'dtHLA'                : 'dtHLA',
+           'dtHLAGM'              : 'dtHLAGM',
+           'dtGUI'                : 'dtGUI',
+           'dtNet'                : 'dtNet',
+           'dtScript'             : 'dtScript',
+           'dtUtil'               : 'dtUtil',
+           'dtBSP'                : 'dtBSP',
+           'dtInspector'          : 'dtInspector',
+           'dtTerrain'            : 'dtTerrain', 
+           'dtGame'               : 'dtGame',
+           'testGameActorLibrary' : 'testGameActorLibrary' }
 
 if mode == 'debug' and OS == 'windows' :
    for lib in dtLibs :
