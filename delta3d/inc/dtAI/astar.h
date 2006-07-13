@@ -85,7 +85,7 @@ namespace dtAI
          _Timer mTimer;
    };
 
-#include "AStar.inl"
+#include "astar.inl"
 
 }//namespace dtAI
 

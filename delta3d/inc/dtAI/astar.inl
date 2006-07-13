@@ -98,8 +98,8 @@ void AStar<_NodeType, _CostFunc, _Container, _Timer>::AddNodeLink(node_type* pPa
 template<class _NodeType, class _CostFunc, class _Container, class _Timer>
 bool AStar<_NodeType, _CostFunc, _Container, _Timer>::Contains(const AStarContainer& pCont, data_type pNode)
 {
-   AStarContainer::const_iterator iter = pCont.begin();
-   AStarContainer::const_iterator endOfList = pCont.end();
+   typename AStarContainer::const_iterator iter = pCont.begin();
+   typename AStarContainer::const_iterator endOfList = pCont.end();
 
    while(iter != endOfList)
    {
@@ -114,10 +114,10 @@ bool AStar<_NodeType, _CostFunc, _Container, _Timer>::Contains(const AStarContai
 }
 
 template<class _NodeType, class _CostFunc, class _Container, class _Timer>
-typename _NodeType* AStar<_NodeType, _CostFunc, _Container, _Timer>::Remove(AStarContainer& pCont, data_type pNode)
+_NodeType* AStar<_NodeType, _CostFunc, _Container, _Timer>::Remove(AStarContainer& pCont, data_type pNode)
 {
-   AStarContainer::iterator iter = pCont.begin();
-   AStarContainer::iterator endOfList = pCont.end();
+   typename AStarContainer::iterator iter = pCont.begin();
+   typename AStarContainer::iterator endOfList = pCont.end();
 
    node_type* pLink = 0;
 
@@ -138,10 +138,10 @@ typename _NodeType* AStar<_NodeType, _CostFunc, _Container, _Timer>::Remove(ASta
 
 
 template<class _NodeType, class _CostFunc, class _Container, class _Timer>
-typename _NodeType* AStar<_NodeType, _CostFunc, _Container, _Timer>::FindLowestCost(const AStarContainer& pCont)
+_NodeType* AStar<_NodeType, _CostFunc, _Container, _Timer>::FindLowestCost(const AStarContainer& pCont)
 {
-   AStarContainer::const_iterator iter = pCont.begin();
-   AStarContainer::const_iterator endOfList = pCont.end();
+   typename AStarContainer::const_iterator iter = pCont.begin();
+   typename AStarContainer::const_iterator endOfList = pCont.end();
 
    node_type* pLowest = *iter;
    
@@ -211,8 +211,8 @@ typename AStar<_NodeType, _CostFunc, _Container, _Timer>::AStarResult AStar<_Nod
          mOpen.remove(pStart);
          mClosed.push_back(pStart);
          
-         node_type::iterator iter = pStart->begin();
-         node_type::iterator endOfList = pStart->end();
+         typename node_type::iterator iter = pStart->begin();
+         typename node_type::iterator endOfList = pStart->end();
 
          while(iter != endOfList)
          {

@@ -54,10 +54,9 @@ namespace dtTest
       void PrintStats(const TestAStar::config_type& pConfig);
       void TestPathForCorrectness(int pathNum, TestAStar::AStarResult pResult, const TestContainer& pPath);
 
-
       TestAStar mAStar;
 
-      int mCorrectPaths[4][6];
+      unsigned mCorrectPaths[4][6];
    };
 
 
@@ -188,34 +187,34 @@ void AStarTests::TestPathForCorrectness(int pathNum, TestAStar::AStarResult pRes
 
    if(pathNum == 0)
    {
-      CPPUNIT_ASSERT(mCorrectPaths[0][0] == pPath[0]);
-      CPPUNIT_ASSERT(mCorrectPaths[0][1] == pPath[1]);
-      CPPUNIT_ASSERT(mCorrectPaths[0][2] == pPath[2]);
+      CPPUNIT_ASSERT_EQUAL(mCorrectPaths[0][0],pPath[0]);
+      CPPUNIT_ASSERT_EQUAL(mCorrectPaths[0][1],pPath[1]);
+      CPPUNIT_ASSERT_EQUAL(mCorrectPaths[0][2],pPath[2]);
    }
    else if(pathNum == 1)
    {
-      CPPUNIT_ASSERT(mCorrectPaths[1][0] == pPath[0]);
-      CPPUNIT_ASSERT(mCorrectPaths[1][1] == pPath[1]);
-      CPPUNIT_ASSERT(mCorrectPaths[1][2] == pPath[2]);
-      CPPUNIT_ASSERT(mCorrectPaths[1][3] == pPath[3]);
-      CPPUNIT_ASSERT(mCorrectPaths[1][4] == pPath[4]);
+      CPPUNIT_ASSERT_EQUAL(mCorrectPaths[1][0],pPath[0]);
+      CPPUNIT_ASSERT_EQUAL(mCorrectPaths[1][1],pPath[1]);
+      CPPUNIT_ASSERT_EQUAL(mCorrectPaths[1][2],pPath[2]);
+      CPPUNIT_ASSERT_EQUAL(mCorrectPaths[1][3],pPath[3]);
+      CPPUNIT_ASSERT_EQUAL(mCorrectPaths[1][4],pPath[4]);
    }
    else if(pathNum == 2)
    {
-      CPPUNIT_ASSERT(mCorrectPaths[2][0] == pPath[0]);
-      CPPUNIT_ASSERT(mCorrectPaths[2][1] == pPath[1]);
-      CPPUNIT_ASSERT(mCorrectPaths[2][2] == pPath[2]);
-      CPPUNIT_ASSERT(mCorrectPaths[2][3] == pPath[3]);
-      CPPUNIT_ASSERT(mCorrectPaths[2][4] == pPath[4]);
+      CPPUNIT_ASSERT_EQUAL(mCorrectPaths[2][0],pPath[0]);
+      CPPUNIT_ASSERT_EQUAL(mCorrectPaths[2][1],pPath[1]);
+      CPPUNIT_ASSERT_EQUAL(mCorrectPaths[2][2],pPath[2]);
+      CPPUNIT_ASSERT_EQUAL(mCorrectPaths[2][3],pPath[3]);
+      CPPUNIT_ASSERT_EQUAL(mCorrectPaths[2][4],pPath[4]);
    }
    else if(pathNum == 3)
    {
-      CPPUNIT_ASSERT(mCorrectPaths[3][0] == pPath[0]);
-      CPPUNIT_ASSERT(mCorrectPaths[3][1] == pPath[1]);
-      CPPUNIT_ASSERT(mCorrectPaths[3][2] == pPath[2]);
-      CPPUNIT_ASSERT(mCorrectPaths[3][3] == pPath[3]);
-      CPPUNIT_ASSERT(mCorrectPaths[3][4] == pPath[4]);
-      CPPUNIT_ASSERT(mCorrectPaths[3][5] == pPath[5]);
+      CPPUNIT_ASSERT_EQUAL(mCorrectPaths[3][0],pPath[0]);
+      CPPUNIT_ASSERT_EQUAL(mCorrectPaths[3][1],pPath[1]);
+      CPPUNIT_ASSERT_EQUAL(mCorrectPaths[3][2],pPath[2]);
+      CPPUNIT_ASSERT_EQUAL(mCorrectPaths[3][3],pPath[3]);
+      CPPUNIT_ASSERT_EQUAL(mCorrectPaths[3][4],pPath[4]);
+      CPPUNIT_ASSERT_EQUAL(mCorrectPaths[3][5],pPath[5]);
    }      
    
 }
