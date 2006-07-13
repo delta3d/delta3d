@@ -12,7 +12,7 @@ projectEnv = env.Copy()
 #in this list, put your test cpp files in with the names "*tests.cpp"
 #and the files will be added to both allTests and to a test just
 #for the new set of files.
-suites = ['dtCore', 'dtDAL', 'dtGame', 'dtUtil', 'dtABC', 'dtActors', 'dtGUI']
+suites = ['dtCore', 'dtDAL', 'dtGame', 'dtAI', 'dtUtil', 'dtABC', 'dtActors', 'dtGUI']
 
 if env.get('rti') != 0 :
 	suites += [ 'dtHLAGM' ]

@@ -21,7 +21,7 @@
 
 #include <dtDAL/waypointactorproxy.h>
 #include <dtAI/waypointmanager.h>
-#include <dtAI/WaypointActor.h>
+#include <dtAI/waypointactor.h>
 
 #include <dtDAL/actorproxyicon.h>
 #include <dtDAL/enginepropertytypes.h>
@@ -55,7 +55,6 @@ namespace dtDAL
 
    void WaypointActorProxy::BuildPropertyMap()
    {
-      WaypointActor *pWaypointActor = static_cast<WaypointActor*> (mActor.get());
       dtDAL::TransformableActorProxy::BuildPropertyMap();
    }
 
