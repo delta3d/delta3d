@@ -69,15 +69,18 @@ namespace dtAI
 
       public:
          AStarConfig():
-            mMaxNodesExplored(std::numeric_limits<unsigned>::max()),
-            mMaxCost(std::numeric_limits<cost_type>::max()),
-            mMaxTime(9999),
+            mStart(),
+            mFinish(),
             mTotalCost(0),
+            mResult(),
+            mMaxNodesExplored(std::numeric_limits<unsigned>::max()),
+            mMaxTime(9999.0),
+            mMaxCost(std::numeric_limits<cost_type>::max()),
             mIteration(0),
             mNodesExplored(0), 
-            mTimeSpent(0), 
-            mTotalNodesExplored(0), 
-            mTotalTime(0)
+            mTimeSpent(0.0), 
+            mTotalNodesExplored(0),
+            mTotalTime(0.0)
          {
          }
 

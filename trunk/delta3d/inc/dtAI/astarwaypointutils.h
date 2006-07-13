@@ -45,8 +45,8 @@ namespace dtAI
       typedef NavMesh::NavMeshContainer::iterator iterator;
 
    public:
-      WaypointIter(iterator& pIter): mIter(pIter){}  
-      WaypointIter(WaypointIter& pIter){mIter = pIter.container();}
+      WaypointIter(const iterator& pIter): mIter(pIter){}  
+      WaypointIter(const WaypointIter& pIter){mIter = pIter.container();}
       WaypointIter& operator=(WaypointIter& pIter){mIter = pIter.container(); return *this;}
 
       bool WaypointIter::operator !=(const WaypointIter& pIter) const
@@ -78,12 +78,12 @@ namespace dtAI
 
       /*virtual*/ iterator begin() const 
       {
-         return WaypointManager::GetInstance()->GetNavMesh().begin(mData);         
+         return iterator(WaypointManager::GetInstance()->GetNavMesh().begin(mData));
       }
 
       /*virtual*/ iterator end() const
       {
-        return WaypointManager::GetInstance()->GetNavMesh().end(mData);
+         return iterator(WaypointManager::GetInstance()->GetNavMesh().end(mData));
       }
       
    };
