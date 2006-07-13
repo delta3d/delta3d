@@ -49,6 +49,13 @@
 
 #include <ctime>
 
+// TODO: replace this with a platform-independant wrapper
+#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
+   #ifndef snprintf
+      #define snprintf _snprintf
+   #endif // snprintf
+#endif // WIN32
+
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_ENUM(ARRHUDException);
 ARRHUDException ARRHUDException::INIT_ERROR("INIT_ERROR");
