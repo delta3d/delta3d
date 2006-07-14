@@ -5,6 +5,7 @@ Import('*')
 modules = [ 'testActorLibrary',
             'testGameActorLibrary',
             'testApp',
+            'testAI',
             'testAAR', 
             'testAudio',
             'testBumpMap',
