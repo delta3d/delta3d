@@ -147,6 +147,29 @@ namespace dtChar
           * axis
           */
          float GetRotation() const;
+
+
+         /**
+         * Sets the rotation speed of this character.
+         *
+         * @param rotation speed in degrees per second         
+         */
+         void SetRotationSpeed(float rotation);
+
+         /**
+         * Returns the rotation speed of this character.
+         *
+         * @return the current rotation speed in degrees per second         
+         */
+         float GetRotationSpeed() const;
+
+         /**
+         * Rotates the character over time so its heading faces a specific point         
+         *
+         * @param the point to rotate to
+         * @param the time step
+         */
+         void RotateCharacterToPoint(const osg::Vec3& pPoint, float deltaTime);
          
          /**
           * Sets the walk/run velocity of this character.
@@ -242,7 +265,12 @@ namespace dtChar
           * The character's current rotation.
           */
          float mRotation;
-         
+
+         /**
+         * The character's current rotation speed.
+         */
+         float mRotationSpeed;
+
          /**
           * The character's current walk/run velocity.
           */
@@ -256,6 +284,7 @@ namespace dtChar
          dtCore::RefPtr< osgUtil::UpdateVisitor > mUpdateVisitor;
          int mPauseFrameNumber;
    };
+
 };
 
 #endif // DELTA_CHARACTER
