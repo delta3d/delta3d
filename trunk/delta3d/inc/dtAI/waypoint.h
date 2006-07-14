@@ -56,6 +56,7 @@ namespace dtAI
          
          mutable bool mActive;
          unsigned mID;
+
          osg::Vec3 mPosition;
    };
 }//namespace 
