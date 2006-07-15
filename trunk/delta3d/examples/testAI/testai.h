@@ -5,8 +5,7 @@
 
 #include <dtCore/refptr.h>
 #include <dtABC/application.h>
-#include "AICharacter.h"
-
+#include "aicharacter.h"
 
 class TestAI : public dtABC::Application
 {

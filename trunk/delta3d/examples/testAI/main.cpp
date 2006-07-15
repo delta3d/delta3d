@@ -1,6 +1,5 @@
-#include "TestAI.h"
+#include "testai.h"
 #include <dtCore/globals.h>
-
 
 int main()
 {
@@ -14,8 +13,5 @@ int main()
    app->Config(); //configuring the application
    app->Run(); // running the simulation loop
   
-
    return 0;
-
 }
-
