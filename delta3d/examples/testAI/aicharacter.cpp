@@ -19,8 +19,8 @@
  * @author Bradley Anderegg 06/29/2006
  */
 
-#include "AICharacter.h"
-#include <dtAI/AStarConfig.h>
+#include "aicharacter.h"
+#include <dtAI/astarconfig.h>
 
 #include <dtUtil/matrixutil.h>
 

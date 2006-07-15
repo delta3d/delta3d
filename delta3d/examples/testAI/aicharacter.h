@@ -28,7 +28,7 @@
 #include <dtCore/scene.h>
 #include <dtCore/camera.h>
 #include <dtAI/waypoint.h>
-#include <dtAI/AStarWaypointUtils.h>
+#include <dtAI/astarwaypointutils.h>
 #include <string>
 
 namespace dtAI

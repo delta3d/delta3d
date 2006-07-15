@@ -1,6 +1,6 @@
 // TestAI.cpp : defines the implementation of the application
 
-#include "TestAI.h"
+#include "testai.h"
 #include <osgDB/FileUtils>
 #include <dtCore/camera.h>
 #include <dtDAL/map.h>
@@ -8,8 +8,8 @@
 #include <dtDAL/exceptionenum.h>
 #include <dtCore/macros.h>
 
-#include <dtAI/Waypoint.h>
-#include <dtAI/WaypointManager.h>
+#include <dtAI/waypoint.h>
+#include <dtAI/waypointmanager.h>
 
 #include <dtCore/generickeyboardlistener.h>
 #include <dtGUI/ceguikeyboardlistener.h>
