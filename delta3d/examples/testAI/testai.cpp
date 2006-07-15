@@ -3,6 +3,7 @@
 #include "testai.h"
 #include <osgDB/FileUtils>
 #include <dtCore/camera.h>
+#include <dtCore/globals.h>
 #include <dtDAL/map.h>
 #include <dtDAL/project.h>
 #include <dtDAL/exceptionenum.h>
@@ -110,7 +111,7 @@ void TestAI::LoadDemoMap(const std::string& pStr)
 {
    try
    {
-      std::string contextName = "../../../Data/demoMap";
+      std::string contextName =  dtCore::GetDeltaRootPath()+"/data/demoMap";
       Project::GetInstance().SetContext(contextName);
       std::string pContext = Project::GetInstance().GetContext();
       Map &myMap = Project::GetInstance().GetMap(pStr);
