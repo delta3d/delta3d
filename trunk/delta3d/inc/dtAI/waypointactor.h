@@ -40,7 +40,7 @@ namespace dtAI
    public:
 
       void SetIndex(unsigned pIndex){mIndex = pIndex;}
-      unsigned GetIndex(){return mIndex;}
+      unsigned GetIndex() const{return mIndex;}
 
    private:
       unsigned mIndex;

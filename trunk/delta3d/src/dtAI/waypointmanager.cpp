@@ -95,7 +95,7 @@ namespace dtAI
       mWaypoints.insert(std::pair<unsigned, Waypoint*>(pIndex, new Waypoint(pWaypointActor)));      
    }
 
-   void WaypointManager::RemoveWaypoint(WaypointActor* pWaypoint)
+   void WaypointManager::RemoveWaypoint(const WaypointActor* pWaypoint)
    {
       mWaypoints.erase(pWaypoint->GetIndex());
    }

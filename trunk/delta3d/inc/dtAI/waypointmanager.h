@@ -68,7 +68,7 @@ namespace dtAI
          const WaypointMap& GetWaypoints() const;
 
          void AddWaypoint(WaypointActor* pWaypoint);
-         void RemoveWaypoint(WaypointActor* pWaypoint);    
+         void RemoveWaypoint(const WaypointActor* pWaypoint);    
          void MoveWaypoint(unsigned pIndex, const osg::Vec3& pPos);
 
          bool WriteFile(const std::string& pFileToWrite) const;

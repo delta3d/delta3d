@@ -49,14 +49,10 @@ namespace dtAI
 
          osg::Vec3 GetPosition() const;
 
-         bool FindPathAndGoToWaypoint(const Waypoint* pWaypoint, bool pPartialPath);
+         bool FindPathAndGoToWaypoint(const Waypoint* pWaypoint);
          const Waypoint* GetCurrentWaypoint(){return mCurrentWaypoint;}
 
          const WaypointAStar::config_type& GetConfig() const;
-
-         void SetTimeConstraint(double pTime);
-         void SetNodeConstraint(int pNodes);
-         void SetCostConstraint(float pCost);
 
       private:
          void GoToWaypoint(float dt, const Waypoint* pWaypoint);

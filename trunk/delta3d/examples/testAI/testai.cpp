@@ -68,11 +68,11 @@ void TestAI::Config()
    const Waypoint* pWaypoint = (*iter).second;
 
    //spawn our character
-   mCharacter = new dtAI::AICharacter(GetScene(), GetCamera(), pWaypoint, "marine/marine.rbody", 5);    
+   mCharacter = new dtAI::AICharacter(GetScene(), GetCamera(), pWaypoint, "marine/marine.rbody", 10);    
    GoToWaypoint(1);
 
    //seed the random generator
-   srand(42193);
+   srand(4219);
 }
 
 bool TestAI::KeyPressed(const dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character)
@@ -98,15 +98,10 @@ void TestAI::PreFrame( const double deltaFrameTime )
 
    if(mCharacter->GetCurrentWaypoint() == mCurrentWaypoint)
    {
-      WaypointManager::WaypointMap::size_type pNumWaypoints = WaypointManager::GetInstance()->GetWaypoints().size();
-      unsigned pWaypointNum = dtUtil::RandRange(0U, unsigned(pNumWaypoints));
-      
-      bool pResult = false;
-
-      while(!pResult)
-      {
-        pResult = GoToWaypoint(pWaypointNum);
-      }      
+      //send the character to a random waypoint
+      WaypointManager::WaypointMap::size_type pNumWaypoints = WaypointManager::GetInstance()->GetWaypoints().size() - 1;
+      unsigned pWaypointNum = dtUtil::RandRange(0U, unsigned(pNumWaypoints));      
+      GoToWaypoint(pWaypointNum);           
    }
 }
 
@@ -146,7 +141,7 @@ bool TestAI::GoToWaypoint(int pWaypointNum)
    {
       if(i == pWaypointNum)
       {
-         pHasPath = mCharacter->FindPathAndGoToWaypoint((*iter).second, false);
+         pHasPath = mCharacter->FindPathAndGoToWaypoint((*iter).second);
          if(pHasPath)
          {
             mCurrentWaypoint = (*iter).second;

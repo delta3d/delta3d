@@ -39,7 +39,7 @@ namespace dtDAL
    
    WaypointActorProxy::~WaypointActorProxy()
    {      
-      WaypointManager::GetInstance()->RemoveWaypoint(static_cast<WaypointActor*> (mActor.get()));
+      
    }
 
    void WaypointActorProxy::CreateActor()
@@ -92,6 +92,10 @@ namespace dtDAL
       return true;
    }
 
+   void WaypointActorProxy::RemoveFromWaypointManager() const
+   {
+      WaypointManager::GetInstance()->RemoveWaypoint(static_cast<const WaypointActor*> (mActor.get()));
+   }
 
 
 }//namespace 
