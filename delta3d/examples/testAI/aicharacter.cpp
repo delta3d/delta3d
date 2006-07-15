@@ -57,19 +57,13 @@ namespace dtAI
    }
 
 
-   bool AICharacter::FindPathAndGoToWaypoint(const Waypoint* pWaypoint, bool pPartialPath)
+   bool AICharacter::FindPathAndGoToWaypoint(const Waypoint* pWaypoint)
    {      
       mAStar.Reset(mCurrentWaypoint, pWaypoint);
       
-      WaypointAStar::AStarResult pHasPath = WaypointAStar::PARTIAL_PATH;
+      WaypointAStar::AStarResult pHasPath = mAStar.FindPath();      
 
-      while(pHasPath == WaypointAStar::PARTIAL_PATH)
-      {
-         pHasPath = mAStar.FindPath();     
-         if(pPartialPath) break;
-      }
-
-      if(pHasPath)
+      if(pHasPath != WaypointAStar::NO_PATH)
       {
          pWaypoint->SetActive(true);
          mWaypointPath = mAStar.GetPath();
@@ -124,19 +118,5 @@ namespace dtAI
       }
    }
 
-
-   void AICharacter::SetTimeConstraint(double pTime)
-   {
-      mAStar.GetConfig().mMaxTime = pTime;
-   }
-   void AICharacter::SetNodeConstraint(int pNodes)
-   {
-      mAStar.GetConfig().mMaxNodesExplored = pNodes;
-   }
-
-   void AICharacter::SetCostConstraint(float pCost)
-   {
-      mAStar.GetConfig().mMaxCost = pCost;
-   }
 
 }//namespace dtAI

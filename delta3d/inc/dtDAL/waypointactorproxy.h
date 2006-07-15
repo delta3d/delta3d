@@ -48,11 +48,12 @@ namespace dtDAL
          /*virtual*/ dtDAL::ActorProxyIcon * GetBillBoardIcon();
 
          /*virtual*/ const dtDAL::ActorProxy::RenderMode& GetRenderMode();
-   
 
         /*virtual*/ void OnTranslation(const osg::Vec3 &oldValue, const osg::Vec3 &newValue);
 
         /*virtual*/ bool IsGhostProxy() const;
+
+         void RemoveFromWaypointManager() const;
 
       private:
       
