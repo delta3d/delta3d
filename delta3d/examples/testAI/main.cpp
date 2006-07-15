@@ -4,7 +4,7 @@
 int main()
 {
    //set data search path to parent delta3d/data
-   dtCore::SetDataFilePathList( dtCore::GetDeltaRootPath() + "\\Data");
+   dtCore::SetDataFilePathList( dtCore::GetDeltaRootPath()+"/data" );
    std::string pData = dtCore::GetDataFilePathList();
    
    //Instantiate the application and look for the config file
