@@ -65,7 +65,7 @@ namespace dtAI
 
       if(pHasPath != WaypointAStar::NO_PATH)
       {
-         pWaypoint->SetActive(true);
+         pWaypoint->SetRenderFlag(1);
          mWaypointPath = mAStar.GetPath();
          return true;
       }      
@@ -110,7 +110,7 @@ namespace dtAI
          {
             mCurrentWaypoint = mWaypointPath.front();
             mWaypointPath.pop_front();
-            mCurrentWaypoint->SetActive(false);
+            mCurrentWaypoint->SetRenderFlag(0);
          }
 
          if(!mWaypointPath.empty()) GoToWaypoint(dt, mWaypointPath.front());

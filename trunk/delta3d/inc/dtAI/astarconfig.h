@@ -31,7 +31,8 @@
 namespace dtAI
 {
    /**
-    * AStarConfig configures the AStar options
+    * AStarConfig contains the basic data that AStar operates on.
+    * @see AStar.h
     */
    template <class _DataType, class _CostType, class _ContainerType>
    class AStarConfig
@@ -39,44 +40,18 @@ namespace dtAI
       public:
          typedef _DataType data_type;
          typedef _CostType cost_type;
-         //typedef std::numeric_limits<cost_type>::max() max_cost;
          typedef _ContainerType container;
 
 
-         data_type mStart;
-         data_type mFinish;
-
-         cost_type mTotalCost;
-         container mResult;
-
-
-         //these are the max values per iteration
-         unsigned mMaxNodesExplored;
-         double mMaxTime;
-         cost_type mMaxCost;
-
-         //these are for book keeping during a single iteration
-         unsigned mIteration;
-         unsigned mNodesExplored;         
-         double mTimeSpent;
-
-         //these are overall totals for all iterations and may be greater then
-         //the max per iteration
-         unsigned mTotalNodesExplored;
-         double mTotalTime;
-
-
-
-      public:
          AStarConfig():
-            mStart(),
+         mStart(),
             mFinish(),
             mTotalCost(0),
             mResult(),
             mMaxNodesExplored(std::numeric_limits<unsigned>::max()),
-            mMaxTime(9999.0),
+            mMaxTime(std::numeric_limits<double>::max()),
             mMaxCost(std::numeric_limits<cost_type>::max()),
-            mIteration(0),
+            mNumIterations(0),
             mNodesExplored(0), 
             mTimeSpent(0.0), 
             mTotalNodesExplored(0),
@@ -85,25 +60,60 @@ namespace dtAI
          }
 
          AStarConfig(data_type pFrom, data_type pTo):
-            mMaxNodesExplored(std::numeric_limits<unsigned>::max()),
+         mMaxNodesExplored(std::numeric_limits<unsigned>::max()),
             mMaxCost(std::numeric_limits<cost_type>::max()),
-            mMaxTime(9999)
+            mMaxTime(std::numeric_limits<double>::max())
          {
             Reset(pFrom, pTo);
          }
-      
+
+
+      public:
+
+         ///the resulting path, and the total cost to it
+         container mResult;
+         cost_type mTotalCost;
+
+         ///these are used as statistical output
+         unsigned mTotalNodesExplored;
+         double mTotalTime;
+         unsigned mNumIterations;
+
+         ///these are the max values per iteration
+         ///and should be set for dealing with constraints
+         unsigned mMaxNodesExplored;
+         double mMaxTime;
+         cost_type mMaxCost;
+
+
+      //private:
+
+         ///these are for usage by AStar.h and should not be used by clients of AStar.h
          void Reset(data_type pFrom, data_type pTo)
          {
             mStart = pFrom;
             mFinish = pTo;
             mResult.clear();
             mTotalCost = 0;
-            mIteration = 0;
+            mNumIterations = 0;
             mNodesExplored = 0;
             mTimeSpent = 0;
             mTotalNodesExplored = 0;
             mTotalTime = 0;
          }
+
+
+         ///these are for usage by AStar.h and should not be used by clients of AStar.h
+         data_type mStart;
+         ///these are for usage by AStar.h and should not be used by clients of AStar.h
+         data_type mFinish;
+
+
+         //these are for book keeping during a single iteration
+         ///these are for usage by AStar.h and should not be used by clients of AStar.h
+         unsigned mNodesExplored;         
+         ///these are for usage by AStar.h and should not be used by clients of AStar.h
+         double mTimeSpent;
    
    };
 }//namespace dtAI

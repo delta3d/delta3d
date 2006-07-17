@@ -26,19 +26,21 @@ namespace dtAI
 {
    /**
     * AStarCostFunc is a function that generates a cost between two nodes
+    * derive this class and implement operator() with your custom data type.
+    * The return must be a scalar value.
     */
-   template<class _NodeType, class _CostType> 
+   template<class _DataType, class _CostType> 
    class AStarCostFunc
    {
       public:
-         typedef _NodeType node_type;
+         typedef _DataType data_type;
          typedef _CostType Real;
 
       public:  
          AStarCostFunc(){}
          virtual ~AStarCostFunc(){}
             
-         virtual Real operator()(node_type pFrom, node_type pTo) const = 0;
+         virtual Real operator()(data_type pFrom, data_type pTo) const = 0;
 
       private:
    

@@ -72,11 +72,6 @@ namespace dtAI
       }      
    }
 
-   void WaypointManager::DestroyInstance()  
-   {
-      mSingleton = 0;            
-  }
-
    WaypointManager* WaypointManager::GetInstance()  
    {
       if(!mSingleton)
@@ -169,7 +164,7 @@ namespace dtAI
             infile >> pPos[0] >> pPos[1] >> pPos[2];
             
             Waypoint* pNewWaypoint = new Waypoint(pPos);
-            pNewWaypoint->SetActive(false);
+            pNewWaypoint->SetRenderFlag(0);
 
             mWaypoints.insert(std::pair<unsigned, Waypoint*>(i, pNewWaypoint));      
          }
