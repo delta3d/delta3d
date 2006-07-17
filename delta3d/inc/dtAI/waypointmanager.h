@@ -48,7 +48,7 @@ namespace dtAI
     */
    class DT_AI_EXPORT WaypointManager: public dtCore::DeltaDrawable
    {
-      public:
+      public:     
          typedef std::map<unsigned, Waypoint*> WaypointMap;
          typedef WaypointMap::iterator WaypointIterator;
 
@@ -61,34 +61,39 @@ namespace dtAI
 
       public:
 
-         static void CreateInstance();         
-         static void DestroyInstance();         
+         /**
+         * Explicitly instantiates our static member
+         */
+         static void CreateInstance(); 
+
+         /**
+         * Returns an instance to our static member
+         */
          static WaypointManager* GetInstance();           
  
-         const WaypointMap& GetWaypoints() const;
+         /**
+         * returns an internal const reference to the waypoint mapping
+         * of indexes to Waypoints
+         */
+         const WaypointMap& GetWaypoints() const;    
 
-         void AddWaypoint(WaypointActor* pWaypoint);
-         void RemoveWaypoint(const WaypointActor* pWaypoint);    
-         void MoveWaypoint(unsigned pIndex, const osg::Vec3& pPos);
-
-         bool WriteFile(const std::string& pFileToWrite) const;
-         bool ReadFile(const std::string& pFileToRead);             
-
-         //Given a scene we create the possible nav meshes
-         //the scene is used for doing an isector
-         //to test if a pair of waypoints are traversable
+         /**
+         * Given a scene we create a nav mesh
+         * the scene is used for doing isector tests
+         * to test if pairs of waypoints are traversable
+         */
          void CreateNavMesh(dtCore::Scene* pScene);
+
+         /**
+         * Returns a reference / const reference to our internal nav mesh
+         * created after call to CreateNavMesh
+         */
          NavMesh& GetNavMesh();
-         const NavMesh& GetNavMesh() const;
+         const NavMesh& GetNavMesh() const;         
 
-         void Clear();
-
-         std::ostream& GetWaypoints(std::ostream& pStream);
-
-         //required by DeltaDrawable
-         const osg::Node* GetOSGNode() const;
-         osg::Node* GetOSGNode();
-
+         /**
+         * Rendering functionality
+         */
          void SetDrawWaypoints(bool pDraw);
          void SetWaypointColor(const osg::Vec4& pColor);
          void SetWaypointSize(float pSize);
@@ -97,8 +102,24 @@ namespace dtAI
          void SetNavMeshColor(const osg::Vec4& pColor);
          void SetNavMeshSize(float pSize);         
 
+         /**
+         * Formats and writes all waypoints out to an ostream
+         */
+         std::ostream& GetWaypoints(std::ostream& pStream);
 
-         //utility functions used by dtDAL::Project
+         /**
+         * Returns the WaypointDrawable 
+         */
+         const osg::Node* GetOSGNode() const;
+         osg::Node* GetOSGNode();
+
+         /**
+         * These are utility functions used by STAGE and dtDAL::Project         
+         */
+         void AddWaypoint(WaypointActor* pWaypoint);
+         void RemoveWaypoint(const WaypointActor* pWaypoint);    
+         void MoveWaypoint(unsigned pIndex, const osg::Vec3& pPos);
+
          void OnMapLoad(const std::string& pWaypointFilename);
          void OnMapSave(const std::string& pWaypointFilename);
          void OnMapClose();
@@ -106,6 +127,21 @@ namespace dtAI
          //before operating on our waypoint map obtain a lock
          bool ObtainLock();
          void ReleaseLock();
+
+         /**
+         * writes a new waypoint file, returns true if successful
+         */
+         bool WriteFile(const std::string& pFileToWrite) const;
+         
+         /**
+         * attempts to read a waypoint file, returns true if successful
+         */
+         bool ReadFile(const std::string& pFileToRead);         
+
+         /**
+         * Frees memory and clears waypoint mapping
+         */
+         void Clear();
 
       private:
 
@@ -119,6 +155,7 @@ namespace dtAI
          bool mLoadActors;
          WaypointMap mWaypoints;
 
+         ///our static singleton
          static osg::ref_ptr<WaypointManager> mSingleton;
 
 
@@ -127,6 +164,7 @@ namespace dtAI
          //////////////////////////////////////////////////////////////////////////
          friend class WaypointManagerDrawable;
 
+         ///a helper class to do our rendering for us
          class WaypointManagerDrawable: public osg::Drawable
          {
          public:

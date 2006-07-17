@@ -27,6 +27,16 @@ namespace dtAI
 {
    /**
     * AStarNode is a data container for a single node in an AStar Path
+    *
+    *
+    * @brief This class is the base node type for AStar, it holds the cost of the path
+    *        the actual data type, and a pointer to its parent for bookkeeping.
+    *       
+    * @usage Derive this class and implement the pure virtual begin() and end() functions
+    *        which should return iterators of type _IterType and support operator++ to iterate
+    *        through the data types that this data type can get to.  
+    *
+    * @see AStar.h
     */
    template<class _NodeType, class _DataType, class _IterType, class _CostType>
    class AStarNode
@@ -41,17 +51,10 @@ namespace dtAI
       public:   
          AStarNode(node_type* pParent, data_type pData, cost_type pGn, cost_type pHn): mData(pData), mCostToNode(pGn), mCostToGoal(pHn), mParent(pParent){}      
          virtual ~AStarNode(){}
-   
-         AStarNode(const AStarNode& pNode)
-         {
-            mData = pNode.GetData();
-         };
-         
-         AStarNode& operator=(const AStarNode& pNode)
-         {
-            mData = pNode.GetData(); return *this;
-         };
-
+          
+         /**
+         * equality is based on the class data_type's operator ==
+         */
          bool operator==(const AStarNode& pNode) const
          {
             return mData == pNode.GetData();
@@ -61,6 +64,9 @@ namespace dtAI
             return mData != pNode.GetData();
          }
 
+         /**
+         * we use operator < to compare costs between nodes
+         */
          bool operator<(const AStarNode& pType) const
          {
             return (mCostToNode + mCostToGoal) < (pType.GetCostToNode() + pType.GetCostToGoal());
@@ -68,20 +74,36 @@ namespace dtAI
 
          node_type* GetParent(){return mParent;}
 
-         //g(n)
+         /**
+         * This is the cost to get to the node from the start
+         * in common AStar terms it is called cost g(n)
+         */
          cost_type GetCostToNode() const{return mCostToNode;}
 
-         //h(n)
+         /**
+         * This is the cost to get from the node to the end
+         * in common AStar terms it is called cost h(n)
+         */
          cost_type GetCostToGoal() const{return mCostToGoal;}
 
          data_type GetData(){return mData;}
          const data_type GetData() const{return mData;}
 
+         /**
+         * returns an iterator to the first acceptable point from this node
+         */
          virtual iterator begin() const = 0;
+
+         /**
+         * returns an iterator one past the last acceptable point from this node
+         */
          virtual iterator end() const = 0;
 
 
       protected:
+         AStarNode(const AStarNode& pNode); //not implemented by design
+         AStarNode& operator=(const AStarNode& pNode); //not implemented by design
+
          data_type mData;
 
          cost_type mCostToNode;

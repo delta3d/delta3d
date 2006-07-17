@@ -31,7 +31,8 @@ namespace dtAI
    class WaypointPair;
    
    /**
-    * A NavMesh is a collection of waypoint pairs
+    * A NavMesh is the collection of all WaypointPairs
+    * This is used for finding traversal paths between points
     */
    class DT_AI_EXPORT NavMesh
    {
@@ -44,14 +45,37 @@ namespace dtAI
          NavMesh();
          ~NavMesh();
 
+         /**
+         * Creates a new WaypointPair and adds it to the current set
+         */
          void AddPathSegment(const Waypoint* pFrom, const Waypoint* pTo);
 
+         /**
+         * returns a reference to the multimap which contains all WaypointPairs
+         * indexed by the starting waypoint
+         */
          const NavMeshContainer& GetNavMesh() const;
 
+         /**
+         * Returns a multimap iterator to begin starting at the first
+         * valid waypoint you can get to from the waypoint specified
+         * used by WaypointIter in WaypointUtils.h
+         */
          NavMeshContainer::iterator begin(const Waypoint* pPtr);
+         
+         /**
+         * Returns a multimap iterator to the end sequence of
+         * valid waypoints you can get to from the waypoint specified
+         * used by WaypointIter in WaypointUtils.h
+         */
          NavMeshContainer::iterator end(const Waypoint* pPtr);
 
+
+         /**
+         * Frees memory and clears all waypoints from the multimap
+         */
          void Clear();
+
    private:
 
       NavMeshContainer mNavMesh;

@@ -29,7 +29,10 @@ namespace dtAI
 {
 
    /**
-   * This class encapsulates a Waypoint
+   * This class is used as the actor for a WaypointActorProxy
+   * its positional data is used to save the actual waypoint data
+   * it is also the class used to interface between 
+   * and the WaypointManager.
    */
    class DT_AI_EXPORT WaypointActor: public dtCore::Transformable
    {

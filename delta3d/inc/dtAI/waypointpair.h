@@ -29,29 +29,57 @@
 namespace dtAI
 {
    /**
-    * A WaypointPair is a path between two waypoints
+    * A WaypointPair is used to represent a pair of waypoints where
+    * the path between them is traversable.  Also used as a helper
+    * for computing costs between waypoints.
     */
    class DT_AI_EXPORT WaypointPair
    {
    public:
-      WaypointPair(const Waypoint* pFrom, const Waypoint* pTo);
+      /**
+      * constructor assigns the two waypoints, calculates slope and 2D Distance
+      */
+      WaypointPair(const Waypoint* pFrom, const Waypoint* pTo);      
       WaypointPair();
       virtual ~WaypointPair();
 
+      /**
+      * returns the closest point to the path between these two 
+      * waypoints, currently unused and unimplemented, but seems
+      * like it could be useful.
+      */
       osg::Vec3 ClosestPointTo(const osg::Vec3& pPoint);
 
+      /**
+      * calculates distance on the X-Y Plane between the two points
+      */
       void Calculate2DDistance();
       float Get2DDistance() const;
 
+      /**
+      * Calculates the slope in the Z Plane
+      */
       void CalculateSlope();
       float GetSlope() const;
 
+      /**
+      * Setters for the From and To waypoints
+      * if this is used remember to call Calculate2DDistance()
+      * and CalculateSlope()
+      */
       void SetFrom(const Waypoint* pWaypoint);
       void SetTo(const Waypoint* pWaypoint);
 
+      /**
+      * Getters for the waypoints
+      */
       const Waypoint* GetWaypointFrom() const;
       const Waypoint* GetWaypointTo() const;
 
+      /**
+      * Getters that return a reference the the actual position
+      * just for convenience really
+      */
       const osg::Vec3& GetFrom() const;
       const osg::Vec3& GetTo() const;
 

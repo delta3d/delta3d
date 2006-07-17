@@ -38,7 +38,7 @@ AStar<_NodeType, _CostFunc, _Container, _Timer>::AStar()
 }
 
 template<class _NodeType, class _CostFunc, class _Container, class _Timer>
-AStar<_NodeType, _CostFunc, _Container, _Timer>::AStar(config_type pConfig):
+AStar<_NodeType, _CostFunc, _Container, _Timer>::AStar(const config_type& pConfig):
    mConfig(pConfig)
 {
    AddNodeLink(0, pConfig.mStart);
@@ -65,7 +65,7 @@ void AStar<_NodeType, _CostFunc, _Container, _Timer>::FreeMem()
 
 
 template<class _NodeType, class _CostFunc, class _Container, class _Timer>
-void AStar<_NodeType, _CostFunc, _Container, _Timer>::Reset(config_type pConfig)
+void AStar<_NodeType, _CostFunc, _Container, _Timer>::Reset(const config_type& pConfig)
 {
    FreeMem();
    mConfig = pConfig;   
@@ -163,7 +163,9 @@ _NodeType* AStar<_NodeType, _CostFunc, _Container, _Timer>::FindLowestCost(const
 template<class _NodeType, class _CostFunc, class _Container, class _Timer>
 typename AStar<_NodeType, _CostFunc, _Container, _Timer>::AStarResult AStar<_NodeType, _CostFunc, _Container, _Timer>::FindPath()
 {  
-   ++mConfig.mIteration;
+   //increment our iteration
+   //reset our constraint bookkeeping vars
+   ++mConfig.mNumIterations;
    mConfig.mTimeSpent = 0;
    mConfig.mNodesExplored = 0;
    
@@ -176,8 +178,10 @@ typename AStar<_NodeType, _CostFunc, _Container, _Timer>::AStarResult AStar<_Nod
          return NO_PATH;
       }
 
+      //start with the node of lowest cost in the open list
       node_type* pStart = FindLowestCost(mOpen);           
       
+      //check if we found a path to the end or if we have exceeded a constraint
       cost_type pCost = (pStart->GetCostToNode() + pStart->GetCostToGoal());
       bool pExceededMaxCost(pCost >= mConfig.mMaxCost);
       bool pHasPathToFinish(pStart->GetData() == mConfig.mFinish);
@@ -185,7 +189,8 @@ typename AStar<_NodeType, _CostFunc, _Container, _Timer>::AStarResult AStar<_Nod
       mTimer.Update();
       mConfig.mTimeSpent += mTimer.GetDT();
       bool pHasExceededTimeLimit(mConfig.mTimeSpent > mConfig.mMaxTime);
-      
+
+      //if we have exceeded a constraint or found a path to the end return
       if(pHasPathToFinish || pExceededMaxCost || pHasExceededTimeLimit || (mConfig.mNodesExplored >= mConfig.mMaxNodesExplored))
       {
          //\todo combine partial lists instead of clearing them
@@ -197,6 +202,7 @@ typename AStar<_NodeType, _CostFunc, _Container, _Timer>::AStarResult AStar<_Nod
             pStart = pStart->GetParent();
          }
 
+         //log our total costs in the config
          mConfig.mTotalCost = pCost;
          mConfig.mTotalNodesExplored += mConfig.mNodesExplored;
          mConfig.mTotalTime += mConfig.mTimeSpent;
@@ -208,12 +214,17 @@ typename AStar<_NodeType, _CostFunc, _Container, _Timer>::AStarResult AStar<_Nod
       {
          ++mConfig.mNodesExplored;
 
+         //remove this node from the open list
          mOpen.remove(pStart);
+
+         //add it onto the closed list
          mClosed.push_back(pStart);
          
+         //we will iterate through the potential places this node can take us
          typename node_type::iterator iter = pStart->begin();
          typename node_type::iterator endOfList = pStart->end();
 
+         //\todo refactor this with a better container type
          while(iter != endOfList)
          {
             data_type pNode = *iter;
@@ -226,11 +237,16 @@ typename AStar<_NodeType, _CostFunc, _Container, _Timer>::AStarResult AStar<_Nod
                //if it isnt in the open list
                if(!pLink)
                {
+                  //create a new path in the open list
                   AddNodeLink(pStart, pNode);
                }
                else //lets see if we can get there for cheaper
                {
+                  //compute cost to pNode from pStart
                   cost_type pNewCost = pStart->GetCostToNode() + mCostFunc(pStart->GetData(), pNode);
+                  
+                  //if the new g(n) cost is cheaper then the old one delete the old one
+                  //and add the new one as the best potential path to pNode
                   if(pNewCost < (pLink->GetCostToNode() + pLink->GetCostToGoal()))
                   {
                      delete pLink;
@@ -238,6 +254,7 @@ typename AStar<_NodeType, _CostFunc, _Container, _Timer>::AStarResult AStar<_Nod
                   }
                   else
                   {
+                     //put the node back in the list since we can't get there for cheaper
                      mOpen.push_back(pLink);
                   }
                }

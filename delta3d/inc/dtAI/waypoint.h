@@ -30,7 +30,9 @@ namespace dtAI
    class WaypointActor;
 
    /**
-    * This class encapsulates a Waypoint
+    * This class encapsulates a Vec3 as a position
+    * and is a place holder for other potential data
+    * someone might want to store in a waypoint
     */
    class DT_AI_EXPORT Waypoint
    {
@@ -49,12 +51,12 @@ namespace dtAI
          void SetID(unsigned pID);
          unsigned GetID()const;
 
-         void SetActive(bool b) const{mActive = b;}
-         bool GetActive() const {return mActive;}
+         void SetRenderFlag(unsigned rf) const{mRenderFlag = rf;}
+         unsigned GetActive() const {return mRenderFlag;}
 
       private:
          
-         mutable bool mActive;
+         mutable unsigned mRenderFlag;
          unsigned mID;
 
          osg::Vec3 mPosition;
