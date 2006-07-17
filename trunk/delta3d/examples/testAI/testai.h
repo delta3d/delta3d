@@ -5,6 +5,7 @@
 
 #include <dtCore/refptr.h>
 #include <dtABC/application.h>
+#include <dtCore/camera.h>
 #include "aicharacter.h"
 
 class TestAI : public dtABC::Application
@@ -28,6 +29,7 @@ class TestAI : public dtABC::Application
       bool GoToWaypoint(int pNum);
  
       float mSpeed;
+      dtCore::RefPtr<dtCore::Camera> mOverheadCamera;
       dtCore::RefPtr<dtAI::AICharacter> mCharacter;
       dtAI::Waypoint* mCurrentWaypoint;
    
