@@ -28,8 +28,9 @@
 
 //Disable visual C++ compiler warnings that seem to indicate the compiler is
 //getting confused when compiling an enumeration.
-#if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
-#pragma warning(disable:4251)
+#if _MSC_VER
+#	 pragma warning(push)
+#   pragma warning(disable:4251)
 #endif
 
 namespace dtUtil 
@@ -184,5 +185,9 @@ public:                                                 \
    std::vector<dtUtil::Enumeration *> EnumType::instances;
 
 }
+
+#ifdef _MSC_VER
+#   pragma warning(pop)
+#endif
 
 #endif
