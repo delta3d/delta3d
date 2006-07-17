@@ -22,8 +22,9 @@
 #ifndef DELTA_XERCES_UTILS_INC
 #define DELTA_XERCES_UTILS_INC
 
-#ifdef _MSC_VER
-   #pragma warning( disable:4251 )  
+#if _MSC_VER
+#	 pragma warning(push)
+#   pragma warning(disable:4251)
 #endif
 
 #include <dtUtil/export.h>
@@ -125,5 +126,9 @@ namespace dtUtil
       SearchKeyVector mKeys;
    };
 }
+
+#if _MSC_VER
+#	 pragma warning(pop)
+#endif
 
 #endif // DELTA_XERCES_UTILS_INC
