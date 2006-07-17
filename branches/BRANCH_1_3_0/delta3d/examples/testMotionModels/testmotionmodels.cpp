@@ -106,31 +106,31 @@ namespace dtExample
             frame->addChildWindow( menu );
 
             CEGUI::Window* walk = CreateWidget("WindowsLook/RadioButton","WALK");
-            walk->setAreaRect(CEGUI::Rect(CEGUI::Point(0,0),CEGUI::Size(0.2,1.0)));
+            walk->setAreaRect(CEGUI::Rect(CEGUI::Point(0.05,0),CEGUI::Size(0.2,1.0)));
             walk->setText("WALK (1)");
             walk->subscribeEvent(CEGUI::RadioButton::EventSelectStateChanged, CEGUI::Event::Subscriber(&QuickMenuManager::ChangeMotionModelCB,this));
             menu->addChildWindow( walk );
 
             CEGUI::Window* fly = CreateWidget("WindowsLook/RadioButton","FLY");
-            fly->setAreaRect(CEGUI::Rect(CEGUI::Point(0.2,0),CEGUI::Size(0.2,1.0)));
+            fly->setAreaRect(CEGUI::Rect(CEGUI::Point(0.25,0),CEGUI::Size(0.2,1.0)));
             fly->setText("FLY (2)");
             fly->subscribeEvent(CEGUI::RadioButton::EventSelectStateChanged, CEGUI::Event::Subscriber(&QuickMenuManager::ChangeMotionModelCB,this));
             menu->addChildWindow( fly );
 
             CEGUI::Window* ufo = CreateWidget("WindowsLook/RadioButton","UFO");
-            ufo->setAreaRect(CEGUI::Rect(CEGUI::Point(0.4,0),CEGUI::Size(0.2,1.0)));
+            ufo->setAreaRect(CEGUI::Rect(CEGUI::Point(0.45,0),CEGUI::Size(0.2,1.0)));
             ufo->setText("UFO (3)");
             ufo->subscribeEvent(CEGUI::RadioButton::EventSelectStateChanged, CEGUI::Event::Subscriber(&QuickMenuManager::ChangeMotionModelCB,this));
             menu->addChildWindow( ufo );
 
             CEGUI::Window* orb = CreateWidget("WindowsLook/RadioButton","ORBIT");
-            orb->setAreaRect(CEGUI::Rect(CEGUI::Point(0.6,0),CEGUI::Size(0.2,1.0)));
+            orb->setAreaRect(CEGUI::Rect(CEGUI::Point(0.65,0),CEGUI::Size(0.2,1.0)));
             orb->setText("ORBIT (4)");
             orb->subscribeEvent(CEGUI::RadioButton::EventSelectStateChanged, CEGUI::Event::Subscriber(&QuickMenuManager::ChangeMotionModelCB,this));
             menu->addChildWindow( orb );
 
             CEGUI::Window* fps = CreateWidget("WindowsLook/RadioButton","FPS");
-            fps->setAreaRect(CEGUI::Rect(CEGUI::Point(0.8,0),CEGUI::Size(0.2,1.0)));
+            fps->setAreaRect(CEGUI::Rect(CEGUI::Point(0.85,0),CEGUI::Size(0.2,1.0)));
             fps->setText("FPS (5)");
             fps->subscribeEvent(CEGUI::RadioButton::EventSelectStateChanged, CEGUI::Event::Subscriber(&QuickMenuManager::ChangeMotionModelCB,this));
             menu->addChildWindow( fps );
