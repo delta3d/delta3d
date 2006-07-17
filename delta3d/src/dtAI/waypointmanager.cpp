@@ -164,7 +164,7 @@ namespace dtAI
             infile >> pPos[0] >> pPos[1] >> pPos[2];
             
             Waypoint* pNewWaypoint = new Waypoint(pPos);
-            pNewWaypoint->SetRenderFlag(0);
+            pNewWaypoint->SetRenderFlag(Waypoint::RENDER_DEFUALT);
 
             mWaypoints.insert(std::pair<unsigned, Waypoint*>(i, pNewWaypoint));      
          }
@@ -372,9 +372,17 @@ namespace dtAI
 
          while(iter != endOfMap)
          {
-            if((*iter).second->GetActive())
+            if((*iter).second->GetRenderFlag() == Waypoint::RENDER_RED)
             {
                glColor4f(1.0, 0.0, 0.0, 1.0);
+            }
+            else if((*iter).second->GetRenderFlag() == Waypoint::RENDER_GREEN)
+            {
+               glColor4f(0.0, 1.0, 0.0, 1.0);
+            }
+            else if((*iter).second->GetRenderFlag() == Waypoint::RENDER_BLUE)
+            {
+               glColor4f(0.0, 0.0, 1.0, 1.0);
             }
             else
             {

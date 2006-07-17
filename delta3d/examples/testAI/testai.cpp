@@ -63,6 +63,18 @@ void TestAI::Config()
    trans.SetRotation(180.0f, -2.0f, 0.0f);
    GetCamera()->SetTransform(trans);
 
+   //create overhead camera and disable it by default   
+   mOverheadCamera = new dtCore::Camera();
+   mOverheadCamera->SetScene(GetScene());
+   mOverheadCamera->SetWindow(GetWindow());
+   mOverheadCamera->SetEnabled(false);
+   //set overhead camera offset
+   trans.SetTranslation(-1.0f, 20.0f, 100.0f);
+   trans.SetRotation(90.0f, 270.0f, 0.0f);
+   mOverheadCamera->SetTransform(trans);
+   GetCamera()->AddChild(mOverheadCamera.get());
+
+
    //get the first waypoint to spawn the character at
    const WaypointManager::WaypointMap& pContainer = WaypointManager::GetInstance()->GetWaypoints();
    WaypointManager::WaypointMap::const_iterator iter = pContainer.begin();
@@ -73,7 +85,7 @@ void TestAI::Config()
    GoToWaypoint(1);
 
    //seed the random generator
-   srand(4219);
+   srand(420);
 }
 
 bool TestAI::KeyPressed(const dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character)
@@ -81,6 +93,21 @@ bool TestAI::KeyPressed(const dtCore::Keyboard* keyboard, Producer::KeyboardKey 
   
    switch( key )
    {
+      case Producer::Key_space:
+      {
+         if(GetCamera()->GetEnabled())
+         {
+            GetCamera()->SetEnabled(false);
+            mOverheadCamera->SetEnabled(true);
+         }
+         else
+         {
+            mOverheadCamera->SetEnabled(false);
+            GetCamera()->SetEnabled(true);
+         }
+         return true;
+      }
+
       case Producer::Key_Escape:
          {            
             Quit();

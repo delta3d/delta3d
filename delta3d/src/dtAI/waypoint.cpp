@@ -28,7 +28,7 @@
 
 namespace dtAI
 {
-   Waypoint::Waypoint(): mRenderFlag(0)
+   Waypoint::Waypoint(): mRenderFlag(Waypoint::RENDER_DEFUALT)
    {
    }
 

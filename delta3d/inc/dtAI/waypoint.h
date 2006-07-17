@@ -37,6 +37,11 @@ namespace dtAI
    class DT_AI_EXPORT Waypoint
    {
       public:
+
+         //render flags will determine how we draw our waypoints
+         enum RenderFlag{RENDER_DEFUALT = 0, RENDER_RED, RENDER_GREEN, RENDER_BLUE};
+
+      public:
    
          Waypoint();
          Waypoint(const WaypointActor* pActor);
@@ -51,12 +56,12 @@ namespace dtAI
          void SetID(unsigned pID);
          unsigned GetID()const;
 
-         void SetRenderFlag(unsigned rf) const{mRenderFlag = rf;}
-         unsigned GetActive() const {return mRenderFlag;}
+         void SetRenderFlag(RenderFlag rf) const{mRenderFlag = rf;}
+         RenderFlag GetRenderFlag() const {return mRenderFlag;}
 
       private:
          
-         mutable unsigned mRenderFlag;
+         mutable RenderFlag mRenderFlag;
          unsigned mID;
 
          osg::Vec3 mPosition;
