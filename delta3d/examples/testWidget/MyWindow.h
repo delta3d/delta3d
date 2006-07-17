@@ -2,16 +2,15 @@
 #define DELTA_MYWINDOW
 
 #include <dtABC/fl_dt_window.h>
+#include <string>
 #include "MyWidget.h"
 
-class MyWindow :  public   Fl_DT_Window<MyWidget>
+class MyWindow : public Fl_DT_Window<MyWidget>
 {
-   DECLARE_MANAGEMENT_LAYER( MyWindow)
-
    typedef  Fl_DT_Window<MyWidget> MyParent;
 
-   static   const char* PATH;
-   static   const char* FILE;
+   static std::string PATH;
+   static std::string FILE;
 
 public:
                   MyWindow();
@@ -20,10 +19,10 @@ public:
 protected:
    virtual        ~MyWindow();
 public:
-   virtual  void  show( void );
+   virtual  void  show();
 
 private:
-            void  ctor( void );
+            void  ctor();
 };
 
 #endif // DELTA_MYWINDOW
