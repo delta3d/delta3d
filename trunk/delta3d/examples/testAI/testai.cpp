@@ -57,6 +57,10 @@ void TestAI::Config()
    //turn on viewing of waypoints
    WaypointManager::GetInstance()->SetDrawWaypoints(true);
 
+   //by default we wont draw the navmesh
+   mDrawNavMesh = false;
+   WaypointManager::GetInstance()->SetDrawNavMesh(mDrawNavMesh);         
+
    //set camera offset
    dtCore::Transform trans;
    trans.SetTranslation(-1.0f, 5.5f, 1.5f);
@@ -107,6 +111,13 @@ bool TestAI::KeyPressed(const dtCore::Keyboard* keyboard, Producer::KeyboardKey 
          }
          return true;
       }
+
+      case Producer::Key_N:
+         {            
+            mDrawNavMesh = !mDrawNavMesh;
+            WaypointManager::GetInstance()->SetDrawNavMesh(mDrawNavMesh);            
+            return true;
+         }
 
       case Producer::Key_Escape:
          {            

@@ -216,8 +216,8 @@ namespace dtAI
 
    void WaypointManager::CreateNavMesh(dtCore::Scene* pScene)
    {
-      //\todo calulate this instead of having magic number
-      float MAX_DIST_BETWEEN_WAYPOINTS = 30.0;
+      
+      float maxDistBetweenWaypoints = AvgDistBetweenWaypoints();
 
       osg::ref_ptr<dtCore::Isector> pIsector = new dtCore::Isector(pScene);
    
@@ -239,7 +239,7 @@ namespace dtAI
             {               
                Waypoint* pWaypoint2 = (*iter2).second;
 
-               if(WaypointPair(pWaypoint1, pWaypoint2).Get2DDistance() < MAX_DIST_BETWEEN_WAYPOINTS)
+               if(WaypointPair(pWaypoint1, pWaypoint2).Get2DDistance() < maxDistBetweenWaypoints)
                {
 
                   pIsector->SetStartPosition(pWaypoint1->GetPosition());
@@ -326,7 +326,6 @@ namespace dtAI
       mNavMesh.Clear();
    }   
 
-
    void WaypointManager::SetWaypointColor(const osg::Vec4& pColor)
    {
       mWaypointColor = pColor;
@@ -352,6 +351,40 @@ namespace dtAI
    {
       mNavMeshWidth = pSize;
    }
+
+
+   float WaypointManager::AvgDistBetweenWaypoints() const
+   {
+      int i = 0;
+      float pResult = 0;
+
+      WaypointMap::const_iterator iter = mWaypoints.begin();
+      WaypointMap::const_iterator endOfMap = mWaypoints.end();
+
+      while(iter != endOfMap)
+      {
+         const Waypoint* pWaypoint1 = (*iter).second;         
+
+         WaypointMap::const_iterator iter2 = mWaypoints.begin();
+         WaypointMap::const_iterator endOfMap2 = mWaypoints.end();
+
+         while(iter2 != endOfMap2)
+         {
+            if((*iter).second != (*iter2).second)
+            {               
+               const Waypoint* pWaypoint2 = (*iter2).second;
+               
+               ++i;
+               pResult += WaypointPair(pWaypoint1, pWaypoint2).Get2DDistance();               
+            }
+            ++iter2;
+         }
+         ++iter;
+      }
+
+      return (pResult / float(i));
+   }
+
 
 //////////////////////////////////////////////////////////////////////////
 //WaypointManagerDrawable
