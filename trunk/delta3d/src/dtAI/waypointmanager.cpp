@@ -216,6 +216,9 @@ namespace dtAI
 
    void WaypointManager::CreateNavMesh(dtCore::Scene* pScene)
    {
+      //\todo calulate this instead of having magic number
+      float MAX_DIST_BETWEEN_WAYPOINTS = 30.0;
+
       osg::ref_ptr<dtCore::Isector> pIsector = new dtCore::Isector(pScene);
    
       WaypointIterator iter = mWaypoints.begin();
@@ -236,16 +239,20 @@ namespace dtAI
             {               
                Waypoint* pWaypoint2 = (*iter2).second;
 
-               pIsector->SetStartPosition(pWaypoint1->GetPosition());
-               pIsector->SetEndPosition(pWaypoint2->GetPosition());
-
-               //if there is a path between the two points
-               if(!pIsector->Update())
+               if(WaypointPair(pWaypoint1, pWaypoint2).Get2DDistance() < MAX_DIST_BETWEEN_WAYPOINTS)
                {
-                  mNavMesh.AddPathSegment(pWaypoint1, pWaypoint2);
+
+                  pIsector->SetStartPosition(pWaypoint1->GetPosition());
+                  pIsector->SetEndPosition(pWaypoint2->GetPosition());
+
+                  //if there is a path between the two points
+                  if(!pIsector->Update())
+                  {
+                     mNavMesh.AddPathSegment(pWaypoint1, pWaypoint2);
+                  }
+                  
+                  pIsector->Reset();
                }
-               
-               pIsector->Reset();
             }
 
             ++iter2;
