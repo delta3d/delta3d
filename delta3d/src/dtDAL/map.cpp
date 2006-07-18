@@ -29,6 +29,7 @@
 #include "dtDAL/enginepropertytypes.h"
 #include "dtDAL/exceptionenum.h"
 #include <dtUtil/stringutils.h>
+#include <dtDAL/waypointactorproxy.h>
 
 namespace dtDAL 
 {
@@ -199,6 +200,10 @@ namespace dtDAL
       if (i != mProxyMap.end()) 
       {
          mModified = true;
+
+         //notify proxy it is being removed from map
+         proxy.OnRemove();
+
          std::vector<osg::ref_ptr<ActorProxy> > proxies;
          GetAllProxies(proxies);
          for(unsigned int j = 0; j < proxies.size(); j++)

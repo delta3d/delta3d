@@ -92,6 +92,11 @@ namespace dtDAL
       return true;
    }
 
+   void WaypointActorProxy::OnRemove() const
+   {
+      RemoveFromWaypointManager();
+   }
+
    void WaypointActorProxy::RemoveFromWaypointManager() const
    {
       WaypointManager::GetInstance()->RemoveWaypoint(static_cast<const WaypointActor*> (mActor.get()));

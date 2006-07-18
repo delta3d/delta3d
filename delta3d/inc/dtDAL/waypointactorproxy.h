@@ -53,6 +53,8 @@ namespace dtDAL
 
         /*virtual*/ bool IsGhostProxy() const;
 
+        /*virtual*/ void OnRemove() const;
+
          void RemoveFromWaypointManager() const;
 
       private:
