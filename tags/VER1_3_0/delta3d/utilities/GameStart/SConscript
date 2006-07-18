@@ -1,0 +1,9 @@
+Import('*')
+
+sources = SGlob('*.cpp')
+deps = ['dtUtil', 'dtCore', 'dtDAL', 'dtGame']
+
+if mode == 'debug' and OS == 'windows' :
+	env.BuildProgram('GameStartd', sources, deps)
+else :
+	env.BuildProgram('GameStart', sources, deps)
