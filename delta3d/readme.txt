@@ -273,6 +273,8 @@ Windows w/ Visual Studio .NET 7.1
       Overwrite any files with the ones from the patch.
       
    3. Follow instructions for the patch with its readme.
+      Make sure you set the environment variable QMAKESPEC to
+      %QTDIR%\mkspecs\win32-msvc.net
    
    4. After many many hours, it should be all compiled up and happy.
       Qt is now built with MSVC!
