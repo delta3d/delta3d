@@ -53,8 +53,9 @@
 #include <math.h>
 
 using namespace dtCore;
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 using namespace osgParticle;
-
+/// @endcond
 
 /**
  * The editor window.

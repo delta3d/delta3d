@@ -48,8 +48,10 @@
 #include <python/heldptr.h>
 #include <python/osgmath.h>
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 using namespace osg;
 using namespace boost::python;
+/// @endcond
 
 namespace {
 std::string RefMatrix_str(osg::RefMatrix * self)
