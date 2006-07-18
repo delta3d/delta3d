@@ -52,10 +52,13 @@ int main()
 * \image html testApp.jpg
 * 
 * The first thing we need to do is include some header files.  In this example, we'll include
-* dt.h and dtabc.h, which correspond to namespaces and subsequently, the libraries we need.
-* <b>When you include these header files, the library files get automatically linked in</b>.
-* \skip dt.h
-* \until dtabc.h
+* all the header files which are required for this example.  We could have also included the main
+* headers dt.h and dtABC.h, which correspond to namespaces and subsequently, the libraries we need.
+* <b>When you include these header files, the library files get automatically linked in</b>.  Since
+* we're not using the main header files, we have to setup our project file to link in the additional libraries
+* and their dependencies.
+* \skip camera.h
+* \until application.h
 *
 * Now we can set up our search paths to find the data files we'll use in the application.  In
 * this case, we append a couple of strings together, separated by a semi-colon:
