@@ -29,8 +29,8 @@ void initEnvironmentBindings()
    void (Environment::*SetRefLatLong1)( const osg::Vec2& ) = &Environment::SetRefLatLong;
    void (Environment::*GetRefLatLong1)( osg::Vec2& ) const = &Environment::GetRefLatLong;
 
-   void (Environment::*GetSunAzEl1)( float&, float& ) const = &Environment::GetSunAzEl;
-   void (Environment::*GetDateTime1)( int&, int&, int&, int&, int&, int& ) const = &Environment::GetDateTime;
+   // Need wrapper for GetSunzAzEl and GetDataTime that do not use assignment by reference. Python's
+   // numeric types are immutable, and cannot have their values changed by reference.
 
    scope Environment_scope = class_<Environment, bases<DeltaDrawable>, dtCore::RefPtr<Environment>, boost::noncopyable>("Environment", init<optional<const std::string&> >())
       .def("GetInstanceCount", &Environment::GetInstanceCount)
@@ -60,10 +60,8 @@ void initEnvironmentBindings()
       .def("SetVisibility", &Environment::SetVisibility)
       .def("GetVisibility", &Environment::GetVisibility)
       .def("GetSunColor", GetSunColor1)
-      .def("GetSunAzEl", GetSunAzEl1)
       .def("Repaint", &Environment::Repaint)
       .def("SetDateTime", &Environment::SetDateTime)
-      .def("GetDateTime", GetDateTime1)
       .def("SetRefLatLong", SetRefLatLong1)
       .def("GetRefLatLong", GetRefLatLong1);
       
