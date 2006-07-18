@@ -260,8 +260,8 @@ namespace dtEditQt {
     }
 
     /////////////////////////////////////////////////////////////////////////////////
-    void DynamicColorRGBAControl::actorPropertyChanged(osg::ref_ptr<dtDAL::ActorProxy> proxy,
-        osg::ref_ptr<dtDAL::ActorProperty> property)
+    void DynamicColorRGBAControl::actorPropertyChanged(dtCore::RefPtr<dtDAL::ActorProxy> proxy,
+        dtCore::RefPtr<dtDAL::ActorProperty> property)
     {
         if (temporaryEditOnlyTextLabel != NULL && proxy == this->proxy && property == myProperty) 
         {

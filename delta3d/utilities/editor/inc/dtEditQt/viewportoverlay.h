@@ -96,15 +96,18 @@ namespace dtEditQt
                 geode.getName() == dtABC::BezierController::BEZIER_CONTROLLER_GEODE_ID )
                 return;
 
-            if (restoreMode) { //Restore the geodes we made copies of.
+            if (restoreMode)
+            { //Restore the geodes we made copies of.
                 std::map<osg::ref_ptr<osg::Geode>,osg::ref_ptr<osg::Geode> >::iterator itor =
                         this->selectionCopies.find(&geode);
 
-                if (itor != this->selectionCopies.end()) {
+                if (itor != this->selectionCopies.end())
+                {
                     replaceGeode(&geode,itor->second.get());
                 }
             }
-            else {
+            else
+            {
                 copyGeode = new osg::Geode(geode,this->copyOp);
 
                 //Save our original geode along with the copy.
@@ -112,7 +115,8 @@ namespace dtEditQt
 
                 //Make sure we turn off color binding so the wireframe color is
                 //correct.
-                for (i=0; i<copyGeode->getNumDrawables(); i++) {
+                for (i=0; i<copyGeode->getNumDrawables(); i++)
+                {
                     osg::Geometry *geom = copyGeode->getDrawable(i)->asGeometry();
                     if (geom != NULL) {
                         geom->setColorBinding(osg::Geometry::BIND_OFF);
@@ -156,7 +160,7 @@ namespace dtEditQt
         Q_OBJECT
     public:
         ///Simplifies the interface to a list of actor proxies.
-        typedef std::set<osg::ref_ptr<dtDAL::ActorProxy> > ActorProxyList;
+        typedef std::set<dtCore::RefPtr<dtDAL::ActorProxy> > ActorProxyList;
 
         /**
          * Constructs the overlay.
@@ -252,7 +256,7 @@ namespace dtEditQt
          * This method is invoked when the user selects actors in the current scene.
          * @param actors A list of the actors that were selected.
          */
-        void onActorsSelected(proxyRefPtrVector &actors);
+        void onActorsSelected(ActorProxyRefPtrVector &actors);
 
         /**
          * Puts the overlay options in sync with the editor preferences.

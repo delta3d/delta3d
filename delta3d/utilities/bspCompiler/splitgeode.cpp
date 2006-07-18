@@ -4,9 +4,10 @@
 
 #include "splitgeode.h"
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 using namespace std;
 using namespace osg;
-
+/// @endcond
 
 /**
  * A small value, used for determining whether a point lies on a plane.

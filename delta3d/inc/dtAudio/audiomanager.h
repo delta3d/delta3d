@@ -223,7 +223,14 @@ namespace   dtAudio
 
                /// set/get this sounds source id
                         void           Source( ALuint source );
+
+                        /**
+                         * Gets the current source assigned to this SoundObj.
+                         *
+                         * @pre IsInitialized() == true
+                         */
                         ALuint         Source( void );
+                        void           SetInitialized( bool isInitialized );
                         bool           IsInitialized() const;
 
 

@@ -34,9 +34,16 @@ class TerrainWrap : public Terrain, public wrapper< Terrain >
 	   {
 		   if( override UnloadAllTerrainTiles = this->get_override( "UnloadAllTerrainTiles" ) )
 		   {
-			   UnloadAllTerrainTiles();
+ 			   #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+            call<void>( this->get_override( "UnloadAllTerrainTiles" ).ptr() );
+            #else
+            UnloadAllTerrainTiles();
+            #endif
 		   }
-		   Terrain::UnloadAllTerrainTiles();
+         else
+         {
+            Terrain::UnloadAllTerrainTiles();
+         }
 	   }
 
 	   void DefaultUnloadAllTerrainTiles()
@@ -48,8 +55,12 @@ class TerrainWrap : public Terrain, public wrapper< Terrain >
 	   {
 		   if( override IsTerrainTileResident = this->get_override( "IsTerrainTileResident" ) )
 		   {
-			   return IsTerrainTileResident( coords );
-		   }
+			   #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+            return call<bool>( this->get_override( "IsTerrainTileResident" ).ptr(), coords );
+            #else
+            return IsTerrainTileResident( coords );
+            #endif
+		   }            
 		   return Terrain::IsTerrainTileResident( coords );
 	   }
 

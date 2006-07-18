@@ -23,7 +23,6 @@
 #define DELTA_DYNAMICABSTRACTCONTROL
 
 #include <QtCore/QObject>
-#include <osg/ref_ptr>
 #include "dtDAL/actorproxy.h"
 #include "dtDAL/actorproperty.h"
 #include "dtEditQt/typedefs.h"
@@ -274,8 +273,8 @@ namespace dtEditQt
          * to reflect the change in our editor.
          * @Note The default implementation does nothing.
          */
-        virtual void actorPropertyChanged(proxyRefPtr proxy,
-            propertyRefPtr property)
+        virtual void actorPropertyChanged(ActorProxyRefPtr proxy,
+            ActorPropertyRefPtr property)
         {
             // do nothing
         }
@@ -284,8 +283,8 @@ namespace dtEditQt
         // indicates whether the object has been initialized
         bool initialized;
 
-        osg::ref_ptr<dtDAL::ActorProxy> proxy;
-        //osg::ref_ptr<dtDAL::ActorProperty> property;
+        dtCore::RefPtr<dtDAL::ActorProxy> proxy;
+        //dtCore::RefPtr<dtDAL::ActorProperty> property;
 
         // The parent control of this control.  All controls have a parent except root level
         // controls which are likely to be groups

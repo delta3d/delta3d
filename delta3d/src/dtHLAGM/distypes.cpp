@@ -22,9 +22,11 @@
 
 #include <dtHLAGM/distypes.h>
 #include <osg/Endian>
-#include "dtHLAGM/rprparametertranslator.h"
+#include <dtHLAGM/rprparametertranslator.h>
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 using namespace osg;
+/// @endcond
 
 namespace dtHLAGM
 {

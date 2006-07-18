@@ -685,7 +685,7 @@ void ProjectTests::testResources()
 
         const std::set<std::string>& mapNames = p.GetMapNames();
 
-        std::vector<osg::ref_ptr<dtDAL::Map> > maps;
+        std::vector<dtCore::RefPtr<dtDAL::Map> > maps;
 
         time_t currentTime;
         time(&currentTime);
@@ -694,7 +694,7 @@ void ProjectTests::testResources()
         logger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__,
             "Current time as UTC is %s", utcTime.c_str());
 
-        std::vector<osg::ref_ptr<const dtDAL::ResourceTypeHandler> > handlers;
+        std::vector<dtCore::RefPtr<const dtDAL::ResourceTypeHandler> > handlers;
 
         p.GetHandlersForDataType(dtDAL::DataType::TERRAIN, handlers);
         CPPUNIT_ASSERT_MESSAGE("There should be 4 terrain type handlers",  handlers.size() == 4);
@@ -826,7 +826,7 @@ void ProjectTests::testResources()
             logger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found map named %s.", i->c_str());
             //dtDAL::Map& m = p.GetMap(*i);
 
-            //maps.Push_back(osg::ref_ptr<dtDAL::Map>(&m));
+            //maps.Push_back(dtCore::RefPtr<dtDAL::Map>(&m));
         }
 
         p.GetResourcesOfType(dtDAL::DataType::STATIC_MESH, toFill);

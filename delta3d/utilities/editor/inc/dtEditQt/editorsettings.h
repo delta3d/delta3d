@@ -24,7 +24,6 @@
 
 #include <QtCore/QSettings>
 #include <osg/Referenced>
-#include <osg/ref_ptr>
 
 namespace dtEditQt 
 {

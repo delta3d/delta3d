@@ -207,8 +207,8 @@ namespace dtEditQt
     }
 
     /////////////////////////////////////////////////////////////////////////////////
-    void DynamicEnumControl::actorPropertyChanged(osg::ref_ptr<dtDAL::ActorProxy> proxy,
-        osg::ref_ptr<dtDAL::ActorProperty> property)
+    void DynamicEnumControl::actorPropertyChanged(dtCore::RefPtr<dtDAL::ActorProxy> proxy,
+        dtCore::RefPtr<dtDAL::ActorProperty> property)
     {
         dtDAL::AbstractEnumActorProperty *changedProp = 
             dynamic_cast<dtDAL::AbstractEnumActorProperty *>(property.get());

@@ -206,8 +206,7 @@ namespace dtUtil
          {
             msg.clear();
             msg.str("");
-            msg << "Unable to library " << actualLibName;
-            LOG_ERROR(msg.str());
+            msg << "Unable to load library " << actualLibName;
             EXCEPT(LibrarySharingManager::ExceptionEnum::LibraryLoadingError, msg.str());  
          }
          else

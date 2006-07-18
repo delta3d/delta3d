@@ -226,16 +226,16 @@ namespace dtDAL
 
          ///The actual billboard drawable which includes the billboard and an arrow
          ///depicting its actor's orientation.
-         osg::ref_ptr<dtCore::DeltaDrawable> mBillBoard;
+         dtCore::RefPtr<dtCore::DeltaDrawable> mBillBoard;
 
          ///The underlying Delta3D drawable object.
-         osg::ref_ptr<dtCore::Transformable> mIconNode;
+         dtCore::RefPtr<dtCore::Transformable> mIconNode;
 
          ///A transformable used to represent an arrow depicting actor rotation.
-         osg::ref_ptr<dtCore::Transformable> mArrowNode;
+         dtCore::RefPtr<dtCore::Transformable> mArrowNode;
 
          ///A transformable used to represent an arrow depicting actor up vector.
-         osg::ref_ptr<dtCore::Transformable> mArrowNodeUp;
+         dtCore::RefPtr<dtCore::Transformable> mArrowNodeUp;
 
          ///A state set containing the icon's texture.
          osg::ref_ptr<osg::StateSet> mIconStateSet;

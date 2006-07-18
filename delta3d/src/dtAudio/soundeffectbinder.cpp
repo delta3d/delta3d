@@ -12,8 +12,9 @@
 
 // namespaces
 using namespace dtAudio;
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 using namespace std;
-
+/// @endcond
 
 
 // static member variables
@@ -553,7 +554,7 @@ SoundEffectBinder::PlayCB( Sound* sound, void* param )
    assert( param );
 
    SoundEffectBinder*   binder   = static_cast<SoundEffectBinder*>(param);
-   SFX_MAP::iterator    iter(NULL);
+   SFX_MAP::iterator    iter;
 
    for( iter = binder->mSfxMap.begin(); iter != binder->mSfxMap.end(); iter++ )
    {
@@ -586,7 +587,7 @@ SoundEffectBinder::StopCB( Sound* sound, void* param )
    assert( param );
 
    SoundEffectBinder*   binder   = static_cast<SoundEffectBinder*>(param);
-   SFX_MAP::iterator    iter(NULL);
+   SFX_MAP::iterator    iter;
 
    for( iter = binder->mSfxMap.begin(); iter != binder->mSfxMap.end(); iter++ )
    {
@@ -706,4 +707,3 @@ void SoundEffectBinder::SoundEffectListener::EffectRemoved( dtCore::EffectManage
 {
    mRemoveEffect( effectManager, effect );
 }
-

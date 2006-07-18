@@ -18,7 +18,6 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtDAL", "..\src\dtDAL\dtDAL.vcproj", "{F4AF0428-087E-4AE9-BAB2-B18E910DF67A}"
 	ProjectSection(ProjectDependencies) = postProject
 		{5F516A22-15B8-4160-B032-BDFD78707350} = {5F516A22-15B8-4160-B032-BDFD78707350}
-		{963D6948-2667-47EF-ADD7-C7D9AEFD9344} = {963D6948-2667-47EF-ADD7-C7D9AEFD9344}
 		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
 	EndProjectSection
 EndProject
@@ -127,18 +126,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testGameActorLibrary", "..\
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtAI", "..\src\dtAI\dtai.vcproj", "{963D6948-2667-47EF-ADD7-C7D9AEFD9344}"
-	ProjectSection(ProjectDependencies) = postProject
-		{5F516A22-15B8-4160-B032-BDFD78707350} = {5F516A22-15B8-4160-B032-BDFD78707350}
-		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTestsDtAI", "dtAI\unittestsdtai.vcproj", "{4E05F5BD-7038-4975-8A5E-00367FBF3D1C}"
-	ProjectSection(ProjectDependencies) = postProject
-		{963D6948-2667-47EF-ADD7-C7D9AEFD9344} = {963D6948-2667-47EF-ADD7-C7D9AEFD9344}
-		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -229,14 +216,6 @@ Global
 		{F74370BD-A29D-4502-823D-68C2D6FF3C5E}.Debug.Build.0 = Debug|Win32
 		{F74370BD-A29D-4502-823D-68C2D6FF3C5E}.Release.ActiveCfg = Release|Win32
 		{F74370BD-A29D-4502-823D-68C2D6FF3C5E}.Release.Build.0 = Release|Win32
-		{963D6948-2667-47EF-ADD7-C7D9AEFD9344}.Debug.ActiveCfg = Debug|Win32
-		{963D6948-2667-47EF-ADD7-C7D9AEFD9344}.Debug.Build.0 = Debug|Win32
-		{963D6948-2667-47EF-ADD7-C7D9AEFD9344}.Release.ActiveCfg = Release|Win32
-		{963D6948-2667-47EF-ADD7-C7D9AEFD9344}.Release.Build.0 = Release|Win32
-		{4E05F5BD-7038-4975-8A5E-00367FBF3D1C}.Debug.ActiveCfg = Debug|Win32
-		{4E05F5BD-7038-4975-8A5E-00367FBF3D1C}.Debug.Build.0 = Debug|Win32
-		{4E05F5BD-7038-4975-8A5E-00367FBF3D1C}.Release.ActiveCfg = Release|Win32
-		{4E05F5BD-7038-4975-8A5E-00367FBF3D1C}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection

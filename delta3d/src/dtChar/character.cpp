@@ -290,54 +290,6 @@ float Character::GetRotation() const
    return mRotation;
 }
 
-void Character::SetRotationSpeed(float pSpeed) 
-{
-   mRotationSpeed = pSpeed;
-}
-
-float Character::GetRotationSpeed() const
-{
-   return mRotationSpeed;
-}
-
-void Character::RotateCharacterToPoint(const osg::Vec3& targetPos, float delta)
-{
-   dtCore::Transform trans;
-   osg::Vec3 ownPos;
-   GetTransform(trans);  
-   trans.GetTranslation(ownPos);     
-
-   osg::Vec3 pVector = targetPos - ownPos;
-
-   pVector [2] = 0.0f;
-
-   float len = pVector.length();
-   float dir = osg::RadiansToDegrees(atan2(pVector[0], -pVector[1]));
-   float rotation = GetRotation();
-   float dR = dir - rotation;
-
-   if( dR > 180.0f )
-   {
-      dR -= 360.0f;
-   }
-   else if( dR < -180.0f )
-   {
-      dR += 360.0f;
-   }
-
-   if(dR > 0.0f)
-   {
-      rotation += (dR > delta*90.0f ? delta*90.0f : dR);   
-   }
-   else if(dR < 0.0f)
-   {
-      rotation += (dR < -delta*90.0f ? -delta*90.0f : dR);
-   }
-
-   SetRotation(rotation);
-}
-
-
 /**
  * Sets the walk/run velocity of this character.
  *

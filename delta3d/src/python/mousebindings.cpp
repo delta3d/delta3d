@@ -22,32 +22,56 @@ class MouseListenerWrap : public MouseListener, public wrapper<MouseListener>
    
    bool HandleButtonPressed(const Mouse* mouse, Mouse::MouseButton button)
    {
+      #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+      return call<bool>( this->get_override( "HandleButtonPressed" ).ptr(), boost::ref(mouse), button );
+      #else
       return this->get_override( "HandleButtonPressed" )( boost::ref(mouse), button );
+      #endif
    }
    
    bool HandleButtonReleased(const Mouse* mouse, Mouse::MouseButton button)
    {
+      #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+      return call<bool>( this->get_override( "HandleButtonReleased" ).ptr(), boost::ref(mouse), button );
+      #else
       return this->get_override( "HandleButtonReleased" )( boost::ref(mouse), button );
+      #endif
    }
    
    bool HandleButtonClicked(const Mouse* mouse, Mouse::MouseButton button, int clickCount)
    {
+      #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+      return call<bool>( this->get_override( "HandleButtonClicked" ).ptr(), boost::ref(mouse), button, clickCount );
+      #else
       return this->get_override( "HandleButtonClicked" )( boost::ref(mouse), button, clickCount );
+      #endif
    }
    
    bool HandleMouseMoved(const Mouse* mouse, float x, float y)
    {
+      #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+      return call<bool>( this->get_override( "HandleMouseMoved" ).ptr(), boost::ref(mouse), x, y );
+      #else
       return this->get_override( "HandleMouseMoved" )( boost::ref(mouse), x, y );
+      #endif
    }
    
    bool HandleMouseDragged(const Mouse* mouse, float x, float y)
    {
+      #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+      return call<bool>( this->get_override( "HandleMouseDragged" ).ptr(), boost::ref(mouse), x, y );
+      #else
       return this->get_override( "HandleMouseDragged" )( boost::ref(mouse), x, y );
+      #endif
    }
    
    bool HandleMouseScrolled(const Mouse* mouse, int delta)
    {
+      #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+      return call<bool>( this->get_override( "HandleMouseScrolled" ).ptr(), boost::ref(mouse), delta );
+      #else
       return this->get_override( "HandleMouseScrolled" )( boost::ref(mouse), delta );
+      #endif
    }
 };
 
@@ -56,8 +80,11 @@ void initMouseBindings()
    Mouse* (*MouseGI1)(int) = &Mouse::GetInstance;
    Mouse* (*MouseGI2)(std::string) = &Mouse::GetInstance;
 
-   typedef void (Mouse::*MouseFloatFloatMemFun)(float&,float&) const;
-   MouseFloatFloatMemFun MouseGP1 = &Mouse::GetPosition;
+   // Need wrapper for GetPosition that do not use assignment by reference. Python's
+   // numeric types are immutable, and cannot have their values changed by reference.
+   
+   //typedef void (Mouse::*MouseFloatFloatMemFun)(float&,float&) const;
+   //MouseFloatFloatMemFun MouseGP1 = &Mouse::GetPosition;
 
    class_<MouseListenerWrap, dtCore::RefPtr<MouseListenerWrap>, boost::noncopyable >("MouseListener")
       .def("HandleButtonPressed", pure_virtual(&MouseListener::HandleButtonPressed))
@@ -73,7 +100,7 @@ void initMouseBindings()
       .def("GetInstance", MouseGI1, return_internal_reference<>())
       .def("GetInstance", MouseGI2, return_internal_reference<>())
       .staticmethod("GetInstance")
-      .def("GetPosition", MouseGP1)
+      //.def("GetPosition", MouseGP1)
       .def("SetPosition", &Mouse::SetPosition)
       .def("GetButtonState", &Mouse::GetButtonState)
       .def("AddMouseListener", &Mouse::AddMouseListener, with_custodian_and_ward<1,2>())

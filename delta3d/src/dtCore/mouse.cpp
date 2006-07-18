@@ -16,7 +16,7 @@ IMPLEMENT_MANAGEMENT_LAYER(Mouse)
 
    AddFeature(new Axis(this, "mouse x axis"));
    AddFeature(new Axis(this, "mouse y axis"));
-   AddFeature(new Axis(this, "mouse z axis"));
+   AddFeature(new Axis(this, "mouse scroll axis"));
    AddFeature(new Button(this, "left mouse button"));
    AddFeature(new Button(this, "middle mouse button"));
    AddFeature(new Button(this, "right mouse button"));
@@ -88,6 +88,17 @@ bool Mouse::MouseScroll(Producer::KeyboardMouseCallback::ScrollingMotion sm)
    {
       handled = (*iter)->HandleMouseScrolled(this, delta);
       ++iter;
+   }
+
+   // a workaround for classes that listen to input device features
+   dtCore::RefPtr<Axis> scrollAxis = GetAxis(2);
+   if( !handled )
+   {
+      handled = scrollAxis->SetState( scrollAxis->GetState() + delta, delta );
+   }
+   else  // don't affect the return value, but change the state for "pollers of the state"
+   {
+      scrollAxis->SetState( scrollAxis->GetState() + delta, delta );
    }
 
    return handled;

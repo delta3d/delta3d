@@ -6,11 +6,13 @@
 #include <dtCore/motionmodel.h>
 #include <osg/Node>
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
 {
    class Group;
    class MatrixTransform;
 }
+/// @endcond
 
 // forward references
 class ViewState;

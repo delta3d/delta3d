@@ -34,7 +34,7 @@ namespace dtEditQt
     std::string ActorTypeTreeWidget::CATEGORY_SEPARATOR = ".";
 
     ///////////////////////////////////////////////////////////////////////////////
-    ActorTypeTreeWidget::ActorTypeTreeWidget(ActorTypeTreeWidget* parent, osg::ref_ptr<dtDAL::ActorType> actorType) 
+    ActorTypeTreeWidget::ActorTypeTreeWidget(ActorTypeTreeWidget* parent, dtCore::RefPtr<dtDAL::ActorType> actorType) 
         : QTreeWidgetItem(parent)
     {
         LOG_INFO("Initializing ActorTypeTreeWidget - leaf Actor Type Node:" + actorType->GetName());
@@ -93,7 +93,7 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    osg::ref_ptr<dtDAL::ActorType> ActorTypeTreeWidget::getActorType() 
+    dtCore::RefPtr<dtDAL::ActorType> ActorTypeTreeWidget::getActorType() 
     {
         return myActorType;
     }
@@ -132,7 +132,7 @@ namespace dtEditQt
 
     ///////////////////////////////////////////////////////////////////////////////
     bool ActorTypeTreeWidget::recursivelyAddCategoryAndActorTypeAsChildren(
-        QMutableStringListIterator *listIterator, osg::ref_ptr<dtDAL::ActorType> actorType) 
+        QMutableStringListIterator *listIterator, dtCore::RefPtr<dtDAL::ActorType> actorType) 
     {
         bool foundChildMatch= false;
         bool result = false;

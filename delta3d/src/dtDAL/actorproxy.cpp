@@ -98,12 +98,6 @@ namespace dtDAL
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool ActorProxy::IsGhostProxy() const
-   {
-      return false;
-   }
-
-   //////////////////////////////////////////////////////////////////////////
    ResourceDescriptor* ActorProxy::GetResource(const std::string &name)
    {
       std::map<std::string, ResourceDescriptor>::iterator itor = mResourceMap.find(name);
@@ -270,13 +264,13 @@ namespace dtDAL
    }
 
    //////////////////////////////////////////////////////////////////////////
-   osg::ref_ptr<ActorProxy> ActorProxy::Clone()
+   dtCore::RefPtr<ActorProxy> ActorProxy::Clone()
    {
       std::ostringstream error;
 
       //First tell the library manager to create a new mActor using this
       // actors actor type.
-      osg::ref_ptr<ActorProxy> copy = NULL;
+      dtCore::RefPtr<ActorProxy> copy = NULL;
 
       try
       {
@@ -314,11 +308,5 @@ namespace dtDAL
    void ActorProxy::SetActorType(ActorType *type)
    {
       mActorType = type;
-   }
-
-   //////////////////////////////////////////////////////////////////////////
-   void ActorProxy::OnRemove() const
-   {
-
    }
 }

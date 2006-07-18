@@ -21,6 +21,16 @@
 #ifndef DT_HLAGM
 #define DT_HLAGM
 
+/** 
+ * @namespace dtHLAGM
+ *
+ * This namespace contains the functionality to provide network communications
+ * from an HLA network to the GameManager.
+ */
+namespace dtHLAGM
+{
+}
+
 #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
 //

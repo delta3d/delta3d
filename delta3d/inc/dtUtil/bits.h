@@ -29,6 +29,13 @@
 
 namespace dtUtil
 {
+
+   /**
+    * @namespace dtUtil::Bits
+    *
+    * Contains bit-wise operation functionality which makes using bits
+    * a little bit easier.
+    */
    namespace Bits
    {
 

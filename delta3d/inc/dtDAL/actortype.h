@@ -23,14 +23,12 @@
 
 #include <string>
 #include <osg/Referenced>
-#include <osg/ref_ptr>
 #include <dtCore/refptr.h>
 #include <ostream>
-#include "dtDAL/export.h"
+#include <dtDAL/export.h>
 
 namespace dtDAL 
 {
-
    /**
     * This class is more or less a simple data class that has information
     * describing a particular type of Actor.  Actor types contain a name
@@ -62,11 +60,6 @@ namespace dtDAL
           */
          struct RefPtrComp 
          {
-            bool operator()(const osg::ref_ptr<ActorType> &id1, const osg::ref_ptr<ActorType> &id2) const
-            {
-               return (*id1) < (*id2);
-            }
-               
             bool operator()(const dtCore::RefPtr<ActorType> &id1,const dtCore::RefPtr<ActorType> &id2) const
             {
                return (*id1) < (*id2);
@@ -76,8 +69,10 @@ namespace dtDAL
          /**
           * Constructs a new actor type object.
           */
-         ActorType(const std::string &name, const std::string &category="nocategory",
-                  const std::string &desc="", const ActorType *parentType = NULL) : 
+         ActorType(  const std::string &name, 
+                     const std::string &category="nocategory",
+                     const std::string &desc="", 
+                     const ActorType *parentType = NULL) : 
             mName(name), mCategory(category), mDescription(desc), mParentType(parentType)
          {
             GenerateUniqueId();
@@ -175,7 +170,7 @@ namespace dtDAL
       protected:
          
          //Object can only be deleted through the ref_ptr interface.
-         ~ActorType() { }
+         virtual ~ActorType() { }
 
          /**
           * Creates a unique id for this ActorType. Currently, the implementation
@@ -199,13 +194,6 @@ namespace dtDAL
          friend std::ostream& operator<<(std::ostream& os,const ActorType &actorType)
          {
             os << actorType.GetCategory() + "." + actorType.GetName();
-            return os;
-         }
-
-         ///Provide a method for printing the actor type smart pointer to a stream.
-         friend std::ostream &operator<<(std::ostream &os,const osg::ref_ptr<ActorType> &actorType)
-         {
-            os << actorType->GetCategory() + "." + actorType->GetName();
             return os;
          }
    };

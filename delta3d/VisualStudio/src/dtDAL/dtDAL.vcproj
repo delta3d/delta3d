@@ -35,7 +35,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Producerd.lib OpenThreadsWin32d.lib osgd.lib osgDBd.lib osgParticled.lib osgUtild.lib oded.lib dtCored.lib dtUtild.lib dtAId.lib xerces-c_2D.lib rcfgscriptd.lib"
+				AdditionalDependencies="Producerd.lib OpenThreadsWin32d.lib osgd.lib osgDBd.lib osgParticled.lib osgUtild.lib oded.lib dtCored.lib dtUtild.lib xerces-c_2D.lib rcfgscriptd.lib"
 				OutputFile="..\..\..\bin\dtDALd.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
@@ -87,7 +87,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Producer.lib OpenThreadsWin32.lib osg.lib osgDB.lib osgParticle.lib osgUtil.lib ode.lib dtCore.lib dtUtil.lib dtAI.lib xerces-c_2.lib rcfgscript.lib"
+				AdditionalDependencies="Producer.lib OpenThreadsWin32.lib osg.lib osgDB.lib osgParticle.lib osgUtil.lib ode.lib dtCore.lib dtUtil.lib xerces-c_2.lib rcfgscript.lib"
 				OutputFile="..\..\..\bin\dtDAL.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
@@ -187,9 +187,6 @@
 			<File
 				RelativePath="..\..\..\src\dtDAL\transformableactorproxy.cpp">
 			</File>
-			<File
-				RelativePath="..\..\..\src\dtDAL\waypointactorproxy.cpp">
-			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
@@ -279,9 +276,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtDAL\tree.h">
-			</File>
-			<File
-				RelativePath="..\..\..\inc\dtDAL\waypointactorproxy.h">
 			</File>
 		</Filter>
 	</Files>

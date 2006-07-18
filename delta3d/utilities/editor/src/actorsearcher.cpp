@@ -65,8 +65,8 @@ namespace dtEditQt
             this, SLOT(refreshAll()));
         connect(&EditorEvents::getInstance(), SIGNAL(LibraryAboutToBeRemoved()),
             this, SLOT(refreshAll())); // make sure the table is emptied here or crash!
-        connect(&EditorEvents::getInstance(), SIGNAL(actorProxyCreated(proxyRefPtr, bool)), 
-            this, SLOT(onActorProxyCreated(proxyRefPtr, bool)));   
+        connect(&EditorEvents::getInstance(), SIGNAL(actorProxyCreated(ActorProxyRefPtr, bool)), 
+            this, SLOT(onActorProxyCreated(ActorProxyRefPtr, bool)));   
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -248,7 +248,7 @@ namespace dtEditQt
         EditorData::getInstance().getMainWindow()->startWaitCursor();
 
         LOG_ERROR("User pressed the search button");
-        std::vector<osg::ref_ptr<dtDAL::ActorProxy> > foundProxies;
+        std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > foundProxies;
         dtDAL::Map *map = EditorData::getInstance().getCurrentMap().get();
 
         // get the search values
@@ -280,7 +280,7 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void ActorSearcher::onActorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy> proxy, bool forceNoAdjustments)
+    void ActorSearcher::onActorProxyCreated(dtCore::RefPtr<dtDAL::ActorProxy> proxy, bool forceNoAdjustments)
     {
         EditorData::getInstance().getMainWindow()->startWaitCursor();
 

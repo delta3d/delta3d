@@ -48,6 +48,10 @@ namespace dtActors
     {
     public:
 
+        // This class is not actually used in StaticMeshActorProxy, so it's #ifdef'd out
+        // for now to avoid linker warnings. -osb
+        #if 0
+
         /**
          * @class TextureEntry
          * This is a simple class which is used by the texture resource properties to
@@ -75,6 +79,8 @@ namespace dtActors
         private:
             osg::ref_ptr<osg::Texture2D> mTexture;
         };
+
+        #endif // 0
 
         StaticMeshActorProxy() { SetClassName("dtCore::Object"); }
 
@@ -119,8 +125,10 @@ namespace dtActors
         virtual ~StaticMeshActorProxy();
 
     private:
+        #if 0
         ///List of textures that can be overridden on the static mesh.
         std::vector<osg::ref_ptr<TextureEntry> > mTextureSlots;
+        #endif
     };
 }
 
