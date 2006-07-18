@@ -949,6 +949,7 @@ if OS == 'windows' :
          'winsock'             : 'ws2_32',
          'shell32'             : 'shell32',
          'ole32'               : 'ole32', 
+         'Comctl32'            : 'Comctl32',
          'cppunit'             : 'cppunit' 
          }
    
