@@ -27,17 +27,13 @@ void initTransformBindings()
    void (Transform::*SetScale1)(float, float, float) = &Transform::SetScale;
    void (Transform::*SetScale2)(const osg::Vec3&) = &Transform::SetScale;
 
-   void (Transform::*Get1)(float&, float&, float&, float&, float&, float&, float&, float&, float&) const = &Transform::Get;
-   void (Transform::*Get2)(osg::Vec3&, osg::Vec3&, osg::Vec3&) const = &Transform::Get;
-   void (Transform::*Get3)(osg::Vec3&, osg::Matrix&, osg::Vec3&) const = &Transform::Get;
-   void (Transform::*Get4)(osg::Matrix&) const = &Transform::Get;
-   void (Transform::*GetTranslation1)(osg::Vec3&) const = &Transform::GetTranslation;
-   void (Transform::*GetTranslation2)(float&, float&, float&) const = &Transform::GetTranslation;
-   void (Transform::*GetRotation1)(float&, float&, float&) const = &Transform::GetRotation;
-   void (Transform::*GetRotation2)(osg::Vec3&) const = &Transform::GetRotation;
-   void (Transform::*GetRotation3)(osg::Matrix&) const = &Transform::GetRotation;
-   void (Transform::*GetScale1)(float&, float&, float&) const = &Transform::GetScale;
-   void (Transform::*GetScale2)(osg::Vec3&) const = &Transform::GetScale;
+   void (Transform::*Get1)(osg::Vec3&, osg::Vec3&, osg::Vec3&) const = &Transform::Get;
+   void (Transform::*Get2)(osg::Vec3&, osg::Matrix&, osg::Vec3&) const = &Transform::Get;
+   void (Transform::*Get3)(osg::Matrix&) const = &Transform::Get;
+   void (Transform::*GetTranslation)(osg::Vec3&) const = &Transform::GetTranslation;
+   void (Transform::*GetRotation1)(osg::Vec3&) const = &Transform::GetRotation;
+   void (Transform::*GetRotation2)(osg::Matrix&) const = &Transform::GetRotation;
+   void (Transform::*GetScale)(osg::Vec3&) const = &Transform::GetScale;
 
    void (Transform::*SetLookAt1)(const osg::Vec3&, const osg::Vec3&, const osg::Vec3&) = &Transform::SetLookAt;
    void (Transform::*SetLookAt2)(float, float, float, float, float, float, float, float, float) = &Transform::SetLookAt;
@@ -57,14 +53,10 @@ void initTransformBindings()
       .def("Get", Get1)
       .def("Get", Get2)
       .def("Get", Get3)
-      .def("Get", Get4)
-      .def("GetTranslation", GetTranslation1)
-      .def("GetTranslation", GetTranslation2)
+      .def("GetTranslation", GetTranslation)
       .def("GetRotation", GetRotation1)
       .def("GetRotation", GetRotation2)
-      .def("GetRotation", GetRotation3)
-      .def("GetScale", GetScale1)
-      .def("GetScale", GetScale2)
+      .def("GetScale", GetScale)
       .def("SetLookAt", SetLookAt1)
       .def("SetLookAt", SetLookAt2)
       .def("EpsilonEquals", &Transform::EpsilonEquals, EE_overloads());
