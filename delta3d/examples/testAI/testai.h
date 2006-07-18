@@ -29,6 +29,7 @@ class TestAI : public dtABC::Application
       bool GoToWaypoint(int pNum);
  
       float mSpeed;
+      bool mDrawNavMesh;
       dtCore::RefPtr<dtCore::Camera> mOverheadCamera;
       dtCore::RefPtr<dtAI::AICharacter> mCharacter;
       dtAI::Waypoint* mCurrentWaypoint;

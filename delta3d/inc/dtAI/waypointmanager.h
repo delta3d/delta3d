@@ -78,9 +78,12 @@ namespace dtAI
          const WaypointMap& GetWaypoints() const;    
 
          /**
-         * Given a scene we create a nav mesh
-         * the scene is used for doing isector tests
-         * to test if pairs of waypoints are traversable
+         * Given a scene we create a NavMesh
+         * the scene is used for doing Isector tests
+         * to test if pairs of waypoints are traversable.
+         * The NavMesh is created by connecting all pairs of 
+         * waypoints that are within the total average distance 
+         * between all two waypoints.
          */
          void CreateNavMesh(dtCore::Scene* pScene);
 
@@ -142,6 +145,11 @@ namespace dtAI
          * Frees memory and clears waypoint mapping
          */
          void Clear();
+
+         /**
+         * returns the average distance between the waypoints
+         */
+         float AvgDistBetweenWaypoints() const;
 
       private:
 
