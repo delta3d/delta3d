@@ -12,8 +12,9 @@
 
 // namespaces
 using namespace dtAudio;
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 using namespace std;
-
+/// @endcond
 
 
 // static member variables
@@ -706,4 +707,3 @@ void SoundEffectBinder::SoundEffectListener::EffectRemoved( dtCore::EffectManage
 {
    mRemoveEffect( effectManager, effect );
 }
-

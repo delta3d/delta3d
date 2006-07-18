@@ -44,7 +44,9 @@
 #include <osgDB/FileNameUtils>
 
 using namespace dtDAL;
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 using namespace std;
+/// @endcond
 
 enum { ERROR_LIB_NOT_LOADED = 0, ERROR_ACTORS_IN_LIB, ERROR_INVALID_LIB, ERROR_UNKNOWN };
 
