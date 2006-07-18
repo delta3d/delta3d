@@ -315,4 +315,10 @@ namespace dtDAL
    {
       mActorType = type;
    }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ActorProxy::OnRemove() const
+   {
+
+   }
 }

@@ -326,6 +326,11 @@ namespace dtDAL
 
 
          /**
+         * Called when this actor is removed from a map
+         */
+         virtual void OnRemove() const;
+
+         /**
           * Creates a copy of this actor proxy and returns it.  The method uses the
           * library manager to create the clone and then iterates though the
           * current state of this proxy's property set and copies their values
