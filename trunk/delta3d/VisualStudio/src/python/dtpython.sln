@@ -85,6 +85,14 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtTerrain", "..\dtTerrain\d
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtAIBindings", "dtaibindings.vcproj", "{45D4F709-62D9-461A-8251-F7AF42877936}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtAI", "..\dtAI\dtai.vcproj", "{963D6948-2667-47EF-ADD7-C7D9AEFD9344}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -134,6 +142,7 @@ Global
 		{F4AF0428-087E-4AE9-BAB2-B18E910DF67A}.Release.ActiveCfg = Release|Win32
 		{F4AF0428-087E-4AE9-BAB2-B18E910DF67A}.Release.Build.0 = Release|Win32
 		{DCA6E500-A5D4-496E-9B0A-B22790AD6611}.Debug.ActiveCfg = Release|Win32
+		{DCA6E500-A5D4-496E-9B0A-B22790AD6611}.Debug.Build.0 = Release|Win32
 		{DCA6E500-A5D4-496E-9B0A-B22790AD6611}.Release.ActiveCfg = Release|Win32
 		{DCA6E500-A5D4-496E-9B0A-B22790AD6611}.Release.Build.0 = Release|Win32
 		{5F516A22-15B8-4160-B032-BDFD78707350}.Debug.ActiveCfg = Debug|Win32
@@ -148,6 +157,14 @@ Global
 		{2688CD16-9490-48A8-A3FD-89C0E7605AA5}.Debug.Build.0 = Debug|Win32
 		{2688CD16-9490-48A8-A3FD-89C0E7605AA5}.Release.ActiveCfg = Release|Win32
 		{2688CD16-9490-48A8-A3FD-89C0E7605AA5}.Release.Build.0 = Release|Win32
+		{45D4F709-62D9-461A-8251-F7AF42877936}.Debug.ActiveCfg = Release|Win32
+		{45D4F709-62D9-461A-8251-F7AF42877936}.Debug.Build.0 = Release|Win32
+		{45D4F709-62D9-461A-8251-F7AF42877936}.Release.ActiveCfg = Release|Win32
+		{45D4F709-62D9-461A-8251-F7AF42877936}.Release.Build.0 = Release|Win32
+		{963D6948-2667-47EF-ADD7-C7D9AEFD9344}.Debug.ActiveCfg = Debug|Win32
+		{963D6948-2667-47EF-ADD7-C7D9AEFD9344}.Debug.Build.0 = Debug|Win32
+		{963D6948-2667-47EF-ADD7-C7D9AEFD9344}.Release.ActiveCfg = Release|Win32
+		{963D6948-2667-47EF-ADD7-C7D9AEFD9344}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection

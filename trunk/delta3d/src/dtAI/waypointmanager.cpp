@@ -197,23 +197,6 @@ namespace dtAI
       mLoadActorsLock = false;
    }
 
-   std::ostream& WaypointManager::GetWaypoints(std::ostream& pStream)
-   {
-      WaypointIterator iter = mWaypoints.begin();
-      WaypointIterator endOfMap = mWaypoints.end();
-
-      pStream << "Num Waypoints: " << mWaypoints.size() << std::endl;
-
-      while(iter != endOfMap)
-      {
-         osg::Vec3 pPos = (*iter).second->GetPosition();
-         pStream << "Waypoint: (" << float(pPos[0]) << ", " << float(pPos[1]) << ", " << float(pPos[2]) << ")" << std::endl;
-         ++iter;
-      }
-      
-      return pStream;
-   }
-
    void WaypointManager::CreateNavMesh(dtCore::Scene* pScene)
    {
       
@@ -292,6 +275,37 @@ namespace dtAI
    const WaypointManager::WaypointMap& WaypointManager::GetWaypoints() const
    {
       return mWaypoints;
+   }
+
+   std::vector<Waypoint*> WaypointManager::CopyWaypointsIntoVector() 
+   {
+      std::vector<Waypoint*> pContainer;
+      WaypointMap::const_iterator iter = mWaypoints.begin();
+      WaypointMap::const_iterator endOfMap = mWaypoints.end();
+
+      while(iter != endOfMap)
+      {
+         pContainer.push_back((*iter).second);
+         ++iter;
+      }
+      return pContainer;
+   }
+
+   std::ostream& WaypointManager::GetWaypoints(std::ostream& pStream)
+   {
+      WaypointIterator iter = mWaypoints.begin();
+      WaypointIterator endOfMap = mWaypoints.end();
+
+      pStream << "Num Waypoints: " << mWaypoints.size() << std::endl;
+
+      while(iter != endOfMap)
+      {
+         osg::Vec3 pPos = (*iter).second->GetPosition();
+         pStream << "Waypoint: (" << float(pPos[0]) << ", " << float(pPos[1]) << ", " << float(pPos[2]) << ")" << std::endl;
+         ++iter;
+      }
+
+      return pStream;
    }
 
    const osg::Node* WaypointManager::GetOSGNode() const

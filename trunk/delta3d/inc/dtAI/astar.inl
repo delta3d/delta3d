@@ -179,7 +179,7 @@ typename AStar<_NodeType, _CostFunc, _Container, _Timer>::AStarResult AStar<_Nod
       }
 
       //start with the node of lowest cost in the open list
-      node_type* pStart = FindLowestCost(mOpen);           
+      node_type* pStart = FindLowestCost(mOpen);     
       
       //check if we found a path to the end or if we have exceeded a constraint
       cost_type pCost = (pStart->GetCostToNode() + pStart->GetCostToGoal());
