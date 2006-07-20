@@ -82,6 +82,12 @@ if CheckForBoost() :
                     'dtdalbindings.cpp', 
                     'mapbindings.cpp', 
                     'projectbindings.cpp' ],
+
+   'dtAI'   : [     'dtaibindings.cpp',
+                    'waypointbindings.cpp',
+                    'waypointpairbindings.cpp',
+                    'waypointmanagerbindings.cpp',
+                    'waypointastarbindings.cpp'],
     
    'dtInspector' : [ 'dtinspectorbindings.cpp' ],
     
@@ -146,6 +152,7 @@ if CheckForBoost() :
       dtAudioBindingsTarget = 'dtAudioBindingsd'
       dtCharBindingsTarget = 'dtCharBindingsd'
       dtDALBindingsTarget = 'dtDALBindingsd'
+      dtAIBindingsTarget = 'dtAIBindingsd'
       dtInspectorBindingsTarget = 'dtInspectorBindingsd'
       dtHlaBindingsTarget = 'dtHLABindingsd'
       dtTerrainBindingsTarget = 'dtTerrainBindingsd'
@@ -156,6 +163,7 @@ if CheckForBoost() :
       dtAudioBindingsTarget = 'dtAudioBindings'
       dtCharBindingsTarget = 'dtCharBindings'
       dtDALBindingsTarget = 'dtDALBindings'
+      dtAIBindingsTarget = 'dtAIBindings'
       dtInspectorBindingsTarget = 'dtInspectorBindings'
       dtHlaBindingsTarget = 'dtHLABindings'
       dtTerrainBindingsTarget = 'dtTerrainBindings'
@@ -173,12 +181,13 @@ if CheckForBoost() :
    pythonDtAbcLib = env.SharedLibrary(   dtAbcBindingsTarget,     pythonSrcs['dtABC'],    LIBS = addToLibs + [dtLibs['dtABC'],dtLibs['dtCore'],dtLibs['dtDAL']], LINKFLAGS = addToLink, CPPFLAGS=pythonCPPFlags )
    pythonDtAudioLib = env.SharedLibrary( dtAudioBindingsTarget,   pythonSrcs['dtAudio'],  LIBS = addToLibs + [dtLibs['dtAudio'],dtLibs['dtCore']], LINKFLAGS = addToLink, CPPFLAGS=pythonCPPFlags )
    pythonDtCharLib = env.SharedLibrary(  dtCharBindingsTarget,    pythonSrcs['dtChar'],   LIBS = addToLibs + [dtLibs['dtChar'],dtLibs['dtCore'],dtLibs['dtUtil']], LINKFLAGS = addToLink, CPPFLAGS=pythonCPPFlags )
-   pythonDtDALLib = env.SharedLibrary(   dtDALBindingsTarget,     pythonSrcs['dtDAL'],    LIBS = addToLibs + [dtLibs['dtDAL'],dtLibs['dtCore']], LINKFLAGS = addToLink, CPPFLAGS=pythonCPPFlags )
+   pythonDtDALLib = env.SharedLibrary(   dtDALBindingsTarget,     pythonSrcs['dtDAL'],    LIBS = addToLibs + [dtLibs['dtCore'],dtLibs['dtAI']], LINKFLAGS = addToLink, CPPFLAGS=pythonCPPFlags )
+   pythonDtAILib = env.SharedLibrary(   dtAIBindingsTarget,     pythonSrcs['dtAI'],    LIBS = addToLibs + [dtLibs['dtDAL'],dtLibs['dtCore'],dtLibs['dtUtil']], LINKFLAGS = addToLink, CPPFLAGS=pythonCPPFlags )   
    pythonDtInspectorLib = env.SharedLibrary(  dtInspectorBindingsTarget,  pythonSrcs['dtInspector'],   LIBS = addToLibs + [dtLibs['dtInspector'],dtLibs['dtCore']], LINKFLAGS = addToLink, CPPFLAGS=pythonCPPFlags )
    pythonDtTerrainLib = env.SharedLibrary(  dtTerrainBindingsTarget,  pythonSrcs['dtTerrain'],   LIBS = addToLibs + [dtLibs['dtTerrain'],dtLibs['dtCore'],dtLibs['dtUtil']], LINKFLAGS = addToLink, CPPFLAGS=pythonCPPFlags )
    pythonDtUtilLib = env.SharedLibrary(  dtUtilBindingsTarget,    pythonSrcs['dtUtil'],   LIBS = addToLibs + [dtLibs['dtUtil']], LINKFLAGS = addToLink, CPPFLAGS=pythonCPPFlags )
    
-   env.Precious( pythonDtCoreLib, pythonDtAbcLib, pythonDtAudioLib, pythonDtCharLib, pythonDtDALLib, pythonDtInspectorLib, pythonDtTerrainLib, pythonDtUtilLib )
+   env.Precious( pythonDtCoreLib, pythonDtAbcLib, pythonDtAudioLib, pythonDtCharLib, pythonDtDALLib, pythonDtAILib, pythonDtInspectorLib, pythonDtTerrainLib, pythonDtUtilLib )
    
    if env.get('rti') != 0 :
       pythonDtHlaLib = env.SharedLibrary( dtHlaBindingsTarget, pythonSrcs['dtHLA'], LIBS = addToLibs + [dtLibs[ 'dtHLA' ]], CPPFLAGS=pythonCPPFlags )
@@ -203,6 +212,7 @@ if CheckForBoost() :
       dtAudioPydTarget = '#'+dir+'/PyDtAudiod.'+suffix
       dtCharPydTarget = '#'+dir+'/PyDtChard.'+suffix
       dtDALPydTarget = '#'+dir+'/PyDtDALd.'+suffix
+      dtAIPydTarget = '#'+dir+'/PyDtAId.'+suffix
       dtInspectorPydTarget = '#'+dir+'/PyDtInspectord.'+suffix
       dtHlaPydTarget = '#'+dir+'/PyDtHLAd.'+suffix
       dtTerrainPydTarget = '#'+dir+'/PyDtTerraind.'+suffix
@@ -213,6 +223,7 @@ if CheckForBoost() :
       dtAudioPydTarget = '#'+dir+'/PyDtAudio.'+suffix
       dtCharPydTarget = '#'+dir+'/PyDtChar.'+suffix
       dtDALPydTarget = '#'+dir+'/PyDtDAL.'+suffix
+      dtAIPydTarget = '#'+dir+'/PyDtAI.'+suffix
       dtInspectorPydTarget = '#'+dir+'/PyDtInspector.'+suffix
       dtHlaPydTarget = '#'+dir+'/PyDtHLA.'+suffix
       dtTerrainPydTarget = '#'+dir+'/PyDtTerrain.'+suffix
@@ -223,6 +234,7 @@ if CheckForBoost() :
                      dtAudioPydTarget, \
                      dtCharPydTarget, \
                      dtDALPydTarget, \
+                     dtAIPydTarget, \
                      dtInspectorPydTarget, \
                      dtTerrainPydTarget, \
                      dtUtilPydTarget ], \
@@ -231,6 +243,7 @@ if CheckForBoost() :
                      pythonDtAudioLib[0], \
                      pythonDtCharLib[0], \
                      pythonDtDALLib[0], \
+                     pythonDtAILib[0], \
                      pythonDtInspectorLib[0], \
                      pythonDtTerrainLib[0], \
                      pythonDtUtilLib[0] ] )
@@ -245,6 +258,7 @@ if CheckForBoost() :
                               pythonDtAudioLib[1:], \
                               pythonDtCharLib[1:], \
                               pythonDtDALLib[1:], \
+                              pythonDtAILib[1:], \
                               pythonDtInspectorLib[1:], \
                               pythonDtTerrainLib[1:], \
                               pythonDtUtilLib[1:] ] )

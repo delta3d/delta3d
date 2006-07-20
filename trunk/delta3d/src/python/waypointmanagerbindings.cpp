@@ -4,6 +4,7 @@
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include <dtCore/refptr.h>
+#include <dtCore/scene.h>
 #include <string>
 #include <map>
 using namespace boost::python;
