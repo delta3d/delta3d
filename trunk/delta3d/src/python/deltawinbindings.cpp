@@ -26,7 +26,10 @@ void initDeltaWinBindings()
    bool (*DeltaWinCSR1)(int,int,int,int) = &DeltaWin::ChangeScreenResolution;
    bool (*DeltaWinCSR2)(DeltaWin::Resolution) = &DeltaWin::ChangeScreenResolution;
 
-   void (DeltaWin::*GP1)( int&, int&, int&, int& ) = &DeltaWin::GetPosition;
+   // Need wrapper for GetPosition that do not use assignment by reference. Python's
+   // numeric types are immutable, and cannot have their values changed by reference.
+   //void (DeltaWin::*GP1)( int&, int&, int&, int& ) = &DeltaWin::GetPosition;
+   
    Keyboard* (DeltaWin::*GK1)() = &DeltaWin::GetKeyboard;
    Mouse* (DeltaWin::*GM1)() = &DeltaWin::GetMouse;
 
@@ -48,7 +51,7 @@ void initDeltaWinBindings()
       .def("SetWindowTitle", &DeltaWin::SetWindowTitle)
       .def("GetWindowTitle", &DeltaWin::GetWindowTitle, return_internal_reference<>())
       .def("SetPosition", &DeltaWin::SetPosition)
-      .def("GetPosition", GP1)
+      //.def("GetPosition", GP1)
       .def("GetKeyboard", GK1, return_internal_reference<>())
       .def("GetMouse", GM1, return_internal_reference<>())
       .def("SetKeyboard",&DeltaWin::SetKeyboard)

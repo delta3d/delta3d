@@ -1123,17 +1123,19 @@ void Transformable::SetCollisionMesh(osg::Node* node)
       mMeshVertices = new dVector3[mv.mFunctor.mVertices.size()];
       mMeshIndices = new int[mv.mFunctor.mTriangles.size()*3];
 
-      memcpy(
-         mMeshVertices,
-         &mv.mFunctor.mVertices.front(),
-         mv.mFunctor.mVertices.size()*sizeof(StridedVertex)
-         );
+      if( !mv.mFunctor.mVertices.empty() )
+      {
+         memcpy(  mMeshVertices,
+                  &mv.mFunctor.mVertices[0],
+                  mv.mFunctor.mVertices.size()*sizeof(StridedVertex) );
+      }
 
-      memcpy(
-         mMeshIndices,
-         &mv.mFunctor.mTriangles.front(),
-         mv.mFunctor.mTriangles.size()*sizeof(StridedTriangle)
-         );
+      if( !mv.mFunctor.mTriangles.empty() )
+      {
+         memcpy(  mMeshIndices,
+                  &mv.mFunctor.mTriangles[0],
+                  mv.mFunctor.mTriangles.size()*sizeof(StridedTriangle) );
+      }
 
       dGeomTriMeshDataBuildSimple(
          mTriMeshDataID,

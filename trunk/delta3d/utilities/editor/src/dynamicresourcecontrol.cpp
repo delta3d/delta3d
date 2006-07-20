@@ -351,8 +351,8 @@ namespace dtEditQt
     }
 
     /////////////////////////////////////////////////////////////////////////////////
-    void DynamicResourceControl::actorPropertyChanged(osg::ref_ptr<dtDAL::ActorProxy> proxy,
-        osg::ref_ptr<dtDAL::ActorProperty> property)
+    void DynamicResourceControl::actorPropertyChanged(dtCore::RefPtr<dtDAL::ActorProxy> proxy,
+        dtCore::RefPtr<dtDAL::ActorProperty> property)
     {
         // update our label
         if (temporaryEditOnlyTextLabel != NULL && proxy == this->proxy && property == myProperty) 

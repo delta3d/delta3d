@@ -25,7 +25,6 @@
 
 #include <QtGui/QWidget>
 #include <vector>
-#include <osg/ref_ptr>
 #include <dtCore/refptr.h>
 #include <dtDAL/actorproxy.h>
 #include "dtEditQt/typedefs.h"
@@ -76,7 +75,7 @@ namespace dtEditQt {
             /** 
             * When a new actor is created, we have to add it's classes to our class list.
             */
-            void onActorProxyCreated(proxyRefPtr proxy, bool forceNoAdjustments);
+            void onActorProxyCreated(ActorProxyRefPtr proxy, bool forceNoAdjustments);
 
         private:
             QGroupBox *resultsGroup();

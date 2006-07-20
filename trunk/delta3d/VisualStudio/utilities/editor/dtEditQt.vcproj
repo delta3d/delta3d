@@ -37,7 +37,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Producerd.lib ul_d.lib OpenThreadsWin32d.lib osgd.lib osgDBd.lib osgParticled.lib osgUtild.lib oded.lib osgTextd.lib js_d.lib isensed.lib dtDALd.lib dtCored.lib dtABCd.lib dtChard.lib dtAudiod.lib dtUtild.lib dtBSPd.lib dtGamed.lib xerces-c_2D.lib QtCored4.lib QtGuid4.lib qtmaind.lib QtOpenGLd4.lib"
+				AdditionalDependencies="Producerd.lib ul_d.lib OpenThreadsWin32d.lib osgd.lib osgDBd.lib osgParticled.lib osgUtild.lib oded.lib osgTextd.lib js_d.lib isensed.lib dtDALd.lib dtCored.lib dtABCd.lib dtAudiod.lib dtUtild.lib dtBSPd.lib dtGamed.lib xerces-c_2D.lib QtCored4.lib QtGuid4.lib qtmaind.lib QtOpenGLd4.lib"
 				OutputFile="..\..\..\bin\STAGEd.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib;$(QTDIR)\lib"
@@ -91,7 +91,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Producer.lib ul.lib OpenThreadsWin32.lib osg.lib osgDB.lib osgParticle.lib osgUtil.lib ode.lib osgText.lib js.lib isense.lib dtDAL.lib dtCore.lib dtABC.lib dtChar.lib dtAudio.lib dtUtil.lib dtBSP.lib dtGame.lib QtCore4.lib QtGui4.lib qtmain.lib QtOpenGL4.lib xerces-c_2.lib xerces-c_2D.lib"
+				AdditionalDependencies="Producer.lib ul.lib OpenThreadsWin32.lib osg.lib osgDB.lib osgParticle.lib osgUtil.lib ode.lib osgText.lib js.lib isense.lib dtDAL.lib dtCore.lib dtABC.lib dtAudio.lib dtUtil.lib dtBSP.lib dtGame.lib QtCore4.lib QtGui4.lib qtmain.lib QtOpenGL4.lib xerces-c_2.lib xerces-c_2D.lib"
 				OutputFile="..\..\..\bin\STAGE.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib;$(QTDIR)\lib"
@@ -152,9 +152,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\camera.h">
-			</File>
-			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\characterbrowser.h">
 			</File>
 			<File
 				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\dialoglistselection.h">
@@ -316,6 +313,9 @@
 				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\texturebrowser.h">
 			</File>
 			<File
+				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\typedefs.h">
+			</File>
+			<File
 				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\uiresources.h">
 			</File>
 			<File
@@ -359,9 +359,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\utilities\editor\src\moc\moc_actorsearcher.cpp">
-			</File>
-			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_characterbrowser.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\utilities\editor\src\moc\moc_dialoglistselection.cpp">
@@ -544,9 +541,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\utilities\editor\src\camera.cpp">
-			</File>
-			<File
-				RelativePath="..\..\..\utilities\editor\src\characterbrowser.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\utilities\editor\src\dialoglistselection.cpp">

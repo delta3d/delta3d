@@ -131,25 +131,37 @@ namespace dtUtil
    */
    inline void trim(std::string& toTrim)
    {
-      if(toTrim.empty())
-         return;
-
-      for (std::string::iterator i = toTrim.begin(); i != toTrim.end();)
+      if( toTrim.empty() )
       {
-         if (isspace(*i))
-               i = toTrim.erase(i);
-         else
-               break;
+         return;
       }
 
-      for (unsigned int i = (toTrim.size() - 1); i >= 0; --i)
+      // TODO: All this code should be replaced with STL algorithms
+      
+      for( std::string::iterator i = toTrim.begin(); i != toTrim.end(); )
       {
-         if (isspace(toTrim[i]))
-               //we can just erase from the end because
-               //it will shorted the part of the string already covered by the loop.
-               toTrim.erase(i);
+         if( isspace(*i) )
+         {
+            i = toTrim.erase(i);
+         }
          else
-               break;
+         {
+            break;
+         }
+      }
+
+      for( int i = (int(toTrim.size()) - 1); i >= 0; --i )
+      {
+         if( isspace(toTrim[i]) )
+         {
+            //we can just erase from the end because
+            //it will shorted the part of the string already covered by the loop.
+            toTrim.erase(i);
+         }
+         else
+         {
+            break;
+         }
       }
    }
 

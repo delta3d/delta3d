@@ -22,7 +22,6 @@
 #define DELTA_ACTOR_PLUGIN_REGISTRY
 
 #include <vector>
-#include <osg/ref_ptr>
 #include <dtUtil/objectfactory.h>
 #include <dtDAL/actortype.h>
 #include <dtDAL/actorproxy.h>
@@ -37,7 +36,7 @@ namespace dtDAL
     * object factory which knows how to build ActorProxies using
     * ActorTypes as the tool by which to do so.
     * @note
-    *      Registry objects should only be used with the osg::ref_ptr<>
+    *      Registry objects should only be used with the dtCore::RefPtr<>
     *      construct since they are reference counted objects.
     * @see ActorType
     * @see ActorProxy
@@ -53,7 +52,7 @@ namespace dtDAL
          ActorPluginRegistry(const std::string &name,
                            const std::string &desc = "") : mName(name), mDescription(desc)
          {
-            mActorFactory = new dtUtil::ObjectFactory<osg::ref_ptr<ActorType>, ActorProxy, ActorType::RefPtrComp>;
+            mActorFactory = new dtUtil::ObjectFactory<dtCore::RefPtr<ActorType>, ActorProxy, ActorType::RefPtrComp>;
          }
 
          /**
@@ -97,14 +96,14 @@ namespace dtDAL
          /**
           * Gets a list of actor types that this registry supports.
           */
-         void GetSupportedActorTypes(std::vector<osg::ref_ptr<ActorType> > &actors);
+         void GetSupportedActorTypes(std::vector<dtCore::RefPtr<ActorType> > &actors);
 
          /**
           * Checks to see if this registry supports the given actor type.
           * @param type The type to check support for.
           * @return True if supported, false otherwise.
           */
-         bool IsActorTypeSupported(osg::ref_ptr<ActorType> type);
+         bool IsActorTypeSupported(dtCore::RefPtr<ActorType> type);
 
          /**
           * Creates a new actor proxy based on the ActorType given.
@@ -113,7 +112,7 @@ namespace dtDAL
           * proxy object.
           * @throws ExceptionEnum::ObjectFactoryUnknownType
           */
-         osg::ref_ptr<ActorProxy> CreateActorProxy(ActorType& type);
+         dtCore::RefPtr<ActorProxy> CreateActorProxy(ActorType& type);
 
       protected:
          std::string mName;
@@ -124,7 +123,7 @@ namespace dtDAL
           * create proxy objects for each type.
           * @see ObjectFactory
           */
-         osg::ref_ptr<dtUtil::ObjectFactory<osg::ref_ptr<ActorType>,
+         dtCore::RefPtr<dtUtil::ObjectFactory<dtCore::RefPtr<ActorType>,
             ActorProxy,ActorType::RefPtrComp> > mActorFactory;
    };
 }

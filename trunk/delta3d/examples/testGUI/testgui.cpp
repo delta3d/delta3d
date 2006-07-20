@@ -245,10 +245,6 @@ int main( int argc, const char* argv[] )
 * Operating System cursor.  Otherwise we'll see two cursors at once.  
 * \skipline ShowCursor
 *
-* Now we can register some callback functions which will be trigger when widgets generate
-* Events.  We do this by using the dtGUI::ScriptModule.  First lets create a new one:
-* \skipline new ScriptModule()
-*
 * Now we can start registering some functions for CEGUI to call.  Here, we add two static 
 * functions and give them a string "name".  We can also use non-static member functions if
 * we want.  See the docs for dtGUI::ScriptModule::AddCallback for more information.  These

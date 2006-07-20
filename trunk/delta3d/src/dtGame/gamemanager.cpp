@@ -1057,7 +1057,7 @@ namespace dtGame
    {
       dtDAL::Map &map = dtDAL::Project::GetInstance().GetMap(mapName);
 
-      std::vector<osg::ref_ptr<dtDAL::ActorProxy> > proxies;
+      std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > proxies;
       map.GetAllProxies(proxies);
 
       //delete all actors after making sure the map loaded correctly.

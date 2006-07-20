@@ -21,8 +21,8 @@
 #ifndef DELTA_BASEINPUTCOMPONENT
 #define DELTA_BASEINPUTCOMPONENT
 
-#include "dtGame/gmcomponent.h"
-#include "dtGame/export.h"
+#include <dtGame/gmcomponent.h>
+#include <dtGame/export.h>
 #include <dtCore/keyboard.h>
 #include <dtCore/mouse.h>
 
@@ -220,7 +220,6 @@ namespace dtGame
          virtual ~BaseInputComponent() { }
 
       private:
-         //dtUtil::Log* mLogger;
          dtCore::RefPtr<InputComponentMouseListener> mMouseListener;
          dtCore::RefPtr<InputComponentKeyboardListener> mKeyboardListener;
    };
@@ -282,7 +281,8 @@ namespace dtGame
 
       private:
 
-         dtCore::RefPtr<dtGame::BaseInputComponent> mInputComp;
+         // This is not a RefPtr to prevent a circular reference with BaseInputComponent.
+         dtGame::BaseInputComponent* mInputComp;
    };
 
 
@@ -328,7 +328,8 @@ namespace dtGame
 
       private:
 
-         dtCore::RefPtr<dtGame::BaseInputComponent> mInputComp;
+         // This is not a RefPtr to prevent a circular reference with BaseInputComponent.
+         dtGame::BaseInputComponent* mInputComp;
    };
 
 }

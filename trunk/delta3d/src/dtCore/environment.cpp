@@ -695,3 +695,8 @@ void dtCore::Environment::SetRefLatLong( const osg::Vec2& latLong )
 {
    mRefLatLong = latLong;
 }
+
+void dtCore::Environment::SetOSGNode( osg::Node* pNode )
+{
+   mNode = pNode;
+}

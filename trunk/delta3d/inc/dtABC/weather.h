@@ -53,8 +53,9 @@ namespace dtABC
     * Then add the Weather's Environment to your Scene using 
     * Weather::GetEnvironment().
     * 
-    * Make sure to add your Drawables using Weather::AddDrawable().  This will
-    * ensure that the Drawables get affected by the fog and lighting.
+    * Make sure to add your Drawables using Weather::AddChild().  This will
+    * add the Drawable to the Weather's internal Environment, which will ensure
+    * that the Drawables get affected by the fog and lighting.
     */
    class DT_ABC_EXPORT Weather : public dtCore::Base
    {

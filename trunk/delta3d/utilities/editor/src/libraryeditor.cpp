@@ -44,7 +44,9 @@
 #include <osgDB/FileNameUtils>
 
 using namespace dtDAL;
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 using namespace std;
+/// @endcond
 
 enum { ERROR_LIB_NOT_LOADED = 0, ERROR_ACTORS_IN_LIB, ERROR_INVALID_LIB, ERROR_UNKNOWN };
 
@@ -211,7 +213,7 @@ namespace dtEditQt
                               tr("&Yes"), tr("&No"), QString::null, 1) == 0)
         {
             Map *curMap = EditorData::getInstance().getCurrentMap().get();
-            vector<osg::ref_ptr<ActorProxy> > proxies;
+            vector<dtCore::RefPtr<ActorProxy> > proxies;
             curMap->GetAllProxies(proxies);
             vector<string> loadedLibs = curMap->GetAllLibraries();
 
@@ -231,7 +233,7 @@ namespace dtEditQt
                         std::cout << "Proxy: " << proxies[j]->GetName() << " RefCount: " <<
                             proxies[j]->referenceCount() << std::endl;
 
-                        osg::ref_ptr<ActorType> type = &proxies[j]->GetActorType();
+                        dtCore::RefPtr<ActorType> type = &proxies[j]->GetActorType();
                         if(reg->IsActorTypeSupported(type))
                             ++numActorsInScene;
                     }

@@ -2,8 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "python/dtpython.h"
-#include "dtCore/inputdevice.h"
+#include <python/dtpython.h>
+#include <dtCore/inputdevice.h>
 
 using namespace boost::python;
 using namespace dtCore;
@@ -13,7 +13,11 @@ class ButtonListenerWrap : public ButtonListener, public wrapper<ButtonListener>
    public:   
       bool ButtonStateChanged(const Button* button, bool oldState, bool newState)
       {
-         return this->get_override("ButtonStateChanged")(button,oldState,newState);
+         #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+         return call<bool>( this->get_override("ButtonStateChanged").ptr(), button, oldState, newState );
+         #else
+         return this->get_override("ButtonStateChanged")( button, oldState, newState );
+         #endif
       }
 };
 
@@ -22,7 +26,11 @@ class AxisListenerWrap : public AxisListener, public wrapper<AxisListener>
    public:      
       bool AxisStateChanged(const Axis* axis, double oldState, double newState, double delta)
       {
-         return this->get_override("AxisStateChanged")(axis, oldState, newState, delta);
+         #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+         return call<bool>( this->get_override("AxisStateChanged").ptr(), axis, oldState, newState, delta );
+         #else
+         return this->get_override("AxisStateChanged")( axis, oldState, newState, delta );
+         #endif
       }
 };
 

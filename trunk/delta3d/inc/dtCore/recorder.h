@@ -214,7 +214,7 @@ namespace dtCore
         */
       void SaveFile(const std::string& filename)
       {
-         osg::ref_ptr<dtUtil::XercesWriter> writer = new dtUtil::XercesWriter();
+         dtCore::RefPtr<dtUtil::XercesWriter> writer = new dtUtil::XercesWriter();
          writer->CreateDocument( "RecordedFrames" );
          XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc = writer->GetDocument();
          XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* root = doc->getDocumentElement();

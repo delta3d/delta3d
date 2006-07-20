@@ -35,6 +35,8 @@ void GUIManager::InitializeGUI(dtCore::DeltaWin* dwin, dtGUI::BaseScriptModule* 
    mDrawable = new dtGUI::CEUIDrawable(dwin,sm);
 }
 
+// These functions not actually used, so it's #ifdef'd out for now to avoid linker warnings. -osb
+#if 0
 CEGUI::Scheme* GUIManager::LoadScheme(const std::string& file)
 {
    CEGUI::Scheme* scheme(0);
@@ -113,6 +115,7 @@ CEGUI::Window* GUIManager::LoadLayout(const std::string& file)
 
    return layoutwindow;
 }
+#endif // 0
 
 CEGUI::Imageset* GUIManager::CreateImageset(const std::string& name, void* buffer, int width, int height)
 {

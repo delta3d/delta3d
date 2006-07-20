@@ -27,7 +27,6 @@
 #include <QtGui/QTreeWidget>
 #include <QtGui/QTreeWidgetItem>
 #include <vector>
-#include <osg/ref_ptr>
 #include <dtDAL/actorproxy.h>
 #include "dtEditQt/typedefs.h"
 
@@ -51,7 +50,7 @@ namespace dtEditQt {
          * Constructor - showActions lets you indicate whether you should show the 
          * buttons for various behaviors such as select and goto.
          */
-        ActorResultsTreeItem(QTreeWidget *parent, osg::ref_ptr<dtDAL::ActorProxy> proxy);
+        ActorResultsTreeItem(QTreeWidget *parent, dtCore::RefPtr<dtDAL::ActorProxy> proxy);
 
         /**
          * Destructor
@@ -61,10 +60,10 @@ namespace dtEditQt {
         /**
          * Gets the actor proxy for this tree item
          */
-        osg::ref_ptr<dtDAL::ActorProxy> getProxy()  {  return myProxy;  }
+        dtCore::RefPtr<dtDAL::ActorProxy> getProxy()  {  return myProxy;  }
 
     private: 
-        osg::ref_ptr<dtDAL::ActorProxy> myProxy;
+        dtCore::RefPtr<dtDAL::ActorProxy> myProxy;
     };
 
 
@@ -117,12 +116,12 @@ namespace dtEditQt {
         /**
          * Add a vector of ActorProxies to the table. 
          */
-        void addProxies(std::vector<osg::ref_ptr<dtDAL::ActorProxy> > foundProxies);
+        void addProxies(std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > foundProxies);
 
         /** 
          * Add just a single ActorProxy to the table. Puts it at the end
          */
-        void addProxy(osg::ref_ptr<dtDAL::ActorProxy> myProxy, bool updateCount = true);
+        void addProxy(dtCore::RefPtr<dtDAL::ActorProxy> myProxy, bool updateCount = true);
 
         /**
          * Enable or disable the action buttons appropriately based 
@@ -169,7 +168,7 @@ namespace dtEditQt {
         /**
          * Remove an item from our search results if it's about to be destroyed
          */
-        void actorProxyAboutToBeDestroyed(proxyRefPtr proxy);
+        void actorProxyAboutToBeDestroyed(ActorProxyRefPtr proxy);
 
         /**
          * Handle the selection changed event in the tree table.  Should enable/disable buttons
@@ -181,7 +180,7 @@ namespace dtEditQt {
          * Change our selection if objects get selected somewhere else
          * Note - This slot occurs from EditorEvents.  And is separate from our internal method.
          */
-        void selectedActors(proxyRefPtrVector &actors);
+        void selectedActors(ActorProxyRefPtrVector &actors);
 
     private:
         /** 

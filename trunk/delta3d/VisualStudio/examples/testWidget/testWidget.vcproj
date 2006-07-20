@@ -33,6 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="dtUtild.lib dtCored.lib dtABCd.lib fltkd.lib osgd.lib Ws2_32.lib Comctl32.lib"
 				OutputFile="../../../bin/testWidgetd.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -84,6 +85,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="dtUtil.lib dtCore.lib dtABC.lib fltk.lib osg.lib Ws2_32.lib Comctl32.lib"
 				OutputFile="../../../bin/testWidget.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"

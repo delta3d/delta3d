@@ -25,10 +25,12 @@
 #include "splitgeode.h"
 
 using namespace dtBSP;
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 using namespace osg;
 using namespace osgDB;
 using namespace osgUtil;
 using namespace std;
+/// @endcond
 
 /**
  * A triangle obtained from the scene graph.

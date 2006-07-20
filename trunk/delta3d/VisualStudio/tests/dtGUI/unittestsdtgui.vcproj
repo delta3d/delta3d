@@ -23,7 +23,7 @@
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;NOMINMAX"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="2"
+				RuntimeLibrary="3"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -33,10 +33,11 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="cppunitd.lib osgd.lib dtGUId.lib dtCored.lib CEGUIBase_d.lib osgDBd.lib dtABCd.lib dtUtild.lib"
+				AdditionalDependencies="cppunitd.lib osgd.lib dtGUId.lib dtCored.lib CEGUIBase_d.lib dtABCd.lib dtUtild.lib"
 				OutputFile="../../../tests/UnitTestsDtGUId.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
+				IgnoreDefaultLibraryNames="libcd;libcmtd"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
 				SubSystem="1"
@@ -87,10 +88,11 @@ set DELTA_DATA=$(DELTA_DATA)
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="cppunit.lib osg.lib dtGUI.lib dtCore.lib CEGUIBase.lib osgDB.lib dtABC.lib dtUtil.lib"
+				AdditionalDependencies="cppunit.lib osg.lib dtGUI.lib dtCore.lib CEGUIBase.lib dtABC.lib dtUtil.lib"
 				OutputFile="../../../tests/UnitTestsDtGUI.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
+				IgnoreDefaultLibraryNames="libc;libcmt"
 				GenerateDebugInformation="FALSE"
 				SubSystem="1"
 				OptimizeReferences="2"

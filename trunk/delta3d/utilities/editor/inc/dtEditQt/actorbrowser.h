@@ -25,7 +25,6 @@
 
 #include <QtGui/QWidget>
 #include <vector>
-#include <osg/ref_ptr>
 
 #include <dtCore/refptr.h>
 #include <dtUtil/tree.h>

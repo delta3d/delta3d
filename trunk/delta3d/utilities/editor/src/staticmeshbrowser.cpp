@@ -376,14 +376,14 @@ namespace dtEditQt
             * implemented as a quick and dirty solution to assigning meshes to an
             * actor of this type.
             */
-            osg::ref_ptr<dtDAL::ActorType> meshActor =
+            dtCore::RefPtr<dtDAL::ActorType> meshActor =
                 dtDAL::LibraryManager::GetInstance().FindActorType("dtcore","Static Mesh").get();
 
             // create our new actor proxy from the mesh actor type that was
             // found by the results of our hard coded search above.
             if(meshActor!=NULL)
             {
-                osg::ref_ptr<dtDAL::ActorProxy> proxy =
+                dtCore::RefPtr<dtDAL::ActorProxy> proxy =
                         dtDAL::LibraryManager::GetInstance().CreateActorProxy(*meshActor).get();
 
                 // check to make sure both the mesh actor and the proxy are valid.
@@ -401,7 +401,7 @@ namespace dtEditQt
                     }
 
                     // add the new proxy to the map
-                    osg::ref_ptr<dtDAL::Map> mapPtr = EditorData::getInstance().getCurrentMap();
+                    dtCore::RefPtr<dtDAL::Map> mapPtr = EditorData::getInstance().getCurrentMap();
                     if (mapPtr.valid())
                     {
                         mapPtr->AddProxy(*proxy);
@@ -414,7 +414,7 @@ namespace dtEditQt
                     EditorEvents::getInstance().emitEndChangeTransaction();
 
                     // Now, let the world that it should select the new actor proxy.
-                    std::vector<osg::ref_ptr<dtDAL::ActorProxy> > actors;
+                    std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > actors;
 
                     actors.push_back(proxy);
                     EditorEvents::getInstance().emitActorsSelected(actors);

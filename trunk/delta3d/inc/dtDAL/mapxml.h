@@ -34,7 +34,6 @@
 #include <xercesc/sax2/SAX2XMLReader.hpp>
 
 #include <osg/Referenced>
-#include <osg/ref_ptr>
 #include <dtUtil/log.h>
 #include <dtCore/uniqueid.h>
 
@@ -47,6 +46,7 @@
 
 // Default iimplementation of char_traits<XMLCh>, needed for gcc3.3
 #if (__GNUC__ == 3 && __GNUC_MINOR__ <= 3)
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace std
 {
    template<>
@@ -78,6 +78,7 @@ namespace std
 
    };
 }
+/// @endcond
 #endif
 
 namespace xerces_dt = XERCES_CPP_NAMESPACE;
@@ -332,7 +333,7 @@ namespace dtDAL
          MapContentHandler(const MapContentHandler&);
          MapContentHandler& operator=(const MapContentHandler&);
 
-         osg::ref_ptr<Map> mMap;
+         dtCore::RefPtr<Map> mMap;
 
          bool mInMap;
          bool mInHeader;
@@ -400,7 +401,7 @@ namespace dtDAL
       public:
 
          /**
-          * Completely parses a map file.  Be sure store an osg::ref_ptr to the map immediately, otherwise
+          * Completely parses a map file.  Be sure store an dtCore::RefPtr to the map immediately, otherwise
           * if the parser is deleted or another map file is parse, the map will get deleted.
           * @param path The file path to the map.
           * @param handler The content handler to be used when parsing.

@@ -28,7 +28,11 @@ class BaseABCWrap : public BaseABC, public wrapper<BaseABC>
       {
          if( override Config = this->get_override("Config") )
          {
-            Config();
+             #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+             call<void>( Config.ptr() );
+             #else
+             Config();
+             #endif
          }
          else
          {
@@ -45,7 +49,11 @@ class BaseABCWrap : public BaseABC, public wrapper<BaseABC>
       {
          if( override Quit = this->get_override("Quit") )
          {
+            #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+            call<void>( Quit.ptr() );
+            #else
             Quit();
+            #endif
          }
          else
          {
@@ -62,7 +70,11 @@ class BaseABCWrap : public BaseABC, public wrapper<BaseABC>
       {
          if( override AddDrawable = this->get_override("AddDrawable") )
          {
+            #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+            call<void>( AddDrawable.ptr(), drawable );
+            #else
             AddDrawable( drawable );
+            #endif
          }
          else
          {
@@ -79,7 +91,11 @@ class BaseABCWrap : public BaseABC, public wrapper<BaseABC>
       {
          if( override RemoveDrawable = this->get_override("RemoveDrawable") )
          {
+            #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+            call<void>( RemoveDrawable.ptr(), drawable );
+            #else
             RemoveDrawable(drawable);
+            #endif
          }
          else
          {
@@ -96,15 +112,27 @@ class BaseABCWrap : public BaseABC, public wrapper<BaseABC>
       
       virtual void PreFrame(const double deltaFrameTime)
       {
+         #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+         call<void>( this->get_override("PreFrame").ptr(), deltaFrameTime );
+         #else
          this->get_override("PreFrame")(deltaFrameTime);
+         #endif
       }
       virtual void Frame(const double deltaFrameTime)
       {
+         #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+         call<void>( this->get_override("Frame").ptr(), deltaFrameTime );
+         #else
          this->get_override("Frame")(deltaFrameTime);
+         #endif
       }
       virtual void PostFrame(const double deltaFrameTime)
       {
+         #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+         call<void>( this->get_override("PostFrame").ptr(), deltaFrameTime );
+         #else
          this->get_override("PostFrame")(deltaFrameTime);
+         #endif
       }
 };
 

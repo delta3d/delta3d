@@ -127,8 +127,8 @@ namespace dtEditQt
          */
         void clearPressed();
 
-        void actorPropertyChanged(proxyRefPtr proxy,
-            propertyRefPtr property);
+        void actorPropertyChanged(ActorProxyRefPtr proxy,
+            ActorPropertyRefPtr property);
 
     protected:
 

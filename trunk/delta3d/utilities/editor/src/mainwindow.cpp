@@ -461,8 +461,8 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void MainWindow::onActorPropertyChanged(osg::ref_ptr<dtDAL::ActorProxy> proxy,
-            osg::ref_ptr<dtDAL::ActorProperty> property)
+    void MainWindow::onActorPropertyChanged(dtCore::RefPtr<dtDAL::ActorProxy> proxy,
+            dtCore::RefPtr<dtDAL::ActorProperty> property)
     {
         if (!dtDAL::Project::GetInstance().IsContextValid())
             return;
@@ -513,21 +513,21 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void MainWindow::onActorProxyDestroyed(osg::ref_ptr<dtDAL::ActorProxy> proxy)
+    void MainWindow::onActorProxyDestroyed(dtCore::RefPtr<dtDAL::ActorProxy> proxy)
     {
         EditorData::getInstance().getCurrentMap()->SetModified(true);
         updateWindowTitle();
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void MainWindow::onActorProxyNameChanged(osg::ref_ptr<dtDAL::ActorProxy> proxy, std::string oldName)
+    void MainWindow::onActorProxyNameChanged(dtCore::RefPtr<dtDAL::ActorProxy> proxy, std::string oldName)
     {
         EditorData::getInstance().getCurrentMap()->SetModified(true);
         updateWindowTitle();
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void MainWindow::onActorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy> proxy, bool forceNoAdjustments)
+    void MainWindow::onActorProxyCreated(dtCore::RefPtr<dtDAL::ActorProxy> proxy, bool forceNoAdjustments)
     {
         EditorData::getInstance().getCurrentMap()->SetModified(true);
         updateWindowTitle();
@@ -579,15 +579,15 @@ namespace dtEditQt
             this, SLOT(onMapPropertyChanged()));
         connect(editorActions.actionWindowsResetWindows, SIGNAL(triggered()),
             this, SLOT(onResetWindows()));
-        connect(&EditorEvents::getInstance(), SIGNAL(actorProxyDestroyed(proxyRefPtr)),
-            this, SLOT(onActorProxyDestroyed(proxyRefPtr)));
-        connect(&EditorEvents::getInstance(), SIGNAL(actorProxyCreated(proxyRefPtr, bool)),
-            this, SLOT(onActorProxyCreated(proxyRefPtr, bool)));
+        connect(&EditorEvents::getInstance(), SIGNAL(actorProxyDestroyed(ActorProxyRefPtr)),
+            this, SLOT(onActorProxyDestroyed(ActorProxyRefPtr)));
+        connect(&EditorEvents::getInstance(), SIGNAL(actorProxyCreated(ActorProxyRefPtr, bool)),
+            this, SLOT(onActorProxyCreated(ActorProxyRefPtr, bool)));
         connect(&EditorEvents::getInstance(),
-            SIGNAL(actorPropertyChanged(proxyRefPtr, propertyRefPtr)),
-            this, SLOT(onActorPropertyChanged(proxyRefPtr, propertyRefPtr)));
-        connect(&EditorEvents::getInstance(), SIGNAL(proxyNameChanged(proxyRefPtr, std::string)), 
-           this, SLOT(onActorProxyNameChanged(proxyRefPtr, std::string)));
+            SIGNAL(actorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)),
+            this, SLOT(onActorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)));
+        connect(&EditorEvents::getInstance(), SIGNAL(proxyNameChanged(ActorProxyRefPtr, std::string)), 
+           this, SLOT(onActorProxyNameChanged(ActorProxyRefPtr, std::string)));
     }
 
     ///////////////////////////////////////////////////////////////////////////////

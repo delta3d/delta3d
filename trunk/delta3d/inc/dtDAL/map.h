@@ -26,7 +26,6 @@
 #include <map>
 
 #include <osg/Referenced>
-#include <osg/ref_ptr>
 
 #include "dtDAL/actorproxy.h"
 #include "dtDAL/export.h"
@@ -171,7 +170,7 @@ namespace dtDAL
           * @param placeable set to Placeable to search for only proxys that return true for isPlaceable,
           *                  NonPlaceable for false, or Either for both.
           */
-         void FindProxies(std::vector<osg::ref_ptr<ActorProxy> >& container,
+         void FindProxies(std::vector<dtCore::RefPtr<ActorProxy> >& container,
                           const std::string& name,
                           const std::string& category = std::string(""),
                           const std::string& typeName = std::string(""),
@@ -189,7 +188,7 @@ namespace dtDAL
           * @param placeable set to Placeable to search for only proxys that return true for isPlaceable,
           *                  NonPlaceable for false, or Either for both.
           */
-         void FindProxies(std::vector<osg::ref_ptr<const ActorProxy> >& container,
+         void FindProxies(std::vector<dtCore::RefPtr<const ActorProxy> >& container,
                           const std::string& name, const std::string& category = std::string(""),
                           const std::string& typeName = std::string(""),
                           const std::string& className = std::string(""),
@@ -198,12 +197,12 @@ namespace dtDAL
          /**
           * @return a vector of ref pointers to the all the proxies in the map.
           */
-         const std::map<dtCore::UniqueId, osg::ref_ptr<ActorProxy> >& GetAllProxies() const { return mProxyMap; }
+         const std::map<dtCore::UniqueId, dtCore::RefPtr<ActorProxy> >& GetAllProxies() const { return mProxyMap; }
 
          /**
           * @return fills a vector with ref pointers to all the proxies in the map.
           */
-         void GetAllProxies(std::vector<osg::ref_ptr<ActorProxy> >& container) { FindProxies(container, ""); }
+         void GetAllProxies(std::vector<dtCore::RefPtr<ActorProxy> >& container) { FindProxies(container, ""); }
 
          /**
           * Adds a new proxy to the map.
@@ -390,7 +389,7 @@ namespace dtDAL
       
        private:
          bool mModified;
-         //typedef std::multimap<std::string, osg::ref_ptr<ActorProxy> > ProxiesByClassMap;
+         //typedef std::multimap<std::string, dtCore::RefPtr<ActorProxy> > ProxiesByClassMap;
          std::string mName;
          //The name set when it was created/last saved.
          std::string mSavedName;
@@ -403,10 +402,10 @@ namespace dtDAL
          std::string mCopyright;
          std::string mCreateDateTime;
 
-         osg::ref_ptr<dtDAL::ActorProxy> mEnvActor;
+         dtCore::RefPtr<dtDAL::ActorProxy> mEnvActor;
 
          //ProxiesByClassMap proxiesByClass;
-         std::map<dtCore::UniqueId, osg::ref_ptr<ActorProxy> > mProxyMap;
+         std::map<dtCore::UniqueId, dtCore::RefPtr<ActorProxy> > mProxyMap;
 
          std::map<std::string, std::string> mLibraryVersionMap;
          std::vector<std::string> mLibraryOrder;

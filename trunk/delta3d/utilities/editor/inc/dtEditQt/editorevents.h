@@ -24,7 +24,6 @@
 
 #include <QtCore/QObject>
 #include <osg/Referenced>
-#include <osg/ref_ptr>
 #include <vector>
 #include "dtDAL/actorproxy.h"
 #include "dtDAL/actorproperty.h"
@@ -59,13 +58,13 @@ namespace dtEditQt
          * An actor(s) was selected in the viewport.  This event should cause other UI elements to
          * update if they do anything with the current selected object.
          */
-        void emitActorsSelected(proxyRefPtrVector &actors);
+        void emitActorsSelected(ActorProxyRefPtrVector &actors);
 
         /**
          * All the viewports should center on this actor.  Each visible should maintain
          * their current focus.
          */
-        void emitGotoActor(proxyRefPtr actor);
+        void emitGotoActor(ActorProxyRefPtr actor);
 
         /**
          * A new ActorProxy was created in the UI.  Anybody that needs to know about the new object
@@ -77,7 +76,7 @@ namespace dtEditQt
          * from positioning an object that was created by undoing a delete event in front of the camera.
          * @note The forceNoAdjustments flag is no longer really used.  It has value, but isn't currently used.
          */
-        void emitActorProxyCreated(proxyRefPtr, bool forceNoAdjustments);
+        void emitActorProxyCreated(ActorProxyRefPtr, bool forceNoAdjustments);
 
         /**
          * An ActorProxy is about to be destroyed.  The user has previously selected an object and
@@ -86,7 +85,7 @@ namespace dtEditQt
          * delete message (below).
          * @param proxy The proxy that is about to be destroyed is sent with the signal.
          */
-        void emitActorProxyAboutToBeDestroyed(proxyRefPtr proxy);
+        void emitActorProxyAboutToBeDestroyed(ActorProxyRefPtr proxy);
 
         /**
          * An ActorProxy has been destroyed.  The user or some code has deleted it.
@@ -95,7 +94,7 @@ namespace dtEditQt
          * If you want that, then trap the about to be destroyed message above.
          * @param proxy The proxy that is about to be destroyed is sent with the signal.
          */
-        void emitActorProxyDestroyed(proxyRefPtr proxy);
+        void emitActorProxyDestroyed(ActorProxyRefPtr proxy);
 
         /**
          * This event is sent after the UI is basically initialized.  Elements should listen for
@@ -126,7 +125,7 @@ namespace dtEditQt
         /**
          * This is emitted when the user edits the name in the property editor.
          */
-        void emitProxyNameChanged(proxyRefPtr proxy, std::string oldName);
+        void emitProxyNameChanged(ActorProxyRefPtr proxy, std::string oldName);
 
         /**
          * The user has modified the passed in property on the passed in proxy.  There are
@@ -134,15 +133,15 @@ namespace dtEditQt
          * is valid and that it is different than what it was before.  NULL may be valid in some
          * cases.
          */
-        void emitActorPropertyChanged(proxyRefPtr proxy,
-            propertyRefPtr property);
+        void emitActorPropertyChanged(ActorProxyRefPtr proxy,
+            ActorPropertyRefPtr property);
 
         /**
          * A property is about to be changed.  This message holds the old and new toString() 
          * values of the property.  It is primarily used by the undo process.
          */
-        void emitActorPropertyAboutToChange(proxyRefPtr proxy,
-            propertyRefPtr property, std::string oldValue, std::string newValue);
+        void emitActorPropertyAboutToChange(ActorProxyRefPtr proxy,
+            ActorPropertyRefPtr property, std::string oldValue, std::string newValue);
 
 
         /**
@@ -192,19 +191,19 @@ namespace dtEditQt
         void emitEditorPreferencesChanged();
 
     signals:
-        void selectedActors(proxyRefPtrVector &actors);
-        void gotoActor(proxyRefPtr actor);
-        void actorProxyCreated(proxyRefPtr proxy, bool forceNoAdjustments);
-        void actorProxyAboutToBeDestroyed(proxyRefPtr proxy);
-        void actorProxyDestroyed(proxyRefPtr proxy);
+        void selectedActors(ActorProxyRefPtrVector &actors);
+        void gotoActor(ActorProxyRefPtr actor);
+        void actorProxyCreated(ActorProxyRefPtr proxy, bool forceNoAdjustments);
+        void actorProxyAboutToBeDestroyed(ActorProxyRefPtr proxy);
+        void actorProxyDestroyed(ActorProxyRefPtr proxy);
         void editorInitiationEvent();
         void projectChanged();
         void currentMapChanged();
         void viewportsChanged();
-        void actorPropertyChanged(proxyRefPtr proxy, propertyRefPtr property);
-        void actorPropertyAboutToChange(proxyRefPtr proxy,
-            propertyRefPtr property, std::string oldValue, std::string newValue);
-        void proxyNameChanged(proxyRefPtr proxy, std::string oldName);
+        void actorPropertyChanged(ActorProxyRefPtr proxy, ActorPropertyRefPtr property);
+        void actorPropertyAboutToChange(ActorProxyRefPtr proxy,
+            ActorPropertyRefPtr property, std::string oldValue, std::string newValue);
+        void proxyNameChanged(ActorProxyRefPtr proxy, std::string oldName);
         void beginChangeTransaction();
         void endChangeTransaction();
         void mapLibraryImported();
@@ -220,7 +219,7 @@ namespace dtEditQt
         EditorEvents(const EditorEvents &rhs) { }
         virtual ~EditorEvents();
 
-        static osg::ref_ptr<EditorEvents> instance;
+        static dtCore::RefPtr<EditorEvents> instance;
     };
 
 }

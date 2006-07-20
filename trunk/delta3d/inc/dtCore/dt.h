@@ -95,7 +95,6 @@ namespace dtCore
 #undef _AUTOLIBNAME8
 #undef _AUTOLIBNAME10
 #undef _AUTOLIBNAME11
-#undef _AUTOLIBNAME12
 #undef _AUTOLIBNAME13
 #undef _AUTOLIBNAME14
 #undef _AUTOLIBNAME18
@@ -139,7 +138,6 @@ namespace dtCore
 
 #define _AUTOLIBNAME3  "winmm.lib"
 
-#define _AUTOLIBNAME12 "opcode.lib"
 #define _AUTOLIBNAME14 "opengl32.lib"
 #define _AUTOLIBNAME19 "openal32.lib"
 #define _AUTOLIBNAME20 "alut.lib"
@@ -156,7 +154,6 @@ namespace dtCore
    #pragma message( "Will automatically link with " _AUTOLIBNAME8 )
    #pragma message( "Will automatically link with " _AUTOLIBNAME10 )
    #pragma message( "Will automatically link with " _AUTOLIBNAME11 )
-   #pragma message( "Will automatically link with " _AUTOLIBNAME12 )
    #pragma message( "Will automatically link with " _AUTOLIBNAME13 )
    #pragma message( "Will automatically link with " _AUTOLIBNAME14 )
    #pragma message( "Will automatically link with " _AUTOLIBNAME18 )
@@ -178,7 +175,6 @@ namespace dtCore
 #pragma comment(lib, _AUTOLIBNAME8)
 #pragma comment(lib, _AUTOLIBNAME10)
 #pragma comment(lib, _AUTOLIBNAME11)
-#pragma comment(lib, _AUTOLIBNAME12)
 #pragma comment(lib, _AUTOLIBNAME13)
 #pragma comment(lib, _AUTOLIBNAME14)
 #pragma comment(lib, _AUTOLIBNAME18)

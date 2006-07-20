@@ -47,7 +47,14 @@
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/transformableactorproxy.h>
 
-#include <time.h>
+#include <ctime>
+
+// TODO: replace this with a platform-independant wrapper
+#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
+   #ifndef snprintf
+      #define snprintf _snprintf
+   #endif // snprintf
+#endif // WIN32
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_ENUM(ARRHUDException);
@@ -75,6 +82,44 @@ TestAARHUD::TestAARHUD(dtCore::DeltaWin *win, dtGame::ClientGameManager &clientG
    mTaskComponent(&taskComponent),
    mServerLoggerComponent(&serverLogger),
    mWin(win),
+   mMainWindow(NULL),
+   mGUI(NULL),
+   mHUDOverlay(NULL),
+   mHelpOverlay(NULL),
+   mStateText(NULL),
+   mSimTimeText(NULL),
+   mSpeedFactorText(NULL),
+   mNumMessagesText(NULL),
+   mRecordDurationText(NULL),
+   mNumTagsText(NULL),
+   mLastTagText(NULL),
+   mNumFramesText(NULL),
+   mLastFrameText(NULL),
+   mCurLogText(NULL),
+   mCurMapText(NULL),
+   mFirstTipText(NULL),
+   mSecondTipText(NULL),
+   mHelpTipText(NULL),
+   mHelp1Text(NULL),
+   mHelp2Text(NULL),
+   mHelp3Text(NULL),
+   mHelp4Text(NULL),
+   mHelp5Text(NULL),
+   mHelp6Text(NULL),
+   mHelp7Text(NULL),
+   mHelp8Text(NULL),
+   mHelp9Text(NULL),
+   mHelp10Text(NULL),
+   mHelp11Text(NULL),
+   mHelp12Text(NULL),
+   mHelp13Text(NULL),
+   mHelp14Text(NULL),
+   mHelp15Text(NULL),
+   mHelp16Text(NULL),
+   mHelp17Text(NULL),
+   mHelp18Text(NULL),
+   mTasksHeaderText(NULL),
+   mTaskTextList(),
    mRightTextXOffset(180.0f),
    mTextYTopOffset(10.0f),
    mTextYSeparation(2.0f),
@@ -86,46 +131,7 @@ TestAARHUD::TestAARHUD(dtCore::DeltaWin *win, dtGame::ClientGameManager &clientG
 //////////////////////////////////////////////////////////////////////////
 TestAARHUD::~TestAARHUD()
 {
-   delete mStateText;
-   delete mSimTimeText;
-   delete mSpeedFactorText;
-   delete mNumMessagesText;
-   delete mRecordDurationText;
-   delete mNumTagsText;
-   delete mLastTagText;
-   delete mNumFramesText;
-   delete mLastFrameText;
-   delete mCurLogText;
-   delete mCurMapText;
-
-   for (int i = mTaskTextList.size() - 1; i > 0; i --)
-   {
-      CEGUI::StaticText *taskText = mTaskTextList[i];
-      delete taskText;
-   }
-
-   delete mFirstTipText;
-   delete mSecondTipText;
-
-   delete mHelpTipText;
-   delete mHelp1Text;
-   delete mHelp2Text;
-   delete mHelp3Text;
-   delete mHelp4Text;
-   delete mHelp5Text;
-   delete mHelp6Text;
-   delete mHelp7Text;
-   delete mHelp8Text;
-   delete mHelp9Text;
-   delete mHelp10Text;
-   delete mHelp11Text;
-   delete mHelp12Text;
-   delete mHelp13Text;
-   delete mHelp14Text;
-   delete mHelp15Text;
-   delete mHelp16Text;
-   delete mHelp17Text;
-   delete mHelp18Text;
+   mGUI->ShutdownGUI();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -133,17 +139,9 @@ void TestAARHUD::ProcessMessage(const dtGame::Message& message)
 {
    if (message.GetMessageType() == dtGame::MessageType::TICK_LOCAL)
    {
-      //const dtGame::TickMessage &tickMessage = static_cast<const dtGame::TickMessage&>(message);
       TickHUD();
    }
 }
-
-//static bool OutputHandler(const CEGUI::EventArgs &e)
-//{
-   //CEGUI::Window *w = (CEGUI::Window*)((const CEGUI::WindowEventArgs&)e).window;
-   //std::cout << "TEST IN OUTPUTHANDLER" << std::endl;
-//   return true;
-//}
 
 //////////////////////////////////////////////////////////////////////////
 void TestAARHUD::SetupGUI(dtCore::DeltaWin *win)
@@ -338,7 +336,7 @@ void TestAARHUD::SetupGUI(dtCore::DeltaWin *win)
 void TestAARHUD::TickHUD()
 {
    int x(0), y(0), w(0), h(0);
-   mWin->GetPosition(&x, &y, &w, &h);
+   mWin->GetPosition(x, y, w, h);
    float curYPos;
 
    if (*mHUDState != HUDState::HELP)
@@ -507,7 +505,7 @@ void TestAARHUD::UpdateHighDetailData(int baseWidth, float &curYPos)
 }
 
 //////////////////////////////////////////////////////////////////////////
-int TestAARHUD::RecursivelyAddTasks(std::string indent, int curIndex,
+int TestAARHUD::RecursivelyAddTasks(const std::string &indent, int curIndex,
                                     const dtActors::TaskActorProxy *taskProxy, int &numCompleted)
 {
    char clin[HUDCONTROLMAXTEXTSIZE];
@@ -731,4 +729,3 @@ CEGUI::StaticText * TestAARHUD::CreateText(const std::string &name, CEGUI::Stati
 
    return result;
 }
-

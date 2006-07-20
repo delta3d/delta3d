@@ -21,8 +21,8 @@
 #ifndef DELTA_TEXTURESHADERPARAMETER
 #define DELTA_TEXTURESHADERPARAMETER
 
-#include "dtCore/shaderparameter.h"
-#include "dtCore/export.h"
+#include <dtCore/shaderparameter.h>
+#include <dtCore/export.h>
 
 #include <osg/Texture>
 
@@ -225,6 +225,13 @@ namespace dtCore
          const TextureSourceType *mSourceType;
          dtCore::RefPtr<osg::Texture> mTextureObject;
          std::string mTexturePath;
+
+         // Disallowed to prevent compile errors on VS2003. It apparently
+         // creates this functions even if they are not used, and if
+         // this class is forward declared, these implicit functions will
+         // cause compiler errors for missing calls to "ref".
+         TextureShaderParameter& operator=( const TextureShaderParameter& ); 
+         TextureShaderParameter( const TextureShaderParameter& );
    };
 }
 

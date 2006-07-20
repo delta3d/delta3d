@@ -21,8 +21,8 @@
 #ifndef DELTA_TEXTURE2DSHADERPARAMETER
 #define DELTA_TEXTURE2DSHADERPARAMETER
 
-#include "dtCore/textureshaderparameter.h"
-#include "dtCore/export.h"
+#include <dtCore/textureshaderparameter.h>
+#include <dtCore/export.h>
 
 namespace dtCore
 {
@@ -63,6 +63,15 @@ namespace dtCore
           * Destroys the texture parameter.
           */
          virtual ~Texture2DShaderParameter();
+
+      private:
+
+         // Disallowed to prevent compile errors on VS2003. It apparently
+         // creates this functions even if they are not used, and if
+         // this class is forward declared, these implicit functions will
+         // cause compiler errors for missing calls to "ref".
+         Texture2DShaderParameter& operator=( const Texture2DShaderParameter& ); 
+         Texture2DShaderParameter( const Texture2DShaderParameter& );
    };
 }
 

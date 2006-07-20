@@ -33,18 +33,22 @@
 #include <osg/CopyOp>
 #include <osg/Node>                         //for member
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace CEGUI
 {
    class System;
    class Renderer;
    class Window;
 }
+/// @endcond
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
 {
    class MatrixTransform;
    class Projection;
 }
+/// @endcond
 
 namespace dtCore
 {

@@ -27,8 +27,10 @@
 #include <boost/python/copy_non_const_reference.hpp>
 #include <python/heldptr.h>
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 using namespace osg;
 using namespace boost::python;
+/// @endcond
 
 namespace {
 

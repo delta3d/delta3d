@@ -48,9 +48,9 @@ _CRTIMP extern int errno;
 #include <osg/Notify>
 #include <stack>
 
-#include "dtUtil/fileutils.h"
+#include <dtUtil/fileutils.h>
 #include <dtCore/globals.h>
-#include "dtUtil/stringutils.h"
+#include <dtUtil/stringutils.h>
 
 #include <string.h>
 #include <sys/types.h>
@@ -232,10 +232,15 @@ namespace dtUtil
                char buffer[4096]; 
                while (i<tagStat.st_size)
                {
-                  int readCount = fread(buffer, 1, 4096, pSrcFile );
+                  size_t readCount = fread(buffer, 1, 4096, pSrcFile );
                   if (readCount > 0) 
                   {
-                     fwrite(buffer, 1, readCount, pDestFile );
+                     size_t numWritten = fwrite(buffer, 1, readCount, pDestFile );
+                     if(numWritten<readCount)
+                     {
+                        EXCEPT(FileExceptionEnum::IOException,
+                               std::string("Unable to write to destinate file: \"") + destFile + "\"");
+                     }
                      i += readCount;
                   }
                }
@@ -386,7 +391,12 @@ namespace dtUtil
          EXCEPT(FileExceptionEnum::FileNotFound, std::string("Cannot open directory ") + path);
       }
       char buf[512];
-      getcwd(buf, 512);
+      char* bufAddress = getcwd(buf, 512);
+      if(buf != bufAddress)
+      {
+         EXCEPT( FileExceptionEnum::IOException, std::string("Cannot get current working directory") );         
+      }
+      
       mCurrentDirectory = buf;
 
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
@@ -439,7 +449,11 @@ namespace dtUtil
             EXCEPT(FileExceptionEnum::FileNotFound, std::string("Cannot open directory ") + relativePath);
          }
          char buf[512];
-         getcwd(buf, 512);
+         char* bufAddress = getcwd(buf, 512);
+         if( bufAddress != buf )
+         {
+            EXCEPT( FileExceptionEnum::IOException, std::string("Cannot get current working directory") );
+         }
          result = buf;
       }
       catch (const dtUtil::Exception& ex)

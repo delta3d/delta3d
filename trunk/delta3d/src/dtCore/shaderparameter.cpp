@@ -77,5 +77,16 @@ namespace dtCore
       if (mParentShader != NULL)
          mParentShader->SetDirty(flag);
    }
+   
+   ///////////////////////////////////////////////////////////////////////////////
+   void ShaderParameter::SetParentShader(Shader *shader)
+   {
+      mParentShader = shader;
+   }
 
+   ///////////////////////////////////////////////////////////////////////////////
+   void ShaderParameter::SetUniformParam(osg::Uniform &uniform)
+   {
+      mUniform = &uniform;
+   }
 }

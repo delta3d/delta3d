@@ -23,7 +23,6 @@
 #define DELTA_PROPERTY_EDITOR
 
 #include <QtGui/QDockWidget>
-#include <osg/ref_ptr>
 #include <vector>
 
 #include <dtUtil/objectfactory.h>
@@ -75,17 +74,17 @@ namespace dtEditQt
         /**
         * Handles the actor selection changed event message from EditorEvents
         */
-        void handleActorsSelected(proxyRefPtrVector &actors);
+        void handleActorsSelected(ActorProxyRefPtrVector &actors);
 
-        void actorPropertyChanged(proxyRefPtr proxy,
-            propertyRefPtr property);
+        void actorPropertyChanged(ActorProxyRefPtr proxy,
+            ActorPropertyRefPtr property);
 
-        void proxyNameChanged(proxyRefPtr proxy, std::string oldName);
+        void proxyNameChanged(ActorProxyRefPtr proxy, std::string oldName);
 
     private:
 
         // list of what the editor thinks is the last known selected actors
-        std::vector <osg::ref_ptr<dtDAL::ActorProxy> > selectedActors;
+        std::vector <dtCore::RefPtr<dtDAL::ActorProxy> > selectedActors;
 
         //QGroupBox *actorInfoBox;
         QString baseGroupBoxName;
@@ -98,7 +97,7 @@ namespace dtEditQt
         DynamicGroupControl *rootProperty;
 
         // the dynamic control factory can create objects for each type.
-        osg::ref_ptr<dtUtil::ObjectFactory<dtDAL::DataType *, DynamicAbstractControl> > controlFactory;
+        dtCore::RefPtr<dtUtil::ObjectFactory<dtDAL::DataType *, DynamicAbstractControl> > controlFactory;
 
         // this is a tree of property group names which were expanded.  It is used
         // when we change selected actors.  We walk the property tree and look for
@@ -125,7 +124,7 @@ namespace dtEditQt
         /**
          * Add all the dynamic controls for this proxy object.
          */
-        void buildDynamicControls(osg::ref_ptr<dtDAL::ActorProxy> proxy);
+        void buildDynamicControls(dtCore::RefPtr<dtDAL::ActorProxy> proxy);
 
         /**
          * Indicate selection information in the group box title

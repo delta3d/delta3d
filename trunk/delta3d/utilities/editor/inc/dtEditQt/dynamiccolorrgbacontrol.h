@@ -131,8 +131,8 @@ namespace dtEditQt
         */
         void colorPickerPressed();
 
-        void actorPropertyChanged(osg::ref_ptr<dtDAL::ActorProxy> proxy,
-            osg::ref_ptr<dtDAL::ActorProperty> property);
+        void actorPropertyChanged(dtCore::RefPtr<dtDAL::ActorProxy> proxy,
+            dtCore::RefPtr<dtDAL::ActorProperty> property);
 
     protected:
 
