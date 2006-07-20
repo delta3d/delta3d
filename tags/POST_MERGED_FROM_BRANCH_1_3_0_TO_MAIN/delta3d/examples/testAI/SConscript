@@ -1,0 +1,6 @@
+Import('*')
+
+srcs = SGlob( '*.cpp' )
+deps = [ 'dtCore', 'dtABC', 'dtChar', 'dtUtil', 'dtAI' ]
+
+env.BuildProgram( 'testAI', srcs, deps )

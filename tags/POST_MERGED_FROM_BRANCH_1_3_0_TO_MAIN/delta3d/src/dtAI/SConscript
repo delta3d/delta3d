@@ -1,0 +1,16 @@
+import os
+
+Import('*')
+
+srcs = SGlob( '*.cpp' )
+
+deps=[ 'dtUtil', 'dtCore', 'osg', 'osgDB', 'opengl',
+       'User32', 'Advapi32', 'Rpcrt4', 'Winmm', 'Gdi32',  
+       'CoreFoundation', 'IOKit', 'Carbon' ]
+
+defines = []
+
+if OS == 'windows':
+   defines = ['DT_AI_LIBRARY', 'NOMINMAX']
+
+env.BuildLib( 'dtAI', srcs, deps, defines )

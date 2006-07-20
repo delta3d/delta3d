@@ -1,0 +1,1055 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0107 
+header_name {gui_fltk.h} 
+code_name {gui_fltk.cpp}
+decl {\#include "dtCore/base.h"} {public
+} 
+
+decl {///Do not create directly - use dtCore::GUI instead} {public
+} 
+
+class UserInterface {open
+} {
+  Function {make_window()} {open
+  } {
+    Fl_Window MainWindow {
+      label dtCore open
+      xywh {691 118 545 555} type Double visible
+    } {
+      Fl_Browser InstanceList {
+        user_data this
+        callback {((UserInterface*)v)->SelectInstance()}
+        xywh {10 5 220 120} type Select
+      }
+      Fl_Box InstanceClassName {
+        private xywh {235 15 300 30} box BORDER_BOX color 46 labelfont 2 labelsize 18
+      }
+      Fl_Group BaseGroup {
+        xywh {235 60 300 65} box ENGRAVED_FRAME align 5
+      } {
+        Fl_Input BaseName {
+          label {Name:}
+          user_data this
+          callback {((UserInterface*)v)->BaseNameCB(o)}
+          private tooltip {The name of this instance} xywh {295 65 230 25} when 8
+        }
+        Fl_Value_Output BaseReferenceCount {
+          label {Ref:}
+          tooltip {The current reference count} xywh {295 95 60 25}
+        }
+      }
+      Fl_Group DrawableGroup {
+        label Drawable
+        xywh {10 145 230 105} box ENGRAVED_FRAME align 5 hide
+      } {
+        Fl_Browser DrawableChildList {
+          label Children
+          private xywh {70 180 135 65} type Multi align 4
+        }
+        Fl_Button {} {
+          user_data this
+          callback {((UserInterface*)v)->DrawableAddChildCB(o)}
+          tooltip {Add a child to the list} image {C:/Documents and Settings/ejohnson/My Documents/Projects/p51/data/btnAdd.gif} xywh {210 180 25 25}
+        }
+        Fl_Button {} {
+          user_data this
+          callback {((UserInterface*)v)->DrawableRemChildCB(o)}
+          tooltip {Remove a child from the list} image {C:/Documents and Settings/ejohnson/My Documents/Projects/p51/data/btnDel.gif} xywh {210 215 25 25}
+        }
+        Fl_Output DrawableParentText {
+          label {Parent:}
+          private xywh {75 150 130 25} box ENGRAVED_FRAME
+        }
+      }
+      Fl_Group TransformGroup {
+        label Transformable
+        xywh {245 145 295 105} box ENGRAVED_FRAME align 5 hide
+      } {
+        Fl_Value_Input TransformX {
+          label {X:}
+          user_data this
+          callback {((UserInterface*)v)->TransformPosCB(o)}
+          private xywh {265 185 60 20} minimum -500000 maximum 500000 step 0.1
+        }
+        Fl_Value_Input TransformY {
+          label {Y:}
+          user_data this
+          callback {((UserInterface*)v)->TransformPosCB(o)}
+          private xywh {265 205 60 20} minimum -500000 maximum 500000 step 0.1
+        }
+        Fl_Value_Input TransformZ {
+          label {Z:}
+          user_data this
+          callback {((UserInterface*)v)->TransformPosCB(o)}
+          private xywh {265 225 60 20} minimum -500000 maximum 500000 step 0.1
+        }
+        Fl_Value_Input TransformH {
+          label {H:}
+          user_data this
+          callback {((UserInterface*)v)->TransformPosCB(o)}
+          private xywh {355 185 60 20} minimum -500000 maximum 500000 step 0.1
+        }
+        Fl_Value_Input TransformP {
+          label {P:}
+          user_data this
+          callback {((UserInterface*)v)->TransformPosCB(o)}
+          private xywh {355 205 60 20} minimum -500000 maximum 500000 step 0.1
+        }
+        Fl_Value_Input TransformR {
+          label {R:}
+          user_data this
+          callback {((UserInterface*)v)->TransformPosCB(o)}
+          private xywh {355 225 60 20} minimum -500000 maximum 500000 step 0.1
+        }
+        Fl_Value_Input TransformScaleX {
+          label {ScaleX:}
+          user_data this
+          callback {((UserInterface*)v)->TransformPosCB(o)}
+          private tooltip {Scale the Transformable in the x-axis} xywh {475 185 60 20} maximum 500000 step 0.1 value 1
+        }
+        Fl_Value_Input TransformScaleY {
+          label {ScaleY:}
+          user_data this
+          callback {((UserInterface*)v)->TransformPosCB(o)}
+          private tooltip {Scale the Transformable in the y-axis} xywh {475 205 60 20} maximum 500000 step 0.1 value 1
+        }
+        Fl_Value_Input TransformScaleZ {
+          label {ScaleZ:}
+          user_data this
+          callback {((UserInterface*)v)->TransformPosCB(o)}
+          private tooltip {Scale the Transformable in the z-axis} xywh {475 225 60 20} maximum 500000 step 0.1 value 1
+        }
+        Fl_Group {} {
+          label System
+          xywh {310 150 165 30} box THIN_DOWN_FRAME align 4
+        } {
+          Fl_Round_Button TransformCSAbsButton {
+            label Absolute
+            user_data this
+            callback {((UserInterface*)v)->TransformCSCB(o)}
+            private tooltip {The position/attitude reflects an Absolute Coordinate System} xywh {315 155 80 20} type Radio down_box ROUND_DOWN_BOX value 1
+          }
+          Fl_Round_Button TransformCSRelButton {
+            label Relative
+            user_data this
+            callback {((UserInterface*)v)->TransformCSCB(o)}
+            private tooltip {The position/attitude reflects a Relative Coordinate System} xywh {395 155 75 20} type Radio down_box ROUND_DOWN_BOX
+          }
+        }
+      }
+      Fl_Group LoadableGroup {
+        xywh {245 259 290 36} box ENGRAVED_FRAME align 5 hide
+      } {
+        Fl_Input LoadableFilename {
+          label File
+          user_data this
+          callback {((UserInterface*)v)->LoadableFileCB(o)}
+          private xywh {285 265 210 25} when 8
+        }
+        Fl_Button {} {
+          label {...}
+          user_data this
+          callback {((UserInterface*)v)->LoadableLoadFileCB(o)}
+          xywh {500 265 25 25}
+        }
+      }
+      Fl_Group CameraGroup {
+        xywh {10 265 530 120} box ENGRAVED_FRAME align 5 hide
+      } {
+        Fl_Group {} {
+          label {Clear Color}
+          xywh {225 290 130 85} box THIN_DOWN_FRAME
+        } {
+          Fl_Value_Input CameraClearRed {
+            label {Red:}
+            user_data this
+            callback {((UserInterface*)v)->CameraClearColorCB(o)}
+            private xywh {275 295 45 25} step 0.01 value 8.888
+          }
+          Fl_Value_Input CameraClearGreen {
+            label {Green:}
+            user_data this
+            callback {((UserInterface*)v)->CameraClearColorCB(o)}
+            private xywh {275 320 45 25} step 0.01 value 8.888
+          }
+          Fl_Value_Input CameraClearBlue {
+            label {Blue:}
+            user_data this
+            callback {((UserInterface*)v)->CameraClearColorCB(o)}
+            private xywh {275 345 45 25} step 0.01 value 8.888
+          }
+          Fl_Button CameraClearLoadButton {
+            label {...}
+            user_data this
+            callback {((UserInterface*)v)->CameraClearColorBrowserCB(o)}
+            private xywh {325 295 25 75}
+          }
+        }
+        Fl_Choice CameraSceneChoice {
+          label {Scene:}
+          user_data this
+          callback {((UserInterface*)v)->CameraSceneCB(o)}
+          private xywh {420 280 110 25} down_box BORDER_BOX
+        } {}
+        Fl_Choice CameraWinChoice {
+          label {Window:}
+          user_data this
+          callback {((UserInterface*)v)->CameraWinCB(o)}
+          private xywh {420 315 110 25} down_box BORDER_BOX
+        } {}
+        Fl_Button {} {
+          label {Next Stats}
+          user_data this
+          callback {((UserInterface*)v)->CamStatisticsCB(o)}
+          xywh {115 290 80 25}
+        }
+        Fl_Value_Input CamFrameBin {
+          label {Frame Bin:}
+          user_data this
+          callback {((UserInterface*)v)->CameraFrameBinCB(o)}
+          xywh {140 335 55 25} deactivate
+        }
+      }
+      Fl_Group WindowGroup {
+        xywh {175 165 320 260} box ENGRAVED_FRAME align 5 hide
+      } {
+        Fl_Group {} {
+          label Position open
+          xywh {195 185 175 95} box THIN_DOWN_BOX
+        } {
+          Fl_Value_Input WinPosW {
+            label Width
+            user_data this
+            callback {((UserInterface*)v)->WinPosCB(o)}
+            private tooltip {The width of the window} xywh {215 205 45 25} align 1 maximum 1600 step 1 value 8888
+          }
+          Fl_Value_Input WinPosH {
+            label Height
+            user_data this
+            callback {((UserInterface*)v)->WinPosCB(o)}
+            private tooltip {The height of the window} xywh {285 205 45 25} align 1 maximum 1600 step 1 value 8888
+          }
+          Fl_Menu_Button WinSizeButton {
+            user_data this
+            callback {((UserInterface*)v)->WinSizeCB(o)}
+            private tooltip {Preset Window sizes} xywh {340 205 25 25}
+          } {
+            MenuItem {} {
+              label 640x480
+              xywh {0 0 100 20}
+            }
+            MenuItem {} {
+              label 800x600
+              xywh {10 10 100 20}
+            }
+            MenuItem {} {
+              label 1024x768
+              xywh {20 20 100 20}
+            }
+            MenuItem {} {
+              label 1280x1024
+              xywh {30 30 100 20}
+            }
+            MenuItem {} {
+              label 1600x1200
+              xywh {40 40 100 20}
+            }
+          }
+          Fl_Value_Input WinPosX {
+            label {X:}
+            user_data this
+            callback {((UserInterface*)v)->WinPosCB(o)}
+            private tooltip {Position of left edge of window (0=leftmost edge of display)} xywh {215 245 45 25} maximum 1600 step 1 value 8888
+          }
+          Fl_Value_Input WinPosY {
+            label {Y:}
+            user_data this
+            callback {((UserInterface*)v)->WinPosCB(o)}
+            private tooltip {Posiiton of bottom of window (0=bottom of display)} xywh {285 245 45 25} maximum 1600 step 1 value 8888
+          }
+        }
+        Fl_Check_Button WinCursorToggle {
+          label {Show Cursor}
+          user_data this
+          callback {((UserInterface*)v)->WinCursorCB(o)}
+          private tooltip {Show the cursor on the Window.} xywh {275 330 25 25} down_box DOWN_BOX value 1 align 4
+        }
+        Fl_Input WinTitle {
+          label {Title:}
+          user_data this
+          callback {((UserInterface*)v)->WinTitleCB(o)}
+          private tooltip {The title on the Window title bar} xywh {225 295 245 25}
+        }
+        Fl_Check_Button WinFullScreenToggle {
+          label {Full Screen}
+          user_data this
+          callback {((UserInterface*)v)->WinFullScreenCB(o)}
+          private tooltip {Resize the window to full-screen and remove the window border} xywh {275 350 25 25} down_box DOWN_BOX align 4
+        }
+      }
+      Fl_Group SkyBoxGroup {
+        xywh {60 155 430 229} hide
+      } {
+        Fl_Group {} {
+          label {Base Color}
+          xywh {205 190 130 85} box THIN_DOWN_FRAME
+        } {
+          Fl_Value_Input SkyBoxBaseRed {
+            label {Red:}
+            user_data this
+            callback {((UserInterface*)v)->SkyBoxBaseColorCB(o)}
+            private xywh {255 195 45 25} step 0.01 value 8.888
+          }
+          Fl_Value_Input SkyBoxBaseGreen {
+            label {Green:}
+            user_data this
+            callback {((UserInterface*)v)->SkyBoxBaseColorCB(o)}
+            private xywh {255 220 45 25} step 0.01 value 8.888
+          }
+          Fl_Value_Input SkyBoxBaseBlue {
+            label {Blue:}
+            user_data this
+            callback {((UserInterface*)v)->SkyBoxBaseColorCB(o)}
+            private xywh {255 245 45 25} step 0.01 value 8.888
+          }
+          Fl_Button SkyBoxBaseColorLoadButton {
+            label {...}
+            user_data this
+            callback {((UserInterface*)v)->SkyBoxBaseColorBrowserCB(o)}
+            private xywh {305 195 25 75}
+          }
+        }
+      }
+      Fl_Group EnvironmentGroup {
+        xywh {70 255 450 285} box ENGRAVED_FRAME hide
+      } {
+        Fl_Group EnvFogColorGroup {
+          label {Fog Color}
+          xywh {376 274 130 85} box THIN_DOWN_FRAME hide
+        } {
+          Fl_Value_Input FogRed {
+            label {Red:}
+            user_data this
+            callback {((UserInterface*)v)->EnvFogColorCB(o)}
+            private xywh {426 279 45 25} step 0.01 value 8.888
+          }
+          Fl_Value_Input FogGreen {
+            label {Green:}
+            user_data this
+            callback {((UserInterface*)v)->EnvFogColorCB(o)}
+            private xywh {426 304 45 25} step 0.01 value 8.888
+          }
+          Fl_Value_Input FogBlue {
+            label {Blue:}
+            user_data this
+            callback {((UserInterface*)v)->EnvFogColorCB(o)}
+            private xywh {426 329 45 25} step 0.01 value 8.888
+          }
+          Fl_Button FogColorLoadButton {
+            label {...}
+            user_data this
+            callback {((UserInterface*)v)->EnvFogColorBrowserCB(o)}
+            private xywh {476 279 25 75}
+          }
+        }
+        Fl_Group EnvAdvFogGroup {
+          label {Adv Fog}
+          xywh {374 280 126 87} box THIN_DOWN_FRAME
+        } {
+          Fl_Value_Input AdvFogTurbidity {
+            label {Turb:}
+            user_data this
+            callback {((UserInterface*)v)->EnvAdvFogCB(o)}
+            private tooltip {Quality of the Air (~1.0 is a good choice)} xywh {425 284 68 22} minimum 0.01 maximum 64 step 0.01 value 88.88
+          }
+          Fl_Value_Input AdvFogEnergy {
+            label {Engy:}
+            user_data this
+            callback {((UserInterface*)v)->EnvAdvFogCB(o)}
+            private tooltip {Energy passed to the atmosphere (0=dark; + = brighter)} xywh {426 311 67 25} minimum 0.1 maximum 100 step 0.01 value 888.88
+          }
+          Fl_Value_Input AdvFogMolecules {
+            label {Vis:}
+            user_data this
+            callback {((UserInterface*)v)->EnvAdvFogCB(o)}
+            private tooltip {Visibility ratio (0=no visibility; + = increased visibility)} xywh {426 338 67 25} maximum 100 step 0.01 value 888.88
+          }
+        }
+        Fl_Value_Input EnvFogVis {
+          label {Visibility Distance:}
+          user_data this
+          callback {((UserInterface*)v)->EnvFogVisCB(o)}
+          private xywh {265 266 61 25} maximum 500000 step 1 value 88888
+        }
+        Fl_Value_Input EnvFogNear {
+          label {Fog Start:}
+          user_data this
+          callback {((UserInterface*)v)->EnvFogNearCB(o)}
+          private tooltip {Start of fog (only used for Linear fog)} xywh {265 293 61 25} maximum 99999 step 1 value 88888
+        }
+        Fl_Choice EnvFogMode {
+          label {Fog Mode:}
+          user_data this
+          callback {((UserInterface*)v)->EnvFogModeCB(o)} open
+          xywh {244 322 101 25} down_box BORDER_BOX
+        } {
+          MenuItem {} {
+            label Linear
+            xywh {0 0 100 20}
+          }
+          MenuItem {} {
+            label Exp
+            xywh {10 10 100 20}
+          }
+          MenuItem {} {
+            label Exp2
+            xywh {20 20 100 20}
+          }
+          MenuItem {} {
+            label Advanced
+            xywh {30 30 100 20}
+          }
+        }
+        Fl_Check_Button EnvFogEnable {
+          label {Fog:}
+          user_data this
+          callback {((UserInterface*)v)->EnvFogEnableCB(o)}
+          private xywh {121 323 45 25} down_box DOWN_BOX value 1 align 4
+        }
+        Fl_Group {} {
+          label {Sky Color}
+          xywh {380 449 130 85} box THIN_DOWN_FRAME
+        } {
+          Fl_Value_Input SkyRed {
+            label {Red:}
+            user_data this
+            callback {((UserInterface*)v)->EnvSkyColorCB(o)}
+            private xywh {430 454 45 25} step 0.01 value 8.888
+          }
+          Fl_Value_Input SkyGreen {
+            label {Green:}
+            user_data this
+            callback {((UserInterface*)v)->EnvSkyColorCB(o)}
+            private xywh {430 479 45 25} step 0.01 value 8.888
+          }
+          Fl_Value_Input SkyBlue {
+            label {Blue:}
+            user_data this
+            callback {((UserInterface*)v)->EnvSkyColorCB(o)}
+            private xywh {430 504 45 25} step 0.01 value 8.888
+          }
+          Fl_Button SkyColorLoadButton {
+            label {...}
+            user_data this
+            callback {((UserInterface*)v)->EnvSkyColorBrowserCB(o)}
+            private xywh {480 454 25 75}
+          }
+        }
+        Fl_Group {} {
+          label {Sun Color}
+          xywh {234 450 109 85} box THIN_DOWN_FRAME
+        } {
+          Fl_Value_Input EnvSunRed {
+            label {Red:}
+            user_data this
+            private xywh {284 455 45 25} step 0.01 value 8.888
+          }
+          Fl_Value_Input EnvSunGreen {
+            label {Green:}
+            user_data this
+            private xywh {284 480 45 25} step 0.01 value 8.888
+          }
+          Fl_Value_Input EnvSunBlue {
+            label {Blue:}
+            user_data this
+            private xywh {284 505 45 25} step 0.01 value 8.888
+          }
+        }
+        Fl_Group {} {
+          label {Ref Position}
+          xywh {78 450 109 85} box THIN_DOWN_FRAME
+        } {
+          Fl_Value_Input EnvRefLat {
+            label {Lat:}
+            user_data this
+            callback {((UserInterface*)v)->EnvRefPosCB(o)}
+            private tooltip {Ephemeris Reference Lattitude (deg)} xywh {119 455 60 25} minimum -90 maximum 90 step 0.001 value 8.888
+          }
+          Fl_Value_Input EnvRefLong {
+            label {Long:}
+            user_data this
+            callback {((UserInterface*)v)->EnvRefPosCB(o)}
+            private tooltip {Ephemeris Reference Longitude (deg)} xywh {119 480 60 25} minimum -180 maximum 180 step 0.001 value 8.888
+          }
+        }
+        Fl_Group {} {
+          label {Date/Time}
+          xywh {105 370 315 60} box THIN_DOWN_FRAME
+        } {
+          Fl_Value_Slider EnvTimeOfDay {
+            label Time
+            user_data this
+            callback {((UserInterface*)v)->EnvTimeCB(o)}
+            xywh {154 403 241 23} type {Horz Knob} align 4 maximum 24 value 12
+          }
+          Fl_Value_Input EnvYear {
+            label {Year:}
+            user_data this
+            callback {((UserInterface*)v)->EnvDateTimeCB(o)}
+            tooltip {Year (1970-2023)} xywh {168 376 45 23} minimum 1970 maximum 2023 step 1 value 8888
+          }
+          Fl_Value_Input EnvMonth {
+            label {Month:}
+            user_data this
+            callback {((UserInterface*)v)->EnvDateTimeCB(o)}
+            tooltip {Month (1-12)} xywh {273 376 35 23} minimum 1 maximum 12 step 1 value 88
+          }
+          Fl_Value_Input EnvDay {
+            label {Day:}
+            user_data this
+            callback {((UserInterface*)v)->EnvDateTimeCB(o)}
+            tooltip {Day (1-31)} xywh {361 376 30 23} minimum 1 maximum 31 step 1 value 88
+          }
+        }
+      }
+      Fl_Group InfTerrainGroup {
+        label InfiniteTerrain
+        xywh {185 280 190 215} box ENGRAVED_FRAME align 5 hide
+      } {
+        Fl_Value_Input InfBuildDistance {
+          label {Build Distance:}
+          tooltip {How far (meters) into the distance should there be terrain} xywh {300 290 65 25} minimum 1 maximum 999999 value 888888
+        }
+        Fl_Value_Input InfSegSize {
+          label {Seg Size:}
+          tooltip {The size (meters) of each side of a block of terrain} xywh {300 315 65 25} minimum 1 maximum 999999 value 888888
+        }
+        Fl_Value_Input InfSegDivisions {
+          label {Seg Divisions:}
+          tooltip {The number of divisions in each block of terrain} xywh {300 340 65 25} minimum 1 maximum 999999 value 888888
+        }
+        Fl_Value_Input InfVertScale {
+          label {Vertical Scale:}
+          tooltip {The vertical scaling factor of the terrain} xywh {300 365 65 25} minimum 1 maximum 999999 value 888888
+        }
+        Fl_Value_Input InfHorizScale {
+          label {Horiz Scale:}
+          tooltip {The horizontal scaling factor of the terrain (spreads out the terrain features)} xywh {300 390 65 25} minimum 1 maximum 999999 value 888888
+        }
+        Fl_Button InfRegenerateButton {
+          label {Regenerate!}
+          user_data this
+          callback {((UserInterface*)v)->InfRegenerateCB(o)}
+          xywh {245 425 90 30}
+        }
+        Fl_Check_Button InfSmoothCollision {
+          label {Smooth Collisions}
+          user_data this
+          callback {((UserInterface*)v)->InfSmoothCDCB(o)}
+          tooltip {Enables smoothed collision detection} xywh {320 465 20 20} down_box DOWN_BOX align 4
+        }
+      }
+      Fl_Group CloudEditor {
+        label {Cloud Shaders Properties}
+        xywh {30 165 500 260} box ENGRAVED_BOX labeltype EMBOSSED_LABEL hide
+      } {
+        Fl_Group {} {
+          label Parameters
+          xywh {45 200 215 225} labeltype EMBOSSED_LABEL
+        } {
+          Fl_Value_Slider cScale {
+            label Scale
+            user_data this
+            callback {((UserInterface*)v)->CloudScaleCB(o)}
+            tooltip {Scale the noise texture} xywh {45 215 200 25} type {Horz Knob} step 0.001 value 0.2
+          }
+          Fl_Value_Slider cCutoff {
+            label Cutoff
+            user_data this
+            callback {((UserInterface*)v)->CloudCutoffCB(o)}
+            tooltip {Cloud coverage} xywh {45 268 200 25} type {Horz Knob} step 0.001 value 0.5
+          }
+          Fl_Value_Slider cExponent {
+            label Exponent
+            user_data this
+            callback {((UserInterface*)v)->CloudExponentCB(o)}
+            tooltip {Saturation of the clouds} xywh {45 321 200 25} type {Horz Knob} minimum 1 maximum 10 step 1 value 5
+          }
+          Fl_Value_Slider cBias {
+            label Bias
+            user_data this
+            callback {((UserInterface*)v)->CloudBiasCB(o)}
+            tooltip {Cloud brightness} xywh {45 375 200 25} type {Horz Knob} maximum 2 value 1.2
+          }
+        }
+        Fl_Group {} {
+          label {Cloud Color}
+          xywh {440 200 70 90} box FLAT_BOX labeltype EMBOSSED_LABEL
+        } {
+          Fl_Value_Input CloudRed {
+            label {Red:}
+            user_data this
+            callback {((UserInterface*)v)->CloudColorCB(o)}
+            xywh {462 215 25 25} step 0.1 value 1
+          }
+          Fl_Value_Input CloudGreen {
+            label {Green:}
+            user_data this
+            callback {((UserInterface*)v)->CloudColorCB(o)}
+            xywh {462 240 25 25} step 0.1 value 1
+          }
+          Fl_Value_Input CloudBlue {
+            label {Blue:}
+            user_data this
+            callback {((UserInterface*)v)->CloudColorCB(o)}
+            xywh {462 265 25 25} step 0.1 value 1
+          }
+          Fl_Button CloudColorLoadButton {
+            label {...}
+            user_data this
+            callback {((UserInterface*)v)->CloudColorBrowserCB(o)}
+            private xywh {485 215 25 75}
+          }
+        }
+        Fl_Group {} {
+          label {Cloud Speed} open
+          xywh {285 200 105 95} labeltype EMBOSSED_LABEL
+        } {
+          Fl_Value_Slider cSpeedX {
+            label {X speed}
+            user_data this
+            callback {((UserInterface*)v)->CloudWindCB(o)}
+            xywh {285 215 100 25} type {Horz Knob} maximum 5 step 0.1 value 0.1
+          }
+          Fl_Value_Slider cSpeedY {
+            label {Y speed}
+            user_data this
+            callback {((UserInterface*)v)->CloudWindCB(o)}
+            xywh {285 260 100 25} type {Horz Knob} maximum 5 step 0.1 value 0.1
+          }
+        }
+        Fl_Check_Button cEnable {
+          label {Shader Enabled}
+          user_data this
+          callback {((UserInterface*)v)->CloudEnableCB(o)}
+          tooltip {Enables/Disables the cloud shader} xywh {400 380 25 25} down_box DOWN_BOX value 1 labeltype EMBOSSED_LABEL
+        }
+      }
+      Fl_Group WeatherGroup {
+        user_data this
+        xywh {31 165 500 260} box ENGRAVED_BOX labeltype EMBOSSED_LABEL hide
+      } {
+        Fl_Choice WeatherTimePeriodChoice {
+          label {Time:}
+          user_data this
+          callback {((UserInterface*)v)->WeatherTimeCB(o)}
+          xywh {270 185 90 30} down_box BORDER_BOX
+        } {
+          MenuItem {} {
+            label Dawn
+            xywh {40 40 100 20}
+          }
+          MenuItem {} {
+            label Day
+            xywh {40 40 100 20}
+          }
+          MenuItem {} {
+            label Dusk
+            xywh {40 40 100 20}
+          }
+          MenuItem {} {
+            label Night
+            xywh {40 40 100 20}
+          }
+        }
+        Fl_Choice WeatherSeasonChoice {
+          label {Season:}
+          user_data this
+          callback {((UserInterface*)v)->WeatherSeasonCB(o)}
+          xywh {425 185 90 30} down_box BORDER_BOX
+        } {
+          MenuItem {} {
+            label Spring
+            xywh {50 50 100 20}
+          }
+          MenuItem {} {
+            label Summer
+            xywh {50 50 100 20}
+          }
+          MenuItem {} {
+            label Fall
+            xywh {50 50 100 20}
+          }
+          MenuItem {} {
+            label Winter
+            xywh {50 50 100 20}
+          }
+        }
+        Fl_Group WeatherCustomGroup {
+          label Custom
+          xywh {115 335 405 67} box EMBOSSED_FRAME align 4
+        } {
+          Fl_Slider WeatherCloudSlider {
+            label Cloud
+            user_data this
+            callback {((UserInterface*)v)->WeatherCustomCloudCB(o)}
+            xywh {131 366 120 25} type Horizontal align 1 maximum 4 step 1
+          }
+          Fl_Slider WeatherWindSlider {
+            label Wind
+            user_data this
+            callback {((UserInterface*)v)->WeatherCustomWindCB(o)}
+            xywh {265 366 120 25} type Horizontal align 1 maximum 5 step 1
+          }
+          Fl_Slider WeatherVisSlider {
+            label Visibility
+            user_data this
+            callback {((UserInterface*)v)->WeatherCustomVisCB(o)}
+            xywh {395 366 120 25} type Horizontal align 1 maximum 4 step 1
+          }
+        }
+        Fl_Group {} {
+          user_data this
+          xywh {45 235 25 150}
+        } {
+          Fl_Round_Button WeatherThemeOption {
+            user_data this
+            callback {((UserInterface*)v)->WeatherThemeCustomOptionCB(o)}
+            xywh {45 235 25 25} type Radio down_box ROUND_DOWN_BOX value 1
+          }
+          Fl_Round_Button WeatherCustomOption {
+            user_data this
+            callback {((UserInterface*)v)->WeatherThemeCustomOptionCB(o)}
+            xywh {45 360 25 25} type Radio down_box ROUND_DOWN_BOX
+          }
+        }
+        Fl_Group WeatherThemeGroup {
+          label {Theme:}
+          xywh {115 185 92 145} box EMBOSSED_FRAME align 4
+        } {
+          Fl_Round_Button WeatherThemeClearOption {
+            label Clear
+            user_data this
+            callback {((UserInterface*)v)->WeatherThemeCB(o)}
+            xywh {117 213 80 25} type Radio down_box ROUND_DOWN_BOX value 1
+          }
+          Fl_Round_Button WeatherThemeFairOption {
+            label Fair
+            user_data this
+            callback {((UserInterface*)v)->WeatherThemeCB(o)}
+            xywh {117 243 80 25} type Radio down_box ROUND_DOWN_BOX
+          }
+          Fl_Round_Button WeatherThemeFoggyOption {
+            label Foggy
+            user_data this
+            callback {((UserInterface*)v)->WeatherThemeCB(o)}
+            xywh {117 273 80 25} type Radio down_box ROUND_DOWN_BOX
+          }
+          Fl_Round_Button WeatherThemeRainyOption {
+            label Rainy
+            user_data this
+            callback {((UserInterface*)v)->WeatherThemeCB(o)}
+            xywh {117 301 80 25} type Radio down_box ROUND_DOWN_BOX
+          }
+          Fl_Round_Button WeatherThemeCustomOption {
+            label Custom
+            user_data this
+            callback {((UserInterface*)v)->WeatherThemeCB(o)}
+            xywh {115 185 80 25} type Radio down_box ROUND_DOWN_BOX
+          }
+        }
+        Fl_Value_Slider WeatherRateOfChangeSlider {
+          label {Rate of Change}
+          user_data this
+          callback {((UserInterface*)v)->WeatherRateOfChangeCB(o)}
+          xywh {310 240 140 25} type Horizontal minimum -1
+        }
+      }
+      Fl_Group LightGroup {
+        user_data this
+        xywh {15 255 520 180} box ENGRAVED_BOX labeltype EMBOSSED_LABEL hide
+      } {
+        Fl_Value_Input LightNumberInput {
+          label {Light Number}
+          user_data this
+          callback {((UserInterface*)v)->LightNumCB(o)}
+          private xywh {81 280 25 25} align 132 minimum 1 maximum 8 step 1
+        }
+        Fl_Group {} {
+          label Mode
+          xywh {455 353 65 45} box ENGRAVED_FRAME
+        } {
+          Fl_Round_Button LightModeLocal {
+            label Local
+            user_data this
+            callback {((UserInterface*)v)->LightModeCB(o)}
+            xywh {455 353 65 25} type Radio down_box ROUND_DOWN_BOX
+          }
+          Fl_Round_Button LightModeGlobal {
+            label Global
+            user_data this
+            callback {((UserInterface*)v)->LightModeCB(o)}
+            xywh {455 373 65 25} type Radio down_box ROUND_DOWN_BOX value 1
+          }
+        }
+        Fl_Group {} {
+          label Diffuse
+          xywh {29 344 130 85} box THIN_DOWN_FRAME
+        } {
+          Fl_Value_Input LightDifRed {
+            label {Red:}
+            user_data this
+            callback {((UserInterface*)v)->LightDifColorCB(o)}
+            private xywh {79 349 45 25} step 0.01 value 8.888
+          }
+          Fl_Value_Input LightDifGreen {
+            label {Green:}
+            user_data this
+            callback {((UserInterface*)v)->LightDifColorCB(o)}
+            private xywh {79 374 45 25} step 0.01 value 8.888
+          }
+          Fl_Value_Input LightDifBlue {
+            label {Blue:}
+            user_data this
+            callback {((UserInterface*)v)->LightDifColorCB(o)}
+            private xywh {79 399 45 25} step 0.01 value 8.888
+          }
+          Fl_Button LightDifColorLoadButton {
+            label {...}
+            user_data this
+            callback {((UserInterface*)v)->LightDifColorBrowserCB(o)}
+            private xywh {129 349 25 75}
+          }
+        }
+        Fl_Group {} {
+          label Ambient
+          xywh {170 344 130 85} box THIN_DOWN_FRAME
+        } {
+          Fl_Value_Input LightAmbRed {
+            label {Red:}
+            user_data this
+            callback {((UserInterface*)v)->LightAmbColorCB(o)}
+            private xywh {220 349 45 25} step 0.01 value 8.888
+          }
+          Fl_Value_Input LightAmbGreen {
+            label {Green:}
+            user_data this
+            callback {((UserInterface*)v)->LightAmbColorCB(o)}
+            private xywh {220 374 45 25} step 0.01 value 8.888
+          }
+          Fl_Value_Input LightAmbBlue {
+            label {Blue:}
+            user_data this
+            callback {((UserInterface*)v)->LightAmbColorCB(o)}
+            private xywh {220 399 45 25} step 0.01 value 8.888
+          }
+          Fl_Button LightAmbColorLoadButton {
+            label {...}
+            user_data this
+            callback {((UserInterface*)v)->LightAmbColorBrowserCB(o)}
+            private xywh {270 349 25 75}
+          }
+        }
+        Fl_Group {} {
+          label Specular
+          xywh {310 343 130 85} box THIN_DOWN_FRAME
+        } {
+          Fl_Value_Input LightSpecRed {
+            label {Red:}
+            user_data this
+            callback {((UserInterface*)v)->LightSpecColorCB(o)}
+            private xywh {360 348 45 25} step 0.01 value 8.888
+          }
+          Fl_Value_Input LightSpecGreen {
+            label {Green:}
+            user_data this
+            callback {((UserInterface*)v)->LightSpecColorCB(o)}
+            private xywh {360 373 45 25} step 0.01 value 8.888
+          }
+          Fl_Value_Input LightSpecBlue {
+            label {Blue:}
+            user_data this
+            callback {((UserInterface*)v)->LightSpecColorCB(o)}
+            private xywh {360 398 45 25} step 0.01 value 8.888
+          }
+          Fl_Button LightSpecColorLoadButton {
+            label {...}
+            user_data this
+            callback {((UserInterface*)v)->LightSpecColorBrowserCB(o)}
+            private xywh {410 348 25 75}
+          }
+        }
+      }
+      Fl_Group PositionalLightGroup {
+        user_data this
+        xywh {280 259 235 71} box ENGRAVED_BOX hide
+      } {
+        Fl_Group {} {
+          label Attenuation
+          xywh {290 275 205 50} box THIN_DOWN_BOX
+        } {
+          Fl_Value_Input LightConstAtt {
+            label Constant
+            user_data this
+            callback {((UserInterface*)v)->LightAttCB(o)}
+            private xywh {295 295 60 25} align 1 maximum 100 step 0.001
+          }
+          Fl_Value_Input LightLinAtt {
+            label Linear
+            user_data this
+            callback {((UserInterface*)v)->LightAttCB(o)}
+            private xywh {360 295 60 25} align 1 maximum 100 step 0.001
+          }
+          Fl_Value_Input LightQuadAtt {
+            label Quadratic
+            user_data this
+            callback {((UserInterface*)v)->LightAttCB(o)}
+            private xywh {427 295 60 25} align 1 maximum 100 step 0.001
+          }
+        }
+      }
+      Fl_Group LightSpotGroup {
+        label Spot
+        xywh {130 279 139 50} box THIN_DOWN_BOX hide
+      } {
+        Fl_Value_Input LightExponentInput {
+          label Exp
+          user_data this
+          callback {((UserInterface*)v)->LightSpotCB(o)}
+          private xywh {202 300 60 25} align 1 maximum 500000 step 0.1
+        }
+        Fl_Value_Input LightCutoffInput {
+          label Cutoff
+          user_data this
+          callback {((UserInterface*)v)->LightSpotCB(o)}
+          private xywh {134 300 60 25} align 1 maximum 500000 step 0.1
+        }
+      }
+      Fl_Group InfiniteLightGroup {
+        label {Azimuth/Elevation} open
+        xywh {130 279 142 50} box THIN_DOWN_BOX
+      } {
+        Fl_Value_Input InfLightAzInput {
+          label {Az.}
+          user_data this
+          callback {((UserInterface*)v)->InfLightCB(o)} selected
+          private xywh {134 300 60 25} align 1 maximum 500000 step 0.1
+        }
+        Fl_Value_Input InfLightElevInput {
+          label {Elev.}
+          user_data this
+          callback {((UserInterface*)v)->InfLightCB(o)}
+          private xywh {202 300 60 25} align 1 maximum 500000 step 0.1
+        }
+      }
+      Fl_Group ParticleGroup {
+        label {Particle System}
+        xywh {15 270 135 60} box ENGRAVED_FRAME align 5 hide
+      } {
+        Fl_Check_Button ParticleEnabled {
+          label Enabled
+          user_data this
+          callback {((UserInterface*)v)->ParticleEnabledCB(o)}
+          xywh {20 275 75 25} down_box DOWN_BOX
+        }
+        Fl_Check_Button ParticleParentRelative {
+          label {Parent Relative}
+          user_data this
+          callback {((UserInterface*)v)->ParticleRelativeCB(o)}
+          xywh {20 300 125 25} down_box DOWN_BOX
+        }
+      }
+    }
+    Fl_Window SelectWindow {
+      label {Add Child}
+      xywh {475 475 274 249} type Double hide modal
+    } {
+      Fl_Check_Browser SelectList {
+        private xywh {20 15 205 160}
+      }
+      Fl_Return_Button SelectWinAddButton {
+        label Add
+        private xywh {170 190 70 40}
+      }
+      Fl_Button SelectWinCancelButton {
+        label Cancel
+        xywh {40 190 55 40}
+      }
+    }
+  }
+  decl {void SelectInstance(void);} {public
+  }
+  decl {static dtCore::Base *GetSelectedInstance( UserInterface *ui);} {}
+  decl {void BaseNameCB(Fl_Input *o);} {}
+  decl {void DrawableAddChildCB( Fl_Button *);} {}
+  decl {void DrawableRemChildCB( Fl_Button *);} {}
+  decl {void TransformPosCB( Fl_Value_Input *);} {}
+  decl {void TransformCSCB( Fl_Round_Button *);} {}
+  decl {void CameraClearColorBrowserCB(Fl_Button*);} {}
+  decl {void CameraClearColorCB(Fl_Value_Input* )} {}
+  decl {void CameraWinCB(Fl_Choice *);} {}
+  decl {void CameraSceneCB(Fl_Choice *);} {}
+  decl {void WinPosCB( Fl_Value_Input * );} {}
+  decl {void WinSizeCB( Fl_Menu_Button * );} {}
+  decl {void WinCursorCB( Fl_Check_Button * );} {}
+  decl {void WinFullScreenCB( Fl_Check_Button * );} {}
+  decl {void WinTitleCB( Fl_Input * );} {}
+  decl {void LoadableFileCB( Fl_Input * );} {}
+  decl {void LoadableLoadFileCB( Fl_Button * );} {}
+  decl {void SkyBoxBaseColorCB(Fl_Value_Input *);} {}
+  decl {void SkyBoxBaseColorBrowserCB(Fl_Button*);} {}
+  decl {void EnvFogColorCB(Fl_Value_Input *);} {}
+  decl {void EnvAdvFogCB(Fl_Value_Input *);} {}
+  decl {void EnvFogColorBrowserCB(Fl_Button*);} {}
+  decl {void EnvFogVisCB(Fl_Value_Input*);} {}
+  decl {void EnvFogNearCB(Fl_Value_Input*);} {}
+  decl {void EnvFogEnableCB(Fl_Check_Button*);} {}
+  decl {void EnvFogModeCB(Fl_Choice*);} {}
+  decl {void EnvSkyColorCB(Fl_Value_Input*);} {}
+  decl {void EnvSkyColorBrowserCB(Fl_Button*);} {}
+  decl {void EnvDateTimeCB(Fl_Value_Input*);} {}
+  decl {void EnvTimeCB(Fl_Value_Slider*);} {}
+  decl {void EnvRefPosCB(Fl_Value_Input *);} {}
+  decl {void InfRegenerateCB(Fl_Button*);} {}
+  decl {void InfSmoothCDCB(Fl_Check_Button*);} {}
+  decl {void CloudColorCB(Fl_Value_Input *);} {}
+  decl {void CloudColorBrowserCB(Fl_Button*);} {}
+  decl {void CloudScaleCB(Fl_Value_Slider*);} {}
+  decl {void CloudCutoffCB(Fl_Value_Slider*);} {}
+  decl {void CloudExponentCB(Fl_Value_Slider*);} {}
+  decl {void CloudWindCB(Fl_Value_Slider*);} {}
+  decl {void CloudEnableCB(Fl_Check_Button*);} {}
+  decl {void CloudBiasCB(Fl_Value_Slider*);} {}
+  decl {void WeatherThemeCustomOptionCB(Fl_Round_Button*);} {}
+  decl {void WeatherThemeCB(Fl_Round_Button*);} {}
+  decl {void WeatherCustomCloudCB(Fl_Slider*);} {}
+  decl {void WeatherCustomWindCB(Fl_Slider*);} {}
+  decl {void WeatherCustomVisCB(Fl_Slider*);} {}
+  decl {void WeatherTimeCB(Fl_Choice*);} {}
+  decl {void WeatherSeasonCB(Fl_Choice*);} {}
+  decl {void WeatherRateOfChangeCB(Fl_Value_Slider*);} {}
+  decl {void LightModeCB(Fl_Round_Button*);} {}
+  decl {void LightNumCB(Fl_Value_Input*);} {}
+  decl {void LightAmbColorCB(Fl_Value_Input*);} {}
+  decl {void LightDifColorCB(Fl_Value_Input*);} {}
+  decl {void LightSpecColorCB(Fl_Value_Input*);} {}
+  decl {void LightAmbColorBrowserCB(Fl_Button*);} {}
+  decl {void LightDifColorBrowserCB(Fl_Button*);} {}
+  decl {void LightSpecColorBrowserCB(Fl_Button*);} {}
+  decl {void LightAttCB(Fl_Value_Input*);} {}
+  decl {void LightSpotCB(Fl_Value_Input*);} {}
+  decl {void InfLightCB(Fl_Value_Input*);} {}
+  decl {void ParticleRelativeCB(Fl_Check_Button*);} {}
+  decl {void ParticleEnabledCB(Fl_Check_Button*);} {}
+  decl {void CamStatisticsCB(Fl_Button*);} {}
+  decl {void CameraFrameBinCB(Fl_Value_Input*);} {}
+} 
+
+decl {\#pragma comment(lib, "fltk.lib")} {public
+} 
+
+decl {\#pragma comment(lib, "wsock32.lib")} {public
+} 
+
+decl {\#pragma comment(lib, "comctl32.lib")} {public
+} 

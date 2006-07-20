@@ -1,0 +1,67 @@
+# Build script for the unit tests.
+import glob
+import sys
+
+# Import the variables defined in the global SConstruct build script.
+Import ('*')
+
+projectEnv = env.Copy()
+
+#there will be one program per test dir here plus an all tests.
+#To add a new one, add a new one, simply put the directory 
+#in this list, put your test cpp files in with the names "*tests.cpp"
+#and the files will be added to both allTests and to a test just
+#for the new set of files.
+suites = ['dtCore', 'dtDAL', 'dtGame', 'dtAI', 'dtUtil', 'dtABC', 'dtActors', 'dtGUI']
+
+if env.get('rti') != 0 :
+	suites += [ 'dtHLAGM' ]
+	
+sources = {}
+mainSources = SGlob( '*.cpp' )
+sources['all'] = mainSources + []
+
+for suite in suites:
+   #get the sources for each program
+   sources[suite] = SGlob(suite + '/*tests.cpp')
+   #add the sources to the allTests program
+   sources['all'] += sources[suite]
+   #add the "main" source files.
+   sources[suite] += mainSources
+
+mainlibs = suites + ['dtAudio', 'dtABC', 'dtChar', 'dtActors', 'cppunit', 'testGameActorLibrary']
+	
+mainlibs = [ dtLibs[lib] for lib in mainlibs if dtLibs.has_key(lib) ]
+
+if env.get('rti') != 0:
+	mainlibs += rtiLibs
+
+projectEnv.Append(LIBS = mainlibs)
+
+#Add this so we can include files from testActorLib.h
+projectEnv.Append(CPPPATH = ['#examples'])
+
+programs = {}
+
+result = 'true'
+
+if projectEnv['usePrefixHeaders'] and OS != 'windows':
+ 	projectEnv.Append(CPPFLAGS = " -include inc/prefix/dtutilprefix.h ")
+
+
+#create all the program names base on the sets of sources.
+for prog in sources.keys():
+   programs[prog] = '#tests/' + prog + 'Tests'
+
+   #add the "d" at the end for windows
+   if mode == 'debug' and OS == 'windows':
+      programs[prog] += 'd'
+   #create the program
+     
+   app = projectEnv.Program(programs[prog], sources[prog])
+   
+   if (app == '[]') :
+      result = 'false'
+      errorLog.write("Failed to build test program " + programs[prog] + ".\n")
+
+Return('result')
