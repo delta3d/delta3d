@@ -43,7 +43,7 @@ namespace dtDAL
    
    ActorProxy* Map::GetProxyById(const dtCore::UniqueId& id) 
    {
-      std::map<dtCore::UniqueId, osg::ref_ptr<ActorProxy> >::iterator i = mProxyMap.find(id);
+      std::map<dtCore::UniqueId, dtCore::RefPtr<ActorProxy> >::iterator i = mProxyMap.find(id);
       if (i != mProxyMap.end())
       {
          return i->second.get();
@@ -53,7 +53,7 @@ namespace dtDAL
    
    const ActorProxy* Map::GetProxyById(const dtCore::UniqueId& id) const 
    {
-      std::map<dtCore::UniqueId, osg::ref_ptr<ActorProxy> >::const_iterator i = mProxyMap.find(id);
+      std::map<dtCore::UniqueId, dtCore::RefPtr<ActorProxy> >::const_iterator i = mProxyMap.find(id);
       if (i != mProxyMap.end()) 
       {
          
@@ -77,7 +77,7 @@ namespace dtDAL
          mFileName += MAP_FILE_EXTENSION;
    }
    
-   void Map::FindProxies(std::vector<osg::ref_ptr<ActorProxy> >& container,
+   void Map::FindProxies(std::vector<dtCore::RefPtr<ActorProxy> >& container,
                          const std::string& name,
                          const std::string& category,
                          const std::string& typeName,
@@ -89,14 +89,14 @@ namespace dtDAL
       
       if (name != "" || category != "" || typeName != "" || className != "" || placeable != Either ) 
       {
-         for (std::map<dtCore::UniqueId, osg::ref_ptr<ActorProxy> >::iterator i = mProxyMap.begin();
+         for (std::map<dtCore::UniqueId, dtCore::RefPtr<ActorProxy> >::iterator i = mProxyMap.begin();
               i != mProxyMap.end(); ++i) 
          {
             ActorProxy* ap = i->second.get();
             
             if (name == "" || WildMatch(name, ap->GetName()))
                if (MatchesSearch(*ap, category, typeName, className, placeable))
-                  container.push_back(osg::ref_ptr<ActorProxy>(ap));
+                  container.push_back(dtCore::RefPtr<ActorProxy>(ap));
          }
       } 
       else 
@@ -104,17 +104,17 @@ namespace dtDAL
          
          //return everything.
          container.reserve(mProxyMap.size());
-         for (std::map<dtCore::UniqueId, osg::ref_ptr<ActorProxy> >::iterator i = mProxyMap.begin();
+         for (std::map<dtCore::UniqueId, dtCore::RefPtr<ActorProxy> >::iterator i = mProxyMap.begin();
               i != mProxyMap.end(); ++i) 
          {
             ActorProxy* ap = i->second.get();
-            container.push_back(osg::ref_ptr<ActorProxy>(ap));
+            container.push_back(dtCore::RefPtr<ActorProxy>(ap));
          }
       }
       
    }
    
-   void Map::FindProxies(std::vector<osg::ref_ptr<const ActorProxy> >& container,
+   void Map::FindProxies(std::vector<dtCore::RefPtr<const ActorProxy> >& container,
                          const std::string& name,
                          const std::string& category,
                          const std::string& typeName,
@@ -126,7 +126,7 @@ namespace dtDAL
       
       if (name != "" || category != "" || typeName != "" || className != "" || placeable != Either) 
       {
-         for (std::map<dtCore::UniqueId, osg::ref_ptr<ActorProxy> >::const_iterator i = mProxyMap.begin();
+         for (std::map<dtCore::UniqueId, dtCore::RefPtr<ActorProxy> >::const_iterator i = mProxyMap.begin();
               i != mProxyMap.end(); ++i) 
          {
 
@@ -134,18 +134,18 @@ namespace dtDAL
 
             if (name == "" || WildMatch(name, ap->GetName()))
                if (MatchesSearch(*ap, category, typeName, className, placeable))
-                  container.push_back(osg::ref_ptr<const ActorProxy>(ap));
+                  container.push_back(dtCore::RefPtr<const ActorProxy>(ap));
          }
       } 
       else 
       {
          //return everything.
          container.reserve(mProxyMap.size());
-         for (std::map<dtCore::UniqueId, osg::ref_ptr<ActorProxy> >::const_iterator i = mProxyMap.begin();
+         for (std::map<dtCore::UniqueId, dtCore::RefPtr<ActorProxy> >::const_iterator i = mProxyMap.begin();
               i != mProxyMap.end(); ++i) 
          {
             const ActorProxy* ap = i->second.get();
-            container.push_back(osg::ref_ptr<const ActorProxy>(ap));
+            container.push_back(dtCore::RefPtr<const ActorProxy>(ap));
          }
       }
    }
@@ -185,7 +185,7 @@ namespace dtDAL
 
    void Map::AddProxy(ActorProxy& proxy) 
    {
-      if (mProxyMap.insert(std::make_pair(proxy.GetId(), osg::ref_ptr<ActorProxy>(&proxy))).second) 
+      if (mProxyMap.insert(std::make_pair(proxy.GetId(), dtCore::RefPtr<ActorProxy>(&proxy))).second) 
       {
          mProxyActorClasses.insert(proxy.GetClassName());
          mProxyActorClasses.insert(proxy.GetClassHierarchy().begin(), proxy.GetClassHierarchy().end());
@@ -196,15 +196,15 @@ namespace dtDAL
    bool Map::RemoveProxy(const ActorProxy& proxy)
    {
       //This needs to be faster.
-      std::map<dtCore::UniqueId, osg::ref_ptr<ActorProxy> >::iterator i = mProxyMap.find(proxy.GetId());
+      std::map<dtCore::UniqueId, dtCore::RefPtr<ActorProxy> >::iterator i = mProxyMap.find(proxy.GetId());
       if (i != mProxyMap.end()) 
       {
          mModified = true;
 
          //notify proxy it is being removed from map
          proxy.OnRemove();
+         std::vector<dtCore::RefPtr<ActorProxy> > proxies;
 
-         std::vector<osg::ref_ptr<ActorProxy> > proxies;
          GetAllProxies(proxies);
          for(unsigned int j = 0; j < proxies.size(); j++)
          {
@@ -236,7 +236,7 @@ namespace dtDAL
    void Map::RebuildProxyActorClassSet() const 
    {
       mProxyActorClasses.clear();
-      for (std::map<dtCore::UniqueId, osg::ref_ptr<ActorProxy> >::const_iterator i = mProxyMap.begin(); i != mProxyMap.end(); ++i) 
+      for (std::map<dtCore::UniqueId, dtCore::RefPtr<ActorProxy> >::const_iterator i = mProxyMap.begin(); i != mProxyMap.end(); ++i) 
       {
          const ActorProxy& ap = *(i->second);
          mProxyActorClasses.insert(ap.GetClassName());

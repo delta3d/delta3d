@@ -18,8 +18,7 @@ void initCameraBindings()
    void (Camera::*SetClearColor1)(float, float, float, float) = &Camera::SetClearColor;
    void (Camera::*SetClearColor2)(const osg::Vec4&t) = &Camera::SetClearColor;
    
-   void (Camera::*GetClearColor1)(float&, float&, float&, float&) = &Camera::GetClearColor;
-   void (Camera::*GetClearColor2)(osg::Vec4&) = &Camera::GetClearColor;
+   void (Camera::*GetClearColor)(osg::Vec4&) = &Camera::GetClearColor;
 
    Scene* (Camera::*GetScene2)() = &Camera::GetScene;
    const Scene* (Camera::*GetScene1)() const = &Camera::GetScene;
@@ -40,8 +39,7 @@ void initCameraBindings()
       .def("GetScene", GetScene2, return_internal_reference<>())
       .def("SetClearColor", SetClearColor1)
       .def("SetClearColor", SetClearColor2)
-      .def("GetClearColor", GetClearColor1)
-      .def("GetClearColor", GetClearColor2)
+      .def("GetClearColor", GetClearColor)
       .def("SetPerspective", &Camera::SetPerspective)
       .def("SetFrustum", &Camera::SetFrustum)
       .def("SetOrtho", &Camera::SetOrtho)

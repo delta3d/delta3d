@@ -808,7 +808,9 @@ void GameManagerTests::TestDataStream()
       std::string    longTestString;
       longTestString.reserve(2000);
       for (int i = 0; i < 2000; ++i)
-         longTestString.append(1, 'a' + (char)(i % 10));
+      {
+         longTestString.push_back( 'a' + std::string::value_type(i % 10) );
+      }
 
       ds << boolean1;
       ds << boolean2;

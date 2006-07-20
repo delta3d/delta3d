@@ -157,7 +157,7 @@ namespace dtCore
       osg::Node* GetOSGNode(){return mNode.get();}
       const osg::Node* GetOSGNode() const{return mNode.get();}
 
-      void SetOSGNode(osg::Node* pNode){mNode = pNode;}
+      void SetOSGNode(osg::Node* pNode);
 
    private:
 

@@ -361,9 +361,9 @@ void Viewer::LoadFile( ViewState* vs )
 
       filenode = new osg::Group();
 
-      std::vector<osg::ref_ptr<dtDAL::ActorProxy> > container;
+      std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > container;
       theMap->GetAllProxies(container);
-      for (std::vector<osg::ref_ptr<dtDAL::ActorProxy> >::iterator i = container.begin();
+      for (std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >::iterator i = container.begin();
             i != container.end(); ++i)
       {
          dtDAL::ActorProxy& proxy = **i;

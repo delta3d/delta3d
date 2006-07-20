@@ -143,7 +143,7 @@ namespace dtEditQt
          * Removes all drawables from the master scene.
          */
         void clearMasterScene(const std::map<dtCore::UniqueId,
-            osg::ref_ptr<dtDAL::ActorProxy> > &proxies);
+            dtCore::RefPtr<dtDAL::ActorProxy> > &proxies);
 
         /**
          * Called from the first initialized viewport.  This method sets various
@@ -177,15 +177,15 @@ namespace dtEditQt
          * @param proxy
          * @param property
          */
-        void onActorPropertyChanged(proxyRefPtr proxy,
-            propertyRefPtr property);
+        void onActorPropertyChanged(ActorProxyRefPtr proxy,
+            ActorPropertyRefPtr property);
 
         /**
          * This method is invoked when the user has created a new actor proxy.  The method
          * then inserts the new actor proxy into the current scene.
          * @param proxy The newly created actor proxy.
          */
-        void onActorProxyCreated(proxyRefPtr proxy, bool forceNoAdjustments);
+        void onActorProxyCreated(ActorProxyRefPtr proxy, bool forceNoAdjustments);
 
         /**
          * Called when the current map being edited has changed.  This causes the scene

@@ -313,7 +313,7 @@ namespace dtActors
           * Gets the number of sub tasks owned by this task.
           * @return The number of sub tasks.
           */
-         unsigned int GetNumSubTaskProxies() const { return mSubTaskProxies.size(); }
+        unsigned GetNumSubTaskProxies() const { return unsigned(mSubTaskProxies.size()); }
 
          /**
           * This method exists for the property system.  Note, this method is a no-op.

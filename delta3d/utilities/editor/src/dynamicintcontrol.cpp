@@ -187,8 +187,8 @@ namespace dtEditQt
     }
 
     /////////////////////////////////////////////////////////////////////////////////
-    void DynamicIntControl::actorPropertyChanged(osg::ref_ptr<dtDAL::ActorProxy> proxy,
-        osg::ref_ptr<dtDAL::ActorProperty> property)
+    void DynamicIntControl::actorPropertyChanged(dtCore::RefPtr<dtDAL::ActorProxy> proxy,
+        dtCore::RefPtr<dtDAL::ActorProperty> property)
     {
         if (temporaryEditControl != NULL && proxy == this->proxy && property == myProperty) 
         {

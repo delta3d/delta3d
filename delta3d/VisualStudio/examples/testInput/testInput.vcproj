@@ -42,7 +42,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtUtild.lib dtCore.lib dtABC.lib dtGUI.lib osg.lib osgDB.lib CEGUIBase.lib"
+				AdditionalDependencies="dtUtil.lib dtCore.lib dtABC.lib dtGUI.lib osg.lib osgDB.lib CEGUIBase.lib"
 				OutputFile="../../../bin/testInput.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"

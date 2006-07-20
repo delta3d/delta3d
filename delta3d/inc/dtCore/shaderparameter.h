@@ -21,17 +21,19 @@
 #ifndef DELTA_SHADERPARAMETER
 #define DELTA_SHADERPARAMETER
 
-#include "dtCore/export.h"
+#include <dtCore/export.h>
 #include <dtUtil/enumeration.h>
 #include <dtCore/refptr.h>
 #include <osg/Referenced>
 #include <string>
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
 {
    class StateSet;
    class Uniform;
 }
+/// @endcond
 
 namespace dtCore
 {
@@ -169,7 +171,7 @@ namespace dtCore
           * Sets the shader owning this shader parameter.
           * @param shader The shader owning this parameter.
           */
-         void SetParentShader(Shader *shader) { mParentShader = shader; }
+        void SetParentShader(Shader *shader);
 
          /**
           * Gets the shader currently managing this shader parameter.
@@ -187,7 +189,7 @@ namespace dtCore
           *   values depending on the complexity of the underlying data of a particular parameter
           *   implementation.
           */
-         void SetUniformParam(osg::Uniform &uniform) { mUniform = &uniform; }
+         void SetUniformParam(osg::Uniform &uniform);
 
          /**
           * Gets the uniform parameter currently bound to this shader parameter.
@@ -202,6 +204,13 @@ namespace dtCore
          dtCore::RefPtr<osg::Uniform> mUniform;
 
          friend class Shader;
+
+         // Disallowed to prevent compile errors on VS2003. It apparently
+         // creates this functions even if they are not used, and if
+         // this class is forward declared, these implicit functions will
+         // cause compiler errors for missing calls to "ref".
+         ShaderParameter& operator=( const ShaderParameter& ); 
+         ShaderParameter( const ShaderParameter& );
    };
 }
 

@@ -36,6 +36,11 @@
 
 namespace dtActors
 {
+
+    // This class is not actually used in StaticMeshActorProxy, so it's #ifdef'd out
+    // for now to avoid linker warnings. -osb
+    #if 0
+
     /**
      * This is a node visitor which searches for any textures and extracts them.
      * It is important to note that this visitor will only check geodes and their
@@ -148,6 +153,8 @@ namespace dtActors
         mTexture->setImage(newImage);
         mTexture->dirtyTextureObject();
     }
+
+    #endif // 0
 
     ///////////////////////////////////////////////////////////////////////////////
     StaticMeshActorProxy::~StaticMeshActorProxy()

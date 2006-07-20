@@ -287,13 +287,13 @@ namespace dtEditQt
             EditorData::getInstance().getMainWindow()->startWaitCursor();
 
             // create our new object
-            osg::ref_ptr<dtDAL::ActorProxy> proxy =
+            dtCore::RefPtr<dtDAL::ActorProxy> proxy =
                     dtDAL::LibraryManager::GetInstance().CreateActorProxy(*selectedWidget->getActorType()).get();
 
             if (proxy.valid())
             {
                 // add the new proxy to the map
-                osg::ref_ptr<dtDAL::Map> mapPtr = EditorData::getInstance().getCurrentMap();
+                dtCore::RefPtr<dtDAL::Map> mapPtr = EditorData::getInstance().getCurrentMap();
                 if (mapPtr.valid())
                 {
                     mapPtr->AddProxy(*(proxy.get()));
@@ -306,7 +306,7 @@ namespace dtEditQt
                 EditorEvents::getInstance().emitEndChangeTransaction();
 
                 // Now, let the world that it should select the new actor proxy.
-                std::vector<osg::ref_ptr<dtDAL::ActorProxy> > actors;
+                std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > actors;
                 actors.push_back(proxy.get());
                 EditorEvents::getInstance().emitActorsSelected(actors);
             }

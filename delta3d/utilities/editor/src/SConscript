@@ -84,7 +84,13 @@ if 'qt' in env['TOOLS'] :
       moc_headers = SGlob('..\inc\dtEditQt\*.h')
    else:
       moc_headers = SGlob('../inc/dtEditQt/*.h')
-   
+
+   # Hack to avoid Qt warning about unused file. This should probably just be removed
+   # from CVS.
+   charBrowserHeader = '../inc/dtEditQt/characterbrowser.h'
+   if charBrowserHeader in moc_headers:
+      moc_headers.remove(charBrowserHeader)
+
    # Next, grep each header file for the Q_OBJECT macro to determine if moc should be run on 
    # it.
    moc_headers = getQObjectHeaders(moc_headers)
@@ -107,6 +113,12 @@ if 'qt' in env['TOOLS'] :
       EditorEnv.Moc(target=target, source=currHeader)
 
    sources = SGlob('*.cpp') + moc_targets
+
+   # Hack to avoid Qt warning about unused file. This should probably just be removed
+   # from CVS.
+   charBrowserSrc = 'characterbrowser.cpp'
+   if charBrowserSrc in sources:      
+      sources.remove(charBrowserSrc)
    
    # Build the icon
    if OS == 'windows' :

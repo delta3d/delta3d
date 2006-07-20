@@ -23,7 +23,6 @@
 #include "dtEditQt/editordata.h"
 #include "dtEditQt/editorevents.h"
 
-#include <osg/ref_ptr>
 #include <dtDAL/map.h>
 #include <dtDAL/exceptionenum.h>
 #include <dtDAL/datatype.h>
@@ -97,11 +96,11 @@ namespace dtEditQt
             // give undo manager the ability to create undo/redo events
             EditorEvents::getInstance().emitActorPropertyAboutToChange(proxy, myProperty, previousString, selectionString);
 
-            osg::ref_ptr<dtDAL::Map> curMap = EditorData::getInstance().getCurrentMap();
+            dtCore::RefPtr<dtDAL::Map> curMap = EditorData::getInstance().getCurrentMap();
             if(!curMap.valid())
                EXCEPT(dtDAL::ExceptionEnum::MapException, "There is no map open, there shouldn't be any controls");
             
-            std::vector<osg::ref_ptr<dtDAL::ActorProxy> > proxies = GetActorProxies(myProperty->GetDesiredActorClass());
+            std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > proxies = GetActorProxies(myProperty->GetDesiredActorClass());
 
             myProperty->SetValue((unsigned int)index < proxies.size() ? proxies[index].get() : NULL);
             dataChanged = true;
@@ -143,7 +142,7 @@ namespace dtEditQt
       
       wrapper->setFocusProxy(temporaryGotoButton);
 
-      std::vector<osg::ref_ptr<dtDAL::ActorProxy> > names = GetActorProxies(myProperty->GetDesiredActorClass());
+      std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > names = GetActorProxies(myProperty->GetDesiredActorClass());
 
       for(unsigned int i = 0; i < names.size(); i++)
          temporaryEditControl->addItem(QString(names[i]->GetName().c_str()));
@@ -216,8 +215,8 @@ namespace dtEditQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void DynamicActorControl::actorPropertyChanged(osg::ref_ptr<dtDAL::ActorProxy> proxy,
-      osg::ref_ptr<dtDAL::ActorProperty> property)
+   void DynamicActorControl::actorPropertyChanged(dtCore::RefPtr<dtDAL::ActorProxy> proxy,
+      dtCore::RefPtr<dtDAL::ActorProperty> property)
    {
       dtDAL::ActorActorProperty *changedProp = dynamic_cast<dtDAL::ActorActorProperty*>(property.get());
 
@@ -231,22 +230,22 @@ namespace dtEditQt
    {
       if(myProperty->GetValue() != NULL)
       {
-         osg::ref_ptr<dtDAL::ActorProxy> proxy(myProperty->GetValue());
+         dtCore::RefPtr<dtDAL::ActorProxy> proxy(myProperty->GetValue());
          
          EditorEvents::getInstance().emitGotoActor(proxy);
 
-         std::vector<osg::ref_ptr<dtDAL::ActorProxy> > vec;
+         std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > vec;
          vec.push_back(proxy);
 
          EditorEvents::getInstance().emitActorsSelected(vec);
       }
    }
 
-   std::vector<osg::ref_ptr<dtDAL::ActorProxy> > DynamicActorControl::GetActorProxies(const std::string &className)
+   std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > DynamicActorControl::GetActorProxies(const std::string &className)
    {
-      std::vector<osg::ref_ptr<dtDAL::ActorProxy> > toFill; 
+      std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > toFill; 
 
-      osg::ref_ptr<dtDAL::Map> curMap = EditorData::getInstance().getCurrentMap();
+      dtCore::RefPtr<dtDAL::Map> curMap = EditorData::getInstance().getCurrentMap();
 
       if(!curMap.valid())
          EXCEPT(dtDAL::ExceptionEnum::MapException, "There is no map open, there shouldn't be any controls");

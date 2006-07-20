@@ -25,7 +25,11 @@ class ApplicationWrap : public Application, public wrapper<Application>
    {
       if( override KeyPressed = this->get_override("KeyPressed") )
       {
+         #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+         return call<bool>( KeyPressed.ptr(), boost::ref(keyboard), key, character );
+         #else
          return KeyPressed( boost::ref(keyboard), key, character );
+         #endif
       }
       return Application::KeyPressed( keyboard, key, character );
    }
@@ -46,7 +50,11 @@ class ApplicationWrap : public Application, public wrapper<Application>
          {
             if( override PreFrame = this->get_override("PreFrame") )
             {
+               #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+               call<void>( PreFrame.ptr(), deltaFrameTime );
+               #else
                PreFrame(deltaFrameTime);
+               #endif
             }
             else
             {
@@ -62,7 +70,11 @@ class ApplicationWrap : public Application, public wrapper<Application>
          {
             if( override Frame = this->get_override("Frame") )
             {
+               #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+               call<void>( Frame.ptr(), deltaFrameTime );
+               #else
                Frame(deltaFrameTime);
+               #endif
             }
             else
             {
@@ -78,7 +90,11 @@ class ApplicationWrap : public Application, public wrapper<Application>
          {
             if( override PostFrame = this->get_override("PostFrame") )
             {
+               #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+               call<void>( PostFrame.ptr(), deltaFrameTime );
+               #else
                PostFrame(deltaFrameTime);
+               #endif
             }
             else
             {

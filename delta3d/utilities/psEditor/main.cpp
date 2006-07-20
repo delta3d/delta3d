@@ -53,8 +53,9 @@
 #include <math.h>
 
 using namespace dtCore;
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 using namespace osgParticle;
-
+/// @endcond
 
 /**
  * The editor window.
@@ -639,7 +640,7 @@ void psEditorGUI_NewLayer(Fl_Button*, void*)
 
    char buf[256];
    
-   sprintf(buf, "Layer %d", layers.size());
+   sprintf(buf, "Layer %u", layers.size());
    
    layer.mGeode->setName(buf);
    
@@ -865,7 +866,7 @@ void LoadFile( std::string filename, bool import = false )
             {
                char buf[256];
                
-               sprintf(buf, "Layer %d", newLayers.size() + (import ? layers.size() : 0));
+               sprintf(buf, "Layer %u", newLayers.size() + (import ? layers.size() : 0));
                
                layer.mGeode->setName(buf);
             }

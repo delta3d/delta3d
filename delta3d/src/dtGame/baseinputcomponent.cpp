@@ -1,4 +1,4 @@
-/*
+/* -*-c++-*-
  * Delta3D Open Source Game and Simulation Engine
  * Copyright (C) 2005, BMH Associates, Inc.
  *
@@ -18,7 +18,7 @@
  *
  * @author Curtiss Murphy
  */
-#include "dtGame/baseinputcomponent.h"
+#include <dtGame/baseinputcomponent.h>
 #include <dtABC/application.h>
 #include <dtCore/logicalinputdevice.h>
 
@@ -54,7 +54,6 @@ namespace dtGame
    {
       mMouseListener = new InputComponentMouseListener(*this);
       mKeyboardListener = new InputComponentKeyboardListener(*this);
-      //mLogger = &dtUtil::Log::GetInstance("BaseInputComponent.cpp");
    }
 
    void BaseInputComponent::OnAddedToGM() 

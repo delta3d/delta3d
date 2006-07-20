@@ -36,7 +36,6 @@
 #include <QtCore/QList>
 
 #include <osg/Referenced>
-#include <osg/ref_ptr>
 #include <vector>
 
 #include <dtDAL/datatype.h>
@@ -204,7 +203,7 @@ namespace dtEditQt{
         dtUtil::Log *mLogger;
 
         // filter vector to fill for file types
-        std::vector<osg::ref_ptr<const dtDAL::ResourceTypeHandler> >handler;
+        std::vector<dtCore::RefPtr<const dtDAL::ResourceTypeHandler> >handler;
 
         bool created;
     };

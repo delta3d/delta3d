@@ -58,6 +58,13 @@
    #define SLEEP(milliseconds) usleep(((milliseconds) * 1000))
 #endif
 
+// TODO: replace this with a platform-independant wrapper
+#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
+   #ifndef snprintf
+      #define snprintf _snprintf
+   #endif // snprintf
+#endif // WIN32
+
 class MessageTests : public CPPUNIT_NS::TestFixture
 {
    CPPUNIT_TEST_SUITE(MessageTests);

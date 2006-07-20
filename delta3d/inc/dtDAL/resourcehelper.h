@@ -25,7 +25,6 @@
 #include <map>
 
 #include <osg/Referenced>
-#include <osg/ref_ptr>
 
 #include <dtUtil/fileutils.h>
 #include <dtUtil/tree.h>
@@ -158,7 +157,7 @@ namespace dtDAL
           * @return The resource types that are available for the given handler.
           * @throws ExceptionEnum::ProjectResourceError if the datatype is a primitive type, not a resource type.
           */
-         void GetHandlersForDataType(const DataType& resourceType, std::vector<osg::ref_ptr<const ResourceTypeHandler> >& toFill) const;
+         void GetHandlersForDataType(const DataType& resourceType, std::vector<dtCore::RefPtr<const ResourceTypeHandler> >& toFill) const;
 
          /**
           * Registers a new type handler.  The method will get the datatype and applicable filters from
@@ -241,13 +240,13 @@ namespace dtDAL
                                     const ResourceDescriptor& resource) const;
 
       private:
-         static osg::ref_ptr<ResourceHelper> mInstance;
-         std::map<DataType*, osg::ref_ptr<ResourceTypeHandler> > mDefaultTypeHandlers;
-         std::map<DataType*, std::map<std::string, osg::ref_ptr<ResourceTypeHandler> > > mTypeHandlers;
+         static dtCore::RefPtr<ResourceHelper> mInstance;
+         std::map<DataType*, dtCore::RefPtr<ResourceTypeHandler> > mDefaultTypeHandlers;
+         std::map<DataType*, std::map<std::string, dtCore::RefPtr<ResourceTypeHandler> > > mTypeHandlers;
          //map if directory based resources based on the directory extension.
-         std::map<DataType*, std::map<std::string, osg::ref_ptr<ResourceTypeHandler> > > mResourceDirectoryTypeHandlers;
+         std::map<DataType*, std::map<std::string, dtCore::RefPtr<ResourceTypeHandler> > > mResourceDirectoryTypeHandlers;
          //multimap of resource handlers that import directories.
-         std::multimap<DataType*, osg::ref_ptr<ResourceTypeHandler> > mDirectoryImportingTypeHandlers;
+         std::multimap<DataType*, dtCore::RefPtr<ResourceTypeHandler> > mDirectoryImportingTypeHandlers;
          dtUtil::Log* mLogger;
 
          //Hide the copy constructor and operator=
@@ -261,7 +260,7 @@ namespace dtDAL
                                                                const std::string& category = "", dtUtil::tree<ResourceTreeNode>* parentTree = NULL) const;
 
          const ResourceTypeHandler* FindHandlerForDataTypeAndExtension(
-            const std::map<DataType*, std::map<std::string, osg::ref_ptr<ResourceTypeHandler> > >& mapToSearch, 
+            const std::map<DataType*, std::map<std::string, dtCore::RefPtr<ResourceTypeHandler> > >& mapToSearch, 
             DataType& dt, const std::string& ext) const;
            
          static dtUtil::tree<ResourceTreeNode>::iterator FindTreeNodeFor(

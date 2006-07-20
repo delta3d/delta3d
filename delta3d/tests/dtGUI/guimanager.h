@@ -64,8 +64,12 @@ namespace dtGUI
       ///Returns the instance of the class responsible for drawing the GUI scene.
       dtGUI::CEUIDrawable* GetGUIDrawable();
 
+      // These functions not actually used, so it's #ifdef'd out
+      // for now to avoid linker warnings. -osb
+      #if 0
       CEGUI::Scheme* LoadScheme(const std::string& scheme);
       CEGUI::Window* LoadLayout(const std::string& layout);
+      #endif // 0
 
       CEGUI::Imageset* CreateImageset(const std::string& name, void* buffer, int width, int height);
 

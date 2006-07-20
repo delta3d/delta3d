@@ -114,8 +114,8 @@ namespace dtEditQt
          */
         virtual bool updateData(QWidget *widget);
 
-        void actorPropertyChanged(proxyRefPtr proxy,
-            propertyRefPtr property);
+        void actorPropertyChanged(ActorProxyRefPtr proxy,
+            ActorPropertyRefPtr property);
     protected:
 
     private: 

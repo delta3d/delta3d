@@ -73,7 +73,7 @@ namespace dtDAL
    const std::string Project::MAP_DIRECTORY("maps");
    const std::string Project::MAP_BACKUP_SUB_DIRECTORY("backups");
 
-   osg::ref_ptr<Project> Project::mInstance(NULL);
+   dtCore::RefPtr<Project> Project::mInstance(NULL);
 
    //////////////////////////////////////////////////////////
    Project::Project() : mValidContext(false), mContext(""),
@@ -367,7 +367,7 @@ namespace dtDAL
                    "Map loading didn't throw an exception, but the result is NULL");
          }
 
-         mOpenMaps.insert(std::make_pair(name, osg::ref_ptr<Map>(map)));
+         mOpenMaps.insert(std::make_pair(name, dtCore::RefPtr<Map>(map)));
 
          //Clearing the modified flag must be done because setting the
          //map properties at load will make the map look modified.
@@ -405,7 +405,7 @@ namespace dtDAL
       if (!mValidContext)
          EXCEPT(dtDAL::ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
 
-      std::map<std::string, osg::ref_ptr<Map> >::iterator openMapI = mOpenMaps.find(name);
+      std::map<std::string, dtCore::RefPtr<Map> >::iterator openMapI = mOpenMaps.find(name);
 
       //map is already open.
       if (openMapI != mOpenMaps.end())
@@ -432,7 +432,7 @@ namespace dtDAL
       if (!mValidContext)
          EXCEPT(dtDAL::ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
 
-      std::map<std::string, osg::ref_ptr<Map> >::iterator openMapI = mOpenMaps.find(name);
+      std::map<std::string, dtCore::RefPtr<Map> >::iterator openMapI = mOpenMaps.find(name);
 
       //map is already open.
       if (openMapI != mOpenMaps.end())
@@ -475,7 +475,7 @@ namespace dtDAL
          EXCEPT(dtDAL::ExceptionEnum::ProjectException, std::string("Maps may not have an empty fileName."));
 
       //assign it to a refptr so that if I except, it will get deleted
-      osg::ref_ptr<Map> map(new Map(fileName, name));
+      dtCore::RefPtr<Map> map(new Map(fileName, name));
 
       for (std::map<std::string, std::string>::iterator i = mMapList.begin(); i != mMapList.end(); ++i)
       {
@@ -494,7 +494,7 @@ namespace dtDAL
 
       InternalSaveMap(*map);
 
-      mOpenMaps.insert(make_pair(name, osg::ref_ptr<Map>(map.get())));
+      mOpenMaps.insert(make_pair(name, dtCore::RefPtr<Map>(map.get())));
       //The map can add extensions and such to the file name, so it
       //must be fetched back from the map object before being added to the name-file map.
       mMapList.insert(make_pair(name, map->GetFileName()));
@@ -508,9 +508,9 @@ namespace dtDAL
    void Project::LoadMapIntoScene(Map& map, dtCore::Scene& scene, bool addBillBoards, bool enablePaging)
    {
       CheckMapValidity(map, true);
-      std::vector<osg::ref_ptr<ActorProxy> > container;
+      std::vector<dtCore::RefPtr<ActorProxy> > container;
       map.GetAllProxies(container);
-      for (std::vector<osg::ref_ptr<ActorProxy> >::iterator i = container.begin();
+      for (std::vector<dtCore::RefPtr<ActorProxy> >::iterator i = container.begin();
            i != container.end(); ++i)
       {
          ActorProxy& proxy = **i;
@@ -604,12 +604,12 @@ namespace dtDAL
    void Project::UnloadUnusedLibraries(Map& mapToClose)
    {
 
-      std::vector<osg::ref_ptr<ActorProxy> > proxies;
+      std::vector<dtCore::RefPtr<ActorProxy> > proxies;
       mapToClose.GetAllProxies(proxies);
-      std::vector<osg::ref_ptr<ActorProxy> >::iterator i = proxies.begin();
+      std::vector<dtCore::RefPtr<ActorProxy> >::iterator i = proxies.begin();
       while (i != proxies.end())
       {
-         osg::ref_ptr<ActorProxy>& proxy = *i;
+         dtCore::RefPtr<ActorProxy>& proxy = *i;
          //if this proxy has a reference count greater than 1
          //then its library may not close, but 2 is used here because
          //the vector has a referece to it now.
@@ -631,7 +631,7 @@ namespace dtDAL
       {
          std::string libToClose = *i;
          bool libMayClose = true;
-         for (std::map<std::string, osg::ref_ptr<Map> >::const_iterator j = mOpenMaps.begin(); j != mOpenMaps.end(); ++j)
+         for (std::map<std::string, dtCore::RefPtr<Map> >::const_iterator j = mOpenMaps.begin(); j != mOpenMaps.end(); ++j)
          {
             const Map& toCheck = *j->second;
             if (&mapToClose != &toCheck && toCheck.HasLibrary(libToClose))
@@ -658,10 +658,10 @@ namespace dtDAL
 
             //go through proxies still being held onto outside this library
             //and see if the currently library is the source of any.
-            for (std::vector<osg::ref_ptr<ActorProxy> >::iterator i = proxies.begin();
+            for (std::vector<dtCore::RefPtr<ActorProxy> >::iterator i = proxies.begin();
                  i != proxies.end(); ++i)
             {
-               osg::ref_ptr<ActorProxy>& proxy = *i;
+               dtCore::RefPtr<ActorProxy>& proxy = *i;
 
                try
                {
@@ -706,7 +706,7 @@ namespace dtDAL
       }
 
       //bool
-      std::map<std::string, osg::ref_ptr<Map> >::iterator j = mOpenMaps.find(map.GetSavedName());
+      std::map<std::string, dtCore::RefPtr<Map> >::iterator j = mOpenMaps.find(map.GetSavedName());
       if (j == mOpenMaps.end() || (j->second.get() != &map))
       {
          EXCEPT(dtDAL::ExceptionEnum::ProjectInvalidContext,
@@ -765,7 +765,7 @@ namespace dtDAL
       if (IsReadOnly())
          EXCEPT(dtDAL::ExceptionEnum::ProjectReadOnly, std::string("The context is readonly."));
 
-      std::map<std::string, osg::ref_ptr<Map> >::iterator j = mOpenMaps.find(mapName);
+      std::map<std::string, dtCore::RefPtr<Map> >::iterator j = mOpenMaps.find(mapName);
       if (j != mOpenMaps.end())
       {
          CloseMap(*j->second, unloadLibraries);
@@ -897,7 +897,7 @@ namespace dtDAL
       if (IsReadOnly())
          EXCEPT(dtDAL::ExceptionEnum::ProjectReadOnly, std::string("The context is readonly."));
 
-      std::map<std::string, osg::ref_ptr<Map> >::iterator j = mOpenMaps.find(mapName);
+      std::map<std::string, dtCore::RefPtr<Map> >::iterator j = mOpenMaps.find(mapName);
       if (j == mOpenMaps.end())
       {
          return; //map is not in memory, so it doesn't need to be saved.
@@ -921,7 +921,7 @@ namespace dtDAL
          EXCEPT(dtDAL::ExceptionEnum::ProjectFileNotFound, std::string("No such map: \"") + map.GetSavedName() + "\"");
       }
 
-      std::map<std::string, osg::ref_ptr<Map> >::const_iterator j = mOpenMaps.find(map.GetSavedName());
+      std::map<std::string, dtCore::RefPtr<Map> >::const_iterator j = mOpenMaps.find(map.GetSavedName());
 
       if (j == mOpenMaps.end())
       {
@@ -999,7 +999,7 @@ namespace dtDAL
             ReloadMapNames();
          }
 
-         osg::ref_ptr<Map> holder(&map);
+         dtCore::RefPtr<Map> holder(&map);
 
          mOpenMaps.erase(mOpenMaps.find(map.GetSavedName()));
          mOpenMaps.insert(make_pair(map.GetName(), holder));
@@ -1142,7 +1142,7 @@ namespace dtDAL
       if (!mValidContext)
          EXCEPT(dtDAL::ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
 
-      std::map< std::string, osg::ref_ptr<Map> >::iterator i = mOpenMaps.begin();
+      std::map< std::string, dtCore::RefPtr<Map> >::iterator i = mOpenMaps.begin();
       while (i != mOpenMaps.end())
       {
          ActorProxy* ap = i->second->GetProxyById(proxy.GetId());
@@ -1158,7 +1158,7 @@ namespace dtDAL
       if (!mValidContext)
          EXCEPT(dtDAL::ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
 
-      std::map< std::string, osg::ref_ptr<Map> >::const_iterator i = mOpenMaps.begin();
+      std::map< std::string, dtCore::RefPtr<Map> >::const_iterator i = mOpenMaps.begin();
       while (i != mOpenMaps.end())
       {
          const ActorProxy* ap = i->second->GetProxyById(proxy.GetId());
@@ -1169,7 +1169,7 @@ namespace dtDAL
    }
 
    //////////////////////////////////////////////////////////
-   void Project::GetHandlersForDataType(const DataType& resourceType, std::vector<osg::ref_ptr<const ResourceTypeHandler> >& toFill) const
+   void Project::GetHandlersForDataType(const DataType& resourceType, std::vector<dtCore::RefPtr<const ResourceTypeHandler> >& toFill) const
    {
       mResourceHelper.GetHandlersForDataType(resourceType, toFill);
    }

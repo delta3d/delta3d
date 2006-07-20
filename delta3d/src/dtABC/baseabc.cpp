@@ -98,7 +98,7 @@ void BaseABC::CreateInstances()
 
 void BaseABC::LoadMap( dtDAL::Map& map, bool addBillBoards )
 {
-   typedef std::vector< osg::ref_ptr< dtDAL::ActorProxy > > ActorProxyVector;
+   typedef std::vector< dtCore::RefPtr< dtDAL::ActorProxy > > ActorProxyVector;
    ActorProxyVector proxies;
    map.FindProxies(proxies, "*", "dtcore", "Camera");
 

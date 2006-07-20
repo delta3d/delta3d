@@ -39,8 +39,8 @@ namespace dtEditQt
     DynamicAbstractControl::DynamicAbstractControl()
         : initialized(false)//, newCommitEmitter(NULL)
     {
-        connect(&EditorEvents::getInstance(), SIGNAL(actorPropertyChanged(proxyRefPtr,propertyRefPtr)),
-            this, SLOT(actorPropertyChanged(proxyRefPtr, propertyRefPtr)));
+        connect(&EditorEvents::getInstance(), SIGNAL(actorPropertyChanged(ActorProxyRefPtr,ActorPropertyRefPtr)),
+            this, SLOT(actorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)));
     }
 
     /////////////////////////////////////////////////////////////////////////////////

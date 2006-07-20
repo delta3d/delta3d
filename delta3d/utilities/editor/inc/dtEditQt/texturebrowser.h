@@ -24,9 +24,8 @@
 #define __TextureBrowser_h
 
 #include "dtEditQt/resourceabstractbrowser.h"
-#include <osg/ref_ptr>
 
-#include "dtDAL/resourcehelper.h"
+#include <dtDAL/resourcehelper.h>
 
 class QAction;
 class QGroupBox;

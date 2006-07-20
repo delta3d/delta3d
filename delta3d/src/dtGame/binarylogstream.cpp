@@ -24,6 +24,7 @@
 #include "dtUtil/exception.h"
 #include "dtUtil/fileutils.h"
 
+#include <cassert>
 #include <iostream>
 
 namespace dtGame
@@ -272,17 +273,23 @@ namespace dtGame
       fseek(mMessagesFile,0L,SEEK_SET);
 
       char magicNumber[11];
-      fread(&magicNumber[0],1,10,mMessagesFile);
+      size_t numRead = fread(&magicNumber[0],1,10,mMessagesFile);
+      assert(numRead>=10||feof(mMessagesFile));
       magicNumber[10] = '\0';
       header.magicNumber = magicNumber;
 
-      fread((char *)&header.majorVersion,1,1,mMessagesFile);
-      fread((char *)&header.minorVersion,1,1,mMessagesFile);
-      fread((char *)&header.recordLength,sizeof(double),1,mMessagesFile);
-      fread((char *)&header.indexTableFileNameLength,sizeof(unsigned short),1,mMessagesFile);
+      numRead = fread((char *)&header.majorVersion,1,1,mMessagesFile);
+      assert(numRead>=1||feof(mMessagesFile));
+      numRead = fread((char *)&header.minorVersion,1,1,mMessagesFile);
+      assert(numRead>=1||feof(mMessagesFile));
+      numRead = fread((char *)&header.recordLength,sizeof(double),1,mMessagesFile);
+      assert(numRead>=1||feof(mMessagesFile));
+      numRead = fread((char *)&header.indexTableFileNameLength,sizeof(unsigned short),1,mMessagesFile);
+      assert(numRead>=1||feof(mMessagesFile));
 
       char *indexFile = new char[header.indexTableFileNameLength+1];
-      fread(&indexFile[0],1,header.indexTableFileNameLength,mMessagesFile);
+      numRead = fread(&indexFile[0],1,header.indexTableFileNameLength,mMessagesFile);
+      assert(numRead>=header.indexTableFileNameLength||feof(mMessagesFile));
       indexFile[header.indexTableFileNameLength] = '\0';
       header.indexTableFileName = indexFile;
       delete [] indexFile;
@@ -325,16 +332,22 @@ namespace dtGame
       fseek(mIndexTablesFile,0L,SEEK_SET);
 
       char magicNumber[14];
-      fread(&magicNumber[0],1,13,mIndexTablesFile);
+      size_t numRead = fread(&magicNumber[0],1,13,mIndexTablesFile);
+      assert(numRead>=13||feof(mIndexTablesFile));
+
       magicNumber[13] = '\0';
       header.magicNumber = magicNumber;
 
-      fread((char *)&header.majorVersion,1,1,mIndexTablesFile);
-      fread((char *)&header.minorVersion,1,1,mIndexTablesFile);
-      fread((char *)&header.msgDBFileNameLength,sizeof(unsigned short),1,mIndexTablesFile);
+      numRead = fread((char *)&header.majorVersion,1,1,mIndexTablesFile);
+      assert(numRead>=1||feof(mIndexTablesFile));
+      numRead = fread((char *)&header.minorVersion,1,1,mIndexTablesFile);
+      assert(numRead>=1||feof(mIndexTablesFile));
+      numRead = fread((char *)&header.msgDBFileNameLength,sizeof(unsigned short),1,mIndexTablesFile);
+      assert(numRead>=1||feof(mIndexTablesFile));
 
       char *msgDBFile = new char[header.msgDBFileNameLength+1];
-      fread(&msgDBFile[0],1,header.msgDBFileNameLength,mIndexTablesFile);
+      numRead = fread(&msgDBFile[0],1,header.msgDBFileNameLength,mIndexTablesFile);
+      assert(numRead>=header.msgDBFileNameLength||feof(mIndexTablesFile));
       msgDBFile[header.msgDBFileNameLength] = '\0';
       header.msgDBFileName = msgDBFile;
       delete [] msgDBFile;
@@ -409,7 +422,8 @@ namespace dtGame
       }
 
       unsigned char dEID;
-      fread((char *)&dEID,1,1,mMessagesFile);
+      size_t numRead = fread((char *)&dEID,1,1,mMessagesFile);
+      assert(numRead>=1||feof(mMessagesFile));
       if (feof(mMessagesFile))
          return NULL;
 
@@ -420,8 +434,10 @@ namespace dtGame
 
       //Get the type of message and create the message object.
       unsigned short msgID;
-      fread((char *)&msgID,sizeof(unsigned short),1,mMessagesFile);
-      fread((char *)&timeStamp,sizeof(double),1,mMessagesFile);
+      numRead = fread((char *)&msgID,sizeof(unsigned short),1,mMessagesFile);
+      assert(numRead>=1||feof(mMessagesFile));
+      numRead = fread((char *)&timeStamp,sizeof(double),1,mMessagesFile);
+      assert(numRead>=1||feof(mMessagesFile));
       const MessageType &msgType = GetMessageFactory().GetMessageTypeById(msgID);
 
       dtCore::RefPtr<Message> msg = NULL;
@@ -429,11 +445,13 @@ namespace dtGame
 
       //Create a temporary buffer, and read the message from it.
       unsigned int bufferSize;
-      fread((char *)&bufferSize,sizeof(unsigned int),1,mMessagesFile);
+      numRead = fread((char *)&bufferSize,sizeof(unsigned int),1,mMessagesFile);
+      assert(numRead>=1||feof(mMessagesFile));
       if (bufferSize != 0)
       {
          char *tempBuffer = new char[bufferSize];
-         fread(&tempBuffer[0],1,bufferSize,mMessagesFile);
+         numRead = fread(&tempBuffer[0],1,bufferSize,mMessagesFile);
+         assert(numRead>=bufferSize||feof(mMessagesFile));
 
          DataStream stream(tempBuffer,bufferSize);
 
@@ -457,7 +475,8 @@ namespace dtGame
             "Index table file is not valid.");
 
       unsigned char deID;
-      fread((char *)&deID,1,1,mIndexTablesFile);
+      size_t numRead = fread((char *)&deID,1,1,mIndexTablesFile);
+      assert(numRead>=1||feof(mIndexTablesFile));
       CheckFileStatus(mIndexTablesFile);
       while (!feof(mIndexTablesFile))
       {
@@ -477,7 +496,8 @@ namespace dtGame
                break;
          }
 
-         fread((char *)&deID,1,1,mIndexTablesFile);
+         numRead = fread((char *)&deID,1,1,mIndexTablesFile);
+         assert(numRead>=1||feof(mIndexTablesFile));
       }
 
       CheckFileStatus(mIndexTablesFile);
@@ -666,10 +686,12 @@ namespace dtGame
       LogTag tag;
 
       unsigned int bufferSize;
-      fread((char *)&bufferSize,sizeof(unsigned int),1,mIndexTablesFile);
+      size_t numRead = fread((char *)&bufferSize,sizeof(unsigned int),1,mIndexTablesFile);
+      assert(numRead>=1||feof(mIndexTablesFile));
 
       char *tempBuffer = new char[bufferSize];
-      fread(&tempBuffer[0],bufferSize,1,mIndexTablesFile);
+      numRead = fread(&tempBuffer[0],bufferSize,1,mIndexTablesFile);
+      assert(numRead>=1||feof(mIndexTablesFile));
       CheckFileStatus(mIndexTablesFile);
 
       DataStream stream(tempBuffer,bufferSize);
@@ -711,10 +733,12 @@ namespace dtGame
       LogKeyframe keyFrame;
 
       unsigned int bufferSize;
-      fread((char *)&bufferSize,sizeof(unsigned int),1,mIndexTablesFile);
+      size_t numRead = fread((char *)&bufferSize,sizeof(unsigned int),1,mIndexTablesFile);
+      assert(numRead>=1||feof(mIndexTablesFile));
 
       char *tempBuffer = new char[bufferSize];
-      fread(&tempBuffer[0],bufferSize,1,mIndexTablesFile);
+      numRead = fread(&tempBuffer[0],bufferSize,1,mIndexTablesFile);
+      assert(numRead>=1||feof(mIndexTablesFile));
       CheckFileStatus(mIndexTablesFile);
 
       DataStream stream(tempBuffer,bufferSize);

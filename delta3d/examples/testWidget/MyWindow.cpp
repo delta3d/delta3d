@@ -1,13 +1,9 @@
-#include <string>
-
 #include "MyWindow.h"
 
-IMPLEMENT_MANAGEMENT_LAYER( MyWindow )
+#include <dtCore/globals.h>
 
-const char* MyWindow::PATH = "/examples/testWidget/;";
-const char* MyWindow::FILE = "models/brdm.ive";
-
-
+std::string MyWindow::PATH = "/examples/testWidget/;";
+std::string MyWindow::FILE = "models/brdm.ive";
 
 MyWindow::MyWindow()
 :  MyParent()
@@ -15,15 +11,11 @@ MyWindow::MyWindow()
    ctor();
 }
 
-
-
 MyWindow::MyWindow( int w, int h, const char* l /*= 0L*/ )
 :  MyParent(w, h, l)
 {
    ctor();
 }
-
-
 
 MyWindow::MyWindow( int x, int y, int w, int h, const char* l /*= 0L*/ )
 :  MyParent(x, y, w, h, l)
@@ -31,31 +23,21 @@ MyWindow::MyWindow( int x, int y, int w, int h, const char* l /*= 0L*/ )
    ctor();
 }
 
-
-
 MyWindow::~MyWindow()
 {
 }
 
-
-
-void
-MyWindow::show( void )
+void MyWindow::show()
 {
    MyParent::show();
 
    std::string path((dtCore::GetDeltaRootPath() + PATH) + dtCore::GetDeltaDataPathList() );
 
-   std::string file(FILE);
-
    SendMessage( "setpath", &path );
-   SendMessage( "loadfile", &file );
+   SendMessage( "loadfile", &FILE );
 }
 
-
-
-void
-MyWindow::ctor( void )
+void MyWindow::ctor()
 {
    SetEvent( FL_PUSH );
    SetEvent( FL_RELEASE );

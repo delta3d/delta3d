@@ -23,7 +23,6 @@
 #define DELTA_MAIN_WINDOW
 
 #include <QtGui/QMainWindow>
-#include <osg/ref_ptr>
 #include <dtCore/uniqueid.h>
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/actorproperty.h>
@@ -127,16 +126,16 @@ namespace dtEditQt
          * @param proxy The proxy that was changed.
          * @param property The property of the proxy that was modified.
          */
-        void onActorPropertyChanged(proxyRefPtr proxy, propertyRefPtr property);
+        void onActorPropertyChanged(ActorProxyRefPtr proxy, ActorPropertyRefPtr property);
 
         /// Updates the window title
         void updateWindowTitle();
 
-        void onActorProxyCreated(proxyRefPtr proxy, bool forceNoAdjustments);
+        void onActorProxyCreated(ActorProxyRefPtr proxy, bool forceNoAdjustments);
 
-        void onActorProxyDestroyed(proxyRefPtr proxy);
+        void onActorProxyDestroyed(ActorProxyRefPtr proxy);
 
-        void onActorProxyNameChanged(proxyRefPtr proxy, std::string oldName);
+        void onActorProxyNameChanged(ActorProxyRefPtr proxy, std::string oldName);
 
         void onMapPropertyChanged();
 

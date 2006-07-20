@@ -23,7 +23,6 @@
 #define DELTA_UNDOMANAGER
 
 #include <osg/Referenced>
-#include <osg/ref_ptr>
 #include <QtCore/QObject>
 #include <vector>
 #include <stack>
@@ -106,30 +105,30 @@ namespace dtEditQt
          * @param proxy The proxy that was changed.
          * @param property The property of the proxy that was modified.
          */
-        void onActorPropertyChanged(proxyRefPtr proxy,
-            propertyRefPtr property);
+        void onActorPropertyChanged(ActorProxyRefPtr proxy,
+            ActorPropertyRefPtr property);
 
         /**
          * An actor property is about to change.  We create the change event object, but 
          * don't add it to the undo list until we get the actual changed event.
          */
-        void actorPropertyAboutToChange(proxyRefPtr proxy,
-            propertyRefPtr property, std::string oldValue, std::string newValue);
+        void actorPropertyAboutToChange(ActorProxyRefPtr proxy,
+            ActorPropertyRefPtr property, std::string oldValue, std::string newValue);
 
         /**
           * When an actor is created, we add a create event to the undo list.
           */
-        void onActorProxyCreated(proxyRefPtr proxy, bool forceNoAdjustments);
+        void onActorProxyCreated(ActorProxyRefPtr proxy, bool forceNoAdjustments);
 
         /**
          * When an actor is destroyed, we add a destroy event to the undo list.
          */
-        void onActorProxyDestroyed(proxyRefPtr proxy);
+        void onActorProxyDestroyed(ActorProxyRefPtr proxy);
 
         /**
          * When the name changes, trap this event.
          */        
-        void onProxyNameChanged(proxyRefPtr proxy, std::string oldName);
+        void onProxyNameChanged(ActorProxyRefPtr proxy, std::string oldName);
 
         /**
          * Called when a map, project, or libraries change.  Clears all undo/redo events.
@@ -166,7 +165,7 @@ namespace dtEditQt
             virtual ~ChangeEvent() {};
 
             ChangeEventType type;
-            std::vector<osg::ref_ptr < UndoPropertyData > > undoPropData;
+            std::vector<dtCore::RefPtr < UndoPropertyData > > undoPropData;
             std::string objectId;
             std::string actorTypeName;
             std::string actorTypeCategory;
@@ -175,8 +174,8 @@ namespace dtEditQt
         };
 
         // variables
-        std::stack<osg::ref_ptr < ChangeEvent > > undoStack;
-        std::stack<osg::ref_ptr < ChangeEvent > > redoStack;
+        std::stack<dtCore::RefPtr < ChangeEvent > > undoStack;
+        std::stack<dtCore::RefPtr < ChangeEvent > > redoStack;
         // this variable is used to avoid recursing on events to our selves
         // because undo or redo makjes changes to the data, but we don't want 
         // to listen to our own events
@@ -187,7 +186,7 @@ namespace dtEditQt
         // and property, then it is discarded.  This helps to only track change 
         // events that were intended to be tracked in undo. It also prevents us
         // from holding to a change event for a change that didn't actually complete
-        osg::ref_ptr<ChangeEvent> aboutToChangeEvent;
+        dtCore::RefPtr<ChangeEvent> aboutToChangeEvent;
 
         /**
          * Enables the redo and undo buttons based on the current state of the stacks
@@ -223,7 +222,7 @@ namespace dtEditQt
          * used by both the delete and change event types.  It makes an UndoPropertyData for 
          * every property on the proxy.
          * @return Returns a new instance of a ChangeEvent.  You must delete this or make 
-         * an osg::ref_ptr for it
+         * an dtCore::RefPtr for it
          */
         ChangeEvent *createFullUndoEvent(dtDAL::ActorProxy *proxy);
 

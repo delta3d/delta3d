@@ -205,7 +205,7 @@ void Scene::AddDrawable( DeltaDrawable *drawable )
 
 void Scene::RemoveDrawable(DeltaDrawable *drawable)
 {
-   mSceneNode.get()->removeChild( drawable->GetOSGNode() );
+   mSceneNode->removeChild( drawable->GetOSGNode() );
    drawable->AddedToScene(0);
 
    unsigned int pos = GetDrawableIndex(drawable);
