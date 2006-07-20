@@ -78,6 +78,19 @@ namespace dtAI
          const WaypointMap& GetWaypoints() const;    
 
          /**
+         * Copies waypoints into a vector and returns it by value
+         * definitely not efficient to say the least, but is being
+         * used as a helper function for the Python bindings
+         * this function may be removed once the waypoint map is exported
+         */
+         std::vector<Waypoint*> CopyWaypointsIntoVector();
+
+         /**
+         * Formats and writes all waypoints out to an ostream
+         */
+         std::ostream& GetWaypoints(std::ostream& pStream);
+
+         /**
          * Given a scene we create a NavMesh
          * the scene is used for doing Isector tests
          * to test if pairs of waypoints are traversable.
@@ -104,11 +117,6 @@ namespace dtAI
          void SetDrawNavMesh(bool pDraw);
          void SetNavMeshColor(const osg::Vec4& pColor);
          void SetNavMeshSize(float pSize);         
-
-         /**
-         * Formats and writes all waypoints out to an ostream
-         */
-         std::ostream& GetWaypoints(std::ostream& pStream);
 
          /**
          * Returns the WaypointDrawable 
