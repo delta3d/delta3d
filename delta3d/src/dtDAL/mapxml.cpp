@@ -1452,6 +1452,12 @@ namespace dtDAL
             const ActorProxy& proxy = *i->second.get();
             //printf("Proxy pointer %x\n", &proxy);
             //printf("Actor pointer %x\n", proxy.getActor());
+
+            //ghost proxies arent saved
+            //added 7/10/06 -banderegg
+            if(proxy.IsGhostProxy()) 
+               continue;
+
             BeginElement(MapXMLConstants::ACTOR_ELEMENT);
             BeginElement(MapXMLConstants::ACTOR_TYPE_ELEMENT);
             AddCharacters(proxy.GetActorType().GetCategory()
@@ -1479,11 +1485,6 @@ namespace dtDAL
 
                // If the property is read only, skip it
                if(property.IsReadOnly())
-                  continue;
-
-               //ghost proxies arent saved
-               //added 7/10/06 -banderegg
-               if(proxy.IsGhostProxy()) 
                   continue;
 
                BeginElement(MapXMLConstants::ACTOR_PROPERTY_ELEMENT);
