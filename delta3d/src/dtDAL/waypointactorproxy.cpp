@@ -68,8 +68,12 @@ namespace dtDAL
    {
       if(!mBillBoardIcon.valid())
       {
-         mBillBoardIcon =
-            new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IconType::GENERIC);
+         dtDAL::ActorProxyIcon::ActorProxyIconConfig config;
+         config.mForwardVector = false;
+         config.mUpVector = false;
+         config.mScale = 0.25;
+
+         mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IconType::WAYPOINT, config);
       }
 
       return mBillBoardIcon.get();

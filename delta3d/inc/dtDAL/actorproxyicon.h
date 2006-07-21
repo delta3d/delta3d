@@ -62,6 +62,17 @@ namespace dtDAL
 
       public:
 
+         //a basic means to encapsulate icon configure params
+         struct ActorProxyIconConfig
+         {
+            ActorProxyIconConfig(): mUpVector(true), mForwardVector(true), /*mRightVector(true),*/ mScale(1.0) {}
+            bool mUpVector;
+            bool mForwardVector;
+            //bool mRightVector;
+            float mScale;
+         };
+
+
          //Our custom Delta3D drawable.
          class BillBoardDrawable : public dtCore::DeltaDrawable
          {
@@ -105,6 +116,7 @@ namespace dtDAL
          static std::string IMAGE_BILLBOARD_PLAYERSTART;
          static std::string IMAGE_BILLBOARD_TRIGGER;
          static std::string IMAGE_BILLBOARD_CAMERA;
+         static std::string IMAGE_BILLBOARD_WAYPOINT;
 
          //Textures used to display the arrow orientation indicator on the billboard.
          static std::string IMAGE_ARROW_HEAD;
@@ -129,6 +141,7 @@ namespace dtDAL
                static const IconType PLAYERSTART;
                static const IconType TRIGGER;
                static const IconType CAMERA;
+               static const IconType WAYPOINT;
 
             protected:
                IconType(const std::string &name) : Enumeration(name)
@@ -150,6 +163,12 @@ namespace dtDAL
           * @param type Type of icon to create.  By default, IconType::GENERIC is used.
           */
          ActorProxyIcon(const IconType &type = IconType::GENERIC);
+
+         /**
+         * Constructs a new actor proxy billboard icon using an optional config class
+         * meant to be extendable to allow various options.
+         */
+         ActorProxyIcon(const IconType& type, const ActorProxyIconConfig& pConfig);
 
          /**
           * Sets the icon type used by this proxy icon.
@@ -223,6 +242,9 @@ namespace dtDAL
 
          ///Type of the billboard icon.
          const IconType *mIconType;
+
+         ///our custom config
+         ActorProxyIconConfig mConfig;
 
          ///The actual billboard drawable which includes the billboard and an arrow
          ///depicting its actor's orientation.
