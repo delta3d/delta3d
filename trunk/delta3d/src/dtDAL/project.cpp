@@ -956,12 +956,6 @@ namespace dtDAL
       fileUtils.PushDirectory(mContext);
       try
       {
-         //save the file to a separate name first so that
-         //it won't blast the old one unless it is successful.
-         mw.Save(map, fullPathSaving);
-         //if it's successful, move it to the final file name
-         fileUtils.FileMove(fullPathSaving, fullPath, true);
-
          //save the waypoint file- banderegg 7/10/06
          //if there is no filename given, we arent going to save any waypoints
          //lets check to see if there are waypoints in the scene and if so create 
@@ -979,6 +973,12 @@ namespace dtDAL
          {
             dtAI::WaypointManager::GetInstance()->OnMapSave(map.GetPathNodeFileName(), pScene);
          }
+
+         //save the file to a separate name first so that
+         //it won't blast the old one unless it is successful.
+         mw.Save(map, fullPathSaving);
+         //if it's successful, move it to the final file name
+         fileUtils.FileMove(fullPathSaving, fullPath, true);
       }
       catch (const dtUtil::Exception& e)
       {
