@@ -311,7 +311,6 @@ void Character::RotateCharacterToPoint(const osg::Vec3& targetPos, float delta)
 
    pVector [2] = 0.0f;
 
-   float len = pVector.length();
    float dir = osg::RadiansToDegrees(atan2(pVector[0], -pVector[1]));
    float rotation = GetRotation();
    float dR = dir - rotation;
