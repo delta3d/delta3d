@@ -441,7 +441,7 @@ namespace dtEditQt
 
             float offset = (bs.radius() < 1000.0f) ? bs.radius() : 1.0f;
             if (offset <= 0.0f)
-                offset = 10.0f;
+                offset = 2.0f; //10 is always a bad magic number
             tProxy->SetTranslation(pos+(viewDir*offset*2));
 
             std::string newValue = prop->GetStringValue();
