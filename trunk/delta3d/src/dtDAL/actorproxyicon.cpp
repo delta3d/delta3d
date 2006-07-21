@@ -47,6 +47,7 @@ namespace dtDAL
    const ActorProxyIcon::IconType ActorProxyIcon::IconType::PLAYERSTART("PLAYERSTART_ICON");
    const ActorProxyIcon::IconType ActorProxyIcon::IconType::TRIGGER("TRIGGER_ICON");
    const ActorProxyIcon::IconType ActorProxyIcon::IconType::CAMERA("CAMERA");
+   const ActorProxyIcon::IconType ActorProxyIcon::IconType::WAYPOINT("WAYPOINT");
    //////////////////////////////////////////////////////////////////////////
 
    //////////////////////////////////////////////////////////////////////////
@@ -60,6 +61,7 @@ namespace dtDAL
    std::string ActorProxyIcon::IMAGE_BILLBOARD_PLAYERSTART("");
    std::string ActorProxyIcon::IMAGE_BILLBOARD_TRIGGER("");
    std::string ActorProxyIcon::IMAGE_BILLBOARD_CAMERA("");
+   std::string ActorProxyIcon::IMAGE_BILLBOARD_WAYPOINT("");
 
    std::string ActorProxyIcon::IMAGE_ARROW_HEAD("");
    std::string ActorProxyIcon::IMAGE_ARROW_BODY("");
@@ -78,6 +80,7 @@ namespace dtDAL
       IMAGE_BILLBOARD_PLAYERSTART = ("billboards/playerstart.png");
       IMAGE_BILLBOARD_TRIGGER = ("billboards/trigger.png");
       IMAGE_BILLBOARD_CAMERA = ("billboards/camera.png");
+      IMAGE_BILLBOARD_WAYPOINT = ("billboards/Foot.png");
 
       IMAGE_ARROW_HEAD = ("billboards/arrowhead.png");
       IMAGE_ARROW_BODY = ("billboards/arrowbody.png");
@@ -91,6 +94,19 @@ namespace dtDAL
    {
       mIconType = &type;
       mIconNode = NULL;
+      //just use a default config
+      CreateBillBoard();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   ActorProxyIcon::ActorProxyIcon(const IconType& type, const ActorProxyIconConfig& pConfig)
+      : mIconStateSet(0)
+      , mConeStateSet(0)
+      , mCylinderStateSet(0)
+   {
+      mIconType = &type;
+      mIconNode = NULL;
+      mConfig = pConfig;
       CreateBillBoard();
    }
 
@@ -136,23 +152,37 @@ namespace dtDAL
       mIconStateSet->setAttributeAndModes(pm,turnOn);
       geom->setStateSet(mIconStateSet.get());
 
-      osg::Group *arrow = CreateOrientationArrow();
-      mArrowNode = new dtCore::Transformable();
-      mArrowNode->GetMatrixNode()->addChild(arrow);
+      if(mConfig.mForwardVector)
+      {
+         osg::Group *arrow = CreateOrientationArrow();
+         mArrowNode = new dtCore::Transformable();
+         mArrowNode->GetMatrixNode()->addChild(arrow);
+      }
 
-      osg::Group *arrowUp = CreateOrientationArrow();
-      mArrowNodeUp = new dtCore::Transformable();
-      mArrowNodeUp->GetMatrixNode()->addChild(arrowUp);
+      if(mConfig.mUpVector)
+      {
+         osg::Group *arrowUp = CreateOrientationArrow();
+         mArrowNodeUp = new dtCore::Transformable();
+         mArrowNodeUp->GetMatrixNode()->addChild(arrowUp);
+      }
 
       mIconNode = new dtCore::Transformable();
+      
+      osg::Matrix scale;
+      scale(0,0) = mConfig.mScale;
+      scale(1,1) = mConfig.mScale;
+      scale(2,2) = mConfig.mScale;
+
+      mIconNode->GetMatrixNode()->setMatrix(scale);
+
       osg::Geode *billBoard = new osg::Geode();
       billBoard->addDrawable(geom);
       mIconNode->GetMatrixNode()->addChild(billBoard);
 
       mBillBoard = new BillBoardDrawable();
       mBillBoard->AddChild(mIconNode.get());
-      mBillBoard->AddChild(mArrowNode.get());
-      mBillBoard->AddChild(mArrowNodeUp.get());
+      if(mConfig.mForwardVector) mBillBoard->AddChild(mArrowNode.get());
+      if(mConfig.mUpVector) mBillBoard->AddChild(mArrowNodeUp.get());
 
       SetActorRotation(osg::Vec3(0.0f, 0.0f, 0.0f));
    }
@@ -182,26 +212,32 @@ namespace dtDAL
       osg::PolygonMode *pm = new osg::PolygonMode();
       pm->setMode(osg::PolygonMode::FRONT_AND_BACK,osg::PolygonMode::FILL);
 
-      image = osgDB::readImageFile(ActorProxyIcon::IMAGE_ARROW_HEAD);
-      tex = new osg::Texture2D(image);
-      tex->setWrap(osg::Texture2D::WRAP_S,osg::Texture2D::CLAMP);
-      tex->setWrap(osg::Texture2D::WRAP_T,osg::Texture2D::CLAMP);
-      tex->setFilter(osg::Texture2D::MIN_FILTER, osg::Texture2D::LINEAR_MIPMAP_NEAREST);
-      tex->setFilter(osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR);
-      mConeStateSet->setTextureAttributeAndModes(0,tex,turnOn);
-      mConeStateSet->setAttributeAndModes(pm,turnOn);
-      mConeStateSet->setMode(GL_LIGHTING,turnOff);
+      if(mConfig.mForwardVector)
+      {
+         image = osgDB::readImageFile(ActorProxyIcon::IMAGE_ARROW_HEAD);
+         tex = new osg::Texture2D(image);
+         tex->setWrap(osg::Texture2D::WRAP_S,osg::Texture2D::CLAMP);
+         tex->setWrap(osg::Texture2D::WRAP_T,osg::Texture2D::CLAMP);
+         tex->setFilter(osg::Texture2D::MIN_FILTER, osg::Texture2D::LINEAR_MIPMAP_NEAREST);
+         tex->setFilter(osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR);
+         mConeStateSet->setTextureAttributeAndModes(0,tex,turnOn);
+         mConeStateSet->setAttributeAndModes(pm,turnOn);
+         mConeStateSet->setMode(GL_LIGHTING,turnOff);
+      }
 
-      image = osgDB::readImageFile(ActorProxyIcon::IMAGE_ARROW_BODY);
-      tex = new osg::Texture2D(image);
-      texMat->setMatrix(osg::Matrix::scale(5,7,0.0f));
-      tex->setWrap(osg::Texture2D::WRAP_S,osg::Texture2D::CLAMP);
-      tex->setWrap(osg::Texture2D::WRAP_T,osg::Texture2D::CLAMP);
-      tex->setFilter(osg::Texture2D::MIN_FILTER, osg::Texture2D::LINEAR_MIPMAP_NEAREST);
-      tex->setFilter(osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR);
-      mCylinderStateSet->setTextureAttributeAndModes(0,tex,turnOn);
-      mCylinderStateSet->setAttributeAndModes(pm,turnOn);
-      mCylinderStateSet->setMode(GL_LIGHTING,turnOff);
+      if(mConfig.mUpVector)
+      {
+         image = osgDB::readImageFile(ActorProxyIcon::IMAGE_ARROW_BODY);
+         tex = new osg::Texture2D(image);
+         texMat->setMatrix(osg::Matrix::scale(5,7,0.0f));
+         tex->setWrap(osg::Texture2D::WRAP_S,osg::Texture2D::CLAMP);
+         tex->setWrap(osg::Texture2D::WRAP_T,osg::Texture2D::CLAMP);
+         tex->setFilter(osg::Texture2D::MIN_FILTER, osg::Texture2D::LINEAR_MIPMAP_NEAREST);
+         tex->setFilter(osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR);
+         mCylinderStateSet->setTextureAttributeAndModes(0,tex,turnOn);
+         mCylinderStateSet->setAttributeAndModes(pm,turnOn);
+         mCylinderStateSet->setMode(GL_LIGHTING,turnOff);
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -233,13 +269,19 @@ namespace dtDAL
       trans.SetTranslation(newPos);
       mIconNode->SetTransform(&trans);
 
-      mArrowNode->GetTransform(&trans);
-      trans.SetTranslation(newPos);
-      mArrowNode->SetTransform(&trans);
-
-      mArrowNodeUp->GetTransform(&trans);
-      trans.SetTranslation(newPos);
-      mArrowNodeUp->SetTransform(&trans);
+      if(mConfig.mForwardVector)
+      {
+         mArrowNode->GetTransform(&trans);
+         trans.SetTranslation(newPos);
+         mArrowNode->SetTransform(&trans);
+      }
+      
+      if(mConfig.mUpVector)
+      {
+         mArrowNodeUp->GetTransform(&trans);
+         trans.SetTranslation(newPos);
+         mArrowNodeUp->SetTransform(&trans);
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -255,13 +297,18 @@ namespace dtDAL
    void ActorProxyIcon::SetActorRotation(const osg::Vec3 &hpr)
    {
       dtCore::Transform tx;
-      mArrowNode->GetTransform(&tx);
-      tx.SetRotation(hpr);
-      mArrowNode->SetTransform(&tx);
+      if(mConfig.mForwardVector)
+      {
+         mArrowNode->GetTransform(&tx);
+         tx.SetRotation(hpr);
+         mArrowNode->SetTransform(&tx);
+      }
      
-      tx.SetRotation(osg::Vec3(hpr[0], hpr[1] + 90.0f, hpr[2]));
-
-      mArrowNodeUp->SetTransform(&tx);
+      if(mConfig.mUpVector)
+      {
+         tx.SetRotation(osg::Vec3(hpr[0], hpr[1] + 90.0f, hpr[2]));
+         mArrowNodeUp->SetTransform(&tx);
+      }
       
    }
 
@@ -269,15 +316,22 @@ namespace dtDAL
    void ActorProxyIcon::SetActorRotation(const osg::Matrix &mat)
    {
       dtCore::Transform tx;
-      mArrowNode->GetTransform(&tx);
-      tx.SetRotation(mat);
-      mArrowNode->SetTransform(&tx);
-      osg::Vec3 hpr;
-      tx.GetRotation(hpr);
-      hpr[1] += 90.0f;
-      tx.SetRotation(hpr);
+      
+      if(mConfig.mForwardVector)
+      {
+         mArrowNode->GetTransform(&tx);
+         tx.SetRotation(mat);
+         mArrowNode->SetTransform(&tx);
+      }
 
-      mArrowNodeUp->SetTransform(&tx);
+      if(mConfig.mUpVector)
+      {
+         osg::Vec3 hpr;
+         tx.GetRotation(hpr);
+         hpr[1] += 90.0f;
+         tx.SetRotation(hpr);
+         mArrowNodeUp->SetTransform(&tx);
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -286,8 +340,11 @@ namespace dtDAL
       osg::Matrix mat;
       dtCore::Transform tx;
 
-      mArrowNode->GetTransform(&tx);
-      tx.Get(mat);
+      if(mConfig.mForwardVector)
+      {
+         mArrowNode->GetTransform(&tx);
+         tx.Get(mat);
+      }
       return mat;
    }
 
@@ -324,6 +381,8 @@ namespace dtDAL
          image = osgDB::readImageFile(ActorProxyIcon::IMAGE_BILLBOARD_PLAYERSTART);
       else if (mIconType == &IconType::TRIGGER)
          image = osgDB::readImageFile(ActorProxyIcon::IMAGE_BILLBOARD_TRIGGER);
+      else if (mIconType == &IconType::WAYPOINT)
+         image = osgDB::readImageFile(ActorProxyIcon::IMAGE_BILLBOARD_WAYPOINT);
       else if (mIconType == &IconType::CAMERA)
          image = osgDB::readImageFile(ActorProxyIcon::IMAGE_BILLBOARD_CAMERA);
 
