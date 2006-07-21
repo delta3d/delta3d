@@ -51,9 +51,6 @@ void TestAI::Config()
 
    LoadDemoMap("TesttownLt");
 
-   //create our navigation mesh
-   WaypointManager::GetInstance()->CreateNavMesh(GetScene());
-
    //turn on viewing of waypoints
    WaypointManager::GetInstance()->SetDrawWaypoints(true);
 

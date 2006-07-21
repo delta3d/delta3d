@@ -1,6 +1,7 @@
 #include <python/dtpython.h>
 #include <dtDAL/project.h>
 #include <dtDAL/map.h>
+#include <dtCore/scene.h>
 
 using namespace boost::python;
 using namespace dtDAL;
@@ -18,11 +19,11 @@ void initProjectBindings()
    void ( Project::*DM1 )( Map&, bool ) = &Project::DeleteMap;
    void ( Project::*DM2 )( const std::string&, bool ) = &Project::DeleteMap;
    
-   void ( Project::*SM1 )( Map& ) = &Project::SaveMap;
-   void ( Project::*SMA1 )( Map&, const std::string&, const std::string& ) = &Project::SaveMapAs;
+   void ( Project::*SM1 )( Map&, dtCore::Scene* ) = &Project::SaveMap;
+   void ( Project::*SMA1 )( Map&, dtCore::Scene*, const std::string&, const std::string& ) = &Project::SaveMapAs;
    
-   void ( Project::*SM2 )( const std::string& ) = &Project::SaveMap;
-   void ( Project::*SMA2 )( const std::string&, const std::string&, const std::string& ) = &Project::SaveMapAs;
+   void ( Project::*SM2 )( const std::string&, dtCore::Scene*) = &Project::SaveMap;
+   void ( Project::*SMA2 )( const std::string&, dtCore::Scene*, const std::string&, const std::string& ) = &Project::SaveMapAs;
    
    bool ( Project::*HB1 )( Map& ) const = &Project::HasBackup;
    bool ( Project::*HB2 )( const std::string& ) const = &Project::HasBackup;
