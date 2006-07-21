@@ -42,20 +42,19 @@ namespace dtAI
          typedef _CostType cost_type;
          typedef _ContainerType container;
 
-
          AStarConfig():
-         mStart(),
-            mFinish(),
-            mTotalCost(0),
             mResult(),
+            mTotalCost(0),
+            mTotalNodesExplored(0),
+            mTotalTime(0.0),
+            mNumIterations(0),
             mMaxNodesExplored(std::numeric_limits<unsigned>::max()),
             mMaxTime(std::numeric_limits<double>::max()),
             mMaxCost(std::numeric_limits<cost_type>::max()),
-            mNumIterations(0),
+            mStart(),
+            mFinish(),
             mNodesExplored(0), 
-            mTimeSpent(0.0), 
-            mTotalNodesExplored(0),
-            mTotalTime(0.0)
+            mTimeSpent(0.0)
          {
          }
 
