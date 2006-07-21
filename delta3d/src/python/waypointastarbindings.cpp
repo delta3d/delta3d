@@ -44,7 +44,6 @@ private:
 
 void init_WaypointAStarBindings()
 {   
-
    class_<WaypointVector>("WaypointVector")
       .def(vector_indexing_suite<WaypointVector>())
       ;
@@ -62,5 +61,4 @@ void init_WaypointAStarBindings()
       .value("PATH_FOUND", WaypointAStar::PATH_FOUND)
       .value("PARTIAL_PATH", WaypointAStar::PARTIAL_PATH)
       .export_values();
-
 }

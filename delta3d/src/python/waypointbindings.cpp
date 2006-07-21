@@ -22,7 +22,4 @@ void init_WaypointBindings()
       .value("RENDER_GREEN", Waypoint::RENDER_GREEN)
       .value("RENDER_BLUE", Waypoint::RENDER_BLUE)
       .export_values();
-
-
-
 }

@@ -9,7 +9,6 @@ using namespace dtAI;
 
 void init_WaypointPairBindings()
 {
-
    class_<WaypointPair>("WaypointPair")
       .def(init<const Waypoint*, const Waypoint*>())
       .def("ClosestPointTo", &WaypointPair::ClosestPointTo)
@@ -24,6 +23,4 @@ void init_WaypointPairBindings()
       .def("GetWaypointFrom", &WaypointPair::GetWaypointFrom, return_internal_reference<>())
       .def("GetWaypointTo", &WaypointPair::GetWaypointTo, return_internal_reference<>())
       ;
-
-
 }
