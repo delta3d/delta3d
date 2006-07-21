@@ -492,7 +492,7 @@ namespace dtDAL
       }
 
 
-      InternalSaveMap(*map);
+      InternalSaveMap(*map, NULL);
 
       mOpenMaps.insert(make_pair(name, dtCore::RefPtr<Map>(map.get())));
       //The map can add extensions and such to the file name, so it
@@ -820,14 +820,14 @@ namespace dtDAL
    }
 
    //////////////////////////////////////////////////////////
-   void Project::SaveMap(Map& map)
+   void Project::SaveMap(Map& map, dtCore::Scene* pScene)
    {
       CheckMapValidity(map);
-      InternalSaveMap(map);
+      InternalSaveMap(map, pScene);
    }
 
    //////////////////////////////////////////////////////////
-   void Project::SaveMapAs(const std::string& mapName, const std::string& newName, const std::string& newFileName)
+   void Project::SaveMapAs(const std::string& mapName, dtCore::Scene* pScene, const std::string& newName, const std::string& newFileName)
    {
       if (!mValidContext)
          EXCEPT(dtDAL::ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
@@ -836,11 +836,11 @@ namespace dtDAL
          EXCEPT(dtDAL::ExceptionEnum::ProjectReadOnly, std::string("The context is readonly."));
 
       //The map must be loaded to do a saveAs, so we call getMap();
-      SaveMapAs(GetMap(mapName), newName, newFileName);
+      SaveMapAs(GetMap(mapName), pScene, newName, newFileName);
 
    }
    //////////////////////////////////////////////////////////
-   void Project::SaveMapAs(Map& map, const std::string& newName, const std::string& newFileName)
+   void Project::SaveMapAs(Map& map, dtCore::Scene* pScene, const std::string& newName, const std::string& newFileName)
    {
       CheckMapValidity(map);
 
@@ -871,7 +871,7 @@ namespace dtDAL
       map.SetName(newName);
       map.SetFileName(newFileNameCopy);
 
-      InternalSaveMap(map);
+      InternalSaveMap(map, pScene);
       //re-add the old map to the list of saved maps
       //since saving with a new name will remove the old entry.
       mMapList.insert(std::make_pair(oldMapName, oldFileName));
@@ -889,7 +889,7 @@ namespace dtDAL
    }
 
    //////////////////////////////////////////////////////////
-   void Project::SaveMap(const std::string& mapName)
+   void Project::SaveMap(const std::string& mapName, dtCore::Scene* pScene)
    {
       if (!mValidContext)
          EXCEPT(dtDAL::ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
@@ -903,7 +903,7 @@ namespace dtDAL
          return; //map is not in memory, so it doesn't need to be saved.
       }
 
-      InternalSaveMap(*(j->second));
+      InternalSaveMap(*(j->second), pScene);
    }
 
    //////////////////////////////////////////////////////////
@@ -937,7 +937,7 @@ namespace dtDAL
    }
 
    //////////////////////////////////////////////////////////
-   void Project::InternalSaveMap(Map& map)
+   void Project::InternalSaveMap(Map& map, dtCore::Scene* pScene)
    {
       MapWriter& mw = *mWriter;
 
@@ -975,9 +975,9 @@ namespace dtDAL
          }
 
          //alert the waypoint manager to save the waypoint file
-         if(!map.GetPathNodeFileName().empty())
+         if(pScene && !map.GetPathNodeFileName().empty())
          {
-            dtAI::WaypointManager::GetInstance()->OnMapSave(map.GetPathNodeFileName());
+            dtAI::WaypointManager::GetInstance()->OnMapSave(map.GetPathNodeFileName(), pScene);
          }
       }
       catch (const dtUtil::Exception& e)

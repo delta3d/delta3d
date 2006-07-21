@@ -506,7 +506,7 @@ namespace dtEditQt
         {
             myMap->SetDescription(dlg.getMapDescription());
             EditorData::getInstance().getMainWindow()->startWaitCursor();
-            dtDAL::Project::GetInstance().SaveMapAs(*myMap, name, strippedName);
+            dtDAL::Project::GetInstance().SaveMapAs(*myMap, ViewportManager::getInstance().getMasterScene(), name, strippedName);
             EditorData::getInstance().getMainWindow()->endWaitCursor();
         }
         catch(const dtUtil::Exception &e)
@@ -1111,7 +1111,7 @@ namespace dtEditQt
             try
             {
                 EditorData::getInstance().getMainWindow()->startWaitCursor();
-                dtDAL::Project::GetInstance().SaveMap(*currMap);
+                dtDAL::Project::GetInstance().SaveMap(*currMap, ViewportManager::getInstance().getMasterScene());
                 ((QMainWindow*)EditorData::getInstance().getMainWindow())->setWindowTitle(
                     getWindowName().c_str());
                 EditorData::getInstance().getMainWindow()->endWaitCursor();

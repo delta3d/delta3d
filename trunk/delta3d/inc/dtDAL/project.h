@@ -103,7 +103,8 @@ namespace dtDAL
                                                                dtUtil::tree<ResourceTreeNode>* parentTree = NULL);
 
          //internal handling for saving a map.
-         void InternalSaveMap(Map& map);
+         //added scene param for handling navmesh generation
+         void InternalSaveMap(Map& map, dtCore::Scene* pScene);
          //internal handling for deleting a map.
          void InternalDeleteMap(const std::string& mapFileName);
 
@@ -299,17 +300,19 @@ namespace dtDAL
          /**
           * Saves the given map whether it has changed or not.
           * @param map the map to save.
+          * @param scene map is being saved as, if no scene is present use NULL
           * @throws ExceptionEnum::ProjectException if you change the name to match another map.
           * @throws ExceptionEnum::ProjectInvalidContext if the context is not set or the Map is not part of the project.
           * @throws ExceptionEnum::ProjectReadOnly if the context is read only.
           * @throws ExceptionEnum::MapSaveError if the new map could not be saved.
           */
-         void SaveMap(Map& map);
+         void SaveMap(Map& map, dtCore::Scene* pScene);
 
          /**
           * Saves the given map to a new file name and alters the open map object to point to the new file.
           * There will then be no open copy of the old map file name.
           * @param map the map to save.
+          * @param scene map is being saved as, if no scene is present use NULL
           * @param newName the new name of the map to save.
           * @param newFileName the new file name of the map to save.
           * @throws ExceptionEnum::ProjectException if a map by that name or fileName already exists.
@@ -317,13 +320,14 @@ namespace dtDAL
           * @throws ExceptionEnum::ProjectReadOnly if the context is read only.
           * @throws ExceptionEnum::MapSaveError if the new map could not be saved.
           */
-         void SaveMapAs(Map& map, const std::string& newName, const std::string& newFileName);
+         void SaveMapAs(Map& map, dtCore::Scene* pScene, const std::string& newName, const std::string& newFileName);
 
          /**
           * Saves the given map to a new file name and alters the open map object to point to the new file.
           * There will then be no open copy of the old map file name.
           * Keep in mind that if the map name given is not loaded, this call will actually open the map before saving it.
           * @param map the current map name.
+          * @param scene map is being saved as, if no scene is present use NULL
           * @param newName the new name of the map to save.
           * @param newFileName the new file name of the map to save.
           * @throws ExceptionEnum::ProjectException if a map by that name or fileName already exists.
@@ -331,17 +335,18 @@ namespace dtDAL
           * @throws ExceptionEnum::ProjectReadOnly if the context is read only.
           * @throws ExceptionEnum::MapSaveError if the new map could not be saved.
           */
-         void SaveMapAs(const std::string& mapName, const std::string& newName, const std::string& newFileName);
+         void SaveMapAs(const std::string& mapName, dtCore::Scene* pScene, const std::string& newName, const std::string& newFileName);
 
          /**
           * Saves the given map whether it has changed or not.  If the map has not been loaded, but exists, this
           * call is a NOOP.
           * @param map the map to save.
+          * @param scene map is being saved as, if no scene is present use NULL
           * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
           * @throws ExceptionEnum::ProjectReadOnly if the context is read only.
           * @throws ExceptionEnum::MapSaveError if the new map could not be saved.
           */
-         void SaveMap(const std::string& mapName);
+         void SaveMap(const std::string& mapName, dtCore::Scene* pScene);
 
          /**
           * Saves a new backup of the map.

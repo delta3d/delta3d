@@ -76,7 +76,6 @@ class TestAI(Application):
       myMap = Project.GetInstance().GetMap("TesttownLt")
       self.LoadMap(myMap)
 
-      WaypointManager.GetInstance().CreateNavMesh(self.GetScene())
       WaypointManager.GetInstance().SetDrawWaypoints(1)
       WaypointManager.GetInstance().SetDrawNavMesh(0)
       self.mDrawNavMesh = 0

@@ -38,6 +38,7 @@
 
 
 #define WAYPOINT_HELPER_FILE_ID 42193
+#define WAYPOINT_FILE_VERSION 100
 
 
 namespace dtAI
@@ -83,7 +84,7 @@ namespace dtAI
          * used as a helper function for the Python bindings
          * this function may be removed once the waypoint map is exported
          */
-         std::vector<Waypoint*> CopyWaypointsIntoVector();
+         std::vector<Waypoint*> CopyWaypointsIntoVector() const;
 
          /**
          * Formats and writes all waypoints out to an ostream
@@ -132,7 +133,7 @@ namespace dtAI
          void MoveWaypoint(unsigned pIndex, const osg::Vec3& pPos);
 
          void OnMapLoad(const std::string& pWaypointFilename);
-         void OnMapSave(const std::string& pWaypointFilename);
+         void OnMapSave(const std::string& pWaypointFilename, dtCore::Scene* pScene);
          void OnMapClose();
 
          //before operating on our waypoint map obtain a lock
@@ -142,7 +143,7 @@ namespace dtAI
          /**
          * writes a new waypoint file, returns true if successful
          */
-         bool WriteFile(const std::string& pFileToWrite) const;
+         bool WriteFile(const std::string& pFileToWrite);
          
          /**
          * attempts to read a waypoint file, returns true if successful
