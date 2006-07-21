@@ -12,7 +12,7 @@ class TestAI : public dtABC::Application
 {
 
    public:
-      TestAI( const std::string& configFilename = "config.xml" );
+      TestAI(const std::string& mapName = "TesttownLt", const std::string& configFilename = "config.xml");
    protected:
       /*virtual*/~TestAI();
    public:
@@ -30,6 +30,7 @@ class TestAI : public dtABC::Application
  
       float mSpeed;
       bool mDrawNavMesh;
+      std::string mMapFilename;
       dtCore::RefPtr<dtCore::Camera> mOverheadCamera;
       dtCore::RefPtr<dtAI::AICharacter> mCharacter;
       dtAI::Waypoint* mCurrentWaypoint;

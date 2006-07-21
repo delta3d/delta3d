@@ -24,8 +24,9 @@ using namespace dtDAL;
 using namespace dtAI;
 
 
-TestAI::TestAI(const std::string& configFilename)
+TestAI::TestAI(const std::string& pMapFilename, const std::string& configFilename)
    : Application(configFilename)
+   , mMapFilename(pMapFilename)
    , mCharacter(0)
 {
    //Generating a default config file if there isn't one already
@@ -49,7 +50,7 @@ void TestAI::Config()
    WaypointManager::GetInstance();   
    GetScene()->AddDrawable(WaypointManager::GetInstance());
 
-   LoadDemoMap("TesttownLt");
+   LoadDemoMap(mMapFilename);
 
    //turn on viewing of waypoints
    WaypointManager::GetInstance()->SetDrawWaypoints(true);
