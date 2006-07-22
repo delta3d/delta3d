@@ -107,12 +107,8 @@ namespace dtAI
       outfile.open(pFileToWrite.c_str(), std::ofstream::out);      
       if(outfile.fail()) return false;
 
-      //obtain a temporary vector for writing
-      //and use it to reorganize our data
-      //so everyones index is consistent with there index into the
-      //waypoint datastructure
-      std::vector<Waypoint*> pWaypointVector = CopyWaypointsIntoVector();
-      mWaypoints.clear();
+      //obtain a temporary vector for writing      
+      std::vector<Waypoint*> pWaypointVector = CopyWaypointsIntoVector(); 
 
       //write the file id
       int id = WAYPOINT_HELPER_FILE_ID;
@@ -128,11 +124,9 @@ namespace dtAI
 
       for(unsigned i = 0; i < size; ++i)
       {
-         //note we are resetting data, not only writing
+         //we will use these ids when we write out the navmesh
          pWaypointVector[i]->SetID(i);
-         mWaypoints.insert(std::pair<unsigned, Waypoint*>(i, pWaypointVector[i]));
-
-         osg::Vec3 pPos = pWaypointVector[i]->GetPosition();
+         osg::Vec3 pPos = pWaypointVector[i]->GetPosition();         
          outfile << pPos[0] << " " << pPos[1] << " " << pPos[2] << std::endl;
       }
 
@@ -195,6 +189,7 @@ namespace dtAI
             
             Waypoint* pNewWaypoint = new Waypoint(pPos);
             pNewWaypoint->SetRenderFlag(Waypoint::RENDER_DEFUALT);
+            pNewWaypoint->SetID(i);
 
             mWaypoints.insert(std::pair<unsigned, Waypoint*>(i, pNewWaypoint));      
          }
@@ -206,7 +201,7 @@ namespace dtAI
          for(unsigned i = 0; i < navMeshSize; ++i)
          {
             unsigned indexFrom, indexTo;
-            infile >> indexFrom >> indexTo;
+            infile >> indexFrom >> indexTo;            
             mNavMesh.AddPathSegment(mWaypoints[indexFrom], mWaypoints[indexTo]);
          }
 
@@ -241,6 +236,7 @@ namespace dtAI
 
    void WaypointManager::CreateNavMesh(dtCore::Scene* pScene)
    {
+      mNavMesh.Clear();
       
       float maxDistBetweenWaypoints = AvgDistBetweenWaypoints();
 
@@ -298,7 +294,6 @@ namespace dtAI
 
    void WaypointManager::OnMapSave(const std::string& pWaypointFilename, dtCore::Scene* pScene)
    {      
-      mNavMesh.Clear();      
       CreateNavMesh(pScene);
       WriteFile(pWaypointFilename);
    }
