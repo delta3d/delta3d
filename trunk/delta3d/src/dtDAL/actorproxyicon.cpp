@@ -256,8 +256,8 @@ namespace dtDAL
    bool ActorProxyIcon::OwnsDrawable(dtCore::DeltaDrawable *drawable) const
    {
       return  mBillBoard->GetUniqueId() == drawable->GetUniqueId() ||
-         mIconNode->GetUniqueId() == drawable->GetUniqueId() ||
-         mArrowNode->GetUniqueId() == drawable->GetUniqueId() || mArrowNodeUp->GetUniqueId() == drawable->GetUniqueId();
+         mIconNode->GetUniqueId() == drawable->GetUniqueId();// || //is this really necessary
+         //mArrowNode->GetUniqueId() == drawable->GetUniqueId() || mArrowNodeUp->GetUniqueId() == drawable->GetUniqueId();
    }
 
    //////////////////////////////////////////////////////////////////////////
