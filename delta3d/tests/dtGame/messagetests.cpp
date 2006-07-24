@@ -985,7 +985,7 @@ void MessageTests::TestChangeMap()
    createActors(*map);
    unsigned numActors = map->GetAllProxies().size();
 
-   project.SaveMap(*map);
+   project.SaveMap(*map, 0);
    project.CloseMap(*map);
 
    TestComponent& tc = *new TestComponent();

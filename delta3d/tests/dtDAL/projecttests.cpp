@@ -495,7 +495,7 @@ void ProjectTests::testReadonlyFailure()
         }
 
         try {
-            p.SaveMap("mojo");
+            p.SaveMap("mojo", 0);
             CPPUNIT_FAIL("deleteMap should not be allowed on a readoly context.");
         } catch (const dtUtil::Exception& e) {
             CPPUNIT_ASSERT_MESSAGE("Exception should have been ExceptionEnum::ProjectReadOnly",
@@ -503,7 +503,7 @@ void ProjectTests::testReadonlyFailure()
         }
 
         try {
-            p.SaveMapAs("mojo", "a", "b");
+            p.SaveMapAs("mojo", 0, "a", "b");
             CPPUNIT_FAIL("deleteMap should not be allowed on a readoly context.");
         } catch (const dtUtil::Exception& e) {
             CPPUNIT_ASSERT_MESSAGE("Exception should have been ExceptionEnum::ProjectReadOnly",
