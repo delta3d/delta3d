@@ -604,7 +604,7 @@ void MapTests::testMapLibraryHandling()
        dtDAL::ActorPluginRegistry* reg = dtDAL::LibraryManager::GetInstance().GetRegistry(mExampleLibraryName);
        CPPUNIT_ASSERT_MESSAGE("Registry for testActorLibrary should not be NULL.", reg != NULL);
 
-       project.SaveMap(*map);
+       project.SaveMap(*map, 0);
 
        project.CloseMap(*map, true);
 
@@ -859,7 +859,7 @@ void MapTests::testMapSaveAndLoad()
         CPPUNIT_ASSERT_MESSAGE("A backup was just saved.  The map should have backups.",
             project.HasBackup(*map) && project.HasBackup(mapName));
 
-        project.SaveMap(*map);
+        project.SaveMap(*map, 0);
 
         //test both versions of the call.
         CPPUNIT_ASSERT_MESSAGE("Map was saved.  The map should have no backups.",
@@ -1091,7 +1091,7 @@ void MapTests::testMapSaveAndLoad()
             CPPUNIT_ASSERT_MESSAGE("Property is not read only, value should have been set", p->GetValue() == value2);
         }
 
-        project.SaveMap(*map);
+        project.SaveMap(*map, 0);
         project.CloseMap(*map);
 
         map = &project.GetMap(newMapName);
@@ -1154,7 +1154,7 @@ void MapTests::testMapSaveAndLoad()
 
         try
         {
-            project.SaveMapAs(*map, newMapName, mapFileName);
+            project.SaveMapAs(*map, 0, newMapName, mapFileName);
             CPPUNIT_FAIL("Calling SaveAs on a map with the same name and filename should fail.");
         }
         catch (const dtUtil::Exception&)
@@ -1164,7 +1164,7 @@ void MapTests::testMapSaveAndLoad()
 
         try
         {
-            project.SaveMapAs(*map, mapName, mapFileName);
+            project.SaveMapAs(*map, 0, mapName, mapFileName);
             CPPUNIT_FAIL("Calling SaveAs on a map with the same filename should fail.");
         }
         catch (const dtUtil::Exception&)
@@ -1174,7 +1174,7 @@ void MapTests::testMapSaveAndLoad()
 
         try
         {
-            project.SaveMapAs(*map, newMapName, "oo");
+            project.SaveMapAs(*map, 0, newMapName, "oo");
             CPPUNIT_FAIL("Calling SaveAs on a map with the same name should fail.");
         }
         catch (const dtUtil::Exception&)
@@ -1182,7 +1182,7 @@ void MapTests::testMapSaveAndLoad()
             //correct
         }
 
-        project.SaveMapAs(*map, mapName, "oo");
+        project.SaveMapAs(*map, 0, mapName, "oo");
 
         //test both versions of the call.
         CPPUNIT_ASSERT_MESSAGE("Map was just saved AS.  The map should have no backups.",
@@ -1334,7 +1334,7 @@ void MapTests::testEnvironmentMapLoading()
       CPPUNIT_ASSERT_MESSAGE("GetEnvironmentActor should return what was set", map.GetEnvironmentActor() == envProxy.get());
 
       std::string mapName = map.GetName();
-      project.SaveMap(mapName);
+      project.SaveMap(mapName, 0);
       project.CloseMap(map);
 
       dtDAL::Map &savedMap = project.GetMap(mapName);
