@@ -62,21 +62,21 @@ if 'qt' in env['TOOLS'] :
    
    if mode == 'debug':
       if OS == 'windows':
-         EditorEnv.Append(LIBS = ['QtCored4','QtGuid4','QtOpenGLd4','dtDALd','dtCored','dtUtild','dtAudiod','dtChard','dtABCd','dtGamed'])   
+         EditorEnv.Append(LIBS = ['QtCored4','QtGuid4','QtOpenGLd4','dtDALd','dtAId','dtCored','dtUtild','dtAudiod','dtChard','dtABCd','dtGamed'])   
       elif OS == 'darwin':
          EditorEnv.Append(LIBS = ['dtDAL','dtAI','dtCore','dtUtil','dtAudio','dtChar','dtABC','dtGame','plibul'])
          EditorEnv.Append(LINKFLAGS = ' -F' + qtdir + '/lib' )
          EditorEnv.Append(FRAMEWORKS = [ 'QtCore', 'QtGui', 'QtOpenGL' ])
       else:
-         EditorEnv.Append(LIBS = ['QtCore','QtGui','QtOpenGL','dtDAL','dtCore','dtUtil','dtAudio','dtChar','dtABC','dtGame','plibul'])   
+         EditorEnv.Append(LIBS = ['QtCore','QtGui','QtOpenGL','dtDAL','dtAI','dtCore','dtUtil','dtAudio','dtChar','dtABC','dtGame','plibul'])   
    else:
       if OS == 'windows':
-         EditorEnv.Append(LIBS = ['QtCore4','QtGui4','QtOpenGL4','dtDAL','dtcore','dtaudio','dtchar','dtutil','dtabc','dtGame'])
+         EditorEnv.Append(LIBS = ['QtCore4','QtGui4','QtOpenGL4','dtDAL','dtAI','dtCore','dtAudio','dtChar','dtUtil','dtABC','dtGame'])
       elif OS == 'darwin':
          EditorEnv.Append(LIBS = ['dtDAL','dtAI','dtCore','dtUtil','dtAudio','dtChar','dtABC','dtGame','plibul']) 
          EditorEnv.Append(LINKFLAGS = ' -F' + qtdir + '/lib -framework QtCore -framework QtGui -framework QtOpenGL ' )   
       else:
-         EditorEnv.Append(LIBS = ['QtCore','QtGui','QtOpenGL','dtDAL','dtCore','dtUtil','dtAudio','dtChar','dtABC','dtGame','plibul']) 
+         EditorEnv.Append(LIBS = ['QtCore','QtGui','QtOpenGL','dtDAL','dtAI','dtCore','dtUtil','dtAudio','dtChar','dtABC','dtGame','plibul']) 
    
    # First, glob the header directory to obtain a list of potential files to run
    # the moc builder on.
