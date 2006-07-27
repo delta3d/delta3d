@@ -26,6 +26,7 @@
 
 #include <osg/Vec2>
 #include <osg/Vec3>
+#include <time.h>
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
