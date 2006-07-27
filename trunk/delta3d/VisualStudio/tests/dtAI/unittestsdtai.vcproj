@@ -47,11 +47,7 @@
 				Name="VCMIDLTool"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="set PATH=$(PATH);$(DELTA_ROOT)\bin;$(DELTA_ROOT)\ext\bin
-set DELTA_ROOT=$(DELTA_ROOT)
-set DELTA_DATA=$(DELTA_DATA)
-&quot;$(TargetPath)&quot;
-"/>
+				CommandLine="set PATH=$(PATH);$(DELTA_ROOT)\bin;$(DELTA_ROOT)\ext\bin"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -141,7 +137,16 @@ set DELTA_DATA=$(DELTA_DATA)
 				RelativePath="..\..\..\tests\mainTestRunner.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\tests\dtAI\plannertests.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\tests\dtAI\testastarutils.h">
+			</File>
+			<File
+				RelativePath="..\..\..\tests\dtAI\testplannerutils.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\tests\dtAI\testplannerutils.h">
 			</File>
 		</Filter>
 	</Files>

@@ -36,4 +36,6 @@
 #endif
 
 
+#pragma warning (disable: 4251)
+
 #endif // DELTA_AI_EXPORT
