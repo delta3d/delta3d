@@ -131,6 +131,15 @@
 				RelativePath="..\..\..\src\dtAI\navmesh.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtAI\npcoperator.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtAI\planner.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtAI\plannerhelper.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtAI\waypoint.cpp">
 			</File>
 			<File
@@ -141,6 +150,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtAI\waypointpair.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtAI\worldstate.cpp">
 			</File>
 		</Filter>
 		<Filter
@@ -166,10 +178,31 @@
 				RelativePath="..\..\..\inc\dtAI\astarwaypointutils.h">
 			</File>
 			<File
+				RelativePath="..\..\..\inc\dtAI\conditional.h">
+			</File>
+			<File
 				RelativePath="..\..\..\inc\dtAI\export.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtAI\navmesh.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtAI\npcoperator.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtAI\planner.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtAI\plannerastarutils.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtAI\plannerconfig.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtAI\plannerhelper.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtAI\statevariable.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtAI\waypoint.h">
@@ -182,6 +215,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtAI\waypointpair.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtAI\worldstate.h">
 			</File>
 		</Filter>
 	</Files>
