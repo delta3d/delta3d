@@ -44,7 +44,9 @@ namespace dtAI
          void AddOperator(NPCOperator* pOperator);
          const OperatorList& GetOperators() const;
 
-         void SetCurrentState(WorldState* pNewState);
+         void SetCurrentState(const WorldState& pNewState);
+         
+         WorldState* GetCurrentState();
          const WorldState* GetCurrentState() const;
 
 

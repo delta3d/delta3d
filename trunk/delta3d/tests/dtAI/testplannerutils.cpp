@@ -33,7 +33,7 @@ namespace dtAI
 
    MyNPC::MyNPC()
    {
-      Init();
+     
    }
 
    MyNPC::~MyNPC()
@@ -43,11 +43,11 @@ namespace dtAI
 
    void MyNPC::Init()
    {
-      WorldState* ws = new WorldState(WorldState::RemainingCostFunctor(this, &MyNPC::RemainingCost), WorldState::DesiredStateFunctor(this, &MyNPC::IsDesiredState));
-      ws->AddState(new Recipe());
-      ws->AddState(new Groceries());
-      ws->AddState(new PreparedFood());
-      ws->AddState(new HungerMeter());
+      WorldState ws(WorldState::RemainingCostFunctor(this, &MyNPC::RemainingCost), WorldState::DesiredStateFunctor(this, &MyNPC::IsDesiredState));
+      ws.AddState("Recipe", new Recipe());
+      ws.AddState("Groceries", new Groceries());
+      ws.AddState("PreparedFood", new PreparedFood());
+      ws.AddState("HungerMeter", new HungerMeter());
    
       mHelper.SetCurrentState(ws);
       mHelper.AddOperator(new CallGrandma());

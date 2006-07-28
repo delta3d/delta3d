@@ -20,9 +20,19 @@
  */
 
 #include <dtAI/worldstate.h>
+#include <algorithm>
 
 namespace dtAI
 {
+   WorldState::WorldState()
+      : mCost(0.0f)
+      , mStateVariables()
+      , mRemainingCost()
+      , mDesiredState()
+   {
+
+   }
+
    WorldState::WorldState(const RemainingCostFunctor& pRCF, const DesiredStateFunctor& pDSF)
       : mCost(0.0f)
       , mStateVariables()
@@ -31,8 +41,24 @@ namespace dtAI
    {
    }
    
+   struct deleteFunc
+   {
+      template<class _Type>
+         void operator()(_Type p1)
+      {
+         delete p1.second; 
+      }
+   };
+
    WorldState::~WorldState()
    {
+      FreeMem();
+   }
+
+   void WorldState::FreeMem()
+   {
+      std::for_each(mStateVariables.begin(), mStateVariables.end(), deleteFunc());
+      mStateVariables.clear();
    }
 
    WorldState::WorldState(const WorldState& pWS)
@@ -41,14 +67,32 @@ namespace dtAI
       mRemainingCost = pWS.mRemainingCost;
       mDesiredState = pWS.mDesiredState;
 
-      StateVarList::const_iterator iter = pWS.mStateVariables.begin();
-      StateVarList::const_iterator endOfList = pWS.mStateVariables.end();
+      StateVarMapping::const_iterator iter = pWS.mStateVariables.begin();
+      StateVarMapping::const_iterator endOfList = pWS.mStateVariables.end();
       while(iter != endOfList)
       {
-         mStateVariables.push_back((*iter)->Copy());
+         mStateVariables.insert(StringStateMapping((*iter).first , (*iter).second->Copy()));
          ++iter;
       }
 
+   }
+
+   WorldState& WorldState::operator =(const WorldState& pWS)
+   {
+      FreeMem();
+
+      mCost = pWS.mCost;      
+      mRemainingCost = pWS.mRemainingCost;
+      mDesiredState = pWS.mDesiredState;
+
+      StateVarMapping::const_iterator iter = pWS.mStateVariables.begin();
+      StateVarMapping::const_iterator endOfList = pWS.mStateVariables.end();
+      while(iter != endOfList)
+      {
+         mStateVariables.insert(StringStateMapping((*iter).first , (*iter).second->Copy()));
+         ++iter;
+      }
+      return *this;
    }
 
    float WorldState::GetCost() const
@@ -61,48 +105,28 @@ namespace dtAI
       mCost += pCost;
    }
 
-   void WorldState::AddState(IStateVariable* pStateVar)
+   void WorldState::AddState(const std::string& pName, IStateVariable* pStateVar)
    {
-      mStateVariables.push_back(pStateVar);
+      StateVarMapping::iterator iter = mStateVariables.find(pName);
+      if(iter == mStateVariables.end()) 
+      {
+         mStateVariables.insert(StringStateMapping(pName, pStateVar));
+      }
    }
 
    IStateVariable* WorldState::GetState(const std::string& pState)
    {
-      StateVarList::iterator iter = mStateVariables.begin();
-      StateVarList::iterator endOfList = mStateVariables.end();
-
-      while(iter != endOfList)
-      {
-         if((*iter)->GetName() == pState)
-         {
-            return (*iter);
-         }
-         ++iter;
-      }
-      return 0;
+      StateVarMapping::iterator iter = mStateVariables.find(pState);
+      if(iter == mStateVariables.end()) return 0;
+      else return (*iter).second;
    }
 
 
    const IStateVariable* WorldState::GetState(const std::string& pState) const
    {
-      StateVarList::const_iterator iter = mStateVariables.begin();
-      StateVarList::const_iterator endOfList = mStateVariables.end();
-
-      while(iter != endOfList)
-      {
-         if((*iter)->GetName() == pState)
-         {
-            return (*iter);
-         }
-         ++iter;
-      }
-      return 0;
-   }
-
-
-   const WorldState::StateVarList& WorldState::GetStateVars() const
-   {
-      return mStateVariables;
+      StateVarMapping::const_iterator iter = mStateVariables.find(pState);
+      if(iter == mStateVariables.end()) return 0;
+      else return (*iter).second;
    }
 
    float WorldState::RemainingCost() const

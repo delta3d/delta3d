@@ -36,13 +36,6 @@ namespace dtAI
          virtual ~IStateVariable() {};
 
          virtual IStateVariable* Copy() const = 0;
-
-         virtual const std::string& GetName() const = 0;
-
-         bool operator==(const IStateVariable& pState) const
-         {
-            return GetName() == pState.GetName();
-         };
    
       private:
    
