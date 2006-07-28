@@ -53,6 +53,7 @@ namespace dtAI
          PlannerConfig& GetResult();
          
       private:
+         void FreeMem();
          
          const PlannerNodeLink* FindLowestCost();
          void Remove(const PlannerNodeLink* pNodeLink);

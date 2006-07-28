@@ -27,7 +27,7 @@
 
 #include <dtUtil/functor.h>
 
-#include <list>
+#include <map>
 #include <string>
 
 namespace dtAI
@@ -40,31 +40,32 @@ namespace dtAI
       public:
          typedef dtUtil::Functor<float, TYPELIST_1(const WorldState*)> RemainingCostFunctor;
          typedef dtUtil::Functor<bool, TYPELIST_1(const WorldState*)> DesiredStateFunctor;
-         typedef std::list<IStateVariable*> StateVarList;
+         typedef std::pair<std::string, IStateVariable*> StringStateMapping;
+         typedef std::map<std::string, IStateVariable*> StateVarMapping;
 
       public:
+         WorldState();
          WorldState(const RemainingCostFunctor& pRCF, const DesiredStateFunctor& pDSF);
          WorldState(const WorldState& pWS);         
+         WorldState& operator=(const WorldState& pWS);
 
          virtual ~WorldState();
    
          float GetCost() const;
          void AddCost(float pCost);         
                   
-         void AddState(IStateVariable* pStateVar);
+         void AddState(const std::string& pName, IStateVariable* pStateVar);
          IStateVariable* GetState(const std::string& pState);         
          const IStateVariable* GetState(const std::string& pState) const;         
-
-         const StateVarList& GetStateVars() const;
 
          float RemainingCost() const;
          bool IsDesiredState() const;
 
       private:
-         WorldState& operator=(const WorldState&); //not implemented by design
+         void FreeMem();
    
          float mCost;
-         StateVarList mStateVariables;
+         StateVarMapping mStateVariables;
          RemainingCostFunctor mRemainingCost;
          DesiredStateFunctor mDesiredState;
 

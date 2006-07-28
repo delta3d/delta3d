@@ -20,17 +20,32 @@
  */
 
 #include <dtAI/plannerhelper.h>
+#include <algorithm>
 
 namespace dtAI
 {
    PlannerHelper::PlannerHelper()
       : mOperators(0)
-      , mCurrentState(0)
+      , mCurrentState(new WorldState())
    {
    }
+
+   struct deleteFunc
+   {
+      template<class _Type>
+         void operator()(_Type p1)
+      {
+         delete p1; 
+      }
+   };
    
    PlannerHelper::~PlannerHelper()
-   {
+   {      
+      std::for_each(mOperators.begin(), mOperators.end(), deleteFunc());
+      mOperators.clear();
+
+      delete mCurrentState;
+      mCurrentState = 0;
    }
 
    void PlannerHelper::AddOperator(NPCOperator* pOperator)
@@ -43,14 +58,19 @@ namespace dtAI
       return mOperators;
    }
 
+   WorldState* PlannerHelper::GetCurrentState()
+   {
+      return mCurrentState;
+   }
+
    const WorldState* PlannerHelper::GetCurrentState() const
    {
       return mCurrentState;
    }
 
-   void PlannerHelper::SetCurrentState(WorldState* pNewState)
+   void PlannerHelper::SetCurrentState(const WorldState& pNewState)
    {
-      mCurrentState = pNewState;
+      mCurrentState->operator =(pNewState);
    }
 
 

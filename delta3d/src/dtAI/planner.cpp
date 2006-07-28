@@ -33,32 +33,47 @@ namespace dtAI
    
    Planner::~Planner()
    {
+      FreeMem();
+   }
+
+   struct deleteFunc
+   {
+      template<class _Type>
+         void operator()(_Type p1)
+      {
+         delete p1->mState;
+         delete p1; 
+      }
+   };
+
+   void Planner::FreeMem()
+   {
+      std::for_each(mOpen.begin(), mOpen.end(), deleteFunc());  
+      mOpen.clear();
+      mConfig.mResult.clear();
    }
 
    void Planner::Reset(const PlannerConfig& pConfig)
    {
-      mOpen.clear();
-      mConfig.mResult.clear();
+      FreeMem();
       mConfig = pConfig;      
       
       PlannerNodeLink* pNodeLink = new PlannerNodeLink();
-      pNodeLink->mState = mHelper->GetCurrentState(); 
-
+      pNodeLink->mState = new WorldState(*mHelper->GetCurrentState()); 
+      
       mOpen.push_back(pNodeLink);
    }
 
 
    void Planner::Reset(const WorldState* pDesiredState, const PlannerHelper* pHelper)
    {
-      mOpen.clear();
-      mConfig.mResult.clear();
-
+      FreeMem();
       mHelper = pHelper;
       mConfig.mGoal = pDesiredState;     
 
 
       PlannerNodeLink* pNodeLink = new PlannerNodeLink();
-      pNodeLink->mState = mHelper->GetCurrentState(); 
+      pNodeLink->mState = new WorldState(*mHelper->GetCurrentState()); 
 
       mOpen.push_back(pNodeLink);
    }

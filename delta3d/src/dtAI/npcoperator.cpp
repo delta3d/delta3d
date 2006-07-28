@@ -20,6 +20,7 @@
  */
 
 #include <dtAI/npcoperator.h>
+#include <algorithm>
 
 namespace dtAI
 {
@@ -31,9 +32,21 @@ namespace dtAI
       , mApplyFunctor(pEvalFunc)
    {
    }
+
+   struct deleteFunc 
+   {
+      template<class _Type>
+         void operator()(_Type p1)
+      {
+         delete p1; 
+      }
+   };
    
    NPCOperator::~NPCOperator()
    {
+      std::for_each(mPreConditionals.begin(), mPreConditionals.end(), deleteFunc());
+      std::for_each(mEffects.begin(), mEffects.end(), deleteFunc());
+      std::for_each(mInterrupts.begin(), mInterrupts.end(), deleteFunc());
       mPreConditionals.clear();
       mEffects.clear();
       mInterrupts.clear();
