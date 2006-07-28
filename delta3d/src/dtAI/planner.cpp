@@ -115,6 +115,8 @@ namespace dtAI
 
    Planner::PlannerResult Planner::GeneratePlan()
    {
+      mConfig.mTimer.Update();
+
       for (;;)
       {
 
@@ -123,17 +125,26 @@ namespace dtAI
             return NO_PLAN;
          }
 
+         mConfig.mTimer.Update();
+         mConfig.mCurrentElapsedTime += mConfig.mTimer.GetDT();
+
          const PlannerNodeLink* pCurrent = FindLowestCost();
-         
+         bool pReachedGoal = pCurrent->mState->IsDesiredState();
+
          //we have found our desired state
-         if(pCurrent->mState->IsDesiredState())
+         if(pReachedGoal || mConfig.mCurrentElapsedTime >= mConfig.mMaxTimePerIteration)
          {
             while(pCurrent->mOperator)
             {
                mConfig.mResult.push_front(pCurrent->mOperator);
                pCurrent = pCurrent->mParent;
             }
-            return PLAN_FOUND;
+
+            mConfig.mCurrentElapsedTime = 0.0;
+            mConfig.mTotalElapsedTime += mConfig.mCurrentElapsedTime;
+
+            if(pReachedGoal) return PLAN_FOUND;
+            else return PARTIAL_PLAN;
          }
          else
          {

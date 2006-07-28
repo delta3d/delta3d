@@ -54,15 +54,12 @@ namespace dtAI
          bool Apply(const WorldState* pCurrent, WorldState* pWSIn) const;
 
          void AddPreCondition(IConditional* pCondIn);
-         void AddEffect(IConditional* pCondIn);
          void AddInterrupt(IConditional* pCondIn);
    
          void RemovePreCondition(IConditional* pConditional);
-         void RemoveEffect(IConditional* pConditional);
          void RemoveInterrupt(IConditional* pConditional);
 
          const ConditionalList& GetPreConditions() const;
-         const ConditionalList& GetEffects() const;
          const ConditionalList& GetInterrupts() const;
 
       private:
@@ -72,7 +69,6 @@ namespace dtAI
          std::string mName;
 
          ConditionalList mPreConditionals;
-         ConditionalList mEffects;
          ConditionalList mInterrupts;
 
          ApplyOperatorFunctor mApplyFunctor;

@@ -27,7 +27,6 @@ namespace dtAI
    NPCOperator::NPCOperator(const std::string& pName, const ApplyOperatorFunctor& pEvalFunc)
       : mName(pName)
       , mPreConditionals()
-      , mEffects()
       , mInterrupts()
       , mApplyFunctor(pEvalFunc)
    {
@@ -45,10 +44,8 @@ namespace dtAI
    NPCOperator::~NPCOperator()
    {
       std::for_each(mPreConditionals.begin(), mPreConditionals.end(), deleteFunc());
-      std::for_each(mEffects.begin(), mEffects.end(), deleteFunc());
       std::for_each(mInterrupts.begin(), mInterrupts.end(), deleteFunc());
       mPreConditionals.clear();
-      mEffects.clear();
       mInterrupts.clear();
    }
 
@@ -73,11 +70,6 @@ namespace dtAI
       mPreConditionals.push_back(pCondIn);
    }
 
-   void NPCOperator::AddEffect(IConditional* pCondIn)
-   {
-      mEffects.push_back(pCondIn);
-   }
-
    void NPCOperator::AddInterrupt(IConditional* pCondIn)
    {
       mInterrupts.push_back(pCondIn);
@@ -88,11 +80,6 @@ namespace dtAI
       mPreConditionals.remove(pConditional);
    }
 
-   void NPCOperator::RemoveEffect(IConditional* pConditional)
-   {
-      mEffects.remove(pConditional);
-   }
-
    void NPCOperator::RemoveInterrupt(IConditional* pConditional)
    {
       mInterrupts.remove(pConditional);
@@ -101,11 +88,6 @@ namespace dtAI
    const NPCOperator::ConditionalList& NPCOperator::GetPreConditions() const
    {
       return mPreConditionals;
-   }
-
-   const NPCOperator::ConditionalList& NPCOperator::GetEffects() const
-   {
-      return mEffects;
    }
 
    const NPCOperator::ConditionalList& NPCOperator::GetInterrupts() const
