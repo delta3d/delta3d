@@ -135,24 +135,6 @@ class BaseABCWrap : public BaseABC, public wrapper<BaseABC>
          this->get_override("PostFrame")(deltaFrameTime);
          #endif
       }
-
-      virtual void OnMessage(MessageData* pColData)
-      {
-         if( pColData->message == "collision" )
-         {
-            Scene::CollisionData* cd = static_cast< Scene::CollisionData* >( pColData->userData );
-            OnCollisionMessage(cd);            
-         }
-      }
-
-      virtual void OnCollisionMessage(Scene::CollisionData* pColData)
-      {
-         #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
-            call<void>( this->get_override("OnCollisionMessage").ptr(), pColData );
-         #else
-            this->get_override("OnCollisionMessage")(pColData);
-         #endif
-      }
 };
 
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(LoadMap_overloads, LoadMap, 1, 2)
