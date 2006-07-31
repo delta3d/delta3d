@@ -451,7 +451,9 @@ namespace dtAI
       //this will keep us from drawing when we are loading
       if(mHelper->mReadingFile) return;
 
-      glEnable(GL_BLEND);
+      glDisable(GL_LIGHTING);
+
+      glEnable(GL_BLEND);      
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
       if(mHelper->mDrawWaypoints)
@@ -525,6 +527,8 @@ namespace dtAI
 
 
       glDisable(GL_BLEND);
+      glEnable(GL_LIGHTING);
+      
    }
 
 
