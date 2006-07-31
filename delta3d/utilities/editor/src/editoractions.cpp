@@ -584,6 +584,7 @@ namespace dtEditQt
         {
             mapPropsDialog.getMapName()->setText(map->GetName().c_str());
             mapPropsDialog.getPathNodeFileName()->setText(map->GetPathNodeFileName().c_str());
+            mapPropsDialog.getCreateNavMesh()->setChecked(map->GetCreateNavMesh());
             mapPropsDialog.getMapDescription()->setText(map->GetDescription().c_str());
             mapPropsDialog.getMapAuthor()->setText(map->GetAuthor().c_str());
             mapPropsDialog.getMapCopyright()->setText(map->GetCopyright().c_str());
@@ -595,6 +596,7 @@ namespace dtEditQt
         {
             map->SetName(mapPropsDialog.getMapName()->text().toStdString());
             map->SetPathNodeFileName(mapPropsDialog.getPathNodeFileName()->text().toStdString());
+            map->SetCreateNavMesh(mapPropsDialog.getCreateNavMesh()->isChecked());
             map->SetDescription(mapPropsDialog.getMapDescription()->text().toStdString());
             map->SetAuthor(mapPropsDialog.getMapAuthor()->text().toStdString());
             map->SetCopyright(mapPropsDialog.getMapCopyright()->text().toStdString());

@@ -235,9 +235,7 @@ namespace dtAI
    }
 
    void WaypointManager::CreateNavMesh(dtCore::Scene* pScene)
-   {
-      mNavMesh.Clear();
-      
+   {            
       float maxDistBetweenWaypoints = AvgDistBetweenWaypoints();
 
       osg::ref_ptr<dtCore::Isector> pIsector = new dtCore::Isector(pScene);
@@ -292,9 +290,10 @@ namespace dtAI
       ReadFile(pWaypointFilename);      
    }
 
-   void WaypointManager::OnMapSave(const std::string& pWaypointFilename, dtCore::Scene* pScene)
+   void WaypointManager::OnMapSave(const std::string& pWaypointFilename, bool pCreateNavMesh, dtCore::Scene* pScene)
    {      
-      CreateNavMesh(pScene);
+      mNavMesh.Clear();
+      if(pCreateNavMesh) CreateNavMesh(pScene);
       WriteFile(pWaypointFilename);
    }
 

@@ -51,7 +51,6 @@ namespace dtHLAGM
 
    const std::string HLAFOMConfigContentHandler::HEADER_ELEMENT("header");
    const std::string HLAFOMConfigContentHandler::HEADER_NAME_ELEMENT("name");
-   const std::string HLAFOMConfigContentHandler::WAYPOINT_FILENAME_ELEMENT("waypointFileName");
    const std::string HLAFOMConfigContentHandler::HEADER_USE_DIS_ENTITIES_ELEMENT("disEntityTypes");
    const std::string HLAFOMConfigContentHandler::HEADER_DIS_ENTITIES_ATTR_ELEMENT("disEntityTypeAttribute");
    const std::string HLAFOMConfigContentHandler::HEADER_DESCRIPTION_ELEMENT("description");
@@ -451,9 +450,6 @@ namespace dtHLAGM
          {
          }
          else if (topElement == HEADER_NAME_ELEMENT)
-         {
-         }
-         else if (topElement == WAYPOINT_FILENAME_ELEMENT)
          {
          }
          else if (topElement == HEADER_DESCRIPTION_ELEMENT)

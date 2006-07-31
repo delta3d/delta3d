@@ -109,6 +109,17 @@ namespace dtDAL
          void SetPathNodeFileName(const std::string& newFilename) { mModified = true;  mPathNodeFile = newFilename; }
 
          /**
+         * @return whether or not we will create a navmesh on map save
+         */
+         bool GetCreateNavMesh()const {return mCreateNavMesh;}
+
+         /**
+         * Sets whether or not we create a NavMesh on save
+         * used with waypoints
+         */
+         void SetCreateNavMesh(bool pNavMesh){mCreateNavMesh = pNavMesh;}
+
+         /**
           * @return The map comments.  This is intended to be the long comments.
           */
          const std::string& GetComment() const { return mComment; }
@@ -395,6 +406,7 @@ namespace dtDAL
          std::string mSavedName;
          std::string mFileName;
          std::string mPathNodeFile;
+         bool mCreateNavMesh;
          std::string mDescription;
          std::string mAuthor;
          std::string mComment;

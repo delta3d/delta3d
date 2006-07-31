@@ -23,6 +23,7 @@
 #define DELTA_DIALOG_MAP_PROPERTIES
 
 #include <QtGui/QDialog>
+#include <QtGui/QCheckBox>
 
 class QLineEdit;
 class QTextEdit;
@@ -41,6 +42,11 @@ namespace dtEditQt {
 
         QLineEdit *getMapName() {
             return this->name;
+        }
+
+        QCheckBox* getCreateNavMesh()
+        {
+           return this->createNavMesh;
         }
 
         QLineEdit *getPathNodeFileName() {
@@ -73,6 +79,7 @@ namespace dtEditQt {
         QLineEdit *author;
         QLineEdit *copyright;
         QTextEdit *comments;
+        QCheckBox *createNavMesh;
     };
 
 }

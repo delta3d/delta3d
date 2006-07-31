@@ -113,6 +113,7 @@ namespace dtDAL
 
          static XMLCh* HEADER_ELEMENT;
          static XMLCh* MAP_NAME_ELEMENT;
+         static XMLCh* WAYPOINT_CREATE_NAVMESH;
          static XMLCh* WAYPOINT_FILENAME_ELEMENT;
          static XMLCh* DESCRIPTION_ELEMENT;
          static XMLCh* AUTHOR_ELEMENT;

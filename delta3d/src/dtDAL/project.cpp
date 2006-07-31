@@ -971,7 +971,7 @@ namespace dtDAL
          //alert the waypoint manager to save the waypoint file
          if(pScene && !map.GetPathNodeFileName().empty())
          {
-            dtAI::WaypointManager::GetInstance()->OnMapSave(map.GetPathNodeFileName(), pScene);
+            dtAI::WaypointManager::GetInstance()->OnMapSave(map.GetPathNodeFileName(), map.GetCreateNavMesh(), pScene);
          }
 
          //save the file to a separate name first so that
