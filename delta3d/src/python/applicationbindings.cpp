@@ -101,6 +101,26 @@ class ApplicationWrap : public Application, public wrapper<Application>
                Application::PostFrame(deltaFrameTime);
             }
          }
+      }
+
+      virtual void OnMessage( MessageData* data )
+      {
+         if( PyObject_HasAttrString( boost::python::detail::wrapper_base_::get_owner(*this),
+                                     "OnMessage") )
+         {
+            if( override OnMessage = this->get_override("OnMessage") )
+            {
+               #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+               call<void>( OnMessage.ptr(), data );
+               #else
+               OnMessage(data);
+               #endif
+            }
+            else
+            {
+               Application::OnMessage(data);
+            }
+         }
       }      
 };
 
