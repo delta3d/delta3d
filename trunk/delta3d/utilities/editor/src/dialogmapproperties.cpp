@@ -59,11 +59,17 @@ namespace dtEditQt
         gridLayout->addWidget(label,1,0);
         gridLayout->addWidget(this->description,1,1);
 
+        label = new QLabel(tr("Create NavMesh: "), mapGroup);
+        label->setAlignment(Qt::AlignRight);
+        this->createNavMesh = new QCheckBox(mapGroup);
+        gridLayout->addWidget(label, 2, 0);
+        gridLayout->addWidget(this->createNavMesh, 2,1);
+
         label = new QLabel(tr("Waypoint Filename:"),mapGroup);
         label->setAlignment(Qt::AlignRight);
         this->pathNodeFile = new QLineEdit(mapGroup);
-        gridLayout->addWidget(label,2,0);
-        gridLayout->addWidget(this->pathNodeFile,2,1);
+        gridLayout->addWidget(label,3,0);
+        gridLayout->addWidget(this->pathNodeFile,3,1);
         
         //Create the properties section...
         QGroupBox *propsGroup = new QGroupBox(tr("Properties"),this);

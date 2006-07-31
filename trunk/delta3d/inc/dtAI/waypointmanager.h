@@ -133,7 +133,7 @@ namespace dtAI
          void MoveWaypoint(unsigned pIndex, const osg::Vec3& pPos);
 
          void OnMapLoad(const std::string& pWaypointFilename);
-         void OnMapSave(const std::string& pWaypointFilename, dtCore::Scene* pScene);
+         void OnMapSave(const std::string& pWaypointFilename, bool pCreateNavMesh, dtCore::Scene* pScene);
          void OnMapClose();
 
          //before operating on our waypoint map obtain a lock

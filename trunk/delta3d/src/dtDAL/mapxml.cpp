@@ -279,6 +279,10 @@ namespace dtDAL
                //this flag is only used when the parser is just looking for the map name.
                mFoundMapName = true;
             }
+            else if (topEl == MapXMLConstants::WAYPOINT_CREATE_NAVMESH)
+            {
+               mMap->SetCreateNavMesh(dtUtil::ToType<bool>(dtUtil::XMLStringConverter(chars).ToString()));
+            }
             else if (topEl == MapXMLConstants::WAYPOINT_FILENAME_ELEMENT)
             {
                mMap->SetPathNodeFileName(dtUtil::XMLStringConverter(chars).ToString());
@@ -1386,8 +1390,13 @@ namespace dtDAL
          AddCharacters(map.GetName());
          EndElement();
          if(!map.GetPathNodeFileName().empty())
-         {  BeginElement(MapXMLConstants::WAYPOINT_FILENAME_ELEMENT);
+         {
+            BeginElement(MapXMLConstants::WAYPOINT_FILENAME_ELEMENT);
             AddCharacters(map.GetPathNodeFileName());
+            EndElement();
+
+            BeginElement(MapXMLConstants::WAYPOINT_CREATE_NAVMESH);
+            AddCharacters(dtUtil::ToString(map.GetCreateNavMesh()));
             EndElement();
          }
          BeginElement(MapXMLConstants::DESCRIPTION_ELEMENT);
@@ -1883,6 +1892,7 @@ namespace dtDAL
 
    XMLCh* MapXMLConstants::HEADER_ELEMENT = NULL;
    XMLCh* MapXMLConstants::MAP_NAME_ELEMENT = NULL;
+   XMLCh* MapXMLConstants::WAYPOINT_CREATE_NAVMESH = NULL;
    XMLCh* MapXMLConstants::WAYPOINT_FILENAME_ELEMENT = NULL;
    XMLCh* MapXMLConstants::DESCRIPTION_ELEMENT = NULL;
    XMLCh* MapXMLConstants::AUTHOR_ELEMENT = NULL;
@@ -1949,6 +1959,7 @@ namespace dtDAL
       HEADER_ELEMENT = XMLString::transcode("header");
       MAP_NAME_ELEMENT = XMLString::transcode("name");
       WAYPOINT_FILENAME_ELEMENT = XMLString::transcode("waypointFileName");
+      WAYPOINT_CREATE_NAVMESH = XMLString::transcode("createNavMesh");
       DESCRIPTION_ELEMENT = XMLString::transcode("description");
       AUTHOR_ELEMENT = XMLString::transcode("author");
       COMMENT_ELEMENT = XMLString::transcode("comment");
@@ -2014,6 +2025,7 @@ namespace dtDAL
       XMLString::release(&HEADER_ELEMENT);
       XMLString::release(&MAP_NAME_ELEMENT);
       XMLString::release(&WAYPOINT_FILENAME_ELEMENT);
+      XMLString::release(&WAYPOINT_CREATE_NAVMESH);
       XMLString::release(&DESCRIPTION_ELEMENT);
       XMLString::release(&AUTHOR_ELEMENT);
       XMLString::release(&COMMENT_ELEMENT);
