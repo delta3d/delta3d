@@ -16,18 +16,13 @@ using namespace dtCore;
 // So then we wrap SendMessage and MessageData to use void_'s in Python.
 //
 // -osb
-struct void_;
+struct void_
+{
+};
 
 class BaseWrap : public Base
 {
    public:
-
-      struct MessageDataWrap
-      {
-         std::string message;
-         Base* sender;
-         void_* userData;
-      };
 
       BaseWrap(PyObject* self)
          : mSelf(self)
@@ -47,7 +42,6 @@ class BaseWrap : public Base
       {
          SendMessage( message, data );
       }
-
    protected:
 
       PyObject* mSelf;
@@ -75,9 +69,14 @@ void initBaseBindings()
       .def("SendMessage", &BaseWrap::SendMessageWrap, SM_overloads())
       ;
 
-   class_<BaseWrap::MessageDataWrap>("MessageData")
-      .def_readwrite("message", &BaseWrap::MessageDataWrap::message)
-      .def_readwrite("sender", &BaseWrap::MessageDataWrap::sender)
-      .def_readwrite("userData", &BaseWrap::MessageDataWrap::userData)
+   class_<BaseWrap::MessageData>("MessageData")
+      .def_readwrite("message", &BaseWrap::MessageData::message)
+      .def_readwrite("sender", &BaseWrap::MessageData::sender)
+
+      // This still doesn't work. One can probably make some sort of wrapper
+      // class for MessageData that does the conversion, but it would need to use
+      // some sort of Get/SetUserData functions and then use Boost.Python's
+      // .add_property to bind them to the userData member.
+      //.def_readwrite("userData", &BaseWrap::MessageData::userData)
       ;
 }
