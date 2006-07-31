@@ -23,7 +23,7 @@ sources['all'] = mainSources + []
 
 for suite in suites:
    #get the sources for each program
-   sources[suite] = SGlob(suite + '/*tests.cpp')
+   sources[suite] = SGlob(suite + '/*.cpp')
    #add the sources to the allTests program
    sources['all'] += sources[suite]
    #add the "main" source files.
@@ -47,7 +47,6 @@ result = 'true'
 
 if projectEnv['usePrefixHeaders'] and OS != 'windows':
  	projectEnv.Append(CPPFLAGS = " -include inc/prefix/dtutilprefix.h ")
-
 
 #create all the program names base on the sets of sources.
 for prog in sources.keys():
