@@ -35,7 +35,8 @@
 #   define DT_AI_EXPORT
 #endif
 
-
-#pragma warning (disable: 4251)
+#ifdef _WIN32
+#   pragma warning (disable: 4251)
+#endif
 
 #endif // DELTA_AI_EXPORT
