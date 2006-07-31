@@ -8,10 +8,10 @@ Import ('*')
 sources = SGlob('*.cpp')
 
 dtTerrainDeps =[ 'dtDAL', 'dtutil', 'dtCore', 'dtChar', 'dtaudio', 'dtabc', 'glgui', 'isense', 
-	'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 
-	'osgGA', 'osgSim', 'osgFX', 'osgProducer','rbody', 'rvrutils', 'rcfgscript','gdal', 
-        'cal3d', 'sg', 'ul', 'js', 
-	'Producer', 'opengl' ]
+                 'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgText', 'osgUtil', 
+                 'osgGA', 'osgSim', 'osgFX', 'osgProducer','rbody', 'rvrutils', 'rcfgscript','gdal', 
+                 'cal3d', 'sg', 'ul', 'js', 
+                 'Producer', 'opengl' ]
 
 defines = []
 
