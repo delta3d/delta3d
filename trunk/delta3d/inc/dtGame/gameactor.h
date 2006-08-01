@@ -279,7 +279,8 @@ namespace dtGame
          virtual void NotifyActorUpdate();
 
          /**
-          * Populates an update message from the actor proxy.
+          * Populates an update message from the actor proxy.  When overwriting this method, be sure to call or 
+          * duplicate the functionality provided in GameActor::PopulateActorUpdate().
           * @param update The message to populate.
           * @param propNames  the properties to include in the message.
           */
@@ -287,7 +288,9 @@ namespace dtGame
           
          /**
           * Populates an update message from the actor proxy.  It will add all property values to the message.
-          * @param update The message to populate.
+          * When overwriting this method, be sure to call or 
+          * duplicate the functionality provided in GameActor::PopulateActorUpdate().
+          * @param update The message to populate.  
           */
          virtual void PopulateActorUpdate(ActorUpdateMessage& update) throw();
 
