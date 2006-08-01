@@ -34,7 +34,7 @@ namespace dtCore
    /** The Tripod is useful for attaching a Camera to another
     *  Transformable.  The Tripod has a built-in offset which allows the Camera
     *  to "stand-off" the parent Transformable.  The user may also supply a scale
-    *  valued for the x,y,z, and h,p,r coordinates.  These scale values allow 
+    *  valued for the x,y,z, and h,p,r coordinates using SetScale().  These scale values allow 
     *  the Camera to "lag" behind. Also, the Tripod may be instructed to always point
     *  toward another Transformable. The Tripod is a DeltaDrawable solely so we can
     *  make an actor proxy for it.
@@ -90,13 +90,13 @@ namespace dtCore
       ///Get the Tripod's currently used offset coordinates
       void GetOffset(osg::Vec3& pos_in, osg::Vec3& hpr_in) const{pos_in = mPosition; hpr_in = mHPR;}
 
-      ///Set the scaling factors for each degree of freedom (0.0 - 1.0)
+      ///Sets the amount of per-frame lag for each degree of freedom (0.0 - 1.0)
       void SetScale(float x, float y, float z, float h, float p, float r);
       
-       ///Set the scaling factors for each degree of freedom (0.0 - 1.0)
+       ///Sets the amount of per-frame lag for each degree of freedom (0.0 - 1.0)
       void SetScale(const osg::Vec3& xyz, const osg::Vec3& hpr){mXYZScale = xyz; mHPRScale = hpr;}
 
-      ///Get the currently used scaling factors
+      ///Get the currently used per-frame lag for each degree of freedom
       void GetScale(osg::Vec3& xyz, osg::Vec3& hpr){xyz = mXYZScale; hpr = mHPRScale;}
 
       enum TetherMode
@@ -132,8 +132,8 @@ namespace dtCore
       osg::Vec3 mPosition; ///<The position
       osg::Vec3 mHPR;///<Heading, Pitch, and Roll
       TetherMode mTetherMode; ///<The tethering mode
-      osg::Vec3 mXYZScale; ///<The scale factors for x,y,z
-      osg::Vec3 mHPRScale; ///<The scale factors for h,p,r
+      osg::Vec3 mXYZScale; ///<The lag scale factors for x,y,z
+      osg::Vec3 mHPRScale; ///<The lag scale factors for h,p,r
       RefPtr<Transformable> mLookAtTarget; ///<the look-at target
       RefPtr<osg::Node> mNode;
 

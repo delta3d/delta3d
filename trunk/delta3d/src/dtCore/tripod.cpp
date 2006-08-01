@@ -80,7 +80,8 @@ void Tripod::SetAttachToTransformable( const std::string& parentName )
    }
 }
 
-/** Must be in the range (0.0,1.0)
+/** Must be in the range (0.0,1.0).  A value of 0 will cause the Camera to not be
+ *  updated on that particular degree of freedom.  A value of 1 will have no lag.
 */
 void Tripod::SetScale(float x, float y, float z, float h, float p, float r)
 {
