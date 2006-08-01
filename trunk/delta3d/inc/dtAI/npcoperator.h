@@ -43,7 +43,6 @@ namespace dtAI
          typedef dtUtil::Functor<bool, TYPELIST_2(const WorldState*, WorldState*)> ApplyOperatorFunctor;
 
       public:
-         NPCOperator(){};
          NPCOperator(const std::string& pName, const ApplyOperatorFunctor& pEvalFunc);
          virtual ~NPCOperator();
 
