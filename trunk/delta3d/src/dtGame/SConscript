@@ -10,7 +10,7 @@ sources = SGlob('*.cpp')
 
 dtGameDeps =[ 'dtDAL', 'dtUtil', 'dtCore', 'dtChar', 'dtAudio', 'dtABC', 'isense', 
               'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgText', 'osgUtil', 
-              'osgGA', 'osgSim', 'osgFX', 'osgProducer','rbody', 'rvrutils', 'rcfgscript','gdal', 
+              'osgGA', 'osgSim', 'osgFX', 'osgProducer','rbody', 'rvrutils', 'rcfgscript', 
               'cal3d', 'sg', 'ul', 'js', 'xerces-c', 'openal',
               'Producer', 'tinyxml', 'opengl' ]
 defines = []
