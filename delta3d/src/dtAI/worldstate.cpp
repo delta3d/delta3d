@@ -27,18 +27,8 @@ namespace dtAI
    WorldState::WorldState()
       : mCost(0.0f)
       , mStateVariables()
-      , mRemainingCost()
-      , mDesiredState()
    {
 
-   }
-
-   WorldState::WorldState(const RemainingCostFunctor& pRCF, const DesiredStateFunctor& pDSF)
-      : mCost(0.0f)
-      , mStateVariables()
-      , mRemainingCost(pRCF)
-      , mDesiredState(pDSF)
-   {
    }
    
    struct deleteFunc
@@ -64,8 +54,6 @@ namespace dtAI
    WorldState::WorldState(const WorldState& pWS)
    {
       mCost = pWS.mCost;      
-      mRemainingCost = pWS.mRemainingCost;
-      mDesiredState = pWS.mDesiredState;
 
       StateVarMapping::const_iterator iter = pWS.mStateVariables.begin();
       StateVarMapping::const_iterator endOfList = pWS.mStateVariables.end();
@@ -82,8 +70,6 @@ namespace dtAI
       FreeMem();
 
       mCost = pWS.mCost;      
-      mRemainingCost = pWS.mRemainingCost;
-      mDesiredState = pWS.mDesiredState;
 
       StateVarMapping::const_iterator iter = pWS.mStateVariables.begin();
       StateVarMapping::const_iterator endOfList = pWS.mStateVariables.end();
@@ -127,16 +113,6 @@ namespace dtAI
       StateVarMapping::const_iterator iter = mStateVariables.find(pState);
       if(iter == mStateVariables.end()) return 0;
       else return (*iter).second;
-   }
-
-   float WorldState::RemainingCost() const
-   {
-      return mRemainingCost(this);
-   }
-
-   bool WorldState::IsDesiredState() const
-   {
-      return mDesiredState(this);
    }
 
 
