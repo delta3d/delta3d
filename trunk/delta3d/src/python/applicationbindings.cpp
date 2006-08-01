@@ -103,7 +103,7 @@ class ApplicationWrap : public Application, public wrapper<Application>
          }
       }
 
-      virtual void OnMessage( MessageData* data )
+      /*virtual void OnMessage( MessageData* data )
       {
          if( PyObject_HasAttrString( boost::python::detail::wrapper_base_::get_owner(*this),
                                      "OnMessage") )
@@ -121,7 +121,7 @@ class ApplicationWrap : public Application, public wrapper<Application>
                Application::OnMessage(data);
             }
          }
-      }      
+      }*/
 };
 
 void initApplicationBindings()
