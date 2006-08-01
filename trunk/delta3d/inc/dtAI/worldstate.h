@@ -25,8 +25,6 @@
 #include <dtAI/export.h>
 #include <dtAI/statevariable.h>
 
-#include <dtUtil/functor.h>
-
 #include <map>
 #include <string>
 
@@ -38,14 +36,11 @@ namespace dtAI
    class DT_AI_EXPORT WorldState
    {
       public:
-         typedef dtUtil::Functor<float, TYPELIST_1(const WorldState*)> RemainingCostFunctor;
-         typedef dtUtil::Functor<bool, TYPELIST_1(const WorldState*)> DesiredStateFunctor;
          typedef std::pair<std::string, IStateVariable*> StringStateMapping;
          typedef std::map<std::string, IStateVariable*> StateVarMapping;
 
       public:
          WorldState();
-         WorldState(const RemainingCostFunctor& pRCF, const DesiredStateFunctor& pDSF);
          WorldState(const WorldState& pWS);         
          WorldState& operator=(const WorldState& pWS);
 
@@ -58,16 +53,11 @@ namespace dtAI
          IStateVariable* GetState(const std::string& pState);         
          const IStateVariable* GetState(const std::string& pState) const;         
 
-         float RemainingCost() const;
-         bool IsDesiredState() const;
-
       private:
          void FreeMem();
    
          float mCost;
          StateVarMapping mStateVariables;
-         RemainingCostFunctor mRemainingCost;
-         DesiredStateFunctor mDesiredState;
 
    };
 }//namespace dtAI

@@ -26,6 +26,8 @@
 #include <dtAI/npcoperator.h>
 #include <dtAI/worldstate.h>
 
+#include <dtUtil/functor.h>
+
 namespace dtAI
 {
    /**
@@ -34,11 +36,13 @@ namespace dtAI
    class DT_AI_EXPORT PlannerHelper
    {
       public:
+         typedef dtUtil::Functor<float, TYPELIST_1(const WorldState*)> RemainingCostFunctor;
+         typedef dtUtil::Functor<bool, TYPELIST_1(const WorldState*)> DesiredStateFunctor;
          typedef std::list<NPCOperator*> OperatorList; 
-
+         
       public:
    
-         PlannerHelper();
+         PlannerHelper(const RemainingCostFunctor& pRCF, const DesiredStateFunctor& pDSF);
          virtual ~PlannerHelper();
    
          void AddOperator(NPCOperator* pOperator);
@@ -50,11 +54,19 @@ namespace dtAI
          WorldState* GetCurrentState();
          const WorldState* GetCurrentState() const;
 
+         void SetRemainingCostFunc(const RemainingCostFunctor& pFunc);
+         void SetDesiredStateFunc(const DesiredStateFunctor& pFunc);
+
+         float RemainingCost(const WorldState* pWS) const;
+         bool IsDesiredState(const WorldState* pWS) const;
 
       private:
 
          OperatorList mOperators;
          WorldState* mCurrentState;
+
+         RemainingCostFunctor mRemainingCost;
+         DesiredStateFunctor mDesiredState;
    
    };
 }//namespace dtAI

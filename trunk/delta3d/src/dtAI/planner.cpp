@@ -140,7 +140,7 @@ namespace dtAI
          mConfig.mCurrentElapsedTime += mConfig.mTimer.GetDT();
 
          const PlannerNodeLink* pCurrent = FindLowestCost();
-         bool pReachedGoal = pCurrent->mState->IsDesiredState();
+         bool pReachedGoal = mHelper->IsDesiredState(pCurrent->mState);
 
          //we have found our desired state
          if(pReachedGoal || mConfig.mCurrentElapsedTime >= mConfig.mMaxTimePerIteration)
@@ -178,7 +178,7 @@ namespace dtAI
                pnl->mState = pWS;
                pnl->mParent = pCurrent;
                pnl->mGCost = pWS->GetCost();
-               pnl->mHCost = pWS->RemainingCost();
+               pnl->mHCost = mHelper->RemainingCost(pWS);
 
                mOpen.push_back(pnl);
 

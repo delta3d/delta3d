@@ -32,6 +32,7 @@ namespace dtAI
 //////////////////////////////////////////////////////////////////////////
 
    MyNPC::MyNPC()
+     : mHelper(PlannerHelper::RemainingCostFunctor(this, &MyNPC::RemainingCost), PlannerHelper::DesiredStateFunctor(this, &MyNPC::IsDesiredState))
    {
      
    }
@@ -43,17 +44,15 @@ namespace dtAI
 
    void MyNPC::Init()
    {
-      WorldState ws(WorldState::RemainingCostFunctor(this, &MyNPC::RemainingCost), WorldState::DesiredStateFunctor(this, &MyNPC::IsDesiredState));
-      ws.AddState("Recipe", new Recipe());
-      ws.AddState("Groceries", new Groceries());
-      ws.AddState("PreparedFood", new PreparedFood());
-      ws.AddState("HungerMeter", new HungerMeter());
-   
-      mHelper.SetCurrentState(ws);
       mHelper.AddOperator(new CallGrandma());
       mHelper.AddOperator(new GoToStore());
       mHelper.AddOperator(new Cook());
       mHelper.AddOperator(new Eat());
+
+      mHelper.GetCurrentState()->AddState("Recipe", new Recipe());
+      mHelper.GetCurrentState()->AddState("Groceries", new Groceries());
+      mHelper.GetCurrentState()->AddState("PreparedFood", new PreparedFood());
+      mHelper.GetCurrentState()->AddState("HungerMeter", new HungerMeter());  
    }
 
    std::list<const NPCOperator*> MyNPC::GetPlanToEat()

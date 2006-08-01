@@ -24,9 +24,11 @@
 
 namespace dtAI
 {
-   PlannerHelper::PlannerHelper()
-      : mOperators(0)
+   PlannerHelper::PlannerHelper(const RemainingCostFunctor& pRCF, const DesiredStateFunctor& pDSF)
+      : mOperators()
       , mCurrentState(new WorldState())
+      , mRemainingCost(pRCF)
+      , mDesiredState(pDSF)
    {
    }
 
@@ -78,5 +80,25 @@ namespace dtAI
       mCurrentState->operator =(pNewState);
    }
 
+
+   float PlannerHelper::RemainingCost(const WorldState* pWS) const
+   {
+      return mRemainingCost(pWS);
+   }
+
+   bool PlannerHelper::IsDesiredState(const WorldState* pWS) const
+   {
+      return mDesiredState(pWS);
+   }
+
+   void PlannerHelper::SetDesiredStateFunc(const DesiredStateFunctor& pFunc)
+   {
+      mDesiredState = pFunc;
+   }
+
+   void PlannerHelper::SetRemainingCostFunc(const RemainingCostFunctor& pFunc)
+   {
+      mRemainingCost = pFunc;
+   }
 
 }//namespace dtAI
