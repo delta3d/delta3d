@@ -46,11 +46,14 @@ namespace dtAI
          virtual ~Planner();     
 
          void Reset(const PlannerConfig& pConfig);
-         void Reset(const WorldState* pDesiredState, const PlannerHelper* pHelper);
+         void Reset(const WorldState* pState, const PlannerHelper* pHelper);
 
          PlannerResult GeneratePlan();
 
-         PlannerConfig& GetResult();
+         std::list<const NPCOperator*> GetPlan() const;
+
+         PlannerConfig& GetConfig();
+         const PlannerConfig& GetConfig() const;         
          
       private:
          void FreeMem();

@@ -53,6 +53,11 @@ namespace dtAI
       mOperators.push_back(pOperator);
    }
 
+   void PlannerHelper::RemoveOperator(NPCOperator* pOperator)
+   {
+      mOperators.remove(pOperator);
+   }
+
    const PlannerHelper::OperatorList& PlannerHelper::GetOperators() const
    {
       return mOperators;

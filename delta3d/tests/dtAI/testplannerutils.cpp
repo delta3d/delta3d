@@ -61,7 +61,7 @@ namespace dtAI
       Planner pPlanner;
       pPlanner.Reset(0, &mHelper);
       pPlanner.GeneratePlan();
-      return pPlanner.GetResult().mResult;
+      return pPlanner.GetConfig().mResult;
    }
 
 

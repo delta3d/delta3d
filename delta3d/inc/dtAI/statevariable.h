@@ -22,7 +22,6 @@
 #ifndef __DELTA_STATEVARIABLE_H__
 #define __DELTA_STATEVARIABLE_H__
 
-#include <string>
 
 namespace dtAI
 {
