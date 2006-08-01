@@ -73,7 +73,25 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
+				RelativePath="..\..\..\src\python\astarconfigbindings.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\python\conditionalbindings.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\python\dtaibindings.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\python\npcoperatorbindings.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\python\plannerbindings.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\python\plannerhelperbindings.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\python\statevariablebindings.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\src\python\waypointastarbindings.cpp">
@@ -86,6 +104,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\python\waypointpairbindings.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\python\worldstatebindings.cpp">
 			</File>
 		</Filter>
 		<Filter

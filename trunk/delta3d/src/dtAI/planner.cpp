@@ -108,10 +108,21 @@ namespace dtAI
       return std::find(mOpen.begin(), mOpen.end(), pNodeLink) != mOpen.end();
    }
 
-   PlannerConfig& Planner::GetResult()
+   std::list<const NPCOperator*> Planner::GetPlan() const
+   {
+      return mConfig.mResult;
+   }
+
+   PlannerConfig& Planner::GetConfig()
    {
       return mConfig;
    }
+
+   const PlannerConfig& Planner::GetConfig() const
+   {
+      return mConfig;
+   }
+
 
    Planner::PlannerResult Planner::GeneratePlan()
    {

@@ -42,6 +42,7 @@ namespace dtAI
          virtual ~PlannerHelper();
    
          void AddOperator(NPCOperator* pOperator);
+         void RemoveOperator(NPCOperator* pOperator);
          const OperatorList& GetOperators() const;
 
          void SetCurrentState(const WorldState& pNewState);
