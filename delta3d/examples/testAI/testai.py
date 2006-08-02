@@ -33,9 +33,14 @@ class AICharacter:
       self.mAStar.Reset(self.mCurrentWaypoint, waypoint)
       result = self.mAStar.FindPath()
       self.mWaypointPath = self.mAStar.GetPath()
+      if not self.mWaypointPath:
+          return False
       #for waypoint in self.mWaypointPath:
-      #   waypoint.SetRenderFlag(Waypoint.RENDER_GREEN) 
+      #   waypoint.SetRenderFlag(Waypoint.RENDER_GREEN)
+      for i in range(len(self.mWaypointPath)):
+          self.mWaypointPath[i].SetRenderFlag(Waypoint.RENDER_GREEN) 
       self.mWaypointPath[-1].SetRenderFlag(Waypoint.RENDER_RED)
+      return True
 
    def GoToWaypoint(self, dt, waypoint):
       self.mCharacter.RotateCharacterToPoint(waypoint.GetPosition(), dt)
@@ -51,17 +56,17 @@ class AICharacter:
    def AmAtWaypoint(self, waypoint):
       pos = self.GetPosition()
       wayPos = waypoint.GetPosition()
-      distToX = math.fabs(pos[0] - wayPos[0])
-      distToY = math.fabs(pos[1] - wayPos[1])
+      distToX = abs(pos[0] - wayPos[0])
+      distToY = abs(pos[1] - wayPos[1])
       return (distToX < 1.0) and ( distToY < 1.0)   
 
    def Update(self, dt):
-      if (len (self.mWaypointPath) != 0):
+      if self.mWaypointPath:
          if(self.AmAtWaypoint(self.mWaypointPath[0])):
             self.mCurrentWaypoint = self.mWaypointPath[0]
             del self.mWaypointPath[0]
             self.mCurrentWaypoint.SetRenderFlag(Waypoint.RENDER_BLUE)
-         if (len (self.mWaypointPath) != 0):
+         if self.mWaypointPath:
             self.GoToWaypoint(dt, self.mWaypointPath[0])
          else:
             self.mCharacter.SetVelocity(0)
@@ -105,8 +110,10 @@ class TestAI(Application):
 
    def PreFrame(self, deltaFrameTime) :      
       if self.character.GetCurrentWaypoint().GetPosition() == self.mWaypoint.GetPosition():
-         self.mWaypoint = random.choice(self.mWaypointList)
-         self.character.FindPathAndGoToWaypoint(self.mWaypoint)
+          foundPathB = False
+          while not foundPathB:
+             self.mWaypoint = random.choice(self.mWaypointList)
+             foundPathB = self.character.FindPathAndGoToWaypoint(self.mWaypoint)
       self.character.Update(deltaFrameTime)
 
    def KeyPressed( self, keyboard, key, character ) :
