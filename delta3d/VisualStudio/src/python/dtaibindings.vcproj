@@ -116,6 +116,12 @@
 			<File
 				RelativePath="..\..\..\inc\python\dtpython.h">
 			</File>
+			<File
+				RelativePath="..\..\..\inc\python\npcoperatorpython.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\python\plannerhelperpython.h">
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"

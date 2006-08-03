@@ -23,10 +23,12 @@
 #define __DELTA_PLANNER_H__
 
 #include <dtAI/export.h>
+#include <dtAI/plannerastarutils.h>
 #include <dtAI/plannerhelper.h>
 #include <dtAI/plannerconfig.h>
 #include <dtAI/worldstate.h>
-#include <dtAI/plannerastarutils.h>
+
+#include <list>
 
 namespace dtAI
 {
@@ -39,18 +41,19 @@ namespace dtAI
          enum PlannerResult{NO_PLAN, PLAN_FOUND, PARTIAL_PLAN};
 
          typedef std::list<const PlannerNodeLink*> PlannerContainer;
-
+         typedef std::list<const NPCOperator*> OperatorList;
+     
       public:
    
          Planner();
          virtual ~Planner();     
 
          void Reset(const PlannerConfig& pConfig);
-         void Reset(const WorldState* pState, const PlannerHelper* pHelper);
+         void Reset(const PlannerHelper* pHelper);
 
          PlannerResult GeneratePlan();
 
-         std::list<const NPCOperator*> GetPlan() const;
+         OperatorList GetPlan() const;
 
          PlannerConfig& GetConfig();
          const PlannerConfig& GetConfig() const;         

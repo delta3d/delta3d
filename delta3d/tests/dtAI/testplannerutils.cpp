@@ -58,7 +58,7 @@ namespace dtAI
    std::list<const NPCOperator*> MyNPC::GetPlanToEat()
    {
       Planner pPlanner;
-      pPlanner.Reset(0, &mHelper);
+      pPlanner.Reset(&mHelper);
       pPlanner.GeneratePlan();
       return pPlanner.GetConfig().mResult;
    }
