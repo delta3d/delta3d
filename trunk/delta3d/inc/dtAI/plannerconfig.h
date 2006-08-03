@@ -22,7 +22,7 @@
 #ifndef __DELTA_PLANNERCONFIG_H__
 #define __DELTA_PLANNERCONFIG_H__
 
-#include <dtAI/plannerastarutils.h>
+#include <dtCore/timer.h>
 
 //vs thinks std::numeric_limits<>::max() is a macro
 #ifdef max
@@ -30,9 +30,25 @@
 #endif
 #include <limits>
 
+#include <list>
+
 
 namespace dtAI
 {
+
+
+   class PlannerTimer
+   {
+   public:
+      void Update(){ mTime = dtCore::Timer::Instance()->Tick();}
+      double GetDT(){return dtCore::Timer::Instance()->DeltaMil(mTime, dtCore::Timer::Instance()->Tick());}
+
+   private:
+      dtCore::Timer_t mTime;
+   };
+
+
+
    /**
     * 
     */
@@ -40,8 +56,7 @@ namespace dtAI
    {
       public:
          PlannerConfig()
-            : mGoal(0)
-            , mResult()
+            : mResult()
             , mMaxTimePerIteration(std::numeric_limits<double>::max())
             , mCurrentElapsedTime(0.0)
             , mTotalElapsedTime(0.0)
@@ -50,7 +65,6 @@ namespace dtAI
          
          }
 
-         const WorldState* mGoal;
          std::list<const NPCOperator*> mResult;
 
          double mMaxTimePerIteration;

@@ -65,12 +65,10 @@ namespace dtAI
    }
 
 
-   void Planner::Reset(const WorldState* pDesiredState, const PlannerHelper* pHelper)
+   void Planner::Reset(const PlannerHelper* pHelper)
    {
       FreeMem();
       mHelper = pHelper;
-      mConfig.mGoal = pDesiredState;     
-
 
       PlannerNodeLink* pNodeLink = new PlannerNodeLink();
       pNodeLink->mState = new WorldState(*mHelper->GetCurrentState()); 

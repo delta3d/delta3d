@@ -42,7 +42,8 @@ namespace dtAI
    };
    
    PlannerHelper::~PlannerHelper()
-   {      
+   {    
+      //\fix me- this crashes boost python... define ownership of operators
       std::for_each(mOperators.begin(), mOperators.end(), deleteFunc());
       mOperators.clear();
 

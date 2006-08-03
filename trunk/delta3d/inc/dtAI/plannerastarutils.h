@@ -24,7 +24,6 @@
 
 #include <dtAI/npcoperator.h>
 #include <dtAI/worldstate.h>
-#include <dtCore/timer.h>
 #include <list>
 
 namespace dtAI
@@ -86,18 +85,6 @@ namespace dtAI
          const PlannerNodeLink* mParent;
          float mGCost, mHCost;
    };
-
-
-   class PlannerTimer
-   {
-   public:
-      void Update(){ mTime = dtCore::Timer::Instance()->Tick();}
-      double GetDT(){return dtCore::Timer::Instance()->DeltaMil(mTime, dtCore::Timer::Instance()->Tick());}
-
-   private:
-      dtCore::Timer_t mTime;
-   };
-
 
 
    //class WorldStateIter

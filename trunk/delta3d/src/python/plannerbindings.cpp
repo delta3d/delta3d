@@ -4,6 +4,8 @@
 #include <dtAI/worldstate.h>
 #include <dtAI/plannerconfig.h>
 
+#include <python/plannerhelperpython.h>
+
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include <vector>
@@ -17,9 +19,9 @@ typedef std::vector<const NPCOperator*> OperatorVector;
 class PythonPlanner
 {
 public:
-   void Reset1(const WorldState* pState, const PlannerHelper* pHelper)
+   void Reset1(PlannerHelperPython* pHelper)
    {
-      mPlanner.Reset(pState, pHelper);
+      mPlanner.Reset(pHelper->GetHelper());
    }
 
    void Reset2(const PlannerConfig& pConf)
@@ -34,7 +36,8 @@ public:
 
    OperatorVector GetPlan()
    {
-      return OperatorVector(mPlanner.GetPlan().begin(), mPlanner.GetPlan().end());
+      if(mPlanner.GetPlan().size() == 0) return OperatorVector();
+      else return OperatorVector(mPlanner.GetPlan().begin(), mPlanner.GetPlan().end());
    }
 
    PlannerConfig& GetConfig()
@@ -54,20 +57,19 @@ void init_PlannerBindings()
       .def_readwrite("mMaxTimePerIteration", &PlannerConfig::mMaxTimePerIteration)
       .def_readwrite("mTotalElapsedTime", &PlannerConfig::mTotalElapsedTime)
       .def_readwrite("mCurrentElapsedTime", &PlannerConfig::mCurrentElapsedTime)
-      .def_readwrite("mGoal", &PlannerConfig::mGoal)
       ;
 
-
-   class_<OperatorVector>("OperatorVector")
-      .def(vector_indexing_suite<OperatorVector>())
-      ;
 
    scope plannerScope = class_<PythonPlanner, PythonPlanner*, boost::noncopyable>("Planner")
       .def("Reset", &PythonPlanner::Reset1)
       .def("Reset", &PythonPlanner::Reset2)
-      .def("FindPath", &PythonPlanner::GeneratePlan)
-      .def("GetPath", &PythonPlanner::GetPlan)
+      .def("GeneratePlan", &PythonPlanner::GeneratePlan)
+      .def("GetPlan", &PythonPlanner::GetPlan)
       .def("GetConfig", &PythonPlanner::GetConfig, return_internal_reference<>())
+      ;
+
+   class_<OperatorVector>("OperatorList")
+      .def(vector_indexing_suite<OperatorVector>())
       ;
 
    enum_<Planner::PlannerResult>("PlannerResult")

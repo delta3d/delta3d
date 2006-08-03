@@ -1,5 +1,4 @@
 #include <dtAI/statevariable.h>
-
 #include <boost/python.hpp>
 
 using namespace boost::python;
@@ -23,7 +22,7 @@ struct StateVarWrap: IStateVariable, wrapper<IStateVariable>
 void init_StateVarBindings()
 {   
 
-   class_<StateVarWrap, boost::noncopyable>("IStateVariable")
+   class_<StateVarWrap, IStateVariable*, boost::noncopyable>("IStateVariable")
       .def("Copy", pure_virtual(&IStateVariable::Copy), return_value_policy<manage_new_object>())
       ;
 

@@ -15,6 +15,7 @@ void init_PlannerHelperBindings();
 void init_NPCOperatorBindings();
 void init_ConditionalBindings();
 void init_WorldStateBindings();
+void init_StateVarBindings();
 
 BOOST_PYTHON_MODULE(PyDtAI)
 {
@@ -31,4 +32,5 @@ BOOST_PYTHON_MODULE(PyDtAI)
    init_WorldStateBindings();
    init_NPCOperatorBindings();
    init_ConditionalBindings();
+   init_StateVarBindings();
 }
