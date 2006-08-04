@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc., 
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
  *
-*/
+ */
 
 #ifndef DELTA_DT
 #define DELTA_DT
@@ -79,111 +79,96 @@ namespace dtCore
 {
 }
 
-
 #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
-//
 // Automatic library inclusion macros that use the #pragma/lib feature
-//
-#undef _AUTOLIBNAME
-#undef _AUTOLIBNAME2
-#undef _AUTOLIBNAME3
-#undef _AUTOLIBNAME4
-#undef _AUTOLIBNAME5
-#undef _AUTOLIBNAME6
-#undef _AUTOLIBNAME7
-#undef _AUTOLIBNAME8
-#undef _AUTOLIBNAME10
-#undef _AUTOLIBNAME11
-#undef _AUTOLIBNAME13
-#undef _AUTOLIBNAME14
-#undef _AUTOLIBNAME18
-#undef _AUTOLIBNAME19
-#undef _AUTOLIBNAME20
-#undef _AUTOLIBNAME21
+#undef DT_H_PRODUCER_LIB
+#undef DT_H_PLIB_UL_LIB
+#undef DT_H_WINMM_LIB
+#undef DT_H_OPENTHREADS_LIB
+#undef DT_H_DTCORE_LIB
+#undef DT_H_OSG_LIB
+#undef DT_H_OSGDB_LIB
+#undef DT_H_OSGPARTICLE_LIB
+#undef DT_H_OSGUTIL_LIB
+#undef DT_H_ODE_LIB
+#undef DT_H_OSGTEXT_LIB
+#undef DT_H_OPENGL_LIB
+#undef DT_H_PLIB_JS_LIB
+#undef DT_H_ISENSE_LIB
 
+// Setup debug vs. release library names
 #if defined(_DEBUG)
    #ifndef DT_CORE_LIBRARY  
-      #define  _AUTOLIBNAME5 "dtCored.lib"
+      #define  DT_H_DTCORE_LIB "dtCored.lib"
    #endif
-
-   #define _AUTOLIBNAME   "Producerd.lib"
-   #define _AUTOLIBNAME2  "ul_d.lib"
-   #define _AUTOLIBNAME4  "OpenThreadsWin32d.lib"  
-   #define _AUTOLIBNAME6  "osgd.lib"
-   #define _AUTOLIBNAME7  "osgDBd.lib"
-   #define _AUTOLIBNAME8  "osgParticled.lib"
-   #define _AUTOLIBNAME10 "osgUtild.lib"
-   #define _AUTOLIBNAME11 "oded.lib"
-   #define _AUTOLIBNAME13 "osgTextd.lib"
-   #define _AUTOLIBNAME18 "js_d.lib"
-   #define _AUTOLIBNAME21 "isensed.lib"
+   #define DT_H_PRODUCER_LIB   "Producerd.lib"
+   #define DT_H_PLIB_UL_LIB  "ul_d.lib"
+   #define DT_H_OPENTHREADS_LIB  "OpenThreadsWin32d.lib"  
+   #define DT_H_OSG_LIB  "osgd.lib"
+   #define DT_H_OSGDB_LIB  "osgDBd.lib"
+   #define DT_H_OSGPARTICLE_LIB  "osgParticled.lib"
+   #define DT_H_OSGUTIL_LIB "osgUtild.lib"
+   #define DT_H_ODE_LIB "oded.lib"
+   #define DT_H_OSGTEXT_LIB "osgTextd.lib"
+   #define DT_H_PLIB_JS_LIB "js_d.lib"
+   #define DT_H_ISENSE_LIB "isensed.lib"
 #else
    #ifndef DT_CORE_LIBRARY
-      #define _AUTOLIBNAME5 "dtCore.lib"
+      #define DT_H_DTCORE_LIB "dtCore.lib"
    #endif
-
-   #define _AUTOLIBNAME   "Producer.lib"
-   #define _AUTOLIBNAME2  "ul.lib"
-   #define _AUTOLIBNAME4  "OpenThreadsWin32.lib"  
-   #define _AUTOLIBNAME6  "osg.lib"
-   #define _AUTOLIBNAME7  "osgDB.lib"
-   #define _AUTOLIBNAME8  "osgParticle.lib"
-   #define _AUTOLIBNAME10 "osgUtil.lib"
-   #define _AUTOLIBNAME11 "ode.lib"
-   #define _AUTOLIBNAME13 "osgText.lib"
-   #define _AUTOLIBNAME18 "js.lib"
-   #define _AUTOLIBNAME21 "isense.lib"
+   #define DT_H_PRODUCER_LIB   "Producer.lib"
+   #define DT_H_PLIB_UL_LIB  "ul.lib"
+   #define DT_H_OPENTHREADS_LIB  "OpenThreadsWin32.lib"  
+   #define DT_H_OSG_LIB  "osg.lib"
+   #define DT_H_OSGDB_LIB  "osgDB.lib"
+   #define DT_H_OSGPARTICLE_LIB  "osgParticle.lib"
+   #define DT_H_OSGUTIL_LIB "osgUtil.lib"
+   #define DT_H_ODE_LIB "ode.lib"
+   #define DT_H_OSGTEXT_LIB "osgText.lib"
+   #define DT_H_PLIB_JS_LIB "js.lib"
+   #define DT_H_ISENSE_LIB "isense.lib"
 #endif
 
-#define _AUTOLIBNAME3  "winmm.lib"
+#define DT_H_WINMM_LIB  "winmm.lib"
+#define DT_H_OPENGL_LIB "opengl32.lib"
 
-#define _AUTOLIBNAME14 "opengl32.lib"
-#define _AUTOLIBNAME19 "openal32.lib"
-#define _AUTOLIBNAME20 "alut.lib"
-
-
-/* You may turn off this include message by defining _NOAUTOLIB */
+// You may turn off this include message by defining _NOAUTOLIB 
 #ifndef _NOAUTOLIBMSG
-   #pragma message( "Will automatically link with " _AUTOLIBNAME )
-   #pragma message( "Will automatically link with " _AUTOLIBNAME2 )
-   #pragma message( "Will automatically link with " _AUTOLIBNAME3 )
-   #pragma message( "Will automatically link with " _AUTOLIBNAME4 )
-   #pragma message( "Will automatically link with " _AUTOLIBNAME6 )
-   #pragma message( "Will automatically link with " _AUTOLIBNAME7 )
-   #pragma message( "Will automatically link with " _AUTOLIBNAME8 )
-   #pragma message( "Will automatically link with " _AUTOLIBNAME10 )
-   #pragma message( "Will automatically link with " _AUTOLIBNAME11 )
-   #pragma message( "Will automatically link with " _AUTOLIBNAME13 )
-   #pragma message( "Will automatically link with " _AUTOLIBNAME14 )
-   #pragma message( "Will automatically link with " _AUTOLIBNAME18 )
-   #pragma message( "Will automatically link with " _AUTOLIBNAME19 )
-   #pragma message( "Will automatically link with " _AUTOLIBNAME20 )
-   #pragma message( "Will automatically link with " _AUTOLIBNAME21 )
-
+   #pragma message( "Will automatically link with " DT_H_PRODUCER_LIB )
+   #pragma message( "Will automatically link with " DT_H_PLIB_UL_LIB )
+   #pragma message( "Will automatically link with " DT_H_WINMM_LIB )
+   #pragma message( "Will automatically link with " DT_H_OPENTHREADS_LIB )
+   #pragma message( "Will automatically link with " DT_H_OSG_LIB )
+   #pragma message( "Will automatically link with " DT_H_OSGDB_LIB )
+   #pragma message( "Will automatically link with " DT_H_OSGPARTICLE_LIB )
+   #pragma message( "Will automatically link with " DT_H_OSGUTIL_LIB )
+   #pragma message( "Will automatically link with " DT_H_ODE_LIB )
+   #pragma message( "Will automatically link with " DT_H_OSGTEXT_LIB )
+   #pragma message( "Will automatically link with " DT_H_OPENGL_LIB )
+   #pragma message( "Will automatically link with " DT_H_PLIB_JS_LIB )
+   #pragma message( "Will automatically link with " DT_H_ISENSE_LIB )
    #ifndef DT_CORE_LIBRARY
-      #pragma message( "Will automatically link with " _AUTOLIBNAME5 )
+      #pragma message( "Will automatically link with " DT_H_DTCORE_LIB )
    #endif
 #endif
 
-#pragma comment(lib, _AUTOLIBNAME)
-#pragma comment(lib, _AUTOLIBNAME2)
-#pragma comment(lib, _AUTOLIBNAME3)
-#pragma comment(lib, _AUTOLIBNAME4)
-#pragma comment(lib, _AUTOLIBNAME6)
-#pragma comment(lib, _AUTOLIBNAME7)
-#pragma comment(lib, _AUTOLIBNAME8)
-#pragma comment(lib, _AUTOLIBNAME10)
-#pragma comment(lib, _AUTOLIBNAME11)
-#pragma comment(lib, _AUTOLIBNAME13)
-#pragma comment(lib, _AUTOLIBNAME14)
-#pragma comment(lib, _AUTOLIBNAME18)
-#pragma comment(lib, _AUTOLIBNAME19)
-#pragma comment(lib, _AUTOLIBNAME20)
-#pragma comment(lib, _AUTOLIBNAME21)
-
+// Actually do the linking
+#pragma comment(lib, DT_H_PRODUCER_LIB)
+#pragma comment(lib, DT_H_PLIB_UL_LIB)
+#pragma comment(lib, DT_H_WINMM_LIB)
+#pragma comment(lib, DT_H_OPENTHREADS_LIB)
+#pragma comment(lib, DT_H_OSG_LIB)
+#pragma comment(lib, DT_H_OSGDB_LIB)
+#pragma comment(lib, DT_H_OSGPARTICLE_LIB)
+#pragma comment(lib, DT_H_OSGUTIL_LIB)
+#pragma comment(lib, DT_H_ODE_LIB)
+#pragma comment(lib, DT_H_OSGTEXT_LIB)
+#pragma comment(lib, DT_H_OPENGL_LIB)
+#pragma comment(lib, DT_H_PLIB_JS_LIB)
+#pragma comment(lib, DT_H_ISENSE_LIB)
 #ifndef DT_CORE_LIBRARY
-   #pragma comment(lib, _AUTOLIBNAME5)
+   #pragma comment(lib, DT_H_DTCORE_LIB)
 #endif
 
 #endif  // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
