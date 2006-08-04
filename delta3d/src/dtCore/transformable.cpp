@@ -60,7 +60,6 @@ Transformable::Transformable( const std::string& name )
    dGeomTransformSetCleanup(mGeomID, 1);
    dGeomTransformSetInfo(mGeomID, 1);
    dGeomDisable(mGeomID);
-   mTriMeshDataID = dGeomTriMeshDataCreate();
 
    // Default collision category = 11
    SetCollisionCategoryBits( UNSIGNED_BIT(11) );
@@ -72,10 +71,12 @@ Transformable::Transformable( const std::string& name )
 Transformable::~Transformable()
 {
    dGeomDestroy(mGeomID);
+   if(mTriMeshDataID != NULL)
+   {
+      dGeomTriMeshDataDestroy(mTriMeshDataID);
+   }
 
-   dGeomTriMeshDataDestroy(mTriMeshDataID);
-
-   if(mMeshVertices != 0)
+   if(mMeshVertices != NULL)
    {
       delete[] mMeshVertices;
       delete[] mMeshIndices;
@@ -1130,6 +1131,11 @@ void Transformable::SetCollisionMesh(osg::Node* node)
          memcpy(  mMeshIndices,
                   &mv.mFunctor.mTriangles[0],
                   mv.mFunctor.mTriangles.size()*sizeof(StridedTriangle) );
+      }
+      
+      if (mTriMeshDataID == NULL)
+      {
+         mTriMeshDataID = dGeomTriMeshDataCreate();
       }
 
       dGeomTriMeshDataBuildSimple(
