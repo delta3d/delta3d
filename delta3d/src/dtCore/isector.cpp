@@ -25,8 +25,10 @@
 #include <dtCore/scene.h>
 
 #include <osg/Group>
+#include <osg/Version> // For #ifdef
 
 #include <stack>
+
 
 namespace dtCore
 {
@@ -80,7 +82,11 @@ namespace dtCore
       }
       else
       {
+         #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 1 && OSG_VERSION_MINOR >= 1
+         return mIntersectVisitor.setLODSelectionMode(osgUtil::IntersectVisitor::USE_HIGHEST_LEVEL_OF_DETAIL);
+         #else
          return mIntersectVisitor.setLODSelectionMode(osgUtil::IntersectVisitor::USE_HEIGHEST_LEVEL_OF_DETAIL);
+         #endif
       }
    }
    

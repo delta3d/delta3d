@@ -1,5 +1,5 @@
-#include "dtCore/stats.h"
-#include "dtCore/timer.h"
+#include <dtCore/stats.h>
+#include <dtCore/timer.h>
 #include <osg/BlendFunc>
 #include <osg/Geode>
 #include <osg/MatrixTransform>
@@ -7,6 +7,7 @@
 #include <osg/Switch>
 #include <dtUtil/log.h>
 #include <dtUtil/stringutils.h>
+#include <osg/Version> // For #ifdefs
 
 using namespace dtCore;
 using namespace dtUtil;
@@ -175,8 +176,6 @@ void Stats::SelectType(osgUtil::Statistics::statsType type)
    EnableTextNodes(mPrintStats);
 } 
 
-
-
 //------------------------------------------------------------------
 // Stats::showStats
 //------------------------------------------------------------------
@@ -301,43 +300,50 @@ void Stats::ShowStats()
     glLineWidth(1.0f);
   }
                               // yet more stats - add triangles, number of strips...
-  if (mPrintStats==osgUtil::Statistics::STAT_PRIMS)
-  {
-    /* 
-     * Use the new renderStage.  Required mods to RenderBin.cpp, and RenderStage.cpp (add getPrims)
-     * also needed to define a new class called Statistic (see osgUtil/Statistic).
-     * RO, July 2001.
-     */
-    osgUtil::Statistics primStats;
-    mStage->getPrims(&primStats);
-                            // full print out required
-    primStats.setType(osgUtil::Statistics::STAT_PRIMS);
-    WritePrims((int)(0.86f*1024),primStats);
-    maxbins=(primStats.getBins()>maxbins)?primStats.getBins():maxbins;
+   if (mPrintStats==osgUtil::Statistics::STAT_PRIMS)
+   {
+      /* 
+       * Use the new renderStage.  Required mods to RenderBin.cpp, and RenderStage.cpp (add getPrims)
+       * also needed to define a new class called Statistic (see osgUtil/Statistic).
+       * RO, July 2001.
+       */
+      osgUtil::Statistics primStats;
+
+      #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 1 && OSG_VERSION_MINOR >= 1
+      mStage->getStats(primStats);
+      #else
+      mStage->getPrims(&primStats);
+      #endif
+ 
+      // full print out required
+      primStats.setType(osgUtil::Statistics::STAT_PRIMS);
+      WritePrims(int(0.86f*1024),primStats);
+      maxbins=(primStats.getBins()>maxbins)?primStats.getBins():maxbins;
  
   }
                               // more stats - add triangles, number of strips... as seen per bin
   if (mPrintStats==osgUtil::Statistics::STAT_PRIMSPERBIN)
   {
-    /* 
-     * Use the new renderStage.  Required mods to RenderBin.cpp, and RenderStage.cpp (add getPrims)
-     * also needed to define a new class called Statistic (see osgUtil/Statistic).
-     * RO, July 2001.
-     */
-                              // array of bin stats
-    osgUtil::Statistics *primStats=new osgUtil::Statistics[maxbins];
-    mStage->getPrims(primStats, maxbins);
+    ///* 
+    // * Use the new renderStage.  Required mods to RenderBin.cpp, and RenderStage.cpp (add getPrims)
+    // * also needed to define a new class called Statistic (see osgUtil/Statistic).
+    // * RO, July 2001.
+    // */
+    //                          // array of bin stats
+    //osgUtil::Statistics *primStats=new osgUtil::Statistics[maxbins];
 
-    int nbinsUsed=(primStats[0].getBins()<maxbins)?primStats[0].getBins():maxbins;
-    int ntop=0;               // offset
-    for (int i=0; i<nbinsUsed; i++)
-    {
-                              // cuts out vertices & triangles to save space on screen
-      primStats[i].setType(osgUtil::Statistics::STAT_PRIMSPERBIN);
-      ntop+=WritePrims((int)(0.86f*1024-ntop),primStats[i]);
-    }
-    maxbins=(primStats[0].getBins()>maxbins)?primStats[0].getBins():maxbins;
-    delete [] primStats;   // free up
+    //mStage->getPrims(primStats, maxbins);
+ 
+    //int nbinsUsed=(primStats[0].getBins()<maxbins)?primStats[0].getBins():maxbins;
+    //int ntop=0;               // offset
+    //for (int i=0; i<nbinsUsed; i++)
+    //{
+    //                          // cuts out vertices & triangles to save space on screen
+    //  primStats[i].setType(osgUtil::Statistics::STAT_PRIMSPERBIN);
+    //  ntop+=WritePrims((int)(0.86f*1024-ntop),primStats[i]);
+    //}
+    //maxbins=(primStats[0].getBins()>maxbins)?primStats[0].getBins():maxbins;
+    //delete [] primStats;   // free up
   }
                               // yet more stats - read the depth complexity
   if (mPrintStats==osgUtil::Statistics::STAT_DC)
