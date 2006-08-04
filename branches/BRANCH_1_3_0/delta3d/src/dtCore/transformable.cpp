@@ -14,6 +14,7 @@
 #include <osg/StateSet>
 #include <osg/Transform>
 #include <osg/TriangleFunctor>
+#include <osg/Version> // For #ifdef
 
 #include <cassert>
 
@@ -179,17 +180,13 @@ bool Transformable::GetAbsoluteMatrix( osg::Node* node, osg::Matrix& wcMatrix )
       {
          osg::NodePath nodePath = nodePathList[0];
 
-         // \TODO: This makes me feel nauseous... It would probably
-         // be better to drop in a pointer to the CameraNode. This is the
-         // only way I know how to get it.
-         //
-         // dtCore::Camera::GetSceneHandler()->GetSceneView()->getRenderStage()->getCameraNode()
-         //
-         //-osb
+         #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR == 1 && OSG_VERSION_MINOR == 0 
+         // Luckily, this behavior is redundant with OSG 1.1
          if( std::string( nodePath[0]->className() ) == std::string("CameraNode") )
          {
             nodePath = osg::NodePath( nodePath.begin()+1, nodePath.end() );
          }
+         #endif // OSG 1.1
 
          wcMatrix.set( osg::computeLocalToWorld(nodePath) );
          return true;
@@ -644,17 +641,15 @@ public:
          if(d->supports(mFunctor))
          {
             osg::NodePath nodePath = getNodePath();
-            // \TODO: This makes me feel nauseous... It would probably
-            // be better to drop in a pointer to the CameraNode. This is the
-            // only way I know how to get it.
-            //
-            // dtCore::Camera::GetSceneHandler()->GetSceneView()->getRenderStage()->getCameraNode()
-            //
-            //-osb
+            
+            #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR == 1 && OSG_VERSION_MINOR == 0 
+            // Luckily, this behavior is redundant with OSG 1.1
             if( std::string( nodePath[0]->className() ) == std::string("CameraNode") )
             {
                nodePath = osg::NodePath( nodePath.begin()+1, nodePath.end() );
             }
+            #endif // OSG 1.1
+
             mFunctor.mMatrix = osg::computeLocalToWorld(nodePath);
 
             d->accept(mFunctor);
@@ -1171,7 +1166,11 @@ void Transformable::ClearCollisionGeometry()
    //collision geometry, that will remove the geode from this node.
    if( mGeomGeod.valid() )
    {
+      #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 1 && OSG_VERSION_MINOR >= 1
+      mGeomGeod->removeDrawables(0,mGeomGeod->getNumDrawables());
+      #else
       mGeomGeod->removeDrawable(0,mGeomGeod->getNumDrawables());
+      #endif
    }
 }
 

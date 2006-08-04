@@ -29,6 +29,8 @@
 #include <dtCore/transform.h>
 #include <dtUtil/enumeration.h>
 
+#include <osg/Version> // For #ifdef
+
 namespace dtCore
 {
    /** 
@@ -512,17 +514,14 @@ namespace dtCore
       virtual void apply(osg::Geode& node)
       {
          osg::NodePath nodePath = getNodePath();
-         // \TODO: This makes me feel nauseous... It would probably
-         // be better to drop in a pointer to the CameraNode. This is the
-         // only way I know how to get it.
-         //
-         // dtCore::Camera::GetSceneHandler()->GetSceneView()->getRenderStage()->getCameraNode()
-         //
-         //-osb
+
+         #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR == 1 && OSG_VERSION_MINOR == 0 
+         // Luckily, this behavior is redundant with OSG 1.1
          if( std::string( nodePath[0]->className() ) == std::string("CameraNode") )
          {
             nodePath = osg::NodePath( nodePath.begin()+1, nodePath.end() );
          }
+         #endif // OSG 1.1
 
          osg::Matrix matrix = osg::computeLocalToWorld(nodePath);
 

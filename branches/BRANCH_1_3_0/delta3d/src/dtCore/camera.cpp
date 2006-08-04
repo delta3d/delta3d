@@ -16,6 +16,8 @@
 #include <osg/Matrix>
 #include <osgUtil/SceneView>
 
+#include <osg/Version>
+
 using namespace dtUtil;
 
 namespace dtCore
@@ -257,7 +259,15 @@ void Camera::Frame( bool lastCamera )
 
          // Find the transform in World coorindates, but leave
          // on the osg::CameraNode.
+
+         #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR == 1 && OSG_VERSION_MINOR == 1
+         // In OSG 1.1, there is a default second paramter to computeLocalToWorld which
+         // ignore the CameraNode at the top of the scene graph. Normally this is what we
+         // want, but for the Camera, we want it included (so pass false).
+         absMat.set( osg::computeLocalToWorld(nodePath, false) );
+         #else
          absMat.set( osg::computeLocalToWorld(nodePath) );
+         #endif
       }
       else
       {
