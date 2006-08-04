@@ -18,7 +18,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc;$(PYTHON_ROOT)\include"
+				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc;$(PYTHON_ROOT)\include;;&quot;C:\Program Files\OpenAL 1.1 SDK\include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_NOAUTOLIBMSG;_LIB"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
@@ -35,7 +35,7 @@
 				OutputFile="../../../bin\PyDtAudio.pyd"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="../../../lib;../../../ext/lib;$(PYTHON_LIB_PATH)"
+				AdditionalLibraryDirectories="../../../lib;../../../ext/lib;$(PYTHON_LIB_PATH);;&quot;C:\Program Files\OpenAL 1.1 SDK\libs\Win32&quot;"
 				IgnoreDefaultLibraryNames="libc; libcmt"
 				ImportLibrary="..\..\..\lib\dtAudioBindings.lib"/>
 			<Tool
