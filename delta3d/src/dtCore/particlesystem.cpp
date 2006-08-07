@@ -9,12 +9,15 @@
 #include <osg/Group>
 #include <osg/NodeVisitor>
 #include <osg/Geode>
-using namespace dtCore;
-using namespace dtUtil;
 
 #include <osgParticle/ModularEmitter>
 #include <osgParticle/ModularProgram>
 #include <osgParticle/FluidProgram>
+
+#include <osg/Version> // For #ifdef
+
+using namespace dtCore;
+using namespace dtUtil;
 
 IMPLEMENT_MANAGEMENT_LAYER(ParticleSystem)
 
@@ -96,17 +99,13 @@ public:
             {
                fullNodePath.pop_back();
 
-               // \TODO: This makes me feel nauseous... It would probably
-               // be better to drop in a pointer to the CameraNode. This is the
-               // only way I know how to get it.
-               //
-               // dtCore::Camera::GetSceneHandler()->GetSceneView()->getRenderStage()->getCameraNode()
-               //
-               //-osb
+               #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR == 1 && OSG_VERSION_MINOR == 0 
+               // Luckily, this behavior is redundant with OSG 1.1
                if( std::string( fullNodePath[0]->className() ) == std::string("CameraNode") )
                {
                   fullNodePath = osg::NodePath( fullNodePath.begin()+1, fullNodePath.end() );
                }
+               #endif // OSG 1.1
 
                osg::Matrix localCoordMat = osg::computeLocalToWorld( fullNodePath );
                osg::Matrix inverseOfAccum = osg::Matrix::inverse( localCoordMat );

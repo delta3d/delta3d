@@ -20,7 +20,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc"
+				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc;;&quot;C:\Program Files\OpenAL 1.1 SDK\include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_NOAUTOLIBMSG;DT_PLUGIN"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -39,7 +39,7 @@
 				AdditionalDependencies="dtDALd.lib Producerd.lib OpenThreadsWin32d.lib osgd.lib osgDBd.lib osgUtild.lib oded.lib dtCored.lib dtABCd.lib dtChard.lib dtAudiod.lib dtUtild.lib dtGamed.lib dtAId.lib xerces-c_2D.lib"
 				OutputFile="..\..\..\bin\dtActorsd.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\..\lib; ..\..\..\ext\lib"
+				AdditionalLibraryDirectories="..\..\..\lib; ..\..\..\ext\lib;;&quot;C:\Program Files\OpenAL 1.1 SDK\libs\Win32&quot;"
 				IgnoreDefaultLibraryNames="libc.lib;libcmt;libcd;libcmtd"
 				ModuleDefinitionFile=""
 				GenerateDebugInformation="TRUE"
@@ -76,7 +76,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc"
+				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc;;&quot;C:\Program Files\OpenAL 1.1 SDK\include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_NOAUTOLIBMSG;DT_PLUGIN"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
@@ -94,7 +94,7 @@
 				AdditionalDependencies="dtDAL.lib Producer.lib OpenThreadsWin32.lib osg.lib osgDB.lib osgParticle.lib osgUtil.lib ode.lib dtCore.lib dtABC.lib dtChar.lib dtAudio.lib dtUtil.lib dtGame.lib dtAI.lib xerces-c_2.lib"
 				OutputFile="..\..\..\bin\dtActors.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\..\lib; ..\..\..\ext\lib"
+				AdditionalLibraryDirectories="..\..\..\lib; ..\..\..\ext\lib;;&quot;C:\Program Files\OpenAL 1.1 SDK\libs\Win32&quot;"
 				IgnoreDefaultLibraryNames="libc;libcmt"
 				ModuleDefinitionFile=""
 				GenerateDebugInformation="FALSE"

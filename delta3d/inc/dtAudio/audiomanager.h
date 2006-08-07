@@ -21,16 +21,21 @@
 #ifndef  DELTA_AUDIOMANAGER
 #define  DELTA_AUDIOMANAGER
 
-#include <stddef.h>
+#include <cstddef>
 #include <vector>
 #include <queue>
 #include <map>
 #include <string>
 
-#ifdef __APPLE__
-  #include <OpenAL/al.h>
+#if defined(_MSC_VER)
+#   include <alc.h>
+#   include <al.h>
+#elif defined(__APPLE__)
+#   include <OpenAL/alc.h>
+#   include <OpenAL/al.h>
 #else
-  #include <AL/al.h>
+#   include <AL/al.h>
+#   include <AL/alc.h>
 #endif
 
 #include <dtCore/base.h>
