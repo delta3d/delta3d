@@ -19,7 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc"
+				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc;&quot;C:\Program Files\OpenAL 1.1 SDK\include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;DT_AUDIO_LIBRARY;NOMINMAX"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -37,7 +37,7 @@
 				OutputFile="../../../bin/dtAudiod.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
+				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib;&quot;C:\Program Files\OpenAL 1.1 SDK\libs\Win32&quot;"
 				IgnoreDefaultLibraryNames="libc;libcD.lib;libcmtD.lib;msvcrt.lib"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
@@ -71,7 +71,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc"
+				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc;&quot;C:\Program Files\OpenAL 1.1 SDK\include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;DT_AUDIO_LIBRARY;NOMINMAX"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
@@ -88,7 +88,7 @@
 				OutputFile="../../../bin/dtAudio.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
+				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib;&quot;C:\Program Files\OpenAL 1.1 SDK\libs\Win32&quot;"
 				IgnoreDefaultLibraryNames="libc.lib;libcmt.lib;libcp.lib;msvcrtD.lib"
 				ImportLibrary="../../../lib/dtAudio.lib"/>
 			<Tool
