@@ -5,19 +5,6 @@ from PyDtAI import *
 import sys
 
 
-class RemainingCost(RemainingCostFunctor):
-   
-   def RemainingCost(self, ws):
-      return 1
-
-
-class DesiredState(DesiredStateFunctor):
-
-   def IsDesiredState(self, ws):
-      recipe = ws.GetState("Recipe")
-      return recipe.HasRecipe()      
-
-
 class Recipe(IStateVariable):
 
    def __init__(self):
@@ -25,14 +12,17 @@ class Recipe(IStateVariable):
       self.mRecipe = 0
 
    def Copy(self):
+      print "Copy"
       rec = Recipe()
       rec.HasRecipe(self.GetRecipe())
       return rec
 
    def HasRecipe(self, b):
+      print "HasRecipe"
       self.mRecipe = b
 
    def GetRecipe(self):
+      print "GetRecipe"
       return self.mRecipe
    
 
@@ -42,9 +32,11 @@ class HasRecipe(IConditional):
       IConditional.__init__(self)      
 
    def GetName(self):
+      print "GetName"
       return "Recipe"
 
    def Evaluate(self, ws):
+      print "Evaluate"
       recipe = ws.GetState("Recipe")
       return recipe.GetRecipe()
       
@@ -52,14 +44,33 @@ class HasRecipe(IConditional):
 class CallGrandma(ApplyOperatorFunctor):
 
    def Apply(self, wsFrom, wsTo):
+      print "CallGrandma"
       recipe = wsTo.GetState("Recipe")
       recipe.HasRecipe(1)
       wsTo.AddCost(1)
 
+
+class RemainingCost(RemainingCostFunctor):
+   def RemainingCost(self, ws):
+      print "RemainingCost, Python"
+      return 1
+
+
+class DesiredState(DesiredStateFunctor):
+   def IsDesiredState(self, ws):
+      print "IsDesiredState, Python"
+      return 1
+      #recipe = ws.GetState("Recipe")
+      #return recipe.HasRecipe()      
+
+
+
 class PlannerNPC:
 
    def __init__(self):
-      self.mHelper = PlannerHelper(RemainingCost(), DesiredState())
+      remainingCost = RemainingCost()
+      desiredState = DesiredState()
+      self.mHelper = PlannerHelper(remainingCost, desiredState)
 
    def Init(self):
       self.mGrandmaFunctor = CallGrandma()
@@ -68,22 +79,25 @@ class PlannerNPC:
 
       self.mRecipe = Recipe()
       self.mHelper.GetCurrentState().AddState("Recipe", self.mRecipe)
+      recipe = self.mHelper.GetCurrentState().GetState("Recipe")
+      recipe.HasRecipe(0)
 
    def GeneratePlan(self):
       pPlanner = Planner()
       pPlanner.Reset(self.mHelper)
       pPlanner.GeneratePlan()
       return pPlanner.GetPlan()
+
    
          
 class TestPlanner:
 
    def Run(self) :
+      print "Run"
       pNPC = PlannerNPC()
-      pNPC.Init()
-      pNPC.GeneratePlan()
+      pNPC.Init()      
       plan = pNPC.GeneratePlan()
-      #print plan[0]
+      #print plan[0]      
        
 
 

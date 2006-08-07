@@ -29,6 +29,7 @@
 #include <dtAI/worldstate.h>
 
 #include <list>
+#include <vector>
 
 namespace dtAI
 {
@@ -42,6 +43,7 @@ namespace dtAI
 
          typedef std::list<const PlannerNodeLink*> PlannerContainer;
          typedef std::list<const NPCOperator*> OperatorList;
+         typedef std::vector<const NPCOperator*> OperatorVector;
      
       public:
    
@@ -58,9 +60,13 @@ namespace dtAI
          PlannerConfig& GetConfig();
          const PlannerConfig& GetConfig() const;         
          
+         OperatorVector GetPlanAsVector() const;
+
+         
       private:
          void FreeMem();
-         
+         void PrintDebug(const char*);
+
          const PlannerNodeLink* FindLowestCost();
          void Remove(const PlannerNodeLink* pNodeLink);
          bool Contains(PlannerNodeLink* pNodeLink);
