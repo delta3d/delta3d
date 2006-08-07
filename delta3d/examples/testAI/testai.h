@@ -8,6 +8,8 @@
 #include <dtCore/camera.h>
 #include "aicharacter.h"
 
+#include <osg/Matrix>
+
 class TestAI : public dtABC::Application
 {
 
@@ -34,6 +36,7 @@ class TestAI : public dtABC::Application
       dtCore::RefPtr<dtCore::Camera> mOverheadCamera;
       dtCore::RefPtr<dtAI::AICharacter> mCharacter;
       dtAI::Waypoint* mCurrentWaypoint;
+      osg::Matrix mCameraOffset; 
    
 };
 
