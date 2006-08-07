@@ -35,4 +35,6 @@ Controls
 --------
 N     - Toggle NavMesh rendering
 Space - Toggle overhead view
+A     - Zoom in with overhead view
+Z     - Zoom out with overhead view
 Esc   - Exit
