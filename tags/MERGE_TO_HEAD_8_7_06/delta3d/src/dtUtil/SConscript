@@ -1,0 +1,10 @@
+Import('*')
+
+srcs = SGlob('*.cpp')
+deps =[ 'OpenThreads', 'Producer', 'osg', 'osgDB', 'ul', 'xerces-c', 'User32']
+
+defines = []
+if OS == 'windows':
+   defines = ['DT_UTIL_LIBRARY']
+
+env.BuildLib( 'dtUtil', srcs, deps, defines, prefixHeader = "inc/prefix/dtutilprefix.h")
