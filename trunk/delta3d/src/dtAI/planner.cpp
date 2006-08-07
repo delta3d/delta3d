@@ -21,6 +21,7 @@
 
 #include <dtAI/planner.h>
 
+#include <iostream>
 #include <algorithm>
 
 namespace dtAI
@@ -111,6 +112,11 @@ namespace dtAI
       return mConfig.mResult;
    }
 
+   std::vector<const NPCOperator*> Planner::GetPlanAsVector() const
+   {
+      return OperatorVector(GetPlan().begin(), GetPlan().end());
+   }
+
    PlannerConfig& Planner::GetConfig()
    {
       return mConfig;
@@ -121,9 +127,15 @@ namespace dtAI
       return mConfig;
    }
 
+   void Planner::PrintDebug(const char* pPrint)
+   {
+      std::cout << pPrint << std::endl;
+   }
 
    Planner::PlannerResult Planner::GeneratePlan()
    {
+      PrintDebug("Generate Plan");
+
       mConfig.mTimer.Update();
 
       for (;;)
@@ -131,13 +143,17 @@ namespace dtAI
 
          if(mOpen.empty())
          {
+            PrintDebug("return NO_PLAN");
             return NO_PLAN;
          }
 
          mConfig.mTimer.Update();
          mConfig.mCurrentElapsedTime += mConfig.mTimer.GetDT();
 
+         PrintDebug("FindLowestCost");
          const PlannerNodeLink* pCurrent = FindLowestCost();
+
+         PrintDebug("IsDesiredState");
          bool pReachedGoal = mHelper->IsDesiredState(pCurrent->mState);
 
          //we have found our desired state

@@ -41,7 +41,7 @@ namespace dtAI
          typedef std::list<NPCOperator*> OperatorList; 
          
       public:
-   
+         PlannerHelper();
          PlannerHelper(const RemainingCostFunctor& pRCF, const DesiredStateFunctor& pDSF);
          virtual ~PlannerHelper();
    
@@ -57,8 +57,8 @@ namespace dtAI
          void SetRemainingCostFunc(const RemainingCostFunctor& pFunc);
          void SetDesiredStateFunc(const DesiredStateFunctor& pFunc);
 
-         float RemainingCost(const WorldState* pWS) const;
-         bool IsDesiredState(const WorldState* pWS) const;
+         virtual float RemainingCost(const WorldState* pWS) const;
+         virtual bool IsDesiredState(const WorldState* pWS) const;
 
       private:
 

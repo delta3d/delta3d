@@ -24,6 +24,14 @@
 
 namespace dtAI
 {
+
+   PlannerHelper::PlannerHelper()
+      : mOperators()
+      , mCurrentState(new WorldState())
+   {
+   }
+
+
    PlannerHelper::PlannerHelper(const RemainingCostFunctor& pRCF, const DesiredStateFunctor& pDSF)
       : mOperators()
       , mCurrentState(new WorldState())

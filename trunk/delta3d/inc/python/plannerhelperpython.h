@@ -9,6 +9,7 @@
 #include <python/npcoperatorpython.h>
 
 #include <vector>
+#include <iostream>
 
 namespace dtAI
 {
@@ -16,17 +17,17 @@ namespace dtAI
 
 struct DesiredStateFunctor_python
 {
-   virtual bool IsDesiredState(const WorldState*) = 0;
+   virtual bool IsDesiredState(const WorldState*) const = 0;
 };
 
 struct RemainingCostFunctor_python
 {
-   virtual float RemainingCost(const WorldState*) = 0;
+   virtual float RemainingCost(const WorldState*) const = 0;
 };
 
 
 
-struct PlannerHelperPython
+struct PlannerHelperPython: PlannerHelper
 {
 
    typedef std::vector<NPCOperator*> HelperOperators;
@@ -34,52 +35,48 @@ struct PlannerHelperPython
    PlannerHelperPython(RemainingCostFunctor_python* pRemFunc, DesiredStateFunctor_python* pDesFunc )
       : mRemainingCostFunctor(pRemFunc)
       , mDesiredStateFunctor(pDesFunc)
-      , mHelper(new PlannerHelper(PlannerHelper::RemainingCostFunctor(mRemainingCostFunctor, &RemainingCostFunctor_python::RemainingCost), PlannerHelper::DesiredStateFunctor(mDesiredStateFunctor, &DesiredStateFunctor_python::IsDesiredState)) )
    {
-
+      pDesFunc->IsDesiredState(0);
    }
 
+   PlannerHelperPython::~PlannerHelperPython()
+   {
+   }
 
-   void AddOperator(NPCOperatorPython* pOperator){mHelper->AddOperator(pOperator->GetOperator());}
-   void RemoveOperator(NPCOperatorPython* pOperator){mHelper->RemoveOperator(pOperator->GetOperator());}
+   void AddOperator(NPCOperatorPython* pOperator){PlannerHelper::AddOperator(pOperator->GetOperator());}
+   void RemoveOperator(NPCOperatorPython* pOperator){PlannerHelper::RemoveOperator(pOperator->GetOperator());}
 
-   HelperOperators GetOperators() const{return HelperOperators(mHelper->GetOperators().begin(), mHelper->GetOperators().end());}
+   HelperOperators GetOperators() const{return HelperOperators(PlannerHelper::GetOperators().begin(), PlannerHelper::GetOperators().end());}
 
-   void SetCurrentState(const WorldState& pNewState){mHelper->SetCurrentState(pNewState);}
+   void SetCurrentState(const WorldState& pNewState){PlannerHelper::SetCurrentState(pNewState);}
 
-   WorldState* GetCurrentState(){return mHelper->GetCurrentState();}
+   WorldState* GetCurrentState(){return PlannerHelper::GetCurrentState();}
 
    void SetRemainingCostFunc(RemainingCostFunctor_python* pFunc)
    {
       mRemainingCostFunctor = pFunc;
-      mHelper->SetRemainingCostFunc(PlannerHelper::RemainingCostFunctor(mRemainingCostFunctor, &RemainingCostFunctor_python::RemainingCost));
    }
    void SetDesiredStateFunc(DesiredStateFunctor_python* pFunc)
    {
       mDesiredStateFunctor = pFunc;
-      mHelper->SetDesiredStateFunc(PlannerHelper::DesiredStateFunctor(mDesiredStateFunctor, DesiredStateFunctor_python::IsDesiredState));
    }
 
    float RemainingCost(const WorldState* pWS) const
    {
-      return mHelper->RemainingCost(pWS);
+      std::cout << "RemainingCost PLannerHelperPython" << std::endl;
+      return mRemainingCostFunctor->RemainingCost(pWS);
    }
 
-   bool IsDesiredState(const WorldState* pWS) const
+   bool IsDesiredState(const WorldState* pWS) const 
    {
-      return mHelper->IsDesiredState(pWS);
-   }
-
-   PlannerHelper* GetHelper()
-   {
-      return mHelper;
+      std::cout << "IsDesiredState PLannerHelperPython" << std::endl;
+      return mDesiredStateFunctor->IsDesiredState(pWS);
    }
 
 
 private:
    RemainingCostFunctor_python* mRemainingCostFunctor;
    DesiredStateFunctor_python* mDesiredStateFunctor;
-   PlannerHelper* mHelper;
 };
 
 

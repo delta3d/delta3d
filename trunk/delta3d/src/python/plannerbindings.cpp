@@ -14,40 +14,44 @@ using namespace boost::python;
 using namespace dtAI;
 
 
-typedef std::vector<const NPCOperator*> OperatorVector;
+//class PythonPlanner
+//{
+//public:
+//   void Reset1(PlannerHelperPython* pHelper)
+//   {
+//      mPlanner.Reset(pHelper);
+//   }
+//
+//   void Reset2(const PlannerConfig& pConf)
+//   {
+//      mPlanner.Reset(pConf);
+//   }
+//
+//   Planner::PlannerResult GeneratePlan()
+//   {
+//      return mPlanner.GeneratePlan();
+//   }
+//
+//   OperatorVector GetPlan()
+//   {
+//      if(mPlanner.GetPlan().size() == 0) return OperatorVector();
+//      else return OperatorVector(mPlanner.GetPlan().begin(), mPlanner.GetPlan().end());
+//   }
+//
+//   PlannerConfig& GetConfig()
+//   {
+//      return mPlanner.GetConfig();
+//   }
+//
+//private:
+//   Planner mPlanner;
+//};
 
-class PythonPlanner
-{
-public:
-   void Reset1(PlannerHelperPython* pHelper)
-   {
-      mPlanner.Reset(pHelper->GetHelper());
-   }
 
-   void Reset2(const PlannerConfig& pConf)
-   {
-      mPlanner.Reset(pConf);
-   }
-
-   Planner::PlannerResult GeneratePlan()
-   {
-      return mPlanner.GeneratePlan();
-   }
-
-   OperatorVector GetPlan()
-   {
-      if(mPlanner.GetPlan().size() == 0) return OperatorVector();
-      else return OperatorVector(mPlanner.GetPlan().begin(), mPlanner.GetPlan().end());
-   }
-
-   PlannerConfig& GetConfig()
-   {
-      return mPlanner.GetConfig();
-   }
-
-private:
-   Planner mPlanner;
-};
+void (Planner::*Reset1)(const PlannerHelper*)= &Planner::Reset;
+void (Planner::*Reset2)(const PlannerConfig&)= &Planner::Reset;
+PlannerConfig& (Planner::*GetConfig1)()= &Planner::GetConfig;
+const PlannerConfig& (Planner::*GetConfig2)() const = &Planner::GetConfig;
 
 
 void init_PlannerBindings()
@@ -60,16 +64,17 @@ void init_PlannerBindings()
       ;
 
 
-   scope plannerScope = class_<PythonPlanner, PythonPlanner*, boost::noncopyable>("Planner")
-      .def("Reset", &PythonPlanner::Reset1)
-      .def("Reset", &PythonPlanner::Reset2)
-      .def("GeneratePlan", &PythonPlanner::GeneratePlan)
-      .def("GetPlan", &PythonPlanner::GetPlan)
-      .def("GetConfig", &PythonPlanner::GetConfig, return_internal_reference<>())
+   scope plannerScope = class_<Planner, Planner*, boost::noncopyable>("Planner")
+      .def("Reset", Reset1, with_custodian_and_ward<1,2>())
+      .def("Reset", Reset2)
+      .def("GeneratePlan", &Planner::GeneratePlan)
+      .def("GetPlan", &Planner::GetPlanAsVector)
+      .def("GetConfig", GetConfig1, return_internal_reference<>())
+      .def("GetConfig", GetConfig2, return_internal_reference<>())
       ;
 
-   class_<OperatorVector>("OperatorList")
-      .def(vector_indexing_suite<OperatorVector>())
+   class_<Planner::OperatorVector>("OperatorVector")
+      .def(vector_indexing_suite<Planner::OperatorVector>())
       ;
 
    enum_<Planner::PlannerResult>("PlannerResult")
