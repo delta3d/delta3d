@@ -73,7 +73,8 @@ void TestAI::Config()
    //set overhead camera offset
    trans.SetTranslation(-1.0f, 20.0f, 100.0f);
    trans.SetRotation(90.0f, 270.0f, 0.0f);
-   mOverheadCamera->SetTransform(trans);
+   trans.Get(mCameraOffset);
+   mOverheadCamera->GetMatrixNode()->setMatrix(mCameraOffset);
    GetCamera()->AddChild(mOverheadCamera.get());
 
 
@@ -114,6 +115,28 @@ bool TestAI::KeyPressed(const dtCore::Keyboard* keyboard, Producer::KeyboardKey 
          {            
             mDrawNavMesh = !mDrawNavMesh;
             WaypointManager::GetInstance()->SetDrawNavMesh(mDrawNavMesh);            
+            return true;
+         }
+
+      case Producer::Key_A:
+         {
+            if(mOverheadCamera->GetEnabled())
+            {
+               mCameraOffset(3,2) -= 1.0f;
+               mCameraOffset(3,1) -= 15.5f / 100.0f;
+               mOverheadCamera->GetMatrixNode()->setMatrix(mCameraOffset);
+            }
+            return true;
+         }
+
+      case Producer::Key_Z:
+         {
+            if(mOverheadCamera->GetEnabled())
+            {
+               mCameraOffset(3,2) += 1.0f;
+               mCameraOffset(3,1) += 15.5f / 100.0f;
+               mOverheadCamera->GetMatrixNode()->setMatrix(mCameraOffset);
+            }
             return true;
          }
 
