@@ -32,9 +32,9 @@ namespace dtUtil
    static const char *sLogFileName = "delta3d_log.html";
 
 #ifdef _DEBUG
-static const char *sTitle = "Delta 3D Engine Log File (Debug Libs)";
+   static std::string sTitle("Delta 3D Engine Log File (Debug Libs)");
 #else
-static const char *sTitle = "Delta 3D Engine Log File";
+   static std::string sTitle("Delta 3D Engine Log File");
 #endif
 
    //////////////////////////////////////////////////////////////////////////
@@ -176,18 +176,19 @@ static const char *sTitle = "Delta 3D Engine Log File";
 
    void LogFile::SetTitle(const std::string& title)
    {
-      sTitle = title.c_str();
+      sTitle = title;
    }
 
-   const std::string LogFile::GetTitle()
+   const std::string& LogFile::GetTitle()
    {
-      return std::string(sTitle);
+      return sTitle;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   Log::Log()
+   Log::Log(const std::string& name)
       :mLevel(LOG_WARNING),
-      mOutputStreamBit(Log::STANDARD)
+      mOutputStreamBit(Log::STANDARD),
+      mName(name)
    {
    }
 
@@ -195,7 +196,6 @@ static const char *sTitle = "Delta 3D Engine Log File";
    Log::~Log()
    {
    }
-
 
 
    //////////////////////////////////////////////////////////////////////////
@@ -442,7 +442,7 @@ static const char *sTitle = "Delta 3D Engine Log File";
       Log* l = manager->GetInstance(name);
       if (l == NULL) 
       {
-         l = new Log;
+         l = new Log(name);
          manager->AddInstance(name, l);
       }
 
@@ -450,7 +450,7 @@ static const char *sTitle = "Delta 3D Engine Log File";
    }
 
    //////////////////////////////////////////////////////////////////////////
-    const std::string Log::GetLogLevelString( LogMessageType msgType) const
+   const std::string Log::GetLogLevelString( Log::LogMessageType msgType) const
    {
       std::string lev;
 
@@ -466,6 +466,23 @@ static const char *sTitle = "Delta 3D Engine Log File";
       }
 
       return lev;
+   }
+   
+   //////////////////////////////////////////////////////////////////////////
+   Log::LogMessageType Log::GetLogLevelForString( const std::string& levelString) const
+   {
+      if (levelString == "Always" || levelString == "ALWAYS")
+         return LOG_ALWAYS;
+      else if (levelString == "Error" || levelString == "ERROR")
+         return LOG_ERROR;
+      else if (levelString == "Warn" || levelString == "WARN" || levelString == "Warning" || levelString == "WARNING")
+         return LOG_WARNING;
+      else if (levelString == "Info" || levelString == "INFO")
+         return LOG_INFO;
+      else if (levelString == "Debug" || levelString == "DEBUG")
+         return LOG_DEBUG;
+         
+      else return LOG_WARNING;
    }
 
    /** Tell the Log where to send output messages.  The supplied parameter is a

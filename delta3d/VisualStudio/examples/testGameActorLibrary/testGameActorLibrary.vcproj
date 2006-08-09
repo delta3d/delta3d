@@ -146,6 +146,9 @@
 				RelativePath="..\..\..\examples\testGameActorLibrary\testgameenvironmentactor.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\examples\testGameActorLibrary\testgamepropertyproxy.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\examples\testGameActorLibrary\testhlaobject.cpp">
 			</File>
 			<File
@@ -173,6 +176,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\examples\testGameActorLibrary\testgameenvironmentactor.h">
+			</File>
+			<File
+				RelativePath="..\..\..\examples\testGameActorLibrary\testgamepropertyproxy.h">
 			</File>
 			<File
 				RelativePath="..\..\..\examples\testGameActorLibrary\testhlaobject.h">

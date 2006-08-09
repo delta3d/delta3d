@@ -41,6 +41,7 @@
 #include "dtHLAGM/interactiontomessage.h"
 #include "dtHLAGM/attributetype.h"
 #include "dtHLAGM/parametertranslator.h"
+#include "dtHLAGM/exceptionenum.h"
 
 namespace dtHLAGM
 {
@@ -149,7 +150,7 @@ namespace dtHLAGM
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                            "Found element %s", dtUtil::XMLStringConverter(localname).c_str());
+                            "Found element \"%s\" ", dtUtil::XMLStringConverter(localname).c_str());
       }
 
       dtUtil::XMLStringConverter localNameConverter(localname);
@@ -247,9 +248,9 @@ namespace dtHLAGM
                   }
                   else
                   {
-                     mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                        "Unable to extend from mapping named \"%s\" because no such mapping has been found in the XML.",
-                        keyName.c_str());
+                     std::ostringstream ss;
+                     ss << "Unable to extend from mapping named " << keyName << " because no such mapping has been found in the XML."; 
+                     throw dtUtil::Exception(ExceptionEnum::XML_CONFIG_EXCEPTION, ss.str(), __FILE__, __LINE__);
                   }
 
                }
@@ -322,6 +323,11 @@ namespace dtHLAGM
                if (itor != rMap.end())
                {
                   const std::string& keyName = itor->second;
+                  if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                     mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                        "Current mapping extends interaction mapping \"%s\".",
+                        keyName.c_str());
+
                   std::map<std::string, dtCore::RefPtr<InteractionToMessage> >::iterator superItor = mNamedInteractionToMessages.find(keyName);
                   if (superItor != mNamedInteractionToMessages.end())
                   {
@@ -332,15 +338,15 @@ namespace dtHLAGM
 
                      if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                           "Added field mappings from object mapping \"%s\" to the current mapping.",
+                           "Added parameter mappings from interaction mapping \"%s\" to the current mapping.",
                            keyName.c_str());
 
                   }
                   else
                   {
-                     mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                        "Unable to extend from mapping named \"%s\" because no such mapping has been found in the XML.",
-                        keyName.c_str());
+                     std::ostringstream ss;
+                     ss << "Unable to extend from mapping named " << keyName << " because no such mapping has been found in the XML."; 
+                     throw dtUtil::Exception(ExceptionEnum::XML_CONFIG_EXCEPTION, ss.str(), __FILE__, __LINE__);
                   }
 
                }
@@ -580,15 +586,19 @@ namespace dtHLAGM
 
       if (elementName == INTERACTION_CLASS_ELEMENT)
       {
+         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+               "Interaction class is being set to %s.", characters.c_str());
+
          mCurrentInteractionToMessage->SetInteractionName(characters);
       }
       else if (elementName == INTERACTION_MESSAGE_TYPE_ELEMENT)
       {
          if (mTargetTranslator->GetGameManager() == NULL)
          {
-            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-               "Unable to lookup message type %s.  No GameManager assigned to the target translator.", characters.c_str());
-
+            std::ostringstream ss;
+            ss << "Unable to lookup message type " << characters << ".  No GameManager assigned to the target translator."; 
+            throw dtUtil::Exception(ExceptionEnum::XML_CONFIG_EXCEPTION, ss.str(), __FILE__, __LINE__);
          }
          else
          {
@@ -597,10 +607,9 @@ namespace dtHLAGM
 
             if (messageType == NULL)
             {
-               mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                  "Message type %s does not exist, this mapping will be ignored.", characters.c_str());
-               mCurrentInteractionToMessage = NULL;
-
+               std::ostringstream ss;
+               ss << "Message type " << characters << " does not exist."; 
+               throw dtUtil::Exception(ExceptionEnum::XML_CONFIG_EXCEPTION, ss.str(), __FILE__, __LINE__);
             }
             else
             {
@@ -620,11 +629,20 @@ namespace dtHLAGM
       {
          if (elementName == ONE_TO_MANY_ENUM_VALUE_ELEMENT)
          {
+            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                  "Adding Enum mapping of \"%s\" to \"%s\" to parameter def 0.", 
+                  mCurrentEnumHLAID.c_str(), characters.c_str());
             mapping.GetParameterDefinitions()[0].AddEnumerationMapping(mCurrentEnumHLAID, characters);
          }
       }
       else if (elementName == ONE_TO_MANY_HLA_NAME_ELEMENT)
       {
+         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+               "Setting HLA parameter/attribute name to \"%s\".", 
+               characters.c_str());
+               
          mapping.SetHLAName(characters);
       }
       else if (elementName == ONE_TO_MANY_HLA_DATATYPE_ELEMENT)
@@ -643,16 +661,38 @@ namespace dtHLAGM
          
          if (mapping.GetHLAType() == AttributeType::UNKNOWN)
          {
-            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-               "No dtHLAGM::AttributeType with name %s exists.", characters.c_str());
+            std::ostringstream ss;
+            ss << "No dtHLAGM::AttributeType with name " << characters << " exists."; 
+            throw dtUtil::Exception(ExceptionEnum::XML_CONFIG_EXCEPTION, ss.str(), __FILE__, __LINE__);
          }
+         else if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         {
+            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+               "Setting HLA Attribute type to \"%s\".", 
+               characters.c_str());
+         }
+
       }
       else if (elementName == ONE_TO_MANY_HLA_REQUIRED_ELEMENT)
       {
-         mapping.SetRequiredForHLA(characters == "true" || characters == "1");
+         bool value = characters == "true" || characters == "1";
+         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         {
+            std::string sValue = value ? "true" : "false";
+            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+               "Setting required flag for HLA to \"%s\".", 
+               sValue.c_str());
+         }
+
+         mapping.SetRequiredForHLA(value);
       }
       else if (elementName == ONE_TO_MANY_GAME_NAME_ELEMENT)
       {
+         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+               "Setting game parameter/property name to \"%s\" on parameter def 0.", 
+               characters.c_str());
+               
          mapping.GetParameterDefinitions()[0].SetGameName(characters);
       }
       else if (elementName == ONE_TO_MANY_GAME_DATATYPE_ELEMENT)
@@ -660,20 +700,40 @@ namespace dtHLAGM
          const dtDAL::DataType* dt = static_cast<const dtDAL::DataType*>(dtDAL::DataType::GetValueForName(characters));
          if (dt != NULL)
          {
+            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                  "Setting game datatype to \"%s\" on parameter def 0.", 
+                  dt->GetName().c_str());
             mapping.GetParameterDefinitions()[0].SetGameType(*dt);
          }
          else
          {
-            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-               "No dtDAL::DataType with name %s exists.", characters.c_str());
+            std::ostringstream ss;
+            ss << "No dtDAL::DataType with name " << characters << " exists."; 
+            throw dtUtil::Exception(ExceptionEnum::XML_CONFIG_EXCEPTION, ss.str(), __FILE__, __LINE__);
          }
       }
       else if (elementName == ONE_TO_MANY_GAME_REQUIRED_ELEMENT)
       {
-         mapping.GetParameterDefinitions()[0].SetRequiredForGame(characters == "true" || characters == "1");
+         bool value = characters == "true" || characters == "1";
+                  
+         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         {
+            std::string sValue = value ? "true" : "false";
+            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+               "Setting required for game flag to \"%s\" on parameter def 0.", 
+               sValue.c_str());
+         }
+
+         mapping.GetParameterDefinitions()[0].SetRequiredForGame(value);
       }
       else if (elementName == ONE_TO_MANY_DEFAULT_ELEMENT)
       {
+         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+               "The default value for parameter def 0 is %s", 
+               characters.c_str());
+
          mapping.GetParameterDefinitions()[0].SetDefaultValue(characters);
       }
 
@@ -747,11 +807,11 @@ namespace dtHLAGM
    {
       if (mElements.empty())
       {
-         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-            "Attempting to pop elements off of stack and the stack is empty."
-            "it should at least contain element %s.",
-             dtUtil::XMLStringConverter(localname).c_str());
-         return;
+         std::ostringstream ss;
+         ss << "Attempting to pop elements off of stack and the stack is empty."
+            << "It should at least contain element " 
+            << dtUtil::XMLStringConverter(localname).c_str();  
+         throw dtUtil::Exception(ExceptionEnum::XML_CONFIG_EXCEPTION, ss.str(), __FILE__, __LINE__);
       }
 
       dtUtil::XMLStringConverter localNameConverter(localname);
@@ -767,10 +827,11 @@ namespace dtHLAGM
 
       if (lname != sLocalName)
       {
-         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-            "Attempting to pop mElements off of stack and the element "
-            "at the top (%s) is not the same as the element ending (%s).",
-            lname.c_str(), sLocalName.c_str());
+         std::ostringstream ss;
+         ss << "Attempting to pop mElements off of stack and the element "
+            << "at the top (" << lname << ") is not the same as the element ending ("
+            << sLocalName << ").";
+         throw dtUtil::Exception(ExceptionEnum::XML_CONFIG_EXCEPTION, ss.str(), __FILE__, __LINE__);
       }
 
       if (mInHLAConfig)
@@ -1008,6 +1069,7 @@ namespace dtHLAGM
                    mLibName.c_str(), mLibVersion.c_str());
          }
          e.LogException(dtUtil::Log::LOG_ERROR, *mLogger);
+         throw e;
       }
    }
 
@@ -1035,6 +1097,7 @@ namespace dtHLAGM
             "Unknown exception loading library %s version %s in the translator registry.  Exception message to follow.",
              mLibName.c_str(), mLibVersion.c_str());
          e.LogException(dtUtil::Log::LOG_ERROR, *mLogger);
+         throw e;
       }
    }
 

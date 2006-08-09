@@ -46,7 +46,6 @@ if CheckForBoost() :
                      'physicalbindings.cpp',
                      'pointaxisbindings.cpp',
                      'positionallightbindings.cpp',
-                     
                      'recorderbindings.cpp',
                      'scenebindings.cpp',
                      'skyboxbindings.cpp',
@@ -59,6 +58,7 @@ if CheckForBoost() :
                      'tripodbindings.cpp',
                      'ufomotionmodelbindings.cpp',
                      'walkmotionmodelbindings.cpp' ],
+
    
    'dtABC' : [      'applicationbindings.cpp', 
                     'baseabcbindings.cpp', 
@@ -117,6 +117,7 @@ if CheckForBoost() :
       # This only has a hard-coded version since Boost.Python does not output
       # with the same file naming convention as other platform (as of 1.33.1)
       boostLib = 'boost_python-1_33_1'
+      pythonSrcs['dtCore'].remove('trackerbindings.cpp')
    else :
       boostLib = 'boost_python-gcc-mt'
    

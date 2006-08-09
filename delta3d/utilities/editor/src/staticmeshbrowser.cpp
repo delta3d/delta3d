@@ -377,11 +377,11 @@ namespace dtEditQt
             * actor of this type.
             */
             dtCore::RefPtr<dtDAL::ActorType> meshActor =
-                dtDAL::LibraryManager::GetInstance().FindActorType("dtcore","Static Mesh").get();
+                dtDAL::LibraryManager::GetInstance().FindActorType("dtcore","Static Mesh");
 
             // create our new actor proxy from the mesh actor type that was
             // found by the results of our hard coded search above.
-            if(meshActor!=NULL)
+            if (meshActor != NULL)
             {
                 dtCore::RefPtr<dtDAL::ActorProxy> proxy =
                         dtDAL::LibraryManager::GetInstance().CreateActorProxy(*meshActor).get();

@@ -26,6 +26,7 @@
 #include <osg/Endian>
 #include <dtUtil/coordinates.h>
 #include <dtUtil/log.h>
+#include <dtCore/uniqueid.h>
 #include <dtDAL/datatype.h>
 #include <dtHLAGM/objecttoactor.h>
 #include <dtHLAGM/interactiontomessage.h>
@@ -42,6 +43,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
 
       CPPUNIT_TEST(TestOutgoingWorldCoordinateDataTranslation);
       CPPUNIT_TEST(TestOutgoingMarkingTypeDataTranslation);
+      CPPUNIT_TEST(TestOutgoingStringDataTranslation);
       CPPUNIT_TEST(TestOutgoingEulerAngleDataTranslation);
       CPPUNIT_TEST(TestOutgoingVectorDataTranslation);
       CPPUNIT_TEST(TestOutgoingEnumDataTranslation);
@@ -50,6 +52,8 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestOutgoingFloatDataTranslation);
       CPPUNIT_TEST(TestIncomingDataTranslation);
       CPPUNIT_TEST(TestIncomingEntityTypeDataTranslation);
+      CPPUNIT_TEST(TestIncomingStringToEnumDataTranslation);
+      CPPUNIT_TEST(TestIncomingStringDataTranslation);
       CPPUNIT_TEST(TestFindTypeByName);
       CPPUNIT_TEST(TestAttributeSupportedQuery);
 
@@ -151,6 +155,16 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          InternalTestOutgoingMarkingTypeDataTranslation("01234567890");
          //too long.
          InternalTestOutgoingMarkingTypeDataTranslation("0123456789012345");
+      }
+
+      void TestOutgoingStringDataTranslation()
+      {
+         InternalTestOutgoingStringDataTranslation("01234");
+         InternalTestOutgoingStringDataTranslation("01234567890");
+         InternalTestOutgoingStringDataTranslation("012345678903234");
+
+         dtCore::UniqueId testId;
+         InternalTestOutgoingUniqueIdToStringDataTranslation(testId);
       }
 
       void TestOutgoingEulerAngleDataTranslation()
@@ -274,6 +288,8 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          InternalTestOutgoingEnumDataTranslation<unsigned short>(iExpectedResult);
          mMapping.SetHLAType(dtHLAGM::RPRAttributeType::UNSIGNED_CHAR_TYPE);
          InternalTestOutgoingEnumDataTranslation<unsigned char>(iExpectedResult);
+         mMapping.SetHLAType(dtHLAGM::RPRAttributeType::STRING_TYPE);
+         InternalTestOutgoingEnumToStringDataTranslation(expectedResult);
 
          pd.ClearEnumerationMapping();
          pd.AddEnumerationMapping("1", "hello");
@@ -286,6 +302,8 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          InternalTestOutgoingEnumDataTranslation<unsigned short>(1);
          mMapping.SetHLAType(dtHLAGM::RPRAttributeType::UNSIGNED_CHAR_TYPE);
          InternalTestOutgoingEnumDataTranslation<unsigned char>(1);
+         mMapping.SetHLAType(dtHLAGM::RPRAttributeType::STRING_TYPE);
+         InternalTestOutgoingEnumToStringDataTranslation("1");
       }
 
       void TestOutgoingEntityTypeEnumDataTranslation()
@@ -371,6 +389,77 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          mParameterTranslator->MapToMessageParameters(mBuffer, inputValue2.EncodedLength(), messageParameters, mMapping);
 
          CPPUNIT_ASSERT_EQUAL(expectedValue, enumParam->GetValue());
+      }
+
+      void TestIncomingStringToEnumDataTranslation()
+      {
+         std::vector<dtCore::RefPtr<dtGame::MessageParameter> > messageParameters;
+
+         dtCore::RefPtr<dtGame::EnumMessageParameter> enumParam = new dtGame::EnumMessageParameter("test");
+         mMapping.SetHLAType(dtHLAGM::RPRAttributeType::STRING_TYPE);
+
+         dtHLAGM::OneToManyMapping::ParameterDefinition& pd = mMapping.GetParameterDefinitions()[0];
+         pd.SetGameType(enumParam->GetDataType());
+         pd.AddEnumerationMapping("horse", "hello");
+         pd.AddEnumerationMapping("chicken", "correct");
+         pd.SetDefaultValue("hello");
+
+         messageParameters.push_back(enumParam.get());
+
+         std::string value("chicken");
+         for (unsigned i = 0; i < value.size(); ++i)
+         {
+            mBuffer[i] = value[i];
+         } 
+         mBuffer[value.size()] = '\0';
+
+         mParameterTranslator->MapToMessageParameters(mBuffer, value.size(), messageParameters, mMapping);
+
+         std::string expectedValue("correct");
+
+         CPPUNIT_ASSERT_EQUAL(expectedValue, enumParam->GetValue());
+
+         value = "booga";
+         for (unsigned i = 0; i < value.size(); ++i)
+         {
+            mBuffer[i] = value[i];
+         } 
+         mBuffer[value.size()] = '\0';
+         
+         expectedValue = "hello";
+
+         mParameterTranslator->MapToMessageParameters(mBuffer, value.size(), messageParameters, mMapping);
+
+         CPPUNIT_ASSERT_EQUAL(expectedValue, enumParam->GetValue());
+      }
+
+      void TestIncomingStringDataTranslation()
+      {
+         std::vector<dtCore::RefPtr<dtGame::MessageParameter> > messageParameters;
+
+         dtCore::RefPtr<dtGame::StringMessageParameter> stringParam = new dtGame::StringMessageParameter("test");
+         mMapping.SetHLAType(dtHLAGM::RPRAttributeType::STRING_TYPE);
+
+         dtHLAGM::OneToManyMapping::ParameterDefinition& pd = mMapping.GetParameterDefinitions()[0];
+         pd.SetGameType(stringParam->GetDataType());
+
+         messageParameters.push_back(stringParam.get());
+         
+         const std::string testValue("bigTest");
+
+         mParameterTranslator->MapToMessageParameters(testValue.c_str(), testValue.size(), messageParameters, mMapping);
+
+         CPPUNIT_ASSERT_EQUAL(testValue, stringParam->GetValue());
+
+         dtCore::RefPtr<dtGame::ActorMessageParameter> actorParam = new dtGame::ActorMessageParameter("test");
+         pd.SetGameType(actorParam->GetDataType());
+
+         messageParameters.clear();
+         messageParameters.push_back(actorParam.get());
+
+         mParameterTranslator->MapToMessageParameters(testValue.c_str(), testValue.size(), messageParameters, mMapping);
+
+         CPPUNIT_ASSERT_EQUAL(testValue, actorParam->GetValue().ToString());
       }
 
       void TestIncomingDataTranslation()
@@ -647,7 +736,69 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          CPPUNIT_ASSERT_MESSAGE("The result should have been \"" + expectedValue + "\" but it is \"" + result + "\"", result == expectedValue);
       }
 
+      void InternalTestOutgoingStringDataTranslation(const std::string& testValue)
+      {
+         std::vector<dtCore::RefPtr<const dtGame::MessageParameter> > messageParameters;
 
+         char* buffer = NULL;
+         size_t size = 0;
+
+         mMapping.GetParameterDefinitions()[0].SetGameType(dtDAL::DataType::STRING);
+         mMapping.SetHLAType(dtHLAGM::RPRAttributeType::STRING_TYPE);
+         dtCore::RefPtr<dtGame::StringMessageParameter> stringParam = new dtGame::StringMessageParameter("test");
+         stringParam->SetValue(testValue);
+         messageParameters.push_back(stringParam.get());
+
+         TranslateOutgoingParameter(buffer, size, messageParameters, mMapping);
+
+         CPPUNIT_ASSERT_EQUAL_MESSAGE("The size of the buffer should match the string length plus one.", testValue.size() + 1, size);
+
+         std::string result;
+         result.reserve(size);
+         for (unsigned i = 0; i < size; ++i)
+         {
+            if (buffer[i] == '\0')
+               break;
+
+            result.append(1, buffer[i]);
+         }
+
+         mParameterTranslator->DeallocateBuffer(buffer);
+
+         CPPUNIT_ASSERT_EQUAL_MESSAGE("The result should have been \"" + testValue + "\" but it is \"" + result + "\"", testValue, result);
+      }
+
+      void InternalTestOutgoingUniqueIdToStringDataTranslation(const dtCore::UniqueId& testValue)
+      {
+         std::vector<dtCore::RefPtr<const dtGame::MessageParameter> > messageParameters;
+
+         char* buffer = NULL;
+         size_t size = 0;
+
+         mMapping.GetParameterDefinitions()[0].SetGameType(dtDAL::DataType::ACTOR);
+         mMapping.SetHLAType(dtHLAGM::RPRAttributeType::STRING_TYPE);
+         dtCore::RefPtr<dtGame::ActorMessageParameter> actorParam = new dtGame::ActorMessageParameter("test");
+         actorParam->SetValue(testValue);
+         messageParameters.push_back(actorParam.get());
+
+         TranslateOutgoingParameter(buffer, size, messageParameters, mMapping);
+
+         CPPUNIT_ASSERT_EQUAL_MESSAGE("The size of the buffer should match the string length plus one.", testValue.ToString().size() + 1, size);
+
+         std::string result;
+         result.reserve(size);
+         for (unsigned i = 0; i < size; ++i)
+         {
+            if (buffer[i] == '\0')
+               break;
+
+            result.append(1, buffer[i]);
+         }
+
+         mParameterTranslator->DeallocateBuffer(buffer);
+
+         CPPUNIT_ASSERT_EQUAL_MESSAGE("The result should have been \"" + testValue.ToString() + "\" but it is \"" + result + "\"", testValue.ToString(), result);
+      }
 
       void TranslateOutgoingParameter(char*& buffer, size_t& size,
          std::vector<dtCore::RefPtr<const dtGame::MessageParameter> >& messageParameters, dtHLAGM::AttributeToPropertyList& mapping)
@@ -655,9 +806,6 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          mParameterTranslator->AllocateBuffer(buffer, size, mapping.GetHLAType());
 
          CPPUNIT_ASSERT(buffer != NULL);
-         CPPUNIT_ASSERT(size > 0);
-
-         mParameterTranslator->MapFromMessageParameters(buffer, size, messageParameters, mapping);
 
          if (size != mapping.GetHLAType().GetEncodedLength())
          {
@@ -668,6 +816,29 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
             CPPUNIT_FAIL(ss.str());
          }
 
+         mParameterTranslator->MapFromMessageParameters(buffer, size, messageParameters, mapping);
+
+      }
+
+      void InternalTestOutgoingEnumToStringDataTranslation(std::string expectedResult)
+      {
+         std::vector<dtCore::RefPtr<const dtGame::MessageParameter> > messageParameters;
+
+         char* buffer = NULL;
+         size_t size = 0;
+
+         dtCore::RefPtr<dtGame::EnumMessageParameter> enumParam = new dtGame::EnumMessageParameter("test");
+         enumParam->SetValue("correct");
+         messageParameters.push_back(enumParam.get());
+
+         TranslateOutgoingParameter(buffer, size, messageParameters, mMapping);
+
+         std::string actualValue(buffer);
+
+         mParameterTranslator->DeallocateBuffer(buffer);
+
+         CPPUNIT_ASSERT_EQUAL(expectedResult, actualValue);
+         CPPUNIT_ASSERT_EQUAL_MESSAGE("The size of the outgoing string should be length of the string plus 1", actualValue.size() + 1, size);
       }
 
       template <typename ValueType>

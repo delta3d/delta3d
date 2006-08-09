@@ -87,7 +87,9 @@ void TransformableTests::setUp()
 
 void TransformableTests::tearDown()
 {
-   mTransformable = 0;
+   mTransformable->SetCollisionMesh(NULL);
+   mTransformable->SetCollisionBox( mBoxLengths[0], mBoxLengths[1], mBoxLengths[2] );
+   mTransformable = NULL;
 }
 
 void TransformableTests::TestGetCollisionGeomDimensions()

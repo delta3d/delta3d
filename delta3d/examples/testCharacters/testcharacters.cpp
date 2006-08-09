@@ -214,7 +214,7 @@ public:
       {
          case Producer::Key_P:
          {
-            System::Instance()->SetPause( !System::Instance()->GetPause() );
+            System::GetInstance().SetPause( !System::GetInstance().GetPause() );
             verdict = true;
             break;
          }

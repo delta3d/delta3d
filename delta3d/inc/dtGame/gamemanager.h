@@ -34,7 +34,6 @@
 #include <dtCore/base.h>
 #include <dtCore/scene.h>
 #include <dtCore/timer.h>
-#include <dtDAL/librarymanager.h>
 #include <dtUtil/log.h>
 
 // Forward declarations
@@ -42,6 +41,7 @@ namespace dtDAL
 {
    class ActorType;
    class ActorPluginRegistry;
+   class LibraryManager;
 }
 
 // Forward declarations
@@ -49,7 +49,6 @@ namespace dtABC
 {
    class Application;
 }
-
 
 /** 
  * A high-level library that manages interaction between game actors.
@@ -128,9 +127,9 @@ namespace dtGame
           * Gets a single actor type that matches the name and category specified.
           * @param category Category of the actor type to find.
           * @param name Name of the actor type.
-          * @return A valid smart pointer if the actor type was found.
+          * @return A pointer to the actor type if the actor type was found or NULL otherwise.
           */
-         dtCore::RefPtr<dtDAL::ActorType> FindActorType(const std::string &category, const std::string &name);
+         dtDAL::ActorType* FindActorType(const std::string &category, const std::string &name);
 
          /**
           * Gets a registry currently loaded by the library manager.  
@@ -165,7 +164,6 @@ namespace dtGame
           * @return A platform independent library name.
           */
          std::string GetPlatformIndependentLibraryName(const std::string &libName);
-
 
          /**
           * Called by the dtCore::Base class
@@ -243,7 +241,7 @@ namespace dtGame
           * @param The actor type to create.
           * @throws dtDAL::ExceptionEnum::ObjectFactoryUnknownType
           */
-         dtCore::RefPtr<dtDAL::ActorProxy> CreateActor(dtDAL::ActorType& actorType) throw(dtUtil::Exception);
+         dtCore::RefPtr<dtDAL::ActorProxy> CreateActor(dtDAL::ActorType& actorType);
 
          /**
           * Creates an actor based on the actor type and store it in a ref pointer.
@@ -254,7 +252,7 @@ namespace dtGame
           * @throws dtDAL::ExceptionEnum::ObjectFactoryUnknownType
           */
          template <typename ProxyType>
-         void CreateActor(dtDAL::ActorType& actorType, dtCore::RefPtr<ProxyType>& proxy) throw(dtUtil::Exception)
+         void CreateActor(dtDAL::ActorType& actorType, dtCore::RefPtr<ProxyType>& proxy)
          {
             dtCore::RefPtr<dtDAL::ActorProxy> tmpProxy = CreateActor(actorType);
             proxy = dynamic_cast<ProxyType*>(tmpProxy.get());
@@ -266,7 +264,7 @@ namespace dtGame
           * @param name The name corresponding to the actor type
           * @throws dtDAL::ExceptionEnum::ObjectFactoryUnknownType
           */
-         dtCore::RefPtr<dtDAL::ActorProxy> CreateActor(const std::string &category, const std::string &name) throw(dtUtil::Exception);
+         dtCore::RefPtr<dtDAL::ActorProxy> CreateActor(const std::string &category, const std::string &name);
 
          /**
           * Creates an actor based on the string version of the actor type and store it in a ref pointer.
@@ -277,7 +275,7 @@ namespace dtGame
           * @throws dtDAL::ExceptionEnum::ObjectFactoryUnknownType
           */
          template <typename ProxyType>
-         void CreateActor(const std::string& category, const std::string& name, dtCore::RefPtr<ProxyType>& proxy) throw(dtUtil::Exception)
+         void CreateActor(const std::string& category, const std::string& name, dtCore::RefPtr<ProxyType>& proxy)
          {
             dtCore::RefPtr<dtDAL::ActorProxy> tmpProxy = CreateActor(category, name);
             proxy = dynamic_cast<ProxyType*>(tmpProxy.get());
@@ -297,7 +295,7 @@ namespace dtGame
           * @throws ExceptionEnum::ACTOR_IS_REMOTE if the actor is remote and publish is true.
           * @throws ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION if the actor is flagged as a game actor, but is not a GameActorProxy.
           */
-         void AddActor(GameActorProxy& gameActorProxy, bool isRemote, bool publish) throw(dtUtil::Exception);
+         void AddActor(GameActorProxy& gameActorProxy, bool isRemote, bool publish);
 
          /**
           * Publishes an actor to the world.  Remote actors may not be published
@@ -350,11 +348,8 @@ namespace dtGame
           * manager.
           * @return The number of game actors in the system.
           */
-         unsigned int GetNumGameActors() const
-         {
-            return mGameActorProxyMap.size();
-         }
-         
+         unsigned int GetNumGameActors() const { return mGameActorProxyMap.size(); }
+        
          /**
           * Retrieves all the game actors added to the GM
           * @param toFill The vector to fill
@@ -415,12 +410,39 @@ namespace dtGame
          GameActorProxy* FindGameActorById(const dtCore::UniqueId &id);
 
          /**
+          * Returns the game actor proxy whose is matches the parameter
+          * @param The id of the proxy to find
+          * @return The proxy, or NULL if not found
+          */
+         template<typename T>
+         T* FindGameActorById(const dtCore::UniqueId &id)
+         {
+            std::map<dtCore::UniqueId, dtCore::RefPtr<dtGame::GameActorProxy> >::iterator i = 
+               mGameActorProxyMap.find(id);
+            return i == mGameActorProxyMap.end() ? NULL : dynamic_cast<T*>(i->second.get());
+         }
+
+         /**
           * Returns the actor proxy whose is matches the parameter. This will search both the game actors and the
           * regular actor proxies.
           * @param The id of the proxy to find
           * @return The proxy, or NULL if not found
           */
          dtDAL::ActorProxy* FindActorById(const dtCore::UniqueId &id);
+
+         /**
+          * Returns the actor proxy whose is matches the parameter. This will search both the game actors and the
+          * regular actor proxies.
+          * @param The id of the proxy to find
+          * @return The proxy, or NULL if not found
+          */
+         template<typename T>
+         T* FindActorById(const dtCore::UniqueId &id)
+         {
+            std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> >::iterator i = 
+               mActorProxyMap.find(id);
+            return i == mActorProxyMap.end() ? NULL : dynamic_cast<T*>(i->second.get());
+         }
 
          /**
           * Saves the game state
@@ -443,7 +465,7 @@ namespace dtGame
           *                             large terrain databases.  Passing false will not disable paging if it is already enabled.
           * @throws ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION if an actor is flagged as a game actor, but is not a GameActorProxy.
           */
-         void ChangeMap(const std::string &mapName, bool addBillboards = false, bool enableDatabasePaging = true) throw(dtUtil::Exception);
+         void ChangeMap(const std::string &mapName, bool addBillboards = false, bool enableDatabasePaging = true);
 
          /**
           * Sets a timer on the game mananger.  It will send out a timer message when it expires.
@@ -487,10 +509,10 @@ namespace dtGame
          void SetScene(dtCore::Scene &newScene) { mScene = &newScene; }
 
          ///@return the application that owns this game mananger.
-         dtABC::Application& GetApplication() throw(dtUtil::Exception); 
+         dtABC::Application& GetApplication(); 
 
          ///@return the application that owns this game mananger.
-         const dtABC::Application& GetApplication() const throw(dtUtil::Exception);
+         const dtABC::Application& GetApplication() const;
          
          ///sets the application that owns this game manager.  This should NOT be changes after startup.
          void SetApplication(dtABC::Application& application);

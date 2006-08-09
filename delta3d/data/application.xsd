@@ -2,7 +2,7 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" id="Application">
 	<xs:element name="Application">
 		<xs:complexType>
-			<xs:all minOccurs="0">
+			<xs:sequence minOccurs="0">
 				<xs:element name="Window">
 					<xs:complexType>
 						<xs:attribute name="Name" type="xs:string" use="required"/>
@@ -29,7 +29,13 @@
 						<xs:attribute name="SceneInstance" type="xs:string" use="required" form="unqualified"/>
 					</xs:complexType>
 				</xs:element>
-			</xs:all>
+				<xs:element name="Log" minOccurs="0" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:attribute name="Name" type="xs:string" form="unqualified"/>
+						<xs:attribute name="Level" type="xs:string" use="required" form="unqualified"/>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
 </xs:schema>

@@ -39,6 +39,9 @@ namespace dtDAL
          ResourceDescriptor(const std::string& displayName, const std::string& resourceIdentifier):
             mDisplayName(displayName), mResourceIdentifier(resourceIdentifier) {}
 
+         ResourceDescriptor(const std::string& resourceIdentifier):
+            mDisplayName(resourceIdentifier), mResourceIdentifier(resourceIdentifier) {}
+
          ResourceDescriptor(const ResourceDescriptor& toCopy) 
          {
             mDisplayName = toCopy.mDisplayName;

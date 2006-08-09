@@ -19,12 +19,13 @@
  * @author Matthew W. Campbell
  */
 
-#include "dtGame/taskcomponent.h"
-#include "dtGame/message.h"
-#include "dtGame/messagetype.h"
-#include "dtGame/basemessages.h"
-#include "dtGame/actorupdatemessage.h"
+#include <dtGame/taskcomponent.h>
+#include <dtGame/message.h>
+#include <dtGame/messagetype.h>
+#include <dtGame/basemessages.h>
+#include <dtGame/actorupdatemessage.h>
 #include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/actortype.h>
 
 namespace dtGame
 {

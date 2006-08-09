@@ -234,7 +234,7 @@ namespace dtHLAGM
 
          ///Fills a vector with all object to actor mappings currently registered.
          void GetAllObjectToActorMappings(std::vector<ObjectToActor*> toFill);
-         
+
          ///Fills a vector with all const object to actor mappings.
          void GetAllObjectToActorMappings(std::vector<const ObjectToActor*> toFill) const;
 
@@ -385,9 +385,22 @@ namespace dtHLAGM
           * @param interactionParams a ParameterHandleValuePairSet to be filled with parameters.
           * @param interactionToMessage the mapping object specifying the mapping information.
           */
-         virtual void PrepareInteraction(const dtGame::Message& message, 
-            RTI::ParameterHandleValuePairSet& interactionParams, 
+         virtual void PrepareInteraction(const dtGame::Message& message,
+            RTI::ParameterHandleValuePairSet& interactionParams,
             const InteractionToMessage& interactionToMessage);
+
+         /**
+          * Prepares the attributes for an hla object update.  This may be overridden in a subclass
+          * to do one-off translations of outgoing data.
+          * @param message the message that holds the data to be translated.
+          * @param updateParams an attributeHandleValuePairSet to be filled with attributes.
+          * @param objectToActor the mapping object specifying the mapping information.
+          * @param newObject true if this is the first time attributes are being send for the object,
+          *                  which means defaults should be sent for data not in the message.
+          */
+         virtual void PrepareUpdate(const dtGame::ActorUpdateMessage& message, 
+            RTI::AttributeHandleValuePairSet& updateParams,
+            const ObjectToActor& objectToActor, bool newObject);
 
          /**
           * Maps a value in a buffer from HLA to a message parameter.
@@ -437,14 +450,14 @@ namespace dtHLAGM
          void RegisterInteractionToMessageWithRTI(InteractionToMessage& interactionToMessage);
 
          const ParameterTranslator* FindTranslatorForAttributeType(const AttributeType& type) const;
-         
-         void MapToMessageParameters(const char* buffer, 
-                                     size_t size, 
-                                     std::vector<dtCore::RefPtr<dtGame::MessageParameter> >& parameters, 
+
+         void MapToMessageParameters(const char* buffer,
+                                     size_t size,
+                                     std::vector<dtCore::RefPtr<dtGame::MessageParameter> >& parameters,
                                      const OneToManyMapping& mapping) const;
 
          void MapFromMessageParameters(char* buffer,
-                                       size_t maxSize,
+                                       size_t& maxSize,
                                        std::vector<dtCore::RefPtr<const dtGame::MessageParameter> >& parameters,
                                        const OneToManyMapping& mapping) const;
 

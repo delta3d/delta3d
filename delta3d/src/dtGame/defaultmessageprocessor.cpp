@@ -19,15 +19,16 @@
  * @author William E. Johnson II
  */
 
-#include "dtGame/defaultmessageprocessor.h"
-#include "dtGame/gamemanager.h"
-#include "dtGame/message.h"
-#include "dtGame/actorupdatemessage.h"
-#include "dtGame/basemessages.h"
-#include "dtGame/messagetype.h"
-#include "dtGame/gameactor.h"
-#include "dtGame/exceptionenum.h"
+#include <dtGame/defaultmessageprocessor.h>
+#include <dtGame/gamemanager.h>
+#include <dtGame/message.h>
+#include <dtGame/actorupdatemessage.h>
+#include <dtGame/basemessages.h>
+#include <dtGame/messagetype.h>
+#include <dtGame/gameactor.h>
+#include <dtGame/exceptionenum.h>
 #include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/actortype.h>
 #include <dtUtil/log.h>
 
 #include <iostream>
@@ -93,7 +94,7 @@ namespace dtGame
       }
    }
 
-   dtCore::RefPtr<GameActorProxy> DefaultMessageProcessor::ProcessRemoteCreateActor(const ActorUpdateMessage& msg) throw (dtUtil::Exception)
+   dtCore::RefPtr<GameActorProxy> DefaultMessageProcessor::ProcessRemoteCreateActor(const ActorUpdateMessage& msg) 
    {
       const std::string typeName = msg.GetActorTypeName();
       const std::string catName = msg.GetActorTypeCategory();

@@ -25,8 +25,11 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#include <dtUtil/deprecationmgr.h>
+
 #include <dtCore/base.h>
 #include <dtCore/timer.h>
+
 #include <map>
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
@@ -68,7 +71,15 @@ namespace dtCore
       void Config();
 
       ///Get a pointer to the System
-      static System *Instance();
+      static System *Instance() 
+      { 
+         DEPRECATE( "System* System::Instance()",
+                    "System& System::GetInstance()" );
+         return &GetInstance(); 
+      }
+
+      ///Get a pointer to the System
+      static System& GetInstance();
 
       static void Destroy();
 

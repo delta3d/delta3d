@@ -114,5 +114,6 @@ void BaseABCTests::TestInput()
    // it is really weird that an app must be used to test the BaseABC function,
    // but this is how it must be when Application allocates BaseABC's members, like mDeltaWin.
    dtCore::RefPtr<TestApp2> app(new TestApp2(Producer::Key_0,Producer::KeyChar_0));
+   app->GetWindow()->SetPosition(0, 0, 50, 50);
    CPPUNIT_ASSERT( app->GetKeyboardListener() != NULL );
 }

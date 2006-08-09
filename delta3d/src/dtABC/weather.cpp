@@ -107,7 +107,7 @@ void Weather::SetBasicCloudType(const CloudType type)
    //remove any existing Clouds that have been added to the Env
    for ( CloudPlaneList::iterator it = mClouds.begin();
          it != mClouds.end(); 
-         it++ )
+         ++it )
    {
       mEnvironment->RemEffect( it->get() );
    }

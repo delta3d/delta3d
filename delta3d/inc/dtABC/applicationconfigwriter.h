@@ -22,45 +22,22 @@
 #ifndef DELTA_APP_XML_CONFIG_WRITER
 #define DELTA_APP_XML_CONFIG_WRITER
 
+#include <dtUtil/log.h>                     // to read the default log name.
 #include <dtABC/export.h>                   // for export symbols
 #include <string>                           // for data members
 #include <xercesc/util/XercesDefs.hpp>      // for XMLCh definition
 
 namespace dtABC
 {
+   struct ApplicationConfigData;
+   
    /// A class that writes config files for the dtABC::Application
    class DT_ABC_EXPORT ApplicationConfigWriter
    {
    public:
-      void operator ()(const std::string& filename);
+      void operator ()(const std::string& filename, const ApplicationConfigData& data);
 
    private:
-      /// A utility class to create xerces character types for the XML data.
-      /// defines the API to obtain default values
-      /// for the values used when generating an application config file.
-      /// Also generates the xerces character types needed for string operations.
-      struct DefaultModel
-      {
-         DefaultModel();
-         ~DefaultModel();
-
-         XMLCh* WINDOW_NAME;
-         XMLCh* WINDOW_X;
-         XMLCh* WINDOW_Y;
-         XMLCh* WINDOW_WIDTH;
-         XMLCh* WINDOW_HEIGHT;
-
-         XMLCh* REFRESH;
-         XMLCh* PIXEL_DEPTH;
-         XMLCh* SHOW_CURSOR;
-         XMLCh* FULL_SCREEN;
-         XMLCh* CHANGE_RESOLUTION;
-
-         XMLCh* CAMERA_NAME;
-         XMLCh* SCENE_NAME;
-
-         ///\todo scene_instance window_instance
-      };
 
       /// A utility class to create xerces character types for the XML schema.
       /// Defines the API to obtain values used when parsing the config file.
@@ -74,6 +51,7 @@ namespace dtABC
          XMLCh* NAME;
          XMLCh* SCENE;
          XMLCh* CAMERA;
+         XMLCh* LOG;
 
          XMLCh* X;
          XMLCh* Y;
@@ -88,6 +66,8 @@ namespace dtABC
 
          XMLCh* WINDOWINSTANCE;
          XMLCh* SCENEINSTANCE;
+
+         XMLCh* LOG_LEVEL;
       };
    };
 }

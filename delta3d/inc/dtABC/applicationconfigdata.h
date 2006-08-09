@@ -25,6 +25,7 @@
 #include <dtABC/export.h>                   // for export symbol
 #include <dtCore/deltawin.h>                // for internal class definition DeltaWin::Resolution
 #include <string>                           // for data members
+#include <map>                              // for log level data
 
 namespace dtABC
 {
@@ -39,6 +40,8 @@ namespace dtABC
       bool SHOW_CURSOR, FULL_SCREEN, CHANGE_RESOLUTION;
       std::string CAMERA_NAME, SCENE_NAME, WINDOW_NAME;
       std::string SCENE_INSTANCE, WINDOW_INSTANCE;
+      
+      std::map<std::string, std::string> LOG_LEVELS;
    };
 }
 

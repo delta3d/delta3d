@@ -175,13 +175,16 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<ActorType> LibraryManager::FindActorType(const std::string &category,
+   ActorType* LibraryManager::FindActorType(const std::string &category,
                                                            const std::string &name)
    {
       dtCore::RefPtr<ActorType> typeToFind = new ActorType(name,category);
       ActorTypeMapItor itor = mActors.find(typeToFind);
       if (itor != mActors.end())
-         return itor->first;
+      {
+         typeToFind = itor->first;
+         return typeToFind.get();
+      }
       else
          return NULL;
    }

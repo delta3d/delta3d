@@ -52,7 +52,7 @@ void StateWalker::DisplayEventChoicesAndWaitForInput()
    if( !mStateManager->GetCurrentState() )
    {
       LOG_ERROR("No valid current State within StateManager, stopping the System.");
-      dtCore::System::Instance()->Stop();
+      dtCore::System::GetInstance().Stop();
       return;
    }
 
@@ -116,6 +116,6 @@ void StateWalker::HandleExtraEventChoices(unsigned int eventvecsize, unsigned in
    if( choice == eventvecsize )
    {
       LOG("StateWalker: Quit was chosen." );
-      dtCore::System::Instance()->Stop();
+      dtCore::System::GetInstance().Stop();
    }
 }

@@ -246,8 +246,11 @@ namespace dtCore
          return mLineLength;
       }
 
-      ///Get the intersected point
+      ///@return the intersected point
       void GetHitPoint( osg::Vec3& xyz, int pointNum = 0 ) const;
+
+      ///@return the normal at the intersected point
+      void GetHitPointNormal( osg::Vec3& normal, int pointNum = 0 ) const;
 
       ///Get the number of intersected items
       int GetNumberOfHits() const;

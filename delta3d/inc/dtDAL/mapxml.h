@@ -37,12 +37,12 @@
 #include <dtUtil/log.h>
 #include <dtCore/uniqueid.h>
 
-#include "dtDAL/map.h"
-#include "dtDAL/actorproperty.h"
-#include "dtDAL/actorproxy.h"
-#include "dtDAL/datatype.h"
-#include "dtDAL/export.h"
-#include "dtDAL/environmentactor.h"
+#include <dtDAL/map.h>
+#include <dtDAL/actorproperty.h>
+#include <dtDAL/actorproxy.h>
+#include <dtDAL/datatype.h>
+#include <dtDAL/export.h>
+#include <dtDAL/environmentactor.h>
 
 // Default iimplementation of char_traits<XMLCh>, needed for gcc3.3
 #if (__GNUC__ == 3 && __GNUC_MINOR__ <= 3)

@@ -26,6 +26,8 @@
 
 #include <osg/Vec3>
 #include <osg/Matrix>
+#include <osg/Version>
+
 #include <dtCore/scene.h>
 #include <dtCore/isector.h>
 
@@ -58,8 +60,13 @@ namespace dtAI
    
    WaypointManager::~WaypointManager()
    {
+      
+      #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 1 && OSG_VERSION_MINOR >= 1
+      mDrawable->removeDrawables(0, 1);
+      #else
       mDrawable->removeDrawable(0, 1);
-      mDrawable = 0;
+      #endif
+      mDrawable = NULL;
 
       Clear();         
    }
@@ -92,12 +99,16 @@ namespace dtAI
 
    void WaypointManager::RemoveWaypoint(const WaypointActor* pWaypoint)
    {
-      mWaypoints.erase(pWaypoint->GetIndex());
+      if (mWaypoints.size() < pWaypoint->GetIndex())
+         mWaypoints.erase(pWaypoint->GetIndex());
+      //TODO othewise we should throw an exception or something
    }
 
    void WaypointManager::MoveWaypoint(unsigned pIndex, const osg::Vec3& pPos)
    {
-      mWaypoints[pIndex]->SetPosition(pPos);
+      if (mWaypoints.size() < pIndex)
+         mWaypoints[pIndex]->SetPosition(pPos);
+      //TODO othewise we should throw an exception or something
    }
 
    bool WaypointManager::WriteFile(const std::string& pFileToWrite)

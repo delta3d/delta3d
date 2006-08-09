@@ -104,17 +104,17 @@ namespace dtGame
 
    }
 
-   bool MessageFactory::IsMessageTypeSupported(const MessageType &msg) const throw()
+   bool MessageFactory::IsMessageTypeSupported(const MessageType &msg) const 
    {
       return mMessageFactory->IsTypeSupported(&msg);
    }
 
-   void MessageFactory::GetSupportedMessageTypes(std::vector<const MessageType*> &vec) throw()
+   void MessageFactory::GetSupportedMessageTypes(std::vector<const MessageType*> &vec) 
    {
       mMessageFactory->GetSupportedTypes(vec);
    }
 
-   dtCore::RefPtr<Message> MessageFactory::CreateMessage(const MessageType &msgType)  throw(dtUtil::Exception)
+   dtCore::RefPtr<Message> MessageFactory::CreateMessage(const MessageType &msgType)  
    {
       Message *msg = mMessageFactory->CreateObject(&msgType);
 
@@ -130,7 +130,7 @@ namespace dtGame
       return msg;
    }
 
-   dtCore::RefPtr<Message> MessageFactory::CloneMessage(const Message& msg) throw(dtUtil::Exception)
+   dtCore::RefPtr<Message> MessageFactory::CloneMessage(const Message& msg)
    {
       dtCore::RefPtr<Message> theClone = CreateMessage(msg.GetMessageType());
       try
@@ -153,7 +153,7 @@ namespace dtGame
       return theClone;
    }
 
-   const MessageType &MessageFactory::GetMessageTypeById(unsigned short id) const throw(dtUtil::Exception)
+   const MessageType &MessageFactory::GetMessageTypeById(unsigned short id) const 
    {
       std::map<unsigned short, const MessageType*>::const_iterator itor = mIdMap.find(id);
       if (itor == mIdMap.end())
@@ -167,7 +167,7 @@ namespace dtGame
       return *itor->second;
    }
 
-   const MessageType* MessageFactory::GetMessageTypeByName(const std::string& name) const throw()
+   const MessageType* MessageFactory::GetMessageTypeByName(const std::string& name) const 
    {
       for (std::map<unsigned short, const MessageType*>::const_iterator i = mIdMap.begin(); i != mIdMap.end(); ++i)
       {

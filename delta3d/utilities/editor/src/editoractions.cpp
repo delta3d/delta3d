@@ -422,7 +422,7 @@ namespace dtEditQt
         openMapDialog.setListItems(listItems);
         if(openMapDialog.exec() == QDialog::Accepted)
         {
-            dtDAL::Map *newMap;
+			   dtCore::RefPtr<dtDAL::Map> newMap;
 
             //Attempt to open the specified map..
             try

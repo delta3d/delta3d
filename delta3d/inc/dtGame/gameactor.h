@@ -219,7 +219,7 @@ namespace dtGame
             const GameActor* ga = dynamic_cast<const GameActor*> (mActor.get());
             if(ga == NULL)
             {
-               EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type GameActor");
+               throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type GameActor", __FILE__,__LINE__);
             }
             return *ga;
          }
@@ -284,7 +284,7 @@ namespace dtGame
           * @param update The message to populate.
           * @param propNames  the properties to include in the message.
           */
-         virtual void PopulateActorUpdate(ActorUpdateMessage& update, const std::vector<std::string> &propNames) throw();
+         virtual void PopulateActorUpdate(ActorUpdateMessage& update, const std::vector<std::string> &propNames);
           
          /**
           * Populates an update message from the actor proxy.  It will add all property values to the message.
@@ -292,7 +292,7 @@ namespace dtGame
           * duplicate the functionality provided in GameActor::PopulateActorUpdate().
           * @param update The message to populate.  
           */
-         virtual void PopulateActorUpdate(ActorUpdateMessage& update) throw();
+         virtual void PopulateActorUpdate(ActorUpdateMessage& update);
 
          /**
           * Takes and actor update message and applys the parameter values to change the 
@@ -301,7 +301,7 @@ namespace dtGame
           * 
           * @param msg the message to apply.
           */
-         virtual void ApplyActorUpdate(const ActorUpdateMessage& msg) throw(); 
+         virtual void ApplyActorUpdate(const ActorUpdateMessage& msg); 
          
          /**
           * Get all of the invokables registered for a given message type.
@@ -439,7 +439,7 @@ namespace dtGame
           * @param propNames the list of properties to include in the message.
           * @param limitProperties true if the propNames list should be respected or false if all properties should added.
           */
-         void PopulateActorUpdate(ActorUpdateMessage& update, const std::vector<std::string> &propNames, bool limitProperties) throw();
+         void PopulateActorUpdate(ActorUpdateMessage& update, const std::vector<std::string> &propNames, bool limitProperties);
 	
          /** 
           * Sets if the actor is remote by invoking the actor implementation

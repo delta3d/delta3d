@@ -33,16 +33,16 @@ mSound(NULL)
 {
    // create and configure the audio manager
    AudioManager::Instantiate();
-   AudioManager::GetManager()->Config();
+   AudioManager::GetInstance().Config();
 
    // pre-load the sound files
    // (an optional optimization)
-   AudioManager::GetManager()->LoadFile( kSoundFile1 );
-   AudioManager::GetManager()->LoadFile( kSoundFile2 );
+   AudioManager::GetInstance().LoadFile( kSoundFile1 );
+   AudioManager::GetInstance().LoadFile( kSoundFile2 );
 
    // get a single sound from the manager
    // and load the sound file into it
-   mSound   = AudioManager::GetManager()->NewSound();
+   mSound   = AudioManager::GetInstance().NewSound();
    assert( mSound );
 
    mSound->LoadFile( kSoundFile1 );
@@ -63,7 +63,7 @@ mSound(NULL)
 TestSoundApp::~TestSoundApp()
 {
    // release our one sound
-   AudioManager::GetManager()->FreeSound( mSound );
+   AudioManager::GetInstance().FreeSound( mSound );
 
    // destroy the audio manager
    AudioManager::Destroy();
@@ -96,7 +96,7 @@ bool TestSoundApp::KeyPressed(const dtCore::Keyboard*       keyboard,
    case Producer::Key_space:
       {
          // get a new sound from the manager
-         Sound*   sound = AudioManager::GetManager()->NewSound();
+         Sound*   sound = AudioManager::GetInstance().NewSound();
          assert( sound );
 
          // load the sound file into our sound
@@ -171,7 +171,7 @@ TestSoundApp::SoundStoppedCB( dtAudio::Sound* sound, void* param )
       return;
 
    // free all other sounds
-   AudioManager::GetManager()->FreeSound( sound );
+   AudioManager::GetInstance().FreeSound( sound );
 }
 
 /// A simple application that demonstrates the most basic methods

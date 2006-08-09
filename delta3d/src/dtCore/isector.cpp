@@ -229,14 +229,21 @@ namespace dtCore
     * @param xyz : The xyz position to be filled out [in/out]
     * @param pointNum:  Which intersection point to return [0..GetNumberOfHits()]
     */
-   void Isector::GetHitPoint( osg::Vec3& xyz, int pointNum/* =0  */) const
+   void Isector::GetHitPoint( osg::Vec3& xyz, int pointNum ) const
+   { 
+      if (pointNum >= GetNumberOfHits()) return;
+   
+      xyz = mHitList[pointNum].getWorldIntersectPoint();
+   }
+   
+   ///Get the normal at the intersected point
+   void Isector::GetHitPointNormal( osg::Vec3& normal, int pointNum ) const
    {
       if (pointNum >= GetNumberOfHits()) return;
    
-      osg::Vec3 ip = mHitList[pointNum].getWorldIntersectPoint();
-      xyz = ip;
+      normal = mHitList[pointNum].getWorldIntersectNormal();
    }
-   
+
    
    /** 
     * Get the number of items that were intersected by this Isector.  Note: 

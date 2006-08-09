@@ -82,7 +82,8 @@ namespace dtCore
       void GetTranslation( float& tx, float& ty, float& tz ) const;
       ///@return the translation vector.
       osg::Vec3& GetTranslation() { return mTranslation; }      
-      
+      const osg::Vec3& GetTranslation() const { return mTranslation; }      
+
       ///Get only rotation methods
       void GetRotation( float& h, float& p, float& r ) const;
       ///Get only rotation methods

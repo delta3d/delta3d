@@ -19,6 +19,7 @@
  * @author Matthew W. Campbell
  */
 #include <cppunit/extensions/HelperMacros.h>
+#include <dtDAL/actortype.h>
 #include <dtGame/clientgamemanager.h>
 #include <dtGame/taskcomponent.h>
 #include <dtGame/defaultmessageprocessor.h>
@@ -53,13 +54,14 @@ class GMTaskComponentTests : public CPPUNIT_NS::TestFixture
 
    private:
       dtCore::RefPtr<dtGame::ClientGameManager> mGameManager;
-      static char* mTestGameActorLibrary;
-      static char* mTestActorLibrary;
+      static const std::string mTestGameActorLibrary;
+      static const std::string mTestActorLibrary;
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(GMTaskComponentTests);
-char* GMTaskComponentTests::mTestGameActorLibrary="testGameActorLibrary";
-char* GMTaskComponentTests::mTestActorLibrary="testActorLibrary";
+
+const std::string GMTaskComponentTests::mTestGameActorLibrary="testGameActorLibrary";
+const std::string GMTaskComponentTests::mTestActorLibrary="testActorLibrary";
 
 //////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
@@ -70,8 +72,8 @@ void GMTaskComponentTests::setUp()
       dtCore::Scene* scene = new dtCore::Scene();
       mGameManager = new dtGame::ClientGameManager(*scene);
       mGameManager->LoadActorRegistry(mTestGameActorLibrary);
-      dtCore::System::Instance()->SetShutdownOnWindowClose(false);
-      dtCore::System::Instance()->Start();
+      dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
+      dtCore::System::GetInstance().Start();
    }
    catch (const dtUtil::Exception& e)
    {
@@ -87,8 +89,8 @@ void GMTaskComponentTests::tearDown()
    {
       try
       {
-         dtCore::System::Instance()->SetPause(false);
-         dtCore::System::Instance()->Stop();
+         dtCore::System::GetInstance().SetPause(false);
+         dtCore::System::GetInstance().Stop();
          mGameManager->DeleteAllActors();
          mGameManager->UnloadActorRegistry(mTestGameActorLibrary);
          mGameManager = NULL;
@@ -141,11 +143,11 @@ void GMTaskComponentTests::TestTaskComponentTaskTracking()
       CPPUNIT_ASSERT_MESSAGE("Should have been a game actor.",gameProxy != NULL);
 
       mGameManager->AddActor(*gameProxy,false,false);
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
       CPPUNIT_ASSERT_MESSAGE("Task component should have 1 top level task.",
          taskComponent->GetNumTopLevelTasks() == 1);
       mGameManager->DeleteActor(*gameProxy);
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
       CPPUNIT_ASSERT_MESSAGE("Task component should have 0 top level tasks.",
          taskComponent->GetNumTopLevelTasks() == 0);
 
@@ -163,10 +165,10 @@ void GMTaskComponentTests::TestTaskComponentTaskTracking()
          mGameManager->AddActor(*gameProxy,false,false);
 
          if ((i%10) == 0)
-            dtCore::System::Instance()->Step();
+            dtCore::System::GetInstance().Step();
       }
 
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
       CPPUNIT_ASSERT_MESSAGE("Task component should have 50 top level tasks.",
          taskComponent->GetNumTopLevelTasks() == 50);
       CPPUNIT_ASSERT_MESSAGE("Task component should have 50 total tasks.",
@@ -176,7 +178,7 @@ void GMTaskComponentTests::TestTaskComponentTaskTracking()
       mGameManager->DeleteAllActors();
 
       SLEEP(50);
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
 
       CPPUNIT_ASSERT_MESSAGE("Task component should have no top level tasks after deletion.",
          taskComponent->GetNumTopLevelTasks() == 0);
@@ -216,7 +218,7 @@ void GMTaskComponentTests::TestChangeMap()
          CPPUNIT_ASSERT_MESSAGE("Should have been a game actor.",gameProxy != NULL);
          mGameManager->AddActor(*gameProxy,false,false);
 
-         dtCore::System::Instance()->Step();
+         dtCore::System::GetInstance().Step();
       }
 
       CPPUNIT_ASSERT_MESSAGE("Task component should have 20 top level tasks.",
@@ -231,7 +233,7 @@ void GMTaskComponentTests::TestChangeMap()
       dtCore::RefPtr<dtGame::MapLoadedMessage> mapLoadMessage =
          (dtGame::MapLoadedMessage *)(msgFactory.CreateMessage(dtGame::MessageType::INFO_MAP_LOADED)).get();
       mGameManager->SendMessage(*mapLoadMessage);
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
 
       CPPUNIT_ASSERT_MESSAGE("Task component should have 0 top level tasks.",
          taskComponent->GetNumTopLevelTasks() == 0);
@@ -272,7 +274,7 @@ void GMTaskComponentTests::TestGetTasks()
          gameProxy->SetName("TASK" + dtUtil::ToString(i));
          mGameManager->AddActor(*gameProxy,false,false);
 
-         dtCore::System::Instance()->Step();
+         dtCore::System::GetInstance().Step();
       }
 
       std::vector<dtCore::RefPtr<dtGame::GameActorProxy> > allTasks,topTasks;

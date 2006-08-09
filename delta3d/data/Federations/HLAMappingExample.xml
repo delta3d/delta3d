@@ -84,6 +84,7 @@
                 <default></default>
             </attrToProp>            
         </object>
+
         <object extends="BaseEntity">
             <objectClass>BaseEntity.PhysicalEntity.Platform.GroundVehicle</objectClass>
             <actorType>TestHLA.Tank</actorType>

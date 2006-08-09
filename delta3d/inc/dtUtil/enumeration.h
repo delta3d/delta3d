@@ -59,7 +59,7 @@ namespace dtUtil
       */
       bool operator==(const Enumeration &rhs) const 
       {
-		  return this->name == rhs.name;
+		  return this == &rhs;
       }
 
       /**

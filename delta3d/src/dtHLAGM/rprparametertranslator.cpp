@@ -25,6 +25,8 @@
 #include <dtUtil/coordinates.h>
 #include <dtUtil/log.h>
 
+#include <dtCore/uniqueid.h>
+
 #include <dtGame/messageparameter.h>
 
 #include "dtHLAGM/onetoonemapping.h"
@@ -47,6 +49,7 @@ namespace dtHLAGM
    const RPRAttributeType RPRAttributeType::ENTITY_IDENTIFIER_TYPE("ENTITY_IDENTIFIER_TYPE", 1, 6);
    const RPRAttributeType RPRAttributeType::EVENT_IDENTIFIER_TYPE("EVENT_IDENTIFIER_TYPE", 1, 5);
    const RPRAttributeType RPRAttributeType::MARKING_TYPE("MARKING_TYPE", 1, 12);
+   const RPRAttributeType RPRAttributeType::STRING_TYPE("STRING_TYPE", 1, 128);
 
    RPRParameterTranslator::RPRParameterTranslator(dtUtil::Coordinates& coordinates, ObjectRuntimeMappingInfo& runtimeMappings):
       mCoordinates(coordinates), mRuntimeMappings(runtimeMappings)
@@ -218,10 +221,8 @@ namespace dtHLAGM
       osg::Vec3 result;
       if (parameterDataType == dtDAL::DataType::VEC3)
       {
-
          result = mCoordinates.GetOriginRotationMatrixInverse().preMult(
             static_cast<const dtGame::Vec3MessageParameter&>(parameter).GetValue());
-
       }
       else if (parameterDataType == dtDAL::DataType::VEC3F)
       {
@@ -229,8 +230,8 @@ namespace dtHLAGM
          osg::Vec3 preResult(temp.x(), temp.y(), temp.z());
          
          result = mCoordinates.GetOriginRotationMatrixInverse().preMult(preResult);
-      }
-      else
+      } 
+      else 
       {
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                              "The incoming parameter \"%s\" is not of a supported type \"%s\" for conversion to \"%s\"",
@@ -266,41 +267,15 @@ namespace dtHLAGM
 
       const std::string& msgParamValue = static_cast<const dtGame::EnumMessageParameter&>(parameter).GetValue();
       
-      std::string valueAsString;
+      const std::string& valueAsString = GetEnumValue(msgParamValue, paramDef, false);
 
-      if (paramDef.GetHLAEnumerationValue(msgParamValue, valueAsString))
-      {
-         std::istringstream iss;
-         iss.str(valueAsString);
-         iss >> entityType;
-         entityType.Encode(buffer);
-      }
-      else
-      {
-         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-               "No mapping was specified for value \"%s\" for an enumeration on mapping of \"%s\" to \"%s\". "
-               "Using default value \"%s\".", msgParamValue.c_str(), paramDef.GetGameName().c_str(),
-               mapping.GetHLAName().c_str(), paramDef.GetDefaultValue().c_str());
-
-         if (paramDef.GetHLAEnumerationValue(paramDef.GetDefaultValue(), valueAsString))
-         {
-            std::istringstream iss;
-            iss.str(valueAsString);
-            iss >> entityType;
-            entityType.Encode(buffer);
-         }
-         else
-         {
-            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-               "No mapping to HLA was specified for the default value for an enumeration on mapping of \"%s\" to \"%s\". "
-               "The default value is \"%s\".", paramDef.GetGameName().c_str(),
-               mapping.GetHLAName().c_str(), paramDef.GetDefaultValue().c_str());
-         }
-      }
+      std::istringstream iss;
+      iss.str(valueAsString);
+      iss >> entityType;
+      entityType.Encode(buffer);
    }
 
-   void RPRParameterTranslator::MapFromMessageParameters(char* buffer, size_t maxSize,
+   void RPRParameterTranslator::MapFromMessageParameters(char* buffer, size_t& maxSize,
       std::vector<dtCore::RefPtr<const dtGame::MessageParameter> >& parameters, const OneToManyMapping& mapping) const
    {
       const AttributeType& hlaType = mapping.GetHLAType();
@@ -397,7 +372,6 @@ namespace dtHLAGM
 
          if (osg::getCpuByteOrder() == osg::LittleEndian)
             osg::swapBytes((char*)(value), sizeof(double));
-
       }
       else if (hlaType == RPRAttributeType::FLOAT_TYPE)
       {
@@ -414,25 +388,75 @@ namespace dtHLAGM
 
          if (osg::getCpuByteOrder() == osg::LittleEndian)
             osg::swapBytes((char*)(value), sizeof(float));
-
       }
       else if (hlaType == RPRAttributeType::EVENT_IDENTIFIER_TYPE)
       {
          EventIdentifier eventIdentifier;
          eventIdentifier.Encode(buffer);
-         //if (
       }
       else if (hlaType == RPRAttributeType::ENTITY_TYPE)
       {
          EntityType entityType;
          entityType.Encode(buffer);
       }
+      else if (hlaType == RPRAttributeType::STRING_TYPE)
+      {
+         if (parameterDataType == dtDAL::DataType::STRING ||
+             parameterDataType == dtDAL::DataType::ENUMERATION)
+         {
+            const std::string& parameterValue = static_cast<const dtGame::StringMessageParameter&>(parameter).GetValue();
+
+            std::string value;
+            if (parameterDataType == dtDAL::DataType::ENUMERATION)
+               value = GetEnumValue(parameterValue, paramDef, false);
+            else
+               value = parameterValue;
+
+            for (unsigned i = 0; i < RPRAttributeType::STRING_TYPE.GetEncodedLength(); ++i)
+            {
+               if (i < value.size())
+                  buffer[i] = value[i];
+               else
+                  //zero anything after the string value.
+                  buffer[i] = '\0';
+            }
+            //change the size of this parameter to match the actual string length.
+            maxSize = value.size() + 1;
+            
+            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                  "Mapped parameter to a string value.  The result with size \"%u\" is \"%s\".",
+                  maxSize, buffer);
+         }
+         else if (parameterDataType == dtDAL::DataType::ACTOR)
+         {
+            const dtCore::UniqueId& value = static_cast<const dtGame::ActorMessageParameter&>(parameter).GetValue();
+
+            const std::string& stringValue = value.ToString();
+            for (unsigned i = 0; i < RPRAttributeType::STRING_TYPE.GetEncodedLength(); ++i)
+            {
+               if (i < stringValue.size())
+                  buffer[i] = stringValue[i];
+               else
+                  //zero anything after the string value.
+                  buffer[i] = '\0';
+            }
+            //change the size of this parameter to match the actual string length.
+            maxSize = stringValue.size() + 1;
+         }
+         else
+         {
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+               "Unable to map from Game Type \"%s\" to HLA type \"%s\"",
+               parameterDataType.GetName().c_str(),
+               RPRAttributeType::STRING_TYPE.GetName().c_str());
+         }
+      }
       else if (hlaType == RPRAttributeType::MARKING_TYPE)
       {
          if (parameterDataType == dtDAL::DataType::STRING)
          {
-            std::string markingText;
-            markingText = static_cast<const dtGame::StringMessageParameter&>(parameter).GetValue();
+            const std::string& markingText = static_cast<const dtGame::StringMessageParameter&>(parameter).GetValue();
 
             //1 is ASCII
             buffer[0] = 1;
@@ -465,7 +489,6 @@ namespace dtHLAGM
             else
                //clear it.
                memset((void*)buffer, 0, maxSize);
-
          }
          else
          {
@@ -574,6 +597,53 @@ namespace dtHLAGM
       }
    }
    
+   const std::string RPRParameterTranslator::GetEnumValue(const std::string& value, 
+      const OneToManyMapping::ParameterDefinition& paramDef, bool returnGameValue) const
+   {
+      std::string mappedValue;
+      bool found = false;
+
+      if (returnGameValue)
+         found = paramDef.GetGameEnumerationValue(value, mappedValue);
+      else
+         found = paramDef.GetHLAEnumerationValue(value, mappedValue);
+
+      if (found)
+      {
+         return mappedValue;
+      }
+      else
+      {
+         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         {
+            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+               "No mapping was specified for value \"%s\" for an enumeration on mapping for game parameter \"%s\". "
+               "Using game default value \"%s\".", 
+               value.c_str(), 
+               paramDef.GetGameName().c_str(), 
+               paramDef.GetDefaultValue().c_str());
+         }
+
+         if (returnGameValue)
+         {
+            return paramDef.GetDefaultValue();
+         }
+         else if (paramDef.GetHLAEnumerationValue(paramDef.GetDefaultValue(), mappedValue))
+         {
+            return mappedValue;
+         }
+      
+         //so we want the HLA Value, but no value was mapped to the game default value.
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+            "No mapping to HLA was specified for the default value for an enumeration on mapping for game parameter \"%s\". "
+            "That is, the game default value is \"%s\", but no HLA value is mapped to that default", 
+            paramDef.GetGameName().c_str(), 
+            paramDef.GetDefaultValue().c_str());
+         
+         return "";
+      }
+   }
+   
    void RPRParameterTranslator::MapToMessageParameters(const char* buffer, size_t size,
       std::vector<dtCore::RefPtr<dtGame::MessageParameter> >& parameters, const OneToManyMapping& mapping) const
    {
@@ -605,8 +675,6 @@ namespace dtHLAGM
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
             "Mapping values from HLA mapping %s to game mapping %s",
             mapping.GetHLAName().c_str(), paramDef.GetGameName().c_str());
-
-      parameter.WriteToLog(*mLogger);
 
       if (hlaType == RPRAttributeType::WORLD_COORDINATE_TYPE)
       {
@@ -702,22 +770,49 @@ namespace dtHLAGM
             //this current code only allows for exact matches and a default.
             stringValue << entityType;
             
-            if (paramDef.GetGameEnumerationValue(stringValue.str(), mappedValue))
-            {
-               static_cast<dtGame::EnumMessageParameter&>(parameter).SetValue(mappedValue);
-            }
-            else
-            {
-               if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-                  mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                     "No mapping was specified for value \"%d\" for an enumeration on mapping of \"%s\" to \"%s\". "
-                     "Using default value \"%s\".", stringValue.str().c_str(), paramDef.GetGameName().c_str(),
-                     mapping.GetHLAName().c_str(), paramDef.GetDefaultValue().c_str());
+            mappedValue = GetEnumValue(stringValue.str(), paramDef, true);
 
-               static_cast<dtGame::EnumMessageParameter&>(parameter).SetValue(paramDef.GetDefaultValue());
-            }
+            static_cast<dtGame::EnumMessageParameter&>(parameter).SetValue(mappedValue);            
          }
-
+      }
+      else if (hlaType == RPRAttributeType::STRING_TYPE)
+      {
+         if (parameterDataType == dtDAL::DataType::STRING ||
+             parameterDataType == dtDAL::DataType::ENUMERATION)
+         {
+            std::string value;
+            for (unsigned i = 0; i < size; ++i)
+            {
+               char c = buffer[i];
+               if (c == '\0')
+                  break;
+               value.append(1, c);
+            }
+            if (parameterDataType == dtDAL::DataType::ENUMERATION)
+               value = GetEnumValue(value, paramDef, true);
+            
+            static_cast<dtGame::StringMessageParameter&>(parameter).SetValue(value);
+         }
+         else if (parameterDataType == dtDAL::DataType::ACTOR)
+         {
+            std::string value;
+            for (unsigned i = 0; i < size; ++i)
+            {
+               char c = buffer[i];
+               if (c == '\0')
+                  break;
+               value.append(1, c);
+            }
+            //}
+            static_cast<dtGame::ActorMessageParameter&>(parameter).SetValue(dtCore::UniqueId(value));
+         }
+         else
+         {
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+               "Unable to map HLA type \"%s\" to \"%s\"",
+               RPRAttributeType::STRING_TYPE.GetName().c_str(),
+               parameterDataType.GetName().c_str());
+         }
       }
       else if (hlaType == RPRAttributeType::MARKING_TYPE)
       {
@@ -765,6 +860,7 @@ namespace dtHLAGM
                              "Unhandled attribute type \"%s\"",
                              hlaType.GetName().c_str());
       }
+      parameter.WriteToLog(*mLogger);
    }
 
    void RPRParameterTranslator::SetIntegerValue(long value, dtGame::MessageParameter& parameter, const OneToManyMapping& mapping, unsigned parameterDefIndex) const
@@ -810,21 +906,10 @@ namespace dtHLAGM
          
          stringValue << int(value);
          
-         if (paramDef.GetGameEnumerationValue(stringValue.str(), mappedValue))
-         {
-            static_cast<dtGame::EnumMessageParameter&>(parameter).SetValue(mappedValue);
-            parameter.WriteToLog(*mLogger);
-         }
-         else
-         {
-            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                  "No mapping was specified for value \"%d\" for an enumeration on mapping of \"%s\" to \"%s\". "
-                  "Using default value \"%s\".", stringValue.str().c_str(), paramDef.GetGameName().c_str(),
-                  mapping.GetHLAName().c_str(), paramDef.GetDefaultValue().c_str());
-
-            static_cast<dtGame::EnumMessageParameter&>(parameter).SetValue(paramDef.GetDefaultValue());
-         }
+         mappedValue = GetEnumValue(stringValue.str(), paramDef, true);
+         
+         static_cast<dtGame::EnumMessageParameter&>(parameter).SetValue(mappedValue);
+         parameter.WriteToLog(*mLogger);
       }
    }
 
@@ -869,37 +954,13 @@ namespace dtHLAGM
          const std::string& msgParamValue = static_cast<const dtGame::EnumMessageParameter&>(parameter).GetValue();
          long value = 0L;
          std::string valueAsString;
-         if (paramDef.GetHLAEnumerationValue(msgParamValue, valueAsString))
-         {
-            std::istringstream iss;
-            iss.str(valueAsString);
-            iss >> value;
-            return value;
-         }
-         else
-         {
-            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                  "No mapping was specified for value \"%s\" for an enumeration on mapping of \"%s\" to \"%s\". "
-                  "Using default value \"%s\".", msgParamValue.c_str(), paramDef.GetGameName().c_str(),
-                  mapping.GetHLAName().c_str(), paramDef.GetDefaultValue().c_str());
-
-            if (paramDef.GetHLAEnumerationValue(paramDef.GetDefaultValue(), valueAsString))
-            {
-               std::istringstream iss;
-               iss.str(valueAsString);
-               iss >> value;
-               return value;
-            }
-            else
-            {
-               mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                  "No mapping to HLA was specified for the default value for an enumeration on mapping of \"%s\" to \"%s\". "
-                  "The default value is \"%s\".", paramDef.GetGameName().c_str(),
-                  mapping.GetHLAName().c_str(), paramDef.GetDefaultValue().c_str());
-               return 0L;
-            }
-         }
+         
+         valueAsString = GetEnumValue(msgParamValue, paramDef, false);
+         
+         std::istringstream iss;
+         iss.str(valueAsString);
+         iss >> value;
+         return value;
       }
       mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
          "Unhandled conversion for an enumeration on mapping of \"%s\" to \"%s\". "

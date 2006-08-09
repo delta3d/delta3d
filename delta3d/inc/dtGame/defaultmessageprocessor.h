@@ -82,7 +82,7 @@ namespace dtGame
           * @return A pointer to the newly created GameActorProxy.
           * @throws dtUtil::Exception if it was unable to create the proper actor.
           */
-         virtual dtCore::RefPtr<GameActorProxy> ProcessRemoteCreateActor(const ActorUpdateMessage &msg) throw (dtUtil::Exception);
+         virtual dtCore::RefPtr<GameActorProxy> ProcessRemoteCreateActor(const ActorUpdateMessage &msg);
 
          /**
           * Processes a remote update actor message

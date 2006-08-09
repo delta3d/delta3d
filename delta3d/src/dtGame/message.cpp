@@ -118,7 +118,7 @@ namespace dtGame
          return NULL;
    }
          
-   void Message::CopyDataTo(Message& msg) const throw(dtUtil::Exception)
+   void Message::CopyDataTo(Message& msg) const
    {
       //copy header stuff
       msg.mMessageType = mMessageType;

@@ -34,6 +34,7 @@ class DT_EXAMPLE_EXPORT TestGameActorLibrary : public dtDAL::ActorPluginRegistry
       static dtCore::RefPtr<dtDAL::ActorType> TEST_JET_GAME_ACTOR_PROXY_TYPE;
       static dtCore::RefPtr<dtDAL::ActorType> TEST_HELICOPTER_GAME_ACTOR_PROXY_TYPE;
       static dtCore::RefPtr<dtDAL::ActorType> TEST_ENVIRONMENT_GAME_ACTOR_PROXY_TYPE;
+      static dtCore::RefPtr<dtDAL::ActorType> TEST_GAME_PROPERTY_PROXY_TYPE;
 
       /// Constructor
       TestGameActorLibrary();

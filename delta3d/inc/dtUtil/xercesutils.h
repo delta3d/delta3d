@@ -81,6 +81,37 @@ namespace dtUtil
         XMLStringConverter& operator=(const XMLStringConverter&) { return *this;}
     };
 
+   /**
+    * Utility methods for using strings, often for XML purposes.
+    * This is a simple class that lets us do easy (though not terribly efficient)
+    * trancoding of string data to XMLCh.
+    */
+   class StringToXMLConverter
+   {
+      public:
+         StringToXMLConverter(const std::string& charData): mXmlForm(NULL)
+         {
+            mXmlForm = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(charData.c_str());
+         }
+
+         ~StringToXMLConverter()
+         {
+            XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release(&mXmlForm);
+         }
+
+         /**
+          * @return the XMLCh string as a char*
+          */
+         const XMLCh* ToXmlString()
+         {
+            return mXmlForm;
+         }
+      private:
+         XMLCh* mXmlForm;
+         StringToXMLConverter(const StringToXMLConverter&) {}
+         StringToXMLConverter& operator=(const StringToXMLConverter&) { return *this;}
+   };
+
 
    /** A utility that finds the string value for a specifically named attribute when a DOM Node is available.
      * Needed for DOM Document traversal.

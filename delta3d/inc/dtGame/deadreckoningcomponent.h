@@ -94,6 +94,16 @@ namespace dtGame
           * @return the current minimum Dead Reckoning Algorithm.
           */
          DeadReckoningAlgorithm& GetDeadReckoningAlgorithm() const { return *mMinDRAlgorithm; }
+
+         /**
+          * Sets the offset from the ground the actor should be clamped to.
+          * This only matters if flying is set to false.
+          * @param newOffset the new offset value. 
+          */
+         void SetGroundOffset(float newOffset);
+       
+         ///@return The distance from the ground that the actor should be.
+         float GetGroundOffset() const { return mGroundOffset; }
        
          /**
           * Sets this entity's last known translation.  This should
@@ -155,6 +165,7 @@ namespace dtGame
           * @return the angular velocity vector
           */
          const osg::Vec3& GetAngularVelocityVector() const { return mAngularVelocityVector; }
+
       protected:
          ~DeadReckoningHelper() {}
       private:
@@ -167,6 +178,9 @@ namespace dtGame
          double mLastUpdatedTime;
          ///number of smoothing steps in seconds left from the last update.
          float mSmoothingSteps;
+         
+         ///The distance from the ground that the actor should be.
+         float mGroundOffset;
          
          ///Last known position of this actor.
          osg::Vec3 mLastTranslation;
@@ -190,7 +204,6 @@ namespace dtGame
          osg::Vec3 mAngularVelocityVector;
          
          DeadReckoningAlgorithm* mMinDRAlgorithm;
-         
       
          // -----------------------------------------------------------------------
          //  Unimplemented constructors and operators
@@ -203,15 +216,11 @@ namespace dtGame
    class DT_GAME_EXPORT DeadReckoningComponent : public dtGame::GMComponent
    {
       public:
-         DeadReckoningComponent(const std::string& name = "");
+         ///The default component name, used when looking it up on the GM. 
+         static const std::string DEFAULT_NAME;
+      
+         DeadReckoningComponent(const std::string& name = DEFAULT_NAME);
          
-         /**
-          * handles a sent a message
-          * @see dtGame::GMComponent#DispatchNetworkMessage
-          * @param The message
-          */
-         virtual void DispatchNetworkMessage(const dtGame::Message& message);
-
          /**
           * handles a processed a message
           * @see dtGame::GMComponent#ProcessMessage
@@ -220,13 +229,20 @@ namespace dtGame
          virtual void ProcessMessage(const dtGame::Message& message);
          
          /**
+          * Gets the helper registered for an actor
+          * @param proxy The proxy to get the helper for
+          * @return A pointer to the helper, or NULL if the proxy is not registered
+          */
+         const DeadReckoningHelper* GetHelperForProxy(dtGame::GameActorProxy &proxy) const;
+
+         /**
           * Registers an actor with this component.  To simplify coding in the actor, specifically when it comes
           * to setting properties on the helper, the actor should create it's own helper and pass it in when registering.
           * @param toRegister the actor to register.
           * @param helper the preconfigured helper object to use.
           * @throws dtUtil::Exception if this actor is already registered with the component.
           */
-         void RegisterActor(dtGame::GameActorProxy& toRegister, DeadReckoningHelper& helper) throw(dtUtil::Exception);
+         void RegisterActor(dtGame::GameActorProxy& toRegister, DeadReckoningHelper& helper);
 
          /**
           * Registers an actor with this component.  To simplify coding in the actor, specifically when it comes
@@ -242,42 +258,79 @@ namespace dtGame
          bool IsRegisteredActor(dtGame::GameActorProxy& gameActorProxy);
 
          ///@return the terrain actor using the given name.  If it has not yet been queried, the query will run when this is called.
-         dtDAL::ActorProxy* GetTerrainActor();
+         dtCore::Transformable* GetTerrainActor() { return mTerrainActor.get(); }
 
-         ///@return the name used when querying for the terrain actor.  
-         const std::string& GetTerrainActorName() const { return mTerrainActorName; }
+         ///@return the terrain actor using the given name.  If it has not yet been queried, the query will run when this is called.
+         const dtCore::Transformable* GetTerrainActor() const { return mTerrainActor.get(); };
+         
+         ///changes the actor to use for the terrain.
+         void SetTerrainActor(dtCore::Transformable* newTerrain);
+         
+         ///@return the actor to use as an eye point for ground clamping.  This determines which LOD to clamp to. 
+         dtCore::Transformable* GetEyePointActor() { return mEyePointActor.get(); };
+
+         ///@return the actor to use as an eye point for ground clamping.  This determines which LOD to clamp to. 
+         const dtCore::Transformable* GetEyePointActor() const { return mEyePointActor.get(); };
+         
+         ///changes the actor to use for the terrain.
+         void SetEyePointActor(dtCore::Transformable* newEyePointActor);
          
          /**
-          * Changes the name of the actor used when querying the Game Manager for the terrain actor.
-          * The terrain is used for ground following. Calling this will cause this component to requery the terrain actor.  
-          * The terrain actor will only be queried once, so make sure to add the terrain actor to the Game Manager before the next tick
-          * after setting this.
-          * @param newTerrainActorName the new name.
+          * Sets the maximum distance from the player that three intersection point clamping will be used.  
+          * After this, one intersection will be used.
           */
-         void SetTerrainActorName(const std::string& newTerrainActorName);
+         void SetHighResGroundClampingRange(float range) 
+         { 
+            mHighResClampRange = range; 
+            mHighResClampRange2 = range * range; 
+         }
+
+         /**
+          * @return the maximum distance from the player that three intersection point clamping will be used.  
+          */
+         float GetHighResGroundClampingRange() const { return mHighResClampRange; }
          
       protected:
          virtual ~DeadReckoningComponent();
+
+         /**
+          * Clamps an actor to the ground.  This doesn't actually move an actor, it just outputs the position and rotation.
+          * @param timeSinceUpdate the amount of time since the last actor update.
+          * @param position output new actor position.  The current position should be passed it so it can be modified.
+          * @param rotation output new actor rotation.  The current rotation should be passed it so it can be modified.
+          * @param xform the current absolute transform of the actor.  This is passed in to allow access to matrices and such.
+          * @param gameActorProxy the actual actor.  This is passed case collision geometry is needed.
+          * @param helper the deadreckoning helper for the actor
+          */
+         void ClampToGround(float timeSinceUpdate, osg::Vec3& position, osg::Matrix& rotation, dtCore::Transform& xform, 
+            dtGame::GameActorProxy& gameActorProxy, DeadReckoningHelper& helper);
+         
+         ///Version of clamping that uses three intersection points to calculate the height and the rotation.
+         void ClampToGroundThreePoint(float timeSinceUpdate, osg::Vec3& position, osg::Matrix& rotation, dtCore::Transform& xform,
+            dtGame::GameActorProxy& gameActorProxy);
+         
+         ///Version of clamping that uses one intersection points and the vertex normal.
+         void ClampToGroundOnePoint(float timeSinceUpdate, osg::Vec3& position, osg::Matrix& rotation, dtCore::Transform& xform);
+
+         dtCore::Isector& GetGroundClampIsector();
+
       private:
          ///number of seconds between forcing vehicles to ground clamp.
          static const float ForceClampTime;
          
          dtUtil::Log* mLogger;
-         std::string mTerrainActorName;
-         dtCore::RefPtr<dtGame::GameActorProxy> mPlayerActor;
-         dtCore::RefPtr<dtDAL::ActorProxy> mTerrainActor;
+         dtCore::RefPtr<dtCore::Transformable> mEyePointActor;
+         dtCore::RefPtr<dtCore::Transformable> mTerrainActor;
          dtCore::RefPtr<dtCore::Isector> mIsector;
-         bool mTerrainQueried; //< this bool is set to true if the actor attempts to find the terrain.  This supports never finding it.
          
-         float mTimeUntilForceClamp;
+         float mTimeUntilForceClamp, mHighResClampRange, mHighResClampRange2;
          
-         std::map<dtCore::RefPtr<dtGame::GameActorProxy>, dtCore::RefPtr<DeadReckoningHelper> > mRegisteredActors;
+         std::map<dtCore::UniqueId, dtCore::RefPtr<DeadReckoningHelper> > mRegisteredActors;
          
          void TickRemote(const dtGame::TickMessage& tickMessage);
-         void ClampToGround(float timeSinceUpdate, osg::Vec3& position, osg::Matrix& rotation, dtCore::Transform& xform, dtGame::GameActorProxy& gameActorProxy);
-         double GetTerrainZIntersectionPoint(dtCore::DeltaDrawable& terrainActor, const osg::Vec3& point);
-         
-         
+                  
+         double GetTerrainZIntersectionPoint(dtCore::DeltaDrawable& terrainActor, const osg::Vec3& point, osg::Vec3& groundNormalOut);
+      
    };
    
 }

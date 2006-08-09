@@ -89,13 +89,13 @@ namespace dtGame
           * Tells is a message type is supported
           * @return True if it is, false if not
           */
-         bool IsMessageTypeSupported(const MessageType &msg) const throw();
+         bool IsMessageTypeSupported(const MessageType &msg) const;
 
          /**
           * Gets a list of supported types
           * @param The vector to fill
           */
-         void GetSupportedMessageTypes(std::vector<const MessageType*> &vec) throw();
+         void GetSupportedMessageTypes(std::vector<const MessageType*> &vec);
 
          /**
           * Returns a MessageType for the corresponding id.
@@ -104,13 +104,13 @@ namespace dtGame
           * @return A reference to the MessageType
           * @throws dtUtil::Exception with enum MessageFactoryException::TYPE_NOT_REGISTERED if the type is not found.
           */
-         const MessageType &GetMessageTypeById(unsigned short id) const throw(dtUtil::Exception);
+         const MessageType &GetMessageTypeById(unsigned short id) const;
 
          /**
           * Returns a MessageType for the corresponding name
           * @return A pointer to the MessageType or NULL if there was no matching message type.
           */
-         const MessageType* GetMessageTypeByName(const std::string& name) const throw();
+         const MessageType* GetMessageTypeByName(const std::string& name) const;
          
          /**
           * Creates a message from the factory and fills a passed in refptr.
@@ -122,7 +122,7 @@ namespace dtGame
           * @throws dtUtil::Exception if the given message type is not registered.
           */
          template <typename MessageClassName>
-         void CreateMessage(const MessageType &msgType, dtCore::RefPtr<MessageClassName>& result) throw(dtUtil::Exception)
+         void CreateMessage(const MessageType &msgType, dtCore::RefPtr<MessageClassName>& result)
          {
             dtCore::RefPtr<Message> msg = CreateMessage(msgType);
             result = static_cast<MessageClassName*>(msg.get());
@@ -136,7 +136,7 @@ namespace dtGame
           * @return A pointer to the message, or NULL if error
           * @throws dtUtil::Exception if the given message type is not registered.
           */
-         dtCore::RefPtr<Message> CreateMessage(const MessageType &msgType) throw(dtUtil::Exception);
+         dtCore::RefPtr<Message> CreateMessage(const MessageType &msgType);
 
          /**
           * Make a copy of a message.  It makes sure the right type is created and then
@@ -145,7 +145,7 @@ namespace dtGame
           * @param the clone.
           * @throws dtUtil::Exception if the message cannot be cloned.
           */
-         dtCore::RefPtr<Message> CloneMessage(const Message& msg) throw(dtUtil::Exception);
+         dtCore::RefPtr<Message> CloneMessage(const Message& msg);
          
       private:
 

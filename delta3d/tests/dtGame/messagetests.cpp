@@ -22,6 +22,7 @@
 #include <iostream>
 #include <osg/Math>
 #include <dtUtil/log.h>
+#include <dtActors/engineactorregistry.h>
 #include <dtCore/refptr.h>
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
@@ -53,6 +54,7 @@
 #if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
    #include <Windows.h>
    #define SLEEP(milliseconds) Sleep((milliseconds))
+   #define snprintf _snprintf
 #else
    #include <unistd.h>
    #define SLEEP(milliseconds) usleep(((milliseconds) * 1000))
@@ -196,8 +198,8 @@ void MessageTests::setUp()
       mGameManager = new dtGame::GameManager(*scene);
       mGameManager->LoadActorRegistry(mTestGameActorLibrary);
       mGameManager->LoadActorRegistry(mTestActorLibrary);
-      dtCore::System::Instance()->SetShutdownOnWindowClose(false);
-      dtCore::System::Instance()->Start();
+      dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
+      dtCore::System::GetInstance().Start();
 
       dtDAL::Project::GetInstance().SetContext("dtGame/TestGameProject");
    }
@@ -217,8 +219,8 @@ void MessageTests::tearDown()
       try
       {
 
-         dtCore::System::Instance()->SetPause(false);
-         dtCore::System::Instance()->Stop();
+         dtCore::System::GetInstance().SetPause(false);
+         dtCore::System::GetInstance().Stop();
 
          if (!mGameManager->GetCurrentMap().empty())
          {
@@ -250,10 +252,10 @@ void MessageTests::tearDown()
 
 void MessageTests::createActors(dtDAL::Map& map)
 {
-   std::vector<dtCore::RefPtr<dtDAL::ActorType> > actors;
+   std::vector<dtCore::RefPtr<dtDAL::ActorType> > actorTypes;
    std::vector<dtDAL::ActorProperty *> props;
 
-   mGameManager->GetActorTypes(actors);
+   mGameManager->GetActorTypes(actorTypes);
 
    int skippedActors = 0;
    int nameCounter = 0;
@@ -261,11 +263,13 @@ void MessageTests::createActors(dtDAL::Map& map)
 
    mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, "Adding one of each proxy type to the map:");
 
-   for (unsigned int i=0; i< actors.size(); i++)
+   for (unsigned int i=0; i< actorTypes.size(); i++)
    {
       // In order to keep the tests fasts, we skip the nasty slow ones.
-      if (actors[i]->GetName() == "Cloud Plane" || actors[i]->GetName() == "Environment" || 
-         actors[i]->GetName() == "Test Environment Actor") 
+      if (actorTypes[i]->GetName() == "Cloud Plane" || 
+          actorTypes[i]->GetName() == "Environment" || 
+          actorTypes[i]->GetName() == "Test Environment Actor" ||
+          actorTypes[i]->GetName() == "Waypoint") 
       {
          skippedActors ++;
          continue; // go to next actor
@@ -274,9 +278,9 @@ void MessageTests::createActors(dtDAL::Map& map)
       dtCore::RefPtr<dtDAL::ActorProxy> proxy;
 
       mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
-                         "Creating actor proxy %s with category %s.", actors[i]->GetName().c_str(), actors[i]->GetCategory().c_str());
+                         "Creating actor proxy %s with category %s.", actorTypes[i]->GetName().c_str(), actorTypes[i]->GetCategory().c_str());
 
-      proxy = mGameManager->CreateActor(*actors[i]);
+      proxy = mGameManager->CreateActor(*actorTypes[i]);
       snprintf(nameAsString, 21, "%d", nameCounter);
       proxy->SetName(std::string(nameAsString));
       nameCounter++;
@@ -428,6 +432,12 @@ void MessageTests::TestBaseMessages()
          static_cast<dtGame::BooleanMessageParameter*>(three)->GetValue() ==
          static_cast<dtGame::BooleanMessageParameter*>(h)->GetValue() );
 
+      dtCore::RefPtr<dtGame::ActorUpdateMessage> actorMsg = new dtGame::ActorUpdateMessage;
+      actorMsg->SetActorTypeName("Tripod");
+      actorMsg->SetActorTypeCategory("dtcore");
+      dtCore::RefPtr<dtDAL::ActorType> type = actorMsg->GetActorType();
+      CPPUNIT_ASSERT(type.valid());
+      CPPUNIT_ASSERT_MESSAGE("The message type should be correct", type == dtActors::EngineActorRegistry::TRIPOD_ACTOR_TYPE);
    }
    catch (const dtUtil::Exception &e)
    {
@@ -566,7 +576,7 @@ void MessageTests::TestMessageDelivery()
 
       tc->reset();
       SLEEP(10);
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
       for (unsigned i = 0; i < tc->GetReceivedProcessMessages().size(); ++i)
       {
          CPPUNIT_ASSERT(tc->GetReceivedProcessMessages()[i].valid());
@@ -642,7 +652,7 @@ void MessageTests::TestActorPublish()
       mGameManager->ChangeTimeSettings(mGameManager->GetSimulationTime(), 1.5, mGameManager->GetSimulationClockTime());
       tc->reset();
       SLEEP(10);
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
       for (unsigned i = 0; i < tc->GetReceivedProcessMessages().size(); ++i)
       {
          CPPUNIT_ASSERT(tc->GetReceivedProcessMessages()[i].valid());
@@ -677,7 +687,7 @@ void MessageTests::TestActorPublish()
 
       //Another Frame...
       SLEEP(10);
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
 
       CPPUNIT_ASSERT(tc->GetReceivedDispatchNetworkMessages().size() > 0);
       for (unsigned i = 0; i < tc->GetReceivedDispatchNetworkMessages().size(); ++i)
@@ -710,10 +720,10 @@ void MessageTests::TestPauseResume()
 
    mGameManager->SetPaused(true);
    CPPUNIT_ASSERT_MESSAGE("The Game Manager should be paused.", mGameManager->IsPaused());
-   CPPUNIT_ASSERT_MESSAGE("System should be paused.", dtCore::System::Instance()->GetPause());
+   CPPUNIT_ASSERT_MESSAGE("System should be paused.", dtCore::System::GetInstance().GetPause());
 
    SLEEP(10);
-   dtCore::System::Instance()->Step();
+   dtCore::System::GetInstance().Step();
 
    dtCore::RefPtr<const dtGame::Message> processPausedMsg = tc->FindProcessMessageOfType(dtGame::MessageType::INFO_PAUSED);
    dtCore::RefPtr<const dtGame::Message> processResumedMsg = tc->FindProcessMessageOfType(dtGame::MessageType::INFO_RESUMED);
@@ -725,7 +735,7 @@ void MessageTests::TestPauseResume()
    double oldSimTime = mGameManager->GetSimulationTime();
 
    SLEEP(10);
-   dtCore::System::Instance()->Step();
+   dtCore::System::GetInstance().Step();
 
    dtCore::RefPtr<const dtGame::Message> processTickLocalMsg = tc->FindProcessMessageOfType(dtGame::MessageType::TICK_LOCAL);
    dtCore::RefPtr<const dtGame::Message> processTickRemoteMsg = tc->FindProcessMessageOfType(dtGame::MessageType::TICK_REMOTE);
@@ -749,10 +759,10 @@ void MessageTests::TestPauseResume()
 
    mGameManager->SetPaused(false);
    CPPUNIT_ASSERT_MESSAGE("The Game Manager should be paused.", !mGameManager->IsPaused());
-   CPPUNIT_ASSERT_MESSAGE("System should be paused.", !dtCore::System::Instance()->GetPause());
+   CPPUNIT_ASSERT_MESSAGE("System should be paused.", !dtCore::System::GetInstance().GetPause());
 
    SLEEP(10);
-   dtCore::System::Instance()->Step();
+   dtCore::System::GetInstance().Step();
 
    processPausedMsg = tc->FindProcessMessageOfType(dtGame::MessageType::INFO_PAUSED);
    processResumedMsg = tc->FindProcessMessageOfType(dtGame::MessageType::INFO_RESUMED);
@@ -770,12 +780,12 @@ void MessageTests::TestPauseResumeSystem()
       mGameManager->AddComponent(*tc, dtGame::GameManager::ComponentPriority::NORMAL);
       CPPUNIT_ASSERT_MESSAGE("The Game Manager should not start out paused.", !mGameManager->IsPaused());
 
-      dtCore::System::Instance()->SetPause(true);
+      dtCore::System::GetInstance().SetPause(true);
       CPPUNIT_ASSERT_MESSAGE("The Game Manager should be paused.", mGameManager->IsPaused());
-      CPPUNIT_ASSERT_MESSAGE("System should be paused.", dtCore::System::Instance()->GetPause());
+      CPPUNIT_ASSERT_MESSAGE("System should be paused.", dtCore::System::GetInstance().GetPause());
 
       SLEEP(10);
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
 
       dtCore::RefPtr<const dtGame::Message> processPausedMsg = tc->FindProcessMessageOfType(dtGame::MessageType::INFO_PAUSED);
       dtCore::RefPtr<const dtGame::Message> processResumedMsg = tc->FindProcessMessageOfType(dtGame::MessageType::INFO_RESUMED);
@@ -785,12 +795,12 @@ void MessageTests::TestPauseResumeSystem()
 
       tc->reset();
 
-      dtCore::System::Instance()->SetPause(false);
+      dtCore::System::GetInstance().SetPause(false);
       CPPUNIT_ASSERT_MESSAGE("The Game Manager should be paused.", !mGameManager->IsPaused());
-      CPPUNIT_ASSERT_MESSAGE("System should be paused.", !dtCore::System::Instance()->GetPause());
+      CPPUNIT_ASSERT_MESSAGE("System should be paused.", !dtCore::System::GetInstance().GetPause());
 
       SLEEP(10);
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
 
       processPausedMsg = tc->FindProcessMessageOfType(dtGame::MessageType::INFO_PAUSED);
       processResumedMsg = tc->FindProcessMessageOfType(dtGame::MessageType::INFO_RESUMED);
@@ -816,7 +826,7 @@ void MessageTests::TestRejectMessage()
    dtCore::RefPtr<dtGame::Message> msg = mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::REQUEST_PAUSE);
    mGameManager->RejectMessage(*msg, "test reason");
    SLEEP(10);
-   dtCore::System::Instance()->Step();
+   dtCore::System::GetInstance().Step();
 
    // message should have been processed (not sent)
 
@@ -845,7 +855,7 @@ void MessageTests::TestRejectMessage()
    msg2->SetSource(*testMachine);
    mGameManager->RejectMessage(*msg2, "test reason2");
    SLEEP(10);
-   dtCore::System::Instance()->Step();
+   dtCore::System::GetInstance().Step();
 
    // message should have been sent (not processed)
 
@@ -875,13 +885,13 @@ void MessageTests::TestTimeScaling()
    CPPUNIT_ASSERT_MESSAGE("The Game Manager should not start out paused.", !mGameManager->IsPaused());
 
    double oldSimTime = mGameManager->GetSimulationTime();
-   mGameManager->ChangeTimeSettings(mGameManager->GetSimulationTime(), 4.0f, dtCore::System::Instance()->GetRealClockTime());
+   mGameManager->ChangeTimeSettings(mGameManager->GetSimulationTime(), 4.0f, dtCore::System::GetInstance().GetRealClockTime());
    CPPUNIT_ASSERT_MESSAGE("The time scale should be 4.0.", osg::equivalent(4.0f, mGameManager->GetTimeScale()));
    CPPUNIT_ASSERT_MESSAGE("The simulation clock time should match the realtime clock.",
-      mGameManager->GetSimulationClockTime() == dtCore::System::Instance()->GetRealClockTime());
+      mGameManager->GetSimulationClockTime() == dtCore::System::GetInstance().GetRealClockTime());
    dtCore::Timer_t oldSimClockTime = mGameManager->GetSimulationClockTime();
    SLEEP(10);
-   dtCore::System::Instance()->Step();
+   dtCore::System::GetInstance().Step();
 
    dtCore::RefPtr<const dtGame::Message> processTickLocalMsg = tc->FindProcessMessageOfType(dtGame::MessageType::TICK_LOCAL);
    dtCore::RefPtr<const dtGame::Message> processTickRemoteMsg = tc->FindProcessMessageOfType(dtGame::MessageType::TICK_REMOTE);
@@ -912,7 +922,7 @@ void MessageTests::TestTimeScaling()
 
    mGameManager->ChangeTimeSettings(mGameManager->GetSimulationTime(), 0.5f, mGameManager->GetSimulationClockTime());
    SLEEP(10);
-   dtCore::System::Instance()->Step();
+   dtCore::System::GetInstance().Step();
 
    processTickLocalMsg = tc->FindProcessMessageOfType(dtGame::MessageType::TICK_LOCAL);
    processTickRemoteMsg = tc->FindProcessMessageOfType(dtGame::MessageType::TICK_REMOTE);
@@ -940,7 +950,7 @@ void MessageTests::TestTimeChange()
 
    mGameManager->ChangeTimeSettings(newTime, 0.5f, oldSimClock);
    SLEEP(10);
-   dtCore::System::Instance()->Step();
+   dtCore::System::GetInstance().Step();
 
    dtCore::RefPtr<const dtGame::Message> processTickLocalMsg = tc->FindProcessMessageOfType(dtGame::MessageType::TICK_LOCAL);
    dtCore::RefPtr<const dtGame::Message> processTickRemoteMsg = tc->FindProcessMessageOfType(dtGame::MessageType::TICK_REMOTE);
@@ -978,47 +988,56 @@ void MessageTests::TestTimeChange()
 
 void MessageTests::TestChangeMap()
 {
-   dtDAL::Project& project = dtDAL::Project::GetInstance();
-   std::string mapName = "Many Game Actors";
-   dtDAL::Map* map = &project.CreateMap(mapName, "mga");
-
-   createActors(*map);
-   unsigned numActors = map->GetAllProxies().size();
-
-   project.SaveMap(*map, 0);
-   project.CloseMap(*map);
-
-   TestComponent& tc = *new TestComponent();
-   mGameManager->AddComponent(tc, dtGame::GameManager::ComponentPriority::NORMAL);
-   mGameManager->ChangeMap(mapName, false, false);
-
-   std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > toFill;
-   mGameManager->GetAllActors(toFill);
-
-   CPPUNIT_ASSERT_MESSAGE("The number of actors in the GM should match the map.", numActors == toFill.size());
-
-   SLEEP(10);
-   dtCore::System::Instance()->Step();
-
-   CPPUNIT_ASSERT_MESSAGE("The number of actors in the GM should match the map.", numActors == toFill.size());
-
-   dtCore::RefPtr<const dtGame::Message> processMapLoadedMsg = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_LOADED);
-   CPPUNIT_ASSERT_MESSAGE("A map loaded message should have been processed.", processMapLoadedMsg.valid());
-   const dtGame::MapLoadedMessage* mapLoadedMsg = static_cast<const dtGame::MapLoadedMessage*>(processMapLoadedMsg.get());
-   CPPUNIT_ASSERT_MESSAGE("The Map name in the message should be " + mapName,  mapLoadedMsg->GetLoadedMapName() == mapName);
-
-   for (unsigned i = 0; i < toFill.size(); ++i)
+   try
    {
-      if (toFill[i]->IsGameActorProxy())
+      dtDAL::Project& project = dtDAL::Project::GetInstance();
+      std::string mapName = "Many Game Actors";
+      dtDAL::Map* map = &project.CreateMap(mapName, "mga");
+
+      createActors(*map);
+      unsigned numActors = map->GetAllProxies().size();
+
+      project.SaveMap(*map, 0);
+      project.CloseMap(*map);
+
+      TestComponent& tc = *new TestComponent();
+      mGameManager->AddComponent(tc, dtGame::GameManager::ComponentPriority::NORMAL);
+
+      mGameManager->ChangeMap(mapName, false, false);
+
+      std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > toFill;
+      mGameManager->GetAllActors(toFill);
+
+      CPPUNIT_ASSERT_MESSAGE("The number of actors in the GM should match the map.", numActors == toFill.size());
+
+      SLEEP(10);
+      dtCore::System::GetInstance().Step();
+
+      CPPUNIT_ASSERT_MESSAGE("The number of actors in the GM should match the map.", numActors == toFill.size());
+
+      dtCore::RefPtr<const dtGame::Message> processMapLoadedMsg = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_LOADED);
+      CPPUNIT_ASSERT_MESSAGE("A map loaded message should have been processed.", processMapLoadedMsg.valid());
+      const dtGame::MapLoadedMessage* mapLoadedMsg = static_cast<const dtGame::MapLoadedMessage*>(processMapLoadedMsg.get());
+      CPPUNIT_ASSERT_MESSAGE("The Map name in the message should be " + mapName,  mapLoadedMsg->GetLoadedMapName() == mapName);
+
+      for (unsigned i = 0; i < toFill.size(); ++i)
       {
-         dtCore::RefPtr<dtGame::GameActorProxy> gap = dynamic_cast<dtGame::GameActorProxy*>(toFill[i].get());
-         CPPUNIT_ASSERT(gap != NULL);
-         CPPUNIT_ASSERT_MESSAGE("The game actor proxy should be assigned to the game actor.", &gap->GetGameActor().GetGameActorProxy() == gap.get());
-         std::vector<const dtGame::Invokable*> invokables;
-         gap->GetInvokables(invokables);
-         CPPUNIT_ASSERT_MESSAGE("There should be invokables on the game actor proxies if BuildInvokables was called.", invokables.size() > 0);
+         if (toFill[i]->IsGameActorProxy())
+         {
+            dtCore::RefPtr<dtGame::GameActorProxy> gap = dynamic_cast<dtGame::GameActorProxy*>(toFill[i].get());
+            CPPUNIT_ASSERT(gap != NULL);
+            CPPUNIT_ASSERT_MESSAGE("The game actor proxy should be assigned to the game actor.", &gap->GetGameActor().GetGameActorProxy() == gap.get());
+            std::vector<const dtGame::Invokable*> invokables;
+            gap->GetInvokables(invokables);
+            CPPUNIT_ASSERT_MESSAGE("There should be invokables on the game actor proxies if BuildInvokables was called.", invokables.size() > 0);
+         }
       }
    }
+   catch(const dtUtil::Exception &e) 
+   {
+      //CPPUNIT_FAIL(e.What());
+   }
+   
 }
 
 void MessageTests::TestGameEventMessage()
@@ -1056,7 +1075,7 @@ void MessageTests::TestChangeMapErrorConditions()
       mGameManager->ChangeMap("A Testy Map");
       CPPUNIT_FAIL("The game manager should not have been able to change to any map without a context.");
    }
-   catch(const dtUtil::Exception &e)
+   catch(const dtUtil::Exception&)
    {
       // correct
    }
@@ -1067,7 +1086,7 @@ void MessageTests::TestChangeMapErrorConditions()
       mGameManager->ChangeMap("");
       CPPUNIT_FAIL("The game manager should not have been able to change to an empty string");
    }
-   catch(const dtUtil::Exception &e)
+   catch(const dtUtil::Exception&)
    {
       // correct
    }
@@ -1078,7 +1097,7 @@ void MessageTests::TestChangeMapErrorConditions()
       mGameManager->ChangeMap("This map does not exist");
       CPPUNIT_FAIL("The game manager should not have been able to set the map");
    }
-   catch(const dtUtil::Exception &e)
+   catch(const dtUtil::Exception&)
    {
       // correct
    }
@@ -1088,7 +1107,7 @@ void MessageTests::TestChangeMapErrorConditions()
       dtDAL::Project::GetInstance().SetContext("dtGame/WorkingProject");
       mGameManager->ChangeMap("../examples/testMap/testMap");
    }
-   catch(const dtUtil::Exception &e)
+   catch(const dtUtil::Exception&)
    {
       // correct
    }
@@ -1108,7 +1127,7 @@ void MessageTests::TestDefaultMessageProcessorWithPauseResumeCommands()
    
    mGameManager->SendMessage(*pauseCommand);
    SLEEP(10);
-   dtCore::System::Instance()->Step();
+   dtCore::System::GetInstance().Step();
 
    CPPUNIT_ASSERT_MESSAGE("The Game Manager should now be paused.", mGameManager->IsPaused());
 
@@ -1116,7 +1135,7 @@ void MessageTests::TestDefaultMessageProcessorWithPauseResumeCommands()
    mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::COMMAND_RESUME, resumeCommand);
    mGameManager->SendMessage(*resumeCommand);
    SLEEP(10);
-   dtCore::System::Instance()->Step();
+   dtCore::System::GetInstance().Step();
 
    CPPUNIT_ASSERT_MESSAGE("The Game Manager should now be resumed.", !mGameManager->IsPaused());
 
@@ -1156,7 +1175,7 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(bool
    {
       mGameManager->AddActor(*gap, remote, false);
    }
-   catch (const dtUtil::Exception& ex)
+   catch (const dtUtil::Exception&)
    {
       CPPUNIT_FAIL("Actor should be added with no problems");
    }
@@ -1215,7 +1234,7 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(bool
 
    mGameManager->SendMessage(*actorUpdateMsg);
    SLEEP(10);
-   dtCore::System::Instance()->Step();
+   dtCore::System::GetInstance().Step();
    if (remote)
    {
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Has Fired should be changed to true.", 
@@ -1275,7 +1294,7 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorDeletes(bool
    {
       mGameManager->AddActor(*gap, remote, false);
    }
-   catch (const dtUtil::Exception& ex)
+   catch (const dtUtil::Exception&)
    {
       CPPUNIT_FAIL("Actor should be added with no problems");
    }
@@ -1286,7 +1305,7 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorDeletes(bool
 
    mGameManager->SendMessage(*actorDeleteMsg);
    SLEEP(10);
-   dtCore::System::Instance()->Step();
+   dtCore::System::GetInstance().Step();
 
    if (remote)
    {
@@ -1362,7 +1381,7 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorCreates(bool
    CPPUNIT_ASSERT(mGameManager->FindGameActorById(gap->GetId()) == NULL);
 
    SLEEP(10);
-   dtCore::System::Instance()->Step();
+   dtCore::System::GetInstance().Step();
 
    dtCore::RefPtr<dtGame::GameActorProxy> gapRemote = mGameManager->FindGameActorById(gap->GetId());
 
@@ -1402,7 +1421,7 @@ void MessageTests::TestActorEnteredWorldMessage()
    CPPUNIT_ASSERT_MESSAGE("The game actor proxy has not yet been added to the game manager, its scene parent pointer should be NULL", scene == NULL);
 
    mGameManager->AddActor(*gap, false, false);
-   dtCore::System::Instance()->Step();
+   dtCore::System::GetInstance().Step();
    msgs = tc->GetReceivedProcessMessages();
    bool receivedCreateMsg = false;
    for(unsigned int i = 0; i < msgs.size(); i++)

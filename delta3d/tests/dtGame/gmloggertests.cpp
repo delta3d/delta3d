@@ -337,8 +337,8 @@ void GMLoggerTests::setUp()
       mGameManager = new dtGame::ClientGameManager(*scene);
       dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
       mGameManager->LoadActorRegistry(mTestGameActorLibrary);
-      dtCore::System::Instance()->SetShutdownOnWindowClose(false);
-      dtCore::System::Instance()->Start();
+      dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
+      dtCore::System::GetInstance().Start();
    }
    catch (const dtUtil::Exception& ex)
    {
@@ -367,8 +367,8 @@ void GMLoggerTests::tearDown()
 
          stream = NULL;
 
-         dtCore::System::Instance()->SetPause(false);
-         dtCore::System::Instance()->Stop();
+         dtCore::System::GetInstance().SetPause(false);
+         dtCore::System::GetInstance().Stop();
       }
    }
    catch (const dtUtil::Exception& e)
@@ -508,7 +508,7 @@ void GMLoggerTests::TestBinaryLogStreamReadWriteErrors()
          errorStream->WriteMessage(*tickMessage.get(),100.0);
          CPPUNIT_FAIL("Should have caught a LOGGER_IO_EXCEPTION.");
       }
-      catch (const dtUtil::Exception &e)
+      catch (const dtUtil::Exception&)
       {
       }
 
@@ -527,7 +527,7 @@ void GMLoggerTests::TestBinaryLogStreamReadWriteErrors()
          tickMessage = (dtGame::TickMessage *)(errorStream->ReadMessage(timeStamp)).get();
          CPPUNIT_FAIL("Should have caught a LOGGER_IO_EXCEPTION.");
       }
-      catch (const dtUtil::Exception &e)
+      catch (const dtUtil::Exception&)
       {
       }
    }
@@ -954,7 +954,7 @@ void GMLoggerTests::TestPlaybackRecordCycle()
 
       mGameManager->AddActor(*gameProxy,false,false);
       SLEEP(10);
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
 
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Wrong number of game actors before changing to record.",
          (unsigned)1,mGameManager->GetNumGameActors());
@@ -963,7 +963,7 @@ void GMLoggerTests::TestPlaybackRecordCycle()
       //actor create messages.
       logController->RequestChangeStateToRecord();
       SLEEP(10);
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
 
       mGameManager->CreateActor("ExampleActors", "Test1Actor", gameProxy);
       mGameManager->AddActor(*gameProxy,false,false);
@@ -972,26 +972,26 @@ void GMLoggerTests::TestPlaybackRecordCycle()
       mGameManager->AddActor(*gameProxy,false,false);
 
       SLEEP(10);
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Wrong number of actors correctly added during record.",
          (unsigned)3,mGameManager->GetNumGameActors());
 
       testSignal->Reset();
       logController->RequestServerGetStatus();
       SLEEP(10); // tick the GM so it can send the messages
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
       CPPUNIT_ASSERT_MESSAGE("Should be RECORD",
          testSignal->mStatus.GetStateEnum() == dtGame::LogStateEnumeration::LOGGER_STATE_RECORD);
 
       logController->RequestChangeStateToIdle();
       SLEEP(10);
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
       CPPUNIT_ASSERT_MESSAGE("Should be IDLE",
          testSignal->mStatus.GetStateEnum() == dtGame::LogStateEnumeration::LOGGER_STATE_IDLE);
 
       tc->reset();
       logController->RequestChangeStateToPlayback();
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
       CPPUNIT_ASSERT_MESSAGE("Should be Playback",
          testSignal->mStatus.GetStateEnum() == dtGame::LogStateEnumeration::LOGGER_STATE_PLAYBACK);
       CPPUNIT_ASSERT_MESSAGE("We should have some number of messages", tc->GetReceivedProcessMessages().size() >= 3);
@@ -1004,13 +1004,13 @@ void GMLoggerTests::TestPlaybackRecordCycle()
       while (!mGameManager->IsPaused())
       {
          SLEEP(10);
-         dtCore::System::Instance()->Step();
+         dtCore::System::GetInstance().Step();
       }
 
       testSignal->Reset();
       logController->RequestServerGetStatus();
       SLEEP(10); // tick the GM so it can send the messages
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
 
       //There should be three actors.  The test player and the two actors added
       //during playback.
@@ -1169,16 +1169,16 @@ void GMLoggerTests::TestLoggerGetKeyframes()
       mGameManager->CreateActor("ExampleActors", "TestPlayer", gameProxy);
       mGameManager->AddActor(*gameProxy,false,false);
 
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
       SLEEP(10);
 
       logController->RequestChangeStateToRecord();
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
       SLEEP(10);
 
       //At this point, there should be one keyframe.
       logController->RequestServerGetKeyframes();
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
       SLEEP(10);
       kfList = logController->GetLastKnownKeyframeList();
       CPPUNIT_ASSERT_MESSAGE("Should have one keyframe.",kfList.size() == 1);
@@ -1194,7 +1194,7 @@ void GMLoggerTests::TestLoggerGetKeyframes()
 
       mGameManager->CreateActor("ExampleActors", "TestPlayer", gameProxy);
       mGameManager->AddActor(*gameProxy,false,false);
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
       SLEEP(10);
 
       dtGame::LogKeyframe keyFrame;
@@ -1202,12 +1202,12 @@ void GMLoggerTests::TestLoggerGetKeyframes()
       keyFrame.SetDescription("bob_description");
       keyFrame.SetActiveMap("bob_map");
       logController->RequestCaptureKeyframe(keyFrame);
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
       SLEEP(10);
 
       //Now there should be two keyframes.
       logController->RequestServerGetKeyframes();
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
       SLEEP(10);
       kfList = logController->GetLastKnownKeyframeList();
       CPPUNIT_ASSERT_MESSAGE("Should have two keyframes.",kfList.size() == 2);
@@ -1224,16 +1224,16 @@ void GMLoggerTests::TestLoggerGetKeyframes()
       logController->RequestChangeStateToIdle();
       mGameManager->DeleteAllActors();
       SLEEP(10);
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
 
       logController->RequestChangeStateToRecord();
       SLEEP(10);
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
 
       mGameManager->CreateActor("ExampleActors", "TestPlayer", gameProxy);
       mGameManager->AddActor(*gameProxy,false,false);
 
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
       SLEEP(10);
 
       //Now go through a loop adding keyframe after keyframe...
@@ -1246,7 +1246,7 @@ void GMLoggerTests::TestLoggerGetKeyframes()
          keyFrame.SetDescription("bob_description" + loopCount);
          keyFrame.SetActiveMap("bob_map" + loopCount);
          logController->RequestCaptureKeyframe(keyFrame);
-         dtCore::System::Instance()->Step();
+         dtCore::System::GetInstance().Step();
          SLEEP(10);
 
          if (rejectMsgSignal->mRejectMessage != NULL)
@@ -1261,7 +1261,7 @@ void GMLoggerTests::TestLoggerGetKeyframes()
 
       //Verify the long list of keyframes..
       logController->RequestServerGetKeyframes();
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
       SLEEP(10);
       kfList = logController->GetLastKnownKeyframeList();
 
@@ -1506,7 +1506,7 @@ void GMLoggerTests::TestLoggerGetTags()
 
       logController->RequestServerGetTags();
       logController->RequestServerGetKeyframes();
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
       SLEEP(10);
       tagList = logController->GetLastKnownTagList();
       kfList = logController->GetLastKnownKeyframeList();
@@ -1516,7 +1516,7 @@ void GMLoggerTests::TestLoggerGetTags()
          kfList.empty() == true);
 
       logController->RequestChangeStateToRecord();
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
       SLEEP(10);
 
       double tagSimTimes[20];
@@ -1534,12 +1534,12 @@ void GMLoggerTests::TestLoggerGetTags()
 
          logController->RequestInsertTag(tag);
          tagSimTimes[i] = mGameManager->GetSimulationTime();
-         dtCore::System::Instance()->Step();
+         dtCore::System::GetInstance().Step();
          SLEEP(10);
       }
 
       logController->RequestChangeStateToIdle();
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
       SLEEP(10);
 
       logController->RequestChangeStateToPlayback();
@@ -1548,7 +1548,7 @@ void GMLoggerTests::TestLoggerGetTags()
       //Make sure tags and keyframes got recorded properly.
       logController->RequestServerGetTags();
       logController->RequestServerGetKeyframes();
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
       SLEEP(10);
       tagList = logController->GetLastKnownTagList();
       kfList = logController->GetLastKnownKeyframeList();
@@ -1634,25 +1634,25 @@ void GMLoggerTests::TestLoggerAutoKeyframeInterval()
       msgSignal->RegisterSignals(*logController);
 
       logController->RequestChangeStateToIdle();
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
 
       //First make sure the user cannot set the interval to negative time..
       msgSignal->Reset();
       logController->RequestSetAutoKeyframeInterval(-10.0);
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
       CPPUNIT_ASSERT_MESSAGE("Should not be allowed to set a negative auto keyframe interval",
          msgSignal->mRejectionSignalReceived);
 
       msgSignal->Reset();
       logController->RequestSetAutoKeyframeInterval(0.25f);
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
 
       logController->RequestChangeStateToRecord();
       SLEEP(300);
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
 
       logController->RequestServerGetKeyframes();
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
       kfList = logController->GetLastKnownKeyframeList();
       CPPUNIT_ASSERT_MESSAGE("Should have one keyframe.",kfList.size() == 1);
 
@@ -1660,7 +1660,7 @@ void GMLoggerTests::TestLoggerAutoKeyframeInterval()
       double currTime=startTime;
       while (currTime <= (startTime+1.0))
       {
-         dtCore::System::Instance()->Step();
+         dtCore::System::GetInstance().Step();
          currTime = mGameManager->GetSimulationTime();
 
          //Make sure we did not get any error messages during the keyframe capture.
@@ -1675,7 +1675,7 @@ void GMLoggerTests::TestLoggerAutoKeyframeInterval()
       }
 
       logController->RequestServerGetKeyframes();
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
       kfList = logController->GetLastKnownKeyframeList();
 
       //Should have captured 4ish keyframes (0.25 seconds interval over 1 second) plus
@@ -1683,13 +1683,13 @@ void GMLoggerTests::TestLoggerAutoKeyframeInterval()
       CPPUNIT_ASSERT(kfList.size() == 5 || kfList.size() == 4);
 
       logController->RequestChangeStateToIdle();
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
 
       logController->RequestChangeStateToPlayback();
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
 
       //for (int i=0; i<500; i++)
-      //   dtCore::System::Instance()->Step();
+      //   dtCore::System::GetInstance().Step();
 
       if (msgSignal->mRejectMessage != NULL)
       {
@@ -1730,17 +1730,17 @@ void GMLoggerTests::TestLoggerKeyframeMessage()
 
       logController->RequestChangeStateToRecord();
       SLEEP(10);
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
 
       dtGame::LogKeyframe kf;
       kf.SetName("test");
       kf.SetDescription("testd");
       logController->RequestCaptureKeyframe(kf);
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
       SLEEP(10);
 
       logController->RequestServerGetKeyframes();
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
       SLEEP(10);
 
       std::vector<dtGame::LogKeyframe> kfList;
@@ -1893,7 +1893,7 @@ void GMLoggerTests::TestLogControllerComponent()
 
       tc->reset();
       double deltaTime[2] = {0.3, 0.3};
-      dtCore::System::Instance()->SendMessage("preframe", &deltaTime);
+      dtCore::System::GetInstance().SendMessage("preframe", &deltaTime);
 
       // validate them.
       for (unsigned i = 0; i < tc->GetReceivedProcessMessages().size(); ++i)
@@ -2031,7 +2031,7 @@ void GMLoggerTests::TestControllerSignals()
       mGameManager->SendMessage(*statusMessage);
       //mGameManager->SendNetworkMessage(*statusMessage);
       double deltaTime[2] = {0.3, 0.3};
-      dtCore::System::Instance()->SendMessage("preframe", &deltaTime); // let the GM send 'em.
+      dtCore::System::GetInstance().SendMessage("preframe", &deltaTime); // let the GM send 'em.
 
       // check the results
 
@@ -2088,7 +2088,7 @@ void GMLoggerTests::TestServerLogger()
 
       logController->RequestServerGetStatus();
       SLEEP(10); // tick the GM so it can send the messages
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
       CPPUNIT_ASSERT_MESSAGE("Request Status Msg should have caused a Status response message.",
          testSignal->mStatusSignalReceived);
 
@@ -2098,7 +2098,7 @@ void GMLoggerTests::TestServerLogger()
       tc->reset();
       logController->RequestChangeStateToIdle();
       SLEEP(10); // tick the GM so it can send the messages
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
       CPPUNIT_ASSERT_MESSAGE("Request Change State to Idle (when in idle) should have caused a Status response message.",
          testSignal->mStatusSignalReceived);
       dtCore::RefPtr<const dtGame::Message> status2 = tc->FindProcessMessageOfType(dtGame::MessageType::LOG_INFO_STATUS);
@@ -2111,7 +2111,7 @@ void GMLoggerTests::TestServerLogger()
       CPPUNIT_ASSERT_MESSAGE("A silly check for Test Signal - should have received signal status flag = false.  Would stink to have someone break signal class and all our tests are bogus", !testSignal->mStatusSignalReceived);
       logController->RequestSetLogFile("UnitTestLoggerFile");
       SLEEP(10); // tick the GM so it can send the messages
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
       CPPUNIT_ASSERT_MESSAGE("Set Log File should cause a Status message.",
          testSignal->mStatusSignalReceived);
       CPPUNIT_ASSERT_MESSAGE("Set Log File should return log file in status",
@@ -2123,7 +2123,7 @@ void GMLoggerTests::TestServerLogger()
       testSignal->Reset();
       logController->RequestChangeStateToRecord();
       SLEEP(10); // tick the GM so it can send the messages
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
       CPPUNIT_ASSERT_MESSAGE("Request Change State to Record should have caused a Status response message.",
          testSignal->mStatusSignalReceived);
       CPPUNIT_ASSERT_MESSAGE("Request Change State to Record should have sent status with RECORD.",
@@ -2132,7 +2132,7 @@ void GMLoggerTests::TestServerLogger()
       // force at least one extra message to check that # count goes up
       logController->RequestServerGetStatus();
       SLEEP(10); // tick the GM so it can send the messages
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
       CPPUNIT_ASSERT_MESSAGE("We should have recorded a msg", msgCount < testSignal->mStatus.GetNumMessages());
 
       // try to set the log file while in Record mode, make sure it fails.
@@ -2140,7 +2140,7 @@ void GMLoggerTests::TestServerLogger()
       testSignal->Reset();
       logController->RequestSetLogFile("ERRORSET");
       SLEEP(10); // tick the GM so it can send the messages
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
       CPPUNIT_ASSERT_MESSAGE("Set Log File with error should NOT cause a Status message.", !testSignal->mStatusSignalReceived);
       // should have gotten a rejection message
       const dtGame::Message *causeMsg2 = testSignal->mRejectMessage->GetCausingMessage();
@@ -2151,7 +2151,7 @@ void GMLoggerTests::TestServerLogger()
       testSignal->Reset();
       logController->RequestServerGetStatus();
       SLEEP(10); // tick the GM so it can send the messages
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
       CPPUNIT_ASSERT_MESSAGE("Failed Set Log File should not change file name ",
          testSignal->mStatus.GetLogFile() == "UnitTestLoggerFile");
 
@@ -2162,7 +2162,7 @@ void GMLoggerTests::TestServerLogger()
       testSignal->Reset();
       logController->RequestChangeStateToIdle();
       SLEEP(10); // tick the GM so it can send the messages
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
       CPPUNIT_ASSERT_MESSAGE("Valid Request Change State to Idle should have caused a Status response message.",
          testSignal->mStatusSignalReceived);
       CPPUNIT_ASSERT_MESSAGE("Valid Request Change State to Idle should have sent status with IDLE.",
@@ -2175,7 +2175,7 @@ void GMLoggerTests::TestServerLogger()
       testSignal->Reset();
       logController->RequestChangeStateToRecord();
       SLEEP(10); // tick the GM so it can send the messages
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
       CPPUNIT_ASSERT_MESSAGE("Request Change State to Record should have sent status with RECORD.",
          testSignal->mStatus.GetStateEnum() == dtGame::LogStateEnumeration::LOGGER_STATE_RECORD);
       // now, force exception and switch back to idle
@@ -2183,7 +2183,7 @@ void GMLoggerTests::TestServerLogger()
       testStream->mExceptionEnabled = true;  // force exception
       logController->RequestChangeStateToIdle();
       SLEEP(10); // tick the GM so it can send the messages
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
       // do the checks
       CPPUNIT_ASSERT_MESSAGE("With exception, should still get Status message.", testSignal->mStatusSignalReceived);
       CPPUNIT_ASSERT_MESSAGE("With exception, should still get reject message.", testSignal->mRejectionSignalReceived);
@@ -2199,7 +2199,7 @@ void GMLoggerTests::TestServerLogger()
       testStream->mExceptionEnabled = true;  // force exception
       logController->RequestChangeStateToRecord();
       SLEEP(10); // tick the GM so it can send the messages
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
       CPPUNIT_ASSERT_MESSAGE("Failed Record (exception) should still get Status message.", testSignal->mStatusSignalReceived);
       CPPUNIT_ASSERT_MESSAGE("Failed Record (exception) should have sent status with IDLE.",
          testSignal->mStatus.GetStateEnum() == dtGame::LogStateEnumeration::LOGGER_STATE_IDLE);
@@ -2253,7 +2253,7 @@ void GMLoggerTests::TestServerLogger2()
       mGameManager->SendMessage(*mapLoadedMsg);
       logController->RequestServerGetStatus();
       SLEEP(10); // tick the GM so it can send the messages
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
       CPPUNIT_ASSERT_MESSAGE("Change map msg should change map on logstatus", testSignal->mStatus.GetActiveMap() == "MyBogusMapName");
 
    }

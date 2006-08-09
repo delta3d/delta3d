@@ -42,6 +42,7 @@
 #include <dtGame/messagetype.h>
 #include <dtGame/defaultmessageprocessor.h>
 #include <dtGame/basemessages.h>
+#include <dtGame/actorupdatemessage.h>
 #include <dtCore/system.h>
 #include <dtCore/globals.h>
 #include <dtCore/transform.h>
@@ -63,6 +64,12 @@ class TestHLAComponent: public dtHLAGM::HLAComponent
          PrepareInteraction(message, interactionParams, interactionToMessage);
       }
 
+      void TestPrepareUpdate(const dtGame::ActorUpdateMessage& message, 
+         RTI::AttributeHandleValuePairSet& updateAttrs,
+         const dtHLAGM::ObjectToActor& objectToActor, bool newObject)
+      {
+         PrepareUpdate(message, updateAttrs, objectToActor, newObject);
+      }
 
       dtHLAGM::ObjectRuntimeMappingInfo& GetRuntimeMappings()
       {
@@ -136,6 +143,7 @@ class HLATests : public CPPUNIT_NS::TestFixture
 
       void TestReflectAttributes();
       void TestReflectAttributesNoEntityType();
+      void TestPrepareUpdate();
       void TestPrepareInteraction();
       void TestReceiveInteraction();
       void TestRuntimeMappingInfo();
@@ -205,7 +213,8 @@ class HLATests : public CPPUNIT_NS::TestFixture
 
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(HLATests);
-const std::string HLATests::mTestGameActorLibrary="testGameActorLibrary";
+
+const std::string HLATests::mTestGameActorLibrary = "testGameActorLibrary";
 
 // Called implicitly by CPPUNIT when the app starts
 void HLATests::setUp()
@@ -223,8 +232,8 @@ void HLATests::setUp()
       mGameManager->AddComponent(*defMsgComp, dtGame::GameManager::ComponentPriority::HIGHEST);
       mTestComponent = new TestComponent();
       mGameManager->AddComponent(*mTestComponent, dtGame::GameManager::ComponentPriority::NORMAL);
-      dtCore::System::Instance()->SetShutdownOnWindowClose(false);
-      dtCore::System::Instance()->Start();
+      dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
+      dtCore::System::GetInstance().Start();
    }
    catch (const dtUtil::Exception& e)
    {
@@ -246,8 +255,9 @@ void HLATests::setUp()
 
    try
    {
-      std::string fedFile = osgDB::findDataFile("RPR-FOM.fed");
-      CPPUNIT_ASSERT_MESSAGE("Couldn't find \"" + fedFile +
+      const std::string fom = "RPR-FOM.fed";
+      const std::string fedFile = osgDB::findDataFile(fom);
+      CPPUNIT_ASSERT_MESSAGE("Couldn't find \"" + fom +
                              "\", make sure you install the Delta3D data package and set the DELTA_DATA environment var.",
                              !fedFile.empty());
       CPPUNIT_ASSERT(mHLAComponent->GetRTIAmbassador() == NULL);
@@ -264,7 +274,7 @@ void HLATests::setUp()
 // Called implicitly by CPPUNIT when the app terminates
 void HLATests::tearDown()
 {
-   dtCore::System::Instance()->Stop();
+   dtCore::System::GetInstance().Stop();
    mHLAComponent->LeaveFederationExecution();
    CPPUNIT_ASSERT(mHLAComponent->GetRTIAmbassador() == NULL);
 
@@ -319,6 +329,7 @@ void HLATests::BetweenTestSetUp()
 
 void HLATests::BetweenTestTearDown()
 {
+   mHLAComponent->GetRuntimeMappings().Clear();
    RTI::RTIambassador* rtiamb = mHLAComponent->GetRTIAmbassador();
    CPPUNIT_ASSERT(rtiamb != NULL);
 
@@ -356,6 +367,10 @@ void HLATests::RunAllTests()
    
    BetweenTestSetUp();
    TestReflectAttributesNoEntityType();
+   BetweenTestTearDown();
+
+   BetweenTestSetUp();
+   TestPrepareUpdate();
    BetweenTestTearDown();
 
    BetweenTestSetUp();
@@ -616,7 +631,7 @@ void HLATests::TestReflectAttributesNoEntityType()
 
       mHLAComponent->reflectAttributeValues(mObjectHandle1, *ahs, "");
 
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
 
       //Check the actual message to see if it was a create message.
       dtCore::RefPtr<const dtGame::Message> msg =
@@ -728,7 +743,7 @@ void HLATests::TestReflectAttributes()
 
       mHLAComponent->reflectAttributeValues(mObjectHandle1, *ahs, "");
 
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
 
       //Check the actual message to see if it was a create message.
       dtCore::RefPtr<const dtGame::Message> msg =
@@ -770,7 +785,7 @@ void HLATests::TestReflectAttributes()
       //now test deleting the object.
       mHLAComponent->removeObjectInstance(mObjectHandle1, "");
 
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
 
       //Check using the old id value to see if the actor is in the GM.
       proxy = mGameManager->FindGameActorById(*id);
@@ -788,6 +803,157 @@ void HLATests::TestReflectAttributes()
       CPPUNIT_FAIL(ex.What());
    }
 }
+
+void HLATests::TestPrepareUpdate()
+{
+   try
+   {
+      RTI::AttributeHandleValuePairSet* ahs =
+         RTI::AttributeSetFactory::create(4);
+      
+      dtCore::RefPtr<dtGame::ActorUpdateMessage> testMsg;
+      mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_UPDATED, testMsg);
+      
+      dtHLAGM::EntityIdentifier entityId(3,3,2);
+      dtCore::UniqueId fakeActorId;
+
+      //insert a bogus mapping to see if the interaction maps properly.
+      mHLAComponent->GetRuntimeMappings().Put(entityId, fakeActorId);
+
+      testMsg->SetSendingActorId(fakeActorId);
+      testMsg->SetAboutActorId(fakeActorId);
+      testMsg->SetName("Rubber Chicken");
+      testMsg->SetActorTypeCategory("TestHLA");
+      testMsg->SetActorTypeName("Tank");
+      
+      testMsg->AddUpdateParameter("Rotation", dtDAL::DataType::VEC3);
+      
+      dtCore::RefPtr<dtDAL::ActorType> testTankType = mGameManager->FindActorType(testMsg->GetActorTypeCategory(), testMsg->GetActorTypeName());
+      
+      CPPUNIT_ASSERT(testTankType.valid());
+      
+      const dtHLAGM::ObjectToActor* oToA = mHLAComponent->GetActorMapping(*testTankType);
+      
+      if (oToA != NULL)
+      {
+         mHLAComponent->TestPrepareUpdate(*testMsg, *ahs, *oToA, true);
+         
+         bool foundEntityTypeAttr = false;
+         //There are two entity id's to be mapped because
+         //one is coming from the sendingActorId and the other
+         //is coming from the aboutActorId.  This is just
+         //part of the test.  It makes absolutely no sense and wouldn't
+         //work if you did this at runtime.
+         bool foundEntityIdAttr1 = false;
+         bool foundEntityIdAttr2 = false;
+         bool foundOrientationAttr = false;
+         bool foundDamageStateAttr = false;
+         
+         for (unsigned i = 0; i < ahs->size(); ++i)
+         {
+            RTI::AttributeHandle attrHandle = ahs->getHandle(i);
+            
+            if (attrHandle == oToA->GetDisIDAttributeHandle())
+            {
+               foundEntityTypeAttr = true;
+               unsigned long length;
+               char* buffer = ahs->getValuePointer(i, length);
+               CPPUNIT_ASSERT_MESSAGE("The mapped parameter for the DISID should be of the proper length.", 
+                  length == oToA->GetDisID()->EncodedLength());
+                  
+               dtHLAGM::EntityType actual;
+               actual.Decode(buffer);
+                        
+               CPPUNIT_ASSERT_MESSAGE("The encoded entity type should match the value.",
+                  *oToA->GetDisID() == actual);                  
+            }
+            if (attrHandle == oToA->GetEntityIdAttributeHandle())
+            {
+               if (!foundEntityIdAttr1)
+                  foundEntityIdAttr1 = true;
+               else
+               {
+                  foundEntityIdAttr2 = true;
+               }
+               
+               unsigned long length;
+               char* buffer = ahs->getValuePointer(i, length);
+               CPPUNIT_ASSERT_MESSAGE("The mapped parameter for the about actor id should be the length of an entity Id.", 
+                  length == entityId.EncodedLength());
+                  
+               dtHLAGM::EntityIdentifier actual;
+               actual.Decode(buffer);
+                        
+               CPPUNIT_ASSERT_MESSAGE("The encoded entity id should match the test value.",
+                  entityId == actual);
+            }
+            else
+            {
+               for (unsigned j = 0; j < oToA->GetOneToManyMappingVector().size(); ++j)
+               {
+                  const dtHLAGM::AttributeToPropertyList& aToPList = oToA->GetOneToManyMappingVector()[j];
+                  if (aToPList.GetAttributeHandle() == attrHandle)
+                  {
+                     if (aToPList.GetParameterDefinitions()[0].GetGameName() == "Damage State")
+                     {
+                        foundDamageStateAttr = true;
+                        unsigned long length;
+                        char* buffer = ahs->getValuePointer(i, length);
+                        CPPUNIT_ASSERT_MESSAGE("The mapped parameter for the damage state should be the size of an unsigned int.", 
+                           length == aToPList.GetHLAType().GetEncodedLength() && length == sizeof(unsigned));
+                           
+                        unsigned actual = *((unsigned*)buffer);
+                        if (osg::getCpuByteOrder() == osg::LittleEndian)
+                           osg::swapBytes((char*)&actual, sizeof(unsigned));
+   
+                        CPPUNIT_ASSERT_EQUAL_MESSAGE("The damage state value should be 3 (Destroyed)", unsigned(3), actual);
+                        
+                     }
+                     else if (aToPList.GetParameterDefinitions()[0].GetGameName() == "Rotation")
+                     {
+                        foundOrientationAttr = true;                        
+                        unsigned long length;
+                        //I just want the length.
+                        ahs->getValuePointer(i, length);
+                        CPPUNIT_ASSERT_MESSAGE("The mapped parameter for the orientation should be the size of three floats.", 
+                           length == aToPList.GetHLAType().GetEncodedLength() && length == 3 * sizeof(float));                        
+                        //There are other tests that check the converter for rotation.
+                     }                     
+                     else if (aToPList.GetParameterDefinitions()[0].GetGameName() == "Translation")
+                     {
+                        CPPUNIT_FAIL("The world coordinate should not have ended up in the output.  It doesn't have a default value.");
+                     }
+                  }
+               }
+            }
+         }
+         
+         delete ahs;
+         ahs = NULL;
+         
+         CPPUNIT_ASSERT_MESSAGE("The entity id attribute based on the aboutActorId should have been found.", 
+            foundEntityIdAttr1);
+         CPPUNIT_ASSERT_MESSAGE("The entity id attribute based on the sendingActorId should have been found.", 
+            foundEntityIdAttr2);
+         CPPUNIT_ASSERT(foundEntityTypeAttr);
+         CPPUNIT_ASSERT(foundDamageStateAttr);
+         CPPUNIT_ASSERT(foundOrientationAttr);
+      }
+      else
+      {
+         delete ahs;
+         ahs = NULL;
+         
+         CPPUNIT_FAIL("No object to actor mapping was found for actor type TestHLA.Tank.");
+      }
+   }
+   catch (const dtUtil::Exception& ex)
+   {
+      CPPUNIT_FAIL(ex.What());
+   }
+   
+}
+
 
 void HLATests::TestPrepareInteraction()
 {
@@ -838,7 +1004,7 @@ void HLATests::TestPrepareInteraction()
                      dtHLAGM::EntityIdentifier actual;
                      actual.Decode(buffer);
                      
-                     CPPUNIT_ASSERT_MESSAGE("The encoded entity id should match the value.", entityId == actual);
+                     CPPUNIT_ASSERT_MESSAGE("The encoded entity id should match the value set.", entityId == actual);
                   }
                   else if (pToPList.GetParameterDefinitions()[0].GetGameName() == "LateTime")
                   {
@@ -929,7 +1095,7 @@ void HLATests::TestReceiveInteraction()
       delete phs;
       phs = NULL;
 
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
 
       dtCore::RefPtr<const dtGame::Message> msg = mTestComponent->FindProcessMessageOfType(dtGame::MessageType::INFO_TIMER_ELAPSED);
       CPPUNIT_ASSERT(msg.valid());
@@ -941,4 +1107,3 @@ void HLATests::TestReceiveInteraction()
       CPPUNIT_FAIL(ex.What());
    }
 }
-

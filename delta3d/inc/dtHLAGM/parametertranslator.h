@@ -56,7 +56,7 @@ namespace dtHLAGM
                                              const OneToManyMapping& mapping) const = 0;
 
          virtual void MapFromMessageParameters(char* buffer,
-                                               size_t maxSize,
+                                               size_t& maxSize,
                                                std::vector<dtCore::RefPtr<const dtGame::MessageParameter> >& parameters,
                                                const OneToManyMapping& mapping) const = 0;
 

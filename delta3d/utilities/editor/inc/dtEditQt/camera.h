@@ -19,8 +19,8 @@
 *
 * @author Matthew W. Campbell
 */
-#ifndef __Camera__h
-#define __Camera__h
+#ifndef DELTA_STAGE_CAMERA
+#define DELTA_STAGE_CAMERA
 
 #include <osg/Referenced>
 #include <osg/Vec3>

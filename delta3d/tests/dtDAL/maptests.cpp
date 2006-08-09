@@ -87,7 +87,7 @@ public:
     void testLoadEnvironmentMapIntoScene();
     void testWildCard();
 private:
-    static char* mExampleLibraryName;
+    static const std::string mExampleLibraryName;
 
     void createActors(dtDAL::Map& map);
     dtUtil::Log* logger;
@@ -103,7 +103,7 @@ const std::string TESTS_DIR = dtCore::GetDeltaRootPath() + dtUtil::FileUtils::PA
 const std::string MAPPROJECTCONTEXT = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "dtDAL" + dtUtil::FileUtils::PATH_SEPARATOR + "WorkingMapProject";
 const std::string PROJECTCONTEXT = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "dtDAL" + dtUtil::FileUtils::PATH_SEPARATOR + "WorkingProject";
 
-char* MapTests::mExampleLibraryName="testActorLibrary";
+const std::string MapTests::mExampleLibraryName="testActorLibrary";
 
 void MapTests::setUp()
 {
@@ -184,10 +184,10 @@ void MapTests::tearDown()
 void MapTests::createActors(dtDAL::Map& map)
 {
    dtDAL::LibraryManager& libMgr = dtDAL::LibraryManager::GetInstance();
-   std::vector<dtCore::RefPtr<dtDAL::ActorType> > actors;
+   std::vector<dtCore::RefPtr<dtDAL::ActorType> > actorTypes;
    std::vector<dtDAL::ActorProperty *> props;
    
-   libMgr.GetActorTypes(actors);
+   libMgr.GetActorTypes(actorTypes);
    
    int skippedActors = 0;
    int nameCounter = 0;
@@ -196,11 +196,13 @@ void MapTests::createActors(dtDAL::Map& map)
    logger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, "Adding one of each proxy type to the map:");
 
    //only create half the actors :-)
-   for (unsigned int i=0; i < actors.size(); ++i)
+   for (unsigned int i=0; i < actorTypes.size(); ++i)
    {
       // In order to keep the tests fasts, we skip the nasty slow ones.
-      if (actors[i]->GetName() == "Cloud Plane" || actors[i]->GetName() == "Environment" || 
-          actors[i]->GetName() == "Test Environment Actor") 
+      if (actorTypes[i]->GetName() == "Cloud Plane" || 
+          actorTypes[i]->GetName() == "Environment" || 
+          actorTypes[i]->GetName() == "Test Environment Actor" ||
+          actorTypes[i]->GetName() == "Waypoint") 
       {
          skippedActors ++;
          continue; // go to next actor
@@ -212,9 +214,9 @@ void MapTests::createActors(dtDAL::Map& map)
       dtCore::Timer_t testClockStart = testClock.Tick();
       
       logger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
-                         "Creating actor proxy %s with category %s.", actors[i]->GetName().c_str(), actors[i]->GetCategory().c_str());
+                         "Creating actor proxy %s with category %s.", actorTypes[i]->GetName().c_str(), actorTypes[i]->GetCategory().c_str());
       
-      proxy = libMgr.CreateActorProxy(*actors[i]);
+      proxy = libMgr.CreateActorProxy(*actorTypes[i]);
       snprintf(nameAsString, 21, "%d", nameCounter);
       proxy->SetName(std::string(nameAsString));
       nameCounter++;
@@ -237,7 +239,7 @@ void MapTests::createActors(dtDAL::Map& map)
       if (timeToCreate > 0.5) // more than .5 seconds is too long for 1 object in a test
          logger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__,
                             "SLOW ACTOR CREATED IN TESTS - Type: %s, time[%f].  To ignore this slow actor in tests, modify these files (maptests.cpp, messagetests.cpp, proxytests.cpp, and gamemanagertests.cpp)", 
-                            actors[i]->GetName().c_str(), timeToCreate);
+                            actorTypes[i]->GetName().c_str(), timeToCreate);
       
       map.AddProxy(*proxy);
       
@@ -712,7 +714,7 @@ void MapTests::testMapSaveAndLoad()
         dtDAL::ResourceDescriptor marineRD = project.AddResource("marine", DATA_DIR + "/marine/marine.rbody", "marine",
             dtDAL::DataType::CHARACTER);
 #else
-        LOG_ERROR("RBody unit tests fail on windows, not testing");
+        LOG_ERROR("RBody unit tests fail on windows, skipping");
 #endif
 
         dtDAL::ResourceDescriptor dirtRD = project.AddResource("dirt", 

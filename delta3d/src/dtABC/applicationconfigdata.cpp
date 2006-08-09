@@ -1,5 +1,5 @@
 #include <dtABC/applicationconfigdata.h>
-
+#include <dtUtil/log.h>
 using namespace dtABC;
 
 ApplicationConfigData::ApplicationConfigData() :
