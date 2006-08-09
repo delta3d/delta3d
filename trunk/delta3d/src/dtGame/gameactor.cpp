@@ -21,17 +21,18 @@
 
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/functor.h>
-#include "dtGame/message.h"
-#include "dtGame/messagetype.h"
-#include "dtGame/messageparameter.h"
-#include "dtGame/gameactor.h"
-#include "dtGame/actorupdatemessage.h"
-#include "dtGame/gamemanager.h"
-#include "dtGame/gmcomponent.h"
+#include <dtGame/message.h>
+#include <dtGame/messagetype.h>
+#include <dtGame/messageparameter.h>
+#include <dtGame/gameactor.h>
+#include <dtGame/actorupdatemessage.h>
+#include <dtGame/gamemanager.h>
+#include <dtGame/gmcomponent.h>
 
 #include <dtCore/shadergroup.h>
 #include <dtCore/shader.h>
 #include <dtCore/shadermanager.h>
+#include <dtDAL/actortype.h>
 
 
 namespace dtGame
@@ -117,17 +118,17 @@ namespace dtGame
       GetGameManager()->SendMessage(*updateMsg);
    }
 
-   void GameActorProxy::PopulateActorUpdate(ActorUpdateMessage& update, const std::vector<std::string> &propNames) throw()
+   void GameActorProxy::PopulateActorUpdate(ActorUpdateMessage& update, const std::vector<std::string> &propNames) 
    {
       PopulateActorUpdate(update, propNames, true);
    }
 
-   void GameActorProxy::PopulateActorUpdate(ActorUpdateMessage& update) throw()
+   void GameActorProxy::PopulateActorUpdate(ActorUpdateMessage& update) 
    {
       PopulateActorUpdate(update, std::vector<std::string>(), false);
    }
 
-   void GameActorProxy::PopulateActorUpdate(ActorUpdateMessage& update, const std::vector<std::string> &propNames, bool limitProperties) throw()
+   void GameActorProxy::PopulateActorUpdate(ActorUpdateMessage& update, const std::vector<std::string> &propNames, bool limitProperties) 
    {
       StringMessageParameter* nameParam = static_cast<StringMessageParameter*>(update.GetParameter("Name"));
       if (nameParam != NULL)
@@ -154,8 +155,9 @@ namespace dtGame
                try
                {
                   MessageParameter* mp = update.AddUpdateParameter(property->GetName(), property->GetPropertyType());
-                  if (mp != NULL)
-                     mp->FromString(property->GetStringValue());
+                  mp->SetFromProperty(*property);
+                  //if (mp != NULL)
+                  //   mp->FromString(property->GetStringValue());
                }
                catch (const dtUtil::Exception&)
                {
@@ -181,7 +183,8 @@ namespace dtGame
             {
                MessageParameter* mp = update.AddUpdateParameter(property.GetName(), property.GetPropertyType());
                if (mp != NULL)
-                  mp->FromString(property.GetStringValue());
+                  mp->SetFromProperty(property);
+               //   mp->FromString(property.GetStringValue());
             }
             catch (const dtUtil::Exception&)
             {
@@ -193,7 +196,7 @@ namespace dtGame
       }
    }
 
-   void GameActorProxy::ApplyActorUpdate(const ActorUpdateMessage& msg) throw()
+   void GameActorProxy::ApplyActorUpdate(const ActorUpdateMessage& msg)
    {
 
       const StringMessageParameter* nameParam = static_cast<const StringMessageParameter*>(msg.GetParameter("Name"));
@@ -248,10 +251,30 @@ namespace dtGame
                );
          }
 
+
+         if (paramType == dtDAL::DataType::ACTOR)
+         {
+            dtDAL::ActorActorProperty *aap = static_cast<dtDAL::ActorActorProperty*>(property);
+            const ActorMessageParameter* amp = static_cast<const ActorMessageParameter*>(params[i]);
+            dtGame::GameActorProxy* valueProxy = GetGameManager()->FindGameActorById(amp->GetValue());
+            aap->SetValue(valueProxy);
+         }
+         else
+         {
+            try 
+            {
+               params[i]->ApplyValueToProperty(*property);
+            } 
+            catch (const dtUtil::Exception& ex)
+            {
+               ex.LogException(dtUtil::Log::LOG_ERROR);
+            }
+         }
+
+/*
+
          if (paramType == dtDAL::DataType::BOOLEAN)
          {
-            dtDAL::BooleanActorProperty *bap = static_cast<dtDAL::BooleanActorProperty*> (property);
-            bap->SetValue(static_cast<const BooleanMessageParameter*>(params[i])->GetValue());
          }
          else if (paramType == dtDAL::DataType::INT)
          {
@@ -285,13 +308,6 @@ namespace dtGame
 
             if (!prop->SetValueFromString(value))
                LOG_ERROR(("Failed to set the value on property \"" + params[i]->GetName() + "\".").c_str());
-         }
-         else if (paramType == dtDAL::DataType::ACTOR)
-         {
-            dtDAL::ActorActorProperty *aap = static_cast<dtDAL::ActorActorProperty*>(property);
-            const ActorMessageParameter* amp = static_cast<const ActorMessageParameter*>(params[i]);
-            dtGame::GameActorProxy* valueProxy = GetGameManager()->FindGameActorById(amp->GetValue());
-            aap->SetValue(valueProxy);
          }
          else if (paramType == dtDAL::DataType::VEC2)
          {
@@ -351,6 +367,7 @@ namespace dtGame
          }
          else
             LOG_ERROR(("Message parameter type \"" + paramType.GetName() + "\" is not supported").c_str());
+*/
       }
 
    }

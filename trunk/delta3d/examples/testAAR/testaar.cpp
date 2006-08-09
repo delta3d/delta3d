@@ -45,6 +45,7 @@
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/project.h>
 #include <dtDAL/map.h>
+#include <dtDAL/actortype.h>
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/transformableactorproxy.h>
 #include <dtDAL/gameevent.h>
@@ -320,7 +321,7 @@ void AARApplication::Reset()
 {
    mClientGM->DeleteAllActors();
    mTaskComponent->ClearTaskList();
-   dtCore::System::Instance()->Step();
+   dtCore::System::GetInstance().Step();
 
    dtCore::RefPtr<dtDAL::ActorType> playerType = mClientGM->FindActorType("ExampleActors", "TestPlayer");
    mPlayer = dynamic_cast<dtGame::GameActorProxy *>(mClientGM->CreateActor(*playerType).get());
@@ -490,7 +491,7 @@ bool AARApplication::KeyPressed(const dtCore::Keyboard *keyBoard,
             dtGame::LogStateEnumeration::LOGGER_STATE_IDLE)
          {
             mClientGM->DeleteAllActors();
-            dtCore::System::Instance()->Step();
+            dtCore::System::GetInstance().Step();
             mPlayer = NULL;
          }
 

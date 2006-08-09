@@ -14,6 +14,7 @@
 #include <osg/StateSet>
 #include <osg/Transform>
 #include <osg/TriangleFunctor>
+#include <osg/CameraNode>
 #include <osg/Version> // For #ifdef
 
 #include <cassert>
@@ -71,6 +72,7 @@ Transformable::Transformable( const std::string& name )
 Transformable::~Transformable()
 {
    dGeomDestroy(mGeomID);
+   
    if(mTriMeshDataID != NULL)
    {
       dGeomTriMeshDataDestroy(mTriMeshDataID);
@@ -183,7 +185,7 @@ bool Transformable::GetAbsoluteMatrix( osg::Node* node, osg::Matrix& wcMatrix )
 
          #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR == 1 && OSG_VERSION_MINOR == 0 
          // Luckily, this behavior is redundant with OSG 1.1
-         if( std::string( nodePath[0]->className() ) == std::string("CameraNode") )
+         if (dynamic_cast<osg::CameraNode*>(nodePath[0]) != NULL)
          {
             nodePath = osg::NodePath( nodePath.begin()+1, nodePath.end() );
          }
@@ -645,7 +647,7 @@ public:
             
             #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR == 1 && OSG_VERSION_MINOR == 0 
             // Luckily, this behavior is redundant with OSG 1.1
-            if( std::string( nodePath[0]->className() ) == std::string("CameraNode") )
+            if (dynamic_cast<osg::CameraNode*>(nodePath[0]) != NULL)
             {
                nodePath = osg::NodePath( nodePath.begin()+1, nodePath.end() );
             }

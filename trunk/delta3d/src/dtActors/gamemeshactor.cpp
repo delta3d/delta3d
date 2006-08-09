@@ -49,23 +49,21 @@ namespace dtActors
    void GameMeshActor::SetMesh(const std::string &meshFile)
    {
       GameMeshActor::GameMeshLoader loader; 
-
-      // Load up the mesh, but do NOT cache. See class comments.
       osg::Node *model = loader.LoadFile(meshFile,false);
-
+ 
       if (model != NULL)
       {
          if (GetMatrixNode()->getNumChildren() != 0)
             GetMatrixNode()->removeChild(0,GetMatrixNode()->getNumChildren());
          GetMatrixNode()->addChild(model);
-
+ 
          GetGameActorProxy().SetCollisionType( GetGameActorProxy().GetCollisionType() );
       }
       else
       {
          LOG_ERROR("Unable to load model file: " + meshFile);
       }
-
+ 
       // send out an ActorUpdateMessage
       if (mAlreadyInWorld)
          GetGameActorProxy().NotifyFullActorUpdate();

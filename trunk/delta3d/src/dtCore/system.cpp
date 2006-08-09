@@ -38,7 +38,7 @@ System::~System()
    mInstanceFlag = false;
 }
 
-System* System::Instance()
+System& System::GetInstance()
 {
    if( !mInstanceFlag )
    {
@@ -46,7 +46,7 @@ System* System::Instance()
       mSystem->SetName("System");
       mInstanceFlag = true;
    }
-   return mSystem;
+   return *mSystem;
 }
 
 void System::Destroy()

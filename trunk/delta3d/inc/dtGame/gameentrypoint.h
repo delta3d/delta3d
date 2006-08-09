@@ -53,8 +53,7 @@ namespace dtGame
           * @param argv array of string pointers to the arguments.
           * @throwns dtUtil::Exception if initialization fails.
           */
-         virtual void Initialize(GameApplication& app, int argc, char **argv) 
-            throw (dtUtil::Exception) {}
+         virtual void Initialize(GameApplication& app, int argc, char **argv) { }
          
          /**
           * Override the method to create the game manager.

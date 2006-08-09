@@ -90,7 +90,7 @@ AudioManager::AudioManager( const std::string& name /*= "audiomanager"*/ )
    while( mSoundRecycle.size() )
       mSoundRecycle.pop();
 
-   AddSender( dtCore::System::Instance() );
+   AddSender( &dtCore::System::GetInstance() );
 
    alutInit( 0L, NULL );
 }
@@ -107,21 +107,21 @@ AudioManager::~AudioManager()
    {
       for( ALsizei ii(0); ii < mNumSources; ii++ )
       { 
-         alSourceStop( mSource[ii] );
-
-         // This check was added to prevent a crash-on-exit for OSX -osb
-         ALint bufValue;
-         alGetSourcei( mSource[ii], AL_BUFFER, &bufValue );
-         if( bufValue != 0 )
+         if (alIsSource( mSource[ii] ))
          {
-            alSourcei( mSource[ii], AL_BUFFER, AL_NONE );
+            alSourceStop( mSource[ii] );
+            // This check was added to prevent a crash-on-exit for OSX -osb
+            ALint bufValue;
+            alGetSourcei( mSource[ii], AL_BUFFER, &bufValue);
+            if (bufValue != 0)
+            {
+               alSourcei( mSource[ii], AL_BUFFER, AL_NONE );
+            }
          }
       }
-   }
-
-   // delete the sources
-   if( mSource != NULL )
-   {
+      
+      // delete the sources
+      
       alDeleteSources( mNumSources, mSource );
       delete   mSource;
    }
@@ -195,16 +195,11 @@ AudioManager::Destroy( void )
    _Mgr  = NULL;
 }
 
-
-
 // static instance accessor
-AudioManager*
-AudioManager::GetManager( void )
+AudioManager& AudioManager::GetInstance( void )
 {
-   return   _Mgr.get();
+   return   *_Mgr;
 }
-
-
 
 // static listener accessor
 Listener*
@@ -212,8 +207,6 @@ AudioManager::GetListener( void )
 {
    return   static_cast<Listener*>(_Mic.get());
 }
-
-
 
 // manager configuration
 void
@@ -545,7 +538,7 @@ AudioManager::NewSound( void )
    SOB_PTR  snd(NULL);
 
    // first look if we can recycle a sound
-   if( mSoundRecycle.size() )
+   if( !mSoundRecycle.empty() )
    {
       snd   = mSoundRecycle.front();
       assert( snd.get() );
@@ -2212,8 +2205,6 @@ AudioManager::SoundObj::SoundObj()
    RegisterInstance( this );
 }
 
-
-
 // desructor
 AudioManager::SoundObj::~SoundObj()
 {
@@ -2221,8 +2212,6 @@ AudioManager::SoundObj::~SoundObj()
 
    Clear();
 }
-
-
 
 void
 AudioManager::SoundObj::OnMessage( MessageData* data )

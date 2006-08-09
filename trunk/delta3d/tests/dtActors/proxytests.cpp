@@ -44,7 +44,7 @@ class ProxyTest : public CPPUNIT_NS::TestFixture
       LibraryManager &libMgr;
       std::vector<dtCore::RefPtr<ActorType> > actors;
       std::vector<dtCore::RefPtr<ActorProxy> > proxies;
-      static char* mExampleLibraryName;
+      static const std::string mExampleLibraryName;
 
       void testProps(ActorProxy& proxy);
       void compareProxies(ActorProxy& ap1, ActorProxy& ap2);
@@ -62,7 +62,7 @@ class ProxyTest : public CPPUNIT_NS::TestFixture
 
 CPPUNIT_TEST_SUITE_REGISTRATION(ProxyTest);
 
-char* ProxyTest::mExampleLibraryName="testActorLibrary";
+const std::string ProxyTest::mExampleLibraryName="testActorLibrary";
 
 ProxyTest::ProxyTest() : libMgr(LibraryManager::GetInstance())
 {

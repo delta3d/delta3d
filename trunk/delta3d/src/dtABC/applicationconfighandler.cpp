@@ -1,5 +1,6 @@
 #include <dtABC/applicationconfighandler.h>
 
+#include <dtABC/applicationconfigschema.h>
 #include <dtUtil/stringutils.h>
 #include <dtUtil/log.h>
 #include <dtUtil/xercesutils.h>
@@ -48,7 +49,7 @@ void ApplicationConfigHandler::startElement(const XMLCh* const uri,
    std::string ename( elementname );
    XMLString::release( &elementname );
 
-   if( ename == "Window" )
+   if( ename == ApplicationConfigSchema::WINDOW )
    {
       // set up some defaults
       std::string name("DefaultApp"),
@@ -65,46 +66,46 @@ void ApplicationConfigHandler::startElement(const XMLCh* const uri,
       RMap results = windowattrs( attrs );
 
       // if the named attributes were found, use them, else use defaults
-      RMap::iterator iter = results.find("Name");
+      RMap::iterator iter = results.find(ApplicationConfigSchema::NAME);
       if( iter != results.end() )
          name = iter->second;
 
-      iter = results.find("X");
+      iter = results.find(ApplicationConfigSchema::X);
       if( iter != results.end() )
          xstring = iter->second;
 
-      iter = results.find("Y");
+      iter = results.find(ApplicationConfigSchema::Y);
       if( iter != results.end() )
          ystring = iter->second;
 
-      iter = results.find("Width");
+      iter = results.find(ApplicationConfigSchema::WIDTH);
       if( iter != results.end() )
          wstring = iter->second;
 
-      iter = results.find("Height");
+      iter = results.find(ApplicationConfigSchema::HEIGHT);
       if( iter != results.end() )
          hstring = iter->second;
 
-      iter = results.find("ShowCursor");
+      iter = results.find(ApplicationConfigSchema::SHOWCURSOR);
       if( iter != results.end() )
          showstring = iter->second;
 
-      iter = results.find("FullScreen");
+      iter = results.find(ApplicationConfigSchema::FULLSCREEN);
       if( iter != results.end() )
          fullstring = iter->second;
 
-      iter = results.find("ChangeDisplayResolution");
+      iter = results.find(ApplicationConfigSchema::CHANGEDISPLAYRESOLUTION);
       if( iter != results.end() )
          changeres = iter->second;
-
-      iter = results.find("PixelDepth");
+         
+      iter = results.find(ApplicationConfigSchema::PIXELDEPTH);
       if( iter != results.end() )
          bitdepth = iter->second;
 
-      iter = results.find("RefreshRate");
+      iter = results.find(ApplicationConfigSchema::REFRESHRATE);
       if( iter != results.end() )
          refresh = iter->second;
-
+         
       int winX = dtUtil::ToType<int>(xstring.c_str());
       int winY = dtUtil::ToType<int>(ystring.c_str());
       int width = dtUtil::ToType<int>(wstring.c_str());
@@ -126,20 +127,18 @@ void ApplicationConfigHandler::startElement(const XMLCh* const uri,
       mConfigData.FULL_SCREEN = fullScreen;
       mConfigData.CHANGE_RESOLUTION = resolution_changed;
    }
-
-   if( ename == "Scene" )
+   else if( ename == ApplicationConfigSchema::SCENE )
    {
       dtUtil::AttributeSearch sceneattrs;
       dtUtil::AttributeSearch::ResultMap results = sceneattrs( attrs );
 
-      dtUtil::AttributeSearch::ResultMap::iterator iter = results.find("Name");
+      dtUtil::AttributeSearch::ResultMap::iterator iter = results.find(ApplicationConfigSchema::NAME);
       if( iter != results.end() )
       {
          mConfigData.SCENE_NAME = iter->second;
       }
    }
-
-   if( ename == "Camera" )
+   else if( ename == ApplicationConfigSchema::CAMERA )
    {
       // push some keys
       dtUtil::AttributeSearch camattrs;
@@ -147,13 +146,13 @@ void ApplicationConfigHandler::startElement(const XMLCh* const uri,
       // do the attribute search, catch the results
       dtUtil::AttributeSearch::ResultMap results = camattrs( attrs );
 
-      dtUtil::AttributeSearch::ResultMap::iterator iter = results.find("Name");
+      dtUtil::AttributeSearch::ResultMap::iterator iter = results.find(ApplicationConfigSchema::NAME);
       if( iter != results.end() )
       {
          mConfigData.CAMERA_NAME = iter->second;
       }
 
-      iter = results.find("WindowInstance");
+      iter = results.find(ApplicationConfigSchema::WINDOWINSTANCE);
       if( iter != results.end() )
       {
          mConfigData.WINDOW_INSTANCE = iter->second;
@@ -163,7 +162,7 @@ void ApplicationConfigHandler::startElement(const XMLCh* const uri,
          LOG_ERROR("No DeltaWin instance speficied for Camera, " + mConfigData.CAMERA_NAME)
       }
 
-      iter = results.find("SceneInstance");
+      iter = results.find(ApplicationConfigSchema::SCENEINSTANCE);
       if( iter != results.end() )
       {
          mConfigData.SCENE_INSTANCE = iter->second;
@@ -173,4 +172,37 @@ void ApplicationConfigHandler::startElement(const XMLCh* const uri,
          LOG_ERROR("No Scene Instance specified for Camera, " + mConfigData.CAMERA_NAME)
       }
    }
+   else if ( ename == ApplicationConfigSchema::LOG )
+   {
+      // push some keys
+      dtUtil::AttributeSearch logAttrs;
+
+      // do the attribute search, catch the results
+      dtUtil::AttributeSearch::ResultMap results = logAttrs( attrs );
+      
+      dtUtil::AttributeSearch::ResultMap::iterator iter;
+
+      iter = results.find(ApplicationConfigSchema::NAME);
+      std::string name;
+      if( iter != results.end() )
+      {
+         name = iter->second;
+      }
+      else
+      {
+         name = dtUtil::Log::GetInstance().GetName();
+      }
+      
+      iter = results.find(ApplicationConfigSchema::LOG_LEVEL);
+      if ( iter != results.end() )
+      {
+         mConfigData.LOG_LEVELS.insert(std::make_pair(name, iter->second));
+      }
+      else
+      {
+         LOG_WARNING("No level defined for log named \"" + name + "\", the default value will be used.");
+      }
+      
+   }
+   
 }

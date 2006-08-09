@@ -40,32 +40,6 @@ int main(int argc, char** argv)
    argv++;
    --argc;
 
-#ifndef __APPLE__
-   /**
-   dtUtil::FileInfo info = dtUtil::FileUtils::GetInstance().GetFileInfo(executable);
-   if(info.fileType == dtUtil::FILE_NOT_FOUND)
-   {
-      LOG_ERROR(std::string("Unable to change to the directory of application \"")
-         + executable + "\": file not found.");
-   }
-   else
-   {
-      LOG_ALWAYS(std::string("Changing to directory \"")
-            + info.path + "\".");
-
-      try
-      {
-         if (!info.path.empty())
-            dtUtil::FileUtils::GetInstance().ChangeDirectory(info.path);
-      }
-      catch (dtUtil::Exception& ex)
-      {
-         ex.LogException(dtUtil::Log::LOG_ERROR);
-      }
-   }
-   */
-#endif
-
    try 
    {
       dtCore::RefPtr<dtGame::GameApplication> app = new dtGame::GameApplication(argc, argv);
@@ -74,9 +48,10 @@ int main(int argc, char** argv)
       app->Run();
       app = NULL;
    }
-   catch (dtUtil::Exception &ex)
+   catch (const dtUtil::Exception &ex)
    {
-      std::cout << "GameStart caught exception: " << ex.ToString() << std::endl;
+      LOG_ERROR("GameStart caught exception: ");
+      ex.LogException(dtUtil::Log::LOG_ERROR);
    }
    return 0;
 }

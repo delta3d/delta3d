@@ -42,8 +42,10 @@
 #include <dtGame/actorupdatemessage.h>
 #include <dtGame/environmentactor.h>
 #include <dtGame/gmcomponent.h>
+#include <dtGame/defaultmessageprocessor.h>
 #include <testGameActorLibrary/testgameactorlibrary.h>
 #include <testGameActorLibrary/testgameenvironmentactor.h>
+#include <testGameActorLibrary/testgamepropertyproxy.h>
 
 #include <cppunit/extensions/HelperMacros.h>
 
@@ -114,6 +116,7 @@ class GameActorTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestStaticGameActorTypes);
       CPPUNIT_TEST(TestEnvironmentTimeConversions);
       CPPUNIT_TEST(TestDefaultProcessMessageRegistration);
+      CPPUNIT_TEST(TestMessageProcessingPerformance);
 
    CPPUNIT_TEST_SUITE_END();
 
@@ -129,10 +132,11 @@ public:
    void TestGlobalInvokableMessageRegistration();
    void TestStaticGameActorTypes();
    void TestEnvironmentTimeConversions();
+   void TestMessageProcessingPerformance();
 
 private:
-   static std::string mTestGameActorLibrary;
-   static std::string mTestActorLibrary;
+   static const std::string mTestGameActorLibrary;
+   static const std::string mTestActorLibrary;
    dtCore::RefPtr<dtGame::GameManager> mManager;
 };
 
@@ -140,15 +144,15 @@ private:
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(GameActorTests);
 
-   std::string GameActorTests::mTestGameActorLibrary = "testGameActorLibrary";
-   std::string GameActorTests::mTestActorLibrary     = "testActorLibrary";
+const std::string GameActorTests::mTestGameActorLibrary = "testGameActorLibrary";
+const std::string GameActorTests::mTestActorLibrary     = "testActorLibrary";
 
 void GameActorTests::setUp()
 {
    try
    {
-      dtCore::System::Instance()->SetShutdownOnWindowClose(false);
-      dtCore::System::Instance()->Start();
+      dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
+      dtCore::System::GetInstance().Start();
       dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
 
       dtCore::RefPtr<dtCore::Scene> scene = new dtCore::Scene;
@@ -167,7 +171,7 @@ void GameActorTests::setUp()
 
 void GameActorTests::tearDown()
 {
-   dtCore::System::Instance()->Stop();
+   dtCore::System::GetInstance().Stop();
    if (mManager.valid())
    {
       mManager->DeleteAllActors(true);
@@ -323,7 +327,7 @@ void GameActorTests::TestInvokableMessageRegistration()
       CPPUNIT_ASSERT_MESSAGE("Zero remote ticks should have been received.", static_cast<dtDAL::IntActorProperty*>(gap->GetProperty("Remote Tick Count"))->GetValue() == 0);
 
       SLEEP(10);
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
 
       CPPUNIT_ASSERT_MESSAGE("One local tick should have been received.", static_cast<dtDAL::IntActorProperty*>(gap->GetProperty("Local Tick Count"))->GetValue() == 1);
       CPPUNIT_ASSERT_MESSAGE("Zero remote ticks should have been received.", static_cast<dtDAL::IntActorProperty*>(gap->GetProperty("Remote Tick Count"))->GetValue() == 0);
@@ -383,7 +387,7 @@ void GameActorTests::TestDefaultProcessMessageRegistration()
       mManager->PublishActor(*gap1);
       mManager->PublishActor(*gap2);
 
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
 
       // One publish message should have been received. So, count should be 2
       CPPUNIT_ASSERT_EQUAL_MESSAGE("We should only have gotten 1 publish, so count shoudl be 2.",
@@ -457,7 +461,7 @@ void GameActorTests::TestGlobalInvokableMessageRegistration()
       CPPUNIT_ASSERT(mManager->FindGameActorById(gap1->GetId()) != NULL);
 
       SLEEP(10);
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
 
       //Actor should be removed by now.
       CPPUNIT_ASSERT(mManager->FindGameActorById(gap1->GetId()) == NULL);
@@ -484,7 +488,7 @@ void GameActorTests::TestGlobalInvokableMessageRegistration()
       mManager->SendMessage(*mManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_MAP_LOADED));
 
       SLEEP(10);
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
 
       CPPUNIT_ASSERT(static_cast<dtDAL::IntActorProperty*>(gap2->GetProperty("Actor Deleted Count"))->GetValue() == 2);
       CPPUNIT_ASSERT(static_cast<dtDAL::IntActorProperty*>(gap2->GetProperty("Actor Published Count"))->GetValue() == 1);
@@ -495,7 +499,7 @@ void GameActorTests::TestGlobalInvokableMessageRegistration()
          dtGame::MessageType::INFO_MAP_LOADED, *gap2, iTestListener->GetName());
       mManager->SendMessage(*mManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_MAP_LOADED));
       SLEEP(10);
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
 
       CPPUNIT_ASSERT(static_cast<dtDAL::IntActorProperty*>(gap2->GetProperty("Actor Deleted Count"))->GetValue() == 2);
       CPPUNIT_ASSERT(static_cast<dtDAL::IntActorProperty*>(gap2->GetProperty("Actor Published Count"))->GetValue() == 1);
@@ -553,7 +557,7 @@ void GameActorTests::TestSetEnvironmentActor()
       //bool shouldBeTrue = mManager->GetScene().IsPagingEnabled();
       //CPPUNIT_ASSERT(shouldBeTrue);
       SLEEP(2);
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
       std::vector<dtCore::RefPtr<const dtGame::Message> > msgs = tc->GetReceivedProcessMessages();
       bool wasMessage = false;
       for(unsigned int i = 0; i < msgs.size(); i++)
@@ -572,7 +576,7 @@ void GameActorTests::TestSetEnvironmentActor()
       //mManager->GetScene().DisablePaging();
       msgs.clear();
       tc->reset();
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
       msgs = tc->GetReceivedProcessMessages();
       wasMessage = false;
       for(unsigned int i = 0; i < msgs.size(); i++)
@@ -590,7 +594,7 @@ void GameActorTests::TestSetEnvironmentActor()
       //CPPUNIT_ASSERT(!mManager->GetScene().IsPagingEnabled());
       msgs.clear();
       tc->reset();
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
       msgs = tc->GetReceivedProcessMessages();
       wasMessage = false;
       for(unsigned int i = 0; i < msgs.size(); i++)
@@ -625,7 +629,7 @@ void GameActorTests::TestSetEnvironmentActor()
       //CPPUNIT_ASSERT(mManager->GetScene().IsPagingEnabled());
       msgs.clear();
       tc->reset();
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
       msgs = tc->GetReceivedProcessMessages();
       wasMessage = false;
       for(unsigned int i = 0; i < msgs.size(); i++)
@@ -645,7 +649,7 @@ void GameActorTests::TestSetEnvironmentActor()
       //CPPUNIT_ASSERT(mManager->GetScene().IsPagingEnabled());
       msgs.clear();
       tc->reset();
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
       msgs = tc->GetReceivedProcessMessages();
       wasMessage = false;
       for(unsigned int i = 0; i < msgs.size(); i++)
@@ -719,3 +723,79 @@ void GameActorTests::TestEnvironmentTimeConversions()
    std::string newValue = envActor->GetTimeAndDateString();
    CPPUNIT_ASSERT_MESSAGE("The time and date string should be equal to the original value", newValue == testTime);
 }
+
+void GameActorTests::TestMessageProcessingPerformance()
+{
+   int numActors = 50;
+   int numTicks = 100;
+   try 
+   {
+      dtCore::RefPtr<dtGame::DefaultMessageProcessor> dmc = new dtGame::DefaultMessageProcessor();
+      mManager->AddComponent(*dmc, dtGame::GameManager::ComponentPriority::HIGHEST);
+
+      dtCore::RefPtr<dtDAL::ActorType> actor1Type = mManager->FindActorType("ExampleActors", "TestGamePropertyProxy");
+
+      // Start time in microseconds
+      dtCore::Timer_t startTime(0);// = mManager->GetRealClockTime();
+      dtCore::Timer statsTickClock;
+      //dtCore::Timer_t frameTickStart(0);
+      startTime = statsTickClock.Tick();
+
+      for (int i = 0; i < numActors; i ++)
+      {
+         dtCore::RefPtr<TestGamePropertyProxy> proxy1;
+         mManager->CreateActor(*actor1Type, proxy1);
+         //dtCore::RefPtr<dtGame::TestGamePropertyProxy> gap1 = dynamic_cast<dtGame::TestGamePropertyProxy*>(proxy1.get());
+         CPPUNIT_ASSERT_MESSAGE("ActorProxy should not be NULL", proxy1 != NULL);
+
+         //proxy1->GetProperty("Rotation")->SetReadOnly(true);
+         //proxy1->GetProperty("Translation")->SetReadOnly(true);
+         //proxy1->GetProperty("Scale")->SetReadOnly(true);
+         proxy1->SetRegisterListeners(false);
+         // add it as a remote actor 
+         mManager->AddActor(*proxy1, true, false);
+      }
+
+      dtCore::System::GetInstance().Step();
+
+      std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > testProxies;
+      mManager->FindActorsByType(*actor1Type.get(), testProxies);
+
+      // loop multiple ticks. 
+      for (int tickCounter = 0; tickCounter < numTicks; tickCounter ++)
+      {
+         // loop through the TON of actors (22 properties each) 
+         for (unsigned int actorIndex = 0; actorIndex < testProxies.size(); actorIndex++)
+         {
+            // get one of hte actors
+            dtCore::RefPtr<dtDAL::ActorProxy> actorProxy = testProxies[actorIndex];
+            dtCore::RefPtr<TestGamePropertyProxy> propProxy = 
+               dynamic_cast<TestGamePropertyProxy *>(actorProxy.get());
+
+            // create and populate an actor update message with ALL properties for this actor
+            dtCore::RefPtr<dtGame::Message> updateMsg =
+                  mManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_UPDATED);
+            dtGame::ActorUpdateMessage *message = static_cast<dtGame::ActorUpdateMessage *>(updateMsg.get());
+            propProxy->PopulateActorUpdate(*message);
+            mManager->SendMessage(*updateMsg);
+         }
+
+         dtCore::System::GetInstance().Step();
+      }
+
+      // Start time in microseconds
+      dtCore::Timer_t stopTime = statsTickClock.Tick();
+      double timeDelta = statsTickClock.DeltaSec(startTime, stopTime);
+      //dtCore::Timer_t stopTime = mManager->GetRealClockTime();
+
+      // 1 second???
+      std::ostringstream ss;
+      ss << "Update Msgs for " << numActors << " actors, 22 props, " << numTicks << " ticks took - [" << timeDelta << "] seconds " << std::endl;
+      //CPPUNIT_ASSERT_MESSAGE(ss.str(), timeDelta < 10.0);
+   }
+   catch (const dtUtil::Exception &e)
+   {
+      CPPUNIT_FAIL(e.What());
+   }
+}
+

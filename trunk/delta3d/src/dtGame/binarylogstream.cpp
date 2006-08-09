@@ -24,7 +24,6 @@
 #include "dtUtil/exception.h"
 #include "dtUtil/fileutils.h"
 
-#include <cassert>
 #include <iostream>
 
 namespace dtGame
@@ -132,7 +131,7 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////////
-   static inline void WriteToLog(const char* data, size_t dataSize, size_t count, FILE* file) throw (dtUtil::Exception)
+   static inline void WriteToLog(const char* data, size_t dataSize, size_t count, FILE* file) 
    {
 
       size_t written = fwrite(data,dataSize, count, file);
@@ -274,22 +273,22 @@ namespace dtGame
 
       char magicNumber[11];
       size_t numRead = fread(&magicNumber[0],1,10,mMessagesFile);
-      assert(numRead>=10||feof(mMessagesFile));
+      CheckFileStatus(mMessagesFile);
       magicNumber[10] = '\0';
       header.magicNumber = magicNumber;
 
       numRead = fread((char *)&header.majorVersion,1,1,mMessagesFile);
-      assert(numRead>=1||feof(mMessagesFile));
+      CheckFileStatus(mMessagesFile);
       numRead = fread((char *)&header.minorVersion,1,1,mMessagesFile);
-      assert(numRead>=1||feof(mMessagesFile));
+      CheckFileStatus(mMessagesFile);
       numRead = fread((char *)&header.recordLength,sizeof(double),1,mMessagesFile);
-      assert(numRead>=1||feof(mMessagesFile));
+      CheckFileStatus(mMessagesFile);
       numRead = fread((char *)&header.indexTableFileNameLength,sizeof(unsigned short),1,mMessagesFile);
-      assert(numRead>=1||feof(mMessagesFile));
+      CheckFileStatus(mMessagesFile);
 
       char *indexFile = new char[header.indexTableFileNameLength+1];
       numRead = fread(&indexFile[0],1,header.indexTableFileNameLength,mMessagesFile);
-      assert(numRead>=header.indexTableFileNameLength||feof(mMessagesFile));
+      CheckFileStatus(mMessagesFile);
       indexFile[header.indexTableFileNameLength] = '\0';
       header.indexTableFileName = indexFile;
       delete [] indexFile;
@@ -333,21 +332,21 @@ namespace dtGame
 
       char magicNumber[14];
       size_t numRead = fread(&magicNumber[0],1,13,mIndexTablesFile);
-      assert(numRead>=13||feof(mIndexTablesFile));
+      CheckFileStatus(mIndexTablesFile);
 
       magicNumber[13] = '\0';
       header.magicNumber = magicNumber;
 
       numRead = fread((char *)&header.majorVersion,1,1,mIndexTablesFile);
-      assert(numRead>=1||feof(mIndexTablesFile));
+      CheckFileStatus(mIndexTablesFile);
       numRead = fread((char *)&header.minorVersion,1,1,mIndexTablesFile);
-      assert(numRead>=1||feof(mIndexTablesFile));
+      CheckFileStatus(mIndexTablesFile);
       numRead = fread((char *)&header.msgDBFileNameLength,sizeof(unsigned short),1,mIndexTablesFile);
-      assert(numRead>=1||feof(mIndexTablesFile));
+      CheckFileStatus(mIndexTablesFile);
 
       char *msgDBFile = new char[header.msgDBFileNameLength+1];
       numRead = fread(&msgDBFile[0],1,header.msgDBFileNameLength,mIndexTablesFile);
-      assert(numRead>=header.msgDBFileNameLength||feof(mIndexTablesFile));
+      CheckFileStatus(mIndexTablesFile);
       msgDBFile[header.msgDBFileNameLength] = '\0';
       header.msgDBFileName = msgDBFile;
       delete [] msgDBFile;
@@ -423,7 +422,7 @@ namespace dtGame
 
       unsigned char dEID;
       size_t numRead = fread((char *)&dEID,1,1,mMessagesFile);
-      assert(numRead>=1||feof(mMessagesFile));
+      CheckFileStatus(mMessagesFile);
       if (feof(mMessagesFile))
          return NULL;
 
@@ -435,9 +434,9 @@ namespace dtGame
       //Get the type of message and create the message object.
       unsigned short msgID;
       numRead = fread((char *)&msgID,sizeof(unsigned short),1,mMessagesFile);
-      assert(numRead>=1||feof(mMessagesFile));
+      CheckFileStatus(mMessagesFile);
       numRead = fread((char *)&timeStamp,sizeof(double),1,mMessagesFile);
-      assert(numRead>=1||feof(mMessagesFile));
+      CheckFileStatus(mMessagesFile);
       const MessageType &msgType = GetMessageFactory().GetMessageTypeById(msgID);
 
       dtCore::RefPtr<Message> msg = NULL;
@@ -446,12 +445,12 @@ namespace dtGame
       //Create a temporary buffer, and read the message from it.
       unsigned int bufferSize;
       numRead = fread((char *)&bufferSize,sizeof(unsigned int),1,mMessagesFile);
-      assert(numRead>=1||feof(mMessagesFile));
+      CheckFileStatus(mMessagesFile);
       if (bufferSize != 0)
       {
          char *tempBuffer = new char[bufferSize];
          numRead = fread(&tempBuffer[0],1,bufferSize,mMessagesFile);
-         assert(numRead>=bufferSize||feof(mMessagesFile));
+         CheckFileStatus(mMessagesFile);
 
          DataStream stream(tempBuffer,bufferSize);
 
@@ -476,7 +475,6 @@ namespace dtGame
 
       unsigned char deID;
       size_t numRead = fread((char *)&deID,1,1,mIndexTablesFile);
-      assert(numRead>=1||feof(mIndexTablesFile));
       CheckFileStatus(mIndexTablesFile);
       while (!feof(mIndexTablesFile))
       {
@@ -497,7 +495,7 @@ namespace dtGame
          }
 
          numRead = fread((char *)&deID,1,1,mIndexTablesFile);
-         assert(numRead>=1||feof(mIndexTablesFile));
+         CheckFileStatus(mIndexTablesFile);
       }
 
       CheckFileStatus(mIndexTablesFile);
@@ -508,7 +506,9 @@ namespace dtGame
    {
       int error = ferror(fp);
       if (error != 0)
-         EXCEPT(LogStreamException::LOGGER_IO_EXCEPTION,std::string(strerror(error)));
+         throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION, std::string(strerror(error)), __FILE__, __LINE__);
+      //else if (feof(fp))
+      //   throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION, "End of file unexpectedly reached.", __FILE__, __LINE__);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -687,11 +687,10 @@ namespace dtGame
 
       unsigned int bufferSize;
       size_t numRead = fread((char *)&bufferSize,sizeof(unsigned int),1,mIndexTablesFile);
-      assert(numRead>=1||feof(mIndexTablesFile));
+      CheckFileStatus(mIndexTablesFile);
 
       char *tempBuffer = new char[bufferSize];
       numRead = fread(&tempBuffer[0],bufferSize,1,mIndexTablesFile);
-      assert(numRead>=1||feof(mIndexTablesFile));
       CheckFileStatus(mIndexTablesFile);
 
       DataStream stream(tempBuffer,bufferSize);
@@ -734,11 +733,10 @@ namespace dtGame
 
       unsigned int bufferSize;
       size_t numRead = fread((char *)&bufferSize,sizeof(unsigned int),1,mIndexTablesFile);
-      assert(numRead>=1||feof(mIndexTablesFile));
+      CheckFileStatus(mIndexTablesFile);
 
       char *tempBuffer = new char[bufferSize];
       numRead = fread(&tempBuffer[0],bufferSize,1,mIndexTablesFile);
-      assert(numRead>=1||feof(mIndexTablesFile));
       CheckFileStatus(mIndexTablesFile);
 
       DataStream stream(tempBuffer,bufferSize);

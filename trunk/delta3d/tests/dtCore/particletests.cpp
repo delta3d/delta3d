@@ -48,7 +48,10 @@ using namespace dtTest;
 void ParticleTest::setUp()
 {
    pSystem = new dtCore::ParticleSystem();
-   pSystem->LoadFile(dtCore::GetDeltaDataPathList() + "/effects/smoke.osg");
+   dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
+   std::string smokeFile = dtCore::FindFileInPathList("effects/smoke.osg");
+   CPPUNIT_ASSERT(!smokeFile.empty());
+   pSystem->LoadFile(smokeFile);
 }
 
 void ParticleTest::tearDown()

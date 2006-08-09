@@ -636,7 +636,8 @@ namespace dtDAL
             const Map& toCheck = *j->second;
             if (&mapToClose != &toCheck && toCheck.HasLibrary(libToClose))
             {
-               if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_INFO)) {
+               if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_INFO)) 
+               {
                   mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
                                       "Not unloading library %s because it is used by open map named %s.",
                                       libToClose.c_str(), toCheck.GetName().c_str());
@@ -645,6 +646,7 @@ namespace dtDAL
                break;
             }
          }
+         
          if (libMayClose)
          {
             ActorPluginRegistry* aprToClose =

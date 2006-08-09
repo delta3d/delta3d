@@ -90,7 +90,7 @@ void CEUIDrawable::Config()
    
    RegisterInstance(this);
 
-   if(!CEGUI::System::getSingletonPtr())
+   if(CEGUI::System::getSingletonPtr() == NULL)
    {
       if(mScriptModule)
       {

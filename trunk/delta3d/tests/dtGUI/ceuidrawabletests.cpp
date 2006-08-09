@@ -94,6 +94,7 @@ void CEUIDrawableTests::TestInput()
 {
    // start an application with GUI support
    dtCore::RefPtr<dtTest::GUIApp> app( new dtTest::GUIApp() );
+   app->GetWindow()->SetPosition(0, 0, 50, 50);
    app->Config();
 
    dtCore::RefPtr<dtCore::Keyboard> kb = app->GetKeyboard();

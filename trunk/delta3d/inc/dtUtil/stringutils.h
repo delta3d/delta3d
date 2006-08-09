@@ -150,7 +150,10 @@ namespace dtUtil
          }
       }
 
-      for( int i = (int(toTrim.size()) - 1); i >= 0; --i )
+      if(toTrim.empty())
+         return;
+
+      for (unsigned int i = (toTrim.size() - 1); i >= 0; --i)
       {
          if( isspace(toTrim[i]) )
          {

@@ -63,11 +63,11 @@ TestAudioApp::TestAudioApp(const std::string& configFilename /*= "config.xml"*/ 
    AudioManager::Instantiate();
 
    AudioConfigData   data;//(32L, true);
-   AudioManager::GetManager()->Config( data );
+   AudioManager::GetInstance().Config( data );
 
    for( unsigned int ii(0L); ii < kNumSoundFiles; ii++ )
    {
-      AudioManager::GetManager()->LoadFile( kSoundFile[ii] );
+      AudioManager::GetInstance().LoadFile( kSoundFile[ii] );
    }
 
    mMic  = AudioManager::GetListener();
@@ -112,7 +112,7 @@ TestAudioApp::~TestAudioApp()
 
    for( unsigned int ii(0L); ii < kNumSoundFiles; ii++ )
    {
-      AudioManager::GetManager()->UnloadFile( kSoundFile[ii] );
+      AudioManager::GetInstance().UnloadFile( kSoundFile[ii] );
    }
 
    AudioManager::Destroy();
@@ -308,7 +308,7 @@ void TestAudioApp::LoadPlaySound( const char* fname, unsigned int box /*= 0L*/ )
    Log::GetInstance().LogMessage(Log::LOG_ALWAYS, __FUNCTION__,
       " LoadPlaySound( %s )", fname );
 
-   Sound*   snd = AudioManager::GetManager()->NewSound();
+   Sound*   snd = AudioManager::GetInstance().NewSound();
    assert( snd );
 
    snd->LoadFile( fname );
@@ -391,7 +391,7 @@ TestAudioApp::FreeAllStoppedSounds( bool forced /*= false*/ )
       Log::GetInstance().LogMessage(Log::LOG_ALWAYS, __FUNCTION__,
          " FreeAllStoppedSounds( %s )", snd->GetFilename() );
 
-      AudioManager::GetManager()->FreeSound( snd );
+      AudioManager::GetInstance().FreeSound( snd );
       mActive.erase( iter );
    }
 }

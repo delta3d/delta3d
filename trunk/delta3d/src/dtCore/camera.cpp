@@ -223,7 +223,7 @@ void Camera::Frame( bool lastCamera )
       }
    }
       
-   if( mScene.valid() && !System::Instance()->GetPause() )
+   if( mScene.valid() && !System::GetInstance().GetPause() )
    {
       // TODO: Investigate double updates when we have multiple camera.
       // Anything with an update callback may be called twice!

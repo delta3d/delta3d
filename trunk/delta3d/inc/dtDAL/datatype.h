@@ -34,6 +34,13 @@ namespace dtDAL
     {
          DECLARE_ENUM(DataType);
       public:
+         enum DataTypeId {
+            UNKNOWN_ID = 0, CHAR_ID, UCHAR_ID, FLOAT_ID, DOUBLE_ID, INT_ID, UINT_ID, LONGINT_ID, 
+            ULONGINT_ID, SHORTINT_ID, USHORTINT_ID, STRING_ID, BOOLEAN_ID, 
+            VEC4_ID, VEC3_ID, VEC2_ID, VEC4F_ID, VEC3F_ID, VEC2F_ID, VEC4D_ID, VEC3D_ID, VEC2D_ID,
+            RGBCOLOR_ID, RGBACOLOR_ID, GROUP_ID, ACTOR_ID, ENUMERATION_ID, GAMEEVENT_ID,
+            STATICMESH_ID, TEXTURE_ID, CHARACTER_ID, TERRAIN_ID, SOUND_ID, PARTICLESYSTEM_ID } ;
+
          /**
           * Data type used to represent an unknown type.  For example, the GenericActorProperty
           * returns identifies its datatype as unknown.  It does this because the

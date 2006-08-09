@@ -24,13 +24,14 @@
 
 #include <map>
 #include <dtUtil/exception.h>
-#include "dtGame/message.h"
+#include <dtGame/message.h>
 
 
 // Forward declarations
 namespace dtDAL
 {
    class DataType;
+   class ActorType;
 }
 
 namespace dtGame
@@ -44,60 +45,46 @@ namespace dtGame
    {
       public:
 
+         static const std::string NAME_PARAMETER;
+         static const std::string ACTOR_TYPE_NAME_PARAMETER;
+         static const std::string ACTOR_TYPE_CATEGORY_PARAMETER;
+         static const std::string UPDATE_GROUP_PARAMETER;
+
          /// Constructor
          ActorUpdateMessage();
-
-
+         
          /**
           * @return The name of the actor this is updating.  This value is also used to change the name.
           */
-         const std::string& GetName() const
-         {
-            return static_cast<const StringMessageParameter*>(GetParameter("Name"))->GetValue();
-         }
+         const std::string& GetName() const;
 
          /**
           * This is used to change the value of the name of the actor being changed.
           * @param newName The name of the actor to set.
           */
-         void SetName(const std::string& newName)
-         {
-            static_cast<StringMessageParameter*>(GetParameter("Name"))->SetValue(newName);
-         }
+         void SetName(const std::string& newName);
 
          /**
           * @return the actor type name of the actor.  This can be used along with the category to create the actor.
           */
-         const std::string& GetActorTypeName() const
-         {
-            return static_cast<const StringMessageParameter*>(GetParameter("Actor Type Name"))->GetValue();
-         }
+         const std::string& GetActorTypeName() const;
          
          /**
           * This is used to change the value of the actor type name of the actor being changed.
           * @param newTypeName The name of the actor type to set.
           */
-         void SetActorTypeName(const std::string& newTypeName)
-         {
-            static_cast<StringMessageParameter*>(GetParameter("Actor Type Name"))->SetValue(newTypeName);
-         }
+         void SetActorTypeName(const std::string& newTypeName);
 
          /**
           * @return the actor type category of the actor.  This can be used along with the actor type name to create the actor.
           */
-         const std::string& GetActorTypeCategory() const
-         {
-            return static_cast<const StringMessageParameter*>(GetParameter("Actor Type Category"))->GetValue();
-         }
+         const std::string& GetActorTypeCategory() const;
 
          /**
           * This is used to change the value of the actor type category of the actor being changed.
           * @param newTypeCategory The category of the actor type to set.
           */
-         void SetActorTypeCategory(const std::string& newTypeCategory)
-         {
-            static_cast<StringMessageParameter*>(GetParameter("Actor Type Category"))->SetValue(newTypeCategory);
-         }
+         void SetActorTypeCategory(const std::string& newTypeCategory);
 
          /**
           * Adds an update parameter to an actor message
@@ -107,58 +94,45 @@ namespace dtGame
           * @see dtDAL::DataType
           * @throws dtUtil::Exception if the name specified is already used.
           */
-         MessageParameter* AddUpdateParameter(const std::string &name, const dtDAL::DataType &type) throw(dtUtil::Exception);
+         MessageParameter* AddUpdateParameter(const std::string &name, const dtDAL::DataType &type);
          
          /**
           * Retrieves the update parameter for this actor update message for the given name.
           * @param name The name of the parameters to retrieve
           * @return A pointer to the update parameters or NULL if no such parameter exists
           */
-         MessageParameter* GetUpdateParameter(const std::string &name) throw();
+         MessageParameter* GetUpdateParameter(const std::string &name);
 
          /**
           * Retrieves the update parameter for this actor update message for the given name.
           * @param name The name of the parameters to retrieve
           * @return A pointer to the update parameters or NULL if no such parameter exists
           */
-         const MessageParameter* GetUpdateParameter(const std::string &name) const throw();
+         const MessageParameter* GetUpdateParameter(const std::string &name) const;
 
          /** 
           * Retrieves the update parameters for this actor update message
           * @param toFill The vector to fill with the parameters
           */
-         void GetUpdateParameters(std::vector<MessageParameter*> &toFill) throw();
+         void GetUpdateParameters(std::vector<MessageParameter*> &toFill);
 
          /** 
           * Retrieves the const update parameters for this actor update message
           * @param toFill The vector to fill with the parameters
           */
-         void GetUpdateParameters(std::vector<const MessageParameter*> &toFill) const throw();
+         void GetUpdateParameters(std::vector<const MessageParameter*> &toFill) const;
 
          /**
-          * Adds support to copy the dynamic update parameter list to the other message.
-          * @see Message#CopyDataTo
-          * @throw dtUtil::Exception with enum Exception::INVALID_PARAMETER if the message is not an ActorUpdateMessage.
+          * Gets the actor type that this message is about
+          * @return The actor type or NULL if the current name and category do not exist
           */
-         virtual void CopyDataTo(Message& msg) const throw(dtUtil::Exception);
-
-         virtual void ToString(std::string& toFill) const;
-         virtual void FromString(const std::string &source); 
+         dtDAL::ActorType* GetActorType() const;
 
          /**
-         * This should write all of the subclass specific data to the stream.
-         * The base class data will be read by the caller before it calls this method.
-         * @param stream the stream to fill.
-         */
-         virtual void ToDataStream(DataStream& stream) const;
-
-         /**
-         * This should read all of the subclass specific data from the stream.
-         * By default, it reads all of the message parameters.
-         * The base class data will be set by the caller when it creates the object.
-         * @param stream the stream to pull the data from.
-         */
-         virtual void FromDataStream(DataStream& stream);
+          * Sets the actor type on this message.
+          * @param newActorType the actor type on this actor
+          */
+         void SetActorType(const dtDAL::ActorType& newActorType);
 
       protected:
 
@@ -167,7 +141,7 @@ namespace dtGame
 
       private:
 
-         std::map<std::string, dtCore::RefPtr<MessageParameter> > mPropertyList;
+         GroupMessageParameter* mUpdateParameters;
    };
 }
 

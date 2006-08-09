@@ -93,6 +93,9 @@ namespace dtHLAGM
          ///Indentifier for an entity marking used to hold both a marking type and the content of the marking.
          static const RPRAttributeType MARKING_TYPE;
 
+         ///A variable length string.
+         static const RPRAttributeType STRING_TYPE;
+
       private:
          RPRAttributeType(const std::string& name, unsigned char id, size_t encodedLength):AttributeType(name, id, encodedLength)
          {
@@ -109,7 +112,7 @@ namespace dtHLAGM
 
          virtual void MapToMessageParameters(const char* buffer, size_t size, std::vector<dtCore::RefPtr<dtGame::MessageParameter> >& parameters, const OneToManyMapping& mapping) const;
 
-         virtual void MapFromMessageParameters(char* buffer, size_t maxSize, std::vector<dtCore::RefPtr<const dtGame::MessageParameter> >& parameters, const OneToManyMapping& mapping) const;
+         virtual void MapFromMessageParameters(char* buffer, size_t& maxSize, std::vector<dtCore::RefPtr<const dtGame::MessageParameter> >& parameters, const OneToManyMapping& mapping) const;
 
          /**
           * @returns the attribute type this translator uses for this name.  It will return AttributeType::UNKNOWN if the name doesn't match anything.
@@ -126,6 +129,19 @@ namespace dtHLAGM
          ObjectRuntimeMappingInfo& mRuntimeMappings;
 
          virtual ~RPRParameterTranslator();
+
+         /**
+          * Helper method to map between the hla and game value enum values.
+          * @param value the hla or game value we need the mapping for.
+          * @param paramDef the parameter definition that should hold the mapping.
+          * @param returnGameValue true if "value" is the hla value an we want the game value. False for the opposite.
+          * @return the mapped value, the default if no mapping is found, or empty string if the default fails.
+          */
+         const std::string GetEnumValue(
+            const std::string& value, 
+            const OneToManyMapping::ParameterDefinition& paramDef, 
+            bool returnGameValue) const;
+
          void SetIntegerValue(long value, dtGame::MessageParameter& parameter, const OneToManyMapping& mapping, unsigned parameterDefIndex) const;
          long GetIntegerValue(const dtGame::MessageParameter& parameter, const OneToManyMapping& mapping, unsigned parameterDefIndex) const;
 

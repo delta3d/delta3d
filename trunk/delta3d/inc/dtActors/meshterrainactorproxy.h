@@ -21,8 +21,8 @@
 #ifndef _MESH_TERRAIN_ACTOR_PROXY_H_
 #define _MESH_TERRAIN_ACTOR_PROXY_H_
 
-#include "dtDAL/plugin_export.h"
-#include "dtActors/deltaobjectactorproxy.h"
+#include <dtDAL/plugin_export.h>
+#include <dtActors/deltaobjectactorproxy.h>
 #include <dtDAL/exceptionenum.h>
 #include <dtCore/object.h>
 

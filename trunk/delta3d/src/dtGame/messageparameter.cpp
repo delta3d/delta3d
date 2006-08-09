@@ -1,26 +1,27 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
-* Copyright (C) 2005, BMH Associates, Inc.
-*
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
-* any later version.
-*
-* This library is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
-* details.
-*
-* You should have received a copy of the GNU Lesser General Public License
-* along with this library; if not, write to the Free Software Foundation, Inc.,
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*
-* @author David Guthrie
-*/
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2005, BMH Associates, Inc.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * @author David Guthrie
+ */
 #include <string>
 #include "dtGame/exceptionenum.h"
 #include "dtGame/messageparameter.h"
+#include <dtDAL/enginepropertytypes.h>
 
 namespace dtGame
 {
@@ -30,110 +31,131 @@ namespace dtGame
    const char MessageParameter::DEFAULT_DELIMETER = '|';
 
    ///////////////////////////////////////////////////////////////////////////////
+   void MessageParameter::SetFromProperty(const dtDAL::ActorProperty &property) 
+   {
+      EXCEPT(dtGame::ExceptionEnum::INVALID_PARAMETER, 
+         "Message parameter[" + GetName() + "] of type[" + GetDataType().GetName() +
+         "] does not have an associated actor property type in SetFromProperty()");
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void MessageParameter::ApplyValueToProperty(dtDAL::ActorProperty &property) const 
+   {
+      EXCEPT(dtGame::ExceptionEnum::INVALID_PARAMETER, 
+         "Message parameter[" + GetName() + "] of type[" + GetDataType().GetName() +
+         "] does not have an associated actor property type in ApplyValueToProperty()");
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void MessageParameter::ValidatePropertyType(const dtDAL::ActorProperty &property) const 
+   {
+      if (property.GetPropertyType() != GetDataType())
+      {
+         EXCEPT(dtGame::ExceptionEnum::INVALID_PARAMETER, 
+            "Actor Property [" + property.GetName() + "] with Data Type [" + property.GetPropertyType().GetName() +
+            "] does not match the Message Parameter [" + GetName() + 
+            "] with Data Type [" + GetDataType().GetName() + "]");
+      }
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    dtCore::RefPtr<MessageParameter> MessageParameter::CreateFromType(
    		const dtDAL::DataType& type, const std::string& name, bool isList)
-		      throw(dtUtil::Exception)
    {
       dtCore::RefPtr<MessageParameter> param;
-      if(type == dtDAL::DataType::UCHAR)
+
+      switch (type.GetTypeId()) 
       {
+      case dtDAL::DataType::CHAR_ID:
+      case dtDAL::DataType::UCHAR_ID:
          param = new UnsignedCharMessageParameter(name,0,isList);
-      }
-      else if(type == dtDAL::DataType::SHORTINT)
-      {
-         param = new ShortIntMessageParameter(name,0,isList);
-      }
-      else if(type == dtDAL::DataType::USHORTINT)
-      {
-         param = new UnsignedShortIntMessageParameter(name,0,isList);
-      }
-      else if(type == dtDAL::DataType::INT)
-      {
-         param = new IntMessageParameter(name,0,isList);
-      }
-      else if(type == dtDAL::DataType::UINT)
-      {
-         param = new UnsignedIntMessageParameter(name,0,isList);
-      }
-      else if(type == dtDAL::DataType::LONGINT)
-      {
-         param = new LongIntMessageParameter(name,0,isList);
-      }
-      else if(type == dtDAL::DataType::ULONGINT)
-      {
-         param = new UnsignedLongIntMessageParameter(name,0,isList);
-      }
-      else if(type == dtDAL::DataType::FLOAT)
-      {
+         break;
+      case dtDAL::DataType::FLOAT_ID:
          param = new FloatMessageParameter(name,0.0f,isList);
-      }
-      else if(type == dtDAL::DataType::DOUBLE)
-      {
+         break;
+      case dtDAL::DataType::DOUBLE_ID:
          param = new DoubleMessageParameter(name,0.0,isList);
-      }
-      else if(type == dtDAL::DataType::BOOLEAN)
-      {
-         param = new BooleanMessageParameter(name,false,isList);
-      }
-      else if(type == dtDAL::DataType::ENUMERATION)
-      {
-         param = new EnumMessageParameter(name,"",isList);
-      }
-      else if(type == dtDAL::DataType::STRING)
-      {
+         break;
+      case dtDAL::DataType::INT_ID:
+         param = new IntMessageParameter(name,0,isList);
+         break;
+      case dtDAL::DataType::UINT_ID:
+         param = new UnsignedIntMessageParameter(name,0,isList);
+         break;
+      case dtDAL::DataType::ULONGINT_ID:
+         param = new UnsignedLongIntMessageParameter(name,0,isList);
+         break;
+      case dtDAL::DataType::LONGINT_ID:
+         param = new LongIntMessageParameter(name,0,isList);
+         break;
+      case dtDAL::DataType::SHORTINT_ID:
+         param = new ShortIntMessageParameter(name,0,isList);
+         break;
+      case dtDAL::DataType::USHORTINT_ID:
+         param = new UnsignedShortIntMessageParameter(name,0,isList);
+         break;
+      case dtDAL::DataType::STRING_ID:
          param = new StringMessageParameter(name,"",isList);
-      }
-      else if(type == dtDAL::DataType::VEC2)
-      {
+         break;
+      case dtDAL::DataType::BOOLEAN_ID:
+         param = new BooleanMessageParameter(name,false,isList);
+         break;
+      case dtDAL::DataType::VEC2_ID:
          param = new Vec2MessageParameter(name,osg::Vec2(0,0),isList);
-      }
-      else if(type == dtDAL::DataType::VEC2F)
-      {
-         param = new Vec2fMessageParameter(name,osg::Vec2f(0,0),isList);
-      }
-      else if(type == dtDAL::DataType::VEC2D)
-      {
-         param = new Vec2dMessageParameter(name,osg::Vec2d(0,0),isList);
-      }
-      else if(type == dtDAL::DataType::VEC3 || type == dtDAL::DataType::RGBCOLOR)
-      {
+         break;
+      case dtDAL::DataType::VEC3_ID:
          param = new Vec3MessageParameter(name,osg::Vec3(0,0,0),isList);
-      }
-      else if(type == dtDAL::DataType::VEC3F)
-      {
-         param = new Vec3fMessageParameter(name,osg::Vec3f(0,0,0),isList);
-      }
-      else if(type == dtDAL::DataType::VEC3D)
-      {
-         param = new Vec3dMessageParameter(name,osg::Vec3d(0,0,0),isList);
-      }
-      else if(type == dtDAL::DataType::VEC4 || type == dtDAL::DataType::RGBACOLOR)
-      {
+         break;
+      case dtDAL::DataType::VEC4_ID:
          param = new Vec4MessageParameter(name,osg::Vec4(0,0,0,0),isList);
-      }
-      else if(type == dtDAL::DataType::VEC4F)
-      {
+         break;
+      case dtDAL::DataType::VEC2F_ID:
+         param = new Vec2fMessageParameter(name,osg::Vec2f(0,0),isList);
+         break;
+      case dtDAL::DataType::VEC3F_ID:
+         param = new Vec3fMessageParameter(name,osg::Vec3f(0,0,0),isList);
+         break;
+      case dtDAL::DataType::VEC4F_ID:
          param = new Vec4fMessageParameter(name,osg::Vec4f(0,0,0,0),isList);
-      }
-      else if(type == dtDAL::DataType::VEC4D)
-      {
+         break;
+      case dtDAL::DataType::VEC2D_ID:
+         param = new Vec2dMessageParameter(name,osg::Vec2d(0,0),isList);
+         break;
+      case dtDAL::DataType::VEC3D_ID:
+         param = new Vec3dMessageParameter(name,osg::Vec3d(0,0,0),isList);
+         break;
+      case dtDAL::DataType::VEC4D_ID:
          param = new Vec4dMessageParameter(name,osg::Vec4d(0,0,0,0),isList);
-      }
-      else if(type.IsResource())
-      {
-         param = new ResourceMessageParameter(type,name,isList);
-      }
-      else if(type == dtDAL::DataType::ACTOR)
-      {
-         param = new ActorMessageParameter(name,dtCore::UniqueId(""),isList);
-      }
-      else if (type == dtDAL::DataType::GAME_EVENT)
-      {
+         break;
+      case dtDAL::DataType::RGBCOLOR_ID:
+         param = new RGBColorMessageParameter(name,osg::Vec3(0,0,0),isList);
+         break;
+      case dtDAL::DataType::RGBACOLOR_ID:
+         param = new RGBAColorMessageParameter(name,osg::Vec4(0,0,0,0),isList);
+         break;
+      case dtDAL::DataType::ENUMERATION_ID:
+         param = new EnumMessageParameter(name,"",isList);
+         break;
+      case dtDAL::DataType::GAMEEVENT_ID:
          param = new GameEventMessageParameter(name,dtCore::UniqueId(""),isList);
-      }
-      else
-      {
+         break;
+      case dtDAL::DataType::ACTOR_ID:
+         param = new ActorMessageParameter(name,dtCore::UniqueId(""),isList);
+         break;
+      case dtDAL::DataType::GROUP_ID:
+         param = new GroupMessageParameter(name);
+         break;
+      case dtDAL::DataType::STATICMESH_ID:
+      case dtDAL::DataType::TEXTURE_ID:
+      case dtDAL::DataType::CHARACTER_ID:
+      case dtDAL::DataType::TERRAIN_ID:
+      case dtDAL::DataType::SOUND_ID:
+      case dtDAL::DataType::PARTICLESYSTEM_ID:
+         param = new ResourceMessageParameter(type,name,isList);
+         break;
+      default:
          EXCEPT(dtGame::ExceptionEnum::INVALID_PARAMETER, "Type " + type.GetName() + " is not supported by the MessageParameter class.");
+         break;
       }
 
       return param;
@@ -145,13 +167,184 @@ namespace dtGame
       if(logger.IsLevelEnabled(level))
       {
          std::ostringstream oss("");
-         oss << "Message Parameter is: " << GetName() << " . ";
-         oss << "Its message type is: "  << GetDataType() << " . ";
-         oss << "Its value is: " << ToString();
+         oss << "Message Parameter is: \"" << GetName() << ".\" ";
+         oss << "Its message type is: \""  << GetDataType() << ".\" ";
+         oss << "Its value is: \"" << ToString() << ".\"";
          
          logger.LogMessage(level, __FUNCTION__, __LINE__, oss.str().c_str());
       }
    }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   ///////////////////////////////////////////////////////////////////////////////
+
+   void GroupMessageParameter::ToDataStream(DataStream& stream) const 
+   {
+      // Write out the size of the list so we know how many times to loop in FromDataStream
+      stream << (unsigned int)mParameterList.size();
+
+      for(std::map<std::string,dtCore::RefPtr<MessageParameter> >::const_iterator i = mParameterList.begin(); 
+         i != mParameterList.end(); ++i)
+      {
+         stream << i->second->GetDataType().GetTypeId();
+         stream << i->second->GetName();
+         i->second->ToDataStream(stream);
+      }
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+
+   void GroupMessageParameter::FromDataStream(DataStream& stream) 
+   {
+      // Read in the size of the stream
+      unsigned int size;
+      stream >> size;
+
+      for(unsigned short int i = 0; i < size; i++)
+      {
+         unsigned char id;
+         stream >> id;
+         dtDAL::DataType *type = NULL;
+
+         for(unsigned int j = 0; j < dtDAL::DataType::Enumerate().size(); j++)
+         {
+            if(static_cast<dtDAL::DataType*>(dtDAL::DataType::Enumerate()[j])->GetTypeId() == id)
+            {
+               type = static_cast<dtDAL::DataType*>(dtDAL::DataType::Enumerate()[j]);
+               break;
+            }
+         }
+         if(type == NULL) //|| type == &dtDAL::DataType::UNKNOWN)
+            EXCEPT(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION, "The datatype was not found in the stream\n");
+
+         std::string name;
+         stream >> name;
+         
+         dtCore::RefPtr<MessageParameter> param = GetParameter(name);
+         if (param == NULL)
+            param = AddParameter(name, *type);
+
+         param->FromDataStream(stream);
+      }      
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+
+   const std::string GroupMessageParameter::ToString() const 
+   {
+      std::string toFill;
+      for(std::map<std::string,dtCore::RefPtr<MessageParameter> >::const_iterator i = mParameterList.begin(); 
+         i != mParameterList.end(); ++i)
+      {
+         toFill.append(i->second->ToString());
+         toFill.append(1, '\n');
+      }
+      return toFill;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+
+   bool GroupMessageParameter::FromString(const std::string& value) 
+   {
+      std::istringstream iss(value);
+      //this is wrong.
+      for(std::map<std::string,dtCore::RefPtr<MessageParameter> >::iterator i = mParameterList.begin(); 
+         i != mParameterList.end(); ++i)
+      {
+         std::string line;
+         std::getline(iss, line);
+         i->second->FromString(line);
+      }
+      return true; 
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+
+   void GroupMessageParameter::CopyFrom(const MessageParameter& otherParam) 
+   {
+      if (otherParam.GetDataType() != GetDataType())
+         EXCEPT(ExceptionEnum::INVALID_PARAMETER, "The msg parameter must be of type GROUP.");
+      
+      const GroupMessageParameter& gpm = static_cast<const GroupMessageParameter&>(otherParam);
+      
+      //wipe out any existing parameters.  It's easier to just recreate them.
+      mParameterList.clear(); 
+      
+      //copy parameters
+      for (std::map<std::string, dtCore::RefPtr<MessageParameter> >::const_iterator i = gpm.mParameterList.begin();
+            i != gpm.mParameterList.end(); ++i)
+      {
+         MessageParameter* newParameter = AddParameter(i->first, i->second->GetDataType());
+         if (newParameter == NULL)
+            //This case should not happen, the method above should throw an exception if it doesn't work, but
+            //this is a case of paranoid programming.
+            EXCEPT(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION, "Unable to create parameter of type " + i->second->GetDataType().GetName());
+         
+         newParameter->CopyFrom(*i->second);
+      }
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+
+   MessageParameter* GroupMessageParameter::AddParameter(const std::string& name, 
+                                                         const dtDAL::DataType& type) 
+   {
+      dtCore::RefPtr<MessageParameter> param = MessageParameter::CreateFromType(type, name);
+      if (param.valid())
+      {
+         AddParameter(*param);
+         return param.get();
+      }
+      return NULL;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+
+   void GroupMessageParameter::AddParameter(MessageParameter& newParam) 
+   {
+      if (!mParameterList.insert(std::make_pair(newParam.GetName(), &newParam)).second)
+         EXCEPT(dtGame::ExceptionEnum::INVALID_PARAMETER, "Could not add new parameter: " + newParam.GetName() + 
+            ". A parameter with that name already exists.");
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+
+   MessageParameter* GroupMessageParameter::GetParameter(const std::string& name) 
+   {
+      std::map<std::string, dtCore::RefPtr<MessageParameter> >::iterator itor = mParameterList.find(name);
+      return itor == mParameterList.end() ? NULL : itor->second.get();
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+
+   const MessageParameter* GroupMessageParameter::GetParameter(const std::string& name) const 
+   {
+      std::map<std::string, dtCore::RefPtr<MessageParameter> >::const_iterator itor = mParameterList.find(name);
+      return itor == mParameterList.end() ? NULL : itor->second.get();
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+
+   void GroupMessageParameter::GetParameters(std::vector<MessageParameter*>& toFill) 
+   {
+      toFill.clear();
+      toFill.reserve(mParameterList.size());
+      for(std::map<std::string, dtCore::RefPtr<MessageParameter> >::iterator itor = mParameterList.begin();
+          itor != mParameterList.end(); ++itor)
+          toFill.push_back(itor->second.get());
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+
+   void GroupMessageParameter::GetParameters(std::vector<const MessageParameter*>& toFill) const 
+   {
+      toFill.clear();
+      toFill.reserve(mParameterList.size());
+      for(std::map<std::string, dtCore::RefPtr<MessageParameter> >::const_iterator itor = mParameterList.begin();
+          itor != mParameterList.end(); ++itor)
+          toFill.push_back(itor->second.get());
+   }
+
 
    ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
@@ -226,6 +419,25 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   void BooleanMessageParameter::SetFromProperty(const dtDAL::ActorProperty &property)
+   {
+      ValidatePropertyType(property);
+
+      const dtDAL::BooleanActorProperty *bap = static_cast<const dtDAL::BooleanActorProperty*> (&property);
+      SetValue(bap->GetValue());
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void BooleanMessageParameter::ApplyValueToProperty(dtDAL::ActorProperty &property) const 
+   {
+      ValidatePropertyType(property);
+
+      dtDAL::BooleanActorProperty *bap = static_cast<dtDAL::BooleanActorProperty*> (&property);
+      bap->SetValue(GetValue());
+   }
+
+
+   ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
    UnsignedCharMessageParameter::UnsignedCharMessageParameter(const std::string &name,
       unsigned char defaultValue, bool isList) : PODMessageParameter<unsigned char>(name,defaultValue,isList)
@@ -286,6 +498,25 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   void IntMessageParameter::SetFromProperty(const dtDAL::ActorProperty &property)
+   {
+      ValidatePropertyType(property);
+
+      const dtDAL::IntActorProperty *ap = static_cast<const dtDAL::IntActorProperty*> (&property);
+      SetValue(ap->GetValue());
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void IntMessageParameter::ApplyValueToProperty(dtDAL::ActorProperty &property) const 
+   {
+      ValidatePropertyType(property);
+
+      dtDAL::IntActorProperty *ap = static_cast<dtDAL::IntActorProperty*> (&property);
+      ap->SetValue(GetValue());
+   }
+
+
+   ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
    UnsignedLongIntMessageParameter::UnsignedLongIntMessageParameter(const std::string &name,
       unsigned long defaultValue, bool isList) : PODMessageParameter<unsigned long>(name,defaultValue,isList)
@@ -310,6 +541,24 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   void LongIntMessageParameter::SetFromProperty(const dtDAL::ActorProperty &property) 
+   {
+      ValidatePropertyType(property);
+
+      const dtDAL::LongActorProperty *ap = static_cast<const dtDAL::LongActorProperty*> (&property);
+      SetValue(ap->GetValue());
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void LongIntMessageParameter::ApplyValueToProperty(dtDAL::ActorProperty &property) const 
+   {
+      ValidatePropertyType(property);
+
+      dtDAL::LongActorProperty *ap = static_cast<dtDAL::LongActorProperty*> (&property);
+      ap->SetValue(GetValue());
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
    FloatMessageParameter::FloatMessageParameter(const std::string &name, float defaultValue,
          bool isList) : PODMessageParameter<float>(name, defaultValue, isList)
@@ -319,6 +568,24 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    FloatMessageParameter::~FloatMessageParameter()
    {
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void FloatMessageParameter::SetFromProperty(const dtDAL::ActorProperty &property) 
+   {
+      ValidatePropertyType(property);
+
+      const dtDAL::FloatActorProperty *ap = static_cast<const dtDAL::FloatActorProperty*> (&property);
+      SetValue(ap->GetValue());
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void FloatMessageParameter::ApplyValueToProperty(dtDAL::ActorProperty &property) const 
+   {
+      ValidatePropertyType(property);
+
+      dtDAL::FloatActorProperty *ap = static_cast<dtDAL::FloatActorProperty*> (&property);
+      ap->SetValue(GetValue());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -334,6 +601,24 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   void DoubleMessageParameter::SetFromProperty(const dtDAL::ActorProperty &property)
+   {
+      ValidatePropertyType(property);
+
+      const dtDAL::DoubleActorProperty *ap = static_cast<const dtDAL::DoubleActorProperty*> (&property);
+      SetValue(ap->GetValue());
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void DoubleMessageParameter::ApplyValueToProperty(dtDAL::ActorProperty &property) const 
+   {
+      ValidatePropertyType(property);
+
+      dtDAL::DoubleActorProperty *ap = static_cast<dtDAL::DoubleActorProperty*> (&property);
+      ap->SetValue(GetValue());
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
    StringMessageParameter::StringMessageParameter(const std::string& name, const std::string& defaultValue,
       bool isList) : GenericMessageParameter<std::string>(name,defaultValue,isList)
@@ -343,6 +628,24 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    StringMessageParameter::~StringMessageParameter()
    {
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void StringMessageParameter::SetFromProperty(const dtDAL::ActorProperty &property) 
+   {
+      ValidatePropertyType(property);
+
+      const dtDAL::StringActorProperty *ap = static_cast<const dtDAL::StringActorProperty*> (&property);
+      SetValue(ap->GetValue());
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void StringMessageParameter::ApplyValueToProperty(dtDAL::ActorProperty &property) const
+   {
+      ValidatePropertyType(property);
+
+      dtDAL::StringActorProperty *ap = static_cast<dtDAL::StringActorProperty*> (&property);
+      ap->SetValue(GetValue());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -413,6 +716,23 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   void EnumMessageParameter::SetFromProperty(const dtDAL::ActorProperty &property)
+   {
+      ValidatePropertyType(property);
+
+      SetValue(property.GetStringValue());
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void EnumMessageParameter::ApplyValueToProperty(dtDAL::ActorProperty &property) const 
+   {
+      ValidatePropertyType(property);
+
+      if (!property.SetStringValue(GetValue()))
+         LOG_ERROR(("Failed to set the enum value on property \"" + GetName() + "\".").c_str());
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
    ActorMessageParameter::ActorMessageParameter(const std::string& name,
       const dtCore::UniqueId& defaultValue, bool isList) :
@@ -423,6 +743,22 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    ActorMessageParameter::~ActorMessageParameter()
    {
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void ActorMessageParameter::SetFromProperty(const dtDAL::ActorProperty &property) 
+   {
+      ValidatePropertyType(property);
+
+      const dtDAL::ActorActorProperty *ap = static_cast<const dtDAL::ActorActorProperty*> (&property);
+      SetValue(ap->GetValue()->GetId());
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void ActorMessageParameter::ApplyValueToProperty(dtDAL::ActorProperty &property) const 
+   {
+      EXCEPT(dtGame::ExceptionEnum::INVALID_PARAMETER, 
+         "Cannot call ApplyValueToProperty()on an ActorMessageParameter.  See the GameActor::ApplyActorUpdate() for an example of how to do this.");
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -492,6 +828,22 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   void GameEventMessageParameter::SetFromProperty(const dtDAL::ActorProperty &property) 
+   {
+      ValidatePropertyType(property);
+
+      FromString(property.GetStringValue());
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void GameEventMessageParameter::ApplyValueToProperty(dtDAL::ActorProperty &property) const 
+   {
+      ValidatePropertyType(property);
+
+      property.SetStringValue(ToString());
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    const std::string GameEventMessageParameter::ToString() const
    {
       if (IsList())
@@ -557,6 +909,24 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   void Vec2MessageParameter::SetFromProperty(const dtDAL::ActorProperty &property) 
+   {
+      ValidatePropertyType(property);
+
+      const dtDAL::Vec2ActorProperty *ap = static_cast<const dtDAL::Vec2ActorProperty*> (&property);
+      SetValue(ap->GetValue());
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void Vec2MessageParameter::ApplyValueToProperty(dtDAL::ActorProperty &property) const 
+   {
+      ValidatePropertyType(property);
+
+      dtDAL::Vec2ActorProperty *ap = static_cast<dtDAL::Vec2ActorProperty*> (&property);
+      ap->SetValue(GetValue());
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
    Vec2fMessageParameter::Vec2fMessageParameter(const std::string &name,
       const osg::Vec2f& defaultValue, bool isList) : VecMessageParameter<osg::Vec2f>(name,defaultValue,isList)
@@ -566,6 +936,24 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    Vec2fMessageParameter::~Vec2fMessageParameter()
    {
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void Vec2fMessageParameter::SetFromProperty(const dtDAL::ActorProperty &property) 
+   {
+      ValidatePropertyType(property);
+
+      const dtDAL::Vec2fActorProperty *ap = static_cast<const dtDAL::Vec2fActorProperty*> (&property);
+      SetValue(ap->GetValue());
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void Vec2fMessageParameter::ApplyValueToProperty(dtDAL::ActorProperty &property) const 
+   {
+      ValidatePropertyType(property);
+
+      dtDAL::Vec2fActorProperty *ap = static_cast<dtDAL::Vec2fActorProperty*> (&property);
+      ap->SetValue(GetValue());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -581,6 +969,24 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   void Vec2dMessageParameter::SetFromProperty(const dtDAL::ActorProperty &property) 
+   {
+      ValidatePropertyType(property);
+
+      const dtDAL::Vec2dActorProperty *ap = static_cast<const dtDAL::Vec2dActorProperty*> (&property);
+      SetValue(ap->GetValue());
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void Vec2dMessageParameter::ApplyValueToProperty(dtDAL::ActorProperty &property) const 
+   {
+      ValidatePropertyType(property);
+
+      dtDAL::Vec2dActorProperty *ap = static_cast<dtDAL::Vec2dActorProperty*> (&property);
+      ap->SetValue(GetValue());
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
    Vec3MessageParameter::Vec3MessageParameter(const std::string &name,
       const osg::Vec3& defaultValue, bool isList) : VecMessageParameter<osg::Vec3>(name,defaultValue,isList)
@@ -589,6 +995,36 @@ namespace dtGame
 
    ///////////////////////////////////////////////////////////////////////////////
    Vec3MessageParameter::~Vec3MessageParameter()
+   {
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void Vec3MessageParameter::SetFromProperty(const dtDAL::ActorProperty &property)
+   {
+      ValidatePropertyType(property);
+
+      const dtDAL::Vec3ActorProperty *ap = static_cast<const dtDAL::Vec3ActorProperty*> (&property);
+      SetValue(ap->GetValue());
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void Vec3MessageParameter::ApplyValueToProperty(dtDAL::ActorProperty &property) const 
+   {
+      ValidatePropertyType(property);
+
+      dtDAL::Vec3ActorProperty *ap = static_cast<dtDAL::Vec3ActorProperty*> (&property);
+      ap->SetValue(GetValue());
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   ///////////////////////////////////////////////////////////////////////////////
+   RGBColorMessageParameter::RGBColorMessageParameter(const std::string &name,
+      const osg::Vec3& defaultValue, bool isList) : Vec3MessageParameter(name,defaultValue,isList)
+   {
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   RGBColorMessageParameter::~RGBColorMessageParameter()
    {
    }
 
@@ -605,6 +1041,24 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   void Vec3fMessageParameter::SetFromProperty(const dtDAL::ActorProperty &property) 
+   {
+      ValidatePropertyType(property);
+
+      const dtDAL::Vec3fActorProperty *ap = static_cast<const dtDAL::Vec3fActorProperty*> (&property);
+      SetValue(ap->GetValue());
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void Vec3fMessageParameter::ApplyValueToProperty(dtDAL::ActorProperty &property) const 
+   {
+      ValidatePropertyType(property);
+
+      dtDAL::Vec3fActorProperty *ap = static_cast<dtDAL::Vec3fActorProperty*> (&property);
+      ap->SetValue(GetValue());
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
    Vec3dMessageParameter::Vec3dMessageParameter(const std::string &name,
       const osg::Vec3d& defaultValue, bool isList) : VecMessageParameter<osg::Vec3d>(name,defaultValue,isList)
@@ -617,6 +1071,24 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   void Vec3dMessageParameter::SetFromProperty(const dtDAL::ActorProperty &property) 
+   {
+      ValidatePropertyType(property);
+
+      const dtDAL::Vec3dActorProperty *ap = static_cast<const dtDAL::Vec3dActorProperty*> (&property);
+      SetValue(ap->GetValue());
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void Vec3dMessageParameter::ApplyValueToProperty(dtDAL::ActorProperty &property) const 
+   {
+      ValidatePropertyType(property);
+
+      dtDAL::Vec3dActorProperty *ap = static_cast<dtDAL::Vec3dActorProperty*> (&property);
+      ap->SetValue(GetValue());
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
    Vec4MessageParameter::Vec4MessageParameter(const std::string &name,
       const osg::Vec4& defaultValue, bool isList) : VecMessageParameter<osg::Vec4>(name,defaultValue,isList)
@@ -625,6 +1097,36 @@ namespace dtGame
 
    ///////////////////////////////////////////////////////////////////////////////
    Vec4MessageParameter::~Vec4MessageParameter()
+   {
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void Vec4MessageParameter::SetFromProperty(const dtDAL::ActorProperty &property) 
+   {
+      ValidatePropertyType(property);
+
+      const dtDAL::Vec4ActorProperty *ap = static_cast<const dtDAL::Vec4ActorProperty*> (&property);
+      SetValue(ap->GetValue());
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void Vec4MessageParameter::ApplyValueToProperty(dtDAL::ActorProperty &property) const
+   {
+      ValidatePropertyType(property);
+
+      dtDAL::Vec4ActorProperty *ap = static_cast<dtDAL::Vec4ActorProperty*> (&property);
+      ap->SetValue(GetValue());
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   ///////////////////////////////////////////////////////////////////////////////
+   RGBAColorMessageParameter::RGBAColorMessageParameter(const std::string &name,
+      const osg::Vec4& defaultValue, bool isList) : Vec4MessageParameter(name,defaultValue,isList)
+   {
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   RGBAColorMessageParameter::~RGBAColorMessageParameter()
    {
    }
 
@@ -641,6 +1143,24 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   void Vec4fMessageParameter::SetFromProperty(const dtDAL::ActorProperty &property) 
+   {
+      ValidatePropertyType(property);
+
+      const dtDAL::Vec4fActorProperty *ap = static_cast<const dtDAL::Vec4fActorProperty*> (&property);
+      SetValue(ap->GetValue());
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void Vec4fMessageParameter::ApplyValueToProperty(dtDAL::ActorProperty &property) const 
+   {
+      ValidatePropertyType(property);
+
+      dtDAL::Vec4fActorProperty *ap = static_cast<dtDAL::Vec4fActorProperty*> (&property);
+      ap->SetValue(GetValue());
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
    Vec4dMessageParameter::Vec4dMessageParameter(const std::string &name,
       const osg::Vec4d& defaultValue, bool isList) : VecMessageParameter<osg::Vec4d>(name,defaultValue,isList)
@@ -653,6 +1173,24 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   void Vec4dMessageParameter::SetFromProperty(const dtDAL::ActorProperty &property)
+   {
+      ValidatePropertyType(property);
+
+      const dtDAL::Vec4dActorProperty *ap = static_cast<const dtDAL::Vec4dActorProperty*> (&property);
+      SetValue(ap->GetValue());
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void Vec4dMessageParameter::ApplyValueToProperty(dtDAL::ActorProperty &property) const 
+   {
+      ValidatePropertyType(property);
+
+      dtDAL::Vec4dActorProperty *ap = static_cast<dtDAL::Vec4dActorProperty*> (&property);
+      ap->SetValue(GetValue());
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
    ResourceMessageParameter::ResourceMessageParameter(const dtDAL::DataType& type,  const std::string &name,
       bool isList) : MessageParameter(name,isList), mDataType(&type)
@@ -661,6 +1199,35 @@ namespace dtGame
         mValueList = new std::vector<dtDAL::ResourceDescriptor>();
      else
         mValueList = NULL;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void ResourceMessageParameter::SetFromProperty(const dtDAL::ActorProperty &property) 
+   {
+      ValidatePropertyType(property);
+
+      const dtDAL::ResourceActorProperty *ap = static_cast<const dtDAL::ResourceActorProperty*> (&property);
+      SetValue(ap->GetValue());
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void ResourceMessageParameter::ApplyValueToProperty(dtDAL::ActorProperty &property) const 
+   {
+      ValidatePropertyType(property);
+
+      dtDAL::ResourceActorProperty *vap = static_cast<dtDAL::ResourceActorProperty*> (&property);
+      if (GetValue() != NULL)
+      {
+         dtDAL::ResourceDescriptor newValue(*GetValue());
+         vap->SetValue(&newValue);
+      }
+      else 
+      {
+         vap->SetValue(NULL);
+      }
+
+      //dtDAL::ResourceActorProperty *ap = static_cast<dtDAL::ResourceActorProperty*> (&property);
+      //ap->SetValue(GetValue());
    }
 
    ///////////////////////////////////////////////////////////////////////////////

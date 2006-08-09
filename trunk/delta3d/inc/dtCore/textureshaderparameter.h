@@ -23,6 +23,7 @@
 
 #include <dtCore/shaderparameter.h>
 #include <dtCore/export.h>
+#include "dtCore/loadable.h"
 
 #include <osg/Texture>
 

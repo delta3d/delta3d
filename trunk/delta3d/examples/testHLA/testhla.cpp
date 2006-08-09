@@ -44,7 +44,7 @@ public:
       {
          if(mKeyboard->GetKeyState(Producer::Key_Escape))
          {
-            System::Instance()->Stop();
+            System::GetInstance().Stop();
          }
 
          const float delta = float(*static_cast<const double*>(data->userData));

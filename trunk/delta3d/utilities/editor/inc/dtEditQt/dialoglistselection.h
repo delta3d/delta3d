@@ -26,6 +26,7 @@
 
 class QStringList;
 class QListWidget;
+class QListWidgetItem;
 class QPushButton;
 
 namespace dtEditQt
@@ -70,12 +71,12 @@ namespace dtEditQt
          * if the user presses the ok button to get the selected item.
          * @return The item selected from the list box.
          */
-        const QString &getSelectedItem() const {
-            return this->currentItem;
-        }
+        const QString &getSelectedItem() const { return currentItem; }
 
     protected slots:
         void onSelectionChanged();
+		  void onItemClicked(QListWidgetItem *i);
+        void onCurrentRowChanged(int newRow);
 
     private:
         QString currentItem;

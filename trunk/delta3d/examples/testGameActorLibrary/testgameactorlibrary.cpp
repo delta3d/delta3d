@@ -25,6 +25,7 @@
 #include "testplayer.h"
 #include "countertaskactor.h"
 #include "testgameenvironmentactor.h"
+#include "testgamepropertyproxy.h"
 #include <dtCore/scene.h>
 #include <dtGame/datastream.h>
 #include <dtGame/messageparameter.h>
@@ -39,6 +40,7 @@ dtCore::RefPtr<dtDAL::ActorType> TestGameActorLibrary::TEST_TANK_GAME_ACTOR_PROX
 dtCore::RefPtr<dtDAL::ActorType> TestGameActorLibrary::TEST_JET_GAME_ACTOR_PROXY_TYPE(new dtDAL::ActorType("Jet", "TestHLA", "These are test HLA mapping actors"));
 dtCore::RefPtr<dtDAL::ActorType> TestGameActorLibrary::TEST_HELICOPTER_GAME_ACTOR_PROXY_TYPE(new dtDAL::ActorType("Helicopter", "TestHLA", "These are test HLA mapping actors"));
 dtCore::RefPtr<dtDAL::ActorType> TestGameActorLibrary::TEST_ENVIRONMENT_GAME_ACTOR_PROXY_TYPE(new dtDAL::ActorType("TestEnvironmentActor", "ExampleActors", "These are example actors"));
+dtCore::RefPtr<dtDAL::ActorType> TestGameActorLibrary::TEST_GAME_PROPERTY_PROXY_TYPE(new dtDAL::ActorType("TestGamePropertyProxy", "ExampleActors", "Has an example of most property types"));
 
 
 extern "C" DT_EXAMPLE_EXPORT dtDAL::ActorPluginRegistry* CreatePluginRegistry()
@@ -70,4 +72,5 @@ void TestGameActorLibrary::RegisterActorTypes()
    mActorFactory->RegisterType<TestHLAObjectProxy> (TEST_JET_GAME_ACTOR_PROXY_TYPE.get());      
    mActorFactory->RegisterType<TestHLAObjectProxy> (TEST_HELICOPTER_GAME_ACTOR_PROXY_TYPE.get());      
    mActorFactory->RegisterType<TestGameEnvironmentActorProxy> (TEST_ENVIRONMENT_GAME_ACTOR_PROXY_TYPE.get());
+   mActorFactory->RegisterType<TestGamePropertyProxy> (TEST_GAME_PROPERTY_PROXY_TYPE.get());
 }

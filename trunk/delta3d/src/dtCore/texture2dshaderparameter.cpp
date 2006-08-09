@@ -19,7 +19,7 @@
  * @author Matthew W. Campbell
  */
 
-#include "dtCore/texture2dshaderparameter.h"
+#include <dtCore/texture2dshaderparameter.h>
 #include <dtUtil/exception.h>
 #include <dtCore/refptr.h>
 #include <dtUtil/fileutils.h>
@@ -63,7 +63,8 @@ namespace dtCore
 
          dtCore::RefPtr<osg::Texture2D> tex2D = new osg::Texture2D();
          std::string filePath = dtCore::FindFileInPathList(GetTexture());
-         osg::Image *image = osgDB::readImageFile(filePath,options.get());
+         osg::Image *image = osgDB::readImageFile(filePath, options.get());
+
          if (image == NULL)
             EXCEPT(ShaderParameterException::INVALID_ATTRIBUTE,"Could not find image for texture at location: "
                + GetTexture());

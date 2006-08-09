@@ -43,7 +43,7 @@ namespace dtActors
     ///////////////////////////////////////////////////////////////////////////////
     void SoundActorProxy::CreateActor()
     {
-        mActor = dtAudio::AudioManager::GetManager()->NewSound();
+        mActor = dtAudio::AudioManager::GetInstance().NewSound();
     }
 
     ///////////////////////////////////////////////////////////////////////////////

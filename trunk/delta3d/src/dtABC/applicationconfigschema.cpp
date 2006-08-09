@@ -7,6 +7,7 @@ const std::string ApplicationConfigSchema::WINDOW="Window";
 const std::string ApplicationConfigSchema::NAME="Name";
 const std::string ApplicationConfigSchema::SCENE="Scene";
 const std::string ApplicationConfigSchema::CAMERA="Camera";
+const std::string ApplicationConfigSchema::LOG="Log";
 
 const std::string ApplicationConfigSchema::X="X";
 const std::string ApplicationConfigSchema::Y="Y";
@@ -21,4 +22,6 @@ const std::string ApplicationConfigSchema::CHANGEDISPLAYRESOLUTION="ChangeDispla
 
 const std::string ApplicationConfigSchema::WINDOWINSTANCE="WindowInstance";
 const std::string ApplicationConfigSchema::SCENEINSTANCE="SceneInstance";
+
+const std::string ApplicationConfigSchema::LOG_LEVEL="Level";
 

@@ -36,9 +36,10 @@ namespace dtGame
 {
    IMPLEMENT_MANAGEMENT_LAYER(GameApplication)
 
-   GameApplication::GameApplication(int argc, char** argv): dtABC::Application(), mArgc(argc), mArgv(argv)
+   GameApplication::GameApplication(int argc, char** argv): dtABC::Application("config.xml"), mArgc(argc), mArgv(argv)
    {
       RegisterInstance(this);
+      mKeyboard->RemoveKeyboardListener(GetKeyboardListener());
    }
 
    GameApplication::~GameApplication()
@@ -93,7 +94,7 @@ namespace dtGame
          msg.str("");
          msg << "Game libraries must implement the function " <<
                 " \"CreateGameEntryPoint.\"";
-         EXCEPT(dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR, msg.str());
+         throw dtUtil::Exception(dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR, msg.str(), __FILE__, __LINE__);
       }
 
       if (destroyAddr== NULL)
@@ -101,37 +102,40 @@ namespace dtGame
          msg.str("");
          msg << "Game libraries must implement the function " <<
                 " \"DestroyGameEntryPoint.\"";
-         EXCEPT(dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR, msg.str());
+         throw dtUtil::Exception(dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR, msg.str(), __FILE__, __LINE__);
       }
 
       //Well we made it here so that means the plugin was loaded
       //successfully and the create and destroy functions were found.
-      mCreateFunction =  (CreateEntryPointFn)createAddr;
-      mDestroyFunction = (DestroyEntryPointFn)destroyAddr;
+      mCreateFunction  = reinterpret_cast<CreateEntryPointFn>(createAddr);
+      mDestroyFunction = reinterpret_cast<DestroyEntryPointFn>(destroyAddr);
+
       mEntryPoint =  mCreateFunction();
 
       try
       {
          mEntryPoint->Initialize(*this, mArgc, mArgv);
          mGameManager = mEntryPoint->CreateGameManager(*GetScene());
+
+         if(mGameManager == NULL)
+         {
+            msg.str("");
+            msg << " " << " \"GameEntryPoint failed to create Game Manager.\"";
+            exit(-1);
+         }
+         
+         mGameManager->SetApplication(*this);
+         mEntryPoint->OnStartup(*mGameManager);
       }
       catch (const dtUtil::Exception& ex)
       {
          ex.LogException(dtUtil::Log::LOG_ERROR);
-         throw ex;
+      
+         if(ex.TypeEnum() == dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR)
+            exit(-1);
+         else
+            throw ex;
       }
-
-      if (mGameManager == NULL)
-      {
-         msg.str("");
-         msg << " " <<
-                " \"GameEntryPoint failed to create Game Manager.\"";
-         EXCEPT(dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR ,msg.str());
-      }
-
-      mGameManager->SetApplication(*this);
-
-      mEntryPoint->OnStartup(*mGameManager);
    }
 
 }

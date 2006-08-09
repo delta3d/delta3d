@@ -15,7 +15,7 @@ void Usage()
 int main(unsigned int argc, char* argv[])
 {
    // This is a console app, so we don't want to shutdown if there are no windows.
-   dtCore::System::Instance()->SetShutdownOnWindowClose( false );
+   dtCore::System::GetInstance().SetShutdownOnWindowClose( false );
 
    dtCore::SetDataFilePathList( dtCore::GetDeltaDataPathList()+ ";" + dtCore::GetDeltaRootPath() + "/examples/testStateManager" );
 
@@ -44,8 +44,8 @@ int main(unsigned int argc, char* argv[])
       app->SetStartState( mgr->GetCurrentState() );
    }
 
-   dtCore::System::Instance()->Config();
-   dtCore::System::Instance()->Run();
+   dtCore::System::GetInstance().Config();
+   dtCore::System::GetInstance().Run();
 
    return 0;
 }

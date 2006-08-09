@@ -39,7 +39,8 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 
-class UtilTests : public CPPUNIT_NS::TestFixture {
+class UtilTests : public CPPUNIT_NS::TestFixture 
+{
     CPPUNIT_TEST_SUITE( UtilTests );
     CPPUNIT_TEST( TestLibrarySharing );
     CPPUNIT_TEST_SUITE_END();
@@ -160,14 +161,13 @@ public:
     
     
 private:
-    static char* mExampleLibraryName;
-    static char* mActorLibraryName;
+    static const std::string mExampleLibraryName;
+    static const std::string mActorLibraryName;
     dtUtil::Log* logger;
 };
 
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION( UtilTests );
 
-char* UtilTests::mExampleLibraryName="testActorLibrary";
-char* UtilTests::mActorLibraryName="dtActors";
-
+const std::string UtilTests::mExampleLibraryName="testActorLibrary";
+const std::string UtilTests::mActorLibraryName="dtActors";

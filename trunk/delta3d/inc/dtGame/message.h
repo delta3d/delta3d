@@ -146,7 +146,7 @@ namespace dtGame
           * @see MessageFactory#CloneMessage
           * @throw dtUtil::Exception with enum Exception::INVALID_PARAMETER if the message passed cannot by copied to.
           */
-         virtual void CopyDataTo(Message& msg) const throw(dtUtil::Exception);
+         virtual void CopyDataTo(Message& msg) const;
       
          /**
           * Assigns the message that caused this message.  This is used for replies, errors, and rejection messages.  

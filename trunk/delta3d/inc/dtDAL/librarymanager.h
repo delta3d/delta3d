@@ -108,10 +108,10 @@ namespace dtDAL
           * Gets a single actor type that matches the name and category specified.
           * @param category Category of the actor type to find.
           * @param name Name of the actor type.
-          * @return A valid smart pointer if the actor type was found.
+          * @return A pointer if the actor type was found or NULL if not.
           */
-         dtCore::RefPtr<ActorType> FindActorType(const std::string &category,
-                                                 const std::string &name);
+         ActorType* FindActorType(const std::string &category,
+                                  const std::string &name);
 
          /**
           * Creates a new actor proxy.  The actor type is used by the library

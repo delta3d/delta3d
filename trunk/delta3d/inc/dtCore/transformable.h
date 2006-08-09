@@ -138,7 +138,7 @@ namespace dtCore
        * @param cs The coordinate system of the returned Transform. For absolute,
        * use ABS_CS, and for relative, us REL_CS.
        */
-      void SetTransform(const Transform& xform, CoordSysEnum cs = ABS_CS )
+      virtual void SetTransform(const Transform& xform, CoordSysEnum cs = ABS_CS )
       {
          SetTransform(&xform, cs);
       }
@@ -167,7 +167,7 @@ namespace dtCore
        * @param cs The coordinate system of the returned Transform. For absolute,
        * use ABS_CS, and for relative, us REL_CS.
        */
-      void GetTransform( Transform& xform, CoordSysEnum cs = ABS_CS ) const
+      virtual void GetTransform( Transform& xform, CoordSysEnum cs = ABS_CS ) const
       {
          GetTransform(&xform, cs);
       }
@@ -311,7 +311,7 @@ namespace dtCore
        * @param node the node from which to obtain the cylinder parameters
        * (if 0, attempt to use own node)
        */
-      void SetCollisionCappedCylinder(osg::Node* node = 0);
+      void SetCollisionCappedCylinder(osg::Node* node = NULL);
 
       /**
        * Sets this object's collision geometry to a ray (along the z axis)
@@ -328,7 +328,7 @@ namespace dtCore
        * @param node the node from which to obtain the mesh data
        * (if 0, attempt to use own node)
        */
-      void SetCollisionMesh(osg::Node* node = 0);
+      void SetCollisionMesh(osg::Node* node = NULL);
 
       /**
        * Removes any collision geometry specified for this object.

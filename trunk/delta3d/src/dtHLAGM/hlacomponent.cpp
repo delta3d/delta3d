@@ -80,18 +80,14 @@ const osg::Node::NodeMask entityMask = 0x01;
 
 namespace dtHLAGM
 {
-
    const std::string HLAComponent::ABOUT_ACTOR_ID("aboutActorId");
    const std::string HLAComponent::SENDING_ACTOR_ID("sendingActorId");
-
-   //IMPLEMENT_MANAGEMENT_LAYER(HLAComponent);
 
    HLAComponent::HLAComponent(const std::string& name)
       : GMComponent(name), mRTIAmbassador(NULL),
         mLocalIPAddress(0x7f000001),
         mMachineInfo(new dtGame::MachineInfo)
    {
-
       mLogger = &dtUtil::Log::GetInstance("hlacomponent.cpp");
 
       mSiteIdentifier = (unsigned short)(1 + (rand() % 65535));
@@ -102,10 +98,8 @@ namespace dtHLAGM
    HLAComponent::~HLAComponent()
       throw (RTI::FederateInternalError)
    {
-      //DeregisterInstance(this);
       LeaveFederationExecution();
    }
-
 
    void HLAComponent::RegisterObjectToActorWithRTI(ObjectToActor& objectToActor)
    {
@@ -141,6 +135,11 @@ namespace dtHLAGM
          return;
       }
 
+      if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                             "Object class handle of object class %s is %u.",
+                             thisObjectClassString.c_str(), thisObjectClassHandle);
+
       objectToActor.SetObjectClassHandle(thisObjectClassHandle);
       std::vector<AttributeToPropertyList>& thisAttributeToPropertyListVector = objectToActor.GetOneToManyMappingVector();
 
@@ -155,6 +154,11 @@ namespace dtHLAGM
          RTI::AttributeHandle entityIdentifierAttributeHandle =
                mRTIAmbassador->getAttributeHandle(objectToActor.GetEntityIdAttributeName().c_str(), thisObjectClassHandle);
 
+         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                                "AttributeHandle for entity identifier on object class %s is %u.",
+                                thisObjectClassString.c_str(), entityIdentifierAttributeHandle);
+
          objectToActor.SetEntityIdAttributeHandle(entityIdentifierAttributeHandle);
 
          ahs->add(entityIdentifierAttributeHandle);
@@ -165,6 +169,11 @@ namespace dtHLAGM
       {
          RTI::AttributeHandle disIDAttributeHandle =
                mRTIAmbassador->getAttributeHandle("EntityType", thisObjectClassHandle);
+
+         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                                "Attribute handle for DIS ID on object class %s is %u.",
+                                thisObjectClassString.c_str(), disIDAttributeHandle);
 
          objectToActor.SetDisIDAttributeHandle(disIDAttributeHandle);
 
@@ -180,6 +189,14 @@ namespace dtHLAGM
          {
             RTI::AttributeHandle thisAttributeHandle = mRTIAmbassador->getAttributeHandle(thisAttributeHandleString.c_str(),
                   thisObjectClassHandle);
+
+            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                                   "Attribute handle for %s on object class %s is %u.",
+                                   thisAttributeHandleString.c_str(),
+                                   thisObjectClassString.c_str(),
+                                   thisAttributeHandle);
+
             thisAttributeToPropertyList.SetAttributeHandle(thisAttributeHandle);
 
             if (!ahs->isMember(thisAttributeHandle))
@@ -226,6 +243,13 @@ namespace dtHLAGM
       const std::string& thisInteractionClassString = interactionToMessage.GetInteractionName();
       RTI::InteractionClassHandle thisInteractionClassHandle
             = mRTIAmbassador->getInteractionClassHandle(thisInteractionClassString.c_str());
+
+      if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                             "interaction class %s has handle id %u.",
+                             thisInteractionClassString.c_str(),
+                             thisInteractionClassHandle);
+
       interactionToMessage.SetInteractionClassHandle(thisInteractionClassHandle);
       std::vector<ParameterToParameterList>& thisParameterToParameterListVector = interactionToMessage.GetOneToManyMappingVector();
       std::vector<ParameterToParameterList>::iterator parameterToParameterIterator = thisParameterToParameterListVector.begin();
@@ -235,6 +259,14 @@ namespace dtHLAGM
          ParameterToParameterList& thisParameterToParameterList = *parameterToParameterIterator;
          const std::string& thisParameterHandleString = thisParameterToParameterList.GetHLAName();
          RTI::ParameterHandle thisParameterHandle = mRTIAmbassador->getParameterHandle(thisParameterHandleString.c_str(), thisInteractionClassHandle);
+
+         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                                "Parameter handle for %s on interaction class %s is %u.",
+                                thisParameterHandleString.c_str(),
+                                thisInteractionClassString.c_str(),
+                                thisParameterHandle);
+
          thisParameterToParameterList.SetParameterHandle(thisParameterHandle);
          ++parameterToParameterIterator;
       }
@@ -1315,7 +1347,7 @@ namespace dtHLAGM
    }
 
    void HLAComponent::MapFromMessageParameters(char* buffer,
-                                 size_t maxSize,
+                                 size_t& maxSize,
                                  std::vector<dtCore::RefPtr<const dtGame::MessageParameter> >& parameters,
                                  const OneToManyMapping& mapping) const
    {
@@ -1472,14 +1504,22 @@ namespace dtHLAGM
 
    void HLAComponent::DispatchUpdate(const dtGame::Message& message)
    {
-      const dtCore::UniqueId actorID = message.GetAboutActorId();
-
+      const dtGame::ActorUpdateMessage& aum = static_cast<const dtGame::ActorUpdateMessage&>(message);
+      const dtCore::UniqueId& actorID = message.GetAboutActorId();
       const std::string actorName = actorID.ToString();
 
       // Get Actor Type
-      dtGame::GameActorProxy* ga = GetGameManager()->FindGameActorById(actorID);
-
-      dtCore::RefPtr<dtDAL::ActorType> actorType = &ga->GetActorType();
+      dtCore::RefPtr<dtDAL::ActorType> actorType = GetGameManager()->FindActorType(aum.GetActorTypeCategory(), aum.GetActorTypeName());
+      if (!actorType.valid())
+      {
+         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_INFO))
+         {
+            mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
+                                "Ignoring actor update for actor \"%s\" because it has a NULL actor type.",
+                                actorID.ToString().c_str());
+            return;
+         }
+      }
 
       // Lookup ObjectToActor from mActorToObjectMap
       dtCore::RefPtr<ObjectToActor> thisObjectToActor;
@@ -1503,6 +1543,8 @@ namespace dtHLAGM
       const RTI::ObjectHandle* tmpObjectHandle = mRuntimeMappings.GetHandle(actorID);
       RTI::ObjectHandle objectHandle;
 
+      bool newObject = false;
+
       if (tmpObjectHandle == NULL)
       {
          try
@@ -1510,6 +1552,7 @@ namespace dtHLAGM
             //Pass ClassHandle to registerObjectInstance
             objectHandle = mRTIAmbassador->registerObjectInstance(classHandle,
                actorName.c_str());
+            newObject = true;
          }
          catch (RTI::ObjectClassNotDefined&)
          {
@@ -1555,7 +1598,33 @@ namespace dtHLAGM
 
       theAttributes->empty();
 
-      bool useEntityId = !thisObjectToActor->GetEntityIdAttributeName().empty();
+      PrepareUpdate(aum, *theAttributes, *thisObjectToActor, newObject);
+
+      if (theAttributes->size() > 0)
+      {
+         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         {
+            std::ostringstream ss;
+            ss << "Sending Update for actor with id " << actorID << ".";
+            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
+         }
+
+         mRTIAmbassador->updateAttributeValues(objectHandle,
+                                               *theAttributes,
+                                               "");
+      }
+
+      delete theAttributes;
+
+      mRTIAmbassador->tick();
+   }
+
+   void HLAComponent::PrepareUpdate(const dtGame::ActorUpdateMessage& message, RTI::AttributeHandleValuePairSet& updateParams,
+      const ObjectToActor& objectToActor, bool newObject)
+   {
+      const dtCore::UniqueId& actorID = message.GetAboutActorId();
+
+      bool useEntityId = !objectToActor.GetEntityIdAttributeName().empty();
 
       if (useEntityId)
       {
@@ -1599,30 +1668,30 @@ namespace dtHLAGM
 
          thisEntityId.Encode(buffer);
 
-         theAttributes->add(thisObjectToActor->GetEntityIdAttributeHandle(),
+         updateParams.add(objectToActor.GetEntityIdAttributeHandle(),
                             buffer,
                             bufferSize);
 
          ParameterTranslator::DeallocateBuffer(buffer);
       }
 
-      if (thisObjectToActor->GetDisID() != NULL)
+      if (objectToActor.GetDisID() != NULL)
       {
          size_t bufferSize;
          char* buffer;
 
          ParameterTranslator::AllocateBuffer(buffer, bufferSize, RPRAttributeType::ENTITY_TYPE);
 
-         thisObjectToActor->GetDisID()->Encode(buffer);
+         objectToActor.GetDisID()->Encode(buffer);
 
-         theAttributes->add(thisObjectToActor->GetDisIDAttributeHandle(),
+         updateParams.add(objectToActor.GetDisIDAttributeHandle(),
                             buffer,
                             bufferSize);
 
          if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
          {
             std::ostringstream ss;
-            ss << "Sending DIS id \"" << *thisObjectToActor->GetDisID() << "\" for object " << thisObjectToActor->GetObjectClassName() << ".";
+            ss << "Sending DIS id \"" << *objectToActor.GetDisID() << "\" for object " << objectToActor.GetObjectClassName() << ".";
             mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
          }
 
@@ -1630,7 +1699,7 @@ namespace dtHLAGM
       }
 
       //Make a loop that looks at all parameter to attribute mappings inside of ObjectToActor
-      std::vector<AttributeToPropertyList> attributeToPropertyListVector = thisObjectToActor->GetOneToManyMappingVector();
+      std::vector<AttributeToPropertyList> attributeToPropertyListVector = objectToActor.GetOneToManyMappingVector();
 
       std::vector<AttributeToPropertyList>::iterator vectorIterator;
 
@@ -1640,37 +1709,105 @@ namespace dtHLAGM
            vectorIterator != attributeToPropertyListVector.end();
            vectorIterator++)
       {
-         //Check if Parameter returns NULL
-         const std::string& gameName = vectorIterator->GetParameterDefinitions()[0].GetGameName();
-
-         //First check for a regular parameter.
-         dtCore::RefPtr<const dtGame::MessageParameter> messageParameter = message.GetParameter(gameName);
-
-         if (!messageParameter.valid())
+         if (vectorIterator->GetHLAName().empty())
+            continue;
+            
+         messageParameters.clear();
+         
+         const size_t parameterDefListSize = vectorIterator->GetParameterDefinitions().size();
+         for (unsigned i = 0; i < parameterDefListSize; ++i)
          {
-            //If no regular parameter was found, check for an actor update parameter.
-            messageParameter = static_cast<const dtGame::ActorUpdateMessage&>(message).GetUpdateParameter(gameName);
-         }
+            const std::string& gameName = vectorIterator->GetParameterDefinitions()[i].GetGameName();
+            const dtDAL::DataType& gameType = vectorIterator->GetParameterDefinitions()[i].GetGameType();
+            const std::string& defaultValue = vectorIterator->GetParameterDefinitions()[i].GetDefaultValue();
+   
+            if (gameType == dtDAL::DataType::UNKNOWN)
+            {
+               mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, 
+                  "Parameter definition \"%u\" for mapping of hla object attribute \"%s\" has \"UNKNOWN\" game data type.  Ingnoring.",
+                  i, vectorIterator->GetHLAName().c_str());
+               continue;
+            }
+   
+            //First check for a regular parameter.
+            dtCore::RefPtr<const dtGame::MessageParameter> messageParameter;
+            
+            //We map with message parameters, so if a
+            if (gameType == dtDAL::DataType::ACTOR &&
+               gameName == ABOUT_ACTOR_ID)
+            {
+               dtCore::RefPtr<dtGame::MessageParameter> tmpParam =
+                  dtGame::MessageParameter::CreateFromType(dtDAL::DataType::ACTOR,
+                  gameName);
 
-         if (messageParameter.valid())
+               tmpParam->FromString(message.GetAboutActorId().ToString());
+               messageParameter = tmpParam.get();
+            }
+            else if (gameType == dtDAL::DataType::ACTOR &&
+               gameName == SENDING_ACTOR_ID)
+            {
+               dtCore::RefPtr<dtGame::MessageParameter> tmpParam =
+                  dtGame::MessageParameter::CreateFromType(dtDAL::DataType::ACTOR,
+                  gameName);
+
+               tmpParam->FromString(message.GetSendingActorId().ToString());
+               messageParameter = tmpParam.get();
+            }
+            else
+            {
+               messageParameter = message.GetParameter(gameName);
+
+               if (!messageParameter.valid())
+               {
+                  //If no regular parameter was found, check for an actor update parameter.
+                  messageParameter = message.GetUpdateParameter(gameName);
+               }
+            }
+               
+            if (messageParameter.valid())
+            {
+               messageParameters.push_back(messageParameter);
+            }
+            else if (!defaultValue.empty() && 
+               //send out the default if it's required or if it's the first time this object is
+               //being updated.
+               (vectorIterator->IsRequiredForHLA() || newObject ))
+            {
+               //Since the default value is in terms of the game value always, create a fake parameter
+               //add it to the translation list with the proper game name, and set it to the default
+               //value.
+               try
+               {
+                  dtCore::RefPtr<dtGame::MessageParameter> tmpMsgParam
+                     = dtGame::MessageParameter::CreateFromType(gameType, gameName);
+                  tmpMsgParam->FromString(defaultValue);
+                  messageParameters.push_back(tmpMsgParam.get());
+               }
+               catch (const dtUtil::Exception& ex)
+               {
+                  mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, 
+                     "Error creating dummy message parameter with name \"%s\" to use for mapping a default value.  Error message should follow.",
+                     gameName.c_str());
+                  ex.LogException(dtUtil::Log::LOG_ERROR, *mLogger);
+                  continue;                  
+               }
+            }  
+         }         
+         
+         if (!messageParameters.empty())
          {
             const AttributeType& hlaType = vectorIterator->GetHLAType();
-
+   
             size_t bufferSize;
             char* buffer;
-
+   
             ParameterTranslator::AllocateBuffer(buffer, bufferSize, hlaType);
-
+   
             try
             {
-               //Supporting mapping multiple actor properties to a single object attribute
-               //is in the works.  This vector always only has one item in it for now.
-               messageParameters.clear();
-               messageParameters.push_back(messageParameter);
-
                MapFromMessageParameters(buffer, bufferSize, messageParameters, *vectorIterator);
-               theAttributes->add(vectorIterator->GetAttributeHandle(), buffer, bufferSize);
-
+               updateParams.add(vectorIterator->GetAttributeHandle(), buffer, bufferSize);
+   
                ParameterTranslator::DeallocateBuffer(buffer);
             }
             catch (...)
@@ -1679,30 +1816,11 @@ namespace dtHLAGM
                if (buffer != NULL)
                   ParameterTranslator::DeallocateBuffer(buffer);
             }
-
-         }
+         }      
       }
-
-      if (theAttributes->size() > 0)
-      {
-         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-         {
-            std::ostringstream ss;
-            ss << "Sending Update for actor with id " << actorID << ".";
-            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
-         }
-
-         mRTIAmbassador->updateAttributeValues(objectHandle,
-                                               *theAttributes,
-                                               "");
-      }
-
-      delete theAttributes;
-
-      mRTIAmbassador->tick();
    }
-
-   void HLAComponent::PrepareInteraction(const dtGame::Message& message, RTI::ParameterHandleValuePairSet& interactionParams, 
+   
+   void HLAComponent::PrepareInteraction(const dtGame::Message& message, RTI::ParameterHandleValuePairSet& interactionParams,
       const InteractionToMessage& interactionToMessage)
    {
       interactionParams.empty();
@@ -1718,54 +1836,68 @@ namespace dtHLAGM
            paramMappingItor != paramToParamListVector.end();
            paramMappingItor++)
       {
-         //Check if Parameter returns NULL
          messageParameters.clear();
 
          for (unsigned i = 0; i < paramMappingItor->GetParameterDefinitions().size(); ++i)
          {
-         
-            const std::string& gameParameterName = paramMappingItor->GetParameterDefinitions()[i].GetGameName();
-            const dtDAL::DataType& gameParameterType = paramMappingItor->GetParameterDefinitions()[i].GetGameType();
+            const ParameterToParameterList::ParameterDefinition& pd = paramMappingItor->GetParameterDefinitions()[i];
             
-            //We map with message parameters, so if a 
+            const std::string& gameParameterName = pd.GetGameName();
+            const dtDAL::DataType& gameParameterType = pd.GetGameType();
+            const std::string& defaultValue = pd.GetDefaultValue();
+
+            //We map with message parameters, so if a
             if (gameParameterType == dtDAL::DataType::ACTOR &&
                gameParameterName == ABOUT_ACTOR_ID)
             {
-               dtCore::RefPtr<dtGame::MessageParameter> messageParameter = 
+               dtCore::RefPtr<dtGame::MessageParameter> messageParameter =
                   dtGame::MessageParameter::CreateFromType(dtDAL::DataType::ACTOR,
                   gameParameterName);
-               
+
                messageParameter->FromString(message.GetAboutActorId().ToString());
                messageParameters.push_back(messageParameter.get());
-            
+
             }
             else if (gameParameterType == dtDAL::DataType::ACTOR &&
                gameParameterName == SENDING_ACTOR_ID)
             {
-               dtCore::RefPtr<dtGame::MessageParameter> messageParameter = 
+               dtCore::RefPtr<dtGame::MessageParameter> messageParameter =
                   dtGame::MessageParameter::CreateFromType(dtDAL::DataType::ACTOR,
                   gameParameterName);
-               
+
                messageParameter->FromString(message.GetSendingActorId().ToString());
                messageParameters.push_back(messageParameter.get());
             }
             else
             {
-               dtCore::RefPtr<const dtGame::MessageParameter> messageParameter = message.GetParameter(gameParameterName);
+               dtCore::RefPtr<const dtGame::MessageParameter> messageParameter 
+                  = message.GetParameter(gameParameterName);
+                  
                if (messageParameter.valid())
                {
                   messageParameters.push_back(messageParameter);
                }
+               else if (!defaultValue.empty() && paramMappingItor->IsRequiredForHLA())
+               {
+                  //Since the default value is in terms of the game value always, create a fake parameter
+                  //add it to the translation list with the proper game name, and set it to the default
+                  //value.
+                  dtCore::RefPtr<dtGame::MessageParameter> tmpMsgParam
+                     = dtGame::MessageParameter::CreateFromType(gameParameterType, gameParameterName);
+                  tmpMsgParam->FromString(defaultValue);
+                  
+                  messageParameter = tmpMsgParam.get();
+               }  
                else
                {
                   mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
-                     "Message to interaction specifies a message parameter named \"%\", but the message of type \"%\" has no such parameter.",
-                     gameParameterName.c_str(), message.GetMessageType().GetName().c_str());            
+                     "Message to interaction specifies a message parameter named \"%s\", but the message of type \"%s\" has no such parameter.",
+                     gameParameterName.c_str(), message.GetMessageType().GetName().c_str());
                }
             }
-            
+
          }
-         
+
          if (!messageParameters.empty())
          {
             const AttributeType& hlaType = paramMappingItor->GetHLAType();
@@ -1796,14 +1928,14 @@ namespace dtHLAGM
    }
 
    void HLAComponent::DispatchInteraction(const dtGame::Message& message)
-   {      
+   {
       const InteractionToMessage* interactionToMessage = GetMessageMapping(message.GetMessageType());
       if (interactionToMessage == NULL)
       {
          if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
          {
             mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-               "No mapping to an interaction was defined for message type: ", 
+               "No mapping to an interaction was defined for message type: ",
                message.GetMessageType().GetName().c_str());
          }
          return;
@@ -1812,7 +1944,7 @@ namespace dtHLAGM
       //Create ParameterHandleValuePairSet to hold the interaction parameters.
       RTI::ParameterHandleValuePairSet* interactionParams =
             RTI::ParameterSetFactory::create(interactionToMessage->GetOneToManyMappingVector().size());
-      
+
       PrepareInteraction(message, *interactionParams, *interactionToMessage);
 
       if (interactionParams->size() > 0)
@@ -1820,7 +1952,7 @@ namespace dtHLAGM
          if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
          {
             std::ostringstream ss;
-            ss << "Sending interaction of type \"" << interactionToMessage->GetInteractionName() << "\" for message type \"" 
+            ss << "Sending interaction of type \"" << interactionToMessage->GetInteractionName() << "\" for message type \""
                << message.GetMessageType() << "\".";
             mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
          }
@@ -1831,7 +1963,7 @@ namespace dtHLAGM
       }
 
       delete interactionParams;
-      
+
    }
 
    void HLAComponent::DispatchNetworkMessage(const dtGame::Message& message)

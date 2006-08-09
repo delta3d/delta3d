@@ -22,12 +22,12 @@
 #include <osgDB/FileNameUtils>
 #include <dtCore/scene.h>
 
-#include "dtDAL/mapxml.h"
-#include "dtDAL/project.h"
-#include "dtDAL/map.h"
-#include "dtDAL/actortype.h"
-#include "dtDAL/enginepropertytypes.h"
-#include "dtDAL/exceptionenum.h"
+#include <dtDAL/mapxml.h>
+#include <dtDAL/project.h>
+#include <dtDAL/map.h>
+#include <dtDAL/actortype.h>
+#include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/exceptionenum.h>
 #include <dtUtil/stringutils.h>
 #include <dtDAL/waypointactorproxy.h>
 
@@ -108,7 +108,7 @@ namespace dtDAL
               i != mProxyMap.end(); ++i) 
          {
             ActorProxy* ap = i->second.get();
-            container.push_back(dtCore::RefPtr<ActorProxy>(ap));
+            container.push_back(ap);
          }
       }
       
@@ -134,7 +134,7 @@ namespace dtDAL
 
             if (name == "" || WildMatch(name, ap->GetName()))
                if (MatchesSearch(*ap, category, typeName, className, placeable))
-                  container.push_back(dtCore::RefPtr<const ActorProxy>(ap));
+                  container.push_back(ap);
          }
       } 
       else 
@@ -145,7 +145,7 @@ namespace dtDAL
               i != mProxyMap.end(); ++i) 
          {
             const ActorProxy* ap = i->second.get();
-            container.push_back(dtCore::RefPtr<const ActorProxy>(ap));
+            container.push_back(ap);
          }
       }
    }

@@ -30,7 +30,7 @@ for suite in suites:
    sources[suite] += mainSources
 
 mainlibs = suites + ['dtAudio', 'dtABC', 'dtChar', 'dtActors', 'cppunit', 'testGameActorLibrary']
-	
+
 mainlibs = [ dtLibs[lib] for lib in mainlibs if dtLibs.has_key(lib) ]
 
 if env.get('rti') != 0:

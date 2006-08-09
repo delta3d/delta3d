@@ -28,6 +28,7 @@
 #include <QtGui/QPushButton>
 #include <QtGui/QGroupBox>
 #include <QtGui/QListWidget>
+#include <QtGui/QListWidgetItem>
 
 namespace dtEditQt 
 {
@@ -41,34 +42,45 @@ namespace dtEditQt
         setWindowTitle(windowTitle);
         
         //Create the group box and list view.
-        if (!groupBoxName.isEmpty()) {
-            QGroupBox *groupBox = new QGroupBox(groupBoxName,this);
-            QVBoxLayout *layout = new QVBoxLayout(groupBox);
-            this->listBox = new QListWidget(groupBox);
-            layout->addWidget(this->listBox);
-            mainLayout->addWidget(groupBox);
+        if (!groupBoxName.isEmpty()) 
+        {
+           QGroupBox *groupBox = new QGroupBox(groupBoxName,this);
+           QVBoxLayout *layout = new QVBoxLayout(groupBox);
+           listBox = new QListWidget(groupBox);
+           layout->addWidget(listBox);
+           mainLayout->addWidget(groupBox);
         }
-        else {
-            this->listBox = new QListWidget(this);
-            mainLayout->addWidget(this->listBox);
+        else 
+        {
+           listBox = new QListWidget(this);
+           mainLayout->addWidget(listBox);
         }
 
-        connect(this->listBox,SIGNAL(itemSelectionChanged()),
+#if QT_VERSION <= 0x040100
+        connect(listBox,SIGNAL(itemSelectionChanged()),
             this,SLOT(onSelectionChanged()));
+#else
+ 	     connect(listBox, SIGNAL(itemClicked(QListWidgetItem*)), 
+			   this, SLOT(onItemClicked(QListWidgetItem*)));
+
+        connect(listBox, SIGNAL(currentRowChanged(int)), 
+           this, SLOT(onCurrentRowChanged(int)));
+#endif
 
         //Create the ok and cancel buttons...
-        this->okButton = new QPushButton(tr("OK"), this);
-        this->cancelButton = new QPushButton(tr("Cancel"), this);
+        okButton = new QPushButton(tr("OK"), this);
+        cancelButton = new QPushButton(tr("Cancel"), this);
         QHBoxLayout *buttonLayout = new QHBoxLayout;
         
-        this->cancelButton->setDefault(true);
-        this->okButton->setEnabled(false);
+        cancelButton->setDefault(true);
+        okButton->setEnabled(false);
         buttonLayout->addStretch(1);
-        buttonLayout->addWidget(this->okButton);
-        buttonLayout->addWidget(this->cancelButton);
+        buttonLayout->addWidget(okButton);
+        buttonLayout->addWidget(cancelButton);
         buttonLayout->addStretch(1);
-        connect(this->okButton,SIGNAL(clicked()),this,SLOT(accept()));
-        connect(this->cancelButton,SIGNAL(clicked()),this,SLOT(reject()));
+        
+        connect(okButton,SIGNAL(clicked()),this,SLOT(accept()));
+        connect(cancelButton,SIGNAL(clicked()),this,SLOT(reject()));
 
         mainLayout->addLayout(buttonLayout);
     }
@@ -76,26 +88,41 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     void DialogListSelection::setListItems(const QStringList &list)
     {
-        if (!list.empty()) {
-            this->listBox->addItems(list);
-            this->listBox->setCurrentRow(0);
-            this->okButton->setEnabled(true);
-            this->okButton->setDefault(true);
+        if (!list.empty()) 
+        {
+           listBox->addItems(list);
+           listBox->setCurrentRow(0);
+           okButton->setEnabled(true);
+           okButton->setDefault(true);
         }
-        else {
-            this->okButton->setEnabled(false);
-            this->cancelButton->setDefault(true);
+        else 
+        {
+           okButton->setEnabled(false);
+           cancelButton->setDefault(true);
         }
     }
     
     ///////////////////////////////////////////////////////////////////////////////
     void DialogListSelection::onSelectionChanged()
     {
-        QListWidgetItem *item = this->listBox->currentItem();
-        if (item != NULL)
-            this->currentItem = item->text();
+        QListWidgetItem *item = listBox->currentItem();
+        if(item != NULL)
+            currentItem = item->text();
         else
-            this->currentItem = tr("");
+            currentItem = tr("");
     }
+	
+	///////////////////////////////////////////////////////////////////////////////
+	void DialogListSelection::onItemClicked(QListWidgetItem *i)
+	{
+	   currentItem = i->text();	
+	}
 
+   ///////////////////////////////////////////////////////////////////////////////
+   void DialogListSelection::onCurrentRowChanged(int i)
+   {
+      QListWidgetItem *item = listBox->item(i);
+     
+      currentItem = item != NULL ? item->text() : tr("");
+   }
 }

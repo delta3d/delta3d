@@ -20,9 +20,11 @@
  */
 #include <dtABC/application.h>
 #include <dtABC/applicationconfighandler.h>
+#include <dtABC/applicationconfigwriter.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtCore/keyboard.h>
 #include <dtCore/generickeyboardlistener.h>
+#include <dtCore/globals.h>
 #include <dtUtil/fileutils.h>                  // for verification when writing the config file
 #include <dtUtil/stringutils.h>                // for dtUtil::ToInt
 #include <dtUtil/xercesparser.h>               // for parsing
@@ -35,6 +37,7 @@ namespace dtTest
       CPPUNIT_TEST_SUITE( ApplicationTests );
       CPPUNIT_TEST( TestInput );
       CPPUNIT_TEST( TestConfigSupport );
+      CPPUNIT_TEST( TestConfigSaveLoad );
       CPPUNIT_TEST_SUITE_END();
 
       public:
@@ -43,9 +46,43 @@ namespace dtTest
 
          void TestInput();
          void TestConfigSupport();
+         void TestConfigSaveLoad();
 
       private:
          std::string mConfigName;
+         
+         void CompareConfigData(const dtABC::ApplicationConfigData& truth, const dtABC::ApplicationConfigData& actual)
+         {
+            CPPUNIT_ASSERT_EQUAL( actual.CHANGE_RESOLUTION , truth.CHANGE_RESOLUTION );
+            CPPUNIT_ASSERT_EQUAL( actual.FULL_SCREEN , truth.FULL_SCREEN );
+            CPPUNIT_ASSERT_EQUAL( actual.RESOLUTION.bitDepth , truth.RESOLUTION.bitDepth );
+            CPPUNIT_ASSERT_EQUAL( actual.RESOLUTION.height , truth.RESOLUTION.height );
+            CPPUNIT_ASSERT_EQUAL( actual.RESOLUTION.refresh , truth.RESOLUTION.refresh );
+            CPPUNIT_ASSERT_EQUAL( actual.RESOLUTION.width , truth.RESOLUTION.width );
+            CPPUNIT_ASSERT_EQUAL( actual.SCENE_NAME , truth.SCENE_NAME );
+            CPPUNIT_ASSERT_EQUAL( actual.SHOW_CURSOR , truth.SHOW_CURSOR );
+            CPPUNIT_ASSERT_EQUAL( actual.WINDOW_NAME , truth.WINDOW_NAME );
+            CPPUNIT_ASSERT_EQUAL( actual.WINDOW_X , truth.WINDOW_X );
+            CPPUNIT_ASSERT_EQUAL( actual.WINDOW_Y , truth.WINDOW_Y );
+            CPPUNIT_ASSERT_EQUAL( actual.CAMERA_NAME , truth.CAMERA_NAME );
+
+            std::ostringstream ss;
+            ss << "Expected map:\n";
+            for (std::map<std::string, std::string>::const_iterator i = truth.LOG_LEVELS.begin();
+               i != truth.LOG_LEVELS.end(); ++i)
+            {
+               ss << " " << i->first << " " << i->second << std::endl;
+            }
+
+            ss << "Actual map:\n";
+            for (std::map<std::string, std::string>::const_iterator i = actual.LOG_LEVELS.begin();
+               i != actual.LOG_LEVELS.end(); ++i)
+            {
+               ss << " " << i->first << " " << i->second << std::endl;
+            }
+
+            CPPUNIT_ASSERT_MESSAGE(ss.str(), truth.LOG_LEVELS == actual.LOG_LEVELS );
+         }
    };
 
    class TestApp : public dtABC::Application
@@ -112,6 +149,7 @@ namespace dtTest
 
    void ApplicationTests::setUp()
    {
+      dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
       mConfigName = "test_config.xml";
       // delete the file
       dtUtil::FileUtils::GetInstance().FileDelete( mConfigName );
@@ -120,6 +158,7 @@ namespace dtTest
    void ApplicationTests::TestInput()
    {
       dtCore::RefPtr<dtTest::TestApp> app(new dtTest::TestApp(Producer::Key_N,Producer::KeyChar_n));
+      app->GetWindow()->SetPosition(0, 0, 50, 50);
 
       app->Config();
       dtCore::RefPtr<dtCore::Keyboard> kb = app->GetKeyboard();
@@ -178,18 +217,8 @@ namespace dtTest
       // a) the parser works, but more importantly
       // b) the writer wrote the right default values
       dtABC::ApplicationConfigData truth = dtABC::Application::GetDefaultConfigData();
-      CPPUNIT_ASSERT_EQUAL( handler.mConfigData.CHANGE_RESOLUTION , truth.CHANGE_RESOLUTION );
-      CPPUNIT_ASSERT_EQUAL( handler.mConfigData.FULL_SCREEN , truth.FULL_SCREEN );
-      CPPUNIT_ASSERT_EQUAL( handler.mConfigData.RESOLUTION.bitDepth , truth.RESOLUTION.bitDepth );
-      CPPUNIT_ASSERT_EQUAL( handler.mConfigData.RESOLUTION.height , truth.RESOLUTION.height );
-      CPPUNIT_ASSERT_EQUAL( handler.mConfigData.RESOLUTION.refresh , truth.RESOLUTION.refresh );
-      CPPUNIT_ASSERT_EQUAL( handler.mConfigData.RESOLUTION.width , truth.RESOLUTION.width );
-      CPPUNIT_ASSERT_EQUAL( handler.mConfigData.SCENE_NAME , truth.SCENE_NAME );
-      CPPUNIT_ASSERT_EQUAL( handler.mConfigData.SHOW_CURSOR , truth.SHOW_CURSOR );
-      CPPUNIT_ASSERT_EQUAL( handler.mConfigData.WINDOW_NAME , truth.WINDOW_NAME );
-      CPPUNIT_ASSERT_EQUAL( handler.mConfigData.WINDOW_X , truth.WINDOW_X );
-      CPPUNIT_ASSERT_EQUAL( handler.mConfigData.WINDOW_Y , truth.WINDOW_Y );
-      CPPUNIT_ASSERT_EQUAL( handler.mConfigData.CAMERA_NAME , truth.CAMERA_NAME );
+      
+      CompareConfigData(truth, handler.mConfigData);
 
       // delete the file
       dtUtil::FileUtils::GetInstance().FileDelete( mConfigName );
@@ -200,4 +229,68 @@ namespace dtTest
       ///\todo test applying the data to an Application instance
    }
 
+   void ApplicationTests::TestConfigSaveLoad()
+   {
+      //make sure the file doesn't already exist.
+      CPPUNIT_ASSERT_MESSAGE("The config file should not exist yet.", !dtUtil::FileUtils::GetInstance().FileExists( mConfigName ) );
+
+      dtABC::ApplicationConfigData truth;
+      truth.CHANGE_RESOLUTION = false;
+      truth.FULL_SCREEN = false;
+   
+      truth.RESOLUTION.bitDepth = 16;
+      truth.RESOLUTION.height = 32;
+      truth.RESOLUTION.width = 19;
+      truth.RESOLUTION.refresh = 50;
+
+      truth.SCENE_NAME = "SomeScene";
+      truth.SHOW_CURSOR = false;
+      truth.WINDOW_NAME = "SomeWin";
+      truth.WINDOW_X = 23;
+      truth.WINDOW_Y = 97;
+      truth.CAMERA_NAME = "SomeCam";
+      
+      truth.SCENE_INSTANCE = "SomeScene";
+      truth.WINDOW_INSTANCE = "SomeWin";
+      
+      truth.LOG_LEVELS.insert(std::make_pair(dtUtil::Log::GetInstance().GetName(), "ERROR"));
+      truth.LOG_LEVELS.insert(std::make_pair("SomeName", "Warn"));
+      truth.LOG_LEVELS.insert(std::make_pair("AnotherName", "Error"));
+      truth.LOG_LEVELS.insert(std::make_pair("horse", "Info"));
+      truth.LOG_LEVELS.insert(std::make_pair("cow", "Debug"));
+      truth.LOG_LEVELS.insert(std::make_pair("chicken", "Always"));
+      
+      dtABC::ApplicationConfigWriter acw;
+      acw(mConfigName, truth);
+
+      // make sure it exists
+      CPPUNIT_ASSERT( dtUtil::FileUtils::GetInstance().FileExists( mConfigName ) );
+
+      // test the content from the parser
+      dtABC::ApplicationConfigHandler handler;
+      dtUtil::XercesParser parser;
+
+      CPPUNIT_ASSERT( parser.Parse( mConfigName , handler , "application.xsd" ) );
+
+      CompareConfigData(truth, handler.mConfigData);
+
+      //create an app to parse the config and actually load the values
+      dtCore::RefPtr<dtABC::Application> app = new dtABC::Application(mConfigName);
+      
+      CPPUNIT_ASSERT_EQUAL(dtUtil::Log::LOG_ERROR, dtUtil::Log::GetInstance().GetLogLevel());
+      CPPUNIT_ASSERT_EQUAL(dtUtil::Log::LOG_WARNING, dtUtil::Log::GetInstance("SomeName").GetLogLevel());
+      CPPUNIT_ASSERT_EQUAL(dtUtil::Log::LOG_ERROR, dtUtil::Log::GetInstance("AnotherName").GetLogLevel());
+      CPPUNIT_ASSERT_EQUAL(dtUtil::Log::LOG_INFO, dtUtil::Log::GetInstance("horse").GetLogLevel());
+      CPPUNIT_ASSERT_EQUAL(dtUtil::Log::LOG_DEBUG, dtUtil::Log::GetInstance("cow").GetLogLevel());
+      CPPUNIT_ASSERT_EQUAL(dtUtil::Log::LOG_ALWAYS, dtUtil::Log::GetInstance("chicken").GetLogLevel());
+
+      app = NULL;
+      
+      // delete the file
+      dtUtil::FileUtils::GetInstance().FileDelete( mConfigName );
+
+      // make sure it does not exist
+      CPPUNIT_ASSERT( !dtUtil::FileUtils::GetInstance().FileExists( mConfigName ) );
+
+   }
 }

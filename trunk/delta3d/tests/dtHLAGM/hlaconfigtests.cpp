@@ -27,8 +27,11 @@
 
 #include <dtUtil/coordinates.h>
 #include <dtCore/globals.h>
+#include <dtDAL/actortype.h>
+#include <dtDAL/actorpluginregistry.h>
 #include <dtDAL/datatype.h>
 #include <dtDAL/project.h>
+#include <dtDAL/librarymanager.h>
 #include <dtGame/messagetype.h>
 #include <dtGame/clientgamemanager.h>
 #include <dtGame/gamemanager.h>
@@ -118,8 +121,8 @@ void HLAConfigTests::CheckObjectToActorMapping(
    bool remoteOnly,
    const std::vector<dtHLAGM::AttributeToPropertyList>& props)
 {
-   dtCore::RefPtr<dtDAL::ActorType> type = dtDAL::LibraryManager::GetInstance().FindActorType(category, name);
-   CPPUNIT_ASSERT(type != NULL);
+   dtCore::RefPtr<dtDAL::ActorType> type = mGameManager->FindActorType(category, name);
+   CPPUNIT_ASSERT(type.valid());
 
    //make absolutely sure we call the const version of the method.
    dtCore::RefPtr<const dtHLAGM::ObjectToActor> otoa =
@@ -213,7 +216,7 @@ void HLAConfigTests::TestConfigure()
    try
    {
       CPPUNIT_ASSERT_MESSAGE("Library should not yet be loaded.",
-         dtDAL::LibraryManager::GetInstance().GetRegistry(mHLAActorRegistry) == NULL);
+         mGameManager->GetRegistry(mHLAActorRegistry) == NULL);
       dtHLAGM::HLAComponentConfig config;
 
       try
@@ -232,7 +235,7 @@ void HLAConfigTests::TestConfigure()
       config.LoadConfiguration(*mTranslator, "Federations/HLAMappingExample.xml");
 
       CPPUNIT_ASSERT_MESSAGE(std::string("Library should be loaded:") + mHLAActorRegistry,
-         dtDAL::LibraryManager::GetInstance().GetRegistry(mHLAActorRegistry) != NULL);
+         mGameManager->GetRegistry(mHLAActorRegistry) != NULL);
 
       {
          dtHLAGM::EntityType type(1, 1, 222, 2, 4, 6, 0);

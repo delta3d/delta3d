@@ -35,6 +35,7 @@ namespace dtABC
       static const std::string NAME;
       static const std::string SCENE;
       static const std::string CAMERA;
+      static const std::string LOG;
 
       static const std::string X;
       static const std::string Y;
@@ -49,6 +50,10 @@ namespace dtABC
 
       static const std::string WINDOWINSTANCE;
       static const std::string SCENEINSTANCE;
+      
+      static const std::string LOG_NAME;
+      static const std::string LOG_LEVEL;
+
    };
 }
 

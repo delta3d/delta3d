@@ -80,7 +80,8 @@
    std::vector<T*> T::instances;                               \
    void T::RegisterInstance(T* instance)                       \
    {                                                           \
-      instances.push_back(instance);                           \
+      if (instance != NULL)                                    \
+         instances.push_back(instance);                        \
    }                                                           \
    void T::DeregisterInstance(T* instance)                     \
    {                                                           \

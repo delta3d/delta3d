@@ -27,6 +27,8 @@
 #include <dtCore/particlesystem.h>
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
+
+#include <osg/io_utils>
 //#include <dtABC/application.h>
 
 class IsectorTests : public CPPUNIT_NS::TestFixture 
@@ -53,10 +55,10 @@ class IsectorTests : public CPPUNIT_NS::TestFixture
          mCamera = new dtCore::Camera();
          mCamera->SetScene(mScene.get());
          mCamera->SetWindow(mWin.get());
-         dtCore::System::Instance()->Config();
+         dtCore::System::GetInstance().Config();
 
-         dtCore::System::Instance()->SetShutdownOnWindowClose(false);
-         dtCore::System::Instance()->Start();
+         dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
+         dtCore::System::GetInstance().Start();
       }
       
       void tearDown()
@@ -68,7 +70,7 @@ class IsectorTests : public CPPUNIT_NS::TestFixture
          mCamera->SetWindow(NULL);
          mCamera = NULL;
          mWin = NULL;
-         dtCore::System::Instance()->Stop();
+         dtCore::System::GetInstance().Stop();
       }
       
       void TestProperties()
@@ -147,34 +149,34 @@ class IsectorTests : public CPPUNIT_NS::TestFixture
          mIsector->SetScene(mScene.get());
          mScene->AddDrawable(terrain.get());
 
-         dtCore::System::Instance()->Step();
+         dtCore::System::GetInstance().Step();
 
          float height = terrain->GetHeight(0.0f, 0.0f, false);
+         osg::Vec3 expectedNormal;
+         terrain->GetNormal(0.0f, 0.0f, expectedNormal, true);
          
-         osg::Vec3 hitPoint;
-         
+               
          CPPUNIT_ASSERT(mIsector->Update());
          CPPUNIT_ASSERT(mIsector->GetNumberOfHits() > 0);
-         mIsector->GetHitPoint(hitPoint, 0);
-         CPPUNIT_ASSERT(osg::equivalent(hitPoint.z(), height, 1e-4f));         
-         CPPUNIT_ASSERT(mIsector->GetClosestDeltaDrawable() == terrain.get());
+         CheckIsectorValues(height, expectedNormal);
+         CPPUNIT_ASSERT(terrain.get() == mIsector->GetClosestDeltaDrawable());
+
          mIsector->Reset();
-         CPPUNIT_ASSERT(mIsector->GetNumberOfHits() == 0);
-         CPPUNIT_ASSERT(mIsector->GetClosestDeltaDrawable() == NULL);
-         
+         CPPUNIT_ASSERT_EQUAL(0, mIsector->GetNumberOfHits());
+         CPPUNIT_ASSERT(NULL == mIsector->GetClosestDeltaDrawable());
+      
+            
          CPPUNIT_ASSERT(mIsector->Update());
          CPPUNIT_ASSERT(mIsector->GetNumberOfHits() > 0);
-         mIsector->GetHitPoint(hitPoint, 0);
-         CPPUNIT_ASSERT(osg::equivalent(hitPoint.z(), height, 1e-4f));         
+         CheckIsectorValues(height, expectedNormal);
          CPPUNIT_ASSERT(mIsector->GetClosestDeltaDrawable() == terrain.get());
                 
          mIsector->SetGeometry(terrain.get());
-
+         
          mIsector->Reset();
          CPPUNIT_ASSERT(mIsector->Update());
          CPPUNIT_ASSERT(mIsector->GetNumberOfHits() > 0);
-         mIsector->GetHitPoint(hitPoint, 0);
-         CPPUNIT_ASSERT(osg::equivalent(hitPoint.z(), height, 1e-4f));         
+         CheckIsectorValues(height, expectedNormal);
          CPPUNIT_ASSERT(mIsector->GetClosestDeltaDrawable() == terrain.get());
 
          mIsector->SetUseEyePoint(true);
@@ -184,9 +186,9 @@ class IsectorTests : public CPPUNIT_NS::TestFixture
          mIsector->Reset();
          CPPUNIT_ASSERT(mIsector->Update());
          CPPUNIT_ASSERT(mIsector->GetNumberOfHits() > 0);
-         mIsector->GetHitPoint(hitPoint, 0);
-         CPPUNIT_ASSERT(osg::equivalent(hitPoint.z(), height, 1e-4f));         
+         CheckIsectorValues(height, expectedNormal);
          CPPUNIT_ASSERT(mIsector->GetClosestDeltaDrawable() == terrain.get());
+
 
          //0.0, 0.0, 0.0 should NOT be within the LOD
          mIsector->SetEyePoint(osg::Vec3(50000.0f, 93838.5f, 9.4f));
@@ -203,6 +205,27 @@ class IsectorTests : public CPPUNIT_NS::TestFixture
       dtCore::RefPtr<dtCore::Scene> mScene;
       dtCore::RefPtr<dtCore::Camera> mCamera;
       dtCore::RefPtr<dtCore::DeltaWin> mWin;
+      
+      void CheckIsectorValues(const float height, const osg::Vec3& expectedNormal) const
+      {
+         osg::Vec3 hitPoint;
+         osg::Vec3 normal;
+
+         mIsector->GetHitPoint(hitPoint, 0);
+         mIsector->GetHitPointNormal(normal, 0);
+   
+         std::ostringstream ss;
+         ss << "The height should be \"" << height << "\" but it is \"" << hitPoint.z() << "\".";
+
+         CPPUNIT_ASSERT_MESSAGE(ss.str(), osg::equivalent(hitPoint.z(), height, 1e-4f));                  
+
+         ss.str("");
+         ss << "The normal should be \"" << expectedNormal << "\" but it is \"" << normal << "\".";
+         
+         CPPUNIT_ASSERT_MESSAGE(ss.str(),osg::equivalent(normal.x(), expectedNormal.x(), 1e-1f) &&
+            osg::equivalent(normal.y(), expectedNormal.y(), 1e-1f) &&
+            osg::equivalent(normal.z(), expectedNormal.z(), 1e-1f));         
+      }
 
 };
 

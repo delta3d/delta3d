@@ -65,14 +65,15 @@ class TaskActorTests : public CPPUNIT_NS::TestFixture
    private:
       dtDAL::GameEventManager *mEventMgr;
       dtCore::RefPtr<dtGame::ClientGameManager> mGameManager;
-      static char* mTestGameActorLibrary;
-      static char* mTestActorLibrary;
+      static const std::string mTestGameActorLibrary;
+      static const std::string mTestActorLibrary;
 };
 
 //Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(TaskActorTests);
-char* TaskActorTests::mTestGameActorLibrary="testGameActorLibrary";
-char* TaskActorTests::mTestActorLibrary="testActorLibrary";
+
+const std::string TaskActorTests::mTestGameActorLibrary="testGameActorLibrary";
+const std::string TaskActorTests::mTestActorLibrary="testActorLibrary";
 
 ///////////////////////////////////////////////////////////////////////////////
 void TaskActorTests::setUp()
@@ -84,8 +85,8 @@ void TaskActorTests::setUp()
       mGameManager = new dtGame::ClientGameManager(*scene);
       dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
       mGameManager->LoadActorRegistry(mTestGameActorLibrary);
-      dtCore::System::Instance()->SetShutdownOnWindowClose(false);
-      dtCore::System::Instance()->Start();
+      dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
+      dtCore::System::GetInstance().Start();
    }
    catch (const dtUtil::Exception& e)
    {
@@ -96,8 +97,8 @@ void TaskActorTests::setUp()
 ///////////////////////////////////////////////////////////////////////////////
 void TaskActorTests::tearDown()
 {
-   dtCore::System::Instance()->SetPause(false);
-   dtCore::System::Instance()->Stop();
+   dtCore::System::GetInstance().SetPause(false);
+   dtCore::System::GetInstance().Stop();
    mGameManager->DeleteAllActors();
    mGameManager->UnloadActorRegistry(mTestGameActorLibrary);
    mGameManager = NULL;
@@ -317,7 +318,7 @@ void TaskActorTests::TestGameEventTaskActor()
 
       eventMsg->SetGameEvent(*gameEvent);
       mGameManager->SendMessage(*eventMsg);
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
 
       //Should be incomplete since the task should have only gotten the event once.
       CPPUNIT_ASSERT_MESSAGE("Task should not yet be complete.",
@@ -327,7 +328,7 @@ void TaskActorTests::TestGameEventTaskActor()
       for (int i=0; i<4; i++)
       {
          mGameManager->SendMessage(*eventMsg);
-         dtCore::System::Instance()->Step();
+         dtCore::System::GetInstance().Step();
          currSimTime = mGameManager->GetSimulationTime();
       }
 
@@ -402,7 +403,7 @@ void TaskActorTests::TestRollupTaskActor()
 
          eventMsg->SetGameEvent(*eventList[i]);
          mGameManager->SendMessage(*eventMsg);
-         dtCore::System::Instance()->Step();
+         dtCore::System::GetInstance().Step();
 
          CPPUNIT_ASSERT_MESSAGE("Rollup task score was not calculated correctly.  The score was: " +
                dtUtil::ToString(prop->GetValue()),osg::equivalent(prop->GetValue(),((float)i+1.0f) * 0.2f,0.001f));
@@ -429,7 +430,7 @@ void TaskActorTests::TestRollupTaskActor()
 
          eventMsg->SetGameEvent(*eventList[i]);
          mGameManager->SendMessage(*eventMsg);
-         dtCore::System::Instance()->Step();
+         dtCore::System::GetInstance().Step();
 
          CPPUNIT_ASSERT_MESSAGE("Rollup task score was not calculated correctly.  The score was: " +
                dtUtil::ToString(prop->GetValue()),osg::equivalent(prop->GetValue(),((float)i+1.0f) * 0.2f,0.001f));
@@ -526,7 +527,7 @@ void TaskActorTests::TestOrderedTaskActor()
 
          eventMsg->SetGameEvent(*eventList[i]);
          mGameManager->SendMessage(*eventMsg);
-         dtCore::System::Instance()->Step();
+         dtCore::System::GetInstance().Step();
 
          CPPUNIT_ASSERT_MESSAGE("Event Task: " + dtUtil::ToString(i) + " should not have been complete.",
             eventProxyList[i]->GetProperty("Complete")->GetStringValue() == "false");
@@ -542,7 +543,7 @@ void TaskActorTests::TestOrderedTaskActor()
 
       eventMsg->SetGameEvent(*primaryEvent);
       mGameManager->SendMessage(*eventMsg);
-      dtCore::System::Instance()->Step();
+      dtCore::System::GetInstance().Step();
 
       CPPUNIT_ASSERT_MESSAGE("Primary Event Task should have been complete.",
                              primaryEventProxy->GetProperty("Complete")->GetStringValue() == "true");
@@ -555,7 +556,7 @@ void TaskActorTests::TestOrderedTaskActor()
 
          eventMsg->SetGameEvent(*eventList[i]);
          mGameManager->SendMessage(*eventMsg);
-         dtCore::System::Instance()->Step();
+         dtCore::System::GetInstance().Step();
 
          CPPUNIT_ASSERT_MESSAGE("Event Task: " + dtUtil::ToString(i) + " should have been complete.",
                                 eventProxyList[i]->GetProperty("Complete")->GetStringValue() == "true");

@@ -54,7 +54,7 @@ Application::~Application(void)
 
 void Application::Run( void )
 {
-   dtCore::System::Instance()->Run();
+   dtCore::System::GetInstance().Run();
 }
 
 void Application::PreFrame( const double deltaFrameTime )
@@ -136,7 +136,7 @@ std::string dtABC::Application::GenerateDefaultConfigFile(const std::string& fil
 
    // write out a new file
    ApplicationConfigWriter writer;
-   writer( filename );
+   writer( filename, GetDefaultConfigData());
 
    // return the resource path to the new file
    return osgDB::findDataFile( filename );
@@ -158,12 +158,15 @@ ApplicationConfigData Application::GetDefaultConfigData()
    data.WINDOW_NAME = "defaultWin";
 
    data.SCENE_INSTANCE = "defaultScene";
-   data.WINDOW_INSTANCE = "defualtWindow";
+   data.WINDOW_INSTANCE = "defaultWin";
 
    data.RESOLUTION.width = 640;
    data.RESOLUTION.height = 480;
    data.RESOLUTION.bitDepth = 24;
    data.RESOLUTION.refresh = 60;
+
+   dtUtil::Log& logger = dtUtil::Log::GetInstance();
+   data.LOG_LEVELS.insert(make_pair(logger.GetName(), logger.GetLogLevelString(dtUtil::Log::LOG_WARNING)));
 
    return data;
 }
@@ -173,6 +176,14 @@ bool Application::AppXMLApplicator::operator ()(const ApplicationConfigData& dat
 {
    // apply the window settings
    dtCore::DeltaWin* dwin = app->GetWindow();
+
+   for (std::map<std::string, std::string>::const_iterator i = data.LOG_LEVELS.begin();
+      i != data.LOG_LEVELS.end(); ++i)
+   {
+      dtUtil::Log& logger = dtUtil::Log::GetInstance(i->first);
+      
+      logger.SetLogLevel(logger.GetLogLevelForString(i->second));
+   }
 
    // John's unwittingly caught a confusing aspect of the Applications's config file here.
    // Historically, the Window's "name" attribute is used for the WindowTitle, while other

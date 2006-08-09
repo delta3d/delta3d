@@ -335,7 +335,16 @@ namespace   dtAudio
          static   void              Destroy( void );
 
          /// access the AudioManager
-         static   AudioManager*     GetManager( void );
+         static   AudioManager*     GetManager( void ) 
+         {
+            DEPRECATE( "AudioManager* AudioManager::GetManager()",
+                       "AudioManager& AudioManager::GetInstance()" );
+             
+            return &GetInstance(); 
+         }
+
+         /// access the AudioManager
+         static   AudioManager&     GetInstance( void );
 
          /// access the global Listener
          static   Listener*         GetListener( void );

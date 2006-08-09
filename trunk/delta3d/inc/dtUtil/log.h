@@ -45,7 +45,7 @@ namespace dtUtil
       static void SetTitle(const std::string& title);
       
       ///Get the current HTML title string.
-      static const std::string GetTitle();
+      static const std::string& GetTitle();
    };
 
     /**
@@ -150,7 +150,7 @@ namespace dtUtil
          * output
          * @param msgType the type of message to query about.
          */
-        bool IsLevelEnabled(LogMessageType msgType) const { return msgType >= mLevel; };
+        bool IsLevelEnabled(LogMessageType msgType) const { return msgType >= mLevel; }
 
         /**
          * Sets the lowest level of logging that will be logged.
@@ -158,9 +158,18 @@ namespace dtUtil
          * errors will be sent.
          * @param msgType the new logging level
          */
-        void SetLogLevel(LogMessageType msgType)  { mLevel = msgType; };
+        void SetLogLevel(LogMessageType msgType)  { mLevel = msgType; }
 
+        /**
+         * @return the lowest level of logging that will be logged.
+         */
+        LogMessageType GetLogLevel() const { return mLevel; }
+
+        ///@return a string version of a log level.
         const std::string GetLogLevelString( LogMessageType msgType) const;
+
+        ///@return the log level matching a string or WARNING if there is no match.
+        LogMessageType GetLogLevelForString( const std::string& levelString) const;
 
         /*
          * Retrieve singleton instance of the log class.
@@ -186,13 +195,16 @@ namespace dtUtil
 
         ///Get the currently defined output stream options
         unsigned int GetOutputStreamBit() const;
+        
+        ///Returns the name of this logger.
+        const std::string& GetName() const { return mName; }
 
     //Constructor and destructor are both protected since this is a singleton.
     protected:
         /**
          * Opens the log file and writes the html header information.
          */
-        Log();
+        Log(const std::string& name);
 
         /**
          * Writes any closing html tags and closes the log file.
@@ -204,10 +216,9 @@ namespace dtUtil
 
         LogMessageType mLevel;
         unsigned int mOutputStreamBit; ///<the current output stream option
-
+        std::string mName;
     };
 
 }
 
 #endif
-

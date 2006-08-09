@@ -42,6 +42,11 @@
 #include "dtGame/datastream.h"
 #include "dtGame/exceptionenum.h"
 
+namespace dtDAL
+{
+   class ActorProperty;
+}
+
 namespace dtGame
 {
 
@@ -60,6 +65,7 @@ namespace dtGame
             SetParamDelimeter(DEFAULT_DELIMETER);
          }
 
+         ///@return the name of this message parameter
          const std::string &GetName() const { return mName; }
 
          virtual const dtDAL::DataType &GetDataType() const = 0;
@@ -69,14 +75,6 @@ namespace dtGame
          virtual void FromDataStream(DataStream &stream) = 0;
 
          virtual const std::string ToString() const = 0;
-
-         void WriteToLog(dtUtil::Log &logger, dtUtil::Log::LogMessageType level = dtUtil::Log::LOG_DEBUG) const;
-
-         /**
-          * @return True if the paramater contains a list of
-          *    data, false if this parameter only stores one value.
-          */
-         bool IsList() const { return mIsList; }
 
          /**
           * @return true if it was able to assign the value based on the string or false if not.
@@ -89,6 +87,15 @@ namespace dtGame
           */
          virtual void CopyFrom(const MessageParameter &otherParam) = 0;
 
+         ///Writes pertinent data about this parameter to the given logger and log level.
+         void WriteToLog(dtUtil::Log &logger, dtUtil::Log::LogMessageType level = dtUtil::Log::LOG_DEBUG) const;
+
+         /**
+          * @return True if the paramater contains a list of
+          *    data, false if this parameter only stores one value.
+          */
+         bool IsList() const { return mIsList; }
+
          /**
           * Creates a message parameter that will hold the given type.
           * @param type the datatype the parameter should hold.
@@ -97,7 +104,7 @@ namespace dtGame
           */
          static dtCore::RefPtr<MessageParameter> CreateFromType(
          	const dtDAL::DataType& type,
-         	const std::string& name, bool isList=false) throw(dtUtil::Exception);
+         	const std::string& name, bool isList=false);
 
          /**
           * Gets the character used as a delimeter between parameters when serializing
@@ -121,9 +128,26 @@ namespace dtGame
             mParamListDelimeter = delim;
          }
 
+
+         /** 
+          * Sets the message parameter's value from the actor property's value
+          */
+         virtual void SetFromProperty(const dtDAL::ActorProperty &property);
+
+         /** 
+          * Sets the actor property's value from the message parameter's value
+          */
+         virtual void ApplyValueToProperty(dtDAL::ActorProperty &property) const;
+
       protected:
 
          virtual ~MessageParameter() { }
+
+         /**
+          * Helper method for each specific parameter type to be able to 
+          * validate the property type before acting on it
+          */
+         void ValidatePropertyType(const dtDAL::ActorProperty &property) const;
 
       private:
          std::string mName;
@@ -133,6 +157,72 @@ namespace dtGame
          char mParamListDelimeter;
 
          bool mIsList;
+   };
+
+   class DT_GAME_EXPORT GroupMessageParameter : public MessageParameter
+   {
+      public:
+         GroupMessageParameter(const std::string &name) :
+            MessageParameter(name, false)
+         {}
+
+         virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::GROUP; }
+
+         virtual void ToDataStream(DataStream &stream) const;
+
+         virtual void FromDataStream(DataStream &stream);
+
+         virtual const std::string ToString() const;
+
+         virtual bool FromString(const std::string &value);
+
+         virtual void CopyFrom(const MessageParameter &otherParam);
+
+         /**
+          * Adds a parameter to the group
+          * @param name The name of the parameter to add
+          * @param type The type of parameter it is, corresponding with dtDAL::DataType
+          * @return A pointer to the parameter
+          * @see dtDAL::DataType
+          * @throws dtUtil::Exception if the name specified is already used.
+          */
+         MessageParameter* AddParameter(const std::string &name, const dtDAL::DataType &type);
+         
+         /**
+          * Adds a parameter to the group
+          * @param param the new parameter to add
+          * @see dtDAL::DataType
+          * @throws dtUtil::Exception if the name specified is already used.
+          */
+         void AddParameter(MessageParameter& newParam);
+
+         /**
+          * Retrieves the parameter for this group parameter with the given name.
+          * @param name The name of the parameter to retrieve
+          * @return A pointer to the parameter or NULL if no such parameter exists
+          */
+         MessageParameter* GetParameter(const std::string &name);
+
+         /**
+          * Retrieves const pointer to the parameter for this group parameter with the given name.
+          * @param name The name of the parameter to retrieve
+          * @return A const pointer to the parameter or NULL if no such parameter exists
+          */
+         const MessageParameter* GetParameter(const std::string &name) const;
+
+         /** 
+          * Retrieves all of the parameters in this group.
+          * @param toFill The vector to fill with the parameters
+          */
+         void GetParameters(std::vector<MessageParameter*> &toFill);
+
+         /** 
+          * Retrieves all of the parameters in this group as const.
+          * @param toFill The vector to fill with the parameters
+          */
+         void GetParameters(std::vector<const MessageParameter*> &toFill) const;
+      private:
+         std::map<std::string, dtCore::RefPtr<MessageParameter> > mParameterList;
    };
 
    template <class ParamType>
@@ -384,6 +474,9 @@ namespace dtGame
          ///overridden to accept "true" and other such strings as well as numbers.
          virtual bool FromString(const std::string &value);
 
+         virtual void SetFromProperty(const dtDAL::ActorProperty &property);
+         virtual void ApplyValueToProperty(dtDAL::ActorProperty &property) const;
+
       protected:
          virtual ~BooleanMessageParameter();
    };
@@ -397,6 +490,7 @@ namespace dtGame
          UnsignedCharMessageParameter(const std::string &name,
              unsigned char defaultValue = 0, bool isList=false);
          virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::UCHAR; }
+
       protected:
          virtual ~UnsignedCharMessageParameter();
    };
@@ -409,6 +503,7 @@ namespace dtGame
       public:
          ShortIntMessageParameter(const std::string &name, short defaultValue = 0, bool isList=false);
          virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::SHORTINT; }
+
       protected:
          virtual ~ShortIntMessageParameter();
    };
@@ -422,6 +517,7 @@ namespace dtGame
          UnsignedShortIntMessageParameter(const std::string &name,
             unsigned short defaultValue = 0, bool isList=false);
          virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::USHORTINT; }
+
       protected:
          virtual ~UnsignedShortIntMessageParameter();
    };
@@ -434,6 +530,7 @@ namespace dtGame
       public:
          UnsignedIntMessageParameter(const std::string &name, unsigned int defaultValue=0,	bool isList=false);
          virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::UINT; }
+
       protected:
          virtual ~UnsignedIntMessageParameter();
    };
@@ -446,6 +543,10 @@ namespace dtGame
       public:
          IntMessageParameter(const std::string &name, int defaultValue=0,	bool isList=false);
          virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::INT; }
+
+         virtual void SetFromProperty(const dtDAL::ActorProperty &property);
+         virtual void ApplyValueToProperty(dtDAL::ActorProperty &property) const;
+
       protected:
          virtual ~IntMessageParameter();
    };
@@ -459,6 +560,7 @@ namespace dtGame
          UnsignedLongIntMessageParameter(const std::string &name,
             unsigned long defaultValue = 0, bool isList=false);
          virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::ULONGINT; }
+
       protected:
          virtual ~UnsignedLongIntMessageParameter();
    };
@@ -471,6 +573,10 @@ namespace dtGame
       public:
          LongIntMessageParameter(const std::string &name, long defaultValue=0, 	bool isList=false);
          virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::LONGINT; }
+
+         virtual void SetFromProperty(const dtDAL::ActorProperty &property);
+         virtual void ApplyValueToProperty(dtDAL::ActorProperty &property) const;
+
       protected:
          virtual ~LongIntMessageParameter();
    };
@@ -480,11 +586,15 @@ namespace dtGame
      */
    class DT_GAME_EXPORT FloatMessageParameter: public PODMessageParameter<float>
    {
-   public:
-      FloatMessageParameter(const std::string &name, float defaultValue=0.0f,  bool isList=false);
-      virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::FLOAT; }
-   protected:
-      virtual ~FloatMessageParameter();
+      public:
+         FloatMessageParameter(const std::string &name, float defaultValue=0.0f,  bool isList=false);
+         virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::FLOAT; }
+
+         virtual void SetFromProperty(const dtDAL::ActorProperty &property);
+         virtual void ApplyValueToProperty(dtDAL::ActorProperty &property) const;
+
+      protected:
+         virtual ~FloatMessageParameter();
    };
 
    /**
@@ -492,11 +602,15 @@ namespace dtGame
      */
    class DT_GAME_EXPORT DoubleMessageParameter: public PODMessageParameter<double>
    {
-   public:
-      DoubleMessageParameter(const std::string &name, double defaultValue=0.0, 	bool isList=false);
-      virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::DOUBLE; }
-   protected:
-      virtual ~DoubleMessageParameter();
+      public:
+         DoubleMessageParameter(const std::string &name, double defaultValue=0.0, 	bool isList=false);
+         virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::DOUBLE; }
+
+         virtual void SetFromProperty(const dtDAL::ActorProperty &property);
+         virtual void ApplyValueToProperty(dtDAL::ActorProperty &property) const;
+
+      protected:
+         virtual ~DoubleMessageParameter();
    };
 
    /**
@@ -512,6 +626,9 @@ namespace dtGame
          virtual const std::string ToString() const;
          virtual bool FromString(const std::string& value);
 
+         virtual void SetFromProperty(const dtDAL::ActorProperty &property);
+         virtual void ApplyValueToProperty(dtDAL::ActorProperty &property) const;
+
       protected:
          virtual ~StringMessageParameter();
    };
@@ -526,6 +643,10 @@ namespace dtGame
       public:
          EnumMessageParameter(const std::string& name, const std::string& defaultValue = "", bool isList=false);
          virtual const dtDAL::DataType& GetDataType() const { return dtDAL::DataType::ENUMERATION; }
+
+         virtual void SetFromProperty(const dtDAL::ActorProperty &property);
+         virtual void ApplyValueToProperty(dtDAL::ActorProperty &property) const;
+
       protected:
          virtual ~EnumMessageParameter();
    };
@@ -544,6 +665,9 @@ namespace dtGame
          virtual const dtDAL::DataType& GetDataType() const { return dtDAL::DataType::ACTOR; }
          virtual const std::string ToString() const;
          virtual bool FromString(const std::string& value);
+
+         virtual void SetFromProperty(const dtDAL::ActorProperty &property);
+         virtual void ApplyValueToProperty(dtDAL::ActorProperty &property) const;
 
       protected:
          virtual ~ActorMessageParameter();
@@ -564,6 +688,9 @@ namespace dtGame
          virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::GAME_EVENT; }
          virtual const std::string ToString() const;
          virtual bool FromString(const std::string &value);
+
+         virtual void SetFromProperty(const dtDAL::ActorProperty &property);
+         virtual void ApplyValueToProperty(dtDAL::ActorProperty &property) const;
 
       protected:
          virtual ~GameEventMessageParameter();
@@ -653,6 +780,9 @@ namespace dtGame
          virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::VEC2; }
          virtual bool FromString(const std::string &value) { return InternalFromString(value, 2); }
 
+         virtual void SetFromProperty(const dtDAL::ActorProperty &property);
+         virtual void ApplyValueToProperty(dtDAL::ActorProperty &property) const;
+
       protected:
          virtual ~Vec2MessageParameter();
    };
@@ -668,6 +798,9 @@ namespace dtGame
 
          virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::VEC2F; }
          virtual bool FromString(const std::string &value) { return InternalFromString(value, 2); }
+
+         virtual void SetFromProperty(const dtDAL::ActorProperty &property);
+         virtual void ApplyValueToProperty(dtDAL::ActorProperty &property) const;
 
       protected:
          virtual ~Vec2fMessageParameter();
@@ -685,6 +818,9 @@ namespace dtGame
          virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::VEC2D; }
          virtual bool FromString(const std::string &value) { return InternalFromString(value, 2); }
 
+         virtual void SetFromProperty(const dtDAL::ActorProperty &property);
+         virtual void ApplyValueToProperty(dtDAL::ActorProperty &property) const;
+
       protected:
          virtual ~Vec2dMessageParameter();
    };
@@ -701,9 +837,28 @@ namespace dtGame
          virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::VEC3; }
          virtual bool FromString(const std::string &value) { return InternalFromString(value, 3); }
 
+         virtual void SetFromProperty(const dtDAL::ActorProperty &property);
+         virtual void ApplyValueToProperty(dtDAL::ActorProperty &property) const;
+
       protected:
          virtual ~Vec3MessageParameter();
    };
+
+   /**
+     * @class RGBColorMessageParameter
+     */
+   class DT_GAME_EXPORT RGBColorMessageParameter: public Vec3MessageParameter
+   {
+      public:
+         RGBColorMessageParameter(const std::string &name,
+             const osg::Vec3& defaultValue = osg::Vec3(0.0, 0.0, 0.0), bool isList=false);
+
+         virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::RGBCOLOR; }
+
+      protected:
+         virtual ~RGBColorMessageParameter();
+   };
+
 
    /**
      * @class Vec3fMessageParameter
@@ -716,6 +871,9 @@ namespace dtGame
 
          virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::VEC3F; }
          virtual bool FromString(const std::string &value) { return InternalFromString(value, 3); }
+
+         virtual void SetFromProperty(const dtDAL::ActorProperty &property);
+         virtual void ApplyValueToProperty(dtDAL::ActorProperty &property) const;
 
       protected:
          virtual ~Vec3fMessageParameter();
@@ -733,6 +891,9 @@ namespace dtGame
          virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::VEC3D; }
          virtual bool FromString(const std::string &value) { return InternalFromString(value, 3); }
 
+         virtual void SetFromProperty(const dtDAL::ActorProperty &property);
+         virtual void ApplyValueToProperty(dtDAL::ActorProperty &property) const;
+
       protected:
          virtual ~Vec3dMessageParameter();
    };
@@ -749,8 +910,26 @@ namespace dtGame
          virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::VEC4; }
          virtual bool FromString(const std::string &value) { return InternalFromString(value, 4); }
 
+         virtual void SetFromProperty(const dtDAL::ActorProperty &property);
+         virtual void ApplyValueToProperty(dtDAL::ActorProperty &property) const;
+
       protected:
          virtual ~Vec4MessageParameter();
+   };
+
+   /**
+     * @class RGBAColorMessageParameter
+     */
+   class DT_GAME_EXPORT RGBAColorMessageParameter: public Vec4MessageParameter
+   {
+      public:
+         RGBAColorMessageParameter(const std::string &name,
+             const osg::Vec4& defaultValue = osg::Vec4(0.0, 0.0, 0.0, 0.0), bool isList=false);
+
+         virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::RGBACOLOR; }
+
+      protected:
+         virtual ~RGBAColorMessageParameter();
    };
 
    /**
@@ -764,6 +943,9 @@ namespace dtGame
 
          virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::VEC4F; }
          virtual bool FromString(const std::string &value)  {  return InternalFromString(value, 4); }
+
+         virtual void SetFromProperty(const dtDAL::ActorProperty &property);
+         virtual void ApplyValueToProperty(dtDAL::ActorProperty &property) const;
 
       protected:
          virtual ~Vec4fMessageParameter();
@@ -780,6 +962,9 @@ namespace dtGame
 
          virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::VEC4D; }
          virtual bool FromString(const std::string &value) { return InternalFromString(value, 4); }
+
+         virtual void SetFromProperty(const dtDAL::ActorProperty &property);
+         virtual void ApplyValueToProperty(dtDAL::ActorProperty &property) const;
 
       protected:
          virtual ~Vec4dMessageParameter();
@@ -815,6 +1000,9 @@ namespace dtGame
          std::vector<dtDAL::ResourceDescriptor> &GetValueList();
 
          void SetValueList(const std::vector<dtDAL::ResourceDescriptor> &newValues);
+
+         virtual void SetFromProperty(const dtDAL::ActorProperty &property);
+         virtual void ApplyValueToProperty(dtDAL::ActorProperty &property) const;
 
       protected:
          virtual ~ResourceMessageParameter();

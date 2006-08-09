@@ -50,7 +50,7 @@ void BaseABC::Config()
 
 void BaseABC::Quit()
 {
-   System::Instance()->Stop();
+   System::GetInstance().Stop();
 }
 
 void BaseABC::AddDrawable( DeltaDrawable* obj )

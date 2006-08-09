@@ -51,9 +51,9 @@
 
 #include <osgDB/FileNameUtils>
 
-#include "dtDAL/mapxml.h"
-#include "dtDAL/librarymanager.h"
-#include "dtDAL/enginepropertytypes.h"
+#include <dtDAL/mapxml.h>
+#include <dtDAL/librarymanager.h>
+#include <dtDAL/enginepropertytypes.h>
 
 #include <dtUtil/fileutils.h>
 #include <dtUtil/stringutils.h>
@@ -496,38 +496,27 @@ namespace dtDAL
 
       xmlCharString& topEl = mElements.top();
 
-      if (*mActorPropertyType == DataType::BOOLEAN)
+      switch (mActorPropertyType->GetTypeId())
       {
-         static_cast<BooleanActorProperty&>(*mActorProperty).SetValue(dataValue == "1"
-                                                                      || dataValue == "true");
+      case DataType::FLOAT_ID:
+      case DataType::DOUBLE_ID:
+      case DataType::INT_ID:
+      case DataType::LONGINT_ID:
+      case DataType::STRING_ID:
+      case DataType::GAMEEVENT_ID:
+         mActorProperty->SetStringValue(dataValue);
          mActorPropertyType = NULL;
-      }
-      else if (*mActorPropertyType == DataType::FLOAT)
+         break;
+      case DataType::BOOLEAN_ID:
       {
-         mActorProperty->SetStringValue(dataValue.c_str());
-         mActorPropertyType = NULL;
+            static_cast<BooleanActorProperty&>(*mActorProperty).SetValue(dataValue == "1"
+                                                                        || dataValue == "true");
+            mActorPropertyType = NULL;
+            break;
       }
-      else if (*mActorPropertyType == DataType::DOUBLE)
-      {
-         mActorProperty->SetStringValue(dataValue.c_str());
-         mActorPropertyType = NULL;
-      }
-      else if (*mActorPropertyType == DataType::INT)
-      {
-         mActorProperty->SetStringValue(dataValue.c_str());
-         mActorPropertyType = NULL;
-      }
-      else if (*mActorPropertyType == DataType::LONGINT)
-      {
-         mActorProperty->SetStringValue(dataValue.c_str());
-         mActorPropertyType = NULL;
-      }
-      else if (*mActorPropertyType == DataType::STRING)
-      {
-         static_cast<StringActorProperty&>(*mActorProperty).SetValue(dataValue);
-         mActorPropertyType = NULL;
-      }
-      else if (*mActorPropertyType == DataType::VEC2)
+      case DataType::VEC2_ID:
+      case DataType::VEC2F_ID:
+      case DataType::VEC2D_ID:
       {
          DataType &actualType = mActorProperty->GetPropertyType();
          if(actualType == DataType::VEC2)
@@ -576,8 +565,11 @@ namespace dtDAL
             }
             p.SetValue(vec);
          }
+         break;
       }
-      else if (*mActorPropertyType == DataType::VEC3)
+      case DataType::VEC3_ID:
+      case DataType::VEC3F_ID:
+      case DataType::VEC3D_ID:
       {
          DataType &actualType = mActorProperty->GetPropertyType();
          if(actualType == DataType::VEC3)
@@ -640,8 +632,11 @@ namespace dtDAL
             }
             p.SetValue(vec);
          }
+         break;
       }
-      else if (*mActorPropertyType == DataType::VEC4)
+      case DataType::VEC4_ID:
+      case DataType::VEC4F_ID:
+      case DataType::VEC4D_ID:
       {
          DataType &actualType = mActorProperty->GetPropertyType();
 
@@ -717,8 +712,9 @@ namespace dtDAL
             }
             p.SetValue(vec);
          }
+         break;
       }
-      else if (*mActorPropertyType == DataType::RGBACOLOR)
+      case DataType::RGBACOLOR_ID:
       {
          osg::Vec4 vec;
          ColorRgbaActorProperty& p = static_cast<ColorRgbaActorProperty&>(*mActorProperty);
@@ -742,8 +738,9 @@ namespace dtDAL
             mActorPropertyType = NULL;
          }
          p.SetValue(vec);
+         break;
       }
-      else if (*mActorPropertyType == DataType::ENUMERATION)
+      case DataType::ENUMERATION_ID:
       {
          if (!mActorProperty->SetStringValue(dataValue.c_str()))
          {
@@ -753,8 +750,9 @@ namespace dtDAL
          }
 
          mActorPropertyType = NULL;
+         break;
       }
-      else if (*mActorPropertyType == DataType::ACTOR)
+      case DataType::ACTOR_ID:
       {
          //insert the data into this map to make it accessible to assign once the parsing is done.
          dtUtil::trim(dataValue);
@@ -764,53 +762,59 @@ namespace dtDAL
 
          }
          mActorPropertyType = NULL;
+         break;
       }
-      else if (*mActorPropertyType == DataType::GAME_EVENT)
+      default:
       {
-         mActorProperty->SetStringValue(dataValue);
-         mActorPropertyType = NULL;
-      }
-      else if (mActorPropertyType->IsResource())
-      {
-         ResourceActorProperty& p = static_cast<ResourceActorProperty&>(*mActorProperty);
-         if (topEl == MapXMLConstants::ACTOR_PROPERTY_RESOURCE_TYPE_ELEMENT)
+         if (mActorPropertyType->IsResource())
          {
-            if (dataValue != p.GetPropertyType().GetName())
+            ResourceActorProperty& p = static_cast<ResourceActorProperty&>(*mActorProperty);
+            if (topEl == MapXMLConstants::ACTOR_PROPERTY_RESOURCE_TYPE_ELEMENT)
             {
-               mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
-                                   "Save file expected resource property %s on actor named %s to have type %s, but it is %s.",
-                                   mActorProperty->GetName().c_str(), mActorProxy->GetName().c_str(),
-                                   dataValue.c_str(), p.GetPropertyType().GetName().c_str());
-               //make it ignore the rest of the mElements.
-               p.SetValue(NULL);
+               if (dataValue != p.GetPropertyType().GetName())
+               {
+                  mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+                                      "Save file expected resource property %s on actor named %s to have type %s, but it is %s.",
+                                      mActorProperty->GetName().c_str(), mActorProxy->GetName().c_str(),
+                                      dataValue.c_str(), p.GetPropertyType().GetName().c_str());
+                  //make it ignore the rest of the mElements.
+                  p.SetValue(NULL);
+                  mActorPropertyType = NULL;
+               }
+            }
+            else if (topEl == MapXMLConstants::ACTOR_PROPERTY_RESOURCE_DISPLAY_ELEMENT)
+            {
+               mDescriptorDisplayName = dataValue;
+            }
+            else if (topEl == MapXMLConstants::ACTOR_PROPERTY_RESOURCE_IDENTIFIER_ELEMENT)
+            {
+               //if the value is null, then both strings will be empty.
+               if (dataValue != "" && mDescriptorDisplayName != "")
+               {
+                  ResourceDescriptor rd(mDescriptorDisplayName, dataValue);
+                  p.SetValue(&rd);
+               }
+               else
+               {
+                  p.SetValue(NULL);
+               }
                mActorPropertyType = NULL;
             }
          }
-         else if (topEl == MapXMLConstants::ACTOR_PROPERTY_RESOURCE_DISPLAY_ELEMENT)
+         else
          {
-            mDescriptorDisplayName = dataValue;
-         }
-         else if (topEl == MapXMLConstants::ACTOR_PROPERTY_RESOURCE_IDENTIFIER_ELEMENT)
-         {
-            //if the value is null, then both strings will be empty.
-            if (dataValue != "" && mDescriptorDisplayName != "")
-            {
-               ResourceDescriptor rd(mDescriptorDisplayName, dataValue);
-               p.SetValue(&rd);
-            }
-            else
-            {
-               p.SetValue(NULL);
-            }
-            mActorPropertyType = NULL;
+            mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__,  __LINE__, 
+               "DataType \"%s\" is not supported in the map loading code.  The data has been ignored.",
+               mActorPropertyType->GetName().c_str());
+            
          }
       }
-
+   }
    }
 
    void MapContentHandler::startDocument()
    {
-      mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Parsing Map Document Started.\n");
+      mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Parsing Map Document Started.");
       Reset();
       mMap = new Map("","");
    }
