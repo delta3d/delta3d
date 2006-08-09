@@ -88,6 +88,7 @@ class TestAI(Application):
       self.AddDrawable(WaypointManager.GetInstance())    
       
       trans = Transform()
+
       trans.SetTranslation(-1.0, 5.5, 1.5)
       trans.SetRotation(180.0, -2.0, 0.0)
       self.GetCamera().SetTransform(trans)
@@ -97,8 +98,9 @@ class TestAI(Application):
       self.mOverheadCamera.SetScene(self.GetScene())
       self.mOverheadCamera.SetWindow(self.GetWindow())
       self.mOverheadCamera.SetEnabled(0)
-      trans.SetTranslation(-1.0, 20.0, 100.0)
+      trans.SetTranslation(-1.0, 5.0, 100.0)
       trans.SetRotation(90.0, 270.0, 0.0)
+      
       self.mOverheadCamera.SetTransform(trans)
       self.GetCamera().AddChild(self.mOverheadCamera)
       
@@ -126,9 +128,31 @@ class TestAI(Application):
          WaypointManager.GetInstance().SetDrawNavMesh(not self.mDrawNavMesh)
          self.mDrawNavMesh = not self.mDrawNavMesh
          verdict = 1
-      if key is KeyboardKey.Key_Escape :
+      elif key is KeyboardKey.Key_Escape :
          self.Quit()
          verdict = 1
+      elif key is KeyboardKey.Key_A :
+         if self.mOverheadCamera.GetEnabled():
+            trans = Transform()
+            self.mOverheadCamera.GetTransform(trans)
+            vec = Vec3()            
+            trans.GetTranslation(vec)
+            #vec[1] -= (15.5 / 100.0)
+            vec[2] -= 1.0
+            trans.SetTranslation(vec)
+            self.mOverheadCamera.SetTransform(trans)
+            verdict = 1
+      elif key is KeyboardKey.Key_Z :
+         if self.mOverheadCamera.GetEnabled():
+            trans = Transform()
+            self.mOverheadCamera.GetTransform(trans)
+            vec = Vec3()            
+            trans.GetTranslation(vec)
+            #vec[1] += (15.5 / 100.0)
+            vec[2] += 1.0
+            trans.SetTranslation(vec)
+            self.mOverheadCamera.SetTransform(trans)
+            verdict = 1
       return verdict     
 
 SetDataFilePathList (   GetDeltaRootPath() + "/examples/testMap/;" +
