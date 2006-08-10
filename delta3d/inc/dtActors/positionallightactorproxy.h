@@ -32,8 +32,7 @@ namespace dtActors
     /**
      * This proxy wraps the PositionalLight Delta3D object.
      */
-    class DT_PLUGIN_EXPORT PositionalLightActorProxy : public BaseLightActorProxy,
-        public dtDAL::TransformableActorProxy
+    class DT_PLUGIN_EXPORT PositionalLightActorProxy : public BaseLightActorProxy
     {
     public:
 
