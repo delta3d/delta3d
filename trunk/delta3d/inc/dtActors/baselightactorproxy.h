@@ -25,7 +25,7 @@
 #include <dtCore/light.h>
 #include <dtDAL/exceptionenum.h>
 #include <dtDAL/plugin_export.h>
-#include <dtDAL/actorproxy.h>
+#include <dtDAL/transformableactorproxy.h>
 #include <osg/Vec4>
 
 namespace dtActors
@@ -38,7 +38,7 @@ namespace dtActors
      * light proxy object should derive from this one.  Assuming, however, that
      * the underlying Delta3D object is derived from dtCore::Light.
      */
-    class DT_PLUGIN_EXPORT BaseLightActorProxy : public virtual dtDAL::ActorProxy
+    class DT_PLUGIN_EXPORT BaseLightActorProxy : public dtDAL::TransformableActorProxy
     {
     public:
 
