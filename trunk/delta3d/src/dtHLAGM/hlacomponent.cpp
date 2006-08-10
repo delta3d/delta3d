@@ -1797,6 +1797,9 @@ namespace dtHLAGM
          if (!messageParameters.empty())
          {
             const AttributeType& hlaType = vectorIterator->GetHLAType();
+
+            if (hlaType == AttributeType::UNKNOWN)
+               continue;
    
             size_t bufferSize;
             char* buffer;
