@@ -1,0 +1,9 @@
+.sconf_temp
+.sconsign.dblite
+BuildLog.txt
+bin
+config.log
+delta3d.conf
+delta3d_log.html
+lib
+macosx.pyc
