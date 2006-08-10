@@ -191,6 +191,8 @@ DeltaWin::DeltaWin(  const std::string& name,
 
    RegisterInstance(this);
 
+   mKeyboard = new Keyboard;
+
    if(ia) // use the passed InputArea if not NULL
    {
       mKeyboardMouse = new Producer::KeyboardMouse(ia);
