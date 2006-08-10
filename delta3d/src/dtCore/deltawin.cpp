@@ -178,18 +178,21 @@ DeltaWin::DeltaWin(  const std::string& name,
                      Producer::InputArea* ia ) :
    Base(name), 
    mRenderSurface(rs),
-   mKeyboardMouse(0),
-   mKeyboard( new Keyboard ),
-   mMouse(0),
+   mKeyboardMouse(NULL),
+   mMouse(NULL),
    mShowCursor(true),
-   mInputCallback(0)
+   mInputCallback(NULL)
 {
-   if( mRenderSurface == 0 )
+   if( mRenderSurface == NULL )
    {
       EXCEPT(dtCore::ExceptionEnum::INVALID_PARAMETER,
          "Supplied Producer::RenderSurface is NULL");
    }
-   
+
+   RegisterInstance(this);
+
+   mKeyboard = new Keyboard;
+
    RegisterInstance(this);
 
    if(ia) // use the passed InputArea if not NULL
