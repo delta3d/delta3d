@@ -41,134 +41,126 @@ const std::string ExampleTestPropertyProxy::GROUPNAME("Example Test");
 
     ///////////////////////////////////////////////////////////////////////////////
     ExampleTestPropertyProxy::ExampleTestPropertyProxy()
-        : myInt(0), myReadOnlyInt(5), myFloat(0.0), myDouble(0.0), myLong(0), myBool(0),
-        myString(""), myEnum(&TestEnum::OPTION1)
+        : mInt(0), mReadOnlyInt(5), mFloat(0.0), mDouble(0.0), mLong(0), mBool(0),
+        mString(""), mEnum(&TestEnum::OPTION1)
     {
-        //static int count = 0;
-        //std::ostringstream ss;
-
-        myEnum = &TestEnum::OPTION1;
-
-        //ss << "ExampleObject" << count++;
-        //getActor()->SetName(ss.str());
-        //loadFile("data/blackhawk.ive");
-
-        SetClassName("dtCore::ExampleTestPropertyProxy");
+      SetClassName("dtCore::ExampleTestPropertyProxy");
     }
 
-    void ExampleTestPropertyProxy::BuildPropertyMap() {
+    void ExampleTestPropertyProxy::BuildPropertyMap() 
+    {
         DeltaObjectActorProxy::BuildPropertyMap();
 
         Object *obj = dynamic_cast<Object*>(GetActor());
         if(obj == NULL)
-            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Object");
+            throw dtUtil::Exception(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Object", __FILE__, __LINE__);
 
         AddProperty(new BooleanActorProperty("Test_Boolean", "Test Boolean",
-            MakeFunctor(*this, &ExampleTestPropertyProxy::setTestBool),
-            MakeFunctorRet(*this, &ExampleTestPropertyProxy::getTestBool),
+            MakeFunctor(*this, &ExampleTestPropertyProxy::SetTestBool),
+            MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetTestBool),
             "Holds a test Boolean property", GROUPNAME));
 
         AddProperty(new IntActorProperty("Test_Int", "Test Int",
-            MakeFunctor(*this, &ExampleTestPropertyProxy::setTestInt),
-            MakeFunctorRet(*this, &ExampleTestPropertyProxy::getTestInt),
+            MakeFunctor(*this, &ExampleTestPropertyProxy::SetTestInt),
+            MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetTestInt),
             "Holds a test Int property", GROUPNAME));
 
         dtDAL::IntActorProperty *i = new IntActorProperty("Test_Read_Only_Int", "Test_Read_Only_Int",
-            MakeFunctor(*this, &ExampleTestPropertyProxy::setReadOnlyTestInt),
-            MakeFunctorRet(*this, &ExampleTestPropertyProxy::getReadOnlyTestInt),
+            MakeFunctor(*this, &ExampleTestPropertyProxy::SetReadOnlyTestInt),
+            MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetReadOnlyTestInt),
             "Holds a test Read Only Int property", GROUPNAME);
         i->SetReadOnly(true);
 
         AddProperty(i);
 
         AddProperty(new LongActorProperty("Test_Long", "Test Long",
-            MakeFunctor(*this, &ExampleTestPropertyProxy::setTestLong),
-            MakeFunctorRet(*this, &ExampleTestPropertyProxy::getTestLong),
+            MakeFunctor(*this, &ExampleTestPropertyProxy::SetTestLong),
+            MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetTestLong),
             "Holds a test Long property", GROUPNAME));
 
         AddProperty(new FloatActorProperty("Test_Float", "Test Float",
-            MakeFunctor(*this, &ExampleTestPropertyProxy::setTestFloat),
-            MakeFunctorRet(*this, &ExampleTestPropertyProxy::getTestFloat),
+            MakeFunctor(*this, &ExampleTestPropertyProxy::SetTestFloat),
+            MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetTestFloat),
             "Holds a test Float property", GROUPNAME));
 
         AddProperty(new DoubleActorProperty("Test_Double", "Test Double",
-            MakeFunctor(*this, &ExampleTestPropertyProxy::setTestDouble),
-            MakeFunctorRet(*this, &ExampleTestPropertyProxy::getTestDouble),
+            MakeFunctor(*this, &ExampleTestPropertyProxy::SetTestDouble),
+            MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetTestDouble),
             "Holds a test Double property", GROUPNAME));
 
         AddProperty(new Vec3ActorProperty("Test_Vec3", "Test Vector3",
-            MakeFunctor(*this, &ExampleTestPropertyProxy::setTestVec3),
-            MakeFunctorRet(*this, &ExampleTestPropertyProxy::getTestVec3),
+            MakeFunctor(*this, &ExampleTestPropertyProxy::SetTestVec3),
+            MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetTestVec3),
             "Holds a test Vector3 Property", GROUPNAME));
 
         AddProperty(new Vec2ActorProperty("Test_Vec2", "Test Vector2",
-            MakeFunctor(*this, &ExampleTestPropertyProxy::setTestVec2),
-            MakeFunctorRet(*this, &ExampleTestPropertyProxy::getTestVec2),
+            MakeFunctor(*this, &ExampleTestPropertyProxy::SetTestVec2),
+            MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetTestVec2),
             "Holds a test Vector2 Property", GROUPNAME));
 
         AddProperty(new Vec4ActorProperty("Test_Vec4", "Test Vector4",
-            MakeFunctor(*this, &ExampleTestPropertyProxy::setTestVec4),
-            MakeFunctorRet(*this, &ExampleTestPropertyProxy::getTestVec4),
+            MakeFunctor(*this, &ExampleTestPropertyProxy::SetTestVec4),
+            MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetTestVec4),
             "Holds a test Vector4 Property", GROUPNAME));
 
         AddProperty(new Vec3fActorProperty("Test_Vec3f", "Test Vector3f",
-            MakeFunctor(*this, &ExampleTestPropertyProxy::setTestVec3f),
-            MakeFunctorRet(*this, &ExampleTestPropertyProxy::getTestVec3f),
+            MakeFunctor(*this, &ExampleTestPropertyProxy::SetTestVec3f),
+            MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetTestVec3f),
             "Holds a test Vector3f Property", GROUPNAME));
 
         AddProperty(new Vec2fActorProperty("Test_Vec2f", "Test Vector2f",
-            MakeFunctor(*this, &ExampleTestPropertyProxy::setTestVec2f),
-            MakeFunctorRet(*this, &ExampleTestPropertyProxy::getTestVec2f),
+            MakeFunctor(*this, &ExampleTestPropertyProxy::SetTestVec2f),
+            MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetTestVec2f),
             "Holds a test Vector2f Property", GROUPNAME));
 
         AddProperty(new Vec4fActorProperty("Test_Vec4f", "Test Vector4f",
-            MakeFunctor(*this, &ExampleTestPropertyProxy::setTestVec4f),
-            MakeFunctorRet(*this, &ExampleTestPropertyProxy::getTestVec4f),
+            MakeFunctor(*this, &ExampleTestPropertyProxy::SetTestVec4f),
+            MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetTestVec4f),
             "Holds a test Vector4f Property", GROUPNAME));
 
         AddProperty(new Vec3dActorProperty("Test_Vec3d", "Test Vector3d",
-            MakeFunctor(*this, &ExampleTestPropertyProxy::setTestVec3d),
-            MakeFunctorRet(*this, &ExampleTestPropertyProxy::getTestVec3d),
+            MakeFunctor(*this, &ExampleTestPropertyProxy::SetTestVec3d),
+            MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetTestVec3d),
             "Holds a test Vector3d Property", GROUPNAME));
 
         AddProperty(new Vec2dActorProperty("Test_Vec2d", "Test Vector2d",
-            MakeFunctor(*this, &ExampleTestPropertyProxy::setTestVec2d),
-            MakeFunctorRet(*this, &ExampleTestPropertyProxy::getTestVec2d),
+            MakeFunctor(*this, &ExampleTestPropertyProxy::SetTestVec2d),
+            MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetTestVec2d),
             "Holds a test Vector2d Property", GROUPNAME));
 
         AddProperty(new Vec4dActorProperty("Test_Vec4d", "Test Vector4d",
-            MakeFunctor(*this, &ExampleTestPropertyProxy::setTestVec4d),
-            MakeFunctorRet(*this, &ExampleTestPropertyProxy::getTestVec4d),
+            MakeFunctor(*this, &ExampleTestPropertyProxy::SetTestVec4d),
+            MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetTestVec4d),
             "Holds a test Vector4d Property", GROUPNAME));
 
         AddProperty(new StringActorProperty("Test_String", "Test String",
-            MakeFunctor(*this, &ExampleTestPropertyProxy::setTestString),
-            MakeFunctorRet(*this, &ExampleTestPropertyProxy::getTestString),
+            MakeFunctor(*this, &ExampleTestPropertyProxy::SetTestString),
+            MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetTestString),
             "Holds a test String property (unlimited length)", GROUPNAME));
 
         StringActorProperty *stringProp = new StringActorProperty("Test_String2", "Test String (max 10)",
-            MakeFunctor(*this, &ExampleTestPropertyProxy::setTestStringWithLength),
-            MakeFunctorRet(*this, &ExampleTestPropertyProxy::getTestStringWithLength),
+            MakeFunctor(*this, &ExampleTestPropertyProxy::SetTestStringWithLength),
+            MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetTestStringWithLength),
             "Holds a test String property with a max length of 10", GROUPNAME);
         stringProp->SetMaxLength(10);
         AddProperty(stringProp);
 
         AddProperty(new ColorRgbaActorProperty("Test_Color", "Test Color",
-            MakeFunctor(*this, &ExampleTestPropertyProxy::setTestColor),
-            MakeFunctorRet(*this, &ExampleTestPropertyProxy::getTestColor),
+            MakeFunctor(*this, &ExampleTestPropertyProxy::SetTestColor),
+            MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetTestColor),
             "Holds a test Color property", GROUPNAME));
 
         AddProperty(new EnumActorProperty<TestEnum>("Test_Enum", "Test Enum",
-            MakeFunctor(*this, &ExampleTestPropertyProxy::setTestEnum),
-            MakeFunctorRet(*this, &ExampleTestPropertyProxy::getTestEnum),
+            MakeFunctor(*this, &ExampleTestPropertyProxy::SetTestEnum),
+            MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetTestEnum),
             "Holds a test Enum property", GROUPNAME));
 
         AddProperty(new ResourceActorProperty(*this, DataType::SOUND, "Test_Sound_Resource", "Test Sound",
-            MakeFunctor(*this, &ExampleTestPropertyProxy::setSoundResourceName),
+            MakeFunctor(*this, &ExampleTestPropertyProxy::SetSoundResourceName),
             "An example sound resource property", GROUPNAME));
 
         AddProperty(new ResourceActorProperty(*this, DataType::TEXTURE, "Test_Texture_Resource", "Texture",
-            MakeFunctor(*this, &ExampleTestPropertyProxy::setTextureResourceName),
+            MakeFunctor(*this, &ExampleTestPropertyProxy::SetTextureResourceName),
             "An example texture resource property", GROUPNAME));
 
         AddProperty(new ActorActorProperty(*this, "Test_Actor", "Test Actor",

@@ -58,7 +58,8 @@ class DT_EXAMPLE_EXPORT TestGamePropertyActor : public dtGame::GameActor
 
       //dtCore::Light has an enumeration.  We define our own enumeration here
       //which can be exported as a property to the editor.
-      class DT_EXAMPLE_EXPORT TestEnum : public dtUtil::Enumeration {
+      class DT_EXAMPLE_EXPORT TestEnum : public dtUtil::Enumeration 
+      {
          DECLARE_ENUM(TestEnum);
       public:
          static TestEnum OPTION1;
@@ -69,7 +70,8 @@ class DT_EXAMPLE_EXPORT TestGamePropertyActor : public dtGame::GameActor
          static TestEnum OPTION6;
 
       private:
-         TestEnum(const std::string &name) : dtUtil::Enumeration(name) {
+         TestEnum(const std::string &name) : dtUtil::Enumeration(name) 
+         {
             AddInstance(this);
          }
       };
@@ -78,340 +80,340 @@ class DT_EXAMPLE_EXPORT TestGamePropertyActor : public dtGame::GameActor
       * Sets the test Float
       * @param value Test value
       */
-      void setTestFloat(float value)
+      void SetTestFloat(float value)
       {
-         myFloat = value;
+         mFloat = value;
       }
 
       /**
       * Gets the Test Float
       * @return the test value
       */
-      float getTestFloat()
+      float GetTestFloat()
       {
-         return myFloat;
+         return mFloat;
       }
 
       /**
       * Sets the test bool
       * @param value Test value
       */
-      void setTestBool(bool value)
+      void SetTestBool(bool value)
       {
-         myBool = value;
+         mBool = value;
       }
 
       /**
       * Gets the Test bool
       * @return the test value
       */
-      bool getTestBool()
+      bool GetTestBool()
       {
-         return myBool;
+         return mBool;
       }
 
       /**
       * Sets the test Double
       * @param value Test value
       */
-      void setTestDouble(double value)
+      void SetTestDouble(double value)
       {
-         myDouble = value;
+         mDouble = value;
       }
 
       /**
       * Gets the Test Value
       * @return the test value
       */
-      double getTestDouble()
+      double GetTestDouble()
       {
-         return myDouble;
+         return mDouble;
       }
 
       /**
       * Sets the test value
       * @param value Test value
       */
-      void setTestInt(int value)
+      void SetTestInt(int value)
       {
-         myInt = value;
+         mInt = value;
       }
 
       /**
       * Gets the Test value
       * @return the test value
       */
-      int getTestInt()
+      int GetTestInt()
       {
-         return myInt;
+         return mInt;
       }
 
       /**
       * Sets the test value
       * @param value Test value
       */
-      void setReadOnlyTestInt(int value)
+      void SetReadOnlyTestInt(int value)
       {
-         myReadOnlyInt = value;
+         mReadOnlyInt = value;
       }
 
       /**
       * Gets the Test value
       * @return the test value
       */
-      int getReadOnlyTestInt()
+      int GetReadOnlyTestInt()
       {
-         return myReadOnlyInt;
+         return mReadOnlyInt;
       }
 
       /**
       * Sets the test value
       * @param value Test value
       */
-      void setTestLong(long value)
+      void SetTestLong(long value)
       {
-         myLong = value;
+         mLong = value;
       }
 
       /**
       * Gets the Test value
       * @return the test value
       */
-      long getTestLong()
+      long GetTestLong()
       {
-         return myLong;
+         return mLong;
       }
 
       /**
       * Sets the test value
       * @param value Test value
       */
-      void setTestString(const std::string &value)
+      void SetTestString(const std::string &value)
       {
-         myString = value;
+         mString = value;
       }
 
       /**
       * Gets the Test value
       * @return the test value
       */
-      std::string getTestString()
+      std::string GetTestString()
       {
-         return myString;
+         return mString;
       }
 
       /**
       * Sets the test value
       * @param value Test value
       */
-      void setTestStringWithLength(const std::string &value)
+      void SetTestStringWithLength(const std::string &value)
       {
-         myStringWithLength = value;
+         mStringWithLength = value;
       }
 
       /**
       * Gets the Test value
       * @return the test value
       */
-      std::string getTestStringWithLength()
+      std::string GetTestStringWithLength()
       {
-         return myStringWithLength;
+         return mStringWithLength;
       }
 
       /**
       * Sets the test value
       * @param value Test value
       */
-      void setTestVec4(const osg::Vec4 &value)
+      void SetTestVec4(const osg::Vec4 &value)
       {
-         myVec4 = value;
+         mVec4 = value;
       }
 
       /**
       * Gets the Test value
       * @return the test value
       */
-      osg::Vec4 getTestVec4()
+      osg::Vec4 GetTestVec4()
       {
-         return myVec4;
+         return mVec4;
       }
 
       /**
       * Sets the test value
       * @param value Test value
       */
-      void setTestVec4f(const osg::Vec4f &value)
+      void SetTestVec4f(const osg::Vec4f &value)
       {
-         myVec4f = value;
+         mVec4f = value;
       }
 
       /**
       * Gets the Test value
       * @return the test value
       */
-      osg::Vec4d getTestVec4d()
+      osg::Vec4d GetTestVec4d()
       {
-         return myVec4d;
+         return mVec4d;
       }
 
       /**
       * Sets the test value
       * @param value Test value
       */
-      void setTestVec4d(const osg::Vec4d &value)
+      void SetTestVec4d(const osg::Vec4d &value)
       {
-         myVec4d = value;
+         mVec4d = value;
       }
 
       /**
       * Gets the Test value
       * @return the test value
       */
-      osg::Vec4f getTestVec4f()
+      osg::Vec4f GetTestVec4f()
       {
-         return myVec4f;
+         return mVec4f;
       }
 
       /**
       * Sets the test value
       * @param value Test value
       */
-      void setTestVec2(const osg::Vec2 &value)
+      void SetTestVec2(const osg::Vec2 &value)
       {
-         myVec2 = value;
+         mVec2 = value;
       }
 
       /**
       * Gets the Test value
       * @return the test value
       */
-      osg::Vec2 getTestVec2()
+      osg::Vec2 GetTestVec2()
       {
-         return myVec2;
+         return mVec2;
       }
 
       /**
       * Sets the test value
       * @param value Test value
       */
-      void setTestVec2f(const osg::Vec2f &value)
+      void SetTestVec2f(const osg::Vec2f &value)
       {
-         myVec2f = value;
+         mVec2f = value;
       }
 
       /**
       * Gets the Test value
       * @return the test value
       */
-      osg::Vec2f getTestVec2f()
+      osg::Vec2f GetTestVec2f()
       {
-         return myVec2f;
+         return mVec2f;
       }
 
       /**
       * Sets the test value
       * @param value Test value
       */
-      void setTestVec2d(const osg::Vec2d &value)
+      void SetTestVec2d(const osg::Vec2d &value)
       {
-         myVec2d = value;
+         mVec2d = value;
       }
 
       /**
       * Gets the Test value
       * @return the test value
       */
-      osg::Vec2d getTestVec2d()
+      osg::Vec2d GetTestVec2d()
       {
-         return myVec2d;
+         return mVec2d;
       }
 
       /**
       * Sets the test value
       * @param value Test value
       */
-      void setTestVec3(const osg::Vec3 &value)
+      void SetTestVec3(const osg::Vec3 &value)
       {
-         myVec3 = value;
+         mVec3 = value;
       }
 
       /**
       * Gets the Test value
       * @return the test value
       */
-      osg::Vec3 getTestVec3()
+      osg::Vec3 GetTestVec3()
       {
-         return myVec3;
+         return mVec3;
       }
 
       /**
       * Sets the test value
       * @param value Test value
       */
-      void setTestVec3f(const osg::Vec3f &value)
+      void SetTestVec3f(const osg::Vec3f &value)
       {
-         myVec3f = value;
+         mVec3f = value;
       }
 
       /**
       * Gets the Test value
       * @return the test value
       */
-      osg::Vec3f getTestVec3f()
+      osg::Vec3f GetTestVec3f()
       {
-         return myVec3f;
+         return mVec3f;
       }
 
       /**
       * Sets the test value
       * @param value Test value
       */
-      void setTestVec3d(const osg::Vec3d &value)
+      void SetTestVec3d(const osg::Vec3d &value)
       {
-         myVec3d = value;
+         mVec3d = value;
       }
 
       /**
       * Gets the Test value
       * @return the test value
       */
-      osg::Vec3d getTestVec3d()
+      osg::Vec3d GetTestVec3d()
       {
-         return myVec3d;
+         return mVec3d;
       }
 
-      void setTestEnum(TestEnum &mode)
+      void SetTestEnum(TestEnum &mode)
       {
          //dtCore::Light *l = dynamic_cast<dtCore::Light *>(this->actor.get());
-         myEnum = &mode;
+         mEnum = &mode;
       }
 
-      TestEnum &getTestEnum()
+      TestEnum &GetTestEnum()
       {
-         return *myEnum;
+         return *mEnum;
       }
 
       /**
       * Sets the test value
       * @param value Test value
       */
-      void setTestColor(const osg::Vec4 &value)
+      void SetTestColor(const osg::Vec4 &value)
       {
-         myColor = value;
+         mColor = value;
       }
 
       /**
       * Gets the Test value
       * @return the test value
       */
-      osg::Vec4 getTestColor()
+      osg::Vec4 GetTestColor()
       {
-         return myColor;
+         return mColor;
       }
 
-      void setSoundResourceName(const std::string &fileName) { mySound = fileName;}
+      void SetSoundResourceName(const std::string &fileName) { mSound = fileName;}
 
-      void setTextureResourceName(const std::string &fileName) { myTexture = fileName; }
+      void SetTextureResourceName(const std::string &fileName) { mTexture = fileName; }
 
       void SetTestGameEvent(dtDAL::GameEvent *event) { mTestGameEvent = event; }
       dtDAL::GameEvent *GetTestGameEvent() { return mTestGameEvent.get(); }
@@ -420,26 +422,26 @@ class DT_EXAMPLE_EXPORT TestGamePropertyActor : public dtGame::GameActor
       virtual ~TestGamePropertyActor();
 
    private:
-    int myInt, myReadOnlyInt;
-    float myFloat;
-    double myDouble;
-    long myLong;
-    bool myBool;
-    std::string myString;
-    std::string myStringWithLength;
-    osg::Vec2 myVec2;
-    osg::Vec3 myVec3;
-    osg::Vec4 myVec4;
-    osg::Vec2 myVec2f;
-    osg::Vec3 myVec3f;
-    osg::Vec4 myVec4f;
-    osg::Vec2 myVec2d;
-    osg::Vec3 myVec3d;
-    osg::Vec4 myVec4d;
-    osg::Vec4 myColor;
-    TestEnum *myEnum;
-    std::string mySound;
-    std::string myTexture;
+    int mInt, mReadOnlyInt;
+    float mFloat;
+    double mDouble;
+    long mLong;
+    bool mBool;
+    std::string mString;
+    std::string mStringWithLength;
+    osg::Vec2 mVec2;
+    osg::Vec3 mVec3;
+    osg::Vec4 mVec4;
+    osg::Vec2 mVec2f;
+    osg::Vec3 mVec3f;
+    osg::Vec4 mVec4f;
+    osg::Vec2 mVec2d;
+    osg::Vec3 mVec3d;
+    osg::Vec4 mVec4d;
+    osg::Vec4 mColor;
+    TestEnum *mEnum;
+    std::string mSound;
+    std::string mTexture;
     dtCore::RefPtr<dtDAL::GameEvent> mTestGameEvent;
 
 };

@@ -19,10 +19,10 @@
  * @author Curtiss Murphy
  */
 #include "testgamepropertyproxy.h"
-#include "dtDAL/enginepropertytypes.h"
-#include "dtActors/deltaobjectactorproxy.h"
-#include "dtCore/scene.h"
-#include "dtCore/object.h"
+#include <dtDAL/enginepropertytypes.h>
+#include <dtActors/deltaobjectactorproxy.h>
+#include <dtCore/scene.h>
+#include <dtCore/object.h>
 #include <sstream>
 
 using namespace dtCore;
@@ -45,14 +45,14 @@ TestGamePropertyActor::TestEnum TestGamePropertyActor::TestEnum::OPTION6("Mind w
 ///////////////////////////////////////////////////////////////////////////////
 TestGamePropertyActor::TestGamePropertyActor(dtGame::GameActorProxy& proxy): 
    dtGame::GameActor(proxy),
-   myInt(0), 
-   myReadOnlyInt(5), 
-   myFloat(0.0), 
-   myDouble(0.0), 
-   myLong(0), 
-   myBool(0),
-   myString(""), 
-   myEnum(&TestEnum::OPTION1)
+   mInt(0), 
+   mReadOnlyInt(5), 
+   mFloat(0.0f), 
+   mDouble(0.0), 
+   mLong(0), 
+   mBool(0),
+   mString(""), 
+   mEnum(&TestEnum::OPTION1)
 {
 }
 
@@ -68,7 +68,7 @@ void TestGamePropertyActor::TickLocal(const dtGame::Message &tickMessage)
    //   static_cast<const dtGame::TickMessage&>(tickMessage);
 
    // increment a message counter
-   myInt++;
+   mInt++;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -78,7 +78,7 @@ void TestGamePropertyActor::TickRemote(const dtGame::Message &tickMessage)
    //   static_cast<const dtGame::TickMessage&>(tickMessage);
 
    // increment a message counter
-   myInt++;
+   mInt++;
 }
 
 void TestGamePropertyActor::ProcessMessage(const dtGame::Message &tickMessage)
@@ -87,7 +87,7 @@ void TestGamePropertyActor::ProcessMessage(const dtGame::Message &tickMessage)
    //   static_cast<const dtGame::TickMessage&>(tickMessage);
 
    // increment a message counter
-   myInt++;
+   mInt++;
 }
 
 
@@ -104,116 +104,117 @@ TestGamePropertyProxy::TestGamePropertyProxy() :
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void TestGamePropertyProxy::BuildPropertyMap() {
+void TestGamePropertyProxy::BuildPropertyMap() 
+{
    GameActorProxy::BuildPropertyMap();
 
    TestGamePropertyActor &actor = static_cast<TestGamePropertyActor &>(GetGameActor());
 
    AddProperty(new BooleanActorProperty("Test_Boolean", "Test Boolean",
-      MakeFunctor(actor, &TestGamePropertyActor::setTestBool),
-      MakeFunctorRet(actor, &TestGamePropertyActor::getTestBool),
+      MakeFunctor(actor, &TestGamePropertyActor::SetTestBool),
+      MakeFunctorRet(actor, &TestGamePropertyActor::GetTestBool),
       "Holds a test Boolean property", GROUPNAME));
 
    AddProperty(new IntActorProperty("Test_Int", "Test Int",
-      MakeFunctor(actor, &TestGamePropertyActor::setTestInt),
-      MakeFunctorRet(actor, &TestGamePropertyActor::getTestInt),
+      MakeFunctor(actor, &TestGamePropertyActor::SetTestInt),
+      MakeFunctorRet(actor, &TestGamePropertyActor::GetTestInt),
       "Holds a test Int property", GROUPNAME));
 
    dtDAL::IntActorProperty *i = new IntActorProperty("Test_Read_Only_Int", "Test_Read_Only_Int",
-      MakeFunctor(actor, &TestGamePropertyActor::setReadOnlyTestInt),
-      MakeFunctorRet(actor, &TestGamePropertyActor::getReadOnlyTestInt),
+      MakeFunctor(actor, &TestGamePropertyActor::SetReadOnlyTestInt),
+      MakeFunctorRet(actor, &TestGamePropertyActor::GetReadOnlyTestInt),
       "Holds a test Read Only Int property", GROUPNAME);
    i->SetReadOnly(true);
    AddProperty(i);
 
    AddProperty(new LongActorProperty("Test_Long", "Test Long",
-      MakeFunctor(actor, &TestGamePropertyActor::setTestLong),
-      MakeFunctorRet(actor, &TestGamePropertyActor::getTestLong),
+      MakeFunctor(actor, &TestGamePropertyActor::SetTestLong),
+      MakeFunctorRet(actor, &TestGamePropertyActor::GetTestLong),
       "Holds a test Long property", GROUPNAME));
 
    AddProperty(new FloatActorProperty("Test_Float", "Test Float",
-      MakeFunctor(actor, &TestGamePropertyActor::setTestFloat),
-      MakeFunctorRet(actor, &TestGamePropertyActor::getTestFloat),
+      MakeFunctor(actor, &TestGamePropertyActor::SetTestFloat),
+      MakeFunctorRet(actor, &TestGamePropertyActor::GetTestFloat),
       "Holds a test Float property", GROUPNAME));
 
    AddProperty(new DoubleActorProperty("Test_Double", "Test Double",
-      MakeFunctor(actor, &TestGamePropertyActor::setTestDouble),
-      MakeFunctorRet(actor, &TestGamePropertyActor::getTestDouble),
+      MakeFunctor(actor, &TestGamePropertyActor::SetTestDouble),
+      MakeFunctorRet(actor, &TestGamePropertyActor::GetTestDouble),
       "Holds a test Double property", GROUPNAME));
 
    AddProperty(new Vec3ActorProperty("Test_Vec3", "Test Vector3",
-      MakeFunctor(actor, &TestGamePropertyActor::setTestVec3),
-      MakeFunctorRet(actor, &TestGamePropertyActor::getTestVec3),
+      MakeFunctor(actor, &TestGamePropertyActor::SetTestVec3),
+      MakeFunctorRet(actor, &TestGamePropertyActor::GetTestVec3),
       "Holds a test Vector3 Property", GROUPNAME));
 
    AddProperty(new Vec2ActorProperty("Test_Vec2", "Test Vector2",
-      MakeFunctor(actor, &TestGamePropertyActor::setTestVec2),
-      MakeFunctorRet(actor, &TestGamePropertyActor::getTestVec2),
+      MakeFunctor(actor, &TestGamePropertyActor::SetTestVec2),
+      MakeFunctorRet(actor, &TestGamePropertyActor::GetTestVec2),
       "Holds a test Vector2 Property", GROUPNAME));
 
    AddProperty(new Vec4ActorProperty("Test_Vec4", "Test Vector4",
-      MakeFunctor(actor, &TestGamePropertyActor::setTestVec4),
-      MakeFunctorRet(actor, &TestGamePropertyActor::getTestVec4),
+      MakeFunctor(actor, &TestGamePropertyActor::SetTestVec4),
+      MakeFunctorRet(actor, &TestGamePropertyActor::GetTestVec4),
       "Holds a test Vector4 Property", GROUPNAME));
 
    AddProperty(new Vec3fActorProperty("Test_Vec3f", "Test Vector3f",
-      MakeFunctor(actor, &TestGamePropertyActor::setTestVec3f),
-      MakeFunctorRet(actor, &TestGamePropertyActor::getTestVec3f),
+      MakeFunctor(actor, &TestGamePropertyActor::SetTestVec3f),
+      MakeFunctorRet(actor, &TestGamePropertyActor::GetTestVec3f),
       "Holds a test Vector3f Property", GROUPNAME));
 
    AddProperty(new Vec2fActorProperty("Test_Vec2f", "Test Vector2f",
-      MakeFunctor(actor, &TestGamePropertyActor::setTestVec2f),
-      MakeFunctorRet(actor, &TestGamePropertyActor::getTestVec2f),
+      MakeFunctor(actor, &TestGamePropertyActor::SetTestVec2f),
+      MakeFunctorRet(actor, &TestGamePropertyActor::GetTestVec2f),
       "Holds a test Vector2f Property", GROUPNAME));
 
    AddProperty(new Vec4fActorProperty("Test_Vec4f", "Test Vector4f",
-      MakeFunctor(actor, &TestGamePropertyActor::setTestVec4f),
-      MakeFunctorRet(actor, &TestGamePropertyActor::getTestVec4f),
+      MakeFunctor(actor, &TestGamePropertyActor::SetTestVec4f),
+      MakeFunctorRet(actor, &TestGamePropertyActor::GetTestVec4f),
       "Holds a test Vector4f Property", GROUPNAME));
 
    AddProperty(new Vec3dActorProperty("Test_Vec3d", "Test Vector3d",
-      MakeFunctor(actor, &TestGamePropertyActor::setTestVec3d),
-      MakeFunctorRet(actor, &TestGamePropertyActor::getTestVec3d),
+      MakeFunctor(actor, &TestGamePropertyActor::SetTestVec3d),
+      MakeFunctorRet(actor, &TestGamePropertyActor::GetTestVec3d),
       "Holds a test Vector3d Property", GROUPNAME));
 
    AddProperty(new Vec2dActorProperty("Test_Vec2d", "Test Vector2d",
-      MakeFunctor(actor, &TestGamePropertyActor::setTestVec2d),
-      MakeFunctorRet(actor, &TestGamePropertyActor::getTestVec2d),
+      MakeFunctor(actor, &TestGamePropertyActor::SetTestVec2d),
+      MakeFunctorRet(actor, &TestGamePropertyActor::GetTestVec2d),
       "Holds a test Vector2d Property", GROUPNAME));
 
    AddProperty(new Vec4dActorProperty("Test_Vec4d", "Test Vector4d",
-      MakeFunctor(actor, &TestGamePropertyActor::setTestVec4d),
-      MakeFunctorRet(actor, &TestGamePropertyActor::getTestVec4d),
+      MakeFunctor(actor, &TestGamePropertyActor::SetTestVec4d),
+      MakeFunctorRet(actor, &TestGamePropertyActor::GetTestVec4d),
       "Holds a test Vector4d Property", GROUPNAME));
 
    AddProperty(new StringActorProperty("Test_String", "Test String",
-      MakeFunctor(actor, &TestGamePropertyActor::setTestString),
-      MakeFunctorRet(actor, &TestGamePropertyActor::getTestString),
+      MakeFunctor(actor, &TestGamePropertyActor::SetTestString),
+      MakeFunctorRet(actor, &TestGamePropertyActor::GetTestString),
       "Holds a test String property (unlimited length)", GROUPNAME));
 
    StringActorProperty *stringProp = new StringActorProperty("Test_String2", "Test String (max 10)",
-      MakeFunctor(actor, &TestGamePropertyActor::setTestStringWithLength),
-      MakeFunctorRet(actor, &TestGamePropertyActor::getTestStringWithLength),
+      MakeFunctor(actor, &TestGamePropertyActor::SetTestStringWithLength),
+      MakeFunctorRet(actor, &TestGamePropertyActor::GetTestStringWithLength),
       "Holds a test String property with a max length of 10", GROUPNAME);
    stringProp->SetMaxLength(10);
    AddProperty(stringProp);
 
    AddProperty(new ColorRgbaActorProperty("Test_Color", "Test Color",
-      MakeFunctor(actor, &TestGamePropertyActor::setTestColor),
-      MakeFunctorRet(actor, &TestGamePropertyActor::getTestColor),
+      MakeFunctor(actor, &TestGamePropertyActor::SetTestColor),
+      MakeFunctorRet(actor, &TestGamePropertyActor::GetTestColor),
       "Holds a test Color property", GROUPNAME));
 
    AddProperty(new EnumActorProperty<TestGamePropertyActor::TestEnum>("Test_Enum", "Test Enum",
-      MakeFunctor(actor, &TestGamePropertyActor::setTestEnum),
-      MakeFunctorRet(actor, &TestGamePropertyActor::getTestEnum),
+      MakeFunctor(actor, &TestGamePropertyActor::SetTestEnum),
+      MakeFunctorRet(actor, &TestGamePropertyActor::GetTestEnum),
       "Holds a test Enum property", GROUPNAME));
 
    //AddProperty(new ResourceActorProperty(*this, DataType::SOUND, "Test_Sound_Resource", "Test Sound",
-   //   MakeFunctor(actor, &TestGamePropertyActor::setSoundResourceName),
+   //   MakeFunctor(actor, &TestGamePropertyActor::SetSoundResourceName),
    //   "An example sound resource property", GROUPNAME));
 
    //AddProperty(new ResourceActorProperty(*this, DataType::TEXTURE, "Test_Texture_Resource", "Texture",
-   //   MakeFunctor(actor, &TestGamePropertyActor::setTextureResourceName),
+   //   MakeFunctor(actor, &TestGamePropertyActor::SetTextureResourceName),
    //   "An example texture resource property", GROUPNAME));
 
    //AddProperty(new ActorActorProperty(actor, "Test_Actor", "Test Actor",
