@@ -576,9 +576,8 @@ void Scene::NearCallback( void* data, dGeomID o1, dGeomID o2 )
 
          for( int i = 0; i < numContacts; i++ )
          {
-            contact.surface.mode = dContactMu2 | dContactBounce;
+            contact.surface.mode = dContactBounce;
             contact.surface.mu = 1000.0;
-            contact.surface.mu2 = 1000.0;
             contact.surface.bounce = 0.75;
             contact.surface.bounce_vel = 0.001;
 

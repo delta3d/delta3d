@@ -23,7 +23,7 @@
 #define _TRIGGER_ACTOR_PROXY_H_
 
 #include <dtDAL/plugin_export.h>
-#include <dtDAL/transformableactorproxy.h>
+#include <dtDAL/actorproxy.h>
 
 namespace dtActors 
 {
@@ -31,7 +31,7 @@ namespace dtActors
     /**
      * This proxy wraps placeable triggers.
      */
-    class DT_PLUGIN_EXPORT TriggerActorProxy : public virtual dtDAL::ActorProxy
+    class DT_PLUGIN_EXPORT TriggerActorProxy : public dtDAL::ActorProxy
     {
       public:
 

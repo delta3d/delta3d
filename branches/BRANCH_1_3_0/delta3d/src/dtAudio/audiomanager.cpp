@@ -107,14 +107,17 @@ AudioManager::~AudioManager()
    {
       for( ALsizei ii(0); ii < mNumSources; ii++ )
       { 
-         alSourceStop( mSource[ii] );
-
-         // This check was added to prevent a crash-on-exit for OSX -osb
-         ALint bufValue;
-         alGetSourcei( mSource[ii], AL_BUFFER, &bufValue );
-         if( bufValue != 0 )
+         if (alIsSource( mSource[ii] ))
          {
-            alSourcei( mSource[ii], AL_BUFFER, AL_NONE );
+            alSourceStop( mSource[ii] );
+   
+            // This check was added to prevent a crash-on-exit for OSX -osb
+            ALint bufValue;
+            alGetSourcei( mSource[ii], AL_BUFFER, &bufValue );
+            if( bufValue != 0 )
+            {
+               alSourcei( mSource[ii], AL_BUFFER, AL_NONE );
+            }
          }
       }
    }
