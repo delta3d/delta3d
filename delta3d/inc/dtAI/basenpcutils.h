@@ -63,12 +63,12 @@ namespace dtAI
    };
 
 
-   template <typename _Type>
-      void Associate(WorldState* pWS, Operator* pOperator, const std::string& pPropertyName, const _Type& pStateVar, const _Type& pConditional)
-   {
-      pWS->AddState(pPropertyName, new StateVar<_Type>(pStateVar));
-      pOperator->AddPreCondition(new Conditional<_Type>(pPropertyName, pConditional));
-   }
+   //template <typename _Type>
+   //   void Associate(WorldState* pWS, Operator* pOperator, const std::string& pPropertyName, const _Type& pStateVar, const _Type& pConditional)
+   //{
+   //   pWS->AddState(pPropertyName, new StateVar<_Type>(pStateVar));
+   //   pOperator->AddPreCondition(new Conditional<_Type>(pPropertyName, pConditional));
+   //}
 
    template <typename _Type>
    const StateVar<_Type>* GetWorldStateVariable(const WorldState* pWS, const std::string& pName)
@@ -123,8 +123,9 @@ namespace dtAI
 
       bool Apply(const WorldState* pCurrent, WorldState* pWSIn) const
       {
-         StateVariable<_Type>* pState = GetWorldStateVariable<_Type>(pWSIn, mName);
+         StateVar<_Type>* pState = GetWorldStateVariable<_Type>(pWSIn, mName);
          pState->Set(mData);
+         return true;
       }
 
    private:
@@ -161,7 +162,7 @@ namespace dtAI
          typedef std::list<Interrupt*> InterruptList;
 
       public:
-         TOperator(const std::string& pName): Operator(pName), Operator::ApplyOperatorFunctor(this, &NPCOperator::Apply){}
+         TOperator(const std::string& pName): Operator(pName), Operator::ApplyOperatorFunctor(this, &TOperator<_Type>::Apply){}
 
          void SetCost(float pcost){mCost = pcost;}
 
