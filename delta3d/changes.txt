@@ -5,6 +5,34 @@
 ##############################
 
 ---------
+| 1.3.1 |
+---------
+
+New Features
+------------
+-OSG 1.1.x support
+-ALUT 1.1.0 support
+-ODE 0.6 support
+
+Bug Fixes
+---------
+- Bug fixes to help compatibility with Qt 4.1.x (no promises that it will work with all versions!)
+
+- Goto Actor buttom now works in STAGE.
+
+- Global function RegisterInstance prevents NULL pointers from being added to the GetInstance() vector.
+
+- Fixed crash-on-exit bug for OS X with dtAudio.
+
+- Removed redundant ODE code in dtCore::Scene.
+
+- Prevented bad memory from being placed in global GetInstance() vector if an exception is thrown inside DeltaWin's constructor.
+
+- Fixed bug in outgoing HLA code in dtHLAGM.
+
+- Removed virtual and multiple inheritance in dtActors (not necessary since dtCore::Light now derives from dtCore::Transformable).
+
+---------
 | 1.3.0 |
 ---------
 

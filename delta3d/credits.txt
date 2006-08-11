@@ -55,12 +55,15 @@ J.P. Jamieson
 
 Matt Campbell
 Teague Coonan
+Allen Danklefsen
 David Guthrie
 Eddie Johnson
 Curtiss Murphy
 - STAGE: Simluation, Training, and Game Editor
 - dtTerrain
+- dtDAL
 - dtGame
+- dtHLAGM
  
 Roy Newton
 - Unit Tests
