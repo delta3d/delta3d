@@ -76,22 +76,7 @@
 				RelativePath="..\..\..\src\python\astarconfigbindings.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\src\python\conditionalbindings.cpp">
-			</File>
-			<File
 				RelativePath="..\..\..\src\python\dtaibindings.cpp">
-			</File>
-			<File
-				RelativePath="..\..\..\src\python\npcoperatorbindings.cpp">
-			</File>
-			<File
-				RelativePath="..\..\..\src\python\plannerbindings.cpp">
-			</File>
-			<File
-				RelativePath="..\..\..\src\python\plannerhelperbindings.cpp">
-			</File>
-			<File
-				RelativePath="..\..\..\src\python\statevariablebindings.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\src\python\waypointastarbindings.cpp">
@@ -105,9 +90,6 @@
 			<File
 				RelativePath="..\..\..\src\python\waypointpairbindings.cpp">
 			</File>
-			<File
-				RelativePath="..\..\..\src\python\worldstatebindings.cpp">
-			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -115,12 +97,6 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
 				RelativePath="..\..\..\inc\python\dtpython.h">
-			</File>
-			<File
-				RelativePath="..\..\..\inc\python\npcoperatorpython.h">
-			</File>
-			<File
-				RelativePath="..\..\..\inc\python\plannerhelperpython.h">
 			</File>
 		</Filter>
 		<Filter

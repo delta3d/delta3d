@@ -64,7 +64,7 @@ namespace dtTest
 
    void PlannerTests::TestCreatePlan()
    {
-      std::list<const NPCOperator*> pOperators = mNPC.GetPlanToEat();
+      std::list<const Operator*> pOperators = mNPC.GetPlanToEat();
       
       std::string callGrandma("CallGrandma");
       CPPUNIT_ASSERT_EQUAL(callGrandma, pOperators.front()->GetName());

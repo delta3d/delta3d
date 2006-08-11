@@ -23,7 +23,7 @@
 #define __DELTA_PLANNER_H__
 
 #include <dtAI/export.h>
-#include <dtAI/plannerastarutils.h>
+#include <dtAI/plannernodelink.h>
 #include <dtAI/plannerhelper.h>
 #include <dtAI/plannerconfig.h>
 #include <dtAI/worldstate.h>
@@ -42,8 +42,8 @@ namespace dtAI
          enum PlannerResult{NO_PLAN, PLAN_FOUND, PARTIAL_PLAN};
 
          typedef std::list<const PlannerNodeLink*> PlannerContainer;
-         typedef std::list<const NPCOperator*> OperatorList;
-         typedef std::vector<const NPCOperator*> OperatorVector;
+         typedef std::list<const Operator*> OperatorList;
+         typedef std::vector<const Operator*> OperatorVector;
      
       public:
    
@@ -65,11 +65,12 @@ namespace dtAI
          
       private:
          void FreeMem();
-         void PrintDebug(const char*);
 
          const PlannerNodeLink* FindLowestCost();
          void Remove(const PlannerNodeLink* pNodeLink);
          bool Contains(PlannerNodeLink* pNodeLink);
+         bool CanApplyOperator(const Operator* pOperator, const WorldState* pState);
+         void GetTraversableStates(const WorldState* pCurrentState, const std::list<Operator*>& pOperators, std::list<Operator*>& pOperatorListIn);
 
          const PlannerHelper* mHelper;
          PlannerConfig mConfig;    

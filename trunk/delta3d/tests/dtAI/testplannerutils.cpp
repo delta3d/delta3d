@@ -55,7 +55,7 @@ namespace dtAI
       mHelper.GetCurrentState()->AddState("HungerMeter", new HungerMeter());  
    }
 
-   std::list<const NPCOperator*> MyNPC::GetPlanToEat()
+   std::list<const Operator*> MyNPC::GetPlanToEat()
    {
       Planner pPlanner;
       pPlanner.Reset(&mHelper);
@@ -424,7 +424,7 @@ namespace dtAI
 //CallGrandma
 //////////////////////////////////////////////////////////////////////////
 
-   CallGrandma::CallGrandma(): NPCOperator("CallGrandma", NPCOperator::ApplyOperatorFunctor(this, &CallGrandma::FuncCallGrandma))
+   CallGrandma::CallGrandma(): Operator("CallGrandma", Operator::ApplyOperatorFunctor(this, &CallGrandma::FuncCallGrandma))
    {      
    }
 
@@ -442,7 +442,7 @@ namespace dtAI
 //GoToStore
 //////////////////////////////////////////////////////////////////////////
 
-   GoToStore::GoToStore(): NPCOperator("GoToStore", NPCOperator::ApplyOperatorFunctor(this, &GoToStore::FuncGoToStore))
+   GoToStore::GoToStore(): Operator("GoToStore", Operator::ApplyOperatorFunctor(this, &GoToStore::FuncGoToStore))
    {
       AddPreCondition(new HasPizzaRecipe());
    }
@@ -467,7 +467,7 @@ namespace dtAI
 //Cook
 //////////////////////////////////////////////////////////////////////////
 
-   Cook::Cook(): NPCOperator("Cook", NPCOperator::ApplyOperatorFunctor(this, &Cook::FuncCook))
+   Cook::Cook(): Operator("Cook", Operator::ApplyOperatorFunctor(this, &Cook::FuncCook))
    {
       AddPreCondition(new HasPizzaRecipe());
       AddPreCondition(new HasPizzaGroceries());
@@ -503,7 +503,7 @@ namespace dtAI
 //Eat
 //////////////////////////////////////////////////////////////////////////
 
-   Eat::Eat(): NPCOperator("Eat", NPCOperator::ApplyOperatorFunctor(this, &Eat::FuncEat))
+   Eat::Eat(): Operator("Eat", Operator::ApplyOperatorFunctor(this, &Eat::FuncEat))
    {
       AddPreCondition(new HasFood());
    }

@@ -1,4 +1,4 @@
-/*
+ /*
  * Delta3D Open Source Game and Simulation Engine
  * Copyright (C) 2004-2006 MOVES Institute
  *
@@ -23,7 +23,7 @@
 #define __DELTA_PLANNERHELPER_H__
 
 #include <dtAI/export.h>
-#include <dtAI/npcoperator.h>
+#include <dtAI/operator.h>
 #include <dtAI/worldstate.h>
 
 #include <dtUtil/functor.h>
@@ -38,15 +38,14 @@ namespace dtAI
       public:
          typedef dtUtil::Functor<float, TYPELIST_1(const WorldState*)> RemainingCostFunctor;
          typedef dtUtil::Functor<bool, TYPELIST_1(const WorldState*)> DesiredStateFunctor;
-         typedef std::list<NPCOperator*> OperatorList; 
+         typedef std::list<Operator*> OperatorList; 
          
       public:
-         PlannerHelper();
          PlannerHelper(const RemainingCostFunctor& pRCF, const DesiredStateFunctor& pDSF);
          virtual ~PlannerHelper();
    
-         void AddOperator(NPCOperator* pOperator);
-         void RemoveOperator(NPCOperator* pOperator);
+         void AddOperator(Operator* pOperator);
+         void RemoveOperator(Operator* pOperator);
          const OperatorList& GetOperators() const;
 
          void SetCurrentState(const WorldState& pNewState);
@@ -57,8 +56,8 @@ namespace dtAI
          void SetRemainingCostFunc(const RemainingCostFunctor& pFunc);
          void SetDesiredStateFunc(const DesiredStateFunctor& pFunc);
 
-         virtual float RemainingCost(const WorldState* pWS) const;
-         virtual bool IsDesiredState(const WorldState* pWS) const;
+         float RemainingCost(const WorldState* pWS) const;
+         bool IsDesiredState(const WorldState* pWS) const;
 
       private:
 

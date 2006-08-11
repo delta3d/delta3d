@@ -92,7 +92,7 @@ namespace dtAI
    }
 
    void WorldState::AddState(const std::string& pName, IStateVariable* pStateVar)
-   {
+   {      
       StateVarMapping::iterator iter = mStateVariables.find(pName);
       if(iter == mStateVariables.end()) 
       {

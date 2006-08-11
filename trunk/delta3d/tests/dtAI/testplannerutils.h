@@ -24,7 +24,7 @@
 
 #include <dtAI/conditional.h>
 #include <dtAI/statevariable.h>
-#include <dtAI/npcoperator.h>
+#include <dtAI/operator.h>
 #include <dtAI/plannerhelper.h>
 
 #include <list>
@@ -41,7 +41,7 @@ class MyNPC
 
      void Init();
 
-     std::list<const NPCOperator*> GetPlanToEat();
+     std::list<const Operator*> GetPlanToEat();
      
 
      float RemainingCost(const WorldState* pWS) const;
@@ -186,7 +186,7 @@ private:
 
 
 
-class CallGrandma: public NPCOperator
+class CallGrandma: public Operator
 {
 public:
 
@@ -196,7 +196,7 @@ public:
 
 };
 
-class GoToStore: public NPCOperator
+class GoToStore: public Operator
 {
 public:
 
@@ -207,7 +207,7 @@ public:
 };
 
 
-class Cook: public NPCOperator
+class Cook: public Operator
 {
 public:
 
@@ -218,7 +218,7 @@ public:
 };
 
 
-class Eat: public NPCOperator
+class Eat: public Operator
 {
 public:
 

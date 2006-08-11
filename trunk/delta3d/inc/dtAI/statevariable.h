@@ -22,8 +22,6 @@
 #ifndef __DELTA_STATEVARIABLE_H__
 #define __DELTA_STATEVARIABLE_H__
 
-#include <cassert>
-
 namespace dtAI
 {
    /**
@@ -35,8 +33,7 @@ namespace dtAI
    
          virtual ~IStateVariable() {};
 
-         //cannot be pure virtual or python bindings dont compile
-         virtual IStateVariable* Copy() const {assert(0); return 0;};
+         virtual IStateVariable* Copy() const = 0;
    
       private:
    
