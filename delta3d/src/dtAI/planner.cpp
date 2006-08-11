@@ -21,7 +21,6 @@
 
 #include <dtAI/planner.h>
 
-#include <iostream>
 #include <algorithm>
 
 namespace dtAI
@@ -107,12 +106,12 @@ namespace dtAI
       return std::find(mOpen.begin(), mOpen.end(), pNodeLink) != mOpen.end();
    }
 
-   std::list<const NPCOperator*> Planner::GetPlan() const
+   std::list<const Operator*> Planner::GetPlan() const
    {
       return mConfig.mResult;
    }
 
-   std::vector<const NPCOperator*> Planner::GetPlanAsVector() const
+   std::vector<const Operator*> Planner::GetPlanAsVector() const
    {
       return OperatorVector(GetPlan().begin(), GetPlan().end());
    }
@@ -127,15 +126,38 @@ namespace dtAI
       return mConfig;
    }
 
-   void Planner::PrintDebug(const char* pPrint)
+   bool Planner::CanApplyOperator(const Operator* pOperator, const WorldState* pState)
    {
-      std::cout << pPrint << std::endl;
+      Operator::ConditionalList::const_iterator iter =  pOperator->GetPreConditions().begin();
+      Operator::ConditionalList::const_iterator endOfList = pOperator->GetPreConditions().end();
+      while(iter != endOfList)
+      {
+         if(!((*iter)->Evaluate(pState)))
+         {
+            return false;
+         }
+         ++iter;
+      }
+      return true;
+   }
+
+   void Planner::GetTraversableStates(const WorldState* pCurrentState, const std::list<Operator*>& pOperators, std::list<Operator*>& pOperatorListIn)
+   {
+      std::list<Operator*>::const_iterator iter = pOperators.begin();
+      std::list<Operator*>::const_iterator endOfList = pOperators.end();
+      while(iter != endOfList)
+      {
+         if(CanApplyOperator(*iter, pCurrentState))
+         {
+            pOperatorListIn.push_back(*iter);
+         }
+         ++iter;
+      }
+
    }
 
    Planner::PlannerResult Planner::GeneratePlan()
    {
-      PrintDebug("Generate Plan");
-
       mConfig.mTimer.Update();
 
       for (;;)
@@ -143,17 +165,14 @@ namespace dtAI
 
          if(mOpen.empty())
          {
-            PrintDebug("return NO_PLAN");
             return NO_PLAN;
          }
 
          mConfig.mTimer.Update();
          mConfig.mCurrentElapsedTime += mConfig.mTimer.GetDT();
 
-         PrintDebug("FindLowestCost");
          const PlannerNodeLink* pCurrent = FindLowestCost();
 
-         PrintDebug("IsDesiredState");
          bool pReachedGoal = mHelper->IsDesiredState(pCurrent->mState);
 
          //we have found our desired state
@@ -175,11 +194,11 @@ namespace dtAI
          {
             Remove(pCurrent);
             
-            std::list<NPCOperator*> pTraverse;            
-            PlannerUtils::GetTraversableStates(pCurrent->mState, mHelper->GetOperators(), pTraverse);
+            std::list<Operator*> pTraverse;            
+            GetTraversableStates(pCurrent->mState, mHelper->GetOperators(), pTraverse);
 
-            std::list<NPCOperator*>::iterator iter = pTraverse.begin();
-            std::list<NPCOperator*>::iterator endOfList = pTraverse.end();
+            std::list<Operator*>::iterator iter = pTraverse.begin();
+            std::list<Operator*>::iterator endOfList = pTraverse.end();
 
             while(iter != endOfList)
             {

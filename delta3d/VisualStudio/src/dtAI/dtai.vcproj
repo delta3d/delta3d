@@ -128,10 +128,13 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
+				RelativePath="..\..\..\src\dtAI\basenpc.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtAI\navmesh.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\src\dtAI\npcoperator.cpp">
+				RelativePath="..\..\..\src\dtAI\operator.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtAI\planner.cpp">
@@ -178,6 +181,12 @@
 				RelativePath="..\..\..\inc\dtAI\astarwaypointutils.h">
 			</File>
 			<File
+				RelativePath="..\..\..\inc\dtAI\basenpc.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtAI\basenpcutils.h">
+			</File>
+			<File
 				RelativePath="..\..\..\inc\dtAI\conditional.h">
 			</File>
 			<File
@@ -187,19 +196,19 @@
 				RelativePath="..\..\..\inc\dtAI\navmesh.h">
 			</File>
 			<File
-				RelativePath="..\..\..\inc\dtAI\npcoperator.h">
+				RelativePath="..\..\..\inc\dtAI\operator.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtAI\planner.h">
-			</File>
-			<File
-				RelativePath="..\..\..\inc\dtAI\plannerastarutils.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtAI\plannerconfig.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtAI\plannerhelper.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtAI\plannernodelink.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtAI\statevariable.h">

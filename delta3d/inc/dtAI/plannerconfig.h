@@ -65,7 +65,7 @@ namespace dtAI
          
          }
 
-         std::list<const NPCOperator*> mResult;
+         std::list<const Operator*> mResult;
 
          double mMaxTimePerIteration;
          double mCurrentElapsedTime;

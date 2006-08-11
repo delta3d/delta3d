@@ -25,13 +25,6 @@
 namespace dtAI
 {
 
-   PlannerHelper::PlannerHelper()
-      : mOperators()
-      , mCurrentState(new WorldState())
-   {
-   }
-
-
    PlannerHelper::PlannerHelper(const RemainingCostFunctor& pRCF, const DesiredStateFunctor& pDSF)
       : mOperators()
       , mCurrentState(new WorldState())
@@ -59,12 +52,12 @@ namespace dtAI
       mCurrentState = 0;
    }
 
-   void PlannerHelper::AddOperator(NPCOperator* pOperator)
+   void PlannerHelper::AddOperator(Operator* pOperator)
    {
       mOperators.push_back(pOperator);
    }
 
-   void PlannerHelper::RemoveOperator(NPCOperator* pOperator)
+   void PlannerHelper::RemoveOperator(Operator* pOperator)
    {
       mOperators.remove(pOperator);
    }
