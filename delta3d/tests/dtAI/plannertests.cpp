@@ -22,6 +22,9 @@
 #include <cppunit/extensions/HelperMacros.h>
 
 #include "testplannerutils.h"
+#include <dtAI/basenpc.h>
+#include <dtAI/npcparser.h>
+#include <dtCore/globals.h>
 
 using namespace dtAI;
 
@@ -32,6 +35,7 @@ namespace dtTest
    {
       CPPUNIT_TEST_SUITE(PlannerTests );
       CPPUNIT_TEST(TestCreatePlan);
+      CPPUNIT_TEST(TestPlannerScript);
       CPPUNIT_TEST_SUITE_END();
 
    public:
@@ -39,10 +43,12 @@ namespace dtTest
       void tearDown();
 
       void TestCreatePlan();
+      void TestPlannerScript();
 
    private:
 
-      MyNPC mNPC;
+      void VerifyPlan(std::list<const Operator*>& pPlan);
+
    };
 
 
@@ -53,7 +59,7 @@ namespace dtTest
 
    void PlannerTests::setUp()
    {
-      mNPC.Init();
+      
    }
 
 
@@ -64,8 +70,25 @@ namespace dtTest
 
    void PlannerTests::TestCreatePlan()
    {
+      MyNPC mNPC;
+      mNPC.Init();
       std::list<const Operator*> pOperators = mNPC.GetPlanToEat();
-      
+      VerifyPlan(pOperators);       
+   }
+
+   void PlannerTests::TestPlannerScript()
+   {
+      NPCParser parser;            
+      BaseNPC* pTestNPC = parser.LoadScript(dtCore::GetDeltaRootPath() + "/tests/dtAI/npcscript_test.txt");
+      pTestNPC->Spawn();
+
+      pTestNPC->GeneratePlan();
+      std::list<const Operator*> pOperators = pTestNPC->GetPlan();
+      VerifyPlan(pOperators);
+   }
+
+   void PlannerTests::VerifyPlan(std::list<const Operator*>& pOperators)
+   {
       std::string callGrandma("CallGrandma");
       CPPUNIT_ASSERT_EQUAL(callGrandma, pOperators.front()->GetName());
       pOperators.pop_front();

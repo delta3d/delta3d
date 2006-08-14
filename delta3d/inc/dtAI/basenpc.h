@@ -68,6 +68,7 @@ namespace dtAI
          void AddOperator(NPCOperator* pOperator);
          void SetWSTemplate(const WorldState& pWS);
          void AddGoal(const std::string& pName, Goal* pGoal);
+         Planner::OperatorList GetPlan() const;
 
       private:
 

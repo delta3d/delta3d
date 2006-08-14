@@ -27,6 +27,8 @@
 #include <dtAI/conditional.h>
 #include <dtAI/statevariable.h>
 
+#include <dtUtil/functor.h>
+
 #include <list>
 #include <vector>
 #include <string>
@@ -74,6 +76,12 @@ namespace dtAI
    const StateVar<_Type>* GetWorldStateVariable(const WorldState* pWS, const std::string& pName)
    {
       return dynamic_cast<const StateVar<_Type>* >(pWS->GetState(pName));
+   }
+
+   template <typename _Type>
+   StateVar<_Type>* GetWorldStateVariable(WorldState* pWS, const std::string& pName)
+   {
+      return dynamic_cast<StateVar<_Type>* >(pWS->GetState(pName));
    }
 
 
@@ -162,7 +170,7 @@ namespace dtAI
          typedef std::list<Interrupt*> InterruptList;
 
       public:
-         TOperator(const std::string& pName): Operator(pName), Operator::ApplyOperatorFunctor(this, &TOperator<_Type>::Apply){}
+         TOperator(const std::string& pName): Operator(pName, Operator::ApplyOperatorFunctor(this, &TOperator<_Type>::Apply)){}
 
          void SetCost(float pcost){mCost = pcost;}
 
@@ -186,8 +194,8 @@ namespace dtAI
 
          bool Apply(const WorldState* pCurrent, WorldState* pWSIn) const
          {
-            EffectList::iterator iter = mEffects.begin();
-            EffectList::iterator endOfList = mEffects.end();
+            EffectList::const_iterator iter = mEffects.begin();
+            EffectList::const_iterator endOfList = mEffects.end();
             while(iter != endOfList)
             {
                (*iter)->Apply(pCurrent, pWSIn);
