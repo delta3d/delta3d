@@ -33,7 +33,6 @@ namespace dtAI
       , mCurrentGoal(0)
       , mCurrentPlan()
    {
-      mPlanner.Reset(&mHelper);
    }
    
    BaseNPC::~BaseNPC()
@@ -45,6 +44,7 @@ namespace dtAI
    {
       mSleeping = false;
       mHelper.SetCurrentState(mWSTemplate);
+      if(!mCurrentGoal && !mGoals.empty()) SetGoal(mGoals.begin()->first);
       OnSpawn();
    }
 
@@ -94,8 +94,14 @@ namespace dtAI
    void BaseNPC::GeneratePlan()
    {
      mCurrentPlan.clear();
+     mPlanner.Reset(&mHelper);
      mPlanner.GeneratePlan();
      mCurrentPlan = mPlanner.GetPlan();
+   }
+
+   Planner::OperatorList BaseNPC::GetPlan() const
+   {
+      return mCurrentPlan;
    }
 
    float BaseNPC::RemainingCost(const WorldState* pWS) const

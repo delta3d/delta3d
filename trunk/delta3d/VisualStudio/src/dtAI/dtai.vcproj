@@ -134,6 +134,9 @@
 				RelativePath="..\..\..\src\dtAI\navmesh.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtAI\npcparser.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtAI\operator.cpp">
 			</File>
 			<File
@@ -194,6 +197,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtAI\navmesh.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtAI\npcparser.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtAI\operator.h">
