@@ -115,7 +115,10 @@ namespace dtAI
          void SetWaypointColor(const osg::Vec4& pColor);
          void SetWaypointSize(float pSize);
 
-         void SetDrawNavMesh(bool pDraw);
+         /**if draw details is set to true it will render one way paths green to red
+         *  note this can be a performance hit until we optimize it to be precalculated
+         *  also if pDraw is set to false then draw details wont do anything*/
+         void SetDrawNavMesh(bool pDraw, bool pDrawDetails);
          void SetNavMeshColor(const osg::Vec4& pColor);
          void SetNavMeshSize(float pSize);         
 
@@ -212,6 +215,10 @@ namespace dtAI
 
          //a flag to toggle drawing of the navmesh
          bool mDrawNavMesh;
+         
+         //a flag to toggle drawing of the navmesh details, which for now
+         //renders one way links in red
+         bool mDrawNavMeshDetails;
 
          //this flag is set when we are reading so we dont try to draw
          //at the same time

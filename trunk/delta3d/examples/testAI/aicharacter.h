@@ -48,6 +48,7 @@ namespace dtAI
          void SetPosition(const Waypoint* pWaypoint);         
 
          osg::Vec3 GetPosition() const;
+         osg::Vec3 GetForward() const;
 
          bool FindPathAndGoToWaypoint(const Waypoint* pWaypoint);
          const Waypoint* GetCurrentWaypoint(){return mCurrentWaypoint;}

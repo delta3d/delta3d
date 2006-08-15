@@ -28,6 +28,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <cmath>
 
 /**
 * A quick functor that will be used with for_each to render
@@ -107,8 +108,25 @@ namespace dtAI
    {  
       //simple... just rotate to the waypoint over time and set a
       //positive velocity to go there
-      mCharacter->RotateCharacterToPoint(pWaypoint->GetPosition(), dt);      
-      mCharacter->SetVelocity(mSpeed);
+      mCharacter->RotateCharacterToPoint(pWaypoint->GetPosition(), dt);            
+
+      //osg::Vec3 pVector = pWaypoint->GetPosition() - GetPosition();
+
+      //pVector [2] = 0.0f;
+
+      //float dir = fabs(osg::RadiansToDegrees(atan2(pVector[0], -pVector[1])) - mCharacter->GetRotation());
+
+      //while(dir >= 360.0f) dir -= 360.0f;
+
+      //std::cout << dir << std::endl;
+      //if(dir < 5.0f)
+      //{
+         mCharacter->SetVelocity(mSpeed);
+      //}
+      //else
+      //{
+      //   mCharacter->SetVelocity(0.0f);
+      //}
    }
 
    osg::Vec3 AICharacter::GetPosition() const
@@ -116,6 +134,13 @@ namespace dtAI
      osg::Matrix mat = mCharacter->GetMatrixNode()->getMatrix();  
      osg::Vec3 pos(mat(3, 0), mat(3, 1), mat(3, 2));
      return pos;
+   }
+
+   osg::Vec3 AICharacter::GetForward() const
+   {
+      osg::Matrix mat = mCharacter->GetMatrixNode()->getMatrix();  
+      osg::Vec3 forward(mat(1, 0), mat(1, 1), mat(1, 2));
+      return forward;
    }
 
    bool AICharacter::AmAtWaypoint(const Waypoint* pWaypoint)

@@ -1,5 +1,4 @@
-/*
- * Delta3D Open Source Game and Simulation Engine
+/** Delta3D Open Source Game and Simulation Engine
  * Copyright (C) 2004-2006 MOVES Institute
  *
  * This library is free software; you can redistribute it and/or modify it under
@@ -75,6 +74,34 @@ namespace dtAI
    {
       return mNavMesh.upper_bound(pPtr->GetID());
    }
+
+   NavMesh::NavMeshContainer::const_iterator NavMesh::begin(const Waypoint* pPtr) const
+   {
+      return mNavMesh.lower_bound(pPtr->GetID());
+   }
+
+
+   NavMesh::NavMeshContainer::const_iterator NavMesh::end(const Waypoint* pPtr) const
+   {
+      return mNavMesh.upper_bound(pPtr->GetID());
+   }
   
+   bool NavMesh::IsOneWay(WaypointPair* pPair) const
+   {
+      NavMeshContainer::const_iterator iter = begin(pPair->GetWaypointTo());
+      NavMeshContainer::const_iterator endOfList = end(pPair->GetWaypointTo());
+
+      unsigned id = pPair->GetWaypointFrom()->GetID();
+      while(iter != endOfList)
+      {
+         if(iter->second->GetWaypointTo()->GetID() == id)
+         {
+            return false;
+         }
+         ++iter;
+      }
+
+      return true;
+   }
 
 }//namespace dtAI
