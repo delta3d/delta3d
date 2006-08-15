@@ -110,7 +110,7 @@ namespace dtAI
    * this DataType is const Waypoint*.  As a note, the AStar algorithm will
    * give perfect output when perfect input is provided. This means that the 
    * performance of AStar::FindPath() and its accuracy is determined by how
-   * well we can compute cost.  This is using 2D distance for cost and can
+   * well we can compute cost.  This is using 3D distance for cost and can
    * be refined to use slope or even other factors such as gravitational spots
    * reflected places you want your agents to avoid or close in on.
    */
@@ -120,7 +120,7 @@ namespace dtAI
       float operator()(const Waypoint* pWaypoint1, const Waypoint* pWaypoint2) const
       {
          WaypointPair pPair(pWaypoint1, pWaypoint2);
-         return pPair.Get2DDistance();
+         return pPair.Get3DDistance();
       }
    };
 

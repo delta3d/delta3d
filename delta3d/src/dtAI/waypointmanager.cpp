@@ -269,7 +269,7 @@ namespace dtAI
             {               
                Waypoint* pWaypoint2 = (*iter2).second;
 
-               if(WaypointPair(pWaypoint1, pWaypoint2).Get2DDistance() < maxDistBetweenWaypoints)
+               if(WaypointPair(pWaypoint1, pWaypoint2).Get3DDistance() < maxDistBetweenWaypoints)
                {
                   //added special case to avoid colliding with the billboards
                   osg::Vec3 vec = pWaypoint2->GetPosition() - pWaypoint1->GetPosition();
@@ -440,7 +440,7 @@ namespace dtAI
                const Waypoint* pWaypoint2 = (*iter2).second;
                
                ++i;
-               pResult += WaypointPair(pWaypoint1, pWaypoint2).Get2DDistance();               
+               pResult += WaypointPair(pWaypoint1, pWaypoint2).Get3DDistance();               
             }
             ++iter2;
          }
