@@ -57,7 +57,7 @@ void TestAI::Config()
 
    //by default we wont draw the navmesh
    mDrawNavMesh = false;
-   WaypointManager::GetInstance()->SetDrawNavMesh(mDrawNavMesh);         
+   WaypointManager::GetInstance()->SetDrawNavMesh(mDrawNavMesh, true);         
 
    //set camera offset
    dtCore::Transform trans;
@@ -88,7 +88,8 @@ void TestAI::Config()
    GoToWaypoint(1);
 
    //seed the random generator
-   srand(420);
+   //srand(420);
+   srand(4);
 }
 
 bool TestAI::KeyPressed(const dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character)
@@ -114,7 +115,7 @@ bool TestAI::KeyPressed(const dtCore::Keyboard* keyboard, Producer::KeyboardKey 
       case Producer::Key_N:
          {            
             mDrawNavMesh = !mDrawNavMesh;
-            WaypointManager::GetInstance()->SetDrawNavMesh(mDrawNavMesh);            
+            WaypointManager::GetInstance()->SetDrawNavMesh(mDrawNavMesh, true);            
             return true;
          }
 

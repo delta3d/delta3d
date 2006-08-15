@@ -47,6 +47,7 @@ namespace dtAI
       : mLoadActors(0)
       , mDrawWaypoints(false) 
       , mDrawNavMesh(false)
+      , mDrawNavMeshDetails(false)
       , mReadingFile(false)
       , mLoadActorsLock(false)
       , mWaypointSize(15.0f)
@@ -402,9 +403,10 @@ namespace dtAI
    }
 
 
-   void WaypointManager::SetDrawNavMesh(bool pDraw)
+   void WaypointManager::SetDrawNavMesh(bool pDraw, bool pDrawDetails)
    {
       mDrawNavMesh = pDraw;
+      mDrawNavMeshDetails = pDrawDetails;
    }
 
    void WaypointManager::SetNavMeshColor(const osg::Vec4& pColor)
@@ -511,9 +513,7 @@ namespace dtAI
          float lineWidth = mHelper->mNavMeshWidth;
          if(lineWidth < 1.0f) lineWidth = 1.0f;
          glLineWidth(lineWidth);
-
-         osg::Vec4 lineColor(mHelper->mNavMeshColor);
-         glColor4fv(&lineColor[0]);
+         osg::Vec4 lineColor(mHelper->mNavMeshColor);         
 
          glBegin(GL_LINES);
 
@@ -527,7 +527,16 @@ namespace dtAI
             osg::Vec3 pTo = pMesh->GetTo();
             pFrom[2] += 0.15f;
             pTo[2] += 0.15f;
+
+            glColor4fv(&lineColor[0]);
+
             glVertex3fv(&pFrom[0]);
+            
+            if(mHelper->mDrawNavMeshDetails && mHelper->mNavMesh.IsOneWay(pMesh)) 
+            {
+               glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+            }
+
             glVertex3fv(&pTo[0]);
             ++iter;
          }

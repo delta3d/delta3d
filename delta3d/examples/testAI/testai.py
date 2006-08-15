@@ -82,7 +82,7 @@ class TestAI(Application):
       self.LoadMap(myMap)
 
       WaypointManager.GetInstance().SetDrawWaypoints(1)
-      WaypointManager.GetInstance().SetDrawNavMesh(0)
+      WaypointManager.GetInstance().SetDrawNavMesh(0, 0)
       self.mDrawNavMesh = 0
       
       self.AddDrawable(WaypointManager.GetInstance())    
@@ -125,7 +125,7 @@ class TestAI(Application):
          self.GetCamera().SetEnabled(not self.GetCamera().GetEnabled())               
          verdict = 1
       elif key is KeyboardKey.Key_N :
-         WaypointManager.GetInstance().SetDrawNavMesh(not self.mDrawNavMesh)
+         WaypointManager.GetInstance().SetDrawNavMesh(not self.mDrawNavMesh, 1)
          self.mDrawNavMesh = not self.mDrawNavMesh
          verdict = 1
       elif key is KeyboardKey.Key_Escape :

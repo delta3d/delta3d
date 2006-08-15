@@ -62,6 +62,7 @@ namespace dtAI
          * used by WaypointIter in WaypointUtils.h
          */
          NavMeshContainer::iterator begin(const Waypoint* pPtr);
+         NavMeshContainer::const_iterator begin(const Waypoint* pPtr) const;
          
          /**
          * Returns a multimap iterator to the end sequence of
@@ -69,12 +70,19 @@ namespace dtAI
          * used by WaypointIter in WaypointUtils.h
          */
          NavMeshContainer::iterator end(const Waypoint* pPtr);
+         NavMeshContainer::const_iterator end(const Waypoint* pPtr) const;
 
 
          /**
          * Frees memory and clears all waypoints from the multimap
          */
          void Clear();
+
+
+         /**
+         * Returns whether or not there is a WaypointPair going in the opposite direction
+         */
+         bool IsOneWay(WaypointPair* pPair) const;
 
    private:
 
