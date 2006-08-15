@@ -28,7 +28,7 @@ namespace dtAI
 WaypointPair::WaypointPair()
    : mFrom(0)
    , mTo(0)
-   , m2DDistance(0)
+   , m3DDistance(0)
 {
 }
 
@@ -36,7 +36,7 @@ WaypointPair::WaypointPair(const Waypoint* pFrom, const Waypoint* pTo)
    : mFrom(pFrom)
    , mTo(pTo)
 {
-   Calculate2DDistance();
+   Calculate3DDistance();
    CalculateSlope();
 }
 
@@ -53,9 +53,9 @@ osg::Vec3 WaypointPair::ClosestPointTo(const osg::Vec3& pPoint)
    return pPoint;
 }
 
-void WaypointPair::Calculate2DDistance()
-{
-   m2DDistance = sqrtf(osg::square(GetTo()[0] - GetFrom()[0]) + osg::square(GetTo()[1] - GetFrom()[1]));
+void WaypointPair::Calculate3DDistance()
+{  
+   m3DDistance = osg::Vec3(mTo->GetPosition() - mFrom->GetPosition()).length();
 }
 
 
@@ -70,9 +70,9 @@ float WaypointPair::GetSlope() const
    return mSlope;
 }
 
-float WaypointPair::Get2DDistance() const
+float WaypointPair::Get3DDistance() const
 {
-   return m2DDistance;
+   return m3DDistance;
 }
 
 void WaypointPair::SetFrom(const Waypoint* pWaypoint)

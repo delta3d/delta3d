@@ -51,10 +51,11 @@ namespace dtAI
       osg::Vec3 ClosestPointTo(const osg::Vec3& pPoint);
 
       /**
-      * calculates distance on the X-Y Plane between the two points
+      * calculates distance between the two points
       */
-      void Calculate2DDistance();
-      float Get2DDistance() const;
+      void Calculate3DDistance();
+      float Get3DDistance() const;
+
 
       /**
       * Calculates the slope in the Z Plane
@@ -88,7 +89,7 @@ namespace dtAI
       const Waypoint* mFrom;
       const Waypoint* mTo;
 
-      float m2DDistance;
+      float m3DDistance;
       float mSlope;
    
    };
