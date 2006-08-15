@@ -127,7 +127,7 @@ namespace dtAI
 
       float distToX = fabs(pos[0] - wayPos[0]);
       float distToY = fabs(pos[1] - wayPos[1]);
-      return (distToX < 1.0f && distToY < 1.0f);
+      return (distToX < 0.1f && distToY < 0.1f);
    }
 
    

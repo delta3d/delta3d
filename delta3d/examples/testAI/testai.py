@@ -58,7 +58,7 @@ class AICharacter:
       wayPos = waypoint.GetPosition()
       distToX = abs(pos[0] - wayPos[0])
       distToY = abs(pos[1] - wayPos[1])
-      return (distToX < 1.0) and ( distToY < 1.0)   
+      return (distToX < 0.1) and ( distToY < 0.1)   
 
    def Update(self, dt):
       if self.mWaypointPath:
