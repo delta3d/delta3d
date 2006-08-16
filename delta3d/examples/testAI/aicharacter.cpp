@@ -152,7 +152,14 @@ namespace dtAI
 
       float distToX = fabs(pos[0] - wayPos[0]);
       float distToY = fabs(pos[1] - wayPos[1]);
-      return (distToX < 0.1f && distToY < 0.1f);
+	  if(mWaypointPath.size() == 1)
+	  {
+		  return (distToX < 0.1f && distToY < 0.1f);
+	  }
+	  else
+	  {
+		  return (distToX < 1.0f && distToY < 1.0f);
+	  }
    }
 
    
