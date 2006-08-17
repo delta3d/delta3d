@@ -121,8 +121,8 @@ namespace dtAI
 
          bool AtFinish(data_type pTest)
          {
-            std::vector<data_type>::const_iterator iter = mFinish.begin();
-            std::vector<data_type>::const_iterator endOfList = mFinish.end();
+            typename std::vector<data_type>::const_iterator iter = mFinish.begin();
+            typename std::vector<data_type>::const_iterator endOfList = mFinish.end();
 
             while(iter != endOfList)
             {

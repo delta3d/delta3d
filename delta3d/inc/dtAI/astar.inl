@@ -89,8 +89,8 @@ void AStar<_NodeType, _CostFunc, _Container, _Timer>::Reset(const std::vector<da
    FreeMem();
    mConfig.Reset(pFrom[0], pTo);
 
-   std::vector<data_type>::const_iterator iter = pFrom.begin();
-   std::vector<data_type>::const_iterator endOfList = pFrom.end();
+   typename std::vector<data_type>::const_iterator iter = pFrom.begin();
+   typename std::vector<data_type>::const_iterator endOfList = pFrom.end();
 
    //we start from index 1
    ++iter;
