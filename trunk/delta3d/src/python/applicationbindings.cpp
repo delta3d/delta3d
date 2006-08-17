@@ -5,10 +5,48 @@
 #include <python/dtpython.h>
 #include <dtABC/application.h>
 #include <dtCore/keyboard.h>
+#include <dtCore/transformable.h>
+#include <dtCore/scene.h>
+#include <dtCore/refptr.h>
 
 using namespace boost::python;
 using namespace dtABC;
 using namespace dtCore;
+
+
+struct PythonCollisionData
+{
+   PythonCollisionData(){}
+
+   PythonCollisionData(dtCore::Scene::CollisionData* colData)
+      : mBodies_0(colData->mBodies[0])
+      , mBodies_1(colData->mBodies[1])
+      , mLocation(colData->mLocation)
+      , mNormal(colData->mNormal)
+      , mDepth(colData->mDepth)
+   {
+
+   }
+
+   Transformable* GetBody1()
+   {
+      return mBodies_0;
+   }
+
+   Transformable* GetBody2()
+   {
+      return mBodies_1;
+   }
+
+   Transformable* mBodies_0;
+   Transformable* mBodies_1;
+   osg::Vec3 mLocation; ///<The collision location
+   osg::Vec3 mNormal; ///<The collision normal
+   float mDepth; ///<The penetration depth
+
+   
+};
+
 
 class ApplicationWrap : public Application, public wrapper<Application>
 {
@@ -17,6 +55,7 @@ class ApplicationWrap : public Application, public wrapper<Application>
    ApplicationWrap( const std::string& configFilename = "") :
       Application(configFilename)
       {
+                  
       }
 
    virtual bool KeyPressed( const dtCore::Keyboard* keyboard,
@@ -39,6 +78,18 @@ class ApplicationWrap : public Application, public wrapper<Application>
                                    Producer::KeyCharacter character )
    {
       return this->Application::KeyPressed( keyboard, key, character );
+   }
+
+   virtual void OnCollisionMessage(PythonCollisionData pData)
+   {
+      if( override pOverride = this->get_override("OnCollisionMessage") )
+      {
+         #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+            call<>( this->get_override("OnCollisionMessage").ptr(), pData);
+         #else
+            this->get_override("OnCollisionMessage")(pData);
+         #endif
+      }
    }
 
    protected:
@@ -103,25 +154,25 @@ class ApplicationWrap : public Application, public wrapper<Application>
          }
       }
 
-      /*virtual void OnMessage( MessageData* data )
+      void OnMessage( MessageData* data )
       {
-         if( PyObject_HasAttrString( boost::python::detail::wrapper_base_::get_owner(*this),
-                                     "OnMessage") )
+         if( data->message == "preframe" )
          {
-            if( override OnMessage = this->get_override("OnMessage") )
-            {
-               #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
-               call<void>( OnMessage.ptr(), data );
-               #else
-               OnMessage(data);
-               #endif
-            }
-            else
-            {
-               Application::OnMessage(data);
-            }
+            PreFrame( *static_cast<const double*>(data->userData) );
          }
-      }*/
+         else if( data->message == "frame" )
+         {
+            Frame( *static_cast<const double*>(data->userData) );
+         }
+         else if( data->message == "postframe" )
+         {
+            PostFrame( *static_cast<const double*>(data->userData) );
+         }
+         else if( data->message == "collision")
+         {
+             OnCollisionMessage(PythonCollisionData(static_cast< Scene::CollisionData* >( data->userData )));
+         }
+      }
 };
 
 void initApplicationBindings()
@@ -140,4 +191,12 @@ void initApplicationBindings()
       .def("Run", &Application::Run)
       .def("KeyPressed",&Application::KeyPressed,&ApplicationWrap::DefaultKeyPressed)
       ;
+
+
+   class_<PythonCollisionData>("CollisionData")
+      .def("GetBody1", &PythonCollisionData::GetBody1, return_value_policy<reference_existing_object>())
+      .def("GetBody2", &PythonCollisionData::GetBody2, return_value_policy<reference_existing_object>())
+      .def_readonly("mLocation", &PythonCollisionData::mLocation)
+      .def_readonly("mNormal", &PythonCollisionData::mNormal)
+      .def_readonly("mDepth", &PythonCollisionData::mDepth);
 }
