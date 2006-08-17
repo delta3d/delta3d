@@ -2,8 +2,9 @@
 #include <CEGUI/CEGUISystem.h>
 #include <CEGUI/CEGUIWindow.h>
 #include <CEGUI/CEGUIExceptions.h>
+#include <CEGUI/CEGUIVersion.h>
 #if defined(CEGUI_VERSION_MAJOR) && CEGUI_VERSION_MAJOR >= 0 && defined(CEGUI_VERSION_MINOR) && CEGUI_VERSION_MINOR >= 5
-#include <CEGUI/XMLParserModules/XercesParser/CEGUIXercesParser.h>
+#   include <CEGUI/XMLParserModules/XercesParser/CEGUIXercesParser.h>
 #endif
 
 #include <dtGUI/ceuidrawable.h>
@@ -104,7 +105,13 @@ void CEUIDrawable::Config()
       }
       else
       {
+         #if defined(CEGUI_VERSION_MAJOR) && CEGUI_VERSION_MAJOR >= 0 && defined(CEGUI_VERSION_MINOR) && CEGUI_VERSION_MINOR >= 5
+         // CEGUI 0.5.0 introduces a "unified" constructor. 
+         // The new 0 here is for using the default ResourceProvider as well as the default XML parser.
+         new CEGUI::System(mRenderer,0,new CEGUI::XercesParser());          
+         #else
          new CEGUI::System(mRenderer);
+         #endif // CEGUI 0.5.0
       }
    }
 
@@ -124,7 +131,6 @@ void CEUIDrawable::Config()
    stateset->setMode(GL_BLEND,osg::StateAttribute::ON);
 
    stateset->setTextureMode(0, GL_TEXTURE_2D, osg::StateAttribute::ON);
-
 
    geod->setStateSet(stateset);
 
@@ -163,7 +169,11 @@ void CEUIDrawable::DisplayProperties(CEGUI::Window *window, bool onlyNonDefault)
    // Log all its properties + values
    dtUtil::Log *log = &dtUtil::Log::GetInstance();
 
-   CEGUI::PropertySet::PropertyIterator itr = ((CEGUI::PropertySet*)window)->getIterator();
+   #if defined(CEGUI_VERSION_MAJOR) && CEGUI_VERSION_MAJOR >= 0 && defined(CEGUI_VERSION_MINOR) && CEGUI_VERSION_MINOR >= 5
+   CEGUI::PropertySet::Iterator itr = window->getPropertyIterator();
+   #else
+   CEGUI::PropertySet::PropertyIterator itr = static_cast<CEGUI::PropertySet*>(window)->getIterator();
+   #endif // CEGUI 0.5.0
    while (!itr.isAtEnd()) 
    {
       try 
@@ -254,6 +264,5 @@ void CEUIDrawable::osgCEUIDrawable::drawImplementation(osg::State& state) const
    //tell the UI to update and to render
    if (!mUI) return;       
    state.setActiveTextureUnit(0);
-   mUI->getSingletonPtr()->renderGUI();
-   
+   mUI->getSingletonPtr()->renderGUI();   
 }
