@@ -56,6 +56,7 @@ namespace dtAI
          const WaypointAStar::config_type& GetConfig() const;
 
       private:
+         void ApplyStringPulling();
          void GoToWaypoint(float dt, const Waypoint* pWaypoint);
          bool AmAtWaypoint(const Waypoint* pWaypoint);
          void SetRotation(float dt, const Waypoint* pWaypoint);
@@ -67,6 +68,7 @@ namespace dtAI
          const Waypoint* mCurrentWaypoint;
          WaypointAStar::container_type mWaypointPath;
          WaypointAStar mAStar;
+         dtCore::RefPtr<dtCore::Scene> mScene;
 
    };
 }//namespace dtAI
