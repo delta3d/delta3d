@@ -205,19 +205,20 @@ namespace dtAI
 
       dtCore::RefPtr<dtCore::Isector> pIsector = new dtCore::Isector(mScene.get());
       do 
-      {
-         //added special case to avoid colliding with the billboards and self
-         osg::Vec3 vec = mWaypointPath.front()->GetPosition() - GetPosition();
-         vec.normalize();
-         pIsector->SetStartPosition(GetPosition() + vec);
-         pIsector->SetEndPosition(mWaypointPath.front()->GetPosition() - vec);
+      {         
+         pIsector->Reset();
+         //osg::Vec3 vec = mWaypointPath.front()->GetPosition() - GetPosition();
+         //vec.normalize();
+         pIsector->SetStartPosition(GetPosition());// + vec);
+
+         const Waypoint* pNextWaypoint = *(++(mWaypointPath.begin()));
+         pIsector->SetEndPosition(pNextWaypoint->GetPosition());// - vec);
 
          //if there is a path between the two points
          if(!pIsector->Update())
          {
             mWaypointPath.front()->SetRenderFlag(Waypoint::RENDER_BLUE);
-            mWaypointPath.pop_front();   
-            pIsector->Reset();
+            mWaypointPath.pop_front();               
          }
          else break;         
       }
