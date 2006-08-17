@@ -17,6 +17,11 @@ public:
       mAStar.Reset(w1, w2);
    }
 
+   void Reset3(const std::vector<const Waypoint*>& pFrom, const std::vector<const Waypoint*>& pTo)
+   {
+      mAStar.Reset(pFrom, pTo);
+   }
+
    void Reset2(const WaypointAStar::config_type& pConf)
    {
       mAStar.Reset(pConf);
@@ -51,6 +56,7 @@ void init_WaypointAStarBindings()
    scope waypointScope = class_<PythonAStar, PythonAStar*, boost::noncopyable>("WaypointAStar")
       .def("Reset", &PythonAStar::Reset1)
       .def("Reset", &PythonAStar::Reset2)
+      .def("Reset", &PythonAStar::Reset3)
       .def("FindPath", &PythonAStar::FindPath)
       .def("GetPath", &PythonAStar::GetPath)
       .def("GetConfig", &PythonAStar::GetConfig, return_internal_reference<>())

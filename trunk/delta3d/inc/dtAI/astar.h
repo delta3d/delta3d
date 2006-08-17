@@ -27,6 +27,7 @@
 #include <cassert>
 #include <algorithm>
 #include <list>
+#include <vector>
 
 namespace dtAI
 {
@@ -122,6 +123,8 @@ namespace dtAI
          * @param the point to find a path to
          */
          void Reset(data_type pFrom, data_type pTo);
+
+         void Reset(const std::vector<data_type>& pFrom, const std::vector<data_type>& pTo);
 
          /**
          *  Runs the AStar algorithm, using the either the current config or the
