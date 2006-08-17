@@ -24,6 +24,8 @@
 #include <dtAI/waypoint.h>
 #include <dtUtil/matrixutil.h>
 
+#include <dtCore/isector.h>
+
 #include <osg/Matrix>
 
 #include <algorithm>
@@ -47,11 +49,14 @@ struct funcRenderGreen
 
 namespace dtAI
 {
-   AICharacter::AICharacter(dtCore::Scene* pScene, dtCore::Camera* pCamera, const Waypoint* pWaypoint, const std::string& pFilename, unsigned pSpeed):
-      mSpeed(pSpeed),
-      mCurrentWaypoint(pWaypoint)
-   {
-      mCharacter = new dtChar::Character("AICharacter");
+   AICharacter::AICharacter(dtCore::Scene* pScene, dtCore::Camera* pCamera, const Waypoint* pWaypoint, const std::string& pFilename, unsigned pSpeed)
+      : mSpeed(pSpeed)
+      , mCharacter(new dtChar::Character("AICharacter"))
+      , mCurrentWaypoint(pWaypoint)
+      , mWaypointPath()
+      , mAStar()
+      , mScene(pScene)
+   {      
       mCharacter->LoadFile(pFilename);
       SetPosition(pWaypoint);
       pScene->AddDrawable(mCharacter.get());
@@ -181,10 +186,42 @@ namespace dtAI
          }
 
          //if we have another waypoint to goto, goto it
-         if(!mWaypointPath.empty()) GoToWaypoint(dt, mWaypointPath.front());
+         if(!mWaypointPath.empty())
+         {
+            ApplyStringPulling();
+            GoToWaypoint(dt, mWaypointPath.front());
+         }
          //else stop walking
-         else mCharacter->SetVelocity(0);
+         else
+         {
+            mCharacter->SetVelocity(0);
+         }
       }
+   }
+
+   void AICharacter::ApplyStringPulling()
+   {
+      if(mWaypointPath.size() < 2) return;
+
+      dtCore::RefPtr<dtCore::Isector> pIsector = new dtCore::Isector(mScene.get());
+      do 
+      {
+         //added special case to avoid colliding with the billboards and self
+         osg::Vec3 vec = mWaypointPath.front()->GetPosition() - GetPosition();
+         vec.normalize();
+         pIsector->SetStartPosition(GetPosition() + vec);
+         pIsector->SetEndPosition(mWaypointPath.front()->GetPosition() - vec);
+
+         //if there is a path between the two points
+         if(!pIsector->Update())
+         {
+            mWaypointPath.front()->SetRenderFlag(Waypoint::RENDER_BLUE);
+            mWaypointPath.pop_front();   
+            pIsector->Reset();
+         }
+         else break;         
+      }
+      while(mWaypointPath.size() > 2);
    }
 
 
