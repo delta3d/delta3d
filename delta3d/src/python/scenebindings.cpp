@@ -68,13 +68,7 @@ void initSceneBindings()
       .value("POINT", Scene::POINT)
       .value("LINE", Scene::LINE)
       .value("FILL", Scene::FILL)
-      .export_values(); 
-      
-   class_<Scene::CollisionData>("CollisionData")
-      .def_readonly("mBodies", &Scene::CollisionData::mBodies)
-      .def_readonly("mLocation", &Scene::CollisionData::mLocation)
-      .def_readonly("mNormal", &Scene::CollisionData::mNormal)
-      .def_readonly("mDepth", &Scene::CollisionData::mDepth);
+      .export_values();    
 
    
 }
