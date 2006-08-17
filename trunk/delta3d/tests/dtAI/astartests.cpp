@@ -22,15 +22,15 @@
 #include <cppunit/extensions/HelperMacros.h>
 #include "testastarutils.h"
 #include <list>
-
+#include <vector>
 
 using namespace dtAI;
 
 //////////////////////////////////////////////////////////////////////////
 //these are static from testastarutils.h
-dtAI::AStarTest_PathData* dtAI::AStarTest_PathData::sPathData = new dtAI::AStarTest_PathData(100);
+dtAI::AStarTest_PathData* dtAI::AStarTest_PathData::sPathData = 0;
 
-dtAI::PathCostData* dtAI::PathCostData::sCostData = new dtAI::PathCostData();
+dtAI::PathCostData* dtAI::PathCostData::sCostData = 0;
 
 typedef std::list<unsigned> PATH;
 //////////////////////////////////////////////////////////////////////////
@@ -42,13 +42,17 @@ namespace dtTest
    {
       CPPUNIT_TEST_SUITE(AStarTests);
       CPPUNIT_TEST(TestCreatePath);
+      CPPUNIT_TEST(TestCreatePathVector);
       CPPUNIT_TEST_SUITE_END();
 
    public:
       void setUp();
       void tearDown();
 
+      void init();
+      void destroy();
       void TestCreatePath();
+      void TestCreatePathVector();
 
    private:
       void PrintStats(const TestAStar::config_type& pConfig);
@@ -63,9 +67,15 @@ namespace dtTest
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION( AStarTests );
 
+void AStarTests::setUp(){};
+void AStarTests::tearDown(){};
 
-void AStarTests::setUp()
+
+void AStarTests::init()
 {
+   dtAI::AStarTest_PathData::sPathData = new dtAI::AStarTest_PathData(100);
+   dtAI::PathCostData::sCostData = new dtAI::PathCostData();
+
    // 1 to 2 cost: 1
    PATH pOne;
    pOne.push_back(2);
@@ -146,7 +156,7 @@ void AStarTests::setUp()
 
 }
 
-void AStarTests::tearDown()
+void AStarTests::destroy()
 {
    delete AStarTest_PathData::sPathData;
    delete PathCostData::sCostData;
@@ -154,6 +164,8 @@ void AStarTests::tearDown()
 
 void AStarTests::TestCreatePath()
 {  
+   init();
+
    //test 1
    mAStar.Reset(1, 6);
    TestPathForCorrectness(0, mAStar.FindPath(), mAStar.GetPath());
@@ -179,6 +191,42 @@ void AStarTests::TestCreatePath()
    PathCostData::sCostData->SetCost(5, 3, 5);
    mAStar.Reset(1, 6);
    TestPathForCorrectness(3, mAStar.FindPath(), mAStar.GetPath());
+
+   destroy();
+}
+
+void AStarTests::TestCreatePathVector()
+{  
+   init();
+
+   //procedural points 0, 7
+
+   // 0 to 1 cost: 1
+   PATH pZero;
+   pZero.push_back(1);
+   PathCostData::sCostData->SetCost(1, 0, 1);
+   AStarTest_PathData::sPathData->AddPath(0, pZero);
+
+   // 6 to 7 cost: 1
+   PATH pSix;
+   pSix.push_back(7);
+   PathCostData::sCostData->SetCost(1, 6, 7);
+   AStarTest_PathData::sPathData->AddPath(6, pSix);
+   
+
+   std::vector<unsigned> pFrom;
+   pFrom.push_back(0);
+   pFrom.push_back(1);
+
+   std::vector<unsigned> pTo;
+   pTo.push_back(7);
+   pTo.push_back(6);
+
+   //test 1
+   mAStar.Reset(pFrom, pTo);
+   TestPathForCorrectness(0, mAStar.FindPath(), mAStar.GetPath());
+
+   destroy();
 }
 
 void AStarTests::TestPathForCorrectness(int pathNum, TestAStar::AStarResult pResult, const TestContainer& pPathList)
