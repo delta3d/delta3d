@@ -69,7 +69,7 @@ void AStar<_NodeType, _CostFunc, _Container, _Timer>::Reset(const config_type& p
 {
    FreeMem();
    mConfig = pConfig;   
-   AddNodeLink(0, pConfig.mStart);
+   AddNodeLink(0, mConfig.Start());
 }
 
 
@@ -78,7 +78,27 @@ void AStar<_NodeType, _CostFunc, _Container, _Timer>::Reset(data_type pFrom, dat
 {
    FreeMem();
    mConfig.Reset(pFrom, pTo);      
-   AddNodeLink(0, mConfig.mStart);
+   AddNodeLink(0, mConfig.Start());
+}
+
+template<class _NodeType, class _CostFunc, class _Container, class _Timer>
+void AStar<_NodeType, _CostFunc, _Container, _Timer>::Reset(const std::vector<data_type>& pFrom, const std::vector<data_type>& pTo)
+{  
+   FreeMem();
+   mConfig.Reset(pFrom[0], pTo);
+
+   std::vector<data_type>::const_iterator iter = pFrom.begin();
+   std::vector<data_type>::const_iterator endOfList = pFrom.end();
+
+   //we start from index 1
+   ++iter;
+
+   while(iter != endOfList)
+   {
+      mOpen.push_back(new node_type(0, *iter, mCostFunc(pFrom[0], *iter), mCostFunc(*iter, pTo[0]) ));
+      ++iter;
+   }
+   
 }
 
 template<class _NodeType, class _CostFunc, class _Container, class _Timer>
@@ -86,11 +106,11 @@ void AStar<_NodeType, _CostFunc, _Container, _Timer>::AddNodeLink(node_type* pPa
 {
    if(!pParent)
    {
-      mOpen.push_back(new node_type(0, pData, 0, mCostFunc(mConfig.mStart, mConfig.mFinish)));   
+      mOpen.push_back(new node_type(0, pData, 0, mCostFunc(mConfig.Start(), mConfig.Finish())));   
    }
    else
    {
-      mOpen.push_back(new node_type(pParent, pData, pParent->GetCostToNode() + mCostFunc(pParent->GetData(), pData), mCostFunc(pData, mConfig.mFinish)));
+      mOpen.push_back(new node_type(pParent, pData, pParent->GetCostToNode() + mCostFunc(pParent->GetData(), pData), mCostFunc(pData, mConfig.Finish())));
    }
 }
 
@@ -184,7 +204,7 @@ typename AStar<_NodeType, _CostFunc, _Container, _Timer>::AStarResult AStar<_Nod
       //check if we found a path to the end or if we have exceeded a constraint
       cost_type pCost = (pStart->GetCostToNode() + pStart->GetCostToGoal());
       bool pExceededMaxCost(pCost >= mConfig.mMaxCost);
-      bool pHasPathToFinish(pStart->GetData() == mConfig.mFinish);
+      bool pHasPathToFinish = mConfig.AtFinish(pStart->GetData());
 
       mTimer.Update();
       mConfig.mTimeSpent += mTimer.GetDT();

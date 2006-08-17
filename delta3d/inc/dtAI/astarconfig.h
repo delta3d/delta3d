@@ -28,6 +28,8 @@
 #endif
 #include <limits>
 
+#include <vector>
+
 namespace dtAI
 {
    /**
@@ -91,6 +93,21 @@ namespace dtAI
          void Reset(data_type pFrom, data_type pTo)
          {
             mStart = pFrom;
+            mFinish.clear();
+            mFinish.push_back(pTo);
+            mResult.clear();
+            mTotalCost = 0;
+            mNumIterations = 0;
+            mNodesExplored = 0;
+            mTimeSpent = 0;
+            mTotalNodesExplored = 0;
+            mTotalTime = 0;
+         }
+
+         void Reset(data_type pFrom, const std::vector<data_type>& pTo)
+         {
+            mStart = pFrom;
+            mFinish.clear();
             mFinish = pTo;
             mResult.clear();
             mTotalCost = 0;
@@ -102,11 +119,37 @@ namespace dtAI
          }
 
 
+         bool AtFinish(data_type pTest)
+         {
+            std::vector<data_type>::const_iterator iter = mFinish.begin();
+            std::vector<data_type>::const_iterator endOfList = mFinish.end();
+
+            while(iter != endOfList)
+            {
+               if(pTest == (*iter))
+               {
+                  return true;
+               }
+               ++iter;
+            }
+
+            return false;
+         }
+
+         data_type Start()
+         {
+            return mStart;
+         }
+
+         data_type Finish()
+         {
+            return mFinish[0];
+         }
+
          ///these are for usage by AStar.h and should not be used by clients of AStar.h
          data_type mStart;
-         ///these are for usage by AStar.h and should not be used by clients of AStar.h
-         data_type mFinish;
 
+         std::vector<data_type> mFinish;
 
          //these are for book keeping during a single iteration
          ///these are for usage by AStar.h and should not be used by clients of AStar.h
