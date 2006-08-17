@@ -368,7 +368,7 @@ namespace dtAI
 
    bool NPCParser::IsWhiteSpace(char c) const
    {
-      return(c == '\n' || c == '\t' || c == ' ');
+      return(c == '\n' || c == '\t' || c == ' ' || c == '\r');
    }
 
    int NPCParser::ParseInt()
