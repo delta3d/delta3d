@@ -84,6 +84,8 @@ void AStar<_NodeType, _CostFunc, _Container, _Timer>::Reset(data_type pFrom, dat
 template<class _NodeType, class _CostFunc, class _Container, class _Timer>
 void AStar<_NodeType, _CostFunc, _Container, _Timer>::Reset(const std::vector<data_type>& pFrom, const std::vector<data_type>& pTo)
 {  
+   if(pFrom.empty() || pTo.empty()) return;
+
    FreeMem();
    mConfig.Reset(pFrom[0], pTo);
 

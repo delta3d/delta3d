@@ -124,6 +124,13 @@ namespace dtAI
          */
          void Reset(data_type pFrom, data_type pTo);
 
+         /***
+         *  Resets config using a vector of possible points to go from to a vector of 
+         *  possible points to go to.
+         *  The first index in the from and to are the actual positions, where as the rest
+         *  of the vector are nearest points to the actual position, used for specifying 
+         *  procedural to and from data_type that do not exist within scope of the data_type::iterator.
+         */
          void Reset(const std::vector<data_type>& pFrom, const std::vector<data_type>& pTo);
 
          /**
