@@ -9,6 +9,7 @@ using namespace dtAI;
 void init_WaypointBindings()
 {
    scope waypointScope = class_<Waypoint>("Waypoint")
+      .def(init<osg::Vec3>())
       .def("GetPosition", &Waypoint::GetPosition, return_value_policy<copy_const_reference>())
       .def("SetPosition", &Waypoint::SetPosition)
       .def("GetRenderFlag", &Waypoint::GetRenderFlag)
