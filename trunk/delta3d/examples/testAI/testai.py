@@ -20,6 +20,7 @@ class AICharacter:
       self.mCharacter.AddChild(camera)
       self.mAStar = WaypointAStar()
       self.mSpeed = speed
+      self.mScene = scene
 
    def SetPosition(self, waypoint):
       trans = Transform()
@@ -60,6 +61,14 @@ class AICharacter:
       distToY = abs(pos[1] - wayPos[1])
       return (distToX < 0.1) and ( distToY < 0.1)   
 
+   def ApplyStringPulling(self):
+      if len(self.mWaypointPath) >= 2:
+         isector = Isector(self.mScene, self.GetPosition(), self.mWaypointPath[1].GetPosition())
+         if not isector.Update():
+            self.mWaypointPath[0].SetRenderFlag(Waypoint.RENDER_BLUE)
+            del self.mWaypointPath[0]
+      
+
    def Update(self, dt):
       if self.mWaypointPath:
          if(self.AmAtWaypoint(self.mWaypointPath[0])):
@@ -67,6 +76,7 @@ class AICharacter:
             del self.mWaypointPath[0]
             self.mCurrentWaypoint.SetRenderFlag(Waypoint.RENDER_BLUE)
          if self.mWaypointPath:
+            self.ApplyStringPulling()
             self.GoToWaypoint(dt, self.mWaypointPath[0])
          else:
             self.mCharacter.SetVelocity(0)
