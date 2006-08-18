@@ -107,8 +107,14 @@ namespace dtGame
 
       //Well we made it here so that means the plugin was loaded
       //successfully and the create and destroy functions were found.
+
+      #if (__GNUC__ == 3 && __GNUC_MINOR__ <= 3)
+      mCreateFunction  = (CreateEntryPointFn)createAddr;
+      mDestroyFunction = (DestroyEntryPointFn)destroyAddr;
+      #else
       mCreateFunction  = reinterpret_cast<CreateEntryPointFn>(createAddr);
       mDestroyFunction = reinterpret_cast<DestroyEntryPointFn>(destroyAddr);
+      #endif
 
       mEntryPoint =  mCreateFunction();
 
