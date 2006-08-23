@@ -76,9 +76,6 @@ CEUIDrawable::~CEUIDrawable()
 {
    RemoveSender( System::Instance() );
    DeregisterInstance(this);
-
-   mWindow->GetMouse()->RemoveMouseListener( mMouseListener.get() );
-   mWindow->GetKeyboard()->RemoveKeyboardListener( mKeyboardListener.get() );
    
    SetOSGNode(0);
 
@@ -240,6 +237,9 @@ void CEUIDrawable::SetRenderingSize(int width, int height)
 
 void CEUIDrawable::ShutdownGUI()
 {
+   mWindow->GetMouse()->RemoveMouseListener( mMouseListener.get() );
+   mWindow->GetKeyboard()->RemoveKeyboardListener( mKeyboardListener.get() );
+
    delete mUI;
 }
 
