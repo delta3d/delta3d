@@ -357,7 +357,7 @@ bool OrbitMotionModel::AxisStateChanged(const Axis* axis,
    {
       Transform transform;
       
-      GetTarget()->GetTransform(&transform);
+      GetTarget()->GetTransform(transform);
       
       osg::Vec3 xyz, hpr, scale;
       
@@ -466,7 +466,7 @@ bool OrbitMotionModel::AxisStateChanged(const Axis* axis,
       
       transform.Set(xyz, hpr, scale);
       
-      GetTarget()->SetTransform(&transform);
+      GetTarget()->SetTransform(transform);
 
       return true;
    }

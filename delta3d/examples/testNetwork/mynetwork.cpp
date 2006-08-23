@@ -55,7 +55,7 @@ void MyNetwork::OnReceive( GNE::Connection &conn )
          if( iter != mOtherPlayerMap.end() ) 
          {
             //the player ID is already in our list so lets update it's position
-            iter->second->SetTransform(&xform, Transformable::ABS_CS);
+            iter->second->SetTransform(xform, Transformable::ABS_CS);
          }
          else
          {
@@ -102,7 +102,7 @@ void MyNetwork::MakePlayer( const std::string& ownerID )
    object->LoadFile("models/uh-1n.ive");
 
    Transform transform( 0.0f, 0.0f, 5.0f );
-   object->SetTransform( &transform );
+   object->SetTransform( transform );
 
    //Insert the new Objects into our map of IDs->Objects
    StringObjectMap::value_type value( ownerID,  object );

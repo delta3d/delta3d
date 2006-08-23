@@ -81,7 +81,7 @@ TestAudioApp::TestAudioApp(const std::string& configFilename /*= "config.xml"*/ 
    cam->AddChild( mMic );
 
    Transform transform( 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f );
-   mMic->SetTransform( &transform, Transformable::REL_CS );
+   mMic->SetTransform( transform, Transformable::REL_CS );
 
    mSFXBinder  = new dtAudio::SoundEffectBinder;
    assert( mSFXBinder.get() );
@@ -331,7 +331,7 @@ void TestAudioApp::LoadPlaySound( const char* fname, unsigned int box /*= 0L*/ )
       obj->AddChild( snd );
 
       Transform transform( 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f );
-      snd->SetTransform( &transform, Transformable::REL_CS );
+      snd->SetTransform( transform, Transformable::REL_CS );
 
       snd->SetPlayCallback( MakeSmoke, this );
       snd->SetStopCallback( StopSmoke, this );
@@ -604,7 +604,7 @@ TestAudioApp::LoadGfxFile( const char* fname )
    {
       //rotate BRDM 90 degrees
       Transform trans = Transform( 0.0f, 0.0f, 0.0f, 90.0f, 0.0f, 0.0f );
-      fileobj->SetTransform( &trans );
+      fileobj->SetTransform( trans );
    }
 
    // add the object to the scene
@@ -678,7 +678,7 @@ TestAudioApp::SetUpCamera( void )
    Camera*   cam(GetCamera());
    assert( cam );
 
-   cam->SetTransform( &xform );
+   cam->SetTransform( xform );
 
    mOribitMotionModel->SetDistance( dist );
 }
@@ -704,13 +704,13 @@ TestAudioApp::MoveTheObject( unsigned int obj )
    // move the vehicle
    assert( gfx.get() );
 
-   gfx->GetTransform( &xform );
+   gfx->GetTransform( xform );
    xform.GetTranslation( pos );
 
    pos[I]   = static_cast<double>(P * 50.0f);
 
    xform.SetTranslation( pos );
-   gfx->SetTransform( &xform );
+   gfx->SetTransform( xform );
 
    // don't set velocity for TRUCK
    if( obj == TRUCK )

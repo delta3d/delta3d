@@ -75,7 +75,7 @@ namespace dtCore
             {
                Transform transform;
                
-               mDetonation->GetParent()->GetTransform(&transform);
+               mDetonation->GetParent()->GetTransform(transform);
                
                osg::Matrix mat;
                transform.Get(mat);

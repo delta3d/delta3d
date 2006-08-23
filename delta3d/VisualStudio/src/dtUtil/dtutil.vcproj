@@ -184,6 +184,9 @@
 				RelativePath="..\..\..\inc\dtUtil\bits.h">
 			</File>
 			<File
+				RelativePath="..\..\..\inc\dtUtil\breakoverride.h">
+			</File>
+			<File
 				RelativePath="..\..\..\inc\dtUtil\coordinates.h">
 			</File>
 			<File

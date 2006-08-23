@@ -2235,7 +2235,7 @@ AudioManager::SoundObj::OnMessage( MessageData* data )
       osg::Vec3            pos   ( 0.0f, 0.0f, 0.0f );
       osg::Vec3            dir   ( 0.0f, 1.0f, 0.0f );
 
-      GetTransform( &transform );
+      GetTransform( transform );
       transform.GetTranslation( pos );
       transform.Get( matrix );
       dir = osg::Matrix::transform3x3(dir, matrix);
@@ -2319,7 +2319,7 @@ AudioManager::SoundObj::SetParent( dtCore::Transformable* parent )
    if( parent )
    {
       dtCore::Transform transform( 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f );
-      dtCore::Transformable::SetTransform( &transform, dtCore::Transformable::REL_CS );
+      dtCore::Transformable::SetTransform( transform, dtCore::Transformable::REL_CS );
    }
 }
 
@@ -2570,7 +2570,7 @@ void AudioManager::ListenerObj::OnMessage( MessageData* data )
       orient.ort[4] = 0.0f;
       orient.ort[5] = 1.0f;
 
-      GetTransform( &transform );
+      GetTransform( transform );
       osg::Vec3 tmp;
       transform.GetTranslation( tmp );
       pos[0] = tmp[0]; 

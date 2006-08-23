@@ -179,11 +179,11 @@ namespace dtDAL
                 "dtCore::Transformable\n");
 
       dtCore::Transform trans;
-      t->GetTransform(&trans);
+      t->GetTransform(trans);
       osg::Vec3 oldTrans;
       trans.GetTranslation(oldTrans);
       trans.SetTranslation(translation[0], translation[1], translation[2]);
-      t->SetTransform(&trans);
+      t->SetTransform(trans);
 
       //If we have a billboard update its position as well.
       if (GetRenderMode() == ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON ||
@@ -206,7 +206,7 @@ namespace dtDAL
                 " dtCore::Transformable\n");
 
       dtCore::Transform trans;
-      t->GetTransform(&trans);
+      t->GetTransform(trans);
       float x, y, z;
       trans.GetTranslation(x, y, z);
       return osg::Vec3(x, y, z);
@@ -221,11 +221,11 @@ namespace dtDAL
                 "dtCore::Transformable\n");
 
       dtCore::Transform trans;
-      t->GetTransform(&trans);
+      t->GetTransform(trans);
       osg::Vec3 oldScale;
       trans.GetScale(oldScale);
       trans.SetScale(scale[0], scale[1], scale[2]);
-      t->SetTransform(&trans);
+      t->SetTransform(trans);
 
       //If we have a billboard update its scale as well.
       if (GetRenderMode() == ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON ||
@@ -247,7 +247,7 @@ namespace dtDAL
          EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Transformable\n");
 
       dtCore::Transform trans;
-      t->GetTransform(&trans);
+      t->GetTransform(trans);
       float x, y, z;
       trans.GetScale(x, y, z);
       return osg::Vec3(x, y, z);

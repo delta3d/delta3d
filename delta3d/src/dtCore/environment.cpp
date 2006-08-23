@@ -678,7 +678,7 @@ void dtCore::Environment::UpdateShaders()
 
    Camera *cam  = Camera::GetInstance(0);
    Transform camXform;
-   cam->GetTransform( &camXform );
+   cam->GetTransform( camXform );
    osg::Vec3 xyz;
    camXform.GetTranslation(xyz);
 

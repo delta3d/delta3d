@@ -44,7 +44,7 @@ namespace dtCore
     *  \code
     *    myParent->AddChild( myCamera );
     *    Transform offset(x,y,z,h,p,r);
-    *    myCamera->SetTransform( &offset, Transformable::REL_CS );
+    *    myCamera->SetTransform( offset, Transformable::REL_CS );
     *  \endcode
     */
    class DT_CORE_EXPORT Tripod : public DeltaDrawable

@@ -86,7 +86,7 @@ void TestTrigger::Config()
    
    // Position the default camera location inside the warehouse.
    Transform xform( 4.0f, 17.5f, 2.5f, -180.0f, 0.0f, 0.0f );
-   GetCamera()->SetTransform(&xform);
+   GetCamera()->SetTransform(xform);
 
    // Important! The Camera must be assigned a collision shape for this to work.
    GetCamera()->SetCollisionSphere(1.0f);
@@ -98,12 +98,12 @@ void TestTrigger::Config()
    // Put the light/trigger/sphere slightly ahead of the camera.
    xform.SetTranslation( 3.5f, 4.5f, 3.0f );
    xform.SetRotation( 0.0f, 0.0f, 0.0f );
-   mPositionalLight->SetTransform(&xform);
+   mPositionalLight->SetTransform(xform);
 
    // Make a offset between the happy sphere and the light, so we can see the 
    // sphere get lit easier.
    xform.SetTranslation( 0.0f, -1.0f, -1.0f );
-   mHappySphere->SetTransform( &xform, dtCore::Transformable::REL_CS );
+   mHappySphere->SetTransform( xform, dtCore::Transformable::REL_CS );
    
    Application::Config();
    

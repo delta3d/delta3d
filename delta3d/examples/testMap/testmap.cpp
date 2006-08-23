@@ -86,21 +86,21 @@ class TestMap : public Application
       
       // move our tree away a little bit
       Transform xform(-50.0f, 0.0f, -1.0f);
-      mTree->SetTransform(&xform);
+      mTree->SetTransform(xform);
       mSmoke->SetEnabled(true);
       GetScene()->AddDrawable(mExplosionManager.get());
       
       // translate the camera back some
       xform.SetTranslation(-25.0f,-100.0f,0.0f);
-      GetCamera()->SetTransform(&xform);
+      GetCamera()->SetTransform(xform);
    }
    
    virtual void OnMessage(MessageData *data)
    {
       Transform tTree, tHeli;
       
-      mTree->GetTransform(&tTree);
-      mHelicopter->GetTransform(&tHeli);
+      mTree->GetTransform(tTree);
+      mHelicopter->GetTransform(tHeli);
       
       osg::Vec3 tTreeTranslation;
       tTree.GetTranslation(tTreeTranslation);
@@ -112,7 +112,7 @@ class TestMap : public Application
       if(tTreeTranslation.x() < tHeliTranslation.x())
       {
          Transform xform(mStep, 0.0f, 1.0f, 90.0f, 0.0f, 0.0f);
-         mHelicopter->SetTransform(&xform);
+         mHelicopter->SetTransform(xform);
       }
       // It's there
       else if(tTreeTranslation.x() >= tHeliTranslation.x())
@@ -133,7 +133,7 @@ class TestMap : public Application
             mSmoke->SetEnabled(true);
             // Make sure to orient the new mesh to match the old one
             Transform xform(x,y,0.0f,90.0f,-30.0f,0.0f);
-            mHelicopter->SetTransform(&xform);
+            mHelicopter->SetTransform(xform);
          }
       }
       
@@ -151,7 +151,7 @@ class TestMap : public Application
    {
       GetScene()->AddDrawable(mTree.get());
       Transform xform(0.0f,0.0f,1.0f,90.0f,0.0f,0.0f);
-      mHelicopter->SetTransform(&xform);
+      mHelicopter->SetTransform(xform);
       mHelicopter->LoadFile("StaticMeshes/uh-1n.ive");
       mSmoke->SetEnabled(false);
       mStep = -1.0f;

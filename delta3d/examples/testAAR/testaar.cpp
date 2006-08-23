@@ -128,7 +128,7 @@ void AARApplication::Config()
    GetWindow()->SetWindowTitle("testAAR");
    SetupScene();
    dtCore::Transform tx(0.0f,-25.0f,10.0f,0.0f,-15.0f,0.0f);
-   GetCamera()->SetTransform(&tx);
+   GetCamera()->SetTransform(tx);
    Reset();
    SetupGUI();
 }
@@ -139,7 +139,7 @@ void AARApplication::SetupScene()
    mMotionModel = new dtCore::FlyMotionModel(GetKeyboard(),GetMouse(), false);
    mMotionModel->SetTarget(GetCamera());
    dtCore::Transform tx(0.0f,-25.0f,10.0f,0.0f,-15.0f,0.0f);
-   GetCamera()->SetTransform(&tx);
+   GetCamera()->SetTransform(tx);
 
    // setup terrain
    dtCore::Object *terrain = new dtCore::Object();

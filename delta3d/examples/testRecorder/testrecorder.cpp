@@ -84,7 +84,7 @@ void TestRecorder::SetupCamera()
 
    dtCore::Transform xform(0.0f,0.0f,mTerrain->GetVerticalScale()+15.0f);
 
-   GetCamera()->SetTransform( &xform );
+   GetCamera()->SetTransform( xform );
 
    // affect the camera
    mMotionModel->SetTarget( GetCamera() );

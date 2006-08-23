@@ -44,7 +44,7 @@ void TestNetwork::Config()
    mMotion->SetTarget( GetCamera() );
 
    Transform transform( 0.0f, 0.0f, 5.0f );
-   GetCamera()->SetTransform( &transform );
+   GetCamera()->SetTransform( transform );
 
    //setup scene here
    mTerrain = new Object("Terrain");
@@ -110,7 +110,7 @@ void TestNetwork::SendPosition()
 {
    //get our new position
    Transform xform;
-   GetCamera()->GetTransform( &xform );
+   GetCamera()->GetTransform( xform );
    osg::Vec3 xyz;
    osg::Vec3 hpr;
    xform.GetTranslation(xyz);

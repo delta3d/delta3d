@@ -265,22 +265,22 @@ namespace dtDAL
    {
       dtCore::Transform trans;
 
-      mIconNode->GetTransform(&trans);
+      mIconNode->GetTransform(trans);
       trans.SetTranslation(newPos);
-      mIconNode->SetTransform(&trans);
+      mIconNode->SetTransform(trans);
 
       if(mConfig.mForwardVector)
       {
-         mArrowNode->GetTransform(&trans);
+         mArrowNode->GetTransform(trans);
          trans.SetTranslation(newPos);
-         mArrowNode->SetTransform(&trans);
+         mArrowNode->SetTransform(trans);
       }
       
       if(mConfig.mUpVector)
       {
-         mArrowNodeUp->GetTransform(&trans);
+         mArrowNodeUp->GetTransform(trans);
          trans.SetTranslation(newPos);
-         mArrowNodeUp->SetTransform(&trans);
+         mArrowNodeUp->SetTransform(trans);
       }
    }
 
@@ -288,9 +288,9 @@ namespace dtDAL
    void ActorProxyIcon::SetRotation(const osg::Matrix &mat)
    {
       dtCore::Transform tx;
-      mIconNode->GetTransform(&tx);
+      mIconNode->GetTransform(tx);
       tx.SetRotation(mat);
-      mIconNode->SetTransform(&tx);
+      mIconNode->SetTransform(tx);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -299,15 +299,15 @@ namespace dtDAL
       dtCore::Transform tx;
       if(mConfig.mForwardVector)
       {
-         mArrowNode->GetTransform(&tx);
+         mArrowNode->GetTransform(tx);
          tx.SetRotation(hpr);
-         mArrowNode->SetTransform(&tx);
+         mArrowNode->SetTransform(tx);
       }
      
       if(mConfig.mUpVector)
       {
          tx.SetRotation(osg::Vec3(hpr[0], hpr[1] + 90.0f, hpr[2]));
-         mArrowNodeUp->SetTransform(&tx);
+         mArrowNodeUp->SetTransform(tx);
       }
       
    }
@@ -319,9 +319,9 @@ namespace dtDAL
       
       if(mConfig.mForwardVector)
       {
-         mArrowNode->GetTransform(&tx);
+         mArrowNode->GetTransform(tx);
          tx.SetRotation(mat);
-         mArrowNode->SetTransform(&tx);
+         mArrowNode->SetTransform(tx);
       }
 
       if(mConfig.mUpVector)
@@ -330,7 +330,7 @@ namespace dtDAL
          tx.GetRotation(hpr);
          hpr[1] += 90.0f;
          tx.SetRotation(hpr);
-         mArrowNodeUp->SetTransform(&tx);
+         mArrowNodeUp->SetTransform(tx);
       }
    }
 
@@ -342,7 +342,7 @@ namespace dtDAL
 
       if(mConfig.mForwardVector)
       {
-         mArrowNode->GetTransform(&tx);
+         mArrowNode->GetTransform(tx);
          tx.Get(mat);
       }
       return mat;
@@ -352,9 +352,9 @@ namespace dtDAL
    void ActorProxyIcon::SetScale(const osg::Vec3 &newScale)
    {
       dtCore::Transform tx;
-      mIconNode->GetTransform(&tx);
+      mIconNode->GetTransform(tx);
       tx.SetScale(newScale);
-      mIconNode->SetTransform(&tx);
+      mIconNode->SetTransform(tx);
    }
 
    //////////////////////////////////////////////////////////////////////////

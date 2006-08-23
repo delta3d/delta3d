@@ -460,7 +460,7 @@ void FPSMotionModel::OnMessage(MessageData *data)
       const double deltaFrameTime = static_cast<const double*>(data->userData)[1];
 
       Transform transform;
-      GetTarget()->GetTransform(&transform);
+      GetTarget()->GetTransform(transform);
 
       osg::Vec3 xyz, hpr;
       float newH = 0.f, newP = 0.f;
@@ -498,7 +498,7 @@ void FPSMotionModel::OnMessage(MessageData *data)
       //set our new position/rotation
       transform.SetTranslation(newXYZ);
       transform.SetRotation(newH, newP, 0.f);
-      GetTarget()->SetTransform(&transform); 
+      GetTarget()->SetTransform(transform); 
 
       mMouse->SetPosition(0.0f,0.0f);//keeps cursor at center of screen
    }

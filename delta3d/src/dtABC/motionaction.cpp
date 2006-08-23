@@ -24,7 +24,7 @@ void MotionAction::SetParentAndRelation(dtCore::Transformable* pParent, PARENT_R
 
    dtCore::Transform trans;
    
-   mParent->GetTransform(&trans);
+   mParent->GetTransform(trans);
    trans.GetTranslation(mInitialParentPos);
 }
 
@@ -35,7 +35,7 @@ void MotionAction::SetParent(dtCore::Transformable* pParent)
    if(mParent.valid())
    {
       dtCore::Transform trans;
-      mParent->GetTransform(&trans);
+      mParent->GetTransform(trans);
       trans.GetTranslation(mInitialParentPos);
    }
 }
@@ -63,7 +63,7 @@ void MotionAction::StepObject(const PathPoint& cp)
          dtCore::Transform trans;
          osg::Vec3 parentPos;
 
-         mParent->GetTransform(&trans);
+         mParent->GetTransform(trans);
          trans.GetTranslation(parentPos);
 
          pTransform.makeRotate(cp.GetOrientation());
@@ -81,7 +81,7 @@ void MotionAction::StepObject(const PathPoint& cp)
          dtCore::Transform trans;
          osg::Vec3 parentPos, newPos;
 
-         mParent->GetTransform(&trans);
+         mParent->GetTransform(trans);
          trans.GetTranslation(parentPos);
 
          newPos = cp.GetPosition() + (parentPos - mInitialParentPos);
@@ -96,7 +96,7 @@ void MotionAction::StepObject(const PathPoint& cp)
          dtCore::Transform trans;
          osg::Vec3 parentPos, newPos;
 
-         mParent->GetTransform(&trans);
+         mParent->GetTransform(trans);
          trans.GetTranslation(parentPos);
 
          newPos = cp.GetPosition() + (parentPos - mInitialParentPos);

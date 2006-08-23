@@ -69,7 +69,7 @@ class HLAStealthViewerApplication : public Application
          
          Transform transform(0, -350, 0);
          
-         GetCamera()->SetTransform(&transform);
+         GetCamera()->SetTransform(transform);
       }
       
       /**

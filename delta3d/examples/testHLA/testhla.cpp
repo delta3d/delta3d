@@ -72,7 +72,7 @@ public:
                                     0.0f );
          mPosition.SetRotation( mAngle, 0.0f, -45.0f );
 
-         mEntity->SetTransform(&mPosition);
+         mEntity->SetTransform(mPosition);
 
          if(mKeyboard->GetKeyState(Producer::Key_Up))
          {
@@ -94,7 +94,7 @@ public:
          mPosition.SetTranslation( 0.0f, -50.0f, 0.0f );
          mPosition.SetRotation( mCameraHeading, mCameraPitch, 0.0f );
 
-         mCamera->SetTransform(&mPosition);
+         mCamera->SetTransform(mPosition);
       }
    }
 
@@ -138,7 +138,7 @@ public:
 
       Transform position;
       position.SetTranslation(0.0f, -50.0f, 0.0f);
-      GetCamera()->SetTransform( &position );
+      GetCamera()->SetTransform( position );
 
       mEntity->LoadFile("models/uh-1n.ive");
       mEntity->SetEntityIdentifier( EntityIdentifier(1, 1, 1) );

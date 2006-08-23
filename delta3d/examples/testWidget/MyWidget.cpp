@@ -123,7 +123,7 @@ void MyWidget::ObjectLoaded( dtCore::Object* obj )
    Transform pos(0.f, 0.f, 0.f, 0.f, 0.f, 0.f);
    pos.SetLookAt( eye, targ, up );
 
-   GetCamera()->SetTransform( &pos );
+   GetCamera()->SetTransform( pos );
    mMotionModel->SetDistance( (targ - eye).length() );
 }
 

@@ -178,7 +178,7 @@ void TransformableTests::TestSetTransform()
       osg::equivalent( dimensions[2], mBoxLengths[2], 1e-2f ) );
    
    // Now let's set a real Transform and verify ODE knows about it
-   mTransformable->SetTransform(&mTransform);
+   mTransformable->SetTransform(mTransform);
 
    // Position
    osg::Vec3 osgPosition;

@@ -269,6 +269,6 @@ void Physical::PostPhysicsStepUpdate()
       mGeomTransform.SetTranslation( position[0], position[1], position[2] );
       mGeomTransform.SetRotation(newRotation);
 
-      this->SetTransform(&mGeomTransform);
+      this->SetTransform(mGeomTransform);
    }
 }

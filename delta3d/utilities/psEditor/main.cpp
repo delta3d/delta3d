@@ -2681,7 +2681,7 @@ class OrbitMotionModel : public MouseListener
          {
             Transform transform;
             
-            mTarget->GetTransform(&transform);
+            mTarget->GetTransform(transform);
             
             osg::Matrix mat;
             
@@ -2736,7 +2736,7 @@ class OrbitMotionModel : public MouseListener
             0.0f
          );
          
-         mTarget->SetTransform(&transform);
+         mTarget->SetTransform(transform);
          
          osg::Matrix mat;
          

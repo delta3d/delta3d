@@ -20,7 +20,7 @@ public:
       obj->LoadFile( "models/uh-1n.ive" );
 
       Transform transform( 0.0f, 50.0f, 0.0f );
-      obj->SetTransform( &transform );
+      obj->SetTransform( transform );
 
       AddDrawable(obj);
 

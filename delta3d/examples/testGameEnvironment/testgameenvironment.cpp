@@ -70,7 +70,7 @@ class TestGameEnvironmentApp : public dtABC::Application
          GetScene()->UseSceneLight(true);
 
          dtCore::Transform transform(0.0f, 0.0f, 30.0f);
-         GetCamera()->SetTransform(&transform);
+         GetCamera()->SetTransform(transform);
       }
 
       virtual void Config()

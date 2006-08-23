@@ -217,10 +217,10 @@ bool Transformable::GetAbsoluteMatrix( osg::Node* node, osg::Matrix& wcMatrix )
  * @param cs : Optional parameter describing the coordinate system of xform
  *             Defaults to ABS_CS.
  */
-void Transformable::SetTransform( const Transform* xform, CoordSysEnum cs )
+void Transformable::SetTransform( const Transform& xform, CoordSysEnum cs )
 {
    osg::Matrix newMat;
-   xform->Get(newMat);
+   xform.Get(newMat);
 
    if( cs == ABS_CS )
    {
@@ -262,7 +262,7 @@ void Transformable::SetTransform( const Transform* xform, CoordSysEnum cs )
  * @param cs : Optional parameter to select either the absolute world coordinate
  *             or the parent relative coordinate (default == ABS_CS)
  */
-void Transformable::GetTransform( Transform *xform, CoordSysEnum cs ) const
+void Transformable::GetTransform( Transform& xform, CoordSysEnum cs ) const
 {
    osg::Matrix newMat;
 
@@ -279,7 +279,7 @@ void Transformable::GetTransform( Transform *xform, CoordSysEnum cs ) const
      newMat = mt->getMatrix();
    }
 
-   xform->Set( newMat );
+   xform.Set( newMat );
 }
 
 /**
@@ -1192,9 +1192,9 @@ void Transformable::PrePhysicsStepUpdate()
 {
    Transform transform;
 
-   this->GetTransform(&transform, Transformable::ABS_CS);
+   this->GetTransform(transform, Transformable::ABS_CS);
 
-   if( !transform.EpsilonEquals(&mGeomTransform) )
+   if( !transform.EpsilonEquals(mGeomTransform) )
    {
       mGeomTransform = transform;
 

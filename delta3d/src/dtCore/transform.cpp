@@ -174,12 +174,12 @@ void Transform::SetLookAt(float posX, float posY, float posZ,
    SetLookAt( xyz, lookAt, upVec );
 }
 
-bool Transform::EpsilonEquals( const Transform* transform, float epsilon ) const
+bool Transform::EpsilonEquals( const Transform& transform, float epsilon ) const
 {
    osg::Matrix thisMatrix, thatMatrix;
 
    Get( thisMatrix );
-   transform->Get( thatMatrix );
+   transform.Get( thatMatrix );
 
    for( int i = 0; i < 4; i++ )
       for( int j = 0; j < 4; j++ )
@@ -204,5 +204,5 @@ bool Transform::operator==(const Transform & rhs)
 {
    if (this == &rhs) return true;
 
-   return EpsilonEquals( &rhs, 0.0f );
+   return EpsilonEquals( rhs, 0.0f );
 }

@@ -19,7 +19,7 @@ public:
       terr->SetSegmentDivisions(64);
 
       Transform trans = Transform( 0.0f, 0.0f, terr->GetVerticalScale() + 15.0f );
-      GetCamera()->SetTransform(&trans);
+      GetCamera()->SetTransform(trans);
 
       weather = new dtABC::Weather();   
       weather->AddChild( terr.get() );

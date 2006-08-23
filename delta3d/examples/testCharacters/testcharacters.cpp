@@ -80,11 +80,11 @@ public:
          Transform transform;
 
          osg::Vec3 ownPos;
-         mCharacter->GetTransform(&transform);
+         mCharacter->GetTransform(transform);
          transform.GetTranslation(ownPos);
 
          osg::Vec3 targetPos;
-         mTarget->GetTransform(&transform);
+         mTarget->GetTransform(transform);
          transform.GetTranslation(targetPos);
 
          osg::Vec3 vector = targetPos - ownPos;
@@ -162,7 +162,7 @@ public:
       //position the camera
       Transform position;
       position.SetTranslation( -0.75f, -10.f, 5.0f );
-      GetCamera()->SetTransform( &position );
+      GetCamera()->SetTransform( position );
 
       osg::Vec3 camLoc;
       position.GetTranslation( camLoc );
@@ -189,10 +189,10 @@ public:
       mMarine = new Character( "Dave" );
       
       position.SetTranslation( 0.0f, 0.0f, 3.5f );
-      mOpFor->SetTransform( &position);
+      mOpFor->SetTransform( position);
 
       position.SetTranslation( -2.0f, 0.0f, 3.5f );
-      mMarine->SetTransform( &position );
+      mMarine->SetTransform( position );
 
       mOpFor->LoadFile( "opfor/opfor.rbody" );
       mMarine->LoadFile( "marine/marine.rbody" );

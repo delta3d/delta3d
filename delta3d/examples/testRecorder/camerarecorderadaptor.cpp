@@ -30,7 +30,7 @@ CameraRecorderAdaptor::~CameraRecorderAdaptor()
 CameraRecorderAdaptor::FrameData* CameraRecorderAdaptor::CreateFrameData() const
 {
    dtCore::Transform xform;
-   mCamera->GetTransform( &xform );
+   mCamera->GetTransform( xform );
 
    FrameData* fd = new FrameData();
    xform.Get( fd->mMatrix );
@@ -40,9 +40,9 @@ CameraRecorderAdaptor::FrameData* CameraRecorderAdaptor::CreateFrameData() const
 void CameraRecorderAdaptor::UseFrameData(const FrameData* d)
 {
    dtCore::Transform xform;
-   mCamera->GetTransform(&xform);
+   mCamera->GetTransform(xform);
    xform.Set( d->mMatrix );
-   mCamera->SetTransform( &xform );
+   mCamera->SetTransform( xform );
 }
 
 CameraRecorderAdaptor::FrameData* CameraRecorderAdaptor::Deserialize(XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc,
