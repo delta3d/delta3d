@@ -129,14 +129,33 @@ namespace dtDAL
       newEntry.destroyFn = (DestroyPluginRegistryFun)destroyFn;
       newEntry.registry = newEntry.createFn();
 
+      if (!AddRegistryEntry(libName,newEntry))
+      {
+         msg.clear();
+         msg.str("");
+         msg << "Can't add Registry Entry: " << libName << " to Registry. " <<
+            "Possibly it might have been added already.";
+         EXCEPT(dtDAL::ExceptionEnum::ProjectResourceError, msg.str());
+      }
+   }
+
+   bool LibraryManager::AddRegistryEntry(const std::string &libName, const RegistryEntry& entry)
+   {
       //Finally we can actually add the new registry to the library manager.
       //The map key is the system independent library name.
-      mRegistries.insert(std::make_pair(libName,newEntry));
+      bool inserted = mRegistries.insert(std::make_pair(libName,entry)).second;
+      if( !inserted )
+      {
+         return false;
+      }
+
+      //Used to format log messages.
+      std::ostringstream msg;
 
       //Second we map actor type to the registry that owns it.
       std::vector<dtCore::RefPtr<ActorType> > actorTypes;
-      newEntry.registry->RegisterActorTypes();
-      newEntry.registry->GetSupportedActorTypes(actorTypes);
+      entry.registry->RegisterActorTypes();
+      entry.registry->GetSupportedActorTypes(actorTypes);
       int numUniqueActors = 0;
       for (unsigned int i=0; i<actorTypes.size(); i++)
       {
@@ -150,7 +169,7 @@ namespace dtDAL
          }
          else
          {
-            mActors.insert(std::make_pair(dtCore::RefPtr<ActorType>(actorTypes[i].get()),newEntry.registry));
+            mActors.insert(std::make_pair(dtCore::RefPtr<ActorType>(actorTypes[i].get()),entry.registry));
             ++numUniqueActors;
          }
       }
@@ -160,6 +179,8 @@ namespace dtDAL
       msg << "Loaded actor plugin registry. (Name: " << libName <<
          ", Number of Actors: " << numUniqueActors << ")";
       LOG_INFO(msg.str());
+
+      return true;
    }
 
    ///////////////////////////////////////////////////////////////////////////////

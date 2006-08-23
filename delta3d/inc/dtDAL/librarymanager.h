@@ -56,6 +56,7 @@ namespace dtDAL
        */
       typedef void (*DestroyPluginRegistryFun)(ActorPluginRegistry*);
 
+      public:
       /**
        * Simple structure for grouping the data corresponding to a
        * registry entry.
@@ -68,7 +69,7 @@ namespace dtDAL
          DestroyPluginRegistryFun destroyFn;
       };		
 
-      public:
+     
          typedef std::map<dtCore::RefPtr<ActorType>, ActorPluginRegistry*, ActorType::RefPtrComp> ActorTypeMap;
          typedef ActorTypeMap::iterator ActorTypeMapItor;
 
@@ -89,6 +90,15 @@ namespace dtDAL
           *		functions are not found in the library.
           */
          void LoadActorRegistry(const std::string &libName);
+
+         /**
+           * Inserts the pair of parameters into the container.
+           * Also, registers the supported Actor types with the manager.
+           * @param libName The system independent name of the library that was loaded
+           * @param entry The RegistryEntry mapped to the library name.
+           * @return true if successully added, false if not
+           */
+         bool AddRegistryEntry(const std::string &libName, const RegistryEntry& entry);
 
          /**
           * Unloads an actor registry.  This unloads the dynamic library
