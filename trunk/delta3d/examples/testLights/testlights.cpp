@@ -31,7 +31,7 @@ void TestLightsApp::Config()
    // create a global spot light.
    mGlobalSpot = new SpotLight( 1, "GlobalSpotlight" );
    trans.Set( 5.0f, 8.0f, 2.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f );
-   mGlobalSpot->SetTransform( &trans );
+   mGlobalSpot->SetTransform( trans );
    mGlobalSpot->SetSpotCutoff( 20.0f );
    mGlobalSpot->SetSpotExponent( 50.0f );
    GetScene()->AddDrawable( mGlobalSpot.get() );
@@ -42,7 +42,7 @@ void TestLightsApp::Config()
    
    // we want the sphere 1 unit below light so we can see effect of local light and
    trans.Set( 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f ); 
-   mSphere->SetTransform( &trans );
+   mSphere->SetTransform( trans );
 
    // create a global positional light.
    mPositional = new PositionalLight( 3, "PositionalLight" );
@@ -58,7 +58,7 @@ void TestLightsApp::Config()
 
    // set camera stuff
    trans.Set( 30.0f, -20.0f, 25.0f, 40.0f, -33.0f, 0.0f, 1.0f, 1.0f, 1.0f );
-   GetCamera()->SetTransform( &trans );
+   GetCamera()->SetTransform( trans );
 
    osg::Vec3 camLoc, origin;
    trans.GetTranslation( camLoc );
@@ -136,9 +136,9 @@ void TestLightsApp::PreFrame( const double deltaFrameTime )
    
    // rotate the spotlight
    Transform trans;
-   mGlobalSpot->GetTransform( &trans );
+   mGlobalSpot->GetTransform( trans );
    trans.SetRotation( countOne, 0.0f, 0.0f );
-   mGlobalSpot->SetTransform( &trans );
+   mGlobalSpot->SetTransform( trans );
    
    mPositional->SetAttenuation( 1.0f, greenValue/2.0f, blueValue/2.0f ); //change attenutation
    
@@ -146,7 +146,7 @@ void TestLightsApp::PreFrame( const double deltaFrameTime )
    float tx = 1.5*cos( osg::DegreesToRadians(countOne) ) + 2.0f;
    float ty = 1.5*sin( osg::DegreesToRadians(countOne) ) + 5.0f;
    trans.Set( tx, ty, 2.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f ); 
-   mPositional->SetTransform( &trans );
+   mPositional->SetTransform( trans );
    
    mGlobalInfinite->SetDiffuse( redValue, greenValue, blueValue, 1.0f ); //change color
    

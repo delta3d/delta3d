@@ -109,7 +109,7 @@ namespace dtCore
 
       ///checks to see if the param transform is within epsilon of this transform
       ///slightly more sophisticated as using operator ==
-      bool EpsilonEquals( const Transform* transform, float epsilon = 0.0001f ) const;
+      bool EpsilonEquals( const Transform& transform, float epsilon = 0.0001f ) const;
 
       Transform & operator=(const Transform &);
       bool        operator==(const Transform &);
@@ -118,8 +118,7 @@ namespace dtCore
 
       osg::Vec3 mTranslation; ///<Internal storage of translation
       osg::Matrix mRotation; ///<Internal storage of the rotation
-      osg::Vec3 mScale; ///<Internal storage of scale
-      
+      osg::Vec3 mScale; ///<Internal storage of scale 
    };
 };
 

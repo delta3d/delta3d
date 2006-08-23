@@ -1315,7 +1315,7 @@ void RTIConnection::ClampToGround(Entity* entity)
    {
       dtCore::Transform transform;
 
-      entity->GetTransform(&transform, dtCore::Transformable::REL_CS);
+      entity->GetTransform(transform, dtCore::Transformable::REL_CS);
 
       osg::Vec3 xyz;
       osg::Vec3 groundNormal(0, 0, 1);
@@ -1378,7 +1378,7 @@ void RTIConnection::ClampToGround(Entity* entity)
          transform.SetRotation(rotMat);
       }
 
-      entity->SetTransform(&transform, dtCore::Transformable::REL_CS);
+      entity->SetTransform(transform, dtCore::Transformable::REL_CS);
    }
 }
 
@@ -2009,9 +2009,9 @@ void RTIConnection::OnMessage(MessageData *data)
             );
          }
 
-         master->GetTransform(&transform, dtCore::Transformable::REL_CS);
+         master->GetTransform(transform, dtCore::Transformable::REL_CS);
 
-         if(doHeartbeat || !(*m).second.mTransform.EpsilonEquals(&transform))
+         if(doHeartbeat || !(*m).second.mTransform.EpsilonEquals(transform))
          {
             transform.GetTranslation(vec);
             transform.GetRotation(mat);
@@ -2412,7 +2412,7 @@ void RTIConnection::UpdateGhostPosition(const double dt, GhostData &gd, Entity *
    WorldCoordinate wc;
    VelocityVector vv;
 
-   ghost->GetTransform(&transform, dtCore::Transformable::REL_CS);
+   ghost->GetTransform(transform, dtCore::Transformable::REL_CS);
 
    wc = ghost->GetWorldLocation();
 
@@ -2455,7 +2455,7 @@ void RTIConnection::UpdateGhostPosition(const double dt, GhostData &gd, Entity *
 
    transform.SetTranslation(position);
 
-   ghost->SetTransform(&transform, dtCore::Transformable::REL_CS);
+   ghost->SetTransform(transform, dtCore::Transformable::REL_CS);
 
    if( mScene != 0 )
    {
@@ -2611,7 +2611,7 @@ void RTIConnection::reflectAttributeValues(
 
    unsigned int damageAttribute;
 
-   ghost->GetTransform(&transform, dtCore::Transformable::REL_CS);
+   ghost->GetTransform(transform, dtCore::Transformable::REL_CS);
 
    for(unsigned int i=0;i<theAttributes.size();i++)
    {
@@ -2945,7 +2945,7 @@ void RTIConnection::reflectAttributeValues(
       }
    }
 
-   ghost->SetTransform(&transform, dtCore::Transformable::REL_CS);
+   ghost->SetTransform(transform, dtCore::Transformable::REL_CS);
 
    if( mScene != 0 )
    {

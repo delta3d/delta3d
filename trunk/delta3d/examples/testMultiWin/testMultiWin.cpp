@@ -34,19 +34,19 @@ void TestMultiWin::Config()
 
    Transform transform( 0.0f, 0.0f, 5.0f );
 
-   GetCamera()->SetTransform( &transform );
+   GetCamera()->SetTransform( transform );
 
    mCam2 = new Camera("Camera 2");
    mCam2->SetWindow( mWin2.get() );
    mCam2->SetScene( GetScene() ); //use the default, pre-built Scene
    mCam2->GetCamera()->setProjectionRectangle (0.0f, 1.0f, 0.5f, 1.0f);
-   mCam2->SetTransform( &transform );
+   mCam2->SetTransform( transform );
 
    mCam3 = new Camera("Camera 3");
    mCam3->SetWindow( mWin2.get() );
    mCam3->SetScene( GetScene() );
    mCam3->GetCamera()->setProjectionRectangle (0.0f, 1.0f, 0.0f, 0.5f);
-   mCam3->SetTransform( &transform );
+   mCam3->SetTransform( transform );
 
    //setup scene here
    RefPtr<Object> terr = new Object();

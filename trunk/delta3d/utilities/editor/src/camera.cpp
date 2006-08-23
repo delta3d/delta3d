@@ -286,7 +286,7 @@ namespace dtEditQt
                 dtCore::Transform tx;                
                 osg::Vec3 tPos;
 
-                transformable->GetTransform(&tx);
+                transformable->GetTransform(tx);
                 tx.GetRotation(rotMat);
                 tx.GetTranslation(tPos);
                 rotOffset.set(rotMat);

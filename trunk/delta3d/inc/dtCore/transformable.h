@@ -30,6 +30,7 @@
 #include <dtUtil/enumeration.h>
 
 #include <osg/Version> // For #ifdef
+#include <dtUtil/breakoverride.h> // For BREAK_OVERRIDE macro
 
 namespace dtCore
 {
@@ -113,24 +114,7 @@ namespace dtCore
       virtual void RemoveChild( DeltaDrawable* child );
 
       /**
-       * Sets the Transform to reposition this Transformable. Note: The by-pointer version
-       * of this function will soon be deprecated in favor of the by-reference version
-       * since passing NULL for xform is almost a guaranteed crash. Note that if this
-       * function is overriden, then GetMatrix()->getMatrix() may return diffirent
-       * values.
-       *
-       * @param xform The value to set on this Transformable.
-       * @param cs The coordinate system of the returned Transform. For absolute,
-       * use ABS_CS, and for relative, us REL_CS.
-       *
-       * @pre xform != NULL
-       */
-      virtual void SetTransform(const Transform* xform, CoordSysEnum cs = ABS_CS );
-
-      /**
-       * Sets the Transform to reposition this Transformable. Note: The by-pointer version
-       * of this function will soon be deprecated in favor of the by-reference version
-       * since passing NULL for xform is almost a guaranteed crash. Note that if this
+       * Sets the Transform to reposition this Transformable. Note that if this
        * function is overriden, then GetMatrix()->getMatrix() may return diffirent
        * values.
        *
@@ -138,39 +122,16 @@ namespace dtCore
        * @param cs The coordinate system of the returned Transform. For absolute,
        * use ABS_CS, and for relative, us REL_CS.
        */
-      virtual void SetTransform(const Transform& xform, CoordSysEnum cs = ABS_CS )
-      {
-         SetTransform(&xform, cs);
-      }
+      virtual void SetTransform(const Transform& xform, CoordSysEnum cs = ABS_CS);
 
       /**
-       * Get the current Transform of this Transformable. Note: The by-pointer version
-       * of this function will soon be deprecated in favor of the by-reference version
-       * since passing NULL for xform is almost a guaranteed crash. Note that if this
-       * function is overriden, then it may return different values than set by
-       * GetMatrix()->setMatrix().
-       *
-       * @param xform The value will by assigned to this pointer.
-       * @param cs The coordinate system of the returned Transform. For absolute,
-       * use ABS_CS, and for relative, us REL_CS.
-       *
-       * @pre xform != NULL
-       */
-      virtual void GetTransform( Transform* xform, CoordSysEnum cs = ABS_CS ) const;
-
-      /**
-       * Get the current Transform of this Transformable. Note: The by-pointer version
-       * of this function will soon be deprecated in favor of the by-reference version
-       * since passing NULL for xform is almost a guarunteed crash.
+       * Get the current Transform of this Transformable.
        *
        * @param xform The value will by assigned to this reference.
        * @param cs The coordinate system of the returned Transform. For absolute,
        * use ABS_CS, and for relative, us REL_CS.
        */
-      virtual void GetTransform( Transform& xform, CoordSysEnum cs = ABS_CS ) const
-      {
-         GetTransform(&xform, cs);
-      }
+      virtual void GetTransform(Transform& xform, CoordSysEnum cs = ABS_CS) const;
 
       ///Convenience function to return back the internal matrix transform node
       osg::MatrixTransform* GetMatrixNode()
@@ -495,6 +456,13 @@ namespace dtCore
        * If we're rendering the collision geometry.                                                                    
        */
       bool mRenderingGeometry;
+
+      // These functions are are deprecated. The dummy BreakOverride struct
+      // forces subclasses that override these functions to have a compile
+      // error. Use the Transform& versions instead.
+      BREAK_OVERRIDE(SetTransform(Transform*, CoordSysEnum))
+      BREAK_OVERRIDE(SetTransform(const Transform*, CoordSysEnum))
+      BREAK_OVERRIDE(GetTransform(Transform*, CoordSysEnum) const)
 
    };
 

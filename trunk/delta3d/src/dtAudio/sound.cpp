@@ -294,7 +294,7 @@ void Sound::ListenerRelative( bool relative )
  * @param cs : Optional parameter describing the coordinate system of xform
  *             Defaults to ABS_CS.
  */
-void Sound::SetTransform( dtCore::Transform* xform, dtCore::Transformable::CoordSysEnum cs )
+void Sound::SetTransform( const dtCore::Transform& xform, dtCore::Transformable::CoordSysEnum cs )
 {
    // properly set transform to transformable object
    dtCore::Transformable::SetTransform( xform, cs );
@@ -306,7 +306,7 @@ void Sound::SetTransform( dtCore::Transform* xform, dtCore::Transformable::Coord
    osg::Vec3            pos( 0.0f, 0.0f, 0.0f );
    osg::Vec3            dir( 0.0f, 1.0f, 0.0f );
 
-   GetTransform( &transform, cs );
+   GetTransform( transform, cs );
 
    transform.GetTranslation( pos );
 

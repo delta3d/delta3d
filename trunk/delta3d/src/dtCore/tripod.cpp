@@ -110,12 +110,12 @@ void Tripod::Update(double deltaFrameTime) //virtual
    if (!mParentTrans.valid() || !mCamera.valid()) return;
 
    Transform parentXform;
-   mParentTrans->GetTransform(&parentXform);
+   mParentTrans->GetTransform(parentXform);
    osg::Matrix parentMat;
    parentXform.Get(parentMat);
 
    Transform currXform;
-   mCamera->GetTransform(&currXform);
+   mCamera->GetTransform(currXform);
    osg::Matrix currMat;
    currXform.Get(currMat);
 
@@ -148,7 +148,7 @@ void Tripod::Update(double deltaFrameTime) //virtual
    if (mLookAtTarget.valid())
    {
       Transform targetXform, lookatXform;
-      mLookAtTarget.get()->GetTransform(&targetXform);
+      mLookAtTarget.get()->GetTransform(targetXform);
       osg::Vec3 lookAtXYZ, upVec;
       upVec.set(0.f, 0.f, 1.f);
       targetXform.GetTranslation(lookAtXYZ);
@@ -191,7 +191,7 @@ void Tripod::Update(double deltaFrameTime) //virtual
    }
 
    parentXform.Set(newMat);
-   mCamera->SetTransform(&parentXform);
+   mCamera->SetTransform(parentXform);
 }
 
 /** The Camera will always point toward the look-at target if one is supplied.

@@ -26,7 +26,7 @@ public:
    virtual void operator()( osg::Node *node, osg::NodeVisitor* nv )
    {
       Transform trans;
-      mPositionalLight->GetTransform( &trans, Transformable::ABS_CS );
+      mPositionalLight->GetTransform( trans, Transformable::ABS_CS );
 
       osg::Matrix absMatrix;
       Transformable::GetAbsoluteMatrix( mPositionalLight->GetMatrixNode(), absMatrix );

@@ -100,11 +100,11 @@ void UserInterface::SelectInstance()
       Transform trans;
       if (TransformCSAbsButton->value())
       {
-         t->GetTransform( &trans, Transformable::ABS_CS );
+         t->GetTransform( trans, Transformable::ABS_CS );
       }
       else
       {
-         t->GetTransform( &trans, Transformable::REL_CS );
+         t->GetTransform( trans, Transformable::REL_CS );
       }
 
       osg::Vec3 xyz, hpr, scale;
@@ -685,11 +685,11 @@ void UserInterface::TransformPosCB(Fl_Value_Input*)
 
    if (TransformCSAbsButton->value())
    {
-      t->SetTransform( &trans, Transformable::ABS_CS );
+      t->SetTransform( trans, Transformable::ABS_CS );
    }
    else
    {
-      t->SetTransform( &trans, Transformable::REL_CS );
+      t->SetTransform( trans, Transformable::REL_CS );
    }
 
 }
@@ -702,12 +702,12 @@ void UserInterface::TransformCSCB( Fl_Round_Button *)
    if (TransformCSAbsButton->value())
    {
       //fill in widgets with abs position
-      t->GetTransform( &trans, Transformable::ABS_CS );
+      t->GetTransform( trans, Transformable::ABS_CS );
    }
    else
    {
       //fill in widgets with rel position
-      t->GetTransform( &trans, Transformable::REL_CS );
+      t->GetTransform( trans, Transformable::REL_CS );
    }
   
    osg::Vec3 xyz, hpr;

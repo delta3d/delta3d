@@ -38,7 +38,7 @@ class _updateCompassCallback  :  public   osg::NodeCallback
          osg::MatrixTransform*   xformNode   = static_cast<osg::MatrixTransform*>(node);
 
          Transform   xform;
-         mCompass.get()->GetTransform( &xform );
+         mCompass.get()->GetTransform( xform );
 
          osg::Matrix mat;
          xform.Get( mat );
@@ -46,7 +46,7 @@ class _updateCompassCallback  :  public   osg::NodeCallback
          if( dtCore::Camera*   cam   = mCompass->GetCamera() )
          {
             Transform   cam_xform;
-            cam->GetTransform( &cam_xform );
+            cam->GetTransform( cam_xform );
 
             osg::Matrix   cam_mat;
             cam_xform.GetRotation( cam_mat );

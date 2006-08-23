@@ -73,15 +73,15 @@ public:
       //position the camera
       Transform position;
       position.Set( 0.0f, -20.0f, 7.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f );
-      GetCamera()->SetTransform(&position);
+      GetCamera()->SetTransform(position);
 
       //position first falling crate
       position.Set( 0.55f, 0.0f, 6.0f, 0.0f, 40.0f, 0.0f, 1.0f, 1.0f, 1.0f );
-      obj2->SetTransform(&position);
+      obj2->SetTransform(position);
 
       //position the crate on the ground
       position.Set( 0.0f, 0.0f, 3.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f );
-      obj3->SetTransform(&position);
+      obj3->SetTransform(position);
 
       double lx = 1.0;
       double ly = 1.0;
@@ -119,7 +119,7 @@ public:
 
       //calculate and set focal distance for orbit motion model (origin -> camera)
       Transform trans;
-      GetCamera()->GetTransform(&trans);
+      GetCamera()->GetTransform(trans);
 
       osg::Vec3 camLoc;
       trans.GetTranslation(camLoc);
@@ -225,7 +225,7 @@ protected:
                float randomScale = RandFloat( 0.5f, 2.0f );
                xform.SetScale( randomScale, randomScale, randomScale );
                
-               box->SetTransform(&xform);
+               box->SetTransform(xform);
             
                double lx = 1.0;
                double ly = 1.0;
@@ -265,7 +265,7 @@ protected:
                float randomScale = RandFloat( 0.5f, 2.0f );
                xform.SetScale( randomScale, randomScale, randomScale );
                
-               sphere->SetTransform(&xform);
+               sphere->SetTransform(xform);
                
                double radius = 0.5;
                
@@ -302,7 +302,7 @@ protected:
                float randomScale = RandFloat( 0.5f, 2.0f );
                xform.SetScale( randomScale, randomScale, randomScale );
                
-               cyl->SetTransform(&xform);
+               cyl->SetTransform(xform);
                
                double radius = 0.321; 
                double length = 1.0;            

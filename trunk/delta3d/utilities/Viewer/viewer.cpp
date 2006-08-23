@@ -115,7 +115,7 @@ Viewer::Config( const WinData* d /*= NULL*/ )
 
    mCurState.GetCamPosition( cam, true );
 
-   GetCamera()->SetTransform( &cam );
+   GetCamera()->SetTransform( cam );
 
 
    // make sure that the global color mask exists.
@@ -159,7 +159,7 @@ void Viewer::GetState( ViewState* vs )
    assert( vs );
 
    Transform   cam;
-   GetCamera()->GetTransform( &cam );
+   GetCamera()->GetTransform( cam );
    mCurState.SetCamPosition( cam );
 
    OrbitMotionModel* omm   = static_cast<OrbitMotionModel*>(mMotionModel[ORBIT]);
@@ -185,7 +185,7 @@ void Viewer::SetState( ViewState* vs )
       // set the cam position
       Transform   cam;
       vs->GetCamPosition( cam );
-      GetCamera()->SetTransform( &cam );
+      GetCamera()->SetTransform( cam );
 
       OrbitMotionModel* omm   = static_cast<OrbitMotionModel*>(mMotionModel[ORBIT]);
       assert( omm );
@@ -503,7 +503,7 @@ void Viewer::ResetCam( void )
       static_cast<OrbitMotionModel*>(mMotionModel[ORBIT])->SetDistance( dist );
    }
 
-   GetCamera()->SetTransform( &cam );
+   GetCamera()->SetTransform( cam );
 }
 
 

@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc., 
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
  *
-*/
+ */
 
 #ifndef DELTA_SOUND
 #define DELTA_SOUND
@@ -312,7 +312,7 @@ namespace dtAudio
           * @param cs : Optional parameter describing the coordinate system of xform
           *             Defaults to ABS_CS.
           */
-         virtual  void        SetTransform(  dtCore::Transform*                  xform,
+         virtual  void        SetTransform(  const dtCore::Transform&                  xform,
                                              dtCore::Transformable::CoordSysEnum cs = dtCore::Transformable::ABS_CS );
 
          /**

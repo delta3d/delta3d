@@ -120,7 +120,7 @@ public:
       LOG_DEBUG("SetCam: "+vec3ToString(posV3));
 
       //std::cout << "Camera Pos = " <<  pos.x() << ", " << pos.y() << ", " << pos.z() << std::endl;
-      GetCamera()->SetTransform(&tx);         
+      GetCamera()->SetTransform(tx);         
 
       // Set up a motion model so we can move the camera
       mMotionModel = new dtCore::FlyMotionModel(GetKeyboard(), GetMouse());
@@ -421,13 +421,13 @@ public:
       if (mTerrainClamp)
       {
          dtCore::Transform tx;
-         GetCamera()->GetTransform(&tx);
+         GetCamera()->GetTransform(tx);
 
          osg::Vec3 trans;
          tx.GetTranslation(trans);         
          trans.z() = mTerrain->GetHeight(trans.x(),trans.y()) + PLAYER_HEIGHT;         
          tx.SetTranslation(trans);
-         GetCamera()->SetTransform(&tx);
+         GetCamera()->SetTransform(tx);
       }
    }
 

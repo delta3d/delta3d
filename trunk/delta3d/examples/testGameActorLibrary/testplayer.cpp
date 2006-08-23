@@ -75,7 +75,7 @@ void TestPlayer::HandleTick(double deltaSimTime, bool forceGroundClamp)
       osg::Quat q;
       osg::Vec3 viewDir;
 
-      GetTransform(&tx);
+      GetTransform(tx);
       tx.GetRotation(mat);
       mat.get(q);
 
@@ -108,7 +108,7 @@ void TestPlayer::HandleTick(double deltaSimTime, bool forceGroundClamp)
          xyz[2] -= 360.0f;
 
       tx.SetTranslation(pos);
-      SetTransform(&tx);
+      SetTransform(tx);
       GetGameActorProxy().SetRotation(xyz);
    }
 

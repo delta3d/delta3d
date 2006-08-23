@@ -35,7 +35,7 @@ public:
       this->AddDrawable(weather->GetEnvironment());
 
       Transform xform(0.f, 00.f, 30.f, 0.f, 10.f, 0.f);
-      GetCamera()->SetTransform(&xform);
+      GetCamera()->SetTransform(xform);
 
       orbit = new OrbitMotionModel( GetKeyboard(), GetMouse() );
       orbit->SetTarget(GetCamera());

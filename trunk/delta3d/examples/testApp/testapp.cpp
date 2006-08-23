@@ -28,7 +28,7 @@ int main()
    dtCore::Transform trans;
    trans.SetTranslation( brdmPosition );
    trans.SetRotation( brdmRotation );
-   brdm->SetTransform( &trans );
+   brdm->SetTransform( trans );
    
    //adjust the Camera position
    dtCore::Transform camPos;
@@ -36,7 +36,7 @@ int main()
    osg::Vec3 lookAtXYZ ( brdmPosition );
    osg::Vec3 upVec ( 0.f, 0.f, 1.f );
    camPos.SetLookAt( camXYZ, lookAtXYZ, upVec );
-   app->GetCamera()->SetTransform( &camPos );
+   app->GetCamera()->SetTransform( camPos );
 
    app->Config();
    app->Run();

@@ -31,7 +31,7 @@ public:
       mMotionModel->SetTarget(GetCamera());
       GetCamera()->SetPerspective(90.0f, 70.0f, 1.0f, 5000.0f);
 		Transform xform(0.0f, -300.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-		GetCamera()->SetTransform(&xform);
+		GetCamera()->SetTransform(xform);
 
 	}
 
@@ -52,7 +52,7 @@ public:
 
       osg::Vec3 ep;
       Transform trans;
-      GetCamera()->GetTransform(&trans);
+      GetCamera()->GetTransform(trans);
       trans.GetTranslation(ep);
 
 

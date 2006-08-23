@@ -22,7 +22,7 @@ public:
       EnableShaders();
 
       Transform xform(0.0f, -3.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-      GetCamera()->SetTransform(&xform);
+      GetCamera()->SetTransform(xform);
 
       GetWindow()->SetWindowTitle("testShaders");
    }
@@ -99,9 +99,9 @@ public:
       osg::Matrix rotateMat;
       rotateMat.makeRotate(osg::DegreesToRadians(30.0f) * mTotalTime, osg::Vec3(0.0f, 0.0f, 1.0f));
       Transform xform;
-      mObject->GetTransform(&xform);
+      mObject->GetTransform(xform);
       xform.SetRotation(rotateMat);
-      mObject->SetTransform(&xform);
+      mObject->SetTransform(xform);
    }
 
 private:

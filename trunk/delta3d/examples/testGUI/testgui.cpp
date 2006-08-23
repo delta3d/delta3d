@@ -34,7 +34,7 @@ public:
 
       ///move the camera around to see the side of the 3D Object
       Transform xform(-30.0f, 0.0f, 0.0f, -90.0f, 0.0f, 0.0f );
-      GetCamera()->SetTransform( &xform );
+      GetCamera()->SetTransform( xform );
 
       ///lets hide the stock cursor and just use CEGUI's rendered cursor
       GetWindow()->ShowCursor( false );

@@ -188,10 +188,10 @@ namespace dtGame
       else if (helper.IsUpdated())
       {
          dtCore::Transform xform;
-         toRegister.GetGameActor().GetTransform(&xform);
+         toRegister.GetGameActor().GetTransform(xform);
          xform.SetTranslation(helper.GetLastKnownTranslation());
          xform.SetRotation(helper.GetLastKnownRotation());
-         toRegister.GetGameActor().SetTransform(&xform);
+         toRegister.GetGameActor().SetTransform(xform);
          helper.mTransBeforeLastUpdate = helper.GetLastKnownTranslation();
          helper.mRotQuatBeforeLastUpdate = helper.mLastQuatRotation;
       }
@@ -452,7 +452,7 @@ namespace dtGame
          }
 
          dtCore::Transform xform;
-         gameActor.GetTransform(&xform);
+         gameActor.GetTransform(xform);
          osg::Vec3& pos = xform.GetTranslation();
          osg::Matrix& rot = xform.GetRotation();
 

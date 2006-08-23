@@ -376,7 +376,7 @@ void WalkMotionModel::OnMessage(MessageData *data)
       
       Transform transform;
       
-      GetTarget()->GetTransform(&transform);
+      GetTarget()->GetTransform(transform);
       
       osg::Vec3 xyz, hpr, scale;
       
@@ -461,7 +461,7 @@ void WalkMotionModel::OnMessage(MessageData *data)
       
       transform.SetTranslation(xyz);
       
-      GetTarget()->SetTransform(&transform);  
+      GetTarget()->SetTransform(transform);  
    }
 }
 

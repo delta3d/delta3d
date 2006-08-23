@@ -358,7 +358,7 @@ void FlyMotionModel::OnMessage(MessageData *data)
 
       Transform transform;
       
-      GetTarget()->GetTransform(&transform);
+      GetTarget()->GetTransform(transform);
       
       osg::Vec3 xyz, hpr, scale;
       
@@ -400,6 +400,6 @@ void FlyMotionModel::OnMessage(MessageData *data)
       
       transform.SetTranslation(xyz);
       
-      GetTarget()->SetTransform(&transform);  
+      GetTarget()->SetTransform(transform);  
    }
 }
