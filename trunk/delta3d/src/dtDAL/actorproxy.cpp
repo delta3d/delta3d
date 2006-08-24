@@ -18,13 +18,14 @@
  *
  * @author Matthew W. Campbell
  */
-#include "dtDAL/actorproxy.h"
+#include <prefix/dtdalprefix-src.h>
+#include <dtDAL/actorproxy.h>
 #include <dtUtil/log.h>
-#include "dtDAL/enginepropertytypes.h"
-#include "dtDAL/actorproperty.h"
-#include "dtDAL/datatype.h"
-#include "dtDAL/librarymanager.h"
-#include "dtDAL/actorproxyicon.h"
+#include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/actorproperty.h>
+#include <dtDAL/datatype.h>
+#include <dtDAL/librarymanager.h>
+#include <dtDAL/actorproxyicon.h>
 #include <dtCore/scene.h>
 #include <dtCore/deltadrawable.h>
 #include <dtCore/transformable.h>

@@ -17,6 +17,7 @@
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
 */
+#include <prefix/dtdalprefix-src.h>
 #include "dtDAL/environmentactor.h"
 
 namespace dtDAL

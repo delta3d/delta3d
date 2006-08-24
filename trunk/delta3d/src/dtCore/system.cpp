@@ -2,6 +2,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#include <prefix/dtcoreprefix-src.h>
 #include <dtCore/system.h>
 #include <dtUtil/log.h>
 #include <dtCore/camera.h>

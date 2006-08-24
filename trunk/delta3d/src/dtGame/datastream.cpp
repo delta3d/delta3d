@@ -18,9 +18,11 @@
  *
  * @author Matthew W. Campbell and David Guthrie
  */
+#include <prefix/dtgameprefix-src.h>
 #include <limits.h>
 #include <osg/Endian>
-#include "dtGame/datastream.h"
+#include <dtUtil/exception.h>
+#include <dtGame/datastream.h>
 
 namespace dtGame
 {

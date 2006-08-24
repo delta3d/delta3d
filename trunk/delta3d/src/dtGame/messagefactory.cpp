@@ -18,7 +18,7 @@
  *
  * @author William E. Johnson II
  */
-
+#include <prefix/dtgameprefix-src.h>
 #include "dtGame/messagefactory.h"
 #include "dtGame/message.h"
 #include "dtGame/basemessages.h"

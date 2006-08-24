@@ -18,7 +18,7 @@
  *
  * @author William E. Johnson II and David Guthrie
  */
-
+#include <prefix/dtgameprefix-src.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/functor.h>
 #include <dtGame/message.h>

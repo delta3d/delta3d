@@ -1,3 +1,4 @@
+#include <prefix/dtcoreprefix-src.h>
 #include <dtCore/infinitelight.h>
 
 #include <dtUtil/matrixutil.h>

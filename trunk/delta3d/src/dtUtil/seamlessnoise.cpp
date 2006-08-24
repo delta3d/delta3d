@@ -1,4 +1,5 @@
-#include "dtUtil/seamlessnoise.h"
+#include <prefix/dtutilprefix-src.h>
+#include <dtUtil/seamlessnoise.h>
 #include <cstdlib>
 
 

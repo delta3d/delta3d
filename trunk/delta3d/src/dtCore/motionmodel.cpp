@@ -1,7 +1,7 @@
 // motionmodel.cpp: Implementation of the MotionModel class.
 //
 //////////////////////////////////////////////////////////////////////
-
+#include <prefix/dtcoreprefix-src.h>
 #include <dtCore/motionmodel.h>
 #include <dtCore/scene.h>
 #include <dtCore/transformable.h>

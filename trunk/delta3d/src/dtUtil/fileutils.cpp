@@ -18,6 +18,7 @@
  *
  * @author David Guthrie
  */
+#include <prefix/dtutilprefix-src.h>
 
 #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 #   include <windows.h>

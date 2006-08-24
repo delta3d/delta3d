@@ -1,3 +1,4 @@
+#include <prefix/dtcoreprefix-src.h>
 #include <dtCore/environment.h>
 
 #include <dtCore/camera.h>

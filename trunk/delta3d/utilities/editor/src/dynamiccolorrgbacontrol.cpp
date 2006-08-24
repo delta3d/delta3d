@@ -19,7 +19,7 @@
 *
 * @author Curtiss Murphy
 */
-
+#include <prefix/dtstageprefix-src.h>
 #include "dtEditQt/dynamiccolorelementcontrol.h"
 #include "dtEditQt/dynamiccolorrgbacontrol.h"
 #include "dtEditQt/dynamicsubwidgets.h"

@@ -1,7 +1,7 @@
 // base.cpp: Implementation of the Base class.
 //
 //////////////////////////////////////////////////////////////////////
-
+#include <prefix/dtcoreprefix-src.h>
 #include <dtCore/base.h>
 #include <dtUtil/log.h>
 

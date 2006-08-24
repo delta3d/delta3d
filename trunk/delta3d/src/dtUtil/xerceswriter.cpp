@@ -1,5 +1,6 @@
-#include "dtUtil/xerceswriter.h"
-#include "dtUtil/log.h"
+#include <prefix/dtutilprefix-src.h>
+#include <dtUtil/xerceswriter.h>
+#include <dtUtil/log.h>
 
 #include <xercesc/framework/LocalFileFormatTarget.hpp>
 #include <xercesc/dom/DOMImplementationRegistry.hpp>

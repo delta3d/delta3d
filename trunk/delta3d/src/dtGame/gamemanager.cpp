@@ -18,19 +18,20 @@
 *
 * @author Matthew W. Campbell, William E. Johnson II, David Guthrie
 */
-
-#include "dtGame/gamemanager.h"
-#include "dtGame/messagefactory.h"
-#include "dtGame/basemessages.h"
-#include "dtGame/actorupdatemessage.h"
-#include "dtGame/exceptionenum.h"
-#include "dtGame/gmcomponent.h"
+#include <prefix/dtgameprefix-src.h>
+#include <dtGame/gamemanager.h>
+#include <dtGame/messagefactory.h>
+#include <dtGame/basemessages.h>
+#include <dtGame/actorupdatemessage.h>
+#include <dtGame/exceptionenum.h>
+#include <dtGame/gmcomponent.h>
 #include <dtDAL/actortype.h>
 #include <dtDAL/project.h>
 #include <dtDAL/map.h>
 #include <dtDAL/librarymanager.h>
 #include <dtCore/system.h>
 #include <dtCore/camera.h>
+#include <dtCore/scene.h>
 #include <dtUtil/stringutils.h>
 
 namespace dtGame
@@ -158,6 +159,15 @@ namespace dtGame
    {
       mApplication = &application;
    }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   dtCore::Scene& GameManager::GetScene() { return *mScene; }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   const dtCore::Scene& GameManager::GetScene() const { return *mScene; }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void GameManager::SetScene(dtCore::Scene &newScene) { mScene = &newScene; }
 
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::OnMessage(MessageData *data)

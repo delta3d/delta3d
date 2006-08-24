@@ -18,6 +18,7 @@
  *
  * @author Matthew W. Campbell and David Guthrie
  */
+#include <prefix/dtdalprefix-src.h>
 #include "dtDAL/librarymanager.h"
 #include "dtDAL/actortype.h"
 #include "dtDAL/exceptionenum.h"

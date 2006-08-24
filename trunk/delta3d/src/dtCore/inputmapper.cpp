@@ -1,7 +1,7 @@
 // inputmapper.cpp: Implementation of the InputMapper class.
 //
 //////////////////////////////////////////////////////////////////////
-
+#include <prefix/dtcoreprefix-src.h>
 #include "dtCore/inputmapper.h"
 
 namespace dtCore

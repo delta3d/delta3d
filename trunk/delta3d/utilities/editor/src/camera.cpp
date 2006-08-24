@@ -19,6 +19,7 @@
 *
 * @author Matthew W. Campbell
 */
+#include <prefix/dtstageprefix-src.h>
 #include <osg/Math>
 #include "dtEditQt/camera.h"
 #include <dtCore/transformable.h>

@@ -5,6 +5,7 @@
 #include <dtCore/globals.h>
 #include <dtCore/camera.h>
 #include <dtCore/scene.h>
+#include <dtCore/deltawin.h>
 
 using namespace dtCore;
 using namespace dtABC;

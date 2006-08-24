@@ -1,7 +1,7 @@
 // orbitmotionmodel.cpp: Implementation of the OrbitMotionModel class.
 //
 //////////////////////////////////////////////////////////////////////
-
+#include <prefix/dtcoreprefix-src.h>
 #include <dtCore/keyboard.h>
 #include <dtCore/mouse.h>
 #include <dtCore/logicalinputdevice.h>

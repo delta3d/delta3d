@@ -5,6 +5,7 @@
 #include <osg/PrimitiveSet>
 #include <osg/Program>
 #include <dtCore/camera.h>
+#include <dtCore/deltawin.h>
 
 using namespace dtABC;
 using namespace dtCore;

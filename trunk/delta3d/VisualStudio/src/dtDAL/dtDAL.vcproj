@@ -26,7 +26,8 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				RuntimeTypeInfo="TRUE"
-				UsePrecompiledHeader="0"
+				UsePrecompiledHeader="3"
+				PrecompiledHeaderThrough="prefix/dtdalprefix-src.h"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="3"
@@ -79,7 +80,9 @@
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
-				UsePrecompiledHeader="0"
+				UsePrecompiledHeader="3"
+				PrecompiledHeaderThrough="prefix/dtdalprefix-src.h"
+				PrecompiledHeaderFile="$(IntDir)/$(TargetName).pch"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="0"/>
@@ -173,6 +176,21 @@
 				RelativePath="..\..\..\src\dtDAL\physicalactorproxy.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtDAL\precomp.cpp">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtDAL\project.cpp">
 			</File>
 			<File
@@ -222,6 +240,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtDAL\dtdal.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\prefix\dtdalprefix-src.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtDAL\enginepropertytypes.h">

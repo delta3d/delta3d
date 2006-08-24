@@ -25,7 +25,9 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				RuntimeTypeInfo="TRUE"
-				UsePrecompiledHeader="0"
+				UsePrecompiledHeader="3"
+				PrecompiledHeaderThrough="prefix/dtutilprefix-src.h"
+				PrecompiledHeaderFile="$(IntDir)/$(TargetName).pch"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="3"/>
@@ -78,7 +80,9 @@
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
-				UsePrecompiledHeader="0"
+				UsePrecompiledHeader="3"
+				PrecompiledHeaderThrough="prefix/dtutilprefix-src.h"
+				PrecompiledHeaderFile="$(IntDir)/$(TargetName).pch"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="0"/>
@@ -129,6 +133,20 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
 				RelativePath="..\..\..\src\dtUtil\coordinates.cpp">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						PrecompiledHeaderThrough="prefix/dtutilprefix-src.h"
+						PrecompiledHeaderFile="$(IntDir)\$(TargetName).pch"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						PrecompiledHeaderThrough="prefix/dtutilprefix-src.h"
+						PrecompiledHeaderFile="$(IntDir)\$(TargetName).pch"/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtUtil\exception.cpp">
@@ -150,6 +168,21 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtUtil\polardecomp.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtUtil\precomp.cpp">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtUtil\seamlessnoise.cpp">
@@ -194,6 +227,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtUtil\dtutil.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\prefix\dtutilprefix-src.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtUtil\enumeration.h">

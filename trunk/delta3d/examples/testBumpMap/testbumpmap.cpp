@@ -3,6 +3,7 @@
 #include <dtCore/flymotionmodel.h>
 #include <dtCore/object.h>
 #include <dtCore/camera.h>
+#include <dtCore/deltawin.h>
 
 #include "bumpmapdrawable.h"
 

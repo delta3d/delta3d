@@ -25,6 +25,7 @@
 #include <dtCore/transform.h>
 #include <dtCore/transformable.h>
 #include <dtCore/isector.h>
+#include <dtCore/scene.h>
 #include <dtGame/gamemanager.h> 
 #include <dtGame/exceptionenum.h>
 #include <dtGame/deadreckoningcomponent.h>
@@ -51,6 +52,11 @@ namespace dtGame
          {
             return GetGroundClampIsector();
          }     
+         
+         void InternalCalcTotSmoothingSteps(DeadReckoningHelper& helper, const dtCore::Transform& xform)
+         {
+            CalculateTotalSmoothingSteps(helper, xform);
+         }      
    };
    
    class DeadReckoningComponentTests : public CPPUNIT_NS::TestFixture 
@@ -64,6 +70,7 @@ namespace dtGame
          CPPUNIT_TEST(TestActorRegistration);
          CPPUNIT_TEST(TestSimpleBehavior);
          CPPUNIT_TEST(TestHighResClampProperty);
+         CPPUNIT_TEST(TestSmoothingStepsCalc);
    
       CPPUNIT_TEST_SUITE_END();
    
@@ -104,6 +111,8 @@ namespace dtGame
             CPPUNIT_ASSERT(helper->GetAccelerationVector() == vec);
             CPPUNIT_ASSERT(helper->GetAngularVelocityVector() == vec);
             CPPUNIT_ASSERT(helper->GetGroundOffset() == 0.0f);
+            CPPUNIT_ASSERT(helper->GetMaxRotationSmoothingSteps() == 3.0f);
+            CPPUNIT_ASSERT(helper->GetMaxTranslationSmoothingSteps() == 8.0f);
          }
    
          void TestDeadReckoningHelperProperties()
@@ -155,6 +164,14 @@ namespace dtGame
             CPPUNIT_ASSERT(helper->GetGroundOffset() == 43.4f);
             CPPUNIT_ASSERT(helper->IsUpdated());
             helper->ClearUpdated();
+
+            helper->SetMaxRotationSmoothingSteps(5.3f);
+            CPPUNIT_ASSERT(!helper->IsUpdated());
+            CPPUNIT_ASSERT(helper->GetMaxRotationSmoothingSteps() == 5.3f);
+
+            helper->SetMaxTranslationSmoothingSteps(4.8f);
+            CPPUNIT_ASSERT(!helper->IsUpdated());
+            CPPUNIT_ASSERT(helper->GetMaxTranslationSmoothingSteps() == 4.8f);
          }
    
          void TestTerrainProperty()
@@ -303,6 +320,41 @@ namespace dtGame
             CPPUNIT_ASSERT(!mDeadReckoningComponent->IsRegisteredActor(*actor));
          }
    
+         void TestSmoothingStepsCalc()
+         {
+            dtCore::RefPtr<DeadReckoningHelper> helper = new DeadReckoningHelper;            
+            dtCore::Transform xform(300.0f, 200.0f, 100.0f, 30.0f, 32.2f, 93.0f);
+
+            helper->SetLastKnownTranslation(osg::Vec3(-0.4f, -0.3f, -2.7f));
+            helper->SetLastKnownRotation(osg::Vec3(-0.4f, -0.3f, -2.7f));
+            helper->SetVelocityVector(osg::Vec3(0.0f, 0.0f, 0.0f));
+
+            //make sure the average update time is high.
+            helper->SetLastUpdatedTime(20.0);
+            helper->SetLastUpdatedTime(40.0);
+
+            CPPUNIT_ASSERT_MESSAGE("The average time between updates is too low for the rest of the test to be valid", 
+               helper->GetAverageTimeBetweenUpdates() > 10.0);
+
+            mDeadReckoningComponent->InternalCalcTotSmoothingSteps(*helper, xform);
+            
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("The smoothing steps for translation should be 1.0 because it's too far for the velocity vector, so it should essentially warp.",
+               1.0f, helper->GetCurrentTotalTranslationSmoothingSteps());
+            
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("The smoothing steps for rotation should be 1.0 because the velocity vector is 0",
+               1.0f, helper->GetCurrentTotalRotationSmoothingSteps());
+
+            helper->SetVelocityVector(osg::Vec3(100.0f, 100.0f, 100.0f));
+
+            mDeadReckoningComponent->InternalCalcTotSmoothingSteps(*helper, xform);
+            
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("The translation smoothing steps should be set to the maximum because the actor can reach the new update point quickly given its velocity.",
+               helper->GetCurrentTotalTranslationSmoothingSteps(), helper->GetCurrentTotalTranslationSmoothingSteps());
+
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("The rotation smoothing steps should be set to the maximum because the actor is moving.",
+               helper->GetCurrentTotalRotationSmoothingSteps(), helper->GetCurrentTotalRotationSmoothingSteps());
+            
+         }
    
       private:
    

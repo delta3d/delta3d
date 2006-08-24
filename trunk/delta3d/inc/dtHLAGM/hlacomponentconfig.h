@@ -26,7 +26,7 @@
 #include <xercesc/sax2/SAX2XMLReader.hpp>
 namespace xercesc_dt = XERCES_CPP_NAMESPACE;
 
-#include "dtHLAGM/export.h"
+#include <dtHLAGM/export.h>
 
 namespace dtUtil
 {

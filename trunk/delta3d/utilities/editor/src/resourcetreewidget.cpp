@@ -19,6 +19,7 @@
 *
 * @author Teague Coonan
 */
+#include <prefix/dtstageprefix-src.h>
 #include <QtCore/QString>
 #include <QtCore/QList>
 #include <QtGui/QPixmap>

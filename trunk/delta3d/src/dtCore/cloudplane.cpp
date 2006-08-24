@@ -1,3 +1,4 @@
+#include <prefix/dtcoreprefix-src.h>
 #include <dtCore/cloudplane.h>
 #include <dtCore/moveearthtransform.h>
 #include <dtCore/system.h>

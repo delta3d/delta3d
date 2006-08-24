@@ -22,6 +22,7 @@
 #include <dtCore/keyboard.h>
 #include <dtABC/application.h>
 #include <dtCore/refptr.h>
+#include <dtCore/deltawin.h>
 
 namespace dtTest
 {

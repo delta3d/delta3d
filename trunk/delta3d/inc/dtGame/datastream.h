@@ -32,14 +32,14 @@
 #include <osg/Vec3d>
 #include <osg/Vec4d>
 
+#include <dtUtil/enumeration.h>
 #include <dtCore/uniqueid.h>
-#include <dtDAL/exceptionenum.h>
-#include "dtGame/export.h"
+#include <dtGame/export.h>
 
 namespace dtGame 
 {
    
-   class DT_GAME_EXPORT DataStreamException : public dtDAL::ExceptionEnum 
+   class DT_GAME_EXPORT DataStreamException : public dtUtil::Enumeration 
    {
       DECLARE_ENUM(DataStreamException);
       public:
@@ -50,7 +50,7 @@ namespace dtGame
          static DataStreamException BUFFER_INVALID_POS;
       
       private:
-         DataStreamException(const std::string &name) : dtDAL::ExceptionEnum(name) 
+         DataStreamException(const std::string &name) : dtUtil::Enumeration(name) 
          {
             AddInstance(this);
          }

@@ -26,6 +26,7 @@
 #include <osgText/Text>
 #include <osg/Projection>
 #include <osg/Switch>
+#include <osg/Version>
 
 #include <dtCore/export.h>
 #include <dtCore/timer.h>
@@ -48,7 +49,11 @@ namespace dtCore
       void Init(osgUtil::RenderStage* stg);
       void Draw();
       void SetTime(int type);
+#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR == 1 && OSG_VERSION_MINOR == 1 && OSG_VERSION_RELEASE == 1
+      void SelectType(osgUtil::Statistics::StatsType type);
+#else
       void SelectType(osgUtil::Statistics::statsType type);
+#endif
       void SelectNextType(void);
       double FrameSeconds() { return mTimer.DeltaSec(mLastFrameTick,mFrameTick); }
       double FrameRate() { return 1.0/FrameSeconds(); }

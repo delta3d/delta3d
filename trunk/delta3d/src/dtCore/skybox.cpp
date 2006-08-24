@@ -18,7 +18,7 @@
 *
 *@author Bradley Anderegg
 */
-
+#include <prefix/dtcoreprefix-src.h>
 #include <dtCore/skybox.h>
 
 #include <dtCore/moveearthtransform.h>

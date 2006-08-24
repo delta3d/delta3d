@@ -51,7 +51,7 @@ namespace dtDAL
 
 namespace dtGame
 {
-   class ClientGameManager;
+   class GameManager;
    class GameActorProxy;
    class ServerLoggerComponent;
    class LogController;
@@ -215,7 +215,7 @@ class AARApplication : public dtABC::Application
       void GotoNextKeyframe();
 
 private:
-      dtCore::RefPtr<dtGame::ClientGameManager> mClientGM;
+      dtCore::RefPtr<dtGame::GameManager> mClientGM;
       dtCore::RefPtr<dtGame::LogController> mLogController;
       dtCore::RefPtr<dtGame::TaskComponent> mTaskComponent;
       dtCore::RefPtr<dtGame::ServerLoggerComponent> mServerLogger;

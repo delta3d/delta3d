@@ -1,3 +1,4 @@
+#include <prefix/dtcoreprefix-src.h>
 #include <dtCore/light.h>
 
 #include <dtCore/scene.h>

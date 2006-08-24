@@ -36,6 +36,7 @@ namespace dtABC
       static const std::string SCENE;
       static const std::string CAMERA;
       static const std::string LOG;
+      static const std::string LIBRARY_PATH;
 
       static const std::string X;
       static const std::string Y;
@@ -53,7 +54,6 @@ namespace dtABC
       
       static const std::string LOG_NAME;
       static const std::string LOG_LEVEL;
-
    };
 }
 

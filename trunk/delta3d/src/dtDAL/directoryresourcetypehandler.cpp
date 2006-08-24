@@ -18,7 +18,7 @@
  *
  * @author David Guthrie
  */
-
+#include <prefix/dtdalprefix-src.h>
 #include <osgDB/FileNameUtils>
 #include <dtUtil/fileutils.h>
 

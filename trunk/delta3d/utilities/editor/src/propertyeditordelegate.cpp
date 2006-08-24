@@ -19,7 +19,7 @@
 *
 * @author Curtiss Murphy
 */
-
+#include <prefix/dtstageprefix-src.h>
 #include "dtEditQt/propertyeditormodel.h"
 #include "dtEditQt/propertyeditordelegate.h"
 #include "dtEditQt/dynamicabstractcontrol.h"

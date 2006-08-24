@@ -19,7 +19,7 @@
 *
 * @author Curtiss Murphy
 */
-
+#include <prefix/dtstageprefix-src.h>
 #include "dtEditQt/global.h"
 #include "dtEditQt/mainwindow.h"
 #include "dtEditQt/editordata.h"

@@ -39,8 +39,9 @@
 #include <dtCore/refptr.h>
 #include <dtDAL/datatype.h>
 #include <dtDAL/resourcedescriptor.h>
-#include "dtGame/datastream.h"
-#include "dtGame/exceptionenum.h"
+
+#include <dtGame/datastream.h>
+#include <dtGame/exceptionenum.h>
 
 namespace dtDAL
 {

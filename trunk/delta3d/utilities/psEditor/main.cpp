@@ -1,9 +1,10 @@
 #include "dtCore/dt.h"
-#include "dtCore/camera.h"
-#include "dtCore/globals.h"
-#include "dtCore/system.h"
-#include "dtCore/mouse.h"
-#include "dtUtil/matrixutil.h"
+#include <dtCore/camera.h>
+#include <dtCore/globals.h>
+#include <dtCore/system.h>
+#include <dtCore/mouse.h>
+#include <dtUtil/matrixutil.h>
+#include <dtUtil/fileutils.h>
 
 #include "osg/BlendFunc"
 #include "osg/Geode"
@@ -17,6 +18,8 @@
 
 #include "osgDB/ReadFile"
 #include "osgDB/WriteFile"
+#include <osgDB/FileUtils>
+#include <osgDB/FileNameUtils>
 
 #include "osgParticle/AccelOperator"
 #include "osgParticle/FluidFrictionOperator"
@@ -1244,6 +1247,14 @@ void psEditorGUI_Particles_ChooseTexture(Fl_Button*, void*)
 
    if(filename != NULL)
    {
+      std::string absParticlePath = dtUtil::FileUtils::GetInstance().GetAbsolutePath(particleSystemFilename);
+      std::string absTexturePath  = filename;
+
+      std::vector<std::string> results;
+      dtUtil::StringTokenizer<dtUtil::IsSlash>::tokenize(results, absTexturePath);
+      for(unsigned int i = 0; i < results.size(); i++)
+         std::cout << '\n' << results[i]; 
+      
       Particles_Texture->value(filename);
 
       Particles_TexturePreview->SetTexture(filename);

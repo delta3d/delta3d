@@ -19,7 +19,7 @@
  *
  * @author Matthew W. Campbell
 */
-
+#include <prefix/dtstageprefix-src.h>
 #include "dtEditQt/dialoglistselection.h"
 
 #include <QtCore/QStringList>

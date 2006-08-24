@@ -35,6 +35,7 @@
 						<xs:attribute name="Level" type="xs:string" use="required" form="unqualified"/>
 					</xs:complexType>
 				</xs:element>
+				<xs:element name="LibraryPath" minOccurs="0" maxOccurs="unbounded" type="xs:string" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>

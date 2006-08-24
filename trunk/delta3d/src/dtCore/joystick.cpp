@@ -1,7 +1,7 @@
 // joystick.cpp: Implementation of the Joystick class.
 //
 //////////////////////////////////////////////////////////////////////
-
+#include <prefix/dtcoreprefix-src.h>
 #include <dtCore/joystick.h>
 
 #include <iostream>

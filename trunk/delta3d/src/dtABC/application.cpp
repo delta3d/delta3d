@@ -1,6 +1,27 @@
+/* -*-c++-*- 
+ * Delta3D Open Source Game and Simulation Engine 
+ * Copyright (C) 2004-2005 MOVES Institute 
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free 
+ * Software Foundation; either version 2.1 of the License, or (at your option) 
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License 
+ * along with this library; if not, write to the Free Software Foundation, Inc., 
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ *
+ * @author John K. Grant
+ */
 #include <dtABC/application.h>
 #include <dtABC/applicationconfigwriter.h>
 #include <dtABC/applicationconfighandler.h>
+#include <dtABC/applicationconfigdata.h>           // for return type, member
 #include <dtCore/generickeyboardlistener.h>
 
 #include <dtCore/stats.h>
@@ -10,6 +31,7 @@
 #include <dtUtil/log.h>
 #include <dtUtil/stringutils.h>
 #include <dtUtil/xercesparser.h>
+#include <dtUtil/librarysharingmanager.h>
 #include <dtCore/mouse.h>
 
 #include <osgDB/FileUtils>
@@ -47,12 +69,12 @@ Application::Application(const std::string& configFilename) : BaseABC("Applicati
    }
 }
 
-Application::~Application(void)
+Application::~Application()
 {  
    DeregisterInstance(this);   
 }
 
-void Application::Run( void )
+void Application::Run()
 {
    dtCore::System::GetInstance().Run();
 }
@@ -183,6 +205,13 @@ bool Application::AppXMLApplicator::operator ()(const ApplicationConfigData& dat
       dtUtil::Log& logger = dtUtil::Log::GetInstance(i->first);
       
       logger.SetLogLevel(logger.GetLogLevelForString(i->second));
+   }
+
+   dtUtil::LibrarySharingManager& lsm = dtUtil::LibrarySharingManager::GetInstance();
+   for (std::vector<std::string>::const_iterator i = data.LIBRARY_PATHS.begin();
+      i != data.LIBRARY_PATHS.end(); ++i)
+   {
+      lsm.AddToSearchPath(*i);
    }
 
    // John's unwittingly caught a confusing aspect of the Applications's config file here.

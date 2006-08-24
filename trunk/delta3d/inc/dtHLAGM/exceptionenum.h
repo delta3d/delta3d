@@ -22,7 +22,7 @@
 #define DELTA_HLAGM_EXCEPTION_ENUM
 
 #include <dtUtil/enumeration.h>
-#include "dtHLAGM/export.h"
+#include <dtHLAGM/export.h>
 
 namespace dtHLAGM
 {

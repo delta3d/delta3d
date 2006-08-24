@@ -23,6 +23,8 @@
 #include <dtCore/infiniteterrain.h>
 #include <dtCore/flymotionmodel.h>
 #include <dtCore/camera.h>
+#include <dtCore/deltawin.h>
+#include <dtCore/scene.h>
 #include <dtDAL/actorproxy.h>
 #include <dtActors/basicenvironmentactorproxy.h>
 #include <dtUtil/exception.h>

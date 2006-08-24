@@ -113,6 +113,8 @@ if 'qt' in env['TOOLS'] :
       EditorEnv.Moc(target=target, source=currHeader)
 
    sources = SGlob('*.cpp') + moc_targets
+   if "precomp.cpp" in sources:
+	   sources.remove("precomp.cpp")
 
    # Hack to avoid Qt warning about unused file. This should probably just be removed
    # from CVS.
@@ -127,10 +129,22 @@ if 'qt' in env['TOOLS'] :
    if mode == 'debug' and OS == 'windows' :
       app = EditorEnv.Program('#/bin/STAGEd',sources)
    else:   
-      if EditorEnv['usePrefixHeaders']:
-         EditorEnv.Append(CPPFLAGS = " -include inc/prefix/dtstageprefix.h ")
-           
-      app = EditorEnv.Program('#/bin/STAGE',sources)
+       prefixHeader = "inc/prefix/dtstageprefix.h"
+
+       if len(prefixHeader) > 0 and EditorEnv.get('usePrefixHeaders'):
+          EditorEnv['CPPDEFINES'] += ['DELTA_PCH']
+          if OS == 'darwin' or OS == 'linux':
+             oldCxxFlags = EditorEnv['CXXFLAGS'] + ""
+             EditorEnv['CXXFLAGS'] += " -include " + prefixHeader
+             srcHeader = (prefixHeader[0:-2]) + "-src.h"
+             outputGCH = "#" + prefixHeader + ".gch/stage"
+             EditorEnv['Gch'] = EditorEnv.Gch(outputGCH, "#" + srcHeader, CXXFLAGS=oldCxxFlags)[0]             
+          elif OS == 'windows':
+             EditorEnv['PCH'] = EditorEnv.PCH("precomp.cpp")[0]
+       
+    
+       app = EditorEnv.Program('#/bin/STAGE',sources)
+      
    if (app == '[]') :
       result = 'false'
    else :

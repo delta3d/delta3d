@@ -11,6 +11,7 @@
 #include <osgDB/FileUtils>
 #include <dtCore/keyboard.h>
 #include <dtCore/mouse.h>
+#include <dtCore/deltawin.h>
 
 using namespace dtCore;
 using namespace dtABC;

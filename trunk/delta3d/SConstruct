@@ -8,7 +8,7 @@ import smtplib
 import string
 import SCons.Util
 import macosx
-import SCons.Util
+import gch
 import platform
 from SCons.Script.SConscript import SConsEnvironment
 
@@ -256,7 +256,11 @@ def TOOL_BUNDLE(env):
 
 ########################
 
-    def BuildProgram(env,  name, srcs, deps, extraDefines = [], extraLinkFlags = [], buildAppBundle = 1, prefixHeader='inc/prefix/dtprefix.h') :
+    def BuildProgram(env,  name, srcs, deps, extraDefines = [], extraLinkFlags = [], buildAppBundle = 1, prefixHeader='inc/prefix/dtcoreprefix.h') :
+    
+       #remove the windows precompiled header file.
+       if "precomp.cpp" in srcs:
+          srcs.remove("precomp.cpp")
     
        target = '#bin/' + name
     
@@ -291,17 +295,11 @@ def TOOL_BUNDLE(env):
        if OS == 'darwin':
           for lib_name in deps:
             if foundLibs.has_key(lib_name):
-              #print lib_name + " is a " + foundLibs[lib_name] 
               if foundLibs[lib_name] == 'framework':
-                #print "found " + lib_name + " as a framework"
-                #addToLink.append('-framework')
-                #addToLink.append(lib_name)
                 addToFrameworks.append(lib_name)
               else:
-                #print "found " + lib_name + " as a shared lib"
                 addToLibs.append(lib_name)
             else:
-              #print "Didn't find " + lib_name + ".  Defaulting to shared lib."
               addToLibs.append(lib_name);
        else:
           addToLibs = deps
@@ -312,11 +310,26 @@ def TOOL_BUNDLE(env):
        if envProg.has_key('CPPDEFINES'):
          cppDefines = envProg['CPPDEFINES']
 
-       if prefixHeader != '' and envProg.get('usePrefixHeaders'):
+       if len(prefixHeader) > 0 and envProg.get('usePrefixHeaders'):
+          cppDefines += ['DELTA_PCH']
+
           if OS == 'darwin' or OS == 'linux':
+             oldCxxFlags = envProg['CXXFLAGS'] + ""
              envProg['CXXFLAGS'] += " -include " + prefixHeader
+             srcHeader = (prefixHeader[0:-2]) + "-src.h"
+             outputGCH = "#" + prefixHeader + ".gch/prog.h.gch"
+             if not env.has_key('BuiltExecHeader' + prefixHeader[11:-2]):
+                envProg['Gch'] = env.Gch(outputGCH, "#" + srcHeader, CPPDEFINES = cppDefines + extraDefines, CXXFLAGS=oldCxxFlags)[0]
+                env['BuiltExecHeader' + prefixHeader[11:-2]] = envProg['Gch']
+             else:
+                envProg['Gch'] = env['BuiltExecHeader' + prefixHeader[11:-2]]
+          elif OS == 'windows':
+             envProg['PCH'] = envProg.PCH("precomp.cpp", CPPDEFINES = cppDefines + extraDefines)[0]
+       
     
-       program = envProg.Program( target, srcs, CPPDEFINES = cppDefines + extraDefines, LIBS = addToLibs, LINKFLAGS = addToLink + extraLinkFlags )
+       program = envProg.Program( target, srcs,
+                                CPPDEFINES = cppDefines + extraDefines, 
+                                LIBS = addToLibs, LINKFLAGS = addToLink + extraLinkFlags )
     
        if OS == 'darwin' and buildAppBundle:
           envProg ['VERSION_NUM'] = "1.2.0"
@@ -342,8 +355,12 @@ def TOOL_BUNDLE(env):
 ########################
     
     def BuildLib(env, name, srcs, deps, extraDefines = [], extraLinkFlags = [],
-          overrideShLinkFlags = '',  overrideShLibSuffix = '', prefixHeader='inc/prefix/dtprefix.h' ) :
-    
+          overrideShLinkFlags = '',  overrideShLibSuffix = '', prefixHeader='inc/prefix/dtcoreprefix.h' ) :
+
+       #remove the windows precompiled header file.
+       if "precomp.cpp" in srcs:
+          srcs.remove("precomp.cpp")
+
        target = name
        if OS == 'windows' and mode == 'debug' :
           target += 'd'
@@ -390,15 +407,10 @@ def TOOL_BUNDLE(env):
           for lib_name in deps:
             if foundLibs.has_key(lib_name):
               if foundLibs[lib_name] == 'framework':
-                #print "found " + lib_name + " as a framework"
-                #addToLink.append('-framework')
-                #addToLink.append(lib_name)
                 addToFrameworks.append(lib_name)
               else:
-                #print "found " + lib_name + " as a shared lib"
                 addToLibs.append(lib_name)
             else:
-              #print "Didn't find " + lib_name + ".  Defaulting to shared lib."
               addToLibs.append(lib_name);
        else:
           addToLibs = deps
@@ -409,20 +421,45 @@ def TOOL_BUNDLE(env):
        if envLib.has_key('CPPDEFINES'):
           cppDefines = envLib['CPPDEFINES']
 
-       if prefixHeader != '' and envLib.get('usePrefixHeaders'):
+       staticLib = name == 'dtNet'
+
+       if len(prefixHeader) > 0 and envLib.get('usePrefixHeaders'):
+          cppDefines += ['DELTA_PCH']
+
           if OS == 'darwin' or OS == 'linux':
+             oldCxxFlags = envLib['CXXFLAGS'] + ""
              envLib['CXXFLAGS'] += " -include " + prefixHeader
+             srcHeader = (prefixHeader[0:-2]) + "-src.h"
+             if not staticLib:
+                outputGCH = "#" + prefixHeader + ".gch/lib.h.gch"
+                if not env.has_key('BuiltLibHeader' + prefixHeader[11:-2]):
+                   envLib['GchSh'] = env.GchSh(outputGCH, "#" + srcHeader, CPPDEFINES = cppDefines + extraDefines, CXXFLAGS=oldCxxFlags)[0]
+                   env['BuiltLibHeader' + prefixHeader[11:-2]] = envLib['GchSh']
+                else:
+                   envLib['GchSh'] = env['BuiltLibHeader' + prefixHeader[11:-2]]   
+             else:
+                outputGCH = "#" + prefixHeader + ".gch/staticlib.h.gch"
+                if not env.has_key('BuiltStaticLibHeader' + prefixHeader[11:-2]):
+                   envLib['Gch'] = env.Gch(outputGCH, "#" + srcHeader, CPPDEFINES = cppDefines + extraDefines, CXXFLAGS=oldCxxFlags)[0]
+                   env['BuiltStaticLibHeader' + prefixHeader[11:-2]] = envLib['Gch']
+                else:
+                   envLib['Gch'] = env['BuiltStaticLibHeader' + prefixHeader[11:-2]]
+
+          elif OS == 'windows':
+             envLib['PCH'] = envLib.PCH("precomp.cpp", CPPDEFINES = cppDefines + extraDefines)[0]
        
-       if name != 'dtNet' :
-          builtlib = envLib.SharedLibrary( target, srcs, CPPDEFINES = cppDefines + extraDefines,
+       if not staticLib :
+          builtlib = envLib.SharedLibrary( target, srcs, 
+                                           CPPDEFINES = cppDefines + extraDefines,
                                            LIBS = addToLibs, LINKFLAGS = addToLink + extraLinkFlags )
        else :
-          builtlib = envLib.StaticLibrary( target, srcs, CPPDEFINES = cppDefines + extraDefines,
+          builtlib = envLib.StaticLibrary( target, srcs, 
+                                           CPPDEFINES = cppDefines + extraDefines,
                                            LIBS = addToLibs, LINKFLAGS = addToLink + extraLinkFlags )
-          
+           
        envLib.Precious( builtlib )
        
-       if OS == 'windows' and name != 'dtNet' :
+       if OS == 'windows' and not staticLib :
         
           lib = envLib.Install( '#/bin', builtlib[0] ) # .dll
           envLib.Install( '#/lib', builtlib[1] ) # .lib, 
@@ -441,7 +478,7 @@ def TOOL_BUNDLE(env):
              lib = envLib.Install( '$libdir', builtlib )
           elif launchDir != env.get('prefix'):
              lib = envLib.Install( '$prefix/lib', builtlib )
-    
+             
        incDirDict = { 'dtABC'       : 'dtABC',
                       'dtAI'        : 'dtAI',
                       'dtActors'    : 'dtActors',
@@ -581,7 +618,7 @@ else :
    errorLog.close()
    env.Exit(-1) 
 
-tools = ["default"]
+tools = ["default", "gch"]
 
 if OS == 'darwin':
    tools.append(macosx.TOOL_BUNDLE)
@@ -622,7 +659,7 @@ elif OS == 'linux':
 else :
    opts.Add( PathOption( 'prefix', 'Directory to install under', '/usr/local' ) )
 
-env = Environment( options = opts, tools = tools )
+env = Environment( options = opts, tools = tools, toolpath = "." )
 
 # append the outside env to ours
 for K in os.environ.keys():
@@ -674,9 +711,9 @@ if env['ENV'].has_key('QTDIR') :
 #a parent directory, so the framework doesn't really work well with it
 #anyway.
 if OS == 'darwin':
-   env.Append( CPPPATH = [os.path.join( os.getcwd(), 'ext', 'Frameworks', 'Xerces.framework', 'Headers' ) ] )
-   env.Append( CPPPATH = [os.path.join( os.getcwd(), 'ext', 'Frameworks', 'CEGUI.framework', 'Headers' ) ] ) # path for Crazy Eddie's GUI since they are too cool
-   env.Append( CPPPATH = [os.path.join( os.getcwd(), 'ext', 'Frameworks', 'gdal.framework', 'Headers' ) ] ) # gdal since the includes are not done as <gdal/...>
+   env.Append( CPPPATH = [os.path.join( '/Library', 'Frameworks', 'Xerces.framework', 'Headers' ) ] )
+   env.Append( CPPPATH = [os.path.join( '/Library', 'Frameworks', 'CEGUI.framework', 'Headers' ) ] ) # path for Crazy Eddie's GUI since they are too cool
+   env.Append( CPPPATH = [os.path.join( '/Library', 'Frameworks', 'gdal.framework', 'Headers' ) ] ) # gdal since the includes are not done as <gdal/...>
 
 env.Append( LIBPATH = [os.path.join( os.getcwd(), 'lib' ) ] ) # Delta3D libs
 
@@ -752,11 +789,12 @@ if mode == 'debug':
                   CXXFLAGS = ['/EHsc', '/GR', '/MDd' ], #synchronous exception handling (c-?), run-time type info, multi-threaded debug dll
                   LINKFLAGS = ['/NODEFAULTLIB:LIBCMTD', '/NODEFAULTLIB:LIBCD'] ) 
    elif OS == 'linux':      
-      env.Append( CXXFLAGS=['-g', '-O0', '-pipe', '-fPIC'], #deubg info, no optimizations, pipe object data
+      env.Append( CXXFLAGS=['-g', '-O0', '-pipe'], #deubg info, no optimizations, pipe object data
                   #removed _DEBUG for now because of problem with GNE and DEBUG because of a python issue.
 		  CPPDEFINES=['SIGSLOT_PURE_ISO'] )
    elif OS == 'darwin':      
-      env.Append(CXXFLAGS=['-ggdb', '-O0', '-pipe', '-fPIC', '-isysroot', '/Developer/SDKs/MacOSX10.4u.sdk'], CPPDEFINES=['_DEBUG', '__USE_OSX_AGL_IMPLEMENTATION__', 'SIGSLOT_PURE_ISO', 'MAC_OS_X_VERSION_MIN_REQUIRED=1030' ],
+      env.Append(CXXFLAGS=['-gdwarf-2', '-O0', '-pipe', '-isysroot', '/Developer/SDKs/MacOSX10.4u.sdk'], 
+        CPPDEFINES=['_DEBUG', '__USE_OSX_AGL_IMPLEMENTATION__', 'SIGSLOT_PURE_ISO', 'MAC_OS_X_VERSION_MIN_REQUIRED=1030' ],
 	LINKFLAGS=['-Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk'] )
 else:
    print 'Build Configuration: Release'
@@ -767,13 +805,13 @@ else:
               CXXFLAGS = ['/EHsc', '/GR', '/MD' ], #synchronous exception handling (c-?), run-time type info, multi-threaded dll
               LINKFLAGS = ['/NODEFAULTLIB:LIBCMT', '/NODEFAULTLIB:LIBC'] )  
    elif OS == 'linux':
-     env.Append( CXXFLAGS=['-O2', '-pipe', '-fPIC'], #optimizations, pipe object data
+     env.Append( CXXFLAGS=['-O2', '-pipe'], #optimizations, pipe object data
               CPPDEFINES=['NDEBUG', 'SIGSLOT_PURE_ISO'],
               LINKFLAGS=['-s'] )
  #             LINKFLAGS=['-Wl,-rpath-link=' + env['ENV']['DELTA_ROOT'] + '/lib,-rpath-link=' + env['ENV']['DELTA_ROOT'] + '/ext/lib'] )
 
    elif OS == 'darwin':     
-      env.Append(CXXFLAGS=['-Os', '-pipe', '-fPIC', '-isysroot', '/Developer/SDKs/MacOSX10.4u.sdk'],
+      env.Append(CXXFLAGS=['-Os', '-pipe', '-isysroot', '/Developer/SDKs/MacOSX10.4u.sdk'],
          CPPDEFINES=['NDEBUG', '__USE_OSX_AGL_IMPLEMENTATION__', 'SIGSLOT_PURE_ISO', 'MAC_OS_X_VERSION_MIN_REQUIRED=1030'], 
          LINKFLAGS=['-Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk'] )
 

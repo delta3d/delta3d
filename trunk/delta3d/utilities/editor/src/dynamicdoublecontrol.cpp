@@ -19,7 +19,7 @@
 *
 * @author Curtiss Murphy
 */
-
+#include <prefix/dtstageprefix-src.h>
 #include "dtEditQt/dynamicdoublecontrol.h"
 #include "dtEditQt/dynamicsubwidgets.h"
 #include "dtEditQt/editorevents.h"

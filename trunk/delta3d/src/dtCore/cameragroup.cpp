@@ -1,3 +1,4 @@
+#include <prefix/dtcoreprefix-src.h>
 #include <dtCore/cameragroup.h>
 #include <dtCore/camera.h>
 #include <cassert>

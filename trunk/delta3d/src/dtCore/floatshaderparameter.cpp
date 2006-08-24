@@ -18,6 +18,7 @@
  *
  * @author Matthew W. Campbell
  */
+#include <prefix/dtcoreprefix-src.h>
 #include "dtCore/floatshaderparameter.h"
 #include <osg/Uniform>
 #include <osg/StateSet>

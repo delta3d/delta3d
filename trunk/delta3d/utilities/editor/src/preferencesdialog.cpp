@@ -19,7 +19,7 @@
 *
 * @author William E. Johnson II
 */
-
+#include <prefix/dtstageprefix-src.h>
 #include <QtGui/QGridLayout>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QHBoxLayout>

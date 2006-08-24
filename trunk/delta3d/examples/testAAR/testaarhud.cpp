@@ -24,6 +24,7 @@
 #include <dtCore/object.h>
 #include <dtCore/globals.h>
 #include <dtCore/flymotionmodel.h>
+#include <dtCore/deltawin.h>
 #include <dtUtil/exception.h>
 
 #include <dtGame/binarylogstream.h>
@@ -34,7 +35,7 @@
 #include <dtGame/loggermessages.h>
 #include <dtGame/basemessages.h>
 #include <dtGame/messagetype.h>
-#include <dtGame/clientgamemanager.h>
+#include <dtGame/gamemanager.h>
 #include <dtGame/logcontroller.h>
 #include <dtGame/logstatus.h>
 #include <dtGame/serverloggercomponent.h>
@@ -71,13 +72,13 @@ HUDState HUDState::HELP("HELP");
 
 
 //////////////////////////////////////////////////////////////////////////
-TestAARHUD::TestAARHUD(dtCore::DeltaWin *win, dtGame::ClientGameManager &clientGM,
-                       dtGame::LogController &logController, dtGame::TaskComponent &taskComponent,
+TestAARHUD::TestAARHUD(dtCore::DeltaWin *win,
+                       dtGame::LogController &logController, 
+                       dtGame::TaskComponent &taskComponent,
                        dtGame::ServerLoggerComponent &serverLogger)
  : dtGame::GMComponent("TestAARHUD"),
    mHUDState(&HUDState::MINIMAL),
    mLastHUDStateBeforeHelp(&HUDState::MINIMAL),
-   mClientGM(&clientGM),
    mLogController(&logController),
    mTaskComponent(&taskComponent),
    mServerLoggerComponent(&serverLogger),
@@ -159,7 +160,7 @@ void TestAARHUD::SetupGUI(dtCore::DeltaWin *win)
       std::string path = osgDB::findDataFile(scheme);
       if(path.empty())
       {
-         EXCEPT(ARRHUDException::INIT_ERROR,"Failed to find the scheme file.");
+         throw dtUtil::Exception(ARRHUDException::INIT_ERROR,"Failed to find the scheme file.", __FILE__, __LINE__);
       }
 
       std::string dir = path.substr(0, path.length() - (scheme.length() - 3));
@@ -352,15 +353,15 @@ void TestAARHUD::TickHUD()
          UpdateStaticText(mStateText, "RECORD", 1.0, 0.1, 0.1);
 
       // Sim Time
-      snprintf(clin, HUDCONTROLMAXTEXTSIZE, "SimTime: %.2f", mClientGM->GetSimulationTime());
+      snprintf(clin, HUDCONTROLMAXTEXTSIZE, "SimTime: %.2f", GetGameManager()->GetSimulationTime());
       curYPos = mTextYTopOffset;
       UpdateStaticText(mSimTimeText, clin, -1.0, -1.0, -1.0, w - mRightTextXOffset, curYPos);
 
       // speed factor
       curYPos += mTextHeight + 2;
-      if (!mClientGM->IsPaused())
+      if (!GetGameManager()->IsPaused())
       {
-         snprintf(clin, HUDCONTROLMAXTEXTSIZE, "Speed: %.2fX", mClientGM->GetTimeScale());
+         snprintf(clin, HUDCONTROLMAXTEXTSIZE, "Speed: %.2fX", GetGameManager()->GetTimeScale());
          UpdateStaticText(mSpeedFactorText, clin, 1.0, 1.0, 1.0, w - mRightTextXOffset, curYPos);
       }
       else
@@ -431,13 +432,13 @@ void TestAARHUD::UpdateHighDetailData(int baseWidth, float &curYPos)
          if (tags.size() > 0)
          {
             snprintf(lastTagStr, HUDCONTROLMAXTEXTSIZE, "  (Last: None)");
-            for (int i = 0; i < (int) tags.size(); i ++)
+            for (unsigned int i = 0; i < tags.size(); i ++)
             {
                const dtGame::LogTag tag = tags[i];
                //double tagTime = tags[i].GetSimTimeStamp();
                //double simTime = mClientGM->GetSimulationTime();
 
-               if (tags[i].GetSimTimeStamp() <= mClientGM->GetSimulationTime())
+               if (tags[i].GetSimTimeStamp() <= GetGameManager()->GetSimulationTime())
                {
                   std::string temp = (tags[i]).GetName();
                   snprintf(lastTagStr, HUDCONTROLMAXTEXTSIZE, " (%s)", temp.c_str());//(tags[tags.size()-1]).GetName());
@@ -453,9 +454,9 @@ void TestAARHUD::UpdateHighDetailData(int baseWidth, float &curYPos)
          if (frames.size() > 0)
          {
             snprintf(lastFrameStr, HUDCONTROLMAXTEXTSIZE, "  (Last: None)");
-            for (int i = 0; i < (int) frames.size(); i ++)
+            for (unsigned int i = 0; i < frames.size(); i ++)
             {
-               if (frames[i].GetSimTimeStamp() <= mClientGM->GetSimulationTime())
+               if (frames[i].GetSimTimeStamp() <= GetGameManager()->GetSimulationTime())
                {
                   std::string temp = (frames[i]).GetName();
                   snprintf(lastFrameStr, HUDCONTROLMAXTEXTSIZE, " (%s)", temp.c_str());

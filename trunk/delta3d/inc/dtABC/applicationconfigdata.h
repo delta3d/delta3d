@@ -42,6 +42,7 @@ namespace dtABC
       std::string SCENE_INSTANCE, WINDOW_INSTANCE;
       
       std::map<std::string, std::string> LOG_LEVELS;
+      std::vector<std::string> LIBRARY_PATHS;
    };
 }
 

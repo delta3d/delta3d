@@ -18,6 +18,7 @@
 *
 * @author Matthew W. Campbell
 */
+#include <prefix/dtutilprefix-src.h>
 #include <dtUtil/log.h>
 #include <dtUtil/bits.h>
 

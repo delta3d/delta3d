@@ -19,7 +19,7 @@
 *
 * @author Curtiss Murphy
 */
-
+#include <prefix/dtstageprefix-src.h>
 #include "dtEditQt/actortab.h"
 #include "dtEditQt/tabcontainer.h"
 #include "dtEditQt/tabwrapper.h"

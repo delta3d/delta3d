@@ -18,7 +18,7 @@
  *
  * @author Bradley Anderegg 06/07/2006
  */
-
+#include <prefix/dtdalprefix-src.h>
 #include <dtDAL/waypointactorproxy.h>
 #include <dtAI/waypointmanager.h>
 #include <dtAI/waypointactor.h>

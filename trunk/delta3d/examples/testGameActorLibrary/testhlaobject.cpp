@@ -41,8 +41,7 @@ void TestHLAObjectProxy::BuildPropertyMap()
    TestHLAObject *actor = dynamic_cast<TestHLAObject*> (GetActor());
    if(actor == NULL)
    {
-      EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type TestHLAObject");
-      return;
+      throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type TestHLAObject", __FILE__, __LINE__);
    }
    
    AddProperty(

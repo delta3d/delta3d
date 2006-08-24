@@ -1,4 +1,11 @@
-#include "prefix/dtprefix-src.h"
+#ifdef DELTA_PCH
+
+#ifndef DTSTAGE_PREFIX
+#define DTSTAGE_PREFIX
+
+#include <prefix/dtdalprefix-src.h>
 #include <QtCore/QtCore>
 #include <QtGui/QtGui>
-#include "prefix/dtdalprefix-src.h"
+
+#endif
+#endif

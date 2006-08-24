@@ -33,7 +33,6 @@
 #include <dtDAL/project.h>
 #include <dtDAL/librarymanager.h>
 #include <dtGame/messagetype.h>
-#include <dtGame/clientgamemanager.h>
 #include <dtGame/gamemanager.h>
 
 #include <dtHLAGM/objecttoactor.h>
@@ -97,7 +96,7 @@ void HLAConfigTests::setUp()
    logger = &dtUtil::Log::GetInstance(logName);
    mTranslator = new dtHLAGM::HLAComponent();
    dtCore::Scene* scene = new dtCore::Scene();
-   mGameManager = new dtGame::ClientGameManager(*scene);
+   mGameManager = new dtGame::GameManager(*scene);
 
 }
 

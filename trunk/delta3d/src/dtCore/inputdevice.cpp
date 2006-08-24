@@ -1,7 +1,7 @@
 // inputdevice.cpp: Implementation of the InputDevice class.
 //
 //////////////////////////////////////////////////////////////////////
-
+#include <prefix/dtcoreprefix-src.h>
 #include <dtCore/inputdevice.h>
 #include <algorithm>
 

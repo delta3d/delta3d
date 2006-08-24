@@ -19,7 +19,7 @@
 *
 * @author Curtiss Murphy
 */
-
+#include <prefix/dtstageprefix-src.h>
 #include "dtEditQt/dynamicvec4control.h"
 #include "dtEditQt/dynamicvectorelementcontrol.h"
 #include <osg/Vec3>

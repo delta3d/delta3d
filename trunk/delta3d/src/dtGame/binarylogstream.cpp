@@ -18,7 +18,7 @@
 *
 * @author Matthew W. Campbell
 */
-
+#include <prefix/dtgameprefix-src.h>
 #include "dtGame/binarylogstream.h"
 #include "dtGame/messagetype.h"
 #include "dtUtil/exception.h"

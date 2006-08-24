@@ -1,9 +1,8 @@
 // window.cpp: implementation of the DeltaWin class.
 //
 //////////////////////////////////////////////////////////////////////
-
-#ifdef _WIN32
-
+#include <prefix/dtcoreprefix-src.h>
+#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
 #include <dtCore/deltawin.h>
 #include <dtUtil/log.h>
 #include <Producer/RenderSurface>

@@ -1,4 +1,5 @@
-#include "dtUtil/stringutils.h"
+#include <prefix/dtutilprefix-src.h>
+#include <dtUtil/stringutils.h>
 
 #include <cstdio>        // for sscanf, atoi
 

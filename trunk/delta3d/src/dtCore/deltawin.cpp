@@ -1,7 +1,7 @@
 // deltawin.cpp: implementation of the DeltaWin class.
 //
 //////////////////////////////////////////////////////////////////////
-
+#include <prefix/dtcoreprefix-src.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/keyboard.h>
 #include <dtCore/mouse.h>
@@ -185,8 +185,8 @@ DeltaWin::DeltaWin(  const std::string& name,
 {
    if( mRenderSurface == NULL )
    {
-      EXCEPT(dtCore::ExceptionEnum::INVALID_PARAMETER,
-         "Supplied Producer::RenderSurface is NULL");
+      throw dtUtil::Exception(dtCore::ExceptionEnum::INVALID_PARAMETER,
+         "Supplied Producer::RenderSurface is NULL", __FILE__, __LINE__);
    }
 
    RegisterInstance(this);
@@ -223,8 +223,8 @@ DeltaWin::DeltaWin(  const std::string& name,
 {
    if( !mKeyboard.valid() || !mMouse.valid() )
    {
-      EXCEPT(dtCore::ExceptionEnum::INVALID_PARAMETER,
-         "Supplied dtCore::Keyboard or dtCore::Mouse is invalid");
+      throw dtUtil::Exception(dtCore::ExceptionEnum::INVALID_PARAMETER,
+         "Supplied dtCore::Keyboard or dtCore::Mouse is invalid", __FILE__, __LINE__);
    }
 
    RegisterInstance(this);
@@ -291,8 +291,8 @@ void DeltaWin::SetKeyboard( Keyboard* keyboard )
 {
    if( keyboard == 0 )
    {
-      EXCEPT(dtCore::ExceptionEnum::INVALID_PARAMETER,
-         "Supplied dtCore::Keyboard is invalid");
+      throw dtUtil::Exception(dtCore::ExceptionEnum::INVALID_PARAMETER,
+         "Supplied dtCore::Keyboard is invalid", __FILE__, __LINE__);
    }
    mKeyboard = keyboard;
    mInputCallback->SetKeyboard( mKeyboard.get() );
@@ -309,8 +309,8 @@ void DeltaWin::SetMouse( Mouse* mouse )
 {
    if( mouse == 0 )
    {
-      EXCEPT(dtCore::ExceptionEnum::INVALID_PARAMETER,
-         "Supplied dtCore::Mouse is invalid");
+      throw dtUtil::Exception(dtCore::ExceptionEnum::INVALID_PARAMETER,
+         "Supplied dtCore::Mouse is invalid", __FILE__, __LINE__);
    }
    mMouse = mouse;
    mInputCallback->SetMouse( mMouse.get() );

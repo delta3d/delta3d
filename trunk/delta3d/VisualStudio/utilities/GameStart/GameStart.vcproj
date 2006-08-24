@@ -34,7 +34,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCored.lib dtUtild.lib dtDALd.lib dtGamed.lib dtABCd.lib osg.lib Producerd.lib"
+				AdditionalDependencies="dtCored.lib dtUtild.lib dtDALd.lib dtGamed.lib dtABCd.lib osgd.lib Producerd.lib"
 				OutputFile="../../../bin/GameStartd.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"

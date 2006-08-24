@@ -18,7 +18,7 @@
  *
  * @author Matthew W. Campbell
  */
-
+#include <prefix/dtgameprefix-src.h>
 #include <dtGame/taskcomponent.h>
 #include <dtGame/message.h>
 #include <dtGame/messagetype.h>
@@ -31,7 +31,7 @@ namespace dtGame
 {
 
    //////////////////////////////////////////////////////////////////////////
-   TaskComponent::TaskComponent()
+   TaskComponent::TaskComponent(const std::string &name) : GMComponent(name)
    {
    }
 

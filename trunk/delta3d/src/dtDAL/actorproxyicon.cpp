@@ -18,7 +18,7 @@
  *
  * @author Matthew W. Campbell
  */
-
+#include <prefix/dtdalprefix-src.h>
 #include "dtDAL/actorproxyicon.h"
 #include "dtCore/scene.h"
 #include <dtCore/transformable.h>

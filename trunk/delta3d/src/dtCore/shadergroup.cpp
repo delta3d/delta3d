@@ -18,6 +18,7 @@
  *
  * @author Matthew W. Campbell
  */
+#include <prefix/dtcoreprefix-src.h>
 #include "dtCore/shadergroup.h"
 #include "dtCore/shadermanager.h"
 #include <dtUtil/log.h>
@@ -45,7 +46,7 @@ namespace dtCore
          mShaders.find(shader.GetName());
 
       if (itor != mShaders.end())
-         EXCEPT(ShaderException::SHADER_SOURCE_ERROR,"Shader names must be unique.");
+         throw dtUtil::Exception(ShaderException::SHADER_SOURCE_ERROR,"Shader names must be unique.", __FILE__, __LINE__);
 
       mShaders.insert(std::make_pair(shader.GetName(),&shader));
       shader.SetParentGroup(this);

@@ -19,6 +19,7 @@
  * @author Matthew W. Campbell
  */
 
+#include <prefix/dtcoreprefix-src.h>
 #include <dtCore/texture2dshaderparameter.h>
 #include <dtUtil/exception.h>
 #include <dtCore/refptr.h>

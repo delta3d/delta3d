@@ -18,6 +18,9 @@
  *
  * @author David Guthrie
  */
+#include <prefix/dtgameprefix-src.h>
+#include <algorithm>
+
 #include <dtGame/deadreckoningcomponent.h>
 #include <dtUtil/log.h>
 #include <dtUtil/mathdefines.h>
@@ -40,9 +43,15 @@ namespace dtGame
    DeadReckoningHelper::DeadReckoningHelper() :
       mUpdated(false), 
       mFlying(false), 
-      mLastUpdatedTime(0.0), 
+      mLastUpdatedTime(0.0),
+      mAverageTimeBetweenUpdates(0.0f), 
+      mMaxRotationSmoothingSteps(3.0f),
+      mMaxTranslationSmoothingSteps(8.0f),
       mSmoothingSteps(0.0f), 
+      mCurrentTotalRotationSmoothingSteps(0.0f),
+      mCurrentTotalTranslationSmoothingSteps(0.0f),
       mGroundOffset(0.0f),
+      mRotationResolved(true),
       mMinDRAlgorithm(&DeadReckoningAlgorithm::NONE)
    {}
 
@@ -113,6 +122,14 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
+   void DeadReckoningHelper::SetLastUpdatedTime(double newUpdatedTime)
+   {
+      //the average of the last average and the current time since an update.
+      mAverageTimeBetweenUpdates = 0.5f * (float(newUpdatedTime - mLastUpdatedTime) + mAverageTimeBetweenUpdates); 
+      mLastUpdatedTime = newUpdatedTime;
+   }
+
+   //////////////////////////////////////////////////////////////////////
    const std::string DeadReckoningComponent::DEFAULT_NAME("Dead Reckoning Component");
 
    //////////////////////////////////////////////////////////////////////
@@ -136,8 +153,7 @@ namespace dtGame
    {
       if (message.GetMessageType() == dtGame::MessageType::TICK_REMOTE)
       {
-         const dtGame::TickMessage& tickMessage = static_cast<const dtGame::TickMessage&>(message);
-         TickRemote(tickMessage);
+         TickRemote(static_cast<const dtGame::TickMessage&>(message));
       }
       else if (message.GetMessageType() == dtGame::MessageType::INFO_ACTOR_DELETED)
       {
@@ -263,13 +279,16 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningComponent::ClampToGroundThreePoint(float timeSinceUpdate, osg::Vec3& position, osg::Matrix& rotation, dtCore::Transform& xform,
+   void DeadReckoningComponent::ClampToGroundThreePoint(float timeSinceUpdate, dtCore::Transform& xform,
       dtGame::GameActorProxy& gameActorProxy)
    {
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Using three point ground clamping.");
       }
+
+      osg::Vec3& position = xform.GetTranslation();
+      osg::Matrix& rotation = xform.GetRotation();
 
       std::vector<float> dimensions;
       gameActorProxy.GetGameActor().GetCollisionGeomDimensions(dimensions);
@@ -326,8 +345,11 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningComponent::ClampToGroundOnePoint(float timeSinceUpdate, osg::Vec3& position, osg::Matrix& rotation, dtCore::Transform& xform)
+   void DeadReckoningComponent::ClampToGroundOnePoint(float timeSinceUpdate, dtCore::Transform& xform)
    {
+      osg::Vec3& position = xform.GetTranslation();
+      osg::Matrix& rotation = xform.GetRotation();
+      
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Using one point ground clamping.");
@@ -373,7 +395,7 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningComponent::ClampToGround(float timeSinceUpdate, osg::Vec3& position, osg::Matrix& rotation, dtCore::Transform& xform,
+   void DeadReckoningComponent::ClampToGround(float timeSinceUpdate, dtCore::Transform& xform,
       dtGame::GameActorProxy& gameActorProxy, DeadReckoningHelper& helper)
    {
       if (GetTerrainActor() == NULL)
@@ -384,21 +406,186 @@ namespace dtGame
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Ground clamping actor.");
       }
 
+      osg::Vec3& position = xform.GetTranslation();
+
       if (mIsector->GetUseEyePoint() && GetHighResGroundClampingRange() > 0.0f)
       {
          const osg::Vec3 vec = mIsector->GetEyePoint();
 
          if ((position - vec).length2() > mHighResClampRange2)
-            ClampToGroundOnePoint(timeSinceUpdate, position, rotation, xform);
+            ClampToGroundOnePoint(timeSinceUpdate, xform);
          else
-            ClampToGroundThreePoint(timeSinceUpdate, position, rotation, xform, gameActorProxy);
+            ClampToGroundThreePoint(timeSinceUpdate, xform, gameActorProxy);
       }
       else
       {
-         ClampToGroundThreePoint(timeSinceUpdate, position, rotation, xform, gameActorProxy);
+         ClampToGroundThreePoint(timeSinceUpdate, xform, gameActorProxy);
       }
       
       position.z() += helper.GetGroundOffset();
+   }
+
+   //////////////////////////////////////////////////////////////////////
+   void DeadReckoningComponent::DRStatic(DeadReckoningHelper& helper, const double timeSinceUpdate, GameActor& gameActor, dtCore::Transform& xform)
+   {
+      if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+      {
+         std::ostringstream ss;
+         ss << "Dead Reckoning actor as STATIC.  New position is " <<  helper.mLastTranslation  
+            << ".  New Rotation is " << helper.mLastRotation << ".";
+         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
+      }
+
+      xform.SetTranslation(helper.mLastTranslation);
+      xform.SetRotation(helper.mLastRotationMatrix);
+
+      helper.mTransBeforeLastUpdate = helper.mLastTranslation;
+      helper.mRotQuatBeforeLastUpdate = helper.mLastQuatRotation;
+
+      helper.mRotationResolved = true;
+      if (!helper.IsFlying() && gameActor.GetCollisionGeomType() == &dtCore::Transformable::CollisionGeomType::CUBE)
+      {
+         ClampToGround(timeSinceUpdate, xform, gameActor.GetGameActorProxy(), helper);
+      }
+      gameActor.SetTransform(xform);
+   }
+
+   //////////////////////////////////////////////////////////////////////
+   void DeadReckoningComponent::DRVelocityAcceleration(DeadReckoningHelper& helper, const float deltaTime, const double timeSinceUpdate, const bool forceClamp, GameActor& gameActor, dtCore::Transform& xform)
+   {
+      osg::Vec3& pos = xform.GetTranslation();
+      osg::Matrix& rot = xform.GetRotation();
+
+      osg::Vec3 unclampedTranslation = pos;
+      unclampedTranslation.z() = helper.mLastTranslation.z();
+
+      //avoid the sqrtf by using length2.
+      //we went to see if all this dr and ground clamping stuff has to be done.
+      if ((forceClamp && !helper.IsFlying()) || 
+         helper.IsUpdated() || 
+         helper.mLastTranslation != unclampedTranslation ||
+         !helper.mRotationResolved ||
+         helper.mVelocityVector.length2() > 1e-2f ||
+         (helper.GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::VELOCITY_AND_ACCELERATION
+            && helper.mAccelerationVector.length2() > 1e-2f))
+      {
+         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         {
+            std::ostringstream ss;
+            ss << "Actor passed optimization checks: fully dead-reckoning actor.\n" 
+               << "  forceClamp:                           " << forceClamp << std::endl
+               << "  IsFlying():                           " << helper.IsFlying() << std::endl
+               << "  mLastTranslation:                     " << helper.mLastTranslation << std::endl
+               << "  unclampedTranslation:                 " << unclampedTranslation << std::endl
+               << "  mRotationResolved:                    " << helper.mRotationResolved << std::endl
+               << "  helper.mVelocityVector.length2():     " << helper.mVelocityVector.length2() << std::endl
+               << "  helper.mAccelerationVector.length2(): " << helper.mAccelerationVector.length2() << std::endl;
+            
+            if (!helper.mRotationResolved)
+            {
+               ss << "rot Matrix is: " << rot << std::endl;
+               ss << "mLastRotationMatrix is: " << helper.mLastRotationMatrix << std::endl;
+            }
+            
+            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
+         }
+         osg::Vec3 positionChange;
+         if (helper.GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::VELOCITY_ONLY)
+         {
+            positionChange = helper.mVelocityVector * timeSinceUpdate;
+         }
+         else
+         {
+            positionChange = helper.mVelocityVector * timeSinceUpdate +
+               ((helper.mAccelerationVector * 0.5f) * (timeSinceUpdate * timeSinceUpdate));
+         }
+
+         osg::Vec3 drPos = helper.mLastTranslation + positionChange;
+
+         osg::Quat newRot;
+
+         if (helper.IsUpdated())
+            CalculateTotalSmoothingSteps(helper, xform);
+         
+         if (rot != helper.mLastRotationMatrix && helper.mSmoothingSteps < helper.mCurrentTotalTranslationSmoothingSteps)
+         {
+            float smoothingFactor = helper.mSmoothingSteps/helper.mCurrentTotalRotationSmoothingSteps;
+            newRot.slerp(smoothingFactor, helper.mRotQuatBeforeLastUpdate, helper.mLastQuatRotation);
+            rot.set(newRot);
+            
+            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            {
+               std::ostringstream ss;
+               osg::Vec3 hpr;
+               xform.GetRotation(hpr);
+               ss << "Actor " << gameActor.GetUniqueId() << " - " << gameActor.GetName() << " has rotation "
+                  << "\"" << hpr  << "\"";
+               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, 
+                  ss.str().c_str());               
+            }
+         }
+         else
+         {
+            rot.set(helper.mLastQuatRotation);
+            helper.mRotationResolved = true;
+         }
+
+         if (drPos != helper.mLastTranslation && helper.mSmoothingSteps < helper.mCurrentTotalTranslationSmoothingSteps)
+         {
+            pos = helper.mTransBeforeLastUpdate + positionChange;
+            float smoothingFactor = helper.mSmoothingSteps/helper.mCurrentTotalTranslationSmoothingSteps;
+            //a bit of smoothing.
+            pos = pos + (drPos - pos) * smoothingFactor;
+
+            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            {
+               std::ostringstream ss;
+               ss << "Actor " << gameActor.GetUniqueId() << " - " << gameActor.GetName() << " has translation "
+                  << "\"" << pos << "\"";
+               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, 
+                  ss.str().c_str());               
+            }
+         }
+         else
+         {
+            pos = drPos;
+         }
+
+         helper.mSmoothingSteps += deltaTime;
+
+         if (!helper.IsFlying() && gameActor.GetCollisionGeomType() == &dtCore::Transformable::CollisionGeomType::CUBE)
+         {
+            ClampToGround(timeSinceUpdate, xform, gameActor.GetGameActorProxy(), helper);
+         }
+
+         xform.SetTranslation(pos);
+         xform.SetRotation(rot);
+         gameActor.SetTransform(xform);
+      }
+      else
+      {
+         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Entity does not need to be Dead Reckoned");
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////
+   void DeadReckoningComponent::CalculateTotalSmoothingSteps(DeadReckoningHelper& helper, const dtCore::Transform& xform)
+   {
+      helper.mCurrentTotalRotationSmoothingSteps = 
+         std::min(helper.GetMaxRotationSmoothingSteps(), helper.mAverageTimeBetweenUpdates);
+      //if the vehicle is not moving, just quickly resolve the
+      //rotation.
+      if (helper.mVelocityVector.length2() < 1e-2f)
+         helper.mCurrentTotalRotationSmoothingSteps = 1.0f;
+         
+      helper.mCurrentTotalTranslationSmoothingSteps = 
+         std::min(helper.GetMaxTranslationSmoothingSteps(), helper.mAverageTimeBetweenUpdates);
+      //If the player could not possible get to the new position in 10 seconds
+      //based on the magnitude of it's velocity vector, then just warp the entity in 1 second.
+      if (helper.mVelocityVector.length2() * 10.0f < (helper.mLastTranslation - xform.GetTranslation()).length2() )
+         helper.mCurrentTotalTranslationSmoothingSteps = 1.0f;
+      
    }
 
    //////////////////////////////////////////////////////////////////////
@@ -453,17 +640,17 @@ namespace dtGame
 
          dtCore::Transform xform;
          gameActor.GetTransform(xform);
-         osg::Vec3& pos = xform.GetTranslation();
-         osg::Matrix& rot = xform.GetRotation();
 
          if (helper.IsUpdated())
          {
             //Pretend we were updated on the last tick so we have time delta to work with
             //when calculating movement.
-            helper.mLastUpdatedTime = tickMessage.GetSimulationTime() - tickMessage.GetDeltaSimTime();
-            helper.mTransBeforeLastUpdate = pos;
-            rot.get(helper.mRotQuatBeforeLastUpdate);
-            helper.mSmoothingSteps = 0.1;
+            helper.SetLastUpdatedTime(tickMessage.GetSimulationTime() - tickMessage.GetDeltaSimTime());
+            helper.mTransBeforeLastUpdate = xform.GetTranslation();
+            xform.GetRotation().get(helper.mRotQuatBeforeLastUpdate);
+            //so it will move some in the first tick.
+            helper.mSmoothingSteps = tickMessage.GetDeltaSimTime();
+            helper.mRotationResolved = false;
          }
 
          bool forceClamp = false;
@@ -496,100 +683,12 @@ namespace dtGame
          {
             if (helper.IsUpdated() || forceClamp)
             {
-               if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-               {
-                  std::ostringstream ss;
-                  ss << "Dead Reckoning actor as STATIC.  New position is " <<  helper.mLastTranslation  
-                     << ".  New Rotation is " << helper.mLastRotation << ".";
-                  mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
-               }
-
-               xform.SetTranslation(helper.mLastTranslation);
-               xform.SetRotation(helper.mLastRotationMatrix);
-
-               helper.mTransBeforeLastUpdate = helper.mLastTranslation;
-               helper.mRotQuatBeforeLastUpdate = helper.mLastQuatRotation;
-
-               if (!helper.IsFlying() && gameActor.GetCollisionGeomType() == &dtCore::Transformable::CollisionGeomType::CUBE)
-               {
-                  ClampToGround(timeSinceUpdate, pos, rot, xform, gameActor.GetGameActorProxy(), helper);
-               }
-
-               xform.SetTranslation(pos);
-               xform.SetRotation(rot);
-               gameActor.SetTransform(xform);
+               DRStatic(helper, timeSinceUpdate, gameActor, xform);
             }
          }
          else
          {
-            osg::Vec3 unclampedTranslation = pos;
-            unclampedTranslation.z() = helper.mLastTranslation.z();
-
-            //avoid the sqrtf by using length2.
-            //we went to see if all this dr and ground clamping stuff has to be done.
-            if ((forceClamp && !helper.IsFlying()) || helper.IsUpdated() || helper.mLastTranslation != unclampedTranslation ||
-               (helper.IsFlying() && rot != helper.mLastRotationMatrix) ||
-               helper.mVelocityVector.length2() > 1e-2 ||
-               (helper.GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::VELOCITY_AND_ACCELERATION
-                  && helper.mAccelerationVector.length2() > 1e-2))
-            {
-               if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-               {
-                  mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Actor passed optimization checks: fully dead-reckoning actor.");
-               }
-
-               osg::Vec3 positionChange;
-               if (helper.GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::VELOCITY_ONLY)
-                  positionChange = helper.mVelocityVector * timeSinceUpdate;
-               else
-                  positionChange = helper.mVelocityVector * timeSinceUpdate +
-                     ((helper.mAccelerationVector * 0.5f) * (timeSinceUpdate * timeSinceUpdate));
-
-               osg::Vec3 drPos = helper.mLastTranslation + positionChange;
-
-               osg::Quat newRot;
-
-               if (rot != helper.mLastRotationMatrix && helper.mSmoothingSteps < 3.0)
-               {
-                  float smoothingFactor = helper.mSmoothingSteps/3.0f;
-                  newRot.slerp(smoothingFactor, helper.mRotQuatBeforeLastUpdate, helper.mLastQuatRotation);
-                  rot.set(newRot);
-               }
-               else
-               {
-                  rot.set(helper.mLastQuatRotation);
-               }
-
-               if (drPos != helper.mLastTranslation && helper.mSmoothingSteps < 10.0)
-               {
-                  pos = helper.mTransBeforeLastUpdate + positionChange;
-                  float smoothingFactor = helper.mSmoothingSteps/10.0f;
-                  //a bit of smoothing.
-                  pos = pos + (drPos - pos) * smoothingFactor;
-                  helper.mSmoothingSteps += tickMessage.GetDeltaSimTime();
-               }
-               else
-               {
-                  pos = drPos;
-               }
-
-               if (!helper.IsFlying() && gameActor.GetCollisionGeomType() == &dtCore::Transformable::CollisionGeomType::CUBE)
-               {
-                  ClampToGround(timeSinceUpdate, pos, rot, xform, gameActor.GetGameActorProxy(), helper);
-               }
-
-               xform.SetTranslation(pos);
-               xform.SetRotation(rot);
-               gameActor.SetTransform(xform);
-            }
-            else
-            {
-               if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-               {
-                  mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Entity does not need to be Dead Reckoned");
-               }
-            }
-
+            DRVelocityAcceleration(helper, tickMessage.GetDeltaSimTime(), timeSinceUpdate, forceClamp, gameActor, xform);
          }
          //clear the updated flag.
          helper.ClearUpdated();

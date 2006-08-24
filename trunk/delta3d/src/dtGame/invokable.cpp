@@ -18,6 +18,7 @@
  *
  * @author David Guthrie
  */
+#include <prefix/dtgameprefix-src.h>
 #include "dtGame/invokable.h"
 #include "dtGame/datastream.h"
 #include "dtGame/messageparameter.h"

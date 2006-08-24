@@ -21,9 +21,9 @@
 #ifndef DELTA_APPLICATION
 #define DELTA_APPLICATION
 
+#include <dtCore/refptr.h>
 #include <dtABC/baseabc.h>
 #include <dtABC/export.h>
-#include <dtABC/applicationconfigdata.h>           // for return type, member
 
 namespace dtCore
 {
@@ -32,6 +32,8 @@ namespace dtCore
 
 namespace dtABC
 {
+   struct ApplicationConfigData;
+   
    ///Base generic Application class
 
    /** The Application class of the dtCore Application Base Class library

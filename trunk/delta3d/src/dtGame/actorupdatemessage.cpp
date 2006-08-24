@@ -1,4 +1,4 @@
-/*
+/* -*-c++-*-
  * Delta3D Open Source Game and Simulation Engine
  * Copyright (C) 2005, BMH Associates, Inc.
  *
@@ -18,6 +18,7 @@
  *
  * @author William E. Johnson II
  */
+#include <prefix/dtgameprefix-src.h>
 #include <dtGame/actorupdatemessage.h>
 #include <dtGame/exceptionenum.h>
 #include <dtGame/messageparameter.h>

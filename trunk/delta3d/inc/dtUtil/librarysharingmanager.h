@@ -22,19 +22,27 @@
 #define DELTA_LIBRARYSHARINGMANAGER
 
 #include <set>
+#include <map>
 #include <string>
+#include <vector>
 #include <osg/Referenced>
 #include <osgDB/DynamicLibrary>
 #include <dtUtil/export.h>
+#include <dtUtil/exception.h>
+#include <dtUtil/enumeration.h>
+
+//This is bad. dtCore depends on dtUtil, but not dtUtil depends on dtCore
+//It only works because it's a template and the code is all in the header.
 #include <dtCore/refptr.h>
-#include "dtUtil/exception.h"
-#include "dtUtil/enumeration.h"
 
 namespace dtUtil
 {
    /**
     * @class LibrarySharingManager
     * @brief Singleton for controlling loading and unloading libraries shared by mulitple bodies of code.
+    * 
+    * @note This class will search a configured list of paths for a library
+    * before letting the OS use its search path. The default list may vary per OS.
     */
    class DT_UTIL_EXPORT LibrarySharingManager : public osg::Referenced
    {
@@ -104,8 +112,37 @@ namespace dtUtil
           * @throws dtUtil::Exception with key dtUtil::LibrarySharingManager::ExceptionEnum::LibraryLoadingError if the library
           *         can't be loaded for some reason.
           */
-         dtCore::RefPtr<LibraryHandle> LoadSharedLibrary(const std::string& libName) 
-            throw(dtUtil::Exception);
+         dtCore::RefPtr<LibraryHandle> LoadSharedLibrary(const std::string& libName);
+            
+         /**
+          * This class will search a configured list of paths for a library
+          * before letting the OS use its search path.  This method
+          * returns the list.  The default list may vary per OS.
+          * @return the list of directories this will search for libraries
+          */
+         void GetSearchPath(std::vector<std::string>& toFill) const;
+         
+         /**
+          * @param the file name of the library to find.
+          * @note this will not return a path to a library is the OS search path.
+          * @return the path to the library just searching in the search path list
+          */
+         const std::string FindLibraryInSearchPath(const std::string& libraryFileName) const;
+         
+         /**
+          * Adds a new path to the search path.  It will not convert the path to 
+          * an absolute path, so be careful when using relative ones.  It will also
+          * not validate that the path exists so that the app won't blow up of a directory
+          * is removed that was being added to the list.
+          * @param newPath the new path to add.
+          */
+         void AddToSearchPath(const std::string& newPath);
+
+         /**
+          * Removes a path from the search path.
+          * @param path the path to remove.
+          */
+         void RemoveFromSearchPath(const std::string& path);
                   
          /**
           * Determines which platform we are running on and returns a
@@ -118,7 +155,7 @@ namespace dtUtil
           *  library name would be ExampleActors.dll, however, on Unix based
           *  platforms, the resulting name would be libExampleActors.so.
           */
-         static std::string GetPlatformSpecificLibraryName(const std::string &libBase) throw();
+         static std::string GetPlatformSpecificLibraryName(const std::string &libBase);
   
          /**
           * Strips off the path and platform specific library prefixs and extensions
@@ -126,7 +163,7 @@ namespace dtUtil
           * @param libName The platform specific library name.
           * @return A platform independent library name.
           */
-         static std::string GetPlatformIndependentLibraryName(const std::string &libName) throw();
+         static std::string GetPlatformIndependentLibraryName(const std::string &libName);
 
       private:
          static dtCore::RefPtr<LibrarySharingManager> mInstance;
@@ -135,6 +172,8 @@ namespace dtUtil
          virtual ~LibrarySharingManager();
          //map of the platform independent name to the actual library
          std::map<std::string, dtCore::RefPtr<LibraryHandle> > mLibraries;
+         
+         std::set<std::string> mSearchPath;
 
          bool mShuttingDown;
 
@@ -143,7 +182,7 @@ namespace dtUtil
           * referenced library in use, the library will be closed.
           * @param a pointer to the handle to release.  This should not be NULL.
           */
-         void ReleaseSharedLibraryHandle(LibraryHandle* handle) throw();
+         void ReleaseSharedLibraryHandle(LibraryHandle* handle);
 
 
          // -----------------------------------------------------------------------

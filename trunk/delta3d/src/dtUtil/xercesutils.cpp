@@ -1,5 +1,6 @@
-#include "dtUtil/xercesutils.h"
-#include "dtUtil/log.h"
+#include <prefix/dtutilprefix-src.h>
+#include <dtUtil/xercesutils.h>
+#include <dtUtil/log.h>
 
 #include <algorithm>
 

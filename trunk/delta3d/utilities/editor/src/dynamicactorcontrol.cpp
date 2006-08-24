@@ -19,6 +19,7 @@
  *
  * @author William E. Johnson II
  */
+#include <prefix/dtstageprefix-src.h>
 #include "dtEditQt/dynamicactorcontrol.h"
 #include "dtEditQt/editordata.h"
 #include "dtEditQt/editorevents.h"

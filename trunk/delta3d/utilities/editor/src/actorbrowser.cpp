@@ -19,7 +19,7 @@
 *
 * @author Curtiss Murphy
 */
-
+#include <prefix/dtstageprefix-src.h>
 #include <QtGui/QDirModel>
 #include <QtGui/QGridLayout>
 #include <QtGui/QGroupBox>
@@ -32,12 +32,12 @@
 #include <QtGui/QTreeView>
 #include <QtGui/QTreeWidget>
 
-#include "dtEditQt/actorbrowser.h"
-#include "dtEditQt/viewportmanager.h"
-#include "dtEditQt/actortypetreewidget.h"
-#include "dtEditQt/editorevents.h"
-#include "dtEditQt/editordata.h"
-#include "dtEditQt/mainwindow.h"
+#include <dtEditQt/actorbrowser.h>
+#include <dtEditQt/viewportmanager.h>
+#include <dtEditQt/actortypetreewidget.h>
+#include <dtEditQt/editorevents.h>
+#include <dtEditQt/editordata.h>
+#include <dtEditQt/mainwindow.h>
 #include <dtDAL/librarymanager.h>
 #include <dtDAL/map.h>
 #include <dtUtil/log.h>

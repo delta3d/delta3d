@@ -33,7 +33,7 @@
 #undef None
 #endif
 #include <CEGUI/CEGUI.h>
-#include <dtGUI/dtgui.h>
+#include <dtGUI/ceuidrawable.h>
 
 #define HUDCONTROLMAXTEXTSIZE 100
 
@@ -44,7 +44,6 @@ namespace dtActors
 
 namespace dtGame
 {
-   class ClientGameManager;
    class GameActorProxy;
    class ServerLoggerComponent;
    class LogController;
@@ -98,8 +97,9 @@ class TestAARHUD : public dtGame::GMComponent
       /**
        * Constructs the test application.
        */
-      TestAARHUD(dtCore::DeltaWin *win, dtGame::ClientGameManager &clientGM,
-                 dtGame::LogController &logController, dtGame::TaskComponent &taskComponent,
+      TestAARHUD(dtCore::DeltaWin *win, 
+                 dtGame::LogController &logController, 
+                 dtGame::TaskComponent &taskComponent,
                  dtGame::ServerLoggerComponent &serverLogger);
    protected:
 
@@ -182,7 +182,6 @@ class TestAARHUD : public dtGame::GMComponent
       HUDState *mHUDState;
       HUDState *mLastHUDStateBeforeHelp;
 
-      dtCore::RefPtr<dtGame::ClientGameManager> mClientGM;
       dtCore::RefPtr<dtGame::LogController> mLogController;
       dtCore::RefPtr<dtGame::TaskComponent> mTaskComponent;
       dtCore::RefPtr<dtGame::ServerLoggerComponent> mServerLoggerComponent;

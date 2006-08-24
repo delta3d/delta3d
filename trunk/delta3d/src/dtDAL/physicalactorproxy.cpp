@@ -18,7 +18,7 @@
  *
  * @author William E. Johnson II
  */
-
+#include <prefix/dtdalprefix-src.h>
 #include <dtDAL/physicalactorproxy.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/exceptionenum.h>

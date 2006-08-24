@@ -18,6 +18,7 @@
  *
  * @author David Guthrie
  */
+#include <prefix/dtutilprefix-src.h>
 
 #if defined(WIN32) && !defined(__CYGWIN__)
   #include <Io.h>
@@ -30,7 +31,12 @@
 #include <sstream>
 #include <osgDB/FileUtils>
 #include <osgDB/FileNameUtils>
-#include "dtUtil/librarysharingmanager.h"
+
+#include <dtUtil/fileutils.h>
+#include <dtUtil/librarysharingmanager.h>
+
+using std::string;
+using std::set;
 
 namespace dtUtil
 {
@@ -53,18 +59,25 @@ namespace dtUtil
    class InternalLibraryHandle : public LibrarySharingManager::LibraryHandle 
    {
       public:
-         InternalLibraryHandle(const std::string& libName, HANDLE libHandle, bool close): 
+         InternalLibraryHandle(const string& libName, HANDLE libHandle, bool close): 
             LibrarySharingManager::LibraryHandle(), mLibName(libName), mHandle(libHandle), mClose(close)  {}
          
          ///Loads the library and returns a ref pointer to it.  This will not reload libraries that are already
          ///loaded.
-         static dtCore::RefPtr<LibrarySharingManager::LibraryHandle> LoadLibrary(const std::string& libraryName)
+         static dtCore::RefPtr<LibrarySharingManager::LibraryHandle> LoadLibrary(const string& libraryName)
          {
             HANDLE handle = NULL;
             
-            std::string fullLibraryName = osgDB::findLibraryFile(libraryName);            
+            string fullLibraryName = osgDB::findLibraryFile(libraryName);            
             if (fullLibraryName.empty())
-               fullLibraryName = libraryName;
+            {               
+               fullLibraryName = LibrarySharingManager::GetInstance().FindLibraryInSearchPath(libraryName);
+                              
+               //if It's still empty, just set it to the plain name and
+               //use the OS search path.   
+               if (fullLibraryName.empty())
+                  fullLibraryName = libraryName;
+            }
             
             //close is only used in windows so that it can be false if the lib is already
             //loaded and a handle is found for it.  Freeing a library that is linked it at
@@ -85,7 +98,7 @@ namespace dtUtil
 #else
             // dlopen will not work with files in the current directory unless
             // they are prefaced with './'  (DB - Nov 5, 2003).
-            std::string localLibraryName;
+            string localLibraryName;
             if( fullLibraryName == osgDB::getSimpleFileName( fullLibraryName ) )
                localLibraryName = "./" + fullLibraryName;
             else
@@ -107,7 +120,7 @@ namespace dtUtil
          }
 
          ///Looks up a function symbol
-         virtual LibrarySharingManager::LibraryHandle::SYMBOL_ADDRESS FindSymbol(const std::string& symbolName) const
+         virtual LibrarySharingManager::LibraryHandle::SYMBOL_ADDRESS FindSymbol(const string& symbolName) const
          {
             if (mHandle==NULL) return NULL;
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -122,7 +135,7 @@ namespace dtUtil
 #endif            
          }
          
-         virtual const std::string& GetLibName() const
+         virtual const string& GetLibName() const
          {
             return mLibName;
          } 
@@ -145,7 +158,7 @@ namespace dtUtil
          }
       
       private:
-         std::string mLibName;
+         string mLibName;
          HANDLE mHandle;
          bool mClose;
          /// disable default constructor.
@@ -181,8 +194,7 @@ namespace dtUtil
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<LibrarySharingManager::LibraryHandle> LibrarySharingManager::LoadSharedLibrary(const std::string& libName) 
-   throw(dtUtil::Exception)
+   dtCore::RefPtr<LibrarySharingManager::LibraryHandle> LibrarySharingManager::LoadSharedLibrary(const string& libName) 
    {
       if (mShuttingDown)
          EXCEPT(LibrarySharingManager::ExceptionEnum::LibraryLoadingError, "Library Manager is shutting down.");  
@@ -190,10 +202,10 @@ namespace dtUtil
       dtCore::RefPtr<LibrarySharingManager::LibraryHandle> dynLib;
         
         
-      std::map<std::string, dtCore::RefPtr<LibrarySharingManager::LibraryHandle> >::iterator itor = mLibraries.find(libName);
+      std::map<string, dtCore::RefPtr<LibrarySharingManager::LibraryHandle> >::iterator itor = mLibraries.find(libName);
       if (itor == mLibraries.end())
       {
-         std::string actualLibName;
+         string actualLibName;
 
          //Get the system dependent name of the library.
          actualLibName = GetPlatformSpecificLibraryName(libName);
@@ -231,7 +243,7 @@ namespace dtUtil
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void LibrarySharingManager::ReleaseSharedLibraryHandle(LibraryHandle* handle) throw()
+   void LibrarySharingManager::ReleaseSharedLibraryHandle(LibraryHandle* handle)
    {
       if (handle == NULL)
          return;
@@ -239,7 +251,7 @@ namespace dtUtil
       if (mShuttingDown)
          return;
          
-      std::map<std::string, dtCore::RefPtr<LibrarySharingManager::LibraryHandle> >::iterator itor = mLibraries.find(handle->GetLibName());
+      std::map<string, dtCore::RefPtr<LibrarySharingManager::LibraryHandle> >::iterator itor = mLibraries.find(handle->GetLibName());
       if (itor != mLibraries.end()) 
       {
          //if the the reference in the data structure is the last reference, then erase the library, causing it to be
@@ -250,7 +262,47 @@ namespace dtUtil
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   std::string LibrarySharingManager::GetPlatformSpecificLibraryName(const std::string &libBase) throw()
+   void LibrarySharingManager::GetSearchPath(std::vector<string>& toFill) const
+   {
+      toFill.clear();
+      toFill.reserve(mSearchPath.size());
+      toFill.insert(toFill.begin(), mSearchPath.begin(), mSearchPath.end());
+   }
+   
+   ///////////////////////////////////////////////////////////////////////////////
+   const std::string LibrarySharingManager::FindLibraryInSearchPath(const std::string& libraryFileName) const
+   {
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+      
+      string path;
+      for (set<string>::const_iterator itor = mSearchPath.begin(); itor != mSearchPath.end(); ++itor)
+      {
+         path = *itor;
+         //Make sure we remove any trailing slashes from the cache path.
+         if (path[path.length()-1] == '/' || path[path.length()-1] == '\\')
+            path = path.substr(0, path.length()-1);
+
+         if (fileUtils.FileExists(path + dtUtil::FileUtils::PATH_SEPARATOR + libraryFileName))
+            return  path + dtUtil::FileUtils::PATH_SEPARATOR + libraryFileName;
+      }
+      return string();
+   }  
+   ///////////////////////////////////////////////////////////////////////////////
+   void LibrarySharingManager::AddToSearchPath(const string& newPath)
+   {
+      mSearchPath.insert(newPath);
+   }
+   
+   ///////////////////////////////////////////////////////////////////////////////
+   void LibrarySharingManager::RemoveFromSearchPath(const string& path)
+   {
+      set<string>::iterator i = mSearchPath.find(path);
+      if (i != mSearchPath.end())
+         mSearchPath.erase(i);      
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   string LibrarySharingManager::GetPlatformSpecificLibraryName(const string &libBase)
    {
       #if defined(_MSC_VER) || defined(__CYGWIN__) || defined(__MINGW32__) || defined( __BCPLUSPLUS__)  || defined( __MWERKS__)
          #ifdef _DEBUG
@@ -266,19 +318,19 @@ namespace dtUtil
    }
    
    ///////////////////////////////////////////////////////////////////////////////
-   std::string LibrarySharingManager::GetPlatformIndependentLibraryName(const std::string &libName) throw()
+   string LibrarySharingManager::GetPlatformIndependentLibraryName(const string &libName)
    {
-      std::string iName = osgDB::getStrippedName(libName);
+      string iName = osgDB::getStrippedName(libName);
    
       #if defined(_MSC_VER) || defined(__CYGWIN__) || defined(__MINGW32__) || defined( __BCPLUSPLUS__)  || defined( __MWERKS__)
          #ifdef _DEBUG
          //Pull off the final "d"
-         return std::string(iName.begin(),iName.end() - 1);
+         return string(iName.begin(),iName.end() - 1);
          #else
          return iName;
          #endif
       #else
-         return std::string(iName.begin()+3,iName.end());
+         return string(iName.begin()+3,iName.end());
       #endif
    }
 }

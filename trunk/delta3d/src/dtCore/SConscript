@@ -14,21 +14,20 @@ defines = []
 
 if OS == 'windows':
    defines = ['DT_CORE_LIBRARY', 'NOMINMAX']
-
-
-if OS != 'windows' :
-   srcs.remove( 'deltawin_win32.cpp' )
-   srcs.remove( 'uniqueid_win32.cpp' )
-
-if OS != 'linux':
    srcs.remove( 'deltawin_x11.cpp' )
-   srcs.remove( 'uniqueid_linux.cpp' )
-
-if OS != 'darwin':
    srcs.remove( 'deltawin_carbon.cpp' )
+   srcs.remove( 'uniqueid_linux.cpp' )
    srcs.remove( 'uniqueid_macosx.cpp' )
-
-if OS == 'darwin':
+elif OS == 'linux':
+   srcs.remove( 'deltawin_win32.cpp' )
+   srcs.remove( 'deltawin_carbon.cpp' )
+   srcs.remove( 'uniqueid_win32.cpp' )
+   srcs.remove( 'uniqueid_macosx.cpp' )
+elif OS == 'darwin':
+   srcs.remove( 'deltawin_x11.cpp' )
+   srcs.remove( 'deltawin_win32.cpp' )
+   srcs.remove( 'uniqueid_linux.cpp' )
+   srcs.remove( 'uniqueid_win32.cpp' )
    srcs.remove( 'tracker.cpp' )
     
 env.BuildLib( 'dtCore', srcs, deps,  defines, prefixHeader = 'inc/prefix/dtcoreprefix.h')

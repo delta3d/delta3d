@@ -20,6 +20,7 @@
  * @author Chris Osborn
  */
 
+#include <prefix/dtutilprefix-src.h>
 #include <dtUtil/version.h>
 
 const char* Delta3DGetVersion()

@@ -19,7 +19,7 @@
 *
 * @author Curtiss Murphy
 */
-
+#include <prefix/dtstageprefix-src.h>
 #include <QtGui/QIcon>
 
 #include "dtEditQt/actortypetreewidget.h"

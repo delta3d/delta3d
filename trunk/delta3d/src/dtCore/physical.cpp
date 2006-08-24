@@ -1,7 +1,7 @@
 // physical.cpp: Implementation of the Physical class.
 //
 //////////////////////////////////////////////////////////////////////
-
+#include <prefix/dtcoreprefix-src.h>
 #include <dtCore/scene.h>
 #include <dtCore/object.h>
 #include <dtUtil/log.h>
