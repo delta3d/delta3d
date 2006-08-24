@@ -249,7 +249,7 @@ namespace dtGame
             CPPUNIT_ASSERT(mDeadReckoningComponent->IsRegisteredActor(*actor));
             
             dtCore::Transform xform;
-            actor->GetGameActor().GetTransform(&xform);
+            actor->GetGameActor().GetTransform(xform);
             osg::Vec3 vec;
             xform.GetTranslation(vec);
             CPPUNIT_ASSERT(osg::equivalent(vec.x(), 0.0f, 1e-2f) &&
@@ -271,7 +271,7 @@ namespace dtGame
             
             dtCore::System::GetInstance().Step();
          
-            actor->GetGameActor().GetTransform(&xform);
+            actor->GetGameActor().GetTransform(xform);
             xform.GetTranslation(vec);
             CPPUNIT_ASSERT(osg::equivalent(vec.x(), 0.0f, 1e-2f) &&
                            osg::equivalent(vec.y(), 0.0f, 1e-2f) &&
@@ -286,7 +286,7 @@ namespace dtGame
             helper->SetDeadReckoningAlgorithm(DeadReckoningAlgorithm::STATIC);
             dtCore::System::GetInstance().Step();
          
-            actor->GetGameActor().GetTransform(&xform);
+            actor->GetGameActor().GetTransform(xform);
             xform.GetTranslation(vec);
             CPPUNIT_ASSERT(osg::equivalent(vec.x(), setVec.x(), 1e-2f) &&
                            osg::equivalent(vec.y(), setVec.y(), 1e-2f) &&

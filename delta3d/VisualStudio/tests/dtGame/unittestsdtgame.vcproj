@@ -137,7 +137,13 @@ set DELTA_DATA=$(DELTA_DATA)
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
+				RelativePath="..\..\..\tests\dtGame\deadreckoningcomponenttests.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\tests\dtGame\gameactortests.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\tests\dtGame\gameapplicationtests.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\tests\dtGame\gamemanagertests.cpp">
@@ -147,6 +153,9 @@ set DELTA_DATA=$(DELTA_DATA)
 			</File>
 			<File
 				RelativePath="..\..\..\tests\mainTestRunner.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\tests\dtGame\messageparametertests.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\tests\dtGame\messagetests.cpp">
