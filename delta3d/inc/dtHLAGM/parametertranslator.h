@@ -24,8 +24,8 @@
 
 #include <dtCore/base.h>
 #include <dtCore/refptr.h>
-#include "dtHLAGM/export.h"
-#include "dtHLAGM/attributetype.h"
+#include <dtHLAGM/export.h>
+#include <dtHLAGM/attributetype.h>
 
 namespace dtGame 
 {

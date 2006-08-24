@@ -20,8 +20,8 @@
  */
 #include <map>
 #include <dtCore/uniqueid.h>
-#include "dtHLAGM/distypes.h"
-#include "dtHLAGM/objecttoactor.h"
+#include <dtHLAGM/distypes.h>
+#include <dtHLAGM/objecttoactor.h>
 
 namespace dtHLAGM
 {

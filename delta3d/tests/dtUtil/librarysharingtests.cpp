@@ -43,6 +43,7 @@ class UtilTests : public CPPUNIT_NS::TestFixture
 {
     CPPUNIT_TEST_SUITE( UtilTests );
     CPPUNIT_TEST( TestLibrarySharing );
+    CPPUNIT_TEST( TestPaths );
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -73,6 +74,50 @@ public:
    
    void tearDown() {}
 
+   void TestPaths()
+   {
+      std::vector<std::string> toFill;
+      
+      dtUtil::LibrarySharingManager& lsm = dtUtil::LibrarySharingManager::GetInstance();
+      lsm.GetSearchPath(toFill);
+      CPPUNIT_ASSERT_MESSAGE("Search Path should default to empty.", toFill.empty());
+      
+      lsm.AddToSearchPath("hello");      
+      lsm.AddToSearchPath("jojo");      
+
+      lsm.GetSearchPath(toFill);
+      CPPUNIT_ASSERT_MESSAGE("Search Path should have two items.", toFill.size() == 2);
+
+      lsm.RemoveFromSearchPath("hello");      
+      lsm.RemoveFromSearchPath("jojo");      
+
+      lsm.GetSearchPath(toFill);
+      CPPUNIT_ASSERT_MESSAGE("Search Path should be empty.", toFill.empty());
+      
+   }
+
+   void TestPathSearching()
+   {
+      std::vector<std::string> toFill;
+      
+      dtUtil::LibrarySharingManager& lsm = dtUtil::LibrarySharingManager::GetInstance();
+      lsm.GetSearchPath(toFill);
+      CPPUNIT_ASSERT_MESSAGE("Search Path should default to empty.", toFill.empty());
+      
+      lsm.AddToSearchPath("hello");      
+      lsm.AddToSearchPath("jojo");      
+
+      lsm.GetSearchPath(toFill);
+      CPPUNIT_ASSERT_MESSAGE("Search Path should have two items.", toFill.size() == 2);
+
+      lsm.RemoveFromSearchPath("hello");      
+      lsm.RemoveFromSearchPath("jojo");      
+
+      lsm.GetSearchPath(toFill);
+      CPPUNIT_ASSERT_MESSAGE("Search Path should be empty.", toFill.empty());
+      
+   }
+   
    void TestLibrarySharing()
    {
       dtDAL::LibraryManager& libMgr = dtDAL::LibraryManager::GetInstance();

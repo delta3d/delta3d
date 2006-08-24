@@ -29,8 +29,8 @@
 #include <vector>
 #include <dtGame/messagetype.h>
 #include <osg/Referenced>
-#include "dtHLAGM/onetoonemapping.h"
-#include "dtHLAGM/parametertoparameter.h"
+#include <dtHLAGM/onetoonemapping.h>
+#include <dtHLAGM/parametertoparameter.h>
 
 namespace dtHLAGM
 {

@@ -18,6 +18,7 @@
  *
  * @author David Guthrie
  */
+#include <prefix/dtgameprefix-src.h>
 #include <string>
 #include "dtGame/exceptionenum.h"
 #include "dtGame/messageparameter.h"
@@ -33,17 +34,17 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void MessageParameter::SetFromProperty(const dtDAL::ActorProperty &property) 
    {
-      EXCEPT(dtGame::ExceptionEnum::INVALID_PARAMETER, 
+      throw dtUtil::Exception(dtGame::ExceptionEnum::INVALID_PARAMETER, 
          "Message parameter[" + GetName() + "] of type[" + GetDataType().GetName() +
-         "] does not have an associated actor property type in SetFromProperty()");
+         "] does not have an associated actor property type in SetFromProperty()", __FILE__, __LINE__);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void MessageParameter::ApplyValueToProperty(dtDAL::ActorProperty &property) const 
    {
-      EXCEPT(dtGame::ExceptionEnum::INVALID_PARAMETER, 
+      throw dtUtil::Exception(dtGame::ExceptionEnum::INVALID_PARAMETER, 
          "Message parameter[" + GetName() + "] of type[" + GetDataType().GetName() +
-         "] does not have an associated actor property type in ApplyValueToProperty()");
+         "] does not have an associated actor property type in ApplyValueToProperty()", __FILE__, __LINE__);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -51,10 +52,10 @@ namespace dtGame
    {
       if (property.GetPropertyType() != GetDataType())
       {
-         EXCEPT(dtGame::ExceptionEnum::INVALID_PARAMETER, 
+         throw dtUtil::Exception(dtGame::ExceptionEnum::INVALID_PARAMETER, 
             "Actor Property [" + property.GetName() + "] with Data Type [" + property.GetPropertyType().GetName() +
             "] does not match the Message Parameter [" + GetName() + 
-            "] with Data Type [" + GetDataType().GetName() + "]");
+            "] with Data Type [" + GetDataType().GetName() + "]", __FILE__, __LINE__);
       }
    }
 
@@ -154,7 +155,7 @@ namespace dtGame
          param = new ResourceMessageParameter(type,name,isList);
          break;
       default:
-         EXCEPT(dtGame::ExceptionEnum::INVALID_PARAMETER, "Type " + type.GetName() + " is not supported by the MessageParameter class.");
+         throw dtUtil::Exception(dtGame::ExceptionEnum::INVALID_PARAMETER, "Type " + type.GetName() + " is not supported by the MessageParameter class.", __FILE__, __LINE__);
          break;
       }
 
@@ -215,7 +216,7 @@ namespace dtGame
             }
          }
          if(type == NULL) //|| type == &dtDAL::DataType::UNKNOWN)
-            EXCEPT(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION, "The datatype was not found in the stream\n");
+            throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION, "The datatype was not found in the stream", __FILE__, __LINE__);
 
          std::string name;
          stream >> name;
@@ -263,7 +264,8 @@ namespace dtGame
    void GroupMessageParameter::CopyFrom(const MessageParameter& otherParam) 
    {
       if (otherParam.GetDataType() != GetDataType())
-         EXCEPT(ExceptionEnum::INVALID_PARAMETER, "The msg parameter must be of type GROUP.");
+         throw dtUtil::Exception(ExceptionEnum::INVALID_PARAMETER, 
+            "The msg parameter must be of type GROUP.", __FILE__, __LINE__);
       
       const GroupMessageParameter& gpm = static_cast<const GroupMessageParameter&>(otherParam);
       
@@ -278,7 +280,8 @@ namespace dtGame
          if (newParameter == NULL)
             //This case should not happen, the method above should throw an exception if it doesn't work, but
             //this is a case of paranoid programming.
-            EXCEPT(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION, "Unable to create parameter of type " + i->second->GetDataType().GetName());
+            throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION, 
+               "Unable to create parameter of type " + i->second->GetDataType().GetName(), __FILE__, __LINE__);
          
          newParameter->CopyFrom(*i->second);
       }
@@ -303,8 +306,8 @@ namespace dtGame
    void GroupMessageParameter::AddParameter(MessageParameter& newParam) 
    {
       if (!mParameterList.insert(std::make_pair(newParam.GetName(), &newParam)).second)
-         EXCEPT(dtGame::ExceptionEnum::INVALID_PARAMETER, "Could not add new parameter: " + newParam.GetName() + 
-            ". A parameter with that name already exists.");
+         throw dtUtil::Exception(dtGame::ExceptionEnum::INVALID_PARAMETER, "Could not add new parameter: " + newParam.GetName() + 
+            ". A parameter with that name already exists.", __FILE__, __LINE__);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -757,8 +760,9 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void ActorMessageParameter::ApplyValueToProperty(dtDAL::ActorProperty &property) const 
    {
-      EXCEPT(dtGame::ExceptionEnum::INVALID_PARAMETER, 
-         "Cannot call ApplyValueToProperty()on an ActorMessageParameter.  See the GameActor::ApplyActorUpdate() for an example of how to do this.");
+      throw dtUtil::Exception(dtGame::ExceptionEnum::INVALID_PARAMETER, 
+         "Cannot call ApplyValueToProperty()on an ActorMessageParameter.  See the GameActor::ApplyActorUpdate() for an example of how to do this.",
+         __FILE__, __LINE__);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -1395,8 +1399,9 @@ namespace dtGame
       //First make sure this parameter does not have a list if the
       //other parameter does and vice versa.
       if ((IsList() && !otherParam.IsList()) ||(!IsList() && otherParam.IsList()))
-         EXCEPT(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION,
-            "Cannot assign two parameters with one being a list of values and the other not.");
+         throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION,
+            "Cannot assign two parameters with one being a list of values and the other not.",
+            __FILE__, __LINE__);
 
       if (param != NULL)
       {
@@ -1416,8 +1421,8 @@ namespace dtGame
    void ResourceMessageParameter::SetValue(const dtDAL::ResourceDescriptor* descriptor)
    {
       if (IsList())
-         EXCEPT(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION,
-            "Cannot call SetValue() on message parameter with a list of values.");
+         throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION,
+            "Cannot call SetValue() on message parameter with a list of values.", __FILE__, __LINE__);
 
       mDescriptor = descriptor == NULL ? dtDAL::ResourceDescriptor("","") : *descriptor;
    }
@@ -1426,8 +1431,8 @@ namespace dtGame
    const dtDAL::ResourceDescriptor* ResourceMessageParameter::GetValue() const
    {
       if (IsList())
-         EXCEPT(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION,
-            "Cannot call GetValue() on message parameter with a list of values.");
+         throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION,
+            "Cannot call GetValue() on message parameter with a list of values.", __FILE__, __LINE__);
 
       if (mDescriptor.GetResourceIdentifier().empty())
          return NULL;
@@ -1439,8 +1444,8 @@ namespace dtGame
    const std::vector<dtDAL::ResourceDescriptor> &ResourceMessageParameter::GetValueList() const
    {
       if (!IsList())
-         EXCEPT(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION,
-            "Cannot retrieve the parameters value list.  Parameter does not contain a list.");
+         throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION,
+            "Cannot retrieve the parameters value list.  Parameter does not contain a list.", __FILE__, __LINE__);
       return *mValueList;
    }
 
@@ -1448,8 +1453,8 @@ namespace dtGame
    std::vector<dtDAL::ResourceDescriptor> &ResourceMessageParameter::GetValueList()
    {
       if (!IsList())
-         EXCEPT(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION,
-            "Cannot retrieve the parameters value list.  Parameter does not contain a list.");
+         throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION,
+            "Cannot retrieve the parameters value list.  Parameter does not contain a list.", __FILE__, __LINE__);
       return *mValueList;
    }
 
@@ -1457,8 +1462,8 @@ namespace dtGame
    void ResourceMessageParameter::SetValueList(const std::vector<dtDAL::ResourceDescriptor> &newValues)
    {
       if (!IsList())
-         EXCEPT(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION,
-            "Cannot set a list of new values on a parameter that is not a list.");
+         throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION,
+            "Cannot set a list of new values on a parameter that is not a list.", __FILE__, __LINE__);
 
       *mValueList = newValues;
    }

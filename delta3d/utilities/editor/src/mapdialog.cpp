@@ -19,7 +19,7 @@
 *
 * @author William E. Johnson II
 */
-
+#include <prefix/dtstageprefix-src.h>
 #include "dtEditQt/mapdialog.h"
 
 #include <QtGui/QGroupBox>

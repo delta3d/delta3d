@@ -29,10 +29,10 @@
 
 #include <dtGame/messageparameter.h>
 
-#include "dtHLAGM/onetoonemapping.h"
-#include "dtHLAGM/rprparametertranslator.h"
-#include "dtHLAGM/distypes.h"
-#include "dtHLAGM/objectruntimemappinginfo.h"
+#include <dtHLAGM/onetoonemapping.h>
+#include <dtHLAGM/rprparametertranslator.h>
+#include <dtHLAGM/distypes.h>
+#include <dtHLAGM/objectruntimemappinginfo.h>
 
 namespace dtHLAGM
 {

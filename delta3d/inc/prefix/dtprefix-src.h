@@ -1,18 +1,27 @@
+#ifdef DELTA_PCH
+
+#ifndef DELTA_PREFIX
+#define DELTA_PREFIX
+
+#include <cstdlib>
+#include <cstdio>
 #include <string>
 #include <vector>
 #include <map>
 #include <sstream>
 #include <algorithm>
 
+#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
+   #if !defined (WIN32_LEAN_AND_MEAN)
+       #define WIN32_LEAN_AND_MEAN
+   #endif
+   #if !defined (NOMINMAX)
+       #define NOMINMAX
+   #endif
+   #include <windows.h>
+#endif
+
 //#include <python/dtpython.h>
-#include <dtCore/refptr.h>
-#include <dtUtil/exception.h>
-#include <dtUtil/log.h>
-#include <dtUtil/stringutils.h>
-#include <dtUtil/deprecationmgr.h>
-#include <dtCore/sigslot.h>
-#include <dtCore/uniqueid.h>
-#include <osg/ref_ptr>
 #include <osg/Referenced>
 #include <osg/Matrix>
 #include <osg/Vec3>
@@ -21,3 +30,6 @@
 #include <osg/io_utils>
 
 #include <cppunit/extensions/HelperMacros.h>
+
+#endif
+#endif

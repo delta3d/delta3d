@@ -1,3 +1,4 @@
+#include <prefix/dtcoreprefix-src.h>
 #include <dtCore/stats.h>
 #include <dtCore/timer.h>
 #include <osg/BlendFunc>
@@ -94,7 +95,12 @@ dtCore::Timer_t Stats::UpdateFrameTick()
 //Select the next osgUtil::Statistics type - will wrap around back to NONE
 void Stats::SelectNextType()
 {
+   
+#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR == 1 && OSG_VERSION_MINOR == 1 && OSG_VERSION_RELEASE >= 1
+   osgUtil::Statistics::StatsType type = osgUtil::Statistics::STAT_NONE;
+#else
    osgUtil::Statistics::statsType type = osgUtil::Statistics::STAT_NONE;
+#endif
 
    switch( mPrintStats ) 
    {
@@ -115,7 +121,11 @@ void Stats::SelectNextType()
 //------------------------------------------------------------------
 // Stats::selectType
 //------------------------------------------------------------------
+#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR == 1 && OSG_VERSION_MINOR == 1 && OSG_VERSION_RELEASE >= 1
+void Stats::SelectType(osgUtil::Statistics::StatsType type)
+#else
 void Stats::SelectType(osgUtil::Statistics::statsType type)
+#endif
 {
 
    if (!mProjection.valid()) InitTexts();

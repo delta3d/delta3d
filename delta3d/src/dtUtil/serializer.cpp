@@ -1,5 +1,6 @@
-#include "dtUtil/serializer.h"
-#include "dtUtil/stringutils.h"
+#include <prefix/dtutilprefix-src.h>
+#include <dtUtil/serializer.h>
+#include <dtUtil/stringutils.h>
 
 #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOMElement.hpp>

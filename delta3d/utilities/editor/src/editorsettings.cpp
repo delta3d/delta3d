@@ -19,6 +19,7 @@
 *
 * @author Matthew W. Campbell
 */
+#include <prefix/dtstageprefix-src.h>
 #include "dtEditQt/editorsettings.h"
 
 namespace dtEditQt

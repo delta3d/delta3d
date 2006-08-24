@@ -22,6 +22,7 @@
 
 //had to add this header to make it compile in linux
 //not sure why.
+#include <prefix/dtstageprefix-src.h>
 #include <QtGui/QHeaderView>
 
 #include <QtGui/QHBoxLayout>

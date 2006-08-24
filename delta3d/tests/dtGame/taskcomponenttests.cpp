@@ -20,11 +20,12 @@
  */
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtDAL/actortype.h>
-#include <dtGame/clientgamemanager.h>
+#include <dtGame/gamemanager.h>
 #include <dtGame/taskcomponent.h>
 #include <dtGame/defaultmessageprocessor.h>
 #include <dtGame/basemessages.h>
 #include <dtCore/system.h>
+#include <dtCore/scene.h>
 
 #if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
    #include <Windows.h>
@@ -53,7 +54,7 @@ class GMTaskComponentTests : public CPPUNIT_NS::TestFixture
       void TestGetTasks();
 
    private:
-      dtCore::RefPtr<dtGame::ClientGameManager> mGameManager;
+      dtCore::RefPtr<dtGame::GameManager> mGameManager;
       static const std::string mTestGameActorLibrary;
       static const std::string mTestActorLibrary;
 };
@@ -70,7 +71,7 @@ void GMTaskComponentTests::setUp()
    try
    {
       dtCore::Scene* scene = new dtCore::Scene();
-      mGameManager = new dtGame::ClientGameManager(*scene);
+      mGameManager = new dtGame::GameManager(*scene);
       mGameManager->LoadActorRegistry(mTestGameActorLibrary);
       dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
       dtCore::System::GetInstance().Start();

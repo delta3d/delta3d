@@ -1,7 +1,7 @@
 // logicalinputdevice.cpp: Implementation of the LogicalInputDevice class.
 //
 //////////////////////////////////////////////////////////////////////
-
+#include <prefix/dtcoreprefix-src.h>
 #include "dtCore/logicalinputdevice.h"
 
 namespace dtCore

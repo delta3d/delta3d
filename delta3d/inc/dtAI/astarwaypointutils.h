@@ -57,7 +57,7 @@ namespace dtAI
       WaypointIter(const WaypointIter& pIter){mIter = pIter.container();}
       WaypointIter& operator=(WaypointIter& pIter){mIter = pIter.container(); return *this;}
 
-      bool WaypointIter::operator !=(const WaypointIter& pIter) const
+      bool operator !=(const WaypointIter& pIter) const
       {
          return mIter != pIter.container();
       }

@@ -10,10 +10,8 @@ using namespace dtDAL;
 namespace dtActors
 {
 
-
-
-void ActionActorProxy::BuildPropertyMap()
-{
+   void ActionActorProxy::BuildPropertyMap()
+   {
       const std::string GROUPNAME = "Action";
 
       dtABC::Action *a = dynamic_cast<dtABC::Action*>(mActor.get());
@@ -27,8 +25,6 @@ void ActionActorProxy::BuildPropertyMap()
          dtDAL::MakeFunctorRet(*a,&dtABC::Action::GetTimeStep),
          "Sets the time step which will be the increment in seconds to update this Action by.", GROUPNAME));
 
-}
-
-
+   } 
 
 }

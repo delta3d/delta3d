@@ -32,9 +32,9 @@
 #include <map>
 #include <dtDAL/datatype.h>
 #include <dtCore/refptr.h>
-#include "dtHLAGM/export.h"
-#include "dtHLAGM/distypes.h"
-#include "dtHLAGM/attributetype.h"
+#include <dtHLAGM/export.h>
+#include <dtHLAGM/distypes.h>
+#include <dtHLAGM/attributetype.h>
 
 namespace dtHLAGM
 {

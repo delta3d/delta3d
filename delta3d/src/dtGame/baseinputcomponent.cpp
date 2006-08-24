@@ -18,9 +18,11 @@
  *
  * @author Curtiss Murphy
  */
+#include <prefix/dtgameprefix-src.h>
 #include <dtGame/baseinputcomponent.h>
 #include <dtABC/application.h>
 #include <dtCore/logicalinputdevice.h>
+#include <dtCore/deltawin.h>
 
 namespace dtGame
 {
@@ -73,15 +75,17 @@ namespace dtGame
       switch(key)
       {
          case Producer::Key_Escape:
-            {
-               dtABC::Application& app = GetGameManager()->GetApplication();
-               app.Quit();
-            }
-            break;
+         {
+            dtABC::Application& app = GetGameManager()->GetApplication();
+            app.Quit();
+         }
+         break;
 
          default:
+         {
             handled = false;
-            break;
+         }
+         break;
       }
 
       return handled;

@@ -18,7 +18,7 @@
 *
 * @author Curtiss Murphy
 */
-
+#include <prefix/dtgameprefix-src.h>
 #include "dtGame/logcontroller.h"
 #include "dtGame/loggermessages.h"
 #include "dtGame/messagetype.h"

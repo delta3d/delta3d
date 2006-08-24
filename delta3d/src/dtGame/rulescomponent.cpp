@@ -18,12 +18,13 @@
  *
  * @author William E. Johnson II
  */
-
-#include "dtGame/rulescomponent.h"
-#include "dtGame/gamemanager.h"
-#include "dtGame/messagetype.h"
-#include "dtGame/basemessages.h"
-#include "dtGame/actorupdatemessage.h"
+#include <prefix/dtgameprefix-src.h>
+#include <dtGame/rulescomponent.h>
+#include <dtGame/gamemanager.h>
+#include <dtGame/messagetype.h>
+#include <dtGame/basemessages.h>
+#include <dtGame/actorupdatemessage.h>
+#include <dtUtil/log.h>
 
 namespace dtGame
 {

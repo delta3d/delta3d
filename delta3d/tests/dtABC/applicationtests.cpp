@@ -28,6 +28,7 @@
 #include <dtUtil/fileutils.h>                  // for verification when writing the config file
 #include <dtUtil/stringutils.h>                // for dtUtil::ToInt
 #include <dtUtil/xercesparser.h>               // for parsing
+#include <dtUtil/librarysharingmanager.h>      // make sure this gets configured properly.
 
 namespace dtTest
 {
@@ -42,8 +43,7 @@ namespace dtTest
 
       public:
          void setUp();
-         void tearDown() {}
-
+         void tearDown();
          void TestInput();
          void TestConfigSupport();
          void TestConfigSaveLoad();
@@ -82,6 +82,8 @@ namespace dtTest
             }
 
             CPPUNIT_ASSERT_MESSAGE(ss.str(), truth.LOG_LEVELS == actual.LOG_LEVELS );
+
+            CPPUNIT_ASSERT_MESSAGE("Library path lists should match.", truth.LIBRARY_PATHS == actual.LIBRARY_PATHS );
          }
    };
 
@@ -153,6 +155,16 @@ namespace dtTest
       mConfigName = "test_config.xml";
       // delete the file
       dtUtil::FileUtils::GetInstance().FileDelete( mConfigName );
+   }
+
+   void ApplicationTests::tearDown()
+   {
+      std::vector<std::string> paths;
+      dtUtil::LibrarySharingManager::GetInstance().GetSearchPath(paths);
+      for(unsigned int i = 0; i < paths.size(); i++)
+      {
+         dtUtil::LibrarySharingManager::GetInstance().RemoveFromSearchPath(paths[i]);
+      }
    }
 
    void ApplicationTests::TestInput()
@@ -260,6 +272,10 @@ namespace dtTest
       truth.LOG_LEVELS.insert(std::make_pair("cow", "Debug"));
       truth.LOG_LEVELS.insert(std::make_pair("chicken", "Always"));
       
+      truth.LIBRARY_PATHS.push_back("mypath1");
+      truth.LIBRARY_PATHS.push_back("mypath2");
+      truth.LIBRARY_PATHS.push_back("mypath3");
+      
       dtABC::ApplicationConfigWriter acw;
       acw(mConfigName, truth);
 
@@ -283,6 +299,13 @@ namespace dtTest
       CPPUNIT_ASSERT_EQUAL(dtUtil::Log::LOG_INFO, dtUtil::Log::GetInstance("horse").GetLogLevel());
       CPPUNIT_ASSERT_EQUAL(dtUtil::Log::LOG_DEBUG, dtUtil::Log::GetInstance("cow").GetLogLevel());
       CPPUNIT_ASSERT_EQUAL(dtUtil::Log::LOG_ALWAYS, dtUtil::Log::GetInstance("chicken").GetLogLevel());
+
+      std::vector<std::string> libPath;
+      dtUtil::LibrarySharingManager::GetInstance().GetSearchPath(libPath);
+      CPPUNIT_ASSERT_EQUAL(size_t(3), libPath.size());
+      CPPUNIT_ASSERT_EQUAL(std::string("mypath1"), libPath[0]);
+      CPPUNIT_ASSERT_EQUAL(std::string("mypath2"), libPath[1]);
+      CPPUNIT_ASSERT_EQUAL(std::string("mypath3"), libPath[2]);
 
       app = NULL;
       

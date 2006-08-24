@@ -1,7 +1,7 @@
 // tracker.cpp: Implementation of the Tracker class.
 //
 //////////////////////////////////////////////////////////////////////
-
+#include <prefix/dtcoreprefix-src.h>
 #include <dtCore/tracker.h>
 #include <sstream>
 

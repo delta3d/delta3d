@@ -18,6 +18,7 @@
  *
  * @author Matthew W. Campbell
  */
+#include <prefix/dtcoreprefix-src.h>
 #include "dtCore/shaderxml.h"
 #include "dtCore/shadermanager.h"
 #include "dtCore/shader.h"
@@ -86,7 +87,7 @@ namespace dtCore
          std::ostringstream error;
          error << "Error initializing XML toolkit: " << message;
          xercesc::XMLString::release(&message);
-         EXCEPT(ShaderException::XML_PARSER_ERROR,error.str());
+         throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,error.str(), __FILE__, __LINE__);
       }
    }
 
@@ -104,7 +105,7 @@ namespace dtCore
          std::ostringstream error;
          error << "Error shutting down XML toolkit: " << message;
          xercesc::XMLString::release(&message);
-         EXCEPT(ShaderException::XML_PARSER_ERROR,error.str());
+         throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,error.str(), __FILE__, __LINE__);
       }
    }
 
@@ -125,11 +126,11 @@ namespace dtCore
          xercesc::DOMDocument *xmlDoc = parser.getDocument();
          xercesc::DOMElement *shaderList = xmlDoc->getDocumentElement();
          if (shaderList == NULL)
-            EXCEPT(ShaderException::XML_PARSER_ERROR,"Shader XML document is empty.");
+            throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Shader XML document is empty.", __FILE__, __LINE__);
 
          dtUtil::XMLStringConverter strConv(shaderList->getTagName());
          if (strConv.ToString() != ShaderXML::SHADERLIST_ELEMENT)
-            EXCEPT(ShaderException::XML_PARSER_ERROR,"Malformed shader list element tag name.");
+            throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Malformed shader list element tag name.", __FILE__, __LINE__);
 
          xercesc::DOMNodeList *children = shaderList->getChildNodes();
          for (XMLSize_t i=0; i<children->getLength(); i++)
@@ -155,7 +156,7 @@ namespace dtCore
             message;
 
          xercesc::XMLString::release(&message);
-         EXCEPT(ShaderException::XML_PARSER_ERROR,error.str());
+         throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,error.str(), __FILE__, __LINE__);
       }
       catch (const xercesc::DOMException &e)
       {
@@ -165,7 +166,7 @@ namespace dtCore
          error << "Error processing DOM:  Reason: " << message;
 
          xercesc::XMLString::release(&message);
-         EXCEPT(ShaderException::XML_PARSER_ERROR,error.str());
+         throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,error.str(), __FILE__, __LINE__);
       }
    }
 
@@ -174,7 +175,7 @@ namespace dtCore
    {
       dtUtil::XMLStringConverter strConv(shaderGroupElem->getTagName());
       if (strConv.ToString() != ShaderXML::SHADERGROUP_ELEMENT)
-         EXCEPT(ShaderException::XML_PARSER_ERROR,"Malformed shader group element tag name.");
+         throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Malformed shader group element tag name.", __FILE__, __LINE__);
 
       //Shader elements only have one attribute (the name) so parse it and continue on.
       std::string groupName = GetElementAttribute(*shaderGroupElem,
@@ -199,7 +200,7 @@ namespace dtCore
          if (elemName.ToString() == ShaderXML::SHADER_ELEMENT)
             ParseShaderElement(element,*newGroup);
          else
-            EXCEPT(ShaderException::XML_PARSER_ERROR,"Foreign element found in shader XML source.");
+            throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Foreign element found in shader XML source.", __FILE__, __LINE__);
       }
 
       ShaderManager::GetInstance().AddShaderGroup(*newGroup);
@@ -234,7 +235,7 @@ namespace dtCore
          else if (elemName.ToString() == ShaderXML::PARAMETER_ELEMENT)
             ParseParameterElement(element,*newShader);
          else
-            EXCEPT(ShaderException::XML_PARSER_ERROR,"Foreign element found in shader XML source.");
+            throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Foreign element found in shader XML source.", __FILE__, __LINE__);
       }
 
       if (isDefault == "yes")
@@ -251,7 +252,7 @@ namespace dtCore
       //The source element has one child:  The text specifing the source file.
       xercesc::DOMNodeList *children = sourceElem->getChildNodes();
       if (children->getLength() != 1 || children->item(0)->getNodeType() != xercesc::DOMNode::TEXT_NODE)
-         EXCEPT(ShaderException::XML_PARSER_ERROR,"Shader source should only have one child text element.");
+         throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Shader source should only have one child text element.", __FILE__, __LINE__);
 
       xercesc::DOMText *file = static_cast<xercesc::DOMText *>(children->item(0));
 
@@ -291,8 +292,8 @@ namespace dtCore
          else if (toString == ShaderXML::INT_ELEMENT)
             newParam = ParseIntParameter(typeElement,paramName);
          else
-            EXCEPT(ShaderException::XML_PARSER_ERROR,"Invalid element found while parsing "
-                  "shader parameter.");
+            throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Invalid element found while parsing "
+                  "shader parameter.", __FILE__, __LINE__);
 
          shader.AddParameter(*newParam);
       }
@@ -345,7 +346,7 @@ namespace dtCore
                if (children->getLength() != 1 ||
                   children->item(0)->getNodeType() != xercesc::DOMNode::TEXT_NODE)
                {
-                  EXCEPT(ShaderException::XML_PARSER_ERROR,"Shader source should only have one child text element.");
+                  throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Shader source should only have one child text element.", __FILE__, __LINE__);
                }
 
                xercesc::DOMText *file = static_cast<xercesc::DOMText *>(children->item(0));
@@ -360,7 +361,7 @@ namespace dtCore
             }
             else
             {
-               EXCEPT(ShaderException::XML_PARSER_ERROR,"Unknown texture2D source type.");
+               throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Unknown texture2D source type.", __FILE__, __LINE__);
             }
          }
          else if (elemName == ShaderXML::TEXTURE2D_WRAP_ELEMENT)
@@ -374,18 +375,19 @@ namespace dtCore
                const TextureShaderParameter::TextureAxis *texAxis = GetTextureAxis(axis);
 
                if (wrapMode == NULL)
-                  EXCEPT(ShaderException::XML_PARSER_ERROR,"Invalid address mode of: " + mode +
-                        " specified for shader parameter: " + paramName);
+                  throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Invalid address mode of: " + mode +
+                        " specified for shader parameter: " + paramName, __FILE__, __LINE__);
                if (texAxis == NULL)
-                  EXCEPT(ShaderException::XML_PARSER_ERROR,"Invalid texture axis: " + axis +
-                        " specified for shader parameter: " + paramName);
+                  throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Invalid texture axis: " + axis +
+                        " specified for shader parameter: " + paramName, __FILE__, __LINE__);
 
                newParam->SetAddressMode(*texAxis,*wrapMode);
             }
          }
          else
          {
-            EXCEPT(ShaderException::XML_PARSER_ERROR,"Unknown element in Texture2D parameter.");
+            throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,
+               "Unknown element in Texture2D parameter.", __FILE__, __LINE__);
          }
       }
 

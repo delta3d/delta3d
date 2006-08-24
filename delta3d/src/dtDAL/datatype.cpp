@@ -18,6 +18,7 @@
  *
  * @author Matthew W. Campbell
  */
+#include <prefix/dtdalprefix-src.h>
 #include "dtDAL/datatype.h"
 
 namespace dtDAL 

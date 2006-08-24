@@ -212,7 +212,11 @@ namespace dtCore
       void SetNextStatisticsType() { mSceneHandler->mStats->SelectNextType(); }     
 
       ///Display the supplied statistics type
+#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR == 1 && OSG_VERSION_MINOR == 1 && OSG_VERSION_RELEASE >= 1
+      void SetStatisticsType(osgUtil::Statistics::StatsType type) 
+#else
       void SetStatisticsType(osgUtil::Statistics::statsType type) 
+#endif
       {
         mSceneHandler->mStats->SelectType(type);
       }

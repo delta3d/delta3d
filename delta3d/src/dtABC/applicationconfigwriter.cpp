@@ -1,3 +1,24 @@
+/* -*-c++-*- 
+ * Delta3D Open Source Game and Simulation Engine 
+ * Copyright (C) 2004-2005 MOVES Institute 
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free 
+ * Software Foundation; either version 2.1 of the License, or (at your option) 
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License 
+ * along with this library; if not, write to the Free Software Foundation, Inc., 
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ *
+ * @author John K. Grant
+ * @author David Guthrie
+ */
 #include <dtABC/applicationconfigwriter.h>
 #include <dtABC/applicationconfigschema.h>
 #include <dtABC/applicationconfigdata.h>
@@ -18,6 +39,7 @@
 
 #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOMElement.hpp>
+#include <xercesc/dom/DOMText.hpp>
 #include <xercesc/util/XMLString.hpp>
 
 XERCES_CPP_NAMESPACE_USE;
@@ -108,6 +130,15 @@ namespace dtABC
          app->appendChild( log );
       }
 
+      for (std::vector<std::string>::const_iterator i = data.LIBRARY_PATHS.begin();
+         i != data.LIBRARY_PATHS.end(); ++i)
+      {
+         DOMElement* log = doc->createElement(sch.LIBRARY_PATH);
+         DOMText* path = doc->createTextNode(dtUtil::StringToXMLConverter(*i).ToXmlString());
+         log->appendChild( path );
+         app->appendChild( log );
+      }
+
       writer->WriteFile( filename );
    }
 
@@ -118,6 +149,7 @@ namespace dtABC
       SCENE = XMLString::transcode( ApplicationConfigSchema::SCENE.c_str() );
       CAMERA = XMLString::transcode( ApplicationConfigSchema::CAMERA.c_str() );
       LOG = XMLString::transcode( ApplicationConfigSchema::LOG.c_str() );
+      LIBRARY_PATH = XMLString::transcode( ApplicationConfigSchema::LIBRARY_PATH.c_str() );
 
       X = XMLString::transcode( ApplicationConfigSchema::X.c_str() );
       Y = XMLString::transcode( ApplicationConfigSchema::Y.c_str() );
@@ -143,6 +175,7 @@ namespace dtABC
       XMLString::release( &SCENE );
       XMLString::release( &CAMERA );
       XMLString::release( &LOG );
+      XMLString::release( &LIBRARY_PATH );
 
       XMLString::release( &X );
       XMLString::release( &Y );

@@ -17,7 +17,7 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
  *
  */
-
+#include <prefix/dtcoreprefix-src.h>
 #include "dtUtil/fileutils.h"
 #include "dtUtil/stringutils.h"
 #include "dtUtil/log.h"
@@ -108,13 +108,14 @@ std::string dtCore::FindFileInPathList(const std::string &fileName) throw()
    
    dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
    
-   //Make sure we remove any trailing slashes from the cache path.
-   std::string path;          
+   std::string path;
    for (itor=pathList.begin(); itor!=pathList.end(); ++itor)
    {
       path = *itor;
+      //Make sure we remove any trailing slashes from the cache path.
       if (path[path.length()-1] == '/' || path[path.length()-1] == '\\')
          path = path.substr(0,path.length()-1);
+
       if (fileUtils.FileExists(path + dtUtil::FileUtils::PATH_SEPARATOR + fileName))
          return path + dtUtil::FileUtils::PATH_SEPARATOR + fileName;
    }     

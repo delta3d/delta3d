@@ -18,6 +18,7 @@
  *
  * @author Curtiss Murphy
  */
+#include <prefix/dtgameprefix-src.h>
 #include "dtGame/logstatus.h"
 
 namespace dtGame

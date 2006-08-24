@@ -25,7 +25,7 @@
 #include <osg/Referenced>
 #include <string>
 #include <vector>
-#include "dtHLAGM/export.h"
+#include <dtHLAGM/export.h>
 
 namespace dtHLAGM
 {

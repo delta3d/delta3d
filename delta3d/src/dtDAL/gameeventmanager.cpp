@@ -18,6 +18,7 @@
  *
  * @author Matthew W. Campbell
  */
+#include <prefix/dtdalprefix-src.h>
 #include "dtDAL/gameeventmanager.h"
 #include "dtDAL/exceptionenum.h"
 #include "dtDAL/gameevent.h"

@@ -1,7 +1,7 @@
 // keyboard.cpp: Implementation of the Keyboard class.
 //
 //////////////////////////////////////////////////////////////////////
-
+#include <prefix/dtcoreprefix-src.h>
 #include <dtCore/keyboard.h>
 #include <algorithm>
 

@@ -1,7 +1,7 @@
 // mouse.cpp: Implementation of the Mouse class.
 //
 //////////////////////////////////////////////////////////////////////
-
+#include <prefix/dtcoreprefix-src.h>
 #include <dtCore/mouse.h>
 #include <dtCore/deltawin.h>
 #include <algorithm>

@@ -1,6 +1,7 @@
-#include "dtUtil/xerceserrorhandler.h"
-#include "dtUtil/stringutils.h"
-#include "dtUtil/log.h"
+#include <prefix/dtutilprefix-src.h>
+#include <dtUtil/xerceserrorhandler.h>
+#include <dtUtil/stringutils.h>
+#include <dtUtil/log.h>
 
 #include <string>
 #include <xercesc/util/XMLString.hpp>

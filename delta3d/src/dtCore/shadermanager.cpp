@@ -18,6 +18,7 @@
  *
  * @author Matthew W. Campbell
  */
+#include <prefix/dtcoreprefix-src.h>
 #include "dtCore/shadermanager.h"
 #include "dtCore/shaderxml.h"
 #include "dtCore/shaderparameter.h"

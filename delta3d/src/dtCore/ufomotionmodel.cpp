@@ -1,7 +1,7 @@
 // ufomotionmodel.cpp: Implementation of the UFOMotionModel class.
 //
 //////////////////////////////////////////////////////////////////////
-
+#include <prefix/dtcoreprefix-src.h>
 #include <dtCore/ufomotionmodel.h>
 
 #include <dtCore/inputdevice.h>

@@ -18,6 +18,7 @@
  *
  * @author David Guthrie
  */
+#include <prefix/dtdalprefix-src.h>
 #include <string>
 #include <sstream>
 #include <iostream>

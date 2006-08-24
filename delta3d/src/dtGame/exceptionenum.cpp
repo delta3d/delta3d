@@ -18,6 +18,7 @@
  *
  * @author David Guthrie
  */
+#include <prefix/dtgameprefix-src.h>
 #include "dtGame/exceptionenum.h"
 
 namespace dtGame

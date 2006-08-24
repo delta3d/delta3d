@@ -1,7 +1,7 @@
 // scene.cpp: implementation of the Scene class.
 //
 //////////////////////////////////////////////////////////////////////
-
+#include <prefix/dtcoreprefix-src.h>
 #include <dtCore/scene.h>
 
 #include <osg/FrameStamp>

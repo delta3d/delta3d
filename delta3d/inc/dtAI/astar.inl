@@ -25,7 +25,7 @@ struct deleteFunc
       void operator()(T* pElement)
    {
       delete pElement;
-      pElement = 0;
+      pElement = NULL;
    }
 };
 
@@ -141,7 +141,7 @@ _NodeType* AStar<_NodeType, _CostFunc, _Container, _Timer>::Remove(AStarContaine
    typename AStarContainer::iterator iter = pCont.begin();
    typename AStarContainer::iterator endOfList = pCont.end();
 
-   node_type* pLink = 0;
+   node_type* pLink = NULL;
 
    while(iter != endOfList)
    {

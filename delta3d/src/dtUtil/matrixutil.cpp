@@ -1,3 +1,4 @@
+#include <prefix/dtutilprefix-src.h>
 #include <dtUtil/matrixutil.h>
 
 using namespace dtUtil;

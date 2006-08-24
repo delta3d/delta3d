@@ -24,17 +24,23 @@
 #include <set>
 #include <map>
 #include <queue>
-#include "dtGame/export.h"
-#include "dtGame/gameactor.h"
-#include "dtGame/messagefactory.h"
-#include "dtGame/message.h"
-#include "dtGame/machineinfo.h"
-#include "dtGame/environmentactor.h"
+
+#include <dtGame/export.h>
+#include <dtGame/gameactor.h>
+#include <dtGame/messagefactory.h>
+#include <dtGame/message.h>
+#include <dtGame/machineinfo.h>
+#include <dtGame/environmentactor.h>
+
 #include <dtCore/refptr.h>
 #include <dtCore/base.h>
-#include <dtCore/scene.h>
 #include <dtCore/timer.h>
 #include <dtUtil/log.h>
+
+namespace dtCore
+{
+   class Scene;
+}
 
 // Forward declarations
 namespace dtDAL
@@ -493,21 +499,19 @@ namespace dtGame
           * Accessor to the scene member of the class
           * @return The scene
           */
-         dtCore::Scene& GetScene() { return *mScene; }
-
+         dtCore::Scene& GetScene();
          /**
           * Accessor to the scene member of the class
           * @return The scene
           */
-         const dtCore::Scene& GetScene() const { return *mScene; }
-
+         const dtCore::Scene& GetScene() const;
          /**
           * Sets the scene member of the class
           * This should not be changed after startup.
           * @param The new scene to assign
           */
-         void SetScene(dtCore::Scene &newScene) { mScene = &newScene; }
-
+         void SetScene(dtCore::Scene &newScene);
+         
          ///@return the application that owns this game mananger.
          dtABC::Application& GetApplication(); 
 

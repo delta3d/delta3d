@@ -18,6 +18,7 @@
 *
 * @author Matthew W. Campbell
 */
+#include <prefix/dtgameprefix-src.h>
 #include "dtGame/logkeyframeindex.h"
 
 namespace dtGame

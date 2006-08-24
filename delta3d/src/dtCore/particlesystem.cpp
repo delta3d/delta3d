@@ -1,7 +1,7 @@
 // particlesystem.cpp: Implementation of the ParticleSystem class.
 //
 //////////////////////////////////////////////////////////////////////
-
+#include <prefix/dtcoreprefix-src.h>
 #include <dtCore/particlesystem.h>
 #include <dtCore/scene.h>
 #include <dtUtil/log.h>

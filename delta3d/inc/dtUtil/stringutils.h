@@ -48,34 +48,36 @@ namespace dtUtil
    {
    public:
       //The predicate should evaluate to true when applied to a separator.
-      static void tokenize(std::vector<std::string>& roResult, std::string const& rostr,
-                           Pred const& roPred=Pred());
+      static void tokenize(std::vector<std::string> &tokens,
+                           const std::string &stringToParse, 
+                           const Pred &predFxn = Pred());
    };
 
    //The predicate should evaluate to true when applied to a separator.
    template <class Pred>
-   inline void StringTokenizer<Pred>::tokenize(std::vector<std::string>& roResult,
-                                             std::string const& rostr, Pred const& roPred)
+   inline void StringTokenizer<Pred>::tokenize(std::vector<std::string> &tokens,
+                                               const std::string &stringToParse, 
+                                               const Pred &predFxn)
    {
       //First clear the results std::vector
-      roResult.clear();
-      std::string::const_iterator it = rostr.begin();
-      std::string::const_iterator itTokenEnd = rostr.begin();
-      while(it != rostr.end())
+      tokens.clear();
+      std::string::const_iterator it = stringToParse.begin();
+      std::string::const_iterator itTokenEnd = stringToParse.begin();
+      while(it != stringToParse.end())
       {
-         //Eat seperators
-         if(roPred(*it))
+         //Eat separators
+         if(predFxn(*it))
          {
             it++;
          }
          else
          {
             //Find next token
-            itTokenEnd = std::find_if(it, rostr.end(), roPred);
+            itTokenEnd = std::find_if(it, stringToParse.end(), predFxn);
             //Append token to result
             if(it < itTokenEnd)
             {
-               roResult.push_back(std::string(it, itTokenEnd));
+               tokens.push_back(std::string(it, itTokenEnd));
             }
             it = itTokenEnd;
          }

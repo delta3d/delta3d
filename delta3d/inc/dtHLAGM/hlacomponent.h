@@ -37,8 +37,8 @@
 #include <dtCore/refptr.h>
 #include <dtGame/gmcomponent.h>
 
-#include "dtHLAGM/export.h"
-#include "dtHLAGM/objectruntimemappinginfo.h"
+#include <dtHLAGM/export.h>
+#include <dtHLAGM/objectruntimemappinginfo.h>
 
 #define RTI_USES_STD_FSTREAM
 #include <RTI.hh>

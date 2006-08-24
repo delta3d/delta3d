@@ -19,7 +19,7 @@
  *
  * @author Matthew W. Campbell
 */
-
+#include <prefix/dtstageprefix-src.h>
 #include "dtEditQt/dialogmapproperties.h"
 #include "dtEditQt/editorevents.h"
 

@@ -28,16 +28,16 @@
 //
 ///////////////////////////////////////////////////////////////////////
 #define RTI_USES_STD_FSTREAM
-#include "RTI.hh"
+#include <RTI.hh>
 
 #include <string>
 #include <vector>
 #include <dtDAL/actortype.h>
 #include <dtCore/refptr.h>
 #include <osg/Referenced>
-#include "dtHLAGM/onetoonemapping.h"
-#include "dtHLAGM/distypes.h"
-#include "dtHLAGM/attributetoproperty.h"
+#include <dtHLAGM/onetoonemapping.h>
+#include <dtHLAGM/distypes.h>
+#include <dtHLAGM/attributetoproperty.h>
 
 namespace dtHLAGM
 {

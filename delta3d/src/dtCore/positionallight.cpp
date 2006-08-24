@@ -1,3 +1,4 @@
+#include <prefix/dtcoreprefix-src.h>
 #include <dtCore/positionallight.h>
 
 #include <dtUtil/matrixutil.h>

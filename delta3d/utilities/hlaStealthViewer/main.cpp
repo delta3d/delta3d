@@ -2,6 +2,7 @@
 #include <dtCore/camera.h>
 #include <dtCore/globals.h>
 #include <dtCore/orbitmotionmodel.h>
+#include <dtCore/deltawin.h>
 #include <dtHLA/rticonnection.h>
 
 #include <iostream>
@@ -129,7 +130,7 @@ class HLAStealthViewerApplication : public Application
       RefPtr<Object> mEarth;
 };
 
-IMPLEMENT_MANAGEMENT_LAYER(HLAStealthViewerApplication)
+IMPLEMENT_MANAGEMENT_LAYER(HLAStealthViewerApplication);
 
 int main( int argc, char **argv )
 {

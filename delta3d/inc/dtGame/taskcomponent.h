@@ -40,7 +40,7 @@ namespace dtGame
          /**
           * Constructs the task component.
           */
-         TaskComponent();
+         TaskComponent(const std::string &name = "TaskComponent");
 
          /**
           * Called when a message arrives at the Game Manager.  These messages are trapped

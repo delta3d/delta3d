@@ -34,24 +34,26 @@ namespace dtABC
    /// Use this with the Xerces SAX2XMLReader.
    class DT_ABC_EXPORT ApplicationConfigHandler : public XERCES_CPP_NAMESPACE_QUALIFIER ContentHandler
    {
-   public:
-      ApplicationConfigHandler();
-      ~ApplicationConfigHandler();
-
-      // inherited pure virtual functions
-      virtual void characters(const XMLCh* const chars, const unsigned int length);
-      virtual void endDocument();
-      virtual void endElement(const XMLCh* const uri,const XMLCh* const localname,const XMLCh* const qname);
-      virtual void ignorableWhitespace(const XMLCh* const chars, const unsigned int length);
-      virtual void processingInstruction(const XMLCh* const target, const XMLCh* const data);
-      virtual void setDocumentLocator(const XERCES_CPP_NAMESPACE_QUALIFIER Locator* const locator);
-      virtual void startDocument();
-      virtual void startElement(const XMLCh* const uri,const XMLCh* const localname,const XMLCh* const qname, const XERCES_CPP_NAMESPACE_QUALIFIER Attributes& attrs);
-      virtual void startPrefixMapping(const	XMLCh* const prefix,const XMLCh* const uri);
-      virtual void endPrefixMapping(const XMLCh* const prefix);
-      virtual void skippedEntity(const XMLCh* const name);
-
-      ApplicationConfigData mConfigData;
+      public:
+         ApplicationConfigHandler();
+         ~ApplicationConfigHandler();
+   
+         // inherited pure virtual functions
+         virtual void characters(const XMLCh* const chars, const unsigned int length);
+         virtual void endDocument();
+         virtual void endElement(const XMLCh* const uri,const XMLCh* const localname,const XMLCh* const qname);
+         virtual void ignorableWhitespace(const XMLCh* const chars, const unsigned int length);
+         virtual void processingInstruction(const XMLCh* const target, const XMLCh* const data);
+         virtual void setDocumentLocator(const XERCES_CPP_NAMESPACE_QUALIFIER Locator* const locator);
+         virtual void startDocument();
+         virtual void startElement(const XMLCh* const uri,const XMLCh* const localname,const XMLCh* const qname, const XERCES_CPP_NAMESPACE_QUALIFIER Attributes& attrs);
+         virtual void startPrefixMapping(const	XMLCh* const prefix,const XMLCh* const uri);
+         virtual void endPrefixMapping(const XMLCh* const prefix);
+         virtual void skippedEntity(const XMLCh* const name);
+   
+         ApplicationConfigData mConfigData;
+      private:
+         std::string mCurrentElement;      
    };
 }
 

@@ -1,3 +1,4 @@
+#include <prefix/dtdalprefix-src.h>
 #include <dtDAL/exceptionenum.h>
 
 

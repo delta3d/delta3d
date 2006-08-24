@@ -32,7 +32,7 @@
 
 #include <dtCore/refptr.h>
 
-#include "dtHLAGM/export.h"
+#include <dtHLAGM/export.h>
 
 #include <xercesc/sax2/ContentHandler.hpp>
 #include <xercesc/sax/ErrorHandler.hpp>

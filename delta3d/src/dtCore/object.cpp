@@ -1,7 +1,7 @@
 // object.cpp: implementation of the Object class.
 //
 //////////////////////////////////////////////////////////////////////
-
+#include <prefix/dtcoreprefix-src.h>
 #include <dtCore/object.h>
 #include <dtCore/scene.h>
 #include <osgDB/ReadFile>

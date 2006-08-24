@@ -19,6 +19,7 @@
 *
 * @author Matthew W. Campbell
 */
+#include <prefix/dtstageprefix-src.h>
 #include <QtGui/QApplication>
 #include <QtGui/QMenu>
 #include <QtGui/QMenuBar>

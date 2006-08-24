@@ -17,7 +17,7 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
  *
  * @author John K. Grant
-*/
+ */
 
 #ifndef DELTA_APP_XML_CONFIG_WRITER
 #define DELTA_APP_XML_CONFIG_WRITER
@@ -52,6 +52,7 @@ namespace dtABC
          XMLCh* SCENE;
          XMLCh* CAMERA;
          XMLCh* LOG;
+         XMLCh* LIBRARY_PATH;
 
          XMLCh* X;
          XMLCh* Y;

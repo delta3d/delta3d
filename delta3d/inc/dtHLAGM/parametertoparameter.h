@@ -30,9 +30,9 @@
 
 //You must include RTI.hh before including this file.
 
-#include "dtHLAGM/export.h"
-#include "dtHLAGM/onetoonemapping.h"
-#include "dtHLAGM/onetomanymapping.h"
+#include <dtHLAGM/export.h>
+#include <dtHLAGM/onetoonemapping.h>
+#include <dtHLAGM/onetomanymapping.h>
 
 namespace dtHLAGM
 {

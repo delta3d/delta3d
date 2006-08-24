@@ -21,9 +21,12 @@
 #ifndef DELTA_RULESCOMPONENT
 #define DELTA_RULESCOMPONENT
 
-#include "dtGame/gmcomponent.h"
-#include <dtCore/scene.h>
-#include <dtUtil/log.h>
+#include <dtGame/gmcomponent.h>
+
+namespace dtUtil
+{
+   class Log;
+}
 
 namespace dtGame
 {

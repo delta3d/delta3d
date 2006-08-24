@@ -28,8 +28,8 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				RuntimeTypeInfo="TRUE"
-				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=""
+				UsePrecompiledHeader="3"
+				PrecompiledHeaderThrough="prefix/dtcoreprefix-src.h"
 				AssemblerListingLocation=""
 				ObjectFile="$(IntDir)/"
 				ProgramDataBaseFileName="$(IntDir)/vc70.pdb"
@@ -37,7 +37,8 @@
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="3"
-				CompileAs="0"/>
+				CompileAs="0"
+				ForcedIncludeFiles=""/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -92,8 +93,8 @@
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="FALSE"
 				RuntimeTypeInfo="TRUE"
-				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=""
+				UsePrecompiledHeader="3"
+				PrecompiledHeaderThrough="prefix/dtcoreprefix-src.h"
 				AssemblerListingLocation=""
 				ObjectFile="$(IntDir)/"
 				ProgramDataBaseFileName="$(IntDir)/vc70.pdb"
@@ -266,6 +267,22 @@
 				RelativePath="..\..\..\src\dtCore\positionallight.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtCore\precomp.cpp">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+						ForcedIncludeFiles="$(NOINHERIT)"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtCore\scene.cpp">
 			</File>
 			<File
@@ -364,6 +381,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtCore\dt.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\prefix\dtcoreprefix-src.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtCore\effectmanager.h">

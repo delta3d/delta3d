@@ -1,3 +1,4 @@
+#include <prefix/dtcoreprefix-src.h>
 #include <dtCore/genericmouselistener.h>
 
 using namespace dtCore;

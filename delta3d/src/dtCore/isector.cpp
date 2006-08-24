@@ -18,7 +18,7 @@
  *
  * @author Matthew W. Campbell
  */
-
+#include <prefix/dtcoreprefix-src.h>
 #include <dtCore/isector.h>
 
 #include <dtCore/deltadrawable.h>

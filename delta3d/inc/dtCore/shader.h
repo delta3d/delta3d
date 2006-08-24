@@ -172,11 +172,17 @@ namespace dtCore
 
          /**
           * Gets a pointer to the actual shader program constructed by the shader source code
-          * compiled and linked.
-          * @return A referenced counted pointer to the shader program.  This may be shared
+          * @return A pointer to the shader program.  This may be shared
           *    amoungst many renderable objects.
           */
          const osg::Program *GetShaderProgram() const { return mGLSLProgram.get(); }
+
+         /**
+          * Gets a pointer to the actual shader program constructed by the shader source code.
+          * @return A pointer to the shader program.  This may be shared
+          *    amoungst many renderable objects. Either put this in a RefPtr or don't hold onto it.
+          */
+         osg::Program *GetShaderProgram() { return mGLSLProgram.get(); }
 
          /**
           * Removes all shader source and compiler programs from this shader object.

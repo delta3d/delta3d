@@ -21,6 +21,7 @@
 */
 
 //#include <osg/Vec3>
+#include <prefix/dtstageprefix-src.h>
 #include "dtEditQt/dynamicvectorelementcontrol.h"
 #include "dtEditQt/dynamicsubwidgets.h"
 #include "dtEditQt/editorevents.h"

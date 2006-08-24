@@ -45,9 +45,19 @@ programs = {}
 
 result = 'true'
 
-if projectEnv['usePrefixHeaders'] and OS != 'windows':
- 	projectEnv.Append(CPPFLAGS = " -include inc/prefix/dtutilprefix.h ")
+prefixHeader = "inc/prefix/dtcoreprefix.h"
 
+if len(prefixHeader) > 0 and projectEnv.get('usePrefixHeaders'):
+   projectEnv['CPPDEFINES'] += ['DELTA_PCH']
+   if OS == 'darwin' or OS == 'linux':
+      oldCxxFlags = projectEnv['CXXFLAGS'] + ""
+      projectEnv['CXXFLAGS']  += " -include " + prefixHeader
+      srcHeader = (prefixHeader[0:-2]) + "-src.h"
+      outputGCH = "#" + prefixHeader + ".gch/unitTests" 
+      projectEnv['Gch'] = projectEnv.Gch(outputGCH, "#" + srcHeader, CXXFLAGS = oldCxxFlags)[0]             
+   elif OS == 'windows':
+      projectEnv['PCH'] = projectEnv.PCH("precomp.cpp")[0]
+   
 #create all the program names base on the sets of sources.
 for prog in sources.keys():
    programs[prog] = '#tests/' + prog + 'Tests'

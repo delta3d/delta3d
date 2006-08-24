@@ -20,12 +20,13 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc"
-				PreprocessorDefinitions="WIN32;_DEBUG;_NOAUTOLIBMSG;_USRDLL;DT_GAME_LIBRARY"
+				PreprocessorDefinitions="WIN32;_DEBUG;_NOAUTOLIBMSG;_USRDLL;DT_GAME_LIBRARY;NOMINMAX"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				RuntimeTypeInfo="TRUE"
-				UsePrecompiledHeader="0"
+				UsePrecompiledHeader="3"
+				PrecompiledHeaderThrough="prefix/dtgameprefix-src.h"
 				AssemblerListingLocation=""
 				ProgramDataBaseFileName="$(IntDir)/vc70.pdb"
 				WarningLevel="3"
@@ -35,7 +36,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCored.lib dtUtild.lib dtDALd.lib dtABCd.lib osgd.lib OpenThreadsWin32d.lib Producerd.lib osgDBd.lib xerces-c_2D.lib"
+				AdditionalDependencies="dtCored.lib dtUtild.lib dtDALd.lib dtABCd.lib osgd.lib OpenThreadsWin32d.lib Producerd.lib osgDBd.lib xerces-c_2D.lib dtAudiod.lib"
 				OutputFile="..\..\..\bin\dtGamed.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
@@ -74,13 +75,14 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_NOAUTOLIBMSG;_USRDLL;DT_GAME_LIBRARY"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_NOAUTOLIBMSG;_USRDLL;DT_GAME_LIBRARY;NOMINMAX"
 				StringPooling="TRUE"
 				MinimalRebuild="FALSE"
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
-				UsePrecompiledHeader="0"
+				UsePrecompiledHeader="3"
+				PrecompiledHeaderThrough="prefix/dtgameprefix-src.h"
 				AssemblerListingLocation=""
 				ProgramDataBaseFileName="$(IntDir)/vc70.pdb"
 				WarningLevel="3"
@@ -89,7 +91,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCore.lib dtUtil.lib dtDAL.lib dtABC.lib osg.lib osgDB.lib OpenThreadsWin32.lib Producer.lib xerces-c_2.lib"
+				AdditionalDependencies="dtCore.lib dtUtil.lib dtDAL.lib dtABC.lib osg.lib osgDB.lib OpenThreadsWin32.lib Producer.lib xerces-c_2.lib dtAudio.lib"
 				OutputFile="..\..\..\bin\dtGame.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -142,9 +144,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtGame\binarylogstream.cpp">
-			</File>
-			<File
-				RelativePath="..\..\..\src\dtGame\clientgamemanager.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtGame\datastream.cpp">
@@ -207,10 +206,22 @@
 				RelativePath="..\..\..\src\dtGame\messagetype.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\src\dtGame\rulescomponent.cpp">
+				RelativePath="..\..\..\src\dtGame\precomp.cpp">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"/>
+				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\src\dtGame\servergamemanager.cpp">
+				RelativePath="..\..\..\src\dtGame\rulescomponent.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtGame\serverloggercomponent.cpp">
@@ -236,9 +247,6 @@
 				RelativePath="..\..\..\inc\dtGame\binarylogstream.h">
 			</File>
 			<File
-				RelativePath="..\..\..\inc\dtGame\clientgamemanager.h">
-			</File>
-			<File
 				RelativePath="..\..\..\inc\dtGame\datastream.h">
 			</File>
 			<File
@@ -246,6 +254,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtGame\defaultmessageprocessor.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\prefix\dtgameprefix-src.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtGame\environmentactor.h">
@@ -315,9 +326,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtGame\rulescomponent.h">
-			</File>
-			<File
-				RelativePath="..\..\..\inc\dtGame\servergamemanager.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtGame\serverloggercomponent.h">

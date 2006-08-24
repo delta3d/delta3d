@@ -19,6 +19,7 @@
 *
 * @author Teague Coonan
 */
+#include <prefix/dtstageprefix-src.h>
 #include <QtGui/QIcon>
 #include <QtGui/QPixmap>
 

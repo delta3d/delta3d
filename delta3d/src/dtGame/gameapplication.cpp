@@ -18,19 +18,23 @@
  *
  * @author David Guthrie
  */
-
+#include <prefix/dtgameprefix-src.h>
 #include <dtUtil/log.h>
 
-#include "dtGame/gamemanager.h"
-#include "dtGame/gameapplication.h"
-#include "dtGame/gameentrypoint.h"
-#include "dtGame/exceptionenum.h"
+#include <dtGame/gamemanager.h>
+#include <dtGame/gameapplication.h>
+#include <dtGame/gameentrypoint.h>
+#include <dtGame/exceptionenum.h>
+
 #include <dtUtil/exception.h>
+#include <dtAudio/audiomanager.h>
 #include <dtCore/camera.h>
-#include <dtABC/application.h>
+#include <dtCore/deltawin.h>
+#include <dtCore/scene.h>
 #include <dtCore/keyboard.h>
 #include <dtCore/mouse.h>
 #include <dtCore/generickeyboardlistener.h>
+#include <dtABC/application.h>
 
 namespace dtGame
 {
@@ -89,7 +93,7 @@ namespace dtGame
 
       //Make sure the plugin actually implemented these functions and they
       //have been exported.
-      if (createAddr == NULL)
+      if(createAddr == NULL)
       {
          msg.str("");
          msg << "Game libraries must implement the function " <<
@@ -97,7 +101,7 @@ namespace dtGame
          throw dtUtil::Exception(dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR, msg.str(), __FILE__, __LINE__);
       }
 
-      if (destroyAddr== NULL)
+      if(destroyAddr == NULL)
       {
          msg.str("");
          msg << "Game libraries must implement the function " <<
@@ -116,7 +120,7 @@ namespace dtGame
       mDestroyFunction = reinterpret_cast<DestroyEntryPointFn>(destroyAddr);
       #endif
 
-      mEntryPoint =  mCreateFunction();
+      mEntryPoint = mCreateFunction();
 
       try
       {
@@ -133,10 +137,13 @@ namespace dtGame
          mGameManager->SetApplication(*this);
          mEntryPoint->OnStartup(*mGameManager);
       }
-      catch (const dtUtil::Exception& ex)
+      catch(const dtUtil::Exception& ex)
       {
          ex.LogException(dtUtil::Log::LOG_ERROR);
-      
+         // HACK
+         if(dtAudio::AudioManager::GetManager() != NULL)
+            dtAudio::AudioManager::Destroy();
+
          if(ex.TypeEnum() == dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR)
             exit(-1);
          else

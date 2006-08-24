@@ -19,7 +19,7 @@
 *
 * @author Teague Coonan
 */
-
+#include <prefix/dtstageprefix-src.h>
 #include <QtCore/QDir>
 #include <QtGui/QHeaderView>
 

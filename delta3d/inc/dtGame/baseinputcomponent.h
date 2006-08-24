@@ -28,7 +28,6 @@
 
 namespace dtGame
 {
-   class BaseInputComponent;
    class InputComponentMouseListener;
    class InputComponentKeyboardListener;
 
@@ -46,14 +45,14 @@ namespace dtGame
       public:
 
          /// Constructor
-         BaseInputComponent(const std::string &name = "Base Input Component");
+         BaseInputComponent(const std::string &name = "BaseInputComponent");
 
          /**
           * Overridden from base class.  When this component is added to the GM, it 
           * needs to setup the mouse listener and keyboard listener on this input component. 
           * Do not call this yourself.
           */
-         void OnAddedToGM();
+         virtual void OnAddedToGM();
 
          /**
           * Gets the mouse listener of this input component. Not typically useful externally.

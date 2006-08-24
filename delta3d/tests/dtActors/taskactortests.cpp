@@ -27,11 +27,12 @@
 #include <dtActors/taskactorgameevent.h>
 #include <dtActors/taskactorrollup.h>
 #include <dtActors/taskactorordered.h>
-#include <dtGame/clientgamemanager.h>
+#include <dtGame/gamemanager.h>
 #include <dtGame/defaultmessageprocessor.h>
 #include <dtGame/basemessages.h>
 #include <dtCore/globals.h>
 #include <dtCore/system.h>
+#include <dtCore/scene.h>
 #include <dtUtil/stringutils.h>
 
 #include <vector>
@@ -64,7 +65,7 @@ class TaskActorTests : public CPPUNIT_NS::TestFixture
 
    private:
       dtDAL::GameEventManager *mEventMgr;
-      dtCore::RefPtr<dtGame::ClientGameManager> mGameManager;
+      dtCore::RefPtr<dtGame::GameManager> mGameManager;
       static const std::string mTestGameActorLibrary;
       static const std::string mTestActorLibrary;
 };
@@ -82,7 +83,7 @@ void TaskActorTests::setUp()
    {
       mEventMgr = &dtDAL::GameEventManager::GetInstance();
       dtCore::Scene* scene = new dtCore::Scene();
-      mGameManager = new dtGame::ClientGameManager(*scene);
+      mGameManager = new dtGame::GameManager(*scene);
       dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
       mGameManager->LoadActorRegistry(mTestGameActorLibrary);
       dtCore::System::GetInstance().SetShutdownOnWindowClose(false);

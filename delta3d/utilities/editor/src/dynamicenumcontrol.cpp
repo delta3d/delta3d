@@ -19,7 +19,7 @@
 *
 * @author Curtiss Murphy
 */
-
+#include <prefix/dtstageprefix-src.h>
 #include <dtUtil/enumeration.h>
 #include "dtEditQt/dynamicenumcontrol.h"
 #include "dtEditQt/editorevents.h"

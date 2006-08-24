@@ -19,7 +19,7 @@
  * @author David Guthrie
  */
 
-#include "dtHLAGM/attributetype.h"
+#include <dtHLAGM/attributetype.h>
 
 namespace dtHLAGM
 {

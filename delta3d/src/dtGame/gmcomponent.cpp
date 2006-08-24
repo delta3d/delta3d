@@ -18,9 +18,9 @@
  *
  * @author William E. Johnson II
  */
-
-#include "dtGame/gmcomponent.h"
-#include "dtGame/gamemanager.h"
+#include <prefix/dtgameprefix-src.h>
+#include <dtGame/gmcomponent.h>
+#include <dtGame/gamemanager.h>
 #include <dtDAL/actorproxy.h>
 #include <dtCore/refptr.h>
 

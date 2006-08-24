@@ -1,3 +1,4 @@
+#include <prefix/dtcoreprefix-src.h>
 #include <dtCore/spotlight.h>
 #include <osg/LightSource>
 

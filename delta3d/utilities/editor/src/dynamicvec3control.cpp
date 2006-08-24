@@ -19,7 +19,7 @@
 *
 * @author Curtiss Murphy
 */
-
+#include <prefix/dtstageprefix-src.h>
 #include <QtGui/QWidget>
 #include <QtGui/QGridLayout>
 #include <QtGui/QLabel>

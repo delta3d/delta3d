@@ -1,3 +1,4 @@
+#include <prefix/dtcoreprefix-src.h>
 #include <dtCore/deltadrawable.h>
 #include <dtCore/scene.h>
 #include <dtUtil/log.h>

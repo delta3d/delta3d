@@ -21,8 +21,6 @@
 #pragma warning( disable : 4800 )
 #endif
 
-
-
 // definitions
 #if   !  defined(BIT)
 #define  BIT(a)      (1L<<a)

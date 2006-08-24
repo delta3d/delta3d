@@ -18,6 +18,7 @@
  *
  * @author William E. Johnson II
  */
+#include <prefix/dtgameprefix-src.h>
 #include <dtGame/environmentactor.h>
 
 namespace dtGame

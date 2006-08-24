@@ -29,6 +29,7 @@
 #include <dtCore/system.h>
 #include <dtCore/keyboard.h>
 #include <dtUtil/exception.h>
+#include <dtCore/deltawin.h>
 
 #include <dtGame/binarylogstream.h>
 #include <dtGame/logtag.h>
@@ -37,7 +38,7 @@
 #include <dtGame/defaultmessageprocessor.h>
 #include <dtGame/loggermessages.h>
 #include <dtGame/basemessages.h>
-#include <dtGame/clientgamemanager.h>
+#include <dtGame/gamemanager.h>
 #include <dtGame/logcontroller.h>
 #include <dtGame/serverloggercomponent.h>
 #include <dtGame/taskcomponent.h>
@@ -88,7 +89,7 @@ AARApplication::~AARApplication()
 //////////////////////////////////////////////////////////////////////////
 void AARApplication::Config()
 {
-   mClientGM = new dtGame::ClientGameManager(*GetScene());
+   mClientGM = new dtGame::GameManager(*GetScene());
 
    //To enable logging, we must have three parts.  A server logger component which, in a
    //networked environment would reside on the server, a log controller which is a client side
@@ -176,7 +177,7 @@ void AARApplication::SetupScene()
 //////////////////////////////////////////////////////////////////////////
 void AARApplication::SetupGUI()
 {
-   hudGUI = new TestAARHUD(GetWindow(), *mClientGM, *mLogController, *mTaskComponent, *mServerLogger);
+   hudGUI = new TestAARHUD(GetWindow(), *mLogController, *mTaskComponent, *mServerLogger);
    mClientGM->AddComponent(*hudGUI, dtGame::GameManager::ComponentPriority::NORMAL);
    GetScene()->AddDrawable(hudGUI->GetGUIDrawable().get());
 }
@@ -187,16 +188,16 @@ void AARApplication::SetupTasks()
    //Get our actor types...
    dtCore::RefPtr<dtDAL::ActorType> taskType = mClientGM->FindActorType("dtcore.Tasks","Task Actor");
    if (taskType == NULL)
-      EXCEPT(AppException::INIT_ERROR,"Could not find task actor type.");
+      throw dtUtil::Exception(AppException::INIT_ERROR,"Could not find task actor type.", __FILE__, __LINE__);
    dtCore::RefPtr<dtDAL::ActorType> eventTaskType = mClientGM->FindActorType("dtcore.Tasks","GameEvent Task Actor");
    if (eventTaskType == NULL)
-      EXCEPT(AppException::INIT_ERROR,"Could not find Game Event Task Actor.");
+      throw dtUtil::Exception(AppException::INIT_ERROR,"Could not find Game Event Task Actor.", __FILE__, __LINE__);
    dtCore::RefPtr<dtDAL::ActorType> orderedTaskType = mClientGM->FindActorType("dtcore.Tasks","Ordered Task Actor");
    if (orderedTaskType == NULL)
-      EXCEPT(AppException::INIT_ERROR,"Could not find Ordered Task Actor.");
+      throw dtUtil::Exception(AppException::INIT_ERROR,"Could not find Ordered Task Actor.", __FILE__, __LINE__);
    dtCore::RefPtr<dtDAL::ActorType> rollupTaskType = mClientGM->FindActorType("dtcore.Tasks","Rollup Task Actor");
    if (rollupTaskType == NULL)
-      EXCEPT(AppException::INIT_ERROR,"Could not find Rollup Task Actor.");
+      throw dtUtil::Exception(AppException::INIT_ERROR,"Could not find Rollup Task Actor.", __FILE__, __LINE__);
 
    // task - root - event - start record  where are all the comments for this code
    dtCore::RefPtr<dtActors::TaskActorGameEventProxy> taskStartRecordProxy =

@@ -21,7 +21,7 @@
  */
 
 #include <dtGame/binarylogstream.h>
-#include <dtGame/clientgamemanager.h>
+#include <dtGame/gamemanager.h>
 #include <dtGame/serverloggercomponent.h>
 #include <dtGame/logcontroller.h>
 #include <dtGame/gamemanager.h>
@@ -122,7 +122,7 @@ class GMLoggerTests : public CPPUNIT_NS::TestFixture
          const std::vector<dtGame::LogTag> listTwo);
 
    private:
-      dtCore::RefPtr<dtGame::ClientGameManager> mGameManager;
+      dtCore::RefPtr<dtGame::GameManager> mGameManager;
 
       dtGame::LogStatus status;
       dtGame::LogKeyframe keyframe;
@@ -245,7 +245,7 @@ class TestControllerSignal: public sigslot::has_slots<>, public osg::Referenced
 class TestLogStream : public dtGame::LogStream
 {
    public:
-      TestLogStream(dtGame::MessageFactory &msgFactory, dtCore::RefPtr<dtGame::ClientGameManager> newGameManager)
+      TestLogStream(dtGame::MessageFactory &msgFactory, dtCore::RefPtr<dtGame::GameManager> newGameManager)
          : dtGame::LogStream(msgFactory)
       {
          mGameManager = newGameManager;
@@ -285,7 +285,7 @@ class TestLogStream : public dtGame::LogStream
       }
       virtual ~TestLogStream() { }
    private:
-      dtCore::RefPtr<dtGame::ClientGameManager> mGameManager;
+      dtCore::RefPtr<dtGame::GameManager> mGameManager;
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -334,7 +334,7 @@ void GMLoggerTests::setUp()
    try
    {
       dtCore::Scene* scene = new dtCore::Scene();
-      mGameManager = new dtGame::ClientGameManager(*scene);
+      mGameManager = new dtGame::GameManager(*scene);
       dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
       mGameManager->LoadActorRegistry(mTestGameActorLibrary);
       dtCore::System::GetInstance().SetShutdownOnWindowClose(false);

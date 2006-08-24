@@ -17,7 +17,7 @@ defines = []
 
 if OS == 'windows' :
    dtGameDeps += [ 'User32', 'Advapi32', 'Rpcrt4', 'Winmm', 'Gdi32' ]
-   defines = ['DT_GAME_LIBRARY']
+   defines = ['DT_GAME_LIBRARY', 'NOMINMAX']
 elif OS == 'linux':
    dtGameDeps += [ 'uuid', 'Xxf86vm' ]
 elif OS == 'darwin':

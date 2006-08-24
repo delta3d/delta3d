@@ -1,3 +1,4 @@
+#include <prefix/dtcoreprefix-src.h>
 #include <dtCore/pointaxis.h>
 #include <dtCore/scene.h>
 #include <dtCore/transformable.h>

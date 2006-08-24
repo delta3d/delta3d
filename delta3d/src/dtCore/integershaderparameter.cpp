@@ -18,6 +18,7 @@
  *
  * @author Matthew W. Campbell
  */
+#include <prefix/dtcoreprefix-src.h>
 #include "dtCore/integershaderparameter.h"
 #include <osg/Uniform>
 #include <osg/StateSet>
