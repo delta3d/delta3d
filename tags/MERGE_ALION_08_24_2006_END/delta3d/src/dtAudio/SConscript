@@ -1,0 +1,15 @@
+Import('*')
+
+srcs = SGlob( '*.cpp' )
+                
+deps = [ 'dtCore', 'openal', 'alut', 'dtUtil', 'isense', 'OpenThreads',
+         'osg', 'osgDB', 'osgParticle', 'osgText', 'osgUtil',
+         'osgGA', 'osgSim', 'osgFX', 'osgProducer', 'ul', 'js', 'Producer',
+         'opengl', 'alut', 'User32' ]
+
+defines = []
+if OS == 'windows':
+   defines = ['DT_AUDIO_LIBRARY', 'NOMINMAX']
+
+
+env.BuildLib( 'dtAudio', srcs, deps, defines, prefixHeader = 'inc/prefix/dtcoreprefix.h' )

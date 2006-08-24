@@ -1,0 +1,6 @@
+Import('*')
+
+srcs = SGlob('*.cpp')
+deps = [ 'dtCore', 'dtABC', 'dtUtil' ]
+
+env.BuildProgram( 'testStateManager', srcs, deps )
