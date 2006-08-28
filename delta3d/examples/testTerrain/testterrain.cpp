@@ -41,6 +41,7 @@
 #include <dtCore/keyboard.h>
 #include <sstream>
 #include <dtCore/generickeyboardlistener.h>
+#include <osg/Version>
 
       // helper func that should be somewhere
    std::string vec3dToString(const osg::Vec3d &pt)
@@ -434,7 +435,7 @@ public:
    //////////////////////////////////////////////////////////////////////////
    void ShowStatistics()
    {
-#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR == 1 && OSG_VERSION_MINOR == 1 && OSG_VERSION_RELEASE >= 1
+#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && defined(OSG_VERSION_RELEASE) && OSG_VERSION_MAJOR >= 1 && OSG_VERSION_MINOR >= 1 && OSG_VERSION_RELEASE >= 1
       osgUtil::Statistics::StatsType currStats = osgUtil::Statistics::STAT_NONE;
 #else
       osgUtil::Statistics::statsType currStats = osgUtil::Statistics::STAT_NONE;
