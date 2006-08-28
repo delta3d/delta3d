@@ -4,6 +4,7 @@
 #include <prefix/dtcoreprefix-src.h>
 #include <dtCore/mouse.h>
 #include <dtCore/deltawin.h>
+#include <osg/Version>
 #include <algorithm>
 
 using namespace dtCore;
@@ -68,16 +69,20 @@ bool Mouse::MouseScroll(Producer::KeyboardMouseCallback::ScrollingMotion sm)
 
    switch(sm)
    {
-      case Producer::KeyboardMouseCallback::ScrollNone:
-         delta = 0;
-         break;
-
       case Producer::KeyboardMouseCallback::ScrollUp:
          delta = +1;
          break;
-
       case Producer::KeyboardMouseCallback::ScrollDown:
          delta = -1;
+         break;
+      case Producer::KeyboardMouseCallback::ScrollNone:
+#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 1 && OSG_VERSION_MINOR >= 1
+      case Producer::KeyboardMouseCallback::ScrollLeft:
+      case Producer::KeyboardMouseCallback::ScrollRight:
+      case Producer::KeyboardMouseCallback::Scroll2D:
+#endif
+      default:
+         delta = 0;
          break;
    }
 
