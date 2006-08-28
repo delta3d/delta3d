@@ -25,7 +25,7 @@
 
 const char* Delta3DGetVersion()
 {
-   return "1.3.0";
+   return "1.4.0";
 }
 
 const char* Delta3DGetLibraryName()
