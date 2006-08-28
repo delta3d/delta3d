@@ -20,6 +20,7 @@ import SCons.Action
 import SCons.Builder
 import SCons.Scanner.C
 import SCons.Util
+import SCons
 
 GchAction = SCons.Action.Action('$GCHCOM', '$GCHCOMSTR')
 GchShAction = SCons.Action.Action('$GCHSHCOM', '$GCHSHCOMSTR')
@@ -27,12 +28,19 @@ GchShAction = SCons.Action.Action('$GCHSHCOM', '$GCHSHCOMSTR')
 def gen_suffix(env, sources):
     return sources[0].get_suffix() + env['GCHSUFFIX']
 
+# SCons 0.96.90 renamed C.CScan() as C.CScanner().
+# Here we check for the patch version to support both names.
+if int(SCons.__version__.split('.')[2]) >= 90:
+    scanner = SCons.Scanner.C.CScanner()
+else:
+    scanner = SCons.Scanner.C.CScan()
+
 GchShBuilder = SCons.Builder.Builder(action = GchShAction,
-                                     source_scanner =  SCons.Scanner.C.CScanner(),
+                                     source_scanner =  scanner,
                                      suffix = gen_suffix)
 
 GchBuilder = SCons.Builder.Builder(action = GchAction,
-                                   source_scanner =  SCons.Scanner.C.CScanner(),
+                                   source_scanner =  scanner,
                                    suffix = gen_suffix)
 
 def static_pch_emitter(target,source,env):
