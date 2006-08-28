@@ -49,7 +49,7 @@ namespace dtCore
       void Init(osgUtil::RenderStage* stg);
       void Draw();
       void SetTime(int type);
-#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR == 1 && OSG_VERSION_MINOR == 1 && OSG_VERSION_RELEASE == 1
+#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && defined(OSG_VERSION_RELEASE) && OSG_VERSION_MAJOR >= 1 && OSG_VERSION_MINOR >= 1 && OSG_VERSION_RELEASE >= 1
       void SelectType(osgUtil::Statistics::StatsType type);
 #else
       void SelectType(osgUtil::Statistics::statsType type);
