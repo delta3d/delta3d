@@ -103,21 +103,27 @@ namespace dtCore
 
       ///sets the ambient light color
       void SetAmbient( float r, float g, float b, float a );
+      void SetAmbient(const osg::Vec4& rgba);
       
       ///gets the ambient light color
       void GetAmbient( float& r, float& g, float& b, float& a ) const;
+      const osg::Vec4& GetAmbient() const;
       
       ///sets the diffuse light color
       void SetDiffuse( float r, float g, float b, float a );
+      void SetDiffuse(const osg::Vec4& rgba);
       
       ///Gets the diffuse light color
       void GetDiffuse( float& r, float& g, float& b, float& a ) const;
+      const osg::Vec4& GetDiffuse() const;
       
       ///sets the specular light color
       void SetSpecular( float r, float g, float b, float a );
+      void SetSpecular(const osg::Vec4& rgba);
       
       ///gets the specular light color
       void GetSpecular( float& r, float& g, float& b, float& a ) const;
+      const osg::Vec4& GetSpecular() const;
 
       ///adds the light to the root node of the scene
       virtual void AddedToScene( Scene* scene );

@@ -33,6 +33,7 @@
 #include <dtCore/inputdevice.h>        // for base class
 #include <osg/Referenced>              // for listener's base class
 #include <dtCore/refptr.h>             // for typedef, list member
+#include <osg/Vec2>
 
 namespace dtCore
 {
@@ -69,11 +70,13 @@ namespace dtCore
       /// @param x a reference to the location in which to store the x coordinate
       /// @param y a reference to the location in which to store the y coordinate
       void GetPosition(float& x, float& y) const;
+      osg::Vec2 GetPosition() const;
 
       /// Sets the current mouse position.
       /// @param x the new x coordinate
       /// @param y the new y coordinate
       void SetPosition(float x, float y);
+      void SetPosition(const osg::Vec2& xy);
 
       /// Gets the state of the specified mouse button.
       /// @param button the button to check

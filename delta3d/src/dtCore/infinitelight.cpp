@@ -52,6 +52,11 @@ namespace dtCore
       mLightSource->getLight()->setPosition( direction );
    }
 
+   void InfiniteLight::SetAzimuthElevation( const osg::Vec2& azEl )
+   {
+      SetAzimuthElevation(azEl[0], azEl[1]);
+   }
+
    void InfiniteLight::GetAzimuthElevation( float& az, float& el ) const
    {
       osg::Vec4 xyz = mLightSource->getLight()->getPosition();
@@ -68,5 +73,12 @@ namespace dtCore
       }
 
       el = osg::RadiansToDegrees( asinf( xyz[2] ) );
+   }
+
+   osg::Vec2 InfiniteLight::GetAzimuthElevation() const
+   {
+      osg::Vec2 azEl;
+      GetAzimuthElevation(azEl[0], azEl[1]);
+      return azEl;
    }
 }

@@ -110,12 +110,17 @@ int Light::GetNumber() const
 ///sets the ambient light color
 void Light::SetAmbient( float r, float g, float b, float a )
 { 
-   mLightSource->getLight()->setAmbient( osg::Vec4( r, g, b, a) );
+   SetAmbient( osg::Vec4( r, g, b, a) );
+}
+
+void Light::SetAmbient(const osg::Vec4& rgba)
+{
+   mLightSource->getLight()->setAmbient(rgba);
 }
 
 void Light::GetAmbient( float& r, float& g, float& b, float& a ) const
 { 
-   osg::Vec4f color = mLightSource->getLight()->getAmbient();
+   const osg::Vec4& color = GetAmbient();
 
    r = color[0]; 
    g = color[1]; 
@@ -123,15 +128,25 @@ void Light::GetAmbient( float& r, float& g, float& b, float& a ) const
    a = color[3];
 }
 
+const osg::Vec4& Light::GetAmbient() const
+{ 
+   return mLightSource->getLight()->getAmbient();
+}
+
 ///sets the diffuse light color
 void Light::SetDiffuse( float r, float g, float b, float a )
 { 
-   mLightSource->getLight()->setDiffuse( osg::Vec4( r, g, b, a) );
+   SetDiffuse( osg::Vec4( r, g, b, a) );
 }
-      
+ 
+void Light::SetDiffuse(const osg::Vec4& rgba)
+{
+   mLightSource->getLight()->setDiffuse(rgba);
+}
+
 void Light::GetDiffuse( float& r, float& g, float& b, float& a ) const
 {
-   osg::Vec4f color = mLightSource->getLight()->getDiffuse();
+   const osg::Vec4& color = GetDiffuse();
 
    r = color[0]; 
    g = color[1];
@@ -139,9 +154,14 @@ void Light::GetDiffuse( float& r, float& g, float& b, float& a ) const
    a = color[3];
 }
 
+const osg::Vec4& Light::GetDiffuse() const
+{ 
+   return mLightSource->getLight()->getDiffuse();
+}
+
 void Light::GetSpecular( float& r, float& g, float& b, float& a ) const
 {
-   osg::Vec4f color = mLightSource->getLight()->getSpecular();
+   const osg::Vec4& color = GetSpecular();
 
    r = color[0]; 
    g = color[1]; 
@@ -149,10 +169,20 @@ void Light::GetSpecular( float& r, float& g, float& b, float& a ) const
    a = color[3];
 }
 
+const osg::Vec4& Light::GetSpecular() const
+{ 
+   return mLightSource->getLight()->getSpecular();
+}
+
 ///sets the specular light color
 void Light::SetSpecular( float r, float g, float b, float a )
 { 
-   mLightSource->getLight()->setSpecular( osg::Vec4( r, g, b, a) );
+   SetSpecular( osg::Vec4( r, g, b, a) );
+}
+
+void Light::SetSpecular(const osg::Vec4& rgba)
+{
+   mLightSource->getLight()->setSpecular(rgba);
 }
 
 void Light::AddedToScene( Scene *scene )

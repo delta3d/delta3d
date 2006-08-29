@@ -29,8 +29,11 @@ void initEnvironmentBindings()
    void (Environment::*SetRefLatLong1)( const osg::Vec2& ) = &Environment::SetRefLatLong;
    void (Environment::*GetRefLatLong1)( osg::Vec2& ) const = &Environment::GetRefLatLong;
 
-   // Need wrapper for GetSunzAzEl and GetDataTime that do not use assignment by reference. Python's
-   // numeric types are immutable, and cannot have their values changed by reference.
+   osg::Vec2 (Environment::*GetSunAzEl1)() const = &Environment::GetSunAzEl;
+
+   void (Environment::*SetDateTime1)(int, int, int, int, int, int) = &Environment::SetDateTime;
+   void (Environment::*SetDateTime2)(const Environment::DateTime&) = &Environment::SetDateTime;
+   Environment::DateTime (Environment::*GetDateTime1)() const = &Environment::GetDateTime;
 
    scope Environment_scope = class_<Environment, bases<DeltaDrawable>, dtCore::RefPtr<Environment>, boost::noncopyable>("Environment", init<optional<const std::string&> >())
       .def("GetInstanceCount", &Environment::GetInstanceCount)
@@ -60,15 +63,28 @@ void initEnvironmentBindings()
       .def("SetVisibility", &Environment::SetVisibility)
       .def("GetVisibility", &Environment::GetVisibility)
       .def("GetSunColor", GetSunColor1)
+      .def("GetSunAzEl", GetSunAzEl1)
       .def("Repaint", &Environment::Repaint)
-      .def("SetDateTime", &Environment::SetDateTime)
+      .def("SetDateTime", SetDateTime1)
+      .def("SetDateTime", SetDateTime2)
+      .def("GetDateTime", GetDateTime1)
       .def("SetRefLatLong", SetRefLatLong1)
       .def("GetRefLatLong", GetRefLatLong1);
+
+   class_<Environment::DateTime>("DateTime")
+      .def_readwrite("mYear", &Environment::DateTime::mYear)
+      .def_readwrite("mMonth", &Environment::DateTime::mMonth)
+      .def_readwrite("mDay", &Environment::DateTime::mDay)
+      .def_readwrite("mHour", &Environment::DateTime::mHour)
+      .def_readwrite("mMinute", &Environment::DateTime::mMinute)
+      .def_readwrite("mSecond", &Environment::DateTime::mSecond)
+      ;
       
    enum_<Environment::FogMode>("FogMode")
       .value("LINEAR", Environment::LINEAR)
       .value("EXP", Environment::EXP)
       .value("EXP2", Environment::EXP2)
       .value("ADV", Environment::ADV)
-      .export_values();
+      .export_values()
+      ;
 }

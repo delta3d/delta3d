@@ -83,8 +83,9 @@ void initMouseBindings()
    // Need wrapper for GetPosition that do not use assignment by reference. Python's
    // numeric types are immutable, and cannot have their values changed by reference.
    
-   //typedef void (Mouse::*MouseFloatFloatMemFun)(float&,float&) const;
-   //MouseFloatFloatMemFun MouseGP1 = &Mouse::GetPosition;
+   osg::Vec2 (Mouse::*GetPosition1)() const = &Mouse::GetPosition;
+   void (Mouse::*SetPosition1)(float, float) = &Mouse::SetPosition;
+   void (Mouse::*SetPosition2)(const osg::Vec2&) = &Mouse::SetPosition;
 
    class_<MouseListenerWrap, dtCore::RefPtr<MouseListenerWrap>, boost::noncopyable >("MouseListener")
       .def("HandleButtonPressed", pure_virtual(&MouseListener::HandleButtonPressed))
@@ -100,8 +101,9 @@ void initMouseBindings()
       .def("GetInstance", MouseGI1, return_internal_reference<>())
       .def("GetInstance", MouseGI2, return_internal_reference<>())
       .staticmethod("GetInstance")
-      //.def("GetPosition", MouseGP1)
-      .def("SetPosition", &Mouse::SetPosition)
+      .def("GetPosition", GetPosition1)
+      .def("SetPosition", SetPosition1)
+      .def("SetPosition", SetPosition2)
       .def("GetButtonState", &Mouse::GetButtonState)
       .def("AddMouseListener", &Mouse::AddMouseListener, with_custodian_and_ward<1,2>())
       .def("RemoveMouseListener", &Mouse::RemoveMouseListener);

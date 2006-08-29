@@ -10,9 +10,14 @@ using namespace dtCore;
 
 void initPositionalLightBindings()
 {
+   void (PositionalLight::*SetAttenuation1)(float, float, float) = &PositionalLight::SetAttenuation;
+   void (PositionalLight::*SetAttenuation2)(const osg::Vec3&) = &PositionalLight::SetAttenuation;
+   osg::Vec3 (PositionalLight::*GetAttenuation1)() const = &PositionalLight::GetAttenuation;
+
    class_<PositionalLight, bases<Light>, dtCore::RefPtr<PositionalLight>, boost::noncopyable >("PositionalLight", init<int, optional<const std::string&, Light::LightingMode> >())
-      .def("SetAttenuation", &PositionalLight::SetAttenuation)
-      .def("GetAttenuation", &PositionalLight::GetAttenuation)
+      .def("SetAttenuation", SetAttenuation1)
+      .def("SetAttenuation", SetAttenuation2)
+      .def("GetAttenuation", GetAttenuation1)
       .def("AddChild", &PositionalLight::AddChild, with_custodian_and_ward<1, 2>())
       .def("RemoveChild", &PositionalLight::RemoveChild);
 }

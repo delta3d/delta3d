@@ -133,7 +133,11 @@ Compass::GetScreenPosition( float& x, float& y )   const
    y  = mScreenY;
 }
 
-
+osg::Vec2
+Compass::GetScreenPosition()   const
+{
+   return osg::Vec2( mScreenX, mScreenY );
+}
 
 void
 Compass::SetScreenPosition( float x, float y )
@@ -145,7 +149,11 @@ Compass::SetScreenPosition( float x, float y )
 }
 
 
-
+void
+Compass::SetScreenPosition( const osg::Vec2& xy )
+{
+   SetScreenPosition( xy.x(), xy.y() );
+}
 
 dtCore::Camera*
 Compass::GetCamera()

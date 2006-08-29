@@ -29,6 +29,7 @@
 #include <dtCore/refptr.h>
 #include <Producer/KeyboardMouse>   // for InputCallback's base class
 #include <vector>                   // for member
+#include <osg/Vec2>
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace Producer
@@ -113,9 +114,11 @@ namespace dtCore
 
       ///Calculate the screen pixel coords ([0,w],[0,h]) given the window coords (x,y) ([-1,1],[-1,1])
       bool CalcPixelCoords( float x, float y, float &pixel_x, float &pixel_y );
+      bool CalcPixelCoords( osg::Vec2 window_xy, osg::Vec2& pixel_xy );
 
       ///Calculate the window coords ([-1,1],[-1,1]), given the screen pixel coords (x,y) ([0,w],[0,h])
       bool CalcWindowCoords( float pixel_x, float pixel_y, float &x, float &y );
+      bool CalcWindowCoords( osg::Vec2 pixel_xy, osg::Vec2& window_xy );
 
       ///Draw the cursor or not
       void ShowCursor( bool show = true );
@@ -139,11 +142,21 @@ namespace dtCore
       const std::string& GetWindowTitle() const;
       
       ///Set the size and position of the DeltaWin
+      struct PositionSize
+      {
+         int mX;
+         int mY;
+         int mWidth;
+         int mHeight;
+      };
+
       void SetPosition( int x, int y, int width, int height );
+      void SetPosition( const PositionSize& positionSize );
 
       ///Get the size and position of the DeltaWin
       void GetPosition( int *x, int *y, int *width, int *height );
       void GetPosition( int& x, int& y, int& width, int& height );
+      PositionSize GetPosition();
 
       ///Get a handle to the underlying RenderSurface
       Producer::RenderSurface* GetRenderSurface() { return mRenderSurface.get(); }

@@ -95,13 +95,25 @@ void PositionalLight::SetAttenuation( float constant, float linear, float quadra
    mLightSource->getLight()->setConstantAttenuation( constant );
    mLightSource->getLight()->setLinearAttenuation( linear );
    mLightSource->getLight()->setQuadraticAttenuation( quadratic );
-}  
+}
 
-void PositionalLight::GetAttenuation( float& constant, float& linear, float& quadratic )
+void PositionalLight::SetAttenuation( const osg::Vec3& constantLinearQuadratic )
+{
+   SetAttenuation(constantLinearQuadratic[0], constantLinearQuadratic[1], constantLinearQuadratic[2]);
+}
+
+void PositionalLight::GetAttenuation( float& constant, float& linear, float& quadratic ) const
 {
    constant = mLightSource->getLight()->getConstantAttenuation();
    linear = mLightSource->getLight()->getLinearAttenuation();
    quadratic = mLightSource->getLight()->getQuadraticAttenuation();
+}
+
+osg::Vec3 PositionalLight::GetAttenuation() const
+{
+   osg::Vec3 constantLinearQuadratic;
+   GetAttenuation(constantLinearQuadratic[0], constantLinearQuadratic[1], constantLinearQuadratic[2]);
+   return constantLinearQuadratic;
 }
 
 bool PositionalLight::AddChild( DeltaDrawable *child )

@@ -71,12 +71,14 @@ namespace dtCore
       /// @param el The elevation angle (degrees), e.g. the swing up or down from the y-x plane.
       /// @pre el<=90.0 && el>-90
       void SetAzimuthElevation( float az, float el );
+      void SetAzimuthElevation( const osg::Vec2& azEl );
 
       /// Values returned may be different than those set due to math limitations, but
       /// they are guarunteed to be equal internally.
       /// @param az The azimuth angle (degrees), e.g. the swing in the y-x plane.
       /// @param el The elevation angle (degrees), e.g. the swing up or down from the y-x plane.
       void GetAzimuthElevation( float& az, float& el ) const;
+      osg::Vec2 GetAzimuthElevation() const;
    };
 
 }

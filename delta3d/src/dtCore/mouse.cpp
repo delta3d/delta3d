@@ -34,12 +34,24 @@ void Mouse::GetPosition(float& x, float& y) const
    y = GetAxis(1)->GetState();
 }
 
+osg::Vec2 Mouse::GetPosition() const
+{
+   osg::Vec2 xy;
+   GetPosition(xy.x(), xy.y());
+   return xy;
+}
+
 void Mouse::SetPosition(float x, float y)
 {
    if( mKeyboardMouse.valid() )
    {
       mKeyboardMouse->positionPointer(x,y);
    }
+}
+
+void Mouse::SetPosition(const osg::Vec2& xy)
+{
+   SetPosition(xy.x(), xy.y());
 }
 
 bool Mouse::GetButtonState(MouseButton button) const
