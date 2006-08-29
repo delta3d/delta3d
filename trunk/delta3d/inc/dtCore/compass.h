@@ -61,14 +61,16 @@ namespace dtCore
          virtual                    ~Compass();
       
       public:   
-         virtual  void              GetScreenPosition( float& x, float& y )   const;
-         virtual  void              SetScreenPosition( float x, float y );
+                  void              GetScreenPosition( float& x, float& y )   const;
+                  osg::Vec2         GetScreenPosition()                       const;
+                  void              SetScreenPosition( float x, float y );
+                  void              SetScreenPosition( const osg::Vec2& xy );
 
          ///@return returns a pointer to the current camera
-         virtual  dtCore::Camera*      GetCamera();
+                  dtCore::Camera*   GetCamera();
          
          //@param stes the current camera
-         virtual  void              SetCamera( dtCore::Camera* cam );
+                  void              SetCamera( dtCore::Camera* cam );
 
       private:
          inline   void              ctor();

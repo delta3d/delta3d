@@ -468,8 +468,8 @@ void dtCore::Environment::SetFogEnable(bool enable)
 * @param mi Minutes after the hour (0-59)
 * @param sc Seconds pass the minute (0-59)
 */
-void dtCore::Environment::SetDateTime( const int yr, const int mo, const int da,
-                                       const int hr, const int mi, const int sc )
+void dtCore::Environment::SetDateTime( int yr, int mo, int da,
+                                       int hr, int mi, int sc )
 {
    if ((yr == -1) || (mo == -1) || (da == -1) ||
       (hr == -1) || (mi == -1) || (sc == -1) )
@@ -486,6 +486,10 @@ void dtCore::Environment::SetDateTime( const int yr, const int mo, const int da,
    Update(999.99);
 }
 
+void dtCore::Environment::SetDateTime(const DateTime& dateTime)
+{
+   SetDateTime(dateTime.mYear, dateTime.mMonth, dateTime.mDay, dateTime.mHour, dateTime.mMinute, dateTime.mSecond);
+}
 
 /** Get the current Date and Time of this Environment within a second.
 * @param yr year
@@ -504,6 +508,13 @@ void dtCore::Environment::GetDateTime( int& yr, int& mo, int& da, int& hr, int& 
    hr = tmp->tm_hour;
    mi = tmp->tm_min;
    sc = tmp->tm_sec;
+}
+
+dtCore::Environment::DateTime dtCore::Environment::GetDateTime() const
+{
+   DateTime dateTime;
+   GetDateTime(dateTime.mYear, dateTime.mMonth, dateTime.mDay, dateTime.mHour, dateTime.mMinute, dateTime.mSecond);
+   return dateTime;
 }
 
 void dtCore::Environment::Update(const double deltaFrameTime)

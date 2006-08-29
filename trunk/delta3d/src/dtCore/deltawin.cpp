@@ -263,6 +263,11 @@ void DeltaWin::SetPosition( int x, int y, int width, int height )
    mRenderSurface->setWindowRectangle(x, y, width, height);
 }
 
+void DeltaWin::SetPosition( const DeltaWin::PositionSize& positionSize )
+{
+   SetPosition(positionSize.mX, positionSize.mY, positionSize.mWidth, positionSize.mHeight);
+}
+
 void DeltaWin::GetPosition( int *x, int *y,int *width, int *height )
 {
    DEPRECATE(  "void GetPosition( int *x, int *y,int *width, int *height )",
@@ -277,6 +282,13 @@ void DeltaWin::GetPosition( int& x, int& y, int& width, int& height )
    mRenderSurface->getWindowRectangle( x, y, w, h );
    width = w;
    height = h;
+}
+
+DeltaWin::PositionSize DeltaWin::GetPosition()
+{
+   PositionSize positionSize;
+   GetPosition(positionSize.mX, positionSize.mY, positionSize.mWidth, positionSize.mHeight);
+   return positionSize;
 }
 
 /** 
@@ -356,6 +368,11 @@ bool DeltaWin::CalcPixelCoords( float x, float y, float &pixel_x, float &pixel_y
    return true;
 }
 
+bool DeltaWin::CalcPixelCoords( osg::Vec2 window_xy, osg::Vec2& pixel_xy )
+{
+   return CalcPixelCoords( window_xy.x(), window_xy.y(), pixel_xy.x(), pixel_xy.y() );
+}
+
 bool DeltaWin::CalcWindowCoords( float pixel_x, float pixel_y, float &x, float &y )
 {
    int wx, wy;
@@ -377,6 +394,11 @@ bool DeltaWin::CalcWindowCoords( float pixel_x, float pixel_y, float &x, float &
       LOG_DEBUG("Window size of 0");
       return false;
    }
+}
+
+bool DeltaWin::CalcWindowCoords( osg::Vec2 pixel_xy, osg::Vec2& window_xy )
+{
+   return CalcWindowCoords( pixel_xy.x(), pixel_xy.y(), window_xy.x(), window_xy.y() );
 }
 
 bool DeltaWin::ChangeScreenResolution( Resolution res ) 

@@ -56,9 +56,11 @@ namespace dtCore
 
       ///Set that values that control how fast light fades as one moves away from the light
       void SetAttenuation( float constant, float linear, float quadratic );
+      void SetAttenuation( const osg::Vec3& constantLinearQuadratic );
 
       ///gets the value of the attenuation which controls how the light fades as objects get farther away
-      void GetAttenuation( float& constant, float& linear, float& quadratic );
+      void GetAttenuation( float& constant, float& linear, float& quadratic ) const;
+      osg::Vec3 GetAttenuation() const;
       
       ///adds a drawable as a child of this node
       virtual bool AddChild( DeltaDrawable *child ); 

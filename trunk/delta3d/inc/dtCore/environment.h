@@ -51,6 +51,17 @@ namespace dtCore
      DECLARE_MANAGEMENT_LAYER(Environment)
 
    public:
+
+      struct DateTime
+      {
+         int mYear;
+         int mMonth;
+         int mDay;
+         int mHour;
+         int mMinute;
+         int mSecond;
+      };
+
       Environment( const std::string& name = "Environment" );
    protected:
       virtual ~Environment();
@@ -134,11 +145,18 @@ namespace dtCore
          el = mSunAltitude;
       }
 
+      osg::Vec2 GetSunAzEl() const
+      {
+         return osg::Vec2(mSunAzimuth, mSunAltitude);
+      }
+
       void Repaint();
 
       ///Set the environment's date and time
       void SetDateTime( int yr, int mo, int da,
                         int hr, int mi, int sc);
+
+      void SetDateTime(const DateTime& dateTime);
 
       ///Get the current date/time of the environment
       void GetDateTime( int *yr, int *mo, int *da, int *hr, int *mi, int *sc ) const
@@ -149,6 +167,8 @@ namespace dtCore
       }
 
       void GetDateTime( int& yr, int& mo, int& da, int& hr, int& mi, int& sc ) const;
+
+      DateTime GetDateTime() const;
 
       ///Set the ephemeris reference lat/long
       void SetRefLatLong( const osg::Vec2& latLong );
