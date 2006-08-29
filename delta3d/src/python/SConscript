@@ -175,7 +175,7 @@ if CheckForBoost() :
    pythonDtAbcLib = env.SharedLibrary(   dtAbcBindingsTarget,     pythonSrcs['dtABC'],    LIBS = addToLibs + [dtLibs['dtABC'],dtLibs['dtCore'],dtLibs['dtDAL']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )
    pythonDtAudioLib = env.SharedLibrary( dtAudioBindingsTarget,   pythonSrcs['dtAudio'],  LIBS = addToLibs + [dtLibs['dtAudio'],dtLibs['dtCore']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )
    pythonDtCharLib = env.SharedLibrary(  dtCharBindingsTarget,    pythonSrcs['dtChar'],   LIBS = addToLibs + [dtLibs['dtChar'],dtLibs['dtCore'],dtLibs['dtUtil']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )
-   pythonDtDALLib = env.SharedLibrary(   dtDALBindingsTarget,     pythonSrcs['dtDAL'],    LIBS = addToLibs + [dtLibs['dtCore'],dtLibs['dtAI']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )
+   pythonDtDALLib = env.SharedLibrary(   dtDALBindingsTarget,     pythonSrcs['dtDAL'],    LIBS = addToLibs + [dtLibs['dtCore'],dtLibs['dtDAL'],dtLibs['dtAI']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )
    pythonDtAILib = env.SharedLibrary(   dtAIBindingsTarget,     pythonSrcs['dtAI'],    LIBS = addToLibs + [dtLibs['dtDAL'],dtLibs['dtCore'],dtLibs['dtUtil'],dtLibs['dtAI']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )   
    pythonDtInspectorLib = env.SharedLibrary(  dtInspectorBindingsTarget,  pythonSrcs['dtInspector'],   LIBS = addToLibs + [dtLibs['dtInspector'],dtLibs['dtCore']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )
    pythonDtTerrainLib = env.SharedLibrary(  dtTerrainBindingsTarget,  pythonSrcs['dtTerrain'],   LIBS = addToLibs + [dtLibs['dtTerrain'],dtLibs['dtCore'],dtLibs['dtUtil']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )
