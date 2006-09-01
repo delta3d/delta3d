@@ -525,8 +525,6 @@ namespace dtCore
          //calculate our new heading
          newH = hpr[0] - mLookLeftRightCtrl * mMaximumTurnSpeed * deltaFrameTime;
 
-         std::cout << newH << " " << mLookLeftRightCtrl << std::endl;
-
          //calculate our new pitch
          newP = hpr[1] + mLookUpDownCtrl * mMaximumTurnSpeed * deltaFrameTime;
          dtUtil::Clamp<float>(newP, -89.9f, 89.9f); //stay away from 90.0 as it causes funky gimbal lock
@@ -662,15 +660,9 @@ namespace dtCore
 
    void CollisionMotionModel::HandleCollideTorso(dGeomID pFeet, dGeomID pObject)
    {
-
       if(pObject == GetFeetGeom()) return;      
 
       mNumTorsoContactPoints = dCollide( pFeet, pObject, 8, mLastContactPoints, sizeof(dContactGeom) );
-
-      if( mNumTorsoContactPoints > 0)
-      {
-         std::cout << "Collision With Torso: " << mNumTorsoContactPoints << std::endl;
-      }
    }
 
    void CollisionMotionModel::HandleCollideFeet(dGeomID pFeet, dGeomID pObject)
