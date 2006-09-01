@@ -314,6 +314,15 @@ namespace dtCore
       int mNumFeetContactPoints;
       int mNumTorsoContactPoints;
       float mLowestZValue;
+
+      float mJumpLength;
+      float mJumpTimer;
+      bool mJumped;
+
+      float mAirControl;
+      bool mFreeFall;
+      double mFreeFallCounter;
+
       dContactGeom mLastContactPoints[8];
 
 
@@ -435,6 +444,7 @@ namespace dtCore
       bool mFalling; ///<are we currently falling?
 
       dtCore::RefPtr<Mouse> mMouse;
+      dtCore::RefPtr<Keyboard> mKeyboard;
 
       bool OnForwardBackwardChanged(double newState, double delta);
       bool OnSidestepChanged(double newState, double delta);

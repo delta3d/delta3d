@@ -73,8 +73,8 @@ namespace dtCore
       mMaximumWalkSpeed(10.0f),
       mMaximumTurnSpeed(14440.0f),
       mMaximumSidestepSpeed(10.0f),
-      mHeightAboveTerrain(1.5f),
-      mMaximumStepUpDistance(.5f),
+      mHeightAboveTerrain(1.0f),
+      mMaximumStepUpDistance(.15f),
       mFallingHeight(0.25f),
       mFallingVec(0.f, 0.f, 0.f),
       mFalling(false),
@@ -82,13 +82,22 @@ namespace dtCore
       mSidestepCtrl(0.f),
       mLookLeftRightCtrl(0.f),
       mLookUpDownCtrl(0.f),
-      mBBFeetOffset(0.0f, 0.0f, -1.5f),
-      mBBTorsoOffset(0.0f, 0.0f, 0.0f),
+      mBBFeetOffset(0.0f, 0.0f, -1.0f),
+      mBBTorsoOffset(0.0f, 0.0f, -0.5f),
       mBBFeetLengths(0.5f, 0.5f, 0.5f),
-      mBBTorsoLengths(0.65f, 0.65f, 0.75f),
+      mBBTorsoLengths(0.65f, 0.65f, 1.0f),
       mNumFeetContactPoints(0),
       mNumTorsoContactPoints(0),
-      mScene(scene)
+      mScene(scene),
+      mJumpLength(0.25f),
+      mJumpTimer(0.0f),
+      mJumped(false),
+      mMouse(mouse),
+      mKeyboard(keyboard),
+      mAirControl(0.35f),
+      mFreeFall(false),
+      mFreeFallCounter(0)
+
    {
 
       //setup some axis listeners with functors 
@@ -531,9 +540,11 @@ namespace dtCore
          mLookUpDownAxis->SetState(0.0f);//necessary to stop camera drifting down
 
          //calculate x/y delta
+         float adjusted_dt = deltaFrameTime;
+         if(mFreeFall || mJumped) adjusted_dt *= mAirControl;
          osg::Vec3 translation;
-         translation[0] = mSidestepCtrl * mMaximumSidestepSpeed * deltaFrameTime;
-         translation[1] = mForwardBackCtrl * mMaximumWalkSpeed * deltaFrameTime;
+         translation[0] = mSidestepCtrl * mMaximumSidestepSpeed * adjusted_dt;
+         translation[1] = mForwardBackCtrl * mMaximumWalkSpeed * adjusted_dt;
 
          //transform our x/y delta by our new heading
          osg::Matrix mat;
@@ -591,49 +602,92 @@ namespace dtCore
 
       CollideFeet(xyz);
 
-      float hot = 0.0f;
-
-      if (mNumFeetContactPoints)
-      {    
-         hot = (xyz[2] + mBBFeetOffset[2]) + mLowestZValue;
-         mNumFeetContactPoints = 0;
-      }
-      else
+      if(mNumFeetContactPoints)
       {
-         mFalling = true;
-         hot = -100000000.0f;//std::min<float>();
+         mFreeFall = false;
       }
-
-      ////add in the offset distance off the height of terrain
-      const float targetHeight = hot + mHeightAboveTerrain;
-
-      if (mFalling)
-      {
-         //adjust the position based on the gravity vector
-
-         osg::Vec3 gravityVec;
-         mScene->GetGravity(gravityVec);
-
-         mFallingVec += gravityVec * deltaFrameTime;
-
-         //modify our position using the falling vector
-         xyz += mFallingVec * deltaFrameTime;    
-
-         //make sure didn't fall below the terrain
-         if (xyz[2] <= targetHeight)
+      else if(!mFreeFall)
+      {                  
+         mFreeFallCounter += deltaFrameTime;
+         if(mFreeFallCounter > 0.25)
          {
-            //stop falling
+            mFreeFall = true;
+            mFreeFallCounter = 0.0;
+         }       
+      }
+
+      if(mJumped)
+      {
+         mJumpTimer -= deltaFrameTime;
+         if(mJumpTimer <= 0.0f)
+         {
+            mJumpTimer = 0.0f;
+            mJumped = false;
             mFallingVec.set(0.f, 0.f, 0.f);
-            xyz[2] = targetHeight;
-            mFalling = false;
+         }
+         else
+         {
+            osg::Vec3 gravityVec;
+            mScene->GetGravity(gravityVec);
+            gravityVec.set(-gravityVec[0] * 0.5f, -gravityVec[1] * 0.5f, -gravityVec[2] * 0.5f);
+
+            mFallingVec += gravityVec * deltaFrameTime;
+            xyz += gravityVec * deltaFrameTime;  
          }
       }
+      else
+      {         
 
-      //otherwise, lets clamp to the terrain
-      else 
-      {
-         mFallingVec.set(0.f, 0.f, 0.f);
-         xyz[2] = targetHeight;
+         float hot = 0.0f;
+
+         if (mNumFeetContactPoints)
+         {    
+            hot = (xyz[2] + mBBFeetOffset[2]) + mLowestZValue;
+            mNumFeetContactPoints = 0;
+         }
+         else
+         {
+            mFalling = true;
+            hot = -100000000.0f;//std::min<float>();
+         }
+
+         ////add in the offset distance off the height of terrain
+         const float targetHeight = hot + mHeightAboveTerrain;
+
+         if (mFalling)
+         {
+            //adjust the position based on the gravity vector
+
+            osg::Vec3 gravityVec;
+            mScene->GetGravity(gravityVec);
+
+            mFallingVec += gravityVec * deltaFrameTime;
+
+            //modify our position using the falling vector
+            xyz += mFallingVec * deltaFrameTime;    
+
+            //make sure didn't fall below the terrain
+            if (xyz[2] <= targetHeight)
+            {
+               //stop falling
+               mFallingVec.set(0.f, 0.f, 0.f);
+               xyz[2] = targetHeight;
+               mFalling = false;
+            }
+         }
+
+         //otherwise, lets clamp to the terrain
+         else 
+         {
+            mFallingVec.set(0.f, 0.f, 0.f);
+            xyz[2] = targetHeight;
+         }
+
+         if(!mFreeFall && !mJumped && mKeyboard->GetKeyState(Producer::Key_space))
+         {
+            mJumped = true;
+            mJumpTimer = mJumpLength;
+         }
       }
    }
 
@@ -744,25 +798,26 @@ namespace dtCore
       osg::Vec3 torso = xyz + mBBTorsoOffset;
       dGeomSetPosition(mBBTorso, torso[0], torso[1], torso[2]);
 
-      //osg::Matrix rotation; 
-      //dtUtil::MatrixUtil::HprToMatrix(rotation, hpr);
+      osg::Matrix rotation; 
+      dtUtil::MatrixUtil::HprToMatrix(rotation, osg::Vec3(hpr[0], 0.0f, 0.0f));
 
-      //// Set rotation
-      //dMatrix3 dRot;
+      // Set rotation
+      dMatrix3 dRot;
 
-      //dRot[0] = rotation(0,0);
-      //dRot[1] = rotation(1,0);
-      //dRot[2] = rotation(2,0);
+      dRot[0] = rotation(0,0);
+      dRot[1] = rotation(1,0);
+      dRot[2] = rotation(2,0);
 
-      //dRot[4] = rotation(0,1);
-      //dRot[5] = rotation(1,1);
-      //dRot[6] = rotation(2,1);
+      dRot[4] = rotation(0,1);
+      dRot[5] = rotation(1,1);
+      dRot[6] = rotation(2,1);
 
-      //dRot[8] = rotation(0,2);
-      //dRot[9] = rotation(1,2);
-      //dRot[10] = rotation(2,2);
+      dRot[8] = rotation(0,2);
+      dRot[9] = rotation(1,2);
+      dRot[10] = rotation(2,2);
 
-      //dGeomSetRotation(mBBFeet, dRot);
+      dGeomSetRotation(mBBFeet, dRot);
+      dGeomSetRotation(mBBTorso, dRot);
 
    }
 
