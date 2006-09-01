@@ -159,6 +159,9 @@
 				RelativePath="..\..\..\src\dtCore\cloudplane.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtCore\collisionmotionmodel.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtCore\compass.cpp">
 			</File>
 			<File
@@ -369,6 +372,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtCore\cloudplane.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtCore\collisionmotionmodel.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtCore\compass.h">
