@@ -23,7 +23,8 @@ namespace dtExample
       FLY,
       UFO,
       ORBIT,
-      FPS
+      FPS,
+      COLLISION
    };
 
    /// a small helper class that will set up and modify the GUI
@@ -32,7 +33,7 @@ namespace dtExample
    public:
       typedef dtUtil::Functor<void,TYPELIST_1(MotionModelType)> ForwardingFunctor;
 
-      QuickMenuManager(const ForwardingFunctor& ff): mWalk(0), mFly(0), mUFO(0), mOrbit(0), mFPS(0), mForwardingFunctor(ff)
+      QuickMenuManager(const ForwardingFunctor& ff): mWalk(0), mFly(0), mUFO(0), mOrbit(0), mFPS(0), mCollision(0), mForwardingFunctor(ff)
       {
       }
 
@@ -64,6 +65,11 @@ namespace dtExample
             {
                mFPS->setSelected(true);
             } break;
+
+         case COLLISION:
+            {
+               mCollision->setSelected(true);
+            } break;
          }
       }
 
@@ -76,6 +82,7 @@ namespace dtExample
          else if( mUFO == wea.window )   { mForwardingFunctor( UFO ); }
          else if( mOrbit == wea.window ) { mForwardingFunctor( ORBIT ); }
          else if( mFPS == wea.window )   { mForwardingFunctor( FPS ); }
+         else if( mCollision == wea.window )   { mForwardingFunctor( COLLISION ); }
 
          return true;
       }
@@ -135,13 +142,20 @@ namespace dtExample
             fps->subscribeEvent(CEGUI::RadioButton::EventSelectStateChanged, CEGUI::Event::Subscriber(&QuickMenuManager::ChangeMotionModelCB,this));
             menu->addChildWindow( fps );
 
+            CEGUI::Window* col = CreateWidget("WindowsLook/RadioButton","COLLISION");
+            col->setAreaRect(CEGUI::Rect(CEGUI::Point(0.05,0.25),CEGUI::Size(0.2,1.0)));
+            col->setText("COLLISION (6)");
+            col->subscribeEvent(CEGUI::RadioButton::EventSelectStateChanged, CEGUI::Event::Subscriber(&QuickMenuManager::ChangeMotionModelCB,this));
+            menu->addChildWindow( col );
+
             CEGUI::System::getSingleton().setGUISheet( menu );
 
             InitializeWidgets(static_cast<CEGUI::RadioButton*>(walk),
                               static_cast<CEGUI::RadioButton*>(fly),
                               static_cast<CEGUI::RadioButton*>(ufo),
                               static_cast<CEGUI::RadioButton*>(orb),
-                              static_cast<CEGUI::RadioButton*>(fps));
+                              static_cast<CEGUI::RadioButton*>(fps),
+                              static_cast<CEGUI::RadioButton*>(col));
 
             //RegisterCallbacks( sm );
          }
@@ -156,13 +170,14 @@ namespace dtExample
       {
       }
 
-      void InitializeWidgets(CEGUI::RadioButton* walk, CEGUI::RadioButton* fly, CEGUI::RadioButton* ufo, CEGUI::RadioButton* orb, CEGUI::RadioButton* fps)
+      void InitializeWidgets(CEGUI::RadioButton* walk, CEGUI::RadioButton* fly, CEGUI::RadioButton* ufo, CEGUI::RadioButton* orb, CEGUI::RadioButton* fps, CEGUI::RadioButton* col)
       {
          mWalk = walk;
          mFly = fly;
          mUFO = ufo;
          mOrbit = orb;
          mFPS = fps;
+         mCollision = col;
       }
 
       CEGUI::Window* CreateWidget(const std::string& wtype, const std::string& wname)
@@ -193,6 +208,7 @@ namespace dtExample
       CEGUI::RadioButton* mUFO;
       CEGUI::RadioButton* mOrbit;
       CEGUI::RadioButton* mFPS;
+      CEGUI::RadioButton* mCollision;
 
       ForwardingFunctor mForwardingFunctor;
    };
@@ -237,6 +253,8 @@ public:
       RefPtr<FPSMotionModel> fmm = new FPSMotionModel( GetKeyboard(), GetMouse() );
       fmm->SetScene( GetScene() );
       mMotionModels.push_back( fmm.get() );
+
+      mMotionModels.push_back( new CollisionMotionModel( GetKeyboard(), GetMouse(), GetScene() ) );
 
       Transform xform( 0.0f, 0.0f, mTerrain->GetVerticalScale() + 15.0f );
       GetCamera()->SetTransform( xform );
@@ -288,6 +306,10 @@ public:
          break;
       case Producer::Key_5:
          mMenuManager->SetSelected(dtExample::FPS);
+         verdict = true;
+         break;
+      case Producer::Key_6:
+         mMenuManager->SetSelected(dtExample::COLLISION);
          verdict = true;
          break;
       default:

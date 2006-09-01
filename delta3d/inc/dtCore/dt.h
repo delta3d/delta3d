@@ -68,6 +68,7 @@
 #include <dtCore/ufomotionmodel.h>
 #include <dtCore/uniqueid.h>
 #include <dtCore/walkmotionmodel.h>
+#include <dtCore/collisionmotionmodel.h>
 
 /** 
  * @namespace dtCore

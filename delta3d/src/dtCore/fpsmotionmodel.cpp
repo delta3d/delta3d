@@ -144,9 +144,21 @@ Scene* FPSMotionModel::GetScene()
 */
 void FPSMotionModel::SetEnabled(bool enabled)
 {
-   if(enabled)
+   if(enabled && !MotionModel::IsEnabled())
    {
       mMouse->SetPosition(0.0f,0.0f);
+
+      mLookUpDownAxis->AddAxisListener(mLookUpDownListener);
+      mTurnLeftRightAxis->AddAxisListener(mLookLeftRightListener);
+      mSidestepLeftRightAxis->AddAxisListener(mSidestepListener);
+      mWalkForwardBackwardAxis->AddAxisListener(mForwardBackwardListener);
+   }
+   else
+   {
+      mLookUpDownAxis->RemoveAxisListener(mLookUpDownListener);
+      mTurnLeftRightAxis->RemoveAxisListener(mLookLeftRightListener);
+      mSidestepLeftRightAxis->RemoveAxisListener(mSidestepListener);
+      mWalkForwardBackwardAxis->RemoveAxisListener(mForwardBackwardListener);
    }
 
    MotionModel::SetEnabled(enabled);
