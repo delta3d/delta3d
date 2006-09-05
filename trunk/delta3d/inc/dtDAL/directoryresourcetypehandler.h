@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * @author David Guthrie
+ * David Guthrie
  */
 #ifndef DELTA_DIRECTORY_RESOURCE_TYPE_HANDLER
 #define DELTA_DIRECTORY_RESOURCE_TYPE_HANDLER

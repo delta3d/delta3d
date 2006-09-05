@@ -105,7 +105,7 @@ void Camera::_SceneHandler::draw( Producer::Camera &cam )
 {
    //call osg draw here
    DrawImplementation( cam );
-};
+}
 
 void Camera::_SceneHandler::DrawImplementation( Producer::Camera &cam )
 {

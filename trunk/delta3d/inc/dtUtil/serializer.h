@@ -19,7 +19,7 @@
 
 /** \file serializer.h
   * Utility functions for serialization.
-  * @author John K. Grant
+  * John K. Grant
   */
 
 #ifndef _DTUTIL_SERIALIZER_H_

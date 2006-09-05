@@ -96,7 +96,7 @@ dtCore::Timer_t Stats::UpdateFrameTick()
 void Stats::SelectNextType()
 {
    
-#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && defined(OSG_VERSION_RELEASE) && OSG_VERSION_MAJOR >= 1 && OSG_VERSION_MINOR >= 1 && OSG_VERSION_RELEASE >= 1
+#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 1 && OSG_VERSION_MINOR >= 2
    osgUtil::Statistics::StatsType type = osgUtil::Statistics::STAT_NONE;
 #else
    osgUtil::Statistics::statsType type = osgUtil::Statistics::STAT_NONE;
@@ -121,7 +121,7 @@ void Stats::SelectNextType()
 //------------------------------------------------------------------
 // Stats::selectType
 //------------------------------------------------------------------
-#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && defined(OSG_VERSION_RELEASE) && OSG_VERSION_MAJOR >= 1 && OSG_VERSION_MINOR >= 1 && OSG_VERSION_RELEASE >= 1
+#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 1 && OSG_VERSION_MINOR >= 2
 void Stats::SelectType(osgUtil::Statistics::StatsType type)
 #else
 void Stats::SelectType(osgUtil::Statistics::statsType type)

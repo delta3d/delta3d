@@ -16,7 +16,7 @@
 * along with this library; if not, write to the Free Software Foundation, Inc.,
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
-* @author Erik Johnson 06/06/2006
+* Erik Johnson 06/06/2006
 *
 * Bits is a derivation from the Bits.h file of the CADKit project, Usul:
 * Perry L. Miller IV

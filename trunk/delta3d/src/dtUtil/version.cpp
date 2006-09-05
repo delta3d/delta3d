@@ -16,8 +16,8 @@
  * along with this library; if not, write to the Free Software Foundation, Inc., 
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
  *
- * @author Robert Osfield (via <osg/Version>)
- * @author Chris Osborn
+ * Robert Osfield (via <osg/Version>)
+ * Chris Osborn
  */
 
 #include <prefix/dtutilprefix-src.h>

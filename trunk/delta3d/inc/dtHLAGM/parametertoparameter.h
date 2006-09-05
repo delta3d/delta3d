@@ -16,8 +16,8 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * @author David Guthrie
- * @author Olen A. Bruce
+ * David Guthrie
+ * Olen A. Bruce
  */
 
 #ifndef DELTA_PARAMETER_TO_PARAMETER

@@ -16,7 +16,7 @@
 * along with this library; if not, write to the Free Software Foundation, Inc., 
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 *
-* @author John K. Grant
+* John K. Grant
 */
 #ifndef DELTA_GENERIC_KEYBOARD_LISTENER
 #define DELTA_GENERIC_KEYBOARD_LISTENER
