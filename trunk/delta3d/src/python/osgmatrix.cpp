@@ -48,6 +48,8 @@
 #include <python/heldptr.h>
 #include <python/osgmath.h>
 
+#include <osg/Version>
+
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 using namespace osg;
 using namespace boost::python;
@@ -240,8 +242,14 @@ void initOSGMatrix()
 		&Matrix::getLookAt)
 
 	.def("invert", &Matrix::invert)
-	.def("invert_4x4_orig", &Matrix::invert_4x4_orig)
+
+   #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 1 && OSG_VERSION_MINOR >= 2
+   .def("invert_4x3", &Matrix::invert_4x3)
+   .def("invert_4x4", &Matrix::invert_4x4)
+   #else
+   .def("invert_4x4_orig", &Matrix::invert_4x4_orig)
 	.def("invert_4x4_new", &Matrix::invert_4x4_new)
+   #endif
 
 	.def("identity",  &Matrix::identity)
 
