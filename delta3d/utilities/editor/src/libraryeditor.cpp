@@ -17,7 +17,7 @@
 * along with this library; if not, write to the Free Software Foundation, Inc.,
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
-* @author William E. Johnson II
+* William E. Johnson II
 */
 #include <prefix/dtstageprefix-src.h>
 #include <QtGui/QVBoxLayout>

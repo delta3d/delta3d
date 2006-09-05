@@ -16,8 +16,8 @@
  * along with this library; if not, write to the Free Software Foundation, Inc., 
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
  *
- * @author John K. Grant
- * @author David Guthrie
+ * John K. Grant
+ * David Guthrie
  */
 #include <dtABC/applicationconfighandler.h>
 

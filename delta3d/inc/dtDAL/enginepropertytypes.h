@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * @author Matthew W. Campbell, David Guthrie, William E. Johnson
+ * Matthew W. Campbell, David Guthrie, William E. Johnson
  */
 #ifndef DELTA_ENGINE_PROPERTY_TYPES
 #define DELTA_ENGINE_PROPERTY_TYPES

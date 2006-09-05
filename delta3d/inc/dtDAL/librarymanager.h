@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc., 
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
  *
- * @author Matthew W. Campbell and David Guthrie
+ * Matthew W. Campbell and David Guthrie
  */
 #ifndef DELTA_LIBRARY_MANAGER
 #define DELTA_LIBRARY_MANAGER

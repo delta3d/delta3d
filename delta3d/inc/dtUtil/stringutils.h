@@ -20,10 +20,10 @@
 
 /** @file
   * Utility methods for using strings.
-  * @author David Guthrie
-  * @author John K. Grant
-  * @author William E. Johnson II
-  * @author Chris Osborn
+  * David Guthrie
+  * John K. Grant
+  * William E. Johnson II
+  * Chris Osborn
   */
 
 #ifndef DELTA_STRING_UTILS_INC

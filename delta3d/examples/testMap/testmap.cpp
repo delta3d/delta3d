@@ -1,6 +1,6 @@
 /// Demo application illustrating map loading and actor manipulation
-/// @author Eddie Johnson
-/// @author Chris Osborn
+/// Eddie Johnson
+/// Chris Osborn
 
 #include <dtABC/dtabc.h>
 #include <dtCore/dt.h>

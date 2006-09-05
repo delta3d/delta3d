@@ -16,7 +16,7 @@
 * along with this library; if not, write to the Free Software Foundation, Inc.,
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
-* @author Matthew W. Campbell
+* Matthew W. Campbell
 */
 #include <osg/ApplicationUsage>
 #include <dtABC/application.h>
@@ -435,7 +435,7 @@ public:
    //////////////////////////////////////////////////////////////////////////
    void ShowStatistics()
    {
-#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && defined(OSG_VERSION_RELEASE) && OSG_VERSION_MAJOR >= 1 && OSG_VERSION_MINOR >= 1 && OSG_VERSION_RELEASE >= 1
+#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 1 && OSG_VERSION_MINOR >= 2
       osgUtil::Statistics::StatsType currStats = osgUtil::Statistics::STAT_NONE;
 #else
       osgUtil::Statistics::statsType currStats = osgUtil::Statistics::STAT_NONE;

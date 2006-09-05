@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * @author Bradley Anderegg
+ * Bradley Anderegg
  */
 
 #ifndef __DELTA_ASTAR_H__
@@ -76,7 +76,7 @@ namespace dtAI
     * @reference Thanks to Amit and his great webpage on AStar Algorithms
     *            http://theory.stanford.edu/~amitp/GameProgramming/
     *
-    * @author Bradley Anderegg
+    * Bradley Anderegg
     */
    template<class _NodeType, class _CostFunc, class _Container, class _Timer>
    class AStar
