@@ -85,7 +85,7 @@ namespace dtCore
       mBBFeetOffset(0.0f, 0.0f, -1.0f),
       mBBTorsoOffset(0.0f, 0.0f, -0.5f),
       mBBFeetLengths(0.5f, 0.5f, 0.5f),
-      mBBTorsoLengths(0.65f, 0.65f, 1.0f),
+      mBBTorsoLengths(0.5f, 0.5f, 1.0f),
       mNumFeetContactPoints(0),
       mNumTorsoContactPoints(0),
       mScene(scene),
@@ -555,8 +555,11 @@ namespace dtCore
 
          if(CollideTorso(newXYZ))
          {
+            static int frame = 0;
             osg::Vec3 norm;            
             osg::Vec3 result = translation;
+
+            std::cout << std::endl << std::endl;
             for(int i = 0; i < mNumTorsoContactPoints; ++i)
             {
                norm.set(mLastContactPoints[i].normal[0], mLastContactPoints[i].normal[1], mLastContactPoints[i].normal[2]);
@@ -567,6 +570,7 @@ namespace dtCore
                float dot = (norm * result);
                result -= osg::Vec3(norm[0] * dot, norm[1] * dot, norm[2] * dot);
             }
+            ++frame;
 
             newXYZ = xyz + result;
 
@@ -590,7 +594,7 @@ namespace dtCore
          mMouse->SetPosition(0.0f,0.0f);//keeps cursor at center of screen
 
 
-         UpdateBoundingVolumes(newXYZ, osg::Vec3(newH, newP, 0.0f));
+         UpdateBoundingVolumes(newXYZ, osg::Vec3(newH, newP, 0.0f), mMouse->GetButtonState(Mouse::LeftButton));
 
       }
    }
@@ -716,7 +720,7 @@ namespace dtCore
    {
       if(pObject == GetFeetGeom()) return;      
 
-      mNumTorsoContactPoints = dCollide( pFeet, pObject, 8, mLastContactPoints, sizeof(dContactGeom) );
+      mNumTorsoContactPoints = dCollide( pFeet, pObject, 3, mLastContactPoints, sizeof(dContactGeom) );
    }
 
    void CollisionMotionModel::HandleCollideFeet(dGeomID pFeet, dGeomID pObject)
@@ -735,7 +739,7 @@ namespace dtCore
 
          for(int i = 0; i < mNumFeetContactPoints; ++i)
          {
-            if(contactGeoms[i].pos[2] > mLowestZValue)
+            if(contactGeoms[i].pos[2] < mLowestZValue)
             {
                index = i;
                mLowestZValue = contactGeoms[i].pos[2];
@@ -787,7 +791,7 @@ namespace dtCore
    }
 
 
-   void CollisionMotionModel::UpdateBoundingVolumes(const osg::Vec3& xyz, const osg::Vec3& hpr)
+   void CollisionMotionModel::UpdateBoundingVolumes(const osg::Vec3& xyz, const osg::Vec3& hpr, bool pRotate)
    {
       //change position of object
       // Set translation
@@ -801,23 +805,26 @@ namespace dtCore
       osg::Matrix rotation; 
       dtUtil::MatrixUtil::HprToMatrix(rotation, osg::Vec3(hpr[0], 0.0f, 0.0f));
 
-      // Set rotation
-      dMatrix3 dRot;
+      //if(pRotate)
+      //{
+      //   // Set rotation
+      //   dMatrix3 dRot;
 
-      dRot[0] = rotation(0,0);
-      dRot[1] = rotation(1,0);
-      dRot[2] = rotation(2,0);
+      //   dRot[0] = rotation(0,0);
+      //   dRot[1] = rotation(1,0);
+      //   dRot[2] = rotation(2,0);
 
-      dRot[4] = rotation(0,1);
-      dRot[5] = rotation(1,1);
-      dRot[6] = rotation(2,1);
+      //   dRot[4] = rotation(0,1);
+      //   dRot[5] = rotation(1,1);
+      //   dRot[6] = rotation(2,1);
 
-      dRot[8] = rotation(0,2);
-      dRot[9] = rotation(1,2);
-      dRot[10] = rotation(2,2);
+      //   dRot[8] = rotation(0,2);
+      //   dRot[9] = rotation(1,2);
+      //   dRot[10] = rotation(2,2);
 
-      dGeomSetRotation(mBBFeet, dRot);
-      dGeomSetRotation(mBBTorso, dRot);
+      //   dGeomSetRotation(mBBFeet, dRot);
+      //   dGeomSetRotation(mBBTorso, dRot);
+      //}
 
    }
 
