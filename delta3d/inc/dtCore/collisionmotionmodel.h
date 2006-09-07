@@ -279,7 +279,7 @@ namespace dtCore
       */
       virtual void OnMessage(MessageData *data);
 
-      void UpdateBoundingVolumes(const osg::Vec3& xyz, const osg::Vec3& hpr);
+      void UpdateBoundingVolumes(const osg::Vec3& xyz, const osg::Vec3& hpr, bool pRotate);
       void CreateCollisionBox(dWorldID pWorldId, dSpaceID pSpaceId, dGeomID& pId, const osg::Vec3& pLengths);
 
       dGeomID GetFeetGeom();
@@ -290,6 +290,8 @@ namespace dtCore
       ///ODE collision callback
       static void NearCallbackFeet(void *data, dGeomID o1, dGeomID o2);
       static void NearCallbackTorso(void *data, dGeomID o1, dGeomID o2);
+
+      //void dTriArrayCallback(dGeomID TriMesh, dGeomID RefObject, const int* TriIndices, int TriCount);
 
       void InitBoundingVolumes();
       void InitDrawable();
