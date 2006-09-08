@@ -291,7 +291,7 @@ namespace dtCore
       static void NearCallbackFeet(void *data, dGeomID o1, dGeomID o2);
       static void NearCallbackTorso(void *data, dGeomID o1, dGeomID o2);
 
-      //void dTriArrayCallback(dGeomID TriMesh, dGeomID RefObject, const int* TriIndices, int TriCount);
+      static void dTriArrayCallback(dGeomID TriMesh, dGeomID RefObject, const int* TriIndices, int TriCount);
 
       void InitBoundingVolumes();
       void InitDrawable();
@@ -312,6 +312,9 @@ namespace dtCore
 
       osg::Vec3 mBBFeetLengths;
       osg::Vec3 mBBTorsoLengths;
+
+      unsigned mNumNormals;
+      osg::Vec3 mNormals[8];
 
       int mNumFeetContactPoints;
       int mNumTorsoContactPoints;
