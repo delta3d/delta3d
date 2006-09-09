@@ -523,7 +523,7 @@ void CollisionMotionModel::CreateCollisionBox(dWorldID pWorldId, dSpaceID pSpace
 {
    pId = dCreateGeomTransform(0);
 
-   dGeomTransformSetGeom(pId, dCreateBox(0, pLengths[0], pLengths[1], pLengths[2]));
+   dGeomTransformSetGeom(pId, dCreateCapsule(0, pLengths[1], pLengths[2]));
 
    dSpaceAdd(pSpaceId, pId);
    dGeomSetData(pId, this );
@@ -583,15 +583,18 @@ void CollisionMotionModel::OnMessage(MessageData *data)
       {   
          osg::Vec3 result = translation;
 
-         //std::cout << std::endl << std::endl;
+         std::cout << "Start: " << result << std::endl;
+
          for(unsigned i = 0; i < mNumNormals; ++i)
          {
-            //std::cout << "Collision: " << " " << mNormals[i][0] << " " << mNormals[i][1] << " " << mNormals[i][2] << std::endl;
+            std::cout << "Collision: " << " " << mNormals[i][0] << " " << mNormals[i][1] << " " << mNormals[i][2] << std::endl;
 
             float dot = (mNormals[i] * result); 
             if(dot < 0.0f) result -= osg::Vec3(mNormals[i][0] * dot, mNormals[i][1] * dot, mNormals[i][2] * dot);
-            //std::cout << "Result: " << result << std::endl;
+            std::cout << "Result: " << result << std::endl;
          }
+
+         std::cout << std::endl << std::endl;
 
          newXYZ = xyz + result;
 
@@ -886,9 +889,9 @@ void CollisionMotionModel::dTriArrayCallback(dGeomID TriMesh, dGeomID RefObject,
       osg::Vec3 side1(v1[0], v1[1], v1[2]);
       osg::Vec3 side2(v3[0], v3[1], v3[2]);
 
-      //std::cout << "Vert 1 " << side1 << std::endl;
-      //std::cout << "Vert 2 " << middle << std::endl;
-      //std::cout << "Vert 3 " << side2 << std::endl;
+      std::cout << "Vert 1 " << side1 << std::endl;
+      std::cout << "Vert 2 " << middle << std::endl;
+      std::cout << "Vert 3 " << side2 << std::endl;
 
       side1 -= middle;
       side2 = middle - side2; 
@@ -897,7 +900,7 @@ void CollisionMotionModel::dTriArrayCallback(dGeomID TriMesh, dGeomID RefObject,
       cmm->mNormals[i].normalize();
 
 
-      //std::cout << "Normal " << cmm->mNormals[i] << std::endl;
+      std::cout << "Normal " << cmm->mNormals[i] << std::endl;
 
    }
 
