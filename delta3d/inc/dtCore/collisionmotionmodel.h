@@ -61,6 +61,9 @@ namespace dtCore
    {
 
    public:
+      enum eMode{WALKING = 0, FALLING, SLIDING};
+
+   public:
 
       /**
       * Constructor.
@@ -70,7 +73,7 @@ namespace dtCore
       * @param mouse the mouse instance, or 0 to avoid
       * creating default input mappings
       */
-      CollisionMotionModel(Keyboard* keyboard, Mouse* mouse, Scene* scene);
+      CollisionMotionModel(float pHeight, float pRadius, float k, float theta, Keyboard* keyboard, Mouse* mouse, Scene* scene);
 
    protected:
 
@@ -279,8 +282,7 @@ namespace dtCore
       */
       virtual void OnMessage(MessageData *data);
 
-      void UpdateBoundingVolumes(const osg::Vec3& xyz, const osg::Vec3& hpr, bool pRotate);
-      void CreateCollisionBox(dWorldID pWorldId, dSpaceID pSpaceId, dGeomID& pId, const osg::Vec3& pLengths);
+      void UpdateBoundingVolumes(const osg::Vec3& xyz);
 
       dGeomID GetFeetGeom();
       dGeomID GetTorsoGeom();
@@ -293,14 +295,18 @@ namespace dtCore
 
       static void dTriArrayCallback(dGeomID TriMesh, dGeomID RefObject, const int* TriIndices, int TriCount);
 
+      void CreateCollisionCylinder(dWorldID pWorldId, dSpaceID pSpaceId, dGeomID& pId, const osg::Vec3& pLengths);
+
       void InitBoundingVolumes();
       void InitDrawable();
 
       void HandleCollideFeet(dGeomID pFeet, dGeomID pObject);
       void HandleCollideTorso(dGeomID pTorso, dGeomID pObject);
       
-      bool CollideTorso(const osg::Vec3& newPos);
-      bool CollideFeet(const osg::Vec3& newPos);
+      bool CollideTorso();
+      bool CollideFeet();
+       
+      bool TestPosition(osg::Vec3& newPos);
 
       dGeomID mBBFeet;
       dGeomID mBBTorso;
@@ -314,12 +320,14 @@ namespace dtCore
       osg::Vec3 mBBTorsoLengths;
 
       unsigned mNumNormals;
-      osg::Vec3 mNormals[8];
+      osg::Vec3 mNormals[20];
 
       int mNumFeetContactPoints;
       int mNumTorsoContactPoints;
-      float mLowestZValue;
 
+      dContactGeom mLastFeetContact;
+
+      bool mCanJump;
       float mJumpLength;
       float mJumpTimer;
       bool mJumped;
@@ -328,7 +336,16 @@ namespace dtCore
       bool mFreeFall;
       double mFreeFallCounter;
 
-      dContactGeom mLastContactPoints[8];
+      eMode mCurrentMode;
+
+      float mSlideThreshold;
+      float mSlideSpeed;
+      float mJumpSpeed;
+
+      osg::Vec3 mTerminalVelocity;
+      osg::Vec3 mLastVelocity;
+      osg::Vec3 mSlideVelocity;
+      osg::Vec3 mFallingVelocity;
 
 
       /**
@@ -357,6 +374,7 @@ namespace dtCore
       ButtonsToAxis* mArrowKeysUpDownMapping;
 
       /**
+
       * The arrow key left/right mapping.
       */
       ButtonsToAxis* mArrowKeysLeftRightMapping;
@@ -441,11 +459,6 @@ namespace dtCore
       */
       float mFallingHeight;
 
-      /**
-      * The current downward speed.
-      */
-      osg::Vec3 mFallingVec;
-
       bool mFalling; ///<are we currently falling?
 
       dtCore::RefPtr<Mouse> mMouse;
@@ -463,6 +476,8 @@ namespace dtCore
 
       ///private method used to ground clamp or adjust the falling velocity/position
       void AdjustElevation(osg::Vec3 &xyz, double deltaFrameTime);
+
+      bool pFeetCollision;
    };
 };
 
