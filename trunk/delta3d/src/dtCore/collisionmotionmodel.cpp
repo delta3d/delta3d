@@ -17,7 +17,6 @@
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
 * Bradley Anderegg 08/21/2006
-* modified original FPSMotionModel by Terry Jordan
 */
 
 #include <prefix/dtcoreprefix-src.h>
@@ -33,6 +32,7 @@
 #include <dtCore/isector.h>
 #include <dtUtil/mathdefines.h>
 #include <dtUtil/matrixutil.h>
+
 
 namespace dtCore
 {
@@ -60,27 +60,35 @@ bool CollisionMotionModel::FPSAxisListener::AxisStateChanged(const Axis* axis,
 * @param mouse the mouse instance, or 0 to avoid
 * creating default input mappings
 */
-CollisionMotionModel::CollisionMotionModel(  Keyboard* keyboard,
+CollisionMotionModel::CollisionMotionModel( float pHeight, float pRadius, float k, float theta, Keyboard* keyboard,
       Mouse* mouse, Scene* scene ) : MotionModel("CollisionMotionModel"),
       mBBFeet(),
       mBBTorso(),
       mSpaceID(),
-      mBBFeetOffset(0.0f, 0.0f, -1.0f),
-      mBBTorsoOffset(0.0f, 0.0f, -0.5f),
-      mBBFeetLengths(0.5f, 0.5f, 0.5f),
-      mBBTorsoLengths(0.5f, 0.5f, 1.0f),
+      mBBFeetOffset(0.0f, 0.0f, pHeight + (theta * 0.5f) - (k * 0.5f)),
+      mBBTorsoOffset(0.0f, 0.0f, (pHeight - k) * 0.5f),
+      mBBFeetLengths(pRadius, pRadius, theta + k),
+      mBBTorsoLengths(pRadius, pRadius, pHeight - k),
       mNumNormals(0),
       mNormals(),
       mNumFeetContactPoints(0),
       mNumTorsoContactPoints(0),
-      mLowestZValue(0.0f),
+      mLastFeetContact(),
+      mCanJump(false),
       mJumpLength(0.25f),
       mJumpTimer(0.0f),
       mJumped(false),
       mAirControl(0.35f),
       mFreeFall(false),
-      mFreeFallCounter(0),
-      mLastContactPoints(),
+      mFreeFallCounter(0), 
+      mCurrentMode(FALLING),
+      mSlideThreshold(0.5f),
+      mSlideSpeed(3.0f),
+      mJumpSpeed(5.0f),
+      mTerminalVelocity(0.0f, 0.0f, -50.0f),
+      mLastVelocity(0.0f, 0.0f, 0.0f),
+      mSlideVelocity(0.0f, 0.0f, 0.0f),
+      mFallingVelocity(0.f, 0.f, 0.f),
       mScene(scene),
       mDefaultInputDevice(),
       mLeftRightMouseMovement(0),
@@ -100,13 +108,12 @@ CollisionMotionModel::CollisionMotionModel(  Keyboard* keyboard,
       mForwardBackwardListener(0),
       mLookLeftRightListener(0),
       mLookUpDownListener(0),
-      mMaximumWalkSpeed(10.0f),
+      mMaximumWalkSpeed(40.0f),
       mMaximumTurnSpeed(14440.0f),
-      mMaximumSidestepSpeed(10.0f),
-      mHeightAboveTerrain(1.0f),
-      mMaximumStepUpDistance(.15f),
+      mMaximumSidestepSpeed(40.0f),
+      mHeightAboveTerrain(pHeight),
+      mMaximumStepUpDistance(0.25f * pHeight),
       mFallingHeight(0.25f),
-      mFallingVec(0.f, 0.f, 0.f),
       mFalling(false),
       mMouse(mouse),
       mKeyboard(keyboard),
@@ -515,15 +522,16 @@ dGeomID CollisionMotionModel::GetTorsoGeom()
 void CollisionMotionModel::InitBoundingVolumes()
 { 
    mSpaceID = dSimpleSpaceCreate(0);
-   CreateCollisionBox(mScene->GetWorldID(), mSpaceID, mBBFeet, mBBFeetLengths);
-   CreateCollisionBox(mScene->GetWorldID(), mSpaceID, mBBTorso, mBBTorsoLengths);
+   CreateCollisionCylinder(mScene->GetWorldID(), mSpaceID, mBBFeet, mBBFeetLengths);
+   CreateCollisionCylinder(mScene->GetWorldID(), mSpaceID, mBBTorso, mBBTorsoLengths);
 }
 
-void CollisionMotionModel::CreateCollisionBox(dWorldID pWorldId, dSpaceID pSpaceId, dGeomID& pId, const osg::Vec3& pLengths)
+
+void CollisionMotionModel::CreateCollisionCylinder(dWorldID pWorldId, dSpaceID pSpaceId, dGeomID& pId, const osg::Vec3& pLengths)
 {
    pId = dCreateGeomTransform(0);
 
-   dGeomTransformSetGeom(pId, dCreateCapsule(0, pLengths[1], pLengths[2]));
+   dGeomTransformSetGeom(pId, dCreateCylinder(0, pLengths[1], pLengths[2]));
 
    dSpaceAdd(pSpaceId, pId);
    dGeomSetData(pId, this );
@@ -555,6 +563,7 @@ void CollisionMotionModel::OnMessage(MessageData *data)
       osg::Vec3 newXYZ;
 
       transform.GetRotation(hpr);
+
       transform.GetTranslation(xyz);
 
       //calculate our new heading
@@ -574,40 +583,89 @@ void CollisionMotionModel::OnMessage(MessageData *data)
 
       //transform our x/y delta by our new heading
       osg::Matrix mat;
-      mat.makeRotate(osg::DegreesToRadians(newH), osg::Vec3(0.f, 0.f, 1.f) );
+      mat.makeRotate(osg::DegreesToRadians(newH), osg::Vec3(0.0f, 0.0f, 1.0f) );
       translation = translation * mat;
 
-      newXYZ = xyz + translation;
+      //newXYZ = xyz + translation;
+      osg::Vec3 gravity;
+      mScene->GetGravity(gravity);
 
-      if(CollideTorso(newXYZ))
-      {   
-         osg::Vec3 result = translation;
+      osg::Vec3 p0 = xyz;
+      osg::Vec3 v0 = translation;
+      osg::Vec3 v1, p1;
 
-         //std::cout << "Start: " << result << std::endl;
+      if(mCurrentMode != FALLING && mKeyboard->GetKeyState(Producer::Key_space))
+      {
+         mCurrentMode = FALLING;
+         mLastVelocity[2] = mJumpSpeed;
+         v0[2] = mJumpSpeed;  
+         mJumped = true;
+      }
+      
+      //added flag for jumping, used true when we are on the way up
+      if(mJumped && mLastVelocity[2] < 0.0f)
+      {
+         mJumped = false;
+      }
 
+      switch(mCurrentMode)
+      {
+          case FALLING:
+           {
+              mFallingVelocity[2] = mLastVelocity[2] + gravity[2] * deltaFrameTime;
+              if(mFallingVelocity[2] < mTerminalVelocity[2]) mFallingVelocity[2] = mTerminalVelocity[2];
+              //changed from using mLastVelocity to using aircontrol
+              v0 = osg::Vec3((mMaximumWalkSpeed * v0[0] * mAirControl), (mMaximumWalkSpeed * v0[1] * mAirControl), mFallingVelocity[2]);
+              p1 = p0 + osg::Vec3(v0[0] * deltaFrameTime, v0[1] * deltaFrameTime, v0[2] * deltaFrameTime);
+           }
+           break;
+         
+          case SLIDING:
+            {
+              v0[2] = 0.0f;
+              v0 += mSlideVelocity;
+
+              p1 = p0 + osg::Vec3(mMaximumWalkSpeed * v0[0] * deltaFrameTime, mMaximumWalkSpeed * v0[1] * deltaFrameTime, v0[2] * deltaFrameTime);
+
+            }
+            break;
+
+          case WALKING:
+            {
+              v0[2] = 0.0f;
+
+              p1 = p0 + osg::Vec3(mMaximumWalkSpeed * v0[0] * deltaFrameTime, mMaximumWalkSpeed *  v0[1] * deltaFrameTime, v0[2] * deltaFrameTime);
+            }
+            break;
+      }
+
+      if(!TestPosition(p1))
+      {
+         newXYZ = p1;
+         mLastVelocity = v0;
+      }
+      else
+      {
+         v1 = v0;
          for(unsigned i = 0; i < mNumNormals; ++i)
          {
-            //std::cout << "Collision: " << " " << mNormals[i][0] << " " << mNormals[i][1] << " " << mNormals[i][2] << std::endl;
-
-            float dot = (mNormals[i] * result); 
-            if(dot < 0.0f) result -= osg::Vec3(mNormals[i][0] * dot, mNormals[i][1] * dot, mNormals[i][2] * dot);
-            //std::cout << "Result: " << result << std::endl;
+            float dot = (mNormals[i] * v1); 
+            if(dot < 0.0f) v1 -= osg::Vec3(mNormals[i][0] * dot, mNormals[i][1] * dot, mNormals[i][2] * dot);
          }
+         
+         osg::Vec3 p2 = p0 + osg::Vec3(mMaximumWalkSpeed * v1[0] * deltaFrameTime, mMaximumWalkSpeed * v1[1] * deltaFrameTime, v1[2] * deltaFrameTime);
 
-         //std::cout << std::endl << std::endl;
-
-         newXYZ = xyz + result;
-
-         if(CollideTorso(newXYZ)) newXYZ = xyz;          
+         if(!TestPosition(p2))
+         {
+            mLastVelocity = v1;
+            newXYZ = p2;
+         }
+         else
+         {
+            mLastVelocity.set(0.0f, 0.0f, 0.0f);
+            newXYZ = p0;
+         }
       }
-
-
-      if(mScene.valid())
-      {         
-         //ground clamp if required
-         AdjustElevation(newXYZ, deltaFrameTime);
-      }
-
 
       transform.SetTranslation(newXYZ);
       if(mMouse->GetButtonState(Mouse::LeftButton)) 
@@ -617,125 +675,84 @@ void CollisionMotionModel::OnMessage(MessageData *data)
       if(mMouse->GetButtonState(Mouse::LeftButton)) 
          mMouse->SetPosition(0.0f,0.0f);//keeps cursor at center of screen
 
-
-      UpdateBoundingVolumes(newXYZ, osg::Vec3(newH, newP, 0.0f), mMouse->GetButtonState(Mouse::LeftButton));
-
    }
 }
 
-
-///Update the MotionModel's elevation by either ground clamping, or "falling"
-void CollisionMotionModel::AdjustElevation(osg::Vec3 &xyz, double deltaFrameTime)
+bool CollisionMotionModel::TestPosition(osg::Vec3& newPos)
 {
+   UpdateBoundingVolumes(newPos);
 
-   CollideFeet(xyz);
+   bool pCollided = CollideFeet();
+   float relativeDepth = 0.0f;
 
-   if(mNumFeetContactPoints)
+   int normalIndex = 0;
+   osg::Vec3 pCollidePos;
+
+
+   float pBottomOfFeetBB = newPos[2] - (mHeightAboveTerrain + 0.25f);
+   const dReal* pODE_B = dGeomGetPosition(mBBFeet);
+   
+   //addded check to see if we are in the middle of a jump, otherwise
+   //theta may collide with the ground before we are able to leave it
+   //putting us back to walk mode
+   if(!pCollided || mJumped)
    {
-      mFreeFall = false;
-   }
-   else if(!mFreeFall)
-   {                  
-      mFreeFallCounter += deltaFrameTime;
-      if(mFreeFallCounter > 0.25)
-      {
-         mFreeFall = true;
-         mFreeFallCounter = 0.0;
-      }       
-   }
-
-   if(mJumped)
-   {
-      mJumpTimer -= deltaFrameTime;
-      if(mJumpTimer <= 0.0f)
-      {
-         mJumpTimer = 0.0f;
-         mJumped = false;
-         mFallingVec.set(0.f, 0.f, 0.f);
-      }
-      else
-      {
-         osg::Vec3 gravityVec;
-         mScene->GetGravity(gravityVec);
-         gravityVec.set(-gravityVec[0] * 0.5f, -gravityVec[1] * 0.5f, -gravityVec[2] * 0.5f);
-
-         mFallingVec += gravityVec * deltaFrameTime;
-         xyz += gravityVec * deltaFrameTime;  
-      }
+      //std::cout << "NO COLLISION: " << pBottomOfFeetBB << " B: " << pODE_B[2] << std::endl;
+      mCurrentMode = FALLING;
    }
    else
-   {         
+   {
 
-      float hot = 0.0f;
+      //std::cout << "COLLISION: " << pBottomOfFeetBB << " Height: " <<  mLastFeetContact.pos[2] << " B: " << pODE_B[2] << std::endl;
 
-      if (mNumFeetContactPoints)
-      {    
-         hot = (xyz[2] + mBBFeetOffset[2]) + mLowestZValue;
-         mNumFeetContactPoints = 0;
-      }
-      else
+      //set our new height
+      newPos[2] = mLastFeetContact.pos[2] + mHeightAboveTerrain;
+
+      //find the collided normal with with max z value 
+      float highestZ = mNormals[normalIndex][2];
+      for(unsigned i = 1; i < mNumNormals; ++i)
       {
-         mFalling = true;
-         hot = -100000000.0f;//std::min<float>();
-      }
-
-      ////add in the offset distance off the height of terrain
-      const float targetHeight = hot + mHeightAboveTerrain;
-
-      if (mFalling)
-      {
-         //adjust the position based on the gravity vector
-
-         osg::Vec3 gravityVec;
-         mScene->GetGravity(gravityVec);
-
-         mFallingVec += gravityVec * deltaFrameTime;
-
-         //modify our position using the falling vector
-         xyz += mFallingVec * deltaFrameTime;    
-
-         //make sure didn't fall below the terrain
-         if (xyz[2] <= targetHeight)
+         if(mNormals[i][2] > highestZ)
          {
-            //stop falling
-            mFallingVec.set(0.f, 0.f, 0.f);
-            xyz[2] = targetHeight;
-            mFalling = false;
+            highestZ = mNormals[i][2];
+            normalIndex = i;
          }
       }
 
-      //otherwise, lets clamp to the terrain
-      else 
+      float dotZ = highestZ;
+      if(dotZ < mSlideThreshold)
       {
-         mFallingVec.set(0.f, 0.f, 0.f);
-         xyz[2] = targetHeight;
+         mCurrentMode = SLIDING;
+         mSlideVelocity.set(mSlideSpeed * mNormals[normalIndex][0], mSlideSpeed * mNormals[normalIndex][1], 0.0f);
       }
-
-      if(!mFreeFall && !mJumped && mKeyboard->GetKeyState(Producer::Key_space))
+      else
       {
-         mJumped = true;
-         mJumpTimer = mJumpLength;
+         mCurrentMode = WALKING;
       }
    }
+
+   UpdateBoundingVolumes(newPos);
+
+   return CollideTorso();
 }
 
-bool CollisionMotionModel::CollideTorso(const osg::Vec3& newPos)
+bool CollisionMotionModel::CollideTorso()
 {
-   osg::Vec3 torso = newPos + mBBTorsoOffset;
-   dGeomSetPosition(mBBTorso, torso[0], torso[1], torso[2]);
+   mNumTorsoContactPoints = 0;
 
    dSpaceCollide2((dGeomID)mScene->GetSpaceID(), (dGeomID)mSpaceID, this, NearCallbackTorso);
 
    return mNumTorsoContactPoints > 0;
 }
 
-bool CollisionMotionModel::CollideFeet(const osg::Vec3& newPos)
+bool CollisionMotionModel::CollideFeet()
 {
-   osg::Vec3 newVec = newPos + mBBFeetOffset;
-   dGeomSetPosition(mBBFeet, newVec[0], newVec[1], newVec[2]);
+   pFeetCollision = true;
+   mNumFeetContactPoints = 0;
 
    dSpaceCollide2((dGeomID)mScene->GetSpaceID(), (dGeomID)mSpaceID, this, NearCallbackFeet);
 
+   pFeetCollision = false;
    return mNumFeetContactPoints > 0;
 }
 
@@ -758,7 +775,8 @@ void CollisionMotionModel::HandleCollideTorso(dGeomID pFeet, dGeomID pObject)
       dGeomTriMeshSetArrayCallback(pID, dTriArrayCallback);
    }
 
-   mNumTorsoContactPoints = dCollide( pFeet, pObject, 8, mLastContactPoints, sizeof(dContactGeom) );
+   dContactGeom contactGeoms[1];
+   mNumTorsoContactPoints = dCollide(pFeet, pObject, 1, contactGeoms, sizeof(dContactGeom));
 
    if(set)
    {
@@ -769,29 +787,51 @@ void CollisionMotionModel::HandleCollideTorso(dGeomID pFeet, dGeomID pObject)
 
 void CollisionMotionModel::HandleCollideFeet(dGeomID pFeet, dGeomID pObject)
 {
-
    if(pObject == GetTorsoGeom()) return;
 
+   bool set = false;
+   void* data = 0;
+   dGeomID pID = pObject;
+
+   if(dGeomGetClass(pObject) == dGeomTransformClass) pID = dGeomTransformGetGeom(pObject);
+
+   if(dGeomGetClass(pID) == dTriMeshClass)
+   {
+      set = true;
+      data = dGeomGetData(pID);
+      dGeomSetData(pID, this);
+      dGeomTriMeshSetArrayCallback(pID, dTriArrayCallback);
+   }
+
    dContactGeom contactGeoms[8];
-
-   mNumFeetContactPoints = dCollide( pFeet, pObject, 8, contactGeoms, sizeof(dContactGeom) );
-
-   if( mNumFeetContactPoints > 0)
+   int contactPoints = dCollide(pFeet, pObject, 8, contactGeoms, sizeof(dContactGeom));
+ 
+   //find the contact point with the highest z value
+   if(contactPoints)
    {
       int index = 0;
-      mLowestZValue = contactGeoms[0].pos[2];
+      float highestZ = contactGeoms[index].pos[2];
 
-      for(int i = 0; i < mNumFeetContactPoints; ++i)
+      for(int i = 1; i < contactPoints; ++i)
       {
-         if(contactGeoms[i].pos[2] < mLowestZValue)
+         if(contactGeoms[i].pos[2] > highestZ)
          {
             index = i;
-            mLowestZValue = contactGeoms[i].pos[2];
+            highestZ = contactGeoms[i].pos[2];
          }
       }
 
-      mLowestZValue = contactGeoms[index].depth;
+      mLastFeetContact = contactGeoms[index];
+      mNumFeetContactPoints = contactPoints;
    }
+
+
+   if(set)
+   {
+      dGeomSetData(pID, data);
+      dGeomTriMeshSetArrayCallback(pID, 0);
+   }
+   
 }
 
 // ODE collision callback
@@ -835,41 +875,13 @@ void CollisionMotionModel::NearCallbackTorso( void* data, dGeomID o1, dGeomID o2
 }
 
 
-void CollisionMotionModel::UpdateBoundingVolumes(const osg::Vec3& xyz, const osg::Vec3& hpr, bool pRotate)
+void CollisionMotionModel::UpdateBoundingVolumes(const osg::Vec3& xyz)
 {
-   //change position of object
-   // Set translation
-
-   osg::Vec3 newVec = xyz + mBBFeetOffset;
+   osg::Vec3 newVec = xyz - mBBFeetOffset;
    dGeomSetPosition(mBBFeet, newVec[0], newVec[1], newVec[2]);
 
-   osg::Vec3 torso = xyz + mBBTorsoOffset;
+   osg::Vec3 torso = xyz - mBBTorsoOffset;
    dGeomSetPosition(mBBTorso, torso[0], torso[1], torso[2]);
-
-   osg::Matrix rotation; 
-   dtUtil::MatrixUtil::HprToMatrix(rotation, osg::Vec3(hpr[0], 0.0f, 0.0f));
-
-   //if(pRotate)
-   //{
-   //   // Set rotation
-   //   dMatrix3 dRot;
-
-   //   dRot[0] = rotation(0,0);
-   //   dRot[1] = rotation(1,0);
-   //   dRot[2] = rotation(2,0);
-
-   //   dRot[4] = rotation(0,1);
-   //   dRot[5] = rotation(1,1);
-   //   dRot[6] = rotation(2,1);
-
-   //   dRot[8] = rotation(0,2);
-   //   dRot[9] = rotation(1,2);
-   //   dRot[10] = rotation(2,2);
-
-   //   dGeomSetRotation(mBBFeet, dRot);
-   //   dGeomSetRotation(mBBTorso, dRot);
-   //}
-
 }
 
 void CollisionMotionModel::dTriArrayCallback(dGeomID TriMesh, dGeomID RefObject, const int* TriIndices, int TriCount)
@@ -878,7 +890,7 @@ void CollisionMotionModel::dTriArrayCallback(dGeomID TriMesh, dGeomID RefObject,
    CollisionMotionModel* cmm = static_cast<CollisionMotionModel*>(dGeomGetData(TriMesh));
    cmm->mNumNormals = 0;
 
-   for(int i = 0; i < TriCount && i < 8; ++i, ++cmm->mNumNormals)
+   for(int i = 0; i < TriCount && i < 20; ++i, ++cmm->mNumNormals)
    {
       dVector3 v1, v2, v3;
 
@@ -889,9 +901,12 @@ void CollisionMotionModel::dTriArrayCallback(dGeomID TriMesh, dGeomID RefObject,
       osg::Vec3 side1(v1[0], v1[1], v1[2]);
       osg::Vec3 side2(v3[0], v3[1], v3[2]);
 
-      //std::cout << "Vert 1 " << side1 << std::endl;
-      //std::cout << "Vert 2 " << middle << std::endl;
-      //std::cout << "Vert 3 " << side2 << std::endl;
+      //if(!cmm->pFeetCollision)
+      //{
+         //std::cout << "Vert 1 " << side1 << std::endl;
+         //std::cout << "Vert 2 " << middle << std::endl;
+         //std::cout << "Vert 3 " << side2 << std::endl;
+      //}
 
       side1 -= middle;
       side2 = middle - side2; 
@@ -900,7 +915,7 @@ void CollisionMotionModel::dTriArrayCallback(dGeomID TriMesh, dGeomID RefObject,
       cmm->mNormals[i].normalize();
 
 
-      //std::cout << "Normal " << cmm->mNormals[i] << std::endl;
+      //if(!cmm->pFeetCollision) //std::cout << "Normal " << cmm->mNormals[i] << std::endl;
 
    }
 
