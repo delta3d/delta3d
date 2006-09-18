@@ -246,34 +246,6 @@ namespace dtCore
       */
       float GetHeightAboveTerrain();
 
-      /**
-      * Sets the maximum step-up distance.  When clamping to the ground, the
-      * maximum step-up distance determines whether to rise to a new level
-      * (as when the model climbs a staircase) or to stay at the current level
-      * (as when the model passes under a roof).  The default is 1.0.
-      *
-      * @param maximumStepUpDistance the new maximum step-up distance
-      */
-      void SetMaximumStepUpDistance(float maximumStepUpDistance);
-
-      /**
-      * Returns the current maximum step-up distance.
-      *
-      * @return the maximum step-up distance
-      */
-      float GetMaximumStepUpDistance();
-
-
-      /**
-      * Set the height distance at which point we're falling.  If the MotionModel
-      * elevation is higher than fallingHeight plus the height of terrain, than
-      * we'll let gravity take over. (defaults to 1.0 meter)
-      * @param fallingHeight: The distance above terrain at which point we're falling (meters)
-      */
-      void SetFallingHeight( float fallingHeight );
-
-      ///Get the distance above terrain at which point we're falling.
-      float GetFallingHeight() const;
 
       /**
       * Message handler callback.
@@ -327,9 +299,6 @@ namespace dtCore
 
       dContactGeom mLastFeetContact;
 
-      bool mCanJump;
-      float mJumpLength;
-      float mJumpTimer;
       bool mJumped;
 
       float mAirControl;
@@ -449,18 +418,6 @@ namespace dtCore
       */
       float mHeightAboveTerrain;
 
-      /**
-      * The maximum step-up distance (meters).
-      */
-      float mMaximumStepUpDistance;
-
-      /** 
-      * The height at which the motion model will "fall" and have gravity take over
-      */
-      float mFallingHeight;
-
-      bool mFalling; ///<are we currently falling?
-
       dtCore::RefPtr<Mouse> mMouse;
       dtCore::RefPtr<Keyboard> mKeyboard;
 
@@ -477,7 +434,6 @@ namespace dtCore
       ///private method used to ground clamp or adjust the falling velocity/position
       void AdjustElevation(osg::Vec3 &xyz, double deltaFrameTime);
 
-      bool pFeetCollision;
    };
 };
 
