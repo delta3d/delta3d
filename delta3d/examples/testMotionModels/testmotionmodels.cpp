@@ -254,7 +254,7 @@ public:
       fmm->SetScene( GetScene() );
       mMotionModels.push_back( fmm.get() );
 
-      mMotionModels.push_back( new CollisionMotionModel( GetKeyboard(), GetMouse(), GetScene() ) );
+      mMotionModels.push_back( new CollisionMotionModel(1.5f, 0.4f, 0.25f, 0.1f, GetKeyboard(), GetMouse(), GetScene());
 
       Transform xform( 0.0f, 0.0f, mTerrain->GetVerticalScale() + 15.0f );
       GetCamera()->SetTransform( xform );
