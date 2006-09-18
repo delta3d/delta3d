@@ -704,7 +704,7 @@ env.Append( LIBPATH = env.get('libpath') )
 
 if env['ENV'].has_key('QTDIR') :
    env.Append( TOOLS = 'qt' ) 
-else
+else :
    print 'Warning : QTDIR not defined, STAGE will not build'
    errorLog.write('QTDIR not defined, STAGE will not build ')
 
