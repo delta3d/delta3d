@@ -79,7 +79,7 @@ CollisionMotionModel::CollisionMotionModel( float pHeight, float pRadius, float 
       mFreeFall(false),
       mFreeFallCounter(0), 
       mCurrentMode(FALLING),
-      mSlideThreshold(0.5f),
+      mSlideThreshold(0.65f),
       mSlideSpeed(3.0f),
       mJumpSpeed(5.0f),
       mTerminalVelocity(0.0f, 0.0f, -50.0f),
@@ -105,9 +105,9 @@ CollisionMotionModel::CollisionMotionModel( float pHeight, float pRadius, float 
       mForwardBackwardListener(0),
       mLookLeftRightListener(0),
       mLookUpDownListener(0),
-      mMaximumWalkSpeed(300.0f),
+      mMaximumWalkSpeed(3.0f),
       mMaximumTurnSpeed(10000.0f),
-      mMaximumSidestepSpeed(300.0f),
+      mMaximumSidestepSpeed(3.0f),
       mHeightAboveTerrain(pHeight),
       mMouse(mouse),
       mKeyboard(keyboard),
@@ -543,8 +543,8 @@ void CollisionMotionModel::OnMessage(MessageData *data)
 
       //calculate x/y delta
       osg::Vec3 translation;
-      translation[0] = mSidestepCtrl * mMaximumSidestepSpeed * deltaFrameTime;
-      translation[1] = mForwardBackCtrl * mMaximumWalkSpeed * deltaFrameTime;
+      translation[0] = mSidestepCtrl * mMaximumSidestepSpeed;
+      translation[1] = mForwardBackCtrl * mMaximumWalkSpeed;
 
       //transform our x/y delta by our new heading
       osg::Matrix mat;
@@ -563,8 +563,6 @@ void CollisionMotionModel::OnMessage(MessageData *data)
       {
          mJumped = false;
       }
-
-      
 
       switch(mCurrentMode)
       {
