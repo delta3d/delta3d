@@ -16,7 +16,7 @@
 * along with this library; if not, write to the Free Software Foundation, Inc.,
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
-* Bradley Anderegg 08/21/2006
+* Bradley Anderegg and Chris Darken 08/21/2006
 */
 
 #include <prefix/dtcoreprefix-src.h>
@@ -69,10 +69,10 @@ CollisionMotionModel::CollisionMotionModel( float pHeight, float pRadius, float 
       mBBTorsoOffset(0.0f, 0.0f, (pHeight - k) * 0.5f),
       mBBFeetLengths(pRadius, pRadius, theta + k),
       mBBTorsoLengths(pRadius, pRadius, pHeight - k),
-      mNumNormals(0),
       mNormals(),
       mNumFeetContactPoints(0),
       mNumTorsoContactPoints(0),
+      mStartCollideFeet(false),
       mLastFeetContact(),
       mJumped(false),
       mAirControl(0.35f),
@@ -520,7 +520,7 @@ void CollisionMotionModel::OnMessage(MessageData *data)
    {
 
       static float lastDT = 0.0f;
-      const double deltaFrameTime = static_cast<const double*>(data->userData)[1];
+      const double deltaFrameTime = 1.0 / 200.0;//static_cast<const double*>(data->userData)[1];
 
       Transform transform;
       GetTarget()->GetTransform(transform);
@@ -568,15 +568,13 @@ void CollisionMotionModel::OnMessage(MessageData *data)
       {
           case FALLING:
            {
-              //std::cout << "LAST DT: " << lastDT << " Last Velocity: " << mLastVelocity[0] << " " <<  mLastVelocity[1] << std::endl;
-
               mFallingVelocity[2] = mLastVelocity[2] + gravity[2] * deltaFrameTime;
               if(mFallingVelocity[2] < mTerminalVelocity[2]) mFallingVelocity[2] = mTerminalVelocity[2];
               v0 = osg::Vec3(mLastVelocity[0], mLastVelocity[1], mFallingVelocity[2]);
               p1 = p0 + osg::Vec3(v0[0] * deltaFrameTime, v0[1] * deltaFrameTime, v0[2] * deltaFrameTime);
            }
            break;
-         
+          
           case SLIDING:
             {
               v0[2] = 0.0f;
@@ -584,7 +582,6 @@ void CollisionMotionModel::OnMessage(MessageData *data)
 
               if(mCurrentMode != FALLING && mKeyboard->GetKeyState(Producer::Key_space))
               {
-                 //std::cout << std::endl << std::endl << "JUMP" << std::endl;
                  v0[2] = mJumpSpeed;  
                  mJumped = true;
               }
@@ -599,7 +596,6 @@ void CollisionMotionModel::OnMessage(MessageData *data)
 
               if(mCurrentMode != FALLING && mKeyboard->GetKeyState(Producer::Key_space))
               {
-                 //std::cout << std::endl << std::endl << "JUMP" << std::endl;
                  v0[2] = mJumpSpeed;  
                  mJumped = true;
               }
@@ -617,7 +613,7 @@ void CollisionMotionModel::OnMessage(MessageData *data)
       else
       {
          v1 = v0;
-         for(unsigned i = 0; i < mNumNormals; ++i)
+         for(unsigned i = 0; i < mNormals.size(); ++i)
          {
             float dot = (mNormals[i] * v1); 
             if(dot < 0.0f) v1 -= osg::Vec3(mNormals[i][0] * dot, mNormals[i][1] * dot, mNormals[i][2] * dot);
@@ -674,7 +670,7 @@ bool CollisionMotionModel::TestPosition(osg::Vec3& newPos)
 
       //find the collided normal with with max z value 
       float highestZ = mNormals[normalIndex][2];
-      for(unsigned i = 1; i < mNumNormals; ++i)
+      for(unsigned i = 0; i < mNormals.size(); ++i)
       {
          if(mNormals[i][2] > highestZ)
          {
@@ -704,6 +700,7 @@ bool CollisionMotionModel::TestPosition(osg::Vec3& newPos)
 
 bool CollisionMotionModel::CollideTorso()
 {
+   mNormals.clear();
    mNumTorsoContactPoints = 0;
 
    dSpaceCollide2((dGeomID)mScene->GetSpaceID(), (dGeomID)mSpaceID, this, NearCallbackTorso);
@@ -713,10 +710,13 @@ bool CollisionMotionModel::CollideTorso()
 
 bool CollisionMotionModel::CollideFeet()
 {
+   mNormals.clear();
    mNumFeetContactPoints = 0;
+   mStartCollideFeet = true;
 
    dSpaceCollide2((dGeomID)mScene->GetSpaceID(), (dGeomID)mSpaceID, this, NearCallbackFeet);
 
+   mStartCollideFeet = false;
    return mNumFeetContactPoints > 0;
 }
 
@@ -729,7 +729,13 @@ void CollisionMotionModel::HandleCollideTorso(dGeomID pFeet, dGeomID pObject)
    void* data = 0;
    dGeomID pID = pObject;
 
-   if(dGeomGetClass(pObject) == dGeomTransformClass) pID = dGeomTransformGetGeom(pObject);
+
+   while(pID != 0 && dGeomGetClass(pID) == dGeomTransformClass && pID != 0 )
+   {
+      pID = dGeomTransformGetGeom(pID);
+   }
+
+   if(!pID) return;
 
    if(dGeomGetClass(pID) == dTriMeshClass)
    {
@@ -757,8 +763,13 @@ void CollisionMotionModel::HandleCollideFeet(dGeomID pFeet, dGeomID pObject)
    void* data = 0;
    dGeomID pID = pObject;
 
-   if(dGeomGetClass(pObject) == dGeomTransformClass) pID = dGeomTransformGetGeom(pObject);
+   while(pID != 0 && dGeomGetClass(pID) == dGeomTransformClass )
+   {
+      pID = dGeomTransformGetGeom(pID);
+   }
 
+   if(!pID) return;
+   
    if(dGeomGetClass(pID) == dTriMeshClass)
    {
       set = true;
@@ -773,19 +784,27 @@ void CollisionMotionModel::HandleCollideFeet(dGeomID pFeet, dGeomID pObject)
    //find the contact point with the highest z value
    if(contactPoints)
    {
-      int index = 0;
-      float highestZ = contactGeoms[index].pos[2];
+      float highestZ;
+      if(mStartCollideFeet)
+      {
+         highestZ = contactGeoms[0].pos[2];
+         mLastFeetContact = contactGeoms[0];
+         mStartCollideFeet = false;
+      }
+      else
+      {
+         highestZ = mLastFeetContact.pos[2];
+      }
 
-      for(int i = 1; i < contactPoints; ++i)
+      for(int i = 0; i < contactPoints; ++i)
       {
          if(contactGeoms[i].pos[2] > highestZ)
          {
-            index = i;
             highestZ = contactGeoms[i].pos[2];
+            mLastFeetContact = contactGeoms[i];
          }
       }
 
-      mLastFeetContact = contactGeoms[index];
       mNumFeetContactPoints = contactPoints;
    }
 
@@ -852,9 +871,8 @@ void CollisionMotionModel::dTriArrayCallback(dGeomID TriMesh, dGeomID RefObject,
 {
 
    CollisionMotionModel* cmm = static_cast<CollisionMotionModel*>(dGeomGetData(TriMesh));
-   cmm->mNumNormals = 0;
 
-   for(int i = 0; i < TriCount && i < 20; ++i, ++cmm->mNumNormals)
+   for(int i = 0; i < TriCount; ++i)
    {
       dVector3 v1, v2, v3;
 
@@ -864,13 +882,15 @@ void CollisionMotionModel::dTriArrayCallback(dGeomID TriMesh, dGeomID RefObject,
 
       osg::Vec3 side1(v1[0], v1[1], v1[2]);
       osg::Vec3 side2(v3[0], v3[1], v3[2]);
+      osg::Vec3 normal;
 
       side1 -= middle;
       side2 = middle - side2; 
 
-      cmm->mNormals[i].set(side1 ^ side2);
-      cmm->mNormals[i].normalize();
+      normal.set(side1 ^ side2);
+      normal.normalize();
 
+      cmm->mNormals.push_back(normal);    
    }
 
 }
