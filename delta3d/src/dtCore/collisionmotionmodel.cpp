@@ -518,9 +518,7 @@ void CollisionMotionModel::OnMessage(MessageData *data)
       IsEnabled() && 
       data->message == "preframe")
    {
-
-      static float lastDT = 0.0f;
-      const double deltaFrameTime = 1.0 / 200.0;//static_cast<const double*>(data->userData)[1];
+      const double deltaFrameTime = static_cast<const double*>(data->userData)[1];
 
       Transform transform;
       GetTarget()->GetTransform(transform);
@@ -640,8 +638,6 @@ void CollisionMotionModel::OnMessage(MessageData *data)
 
       if(mMouse->GetButtonState(Mouse::LeftButton)) 
          mMouse->SetPosition(0.0f,0.0f);//keeps cursor at center of screen
-
-      lastDT = deltaFrameTime;
    }
 }
 
