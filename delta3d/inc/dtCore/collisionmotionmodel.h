@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * Bradley Anderegg 08/21/2006
+ * Bradley Anderegg and Chris Darken 08/21/2006
  */
 
 #ifndef __DELTA_collisionmotionmodel_H__
@@ -33,6 +33,7 @@
 
 #include <ode/ode.h>
 
+#include <vector>
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
@@ -291,12 +292,12 @@ namespace dtCore
       osg::Vec3 mBBFeetLengths;
       osg::Vec3 mBBTorsoLengths;
 
-      unsigned mNumNormals;
-      osg::Vec3 mNormals[20];
+      std::vector<osg::Vec3> mNormals;
 
       int mNumFeetContactPoints;
       int mNumTorsoContactPoints;
 
+      bool mStartCollideFeet;
       dContactGeom mLastFeetContact;
 
       bool mJumped;
