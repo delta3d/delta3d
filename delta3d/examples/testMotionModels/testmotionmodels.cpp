@@ -223,7 +223,7 @@ public:
 
    /// Constructor.
    TestMotionModelsApp( const std::string& configFile = "config.xml" ) : Application( configFile ),
-      mTerrain(0),
+      mTown(0),
       mGUIDrawable(0),
       mMenuManager(0)
    {
@@ -236,11 +236,11 @@ public:
       //make sure to call the Base Config() as well.
       Application::Config();
 
-      mTerrain = new InfiniteTerrain();
-      mTerrain->SetBuildDistance(1500.f);
-      mTerrain->SetSegmentDivisions(64);
-
-      AddDrawable( mTerrain.get() );
+      mTown = new Object("Town");
+      mTown->LoadFile("/demoMap/StaticMeshes/TestTownLt.ive");
+      mTown->SetCollisionMesh();
+      AddDrawable(mTown.get());
+      GetScene()->GetSceneNode()->getOrCreateStateSet()->setMode( GL_LIGHTING, osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF );
 
       RefPtr<WalkMotionModel> wmm = new WalkMotionModel( GetKeyboard(), GetMouse() );
       wmm->SetScene( GetScene() );
@@ -255,9 +255,6 @@ public:
       mMotionModels.push_back( fmm.get() );
 
       mMotionModels.push_back( new CollisionMotionModel(1.5f, 0.4f, 0.25f, 0.1f, GetKeyboard(), GetMouse(), GetScene()) );
-
-      Transform xform( 0.0f, 0.0f, mTerrain->GetVerticalScale() + 15.0f );
-      GetCamera()->SetTransform( xform );
 
       for( unsigned int i = 0; i < mMotionModels.size(); i++ )
       {  
@@ -344,8 +341,8 @@ private:
       GetWindow()->ShowCursor(index != dtExample::FPS); 
    }
 
-   /// The terrain object.
-   RefPtr<InfiniteTerrain> mTerrain;
+   /// The Town.
+   RefPtr<Object> mTown;
 
    /// The five motion models.
    std::vector< RefPtr<MotionModel> > mMotionModels;
