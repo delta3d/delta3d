@@ -182,9 +182,12 @@ namespace dtUtil
          const std::string GetAbsolutePath(const std::string& relativePath) const throw(dtUtil::Exception);
 
          /**
+          * Note: throws exceptions of type dtUtil::Exception
           * @param path the path to the directory to list the contents of.
           * @return a vector of file names.
           * @throws FileExceptionEnum::FileNotFound if the path does not exist.
+          * @throws FileExceptionEnum::IOException if the path is not an actual directory
+          * 
           */
          DirectoryContents DirGetFiles( const std::string& path ) const throw(dtUtil::Exception);
 
