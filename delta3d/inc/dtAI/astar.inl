@@ -116,7 +116,7 @@ void AStar<_NodeType, _CostFunc, _Container, _Timer>::AddNodeLink(node_type* pPa
    }
 }
 
-
+//This needs to be optimized once we have a more suitable container implementation
 template<class _NodeType, class _CostFunc, class _Container, class _Timer>
 bool AStar<_NodeType, _CostFunc, _Container, _Timer>::Contains(const AStarContainer& pCont, data_type pNode)
 {
@@ -135,6 +135,7 @@ bool AStar<_NodeType, _CostFunc, _Container, _Timer>::Contains(const AStarContai
    return false;
 }
 
+//This needs to be optimized once we have a more suitable container implementation
 template<class _NodeType, class _CostFunc, class _Container, class _Timer>
 _NodeType* AStar<_NodeType, _CostFunc, _Container, _Timer>::Remove(AStarContainer& pCont, data_type pNode)
 {
@@ -158,7 +159,7 @@ _NodeType* AStar<_NodeType, _CostFunc, _Container, _Timer>::Remove(AStarContaine
 }
 
 
-
+//This needs to be optimized once we have a more suitable container implementation
 template<class _NodeType, class _CostFunc, class _Container, class _Timer>
 _NodeType* AStar<_NodeType, _CostFunc, _Container, _Timer>::FindLowestCost(const AStarContainer& pCont)
 {
