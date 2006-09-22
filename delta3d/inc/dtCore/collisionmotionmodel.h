@@ -23,17 +23,13 @@
 #define __DELTA_collisionmotionmodel_H__
 
 #include <dtCore/motionmodel.h>
+#include <dtCore/fpscollider.h>
 #include <dtCore/transformable.h>
 #include <dtCore/inputdevice.h>
 #include <dtCore/export.h>
 
 #include <dtUtil/functor.h>
 
-#include <osg/Vec3>
-
-#include <ode/ode.h>
-
-#include <vector>
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
@@ -74,7 +70,7 @@ namespace dtCore
       * @param mouse the mouse instance, or 0 to avoid
       * creating default input mappings
       */
-      CollisionMotionModel(float pHeight, float pRadius, float k, float theta, Keyboard* keyboard, Mouse* mouse, Scene* scene);
+      CollisionMotionModel(float pHeight, float pRadius, float k, float theta, dSpaceID pCollisionSpace, const osg::Vec3& pGravity, Keyboard* keyboard, Mouse* mouse);
 
    protected:
 
@@ -255,73 +251,8 @@ namespace dtCore
       */
       virtual void OnMessage(MessageData *data);
 
-      void UpdateBoundingVolumes(const osg::Vec3& xyz);
-
-      dGeomID GetFeetGeom();
-      dGeomID GetTorsoGeom();
 
    private:
-
-      ///ODE collision callback
-      static void NearCallbackFeet(void *data, dGeomID o1, dGeomID o2);
-      static void NearCallbackTorso(void *data, dGeomID o1, dGeomID o2);
-
-      static void dTriArrayCallback(dGeomID TriMesh, dGeomID RefObject, const int* TriIndices, int TriCount);
-
-      void CreateCollisionCylinder(dWorldID pWorldId, dSpaceID pSpaceId, dGeomID& pId, const osg::Vec3& pLengths);
-
-      void InitBoundingVolumes();
-      void InitDrawable();
-
-      void HandleCollideFeet(dGeomID pFeet, dGeomID pObject);
-      void HandleCollideTorso(dGeomID pTorso, dGeomID pObject);
-      
-      bool CollideTorso();
-      bool CollideFeet();
-       
-      bool TestPosition(osg::Vec3& newPos);
-
-      dGeomID mBBFeet;
-      dGeomID mBBTorso;
-
-      dSpaceID mSpaceID;
-
-      osg::Vec3 mBBFeetOffset;
-      osg::Vec3 mBBTorsoOffset;
-
-      osg::Vec3 mBBFeetLengths;
-      osg::Vec3 mBBTorsoLengths;
-
-      std::vector<osg::Vec3> mNormals;
-
-      int mNumFeetContactPoints;
-      int mNumTorsoContactPoints;
-
-      bool mStartCollideFeet;
-      dContactGeom mLastFeetContact;
-
-      bool mJumped;
-
-      float mAirControl;
-      bool mFreeFall;
-      double mFreeFallCounter;
-
-      eMode mCurrentMode;
-
-      float mSlideThreshold;
-      float mSlideSpeed;
-      float mJumpSpeed;
-
-      osg::Vec3 mTerminalVelocity;
-      osg::Vec3 mLastVelocity;
-      osg::Vec3 mSlideVelocity;
-      osg::Vec3 mFallingVelocity;
-
-
-      /**
-      * A reference to the Scene, used for ground following.
-      */
-      RefPtr<Scene> mScene;
 
       /**
       * The default input device.
@@ -413,14 +344,11 @@ namespace dtCore
       * The maximum sidestep speed (meters per second).
       */
       float mMaximumSidestepSpeed;
-
-      /**
-      * The height to maintain above terrain (meters).
-      */
-      float mHeightAboveTerrain;
+      
 
       dtCore::RefPtr<Mouse> mMouse;
       dtCore::RefPtr<Keyboard> mKeyboard;
+      FPSCollider mCollider;
 
       bool OnForwardBackwardChanged(double newState, double delta);
       bool OnSidestepChanged(double newState, double delta);
@@ -431,9 +359,6 @@ namespace dtCore
       float mSidestepCtrl;    ///<control value for sidestep movement (-1.0, 1.0)
       float mLookLeftRightCtrl;///<control value for Left/Right rotation (-1.0, 1.0)
       float mLookUpDownCtrl;   ///<control value for up/down rotation (-1.0, 1.0)
-
-      ///private method used to ground clamp or adjust the falling velocity/position
-      void AdjustElevation(osg::Vec3 &xyz, double deltaFrameTime);
 
    };
 };
