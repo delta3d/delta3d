@@ -254,7 +254,9 @@ public:
       fmm->SetScene( GetScene() );
       mMotionModels.push_back( fmm.get() );
 
-      mMotionModels.push_back( new CollisionMotionModel(1.5f, 0.4f, 0.25f, 0.1f, GetKeyboard(), GetMouse(), GetScene()) );
+      osg::Vec3 gravity;
+      GetScene()->GetGravity(gravity);
+      mMotionModels.push_back( new CollisionMotionModel(1.5f, 0.4f, 0.25f, 0.1f, GetScene()->GetSpaceID(), gravity, GetKeyboard(), GetMouse()) );
 
       for( unsigned int i = 0; i < mMotionModels.size(); i++ )
       {  
@@ -266,6 +268,8 @@ public:
       AddDrawable( mGUIDrawable.get() );
       mMenuManager->BuildMenu();
       mMenuManager->SetSelected( dtExample::WALK );
+
+      GetCamera()->SetPerspective(90,90,0.0001,100);
    }
 
    /**

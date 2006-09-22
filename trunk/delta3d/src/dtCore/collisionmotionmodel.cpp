@@ -60,61 +60,36 @@ bool CollisionMotionModel::FPSAxisListener::AxisStateChanged(const Axis* axis,
 * @param mouse the mouse instance, or 0 to avoid
 * creating default input mappings
 */
-CollisionMotionModel::CollisionMotionModel( float pHeight, float pRadius, float k, float theta, Keyboard* keyboard,
-      Mouse* mouse, Scene* scene ) : MotionModel("CollisionMotionModel"),
-      mBBFeet(),
-      mBBTorso(),
-      mSpaceID(),
-      mBBFeetOffset(0.0f, 0.0f, pHeight + (theta * 0.5f) - (k * 0.5f)),
-      mBBTorsoOffset(0.0f, 0.0f, (pHeight - k) * 0.5f),
-      mBBFeetLengths(pRadius, pRadius, theta + k),
-      mBBTorsoLengths(pRadius, pRadius, pHeight - k),
-      mNormals(),
-      mNumFeetContactPoints(0),
-      mNumTorsoContactPoints(0),
-      mStartCollideFeet(false),
-      mLastFeetContact(),
-      mJumped(false),
-      mAirControl(0.35f),
-      mFreeFall(false),
-      mFreeFallCounter(0), 
-      mCurrentMode(FALLING),
-      mSlideThreshold(0.65f),
-      mSlideSpeed(3.0f),
-      mJumpSpeed(5.0f),
-      mTerminalVelocity(0.0f, 0.0f, -50.0f),
-      mLastVelocity(0.0f, 0.0f, 0.0f),
-      mSlideVelocity(0.0f, 0.0f, 0.0f),
-      mFallingVelocity(0.f, 0.f, 0.f),
-      mScene(scene),
-      mDefaultInputDevice(),
-      mLeftRightMouseMovement(0),
-      mUpDownMouseMovement(0),
-      mArrowKeysUpDownMapping(0),
-      mArrowKeysLeftRightMapping(0),
-      mADKeysLeftRightMapping(0),
-      mDefaultWalkForwardBackwardAxis(0),
-      mDefaultTurnLeftRightAxis(0),
-      mDefaultLookUpDownAxis(0),
-      mDefaultSidestepLeftRightAxis(0),
-      mWalkForwardBackwardAxis(0),
-      mTurnLeftRightAxis(0),
-      mLookUpDownAxis(0),
-      mSidestepLeftRightAxis(0),
-      mSidestepListener(0),
-      mForwardBackwardListener(0),
-      mLookLeftRightListener(0),
-      mLookUpDownListener(0),
-      mMaximumWalkSpeed(3.0f),
-      mMaximumTurnSpeed(10000.0f),
-      mMaximumSidestepSpeed(3.0f),
-      mHeightAboveTerrain(pHeight),
-      mMouse(mouse),
-      mKeyboard(keyboard),
-      mForwardBackCtrl(0.0f),
-      mSidestepCtrl(0.0f),
-      mLookLeftRightCtrl(0.0f),
-      mLookUpDownCtrl(0.0f)
+CollisionMotionModel::CollisionMotionModel(float pHeight, float pRadius, float k, float theta, dSpaceID pCollisionSpace, const osg::Vec3& pGravity, Keyboard* keyboard, Mouse* mouse)
+      : MotionModel("CollisionMotionModel")
+      , mDefaultInputDevice()
+      , mLeftRightMouseMovement(0)
+      , mUpDownMouseMovement(0)
+      , mArrowKeysUpDownMapping(0)
+      , mArrowKeysLeftRightMapping(0)
+      , mADKeysLeftRightMapping(0)
+      , mDefaultWalkForwardBackwardAxis(0)
+      , mDefaultTurnLeftRightAxis(0)
+      , mDefaultLookUpDownAxis(0)
+      , mDefaultSidestepLeftRightAxis(0)
+      , mWalkForwardBackwardAxis(0)
+      , mTurnLeftRightAxis(0)
+      , mLookUpDownAxis(0)
+      , mSidestepLeftRightAxis(0)
+      , mSidestepListener(0)
+      , mForwardBackwardListener(0)
+      , mLookLeftRightListener(0)
+      , mLookUpDownListener(0)
+      , mMaximumWalkSpeed(3.0f)
+      , mMaximumTurnSpeed(10000.0f)
+      , mMaximumSidestepSpeed(3.0f)
+      , mMouse(mouse)
+      , mKeyboard(keyboard)
+      , mCollider(pHeight, pRadius, k, theta, pCollisionSpace, pGravity)
+      , mForwardBackCtrl(0.0f)
+      , mSidestepCtrl(0.0f)
+      , mLookLeftRightCtrl(0.0f)
+      , mLookUpDownCtrl(0.0f)
 {
 
    //setup some axis listeners with functors 
@@ -134,8 +109,6 @@ CollisionMotionModel::CollisionMotionModel( float pHeight, float pRadius, float 
    }
 
    mMouse = mouse;
-
-   InitBoundingVolumes();
 
    AddSender(System::Instance());
 }
@@ -428,28 +401,6 @@ float CollisionMotionModel::GetMaximumSidestepSpeed()
    return mMaximumSidestepSpeed;
 }
 
-/**
-* Sets the height to maintain above the terrain (meters).
-*
-* @param heightAboveTerrain the height to maintain above the
-* terrain
-*/
-void CollisionMotionModel::SetHeightAboveTerrain(float heightAboveTerrain)
-{
-   mHeightAboveTerrain = heightAboveTerrain;
-}
-
-/**
-* Returns the height to maintain above the terrain (meters).
-*
-* @return the height to maintain above the terrain
-*/
-float CollisionMotionModel::GetHeightAboveTerrain()
-{
-   return mHeightAboveTerrain;
-}
-
-
 bool CollisionMotionModel::OnForwardBackwardChanged(double newState, double delta)
 {
    mForwardBackCtrl = newState;
@@ -474,38 +425,6 @@ bool CollisionMotionModel::OnLookUpDownChanged(double newState, double delta)
    return true;
 }
 
-dGeomID CollisionMotionModel::GetFeetGeom()
-{
-   return mBBFeet;
-}
-
-dGeomID CollisionMotionModel::GetTorsoGeom()
-{
-   return mBBTorso;
-}
-
-
-void CollisionMotionModel::InitBoundingVolumes()
-{ 
-   mSpaceID = dSimpleSpaceCreate(0);
-   CreateCollisionCylinder(mScene->GetWorldID(), mSpaceID, mBBFeet, mBBFeetLengths);
-   CreateCollisionCylinder(mScene->GetWorldID(), mSpaceID, mBBTorso, mBBTorsoLengths);
-}
-
-
-void CollisionMotionModel::CreateCollisionCylinder(dWorldID pWorldId, dSpaceID pSpaceId, dGeomID& pId, const osg::Vec3& pLengths)
-{
-   pId = dCreateGeomTransform(0);
-
-   dGeomTransformSetGeom(pId, dCreateCylinder(0, pLengths[1], pLengths[2]));
-
-   dSpaceAdd(pSpaceId, pId);
-   dGeomSetData(pId, this );
-
-   dGeomSetCategoryBits( pId, 0 );
-   dGeomSetCollideBits( pId, 0xFFFFFFFF );
-}
-
 /**
 * Message handler callback.
 *
@@ -524,7 +443,7 @@ void CollisionMotionModel::OnMessage(MessageData *data)
       GetTarget()->GetTransform(transform);
 
       osg::Vec3 xyz, hpr;
-      float newH = 0.f, newP = 0.f;
+      float newH = 0.0f, newP = 0.0f;
       osg::Vec3 newXYZ;
 
       transform.GetRotation(hpr);
@@ -547,89 +466,9 @@ void CollisionMotionModel::OnMessage(MessageData *data)
       //transform our x/y delta by our new heading
       osg::Matrix mat;
       mat.makeRotate(osg::DegreesToRadians(newH), osg::Vec3(0.0f, 0.0f, 1.0f) );
-      translation = translation * mat;
+      translation = translation * mat;  
 
-      osg::Vec3 gravity;
-      mScene->GetGravity(gravity);
-
-      osg::Vec3 p0 = xyz;
-      osg::Vec3 v0 = translation;
-      osg::Vec3 v1, p1;
-      
-      //added flag for jumping, used true when we are on the way up
-      if(mJumped && mLastVelocity[2] <= 0.0f)
-      {
-         mJumped = false;
-      }
-
-      switch(mCurrentMode)
-      {
-          case FALLING:
-           {
-              mFallingVelocity[2] = mLastVelocity[2] + gravity[2] * deltaFrameTime;
-              if(mFallingVelocity[2] < mTerminalVelocity[2]) mFallingVelocity[2] = mTerminalVelocity[2];
-              v0 = osg::Vec3(mLastVelocity[0], mLastVelocity[1], mFallingVelocity[2]);
-              p1 = p0 + osg::Vec3(v0[0] * deltaFrameTime, v0[1] * deltaFrameTime, v0[2] * deltaFrameTime);
-           }
-           break;
-          
-          case SLIDING:
-            {
-              v0[2] = 0.0f;
-              v0 += mSlideVelocity;
-
-              if(mCurrentMode != FALLING && mKeyboard->GetKeyState(Producer::Key_space))
-              {
-                 v0[2] = mJumpSpeed;  
-                 mJumped = true;
-              }
-
-              p1 = p0 + osg::Vec3(v0[0] * deltaFrameTime, v0[1] * deltaFrameTime, v0[2] * deltaFrameTime);
-            }
-            break;
-
-          case WALKING:
-            {
-              v0[2] = 0.0f;
-
-              if(mCurrentMode != FALLING && mKeyboard->GetKeyState(Producer::Key_space))
-              {
-                 v0[2] = mJumpSpeed;  
-                 mJumped = true;
-              }
-
-              p1 = p0 + osg::Vec3(v0[0] * deltaFrameTime, v0[1] * deltaFrameTime, v0[2] * deltaFrameTime);            
-            }
-            break;
-      }
-
-      if(!TestPosition(p1))
-      {
-         newXYZ = p1;
-         mLastVelocity = v0;
-      }
-      else
-      {
-         v1 = v0;
-         for(unsigned i = 0; i < mNormals.size(); ++i)
-         {
-            float dot = (mNormals[i] * v1); 
-            if(dot < 0.0f) v1 -= osg::Vec3(mNormals[i][0] * dot, mNormals[i][1] * dot, mNormals[i][2] * dot);
-         }
-         
-         osg::Vec3 p2 = p0 + osg::Vec3(v1[0] * deltaFrameTime, v1[1] * deltaFrameTime, v1[2] * deltaFrameTime);
-
-         if(!TestPosition(p2))
-         {
-            mLastVelocity = v1;
-            newXYZ = p2;
-         }
-         else
-         {
-            mLastVelocity.set(0.0f, 0.0f, 0.0f);
-            newXYZ = p0;
-         }
-      }
+      newXYZ = mCollider.Update(xyz, translation, deltaFrameTime, mKeyboard->GetKeyState(Producer::Key_space));
 
       transform.SetTranslation(newXYZ);
       if(mMouse->GetButtonState(Mouse::LeftButton)) 
@@ -640,256 +479,4 @@ void CollisionMotionModel::OnMessage(MessageData *data)
          mMouse->SetPosition(0.0f,0.0f);//keeps cursor at center of screen
    }
 }
-
-bool CollisionMotionModel::TestPosition(osg::Vec3& newPos)
-{
-   UpdateBoundingVolumes(newPos);
-
-   bool pCollided = CollideFeet();
-   float relativeDepth = 0.0f;
-
-   int normalIndex = 0;
-   osg::Vec3 pCollidePos;
-
-
-   float pBottomOfFeetBB = newPos[2] - (mHeightAboveTerrain + 0.25f);
-   const dReal* pODE_B = dGeomGetPosition(mBBFeet);
-   
-   if(!pCollided || mJumped)
-   {
-      mCurrentMode = FALLING;
-   }
-   else
-   {
-      //set our new height
-      newPos[2] = mLastFeetContact.pos[2] + mHeightAboveTerrain;
-
-      //find the collided normal with with max z value 
-      float highestZ = mNormals[normalIndex][2];
-      for(unsigned i = 0; i < mNormals.size(); ++i)
-      {
-         if(mNormals[i][2] > highestZ)
-         {
-            highestZ = mNormals[i][2];
-            normalIndex = i;
-         }
-      }
-
-      float dotZ = highestZ;
-      if(dotZ < mSlideThreshold)
-      {
-         mCurrentMode = SLIDING;
-         //set mSlideVelocity = (mSlideSpeed / (1 - n.z) * (n.z*n.x, n.z*n.y, n.z*n.z - 1))
-         float speed = mSlideSpeed / (1.0 - mNormals[normalIndex][2]);
-         mSlideVelocity.set(speed * mNormals[normalIndex][2] * mNormals[normalIndex][0], speed * mNormals[normalIndex][2] * mNormals[normalIndex][1], speed * mNormals[normalIndex][2] * mNormals[normalIndex][2] - 1.0);
-      }
-      else
-      {
-         mCurrentMode = WALKING;
-      }
-   }
-
-   UpdateBoundingVolumes(newPos);
-
-   return CollideTorso();
-}
-
-bool CollisionMotionModel::CollideTorso()
-{
-   mNormals.clear();
-   mNumTorsoContactPoints = 0;
-
-   dSpaceCollide2((dGeomID)mScene->GetSpaceID(), (dGeomID)mSpaceID, this, NearCallbackTorso);
-
-   return mNumTorsoContactPoints > 0;
-}
-
-bool CollisionMotionModel::CollideFeet()
-{
-   mNormals.clear();
-   mNumFeetContactPoints = 0;
-   mStartCollideFeet = true;
-
-   dSpaceCollide2((dGeomID)mScene->GetSpaceID(), (dGeomID)mSpaceID, this, NearCallbackFeet);
-
-   mStartCollideFeet = false;
-   return mNumFeetContactPoints > 0;
-}
-
-
-void CollisionMotionModel::HandleCollideTorso(dGeomID pFeet, dGeomID pObject)
-{
-   if(pObject == GetFeetGeom()) return;
-
-   bool set = false;
-   void* data = 0;
-   dGeomID pID = pObject;
-
-
-   while(pID != 0 && dGeomGetClass(pID) == dGeomTransformClass && pID != 0 )
-   {
-      pID = dGeomTransformGetGeom(pID);
-   }
-
-   if(!pID) return;
-
-   if(dGeomGetClass(pID) == dTriMeshClass)
-   {
-      set = true;
-      data = dGeomGetData(pID);
-      dGeomSetData(pID, this);
-      dGeomTriMeshSetArrayCallback(pID, dTriArrayCallback);
-   }
-
-   dContactGeom contactGeoms[1];
-   mNumTorsoContactPoints = dCollide(pFeet, pObject, 1, contactGeoms, sizeof(dContactGeom));
-
-   if(set)
-   {
-      dGeomSetData(pID, data);
-      dGeomTriMeshSetArrayCallback(pID, 0);
-   }
-}
-
-void CollisionMotionModel::HandleCollideFeet(dGeomID pFeet, dGeomID pObject)
-{
-   if(pObject == GetTorsoGeom()) return;
-
-   bool set = false;
-   void* data = 0;
-   dGeomID pID = pObject;
-
-   while(pID != 0 && dGeomGetClass(pID) == dGeomTransformClass )
-   {
-      pID = dGeomTransformGetGeom(pID);
-   }
-
-   if(!pID) return;
-   
-   if(dGeomGetClass(pID) == dTriMeshClass)
-   {
-      set = true;
-      data = dGeomGetData(pID);
-      dGeomSetData(pID, this);
-      dGeomTriMeshSetArrayCallback(pID, dTriArrayCallback);
-   }
-
-   dContactGeom contactGeoms[8];
-   int contactPoints = dCollide(pFeet, pObject, 8, contactGeoms, sizeof(dContactGeom));
- 
-   //find the contact point with the highest z value
-   if(contactPoints)
-   {
-      float highestZ;
-      if(mStartCollideFeet)
-      {
-         highestZ = contactGeoms[0].pos[2];
-         mLastFeetContact = contactGeoms[0];
-         mStartCollideFeet = false;
-      }
-      else
-      {
-         highestZ = mLastFeetContact.pos[2];
-      }
-
-      for(int i = 0; i < contactPoints; ++i)
-      {
-         if(contactGeoms[i].pos[2] > highestZ)
-         {
-            highestZ = contactGeoms[i].pos[2];
-            mLastFeetContact = contactGeoms[i];
-         }
-      }
-
-      mNumFeetContactPoints = contactPoints;
-   }
-
-
-   if(set)
-   {
-      dGeomSetData(pID, data);
-      dGeomTriMeshSetArrayCallback(pID, 0);
-   }
-   
-}
-
-// ODE collision callback
-void CollisionMotionModel::NearCallbackFeet( void* data, dGeomID o1, dGeomID o2 )
-{
-   if( data == 0 || o1 == 0 || o2 == 0 )
-   {
-      return;
-   }
-
-   CollisionMotionModel* cmm = static_cast<CollisionMotionModel*>(data);
-
-   if (o1 == cmm->GetFeetGeom()) 
-   {
-      cmm->HandleCollideFeet(o1, o2);
-   }
-   else if (cmm->GetFeetGeom())
-   {
-      cmm->HandleCollideFeet(o2, o1);
-   }
-}
-
-// ODE collision callback
-void CollisionMotionModel::NearCallbackTorso( void* data, dGeomID o1, dGeomID o2 )
-{
-   if( data == 0 || o1 == 0 || o2 == 0 )
-   {
-      return;
-   }
-
-   CollisionMotionModel* cmm = static_cast<CollisionMotionModel*>(data);
-
-   if (o1 == cmm->GetTorsoGeom()) 
-   {
-      cmm->HandleCollideTorso(o1, o2);
-   }
-   else if (o2 == cmm->GetTorsoGeom())
-   {
-      cmm->HandleCollideTorso(o2, o1);
-   }
-}
-
-
-void CollisionMotionModel::UpdateBoundingVolumes(const osg::Vec3& xyz)
-{
-   osg::Vec3 newVec = xyz - mBBFeetOffset;
-   dGeomSetPosition(mBBFeet, newVec[0], newVec[1], newVec[2]);
-
-   osg::Vec3 torso = xyz - mBBTorsoOffset;
-   dGeomSetPosition(mBBTorso, torso[0], torso[1], torso[2]);
-}
-
-void CollisionMotionModel::dTriArrayCallback(dGeomID TriMesh, dGeomID RefObject, const int* TriIndices, int TriCount)
-{
-
-   CollisionMotionModel* cmm = static_cast<CollisionMotionModel*>(dGeomGetData(TriMesh));
-
-   for(int i = 0; i < TriCount; ++i)
-   {
-      dVector3 v1, v2, v3;
-
-      dGeomTriMeshGetTriangle(TriMesh, TriIndices[i], &v1, &v2, &v3);
-
-      osg::Vec3 middle(v2[0], v2[1], v2[2]);
-
-      osg::Vec3 side1(v1[0], v1[1], v1[2]);
-      osg::Vec3 side2(v3[0], v3[1], v3[2]);
-      osg::Vec3 normal;
-
-      side1 -= middle;
-      side2 = middle - side2; 
-
-      normal.set(side1 ^ side2);
-      normal.normalize();
-
-      cmm->mNormals.push_back(normal);    
-   }
-
-}
-
-
 }
