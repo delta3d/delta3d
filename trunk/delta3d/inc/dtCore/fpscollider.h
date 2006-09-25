@@ -72,7 +72,7 @@ namespace dtCore
          bool CollideTorso();
          bool CollideFeet();
 
-         bool TestPosition(osg::Vec3& newPos);
+         bool TestPosition(osg::Vec3& newPos, float dt);
 
          dGeomID mBBFeet;
          dGeomID mBBTorso;
