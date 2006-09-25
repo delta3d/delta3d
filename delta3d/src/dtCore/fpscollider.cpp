@@ -19,6 +19,7 @@
  * Bradley Anderegg and Chris Darken 09/21/2006
  */
 #include <prefix/dtcoreprefix-src.h>
+#include <dtUtil/mathdefines.h>
 #include <dtCore/fpscollider.h>
 
 namespace dtCore
@@ -42,7 +43,7 @@ namespace dtCore
       , mFreeFallCounter(0)
       , mCurrentMode(FALLING)
       , mSlideThreshold(0.65f)
-      , mSlideSpeed(100.0f)
+      , mSlideSpeed(9.8f)
       , mJumpSpeed(5.0f)
       , mHeightAboveTerrain(pHeight)
       , mMaxStepUpDistance(k)
@@ -96,7 +97,7 @@ namespace dtCore
 
 
 
-   bool FPSCollider::TestPosition(osg::Vec3& newPos)
+   bool FPSCollider::TestPosition(osg::Vec3& newPos, float dt)
    {
       UpdateBoundingVolumes(newPos);
 
@@ -111,8 +112,12 @@ namespace dtCore
       else
       {
          //set our new height
-         float newHeight = mLastFeetContact.pos[2] + mHeightAboveTerrain;
-         if(newHeight - newPos[2] < mMaxStepUpDistance) newPos[2] = mLastFeetContact.pos[2] + mHeightAboveTerrain;
+         double diff = (mHeightAboveTerrain + mLastFeetContact.pos[2]) - newPos[2];
+         double zPrime = dtUtil::Min<double>(diff, mJumpSpeed * dt);
+
+         //float newHeight = mLastFeetContact.pos[2] + mHeightAboveTerrain;
+         newPos[2] += zPrime;
+         //if(newHeight - newPos[2] < mMaxStepUpDistance) newPos[2] = mLastFeetContact.pos[2] + mHeightAboveTerrain;
 
          //find the collided normal with with max z value 
          float highestZ = mNormals[normalIndex][2];
@@ -129,9 +134,9 @@ namespace dtCore
          if(dotZ < mSlideThreshold)
          {
             mCurrentMode = SLIDING;
-            //set mSlideVelocity = (mSlideSpeed / (1 - n.z) * (n.z*n.x, n.z*n.y, n.z*n.z - 1))
-            float speed = mSlideSpeed / (1.0 - mNormals[normalIndex][2]);
-            mSlideVelocity.set(speed * mNormals[normalIndex][2] * mNormals[normalIndex][0], speed * mNormals[normalIndex][2] * mNormals[normalIndex][1], speed * mNormals[normalIndex][2] * mNormals[normalIndex][2] - 1.0);
+            //set mSlideVelocity = ((mSlideSpeed * dt) / (1 - n.z) * (n.z*n.x, n.z*n.y, n.z*n.z - 1))
+            float speed = (mSlideSpeed) / (1.0 - mNormals[normalIndex][2]);
+            mSlideVelocity.set(speed * mNormals[normalIndex][2] * mNormals[normalIndex][0], speed * mNormals[normalIndex][2] * mNormals[normalIndex][1], speed * (mNormals[normalIndex][2] * mNormals[normalIndex][2] - 1.0));
          }
          else
         { 
@@ -345,7 +350,7 @@ namespace dtCore
    osg::Vec3 FPSCollider::Update(const osg::Vec3& p0, const osg::Vec3& velocity, float deltaFrameTime, bool pJump)
    {
       deltaFrameTime = 1.0 / 200.0;
-      mSlideSpeed = velocity.length() + 10.0f;
+      //mSlideSpeed = sqrtf(velocity.length() + velocity.length() + mJumpSpeed + mJumpSpeed);
 
       osg::Vec3 v0, v1, p1, newXYZ;
       v0 = velocity;
@@ -369,8 +374,16 @@ namespace dtCore
 
       case SLIDING:
          {
+
             v0[2] = 0.0f;
             v0 += mSlideVelocity;
+            float length = v0.length();
+
+            if(length > mSlideSpeed)
+            {
+               v0.normalize();
+               v0.set(v0[0] * mSlideSpeed, v0[1] * mSlideSpeed, v0[2] * mSlideSpeed);
+            }
 
             if(mCurrentMode != FALLING && pJump)
             {
@@ -397,7 +410,7 @@ namespace dtCore
          break;
       }
 
-      if(!TestPosition(p1))
+      if(!TestPosition(p1, deltaFrameTime))
       {
          newXYZ = p1;
          mLastVelocity = v0;
@@ -413,7 +426,7 @@ namespace dtCore
 
          osg::Vec3 p2 = p0 + osg::Vec3(v1[0] * deltaFrameTime, v1[1] * deltaFrameTime, v1[2] * deltaFrameTime);
 
-         if(!TestPosition(p2))
+         if(!TestPosition(p2, deltaFrameTime))
          {
             mLastVelocity = v1;
             newXYZ = p2;
