@@ -69,8 +69,8 @@ namespace dtCore
           * @param mouse the mouse instance, or 0 to avoid
           * creating default input mappings
           */
-         OrbitMotionModel(Keyboard* keyboard = 0,
-                          Mouse* mouse = 0);
+         OrbitMotionModel(Keyboard* keyboard = NULL,
+                          Mouse* mouse = NULL);
 
       protected:
       
@@ -315,6 +315,6 @@ namespace dtCore
           */
          float mDistance;
    };
-};
+}
 
 #endif // DELTA_ORBIT_MOTION_MODEL

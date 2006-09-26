@@ -5,7 +5,7 @@ import sys
 Import ('*')
 
 # Grab all the sources from the terrain  source directory.
-sources = SGlob('*.cpp')
+sources = env.SGlob('*.cpp')
 
 dtTerrainDeps =[ 'dtDAL', 'dtutil', 'dtCore', 'dtChar', 'dtaudio', 'dtabc', 'glgui', 'isense', 
                  'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgText', 'osgUtil', 
@@ -15,12 +15,12 @@ dtTerrainDeps =[ 'dtDAL', 'dtutil', 'dtCore', 'dtChar', 'dtaudio', 'dtabc', 'glg
 
 defines = []
 
-if OS == 'windows' :
+if env['OS'] == 'windows' :
    dtTerrainDeps += [ 'User32', 'Advapi32', 'Rpcrt4', 'Winmm', 'Gdi32' ]
    defines = ['DT_TERRAIN_LIBRARY']
-elif OS == 'linux':
+elif env['OS'] == 'linux':
    dtTerrainDeps += [ 'uuid', 'Xxf86vm' ]
-elif OS == 'darwin':
+elif env['OS'] == 'darwin':
    dtTerrainDeps += [ 'CoreFoundation', 'IOKit', 'Carbon' ]
 
 libdtTerrain = env.BuildLib( 'dtTerrain', sources, dtTerrainDeps, defines)

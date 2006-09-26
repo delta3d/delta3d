@@ -370,7 +370,7 @@ namespace dtCore
       KeyFrameContainerIterator mKeyFrameIter;
    };
 
-};
+}
 
 
 #endif // DELTA_RECORDER

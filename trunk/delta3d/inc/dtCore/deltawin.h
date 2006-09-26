@@ -256,7 +256,7 @@ namespace dtCore
       DeltaWin& operator=( const DeltaWin& );
       DeltaWin( const DeltaWin& );
    };
-};
+}
 
 
 #endif // DELTA_DELTA_WIN

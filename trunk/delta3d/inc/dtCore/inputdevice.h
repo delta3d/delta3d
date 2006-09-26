@@ -376,7 +376,7 @@ namespace dtCore
       */
       virtual bool AxisStateChanged(const Axis* axis, double oldState, double newState, double delta)=0;
    };
-};
+}
 
 
 #endif // DELTA_INPUTDEVICE

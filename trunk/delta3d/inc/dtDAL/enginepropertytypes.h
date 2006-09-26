@@ -16,7 +16,9 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * Matthew W. Campbell, David Guthrie, William E. Johnson
+ * Matthew W. Campbell
+ * David Guthrie
+ * William E. Johnson II
  */
 #ifndef DELTA_ENGINE_PROPERTY_TYPES
 #define DELTA_ENGINE_PROPERTY_TYPES
@@ -29,11 +31,12 @@
 #include <osg/Vec2>
 #include <osg/Vec2d>
 #include <dtCore/deltadrawable.h>
-#include "dtDAL/resourcedescriptor.h"
-#include "dtDAL/actorproperty.h"
-#include "dtDAL/datatype.h"
-#include "dtDAL/gameevent.h"
-#include "dtDAL/export.h"
+#include <dtDAL/resourcedescriptor.h>
+#include <dtDAL/actorproperty.h>
+#include <dtDAL/datatype.h>
+#include <dtDAL/gameevent.h>
+#include <dtDAL/export.h>
+#include <dtUtil/log.h>
 
 namespace dtDAL
 {
@@ -54,7 +57,7 @@ namespace dtDAL
                            const std::string& desiredActorClass = "",
                            const std::string& desc = "",
                            const std::string& groupName = "") :
-         ActorProperty(name, label, desc, groupName),
+         ActorProperty(DataType::ACTOR, name, label, desc, groupName),
             mProxy(&actorProxy),
             SetPropFunctor(Set),
             GetActorFunctor(Get),
@@ -63,20 +66,23 @@ namespace dtDAL
 
             }
 
-         DataType& GetPropertyType() const { return DataType::ACTOR; }
-
          /**
-          * Copies a ResourceActorProperty value to this one from the property
+          * Copies an ActorActorProperty value to this one from the property
           * specified. This method fails if otherProp is not a ResourceActorProperty.
           * @param otherProp The property to copy the value from.
           */
-         virtual void CopyFrom(ActorProperty* otherProp)
+         virtual void CopyFrom(const ActorProperty& otherProp)
          {
-            ActorActorProperty *prop = dynamic_cast<ActorActorProperty *>(otherProp);
-            if (prop != NULL)
-               SetValue(prop->GetValue());
-            else
-               LOG_ERROR("Property types are incompatible. Cannot make a copy.");
+            if (GetPropertyType() != otherProp.GetPropertyType())
+            {
+               LOG_ERROR("Property types are incompatible. Cannot make copy.");
+               return;
+            }
+            
+            const ActorActorProperty& prop =
+               static_cast<const ActorActorProperty& >(otherProp);
+
+            SetValue(prop.GetValue());
          }
 
          /**
@@ -93,14 +99,7 @@ namespace dtDAL
           * Hack for the resource class
           * @return the currently set ActorProxy for this property.
           */
-         ActorProxy* GetValue();
-
-         /**
-          * Gets the value proxy assiged to this property.
-          * Hack for the resource class
-          * @return the currently set ActorProxy for this property.
-          */
-         const ActorProxy* GetValue() const;
+         ActorProxy* GetValue() const;
 
          /**
           * Gets the drawable that this property is representing
@@ -154,15 +153,14 @@ namespace dtDAL
    {
       public:
 
-         GameEventActorProperty(const std::string &name, const std::string &label,
+         GameEventActorProperty(ActorProxy &actorProxy,
+                                const std::string &name, const std::string &label,
                                 Functor1<GameEvent *> set, Functor0Ret<GameEvent *> get,
                                 const std::string &desc = "",
                                 const std::string &groupName = "") :
-            GenericActorProperty<GameEvent *,GameEvent *>(name,label,set,get,desc,groupName)
+            GenericActorProperty<GameEvent *,GameEvent *>(DataType::GAME_EVENT,name,label,set,get,desc,groupName), mProxy(&actorProxy)
          {
          }
-
-         DataType &GetPropertyType() const { return DataType::GAME_EVENT; }
 
          /**
           * Sets the value of this property using the given string.
@@ -182,6 +180,10 @@ namespace dtDAL
 
       protected:
          virtual ~GameEventActorProperty() { }
+
+      private:
+
+         ActorProxy *mProxy;
    };
 
    ////////////////////////////////////////////////////////////////////////////
@@ -199,28 +201,27 @@ namespace dtDAL
                               Functor1<const std::string&> Set,
                               const std::string &desc = "",
                               const std::string &groupName = "") :
-         ActorProperty(name, label, desc, groupName),
-            mDataType(&type),
+         ActorProperty(type, name, label, desc, groupName),
             mProxy(&actorProxy),
             SetPropFunctor(Set)
             {
 
             }
 
-         DataType& GetPropertyType() const { return *mDataType; }
-
          /**
           * Copies a ResourceActorProperty value to this one from the property
           * specified. This method fails if otherProp is not a ResourceActorProperty.
           * @param otherProp The property to copy the value from.
           */
-         virtual void CopyFrom(ActorProperty *otherProp)
+         virtual void CopyFrom(const ActorProperty& otherProp)
          {
-            ResourceActorProperty *prop = dynamic_cast<ResourceActorProperty *>(otherProp);
-            if (prop != NULL)
-               SetValue(prop->GetValue());
-            else
+            if (GetPropertyType() != otherProp.GetPropertyType())
                LOG_ERROR("Property types are incompatible. Cannot make copy.");
+            
+            const ResourceActorProperty& prop =
+               static_cast<const ResourceActorProperty& >(otherProp);
+
+            SetValue(prop.GetValue());
          }
 
          /**
@@ -256,7 +257,6 @@ namespace dtDAL
          virtual const std::string GetStringValue() const;
 
       private:
-         DataType *mDataType;
          ActorProxy *mProxy;
          Functor1<const std::string&> SetPropFunctor;
       protected:
@@ -274,9 +274,7 @@ namespace dtDAL
          FloatActorProperty(const std::string &name, const std::string &label,
                            Functor1<float> set, Functor0Ret<float> get,
                            const std::string &desc = "", const std::string &groupName = "") :
-         GenericActorProperty<float,float>(name,label,set,get,desc,groupName){ }
-
-         DataType& GetPropertyType() const { return DataType::FLOAT; }
+         GenericActorProperty<float,float>(DataType::FLOAT, name,label,set,get,desc,groupName){ }
 
          /**
           * Sets the value of the property based on a string.
@@ -308,9 +306,7 @@ namespace dtDAL
          DoubleActorProperty(const std::string &name, const std::string &label,
                            Functor1<double> set, Functor0Ret<double> get,
                            const std::string &desc = "", const std::string &groupName = "") :
-         GenericActorProperty<double,double>(name,label,set,get,desc,groupName) { }
-
-         DataType &GetPropertyType() const { return DataType::DOUBLE; }
+         GenericActorProperty<double,double>(DataType::DOUBLE, name,label,set,get,desc,groupName) { }
 
          /**
           * Sets the value of the property based on a string.
@@ -342,9 +338,7 @@ namespace dtDAL
          IntActorProperty(const std::string &name, const std::string &label,
                         Functor1<int> set, Functor0Ret<int> get,
                         const std::string &desc = "", const std::string &groupName = "") :
-         GenericActorProperty<int,int>(name,label,set,get,desc,groupName) { }
-
-         DataType &GetPropertyType() const { return DataType::INT; }
+         GenericActorProperty<int,int>(DataType::INT, name,label,set,get,desc,groupName) { }
 
          /**
           * Sets the value of the property based on a string.
@@ -375,9 +369,7 @@ namespace dtDAL
          LongActorProperty(const std::string &name, const std::string &label,
                            Functor1<long> set, Functor0Ret<long> get,
                            const std::string &desc = "", const std::string &groupName = "") :
-         GenericActorProperty<long,long>(name,label,set,get,desc,groupName) { }
-
-         DataType &GetPropertyType() const { return DataType::LONGINT; }
+         GenericActorProperty<long,long>(DataType::LONGINT, name,label,set,get,desc,groupName) { }
 
          /**
           * Sets the value of the property based on a string.
@@ -414,12 +406,10 @@ namespace dtDAL
                            const std::string &desc = "",
                            const std::string &groupName = "") :
          GenericActorProperty<const std::string &,std::string>
-            (name,label,set,get,desc,groupName)
+            (DataType::STRING, name,label,set,get,desc,groupName)
          {
             mMaxLength = 0;
          }
-
-         DataType &GetPropertyType() const { return DataType::STRING; }
 
          /**
           * Sets the maximum length of strings stored in this property.
@@ -479,9 +469,7 @@ namespace dtDAL
          BooleanActorProperty(const std::string &name, const std::string &label,
                               Functor1<bool> set, Functor0Ret<bool> get,
                               const std::string &desc = "", const std::string &groupName = "") :
-         GenericActorProperty<bool,bool>(name,label,set,get,desc,groupName) { }
-
-         DataType &GetPropertyType() const { return DataType::BOOLEAN; }
+         GenericActorProperty<bool,bool>(DataType::BOOLEAN, name,label,set,get,desc,groupName) { }
 
          /**
           * Sets the value of the property based on a string.
@@ -513,9 +501,9 @@ namespace dtDAL
       public:
 
          /**
-         * @return DataType::ENUMERATION
-         */
-         virtual DataType& GetPropertyType() const { return DataType::ENUMERATION; }
+          * @return the datatype for this enum actor property.
+          */
+         virtual DataType& GetPropertyType() const = 0;
 
          /**
           * @return the value as a generic enumeration
@@ -572,11 +560,20 @@ namespace dtDAL
          EnumActorProperty(const std::string &name, const std::string &label,
                            Functor1<T&> set, Functor0Ret<T&> get,
                            const std::string &desc = "", const std::string &groupName = "") :
-         GenericActorProperty<T&,T&>(name,label,set,get,desc,groupName) { }
+         GenericActorProperty<T&,T&>(DataType::ENUMERATION, name,label,set,get,desc,groupName) { }
 
-         virtual const std::vector<dtUtil::Enumeration*>& GetList() const { return T::Enumerate(); }
+         ///@note this method exists to reconcile the two same-named methods on the superclases.
+         DataType& GetPropertyType() const { return GenericActorProperty<T&,T&>::GetPropertyType(); }
 
-         virtual DataType& GetPropertyType() const { return AbstractEnumActorProperty::GetPropertyType(); }
+         virtual const std::vector<dtUtil::Enumeration*>& GetList() const 
+         { 
+            return T::Enumerate(); 
+         }
+
+         virtual const std::vector<T*>& GetListOfType() const 
+         { 
+            return T::EnumerateType(); 
+         }
 
          virtual bool SetValueFromString(const std::string &name)
          {
@@ -635,9 +632,7 @@ namespace dtDAL
          Vec2ActorProperty(const std::string &name, const std::string &label,
                            Functor1<const osg::Vec2&> set, Functor0Ret<osg::Vec2> get,
                            const std::string &desc = "", const std::string &groupName = "") :
-         GenericActorProperty<const osg::Vec2&,osg::Vec2>(name,label,set,get,desc,groupName) { }
-
-         DataType &GetPropertyType() const { return DataType::VEC2; }
+         GenericActorProperty<const osg::Vec2&,osg::Vec2>(DataType::VEC2, name,label,set,get,desc,groupName) { }
 
          /**
           * Sets the value of the property based on a string.
@@ -672,9 +667,7 @@ namespace dtDAL
          Vec2fActorProperty(const std::string &name, const std::string &label,
                            Functor1<const osg::Vec2f&> set, Functor0Ret<osg::Vec2f> get,
                            const std::string &desc = "", const std::string &groupName = "") :
-         GenericActorProperty<const osg::Vec2f&,osg::Vec2f>(name,label,set,get,desc,groupName) { }
-
-         DataType &GetPropertyType() const { return DataType::VEC2F; }
+         GenericActorProperty<const osg::Vec2f&,osg::Vec2f>(DataType::VEC2F,name,label,set,get,desc,groupName) { }
 
          /**
           * Sets the value of the property based on a string.
@@ -709,9 +702,7 @@ namespace dtDAL
          Vec2dActorProperty(const std::string &name, const std::string &label,
                            Functor1<const osg::Vec2d&> set, Functor0Ret<osg::Vec2d> get,
                            const std::string &desc = "", const std::string &groupName = "") :
-         GenericActorProperty<const osg::Vec2d&,osg::Vec2d>(name,label,set,get,desc,groupName) { }
-
-         DataType &GetPropertyType() const { return DataType::VEC2D; }
+         GenericActorProperty<const osg::Vec2d&,osg::Vec2d>(DataType::VEC2D, name, label, set, get, desc, groupName) { }
 
          /**
           * Sets the value of the property based on a string.
@@ -746,9 +737,7 @@ namespace dtDAL
          Vec3ActorProperty(const std::string &name, const std::string &label,
                            Functor1<const osg::Vec3&> set, Functor0Ret<osg::Vec3> get,
                            const std::string &desc = "", const std::string &groupName = "") :
-         GenericActorProperty<const osg::Vec3&,osg::Vec3>(name,label,set,get,desc,groupName) { }
-
-         DataType &GetPropertyType() const { return DataType::VEC3; }
+         GenericActorProperty<const osg::Vec3&,osg::Vec3>(DataType::VEC3, name,label,set,get,desc,groupName) { }
 
          /**
           * Sets the value of the property based on a string.
@@ -782,9 +771,7 @@ namespace dtDAL
          Vec3fActorProperty(const std::string &name, const std::string &label,
                            Functor1<const osg::Vec3f&> set, Functor0Ret<osg::Vec3f> get,
                            const std::string &desc = "", const std::string &groupName = "") :
-         GenericActorProperty<const osg::Vec3f&,osg::Vec3f>(name,label,set,get,desc,groupName) { }
-
-         DataType &GetPropertyType() const { return DataType::VEC3F; }
+         GenericActorProperty<const osg::Vec3f&,osg::Vec3f>(DataType::VEC3F, name,label,set,get,desc,groupName) { }
 
          /**
           * Sets the value of the property based on a string.
@@ -818,9 +805,7 @@ namespace dtDAL
          Vec3dActorProperty(const std::string &name, const std::string &label,
                            Functor1<const osg::Vec3d&> set, Functor0Ret<osg::Vec3d> get,
                            const std::string &desc = "", const std::string &groupName = "") :
-         GenericActorProperty<const osg::Vec3d&,osg::Vec3d>(name,label,set,get,desc,groupName) { }
-
-         DataType &GetPropertyType() const { return DataType::VEC3D; }
+         GenericActorProperty<const osg::Vec3d&,osg::Vec3d>(DataType::VEC3D, name,label,set,get,desc,groupName) { }
 
          /**
           * Sets the value of the property based on a string.
@@ -853,10 +838,9 @@ namespace dtDAL
       public:
          Vec4ActorProperty(const std::string &name, const std::string &label,
                            Functor1<const osg::Vec4&> set, Functor0Ret<osg::Vec4> get,
-                           const std::string &desc = "", const std::string &groupName = "") :
-         GenericActorProperty<const osg::Vec4&,osg::Vec4>(name,label,set,get,desc,groupName) { }
-
-         DataType &GetPropertyType() const { return DataType::VEC4; }
+                           const std::string &desc = "", const std::string &groupName = "", 
+                           dtDAL::DataType& dataType = DataType::VEC4) :
+         GenericActorProperty<const osg::Vec4&,osg::Vec4>(dataType, name,label,set,get,desc,groupName) { }
 
          /**
           * Sets the value of the property based on a string.
@@ -876,6 +860,7 @@ namespace dtDAL
          virtual const std::string GetStringValue() const;
 
       protected:
+
          virtual ~Vec4ActorProperty() { }
    };
 
@@ -891,9 +876,7 @@ namespace dtDAL
          Vec4fActorProperty(const std::string &name, const std::string &label,
                            Functor1<const osg::Vec4f&> set, Functor0Ret<osg::Vec4f> get,
                            const std::string &desc = "", const std::string &groupName = "") :
-         GenericActorProperty<const osg::Vec4f&,osg::Vec4f>(name,label,set,get,desc,groupName) { }
-
-         DataType &GetPropertyType() const { return DataType::VEC4F; }
+         GenericActorProperty<const osg::Vec4f&,osg::Vec4f>(DataType::VEC4F, name,label,set,get,desc,groupName) { }
 
          /**
           * Sets the value of the property based on a string.
@@ -928,9 +911,7 @@ namespace dtDAL
          Vec4dActorProperty(const std::string &name, const std::string &label,
                            Functor1<const osg::Vec4d&> set, Functor0Ret<osg::Vec4d> get,
                            const std::string &desc = "", const std::string &groupName = "") :
-         GenericActorProperty<const osg::Vec4d&,osg::Vec4d>(name,label,set,get,desc,groupName) { }
-
-         DataType &GetPropertyType() const { return DataType::VEC4D; }
+         GenericActorProperty<const osg::Vec4d&,osg::Vec4d>(DataType::VEC4D, name,label,set,get,desc,groupName) { }
 
          /**
           * Sets the value of the property based on a string.
@@ -964,9 +945,7 @@ namespace dtDAL
          ColorRgbaActorProperty(const std::string &name, const std::string &label,
                               Functor1<const osg::Vec4&> set, Functor0Ret<osg::Vec4> get,
                               const std::string &desc = "", const std::string &groupName = "") :
-         Vec4ActorProperty(name,label,set,get,desc,groupName) { }
-
-         DataType &GetPropertyType() const { return DataType::RGBACOLOR; }
+         Vec4ActorProperty(name,label,set,get,desc,groupName, DataType::RGBACOLOR) { }
 
          // This is a work around a bug in Visual Studio where the Unit Tests would fail at runtime because
          // it couldn't find these functions in this class, even though they are inherited.
@@ -976,7 +955,6 @@ namespace dtDAL
       protected:
          virtual ~ColorRgbaActorProperty() { }
    };
-
 
 }
 

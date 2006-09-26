@@ -20,33 +20,17 @@
 */
 
 #include "testaarhud.h"
+#include "testaarexceptionenum.h"
 
-#include <dtCore/object.h>
+#include <dtUtil/fileutils.h>
 #include <dtCore/globals.h>
-#include <dtCore/flymotionmodel.h>
 #include <dtCore/deltawin.h>
-#include <dtUtil/exception.h>
-
-#include <dtGame/binarylogstream.h>
 #include <dtGame/logtag.h>
-#include <dtGame/logkeyframe.h>
 #include <dtGame/logstatus.h>
-#include <dtGame/defaultmessageprocessor.h>
-#include <dtGame/loggermessages.h>
-#include <dtGame/basemessages.h>
-#include <dtGame/messagetype.h>
-#include <dtGame/gamemanager.h>
 #include <dtGame/logcontroller.h>
-#include <dtGame/logstatus.h>
 #include <dtGame/serverloggercomponent.h>
 #include <dtGame/taskcomponent.h>
 #include <dtActors/taskactor.h>
-
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/project.h>
-#include <dtDAL/map.h>
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/transformableactorproxy.h>
 
 #include <ctime>
 
@@ -58,18 +42,12 @@
 #endif // WIN32
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_ENUM(ARRHUDException);
-ARRHUDException ARRHUDException::INIT_ERROR("INIT_ERROR");
-ARRHUDException ARRHUDException::RUNTIME_ERROR("RUNTIME_ERROR");
-
-//////////////////////////////////////////////////////////////////////////
 IMPLEMENT_ENUM(HUDState);
-HUDState HUDState::MINIMAL("MINIMAL");
+HUDState HUDState::HELP("HELP");
 HUDState HUDState::MEDIUM("MEDIUM");
+HUDState HUDState::MINIMAL("MINIMAL");
 HUDState HUDState::MAXIMUM("MAXIMUM");
 HUDState HUDState::NONE("NONE");
-HUDState HUDState::HELP("HELP");
-
 
 //////////////////////////////////////////////////////////////////////////
 TestAARHUD::TestAARHUD(dtCore::DeltaWin *win,
@@ -157,10 +135,10 @@ void TestAARHUD::SetupGUI(dtCore::DeltaWin *win)
       mGUI = new dtGUI::CEUIDrawable(win);
 
       std::string scheme = "gui/schemes/WindowsLookSkin.scheme";
-      std::string path = osgDB::findDataFile(scheme);
+      std::string path = dtCore::FindFileInPathList(scheme);
       if(path.empty())
       {
-         throw dtUtil::Exception(ARRHUDException::INIT_ERROR,"Failed to find the scheme file.", __FILE__, __LINE__);
+         EXCEPT(ARRHUDException::INIT_ERROR,"Failed to find the scheme file.");
       }
 
       std::string dir = path.substr(0, path.length() - (scheme.length() - 3));

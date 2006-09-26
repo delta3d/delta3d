@@ -84,13 +84,13 @@ class EnumerationTests : public CPPUNIT_NS::TestFixture {
      
 };
 
-IMPLEMENT_ENUM(EnumerationTests::TestEnumType1);
+IMPLEMENT_ENUM(EnumerationTests::TestEnumType1)
 EnumerationTests::TestEnumType1
 EnumerationTests::TestEnumType1::ENUM1("ENUM1");
 EnumerationTests::TestEnumType1
 EnumerationTests::TestEnumType1::ENUM2("ENUM2");
 
-IMPLEMENT_ENUM(EnumerationTests::TestEnumType2);
+IMPLEMENT_ENUM(EnumerationTests::TestEnumType2)
 EnumerationTests::TestEnumType2
 EnumerationTests::TestEnumType2::ENUM1("ENUM1");
 EnumerationTests::TestEnumType2
@@ -166,10 +166,10 @@ void EnumerationTests::TestIterator()
 {
    mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__,  __LINE__, "Testing Enumeration Iterator.\n");
    int count1 = 0;
-   for (std::vector<dtUtil::Enumeration*>::const_iterator i = TestEnumType1::Enumerate().begin();
-            i != TestEnumType1::Enumerate().end(); ++i)
+   for (std::vector<TestEnumType1*>::const_iterator i = TestEnumType1::EnumerateType().begin();
+            i != TestEnumType1::EnumerateType().end(); ++i)
    {
-      TestEnumType1& TET = *static_cast<TestEnumType1*>(*i);
+      TestEnumType1& TET = **i;
       if(TET == TestEnumType1::ENUM1)
       {
          count1++;

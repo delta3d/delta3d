@@ -20,6 +20,8 @@
  */
 #include <prefix/dtdalprefix-src.h>
 #include <osgDB/FileNameUtils>
+
+#include <dtUtil/stringutils.h>
 #include <dtCore/scene.h>
 
 #include <dtDAL/mapxml.h>
@@ -28,19 +30,52 @@
 #include <dtDAL/actortype.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/exceptionenum.h>
-#include <dtUtil/stringutils.h>
 #include <dtDAL/waypointactorproxy.h>
+#include <dtDAL/gameeventmanager.h>
+#include <dtDAL/gameevent.h>
+#include <dtDAL/environmentactor.h>
 
 namespace dtDAL 
 {
    const std::string Map::MAP_FILE_EXTENSION(".xml");
    
-   Map::Map(const std::string& mFileName, const std::string& name) : mModified(true), mName(name) 
+   Map::Map(const std::string& mFileName, const std::string& name) : 
+      mModified(true), mName(name) 
    {
       //mFileName requires some processing.
       SetFileName(mFileName);
+      mEventManager = new MapGameEvents(*this);
    }
    
+   Map::~Map() {}
+   
+   Map::MapGameEvents::MapGameEvents(Map& parent): GameEventManager(), mParent(parent)
+   {}
+
+   void Map::MapGameEvents::AddEvent(GameEvent& event)
+   {
+      GameEventManager::AddEvent(event);
+      mParent.SetModified(true);
+   }
+
+   void Map::MapGameEvents::RemoveEvent(GameEvent& event)
+   {
+      GameEventManager::RemoveEvent(event);
+      mParent.SetModified(true);
+   }
+
+   void Map::MapGameEvents::RemoveEvent(const dtCore::UniqueId& id)
+   {
+      GameEventManager::RemoveEvent(id);
+      mParent.SetModified(true);
+   }
+
+   void Map::MapGameEvents::ClearAllEvents()
+   {
+      GameEventManager::ClearAllEvents();
+      mParent.SetModified(true);
+   }
+
    ActorProxy* Map::GetProxyById(const dtCore::UniqueId& id) 
    {
       std::map<dtCore::UniqueId, dtCore::RefPtr<ActorProxy> >::iterator i = mProxyMap.find(id);
@@ -335,6 +370,16 @@ namespace dtDAL
       return result;
    }
     
+   GameEventManager& Map::GetEventManager()
+   {
+      return *mEventManager;
+   }
+   
+   const GameEventManager& Map::GetEventManager() const
+   {
+      return *mEventManager;
+   }
+   
    void Map::SetEnvironmentActor(ActorProxy *envActor)
    {
       if(envActor == NULL)

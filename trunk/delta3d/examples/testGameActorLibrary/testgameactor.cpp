@@ -22,7 +22,7 @@
 #include "testgameactor.h"
 #include <dtCore/scene.h>
 #include <dtDAL/enginepropertytypes.h>
-#include <dtGame/datastream.h>
+#include <dtUtil/datastream.h>
 #include <dtGame/messageparameter.h>
 #include <dtGame/messagetype.h>
 
@@ -130,12 +130,10 @@ void TestGameActor1::Reset(const dtGame::Message& message)
 
 void TestGameActor1::TickLocal(const dtGame::Message& tickMessage)
 {
-   std::cout << "TickLocal" << std::endl;
    tickLocals++;
 }
 
 void TestGameActor1::TickRemote(const dtGame::Message& tickMessage)
 {
-      std::cout << "TickRemote" << std::endl;
    tickRemotes++;
 }

@@ -28,7 +28,7 @@ IMPLEMENT_MANAGEMENT_LAYER(Transformable)
 const std::string Transformable::COLLISION_GEODE_ID("__DELTA3D_COLLISION_GEOMETRY__");
 
 ///////////////////////////////////////////////////////////////////////////////
-IMPLEMENT_ENUM(Transformable::CollisionGeomType);
+IMPLEMENT_ENUM(Transformable::CollisionGeomType)
 Transformable::CollisionGeomType
 Transformable::CollisionGeomType::NONE("NONE");
 Transformable::CollisionGeomType

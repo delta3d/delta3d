@@ -28,21 +28,21 @@ IMPLEMENT_MANAGEMENT_LAYER(UFOMotionModel)
 UFOMotionModel::UFOMotionModel(Keyboard* keyboard,
                                Mouse* mouse)
    : MotionModel("UFOMotionModel"),
-     mFlyForwardBackwardAxis(0),
-     mFlyLeftRightAxis(0),
-     mFlyUpDownAxis(0),
-     mTurnLeftRightAxis(0),
+     mFlyForwardBackwardAxis(NULL),
+     mFlyLeftRightAxis(NULL),
+     mFlyUpDownAxis(NULL),
+     mTurnLeftRightAxis(NULL),
      mMaximumFlySpeed(100.0f),
      mMaximumTurnSpeed(90.0f)
 {
    RegisterInstance(this);
    
-   if(keyboard != 0 && mouse != 0)
+   if(keyboard != NULL && mouse != NULL)
    {
       SetDefaultMappings(keyboard, mouse);
    }
    
-   AddSender(System::Instance());
+   AddSender(&System::GetInstance());
 }
 
 /**
@@ -50,7 +50,7 @@ UFOMotionModel::UFOMotionModel(Keyboard* keyboard,
  */
 UFOMotionModel::~UFOMotionModel()
 {
-   RemoveSender(System::Instance());
+   RemoveSender(&System::GetInstance());
    
    DeregisterInstance(this);
 }

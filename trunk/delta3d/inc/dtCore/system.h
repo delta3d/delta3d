@@ -221,8 +221,6 @@ namespace dtCore
       RenderSurfaceCameraMap mRenderSurfaceCameraMap;
 
    };
-};
-
-
+}
 
 #endif // DELTA_SYSTEM

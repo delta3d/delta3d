@@ -1,9 +1,9 @@
 Import('*')
 
-srcs = SGlob( '*.cpp' )
+srcs = env.SGlob( '*.cpp' )
 
 # Build the icon
-if OS == 'windows' :
+if env['OS'] == 'windows' :
    srcs += env.RES( 'bspCompiler.rc' )
 
 deps = [ 'dtBSP' ]

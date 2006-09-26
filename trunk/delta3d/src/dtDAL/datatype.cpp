@@ -17,9 +17,10 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  * Matthew W. Campbell
+ * David Guthrie
  */
 #include <prefix/dtdalprefix-src.h>
-#include "dtDAL/datatype.h"
+#include <dtDAL/datatype.h>
 
 namespace dtDAL 
 {
@@ -37,19 +38,24 @@ namespace dtDAL
    DataType DataType::USHORTINT("USHORT", "Unsigned short", false, USHORTINT_ID);
    DataType DataType::STRING("STRING", "String", false, STRING_ID);
    DataType DataType::BOOLEAN("BOOLEAN", "Boolean", false, BOOLEAN_ID);
+   
    DataType DataType::VEC2("VEC2", "Vector 2", false, VEC2_ID);
    DataType DataType::VEC3("VEC3", "Vector 3", false, VEC3_ID);
    DataType DataType::VEC4("VEC4", "Vector 4", false, VEC4_ID);
+   
    DataType DataType::VEC2F("VEC2F", "Vector 2f", false, VEC2F_ID);
    DataType DataType::VEC3F("VEC3F", "Vector 3f", false, VEC3F_ID);
    DataType DataType::VEC4F("VEC4F", "Vector 4f", false, VEC4F_ID);
+   
    DataType DataType::VEC2D("VEC2D", "Vector 2d", false, VEC2D_ID);
    DataType DataType::VEC3D("VEC3D", "Vector 3d", false, VEC3D_ID);
    DataType DataType::VEC4D("VEC4D", "Vector 4d", false, VEC4D_ID);
+   
    DataType DataType::RGBCOLOR("RGBCOLOR", "RGB Color", false, RGBCOLOR_ID);
    DataType DataType::RGBACOLOR("RGBACOLOR", "RGBA Color", false, RGBACOLOR_ID);
+   
    DataType DataType::ENUMERATION("ENUMERATION",  "Enumeration", false, ENUMERATION_ID);
-   DataType DataType::GAME_EVENT("GAME_EVENT","Game Event",false,GAMEEVENT_ID);
+   DataType DataType::GAME_EVENT("GAME_EVENT", "Game Event", false, GAMEEVENT_ID);
    DataType DataType::GROUP("GROUP", "Group", false, GROUP_ID);
    DataType DataType::ACTOR("ACTOR", "Actor", false, ACTOR_ID);
 
@@ -59,5 +65,4 @@ namespace dtDAL
    DataType DataType::TERRAIN("Terrains", "Terrain", true, TERRAIN_ID);
    DataType DataType::SOUND("Sounds", "Sound", true, SOUND_ID);
    DataType DataType::PARTICLE_SYSTEM("Particles", "Particle", true, PARTICLESYSTEM_ID);
-
 }

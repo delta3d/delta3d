@@ -16,7 +16,7 @@ using namespace dtGUI;
 using namespace dtUtil;
 
 TestWinApp::TestWinApp( const std::string& configFilename ) : Application( configFilename ),
-   mGUI(0),
+   mGUI(NULL),
    mResolutionVec(),
    mScriptModule(new dtGUI::ScriptModule())
 {

@@ -31,11 +31,11 @@
 
 #include <dtUtil/tree.h>
 #include <dtUtil/fileutils.h>
-#include "dtDAL/resourcedescriptor.h"
-#include "dtDAL/resourcetreenode.h"
-#include "dtDAL/resourcehelper.h"
-#include "dtDAL/actorproxy.h"
-#include "dtDAL/export.h"
+#include <dtDAL/resourcedescriptor.h>
+#include <dtDAL/resourcetreenode.h>
+#include <dtDAL/resourcehelper.h>
+#include <dtDAL/actorproxy.h>
+#include <dtDAL/export.h>
 
 namespace dtUtil
 {
@@ -104,7 +104,7 @@ namespace dtDAL
 
          //internal handling for saving a map.
          //added scene param for handling navmesh generation
-         void InternalSaveMap(Map& map, dtCore::Scene* pScene);
+         void InternalSaveMap(Map& map, dtCore::Scene* pScene = NULL);
          //internal handling for deleting a map.
          void InternalDeleteMap(const std::string& mapFileName);
 
@@ -306,7 +306,7 @@ namespace dtDAL
           * @throws ExceptionEnum::ProjectReadOnly if the context is read only.
           * @throws ExceptionEnum::MapSaveError if the new map could not be saved.
           */
-         void SaveMap(Map& map, dtCore::Scene* pScene);
+         void SaveMap(Map& map, dtCore::Scene* pScene = NULL);
 
          /**
           * Saves the given map to a new file name and alters the open map object to point to the new file.
@@ -320,7 +320,7 @@ namespace dtDAL
           * @throws ExceptionEnum::ProjectReadOnly if the context is read only.
           * @throws ExceptionEnum::MapSaveError if the new map could not be saved.
           */
-         void SaveMapAs(Map& map, dtCore::Scene* pScene, const std::string& newName, const std::string& newFileName);
+         void SaveMapAs(Map& map, const std::string& newName, const std::string& newFileName, dtCore::Scene* pScene = NULL);
 
          /**
           * Saves the given map to a new file name and alters the open map object to point to the new file.
@@ -335,7 +335,7 @@ namespace dtDAL
           * @throws ExceptionEnum::ProjectReadOnly if the context is read only.
           * @throws ExceptionEnum::MapSaveError if the new map could not be saved.
           */
-         void SaveMapAs(const std::string& mapName, dtCore::Scene* pScene, const std::string& newName, const std::string& newFileName);
+         void SaveMapAs(const std::string& mapName, const std::string& newName, const std::string& newFileNam, dtCore::Scene* pScene = NULL);
 
          /**
           * Saves the given map whether it has changed or not.  If the map has not been loaded, but exists, this
@@ -346,7 +346,7 @@ namespace dtDAL
           * @throws ExceptionEnum::ProjectReadOnly if the context is read only.
           * @throws ExceptionEnum::MapSaveError if the new map could not be saved.
           */
-         void SaveMap(const std::string& mapName, dtCore::Scene* pScene);
+         void SaveMap(const std::string& mapName, dtCore::Scene* pScene = NULL);
 
          /**
           * Saves a new backup of the map.
@@ -401,7 +401,7 @@ namespace dtDAL
           * @return The resource types that are available for the given handler.
           * @throws ExceptionEnum::ProjectResourceError if the datatype is a primitive type, not a resource type.
           */
-         void GetHandlersForDataType(const DataType& resourceType, std::vector<dtCore::RefPtr<const ResourceTypeHandler> >& toFill) const;
+         void GetHandlersForDataType(const DataType& resourceType, std::vector<const ResourceTypeHandler* >& toFill) const;
 
          /**
           * Registers a new type handler.  The method will get the datatype and applicable filters from

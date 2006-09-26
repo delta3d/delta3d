@@ -507,6 +507,6 @@ namespace dtCore
        */
       osg::BoundingBox mBoundingBox;
    };
-};
+}
 
 #endif // DELTA_TRANSFORMABLE

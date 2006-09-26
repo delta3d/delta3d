@@ -1,6 +1,6 @@
 Import('*')
 
-srcs = SGlob( '*.cpp' )
+srcs = env.SGlob( '*.cpp' )
 
 deps = [ 'dtCore', 'cal3d', 'rbody', 'dtUtil', 'isense',
          'OpenThreads', 'osg', 'osgDB', 'osgParticle',
@@ -8,7 +8,7 @@ deps = [ 'dtCore', 'cal3d', 'rbody', 'dtUtil', 'isense',
          'ul', 'js', 'Producer', 'opengl', 'rbody', 'rvrutils', 'rcfgscript' ] 
 
 defines = []
-if OS == 'windows':
+if env['OS'] == 'windows':
    defines = ['DT_CHAR_LIBRARY']
 
     

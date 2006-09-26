@@ -1357,7 +1357,7 @@ void GMLoggerTests::TestLoggerKeyframeListMessage()
          new dtGame::LogGetKeyframeListMessage();
 
       std::string str;
-      dtGame::DataStream ds;
+      dtUtil::DataStream ds;
 
       msg->ToString(str);
       otherMsg->FromString(str);
@@ -1453,7 +1453,7 @@ void GMLoggerTests::TestLoggerTagListMessage()
          new dtGame::LogGetTagListMessage();
 
       std::string str;
-      dtGame::DataStream ds;
+      dtUtil::DataStream ds;
 
       msg->ToString(str);
       otherMsg->FromString(str);

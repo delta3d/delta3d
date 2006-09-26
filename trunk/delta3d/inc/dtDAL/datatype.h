@@ -22,17 +22,17 @@
 #define DELTA_DATATYPES
 
 #include <dtUtil/enumeration.h>
-#include "dtDAL/export.h"
+#include <dtDAL/export.h>
 
 namespace dtDAL
 {
-    /**
-     * The DataType class is an enumeration representing the different datatypes
-     * that are supported by the Delta3D engine.
-     */
-    class DT_DAL_EXPORT DataType : public dtUtil::Enumeration
-    {
-         DECLARE_ENUM(DataType);
+   /**
+   * The DataType class is an enumeration representing the different datatypes
+   * that are supported by the Delta3D engine.
+   */
+   class DT_DAL_EXPORT DataType : public dtUtil::Enumeration
+   {
+      DECLARE_ENUM(DataType);
       public:
          enum DataTypeId {
             UNKNOWN_ID = 0, CHAR_ID, UCHAR_ID, FLOAT_ID, DOUBLE_ID, INT_ID, UINT_ID, LONGINT_ID, 
@@ -252,7 +252,7 @@ namespace dtDAL
          bool mResource;
          std::string mDisplayName;
          unsigned char mId;
-    };
+   };
 }
 
 #endif //DELTA_DATATYPES

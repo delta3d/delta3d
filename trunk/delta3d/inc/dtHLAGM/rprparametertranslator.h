@@ -37,11 +37,6 @@ namespace dtDAL
    class DataType;
 }
 
-namespace dtGame
-{
-   class MessageParameter;
-}
-
 namespace dtHLAGM
 {
    class ObjectRuntimeMappingInfo;
@@ -95,6 +90,9 @@ namespace dtHLAGM
 
          ///A variable length string.
          static const RPRAttributeType STRING_TYPE;
+
+         ///A type for the articulation to be captured / sent
+         static const RPRAttributeType ARTICULATED_PART_TYPE;
 
       private:
          RPRAttributeType(const std::string& name, unsigned char id, size_t encodedLength):AttributeType(name, id, encodedLength)

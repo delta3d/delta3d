@@ -17,6 +17,7 @@
     <xsd:sequence>
       <xsd:element name="header" type="HeaderType"/>
       <xsd:element name="libraries" type="LibrariesType"/>
+      <xsd:element name="events" type="EventsType" minOccurs="0" maxOccurs="unbounded"/>
       <xsd:element name="actors" type="ActorsType"/>
     </xsd:sequence>
   </xsd:complexType>
@@ -45,6 +46,20 @@
           <xsd:sequence>
             <xsd:element name="name" type="xsd:string"/>
             <xsd:element name="version" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="EventsType">
+    <xsd:sequence>
+      <xsd:element name="event" minOccurs="0" maxOccurs="unbounded">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="id" type="xsd:string"/>
+            <xsd:element name="name" type="xsd:string"/>
+            <xsd:element name="description" type="xsd:string"/>
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
@@ -91,34 +106,16 @@
             <xsd:element name="resource" type="xsd:string" />
           </xsd:sequence>
           <xsd:element name="actorId" type="xsd:string" />
-          <xsd:element name="vector" type="VectorType"/>
+          <xsd:element name="group" type="GroupType"/>
           <xsd:element name="gameevent" type="xsd:string"/>
         </xsd:choice>
     </xsd:sequence>
   </xsd:complexType>
 
-  <xsd:complexType name="VectorType">
-    <xsd:choice>
-      <xsd:element name="string" type="xsd:string" minOccurs="1" maxOccurs="unbounded"/>
-      <xsd:element name="enumerated" type="xsd:string" minOccurs="1" maxOccurs="unbounded"/>
-      <xsd:element name="float" type="xsd:float" minOccurs="1" maxOccurs="unbounded"/>
-      <xsd:element name="double" type="xsd:double" minOccurs="1" maxOccurs="unbounded"/>
-      <xsd:element name="integer" type="xsd:int" minOccurs="1" maxOccurs="unbounded"/>
-      <xsd:element name="long" type="xsd:long" minOccurs="1" maxOccurs="unbounded"/>
-      <xsd:element name="vec3" type="Vec4Type" minOccurs="1" maxOccurs="unbounded"/>
-      <xsd:element name="vec3" type="Vec3Type" minOccurs="1" maxOccurs="unbounded"/>
-      <xsd:element name="vec2" type="Vec2Type" minOccurs="1" maxOccurs="unbounded"/>
-      <xsd:element name="boolean" type="xsd:boolean" minOccurs="1" maxOccurs="unbounded"/>
-      <xsd:element name="colorRGB" type="ColorRGBType" minOccurs="1" maxOccurs="unbounded"/>
-      <xsd:element name="colorRGBA" type="ColorRGBAType" minOccurs="1" maxOccurs="unbounded"/>
-      <xsd:sequence>
-        <!--this needs to be fixed to allow listing mutiple resources -->
-      	<xsd:element name="resourceType" type="xsd:string" />
-        <xsd:element name="resourceDisplayName" type="xsd:string" />
-        <xsd:element name="resource" type="xsd:string" />
-      </xsd:sequence>
-      <xsd:element name="actorId" type="xsd:string" minOccurs="1" maxOccurs="unbounded" />
-    </xsd:choice>
+  <xsd:complexType name="GroupType">
+    <xsd:sequence>
+        <xsd:element name="parameter" minOccurs="0" maxOccurs="unbounded" type="PropertyType"/>
+    </xsd:sequence>
   </xsd:complexType>
 
   <xsd:complexType name="Vec2Type">

@@ -300,7 +300,7 @@ namespace dtDAL
       myPropItor = mPropertyMap.begin();
       while(myPropItor != mPropertyMap.end() && copyPropItor != copy->mPropertyMap.end())
       {
-         copyPropItor->second->CopyFrom(myPropItor->second.get());
+         copyPropItor->second->CopyFrom(*myPropItor->second);
          ++copyPropItor;
          ++myPropItor;
       }

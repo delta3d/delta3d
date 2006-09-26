@@ -180,7 +180,7 @@ namespace dtABC
                DND_ENTER,
                DND_DRAG,
                DND_LEAVE,
-               DND_RELEASE,
+               DND_RELEASE
             };
    };
 
@@ -204,7 +204,7 @@ namespace dtABC
                FOCUS,
                UNFOCUS,
                KEYDOWN,
-               KEYUP,
+               KEYUP
             };
 
       enum  Modifier
@@ -215,7 +215,7 @@ namespace dtABC
                ALT         = BIT(4L),
                NUMLOCK     = BIT(3L),
                META        = BIT(5L),
-               SCROLLLOCK  = BIT(6L),
+               SCROLLLOCK  = BIT(6L)
             };
 
 #if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
@@ -436,6 +436,6 @@ namespace dtABC
       static   const int   KEY_F12;
    };
 
-};
+}
 
 #endif // DELTA_WIDGET

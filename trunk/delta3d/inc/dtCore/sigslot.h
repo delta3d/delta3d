@@ -2560,7 +2560,7 @@ namespace sigslot {
 		}
 	};
 
-}; // namespace sigslot
+} // namespace sigslot
 
 #endif // SIGSLOT_H__
 

@@ -42,7 +42,7 @@
 #include <xercesc/dom/DOMText.hpp>
 #include <xercesc/util/XMLString.hpp>
 
-XERCES_CPP_NAMESPACE_USE;
+XERCES_CPP_NAMESPACE_USE
 
 namespace dtABC
 {

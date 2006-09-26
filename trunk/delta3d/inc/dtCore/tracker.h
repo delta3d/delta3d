@@ -91,7 +91,7 @@ namespace dtCore
           */
          ISD_TRACKER_HANDLE mTrackerHandle;
    };
-};
+}
 
 
 #endif // DELTA_TRACKER

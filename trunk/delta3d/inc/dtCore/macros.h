@@ -45,7 +45,7 @@
 #ifdef IS_A
 #undef IS_A
 #endif
-#define IS_A(P, T) (dynamic_cast<T>(P)!=0)
+#define IS_A(P, T) (dynamic_cast<T>(P)!=NULL)
 
 //
 // The management layer declaration macro.  Should be included in the

@@ -258,6 +258,6 @@ namespace dtCore
          RefPtr<osg::Node> mLoadedFile; 
          
    };
-};
+}
 
 #endif // DELTA_PARTICLESYSTEM

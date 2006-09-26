@@ -69,6 +69,6 @@ namespace dtABC
       dtCore::RefPtr<Trigger>                   mTrigger;
       dtCore::RefPtr<osg::Node>                 mNode;      
    };
-};
+}
 
 #endif //DELTA_AUTO_TRIGGER

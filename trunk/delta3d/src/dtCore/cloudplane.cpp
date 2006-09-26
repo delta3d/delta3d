@@ -3,6 +3,7 @@
 #include <dtCore/moveearthtransform.h>
 #include <dtCore/system.h>
 #include <dtUtil/noisetexture.h>
+#include <dtUtil/log.h>
 
 #include <osg/BlendFunc>
 #include <osg/Fog>
@@ -32,13 +33,9 @@ CloudPlane::CloudPlane( int   octaves,
                         float density,
                         int   texSize,
                         float height,
-                        const std::string& name )
+                        const std::string& name,
+                        const std::string& textureFilePath)
    : EnvEffect(name),
-     mGeode(0),
-     mPlane(0),
-     mImage(0),
-     mCloudTexture(0),
-     mFog(0),
      mOctaves(octaves),
      mCutoff(cutoff),
      mFrequency(frequency),
@@ -47,27 +44,76 @@ CloudPlane::CloudPlane( int   octaves,
      mDensity(density),
      mHeight(height),
      mTexSize(texSize),
-     mWind(0),
-     mCloudColor(0),
-     mTexCoords(0),
-     mColors(0),
-     mXform(0)
+     mWind(NULL),
+     mCloudColor(NULL),
+     mTexCoords(NULL),
+     mColors(NULL)
 {
 	RegisterInstance(this);
 	if(mHeight > MAX_HEIGHT)
 		mHeight = MAX_HEIGHT;
 
-	SetOSGNode( new osg::Group() );
+	SetOSGNode(new osg::Group);
    GetOSGNode()->setNodeMask(0xf0000000);
 
-	Create();
-	AddSender(System::Instance());
+	Create(textureFilePath);
+	AddSender(&System::GetInstance());
 }
 
 CloudPlane::~CloudPlane()
 {
 	DeregisterInstance(this);
-   RemoveSender( System::Instance() );
+   RemoveSender(&System::GetInstance());
+}
+
+///Save generated texture to file
+///@return success of save
+bool CloudPlane::SaveTexture(const std::string &textureFilePath)
+{
+   if(!mImage.valid()) 
+   { 
+      return false; 
+   }
+
+   return osgDB::writeImageFile(*mImage, textureFilePath);
+}
+
+///Load generated texture from file
+///@return success of load
+bool CloudPlane::LoadTexture(const std::string &textureFilePath)
+{
+   osg::Image* image = osgDB::readImageFile(textureFilePath);
+   if(image != NULL)
+   {
+      mImage = image;
+      return true;
+   }
+   else
+   {
+      return false;
+   }
+}
+
+osg::Texture2D* CloudPlane::CreateCloudTexture( const std::string& filename )
+{
+   osg::Texture2D* texture = NULL;
+   mImage = filename == "" ? NULL : osgDB::readImageFile(filename);
+
+   if( ! mImage.valid() )
+   {
+      LOG_DEBUG("Creating 2D cloud texture..." );	
+      texture = createPerlinTexture();
+      if( texture == NULL )
+      {
+         LOG_DEBUG("Could not write 2D cloud texture to file." );	
+         LOG_DEBUG(filename );
+      }
+   }
+   else
+   {
+      texture = new osg::Texture2D(mImage.get());
+   }
+   return texture;
 }
 
 
@@ -106,7 +152,7 @@ osg::Texture2D* CloudPlane::createPerlinTexture()
 }
 
 
-void CloudPlane::Create() 
+void CloudPlane::Create(const std::string& textureFilePath) 
 {
 	mXform = new MoveEarthySkyWithEyePointTransform();
 	mXform->setCullingActive(false);
@@ -123,7 +169,7 @@ void CloudPlane::Create()
 	mPlane = createPlane(planeSize, mHeight);
 	osg::StateSet *stateset = mPlane->getOrCreateStateSet();
 
-	mCloudTexture = createPerlinTexture();
+   mCloudTexture = CreateCloudTexture(textureFilePath);
    stateset->setTextureAttributeAndModes(0, mCloudTexture.get());
 
 	// Texture filtering

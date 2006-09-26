@@ -67,8 +67,8 @@ namespace dtTest
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION( AStarTests );
 
-void AStarTests::setUp(){};
-void AStarTests::tearDown(){};
+void AStarTests::setUp(){}
+void AStarTests::tearDown(){}
 
 
 void AStarTests::init()

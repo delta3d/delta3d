@@ -9,7 +9,7 @@ overrideShLink = ''
 overrideShSuffix = ''
 
 # Grab all the sources from the DAL source directory.
-srcs = SGlob( '*.cpp' )
+srcs = env.SGlob( '*.cpp' )
 
 deps = [ 'dtDAL', 'dtUtil', 'dtCore', 'dtChar', 'dtABC', 'dtAudio', 'isense', 'ode',
         'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgText',
@@ -19,11 +19,11 @@ deps = [ 'dtDAL', 'dtUtil', 'dtCore', 'dtChar', 'dtABC', 'dtAudio', 'isense', 'o
         'Carbon', 'dtGame']
 
 defines = []
-if OS == 'windows':
+if env['OS'] == 'windows':
    defines = ['DT_PLUGIN']
 
 dtActors = env.BuildLib( 'dtActors', srcs, deps, defines,
                      overrideShLinkFlags = overrideShLink, overrideShLibSuffix = overrideShSuffix, prefixHeader = 'inc/prefix/dtdalprefix.h' )
 
-if OS == 'darwin':
+if env['OS'] == 'darwin':
    Depends(dtActors, libdtDAL)

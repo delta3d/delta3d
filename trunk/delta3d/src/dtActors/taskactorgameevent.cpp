@@ -110,7 +110,7 @@ namespace dtActors
       TaskActorGameEvent &task = static_cast<TaskActorGameEvent&>(GetGameActor());
 
       //Game event property.
-      AddProperty(new dtDAL::GameEventActorProperty("GameEvent","Game Event",
+      AddProperty(new dtDAL::GameEventActorProperty(*this, "GameEvent","Game Event",
                   dtDAL::MakeFunctor(task,&TaskActorGameEvent::SetGameEvent),
                   dtDAL::MakeFunctorRet(task,&TaskActorGameEvent::GetGameEvent),
                   "Sets and gets the game event being tracked by the task.",GROUPNAME));

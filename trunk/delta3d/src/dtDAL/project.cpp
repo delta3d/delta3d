@@ -30,13 +30,6 @@
 #	pragma warning(disable : 4267) // for warning C4267: 'argument' : conversion from 'size_t' to 'const unsigned int', possible loss of data
 #endif
 
-#include <xercesc/util/PlatformUtils.hpp>
-#include <xercesc/util/TransService.hpp>
-#include <xercesc/sax2/SAX2XMLReader.hpp>
-#include <xercesc/sax2/XMLReaderFactory.hpp>
-#include <xercesc/util/OutOfMemoryException.hpp>
-#include <xercesc/util/XMLUni.hpp>
-
 #ifdef _MSC_VER
 #	pragma warning(pop)
 #endif
@@ -49,14 +42,15 @@
 #include <dtUtil/stringutils.h>
 #include <dtUtil/fileutils.h>
 
-#include "dtDAL/project.h"
-#include "dtDAL/map.h"
-#include "dtDAL/mapxml.h"
-#include "dtDAL/datatype.h"
-#include "dtDAL/exceptionenum.h"
-#include "dtDAL/librarymanager.h"
-#include "dtDAL/actorproxyicon.h"
-#include "dtDAL/environmentactor.h"
+#include <dtDAL/project.h>
+#include <dtDAL/map.h>
+#include <dtDAL/mapxml.h>
+#include <dtDAL/mapxmlconstants.h>
+#include <dtDAL/datatype.h>
+#include <dtDAL/exceptionenum.h>
+#include <dtDAL/librarymanager.h>
+#include <dtDAL/actorproxyicon.h>
+#include <dtDAL/environmentactor.h>
 
 #include <dtAI/waypointmanager.h>
 #include <dtDAL/waypointactorproxy.h>
@@ -829,7 +823,7 @@ namespace dtDAL
    }
 
    //////////////////////////////////////////////////////////
-   void Project::SaveMapAs(const std::string& mapName, dtCore::Scene* pScene, const std::string& newName, const std::string& newFileName)
+   void Project::SaveMapAs(const std::string& mapName, const std::string& newName, const std::string& newFileName, dtCore::Scene* pScene)
    {
       if (!mValidContext)
          EXCEPT(dtDAL::ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
@@ -838,11 +832,11 @@ namespace dtDAL
          EXCEPT(dtDAL::ExceptionEnum::ProjectReadOnly, std::string("The context is readonly."));
 
       //The map must be loaded to do a saveAs, so we call getMap();
-      SaveMapAs(GetMap(mapName), pScene, newName, newFileName);
+      SaveMapAs(GetMap(mapName), newName, newFileName, pScene);
 
    }
    //////////////////////////////////////////////////////////
-   void Project::SaveMapAs(Map& map, dtCore::Scene* pScene, const std::string& newName, const std::string& newFileName)
+   void Project::SaveMapAs(Map& map, const std::string& newName, const std::string& newFileName, dtCore::Scene* pScene)
    {
       CheckMapValidity(map);
 
@@ -1171,7 +1165,7 @@ namespace dtDAL
    }
 
    //////////////////////////////////////////////////////////
-   void Project::GetHandlersForDataType(const DataType& resourceType, std::vector<dtCore::RefPtr<const ResourceTypeHandler> >& toFill) const
+   void Project::GetHandlersForDataType(const DataType& resourceType, std::vector<const ResourceTypeHandler* >& toFill) const
    {
       mResourceHelper.GetHandlersForDataType(resourceType, toFill);
    }

@@ -3,8 +3,7 @@
 
 namespace dtCore
 {
-   IMPLEMENT_ENUM(ExceptionEnum);
+   IMPLEMENT_ENUM(ExceptionEnum)
 
    ExceptionEnum ExceptionEnum::INVALID_PARAMETER("Invalid method parameter");   
-
 }

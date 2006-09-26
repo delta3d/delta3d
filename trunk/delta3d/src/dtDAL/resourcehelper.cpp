@@ -122,12 +122,12 @@ namespace dtDAL
    {
       mLogger = &dtUtil::Log::GetInstance("resourcehelper.cpp");
 
-      for (std::vector<dtUtil::Enumeration*>::const_iterator i = DataType::Enumerate().begin();
-           i != DataType::Enumerate().end(); ++i)
+      for (std::vector<dtDAL::DataType*>::const_iterator i = DataType::EnumerateType().begin();
+           i != DataType::EnumerateType().end(); ++i)
       {
          std::map<std::string, std::string> defFilter;
          defFilter.insert(std::make_pair("*","Any File"));
-         DataType& d = *static_cast<DataType*>(*i);
+         DataType& d = **i;
          if (d.IsResource())
          {
             std::string description;
@@ -288,17 +288,17 @@ namespace dtDAL
    //////////////////////////////////////////////////////////
    void ResourceHelper::GetHandlersForDataType(
       const DataType& resourceType,
-      std::vector<dtCore::RefPtr<const ResourceTypeHandler> >& toFill) const
+      std::vector<const ResourceTypeHandler*>& toFill) const
    {
       if (resourceType.IsResource())
       {
          toFill.clear();
-         std::set<dtCore::RefPtr<const ResourceTypeHandler> > tempSet;
+         std::set<const ResourceTypeHandler* > tempSet;
          //so I can use it as a lookup key in the map.
          DataType* dt = const_cast<DataType*>(&resourceType);
 
          //insert the default handler
-         tempSet.insert(dtCore::RefPtr<const ResourceTypeHandler>(mDefaultTypeHandlers.find(dt)->second.get()));
+         tempSet.insert(mDefaultTypeHandlers.find(dt)->second.get());
 
          //lookup the handlers by type.
          std::map<DataType*, std::map<std::string, dtCore::RefPtr<ResourceTypeHandler> > >::const_iterator found
@@ -310,7 +310,7 @@ namespace dtDAL
             for (std::map<std::string, dtCore::RefPtr<ResourceTypeHandler> >::const_iterator i = extMap.begin();
                  i != extMap.end(); ++i)
             {
-               tempSet.insert(dtCore::RefPtr<const ResourceTypeHandler>(i->second.get()));
+               tempSet.insert(i->second.get());
             }
          }
 
@@ -323,7 +323,7 @@ namespace dtDAL
             for (std::map<std::string, dtCore::RefPtr<ResourceTypeHandler> >::const_iterator i = extMap.begin();
                  i != extMap.end(); ++i)
             {
-               tempSet.insert(dtCore::RefPtr<const ResourceTypeHandler>(i->second.get()));
+               tempSet.insert(i->second.get());
             }
          }
 
@@ -331,7 +331,7 @@ namespace dtDAL
          for (std::multimap<DataType*, dtCore::RefPtr<ResourceTypeHandler> >::const_iterator i = mDirectoryImportingTypeHandlers.find(dt);
               i != mDirectoryImportingTypeHandlers.end() && i->first == dt; ++i)
          {
-            tempSet.insert(dtCore::RefPtr<const ResourceTypeHandler>(i->second.get()));
+            tempSet.insert(i->second.get());
          }
 
          toFill.insert(toFill.begin(), tempSet.begin(), tempSet.end());
@@ -742,10 +742,10 @@ namespace dtDAL
    void ResourceHelper::IndexResources(dtUtil::tree<ResourceTreeNode>& tree) const
    {
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-      for (std::vector<dtUtil::Enumeration *>::const_iterator i = DataType::Enumerate().begin();
-           i != DataType::Enumerate().end(); ++i)
+      for (std::vector<dtDAL::DataType *>::const_iterator i = DataType::EnumerateType().begin();
+           i != DataType::EnumerateType().end(); ++i)
       {
-         const DataType& dt = static_cast<DataType&>(**i);
+         const DataType& dt = **i;
          if (dt.IsResource())
          {
             ResourceTreeNode newNode(dt.GetName(), "");

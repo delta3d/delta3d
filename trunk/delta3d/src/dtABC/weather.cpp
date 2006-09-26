@@ -12,7 +12,8 @@ namespace dtABC
 
 IMPLEMENT_MANAGEMENT_LAYER(Weather)
 
-Weather::Weather(): Base("Weather"),
+Weather::Weather( const std::string& textureDirectory ): Base("Weather"),
+   mClouds(NULL),
    mEnvironment( new dtCore::Environment("weatherEnv") ),
    mCloudType(CLOUD_CLEAR),
    mVisType(VIS_UNLIMITED),
@@ -27,12 +28,9 @@ Weather::Weather(): Base("Weather"),
    mEnvironment->SetFogEnable(true);
    mEnvironment->SetFogMode(dtCore::Environment::EXP2);
 
-   mClouds.push_back(new dtCore::CloudPlane(6, 0.75f, 2, 1, .2, .96, 512, 1100.f));//few
-   mClouds.push_back(new dtCore::CloudPlane(6, 0.5f, 4, 1, .3, .97,  512, 1000.f));//scattered
-   mClouds.push_back(new dtCore::CloudPlane(6, 0.5f, 4, 1, .3, .96,  512, 800.f)); //broken
-   mClouds.push_back(new dtCore::CloudPlane(6, 0.4f, 6, 1, .2, .98,  512, 600.f));//overcast
+   mClouds.resize(4,NULL);
 
-   SetTheme(mTheme);
+   SetTheme(mTheme, textureDirectory);
 
    RegisterInstance(this);
 }
@@ -42,7 +40,7 @@ Weather::~Weather()
    DeregisterInstance(this);
 }
 
-void Weather::SetTheme(const WeatherTheme theme)
+void Weather::SetTheme(const WeatherTheme theme, const std::string textureDirectory )
 {
    if (theme == mTheme)
    {
@@ -54,28 +52,28 @@ void Weather::SetTheme(const WeatherTheme theme)
       case THEME_CLEAR:
       {
          SetBasicWindType(WIND_BREEZE);
-         SetBasicCloudType(CLOUD_CLEAR);
+         SetBasicCloudType(CLOUD_CLEAR, textureDirectory);
          SetBasicVisibilityType(VIS_UNLIMITED);
    	   break;
       }
       case THEME_FAIR:
       {
          SetBasicWindType(WIND_LIGHT);
-         SetBasicCloudType(CLOUD_FEW);
+         SetBasicCloudType(CLOUD_FEW, textureDirectory);
          SetBasicVisibilityType(VIS_MODERATE);
    	   break;
       }
       case THEME_FOGGY:
       {
          SetBasicWindType(WIND_LIGHT);
-         SetBasicCloudType(CLOUD_OVERCAST);
+         SetBasicCloudType(CLOUD_OVERCAST, textureDirectory);
          SetBasicVisibilityType(VIS_CLOSE);
    	   break;
       }
       case THEME_RAINY:
       {
          SetBasicWindType(WIND_MODERATE);
-         SetBasicCloudType(CLOUD_OVERCAST);
+         SetBasicCloudType(CLOUD_OVERCAST, textureDirectory);
          SetBasicVisibilityType(VIS_LIMITED);
    	   break;
       }
@@ -90,7 +88,7 @@ void Weather::SetTheme(const WeatherTheme theme)
    mTheme = theme;
 }
 
-void Weather::SetBasicCloudType(const CloudType type)
+void Weather::SetBasicCloudType(const CloudType type, const std::string textureDirectory)
 {
    //create a set of cloud layers EnvEffects to represent the 
    //supplied cloud type
@@ -106,8 +104,8 @@ void Weather::SetBasicCloudType(const CloudType type)
 
    //remove any existing Clouds that have been added to the Env
    for ( CloudPlaneList::iterator it = mClouds.begin();
-         it != mClouds.end(); 
-         ++it )
+      it != mClouds.end(); 
+      ++it )
    {
       mEnvironment->RemEffect( it->get() );
    }
@@ -120,21 +118,41 @@ void Weather::SetBasicCloudType(const CloudType type)
       }
       case CLOUD_FEW:
       {
+         if( mClouds[CLOUD_FEW-1].valid() == false )
+         {
+            mClouds[CLOUD_FEW-1] = new dtCore::CloudPlane(6, 0.75f, 2, 1, .2, .96, 512, 1100.f, 
+               "Clouds Few", textureDirectory);//few
+         }
          mEnvironment->AddEffect( mClouds[CLOUD_FEW-1].get() );
         	break;
       }
       case CLOUD_SCATTERED:
       {
+         if( mClouds[CLOUD_SCATTERED-1].valid() == false )
+         {
+            mClouds[CLOUD_SCATTERED-1] = new dtCore::CloudPlane(6, 0.5f, 4, 1, .3, .97,  512, 1000.f, 
+               "Clouds Scattered", textureDirectory);// scattered
+         }
          mEnvironment->AddEffect( mClouds[CLOUD_SCATTERED-1].get() );
-   	   break;
+         break;
       }
       case CLOUD_BROKEN:
       {
+         if( mClouds[CLOUD_BROKEN-1].valid() == false )
+         {
+            mClouds[CLOUD_BROKEN-1] = new dtCore::CloudPlane(6, 0.5f, 4, 1, .3, .96,  512, 800.f, 
+               "Clouds Broken", textureDirectory); //broken
+         }
          mEnvironment->AddEffect( mClouds[CLOUD_BROKEN-1].get() );
          break;
       }
    	case CLOUD_OVERCAST:
       {
+         if( mClouds[CLOUD_OVERCAST-1].valid() == false )
+         {
+            mClouds[CLOUD_OVERCAST-1] = new dtCore::CloudPlane(6, 0.4f, 6, 1, .2, .98,  512, 600.f, 
+               "Clouds Overcast", textureDirectory);//overcast
+         }
          mEnvironment->AddEffect( mClouds[CLOUD_OVERCAST-1].get() );
          break;   
       }
@@ -289,6 +307,52 @@ void Weather::RemoveChild( dtCore::DeltaDrawable *child)
    {
       mEnvironment->RemoveChild(child);
    }
+}
+
+int Weather::SaveCloudTextures( const std::string& textureDirectory )
+{
+   int saveCount = 0;
+
+   if( mClouds[CLOUD_FEW-1].valid()
+      && mClouds[CLOUD_FEW-1]->SaveTexture(textureDirectory+"/_WeatherCloudFew.png") )
+      saveCount++;
+
+   if( mClouds[CLOUD_SCATTERED-1].valid()
+      && mClouds[CLOUD_SCATTERED-1]->SaveTexture(textureDirectory+"/_WeatherCloudScattered.png") )
+      saveCount++;
+
+   if( mClouds[CLOUD_BROKEN-1].valid()
+      && mClouds[CLOUD_BROKEN-1]->SaveTexture(textureDirectory+"/_WeatherCloudBroken.png") )
+      saveCount++;
+
+   if( mClouds[CLOUD_OVERCAST-1].valid()
+      && mClouds[CLOUD_OVERCAST-1]->SaveTexture(textureDirectory+"/_WeatherCloudOvercast.png") )
+      saveCount++;
+
+   return saveCount;
+}
+
+int Weather::LoadCloudTextures( const std::string& textureDirectory )
+{
+   int loadCount = 0;
+
+   if( mClouds[CLOUD_FEW-1].valid()
+      && mClouds[CLOUD_FEW-1]->LoadTexture(textureDirectory+"/_WeatherCloudFew.png") )
+      loadCount++;
+
+   if( mClouds[CLOUD_SCATTERED-1].valid()
+      && mClouds[CLOUD_SCATTERED-1]->LoadTexture(textureDirectory+"/_WeatherCloudScattered.png") )
+      loadCount++;
+   
+   if( mClouds[CLOUD_BROKEN-1].valid() 
+      && mClouds[CLOUD_BROKEN-1]->LoadTexture(textureDirectory+"/_WeatherCloudBroken.png") )
+      loadCount++;
+   
+   if( mClouds[CLOUD_OVERCAST-1].valid()
+      && mClouds[CLOUD_OVERCAST-1]->LoadTexture(textureDirectory+"/_WeatherCloudOvercast.png") )
+      loadCount++;
+
+   return loadCount++;
 }
 
 }

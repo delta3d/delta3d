@@ -2,6 +2,7 @@
 #define DELTA_MATHDEFINES
 
 #include <cstdlib>
+#include <cmath>
 
 #ifndef RAND_MAX
 #define RAND_MAX 0x7fff
@@ -57,6 +58,15 @@ namespace dtUtil
       return x + t * (y - x);
    }
 
+   template <typename T> 
+   bool IsFinite(const T value)
+   {
+      #if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
+         return _finite(value) ? true : false;
+      #else
+         return std::isfinite(value) ? true : false;
+      #endif
+   }
  
    /// Normalizes a value within a specified space range.
    /// Usage:  To find the normalized value for a range:
@@ -100,6 +110,25 @@ namespace dtUtil
    {
       return( CalculateValueForRange( CalculateNormal(sX,xMin,xMax), yMin, yMax ) );
    }
+
+   /**
+    * Does an epsilon equals on an any osg::Vec# 
+    * @param lhs The first vector.
+    * @param rhs The second vector.
+    * @param size The size or the vec.
+    * @param epsilon the epsilon to use in the compare.
+    */
+   template <typename TVec, typename Real>
+   inline bool Equivalent(const TVec& lhs, const TVec& rhs, size_t size, Real epsilon)
+   {
+      for (size_t i = 0; i < size; i++)
+      {
+         if (!osg::equivalent(lhs[i], rhs[i], epsilon))
+            return false;
+      }
+      return true;
+   }
+
 }
 
 

@@ -131,11 +131,11 @@ namespace dtUtil
    * Trims whitespace off the front and end of a string
    * @param toTrim the string to trim.
    */
-   inline void trim(std::string& toTrim)
+   inline const std::string& trim(std::string& toTrim)
    {
       if( toTrim.empty() )
       {
-         return;
+         return toTrim;
       }
 
       // TODO: All this code should be replaced with STL algorithms
@@ -153,7 +153,7 @@ namespace dtUtil
       }
 
       if(toTrim.empty())
-         return;
+         return toTrim;
 
       for (unsigned int i = (toTrim.size() - 1); i >= 0; --i)
       {
@@ -168,6 +168,7 @@ namespace dtUtil
             break;
          }
       }
+      return toTrim;
    }
 
    /**
@@ -270,6 +271,6 @@ namespace dtUtil
    }
 
    bool DT_UTIL_EXPORT Match(char* wildCards, char* str);
-};
+}
 
 #endif // DELTA_STRING_UTILS_INC

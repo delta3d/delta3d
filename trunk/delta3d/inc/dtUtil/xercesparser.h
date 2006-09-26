@@ -52,6 +52,6 @@ namespace dtUtil
                  XERCES_CPP_NAMESPACE_QUALIFIER ContentHandler& handler,
                  const std::string& schema="");
    };
-};
+}
 
 #endif  // DELTA_XERCES_PARSER_INC

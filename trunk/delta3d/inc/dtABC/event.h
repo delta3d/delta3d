@@ -38,7 +38,6 @@ namespace dtABC
 
    };
 
-};
-
+}
 
 #endif //DELTA_EVENT

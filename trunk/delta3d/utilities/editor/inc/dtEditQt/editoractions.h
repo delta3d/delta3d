@@ -1,24 +1,24 @@
-/*
-* Delta3D Open Source Game and Simulation Engine 
-* Simulation, Training, and Game Editor (STAGE)
-* Copyright (C) 2005, BMH Associates, Inc.
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free
-* Software Foundation; either version 2 of the License, or (at your option)
-* any later version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this library; if not, write to the Free Software Foundation, Inc.,
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*
-* Curtiss Murphy
-*/
+/* -*-c++-*-
+ * Delta3D Open Source Game and Simulation Engine 
+ * Simulation, Training, and Game Editor (STAGE)
+ * Copyright (C) 2005, BMH Associates, Inc.
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * Curtiss Murphy
+ */
 #ifndef DELTA_EDTIOR_ACTIONS
 #define DELTA_EDTIOR_ACTIONS
 
@@ -27,7 +27,7 @@
 #include <vector>
 #include <osg/Referenced>
 #include <dtDAL/actorproxy.h>
-#include "dtEditQt/typedefs.h"
+#include <dtEditQt/typedefs.h>
 #include <dtCore/refptr.h>
 
 class QAction;
@@ -63,19 +63,20 @@ namespace dtEditQt
 
   public:
 
-      int  saveMilliSeconds;
-      bool wasCancelled;
-    /**
+   int  saveMilliSeconds;
+   bool wasCancelled;
+   
+   /**
     * Gets the singleton instance of the EditorActions.
     * @return Returns the singleton instance.
     */
-    static EditorActions &getInstance();
+   static EditorActions &getInstance();
 
     /**
      * Returns the window name with a *appended, if modified
      * @return The new name
      */
-    std::string getWindowName();//bool modified = false, bool includesMap = true);
+    const std::string getWindowName() const;//bool modified = false, bool includesMap = true);
 
     // Initialized the recent items actions
     void setupRecentItems();
@@ -169,6 +170,12 @@ namespace dtEditQt
 
     // Action - Edit - Map Properties Editor
     QAction *actionEditMapProperties;
+
+    // Action - Edit - Map Events Editor
+    QAction *actionEditMapEvents;
+
+    // Action - Edie - Task Editor
+    QAction *actionEditTaskEditor;
 
     // Action - Project - Change project context.
     //QAction *actionProjectChangeContext;
@@ -266,6 +273,11 @@ namespace dtEditQt
     void slotToggleTerrainPaging();
 
     /**
+     * Slot - Edit - Task Editor
+     */
+    void slotTaskEditor();
+
+    /**
      * Slot - Edit - Goto Actor. Places the camera at the selected actor. 
      */
     void slotEditGotoActor();
@@ -284,6 +296,11 @@ namespace dtEditQt
      * Slot - Edit Lib Edit event.  Spawns the library editor.
      */
     void slotEditMapLibraries();
+
+    /**
+     * Slot - Edit Game Events Edit event.  Spawns the game event editor.
+     */
+    void slotEditMapEvents();
 
     /**
      * Slot - Edit Map Properties event.  Spawns the map properties editor.

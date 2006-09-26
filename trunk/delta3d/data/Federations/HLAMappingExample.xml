@@ -66,13 +66,6 @@
                 <gameDataType>VEC3</gameDataType>
                 <gameRequired>true</gameRequired>
                 <default></default>
-                <!-- this should be ignored -->
-                <enumerationMapping>
-                   <value id="0">No Damage</value>
-                   <value id="1">Slight Damage</value>
-                   <value id="2">Moderate Damage</value>
-                   <value id="3">Destroyed</value>
-                </enumerationMapping>
             </attrToProp>            
             <attrToProp>
                 <hlaName>WorldLocation</hlaName>

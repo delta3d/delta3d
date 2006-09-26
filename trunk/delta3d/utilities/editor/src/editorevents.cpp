@@ -184,6 +184,34 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
+    void EditorEvents::emitGameEventAdded()
+    {
+        LOG_INFO("User added a game event");
+        emit mapGameEventAdded();
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void EditorEvents::emitGameEventEdited()
+    {
+        LOG_INFO("User edited a game event");
+        emit mapGameEventEdited();
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void EditorEvents::emitGameEventAboutToBeRemoved()
+    {
+        LOG_INFO("User is about to remove an event");
+        emit mapGameEventAboutToBeRemoved();
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void EditorEvents::emitGameEventRemoved()
+    {
+        LOG_INFO("User removed an event");
+        emit mapGameEventRemoved();
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
     void EditorEvents::emitEditorPreferencesChanged()
     {
         LOG_INFO("User preferences have changed.");

@@ -25,8 +25,8 @@
 #include <dtCore/physical.h>
 #include <dtDAL/physicalactorproxy.h>
 #include <dtDAL/exceptionenum.h>
-#include "dtGame/invokable.h"
-#include "dtGame/export.h"
+#include <dtGame/invokable.h>
+#include <dtGame/export.h>
 
 namespace dtGame
 {

@@ -428,7 +428,7 @@ namespace dtCore
          ///private method used to ground clamp or adjust the falling velocity/position
          void AdjustElevation(osg::Vec3 &xyz, double deltaFrameTime);
    };
-};
+}
 
 
 #endif // DELTA_FPSMOTIONMODEL

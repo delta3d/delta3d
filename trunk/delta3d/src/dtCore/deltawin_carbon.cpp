@@ -99,7 +99,6 @@ DeltaWin::Resolution DeltaWin::GetCurrentResolution()
    }
    
    Producer::Display* dpy = &displays[0];
-   delete[] displays;
 
    w = CGDisplayPixelsWide(*dpy);
    h = CGDisplayPixelsHigh(*dpy);
@@ -108,6 +107,9 @@ DeltaWin::Resolution DeltaWin::GetCurrentResolution()
    // add next line and on following line replace hard coded depth and refresh rate
    int refresh =  (int)getDictDouble (CGDisplayCurrentMode (*dpy), kCGDisplayRefreshRate);
    int depth = (int)CGDisplayBitsPerPixel(*dpy);
+
+   delete[] displays;
+
    DeltaWin::Resolution result = { w,h, depth, refresh };
    return result;
 }

@@ -5,7 +5,7 @@ import sys
 # Import the variables defined in the global SConstruct build script.
 Import ('*')
 
-#if OS == 'darwin':
+#if env['OS'] == 'darwin':
    #overrideShLink = '$LINKFLAGS -bundle -flat_namespace -undefined suppress'
    #overrideShSuffix = '.dylib'
 #else:
@@ -14,7 +14,7 @@ overrideShLink = ''
 overrideShSuffix = ''
 
 # Grab all the sources from the DAL source directory.
-sources = SGlob('*.cpp')
+sources = env.SGlob('*.cpp')
 
 testGameActorLibraryDeps =[ 'dtGame', 'dtDAL', 'dtUtil', 'dtCore', 'ode', 'OpenThreads', 'osg',
                             'osgDB', 'osgParticle', 'osgText', 'osgUtil',
@@ -23,7 +23,7 @@ testGameActorLibraryDeps =[ 'dtGame', 'dtDAL', 'dtUtil', 'dtCore', 'ode', 'OpenT
                             'Advapi32', 'Rpcrt4', 'Winmm', 'Gdi32', 'uuid', 'Xxf86vm',
                             'CoreFoundation', 'IOKit', 'Carbon', 'dtActors' ]
 
-#if OS == 'windows':
+#if env['OS'] == 'windows':
 #   testGameActorLibraryDeps += ['dtActors']
 
 testGameActorLibrary = env.BuildLib( 'testGameActorLibrary', sources, testGameActorLibraryDeps, ['DT_EXAMPLE_LIBRARY'], 

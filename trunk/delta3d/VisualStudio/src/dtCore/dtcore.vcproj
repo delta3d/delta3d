@@ -195,6 +195,9 @@
 				RelativePath="..\..\..\src\dtCore\flymotionmodel.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtCore\fpscollider.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtCore\fpsmotionmodel.cpp">
 			</File>
 			<File
@@ -247,6 +250,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtCore\moveearthtransform.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtCore\nodecollector.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtCore\notify.cpp">
@@ -414,6 +420,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtCore\flymotionmodel.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtCore\fpscollider.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtCore\fpsmotionmodel.h">

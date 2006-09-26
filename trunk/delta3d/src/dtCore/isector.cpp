@@ -100,7 +100,7 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    bool Isector::Update()
    {
-      if( !mSceneRoot.valid() && mScene == 0 )
+      if( !mSceneRoot.valid() && mScene == NULL )
       {
          return false;
       }
@@ -115,7 +115,7 @@ namespace dtCore
       {
          mSceneRoot->GetOSGNode()->accept(mIntersectVisitor);
       }
-      else if( mScene != 0 )
+      else if( mScene != NULL )
       {
          mScene->GetSceneNode()->accept(mIntersectVisitor);
       }
@@ -133,7 +133,7 @@ namespace dtCore
       }
       else
       {
-         mClosestDrawable = 0;
+         mClosestDrawable = NULL;
          return false;
       }
    }
@@ -141,9 +141,9 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    dtCore::DeltaDrawable *Isector::MapNodePathToDrawable(osg::NodePath &nodePath)
    {
-      if( ( !mSceneRoot.valid() && mScene == 0 ) || nodePath.empty() )
+      if( ( !mSceneRoot.valid() && mScene == NULL ) || nodePath.empty() )
       {
-         return 0;
+         return NULL;
       }
    
       std::set<osg::Node *> nodeCache;
@@ -164,7 +164,7 @@ namespace dtCore
       {
          drawables.push(mSceneRoot.get());
       }
-      else if( mScene != 0 )
+      else if( mScene != NULL )
       {
          for( unsigned i = 0; i < mScene->GetNumberOfAddedDrawable(); ++i )
          {
@@ -173,7 +173,7 @@ namespace dtCore
       }
       else
       {
-         return 0;
+         return NULL;
       }
    
       while (!drawables.empty())

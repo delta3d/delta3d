@@ -608,7 +608,7 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     void Viewport::updateActorProxyBillboards()
     {
-        dtDAL::Map *currentMap = EditorData::getInstance().getCurrentMap().get();
+        dtDAL::Map *currentMap = EditorData::getInstance().getCurrentMap();
         std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > proxies;
         std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >::iterator itor;
 

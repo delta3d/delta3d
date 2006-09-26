@@ -149,6 +149,9 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtUtil\datastream.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtUtil\exception.cpp">
 			</File>
 			<File
@@ -221,6 +224,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtUtil\coordinates.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtUtil\datastream.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtUtil\deprecationmgr.h">

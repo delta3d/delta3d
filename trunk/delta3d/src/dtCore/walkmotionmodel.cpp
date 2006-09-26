@@ -31,9 +31,9 @@ IMPLEMENT_MANAGEMENT_LAYER(WalkMotionModel)
 WalkMotionModel::WalkMotionModel(Keyboard* keyboard,
                                  Mouse* mouse)
    : MotionModel("WalkMotionModel"),
-     mWalkForwardBackwardAxis(0),
-     mTurnLeftRightAxis(0),
-     mSidestepLeftRightAxis(0),
+     mWalkForwardBackwardAxis(NULL),
+     mTurnLeftRightAxis(NULL),
+     mSidestepLeftRightAxis(NULL),
      mMaximumWalkSpeed(10.0f),
      mMaximumTurnSpeed(90.0f),
      mMaximumSidestepSpeed(5.0f),
@@ -43,12 +43,12 @@ WalkMotionModel::WalkMotionModel(Keyboard* keyboard,
 {
    RegisterInstance(this);
    
-   if(keyboard != 0 && mouse != 0)
+   if(keyboard != NULL && mouse != NULL)
    {
       SetDefaultMappings(keyboard, mouse);
    }
    
-   AddSender(System::Instance());
+   AddSender(&System::GetInstance());
 }
 
 /**
@@ -56,7 +56,7 @@ WalkMotionModel::WalkMotionModel(Keyboard* keyboard,
  */
 WalkMotionModel::~WalkMotionModel()
 {
-   RemoveSender(System::Instance());
+   RemoveSender(&System::GetInstance());
    
    DeregisterInstance(this);
 }

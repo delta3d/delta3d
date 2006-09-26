@@ -1,4 +1,4 @@
-/* 
+/* -*-c++-*-
  * Delta3D Open Source Game and Simulation Engine 
  * Simulation, Training, and Game Editor (STAGE)
  * Copyright (C) 2005, BMH Associates, Inc. 
@@ -22,8 +22,8 @@
 #ifndef DELTA_DYNAMIC_ACTOR_CONTROL
 #define DELTA_DYNAMIC_ACTOR_CONTROL
 
-#include "dtEditQt/dynamicabstractcontrol.h"
-#include "dtEditQt/dynamicsubwidgets.h"
+#include <dtEditQt/dynamicabstractcontrol.h>
+#include <dtEditQt/dynamicsubwidgets.h>
 
 // Forward References
 namespace dtDAL
@@ -124,7 +124,7 @@ namespace dtEditQt
           * @param className The class name to search for
           * @return A vector with the name and proxy pointer mapped 
           */
-         std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > GetActorProxies(const std::string &className);
+         void GetActorProxies(std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill, const std::string &className);
 
          dtDAL::ActorActorProperty *myProperty;
 

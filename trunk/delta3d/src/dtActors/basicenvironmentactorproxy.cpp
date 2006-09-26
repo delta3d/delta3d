@@ -153,7 +153,8 @@ namespace dtActors
       dtGame::EnvironmentActor(proxy),
       mIsCloudPlaneEnabled(false),
       mWeather(new dtABC::Weather),
-      mCloudPlane(new dtCore::CloudPlane(6, 0.5f, 6, 1, 0.3f, 0.96f, 512, 1400.0f))
+      mCloudPlane( NULL ),//new dtCore::CloudPlane(6, 0.5f, 6, 1, 0.3f, 0.96f, 512, 1400.0f))
+      mWeatherTheme(dtABC::Weather::THEME_CLEAR)
    {
       AddChild(mWeather->GetEnvironment());
       EnableFog(false);
@@ -198,18 +199,6 @@ namespace dtActors
       mAddedActors.clear();
    }
 
-   void BasicEnvironmentActor::GetAllActors(std::vector<dtDAL::ActorProxy*> &vec)
-   {
-      vec.clear();
-
-      std::map<dtCore::RefPtr<dtDAL::ActorProxy>, dtCore::DeltaDrawable*>::iterator i;
-      for(i = mAddedActors.begin(); i != mAddedActors.end(); ++i)
-      {
-         dtCore::RefPtr<dtDAL::ActorProxy> proxy = i->first;
-         vec.push_back(proxy.get());
-      }
-   }
-
    void BasicEnvironmentActor::GetAllActors(std::vector<const dtDAL::ActorProxy*> &vec) const
    {
       vec.clear();
@@ -217,8 +206,8 @@ namespace dtActors
       std::map<dtCore::RefPtr<dtDAL::ActorProxy>, dtCore::DeltaDrawable*>::const_iterator i;
       for(i = mAddedActors.begin(); i != mAddedActors.end(); ++i)
       {
-         dtCore::RefPtr<dtDAL::ActorProxy> proxy = i->first;
-         vec.push_back(proxy.get());
+         const dtDAL::ActorProxy *proxy = i->first.get();
+         vec.push_back(proxy);
       }
    }
 
@@ -258,6 +247,11 @@ namespace dtActors
       return dtUtil::TimeAsUTC(currentTime);
    }
 
+   dtABC::Weather& BasicEnvironmentActor::GetWeather()
+   {
+      return *mWeather;
+   }
+
    std::string BasicEnvironmentActor::GetTimeAndDateString() const
    {
       std::ostringstream oss;
@@ -294,12 +288,15 @@ namespace dtActors
 
    void BasicEnvironmentActor::EnableCloudPlane(bool enable)
    {
+      if( enable == false && mIsCloudPlaneEnabled )
+         mWeatherTheme = mWeather->GetTheme();
+
       mIsCloudPlaneEnabled = enable;
 
       if(mIsCloudPlaneEnabled)
-         mWeather->GetEnvironment()->AddEffect(mCloudPlane.get());
+         mWeather->SetTheme(mWeatherTheme);
       else
-         mWeather->GetEnvironment()->RemEffect(mCloudPlane.get());
+         mWeather->SetTheme(dtABC::Weather::THEME_CLEAR);
    }
 
    bool BasicEnvironmentActor::IsCloudPlaneEnabled() const
@@ -319,9 +316,9 @@ namespace dtActors
 
    BasicEnvironmentActor::VisibilityTypeEnum& BasicEnvironmentActor::GetWeatherVisibility()
    {
-      for(unsigned int i = 0; i < BasicEnvironmentActor::VisibilityTypeEnum::Enumerate().size(); i++)
+      for(unsigned int i = 0; i < BasicEnvironmentActor::VisibilityTypeEnum::EnumerateType().size(); i++)
       {
-         BasicEnvironmentActor::VisibilityTypeEnum &v = static_cast<BasicEnvironmentActor::VisibilityTypeEnum&>(*BasicEnvironmentActor::VisibilityTypeEnum::Enumerate()[i]);
+         BasicEnvironmentActor::VisibilityTypeEnum &v = *BasicEnvironmentActor::VisibilityTypeEnum::EnumerateType()[i];
 
          if(mWeather->GetBasicVisibilityType() == v.GetEnumValue())
             return v;
@@ -338,7 +335,7 @@ namespace dtActors
    {
       for(unsigned int i = 0; i < BasicEnvironmentActor::WeatherThemeEnum::Enumerate().size(); i++)
       {
-         BasicEnvironmentActor::WeatherThemeEnum &v = static_cast<BasicEnvironmentActor::WeatherThemeEnum&>(*BasicEnvironmentActor::WeatherThemeEnum::Enumerate()[i]);
+         BasicEnvironmentActor::WeatherThemeEnum &v = *BasicEnvironmentActor::WeatherThemeEnum::EnumerateType()[i];
 
          if(mWeather->GetTheme() == v.GetEnumValue())
             return v;
@@ -358,9 +355,9 @@ namespace dtActors
 
    BasicEnvironmentActor::WindTypeEnum& BasicEnvironmentActor::GetWindType()
    {
-      for(unsigned int i = 0; i < BasicEnvironmentActor::WindTypeEnum::Enumerate().size(); i++)
+      for(unsigned int i = 0; i < BasicEnvironmentActor::WindTypeEnum::EnumerateType().size(); i++)
       {
-         BasicEnvironmentActor::WindTypeEnum &v = static_cast<BasicEnvironmentActor::WindTypeEnum&>(*BasicEnvironmentActor::WindTypeEnum::Enumerate()[i]);
+         BasicEnvironmentActor::WindTypeEnum &v = *BasicEnvironmentActor::WindTypeEnum::EnumerateType()[i];
 
          if(mWeather->GetBasicWindType() == v.GetEnumValue())
             return v;
@@ -400,9 +397,9 @@ namespace dtActors
 
    BasicEnvironmentActor::TimePeriodEnum& BasicEnvironmentActor::GetTimePeriod() const
    {
-      for(unsigned int i = 0; i < BasicEnvironmentActor::TimePeriodEnum::Enumerate().size(); i++)
+      for(unsigned int i = 0; i < BasicEnvironmentActor::TimePeriodEnum::EnumerateType().size(); i++)
       {
-         BasicEnvironmentActor::TimePeriodEnum &v = static_cast<BasicEnvironmentActor::TimePeriodEnum&>(*BasicEnvironmentActor::TimePeriodEnum::Enumerate()[i]);
+         BasicEnvironmentActor::TimePeriodEnum &v = *BasicEnvironmentActor::TimePeriodEnum::EnumerateType()[i];
 
          dtABC::Weather::TimePeriod p;
          dtABC::Weather::Season s;
@@ -424,9 +421,9 @@ namespace dtActors
 
    BasicEnvironmentActor::SeasonEnum& BasicEnvironmentActor::GetSeason() const
    {
-      for(unsigned int i = 0; i < BasicEnvironmentActor::SeasonEnum::Enumerate().size(); i++)
+      for(unsigned int i = 0; i < BasicEnvironmentActor::SeasonEnum::EnumerateType().size(); i++)
       {
-         BasicEnvironmentActor::SeasonEnum &v = static_cast<BasicEnvironmentActor::SeasonEnum&>(*BasicEnvironmentActor::SeasonEnum::Enumerate()[i]);
+         BasicEnvironmentActor::SeasonEnum &v = *BasicEnvironmentActor::SeasonEnum::EnumerateType()[i];
 
          dtABC::Weather::TimePeriod p;
          dtABC::Weather::Season s;

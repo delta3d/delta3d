@@ -474,6 +474,6 @@ namespace dtABC
       }
    }
 
-};  // end dtABC namespace
+}  // end dtABC namespace
 
 #endif // DELTA_STATEMANAGER

@@ -23,23 +23,19 @@
 #include <iostream>
 #include <osg/Math>
 #include <osg/io_utils>
-
+#include <osg/Endian>
 #include <dtUtil/log.h>
-
 #include <dtCore/refptr.h>
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
 #include <dtCore/globals.h>
-
 #include <dtDAL/datatype.h>
 #include <dtDAL/resourcedescriptor.h>
 #include <dtDAL/actortype.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/project.h>
-
 #include <dtABC/application.h>
-
-#include <dtGame/datastream.h>
+#include <dtUtil/datastream.h>
 #include <dtGame/messageparameter.h>
 #include <dtGame/machineinfo.h>
 #include <dtGame/gameactor.h>
@@ -48,17 +44,12 @@
 #include <dtGame/messagefactory.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/actorupdatemessage.h>
-#include <dtGame/actorupdatemessage.h>
 #include <dtGame/exceptionenum.h>
 #include <dtGame/rulescomponent.h>
 #include <dtGame/defaultmessageprocessor.h>
 #include <dtGame/environmentactor.h>
 #include <dtActors/playerstartactorproxy.h>
-
 #include <testGameActorLibrary/testplayer.h>
-
-#include <osg/Endian>
-
 #include <cppunit/extensions/HelperMacros.h>
 
 #if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
@@ -298,7 +289,7 @@ void GameManagerTests::TestApplicationMember()
 
 void GameManagerTests::TestDataStream()
 {
-   dtGame::DataStream ds;
+   dtUtil::DataStream ds;
 
    const bool           boolean1 =  false;
    const bool           boolean2 =  true;
@@ -419,7 +410,7 @@ void GameManagerTests::TestDataStream()
          osg::swapBytes((char *)&numList[3], sizeof(unsigned int));
       }
 
-      dtGame::DataStream ds2((char *)&numList[0],sizeof(unsigned int)*4,false);
+      dtUtil::DataStream ds2((char *)&numList[0],sizeof(unsigned int)*4,false);
       ds2.SetForceLittleEndian(true);
       ds2 >> numList2[0] >> numList2[1] >> numList2[2] >> numList2[3];
 

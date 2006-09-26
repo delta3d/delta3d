@@ -20,12 +20,13 @@
 */
 #include <prefix/dtgameprefix-src.h>
 #include <dtUtil/log.h>
-#include "dtGame/exceptionenum.h"
-#include "dtGame/message.h"
-#include "dtGame/datastream.h"
-#include "dtGame/messageparameter.h"
-#include "dtGame/machineinfo.h"
-#include "dtGame/messagetype.h"
+#include <dtUtil/datastream.h>
+#include <dtGame/exceptionenum.h>
+#include <dtGame/message.h>
+#include <dtGame/machineinfo.h>
+#include <dtGame/messagetype.h>
+
+using dtUtil::DataStream;
    
 namespace dtGame 
 {
@@ -78,7 +79,7 @@ namespace dtGame
    }
   
    ///////////////////////////////////////////////////////////////////////////////
-   void Message::AddParameter(MessageParameter *param)
+   void Message::AddParameter(dtDAL::NamedParameter *param)
    {
       if (param == NULL)
          EXCEPT(ExceptionEnum::INVALID_PARAMETER,"NULL parameters are not legal.");

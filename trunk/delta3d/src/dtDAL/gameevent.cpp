@@ -19,7 +19,7 @@
  * Matthew W. Campbell
  */
 #include <prefix/dtdalprefix-src.h>
-#include "dtDAL/gameevent.h"
+#include <dtDAL/gameevent.h>
 
 namespace dtDAL
 {

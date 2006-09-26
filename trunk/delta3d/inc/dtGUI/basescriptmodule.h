@@ -33,6 +33,6 @@ namespace dtGUI
       virtual CEGUI::Event::Connection	subscribeEvent(CEGUI::EventSet* target, const CEGUI::String& name, CEGUI::Event::Group group, const CEGUI::String& subscriber_name)=0;
       #endif // CEGUI 0.5.0
    };
-};
+}
 
 #endif  //  DT_BASE_SCRIPTMODULE_INC

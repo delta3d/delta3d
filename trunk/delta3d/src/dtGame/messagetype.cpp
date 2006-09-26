@@ -36,6 +36,7 @@ namespace dtGame
    const MessageType MessageType::INFO_ACTOR_UPDATED("Actor Updated", "Info", "Sent when an actor's state changes enough to inform the game world", 14);
    const MessageType MessageType::INFO_CLIENT_CONNECTED("Client Connected", "Info", "Sent to other clients when a new client has connected", 15);
    const MessageType MessageType::INFO_MAP_LOADED("Map Loaded", "Info", "Sent after a new map has been loaded successfully", 16);
+   const MessageType MessageType::INFO_MAP_UNLOADED("Map UnLoaded", "Info", "Sent after an old map has been unloaded successfully", 31);
    const MessageType MessageType::INFO_PAUSED("Paused", "Info", "Sent when a game manager pauses the game or simulation", 17);
    const MessageType MessageType::INFO_RESUMED("Resumed", "Info", "Sent when a game manager resumes from a paused state", 18);
    const MessageType MessageType::INFO_RESTARTED("Restarted", "Info", "Sent when a game manager restarts the game or simulation", 19);

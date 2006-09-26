@@ -26,11 +26,7 @@
 #include <dtCore/refptr.h>
 #include <dtHLAGM/export.h>
 #include <dtHLAGM/attributetype.h>
-
-namespace dtGame 
-{
-   class MessageParameter;
-}
+#include <dtGame/messageparameter.h>
 
 namespace dtHLAGM
 {

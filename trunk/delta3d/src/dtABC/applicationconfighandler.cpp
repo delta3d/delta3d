@@ -37,7 +37,8 @@
 #include <dtCore/camera.h>
 #include <dtCore/scene.h>
 
-XERCES_CPP_NAMESPACE_USE;
+XERCES_CPP_NAMESPACE_USE
+
 namespace dtABC
 {
 

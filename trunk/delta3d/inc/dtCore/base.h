@@ -146,6 +146,6 @@ namespace dtCore
          
          UniqueId mId;
    };
-};
+}
 
 #endif // DELTA_BASE

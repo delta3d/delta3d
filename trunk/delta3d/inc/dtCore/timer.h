@@ -55,6 +55,6 @@ namespace dtCore
       osg::Timer mTimer;
 
    };
-};
+}
 
 #endif // DELTA_TIMER

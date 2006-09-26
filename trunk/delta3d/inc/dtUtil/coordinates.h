@@ -583,7 +583,7 @@ namespace dtUtil
    {
       return ((double) (TranMerc_a * (1.e0 - TranMerc_es) / pow(DENOM(Latitude), 3)));
    }
-};
+}
 
 #endif
 

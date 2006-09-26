@@ -50,29 +50,29 @@ if 'qt' in env['TOOLS'] :
                    'QT_GUI_LIB',
                    'QT_SHARED'])
    
-   if OS == 'linux':
+   if env['OS'] == 'linux':
       EditorEnv.Append(CPPDEFINES = ['_REENTRANT'])
-   elif OS == 'darwin':
+   elif env['OS'] == 'darwin':
       EditorEnv.Append(CPPDEFINES = ['_REENTRANT'])
    
-   if OS == 'darwin':
+   if env['OS'] == 'darwin':
       EditorEnv.Append(CPPPATH = ['#/utilities/editor/inc'] )
    else:
       EditorEnv.Append(CPPPATH = [qtdir + '/include','#/utilities/editor/inc'] )
    
    if mode == 'debug':
-      if OS == 'windows':
+      if env['OS'] == 'windows':
          EditorEnv.Append(LIBS = ['QtCored4','QtGuid4','QtOpenGLd4','dtDALd','dtAId','dtCored','dtUtild','dtAudiod','dtChard','dtABCd','dtGamed'])   
-      elif OS == 'darwin':
+      elif env['OS'] == 'darwin':
          EditorEnv.Append(LIBS = ['dtDAL','dtAI','dtCore','dtUtil','dtAudio','dtChar','dtABC','dtGame','plibul'])
          EditorEnv.Append(LINKFLAGS = ' -F' + qtdir + '/lib' )
          EditorEnv.Append(FRAMEWORKS = [ 'QtCore', 'QtGui', 'QtOpenGL' ])
       else:
          EditorEnv.Append(LIBS = ['QtCore','QtGui','QtOpenGL','dtDAL','dtAI','dtCore','dtUtil','dtAudio','dtChar','dtABC','dtGame','plibul'])   
    else:
-      if OS == 'windows':
+      if env['OS'] == 'windows':
          EditorEnv.Append(LIBS = ['QtCore4','QtGui4','QtOpenGL4','dtDAL','dtAI','dtCore','dtAudio','dtChar','dtUtil','dtABC','dtGame'])
-      elif OS == 'darwin':
+      elif env['OS'] == 'darwin':
          EditorEnv.Append(LIBS = ['dtDAL','dtAI','dtCore','dtUtil','dtAudio','dtChar','dtABC','dtGame','plibul']) 
          EditorEnv.Append(LINKFLAGS = ' -F' + qtdir + '/lib -framework QtCore -framework QtGui -framework QtOpenGL ' )   
       else:
@@ -80,10 +80,10 @@ if 'qt' in env['TOOLS'] :
    
    # First, glob the header directory to obtain a list of potential files to run
    # the moc builder on.
-   if OS == 'windows':
-      moc_headers = SGlob('..\inc\dtEditQt\*.h')
+   if env['OS'] == 'windows':
+      moc_headers = env.SGlob('..\inc\dtEditQt\*.h')
    else:
-      moc_headers = SGlob('../inc/dtEditQt/*.h')
+      moc_headers = env.SGlob('../inc/dtEditQt/*.h')
 
    # Hack to avoid Qt warning about unused file. This should probably just be removed
    # from CVS.
@@ -100,7 +100,7 @@ if 'qt' in env['TOOLS'] :
    # file names.
    moc_targets = []
    for currHeader in moc_headers :
-      if OS == 'windows':
+      if env['OS'] == 'windows':
          parts = currHeader.split("\\")
          target = "moc\moc_" + parts[len(parts)-1]
       else:
@@ -112,7 +112,7 @@ if 'qt' in env['TOOLS'] :
       moc_targets.append(target)
       EditorEnv.Moc(target=target, source=currHeader)
 
-   sources = SGlob('*.cpp') + moc_targets
+   sources = env.SGlob('*.cpp') + moc_targets
    if "precomp.cpp" in sources:
 	   sources.remove("precomp.cpp")
 
@@ -123,23 +123,23 @@ if 'qt' in env['TOOLS'] :
       sources.remove(charBrowserSrc)
    
    # Build the icon
-   if OS == 'windows' :
+   if env['OS'] == 'windows' :
       sources += env.RES( '../../dtEditQt.rc' )
    
-   if mode == 'debug' and OS == 'windows' :
+   if mode == 'debug' and env['OS'] == 'windows' :
       app = EditorEnv.Program('#/bin/STAGEd',sources)
    else:   
        prefixHeader = "inc/prefix/dtstageprefix.h"
 
        if len(prefixHeader) > 0 and EditorEnv.get('usePrefixHeaders'):
           EditorEnv['CPPDEFINES'] += ['DELTA_PCH']
-          if OS == 'darwin' or OS == 'linux':
+          if env['OS'] == 'darwin' or env['OS'] == 'linux':
              oldCxxFlags = EditorEnv['CXXFLAGS'] + ""
              EditorEnv['CXXFLAGS'] += " -include " + prefixHeader
              srcHeader = (prefixHeader[0:-2]) + "-src.h"
              outputGCH = "#" + prefixHeader + ".gch/stage"
              EditorEnv['Gch'] = EditorEnv.Gch(outputGCH, "#" + srcHeader, CXXFLAGS=oldCxxFlags)[0]             
-          elif OS == 'windows':
+          elif env['OS'] == 'windows':
              EditorEnv['PCH'] = EditorEnv.PCH("precomp.cpp")[0]
        
     

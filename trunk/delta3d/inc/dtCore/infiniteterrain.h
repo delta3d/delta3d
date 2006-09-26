@@ -329,6 +329,6 @@ namespace dtCore
          osg::Vec3 mMinColor, mIdealColor, mMaxColor;
 
    };
-};
+}
 
 #endif // DELTA_INFINITETERRAIN

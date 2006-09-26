@@ -118,6 +118,6 @@ namespace dtABC
       TransformableIntMap                       mTraversalNumberMap;
 
    };
-};
+}
 
 #endif //DELTA_PROXIMITY_TRIGGER

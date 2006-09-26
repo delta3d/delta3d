@@ -40,7 +40,7 @@ void CameraActorProxy::CreateActor()
    SetName(ss.str());
 
    Camera *cam = dynamic_cast<Camera*>(mActor.get());
-   if(!cam)
+   if(cam == NULL)
       EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be dtCore::Camera.");
 
    cam->SetEnabled(false);
@@ -86,7 +86,7 @@ dtDAL::ActorProxyIcon* CameraActorProxy::GetBillBoardIcon()
 osg::Vec4f CameraActorProxy::GetClearColor()
 {
    Camera *cam = dynamic_cast<Camera*>(mActor.get());
-   if(!cam)
+   if(cam == NULL)
       EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be dtCore::Camera.");
 
    osg::Vec4 color;
@@ -98,7 +98,7 @@ osg::Vec4f CameraActorProxy::GetClearColor()
 void CameraActorProxy::SetClearColor(const osg::Vec4 &color)
 {
    Camera *cam = dynamic_cast<Camera*>(mActor.get());
-   if(!cam)
+   if(cam == NULL)
       EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be dtCore::Camera.");
 
    cam->SetClearColor(color);

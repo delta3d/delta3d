@@ -1,4 +1,4 @@
-/*
+/* -*-c++-*-
  * Delta3D Open Source Game and Simulation Engine
  * Copyright (C) 2004-2005 MOVES Institute
  *
@@ -58,12 +58,6 @@ namespace dtDAL
           * @return True if it contains it, false if not
           */
          virtual bool ContainsActor(dtDAL::ActorProxy &proxy) const = 0;
-
-         /**
-          * Gets all the actors associated with this environment
-          * @param vec The vector to fill
-          */
-         virtual void GetAllActors(std::vector<dtDAL::ActorProxy*> &vec) = 0;
 
          /**
           * const version of the above function

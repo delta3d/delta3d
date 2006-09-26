@@ -49,6 +49,7 @@ namespace dtDAL
          static ExceptionEnum ObjectFactoryUnknownType;
 
          static ExceptionEnum InvalidActorException;
+         static ExceptionEnum InvalidParameter;
 
       protected:
          ExceptionEnum(const std::string &name) : Enumeration(name)
@@ -56,8 +57,6 @@ namespace dtDAL
             AddInstance(this);
          }
    };
-
-
 
 }//namespace dtDAL
 

@@ -193,13 +193,13 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<GameActorProxy> TaskComponent::GetTaskByName(const std::string &name)
+   GameActorProxy* TaskComponent::GetTaskByName(const std::string &name)
    {
       std::map<std::string,dtCore::RefPtr<dtGame::GameActorProxy> >::iterator taskItor =
             mTaskList.find(name);
 
       if (taskItor != mTaskList.end())
-         return taskItor->second;
+         return taskItor->second.get();
       else
          return NULL;
    }

@@ -73,17 +73,17 @@ namespace dtCore
                   void              SetCamera( dtCore::Camera* cam );
 
       private:
+
          inline   void              ctor();
          inline   void              SetWindow( dtCore::DeltaWin* win );
 
-      private:
-                  RefPtr<dtCore::Camera>              mCamera;    /// camera who's window we place the model
-                  float                               mScreenX;   /// screen position of model
-                  float                               mScreenY;   /// screen position of model
-                  float                               mScreenW;   /// screen width
-                  float                               mScreenH;   /// screen height
+         RefPtr<dtCore::Camera>              mCamera;    /// camera who's window we place the model
+         float                               mScreenX;   /// screen position of model
+         float                               mScreenY;   /// screen position of model
+         float                               mScreenW;   /// screen width
+         float                               mScreenH;   /// screen height
    };
 
-};
+}
 
 #endif // DELTA_COMPASS

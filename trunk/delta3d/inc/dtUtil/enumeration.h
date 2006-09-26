@@ -23,8 +23,8 @@
 
 #include <string>
 #include <vector>
-#include "dtUtil/export.h"
-#include "osg/Referenced"  // for base class
+#include <dtUtil/export.h>
+#include <osg/Referenced>  // for base class
 
 //Disable visual C++ compiler warnings that seem to indicate the compiler is
 //getting confused when compiling an enumeration.
@@ -153,36 +153,45 @@ namespace dtUtil
    };
 
 
-   /**
-   * Helper macros used to create the static data and methods
-   * needed to enumerate an enumeration.
-   */
+/**
+* Helper macros used to create the static data and methods
+* needed to enumerate an enumeration.
+*/
 #define DECLARE_ENUM(EnumType)                          \
 private:                                                \
-   static std::vector<dtUtil::Enumeration *> instances;           \
-   static void AddInstance(dtUtil::Enumeration *instance) \
+   static std::vector<EnumType*> mInstances;           \
+   static std::vector<dtUtil::Enumeration*> mGenericInstances;           \
+   static void AddInstance(EnumType* instance) \
    {                                                  \
-      EnumType::instances.push_back(instance);        \
+      EnumType::mInstances.push_back(instance);        \
+      EnumType::mGenericInstances.push_back(instance);        \
    }                                                   \
 public:                                                 \
-   static const std::vector<dtUtil::Enumeration *> &Enumerate() {       \
-      return EnumType::instances;                     \
+   static const std::vector<EnumType*>& EnumerateType() \
+   {                                                 \
+      return EnumType::mInstances;                     \
+   }                                                   \
+                                                    \
+   static const std::vector<dtUtil::Enumeration*>& Enumerate() \
+   {                                                 \
+      return EnumType::mGenericInstances;                     \
    }                                                   \
    \
-   static Enumeration* GetValueForName(const std::string& name) \
+   static EnumType* GetValueForName(const std::string& name) \
    {                                                  \
-      for(unsigned i = 0; i < instances.size(); i++) \
+      for(unsigned i = 0; i < mInstances.size(); i++) \
       {                                      \
-         if(name == instances[i]->GetName()) \
+         if(name == mInstances[i]->GetName()) \
          {                                   \
-            return instances[i];              \
+            return mInstances[i];              \
          }                                     \
       }                                         \
       return NULL;                              \
    }
 
 #define IMPLEMENT_ENUM(EnumType)                        \
-   std::vector<dtUtil::Enumeration *> EnumType::instances;
+   std::vector<EnumType*> EnumType::mInstances;        \
+   std::vector<dtUtil::Enumeration*> EnumType::mGenericInstances;
 
 }
 

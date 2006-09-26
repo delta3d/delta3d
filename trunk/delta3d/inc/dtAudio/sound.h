@@ -478,7 +478,7 @@ namespace dtAudio
          float       mMaxGain;
 
    };
-};
+}
 
 
 #endif // DELTA_SOUND

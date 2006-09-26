@@ -48,6 +48,6 @@ namespace dtUtil
       virtual void fatalError(const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException& e);
       virtual void resetErrors();
    };
-};
+}
 
 #endif // DTUTIL_XERCES_ERROR_HANDLER_INC

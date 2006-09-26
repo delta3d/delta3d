@@ -19,11 +19,11 @@
  * David Guthrie
  */
 #include <prefix/dtgameprefix-src.h>
-#include "dtGame/exceptionenum.h"
+#include <dtGame/exceptionenum.h>
 
 namespace dtGame
 {
-   IMPLEMENT_ENUM(ExceptionEnum);
+   IMPLEMENT_ENUM(ExceptionEnum)
 
    ExceptionEnum ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION("General Game Manager Exception");
    ExceptionEnum ExceptionEnum::INVALID_PARAMETER("Invalid method parameter");   

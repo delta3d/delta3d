@@ -134,6 +134,6 @@ namespace dtABC
       void KeyReleased(dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character); ///< private & unimplemented by design.
       void HandleKeyReleased(dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character); ///< private & unimplemented by design.
    };
-};
+}
 
 #endif // DELTA_BASEABC

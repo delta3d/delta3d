@@ -21,11 +21,14 @@
 #ifndef DELTA_ACTORPROPERTY
 #define DELTA_ACTORPROPERTY
 
+#include <iostream>
+
 #include <osg/Referenced>
-#include "dtDAL/functor.h"
-#include "dtDAL/actorproxy.h"
-#include "dtDAL/exceptionenum.h"
-#include "dtDAL/export.h"
+#include <dtDAL/functor.h>
+#include <dtDAL/actorproxy.h>
+#include <dtDAL/export.h>
+#include <dtDAL/abstractparameter.h>
+#include <dtUtil/log.h>
 
 namespace dtDAL
 {
@@ -48,14 +51,17 @@ namespace dtDAL
     *  @see DataType
     *  @see GenericActorProperty
     */
-   class DT_DAL_EXPORT ActorProperty : public osg::Referenced
+   class DT_DAL_EXPORT ActorProperty : public AbstractParameter
    {
       public:
          /**
-          * Returns an enumeration of the data type that this property
+          * @return Returns an enumeration of the data type that this property
           * represents.
           */
-         virtual DataType &GetPropertyType() const = 0;
+         DataType &GetPropertyType() const { return mDataType; };
+
+         ///@return the type of this property.
+         const DataType &GetDataType() const { return mDataType; };
 
          /**
           * Assigns the value of this property the value contained in the
@@ -72,7 +78,7 @@ namespace dtDAL
           *  is merely a method to set the "value" of a property from another property.
           * @see GenericActorProperty#copyFrom
           */
-         virtual void CopyFrom(ActorProperty *otherProp) = 0;
+         virtual void CopyFrom(const ActorProperty& otherProp) = 0;
 
          /**
           * Gets the unique name assigned to this property.
@@ -105,6 +111,13 @@ namespace dtDAL
           * @return the value of the property as a string.
           */
          const std::string ToString() const { return GetStringValue(); };
+
+         /**
+          * This is an alias to SetStringValue.
+          * @see #SetStringValue
+          * @return true if the property could be set via the string.
+          */
+         bool FromString(const std::string &value) { return SetStringValue(value); }
 
          /**
           * Sets the value of the property based on a string.
@@ -161,17 +174,19 @@ namespace dtDAL
           * Constructs the actor property.  This is protected since the real
           * property functionality comes from classes extending this one.
           */
-         ActorProperty(const std::string &name,
+         ActorProperty(dtDAL::DataType& dataType, 
+                     const std::string &name,
                      const std::string &label,
                      const std::string &desc,
                      const std::string &groupName,
                      bool  readOnly = false) :
-         mName(name),
+            mDataType(dataType),
+            mName(name),
             mLabel(label),
             mDescription(desc),
-            mNumberPrecision(16)
+            mNumberPrecision(16),
+            mReadOnly(readOnly)
             {
-               mReadOnly = readOnly;
                groupName.empty() ? SetGroupName("Base") : SetGroupName(groupName);
             }
 
@@ -184,16 +199,14 @@ namespace dtDAL
          virtual ~ActorProperty() { }
 
       private:
+         ///The datatype this property accesses
+         DataType& mDataType;
+      
          /**
           * Name of the property.  This is the key when searching for properties,
           * therefore, no two properties should have the same name.
           */
          std::string mName;
-
-         /**
-          * Flag the identifies if a property is read only or read/write
-          */
-         bool mReadOnly;
 
          ///Label for use in UI applications that which to display the property.
          std::string mLabel;
@@ -205,9 +218,14 @@ namespace dtDAL
          unsigned int mNumberPrecision;
 
          /**
+          * Flag the identifies if a property is read only or read/write
+          */
+         bool mReadOnly;
+
+         /**
           * hidden copy constructor
           */
-         ActorProperty(const ActorProperty&) { }
+         ActorProperty(const ActorProperty& toCopy): mDataType(toCopy.mDataType) { }
 
          /**
           * hidden operator=
@@ -215,16 +233,30 @@ namespace dtDAL
          ActorProperty& operator=(const ActorProperty&) { return *this; }
    };
 
+   inline std::ostream& operator << (std::ostream& o, const ActorProperty& prop)
+   {
+      o << prop.GetStringValue();
+      return o;
+   }
+
+   inline std::istream& operator >> (std::istream& i, ActorProperty& prop)
+   {
+      std::string value;
+      i >> value;
+      prop.SetStringValue(value);      
+      return i;
+   }
+
    /**
     * The GenericActorProperty class implements the set and get functionality
     * which defines the primary behavior of the ActorProperty.  The class is
     * templated such that it has a set type and a get type which correspond to
     * the set and get method signatures.
     * @note
-    *      The set method signature excepts one parameter of any type and may
-    *      or may not return a value.
-    *  @note
-    *      The get method returns a value of any type and takes no parameters.
+    *     The set method signature excepts one parameter of any type and may
+    *     or may not return a value.
+    * @note
+    *     The get method returns a value of any type and takes no parameters.
     */
    template <class SetType, class GetType>
    class GenericActorProperty : public ActorProperty
@@ -234,24 +266,20 @@ namespace dtDAL
           * Constructs the actor property.  Note, that functor objects must be
           * specified and match the set and get types of the GenericActorProperty.
           */
-         GenericActorProperty(const std::string &name,
+         GenericActorProperty(DataType& dataType,
+                              const std::string &name,
                               const std::string &label,
                               Functor1<SetType> &set,
                               Functor0Ret<GetType> &get,
                               const std::string &desc,
-                              const std::string &groupName) :
-         ActorProperty(name,label,desc, groupName),
+                              const std::string &groupName,
+                              bool readOnly = false) :
+         ActorProperty(dataType, name,label,desc, groupName, readOnly),
             SetPropFunctor(set),
             GetPropFunctor(get)
          {
 
          }
-
-         /**
-          * Since the generic actor property has no defined data type it represents
-          * return DataType::UNKNOWN.
-          */
-         virtual DataType &GetPropertyType() const  = 0;
 
          /**
           * This method allows a generic property of any type to be copied from
@@ -262,31 +290,34 @@ namespace dtDAL
           *     type to be copied.  For example, a FloatActorProperty cannot
           *     be copied to an IntActorProperty.
           */
-         virtual void CopyFrom(ActorProperty *otherProp)
+         virtual void CopyFrom(const ActorProperty& otherProp)
          {
-            GenericActorProperty<SetType,GetType> *prop =
-               dynamic_cast<GenericActorProperty<SetType,GetType> *>(otherProp);
-
-            if (prop != NULL)
-               SetValue(prop->GetValue());
-            else
+            if (GetPropertyType() != otherProp.GetPropertyType())
+            {
                LOG_ERROR("Property types are incompatible. Cannot make copy.");
+               return;
+            }
+            
+            const GenericActorProperty<SetType,GetType>& prop =
+               static_cast<const GenericActorProperty<SetType,GetType>& >(otherProp);
+
+            SetValue(prop.GetValue());
          }
 
          /**
           * Sets the value of this property by calling the set functor
           * assigned to this property.
           */
-         virtual void SetValue(SetType value) 
+         void SetValue(SetType value) 
          { 
             !IsReadOnly() ? SetPropFunctor(value) : LOG_WARNING("SetValue has been called on a property that is read only.");
          }
 
          /**
-          * Gets the value of this property be calling the get functor
+          * @return the value of this property be calling the get functor
           * assigned to this property.
           */
-         virtual GetType GetValue() const { return GetPropFunctor(); }
+         GetType GetValue() const { return GetPropFunctor(); }
 
       protected:
          ///Keep destructors protected to ensure property smart pointer management.

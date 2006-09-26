@@ -62,7 +62,7 @@ CloudDome::CloudDome(   int   octaves,
    SetOSGNode( new osg::Group() );
    GetOSGNode()->setName( this->GetName() );
    Create();
-   AddSender(System::Instance());
+   AddSender(&System::GetInstance());
 }
 
 // Constructor with filename of volume texture

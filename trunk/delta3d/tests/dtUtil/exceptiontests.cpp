@@ -73,7 +73,7 @@ class ExceptionTests : public CPPUNIT_NS::TestFixture {
       };
 };
 
-IMPLEMENT_ENUM(ExceptionTests::TestEnumType);
+IMPLEMENT_ENUM(ExceptionTests::TestEnumType)
 ExceptionTests::TestEnumType
 ExceptionTests::TestEnumType::ENUM("ENUM");
 

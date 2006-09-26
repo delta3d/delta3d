@@ -24,11 +24,7 @@
 
 #include <dtUtil/coordinates.h>
 #include <dtUtil/log.h>
-
 #include <dtCore/uniqueid.h>
-
-#include <dtGame/messageparameter.h>
-
 #include <dtHLAGM/onetoonemapping.h>
 #include <dtHLAGM/rprparametertranslator.h>
 #include <dtHLAGM/distypes.h>
@@ -50,6 +46,7 @@ namespace dtHLAGM
    const RPRAttributeType RPRAttributeType::EVENT_IDENTIFIER_TYPE("EVENT_IDENTIFIER_TYPE", 1, 5);
    const RPRAttributeType RPRAttributeType::MARKING_TYPE("MARKING_TYPE", 1, 12);
    const RPRAttributeType RPRAttributeType::STRING_TYPE("STRING_TYPE", 1, 128);
+   const RPRAttributeType RPRAttributeType::ARTICULATED_PART_TYPE("ARTICULATED_PART_TYPE", 1, 512);
 
    RPRParameterTranslator::RPRParameterTranslator(dtUtil::Coordinates& coordinates, ObjectRuntimeMappingInfo& runtimeMappings):
       mCoordinates(coordinates), mRuntimeMappings(runtimeMappings)
@@ -498,7 +495,7 @@ namespace dtHLAGM
                RPRAttributeType::MARKING_TYPE.GetName().c_str());
          }
       }
-
+     
    }
 
    void RPRParameterTranslator::MapFromWorldCoordToMessageParam(
@@ -626,7 +623,7 @@ namespace dtHLAGM
 
          if (returnGameValue)
          {
-            return paramDef.GetDefaultValue();
+             return paramDef.GetDefaultValue();
          }
          else if (paramDef.GetHLAEnumerationValue(paramDef.GetDefaultValue(), mappedValue))
          {
@@ -850,6 +847,307 @@ namespace dtHLAGM
             const dtCore::UniqueId* oid = mRuntimeMappings.GetId(eid);
             if (oid != NULL)
                static_cast<dtGame::ActorMessageParameter&>(parameter).SetValue(*oid);
+         }
+      }
+      else if (hlaType == RPRAttributeType::ARTICULATED_PART_TYPE)
+      {
+         //Create articulated part
+         std::vector<ArticulatedParameter> artParams;
+         ArticulatedParameter artParam;
+         artParam.Decode(buffer);
+         artParams.push_back(artParam);
+         int amount = (int)(size / artParam.EncodedLength());
+
+         /////////////////////////////////////////////////////////////////////////////////////////
+         // ERROR CHECKING TO MAKE SURE SIZE IS CORRECT
+         if(size % artParam.EncodedLength() != 0)
+         {
+            // Log error they sent us bad data 
+            if(mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+               "Received inaccurate data from hla in the articulated parts area, size is %d",
+               (int)size);
+         }
+         else if(amount == 0)
+         {
+             if(mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+               "Received inaccurate data from hla in the articulated parts area, amount is 0");
+         }
+
+         /////////////////////////////////////////////////////////////////////////////////////////
+         // Add all the data onto the vector
+         for(int i = 1; i < amount; i++)
+         {
+            ArticulatedParameter tempparam;
+            const char* tempString =  &buffer[i * artParam.EncodedLength()];
+            tempparam.Decode(tempString);
+            artParams.push_back(tempparam);
+         }
+
+         /////////////////////////////////////////////////////////////////////////////////////////
+         // Error Check values
+         std::vector<ArticulatedParameter>::iterator paramsIter;
+         for(paramsIter = artParams.begin(); paramsIter != artParams.end(); ++paramsIter)
+         {
+            // attached part check
+            if((int)(*paramsIter).GetParameterValue().GetArticulatedParameterType() == 1)
+            {
+               if((*paramsIter).GetParameterValue().GetAttachedParts().GetStation() == 0)
+               {
+                  if(mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                  mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                  "Received inaccurate data from hla in the articulated parts area, Station ID is = %d", 
+                  (unsigned int)(*paramsIter).GetParameterValue().GetAttachedParts().GetStation());
+               }
+            }
+            else // articulation part check
+            {
+               if((unsigned int)(*paramsIter).GetParameterValue().GetArticulatedParts().GetClass() == 0)
+               {
+                  if(mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                  mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                  "Received inaccurate data from hla in the articulated parts area, Unknown Class type = %d", 
+                  (unsigned int)(*paramsIter).GetParameterValue().GetArticulatedParts().GetClass());
+               }
+               if((unsigned int)(*paramsIter).GetParameterValue().GetArticulatedParts().GetTypeMetric() == 0 
+               || (unsigned int)(*paramsIter).GetParameterValue().GetArticulatedParts().GetTypeMetric() > 16)
+               {
+                  if(mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                  mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                  "Received inaccurate data from hla in the articulated parts area, Unknown Metric type = %d", 
+                  (unsigned int)(*paramsIter).GetParameterValue().GetArticulatedParts().GetTypeMetric());
+               }
+            }
+         }
+
+         /////////////////////////////////////////////////////////////////////////////////////////
+         // fill in all info to a group message parameter
+         dtGame::GroupMessageParameter* gParams = (dynamic_cast<dtGame::GroupMessageParameter*>(&parameter));
+         int j = 0;
+         int k = 0;
+         for(paramsIter = artParams.begin(); paramsIter != artParams.end(); ++paramsIter)
+         {
+            char buffer[64];
+            if((int)(*paramsIter).GetParameterValue().GetArticulatedParameterType() == 1)
+            {
+               sprintf(buffer, "AttachedPartMessageParam%d", k);
+               k++;
+
+               dtCore::RefPtr<dtGame::GroupMessageParameter> newGroupParam = new dtGame::GroupMessageParameter(buffer);
+
+               // fill in with all messages we need to send for this data
+               dtCore::RefPtr<dtGame::UnsignedIntMessageParameter> stationParam = new dtGame::UnsignedIntMessageParameter("Station", 
+                                                      (unsigned int)(*paramsIter).GetParameterValue().GetAttachedParts().GetStation());
+               std::ostringstream disStream;
+               disStream << ((*paramsIter).GetParameterValue().GetAttachedParts().GetStoreType());
+               std::string finalEnumString = GetEnumValue(disStream.str(), paramDef, true);
+               dtCore::RefPtr<dtGame::EnumMessageParameter> disParam = new dtGame::EnumMessageParameter("DISInfo", finalEnumString.c_str());
+               
+               // add all params to group param
+               newGroupParam->AddParameter(*(dtGame::MessageParameter*)&(*stationParam.get()));
+               newGroupParam->AddParameter(*(dtGame::MessageParameter*)&(*disParam.get()));
+               
+               // we're done add to big group
+               gParams->AddParameter(*(dtGame::MessageParameter*)&(*newGroupParam.get()));
+            }
+            else
+            {
+               sprintf(buffer, "ArticulatedPartMessageParam%d", j);
+               j++;
+
+               dtCore::RefPtr<dtGame::GroupMessageParameter> newGroupParam = new dtGame::GroupMessageParameter(buffer);
+
+               // fill in with all messages we need to send for this data
+               std::ostringstream disStream;
+               disStream << (unsigned int)(*paramsIter).GetParameterValue().GetArticulatedParts().GetClass();
+               std::string finalEnumString = GetEnumValue(disStream.str(), paramDef, true);
+               
+               // WHat dof are we, which one we moving.
+               dtCore::RefPtr<dtGame::StringMessageParameter> nameParam    = new dtGame::StringMessageParameter("OurName", finalEnumString.c_str());
+               newGroupParam->AddParameter(*(dtGame::MessageParameter*)&(*nameParam.get()));
+               
+               // what is our parent that we are attached to.
+               std::vector<ArticulatedParameter>::iterator paramsIterTwo;
+               int l = 0;
+               std::string ParentEnumString = "";
+               for(paramsIterTwo = artParams.begin(); paramsIterTwo != artParams.end(); ++paramsIterTwo)
+               {
+                  if((unsigned short)(*paramsIter).GetPartAttachedTo() == 0)
+                  {
+                     // change to read from enum???
+                     dtCore::RefPtr<dtGame::StringMessageParameter> attachedParam = new dtGame::StringMessageParameter("OurParent", "dof_chasis");
+                     newGroupParam->AddParameter(*(dtGame::MessageParameter*)&(*attachedParam.get()));
+                     break;
+                  }
+                  else if((unsigned short)(*paramsIter).GetPartAttachedTo() == l)
+                  {
+                     std::ostringstream disStreamForParentName;
+                     disStreamForParentName << (unsigned int)(*paramsIterTwo).GetParameterValue().GetArticulatedParts().GetClass();
+                     ParentEnumString = GetEnumValue(disStreamForParentName.str(), paramDef, true);
+                     dtCore::RefPtr<dtGame::StringMessageParameter> attachedParam = new dtGame::StringMessageParameter("OurParent", ParentEnumString.c_str());
+                     newGroupParam->AddParameter(*(dtGame::MessageParameter*)&(*attachedParam.get()));
+                     break;
+                  }
+                  l++;
+               }
+               
+               switch((unsigned int)(*paramsIter).GetParameterValue().GetArticulatedParts().GetTypeMetric())
+               {
+                  //(Enumeration (Enumerator "Position")         (Representation 1))
+                  case 1:
+                  {
+                     dtCore::RefPtr<dtGame::FloatMessageParameter>  positionParam = 
+                        new dtGame::FloatMessageParameter( "Position", (float)(*paramsIter).GetParameterValue().GetArticulatedParts().GetValue());
+                     newGroupParam->AddParameter(*(dtGame::MessageParameter*)&(*positionParam.get()));
+                  }
+                  break;
+
+                  //(Enumeration (Enumerator "PositionRate")     (Representation 2))
+                  case 2:
+                  {
+                     dtCore::RefPtr<dtGame::FloatMessageParameter>  positionRateParam = 
+                        new dtGame::FloatMessageParameter( "PositionRate",(float)(*paramsIter).GetParameterValue().GetArticulatedParts().GetValue());
+                     newGroupParam->AddParameter(*(dtGame::MessageParameter*)&(*positionRateParam.get()));
+                  }
+                  break;
+
+                  //(Enumeration (Enumerator "Extension")        (Representation 3))
+                  case 3:
+                  {
+                     dtCore::RefPtr<dtGame::FloatMessageParameter>  extensionParam = 
+                        new dtGame::FloatMessageParameter( "Extension",(float)(*paramsIter).GetParameterValue().GetArticulatedParts().GetValue());
+                     newGroupParam->AddParameter(*(dtGame::MessageParameter*)&(*extensionParam.get()));
+                  }
+                  break;
+
+                  //(Enumeration (Enumerator "ExtensionRate")    (Representation 4))
+                  case 4:
+                  {
+                     dtCore::RefPtr<dtGame::FloatMessageParameter>  extensionRateParam = 
+                        new dtGame::FloatMessageParameter( "ExtensionRate",(float)(*paramsIter).GetParameterValue().GetArticulatedParts().GetValue());
+                     newGroupParam->AddParameter(*(dtGame::MessageParameter*)&(*extensionRateParam.get()));
+                  }
+                  break;
+
+                  //(Enumeration (Enumerator "X")                (Representation 5))
+                  case 5:
+                  {
+                     dtCore::RefPtr<dtGame::FloatMessageParameter>  locationXParam =
+                        new dtGame::FloatMessageParameter( "LocationX",(float)(*paramsIter).GetParameterValue().GetArticulatedParts().GetValue());
+                     newGroupParam->AddParameter(*(dtGame::MessageParameter*)&(*locationXParam.get()));
+                  }
+                  break;
+
+                  //(Enumeration (Enumerator "XRate")            (Representation 6))
+                  case 6:
+                  {
+                     dtCore::RefPtr<dtGame::FloatMessageParameter>  locationXRateParam = 
+                        new dtGame::FloatMessageParameter( "LocationXRate",(float)(*paramsIter).GetParameterValue().GetArticulatedParts().GetValue());
+                     newGroupParam->AddParameter(*(dtGame::MessageParameter*)&(*locationXRateParam.get()));
+                  }
+                  break;
+                  
+                  //(Enumeration (Enumerator "Y")                (Representation 7))
+                  case 7:
+                  {
+                        dtCore::RefPtr<dtGame::FloatMessageParameter>  locationYParam =
+                           new dtGame::FloatMessageParameter( "LocationY",(float)(*paramsIter).GetParameterValue().GetArticulatedParts().GetValue());
+                     newGroupParam->AddParameter(*(dtGame::MessageParameter*)&(*locationYParam.get()));
+                  }
+                  break;
+
+                  //(Enumeration (Enumerator "YRate")            (Representation 8))
+                  case 8:
+                  {
+                     dtCore::RefPtr<dtGame::FloatMessageParameter>  locationYRateParam =
+                        new dtGame::FloatMessageParameter( "LocationYRate",(float)(*paramsIter).GetParameterValue().GetArticulatedParts().GetValue());
+                     newGroupParam->AddParameter(*(dtGame::MessageParameter*)&(*locationYRateParam.get()));
+                  }
+                  break;
+
+                  //(Enumeration (Enumerator "Z")                (Representation 9))
+                  case 9:
+                  {
+                     dtCore::RefPtr<dtGame::FloatMessageParameter>  locationZParam = 
+                        new dtGame::FloatMessageParameter( "LocationZ",(float)(*paramsIter).GetParameterValue().GetArticulatedParts().GetValue());
+                     newGroupParam->AddParameter(*(dtGame::MessageParameter*)&(*locationZParam.get()));
+                  }
+                  break;
+
+                  //(Enumeration (Enumerator "ZRate")            (Representation 10))
+                  case 10:
+                  {
+                     dtCore::RefPtr<dtGame::FloatMessageParameter>  locationZRateParam = 
+                        new dtGame::FloatMessageParameter( "LocationZRate",(float)(*paramsIter).GetParameterValue().GetArticulatedParts().GetValue());
+                     newGroupParam->AddParameter(*(dtGame::MessageParameter*)&(*locationZRateParam.get()));
+                  }
+                  break;
+
+                  //(Enumeration (Enumerator "Azimuth")          (Representation 11))
+                  case 11:
+                  {
+                     dtCore::RefPtr<dtGame::FloatMessageParameter>  azimuthParam = 
+                        new dtGame::FloatMessageParameter( "Azimuth",(float)(*paramsIter).GetParameterValue().GetArticulatedParts().GetValue());
+                     newGroupParam->AddParameter(*(dtGame::MessageParameter*)&(*azimuthParam.get()));
+                  }
+                  break;
+
+                  //(Enumeration (Enumerator "AzimuthRate")      (Representation 12))
+                  case 12:
+                  {
+                     dtCore::RefPtr<dtGame::FloatMessageParameter>  azimuthRateParam = 
+                        new dtGame::FloatMessageParameter( "AzimuthRate",(float)(*paramsIter).GetParameterValue().GetArticulatedParts().GetValue());
+                     newGroupParam->AddParameter(*(dtGame::MessageParameter*)&(*azimuthRateParam.get()));
+                  }
+                  break;
+
+                  //(Enumeration (Enumerator "Elevation")        (Representation 13))
+                  case 13:
+                  {
+                     dtCore::RefPtr<dtGame::FloatMessageParameter>  elevationParam = 
+                        new dtGame::FloatMessageParameter( "Elevation",(float)(*paramsIter).GetParameterValue().GetArticulatedParts().GetValue());
+                     newGroupParam->AddParameter(*(dtGame::MessageParameter*)&(*elevationParam.get()));
+                  }
+                  break;
+
+                  //(Enumeration (Enumerator "ElevationRate")    (Representation 14))
+                  case 14:
+                  {
+                     dtCore::RefPtr<dtGame::FloatMessageParameter>  elevationRateParam = 
+                        new dtGame::FloatMessageParameter( "ElevationRate",(float)(*paramsIter).GetParameterValue().GetArticulatedParts().GetValue());
+                     newGroupParam->AddParameter(*(dtGame::MessageParameter*)&(*elevationRateParam.get()));
+                  }
+                  break;
+
+                  //(Enumeration (Enumerator "Rotation")         (Representation 15))
+                  case 15:
+                  {
+                     dtCore::RefPtr<dtGame::FloatMessageParameter>  rotationParam = 
+                        new dtGame::FloatMessageParameter( "Rotation",(float)(*paramsIter).GetParameterValue().GetArticulatedParts().GetValue());
+                     newGroupParam->AddParameter(*(dtGame::MessageParameter*)&(*rotationParam.get()));
+                  }
+                  break;
+
+                  //(Enumeration (Enumerator "RotationRate")     (Representation 16))
+                  case 16:
+                  {
+                     dtCore::RefPtr<dtGame::FloatMessageParameter>  rotationRateParam = 
+                        new dtGame::FloatMessageParameter( "RotationRate",(float)(*paramsIter).GetParameterValue().GetArticulatedParts().GetValue());
+                     newGroupParam->AddParameter(*(dtGame::MessageParameter*)&(*rotationRateParam.get()));
+                  }
+                  break;
+
+                  default: // log error
+                  {
+                     // Logged above in error check there.
+                  }
+                  break;
+               }
+
+               // we're done add to big group
+               gParams->AddParameter(*(dtGame::MessageParameter*)&(*newGroupParam.get()));
+            }          
          }
       }
       else

@@ -212,7 +212,7 @@ namespace dtCore
           */
          virtual void AxisMappingAcquired(AxisMapping* mapping) {}
    };
-};
+}
 
 
 #endif // DELTA_INPUTMAPPER

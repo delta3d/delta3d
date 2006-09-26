@@ -1062,7 +1062,7 @@ public:
 template <typename T>
 tree_iterator<T> tree_iterator<T>::end_of_iterator;
 
-};
+}
 
 #if WIN32
 #pragma warning( pop )

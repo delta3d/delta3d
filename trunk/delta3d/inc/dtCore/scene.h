@@ -21,7 +21,7 @@
 #ifndef DELTA_SCENE
 #define DELTA_SCENE
 
- // scene.h: interface for the Scene class.
+// scene.h: interface for the Scene class.
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -279,7 +279,7 @@ namespace dtCore
 
       ParticleSystemFreezer mFreezer;
    };   
-};
+}
 
 
 #endif // DELTA_SCENE

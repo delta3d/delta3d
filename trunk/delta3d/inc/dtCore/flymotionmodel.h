@@ -57,8 +57,8 @@ namespace dtCore
           * simulation time, which can be scaled, for motion or false if it 
           * should use the real time.
           */
-         FlyMotionModel(Keyboard* keyboard = 0,
-                        Mouse* mouse = 0, 
+         FlyMotionModel(Keyboard* keyboard = NULL,
+                        Mouse* mouse = NULL, 
                         bool useSimTimeForSpeed = true);
 
       protected:
@@ -294,7 +294,7 @@ namespace dtCore
           */
          bool mUseSimTimeForSpeed;
    };
-};
+}
 
 
 #endif // DELTA_FLYMOTIONMODEL

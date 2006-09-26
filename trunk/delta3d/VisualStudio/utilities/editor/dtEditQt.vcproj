@@ -37,10 +37,10 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Producerd.lib ul_d.lib OpenThreadsWin32d.lib osgd.lib osgDBd.lib osgParticled.lib osgUtild.lib oded.lib osgTextd.lib js_d.lib isensed.lib dtDALd.lib dtCored.lib dtABCd.lib dtAudiod.lib dtUtild.lib dtBSPd.lib dtGamed.lib xerces-c_2D.lib QtCored4.lib QtGuid4.lib qtmaind.lib QtOpenGLd4.lib"
+				AdditionalDependencies="Producerd.lib ul_d.lib OpenThreadsWin32d.lib osgd.lib osgDBd.lib osgParticled.lib osgUtild.lib oded.lib osgTextd.lib js_d.lib isensed.lib dtDALd.lib dtCored.lib dtABCd.lib dtAudiod.lib dtUtild.lib dtBSPd.lib dtGamed.lib xerces-c_2D.lib QtCored4.lib QtGuid4.lib qtmaind.lib QtOpenGLd4.lib dtChard.lib"
 				OutputFile="..\..\..\bin\STAGEd.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib;$(QTDIR)\lib"
+				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib;&quot;$(QTDIR)\lib&quot;;&quot;C:\Program Files\DVTE\trunk\bin&quot;"
 				IgnoreDefaultLibraryNames="libc.lib;libcmt;libcd;libcmtd"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
@@ -92,7 +92,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Producer.lib ul.lib OpenThreadsWin32.lib osg.lib osgDB.lib osgParticle.lib osgUtil.lib ode.lib osgText.lib js.lib isense.lib dtDAL.lib dtCore.lib dtABC.lib dtAudio.lib dtUtil.lib dtBSP.lib dtGame.lib QtCore4.lib QtGui4.lib qtmain.lib QtOpenGL4.lib xerces-c_2.lib xerces-c_2D.lib"
+				AdditionalDependencies="Producer.lib ul.lib OpenThreadsWin32.lib osg.lib osgDB.lib osgParticle.lib osgUtil.lib ode.lib osgText.lib js.lib isense.lib dtDAL.lib dtCore.lib dtABC.lib dtAudio.lib dtUtil.lib dtBSP.lib dtGame.lib QtCore4.lib QtGui4.lib qtmain.lib QtOpenGL4.lib xerces-c_2.lib xerces-c_2D.lib dtChar.lib"
 				OutputFile="..\..\..\bin\STAGE.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib;$(QTDIR)\lib"
@@ -155,6 +155,9 @@
 				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\camera.h">
 			</File>
 			<File
+				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\characterbrowser.h">
+			</File>
+			<File
 				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\dialoglistselection.h">
 			</File>
 			<File
@@ -189,6 +192,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\dynamicfloatcontrol.h">
+			</File>
+			<File
+				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\dynamicgameeventcontrol.h">
 			</File>
 			<File
 				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\dynamicgroupcontrol.h">
@@ -240,6 +246,12 @@
 			</File>
 			<File
 				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\editorsettings.h">
+			</File>
+			<File
+				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\gameeventdialog.h">
+			</File>
+			<File
+				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\gameeventsdialog.h">
 			</File>
 			<File
 				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\global.h">
@@ -311,6 +323,9 @@
 				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\tabwrapper.h">
 			</File>
 			<File
+				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\taskeditor.h">
+			</File>
+			<File
 				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\terrainbrowser.h">
 			</File>
 			<File
@@ -349,9 +364,6 @@
 		<Filter
 			Name="MocFiles"
 			Filter="">
-			<File
-				RelativePath=".\editor.pro">
-			</File>
 			<File
 				RelativePath="..\..\..\utilities\editor\src\moc\moc_actorbrowser.cpp">
 				<FileConfiguration
@@ -399,6 +411,21 @@
 			</File>
 			<File
 				RelativePath="..\..\..\utilities\editor\src\moc\moc_actorsearcher.cpp">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\utilities\editor\src\moc\moc_characterbrowser.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -564,6 +591,21 @@
 			</File>
 			<File
 				RelativePath="..\..\..\utilities\editor\src\moc\moc_dynamicfloatcontrol.cpp">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\utilities\editor\src\moc\moc_dynamicgameeventcontrol.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -789,6 +831,36 @@
 			</File>
 			<File
 				RelativePath="..\..\..\utilities\editor\src\moc\moc_editorevents.cpp">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\utilities\editor\src\moc\moc_gameeventdialog.cpp">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\utilities\editor\src\moc\moc_gameeventsdialog.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -1088,6 +1160,21 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\..\utilities\editor\src\moc\moc_taskeditor.cpp">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath="..\..\..\utilities\editor\src\moc\moc_terrainbrowser.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -1195,8 +1282,7 @@
 		</Filter>
 		<Filter
 			Name="Source Files"
-			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
-			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
+			Filter="">
 			<File
 				RelativePath="..\..\..\utilities\editor\src\actorbrowser.cpp">
 			</File>
@@ -1217,6 +1303,15 @@
 			</File>
 			<File
 				RelativePath="..\..\..\utilities\editor\src\camera.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\utilities\editor\src\characterbrowser.cpp">
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="3"/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\..\utilities\editor\src\dialoglistselection.cpp">
@@ -1250,6 +1345,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\utilities\editor\src\dynamicfloatcontrol.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\utilities\editor\src\dynamicgameeventcontrol.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\utilities\editor\src\dynamicgroupcontrol.cpp">
@@ -1298,6 +1396,12 @@
 			</File>
 			<File
 				RelativePath="..\..\..\utilities\editor\src\editorsettings.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\utilities\editor\src\gameeventdialog.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\utilities\editor\src\gameeventsdialog.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\utilities\editor\src\libraryeditor.cpp">
@@ -1382,6 +1486,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\utilities\editor\src\tabwrapper.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\utilities\editor\src\taskeditor.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\utilities\editor\src\terrainbrowser.cpp">

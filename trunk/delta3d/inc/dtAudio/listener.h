@@ -98,7 +98,7 @@ namespace   dtAudio
           */
          virtual  float GetGain()                        const = 0L;
    };
-};
+}
 
 
 

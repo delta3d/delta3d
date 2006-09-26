@@ -53,6 +53,6 @@ namespace dtUtil
         */
       static XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* ToBool(bool state, char* name, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc);
    };
-};
+}
 
 #endif // _DTUTIL_SERIALIZER_H_

@@ -223,7 +223,7 @@ void TestGamePropertyProxy::BuildPropertyMap()
    //   "dtCore::Transformable",
    //   "An example linked actor property", GROUPNAME));
 
-   AddProperty(new GameEventActorProperty("TestGameEvent", "Test Game Event",
+   AddProperty(new GameEventActorProperty(*this, "TestGameEvent", "Test Game Event",
                MakeFunctor(actor, &TestGamePropertyActor::SetTestGameEvent),
                MakeFunctorRet(actor, &TestGamePropertyActor::GetTestGameEvent),
                "Holds a test game event property", GROUPNAME));

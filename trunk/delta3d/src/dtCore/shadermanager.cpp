@@ -19,9 +19,9 @@
  * Matthew W. Campbell
  */
 #include <prefix/dtcoreprefix-src.h>
-#include "dtCore/shadermanager.h"
-#include "dtCore/shaderxml.h"
-#include "dtCore/shaderparameter.h"
+#include <dtCore/shadermanager.h>
+#include <dtCore/shaderxml.h>
+#include <dtCore/shaderparameter.h>
 
 #include <osg/Texture2D>
 #include <osg/Node>
@@ -36,7 +36,7 @@ namespace dtCore
    dtCore::RefPtr<ShaderManager> ShaderManager::mInstance(NULL);
 
    ///////////////////////////////////////////////////////////////////////////////
-   IMPLEMENT_ENUM(ShaderException);
+   IMPLEMENT_ENUM(ShaderException)
    ShaderException ShaderException::SHADER_SOURCE_ERROR("SHADER_SOURCE_ERROR");
    ShaderException ShaderException::DUPLICATE_SHADERGROUP_FOUND("DUPLICATE_SHADERGROUP_FOUND");
    ShaderException ShaderException::XML_PARSER_ERROR("XML_PARSER_ERROR");

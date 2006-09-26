@@ -100,9 +100,12 @@ void TaskActorTests::tearDown()
 {
    dtCore::System::GetInstance().SetPause(false);
    dtCore::System::GetInstance().Stop();
-   mGameManager->DeleteAllActors();
-   mGameManager->UnloadActorRegistry(mTestGameActorLibrary);
-   mGameManager = NULL;
+   if(mGameManager.valid())
+   {
+      mGameManager->DeleteAllActors();
+      mGameManager->UnloadActorRegistry(mTestGameActorLibrary);
+      mGameManager = NULL;
+   }
    mEventMgr->ClearAllEvents();
    mEventMgr = NULL;
 }

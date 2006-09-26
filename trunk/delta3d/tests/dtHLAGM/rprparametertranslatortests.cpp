@@ -56,6 +56,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestIncomingStringDataTranslation);
       CPPUNIT_TEST(TestFindTypeByName);
       CPPUNIT_TEST(TestAttributeSupportedQuery);
+      CPPUNIT_TEST(TestIncomingArticulation);
 
    CPPUNIT_TEST_SUITE_END();
 
@@ -566,17 +567,56 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          }
          mMapping.SetHLAType(dtHLAGM::RPRAttributeType::DOUBLE_TYPE);
          TestSpecificFloatTranslations<double>(mMapping, testDouble);
+      }
 
+      void TestIncomingArticulation()
+      {
+         std::vector<dtCore::RefPtr<dtGame::MessageParameter> > messageParameters;
+         
+         dtHLAGM::ArticulatedParts* ap = new dtHLAGM::ArticulatedParts(1212, 8, -20.21);
+         dtHLAGM::ArticulatedParameter artParam(0,0, dtHLAGM::ParameterValue(*ap));
+         artParam.Encode(mBuffer);
 
+         dtCore::RefPtr<dtGame::GroupMessageParameter> groupParam = new dtGame::GroupMessageParameter("Group Test");
+         messageParameters.push_back(groupParam.get());
+
+         dtHLAGM::OneToManyMapping oneToMany("default", dtHLAGM::RPRAttributeType::ARTICULATED_PART_TYPE, false);
+         dtHLAGM::OneToManyMapping::ParameterDefinition pd("ArticulatedParameter", dtDAL::DataType::GROUP, "", false);
+         pd.AddEnumerationMapping("3334", "dof_notadof");
+         pd.AddEnumerationMapping("2231", "dof_fakerz");
+         oneToMany.GetParameterDefinitions().push_back(pd);
+
+         mParameterTranslator->MapToMessageParameters(mBuffer, artParam.EncodedLength(), messageParameters, oneToMany);
+         
+         dtGame::MessageParameter* msgParam = groupParam.get()->GetParameter("AttachedPartMessageParam0");
+         CPPUNIT_ASSERT_MESSAGE("Found an articulated message param that should have not been added", msgParam == NULL);
+
+         msgParam = groupParam.get()->GetParameter("ArticulatedPartMessageParam0");
+         CPPUNIT_ASSERT_MESSAGE("Did not find the articulated message param that should have been added", msgParam != NULL);
+         
+         if(msgParam->GetDataType() == dtDAL::DataType::GROUP)
+         {
+            dtGame::MessageParameter* Value = (*(dtGame::GroupMessageParameter*)&(*msgParam)).GetParameter("LocationYRate");
+            CPPUNIT_ASSERT_MESSAGE("Did not find the locationyRate value that should have been there", Value != NULL);
+            float yrate = (*(dtGame::FloatMessageParameter*)&(*Value)).GetValue();
+            bool check = false;
+            if((yrate -1) < -20.21 && (yrate + 1) > -20.21)
+               check = true;
+            CPPUNIT_ASSERT_MESSAGE("YRate is not correct!", check );
+         }
+         else
+         {
+            CPPUNIT_ASSERT_MESSAGE("Should have been a group msg param...", msgParam->GetDataType() != dtDAL::DataType::GROUP);
+         }  
       }
 
       void TestFindTypeByName()
       {
-         for (unsigned int i = 0; i < dtHLAGM::RPRAttributeType::Enumerate().size(); ++i)
+         for (unsigned int i = 0; i < dtHLAGM::RPRAttributeType::EnumerateType().size(); ++i)
          {
             //Test all the types to see if it's working properly
-            CPPUNIT_ASSERT(mParameterTranslator->GetAttributeTypeForName(dtHLAGM::RPRAttributeType::Enumerate()[i]->GetName()) ==
-               *dtHLAGM::RPRAttributeType::Enumerate()[i]);
+            CPPUNIT_ASSERT(mParameterTranslator->GetAttributeTypeForName(dtHLAGM::RPRAttributeType::EnumerateType()[i]->GetName()) ==
+               *dtHLAGM::RPRAttributeType::EnumerateType()[i]);
          }
          //Make sure it returns unknown for anything else.
          CPPUNIT_ASSERT(mParameterTranslator->GetAttributeTypeForName("Some Junk") ==
@@ -585,11 +625,10 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
 
       void TestAttributeSupportedQuery()
       {
-         for (unsigned int i = 0; i < dtHLAGM::RPRAttributeType::Enumerate().size(); ++i)
+         for (unsigned int i = 0; i < dtHLAGM::RPRAttributeType::EnumerateType().size(); ++i)
          {
             //Test all the types to see if it's working properly
-            CPPUNIT_ASSERT(mParameterTranslator->TranslatesAttributeType(
-               static_cast<dtHLAGM::AttributeType&>(*dtHLAGM::RPRAttributeType::Enumerate()[i])));
+            CPPUNIT_ASSERT(mParameterTranslator->TranslatesAttributeType(*dtHLAGM::RPRAttributeType::EnumerateType()[i]));
          }
 
          //Make sure UNKNOWN is not supported.

@@ -19,10 +19,10 @@
  * David Guthrie
  */
 #include <prefix/dtgameprefix-src.h>
-#include "dtGame/invokable.h"
-#include "dtGame/datastream.h"
-#include "dtGame/messageparameter.h"
-#include "dtGame/messagetype.h"
+#include <dtGame/invokable.h>
+#include <dtUtil/datastream.h>
+#include <dtGame/messageparameter.h>
+#include <dtGame/messagetype.h>
 
 namespace dtGame
 {

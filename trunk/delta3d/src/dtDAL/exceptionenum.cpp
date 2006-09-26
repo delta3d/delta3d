@@ -23,6 +23,7 @@ namespace dtDAL
 
    ExceptionEnum ExceptionEnum::ObjectFactoryUnknownType("Unknown Object Type");
    ExceptionEnum ExceptionEnum::InvalidActorException("Invalid Actor Type");
+   ExceptionEnum ExceptionEnum::InvalidParameter("Invalid Parameter");
 
 }//namespace dtDAL
 
