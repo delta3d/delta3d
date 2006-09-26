@@ -43,7 +43,7 @@ namespace dtCore
       , mFreeFallCounter(0)
       , mCurrentMode(FALLING)
       , mSlideThreshold(0.65f)
-      , mSlideSpeed(9.8f)
+      , mSlideSpeed(9.8f/4.0f)
       , mJumpSpeed(5.0f)
       , mHeightAboveTerrain(pHeight)
       , mMaxStepUpDistance(k)
@@ -107,6 +107,10 @@ namespace dtCore
 
       if(!pCollided || mJumped)
       {
+         if(mJumped && !pCollided)
+         {
+            mJumped = false; 
+         }
          mCurrentMode = FALLING;
       }
       else
@@ -355,7 +359,7 @@ namespace dtCore
       osg::Vec3 v0, v1, p1, newXYZ;
       v0 = velocity;
 
-      //added flag for jumping, used true when we are on the way up
+      ////added flag for jumping, used true when we are on the way up
       if(mJumped && mLastVelocity[2] <= 0.0f)
       {
          mJumped = false;
@@ -376,7 +380,8 @@ namespace dtCore
          {
 
             v0[2] = 0.0f;
-            v0 += mSlideVelocity;
+            //v0 += mSlideVelocity;
+			v0 = mSlideVelocity;
             float length = v0.length();
 
             if(length > mSlideSpeed)
@@ -385,11 +390,13 @@ namespace dtCore
                v0.set(v0[0] * mSlideSpeed, v0[1] * mSlideSpeed, v0[2] * mSlideSpeed);
             }
 
-            if(mCurrentMode != FALLING && pJump)
+            /*
+			if(mCurrentMode != FALLING && pJump)
             {
                v0[2] = mJumpSpeed;  
                mJumped = true;
             }
+			*/
 
             p1 = p0 + osg::Vec3(v0[0] * deltaFrameTime, v0[1] * deltaFrameTime, v0[2] * deltaFrameTime);
          }
@@ -397,12 +404,12 @@ namespace dtCore
 
       case WALKING:
          {
-            v0[2] = 0.0f;
+              v0[2] = 0.0f;
 
             if(mCurrentMode != FALLING && pJump)
             {
                v0[2] = mJumpSpeed;  
-               mJumped = true;
+                mJumped = true;
             }
 
             p1 = p0 + osg::Vec3(v0[0] * deltaFrameTime, v0[1] * deltaFrameTime, v0[2] * deltaFrameTime);            
