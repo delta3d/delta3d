@@ -56,8 +56,8 @@ namespace dtCore
           * @param mouse the mouse instance, or 0 to avoid
           * creating default input mappings
           */
-         WalkMotionModel(Keyboard* keyboard = 0,
-                         Mouse* mouse = 0);
+         WalkMotionModel(Keyboard* keyboard = NULL,
+                         Mouse* mouse = NULL);
 
       protected:
       
@@ -323,7 +323,6 @@ namespace dtCore
           */
          float mDownwardSpeed;
    };
-};
-
+}
 
 #endif // DELTA_WALKMOTIONMODEL

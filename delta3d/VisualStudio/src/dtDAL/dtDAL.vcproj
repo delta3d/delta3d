@@ -164,13 +164,25 @@
 				RelativePath="..\..\..\src\dtDAL\gameeventmanager.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtDAL\groupactorproperty.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtDAL\librarymanager.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtDAL\map.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtDAL\mapcontenthandler.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtDAL\mapxml.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtDAL\mapxmlconstants.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtDAL\namedparameter.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtDAL\physicalactorproxy.cpp">
@@ -217,6 +229,9 @@
 		<Filter
 			Name="Headers"
 			Filter="">
+			<File
+				RelativePath="..\..\..\inc\dtDAL\abstractparameter.h">
+			</File>
 			<File
 				RelativePath="..\..\..\inc\dtDAL\actorpluginregistry.h">
 			</File>
@@ -266,13 +281,25 @@
 				RelativePath="..\..\..\inc\dtDAL\gameeventmanager.h">
 			</File>
 			<File
+				RelativePath="..\..\..\inc\dtDAL\groupactorproperty.h">
+			</File>
+			<File
 				RelativePath="..\..\..\inc\dtDAL\librarymanager.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtDAL\map.h">
 			</File>
 			<File
+				RelativePath="..\..\..\inc\dtDAL\mapcontenthandler.h">
+			</File>
+			<File
 				RelativePath="..\..\..\inc\dtDAL\mapxml.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtDAL\mapxmlconstants.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtDAL\namedparameter.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtDAL\physicalactorproxy.h">

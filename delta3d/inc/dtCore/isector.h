@@ -81,7 +81,7 @@ namespace dtCore
        * @note The default ray has a starting position of (0,0,0) and a
        *  direction of (0,1,0).
        */
-      Isector(Scene *scene = 0);
+      Isector(Scene *scene = NULL);
 
       /**
        * Constructs a new intersection query using a ray constructed with the
@@ -90,7 +90,7 @@ namespace dtCore
        * @param dir The direction the ray is traveling.
        * @param scene The Delta3D scene to intersect.
        */
-      Isector(const osg::Vec3 &start, const osg::Vec3 &dir, Scene *scene = 0);
+      Isector(const osg::Vec3 &start, const osg::Vec3 &dir, Scene *scene = NULL);
 
       /**
        * Constructs a new intersection query using a line segment with the
@@ -122,7 +122,7 @@ namespace dtCore
        */
       void ClearQueryRoot() 
       {
-         mSceneRoot = 0;
+         mSceneRoot = NULL;
       }
 
       /**

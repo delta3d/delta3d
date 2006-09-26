@@ -1,8 +1,9 @@
-#include <cassert>
+ #include <cassert>
 #include <stack>
 
 #include <osgDB/FileUtils>
 #include <osg/Vec3>
+#include <osg/io_utils>
 
 #ifdef __APPLE__
   #include <OpenAL/alut.h>
@@ -26,11 +27,6 @@
 #define  BIT(a)      (1L<<a)
 #endif
 
-#if   !  defined(MAX_FLOAT)
-#define  MAX_FLOAT   static_cast<float>(0xFFFFFFFF)
-#endif
-
-
 // name spaces
 using namespace   dtAudio;
 using namespace   dtUtil;
@@ -48,8 +44,6 @@ const AudioConfigData   AudioManager::_DefCfg;
 IMPLEMENT_MANAGEMENT_LAYER(AudioManager::SoundObj)
 IMPLEMENT_MANAGEMENT_LAYER(AudioManager::ListenerObj)
 IMPLEMENT_MANAGEMENT_LAYER(AudioManager)
-
-
 
 // public member functions
 // default consructor
@@ -95,76 +89,83 @@ AudioManager::AudioManager( const std::string& name /*= "audiomanager"*/ )
 
 
 
-// desructor
+// destructor
 AudioManager::~AudioManager()
 {
    DeregisterInstance( this );
 
-   // stop all sources
-   if(mSource)
+   try
    {
-      for( ALsizei ii(0); ii < mNumSources; ii++ )
-      { 
-         if (alIsSource( mSource[ii] ))
-         {
-            alSourceStop( mSource[ii] );
-            // This check was added to prevent a crash-on-exit for OSX -osb
-            ALint bufValue;
-            alGetSourcei( mSource[ii], AL_BUFFER, &bufValue);
-            if (bufValue != 0)
+      // stop all sources
+      if(mSource)
+      {
+         for( ALsizei ii(0); ii < mNumSources; ii++ )
+         { 
+            unsigned int sourceNum = mSource[ii];
+            if(alIsSource( sourceNum ))
             {
-               alSourcei( mSource[ii], AL_BUFFER, AL_NONE );
+               alSourceStop( mSource[ii] );
+               // This check was added to prevent a crash-on-exit for OSX -osb
+               ALint bufValue;
+               alGetSourcei( mSource[ii], AL_BUFFER, &bufValue);
+               if (bufValue != 0)
+               {
+                  alSourcei( mSource[ii], AL_BUFFER, AL_NONE );
+               }
             }
          }
+         
+         // delete the sources
+         alDeleteSources( mNumSources, mSource );
+         delete   mSource;
       }
-      
-      // delete the sources
-      
-      alDeleteSources( mNumSources, mSource );
-      delete   mSource;
+
+      mSourceMap.clear();
+      mActiveList.clear();
+
+      while( mAvailable.size() )
+         mAvailable.pop();
+
+      while( mPlayQueue.size() )
+         mPlayQueue.pop();
+
+      while( mPauseQueue.size() )
+         mPauseQueue.pop();
+
+      while( mStopQueue.size() )
+         mStopQueue.pop();
+
+      while( mRewindQueue.size() )
+         mRewindQueue.pop();
+
+      // delete the buffers
+      BufferData* bd(NULL);
+      for( BUF_MAP::iterator iter(mBufferMap.begin()); iter != mBufferMap.end(); iter++ )
+      {
+         if( ( bd = iter->second ) == NULL )
+            continue;
+
+         iter->second   = NULL;
+         alDeleteBuffers( 1L, &bd->buf );
+         delete   bd;
+      }
+      mBufferMap.clear();
+      mSoundList.clear();
+
+      while( mSoundCommand.size() )
+         mSoundCommand.pop();
+
+      while( mSoundRecycle.size() )
+         mSoundRecycle.pop();
+
+      alutExit();
+
+      RemoveSender( dtCore::System::Instance() );
    }
-
-   mSourceMap.clear();
-   mActiveList.clear();
-
-   while( mAvailable.size() )
-      mAvailable.pop();
-
-   while( mPlayQueue.size() )
-      mPlayQueue.pop();
-
-   while( mPauseQueue.size() )
-      mPauseQueue.pop();
-
-   while( mStopQueue.size() )
-      mStopQueue.pop();
-
-   while( mRewindQueue.size() )
-      mRewindQueue.pop();
-
-   // delete the buffers
-   BufferData* bd(NULL);
-   for( BUF_MAP::iterator iter(mBufferMap.begin()); iter != mBufferMap.end(); iter++ )
+   catch(...)
    {
-      if( ( bd = iter->second ) == NULL )
-         continue;
-
-      iter->second   = NULL;
-      alDeleteBuffers( 1L, &bd->buf );
-      delete   bd;
+      LOG_ERROR("Caught an exception of unknown type in the destructor of the AudioManager");
    }
-   mBufferMap.clear();
-   mSoundList.clear();
-
-   while( mSoundCommand.size() )
-      mSoundCommand.pop();
-
-   while( mSoundRecycle.size() )
-      mSoundRecycle.pop();
-
-   alutExit();
-
-   RemoveSender( dtCore::System::Instance() );
 }
 
 
@@ -642,7 +643,7 @@ AudioManager::LoadFile( const std::string& file )
 
    ALenum format(0);
    ALsizei size(0);
-   ALvoid* data(0);
+   ALvoid *data = NULL;
 
    // We are trying to support the new version of ALUT as well as the old intergated
    // version. So we have two cases: DEPRECATED and NON-DEPRECATED.
@@ -712,8 +713,8 @@ AudioManager::LoadFile( const std::string& file )
    // bit in the meantime. Hope you bought your Timberlands...
    // -osb
 
-   #ifndef WIN32
-   free(data);
+   #if !defined (WIN32) && !defined (_WIN32) && !defined (__WIN32__)
+      free(data);
    #endif
 
    mBufferMap[file] = bd;
@@ -1380,8 +1381,8 @@ AudioManager::ConfigEAX( bool eax )
    }
    
    #ifndef AL_VERSION_1_1
-   memset( buf, 0L, 32L );
-   memcpy( buf, _EaxGet, std::min( strlen(_EaxGet), size_t(32L) ) );
+   memset( buf, 0, 32 );
+   memcpy( buf, _EaxGet, std::min( strlen(_EaxGet), size_t(32) ) );
    #else
    buf = _EaxVer;
    #endif
@@ -1434,7 +1435,7 @@ AudioManager::UnloadSound( SoundObj* snd )
    if( file == NULL )
       return;
 
-   snd->Buffer( 0L );
+   snd->Buffer(0);
 
    BufferData* bd = mBufferMap[file];
 
@@ -1451,8 +1452,8 @@ AudioManager::UnloadSound( SoundObj* snd )
 void
 AudioManager::PlaySound( SoundObj* snd )
 {
-   ALuint   buf(0L);
-   ALuint   src(0L);
+   ALuint   buf(0);
+   ALuint   src(0);
    ALenum   err(alGetError());
 
    assert( snd );
@@ -1539,17 +1540,18 @@ AudioManager::PlaySound( SoundObj* snd )
       }
 
       // set initial position and direction
-      osg::Vec3   pos   ( 0.0f, 0.0f, 0.0f );
-      osg::Vec3   dir   ( 0.0f, 1.0f, 0.0f );
+      osg::Vec3   pos;
+      osg::Vec3   dir;
 
       snd->GetPosition( pos );
       snd->GetDirection( dir );
 
       alSource3f( src,
                   AL_POSITION,
-                  static_cast<ALfloat>(pos[0L]),
-                  static_cast<ALfloat>(pos[1L]),
-                  static_cast<ALfloat>(pos[2L]) );
+                  static_cast<ALfloat>(pos[0]),
+                  static_cast<ALfloat>(pos[1]),
+                  static_cast<ALfloat>(pos[2]) );
+
       if( ( err = alGetError() ) != AL_NO_ERROR )
       {
          Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__, 
@@ -1557,10 +1559,10 @@ AudioManager::PlaySound( SoundObj* snd )
       }
 
       alSource3f( src,
-                  AL_DIRECTION,
-                  static_cast<ALfloat>(dir[0L]),
-                  static_cast<ALfloat>(dir[1L]),
-                  static_cast<ALfloat>(dir[2L]) );
+         AL_DIRECTION,
+         static_cast<ALfloat>(dir[0]),
+         static_cast<ALfloat>(dir[1]),
+         static_cast<ALfloat>(dir[2]) );
       if( ( err = alGetError() ) != AL_NO_ERROR )
       {
          Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
@@ -1920,7 +1922,7 @@ AudioManager::SetPosition( SoundObj* snd )
    snd->GetPosition( pos );
 
    ALenum   err(alGetError());
-   alSource3f( src, AL_POSITION, static_cast<ALfloat>(pos[0L]), static_cast<ALfloat>(pos[1L]), static_cast<ALfloat>(pos[2L]) );
+   alSource3f( src, AL_POSITION, static_cast<ALfloat>(pos[0]), static_cast<ALfloat>(pos[1]), static_cast<ALfloat>(pos[2]) );
    if( ( err = alGetError() ) != AL_NO_ERROR )
    {
       Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
@@ -1949,7 +1951,7 @@ AudioManager::SetDirection( SoundObj* snd )
    snd->GetDirection( dir );
 
    ALenum   err(alGetError());
-   alSource3f( src, AL_DIRECTION, static_cast<ALfloat>(dir[0L]), static_cast<ALfloat>(dir[1L]), static_cast<ALfloat>(dir[2L]) );
+   alSource3f( src, AL_DIRECTION, static_cast<ALfloat>(dir[0]), static_cast<ALfloat>(dir[1]), static_cast<ALfloat>(dir[2]) );
    if( ( err = alGetError() ) != AL_NO_ERROR )
    {
       Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
@@ -1978,7 +1980,7 @@ AudioManager::SetVelocity( SoundObj* snd )
    snd->GetVelocity( velo );
 
    ALenum   err(alGetError());
-   alSource3f( src, AL_VELOCITY, static_cast<ALfloat>(velo[0L]), static_cast<ALfloat>(velo[1L]), static_cast<ALfloat>(velo[2L]) );
+   alSource3f( src, AL_VELOCITY, static_cast<ALfloat>(velo[0]), static_cast<ALfloat>(velo[1]), static_cast<ALfloat>(velo[2]) );
    if( ( err = alGetError() ) != AL_NO_ERROR )
    {
       Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
@@ -2093,8 +2095,6 @@ AudioManager::SetMinimumGain( SoundObj* snd )
 
    ALfloat  min_gain(static_cast<ALfloat>(snd->GetMinGain()));
    ALfloat  max_gain(static_cast<ALfloat>(snd->GetMaxGain()));
-   min_gain = min_gain; //no-op to prevent warnings
-   max_gain = max_gain; //no-op to prevent warnings
    assert( min_gain <= max_gain );
 
    ALenum   err(alGetError());
@@ -2124,8 +2124,7 @@ AudioManager::SetMaximumGain( SoundObj* snd )
 
    ALfloat  min_gain(static_cast<ALfloat>(snd->GetMinGain()));
    ALfloat  max_gain(static_cast<ALfloat>(snd->GetMaxGain()));
-   min_gain = min_gain; //no-op to prevent warnings
-   max_gain = max_gain; //no-op to prevent warnings
+   
    assert( min_gain <= max_gain );
 
    ALenum   err(alGetError());
@@ -2308,16 +2307,15 @@ AudioManager::SoundObj::OnMessage( MessageData* data )
 
 
 
-void
-AudioManager::SoundObj::SetParent( dtCore::Transformable* parent )
+void AudioManager::SoundObj::SetParent( dtCore::DeltaDrawable* parent )
 {
-   ListenerRelative( bool(parent) );
+   ListenerRelative( parent != NULL );
    dtCore::Transformable::SetParent( parent );
 
    if( parent )
    {
-      dtCore::Transform transform( 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f );
-      dtCore::Transformable::SetTransform( transform, dtCore::Transformable::REL_CS );
+      dtCore::Transform transform;
+      SetTransform( transform, dtCore::Transformable::REL_CS );
    }
 }
 
@@ -2519,9 +2517,9 @@ void AudioManager::ListenerObj::SetVelocity( const osg::Vec3& velocity )
 
 void AudioManager::ListenerObj::GetVelocity( osg::Vec3& velocity )  const
 {
-   velocity[0L]   = static_cast<double>(mVelo[0L]);
-   velocity[1L]   = static_cast<double>(mVelo[1L]);
-   velocity[2L]   = static_cast<double>(mVelo[2L]);
+   velocity[0]   = static_cast<double>(mVelo[0]);
+   velocity[1]   = static_cast<double>(mVelo[1]);
+   velocity[2]   = static_cast<double>(mVelo[2]);
 }
 
 
@@ -2532,14 +2530,10 @@ void AudioManager::ListenerObj::SetGain( float gain )
    mGain = static_cast<ALfloat>(gain);
 }
 
-
-
 float AudioManager::ListenerObj::GetGain( void )   const
 {
    return   static_cast<float>(mGain);
 }
-
-
 
 void AudioManager::ListenerObj::OnMessage( MessageData* data )
 {
@@ -2548,25 +2542,19 @@ void AudioManager::ListenerObj::OnMessage( MessageData* data )
    if( data->message == "frame" )
    {
       dtCore::Transform transform;
-      osg::Matrix            matrix;
-      ALfloat           pos[3L]  = { 0.0f, 0.0f, 0.0f };
+      osg::Matrix       matrix;
+      ALfloat           pos[3];
 
       union orient
       {
-         ALfloat     ort[6L];
+         ALfloat     ort[6];
 
          struct
          {  
-            ALfloat  at[3L];  
-            ALfloat  up[3L];  
+            ALfloat  at[3];  
+            ALfloat  up[3];  
          };
-      } orient = { 0.0f };
-      orient.ort[0] = 0.0f;
-      orient.ort[1] = 1.0f;
-      orient.ort[2] = 0.0f;
-      orient.ort[3] = 0.0f;
-      orient.ort[4] = 0.0f;
-      orient.ort[5] = 1.0f;
+      } orient;
 
       GetTransform( transform );
       osg::Vec3 tmp;
@@ -2574,17 +2562,15 @@ void AudioManager::ListenerObj::OnMessage( MessageData* data )
       pos[0] = tmp[0]; 
       pos[1] = tmp[1]; 
       pos[2] = tmp[2];
-
       transform.Get( matrix );
-
-      osg::Vec3 transformedOrientation = osg::Matrix::transform3x3(osg::Vec3(orient.at[0], orient.at[1], orient.at[2]), matrix);
-      orient.at[0] = transformedOrientation[0];
-      orient.at[1] = transformedOrientation[1];
-      orient.at[2] = transformedOrientation[2];
-      osg::Vec3 transformedUp = osg::Matrix::transform3x3(osg::Vec3(orient.up[0], orient.up[1], orient.up[2]), matrix);
-      orient.up[0] = transformedUp[0];
-      orient.up[1] = transformedUp[1];
-      orient.up[2] = transformedUp[2];
+      
+      //assign at and up vectors directly from the matrix
+      orient.at[0] = matrix(1,0);
+      orient.at[1] = matrix(1,1);
+      orient.at[2] = matrix(1,2);
+      orient.up[0] = matrix(2,0);
+      orient.up[1] = matrix(2,1);
+      orient.up[2] = matrix(2,2);
 
       alListenerfv( AL_POSITION, pos );
       alListenerfv( AL_ORIENTATION, orient.ort );
@@ -2593,14 +2579,6 @@ void AudioManager::ListenerObj::OnMessage( MessageData* data )
       alListenerf( AL_GAIN, mGain );
    }
 }
-
-
-
-//void AudioManager::ListenerObj::SetParent( dtCore::Transformable* parent )
-//{
-//   dtCore::Transformable::SetParent( parent );
-//}
-
 
 
 void AudioManager::ListenerObj::Clear( void )
@@ -2613,11 +2591,11 @@ void AudioManager::ListenerObj::Clear( void )
 
    union
    {
-      ALfloat     ort[6L];
+      ALfloat     ort[6];
       struct
       {
-         ALfloat  at[3L];
-         ALfloat  up[3L];
+         ALfloat  at[3];
+         ALfloat  up[3];
       };
    }  orient = { 0.0f };
    orient.ort[0] = 0.0f;

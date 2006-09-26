@@ -19,7 +19,7 @@
  * Matthew W. Campbell
  */
 #include <prefix/dtcoreprefix-src.h>
-#include "dtCore/textureshaderparameter.h"
+#include <dtCore/textureshaderparameter.h>
 #include <dtCore/refptr.h>
 
 #include <osg/StateSet>
@@ -29,18 +29,18 @@
 namespace dtCore
 {
    ///////////////////////////////////////////////////////////////////////////////
-   IMPLEMENT_ENUM(TextureShaderParameter::AddressMode);
+   IMPLEMENT_ENUM(TextureShaderParameter::AddressMode)
    const TextureShaderParameter::AddressMode TextureShaderParameter::AddressMode::CLAMP("Clamp");
    const TextureShaderParameter::AddressMode TextureShaderParameter::AddressMode::REPEAT("Repeat");
    const TextureShaderParameter::AddressMode TextureShaderParameter::AddressMode::MIRROR("Mirror");
 
-   IMPLEMENT_ENUM(TextureShaderParameter::TextureAxis);
+   IMPLEMENT_ENUM(TextureShaderParameter::TextureAxis)
    const TextureShaderParameter::TextureAxis TextureShaderParameter::TextureAxis::S("S");
    const TextureShaderParameter::TextureAxis TextureShaderParameter::TextureAxis::T("T");
    const TextureShaderParameter::TextureAxis TextureShaderParameter::TextureAxis::R("R");
    const TextureShaderParameter::TextureAxis TextureShaderParameter::TextureAxis::Q("Q");
 
-   IMPLEMENT_ENUM(TextureShaderParameter::TextureSourceType);
+   IMPLEMENT_ENUM(TextureShaderParameter::TextureSourceType)
    const TextureShaderParameter::TextureSourceType TextureShaderParameter::TextureSourceType::IMAGE("Image");
    const TextureShaderParameter::TextureSourceType TextureShaderParameter::TextureSourceType::AUTO("Auto");
 

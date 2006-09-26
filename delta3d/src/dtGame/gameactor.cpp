@@ -55,6 +55,7 @@ namespace dtGame
 	{
       SetClassName("dtGame::GameActor");
 	}
+   
 	GameActorProxy::~GameActorProxy()
 	{
 	}
@@ -224,7 +225,7 @@ namespace dtGame
 
          if (property == NULL)
          {
-            LOG_ERROR(("Property \"" + params[i]->GetName() + "\" was not found on the actor.").c_str());
+            LOG_INFO(("Property \"" + params[i]->GetName() + "\" was not found on the actor.").c_str());
             continue;
          }
 
@@ -271,103 +272,6 @@ namespace dtGame
             }
          }
 
-/*
-
-         if (paramType == dtDAL::DataType::BOOLEAN)
-         {
-         }
-         else if (paramType == dtDAL::DataType::INT)
-         {
-            dtDAL::IntActorProperty *iap = static_cast<dtDAL::IntActorProperty*> (property);
-            iap->SetValue(static_cast<const IntMessageParameter*>(params[i])->GetValue());
-         }
-         else if (paramType == dtDAL::DataType::LONGINT)
-         {
-            dtDAL::LongActorProperty *lap = static_cast<dtDAL::LongActorProperty*> (property);
-            lap->SetValue(static_cast<const LongIntMessageParameter*>(params[i])->GetValue());
-         }
-         else if (paramType == dtDAL::DataType::FLOAT)
-         {
-            dtDAL::FloatActorProperty *fap = static_cast<dtDAL::FloatActorProperty*> (property);
-            fap->SetValue(static_cast<const FloatMessageParameter*>(params[i])->GetValue());
-         }
-         else if (paramType == dtDAL::DataType::DOUBLE)
-         {
-            dtDAL::DoubleActorProperty *dap = static_cast<dtDAL::DoubleActorProperty*> (property);
-            dap->SetValue(static_cast<const DoubleMessageParameter*>(params[i])->GetValue());
-         }
-         else if (paramType == dtDAL::DataType::STRING)
-         {
-            dtDAL::StringActorProperty *sap = static_cast<dtDAL::StringActorProperty*> (property);
-            sap->SetValue(static_cast<const StringMessageParameter*>(params[i])->GetValue());
-         }
-         else if (paramType == dtDAL::DataType::ENUMERATION)
-         {
-            dtDAL::AbstractEnumActorProperty *prop = dynamic_cast<dtDAL::AbstractEnumActorProperty*>(property);
-            std::string value = params[i]->ToString();
-
-            if (!prop->SetValueFromString(value))
-               LOG_ERROR(("Failed to set the value on property \"" + params[i]->GetName() + "\".").c_str());
-         }
-         else if (paramType == dtDAL::DataType::VEC2)
-         {
-            dtDAL::Vec2ActorProperty *vap = static_cast<dtDAL::Vec2ActorProperty*> (property);
-            vap->SetValue(static_cast<const Vec2MessageParameter*>(params[i])->GetValue());
-         }
-         else if (paramType == dtDAL::DataType::VEC2F)
-         {
-            dtDAL::Vec2fActorProperty *vap = static_cast<dtDAL::Vec2fActorProperty*> (property);
-            vap->SetValue(static_cast<const Vec2fMessageParameter*>(params[i])->GetValue());
-         }
-         else if (paramType == dtDAL::DataType::VEC2D)
-         {
-            dtDAL::Vec2dActorProperty *vap = static_cast<dtDAL::Vec2dActorProperty*> (property);
-            vap->SetValue(static_cast<const Vec2dMessageParameter*>(params[i])->GetValue());
-         }
-         else if (paramType == dtDAL::DataType::VEC3)
-         {
-            dtDAL::Vec3ActorProperty *vap = static_cast<dtDAL::Vec3ActorProperty*> (property);
-            vap->SetValue(static_cast<const Vec3MessageParameter*>(params[i])->GetValue());
-         }
-         else if (paramType == dtDAL::DataType::VEC3F)
-         {
-            dtDAL::Vec3fActorProperty *vap = static_cast<dtDAL::Vec3fActorProperty*> (property);
-            vap->SetValue(static_cast<const Vec3fMessageParameter*>(params[i])->GetValue());
-         }
-         else if (paramType == dtDAL::DataType::VEC3D)
-         {
-            dtDAL::Vec3dActorProperty *vap = static_cast<dtDAL::Vec3dActorProperty*> (property);
-            vap->SetValue(static_cast<const Vec3dMessageParameter*>(params[i])->GetValue());
-         }
-         else if (paramType == dtDAL::DataType::VEC4)
-         {
-            dtDAL::Vec4ActorProperty *vap = static_cast<dtDAL::Vec4ActorProperty*> (property);
-            vap->SetValue(static_cast<const Vec4MessageParameter*>(params[i])->GetValue());
-         }
-         else if (paramType == dtDAL::DataType::VEC4F)
-         {
-            dtDAL::Vec4fActorProperty *vap = static_cast<dtDAL::Vec4fActorProperty*> (property);
-            vap->SetValue(static_cast<const Vec4fMessageParameter*>(params[i])->GetValue());
-         }
-         else if (paramType == dtDAL::DataType::VEC4D)
-         {
-            dtDAL::Vec4dActorProperty *vap = static_cast<dtDAL::Vec4dActorProperty*> (property);
-            vap->SetValue(static_cast<const Vec4dMessageParameter*>(params[i])->GetValue());
-         }
-         else if (paramType.IsResource())
-         {
-            dtDAL::ResourceActorProperty *vap = static_cast<dtDAL::ResourceActorProperty*> (property);
-            dtDAL::ResourceDescriptor newValue(*static_cast<const ResourceMessageParameter*>(params[i])->GetValue());
-            vap->SetValue(&newValue);
-         }
-         else if (paramType == dtDAL::DataType::GAME_EVENT)
-         {
-            dtDAL::GameEventActorProperty *gap = static_cast<dtDAL::GameEventActorProperty*>(property);
-            gap->SetStringValue(static_cast<const GameEventMessageParameter*>(params[i])->ToString());
-         }
-         else
-            LOG_ERROR(("Message parameter type \"" + paramType.GetName() + "\" is not supported").c_str());
-*/
       }
 
    }

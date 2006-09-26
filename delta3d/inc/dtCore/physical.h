@@ -184,6 +184,6 @@ namespace dtCore
          dMass mMass;
 
    };
-};
+}
 
 #endif // DELTA_PHYSICAL

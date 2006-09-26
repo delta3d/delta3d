@@ -203,7 +203,7 @@ namespace dtEditQt{
         dtUtil::Log *mLogger;
 
         // filter vector to fill for file types
-        std::vector<dtCore::RefPtr<const dtDAL::ResourceTypeHandler> >handler;
+        std::vector<const dtDAL::ResourceTypeHandler* >handler;
 
         bool created;
     };

@@ -66,7 +66,7 @@ namespace dtGame
 
    class DT_GAME_EXPORT GameManager : public dtCore::Base 
    {
-      DECLARE_MANAGEMENT_LAYER(GameManager);
+      DECLARE_MANAGEMENT_LAYER(GameManager)
 
       public:
       

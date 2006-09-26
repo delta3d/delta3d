@@ -1,4 +1,4 @@
-/*
+/* -*-c++-*-
  * Delta3D Open Source Game and Simulation Engine
  * Copyright (C) 2004-2006 MOVES Institute
  *
@@ -19,8 +19,8 @@
  * Bradley Anderegg 06/07/2006
  */
 
-#ifndef __DELTA_WAYPOINTACTORPROXY_H__
-#define __DELTA_WAYPOINTACTORPROXY_H__
+#ifndef DELTA_WAYPOINTACTORPROXY
+#define DELTA_WAYPOINTACTORPROXY
 
 #include <dtDAL/export.h>
 #include <dtDAL/transformableactorproxy.h>

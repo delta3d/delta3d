@@ -32,28 +32,25 @@
 #include <QtCore/QTimer>
 #include <dtCore/uniqueid.h>
 #include <QtGui/QIcon>
-
-#include "dtDAL/project.h"
-#include "dtDAL/librarymanager.h"
-#include "dtUtil/fileutils.h"
-#include "dtEditQt/global.h"
-#include "dtEditQt/mainwindow.h"
-#include "dtEditQt/editoractions.h"
-#include "dtEditQt/editorsettings.h"
-#include "dtEditQt/perspectiveviewport.h"
-#include "dtEditQt/orthoviewport.h"
-#include "dtEditQt/viewportmanager.h"
-#include "dtEditQt/viewportcontainer.h"
-#include "dtEditQt/propertyeditor.h"
-#include "dtEditQt/actortab.h"
-#include "dtEditQt/resourcebrowser.h"
-#include "dtEditQt/editordata.h"
-#include "dtEditQt/editorevents.h"
-#include "dtEditQt/viewportmanager.h"
-#include "dtEditQt/projectcontextdialog.h"
-#include "dtEditQt/uiresources.h"
-//#include "dtEditQt/undomanager.h"
-
+#include <dtDAL/project.h>
+#include <dtDAL/librarymanager.h>
+#include <dtUtil/fileutils.h>
+#include <dtEditQt/global.h>
+#include <dtEditQt/mainwindow.h>
+#include <dtEditQt/editoractions.h>
+#include <dtEditQt/editorsettings.h>
+#include <dtEditQt/perspectiveviewport.h>
+#include <dtEditQt/orthoviewport.h>
+#include <dtEditQt/viewportmanager.h>
+#include <dtEditQt/viewportcontainer.h>
+#include <dtEditQt/propertyeditor.h>
+#include <dtEditQt/actortab.h>
+#include <dtEditQt/resourcebrowser.h>
+#include <dtEditQt/editordata.h>
+#include <dtEditQt/editorevents.h>
+#include <dtEditQt/viewportmanager.h>
+#include <dtEditQt/projectcontextdialog.h>
+#include <dtEditQt/uiresources.h>
 #include <osgDB/FileNameUtils>
 
 
@@ -129,6 +126,7 @@ namespace dtEditQt
         editMenu->addSeparator();
         editMenu->addAction(editorActions.actionEditMapProperties);
         editMenu->addAction(editorActions.actionEditMapLibraries);
+        editMenu->addAction(editorActions.actionEditMapEvents);
         editMenu->addSeparator();
         editMenu->addAction(editorActions.actionFileEditPreferences);
 
@@ -170,6 +168,7 @@ namespace dtEditQt
         editToolBar->addAction(EditorActions::getInstance().actionEditGotoActor);
         editToolBar->addAction(EditorActions::getInstance().actionEditGroundClampActors);
         editToolBar->addAction(EditorActions::getInstance().actionToggleTerrainPaging);
+        //editToolBar->addAction(EditorActions::getInstance().actionEditTaskEditor);
         addToolBar(editToolBar);
 
         undoToolBar = new QToolBar(this);
@@ -290,6 +289,7 @@ namespace dtEditQt
         EditorActions::getInstance().actionEditGroundClampActors->setEnabled(false);
         EditorActions::getInstance().actionEditMapProperties->setEnabled(hasBoth);
         EditorActions::getInstance().actionEditMapLibraries->setEnabled(hasBoth);
+        EditorActions::getInstance().actionEditTaskEditor->setEnabled(hasBoth);
 
         EditorActions::getInstance().actionSelectionCamera->setEnabled(hasBoth);
         EditorActions::getInstance().actionSelectionSelectActor->setEnabled(hasBoth);
@@ -441,7 +441,7 @@ namespace dtEditQt
 
         //Check to see if the user wants the app to remember the recently loaded map.
         if(!EditorData::getInstance().getLoadLastMap() ||
-           !EditorData::getInstance().getCurrentMap().valid())
+           !EditorData::getInstance().getCurrentMap())
         {
             // Error check, if they have a previous settings file with a recent map in it, it
             // needs to be deleted as to not load it next time
@@ -477,7 +477,7 @@ namespace dtEditQt
     {
         EditorActions::getInstance().wasCancelled = false;
 
-        dtDAL::Map *curMap = dtEditQt::EditorData::getInstance().getCurrentMap().get();
+        dtDAL::Map *curMap = dtEditQt::EditorData::getInstance().getCurrentMap();
         if(curMap == NULL)
         {
             EditorEvents::getInstance().emitEditorCloseEvent();
@@ -738,7 +738,7 @@ namespace dtEditQt
                     dtDAL::Project::GetInstance().OpenMapBackup(str);
 
                 EditorActions::getInstance().changeMaps(
-                    EditorData::getInstance().getCurrentMap().get(), &backupMap);
+                    EditorData::getInstance().getCurrentMap(), &backupMap);
                 EditorData::getInstance().addRecentMap(backupMap.GetName());
                 EditorData::getInstance().getMainWindow()->endWaitCursor();
             }
@@ -755,8 +755,8 @@ namespace dtEditQt
 
                 EditorData::getInstance().getMainWindow()->startWaitCursor();
                 dtDAL::Project::GetInstance().ClearBackup(str);
-                EditorActions::getInstance().changeMaps(EditorData::getInstance().getCurrentMap().get(),
-                    &dtDAL::Project::GetInstance().GetMap(str));
+                EditorActions::getInstance().changeMaps(EditorData::getInstance().getCurrentMap(),
+                   &dtDAL::Project::GetInstance().GetMap(str));
                 EditorData::getInstance().addRecentMap(str);
                 EditorData::getInstance().getMainWindow()->endWaitCursor();
             }
@@ -768,7 +768,7 @@ namespace dtEditQt
             EditorData::getInstance().getMainWindow()->startWaitCursor();
             dtDAL::Map &m = dtDAL::Project::GetInstance().GetMap(str);
             EditorActions::getInstance().changeMaps(
-                EditorData::getInstance().getCurrentMap().get(), &m);
+                EditorData::getInstance().getCurrentMap(), &m);
             EditorData::getInstance().addRecentMap(m.GetName());
             EditorData::getInstance().getMainWindow()->endWaitCursor();
         }

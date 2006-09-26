@@ -55,8 +55,8 @@ namespace dtCore
           * @param mouse the mouse instance, or 0 to avoid
           * creating default input mappings
           */
-         UFOMotionModel(Keyboard* keyboard = 0,
-                        Mouse* mouse = 0);
+         UFOMotionModel(Keyboard* keyboard = NULL,
+                        Mouse* mouse = NULL);
 
       protected:
       
@@ -273,7 +273,7 @@ namespace dtCore
           */
          float mMaximumTurnSpeed;
    };
-};
+}
 
 
 #endif // DELTA_UFOMOTIONMODEL

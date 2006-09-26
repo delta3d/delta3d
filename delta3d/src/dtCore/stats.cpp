@@ -84,7 +84,7 @@ void Stats::Draw()
 // Stats::updateFrameTick
 //------------------------------------------------------------------
 // update time from the current frame update and the previous one.
-dtCore::Timer_t Stats::UpdateFrameTick()
+Timer_t Stats::UpdateFrameTick()
 {
   mLastFrameTick = mFrameTick;
   mFrameTick = mTimer.Tick();

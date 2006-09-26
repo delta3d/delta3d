@@ -1,6 +1,6 @@
 Import('*')
 
-srcs = SGlob( '*.cpp' )
+srcs = env.SGlob( '*.cpp' )
                 
 deps = [ 'dtCore', 'openal', 'alut', 'dtUtil', 'isense', 'OpenThreads',
          'osg', 'osgDB', 'osgParticle', 'osgText', 'osgUtil',
@@ -8,7 +8,7 @@ deps = [ 'dtCore', 'openal', 'alut', 'dtUtil', 'isense', 'OpenThreads',
          'opengl', 'alut', 'User32' ]
 
 defines = []
-if OS == 'windows':
+if env['OS'] == 'windows':
    defines = ['DT_AUDIO_LIBRARY', 'NOMINMAX']
 
 

@@ -21,7 +21,7 @@
 #ifndef DELTA_DEFAULTMESSAGEPROCESSOR
 #define DELTA_DEFAULTMESSAGEPROCESSOR
 
-#include "dtGame/gmcomponent.h"
+#include <dtGame/gmcomponent.h>
 
 namespace dtGame
 {

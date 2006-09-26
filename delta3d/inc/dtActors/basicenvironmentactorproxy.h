@@ -188,12 +188,6 @@ namespace dtActors
          virtual bool ContainsActor(dtDAL::ActorProxy &proxy) const;
 
          /**
-           * Gets all the actors associated with this environment
-           * @param vec The vector to fill
-           */
-         virtual void GetAllActors(std::vector<dtDAL::ActorProxy*> &vec);
-
-         /**
            * const version of the above function
            * Gets all the actors associated with this environment
            * @param vec The vector to fill
@@ -245,6 +239,12 @@ namespace dtActors
           * @return The time and date, as based on real world time
           */
          std::string GetCurrentTimeAndDateString() const;
+
+         /**
+          * Gets the weather object contained by this actor.
+          * @return The weather object contained by this actor.
+          */
+         dtABC::Weather& GetWeather();
 
          /**
           * Enables a cloud plane in this environment
@@ -376,6 +376,7 @@ namespace dtActors
          bool mIsCloudPlaneEnabled;
          dtCore::RefPtr<dtABC::Weather> mWeather;
          dtCore::RefPtr<dtCore::CloudPlane> mCloudPlane;
+         dtABC::Weather::WeatherTheme mWeatherTheme;
          std::map<dtCore::RefPtr<dtDAL::ActorProxy>, dtCore::DeltaDrawable*> mAddedActors;
    };
 

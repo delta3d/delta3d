@@ -19,8 +19,8 @@
  * Bradley Anderegg and Chris Darken 09/21/2006
  */
 
-#ifndef __DELTA_FPSCOLLIDER_H__
-#define __DELTA_FPSCOLLIDER_H__
+#ifndef DELTA_FPSCOLLIDER
+#define DELTA_FPSCOLLIDER
 
 #include <dtCore/export.h>
 #include <osg/Vec3>

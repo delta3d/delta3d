@@ -190,6 +190,20 @@ namespace dtEditQt
         /// Emitted when an editor preference changes.
         void emitEditorPreferencesChanged();
 
+
+       ///Emitted right after a game event has been added.
+       void emitGameEventAdded();
+
+       ///Emitted right after a game event has been edited.
+       void emitGameEventEdited();
+
+       ///Emitted right after a game event has been removed from the map.
+       void emitGameEventRemoved();
+
+       ///Emitted right before a game event is removed from the map.
+       void emitGameEventAboutToBeRemoved();
+       
+       
     signals:
         void selectedActors(ActorProxyRefPtrVector &actors);
         void gotoActor(ActorProxyRefPtr actor);
@@ -209,6 +223,12 @@ namespace dtEditQt
         void mapLibraryImported();
         void mapLibraryRemoved();
         void mapLibraryAboutToBeRemoved();
+
+        void mapGameEventAdded();
+        void mapGameEventEdited();
+        void mapGameEventRemoved();
+        void mapGameEventAboutToBeRemoved();
+
         void editorCloseEvent();
         void mapPropertyChanged();
         void editorPreferencesChanged();

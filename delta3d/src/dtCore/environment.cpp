@@ -26,14 +26,14 @@ using namespace dtUtil;
 IMPLEMENT_MANAGEMENT_LAYER(Environment)
 
 Environment::Environment(const std::string& name):
-   mAmbLightTable(0),
-   mDifLightTable(0),
-   mSpecLightTable(0),
-   mSkyLightTable(0),
-   mEnvEffectNode(0),
-   mDrawableNode(0),
-   mSkyLight(0),
-   mFog(0),
+   mAmbLightTable(new InterpTable()),
+   mDifLightTable(new InterpTable()),
+   mSpecLightTable(new InterpTable()),
+   mSkyLightTable(new InterpTable()),
+   mEnvEffectNode(new osg::Group()),
+   mDrawableNode(new osg::Group()),
+   mSkyLight(NULL),
+   mFog(new osg::Fog()),
    mVisibility(0),
    mFogEnabled(true),
    mFogMode(EXP2),
@@ -42,16 +42,14 @@ Environment::Environment(const std::string& name):
    mSunAzimuth(0),
    mCurrTime(0),
    mLastUpdate(0),
-   mSunlightShader(0),
-   mSkyDomeShader(0),
-   mSkyDome(0)
+   mSunlightShader(new SunlightShader()),
+   mSkyDomeShader(new SkyDomeShader()),
+   mSkyDome(NULL)
 {
    RegisterInstance(this);
 
    SetName(name);
    SetOSGNode( new osg::Group() );
-   mEnvEffectNode = new osg::Group();
-   mDrawableNode = new osg::Group();
    GetOSGNode()->asGroup()->addChild(mEnvEffectNode.get());
    GetOSGNode()->asGroup()->addChild(mDrawableNode.get());
 
@@ -63,15 +61,10 @@ Environment::Environment(const std::string& name):
    
    mRefLatLong.set(36.586944f, -121.842778f);
 
-   mFog = new osg::Fog();
    osg::StateSet *state = mDrawableNode->getOrCreateStateSet();
    state->setAttributeAndModes(mFog.get());
    mDrawableNode->setStateSet(state);
 
-   mSunlightShader = new SunlightShader();
-   mSkyDomeShader = new SkyDomeShader();
-
-   mAmbLightTable = new InterpTable();
    mAmbLightTable->AddEntry(-90.0, 0.040);
    mAmbLightTable->AddEntry(-25.0, 0.040);
    mAmbLightTable->AddEntry(-20.0, 0.048);
@@ -82,7 +75,6 @@ Environment::Environment(const std::string& name):
    mAmbLightTable->AddEntry(0.0, 0.200);
    mAmbLightTable->AddEntry(90.0, 0.200);
 
-   mDifLightTable = new InterpTable();
    mDifLightTable->AddEntry(-90.0, 0.0);
    mDifLightTable->AddEntry(-25.0, 0.0);
    mDifLightTable->AddEntry(-20.0, 0.03);
@@ -98,7 +90,6 @@ Environment::Environment(const std::string& name):
    mDifLightTable->AddEntry(50.0, 1.0);
    mDifLightTable->AddEntry(90.0, 1.0);
 
-   mSpecLightTable = new InterpTable();
    mSpecLightTable->AddEntry(-90.0, 0.215);
    mSpecLightTable->AddEntry(-15.0, 0.215);
    mSpecLightTable->AddEntry(-10.0, 0.257);
@@ -109,7 +100,6 @@ Environment::Environment(const std::string& name):
    mSpecLightTable->AddEntry(10.0, 0.5);
    mSpecLightTable->AddEntry(90.0, 0.5);
 
-   mSkyLightTable = new InterpTable();
    mSkyLightTable->AddEntry(-90.0, 0.080);
    mSkyLightTable->AddEntry(-50.0, 0.080);
    mSkyLightTable->AddEntry(-40.0, 0.090);
@@ -137,7 +127,7 @@ Environment::Environment(const std::string& name):
 
    Update(999.99);
 
-   AddSender(System::Instance());
+   AddSender(&System::GetInstance());
 }
 
 Environment::~Environment()
@@ -166,7 +156,7 @@ Environment::~Environment()
    delete mSunlightShader; 
    delete mSkyDomeShader; 
 
-   RemoveSender( System::Instance() );
+   RemoveSender(&System::GetInstance());
 }
 
 ///Notifies this object that it has been added to a Scene

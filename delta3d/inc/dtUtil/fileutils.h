@@ -25,10 +25,10 @@
 #include <dtCore/refptr.h>
 #include <osg/Referenced>
 #include <osgDB/FileUtils>
-#include "dtUtil/log.h"
-#include "dtUtil/enumeration.h"
-#include "dtUtil/exception.h"
-#include "dtUtil/export.h"
+#include <dtUtil/log.h>
+#include <dtUtil/enumeration.h>
+#include <dtUtil/exception.h>
+#include <dtUtil/export.h>
 
 namespace dtUtil
 {
@@ -38,7 +38,7 @@ namespace dtUtil
    {
       FILE_NOT_FOUND,
       REGULAR_FILE,
-      DIRECTORY,
+      DIRECTORY
    };
 
    /**
@@ -100,7 +100,7 @@ namespace dtUtil
           * @param strFile the path to the file to check.
           * @return true if the file exists.
           */
-         bool FileExists( const std::string& strFile ) const throw();
+         bool FileExists( const std::string& strFile ) const;
 
          /**
           * Copys a file.
@@ -111,7 +111,7 @@ namespace dtUtil
           * @throws FileExceptionEnum::IOException if an error occurs copying the data or bOverwrite was false and the
           *                                           destination file exists.
           */
-         void FileCopy( const std::string& strSrc, const std::string& strDest, bool bOverwrite ) const throw(dtUtil::Exception);
+         void FileCopy( const std::string& strSrc, const std::string& strDest, bool bOverwrite ) const;
 
          /**
           * Moves a file. This call will attempt to move the file without moving the data, but if it can't,
@@ -123,14 +123,14 @@ namespace dtUtil
           * @throws FileExceptionEnum::IOException if an error occurs moving the data or bOverwrite was false and the
           *                                           destination file exists.
           */
-         void FileMove( const std::string& strSrc, const std::string& strDest, bool bOverwrite ) const throw(dtUtil::Exception);
+         void FileMove( const std::string& strSrc, const std::string& strDest, bool bOverwrite ) const;
 
          /**
           * Deletes the given file
           * @param strFile the path to the file to delete
           * @throws FileExceptionEnum::IOException if an error occurs deleting the data
           */
-         void FileDelete( const std::string& strFile ) const throw(dtUtil::Exception);
+         void FileDelete( const std::string& strFile ) const;
 
          /**
           * @note If the  file is not found, the fileType value will be set to FILE_NOT_FOUND and all other values
@@ -138,7 +138,7 @@ namespace dtUtil
           * @return the fileInfo struct for the given file.
           * @see dtUtil::FileInfo
           */
-         const struct FileInfo GetFileInfo( const std::string& strFile) const throw();
+         const struct FileInfo GetFileInfo( const std::string& strFile) const;
 
          /**
           * Changes the current directory to the one given in "path."
@@ -149,12 +149,12 @@ namespace dtUtil
           * @param path The path to the new directory.
           * @throws FileExceptionEnum::FileNotFound if the path does not exist.
           */
-         void ChangeDirectory(const std::string& path) throw(dtUtil::Exception);
+         void ChangeDirectory(const std::string& path);
 
          /**
           * @return the full path to the current directory.
           */
-         const std::string& CurrentDirectory() const throw();
+         const std::string& CurrentDirectory() const;
 
          /**
           * Changes the current directory to the one given in "path" and
@@ -164,14 +164,14 @@ namespace dtUtil
           * @param path The path to the new directory.
           * @throws FileExceptionEnum::FileNotFound if the path does not exist.
           */
-         void PushDirectory(const std::string& path) throw(dtUtil::Exception);
+         void PushDirectory(const std::string& path);
 
          /**
           * sets the current directory to the last directory on the stack.
           * @see pushDirectory
           * @throws FileExceptionEnum::FileNotFound if the previous directory no longer exists.
           */
-         void PopDirectory() throw(dtUtil::Exception);
+         void PopDirectory();
 
          /**
           * Converts a relative path to an absolute path.
@@ -179,7 +179,7 @@ namespace dtUtil
           * @return the absolute path.
           * @throws FileExceptionEnum::FileNotFound if the path does not exist.
           */
-         const std::string GetAbsolutePath(const std::string& relativePath) const throw(dtUtil::Exception);
+         const std::string GetAbsolutePath(const std::string& relativePath) const;
 
          /**
           * Note: throws exceptions of type dtUtil::Exception
@@ -189,14 +189,14 @@ namespace dtUtil
           * @throws FileExceptionEnum::IOException if the path is not an actual directory
           * 
           */
-         DirectoryContents DirGetFiles( const std::string& path ) const throw(dtUtil::Exception);
+         DirectoryContents DirGetFiles( const std::string& path ) const;
 
          /**
           * @param path the path to the directory to get the subdirectories for.
           * @return a vector holding the list of subdirectories.
           * @throws FileExceptionEnum::FileNotFound if the path does not exist.
           */
-         DirectoryContents DirGetSubs( const std::string& path ) const throw(dtUtil::Exception);
+         DirectoryContents DirGetSubs( const std::string& path ) const;
 
          /**
           * Copys an entire directory.  If destPath exists, then a subdirectory will be created in
@@ -214,7 +214,7 @@ namespace dtUtil
           * @throws FileExceptionEnum::IOException if an error occurs copying the data or bOverwrite was false and a
           *                                           destination file exists.
           */
-         void DirCopy(const std::string& srcPath, const std::string& destPath, bool bOverwrite, bool copyContentsOnly = false) const throw(dtUtil::Exception);
+         void DirCopy(const std::string& srcPath, const std::string& destPath, bool bOverwrite, bool copyContentsOnly = false) const;
 
          /**
           * Deletes a directory.  If bRecursive is true, the directory and all it's contents will
@@ -225,7 +225,7 @@ namespace dtUtil
           * @throws FileExceptionEnum::FileNotFound if the path does not exist.
           * @throws FileExceptionEnum::IOException if an error occurs deleteting the directory
           */
-         bool DirDelete( const std::string& strDir, bool bRecursive ) throw(dtUtil::Exception);
+         bool DirDelete( const std::string& strDir, bool bRecursive );
 
          /**
           * creates a new directory from a path.
@@ -233,20 +233,20 @@ namespace dtUtil
           * @throws FileExceptionEnum::FileNotFound if the parent path does not exist.
           * @throws FileExceptionEnum::IOException if an error occurs creating the directory
           */
-         void MakeDirectory(const std::string& strDir) const throw(dtUtil::Exception);
+         void MakeDirectory(const std::string& strDir) const;
 
          /**
           * @param strDir The directory to check.
           * @return true if the path exists and is a directory
           */
-         bool DirExists( const std::string& strDir ) const throw();
+         bool DirExists( const std::string& strDir ) const;
            
       private:
          FileUtils();
 
          virtual ~FileUtils();
 
-         void RecursDeleteDir( bool bRecursive ) throw(dtUtil::Exception);
+         void RecursDeleteDir( bool bRecursive );
 
          static dtCore::RefPtr<FileUtils> mInstance;
 
@@ -255,9 +255,9 @@ namespace dtUtil
          std::string mCurrentDirectory;
          std::vector<std::string> mStackOfDirectories;
          static const int PATH_BUFFER_SIZE = 512;
-         void ChangeDirectoryInternal(const std::string& path) throw(dtUtil::Exception);
+         void ChangeDirectoryInternal(const std::string& path);
          void InternalDirCopy(const std::string& srcPath,
-                              const std::string& destPath, bool bOverwrite) const throw(dtUtil::Exception);
+                              const std::string& destPath, bool bOverwrite) const;
    };
 
 }

@@ -58,6 +58,6 @@ namespace dtCore
 
           bool mRecenterGeometry;///<if we want to recenter the geometry of the object about the origin upon load
    };   
-};
+}
 
 #endif // DELTA_OBJECT

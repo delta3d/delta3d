@@ -101,7 +101,7 @@ namespace dtEditQt
         EditorData::getInstance().getMainWindow()->startWaitCursor();
 
         std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > globalProxies;
-        dtDAL::Map *map = EditorData::getInstance().getCurrentMap().get();
+        dtDAL::Map *map = EditorData::getInstance().getCurrentMap();
 
         // empty out our table, just in case - Must happen BEFORE libraries are removed
         resultsTable->clearAll();

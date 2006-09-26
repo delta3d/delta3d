@@ -101,7 +101,11 @@ public:
 
                #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR == 1 && OSG_VERSION_MINOR == 0 
                // Luckily, this behavior is redundant with OSG 1.1
-               if( std::string( fullNodePath[0]->className() ) == std::string("CameraNode") )
+               
+               //if( std::string( fullNodePath[0]->className() ) == std::string("CameraNode") )
+               // This dynamic_cast should be much faster than constructing two strings and 
+               // comparing them
+               if(dynamic_cast<osg::CameraNode*>(fullNodePath[0]) != NULL)
                {
                   fullNodePath = osg::NodePath( fullNodePath.begin()+1, fullNodePath.end() );
                }

@@ -336,5 +336,5 @@ namespace dtHLAGM
          ///whether or not this mapping is invalid.
          bool mInvalid;
    };
-};
+}
 #endif // DELTA_ONE_TO_ONE_MAPPING

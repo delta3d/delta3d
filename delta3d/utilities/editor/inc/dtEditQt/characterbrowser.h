@@ -20,16 +20,10 @@
 * @author Teague Coonan
 */
 
-// This class is not actually used in ResourceBrowser, so it's #ifdef'd out
-// for now to avoid linker warnings. -osb
-
-#include <QtCore/QObject>
-
-#if 0
-
 #ifndef __CharacterBrowser_h
 #define __CharacterBrowser_h
 
+#include <QtCore/QObject>
 #include "dtEditQt/resourceabstractbrowser.h"
 #include <osg/ref_ptr>
 #include <dtChar/character.h>
@@ -127,5 +121,3 @@ namespace dtEditQt {
 }
 
 #endif
-
-#endif 

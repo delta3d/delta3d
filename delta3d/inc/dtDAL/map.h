@@ -27,13 +27,14 @@
 
 #include <osg/Referenced>
 
-#include "dtDAL/actorproxy.h"
-#include "dtDAL/export.h"
-#include "dtDAL/environmentactor.h"
+#include <dtDAL/actorproxy.h>
+#include <dtDAL/export.h>
+#include <dtDAL/gameeventmanager.h>
 
 namespace dtDAL 
 {
    class Project;
+   class GameEvent;
 
    /**
     * @class Map
@@ -53,6 +54,37 @@ namespace dtDAL
             Either
          };
 
+         class MapGameEvents: public GameEventManager
+         {
+            public:
+               MapGameEvents(Map& parent);
+               /**
+                *
+                */
+               virtual void AddEvent(GameEvent& event);
+
+               /**
+                * Removes an existing event from the game event manager.
+                * @param event The event to remove.  If it is not currently in the
+                *  manager, this method is a no-op.
+                */
+               virtual void RemoveEvent(GameEvent& event);
+
+               /**
+                * Removes the game event with the specified unique id from the manager.
+                * @param id The unique id of the game event to remove.  If the event is not
+                *   currently in the manager, this method is a no-op.
+                */
+               virtual void RemoveEvent(const dtCore::UniqueId& id);
+
+               /**
+                * Clears all the currently registered events from the manager.
+                */
+               virtual void ClearAllEvents();
+            private:
+               Map& mParent;
+         };
+   
          /**
           * @return the mName of the map.
           */
@@ -350,16 +382,19 @@ namespace dtDAL
           */
          const ActorProxy* GetEnvironmentActor() const { return mEnvActor.get(); }
 
+         ///@return the GameEventManager that holds the game events for this map.
+         GameEventManager& GetEventManager();
+         ///@return as const the GameEventManager that holds the game events for this map.
+         const GameEventManager& GetEventManager() const;
+
          /**
           * Sets the environment actor on this map
           * @param envActor The new environment actor to set
           */
          void SetEnvironmentActor(ActorProxy *envActor);
          
-
       protected:
          friend class Project;
-
 
          /**
           * Assigns the file name this map should be saved to. It should not have
@@ -367,7 +402,6 @@ namespace dtDAL
           * @param newFileName the new file name.
           */
          void SetFileName(const std::string& newFileName);
-
 
          /**
           * Assigns the saved map name.  This is used as an override when loading backup copies
@@ -396,7 +430,7 @@ namespace dtDAL
           */
          void AddMissingActorTypes(const std::set<std::string>& types);
 
-         virtual ~Map() {}
+         virtual ~Map();
       
        private:
          bool mModified;
@@ -415,6 +449,8 @@ namespace dtDAL
          std::string mCreateDateTime;
 
          dtCore::RefPtr<dtDAL::ActorProxy> mEnvActor;
+
+         dtCore::RefPtr<GameEventManager> mEventManager;
 
          //ProxiesByClassMap proxiesByClass;
          std::map<dtCore::UniqueId, dtCore::RefPtr<ActorProxy> > mProxyMap;

@@ -22,14 +22,14 @@
 #define DELTA_BINARYLOGSTREAM
 
 #include <stdio.h>
-#include "dtGame/logstream.h"
-#include "dtGame/export.h"
+#include <dtGame/logstream.h>
+#include <dtGame/export.h>
 
 namespace dtGame
 {
    /**
     * This is a log stream class which supports a binary log file format.
-    * The stream actually manages two seperate files.  The first file contains
+    * The stream actually manages two separate files.  The first file contains
     * a dump of game messages in addition to key-frame captures.  The second
     * file contains two index tables, one for the tags, and one for the key-frames.
     */

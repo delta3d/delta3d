@@ -33,6 +33,8 @@
 
 #include <iostream>
 
+using namespace dtCore;
+
 namespace dtGame
 {
    DefaultMessageProcessor::DefaultMessageProcessor(const std::string& name) : GMComponent(name)
@@ -227,7 +229,7 @@ namespace dtGame
 
    void DefaultMessageProcessor::ProcessTimeChangeCommand(const TimeChangeMessage& msg)
    {
-      GetGameManager()->ChangeTimeSettings(msg.GetSimulationTime(), msg.GetTimeScale(), (dtCore::Timer_t)(msg.GetSimulationClockTime() * 1000000));
+      GetGameManager()->ChangeTimeSettings(msg.GetSimulationTime(), msg.GetTimeScale(), (Timer_t)(msg.GetSimulationClockTime() * 1000000));
    }
 
    void DefaultMessageProcessor::ProcessUnhandledLocalMessage(const Message &msg)

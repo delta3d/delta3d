@@ -34,22 +34,22 @@ FlyMotionModel::FlyMotionModel(Keyboard* keyboard,
                                Mouse* mouse, 
                                bool useSimTimeForSpeed)
    : MotionModel("FlyMotionModel"),
-     mLeftButtonUpDownMapping(0),
-     mLeftButtonLeftRightMapping(0),
-     mRightButtonUpDownMapping(0),
-     mRightButtonLeftRightMapping(0),
-     mArrowKeysUpDownMapping(0),
-     mArrowKeysLeftRightMapping(0),
-     mWSKeysUpDownMapping(0),
-     mADKeysLeftRightMapping(0),
-     mDefaultFlyForwardBackwardAxis(0),
-     mDefaultFlyLeftRightAxis(0),
-     mDefaultTurnLeftRightAxis(0),
-     mDefaultTurnUpDownAxis(0),
-     mFlyForwardBackwardAxis(0),
-     mFlyLeftRightAxis(0),
-     mTurnLeftRightAxis(0),
-     mTurnUpDownAxis(0),
+     mLeftButtonUpDownMapping(NULL),
+     mLeftButtonLeftRightMapping(NULL),
+     mRightButtonUpDownMapping(NULL),
+     mRightButtonLeftRightMapping(NULL),
+     mArrowKeysUpDownMapping(NULL),
+     mArrowKeysLeftRightMapping(NULL),
+     mWSKeysUpDownMapping(NULL),
+     mADKeysLeftRightMapping(NULL),
+     mDefaultFlyForwardBackwardAxis(NULL),
+     mDefaultFlyLeftRightAxis(NULL),
+     mDefaultTurnLeftRightAxis(NULL),
+     mDefaultTurnUpDownAxis(NULL),
+     mFlyForwardBackwardAxis(NULL),
+     mFlyLeftRightAxis(NULL),
+     mTurnLeftRightAxis(NULL),
+     mTurnUpDownAxis(NULL),
      mMaximumFlySpeed(100.0f),
      mMaximumTurnSpeed(90.0f),
      mUseSimTimeForSpeed(useSimTimeForSpeed)
@@ -57,12 +57,12 @@ FlyMotionModel::FlyMotionModel(Keyboard* keyboard,
 
    RegisterInstance(this);
    
-   if(keyboard != 0 && mouse != 0)
+   if(keyboard != NULL && mouse != NULL)
    {
       SetDefaultMappings(keyboard, mouse);
    }
    
-   AddSender(System::Instance());
+   AddSender(&System::GetInstance());
 }
 
 /**
@@ -70,7 +70,7 @@ FlyMotionModel::FlyMotionModel(Keyboard* keyboard,
  */
 FlyMotionModel::~FlyMotionModel()
 {
-   RemoveSender(System::Instance());
+   RemoveSender(&System::GetInstance());
    
    DeregisterInstance(this);
 }
@@ -371,7 +371,20 @@ void FlyMotionModel::OnMessage(MessageData *data)
       
       if(mTurnUpDownAxis != 0)
       {
-         hpr[1] += float(mTurnUpDownAxis->GetState() * mMaximumTurnSpeed * delta);
+         float rotateTo = hpr[1] + float(mTurnUpDownAxis->GetState() * mMaximumTurnSpeed * delta);
+
+         if( rotateTo <= -90.0f )
+         {
+            hpr[1] = -89.5f;
+         }
+         else if( rotateTo >= 90.0f )
+         {
+            hpr[1] = 89.5f;
+         }
+         else
+         {
+            hpr[1] = rotateTo;
+         }
       }
       
       hpr[2] = 0.0f;

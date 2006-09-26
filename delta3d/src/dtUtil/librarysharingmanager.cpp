@@ -40,7 +40,7 @@ using std::set;
 
 namespace dtUtil
 {
-   IMPLEMENT_ENUM(LibrarySharingManager::ExceptionEnum);
+   IMPLEMENT_ENUM(LibrarySharingManager::ExceptionEnum)
 
    LibrarySharingManager::ExceptionEnum LibrarySharingManager::ExceptionEnum::LibraryLoadingError("Base Exception");
 

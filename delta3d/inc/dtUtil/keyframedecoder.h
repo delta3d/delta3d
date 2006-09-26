@@ -142,7 +142,7 @@ namespace dtUtil
          }
          else
          {
-            LOG_ERROR("No available recordable source to handle serialization.")
+            LOG_ERROR("No available recordable source to handle serialization.");
             return NULL;
          }
       }
@@ -153,7 +153,7 @@ namespace dtUtil
       unsigned int mSourcesSize;
    };
 
-};
+}
 
 #endif // DTUTIL_KEYFRAME_DECODER_INC
 

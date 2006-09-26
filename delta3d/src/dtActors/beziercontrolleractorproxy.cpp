@@ -2,6 +2,7 @@
 #include <dtABC/beziercontroller.h>
 #include <dtDAL/functor.h>
 #include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/exceptionenum.h>
 
 using namespace dtABC;
 using namespace dtDAL;

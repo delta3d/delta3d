@@ -14,13 +14,13 @@
 			Name="Debug|Win32"
 			OutputDirectory="..\..\..\examples\testAAR\windows-msvc-debug"
 			IntermediateDirectory="..\..\..\examples\testAAR\windows-msvc-debug"
-			ConfigurationType="1"
+			ConfigurationType="2"
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_NOAUTOLIBMSG;NOMINMAX"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_NOAUTOLIBMSG;NOMINMAX;TEST_AAR_LIBRARY"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -34,8 +34,8 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCored.lib dtABCd.lib dtUtild.lib dtDALd.lib dtGamed.lib CEGUIBase_d.lib osgDBd.lib dtActorsd.lib osgd.lib"
-				OutputFile="../../../bin/testAARd.exe"
+				AdditionalDependencies="dtCored.lib dtABCd.lib dtUtild.lib dtDALd.lib dtGamed.lib dtLMSd.lib dtGUId.lib CEGUIBase_d.lib osgDBd.lib dtActorsd.lib osgd.lib"
+				OutputFile="../../../bin/testAARd.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libcmt;libcmtd;libcimtd;libcd;msvcrt.lib;libc.lib"
@@ -68,12 +68,12 @@
 			Name="Release|Win32"
 			OutputDirectory="..\..\..\examples\testAAR\windows-msvc-release"
 			IntermediateDirectory="..\..\..\examples\testAAR\windows-msvc-release"
-			ConfigurationType="1"
+			ConfigurationType="2"
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_NOAUTOLIBMSG;NOMINMAX"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_NOAUTOLIBMSG;NOMINMAX;TEST_AAR_LIBRARY"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
@@ -86,8 +86,8 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCore.lib dtABC.lib dtUtil.lib dtDAL.lib dtGame.lib dtActors.lib osg.lib CEGUIBase.lib osgDB.lib"
-				OutputFile="../../../bin/testAAR.exe"
+				AdditionalDependencies="dtCore.lib dtABC.lib dtUtil.lib dtDAL.lib dtGame.lib dtLMS.lib dtActors.lib dtGUI.lib osg.lib CEGUIBase.lib osgDB.lib"
+				OutputFile="../../../bin/testAAR.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				IgnoreDefaultLibraryNames="LIBCMT"
@@ -126,13 +126,25 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
-				RelativePath="..\..\..\examples\testAAR\main.cpp">
-			</File>
-			<File
 				RelativePath="..\..\..\examples\testAAR\testaar.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\examples\testAAR\testaarexceptionenum.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\examples\testAAR\testaargameevent.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\examples\testAAR\testaarhud.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\examples\testAAR\testaarinput.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\examples\testAAR\testaarmessageprocessor.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\examples\testAAR\testaarmessagetypes.cpp">
 			</File>
 		</Filter>
 		<Filter
@@ -140,10 +152,28 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
+				RelativePath="..\..\..\examples\testAAR\export.h">
+			</File>
+			<File
 				RelativePath="..\..\..\examples\testAAR\testaar.h">
 			</File>
 			<File
+				RelativePath="..\..\..\examples\testAAR\testaarexceptionenum.h">
+			</File>
+			<File
+				RelativePath="..\..\..\examples\testAAR\testaargameevent.h">
+			</File>
+			<File
 				RelativePath="..\..\..\examples\testAAR\testaarhud.h">
+			</File>
+			<File
+				RelativePath="..\..\..\examples\testAAR\testaarinput.h">
+			</File>
+			<File
+				RelativePath="..\..\..\examples\testAAR\testaarmessageprocessor.h">
+			</File>
+			<File
+				RelativePath="..\..\..\examples\testAAR\testaarmessagetypes.h">
 			</File>
 		</Filter>
 		<Filter

@@ -311,7 +311,7 @@ namespace dtBSP
           */
          osg::ref_ptr<PotentiallyVisibleSet> mPotentiallyVisibleSet;
    };
-};
+}
 
 
 #endif // DELTA_BSPCULLCALLBACK

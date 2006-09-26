@@ -46,6 +46,7 @@ namespace dtGame
       RegisterMessageType<TickMessage>(MessageType::TICK_REMOTE);
       RegisterMessageType<TimerElapsedMessage>(MessageType::INFO_TIMER_ELAPSED);
       RegisterMessageType<MapLoadedMessage>(MessageType::INFO_MAP_LOADED);
+      RegisterMessageType<MapLoadedMessage>(MessageType::INFO_MAP_UNLOADED);
 
       RegisterMessageType<Message>(MessageType::INFO_PAUSED);
       RegisterMessageType<Message>(MessageType::INFO_RESUMED);

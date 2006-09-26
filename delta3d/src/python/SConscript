@@ -113,9 +113,9 @@ if CheckForBoost() :
    # Build libs #
    ##############
       
-   if OS == 'windows' :
+   if env['OS'] == 'windows' :
       boostLib = 'boost_python-vc71-mt'
-   elif OS == 'darwin' :
+   elif env['OS'] == 'darwin' :
       # This only has a hard-coded version since Boost.Python does not output
       # with the same file naming convention as other platform (as of 1.33.1)
       boostLib = 'boost_python-1_33_1'
@@ -125,17 +125,17 @@ if CheckForBoost() :
    
    pythonDeps = ['osg','Producer','OpenThreads','xerces-c','python','osgUtil','osgText','osgParticle','osgDB','ode','js','isense','ul','cal3d','rbody','rvrutils','rcfgscript']
    
-   if OS == 'windows' :
+   if env['OS'] == 'windows' :
       pythonDeps += [  'User32' ] 
       
-   pythonDeps = [ extLibs[lib] for lib in pythonDeps if extLibs.has_key(lib) ] + [boostLib]
+   pythonDeps = [ env['extLibs'][lib] for lib in pythonDeps if env['extLibs'].has_key(lib) ] + [boostLib]
 
    addToLibs = []
    addToFrameworks = []
-   if OS == 'darwin':
+   if env['OS'] == 'darwin':
       for lib_name in pythonDeps:
-        if foundLibs.has_key(lib_name):
-          if foundLibs[lib_name] == 'framework':
+        if env['foundLibs'].has_key(lib_name):
+          if env['foundLibs'][lib_name] == 'framework':
             addToFrameworks.append(lib_name)
           else:
             addToLibs.append(lib_name)
@@ -144,7 +144,7 @@ if CheckForBoost() :
    else:
       addToLibs = pythonDeps
    
-   if OS == 'windows' and mode == 'debug' :
+   if env['OS'] == 'windows' and env['mode'] == 'debug' :
       dtCoreBindingsTarget = 'dtCoreBindingsd'
       dtAbcBindingsTarget = 'dtABCBindingsd'
       dtAudioBindingsTarget = 'dtAudioBindingsd'
@@ -171,20 +171,20 @@ if CheckForBoost() :
    if env.has_key('CPPFLAGS') :
       pythonCPPFlags = env['CPPFLAGS'] + pythonCPPFlags
    
-   pythonDtCoreLib = env.SharedLibrary(  dtCoreBindingsTarget,    pythonSrcs['dtCore'],   LIBS = addToLibs + [dtLibs['dtCore'],dtLibs['dtUtil']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )
-   pythonDtAbcLib = env.SharedLibrary(   dtAbcBindingsTarget,     pythonSrcs['dtABC'],    LIBS = addToLibs + [dtLibs['dtABC'],dtLibs['dtCore'],dtLibs['dtDAL']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )
-   pythonDtAudioLib = env.SharedLibrary( dtAudioBindingsTarget,   pythonSrcs['dtAudio'],  LIBS = addToLibs + [dtLibs['dtAudio'],dtLibs['dtCore']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )
-   pythonDtCharLib = env.SharedLibrary(  dtCharBindingsTarget,    pythonSrcs['dtChar'],   LIBS = addToLibs + [dtLibs['dtChar'],dtLibs['dtCore'],dtLibs['dtUtil']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )
-   pythonDtDALLib = env.SharedLibrary(   dtDALBindingsTarget,     pythonSrcs['dtDAL'],    LIBS = addToLibs + [dtLibs['dtCore'],dtLibs['dtDAL'],dtLibs['dtAI']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )
-   pythonDtAILib = env.SharedLibrary(   dtAIBindingsTarget,     pythonSrcs['dtAI'],    LIBS = addToLibs + [dtLibs['dtDAL'],dtLibs['dtCore'],dtLibs['dtUtil'],dtLibs['dtAI']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )   
-   pythonDtInspectorLib = env.SharedLibrary(  dtInspectorBindingsTarget,  pythonSrcs['dtInspector'],   LIBS = addToLibs + [dtLibs['dtInspector'],dtLibs['dtCore']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )
-   pythonDtTerrainLib = env.SharedLibrary(  dtTerrainBindingsTarget,  pythonSrcs['dtTerrain'],   LIBS = addToLibs + [dtLibs['dtTerrain'],dtLibs['dtCore'],dtLibs['dtUtil']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )
-   pythonDtUtilLib = env.SharedLibrary(  dtUtilBindingsTarget,    pythonSrcs['dtUtil'],   LIBS = addToLibs + [dtLibs['dtUtil']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )
+   pythonDtCoreLib = env.SharedLibrary(  dtCoreBindingsTarget,    pythonSrcs['dtCore'],   LIBS = addToLibs + [env['dtLibs']['dtCore'],env['dtLibs']['dtUtil']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )
+   pythonDtAbcLib = env.SharedLibrary(   dtAbcBindingsTarget,     pythonSrcs['dtABC'],    LIBS = addToLibs + [env['dtLibs']['dtABC'],env['dtLibs']['dtCore'],env['dtLibs']['dtDAL']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )
+   pythonDtAudioLib = env.SharedLibrary( dtAudioBindingsTarget,   pythonSrcs['dtAudio'],  LIBS = addToLibs + [env['dtLibs']['dtAudio'],env['dtLibs']['dtCore']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )
+   pythonDtCharLib = env.SharedLibrary(  dtCharBindingsTarget,    pythonSrcs['dtChar'],   LIBS = addToLibs + [env['dtLibs']['dtChar'],env['dtLibs']['dtCore'],env['dtLibs']['dtUtil']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )
+   pythonDtDALLib = env.SharedLibrary(   dtDALBindingsTarget,     pythonSrcs['dtDAL'],    LIBS = addToLibs + [env['dtLibs']['dtCore'],env['dtLibs']['dtAI']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )
+   pythonDtAILib = env.SharedLibrary(   dtAIBindingsTarget,     pythonSrcs['dtAI'],    LIBS = addToLibs + [env['dtLibs']['dtDAL'],env['dtLibs']['dtCore'],env['dtLibs']['dtUtil']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )   
+   pythonDtInspectorLib = env.SharedLibrary(  dtInspectorBindingsTarget,  pythonSrcs['dtInspector'],   LIBS = addToLibs + [env['dtLibs']['dtInspector'],env['dtLibs']['dtCore']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )
+   pythonDtTerrainLib = env.SharedLibrary(  dtTerrainBindingsTarget,  pythonSrcs['dtTerrain'],   LIBS = addToLibs + [env['dtLibs']['dtTerrain'],env['dtLibs']['dtCore'],env['dtLibs']['dtUtil']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )
+   pythonDtUtilLib = env.SharedLibrary(  dtUtilBindingsTarget,    pythonSrcs['dtUtil'],   LIBS = addToLibs + [env['dtLibs']['dtUtil']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )
    
    env.Precious( pythonDtCoreLib, pythonDtAbcLib, pythonDtAudioLib, pythonDtCharLib, pythonDtDALLib, pythonDtAILib, pythonDtInspectorLib, pythonDtTerrainLib, pythonDtUtilLib )
    
    if env.get('rti') != 0 :
-      pythonDtHlaLib = env.SharedLibrary( dtHlaBindingsTarget, pythonSrcs['dtHLA'], LIBS = addToLibs + [dtLibs[ 'dtHLA' ]], CPPFLAGS=pythonCPPFlags )
+      pythonDtHlaLib = env.SharedLibrary( dtHlaBindingsTarget, pythonSrcs['dtHLA'], LIBS = addToLibs + [env['dtLibs'][ 'dtHLA' ]], CPPFLAGS=pythonCPPFlags )
       env.Precious( pythonDtHlaLib )
    else :
       pythonDtHlaLib = None
@@ -193,14 +193,14 @@ if CheckForBoost() :
    # Install libs #
    ################
 
-   if OS == 'windows' :
+   if env['OS'] == 'windows' :
       dir = 'bin'
       suffix = 'pyd'
    else :
       dir = 'lib'
       suffix = 'so'
 
-   if OS == 'windows' and mode == 'debug' :
+   if env['OS'] == 'windows' and env['mode'] == 'debug' :
       dtCorePydTarget = '#'+dir+'/PyDtCored.'+suffix
       dtAbcPydTarget = '#'+dir+'/PyDtABCd.'+suffix
       dtAudioPydTarget = '#'+dir+'/PyDtAudiod.'+suffix
@@ -245,7 +245,7 @@ if CheckForBoost() :
    if pythonDtHlaLib is not None:
          env.InstallAs( dtHlaPydTarget, pythonDtHlaLib[0] )
 
-   if OS == 'windows' :
+   if env['OS'] == 'windows' :
       
       env.Install( '#/lib', [ pythonDtCoreLib[1:], \
                               pythonDtAbcLib[1:], \

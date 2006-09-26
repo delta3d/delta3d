@@ -140,9 +140,6 @@ namespace dtGame
       catch(const dtUtil::Exception& ex)
       {
          ex.LogException(dtUtil::Log::LOG_ERROR);
-         // HACK
-         if(dtAudio::AudioManager::GetManager() != NULL)
-            dtAudio::AudioManager::Destroy();
 
          if(ex.TypeEnum() == dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR)
             exit(-1);

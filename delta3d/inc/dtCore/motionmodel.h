@@ -102,7 +102,7 @@ namespace dtCore
           */
          bool mEnabled;
    };
-};
+}
 
 
 #endif // DELTA_MOTIONMODEL

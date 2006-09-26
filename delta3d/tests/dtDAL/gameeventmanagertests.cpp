@@ -19,113 +19,170 @@
  * @author Matthew W. Campbell
  */
 #include <cppunit/extensions/HelperMacros.h>
-#include <dtDAL/gameeventmanager.h>
-#include <dtDAL/gameevent.h>
+
+#include <vector>
+#include <dtCore/refptr.h>
+
 #include <dtUtil/exception.h>
 #include <dtUtil/stringutils.h>
 
-class GameEventManagerTests : public CPPUNIT_NS::TestFixture
+#include <dtDAL/gameeventmanager.h>
+#include <dtDAL/gameevent.h>
+
+using dtCore::RefPtr;
+using std::vector;
+
+namespace dtDAL
 {
-   CPPUNIT_TEST_SUITE(GameEventManagerTests);
-      CPPUNIT_TEST(TestAddRemoveEvents);
-      CPPUNIT_TEST(TestGetAllEvents);
-   CPPUNIT_TEST_SUITE_END();
-
-   public:
-      void setUp();
-      void tearDown();
-      void TestAddRemoveEvents();
-      void TestGetAllEvents();
-
-   private:
-      dtDAL::GameEventManager *mEventMgr;
-};
-
-CPPUNIT_TEST_SUITE_REGISTRATION(GameEventManagerTests);
-
-//////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////
-void GameEventManagerTests::setUp()
-{
-   try
+   
+   class GameEventManagerTests : public CPPUNIT_NS::TestFixture
    {
-      mEventMgr = &dtDAL::GameEventManager::GetInstance();
-      CPPUNIT_ASSERT_MESSAGE("Game event manager was invalid.",mEventMgr != NULL);
-   }
-   catch (const dtUtil::Exception& e)
+      CPPUNIT_TEST_SUITE(GameEventManagerTests);
+         CPPUNIT_TEST(TestAddRemoveEvents);
+         CPPUNIT_TEST(TestGetAllEvents);
+         CPPUNIT_TEST(TestCopyConstructor);
+         CPPUNIT_TEST(TestAssigmentOperator);
+      CPPUNIT_TEST_SUITE_END();
+   
+      public:
+         void setUp();
+         void tearDown();
+         void TestAddRemoveEvents();
+         void TestGetAllEvents();
+         void TestCopyConstructor();
+         void TestAssigmentOperator();
+   
+      private:
+         GameEventManager *mEventMgr;
+   
+         void CompareEventManagers(GameEventManager& one, GameEventManager& two);
+         
+         void CreateEvents(GameEventManager& gemToFill)
+         {
+            unsigned int i;
+            for (i=0; i<50; i++)
+            {
+               GameEvent *newEvent = new GameEvent("Event " + dtUtil::ToString(i));
+               gemToFill.AddEvent(*newEvent);
+            }   
+         }
+   };
+   
+   CPPUNIT_TEST_SUITE_REGISTRATION(GameEventManagerTests);
+   
+   //////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////
+   void GameEventManagerTests::setUp()
    {
-      CPPUNIT_FAIL(e.ToString());
-   }
-
-}
-
-//////////////////////////////////////////////////////////////////////////
-void GameEventManagerTests::tearDown()
-{
-   try
-   {
-      mEventMgr->ClearAllEvents();
-      mEventMgr = NULL;
-   }
-   catch (const dtUtil::Exception& e)
-   {
-      CPPUNIT_FAIL(e.ToString());
-   }
-}
-
-//////////////////////////////////////////////////////////////////////////
-void GameEventManagerTests::TestAddRemoveEvents()
-{
-   try
-   {
-      unsigned int i;
-      for (i=0; i<50; i++)
+      try
       {
-         dtDAL::GameEvent *newEvent = new dtDAL::GameEvent("Event" + dtUtil::ToString(i));
-         mEventMgr->AddEvent(*newEvent);
+         mEventMgr = &GameEventManager::GetInstance();
+         CPPUNIT_ASSERT_MESSAGE("Game event manager was invalid.",mEventMgr != NULL);
       }
-
-      CPPUNIT_ASSERT_MESSAGE("Should have 50 events in the manager.",mEventMgr->GetNumEvents() == 50);
-
-      dtDAL::GameEvent *found = mEventMgr->FindEvent("Event10");
-      CPPUNIT_ASSERT_MESSAGE("Could not find event10.",found != NULL);
-
-      mEventMgr->RemoveEvent(*found);
-      CPPUNIT_ASSERT_MESSAGE("Should have one less event.",mEventMgr->GetNumEvents() == 49);
-   }
-   catch (const dtUtil::Exception& e)
-   {
-      CPPUNIT_FAIL(e.ToString());
-   }
-}
-
-//////////////////////////////////////////////////////////////////////////
-void GameEventManagerTests::TestGetAllEvents()
-{
-   try
-   {
-      unsigned int i;
-      for (i=0; i<50; i++)
+      catch (const dtUtil::Exception& e)
       {
-         dtDAL::GameEvent *newEvent = new dtDAL::GameEvent("Event " + dtUtil::ToString(i));
-         mEventMgr->AddEvent(*newEvent);
+         CPPUNIT_FAIL(e.ToString());
       }
-
-      std::vector<dtCore::RefPtr<dtDAL::GameEvent> > eventList;
-      mEventMgr->GetAllEvents(eventList);
-      for (i=0; i<25; i++)
-      {
-         dtDAL::GameEvent *found = mEventMgr->FindEvent(eventList[i]->GetUniqueId());
-         CPPUNIT_ASSERT_MESSAGE("Could not search by unique id.",found != NULL);
-         mEventMgr->RemoveEvent(eventList[i]->GetUniqueId());
-      }
-
-      CPPUNIT_ASSERT_MESSAGE("Should have 25 events in the manager.",mEventMgr->GetNumEvents() == 25);
-      mEventMgr->ClearAllEvents();
-      CPPUNIT_ASSERT_MESSAGE("Should have 0 events in the manager.",mEventMgr->GetNumEvents() == 0);
+   
    }
-   catch (const dtUtil::Exception& e)
+   
+   //////////////////////////////////////////////////////////////////////////
+   void GameEventManagerTests::tearDown()
    {
-      CPPUNIT_FAIL(e.ToString());
+      try
+      {
+         mEventMgr->ClearAllEvents();
+         mEventMgr = NULL;
+      }
+      catch (const dtUtil::Exception& e)
+      {
+         CPPUNIT_FAIL(e.ToString());
+      }
+   }
+   
+   //////////////////////////////////////////////////////////////////////////
+   void GameEventManagerTests::TestAddRemoveEvents()
+   {
+      try
+      {
+         unsigned int i;
+         for (i=0; i<50; i++)
+         {
+            GameEvent *newEvent = new GameEvent("Event" + dtUtil::ToString(i));
+            mEventMgr->AddEvent(*newEvent);
+         }
+   
+         CPPUNIT_ASSERT_MESSAGE("Should have 50 events in the manager.",mEventMgr->GetNumEvents() == 50);
+   
+         GameEvent *found = mEventMgr->FindEvent("Event10");
+         CPPUNIT_ASSERT_MESSAGE("Could not find event10.",found != NULL);
+   
+         mEventMgr->RemoveEvent(*found);
+         CPPUNIT_ASSERT_MESSAGE("Should have one less event.",mEventMgr->GetNumEvents() == 49);
+      }
+      catch (const dtUtil::Exception& e)
+      {
+         CPPUNIT_FAIL(e.ToString());
+      }
+   }
+   
+   void GameEventManagerTests::CompareEventManagers(GameEventManager& one, GameEventManager& two)
+   {
+      CPPUNIT_ASSERT_EQUAL(one.GetNumEvents(), two.GetNumEvents());
+
+      vector<GameEvent* > toFillOne;
+      one.GetAllEvents(toFillOne);
+      
+      vector<GameEvent* > toFillTwo;
+      two.GetAllEvents(toFillTwo);
+
+      CPPUNIT_ASSERT_MESSAGE(
+         "The list of events in the first should be the same as the copy.",
+         toFillOne == toFillTwo);      
+   }
+   
+   //////////////////////////////////////////////////////////////////////////
+   void GameEventManagerTests::TestCopyConstructor()
+   {
+      CreateEvents(*mEventMgr);
+      RefPtr<GameEventManager> copyGEM = new GameEventManager(*mEventMgr);
+
+      CompareEventManagers(*mEventMgr, *copyGEM);
+   }
+   
+   //////////////////////////////////////////////////////////////////////////
+   void GameEventManagerTests::TestAssigmentOperator()
+   {
+      CreateEvents(*mEventMgr);
+      RefPtr<GameEventManager> copyGEM = new GameEventManager();
+      *copyGEM = *mEventMgr;
+      
+      CompareEventManagers(*mEventMgr, *copyGEM);
+   }
+   
+   //////////////////////////////////////////////////////////////////////////
+   void GameEventManagerTests::TestGetAllEvents()
+   {
+      try
+      {
+         CreateEvents(*mEventMgr);
+   
+         vector<GameEvent* > eventList;
+         mEventMgr->GetAllEvents(eventList);
+         for (unsigned i=0; i<25; i++)
+         {
+            GameEvent *found = mEventMgr->FindEvent(eventList[i]->GetUniqueId());
+            CPPUNIT_ASSERT_MESSAGE("Could not search by unique id.",found != NULL);
+            mEventMgr->RemoveEvent(eventList[i]->GetUniqueId());
+         }
+   
+         CPPUNIT_ASSERT_MESSAGE("Should have 25 events in the manager.",mEventMgr->GetNumEvents() == 25);
+         mEventMgr->ClearAllEvents();
+         CPPUNIT_ASSERT_MESSAGE("Should have 0 events in the manager.",mEventMgr->GetNumEvents() == 0);
+      }
+      catch (const dtUtil::Exception& e)
+      {
+         CPPUNIT_FAIL(e.ToString());
+      }
    }
 }

@@ -133,6 +133,6 @@ namespace dtCore
 
          RefPtr<osg::Node> mProxyNode;
    };
-};
+}
 
 #endif // DELTA_DELTA_DRAWABLE

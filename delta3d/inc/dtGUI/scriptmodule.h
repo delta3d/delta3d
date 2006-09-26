@@ -66,7 +66,7 @@ namespace dtGUI
       ScriptModule(const ScriptModule&);  // not implemented by design
       CallbackRegistry mCallbacks;
    };
-};
+}
 
 #if defined(_MSC_VER)
 #	pragma warning(pop)

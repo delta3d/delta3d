@@ -64,7 +64,7 @@ namespace dtABC
 
       DECLARE_MANAGEMENT_LAYER(Weather)
 
-      Weather();
+      Weather( const std::string& textureDirectory = "" );
 
    protected:
 
@@ -126,7 +126,7 @@ namespace dtABC
       };
 
       ///Creates a set of clouds to represent the generic cloud description
-      void SetBasicCloudType( const CloudType type );
+      void SetBasicCloudType( const CloudType type, const std::string textureDirectory = "" );
       CloudType GetBasicCloudType() const {return mCloudType;}
 
       ///Creates wind layers to represent the wind description
@@ -138,7 +138,7 @@ namespace dtABC
       VisibilityType GetBasicVisibilityType()const {return mVisType;}
 
       ///Preset weather themes which control clouds, winds, and visibility
-      void SetTheme(const WeatherTheme theme);
+      void SetTheme(const WeatherTheme theme, const std::string textureDirectory = "" );
       WeatherTheme GetTheme() const {return mTheme;}
 
       ///Get a handle to the Weather's Environment instance
@@ -159,10 +159,18 @@ namespace dtABC
       bool AddChild( dtCore::DeltaDrawable *child);
       void RemoveChild( dtCore::DeltaDrawable *child);
 
+      ///Save all generated cloud textures to file
+      ///@return The number of textures saved
+      int SaveCloudTextures( const std::string& textureDirectory = "" );
+      
+      ///Load all pre-generated cloud textures from file
+      ///@return The number of textures loaded
+      int LoadCloudTextures( const std::string& textureDirectory = "" );
+
    private:
+
       typedef std::vector<dtCore::RefPtr<dtCore::CloudPlane> > CloudPlaneList;
       CloudPlaneList mClouds;
-
       dtCore::RefPtr<dtCore::Environment> mEnvironment;
       CloudType mCloudType;
       VisibilityType mVisType;

@@ -1,6 +1,6 @@
 Import('*')
 
-srcs = SGlob( '*.cpp' )
+srcs = env.SGlob( '*.cpp' )
 deps = [ 'dtCore', 'dtGUI', 'dtABC', 'dtUtil', 'cal3d',
              'CEGUIBase', 'CEGUIOpenGLRenderer' ]
 

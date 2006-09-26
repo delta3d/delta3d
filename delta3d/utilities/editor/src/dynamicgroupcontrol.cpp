@@ -20,11 +20,8 @@
 * Curtiss Murphy
 */
 #include <prefix/dtstageprefix-src.h>
-#include "dtEditQt/dynamicgroupcontrol.h"
-#include "dtEditQt/propertyeditormodel.h"
-//#include "dtDAL/actorproxy.h"
-//#include "dtDAL/ActorProperty.h"
-//#include "dtDAL/EnginePropertyTypes.h"
+#include <dtEditQt/dynamicgroupcontrol.h>
+#include <dtEditQt/propertyeditormodel.h>
 #include <QtGui/QWidget>
 
 namespace dtEditQt 

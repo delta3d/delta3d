@@ -104,11 +104,14 @@ void HLAConfigTests::setUp()
 void HLAConfigTests::tearDown()
 {
    mTranslator = NULL;
-   if (mGameManager->GetRegistry(mHLAActorRegistry) != NULL)
-      mGameManager->UnloadActorRegistry(mHLAActorRegistry);
 
-   mGameManager = NULL;
+   if(mGameManager.valid())
+   {
+      if(mGameManager->GetRegistry(mHLAActorRegistry) != NULL)
+         mGameManager->UnloadActorRegistry(mHLAActorRegistry);
 
+      mGameManager = NULL;
+   }
 }
 
 void HLAConfigTests::CheckObjectToActorMapping(

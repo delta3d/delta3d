@@ -19,10 +19,11 @@
 * Curtiss Murphy
 */
 #include <prefix/dtgameprefix-src.h>
-#include "dtGame/loggermessages.h"
-#include "dtGame/logtag.h"
-#include "dtGame/logkeyframe.h"
-#include "dtGame/logstatus.h"
+#include <dtGame/loggermessages.h>
+#include <dtGame/logtag.h>
+#include <dtGame/logkeyframe.h>
+#include <dtGame/logstatus.h>
+#include <dtGame/exceptionenum.h>
 
 namespace dtGame
 {

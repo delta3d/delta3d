@@ -35,44 +35,43 @@
 #include <QtGui/QAction>
 #include <QtGui/QHeaderView>
 #include <dtCore/deltadrawable.h>
-#include "dtEditQt/global.h"
-#include "dtEditQt/dynamicabstractcontrol.h"
-#include "dtEditQt/dynamicabstractparentcontrol.h"
-#include "dtEditQt/dynamicactorcontrol.h"
-#include "dtEditQt/dynamicboolcontrol.h"
-#include "dtEditQt/dynamiccolorrgbacontrol.h"
-#include "dtEditQt/dynamicenumcontrol.h"
-#include "dtEditQt/dynamicfloatcontrol.h"
-#include "dtEditQt/dynamicdoublecontrol.h"
-#include "dtEditQt/dynamicgroupcontrol.h"
-#include "dtEditQt/dynamicintcontrol.h"
-#include "dtEditQt/dynamiclabelcontrol.h"
-#include "dtEditQt/dynamiclongcontrol.h"
-#include "dtEditQt/dynamicnamecontrol.h"
-#include "dtEditQt/dynamicresourcecontrol.h"
-#include "dtEditQt/dynamicstringcontrol.h"
-#include "dtEditQt/dynamicvec3control.h"
-#include "dtEditQt/dynamicvec2control.h"
-#include "dtEditQt/dynamicvec4control.h"
-#include "dtEditQt/editoractions.h"
-#include "dtEditQt/editorevents.h"
-#include "dtEditQt/propertyeditor.h"
-#include "dtEditQt/propertyeditormodel.h"
-#include "dtEditQt/propertyeditortreeview.h"
-#include "dtEditQt/viewportmanager.h"
-#include "dtDAL/actorproxy.h"
-#include "dtDAL/actorproperty.h"
-#include "dtDAL/enginepropertytypes.h"
+#include <dtEditQt/global.h>
+#include <dtEditQt/dynamicabstractcontrol.h>
+#include <dtEditQt/dynamicabstractparentcontrol.h>
+#include <dtEditQt/dynamicactorcontrol.h>
+#include <dtEditQt/dynamicboolcontrol.h>
+#include <dtEditQt/dynamiccolorrgbacontrol.h>
+#include <dtEditQt/dynamicenumcontrol.h>
+#include <dtEditQt/dynamicfloatcontrol.h>
+#include <dtEditQt/dynamicdoublecontrol.h>
+#include <dtEditQt/dynamicgroupcontrol.h>
+#include <dtEditQt/dynamicintcontrol.h>
+#include <dtEditQt/dynamiclabelcontrol.h>
+#include <dtEditQt/dynamiclongcontrol.h>
+#include <dtEditQt/dynamicnamecontrol.h>
+#include <dtEditQt/dynamicresourcecontrol.h>
+#include <dtEditQt/dynamicstringcontrol.h>
+#include <dtEditQt/dynamicvec3control.h>
+#include <dtEditQt/dynamicvec2control.h>
+#include <dtEditQt/dynamicvec4control.h>
+#include <dtEditQt/dynamicgameeventcontrol.h>
+#include <dtEditQt/editoractions.h>
+#include <dtEditQt/editorevents.h>
+#include <dtEditQt/propertyeditor.h>
+#include <dtEditQt/propertyeditormodel.h>
+#include <dtEditQt/propertyeditortreeview.h>
+#include <dtEditQt/viewportmanager.h>
+#include <dtDAL/actorproxy.h>
+#include <dtDAL/actorproperty.h>
+#include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/exceptionenum.h>
-#include "dtDAL/datatype.h"
-#include "dtDAL/librarymanager.h"
+#include <dtDAL/datatype.h>
+#include <dtDAL/librarymanager.h>
 #include <dtUtil/log.h>
 #include <dtUtil/tree.h>
-
 #include <osg/Referenced>
 #include <vector>
 #include <cmath>
-
 
 namespace dtEditQt
 {
@@ -136,6 +135,7 @@ namespace dtEditQt
         controlFactory->RegisterType<DynamicResourceControl>(&(dtDAL::DataType::TERRAIN));
         controlFactory->RegisterType<DynamicResourceControl>(&(dtDAL::DataType::PARTICLE_SYSTEM));
         controlFactory->RegisterType<DynamicActorControl>(&(dtDAL::DataType::ACTOR));
+        controlFactory->RegisterType<DynamicGameEventControl>(&(dtDAL::DataType::GAME_EVENT));
     }
 
     /////////////////////////////////////////////////////////////////////////////////

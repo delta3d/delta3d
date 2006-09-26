@@ -21,9 +21,8 @@
 
 #include <dtUtil/log.h>
 #include <dtUtil/exception.h>
+#include <dtUtil/fileutils.h>
 #include <cppunit/extensions/HelperMacros.h>
-
-#define MAX_LENGTH 2048
 
 /**
  * @class LogTests
@@ -31,15 +30,17 @@
  */
 class LogTests : public CPPUNIT_NS::TestFixture {
    CPPUNIT_TEST_SUITE( LogTests );
-   CPPUNIT_TEST( TestLogMessage1 );
-   CPPUNIT_TEST( TestLogMessage2 );
-   CPPUNIT_TEST( TestLogMessage3 );
-   CPPUNIT_TEST( TestIsLevelEnabled );
-   CPPUNIT_TEST( TestLogFilename );
-   CPPUNIT_TEST( TestOutputStream );
+      CPPUNIT_TEST( TestLogMessage1 );
+      CPPUNIT_TEST( TestLogMessage2 );
+      CPPUNIT_TEST( TestLogMessage3 );
+      CPPUNIT_TEST( TestIsLevelEnabled );
+      CPPUNIT_TEST( TestLogFilename );
+      CPPUNIT_TEST( TestOutputStream );
    CPPUNIT_TEST_SUITE_END();
 
    public:
+      static const unsigned int MAX_LENGTH = 512;
+      
       void setUp();
       void tearDown();
       
@@ -277,15 +278,22 @@ void LogTests::TestIsLevelEnabled()
 void LogTests::TestLogFilename()
 {
    const std::string newFileName("logtest.html");
-   dtUtil::LogFile::SetFileName(newFileName);
+   //make sure the file is deleted first
+   if (dtUtil::FileUtils::GetInstance().FileExists(newFileName))
+      dtUtil::FileUtils::GetInstance().FileDelete(newFileName);
 
-   LOG_ALWAYS("Filename test");
+   dtUtil::LogFile::SetFileName(newFileName);
 
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Filename should be: " + newFileName +
       " but returned: " + dtUtil::LogFile::GetFileName(),
       newFileName, dtUtil::LogFile::GetFileName() );
 
-   //hmm, not much of a test.  Does the file exist?
+   LOG_ALWAYS("Filename test");
+
+   bool exists = dtUtil::FileUtils::GetInstance().FileExists(newFileName);
+   
+   //dtUtil::FileUtils::GetInstance().FileDelete(newFileName);
+   CPPUNIT_ASSERT(exists);
 }
 
 //////////////////////////////////////////////////////////////////////////

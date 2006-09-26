@@ -1,4 +1,4 @@
-/*
+/* -*-c++-*-
  * Delta3D Open Source Game and Simulation Engine
  * Copyright (C) 2006, Alion Science and Technology, BMH Operation.
  *
@@ -125,7 +125,7 @@ namespace dtHLAGM
          RTI::AttributeHandle mAttributeHandle;
    };
 
-};
+}
 
 #endif //DELTA_ATTRIBUTE_TO_PROPERTY
 

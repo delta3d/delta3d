@@ -308,6 +308,6 @@ namespace dtHLAGM
 
    };
 
-};
+}
 
 #endif // DELTA_OBJECT_TO_ACTOR

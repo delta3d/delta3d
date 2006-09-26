@@ -157,7 +157,7 @@ namespace dtDAL
           * @return The resource types that are available for the given handler.
           * @throws ExceptionEnum::ProjectResourceError if the datatype is a primitive type, not a resource type.
           */
-         void GetHandlersForDataType(const DataType& resourceType, std::vector<dtCore::RefPtr<const ResourceTypeHandler> >& toFill) const;
+         void GetHandlersForDataType(const DataType& resourceType, std::vector<const ResourceTypeHandler*>& toFill) const;
 
          /**
           * Registers a new type handler.  The method will get the datatype and applicable filters from

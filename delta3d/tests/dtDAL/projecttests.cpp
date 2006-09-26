@@ -495,7 +495,7 @@ void ProjectTests::testReadonlyFailure()
         }
 
         try {
-            p.SaveMap("mojo", 0);
+            p.SaveMap("mojo");
             CPPUNIT_FAIL("deleteMap should not be allowed on a readoly context.");
         } catch (const dtUtil::Exception& e) {
             CPPUNIT_ASSERT_MESSAGE("Exception should have been ExceptionEnum::ProjectReadOnly",
@@ -503,7 +503,7 @@ void ProjectTests::testReadonlyFailure()
         }
 
         try {
-            p.SaveMapAs("mojo", 0, "a", "b");
+            p.SaveMapAs("mojo", "a", "b");
             CPPUNIT_FAIL("deleteMap should not be allowed on a readoly context.");
         } catch (const dtUtil::Exception& e) {
             CPPUNIT_ASSERT_MESSAGE("Exception should have been ExceptionEnum::ProjectReadOnly",
@@ -584,12 +584,12 @@ void ProjectTests::testCategories()
             CPPUNIT_FAIL(std::string(std::string("Project should have been able to set context. Exception: ") + e.What()).c_str());
         }
 
-        for (std::vector<dtUtil::Enumeration*>::const_iterator i = dtDAL::DataType::Enumerate().begin();
-            i != dtDAL::DataType::Enumerate().end(); ++i) {
-            dtDAL::DataType& d = *static_cast<dtDAL::DataType*>(*i);
+        for (std::vector<dtDAL::DataType*>::const_iterator i = dtDAL::DataType::EnumerateType().begin();
+            i != dtDAL::DataType::EnumerateType().end(); ++i) {
+            dtDAL::DataType& d = **i;
 
             //don't index the first time so it will be tested both ways.
-            if (i != dtDAL::DataType::Enumerate().begin())
+            if (i != dtDAL::DataType::EnumerateType().begin())
                 p.GetAllResources();
 
             if (!d.IsResource()) {
@@ -694,7 +694,7 @@ void ProjectTests::testResources()
         logger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__,
             "Current time as UTC is %s", utcTime.c_str());
 
-        std::vector<dtCore::RefPtr<const dtDAL::ResourceTypeHandler> > handlers;
+        std::vector<const dtDAL::ResourceTypeHandler* > handlers;
 
         p.GetHandlersForDataType(dtDAL::DataType::TERRAIN, handlers);
         CPPUNIT_ASSERT_MESSAGE("There should be 4 terrain type handlers",  handlers.size() == 4);

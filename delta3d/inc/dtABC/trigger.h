@@ -97,6 +97,6 @@ namespace dtABC
       dtCore::RefPtr<osg::Node> mNode;
 
    };
-};
+}
 
 #endif //DELTA_TRIGGER

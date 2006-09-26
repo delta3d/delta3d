@@ -1195,6 +1195,6 @@ namespace dtHLAGM
           */
          ParameterValue mParameterValue;
    };
-};
+}
 
 #endif // DELTA_DIS_TYPES

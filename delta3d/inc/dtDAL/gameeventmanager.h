@@ -1,4 +1,4 @@
-/*
+/* -*-c++-*-
  * Delta3D Open Source Game and Simulation Engine
  * Copyright (C) 2006, Alion Science and Technology
  *
@@ -25,7 +25,7 @@
 #include <dtCore/refptr.h>
 #include <dtCore/uniqueid.h>
 #include <osg/Referenced>
-#include "dtDAL/export.h"
+#include <dtDAL/export.h>
 
 #include <string>
 #include <vector>
@@ -35,15 +35,29 @@ namespace dtDAL
 {
    class GameEvent;
 
+   /**
+    * @brief a simple class that manages a list of game events.
+    * 
+    * This class is a singleton, but instances can also be created to store
+    * lists of game events.  The version to use at runtime is the singleton version.
+    */
    class DT_DAL_EXPORT GameEventManager : public osg::Referenced
    {
       public:
+         /**
+          * Constructs the shader manager.  Since this is a singleton class, this is private.
+          */
+         GameEventManager();
+
+         GameEventManager(const GameEventManager &rhs);
+         
+         GameEventManager& operator=(const GameEventManager &rhs);
 
          /**
           * Gets the single global instance of this class.
           * @return The singleton instance.
           */
-         static GameEventManager &GetInstance()
+         static GameEventManager& GetInstance()
          {
             if (mInstance == NULL)
                mInstance = new GameEventManager();
@@ -54,26 +68,26 @@ namespace dtDAL
           * Adds a new event to the game event manager.
           * @param event The new event to register with the manager.
           */
-         void AddEvent(GameEvent &event);
+         virtual void AddEvent(GameEvent& event);
 
          /**
           * Removes an existing event from the game event manager.
           * @param event The event to remove.  If it is not currently in the
           *  manager, this method is a no-op.
           */
-         void RemoveEvent(GameEvent &event);
+         virtual void RemoveEvent(GameEvent& event);
 
          /**
           * Removes the game event with the specified unique id from the manager.
           * @param id The unique id of the game event to remove.  If the event is not
           *   currently in the manager, this method is a no-op.
           */
-         void RemoveEvent(const dtCore::UniqueId &id);
+         virtual void RemoveEvent(const dtCore::UniqueId& id);
 
          /**
           * Clears all the currently registered events from the manager.
           */
-         void ClearAllEvents();
+         virtual void ClearAllEvents();
 
          /**
           * Fills the specified vector with the current list of game events in the
@@ -81,7 +95,7 @@ namespace dtDAL
           * @param toFill The vector to fill with game events.  This is cleared before it is
           *   filled.
           */
-         void GetAllEvents(std::vector<dtCore::RefPtr<GameEvent> > &toFill);
+         void GetAllEvents(std::vector<GameEvent* >& toFill);
 
          /**
           * Gets the event specified by the unique id.
@@ -89,7 +103,7 @@ namespace dtDAL
           * @return The event in question or NULL if an event with the specified unique id could
           *   not be found.
           */
-         GameEvent *FindEvent(const dtCore::UniqueId &id);
+         GameEvent* FindEvent(const dtCore::UniqueId& id);
 
          /**
           * Gets the event with the specified name.
@@ -98,7 +112,7 @@ namespace dtDAL
           * @note Since events may have the same name, this method will return the FIRST event
           *   matching the specified name.
           */
-         GameEvent *FindEvent(const std::string &name);
+         GameEvent* FindEvent(const std::string& name);
 
          /**
           * Gets the number of events currently registered with the event manager.
@@ -106,25 +120,16 @@ namespace dtDAL
           */
          unsigned int GetNumEvents() const { return mEventList.size(); }
 
-      private:
-         /**
-          * Constructs the shader manager.  Since this is a singleton class, this is private.
-          */
-         GameEventManager();
-
-         /**
-          * Destroys the shader manager.
-          */
+      protected:
+         ///Destroys the event manager
          virtual ~GameEventManager();
-
-         GameEventManager(const GameEventManager &rhs) { }
-         GameEventManager &operator=(const GameEventManager &rhs) { return *this; }
+      private:
 
          ///Single instance of this class.
          static dtCore::RefPtr<GameEventManager> mInstance;
 
          ///Map of game events currently owned by the game event manager.
-         std::map<dtCore::UniqueId,dtCore::RefPtr<GameEvent> > mEventList;
+         std::map<dtCore::UniqueId, dtCore::RefPtr<GameEvent> > mEventList;
    };
 
 }

@@ -24,7 +24,7 @@
 #define DELTA_SOUND_BROWSER
 
 #include <QtGui/QSound>
-#include "dtEditQt/resourceabstractbrowser.h"
+#include <dtEditQt/resourceabstractbrowser.h>
 
 class QAction;
 class QGroupBox;

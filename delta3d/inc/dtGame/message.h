@@ -25,13 +25,17 @@
 #include <limits.h>
 #include <dtDAL/exceptionenum.h>
 #include <dtUtil/exception.h>
-#include "dtGame/export.h"
-#include "dtGame/machineinfo.h"
-#include "dtGame/messageparameter.h"
+#include <dtGame/export.h>
+#include <dtGame/machineinfo.h>
+#include <dtGame/messageparameter.h>
+
+namespace dtUtil
+{
+   class DataStream;
+}
 
 namespace dtGame 
 {
-   class DataStream;
    class MessageType;
    
    class DT_GAME_EXPORT Message : public osg::Referenced
@@ -60,7 +64,7 @@ namespace dtGame
           * The base class data will be read by the caller before it calls this method.
           * @param stream the stream to fill.
           */
-         virtual void ToDataStream(DataStream& stream) const;
+         virtual void ToDataStream(dtUtil::DataStream& stream) const;
 
          /**
           * This should read all of the subclass specific data from the stream.
@@ -68,7 +72,7 @@ namespace dtGame
           * The base class data will be set by the caller when it creates the object.
           * @param stream the stream to pull the data from.
           */
-         virtual void FromDataStream(DataStream& stream);
+         virtual void FromDataStream(dtUtil::DataStream& stream);
          
          /**
           * Non-const version of getter to return a message parameter by name.

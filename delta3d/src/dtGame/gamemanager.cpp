@@ -29,10 +29,13 @@
 #include <dtDAL/project.h>
 #include <dtDAL/map.h>
 #include <dtDAL/librarymanager.h>
+#include <dtDAL/gameeventmanager.h>
 #include <dtCore/system.h>
 #include <dtCore/camera.h>
 #include <dtCore/scene.h>
 #include <dtUtil/stringutils.h>
+
+using namespace dtCore;
 
 namespace dtGame
 {
@@ -226,19 +229,19 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtCore::Timer_t GameManager::GetSimulationClockTime() const
+   Timer_t GameManager::GetSimulationClockTime() const
    {
       return dtCore::System::GetInstance().GetSimulationClockTime();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtCore::Timer_t GameManager::GetRealClockTime() const
+   Timer_t GameManager::GetRealClockTime() const
    {
       return dtCore::System::GetInstance().GetRealClockTime();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::ChangeTimeSettings(double newTime, float newTimeScale, dtCore::Timer_t newClockTime)
+   void GameManager::ChangeTimeSettings(double newTime, float newTimeScale, Timer_t newClockTime)
    {
       dtCore::System::GetInstance().SetSimulationClockTime(newClockTime);
       dtCore::System::GetInstance().SetSimulationTime(newTime);
@@ -274,8 +277,8 @@ namespace dtGame
    void GameManager::PreFrame(double deltaSimTime, double deltaRealTime)
    {
       // stats information used to track statistics per fragment (usually about 1 second)
-      dtCore::Timer statsTickClock;
-      dtCore::Timer_t frameTickStart(0);
+      Timer statsTickClock;
+      Timer_t frameTickStart(0);
 
       if (mStatisticsInterval > 0)
          frameTickStart = statsTickClock.Tick();
@@ -456,7 +459,7 @@ namespace dtGame
          mStatsNumFrames++;
          // Compute GM process time.  Note - You can't use GetRealClockTime() for GM work time
          // because mClock on system is only updated at the start of the whole tick.
-         dtCore::Timer_t frameTickStop = statsTickClock.Tick();
+         Timer_t frameTickStop = statsTickClock.Tick();
          double fragmentDelta = statsTickClock.DeltaMicro(mStatsLastFragmentDump, frameTickStop);
          mStatsCumGMProcessTime += dtCore::Timer_t(statsTickClock.DeltaMicro(frameTickStart, frameTickStop));
 
@@ -465,7 +468,7 @@ namespace dtGame
 
          else if (fragmentDelta >= (mStatisticsInterval * 1000000))
          {
-            dtCore::Timer_t realTimeElapsed = dtCore::Timer_t(statsTickClock.DeltaMicro(mStatsLastFragmentDump, frameTickStop));
+            Timer_t realTimeElapsed = dtCore::Timer_t(statsTickClock.DeltaMicro(mStatsLastFragmentDump, frameTickStop));
             float gmPercentTime = ComputeStatsPercent(realTimeElapsed, mStatsCumGMProcessTime);
 
             std::ostringstream ss;
@@ -803,7 +806,7 @@ namespace dtGame
       {
          // First we have to remove all of the actors from it
          EnvironmentActor *e = dynamic_cast<EnvironmentActor*>(&eap->GetGameActor());
-         std::vector<dtDAL::ActorProxy*> actors;
+         std::vector<const dtDAL::ActorProxy*> actors;
          e->GetAllActors(actors);
          e->RemoveAllActors();
 
@@ -811,7 +814,7 @@ namespace dtGame
          // Also invalidate the delete environment parent by calling Emancipate
          for(unsigned i = 0; i < actors.size(); ++i)
          {
-            mScene->AddDrawable(actors[i]->GetActor());
+            mScene->AddDrawable(const_cast<dtDAL::ActorProxy*>(actors[i])->GetActor());
          }
 
          // Are we deleting the environment pointer?
@@ -1100,20 +1103,33 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::ChangeMap(const std::string &mapName, bool addBillboards, bool enableDatabasePaging) 
    {
+      //delete all actors after making sure the map loaded correctly.
+      DeleteAllActors(true);
+
+      //Close the old map.
+      if (!mLoadedMap.empty() )
+      {
+         dtDAL::Map &oldMap = dtDAL::Project::GetInstance().GetMap(mLoadedMap);
+         
+         //Clear out all the events in the event manager because the map that populated them was closed.
+         dtDAL::GameEventManager::GetInstance().ClearAllEvents();
+
+         dtCore::RefPtr<MapLoadedMessage> closeMessage;
+         mFactory.CreateMessage(MessageType::INFO_MAP_UNLOADED, closeMessage);
+         closeMessage->SetLoadedMapName(oldMap.GetName());
+
+         dtDAL::Project::GetInstance().CloseMap(oldMap, true);
+
+         SendMessage(*closeMessage);
+      }
+
       dtDAL::Map &map = dtDAL::Project::GetInstance().GetMap(mapName);
 
       std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > proxies;
       map.GetAllProxies(proxies);
 
-      //delete all actors after making sure the map loaded correctly.
-      DeleteAllActors(true);
-
-      //Close the old map.
-      if (!mLoadedMap.empty())
-      {
-         dtDAL::Map &oldMap = dtDAL::Project::GetInstance().GetMap(mLoadedMap);
-         dtDAL::Project::GetInstance().CloseMap(oldMap, true);
-      }
+      //add all the events in the map to the game manager.
+      dtDAL::GameEventManager::GetInstance() = map.GetEventManager();      
 
       mRealTimeTimers.clear();
       mSimulationTimers.clear();
@@ -1160,10 +1176,10 @@ namespace dtGame
          }
       }
 
-      dtCore::RefPtr<Message> refMsg = mFactory.CreateMessage(MessageType::INFO_MAP_LOADED);
-      MapLoadedMessage *loadedMsg = static_cast<MapLoadedMessage*>(refMsg.get());
-      loadedMsg->SetLoadedMapName(mapName);
-      SendMessage(*loadedMsg); // rules component determines whether to send and/or process
+      dtCore::RefPtr<MapLoadedMessage> refMsg;
+      mFactory.CreateMessage(MessageType::INFO_MAP_LOADED, refMsg);
+      refMsg->SetLoadedMapName(mapName);
+      SendMessage(*refMsg); // rules component determines whether to send and/or process
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -1178,7 +1194,7 @@ namespace dtGame
       else
          t.aboutActor = aboutActor->GetId();
 
-      t.interval = (dtCore::Timer_t)(time * 1e6);
+      t.interval = (Timer_t)(time * 1e6);
       if(realTime)
          t.time = GetRealClockTime() + t.interval;
       else
@@ -1411,7 +1427,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::ProcessTimers(std::set<TimerInfo> &listToProcess, dtCore::Timer_t clockTime)
+   void GameManager::ProcessTimers(std::set<TimerInfo> &listToProcess, Timer_t clockTime)
    {
       std::set<TimerInfo>::iterator itor;
       std::set<TimerInfo> repeatingTimers;
@@ -1449,7 +1465,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   float GameManager::ComputeStatsPercent(dtCore::Timer_t total, dtCore::Timer_t partial)
+   float GameManager::ComputeStatsPercent(Timer_t total, Timer_t partial)
    {
       float returnValue = 0.0;
 

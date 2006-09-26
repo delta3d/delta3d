@@ -105,7 +105,7 @@ namespace dtCore
    {
       RegisterInstance(this);     
       mGroup = new osg::Group;
-      AddSender(System::Instance());
+      AddSender(&System::GetInstance());
    }
 
    /**
@@ -114,7 +114,7 @@ namespace dtCore
    EffectManager::~EffectManager()
    {
       DeregisterInstance(this);
-      RemoveSender( System::Instance() );
+      RemoveSender(&System::GetInstance());
    }
 
    /**

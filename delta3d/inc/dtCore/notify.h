@@ -51,6 +51,6 @@ namespace dtCore
    ///Deprecated 8/23/05
    extern DT_CORE_EXPORT std::ostream& Notify(const NotifySeverity severity);
 
-};
+}
 
 #endif // DELTA_NOTIFY

@@ -71,8 +71,7 @@ namespace dtEditQt
          *
          * @return Returns the current map that was set when opening or creating a new map
          */
-        dtCore::RefPtr<dtDAL::Map> getCurrentMap();
-
+        dtDAL::Map* getCurrentMap();
 
         /**
          * Sets the currently selected Sound resource.  This is called when the user is

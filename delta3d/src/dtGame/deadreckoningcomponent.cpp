@@ -130,6 +130,98 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
+   void DeadReckoningHelper::AddToDeadReckonDOF(const std::string &DofName, osg::Vec3& position, osg::Vec3& rateOverTime)
+   {
+      DeadReckoningDOF *toAdd = new DeadReckoningDOF;
+      toAdd->mNext = NULL;
+      toAdd->mPrev = NULL;
+      toAdd->mName = DofName;
+      toAdd->mCurrentTime = 0;
+      toAdd->mRateOverTime.set( rateOverTime );
+      toAdd->mStartLocation.set( position );
+
+      std::list<dtCore::RefPtr<DeadReckoningDOF> >::iterator iter;
+      for(iter = mDeadReckonDOFS.begin(); iter != mDeadReckonDOFS.end(); ++iter)
+      {
+         if((*iter)->mName == DofName)
+         {
+            bool HadToIter = false;
+            dtCore::RefPtr<DeadReckoningDOF> GetDOFBeforeNULL = (*iter).get();
+            
+            while(GetDOFBeforeNULL != NULL)
+            {
+               if(GetDOFBeforeNULL->mNext == NULL)
+                  break;
+               GetDOFBeforeNULL = GetDOFBeforeNULL->mNext;
+               HadToIter = true;
+            }
+            
+            toAdd->mPrev = GetDOFBeforeNULL.get();
+            toAdd->mNext = NULL;
+
+            GetDOFBeforeNULL->mCurrentTime = 0;
+            GetDOFBeforeNULL->mNext = toAdd;
+            GetDOFBeforeNULL->mStartLocation = mDOFDeadReckoning->GetDOFByName(GetDOFBeforeNULL->mName)->getCurrentHPR();
+            
+            break;
+         }
+      }
+
+      mDeadReckonDOFS.push_back(toAdd);
+   }
+
+   //////////////////////////////////////////////////////////////////////
+   void DeadReckoningHelper::RemoveDRDOF(DeadReckoningDOF &obj)
+   {
+      std::list<dtCore::RefPtr<DeadReckoningDOF> >::iterator iterDOF = mDeadReckonDOFS.begin();
+       for(iterDOF = mDeadReckonDOFS.begin();iterDOF != mDeadReckonDOFS.end(); ++iterDOF)
+       {
+          if(  (obj.mCurrentTime   == (*iterDOF)->mCurrentTime)
+             && (obj.mName          == (*iterDOF)->mName)
+             && (obj.mRateOverTime  == (*iterDOF)->mRateOverTime)
+             && (obj.mStartLocation == (*iterDOF)->mStartLocation))
+          {
+               RemoveDRDOF(iterDOF);
+               return;
+          }
+       }
+   }
+
+   //////////////////////////////////////////////////////////////////////
+   void DeadReckoningHelper::RemoveDRDOF(std::list<dtCore::RefPtr<DeadReckoningDOF> >::iterator &iter)
+   {
+      // if theres more after it
+      if((*iter)->mNext != NULL)
+      {
+         // if its in the middle of two objects
+         if((*iter)->mPrev != NULL)
+         {
+            (*iter)->mPrev->mNext = (*iter)->mNext;
+            (*iter)->mNext->mPrev = (*iter)->mPrev;
+         }
+         // else its in the front
+         else
+         {
+            (*iter)->mNext->mPrev = NULL;
+         }
+      }
+      // if there is more before it
+      else if((*iter)->mPrev != NULL)
+      {
+         // its last
+        (*iter)->mPrev->mNext = NULL;
+      }
+      // none before or after the object, first one in list
+      else
+      {
+         // dont need to link objects
+      }
+      
+      mDeadReckonDOFS.erase(iter);
+      return;
+   }
+
+   //////////////////////////////////////////////////////////////////////
    const std::string DeadReckoningComponent::DEFAULT_NAME("Dead Reckoning Component");
 
    //////////////////////////////////////////////////////////////////////
@@ -690,6 +782,93 @@ namespace dtGame
          {
             DRVelocityAcceleration(helper, tickMessage.GetDeltaSimTime(), timeSinceUpdate, forceClamp, gameActor, xform);
          }
+
+         if (helper.GetNodeCollector() != NULL)
+         {
+            std::list<dtCore::RefPtr<DeadReckoningHelper::DeadReckoningDOF> >::iterator iterDOF = helper.mDeadReckonDOFS.begin();
+            
+            for(iterDOF = helper.mDeadReckonDOFS.begin();iterDOF != helper.mDeadReckonDOFS.end(); ++iterDOF)
+            {
+               (*iterDOF)->mUpdate = false;
+            }
+
+            iterDOF = helper.mDeadReckonDOFS.begin();
+            while(iterDOF != helper.mDeadReckonDOFS.end())
+            {
+               if((*iterDOF)->mPrev == NULL && !(*iterDOF)->mUpdate)
+               {
+                  (*iterDOF)->mCurrentTime += tickMessage.GetDeltaSimTime();
+                  (*iterDOF)->mUpdate = true;
+
+                  // there is something in the chain
+                  if((*iterDOF)->mNext != NULL)
+                  {
+                     osg::Vec3 NewDistance = ((*iterDOF)->mNext->mStartLocation  - (*iterDOF)->mStartLocation);
+                     
+                     for (int i = 0; i < 3; ++i)
+                     {
+                        while (NewDistance[i] > osg::PI)
+                           NewDistance[i] -= 2 * osg::PI;
+                        while (NewDistance[i] < -osg::PI)
+                           NewDistance[i] += 2 * osg::PI;
+                     }
+                     
+                     osg::Vec3 RateOverTime = (NewDistance * (*iterDOF)->mCurrentTime);
+                     
+                     osg::Vec3 result((*iterDOF)->mStartLocation[0] + RateOverTime[0],
+                                     (*iterDOF)->mStartLocation[1] + RateOverTime[1],
+                                     (*iterDOF)->mStartLocation[2] + RateOverTime[2]);
+                     
+                     for (int i = 0; i < 3; ++i)
+                     {
+                        while (result[i] > 2 * osg::PI)
+                           result[i] -= 2 * osg::PI;
+                           
+                        while (result[i] < 0)
+                           result[i] += 2 * osg::PI;
+                     }
+                     
+                     helper.mDOFDeadReckoning->GetDOFByName((*iterDOF)->mName)->updateCurrentHPR(result);
+                  }
+                  else
+                  {
+                     helper.mDOFDeadReckoning->GetDOFByName((*iterDOF)->mName)->updateCurrentHPR( 
+                        osg::Vec3(  (*iterDOF)->mStartLocation[0] + ((*iterDOF)->mCurrentTime * (*iterDOF)->mRateOverTime[0]),
+                                    (*iterDOF)->mStartLocation[1] + ((*iterDOF)->mCurrentTime * (*iterDOF)->mRateOverTime[1]),
+                                    (*iterDOF)->mStartLocation[2] + ((*iterDOF)->mCurrentTime * (*iterDOF)->mRateOverTime[2])));
+                  }
+
+                  // Get rid of middle man, would take out if u want full movement
+                  // between multiple steps
+                  if((*iterDOF)->mNext != NULL)
+                  {
+                     bool changedList = false;
+                     while((*iterDOF)->mNext->mNext != NULL)
+                     {
+                        helper.RemoveDRDOF(*(*iterDOF)->mNext);
+                        iterDOF = helper.mDeadReckonDOFS.begin();
+                        changedList = true;
+                     }
+                     if (changedList)
+                        continue;
+                  }
+
+                  // One second has passed, and this has more in its chain
+                  if((*iterDOF)->mNext != NULL && (*iterDOF)->mCurrentTime >= 1)
+                  {
+                     (*iterDOF)->mNext->mStartLocation = helper.mDOFDeadReckoning->GetDOFByName((*iterDOF)->mName)->getCurrentHPR();
+                     (*iterDOF)->mNext->mCurrentTime = 0;
+
+                     // Get rid of the rotation
+                     helper.RemoveDRDOF(*(*iterDOF));
+                     iterDOF = helper.mDeadReckonDOFS.begin();
+                     continue;
+                  }                  
+               }
+               ++iterDOF;
+            }
+         }
+
          //clear the updated flag.
          helper.ClearUpdated();
       }

@@ -18,7 +18,7 @@
 *
 */
 #include <prefix/dtdalprefix-src.h>
-#include "dtDAL/environmentactor.h"
+#include <dtDAL/environmentactor.h>
 
 namespace dtDAL
 {

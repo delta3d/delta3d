@@ -285,6 +285,6 @@ namespace dtChar
          int mPauseFrameNumber;
    };
 
-};
+}
 
 #endif // DELTA_CHARACTER

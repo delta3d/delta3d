@@ -27,7 +27,7 @@
 #include "testgameenvironmentactor.h"
 #include "testgamepropertyproxy.h"
 #include <dtCore/scene.h>
-#include <dtGame/datastream.h>
+#include <dtUtil/datastream.h>
 #include <dtGame/messageparameter.h>
 #include <dtGame/messagetype.h>
 

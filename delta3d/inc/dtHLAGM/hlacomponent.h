@@ -515,5 +515,5 @@ namespace dtHLAGM
 
    };
 
-};
+}
 #endif // DELTA_HLA_FOM_TRANSLATOR

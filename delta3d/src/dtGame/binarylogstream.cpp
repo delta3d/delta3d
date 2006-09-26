@@ -19,12 +19,16 @@
 * Matthew W. Campbell
 */
 #include <prefix/dtgameprefix-src.h>
-#include "dtGame/binarylogstream.h"
-#include "dtGame/messagetype.h"
-#include "dtUtil/exception.h"
-#include "dtUtil/fileutils.h"
+#include <dtGame/binarylogstream.h>
+#include <dtGame/messagetype.h>
+#include <dtUtil/exception.h>
+#include <dtUtil/fileutils.h>
+#include <dtUtil/datastream.h>
+#include <dtCore/uniqueid.h>
 
 #include <iostream>
+
+using dtUtil::DataStream;
 
 namespace dtGame
 {
@@ -395,7 +399,7 @@ namespace dtGame
 
       //Get the size of the message and write that along with the message data stream.
       unsigned int bufferSize;
-      DataStream dataStream;
+      dtUtil::DataStream dataStream;
 
       dataStream << msg.GetAboutActorId() << msg.GetSendingActorId();
       msg.ToDataStream(dataStream);
@@ -452,7 +456,7 @@ namespace dtGame
          numRead = fread(&tempBuffer[0],1,bufferSize,mMessagesFile);
          CheckFileStatus(mMessagesFile);
 
-         DataStream stream(tempBuffer,bufferSize);
+         dtUtil::DataStream stream(tempBuffer,bufferSize);
 
          dtCore::UniqueId sendingActorId,aboutActorId;
          stream >> aboutActorId >> sendingActorId;

@@ -1,26 +1,26 @@
-/*
-* Delta3D Open Source Game and Simulation Engine 
-* Simulation, Training, and Game Editor (STAGE)
-* Copyright (C) 2005, BMH Associates, Inc.
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free
-* Software Foundation; either version 2 of the License, or (at your option)
-* any later version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this library; if not, write to the Free Software Foundation, Inc.,
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*
-* Curtiss Murphy
-*/
+/* -*-c++-*-
+ * Delta3D Open Source Game and Simulation Engine 
+ * Simulation, Training, and Game Editor (STAGE)
+ * Copyright (C) 2005, BMH Associates, Inc.
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * Curtiss Murphy
+ */
 #include <prefix/dtstageprefix-src.h>
-#include "dtEditQt/editoractions.h"
+#include <dtEditQt/editoractions.h>
 
 #include <QtGui/QApplication>
 #include <QtGui/QAction>
@@ -39,33 +39,35 @@
 
 #include <osgDB/FileNameUtils>
 
-#include "dtEditQt/global.h"
-#include "dtEditQt/uiresources.h"
-#include "dtEditQt/editordata.h"
-#include "dtEditQt/editorevents.h"
-#include "dtEditQt/viewportmanager.h"
-#include "dtEditQt/viewportoverlay.h"
-#include "dtEditQt/editoraboutbox.h"
-#include "dtEditQt/libraryeditor.h"
-#include "dtEditQt/camera.h"
-#include "dtEditQt/projectcontextdialog.h"
-#include "dtEditQt/mapdialog.h"
-#include "dtEditQt/dialogmapproperties.h"
-#include "dtEditQt/dialoglistselection.h"
-#include "dtEditQt/mapsaveasdialog.h"
-#include "dtEditQt/mainwindow.h"
-#include "dtEditQt/preferencesdialog.h"
-#include "dtEditQt/undomanager.h"
+#include <dtEditQt/global.h>
+#include <dtEditQt/uiresources.h>
+#include <dtEditQt/editordata.h>
+#include <dtEditQt/editorevents.h>
+#include <dtEditQt/viewportmanager.h>
+#include <dtEditQt/viewportoverlay.h>
+#include <dtEditQt/editoraboutbox.h>
+#include <dtEditQt/libraryeditor.h>
+#include <dtEditQt/gameeventsdialog.h>
+#include <dtEditQt/camera.h>
+#include <dtEditQt/projectcontextdialog.h>
+#include <dtEditQt/mapdialog.h>
+#include <dtEditQt/dialogmapproperties.h>
+#include <dtEditQt/dialoglistselection.h>
+#include <dtEditQt/mapsaveasdialog.h>
+#include <dtEditQt/mainwindow.h>
+#include <dtEditQt/preferencesdialog.h>
+#include <dtEditQt/undomanager.h>
+#include <dtEditQt/taskeditor.h>
 
 #include <dtUtil/log.h>
 #include <dtCore/isector.h>
-#include "dtDAL/project.h"
-#include "dtDAL/map.h"
+#include <dtDAL/project.h>
+#include <dtDAL/map.h>
 #include <dtDAL/exceptionenum.h>
-#include "dtDAL/transformableactorproxy.h"
-#include "dtUtil/fileutils.h"
-#include "dtDAL/actorproxy.h"
-#include "dtDAL/actorproxyicon.h"
+#include <dtDAL/transformableactorproxy.h>
+#include <dtUtil/fileutils.h>
+#include <dtDAL/actorproxy.h>
+#include <dtDAL/actorproxyicon.h>
 
 #include <sstream>
 
@@ -173,8 +175,13 @@ namespace dtEditQt
 
         //File - Map Libraries Editor...
         actionEditMapLibraries = new QAction(tr("Map &Libraries..."), this);
-        actionEditMapLibraries->setStatusTip(tr("Add and remove actor libraries from the current map."));
+        actionEditMapLibraries->setStatusTip(tr("Add and Remove actor libraries from the current map."));
         connect(actionEditMapLibraries, SIGNAL(triggered()), this, SLOT(slotEditMapLibraries()));
+
+        //File - Map Libraries Editor...
+        actionEditMapEvents = new QAction(tr("Map &Events..."), this);
+        actionEditMapEvents->setStatusTip(tr("Add and Remove Game Events from the current map."));
+        connect(actionEditMapEvents, SIGNAL(triggered()), this, SLOT(slotEditMapEvents()));
 
         actionFileEditPreferences = new QAction(tr("Preferences..."), this);
         actionFileEditPreferences->setStatusTip(tr("Edit editor preferences"));
@@ -222,6 +229,12 @@ namespace dtEditQt
         actionToggleTerrainPaging->setStatusTip(tr("Turns off or on terrain paging."));
         connect(actionToggleTerrainPaging,SIGNAL(triggered()),
                 this,SLOT(slotToggleTerrainPaging()));
+
+        // Edit - Task Editor
+        actionEditTaskEditor = new QAction(QIcon(UIResources::ICON_GROUND_CLAMP.c_str()),
+           tr("Tas&k Editor"),this);
+        connect(actionEditTaskEditor,SIGNAL(triggered()),
+           this,SLOT(slotTaskEditor()));
         
         
         // Edit - Goto Actor
@@ -383,7 +396,7 @@ namespace dtEditQt
         slotPauseAutosave();
         MapDialog mapDialog((QWidget*)EditorData::getInstance().getMainWindow());
         if(mapDialog.exec() == QDialog::Accepted) {
-            changeMaps(EditorData::getInstance().getCurrentMap().get(),
+            changeMaps(EditorData::getInstance().getCurrentMap(),
                 mapDialog.getFinalizedMap());
             EditorData::getInstance().addRecentMap(mapDialog.getFinalizedMap()->GetName());
         }
@@ -462,12 +475,12 @@ namespace dtEditQt
     void EditorActions::slotFileCloseMap()
     {
         // no map open? peace out
-        if(!EditorData::getInstance().getCurrentMap().valid())
+        if(!EditorData::getInstance().getCurrentMap())
             return;
 
         saveCurrentMapChanges(EditorData::getInstance().getCurrentMap()->IsModified());
 
-        changeMaps(EditorData::getInstance().getCurrentMap().get(), NULL);
+        changeMaps(EditorData::getInstance().getCurrentMap(), NULL);
         EditorData::getInstance().getMainWindow()->enableActions();
     }
 
@@ -496,7 +509,7 @@ namespace dtEditQt
         std::string strippedName = osgDB::getSimpleFileName(dlg.getMapFileName());
         std::string name         = osgDB::getStrippedName(strippedName);
 
-        dtDAL::Map *myMap = EditorData::getInstance().getCurrentMap().get();
+        dtDAL::Map *myMap = EditorData::getInstance().getCurrentMap();
         if(myMap == NULL)
         {
             slotRestartAutosave();
@@ -507,7 +520,7 @@ namespace dtEditQt
         {
             myMap->SetDescription(dlg.getMapDescription());
             EditorData::getInstance().getMainWindow()->startWaitCursor();
-            dtDAL::Project::GetInstance().SaveMapAs(*myMap, ViewportManager::getInstance().getMasterScene(), name, strippedName);
+            dtDAL::Project::GetInstance().SaveMapAs(*myMap, name, strippedName, ViewportManager::getInstance().getMasterScene());
             EditorData::getInstance().getMainWindow()->endWaitCursor();
         }
         catch(const dtUtil::Exception &e)
@@ -530,7 +543,7 @@ namespace dtEditQt
     {
         slotPauseAutosave();
 
-        dtDAL::Map *currMap = dtEditQt::EditorData::getInstance().getCurrentMap().get();
+        dtDAL::Map *currMap = dtEditQt::EditorData::getInstance().getCurrentMap();
         if (currMap == NULL)
         {
             EditorEvents::getInstance().emitEditorCloseEvent();
@@ -571,7 +584,7 @@ namespace dtEditQt
     void EditorActions::slotEditMapProperties()
     {
         DialogMapProperties mapPropsDialog((QWidget *)EditorData::getInstance().getMainWindow());
-        dtDAL::Map *map = EditorData::getInstance().getCurrentMap().get();
+        dtDAL::Map *map = EditorData::getInstance().getCurrentMap();
 
         //If the current map is invalid, issue an error, else populate the dialog
         //box with the values from the current map.  The map "should" always be
@@ -609,7 +622,7 @@ namespace dtEditQt
     void EditorActions::slotEditMapLibraries()
     {
         // we need a current map to edit libraries
-        if(!EditorData::getInstance().getCurrentMap().valid())
+        if(!EditorData::getInstance().getCurrentMap())
         {
             QMessageBox::critical(NULL, tr("Failure"),
                 tr("A map must be open in order to edit libraries"),
@@ -619,6 +632,22 @@ namespace dtEditQt
 
         LibraryEditor libEdit((QWidget *)EditorData::getInstance().getMainWindow());
         libEdit.exec();
+    }
+
+    //////////////////////////////////////////////////////////////////////////////
+    void EditorActions::slotEditMapEvents()
+    {
+        // we need a current map to edit libraries
+        if(!EditorData::getInstance().getCurrentMap())
+        {
+            QMessageBox::critical(NULL, tr("Failure"),
+                tr("A map must be open in order to edit events"),
+                tr("OK"));
+            return;
+        }
+
+        GameEventsDialog editor((QWidget *)EditorData::getInstance().getMainWindow());
+        editor.exec();
     }
 
     //////////////////////////////////////////////////////////////////////////////
@@ -783,6 +812,13 @@ namespace dtEditQt
     }
 
     //////////////////////////////////////////////////////////////////////////////
+    void EditorActions::slotTaskEditor()
+    {
+       TaskEditor taskEditor(static_cast<QWidget*>(EditorData::getInstance().getMainWindow()));
+       taskEditor.exec();
+    }
+
+    //////////////////////////////////////////////////////////////////////////////
     void EditorActions::slotEditGroundClampActors()
     {
         LOG_INFO("Ground clamping actors.");
@@ -869,7 +905,7 @@ namespace dtEditQt
             //First try to set the new project context.
             try
             {
-                changeMaps(EditorData::getInstance().getCurrentMap().get(),NULL);
+                changeMaps(EditorData::getInstance().getCurrentMap(), NULL);
                 dtDAL::Project::GetInstance().SetContext(contextName);
             }
             catch (dtUtil::Exception &e)
@@ -912,7 +948,7 @@ namespace dtEditQt
     {
         try
         {
-            if(EditorData::getInstance().getCurrentMap().valid())
+            if(EditorData::getInstance().getCurrentMap())
             {
                 dtDAL::Project::GetInstance().SaveMapBackup(*EditorData::getInstance().getCurrentMap());
             }
@@ -924,10 +960,10 @@ namespace dtEditQt
     }
 
     //////////////////////////////////////////////////////////////////////////////
-    std::string EditorActions::getWindowName()
+    const std::string EditorActions::getWindowName() const
     {
         ((QMainWindow*)EditorData::getInstance().getMainWindow())->windowTitle().clear();
-        std::string name = "STAGE";
+        std::string name("STAGE");
         std::string projDir;
         std::string temp = dtDAL::Project::GetInstance().GetContext();
         if(temp.empty())
@@ -971,7 +1007,7 @@ namespace dtEditQt
         if (saveCurrentMapChanges(true) == QMessageBox::Cancel)
             return;
 
-        changeMaps(EditorData::getInstance().getCurrentMap().get(),NULL);
+        changeMaps(EditorData::getInstance().getCurrentMap(),NULL);
 
         EditorData::getInstance().setCurrentProjectContext(actionFileRecentProject0->text().toStdString());
         dtDAL::Project::GetInstance().SetContext(actionFileRecentProject0->text().toStdString());
@@ -997,7 +1033,7 @@ namespace dtEditQt
             return;
         }
 
-        changeMaps(EditorData::getInstance().getCurrentMap().get(),newMap);
+        changeMaps(EditorData::getInstance().getCurrentMap(), newMap);
     }
 
     //////////////////////////////////////////////////////////////////////////////
@@ -1092,7 +1128,7 @@ namespace dtEditQt
     //////////////////////////////////////////////////////////////////////////////
     int EditorActions::saveCurrentMapChanges(bool askPermission)
     {
-        dtDAL::Map *currMap = EditorData::getInstance().getCurrentMap().get();
+        dtDAL::Map *currMap = EditorData::getInstance().getCurrentMap();
         int result = QMessageBox::NoButton;
 
         if (currMap == NULL || !currMap->IsModified())

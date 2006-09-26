@@ -97,13 +97,13 @@ namespace dtCore
                            LABEL_Z        = BIT(4L),
                            XYZ_LABELS     = BIT(5L),
                            HPR_LABELS     = BIT(6L),
-                           CUSTOM_LABELS  = BIT(7L),
+                           CUSTOM_LABELS  = BIT(7L)
                         };
 
       private:
                   enum  BASE_COLOR        ///< internal use enum
                         {
-                           BASECOLORS     = MAGENTA   + 1L,
+                           BASECOLORS     = MAGENTA   + 1L
                         };
 
          static   const float       DEF_AXIS_SIZE;          ///< default size of axis lines
@@ -175,6 +175,6 @@ namespace dtCore
                   RefPtr<osg::Switch>           mMainSwitch;         ///< toggle for axis and all lables
                   RefPtr<osg::Switch>           mLabelSwitch;        ///< toggle for individual labels
    };
-};
+}
 
 #endif // DELTA_POINTAXIS

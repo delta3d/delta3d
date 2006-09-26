@@ -84,7 +84,7 @@ namespace dtCore
           */
          jsJoystick* mJoystick;
    };
-};
+}
 
 
 #endif // DELTA_JOYSTICK

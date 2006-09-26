@@ -31,7 +31,8 @@
 #include <dtDAL/resourcedescriptor.h>
 #include <dtDAL/actortype.h>
 #include <dtDAL/enginepropertytypes.h>
-#include <dtGame/datastream.h>
+#include <dtDAL/project.h>
+#include <dtUtil/datastream.h>
 #include <dtGame/messageparameter.h>
 #include <dtGame/machineinfo.h>
 #include <dtGame/gameactor.h>
@@ -533,7 +534,7 @@ void GameActorTests::TestSetEnvironmentActor()
       dtCore::RefPtr<TestGameEnvironmentActor> ea = dynamic_cast<TestGameEnvironmentActor*>(eap->GetActor());
       CPPUNIT_ASSERT_MESSAGE("Should have been able to cast the environment proxy's actor to an environment actor", ea != NULL);
 
-      std::vector<dtDAL::ActorProxy*> actors;
+      std::vector<const dtDAL::ActorProxy*> actors;
       std::vector<dtCore::RefPtr<dtCore::DeltaDrawable> > drawables;
       ea->GetAllActors(actors);
       CPPUNIT_ASSERT(actors.empty());
@@ -730,6 +731,7 @@ void GameActorTests::TestMessageProcessingPerformance()
    int numTicks = 100;
    try 
    {
+      dtDAL::Project::GetInstance().SetContext("Working Project");
       dtCore::RefPtr<dtGame::DefaultMessageProcessor> dmc = new dtGame::DefaultMessageProcessor();
       mManager->AddComponent(*dmc, dtGame::GameManager::ComponentPriority::HIGHEST);
 
@@ -738,7 +740,7 @@ void GameActorTests::TestMessageProcessingPerformance()
       // Start time in microseconds
       dtCore::Timer_t startTime(0);// = mManager->GetRealClockTime();
       dtCore::Timer statsTickClock;
-      //dtCore::Timer_t frameTickStart(0);
+      //Timer_t frameTickStart(0);
       startTime = statsTickClock.Tick();
 
       for (int i = 0; i < numActors; i ++)
@@ -786,7 +788,7 @@ void GameActorTests::TestMessageProcessingPerformance()
       // Start time in microseconds
       dtCore::Timer_t stopTime = statsTickClock.Tick();
       double timeDelta = statsTickClock.DeltaSec(startTime, stopTime);
-      //dtCore::Timer_t stopTime = mManager->GetRealClockTime();
+      //Timer_t stopTime = mManager->GetRealClockTime();
 
       // 1 second???
       std::ostringstream ss;

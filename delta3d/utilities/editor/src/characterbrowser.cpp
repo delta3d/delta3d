@@ -20,10 +20,7 @@
 * @author Teague Coonan
 */
 
-// This class is not actually used in ResourceBrowser, so it's #ifdef'd out
-// for now to avoid linker warnings. -osb
-#if 0
-
+#include <prefix/dtstageprefix-src.h>
 #include <QtCore/QDir>
 #include <QtGui/QHeaderView>
 
@@ -327,5 +324,3 @@ namespace dtEditQt
         }
     }
 }
-
-#endif // 0

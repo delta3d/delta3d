@@ -19,9 +19,9 @@
  * Matthew W. Campbell
  */
 #include <prefix/dtdalprefix-src.h>
-#include "dtDAL/gameeventmanager.h"
-#include "dtDAL/exceptionenum.h"
-#include "dtDAL/gameevent.h"
+#include <dtDAL/gameeventmanager.h>
+#include <dtDAL/exceptionenum.h>
+#include <dtDAL/gameevent.h>
 
 namespace dtDAL
 {
@@ -36,6 +36,22 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////
    GameEventManager::~GameEventManager()
    {
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   GameEventManager::GameEventManager(const GameEventManager &rhs) 
+   {
+      mEventList = rhs.mEventList; 
+   }
+   
+   ///////////////////////////////////////////////////////////////////////////////
+   GameEventManager& GameEventManager::operator=(const GameEventManager &rhs) 
+   {
+      if (&rhs != this)
+      {
+         mEventList = rhs.mEventList;
+      }  
+      return *this; 
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -78,14 +94,14 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameEventManager::GetAllEvents(std::vector<dtCore::RefPtr<GameEvent> > &toFill)
+   void GameEventManager::GetAllEvents(std::vector<GameEvent* > &toFill)
    {
       std::map<dtCore::UniqueId,dtCore::RefPtr<GameEvent> >::iterator itor;
 
       toFill.clear();
       toFill.reserve(mEventList.size());
       for (itor=mEventList.begin(); itor!=mEventList.end(); ++itor)
-         toFill.push_back(itor->second);
+         toFill.push_back(itor->second.get());
    }
 
    ///////////////////////////////////////////////////////////////////////////////

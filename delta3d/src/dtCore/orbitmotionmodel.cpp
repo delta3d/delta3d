@@ -30,18 +30,13 @@ IMPLEMENT_MANAGEMENT_LAYER(OrbitMotionModel)
 OrbitMotionModel::OrbitMotionModel(Keyboard* keyboard,
                                    Mouse* mouse)
    : MotionModel("OrbitMotionModel"),
-     mAzimuthAxis(0),
-     mElevationAxis(0),
-     mDistanceAxis(0),
-     mLeftRightTranslationAxis(0),
-     mUpDownTranslationAxis(0),
      mAngularRate(90.0f),
      mLinearRate(1.0f),
      mDistance(100.0f)
 {
    RegisterInstance(this);
    
-   if(keyboard != 0 && mouse != 0)
+   if(keyboard != NULL && mouse != NULL)
    {
       SetDefaultMappings(keyboard, mouse);
    }
@@ -52,11 +47,11 @@ OrbitMotionModel::OrbitMotionModel(Keyboard* keyboard,
  */
 OrbitMotionModel::~OrbitMotionModel()
 {
-   SetAzimuthAxis(0);
-   SetElevationAxis(0);
-   SetDistanceAxis(0);
-   SetLeftRightTranslationAxis(0);
-   SetUpDownTranslationAxis(0);
+   SetAzimuthAxis(NULL);
+   SetElevationAxis(NULL);
+   SetDistanceAxis(NULL);
+   SetLeftRightTranslationAxis(NULL);
+   SetUpDownTranslationAxis(NULL);
    
    DeregisterInstance(this);
 }
@@ -135,14 +130,14 @@ void OrbitMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
  */
 void OrbitMotionModel::SetAzimuthAxis(Axis* azimuthAxis)
 {
-   if(mAzimuthAxis != 0)
+   if(mAzimuthAxis.valid())
    {
       mAzimuthAxis->RemoveAxisListener(this);
    }
    
    mAzimuthAxis = azimuthAxis;
    
-   if(mAzimuthAxis != 0)
+   if(mAzimuthAxis.valid())
    {
       mAzimuthAxis->AddAxisListener(this);
    }
@@ -165,7 +160,7 @@ Axis* OrbitMotionModel::GetAzimuthAxis()
  */
 void OrbitMotionModel::SetElevationAxis(Axis* elevationAxis)
 {
-   if(mElevationAxis != 0)
+   if(mElevationAxis.valid())
    {
       mElevationAxis->RemoveAxisListener(this);
    }

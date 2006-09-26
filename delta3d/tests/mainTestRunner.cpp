@@ -74,7 +74,7 @@ class TimingListener : public CppUnit::TestListener
 };
  
 
-int main (int argc, char* argv[])
+int main(int argc, char* argv[])
 {
    dtCore::Timer testsClock;
    dtCore::Timer_t testsTimerStart = testsClock.Tick(); 

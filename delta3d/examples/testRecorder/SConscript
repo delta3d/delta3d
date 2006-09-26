@@ -1,6 +1,6 @@
 Import('*')
 
-srcs = SGlob('*.cpp')
+srcs = env.SGlob('*.cpp')
 deps = [ 'dtCore', 'dtABC', 'dtUtil' ]
 
 env.BuildProgram( 'testRecorder', srcs, deps )

@@ -72,7 +72,7 @@ _CRTIMP extern int errno;
 namespace dtUtil
 {
 
-   IMPLEMENT_ENUM(FileExceptionEnum);
+   IMPLEMENT_ENUM(FileExceptionEnum)
 
    FileExceptionEnum FileExceptionEnum::IOException("File IO Exception");
    FileExceptionEnum FileExceptionEnum::FileNotFound("File Not Found");
@@ -150,13 +150,13 @@ namespace dtUtil
    }
 	
    //-----------------------------------------------------------------------
-   bool FileUtils::FileExists( const std::string& strFile ) const throw()
+   bool FileUtils::FileExists( const std::string& strFile ) const
    {
       return GetFileInfo(strFile).fileType != FILE_NOT_FOUND;
    }
 
    //-----------------------------------------------------------------------
-   void FileUtils::FileCopy( const std::string& strSrc, const std::string& strDest, bool bOverwrite ) const throw(dtUtil::Exception) {
+   void FileUtils::FileCopy( const std::string& strSrc, const std::string& strDest, bool bOverwrite ) const {
 
       FILE* pSrcFile;
       FILE* pDestFile;
@@ -266,7 +266,7 @@ namespace dtUtil
    }
 
    //-----------------------------------------------------------------------
-   void FileUtils::FileMove( const std::string& strSrc, const std::string& strDest, bool bOverwrite ) const throw(dtUtil::Exception)
+   void FileUtils::FileMove( const std::string& strSrc, const std::string& strDest, bool bOverwrite ) const
    {
       if (GetFileInfo(strSrc).fileType != REGULAR_FILE)
          EXCEPT(FileExceptionEnum::FileNotFound,
@@ -321,7 +321,7 @@ namespace dtUtil
    }
 
    //-----------------------------------------------------------------------
-   void FileUtils::FileDelete( const std::string& strFile ) const throw(dtUtil::Exception)
+   void FileUtils::FileDelete( const std::string& strFile ) const
    {
       FileType ft = GetFileInfo(strFile).fileType;
 
@@ -340,7 +340,7 @@ namespace dtUtil
    }
 
    //-----------------------------------------------------------------------
-   const struct FileInfo FileUtils::GetFileInfo( const std::string& strFile) const throw()
+   const struct FileInfo FileUtils::GetFileInfo( const std::string& strFile) const
    {
       struct FileInfo info;
 
@@ -372,20 +372,20 @@ namespace dtUtil
 
 
    //-----------------------------------------------------------------------
-   void FileUtils::ChangeDirectory(const std::string& path) throw(dtUtil::Exception)
+   void FileUtils::ChangeDirectory(const std::string& path)
    {
       ChangeDirectoryInternal(path);
       mStackOfDirectories.clear();
    }
 
    //-----------------------------------------------------------------------
-   const std::string& FileUtils::CurrentDirectory() const throw()
+   const std::string& FileUtils::CurrentDirectory() const
    {
       return mCurrentDirectory;
    }
 
    //-----------------------------------------------------------------------
-   void FileUtils::ChangeDirectoryInternal(const std::string& path) throw(dtUtil::Exception)
+   void FileUtils::ChangeDirectoryInternal(const std::string& path)
    {
       if (chdir(path.c_str()) == -1)
       {
@@ -409,7 +409,7 @@ namespace dtUtil
       }
    }
    //-----------------------------------------------------------------------
-   void FileUtils::PushDirectory(const std::string& path) throw(dtUtil::Exception)
+   void FileUtils::PushDirectory(const std::string& path)
    {
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {
@@ -424,7 +424,7 @@ namespace dtUtil
    }
 
    //-----------------------------------------------------------------------
-   void FileUtils::PopDirectory() throw(dtUtil::Exception)
+   void FileUtils::PopDirectory()
    {
       if(mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {
@@ -439,7 +439,7 @@ namespace dtUtil
    }
 
    //-----------------------------------------------------------------------
-   const std::string FileUtils::GetAbsolutePath(const std::string& relativePath) const throw(dtUtil::Exception)
+   const std::string FileUtils::GetAbsolutePath(const std::string& relativePath) const
    {
       std::string result;
       std::string old = mCurrentDirectory;
@@ -475,7 +475,7 @@ namespace dtUtil
    }
 
    //-----------------------------------------------------------------------
-   DirectoryContents FileUtils::DirGetFiles( const std::string& path ) const throw(dtUtil::Exception)
+   DirectoryContents FileUtils::DirGetFiles( const std::string& path ) const
    {
       FileInfo ft = GetFileInfo(path);
       if (ft.fileType == FILE_NOT_FOUND)
@@ -489,7 +489,7 @@ namespace dtUtil
    }
 
    //-----------------------------------------------------------------------
-   DirectoryContents FileUtils::DirGetSubs( const std::string& path ) const throw(dtUtil::Exception)
+   DirectoryContents FileUtils::DirGetSubs( const std::string& path ) const
    {
       DirectoryContents vec;
 
@@ -506,7 +506,7 @@ namespace dtUtil
 
 
    void FileUtils::InternalDirCopy(const std::string& srcPath,
-                                   const std::string& destPath, bool bOverwrite) const throw(dtUtil::Exception)
+                                   const std::string& destPath, bool bOverwrite) const
    {
       FileType destFileType = GetFileInfo(destPath).fileType;
       //std::cout << "Copying " << srcPath << " to " << destPath << std::endl;
@@ -549,7 +549,7 @@ namespace dtUtil
 
    //-----------------------------------------------------------------------
    void FileUtils::DirCopy(const std::string& srcPath,
-                           const std::string& destPath, bool bOverwrite, bool copyContentsOnly) const throw(dtUtil::Exception)
+                           const std::string& destPath, bool bOverwrite, bool copyContentsOnly) const
    {
 
       if (!DirExists(srcPath))
@@ -619,7 +619,7 @@ namespace dtUtil
    }
 
    //-----------------------------------------------------------------------
-   bool FileUtils::DirDelete( const std::string& strDir, bool bRecursive ) throw(dtUtil::Exception)
+   bool FileUtils::DirDelete( const std::string& strDir, bool bRecursive )
    {
       if (bRecursive)
       {
@@ -688,7 +688,7 @@ namespace dtUtil
       return true;
    }
 
-   void FileUtils::MakeDirectory(const std::string& strDir) const throw(dtUtil::Exception)
+   void FileUtils::MakeDirectory(const std::string& strDir) const
    {
       if (!iMakeDirectory(strDir))
       {
@@ -715,13 +715,13 @@ namespace dtUtil
 
 
    //-----------------------------------------------------------------------
-   bool FileUtils::DirExists( const std::string& strDir ) const throw()
+   bool FileUtils::DirExists( const std::string& strDir ) const
    {
       return GetFileInfo(strDir).fileType == DIRECTORY;
    }
 
    //-----------------------------------------------------------------------
-   void FileUtils::RecursDeleteDir( bool bRecursive ) throw(dtUtil::Exception)
+   void FileUtils::RecursDeleteDir( bool bRecursive )
    {
       //this method assumes one is IN the directory that you want to delete.
       DirectoryContents dirCont = DirGetFiles(mCurrentDirectory);

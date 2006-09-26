@@ -21,7 +21,7 @@
 #ifndef DELTA_TASKCOMPONENT
 #define DELTA_TASKCOMPONENT
 
-#include "dtGame/gmcomponent.h"
+#include <dtGame/gmcomponent.h>
 #include <set>
 #include <vector>
 
@@ -88,7 +88,7 @@ namespace dtGame
           * @return The first task found with a matching name or NULL if a task could not
           *    be found.
           */
-         dtCore::RefPtr<GameActorProxy> GetTaskByName(const std::string &name);
+         GameActorProxy* GetTaskByName(const std::string &name);
 
          /**
           * Removes all the tasks currently registered with the task component.

@@ -28,7 +28,8 @@
 #include <string>
 #include <iostream>
 
-#include "dtCore/export.h"
+#include <dtCore/export.h>
+#include <dtUtil/datastream.h>
 
 namespace dtCore
 {
@@ -83,7 +84,27 @@ namespace dtCore
       return o;
    }
 
-};
+   inline std::istream& operator >> (std::istream &i, UniqueId &id)
+   {
+      std::string value;
+      i >> value;
+      id = value;
+      return i;
+   }
 
+   inline dtUtil::DataStream& operator << (dtUtil::DataStream &ds, const UniqueId &id)
+   {
+      ds << id.ToString();
+      return ds;
+   }
+
+   inline dtUtil::DataStream& operator >> (dtUtil::DataStream &ds, UniqueId &id)
+   {
+      std::string value;
+      ds >> value;
+      id = value;
+      return ds;
+   }
+}
 
 #endif // DELTA_UNIQUEID

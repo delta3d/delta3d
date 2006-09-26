@@ -78,9 +78,9 @@ namespace dtEditQt
         myMap = map;
     }
     //////////////////////////////////////////////////////////////////////////////
-    dtCore::RefPtr<dtDAL::Map> EditorData::getCurrentMap()
+    dtDAL::Map* EditorData::getCurrentMap()
     {
-        return myMap;
+        return myMap.get();
     }
     //////////////////////////////////////////////////////////////////////////////
     void EditorData::setCurrentSoundResource(dtDAL::ResourceDescriptor newResource)

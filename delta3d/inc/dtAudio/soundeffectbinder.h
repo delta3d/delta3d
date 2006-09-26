@@ -328,7 +328,7 @@ namespace dtAudio
                   FLT_MAP     mMinDist;
                   FLT_MAP     mMaxDist;
    };
-};
+}
 
 
 

@@ -1,9 +1,9 @@
 Import('*')
 
-viewerSrcs = SGlob( '*.cpp' ) + SGlob( '*.cxx' )
+viewerSrcs = env.SGlob( '*.cpp' ) + env.SGlob( '*.cxx' )
 
 # Build the icon
-if OS == 'windows' :
+if env['OS'] == 'windows' :
    viewerSrcs += env.RES( 'Viewer.rc' )
 
 viewerDeps = [ 'dtDAL', 'dtCore', 'dtABC', 'dtUtil', 'dtChar',

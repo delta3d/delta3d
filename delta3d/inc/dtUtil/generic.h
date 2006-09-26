@@ -178,7 +178,7 @@ struct InstantiateH<TypeList<T, U>, Holder, i>
 	: public Holder<typename TypeList<T, U>::Head, i>
 	, public InstantiateH<typename TypeList<T, U>::Tail, Holder, i+1>
 {
-    enum { ordern = i, };
+    enum { ordern = i };
 	typedef Holder<typename TypeList<T, U>::Head, i> LeftBase;
 	typedef InstantiateH<typename TypeList<T, U>::Tail, Holder, i+1> RightBase;
 	InstantiateH(typename TypeList<T, U>::Head h, RightBase const& t) : LeftBase(h), RightBase(t) {}

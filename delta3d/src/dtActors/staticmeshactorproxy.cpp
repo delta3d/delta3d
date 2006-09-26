@@ -24,10 +24,12 @@
 #include <osgDB/ReadFile>
 #include <osgDB/WriteFile>
 
-#include "dtActors/staticmeshactorproxy.h"
-#include "dtDAL/enginepropertytypes.h"
-#include "dtDAL/resourcedescriptor.h"
-#include "dtDAL/actorproxyicon.h"
+#include <dtActors/staticmeshactorproxy.h>
+
+#include <dtDAL/exceptionenum.h>
+#include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/resourcedescriptor.h>
+#include <dtDAL/actorproxyicon.h>
 
 #include <dtCore/object.h>
 
@@ -179,8 +181,8 @@ namespace dtActors
         DeltaObjectActorProxy::BuildPropertyMap();
 
         dtCore::Object *obj = dynamic_cast<dtCore::Object*>(mActor.get());
-        if(!obj)
-            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Object");
+        if (obj == NULL)
+            throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Object", __FILE__, __LINE__);
 
         AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::STATIC_MESH,
                     "static mesh", "Static Mesh", MakeFunctor(*this, &StaticMeshActorProxy::LoadFile),
@@ -193,8 +195,8 @@ namespace dtActors
         dtCore::Object *obj = dynamic_cast<dtCore::Object*>(mActor.get());
         if (obj == NULL)
         {
-            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException,
-                "Actor should be type dtCore::Object");
+            throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException,
+                "Actor should be type dtCore::Object", __FILE__, __LINE__);
         }
 
         //First load the mesh (with cacheing on).

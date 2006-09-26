@@ -351,6 +351,6 @@ namespace dtHLAGM
 
    DT_HLAGM_EXPORT std::ostream& operator << (std::ostream& os, const OneToManyMapping::ParameterDefinition& pd);
 
-};
+}
 
 #endif // DELTA_ONE_TO_MANY_MAPPING

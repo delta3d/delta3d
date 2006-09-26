@@ -1,4 +1,4 @@
-/*
+/* -*-c++-*-
  * Delta3D Open Source Game and Simulation Engine
  * Copyright (C) 2006, Alion Science and Technology
  *
@@ -21,10 +21,10 @@
 #ifndef DELTA_GAMEEVENT
 #define DELTA_GAMEEVENT
 
-#include "dtDAL/export.h"
-#include <dtCore/base.h>
-#include <osg/Referenced>
 #include <string>
+
+#include <dtDAL/export.h>
+#include <dtCore/base.h>
 
 namespace dtDAL
 {
@@ -66,6 +66,11 @@ namespace dtDAL
           * @return Gets the description of the game event.
           */
          const std::string &GetDescription() const { return mDescription; }
+
+         bool operator==(const GameEvent& toCompare) const
+         {
+            return GetUniqueId() == toCompare.GetUniqueId();
+         }
 
       protected: 
          /// Destructor

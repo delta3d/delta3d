@@ -209,7 +209,7 @@ namespace   dtAudio
                virtual  void           OnMessage( MessageData* data );
 
                /// override method so sound knows when it's becoming a child
-               virtual  void           SetParent( dtCore::Transformable* parent );
+               virtual void            SetParent( dtCore::DeltaDrawable* parent );
 
                /// override methods for user to querry sound state
                virtual  bool           IsPlaying( void )          const;

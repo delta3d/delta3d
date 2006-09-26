@@ -199,16 +199,7 @@ namespace dtHLAGM
                   }
                   else if (sLocalName == ONE_TO_MANY_ENUM_MAPPING_ELEMENT)
                   {
-                     if (mCurrentAttrToProp->GetParameterDefinitions()[0].GetGameType() == dtDAL::DataType::ENUMERATION)
-                     {
-                        mParsingEnumMapping = true;
-                     }
-                     else
-                     {
-                        mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
-                           "Ignorning enumeration mapping for mapping \"%s\" to \"%s\" because the game datatype is not \"ENUMERATION\".",
-                           mCurrentAttrToProp->GetHLAName().c_str(), mCurrentAttrToProp->GetParameterDefinitions()[0].GetGameName().c_str());
-                     }
+                     mParsingEnumMapping = true;
                   }
                }
             }
@@ -299,16 +290,7 @@ namespace dtHLAGM
                   }
                   else if (sLocalName == ONE_TO_MANY_ENUM_MAPPING_ELEMENT)
                   {
-                     if (mCurrentParamToParam->GetParameterDefinitions()[0].GetGameType() == dtDAL::DataType::ENUMERATION)
-                     {
-                        mParsingEnumMapping = true;
-                     }
-                     else
-                     {
-                        mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
-                           "Ignorning enumeration mapping for mapping \"%s\" to \"%s\" because the game datatype is not \"ENUMERATION\".",
-                           mCurrentParamToParam->GetHLAName().c_str(), mCurrentParamToParam->GetParameterDefinitions()[0].GetGameName().c_str());
-                     }
+                     mParsingEnumMapping = true;
                   }
                }
             }

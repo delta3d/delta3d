@@ -457,7 +457,7 @@ namespace dtCore
          RefPtr<Transformable> mParent;
 
    };
-};
+}
 
 
 #endif // DELTA_EFFECTMANAGER

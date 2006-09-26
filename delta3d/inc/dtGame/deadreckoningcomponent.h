@@ -27,6 +27,7 @@
 #include <dtCore/refptr.h>
 #include <dtGame/export.h>
 #include <dtGame/gmcomponent.h>
+#include <dtCore/nodecollector.h>
 
 namespace dtUtil
 {
@@ -60,9 +61,39 @@ namespace dtGame
             AddInstance(this);
          }
    };
+   
       
    class DT_GAME_EXPORT DeadReckoningHelper : public dtCore::Base
    {
+      public:
+         class DeadReckoningDOF : public osg::Referenced
+         {
+            public:
+               DeadReckoningDOF(){}
+            
+            protected:
+               virtual ~DeadReckoningDOF(){}
+            
+            public:
+               // dof has a name
+               std::string mName;
+
+               // rate at which it needs to move in xyz direction
+               osg::Vec3 mRateOverTime;
+
+               // the start location of the object
+               osg::Vec3 mStartLocation;
+
+               // how long we've been going through the stuff
+               float mCurrentTime;
+
+               // has update been called yet.
+               bool mUpdate;
+
+               //  pointer to know where it should gos
+               DeadReckoningDOF *mNext, *mPrev;
+         };
+
       public:
    
          DeadReckoningHelper();
@@ -191,8 +222,23 @@ namespace dtGame
          ///@return the rough average amount of time between updates.  This is based on values sent to SetLastUpdatedTime.
          double GetAverageTimeBetweenUpdates() const { return mAverageTimeBetweenUpdates; };
 
+         ///@return wether or not this is a dofcontainer helper
+         dtCore::NodeCollector* GetNodeCollector() {return mDOFDeadReckoning.get();}
+
+         /// Set the dof container to what the entity is using for reference.
+         void SetDofContainer(dtCore::NodeCollector& dofContainerToSet){mDOFDeadReckoning = &dofContainerToSet;}
+
+         /// Add onto the dof dead reckoning list where the dof should move 
+         void AddToDeadReckonDOF(const std::string &DofName, osg::Vec3& position, osg::Vec3& rateOverTime);
+
+         /// Remove a drDOF from the list at this spot
+         void RemoveDRDOF(std::list<dtCore::RefPtr<DeadReckoningDOF> >::iterator &iter);
+
+         /// Remove a drdof by checking against values compared to everything else.
+         void RemoveDRDOF(DeadReckoningDOF &obj);
+ 
       protected:
-         ~DeadReckoningHelper() {}
+         virtual ~DeadReckoningHelper() {}
          
       private:
          friend class DeadReckoningComponent;
@@ -224,6 +270,7 @@ namespace dtGame
          
          ///Last known position of this actor.
          osg::Vec3 mLastTranslation;
+
          ///The Dead-Reckoned position prior to the last update.
          osg::Vec3 mTransBeforeLastUpdate;
          
@@ -246,13 +293,18 @@ namespace dtGame
          osg::Vec3 mAngularVelocityVector;
          
          DeadReckoningAlgorithm* mMinDRAlgorithm;
+
+         /// The Dead reckoning DOF Container object
+         dtCore::RefPtr<dtCore::NodeCollector> mDOFDeadReckoning;
       
+         /// The list of DeadReckoningDOFs, might want to change to has table of list later.
+         std::list<dtCore::RefPtr<DeadReckoningDOF> > mDeadReckonDOFS;
+         
          // -----------------------------------------------------------------------
          //  Unimplemented constructors and operators
          // -----------------------------------------------------------------------
          DeadReckoningHelper(const DeadReckoningHelper&) {}
          DeadReckoningHelper& operator=(const DeadReckoningHelper&) {return *this;}
-         
    };
    
    class DT_GAME_EXPORT DeadReckoningComponent : public dtGame::GMComponent

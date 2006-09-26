@@ -6,7 +6,7 @@ import glob
 Import ('*')
 
 # Grab all the sources from the source directory.
-sources = SGlob('*.cpp')
+sources = env.SGlob('*.cpp')
 
 dtGameDeps =[ 'dtDAL','dtAI', 'dtUtil', 'dtCore', 'dtChar', 'dtAudio', 'dtABC', 'isense', 
               'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgText', 'osgUtil', 
@@ -15,12 +15,12 @@ dtGameDeps =[ 'dtDAL','dtAI', 'dtUtil', 'dtCore', 'dtChar', 'dtAudio', 'dtABC', 
               'Producer', 'tinyxml', 'opengl' ]
 defines = []
 
-if OS == 'windows' :
+if env['OS'] == 'windows' :
    dtGameDeps += [ 'User32', 'Advapi32', 'Rpcrt4', 'Winmm', 'Gdi32' ]
    defines = ['DT_GAME_LIBRARY', 'NOMINMAX']
-elif OS == 'linux':
+elif env['OS'] == 'linux':
    dtGameDeps += [ 'uuid', 'Xxf86vm' ]
-elif OS == 'darwin':
+elif env['OS'] == 'darwin':
    dtGameDeps += [ 'CoreFoundation', 'IOKit', 'Carbon' ]
 
 dtGameManagerLib = env.BuildLib( 'dtGame', sources, dtGameDeps, defines, prefixHeader = 'inc/prefix/dtgameprefix.h' )

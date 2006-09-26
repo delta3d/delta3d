@@ -29,7 +29,7 @@
 #include <dtUtil/enumeration.h>
 #include <dtCore/uniqueid.h>
 #include <dtCore/refptr.h>
-#include "dtDAL/export.h"
+#include <dtDAL/export.h>
 
 namespace dtCore
 {

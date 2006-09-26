@@ -1,29 +1,26 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
-* Copyright (C) 2005, BMH Associates, Inc.
-*
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
-* any later version.
-*
-* This library is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
-* details.
-*
-* You should have received a copy of the GNU Lesser General Public License
-* along with this library; if not, write to the Free Software Foundation, Inc.,
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*
-* Curtiss Murphy
-*/
-#ifndef DELTA_TESTAARHUD
-#define DELTA_TESTAARHUD
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2005, BMH Associates, Inc.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * Curtiss Murphy
+ */
+#ifndef DELTA_TEST_AAR_HUD
+#define DELTA_TEST_AAR_HUD
 
-
-#include <dtABC/application.h>
-#include <dtGame/logstatus.h>
 #include <dtGame/message.h>
 #include <dtGame/gmcomponent.h>
 #include <osg/Referenced>
@@ -34,6 +31,7 @@
 #endif
 #include <CEGUI/CEGUI.h>
 #include <dtGUI/ceuidrawable.h>
+#include "export.h"
 
 #define HUDCONTROLMAXTEXTSIZE 100
 
@@ -44,32 +42,15 @@ namespace dtActors
 
 namespace dtGame
 {
-   class GameActorProxy;
    class ServerLoggerComponent;
    class LogController;
    class TaskComponent;
 }
 
 /**
- * Exception that may be thrown by the HUD.
- */
-class ARRHUDException : public dtUtil::Enumeration
-{
-   DECLARE_ENUM(ARRHUDException);
-   public:
-      static ARRHUDException INIT_ERROR;
-      static ARRHUDException RUNTIME_ERROR;
-   private:
-      ARRHUDException(const std::string &name) : dtUtil::Enumeration(name)
-      {
-         AddInstance(this);
-      }
-};
-
-/**
  * HUD State enumeration - what info is the HUD showing.
  */
-class HUDState : public dtUtil::Enumeration
+class TEST_AAR_EXPORT HUDState : public dtUtil::Enumeration
 {
    DECLARE_ENUM(HUDState);
    public:
@@ -90,7 +71,7 @@ class HUDState : public dtUtil::Enumeration
  * status information like AAR state (record, playback, idle), sim time,
  * speed factor, num messages, and other help info etc...
  */
-class TestAARHUD : public dtGame::GMComponent
+class TEST_AAR_EXPORT TestAARHUD : public dtGame::GMComponent
 {
    public:
 
@@ -129,7 +110,7 @@ class TestAARHUD : public dtGame::GMComponent
       void SetHUDState(HUDState &newState) { mHUDState = &newState;  UpdateState(); }
       HUDState &GetHUDState() { return *mHUDState; }
 
-      dtCore::RefPtr<dtGUI::CEUIDrawable> GetGUIDrawable() { return mGUI; }
+      dtGUI::CEUIDrawable* GetGUIDrawable() { return mGUI.get(); }
 
       void TickHUD();
 

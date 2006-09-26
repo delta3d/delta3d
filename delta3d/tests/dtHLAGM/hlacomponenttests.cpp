@@ -275,9 +275,11 @@ void HLATests::setUp()
 void HLATests::tearDown()
 {
    dtCore::System::GetInstance().Stop();
-   mHLAComponent->LeaveFederationExecution();
-   CPPUNIT_ASSERT(mHLAComponent->GetRTIAmbassador() == NULL);
-
+   if(mHLAComponent.valid())
+   {
+      mHLAComponent->LeaveFederationExecution();
+      CPPUNIT_ASSERT(mHLAComponent->GetRTIAmbassador() == NULL);
+   }
    if (mGameManager.valid())
    {
       mHLAComponent = NULL;

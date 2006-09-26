@@ -22,8 +22,8 @@
 #ifndef DELTA_PROPERTYEDITORTREEVIEW
 #define DELTA_PROPERTYEDITORTREEVIEW
 
-#include "dtEditQt/dynamicabstractcontrol.h"
-#include "dtEditQt/propertyeditormodel.h"
+#include <dtEditQt/dynamicabstractcontrol.h>
+#include <dtEditQt/propertyeditormodel.h>
 #include <QtCore/QAbstractItemModel>
 
 #include <QtGui/QTreeView>

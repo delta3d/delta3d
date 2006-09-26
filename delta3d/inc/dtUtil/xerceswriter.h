@@ -70,6 +70,6 @@ namespace dtUtil
       XERCES_CPP_NAMESPACE_QUALIFIER DOMImplementation* mImplementation;
       XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* mDocument;
    };
-};
+}
 
 #endif  // DELTA_XERCESWRITER_INC

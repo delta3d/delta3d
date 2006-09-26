@@ -232,7 +232,7 @@ namespace dtHLA
           */
          DamageState mDamageState;
    };
-};
+}
 
 
 #endif // DELTA_ENTITY

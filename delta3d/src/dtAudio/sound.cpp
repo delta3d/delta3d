@@ -2,6 +2,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#include <cfloat>
 #include <dtAudio/sound.h>
 #include <dtCore/scene.h>
 #include <dtUtil/serializer.h>
@@ -18,11 +19,6 @@
 #pragma warning( disable : 4800 )
 #endif
 
-
-
-#if   !  defined(MAX_FLOAT)
-#define  MAX_FLOAT   static_cast<float>(0xFFFFFFFF)
-#endif
 
 
 
@@ -75,7 +71,7 @@ Sound::Sound()
    mGain(1.0f),
    mPitch(1.0f),   
    mMinDist(1.0f),
-   mMaxDist(static_cast<float>(MAX_FLOAT)),
+   mMaxDist(FLT_MAX),
    mRolloff(1.0f),
    mMinGain(0.0f),
    mMaxGain(1.0f)
@@ -306,7 +302,7 @@ void Sound::SetTransform( const dtCore::Transform& xform, dtCore::Transformable:
    osg::Vec3            pos( 0.0f, 0.0f, 0.0f );
    osg::Vec3            dir( 0.0f, 1.0f, 0.0f );
 
-   GetTransform( transform, cs );
+   GetTransform( transform, ABS_CS );
 
    transform.GetTranslation( pos );
 

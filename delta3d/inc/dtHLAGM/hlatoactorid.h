@@ -69,6 +69,6 @@ namespace dtHLAGM
          
          dtCore::UniqueID mGameID;    
    };
-};
+}
 
 #endif // DELTA_HLA_TO_ACTOR_ID

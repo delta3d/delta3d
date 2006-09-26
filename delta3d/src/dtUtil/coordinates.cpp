@@ -3,39 +3,30 @@
 #include <cstdio>
 #include <cfloat>
 
-#include "dtUtil/matrixutil.h"
-#include "dtUtil/coordinates.h"
-#include "dtUtil/log.h"
-#include "dtUtil/stringutils.h"
-#include "dtUtil/deprecationmgr.h"
+#include <dtUtil/matrixutil.h>
+#include <dtUtil/coordinates.h>
+#include <dtUtil/log.h>
+#include <dtUtil/stringutils.h>
+#include <dtUtil/deprecationmgr.h>
+#include <dtUtil/mathdefines.h>
 
 
 #if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
    #define snprintf _snprintf
 #endif
 
-template <typename T> 
-bool IsFinite(const T value)
-{
-   #if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
-      return _finite(value) ? true : false;
-   #else
-      return std::isfinite(value) ? true : false;
-   #endif
-}
-
 namespace dtUtil
 {     
-   IMPLEMENT_ENUM(IncomingCoordinateType);
+   IMPLEMENT_ENUM(IncomingCoordinateType)
    const IncomingCoordinateType IncomingCoordinateType::GEOCENTRIC("Geocentric");
    const IncomingCoordinateType IncomingCoordinateType::GEODETIC("Geodetic");
    const IncomingCoordinateType IncomingCoordinateType::UTM("UTM");
 
-   IMPLEMENT_ENUM(LocalCoordinateType);
+   IMPLEMENT_ENUM(LocalCoordinateType)
    const LocalCoordinateType LocalCoordinateType::GLOBE("Globe");
    const LocalCoordinateType LocalCoordinateType::CARTESIAN("Cartesian");
 
-   IMPLEMENT_ENUM(CoordinateConversionExceptionEnum);
+   IMPLEMENT_ENUM(CoordinateConversionExceptionEnum)
    CoordinateConversionExceptionEnum CoordinateConversionExceptionEnum::INVALID_INPUT("Illegal argument");
 
    Coordinates::Coordinates(): mLocalCoordinateType(&LocalCoordinateType::CARTESIAN), 

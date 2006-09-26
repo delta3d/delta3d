@@ -67,7 +67,8 @@ namespace dtCore
                      float density,
                      int   texSize,
                      float height,
-                     const std::string& name = "CloudPlane");
+                     const std::string& name = "CloudPlane",
+                     const std::string& textureFilePath = "");
       
    protected:
 
@@ -84,9 +85,18 @@ namespace dtCore
       ///@return height of skyplane
       float GetHeight() { return mHeight; };
 
+      ///Save generated texture to file
+      ///@return success of save
+      bool SaveTexture( const std::string& textureFilePath );
+
+      ///Load generated texture from file
+      ///@return success of load
+      bool LoadTexture( const std::string& textureFilePath );
+
    private:
 
-       void Create();
+       void Create(const std::string& textureFilePath = "");
+       osg::Texture2D *CreateCloudTexture( const std::string& filename );
        osg::Texture2D *createPerlinTexture();
        virtual void OnMessage(MessageData *data);
        void Update(const double deltaFrameTime);

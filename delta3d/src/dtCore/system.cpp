@@ -109,7 +109,7 @@ void System::SystemStep()
       //scale time.
       double mSimDt = mDt * mTimeScale;         
       mSimulationTime += mSimDt;
-      mSimulationClockTime += dtCore::Timer_t(mSimDt * 1000000); 
+      mSimulationClockTime += Timer_t(mSimDt * 1000000); 
 
       PreFrame(mSimDt, mDt);
       Frame(mSimDt, mDt);

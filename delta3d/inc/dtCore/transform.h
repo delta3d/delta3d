@@ -120,7 +120,7 @@ namespace dtCore
       osg::Matrix mRotation; ///<Internal storage of the rotation
       osg::Vec3 mScale; ///<Internal storage of scale 
    };
-};
+}
 
 
 

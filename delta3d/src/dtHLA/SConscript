@@ -2,11 +2,11 @@ Import('*')
 
 if env.get('rti') != 0 :
 
-   srcs = SGlob( '*.cpp' )                  
-   deps = [ 'dtCore', 'osgSim', 'winsock' ] + rtiLibs
+   srcs = env.SGlob( '*.cpp' )                  
+   deps = [ 'dtCore', 'osgSim', 'winsock' ] + env['rtiLibs']
          
    defines = []
-   if OS == 'windows':
+   if env['OS'] == 'windows':
       defines = ['DT_HLA_LIBRARY']
 
    env.BuildLib( 'dtHLA', srcs, deps, defines )

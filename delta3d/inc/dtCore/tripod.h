@@ -138,7 +138,6 @@ namespace dtCore
       RefPtr<osg::Node> mNode;
 
    };
-
 }
 
 #endif // DELTA_TRIPOD

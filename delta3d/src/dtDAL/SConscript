@@ -5,9 +5,9 @@ import sys
 Import ('*')
 
 # Grab all the sources from the DAL source directory.
-srcs = SGlob('*.cpp')
+srcs = env.SGlob('*.cpp')
 
-deps =  [ 'dtUtil', 'dtCore', 'dtAI', 'dtChar', 'isense', 'ode', 
+deps =  [ 'dtUtil', 'dtCore', 'dtAI', 'isense', 'ode', 
           'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgText',
           'osgUtil', 'osgGA', 'osgSim', 'osgFX', 'osgProducer', 'rbody', 'rvrutils',
           'rcfgscript', 'cal3d', 'ul', 'js', 'Producer', 'opengl',
@@ -15,7 +15,7 @@ deps =  [ 'dtUtil', 'dtCore', 'dtAI', 'dtChar', 'isense', 'ode',
           'uuid', 'Xxf86vm', 'CoreFoundation', 'IOKit', 'Carbon' ]
 
 defines = []
-if OS == 'windows':
+if env['OS'] == 'windows':
    defines = ['DT_DAL_LIBRARY']
 
 libdtDAL = env.BuildLib( 'dtDAL', srcs, deps, defines, prefixHeader = "inc/prefix/dtdalprefix.h" )

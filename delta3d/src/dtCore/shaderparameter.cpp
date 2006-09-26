@@ -19,20 +19,20 @@
  * Matthew W. Campbell
  */
 #include <prefix/dtcoreprefix-src.h>
-#include "dtCore/shaderparameter.h"
-#include "dtCore/shader.h"
+#include <dtCore/shaderparameter.h>
+#include <dtCore/shader.h>
 
 #include <osg/Uniform>
 
 namespace dtCore
 {
    ///////////////////////////////////////////////////////////////////////////////
-   IMPLEMENT_ENUM(ShaderParameterException);
+   IMPLEMENT_ENUM(ShaderParameterException)
    ShaderParameterException ShaderParameterException::INVALID_ATTRIBUTE("INVALID_ATTRIBUTE");
    ///////////////////////////////////////////////////////////////////////////////
 
    ///////////////////////////////////////////////////////////////////////////////
-   IMPLEMENT_ENUM(ShaderParameter::ParamType);
+   IMPLEMENT_ENUM(ShaderParameter::ParamType)
    const ShaderParameter::ParamType ShaderParameter::ParamType::FLOAT("FLOAT");
    const ShaderParameter::ParamType ShaderParameter::ParamType::FLOAT_VEC2("FLOAT_VEC2");
    const ShaderParameter::ParamType ShaderParameter::ParamType::FLOAT_VEC3("FLOAT_VEC3");

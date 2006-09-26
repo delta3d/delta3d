@@ -89,9 +89,12 @@ namespace dtGame
          void tearDown()
          {
             dtCore::System::GetInstance().Stop();
-            mGM->DeleteAllActors(true);
-            mGM->UnloadActorRegistry(mTestGameActorRegistry);
-            mGM = NULL;
+            if(mGM.valid())
+            {
+               mGM->DeleteAllActors(true);
+               mGM->UnloadActorRegistry(mTestGameActorRegistry);
+               mGM = NULL;
+            }
             mDeadReckoningComponent = NULL;
          }
    

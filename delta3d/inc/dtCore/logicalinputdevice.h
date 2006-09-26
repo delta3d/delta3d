@@ -783,7 +783,7 @@ namespace dtCore
          /// Updates the state of the target axis.
          bool UpdateTargetAxisState();
    };
-};
+}
 
 
 #endif // DELTA_LOGICALINPUTDEVICE

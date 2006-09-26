@@ -20,10 +20,9 @@
  * William E. Johnson II
  */
 #include <prefix/dtstageprefix-src.h>
-#include "dtEditQt/dynamicactorcontrol.h"
-#include "dtEditQt/editordata.h"
-#include "dtEditQt/editorevents.h"
-
+#include <dtEditQt/dynamicactorcontrol.h>
+#include <dtEditQt/editordata.h>
+#include <dtEditQt/editorevents.h>
 #include <dtDAL/map.h>
 #include <dtDAL/exceptionenum.h>
 #include <dtDAL/datatype.h>
@@ -101,7 +100,8 @@ namespace dtEditQt
             if(!curMap.valid())
                EXCEPT(dtDAL::ExceptionEnum::MapException, "There is no map open, there shouldn't be any controls");
             
-            std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > proxies = GetActorProxies(myProperty->GetDesiredActorClass());
+            std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > proxies;
+            GetActorProxies(proxies, myProperty->GetDesiredActorClass());
 
             myProperty->SetValue((unsigned int)index < proxies.size() ? proxies[index].get() : NULL);
             dataChanged = true;
@@ -143,13 +143,14 @@ namespace dtEditQt
       
       wrapper->setFocusProxy(temporaryGotoButton);
 
-      std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > names = GetActorProxies(myProperty->GetDesiredActorClass());
-
-      for(unsigned int i = 0; i < names.size(); i++)
-         temporaryEditControl->addItem(QString(names[i]->GetName().c_str()));
+      std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > names;
+      GetActorProxies(names, myProperty->GetDesiredActorClass());
 
       // Insert the None option at the end of the list
       temporaryEditControl->addItem(QString("None"));
+
+      for(unsigned int i = 0; i < names.size(); i++)
+         temporaryEditControl->addItem(QString(names[i]->GetName().c_str()));
 
       connect(temporaryEditControl, SIGNAL(activated(int)), this, SLOT(itemSelected(int)));
 
@@ -242,9 +243,9 @@ namespace dtEditQt
       }
    }
 
-   std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > DynamicActorControl::GetActorProxies(const std::string &className)
+   void DynamicActorControl::GetActorProxies(std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill, const std::string &className)
    {
-      std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > toFill; 
+      toFill.clear();
 
       dtCore::RefPtr<dtDAL::Map> curMap = EditorData::getInstance().getCurrentMap();
 
@@ -253,6 +254,5 @@ namespace dtEditQt
             
       curMap->FindProxies(toFill, "", "", "", className);
 
-      return toFill;  
    }
 }

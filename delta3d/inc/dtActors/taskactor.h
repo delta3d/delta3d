@@ -21,9 +21,9 @@
 #ifndef DELTA_TASKACTOR
 #define DELTA_TASKACTOR
 
-#include "dtGame/gameactor.h"
-#include "dtUtil/mathdefines.h"
-#include "dtDAL/plugin_export.h"
+#include <dtGame/gameactor.h>
+#include <dtUtil/mathdefines.h>
+#include <dtDAL/plugin_export.h>
 
 #include <map>
 #include <vector>
@@ -84,7 +84,7 @@ namespace dtActors
           * player did in accomblishing this task.
           * @param score The score to assign to this task.  This value is clamped from 0.0 - 1.0.
           */
-         void SetScore(float score) { dtUtil::Clamp<float>(score,0.0f,1.0f); mScore = score; }
+         void SetScore(float score) { dtUtil::Clamp(score,0.0f,1.0f); mScore = score; }
 
          /**
           * Gets the score currently assigned to this task.

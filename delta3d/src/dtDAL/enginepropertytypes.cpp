@@ -1,4 +1,4 @@
-/*
+/* -*-c++-*-
  * Delta3D Open Source Game and Simulation Engine
  * Copyright (C) 2005, BMH Associates, Inc.
  *
@@ -19,12 +19,12 @@
  * David Guthrie
  */
 #include <prefix/dtdalprefix-src.h>
-#include "dtDAL/enginepropertytypes.h"
-#include "dtDAL/project.h"
-#include "dtDAL/exceptionenum.h"
-#include "dtDAL/map.h"
-#include "dtDAL/mapxml.h"
-#include "dtDAL/gameeventmanager.h"
+#include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/project.h>
+#include <dtDAL/exceptionenum.h>
+#include <dtDAL/map.h>
+#include <dtDAL/mapxml.h>
+#include <dtDAL/gameeventmanager.h>
 #include <dtUtil/stringutils.h>
 #include <dtUtil/log.h>
 
@@ -121,13 +121,7 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   const ActorProxy* ActorActorProperty::GetValue() const
-   {
-      return mProxy->GetLinkedActor(GetName());
-   }
-
-   ////////////////////////////////////////////////////////////////////////////
-   ActorProxy* ActorActorProperty::GetValue()
+   ActorProxy* ActorActorProperty::GetValue() const
    {
       return mProxy->GetLinkedActor(GetName());
    }
@@ -136,6 +130,13 @@ namespace dtDAL
    bool GameEventActorProperty::SetStringValue(const std::string& value)
    {
       GameEvent *event = GameEventManager::GetInstance().FindEvent(dtCore::UniqueId(value));
+      if(event == NULL)
+      {
+         Map *map = Project::GetInstance().GetMapForActorProxy(*mProxy);
+         if(map != NULL)
+            event = map->GetEventManager().FindEvent(dtCore::UniqueId(value));
+      }
+
       SetValue(event);
       return (event != NULL) ? true : false;
    }

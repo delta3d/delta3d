@@ -168,7 +168,7 @@ namespace dtEditQt
         std::vector<dtCore::RefPtr<dtDAL::ActorType> > actorTypes;
         std::vector<dtCore::RefPtr<dtDAL::ActorType> >::const_iterator actorTypesIter;
         std::set<std::string>::const_iterator setIter;
-        dtDAL::Map *map = EditorData::getInstance().getCurrentMap().get();
+        dtDAL::Map *map = EditorData::getInstance().getCurrentMap();
         QStringList categoryList;
         QStringList typeList;
 
@@ -249,7 +249,7 @@ namespace dtEditQt
 
         LOG_ERROR("User pressed the search button");
         std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > foundProxies;
-        dtDAL::Map *map = EditorData::getInstance().getCurrentMap().get();
+        dtDAL::Map *map = EditorData::getInstance().getCurrentMap();
 
         // get the search values
         QString searchName = actorNameEdit->text();

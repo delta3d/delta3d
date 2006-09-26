@@ -52,7 +52,7 @@ namespace dtCore
    DT_CORE_EXPORT std::string FindFileInPathList(const std::string &fileName) throw();
 
 
-};
+}
 
 
 #endif // DELTA_GLOBALS

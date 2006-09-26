@@ -2,7 +2,7 @@ import os
 
 Import('*')
 
-srcs = SGlob( '*.cpp' )
+srcs = env.SGlob( '*.cpp' )
 
 deps=[ 'dtUtil', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgParticle',
        'osgText', 'osgUtil', 'osgGA', 'osgSim', 'osgFX',
@@ -12,18 +12,18 @@ deps=[ 'dtUtil', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgParticle',
 
 defines = []
 
-if OS == 'windows':
+if env['OS'] == 'windows':
    defines = ['DT_CORE_LIBRARY', 'NOMINMAX']
    srcs.remove( 'deltawin_x11.cpp' )
    srcs.remove( 'deltawin_carbon.cpp' )
    srcs.remove( 'uniqueid_linux.cpp' )
    srcs.remove( 'uniqueid_macosx.cpp' )
-elif OS == 'linux':
+elif env['OS'] == 'linux':
    srcs.remove( 'deltawin_win32.cpp' )
    srcs.remove( 'deltawin_carbon.cpp' )
    srcs.remove( 'uniqueid_win32.cpp' )
    srcs.remove( 'uniqueid_macosx.cpp' )
-elif OS == 'darwin':
+elif env['OS'] == 'darwin':
    srcs.remove( 'deltawin_x11.cpp' )
    srcs.remove( 'deltawin_win32.cpp' )
    srcs.remove( 'uniqueid_linux.cpp' )

@@ -121,6 +121,6 @@ namespace dtHLAGM
          RTI::InteractionClassHandle mInteractionHandle;
          std::vector<ParameterToParameterList> mOneToMany;
    };
-};
+}
 
 #endif // DELTA_INTERACTION_TO_MESSAGE
