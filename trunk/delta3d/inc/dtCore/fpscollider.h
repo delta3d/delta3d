@@ -25,6 +25,7 @@
 #include <dtCore/export.h>
 #include <osg/Vec3>
 #include <osg/Matrix>
+#include <dtCore/scene.h>
 
 #include <ode/ode.h>
 
@@ -33,7 +34,17 @@
 namespace dtCore
 {
    /**
-    * This class uses ode to simulate fps movement 
+    * This class uses ode to simulate fps movement on collision meshes
+    * note: this is a simplified physical model and has a few caveats listed below
+    *
+    * -We currently only support collision meshes
+    * -There is a maximum slope that we can go up (SlideThreshold), when on a poly with normal
+    *   dotted with Up (0,0,1) < SlideThreshold we begin sliding, the user has no control
+    *   until sliding is resolved and we are on a "good" poly again
+    * -Because user has no control during Sliding we can get stuck where two polys come together 
+    *   where each one is too steep to climb up, typical ravine like so \/
+    * -Also when sliding we will continue sliding even if our momentum should carry us over the edge of a cliff
+    * -
     */
    class DT_CORE_EXPORT FPSCollider
    {
@@ -41,12 +52,68 @@ namespace dtCore
          enum eMode{WALKING = 0, FALLING, SLIDING};
 
       public:
+         /**
+         * Constructor.
+         * @param height, the height of the character and camera, in meters      
+         * @param radius, the width of our character  
+         * @param k the distance from the bottom of the knees to the ground, this represents the maximum step up height
+         * @param theta the collision amount to maintain below the ground (note: this should be less then half of k,
+         *        something small like 0.1 is recommended)
+         * @param Scene is used to get the gravity and the ode space
+         */
    
+         FPSCollider(float pHeight, float pRadius, float k, float theta, dtCore::Scene* pScene);
          FPSCollider(float pHeight, float pRadius, float k, float theta, dSpaceID pSpaceToCollideWith, const osg::Vec3& pGravity);
          virtual ~FPSCollider();
 
 
+         /**
+         * @param p0 is our initial position, or position we are currently at
+         * @param v0 is our instantaneous velocity, or the direction we want to go
+         * @param deltaFrameTime is the elapsed time in seconds since the last frame
+         * @param pJump specifies whether or not we want to jump
+         * @return our new position in world coordinates, whatever this is controlling should be set to this pos
+         */
          osg::Vec3 Update(const osg::Vec3& p0, const osg::Vec3& v0, float deltaFrameTime, bool pJump);
+
+         /**
+         * @return returns the space id used for the FPSCollider
+         *  this can be useful for resolving collisions between the collider
+         *  and other objects (perhaps another collider)
+         */
+         dSpaceID GetSpaceID() const;
+
+         /*
+         * @return the slide threshold is used to determine the maximum slope
+         *  we can climb Normal DOT UP < SlideThreshold means we are sliding
+         */
+         float GetSlideThreshold() const;
+         void SetSlideThreshold(float pSlide);
+         
+         /**
+         * @return the slide speed is the speed we will travel perpendicular to the normal
+         */
+         float GetSlideSpeed() const;
+         void SetSlideSpeed(float pSpeed);
+
+         /**
+         * Jump speed is the force we apply to our body when jumping in meters per second
+         */
+         float GetJumpSpeed() const;
+         void SetJumpSpeed(float pSpeed);
+
+         /**
+         * @return height above the terrain is the camera height and the top of our bv
+         */
+         float GetHeightAboveTerrain() const;
+
+         /**
+         * @param pHeight is the height of our camera and the top of our bv
+         * @param pRadius is the width of our character 
+         * @param k is the max distance we can step up and the size of our feet bv
+         * @param theta is the distance we maintain below the surface (should be less then half of k)
+         */
+         void SetDimensions(float pHeight, float pRadius, float k, float theta);
    
       private:
 

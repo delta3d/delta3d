@@ -24,14 +24,51 @@
 
 namespace dtCore
 {
+   FPSCollider::FPSCollider(float pHeight, float pRadius, float k, float theta, dtCore::Scene* pScene)
+      : mBBFeet(0)
+      , mBBTorso(0)
+      , mSpaceID(0)
+      , mBBFeetOffset()
+      , mBBTorsoOffset()
+      , mBBFeetLengths()
+      , mBBTorsoLengths()
+      , mNormals()
+      , mNumFeetContactPoints(0)
+      , mNumTorsoContactPoints(0)
+      , mStartCollideFeet(false)
+      , mLastFeetContact()
+      , mJumped(false)
+      , mAirControl(0.35f)
+      , mFreeFall(false)
+      , mFreeFallCounter(0)
+      , mCurrentMode(FALLING)
+      , mSlideThreshold(0.65f)
+      , mSlideSpeed(9.8f/4.0f)
+      , mJumpSpeed(5.0f)
+      , mHeightAboveTerrain(pHeight)
+      , mMaxStepUpDistance(k)
+      , mTerminalVelocity(0.0f, 0.0f, -50.0f)
+      , mLastVelocity(0.0f, 0.0f, 0.0f)
+      , mSlideVelocity(0.0f, 0.0f, 0.0f)
+      , mFallingVelocity(0.f, 0.f, 0.f)
+      , mGravity()
+      , mCollisionSpace()
+   {
+      pScene->GetGravity(mGravity);
+      mCollisionSpace = pScene->GetSpaceID();
+      mSpaceID = dSimpleSpaceCreate(0);
+      SetDimensions(pHeight, pRadius, k, theta);
+   }
+
+
    FPSCollider::FPSCollider(float pHeight, float pRadius, float k, float theta, dSpaceID pSpaceToCollideWith, const osg::Vec3& pGravity)
-      : mBBFeet()
-      , mBBTorso()
-      , mSpaceID()
-      , mBBFeetOffset(0.0f, 0.0f, pHeight + (theta * 0.5f) - (k * 0.5f))
-      , mBBTorsoOffset(0.0f, 0.0f, (pHeight - k) * 0.5f)
-      , mBBFeetLengths(pRadius, pRadius, theta + k)
-      , mBBTorsoLengths(pRadius, pRadius, pHeight - k)
+      : mBBFeet(0)
+      , mBBTorso(0)
+      , mSpaceID(0)
+      , mBBFeetOffset()
+      , mBBTorsoOffset()
+      , mBBFeetLengths()
+      , mBBTorsoLengths()
       , mNormals()
       , mNumFeetContactPoints(0)
       , mNumTorsoContactPoints(0)
@@ -54,12 +91,68 @@ namespace dtCore
       , mGravity(pGravity)
       , mCollisionSpace(pSpaceToCollideWith)
    {
-      InitBoundingVolumes();
+      mSpaceID = dSimpleSpaceCreate(0);
+      SetDimensions(pHeight, pRadius, k, theta);
    }
-   
+
    FPSCollider::~FPSCollider()
    {
+      if(mBBFeet) dGeomDestroy(mBBFeet);
+      if(mBBTorso) dGeomDestroy(mBBTorso);
+      if(mSpaceID) dSpaceDestroy(mSpaceID);
+   }
 
+   dSpaceID FPSCollider::GetSpaceID() const
+   {
+      return mSpaceID;
+   }
+
+   float FPSCollider::GetSlideThreshold() const
+   {
+      return mSlideThreshold;
+   }
+
+   void FPSCollider::SetSlideThreshold(float pSlide)
+   {
+      mSlideThreshold = pSlide;
+   }
+
+   float FPSCollider::GetSlideSpeed() const
+   {
+      return mSlideSpeed;
+   }
+
+   void FPSCollider::SetSlideSpeed(float pSpeed)
+   {
+      mSlideSpeed = pSpeed;
+   }
+
+   float FPSCollider::GetJumpSpeed() const
+   {
+      return mJumpSpeed;
+   }
+
+   void FPSCollider::SetJumpSpeed(float pSpeed)
+   {
+      mJumpSpeed = pSpeed;
+   }
+
+   float FPSCollider::GetHeightAboveTerrain() const
+   {
+      return mHeightAboveTerrain;
+   }
+
+   void FPSCollider::SetDimensions(float pHeight, float pRadius, float k, float theta)
+   {
+      if(mBBFeet) dGeomDestroy(mBBFeet);
+      if(mBBTorso) dGeomDestroy(mBBTorso);
+
+      mBBFeetOffset.set(0.0f, 0.0f, pHeight + (theta * 0.5f) - (k * 0.5f));
+      mBBTorsoOffset.set(0.0f, 0.0f, (pHeight - k) * 0.5f);
+      mBBFeetLengths.set(pRadius, pRadius, theta + k);
+      mBBTorsoLengths.set(pRadius, pRadius, pHeight - k);
+
+      InitBoundingVolumes();
    }
 
 
@@ -76,7 +169,6 @@ namespace dtCore
 
    void FPSCollider::InitBoundingVolumes()
    { 
-      mSpaceID = dSimpleSpaceCreate(0);
       CreateCollisionCylinder((dWorldID)mCollisionSpace, mSpaceID, mBBFeet, mBBFeetLengths);
       CreateCollisionCylinder((dWorldID)mCollisionSpace, mSpaceID, mBBTorso, mBBTorsoLengths);
    }
@@ -353,7 +445,7 @@ namespace dtCore
 
    osg::Vec3 FPSCollider::Update(const osg::Vec3& p0, const osg::Vec3& velocity, float deltaFrameTime, bool pJump)
    {
-      deltaFrameTime = 1.0 / 200.0;
+      //deltaFrameTime = 1.0 / 200.0;
       //mSlideSpeed = sqrtf(velocity.length() + velocity.length() + mJumpSpeed + mJumpSpeed);
 
       osg::Vec3 v0, v1, p1, newXYZ;
