@@ -34,6 +34,7 @@ void initMotionModelBindings();
 void initMouseBindings();
 void initObjectBindings();
 void initOrbitMotionModelBindings();
+void initCollisionMotionModelBindings();
 
 
 //#ifndef WIN32
@@ -60,6 +61,7 @@ void initTransformableBindings();
 void initTripodBindings();
 void initUFOMotionModelBindings();
 void initWalkMotionModelBindings();
+void initFPSColliderBindings();
 
 
 void NotifyWrap(NotifySeverity ns, const char* msg)
@@ -132,6 +134,9 @@ BOOST_PYTHON_MODULE(PyDtCore)
    initFlyMotionModelBindings();
    initUFOMotionModelBindings();
    initOrbitMotionModelBindings();
+   initCollisionMotionModelBindings();
+
+   initFPSColliderBindings();
 
    initCompassBindings();
    initPointAxisBindings();

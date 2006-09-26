@@ -60,7 +60,7 @@ bool CollisionMotionModel::FPSAxisListener::AxisStateChanged(const Axis* axis,
 * @param mouse the mouse instance, or 0 to avoid
 * creating default input mappings
 */
-CollisionMotionModel::CollisionMotionModel(float pHeight, float pRadius, float k, float theta, dSpaceID pCollisionSpace, const osg::Vec3& pGravity, Keyboard* keyboard, Mouse* mouse)
+CollisionMotionModel::CollisionMotionModel(float pHeight, float pRadius, float k, float theta, dtCore::Scene* pScene, Keyboard* keyboard, Mouse* mouse)
       : MotionModel("CollisionMotionModel")
       , mDefaultInputDevice()
       , mLeftRightMouseMovement(0)
@@ -85,7 +85,7 @@ CollisionMotionModel::CollisionMotionModel(float pHeight, float pRadius, float k
       , mMaximumSidestepSpeed(3.0f)
       , mMouse(mouse)
       , mKeyboard(keyboard)
-      , mCollider(pHeight, pRadius, k, theta, pCollisionSpace, pGravity)
+      , mCollider(pHeight, pRadius, k, theta, pScene)
       , mForwardBackCtrl(0.0f)
       , mSidestepCtrl(0.0f)
       , mLookLeftRightCtrl(0.0f)
@@ -423,6 +423,11 @@ bool CollisionMotionModel::OnLookUpDownChanged(double newState, double delta)
 {
    mLookUpDownCtrl = newState;
    return true;
+}
+
+FPSCollider& CollisionMotionModel::GetFPSCollider()
+{
+   return mCollider;
 }
 
 /**

@@ -4,6 +4,7 @@
 	Version="7.10"
 	Name="dtCoreBindings"
 	ProjectGUID="{17C8B821-1515-4CE5-9C9A-00193C34FF0F}"
+	RootNamespace="dtCoreBindings"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
@@ -81,6 +82,9 @@
 				RelativePath="..\..\..\src\python\cloudplanebindings.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\python\collisionmotionmodelbindings.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\python\compassbindings.cpp">
 			</File>
 			<File
@@ -103,6 +107,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\python\flymotionmodelbindings.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\python\fpscolliderbindings.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\src\python\fpsmotionmodelbindings.cpp">
