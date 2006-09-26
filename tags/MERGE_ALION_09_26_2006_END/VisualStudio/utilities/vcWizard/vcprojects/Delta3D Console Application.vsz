@@ -1,0 +1,6 @@
+VSWIZARD 7.0
+Wizard=VsWizard.VsWizardEngine.7.1
+
+Param="WIZARD_NAME = Delta3D Console Application"
+Param="ABSOLUTE_PATH = C:\Program Files\Microsoft Visual Studio .NET 2003\Vc7\VCWizards\Delta3D Console Application\Delta3D Console Application"
+Param="FALLBACK_LCID = 1033"
