@@ -40,7 +40,7 @@
 				AdditionalDependencies="Producerd.lib ul_d.lib OpenThreadsWin32d.lib osgd.lib osgDBd.lib osgParticled.lib osgUtild.lib oded.lib osgTextd.lib js_d.lib isensed.lib dtDALd.lib dtCored.lib dtABCd.lib dtAudiod.lib dtUtild.lib dtBSPd.lib dtGamed.lib xerces-c_2D.lib QtCored4.lib QtGuid4.lib qtmaind.lib QtOpenGLd4.lib dtChard.lib"
 				OutputFile="..\..\..\bin\STAGEd.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib;&quot;$(QTDIR)\lib&quot;;&quot;C:\Program Files\DVTE\trunk\bin&quot;"
+				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib;&quot;$(QTDIR)\lib&quot;"
 				IgnoreDefaultLibraryNames="libc.lib;libcmt;libcd;libcmtd"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
