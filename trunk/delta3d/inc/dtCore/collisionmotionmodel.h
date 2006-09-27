@@ -219,20 +219,6 @@ namespace dtCore
       */
       float GetMaximumTurnSpeed();
 
-      /**
-      * Sets the maximum sidestep speed (meters per second).
-      *
-      * @param maximumSidestepSpeed the new maximum sidestep speed
-      */
-      void SetMaximumSidestepSpeed(float maximumSidestepSpeed);
-
-      /**
-      * Returns the maximum sidestep speed (meters per second).
-      *
-      * @return the current maximum sidestep speed
-      */
-      float GetMaximumSidestepSpeed();
-
 
       /**
       * Message handler callback.

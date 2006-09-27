@@ -43,7 +43,7 @@ namespace dtCore
       , mFreeFallCounter(0)
       , mCurrentMode(FALLING)
       , mSlideThreshold(0.65f)
-      , mSlideSpeed(9.8f/4.0f)
+      , mSlideSpeed(5.0f)
       , mJumpSpeed(5.0f)
       , mHeightAboveTerrain(pHeight)
       , mMaxStepUpDistance(k)
@@ -211,10 +211,8 @@ namespace dtCore
          double diff = (mHeightAboveTerrain + mLastFeetContact.pos[2]) - newPos[2];
          double zPrime = dtUtil::Min<double>(diff, mJumpSpeed * dt);
 
-         //float newHeight = mLastFeetContact.pos[2] + mHeightAboveTerrain;
          newPos[2] += zPrime;
-         //if(newHeight - newPos[2] < mMaxStepUpDistance) newPos[2] = mLastFeetContact.pos[2] + mHeightAboveTerrain;
-
+  
          //find the collided normal with with max z value 
          float highestZ = mNormals[normalIndex][2];
          for(unsigned i = 0; i < mNormals.size(); ++i)
@@ -231,11 +229,11 @@ namespace dtCore
          {
             mCurrentMode = SLIDING;
             //set mSlideVelocity = ((mSlideSpeed * dt) / (1 - n.z) * (n.z*n.x, n.z*n.y, n.z*n.z - 1))
-            float speed = (mSlideSpeed) / (1.0 - mNormals[normalIndex][2]);
+            float speed = mSlideSpeed / (1.0 - mNormals[normalIndex][2]);
             mSlideVelocity.set(speed * mNormals[normalIndex][2] * mNormals[normalIndex][0], speed * mNormals[normalIndex][2] * mNormals[normalIndex][1], speed * (mNormals[normalIndex][2] * mNormals[normalIndex][2] - 1.0));
          }
          else
-        { 
+         { 
             mCurrentMode = WALKING;
          }
       }
@@ -445,9 +443,6 @@ namespace dtCore
 
    osg::Vec3 FPSCollider::Update(const osg::Vec3& p0, const osg::Vec3& velocity, float deltaFrameTime, bool pJump)
    {
-      //deltaFrameTime = 1.0 / 200.0;
-      //mSlideSpeed = sqrtf(velocity.length() + velocity.length() + mJumpSpeed + mJumpSpeed);
-
       osg::Vec3 v0, v1, p1, newXYZ;
       v0 = velocity;
 
@@ -470,25 +465,8 @@ namespace dtCore
 
       case SLIDING:
          {
-
             v0[2] = 0.0f;
-            //v0 += mSlideVelocity;
-			v0 = mSlideVelocity;
-            float length = v0.length();
-
-            if(length > mSlideSpeed)
-            {
-               v0.normalize();
-               v0.set(v0[0] * mSlideSpeed, v0[1] * mSlideSpeed, v0[2] * mSlideSpeed);
-            }
-
-            /*
-			if(mCurrentMode != FALLING && pJump)
-            {
-               v0[2] = mJumpSpeed;  
-               mJumped = true;
-            }
-			*/
+			   v0 = mSlideVelocity;
 
             p1 = p0 + osg::Vec3(v0[0] * deltaFrameTime, v0[1] * deltaFrameTime, v0[2] * deltaFrameTime);
          }
@@ -496,12 +474,12 @@ namespace dtCore
 
       case WALKING:
          {
-              v0[2] = 0.0f;
+            v0[2] = 0.0f;
 
-            if(mCurrentMode != FALLING && pJump)
+            if(pJump)
             {
                v0[2] = mJumpSpeed;  
-                mJumped = true;
+               mJumped = true;
             }
 
             p1 = p0 + osg::Vec3(v0[0] * deltaFrameTime, v0[1] * deltaFrameTime, v0[2] * deltaFrameTime);            

@@ -82,7 +82,6 @@ CollisionMotionModel::CollisionMotionModel(float pHeight, float pRadius, float k
       , mLookUpDownListener(0)
       , mMaximumWalkSpeed(3.0f)
       , mMaximumTurnSpeed(10000.0f)
-      , mMaximumSidestepSpeed(3.0f)
       , mMouse(mouse)
       , mKeyboard(keyboard)
       , mCollider(pHeight, pRadius, k, theta, pScene)
@@ -381,25 +380,6 @@ float CollisionMotionModel::GetMaximumTurnSpeed()
    return mMaximumTurnSpeed;
 }
 
-/**
-* Sets the maximum sidestep speed (meters per second).
-*
-* @param maximumSidestepSpeed the new maximum sidestep speed
-*/
-void CollisionMotionModel::SetMaximumSidestepSpeed(float maximumSidestepSpeed)
-{
-   mMaximumSidestepSpeed = maximumSidestepSpeed;
-}
-
-/**
-* Returns the maximum sidestep speed (meters per second).
-*
-* @return the current maximum sidestep speed
-*/
-float CollisionMotionModel::GetMaximumSidestepSpeed()
-{
-   return mMaximumSidestepSpeed;
-}
 
 bool CollisionMotionModel::OnForwardBackwardChanged(double newState, double delta)
 {
@@ -465,13 +445,18 @@ void CollisionMotionModel::OnMessage(MessageData *data)
 
       //calculate x/y delta
       osg::Vec3 translation;
-      translation[0] = mSidestepCtrl * mMaximumSidestepSpeed;
+      translation[0] = mSidestepCtrl * mMaximumWalkSpeed;
       translation[1] = mForwardBackCtrl * mMaximumWalkSpeed;
 
       //transform our x/y delta by our new heading
       osg::Matrix mat;
       mat.makeRotate(osg::DegreesToRadians(newH), osg::Vec3(0.0f, 0.0f, 1.0f) );
       translation = translation * mat;  
+      if(translation.length() > mMaximumWalkSpeed)
+      {
+         translation.normalize();
+         translation.set(translation[0] * mMaximumWalkSpeed, translation[1] * mMaximumWalkSpeed, translation[2] * mMaximumWalkSpeed);
+      }
 
       newXYZ = mCollider.Update(xyz, translation, deltaFrameTime, mKeyboard->GetKeyState(Producer::Key_space));
 

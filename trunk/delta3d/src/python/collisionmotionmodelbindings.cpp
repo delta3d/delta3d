@@ -26,8 +26,6 @@ void initCollisionMotionModelBindings()
       .def("GetMaximumWalkSpeed", &CollisionMotionModel::GetMaximumWalkSpeed)
       .def("SetMaximumTurnSpeed", &CollisionMotionModel::SetMaximumTurnSpeed)
       .def("GetMaximumTurnSpeed", &CollisionMotionModel::GetMaximumTurnSpeed)
-      .def("SetMaximumSidestepSpeed", &CollisionMotionModel::SetMaximumSidestepSpeed)
-      .def("GetMaximumSidestepSpeed", &CollisionMotionModel::GetMaximumSidestepSpeed)
       .def("GetFPSCollider", &CollisionMotionModel::GetFPSCollider, return_internal_reference<>())
       ;
 }
