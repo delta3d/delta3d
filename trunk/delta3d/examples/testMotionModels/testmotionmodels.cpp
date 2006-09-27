@@ -256,7 +256,7 @@ public:
 
       osg::Vec3 gravity;
       GetScene()->GetGravity(gravity);
-      mMotionModels.push_back( new CollisionMotionModel(1.5f, 0.4f, 0.25f, 0.1f, GetScene()->GetSpaceID(), gravity, GetKeyboard(), GetMouse()) );
+      mMotionModels.push_back( new CollisionMotionModel(1.5f, 0.4f, 0.25f, 0.1f, GetScene(), GetKeyboard(), GetMouse()) );
 
       for( unsigned int i = 0; i < mMotionModels.size(); i++ )
       {  
