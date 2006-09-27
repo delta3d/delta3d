@@ -12,12 +12,13 @@ class ActorPropertyWrap : public ActorProperty, public wrapper<ActorProperty>
 {
    protected:
 
-   ActorPropertyWrap(const std::string &name,
+   ActorPropertyWrap(dtDAL::DataType &dataType, 
+		     const std::string &name,
                      const std::string &label,
                      const std::string &desc,
                      const std::string &groupName,
                      bool  readOnly = false) :
-      ActorProperty(name,label,desc,groupName,readOnly)
+      ActorProperty(dataType, name,label,desc,groupName,readOnly)
    {
    }
 
@@ -39,20 +40,20 @@ class ActorPropertyWrap : public ActorProperty, public wrapper<ActorProperty>
       void CopyFrom( ActorProperty* otherProp )
       {
          #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
-         call<void>( this->get_override("GetPropertyType").ptr(), otherProp );
+         call<void>( this->get_override("CopyFrom").ptr(), otherProp );
          #else
-         this->get_override( "GetPropertyType" )( otherProp );
+         this->get_override( "CopyFrom" )( otherProp );
          #endif
       }
    	
       bool SetStringValue( const std::string& value )
-	   {
+      {
          #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
          return call<bool>( this->get_override("SetStringValue").ptr(), value );         
          #else
 		   return this->get_override( "SetStringValue" )(value);
          #endif
-	   }
+      }
 
       const std::string GetStringValue()
       {
@@ -61,28 +62,28 @@ class ActorPropertyWrap : public ActorProperty, public wrapper<ActorProperty>
          #else
 		   return this->get_override("GetStringValue")();
          #endif
-	   }
+      }
 };
 
 void initActorPropertyBindings()
 {
    class_< ActorPropertyWrap, dtCore::RefPtr< ActorPropertyWrap >, boost::noncopyable >( "ActorProperty", no_init )
       .def( "GetPropertyType", pure_virtual( &ActorProperty::GetPropertyType ), return_internal_reference<>() ) // copy_non_const_reference?
-      .def( "CopyFrom", pure_virtual( &ActorProperty::CopyFrom ) )
-		.def( "GetName", &ActorProperty::GetName, return_value_policy<copy_const_reference>() )
-		.def( "GetLabel", &ActorProperty::GetLabel, return_value_policy<copy_const_reference>() )
-		.def( "GetDescription", &ActorProperty::GetDescription, return_value_policy<copy_const_reference>() )
-		.def( "GetGroupName", &ActorProperty::GetGroupName, return_value_policy<copy_const_reference>() )
+      //.def( "CopyFrom", &ActorProperty::CopyFrom )
+      .def( "GetName", &ActorProperty::GetName, return_value_policy<copy_const_reference>() )
+      .def( "GetLabel", &ActorProperty::GetLabel, return_value_policy<copy_const_reference>() )
+      .def( "GetDescription", &ActorProperty::GetDescription, return_value_policy<copy_const_reference>() )
+      .def( "GetGroupName", &ActorProperty::GetGroupName, return_value_policy<copy_const_reference>() )
       .def( "IsReadOnly", &ActorProperty::IsReadOnly )
       .def( "ToString", &ActorProperty::ToString )
       .def( "SetStringValue", pure_virtual( &ActorProperty::SetStringValue ) )
-		.def( "GetStringValue", pure_virtual( &ActorProperty::GetStringValue ) )
+      .def( "GetStringValue", pure_virtual( &ActorProperty::GetStringValue ) )
       .def( "SetNumberPrecision", &ActorProperty::SetNumberPrecision )
       .def( "GetNumberPrecision", &ActorProperty::GetNumberPrecision )
 		;
 
-   ActorProxy* (ActorActorProperty::*GetValueNonConst)() = &ActorActorProperty::GetValue;
-   const ActorProxy* (ActorActorProperty::*GetValueConst)() const = &ActorActorProperty::GetValue;
+   ActorProxy* (ActorActorProperty::*GetValueNonConst)() const = &ActorActorProperty::GetValue;
+   //const ActorProxy* (ActorActorProperty::*GetValueConst)() const = &ActorActorProperty::GetValue;
 
    dtCore::DeltaDrawable* (ActorActorProperty::*GetRealActorNonConst)() = &ActorActorProperty::GetRealActor;
    const dtCore::DeltaDrawable* (ActorActorProperty::*GetRealActorConst)() const = &ActorActorProperty::GetRealActor;
@@ -93,7 +94,7 @@ void initActorPropertyBindings()
             boost::noncopyable >( "ActorActorProperty", no_init )
       .def( "SetValue", &ActorActorProperty::SetValue, with_custodian_and_ward< 1, 2 >() )
       .def( "GetValue", GetValueNonConst, return_internal_reference<>() )
-      .def( "GetValue", GetValueConst, return_internal_reference<>() )
+      //.def( "GetValue", GetValueConst, return_internal_reference<>() )
       .def( "GetRealActor", GetRealActorNonConst, return_internal_reference<>() )
       .def( "GetRealActor", GetRealActorConst, return_internal_reference<>() )
       .def( "GetDesiredActorClass", &ActorActorProperty::GetDesiredActorClass, return_value_policy<copy_const_reference>() )

@@ -3,6 +3,7 @@
 
 #include <cstdlib>
 #include <cmath>
+#include <osg/Math>
 
 #ifndef RAND_MAX
 #define RAND_MAX 0x7fff
