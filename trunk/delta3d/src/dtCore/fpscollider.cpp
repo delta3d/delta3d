@@ -446,6 +446,8 @@ namespace dtCore
       osg::Vec3 v0, v1, p1, newXYZ;
       v0 = velocity;
 
+      eMode oldMode = mCurrentMode;
+
       ////added flag for jumping, used true when we are on the way up
       if(mJumped && mLastVelocity[2] <= 0.0f)
       {
@@ -512,6 +514,7 @@ namespace dtCore
          {
             mLastVelocity.set(0.0f, 0.0f, 0.0f);
             newXYZ = p0;
+            mCurrentMode = oldMode;
          }
       }
 
