@@ -308,7 +308,7 @@ void XercesTests::doAttributeSearch(const Attributes& attrs, std::string searchK
    try
    {      
       dtUtil::AttributeSearch	attrSearch;
-      attrSearch.GetSearchKeys().push_back(searchKey);
+      //attrSearch.GetSearchKeys().push_back(searchKey);
       dtUtil::AttributeSearch::ResultMap results =	attrSearch(attrs);
 
       dtUtil::AttributeSearch::ResultMap::iterator	iter = results.find(searchKey);		 

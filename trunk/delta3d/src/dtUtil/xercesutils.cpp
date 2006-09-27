@@ -53,11 +53,7 @@ std::string dtUtil::FindAttributeValueFor(const char* attributeName,
 
 using namespace dtUtil;
 
-AttributeSearch::AttributeSearch() : mKeys()
-{
-}
-
-AttributeSearch::AttributeSearch(const SearchKeyVector& k) : mKeys(k)
+AttributeSearch::AttributeSearch()
 {
 }
 
