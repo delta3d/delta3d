@@ -105,8 +105,7 @@ osg::Texture2D* CloudPlane::CreateCloudTexture( const std::string& filename )
       texture = createPerlinTexture();
       if( texture == NULL )
       {
-         LOG_DEBUG("Could not write 2D cloud texture to file." );	
-         LOG_DEBUG(filename );
+         LOG_ERROR("Could not write 2D cloud texture to file." + filename );	
       }
    }
    else
