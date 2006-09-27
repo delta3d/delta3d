@@ -1668,15 +1668,6 @@ void RTIConnection::RTIEntityContentHandler::startElement(const XMLCh* const uri
    if( elname == "EntityTypeMapping" )
    {
       dtUtil::AttributeSearch etmsearch;
-      etmsearch.GetSearchKeys().push_back( "kind" );
-      etmsearch.GetSearchKeys().push_back( "domain" );
-      etmsearch.GetSearchKeys().push_back( "country" );
-      etmsearch.GetSearchKeys().push_back( "category" );
-      etmsearch.GetSearchKeys().push_back( "subcategory" );
-      etmsearch.GetSearchKeys().push_back( "specific" );
-      etmsearch.GetSearchKeys().push_back( "extra" );
-      etmsearch.GetSearchKeys().push_back( "model" );
-      etmsearch.GetSearchKeys().push_back( "icon" );
 
       ResultMap results = etmsearch( attrs );
 
@@ -1750,8 +1741,6 @@ void RTIConnection::RTIEntityContentHandler::startElement(const XMLCh* const uri
    if( elname == "ArticulatedPart")
    {
       dtUtil::AttributeSearch atpsearch;
-      atpsearch.GetSearchKeys().push_back( "name" );
-      atpsearch.GetSearchKeys().push_back( "class" );
       ResultMap results = atpsearch( attrs );
 
       // set up an EntityType based off of the attributes

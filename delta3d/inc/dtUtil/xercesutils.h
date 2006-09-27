@@ -122,39 +122,34 @@ namespace dtUtil
                                                XERCES_CPP_NAMESPACE_QUALIFIER DOMNamedNodeMap* attrs);
 
    /** \brief Searches a Xerces XML Attribute list for names of interest.
-     * A helper used when searching with a known string.  e.g. "mystring", "Type", "Name", or "Value"
+     * A helper used when searching with a known string.  e.g. "mystring", "Type", "Name", or "Value".
+     * For example:
+     * \code
+     *  void myHandler::startElement(... Attributes& attrs)
+     *  {
+     *    AttributeSearch attSearch;
+     *    AttributeSearch::ResultMap results = attrSearch(attrs)
+     *    AttributeSearch::ResultMap::iterator itr = results.find("Name");
+     *    if (itr != results.end())
+     *    {
+     *       std::cout << "name is: " << itr->second << std::endl;
+     *    }
+     *  }
+     *  \endcode
      */
    class DT_UTIL_EXPORT AttributeSearch
    {
    public:
-      ///\deprecated not needed anymore since this class now searches all Attributes by design.
-      typedef std::vector<std::string> SearchKeyVector;
-
       typedef std::map<std::string,std::string> ResultMap;
 
       AttributeSearch();
 
-      /// sets the search key vector
-      AttributeSearch(const SearchKeyVector& k);
-
       ~AttributeSearch();
-
-      /// \deprecated functor searches all Attributes now.
-      void SetSearchKeys(const SearchKeyVector& k) { mKeys = k; }
-
-      /// \deprecated functor searches all Attributes now.
-      SearchKeyVector& GetSearchKeys() { return mKeys; }
-
-      /// \deprecated functor searches all Attributes now.
-      const SearchKeyVector& GetSearchKeys() const { return mKeys; }
 
       /** searches for all keys on each attribute.
         * @return ResultMap a map containing keys that were found, with attribute values as the second of the pair.
         */
       ResultMap operator ()(const XERCES_CPP_NAMESPACE_QUALIFIER Attributes& attrs);
-
-   private:
-      SearchKeyVector mKeys;
    };
 }
 
