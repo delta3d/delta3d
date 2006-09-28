@@ -5,6 +5,8 @@
 #include <cmath>
 #include <osg/Math>
 
+#include <dtUtil/deprecationmgr.h>
+
 #ifndef RAND_MAX
 #define RAND_MAX 0x7fff
 #endif
