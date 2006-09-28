@@ -435,13 +435,18 @@ void CollisionMotionModel::OnMessage(MessageData *data)
 
       transform.GetTranslation(xyz);
 
-      //calculate our new heading
-      newH = hpr[0] - mLookLeftRightCtrl * mMaximumTurnSpeed * deltaFrameTime;
+      newH = hpr[0];
+      newP = hpr[1];
 
-      //calculate our new pitch
-      newP = hpr[1] + mLookUpDownCtrl * mMaximumTurnSpeed * deltaFrameTime;
-      dtUtil::Clamp<float>(newP, -89.9f, 89.9f); //stay away from 90.0 as it causes funky gimbal lock
-      mLookUpDownAxis->SetState(0.0f);//necessary to stop camera drifting down
+      if(mMouse->GetButtonState(Mouse::LeftButton)) 
+      {
+         //calculate our new heading
+         newH -= mLookLeftRightCtrl * mMaximumTurnSpeed * deltaFrameTime;
+         //calculate our new pitch
+         newP += mLookUpDownCtrl * mMaximumTurnSpeed * deltaFrameTime;
+         dtUtil::Clamp<float>(newP, -89.9f, 89.9f); //stay away from 90.0 as it causes funky gimbal lock
+         mLookUpDownAxis->SetState(0.0f);//necessary to stop camera drifting down
+      }
 
       //calculate x/y delta
       osg::Vec3 translation;

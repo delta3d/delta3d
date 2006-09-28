@@ -212,15 +212,19 @@ namespace dtCore
          double zPrime = dtUtil::Min<double>(diff, mJumpSpeed * dt);
 
          newPos[2] += zPrime;
-  
-         //find the collided normal with with max z value 
-         float highestZ = mNormals[normalIndex][2];
-         for(unsigned i = 0; i < mNormals.size(); ++i)
+         
+         float highestZ = 1.0f;
+         if(mNormals.size())
          {
-            if(mNormals[i][2] > highestZ)
+            //find the collided normal with with max z value 
+            highestZ = mNormals[normalIndex][2];
+            for(unsigned i = 0; i < mNormals.size(); ++i)
             {
-               highestZ = mNormals[i][2];
-               normalIndex = i;
+               if(mNormals[i][2] > highestZ)
+               {
+                  highestZ = mNormals[i][2];
+                  normalIndex = i;
+               }
             }
          }
 
@@ -275,12 +279,11 @@ namespace dtCore
       dGeomID pID = pObject;
 
 
-      while(pID != 0 && dGeomGetClass(pID) == dGeomTransformClass && pID != 0 )
+      while(dGeomGetClass(pID) == dGeomTransformClass)
       {
+         if(!pID) return;
          pID = dGeomTransformGetGeom(pID);
       }
-
-      if(!pID) return;
 
       if(dGeomGetClass(pID) == dTriMeshClass)
       {
@@ -308,12 +311,11 @@ namespace dtCore
       void* data = 0;
       dGeomID pID = pObject;
 
-      while(pID != 0 && dGeomGetClass(pID) == dGeomTransformClass )
+      while(dGeomGetClass(pID) == dGeomTransformClass)
       {
+         if(!pID) return;
          pID = dGeomTransformGetGeom(pID);
-      }
-
-      if(!pID) return;
+      }      
 
       if(dGeomGetClass(pID) == dTriMeshClass)
       {
