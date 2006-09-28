@@ -66,7 +66,9 @@ namespace dtTest
       MouseObserver(HandlerType handler, dtCore::Mouse::MouseButton button): BaseClass(),
          mHandlerType(handler),
          mButton(button),
-         mHit(false)
+         mHit(false),
+         mDiffX(0.0f),
+         mDiffY(0.0f)
       {
       }
 
@@ -111,6 +113,9 @@ namespace dtTest
       {
          mHit = true;
 
+         mDiffX = x;
+         mDiffY = y;
+
          if( mHandlerType == MOVE )
          {
             return true;
@@ -141,6 +146,16 @@ namespace dtTest
          return false;
       }
 
+      float GetDiffX()
+      {
+         return mDiffX;
+      }
+
+      float GetDiffY()
+      {
+         return mDiffY;
+      }
+
    protected:
       ~MouseObserver() {}
 
@@ -148,6 +163,8 @@ namespace dtTest
       HandlerType mHandlerType;
       dtCore::Mouse::MouseButton mButton;
       bool mHit;
+      float mDiffX;
+      float mDiffY;
    };
 
    // a quick class to find out if we have hit the callbacks of an arbitrary class
@@ -228,6 +245,17 @@ void MouseTests::TestObservers()
    CPPUNIT_ASSERT( ms->DoubleButtonDown(x,y,lefty->GetButton()) );                 // double: lefty should handle it
    CPPUNIT_ASSERT( ms->ButtonUp(x,y,lefty->GetButton()) );                     // release: lefty should handle it
    CPPUNIT_ASSERT( lefty->GetHit() );                                               // better be hit
+
+   //if we set the mouse position the listener should not get notified
+   ms->SetPosition(x, y);
+
+   float diffX = lefty->GetDiffX();
+   float diffY = lefty->GetDiffY();
+
+   ms->SetPosition(0.25f * x, 0.5f * y);
+
+   CPPUNIT_ASSERT_EQUAL(diffX, lefty->GetDiffX());
+   CPPUNIT_ASSERT_EQUAL(diffY, lefty->GetDiffY());
 
    // -- test chain of responsibility -- //
    lefty->ResetHit();
