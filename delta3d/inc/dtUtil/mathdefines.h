@@ -53,6 +53,14 @@ namespace dtUtil
       if (x > high) x = high;
    }
 
+   /** Apply a linear interpolation between the two supplied numbers using a
+     * third percentage value.
+     *
+     * @param x : specifies the left bound of the range.
+     * @param y : specifies the right bound of the range.
+     * @param t: the normalized value with respect to the specified range to be interpolated.
+     * @return the interpolated value for the coefficient of the range.
+     */
    template <typename Real>
    Real Lerp(Real x, Real y, Real t)
    {
@@ -83,18 +91,13 @@ namespace dtUtil
       return( (sX-sMin) / delta );
    }
 
-   /// Applies the linear transformation of a coefficient for a given range.
-   /// Usage:  To map a value in one space to a corresponding value in another space:
-   /// float nX = CalculateNormal( valueX , xMin , xMax );
-   /// float valueY = CalculateValueForRange(nX,minY,maxY);
-   /// @param coefficient the normalized value with respect to the specified range to be transformed.
-   /// @param sMin specifies the left bound of the range.
-   /// @param sMax specifies the right bound of the range.
-   /// @return the mapped value for the coefficient of the range.
+   ///deprecated 09/28/06
    template<typename T>
    T CalculateValueForRange(T coefficient, T sMin, T sMax)
-   {
-      return( coefficient*(sMax-sMin) + sMin);
+   {      
+      DEPRECATE("dtUtil::CalculateValueForRange()",
+                "dtUtil::Lerp()" );
+      return Lerp(sMin, sMax, coefficient);
    }
 
    /// Caclulates the corresponding value for a mirrored space.
