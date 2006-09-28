@@ -2094,17 +2094,19 @@ AudioManager::SetMinimumGain( SoundObj* snd )
    }
 
    ALfloat  min_gain(static_cast<ALfloat>(snd->GetMinGain()));
-   ALfloat  max_gain(static_cast<ALfloat>(snd->GetMaxGain()));
-   assert( min_gain <= max_gain );
 
-   ALenum   err(alGetError());
-   alSourcef( src, AL_MIN_GAIN, min_gain );
-   if( ( err = alGetError() ) != AL_NO_ERROR )
+   if( min_gain <= snd->GetMaxGain() )
    {
-      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
-         "AudioManager: alSourcef(AL_MIN_GAIN) error %X", err );
-      return;
+      ALenum   err(alGetError());
+      alSourcef( src, AL_MIN_GAIN, min_gain );
+      if( ( err = alGetError() ) != AL_NO_ERROR )
+      {
+         Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
+            "AudioManager: alSourcef(AL_MIN_GAIN) error %X", err );
+         return;
+      }
    }
+
 }
 
 
@@ -2122,18 +2124,18 @@ AudioManager::SetMaximumGain( SoundObj* snd )
       return;
    }
 
-   ALfloat  min_gain(static_cast<ALfloat>(snd->GetMinGain()));
    ALfloat  max_gain(static_cast<ALfloat>(snd->GetMaxGain()));
    
-   assert( min_gain <= max_gain );
-
-   ALenum   err(alGetError());
-   alSourcef( src, AL_MAX_GAIN, max_gain );
-   if( ( err = alGetError() ) != AL_NO_ERROR )
+   if( snd->GetMinGain() <= max_gain )
    {
-      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
-         "AudioManager: alSourcef(AL_MAX_GAIN) error %X", err );
-      return;
+      ALenum   err(alGetError());
+      alSourcef( src, AL_MAX_GAIN, max_gain );
+      if( ( err = alGetError() ) != AL_NO_ERROR )
+      {
+         Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
+            "AudioManager: alSourcef(AL_MAX_GAIN) error %X", err );
+         return;
+      }
    }
 }
 

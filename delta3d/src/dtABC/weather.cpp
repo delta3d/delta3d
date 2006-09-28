@@ -13,7 +13,7 @@ namespace dtABC
 IMPLEMENT_MANAGEMENT_LAYER(Weather)
 
 Weather::Weather( const std::string& textureDirectory ): Base("Weather"),
-   mClouds(NULL),
+   mClouds(),
    mEnvironment( new dtCore::Environment("weatherEnv") ),
    mCloudType(CLOUD_CLEAR),
    mVisType(VIS_UNLIMITED),
