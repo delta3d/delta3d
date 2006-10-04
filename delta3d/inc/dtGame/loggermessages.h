@@ -24,6 +24,11 @@
 #include <dtGame/message.h>
 #include <dtGame/messageparameter.h>
 
+namespace dtUtil
+{
+   class DataStream;
+}
+
 namespace dtGame
 {
    class LogKeyframe;
@@ -197,11 +202,7 @@ namespace dtGame
           * Overloaded to update the internal cached keyframe list.
           * @param stream The stream to deserialized into a message.
           */
-         virtual void FromDataStream(DataStream &stream)
-         {
-            Message::FromDataStream(stream);
-            UpdateInternalKeyframeList();
-         }
+         virtual void FromDataStream(dtUtil::DataStream &stream);
          
          /**
           * Sets the list of keyframes this message contains.
@@ -258,11 +259,7 @@ namespace dtGame
           * Overloaded to update the internal cached tags list.
           * @param stream The stream to deserialized into a message.
           */
-         virtual void FromDataStream(DataStream &stream)
-         {
-            Message::FromDataStream(stream);
-            UpdateInternalTagList();
-         }
+         virtual void FromDataStream(dtUtil::DataStream &stream);
          
          /**
           * Sets the list of logs this message contains.

@@ -24,6 +24,7 @@
 #include <dtGame/logkeyframe.h>
 #include <dtGame/logstatus.h>
 #include <dtGame/exceptionenum.h>
+#include <dtUtil/datastream.h>
 
 namespace dtGame
 {
@@ -628,4 +629,15 @@ namespace dtGame
       AddParameter(new StringMessageParameter("FailureReason"));
    }
 
+   void LogGetKeyframeListMessage::FromDataStream(dtUtil::DataStream &stream)
+   {
+      Message::FromDataStream(stream);
+      UpdateInternalKeyframeList();
+   }
+
+   void LogGetTagListMessage::FromDataStream(dtUtil::DataStream &stream)
+   {
+      Message::FromDataStream(stream);
+      UpdateInternalTagList();
+   }
 }
