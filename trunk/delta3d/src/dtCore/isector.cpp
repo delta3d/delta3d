@@ -158,8 +158,11 @@ namespace dtCore
       }
    
       //In order to find the DeltaDrawable we first check the drawables at the
-      //top level of the scene.  If not found, we check all children of the drawables
-      //for a match.
+      //top level of the scene.  Then, keep on going though the hierarchy, in order
+	  //to find the Delta Drawable deeper in the graph (the closest to the 
+	  //intersection point)
+	  dtCore::DeltaDrawable* pCurrClosest = NULL;
+
       if( mSceneRoot.valid() )
       {
          drawables.push(mSceneRoot.get());
@@ -182,17 +185,20 @@ namespace dtCore
          drawables.pop();
    
          if (nodeCache.find(d->GetOSGNode()) != nodeCache.end())
-         {
-            return d;
-         }
-   
-         for (unsigned i = 0; i < d->GetNumChildren(); i++)
-         {
-            drawables.push(d->GetChild(i));
-         }
+		 {
+			 // save the current result
+			 pCurrClosest = d;
+			 // iterate through the children
+			 drawables.empty();
+			 for (unsigned i = 0; i < d->GetNumChildren(); i++)
+			 {
+				 drawables.push(d->GetChild(i));
+			 }
+			 //return d;
+		 }
       }
    
-      return NULL;
+      return pCurrClosest;
    }
    
    ///////////////////////////////////////////////////////////////////////////////
@@ -230,7 +236,7 @@ namespace dtCore
     * @param pointNum:  Which intersection point to return [0..GetNumberOfHits()]
     */
    void Isector::GetHitPoint( osg::Vec3& xyz, int pointNum ) const
-   { 
+   {
       if (pointNum >= GetNumberOfHits()) return;
    
       xyz = mHitList[pointNum].getWorldIntersectPoint();
