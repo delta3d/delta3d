@@ -194,7 +194,6 @@ namespace dtCore
       UpdateBoundingVolumes(newPos);
 
       bool pCollided = CollideFeet();
-      float relativeDepth = 0.0f;
       int normalIndex = 0;
 
       if(!pCollided || mJumped)
