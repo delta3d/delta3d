@@ -1,6 +1,7 @@
 #include "testplannerutils.h"
 #include <dtAI/planner.h>
 #include <cassert>
+#include <iostream>
 #include <algorithm>
 
 /* Delta3D Open Source Game and Simulation Engine
@@ -32,7 +33,7 @@ namespace dtAI
 //////////////////////////////////////////////////////////////////////////
 
    MyNPC::MyNPC()
-     : mHelper(PlannerHelper::RemainingCostFunctor(this, &MyNPC::RemainingCost), PlannerHelper::DesiredStateFunctor(this, &MyNPC::IsDesiredState))
+     : BaseNPC("MyNPC")
    {
      
    }
@@ -42,27 +43,36 @@ namespace dtAI
 
    }
 
-   void MyNPC::Init()
+   void MyNPC::OnInit()
    {
-      mHelper.AddOperator(new CallGrandma());
-      mHelper.AddOperator(new GoToStore());
-      mHelper.AddOperator(new Cook());
-      mHelper.AddOperator(new Eat());
 
-      mHelper.GetCurrentState()->AddState("Recipe", new Recipe());
-      mHelper.GetCurrentState()->AddState("Groceries", new Groceries());
-      mHelper.GetCurrentState()->AddState("PreparedFood", new PreparedFood());
-      mHelper.GetCurrentState()->AddState("HungerMeter", new HungerMeter());  
+      mHelper.SetDesiredStateFunc(PlannerHelper::DesiredStateFunctor(this, &MyNPC::IsDesiredState));
+      mHelper.SetRemainingCostFunc(PlannerHelper::RemainingCostFunctor(this, &MyNPC::RemainingCost));
+
+      AddOperator(new CallGrandma());
+      AddOperator(new GoToStore());
+      AddOperator(new Cook());
+      AddOperator(new Eat());
+
+      
+      mWSTemplate.AddState("Recipe", new Recipe());
+      mWSTemplate.AddState("Groceries", new Groceries());
+      mWSTemplate.AddState("PreparedFood", new PreparedFood());
+      mWSTemplate.AddState("HungerMeter", new HungerMeter());  
    }
 
-   std::list<const Operator*> MyNPC::GetPlanToEat()
+   void MyNPC::MakeHungry()
    {
-      Planner pPlanner;
-      pPlanner.Reset(&mHelper);
-      pPlanner.GeneratePlan();
-      return pPlanner.GetConfig().mResult;
+      IStateVariable* pState = mHelper.GetCurrentState()->GetState("HungerMeter");
+      if(pState)
+      {
+         HungerMeter* hm = dynamic_cast<HungerMeter*>(pState);
+         assert(hm);
+         hm->SetHungerLevel(0.0f);
+      }
+      
+      std::cout << "Force Hungry" << std::endl;
    }
-
 
    float MyNPC::RemainingCost(const WorldState* pWS) const
    {
@@ -105,6 +115,42 @@ namespace dtAI
          return pHungry;
       }
       return false;
+   }
+
+   void MyNPC::RegisterActions()
+   {
+      RegisterAction("CallGrandma", BaseNPC::Action(this, &MyNPC::ActionCallGrandma));
+      RegisterAction("GoToStore", BaseNPC::Action(this, &MyNPC::ActionGoToStore));
+      RegisterAction("Cook", BaseNPC::Action(this, &MyNPC::ActionCook));
+      RegisterAction("Eat", BaseNPC::Action(this, &MyNPC::ActionEat));
+   }
+
+   bool MyNPC::ActionCallGrandma(double dt, WorldState* pWS)
+   {
+      mHelper.GetOperator("CallGrandma")->Apply(pWS, pWS);
+      std::cout << "Action Call Grandma" << std::endl;
+      return true;
+   }
+
+   bool MyNPC::ActionGoToStore(double dt, WorldState* pWS)
+   {
+      mHelper.GetOperator("GoToStore")->Apply(pWS, pWS);
+      std::cout << "Action Go To Store" << std::endl;
+      return true;
+   }
+
+   bool MyNPC::ActionCook(double dt, WorldState* pWS)
+   {
+      mHelper.GetOperator("Cook")->Apply(pWS, pWS);
+      std::cout << "Action Cook" << std::endl;
+      return true;
+   }
+
+   bool MyNPC::ActionEat(double dt, WorldState* pWS)
+   {
+      mHelper.GetOperator("Eat")->Apply(pWS, pWS);
+      std::cout << "Action Eat" << std::endl;
+      return true;
    }
 
 

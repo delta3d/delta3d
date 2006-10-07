@@ -59,10 +59,8 @@ namespace dtAI
    }
 
 
-   BaseNPC* NPCParser::LoadScript(const std::string& pFilename)
+   bool NPCParser::LoadScript(const std::string& pFilename, BaseNPC* pNPC)
    {
-      BaseNPC* pNPC = 0;
-
       std::string file = osgDB::findDataFile(pFilename);
       
       if(file.empty() )
@@ -82,8 +80,6 @@ namespace dtAI
 
             std::string pNPCName;
             ParseString(pNPCName);
-
-            pNPC = new BaseNPC(pNPCName);
            
             if(mLastDelimeter != TOKEN_OPEN_BRACKET[0]) throw CreateError("Syntax Error: token '[' expected.");
 
@@ -137,12 +133,12 @@ namespace dtAI
          catch (NPCParserError& pError)
          {
             PrintError(pError);
-            return 0;
+            return false;
          }
       }
 
       mFileStream.close();
-      return pNPC;
+      return true;
    }
 
 

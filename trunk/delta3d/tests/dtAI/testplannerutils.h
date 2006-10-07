@@ -26,31 +26,33 @@
 #include <dtAI/statevariable.h>
 #include <dtAI/operator.h>
 #include <dtAI/plannerhelper.h>
-
+#include <dtAI/basenpc.h>
 #include <list>
 
 namespace dtAI
 {
 
-class MyNPC
+class MyNPC: public BaseNPC
 {
   public:
   
      MyNPC();
      ~MyNPC();
 
-     void Init();
+     void OnInit();
 
-     std::list<const Operator*> GetPlanToEat();
+     void MakeHungry();
      
+     void RegisterActions();
+
+     bool ActionCallGrandma(double dt, WorldState* pWS);
+     bool ActionGoToStore(double dt, WorldState* pWS);
+     bool ActionCook(double dt, WorldState* pWS);
+     bool ActionEat(double dt, WorldState* pWS);
 
      float RemainingCost(const WorldState* pWS) const;
      bool IsDesiredState(const WorldState* pWS) const;
 
-
-  private:
-
-     PlannerHelper mHelper;
 
 };
 

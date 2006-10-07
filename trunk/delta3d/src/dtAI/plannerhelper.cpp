@@ -103,4 +103,20 @@ namespace dtAI
       mRemainingCost = pFunc;
    }
 
+   const Operator* PlannerHelper::GetOperator(const std::string& pName) const
+   {
+      OperatorList::const_iterator iter = mOperators.begin();
+      OperatorList::const_iterator endOfList = mOperators.end();
+
+      while(iter != endOfList)
+      {
+         if((*iter)->GetName() == pName)
+         {
+            return *iter;
+         }
+         ++iter;
+      }
+      return 0;
+   }
+
 }//namespace dtAI

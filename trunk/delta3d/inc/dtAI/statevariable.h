@@ -22,12 +22,14 @@
 #ifndef __DELTA_STATEVARIABLE_H__
 #define __DELTA_STATEVARIABLE_H__
 
+#include <dtAI/export.h>
+
 namespace dtAI
 {
    /**
     * A single entity of a dtAI::WorldState
     */
-   class IStateVariable
+   class DT_AI_EXPORT IStateVariable
    {
       public:
    

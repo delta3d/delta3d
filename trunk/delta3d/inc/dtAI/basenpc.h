@@ -27,6 +27,9 @@
 #include <dtAI/plannerhelper.h>
 #include <dtAI/worldstate.h>
 #include <dtAI/planner.h>
+#include <dtAI/fsm.h>
+
+#include <dtUtil/functor.h>
 
 #include <map>
 #include <string>
@@ -44,38 +47,60 @@ namespace dtAI
          typedef std::map<std::string, Goal*> GoalMap;
          typedef GoalMap::allocator_type::value_type GoalMapping;
 
+         typedef dtUtil::Functor<bool,TYPELIST_2(double, WorldState*)> Action;
+         typedef std::map<std::string, Action> ActionMap;
+
       public:
    
          BaseNPC(const std::string& pName);
          virtual ~BaseNPC();
-   
-         void Spawn();
-         virtual void OnSpawn();
+          
+         void InitNPC();
+         void SpawnNPC();
+         void KillNPC();
 
-         void Kill();
-         virtual void OnKill();
+         void SetSleeping(bool pIsSleeping);
 
-         void Update(double dt);
-         virtual void OnUpdate(double dt);
+         virtual void Update(double dt);
+
+         bool LoadNPCScript(const std::string& pFileName);
 
          bool SetGoal(const std::string& pGoal);
          void GeneratePlan();
 
+         void RegisterAction(const std::string& pName, Action pAction);
+
+         void AddOperator(Operator* pOperator);
+         void AddGoal(const std::string& pName, Goal* pGoal);
+
+         Planner::OperatorList GetPlan() const;
+
+         void SetWSTemplate(const WorldState& pWS);
+
+      protected:
+
+         virtual void Spawn();
+         virtual void Kill();
+         virtual void SelectState(double dt);
+
+         bool ExecuteAction(const std::string& pAction, double dt, WorldState* pWS);
+         virtual void ExecutePlan(double dt);
+
+         void InitializeFSM();      
+         virtual void OnInitializeFSM();    
+
+         virtual void OnInit();
+         virtual void RegisterActions();
+
          virtual float RemainingCost(const WorldState* pWS) const;
          virtual bool IsDesiredState(const WorldState* pWS) const;
 
-
-         void AddOperator(NPCOperator* pOperator);
-         void SetWSTemplate(const WorldState& pWS);
-         void AddGoal(const std::string& pName, Goal* pGoal);
-         Planner::OperatorList GetPlan() const;
-
-      private:
-
-         void ExecutePlan();
-
          bool mSleeping;
          const std::string mName;
+
+         FSM mStateMachine;
+
+         ActionMap mActions;
 
          Planner mPlanner;
          PlannerHelper mHelper;
@@ -83,6 +108,7 @@ namespace dtAI
 
          GoalMap mGoals;        
          GoalMapping* mCurrentGoal;
+
          Planner::OperatorList mCurrentPlan;
    
    };

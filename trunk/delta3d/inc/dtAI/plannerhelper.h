@@ -46,6 +46,8 @@ namespace dtAI
    
          void AddOperator(Operator* pOperator);
          void RemoveOperator(Operator* pOperator);
+
+         const Operator* GetOperator(const std::string& pName) const;
          const OperatorList& GetOperators() const;
 
          void SetCurrentState(const WorldState& pNewState);
