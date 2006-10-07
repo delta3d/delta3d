@@ -41,7 +41,7 @@ namespace dtAI
          NPCParser();
          virtual ~NPCParser();
          
-         BaseNPC* LoadScript(const std::string& pFilename);
+         bool LoadScript(const std::string& pFilename, BaseNPC* pNPC);
 
 
       private:

@@ -131,10 +131,19 @@
 				RelativePath="..\..\..\src\dtAI\basenpc.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtAI\fsm.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtAI\navmesh.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtAI\npcevent.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtAI\npcparser.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtAI\npcstate.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtAI\operator.cpp">
@@ -196,10 +205,19 @@
 				RelativePath="..\..\..\inc\dtAI\export.h">
 			</File>
 			<File
+				RelativePath="..\..\..\inc\dtAI\fsm.h">
+			</File>
+			<File
 				RelativePath="..\..\..\inc\dtAI\navmesh.h">
 			</File>
 			<File
+				RelativePath="..\..\..\inc\dtAI\npcevent.h">
+			</File>
+			<File
 				RelativePath="..\..\..\inc\dtAI\npcparser.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtAI\npcstate.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtAI\operator.h">

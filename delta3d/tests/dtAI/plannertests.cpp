@@ -47,7 +47,7 @@ namespace dtTest
 
    private:
 
-      void VerifyPlan(std::list<const Operator*>& pPlan);
+      void VerifyPlan(std::list<const Operator*>& pPlan, bool pCallGrandma);
 
    };
 
@@ -71,27 +71,51 @@ namespace dtTest
    void PlannerTests::TestCreatePlan()
    {
       MyNPC mNPC;
-      mNPC.Init();
-      std::list<const Operator*> pOperators = mNPC.GetPlanToEat();
-      VerifyPlan(pOperators);       
+      mNPC.InitNPC();
+      mNPC.SpawnNPC();
+      mNPC.GeneratePlan();
+      std::list<const Operator*> pOperators = mNPC.GetPlan();
+      VerifyPlan(pOperators, true);    
+
+      //step through the plan
+      while(!mNPC.GetPlan().empty())
+      {
+         mNPC.Update(0.05);
+      }
+
+      mNPC.MakeHungry();
+      mNPC.GeneratePlan();
+      pOperators = mNPC.GetPlan();
+      VerifyPlan(pOperators, false);
+
+      //step through the next plan
+      while(!mNPC.GetPlan().empty())
+      {
+         mNPC.Update(0.05);
+      }
+
    }
 
    void PlannerTests::TestPlannerScript()
    {
       NPCParser parser;            
-      BaseNPC* pTestNPC = parser.LoadScript(dtCore::GetDeltaRootPath() + "/tests/dtAI/npcscript_test.txt");
-      pTestNPC->Spawn();
+      BaseNPC* pTestNPC = new BaseNPC("TestNPC");
+      pTestNPC->LoadNPCScript(dtCore::GetDeltaRootPath() + "/tests/dtAI/npcscript_test.txt");
+      pTestNPC->SpawnNPC();
 
       pTestNPC->GeneratePlan();
       std::list<const Operator*> pOperators = pTestNPC->GetPlan();
-      VerifyPlan(pOperators);
+      VerifyPlan(pOperators, true);
    }
 
-   void PlannerTests::VerifyPlan(std::list<const Operator*>& pOperators)
+   void PlannerTests::VerifyPlan(std::list<const Operator*>& pOperators, bool pCallGrandma)
    {
-      std::string callGrandma("CallGrandma");
-      CPPUNIT_ASSERT_EQUAL(callGrandma, pOperators.front()->GetName());
-      pOperators.pop_front();
+      if(pCallGrandma)
+      {
+         std::string callGrandma("CallGrandma");
+         CPPUNIT_ASSERT_EQUAL(callGrandma, pOperators.front()->GetName());
+         pOperators.pop_front();
+      }
 
       std::string goToStore("GoToStore");
       CPPUNIT_ASSERT_EQUAL(goToStore, pOperators.front()->GetName());
