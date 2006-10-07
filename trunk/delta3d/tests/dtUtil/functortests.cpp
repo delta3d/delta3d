@@ -26,6 +26,7 @@
 #include <dtUtil/funcall.h>
 #include <dtUtil/functor.h>
 #include <dtUtil/funbind.h>
+#include <dtUtil/command.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <osg/Math>
 
@@ -55,6 +56,7 @@ class FunctorTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST(TestMemberFunctors);
    CPPUNIT_TEST(TestBinding);
    CPPUNIT_TEST(TestMoreFunctors);
+   CPPUNIT_TEST(TestCommand);
    CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -66,6 +68,7 @@ public:
    void TestMemberFunctors();
    void TestBinding();
    void TestMoreFunctors();
+   void TestCommand();
 
 private:
 
@@ -140,6 +143,7 @@ private:
       virtual ~D() {}
       virtual void f2() { }
       virtual int f2defvirt(int i, long j) { return i + j + 1; }
+ 
       int f2def(int i, long j) { return i + j + 3; }
       virtual int f2virta(int i, long j) { return i + j + 2; }
    };
@@ -181,6 +185,22 @@ void FunctorTests::setUp()
 ///////////////////////////////////////////////////////////////////////////////
 void FunctorTests::tearDown() 
 {
+}
+
+//////////////////////////////////////////////////////////////////////////
+void FunctorTests::TestCommand()
+{
+   A pStruct;
+
+   dtCore::RefPtr<dtUtil::Command0<int> > cmd = new dtUtil::Command0<int>(Command0<int>::FunctorType(&pStruct, &A::f0def));
+   CPPUNIT_ASSERT(cmd->operator()() == 2);
+
+   dtCore::RefPtr<dtUtil::Command1<int, int> > cmd1 = new dtUtil::Command1<int, int>(Command1<int, int>::FunctorType(&pStruct, &A::f1def), 2);
+   CPPUNIT_ASSERT(cmd1->operator()() == 2);
+
+   dtCore::RefPtr<dtUtil::Command2<int, int, int> > cmd2 = new dtUtil::Command2<int, int, int>(Command2<int, int, int>::FunctorType(&pStruct, &A::f2def), 5, 4);
+   CPPUNIT_ASSERT(cmd2->operator()() == 9);
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////
