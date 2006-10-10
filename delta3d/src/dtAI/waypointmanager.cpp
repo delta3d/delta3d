@@ -100,16 +100,14 @@ namespace dtAI
 
    void WaypointManager::RemoveWaypoint(const WaypointActor* pWaypoint)
    {
-      if (mWaypoints.size() < pWaypoint->GetIndex())
-         mWaypoints.erase(pWaypoint->GetIndex());
-      //TODO othewise we should throw an exception or something
+      //we are indexing into map with a key generated on AddWaypoint
+       mWaypoints.erase(pWaypoint->GetIndex());
    }
 
    void WaypointManager::MoveWaypoint(unsigned pIndex, const osg::Vec3& pPos)
    {
-      if (mWaypoints.size() < pIndex)
-         mWaypoints[pIndex]->SetPosition(pPos);
-      //TODO othewise we should throw an exception or something
+      //we are indexing into map with a key generated on AddWaypoint
+      mWaypoints[pIndex]->SetPosition(pPos);
    }
 
    bool WaypointManager::WriteFile(const std::string& pFileToWrite)
