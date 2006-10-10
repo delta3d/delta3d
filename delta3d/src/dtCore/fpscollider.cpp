@@ -112,6 +112,11 @@ namespace dtCore
       return mSlideThreshold;
    }
 
+   FPSCollider::eMode FPSCollider::GetMode() const
+   {
+      return mCurrentMode;
+   }
+
    void FPSCollider::SetSlideThreshold(float pSlide)
    {
       mSlideThreshold = pSlide;

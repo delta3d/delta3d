@@ -68,8 +68,10 @@ namespace dtCore
 
 
          /**
-         * @param p0 is our initial position, or position we are currently at
+         * @param p0 is the current position of the camera which is our position plus our height above the ground
          * @param v0 is our instantaneous velocity, or the direction we want to go
+         *        as a note the last velocity is saved for adjusting falling speed
+         *        so if you want to warp you may need to set velocity to 0 for one frame
          * @param deltaFrameTime is the elapsed time in seconds since the last frame
          * @param pJump specifies whether or not we want to jump
          * @return our new position in world coordinates, whatever this is controlling should be set to this pos
@@ -82,6 +84,12 @@ namespace dtCore
          *  and other objects (perhaps another collider)
          */
          dSpaceID GetSpaceID() const;
+
+         /**
+         * @return our current mode, WALKING, FALLING, or SLIDING
+         * @note we start in the FALLING state
+         */
+         eMode GetMode() const;
 
          /*
          * @return the slide threshold is used to determine the maximum slope
