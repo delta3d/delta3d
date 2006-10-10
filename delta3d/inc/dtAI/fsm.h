@@ -23,8 +23,8 @@
 #define __DELTA_FSM_H__
 
 #include <dtAI/export.h>
-#include <dtAI/NPCState.h>
-#include <dtAI/NPCEvent.h>
+#include <dtAI/npcstate.h>
+#include <dtAI/npcevent.h>
 
 #include <set>
 #include <map>
