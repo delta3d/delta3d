@@ -21,7 +21,7 @@
 */
 
 
-#include <dtAI/NPCState.h>
+#include <dtAI/npcstate.h>
 #include <algorithm>
 
 namespace dtAI
