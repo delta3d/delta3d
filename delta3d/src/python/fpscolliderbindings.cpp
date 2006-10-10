@@ -10,7 +10,7 @@ using namespace dtCore;
 void initFPSColliderBindings()
 {
 
-   class_<FPSCollider>("FPSCollider", init<float, float, float, float, Scene*>())
+  scope colliderScope = class_<FPSCollider>("FPSCollider", init<float, float, float, float, Scene*>())
       .def("Update", &FPSCollider::Update)
       .def("GetSlideThreshold", &FPSCollider::GetSlideThreshold)
       .def("SetSlideThreshold", &FPSCollider::SetSlideThreshold)
@@ -20,5 +20,12 @@ void initFPSColliderBindings()
       .def("SetJumpSpeed", &FPSCollider::SetJumpSpeed)
       .def("GetHeightAboveTerrain", &FPSCollider::GetHeightAboveTerrain)
       .def("SetDimensions", &FPSCollider::SetDimensions)
+      .def("GetMode", &FPSCollider::GetMode)
    ;
+
+  enum_<FPSCollider::eMode>("eMode")
+     .value("WALKING", FPSCollider::WALKING)
+     .value("FALLING", FPSCollider::FALLING)
+     .value("SLIDING", FPSCollider::SLIDING)
+     .export_values();
 }
