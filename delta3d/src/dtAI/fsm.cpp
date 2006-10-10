@@ -19,7 +19,7 @@
  * Bradley Anderegg 03/20/2006
  */
 
-#include <dtAI/FSM.h>
+#include <dtAI/fsm.h>
 #include <dtUtil/log.h>
 
 namespace dtAI

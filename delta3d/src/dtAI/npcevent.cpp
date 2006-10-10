@@ -19,7 +19,7 @@
  * Bradley Anderegg 03/16/2006
  */
 
-#include <dtAI/NPCEvent.h>
+#include <dtAI/npcevent.h>
 
 namespace dtAI
 {
