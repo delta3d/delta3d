@@ -23,6 +23,7 @@
 #include <dtAI/npcparser.h>
 #include <dtAI/npcstate.h>
 #include <dtUtil/log.h>
+#include <dtUtil/command.h>
 
 namespace dtAI
 {

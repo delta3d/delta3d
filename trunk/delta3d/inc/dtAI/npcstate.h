@@ -24,7 +24,7 @@
 
 #include <dtAI/export.h>
 #include <dtUtil/enumeration.h>
-#include <dtUtil/Command.h>
+#include <dtUtil/command.h>
 #include <dtUtil/functor.h>
 #include <osg/Referenced>
 #include <osg/ref_ptr>
