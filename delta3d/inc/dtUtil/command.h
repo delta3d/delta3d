@@ -33,36 +33,36 @@ namespace dtUtil
    struct TypeTraits
    {
    private:
-      template<typename T>
+      template<typename U>
       struct _Traits
       {
-         typedef T NonConstNoRef;
-         typedef T& NonConstRef;
-         typedef const T& ConstRef;
+         typedef U NonConstNoRef;
+         typedef U& NonConstRef;
+         typedef const U& ConstRef;
       };
 
       template<>
-      struct _Traits<T>
+      struct _Traits<U>
       {
-         typedef T NonConstNoRef;
-         typedef T& NonConstRef;
-         typedef const T& ConstRef;
+         typedef U NonConstNoRef;
+         typedef U& NonConstRef;
+         typedef const U& ConstRef;
       };
 
       template<>
-      struct _Traits<const T&>
+      struct _Traits<const U&>
       {
-         typedef T NonConstNoRef;
-         typedef T& NonConstRef;
-         typedef const T& ConstRef;
+         typedef U NonConstNoRef;
+         typedef U& NonConstRef;
+         typedef const U& ConstRef;
       };
 
       template<>
-      struct _Traits<T&>
+      struct _Traits<U&>
       {
-         typedef T NonConstNoRef;
-         typedef T& NonConstRef;
-         typedef const T& ConstRef;
+         typedef U NonConstNoRef;
+         typedef U& NonConstRef;
+         typedef const U& ConstRef;
       };
 
    public:
