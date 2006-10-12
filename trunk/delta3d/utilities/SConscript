@@ -2,8 +2,7 @@ import os
 
 Import('*')
 
-modules = [ 'bspCompiler',
-            'hlaStealthViewer', 
+modules = [ 'hlaStealthViewer', 
             'psEditor',
             'Viewer',
             'GameStart' ]

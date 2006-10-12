@@ -166,11 +166,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testWin", "examples\testWin
 		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bspCompiler", "utilities\bspCompiler\bspCompiler.vcproj", "{BE9E03DF-21E7-45B7-87B3-F146CAA9D582}"
-	ProjectSection(ProjectDependencies) = postProject
-		{6CB0D175-771B-4592-91A2-C367C61A3381} = {6CB0D175-771B-4592-91A2-C367C61A3381}
-	EndProjectSection
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "hlaStealthViewer", "utilities\hlaStealthViewer\hlaStealthViewer.vcproj", "{D7E5DE16-0A28-4396-BAC2-05B4DEE27D04}"
 	ProjectSection(ProjectDependencies) = postProject
 		{D1B34D72-1FCC-45E4-8CA7-BFF9C7D7689C} = {D1B34D72-1FCC-45E4-8CA7-BFF9C7D7689C}
@@ -565,10 +560,6 @@ Global
 		{37B8BAE2-2318-43AD-A052-95D22E2AF605}.Debug.Build.0 = Debug|Win32
 		{37B8BAE2-2318-43AD-A052-95D22E2AF605}.Release.ActiveCfg = Release|Win32
 		{37B8BAE2-2318-43AD-A052-95D22E2AF605}.Release.Build.0 = Release|Win32
-		{BE9E03DF-21E7-45B7-87B3-F146CAA9D582}.Debug.ActiveCfg = Debug|Win32
-		{BE9E03DF-21E7-45B7-87B3-F146CAA9D582}.Debug.Build.0 = Debug|Win32
-		{BE9E03DF-21E7-45B7-87B3-F146CAA9D582}.Release.ActiveCfg = Release|Win32
-		{BE9E03DF-21E7-45B7-87B3-F146CAA9D582}.Release.Build.0 = Release|Win32
 		{D7E5DE16-0A28-4396-BAC2-05B4DEE27D04}.Debug.ActiveCfg = Debug|Win32
 		{D7E5DE16-0A28-4396-BAC2-05B4DEE27D04}.Release.ActiveCfg = Release|Win32
 		{D7E5DE16-0A28-4396-BAC2-05B4DEE27D04}.Release.Build.0 = Release|Win32
