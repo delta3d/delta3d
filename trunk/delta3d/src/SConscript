@@ -4,7 +4,7 @@ Import('*')
 
 # order of dependencies...
 modules = [ 'dtUtil', 'dtCore', 'dtAI', 'dtABC', 'dtAudio', 'dtChar', 'dtGUI', 'dtHLA',
-            'dtScript', 'dtNet', 'dtBSP', 'dtInspector', 'dtDAL', 'dtActors',
+            'dtScript', 'dtNet', 'dtInspector', 'dtDAL', 'dtActors',
             'dtTerrain', 'dtGame', 'dtHLAGM', 'dtLMS']
 
 if env.get('buildPythonBindings'):
