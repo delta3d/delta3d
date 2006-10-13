@@ -124,7 +124,7 @@ if 'qt' in env['TOOLS'] :
    
    # Build the icon
    if env['OS'] == 'windows' :
-      sources += env.RES( '../../dtEditQt.rc' )
+      sources += env.RES( '#utilities\editor\dtEditQt.rc' )
    
    if mode == 'debug' and env['OS'] == 'windows' :
       app = EditorEnv.Program('#/bin/STAGEd',sources)
