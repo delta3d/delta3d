@@ -115,13 +115,7 @@ if 'qt' in env['TOOLS'] :
    sources = env.SGlob('*.cpp') + moc_targets
    if "precomp.cpp" in sources:
 	   sources.remove("precomp.cpp")
-
-   # Hack to avoid Qt warning about unused file. This should probably just be removed
-   # from CVS.
-   charBrowserSrc = 'characterbrowser.cpp'
-   if charBrowserSrc in sources:      
-      sources.remove(charBrowserSrc)
-   
+  
    # Build the icon
    if env['OS'] == 'windows' :
       sources += env.RES( '#utilities\editor\dtEditQt.rc' )
