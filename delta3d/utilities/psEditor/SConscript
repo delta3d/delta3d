@@ -6,6 +6,6 @@ srcs = env.SGlob( '*.cpp' ) + env.SGlob( '*.cxx' )
 if env['OS'] == 'windows' :
    srcs += env.RES( 'psEditor.rc' )
 
-deps = [ 'dtBSP', 'dtABC', 'dtCore', 'User32', 'Gdi32', 'shell32', 'Advapi32', 'ole32' ]
+deps = [ 'dtABC', 'dtCore', 'User32', 'Gdi32', 'shell32', 'Advapi32', 'ole32' ]
 
 env.BuildProgram( 'psEditor', srcs, deps, buildAppBundle = 0 )
