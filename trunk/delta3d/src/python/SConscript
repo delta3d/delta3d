@@ -14,6 +14,7 @@ if CheckForBoost() :
                      'camerabindings.cpp',
                      'clouddomebindings.cpp',
                      'cloudplanebindings.cpp',
+                     'collisionmotionmodelbindings.cpp',
                      'compassbindings.cpp',
                      'deltadrawablebindings.cpp',
                      'deltawinbindings.cpp',
@@ -23,6 +24,7 @@ if CheckForBoost() :
                      'environmentbindings.cpp',
                      'flymotionmodelbindings.cpp',
                      'fpsmotionmodelbindings.cpp',
+                     'fpscolliderbindings.cpp',
                      'infinitelightbindings.cpp',
                      'infiniteterrainbindings.cpp',
                      'inputdevicebindings.cpp',
@@ -176,7 +178,7 @@ if CheckForBoost() :
    pythonDtAudioLib = env.SharedLibrary( dtAudioBindingsTarget,   pythonSrcs['dtAudio'],  LIBS = addToLibs + [env['dtLibs']['dtAudio'],env['dtLibs']['dtCore']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )
    pythonDtCharLib = env.SharedLibrary(  dtCharBindingsTarget,    pythonSrcs['dtChar'],   LIBS = addToLibs + [env['dtLibs']['dtChar'],env['dtLibs']['dtCore'],env['dtLibs']['dtUtil']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )
    pythonDtDALLib = env.SharedLibrary(   dtDALBindingsTarget,     pythonSrcs['dtDAL'],    LIBS = addToLibs + [env['dtLibs']['dtCore'],env['dtLibs']['dtAI']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )
-   pythonDtAILib = env.SharedLibrary(   dtAIBindingsTarget,     pythonSrcs['dtAI'],    LIBS = addToLibs + [env['dtLibs']['dtDAL'],env['dtLibs']['dtCore'],env['dtLibs']['dtUtil']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )   
+   pythonDtAILib = env.SharedLibrary(   dtAIBindingsTarget,     pythonSrcs['dtAI'],    LIBS = addToLibs + [env['dtLibs']['dtAI'],env['dtLibs']['dtCore'],env['dtLibs']['dtUtil']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )   
    pythonDtInspectorLib = env.SharedLibrary(  dtInspectorBindingsTarget,  pythonSrcs['dtInspector'],   LIBS = addToLibs + [env['dtLibs']['dtInspector'],env['dtLibs']['dtCore']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )
    pythonDtTerrainLib = env.SharedLibrary(  dtTerrainBindingsTarget,  pythonSrcs['dtTerrain'],   LIBS = addToLibs + [env['dtLibs']['dtTerrain'],env['dtLibs']['dtCore'],env['dtLibs']['dtUtil']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )
    pythonDtUtilLib = env.SharedLibrary(  dtUtilBindingsTarget,    pythonSrcs['dtUtil'],   LIBS = addToLibs + [env['dtLibs']['dtUtil']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )
