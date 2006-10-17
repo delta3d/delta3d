@@ -29,8 +29,8 @@
 namespace dtUtil
 {
 
-   template<typename T>
-   struct TypeTraits
+   template<typename U>
+     struct TypeTraits
    {
    private:
       template<typename T>
@@ -41,15 +41,23 @@ namespace dtUtil
          typedef const T& ConstRef;
       };
 
-      template<>
-      struct _Traits<T>
-      {
-         typedef T NonConstNoRef;
-         typedef T& NonConstRef;
-         typedef const T& ConstRef;
-      };
+     //      template<typename T>
+     //      struct _Traits<T*>
+     //      {
+     //         typedef *T NonConstNoRef;
+     //         typedef *T NonConstRef;
+     //         typedef const *T ConstRef;
+     //      };
 
-      template<>
+/*       template<typename T> */
+/*       struct _Traits<const T*> */
+/*       { */
+/*          typedef *T NonConstNoRef; */
+/*          typedef *T NonConstRef; */
+/*          typedef const *T ConstRef; */
+/*       }; */
+
+      template<typename T>
       struct _Traits<const T&>
       {
          typedef T NonConstNoRef;
@@ -57,7 +65,7 @@ namespace dtUtil
          typedef const T& ConstRef;
       };
 
-      template<>
+      template<typename T>
       struct _Traits<T&>
       {
          typedef T NonConstNoRef;
@@ -66,9 +74,9 @@ namespace dtUtil
       };
 
    public:
-      typedef typename _Traits<T>::NonConstNoRef NonConstNoRef;
-      typedef typename _Traits<T>::NonConstRef NonConstRef;
-      typedef typename _Traits<T>::ConstRef ConstRef;
+      typedef typename _Traits<U>::NonConstNoRef NonConstNoRef;
+      typedef typename _Traits<U>::NonConstRef NonConstRef;
+      typedef typename _Traits<U>::ConstRef ConstRef;
    };
 
    /** An abstract class for all types which
