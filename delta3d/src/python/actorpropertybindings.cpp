@@ -69,7 +69,7 @@ void initActorPropertyBindings()
 {
    class_< ActorPropertyWrap, dtCore::RefPtr< ActorPropertyWrap >, boost::noncopyable >( "ActorProperty", no_init )
       .def( "GetPropertyType", pure_virtual( &ActorProperty::GetPropertyType ), return_internal_reference<>() ) // copy_non_const_reference?
-      //.def( "CopyFrom", &ActorProperty::CopyFrom )
+      //.def( "CopyFrom", pure_virtual( &ActorProperty::CopyFrom ) )
       .def( "GetName", &ActorProperty::GetName, return_value_policy<copy_const_reference>() )
       .def( "GetLabel", &ActorProperty::GetLabel, return_value_policy<copy_const_reference>() )
       .def( "GetDescription", &ActorProperty::GetDescription, return_value_policy<copy_const_reference>() )
@@ -82,8 +82,7 @@ void initActorPropertyBindings()
       .def( "GetNumberPrecision", &ActorProperty::GetNumberPrecision )
 		;
 
-   ActorProxy* (ActorActorProperty::*GetValueNonConst)() const = &ActorActorProperty::GetValue;
-   //const ActorProxy* (ActorActorProperty::*GetValueConst)() const = &ActorActorProperty::GetValue;
+   ActorProxy* (ActorActorProperty::*GetValueConst)() const = &ActorActorProperty::GetValue;
 
    dtCore::DeltaDrawable* (ActorActorProperty::*GetRealActorNonConst)() = &ActorActorProperty::GetRealActor;
    const dtCore::DeltaDrawable* (ActorActorProperty::*GetRealActorConst)() const = &ActorActorProperty::GetRealActor;
@@ -93,8 +92,8 @@ void initActorPropertyBindings()
             dtCore::RefPtr< ActorActorProperty >, 
             boost::noncopyable >( "ActorActorProperty", no_init )
       .def( "SetValue", &ActorActorProperty::SetValue, with_custodian_and_ward< 1, 2 >() )
-      .def( "GetValue", GetValueNonConst, return_internal_reference<>() )
-      //.def( "GetValue", GetValueConst, return_internal_reference<>() )
+      //.def( "GetValue", GetValueNonConst, return_internal_reference<>() )
+      .def( "GetValue", GetValueConst, return_internal_reference<>() )
       .def( "GetRealActor", GetRealActorNonConst, return_internal_reference<>() )
       .def( "GetRealActor", GetRealActorConst, return_internal_reference<>() )
       .def( "GetDesiredActorClass", &ActorActorProperty::GetDesiredActorClass, return_value_policy<copy_const_reference>() )
