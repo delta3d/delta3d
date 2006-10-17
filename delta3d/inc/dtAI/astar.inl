@@ -270,7 +270,7 @@ typename AStar<_NodeType, _CostFunc, _Container, _Timer>::AStarResult AStar<_Nod
                   
                   //if the new g(n) cost is cheaper then the old one delete the old one
                   //and add the new one as the best potential path to pNode
-                  if(pNewCost < (pLink->GetCostToNode() + pLink->GetCostToGoal()))
+                  if(pNewCost < pLink->GetCostToNode())
                   {
                      delete pLink;
                      AddNodeLink(pStart, pNode);                     
