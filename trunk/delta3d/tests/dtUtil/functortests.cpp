@@ -195,11 +195,11 @@ void FunctorTests::TestCommand()
    dtCore::RefPtr<dtUtil::Command0<int> > cmd = new dtUtil::Command0<int>(Command0<int>::FunctorType(&pStruct, &A::f0def));
    CPPUNIT_ASSERT(cmd->operator()() == 2);
 
-   dtCore::RefPtr<dtUtil::Command1<int, int> > cmd1 = new dtUtil::Command1<int, int>(Command1<int, int>::FunctorType(&pStruct, &A::f1def), 2);
-   CPPUNIT_ASSERT(cmd1->operator()() == 2);
+      dtCore::RefPtr<dtUtil::Command1<int, int> > cmd1 = new dtUtil::Command1<int, int>(Command1<int, int>::FunctorType(&pStruct, &A::f1def), 2);
+      CPPUNIT_ASSERT(cmd1->operator()() == 2);
 
-   dtCore::RefPtr<dtUtil::Command2<int, int, int> > cmd2 = new dtUtil::Command2<int, int, int>(Command2<int, int, int>::FunctorType(&pStruct, &A::f2def), 5, 4);
-   CPPUNIT_ASSERT(cmd2->operator()() == 9);
+      dtCore::RefPtr<dtUtil::Command2<int, int, int> > cmd2 = new dtUtil::Command2<int, int, int>(Command2<int, int, int>::FunctorType(&pStruct, &A::f2def), 5, 4);
+      CPPUNIT_ASSERT(cmd2->operator()() == 9);
 
 }
 
