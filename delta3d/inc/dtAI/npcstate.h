@@ -34,9 +34,6 @@
 namespace dtAI
 {
 
-/**
-* A class which encapsulates all editable properties of an npc
-*/
 class DT_AI_EXPORT NPCState: public osg::Referenced
 {
    public:

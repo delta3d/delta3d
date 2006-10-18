@@ -25,6 +25,7 @@
 #include <dtAI/basenpc.h>
 #include <dtAI/npcparser.h>
 #include <dtCore/globals.h>
+#include <osg/ref_ptr>
 
 using namespace dtAI;
 
@@ -99,7 +100,7 @@ namespace dtTest
    void PlannerTests::TestPlannerScript()
    {
       NPCParser parser;            
-      BaseNPC* pTestNPC = new BaseNPC("TestNPC");
+      osg::ref_ptr<BaseNPC> pTestNPC = new BaseNPC("TestNPC");
       pTestNPC->LoadNPCScript(dtCore::GetDeltaRootPath() + "/tests/dtAI/npcscript_test.txt");
       pTestNPC->SpawnNPC();
 
