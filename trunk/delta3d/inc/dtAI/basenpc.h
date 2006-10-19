@@ -69,13 +69,13 @@ namespace dtAI
          /**
          * SpawnNPC() sets the WorldState of the NPC to be equal to the WorldState template (SetWSTemplate())
          * it then sets a goal from the goal list if it does not already have one 
-         * and calls Spawn() for derived specific spawning behavoir 
+         * and changes the state to NPC_STATE_SPAWN
          */
          void SpawnNPC();
 
          /**
          * KillNPC() puts the character in the sleep state so it no longer does processing on update
-         * calls Kill() for derived specific behavoir
+         * and changes the state to NPC_STATE_DIE
          */
          void KillNPC();
 
@@ -147,16 +147,6 @@ namespace dtAI
          void SetWSTemplate(const WorldState& pWS);
 
       protected:
-
-         /**
-         * Called on SpawnNPC()
-         */
-         virtual void Spawn();
-
-         /**
-         * Called on KillNPC()
-         */
-         virtual void Kill();
 
          /**
          * Override this to set the initial state of the NPC after it is spawned

@@ -67,23 +67,13 @@ namespace dtAI
       mSleeping = false;
       mHelper.SetCurrentState(mWSTemplate);
       if(!mCurrentGoal && !mGoals.empty()) SetGoal(mGoals.begin()->first);
-      Spawn();
-   }
-
-   void BaseNPC::Spawn()
-   {
-
+     
+      mStateMachine.MakeCurrent(&NPCStateTypes::NPC_STATE_SPAWN);
    }
 
    void BaseNPC::KillNPC()
    {
-      mSleeping = true;
-      Kill();
-   }
-
-   void BaseNPC::Kill()
-   {
-
+      mStateMachine.MakeCurrent(&NPCStateTypes::NPC_STATE_DIE);
    }
 
    void BaseNPC::SetSleeping(bool pIsSleeping)
@@ -183,14 +173,11 @@ namespace dtAI
       NPCState* state_die = new NPCState(&NPCStateTypes::NPC_STATE_DIE);
 
       mStateMachine.AddTransition(&NPCEvent::NPC_EVENT_SPAWN, state_default, state_spawn);
-      mStateMachine.AddTransition(&NPCEvent::NPC_EVENT_DIE, state_spawn, state_die);
       mStateMachine.AddTransition(&NPCEvent::NPC_EVENT_DIE, state_idle, state_die);
-      mStateMachine.AddTransition(&NPCEvent::NPC_EVENT_SLEEP, state_spawn, state_idle);
 
       //when spawn first updates, it will call the virtual spawn function
       //set mSleeping to false and select a new state through the
       //virtual select state mechanism on its first update
-      mStateMachine.GetState(&NPCStateTypes::NPC_STATE_SPAWN)->AddEntryCommand(new dtUtil::Command0<void>(dtUtil::Functor<void, TYPELIST_0()>(this, &BaseNPC::Spawn)));
       mStateMachine.GetState(&NPCStateTypes::NPC_STATE_SPAWN)->AddEntryCommand(new dtUtil::Command1<void, bool>(dtUtil::Functor<void, TYPELIST_1(bool)>(this, &BaseNPC::SetSleeping), false));
       mStateMachine.GetState(&NPCStateTypes::NPC_STATE_SPAWN)->SetUpdate(NPCState::UpdateFunctor(this, &BaseNPC::SelectState));   
 
