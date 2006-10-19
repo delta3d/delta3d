@@ -90,6 +90,7 @@ namespace dtAI
          ++iter;
       }
 
+      LOG_ERROR("State Type: " + pStateType->GetName() + " not found.");
       return 0;
    }
 
@@ -127,6 +128,8 @@ namespace dtAI
          OnStateChange( to );
          return true;
       }
+
+      LOG_ERROR("Unable to handle event: " + pEvent->GetName() + " from state: " + mCurrentState->GetName());
       return false;
    }
 

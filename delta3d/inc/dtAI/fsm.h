@@ -26,6 +26,8 @@
 #include <dtAI/npcstate.h>
 #include <dtAI/npcevent.h>
 
+#include <dtCore/refptr.h>
+
 #include <set>
 #include <map>
 #include <functional> 
@@ -85,7 +87,7 @@ namespace dtAI
             }
          };
 
-         typedef osg::ref_ptr<NPCState> StatePtr;
+         typedef dtCore::RefPtr<NPCState> StatePtr;
          typedef std::set< StatePtr, RefPtrWithNameCompare<StatePtr> > StateSet;         
          typedef std::pair< const NPCEvent*, StatePtr > EventStatePtrPair;
          typedef std::map< EventStatePtrPair, StatePtr, PairRefPtrWithNameCompare<EventStatePtrPair> > TransitionMap;
@@ -121,9 +123,10 @@ namespace dtAI
          void OnStateChange(NPCState* pState);
 
       protected:
-         osg::ref_ptr<NPCState>  mCurrentState;
+         dtCore::RefPtr<NPCState>  mCurrentState;
          
       private:
+
          StateSet                mStates;
          TransitionMap           mTransitions;
    };
