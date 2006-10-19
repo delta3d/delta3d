@@ -83,7 +83,7 @@ class DT_AI_EXPORT NPCState: public osg::Referenced
 };
 
 
-class NPCStateTypes: public NPCState::Type
+class DT_AI_EXPORT NPCStateTypes: public NPCState::Type
 {
    DECLARE_ENUM(NPCStateTypes);
 
