@@ -86,7 +86,7 @@ namespace dtAI
 
          /**
          * Update should be called every frame
-         * calls ExecutePlan which will generate a plan if it doesnt have one
+         * calls ExecutePlan which will run a plan if one has been generated
          * Updates the state machine which may change states based on input
          */
          virtual void Update(double dt);
