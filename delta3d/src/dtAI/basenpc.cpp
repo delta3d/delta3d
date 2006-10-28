@@ -155,9 +155,14 @@ namespace dtAI
       mHelper.AddOperator(pOperator);
    }
 
-   void BaseNPC::SetWSTemplate(const WorldState& pWS)
+   const WorldState& BaseNPC::GetWSTemplate() const 
    {
-      mWSTemplate = pWS;
+      return mWSTemplate;
+   }
+
+   WorldState& BaseNPC::GetWSTemplate() 
+   {
+      return mWSTemplate;
    }
 
    void BaseNPC::AddGoal(const std::string& pName, Goal* pGoal)
@@ -217,20 +222,26 @@ namespace dtAI
 
    void BaseNPC::ExecutePlan(double dt)
    {
-      if(mCurrentPlan.empty())
-      {
-         GeneratePlan();
-      }
-
       Planner::OperatorList::iterator pPlanIter = mCurrentPlan.begin();
 
       if(pPlanIter != mCurrentPlan.end())
       {
          const Operator* pOperator = *pPlanIter;         
 
+         //ExecuteAction will return true when it completes so we can pop that action
+         //of the plan... if the action generates a new plan it needs to return false
+         //so that we dont loose the first operator of the new plan
+         //we should probably make this a critical section or something to prevent this
          if(ExecuteAction(pOperator->GetName(), dt, mHelper.GetCurrentState()))
-         {
+         {           
             mCurrentPlan.pop_front();
+         }
+         //check if we hit any interrupts
+         const NPCOperator* pNPCOperator = dynamic_cast<const NPCOperator*>(pOperator);
+         if(pNPCOperator && pNPCOperator->CheckInterrupts(mHelper.GetCurrentState()))
+         {
+            //if so, clear the current plan and generate a new one            
+            GeneratePlan();
          }
       }
 

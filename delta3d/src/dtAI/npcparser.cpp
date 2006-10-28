@@ -46,11 +46,14 @@ namespace dtAI
    const std::string NPCParser::TOKEN_FALSE("false");
    const std::string NPCParser::TOKEN_OPEN_BRACKET("[");
    const std::string NPCParser::TOKEN_CLOSE_BRACKET("]");
+   const std::string NPCParser::TOKEN_OPEN_PAREN("(");
+   const std::string NPCParser::TOKEN_CLOSE_PAREN(")");
    const std::string NPCParser::TOKEN_DELIMETER(",()[]");
    //////////////////////////////////////////////////////////////////////////
 
 
    NPCParser::NPCParser()
+   : mLineNumber(0)
    {
    }
    
@@ -76,16 +79,20 @@ namespace dtAI
          try
          {
 
+            mCurrentTask = "Parsing Token NPC";
             ParseToken(TOKEN_NPC);
 
+            mCurrentTask = "Parsing NPC Name";
             std::string pNPCName;
             ParseString(pNPCName);
            
-            if(mLastDelimeter != TOKEN_OPEN_BRACKET[0]) throw CreateError("Syntax Error: token '[' expected.");
+            if(ParseDelimeter() != TOKEN_OPEN_BRACKET[0]) throw CreateError("Syntax Error: token '[' expected.");
 
             //world state
+            mCurrentTask = "Parsing WorldState";
             ParseToken(TOKEN_WORLD_STATE);
            
+            mCurrentTask = "Parsing WorldState Expression";
             Expression pWorldState;
             ParseExpression(pWorldState);
             CreateWorldState(pNPC, pWorldState);
@@ -96,8 +103,11 @@ namespace dtAI
 
             while(pToken == TOKEN_OPERATOR && mFileStream.good())
             {
+               mCurrentTask = "Parsing Operator Name";
                std::string OpName;
                ParseString(OpName);
+
+               mCurrentTask = "Parsing Operator: " + OpName;
 
                ParseToken(TOKEN_PRECONDS);
                Expression preConds;
@@ -122,8 +132,10 @@ namespace dtAI
 
 
             //goals
-            if(pToken != TOKEN_GOALS) throw CreateError("Token Expected, 'Goals'");
+            mCurrentTask = "Parsing Goals";
 
+            if(pToken != TOKEN_GOALS) throw CreateError("Token Expected, 'Goals'");
+            
             Expression pGoals;
             ParseExpression(pGoals);
             CreateGoals(pNPC, pGoals);
@@ -144,7 +156,7 @@ namespace dtAI
 
    void NPCParser::CreateWorldState(BaseNPC* pNPC, Expression& pExr)
    {
-      WorldState pWS;
+      WorldState& pWS = pNPC->GetWSTemplate();
       Expression::iterator iter = pExr.begin();
       Expression::iterator endOfList = pExr.end();
       while(iter != endOfList)
@@ -163,8 +175,6 @@ namespace dtAI
          
          ++iter;
       }      
-
-      pNPC->SetWSTemplate(pWS);
    }
 
    void NPCParser::CreateGoals(BaseNPC* pNPC, Expression& pExr)
@@ -257,29 +267,47 @@ namespace dtAI
 
    void NPCParser::ParseExpression(Expression& pExp)
    {
-      if(ParseDelimeter() != TOKEN_OPEN_BRACKET[0]) throw CreateError("NPCParser, Syntax Error: token '[' expected,");
-      
       std::string pToken;
+      char lastDelimeter = ParseDelimeter();
+
+      if(lastDelimeter != TOKEN_OPEN_BRACKET[0]) throw CreateError("NPCParser, Syntax Error: token '[' expected,");
+            
       do
       {
          ExpressionPair ep;
-         if(!ParseString(pToken)) break;
+         if(!ParseString(pToken))
+         {
+            lastDelimeter = ParseDelimeter();
+            break;
+         }
+
          ep.first = pToken;
+
+         if(ParseDelimeter() != TOKEN_OPEN_PAREN[0])
+         {
+            throw CreateError("Syntax Error, expected token:" + TOKEN_OPEN_PAREN);
+         }
 
          do 
          {
             ep.second.push_back(ParseParam());
+            lastDelimeter = ParseDelimeter();
          } 
-         while(mLastDelimeter == ',');
+         while(lastDelimeter == ',');
+
+         if(lastDelimeter != TOKEN_CLOSE_PAREN[0])
+         {
+            throw CreateError("NPCParser, Syntax Error: token ')' expected,");
+         }
 
          pExp.push_back(ep);
          pToken.clear();
 
-         ParseDelimeter();
+         lastDelimeter = ParseDelimeter();
       }
-      while(mLastDelimeter == ',');
+      while(lastDelimeter == ',');
             
-      if(mLastDelimeter != TOKEN_CLOSE_BRACKET[0])
+      if(lastDelimeter != TOKEN_CLOSE_BRACKET[0])
       {
          throw CreateError("Syntax Error, expected token:" + TOKEN_CLOSE_BRACKET);
       }
@@ -288,7 +316,9 @@ namespace dtAI
    NPCParser::Param NPCParser::ParseParam()
    {
       std::string pStr;
+
       ParseString(pStr);
+
       if(!pStr.empty() && IsDigit(pStr[0]))
       {
          return Param(dtUtil::ToType<int>(pStr));
@@ -333,18 +363,18 @@ namespace dtAI
 
       if(IsDelimeter(c))
       {
-         mLastDelimeter = c;
+         mFileStream.unget();
          return false;
       }
 
-      while(mFileStream.good() && !IsDelimeter(c) && c != ' ')
+      while(mFileStream.good() && !IsDelimeter(c) && !IsWhiteSpace(c))
       {
          if(!IsWhiteSpace(c)) pStr.push_back(c);
 
          mFileStream.get(c);
       }
       
-      mLastDelimeter = c;
+      mFileStream.unget();
       return true;
    }
 
@@ -352,8 +382,7 @@ namespace dtAI
    {
       char pDel = ' ';
       while(IsWhiteSpace(pDel)) mFileStream >> pDel;
-      mLastDelimeter = pDel;
-      return mLastDelimeter;
+      return pDel;
    }
 
    bool NPCParser::IsDelimeter(char c) const
@@ -364,14 +393,30 @@ namespace dtAI
 
    bool NPCParser::IsWhiteSpace(char c) const
    {
-      return(c == '\n' || c == '\t' || c == ' ' || c == '\r');
+      if(c == '\n' || c == '\r') 
+      {
+         ++mLineNumber;
+      }
+
+      static dtUtil::IsSpace sIsSpace;
+
+      return(sIsSpace(c) || c == '\n' || c == '\t' || c == ' ' || c == '\r');
    }
 
    int NPCParser::ParseInt()
    {
-      int i;
-      mFileStream >> i;
-      return i;
+      std::string pStr;
+
+      ParseString(pStr);
+
+      if(!pStr.empty() && IsDigit(pStr[0]))
+      {
+         return dtUtil::ToType<int>(pStr);
+      }
+      else
+      {
+         throw CreateError("Expected integer parameter, found: " + pStr);
+      }
    }
 
    NPCParser::NPCParserError NPCParser::CreateError(const std::string& pError)
@@ -384,7 +429,7 @@ namespace dtAI
 
    void NPCParser::PrintError(NPCParserError& pError)
    {
-      LOG_WARNING( "NPCParser Error: " + pError.pError);//  std::endl;// << "   Line: " << pError.pLineNumber << std::endl;
+      LOG_WARNING( "NPCParser Error: " + pError.pError + '\n' + "   During Task: " + mCurrentTask + '\n' + "   Line: " + dtUtil::ToString(mLineNumber + 1) + '\n');
    }
 
 

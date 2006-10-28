@@ -47,9 +47,18 @@ namespace dtAI
    {
       public:
 
+         //A Goal is essentially a conditional, but one representing our desired state
+         //so if a goal evaluates to true then we have theoretically completed a task of interest
+         //if the user overrides IsDesiredState() then they are responsible for either evaluating 
+         //Goals themselves or potentially not using them at all
          typedef std::map<std::string, Goal*> GoalMap;
          typedef GoalMap::allocator_type::value_type GoalMapping;
 
+         //An action is a function pointer that takes a double representing the frame time
+         //and the current world state to modify
+         //it returns true when that action has completed 
+         //NOTE: if the action generates a new plan for this NPC it MUST return false
+         //we should add a critical section in ExecutePlan to prevent this mistake
          typedef dtUtil::Functor<bool,TYPELIST_2(double, WorldState*)> Action;
          typedef std::map<std::string, Action> ActionMap;
 
@@ -141,10 +150,11 @@ namespace dtAI
          Planner::OperatorList GetPlan() const;
  
          /**
-         * SetWSTemplate() sets the template of the WorldState for this NPC
+         * GetWSTemplate() returns the template of the WorldState for this NPC
          * a WorldState Template can be thought of as the initial state of the NPC
          */
-         void SetWSTemplate(const WorldState& pWS);
+         const WorldState& GetWSTemplate() const; 
+         WorldState& GetWSTemplate();
 
       protected:
 
