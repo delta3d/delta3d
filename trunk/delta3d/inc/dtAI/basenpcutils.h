@@ -179,8 +179,8 @@ namespace dtAI
 
          bool CheckInterrupts(const WorldState* pCurrent) const
          {
-            InterruptList::iterator iter = mInterrupts.begin();
-            InterruptList::iterator endOfList = mInterrupts.end();
+            InterruptList::const_iterator iter = mInterrupts.begin();
+            InterruptList::const_iterator endOfList = mInterrupts.end();
             while(iter != endOfList)
             {
                if(!(*iter)->Evaluate(pCurrent))

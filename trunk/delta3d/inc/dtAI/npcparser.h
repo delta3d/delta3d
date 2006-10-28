@@ -102,6 +102,8 @@ namespace dtAI
          static const std::string TOKEN_FALSE;
          static const std::string TOKEN_OPEN_BRACKET;
          static const std::string TOKEN_CLOSE_BRACKET;
+         static const std::string TOKEN_OPEN_PAREN;
+         static const std::string TOKEN_CLOSE_PAREN;
          static const std::string TOKEN_DELIMETER;
 
          void CreateWorldState(BaseNPC* pNPC, Expression& pExr);
@@ -122,7 +124,8 @@ namespace dtAI
          NPCParserError CreateError(const std::string& pError);
          void PrintError(NPCParserError& pError);
 
-         char mLastDelimeter;
+         mutable unsigned mLineNumber;
+         std::string mCurrentTask;
          std::ifstream mFileStream;
    };
 }//namespace dtAI
