@@ -183,7 +183,7 @@ namespace dtAI
             InterruptList::const_iterator endOfList = mInterrupts.end();
             while(iter != endOfList)
             {
-               if(!(*iter)->Evaluate(pCurrent))
+               if((*iter)->Evaluate(pCurrent))
                {
                   return false;
                }

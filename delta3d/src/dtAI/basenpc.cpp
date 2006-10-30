@@ -238,7 +238,7 @@ namespace dtAI
          }
          //check if we hit any interrupts
          const NPCOperator* pNPCOperator = dynamic_cast<const NPCOperator*>(pOperator);
-         if(pNPCOperator && pNPCOperator->CheckInterrupts(mHelper.GetCurrentState()))
+         if(pNPCOperator && !pNPCOperator->CheckInterrupts(mHelper.GetCurrentState()))
          {
             //if so, clear the current plan and generate a new one            
             GeneratePlan();
