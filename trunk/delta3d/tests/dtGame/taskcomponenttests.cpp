@@ -18,6 +18,7 @@
  *
  * @author Matthew W. Campbell
  */
+#include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtDAL/actortype.h>
 #include <dtGame/gamemanager.h>

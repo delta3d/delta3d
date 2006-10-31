@@ -54,6 +54,7 @@ namespace dtEditQt {
     public:
         CharacterBrowser(dtDAL::DataType &type,QWidget *parent=0);
         virtual ~CharacterBrowser();
+        
             /**
         * Derived from our abstract base class. When a tree selection changes 
         * this method will be called. This will handle our context sensitive buttons

@@ -180,8 +180,8 @@ bool PackageProfile::IsSCORMCompliant() const
 
 bool PackageProfile::IncludePlatform( TargetPlatform x ) const
 {
-   if ( x == WINDOWS )    return getFlag( FLAG_PLATFORM_WINDOWS );
-   else if ( x == LINUX ) return getFlag( FLAG_PLATFORM_LINUX );
+   if ( x == TP_WINDOWS )    return getFlag( FLAG_PLATFORM_WINDOWS );
+   else if ( x == TP_LINUX ) return getFlag( FLAG_PLATFORM_LINUX );
    else                   return false;
 }
 
@@ -506,9 +506,9 @@ void PackageProfile::GetLibraries( LibraryType libType,
                   XMLString::release( &val );
 
                   if ( ToUpperCase(platform) == "WINDOWS" )
-                     enumPlatform = TargetPlatform::WINDOWS;
+                     enumPlatform = TP_WINDOWS;
                   else if ( ToUpperCase(platform) == "LINUX" )
-                     enumPlatform = TargetPlatform::LINUX;
+                     enumPlatform = TP_LINUX;
                }
             }
             

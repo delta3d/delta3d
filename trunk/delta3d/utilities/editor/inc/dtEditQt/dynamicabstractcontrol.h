@@ -23,9 +23,10 @@
 #define DELTA_DYNAMICABSTRACTCONTROL
 
 #include <QtCore/QObject>
-#include "dtDAL/actorproxy.h"
-#include "dtDAL/actorproperty.h"
-#include "dtEditQt/typedefs.h"
+#include <dtDAL/actorproxy.h>
+#include <dtDAL/actorproperty.h>
+#include <dtEditQt/typedefs.h>
+#include <QtGui/QAbstractItemDelegate>
 
 class QWidget;
 class QGridLayout;
@@ -45,8 +46,8 @@ namespace dtDAL
 namespace dtEditQt 
 {
 
-// The number of digits to the right of a decimal point for floats/doubles
-#define NUM_DECIMAL_DIGITS 7
+    // The number of digits to the right of a decimal point for floats/doubles
+    const unsigned NUM_DECIMAL_DIGITS = 7;
 
     class PropertyEditorModel;
     class PropertyEditorTreeView;
@@ -212,16 +213,6 @@ namespace dtEditQt
          */
         void setTreeView(PropertyEditorTreeView *newPropertyTree);
 
-        /** 
-         * This method is called by one of the Sub Widgets from DynamicSubWidgets.h from the 
-         * destructor of the passed in widget.  The intent is to work around the way editors 
-         * work in QT trees.  Since the editors are created only when the user should be editing the
-         * field and then destroyed as soon as they lose focus, it is important that any Dynamic
-         * controls not be holding on to bogus pointers.  This method gives you a chance to set
-         * a pointer back to NULL or whatever.
-         */
-        virtual void handleSubEditDestroy(QWidget *widget);
-
         /**
          * Called when the abstract control is constructed to determine whether or not we 
          * need a persistent editor.  Persistent editors are created after the control is 
@@ -278,6 +269,15 @@ namespace dtEditQt
         {
             // do nothing
         }
+        /** 
+         * This method is called by one of the Sub Widgets from DynamicSubWidgets.h from the 
+         * destructor of the passed in widget.  The intent is to work around the way editors 
+         * work in QT trees.  Since the editors are created only when the user should be editing the
+         * field and then destroyed as soon as they lose focus, it is important that any Dynamic
+         * controls not be holding on to bogus pointers.  This method gives you a chance to set
+         * a pointer back to NULL or whatever.
+         */
+         virtual void handleSubEditDestroy(QWidget *widget, QAbstractItemDelegate::EndEditHint hint = QAbstractItemDelegate::NoHint);
 
     protected:
         // indicates whether the object has been initialized

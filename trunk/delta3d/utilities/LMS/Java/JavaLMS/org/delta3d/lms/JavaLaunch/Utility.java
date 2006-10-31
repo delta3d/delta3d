@@ -27,24 +27,24 @@ import java.lang.reflect.Array;
 public class Utility
 {
 
-    public static String GetProgramDirectory(String applicationName)
+    public static String GetProgramDirectory(ApplicationConfiguration appConfig)
     {
         String programDirectory = "";
         
-        Preferences prefs = Preferences.systemNodeForPackage(NativeLibraryLaunch.class);
+        Preferences prefs = Preferences.userNodeForPackage(NativeLibraryLaunch.class);
         
-        programDirectory = prefs.get(applicationName, "");
+        programDirectory = prefs.get(appConfig.GetApplicationName(), "");
         
         if (programDirectory.equals(""))
         {
-            ProgramDirectoryDialog dlg = new ProgramDirectoryDialog(applicationName, null);
+            ProgramDirectoryDialog dlg = new ProgramDirectoryDialog(appConfig, null);
             dlg.setLocationRelativeTo(null);
             dlg.setVisible(true);
             
             if (dlg.getDlgOK())
             {
                 programDirectory = dlg.getDirectory();
-                prefs.put(applicationName, programDirectory);
+                prefs.put(appConfig.GetApplicationName(), programDirectory);
                 
             }
             dlg.dispose();

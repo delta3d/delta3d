@@ -18,7 +18,7 @@
  *
  * @author Eddie Johnson and David Guthrie
  */
-
+#include <prefix/dtgameprefix-src.h>
 #include <cstdlib>
 #include <iostream>
 #include <osg/Math>
@@ -1142,13 +1142,14 @@ void GameManagerTests::TestFindActorById()
    CPPUNIT_ASSERT(transActor.valid());
    mManager->AddActor(*transActor);
 
-   dtDAL::TransformableActorProxy *value = 
-      mManager->FindActorById<dtDAL::TransformableActorProxy>(transActor->GetId());
+   dtDAL::TransformableActorProxy *value; 
+   mManager->FindActorById(transActor->GetId(), value);
 
    CPPUNIT_ASSERT_MESSAGE("The template version of FindGameActorById should not return NULL", transActor.valid());
    CPPUNIT_ASSERT_MESSAGE("The template version of FindGameActorById should return the correct pointer", value == transActor.get());
 
-   dtActors::PlayerStartActorProxy *shouldBeNULL = mManager->FindActorById<dtActors::PlayerStartActorProxy>(transActor->GetId());
+   dtActors::PlayerStartActorProxy *shouldBeNULL;
+   mManager->FindActorById(transActor->GetId(), shouldBeNULL);
    CPPUNIT_ASSERT_MESSAGE("The template version of FindGameActorById should have returned NULL", shouldBeNULL == NULL);
 }
 
@@ -1159,12 +1160,13 @@ void GameManagerTests::TestFindGameActorById()
    CPPUNIT_ASSERT(envActor.valid());
    mManager->AddActor(*envActor, false, false);
 
-   dtGame::EnvironmentActorProxy *value = 
-      mManager->FindGameActorById<dtGame::EnvironmentActorProxy>(envActor->GetId());
+   dtGame::EnvironmentActorProxy *value;
+   mManager->FindGameActorById(envActor->GetId(), value);
 
    CPPUNIT_ASSERT_MESSAGE("The template version of FindGameActorById should not return NULL", envActor.valid());
    CPPUNIT_ASSERT_MESSAGE("The template version of FindGameActorById should return the correct pointer", value == envActor.get());
    
-   TestPlayerProxy *shouldBeNULL = mManager->FindGameActorById<TestPlayerProxy>(envActor->GetId());
+   TestPlayerProxy *shouldBeNULL;
+   mManager->FindGameActorById(envActor->GetId(), shouldBeNULL);
    CPPUNIT_ASSERT_MESSAGE("The template version of FindGameActorById should have returned NULL", shouldBeNULL == NULL);
 }

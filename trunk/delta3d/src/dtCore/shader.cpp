@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * Matthew W. Campbell
+ * Matthew W. Campbell, Curtiss Murphy
  */
 #include <prefix/dtcoreprefix-src.h>
 #include "dtCore/shader.h"
@@ -65,7 +65,7 @@ namespace dtCore
       mFragmentShaderFileName = "";
       mVertexShaderFileName = "";
       mParameters.clear();
-      mParentGroup = NULL;
+      //mParentGroup = NULL;
       mIsDirty = false;
    }
 
@@ -203,8 +203,33 @@ namespace dtCore
    void Shader::SetDirty(bool flag)
    {
       mIsDirty = flag;
-      if (mParentGroup != NULL)
-         mParentGroup->SetDirty(flag);
+      //if (mParentGroup != NULL)
+      //   mParentGroup->SetDirty(flag);
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   dtCore::Shader *Shader::Clone() const
+   {
+      dtCore::Shader *newShader = new dtCore::Shader(GetName());
+
+      // copy main values
+      newShader->mVertexShaderFileName = GetFragmentShaderSource();
+      newShader->mFragmentShaderFileName = GetVertexShaderSource();
+      newShader->mVertexShader = mVertexShader;
+      newShader->mFragmentShader = mFragmentShader;
+      newShader->mGLSLProgram = mGLSLProgram;
+
+      // copy all of the parameters. 
+      std::map<std::string,dtCore::RefPtr<ShaderParameter> >::const_iterator paramItor;
+      for (paramItor=mParameters.begin(); paramItor!=mParameters.end(); ++paramItor)
+      {
+         dtCore::ShaderParameter *newParam = paramItor->second->Clone();
+         newParam->SetParentShader(newShader);
+
+         newShader->mParameters.insert(std::make_pair(newParam->GetName(), newParam));
+      }
+
+      return newShader;
    }
 
 }

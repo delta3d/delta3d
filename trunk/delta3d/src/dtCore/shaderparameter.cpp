@@ -23,6 +23,7 @@
 #include <dtCore/shader.h>
 
 #include <osg/Uniform>
+#include <osg/StateSet>
 
 namespace dtCore
 {
@@ -89,5 +90,11 @@ namespace dtCore
    void ShaderParameter::SetUniformParam(osg::Uniform &uniform)
    {
       mUniform = &uniform;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void ShaderParameter::DetachFromRenderState(osg::StateSet &stateSet)
+   {
+      stateSet.removeUniform(GetUniformParam());
    }
 }

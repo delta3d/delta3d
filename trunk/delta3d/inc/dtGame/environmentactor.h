@@ -18,13 +18,13 @@
  *
  * William E. Johnson II
  */
-#include <dtGame/export.h>
-#include <dtGame/gameactor.h>
-#include <dtDAL/environmentactor.h>
-#include <dtCore/environment.h>
 
 #ifndef DELTA_ENVIRONMENT_ACTOR
 #define DELTA_ENVIRONMENT_ACTOR
+
+#include <dtGame/export.h>
+#include <dtGame/gameactor.h>
+#include <dtDAL/environmentactor.h>
 
 namespace dtGame
 {

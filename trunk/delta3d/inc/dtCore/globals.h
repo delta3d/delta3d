@@ -24,7 +24,7 @@
 
 #include <string>
 
-#include "dtCore/export.h"
+#include <dtCore/export.h>
 
 namespace dtCore
 {
@@ -49,7 +49,7 @@ namespace dtCore
     *  to the current Delta3D data path list.
     * @return The full path to the file requested or empty string if it's not found. 
     */
-   DT_CORE_EXPORT std::string FindFileInPathList(const std::string &fileName) throw();
+   DT_CORE_EXPORT std::string FindFileInPathList(const std::string &fileName);
 
 
 }

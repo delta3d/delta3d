@@ -24,8 +24,7 @@
 #define DELTA_PROPERTYEDITORDELEGATE
 
 #include <QtGui/QItemDelegate>
-//#include <QAbstractItemDelegate>
-#include "dtEditQt/dynamicabstractcontrol.h"
+#include <dtEditQt/dynamicabstractcontrol.h>
 
 namespace dtEditQt 
 {

@@ -116,6 +116,7 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     void OrthoViewport::mousePressEvent(QMouseEvent *e)
     {
+        setFocus();
         Qt::KeyboardModifiers shiftAndControl = Qt::ControlModifier | Qt::ShiftModifier;
 
         if (getInteractionMode() == Viewport::InteractionMode::CAMERA) {

@@ -23,15 +23,13 @@
 #define DELTA_GMCOMPONENT
 
 #include <string>
-#include <dtGame/export.h>
-#include <dtGame/message.h>
-#include <dtGame/messageparameter.h>
 #include <dtGame/gamemanager.h>
-#include <dtCore/refptr.h>
 #include <dtCore/base.h>
 
 namespace dtGame
 {
+   class Message;
+
    class DT_GAME_EXPORT GMComponent : public dtCore::Base
    {
       public:

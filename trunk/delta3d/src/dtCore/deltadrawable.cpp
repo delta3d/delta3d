@@ -11,9 +11,8 @@ IMPLEMENT_MANAGEMENT_LAYER(DeltaDrawable)
 
 DeltaDrawable::DeltaDrawable(const std::string& name)
 :  Base(name),
-   mParent(0), 
-   mParentScene(0),
-   mProxyNode(0)
+   mParent(NULL), 
+   mParentScene(NULL)
 {
    RegisterInstance(this);
 }
@@ -115,7 +114,7 @@ bool DeltaDrawable::CanBeChild(DeltaDrawable *child)
 
 void DeltaDrawable::RenderProxyNode( bool enable )
 {  
-   if( mProxyNode == 0 )
+   if(!mProxyNode.valid())
    {
       LOG_WARNING("Proxy node is not implemented, overwrite RenderProxyNode." );
    }

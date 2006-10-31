@@ -19,20 +19,20 @@
 * Matthew W. Campbell
 */
 #include <osgDB/FileUtils>
-#include <osg/io_utils>
+#include <osg/MatrixTransform>
 
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/exception.h>
 
-#include "dtTerrain/terrain.h"
-#include "dtTerrain/terraindatareader.h"
-#include "dtTerrain/terraindatarenderer.h"
-#include "dtTerrain/terraindecorationlayer.h"
-#include "dtTerrain/vegetationdecorator.h"
-#include "dtTerrain/pagedterraintile.h"
-#include "dtTerrain/heightfield.h"
+#include <dtTerrain/terrain.h>
+#include <dtTerrain/terraindatareader.h>
+#include <dtTerrain/terraindatarenderer.h>
+#include <dtTerrain/terraindecorationlayer.h>
+#include <dtTerrain/vegetationdecorator.h>
+#include <dtTerrain/pagedterraintile.h>
+#include <dtTerrain/heightfield.h>
 
 #include <sstream>
 #include <algorithm>

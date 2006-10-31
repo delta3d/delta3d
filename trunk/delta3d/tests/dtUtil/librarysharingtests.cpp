@@ -18,6 +18,7 @@
 *
 * @author David Guthrie
 */
+#include <prefix/dtgameprefix-src.h>
 #include <vector>
 #include <string>
 #include <sstream>
@@ -26,8 +27,6 @@
 #include <ctime>
 
 #include <osg/Math>
-#include <osgDB/FileUtils>
-#include <osgDB/FileNameUtils>
 #include <dtCore/globals.h>
 #include <dtUtil/librarysharingmanager.h>
 #include <dtDAL/librarymanager.h>
@@ -35,7 +34,7 @@
 #include <dtDAL/actorproperty.h>
 
 ///here we need to both link in and load dynamically the same library.
-#include <testActorLibrary/testActorLib.h>
+#include <testActorLibrary/testactorlib.h>
 
 #include <cppunit/extensions/HelperMacros.h>
 

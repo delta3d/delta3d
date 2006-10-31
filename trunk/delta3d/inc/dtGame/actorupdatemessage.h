@@ -22,10 +22,9 @@
 #ifndef DELTA_ACTORUPDATEMESSAGE
 #define DELTA_ACTORUPDATEMESSAGE
 
-#include <map>
-#include <dtUtil/exception.h>
 #include <dtGame/message.h>
 #include <dtGame/messageparameter.h>
+#include <vector>
 
 // Forward declarations
 namespace dtDAL

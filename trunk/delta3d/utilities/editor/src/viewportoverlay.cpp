@@ -32,13 +32,13 @@
 #include <osgDB/WriteFile>
 #include <dtCore/transformable.h>
 
-#include "dtDAL/actorproxyicon.h"
+#include <dtDAL/actorproxyicon.h>
 
-#include "dtEditQt/viewportoverlay.h"
-#include "dtEditQt/viewportmanager.h"
-#include "dtEditQt/editorevents.h"
-#include "dtEditQt/editoractions.h"
-#include "dtEditQt/editordata.h"
+#include <dtEditQt/viewportoverlay.h>
+#include <dtEditQt/viewportmanager.h>
+#include <dtEditQt/editorevents.h>
+#include <dtEditQt/editoractions.h>
+#include <dtEditQt/editordata.h>
 
 namespace dtEditQt {
 

@@ -22,9 +22,8 @@
 #define DELTA_SERVERLOGGERCOMPONENT
 
 #include <set>
-#include <dtCore/refptr.h>
-#include "dtGame/gmcomponent.h"
-#include "dtGame/logstatus.h"
+#include <dtGame/gmcomponent.h>
+#include <dtGame/logstatus.h>
 
 namespace dtGame 
 {
@@ -88,6 +87,68 @@ namespace dtGame
           * @return A string containing the current log directory.
           */
          const std::string &GetLogDirectory() const { return mLogDirectory; }
+
+         /*
+          * Gets the number of actors ignored from the recording state.
+          */
+         int GetIgnoredActorCount() const;
+
+         /*
+          * Gets the number of actors currently created by the playback state.
+          */
+         int GetPlaybackActorCount() const;
+
+         /*
+          * Determines if an actor ID is being ignored from the recording state.
+          * @param id the ID of the actor in question
+          */
+         bool IsIgnoredActorId(const dtCore::UniqueId &id) const;
+
+         /*
+          * Determines if an actor, of ID, has been created during the playback state.
+          * @param id the ID of the actor in question
+          */
+         bool IsPlaybackActorId(const dtCore::UniqueId& id) const;
+
+         /*
+          * Determines if an actor ID is being ignored from the recording state.
+          * @param id the ID of the actor in question
+          */
+         bool IsIgnoredActorId(dtCore::UniqueId id);
+
+         /*
+          * Determines if an actor, of ID, has been created during the playback state.
+          * @param id the ID of the actor in question
+          */
+         bool IsPlaybackActorId(dtCore::UniqueId id);
+
+         /**
+          * Access the set of ignored actor IDs.
+          * @return Set of ignore actor IDs of actors that should not be recorded.
+          */
+         void GetIgnoredActorIds(std::vector<dtCore::UniqueId> &toFill) const
+         {
+            toFill.clear();
+            for(std::set<dtCore::UniqueId>::const_iterator i = mRecordIgnoreList.begin();
+               i != mRecordIgnoreList.end(); ++i)
+            {
+               toFill.push_back(*i);
+            }
+         }
+
+         /**
+          * Access the set of playback actor IDs.
+          * @return Set of actor IDs of actors that are created by playback mode.
+          */
+         void GetPlaybackActorIds(std::vector<dtCore::UniqueId> &toFill) const
+         {
+            toFill.clear();
+            for(std::set<dtCore::UniqueId>::const_iterator i = mPlaybackList.begin();
+               i != mPlaybackList.end(); ++i)
+            {
+               toFill.push_back(*i);
+            }
+         }
          
       protected:
       
@@ -109,6 +170,8 @@ namespace dtGame
 
          /**
           * Handles the change state to idle message.  
+          * Transitions to idle state from playback state will clear all playback
+          * actors from the game manager.
           * @param message The message that came in from ProcessMessage()
           */
          void HandleChangeStateIdle(const Message &message);
@@ -221,6 +284,41 @@ namespace dtGame
          void HandleMapLoadedMessage(const Message &message);
 
          /**
+         * Handles the request to add an actor to the playback join list.
+         * @param message Contains the ID of the actor to be joining playback.
+         */
+         void HandleAddPlaybackActorMessage(const Message &message);
+
+         /**
+          * Handles the request to remove an actor from the playback join list.
+          * @param message Contains the ID of the actor exiting playback.
+          */
+         void HandleRemovePlaybackActorMessage(const Message &message);
+
+         /**
+         * Handles the request to clear the joining playback actor list.
+         */
+         void HandleClearPlaybackListMessage();
+
+         /**
+          * Handles the request add an actor to the ignore list.
+          * @param message Contains the ID of the actor to be ignored.
+          */
+         void HandleAddIgnoredActorMessage(const Message &message);
+
+         /**
+          * Handles the request remove an actor from the ignore list.
+          * @param message Contains the ID of the actor be removed from 
+          * the recording ignore list.
+          */
+         void HandleRemoveIgnoredActorMessage(const Message &message);
+
+         /**
+          * Handles the request to clear the ignored actor list.
+          */
+         void HandleClearIgnoreListMessage();
+
+         /**
           * Called when a message we received in ProcessMessage() is a candidate for writing.
           * It determines what state we're in and write the message.  A failure here does 
           * not cause any wierd behavior or change any state, but it should do a log.info message.
@@ -228,11 +326,38 @@ namespace dtGame
          void DoRecordMessage(const Message &message);
          
          /**
-          * Internal utility method for common behavior to set the state to idle
+          * Internal utility method for common behavior to set the state to idle.
+          * Transitions to idle state from playback state will clear all playback
+          * actors from the game manager.
           */
          void SetToIdleState();
-         
+
+         /**
+          * Tells the GameManager to delete all actors created by playback mode.
+          * All actors, whose IDs are contained in the playback actor list, will
+          * be deleted on the next tick of the GameManager.
+          * @return Total number of actors requested to be deleted.
+          */
+         int RequestDeletePlaybackActors();
+
       private:
+
+         /**
+          * Determines if the specified actor ID exists within the specified list.
+          * @param actorID The ID of the actor in question
+          * @param list The list of IDs that may contain the queried actorID
+          * @return bool True if the ID has been found in the list
+          */
+         bool IsActorIdInList( const dtCore::UniqueId& actorID, const std::set<dtCore::UniqueId>& checkedSet ) const;
+
+         /**
+          * Determines if the specified actor ID exists within the specified list.
+          * @param actorID The ID of the actor in question
+          * @param list The list of IDs that may contain the queried actorID
+          * @return bool True if the ID has been found in the list
+          */
+         bool IsActorIdInList(dtCore::UniqueId actorID, std::set<dtCore::UniqueId> &checkedSet );
+
          LogStatus mLogStatus;
          dtCore::RefPtr<LogStream> mLogStream;
          dtCore::RefPtr<Message> mNextMessage;
@@ -248,7 +373,14 @@ namespace dtGame
          std::string mLogDirectory;
          
          //Cached list of available log files.
-         std::set<std::string> mLogCache;      
+         std::set<std::string> mLogCache;   
+
+         //The ignore list for actors to be ignored during the record state.
+         std::set<dtCore::UniqueId> mRecordIgnoreList;
+
+         //The list of actor ids of actors who join the simulation during
+         //the playback state.
+         std::set<dtCore::UniqueId> mPlaybackList;
    };
 
 }

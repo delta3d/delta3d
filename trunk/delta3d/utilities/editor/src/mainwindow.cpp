@@ -35,7 +35,6 @@
 #include <dtDAL/project.h>
 #include <dtDAL/librarymanager.h>
 #include <dtUtil/fileutils.h>
-#include <dtEditQt/global.h>
 #include <dtEditQt/mainwindow.h>
 #include <dtEditQt/editoractions.h>
 #include <dtEditQt/editorsettings.h>
@@ -254,7 +253,6 @@ namespace dtEditQt
         this->frontView->setViewType(OrthoViewport::OrthoViewType::FRONT,false);
         this->frontView->setAutoInteractionMode(true);
 
-
         //We now wrap each viewport in a viewport container to provide the
         //toolbar and right click menu add-ons which are needed by the editor
         //for each viewport.
@@ -340,66 +338,85 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     void MainWindow::onEditorInitiated()
     {
-        enableActions();
-        findAndLoadPreferences();
-
-        bool projectsExist = false;
-        if(findRecentProjects().empty())
+        setUpdatesEnabled(false);
+        try
         {
-            ProjectContextDialog dialog(this);
-            if (dialog.exec() == QDialog::Accepted)
-            {
-                std::string contextName = dialog.getProjectPath().toStdString();
+           enableActions();
+   
+           bool projectsExist = false;
+           if(findRecentProjects().empty())
+           {
+               ProjectContextDialog dialog(this);
+               if (dialog.exec() == QDialog::Accepted)
+               {
+                   std::string contextName = dialog.getProjectPath().toStdString();
+   
+                   //First try to set the new project context.
+                   try
+                   {
+                       startWaitCursor();
+                       dtDAL::Project::GetInstance().SetContext(contextName);
+                       EditorData::getInstance().setCurrentProjectContext(contextName);
+                       EditorData::getInstance().addRecentProject(contextName);
+                       EditorEvents::getInstance().emitProjectChanged();
+                       EditorActions::getInstance().refreshRecentProjects();
+                       endWaitCursor();
+                   }
+                   catch (dtUtil::Exception &e)
+                   {
+                       endWaitCursor();
+                       QMessageBox::critical((QWidget *)this,
+                           tr("Error"), tr(e.What().c_str()), tr("OK"));
+                   }
+               }
+           }
+           else
+           {
+               projectsExist = true;
+   
+               startWaitCursor();
+               EditorEvents::getInstance().emitProjectChanged();
+               endWaitCursor();
+           }
+   
+           startWaitCursor();
+           EditorActions::getInstance().refreshRecentProjects();
+           endWaitCursor();
+   
+           if(!EditorData::getInstance().getLoadLastMap())
+           {
+               return;
+           }
+   
+           if(projectsExist)
+           {
+               std::vector<std::string> maps = findRecentMaps();
+   
+               for(unsigned int i = 0; i < maps.size(); i++)
+                   checkAndLoadBackup(maps[i]);
+           }
+   
+           EditorActions::getInstance().getTimer()->start();
+   
+           updateWindowTitle();
+           perspView->onEditorPreferencesChanged();
+           findAndLoadPreferences();
 
-                //First try to set the new project context.
-                try
-                {
-                    EditorData::getInstance().getMainWindow()->startWaitCursor();
-                    dtDAL::Project::GetInstance().SetContext(contextName);
-                    EditorData::getInstance().setCurrentProjectContext(contextName);
-                    EditorData::getInstance().addRecentProject(contextName);
-                    EditorEvents::getInstance().emitProjectChanged();
-                    EditorActions::getInstance().refreshRecentProjects();
-                    EditorData::getInstance().getMainWindow()->endWaitCursor();
-                }
-                catch (dtUtil::Exception &e)
-                {
-                    EditorData::getInstance().getMainWindow()->endWaitCursor();
-                    QMessageBox::critical((QWidget *)this,
-                        tr("Error"), tr(e.What().c_str()), tr("OK"));
-                }
-            }
+           setUpdatesEnabled(true);
         }
-        else
+        catch (dtUtil::Exception& ex)
         {
-            projectsExist = true;
-
-            EditorData::getInstance().getMainWindow()->startWaitCursor();
-            EditorEvents::getInstance().emitProjectChanged();
-            EditorData::getInstance().getMainWindow()->endWaitCursor();
-        }
-
-        EditorData::getInstance().getMainWindow()->startWaitCursor();
-        EditorActions::getInstance().refreshRecentProjects();
-        EditorData::getInstance().getMainWindow()->endWaitCursor();
-
-        if(!EditorData::getInstance().getLoadLastMap())
+           setUpdatesEnabled(true);
+           throw ex;
+        }   
+        catch (std::exception& ex)
         {
-            return;
+           setUpdatesEnabled(true);
+           throw ex;
         }
 
-        if(projectsExist)
-        {
-            std::vector<std::string> maps = findRecentMaps();
-
-            for(unsigned int i = 0; i < maps.size(); i++)
-                checkAndLoadBackup(maps[i]);
-        }
-
-        EditorActions::getInstance().getTimer()->start();
-
-        updateWindowTitle();
-        this->perspView->onEditorPreferencesChanged();
+        update();
+        repaint();
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -590,6 +607,12 @@ namespace dtEditQt
         connect(&EditorEvents::getInstance(), SIGNAL(proxyNameChanged(ActorProxyRefPtr, std::string)), 
            this, SLOT(onActorProxyNameChanged(ActorProxyRefPtr, std::string)));
     }
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    PropertyEditor& MainWindow::GetPropertyEditor()
+    {
+      return *propertyWindow;
+    }
 
     ///////////////////////////////////////////////////////////////////////////////
     void MainWindow::findAndLoadPreferences()
@@ -611,7 +634,7 @@ namespace dtEditQt
             restoreState(state,EditorSettings::MAINWIN_DOCK_STATE_ID);
         }
         settings.endGroup();
-
+        
         //Now check for the general preferences...
         settings.beginGroup(EditorSettings::PREFERENCES_GROUP);
         if(settings.contains(EditorSettings::LOAD_RECENT_PROJECTS))
@@ -733,14 +756,14 @@ namespace dtEditQt
 
             if(result == 0)
             {
-                EditorData::getInstance().getMainWindow()->startWaitCursor();
+                startWaitCursor();
                 dtDAL::Map &backupMap =
                     dtDAL::Project::GetInstance().OpenMapBackup(str);
 
                 EditorActions::getInstance().changeMaps(
                     EditorData::getInstance().getCurrentMap(), &backupMap);
                 EditorData::getInstance().addRecentMap(backupMap.GetName());
-                EditorData::getInstance().getMainWindow()->endWaitCursor();
+                endWaitCursor();
             }
             else if(result == 1)
             {
@@ -753,24 +776,24 @@ namespace dtEditQt
                 else
                     dtDAL::Project::GetInstance().ClearBackup(str);*/
 
-                EditorData::getInstance().getMainWindow()->startWaitCursor();
+                startWaitCursor();
                 dtDAL::Project::GetInstance().ClearBackup(str);
                 EditorActions::getInstance().changeMaps(EditorData::getInstance().getCurrentMap(),
                    &dtDAL::Project::GetInstance().GetMap(str));
                 EditorData::getInstance().addRecentMap(str);
-                EditorData::getInstance().getMainWindow()->endWaitCursor();
+                endWaitCursor();
             }
             else
                 return;
         }
         else
         {
-            EditorData::getInstance().getMainWindow()->startWaitCursor();
+            startWaitCursor();
             dtDAL::Map &m = dtDAL::Project::GetInstance().GetMap(str);
             EditorActions::getInstance().changeMaps(
                 EditorData::getInstance().getCurrentMap(), &m);
             EditorData::getInstance().addRecentMap(m.GetName());
-            EditorData::getInstance().getMainWindow()->endWaitCursor();
+            endWaitCursor();
         }
     }
 

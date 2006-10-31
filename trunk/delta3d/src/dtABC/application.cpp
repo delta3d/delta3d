@@ -28,13 +28,12 @@
 #include <dtCore/system.h>
 #include <dtCore/camera.h>
 #include <dtCore/scene.h>
+#include <dtCore/globals.h>
 #include <dtUtil/log.h>
 #include <dtUtil/stringutils.h>
 #include <dtUtil/xercesparser.h>
 #include <dtUtil/librarysharingmanager.h>
 #include <dtCore/mouse.h>
-
-#include <osgDB/FileUtils>
 
 #include <cassert>
 
@@ -57,7 +56,7 @@ Application::Application(const std::string& configFilename) : BaseABC("Applicati
 
    if( !configFilename.empty() )
    {
-      std::string foundPath = osgDB::findDataFile(configFilename);
+      std::string foundPath = dtCore::FindFileInPathList(configFilename);
       if( foundPath.empty() )
       {
          LOG_WARNING("Application: Can't find config file, " + configFilename + ", using defaults instead.")
@@ -148,7 +147,7 @@ bool Application::ParseConfigFile(const std::string& file)
 
 std::string dtABC::Application::GenerateDefaultConfigFile(const std::string& filename)
 {
-   std::string existingfile = osgDB::findDataFile( filename );
+   std::string existingfile = dtCore::FindFileInPathList( filename );
 
    if( !existingfile.empty() )
    {
@@ -161,7 +160,7 @@ std::string dtABC::Application::GenerateDefaultConfigFile(const std::string& fil
    writer( filename, GetDefaultConfigData());
 
    // return the resource path to the new file
-   return osgDB::findDataFile( filename );
+   return dtCore::FindFileInPathList( filename );
 }
 
 ApplicationConfigData Application::GetDefaultConfigData()
@@ -227,7 +226,7 @@ bool Application::AppXMLApplicator::operator ()(const ApplicationConfigData& dat
    dwin->SetPosition( data.WINDOW_X, data.WINDOW_Y, data.RESOLUTION.width, data.RESOLUTION.height );
    dwin->ShowCursor( data.SHOW_CURSOR );
    dwin->SetFullScreenMode( data.FULL_SCREEN );
-
+   
    // change the resolution if needed and valid
    if( data.CHANGE_RESOLUTION )
    {

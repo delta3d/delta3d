@@ -18,9 +18,9 @@
  *
  */
 #include <prefix/dtcoreprefix-src.h>
-#include "dtUtil/fileutils.h"
-#include "dtUtil/stringutils.h"
-#include "dtUtil/log.h"
+#include <dtUtil/fileutils.h>
+#include <dtUtil/stringutils.h>
+#include <dtUtil/log.h>
 
 #include <dtCore/globals.h>
 #include <stdexcept>
@@ -92,8 +92,10 @@ std::string dtCore::GetDataFilePathList()
    return pathString;
 }
 
-std::string dtCore::FindFileInPathList(const std::string &fileName) throw()
+std::string dtCore::FindFileInPathList(const std::string &fileName)
 {
+   return osgDB::findDataFile(fileName);
+/**   
    std::vector<std::string> pathList;
    std::vector<std::string>::const_iterator itor;
    
@@ -121,6 +123,7 @@ std::string dtCore::FindFileInPathList(const std::string &fileName) throw()
    }     
    
    return std::string();
+   */
 }
 
 

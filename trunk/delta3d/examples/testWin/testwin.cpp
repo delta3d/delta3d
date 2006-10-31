@@ -8,8 +8,6 @@
 
 #include <sstream>
 
-#include <osgDB/FileUtils>
-
 using namespace dtCore;
 using namespace dtABC;
 using namespace dtGUI;
@@ -72,7 +70,7 @@ void TestWinApp::BuildGUI( DeltaWin::ResolutionVec &resolutions,
 {
    try
    {
-      std::string schemeFileName = osgDB::findDataFile("schemes/WindowsLookSkin.scheme");
+      std::string schemeFileName = dtCore::FindFileInPathList("schemes/WindowsLookSkin.scheme");
 
       CEGUI::SchemeManager::getSingleton().loadScheme(schemeFileName);
       CEGUI::System::getSingleton().setDefaultMouseCursor("WindowsLook", "MouseArrow");

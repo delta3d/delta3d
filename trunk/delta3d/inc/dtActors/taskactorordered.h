@@ -22,7 +22,7 @@
 #define DELTA_TASKACTORORDERED
 
 #include <dtUtil/enumeration.h>
-#include "dtActors/taskactor.h"
+#include <dtActors/taskactor.h>
 
 namespace dtActors
 {

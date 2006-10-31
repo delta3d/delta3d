@@ -163,8 +163,11 @@ namespace dtGame
             try
             {
                dtCore::RefPtr<GameActorProxy> gap = ProcessRemoteCreateActor(msg);
-               gap->ApplyActorUpdate(msg);
-               GetGameManager()->AddActor(*gap, true, false);
+               if (gap.valid())
+               {
+                  gap->ApplyActorUpdate(msg);
+                  GetGameManager()->AddActor(*gap, true, false);
+               }
             }
             catch (const dtUtil::Exception& ex)
             {

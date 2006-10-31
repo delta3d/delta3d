@@ -22,17 +22,18 @@
 #ifndef DELTA_FILEUTILS
 #define DELTA_FILEUTILS
 
+#include <string>
+#include <vector>
 #include <dtCore/refptr.h>
 #include <osg/Referenced>
-#include <osgDB/FileUtils>
-#include <dtUtil/log.h>
 #include <dtUtil/enumeration.h>
-#include <dtUtil/exception.h>
 #include <dtUtil/export.h>
 
 namespace dtUtil
 {
-   typedef osgDB::DirectoryContents DirectoryContents;
+   class Log;
+   
+   typedef std::vector<std::string> DirectoryContents;
 
    enum FileType
    {

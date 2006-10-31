@@ -44,30 +44,30 @@ namespace dtDAL
    class DT_DAL_EXPORT LibraryManager : public osg::Referenced 
    {
       private:
-      /**
-       * Function pointer to the create function implemented in the ActorPlugin.
-       */
-      typedef ActorPluginRegistry *(*CreatePluginRegistryFn)();
+         /**
+          * Function pointer to the create function implemented in the ActorPlugin.
+          */
+         typedef ActorPluginRegistry *(*CreatePluginRegistryFn)();
 
-      /**
-       * Function pointer to the destroy function implemented in the ActorPlugin.
-       * This is called just before closing the dynamic library owning the
-       * ActorPluginRegistry.
-       */
-      typedef void (*DestroyPluginRegistryFun)(ActorPluginRegistry*);
+         /**
+          * Function pointer to the destroy function implemented in the ActorPlugin.
+          * This is called just before closing the dynamic library owning the
+          * ActorPluginRegistry.
+          */
+         typedef void (*DestroyPluginRegistryFun)(ActorPluginRegistry*);
 
       public:
-      /**
-       * Simple structure for grouping the data corresponding to a
-       * registry entry.
-       */
-      struct RegistryEntry 
-      {
-         ActorPluginRegistry* registry;
-         dtCore::RefPtr<dtUtil::LibrarySharingManager::LibraryHandle> lib;
-         CreatePluginRegistryFn createFn;
-         DestroyPluginRegistryFun destroyFn;
-      };		
+         /**
+          * Simple structure for grouping the data corresponding to a
+          * registry entry.
+          */
+         struct RegistryEntry 
+         {
+            ActorPluginRegistry* registry;
+            dtCore::RefPtr<dtUtil::LibrarySharingManager::LibraryHandle> lib;
+            CreatePluginRegistryFn createFn;
+            DestroyPluginRegistryFun destroyFn;
+         };		
 
      
          typedef std::map<dtCore::RefPtr<ActorType>, ActorPluginRegistry*, ActorType::RefPtrComp> ActorTypeMap;
@@ -200,6 +200,8 @@ namespace dtDAL
 
          ///List of the currently loaded actor registries.
          RegistryMap mRegistries;
+
+         dtUtil::Log* mLogger;
    };
 }
 

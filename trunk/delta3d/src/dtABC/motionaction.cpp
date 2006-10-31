@@ -2,6 +2,7 @@
 #include <dtUtil/matrixutil.h>
 #include <dtABC/pathpoint.h>
 #include <dtCore/scene.h>
+#include <osg/MatrixTransform>
 
 namespace dtABC
 {

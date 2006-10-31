@@ -21,7 +21,6 @@
 #ifndef DELTA_GAME_APPLICATION
 #define DELTA_GAME_APPLICATION
 
-#include <dtCore/refptr.h>
 #include <dtABC/application.h>
 #include <dtUtil/librarysharingmanager.h>
 #include <dtGame/export.h>

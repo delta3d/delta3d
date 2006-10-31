@@ -1,35 +1,37 @@
 /* 
-* Delta3D Open Source Game and Simulation Engine 
-* Simulation, Training, and Game Editor (STAGE)
-* Copyright (C) 2005, BMH Associates, Inc. 
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free 
-* Software Foundation; either version 2 of the License, or (at your option) 
-* any later version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more 
-* details.
-*
-* You should have received a copy of the GNU General Public License 
-* along with this library; if not, write to the Free Software Foundation, Inc., 
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
-*
-* Curtiss Murphy
-*/
+ * Delta3D Open Source Game and Simulation Engine 
+ * Simulation, Training, and Game Editor (STAGE)
+ * Copyright (C) 2005, BMH Associates, Inc. 
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free 
+ * Software Foundation; either version 2 of the License, or (at your option) 
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more 
+ * details.
+ *
+ * You should have received a copy of the GNU General Public License 
+ * along with this library; if not, write to the Free Software Foundation, Inc., 
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ *
+ * Curtiss Murphy
+ */
 
 //#include <osg/Vec3>
 #include <prefix/dtstageprefix-src.h>
-#include "dtEditQt/dynamicvectorelementcontrol.h"
-#include "dtEditQt/dynamicsubwidgets.h"
-#include "dtEditQt/editorevents.h"
-#include "dtDAL/actorproxy.h"
-#include "dtDAL/actorproperty.h"
-#include "dtDAL/datatype.h"
-#include "dtDAL/enginepropertytypes.h"
+#include <dtEditQt/dynamicvectorelementcontrol.h>
+#include <dtEditQt/dynamicsubwidgets.h>
+#include <dtEditQt/editorevents.h>
+#include <dtDAL/actorproxy.h>
+#include <dtDAL/actorproperty.h>
+#include <dtDAL/datatype.h>
+#include <dtDAL/enginepropertytypes.h>
 #include <dtUtil/log.h>
+
+#include <QtCore/QLocale>
 #include <QtGui/QWidget>
 #include <QtGui/QDoubleValidator>
 
@@ -233,7 +235,9 @@ namespace dtEditQt
 
             // set the current value from our property
             double value = getValue();
-            QString strValue = QString::number(value, 'f', NUM_DECIMAL_DIGITS);
+            //QString strValue = QString::number(value, 'f', NUM_DECIMAL_DIGITS);
+            QLocale locale(QLocale::C);
+            QString strValue = locale.toString(value, 'f', NUM_DECIMAL_DIGITS);
             editBox->setText(strValue);
             editBox->selectAll();
         }
@@ -602,6 +606,7 @@ namespace dtEditQt
         return updateModelFromEditor(widget);
     }
 
+    /////////////////////////////////////////////////////////////////////////////////
     void DynamicVectorElementControl::actorPropertyChanged(dtCore::RefPtr<dtDAL::ActorProxy> proxy,
         dtCore::RefPtr<dtDAL::ActorProperty> property)
     {

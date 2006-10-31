@@ -27,7 +27,7 @@
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/map.h>
-#include "dtEditQt/typedefs.h"
+#include <dtEditQt/typedefs.h>
 
 namespace dtEditQt 
 {
@@ -79,7 +79,11 @@ namespace dtEditQt
          * Searches for stored preferences
          */
         void findAndLoadPreferences();
-
+        
+        /**
+         * @return the property editor.
+         */
+       PropertyEditor& GetPropertyEditor();
     public slots:
 
         /**

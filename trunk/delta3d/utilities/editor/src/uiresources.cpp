@@ -21,8 +21,8 @@
 */
 #include <prefix/dtstageprefix-src.h>
 #include <dtEditQt/uiresources.h>
-#include <stdlib.h>
-#include <osgDB/FileUtils>
+#include <cstdlib>
+#include <dtCore/globals.h>
 
 namespace dtEditQt
 {
@@ -30,56 +30,56 @@ namespace dtEditQt
     {        
         UIResources::GPL_LICENSE_FILE = "gpl.txt";
         
-        ICON_FILE_NEW_MAP = osgDB::findDataFile("icons/newmap_small.png");
-        ICON_FILE_OPEN_MAP = osgDB::findDataFile("icons/openmap_small.png");
-        ICON_FILE_SAVE = osgDB::findDataFile("icons/savemap_small.png");
+        ICON_FILE_NEW_MAP = dtCore::FindFileInPathList("icons/newmap_small.png");
+        ICON_FILE_OPEN_MAP = dtCore::FindFileInPathList("icons/openmap_small.png");
+        ICON_FILE_SAVE = dtCore::FindFileInPathList("icons/savemap_small.png");
 
-        ICON_EDIT_DUPLICATE = osgDB::findDataFile("icons/duplicate_small.png");
-        ICON_EDIT_DELETE = osgDB::findDataFile("icons/trash_small.png");
-        ICON_GROUND_CLAMP = osgDB::findDataFile("icons/groundclamp_small.png");
-        ICON_EDIT_UNDO = osgDB::findDataFile("icons/undo.png");
-        ICON_EDIT_REDO = osgDB::findDataFile("icons/redo.png");
+        ICON_EDIT_DUPLICATE = dtCore::FindFileInPathList("icons/duplicate_small.png");
+        ICON_EDIT_DELETE = dtCore::FindFileInPathList("icons/trash_small.png");
+        ICON_GROUND_CLAMP = dtCore::FindFileInPathList("icons/groundclamp_small.png");
+        ICON_EDIT_UNDO = dtCore::FindFileInPathList("icons/undo.png");
+        ICON_EDIT_REDO = dtCore::FindFileInPathList("icons/redo.png");
 
-        ICON_TOOLMODE_CAMERA = osgDB::findDataFile("icons/cameramode_small.png");
-        ICON_TOOLMODE_SELECT = osgDB::findDataFile("icons/selectmode_small.png");
-        ICON_TOOLMODE_TRANSLATE = osgDB::findDataFile("icons/translatemode_small.png");
-        ICON_TOOLMODE_ROTATE = osgDB::findDataFile("icons/rotatemode_small.png");
+        ICON_TOOLMODE_CAMERA = dtCore::FindFileInPathList("icons/cameramode_small.png");
+        ICON_TOOLMODE_SELECT = dtCore::FindFileInPathList("icons/selectmode_small.png");
+        ICON_TOOLMODE_TRANSLATE = dtCore::FindFileInPathList("icons/translatemode_small.png");
+        ICON_TOOLMODE_ROTATE = dtCore::FindFileInPathList("icons/rotatemode_small.png");
 
-        ICON_VIEWMODE_TEXTURES = osgDB::findDataFile("icons/texturemode_tiny.png");
-        ICON_VIEWMODE_LIGHTING = osgDB::findDataFile("icons/lightingmode_tiny.png");
-        ICON_VIEWMODE_WIREFRAME = osgDB::findDataFile("icons/wireframemode_tiny.png");
-        ICON_VIEWMODE_TEXTURES_AND_LIGHTING = osgDB::findDataFile("icons/texturelightingmode_tiny.png");
+        ICON_VIEWMODE_TEXTURES = dtCore::FindFileInPathList("icons/texturemode_tiny.png");
+        ICON_VIEWMODE_LIGHTING = dtCore::FindFileInPathList("icons/lightingmode_tiny.png");
+        ICON_VIEWMODE_WIREFRAME = dtCore::FindFileInPathList("icons/wireframemode_tiny.png");
+        ICON_VIEWMODE_TEXTURES_AND_LIGHTING = dtCore::FindFileInPathList("icons/texturelightingmode_tiny.png");
 
-        ICON_TINY_FOLDER = osgDB::findDataFile("icons/folder_tiny.png");
-        ICON_TINY_FOLDER_OPEN = osgDB::findDataFile("icons/folderopen_tiny.png");
+        ICON_TINY_FOLDER = dtCore::FindFileInPathList("icons/folder_tiny.png");
+        ICON_TINY_FOLDER_OPEN = dtCore::FindFileInPathList("icons/folderopen_tiny.png");
 
-        LARGE_ICON_EDIT_DUPLICATE = osgDB::findDataFile("icons/duplicate_large.png");
-        LARGE_ICON_EDIT_DELETE = osgDB::findDataFile("icons/trash_large.png");
-        LARGE_ICON_EDIT_GOTO = osgDB::findDataFile("icons/goto_large.png");
-        LARGE_ICON_EDIT_IMPORT = osgDB::findDataFile("icons/import_large.png");
-        LARGE_ICON_EDIT_REFRESH = osgDB::findDataFile("icons/refresh_large.png");
-        LARGE_ICON_EDIT_CATEGORY = osgDB::findDataFile("icons/category_large.png");
+        LARGE_ICON_EDIT_DUPLICATE = dtCore::FindFileInPathList("icons/duplicate_large.png");
+        LARGE_ICON_EDIT_DELETE = dtCore::FindFileInPathList("icons/trash_large.png");
+        LARGE_ICON_EDIT_GOTO = dtCore::FindFileInPathList("icons/goto_large.png");
+        LARGE_ICON_EDIT_IMPORT = dtCore::FindFileInPathList("icons/import_large.png");
+        LARGE_ICON_EDIT_REFRESH = dtCore::FindFileInPathList("icons/refresh_large.png");
+        LARGE_ICON_EDIT_CATEGORY = dtCore::FindFileInPathList("icons/category_large.png");
 
-        ICON_SOUND_STOP = osgDB::findDataFile("icons/stop_sound.png");
-        ICON_SOUND_PLAY = osgDB::findDataFile("icons/play_sound.png");
+        ICON_SOUND_STOP = dtCore::FindFileInPathList("icons/stop_sound.png");
+        ICON_SOUND_PLAY = dtCore::FindFileInPathList("icons/play_sound.png");
 
-        ICON_SOUND_RESOURCE = osgDB::findDataFile("icons/sound_resource.png");
-        ICON_STATICMESH_RESOURCE = osgDB::findDataFile("icons/staticmesh_resource.png");
-        ICON_CHARACTER_RESOURCE = osgDB::findDataFile("icons/character_resource.png");
-        ICON_TEXTURE_RESOURCE = osgDB::findDataFile("icons/texture_resource.png");
-        ICON_PARTICLE_RESOURCE = osgDB::findDataFile("icons/particle_resource.png");
-        ICON_TERRAIN_RESOURCE = osgDB::findDataFile("icons/terrain_resource.png");
+        ICON_SOUND_RESOURCE = dtCore::FindFileInPathList("icons/sound_resource.png");
+        ICON_STATICMESH_RESOURCE = dtCore::FindFileInPathList("icons/staticmesh_resource.png");
+        ICON_CHARACTER_RESOURCE = dtCore::FindFileInPathList("icons/character_resource.png");
+        ICON_TEXTURE_RESOURCE = dtCore::FindFileInPathList("icons/texture_resource.png");
+        ICON_PARTICLE_RESOURCE = dtCore::FindFileInPathList("icons/particle_resource.png");
+        ICON_TERRAIN_RESOURCE = dtCore::FindFileInPathList("icons/terrain_resource.png");
 
-        ICON_SOUND_TAB =osgDB::findDataFile ("icons/sound_tab.png");
-        ICON_STATICMESH_TAB = osgDB::findDataFile("icons/staticmesh_tab.png");
-        ICON_CHARACTER_TAB = osgDB::findDataFile("icons/character_tab.png");
-        ICON_TEXTURE_TAB = osgDB::findDataFile("icons/texture_tab.png");
-        ICON_PARTICLE_TAB = osgDB::findDataFile("icons/particle_tab.png");
-        ICON_TERRAIN_TAB = osgDB::findDataFile("icons/terrain_tab.png");
+        ICON_SOUND_TAB =dtCore::FindFileInPathList ("icons/sound_tab.png");
+        ICON_STATICMESH_TAB = dtCore::FindFileInPathList("icons/staticmesh_tab.png");
+        ICON_CHARACTER_TAB = dtCore::FindFileInPathList("icons/character_tab.png");
+        ICON_TEXTURE_TAB = dtCore::FindFileInPathList("icons/texture_tab.png");
+        ICON_PARTICLE_TAB = dtCore::FindFileInPathList("icons/particle_tab.png");
+        ICON_TERRAIN_TAB = dtCore::FindFileInPathList("icons/terrain_tab.png");
 
-        ICON_ACTOR = osgDB::findDataFile("icons/actor_icon.png");
-        SPLASH_SCREEN = osgDB::findDataFile("icons/splash.png");
-        ICON_APPLICATION = osgDB::findDataFile("icons/application_icon.png");
+        ICON_ACTOR = dtCore::FindFileInPathList("icons/actor_icon.png");
+        SPLASH_SCREEN = dtCore::FindFileInPathList("icons/splash.png");
+        ICON_APPLICATION = dtCore::FindFileInPathList("icons/application_icon.png");
     }
 
     //STATIC VARS...

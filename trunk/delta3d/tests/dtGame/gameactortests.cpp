@@ -18,7 +18,7 @@
  *
  * @author Eddie Johnson and David Guthrie
  */
-
+#include <prefix/dtgameprefix-src.h>
 #include <iostream>
 #include <osg/Math>
 #include <dtUtil/log.h>
@@ -44,6 +44,7 @@
 #include <dtGame/environmentactor.h>
 #include <dtGame/gmcomponent.h>
 #include <dtGame/defaultmessageprocessor.h>
+#include <dtGame/invokable.h>
 #include <testGameActorLibrary/testgameactorlibrary.h>
 #include <testGameActorLibrary/testgameenvironmentactor.h>
 #include <testGameActorLibrary/testgamepropertyproxy.h>

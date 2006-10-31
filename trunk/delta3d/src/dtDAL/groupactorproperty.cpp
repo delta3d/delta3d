@@ -37,8 +37,9 @@ namespace dtDAL
                                           const std::string& editorType,
                                           bool readOnly):
                                           ActorProperty(DataType::GROUP,name,label,desc,groupName, readOnly),
-                                          SetPropFunctor(set),
-                                          GetPropFunctor(get)                                          
+                                          mSetPropFunctor(set),
+                                          mGetPropFunctor(get),
+                                          mEditorType(editorType)                                          
    {
    }
                       
@@ -66,13 +67,13 @@ namespace dtDAL
    ////////////////////////////////////////////////////////////////////////////
    void GroupActorProperty::SetValue(const NamedGroupParameter& value) 
    { 
-      !IsReadOnly() ? SetPropFunctor(value) : LOG_WARNING("SetValue has been called on a property that is read only.");
+      !IsReadOnly() ? mSetPropFunctor(value) : LOG_WARNING("SetValue has been called on a property that is read only.");
    }
 
    ////////////////////////////////////////////////////////////////////////////
    dtCore::RefPtr<NamedGroupParameter> GroupActorProperty::GetValue() const 
    { 
-      return GetPropFunctor(); 
+      return mGetPropFunctor(); 
    }
 
    ////////////////////////////////////////////////////////////////////////////

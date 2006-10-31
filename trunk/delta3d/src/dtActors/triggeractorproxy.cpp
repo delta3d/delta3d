@@ -25,6 +25,8 @@
 #include <dtDAL/exceptionenum.h>
 #include <dtABC/trigger.h>
 
+#include <sstream>
+
 using namespace dtABC;
 using namespace dtDAL;
 

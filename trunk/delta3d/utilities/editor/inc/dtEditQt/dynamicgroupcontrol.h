@@ -22,7 +22,7 @@
 #ifndef DELTA_DYNAMICGROUPCONTROL
 #define DELTA_DYNAMICGROUPCONTROL
 
-#include "dtEditQt/dynamicabstractparentcontrol.h"
+#include <dtEditQt/dynamicabstractparentcontrol.h>
 #include <vector>
 
 

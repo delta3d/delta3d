@@ -49,7 +49,7 @@ namespace dtCore
          throw dtUtil::Exception(ShaderException::SHADER_SOURCE_ERROR,"Shader names must be unique.", __FILE__, __LINE__);
 
       mShaders.insert(std::make_pair(shader.GetName(),&shader));
-      shader.SetParentGroup(this);
+      //shader.SetParentGroup(this);
       if (isDefault)
          mDefaultShader = &shader;
    }
@@ -68,7 +68,7 @@ namespace dtCore
       else
       {
          //Hang on to a reference for a second.
-         itor->second->SetParentGroup(NULL);
+         //itor->second->SetParentGroup(NULL);
          dtCore::RefPtr<Shader> tempRef = &shader;
          mShaders.erase(itor);
          if (tempRef == mDefaultShader)

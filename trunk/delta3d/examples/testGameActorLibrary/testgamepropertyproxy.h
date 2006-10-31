@@ -27,7 +27,6 @@
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtUtil/enumeration.h>
-#include <dtUtil/log.h>
 #include <dtDAL/plugin_export.h>
 #include <dtDAL/gameevent.h>
 #include <dtGame/gamemanager.h>

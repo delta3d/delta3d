@@ -22,8 +22,8 @@
 #ifndef DELTA_DYNAMICFLOATCONTROL
 #define DELTA_DYNAMICFLOATCONTROL
 
-#include "dtEditQt/dynamicabstractcontrol.h"
-#include "dtEditQt/dynamicsubwidgets.h"
+#include <dtEditQt/dynamicabstractcontrol.h>
+#include <dtEditQt/dynamicsubwidgets.h>
 
 class QWidget;
 
@@ -98,12 +98,15 @@ namespace dtEditQt
         /**
          * @see DynamicAbstractControl#handleSubEditDestroy
          */
-        void handleSubEditDestroy(QWidget *widget)
+        void handleSubEditDestroy(QWidget *widget, QAbstractItemDelegate::EndEditHint hint = QAbstractItemDelegate::NoHint)
         {
             // we have to check - sometimes the destructor won't get called before the 
             // next widget is created.  Then, when it is called, it sets the NEW editor to NULL!
             if (widget == temporaryEditControl)
-                temporaryEditControl = NULL;
+            {
+               updateData(widget);
+               temporaryEditControl = NULL;
+            }
         }
 
    public slots: 

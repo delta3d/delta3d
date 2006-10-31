@@ -78,6 +78,19 @@ namespace dtDAL
           */
          const std::string ParseMapName(const std::string& path);
 
+         ///@return true if the map is currently being parsed.
+         bool IsParsing() const { return mParsing; }
+
+         /**
+          * This method exists to allow actors being parsed to access their map.  It's to help 
+          * with certain features of the loading process.  Using the meth
+          * @return the map instance that the parser is currently populating.
+          */
+         Map* GetMapBeingParsed();
+         
+         ///@see #GetMapBeingParsed
+         const Map* GetMapBeingParsed() const;
+
          const std::set<std::string>& GetMissingActorTypes(); 
          const std::vector<std::string>& GetMissingLibraries();
 
@@ -93,6 +106,7 @@ namespace dtDAL
           * this is called automatically on startup.
           */
          static void StaticInit();
+         
          /**
           * this is called automatically on shutdown.
           */
@@ -104,6 +118,7 @@ namespace dtDAL
          dtCore::RefPtr<MapContentHandler> mHandler;
          xercesc::SAX2XMLReader* mXercesParser;
          dtUtil::Log* mLogger;
+         bool mParsing;
    };
 
 

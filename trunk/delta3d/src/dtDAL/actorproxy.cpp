@@ -26,15 +26,14 @@
 #include <dtDAL/datatype.h>
 #include <dtDAL/librarymanager.h>
 #include <dtDAL/actorproxyicon.h>
+#include <dtDAL/exceptionenum.h>
+#include <dtDAL/project.h>
 #include <dtCore/scene.h>
-#include <dtCore/deltadrawable.h>
-#include <dtCore/transformable.h>
 #include <dtCore/uniqueid.h>
 #include <sstream>
 
 namespace dtDAL
 {
-
    //////////////////////////////////////////////////////////////////////////
    IMPLEMENT_ENUM(ActorProxy::RenderMode);
    const ActorProxy::RenderMode ActorProxy::RenderMode::DRAW_ACTOR("DRAW_ACTOR");
@@ -166,6 +165,11 @@ namespace dtDAL
    //////////////////////////////////////////////////////////////////////////
    void ActorProxy::AddProperty(ActorProperty *newProp)
    {
+      if(newProp == NULL)
+      {
+         EXCEPT(ExceptionEnum::InvalidParameter, "AddProperty cannot add a NULL property");
+      }
+
       std::map<std::string,dtCore::RefPtr<ActorProperty> >::iterator itor =
          mPropertyMap.find(newProp->GetName());
       if(itor != mPropertyMap.end())
@@ -178,6 +182,32 @@ namespace dtDAL
       else
       {
          mPropertyMap.insert(std::make_pair(newProp->GetName(),newProp));
+         mProperties.push_back(newProp);
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ActorProxy::RemoveProperty(const std::string& nameToRemove)
+   {
+      std::map<std::string,dtCore::RefPtr<ActorProperty> >::iterator itor =
+         mPropertyMap.find(nameToRemove);
+      if(itor != mPropertyMap.end())
+      {
+         mPropertyMap.erase(itor);
+         for (int i = 0; i < mProperties.size(); ++i)
+         {
+            if (mProperties[i]->GetName() == nameToRemove)
+            {
+               mProperties.erase(mProperties.begin() + i);
+               break;
+            }
+         }
+      }
+      else
+      {
+         std::ostringstream msg;
+         msg << "Could not find property " << nameToRemove << " to remove. Reason was: " << "was not found in mPropertyMap";
+         LOG_DEBUG(msg.str());
       }
    }
 
@@ -209,29 +239,24 @@ namespace dtDAL
    void ActorProxy::GetPropertyList(std::vector<const ActorProperty *> &propList) const
    {
       propList.clear();
-      std::map<std::string,dtCore::RefPtr<ActorProperty> >::const_iterator itor =
-         mPropertyMap.begin();
+      propList.reserve(mProperties.size());
 
-      propList.reserve(mPropertyMap.size());
-      while(itor != mPropertyMap.end())
+      for (unsigned i = 0; i < mProperties.size(); ++i)
       {
-         propList.push_back(itor->second.get());
-         ++itor;
+         propList.push_back(mProperties[i].get());
       }
    }
+
 
    //////////////////////////////////////////////////////////////////////////
    void ActorProxy::GetPropertyList(std::vector<ActorProperty *> &propList)
    {
       propList.clear();
-      std::map<std::string,dtCore::RefPtr<ActorProperty> >::iterator itor =
-         mPropertyMap.begin();
+      propList.reserve(mProperties.size());
 
-      propList.reserve(mPropertyMap.size());
-      while(itor != mPropertyMap.end())
+      for (unsigned i = 0; i < mProperties.size(); ++i)
       {
-         propList.push_back(itor->second.get());
-         ++itor;
+         propList.push_back(mProperties[i].get());
       }
    }
 
@@ -271,19 +296,19 @@ namespace dtDAL
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<ActorProxy> ActorProxy::Clone()
+   dtCore::RefPtr<ActorProxy> ActorProxy::Clone() 
    {
       std::ostringstream error;
 
       //First tell the library manager to create a new mActor using this
       // actors actor type.
-      dtCore::RefPtr<ActorProxy> copy = NULL;
+      dtCore::RefPtr<ActorProxy> copy;
 
       try
       {
          copy = LibraryManager::GetInstance().CreateActorProxy(*mActorType).get();
       }
-      catch(dtUtil::Exception &e)
+      catch(const dtUtil::Exception &e)
       {
          error << "Clone of actor proxy: " << GetName() << " failed. Reason was: " << e.What();
          LOG_ERROR(error.str());
@@ -295,14 +320,9 @@ namespace dtDAL
       copy->SetName(GetName());
 
       //Now copy all of the properties from this proxy to the clone.
-      std::map<std::string,dtCore::RefPtr<ActorProperty> >::iterator myPropItor,copyPropItor;
-      copyPropItor = copy->mPropertyMap.begin();
-      myPropItor = mPropertyMap.begin();
-      while(myPropItor != mPropertyMap.end() && copyPropItor != copy->mPropertyMap.end())
+      for (unsigned i = 0; i < mProperties.size(); ++i)
       {
-         copyPropItor->second->CopyFrom(*myPropItor->second);
-         ++copyPropItor;
-         ++myPropItor;
+         copy->mProperties[i]->CopyFrom(*mProperties[i]);
       }
 
       //Now copy all the resource descriptors from this proxy to the clone.
@@ -321,5 +341,10 @@ namespace dtDAL
    void ActorProxy::OnRemove() const
    {
 
+   }
+
+   const bool ActorProxy::IsInSTAGE() const
+   { 
+      return dtDAL::Project::GetInstance().GetEditMode();
    }
 }

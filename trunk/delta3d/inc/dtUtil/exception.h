@@ -29,7 +29,22 @@
 
 namespace dtUtil
 {
-   
+   class DT_UTIL_EXPORT BaseExceptionType : public dtUtil::Enumeration
+   {
+      DECLARE_ENUM(BaseExceptionType);
+      
+      public:
+         
+         static BaseExceptionType GENERAL_EXCEPTION;
+
+      protected:
+         
+         BaseExceptionType(const std::string &name) : dtUtil::Enumeration(name)
+         {
+            AddInstance(this);
+         }
+   };
+
    /*
     * Save some typing if the base exception class is thrown.
     */
@@ -46,7 +61,7 @@ namespace dtUtil
       public:
          
          /**
-         * Constructor - Initializes the exception and logs it.
+          * Constructor - Initializes the exception and logs it.
           *  @param type - the type of exception being thrown.
           *  @param message - Message to display about the exception.
           *  @param filename - File the exception was thrown from.
@@ -55,6 +70,16 @@ namespace dtUtil
           */
          Exception(Enumeration &type, const std::string &message, const std::string &filename,
                    unsigned int linenum);
+
+         /**
+          * Constructor - Initializes the exception and logs it.
+          *  @param message - Message to display about the exception.
+          *  @param filename - File the exception was thrown from.
+          *  @param linenum - Line number in the file from which the
+          *  exception was thrown.
+          */
+         Exception(const std::string &message, const std::string &filename,
+            unsigned int linenum);
          
          /*
           * Destructor - Empty

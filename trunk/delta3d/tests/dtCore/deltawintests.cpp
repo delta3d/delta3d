@@ -18,7 +18,7 @@
  *
  * @author Erik Johnson 05/16/2006
  */
-
+#include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtCore/deltawin.h>
 #include <dtUtil/exception.h>

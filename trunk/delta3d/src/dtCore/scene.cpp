@@ -141,7 +141,7 @@ Scene::Scene( const std::string& name, bool useSceneLight ) : Base(name),
    dSetDebugHandler(ODEDebugHandler);
    dSetErrorHandler(ODEErrorHandler);
 
-   AddSender(System::Instance());
+   AddSender(&System::GetInstance());
 
    //TODO set default render face, mode
 }
@@ -179,7 +179,7 @@ Scene::~Scene()
       DisablePaging();
    }
 
-   RemoveSender( System::Instance() );
+   RemoveSender( &System::GetInstance() );
 }
 
 void Scene::AddDrawable( DeltaDrawable *drawable )
@@ -651,7 +651,7 @@ Light* Scene::GetLight( const std::string& name )
    }
    else
    {
-      return 0;
+      return NULL;
    }
 }
 
@@ -667,7 +667,7 @@ const Light* Scene::GetLight( const std::string& name ) const
    }
    else
    {
-      return 0;
+      return NULL;
    }
 }
 
@@ -695,7 +695,7 @@ void Scene::RegisterLight( Light* light )
 ///unreferences the current light, by number, Note: does not erase
 void Scene::UnRegisterLight( Light* light )
 { 
-   mLights[ light->GetNumber() ] = 0; 
+   mLights[ light->GetNumber() ] = NULL; 
 }
 
 
@@ -710,6 +710,8 @@ void Scene::UseSceneLight( bool lightState )
    else
    {
       mLights[0]->SetEnabled(lightState);
+      if (GetDrawableIndex(mLights[0].get()) == GetNumberOfAddedDrawable())
+         AddDrawable(mLights[0].get());
    }
 }
 
@@ -738,10 +740,10 @@ void Scene::EnablePaging()
 
 void Scene::DisablePaging()
 {
-   if(mPagingEnabled && osgDB::Registry::instance()->getDatabasePager() != 0)
+   if(mPagingEnabled && osgDB::Registry::instance()->getDatabasePager() != NULL)
    {
       osgDB::Registry::instance()->getDatabasePager()->clear();
-      osgDB::Registry::instance()->setDatabasePager(0);
+      osgDB::Registry::instance()->setDatabasePager(NULL);
       mPagingEnabled = false;
    }
    else

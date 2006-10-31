@@ -19,9 +19,11 @@
 * William E. Johnson II
 * Bradley Anderegg
 */
-#include "dtActors/beziernodeactorproxy.h"
+#include <dtActors/beziernodeactorproxy.h>
 #include <dtDAL/actorproxyicon.h>
 #include <dtDAL/enginepropertytypes.h>
+
+#include <sstream>
 
 namespace dtActors
 {

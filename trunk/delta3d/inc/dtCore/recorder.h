@@ -27,8 +27,6 @@
 
 #include <vector>
 
-#include <osgDB/FileUtils>
-
 #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOMElement.hpp>
 #include <xercesc/sax2/SAX2XMLReader.hpp>
@@ -42,6 +40,7 @@
 #include <dtCore/refptr.h>
 #include <dtCore/base.h>
 #include <dtCore/system.h>
+#include <dtCore/globals.h>
 #include <dtUtil/log.h>
 #include <dtUtil/stringutils.h>
 #include <dtUtil/xerceserrorhandler.h>
@@ -88,7 +87,7 @@ namespace dtCore
         */
       Recorder(const std::string& name = "recorder"): Base(name), mState(Stopped)
       {
-         AddSender( dtCore::System::Instance() );
+         AddSender( &System::GetInstance() );
       }
 
    protected:
@@ -97,7 +96,7 @@ namespace dtCore
         */
       virtual ~Recorder()
       {
-         RemoveSender( dtCore::System::Instance() );
+         RemoveSender( &System::GetInstance() );
       }
 
    public:
@@ -273,7 +272,7 @@ namespace dtCore
       void LoadFile(const std::string& filename)
       {
          // check to see if the file exits
-         std::string file = osgDB::findDataFile( filename );
+         std::string file = dtCore::FindFileInPathList( filename );
          if( file.empty() )
          {
             LOG_WARNING("The file, " + filename + " was not found.")

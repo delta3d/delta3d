@@ -18,21 +18,28 @@
  *
  * @author Matthew W. Campbell
  */
+#include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
-#include <dtDAL/librarymanager.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/gameeventmanager.h>
-#include <dtDAL/gameevent.h>
+
 #include <dtActors/taskactor.h>
 #include <dtActors/taskactorgameevent.h>
 #include <dtActors/taskactorrollup.h>
 #include <dtActors/taskactorordered.h>
+
 #include <dtGame/gamemanager.h>
 #include <dtGame/defaultmessageprocessor.h>
 #include <dtGame/basemessages.h>
+
+#include <dtDAL/librarymanager.h>
+#include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/groupactorproperty.h>
+#include <dtDAL/gameeventmanager.h>
+#include <dtDAL/gameevent.h>
+
 #include <dtCore/globals.h>
 #include <dtCore/system.h>
 #include <dtCore/scene.h>
+
 #include <dtUtil/stringutils.h>
 
 #include <vector>
@@ -159,58 +166,105 @@ void TaskActorTests::TestTaskSubTasks()
 {
    try
    {
-      unsigned int i;
-
       dtCore::RefPtr<dtDAL::ActorType> taskActorType =
          mGameManager->FindActorType("dtcore.Tasks","Task Actor");
-      CPPUNIT_ASSERT_MESSAGE("Could not find actor type.",taskActorType.valid());
+      CPPUNIT_ASSERT_MESSAGE("Could not find actor type.", taskActorType.valid());
 
       dtCore::RefPtr<dtActors::TaskActorProxy> parentProxy;
       mGameManager->CreateActor(*taskActorType, parentProxy);
+      mGameManager->AddActor(*parentProxy, false, false);
       
-      CPPUNIT_ASSERT_MESSAGE("Could not create task actor proxy.",parentProxy.valid());
+      CPPUNIT_ASSERT_MESSAGE("Could not create task actor proxy.", parentProxy.valid());
+
+      std::vector<dtActors::TaskActorProxy* > children;      
 
       //Create a bunch of actors and add them as children.
-      for (i=0; i<25; i++)
+      for (unsigned i=0; i<25; i++)
       {
          dtCore::RefPtr<dtActors::TaskActorProxy> childProxy = NULL;
 
          mGameManager->CreateActor(*taskActorType, childProxy);
-         CPPUNIT_ASSERT_MESSAGE("Could not create task actor proxy.",childProxy.valid());
+         CPPUNIT_ASSERT_MESSAGE("Could not create task actor proxy.", childProxy.valid());
+         mGameManager->AddActor(*childProxy,false, false);
+         
+         children.push_back(childProxy.get());
 
          childProxy->SetName("ChildProxy" + dtUtil::ToString(i));
-         parentProxy->AddSubTaskProxy(*childProxy);
+         parentProxy->AddSubTask(*childProxy);
       }
 
-      std::vector<dtCore::RefPtr<dtActors::TaskActorProxy> > children(parentProxy->GetAllSubTaskProxies());
-      CPPUNIT_ASSERT_MESSAGE("Number of child tasks should have been 25.",children.size() == 25);
+      parentProxy->GetAllSubTasks(children);
+      CPPUNIT_ASSERT_MESSAGE("Number of child tasks should have been 25, and the GetAllSubTasks method should clear before filling.", 
+         children.size() == 25);
+
+      dtDAL::GroupActorProperty* subTasksGroup = dynamic_cast<dtDAL::GroupActorProperty*>(parentProxy->GetProperty("SubTasks"));
+      CPPUNIT_ASSERT(subTasksGroup != NULL);
+      dtCore::RefPtr<dtDAL::NamedGroupParameter> subTasksGroupParam = subTasksGroup->GetValue();
+      CPPUNIT_ASSERT(subTasksGroupParam.valid());
+   
+      CPPUNIT_ASSERT_MESSAGE("Number of child tasks in the group property should be 25.", subTasksGroupParam->GetParameterCount() == 25);
+      std::vector<dtDAL::NamedParameter*> subTaskActorIds;
+      subTasksGroupParam->GetParameters(subTaskActorIds);
 
       //Make sure the parent was set correctly and that we can find the task.
-      for (i=0; i<25; i++)
+      for (unsigned i = 0; i < 25; i++)
       {
-         CPPUNIT_ASSERT_MESSAGE("Parent was not set correctly.",children[i]->GetParentTaskProxy() == parentProxy.get());
+         CPPUNIT_ASSERT_MESSAGE("Parent was not set correctly.",children[i]->GetParentTask() == parentProxy.get());
          CPPUNIT_ASSERT_MESSAGE("Should have found the task by unique id.",
-            parentProxy->FindSubTaskProxy(children[i]->GetGameActor().GetUniqueId()) != NULL);
+            parentProxy->FindSubTask(children[i]->GetId()) != NULL);
          CPPUNIT_ASSERT_MESSAGE("Should have found the task by unique id.",
-            parentProxy->FindSubTaskProxy(children[i]->GetGameActor().GetName()) != NULL);
+            parentProxy->FindSubTask(children[i]->GetName()) != NULL);
+         
+         dtDAL::NamedActorParameter* subTaskActorParam = dynamic_cast<dtDAL::NamedActorParameter*>(subTaskActorIds[i]);
+         CPPUNIT_ASSERT_MESSAGE("The parameters in the subtasks group prop should all be NamedActorParameters.",
+            subTaskActorParam != NULL);
+         CPPUNIT_ASSERT_MESSAGE("The SubTasks in the group property should have the same id's and be in the same order as the list on the proxy.",
+            children[i]->GetId() == subTaskActorParam->GetValue());
       }
 
-      for (i=0; i<25; i+=2)
+      for (unsigned i = 0; i < 25; i += 2)
       {
-         parentProxy->RemoveSubTaskProxy(*children[i]);
+         parentProxy->RemoveSubTask(*children[i]);
          CPPUNIT_ASSERT_MESSAGE("Child's parent task should be NULL after removing it.",
-            children[i]->GetParentTaskProxy() == NULL);
+            children[i]->GetParentTask() == NULL);
       }
 
-      std::vector<dtCore::RefPtr<dtActors::TaskActorProxy> > children2(parentProxy->GetAllSubTaskProxies());
-      for (i=0; i<children2.size(); i++)
+      std::vector<const dtActors::TaskActorProxy* > children2;
+      parentProxy->GetAllSubTasks(children2);
+      
+      for (unsigned i = 0; i < children2.size(); i++)
       {
-         parentProxy->RemoveSubTaskProxy(children2[i]->GetGameActor().GetName());
+         parentProxy->RemoveSubTask(children2[i]->GetGameActor().GetName());
          CPPUNIT_ASSERT_MESSAGE("Child's parent task should be NULL after removing it by name.",
-            children2[i]->GetParentTaskProxy() == NULL);
+            children2[i]->GetParentTask() == NULL);
       }
 
-      CPPUNIT_ASSERT_MESSAGE("There should be no more child tasks left.",parentProxy->GetNumSubTaskProxies() == 0);
+      CPPUNIT_ASSERT_MESSAGE("There should be no more child tasks left.",
+         parentProxy->GetSubTaskCount() == 0);
+      
+      dtCore::RefPtr<dtDAL::NamedGroupParameter> subTasksGroupParam2 = subTasksGroup->GetValue();
+      CPPUNIT_ASSERT(subTasksGroupParam2.valid());
+      CPPUNIT_ASSERT_MESSAGE("There should be no more child tasks left when looking in the group property.", 
+         subTasksGroupParam2->GetParameterCount() == 0);
+      
+      subTasksGroup->SetValue(*subTasksGroupParam);
+      parentProxy->GetAllSubTasks(children);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Setting the subtasks via the property should populate the list of children.", 
+         size_t(subTasksGroupParam->GetParameterCount()), children.size());
+      
+      for (unsigned i = 0; i < children.size(); i++)
+      {
+         dtDAL::NamedActorParameter* subTaskActorParam = dynamic_cast<dtDAL::NamedActorParameter*>(subTaskActorIds[i]);
+         CPPUNIT_ASSERT_MESSAGE("The SubTasks in the group property should have the same id's and be in the same order as the list on the proxy.",
+            children[i]->GetId() == subTaskActorParam->GetValue());
+      }
+
+      subTasksGroupParam2 = subTasksGroup->GetValue();
+      CPPUNIT_ASSERT_MESSAGE("The old and new subtask group parameters should be equal but they are: \n  Old:\n"+
+         subTasksGroupParam->ToString() +
+         "\nand\n  New:\n" +
+         subTasksGroupParam2->ToString(),
+         *subTasksGroupParam == *subTasksGroupParam2);
    }
    catch (const dtUtil::Exception& e)
    {
@@ -249,26 +303,26 @@ void TaskActorTests::TestTaskReparentOnAdd()
       mGameManager->CreateActor(*taskActorType, childProxy3);
       CPPUNIT_ASSERT_MESSAGE("Could not create task actor proxy.",childProxy3.valid());
 
-      parentProxy->AddSubTaskProxy(*childProxy1);
-      childProxy1->AddSubTaskProxy(*childProxy2);
-      childProxy2->AddSubTaskProxy(*childProxy3);
+      parentProxy->AddSubTask(*childProxy1);
+      childProxy1->AddSubTask(*childProxy2);
+      childProxy2->AddSubTask(*childProxy3);
 
       CPPUNIT_ASSERT_MESSAGE("Parent proxy should be parent of child 1.",
-         childProxy1->GetParentTaskProxy() == parentProxy.get());
+         childProxy1->GetParentTask() == parentProxy.get());
       CPPUNIT_ASSERT_MESSAGE("Child1 proxy should be parent of child 2.",
-         childProxy2->GetParentTaskProxy() == childProxy1.get());
+         childProxy2->GetParentTask() == childProxy1.get());
       CPPUNIT_ASSERT_MESSAGE("Child2 proxy should be parent of child 3.",
-         childProxy3->GetParentTaskProxy() == childProxy2.get());
+         childProxy3->GetParentTask() == childProxy2.get());
 
-      parentProxy->RemoveSubTaskProxy(*childProxy1);
-      childProxy1->RemoveSubTaskProxy(*childProxy2);
-      childProxy2->RemoveSubTaskProxy(*childProxy3);
+      parentProxy->RemoveSubTask(*childProxy1);
+      childProxy1->RemoveSubTask(*childProxy2);
+      childProxy2->RemoveSubTask(*childProxy3);
       CPPUNIT_ASSERT_MESSAGE("Child1 proxy's parent should be NULL",
-         childProxy1->GetParentTaskProxy() == NULL);
+         childProxy1->GetParentTask() == NULL);
       CPPUNIT_ASSERT_MESSAGE("Child2 proxy's should be parent of child 2.",
-         childProxy2->GetParentTaskProxy() == NULL);
+         childProxy2->GetParentTask() == NULL);
       CPPUNIT_ASSERT_MESSAGE("Child3 proxy's should be parent of child 3.",
-         childProxy3->GetParentTaskProxy() == NULL);
+         childProxy3->GetParentTask() == NULL);
    }
    catch (const dtUtil::Exception& e)
    {
@@ -387,13 +441,13 @@ void TaskActorTests::TestRollupTaskActor()
          eventTaskProxy->GetProperty("GameEvent")->SetStringValue(gameEvent->GetUniqueId().ToString());
          eventTaskProxy->GetProperty("Weight")->SetStringValue("0.2f");
 
-         rollupTaskProxy->AddSubTaskProxy(*eventTaskProxy);
+         rollupTaskProxy->AddSubTask(*eventTaskProxy);
          mGameManager->AddActor(*eventTaskProxy,false,false);
          eventList[i] = gameEvent;
          eventProxyList[i] = eventTaskProxy;
       }
 
-      CPPUNIT_ASSERT_MESSAGE("Rollup task should have 5 child tasks.",rollupTaskProxy->GetNumSubTaskProxies() == 5);
+      CPPUNIT_ASSERT_MESSAGE("Rollup task should have 5 child tasks.",rollupTaskProxy->GetSubTaskCount() == 5);
 
       //Now we need to send a message for each of the 5 events.  This will cause each of the event tasks to be
       //completed which should inform the rollup task and have it calculate the correct score each time
@@ -495,8 +549,8 @@ void TaskActorTests::TestOrderedTaskActor()
       mGameManager->AddActor(*primaryEventProxy,false,false);
 
       //Add an event task which must be completed before the rollup task can be completed.
-      orderedTaskProxy->AddSubTaskProxy(*primaryEventProxy);
-      orderedTaskProxy->AddSubTaskProxy(*rollupTaskProxy);
+      orderedTaskProxy->AddSubTask(*primaryEventProxy);
+      orderedTaskProxy->AddSubTask(*rollupTaskProxy);
 
       //Create some event tasks and add them as children to the rollup task.
       for (i=0; i<5; i++)
@@ -511,13 +565,13 @@ void TaskActorTests::TestOrderedTaskActor()
          eventTaskProxy->GetProperty("GameEvent")->SetStringValue(gameEvent->GetUniqueId().ToString());
          eventTaskProxy->GetProperty("Weight")->SetStringValue("0.2f");
 
-         rollupTaskProxy->AddSubTaskProxy(*eventTaskProxy);
+         rollupTaskProxy->AddSubTask(*eventTaskProxy);
          mGameManager->AddActor(*eventTaskProxy,false,false);
          eventList[i] = gameEvent;
          eventProxyList[i] = eventTaskProxy;
       }
 
-      CPPUNIT_ASSERT_MESSAGE("Rollup task should have 5 child tasks.",rollupTaskProxy->GetNumSubTaskProxies() == 5);
+      CPPUNIT_ASSERT_MESSAGE("Rollup task should have 5 child tasks.",rollupTaskProxy->GetSubTaskCount() == 5);
 
       //Now we need to send a message for each of the 5 events.  This will attempt to mark each task
       //complete which should NOT occur until the primary event task has been completed first since that

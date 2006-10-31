@@ -37,7 +37,7 @@ namespace dtDAL
       dtCore::Transformable *trans = dynamic_cast<dtCore::Transformable*>(mActor.get());
       if(trans == NULL)
          EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type "
-                "dtCore::Transformable\n");
+                "dtCore::Transformable");
 
       AddProperty(new Vec3ActorProperty("Rotation", "Rotation",
                                         MakeFunctor(*this, &TransformableActorProxy::SetRotation),
@@ -63,7 +63,7 @@ namespace dtDAL
                                            GROUPNAME));
 
       //COLLISION PROPS...
-      AddProperty(new BooleanActorProperty("Collision Geometry", "Show Collision Geometry",
+      AddProperty(new BooleanActorProperty("Show Collision Geometry", "Show Collision Geometry",
                                            MakeFunctor(*this, &TransformableActorProxy::SetRenderCollisionGeometry),
                                            MakeFunctorRet(*this, &TransformableActorProxy::GetRenderCollisionGeometry),
                                            "Enables/Disables the rendering of collision geometry assigned to this actor.",
@@ -98,6 +98,12 @@ namespace dtDAL
                                         "Sets the size of the bounding box used for collision detection.  This property "
                                         "is used if the collision type is set to BOX.",
                                         COLLISION_GROUP));
+
+      AddProperty(new BooleanActorProperty("Render Proxy Node", "Render Proxy Node",
+         MakeFunctor(*trans, &dtCore::Transformable::RenderProxyNode),
+         MakeFunctorRet(*trans, &dtCore::Transformable::GetIsRenderingProxyNode),
+         "Enables the rendering of the proxy node for this Transformable",
+         GROUPNAME));
    }
 
    ///////////////////////////////////////////////////////////////////////////////

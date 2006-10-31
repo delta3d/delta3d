@@ -25,6 +25,7 @@
 #include <dtUtil/datastream.h>
 #include <dtGame/messageparameter.h>
 #include <dtGame/messagetype.h>
+#include <dtGame/invokable.h>
 
 ////////////////////////////////////////////////////////////////////
 // Proxy Code

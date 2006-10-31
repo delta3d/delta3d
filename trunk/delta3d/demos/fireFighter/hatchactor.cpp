@@ -1,0 +1,183 @@
+/* -*-c++-*-
+ * Delta3D Open Source Game and Simulation Engine 
+ * Copyright (C) 2006, Alion Science and Technology, BMH Operation
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * William E. Johnson II
+ */
+#include <fireFighter/hatchactor.h>
+#include <fireFighter/gamelevelactor.h>
+#include <fireFighter/entityactorregistry.h>
+#include <dtAudio/audiomanager.h>
+#include <dtGame/gamemanager.h>
+#include <fireFighter/messagetype.h>
+#include <osg/MatrixTransform>
+
+using dtCore::RefPtr;
+
+static osg::Node* FindNamedNode(const std::string &searchName, osg::Node *currNode)
+{
+   osg::Group *currGroup = NULL;
+   osg::Node  *foundNode = NULL;
+
+   // check to see if we have a valid (non-NULL) node.
+   // if we do have a null node, return NULL.
+   if(currNode == NULL)
+   {
+      return NULL;
+   }
+
+   // We have a valid node, check to see if this is the node we 
+   // are looking for. If so, return the current node.
+   if(currNode->getName() == searchName)
+   {
+      return currNode;
+   }
+
+   // We have a valid node, but not the one we are looking for.
+   // Check to see if it has children (non-leaf node). If the node
+   // has children, check each of the child nodes by recursive call.
+   // If one of the recursive calls returns a non-null value we have
+   // found the correct node, so return this node.
+   // If we check all of the children and have not found the node,
+   // return NULL
+   currGroup = currNode->asGroup(); // returns NULL if not a group.
+   if(currGroup != NULL) 
+   {
+      for(unsigned int i = 0; i < currGroup->getNumChildren(); i++)
+      {     
+         foundNode = FindNamedNode(searchName, currGroup->getChild(i));
+         if(foundNode != NULL)
+            return foundNode; // found a match!
+      }
+      return NULL; // We have checked each child node - no match found.
+   }
+   else 
+   {
+      return NULL; // leaf node, no match 
+   }
+}
+
+////////////////////////////////////////////////
+HatchActorProxy::HatchActorProxy()
+{
+
+}
+
+HatchActorProxy::~HatchActorProxy()
+{
+
+}
+
+void HatchActorProxy::BuildPropertyMap()
+{
+   GameItemActorProxy::BuildPropertyMap();
+}
+
+void HatchActorProxy::BuildInvokables()
+{
+   GameItemActorProxy::BuildInvokables();
+}
+
+////////////////////////////////////////////////
+
+HatchActor::HatchActor(dtGame::GameActorProxy &proxy) : 
+   GameItemActor(proxy), 
+   mHatchNode(NULL)
+{
+
+}
+
+HatchActor::~HatchActor()
+{
+
+}
+
+void HatchActor::OnEnteredWorld()
+{
+   GameItemActor::OnEnteredWorld();
+
+   // Find the game level actor and search with its node
+   std::vector<RefPtr<dtDAL::ActorProxy> > proxies;
+   GetGameActorProxy().GetGameManager()->FindActorsByType(*EntityActorRegistry::TYPE_GAME_LEVEL_ACTOR, proxies);
+   GameLevelActor *gla = dynamic_cast<GameLevelActor*>(proxies[0]->GetActor());
+   if(gla == NULL)
+   {
+      LOG_ERROR("Failed to find the game level actor in the map. Unable to open or close the hatch door");
+   }
+   else
+   {
+      osg::Node *hatchNode = FindNamedNode("HatchEngr", gla->GetOSGNode());
+      mHatchNode = dynamic_cast<osg::MatrixTransform*>(hatchNode);
+      if(mHatchNode == NULL)
+      {
+         LOG_ERROR("Failed to find the hatch node in the game level.");
+      }
+   }
+}
+
+void HatchActor::Activate(bool enable)
+{
+   GameItemActor::Activate(enable);
+
+   if(mHatchNode != NULL)
+   {
+      // Open or close the door
+      osg::Matrix rotMat;
+      const float deg = IsActivated() ? -105.0f : 105.0f;
+    
+      rotMat.makeRotate(
+         osg::DegreesToRadians(0.0f), osg::Vec3(1.0f, 0.0f, 0.0f),
+         osg::DegreesToRadians(0.0f), osg::Vec3(0.0f, 1.0f, 0.0f),
+         osg::DegreesToRadians(deg),  osg::Vec3(0.0f, 0.0f, 1.0f));
+         
+      mHatchNode->preMult(rotMat);
+   }
+
+   // Special case. The hatch actor is the only actor that needs to play
+   // its usage sound when it is deactivated, as the door sound it makes
+   // is universal. The base class does not do this. 
+   static bool isFirst = true;
+
+   if(!IsActivated() && !isFirst)
+      PlayItemUseSnd();
+
+   // If we are in STAGE, we have a NULL game manager. So peace out of here
+   if(GetGameActorProxy().IsInSTAGE())
+      return;
+
+   // Special case. Since Activate(bool) is a property that is utilized in
+   // STAGE, this function is called once on startup to initialize the
+   // properties. When this happens, the game manager has not be initialized
+   // or something. It comes back with a weird memory address and outright 
+   // crashes. This doesn't occur in other versions of Activate(bool) because
+   // the base class version does not send a message. That behavior is handled
+   // in the player class. 
+   if(!isFirst)
+   {
+      dtGame::GameManager &mgr = *GetGameActorProxy().GetGameManager();
+
+      RefPtr<dtGame::Message> msg = 
+         mgr.GetMessageFactory().CreateMessage(enable ? MessageType::ITEM_ACTIVATED : 
+                                                        MessageType::ITEM_DEACTIVATED);
+
+      msg->SetAboutActorId(GetUniqueId());
+      mgr.SendMessage(*msg);
+   }
+   else
+      isFirst = false;
+}
+

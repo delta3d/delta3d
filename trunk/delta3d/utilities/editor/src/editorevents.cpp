@@ -24,12 +24,12 @@
 #include <QtCore/QTimer>
 #include <QtGui/QMessageBox>
 
-#include "dtEditQt/editorevents.h"
-#include "dtEditQt/editordata.h"
-#include "dtEditQt/editoractions.h"
-#include "dtDAL/actorproxy.h"
+#include <dtEditQt/editorevents.h>
+#include <dtEditQt/editordata.h>
+#include <dtEditQt/editoractions.h>
+#include <dtDAL/actorproxy.h>
+#include <dtDAL/map.h>
 #include <dtUtil/log.h>
-#include "dtDAL/map.h"
 
 namespace dtEditQt
 {

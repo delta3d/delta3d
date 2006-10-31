@@ -21,16 +21,20 @@
 #ifndef DELTA_TRANSFORMABLE
 #define DELTA_TRANSFORMABLE
 
-#include <ode/ode.h>
+#include <ode/common.h>
+#include <ode/contact.h>
 #include <ode/collision_trimesh.h>
-#include <osg/Geode>
-#include <osg/MatrixTransform>
 #include <dtCore/deltadrawable.h>
 #include <dtCore/transform.h>
 #include <dtUtil/enumeration.h>
 
-#include <osg/Version> // For #ifdef
 #include <dtUtil/breakoverride.h> // For BREAK_OVERRIDE macro
+
+namespace osg
+{
+   class MatrixTransform;
+   class Geode;
+}
 
 namespace dtCore
 {
@@ -147,6 +151,9 @@ namespace dtCore
 
       ///Render method for an object which may not have geometry
       virtual void RenderProxyNode( bool enable = true );
+
+      /// Returns if we are rendering the proxy node
+      virtual bool GetIsRenderingProxyNode() const { return mRenderProxyNode; }
       
       /**
        * Gets the world coordinate matrix for the supplied node.
@@ -375,15 +382,9 @@ namespace dtCore
        * dtTerrain::Terrain:      16
        * 
        */
-      void SetCollisionCategoryBits( unsigned long bits )
-      {
-         dGeomSetCategoryBits( mGeomID, bits );
-      }
+      void SetCollisionCategoryBits( unsigned long bits );
       
-      unsigned long GetCollisionCategoryBits() const
-      {
-         return dGeomGetCategoryBits(mGeomID);
-      }
+      unsigned long GetCollisionCategoryBits() const;
       
       /** 
        * Set the collide bits of this collision geom. If you want this geom to
@@ -391,20 +392,13 @@ namespace dtCore
        * collide bits contain 00000010. The UNSIGNED_BIT macro in dtCore/macros.h
        * comes in handy here. UNSIGNED_BIT(4) = 00000100
        */
-      void SetCollisionCollideBits( unsigned long bits )
-      {
-         dGeomSetCollideBits( mGeomID, bits );
-      }
+      void SetCollisionCollideBits( unsigned long bits );
       
-      unsigned long GetCollisionCollideBits() const
-      {
-         return dGeomGetCollideBits(mGeomID);
-      }
-
+      unsigned long GetCollisionCollideBits() const;
 
       ///required by DeltaDrawable
-      osg::Node* GetOSGNode(){return mNode.get();}
-      const osg::Node* GetOSGNode() const{return mNode.get();}
+      osg::Node* GetOSGNode();
+      const osg::Node* GetOSGNode() const;
             
    protected:
       
@@ -457,6 +451,11 @@ namespace dtCore
        */
       bool mRenderingGeometry;
 
+      /**
+       * If we're rendering the proxy node
+       */
+      bool mRenderProxyNode; 
+
       // These functions are are deprecated. The dummy BreakOverride struct
       // forces subclasses that override these functions to have a compile
       // error. Use the Transform& versions instead.
@@ -464,48 +463,6 @@ namespace dtCore
       BREAK_OVERRIDE(SetTransform(const Transform*, CoordSysEnum))
       BREAK_OVERRIDE(GetTransform(Transform*, CoordSysEnum) const)
 
-   };
-
-   class BoundingBoxVisitor : public osg::NodeVisitor
-   {
-   public:
-
-      BoundingBoxVisitor()
-         : osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_ALL_CHILDREN)
-      {}
-
-      /**
-       * Visits the specified geode.
-       *
-       * @param node the geode to visit
-       */
-      virtual void apply(osg::Geode& node)
-      {
-         osg::NodePath nodePath = getNodePath();
-
-         #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR == 1 && OSG_VERSION_MINOR == 0 
-         // Luckily, this behavior is redundant with OSG 1.1
-         if( std::string( nodePath[0]->className() ) == std::string("CameraNode") )
-         {
-            nodePath = osg::NodePath( nodePath.begin()+1, nodePath.end() );
-         }
-         #endif // OSG 1.1
-
-         osg::Matrix matrix = osg::computeLocalToWorld(nodePath);
-
-         for( unsigned int i = 0; i < node.getNumDrawables(); ++i )
-         {
-            for( unsigned int j = 0; j < 8; ++j )
-            {
-               mBoundingBox.expandBy( node.getDrawable(i)->getBound().corner(j) * matrix );
-            }
-         }
-      }
-
-      /**
-       * The aggregate bounding box.
-       */
-      osg::BoundingBox mBoundingBox;
    };
 }
 

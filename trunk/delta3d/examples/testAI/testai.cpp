@@ -1,7 +1,6 @@
 // TestAI.cpp : defines the implementation of the application
 
 #include "testai.h"
-#include <osgDB/FileUtils>
 #include <dtCore/camera.h>
 #include <dtCore/globals.h>
 #include <dtDAL/map.h>
@@ -17,6 +16,7 @@
 
 #include <dtUtil/mathdefines.h>
 #include <dtUtil/log.h>
+#include <dtUtil/fileutils.h>
 
 using namespace dtCore;
 using namespace dtABC;
@@ -30,7 +30,7 @@ TestAI::TestAI(const std::string& pMapFilename, const std::string& configFilenam
    , mCharacter(0)
 {
    //Generating a default config file if there isn't one already
-   if( !osgDB::fileExists( configFilename ) ) 
+   if( !dtUtil::FileUtils::GetInstance().FileExists( configFilename ) ) 
    {
       GenerateDefaultConfigFile();
    }

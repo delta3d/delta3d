@@ -19,7 +19,7 @@
  * @author Olen A. Bruce
  * @author David Guthrie
  */
-
+#include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <iostream>
 #include <vector>
@@ -256,7 +256,7 @@ void HLATests::setUp()
    try
    {
       const std::string fom = "RPR-FOM.fed";
-      const std::string fedFile = osgDB::findDataFile(fom);
+      const std::string fedFile = dtCore::FindFileInPathList(fom);
       CPPUNIT_ASSERT_MESSAGE("Couldn't find \"" + fom +
                              "\", make sure you install the Delta3D data package and set the DELTA_DATA environment var.",
                              !fedFile.empty());

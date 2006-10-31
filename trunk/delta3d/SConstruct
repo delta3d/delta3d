@@ -211,6 +211,7 @@ env.Alias( 'install', '$prefix' )
 SConscript( dirs=['doc'] )
 SConscript( dirs=['src'] )
 SConscript( dirs=['examples'] )
+SConscript( dirs=['demos'] )
 SConscript( dirs=['utilities'] )
 
 # TODO: this should defintely be using the env['TOOLS'] list and extracting the 'default' cxx tool,

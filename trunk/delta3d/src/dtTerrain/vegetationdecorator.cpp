@@ -18,24 +18,25 @@
 *
 * Teague Coonan
 */
+#include <dtUtil/fileutils.h>
 #include <dtCore/refptr.h>
 #include <dtCore/scene.h>
 #include <dtUtil/fileutils.h>
-#include "dtTerrain/terraindatareader.h"
-#include "dtTerrain/terraindatarenderer.h"
-#include "dtTerrain/terrain.h"
-#include "dtTerrain/vegetationdecorator.h"
-#include "dtTerrain/lccanalyzer.h"
+#include <dtTerrain/terraindatareader.h>
+#include <dtTerrain/terraindatarenderer.h>
+#include <dtTerrain/terrain.h>
+#include <dtTerrain/vegetationdecorator.h>
+#include <dtTerrain/lccanalyzer.h>
 #include <osg/io_utils>
 #include <osgDB/ReadFile>
 #include <osgDB/WriteFile>
 #include <osgDB/ImageOptions>
 #include <osg/PositionAttitudeTransform>
 #include <osgUtil/TriStripVisitor>
-#include "dtTerrain/soarxterrainrenderer.h"
-#include "dtTerrain/lcctype.h"
+#include <osg/Texture2D>
+#include <dtTerrain/soarxterrainrenderer.h>
+#include <dtTerrain/lcctype.h>
 #include <sstream>
-#include <iomanip>
 
 namespace dtTerrain
 {
@@ -109,7 +110,7 @@ namespace dtTerrain
          
       //Before we calculate the vegetation scene graph for this tile,
       //check the cache to see if we already have it and if so load it.         
-      if (osgDB::fileExists(sceneGraphFile))
+      if (dtUtil::FileUtils::GetInstance().FileExists(sceneGraphFile))
       {
          LOG_INFO("Loading cached vegetation scene from: " + sceneGraphFile);
          osg::Group *g = dynamic_cast<osg::Group *>(osgDB::readNodeFile(sceneGraphFile));

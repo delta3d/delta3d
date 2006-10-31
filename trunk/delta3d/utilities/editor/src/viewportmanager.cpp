@@ -26,13 +26,13 @@
 #include <osgDB/DatabasePager>
 #include <osgDB/Registry>
 #include <dtUtil/log.h>
-#include "dtDAL/actorproxyicon.h"
-#include "dtEditQt/viewportmanager.h"
-#include "dtEditQt/orthoviewport.h"
-#include "dtEditQt/perspectiveviewport.h"
-#include "dtEditQt/viewportoverlay.h"
-#include "dtEditQt/camera.h"
-#include "dtEditQt/editorevents.h"
+#include <dtDAL/actorproxyicon.h>
+#include <dtEditQt/viewportmanager.h>
+#include <dtEditQt/orthoviewport.h>
+#include <dtEditQt/perspectiveviewport.h>
+#include <dtEditQt/viewportoverlay.h>
+#include <dtEditQt/camera.h>
+#include <dtEditQt/editorevents.h>
 
 namespace dtEditQt
 {

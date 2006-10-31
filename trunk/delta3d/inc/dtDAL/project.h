@@ -141,6 +141,8 @@ namespace dtDAL
          ///added support for waypoints
          void CreateWaypointActors(Map& pMap);
 
+         bool mIsInSTAGE;
+
          //Later
    /*    dtUtil::tree<ResourceTreeNode>* getMatchingBranch(
          dtUtil::tree<ResourceTreeNode>::iterator level,
@@ -529,6 +531,15 @@ namespace dtDAL
          */
          void SetEditMode(bool pInStage);
 
+         /**
+          * Returns if Project is being executed from STAGE
+          * @return mIsInSTAGE
+          * @note NO USER SHOULD CALL THIS FUNCTION, EVER. 
+          * If you want to find out if you are running from STAGE, 
+          * please use dtDAL::ActorProxy::IsInSTAGE();
+          * @see class dtDAL::ActorProxy
+          */
+         const bool GetEditMode() const { return mEditMode; }
    };
 
 }

@@ -18,6 +18,7 @@
  *
  * @author John K. Grant
  */
+#include <prefix/dtgameprefix-src.h>
 #include <dtABC/application.h>
 #include <dtABC/applicationconfighandler.h>
 #include <dtABC/applicationconfigwriter.h>
@@ -29,6 +30,7 @@
 #include <dtUtil/stringutils.h>                // for dtUtil::ToInt
 #include <dtUtil/xercesparser.h>               // for parsing
 #include <dtUtil/librarysharingmanager.h>      // make sure this gets configured properly.
+#include <Producer/KeyboardMouse>              // for keyboardkey and keyboard char
 
 namespace dtTest
 {

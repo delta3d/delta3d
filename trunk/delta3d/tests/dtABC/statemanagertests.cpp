@@ -18,6 +18,7 @@
  *
  * @author Erik Johnson
  */
+#include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
 
 #include <dtABC/event.h>

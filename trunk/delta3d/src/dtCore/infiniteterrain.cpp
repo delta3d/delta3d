@@ -8,6 +8,7 @@
 
 #include <osg/Drawable>
 #include <osg/Geode>
+#include <osg/MatrixTransform>
 #include <osg/Geometry>
 #include <osg/Plane>
 #include <osg/TexEnv>

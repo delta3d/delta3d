@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * David Guthrie
+ * @author David Guthrie
  */
 #include <prefix/dtgameprefix-src.h>
 #include <dtUtil/log.h>
@@ -48,6 +48,19 @@ namespace dtGame
 
    GameApplication::~GameApplication()
    {
+      try
+      {
+         mEntryPoint->OnShutdown(*mGameManager);
+      }
+      catch(const dtUtil::Exception &e)
+      {
+         e.LogException(dtUtil::Log::LOG_ALWAYS);
+      }
+      catch(...)
+      {
+         LOG_ALWAYS("Unknown exception caught in the destructor of GameApplication");
+      }
+
       DeregisterInstance(this);
 
       GetScene()->RemoveAllDrawables();
@@ -112,7 +125,7 @@ namespace dtGame
       //Well we made it here so that means the plugin was loaded
       //successfully and the create and destroy functions were found.
 
-      #if (__GNUC__ == 3 && __GNUC_MINOR__ <= 3)
+      #if (__GNUC__ == 3 && __GNUC_MINOR__ <= 4)
       mCreateFunction  = (CreateEntryPointFn)createAddr;
       mDestroyFunction = (DestroyEntryPointFn)destroyAddr;
       #else

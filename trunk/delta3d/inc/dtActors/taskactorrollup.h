@@ -21,7 +21,7 @@
 #ifndef DELTA_TASKACTORROLLUP
 #define DELTA_TASKACTORROLLUP
 
-#include "dtActors/taskactor.h"
+#include <dtActors/taskactor.h>
 
 namespace dtActors
 {

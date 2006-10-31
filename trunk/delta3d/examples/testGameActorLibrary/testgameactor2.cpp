@@ -23,7 +23,7 @@
 #include <dtCore/scene.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtGame/messagetype.h>
-
+#include <dtGame/invokable.h>
 /////////////////////////////////////////////////////
 // Actor Proxy code
 /////////////////////////////////////////////////////

@@ -8,12 +8,12 @@
 #include <osg/Vec3>
 #include <osg/Matrix>
 
-#include "dtCore/system.h"
-#include "dtCore/logicalinputdevice.h"
-#include "dtCore/mouse.h"
-#include "dtCore/keyboard.h"
-#include "dtCore/transform.h"
-#include "dtCore/transformable.h"
+#include <dtCore/system.h>
+#include <dtCore/logicalinputdevice.h>
+#include <dtCore/mouse.h>
+#include <dtCore/keyboard.h>
+#include <dtCore/transform.h>
+#include <dtCore/transformable.h>
 
 using namespace dtCore;
 

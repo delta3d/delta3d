@@ -5,6 +5,7 @@
 
 #include <osg/Light>
 #include <osg/LightSource>
+#include <osg/MatrixTransform>
 
 #include <osg/ShapeDrawable>
 

@@ -203,7 +203,7 @@ namespace dtCore
             throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Foreign element found in shader XML source.", __FILE__, __LINE__);
       }
 
-      ShaderManager::GetInstance().AddShaderGroup(*newGroup);
+      ShaderManager::GetInstance().AddShaderGroupTemplate(*newGroup);
    }
 
    ///////////////////////////////////////////////////////////////////////////////

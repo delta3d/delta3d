@@ -21,8 +21,8 @@
 #ifndef _PHYSICAL_ACTOR_PROXY_H_
 #define _PHYSICAL_ACTOR_PROXY_H_
 
-#include "dtDAL/export.h"
-#include "dtDAL/transformableactorproxy.h"
+#include <dtDAL/export.h>
+#include <dtDAL/transformableactorproxy.h>
 #include <dtCore/physical.h>
 
 namespace dtDAL

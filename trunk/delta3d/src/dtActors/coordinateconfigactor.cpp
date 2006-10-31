@@ -19,8 +19,9 @@
  * William E. Johnson II
  */
 
-#include "dtActors/coordinateconfigactor.h"
+#include <dtActors/coordinateconfigactor.h>
 #include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/exceptionenum.h>
 
 #include <osg/Math>
 

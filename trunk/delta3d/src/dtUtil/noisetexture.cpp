@@ -5,8 +5,10 @@
 
  
 #include <prefix/dtutilprefix-src.h>
-#include "dtUtil/noisetexture.h"
-#include "time.h"
+#include <dtUtil/noisetexture.h>
+#include <cmath>
+#include <cstdio>
+#include <ctime>
 
 using namespace dtUtil;
 

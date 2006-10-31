@@ -27,3 +27,4 @@ TestAARMessageType TestAARMessageType::RESET("RESET", "Reset message", "Resets t
 TestAARMessageType TestAARMessageType::REQUEST_ALL_CONTROLLER_UPDATES("REQUEST_UPDATES", "Requests for updates from the controller", "", USER_DEFINED_MESSAGE_TYPE + 3);
 TestAARMessageType TestAARMessageType::PRINT_TASKS("PRINT_TASKS", "Prints the tasks", "", USER_DEFINED_MESSAGE_TYPE + 4);
 TestAARMessageType TestAARMessageType::UPDATE_TASK_CAMERA("UPDATE_TASK_CAMERA", "Updates the task camera", "", USER_DEFINED_MESSAGE_TYPE + 5);
+TestAARMessageType TestAARMessageType::PLACE_IGNORED_ACTOR("PLACE_IGNORED_ACTOR", "Place ignored actor message", "", USER_DEFINED_MESSAGE_TYPE + 6);

@@ -35,6 +35,7 @@ class TEST_AAR_EXPORT TestAARMessageType : public dtGame::MessageType
       static TestAARMessageType REQUEST_ALL_CONTROLLER_UPDATES;
       static TestAARMessageType PRINT_TASKS;
       static TestAARMessageType UPDATE_TASK_CAMERA;
+      static TestAARMessageType PLACE_IGNORED_ACTOR;
 
    private:
 

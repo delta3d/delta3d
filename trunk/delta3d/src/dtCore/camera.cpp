@@ -10,12 +10,15 @@
 #include <dtCore/deltawin.h>
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
+#include <dtUtil/stringutils.h>
 #include <dtUtil/log.h>
 
 #include <osg/FrameStamp>
 #include <osg/Matrix>
+#include <osg/MatrixTransform>
 #include <osgUtil/SceneView>
 
+#include <ctime>
 #include <osg/Version>
 
 using namespace dtUtil;
@@ -49,7 +52,7 @@ mFrameStamp(new osg::FrameStamp())
 
    mStats = new Stats( mSceneView.get() );
    mStats->Init( mSceneView.get()->getRenderStage() );
-
+   
    mStartTime = mTimer.Tick();
 }
 
@@ -75,6 +78,28 @@ void Camera::_SceneHandler::cull( Producer::Camera &cam )
 {
    //call osg cull here         
    CullImplementation( cam );
+}
+
+void Camera::TakeScreenShot(std::string& nameToOutPut)
+{
+   time_t currTime;
+   time(&currTime);
+   nameToOutPut += dtUtil::TimeAsUTC(currTime);
+   char buffer[512];
+   for(unsigned int i = 0 ; i < strlen(nameToOutPut.c_str()); ++i)
+   {
+      if(nameToOutPut.c_str()[i] == '.' 
+         || nameToOutPut.c_str()[i] == ':'
+         || nameToOutPut.c_str()[i] == '-')
+      {
+         buffer[i] = '_';
+      }
+      else
+         buffer[i] = nameToOutPut.c_str()[i];
+      buffer[i + 1]= '\0';
+   }
+   nameToOutPut = buffer;
+   ScreenShotTaker->SetNameToOutPut(nameToOutPut);
 }
 
 void Camera::_SceneHandler::CullImplementation(Producer::Camera &cam)
@@ -148,6 +173,9 @@ Camera::Camera( const std::string& name )
    SetCollisionCategoryBits( UNSIGNED_BIT(1) );
 
    mCameraGroup->AddCamera(this);
+
+   ScreenShotTaker = new ScreenShotCallback;
+   GetCamera()->addPostDrawCallback(ScreenShotTaker.get());
 }
 
 Camera::~Camera()

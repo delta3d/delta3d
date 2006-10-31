@@ -65,6 +65,12 @@ namespace dtGame
           * @param gameManager The game manager to init
           */
          virtual void OnStartup(dtGame::GameManager &gameManager) = 0;
+
+         /**
+          * Called when the app is shut down
+          * @param gameManager The game manager to destroy
+          */
+         virtual void OnShutdown(dtGame::GameManager &gameManager) { }
    };
 
 }

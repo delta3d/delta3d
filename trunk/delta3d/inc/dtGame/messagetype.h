@@ -98,6 +98,9 @@ namespace dtGame
          static const MessageType LOG_COMMAND_BEGIN_LOADKEYFRAME_TRANS;
          static const MessageType LOG_COMMAND_END_LOADKEYFRAME_TRANS; // data
          static const MessageType LOG_REQ_JUMP_TO_KEYFRAME; // data
+         static const MessageType LOG_REQ_ADD_IGNORED_ACTOR;
+         static const MessageType LOG_REQ_REMOVE_IGNORED_ACTOR;
+         static const MessageType LOG_REQ_CLEAR_IGNORE_LIST;
 
          /**
           * Gets the category of this message type

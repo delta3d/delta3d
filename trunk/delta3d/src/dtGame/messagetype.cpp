@@ -125,6 +125,15 @@ namespace dtGame
        "Can only be sent during playback.", 217);
    const MessageType MessageType::LOG_REQ_JUMP_TO_KEYFRAME("Logger - Jump To Keyframe",
       "Request", "Sent by the logger controller component (often a client) to request the "
-         " logger server component to jump to a specific keyframe in the current log.  Only works during Playback.", 218);
+      " logger server component to jump to a specific keyframe in the current log.  Only works during Playback.", 218);
+   const MessageType MessageType::LOG_REQ_ADD_IGNORED_ACTOR("Logger - Add Actor to Ignore List", 
+      "Request", "Sent by the logger controller component (often a client) to request the logger server "
+      " component to add an actor to the recording ignore list", 219);
+   const MessageType MessageType::LOG_REQ_REMOVE_IGNORED_ACTOR("Logger - Remove Actor from Ignore List", 
+      "Request", "Sent by the logger controller component (often a client) to request the logger server "
+      " component to remove an actor from the recording ignore list", 220);
+   const MessageType MessageType::LOG_REQ_CLEAR_IGNORE_LIST("Logger - Clear Ignore List", 
+      "Request", "Sent by the logger controller component (often a client) to request the logger server "
+      " component to remove all actors from the recording ignore list", 221);
 
 }

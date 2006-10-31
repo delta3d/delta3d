@@ -29,7 +29,7 @@
 #include <string>
 #include <list>
 
-#include <Producer/KeyboardMouse>
+#include <Producer/Keyboard>
 #include <dtCore/inputdevice.h>
 #include <dtUtil/deprecationmgr.h>
 #include <osg/Referenced>               // for listener's base class

@@ -11,7 +11,7 @@ using namespace dtCore;
 
 IMPLEMENT_MANAGEMENT_LAYER(Mouse)
 
- Mouse::Mouse(Producer::KeyboardMouse* km, const std::string& name) : InputDevice(name), mKeyboardMouse(km)
+Mouse::Mouse(Producer::KeyboardMouse* km, const std::string& name) : InputDevice(name), mKeyboardMouse(km)
 {
    RegisterInstance(this);
 

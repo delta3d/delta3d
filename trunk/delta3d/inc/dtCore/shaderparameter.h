@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * Matthew W. Campbell
+ * Matthew W. Campbell, Curtiss Murphy
  */
 #ifndef DELTA_SHADERPARAMETER
 #define DELTA_SHADERPARAMETER
@@ -140,6 +140,14 @@ namespace dtCore
          virtual void AttachToRenderState(osg::StateSet &stateSet) = 0;
 
          /**
+          * Each shader parameter has this chance to clean itself up from the
+          * stateset. It should remoave whatever attributes and properties
+          * that it set when it was attached.
+          * @param stateSet The render state to cleanup.
+          */
+         virtual void DetachFromRenderState(osg::StateSet &stateSet);
+
+         /**
           * Instructs the parameter to push and dirty state to the shader it is
           * connected to.
           * @note This method is called automatically by this parameter's parent
@@ -159,6 +167,13 @@ namespace dtCore
           * @return True if state has changed, false otherwise.
           */
          bool IsDirty() const { return mIsDirty; }
+
+         /**
+          * Makes a deep copy of the Shader Parameter. Used when a user assigns
+          * a shader to a node because we clone the template shader and its parameters.
+          * Note - Like Update(), this is a pure virtual method that must be implemented on each param.
+          */
+         virtual ShaderParameter *Clone() const = 0;
 
       protected:
 

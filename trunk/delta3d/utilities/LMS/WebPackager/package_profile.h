@@ -48,8 +48,8 @@ class PackageProfile
    public:
       enum TargetPlatform
       {
-         WINDOWS,
-         LINUX
+	TP_WINDOWS,
+	TP_LINUX
       };
 
       enum LibraryType

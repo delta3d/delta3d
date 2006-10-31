@@ -18,6 +18,7 @@
  *
  * @author Eddie Johnson
  */
+#include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtCore/scene.h>
 #include <dtCore/camera.h>

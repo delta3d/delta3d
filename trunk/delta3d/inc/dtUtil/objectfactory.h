@@ -26,7 +26,6 @@
 #include <iostream>
 #include <sstream>
 #include <dtUtil/log.h>
-//#include "Exception.h"
 #include <osg/Referenced>  // for base_class
 
 namespace dtUtil

@@ -18,10 +18,13 @@
 *
 * @author Chris Osborn
 */ 
-
+#include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtCore/scene.h>
 #include <dtCore/transformable.h>
+
+#include <osg/MatrixTransform>
+#include <ode/collision.h>
 
 using namespace dtCore;
 

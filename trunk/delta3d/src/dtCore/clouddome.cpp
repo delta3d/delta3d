@@ -13,7 +13,6 @@
 #include <osg/Shader>
 #include <osg/Texture3D>
 #include <osgDB/ReadFile>
-#include <osgDB/FileUtils>
 
 using namespace dtCore;
 using namespace dtUtil;
@@ -104,18 +103,18 @@ CloudDome::CloudDome(   float radius,
    GetOSGNode()->setName( this->GetName() );
 
    Create();
-   AddSender( System::Instance() );
+   AddSender( &System::GetInstance() );
 }
 
 CloudDome::~CloudDome()
 {
    DeregisterInstance(this);
-   RemoveSender( System::Instance() );
+   RemoveSender( &System::GetInstance() );
 }
 
 void CloudDome::LoadShaderSource( osg::Shader* obj, const std::string& fileName )
 {
-   std::string fqFileName = osgDB::findDataFile(fileName);
+   std::string fqFileName = dtCore::FindFileInPathList(fileName);
    if( fqFileName.length() != 0 )
    {
       obj->loadShaderSourceFromFile( fqFileName.c_str() );

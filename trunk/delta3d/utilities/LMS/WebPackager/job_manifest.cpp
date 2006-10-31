@@ -16,6 +16,7 @@
 #include <iostream>
 #include <cctype>
 #include <algorithm>
+#include <sstream>
 
 
 //======================================
@@ -25,6 +26,13 @@
 // forward refs
 class PackageProfile;
 
+
+struct ToUpper :
+  public std::unary_function<int, int>
+{
+public:
+  int operator()(int i) const { return std::toupper(i); }
+};
 
 //======================================
 // PUBLIC FUNCTIONS
@@ -98,12 +106,23 @@ void JobManifest::Execute( PackageProfile *profile )
 
             // item
             parent = AddElement( module, "item" );
-            SetAttribute( parent, "identifier", "ITEM-LAUNCHPAGE" );
+
+            //create incremental id string for identifier
+            std::stringstream ss;
+            std::string strItemNum;
+            ss << (idx + 1);
+            ss >> strItemNum;
+            std::string itemID = "ITEM-" + strItemNum;
+
+            SetAttribute( parent, "identifier", itemID );
             SetAttribute( parent, "isvisible",  "true" );            
             profile->GetSCORM_SCO_LaunchPage( idx, launchPage );
             tempStr = "RES-";
             tempStr += GetFileNameNoExt( launchPage );
-            std::transform(tempStr.begin(),tempStr.end(),tempStr.begin(),std::toupper);
+
+	    //            std::transform(tempStr.begin(),tempStr.end(),tempStr.begin(),ToUpper);
+	    tempStr = ToUpperCase(tempStr);
+
             SetAttribute( parent, "identifierref", tempStr );
             profile->GetSCORM_SCO_Options( idx, scoOpts );            
             AddElement( parent, "title", scoOpts.Get( "id" ) );
@@ -176,7 +195,9 @@ void JobManifest::Execute( PackageProfile *profile )
             profile->GetSCORM_SCO_LaunchPage( idx, launchPage );
             std::string tempStr = "RES-";
             tempStr += GetFileNameNoExt( launchPage );
-            std::transform(tempStr.begin(),tempStr.end(),tempStr.begin(),std::toupper);
+	    tempStr = ToUpperCase(tempStr);
+
+	    //            std::transform(tempStr.begin(),tempStr.end(),tempStr.begin(),std::toupper);
             SetAttribute( resource, "identifier", tempStr );
             SetAttribute( resource, "type", "webcontent" );
             SetAttribute( resource, "href", launchPage );

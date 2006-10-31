@@ -574,7 +574,7 @@ TestAudioApp::LoadGfxFile( const char* fname )
       // no file name, bail...
       return   NULL;
 
-   std::string filename = osgDB::findDataFile( fname );
+   std::string filename = dtCore::FindFileInPathList( fname );
    if( filename == "" )
    {
       // still no file name, bail...

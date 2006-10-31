@@ -16,8 +16,9 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * @author Matthew W. Campbell
+ * Matthew W. Campbell, Curtiss Murphy
  */
+#include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtUtil/exception.h>
 #include <dtUtil/fileutils.h>
@@ -44,6 +45,7 @@ class ShaderParameterTests : public CPPUNIT_NS::TestFixture
 {
    CPPUNIT_TEST_SUITE(ShaderParameterTests);
       CPPUNIT_TEST(TestTexture2DParameter);
+      CPPUNIT_TEST(TestTexture2DParameterReverseOrder);
       CPPUNIT_TEST(TestFloatParameter);
       CPPUNIT_TEST(TestIntParameter);
    CPPUNIT_TEST_SUITE_END();
@@ -54,6 +56,7 @@ class ShaderParameterTests : public CPPUNIT_NS::TestFixture
 
    protected:
       void TestTexture2DParameter();
+      void TestTexture2DParameterReverseOrder();
       void TestFloatParameter();
       void TestIntParameter();
 };
@@ -115,12 +118,74 @@ void ShaderParameterTests::TestTexture2DParameter()
       int value;
       texUniform->get(value);
       CPPUNIT_ASSERT_MESSAGE("Uniform should have an integer value of 2.",value == 2);
+
+      // Test clone behavior
+      dtCore::RefPtr<dtCore::Texture2DShaderParameter> clonedParam = 
+         static_cast<dtCore::Texture2DShaderParameter *>(param->Clone());
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Cloned value for texture unit should be the same.", 
+         clonedParam->GetTextureUnit(), param->GetTextureUnit());
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Cloned value for texture should be the same.", 
+         clonedParam->GetTexture(), param->GetTexture());
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Cloned value for address mode S should be the same.", 
+         clonedParam->GetAddressMode(dtCore::TextureShaderParameter::TextureAxis::S), 
+         param->GetAddressMode(dtCore::TextureShaderParameter::TextureAxis::S));
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Cloned value for address mode T should be the same.", 
+         clonedParam->GetAddressMode(dtCore::TextureShaderParameter::TextureAxis::T), 
+         param->GetAddressMode(dtCore::TextureShaderParameter::TextureAxis::T));
+
+      // Test Detach
+      param->DetachFromRenderState(*stateSet);
+      texUniform = stateSet->getUniform(param->GetName());
+      CPPUNIT_ASSERT_MESSAGE("Uniform should go away when detached from stateset.", texUniform == NULL);
    }
    catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.ToString());
    }
 }
+
+///////////////////////////////////////////////////////////////////////////////
+void ShaderParameterTests::TestTexture2DParameterReverseOrder()
+{
+   try
+   {
+      // Basically the same test as above but this one checks that we can load our image
+      // After we set our address modes and it should still work right.
+
+      dtCore::RefPtr<dtCore::Texture2DShaderParameter> param =
+         new dtCore::Texture2DShaderParameter("TestTexture2D");
+      dtCore::RefPtr<osg::StateSet> stateSet = new osg::StateSet();
+
+      param->SetAddressMode(dtCore::TextureShaderParameter::TextureAxis::S,
+         dtCore::TextureShaderParameter::AddressMode::MIRROR);
+      param->SetAddressMode(dtCore::TextureShaderParameter::TextureAxis::T,
+         dtCore::TextureShaderParameter::AddressMode::MIRROR);
+      param->SetTexture("Textures/detailmap.png");
+      param->SetTextureUnit(2);
+
+      CPPUNIT_ASSERT_MESSAGE("Texture S axis address mode was wrong.",
+         param->GetAddressMode(dtCore::TextureShaderParameter::TextureAxis::S) ==
+         dtCore::TextureShaderParameter::AddressMode::MIRROR);
+      CPPUNIT_ASSERT_MESSAGE("Texture T axis address mode was wrong.",
+         param->GetAddressMode(dtCore::TextureShaderParameter::TextureAxis::T) ==
+         dtCore::TextureShaderParameter::AddressMode::MIRROR);
+
+      //Bind the parameter to the render state and verify that the proper attributes were set.
+      param->AttachToRenderState(*stateSet);
+      osg::Texture2D *tex2D = dynamic_cast<osg::Texture2D*>(stateSet->getTextureAttribute(2,osg::StateAttribute::TEXTURE));
+      osg::Uniform *texUniform = stateSet->getUniform(param->GetName());
+
+      CPPUNIT_ASSERT_MESSAGE("There was no 2D texture attribute on the render state.",tex2D != NULL);
+      CPPUNIT_ASSERT_MESSAGE("There was no texture uniform on the render state.",texUniform != NULL);
+      CPPUNIT_ASSERT_MESSAGE("S axis texture addressing mode was wrong.",tex2D->getWrap(osg::Texture::WRAP_S) == osg::Texture::MIRROR);
+      CPPUNIT_ASSERT_MESSAGE("T axis texture addressing mode was wrong.",tex2D->getWrap(osg::Texture::WRAP_T) == osg::Texture::MIRROR);
+   }
+   catch (const dtUtil::Exception& e)
+   {
+      CPPUNIT_FAIL(e.ToString());
+   }
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////
 void ShaderParameterTests::TestFloatParameter()
@@ -142,6 +207,17 @@ void ShaderParameterTests::TestFloatParameter()
       float value;
       uniform->get(value);
       CPPUNIT_ASSERT_EQUAL(101.0f,value);
+
+      // Test clone behavior
+      dtCore::RefPtr<dtCore::FloatShaderParameter> clonedParam = 
+         static_cast<dtCore::FloatShaderParameter *>(param->Clone());
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Cloned value should be the same.", 
+         clonedParam->GetValue(), param->GetValue());
+
+      // Test Detach
+      param->DetachFromRenderState(*ss);
+      uniform = ss->getUniform(param->GetName());
+      CPPUNIT_ASSERT_MESSAGE("Uniform should go away when detached from stateset.", uniform == NULL);
    }
    catch (const dtUtil::Exception &e)
    {
@@ -169,6 +245,17 @@ void ShaderParameterTests::TestIntParameter()
       int value;
       uniform->get(value);
       CPPUNIT_ASSERT_EQUAL(25,value);
+
+      // Test clone behavior
+      dtCore::RefPtr<dtCore::IntegerShaderParameter> clonedParam = 
+         static_cast<dtCore::IntegerShaderParameter *>(param->Clone());
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Cloned value should be the same.", 
+         clonedParam->GetValue(), param->GetValue());
+
+      // Test Detach
+      param->DetachFromRenderState(*ss);
+      uniform = ss->getUniform(param->GetName());
+      CPPUNIT_ASSERT_MESSAGE("Uniform should go away when detached from stateset.", uniform == NULL);
    }
    catch (const dtUtil::Exception &e)
    {

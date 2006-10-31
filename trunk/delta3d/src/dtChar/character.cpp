@@ -7,9 +7,8 @@
 #include <dtCore/camera.h>
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
+#include <dtCore/globals.h>
 #include <dtUtil/log.h>
-
-#include <osgDB/FileUtils>
 
 #include <sstream>
 
@@ -119,7 +118,7 @@ osg::Node* Character::LoadFile(const std::string& filename, bool useCache)
       GetMatrixNode()->removeChild( 0, GetMatrixNode()->getNumChildren() );
    }
 
-   std::string path = osgDB::findDataFile(filename);
+   std::string path = dtCore::FindFileInPathList(filename);
    
    if( path.empty() )
    {

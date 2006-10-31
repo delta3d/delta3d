@@ -101,9 +101,9 @@ void JobJNLP::Execute( PackageProfile *profile )
          //determine target platform for this lib
          PackageProfile::TargetPlatform enumPlatform;
          if ( ToUpperCase(platform) == "WINDOWS" )
-            enumPlatform = PackageProfile::TargetPlatform::WINDOWS;
+            enumPlatform = PackageProfile::TP_WINDOWS;
          else if ( ToUpperCase(platform) == "LINUX" )
-            enumPlatform = PackageProfile::TargetPlatform::LINUX;
+            enumPlatform = PackageProfile::TP_LINUX;
 
          if ( profile->IncludePlatform(enumPlatform) )
          {

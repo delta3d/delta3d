@@ -5,6 +5,7 @@
 #include <dtCore/effectmanager.h>
 #include <dtCore/transformable.h>
 #include <dtCore/system.h>
+#include <dtCore/globals.h>
 #include <dtUtil/deprecationmgr.h>
 #include <dtUtil/log.h>
 #include <dtUtil/matrixutil.h>
@@ -18,7 +19,6 @@
 #include <osg/NodeVisitor>
 
 #include <osgDB/ReadFile>
-#include <osgDB/FileUtils>
 #include <osgParticle/Emitter>
 
 #include <cassert>
@@ -211,7 +211,7 @@ namespace dtCore
          options->setObjectCacheHint( osgDB::ReaderWriter::Options::CACHE_IMAGES );
          osg::ref_ptr<osg::Node> node;
 
-         std::string psFile = osgDB::findDataFile(found->second);
+         std::string psFile = dtCore::FindFileInPathList(found->second);
          if (psFile.empty())
          {
             LOG_WARNING("Can't find particle effect file:" + found->second);

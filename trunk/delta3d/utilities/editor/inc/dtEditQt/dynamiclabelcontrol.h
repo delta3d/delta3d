@@ -22,7 +22,7 @@
 #ifndef DELTA_DYNAMICLABELCONTROL
 #define DELTA_DYNAMICLABELCONTROL
 
-#include "dtEditQt/dynamicabstractcontrol.h"
+#include <dtEditQt/dynamicabstractcontrol.h>
 
 
 namespace dtDAL 

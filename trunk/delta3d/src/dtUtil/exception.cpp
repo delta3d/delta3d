@@ -26,12 +26,21 @@
 
 namespace dtUtil 
 {
+   IMPLEMENT_ENUM(BaseExceptionType);
+   BaseExceptionType BaseExceptionType::GENERAL_EXCEPTION("GENERAL_EXCEPTION");
 
     //////////////////////////////////////////////////////////////////////////
     Exception::Exception(Enumeration &type, const std::string &message, const std::string &filename,
         unsigned int lineNum) : mType(type),mMessage(message),mFileName(filename),mLineNum(lineNum) 
     {
         LogException(dtUtil::Log::LOG_DEBUG, dtUtil::Log::GetInstance());
+    }
+
+    //////////////////////////////////////////////////////////////////////////
+    Exception::Exception(const std::string &message, const std::string &filename,
+       unsigned int lineNum) : mType(BaseExceptionType::GENERAL_EXCEPTION),mMessage(message),mFileName(filename),mLineNum(lineNum) 
+    {
+       LogException(dtUtil::Log::LOG_DEBUG, dtUtil::Log::GetInstance());
     }
 
     //////////////////////////////////////////////////////////////////////////

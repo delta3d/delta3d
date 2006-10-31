@@ -41,9 +41,10 @@ public class ProgramDirectoryDialog extends JDialog
     }
     
     //constructor
-    public ProgramDirectoryDialog(String applicationName, JFrame owner)
+    //public ProgramDirectoryDialog(String applicationName, JFrame owner)
+    public ProgramDirectoryDialog(ApplicationConfiguration appConfig, JFrame owner)
     {
-        super(owner, applicationName + " Program Directory", true);
+        super(owner, appConfig.GetApplicationName() + " Program Directory", true);
         
         //create main panel
         JPanel pnlMain = new JPanel();
@@ -55,7 +56,17 @@ public class ProgramDirectoryDialog extends JDialog
         
         //create text box
         _txtDirectory = new JTextField("", 40);
-        _txtDirectory.setText("C:/Program Files/Delta3D Web Applications/" + applicationName);
+        
+        //set default directory based on platform
+        if (appConfig.GetOperatingSystem() == OperatingSystem.WINDOWS)
+        {
+        	_txtDirectory.setText("C:/Program Files/Delta3dWebApplications/" + appConfig.GetApplicationName().replace(" ", ""));
+        }
+        else
+        {
+        	_txtDirectory.setText(appConfig.GetUserDirectory() + "/Delta3dWebApplications/" + appConfig.GetApplicationName().replace(" ", ""));
+        }
+
         pnlMain.add(_txtDirectory);
         
         //create browse button
@@ -144,12 +155,12 @@ public class ProgramDirectoryDialog extends JDialog
     private Boolean MakeDirectory()
     {
         Boolean retVal = false;
-        File f = new File(_txtDirectory.getText());
+        File dir = new File(_txtDirectory.getText());
         
-        if (!f.isDirectory())
+        if (!dir.isDirectory())
         {
             //prompt user to create new directory
-            String message = "Directory '" + f.getPath() + "' does not exist. Do you wish to create it?";
+            String message = "Directory '" + dir.getPath() + "' does not exist. Do you wish to create it?";
             int result = JOptionPane.showConfirmDialog(this,
                                                                      message,
                                                                      "Create Directory",
@@ -157,7 +168,11 @@ public class ProgramDirectoryDialog extends JDialog
                                                                      JOptionPane.QUESTION_MESSAGE);
             if (result == JOptionPane.OK_OPTION)
             {
-                retVal = f.mkdirs();
+                retVal = dir.mkdirs();
+                if (retVal == false)
+                {
+        			JOptionPane.showMessageDialog(new JFrame(), "Could not create directory " + dir);
+                }
             }
             else
             {

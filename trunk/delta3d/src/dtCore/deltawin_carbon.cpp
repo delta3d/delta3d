@@ -43,7 +43,7 @@ void DeltaWin::ShowCursor( bool show )
 void DeltaWin::SetFullScreenMode( bool enable )
 {
    mRenderSurface->fullScreen(enable);
-   mRenderSurface->useBorder(enable);
+   mRenderSurface->useBorder(!enable);
 }
 
 DeltaWin::ResolutionVec DeltaWin::GetResolutions()

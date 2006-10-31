@@ -18,7 +18,7 @@
  *
  * @author Eddie Johnson and David Guthrie
  */
-
+#include <prefix/dtgameprefix-src.h>
 #include <cstdlib>
 #include <iostream>
 #include <osg/Math>

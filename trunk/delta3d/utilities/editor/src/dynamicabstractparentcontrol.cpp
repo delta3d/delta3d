@@ -20,8 +20,8 @@
 * Curtiss Murphy
 */
 #include <prefix/dtstageprefix-src.h>
-#include "dtEditQt/dynamicabstractparentcontrol.h"
-#include "dtEditQt/propertyeditormodel.h"
+#include <dtEditQt/dynamicabstractparentcontrol.h>
+#include <dtEditQt/propertyeditormodel.h>
 #include <QtCore/QModelIndex>
 
 namespace dtEditQt 

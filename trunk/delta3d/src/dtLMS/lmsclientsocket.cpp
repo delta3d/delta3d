@@ -208,7 +208,8 @@ namespace dtLMS
 	{
 		int numBytes = 0;
 		bool theEnd = false;
-		int i, j;
+		int i;
+      unsigned int j;
 		char str[MAX_RECEIVE_LENGTH];
 		char *temp;
 

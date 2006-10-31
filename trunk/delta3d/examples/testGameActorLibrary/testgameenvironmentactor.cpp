@@ -19,6 +19,8 @@
  * William E. Johnson II
  */
 #include "testgameenvironmentactor.h"
+#include <dtUtil/stringutils.h>
+#include <sstream>
 
 void TestGameEnvironmentActor::AddActor(dtDAL::ActorProxy &proxy)
 {

@@ -28,6 +28,12 @@
 #include <map>
 #include <vector>
 
+namespace dtDAL 
+{
+   class NamedActorParameter;
+   class NamedGroupParameter;
+}
+
 namespace dtActors
 {
    class TaskActorProxy;
@@ -258,13 +264,13 @@ namespace dtActors
           * Gets a const pointer to the parent of this task.
           * @return The parent task or NULL if this task is not a subtask of another.
           */
-         const TaskActorProxy *GetParentTaskProxy() const { return mParentTaskProxy; }
+         const TaskActorProxy *GetParentTask() const { return mParentTaskProxy; }
 
          /**
           * Gets a pointer to the parent of this task.
           * @return The parent task or NULL if this task is not a subtask of another.
           */
-         TaskActorProxy *GetParentTaskProxy() { return mParentTaskProxy; }
+         TaskActorProxy *GetParentTask() { return mParentTaskProxy; }
 
          /**
           * Adds a new sub task to this task.  If the subtask is already a subtask
@@ -272,48 +278,57 @@ namespace dtActors
           * is notified.
           * @param subTask The task to add as a subtask to this one.
           */
-         void AddSubTaskProxy(TaskActorProxy &subTask);
+         void AddSubTask(TaskActorProxy &subTask);
 
          /**
           * Removes an existing task from this task's list of children.
           * @param subTask The task to remove.
           */
-         void RemoveSubTaskProxy(const TaskActorProxy &subTask);
+         void RemoveSubTask(const TaskActorProxy &subTask);
 
          /**
           * Removes an existing task from this task's list of children.
           * @param name The name of the task to remove.
           */
-         void RemoveSubTaskProxy(const std::string &name);
+         void RemoveSubTask(const std::string &name);
 
          /**
           * Searches this task's list of sub tasks for the specified child.
           * @param name The name of the child task to find.
           * @return The requested proxy or NULL if it could not be found.
           */
-         TaskActorProxy *FindSubTaskProxy(const std::string &name);
+         TaskActorProxy *FindSubTask(const std::string &name);
 
          /**
           * Searches this task's list of sub tasks for the specified child.
           * @param id The unique id of the task to search for.
           * @return The requested proxy or NULL if it could not be found.
           */
-         TaskActorProxy *FindSubTaskProxy(const dtCore::UniqueId &id);
+         TaskActorProxy *FindSubTask(const dtCore::UniqueId &id);
 
          /**
-          * Fills the specified vector with all of this task's direct children.
-          * @return The list of sub tasks owned by this task.
+          * @return A const list of sub tasks owned by this task.
           */
-         const std::vector<dtCore::RefPtr<TaskActorProxy> > &GetAllSubTaskProxies() const
+         const std::vector<dtCore::RefPtr<TaskActorProxy> > &GetAllSubTasks() const
          {
             return mSubTaskProxies;
          }
 
          /**
+          * Fills the specified vector with all of this task's direct children.
+          */
+         void GetAllSubTasks(std::vector<TaskActorProxy*>& toFill);
+         
+         /**
+          * Fills the specified vector with all of this task's direct children.
+          */
+         void GetAllSubTasks(std::vector<const TaskActorProxy*>& toFill) const;
+
+         /**
           * Gets the number of sub tasks owned by this task.
           * @return The number of sub tasks.
           */
-        unsigned GetNumSubTaskProxies() const { return unsigned(mSubTaskProxies.size()); }
+         unsigned GetSubTaskCount() const { return unsigned(mSubTaskProxies.size()); }
 
          /**
           * This method exists for the property system.  Note, this method is a no-op.
@@ -330,6 +345,21 @@ namespace dtActors
          bool IsTopLevelTask() const { return mParentTaskProxy == NULL; }
 
       protected:
+
+         /**
+          * Sets the group parameter to populate the list of subtasks.
+          * @param subTasks the group of tasks.  It should contain NamedActorParameters with the ids of all the subtask proxies.
+          * @see dtDAL::NamedGroupParameter
+          * @see dtDAL::NamedActorParameter
+          */
+         void SetSubTaskGroup(const dtDAL::NamedGroupParameter& subTasks);
+         
+         /**
+          * @return a new NamedGroupParameter containing NamedActorParameters with the ids of all the subtask proxies.
+          * @see dtDAL::NamedGroupParameter
+          * @see dtDAL::NamedActorParameter
+          */
+         dtCore::RefPtr<dtDAL::NamedGroupParameter> GetSubTaskGroup() const;
 
          /**
           * Destroys the task actor proxy.

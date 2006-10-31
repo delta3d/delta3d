@@ -18,11 +18,12 @@
  *
  * Matthew W. Campbell
  */
-#include "dtActors/taskactorgameevent.h"
+#include <dtActors/taskactorgameevent.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtGame/basemessages.h>
 #include <dtGame/messagetype.h>
 #include <dtGame/gamemanager.h>
+#include <dtGame/invokable.h>
 
 namespace dtActors
 {

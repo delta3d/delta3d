@@ -23,7 +23,6 @@
 
 #include "export.h"
 #include <dtGame/environmentactor.h>
-#include <dtABC/weather.h>
 
 class DT_EXAMPLE_EXPORT TestGameEnvironmentActor : public dtGame::EnvironmentActor
 {

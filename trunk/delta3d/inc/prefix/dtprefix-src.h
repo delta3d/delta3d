@@ -7,8 +7,9 @@
 #include <cstdio>
 #include <string>
 #include <vector>
+#include <set>
 #include <map>
-#include <sstream>
+//#include <sstream>
 #include <algorithm>
 
 #if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
@@ -29,7 +30,7 @@
 #include <osg/Math>
 #include <osg/io_utils>
 
-#include <cppunit/extensions/HelperMacros.h>
+//#include <cppunit/extensions/HelperMacros.h>
 
 #endif
 #endif

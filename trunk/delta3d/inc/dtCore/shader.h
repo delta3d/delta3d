@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * Matthew W. Campbell
+ * Matthew W. Campbell, Curtiss Murphy
  */
 #ifndef DELTA_SHADER
 #define DELTA_SHADER
@@ -45,6 +45,8 @@ namespace dtCore
     * @note Although it contains methods for setting vertex and fragment programs,
     *    the shader itself could support fixed function effects as well; however it is
     *    tailored towards the programmable pipeline.
+    * @note If you are using this class, you should also be using the ShaderManager. 
+    *    If so, be sure you are modifying an instance of a Shader as opposed to a template. 
     * @note
     *    Each shader has a list of parameters associated with it.  These may be used
     *    by the shader and or the objects using the shader in any way they see fit.
@@ -151,8 +153,8 @@ namespace dtCore
           * Updates any parameter state which may have changed on this shader since the
           * last update.
           * @note This does not rebind any changed shader sources.  In order to rebind,
-          *   the ShaderManager's AssignShader method must be called.
-          * @see ShaderManager::AssignShader
+          *   the ShaderManager's AssignShaderFromTemplate method must be called.
+          * @see ShaderManager::AssignShaderFromTemplate
           */
          virtual void Update();
 
@@ -202,6 +204,13 @@ namespace dtCore
           */
          bool IsDirty() const { return mIsDirty; }
 
+         /**
+          * Makes a deep copy of the shader and all its parameters. Used when a user assigns
+          * a shader to a node using ShaderManager::AssignShaderFromTempalte.
+          * @return the cloned shader instance with cloned parameters.
+          */
+         dtCore::Shader *Clone() const;
+
       protected:
 
          /**
@@ -213,8 +222,8 @@ namespace dtCore
          Shader &operator=(const Shader &rhs);
          Shader(const Shader &rhs);
 
-         void SetParentGroup(ShaderGroup *parent) { mParentGroup = parent; }
-         ShaderGroup *GetParentGroup() const { return mParentGroup; }
+         //void SetParentGroup(ShaderGroup *parent) { mParentGroup = parent; }
+         //ShaderGroup *GetParentGroup() const { return mParentGroup; }
 
       private:
          void SetVertexShader(osg::Shader &shader) { mVertexShader = &shader; }
@@ -229,8 +238,11 @@ namespace dtCore
          //floats, ints, or special parameters like simulation time, or simulation delta time.
          std::map<std::string,dtCore::RefPtr<ShaderParameter> > mParameters;
 
+         // Note - removed mParentGroup since it was only used when you mark a shader dirty.  Since 
+         // a template shader can never be marked dirty and an instanced Shader doesn't need a parent group, 
+         // this is no longer needed.
          //Parent group containing this shader
-         ShaderGroup *mParentGroup;
+         //ShaderGroup *mParentGroup;
          bool mIsDirty;
 
          //These are set by the shader manager when this shader is added since these

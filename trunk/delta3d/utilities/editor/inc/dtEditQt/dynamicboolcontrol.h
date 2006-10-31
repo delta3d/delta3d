@@ -22,8 +22,8 @@
 #ifndef DELTA_DYNAMICBOOLCONTROL
 #define DELTA_DYNAMICBOOLCONTROL
 
-#include "dtEditQt/dynamicabstractcontrol.h"
-#include "dtEditQt/dynamicsubwidgets.h"
+#include <dtEditQt/dynamicabstractcontrol.h>
+#include <dtEditQt/dynamicsubwidgets.h>
 
 class QWidget;
 
@@ -98,17 +98,6 @@ namespace dtEditQt
           */
         virtual bool isEditable();
 
-        /**
-         * @see DynamicAbstractControl#handleSubEditDestroy
-         */
-        void handleSubEditDestroy(QWidget *widget)
-        {
-            // we have to check - sometimes the destructor won't get called before the 
-            // next widget is created.  Then, when it is called, it sets the NEW editor to NULL!
-            if (widget == temporaryEditControl)
-                temporaryEditControl = NULL;
-        }
-
    public slots: 
 
         /**
@@ -123,6 +112,20 @@ namespace dtEditQt
          * Called when the user selects an item in the combo box
          */
         void itemSelected(int index);
+
+        /**
+         * @see DynamicAbstractControl#handleSubEditDestroy
+         */
+        void handleSubEditDestroy(QWidget *widget, QAbstractItemDelegate::EndEditHint hint = QAbstractItemDelegate::NoHint)
+        {
+            // we have to check - sometimes the destructor won't get called before the 
+            // next widget is created.  Then, when it is called, it sets the NEW editor to NULL!
+            if (widget == temporaryEditControl)
+            {
+               updateData(widget);
+               temporaryEditControl = NULL;
+            }
+        }
 
     protected:
 

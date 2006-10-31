@@ -25,6 +25,7 @@
 #include <dtGame/actorupdatemessage.h>
 #include <dtGame/exceptionenum.h>
 #include <dtGame/gmcomponent.h>
+#include <dtGame/invokable.h>
 #include <dtDAL/actortype.h>
 #include <dtDAL/project.h>
 #include <dtDAL/map.h>
@@ -33,7 +34,9 @@
 #include <dtCore/system.h>
 #include <dtCore/camera.h>
 #include <dtCore/scene.h>
+#include <dtCore/timer.h>
 #include <dtUtil/stringutils.h>
+#include <dtUtil/log.h>
 
 using namespace dtCore;
 
@@ -289,6 +292,14 @@ namespace dtGame
          mStatsNumSendNetworkMessages += 1;
          dtCore::RefPtr<const Message> message = mSendNetworkMessageQueue.front();
          mSendNetworkMessageQueue.pop();
+
+         if (!message.valid())
+         {
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, 
+               "Message in send to network queue is NULL.  Something is majorly wrong with the GameManager.");
+            continue;
+         }
+
          try
          {
             for (std::vector<dtCore::RefPtr<GMComponent> >::iterator i = mComponentList.begin(); i != mComponentList.end(); ++i)
@@ -336,6 +347,14 @@ namespace dtGame
          // Forward to Components first
          dtCore::RefPtr<const Message> message = mSendMessageQueue.front();
          mSendMessageQueue.pop();
+         
+         if (!message.valid())
+         {
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, 
+               "Message in send queue is NULL.  Something is majorly wrong with the GameManager.");
+            continue;
+         }
+         
          for (std::vector<dtCore::RefPtr<GMComponent> >::iterator i = mComponentList.begin(); i != mComponentList.end(); ++i)
          {
             try
@@ -593,7 +612,6 @@ namespace dtGame
             }
             else
                EXCEPT(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION, "ERROR: Actor has the type of a GameActor, but casting it to a GameActorProxy failed.");
-
          }
 
          return ap;
@@ -845,7 +863,6 @@ namespace dtGame
          mDeleteList.push_back(itor->second);
          if (!gameActorProxy.IsRemote())
          {
-
             dtCore::RefPtr<Message> msg = mFactory.CreateMessage(MessageType::INFO_ACTOR_DELETED);
             msg->SetAboutActorId(id);
 
@@ -918,6 +935,8 @@ namespace dtGame
          mGlobalMessageListeners.clear();
          mActorMessageListeners.clear();
          mGameActorProxyMap.clear();
+         mRealTimeTimers.clear();
+         mSimulationTimers.clear();
 
          //all the actors are deleted now, so the problems with clearing the list
          //of deleted actors is not a problem.
@@ -1101,19 +1120,18 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::ChangeMap(const std::string &mapName, bool addBillboards, bool enableDatabasePaging) 
+   void GameManager::CloseCurrentMap()
    {
       //delete all actors after making sure the map loaded correctly.
       DeleteAllActors(true);
+      //Clear out all the events in the event manager because the map that populated them was closed.
+      dtDAL::GameEventManager::GetInstance().ClearAllEvents();
 
-      //Close the old map.
       if (!mLoadedMap.empty() )
       {
+         //Close the old map.
          dtDAL::Map &oldMap = dtDAL::Project::GetInstance().GetMap(mLoadedMap);
          
-         //Clear out all the events in the event manager because the map that populated them was closed.
-         dtDAL::GameEventManager::GetInstance().ClearAllEvents();
-
          dtCore::RefPtr<MapLoadedMessage> closeMessage;
          mFactory.CreateMessage(MessageType::INFO_MAP_UNLOADED, closeMessage);
          closeMessage->SetLoadedMapName(oldMap.GetName());
@@ -1122,7 +1140,16 @@ namespace dtGame
 
          SendMessage(*closeMessage);
       }
+   }
 
+   ///////////////////////////////////////////////////////////////////////////////
+   void GameManager::ChangeMap(const std::string &mapName, bool addBillboards, bool enableDatabasePaging) 
+   {
+      //delete all actors after making sure the map loaded correctly.
+      DeleteAllActors(true);
+
+      CloseCurrentMap();
+      
       dtDAL::Map &map = dtDAL::Project::GetInstance().GetMap(mapName);
 
       std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > proxies;
@@ -1130,9 +1157,6 @@ namespace dtGame
 
       //add all the events in the map to the game manager.
       dtDAL::GameEventManager::GetInstance() = map.GetEventManager();      
-
-      mRealTimeTimers.clear();
-      mSimulationTimers.clear();
 
       //Set the loaded map now even if the code later fails because we
       //want to close the map on the next change.
@@ -1219,6 +1243,8 @@ namespace dtGame
                ++i;
                mRealTimeTimers.erase(toDelete);
             }
+            else
+               ++i; // avoid infinite loop
          }
          else if(i->aboutActor == proxy->GetId() && i->name == name)
          {
@@ -1242,6 +1268,8 @@ namespace dtGame
                ++i;
                mSimulationTimers.erase(toDelete);
             }
+            else
+               ++i; // avoid infinite loop
          }
          else if(i->aboutActor == proxy->GetId() && i->name == name)
          {

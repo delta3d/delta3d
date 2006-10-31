@@ -1,0 +1,1160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
+    <header>
+        <name>GameMap</name>
+        <description></description>
+        <author>William E. Johnson II</author>
+        <comment></comment>
+        <copyright></copyright>
+        <createTimestamp>2006-10-11T17:11:58.0-05:00</createTimestamp>
+        <lastUpdateTimestamp>2006-10-31T09:43:25.0-05:00</lastUpdateTimestamp>
+        <editorVersion>1.3.0</editorVersion>
+        <schemaVersion>1.0</schemaVersion>
+    </header>
+    <libraries>
+        <library>
+            <name>fireFighter</name>
+            <version></version>
+        </library>
+    </libraries>
+    <actors>
+        <actor>
+            <type>HatchActor.HatchActor</type>
+            <id>0565dfbd-e7cc-49a8-b718-5917ca054b69</id>
+            <name>HatchActor</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>4.900000</value1>
+                    <value2>-25.273621</value2>
+                    <value3>1.012182</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>0.450000</value1>
+                    <value2>0.150000</value2>
+                    <value3>1.250000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.500000</value1>
+                    <value2>0.500000</value2>
+                    <value3>1.500000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.188790321350098</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server Local</enumerated>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string></string>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::transparent_box.ive</resourceDisplayName>
+                <resource>StaticMeshes::transparent_box.ive</resource>
+            </property>
+            <property>
+                <name>use cache object</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>InventorySound</name>
+                <resourceType>Sounds</resourceType>
+                <resourceDisplayName></resourceDisplayName>
+                <resource></resource>
+            </property>
+            <property>
+                <name>ItemUseSound</name>
+                <resourceType>Sounds</resourceType>
+                <resourceDisplayName>Sounds::openHatch.wav</resourceDisplayName>
+                <resource>Sounds::openHatch.wav</resource>
+            </property>
+            <property>
+                <name>Activate</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collectable</name>
+                <boolean>false</boolean>
+            </property>
+        </actor>
+        <actor>
+            <type>SecondaryHalonActor.SecondaryHalonActor</type>
+            <id>1399958a-b35c-47eb-a004-e62220676134</id>
+            <name>SecondaryHalonActor</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>-3.000192</value1>
+                    <value2>0.049808</value2>
+                    <value3>3.200599</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>8.167773</value1>
+                    <value2>-25.328424</value2>
+                    <value3>0.378103</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>0.300001</value1>
+                    <value2>0.300001</value2>
+                    <value3>0.250000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>NONE</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.188790321350098</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server Local</enumerated>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string></string>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::transparent_box.ive</resourceDisplayName>
+                <resource>StaticMeshes::transparent_box.ive</resource>
+            </property>
+            <property>
+                <name>use cache object</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>InventorySound</name>
+                <resourceType>Sounds</resourceType>
+                <resourceDisplayName></resourceDisplayName>
+                <resource></resource>
+            </property>
+            <property>
+                <name>ItemUseSound</name>
+                <resourceType>Sounds</resourceType>
+                <resourceDisplayName>Sounds::halon1.wav</resourceDisplayName>
+                <resource>Sounds::halon1.wav</resource>
+            </property>
+            <property>
+                <name>Activate</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collectable</name>
+                <boolean>false</boolean>
+            </property>
+        </actor>
+        <actor>
+            <type>PrimaryHalonActor.PrimaryHalonActor</type>
+            <id>1c13f0ff-d2f4-4ef4-926e-7661c7117a7b</id>
+            <name>PrimaryHalonActor</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000010</value1>
+                    <value2>0.000011</value2>
+                    <value3>-0.499987</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>6.660749</value1>
+                    <value2>-25.375061</value2>
+                    <value3>0.383466</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>0.250000</value1>
+                    <value2>0.250000</value2>
+                    <value3>0.750001</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>NONE</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.188790321350098</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server Local</enumerated>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string></string>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::transparent_box.ive</resourceDisplayName>
+                <resource>StaticMeshes::transparent_box.ive</resource>
+            </property>
+            <property>
+                <name>use cache object</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>InventorySound</name>
+                <resourceType>Sounds</resourceType>
+                <resourceDisplayName></resourceDisplayName>
+                <resource></resource>
+            </property>
+            <property>
+                <name>ItemUseSound</name>
+                <resourceType>Sounds</resourceType>
+                <resourceDisplayName>Sounds::halon1.wav</resourceDisplayName>
+                <resource>Sounds::halon1.wav</resource>
+            </property>
+            <property>
+                <name>Activate</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collectable</name>
+                <boolean>false</boolean>
+            </property>
+        </actor>
+        <actor>
+            <type>GameLevelActor.GameLevelActor</type>
+            <id>40760992-812e-4c7d-abf8-8df8e57916a7</id>
+            <name>GameLevelActor</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-0.765347</value1>
+                    <value2>-18.281340</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>1.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>NONE</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.188790321350098</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server Local</enumerated>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string></string>
+            </property>
+            <property>
+                <name>Model</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:FireDeck:firedeck.osg</resourceDisplayName>
+                <resource>StaticMeshes:FireDeck:firedeck.osg</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>SCBAActor.SCBAActor</type>
+            <id>5114f6c2-fab6-4b22-91ed-c16e5ad32fd3</id>
+            <name>SCBAActor</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>3.381335</value1>
+                    <value2>-18.938587</value2>
+                    <value3>0.849926</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>0.250000</value1>
+                    <value2>1.500000</value2>
+                    <value3>1.400000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>NONE</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.188790321350098</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server Local</enumerated>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string></string>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::transparent_box.ive</resourceDisplayName>
+                <resource>StaticMeshes::transparent_box.ive</resource>
+            </property>
+            <property>
+                <name>use cache object</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>InventorySound</name>
+                <resourceType>Sounds</resourceType>
+                <resourceDisplayName>Sounds::takingEquipment.wav</resourceDisplayName>
+                <resource>Sounds::takingEquipment.wav</resource>
+            </property>
+            <property>
+                <name>ItemUseSound</name>
+                <resourceType>Sounds</resourceType>
+                <resourceDisplayName>Sounds::scba.wav</resourceDisplayName>
+                <resource>Sounds::scba.wav</resource>
+            </property>
+            <property>
+                <name>Activate</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collectable</name>
+                <boolean>true</boolean>
+            </property>
+        </actor>
+        <actor>
+            <type>PlayerActor.PlayerActor</type>
+            <id>69d1fda8-4ff5-4a51-9d38-ceb618b76719</id>
+            <name>PlayerActor</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000010</value1>
+                    <value2>0.000010</value2>
+                    <value3>-89.700020</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-7.599609</value1>
+                    <value2>-17.368670</value2>
+                    <value3>1.246080</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>1.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>NONE</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.188790321350098</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server Local</enumerated>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string></string>
+            </property>
+        </actor>
+        <actor>
+            <type>FireHoseActor.FireHoseActor</type>
+            <id>7a513efa-df06-4fbf-9555-93f3fd3ad214</id>
+            <name>FireHoseActor</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>3.361395</value1>
+                    <value2>-3.529804</value2>
+                    <value3>-6.090933</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>7.228115</value1>
+                    <value2>-26.892677</value2>
+                    <value3>0.308137</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>1.000006</value1>
+                    <value2>1.000009</value2>
+                    <value3>1.000008</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>1.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.188790321350098</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server Local</enumerated>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string></string>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::transparent_box.ive</resourceDisplayName>
+                <resource>StaticMeshes::transparent_box.ive</resource>
+            </property>
+            <property>
+                <name>use cache object</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>InventorySound</name>
+                <resourceType>Sounds</resourceType>
+                <resourceDisplayName>Sounds::hoseReel.wav</resourceDisplayName>
+                <resource>Sounds::hoseReel.wav</resource>
+            </property>
+            <property>
+                <name>ItemUseSound</name>
+                <resourceType>Sounds</resourceType>
+                <resourceDisplayName>Sounds::firehose.wav</resourceDisplayName>
+                <resource>Sounds::firehose.wav</resource>
+            </property>
+            <property>
+                <name>Activate</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collectable</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>StreamFile</name>
+                <resourceType>Particles</resourceType>
+                <resourceDisplayName>Particles::stream1.osg</resourceDisplayName>
+                <resource>Particles::stream1.osg</resource>
+            </property>
+            <property>
+                <name>ValvePosition</name>
+                <float>0</float>
+            </property>
+        </actor>
+        <actor>
+            <type>FuelValveActor.FuelValveActor</type>
+            <id>cda5a7d0-4a93-4919-88ce-12bef0152a7d</id>
+            <name>FuelValveActor</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000010</value1>
+                    <value2>0.000010</value2>
+                    <value3>-0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>6.434292</value1>
+                    <value2>-25.433430</value2>
+                    <value3>1.588582</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>0.400000</value1>
+                    <value2>0.250000</value2>
+                    <value3>0.350000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>NONE</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.188790321350098</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server Local</enumerated>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string></string>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::transparent_box.ive</resourceDisplayName>
+                <resource>StaticMeshes::transparent_box.ive</resource>
+            </property>
+            <property>
+                <name>use cache object</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>InventorySound</name>
+                <resourceType>Sounds</resourceType>
+                <resourceDisplayName></resourceDisplayName>
+                <resource></resource>
+            </property>
+            <property>
+                <name>ItemUseSound</name>
+                <resourceType>Sounds</resourceType>
+                <resourceDisplayName>Sounds::close.wav</resourceDisplayName>
+                <resource>Sounds::close.wav</resource>
+            </property>
+            <property>
+                <name>Activate</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collectable</name>
+                <boolean>false</boolean>
+            </property>
+        </actor>
+        <actor>
+            <type>FireActor.FireActor</type>
+            <id>cfc553e2-693b-4123-a2e7-7f4ad64b8657</id>
+            <name>FireActor</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>-1.199043</value1>
+                    <value2>0.048186</value2>
+                    <value3>-88.299500</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>16.600100</value1>
+                    <value2>-18.550592</value2>
+                    <value3>0.179014</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>1.000006</value1>
+                    <value2>1.000006</value2>
+                    <value3>0.750004</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>NONE</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.188790321350098</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server Local</enumerated>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string></string>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::transparent_box.ive</resourceDisplayName>
+                <resource>StaticMeshes::transparent_box.ive</resource>
+            </property>
+            <property>
+                <name>use cache object</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>InventorySound</name>
+                <resourceType>Sounds</resourceType>
+                <resourceDisplayName></resourceDisplayName>
+                <resource></resource>
+            </property>
+            <property>
+                <name>ItemUseSound</name>
+                <resourceType>Sounds</resourceType>
+                <resourceDisplayName>Sounds::fire.wav</resourceDisplayName>
+                <resource>Sounds::fire.wav</resource>
+            </property>
+            <property>
+                <name>Activate</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collectable</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>FlameFileName</name>
+                <resourceType>Particles</resourceType>
+                <resourceDisplayName>Particles::flame1.osg</resourceDisplayName>
+                <resource>Particles::flame1.osg</resource>
+            </property>
+            <property>
+                <name>SparkFileName</name>
+                <resourceType>Particles</resourceType>
+                <resourceDisplayName>Particles::sparks1.osg</resourceDisplayName>
+                <resource>Particles::sparks1.osg</resource>
+            </property>
+            <property>
+                <name>SmokeFileName</name>
+                <resourceType>Particles</resourceType>
+                <resourceDisplayName>Particles::smoke1.osg</resourceDisplayName>
+                <resource>Particles::smoke1.osg</resource>
+            </property>
+            <property>
+                <name>SmokeCeilingFileName</name>
+                <resourceType>Particles</resourceType>
+                <resourceDisplayName>Particles::smokeceiling.osg</resourceDisplayName>
+                <resource>Particles::smokeceiling.osg</resource>
+            </property>
+            <property>
+                <name>Radius</name>
+                <float>1</float>
+            </property>
+            <property>
+                <name>Intensity</name>
+                <float>1</float>
+            </property>
+        </actor>
+        <actor>
+            <type>FireSuitActor.FireSuitActor</type>
+            <id>ea72b366-ad7c-4a17-a335-eb78cb141b04</id>
+            <name>FireSuitActor</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000010</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>2.622730</value1>
+                    <value2>-18.781021</value2>
+                    <value3>0.939397</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>0.300001</value1>
+                    <value2>1.000006</value2>
+                    <value3>1.250007</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>NONE</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.188790321350098</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server Local</enumerated>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string></string>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::transparent_box.ive</resourceDisplayName>
+                <resource>StaticMeshes::transparent_box.ive</resource>
+            </property>
+            <property>
+                <name>use cache object</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>InventorySound</name>
+                <resourceType>Sounds</resourceType>
+                <resourceDisplayName>Sounds::takingEquipment.wav</resourceDisplayName>
+                <resource>Sounds::takingEquipment.wav</resource>
+            </property>
+            <property>
+                <name>ItemUseSound</name>
+                <resourceType>Sounds</resourceType>
+                <resourceDisplayName></resourceDisplayName>
+                <resource></resource>
+            </property>
+            <property>
+                <name>Activate</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collectable</name>
+                <boolean>true</boolean>
+            </property>
+        </actor>
+    </actors>
+</map>

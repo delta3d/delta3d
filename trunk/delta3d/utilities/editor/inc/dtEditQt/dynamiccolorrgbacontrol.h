@@ -22,7 +22,7 @@
 #ifndef DELTA_DYNAMICCOLORRGBCONTROL
 #define DELTA_DYNAMICCOLORRGBCONTROL
 
-#include "dtEditQt/dynamicabstractparentcontrol.h"
+#include <dtEditQt/dynamicabstractparentcontrol.h>
 
 class QLabel;
 class QColorDialog;
@@ -112,11 +112,6 @@ namespace dtEditQt
          */
         virtual bool isNeedsPersistentEditor();
 
-        /**
-         * @see DynamicAbstractControl#handleSubEditDestroy
-         */
-        virtual void handleSubEditDestroy(QWidget *widget);
-
         /** 
          * @see DynamicAbstractControl#installEventFilterOnControl
          */
@@ -133,6 +128,11 @@ namespace dtEditQt
 
         void actorPropertyChanged(dtCore::RefPtr<dtDAL::ActorProxy> proxy,
             dtCore::RefPtr<dtDAL::ActorProperty> property);
+
+        /**
+         * @see DynamicAbstractControl#handleSubEditDestroy
+         */
+        virtual void handleSubEditDestroy(QWidget *widget, QAbstractItemDelegate::EndEditHint hint = QAbstractItemDelegate::NoHint);
 
     protected:
 

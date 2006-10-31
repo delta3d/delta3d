@@ -18,14 +18,13 @@
  *
  * @author David Guthrie
  */
+#include <prefix/dtgameprefix-src.h>
 #include <vector>
 #include <set>
 #include <string>
 
-#include <stdio.h>
-#include <time.h>
-
-#include <osgDB/FileUtils>
+#include <cstdio>
+#include <ctime>
 
 #include <dtCore/dt.h>
 #include <dtCore/scene.h>
@@ -34,15 +33,15 @@
 
 #include <dtUtil/stringutils.h>
 
-#include <dtDAL/project.h>
-#include <dtDAL/map.h>
 #include <dtUtil/tree.h>
 #include <dtUtil/log.h>
 #include <dtUtil/exception.h>
 #include <dtUtil/stringutils.h>
-#include <dtDAL/mapxml.h>
 #include <dtUtil/fileutils.h>
+#include <dtDAL/mapxml.h>
 #include <dtDAL/datatype.h>
+#include <dtDAL/project.h>
+#include <dtDAL/map.h>
 
 
 #include <cppunit/extensions/HelperMacros.h>
@@ -159,8 +158,8 @@ void ProjectTests::testFileIO()
                 ex.TypeEnum() == dtDAL::ExceptionEnum::ProjectFileNotFound);
         }
 
-        osgDB::makeDirectory(Dir1);
-        osgDB::makeDirectory(Dir2);
+        fileUtils.MakeDirectory(Dir1);
+        fileUtils.MakeDirectory(Dir2);
 
         std::string file1("terrain_simple.ive");
         std::string file2("flatdirt.ive");
@@ -353,10 +352,14 @@ void ProjectTests::testFileIO()
 
         CPPUNIT_ASSERT_MESSAGE((Dir1 + " Should only contain 2 entries.").c_str(), dc.size() == 2);
 
-        for (dtUtil::DirectoryContents::const_iterator i = dc.begin(); i != dc.end(); ++i) {
-            const std::string& s = *i;
-            CPPUNIT_ASSERT_MESSAGE((Dir1 + " Should only contain 2 entries and they should be \"Testing1\" and \"Testing\".").c_str(),
+        if(!dc.empty())
+        {
+           for(dtUtil::DirectoryContents::const_iterator i = dc.begin(); i != dc.end(); ++i) 
+           {
+              const std::string& s = *i;
+              CPPUNIT_ASSERT_MESSAGE((Dir1 + " Should only contain 2 entries and they should be \"Testing1\" and \"Testing\".").c_str(),
                 s == "Testing1" || s == "Testing");
+           }
         }
 
         //Testing the delete functionality tests DirGetFiles
@@ -938,15 +941,11 @@ void ProjectTests::testResources()
 
 void ProjectTests::testProject()
 {
-
     try
     {
         dtDAL::Project& p = dtDAL::Project::GetInstance();
-
         dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-
         std::string originalPathList = dtCore::GetDataFilePathList();
-
 
         try
         {
@@ -960,7 +959,7 @@ void ProjectTests::testProject()
 
         std::string projectDir("TestProject");
 
-        if (osgDB::fileExists(projectDir))
+        if (fileUtils.FileExists(projectDir))
         {
             try
             {
@@ -971,7 +970,7 @@ void ProjectTests::testProject()
                 CPPUNIT_FAIL(ex.What().c_str());
             }
 
-            CPPUNIT_ASSERT_MESSAGE("The project Directory should not yet exist.", !osgDB::fileExists(projectDir));
+            CPPUNIT_ASSERT_MESSAGE("The project Directory should not yet exist.", !fileUtils.FileExists(projectDir));
         }
 
         fileUtils.MakeDirectory(projectDir);
@@ -1035,7 +1034,7 @@ void ProjectTests::testProject()
         }
 
 
-        CPPUNIT_ASSERT_MESSAGE("The project Directory should have been deleted.", !osgDB::fileExists(projectDir));
+        CPPUNIT_ASSERT_MESSAGE("The project Directory should have been deleted.", !fileUtils.FileExists(projectDir));
 
     } catch (const dtUtil::Exception& ex) {
         CPPUNIT_FAIL(ex.What());

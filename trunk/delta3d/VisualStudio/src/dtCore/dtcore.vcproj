@@ -443,6 +443,9 @@
 				RelativePath="..\..\..\inc\dtCore\infiniteterrain.h">
 			</File>
 			<File
+				RelativePath="..\..\..\inc\dtCore\inputcallback.h">
+			</File>
+			<File
 				RelativePath="..\..\..\inc\dtCore\inputdevice.h">
 			</File>
 			<File
@@ -483,6 +486,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtCore\moveearthtransform.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtCore\nodecollector.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtCore\notify.h">

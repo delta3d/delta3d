@@ -20,10 +20,10 @@
 * Curtiss Murphy
 */
 #include <prefix/dtstageprefix-src.h>
-#include "dtEditQt/dynamicabstractcontrol.h"
-#include "dtEditQt/propertyeditormodel.h"
-#include "dtEditQt/propertyeditortreeview.h"
-#include "dtEditQt/propertyeditordelegate.h"
+#include <dtEditQt/dynamicabstractcontrol.h>
+#include <dtEditQt/propertyeditormodel.h>
+#include <dtEditQt/propertyeditortreeview.h>
+#include <dtEditQt/propertyeditordelegate.h>
 #include <QtCore/qdebug.h>
 #include <QtGui/QItemDelegate>
 #include <QtGui/qheaderview.h>
@@ -63,18 +63,7 @@ namespace dtEditQt
     void PropertyEditorTreeView::setRoot(DynamicGroupControl *newRoot)
     {
         propertyModel->setRootControl(newRoot);
-
-        setSelectionMode(QTreeView::SingleSelection);
-        setSelectionBehavior(QTreeView::SelectItems);
-        setRootIsDecorated(true);
-
-        setTabKeyNavigation(true);
-        setEditTriggers(QAbstractItemView::CurrentChanged | QAbstractItemView::SelectedClicked);
-        setRootIndex(propertyModel->indexOf(newRoot));
-
-        header()->setResizeMode(1, QHeaderView::Stretch);
-     
-        resizeColumnToContents(0);
+        reset();
     }
 
     /////////////////////////////////////////////////////////////////////////////////
@@ -109,4 +98,24 @@ namespace dtEditQt
         }
     }
 
+   /////////////////////////////////////////////////////////////////////////////////
+   void PropertyEditorTreeView::reset()
+   {
+      QTreeView::reset();
+      setSelectionMode(QTreeView::SingleSelection);
+      setSelectionBehavior(QTreeView::SelectItems);
+      setRootIsDecorated(true);
+
+      setTabKeyNavigation(true);
+      setEditTriggers(QAbstractItemView::CurrentChanged | QAbstractItemView::SelectedClicked);
+      if (propertyModel->getRootControl() != NULL)
+      {
+         setRootIndex(propertyModel->indexOf(propertyModel->getRootControl()));
+   
+         header()->setResizeMode(1, QHeaderView::Stretch);
+     
+         resizeColumnToContents(0);
+         setExpanded(propertyModel->indexOf(propertyModel->getRootControl()), true);
+      }
+   }
 }

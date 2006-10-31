@@ -32,7 +32,6 @@
 #include <osgParticle/Program>
 #include <osgParticle/Particle>
 #include <osgParticle/ParticleSystem>
-#include <osgParticle/ParticleSystemUpdater>
 
 namespace dtCore
 {
@@ -42,23 +41,42 @@ namespace dtCore
 
       public:
          /// Constructor
-         ParticleLayer() : mProgTypeIsModular(false) {}
+         ParticleLayer();
          
          /// Destructor
-         virtual ~ParticleLayer(){}
+         virtual ~ParticleLayer();
 
          /// Copy Constructor
-         ParticleLayer(const ParticleLayer &copyLayer)
-         {
-            mGeode            = copyLayer.mGeode;
-            mParticleSystem   = copyLayer.mParticleSystem;
-            mEmitterTransform = copyLayer.mEmitterTransform;
-            mModularEmitter   = copyLayer.mModularEmitter;
-            mProgram          = copyLayer.mProgram;
-            mLayerName        = copyLayer.mLayerName;
-            mProgTypeIsModular= copyLayer.mProgTypeIsModular;
-         }
+         ParticleLayer(const ParticleLayer &copyLayer);
        
+         /// mutators for RefPtr Variables and string
+         void SetGeode(osg::Geode& geode);
+         void SetParticleSystem(osgParticle::ParticleSystem& particleSystem);
+         void SetEmitterTransform(osg::MatrixTransform& matrixtransform);
+         void SetModularEmitter(osgParticle::ModularEmitter& modularEmitter);
+         void SetProgram(osgParticle::Program& program);
+         void SetLayerName(const std::string& name);
+
+         /// accessors for RefPtrVariables and string
+         osg::Geode& GetGeode();
+         osgParticle::ParticleSystem&  GetParticleSystem();
+         osg::MatrixTransform& GetEmitterTransform();
+         osgParticle::ModularEmitter& GetModularEmitter();
+         osgParticle::Program& GetProgram();
+         
+         const std::string& GetLayerName() { return mLayerName; }
+
+         /// Methods for telling if the Program is modular or fluid
+         bool IsFluidProgram()              {return !mProgTypeIsModular;}
+         bool IsModularProgram()            {return mProgTypeIsModular ;}
+
+         /// Methods for Getting if the program is modular or fluid
+         void SetIsModularProgram(bool Val) {mProgTypeIsModular  =  Val;}
+         void SetIsFluidProgram(  bool Val) {mProgTypeIsModular  = !Val;}
+         
+         /// Operator overloadin' luvin
+         bool operator==(const ParticleLayer& testLayer) const;
+
       private:   
          /**
          * The geode that holds the drawable particle system, and whose name is
@@ -92,41 +110,6 @@ namespace dtCore
          */
          std::string mLayerName;
 
-      public:
-         /// mutators for RefPtr Variables and string
-         void SetGeode           (osg::Geode& geode)                           {mGeode            = &geode;}
-         void SetParticleSystem  (osgParticle::ParticleSystem& particleSystem) {mParticleSystem   = &particleSystem;}
-         void SetEmitterTransform(osg::MatrixTransform&        matrixtransform){mEmitterTransform = &matrixtransform;}
-         void SetModularEmitter  (osgParticle::ModularEmitter& modularEmitter) {mModularEmitter   = &modularEmitter;}
-         void SetProgram         (osgParticle::Program&        program)        {mProgram          = &program;}
-         void SetLayerName       (const std::string           &name)           {mLayerName     = name;}
-
-         /// accessors for RefPtrVariables and string
-         osg::Geode&                   GetGeode()           {return *mGeode.get();}
-         osgParticle::ParticleSystem&  GetParticleSystem()  {return *mParticleSystem.get();}
-         osg::MatrixTransform&         GetEmitterTransform(){return *mEmitterTransform.get();}
-         osgParticle::ModularEmitter&  GetModularEmitter()  {return *mModularEmitter.get();}
-         osgParticle::Program&         GetProgram()         {return *mProgram.get();}
-         const std::string&            GetLayerName()       {return mLayerName;}
-
-      public:
-         /// Methods for telling if the Program is modular or fluid
-         bool IsFluidProgram()              {return !mProgTypeIsModular;}
-         bool IsModularProgram()            {return mProgTypeIsModular ;}
-
-         /// Methods for Getting if the program is modular or fluid
-         void SetIsModularProgram(bool Val) {mProgTypeIsModular  =  Val;}
-         void SetIsFluidProgram(  bool Val) {mProgTypeIsModular  = !Val;}
-     
-      public:
-         
-         /// Operator overloadin' luvin
-         bool operator==(const ParticleLayer& testLayer) const
-         {
-            return (testLayer.mLayerName == mLayerName);
-         }
-
-      private:
          /// For getting Program type, fluid or modular.
          /// Setuped on setup values functions
          bool mProgTypeIsModular;
@@ -183,6 +166,8 @@ namespace dtCore
           * will be positioned relative to the parent.  If disabled, only
           * the emitter will be positioned relative to the parent.  By
           * default, particle systems are not parent-relative.
+          * 
+          * This must be set before loading the particle file.
           *
           * @param parentRelative true to enable parent-relative mode,
           * false to disable it

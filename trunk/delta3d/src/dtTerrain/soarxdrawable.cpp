@@ -20,25 +20,26 @@
 */
 #include <osg/NodeVisitor>
 
-#include "dtTerrain/soarxdrawable.h"
-#include "dtTerrain/imageutils.h"
-#include "dtTerrain/mathutils.h"
-#include "dtTerrain/terrain.h"
+#include <dtTerrain/soarxdrawable.h>
+#include <dtTerrain/imageutils.h>
+#include <dtTerrain/mathutils.h>
+#include <dtTerrain/terrain.h>
 
-#include "dtUtil/log.h"
-#include "dtCore/scene.h"
+#include <dtUtil/log.h>
+#include <dtCore/scene.h>
 
 #include <osg/Image>
 #include <osg/io_utils>
 #include <osgDB/WriteFile>
+#include <osg/Texture2D>
 
 #include <iostream>
 #include <sstream>
 
-#include "dtTerrain/terraindecorationlayer.h"
-#include "dtTerrain/terraindatareader.h"
-#include "dtTerrain/soarxterrainrenderer.h"
-#include "dtTerrain/heightfield.h"
+#include <dtTerrain/terraindecorationlayer.h>
+#include <dtTerrain/terraindatareader.h>
+#include <dtTerrain/soarxterrainrenderer.h>
+#include <dtTerrain/heightfield.h>
 
 namespace dtTerrain
 { 

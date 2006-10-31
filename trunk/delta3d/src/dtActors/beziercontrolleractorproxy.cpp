@@ -3,6 +3,7 @@
 #include <dtDAL/functor.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/exceptionenum.h>
+#include <sstream>
 
 using namespace dtABC;
 using namespace dtDAL;

@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * Matthew W. Campbell
+ * Matthew W. Campbell, Curtiss Murphy
  */
 #ifndef DELTA_TEXTURESHADERPARAMETER
 #define DELTA_TEXTURESHADERPARAMETER
@@ -132,11 +132,18 @@ namespace dtCore
          virtual void Update() = 0;
 
          /**
+          * Makes a deep copy of the Shader Parameter. Used when a user assigns
+          * a shader to a node because we clone the template shader and its parameters.
+          * Note - Like Update(), this is a pure virtual method that must be implemented on each param.
+          */
+         virtual ShaderParameter *Clone() const = 0;
+
+         /**
           * Sets the path to the texture to use for this parameter.
           * @param path The path to the texture file.  Must be relative to
           *    the current delta3d data file path.
           */
-         void SetTexture(const std::string &path) { mTexturePath = path; SetDirty(true); SetImageSourceDirty(true); }
+         virtual void SetTexture(const std::string &path) { mTexturePath = path; SetDirty(true); SetImageSourceDirty(true); }
 
          /**
           * Gets the current texture path string.
@@ -219,7 +226,7 @@ namespace dtCore
           */
          void SetImageSourceDirty(bool flag) { mImageSrcChanged = flag; }
 
-      private:
+      protected:
          bool mImageSrcChanged;
          unsigned int mTextureUnit;
          const AddressMode *mTextureAddressMode[4]; //s,t,r,q
@@ -227,6 +234,7 @@ namespace dtCore
          dtCore::RefPtr<osg::Texture> mTextureObject;
          std::string mTexturePath;
 
+      private:
          // Disallowed to prevent compile errors on VS2003. It apparently
          // creates this functions even if they are not used, and if
          // this class is forward declared, these implicit functions will

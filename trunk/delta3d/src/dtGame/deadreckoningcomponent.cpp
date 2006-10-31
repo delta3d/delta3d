@@ -173,7 +173,7 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////
    void DeadReckoningHelper::RemoveDRDOF(DeadReckoningDOF &obj)
    {
-      std::list<dtCore::RefPtr<DeadReckoningDOF> >::iterator iterDOF = mDeadReckonDOFS.begin();
+      std::list<dtCore::RefPtr<DeadReckoningDOF> >::iterator iterDOF;
        for(iterDOF = mDeadReckonDOFS.begin();iterDOF != mDeadReckonDOFS.end(); ++iterDOF)
        {
           if(  (obj.mCurrentTime   == (*iterDOF)->mCurrentTime)
@@ -253,12 +253,12 @@ namespace dtGame
          if (mActor != NULL)
             UnregisterActor(*mActor);
             
-         if (mEyePointActor.valid() && mActor->GetId() == mEyePointActor->GetUniqueId())
+         if (mEyePointActor.valid() && message.GetAboutActorId() == mEyePointActor->GetUniqueId())
          {
             mEyePointActor = NULL;
          }
          
-         if (mTerrainActor.valid() && mActor->GetId() == mTerrainActor->GetUniqueId())
+         if (mTerrainActor.valid() && message.GetAboutActorId() == mTerrainActor->GetUniqueId())
          {
             mTerrainActor = NULL;
          }

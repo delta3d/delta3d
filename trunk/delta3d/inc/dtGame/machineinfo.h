@@ -21,7 +21,7 @@
 #ifndef DELTA_MACHINEINFO
 #define DELTA_MACHINEINFO
 
-#include "dtGame/export.h"
+#include <dtGame/export.h>
 #include <dtCore/uniqueid.h>
 #include <string>
 
@@ -151,6 +151,32 @@ namespace dtGame
          std::string mIPAddress;
          unsigned long mTimeStamp;
          unsigned int mPing;
+   };
+   
+   class MachineInfoCompare
+   {
+      public:
+         bool operator()(dtCore::RefPtr<const MachineInfo> first, dtCore::RefPtr<const MachineInfo> second)
+         {
+            if (!first.valid() && !second.valid())
+               return true;
+               
+            if (first.valid() != second.valid())
+               return false;
+               
+            return *first == *second;
+         } 
+
+         bool operator()(dtCore::RefPtr<MachineInfo> first, dtCore::RefPtr<MachineInfo> second)
+         {
+            if (!first.valid() && !second.valid())
+               return true;
+               
+            if (first.valid() != second.valid())
+               return false;
+               
+            return *first == *second;
+         } 
    };
 }
 

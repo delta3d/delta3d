@@ -126,7 +126,18 @@ public class NativeLibraryLaunch
         		//this method looks for the library first within .jar files stored in the Java Web Start cache, then
         		//within the system path. Note that this method appends the appropriate library extension (.dll or .so)
         		//to the file name, so we need to strip the extension if it exists.
-        		System.loadLibrary(Utility.StripExtension(library));
+        		//JOptionPane.showMessageDialog(new JFrame(), "Trying to load from JWS cache: " + Utility.StripExtension(library));
+        		String libLoadName = Utility.StripExtension(library);
+        		
+        		if (_appConfig.GetOperatingSystem() == OperatingSystem.LINUX)
+        		{
+        			if (libLoadName.startsWith("lib"))
+        			{
+        				libLoadName = libLoadName.replaceFirst("lib", "");
+        			}
+        		}
+
+        		System.loadLibrary(libLoadName);
         		
         		NativeLibraryLaunch.logger.info("Library loaded from JWS cache: " + library);
         	}
@@ -135,18 +146,36 @@ public class NativeLibraryLaunch
         		//if we can't find the library via the above method, then see if the library is located in the
         		//library directory using an absolute path (including the library extension). See the Java docs
         		//on the differences between loadLibrary() and load() if needed.
-        		System.load(_appConfig.GetLibraryDirectory() + "/" + library);
-        		
-        		NativeLibraryLaunch.logger.info("Library loaded from program directory: " + _appConfig.GetLibraryDirectory() + "/" + library);
+
+        		try
+        		{
+        			NativeLibraryLaunch.logger.info("Library not in JWS cache; attempting to load from program directory...");
+        			System.load(_appConfig.GetLibraryDirectory() + "/" + library);
+        			NativeLibraryLaunch.logger.info("Library loaded from program directory: " + _appConfig.GetLibraryDirectory() + "/" + library);
+        		}
+        		catch (UnsatisfiedLinkError e2)
+        		{
+        			NativeLibraryLaunch.logger.severe("Could not find library '" + library + "'in JWS cache or program directory; exiting...");
+        			JOptionPane.showMessageDialog(new JFrame(), "Could not find library '" + library + "' in JWS cache or program directory; exiting...");
+        			System.exit(1);
+        		}
         	}
         }
         
         //load Game launch library
-        String gameLaunch = _appConfig.GetLauncherLibrary();
-        String gameLaunchNE = Utility.StripExtension(gameLaunch);
-        System.loadLibrary(gameLaunchNE); //load from JWS-cached .jar file, system path, or run directory
+        String gameLaunch = Utility.StripExtension(_appConfig.GetLauncherLibrary());
+		
+		if (_appConfig.GetOperatingSystem() == OperatingSystem.LINUX)
+		{
+			if (gameLaunch.startsWith("lib"))
+			{
+				gameLaunch = gameLaunch.replaceFirst("lib", "");
+			}
+		}
+		
+		System.loadLibrary(gameLaunch);
         
-        NativeLibraryLaunch.logger.info("Game library loaded from JWS cache: " + gameLaunchNE);
+        NativeLibraryLaunch.logger.info("Game library loaded from JWS cache: " + gameLaunch);
         
         //add data and working directories to command line args that we pass on to the native code
     	AddCommandLineArgs();
@@ -158,11 +187,12 @@ public class NativeLibraryLaunch
         }
         catch (UnsatisfiedLinkError e)
         {
-            NativeLibraryLaunch.logger.severe("Error linking to native JavaLaunch method");
+            NativeLibraryLaunch.logger.severe("Error linking to native JavaLaunch method; exiting...");
+            JOptionPane.showMessageDialog(new JFrame(), "Error linking to native JavaLaunch method; exiting...");
             System.exit(1);
         }
-        
-        //JOptionPane.showMessageDialog(new JFrame(), "Exiting..."); //can be used for debugging purposes
+
+        System.exit(0);
     }
 
     /*
@@ -213,7 +243,18 @@ public class NativeLibraryLaunch
         if (!_appConfig.GetGameLibrary().equals(""))
         {
         	_cmdLineArgs[startPosition + 4] = "-a";
-        	_cmdLineArgs[startPosition + 5] = Utility.StripExtension(_appConfig.GetGameLibrary());
+        	
+        	String appLibrary = Utility.StripExtension(_appConfig.GetGameLibrary());
+    		
+    		if (_appConfig.GetOperatingSystem() == OperatingSystem.LINUX)
+    		{
+    			if (appLibrary.startsWith("lib"))
+    			{
+    				appLibrary = appLibrary.replaceFirst("lib", "");
+    			}
+    		}
+        	
+        	_cmdLineArgs[startPosition + 5] = Utility.StripExtension(appLibrary);
         }
     }
 

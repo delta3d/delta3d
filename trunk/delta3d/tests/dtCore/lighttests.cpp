@@ -18,7 +18,7 @@
  *
  * @author Erik Johnson 06/2/2006
  */
-
+#include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtCore/infinitelight.h>
 #include <dtCore/refptr.h>

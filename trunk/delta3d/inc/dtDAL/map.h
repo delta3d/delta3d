@@ -195,6 +195,18 @@ namespace dtDAL
           * @return the proxy found or NULL if it was not found.  This should be stored in a ref_ptr once received.
           */
          ActorProxy* GetProxyById(const dtCore::UniqueId& id);
+         
+         /**
+          * Templated version of GetProxyById that takes a pointer to the desired type and assigns it by dynamic casting
+          * to the that type.
+          * @param id the id of the actor to find.
+          * @param proxy Output Parametr. A pointer to a proxy by reference.
+          */
+         template <typename ProxyType>
+         void GetProxyById(const dtCore::UniqueId& id, ProxyType*& proxy)
+         {
+            proxy = dynamic_cast<ProxyType*>(GetProxyById(id));
+         }
 
          /**
           * Searches all open maps to find the proxy with the given unique id.
@@ -202,6 +214,18 @@ namespace dtDAL
           * @return the proxy found or NULL if it was not found.  This should be stored in a ref_ptr once received.
           */
          const ActorProxy* GetProxyById(const dtCore::UniqueId& id) const;
+
+         /**
+          * Templated version of GetProxyById that takes a pointer to the desired type and assigns it by dynamic casting
+          * to the that type.
+          * @param id the id of the actor to find.
+          * @param proxy Output Parametr. A pointer to a proxy by reference.
+          */
+         template <typename ProxyType>
+         void GetProxyById(const dtCore::UniqueId& id, const ProxyType*& proxy) const
+         {
+            proxy = dynamic_cast<ProxyType*>(GetProxyById(id));
+         }
 
          /**
           * non-const search for proxies.

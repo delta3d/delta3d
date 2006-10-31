@@ -1,7 +1,7 @@
 #include <dtGUI/resourceprovider.h>
+#include <dtCore/globals.h>
 #include <dtUtil/log.h>
 
-#include <osgDB/FileUtils>
 
 using namespace dtGUI;
 
@@ -20,7 +20,7 @@ CEGUI::DefaultResourceProvider()
 void ResourceProvider::loadRawDataContainer(const CEGUI::String& filename, CEGUI::RawDataContainer& output, const CEGUI::String& resourceGroup)
 {
    //find file
-   std::string foundFilename = osgDB::findDataFile(filename.c_str());
+   std::string foundFilename = dtCore::FindFileInPathList(filename.c_str());
    if (foundFilename.empty())
    {
       dtUtil::Log::GetInstance().LogMessage( dtUtil::Log::LOG_WARNING, __FUNCTION__,

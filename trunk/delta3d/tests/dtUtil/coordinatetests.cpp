@@ -19,7 +19,7 @@
  * @author David Guthrie
  * @author Chris Osborn
  */
-
+#include <prefix/dtgameprefix-src.h>
 #include <dtUtil/log.h>
 #include <dtUtil/exception.h>
 #include <dtUtil/coordinates.h>

@@ -1,5 +1,5 @@
 #include <dtScript/scriptmanager.h>
-#include <osgDB/FileUtils>
+#include <dtUtil/fileutils.h>
 
 using namespace dtScript;
 
@@ -27,7 +27,7 @@ void ScriptManager::Load( const std::string& filename )
 
 void ScriptManager::Run( const std::string& filename )
 { 
-   if( osgDB::fileExists( filename ) )
+   if( dtUtil::FileUtils::GetInstance().FileExists( filename ) )
    {
       Load( filename );
    }

@@ -84,7 +84,7 @@ FPSMotionModel::FPSMotionModel(  Keyboard* keyboard,
       SetDefaultMappings(keyboard, mouse);
    }
    
-   AddSender(System::Instance());
+   AddSender(&System::GetInstance());
    
    mMouse = mouse;
 
@@ -98,7 +98,7 @@ FPSMotionModel::FPSMotionModel(  Keyboard* keyboard,
  */
 FPSMotionModel::~FPSMotionModel()
 {
-   RemoveSender(System::Instance());
+   RemoveSender(&System::GetInstance());
 
    mLookUpDownAxis->RemoveAxisListener(mLookUpDownListener);
    mTurnLeftRightAxis->RemoveAxisListener(mLookLeftRightListener);

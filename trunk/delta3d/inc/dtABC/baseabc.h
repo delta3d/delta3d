@@ -26,7 +26,8 @@
 
 #include <dtABC/export.h>
 #include <dtCore/refptr.h>      // for members
-#include <Producer/Keyboard>    // for key enums
+
+#include <Producer/Keyboard>
 
 namespace dtDAL
 {

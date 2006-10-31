@@ -2,10 +2,12 @@
 #include <dtCore/pointaxis.h>
 #include <dtCore/scene.h>
 #include <dtCore/transformable.h>
+#include <dtCore/boundingboxvisitor.h>
 #include <dtUtil/log.h>
 #include <dtUtil/matrixutil.h>
 
 #include <osg/Geode>
+#include <osg/MatrixTransform>
 #include <osg/NodeVisitor>
 #include <osg/LineWidth>
 #include <osg/Material>
@@ -15,8 +17,13 @@
 #include <osg/StateSet>
 #include <osg/Transform>
 #include <osg/TriangleFunctor>
-#include <osg/CameraNode>
 #include <osg/Version> // For #ifdef
+
+#include <ode/ode.h>
+
+#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR == 1 && OSG_VERSION_MINOR == 0 
+#include <osg/CameraNode>
+#endif
 
 #include <cassert>
 
@@ -51,7 +58,8 @@ Transformable::Transformable( const std::string& name )
       mMeshIndices(NULL),
       mGeomGeod(NULL),
       mNode(new osg::MatrixTransform),
-      mRenderingGeometry(false)
+      mRenderingGeometry(false), 
+      mRenderProxyNode(false)
 {
    RegisterInstance(this);
 
@@ -88,11 +96,20 @@ Transformable::~Transformable()
    DeregisterInstance(this);
 }
 
+osg::Node* Transformable::GetOSGNode() { return mNode.get(); }
+const osg::Node* Transformable::GetOSGNode() const { return mNode.get(); }
+
 void Transformable::ReplaceMatrixNode( osg::MatrixTransform* matrixTransform )
 {
+   if (matrixTransform == NULL)
+   {
+      LOG_ERROR("The matrix node may not be set to NULL.");
+      return;
+   }
+   
    // Save off the parent
-   RefPtr<DeltaDrawable> oldParent(NULL);
-   RefPtr<Scene> oldScene(NULL);
+   RefPtr<DeltaDrawable> oldParent;
+   RefPtr<Scene> oldScene;
    if( GetParent() != NULL )
    {
       oldParent = GetParent();
@@ -176,7 +193,7 @@ void Transformable::ReplaceMatrixNode( osg::MatrixTransform* matrixTransform )
  */
 bool Transformable::GetAbsoluteMatrix( osg::Node* node, osg::Matrix& wcMatrix )
 {
-   if( node != 0 )
+   if( node != NULL )
    {
       osg::NodePathList nodePathList = node->getParentalNodePaths();
 
@@ -373,6 +390,8 @@ void Transformable::RenderProxyNode( const bool enable )
    {
       GetMatrixNode()->removeChild( GetProxyNode() );
    }
+
+   mRenderProxyNode = enable;
 }
 
 void Transformable::SetNormalRescaling( const bool enable )
@@ -382,11 +401,15 @@ void Transformable::SetNormalRescaling( const bool enable )
    if( enable )   state = osg::StateAttribute::ON;
    else           state = osg::StateAttribute::OFF;
 
-   GetOSGNode()->getOrCreateStateSet()->setMode( GL_RESCALE_NORMAL, state );
+   if(GetOSGNode() != NULL)
+      GetOSGNode()->getOrCreateStateSet()->setMode(GL_RESCALE_NORMAL, state);
 }
 
 bool Transformable::GetNormalRescaling() const
 {
+   if(GetOSGNode() == NULL)
+      return false;
+
    osg::StateAttribute::GLModeValue state = GetOSGNode()->getStateSet()->getMode( GL_RESCALE_NORMAL );
 
    if( state & osg::StateAttribute::ON )
@@ -521,6 +544,57 @@ void Transformable::GetCollisionGeomDimensions( std::vector<float>& dimensions )
          break;
    }
 }
+
+/** 
+ * Set the category bits of this collision geom. Here's the defaults:
+ *
+ * dtABC::ProximityTrigger  0
+ *
+ * dtCore::Camera:          1  
+ * dtCore::Compass:         2
+ * dtCore::InfiniteTerrain: 3
+ * dtCore::ISector:         4
+ * dtCore::Object:          5
+ * dtCore::ParticlSsystem:  6
+ * dtCore::Physical:        7
+ * dtCore::PointAxis:       8
+ * dtCore::PositionalLight: 9
+ * dtCore::SpotLight:       10
+ * dtCore::Transformable:   11
+ * 
+ * dtChar::Character:       12
+ * dtAudio::Listener:       13
+ * dtAudio::Sound:          14
+ * dtHLA::Entity:           15
+ * dtTerrain::Terrain:      16
+ * 
+ */
+void Transformable::SetCollisionCategoryBits( unsigned long bits )
+{
+   dGeomSetCategoryBits( mGeomID, bits );
+}
+
+unsigned long Transformable::GetCollisionCategoryBits() const
+{
+   return dGeomGetCategoryBits(mGeomID);
+}
+
+/** 
+ * Set the collide bits of this collision geom. If you want this geom to
+ * collide with a geom of category bit 00000010 for example, make sure these
+ * collide bits contain 00000010. The UNSIGNED_BIT macro in dtCore/macros.h
+ * comes in handy here. UNSIGNED_BIT(4) = 00000100
+ */
+void Transformable::SetCollisionCollideBits( unsigned long bits )
+{
+   dGeomSetCollideBits( mGeomID, bits );
+}
+
+unsigned long Transformable::GetCollisionCollideBits() const
+{
+   return dGeomGetCollideBits(mGeomID);
+}
+
 
 /**
 * Sets whether or not collisions detection will be performed.

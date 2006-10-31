@@ -33,6 +33,10 @@
 #include <osg/Vec4>
 #include <osg/Version>
 
+#include <osg/Image>
+#include <Producer/Camera>
+#include <osgDB/WriteFile>
+
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
 {
@@ -50,6 +54,37 @@ namespace dtCore
    class CameraGroup;
    class DeltaWin;
    class Scene;
+
+   class DT_CORE_EXPORT ScreenShotCallback : public Producer::Camera::Callback
+   {
+      public :
+         ScreenShotCallback() : TakeScreenShotNextFrame(false){}
+
+         void SetNameToOutPut(std::string& name)
+         {
+            TakeScreenShotNextFrame  = true;
+            NameOfScreenShotToOutPut = name + ".jpg";
+         }
+
+         virtual void operator()(const Producer::Camera &camera)
+         {
+            if(TakeScreenShotNextFrame)
+            {
+               TakeScreenShotNextFrame = false;
+               osg::ref_ptr<osg::Image> image = new osg::Image;
+               int x,y;
+               unsigned int width, height;
+               camera.getProjectionRectangle( x,y,width, height);
+               image->allocateImage(width, height, 1, GL_RGB, GL_UNSIGNED_BYTE);
+               image->readPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE);
+               osgDB::writeImageFile( *image.get(), NameOfScreenShotToOutPut.c_str() ); // jpg, rgb, png, bmp
+            }
+         }
+
+      private:
+         bool  TakeScreenShotNextFrame;
+         std::string NameOfScreenShotToOutPut;
+   };
 
    /**
     * A dtCore::Camera is a view into the Scene.  It requires a dtCore::DeltaWin to 
@@ -135,6 +170,10 @@ namespace dtCore
 
       ///Get the supplied DeltaWin (could be NULL)
       DeltaWin* GetWindow();
+
+      /// Take a screen shot at end of next frame
+      void TakeScreenShot(std::string& nameToOutPut);
+
       /** 
        *  Redraw the view.
        *  @param lastCamera Pass true if this is the last camera
@@ -252,7 +291,7 @@ namespace dtCore
 
       Producer::RenderSurface* mDefaultRenderSurface;
       RefPtr<_SceneHandler> mSceneHandler;
-
+      RefPtr<ScreenShotCallback> ScreenShotTaker;
    };
 }
 

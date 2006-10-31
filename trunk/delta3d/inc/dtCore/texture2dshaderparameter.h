@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * Matthew W. Campbell
+ * Matthew W. Campbell, Curtiss Murphy
  */
 #ifndef DELTA_TEXTURE2DSHADERPARAMETER
 #define DELTA_TEXTURE2DSHADERPARAMETER
@@ -53,9 +53,51 @@ namespace dtCore
          virtual void AttachToRenderState(osg::StateSet &stateSet);
 
          /**
+          * Each shader parameter has this chance to clean itself up from the
+          * stateset. It should remoave whatever attributes and properties
+          * that it set when it was attached.
+          * @param stateSet The render state to cleanup.
+          */
+         virtual void DetachFromRenderState(osg::StateSet &stateSet);
+
+         /**
+          * Sets the Filters and wrap modes on the Texture2D object.
+          */
+         void ApplyTexture2DValues();
+
+         /**
           * Updates the texture attributes attached to this shader parameter.
           */
          virtual void Update();
+
+         /**
+          * Sets the path to the texture to use for this parameter.
+          * @param path The path to the texture file.  Must be relative to
+          *    the current delta3d data file path.
+          */
+         virtual void SetTexture(const std::string &path);
+
+         /**
+          * Loads the image.  Called when SetTexture is called.
+          */ 
+         void LoadImage();
+
+         /**
+          * Overriden from TextureShaderParameter
+          * Sets the texture addressing mode.  This is applied when texture
+          * coordinates wishing to access this texture parameter fall outside
+          * of the range 0.0 - 1.0.
+          * @param axis The axis enumeration to assign the address mode to.
+          * @param mode The address mode enumeration to assign.
+          */
+         void SetAddressMode(const TextureAxis &axis, const AddressMode &mode);
+
+         /**
+          * Makes a deep copy of the Shader Parameter. Used when a user assigns
+          * a shader to a node because we clone the template shader and its parameters.
+          * Note - Like Update(), this is a pure virtual method that must be implemented on each param.
+          */
+         virtual ShaderParameter *Clone() const;
 
       protected:
 

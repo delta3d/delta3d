@@ -87,19 +87,6 @@ namespace dtEditQt
           */
          virtual bool isEditable();
 
-         /**
-          * @see DynamicAbstractControl#handleSubEditDestroy
-          */
-         void handleSubEditDestroy(QWidget *widget)
-         {
-            // we have to check - sometimes the destructor won't get called before the 
-            // next widget is created.  Then, when it is called, it sets the NEW editor to NULL!
-            if (widget == temporaryEditControl)
-               temporaryEditControl = NULL;
-            else if(widget == temporaryGotoButton)
-               temporaryGotoButton = NULL;
-         }
-
       public slots: 
 
          /**
@@ -115,6 +102,20 @@ namespace dtEditQt
          void itemSelected(int index);
 
          void onGotoClicked();
+
+         /**
+          * @see DynamicAbstractControl#handleSubEditDestroy
+          */
+         void handleSubEditDestroy(QWidget *widget, QAbstractItemDelegate::EndEditHint hint = QAbstractItemDelegate::NoHint)
+         {
+            if (widget != NULL && temporaryEditControl != NULL
+                && widget->isAncestorOf(temporaryEditControl))
+            {
+               updateData(widget);
+               temporaryEditControl = NULL;
+               temporaryGotoButton = NULL;
+            }
+         }
 
       private:
 

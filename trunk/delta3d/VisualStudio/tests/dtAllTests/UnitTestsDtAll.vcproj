@@ -26,6 +26,7 @@
 				RuntimeLibrary="3"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
+				PrecompiledHeaderThrough="prefix/dtgameprefix-src.h"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="4"
@@ -82,6 +83,7 @@ cd $(TargetDir)
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
+				PrecompiledHeaderThrough="prefix/dtgameprefix-src.h"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="3"/>
@@ -272,6 +274,21 @@ cd $(TargetDir)
 				RelativePath="..\..\..\tests\dtAI\plannertests.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\tests\precomp.cpp">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath="..\..\..\tests\dtDAL\projecttests.cpp">
 			</File>
 			<File
@@ -322,6 +339,9 @@ cd $(TargetDir)
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
+				RelativePath="..\..\..\inc\prefix\dtgameprefix-src.h">
+			</File>
+			<File
 				RelativePath="..\..\..\tests\dtGUI\guiapp.h">
 			</File>
 			<File
@@ -340,6 +360,18 @@ cd $(TargetDir)
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}">
 			<File
 				RelativePath="..\..\..\utilities\Lms\WebPackager\package_utils.cpp">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\..\utilities\Lms\WebPackager\package_utils.h">

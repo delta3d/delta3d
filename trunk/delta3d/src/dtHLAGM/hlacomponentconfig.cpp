@@ -23,15 +23,17 @@
 #include <dtUtil/exception.h>
 #include <dtUtil/fileutils.h>
 
-#include "dtHLAGM/hlacomponentconfig.h"
-#include "dtHLAGM/exceptionenum.h"
-#include "dtHLAGM/hlacomponent.h"
-#include "dtHLAGM/objecttoactor.h"
-#include "dtHLAGM/attributetoproperty.h"
-#include "dtHLAGM/parametertoparameter.h"
-#include "dtHLAGM/interactiontomessage.h"
-#include "dtHLAGM/distypes.h"
-#include "dtHLAGM/hlafomconfigxml.h"
+#include <dtCore/globals.h>
+
+#include <dtHLAGM/hlacomponentconfig.h>
+#include <dtHLAGM/exceptionenum.h>
+#include <dtHLAGM/hlacomponent.h>
+#include <dtHLAGM/objecttoactor.h>
+#include <dtHLAGM/attributetoproperty.h>
+#include <dtHLAGM/parametertoparameter.h>
+#include <dtHLAGM/interactiontomessage.h>
+#include <dtHLAGM/distypes.h>
+#include <dtHLAGM/hlafomconfigxml.h>
 
 #include <xercesc/util/XMLUniDefs.hpp>
 #include <xercesc/util/XMLUni.hpp>
@@ -77,7 +79,7 @@ namespace dtHLAGM
       mXercesParser->setFeature(xercesc_dt::XMLUni::fgXercesUseCachedGrammarInParse, true);
       mXercesParser->setFeature(xercesc_dt::XMLUni::fgXercesCacheGrammarFromParse, true);
 
-      std::string schemaFileName = osgDB::findDataFile("Federations/HLAMapping.xsd");
+      std::string schemaFileName = dtCore::FindFileInPathList("Federations/HLAMapping.xsd");
 
       if (!dtUtil::FileUtils::GetInstance().FileExists(schemaFileName))
       {
@@ -102,7 +104,7 @@ namespace dtHLAGM
    {
         try
         {
-            std::string path = osgDB::findDataFile(dataFilePath);
+            std::string path = dtCore::FindFileInPathList(dataFilePath);
             if (!dtUtil::FileUtils::GetInstance().FileExists(path))
             {
                mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,

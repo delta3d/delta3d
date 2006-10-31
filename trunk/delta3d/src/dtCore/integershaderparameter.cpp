@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * Matthew W. Campbell
+ * Matthew W. Campbell, Curtiss Murphy
  */
 #include <prefix/dtcoreprefix-src.h>
 #include "dtCore/integershaderparameter.h"
@@ -55,4 +55,14 @@ namespace dtCore
       SetDirty(false);
    }
 
+   ///////////////////////////////////////////////////////////////////////////////
+   ShaderParameter *IntegerShaderParameter::Clone() const
+   {
+      IntegerShaderParameter *newParam = new IntegerShaderParameter(GetName());
+
+      newParam->SetDirty(false);
+      newParam->mValue = mValue;
+
+      return newParam;
+   }
 }

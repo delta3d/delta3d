@@ -234,4 +234,39 @@ namespace dtGame
       GetGameManager()->SendNetworkMessage(*message);
    }
 
+   //////////////////////////////////////////////////////////////////////////
+   void LogController::RequestAddIgnoredActor(const dtCore::UniqueId& actorID)
+   {
+      dtCore::RefPtr<Message> message = 
+         GetGameManager()->GetMessageFactory().CreateMessage(
+         MessageType::LOG_REQ_ADD_IGNORED_ACTOR);
+      message->SetAboutActorId(actorID);
+
+      GetGameManager()->SendMessage(*message);
+      GetGameManager()->SendNetworkMessage(*message);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void LogController::RequestRemoveIgnoredActor(const dtCore::UniqueId& actorID)
+   {
+      dtCore::RefPtr<Message> message = 
+         GetGameManager()->GetMessageFactory().CreateMessage(
+         MessageType::LOG_REQ_REMOVE_IGNORED_ACTOR);
+      message->SetAboutActorId(actorID);
+
+      GetGameManager()->SendMessage(*message);
+      GetGameManager()->SendNetworkMessage(*message);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void LogController::RequestClearIgnoreList()
+   {
+      dtCore::RefPtr<Message> message = 
+         GetGameManager()->GetMessageFactory().CreateMessage(
+         MessageType::LOG_REQ_CLEAR_IGNORE_LIST);
+
+      GetGameManager()->SendMessage(*message);
+      GetGameManager()->SendNetworkMessage(*message);
+   }
+
 }

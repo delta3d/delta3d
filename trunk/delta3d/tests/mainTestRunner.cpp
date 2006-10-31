@@ -18,7 +18,7 @@
  *
  * @author David Guthrie
  */
-
+#include <prefix/dtgameprefix-src.h>
 #include <cppunit/CompilerOutputter.h>
 #include <cppunit/extensions/TestFactoryRegistry.h>
 #include <cppunit/TestResult.h>

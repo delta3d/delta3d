@@ -20,7 +20,7 @@
 * Curtiss Murphy
 */
 #include <prefix/dtstageprefix-src.h>
-#include "dtEditQt/propertyeditormodel.h"
+#include <dtEditQt/propertyeditormodel.h>
 #include <QtCore/qdebug.h>
 
 namespace dtEditQt
@@ -43,19 +43,19 @@ namespace dtEditQt
 		#if (QT_VERSION == 0x040001)
 		DynamicAbstractControl *parentProp = privateData(parent);
 
-        if (!parent.isValid() || parentProp == NULL)
-            // special case for root.
-            parentProp = rootControl;
+      if (!parent.isValid() || parentProp == NULL)
+         // special case for root.
+         parentProp = rootControl;
 
-        DynamicAbstractControl *childProp = parentProp->getChild(row);
-        if (childProp != NULL) 
+      DynamicAbstractControl *childProp = parentProp->getChild(row);
+      if (childProp != NULL) 
 		{
-            return createIndex(row, column, childProp);
-        } 
+         return createIndex(row, column, childProp);
+      } 
 		else 
 		{
-            return QModelIndex();
-        }
+         return QModelIndex();
+      }
 		#else
 		DynamicAbstractControl *parentProp = privateData(parent);
 		DynamicAbstractControl *childProp = NULL;
@@ -71,14 +71,14 @@ namespace dtEditQt
 		if(parentProp != NULL)
 			childProp = parentProp->getChild(row);
         
-        if (childProp != NULL) 
+      if (childProp != NULL) 
 		{
             return createIndex(row, column, childProp);
-        }
+      }
 		else 
 		{
             return QModelIndex();
-        }
+      }
 		#endif
     }
 

@@ -22,8 +22,8 @@
 #ifndef DELTA_DYNAMICSTRINGCONTROL
 #define DELTA_DYNAMICSTRINGCONTROL
 
-#include "dtEditQt/dynamicabstractcontrol.h"
-#include "dtEditQt/dynamicsubwidgets.h"
+#include <dtEditQt/dynamicabstractcontrol.h>
+#include <dtEditQt/dynamicsubwidgets.h>
 
 
 namespace dtDAL 
@@ -94,17 +94,6 @@ namespace dtEditQt
          */
         virtual bool isEditable();
 
-        /**
-         * @see DynamicAbstractControl#handleSubEditDestroy
-         */
-        void handleSubEditDestroy(QWidget *widget)
-        {
-            // we have to check - sometimes the destructor won't get called before the 
-            // next widget is created.  Then, when it is called, it sets the NEW editor to NULL!
-            if (widget == temporaryEditControl)
-                temporaryEditControl = NULL;
-        }
-
     public slots: 
 
         /**
@@ -114,6 +103,20 @@ namespace dtEditQt
 
         void actorPropertyChanged(ActorProxyRefPtr proxy,
             ActorPropertyRefPtr property);
+
+        /**
+         * @see DynamicAbstractControl#handleSubEditDestroy
+         */
+        void handleSubEditDestroy(QWidget *widget, QAbstractItemDelegate::EndEditHint hint = QAbstractItemDelegate::NoHint)
+        {
+            // we have to check - sometimes the destructor won't get called before the 
+            // next widget is created.  Then, when it is called, it sets the NEW editor to NULL!
+            if (widget == temporaryEditControl)
+            {
+               updateData(widget);
+               temporaryEditControl = NULL;
+            }
+        }
 
     protected:
 

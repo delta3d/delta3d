@@ -318,15 +318,15 @@ namespace dtDAL
 
 
          /**
-         * if this returns true, this proxy will not be saved into the map
-         * useful for having proxies that own other proxies
-         */
+          * if this returns true, this proxy will not be saved into the map
+          * useful for having proxies that own other proxies
+          */
          virtual bool IsGhostProxy() const;
 
 
          /**
-         * Called when this actor is removed from a map
-         */
+          * Called when this actor is removed from a map
+          */
          virtual void OnRemove() const;
 
          /**
@@ -337,6 +337,12 @@ namespace dtDAL
           * @return The cloned actor proxy.
           */
          virtual dtCore::RefPtr<ActorProxy> Clone();
+
+         /**
+          * Returns true if called from STAGE
+          * @return true if STAGE is running, false if not
+          */
+         const bool IsInSTAGE() const;
 
          /**
           * Allow access to the ActorPluginRegistry.  This is so it can set the
@@ -372,9 +378,15 @@ namespace dtDAL
           */
          dtCore::RefPtr<ActorProxyIcon> mBillBoardIcon;
 
+         /// Only call from build property map
+         void RemoveProperty(const std::string& nameToRemove);
+
       private:
          ///Map of properties.
          std::map<std::string, dtCore::RefPtr<ActorProperty> > mPropertyMap;
+
+         ///vector of properties (for order).
+         std::vector<dtCore::RefPtr<ActorProperty> > mProperties;
 
          /// Map of propery names to resource values
          std::map<std::string, ResourceDescriptor> mResourceMap;

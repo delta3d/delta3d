@@ -22,12 +22,16 @@
 #define DELTA_GAMEMESHACTOR_H
 
 #include <dtGame/gameactor.h>
-//#include "dtUtil/mathdefines.h"
 #include <dtDAL/plugin_export.h>
 #include <dtCore/loadable.h>
 
 //#include <map>
 //#include <vector>
+
+namespace dtCore
+{
+   class Scene;
+}
 
 namespace dtActors
 {
@@ -62,7 +66,29 @@ namespace dtActors
          /**
           * Called when the actor has been added to the game manager.
           */
-         virtual void OnEnteredWorld();
+         virtual void AddedToScene(dtCore::Scene* scene);
+
+         /**
+          * Sets whether we will use the cache when we load files.  This must be set
+          * before loading the mesh or it will have no effect.  To make this work, the 
+          * model is now loaded on entering the world the first time.
+          * @param value new use cache value (default is true)
+          */
+         void SetUseCache(bool value)
+         {
+            mUseCache = value;
+         }
+
+         /**
+          * Gets whether we will use the cache when we load files.  This must be set
+          * before loading the mesh or it will have no effect.  To make this work, the 
+          * model is now loaded on entering the world the first time.
+          * @return the use cache value (default is true).
+          */
+         bool GetUseCache()
+         {
+            return mUseCache;
+         }
 
       protected:
 
@@ -71,8 +97,6 @@ namespace dtActors
           */
          virtual ~GameMeshActor();
 
-
-      private:
          /**
           * Inner class for implementing the loadable interface
           */
@@ -81,11 +105,26 @@ namespace dtActors
             public:
                GameMeshLoader() {};
                ~GameMeshLoader() {};
+
+               /**
+                * Sets the mesh file name on the super class.  Provided since the 
+                * base class doesn't let you set this without using load.
+                */
+               void SetMeshFilename(const std::string &newFilename)
+               {
+                  mFilename = newFilename;
+               }
          };
 
+      private:
+         // Does the work of loading the mesh. 
+         void LoadMesh();
+         
+         GameMeshLoader mLoader; 
+         dtCore::RefPtr<osg::Node> mMeshNode;
          // tracks whether we should do a notify when we change the mesh
-         bool mAlreadyInWorld;
-
+         bool mAlreadyInScene;
+         bool mUseCache;
    };
 
    /**
