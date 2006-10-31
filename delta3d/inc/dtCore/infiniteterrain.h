@@ -29,6 +29,7 @@
 #include <dtCore/transformable.h>
 #include <dtUtil/noiseutility.h>
 #include <osg/Vec3>
+#include <ode/collision.h>
 
 namespace dtCore
 {

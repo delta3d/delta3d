@@ -26,6 +26,8 @@
 #include <dtDAL/exceptionenum.h>
 #include <dtABC/proximitytrigger.h>
 
+#include <sstream>
+
 using namespace dtABC;
 using namespace dtCore;
 using namespace dtDAL;

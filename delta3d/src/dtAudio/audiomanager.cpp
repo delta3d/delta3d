@@ -1,7 +1,6 @@
  #include <cassert>
 #include <stack>
 
-#include <osgDB/FileUtils>
 #include <osg/Vec3>
 #include <osg/io_utils>
 
@@ -14,6 +13,7 @@
 #include <dtAudio/audiomanager.h>
 #include <dtCore/system.h>
 #include <dtCore/camera.h>
+#include <dtCore/globals.h>
 #include <dtUtil/deprecationmgr.h>
 #include <dtUtil/log.h>
 #include <dtUtil/mathdefines.h>
@@ -610,7 +610,7 @@ AudioManager::LoadFile( const std::string& file )
       return false;
    }
 
-   std::string filename = osgDB::findDataFile(file);
+   std::string filename = dtCore::FindFileInPathList(file);
    if( filename.empty() )
    {
       // still no file name, bail...
@@ -1796,7 +1796,7 @@ AudioManager::SetRelative( SoundObj* snd )
       {
          // stereo!
          // set flag and bail
-         Log::GetInstance().LogMessage(Log::LOG_WARNING, __FUNCTION__, 
+         Log::GetInstance().LogMessage(Log::LOG_INFO, __FUNCTION__, 
             "AudioManager: A stereo Sound can't be positioned in 3D space");
          snd->ResetState( Sound::POSITION );
          return;

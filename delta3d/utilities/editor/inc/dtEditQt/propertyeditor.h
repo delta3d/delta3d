@@ -65,9 +65,22 @@ namespace dtEditQt
 
     public:
         /**
-        * Constructor
-        */
+         * Constructor
+         */
         PropertyEditor(QMainWindow * parent);
+
+        /**
+         * Convenience method for making the property editor commit it changes.  There are
+         * some cases where an event can fire than needs to current state of the actor properties, but
+         * an edit is in process.  Calling this will clear the focus of the property editor to make it
+         * commit the changes.
+         */
+        void CommitCurrentEdits()
+        {
+           QWidget* lastFocused = focusWidget();
+           if (lastFocused != NULL && lastFocused->hasFocus())
+               lastFocused->clearFocus();
+        }
 
     public slots:
 
@@ -80,6 +93,9 @@ namespace dtEditQt
             ActorPropertyRefPtr property);
 
         void proxyNameChanged(ActorProxyRefPtr proxy, std::string oldName);
+
+        ///This will mark the propertyeditor as closing so it won't update while the app is shutting down.
+        void OnEditorClosing();
 
     private:
 

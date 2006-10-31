@@ -129,6 +129,7 @@ void TestAAR::OnStartup(dtGame::GameManager &gameManager)
    gameManager.GetMessageFactory().RegisterMessageType<dtGame::Message>(TestAARMessageType::RESET);
    gameManager.GetMessageFactory().RegisterMessageType<dtGame::Message>(TestAARMessageType::REQUEST_ALL_CONTROLLER_UPDATES);
    gameManager.GetMessageFactory().RegisterMessageType<dtGame::Message>(TestAARMessageType::PLACE_ACTOR);
+   gameManager.GetMessageFactory().RegisterMessageType<dtGame::Message>(TestAARMessageType::PLACE_IGNORED_ACTOR);
    gameManager.GetMessageFactory().RegisterMessageType<dtGame::Message>(TestAARMessageType::PRINT_TASKS);
    gameManager.GetMessageFactory().RegisterMessageType<dtGame::Message>(TestAARMessageType::UPDATE_TASK_CAMERA);
 

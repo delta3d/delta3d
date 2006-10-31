@@ -23,6 +23,7 @@
 #include <dtUtil/log.h>
 
 #include <dtCore/uniqueid.h>
+#include <dtCore/globals.h>
 
 #include <dtDAL/actortype.h>
 
@@ -34,26 +35,27 @@
 #include <osg/Vec3d>
 #include <osg/Endian>
 #include <osg/io_utils>
-#include <osgDB/FileUtils>
+//#include <osgDB/FileNameUtils>
 
-#include "dtHLAGM/hlacomponent.h"
-#include "dtHLAGM/objecttoactor.h"
-#include "dtHLAGM/distypes.h"
-#include "dtHLAGM/attributetoproperty.h"
-#include "dtHLAGM/parametertoparameter.h"
-#include "dtHLAGM/interactiontomessage.h"
-#include "dtHLAGM/parametertranslator.h"
-#include "dtHLAGM/rprparametertranslator.h"
-
-#if defined(__APPLE__)
-#include <sys/socket.h>
-#include <netinet/in.h>
-#elif !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
-#include <sys/socket.h>
-#include <linux/in.h>
-#endif
+#include <dtHLAGM/hlacomponent.h>
+#include <dtHLAGM/objecttoactor.h>
+#include <dtHLAGM/distypes.h>
+#include <dtHLAGM/attributetoproperty.h>
+#include <dtHLAGM/parametertoparameter.h>
+#include <dtHLAGM/interactiontomessage.h>
+#include <dtHLAGM/parametertranslator.h>
+#include <dtHLAGM/rprparametertranslator.h>
 
 #if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
+
+   #if defined(__APPLE__)
+      #include <sys/socket.h>
+      #include <netinet/in.h>
+   #else
+      #include <sys/socket.h>
+      #include <linux/in.h>
+   #endif
+
 typedef unsigned int SOCKET;
 
 typedef struct win_addr {
@@ -69,7 +71,9 @@ typedef struct win_addr {
 } win_addr;
 
 #else
+
 typedef int socklen_t;
+
 #endif
 
 /**
@@ -357,8 +361,9 @@ namespace dtHLAGM
 
       try
       {
-         std::string fedFile = osgDB::findDataFile(fedFilename).c_str();
+         std::string fedFile = dtCore::FindFileInPathList(fedFilename).c_str();
          mRTIAmbassador->createFederationExecution(executionName.c_str(), fedFile.c_str());
+         //mRTIAmbassador->createFederationExecution(osgDB::getStrippedName(fedFile).c_str(), ".fed");
       }
       catch(RTI::FederationExecutionAlreadyExists&)
       {
@@ -663,7 +668,7 @@ namespace dtHLAGM
          if (!mActorToObjectMap.insert(std::make_pair(&objectToActor.GetActorType(), &objectToActor)).second)
          {
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-               "Unable to mapping for actor type %s.%s and classname %s.  A mapping already exists.  Forcing mapping to be remote only.",
+               "Unable to register mapping for actor type %s.%s and classname %s.  A mapping already exists.  Forcing mapping to be remote only.",
                objectToActor.GetActorType().GetCategory().c_str(),
                objectToActor.GetActorType().GetName().c_str(),
                objectToActor.GetObjectClassName().c_str());

@@ -27,7 +27,6 @@
 
 #include <dtCore/base.h>
 #include <dtCore/refptr.h>
-#include <Producer/KeyboardMouse>   // for InputCallback's base class
 #include <vector>                   // for member
 #include <osg/Vec2>
 
@@ -36,6 +35,7 @@ namespace Producer
 {
    class InputArea;
    class RenderSurface;
+   class KeyboardMouse;
 }
 /// @endcond
 
@@ -43,8 +43,8 @@ namespace dtCore
 {
    class Keyboard;
    class Mouse;
-
-
+   class InputCallback;
+   
    /**
    * \brief The rendering area that a dtCore::Camera will render to
    *
@@ -213,38 +213,9 @@ namespace dtCore
       bool mShowCursor;
 
    public:
-      /// A class to support operating system callbacks for the keyboard and mouse.
-      class InputCallback : public Producer::KeyboardMouseCallback
-      {
-      public:
-         InputCallback(Keyboard* keyboard, Mouse* mouse);
 
-         // virtual methods
-         void mouseScroll(Producer::KeyboardMouseCallback::ScrollingMotion sm);
-         void mouseMotion(float x, float y);
-         void passiveMouseMotion(float x, float y);
-         void buttonPress(float x, float y, unsigned int button);
-         void doubleButtonPress(float x, float y, unsigned int button);
-         void buttonRelease(float x, float y, unsigned int button);
-         void keyPress(Producer::KeyCharacter kc);
-         void keyRelease(Producer::KeyCharacter kc);
-         void specialKeyPress(Producer::KeyCharacter kc);
-         void specialKeyRelease(Producer::KeyCharacter kc);
-
-         void SetKeyboard(Keyboard* kb);
-         void SetMouse(Mouse* m);
-
-      private:
-         InputCallback();  ///< not implemented by design
-         InputCallback& operator=( const InputCallback& );
-         InputCallback(const InputCallback&);  ///< not implemented by design
-
-         RefPtr<Keyboard> mKeyboard;
-         RefPtr<Mouse> mMouse;
-      };
-
-      InputCallback* GetInputCallback() { return mInputCallback.get(); }
-      const InputCallback* GetInputCallback() const { return mInputCallback.get(); }
+      InputCallback* GetInputCallback();
+      const InputCallback* GetInputCallback() const;
 
    private:
       RefPtr<InputCallback> mInputCallback;

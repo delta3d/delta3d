@@ -37,8 +37,8 @@ class JobLaunchConfig : public JobXML
       void Execute( PackageProfile *profile );
 
    private:
-      void removeDebugCharFromFilename( std::string &filename );
-      void removeLibAndExtension( std::string &filename );
+      std::string removeDebugCharFromFilename( const std::string &filename );
+      std::string removeLibAndExtension( const std::string &filename );
 };
 
 #endif

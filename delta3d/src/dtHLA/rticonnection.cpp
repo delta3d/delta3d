@@ -22,12 +22,13 @@
 #include <osg/Material>
 #include <osg/StateSet>
 #include <osg/Endian>
-#include <osgDB/FileUtils>
+
 #include <osgUtil/IntersectVisitor>
 
 #include <xercesc/util/XMLString.hpp>
 
 #include <dtCore/system.h>
+#include <dtCore/globals.h>
 #include <dtUtil/log.h>
 #include <dtUtil/matrixutil.h>
 #include <dtUtil/xercesutils.h>
@@ -179,7 +180,7 @@ void RTIConnection::JoinFederationExecution(std::string executionName,
    {
       mRTIAmbassador.createFederationExecution(
          executionName.c_str(),
-         osgDB::findDataFile(fedFilename).c_str()
+         dtCore::FindFileInPathList(fedFilename).c_str()
       );
    }
    catch( RTI::FederationExecutionAlreadyExists& )

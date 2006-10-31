@@ -28,11 +28,13 @@
 #include <dtGame/actorupdatemessage.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/gmcomponent.h>
+#include <dtGame/invokable.h>
 
 #include <dtCore/shadergroup.h>
 #include <dtCore/shader.h>
 #include <dtCore/shadermanager.h>
 #include <dtDAL/actortype.h>
+#include <dtDAL/exceptionenum.h>
 
 
 namespace dtGame
@@ -99,6 +101,28 @@ namespace dtGame
         dtDAL::MakeFunctorRet(ga, &GameActor::GetShaderGroup),
         "Sets the shader group on the game actor.",GROUPNAME));
 	}
+
+   //////////////////////////////////////////////////////////////////////////////
+   GameActor& GameActorProxy::GetGameActor() 
+   {
+      GameActor* ga = dynamic_cast<GameActor*> (mActor.get());
+      if(ga == NULL)
+      {
+         EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type GameActor");
+      }
+      return *ga;
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+   const GameActor& GameActorProxy::GetGameActor() const
+   {
+      const GameActor* ga = dynamic_cast<const GameActor*> (mActor.get());
+      if(ga == NULL)
+      {
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type GameActor", __FILE__,__LINE__);
+      }
+      return *ga;
+   }
 
    //////////////////////////////////////////////////////////////////////////////
    void GameActorProxy::NotifyActorUpdate()
@@ -354,6 +378,13 @@ namespace dtGame
       {
          GetGameManager()->RegisterForMessages(type,*this, invokableName);
       }
+      else
+      {
+         std::ostringstream oss;
+         oss << "Could not register the messagetype: " << type.GetName() << " with the invokable: " <<
+                invokableName << " because the game manager is NULL.";
+         LOGN_ERROR("gameactor.cpp", oss.str())
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -363,6 +394,13 @@ namespace dtGame
       if (GetGameManager() != NULL)
       {
          GetGameManager()->RegisterForMessagesAboutActor(type,targetActorId, *this, invokableName);
+      }
+      else
+      {
+         std::ostringstream oss;
+         oss << "Could not register the messagetype: " << type.GetName() << " with the invokable: " <<
+            invokableName << " because the game manager is NULL.";
+         LOGN_ERROR("gameactor.cpp", oss.str())
       }
    }
 
@@ -469,7 +507,7 @@ namespace dtGame
    void GameActor::OnShaderGroupChanged()
    {
       const dtCore::ShaderGroup *shaderGroup =
-         dtCore::ShaderManager::GetInstance().FindShaderGroup(mShaderGroup);
+         dtCore::ShaderManager::GetInstance().FindShaderGroupTemplate(mShaderGroup);
 
       /*if (GetOSGNode() == NULL)
       {
@@ -490,7 +528,7 @@ namespace dtGame
       {
          if (defaultShader != NULL)
          {
-            dtCore::ShaderManager::GetInstance().AssignShader(*defaultShader, *GetOSGNode());
+            dtCore::ShaderManager::GetInstance().AssignShaderFromTemplate(*defaultShader, *GetOSGNode());
          }
          else
          {

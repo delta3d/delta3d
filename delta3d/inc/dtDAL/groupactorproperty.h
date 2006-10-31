@@ -33,6 +33,10 @@ namespace dtDAL
     * This property gets and sets a NamedGroupParameter, which can hold any number of other NamedParameters.
     * This is passed to the functors for the actor property which must then handle the data in way that makes
     * sense the actor.  Additionally, a string name can be passed to the property in the constructor
+    *
+    * @note When loading and saving GroupActorProperties, only the NamedParameter types that have associated actor property types
+    *       can be saved.  The rest will be ignored.  There are no plans no solve this issue. 
+    * @note Also, note that currently Vec3d and Vec3f parameters will be loaded as Vec3. There are plans to fix this.
     */
    class DT_DAL_EXPORT GroupActorProperty : public ActorProperty
    {
@@ -94,15 +98,19 @@ namespace dtDAL
           */
          dtCore::RefPtr<NamedGroupParameter> GetValue() const;
 
+         const std::string& GetEditorType() const { return mEditorType; };
+
      protected:
      
          virtual ~GroupActorProperty();
 
       private:
          ///Set functor taking one parameter and optionally returning a value.
-         Functor1<const NamedGroupParameter&> SetPropFunctor;
+         Functor1<const NamedGroupParameter&> mSetPropFunctor;
 
          ///Get functor which returns a value and takes no parameters.
-         Functor0Ret<dtCore::RefPtr<NamedGroupParameter> > GetPropFunctor;
+         Functor0Ret<dtCore::RefPtr<NamedGroupParameter> > mGetPropFunctor;
+         ///Used by stage
+         const std::string mEditorType;
    };
 }

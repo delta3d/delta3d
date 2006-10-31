@@ -20,15 +20,20 @@
  */
 
 #include "testplayer.h"
+#include <osg/MatrixTransform>
 #include <osgDB/ReadFile>
+
 #include <dtCore/isector.h>
+
+#include <dtDAL/enginepropertytypes.h>
+
 #include <dtGame/messagetype.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/basemessages.h>
 #include <dtGame/actorupdatemessage.h>
-#include <dtDAL/enginepropertytypes.h>
+#include <dtGame/invokable.h>
 
-#include <osg/io_utils>
+
 #include <iostream>
 
 //////////////////////////////////////////////////////////////////////////////
@@ -99,7 +104,7 @@ void TestPlayer::HandleTick(double deltaSimTime, bool forceGroundClamp)
          //std::cout << "Got an intersection!" << std::endl;
          osgUtil::IntersectVisitor &iv = mIsector->GetIntersectVisitor();
          osg::Vec3 p = iv.getHitList(mIsector->GetLineSegment())[0].getWorldIntersectPoint();
-         pos.z() = p.z() + 2.55f;
+         pos.z() = p.z() + 1.0f; //2.55f;
       }
 
       osg::Vec3 xyz = GetGameActorProxy().GetRotation();

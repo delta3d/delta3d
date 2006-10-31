@@ -31,13 +31,10 @@
 
 namespace dtEditQt 
 {
+   class DynamicGroupControl;
+   class PropertyEditorDelegate;
 
-//class PropertyEditorModel;
-//class Delegate;
-    class DynamicGroupControl;
-    class PropertyEditorDelegate;
-
-    /**
+   /**
     * This class is the tree control for the properties of a proxy.  It knows 
     * how to draw itself based on the underlying data in the PropertyEditorModel.  
     * This clas follows the model/view architecture for QT. 
@@ -48,52 +45,54 @@ namespace dtEditQt
     * to see the original.  The original class is distributable according to the
     * standard QT license (GPL).
     */
-    class PropertyEditorTreeView: public QTreeView
-    {
-        Q_OBJECT
-    public:
-        /**
-         * The row colors are made public constants so that controls that are 
-         * embedded inside the table can determine what  color backgrounds to use.
-         */
-		static const QColor ROW_COLOR_EVEN;
-        static const QColor ROW_COLOR_ODD;
-
-
-        /**
-         * Constructor
-         */
-        PropertyEditorTreeView(PropertyEditorModel *model, QWidget *parent = 0);
-
-        /**
-         * Destructor
-         */
-        ~PropertyEditorTreeView();
-
-        /**
-         * Is the tree view read only?   Yes it is.
-         */
-        bool isReadOnly() const 
-        {
+   class PropertyEditorTreeView: public QTreeView
+   {
+      Q_OBJECT
+      public:
+         /**
+          * The row colors are made public constants so that controls that are 
+          * embedded inside the table can determine what  color backgrounds to use.
+          */
+         static const QColor ROW_COLOR_EVEN;
+         static const QColor ROW_COLOR_ODD;
+   
+   
+         /**
+          * Constructor
+          */
+         PropertyEditorTreeView(PropertyEditorModel *model, QWidget *parent = 0);
+   
+         /**
+          * Destructor
+          */
+         ~PropertyEditorTreeView();
+   
+         /**
+          * Is the tree view read only?   Yes it is.
+          */
+         bool isReadOnly() const 
+         {
             return true;
-        }
-
-        /**
-         * Used to set the root item.  This causes several settings to occur.
-         */         
-        void setRoot(DynamicGroupControl *newRoot);
-
-    signals:
-        void propertyChanged(DynamicAbstractControl *property);
-
-    protected slots:
-        virtual void currentChanged ( const QModelIndex & current, const QModelIndex & previous ) ;
-        virtual void selectionChanged ( const QItemSelection & selected, const QItemSelection & deselected );
-
-    private:
-        PropertyEditorModel *propertyModel;
-        PropertyEditorDelegate *delegate;
-    };
+         }
+   
+         /**
+          * Used to set the root item.  This causes several settings to occur.
+          */         
+         void setRoot(DynamicGroupControl *newRoot);
+   
+      signals:
+         void propertyChanged(DynamicAbstractControl *property);
+      public slots:
+         virtual void reset();
+      
+      protected slots:
+         virtual void currentChanged ( const QModelIndex & current, const QModelIndex & previous ) ;
+         virtual void selectionChanged ( const QItemSelection & selected, const QItemSelection & deselected );
+   
+      private:
+         PropertyEditorModel *propertyModel;
+         PropertyEditorDelegate *delegate;
+   };
 
 };
 

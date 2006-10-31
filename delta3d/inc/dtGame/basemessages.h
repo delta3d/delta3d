@@ -16,14 +16,15 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * William E. Johnson II and David Guthrie
+ * William E. Johnson II 
+ * David Guthrie
  */
 #ifndef DELTA_BASEMESSAGES
 #define DELTA_BASEMESSAGES
 
-#include "dtGame/message.h"
-#include "dtGame/messageparameter.h"
-#include "dtDAL/gameevent.h"
+#include <dtGame/message.h>
+#include <dtGame/messageparameter.h>
+#include <dtDAL/gameevent.h>
 
 namespace dtGame
 {

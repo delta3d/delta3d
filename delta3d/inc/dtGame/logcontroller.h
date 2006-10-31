@@ -60,7 +60,9 @@ namespace dtGame
           * Sends a request to the server logger component to tell it to change state to 
           * IDLE.  Only valid in Record or Playback states (sends request anyway).  This 
           * message will terminate any currently active record or playback and cause 
-          * all open logger files to be closed and released.  
+          * all open logger files to be closed and released.   
+          * Transitions to idle state from playback state will clear all playback
+          * actors from the game manager.
           */
          virtual void RequestChangeStateToIdle();
         
@@ -129,7 +131,7 @@ namespace dtGame
 
          /**
           * Sends a request to the server logger component to change the auto keyframe 
-          * intervale (in seconds).  If this interval is not 0 on the server, it will 
+          * interval (in seconds).  If this interval is not 0 on the server, it will 
           * automatically log a keyframe at this interval.  It is STRONGLY recommended 
           * that you keep this interval far apart (like 5-10 minutes).  A keyframe is a 
           * fairly expensive operation.  If you set this interval small, your performance 
@@ -137,6 +139,29 @@ namespace dtGame
           * @param interval The interval to send to the server.
           */
          virtual void RequestSetAutoKeyframeInterval(double interval);
+
+         /**
+          * Sends a request to the server logger component to add an actor to an
+          * ignore list. The ignore list prevents all its listed actors from being
+          * recorded while the logger is in record state.
+          * @param actorID The ID of the actor to be ignored in recording.
+          */
+         virtual void RequestAddIgnoredActor(const dtCore::UniqueId& actorID);
+
+         /**
+          * Sends a request to the server logger component to remove an actor from an
+          * ignore list. The ignore list prevents all its listed actors from being
+          * recorded while the logger is in record state.
+          * @param actorID The ID of the actor to be removed from the recording ignore list.
+          */
+         virtual void RequestRemoveIgnoredActor(const dtCore::UniqueId& actorID);
+
+         /**
+          * Sends a request to the server logger component to remove all actors from an
+          * ignore list. The ignore list prevents all its listed actors from being
+          * recorded while the logger is in record state.
+          */
+         virtual void RequestClearIgnoreList();
 
          /**
           * Returns the last received LogStatus.  No Set, since only this object should set it.

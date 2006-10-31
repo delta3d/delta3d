@@ -39,7 +39,6 @@
 
 #include <osgDB/FileNameUtils>
 
-#include <dtEditQt/global.h>
 #include <dtEditQt/uiresources.h>
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/editorevents.h>
@@ -56,6 +55,7 @@
 #include <dtEditQt/mapsaveasdialog.h>
 #include <dtEditQt/mainwindow.h>
 #include <dtEditQt/preferencesdialog.h>
+#include <dtEditQt/propertyeditor.h>
 #include <dtEditQt/undomanager.h>
 #include <dtEditQt/taskeditor.h>
 
@@ -488,7 +488,8 @@ namespace dtEditQt
     void EditorActions::slotFileSaveMap()
     {
         LOG_INFO("Saving current map.");
-
+        //if (EditorData::getInstance().getMainWindow()->isActiveWindow())
+        //   EditorData::getInstance().getMainWindow()->
         //Save the current map without asking the user for permission.
         saveCurrentMapChanges(false);
         slotRestartAutosave();
@@ -654,6 +655,10 @@ namespace dtEditQt
     void EditorActions::slotEditDuplicateActors()
     {
         LOG_INFO("Duplicating current actor selection.");
+
+        //This commits any changes in the property editor.
+        PropertyEditor& propEditor = EditorData::getInstance().getMainWindow()->GetPropertyEditor();
+        propEditor.CommitCurrentEdits();
 
         ViewportOverlay::ActorProxyList &selection =
                 ViewportManager::getInstance().getViewportOverlay()->getCurrentActorSelection();
@@ -1128,6 +1133,10 @@ namespace dtEditQt
     //////////////////////////////////////////////////////////////////////////////
     int EditorActions::saveCurrentMapChanges(bool askPermission)
     {
+        //This commits any changes in the property editor.
+        PropertyEditor& propEditor = EditorData::getInstance().getMainWindow()->GetPropertyEditor();
+        propEditor.CommitCurrentEdits();
+
         dtDAL::Map *currMap = EditorData::getInstance().getCurrentMap();
         int result = QMessageBox::NoButton;
 
@@ -1186,6 +1195,5 @@ namespace dtEditQt
             return result; //Return the users response.
         }
     }
-
 }
 

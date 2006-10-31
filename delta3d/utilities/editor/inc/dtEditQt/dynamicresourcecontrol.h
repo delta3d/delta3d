@@ -22,9 +22,9 @@
 #ifndef DELTA_DYNAMICRESOURCECONTROL
 #define DELTA_DYNAMICRESOURCECONTROL
 
-#include "dtEditQt/dynamicabstractparentcontrol.h"
-#include "dtEditQt/dynamicsubwidgets.h"
-#include "dtEditQt/dynamiclabelcontrol.h"
+#include <dtEditQt/dynamicabstractparentcontrol.h>
+#include <dtEditQt/dynamicsubwidgets.h>
+#include <dtEditQt/dynamiclabelcontrol.h>
 
 namespace dtDAL 
 {
@@ -103,11 +103,6 @@ namespace dtEditQt
           */
         virtual bool isEditable();
 
-         /**
-          * @see DynamicAbstractControl#handleSubEditDestroy
-          */
-        virtual void handleSubEditDestroy(QWidget *widget);
-
         /** 
           * @see DynamicAbstractControl#installEventFilterOnControl
          */
@@ -129,6 +124,11 @@ namespace dtEditQt
 
         void actorPropertyChanged(ActorProxyRefPtr proxy,
             ActorPropertyRefPtr property);
+
+         /**
+          * @see DynamicAbstractControl#handleSubEditDestroy
+          */
+        virtual void handleSubEditDestroy(QWidget *widget, QAbstractItemDelegate::EndEditHint hint = QAbstractItemDelegate::NoHint);
 
     protected:
 

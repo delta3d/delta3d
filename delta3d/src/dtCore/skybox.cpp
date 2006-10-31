@@ -1,23 +1,23 @@
 /* 
-* Delta3D Open Source Game and Simulation Engine 
-* Copyright (C) 2004-2005 MOVES Institute 
-*
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free 
-* Software Foundation; either version 2.1 of the License, or (at your option) 
-* any later version.
-*
-* This library is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
-* details.
-*
-* You should have received a copy of the GNU Lesser General Public License 
-* along with this library; if not, write to the Free Software Foundation, Inc., 
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
-*
-*Bradley Anderegg
-*/
+ * Delta3D Open Source Game and Simulation Engine 
+ * Copyright (C) 2004-2005 MOVES Institute 
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free 
+ * Software Foundation; either version 2.1 of the License, or (at your option) 
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License 
+ * along with this library; if not, write to the Free Software Foundation, Inc., 
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ *
+ * Bradley Anderegg
+ */
 #include <prefix/dtcoreprefix-src.h>
 #include <dtCore/skybox.h>
 
@@ -253,8 +253,8 @@ void SkyBox::AngularMapProfile::Config(osg::Group* pGroup)
 	dtCore::RefPtr<osg::Shader> vertShader = new osg::Shader(osg::Shader::VERTEX);
 	dtCore::RefPtr<osg::Shader> fragShader = new osg::Shader(osg::Shader::FRAGMENT);
 
-   std::string vertFile = osgDB::findDataFile("/shaders/AngularMapSkyBox.vert");
-   std::string fragFile = osgDB::findDataFile("/shaders/AngularMapSkyBox.frag");
+   std::string vertFile = dtCore::FindFileInPathList("/shaders/AngularMapSkyBox.vert");
+   std::string fragFile = dtCore::FindFileInPathList("/shaders/AngularMapSkyBox.frag");
 
    vertShader->loadShaderSourceFromFile(vertFile);
    fragShader->loadShaderSourceFromFile(fragFile);
@@ -362,8 +362,8 @@ void SkyBox::CubeMapProfile::Config(osg::Group* pGroup)
 	mProgram->addShader(vertShader.get());
 	mProgram->addShader(fragShader.get());
 
-   std::string vertFile = osgDB::findDataFile("/shaders/CubeMapSkyBox.vert");
-   std::string fragFile = osgDB::findDataFile("/shaders/CubeMapSkyBox.frag");
+   std::string vertFile = dtCore::FindFileInPathList("/shaders/CubeMapSkyBox.vert");
+   std::string fragFile = dtCore::FindFileInPathList("/shaders/CubeMapSkyBox.frag");
 
 	vertShader->loadShaderSourceFromFile(vertFile);
 	fragShader->loadShaderSourceFromFile(fragFile);

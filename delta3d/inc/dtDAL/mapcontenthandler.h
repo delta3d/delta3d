@@ -50,6 +50,7 @@ namespace dtDAL
    class DataType;
    class Map;
    class NamedParameter;
+   class NamedGroupParameter;
    class DataType;
    
    /**
@@ -183,6 +184,7 @@ namespace dtDAL
           * @return a handle to the map parsed, or NULL if no map has been created.
           */
          Map* GetMap();
+         const Map* GetMap() const;
 
          /**
           * This causes the parser to release its reference to the map.
@@ -229,6 +231,9 @@ namespace dtDAL
          //data for actor linking is not completely available until all actors have been created, so it
          //is stored until the end.
          std::multimap<dtCore::UniqueId, std::pair<std::string, dtCore::UniqueId> > mActorLinking;
+         //The data for group parameters is like linked actors, it needs to be set only after the map is done loading
+         //so things are not in a bad state.
+         std::multimap<dtCore::UniqueId, std::pair<std::string, dtCore::RefPtr<dtDAL::NamedGroupParameter> > > mGroupParameters;
 
          std::string mCurrentPropName;
          bool mCurrentPropIsVector;
@@ -276,6 +281,8 @@ namespace dtDAL
          void ParseVec(const std::string& dataValue, VecType& vec, size_t vecSize, bool& complete);
          //processes the mActorLinking multimap to set ActorActorProperties.
          void LinkActors();
+         //processes the mGroupProperties multimap to set GroupActorProperties.
+         void AssignGroupProperties();
          //decides on a property's datatype base on the name of the element.
          const DataType* ParsePropertyType(const XMLCh* const localname);
          //Creates a named parameter based on the name and type last parsed and pushes it to the top of the stack.

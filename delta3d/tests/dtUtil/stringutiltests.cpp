@@ -18,7 +18,7 @@
  *
  * @author Roy Newton
  */
-
+#include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtUtil/log.h>
 #include <dtUtil/exception.h>

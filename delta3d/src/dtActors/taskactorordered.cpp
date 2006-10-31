@@ -18,7 +18,7 @@
  *
  * Matthew W. Campbell
  */
-#include "dtActors/taskactorordered.h"
+#include <dtActors/taskactorordered.h>
 #include <dtDAL/enginepropertytypes.h>
 
 namespace dtActors
@@ -84,7 +84,7 @@ namespace dtActors
    //////////////////////////////////////////////////////////////////////////////
    bool TaskActorOrderedProxy::RequestScoreChange(const TaskActorProxy &childTask, const TaskActorProxy &origTask)
    {
-      const std::vector<dtCore::RefPtr<TaskActorProxy> > &subTasks = GetAllSubTaskProxies();
+      const std::vector<dtCore::RefPtr<TaskActorProxy> > &subTasks = GetAllSubTasks();
       std::vector<dtCore::RefPtr<TaskActorProxy> >::const_iterator itor;
       bool result = false;
 
@@ -123,10 +123,10 @@ namespace dtActors
       }
 
       //Make sure to forward the request up the task's chain of command so to speak...
-      if (GetParentTaskProxy() != NULL)
-         return result && GetParentTaskProxy()->RequestScoreChange(*this,origTask);
-      else
-         return result;
+      if (GetParentTask() != NULL)
+         return result && GetParentTask()->RequestScoreChange(*this,origTask);
+      
+      return result;
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -135,9 +135,9 @@ namespace dtActors
       //This method is called when a child task has changed its score.  Need to
       //loop through the children of this task.  For any that are complete, we
       //need to factor that in to the score of this task.
-      const std::vector<dtCore::RefPtr<TaskActorProxy> > &subTasks = GetAllSubTaskProxies();
+      const std::vector<dtCore::RefPtr<TaskActorProxy> > &subTasks = GetAllSubTasks();
       std::vector<dtCore::RefPtr<TaskActorProxy> >::const_iterator itor;
-      TaskActor *taskActor;
+      TaskActor *taskActor = NULL;
       float totalWeightedScore = 0.0f;
       float totalWeight = 0.0f;
 
@@ -160,8 +160,8 @@ namespace dtActors
 
       NotifyActorUpdate();
 
-      if (GetParentTaskProxy() != NULL)
-         GetParentTaskProxy()->NotifyScoreChanged(*this);
+      if (GetParentTask() != NULL)
+         GetParentTask()->NotifyScoreChanged(*this);
    }
 
    //////////////////////////////////////////////////////////////////////////////

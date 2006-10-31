@@ -1138,6 +1138,17 @@ namespace dtDAL
       if (!mValidContext)
          EXCEPT(dtDAL::ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
 
+      if (mParser->IsParsing())
+      {
+         Map* m = mParser->GetMapBeingParsed();
+         if (m != NULL)
+         {
+            ActorProxy* ap = m->GetProxyById(proxy.GetId());
+            if (ap != NULL)
+               return m;            
+         }
+      }
+
       std::map< std::string, dtCore::RefPtr<Map> >::iterator i = mOpenMaps.begin();
       while (i != mOpenMaps.end())
       {
@@ -1153,6 +1164,17 @@ namespace dtDAL
    {
       if (!mValidContext)
          EXCEPT(dtDAL::ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
+
+      if (mParser->IsParsing())
+      {
+         const Map* m = mParser->GetMapBeingParsed();
+         if (m != NULL)
+         {
+            const ActorProxy* ap = m->GetProxyById(proxy.GetId());
+            if (ap != NULL)
+               return m;            
+         }
+      }
 
       std::map< std::string, dtCore::RefPtr<Map> >::const_iterator i = mOpenMaps.begin();
       while (i != mOpenMaps.end())

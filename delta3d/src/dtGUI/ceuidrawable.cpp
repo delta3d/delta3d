@@ -26,6 +26,9 @@ using namespace dtUtil;
 
 IMPLEMENT_MANAGEMENT_LAYER(CEUIDrawable)
 
+int CEUIDrawable::mActiveTextureUnit(0);
+
+
 /** The supplied DeltaWin will automatically be monitored for size change and pass the new
   * size onto the CEGUI Renderer.
   * @param win : The DeltaWin to monitor for size change
@@ -43,7 +46,7 @@ CEUIDrawable::CEUIDrawable( dtCore::DeltaWin *win, dtGUI::BaseScriptModule *sm):
    mHeight(0),
    mAutoResize(true),
    mKeyboardListener(new CEGUIKeyboardListener()),
-   mMouseListener(new CEGUIMouseListener())
+   mMouseListener(new CEGUIMouseListener()) 
 {
    mProjection->setName("CEUIDrawable_Projection");
    mTransform->setName("CEUIDrawable_MatrixTransform");
@@ -262,7 +265,9 @@ osg::Object* CEUIDrawable::osgCEUIDrawable::clone(const osg::CopyOp& copyop) con
 void CEUIDrawable::osgCEUIDrawable::drawImplementation(osg::State& state) const
 {
    //tell the UI to update and to render
-   if (!mUI) return;       
-   state.setActiveTextureUnit(0);
+   if(!mUI) 
+      return;       
+   
+   state.setActiveTextureUnit(CEUIDrawable::mActiveTextureUnit);
    mUI->getSingletonPtr()->renderGUI();   
 }

@@ -126,7 +126,7 @@ namespace dtCore
           * Updates this shader group's state by calling update on each shader it is
           * currently maintaining.
           * @note As with the Shader::Update method, this method does not rebind shader
-          *   sources.  Must call ShaderManager::AssignShader for shader sources to get
+          *   sources.  Must call ShaderManager::AssignShaderFromTemplate for shader sources to get
           *   reloaded and rebound.
           */
          virtual void Update();

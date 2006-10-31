@@ -23,6 +23,7 @@
 #include <dtEditQt/dynamicactorcontrol.h>
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/editorevents.h>
+#include <dtEditQt/propertyeditortreeview.h>
 #include <dtDAL/map.h>
 #include <dtDAL/exceptionenum.h>
 #include <dtDAL/datatype.h>
@@ -121,8 +122,10 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    QWidget* DynamicActorControl::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index)
    {
-      // create and init the combo box
       QWidget *wrapper = new QWidget(parent);
+      wrapper->setFocusPolicy(Qt::StrongFocus);
+      // set the background color to white so that it sort of blends in with the rest of the controls
+      setBackgroundColor(wrapper, PropertyEditorTreeView::ROW_COLOR_ODD);
 
       if (!initialized)
       {
@@ -130,19 +133,16 @@ namespace dtEditQt
          return wrapper;
       }
 
-      QHBoxLayout *hLayout = new QHBoxLayout(wrapper);
-      hLayout->setMargin(0);
-      hLayout->setSpacing(0);
+      QGridLayout* grid = new QGridLayout(wrapper);
+      grid->setMargin(0);
+      grid->setSpacing(1);
 
       temporaryEditControl = new SubQComboBox(wrapper, this);
 
       temporaryGotoButton = new SubQPushButton(tr("Goto"), wrapper, this);
-      temporaryGotoButton->setMaximumHeight(18);
 
       connect(temporaryGotoButton, SIGNAL(clicked()), this, SLOT(onGotoClicked()));
       
-      wrapper->setFocusProxy(temporaryGotoButton);
-
       std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > names;
       GetActorProxies(names, myProperty->GetDesiredActorClass());
 
@@ -159,9 +159,13 @@ namespace dtEditQt
       // set the tooltip
       temporaryEditControl->setToolTip(getDescription());
 
-      hLayout->addWidget(temporaryEditControl);
-      hLayout->setSpacing(1);
-      hLayout->addWidget(temporaryGotoButton);
+      grid->addWidget(temporaryEditControl, 0, 0, 1, 1);
+      grid->addWidget(temporaryGotoButton, 0, 1, 1, 1);
+      grid->setColumnMinimumWidth(1, temporaryGotoButton->sizeHint().width() / 2);
+      grid->setColumnStretch(0, 2);
+      
+      connect(this, SIGNAL(closeEditor(QWidget*, QAbstractItemDelegate::EndEditHint)), this,
+         SLOT(handleSubEditDestroy(QWidget*, QAbstractItemDelegate::EndEditHint)));
       
       return wrapper;
    }
@@ -169,14 +173,14 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    const QString DynamicActorControl::getDisplayName()
    {
-      return QString(tr(myProperty->GetLabel().c_str()));
+      return tr(myProperty->GetLabel().c_str());
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    const QString DynamicActorControl::getDescription()
    {
       std::string tooltip = myProperty->GetDescription() + "  [Type: " + myProperty->GetPropertyType().GetName() + "]";
-      return QString(tr(tooltip.c_str()));
+      return tr(tooltip.c_str());
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -228,6 +232,7 @@ namespace dtEditQt
       }
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    void DynamicActorControl::onGotoClicked()
    {
       if(myProperty->GetValue() != NULL)
@@ -243,6 +248,7 @@ namespace dtEditQt
       }
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    void DynamicActorControl::GetActorProxies(std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill, const std::string &className)
    {
       toFill.clear();

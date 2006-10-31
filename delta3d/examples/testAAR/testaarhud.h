@@ -211,6 +211,7 @@ class TEST_AAR_EXPORT TestAARHUD : public dtGame::GMComponent
       CEGUI::StaticText *mHelp16Text;
       CEGUI::StaticText *mHelp17Text;
       CEGUI::StaticText *mHelp18Text;
+      CEGUI::StaticText *mHelp19Text;
 
       // task texts
       CEGUI::StaticText *mTasksHeaderText;

@@ -75,6 +75,8 @@ public class ApplicationConfiguration
 	 */
 	public OperatingSystem GetOperatingSystem() {return _operatingSystem;}
 	
+	public String GetUserDirectory() {return DetermineUserDirectory();}
+	
 	/*
 	 * An accessor method that returns the name of the application as retrieved from the
 	 * JavaLaunch configuration file.
@@ -232,6 +234,11 @@ public class ApplicationConfiguration
 		{
 			return OperatingSystem.LINUX;
 		}
+	}
+	
+	private String DetermineUserDirectory()
+	{
+		return System.getProperty("user.home");
 	}
 	
 	/*
@@ -398,6 +405,6 @@ public class ApplicationConfiguration
 	{
 		if (_applicationName.equals("")) return;
 		
-		_programDirectory = Utility.GetProgramDirectory(_applicationName);
+		_programDirectory = Utility.GetProgramDirectory(this);
 	}
 }

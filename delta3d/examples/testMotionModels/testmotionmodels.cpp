@@ -33,43 +33,55 @@ namespace dtExample
    public:
       typedef dtUtil::Functor<void,TYPELIST_1(MotionModelType)> ForwardingFunctor;
 
-      QuickMenuManager(const ForwardingFunctor& ff): mWalk(0), mFly(0), mUFO(0), mOrbit(0), mFPS(0), mCollision(0), mForwardingFunctor(ff)
+      QuickMenuManager(const ForwardingFunctor& ff) : 
+         mWalk(NULL), 
+         mFly(NULL), 
+         mUFO(NULL), 
+         mOrbit(NULL), 
+         mFPS(NULL), 
+         mCollision(NULL), mForwardingFunctor(ff)
       {
       }
 
-      void SetSelected(MotionModelType mt)
+      void SetSelected(const MotionModelType mt)
       {
          switch( mt )
          {
-         case WALK:
+            case WALK:
             {
                mWalk->setSelected(true);
-            } break;
+            } 
+            break;
 
-         case FLY:
+            case FLY:
             {
                mFly->setSelected(true);
-            } break;
+            } 
+            break;
 
-         case UFO:
+            case UFO:
             {
                mUFO->setSelected(true);
-            } break;
+            } 
+            break;
 
-         case ORBIT:
+            case ORBIT:
             {
                mOrbit->setSelected(true);
-            } break;
+            } 
+            break;
 
-         case FPS:
+            case FPS:
             {
                mFPS->setSelected(true);
-            } break;
+            } 
+            break;
 
-         case COLLISION:
+            case COLLISION:
             {
                mCollision->setSelected(true);
-            } break;
+            } 
+            break;
          }
       }
 
@@ -91,7 +103,7 @@ namespace dtExample
       {
          try
          {
-            std::string schemefile( osgDB::findDataFile("schemes/WindowsLookSkin.scheme") );
+            std::string schemefile( dtCore::FindFileInPathList("schemes/WindowsLookSkin.scheme") );
             CEGUI::SchemeManager* sm = CEGUI::SchemeManager::getSingletonPtr();
             sm->loadScheme( schemefile );  ///< populate the window factories
          }
@@ -180,10 +192,10 @@ namespace dtExample
          mCollision = col;
       }
 
-      CEGUI::Window* CreateWidget(const std::string& wtype, const std::string& wname)
+      CEGUI::Window* CreateWidget(const std::string &wtype, const std::string &wname)
       {
-         CEGUI::WindowManager* wmgr = CEGUI::WindowManager::getSingletonPtr();
-         CEGUI::Window* w = 0;
+         CEGUI::WindowManager *wmgr = CEGUI::WindowManager::getSingletonPtr();
+         CEGUI::Window *w = NULL;
 
          try
          {
@@ -223,9 +235,9 @@ public:
 
    /// Constructor.
    TestMotionModelsApp( const std::string& configFile = "config.xml" ) : Application( configFile ),
-      mTown(0),
-      mGUIDrawable(0),
-      mMenuManager(0)
+      mTown(NULL),
+      mGUIDrawable(NULL),
+      mMenuManager(NULL)
    {
       dtExample::QuickMenuManager::ForwardingFunctor ff(this,&TestMotionModelsApp::SetMotionModel);
       mMenuManager = new dtExample::QuickMenuManager(ff);
@@ -282,7 +294,7 @@ public:
    virtual bool KeyPressed(const dtCore::Keyboard* kb, Producer::KeyboardKey key, Producer::KeyCharacter kc)
    {
       bool verdict = Application::KeyPressed(kb, key, kc);
-      if( verdict == true )
+      if(verdict)
       {
          return verdict;
       }

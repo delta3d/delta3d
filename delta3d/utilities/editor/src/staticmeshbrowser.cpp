@@ -38,16 +38,16 @@
 #include <QtGui/QContextMenuEvent>
 #include <QtGui/QIcon>
 
-#include "dtEditQt/staticmeshbrowser.h"
-#include "dtEditQt/resourcetreewidget.h"
-#include "dtEditQt/editordata.h"
-#include "dtEditQt/editorevents.h"
-#include "dtEditQt/mainwindow.h"
-#include "dtEditQt/perspectiveviewport.h"
-#include "dtEditQt/viewportcontainer.h"
-#include "dtEditQt/viewportmanager.h"
-#include "dtEditQt/camera.h"
-#include "dtEditQt/uiresources.h"
+#include <dtEditQt/staticmeshbrowser.h>
+#include <dtEditQt/resourcetreewidget.h>
+#include <dtEditQt/editordata.h>
+#include <dtEditQt/editorevents.h>
+#include <dtEditQt/mainwindow.h>
+#include <dtEditQt/perspectiveviewport.h>
+#include <dtEditQt/viewportcontainer.h>
+#include <dtEditQt/viewportmanager.h>
+#include <dtEditQt/camera.h>
+#include <dtEditQt/uiresources.h>
 
 #include <dtDAL/project.h>
 #include <dtDAL/exceptionenum.h>

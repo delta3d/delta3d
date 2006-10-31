@@ -20,11 +20,11 @@
 * Curtiss Murphy
 */
 #include <prefix/dtstageprefix-src.h>
-#include "dtEditQt/dynamicabstractcontrol.h"
-#include "dtEditQt/propertyeditortreeview.h"
-#include "dtDAL/actorproxy.h"
-#include "dtDAL/actorproperty.h"
-#include "dtEditQt/editorevents.h"
+#include <dtEditQt/dynamicabstractcontrol.h>
+#include <dtEditQt/propertyeditortreeview.h>
+#include <dtDAL/actorproxy.h>
+#include <dtDAL/actorproperty.h>
+#include <dtEditQt/editorevents.h>
 #include <QtGui/QColor> 
 #include <QtGui/QPalette>
 #include <QtGui/QWidget>
@@ -153,7 +153,7 @@ namespace dtEditQt
     }
 
     /////////////////////////////////////////////////////////////////////////////////
-    void DynamicAbstractControl::handleSubEditDestroy(QWidget *widget) 
+    void DynamicAbstractControl::handleSubEditDestroy(QWidget *widget, QAbstractItemDelegate::EndEditHint hint) 
     {
     }
 
@@ -171,6 +171,8 @@ namespace dtEditQt
         palette.setColor(QPalette::Inactive, QPalette::Background, color);
         palette.setColor(QPalette::Disabled, QPalette::Background, color) ;
         widget->setPalette(palette);
+        //4.1 only
+        widget->setAutoFillBackground(true);
     }
 
     /////////////////////////////////////////////////////////////////////////////////

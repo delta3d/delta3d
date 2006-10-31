@@ -25,16 +25,20 @@
 #include <sstream>
 #include <dtCore/globals.h>
 #include <dtCore/system.h>
-#include "dtEditQt/mainwindow.h"
-#include "dtEditQt/viewportmanager.h"
+#include <dtEditQt/mainwindow.h>
+#include <dtEditQt/viewportmanager.h>
 #include <dtDAL/librarymanager.h>
-#include "dtEditQt/editorevents.h"
-#include "dtEditQt/editoractions.h"
-#include "dtEditQt/uiresources.h"
+#include <dtEditQt/editorevents.h>
+#include <dtEditQt/editoractions.h>
+#include <dtEditQt/uiresources.h>
 #include <dtUtil/log.h>
+#include <dtAudio/audiomanager.h>
 
 int main(int argc, char *argv[])
 {
+   dtAudio::AudioManager::Instantiate();
+   dtAudio::AudioManager::GetInstance().Config(AudioConfigData(32));
+
    dtCore::SetDataFilePathList(  ".;" +
                                  dtCore::GetDeltaDataPathList() + ";" +
                                  dtCore::GetDeltaRootPath() + "/utilities/editor" ) ;
@@ -69,23 +73,29 @@ int main(int argc, char *argv[])
         result = app.exec();
         dtCore::System::GetInstance().Stop();
     }
-    catch (dtUtil::Exception &e)
+    catch(const dtUtil::Exception &e)
     {
+        e.LogException(dtUtil::Log::LOG_ERROR);
         std::ostringstream ss;
-        e.Print();
         ss << "Exception (" << e.TypeEnum() << "): " << e.What()
             << "\n\tLine: " << e.Line() << " File: " << e.File(); 
 
         // hide the splash screen if it's up or you can't see the error!
-        if (splash != NULL) {
+        if (splash != NULL)
+        {
             delete splash;
             splash = NULL;
         }
 
         QMessageBox::critical(NULL,"Exception",ss.str().c_str(),
             QMessageBox::Ok,QMessageBox::NoButton);
+
+        dtAudio::AudioManager::Destroy();
+
         return 1;
     }
+
+    dtAudio::AudioManager::Destroy();
 
     return result;
 }

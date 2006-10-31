@@ -22,7 +22,7 @@
 #ifndef DELTA_DYNAMICSUBWIDGETS
 #define DELTA_DYNAMICSUBWIDGETS
 
-#include "dtEditQt/dynamicabstractcontrol.h"
+#include <dtEditQt/dynamicabstractcontrol.h>
 #include <QtGui/QComboBox>
 #include <QtGui/QLabel>
 #include <QtGui/QLineEdit>
@@ -33,6 +33,12 @@
 #include <QtGui/QWidget>
 #include <vector>
 
+
+/*
+ * WARNING:  You cannot add signals and slots to the classes in this file.  The reason is that
+ *           moc will only parse one Q_OBJECT per header.  The rest will be ignored.
+ *           If you wish to add signals and slots, you will have to put these subclasses into separate files. 
+ */
 
 namespace dtEditQt 
 {
@@ -73,10 +79,6 @@ namespace dtEditQt
          */
         virtual ~SubQLineEdit()
         {  
-            if (control != NULL) {
-                control->updateData(this);  
-                control->handleSubEditDestroy(this);
-            }
         }
 
     private:
@@ -103,10 +105,6 @@ namespace dtEditQt
          */
         virtual ~SubQComboBox()
         {  
-            if (control != NULL) {
-                control->updateData(this);  
-                control->handleSubEditDestroy(this);
-            }
         }
 
     private:
@@ -133,10 +131,6 @@ namespace dtEditQt
          */
         virtual ~SubQSpinBox()
         {  
-            if (control != NULL) {
-                control->updateData(this);  
-                control->handleSubEditDestroy(this);
-            }
         }
 
     private:
@@ -165,10 +159,6 @@ namespace dtEditQt
          */
         virtual ~SubQLabel()
         {  
-            if (control != NULL) {
-                control->updateData(this);  
-                control->handleSubEditDestroy(this);
-            }
         }
 
     private:
@@ -196,10 +186,6 @@ namespace dtEditQt
          */
         virtual ~SubQPushButton()
         {  
-            if (control != NULL) {
-                control->updateData(this);  
-                control->handleSubEditDestroy(this);
-            }
         }
 
     private:

@@ -27,7 +27,7 @@ public:
       mScriptManager = new dtScript::ScriptManager();
       
       // Pre-load the Python script
-      std::string filename = osgDB::findDataFile( "flyhelo.py" );
+      std::string filename = dtCore::FindFileInPathList( "flyhelo.py" );
 
       if( !filename.empty() )
       {

@@ -20,17 +20,17 @@
 * Curtiss Murphy
 */
 #include <prefix/dtstageprefix-src.h>
-#include "dtEditQt/dynamiccolorelementcontrol.h"
-#include "dtEditQt/dynamiccolorrgbacontrol.h"
-#include "dtEditQt/dynamicsubwidgets.h"
-#include "dtEditQt/editordata.h"
-#include "dtEditQt/editorevents.h"
-#include "dtEditQt/mainwindow.h"
-#include "dtEditQt/propertyeditortreeview.h"
-#include "dtDAL/actorproxy.h"
-#include "dtDAL/actorproperty.h"
-#include "dtDAL/datatype.h"
-#include "dtDAL/enginepropertytypes.h"
+#include <dtEditQt/dynamiccolorelementcontrol.h>
+#include <dtEditQt/dynamiccolorrgbacontrol.h>
+#include <dtEditQt/dynamicsubwidgets.h>
+#include <dtEditQt/editordata.h>
+#include <dtEditQt/editorevents.h>
+#include <dtEditQt/mainwindow.h>
+#include <dtEditQt/propertyeditortreeview.h>
+#include <dtDAL/actorproxy.h>
+#include <dtDAL/actorproperty.h>
+#include <dtDAL/datatype.h>
+#include <dtDAL/enginepropertytypes.h>
 #include <dtUtil/log.h>
 #include <QtGui/QColorDialog>
 #include <QtGui/QColor>
@@ -142,6 +142,7 @@ namespace dtEditQt {
         const QStyleOptionViewItem &option, const QModelIndex &index)
     {
         QWidget *wrapper = new QWidget(parent);
+        wrapper->setFocusPolicy(Qt::StrongFocus);
         // set the background color to white so that it sort of blends in with the rest of the controls
         setBackgroundColor(wrapper, PropertyEditorTreeView::ROW_COLOR_ODD);
 
@@ -162,11 +163,9 @@ namespace dtEditQt {
 
         // button
         temporaryColorPicker = new SubQPushButton(tr("Pick ..."), wrapper, this);
-        temporaryColorPicker->setMaximumHeight(18);
+        //temporaryColorPicker->setMaximumHeight(18);
         connect(temporaryColorPicker, SIGNAL(clicked()), this, SLOT(colorPickerPressed()));
         temporaryColorPicker->setToolTip(getDescription());
-        // the button should get focus, not the wrapping widget
-        wrapper->setFocusProxy(temporaryColorPicker);
 
         // setup the horizontal layout 
         hBox->addWidget(temporaryColorPicker);
@@ -191,12 +190,15 @@ namespace dtEditQt {
     }
 
     /////////////////////////////////////////////////////////////////////////////////
-    void DynamicColorRGBAControl::handleSubEditDestroy(QWidget *widget)
+    void DynamicColorRGBAControl::handleSubEditDestroy(QWidget *widget, QAbstractItemDelegate::EndEditHint hint)
     {
-        if (widget == temporaryEditOnlyTextLabel)
+        if (widget != NULL && temporaryEditOnlyTextLabel != NULL 
+            && widget->isAncestorOf(temporaryEditOnlyTextLabel))
+        {
+            updateData(widget);
             temporaryEditOnlyTextLabel = NULL;
-        if (widget == temporaryColorPicker)
-            temporaryColorPicker = NULL;
+            temporaryColorPicker = NULL;        
+        }
     }
 
     /////////////////////////////////////////////////////////////////////////////////

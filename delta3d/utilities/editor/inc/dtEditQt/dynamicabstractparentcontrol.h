@@ -22,7 +22,7 @@
 #ifndef DELTA_DYNAMICABSTRACTPARENTCONTROL
 #define DELTA_DYNAMICABSTRACTPARENTCONTROL
 
-#include "dtEditQt/dynamicabstractcontrol.h"
+#include <dtEditQt/dynamicabstractcontrol.h>
 #include <vector>
 
 namespace dtEditQt 

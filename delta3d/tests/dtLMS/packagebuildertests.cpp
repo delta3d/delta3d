@@ -18,9 +18,11 @@
  *
  * William E. Johnson II
  */
+#include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <LMS/WebPackager/package_utils.h>
 #include <dtUtil/fileutils.h>
+#include <dtUtil/exception.h>
 #include <dtCore/globals.h>
 #include <osgDB/FileNameUtils>
 

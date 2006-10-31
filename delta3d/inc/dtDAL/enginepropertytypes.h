@@ -23,7 +23,6 @@
 #ifndef DELTA_ENGINE_PROPERTY_TYPES
 #define DELTA_ENGINE_PROPERTY_TYPES
 
-#include <sstream>
 #include <osg/Vec3>
 #include <osg/Vec3d>
 #include <osg/Vec4>

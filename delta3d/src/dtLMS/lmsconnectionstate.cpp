@@ -19,7 +19,7 @@
  * @author Christopher DuBuc
  */
 
-#include "dtLMS/lmsconnectionstate.h"
+#include <dtLMS/lmsconnectionstate.h>
 
 namespace dtLMS
 {

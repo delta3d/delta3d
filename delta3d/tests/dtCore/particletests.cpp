@@ -18,6 +18,7 @@
  *
  * @author Allen Danklefsen
  */
+#include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtCore/globals.h>
 #include <osgParticle/ModularEmitter>

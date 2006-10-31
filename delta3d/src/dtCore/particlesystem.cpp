@@ -9,10 +9,14 @@
 #include <osg/Group>
 #include <osg/NodeVisitor>
 #include <osg/Geode>
+#include <osg/MatrixTransform>
 
 #include <osgParticle/ModularEmitter>
 #include <osgParticle/ModularProgram>
 #include <osgParticle/FluidProgram>
+
+#include <osgParticle/ParticleProcessor>
+#include <osgParticle/ParticleSystemUpdater>
 
 #include <osg/Version> // For #ifdef
 
@@ -155,6 +159,9 @@ public:
       accept(*fg); 
       std::vector<osg::Geode*> psGeodeVector = fg->getGeodeVector(); 
 
+
+      // Use a transform that will allow a particle to be
+      // translated to world space from the group's local space.
       psGeodeXForm = new psGeodeTransform();
 
       this->addChild(psGeodeXForm);
@@ -163,6 +170,7 @@ public:
          itr != psGeodeVector.end(); 
          ++itr)
       {
+         // Pull particle out of group and place it into world space.
          this->removeChild( *itr );         
          psGeodeXForm->addChild( *itr ); 
       }
@@ -173,6 +181,84 @@ protected:
    psGeodeTransform* psGeodeXForm; 
 }; 
 
+
+ParticleLayer::ParticleLayer() : mProgTypeIsModular(false) {}
+/// Destructor
+ParticleLayer::~ParticleLayer(){}
+
+/// Copy Constructor
+ParticleLayer::ParticleLayer(const ParticleLayer &copyLayer)
+{
+   mGeode            = copyLayer.mGeode;
+   mParticleSystem   = copyLayer.mParticleSystem;
+   mEmitterTransform = copyLayer.mEmitterTransform;
+   mModularEmitter   = copyLayer.mModularEmitter;
+   mProgram          = copyLayer.mProgram;
+   mLayerName        = copyLayer.mLayerName;
+   mProgTypeIsModular= copyLayer.mProgTypeIsModular;
+}
+
+/// mutators for RefPtr Variables and string
+void ParticleLayer::SetGeode(osg::Geode& geode)
+{
+   mGeode = &geode;
+}
+
+void ParticleLayer::SetParticleSystem(osgParticle::ParticleSystem& particleSystem) 
+{
+   mParticleSystem  = &particleSystem;
+}
+
+void ParticleLayer::SetEmitterTransform(osg::MatrixTransform& matrixtransform)
+{
+   mEmitterTransform = &matrixtransform;
+}
+
+void ParticleLayer::SetModularEmitter(osgParticle::ModularEmitter& modularEmitter) 
+{
+   mModularEmitter  = &modularEmitter;
+}
+
+void ParticleLayer::SetProgram(osgParticle::Program& program) 
+{
+   mProgram = &program;
+}
+
+void ParticleLayer::SetLayerName(const std::string& name) 
+{
+   mLayerName = name;
+}
+
+/// accessors for RefPtrVariables and string
+osg::Geode& ParticleLayer::GetGeode() 
+{
+   return *mGeode;
+}
+
+osgParticle::ParticleSystem&  ParticleLayer::GetParticleSystem()  
+{
+   return *mParticleSystem;
+}
+
+osg::MatrixTransform& ParticleLayer::GetEmitterTransform()
+{
+   return *mEmitterTransform;
+}
+
+osgParticle::ModularEmitter& ParticleLayer::GetModularEmitter() 
+{
+   return *mModularEmitter;
+}
+
+osgParticle::Program& ParticleLayer::GetProgram() 
+{
+   return *mProgram;
+}
+
+bool ParticleLayer::operator==(const ParticleLayer& testLayer) const
+{
+   return (testLayer.mLayerName == mLayerName);
+}
 
 /** This method will load the particle effect from a file.  The loaded particle 
   * system will be broken apart, with the Emitter added to the parent 
@@ -196,10 +282,35 @@ osg::Node* ParticleSystem::LoadFile( const std::string& filename, bool useCache)
          GetMatrixNode()->removeChild(0, GetMatrixNode()->getNumChildren());
       }
 
-      particleSystemHelper *psh = new particleSystemHelper((osg::Group*)mLoadedFile.get());
 
-      GetMatrixNode()->addChild(psh);
+      // Set up all the particle layers
+      SetupParticleLayers();
 
+      if( mParentRelative )
+      {
+         // Attach the particle system tree directly to the transform node.
+         GetMatrixNode()->addChild((osg::Group*)mLoadedFile.get());
+
+
+         // Modify the reference frame of both the emitter and programe
+         // for each particle layer.
+         for(std::list<ParticleLayer>::iterator pLayerIter = mLayers.begin();
+            pLayerIter != mLayers.end(); ++pLayerIter)
+         {
+            // Set the emitter and program to run from the origin
+            pLayerIter->GetProgram().setReferenceFrame(osgParticle::ParticleProcessor::ABSOLUTE_RF);
+            pLayerIter->GetModularEmitter().setReferenceFrame(osgParticle::ParticleProcessor::ABSOLUTE_RF);
+         }
+
+      }
+      else // Emit particles into world space
+      {
+         particleSystemHelper *psh = new particleSystemHelper((osg::Group*)mLoadedFile.get());
+
+         GetMatrixNode()->addChild(psh);
+      }
+
+      // Enable/disable particle system
       ParticleSystemParameterVisitor pspv = ParticleSystemParameterVisitor( mEnabled );
       mLoadedFile->accept(pspv);
    }
@@ -210,10 +321,8 @@ osg::Node* ParticleSystem::LoadFile( const std::string& filename, bool useCache)
       return NULL;
    }
 
-   SetupParticleLayers();
    return node;
 }
-
 
 
 /**
@@ -388,6 +497,7 @@ void ParticleSystem::SetupParticleLayers()
                   // set the data in our layer
                   layerIter->SetIsModularProgram(true);
                   layerIter->SetProgram(*newModularProgram);
+
                   break;
                }
             }

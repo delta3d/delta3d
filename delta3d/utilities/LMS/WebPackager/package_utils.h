@@ -162,6 +162,7 @@ std::string ResolveEnvironmentVariables( std::string path );
  * @param str The input string to convert to upper case.
  * @return A string converted to upper case.
  */
-std::string ToUpperCase( std::string &str );
+extern std::string ToUpperCase( const std::string &str );
 
 #endif
+

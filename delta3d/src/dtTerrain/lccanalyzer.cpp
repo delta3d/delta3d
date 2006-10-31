@@ -28,10 +28,11 @@
 #include <osgDB/ReadFile>
 #include <osgDB/WriteFile>
 #include <dtUtil/log.h>
-#include "dtUtil/exception.h"
-#include "dtTerrain/mathutils.h"
-#include "dtTerrain/imageutils.h"
-#include "dtTerrain/lccanalyzer.h"
+#include <dtUtil/exception.h>
+#include <dtUtil/fileutils.h>
+#include <dtTerrain/mathutils.h>
+#include <dtTerrain/imageutils.h>
+#include <dtTerrain/lccanalyzer.h>
 
 #include <ogrsf_frmts.h>
 #include <gdal_priv.h>
@@ -85,7 +86,7 @@ namespace dtTerrain
       ss << tile.GetCachePath() << "/" <<
          LCCAnalyzerResourceName::COMPOSITE_LCC_IMAGE.GetName() << type.GetIndex() <<
          LCCAnalyzerResourceName::IMAGE_EXT.GetName();
-      if (osgDB::fileExists(ss.str()))
+      if (dtUtil::FileUtils::GetInstance().FileExists(ss.str()))
          return true;      
       
       //If not, go through the LOONG process of generating the probability map.           

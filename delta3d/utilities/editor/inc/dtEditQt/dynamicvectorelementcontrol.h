@@ -22,8 +22,8 @@
 #ifndef DELTA_DYNAMICVECTORELEMENTCONTROL
 #define DELTA_DYNAMICVECTORELEMENTCONTROL
 
-#include "dtEditQt/dynamicabstractcontrol.h"
-#include "dtEditQt/dynamicsubwidgets.h"
+#include <dtEditQt/dynamicabstractcontrol.h>
+#include <dtEditQt/dynamicsubwidgets.h>
 
 namespace dtDAL 
 {
@@ -183,22 +183,25 @@ namespace dtEditQt
          */
         void setValue(double value);
 
-        /**
-         * @see DynamicAbstractControl#handleSubEditDestroy
-         */
-        void handleSubEditDestroy(QWidget *widget)
-        {
-            // we have to check - sometimes the destructor won't get called before the 
-            // next widget is created.  Then, when it is called, it sets the NEW editor to NULL!
-            if (widget == temporaryEditControl)
-                temporaryEditControl = NULL;
-        }
-
     public slots: 
 
         virtual bool updateData(QWidget *widget);
         void actorPropertyChanged(ActorProxyRefPtr proxy,
             ActorPropertyRefPtr property);
+            
+        /**
+         * @see DynamicAbstractControl#handleSubEditDestroy
+         */
+        void handleSubEditDestroy(QWidget *widget, QAbstractItemDelegate::EndEditHint hint = QAbstractItemDelegate::NoHint)
+        {
+            // we have to check - sometimes the destructor won't get called before the 
+            // next widget is created.  Then, when it is called, it sets the NEW editor to NULL!
+            if (widget == temporaryEditControl)
+            {
+               updateData(widget);
+               temporaryEditControl = NULL;
+            }
+        }
 
     protected:
 

@@ -24,8 +24,6 @@
 
 #include <dtCore/physical.h>
 #include <dtDAL/physicalactorproxy.h>
-#include <dtDAL/exceptionenum.h>
-#include <dtGame/invokable.h>
 #include <dtGame/export.h>
 
 namespace dtGame
@@ -33,6 +31,8 @@ namespace dtGame
    class Message;
    class ActorUpdateMessage;
    class GameManager;
+   class Invokable;
+   class MessageType;
    
    class GameActorProxy;
    /**
@@ -189,17 +189,7 @@ namespace dtGame
           * @return true always
           */
          virtual bool IsGameActorProxy() const { return true; }
-                           
-         GameActor& GetGameActor() 
-         {
-            GameActor* ga = dynamic_cast<GameActor*> (mActor.get());
-            if(ga == NULL)
-            {
-               EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type GameActor");
-            }
-            return *ga;
-         }
-
+                          
          /**
           * @return a const pointer to the parent game manager that owns this actor.
           */
@@ -214,15 +204,13 @@ namespace dtGame
           * Retrieves the game actor that this proxy represents. 
           * @return The Game Actor
           */
-         const GameActor& GetGameActor() const
-         {
-            const GameActor* ga = dynamic_cast<const GameActor*> (mActor.get());
-            if(ga == NULL)
-            {
-               throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type GameActor", __FILE__,__LINE__);
-            }
-            return *ga;
-         }
+         GameActor& GetGameActor();
+
+         /**
+          * Retrieves the game actor that this proxy represents. 
+          * @return The Game Actor
+          */
+         const GameActor& GetGameActor() const;
 
          /**
           * Creates the properties associated with this proxy

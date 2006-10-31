@@ -24,7 +24,6 @@
 #include <string>
 #include <map>
 
-#include <dtCore/refptr.h>
 #include <dtGame/export.h>
 #include <dtGame/gmcomponent.h>
 #include <dtCore/nodecollector.h>

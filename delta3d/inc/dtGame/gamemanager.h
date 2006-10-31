@@ -1,4 +1,4 @@
-/*
+/* -*-c++-*-
 * Delta3D Open Source Game and Simulation Engine
 * Copyright (C) 2005, BMH Associates, Inc.
 *
@@ -35,7 +35,11 @@
 #include <dtCore/refptr.h>
 #include <dtCore/base.h>
 #include <dtCore/timer.h>
-#include <dtUtil/log.h>
+
+namespace dtUtil
+{
+   class Log;
+}
 
 namespace dtCore
 {
@@ -403,35 +407,32 @@ namespace dtGame
          
          /**
           * Fills a vector with the game proxys whose position is within the radius parameter
-          * @param The radius to search in 
-          * @param The vector to fill
+          * @param radius The radius to search in 
+          * @param toFill The vector to fill
           */
          void FindActorsWithinRadius(const float radius, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill);
 
          /**
           * Returns the game actor proxy whose is matches the parameter
-          * @param The id of the proxy to find
+          * @param id The id of the proxy to find
           * @return The proxy, or NULL if not found
           */
          GameActorProxy* FindGameActorById(const dtCore::UniqueId &id);
 
          /**
-          * Returns the game actor proxy whose is matches the parameter
-          * @param The id of the proxy to find
-          * @return The proxy, or NULL if not found
+          * Getst the game actor proxy whose is matches the parameter
+          * @param id The id of the proxy to find
           */
-         template<typename T>
-         T* FindGameActorById(const dtCore::UniqueId &id)
+         template<typename ProxyType>
+         void FindGameActorById(const dtCore::UniqueId &id, ProxyType*& proxy)
          {
-            std::map<dtCore::UniqueId, dtCore::RefPtr<dtGame::GameActorProxy> >::iterator i = 
-               mGameActorProxyMap.find(id);
-            return i == mGameActorProxyMap.end() ? NULL : dynamic_cast<T*>(i->second.get());
+            proxy = dynamic_cast<ProxyType*>(FindGameActorById(id));
          }
 
          /**
           * Returns the actor proxy whose is matches the parameter. This will search both the game actors and the
           * regular actor proxies.
-          * @param The id of the proxy to find
+          * @param id The id of the proxy to find
           * @return The proxy, or NULL if not found
           */
          dtDAL::ActorProxy* FindActorById(const dtCore::UniqueId &id);
@@ -439,15 +440,13 @@ namespace dtGame
          /**
           * Returns the actor proxy whose is matches the parameter. This will search both the game actors and the
           * regular actor proxies.
-          * @param The id of the proxy to find
+          * @param id The id of the proxy to find
           * @return The proxy, or NULL if not found
           */
-         template<typename T>
-         T* FindActorById(const dtCore::UniqueId &id)
+         template<typename ProxyType>
+         void FindActorById(const dtCore::UniqueId &id, ProxyType*& proxy)
          {
-            std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> >::iterator i = 
-               mActorProxyMap.find(id);
-            return i == mActorProxyMap.end() ? NULL : dynamic_cast<T*>(i->second.get());
+            proxy = dynamic_cast<ProxyType*>(FindActorById(id));
          }
 
          /**
@@ -463,7 +462,9 @@ namespace dtGame
          bool LoadGameState();
 
          /**
-          * Changes the map being used by the Game Manager
+          * Changes the map being used by the Game Manager.  All actors, Game events, and associated data will be deleted.
+          * It will send INFO_MAP_LOADED.  If another map is currently open, that map will be closed via calling CloseCurrentMap()
+          * @see #CloseCurrentMap()
           * @param mapName       The name of the map to load.
           * @param addBillboards optional parameter that defaults to false that says whether or not proxy billboards should be 
           *                      added to the scene.  This should only be true for debugging purposes.
@@ -472,6 +473,12 @@ namespace dtGame
           * @throws ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION if an actor is flagged as a game actor, but is not a GameActorProxy.
           */
          void ChangeMap(const std::string &mapName, bool addBillboards = false, bool enableDatabasePaging = true);
+
+         /**
+          * Closes the map, if any, being used by the Game Manager.  All actors will be deleted whether map is closed on not.
+          * It will send an INFO_MAP_UNLOADED message if a map is actually closed.
+          */
+         void CloseCurrentMap();
 
          /**
           * Sets a timer on the game mananger.  It will send out a timer message when it expires.
@@ -685,7 +692,7 @@ namespace dtGame
           * @param toReject the Message that you are trying to reject.
           * @param rejectDescription A text message describing why the message was rejected.
           */
-         void RejectMessage(const dtGame::Message &reasonMessage, const std::string &rejectDescription);
+         void RejectMessage(const Message &reasonMessage, const std::string &rejectDescription);
 
       protected:
 

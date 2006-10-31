@@ -86,7 +86,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="python24.lib osg.lib osgDB.lib dtCore.lib OpenThreadsWin32.lib"
+				AdditionalDependencies="python24.lib osg.lib osgDB.lib dtCore.lib dtUtil.lib OpenThreadsWin32.lib"
 				OutputFile="../../../bin/dtScript.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"

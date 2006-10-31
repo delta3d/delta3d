@@ -1,33 +1,37 @@
-/*
- * Delta3D Open Source Game and Simulation Engine
+/* -*-c++-*-
+ * Delta3D Open Source Game and Simulation Engine 
  * Simulation, Training, and Game Editor (STAGE)
- * Copyright (C) 2005, BMH Associates, Inc.
+ * Copyright (C) 2006, Alion Science and Technology, BMH Operation 
  *
  * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
+ * the terms of the GNU General Public License as published by the Free 
+ * Software Foundation; either version 2 of the License, or (at your option) 
  * any later version.
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more 
  * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this library; if not, write to the Free Software Foundation, Inc.,
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License 
+ * along with this library; if not, write to the Free Software Foundation, Inc., 
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
  *
  * William E. Johnson II 
+ * David Guthrie
  */
 #ifndef DELTA_TASK_EDITOR
 #define DELTA_TASK_EDITOR
 
+#include <QtCore/QObject>
 #include <QtGui/QDialog>
+#include <dtEditQt/groupuiplugin.h>
+#include <dtCore/refptr.h>
 
 // Forward declarations
-class QListWidget;
 class QComboBox;
 class QString;
+class QTableWidget;
 
 namespace dtEditQt
 {
@@ -43,12 +47,15 @@ namespace dtEditQt
          /// Destructor
          virtual ~TaskEditor();
 
+         void SetTaskChildren(const dtDAL::NamedGroupParameter& children);
+         void GetTaskChildren(dtDAL::NamedGroupParameter& toFill) const;
+
       public slots:
 
          /**
-          * Slot to refresh the children list widget
+          * Slot to refresh the children table
           */
-         void RefreshListWidget();
+         void RefreshChildren();
 
          /**
           * Slot to refresh the combo box
@@ -74,12 +81,26 @@ namespace dtEditQt
           * Slot called when the remove child button is clicked
           */
          void OnRemoveChildClicked();
-
+         
+         ///Enables the buttons for manipulating the existing children
+         void EnableEditButtons();
+   
+         ///Disables the buttons for manipulating the existing children
+         void DisableEditButtons();
+      
       private:
 
-         QListWidget *mListWidget;
-         QComboBox   *mComboBox;
+         /// The visible list of child tasks
+         QTableWidget* mChildrenView;
+         QComboBox*    mComboBox;
+
+         QPushButton* mMoveUp;
+         QPushButton* mMoveDown;
+         QPushButton* mRemoveChild;
+         
+         dtCore::RefPtr<dtDAL::NamedGroupParameter> mChildren;
    };
+   
 }
 
 #endif

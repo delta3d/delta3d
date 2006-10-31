@@ -18,7 +18,7 @@
  *
  * @author Roy Newton
  */
-
+#include <prefix/dtgameprefix-src.h>
 #include <dtUtil/log.h>
 #include <dtUtil/exception.h>
 #include <dtUtil/fileutils.h>
@@ -130,7 +130,7 @@ void LogTests::TestLogMessage1()
          //test with max characters
          mMsgStr.empty();
          mSource.empty();
-         for(int i=0; i<=MAX_LENGTH-1; i++)
+         for(unsigned i=0; i<=MAX_LENGTH-1; i++)
          {
             mMsgStr += "s";
             mSource += "f";
@@ -180,7 +180,7 @@ void LogTests::TestLogMessage2()
          mMsgStr.empty();
          mSource.empty();
          
-         for(int i=0; i<=MAX_LENGTH-1; i++)
+         for(unsigned i=0; i<=MAX_LENGTH-1; i++)
          {
             mMsgStr += "g";
             mSource += "h";         
@@ -229,7 +229,7 @@ void LogTests::TestLogMessage3()
          mMsgStr.empty();
          mSource.empty();
          
-         for(int i=0; i<=MAX_LENGTH-1; i++)
+         for(unsigned i=0; i<=MAX_LENGTH-1; i++)
          {
             mMsgStr += "i";
             mSource += "j";         

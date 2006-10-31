@@ -19,12 +19,15 @@
  * Bradley Anderegg 06/07/2006
  */
 #include <prefix/dtdalprefix-src.h>
+
 #include <dtDAL/waypointactorproxy.h>
+#include <dtDAL/actorproxyicon.h>
+#include <dtDAL/enginepropertytypes.h>
+
 #include <dtAI/waypointmanager.h>
 #include <dtAI/waypointactor.h>
 
-#include <dtDAL/actorproxyicon.h>
-#include <dtDAL/enginepropertytypes.h>
+#include <sstream>
 
 using namespace dtAI;
 

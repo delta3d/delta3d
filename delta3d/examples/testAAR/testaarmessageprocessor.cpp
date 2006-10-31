@@ -82,6 +82,10 @@ void TestAARMessageProcessor::ProcessMessage(const dtGame::Message &msg)
    {
       PlaceActor();
    }
+   else if(type == TestAARMessageType::PLACE_IGNORED_ACTOR)
+   {
+      PlaceActor(true);
+   }
    else if(type == TestAARMessageType::RESET)
    {
       Reset();
@@ -121,7 +125,8 @@ dtCore::RefPtr<dtGame::GameActorProxy>
 TestAARMessageProcessor::CreateNewMovingActor(const std::string &meshName, 
                                                  float velocity, 
                                                  float turnRate, 
-                                                 bool bSetLocation)
+                                                 bool bSetLocation,
+                                                 bool ignoreRecording)
 {
    if(mLogController->GetLastKnownStatus().GetStateEnum() ==
       dtGame::LogStateEnumeration::LOGGER_STATE_PLAYBACK)
@@ -157,6 +162,11 @@ TestAARMessageProcessor::CreateNewMovingActor(const std::string &meshName,
       }
    }
 
+   if(ignoreRecording)
+   {
+      mLogController->RequestAddIgnoredActor(object->GetId());
+   }
+
    GetGameManager()->AddActor(*object,false,false);
 
    // set mesh, velocity, and turn rate
@@ -171,7 +181,7 @@ TestAARMessageProcessor::CreateNewMovingActor(const std::string &meshName,
 }
 
 //////////////////////////////////////////////////////////////////////////
-void TestAARMessageProcessor::PlaceActor()
+void TestAARMessageProcessor::PlaceActor(bool ignored)
 {
    float turn,velocity;
    float chance,chance2;
@@ -194,12 +204,25 @@ void TestAARMessageProcessor::PlaceActor()
       velocity = 0.0f;
 
    std::string path;
-   if (chance <= 0.5f)
+
+   if (ignored)
+   {
+      path = dtCore::FindFileInPathList("models/ignore_me.ive");
+      if(!path.empty())
+      {
+         obj = CreateNewMovingActor(path,velocity,turn,true,ignored);
+      }
+      else
+      {
+         LOG_ERROR("Failed to find the ignore_me model file.");
+      }
+   }
+   else if (chance <= 0.5f)
    {
       path = dtCore::FindFileInPathList("models/physics_crate.ive");
       if(!path.empty())
       {
-         obj = CreateNewMovingActor(path,velocity,turn,true);
+         obj = CreateNewMovingActor(path,velocity,turn,true,ignored);
       }
       else
       {
@@ -211,7 +234,7 @@ void TestAARMessageProcessor::PlaceActor()
       path = dtCore::FindFileInPathList("models/physics_barrel.ive");
       if(!path.empty())
       {
-         obj = CreateNewMovingActor(path,velocity,turn,true);
+         obj = CreateNewMovingActor(path,velocity,turn,true,ignored);
       }
       else
       {
@@ -270,13 +293,13 @@ void TestAARMessageProcessor::OnReceivedStatus(const dtGame::LogStatus &newStatu
          static_cast<dtActors::TaskActorProxy*>(mLmsComponent->GetTaskByName("Drop 5 boxes"));
 
       //Recreate the hierarchy...
-      movePlayerRollup->AddSubTaskProxy(*movePlayerLeft);
-      movePlayerRollup->AddSubTaskProxy(*movePlayerRight);
-      movePlayerRollup->AddSubTaskProxy(*movePlayerForward);
-      movePlayerRollup->AddSubTaskProxy(*movePlayerBack);
+      movePlayerRollup->AddSubTask(*movePlayerLeft);
+      movePlayerRollup->AddSubTask(*movePlayerRight);
+      movePlayerRollup->AddSubTask(*movePlayerForward);
+      movePlayerRollup->AddSubTask(*movePlayerBack);
 
-      placeObjects->AddSubTaskProxy(*movePlayerRollup);
-      placeObjects->AddSubTaskProxy(*drop5Boxes);
+      placeObjects->AddSubTask(*movePlayerRollup);
+      placeObjects->AddSubTask(*drop5Boxes);
 
       //mTaskComponent->CheckTaskHierarchy();
       mLmsComponent->CheckTaskHierarchy();
@@ -397,7 +420,7 @@ void TestAARMessageProcessor::SetupTasks()
    taskMovePlayerProxy->SetId(dtCore::UniqueId("Move the Player (Rollup)"));
    taskMovePlayer.SetPassingScore(0.75f); // only need 3 to succeed
    taskMovePlayer.SetNotifyLMSOnUpdate(true);
-   taskPlaceObjectsProxy->AddSubTaskProxy(*taskMovePlayerProxy);
+   taskPlaceObjectsProxy->AddSubTask(*taskMovePlayerProxy);
    GetGameManager()->AddActor(*taskMovePlayerProxy,false,false);
 
    //      task - child - event - move left (.25)
@@ -411,7 +434,7 @@ void TestAARMessageProcessor::SetupTasks()
    taskPlayerLeft.SetName("Turn Player Left");
    taskPlayerLeft.SetNotifyLMSOnUpdate(true);
    taskPlayerLeftProxy->SetId(dtCore::UniqueId("Turn Player Left"));
-   taskMovePlayerProxy->AddSubTaskProxy(*taskPlayerLeftProxy);
+   taskMovePlayerProxy->AddSubTask(*taskPlayerLeftProxy);
    GetGameManager()->AddActor(*taskPlayerLeftProxy,false,false);
 
    //      task - child - event - move right (.25)
@@ -425,7 +448,7 @@ void TestAARMessageProcessor::SetupTasks()
    taskPlayerRight.SetName("Turn Player Right");
    taskPlayerRight.SetNotifyLMSOnUpdate(true);
    taskPlayerRightProxy->SetId(dtCore::UniqueId("Turn Player Right"));
-   taskMovePlayerProxy->AddSubTaskProxy(*taskPlayerRightProxy);
+   taskMovePlayerProxy->AddSubTask(*taskPlayerRightProxy);
    GetGameManager()->AddActor(*taskPlayerRightProxy,false,false);
 
    //      task - child - event - move forward (.25)
@@ -439,7 +462,7 @@ void TestAARMessageProcessor::SetupTasks()
    taskPlayerForward.SetName("Move Player Forward");
    taskPlayerForward.SetNotifyLMSOnUpdate(true);
    taskPlayerForwardProxy->SetId(dtCore::UniqueId("Move Player Forward"));
-   taskMovePlayerProxy->AddSubTaskProxy(*taskPlayerForwardProxy);
+   taskMovePlayerProxy->AddSubTask(*taskPlayerForwardProxy);
    GetGameManager()->AddActor(*taskPlayerForwardProxy,false,false);
 
    //      task - child - event - move back (.25)
@@ -453,7 +476,7 @@ void TestAARMessageProcessor::SetupTasks()
    taskPlayerBack.SetName("Move Player Back");
    taskPlayerBack.SetNotifyLMSOnUpdate(true);
    taskPlayerBackProxy->SetId(dtCore::UniqueId("Move Player Back"));
-   taskMovePlayerProxy->AddSubTaskProxy(*taskPlayerBackProxy);
+   taskMovePlayerProxy->AddSubTask(*taskPlayerBackProxy);
    GetGameManager()->AddActor(*taskPlayerBackProxy,false,false);
 
    //   task - child - event - place 5 boxes
@@ -466,7 +489,7 @@ void TestAARMessageProcessor::SetupTasks()
    taskDrop5Boxes.SetName("Drop 5 boxes");
    taskDrop5Boxes.SetNotifyLMSOnUpdate(true);
    taskDrop5BoxesProxy->SetId(dtCore::UniqueId("Drop 5 boxes"));
-   taskPlaceObjectsProxy->AddSubTaskProxy(*taskDrop5BoxesProxy);
+   taskPlaceObjectsProxy->AddSubTask(*taskDrop5BoxesProxy);
    GetGameManager()->AddActor(*taskDrop5BoxesProxy,false,false);
 }
 

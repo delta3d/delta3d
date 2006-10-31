@@ -23,6 +23,7 @@
 #include <dtActors/deltaobjectactorproxy.h>
 #include <dtCore/scene.h>
 #include <dtCore/object.h>
+#include <dtUtil/log.h>
 #include <sstream>
 
 using namespace dtCore;

@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * Matthew W. Campbell
+ * Matthew W. Campbell, Curtiss Murphy
  */
 #include <prefix/dtcoreprefix-src.h>
 #include <dtCore/shadermanager.h>
@@ -47,7 +47,7 @@ namespace dtCore
    ShaderManager::ShaderManager() : dtCore::Base("ShaderManager")
    {
       Clear();
-      AddSender(dtCore::System::Instance());
+      AddSender(&dtCore::System::GetInstance());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -61,6 +61,7 @@ namespace dtCore
       mShaderGroups.clear();
       mShaderProgramCache.clear();
       mTotalShaderCount = 0;
+      mActiveNodeList.clear();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -76,17 +77,24 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    void ShaderManager::OnPreFrame(double deltaRealTime, double deltaSimTime)
    {
-      //Update all the shader groups that have been marked dirty since the last frame.
-      std::map<std::string,dtCore::RefPtr<ShaderGroup> >::iterator itor;
-      for (itor=mShaderGroups.begin(); itor!=mShaderGroups.end(); ++itor)
+      for (int i = mActiveNodeList.size() - 1; i >= 0; i--)
       {
-         if (itor->second->IsDirty())
-            itor->second->Update();
+         // if weak reference observer is still valid, then update our shader instance.
+         if (mActiveNodeList[i].nodeWeakReference.valid())
+         {
+            if (mActiveNodeList[i].shaderInstance->IsDirty())
+               mActiveNodeList[i].shaderInstance->Update();
+         }
+         else 
+         {
+            // If the weak reference is NULL, then remove the item from our active list.
+            mActiveNodeList.erase(mActiveNodeList.begin() + i);
+         }
       }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ShaderManager::AddShaderGroup(ShaderGroup &shaderGroup)
+   void ShaderManager::AddShaderGroupTemplate(ShaderGroup &shaderGroup)
    {
       std::map<std::string,dtCore::RefPtr<ShaderGroup> >::iterator itor =
          mShaderGroups.find(shaderGroup.GetName());
@@ -111,7 +119,7 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ShaderManager::RemoveShaderGroup(const std::string &name)
+   void ShaderManager::RemoveShaderGroupTemplate(const std::string &name)
    {
       std::map<std::string,dtCore::RefPtr<ShaderGroup> >::iterator itor =
          mShaderGroups.find(name);
@@ -121,13 +129,13 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ShaderManager::RemoveShaderGroup(const ShaderGroup &shaderGroup)
+   void ShaderManager::RemoveShaderGroupTemplate(const ShaderGroup &shaderGroup)
    {
-      RemoveShaderGroup(shaderGroup.GetName());
+      RemoveShaderGroupTemplate(shaderGroup.GetName());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   const ShaderGroup *ShaderManager::FindShaderGroup(const std::string &name) const
+   const ShaderGroup *ShaderManager::FindShaderGroupTemplate(const std::string &name) const
    {
       std::map<std::string,dtCore::RefPtr<ShaderGroup> >::const_iterator itor =
             mShaderGroups.find(name);
@@ -139,7 +147,7 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   ShaderGroup *ShaderManager::FindShaderGroup(const std::string &name)
+   ShaderGroup *ShaderManager::FindShaderGroupTemplate(const std::string &name)
    {
       std::map<std::string,dtCore::RefPtr<ShaderGroup> >::iterator itor =
             mShaderGroups.find(name);
@@ -151,7 +159,7 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ShaderManager::GetAllShaderGroups(std::vector<dtCore::RefPtr<ShaderGroup> > &toFill)
+   void ShaderManager::GetAllShaderGroupTemplates(std::vector<dtCore::RefPtr<ShaderGroup> > &toFill)
    {
       std::map<std::string,dtCore::RefPtr<ShaderGroup> >::iterator itor;
 
@@ -162,13 +170,13 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   const Shader *ShaderManager::FindShader(const std::string &name, const std::string &groupName) const
+   const Shader *ShaderManager::FindShaderTemplate(const std::string &name, const std::string &groupName) const
    {
       return InternalFindShader(name,groupName);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   Shader *ShaderManager::FindShader(const std::string &name, const std::string &groupName)
+   Shader *ShaderManager::FindShaderTemplate(const std::string &name, const std::string &groupName)
    {
       return const_cast<Shader *>(InternalFindShader(name,groupName));
    }
@@ -206,31 +214,107 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ShaderManager::AssignShader(const Shader &shader, osg::Node &node)
+   // Curt - Add a method to get an active shader for a given node
+   dtCore::Shader *ShaderManager::GetShaderInstanceForNode(osg::Node *node)
+   {
+      // Try to find the node in the active node list.
+      for (int i = mActiveNodeList.size() - 1; i >= 0 && node != NULL; i--)
+      {
+         if (mActiveNodeList[i].nodeWeakReference.valid() && 
+            mActiveNodeList[i].nodeWeakReference.get() == node)
+         {
+            return mActiveNodeList[i].shaderInstance.get();
+         }
+      }
+
+      return NULL;
+   }
+
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void ShaderManager::RemoveShaderFromActiveNodeList(osg::Node *node)
+   {
+      // find any instances of weak references to this node and remove it from the active list.
+      for (int i = mActiveNodeList.size() - 1; i >= 0 && node != NULL; i--)
+      {
+         if (mActiveNodeList[i].nodeWeakReference.valid() && 
+            mActiveNodeList[i].nodeWeakReference.get() == node)
+         {
+            mActiveNodeList.erase(mActiveNodeList.begin() + i);
+         }
+      }
+   }
+
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void ShaderManager::UnassignShaderFromNode(osg::Node &node)
    {
       std::vector<dtCore::RefPtr<ShaderParameter> > params;
       std::vector<dtCore::RefPtr<ShaderParameter> >::iterator currParam;
       dtCore::RefPtr<osg::StateSet> stateSet = node.getOrCreateStateSet();
 
-      //First assign the vertex,fragment,and shader program to the render
-      //state.
-      if (shader.GetVertexShader() == NULL)
-         LOG_WARNING("Error assigning shader: " + shader.GetName() + "  Vertex shader was invalid.");
-      if (shader.GetFragmentShader() == NULL)
-         LOG_WARNING("Error assigning shader: " + shader.GetName() + "  Fragment shader was invalid.");
-      if (shader.GetShaderProgram() == NULL)
-         LOG_WARNING("Error assigning shader: " + shader.GetName() + "  Shader program was invalid.");
+      // find any instances of weak references to this node and remove it from the active list.
+      for (int i = mActiveNodeList.size() - 1; i >= 0; i--)
+      {
+         if (mActiveNodeList[i].nodeWeakReference.valid() && 
+            mActiveNodeList[i].nodeWeakReference.get() == &node)
+         {
+            // clean up the parameters effects to the stateset
+            mActiveNodeList[i].shaderInstance->GetParameterList(params);
+            for (currParam=params.begin(); currParam!=params.end(); ++currParam)
+               (*currParam)->DetachFromRenderState(*stateSet);
+
+            // remove the program
+            stateSet->setAttributeAndModes(new osg::Program(), osg::StateAttribute::ON);
+         }
+      }
+
+      // Remove all references to this node.  Call the method for safety to eliminate any possible 
+      // chance that there is more than one (not sure how that could happen). .
+      RemoveShaderFromActiveNodeList(&node);
+   }
+
+
+   ///////////////////////////////////////////////////////////////////////////////
+   dtCore::Shader *ShaderManager::AssignShaderFromTemplate(const dtCore::Shader &templateShader, osg::Node &node)
+   {
+      // If this node is already assigned to a shader, remove it from our active list. 
+      RemoveShaderFromActiveNodeList(&node);
+
+      // create a duplicate of the shader template.  The group and shaders that you use to find
+      // are simply templates that we use to create unique instances for each node. 
+      dtCore::RefPtr<dtCore::Shader> newShader = templateShader.Clone();
+
+      std::vector<dtCore::RefPtr<ShaderParameter> > params;
+      std::vector<dtCore::RefPtr<ShaderParameter> >::iterator currParam;
+      dtCore::RefPtr<osg::StateSet> stateSet = node.getOrCreateStateSet();
+
+      //First assign the vertex,fragment,and shader program to the render state.
+      if (newShader->GetVertexShader() == NULL)
+         LOG_WARNING("Error assigning shader: " + newShader->GetName() + "  Vertex shader was invalid.");
+      if (newShader->GetFragmentShader() == NULL)
+         LOG_WARNING("Error assigning shader: " + newShader->GetName() + "  Fragment shader was invalid.");
+      if (newShader->GetShaderProgram() == NULL)
+         LOG_WARNING("Error assigning shader: " + newShader->GetName() + "  Shader program was invalid.");
 
       //I realize const-cast is not a great idea here, but I did not want the have a non-const version
       //of the GetShaderProgram() method on the shader class.
-      stateSet->setAttributeAndModes(const_cast<osg::Program*>(shader.GetShaderProgram()),
+      stateSet->setAttributeAndModes(const_cast<osg::Program*>(newShader->GetShaderProgram()),
          osg::StateAttribute::ON);
 
       //Now add all the shader's parameters to the render state.  Each class of shader parameter
       //is responcible for knowning how to attach itself to the render state.
-      shader.GetParameterList(params);
+      newShader->GetParameterList(params);
       for (currParam=params.begin(); currParam!=params.end(); ++currParam)
          (*currParam)->AttachToRenderState(*stateSet);
+
+      // add the new shader and node to the active node list.
+      ActiveNodeEntry activeNode;
+      activeNode.shaderInstance = newShader.get();
+      activeNode.nodeWeakReference = &node;
+      mActiveNodeList.push_back(activeNode);
+
+      return newShader.get();
    }
 
    ///////////////////////////////////////////////////////////////////////////////

@@ -20,13 +20,13 @@
 * Curtiss Murphy
 */
 #include <prefix/dtstageprefix-src.h>
-#include "dtEditQt/dynamicfloatcontrol.h"
-#include "dtEditQt/dynamicsubwidgets.h"
-#include "dtEditQt/editorevents.h"
-#include "dtDAL/actorproxy.h"
-#include "dtDAL/actorproperty.h"
-#include "dtDAL/datatype.h"
-#include "dtDAL/enginepropertytypes.h"
+#include <dtEditQt/dynamicfloatcontrol.h>
+#include <dtEditQt/dynamicsubwidgets.h>
+#include <dtEditQt/editorevents.h>
+#include <dtDAL/actorproxy.h>
+#include <dtDAL/actorproperty.h>
+#include <dtDAL/datatype.h>
+#include <dtDAL/enginepropertytypes.h>
 #include <dtUtil/log.h>
 #include <QtGui/QWidget>
 #include <QtGui/QLineEdit>
@@ -147,6 +147,9 @@ namespace dtEditQt
         updateEditorFromModel(temporaryEditControl);
 
         temporaryEditControl->setToolTip(getDescription());
+
+        connect(this, SIGNAL(closeEditor(QWidget*, QAbstractItemDelegate::EndEditHint)), this,
+           SLOT(handleSubEditDestroy(QWidget*, QAbstractItemDelegate::EndEditHint)));
 
         return temporaryEditControl;
     }

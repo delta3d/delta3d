@@ -182,6 +182,16 @@ bool TestAARInput::HandleKeyPressed(const dtCore::Keyboard *keyBoard,
       }
       break;
 
+      case Producer::Key_G:
+      {
+         if(mLogController->GetLastKnownStatus().GetStateEnum() != dtGame::LogStateEnumeration::LOGGER_STATE_PLAYBACK)
+         {
+            dtCore::RefPtr<dtGame::Message> msg = GetGameManager()->GetMessageFactory().CreateMessage(TestAARMessageType::PLACE_IGNORED_ACTOR);
+            GetGameManager()->SendMessage(*msg);
+         }   
+      }
+      break;
+
       case Producer::Key_T:
       {
          InsertTag();
@@ -407,7 +417,13 @@ void TestAARInput::InsertKeyFrame()
 ////////////////////////////////////////////////////////////////////////
 void TestAARInput::ProcessMessage(const dtGame::Message& message)
 {
- 
+   const dtGame::MessageType &type = message.GetMessageType();
+   
+   if(type == dtGame::MessageType::INFO_ACTOR_DELETED)
+   {
+      if(mPlayer != NULL && message.GetAboutActorId() == mPlayer->GetId())
+         mPlayer = NULL;
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////

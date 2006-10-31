@@ -19,7 +19,6 @@
  * David Guthrie
  */
 #include <prefix/dtdalprefix-src.h>
-#include <dtDAL/actortype.h>
 #include <cstdio>
 #include <cstdlib>
 #include <string>
@@ -44,6 +43,8 @@
 
 #include <osgDB/FileNameUtils>
 
+#include <dtCore/globals.h>
+
 #include <dtDAL/mapxml.h>
 #include <dtDAL/map.h>
 #include <dtDAL/exceptionenum.h>
@@ -51,6 +52,7 @@
 #include <dtDAL/groupactorproperty.h>
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/actorproxy.h>
+#include <dtDAL/actortype.h>
 #include <dtDAL/datatype.h>
 #include <dtDAL/gameevent.h>
 #include <dtDAL/gameeventmanager.h>
@@ -110,29 +112,34 @@ namespace dtDAL
    {
       try
       {
+         mParsing = true;
          mXercesParser->setContentHandler(mHandler.get());
          mXercesParser->setErrorHandler(mHandler.get());
          mXercesParser->parse(path.c_str());
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Parsing complete.\n");
          dtCore::RefPtr<Map> mapRef = mHandler->GetMap();
          mHandler->ClearMap();
+         mParsing = false;
          return mapRef.release();
       }
       catch (const OutOfMemoryException&)
       {
+         mParsing = false;
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Ran out of memory parsing!");
-         EXCEPT(dtDAL::ExceptionEnum::MapLoadParsingError, "Ran out of memory parsing save file.");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::MapLoadParsingError, "Ran out of memory parsing save file.", __FILE__, __LINE__);
       }
       catch (const XMLException& toCatch)
       {
+         mParsing = false;
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Error during parsing! %ls :\n",
                              toCatch.getMessage());
-         EXCEPT(dtDAL::ExceptionEnum::MapLoadParsingError, "Error while parsing map file. See log for more information.");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::MapLoadParsingError, "Error while parsing map file. See log for more information.", __FILE__, __LINE__);
       }
       catch (const SAXParseException&)
       {
+         mParsing = false;
          //this will already by logged by the
-         EXCEPT(dtDAL::ExceptionEnum::MapLoadParsingError, "Error while parsing map file. See log for more information.");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::MapLoadParsingError, "Error while parsing map file. See log for more information.", __FILE__, __LINE__);
       }
       return NULL;
    }
@@ -173,12 +180,12 @@ namespace dtDAL
             }
             else
             {
-               EXCEPT(dtDAL::ExceptionEnum::MapLoadParsingError, "Parser stopped without finding the map name.");
+               throw dtUtil::Exception(dtDAL::ExceptionEnum::MapLoadParsingError, "Parser stopped without finding the map name.", __FILE__, __LINE__);
             }
          }
          else
          {
-            EXCEPT(dtDAL::ExceptionEnum::MapLoadParsingError, "Parsing to find the map name did not begin.");
+            throw dtUtil::Exception(dtDAL::ExceptionEnum::MapLoadParsingError, "Parsing to find the map name did not begin.", __FILE__, __LINE__);
          }
       }
       catch (const OutOfMemoryException&)
@@ -187,7 +194,7 @@ namespace dtDAL
             mXercesParser->parseReset(token);
 
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Ran out of memory parsing!");
-         EXCEPT(dtDAL::ExceptionEnum::MapLoadParsingError, "Ran out of memory parsing save file.");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::MapLoadParsingError, "Ran out of memory parsing save file.", __FILE__, __LINE__);
       }
       catch (const XMLException& toCatch)
       {
@@ -196,7 +203,7 @@ namespace dtDAL
 
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Error during parsing! %ls :\n",
                              toCatch.getMessage());
-         EXCEPT(dtDAL::ExceptionEnum::MapLoadParsingError, "Error while parsing map file. See log for more information.");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::MapLoadParsingError, "Error while parsing map file. See log for more information.", __FILE__, __LINE__);
       }
       catch (const SAXParseException&)
       {
@@ -204,14 +211,36 @@ namespace dtDAL
             mXercesParser->parseReset(token);
 
          //this will already by logged by the content handler
-         EXCEPT(dtDAL::ExceptionEnum::MapLoadParsingError, "Error while parsing map file. See log for more information.");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::MapLoadParsingError, "Error while parsing map file. See log for more information.", __FILE__, __LINE__);
       }
    }
 
    /////////////////////////////////////////////////////////////////
+   Map* MapParser::GetMapBeingParsed()
+   {
+      if (!IsParsing())
+      {
+         return NULL;
+      }
+      
+      return mHandler->GetMap();
+   }
 
+   /////////////////////////////////////////////////////////////////
+   const Map* MapParser::GetMapBeingParsed() const
+   {
+      if (!IsParsing())
+      {
+         return NULL;
+      }
+      
+      return mHandler->GetMap();
+   }
+
+   /////////////////////////////////////////////////////////////////
    MapParser::MapParser() :
-      mHandler( new MapContentHandler() )
+      mHandler(new MapContentHandler()),
+      mParsing(false)
    { 
       mLogger = &dtUtil::Log::GetInstance(logName);
 
@@ -227,13 +256,13 @@ namespace dtDAL
       mXercesParser->setFeature(XMLUni::fgXercesUseCachedGrammarInParse, true);
       mXercesParser->setFeature(XMLUni::fgXercesCacheGrammarFromParse, true);
 
-      std::string schemaFileName = osgDB::findDataFile("map.xsd");
+      std::string schemaFileName = dtCore::FindFileInPathList("map.xsd");
 
       if (!dtUtil::FileUtils::GetInstance().FileExists(schemaFileName))
       {
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
                              "Error, unable to load required file \"map.xsd\".  Aborting.");
-         EXCEPT(dtDAL::ExceptionEnum::ProjectException, "Error, unable to load required file \"map.xsd\".  Aborting.");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectException, "Error, unable to load required file \"map.xsd\".  Aborting.", __FILE__, __LINE__);
       }
 
       XMLCh* value = XMLString::transcode(schemaFileName.c_str());
@@ -401,7 +430,7 @@ namespace dtDAL
 
       if (outfile == NULL)
       {
-         EXCEPT(dtDAL::ExceptionEnum::MapSaveError, std::string("Unable to open map file \"") + filePath + "\" for writing.");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::MapSaveError, std::string("Unable to open map file \"") + filePath + "\" for writing.", __FILE__, __LINE__);
       }
 
       mFormatTarget.SetOutputFile(outfile);
@@ -574,7 +603,7 @@ namespace dtDAL
                              "Unknown exception while attempting to save map \"%s\".",
                              map.GetName().c_str());
          mFormatTarget.SetOutputFile(NULL);
-         EXCEPT(dtDAL::ExceptionEnum::MapSaveError, std::string("Unknown exception saving map \"") + map.GetName() + ("\"."));
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::MapSaveError, std::string("Unknown exception saving map \"") + map.GetName() + ("\"."), __FILE__, __LINE__);
       }
    }
 
@@ -825,11 +854,14 @@ namespace dtDAL
          {
             BeginElement(MapXMLConstants::ACTOR_PROPERTY_GROUP_ELEMENT);
             dtCore::RefPtr<NamedGroupParameter> gp = static_cast<const GroupActorProperty&>(property).GetValue();
-            std::vector<const NamedParameter*> parameters;
-            gp->GetParameters(parameters);
-            for (size_t i = 0; i < parameters.size(); ++i) 
+            if (gp.valid())
             {
-               WriteParameter(*parameters[i]);
+               std::vector<const NamedParameter*> parameters;
+               gp->GetParameters(parameters);
+               for (size_t i = 0; i < parameters.size(); ++i) 
+               {
+                  WriteParameter(*parameters[i]);
+               }
             }
             EndElement();                     
             break;

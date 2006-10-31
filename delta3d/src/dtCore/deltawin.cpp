@@ -8,6 +8,7 @@
 #include <dtUtil/deprecationmgr.h>
 #include <dtUtil/log.h>
 #include <dtCore/exceptionenum.h>
+#include <dtCore/inputcallback.h>
 #include <dtUtil/exception.h>
 
 using namespace dtCore;
@@ -17,26 +18,26 @@ IMPLEMENT_MANAGEMENT_LAYER(DeltaWin)
 
 
 // --- InputCallback's implementation --- //
-DeltaWin::InputCallback::InputCallback(Keyboard* keyboard, Mouse* mouse) : mKeyboard(keyboard), mMouse(mouse)
+InputCallback::InputCallback(Keyboard* keyboard, Mouse* mouse) : mKeyboard(keyboard), mMouse(mouse)
 {
 }
 
-void DeltaWin::InputCallback::mouseScroll(Producer::KeyboardMouseCallback::ScrollingMotion sm)
+void InputCallback::mouseScroll(Producer::KeyboardMouseCallback::ScrollingMotion sm)
 {
    mMouse->MouseScroll(sm);
 }
 
-void DeltaWin::InputCallback::mouseMotion(float x, float y)
+void InputCallback::mouseMotion(float x, float y)
 {
    mMouse->MouseMotion( x, y );
 }
 
-void DeltaWin::InputCallback::passiveMouseMotion(float x, float y)
+void InputCallback::passiveMouseMotion(float x, float y)
 {
    mMouse->PassiveMouseMotion( x, y );
 }
 
-void DeltaWin::InputCallback::buttonPress(float x, float y, unsigned int button)
+void InputCallback::buttonPress(float x, float y, unsigned int button)
 {
    // an unknown button number defaults to LeftButton.
    Mouse::MouseButton mb(Mouse::LeftButton);
@@ -62,7 +63,7 @@ void DeltaWin::InputCallback::buttonPress(float x, float y, unsigned int button)
    mMouse->ButtonDown(x, y, mb);
 }
 
-void DeltaWin::InputCallback::doubleButtonPress(float x, float y, unsigned int button)
+void InputCallback::doubleButtonPress(float x, float y, unsigned int button)
 {
    // an unknown button number defaults to LeftButton.
    Mouse::MouseButton mb(Mouse::LeftButton);
@@ -89,7 +90,7 @@ void DeltaWin::InputCallback::doubleButtonPress(float x, float y, unsigned int b
    mMouse->DoubleButtonDown(x, y, mb);
 }
 
-void DeltaWin::InputCallback::buttonRelease(float x, float y, unsigned int button)
+void InputCallback::buttonRelease(float x, float y, unsigned int button)
 {
    // an unknown button number defaults to LeftButton.
    Mouse::MouseButton mb(Mouse::LeftButton);
@@ -116,32 +117,32 @@ void DeltaWin::InputCallback::buttonRelease(float x, float y, unsigned int butto
    mMouse->ButtonUp(x, y, mb);
 }
 
-void DeltaWin::InputCallback::keyPress(Producer::KeyCharacter kc)
+void InputCallback::keyPress(Producer::KeyCharacter kc)
 {
    mKeyboard->KeyDown(kc);
 }
 
-void DeltaWin::InputCallback::keyRelease(Producer::KeyCharacter kc)
+void InputCallback::keyRelease(Producer::KeyCharacter kc)
 {
    mKeyboard->KeyUp(kc);
 }
 
-void DeltaWin::InputCallback::specialKeyPress(Producer::KeyCharacter kc)
+void InputCallback::specialKeyPress(Producer::KeyCharacter kc)
 {
    mKeyboard->KeyDown(kc);
 }
 
-void DeltaWin::InputCallback::specialKeyRelease(Producer::KeyCharacter kc)
+void InputCallback::specialKeyRelease(Producer::KeyCharacter kc)
 {
    mKeyboard->KeyUp(kc);
 }
 
-void DeltaWin::InputCallback::SetKeyboard(Keyboard* kb)
+void InputCallback::SetKeyboard(Keyboard* kb)
 {
    mKeyboard = kb;
 }
 
-void DeltaWin::InputCallback::SetMouse(Mouse* m)
+void InputCallback::SetMouse(Mouse* m)
 {
    mMouse = m;
 }
@@ -244,6 +245,16 @@ DeltaWin::~DeltaWin()
    mRenderSurface = 0;
 
    DeregisterInstance(this);
+}
+
+InputCallback* DeltaWin::GetInputCallback() 
+{ 
+   return mInputCallback.get(); 
+}
+
+const InputCallback* DeltaWin::GetInputCallback() const 
+{ 
+   return mInputCallback.get(); 
 }
 
 ///Is the window currently in fullscreen mode?

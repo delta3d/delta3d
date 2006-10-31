@@ -19,16 +19,16 @@
 * Matthew W. Campbell
 */
 #include <prefix/dtgameprefix-src.h>
-#include "dtGame/serverloggercomponent.h"
-#include "dtGame/loggermessages.h"
-#include "dtGame/messagetype.h"
-#include "dtGame/gamemanager.h"
-#include "dtGame/actorupdatemessage.h"
-#include "dtGame/machineinfo.h"
-#include "dtGame/logstream.h"
-#include "dtGame/basemessages.h"
-#include "dtGame/loggermessages.h"
-#include "dtUtil/fileutils.h"
+#include <dtGame/serverloggercomponent.h>
+#include <dtGame/loggermessages.h>
+#include <dtGame/messagetype.h>
+#include <dtGame/gamemanager.h>
+#include <dtGame/actorupdatemessage.h>
+#include <dtGame/machineinfo.h>
+#include <dtGame/logstream.h>
+#include <dtGame/basemessages.h>
+#include <dtGame/loggermessages.h>
+#include <dtUtil/fileutils.h>
 #include <sstream>
 
 namespace dtGame
@@ -58,6 +58,9 @@ namespace dtGame
    {
       if (mLogStream.valid())
          mLogStream->Close();
+
+      mRecordIgnoreList.clear();
+      mPlaybackList.clear();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -126,6 +129,18 @@ namespace dtGame
       else if (message.GetMessageType() == MessageType::INFO_MAP_LOADED)
       {
          HandleMapLoadedMessage(message);
+      }
+      else if (message.GetMessageType() == MessageType::LOG_REQ_ADD_IGNORED_ACTOR)
+      {
+         HandleAddIgnoredActorMessage(message);
+      }
+      else if (message.GetMessageType() == MessageType::LOG_REQ_REMOVE_IGNORED_ACTOR)
+      {
+         HandleRemoveIgnoredActorMessage(message);
+      }
+      else if (message.GetMessageType() == MessageType::LOG_REQ_CLEAR_IGNORE_LIST)
+      {
+         HandleClearIgnoreListMessage();
       }
       else
       {
@@ -563,9 +578,29 @@ namespace dtGame
          {
             const MessageType &type = mNextMessage->GetMessageType();
 
+            // If an actor is destroyed, check and then update
+            // the ignore list and the playback-join list appropriately
+            // if the ID exists in those lists.
+            if( type == MessageType::INFO_ACTOR_DELETED )
+            {
+               HandleRemovePlaybackActorMessage(*mNextMessage);
+               mNextMessage->SetSource(*mLogComponentMachineInfo);
+               mLogStatus.SetNumMessages(mLogStatus.GetNumMessages() + 1);
+               GetGameManager()->SendMessage(*mNextMessage);
+               GetGameManager()->SendNetworkMessage(*mNextMessage);
+            }
+            else if(type == MessageType::INFO_ACTOR_CREATED ||
+               type == MessageType::INFO_ACTOR_UPDATED)
+            {
+               HandleAddPlaybackActorMessage(*mNextMessage);
+               mNextMessage->SetSource(*mLogComponentMachineInfo);
+               mLogStatus.SetNumMessages(mLogStatus.GetNumMessages() + 1);
+               GetGameManager()->SendMessage(*mNextMessage);
+               GetGameManager()->SendNetworkMessage(*mNextMessage);
+            }
             // For keyframes, we loop to skip it all!  Later, this data may be resent to
             // create a heartbeat.  For now, we skip
-            if (type == MessageType::LOG_COMMAND_BEGIN_LOADKEYFRAME_TRANS)
+            else if (type == MessageType::LOG_COMMAND_BEGIN_LOADKEYFRAME_TRANS)
             {
                // Curt todo - log keyframe data here if added to Begin message params
                LOG_DEBUG("Server Logger: Skipping keyframe... ");
@@ -606,7 +641,7 @@ namespace dtGame
             {
                // do nothing.
             }
-            // for now, we're ignoring all command and request messages that could change teh state
+            // for now, we're ignoring all command and request messages that could change the state
             // of the server.  Eventually, this needs to be handled more elegantly. Probably some sort of
             // awareness of being in playback mode on the rules component, or removing the rules component
             // all together, or maybe having a sense of remote vs local server type messages.
@@ -691,6 +726,7 @@ namespace dtGame
       mLogStatus.SetStateEnum(LogStateEnumeration::LOGGER_STATE_IDLE);
       mLogStatus.SetCurrentRecordDuration(0.0);
       mLogStatus.SetNumMessages(0);
+      RequestDeletePlaybackActors();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -745,14 +781,17 @@ namespace dtGame
       GetGameManager()->GetAllGameActors(actors);
       for (actorItor = actors.begin(); actorItor != actors.end(); ++actorItor)
       {
-         //For each game actor we need to build an actor update message, ask the
-         //actor to fill the message with its current property state, and then
-         //dump the update message to the stream.
-         dtCore::RefPtr<dtGame::ActorUpdateMessage> updateMsg = static_cast<dtGame::ActorUpdateMessage*>
-            (GetGameManager()->GetMessageFactory().CreateMessage(MessageType::INFO_ACTOR_UPDATED).get());
+         if( !IsActorIdInList( actorItor->get()->GetId(), mRecordIgnoreList ) )
+         {
+            //For each game actor we need to build an actor update message, ask the
+            //actor to fill the message with its current property state, and then
+            //dump the update message to the stream.
+            dtCore::RefPtr<dtGame::ActorUpdateMessage> updateMsg = static_cast<dtGame::ActorUpdateMessage*>
+               (GetGameManager()->GetMessageFactory().CreateMessage(MessageType::INFO_ACTOR_UPDATED).get());
 
-         (*actorItor)->PopulateActorUpdate(*updateMsg.get());
-         mLogStream->WriteMessage(*updateMsg.get(),mLogStatus.GetCurrentSimTime());
+            (*actorItor)->PopulateActorUpdate(*updateMsg.get());
+            mLogStream->WriteMessage(*updateMsg.get(),mLogStatus.GetCurrentSimTime());
+         }
       }
 
       //We flag a keyframe as complete by adding a END_KEYFRAME message.
@@ -789,6 +828,9 @@ namespace dtGame
       kfMsg = mLogStream->ReadMessage(simTime);
       while (kfMsg->GetMessageType() != MessageType::LOG_COMMAND_END_LOADKEYFRAME_TRANS)
       {
+         // add actor to playback list
+         HandleAddPlaybackActorMessage(*kfMsg);
+
          mLogStatus.SetNumMessages(mLogStatus.GetNumMessages() + 1);
          updateMap.insert(std::make_pair(kfMsg->GetAboutActorId(),kfMsg));
          kfMsg = mLogStream->ReadMessage(simTime);
@@ -803,7 +845,9 @@ namespace dtGame
 
          GameActorProxy *proxy = static_cast<GameActorProxy *>(proxyItor->get());
          kfActorItor = updateMap.find(proxy->GetId());
-         if (kfActorItor == updateMap.end())
+
+         if (kfActorItor == updateMap.end() 
+            && IsActorIdInList( proxy->GetId(), mPlaybackList ) )
          {
             //Since the actor is not in the keyframe delete it.  Do this by processing/sending
             //a message so remote objects will get removed as well.
@@ -813,6 +857,10 @@ namespace dtGame
             GetGameManager()->SendMessage(*msg);
             GetGameManager()->SendNetworkMessage(*msg);
 
+            // Before deleting the actor, remove its id from the playback list
+            HandleRemovePlaybackActorMessage(*msg);
+
+            // Request the GM to delete the actor
             GetGameManager()->DeleteActor(*proxy);
          }
       }
@@ -858,19 +906,151 @@ namespace dtGame
    {
       if (mLogStatus.GetStateEnum() == LogStateEnumeration::LOGGER_STATE_RECORD)
       {
-         try
+         if(!IsActorIdInList(message.GetAboutActorId(),mRecordIgnoreList))
          {
-            mLogStream->WriteMessage(message, mLogStatus.GetCurrentSimTime());
-            mLogStatus.SetNumMessages(mLogStatus.GetNumMessages() + 1);
-         }
-         catch(const dtUtil::Exception &e)
-         {
-            std::string messageString;
-            message.ToString(messageString);
-            LOG_ERROR("Server Logger: Error writing message in Record mode: Message[" +
-               message.GetMessageType().GetName() + "], MsgData[" +
-               messageString + "], Exception[" + e.What() + "]");
+            try
+            {
+               mLogStream->WriteMessage(message, mLogStatus.GetCurrentSimTime());
+               mLogStatus.SetNumMessages(mLogStatus.GetNumMessages() + 1);
+            }
+            catch(const dtUtil::Exception &e)
+            {
+               std::string messageString;
+               message.ToString(messageString);
+               LOG_ERROR("Server Logger: Error writing message in Record mode: Message[" +
+                  message.GetMessageType().GetName() + "], MsgData[" +
+                  messageString + "], Exception[" + e.What() + "]");
+            }
          }
       }
    }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ServerLoggerComponent::HandleAddPlaybackActorMessage(const Message &message)
+   {
+      // Make sure no ignored actors get added when they join the playback simulation.
+      if(!message.GetAboutActorId().ToString().empty() &&
+         !IsActorIdInList(message.GetAboutActorId(),mPlaybackList))
+      {
+         mPlaybackList.insert(message.GetAboutActorId());
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ServerLoggerComponent::HandleRemovePlaybackActorMessage(const Message &message)
+   {
+      std::set<dtCore::UniqueId>::iterator itor = mPlaybackList.find(message.GetAboutActorId());
+      if( itor != mPlaybackList.end() )
+      {
+         mPlaybackList.erase(itor);
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ServerLoggerComponent::HandleClearPlaybackListMessage()
+   {
+      mPlaybackList.clear();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ServerLoggerComponent::HandleAddIgnoredActorMessage(const Message &message)
+   {
+      mRecordIgnoreList.insert(message.GetAboutActorId());
+
+      // If an actor came in on playback but is not part of the simulation and
+      // changes to ignored state, remove it from the playback list since all
+      // joining actor not initially logged as ignored will be shoved into the
+      // playback list.
+      if (mLogStatus.GetStateEnum() != LogStateEnumeration::LOGGER_STATE_PLAYBACK
+         && IsActorIdInList(message.GetAboutActorId(),mPlaybackList))
+      {
+         HandleRemovePlaybackActorMessage(message);
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ServerLoggerComponent::HandleRemoveIgnoredActorMessage(const Message &message)
+   {
+      std::set<dtCore::UniqueId>::iterator itor = mRecordIgnoreList.find(message.GetAboutActorId());
+      if( itor != mRecordIgnoreList.end() )
+      {
+         mRecordIgnoreList.erase(itor);
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ServerLoggerComponent::HandleClearIgnoreListMessage()
+   {
+      mRecordIgnoreList.clear();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool ServerLoggerComponent::IsActorIdInList( const dtCore::UniqueId& actorID, const std::set<dtCore::UniqueId>& checkedSet ) const
+   {
+      return checkedSet.find(actorID) != checkedSet.end();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool ServerLoggerComponent::IsActorIdInList(dtCore::UniqueId actorID, std::set<dtCore::UniqueId>& checkedSet ) 
+   {
+      return checkedSet.find(actorID) != checkedSet.end();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   int ServerLoggerComponent::GetIgnoredActorCount() const
+   {
+      return mRecordIgnoreList.size();
+   }
+   
+   //////////////////////////////////////////////////////////////////////////
+   int ServerLoggerComponent::GetPlaybackActorCount() const
+   {
+      return mPlaybackList.size();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool ServerLoggerComponent::IsIgnoredActorId(const dtCore::UniqueId& id) const
+   {
+      return IsActorIdInList( id, mRecordIgnoreList );
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool ServerLoggerComponent::IsPlaybackActorId(const dtCore::UniqueId& id) const
+   {
+      return IsActorIdInList( id, mPlaybackList );
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool ServerLoggerComponent::IsIgnoredActorId(dtCore::UniqueId id) 
+   {
+      return IsActorIdInList( id, mRecordIgnoreList );
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool ServerLoggerComponent::IsPlaybackActorId(dtCore::UniqueId id) 
+   {
+      return IsActorIdInList( id, mPlaybackList );
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   int ServerLoggerComponent::RequestDeletePlaybackActors()
+   {
+      int deleteCount = 0;
+      std::set<dtCore::UniqueId>::iterator itor = mPlaybackList.begin();
+      for ( ; itor!=mPlaybackList.end(); ++itor)
+      {
+         dtCore::RefPtr<Message> msg = 
+            GetGameManager()->GetMessageFactory().CreateMessage(MessageType::INFO_ACTOR_DELETED);
+         msg->SetAboutActorId(*itor);
+         msg->SetDestination(&GetGameManager()->GetMachineInfo());
+         GetGameManager()->SendMessage(*msg);
+         deleteCount++;
+      }
+
+      // Clean the playback actor ID collection.
+      HandleClearPlaybackListMessage();
+
+      return deleteCount;
+   }
+
 }

@@ -1,3 +1,6 @@
+#ifdef None
+#undef None
+#endif
 #include <CEGUI/CEGUI.h>
 
 #include <dtABC/application.h>
@@ -8,7 +11,6 @@
 #include <dtGUI/ceuidrawable.h>
 #include <dtCore/scene.h>
 #include <dtUtil/log.h>
-#include <osgDB/FileUtils>
 #include <dtCore/keyboard.h>
 #include <dtCore/mouse.h>
 #include <dtCore/deltawin.h>
@@ -132,7 +134,7 @@ public:
 
       try
       {
-         std::string schemeFileName = osgDB::findDataFile("schemes/WindowsLookSkin.scheme");
+         std::string schemeFileName = dtCore::FindFileInPathList("schemes/WindowsLookSkin.scheme");
          CEGUI::SchemeManager::getSingleton().loadScheme(schemeFileName);
 
          CEGUI::System::getSingleton().setDefaultMouseCursor("WindowsLook", "MouseArrow");

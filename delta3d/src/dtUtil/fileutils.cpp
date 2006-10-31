@@ -50,14 +50,18 @@ _CRTIMP extern int errno;
 #include <stack>
 
 #include <dtUtil/fileutils.h>
-#include <dtCore/globals.h>
+#include <dtUtil/exception.h>
 #include <dtUtil/stringutils.h>
+#include <dtUtil/log.h>
+
+#include <dtCore/globals.h>
 
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <iostream>
 
+#include <osgDB/FileUtils>
 #include <osgDB/FileNameUtils>
 
 #ifndef S_ISREG

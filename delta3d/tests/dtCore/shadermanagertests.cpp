@@ -16,8 +16,9 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * @author Matthew W. Campbell
+ * Matthew W. Campbell, Curtiss Murphy
  */
+#include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtUtil/exception.h>
 #include <dtUtil/stringutils.h>
@@ -48,6 +49,7 @@ class ShaderManagerTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestShader);
       CPPUNIT_TEST(TestShaderManager);
       CPPUNIT_TEST(TestAssignShader);
+      CPPUNIT_TEST(TestShaderInstancesAreUnique);
       CPPUNIT_TEST(TestXMLParsing);
       CPPUNIT_TEST(TestTexture2DXMLParam);
       CPPUNIT_TEST(TestIntXMLParam);
@@ -63,6 +65,7 @@ class ShaderManagerTests : public CPPUNIT_NS::TestFixture
       void TestShader();
       void TestShaderManager();
       void TestAssignShader();
+      void TestShaderInstancesAreUnique();
       void TestXMLParsing();
       void TestTexture2DXMLParam();
       void TestIntXMLParam();
@@ -85,7 +88,7 @@ void ShaderManagerTests::setUp()
       dtCore::SetDataFilePathList(projectContext);
       mShaderMgr->LoadShaderDefinitions("Shaders/TestShaderDefinitions.xml",false);
 
-      dtCore::ShaderGroup *testGroup = mShaderMgr->FindShaderGroup("ParamsGroup");
+      dtCore::ShaderGroup *testGroup = mShaderMgr->FindShaderGroupTemplate("ParamsGroup");
       CPPUNIT_ASSERT(testGroup != NULL);
       mTestShader = testGroup->FindShader("AllParamsShader");
       CPPUNIT_ASSERT(mTestShader != NULL);
@@ -247,37 +250,37 @@ void ShaderManagerTests::TestShaderManager()
             group->AddShader(*shader);
          }
 
-         mShaderMgr->AddShaderGroup(*group);
+         mShaderMgr->AddShaderGroupTemplate(*group);
       }
 
       //Since all of the shaders above used the same vertex and fragment sources,
       //there should only be one entry in the program cache and all of the shaders
       //should be using the same compiled programs..
       CPPUNIT_ASSERT_EQUAL((unsigned int)1,mShaderMgr->GetShaderCacheSize());
-      CPPUNIT_ASSERT_EQUAL((unsigned int)20,mShaderMgr->GetNumShaderGroups());
-      CPPUNIT_ASSERT_EQUAL((unsigned int)60,mShaderMgr->GetNumShaders());
+      CPPUNIT_ASSERT_EQUAL((unsigned int)20,mShaderMgr->GetNumShaderGroupTemplates());
+      CPPUNIT_ASSERT_EQUAL((unsigned int)60,mShaderMgr->GetNumShaderTemplates());
 
-      shader = mShaderMgr->FindShader("Shader0","Group0");
-      CPPUNIT_ASSERT_MESSAGE("Could not find shader 0 on group 0.",shader != NULL);
+      const dtCore::Shader *cShader = mShaderMgr->FindShaderTemplate("Shader0","Group0");
+      CPPUNIT_ASSERT_MESSAGE("Could not find shader 0 on group 0.",cShader != NULL);
 
-      const osg::Shader *vertexShader = shader->GetVertexShader();
-      const osg::Shader *fragmentShader = shader->GetFragmentShader();
-      const osg::Program *program = shader->GetShaderProgram();
+      const osg::Shader *vertexShader = cShader->GetVertexShader();
+      const osg::Shader *fragmentShader = cShader->GetFragmentShader();
+      const osg::Program *program = cShader->GetShaderProgram();
       for (i=0; i<20; i++)
       {
          std::string name = "Group" + dtUtil::ToString(i);
-         group = mShaderMgr->FindShaderGroup(name);
-         CPPUNIT_ASSERT_MESSAGE("Could not find shader group: " + name,group != NULL);
+         const dtCore::ShaderGroup *cgroup = mShaderMgr->FindShaderGroupTemplate(name);
+         CPPUNIT_ASSERT_MESSAGE("Could not find shader group: " + name,cgroup != NULL);
 
          for (j=0; j<3; j++)
          {
             std::string shaderName = "Shader" + dtUtil::ToString(j);
-            shader = mShaderMgr->FindShader(shaderName,name);
-            CPPUNIT_ASSERT_MESSAGE("Could not find shader: " + shaderName + " in group: " + name,shader != NULL);
+            const dtCore::Shader *cShader = mShaderMgr->FindShaderTemplate(shaderName,name);
+            CPPUNIT_ASSERT_MESSAGE("Could not find shader: " + shaderName + " in group: " + name,cShader != NULL);
 
-            CPPUNIT_ASSERT_MESSAGE("Vertex program should be shared.",shader->GetVertexShader() == vertexShader);
-            CPPUNIT_ASSERT_MESSAGE("Fragment program should be shared.",shader->GetFragmentShader() == fragmentShader);
-            CPPUNIT_ASSERT_MESSAGE("GLSL program should be shared.",shader->GetShaderProgram() == program);
+            CPPUNIT_ASSERT_MESSAGE("Vertex program should be shared.",cShader->GetVertexShader() == vertexShader);
+            CPPUNIT_ASSERT_MESSAGE("Fragment program should be shared.",cShader->GetFragmentShader() == fragmentShader);
+            CPPUNIT_ASSERT_MESSAGE("GLSL program should be shared.",cShader->GetShaderProgram() == program);
          }
       }
 
@@ -285,17 +288,17 @@ void ShaderManagerTests::TestShaderManager()
       group = new dtCore::ShaderGroup("Group1");
       try
       {
-         mShaderMgr->AddShaderGroup(*group);
+         mShaderMgr->AddShaderGroupTemplate(*group);
          CPPUNIT_FAIL("Should not be allowed to add duplicate groups to the shader manager.");
       }
       catch (const dtUtil::Exception &) { }
 
       //Tests the removal of shader groups..
-      mShaderMgr->RemoveShaderGroup("Group10");
-      mShaderMgr->RemoveShaderGroup(*group);
-      CPPUNIT_ASSERT_MESSAGE("Should only be 18 groups after removal.",mShaderMgr->GetNumShaderGroups() == 18);
+      mShaderMgr->RemoveShaderGroupTemplate("Group10");
+      mShaderMgr->RemoveShaderGroupTemplate(*group);
+      CPPUNIT_ASSERT_MESSAGE("Should only be 18 groups after removal.",mShaderMgr->GetNumShaderGroupTemplates() == 18);
       CPPUNIT_ASSERT_MESSAGE("Should be 54 shaders in the shader manager after removal.",
-                             mShaderMgr->GetNumShaders() == 54);
+                             mShaderMgr->GetNumShaderTemplates() == 54);
 
       //Add another shader here that does not use the same shader source files.  This should increate
       //shader compiled shader cache by 1.
@@ -305,16 +308,16 @@ void ShaderManagerTests::TestShaderManager()
 
       group = new dtCore::ShaderGroup("TestShaderGroup");
       group->AddShader(*shader);
-      mShaderMgr->AddShaderGroup(*group);
+      mShaderMgr->AddShaderGroupTemplate(*group);
       CPPUNIT_ASSERT_MESSAGE("Should be two entries in the shader program cache.",mShaderMgr->GetShaderCacheSize() == 2);
 
       std::vector<dtCore::RefPtr<dtCore::ShaderGroup> > groupList;
-      mShaderMgr->GetAllShaderGroups(groupList);
+      mShaderMgr->GetAllShaderGroupTemplates(groupList);
       CPPUNIT_ASSERT_MESSAGE("Shader group list size should be 19.",groupList.size() == 19);
 
       mShaderMgr->Clear();
-      CPPUNIT_ASSERT_MESSAGE("Should be no groups in the manager.",mShaderMgr->GetNumShaderGroups() == 0);
-      CPPUNIT_ASSERT_MESSAGE("Should be no shaders in the manager.",mShaderMgr->GetNumShaders() == 0);
+      CPPUNIT_ASSERT_MESSAGE("Should be no groups in the manager.",mShaderMgr->GetNumShaderGroupTemplates() == 0);
+      CPPUNIT_ASSERT_MESSAGE("Should be no shaders in the manager.",mShaderMgr->GetNumShaderTemplates() == 0);
       CPPUNIT_ASSERT_MESSAGE("Compiled program cache should be clear.",mShaderMgr->GetShaderCacheSize() == 0);
    }
    catch (const dtUtil::Exception& e)
@@ -351,11 +354,11 @@ void ShaderManagerTests::TestAssignShader()
       //This will cause the shader to get loaded.
       dtCore::ShaderGroup *group = new dtCore::ShaderGroup("TestGroup");
       group->AddShader(*shader);
-      mShaderMgr->AddShaderGroup(*group);
+      mShaderMgr->AddShaderGroupTemplate(*group);
 
       //Try assigning the shader to a scene graph node.
       dtCore::RefPtr<osg::Geode> geode = new osg::Geode();
-      mShaderMgr->AssignShader(*shader,*geode);
+      mShaderMgr->AssignShaderFromTemplate(*shader,*geode);
    }
    catch (const dtUtil::Exception &e)
    {
@@ -364,17 +367,90 @@ void ShaderManagerTests::TestAssignShader()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+void ShaderManagerTests::TestShaderInstancesAreUnique()
+{
+   try
+   {
+
+      // This test makes sure that each node got their own instance of the shader 
+      // so that it can assign different parameter values to separate nodes
+
+      dtCore::RefPtr<dtCore::Shader> shader = new dtCore::Shader("TestShader");
+      shader->SetVertexShaderSource("Shaders/perpixel_lighting_detailmap_vert.glsl");
+      shader->SetFragmentShaderSource("Shaders/perpixel_lighting_detailmap_frag.glsl");
+
+      // We just use an int param for this test.  We aren't testing params in general, just that they
+      // get their own copy.
+      dtCore::RefPtr<dtCore::IntegerShaderParameter> intParam = 
+         new dtCore::IntegerShaderParameter("intTest");
+      intParam->SetValue(29);
+      shader->AddParameter(*intParam);
+
+      //Add our test shader to a shader group and add the shader group to the manager.
+      //This will cause the shader to get loaded.
+      dtCore::ShaderGroup *group = new dtCore::ShaderGroup("TestGroup");
+      group->AddShader(*shader);
+      mShaderMgr->AddShaderGroupTemplate(*group);
+
+      //Try assigning the shader to a scene graph node.
+      dtCore::RefPtr<osg::Geode> geode1 = new osg::Geode();
+      dtCore::RefPtr<osg::Geode> geode2 = new osg::Geode();
+      //dtCore::RefPtr<osg::Geode> geode3 = new osg::Geode();
+
+      dtCore::Shader *newShader1 = mShaderMgr->AssignShaderFromTemplate(*shader,*geode1);
+      CPPUNIT_ASSERT_MESSAGE("Assign Shader should return the new shader instance", newShader1 != NULL);
+
+      dtCore::Shader *newShader2 = mShaderMgr->AssignShaderFromTemplate(*shader,*geode2);
+      CPPUNIT_ASSERT_MESSAGE("Assign Shader should return the new shader instance", newShader2 != NULL);
+
+      dtCore::ShaderParameter *newParam1 = newShader1->FindParameter("intTest");
+      CPPUNIT_ASSERT_MESSAGE("The new shader instance should have the int param", newParam1 != NULL);
+      dtCore::IntegerShaderParameter *newIntParam1 = dynamic_cast<dtCore::IntegerShaderParameter *>(newParam1);
+      CPPUNIT_ASSERT_MESSAGE("The new shader instance should be an int param", newIntParam1 != NULL);
+
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("New int param should initially have the same value", 
+         29, newIntParam1->GetValue());
+      newIntParam1->SetValue(-15);
+      CPPUNIT_ASSERT_MESSAGE("New int param should NOT be the same as the template param", 
+         intParam->GetValue() != newIntParam1->GetValue());
+
+      // Make sure the 2nd shader didn't get changed either.
+      dtCore::ShaderParameter *newParam2 = newShader2->FindParameter("intTest");
+      CPPUNIT_ASSERT_MESSAGE("The new shader instance should have the int param", newParam2 != NULL);
+      dtCore::IntegerShaderParameter *newIntParam2 = dynamic_cast<dtCore::IntegerShaderParameter *>(newParam2);
+      CPPUNIT_ASSERT_MESSAGE("The new shader instance should be an int param", newIntParam2 != NULL);
+      CPPUNIT_ASSERT_MESSAGE("New int param should NOT be the same as the 2nd int param instance", 
+         newIntParam1->GetValue() != newIntParam2->GetValue());
+
+      // Just to be safe, set the 2nd and make sure the 1st doesn't change
+      newIntParam2->SetValue(99);
+      CPPUNIT_ASSERT_MESSAGE("New int param 1 should be unaffected by setting the 2nd", 
+         newIntParam1->GetValue() == -15);
+      CPPUNIT_ASSERT_MESSAGE("The original int param should be unaffected by setting the 2nd", 
+         intParam->GetValue() == 29);
+      CPPUNIT_ASSERT_MESSAGE("The 2nd Int should have its new value", 
+         newIntParam2->GetValue() == 99);
+
+   }
+   catch (const dtUtil::Exception &e)
+   {
+      CPPUNIT_FAIL(e.ToString());
+   }
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
 void ShaderManagerTests::TestXMLParsing()
 {
    try
    {
-      CPPUNIT_ASSERT_EQUAL((unsigned int)3,mShaderMgr->GetNumShaderGroups());
-      CPPUNIT_ASSERT_EQUAL((unsigned int)5,mShaderMgr->GetNumShaders());
+      CPPUNIT_ASSERT_EQUAL((unsigned int)3,mShaderMgr->GetNumShaderGroupTemplates());
+      CPPUNIT_ASSERT_EQUAL((unsigned int)5,mShaderMgr->GetNumShaderTemplates());
 
-      dtCore::ShaderGroup *group1 = mShaderMgr->FindShaderGroup("TestGroup1");
+      dtCore::ShaderGroup *group1 = mShaderMgr->FindShaderGroupTemplate("TestGroup1");
       CPPUNIT_ASSERT(group1 != NULL);
 
-      dtCore::ShaderGroup *group2 = mShaderMgr->FindShaderGroup("TestGroup2");
+      dtCore::ShaderGroup *group2 = mShaderMgr->FindShaderGroupTemplate("TestGroup2");
       CPPUNIT_ASSERT(group2 != NULL);
 
       CPPUNIT_ASSERT_EQUAL((unsigned int)2,group1->GetNumShaders());

@@ -267,7 +267,7 @@ namespace dtActors
          /**
           * Returns true if fog is enabled
           */
-         bool IsFogEnabled() const { return mWeather->GetEnvironment()->GetFogEnable(); }
+         bool IsFogEnabled() const; 
 
          /**
           * Sets the visibility on the weather

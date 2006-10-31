@@ -1,23 +1,24 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
-* Copyright (C) 2005, BMH Associates, Inc.
-*
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
-* any later version.
-*
-* This library is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
-* details.
-*
-* You should have received a copy of the GNU Lesser General Public License
-* along with this library; if not, write to the Free Software Foundation, Inc.,
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*
-* @author David Guthrie
-*/
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2005, BMH Associates, Inc.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * @author David Guthrie
+ */
+#include <prefix/dtgameprefix-src.h>
 #include <vector>
 #include <string>
 #include <sstream>
@@ -27,9 +28,6 @@
 
 #include <osg/Math>
 #include <osg/io_utils>
-
-#include <osgDB/FileUtils>
-#include <osgDB/FileNameUtils>
 
 #include <dtUtil/exception.h>
 #include <dtUtil/fileutils.h>
@@ -53,10 +51,16 @@
 #include <dtDAL/gameeventmanager.h>
 #include <dtDAL/gameevent.h>
 
-#include <testActorLibrary/testActorLib.h>
+#include <testActorLibrary/testactorlib.h>
 #include <testActorLibrary/testdalenvironmentactor.h>
 
-#include <rbody/config_error.h>
+#ifdef _MSC_VER
+   #pragma warning(disable : 4005)
+      #include <rbody/config_error.h>
+   #pragma warning(default : 4005) 
+#else
+   #include <rbody/config_error.h>
+#endif
 
 #include <cppunit/extensions/HelperMacros.h>
 
@@ -78,6 +82,7 @@ class MapTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST( TestMapSaveAndLoad );
       CPPUNIT_TEST( TestMapSaveAndLoadEvents );
       CPPUNIT_TEST( TestMapSaveAndLoadGroup );
+      CPPUNIT_TEST( TestMapSaveAndLoadActorGroups );
       CPPUNIT_TEST( TestLibraryMethods );
       CPPUNIT_TEST( TestWildCard );
       CPPUNIT_TEST( TestEnvironmentMapLoading );
@@ -95,6 +100,7 @@ class MapTests : public CPPUNIT_NS::TestFixture
       void TestMapSaveAndLoad();
       void TestMapSaveAndLoadEvents();
       void TestMapSaveAndLoadGroup();
+      void TestMapSaveAndLoadActorGroups();
       void TestLoadMapIntoScene();
       void TestLibraryMethods();
       void TestEnvironmentMapLoading();
@@ -1480,6 +1486,77 @@ void MapTests::TestMapSaveAndLoadGroup()
             static_cast<dtDAL::NamedDoubleParameter*>(actualFloatGroup->GetParameter("CuteDouble"))->GetValue(), 1e-3));
             
       project.DeleteMap(*map, false);
+   } 
+   catch (const dtUtil::Exception& e) 
+   {
+      CPPUNIT_FAIL(std::string("Error: ") + e.What());
+   }
+}
+
+//This short test actually tests a lot of fairly complex things.
+//It tests that Group actor properties can be set and cause an actor to link actors when
+//loading from a map.  It tests the feature of looking into the current map being parsed
+//when calling Project::GetMapForActorProxy.  It also tests the mParsing flag on the dtDAL::MapParser
+//and it tests the SubTasks property on the task actors.
+void MapTests::TestMapSaveAndLoadActorGroups()
+{
+   try
+   {
+      dtDAL::Project& project = dtDAL::Project::GetInstance();
+
+      project.SetContext("WorkingMapProject");
+
+      std::string mapName("Neato Map");
+      std::string mapFileName("neatomap");
+
+      dtDAL::Map* map = &project.CreateMap(mapName, mapFileName);
+
+      dtDAL::LibraryManager& libraryManager = dtDAL::LibraryManager::GetInstance();
+
+      dtDAL::ActorType* at = libraryManager.FindActorType("dtcore.Tasks", "Task Actor");
+      CPPUNIT_ASSERT(at != NULL);
+      
+      dtCore::RefPtr<dtDAL::ActorProxy> proxy = libraryManager.CreateActorProxy(*at);
+
+      map->AddProxy(*proxy);
+
+      dtCore::RefPtr<dtDAL::NamedGroupParameter> expectedResult = new dtDAL::NamedGroupParameter("TestGroup");
+
+      std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > subTasks;
+      //all of these actors are added to the map AFTER the main proxy
+      //so they won't be loaded yet when the map is loaded.
+      //This tests that the group property will load correctly regardless of actor ordering.
+      std::ostringstream ss;
+      for (unsigned i = 0; i < 10; ++i)
+      {
+         subTasks.push_back(libraryManager.CreateActorProxy(*at));
+         map->AddProxy(*subTasks[i]);
+         ss.str("");
+         ss << i;
+         expectedResult->AddParameter(ss.str(), dtDAL::DataType::ACTOR)->FromString(subTasks[i]->GetId().ToString());
+      }
+
+      dtDAL::GroupActorProperty* groupProp = dynamic_cast<dtDAL::GroupActorProperty*>(proxy->GetProperty("SubTasks"));      
+      groupProp->SetValue(*expectedResult);
+
+      dtCore::RefPtr<dtDAL::NamedGroupParameter> actualResult = groupProp->GetValue();
+
+      CPPUNIT_ASSERT_EQUAL(expectedResult->GetParameterCount(), actualResult->GetParameterCount());      
+      CPPUNIT_ASSERT(*expectedResult == *actualResult);
+      project.SaveMap(*map);
+      project.CloseMap(*map);
+      
+      map = &project.GetMap(mapName);
+      
+      //Here the old proxy will be deleted, but we get the id for it to load the new instance in the map.
+      proxy = map->GetProxyById(proxy->GetId());
+      CPPUNIT_ASSERT(proxy.valid());
+      groupProp = dynamic_cast<dtDAL::GroupActorProperty*>(proxy->GetProperty("SubTasks"));
+      actualResult = groupProp->GetValue();
+      
+      CPPUNIT_ASSERT_EQUAL(expectedResult->GetParameterCount() , actualResult->GetParameterCount());      
+      CPPUNIT_ASSERT_MESSAGE(actualResult->ToString(),*expectedResult == *actualResult);
+      
    } 
    catch (const dtUtil::Exception& e) 
    {

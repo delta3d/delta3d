@@ -18,11 +18,13 @@
  *
  * @author John K. Grant
  */
+#include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtCore/keyboard.h>
 #include <dtABC/application.h>
 #include <dtCore/refptr.h>
 #include <dtCore/deltawin.h>
+#include <Producer/KeyboardMouse>
 
 namespace dtTest
 {

@@ -4,6 +4,7 @@
 #include <dtCore/camera.h>
 #include <dtABC/widget.h>
 #include <dtUtil/fileutils.h>
+#include <dtUtil/log.h>
 
 #include "viewstate.h"
 #include "viewwindow.h"

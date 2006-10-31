@@ -1,3 +1,8 @@
+//remove useless macros in X11 headers for PCH
+#ifdef None
+#undef None
+#endif
+
 #include <CEGUI/CEGUI.h>
 
 #include <dtGUI/dtgui.h>
@@ -69,7 +74,7 @@ private:
    {
       try
       {
-         std::string schemeFileName = osgDB::findDataFile("schemes/WindowsLookSkin.scheme");
+         std::string schemeFileName = dtCore::FindFileInPathList("schemes/WindowsLookSkin.scheme");
 
          CEGUI::SchemeManager::getSingleton().loadScheme(schemeFileName);
          CEGUI::System::getSingleton().setDefaultMouseCursor("WindowsLook", "MouseArrow");
@@ -276,7 +281,7 @@ int main( int argc, const char* argv[] )
 * loaded before we can continue.
 * \skip BuildGUI
 * \until setDefaultFont
-* \note Notice we use the osgDB::findDataFile method to find the .scheme file. This will
+* \note Notice we use the dtCore::FindFileInPathList method to find the .scheme file. This will
 * use the search paths we supplied to find the file.
 *
 * Now we can create a default, root widget to hold our UI.  We'll use the CEGUI::WindowManager

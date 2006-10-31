@@ -19,8 +19,8 @@
  * Matthew W. Campbell
  */
 #include <prefix/dtdalprefix-src.h>
-#include "dtDAL/actorproxyicon.h"
-#include "dtCore/scene.h"
+#include <dtDAL/actorproxyicon.h>
+#include <dtCore/scene.h>
 #include <dtCore/transformable.h>
 #include <osg/Geometry>
 #include <osg/Image>
@@ -31,6 +31,7 @@
 #include <osg/ShapeDrawable>
 #include <osg/TexMat>
 #include <osgDB/ReadFile>
+#include <osg/MatrixTransform>
 
 namespace dtDAL
 {

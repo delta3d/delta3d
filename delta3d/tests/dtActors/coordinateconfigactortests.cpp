@@ -16,19 +16,20 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * @author David Guthrie
+ * David Guthrie
  */
-
+#include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
 
 #include <vector>
 #include <string>
-#include <iostream>
+#include <sstream>
 
 #include <osg/Vec3>
 #include <osg/Vec3d>
 #include <osg/Vec2d>
 #include <osg/Math>
+#include <osg/io_utils>
 
 #include <dtCore/refptr.h>
 #include <dtUtil/coordinates.h>

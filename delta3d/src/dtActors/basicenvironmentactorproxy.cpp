@@ -23,6 +23,7 @@
 #include <dtDAL/exceptionenum.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtUtil/stringutils.h>
+#include <dtCore/environment.h>
 
 namespace dtActors
 {
@@ -307,6 +308,11 @@ namespace dtActors
    void BasicEnvironmentActor::EnableFog(bool enable)
    {
       mWeather->GetEnvironment()->SetFogEnable(enable);
+   }
+
+   bool BasicEnvironmentActor::IsFogEnabled() const
+   {
+      return mWeather->GetEnvironment()->GetFogEnable(); 
    }
 
    void BasicEnvironmentActor::SetWeatherVisibility(BasicEnvironmentActor::VisibilityTypeEnum &visibility)

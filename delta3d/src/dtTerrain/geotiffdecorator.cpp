@@ -18,13 +18,13 @@
 *
 * Matthew W. Campbell
 */
-#include "dtTerrain/geotiffdecorator.h"
+#include <dtTerrain/geotiffdecorator.h>
 
 #include <osg/Image>
 #include <osg/Math>
 #include <dtCore/refptr.h>
 #include <dtUtil/log.h>
-#include <osgDB/FileUtils>
+#include <dtUtil/fileutils.h>
 #include <osgDB/ReadFile>
 #include <osgDB/WriteFile>
 
@@ -49,7 +49,7 @@ namespace dtTerrain
       if (tile.IsCachingEnabled())
       {
          std::string imagePath = tile.GetCachePath() + "/" + IMAGE_NAME;         
-         if (osgDB::fileExists(imagePath))
+         if (dtUtil::FileUtils::GetInstance().FileExists(imagePath))
          {
             LOG_INFO("Reading geo tiff base image from cache: " + imagePath);
             image = osgDB::readImageFile(imagePath);

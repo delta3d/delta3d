@@ -12,8 +12,9 @@
 #include "package_utils.h"
 // delta3d
 #include <dtUtil/fileutils.h>
+#include <dtUtil/exception.h>
 // ansi
-//#include <iostream>
+#include <iostream>
 
 
 

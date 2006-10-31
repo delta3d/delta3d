@@ -22,10 +22,9 @@
 #ifndef DELTA_PROPERTYEDITORMODEL
 #define DELTA_PROPERTYEDITORMODEL
 
-//#include "qpropertyeditor_items_p.h"
-#include "dtEditQt/dynamicabstractcontrol.h"
-#include "dtEditQt/dynamicabstractparentcontrol.h"
-#include "dtEditQt/dynamicgroupcontrol.h"
+#include <dtEditQt/dynamicabstractcontrol.h>
+#include <dtEditQt/dynamicabstractparentcontrol.h>
+#include <dtEditQt/dynamicgroupcontrol.h>
 #include <QtCore/QAbstractItemModel>
 
 namespace dtEditQt 
@@ -132,7 +131,7 @@ namespace dtEditQt
         { return rowCount(parent) > 0; }
 
         virtual QVariant data(const QModelIndex &index, int role) const;
-        //virtual bool setData(const QModelIndex &index, const QVariant &value, int role);
+        virtual bool setData(const QModelIndex &index, const QVariant &value, int role) { return true; }
 
         virtual bool isEditable(const QModelIndex &index) const;
         //virtual QModelIndex buddy(const QModelIndex &index) const;
@@ -140,7 +139,7 @@ namespace dtEditQt
         virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 
         //virtual bool removeRows(int position, int rows, const QModelIndex &parent);
-
+      
     protected:
         //inline IProperty *childAt(IProperty *parent, int pos) const
         // {

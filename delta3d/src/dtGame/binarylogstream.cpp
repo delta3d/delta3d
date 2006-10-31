@@ -27,6 +27,7 @@
 #include <dtCore/uniqueid.h>
 
 #include <iostream>
+#include <set>
 
 using dtUtil::DataStream;
 

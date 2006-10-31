@@ -27,7 +27,8 @@
 
 #include <dtHLAGM/export.h>
 #include <dtUtil/enumeration.h>
-#include <sstream>
+#include <istream>
+#include <ostream>
 
 namespace dtHLAGM
 {

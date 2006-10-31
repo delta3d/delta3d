@@ -18,6 +18,7 @@
  *
  * @author John K. Grant
  */
+#include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtCore/inputdevice.h>   // for testing the Axis definition
 

@@ -1,3 +1,4 @@
+#include <prefix/dtgameprefix-src.h>
 #include <CEGUI/CEGUISystem.h>
 #include <CEGUI/CEGUIWindowManager.h>
 #include <CEGUI/CEGUISchemeManager.h>
@@ -10,8 +11,6 @@
 #include "guimanager.h"
 #include <dtUtil/log.h>
 #include <dtGUI/ceuidrawable.h>
-
-#include <osgDB/FileUtils>
 
 using namespace dtGUI;
 
@@ -41,7 +40,7 @@ CEGUI::Scheme* GUIManager::LoadScheme(const std::string& file)
 {
    CEGUI::Scheme* scheme(0);
 
-   std::string schemefile( osgDB::findDataFile(file) );
+   std::string schemefile( dtCore::FindFileInPathList(file) );
    if( schemefile.empty() )
    {
       LOG_WARNING("Could not find: " + file )
@@ -75,7 +74,7 @@ CEGUI::Window* GUIManager::LoadLayout(const std::string& file)
    /**\todo Also, ResourceProvider should derive and extend the CEGUI::ResourceProvider,
      * but dtCore should offer a tool like this too, to buffer the API from osgDB.
      */
-   std::string layout( osgDB::findDataFile(file) );
+   std::string layout( dtCore::FindFileInPathList(file) );
 
    if( layout.empty() )
    {

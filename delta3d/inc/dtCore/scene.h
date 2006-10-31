@@ -28,6 +28,7 @@
 #include <dtCore/base.h>
 #include <dtCore/refptr.h>
 #include <dtCore/timer.h>
+#include <dtUtil/deprecationmgr.h>
 
 #include <ode/common.h>
 #include <ode/collision_space.h>
@@ -138,9 +139,22 @@ namespace dtCore
 
       ///Get the gravity vector
       void GetGravity(osg::Vec3& vec) const { vec = mGravity; }
+
       ///Get the gravity vector
-      void GetGravity(float* x, float* y, float* z) const { *x = mGravity[0]; *y = mGravity[1]; *z = mGravity[2]; }
-      
+      osg::Vec3 GetGravity() const { return mGravity; }
+
+      ///Get the gravity vector
+      void GetGravity(float* x, float* y, float* z) const 
+      {
+         DEPRECATE("dtCore::Scene::GetGravity(float *x, float *y, float *z)", 
+                   "dtCore::Scene::GetGravity(float &x, float &y, float &z)");
+
+         GetGravity(*x, *y, *z);
+      }
+
+      ///Get the gravity vector
+      void GetGravity(float &x, float &y, float &z) const { x = mGravity[0]; y = mGravity[1]; z = mGravity[2]; }
+
       ///Performs collision detection and updates physics
       virtual void OnMessage(MessageData *data);
       

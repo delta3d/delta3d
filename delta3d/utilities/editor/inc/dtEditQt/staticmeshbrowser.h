@@ -20,10 +20,10 @@
 * Teague Coonan
 */
 
-#ifndef __StaticMeshBrowser_h
-#define __StaticMeshBrowser_h
+#ifndef DELTA_STATIC_MESH_BROWSER
+#define DELTA_STATIC_MESH_BROWSER
 
-#include "dtEditQt/resourceabstractbrowser.h"
+#include <dtEditQt/resourceabstractbrowser.h>
 
 class QAction;
 class QGroupBox;
@@ -34,13 +34,14 @@ class QContextMenuEvent;
 class QCheckBox;
 class QIcon;
 
-namespace dtCore {
+namespace dtCore 
+{
     class Scene;
     class Object;
 }
 
-namespace dtEditQt {
-
+namespace dtEditQt 
+{
     class PerspectiveViewport;
     class ViewportContainer;
     class Camera;

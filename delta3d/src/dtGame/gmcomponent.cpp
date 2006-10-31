@@ -20,9 +20,7 @@
  */
 #include <prefix/dtgameprefix-src.h>
 #include <dtGame/gmcomponent.h>
-#include <dtGame/gamemanager.h>
-#include <dtDAL/actorproxy.h>
-#include <dtCore/refptr.h>
+#include <dtGame/message.h>
 
 namespace dtGame
 {

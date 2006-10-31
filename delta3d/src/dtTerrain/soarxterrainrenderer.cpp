@@ -21,6 +21,7 @@
 #include <sstream>
 
 #include <dtCore/scene.h>
+#include <dtCore/globals.h>
 
 #include <osg/Group>
 #include <osg/Shape>
@@ -38,15 +39,15 @@
 
 #include <dtUtil/fileutils.h>
 
-#include "dtTerrain/terraindatareader.h"
-#include "dtTerrain/terraindecorationlayer.h"
-#include "dtTerrain/terrain.h"
-#include "dtTerrain/soarxterrainrenderer.h"
-#include "dtTerrain/imageutils.h"
-#include "dtTerrain/soarxdrawable.h"
-#include "dtTerrain/geocoordinates.h"
-#include "dtTerrain/pagedterraintile.h"
-#include "dtTerrain/heightfield.h"
+#include <dtTerrain/terraindatareader.h>
+#include <dtTerrain/terraindecorationlayer.h>
+#include <dtTerrain/terrain.h>
+#include <dtTerrain/soarxterrainrenderer.h>
+#include <dtTerrain/imageutils.h>
+#include <dtTerrain/soarxdrawable.h>
+#include <dtTerrain/geocoordinates.h>
+#include <dtTerrain/pagedterraintile.h>
+#include <dtTerrain/heightfield.h>
 
 namespace dtTerrain
 {
@@ -261,7 +262,7 @@ namespace dtTerrain
    void SoarXTerrainRenderer::CreateFragmentShader()
    {      
       dtCore::RefPtr<osg::Shader> fragShader = new osg::Shader(osg::Shader::FRAGMENT);
-      std::string shaderPath = osgDB::findDataFile(mFragShaderPath);
+      std::string shaderPath = dtCore::FindFileInPathList(mFragShaderPath);
       if (shaderPath.empty())
       {
          LOG_ERROR("Could not load terrain fragment shader.");

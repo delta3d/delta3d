@@ -25,13 +25,13 @@
 #include <sstream>
 #include <osg/Billboard>
 #include <osgDB/WriteFile>
-#include "dtEditQt/perspectiveviewport.h"
-#include "dtEditQt/viewportoverlay.h"
-#include "dtEditQt/editorevents.h"
-#include "dtEditQt/editordata.h"
-#include "dtEditQt/editoractions.h"
-#include "dtDAL/transformableactorproxy.h"
-#include "dtDAL/actorproxyicon.h"
+#include <dtEditQt/perspectiveviewport.h>
+#include <dtEditQt/viewportoverlay.h>
+#include <dtEditQt/editorevents.h>
+#include <dtEditQt/editordata.h>
+#include <dtEditQt/editoractions.h>
+#include <dtDAL/transformableactorproxy.h>
+#include <dtDAL/actorproxyicon.h>
 
 namespace dtEditQt
 {
@@ -85,6 +85,7 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     void PerspectiveViewport::mousePressEvent(QMouseEvent *e)
     {
+        setFocus();
         Qt::KeyboardModifiers shiftAndControl = Qt::ControlModifier | Qt::ShiftModifier;
 
         if (getInteractionMode() == Viewport::InteractionMode::CAMERA) {

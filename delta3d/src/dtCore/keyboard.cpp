@@ -2,6 +2,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 #include <prefix/dtcoreprefix-src.h>
+#include <Producer/KeyboardMouse>
 #include <dtCore/keyboard.h>
 #include <algorithm>
 

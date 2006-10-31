@@ -4,6 +4,7 @@
 #include <dtCore/scene.h>
 #include <dtUtil/log.h>
 #include <osg/LightSource>
+#include <osg/MatrixTransform>
 
 using namespace dtCore;
 using namespace dtUtil;

@@ -4,8 +4,10 @@
 #include <prefix/dtcoreprefix-src.h>
 #include <dtCore/object.h>
 #include <dtCore/scene.h>
+#include <dtCore/boundingboxvisitor.h>
 #include <osgDB/ReadFile>
 #include <osgDB/Registry>
+#include <osg/MatrixTransform>
 
 using namespace dtCore;
 

@@ -1,6 +1,5 @@
 #include "testtrigger.h"
 
-#include <osgDB/FileUtils>
 #include <dtCore/keyboard.h>
 #include <dtCore/camera.h>
 

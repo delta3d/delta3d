@@ -35,9 +35,9 @@
 #include <QtGui/QPalette>
 #include <QtGui/QGroupBox>
 
-#include "dtEditQt/preferencesdialog.h"
-#include "dtEditQt/editordata.h"
-#include "dtEditQt/editoractions.h"
+#include <dtEditQt/preferencesdialog.h>
+#include <dtEditQt/editordata.h>
+#include <dtEditQt/editoractions.h>
 
 namespace dtEditQt
 {

@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * Matthew W. Campbell
+ * Matthew W. Campbell, Curtiss Murphy
  */
 #ifndef DELTA_INTEGERSHADERPARAMETER
 #define DELTA_INTEGERSHADERPARAMETER
@@ -69,6 +69,13 @@ namespace dtCore
           * @return The current integer value.
           */
          int GetValue() const { return mValue; }
+
+         /**
+          * Makes a deep copy of the Shader Parameter. Used when a user assigns
+          * a shader to a node because we clone the template shader and its parameters.
+          * Note - Like Update(), this is a pure virtual method that must be implemented on each param.
+          */
+         virtual ShaderParameter *Clone() const;
 
       protected:
          virtual ~IntegerShaderParameter();

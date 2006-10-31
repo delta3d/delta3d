@@ -21,20 +21,20 @@
 #include <sstream>
 
 #include <osg/Vec3>
-#include <osg/io_utils>
+#include <osg/Texture2D>
+#include <dtCore/refptr.h>
+#include <dtCore/physical.h>
 #include <dtCore/scene.h>
 #include <dtUtil/log.h>
-#include <osgDB/WriteFile>
 #include <osgDB/ReadFile>
-#include <osgDB/ImageOptions>
 #include <ogrsf_frmts.h>
 #include <gdal_priv.h>
 #include <gdalwarper.h>
 
-#include "dtUtil/exception.h"
-#include "dtTerrain/imageutils.h"
-#include "dtTerrain/mathutils.h"
-#include "dtTerrain/fixedpointnoise.h"
+#include <dtUtil/exception.h>
+#include <dtTerrain/imageutils.h>
+#include <dtTerrain/mathutils.h>
+#include <dtTerrain/fixedpointnoise.h>
 
 namespace dtTerrain
 {
@@ -206,7 +206,6 @@ namespace dtTerrain
 
             gx = (h-gx) * 0.0005f;//((((gx-h) * scale) + 32768.0f) / 65536.0f);
             gy = (h-gy) * 0.0005f;//((((gy-h) * scale) + 32768.0f) / 65536.0f);      
-            //std::cout << "h,gx,gy: " << h << "," << gx << "," << gy << std::endl;
             
             osg::Vec3 grad = osg::Vec3(gx,gy,1.0f);
             grad.normalize();

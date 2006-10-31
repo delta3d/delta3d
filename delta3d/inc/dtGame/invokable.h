@@ -25,7 +25,7 @@
 #include <string>
 #include <osg/Referenced>
 #include <dtDAL/functor.h>
-#include "dtGame/message.h"
+#include <dtGame/message.h>
 
 namespace dtGame
 {

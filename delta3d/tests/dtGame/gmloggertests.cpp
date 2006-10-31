@@ -19,7 +19,7 @@
  * @author Matthew W. Campbell
  * @author Curtiss Murphy
  */
-
+#include <prefix/dtgameprefix-src.h>
 #include <dtGame/binarylogstream.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/serverloggercomponent.h>
@@ -37,8 +37,14 @@
 #include <dtGame/logstatus.h>
 #include <dtGame/logtag.h>
 #include <dtGame/logkeyframe.h>
+#include <dtGame/messagetype.h>
 #include <dtGame/basemessages.h>
+#include <dtGame/gameactor.h>
 #include <dtGame/defaultmessageprocessor.h>
+#include <dtActors/gamemeshactor.h>
+#include <dtActors/engineactorregistry.h>
+#include <dtDAL/librarymanager.h>
+#include <dtDAL/actorproxy.h>
 
 #if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
    #include <Windows.h>
@@ -79,6 +85,7 @@ class GMLoggerTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestLoggerGetTags);
       CPPUNIT_TEST(TestLoggerGetKeyframes);
       CPPUNIT_TEST(TestLoggerAutoKeyframeInterval);
+      CPPUNIT_TEST(TestLoggerActorIDLists);
       CPPUNIT_TEST(TestLogControllerComponent);
       CPPUNIT_TEST(TestControllerSignals);
       CPPUNIT_TEST(TestServerLogger);
@@ -110,6 +117,7 @@ class GMLoggerTests : public CPPUNIT_NS::TestFixture
       void TestLoggerStatusMessage();
       void TestLoggerGetKeyframes();
       void TestLoggerAutoKeyframeInterval();
+      void TestLoggerActorIDLists();
       void TestLogControllerComponent();
       void TestControllerSignals();
       void TestServerLogger();
@@ -989,15 +997,16 @@ void GMLoggerTests::TestPlaybackRecordCycle()
       CPPUNIT_ASSERT_MESSAGE("Should be IDLE",
          testSignal->mStatus.GetStateEnum() == dtGame::LogStateEnumeration::LOGGER_STATE_IDLE);
 
+      unsigned int numGameActors = (unsigned int)serverController->GetPlaybackActorCount();
+      CPPUNIT_ASSERT_MESSAGE("Number of playback actors before changing to playback should be 0",
+         0 == numGameActors);
+
       tc->reset();
       logController->RequestChangeStateToPlayback();
       dtCore::System::GetInstance().Step();
       CPPUNIT_ASSERT_MESSAGE("Should be Playback",
          testSignal->mStatus.GetStateEnum() == dtGame::LogStateEnumeration::LOGGER_STATE_PLAYBACK);
       CPPUNIT_ASSERT_MESSAGE("We should have some number of messages", tc->GetReceivedProcessMessages().size() >= 3);
-
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("Wrong number of game actors after changing to playback",
-         (unsigned)1,mGameManager->GetNumGameActors());
 
       //Go through the playback cycle until the end has been reached at
       //which point the system should be paused.
@@ -1014,8 +1023,9 @@ void GMLoggerTests::TestPlaybackRecordCycle()
 
       //There should be three actors.  The test player and the two actors added
       //during playback.
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("Wrong number of game actors after concluding playback.",
-         (unsigned)3,mGameManager->GetNumGameActors());
+      numGameActors = mGameManager->GetNumGameActors();
+      CPPUNIT_ASSERT_MESSAGE("Number of game actors after concluding playback should be 3",
+         (unsigned)3==numGameActors);
 
       stream->Close();
    }
@@ -1864,6 +1874,289 @@ void GMLoggerTests::TestLoggerStatusMessage()
    {
       CPPUNIT_FAIL(std::string("Caught exception of type: ") + typeid(e).name() + " " + e.what());
    }
+}
+
+//////////////////////////////////////////////////////////////////////////
+class TestServerLoggerComponent : public dtGame::ServerLoggerComponent
+{
+public:
+   TestServerLoggerComponent(dtGame::LogStream &logStream, const std::string &name = "TestServerLoggerComponent");
+   
+   int RequestDeletePlaybackActors();
+
+protected:
+   virtual ~TestServerLoggerComponent() {}
+
+};
+
+TestServerLoggerComponent::TestServerLoggerComponent(dtGame::LogStream &logStream, const std::string &name)
+: ServerLoggerComponent(logStream,name)
+{
+}
+
+int TestServerLoggerComponent::RequestDeletePlaybackActors()
+{
+   return ServerLoggerComponent::RequestDeletePlaybackActors();
+}
+
+//////////////////////////////////////////////////////////////////////////
+void GMLoggerTests::TestLoggerActorIDLists()
+{
+   dtGame::MessageFactory &msgFactory = mGameManager->GetMessageFactory();
+   dtCore::RefPtr<dtGame::BinaryLogStream> stream = new dtGame::BinaryLogStream(msgFactory);
+   dtCore::RefPtr<dtGame::LogController> logController = new dtGame::LogController();
+   dtCore::RefPtr<TestServerLoggerComponent> serverLoggerComp = new TestServerLoggerComponent(*stream);
+   dtCore::RefPtr<TestComponent> tc = new TestComponent();
+   dtCore::RefPtr<TestControllerSignal> msgSignal = new TestControllerSignal();
+
+   mGameManager->AddComponent(*tc, dtGame::GameManager::ComponentPriority::HIGHEST);
+   mGameManager->AddComponent(*logController, dtGame::GameManager::ComponentPriority::NORMAL);
+   mGameManager->AddComponent(*serverLoggerComp, dtGame::GameManager::ComponentPriority::NORMAL);
+   mGameManager->AddComponent(*(new dtGame::DefaultMessageProcessor()), dtGame::GameManager::ComponentPriority::HIGHEST);
+
+   msgSignal->RegisterSignals(*logController);
+
+   dtCore::RefPtr<dtGame::GameActorProxy> proxy1;
+   mGameManager->CreateActor("ExampleActors", "Test1Actor", proxy1);
+   dtCore::RefPtr<dtGame::GameActorProxy> proxy2;
+   mGameManager->CreateActor("ExampleActors", "Test1Actor", proxy2);
+   dtCore::RefPtr<dtGame::GameActorProxy> proxy3;
+   mGameManager->CreateActor("ExampleActors", "Test1Actor", proxy3);
+   dtCore::RefPtr<dtGame::GameActorProxy> proxy4;
+   mGameManager->CreateActor("ExampleActors", "Test1Actor", proxy4);
+   dtCore::RefPtr<dtGame::GameActorProxy> proxy5;
+   mGameManager->CreateActor("ExampleActors", "Test1Actor", proxy5);
+
+   // Test Add Ignore
+   logController->RequestAddIgnoredActor(proxy1->GetId());
+   logController->RequestAddIgnoredActor(proxy2->GetId());
+   SLEEP(20); dtCore::System::GetInstance().Step();
+
+   // Get Ignore Count
+   CPPUNIT_ASSERT_MESSAGE("Processed LogController add 2 ignored actors, there should be 2 unique actor IDs",
+      serverLoggerComp->GetIgnoredActorCount() == 2 );
+
+   // Add all actor IDs
+   logController->RequestAddIgnoredActor(proxy1->GetId());
+   logController->RequestAddIgnoredActor(proxy2->GetId());
+   logController->RequestAddIgnoredActor(proxy3->GetId());
+   logController->RequestAddIgnoredActor(proxy4->GetId());
+   logController->RequestAddIgnoredActor(proxy5->GetId());
+   SLEEP(50); dtCore::System::GetInstance().Step();
+   CPPUNIT_ASSERT_MESSAGE("Processed LogController add 5 ignore actor IDs (2 re-added), there should be 5 unique actor IDs",
+      serverLoggerComp->GetIgnoredActorCount() == 5 );
+
+   // Remove 2 actor IDs
+   logController->RequestRemoveIgnoredActor(proxy1->GetId());
+   logController->RequestRemoveIgnoredActor(proxy2->GetId());
+   SLEEP(20); dtCore::System::GetInstance().Step();
+   CPPUNIT_ASSERT_MESSAGE("Processed LogController remove 2 ignore actor IDs (1 & 2), there should be 3 unique actor IDs",
+      serverLoggerComp->GetIgnoredActorCount() == 3 );
+
+   // Test to be sure IDs 1 and 2 have been removed
+   CPPUNIT_ASSERT_MESSAGE("Processed ServerLoggerComponent.IsIgnoredActorID; IDs 1 & 2 should NOT be found",
+      (serverLoggerComp->IsIgnoredActorId(proxy1->GetId()) == false 
+      && serverLoggerComp->IsIgnoredActorId(proxy2->GetId()) == false) );
+   CPPUNIT_ASSERT_MESSAGE("Processed ServerLoggerComponent.IsIgnoredActorID; IDs 3 & 4 & 5 should be found",
+      (serverLoggerComp->IsIgnoredActorId(proxy3->GetId()) 
+      && serverLoggerComp->IsIgnoredActorId(proxy4->GetId()) 
+      && serverLoggerComp->IsIgnoredActorId(proxy5->GetId()) ) );
+
+
+   // Change State to RECORD
+   msgSignal->Reset();
+   //logController->RequestSetAutoKeyframeInterval(0.1f);
+
+   logController->RequestChangeStateToRecord();
+   logController->RequestServerGetStatus();
+   SLEEP(50); dtCore::System::GetInstance().Step();
+   CPPUNIT_ASSERT_MESSAGE( "ServerLoggerComponent should be in RECORD state.",
+      logController->GetLastKnownStatus().GetStateEnum()
+      == dtGame::LogStateEnumeration::LOGGER_STATE_RECORD );
+
+   tc->reset(); // flush messages from previous steps
+
+   double newTime = 0.0;
+   double timeFactor = 1.0;
+
+
+   dtGame::LogKeyframe curKeyframe;
+   dtGame::LogKeyframe keyframe1;
+   dtGame::LogKeyframe keyframe2;
+   dtGame::LogKeyframe keyframe3;
+   dtGame::LogKeyframe keyframe4;
+
+
+   // Add actors 1 & 2 into recording (they should not be ignored)
+   mGameManager->ChangeTimeSettings(newTime, timeFactor, mGameManager->GetSimulationClockTime());
+   SLEEP(5); dtCore::System::GetInstance().Step();
+   mGameManager->AddActor(*proxy1,false,false); // KF1
+   keyframe1.SetName("Frame 1");
+   keyframe1.SetSimTimeStamp(newTime);
+   logController->RequestCaptureKeyframe( keyframe1 );
+   SLEEP(10); dtCore::System::GetInstance().Step();
+
+   // Wait and snap some keyframes and add more actors
+   mGameManager->ChangeTimeSettings((newTime+=1.0), timeFactor, mGameManager->GetSimulationClockTime());
+   mGameManager->AddActor(*proxy3,false,false); // KF2
+   keyframe2.SetName("Frame 2");
+   keyframe2.SetSimTimeStamp(newTime);
+   logController->RequestCaptureKeyframe( keyframe2 );
+   SLEEP(10); dtCore::System::GetInstance().Step();
+
+   mGameManager->ChangeTimeSettings((newTime+=1.0), timeFactor, mGameManager->GetSimulationClockTime());
+   mGameManager->AddActor(*proxy2,false,false); // KF3
+   keyframe3.SetName("Frame 3");
+   keyframe3.SetSimTimeStamp(newTime);
+   logController->RequestCaptureKeyframe( keyframe3 );
+   SLEEP(10); dtCore::System::GetInstance().Step();
+
+   mGameManager->ChangeTimeSettings((newTime+=1.0), timeFactor, mGameManager->GetSimulationClockTime());
+   mGameManager->AddActor(*proxy4,false,false); // KF4
+   keyframe4.SetName("Frame 4");
+   keyframe4.SetSimTimeStamp(newTime);
+   logController->RequestCaptureKeyframe( keyframe4 );
+   SLEEP(10); dtCore::System::GetInstance().Step();
+
+
+   // Stop RECORD and switch to IDLE
+   logController->RequestChangeStateToIdle();
+   logController->RequestServerGetStatus();
+   SLEEP(50); dtCore::System::GetInstance().Step();
+   CPPUNIT_ASSERT_MESSAGE( "ServerLoggerComponent should be in IDLE state.",
+      logController->GetLastKnownStatus().GetStateEnum()
+      == dtGame::LogStateEnumeration::LOGGER_STATE_IDLE );
+
+
+   // Switch to PLAYBACK
+   tc->reset();
+   logController->RequestChangeStateToPlayback();
+   logController->RequestServerGetStatus();
+   SLEEP(10); dtCore::System::GetInstance().Step();
+   CPPUNIT_ASSERT_MESSAGE( "ServerLoggerComponent should be in PLAYBACK state.",
+      logController->GetLastKnownStatus().GetStateEnum()
+      == dtGame::LogStateEnumeration::LOGGER_STATE_PLAYBACK );
+
+   logController->RequestServerGetKeyframes();
+   SLEEP(10); dtCore::System::GetInstance().Step();
+   const std::vector<dtGame::LogKeyframe>& keyframes = logController->GetLastKnownKeyframeList();
+   int keyframeCount = keyframes.size();
+   CPPUNIT_ASSERT_MESSAGE( "LogController should have at least 4 keyframes", keyframeCount >= 4 );
+
+
+   // Test the start frame for the existence of actors
+   CPPUNIT_ASSERT_MESSAGE("Started playback, 0 actor IDs should exist in playback",
+      serverLoggerComp->GetPlaybackActorCount() == 0 );
+
+   // Check keyframe jumps...
+   // --- Forward (1.0 to KF1 - proxy1)
+   logController->RequestJumpToKeyframe(keyframes[1]);
+   SLEEP(10); dtCore::System::GetInstance().Step();
+   CPPUNIT_ASSERT_MESSAGE("Moved to keyframe 1, 1 playback actor ID should exist in playback",
+      serverLoggerComp->GetPlaybackActorCount() == 1 );
+
+   // --- Forward (1.0 to KF2 - proxy3)
+   logController->RequestJumpToKeyframe(keyframes[2]);
+   SLEEP(10); dtCore::System::GetInstance().Step();
+   CPPUNIT_ASSERT_MESSAGE("Moved to Third keyframe, 1 playback actor ID should exist in playback (ignored actor was added here)",
+      serverLoggerComp->GetPlaybackActorCount() == 1 );
+
+   // --- Forward (1.0 to KF3 - proxy2)
+   logController->RequestJumpToKeyframe(keyframes[3]);
+   SLEEP(10); dtCore::System::GetInstance().Step();
+   CPPUNIT_ASSERT_MESSAGE("Moved to Fourth keyframe, 2 playback actor IDs should exist in playback",
+      serverLoggerComp->GetPlaybackActorCount() == 2 );
+
+   // --- Check that an ignore actor does not interfere with playback
+   mGameManager->AddActor(*proxy5,false,false);
+   SLEEP(10); dtCore::System::GetInstance().Step();
+   CPPUNIT_ASSERT_MESSAGE("Added an ignore actor, only 2 playback actor IDs should still exist in playback",
+      serverLoggerComp->GetPlaybackActorCount() == 2 );
+
+   // --- Forward (1.0 to KF4 - proxy4 - Last Keyframe)
+   logController->RequestJumpToKeyframe(keyframes[4]);
+   SLEEP(10); dtCore::System::GetInstance().Step();
+   CPPUNIT_ASSERT_MESSAGE("Moved to Last keyframe, 2 playback actor IDs should exist in playback",
+      serverLoggerComp->GetPlaybackActorCount() == 2 );
+
+   // --- Back (3.0 to KF1 - proxy1)
+   logController->RequestJumpToKeyframe(keyframes[1]);
+   SLEEP(10); dtCore::System::GetInstance().Step();
+   CPPUNIT_ASSERT_MESSAGE("Moved to Second keyframe, 1 playback actor ID should exist in playback",
+      serverLoggerComp->GetPlaybackActorCount() == 1 );
+
+   // --- Back (3.0 to KF0 - proxy1)
+   logController->RequestJumpToKeyframe(keyframes[0]);
+   SLEEP(10); dtCore::System::GetInstance().Step();
+   CPPUNIT_ASSERT_MESSAGE("Moved to First keyframe, 0 playback actor IDs should exist in playback",
+      serverLoggerComp->GetPlaybackActorCount() == 0 );
+
+   // --- Forward (1.0 to KF4 - proxy4 - Last Keyframe)
+   logController->RequestJumpToKeyframe(keyframes[4]);
+   SLEEP(10); dtCore::System::GetInstance().Step();
+   CPPUNIT_ASSERT_MESSAGE("Moved to Last keyframe, 2 playback actor IDs should exist in playback",
+      serverLoggerComp->GetPlaybackActorCount() == 2 );
+
+   // Count total game actors
+   int totalActors = mGameManager->GetNumGameActors();
+   CPPUNIT_ASSERT_MESSAGE("Total game actors should be 5 at the end of playback.", totalActors == 5 );
+
+   // Stop RECORD and switch to IDLE
+   logController->RequestChangeStateToIdle();
+   logController->RequestServerGetStatus();
+   SLEEP(50); dtCore::System::GetInstance().Step();
+   CPPUNIT_ASSERT_MESSAGE( "ServerLoggerComponent should be in IDLE state.",
+      logController->GetLastKnownStatus().GetStateEnum()
+      == dtGame::LogStateEnumeration::LOGGER_STATE_IDLE );
+
+   // Count game actors after transition to IDLE state
+   totalActors = mGameManager->GetNumGameActors();
+   CPPUNIT_ASSERT_MESSAGE("Transition to IDLE state should leave 3 ignore actors after deleting the 2 playback actors", 
+      totalActors == 3 );
+
+   // Check playback IDs are cleared
+   CPPUNIT_ASSERT_MESSAGE("Transition to IDLE state should have cleared the playback list; no playback actor IDs should exist",
+      serverLoggerComp->GetPlaybackActorCount() == 0 );
+
+   // Check ignored IDs still exist
+   CPPUNIT_ASSERT_MESSAGE("Playback ended, there should still be 3 ignored actor IDs",
+      serverLoggerComp->GetIgnoredActorCount() == 3 );
+
+
+
+   // Check messages to make sure ignored ID have not been recorded
+   std::vector< dtCore::RefPtr<const dtGame::Message> > &messages = tc->GetReceivedProcessMessages();
+   dtCore::UniqueId curId;
+   int limit = messages.size();
+   bool ignored = true;
+   for( int msg = 0; msg < limit; msg++ )
+   {
+      if( messages[msg].valid() )
+      {
+         curId = messages[msg]->GetAboutActorId();
+         if(curId == proxy3->GetId()
+            || curId == proxy4->GetId())
+         {
+            ignored = false; break;
+         }
+      }
+   }
+   CPPUNIT_ASSERT_MESSAGE("Done with playback, actors should have been ignored", ignored );
+
+   // Clear ignored IDs
+   logController->RequestClearIgnoreList();
+   SLEEP(50); dtCore::System::GetInstance().Step();
+   CPPUNIT_ASSERT_MESSAGE("Processed LogController clear ignore actor IDs, there should be 0 ignored actor IDs",
+      serverLoggerComp->GetIgnoredActorCount() == 0 );
+
+   // Cleanup
+   proxy1 = NULL;
+   proxy2 = NULL;
+   proxy3 = NULL;
+   proxy4 = NULL;
+   proxy5 = NULL;
+   tc->reset();
+
 }
 
 //////////////////////////////////////////////////////////////////////////

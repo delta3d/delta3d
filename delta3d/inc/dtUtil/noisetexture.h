@@ -21,8 +21,6 @@
 #ifndef DELTA_NOISETEXTURE
 #define DELTA_NOISETEXTURE
 
-#include <math.h>
-#include <stdio.h>
 #include <osg/Image>
 #include <dtUtil/noiseutility.h>
 #include <dtUtil/export.h>

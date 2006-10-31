@@ -97,6 +97,7 @@ TestAARHUD::TestAARHUD(dtCore::DeltaWin *win,
    mHelp16Text(NULL),
    mHelp17Text(NULL),
    mHelp18Text(NULL),
+   mHelp19Text(NULL),
    mTasksHeaderText(NULL),
    mTaskTextList(),
    mRightTextXOffset(180.0f),
@@ -283,6 +284,9 @@ void TestAARHUD::SetupGUI(dtCore::DeltaWin *win)
       // HELP - Misc
       curYPos += mTextHeight * 2;
       mHelp8Text = CreateText(std::string("Help8"), mHelpOverlay, std::string("[B] Place Object"),
+         5, curYPos, helpTextWidth, mTextHeight + 2);
+      curYPos += mTextHeight * 2;
+      mHelp19Text = CreateText(std::string("Help19"), mHelpOverlay, std::string("[G] Place Ignorable Object"),
          5, curYPos, helpTextWidth, mTextHeight + 2);
       curYPos += mTextHeight + 2;
       mHelp11Text = CreateText(std::string("Help11"), mHelpOverlay, std::string("[F] Insert Keyframe"),
@@ -512,7 +516,7 @@ int TestAARHUD::RecursivelyAddTasks(const std::string &indent, int curIndex,
       totalNumAdded += 1;
 
       // recurse for each child
-      const std::vector<dtCore::RefPtr<dtActors::TaskActorProxy> > &children = taskProxy->GetAllSubTaskProxies();
+      const std::vector<dtCore::RefPtr<dtActors::TaskActorProxy> > &children = taskProxy->GetAllSubTasks();
       if (!children.empty())
       {
          for (int i = 0; i < (int) children.size(); i ++)

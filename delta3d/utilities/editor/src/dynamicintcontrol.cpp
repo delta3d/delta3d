@@ -20,13 +20,13 @@
 * Curtiss Murphy
 */
 #include <prefix/dtstageprefix-src.h>
-#include "dtEditQt/dynamicintcontrol.h"
-#include "dtEditQt/dynamicsubwidgets.h"
-#include "dtEditQt/editorevents.h"
-#include "dtDAL/actorproxy.h"
-#include "dtDAL/actorproperty.h"
-#include "dtDAL/datatype.h"
-#include "dtDAL/enginepropertytypes.h"
+#include <dtEditQt/dynamicintcontrol.h>
+#include <dtEditQt/dynamicsubwidgets.h>
+#include <dtEditQt/editorevents.h>
+#include <dtDAL/actorproxy.h>
+#include <dtDAL/actorproperty.h>
+#include <dtDAL/datatype.h>
+#include <dtDAL/enginepropertytypes.h>
 #include <dtUtil/log.h>
 #include <QtGui/QGridLayout>
 #include <QtGui/QWidget>
@@ -150,14 +150,14 @@ namespace dtEditQt
 
     const QString DynamicIntControl::getDisplayName()
     {
-        return QString(tr(myProperty->GetLabel().c_str()));
+        return tr(myProperty->GetLabel().c_str());
     }
 
     const QString DynamicIntControl::getDescription() 
     {
         std::string tooltip = myProperty->GetDescription() + "  [Type: " + 
             myProperty->GetPropertyType().GetName() + "]";
-        return QString(tr(tooltip.c_str()));
+        return tr(tooltip.c_str());
     }
 
     const QString DynamicIntControl::getValueAsString() 

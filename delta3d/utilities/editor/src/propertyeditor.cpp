@@ -20,22 +20,10 @@
 * Curtiss Murphy
 */
 #include <prefix/dtstageprefix-src.h>
-#include "dtEditQt/actortypetreewidget.h"
 
-#include <QtGui/QLabel>
-#include <QtGui/QGridLayout>
-#include <QtGui/QScrollArea>
-#include <QtGui/QScrollBar>
-#include <QtGui/QTreeWidget>
-#include <QtCore/QStringList>
-#include <QtGui/QMainWindow>
-#include <QtGui/QHeaderView>
-#include <QtGui/QGroupBox>
-#include <QtGui/QTreeView>
-#include <QtGui/QAction>
-#include <QtGui/QHeaderView>
-#include <dtCore/deltadrawable.h>
-#include <dtEditQt/global.h>
+#include <dtEditQt/propertyeditor.h>
+
+#include <dtEditQt/actortypetreewidget.h>
 #include <dtEditQt/dynamicabstractcontrol.h>
 #include <dtEditQt/dynamicabstractparentcontrol.h>
 #include <dtEditQt/dynamicactorcontrol.h>
@@ -45,6 +33,7 @@
 #include <dtEditQt/dynamicfloatcontrol.h>
 #include <dtEditQt/dynamicdoublecontrol.h>
 #include <dtEditQt/dynamicgroupcontrol.h>
+#include <dtEditQt/dynamicgrouppropertycontrol.h>
 #include <dtEditQt/dynamicintcontrol.h>
 #include <dtEditQt/dynamiclabelcontrol.h>
 #include <dtEditQt/dynamiclongcontrol.h>
@@ -57,19 +46,38 @@
 #include <dtEditQt/dynamicgameeventcontrol.h>
 #include <dtEditQt/editoractions.h>
 #include <dtEditQt/editorevents.h>
-#include <dtEditQt/propertyeditor.h>
 #include <dtEditQt/propertyeditormodel.h>
 #include <dtEditQt/propertyeditortreeview.h>
 #include <dtEditQt/viewportmanager.h>
+
+#include <QtCore/QStringList>
+
+#include <QtGui/QLabel>
+#include <QtGui/QGridLayout>
+#include <QtGui/QScrollArea>
+#include <QtGui/QScrollBar>
+#include <QtGui/QTreeWidget>
+#include <QtGui/QMainWindow>
+#include <QtGui/QHeaderView>
+#include <QtGui/QGroupBox>
+#include <QtGui/QTreeView>
+#include <QtGui/QAction>
+#include <QtGui/QHeaderView>
+
+#include <dtCore/deltadrawable.h>
+
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/exceptionenum.h>
 #include <dtDAL/datatype.h>
 #include <dtDAL/librarymanager.h>
+
 #include <dtUtil/log.h>
 #include <dtUtil/tree.h>
+
 #include <osg/Referenced>
+
 #include <vector>
 #include <cmath>
 
@@ -107,6 +115,10 @@ namespace dtEditQt
         // listen for name changes so we can update our group box label or handle undo changes
         connect(&EditorEvents::getInstance(), SIGNAL(proxyNameChanged(ActorProxyRefPtr, std::string)),
             this, SLOT(proxyNameChanged(ActorProxyRefPtr, std::string)));
+        
+        // listen for closing
+        connect(&EditorEvents::getInstance(), SIGNAL(editorCloseEvent()),
+            this, SLOT(OnEditorClosing()));
 
         controlFactory = new dtUtil::ObjectFactory<dtDAL::DataType *, DynamicAbstractControl>;
 
@@ -136,6 +148,26 @@ namespace dtEditQt
         controlFactory->RegisterType<DynamicResourceControl>(&(dtDAL::DataType::PARTICLE_SYSTEM));
         controlFactory->RegisterType<DynamicActorControl>(&(dtDAL::DataType::ACTOR));
         controlFactory->RegisterType<DynamicGameEventControl>(&(dtDAL::DataType::GAME_EVENT));
+        controlFactory->RegisterType<DynamicGroupPropertyControl>(&(dtDAL::DataType::GROUP));
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////
+    void PropertyEditor::OnEditorClosing()
+    {
+        // listen for selection changed event
+        disconnect(&EditorEvents::getInstance(), SIGNAL(selectedActors(ActorProxyRefPtrVector &)),
+            this, SLOT(handleActorsSelected(ActorProxyRefPtrVector&)));
+
+        // listen for property change events and update the tree.  These can be generated
+        // by the viewports, or the tree itself.
+        disconnect(&EditorEvents::getInstance(), SIGNAL(actorPropertyChanged(ActorProxyRefPtr,
+            ActorPropertyRefPtr)),
+            this, SLOT(actorPropertyChanged(ActorProxyRefPtr,
+            ActorPropertyRefPtr)));
+
+        // listen for name changes so we can update our group box label or handle undo changes
+        disconnect(&EditorEvents::getInstance(), SIGNAL(proxyNameChanged(ActorProxyRefPtr, std::string)),
+            this, SLOT(proxyNameChanged(ActorProxyRefPtr, std::string)));
     }
 
     /////////////////////////////////////////////////////////////////////////////////
@@ -206,6 +238,8 @@ namespace dtEditQt
     /////////////////////////////////////////////////////////////////////////////////
     void PropertyEditor::refreshSelectedActors()
     {
+        CommitCurrentEdits();
+            
         std::vector<dtCore::RefPtr<dtDAL::ActorProxy > >::const_iterator iter;
         bool isMultiSelect = selectedActors.size() > 1;
 
@@ -224,25 +258,24 @@ namespace dtEditQt
 		//					  added if / else for version numbers.
 		#if (QT_VERSION == 0x040001)
 		
-				if (propertyTree != NULL) delete propertyTree;
-				propertyTree = new PropertyEditorTreeView(propertyModel, actorPropBox);
-				rootProperty->removeAllChildren(propertyModel);
-				propertyTree->setRoot(rootProperty);
-				dynamicControlLayout->addWidget(propertyTree);
-		
-		#else
-			if (propertyTree != NULL)
-			{
-				delete propertyTree;
-				propertyTree = NULL;
-			}
-			rootProperty->removeAllChildren(propertyModel);
+			delete propertyTree;
 			propertyTree = new PropertyEditorTreeView(propertyModel, actorPropBox);
+			rootProperty->removeAllChildren(propertyModel);
 			propertyTree->setRoot(rootProperty);
 			dynamicControlLayout->addWidget(propertyTree);
+		
+		#else
+         delete propertyTree;
+         //if (propertyTree == NULL)
+         //{
+         propertyTree = new PropertyEditorTreeView(propertyModel, actorPropBox);
+         dynamicControlLayout->addWidget(propertyTree);
+         //}
+			rootProperty->removeAllChildren(propertyModel);
+         propertyTree->setRoot(rootProperty);
 		#endif
-        resetGroupBoxLabel();
 
+        resetGroupBoxLabel();
         // Walk our selection items.
         for(iter = selectedActors.begin(); iter != selectedActors.end(); ++iter)
         {
@@ -264,7 +297,7 @@ namespace dtEditQt
             }
         }
 
-        //propertyTree->reset();
+        propertyTree->reset();
 
         // we deleted the tree, so we have  to reset some sizes
         //actorPropBox->setMinimumSize(actorPropBox->sizeHint());

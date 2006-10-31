@@ -18,7 +18,7 @@ mTetherMode(TETHER_PARENT_REL)
 {
    RegisterInstance(this);
    
-   AddSender(System::Instance());
+   AddSender(&System::GetInstance());
    if (cam != NULL) SetCamera(cam);
    SetAttachToTransformable(parent);
 
@@ -31,7 +31,7 @@ mTetherMode(TETHER_PARENT_REL)
 Tripod::~Tripod(void)
 {
    DeregisterInstance(this);
-   RemoveSender( System::Instance() );    
+   RemoveSender( &System::GetInstance() );    
 }
 
 void Tripod::SetCamera(Camera *cam)

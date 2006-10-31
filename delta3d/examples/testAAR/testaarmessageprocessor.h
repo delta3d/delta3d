@@ -154,8 +154,9 @@ class TEST_AAR_EXPORT TestAARMessageProcessor : public dtGame::DefaultMessagePro
 
       /**
        * Helper method that creates an actor with random movement behavior.
+       * @param ignored True means the actor will be ignored from recording.
        */
-      void PlaceActor();
+      void PlaceActor(bool ignored = false);
 
       /**
        * Helper method to create a new actor to put in the scene.
@@ -163,7 +164,8 @@ class TEST_AAR_EXPORT TestAARMessageProcessor : public dtGame::DefaultMessagePro
       dtCore::RefPtr<dtGame::GameActorProxy> CreateNewMovingActor(const std::string &meshName, 
          float velocity, 
          float turnRate, 
-         bool bSetLocation);
+         bool bSetLocation,
+         bool ignoreRecording = false);
 
       //Our tasks and objectives
       dtCore::RefPtr<dtActors::TaskActorProxy> mTaskMoveCameraProxy;

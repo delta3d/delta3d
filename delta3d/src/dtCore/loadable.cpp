@@ -1,6 +1,6 @@
 #include <prefix/dtcoreprefix-src.h>
-#include "dtCore/loadable.h"
-#include "dtCore/refptr.h"
+#include <dtCore/loadable.h>
+#include <dtCore/refptr.h>
 #include <dtUtil/log.h>
 
 #include <osg/Node>

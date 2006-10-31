@@ -95,6 +95,9 @@ namespace dtGame
       RegisterMessageType<dtGame::Message>(dtGame::MessageType::LOG_COMMAND_BEGIN_LOADKEYFRAME_TRANS);
       RegisterMessageType<dtGame::LogEndLoadKeyframeMessage>(dtGame::MessageType::LOG_COMMAND_END_LOADKEYFRAME_TRANS);
       RegisterMessageType<dtGame::LogJumpToKeyframeMessage>(dtGame::MessageType::LOG_REQ_JUMP_TO_KEYFRAME);
+      RegisterMessageType<dtGame::Message>(MessageType::LOG_REQ_ADD_IGNORED_ACTOR);
+      RegisterMessageType<dtGame::Message>(MessageType::LOG_REQ_REMOVE_IGNORED_ACTOR);
+      RegisterMessageType<dtGame::Message>(MessageType::LOG_REQ_CLEAR_IGNORE_LIST);
 
       //Game Event...
       RegisterMessageType<dtGame::GameEventMessage>(dtGame::MessageType::INFO_GAME_EVENT);

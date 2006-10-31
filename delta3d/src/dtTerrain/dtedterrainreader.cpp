@@ -31,12 +31,12 @@
 #include <osgDB/FileUtils>
 #include <osgDB/FileNameUtils>
 
-#include "dtTerrain/terraindatareader.h"
-#include "dtTerrain/terraindatarenderer.h"
-#include "dtTerrain/terraindecorationlayer.h"
-#include "dtTerrain/dtedterrainreader.h"
-#include "dtTerrain/imageutils.h"
-#include "dtTerrain/terrain.h"
+#include <dtTerrain/terraindatareader.h>
+#include <dtTerrain/terraindatarenderer.h>
+#include <dtTerrain/terraindecorationlayer.h>
+#include <dtTerrain/dtedterrainreader.h>
+#include <dtTerrain/imageutils.h>
+#include <dtTerrain/terrain.h>
 
 namespace dtTerrain 
 {

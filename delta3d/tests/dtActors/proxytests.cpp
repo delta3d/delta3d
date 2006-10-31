@@ -19,6 +19,7 @@
  * David Guthrie
  * William Johnson
  */
+#include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
 
 #include <dtCore/refptr.h>
@@ -31,6 +32,9 @@
 #include <dtDAL/datatype.h>
 #include <dtDAL/gameevent.h>
 #include <dtDAL/gameeventmanager.h>
+#include <dtDAL/project.h>
+
+#include <dtUtil/log.h>
 
 #include <iostream>
 
@@ -78,8 +82,7 @@ ProxyTest::~ProxyTest()
 
 void ProxyTest::setUp()
 {
-   //dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_DEBUG);
-   //dtUtil::Log::GetInstance("enginepropertytypes.cpp").SetLogLevel(dtUtil::Log::LOG_DEBUG);
+   //dtUtil::Log::GetInstance("librarymanager.cpp").SetLogLevel(dtUtil::Log::LOG_DEBUG);
    dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
    libMgr.LoadActorRegistry(mExampleLibraryName);
    libMgr.GetActorTypes(actors);
@@ -88,11 +91,11 @@ void ProxyTest::setUp()
 
 void ProxyTest::tearDown()
 {
+   //dtUtil::Log::GetInstance("librarymanager.cpp").SetLogLevel(dtUtil::Log::LOG_WARNING);
    proxies.clear();
    actors.clear();
    libMgr.UnloadActorRegistry(mExampleLibraryName);
    dtDAL::GameEventManager::GetInstance().ClearAllEvents();
-   //dtAudio::AudioManager::Destroy();
 }
 
 void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
@@ -419,7 +422,6 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
             CPPUNIT_ASSERT_MESSAGE(ss.str(),
                                    osg::equivalent(result[x], test[x], epsilon));
          }
-         
       }
       else if (props[i]->GetPropertyType() == DataType::VEC4F)
       {
@@ -647,36 +649,39 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
       }
       else if (props[i]->GetPropertyType() == DataType::GROUP)
       {
-         dtDAL::GroupActorProperty *prop = static_cast<dtDAL::GroupActorProperty*>(props[i]);
-         RefPtr<dtDAL::NamedGroupParameter> param = new dtDAL::NamedGroupParameter("TestGroup");
-         
-         param->AddParameter(*new dtDAL::NamedIntParameter("horse", 4));
-         param->AddParameter(*new dtDAL::NamedFloatParameter("cow", 4.3f));
-         param->AddParameter(*new dtDAL::NamedStringParameter("pig", "hello"));
-         
-         prop->SetValue(*param);
-         
-         RefPtr<dtDAL::NamedGroupParameter> valParam = prop->GetValue();
-         CPPUNIT_ASSERT_EQUAL(valParam->GetName(), param->GetName());
-         CPPUNIT_ASSERT_EQUAL(valParam->GetParameterCount(), param->GetParameterCount());
-         
-         dtDAL::NamedIntParameter* intParam = dynamic_cast<dtDAL::NamedIntParameter*>(valParam->GetParameter("horse"));
-         CPPUNIT_ASSERT(intParam != NULL);
-         CPPUNIT_ASSERT_EQUAL(4, intParam->GetValue());
+         if (props[i]->GetName() == "TestGroup")
+         {
+            dtDAL::GroupActorProperty *prop = static_cast<dtDAL::GroupActorProperty*>(props[i]);
+            RefPtr<dtDAL::NamedGroupParameter> param = new dtDAL::NamedGroupParameter("TestGroup");
+            
+            param->AddParameter(*new dtDAL::NamedIntParameter("horse", 4));
+            param->AddParameter(*new dtDAL::NamedFloatParameter("cow", 4.3f));
+            param->AddParameter(*new dtDAL::NamedStringParameter("pig", "hello"));
+            
+            prop->SetValue(*param);
+            
+            RefPtr<dtDAL::NamedGroupParameter> valParam = prop->GetValue();
+            CPPUNIT_ASSERT(valParam.valid());
+            CPPUNIT_ASSERT_EQUAL(valParam->GetName(), param->GetName());
+            CPPUNIT_ASSERT_EQUAL(valParam->GetParameterCount(), param->GetParameterCount());
+            
+            dtDAL::NamedIntParameter* intParam = dynamic_cast<dtDAL::NamedIntParameter*>(valParam->GetParameter("horse"));
+            CPPUNIT_ASSERT(intParam != NULL);
+            CPPUNIT_ASSERT_EQUAL(4, intParam->GetValue());
 
-         dtDAL::NamedFloatParameter* floatParam = dynamic_cast<dtDAL::NamedFloatParameter*>(valParam->GetParameter("cow"));
-         CPPUNIT_ASSERT(floatParam != NULL);
-         CPPUNIT_ASSERT_EQUAL(4.3f, floatParam->GetValue());
+            dtDAL::NamedFloatParameter* floatParam = dynamic_cast<dtDAL::NamedFloatParameter*>(valParam->GetParameter("cow"));
+            CPPUNIT_ASSERT(floatParam != NULL);
+            CPPUNIT_ASSERT_EQUAL(4.3f, floatParam->GetValue());
 
-         dtDAL::NamedStringParameter* stringParam = dynamic_cast<dtDAL::NamedStringParameter*>(valParam->GetParameter("pig"));
-         CPPUNIT_ASSERT(stringParam != NULL);
-         CPPUNIT_ASSERT_EQUAL(std::string("hello"), stringParam->GetValue());
-         
-         std::string stringValue = prop->GetStringValue();
-         
-         CPPUNIT_ASSERT_MESSAGE("Should be able to set the string value of a group property.",
-                                prop->SetStringValue(stringValue));
-         
+            dtDAL::NamedStringParameter* stringParam = dynamic_cast<dtDAL::NamedStringParameter*>(valParam->GetParameter("pig"));
+            CPPUNIT_ASSERT(stringParam != NULL);
+            CPPUNIT_ASSERT_EQUAL(std::string("hello"), stringParam->GetValue());
+            
+            std::string stringValue = prop->GetStringValue();
+            
+            CPPUNIT_ASSERT_MESSAGE("Should be able to set the string value of a group property.",
+                                   prop->SetStringValue(stringValue));
+         }
       }
    }
 }
@@ -909,196 +914,205 @@ void ProxyTest::compareProxies(dtDAL::ActorProxy& ap1, dtDAL::ActorProxy& ap2)
 void ProxyTest::TestProxies()
 {
    try
-{
-   RefPtr<dtDAL::ActorProxy> proxy;
-   
-   for(unsigned int i = 0; i < actors.size(); i++)
    {
-      // In order to keep the tests fasts, we skip the nasty slow ones.
-      if (actors[i]->GetName() == "Cloud Plane" || actors[i]->GetName() == "Environment" || 
-          actors[i]->GetName() == "Test Environment Actor") 
-         continue;
+      RefPtr<dtDAL::ActorProxy> proxy;
       
-      proxy = libMgr.CreateActorProxy(*actors[i]).get();
-      CPPUNIT_ASSERT(proxy != NULL);
-      proxies.push_back(proxy);
+      for(unsigned int i = 0; i < actors.size(); i++)
+      {
+         // In order to keep the tests fasts, we skip the nasty slow ones.
+         if (actors[i]->GetName() == "Cloud Plane" || actors[i]->GetName() == "Environment" || 
+             actors[i]->GetName() == "Test Environment Actor") 
+            continue;
+         
+         proxy = libMgr.CreateActorProxy(*actors[i]).get();
+         CPPUNIT_ASSERT(proxy != NULL);
+         proxies.push_back(proxy);
+      }
+      
+      for(unsigned int i = 0; i < proxies.size(); i++)
+      {
+         proxy = proxies[i];
+         CPPUNIT_ASSERT(proxy != NULL);
+         LOGN_INFO("librarymanager.cpp", std::string("Testing proxy of type: ") + proxy->GetActorType().GetCategory() + "." + proxy->GetActorType().GetName());
+         testProps(*proxy);
+         
+         compareProxies(*proxy, *proxy->Clone());
+
+         CPPUNIT_ASSERT(!dtDAL::Project::GetInstance().GetEditMode());
+         CPPUNIT_ASSERT_MESSAGE("The proxy should return false for being in STAGE", !proxy->IsInSTAGE());
+         dtDAL::Project::GetInstance().SetEditMode(true);
+         CPPUNIT_ASSERT(dtDAL::Project::GetInstance().GetEditMode());
+         CPPUNIT_ASSERT_MESSAGE("The proxy should return true for being in STAGE", proxy->IsInSTAGE());
+         dtDAL::Project::GetInstance().SetEditMode(false);
+         CPPUNIT_ASSERT(!dtDAL::Project::GetInstance().GetEditMode());
+         CPPUNIT_ASSERT_MESSAGE("The proxy should return false for being in STAGE", !proxy->IsInSTAGE());
+      }
    }
-   
-   for(unsigned int i = 0; i < proxies.size(); i++)
+   catch (const dtUtil::Exception &e)
    {
-      proxy = proxies[i];
-      CPPUNIT_ASSERT(proxy != NULL);
-      LOG_INFO(std::string("Testing proxy of type: ") + proxy->GetActorType().GetName());
-      testProps(*proxy);
-      
-      compareProxies(*proxy, *proxy->Clone());
+      CPPUNIT_FAIL(e.ToString());
    }
-}
-catch (const dtUtil::Exception &e)
-{
-   CPPUNIT_FAIL(e.ToString());
-}
 }
 
 void ProxyTest::TestBezierProxies()
 {
    try
-{
-   dtDAL::LibraryManager &libMgr = dtDAL::LibraryManager::GetInstance();
-   RefPtr<dtDAL::ActorType>  at    = libMgr.FindActorType("dtcore.Curve", "Bezier Node");
-   CPPUNIT_ASSERT(at != NULL);
-   
-   RefPtr<dtDAL::ActorProxy> one   = libMgr.CreateActorProxy(*at);
-   RefPtr<dtDAL::ActorProxy> two   = libMgr.CreateActorProxy(*at);
-   RefPtr<dtDAL::ActorProxy> three = libMgr.CreateActorProxy(*at);
-   
-   at = libMgr.FindActorType("dtcore.Curve", "Bezier Control Point");
-   CPPUNIT_ASSERT(at != NULL);
-   
-   RefPtr<dtDAL::ActorProxy> entryBCP = libMgr.CreateActorProxy(*at);
-   RefPtr<dtDAL::ActorProxy> exitBCP = libMgr.CreateActorProxy(*at);
-   
-   dtDAL::ActorActorProperty *prevProp1    = static_cast<dtDAL::ActorActorProperty*>(one->GetProperty("Previous Bezier Node"));
-   CPPUNIT_ASSERT_MESSAGE("Actor type should not be NULL", prevProp1 != NULL);
-   dtDAL::ActorActorProperty *nextProp1    = static_cast<dtDAL::ActorActorProperty*>(one->GetProperty("Next Bezier Node"));
-   CPPUNIT_ASSERT_MESSAGE("Actor type should not be NULL", nextProp1 != NULL);
-   dtDAL::ActorActorProperty *entryCtrlPntProp1 = static_cast<dtDAL::ActorActorProperty*>(one->GetProperty("Entry Control Point"));
-   CPPUNIT_ASSERT_MESSAGE("Actor type should not be NULL", entryCtrlPntProp1 != NULL);
-   dtDAL::ActorActorProperty *exitCtrlPntProp1 = static_cast<dtDAL::ActorActorProperty*>(one->GetProperty("Exit Control Point"));
-   CPPUNIT_ASSERT_MESSAGE("Actor type should not be NULL", exitCtrlPntProp1 != NULL);
-   
-   dtDAL::ActorActorProperty *prevProp2    = static_cast<dtDAL::ActorActorProperty*>(two->GetProperty("Previous Bezier Node"));
-   CPPUNIT_ASSERT_MESSAGE("Actor property should not be NULL", prevProp2 != NULL);
-   dtDAL::ActorActorProperty *nextProp2    = static_cast<dtDAL::ActorActorProperty*>(two->GetProperty("Next Bezier Node"));
-   CPPUNIT_ASSERT_MESSAGE("Actor property should not be NULL", nextProp2 != NULL);
-   dtDAL::ActorActorProperty *entryCtrlPntProp2 = static_cast<dtDAL::ActorActorProperty*>(two->GetProperty("Entry Control Point"));
-   CPPUNIT_ASSERT_MESSAGE("Actor property should not be NULL", entryCtrlPntProp2 != NULL);
-   dtDAL::ActorActorProperty *exitCtrlPntProp2 = static_cast<dtDAL::ActorActorProperty*>(two->GetProperty("Exit Control Point"));
-   CPPUNIT_ASSERT_MESSAGE("Actor type should not be NULL", exitCtrlPntProp2 != NULL);
-   
-   dtDAL::ActorActorProperty *prevProp3    = static_cast<dtDAL::ActorActorProperty*>(three->GetProperty("Previous Bezier Node"));
-   CPPUNIT_ASSERT_MESSAGE("Actor property should not be NULL", prevProp3 != NULL);
-   dtDAL::ActorActorProperty *nextProp3    = static_cast<dtDAL::ActorActorProperty*>(three->GetProperty("Next Bezier Node"));
-   CPPUNIT_ASSERT_MESSAGE("Actor property should not be NULL", nextProp3 != NULL);
-   dtDAL::ActorActorProperty *entryCtrlPntProp3 = static_cast<dtDAL::ActorActorProperty*>(three->GetProperty("Entry Control Point"));
-   CPPUNIT_ASSERT_MESSAGE("Actor property should not be NULL", entryCtrlPntProp3 != NULL);
-   dtDAL::ActorActorProperty *exitCtrlPntProp3 = static_cast<dtDAL::ActorActorProperty*>(three->GetProperty("Exit Control Point"));
-   CPPUNIT_ASSERT_MESSAGE("Actor type should not be NULL", exitCtrlPntProp3 != NULL);
-   
-   CPPUNIT_ASSERT_MESSAGE("The first proxy should not have a previous node", prevProp1->GetValue() == NULL);
-   CPPUNIT_ASSERT_MESSAGE("The first proxy should not have a next node", nextProp1->GetValue() == NULL);
-   CPPUNIT_ASSERT_MESSAGE("The first proxy should not have an enrty control point", entryCtrlPntProp1->GetValue() == NULL);
-   CPPUNIT_ASSERT_MESSAGE("The first proxy should not have an exit control point", exitCtrlPntProp1->GetValue() == NULL);
-   
-   CPPUNIT_ASSERT_MESSAGE("The second proxy should not have a previous node", prevProp2->GetValue() == NULL);
-   CPPUNIT_ASSERT_MESSAGE("The second proxy should not have a next node", nextProp2->GetValue() == NULL);
-   CPPUNIT_ASSERT_MESSAGE("The second proxy should not have an enrty control point", entryCtrlPntProp2->GetValue() == NULL);
-   CPPUNIT_ASSERT_MESSAGE("The second proxy should not have an exit control point", exitCtrlPntProp2->GetValue() == NULL);
-   
-   CPPUNIT_ASSERT_MESSAGE("The third proxy should not have a previous node", prevProp3->GetValue() == NULL);
-   CPPUNIT_ASSERT_MESSAGE("The third proxy should not have a next node", nextProp3->GetValue() == NULL);
-   CPPUNIT_ASSERT_MESSAGE("The third proxy should not have an enrty control point", entryCtrlPntProp3->GetValue() == NULL);
-   CPPUNIT_ASSERT_MESSAGE("The third proxy should not have an exit control point", exitCtrlPntProp3->GetValue() == NULL);
-   
-   nextProp1->SetValue(two.get());
-   nextProp2->SetValue(three.get());
-   
-   entryCtrlPntProp1->SetValue(entryBCP.get());
-   exitCtrlPntProp1->SetValue(exitBCP.get());
-   
-   CPPUNIT_ASSERT_MESSAGE("The first node's next should be the second", nextProp1->GetValue() == two.get());
-   CPPUNIT_ASSERT_MESSAGE("The first next property's real actor should be the node", nextProp1->GetRealActor() == nextProp1->GetValue()->GetActor());
-   
-   CPPUNIT_ASSERT_MESSAGE("The second node's next should be the third", nextProp2->GetValue() == three.get());
-   CPPUNIT_ASSERT_MESSAGE("The second next property's real actor should be the node", nextProp2->GetRealActor() == nextProp2->GetValue()->GetActor());
-   
-   CPPUNIT_ASSERT_MESSAGE("The third node's next should be NULL", nextProp3->GetValue() == NULL);
-   
-   CPPUNIT_ASSERT_MESSAGE("The third node's previous should be the second", prevProp3->GetValue() == two.get());
-   CPPUNIT_ASSERT_MESSAGE("The second node's previous should be the first", prevProp2->GetValue() == one.get());
-   CPPUNIT_ASSERT_MESSAGE("The first node's previous should be NULL", prevProp1->GetValue() == NULL);
-   
-   prevProp3->SetValue(two.get());
-   prevProp2->SetValue(one.get());
-   
-   CPPUNIT_ASSERT_MESSAGE("The third node's previous should be the node", prevProp3->GetRealActor() == prevProp3->GetValue()->GetActor());
-   CPPUNIT_ASSERT_MESSAGE("The second node's previous should be the node", prevProp2->GetRealActor() == prevProp2->GetValue()->GetActor());
-   
-   CPPUNIT_ASSERT_MESSAGE("The third's previous should still be the second", prevProp3->GetValue() == two.get());
-   CPPUNIT_ASSERT_MESSAGE("The second's previous should still be the first", prevProp2->GetValue() == one.get());
-   CPPUNIT_ASSERT_MESSAGE("The first's previous should still be NULL", prevProp1->GetValue() == NULL);
-   
-   CPPUNIT_ASSERT_MESSAGE("The entry control point of the first node should still be set", entryCtrlPntProp1->GetValue() == entryBCP.get());
-   CPPUNIT_ASSERT_MESSAGE("The exit control point of the first node should still be set", exitCtrlPntProp1->GetValue() == exitBCP.get());
-   
-   nextProp1->SetValue(NULL);
-   nextProp1->SetReadOnly(true);
-   nextProp1->SetValue(two.get());
-   
-   CPPUNIT_ASSERT_MESSAGE("The first's next property is read only, the value should still be NULL", nextProp1->GetValue() == NULL);
-   
-   nextProp1->SetReadOnly(false);
-   nextProp1->SetValue(two.get());
-   
-   CPPUNIT_ASSERT_MESSAGE("The first's next property should have been set", nextProp1->GetValue() == two.get());
-   
-   entryCtrlPntProp1->SetValue(NULL);
-   entryCtrlPntProp1->SetReadOnly(true);
-   entryCtrlPntProp1->SetValue(entryBCP.get());
-   
-   CPPUNIT_ASSERT_MESSAGE("The first entry control point is read only, the value should still be NULL", entryCtrlPntProp1->GetValue() == NULL);
-   
-   entryCtrlPntProp1->SetReadOnly(false);
-   entryCtrlPntProp1->SetValue(entryBCP.get());
-   
-   CPPUNIT_ASSERT_MESSAGE("The first entry control point's value should have been set", entryCtrlPntProp1->GetValue() == entryBCP.get());
-   
-   exitCtrlPntProp1->SetValue(NULL);
-   exitCtrlPntProp1->SetReadOnly(true);
-   exitCtrlPntProp1->SetValue(exitBCP.get());
-   
-   CPPUNIT_ASSERT_MESSAGE("The first exit control point is read only, the value should still be NULL", exitCtrlPntProp1->GetValue() == NULL);
-   
-   exitCtrlPntProp1->SetReadOnly(false);
-   exitCtrlPntProp1->SetValue(exitBCP.get());
-   
-   CPPUNIT_ASSERT_MESSAGE("The first exit control point's value should have been set", exitCtrlPntProp1->GetValue() == exitBCP.get());
-   
-   nextProp2->SetValue(NULL);
-   nextProp2->SetReadOnly(true);
-   nextProp2->SetValue(three.get());
-   
-   CPPUNIT_ASSERT_MESSAGE("The seconds's next property is read only, the value should still be NULL", nextProp2->GetValue() == NULL);
-   
-   nextProp2->SetReadOnly(false);
-   nextProp2->SetValue(three.get());
-   
-   CPPUNIT_ASSERT_MESSAGE("The seconds's next property should have been set", nextProp2->GetValue() == three.get());
-   
-   entryCtrlPntProp2->SetValue(NULL);
-   entryCtrlPntProp2->SetReadOnly(true);
-   entryCtrlPntProp2->SetValue(entryBCP.get());
-   
-   CPPUNIT_ASSERT_MESSAGE("The second's entry control point is read only, the value should still be NULL", entryCtrlPntProp2->GetValue() == NULL);
-   
-   entryCtrlPntProp2->SetReadOnly(false);
-   entryCtrlPntProp2->SetValue(entryBCP.get());
-   
-   CPPUNIT_ASSERT_MESSAGE("The second's entry control point's value should have been set", entryCtrlPntProp2->GetValue() == entryBCP.get());
-   
-   exitCtrlPntProp2->SetValue(NULL);
-   exitCtrlPntProp2->SetReadOnly(true);
-   exitCtrlPntProp2->SetValue(exitBCP.get());
-   
-   CPPUNIT_ASSERT_MESSAGE("The second's exit control point is read only, the value should still be NULL", exitCtrlPntProp2->GetValue() == NULL);
-   
-   exitCtrlPntProp2->SetReadOnly(false);
-   exitCtrlPntProp2->SetValue(exitBCP.get());
-   
-   CPPUNIT_ASSERT_MESSAGE("The second's exit control point's value should have been set", exitCtrlPntProp2->GetValue() == exitBCP.get());
-}
-catch (const dtUtil::Exception &e)
-{
-   CPPUNIT_FAIL(e.ToString());
-}
+   {
+      dtDAL::LibraryManager &libMgr = dtDAL::LibraryManager::GetInstance();
+      RefPtr<dtDAL::ActorType>  at    = libMgr.FindActorType("dtcore.Curve", "Bezier Node");
+      CPPUNIT_ASSERT(at != NULL);
+      
+      RefPtr<dtDAL::ActorProxy> one   = libMgr.CreateActorProxy(*at);
+      RefPtr<dtDAL::ActorProxy> two   = libMgr.CreateActorProxy(*at);
+      RefPtr<dtDAL::ActorProxy> three = libMgr.CreateActorProxy(*at);
+      
+      at = libMgr.FindActorType("dtcore.Curve", "Bezier Control Point");
+      CPPUNIT_ASSERT(at != NULL);
+      
+      RefPtr<dtDAL::ActorProxy> entryBCP = libMgr.CreateActorProxy(*at);
+      RefPtr<dtDAL::ActorProxy> exitBCP = libMgr.CreateActorProxy(*at);
+      
+      dtDAL::ActorActorProperty *prevProp1    = static_cast<dtDAL::ActorActorProperty*>(one->GetProperty("Previous Bezier Node"));
+      CPPUNIT_ASSERT_MESSAGE("Actor type should not be NULL", prevProp1 != NULL);
+      dtDAL::ActorActorProperty *nextProp1    = static_cast<dtDAL::ActorActorProperty*>(one->GetProperty("Next Bezier Node"));
+      CPPUNIT_ASSERT_MESSAGE("Actor type should not be NULL", nextProp1 != NULL);
+      dtDAL::ActorActorProperty *entryCtrlPntProp1 = static_cast<dtDAL::ActorActorProperty*>(one->GetProperty("Entry Control Point"));
+      CPPUNIT_ASSERT_MESSAGE("Actor type should not be NULL", entryCtrlPntProp1 != NULL);
+      dtDAL::ActorActorProperty *exitCtrlPntProp1 = static_cast<dtDAL::ActorActorProperty*>(one->GetProperty("Exit Control Point"));
+      CPPUNIT_ASSERT_MESSAGE("Actor type should not be NULL", exitCtrlPntProp1 != NULL);
+      
+      dtDAL::ActorActorProperty *prevProp2    = static_cast<dtDAL::ActorActorProperty*>(two->GetProperty("Previous Bezier Node"));
+      CPPUNIT_ASSERT_MESSAGE("Actor property should not be NULL", prevProp2 != NULL);
+      dtDAL::ActorActorProperty *nextProp2    = static_cast<dtDAL::ActorActorProperty*>(two->GetProperty("Next Bezier Node"));
+      CPPUNIT_ASSERT_MESSAGE("Actor property should not be NULL", nextProp2 != NULL);
+      dtDAL::ActorActorProperty *entryCtrlPntProp2 = static_cast<dtDAL::ActorActorProperty*>(two->GetProperty("Entry Control Point"));
+      CPPUNIT_ASSERT_MESSAGE("Actor property should not be NULL", entryCtrlPntProp2 != NULL);
+      dtDAL::ActorActorProperty *exitCtrlPntProp2 = static_cast<dtDAL::ActorActorProperty*>(two->GetProperty("Exit Control Point"));
+      CPPUNIT_ASSERT_MESSAGE("Actor type should not be NULL", exitCtrlPntProp2 != NULL);
+      
+      dtDAL::ActorActorProperty *prevProp3    = static_cast<dtDAL::ActorActorProperty*>(three->GetProperty("Previous Bezier Node"));
+      CPPUNIT_ASSERT_MESSAGE("Actor property should not be NULL", prevProp3 != NULL);
+      dtDAL::ActorActorProperty *nextProp3    = static_cast<dtDAL::ActorActorProperty*>(three->GetProperty("Next Bezier Node"));
+      CPPUNIT_ASSERT_MESSAGE("Actor property should not be NULL", nextProp3 != NULL);
+      dtDAL::ActorActorProperty *entryCtrlPntProp3 = static_cast<dtDAL::ActorActorProperty*>(three->GetProperty("Entry Control Point"));
+      CPPUNIT_ASSERT_MESSAGE("Actor property should not be NULL", entryCtrlPntProp3 != NULL);
+      dtDAL::ActorActorProperty *exitCtrlPntProp3 = static_cast<dtDAL::ActorActorProperty*>(three->GetProperty("Exit Control Point"));
+      CPPUNIT_ASSERT_MESSAGE("Actor type should not be NULL", exitCtrlPntProp3 != NULL);
+      
+      CPPUNIT_ASSERT_MESSAGE("The first proxy should not have a previous node", prevProp1->GetValue() == NULL);
+      CPPUNIT_ASSERT_MESSAGE("The first proxy should not have a next node", nextProp1->GetValue() == NULL);
+      CPPUNIT_ASSERT_MESSAGE("The first proxy should not have an enrty control point", entryCtrlPntProp1->GetValue() == NULL);
+      CPPUNIT_ASSERT_MESSAGE("The first proxy should not have an exit control point", exitCtrlPntProp1->GetValue() == NULL);
+      
+      CPPUNIT_ASSERT_MESSAGE("The second proxy should not have a previous node", prevProp2->GetValue() == NULL);
+      CPPUNIT_ASSERT_MESSAGE("The second proxy should not have a next node", nextProp2->GetValue() == NULL);
+      CPPUNIT_ASSERT_MESSAGE("The second proxy should not have an enrty control point", entryCtrlPntProp2->GetValue() == NULL);
+      CPPUNIT_ASSERT_MESSAGE("The second proxy should not have an exit control point", exitCtrlPntProp2->GetValue() == NULL);
+      
+      CPPUNIT_ASSERT_MESSAGE("The third proxy should not have a previous node", prevProp3->GetValue() == NULL);
+      CPPUNIT_ASSERT_MESSAGE("The third proxy should not have a next node", nextProp3->GetValue() == NULL);
+      CPPUNIT_ASSERT_MESSAGE("The third proxy should not have an enrty control point", entryCtrlPntProp3->GetValue() == NULL);
+      CPPUNIT_ASSERT_MESSAGE("The third proxy should not have an exit control point", exitCtrlPntProp3->GetValue() == NULL);
+      
+      nextProp1->SetValue(two.get());
+      nextProp2->SetValue(three.get());
+      
+      entryCtrlPntProp1->SetValue(entryBCP.get());
+      exitCtrlPntProp1->SetValue(exitBCP.get());
+      
+      CPPUNIT_ASSERT_MESSAGE("The first node's next should be the second", nextProp1->GetValue() == two.get());
+      CPPUNIT_ASSERT_MESSAGE("The first next property's real actor should be the node", nextProp1->GetRealActor() == nextProp1->GetValue()->GetActor());
+      
+      CPPUNIT_ASSERT_MESSAGE("The second node's next should be the third", nextProp2->GetValue() == three.get());
+      CPPUNIT_ASSERT_MESSAGE("The second next property's real actor should be the node", nextProp2->GetRealActor() == nextProp2->GetValue()->GetActor());
+      
+      CPPUNIT_ASSERT_MESSAGE("The third node's next should be NULL", nextProp3->GetValue() == NULL);
+      
+      CPPUNIT_ASSERT_MESSAGE("The third node's previous should be the second", prevProp3->GetValue() == two.get());
+      CPPUNIT_ASSERT_MESSAGE("The second node's previous should be the first", prevProp2->GetValue() == one.get());
+      CPPUNIT_ASSERT_MESSAGE("The first node's previous should be NULL", prevProp1->GetValue() == NULL);
+      
+      prevProp3->SetValue(two.get());
+      prevProp2->SetValue(one.get());
+      
+      CPPUNIT_ASSERT_MESSAGE("The third node's previous should be the node", prevProp3->GetRealActor() == prevProp3->GetValue()->GetActor());
+      CPPUNIT_ASSERT_MESSAGE("The second node's previous should be the node", prevProp2->GetRealActor() == prevProp2->GetValue()->GetActor());
+      
+      CPPUNIT_ASSERT_MESSAGE("The third's previous should still be the second", prevProp3->GetValue() == two.get());
+      CPPUNIT_ASSERT_MESSAGE("The second's previous should still be the first", prevProp2->GetValue() == one.get());
+      CPPUNIT_ASSERT_MESSAGE("The first's previous should still be NULL", prevProp1->GetValue() == NULL);
+      
+      CPPUNIT_ASSERT_MESSAGE("The entry control point of the first node should still be set", entryCtrlPntProp1->GetValue() == entryBCP.get());
+      CPPUNIT_ASSERT_MESSAGE("The exit control point of the first node should still be set", exitCtrlPntProp1->GetValue() == exitBCP.get());
+      
+      nextProp1->SetValue(NULL);
+      nextProp1->SetReadOnly(true);
+      nextProp1->SetValue(two.get());
+      
+      CPPUNIT_ASSERT_MESSAGE("The first's next property is read only, the value should still be NULL", nextProp1->GetValue() == NULL);
+      
+      nextProp1->SetReadOnly(false);
+      nextProp1->SetValue(two.get());
+      
+      CPPUNIT_ASSERT_MESSAGE("The first's next property should have been set", nextProp1->GetValue() == two.get());
+      
+      entryCtrlPntProp1->SetValue(NULL);
+      entryCtrlPntProp1->SetReadOnly(true);
+      entryCtrlPntProp1->SetValue(entryBCP.get());
+      
+      CPPUNIT_ASSERT_MESSAGE("The first entry control point is read only, the value should still be NULL", entryCtrlPntProp1->GetValue() == NULL);
+      
+      entryCtrlPntProp1->SetReadOnly(false);
+      entryCtrlPntProp1->SetValue(entryBCP.get());
+      
+      CPPUNIT_ASSERT_MESSAGE("The first entry control point's value should have been set", entryCtrlPntProp1->GetValue() == entryBCP.get());
+      
+      exitCtrlPntProp1->SetValue(NULL);
+      exitCtrlPntProp1->SetReadOnly(true);
+      exitCtrlPntProp1->SetValue(exitBCP.get());
+      
+      CPPUNIT_ASSERT_MESSAGE("The first exit control point is read only, the value should still be NULL", exitCtrlPntProp1->GetValue() == NULL);
+      
+      exitCtrlPntProp1->SetReadOnly(false);
+      exitCtrlPntProp1->SetValue(exitBCP.get());
+      
+      CPPUNIT_ASSERT_MESSAGE("The first exit control point's value should have been set", exitCtrlPntProp1->GetValue() == exitBCP.get());
+      
+      nextProp2->SetValue(NULL);
+      nextProp2->SetReadOnly(true);
+      nextProp2->SetValue(three.get());
+      
+      CPPUNIT_ASSERT_MESSAGE("The seconds's next property is read only, the value should still be NULL", nextProp2->GetValue() == NULL);
+      
+      nextProp2->SetReadOnly(false);
+      nextProp2->SetValue(three.get());
+      
+      CPPUNIT_ASSERT_MESSAGE("The seconds's next property should have been set", nextProp2->GetValue() == three.get());
+      
+      entryCtrlPntProp2->SetValue(NULL);
+      entryCtrlPntProp2->SetReadOnly(true);
+      entryCtrlPntProp2->SetValue(entryBCP.get());
+      
+      CPPUNIT_ASSERT_MESSAGE("The second's entry control point is read only, the value should still be NULL", entryCtrlPntProp2->GetValue() == NULL);
+      
+      entryCtrlPntProp2->SetReadOnly(false);
+      entryCtrlPntProp2->SetValue(entryBCP.get());
+      
+      CPPUNIT_ASSERT_MESSAGE("The second's entry control point's value should have been set", entryCtrlPntProp2->GetValue() == entryBCP.get());
+      
+      exitCtrlPntProp2->SetValue(NULL);
+      exitCtrlPntProp2->SetReadOnly(true);
+      exitCtrlPntProp2->SetValue(exitBCP.get());
+      
+      CPPUNIT_ASSERT_MESSAGE("The second's exit control point is read only, the value should still be NULL", exitCtrlPntProp2->GetValue() == NULL);
+      
+      exitCtrlPntProp2->SetReadOnly(false);
+      exitCtrlPntProp2->SetValue(exitBCP.get());
+      
+      CPPUNIT_ASSERT_MESSAGE("The second's exit control point's value should have been set", exitCtrlPntProp2->GetValue() == exitBCP.get());
+   }
+   catch (const dtUtil::Exception &e)
+   {
+      CPPUNIT_FAIL(e.ToString());
+   }
 }

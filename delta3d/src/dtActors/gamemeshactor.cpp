@@ -18,14 +18,13 @@
  *
  * Curtiss Murphy
  */
-#include "dtActors/gamemeshactor.h"
-//#include <dtGame/exceptionenum.h>
+#include <dtActors/gamemeshactor.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/actorupdatemessage.h>
 #include <dtDAL/enginepropertytypes.h>
-//#include "dtDAL/resourcedescriptor.h"
-#include "dtDAL/actorproxyicon.h"
+#include <dtDAL/actorproxyicon.h>
 
+#include <osg/MatrixTransform>
 
 namespace dtActors
 {
@@ -36,7 +35,8 @@ namespace dtActors
    //////////////////////////////////////////////////////////////////////////////
    GameMeshActor::GameMeshActor(dtGame::GameActorProxy &proxy) : 
       dtGame::GameActor(proxy), 
-      mAlreadyInWorld(false)
+      mAlreadyInScene(false),
+      mUseCache(true)
    {
    }
 
@@ -48,31 +48,58 @@ namespace dtActors
    ///////////////////////////////////////////////////////////////////////////////
    void GameMeshActor::SetMesh(const std::string &meshFile)
    {
-      GameMeshActor::GameMeshLoader loader; 
-      osg::Node *model = loader.LoadFile(meshFile,false);
- 
+      // Make sure the mesh changed. 
+      if (mLoader.GetFilename() != meshFile)
+      {
+         mLoader.SetMeshFilename(meshFile);
+
+         // For the initial setting, load the mesh when we first enter the world so we can use the cache variable
+         if (mAlreadyInScene)
+         {
+            LoadMesh();
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+   void GameMeshActor::LoadMesh()
+   {
+      osg::Node *model = mLoader.LoadFile(mLoader.GetFilename(), mUseCache);
+
       if (model != NULL)
       {
-         if (GetMatrixNode()->getNumChildren() != 0)
-            GetMatrixNode()->removeChild(0,GetMatrixNode()->getNumChildren());
+         if (mMeshNode.valid())
+         {
+            GetMatrixNode()->removeChild(mMeshNode.get());
+         }
+         
          GetMatrixNode()->addChild(model);
- 
+         mMeshNode = model;
+
          GetGameActorProxy().SetCollisionType( GetGameActorProxy().GetCollisionType() );
       }
       else
       {
-         LOG_ERROR("Unable to load model file: " + meshFile);
+         LOG_ERROR("Unable to load model file: " + mLoader.GetFilename());
       }
- 
+
       // send out an ActorUpdateMessage
-      if (mAlreadyInWorld)
-         GetGameActorProxy().NotifyFullActorUpdate();
+      // GameMeshActor no longer does this by default. It is possible that the property was 
+      // set using a message, and it is almost certain that the user does not want to do a full
+      // actor update.
+      // if (mAlreadyInWorld)
+      //    GetGameActorProxy().NotifyFullActorUpdate();
+
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void GameMeshActor::OnEnteredWorld()
+   void GameMeshActor::AddedToScene(dtCore::Scene* scene)
    {
-      mAlreadyInWorld = true;
+      dtGame::GameActor::AddedToScene(scene);
+      
+      mAlreadyInScene = true;
+      if (!mLoader.GetFilename().empty())
+         LoadMesh();
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -107,6 +134,11 @@ namespace dtActors
       AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::STATIC_MESH,
          "static mesh", "Static Mesh", dtDAL::MakeFunctor(myActor, &GameMeshActor::SetMesh),
          "The static mesh resource that defines the geometry", GROUPNAME));
+
+      AddProperty(new dtDAL::BooleanActorProperty("use cache object", "Use Model Cache", 
+         dtDAL::MakeFunctor(myActor, &GameMeshActor::SetUseCache),
+         dtDAL::MakeFunctorRet(myActor, &GameMeshActor::GetUseCache),
+         "Indicates whether we will try to use the cache when we load our model.", GROUPNAME));
    }
 
    //////////////////////////////////////////////////////////////////////////////

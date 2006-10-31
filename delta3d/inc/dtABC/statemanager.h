@@ -14,10 +14,10 @@
 #include <dtUtil/objectfactory.h>
 #include <dtCore/refptr.h>
 #include <dtCore/system.h>
+#include <dtCore/globals.h>
 #include <dtUtil/xercesparser.h>
 #include <dtUtil/xercesutils.h>
 
-#include <osgDB/FileUtils>
 #include <xercesc/sax2/ContentHandler.hpp>  // for a base class
 #include <xercesc/util/XMLString.hpp>
 
@@ -321,7 +321,7 @@ namespace dtABC
    template< typename EventT, typename StateT >
    bool StateManager::Load(const std::string& filename )
    {
-      std::string fullFileName = osgDB::findDataFile(filename);
+      std::string fullFileName = dtCore::FindFileInPathList(filename);
       if (fullFileName.empty())
       {
          LOG_WARNING("StateManager - Can't find file " + filename)

@@ -12,6 +12,7 @@
 #include "package_utils.h"
 // delta3d
 #include <dtUtil/fileutils.h>
+#include <dtUtil/exception.h>
 // ansi
 #include <iostream>
 
@@ -77,7 +78,7 @@ void JobJARLibrary::Execute( PackageProfile *profile )
       std::string platform = profile->GetJarFilePlatform( PackageProfile::JAR_LIBRARY, jarFiles[i]);
       if ( ToUpperCase(platform).compare( "WINDOWS" ) == 0 )
       {
-         if ( profile->IncludePlatform(PackageProfile::TargetPlatform::WINDOWS) != true )
+         if ( profile->IncludePlatform(PackageProfile::TP_WINDOWS) != true )
          {
             //not including windows support; skip this jar file
             continue;
@@ -85,11 +86,12 @@ void JobJARLibrary::Execute( PackageProfile *profile )
       }
       else if ( ToUpperCase(platform).compare( "LINUX" ) == 0 )
       {
-         if ( profile->IncludePlatform(PackageProfile::TargetPlatform::LINUX) != true )
-         {
-            //not including windows support; skip this jar file
-            continue;
-         }
+ 	if ( profile->IncludePlatform( PackageProfile::TP_LINUX ) 
+	     != true )
+          {
+             //not including windows support; skip this jar file
+             continue;
+          }
       }
 
       // change to input directory for this jar file

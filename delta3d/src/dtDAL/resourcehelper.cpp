@@ -21,18 +21,18 @@
 #include <prefix/dtdalprefix-src.h>
 #include <string>
 #include <sstream>
-#include <iostream>
+#include <set>
 
 #include <osgDB/FileNameUtils>
 #include <dtUtil/fileutils.h>
+#include <dtUtil/stringutils.h>
 
-#include "dtDAL/resourcedescriptor.h"
-#include "dtDAL/datatype.h"
-#include "dtDAL/resourcetreenode.h"
-#include "dtUtil/stringutils.h"
-#include "dtDAL/rbodyresourcetypehandler.h"
-#include "dtDAL/directoryresourcetypehandler.h"
-#include "dtDAL/resourcehelper.h"
+#include <dtDAL/resourcedescriptor.h>
+#include <dtDAL/datatype.h>
+#include <dtDAL/resourcetreenode.h>
+#include <dtDAL/rbodyresourcetypehandler.h>
+#include <dtDAL/directoryresourcetypehandler.h>
+#include <dtDAL/resourcehelper.h>
 
 namespace dtDAL
 {

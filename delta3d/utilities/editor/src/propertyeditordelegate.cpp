@@ -20,9 +20,9 @@
 * Curtiss Murphy
 */
 #include <prefix/dtstageprefix-src.h>
-#include "dtEditQt/propertyeditormodel.h"
-#include "dtEditQt/propertyeditordelegate.h"
-#include "dtEditQt/dynamicabstractcontrol.h"
+#include <dtEditQt/propertyeditormodel.h>
+#include <dtEditQt/propertyeditordelegate.h>
+#include <dtEditQt/dynamicabstractcontrol.h>
 
 #include <QtGui/QPainter>
 #include <QtGui/QFrame>
@@ -110,7 +110,6 @@ namespace dtEditQt
                     return true;
                 }
             } break;
-            
             default:
                 break;
         }
@@ -167,14 +166,18 @@ namespace dtEditQt
             DynamicAbstractControl *control = model->privateData(index);
             if (control != NULL) {
                 editor = control->createEditor(parent, option, index);//, SLOT(sync()));
+                
+                connect(this, SIGNAL(closeEditor(QWidget *, QAbstractItemDelegate::EndEditHint)),
+                     control, SLOT(handleSubEditDestroy(QWidget *, QAbstractItemDelegate::EndEditHint)));
+                
                 // we want the delegate to control events
                 if (editor != NULL)  {
                     control->installEventFilterOnControl(const_cast<PropertyEditorDelegate *>(this));
+                    
                     editor->installEventFilter(const_cast<PropertyEditorDelegate *>(this));
                 }
             }
         }
-
 
         return editor;
     }

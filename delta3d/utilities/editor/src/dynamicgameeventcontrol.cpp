@@ -127,20 +127,12 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    QWidget* DynamicGameEventControl::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index)
    {
-      // create and init the combo box
-      QWidget *wrapper = new QWidget(parent);
-
+      temporaryEditControl = new SubQComboBox(parent, this);
       if (!initialized)
       {
          LOG_ERROR("Tried to add itself to the parent widget before being initialized");
-         return wrapper;
+         return temporaryEditControl;
       }
-
-      QHBoxLayout *hLayout = new QHBoxLayout(wrapper);
-      hLayout->setMargin(0);
-      hLayout->setSpacing(0);
-
-      temporaryEditControl = new SubQComboBox(wrapper, this);
 
       std::vector<dtDAL::GameEvent*> events;
       dtDAL::Map &map = *EditorData::getInstance().getCurrentMap();
@@ -158,10 +150,7 @@ namespace dtEditQt
 
       // set the tooltip
       temporaryEditControl->setToolTip(getDescription());
-
-      hLayout->addWidget(temporaryEditControl);
-      //hLayout->setSpacing(1);
-      return wrapper;
+      return temporaryEditControl;
    }
 
    /////////////////////////////////////////////////////////////////////////////////

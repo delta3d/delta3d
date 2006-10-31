@@ -6,46 +6,44 @@
 #include <dtUtil/matrixutil.h>
 #include <dtUtil/fileutils.h>
 
-#include "osg/BlendFunc"
-#include "osg/Geode"
-#include "osg/Geometry"
-#include "osg/PrimitiveSet"
-#include "osg/StateAttribute"
-#include "osg/Image"
-#include "osg/Material"
-#include "osg/MatrixTransform"
-#include "osg/Texture2D"
+#include <osg/BlendFunc>
+#include <osg/Geode>
+#include <osg/Geometry>
+#include <osg/PrimitiveSet>
+#include <osg/StateAttribute>
+#include <osg/Image>
+#include <osg/Material>
+#include <osg/MatrixTransform>
+#include <osg/Texture2D>
 
-#include "osgDB/ReadFile"
-#include "osgDB/WriteFile"
-#include <osgDB/FileUtils>
-#include <osgDB/FileNameUtils>
+#include <osgDB/ReadFile>
+#include <osgDB/WriteFile>
 
-#include "osgParticle/AccelOperator"
-#include "osgParticle/FluidFrictionOperator"
-#include "osgParticle/ForceOperator"
-#include "osgParticle/ModularEmitter"
-#include "osgParticle/ModularProgram"
-#include "osgParticle/MultiSegmentPlacer"
-#include "osgParticle/Particle"
-#include "osgParticle/ParticleSystem"
-#include "osgParticle/ParticleSystemUpdater"
-#include "osgParticle/PointPlacer"
-#include "osgParticle/RadialShooter"
-#include "osgParticle/RandomRateCounter"
-#include "osgParticle/SectorPlacer"
-#include "osgParticle/SegmentPlacer"
+#include <osgParticle/AccelOperator>
+#include <osgParticle/FluidFrictionOperator>
+#include <osgParticle/ForceOperator>
+#include <osgParticle/ModularEmitter>
+#include <osgParticle/ModularProgram>
+#include <osgParticle/MultiSegmentPlacer>
+#include <osgParticle/Particle>
+#include <osgParticle/ParticleSystem>
+#include <osgParticle/ParticleSystemUpdater>
+#include <osgParticle/PointPlacer>
+#include <osgParticle/RadialShooter>
+#include <osgParticle/RandomRateCounter>
+#include <osgParticle/SectorPlacer>
+#include <osgParticle/SegmentPlacer>
 
-#include "osgText/Text"
+#include <osgText/Text>
 
 #ifdef _MSC_VER
 #	pragma warning(push)
 #	pragma warning(disable : 4244) // for warning C4244: '=' : conversion from 'short' to 'uchar', possible loss of data
 #endif
 
-#include "FL/Fl_Color_Chooser.H"
-#include "FL/Fl_File_Chooser.H"
-#include "FL/fl_ask.H"
+#include <FL/Fl_Color_Chooser.H>
+#include <FL/Fl_File_Chooser.H>
+#include <FL/fl_ask.H>
 #include "psEditorGUI.h"
 
 #ifdef _MSC_VER
@@ -841,7 +839,7 @@ void LoadFile( std::string filename, bool import = false )
 
       unsigned int i;
       
-      int OldWay = 0;
+      unsigned int OldWay = 0;
 
       for(i=0;i<newParticleSystemGroup->getNumChildren();i++)
       {

@@ -21,7 +21,7 @@
 #ifndef DELTA_BINARYLOGSTREAM
 #define DELTA_BINARYLOGSTREAM
 
-#include <stdio.h>
+#include <cstdio>
 #include <dtGame/logstream.h>
 #include <dtGame/export.h>
 

@@ -101,21 +101,24 @@ namespace  dtDAL
 {
 
    /////////////////////////////////////////////////////////////////
-
    Map* MapContentHandler::GetMap() 
    { 
       return mMap.get(); 
    }
 
    /////////////////////////////////////////////////////////////////
+   const Map* MapContentHandler::GetMap() const 
+   { 
+      return mMap.get(); 
+   }
 
+   /////////////////////////////////////////////////////////////////
    void MapContentHandler::ClearMap() 
    { 
       mMap = NULL; 
    }
 
    /////////////////////////////////////////////////////////////////
-
    bool MapContentHandler::IsPropertyCorrectType()
    {
       if (mActorProperty == NULL || mActorPropertyType == NULL || mActorProxy == NULL)
@@ -145,7 +148,6 @@ namespace  dtDAL
    }
 
    /////////////////////////////////////////////////////////////////
-
    void MapContentHandler::characters(const XMLCh* const chars, const unsigned int length)
    {
       xmlCharString& topEl = mElements.top();
@@ -254,7 +256,6 @@ namespace  dtDAL
    }
 
    /////////////////////////////////////////////////////////////////
-
    void MapContentHandler::ActorCharacters(const XMLCh* const chars)
    {
       xmlCharString& topEl = mElements.top();
@@ -389,7 +390,6 @@ namespace  dtDAL
    }
 
    /////////////////////////////////////////////////////////////////
-
    void MapContentHandler::CreateAndPushParameter()
    {
       try 
@@ -408,7 +408,6 @@ namespace  dtDAL
    }
 
    /////////////////////////////////////////////////////////////////
-
    void MapContentHandler::ParameterCharacters(const XMLCh* const chars)
    {
       xmlCharString& topEl = mElements.top();
@@ -458,7 +457,6 @@ namespace  dtDAL
    }
 
    /////////////////////////////////////////////////////////////////
-
    template <typename VecType>
    void MapContentHandler::ParseVec(const std::string& dataValue, VecType& vec, size_t vecSize, bool& complete)
    {
@@ -510,7 +508,6 @@ namespace  dtDAL
    }
 
    /////////////////////////////////////////////////////////////////
-
    void MapContentHandler::ParsePropertyData(std::string& dataValue)
    {
       if (!IsPropertyCorrectType())
@@ -718,7 +715,6 @@ namespace  dtDAL
    }
 
    /////////////////////////////////////////////////////////////////
-
    void MapContentHandler::ParseParameterData(std::string& dataValue)
    {
       if (mParameterStack.empty())
@@ -922,7 +918,6 @@ namespace  dtDAL
    }
 
    /////////////////////////////////////////////////////////////////
-
    void MapContentHandler::startDocument()
    {
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
@@ -934,7 +929,6 @@ namespace  dtDAL
    }
 
    /////////////////////////////////////////////////////////////////
-
    const DataType* MapContentHandler::ParsePropertyType(const XMLCh* const localname)
    {
       if (XMLString::compareString(localname,
@@ -1028,7 +1022,6 @@ namespace  dtDAL
    }
 
    /////////////////////////////////////////////////////////////////
-
    void MapContentHandler::startElement (
       const XMLCh* const uri,
       const XMLCh* const localname,
@@ -1139,7 +1132,6 @@ namespace  dtDAL
    }
 
    /////////////////////////////////////////////////////////////////
-
    void MapContentHandler::endElement(
       const XMLCh* const uri,
       const XMLCh* const localname,
@@ -1280,7 +1272,8 @@ namespace  dtDAL
                   if (mParameterStack.empty())
                   {
                      mInGroupProperty = false;
-                     static_cast<GroupActorProperty&>(*mActorProperty).SetValue(*topParam);
+                     mGroupParameters.insert(std::make_pair(mActorProxy->GetId(), 
+                        std::make_pair(mActorProperty->GetName(), topParam)));
                   }
                }
             }
@@ -1290,11 +1283,11 @@ namespace  dtDAL
    }
 
    /////////////////////////////////////////////////////////////////
-
    void MapContentHandler::endDocument()
    {
       LinkActors();
-
+      AssignGroupProperties();
+      
       if(!mEnvActorId.ToString().empty())
       {
          try
@@ -1334,7 +1327,6 @@ namespace  dtDAL
    }
 
    /////////////////////////////////////////////////////////////////
-
    void MapContentHandler::error(const xercesc::SAXParseException& exc)
    {
       mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
@@ -1346,7 +1338,6 @@ namespace  dtDAL
    }
 
    /////////////////////////////////////////////////////////////////
-
    void MapContentHandler::fatalError(const xercesc::SAXParseException& exc)
    {
       mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
@@ -1358,7 +1349,6 @@ namespace  dtDAL
    }
 
    /////////////////////////////////////////////////////////////////
-
    void MapContentHandler::warning(const xercesc::SAXParseException& exc)
    {
       mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__,  __LINE__,
@@ -1369,14 +1359,12 @@ namespace  dtDAL
    }
 
    /////////////////////////////////////////////////////////////////
-
    void MapContentHandler::resetDocument()
    {
       Reset();
    }
 
    /////////////////////////////////////////////////////////////////
-
    void MapContentHandler::resetErrors()
    {
       mErrorCount = 0;
@@ -1385,9 +1373,8 @@ namespace  dtDAL
       mMissingLibraries.clear();
       mMissingActorTypes.clear();
    }
-
+   
    /////////////////////////////////////////////////////////////////
-
    void MapContentHandler::Reset()
    {
       mMap = NULL;
@@ -1409,6 +1396,8 @@ namespace  dtDAL
       //This should NOT be done in the Actor Value because this should
       //be cleared at the start and finish of a document, not between each actor.
       mActorLinking.clear();
+      
+      mGroupParameters.clear();
 
       resetErrors();
 
@@ -1417,7 +1406,6 @@ namespace  dtDAL
    }
 
    /////////////////////////////////////////////////////////////////
-
    void MapContentHandler::ClearLibraryValues()
    {
       mLibName.clear();
@@ -1425,7 +1413,6 @@ namespace  dtDAL
    }
 
    /////////////////////////////////////////////////////////////////
-
    void MapContentHandler::ClearActorValues()
    {
       mCurrentPropName.clear();
@@ -1445,7 +1432,6 @@ namespace  dtDAL
    }
 
    /////////////////////////////////////////////////////////////////
-
    void MapContentHandler::ClearParameterValues()
    {
       mParameterNameToCreate.clear();
@@ -1453,7 +1439,47 @@ namespace  dtDAL
    }
 
    /////////////////////////////////////////////////////////////////
+   void MapContentHandler::AssignGroupProperties()
+   {
+      for (std::multimap<dtCore::UniqueId, std::pair<std::string, dtCore::RefPtr<dtDAL::NamedGroupParameter> > >::iterator i 
+           = mGroupParameters.begin();
+           i != mGroupParameters.end(); ++i)
+      {
+         dtCore::UniqueId id = i->first;
+         ActorProxy* proxyToModify = mMap->GetProxyById(id);
+         if (proxyToModify == NULL)
+         {
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
+                                "Proxy with ID %s was defined to have a group property set, but the proxy does not exist in the new map.",
+                                id.ToString().c_str());
+            continue;
+         }
+         std::pair<std::string, dtCore::RefPtr<dtDAL::NamedGroupParameter> >& data = i->second;
+         std::string& propertyName = data.first;
+         dtCore::RefPtr<dtDAL::NamedGroupParameter>& propValue = data.second;
+         
+         ActorProperty* property = proxyToModify->GetProperty(propertyName);
+         if (property == NULL)
+         {
+            mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__,  __LINE__,
+                                "Proxy with ID %s was defined to have group property %s set with actor %s, but the property does not exist on the proxy.",
+                                id.ToString().c_str(), propertyName.c_str(), propValue->ToString().c_str());
+            continue;
+         }
 
+         GroupActorProperty* gap = dynamic_cast<GroupActorProperty*>(property);
+         if (gap == NULL)
+         {
+            mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__,  __LINE__,
+                                "Proxy with ID %s was defined to have actor property %s set with actor %s, but the property is not a GroupActorProperty.",
+                                id.ToString().c_str(), propertyName.c_str(), propValue->ToString().c_str());
+            continue;
+         }
+         gap->SetValue(*propValue);
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////
    void MapContentHandler::LinkActors()
    {
       for (std::multimap<dtCore::UniqueId, std::pair<std::string, dtCore::UniqueId> >::iterator i = mActorLinking.begin();
@@ -1468,7 +1494,7 @@ namespace  dtDAL
                                 id.ToString().c_str());
             continue;
          }
-         std::pair<std::string, dtCore::UniqueId> data = i->second;
+         std::pair<std::string, dtCore::UniqueId>& data = i->second;
          std::string& propertyName = data.first;
          dtCore::UniqueId& propValueId = data.second;
          if (propValueId.ToString().empty())
@@ -1509,7 +1535,6 @@ namespace  dtDAL
 
 
    /////////////////////////////////////////////////////////////////
-
    MapContentHandler::MapContentHandler() : mActorProxy(NULL), mActorPropertyType(NULL), mActorProperty(NULL)
    {
       mLogger = &dtUtil::Log::GetInstance();
@@ -1520,7 +1545,6 @@ namespace  dtDAL
    }
 
    /////////////////////////////////////////////////////////////////
-
    MapContentHandler::~MapContentHandler() {}
 
    MapContentHandler::MapContentHandler(const MapContentHandler&) {}

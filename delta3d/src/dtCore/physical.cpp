@@ -3,9 +3,11 @@
 //////////////////////////////////////////////////////////////////////
 #include <prefix/dtcoreprefix-src.h>
 #include <dtCore/scene.h>
-#include <dtCore/object.h>
+#include <dtCore/physical.h>
 #include <dtUtil/log.h>
 #include <dtUtil/polardecomp.h>
+
+#include <ode/ode.h>
 
 using namespace dtCore;
 using namespace dtUtil;

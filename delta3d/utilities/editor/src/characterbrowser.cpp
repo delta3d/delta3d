@@ -37,11 +37,11 @@
 #include <QtGui/QAction>
 #include <QtGui/QContextMenuEvent>
 
-#include "dtEditQt/resourcetreewidget.h"
-#include "dtDAL/project.h"
-#include "dtEditQt/editordata.h"
-#include "dtEditQt/editorevents.h"
-#include "dtEditQt/mainwindow.h"
+#include <dtEditQt/resourcetreewidget.h>
+#include <dtDAL/project.h>
+#include <dtEditQt/editordata.h>
+#include <dtEditQt/editorevents.h>
+#include <dtEditQt/mainwindow.h>
 
 #include <dtCore/scene.h>
 #include <dtChar/character.h>
@@ -50,13 +50,13 @@
 
 #include <osg/BoundingSphere>
 
-#include "dtEditQt/perspectiveviewport.h"
-#include "dtEditQt/viewportcontainer.h"
-#include "dtEditQt/viewportmanager.h"
-#include "dtEditQt/camera.h"
-#include "dtEditQt/uiresources.h"
+#include <dtEditQt/perspectiveviewport.h>
+#include <dtEditQt/viewportcontainer.h>
+#include <dtEditQt/viewportmanager.h>
+#include <dtEditQt/camera.h>
+#include <dtEditQt/uiresources.h>
 
-#include "dtEditQt/characterbrowser.h"
+#include <dtEditQt/characterbrowser.h>
 
 namespace dtEditQt
 {
@@ -94,7 +94,7 @@ namespace dtEditQt
         grid->setRowStretch(1,0);
     }
     ///////////////////////////////////////////////////////////////////////////////
-    CharacterBrowser::~CharacterBrowser(){}
+    CharacterBrowser::~CharacterBrowser() {}
     ///////////////////////////////////////////////////////////////////////////////
     QGroupBox *CharacterBrowser::previewGroup()
     {

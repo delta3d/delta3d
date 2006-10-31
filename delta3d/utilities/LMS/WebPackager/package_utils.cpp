@@ -13,7 +13,7 @@
 // delta3d
 #include <dtUtil/fileutils.h>
 #include <osgDB/FileNameUtils>
-
+#include <iostream>
 
 //======================================
 // OPTIONS CLASS FUNCTIONS
@@ -281,6 +281,9 @@ void SetFileExtension( std::string &strFile, const std::string &extension )
 
 void CleanupFileString( std::string &strFileOrDir )
 {
+   if(strFileOrDir.empty())
+      return;
+
    // convert all separators to unix-style for conformity
    for ( unsigned int i=0; i<strFileOrDir.length(); i++ )
    {
@@ -421,7 +424,7 @@ std::string ResolveEnvironmentVariables( std::string path )
    std::string endToken = ")";
 
    //find first opening environment variable token
-   size_t startPos = path.find(startToken, 0);
+   unsigned startPos = path.find(startToken, 0);
    if (startPos == std::string::npos)
    {
       //no environment variable starting with "$(" found; return inputString unchanged
@@ -429,7 +432,7 @@ std::string ResolveEnvironmentVariables( std::string path )
    }
 
    //find first closing environment variable token
-   size_t endPos = path.find(endToken, startPos);
+   unsigned endPos = path.find(endToken, startPos);
    if (endPos == std::string::npos)
    {
       //no ending parenthesis ")" found; return inputString unchanged
@@ -447,7 +450,7 @@ std::string ResolveEnvironmentVariables( std::string path )
    //should throw an error because there is no closing parenthesis after $(DELTA_ROOT
 
    //check that closing parenthesis is found before next directory forward slash (linux-style)
-   size_t nextSlash = path.find("/", startPos);
+   unsigned nextSlash = path.find("/", startPos);
    if (nextSlash != std::string::npos && nextSlash < endPos)
    {
       std::cout << "Invalid environment variable: no closing parenthesis before forward slash" << std::endl;
@@ -455,7 +458,7 @@ std::string ResolveEnvironmentVariables( std::string path )
    }
 
    //check that closing parenthesis is found before next directory back slash (windows-style)
-   size_t nextBackslash = path.find("\\", startPos);
+   unsigned nextBackslash = path.find("\\", startPos);
    if (nextBackslash != std::string::npos && nextBackslash < endPos)
    {
       std::cout << "Invalid environment variable: no closing parenthesis before back slash" << std::endl;
@@ -463,7 +466,7 @@ std::string ResolveEnvironmentVariables( std::string path )
    }
 
    //check that closing parenthesis is found before next environment variable opening token
-   size_t nextEnvVarToken = path.find(startToken, startPos + startToken.length());
+   unsigned nextEnvVarToken = path.find(startToken, startPos + startToken.length());
    if (nextEnvVarToken != std::string::npos && nextEnvVarToken <= endPos)
    {
       std::cout << "Invalid environment variable: no closing parenthesis before start of next environment variable" << std::endl;
@@ -493,7 +496,7 @@ std::string ResolveEnvironmentVariables( std::string path )
    return path;
 }
 
-std::string ToUpperCase(std::string &str)
+std::string ToUpperCase(const std::string &str)
 {
    std::string returnString = str;
 

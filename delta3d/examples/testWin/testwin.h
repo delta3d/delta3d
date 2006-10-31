@@ -1,6 +1,9 @@
 #ifndef DELTA_TESTWINAPP
 #define DELTA_TESTWINAPP
 
+#ifdef None
+#undef None
+#endif
 #include <CEGUI/CEGUI.h>
 
 #include <dtABC/application.h>

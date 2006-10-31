@@ -18,11 +18,19 @@
  *
  * Matthew W. Campbell
  */
-#include "dtActors/taskactor.h"
+#include <dtActors/taskactor.h>
+
 #include <dtGame/exceptionenum.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/actorupdatemessage.h>
+
 #include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/groupactorproperty.h>
+#include <dtDAL/namedparameter.h>
+#include <dtDAL/project.h>
+#include <dtDAL/map.h>
+
+#include <sstream>
 
 namespace dtActors
 {
@@ -141,10 +149,16 @@ namespace dtActors
 
       //IsTopLevel...
       AddProperty(new dtDAL::BooleanActorProperty("IsTopLevel","Top Level Task",
-         dtDAL::MakeFunctor(*this,&TaskActorProxy::SetTopLevelTask),
-         dtDAL::MakeFunctorRet(*this,&TaskActorProxy::IsTopLevelTask),
+         dtDAL::MakeFunctor(*this, &TaskActorProxy::SetTopLevelTask),
+         dtDAL::MakeFunctorRet(*this, &TaskActorProxy::IsTopLevelTask),
          "Sets/gets whether or not this task contains a parent task.",GROUPNAME));
       GetProperty("IsTopLevel")->SetReadOnly(true);
+
+      //SubTasks property.
+      AddProperty(new dtDAL::GroupActorProperty("SubTasks", "Sub Task Actor List", 
+         dtDAL::MakeFunctor(*this, &TaskActorProxy::SetSubTaskGroup),
+         dtDAL::MakeFunctorRet(*this, &TaskActorProxy::GetSubTaskGroup),
+         "The list of subtasks.", GROUPNAME, "TaskChildren"));
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -170,8 +184,8 @@ namespace dtActors
       //Default implementation just returns true by default if this task is
       //a top level task, else just passes the request up the chain.  Note, the original
       //task is the task that this method was first called on.
-      if (GetParentTaskProxy() != NULL)
-         return true && GetParentTaskProxy()->RequestScoreChange(*this,origTask);
+      if (GetParentTask() != NULL)
+         return true && GetParentTask()->RequestScoreChange(*this,origTask);
       else
          return true;
    }
@@ -180,26 +194,26 @@ namespace dtActors
    void TaskActorProxy::NotifyScoreChanged(const TaskActorProxy &childTask)
    {
       //Default implementation just needs to pass the notification up the chain.
-      if (GetParentTaskProxy() != NULL)
-         return GetParentTaskProxy()->NotifyScoreChanged(*this);
+      if (GetParentTask() != NULL)
+         GetParentTask()->NotifyScoreChanged(*this);
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void TaskActorProxy::AddSubTaskProxy(TaskActorProxy &subTask)
+   void TaskActorProxy::AddSubTask(TaskActorProxy &subTask)
    {
-      if (FindSubTaskProxy(subTask.GetGameActor().GetUniqueId()) != NULL)
+      if (FindSubTask(subTask.GetGameActor().GetUniqueId()) != NULL)
          EXCEPT(dtGame::ExceptionEnum::INVALID_PARAMETER,"Cannot add a duplicate "
             "sub task.");
 
-      if (subTask.GetParentTaskProxy() != NULL)
-         subTask.GetParentTaskProxy()->RemoveSubTaskProxy(subTask);
+      if (subTask.GetParentTask() != NULL)
+         subTask.GetParentTask()->RemoveSubTask(subTask);
 
       subTask.SetParentTaskProxy(this);
       mSubTaskProxies.push_back(&subTask);
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void TaskActorProxy::RemoveSubTaskProxy(const TaskActorProxy &subTask)
+   void TaskActorProxy::RemoveSubTask(const TaskActorProxy &subTask)
    {
       std::vector<dtCore::RefPtr<TaskActorProxy> >::iterator itor;
 
@@ -222,7 +236,7 @@ namespace dtActors
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void TaskActorProxy::RemoveSubTaskProxy(const std::string &name)
+   void TaskActorProxy::RemoveSubTask(const std::string &name)
    {
       std::vector<dtCore::RefPtr<TaskActorProxy> >::iterator itor;
       for (itor=mSubTaskProxies.begin(); itor!=mSubTaskProxies.end(); ++itor)
@@ -244,37 +258,106 @@ namespace dtActors
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   TaskActorProxy *TaskActorProxy::FindSubTaskProxy(const std::string &name)
+   TaskActorProxy *TaskActorProxy::FindSubTask(const std::string &name)
    {
       std::vector<dtCore::RefPtr<TaskActorProxy> >::iterator itor;
 
       for (itor=mSubTaskProxies.begin(); itor!=mSubTaskProxies.end(); ++itor)
       {
-         if ((*itor)->GetName() == name)
-            break;
+         if((*itor)->GetName() == name)
+            return (*itor).get();
       }
-
-      if (itor != mSubTaskProxies.end())
-         return itor->get();
-      else
-         return NULL;
+      return NULL;
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   TaskActorProxy *TaskActorProxy::FindSubTaskProxy(const dtCore::UniqueId &id)
+   TaskActorProxy *TaskActorProxy::FindSubTask(const dtCore::UniqueId &id)
    {
       std::vector<dtCore::RefPtr<TaskActorProxy> >::iterator itor;
       for (itor=mSubTaskProxies.begin(); itor!=mSubTaskProxies.end(); ++itor)
       {
-         if ((*itor)->GetId() == id)
-            break;
-
+         if((*itor)->GetId() == id)
+            return (*itor).get();
       }
+      return NULL;
+   }
 
-      if (itor != mSubTaskProxies.end())
-         return itor->get();
-      else
-         return NULL;
+   //////////////////////////////////////////////////////////////////////////////
+   void TaskActorProxy::GetAllSubTasks(std::vector<TaskActorProxy*>& toFill)
+   {
+      toFill.reserve(mSubTaskProxies.size());
+      toFill.clear();
+      for (unsigned i = 0; i < mSubTaskProxies.size(); ++i)
+      {
+         toFill.push_back(mSubTaskProxies[i].get());
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+   void TaskActorProxy::GetAllSubTasks(std::vector<const TaskActorProxy*>& toFill) const
+   {
+      toFill.reserve(mSubTaskProxies.size());
+      toFill.clear();
+      for (unsigned i = 0; i < mSubTaskProxies.size(); ++i)
+      {
+         toFill.push_back(mSubTaskProxies[i].get());
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+   void TaskActorProxy::SetSubTaskGroup(const dtDAL::NamedGroupParameter& subTasks)
+   {
+      mSubTaskProxies.clear();
+      std::vector<const dtDAL::NamedParameter*> toFill;
+      subTasks.GetParameters(toFill);
+
+      for (unsigned i = 0; i < toFill.size(); ++i)
+      {
+         if (toFill[i]->GetDataType() == dtDAL::DataType::ACTOR)
+         {
+            const dtCore::UniqueId& id = static_cast<const dtDAL::NamedActorParameter*>(toFill[i])->GetValue();
+            if (GetGameManager() != NULL)
+            {
+               TaskActorProxy* taskActor = NULL;
+               GetGameManager()->FindGameActorById(id, taskActor);
+               
+               if (taskActor != NULL)
+                  AddSubTask(*taskActor);
+            }
+            else 
+            {
+               TaskActorProxy* taskActor = NULL;
+               dtDAL::Map* m = dtDAL::Project::GetInstance().GetMapForActorProxy(*this);
+               if (m != NULL)
+               {
+                   m->GetProxyById(id, taskActor);
+               
+                  if (taskActor != NULL)
+                     AddSubTask(*taskActor);
+               }
+            }
+         }
+      }      
+   }
+   
+   //////////////////////////////////////////////////////////////////////////////
+   dtCore::RefPtr<dtDAL::NamedGroupParameter> TaskActorProxy::GetSubTaskGroup() const
+   {
+      dtCore::RefPtr<dtDAL::NamedGroupParameter> result = new dtDAL::NamedGroupParameter("SubTasks");
+      std::ostringstream ss;
+      
+      ss << mSubTaskProxies.size();
+      unsigned stringLength = ss.str().size();
+      
+      for (unsigned i = 0; i < mSubTaskProxies.size(); ++i)
+      {
+         ss.str("");
+         ss << i;
+         std::string s = ss.str();
+         s.insert(s.begin(), stringLength - s.size(), '0');
+         result->AddParameter(*new dtDAL::NamedActorParameter(s, mSubTaskProxies[i]->GetId()));
+      }
+      return result;
    }
 
    //////////////////////////////////////////////////////////////////////////////

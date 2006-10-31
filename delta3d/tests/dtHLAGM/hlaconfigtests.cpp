@@ -19,7 +19,7 @@
  * @author Olen A. Bruce
  * @author David Guthrie
  */
-
+#include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <iostream>
 #include <vector>

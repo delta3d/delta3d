@@ -1,3 +1,4 @@
+#include <prefix/dtgameprefix-src.h>
 #include "guiapp.h"
 #include "guimanager.h"
 #include <dtGUI/scriptmodule.h>

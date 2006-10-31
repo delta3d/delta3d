@@ -453,7 +453,9 @@ namespace dtUtil
          void SetMagneticNorthOffset(float magNorth) { mMagneticNorthOffset = magNorth; }
 
          /**
-          * Non static accessor to the magentic north offset variable of this class
+          * Non static accessor to the magentic north offset variable of this class.
+          * This is in degrees and should be ADDED to the heading angle.  This is just a point
+          * of storage.  None of the methods in this class use this angle.
           * @return mMagneticNorthOffset
           */
          float GetMagneticNorthOffset() const { return mMagneticNorthOffset; }

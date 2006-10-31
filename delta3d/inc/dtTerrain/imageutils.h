@@ -18,16 +18,14 @@
 *
 * Teague Coonan
 */
-#ifndef _IMAGEUTILS_H
-#define _IMAGEUTILS_H
+#ifndef DELTA_IMAGEUTILS
+#define DELTA_IMAGEUTILS
 
 #include <osg/Vec3>
-#include <osg/Texture2D>
-#include <osgDB/FileUtils>
 #include <dtCore/refptr.h>
-#include <dtCore/physical.h>
-#include "dtTerrain/heightfield.h"
-#include "dtTerrain/terrain_export.h"
+#include <dtTerrain/heightfield.h>
+#include <dtTerrain/terrain_export.h>
+#include <map>
 
 namespace dtTerrain
 {

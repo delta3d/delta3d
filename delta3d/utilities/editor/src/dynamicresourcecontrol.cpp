@@ -20,27 +20,35 @@
 * Curtiss Murphy
 */
 #include <prefix/dtstageprefix-src.h>
-#include "dtEditQt/dynamiclabelcontrol.h"
-#include "dtEditQt/dynamicresourcecontrol.h"
-#include "dtEditQt/dynamicsubwidgets.h"
-#include "dtEditQt/editordata.h"
-#include "dtEditQt/editorevents.h"
-#include "dtEditQt/mainwindow.h"
-#include "dtEditQt/propertyeditortreeview.h"
-#include "dtDAL/actorproxy.h"
-#include "dtDAL/actorproperty.h"
-#include "dtDAL/datatype.h"
-#include "dtDAL/enginepropertytypes.h"
+
+#include <dtEditQt/dynamicresourcecontrol.h>
+#include <dtEditQt/dynamiclabelcontrol.h>
+#include <dtEditQt/dynamicsubwidgets.h>
+#include <dtEditQt/editordata.h>
+#include <dtEditQt/editorevents.h>
+#include <dtEditQt/mainwindow.h>
+#include <dtEditQt/propertyeditortreeview.h>
+
+#include <dtDAL/actorproxy.h>
+#include <dtDAL/actorproperty.h>
+#include <dtDAL/datatype.h>
+#include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/resourcedescriptor.h>
+
 #include <dtUtil/log.h>
-#include "dtDAL/resourcedescriptor.h"
+
+#include <QtCore/QSize>
+#include <QtCore/QRect>
+
 #include <QtGui/QHBoxLayout>
+#include <QtGui/QGridLayout>
 #include <QtGui/QLabel>
 #include <QtGui/QPushButton>
 #include <QtGui/QWidget>
-#include <QtCore/QRect>
 #include <QtGui/QColor>
 #include <QtGui/QPalette>
-#include <QtCore/QSize>
+#include <QtGui/QFocusFrame>
+
 
 namespace dtEditQt 
 {
@@ -160,6 +168,7 @@ namespace dtEditQt
         const QStyleOptionViewItem &option, const QModelIndex &index)
     {
         QWidget *wrapper = new QWidget(parent);
+        wrapper->setFocusPolicy(Qt::StrongFocus);
         // set the background color to white so that it sort of blends in with the rest of the controls
         setBackgroundColor(wrapper, PropertyEditorTreeView::ROW_COLOR_ODD);
 
@@ -169,9 +178,9 @@ namespace dtEditQt
             return wrapper;
         }
 
-        QHBoxLayout *hBox = new QHBoxLayout(wrapper);
-        hBox->setMargin(0);
-        hBox->setSpacing(0);
+        QGridLayout* grid = new QGridLayout(wrapper);
+        grid->setMargin(0);
+        grid->setSpacing(1);
 
         // label 
         temporaryEditOnlyTextLabel = new SubQLabel(getValueAsString(), wrapper, this);
@@ -182,28 +191,26 @@ namespace dtEditQt
         temporaryUseCurrentBtn = new SubQPushButton(tr("Use Current"), wrapper, this);
         // make sure it hold's it's min width.  This is a work around for a wierd QT behavior that 
         // allowed the button to get really tiny and stupid looking (had 'U' instead of 'Use Current')
-        //QSize size = temporaryUseCurrentBtn->sizeHint();
-        //temporaryUseCurrentBtn->setMinimumWidth(size.width());
-        temporaryUseCurrentBtn->setMaximumHeight(18);
+        QSize size = temporaryUseCurrentBtn->sizeHint();
+        temporaryUseCurrentBtn->setMaximumWidth(size.width());
         connect(temporaryUseCurrentBtn, SIGNAL(clicked()), this, SLOT(useCurrentPressed()));
-        // the button should get focus, not the wrapping widget
-        wrapper->setFocusProxy(temporaryUseCurrentBtn);
 
         // Clear button
         temporaryClearBtn = new SubQPushButton(tr("Clear"), wrapper, this);
-        //size = temporaryClearBtn->sizeHint();
-        //temporaryClearBtn->setMinimumWidth(size.width());
+        size = temporaryClearBtn->sizeHint();
+        temporaryClearBtn->setMaximumWidth(size.width());
         connect(temporaryClearBtn, SIGNAL(clicked()), this, SLOT(clearPressed()));
         std::string tooltip = myProperty->GetDescription() + " - Clears the current resource";
         temporaryClearBtn->setToolTip(QString(tr(tooltip.c_str())));
 
-        // setup the horizontal layout 
-        hBox->addWidget(temporaryUseCurrentBtn);
-        hBox->addSpacing(1);
-        hBox->addWidget(temporaryClearBtn);
-        hBox->addSpacing(3);
-        hBox->addWidget(temporaryEditOnlyTextLabel);
-        hBox->addStretch(1);
+        grid->addWidget(temporaryEditOnlyTextLabel, 0, 0, 1, 1);
+        grid->addWidget(temporaryUseCurrentBtn, 0, 1, 1, 1);
+        grid->addWidget(temporaryClearBtn, 0, 2, 1, 1);
+        grid->setColumnMinimumWidth(1, temporaryUseCurrentBtn->sizeHint().width());
+        grid->setColumnMinimumWidth(2, temporaryClearBtn->sizeHint().width());
+        grid->setColumnStretch(0, 2);
+        grid->setColumnStretch(1, 1);
+        grid->setColumnStretch(2, 0);
 
         temporaryUseCurrentBtn->setToolTip(getDescription());
 
@@ -254,16 +261,16 @@ namespace dtEditQt
     }
 
     /////////////////////////////////////////////////////////////////////////////////
-    void DynamicResourceControl::handleSubEditDestroy(QWidget *widget)
+    void DynamicResourceControl::handleSubEditDestroy(QWidget *widget, QAbstractItemDelegate::EndEditHint hint)
     {
-        // we have to check - sometimes the destructor won't get called before the 
-        // next widget is created.  Then, when it is called, it sets the NEW editor to NULL!
-        if (widget == temporaryEditOnlyTextLabel)
-            temporaryEditOnlyTextLabel = NULL;
-        if (widget == temporaryUseCurrentBtn)
-            temporaryUseCurrentBtn = NULL;
-        if (widget == temporaryClearBtn)
-            temporaryClearBtn = NULL;
+        if (widget != NULL && temporaryEditOnlyTextLabel != NULL
+            && widget->isAncestorOf(temporaryEditOnlyTextLabel))
+        {
+           updateData(widget);
+           temporaryEditOnlyTextLabel = NULL;
+           temporaryUseCurrentBtn = NULL;
+           temporaryClearBtn = NULL;
+        }
     }
 
     /////////////////////////////////////////////////////////////////////////////////

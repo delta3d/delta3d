@@ -66,7 +66,6 @@ namespace dtEditQt
       QGroupBox *groupBox = new QGroupBox(tr("Game Events"), this);
       QGridLayout *gridLayout = new QGridLayout(groupBox);      
       
-      // add the lib names to the grid
       mGameEventView = new QTableWidget(groupBox);
       mGameEventView->setSelectionMode(QAbstractItemView::SingleSelection);
       mGameEventView->setSelectionBehavior(QAbstractItemView::SelectRows);
