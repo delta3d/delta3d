@@ -31,8 +31,7 @@ modules = [ 'testActorLibrary',
             'testTrigger',
             'testWeather',
             'testWidget',
-            'testWin',
-            'testOSGClass' ]
+            'testWin']
 
 # TODO: this should defintely be using the env['TOOLS'] list and extracting the 'default' cxx tool,
 #       problem is that on win32 the c_compiler and cxx_compiler are the same, so there's one
