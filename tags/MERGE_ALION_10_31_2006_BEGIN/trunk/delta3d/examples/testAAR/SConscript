@@ -1,0 +1,33 @@
+# Build script for the testActorLibrary
+import glob
+import sys
+
+# Import the variables defined in the global SConstruct build script.
+Import ('*')
+
+#if env['OS'] == 'darwin':
+   #overrideShLink = '$LINKFLAGS -bundle -flat_namespace -undefined suppress'
+   #overrideShSuffix = '.dylib'
+#else:
+   
+overrideShLink = ''
+overrideShSuffix = ''
+
+# Grab all the sources from the DAL source directory.
+sources = env.SGlob('*.cpp')
+
+testAARDeps =[ 'dtGame', 'dtDAL', 'dtUtil', 'dtCore', 'dtGUI', 'ode', 'OpenThreads', 'osg',
+                            'osgDB', 'osgParticle', 'osgText', 'osgUtil',
+                            'osgGA', 'osgSim', 'osgFX', 'osgProducer', 'ul', 'js',
+                            'Producer', 'opengl', 'User32', 'CEGUIBase', 'CEGUIOpenGLRenderer',
+                            'Advapi32', 'Rpcrt4', 'Winmm', 'Gdi32', 'uuid', 'Xxf86vm',
+                            'CoreFoundation', 'IOKit', 'Carbon', 'dtActors', 'dtLMS' ]
+
+#if env['OS'] == 'windows':
+#   testGameActorLibraryDeps += ['dtActors']
+
+testAAR = env.BuildLib( 'testAAR', sources, testAARDeps, ['TEST_AAR_LIBRARY'], 
+                             overrideShLinkFlags = overrideShLink,
+                             overrideShLibSuffix = overrideShSuffix )
+
+Export('testAAR')
