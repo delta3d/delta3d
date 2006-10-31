@@ -1,0 +1,28 @@
+# Build script for the Game Manager module.
+import sys
+import glob
+
+# Import the variables defined in the global SConstruct build script.
+Import ('*')
+
+# Grab all the sources from the source directory.
+sources = env.SGlob('*.cpp')
+
+dtGameDeps =[ 'dtDAL','dtAI', 'dtUtil', 'dtCore', 'dtChar', 'dtAudio', 'dtABC', 'isense', 
+              'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgText', 'osgUtil', 
+              'osgGA', 'osgSim', 'osgFX', 'osgProducer','rbody', 'rvrutils', 'rcfgscript', 
+              'cal3d', 'sg', 'ul', 'js', 'xerces-c', 'openal',
+              'Producer', 'tinyxml', 'opengl' ]
+defines = []
+
+if env['OS'] == 'windows' :
+   dtGameDeps += [ 'User32', 'Advapi32', 'Rpcrt4', 'Winmm', 'Gdi32' ]
+   defines = ['DT_GAME_LIBRARY', 'NOMINMAX']
+elif env['OS'] == 'linux':
+   dtGameDeps += [ 'uuid', 'Xxf86vm' ]
+elif env['OS'] == 'darwin':
+   dtGameDeps += [ 'CoreFoundation', 'IOKit', 'Carbon' ]
+
+dtGameManagerLib = env.BuildLib( 'dtGame', sources, dtGameDeps, defines, prefixHeader = 'inc/prefix/dtgameprefix.h' )
+
+Export('dtGameManagerLib')
