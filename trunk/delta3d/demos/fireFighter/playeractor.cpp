@@ -98,6 +98,11 @@ void PlayerActor::OnEnteredWorld()
    dtGame::GameActor::OnEnteredWorld();
 
    mIsector->SetScene(&GetGameActorProxy().GetGameManager()->GetScene());
+   // Simulate the isector being camera height
+   dtCore::Transform xform;
+   mIsector->GetTransform(xform);
+   xform.GetTranslation().z() += 0.25f;
+   mIsector->SetTransform(xform);
 
    dtGame::Invokable *listenInvoke = new dtGame::Invokable("ListenForTickMessages", 
       dtDAL::MakeFunctor(*this, &PlayerActor::ListenForTickMessages));
@@ -232,7 +237,7 @@ void PlayerActor::ComputeSceneIntersections(const float deltaSimTime)
    osg::Vec3 pos = xform.GetTranslation();
    osg::Matrix matrix = xform.GetRotation();
    osg::Vec3 at(matrix(1, 0), matrix(1, 1), matrix(1, 2));
-   at *= 3;
+   at *= 5;
    mIsector->SetStartPosition(pos);
    mIsector->SetEndPosition(pos + at);
 

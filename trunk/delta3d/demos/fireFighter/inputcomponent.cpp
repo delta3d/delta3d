@@ -216,6 +216,7 @@ bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard,
             if(mPlayer->IsCrouched())
             {
                mMotionModel->SetMaximumFlySpeed(0.5f);
+               //mMotionModel->SetMaximumWalkSpeed(0.5f);
                mCrouchSound->Play();
             }
             else
@@ -225,12 +226,14 @@ bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard,
                if(app.GetKeyboard()->GetKeyState(Producer::Key_Shift_L))
                {
                   mMotionModel->SetMaximumFlySpeed(6.0f);
+                  //mMotionModel->SetMaximumWalkSpeed(6.0f);
                   mRunSound->Play();
                }   
                // Walk
                else
                {
                   mMotionModel->SetMaximumFlySpeed(2.0f);
+                  //mMotionModel->SetMaximumWalkSpeed(2.0f);
                   mWalkSound->Play();
                }
             }
@@ -439,19 +442,15 @@ bool InputComponent::HandleButtonReleased(const dtCore::Mouse* mouse,
 
 void InputComponent::OnAddedToGM()
 {
-//#ifdef _DEBUG
-   //mMotionModel = new dtCore::CollisionMotionModel(1.0f, 0.4f, 0.25f, 0.1f, 
-   //   GetGameManager()->GetScene().GetSpaceID(), osg::Vec3(), //GetGameManager()->GetScene().GetGravity(), 
+   GetGameManager()->GetScene().SetGravity(0.0f, 0.0f, 0.0f);
+
+   //mMotionModel = new dtCore::CollisionMotionModel(1.5f, 0.4f, 0.25f, 0.1f, 
+   //   &GetGameManager()->GetScene(),  
    //   GetGameManager()->GetApplication().GetKeyboard(), 
    //   GetGameManager()->GetApplication().GetMouse());
    mMotionModel = new dtCore::FlyMotionModel(GetGameManager()->GetApplication().GetKeyboard(), 
                                              GetGameManager()->GetApplication().GetMouse());
-   mMotionModel->SetMaximumFlySpeed(2);
-//#else
-//   mMotionModel = new dtCore::FPSMotionModel(GetGameManager()->GetApplication().GetKeyboard(), 
-//                                             GetGameManager()->GetApplication().GetMouse());
-//#endif
-   
+
    dtGame::BaseInputComponent::OnAddedToGM();
 }
 

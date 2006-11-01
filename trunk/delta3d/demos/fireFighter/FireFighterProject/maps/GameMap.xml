@@ -7,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2006-10-11T17:11:58.0-05:00</createTimestamp>
-        <lastUpdateTimestamp>2006-10-31T09:43:25.0-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2006-11-01T18:13:10.0-05:00</lastUpdateTimestamp>
         <editorVersion>1.3.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -25,25 +25,25 @@
             <property>
                 <name>Rotation</name>
                 <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
+                    <value1>0.000010</value1>
+                    <value2>0.000010</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>4.900000</value1>
-                    <value2>-25.273621</value2>
-                    <value3>1.012182</value3>
+                    <value1>4.825397</value1>
+                    <value2>-25.254885</value2>
+                    <value3>1.073556</value3>
                 </vec3>
             </property>
             <property>
                 <name>Scale</name>
                 <vec3>
-                    <value1>0.450000</value1>
+                    <value1>0.700001</value1>
                     <value2>0.150000</value2>
-                    <value3>1.250000</value3>
+                    <value3>1.750002</value3>
                 </vec3>
             </property>
             <property>
@@ -140,9 +140,9 @@
             <property>
                 <name>Rotation</name>
                 <vec3>
-                    <value1>-3.000192</value1>
-                    <value2>0.049808</value2>
-                    <value3>3.200599</value3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
                 </vec3>
             </property>
             <property>
@@ -156,9 +156,9 @@
             <property>
                 <name>Scale</name>
                 <vec3>
-                    <value1>0.300001</value1>
+                    <value1>0.400000</value1>
                     <value2>0.300001</value2>
-                    <value3>0.250000</value3>
+                    <value3>0.350000</value3>
                 </vec3>
             </property>
             <property>
@@ -661,25 +661,25 @@
             <property>
                 <name>Rotation</name>
                 <vec3>
-                    <value1>3.361395</value1>
-                    <value2>-3.529804</value2>
-                    <value3>-6.090933</value3>
+                    <value1>0.799726</value1>
+                    <value2>-0.020945</value2>
+                    <value3>-0.499851</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>7.228115</value1>
-                    <value2>-26.892677</value2>
-                    <value3>0.308137</value3>
+                    <value1>7.258051</value1>
+                    <value2>-26.886045</value2>
+                    <value3>0.355688</value3>
                 </vec3>
             </property>
             <property>
                 <name>Scale</name>
                 <vec3>
-                    <value1>1.000006</value1>
-                    <value2>1.000009</value2>
-                    <value3>1.000008</value3>
+                    <value1>0.700000</value1>
+                    <value2>0.700000</value2>
+                    <value3>0.650000</value3>
                 </vec3>
             </property>
             <property>
@@ -804,7 +804,7 @@
                 <vec3>
                     <value1>0.400000</value1>
                     <value2>0.250000</value2>
-                    <value3>0.350000</value3>
+                    <value3>0.420000</value3>
                 </vec3>
             </property>
             <property>
@@ -901,25 +901,25 @@
             <property>
                 <name>Rotation</name>
                 <vec3>
-                    <value1>-1.199043</value1>
-                    <value2>0.048186</value2>
-                    <value3>-88.299500</value3>
+                    <value1>0.000000</value1>
+                    <value2>0.000010</value2>
+                    <value3>-90.000000</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>16.600100</value1>
-                    <value2>-18.550592</value2>
-                    <value3>0.179014</value3>
+                    <value1>16.587563</value1>
+                    <value2>-18.502733</value2>
+                    <value3>0.159347</value3>
                 </vec3>
             </property>
             <property>
                 <name>Scale</name>
                 <vec3>
-                    <value1>1.000006</value1>
-                    <value2>1.000006</value2>
-                    <value3>0.750004</value3>
+                    <value1>1.000007</value1>
+                    <value2>1.000008</value2>
+                    <value3>1.500000</value3>
                 </vec3>
             </property>
             <property>
@@ -1039,6 +1039,22 @@
             <property>
                 <name>Intensity</name>
                 <float>10</float>
+            </property>
+            <property>
+                <name>LightRotation</name>
+                <vec3>
+                    <value1>-89.999992</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000010</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>LightTranslation</name>
+                <vec3>
+                    <value1>16.587563</value1>
+                    <value2>-18.502733</value2>
+                    <value3>0.159347</value3>
+                </vec3>
             </property>
         </actor>
         <actor>
