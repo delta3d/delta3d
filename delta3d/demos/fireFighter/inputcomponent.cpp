@@ -439,7 +439,7 @@ bool InputComponent::HandleButtonReleased(const dtCore::Mouse* mouse,
 
 void InputComponent::OnAddedToGM()
 {
-#ifdef _DEBUG
+//#ifdef _DEBUG
    //mMotionModel = new dtCore::CollisionMotionModel(1.0f, 0.4f, 0.25f, 0.1f, 
    //   GetGameManager()->GetScene().GetSpaceID(), osg::Vec3(), //GetGameManager()->GetScene().GetGravity(), 
    //   GetGameManager()->GetApplication().GetKeyboard(), 
@@ -447,10 +447,10 @@ void InputComponent::OnAddedToGM()
    mMotionModel = new dtCore::FlyMotionModel(GetGameManager()->GetApplication().GetKeyboard(), 
                                              GetGameManager()->GetApplication().GetMouse());
    mMotionModel->SetMaximumFlySpeed(2);
-#else
-   mMotionModel = new dtCore::FPSMotionModel(GetGameManager()->GetApplication().GetKeyboard(), 
-                                             GetGameManager()->GetApplication().GetMouse());
-#endif
+//#else
+//   mMotionModel = new dtCore::FPSMotionModel(GetGameManager()->GetApplication().GetKeyboard(), 
+//                                             GetGameManager()->GetApplication().GetMouse());
+//#endif
    
    dtGame::BaseInputComponent::OnAddedToGM();
 }
