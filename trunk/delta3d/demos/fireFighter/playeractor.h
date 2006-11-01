@@ -119,8 +119,9 @@ class FIRE_FIGHTER_EXPORT PlayerActor : public dtGame::GameActor
        * is intersected with, a MessageType::ITEM_INTERSECTED
        * message is sent with the about actor ID of the item
        * that is intersected
+       * @param deltaSimTime The difference in time
        */
-      void ComputeSceneIntersections();
+      void ComputeSceneIntersections(const float deltaSimTime);
 
       /**
        * Private helper method to send out an ITEM_INTERSECTED message

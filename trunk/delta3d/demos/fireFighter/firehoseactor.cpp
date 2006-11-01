@@ -72,14 +72,6 @@ FireHoseActor::FireHoseActor(dtGame::GameActorProxy &proxy) :
 {
    mItemUseSnd->SetLooping(true);
    mItemIndex = 1;
-   
-   //mParticleSystem->LoadFile("Particles/stream1.osg");
-   //AddChild(mParticleSystem.get());
-
-   //dtCore::Transform xform;
-   //mParticleSystem->GetTransform(xform);
-   //xform.SetTranslation(osg::Vec3(0, 0, 1));
-   //mParticleSystem->SetTransform(xform);//, REL_CS);
 }
 
 FireHoseActor::~FireHoseActor()

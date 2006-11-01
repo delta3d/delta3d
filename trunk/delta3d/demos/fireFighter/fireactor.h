@@ -26,19 +26,6 @@
 #include <osg/Vec4>
 #include <vector>
 
-namespace osg
-{
-   class Node;
-   class LightSource;
-   class Group;
-   class Light;
-}
-
-namespace dtGame
-{
-   class dtGame;
-}
-
 namespace dtDAL
 {
    class ActorProxyIcon;
@@ -47,6 +34,7 @@ namespace dtDAL
 namespace dtCore
 {
    class ParticleSystem;
+   class PositionalLight;
 }
 
 class FIRE_FIGHTER_EXPORT FireActor : public GameItemActor
@@ -99,6 +87,12 @@ class FIRE_FIGHTER_EXPORT FireActor : public GameItemActor
       void SetIntensity(float intensity);
 
       /**
+       * Decreases the intensity of the fire
+       * @param intensity The intensity to subtract
+       */
+      void DecreaseIntensity(float intensity);
+
+      /**
        * Returns the intensity of the fire.
        * @return the current intensity
        */
@@ -136,9 +130,35 @@ class FIRE_FIGHTER_EXPORT FireActor : public GameItemActor
        */
       void TickLocal(const dtGame::Message &msg);
 
+      /// Invokable that plays the fire sound when the hatch door is opened or closed
       void PlayFireSound(const dtGame::Message &msg);
 
+      /// Invokable to stop all sounds associated with this actor
       void StopSounds(const dtGame::Message &msg);
+
+      /**
+       * Sets the light rotation 
+       * @param rotation The rotation to set
+       */
+      void SetLightRotation(const osg::Vec3 &rotation);
+
+      /**
+       * Gets the light rotation
+       * @return The rotation
+       */
+      osg::Vec3 GetLightRotation() const;
+
+      /**
+       * Sets the light rotation 
+       * @param rotation The rotation to set
+       */
+      void SetLightTranslation(const osg::Vec3 &xyz);
+
+      /**
+       * Gets the light rotation
+       * @return The rotation
+       */
+      osg::Vec3 GetLightTranslation() const;
 
    protected:
 
@@ -151,9 +171,7 @@ class FIRE_FIGHTER_EXPORT FireActor : public GameItemActor
       
       dtCore::RefPtr<dtCore::ParticleSystem> mFlameSystem, mSparkSystem, mSmokeSystem, mCeilingSystem;
 
-      dtCore::RefPtr<osg::LightSource> mLightSource;
-
-      dtCore::RefPtr<osg::Light> mLight;
+      dtCore::RefPtr<dtCore::PositionalLight> mLight;
 
       /// The radius of the fire.
       float mRadius;

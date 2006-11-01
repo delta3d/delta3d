@@ -1038,7 +1038,7 @@
             </property>
             <property>
                 <name>Intensity</name>
-                <float>1</float>
+                <float>10</float>
             </property>
         </actor>
         <actor>
