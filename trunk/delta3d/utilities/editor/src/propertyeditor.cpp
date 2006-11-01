@@ -243,37 +243,15 @@ namespace dtEditQt
         std::vector<dtCore::RefPtr<dtDAL::ActorProxy > >::const_iterator iter;
         bool isMultiSelect = selectedActors.size() > 1;
 
-        // QT has an issue when you remove children.  If you have created an
-        // editor at some point for a control in a tree, it holds onto that control.
-        // Then, at some point, it tries to access the pointer, that has since been
-        // deleted when we change selections.  So, delete the tree and start over :(
-        // This was originally found in Beta2.
-        //
-        // Note 2 - 6/23/05 - This was attempted with RC1 but it still seems to have problems
-        // when you try to add and remove elements from the tree.  If you attempt to not recreate
-        // it, you need to do some work in dynamicGroupControl and DynamicAbstractParentControl with their
-        // adding and removing children.  See there for more info.
-		//
-		// Note 3 - 5/19/06 - Fixed so no more crashy for version 4.1.2
-		//					  added if / else for version numbers.
-		#if (QT_VERSION == 0x040001)
-		
-			delete propertyTree;
-			propertyTree = new PropertyEditorTreeView(propertyModel, actorPropBox);
-			rootProperty->removeAllChildren(propertyModel);
-			propertyTree->setRoot(rootProperty);
-			dynamicControlLayout->addWidget(propertyTree);
-		
-		#else
-         delete propertyTree;
-         //if (propertyTree == NULL)
-         //{
-         propertyTree = new PropertyEditorTreeView(propertyModel, actorPropBox);
-         dynamicControlLayout->addWidget(propertyTree);
-         //}
-			rootProperty->removeAllChildren(propertyModel);
-         propertyTree->setRoot(rootProperty);
-		#endif
+        // The ordering of the following code block has been known to cause
+        // problems in various versions of qt.  This code works in 4.2.1.
+        // if it breaks in a later version, past experience has shown that
+        // changing the order in some way will make it work
+        delete propertyTree;
+        rootProperty->removeAllChildren(propertyModel);
+        propertyTree = new PropertyEditorTreeView(propertyModel, actorPropBox);
+        dynamicControlLayout->addWidget(propertyTree);
+        propertyTree->setRoot(rootProperty);
 
         resetGroupBoxLabel();
         // Walk our selection items.
