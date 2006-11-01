@@ -1455,6 +1455,18 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   void GameManager::SetProjectContext(const std::string &context, bool readOnly)
+   {
+      dtDAL::Project::GetInstance().SetContext(context, readOnly);
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   const std::string& GameManager::GetProjectContext() const
+   {
+      return dtDAL::Project::GetInstance().GetContext();
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    void GameManager::ProcessTimers(std::set<TimerInfo> &listToProcess, Timer_t clockTime)
    {
       std::set<TimerInfo>::iterator itor;

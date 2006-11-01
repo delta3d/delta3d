@@ -80,10 +80,12 @@ class GameManagerTests : public CPPUNIT_NS::TestFixture
         CPPUNIT_TEST(TestTimers);
 
         CPPUNIT_TEST(TestOnAddedToGM);
+        CPPUNIT_TEST(TestSetProjectContext);
 
    CPPUNIT_TEST_SUITE_END();
 
 public:
+
    void setUp();
    void tearDown();
    void TestDataStream();
@@ -102,9 +104,10 @@ public:
    void TestTimers();
 
    void TestOnAddedToGM();
-
+   void TestSetProjectContext();
 
 private:
+
    static const std::string mTestGameActorLibrary;
    static const std::string mTestActorLibrary;
    dtCore::RefPtr<dtGame::GameManager> mManager;
@@ -1169,4 +1172,24 @@ void GameManagerTests::TestFindGameActorById()
    TestPlayerProxy *shouldBeNULL;
    mManager->FindGameActorById(envActor->GetId(), shouldBeNULL);
    CPPUNIT_ASSERT_MESSAGE("The template version of FindGameActorById should have returned NULL", shouldBeNULL == NULL);
+}
+
+void GameManagerTests::TestSetProjectContext()
+{
+   std::string context = "data/ProjectContext";
+   try
+   {
+      mManager->SetProjectContext(context);
+   }
+   catch(const dtUtil::Exception &e)
+   {
+      CPPUNIT_FAIL(e.What());
+   }
+
+   std::string absPath = dtUtil::FileUtils::GetInstance().GetAbsolutePath(context);
+   std::string gmPC    = mManager->GetProjectContext();
+
+   CPPUNIT_ASSERT_MESSAGE("The context should have been set", gmPC == absPath);
+   CPPUNIT_ASSERT_MESSAGE("The dtDAL::ProjectContext should be correct", dtDAL::Project::GetInstance().GetContext() == absPath);
+   CPPUNIT_ASSERT(mManager->GetProjectContext() == dtDAL::Project::GetInstance().GetContext());
 }
