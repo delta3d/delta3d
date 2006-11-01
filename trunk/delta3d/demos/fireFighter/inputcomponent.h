@@ -32,11 +32,11 @@ class PlayerActor;
 
 namespace dtCore
 {
-#ifdef _DEBUG
+//#ifdef _DEBUG
    class FlyMotionModel;
-#else 
-   class CollisionMotionModel;
-#endif
+//#else 
+//   class CollisionMotionModel;
+//#endif
 }
 
 namespace dtAudio
@@ -170,11 +170,11 @@ class FIRE_FIGHTER_EXPORT InputComponent : public dtGame::BaseInputComponent
       GameState *mCurrentState;
       PlayerActor *mPlayer;
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
       dtCore::FlyMotionModel *mMotionModel;
-#else
-      dtCore::CollisionMotionModel *mMotionModel;
-#endif
+//#else
+//      dtCore::CollisionMotionModel *mMotionModel;
+//#endif
       
       dtAudio::Sound *mBellSound, *mDebriefSound, *mWalkSound, *mRunSound, *mCrouchSound;
       GameItemActor *mCurrentIntersectedItem;
