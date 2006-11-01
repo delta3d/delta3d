@@ -25,6 +25,11 @@
 #include <dtGame/gameapplication.h>
 #include <fireFighter/export.h>
 
+namespace dtLMS
+{
+   class LmsComponent;
+}
+
 class FIRE_FIGHTER_EXPORT FireFighterGameEntryPoint : public dtGame::GameEntryPoint
 {
    public:
@@ -61,7 +66,7 @@ class FIRE_FIGHTER_EXPORT FireFighterGameEntryPoint : public dtGame::GameEntryPo
       virtual ~FireFighterGameEntryPoint();
 
    private:
-
+      
       bool mUseLMS; 
 };
 #endif

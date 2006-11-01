@@ -25,6 +25,7 @@
 #include <fireFighter/inputcomponent.h>
 #include <fireFighter/gamestate.h>
 #include <fireFighter/firehoseactor.h>
+#include <fireFighter/fireactor.h>
 #include <dtDAL/actorproxyicon.h>
 #include <dtCore/isector.h>
 #include <dtCore/deltawin.h>
@@ -108,7 +109,8 @@ void PlayerActor::OnEnteredWorld()
 
 void PlayerActor::TickLocal(const dtGame::Message &tickMessage)
 {
-   ComputeSceneIntersections();
+   const dtGame::TickMessage &msg = static_cast<const dtGame::TickMessage&>(tickMessage);
+   ComputeSceneIntersections(msg.GetDeltaSimTime());
 }
 
 void PlayerActor::AddItemToInventory(GameItemActor &item)
@@ -220,7 +222,7 @@ void PlayerActor::UpdateSelectedItem(bool toTheLeft)
    GetGameActorProxy().GetGameManager()->SendMessage(*msg);
 }
 
-void PlayerActor::ComputeSceneIntersections()
+void PlayerActor::ComputeSceneIntersections(const float deltaSimTime)
 {
    // Update the isector values
    mIsector->Reset();
@@ -244,6 +246,20 @@ void PlayerActor::ComputeSceneIntersections()
          return;
       }
 
+      // Check for a collision with the fire hose spray versus the wall 
+      // or fire
+      if(mFireHose->IsEnabled())
+      {
+         // Check for collision with the fire
+         const FireActor *fa = dynamic_cast<const FireActor*>(dd);
+         if(fa != NULL)
+         {
+            const_cast<FireActor&>(*fa).DecreaseIntensity(deltaSimTime);
+         }
+      }
+
+      // Check for collision with a game item and send a message to show the 
+      // hand or not
       const GameItemActor *gia = dynamic_cast<const GameItemActor*>(dd);
       if(gia == NULL)
       {
