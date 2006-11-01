@@ -694,6 +694,22 @@ namespace dtGame
           */
          void RejectMessage(const Message &reasonMessage, const std::string &rejectDescription);
 
+         /**
+          * Wrapper method to encapsulate SetContext on dtDAL::Project so an outside
+          * user does not have to know about dtDAL::Project at all when they are writing
+          * an application using GameStart
+          * @param context A path to the context to use
+          * @param readOnly True to open the context in read only mode
+          */
+         void SetProjectContext(const std::string &context, bool readOnly = false);
+
+         /**
+          * Wrapper method that returns a string to the project context currently 
+          * being used
+          * @return A path to the new context
+          */
+         const std::string& GetProjectContext() const;
+
       protected:
 
          struct TimerInfo 
