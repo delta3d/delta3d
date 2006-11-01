@@ -373,11 +373,11 @@ void FlyMotionModel::OnMessage(MessageData *data)
       {
          float rotateTo = hpr[1] + float(mTurnUpDownAxis->GetState() * mMaximumTurnSpeed * delta);
 
-         if( rotateTo <= -90.0f )
+         if( rotateTo < -89.5f )
          {
             hpr[1] = -89.5f;
          }
-         else if( rotateTo >= 90.0f )
+         else if( rotateTo > 89.5f )
          {
             hpr[1] = 89.5f;
          }
