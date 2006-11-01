@@ -194,7 +194,7 @@ namespace dtDAL
       if(itor != mPropertyMap.end())
       {
          mPropertyMap.erase(itor);
-         for (int i = 0; i < mProperties.size(); ++i)
+         for (unsigned int i = 0; i < mProperties.size(); ++i)
          {
             if (mProperties[i]->GetName() == nameToRemove)
             {
