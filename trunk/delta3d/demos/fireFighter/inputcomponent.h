@@ -167,8 +167,8 @@ class FIRE_FIGHTER_EXPORT InputComponent : public dtGame::BaseInputComponent
       GameState *mCurrentState;
       PlayerActor *mPlayer;
 
-      //dtCore::CollisionMotionModel *mMotionModel;
-      dtCore::FlyMotionModel *mMotionModel;
+      dtCore::CollisionMotionModel *mMotionModel;
+      //dtCore::FlyMotionModel *mMotionModel;
 
       dtAudio::Sound *mBellSound, *mDebriefSound, *mWalkSound, *mRunSound, *mCrouchSound;
       GameItemActor *mCurrentIntersectedItem;

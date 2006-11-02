@@ -89,6 +89,7 @@ CollisionMotionModel::CollisionMotionModel(float pHeight, float pRadius, float k
       , mSidestepCtrl(0.0f)
       , mLookLeftRightCtrl(0.0f)
       , mLookUpDownCtrl(0.0f)
+      , mUseMouseButtons(true)
 {
 
    //setup some axis listeners with functors 
@@ -438,7 +439,16 @@ void CollisionMotionModel::OnMessage(MessageData *data)
       newH = hpr[0];
       newP = hpr[1];
 
-      if(mMouse->GetButtonState(Mouse::LeftButton)) 
+      if(mUseMouseButtons && mMouse->GetButtonState(Mouse::LeftButton)) 
+      {
+         //calculate our new heading
+         newH -= mLookLeftRightCtrl * mMaximumTurnSpeed * deltaFrameTime;
+         //calculate our new pitch
+         newP += mLookUpDownCtrl * mMaximumTurnSpeed * deltaFrameTime;
+         dtUtil::Clamp(newP, -89.9f, 89.9f); //stay away from 90.0 as it causes funky gimbal lock
+         mLookUpDownAxis->SetState(0.0f);//necessary to stop camera drifting down
+      }
+      else
       {
          //calculate our new heading
          newH -= mLookLeftRightCtrl * mMaximumTurnSpeed * deltaFrameTime;
@@ -466,11 +476,15 @@ void CollisionMotionModel::OnMessage(MessageData *data)
       newXYZ = mCollider.Update(xyz, translation, deltaFrameTime, mKeyboard->GetKeyState(Producer::Key_space));
 
       transform.SetTranslation(newXYZ);
-      if(mMouse->GetButtonState(Mouse::LeftButton)) 
+      if(mUseMouseButtons && mMouse->GetButtonState(Mouse::LeftButton)) 
+         transform.SetRotation(newH, newP, 0.0f);
+      else
          transform.SetRotation(newH, newP, 0.0f);
       GetTarget()->SetTransform(transform); 
 
-      if(mMouse->GetButtonState(Mouse::LeftButton)) 
+      if(mUseMouseButtons && mMouse->GetButtonState(Mouse::LeftButton)) 
+         mMouse->SetPosition(0.0f,0.0f);//keeps cursor at center of screen
+      else
          mMouse->SetPosition(0.0f,0.0f);//keeps cursor at center of screen
    }
 }

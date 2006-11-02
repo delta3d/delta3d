@@ -153,13 +153,25 @@ void InputComponent::OnIntro()
 
 void InputComponent::OnGame()
 {  
-   dtCore::Scene &scene = GetGameManager()->GetScene();
+   dtCore::Scene &scene   =  GetGameManager()->GetScene();
    dtCore::Camera &camera = *GetGameManager()->GetApplication().GetCamera();
+   dtCore::Mouse  &mouse  = *GetGameManager()->GetApplication().GetMouse();
    
-   mMotionModel->SetTarget(mPlayer);
-
-   GameLevelActor *gla = NULL;
+   GameLevelActor *gla = NULL; 
    IsActorInGameMap(gla);
+   gla->SetCollisionMesh();
+
+   dtCore::Transform xform;
+   mPlayer->GetTransform(xform);
+
+   mMotionModel = new dtCore::CollisionMotionModel(xform.GetTranslation().z(), 
+      0.1f, 0.20f, 0.1f, &GetGameManager()->GetScene(),  
+      GetGameManager()->GetApplication().GetKeyboard(), 
+      GetGameManager()->GetApplication().GetMouse());
+
+   mMotionModel->SetUseMouseButtons(false);
+
+   mMotionModel->SetTarget(mPlayer);
 
    // Turn off the scene light and use the light maps/shadows maps
    camera.GetSceneHandler()->GetSceneView()->setLightingMode(osgUtil::SceneView::NO_SCENEVIEW_LIGHT);
@@ -183,7 +195,8 @@ void InputComponent::OnGame()
 void InputComponent::OnDebrief()
 {
    StopSounds();
-   mMotionModel->SetTarget(NULL);
+   if(mMotionModel != NULL)
+      mMotionModel->SetTarget(NULL);
 
    mDebriefSound = dtAudio::AudioManager::GetInstance().NewSound();
    mDebriefSound->LoadFile("Sounds/anchorsAweigh.wav");
@@ -193,7 +206,8 @@ void InputComponent::OnDebrief()
 void InputComponent::OnMenu()
 {
    StopSounds();
-   mMotionModel->SetTarget(NULL);
+   if(mMotionModel != NULL)
+      mMotionModel->SetTarget(NULL);
 }
 
 bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard, 
@@ -215,8 +229,8 @@ bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard,
             // We are crouched
             if(mPlayer->IsCrouched())
             {
-               mMotionModel->SetMaximumFlySpeed(0.5f);
-               //mMotionModel->SetMaximumWalkSpeed(0.5f);
+               //mMotionModel->SetMaximumFlySpeed(0.5f);
+               mMotionModel->SetMaximumWalkSpeed(0.5f);
                mCrouchSound->Play();
             }
             else
@@ -225,15 +239,15 @@ bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard,
                // Run 
                if(app.GetKeyboard()->GetKeyState(Producer::Key_Shift_L))
                {
-                  mMotionModel->SetMaximumFlySpeed(6.0f);
-                  //mMotionModel->SetMaximumWalkSpeed(6.0f);
+                  //mMotionModel->SetMaximumFlySpeed(6.0f);
+                  mMotionModel->SetMaximumWalkSpeed(6.0f);
                   mRunSound->Play();
                }   
                // Walk
                else
                {
-                  mMotionModel->SetMaximumFlySpeed(2.0f);
-                  //mMotionModel->SetMaximumWalkSpeed(2.0f);
+                  //mMotionModel->SetMaximumFlySpeed(2.0f);
+                  mMotionModel->SetMaximumWalkSpeed(2.0f);
                   mWalkSound->Play();
                }
             }
@@ -442,14 +456,9 @@ bool InputComponent::HandleButtonReleased(const dtCore::Mouse* mouse,
 
 void InputComponent::OnAddedToGM()
 {
-   GetGameManager()->GetScene().SetGravity(0.0f, 0.0f, 0.0f);
-
-   //mMotionModel = new dtCore::CollisionMotionModel(1.5f, 0.4f, 0.25f, 0.1f, 
-   //   &GetGameManager()->GetScene(),  
-   //   GetGameManager()->GetApplication().GetKeyboard(), 
-   //   GetGameManager()->GetApplication().GetMouse());
-   mMotionModel = new dtCore::FlyMotionModel(GetGameManager()->GetApplication().GetKeyboard(), 
-                                             GetGameManager()->GetApplication().GetMouse());
+    
+   //mMotionModel = new dtCore::FlyMotionModel(GetGameManager()->GetApplication().GetKeyboard(), 
+   //                                          GetGameManager()->GetApplication().GetMouse());
 
    dtGame::BaseInputComponent::OnAddedToGM();
 }
