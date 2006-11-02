@@ -244,7 +244,7 @@ void PlayerActor::ComputeSceneIntersections(const float deltaSimTime)
    // On collision
    if(mIsector->Update())
    {
-      const dtCore::DeltaDrawable *dd = mIsector->GetClosestDeltaDrawable();
+      dtCore::DeltaDrawable *dd = mIsector->GetClosestDeltaDrawable();
       if(dd == NULL)
       {
          SendItemIntersectedMessage(dtCore::UniqueId(""));
@@ -256,23 +256,23 @@ void PlayerActor::ComputeSceneIntersections(const float deltaSimTime)
       if(mFireHose->IsEnabled())
       {
          // Check for collision with the fire
-         const FireActor *fa = dynamic_cast<const FireActor*>(dd);
+         FireActor *fa = dynamic_cast<FireActor*>(dd);
          if(fa != NULL)
          {
-            const_cast<FireActor&>(*fa).DecreaseIntensity(deltaSimTime);
+            fa->DecreaseIntensity(deltaSimTime);
          }
       }
 
       // Check for collision with a game item and send a message to show the 
       // hand or not
-      const GameItemActor *gia = dynamic_cast<const GameItemActor*>(dd);
+      GameItemActor *gia = dynamic_cast<GameItemActor*>(dd);
       if(gia == NULL)
       {
          SendItemIntersectedMessage(dtCore::UniqueId(""));
          return;
       }
 
-      LOG_INFO("Closest drawable is: " + dd->GetName());
+      LOG_INFO("Closest drawable is: " + gia->GetName());
 
       // Now we know we have intersected with a game item
       // we need to send an intersection message

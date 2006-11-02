@@ -230,6 +230,7 @@ namespace dtCore
 
       FPSCollider& GetFPSCollider();
 
+      void SetUseMouseButtons(bool use) { mUseMouseButtons = use; }
 
    private:
 
@@ -339,8 +340,9 @@ namespace dtCore
       float mLookLeftRightCtrl;///<control value for Left/Right rotation (-1.0, 1.0)
       float mLookUpDownCtrl;   ///<control value for up/down rotation (-1.0, 1.0)
 
+      bool mUseMouseButtons;
    };
-};
+}
 
 
 #endif // __DELTA_collisionmotionmodel_H__
