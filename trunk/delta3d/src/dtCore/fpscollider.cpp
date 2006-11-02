@@ -279,7 +279,7 @@ namespace dtCore
       if(pObject == GetFeetGeom()) return;
 
       bool set = false;
-      void* data = 0;
+      void* data = NULL;
       dGeomID pID = pObject;
 
 
@@ -312,7 +312,7 @@ namespace dtCore
       if(pObject == GetTorsoGeom()) return;
 
       bool set = false;
-      void* data = 0;
+      void* data = NULL;
       dGeomID pID = pObject;
 
       while(dGeomGetClass(pID) == dGeomTransformClass)
@@ -371,7 +371,7 @@ namespace dtCore
    // ODE collision callback
    void FPSCollider::NearCallbackFeet( void* data, dGeomID o1, dGeomID o2 )
    {
-      if( data == 0 || o1 == 0 || o2 == 0 )
+      if( data == NULL || o1 == 0 || o2 == 0 )
       {
          return;
       }
@@ -391,7 +391,7 @@ namespace dtCore
    // ODE collision callback
    void FPSCollider::NearCallbackTorso( void* data, dGeomID o1, dGeomID o2 )
    {
-      if( data == 0 || o1 == 0 || o2 == 0 )
+      if( data == NULL || o1 == 0 || o2 == 0 )
       {
          return;
       }

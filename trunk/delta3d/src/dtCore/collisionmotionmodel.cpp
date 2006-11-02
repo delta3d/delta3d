@@ -63,23 +63,23 @@ bool CollisionMotionModel::FPSAxisListener::AxisStateChanged(const Axis* axis,
 CollisionMotionModel::CollisionMotionModel(float pHeight, float pRadius, float k, float theta, dtCore::Scene* pScene, Keyboard* keyboard, Mouse* mouse)
       : MotionModel("CollisionMotionModel")
       , mDefaultInputDevice()
-      , mLeftRightMouseMovement(0)
-      , mUpDownMouseMovement(0)
-      , mArrowKeysUpDownMapping(0)
-      , mArrowKeysLeftRightMapping(0)
-      , mADKeysLeftRightMapping(0)
-      , mDefaultWalkForwardBackwardAxis(0)
-      , mDefaultTurnLeftRightAxis(0)
-      , mDefaultLookUpDownAxis(0)
-      , mDefaultSidestepLeftRightAxis(0)
-      , mWalkForwardBackwardAxis(0)
-      , mTurnLeftRightAxis(0)
-      , mLookUpDownAxis(0)
-      , mSidestepLeftRightAxis(0)
-      , mSidestepListener(0)
-      , mForwardBackwardListener(0)
-      , mLookLeftRightListener(0)
-      , mLookUpDownListener(0)
+      , mLeftRightMouseMovement(NULL)
+      , mUpDownMouseMovement(NULL)
+      , mArrowKeysUpDownMapping(NULL)
+      , mArrowKeysLeftRightMapping(NULL)
+      , mADKeysLeftRightMapping(NULL)
+      , mDefaultWalkForwardBackwardAxis(NULL)
+      , mDefaultTurnLeftRightAxis(NULL)
+      , mDefaultLookUpDownAxis(NULL)
+      , mDefaultSidestepLeftRightAxis(NULL)
+      , mWalkForwardBackwardAxis(NULL)
+      , mTurnLeftRightAxis(NULL)
+      , mLookUpDownAxis(NULL)
+      , mSidestepLeftRightAxis(NULL)
+      , mSidestepListener(NULL)
+      , mForwardBackwardListener(NULL)
+      , mLookLeftRightListener(NULL)
+      , mLookUpDownListener(NULL)
       , mMaximumWalkSpeed(3.0f)
       , mMaximumTurnSpeed(10000.0f)
       , mMouse(mouse)
@@ -102,7 +102,7 @@ CollisionMotionModel::CollisionMotionModel(float pHeight, float pRadius, float k
    mSidestepListener = new FPSAxisListener( sideStepFunc );
    mForwardBackwardListener = new FPSAxisListener( fbFunc );
 
-   if(keyboard != 0 && mouse != 0)
+   if(keyboard != NULL && mouse != NULL)
    {
       SetDefaultMappings(keyboard, mouse);
    }
@@ -167,7 +167,7 @@ void CollisionMotionModel::SetEnabled(bool enabled)
 */
 void CollisionMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
 {
-   if(mDefaultInputDevice.get() == 0)
+   if(!mDefaultInputDevice.valid())
    {
       mDefaultInputDevice = new LogicalInputDevice("FPSLogicalInputDevice");
 
@@ -290,7 +290,7 @@ Axis* CollisionMotionModel::GetTurnLeftRightAxis()
 */
 void CollisionMotionModel::SetLookUpDownAxis(Axis* lookUpDownAxis)
 {
-   if (mLookUpDownAxis)
+   if (mLookUpDownAxis != NULL)
    {
       mLookUpDownAxis->RemoveAxisListener(mLookUpDownListener);
    }
@@ -319,7 +319,7 @@ Axis* CollisionMotionModel::GetLookUpDownAxis()
 */
 void CollisionMotionModel::SetSidestepLeftRightAxis(Axis* sidestepLeftRightAxis)
 {
-   if (mSidestepLeftRightAxis)
+   if (mSidestepLeftRightAxis != NULL)
    {
       mSidestepLeftRightAxis->RemoveAxisListener(mSidestepListener);
    }
@@ -418,7 +418,7 @@ FPSCollider& CollisionMotionModel::GetFPSCollider()
 void CollisionMotionModel::OnMessage(MessageData *data)
 {    
 
-   if(GetTarget() != 0 &&
+   if(GetTarget() != NULL &&
       IsEnabled() && 
       data->message == "preframe")
    {
@@ -444,7 +444,7 @@ void CollisionMotionModel::OnMessage(MessageData *data)
          newH -= mLookLeftRightCtrl * mMaximumTurnSpeed * deltaFrameTime;
          //calculate our new pitch
          newP += mLookUpDownCtrl * mMaximumTurnSpeed * deltaFrameTime;
-         dtUtil::Clamp<float>(newP, -89.9f, 89.9f); //stay away from 90.0 as it causes funky gimbal lock
+         dtUtil::Clamp(newP, -89.9f, 89.9f); //stay away from 90.0 as it causes funky gimbal lock
          mLookUpDownAxis->SetState(0.0f);//necessary to stop camera drifting down
       }
 
@@ -467,7 +467,7 @@ void CollisionMotionModel::OnMessage(MessageData *data)
 
       transform.SetTranslation(newXYZ);
       if(mMouse->GetButtonState(Mouse::LeftButton)) 
-         transform.SetRotation(newH, newP, 0.f);
+         transform.SetRotation(newH, newP, 0.0f);
       GetTarget()->SetTransform(transform); 
 
       if(mMouse->GetButtonState(Mouse::LeftButton)) 
