@@ -128,6 +128,9 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
+				RelativePath="..\..\..\src\dtAI\aiparticlemanager.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtAI\basenpc.cpp">
 			</File>
 			<File
@@ -174,6 +177,9 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
+			<File
+				RelativePath="..\..\..\inc\dtAI\aiparticlemanager.h">
+			</File>
 			<File
 				RelativePath="..\..\..\inc\dtAI\astar.h">
 			</File>

@@ -156,6 +156,19 @@ namespace dtAI
          const WorldState& GetWSTemplate() const; 
          WorldState& GetWSTemplate();
 
+         /**
+         * Sets the template used for this NPC's initial state
+         * since this wipes out previous state template 
+         * it is recommended to do a GetWSTemplate() and then 
+         * add the appropriate state variables
+         */
+         void SetWSTemplate(const WorldState& pWS);
+
+         /**
+         * Returns the name of this NPC
+         */
+         const std::string& GetName() const;
+
       protected:
 
          /**

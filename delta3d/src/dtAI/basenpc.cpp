@@ -44,6 +44,16 @@ namespace dtAI
    {
    }
 
+   const std::string& BaseNPC::GetName() const
+   {
+      return mName;
+   }
+
+   void BaseNPC::SetWSTemplate(const WorldState& pWS)
+   {
+      mWSTemplate = pWS;
+   }
+
    void BaseNPC::InitNPC()
    {
       OnInit();
