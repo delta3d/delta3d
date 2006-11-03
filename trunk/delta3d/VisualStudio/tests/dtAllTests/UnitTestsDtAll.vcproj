@@ -139,6 +139,9 @@ cd $(TargetDir)
 				RelativePath="..\..\..\tests\dtDAL\actortypetests.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\tests\dtAI\aiparticlemanagertests.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\tests\dtABC\applicationtests.cpp">
 			</File>
 			<File
