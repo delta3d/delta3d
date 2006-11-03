@@ -55,6 +55,8 @@ namespace dtCore
       osgSim::DOFTransform *dofXform = dynamic_cast<osgSim::DOFTransform*>(nodepath);
       if(dofXform)
       {
+         //std::cout << "NodeCollector found DOF TRANSFORM: Class Name [" <<  dofXform->className() << 
+         //   "], Node Name [" << dofXform->getName() << "]" << std::endl;
          mDOFTransforms.push_back(dofXform);
       }
 
@@ -102,8 +104,9 @@ namespace dtCore
       std::list<dtCore::RefPtr<osgSim::DOFTransform> >::iterator iter = mDOFTransforms.begin();
       for(;iter != mDOFTransforms.end(); ++iter)
       {
-         if((*iter)->getName().c_str() == DofName)
-            return iter->get();
+         osgSim::DOFTransform *dofTransform = (*iter).get();
+         if(dofTransform->getName().c_str() == DofName)
+            return dofTransform;
       }
       if(mIsLoggingEnabled)
       {

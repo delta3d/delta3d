@@ -37,11 +37,11 @@ osg::Node* Loadable::LoadFile(const std::string& filename, bool useCache)
 
    if (useCache)
    {
-      options.get()->setObjectCacheHint(osgDB::ReaderWriter::Options::CACHE_ALL);
+      options->setObjectCacheHint(osgDB::ReaderWriter::Options::CACHE_ALL);
    }
    else
    {  
-      options.get()->setObjectCacheHint(osgDB::ReaderWriter::Options::CACHE_NONE);
+      options->setObjectCacheHint(osgDB::ReaderWriter::Options::CACHE_NONE);
    }
 
    osg::Node *model = osgDB::readNodeFile(mFilename, options.get());
