@@ -84,7 +84,7 @@
 
         <object name="Blimp" extends="Aircraft">
             <objectClass>BaseEntity.PhysicalEntity.Platform.Aircraft</objectClass>
-            <actorType>MyActors.Targets.Killable Target</actorType>
+            <actorType>MyActors.Targets.KillableTarget</actorType>
             <remoteOnly>false</remoteOnly>
             <disEntityEnum>
                 <kind>1</kind>
