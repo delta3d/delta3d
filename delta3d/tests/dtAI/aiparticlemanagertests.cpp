@@ -47,8 +47,8 @@ namespace dtTest
 
    private:
 
-      AIParticleManager::AgentParticle CloneNPC(BaseNPC* pNPC);
-      bool FilterNPC(BaseNPC* pNPC);
+      AIParticleManager::AgentParticle CloneNPC(AIParticleManager::AgentParticle& pNPC);
+      bool FilterNPC(AIParticleManager::AgentParticle& pNPC);
 
       dtCore::RefPtr<AIParticleManager> mManager;
 
@@ -71,13 +71,13 @@ namespace dtTest
 
    }
 
-   AIParticleManager::AgentParticle AIParticleManagerTests::CloneNPC(BaseNPC* pNPC)
+   AIParticleManager::AgentParticle AIParticleManagerTests::CloneNPC(AIParticleManager::AgentParticle& pNPC)
    {
       static float prob = 0.5f;
 
       BaseNPC* pNewNPC = new BaseNPC("ClonedNPC");
       pNewNPC->LoadNPCScript(dtCore::GetDeltaRootPath() + "/tests/dtAI/npcscript_test.txt");
-      pNewNPC->SetWSTemplate(pNPC->GetWSTemplate());
+      pNewNPC->SetWSTemplate(pNPC.second->GetWSTemplate());
       pNewNPC->InitNPC();
       pNewNPC->SpawnNPC();
 
@@ -87,7 +87,7 @@ namespace dtTest
 
    }
 
-   bool AIParticleManagerTests::FilterNPC(BaseNPC* pNPC)
+   bool AIParticleManagerTests::FilterNPC(AIParticleManager::AgentParticle& pNPC)
    {
       return true;
    }

@@ -69,7 +69,7 @@ namespace dtAI
 
    WorldState* PlannerHelper::GetCurrentState()
    {
-      return mCurrentState;
+       return mCurrentState;
    }
 
    const WorldState* PlannerHelper::GetCurrentState() const

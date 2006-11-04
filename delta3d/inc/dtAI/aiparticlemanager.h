@@ -50,8 +50,8 @@ namespace dtAI
          typedef std::list<AgentParticle> ParticleList;
          typedef std::list<BaseNPC*> AgentList;
 
-         typedef dtUtil::Functor<AgentParticle, TYPELIST_1(BaseNPC*)> CloneFunctor;
-         typedef dtUtil::Functor<bool, TYPELIST_1(BaseNPC*)> FilterFunctor;
+         typedef dtUtil::Functor<AgentParticle, TYPELIST_1(AgentParticle&)> CloneFunctor;
+         typedef dtUtil::Functor<bool, TYPELIST_1(AgentParticle&)> FilterFunctor;
 
       public:
          AIParticleManager(const CloneFunctor& pClone, const FilterFunctor& pFilter);
@@ -61,7 +61,7 @@ namespace dtAI
       public:
 
          void AddAgent(BaseNPC* pAgent, float pProbability);
-         void CloneAgent(BaseNPC* pAgent);
+         BaseNPC* CloneAgent(BaseNPC* pAgent);
          void RemoveAgent(BaseNPC* pAgent);
 
          void RemoveAgents(const AgentList& pList);

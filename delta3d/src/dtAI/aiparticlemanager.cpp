@@ -76,10 +76,27 @@ namespace dtAI
       SortAgents();
    }
    
-   void AIParticleManager::CloneAgent(BaseNPC* pAgent)
+   BaseNPC* AIParticleManager::CloneAgent(BaseNPC* pAgent)
    {
-      mAgents.push_back(mClone(pAgent));
-      SortAgents();
+
+      ParticleList::iterator iter = mAgents.begin();
+      ParticleList::iterator endOfList = mAgents.end();
+
+      while(iter != endOfList)
+      {
+         if((*iter).second == pAgent)
+         {
+            AgentParticle newAgent = mClone(*iter);
+            mAgents.push_back(newAgent);
+            SortAgents();
+
+            return newAgent.second.get();
+         }
+
+         ++iter;
+      }
+      
+      return 0;
    }
 
    void AIParticleManager::RemoveAgent(BaseNPC* pAgent)
@@ -134,10 +151,12 @@ namespace dtAI
 
    void AIParticleManager::UpdateAgents(double dt)
    {
-      ParticleList::iterator iter = mAgents.begin();
+      
       ParticleList::iterator endOfList = mAgents.end();
 
-      while(iter != endOfList)
+      //we use a for loop here and compare against the new end just an npc added to our list
+      //on its update
+      for(ParticleList::iterator iter = mAgents.begin(); iter != mAgents.end(); ++iter)
       {
          BaseNPC* pNPC = (*iter).second.get();
          
@@ -146,12 +165,10 @@ namespace dtAI
 
          //if filter returns true that means this npc is no longer valid
          //and we get rid of it
-         if(mFilter(pNPC))
+         if(mFilter(*iter))
          {
             mRemoveList.push_back(pNPC);
          }
-
-         ++iter;
       }
 
       RemoveAgents(mRemoveList);
