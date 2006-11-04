@@ -20,8 +20,8 @@
  */
 
 #include <prefix/dtdalprefix-src.h>
-#include <dtDAL/mapcontenthandler.h>
 
+#include <dtDAL/mapcontenthandler.h>
 #include <dtDAL/map.h>
 #include <dtDAL/librarymanager.h>
 #include <dtDAL/exceptionenum.h>

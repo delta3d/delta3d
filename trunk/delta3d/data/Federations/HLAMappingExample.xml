@@ -90,6 +90,11 @@
                 <specific>6</specific>
                 <extra>0</extra>
             </disEntityEnum>
+            <attrToProp>
+                <gameName>Mesh</gameName>   
+                <gameDataType>StaticMeshes</gameDataType>
+                <default>StaticMeshes:articulation_test.ive</default>
+            </attrToProp>
         </object>
 
         <object extends="BaseEntity" name="F18">

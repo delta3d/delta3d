@@ -35,81 +35,81 @@ namespace dtDAL
 namespace dtEditQt 
 {
 
-    /**
+   /**
     * @class DynamicIntControl
     * @brief This is the dynamic control for the int data type - used in the property editor
     */
-    class DynamicIntControl : public DynamicAbstractControl
-    {
-        Q_OBJECT
-    public:
-        /**
-         * Constructor
-         */
-        DynamicIntControl();
-
-        /**
-         * Destructor
-         */
-        virtual ~DynamicIntControl();
-
-        /**
-         * @see DynamicAbstractControl#initializeData
-         */
-        virtual void initializeData(DynamicAbstractControl *newParent, PropertyEditorModel *model,
-            dtDAL::ActorProxy *proxy, dtDAL::ActorProperty *property);
-
-        /**
-         * @see DynamicAbstractControl#updateEditorFromModel
-         */
-        virtual void updateEditorFromModel(QWidget *widget);
-
-        /**
-         * @see DynamicAbstractControl#updateModelFromEditor
-         */
-        virtual bool updateModelFromEditor(QWidget *widget);
-
-        /**
-         * @see DynamicAbstractControl#createEditor
-         */
-        virtual QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option,
+   class DynamicIntControl : public DynamicAbstractControl
+   {
+      Q_OBJECT
+      public:
+         /**
+          * Constructor
+          */
+         DynamicIntControl();
+      
+         /**
+          * Destructor
+          */
+         virtual ~DynamicIntControl();
+      
+         /**
+          * @see DynamicAbstractControl#initializeData
+          */
+         virtual void initializeData(DynamicAbstractControl *newParent, PropertyEditorModel *model,
+             dtDAL::ActorProxy *proxy, dtDAL::ActorProperty *property);
+      
+         /**
+          * @see DynamicAbstractControl#updateEditorFromModel
+          */
+         virtual void updateEditorFromModel(QWidget *widget);
+      
+         /**
+          * @see DynamicAbstractControl#updateModelFromEditor
+          */
+         virtual bool updateModelFromEditor(QWidget *widget);
+      
+         /**
+          * @see DynamicAbstractControl#createEditor
+          */
+         virtual QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option,
             const QModelIndex &index);
+      
+         /**
+          * @see DynamicAbstractControl#getDisplayName
+          */
+         virtual const QString getDisplayName();
+      
+         /**
+          * @see DynamicAbstractControl#getDescription
+          */
+         virtual const QString getDescription();
+      
+         /**
+          * @see DynamicAbstractControl#getValueAsString
+          */
+         virtual const QString getValueAsString();
+   
+         /**
+          * @see DynamicAbstractControl#isEditable
+          */
+         virtual bool isEditable();
 
-        /**
-         * @see DynamicAbstractControl#getDisplayName
-         */
-        virtual const QString getDisplayName();
+      public slots: 
 
          /**
-         * @see DynamicAbstractControl#getDescription
-         */
-        virtual const QString getDescription();
+          * @see DynamicAbstractControl#updateData
+          */
+         virtual bool updateData(QWidget *widget);
 
-         /**
-         * @see DynamicAbstractControl#getValueAsString
-         */
-        virtual const QString getValueAsString();
-
-         /**
-         * @see DynamicAbstractControl#isEditable
-         */
-        virtual bool isEditable();
-
-   public slots: 
-
-        /**
-         * @see DynamicAbstractControl#updateData
-         */
-        virtual bool updateData(QWidget *widget);
-
-        void actorPropertyChanged(ActorProxyRefPtr proxy,
+         void actorPropertyChanged(ActorProxyRefPtr proxy,
             ActorPropertyRefPtr property);
 
-        /**
-         * @see DynamicAbstractControl#handleSubEditDestroy
-         */
-        void handleSubEditDestroy(QWidget *widget, QAbstractItemDelegate::EndEditHint hint = QAbstractItemDelegate::NoHint)
-        {
+         /**
+          * @see DynamicAbstractControl#handleSubEditDestroy
+          */
+         void handleSubEditDestroy(QWidget *widget, QAbstractItemDelegate::EndEditHint hint = QAbstractItemDelegate::NoHint)
+         {
             // we have to check - sometimes the destructor won't get called before the 
             // next widget is created.  Then, when it is called, it sets the NEW editor to NULL!
             if (widget == temporaryEditControl)
@@ -117,19 +117,19 @@ namespace dtEditQt
                updateData(widget);
                temporaryEditControl = NULL;
             }
-        }
+         }
 
-    protected:
+      protected:
 
-    private: 
-        dtDAL::IntActorProperty *myProperty;
+      private: 
+         dtDAL::IntActorProperty *myProperty;
 
-        // This pointer is not really in our control.  It is constructed in the createEditor() 
-        // method and destroyed whenever QT feels like it (mostly when the control looses focus). 
-        // We work around this by trapping the destruction of this object, it should
-        // call our handleSubEditDestroy() method so we know to not hold this anymore
-        SubQLineEdit *temporaryEditControl;
-    };
+         // This pointer is not really in our control.  It is constructed in the createEditor() 
+         // method and destroyed whenever QT feels like it (mostly when the control looses focus). 
+         // We work around this by trapping the destruction of this object, it should
+         // call our handleSubEditDestroy() method so we know to not hold this anymore
+         SubQLineEdit *temporaryEditControl;
+   };
 
 }
 

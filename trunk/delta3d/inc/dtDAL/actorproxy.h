@@ -143,8 +143,8 @@ namespace dtDAL
          }
 
          /**
-          * Returns an ordered list of strings corresponding to the inheritance
-          * hierarchy for an instance of this class.
+          * Returns an alphabetically ordered list of strings corresponding to the list of
+          * ancestor classes from which this derives.
           * @return An STL set.
           */
          const std::set<std::string>& GetClassHierarchy() const { return mClassNameSet; }

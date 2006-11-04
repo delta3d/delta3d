@@ -29,6 +29,7 @@
 #include <dtDAL/datatype.h>
 #include <dtDAL/project.h>
 #include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/resourcedescriptor.h>
 #include <dtHLAGM/objecttoactor.h>
 #include <dtHLAGM/interactiontomessage.h>
 #include <dtHLAGM/hlacomponent.h>
@@ -221,6 +222,7 @@ void HLATests::setUp()
 {
    try
    {
+      dtDAL::Project::GetInstance().SetContext("data/ProjectContext");
       dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
       std::string logName("HLATests");
       logger = &dtUtil::Log::GetInstance(logName);
@@ -725,7 +727,7 @@ void HLATests::TestReflectAttributes()
                    encodedWorldCoordinate,
                    location.EncodedLength());
 
-      mHLAComponent->discoverObjectInstance(mObjectHandle1, mClassHandle1, "");
+      mHLAComponent->discoverObjectInstance(mObjectHandle1, mClassHandle1, "dumbstringname");
 
       const dtCore::UniqueId* id = mHLAComponent->GetRuntimeMappings().GetId(mObjectHandle1);
       CPPUNIT_ASSERT(id != NULL);
@@ -737,7 +739,7 @@ void HLATests::TestReflectAttributes()
       CPPUNIT_ASSERT(id == NULL);
 
       //recreate the object for the full test.
-      mHLAComponent->discoverObjectInstance(mObjectHandle1, mClassHandle1, "");
+      mHLAComponent->discoverObjectInstance(mObjectHandle1, mClassHandle1, "dumbname");
 
       id = mHLAComponent->GetRuntimeMappings().GetId(mObjectHandle1);
       CPPUNIT_ASSERT(id != NULL);
@@ -755,6 +757,8 @@ void HLATests::TestReflectAttributes()
 
       //There is a mapping to set the sending id to the new actor as well.
       CPPUNIT_ASSERT(msg->GetSendingActorId() == *id);
+      
+      CPPUNIT_ASSERT(static_cast<const dtGame::ActorUpdateMessage&>(*msg).GetUpdateParameter("Mesh") != NULL);
 
       //check the entity id mapping.
       id = mHLAComponent->GetRuntimeMappings().GetId(entityId);
@@ -783,6 +787,36 @@ void HLATests::TestReflectAttributes()
       CPPUNIT_ASSERT(osg::equivalent(actualRotation[0], expectedRotation[0], 1e-3f) &&
                      osg::equivalent(actualRotation[1], expectedRotation[1], 1e-3f) &&
                      osg::equivalent(actualRotation[2], expectedRotation[2], 1e-3f));
+
+      dtDAL::ResourceActorProperty* rap = dynamic_cast<dtDAL::ResourceActorProperty*>(proxy->GetProperty("Mesh"));
+      CPPUNIT_ASSERT(rap != NULL);
+      dtDAL::ResourceDescriptor* rd = rap->GetValue();
+      CPPUNIT_ASSERT_MESSAGE("the mesh resource should have been set.", rd != NULL);
+      const std::string expectedMeshValue("StaticMeshes:articulation_test.ive");
+      CPPUNIT_ASSERT_EQUAL(expectedMeshValue, rd->GetResourceIdentifier());
+
+      //Clear the resource value.
+      rap->SetValue(NULL);
+      
+      //run the same reflect call again to make sure the mesh value is not sent the second time.
+      mHLAComponent->reflectAttributeValues(mObjectHandle1, *ahs, "");
+
+      mTestComponent->reset();
+      dtCore::System::GetInstance().Step();
+
+      //Check the actual message to see if it was a create message.
+      msg = mTestComponent->FindProcessMessageOfType(dtGame::MessageType::INFO_ACTOR_UPDATED);
+
+      CPPUNIT_ASSERT(msg.valid());
+
+      //There is a mapping to set the sending id to the new actor as well.
+      CPPUNIT_ASSERT(msg->GetSendingActorId() == *id);
+      
+      CPPUNIT_ASSERT_MESSAGE("Non-required default values should only be sent in the actor created message", 
+         static_cast<const dtGame::ActorUpdateMessage&>(*msg).GetUpdateParameter("Mesh") == NULL);
+
+      CPPUNIT_ASSERT_MESSAGE("The value should still be null because it didn't send the property the second time.",
+         rap->GetValue() == NULL);
 
       //now test deleting the object.
       mHLAComponent->removeObjectInstance(mObjectHandle1, "");

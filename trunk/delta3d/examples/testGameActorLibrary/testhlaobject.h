@@ -90,6 +90,9 @@ public:
     * @return the last known rotation for this if it's a remote entity as yaw, pitch, roll.
     */
    osg::Vec3 GetLastKnownRotation() const { return mDeadReckoningHelper->GetLastKnownRotation(); }
+  
+   ///This is a placeholder for the mesh property since we don't want to actually load anything.
+   void TestLoadTheMesh(const std::string& value);
    
 private:
    dtCore::RefPtr<dtGame::DeadReckoningHelper> mDeadReckoningHelper;
