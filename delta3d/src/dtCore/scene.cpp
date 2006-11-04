@@ -303,7 +303,7 @@ void Scene::RegisterPhysical( Physical *physical )
 
 void Scene::RegisterCollidable( Transformable* collidable )
 {
-   if( collidable == 0 )
+   if( collidable == NULL )
    {
       return;
    }
@@ -317,7 +317,8 @@ void Scene::RegisterCollidable( Transformable* collidable )
    // this.
    if( Physical* physical = dynamic_cast<Physical*>(collidable) )
    {
-      physical->SetBodyID( dBodyCreate( mWorldID ) );
+      if(physical != NULL)
+         physical->SetBodyID( dBodyCreate( mWorldID ) );
    }
 
    mCollidableContents.push_back( collidable );
