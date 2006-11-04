@@ -143,7 +143,7 @@ namespace dtEditQt
       }
       dtDAL::Map& currMap = *m;
       
-      if (!mChildren.valid())
+      if (mChildren.valid())
       {
          std::vector<dtDAL::NamedParameter*> toFill;
          mChildren->GetParameters(toFill);

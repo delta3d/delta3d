@@ -37,6 +37,7 @@ namespace dtActors
    //////////////////////////////////////////////////////////////////////////////
    TaskActor::TaskActor(dtGame::GameActorProxy &proxy) : dtGame::GameActor(proxy)
    {
+      SetName("Task");
       Reset();
    }
 

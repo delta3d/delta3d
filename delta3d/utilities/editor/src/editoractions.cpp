@@ -412,7 +412,7 @@ namespace dtEditQt
         if(!dtDAL::Project::GetInstance().IsContextValid())
         {
             slotPauseAutosave();
-            QMessageBox::critical((QWidget *)EditorData::getInstance().getMainWindow(),
+            QMessageBox::critical(EditorData::getInstance().getMainWindow(),
                     tr("Map Open Error"),tr("The current project is not valid."),tr("OK"));
             slotRestartAutosave();
             return;
@@ -425,7 +425,7 @@ namespace dtEditQt
 
         slotPauseAutosave();
 
-        DialogListSelection openMapDialog((QWidget *)EditorData::getInstance().getMainWindow(),
+        DialogListSelection openMapDialog(EditorData::getInstance().getMainWindow(),
             tr("Open Existing Map"),tr("Available Maps"));
 
         QStringList listItems;

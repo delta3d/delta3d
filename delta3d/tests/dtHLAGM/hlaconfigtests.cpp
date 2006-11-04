@@ -285,6 +285,13 @@ void HLAConfigTests::TestConfigure()
             props.push_back(attrToProp);
          }
 
+         {
+            dtHLAGM::AttributeToPropertyList attrToProp("", dtHLAGM::AttributeType::UNKNOWN, false);
+            dtHLAGM::OneToManyMapping::ParameterDefinition pd("Mesh", dtDAL::DataType::STATIC_MESH, "StaticMeshes:articulation_test.ive", false);
+            attrToProp.GetParameterDefinitions().push_back(pd); 
+            props.push_back(attrToProp);
+         }
+
          CheckObjectToActorMapping("TestHLA", "Tank",
             "BaseEntity.PhysicalEntity.Platform.GroundVehicle",
             "EntityIdentifier", &type, false, props);

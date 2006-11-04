@@ -27,6 +27,8 @@
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/groupuiregistry.h>
 #include <dtEditQt/dynamicsubwidgets.h>
+#include <dtEditQt/groupuiplugin.h>
+#include <dtEditQt/mainwindow.h>
 
 #include <dtDAL/groupactorproperty.h>
 #include <dtUtil/log.h>
@@ -34,12 +36,13 @@
 #include <QtGui/QWidget>
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QPushButton>
+#include <QtGui/QMessageBox>
 
 namespace dtEditQt 
 {
 
    ///////////////////////////////////////////////////////////////////////////////
-   DynamicGroupPropertyControl::DynamicGroupPropertyControl()
+   DynamicGroupPropertyControl::DynamicGroupPropertyControl(): mGroupProperty(NULL)
    {
    }
 
@@ -58,11 +61,13 @@ namespace dtEditQt
          children.push_back(child);
       }
    }
+   
    /////////////////////////////////////////////////////////////////////////////////
    QWidget *DynamicGroupPropertyControl::createEditor(QWidget *parent, 
       const QStyleOptionViewItem &option, const QModelIndex &index)
    {
       QWidget *wrapper = new QWidget(parent);
+      wrapper->setFocusPolicy(Qt::StrongFocus);
       // set the background color to white so that it sort of blends in with the rest of the controls
       setBackgroundColor(wrapper, PropertyEditorTreeView::ROW_COLOR_ODD);
 
@@ -72,20 +77,16 @@ namespace dtEditQt
          return wrapper;
       }
 
-      QHBoxLayout *hBox = new QHBoxLayout(wrapper);
-      hBox->setMargin(0);
-      hBox->setSpacing(0);
+      QGridLayout* grid = new QGridLayout(wrapper);
+      grid->setMargin(0);
+      grid->setSpacing(1);
 
-      // Use Current button
+      // Edit button
       SubQPushButton* temporaryEditBtn = new SubQPushButton(tr("Edit"), wrapper, this);
-      temporaryEditBtn->setMaximumHeight(18);
       connect(temporaryEditBtn, SIGNAL(clicked()), this, SLOT(EditClicked()));
       temporaryEditBtn->setToolTip(QString(tr("Edits this property with the configured editor plugin.")));
-      // the button should get focus, not the wrapping widget
-      wrapper->setFocusProxy(temporaryEditBtn);
 
-      // setup the horizontal layout 
-      hBox->addWidget(temporaryEditBtn);
+      grid->addWidget(temporaryEditBtn, 0, 0, 1, 1);
 
       return wrapper;
    }
@@ -94,8 +95,19 @@ namespace dtEditQt
    void DynamicGroupPropertyControl::initializeData(DynamicAbstractControl *newParent,
         PropertyEditorModel *newModel, dtDAL::ActorProxy *newProxy, dtDAL::ActorProperty *newProperty)
    {
-      DynamicAbstractControl::initializeData(newParent, newModel, newProxy, newProperty);
-      mGroupProperty = dynamic_cast<dtDAL::GroupActorProperty*>(newProperty);
+      // Note - We used to have dynamic_cast in here, but it was failing to properly cast in 
+      // all cases in Linux with gcc4.  So we replaced it with a static cast.   
+      if (newProperty != NULL && newProperty->GetPropertyType() == dtDAL::DataType::GROUP) 
+      {
+         mGroupProperty = dynamic_cast<dtDAL::GroupActorProperty*>(newProperty);
+         DynamicAbstractControl::initializeData(newParent, newModel, newProxy, newProperty);
+      } 
+      else 
+      {
+         std::string propertyName = (newProperty != NULL) ? newProperty->GetName() : "NULL";
+         LOG_ERROR("Cannot create dynamic control because property \"" + 
+            propertyName + "\" is not the correct type.");
+      }
    }
    
    /////////////////////////////////////////////////////////////////////////////////
@@ -134,7 +146,15 @@ namespace dtEditQt
 
       return !mGroupProperty->IsReadOnly() &&
          //It's only editable if a plugin for the property's editor type is registered.
-         EditorData::getInstance().GetGroupUIRegistry().GetPlugin(mGroupProperty->GetEditorType()) != NULL;
+         GetPlugin() != NULL;
+   }
+   
+   /////////////////////////////////////////////////////////////////////////////////
+   GroupUIPlugin* DynamicGroupPropertyControl::GetPlugin()
+   {
+      if (mGroupProperty == NULL)
+         return NULL;
+      return EditorData::getInstance().GetGroupUIRegistry().GetPlugin(mGroupProperty->GetEditorType());
    }
    
    /////////////////////////////////////////////////////////////////////////////////
@@ -150,7 +170,40 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicGroupPropertyControl::EditClicked()
    {
+      if (mGroupProperty == NULL)
+      {
+         QMessageBox::critical(EditorData::getInstance().getMainWindow(),
+                 tr("Error"),tr("No Group Property is associated with this control.  An internal error has occurred."), QMessageBox::Ok, QMessageBox::Ok);
+         return;
+      }
       
+      GroupUIPlugin* plugin = GetPlugin();
+      QWidget* pluginWidget = plugin->CreateWidget(EditorData::getInstance().getMainWindow());
+      if (pluginWidget == NULL)
+      {
+         QMessageBox::critical(EditorData::getInstance().getMainWindow(),
+                 tr("Plugin Error"),tr("The plugin registered for this group actor property returned a NULL editor window."),QMessageBox::Ok, QMessageBox::Ok);
+         return;
+      }
+      
+      plugin->UpdateWidgetFromModel(*pluginWidget, *mGroupProperty->GetValue());
+      
+      QDialog* dialog = dynamic_cast<QDialog*>(pluginWidget);
+      if (dialog != NULL)
+      {
+         dialog->setModal(true);
+         dialog->exec();
+         if (dialog->result() == QDialog::Accepted)
+         {
+            dtCore::RefPtr<dtDAL::NamedGroupParameter> param = new dtDAL::NamedGroupParameter(mGroupProperty->GetName());
+            plugin->UpdateModelFromWidget(*pluginWidget, *param);      
+         }
+      }
+      else
+      {
+         QMessageBox::critical(EditorData::getInstance().getMainWindow(),
+                 tr("Plugin Error"),tr("Non-QDialog group property plugin widgets are not yet supported."), QMessageBox::Ok, QMessageBox::Ok);
+      }
    }
    
 }

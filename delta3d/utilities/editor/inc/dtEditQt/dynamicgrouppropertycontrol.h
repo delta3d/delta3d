@@ -33,6 +33,7 @@ namespace dtDAL
 
 namespace dtEditQt 
 {
+   class GroupUIPlugin;
    class PropertyEditorModel;
    
    /**
@@ -110,13 +111,15 @@ namespace dtEditQt
          
          ///Slot called when the edit button on the editor control is clicked.
          void EditClicked();
-         
+
       protected:
             
       private:
+         //helper method for getting the appropriate plugin for the property.
+         GroupUIPlugin* GetPlugin();
+         
          dtDAL::GroupActorProperty* mGroupProperty;
-         
-         
+                 
    };
    
 }

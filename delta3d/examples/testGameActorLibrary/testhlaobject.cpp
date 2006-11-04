@@ -60,6 +60,12 @@ void TestHLAObjectProxy::BuildPropertyMap()
                                             dtDAL::MakeFunctor(*actor, &TestHLAObject::SetDamageState),
                                             dtDAL::MakeFunctorRet(*actor, &TestHLAObject::GetDamageState),
                                             "The general amount of damage sustained by the object.", ""));
+
+   AddProperty(
+               new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::STATIC_MESH, 
+                                                "Mesh", "Mesh",
+                                                dtDAL::MakeFunctor(*actor, &TestHLAObject::TestLoadTheMesh),
+                                                "", ""));
    
 }
 
@@ -130,3 +136,6 @@ void TestHLAObject::SetLastKnownRotation(const osg::Vec3& vec)
 {
    mDeadReckoningHelper->SetLastKnownRotation(vec);
 }
+
+void TestHLAObject::TestLoadTheMesh(const std::string& value)
+{}

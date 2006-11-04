@@ -63,8 +63,8 @@ namespace dtEditQt
         else 
         {
             std::string propertyName = (newProperty != NULL) ? newProperty->GetName() : "NULL";
-            LOG_ERROR("Cannot create dynamic control because property [" + 
-                propertyName + "] is not the correct type.");
+            LOG_ERROR("Cannot create dynamic control because property \"" + 
+                propertyName + "\" is not the correct type.");
         }
     }
 
