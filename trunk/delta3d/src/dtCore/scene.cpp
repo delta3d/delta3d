@@ -154,11 +154,12 @@ Scene::~Scene()
    // This prevents a crash-on-exit in STAGE.
    for(  TransformableVector::iterator iter = mCollidableContents.begin();
          iter != mCollidableContents.end();
-         iter++ )
+         ++iter )
    {
       if( Physical* physical = dynamic_cast<Physical*>(*iter) )
       {
-         physical->SetBodyID(0);
+         if(physical != NULL)
+            physical->SetBodyID(0);
       }
    }
 
