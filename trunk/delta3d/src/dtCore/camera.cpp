@@ -85,17 +85,18 @@ void Camera::TakeScreenShot(std::string& nameToOutPut)
    time_t currTime;
    time(&currTime);
    nameToOutPut += dtUtil::TimeAsUTC(currTime);
-   char buffer[512];
-   for(unsigned int i = 0 ; i < strlen(nameToOutPut.c_str()); ++i)
+   std::string buffer;
+   for(unsigned int i = 0 ; i < nameToOutPut.length(); ++i)
    {
-      if(nameToOutPut.c_str()[i] == '.' 
-         || nameToOutPut.c_str()[i] == ':'
-         || nameToOutPut.c_str()[i] == '-')
+      if(nameToOutPut[i] == '.' 
+         || nameToOutPut[i] == ':'
+         || nameToOutPut[i] == '-')
       {
          buffer[i] = '_';
       }
       else
-         buffer[i] = nameToOutPut.c_str()[i];
+         buffer[i] = nameToOutPut[i];
+      
       buffer[i + 1]= '\0';
    }
    nameToOutPut = buffer;

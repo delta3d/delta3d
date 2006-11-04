@@ -58,32 +58,32 @@ namespace dtCore
    class DT_CORE_EXPORT ScreenShotCallback : public Producer::Camera::Callback
    {
       public :
-         ScreenShotCallback() : TakeScreenShotNextFrame(false){}
+         ScreenShotCallback() : mTakeScreenShotNextFrame(false){}
 
-         void SetNameToOutPut(std::string& name)
+         void SetNameToOutPut(const std::string& name)
          {
-            TakeScreenShotNextFrame  = true;
-            NameOfScreenShotToOutPut = name + ".jpg";
+            mTakeScreenShotNextFrame  = true;
+            mNameOfScreenShotToOutPut = name + ".jpg";
          }
 
          virtual void operator()(const Producer::Camera &camera)
          {
-            if(TakeScreenShotNextFrame)
+            if(mTakeScreenShotNextFrame)
             {
-               TakeScreenShotNextFrame = false;
+               mTakeScreenShotNextFrame = false;
                osg::ref_ptr<osg::Image> image = new osg::Image;
                int x,y;
                unsigned int width, height;
                camera.getProjectionRectangle( x,y,width, height);
                image->allocateImage(width, height, 1, GL_RGB, GL_UNSIGNED_BYTE);
                image->readPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE);
-               osgDB::writeImageFile( *image.get(), NameOfScreenShotToOutPut.c_str() ); // jpg, rgb, png, bmp
+               osgDB::writeImageFile( *image.get(), mNameOfScreenShotToOutPut.c_str() ); // jpg, rgb, png, bmp
             }
          }
 
       private:
-         bool  TakeScreenShotNextFrame;
-         std::string NameOfScreenShotToOutPut;
+         bool  mTakeScreenShotNextFrame;
+         std::string mNameOfScreenShotToOutPut;
    };
 
    /**
