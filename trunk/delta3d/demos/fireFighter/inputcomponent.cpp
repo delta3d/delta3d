@@ -44,8 +44,6 @@
 #include <dtGame/basemessages.h>
 #include <dtUtil/log.h>
 #include <osg/io_utils>
-#include <osg/Light>
-#include <osg/LightSource>
 
 using dtCore::RefPtr;
 
@@ -61,7 +59,10 @@ InputComponent::InputComponent(const std::string &name) :
    mWalkSound(NULL), 
    mRunSound(NULL), 
    mCrouchSound(NULL),
-   mCurrentIntersectedItem(NULL)
+   mCurrentIntersectedItem(NULL), 
+   mRadius(0.1f), 
+   mTheta(0.10f),
+   mK(0.40f)
 {
 
 }
@@ -155,8 +156,7 @@ void InputComponent::OnGame()
 {  
    dtCore::Scene &scene   =  GetGameManager()->GetScene();
    dtCore::Camera &camera = *GetGameManager()->GetApplication().GetCamera();
-   dtCore::Mouse  &mouse  = *GetGameManager()->GetApplication().GetMouse();
-   
+
    GameLevelActor *gla = NULL; 
    IsActorInGameMap(gla);
    gla->SetCollisionMesh();
@@ -165,7 +165,7 @@ void InputComponent::OnGame()
    mPlayer->GetTransform(xform);
 
    mMotionModel = new dtCore::CollisionMotionModel(xform.GetTranslation().z(), 
-      0.1f, 0.20f, 0.1f, &GetGameManager()->GetScene(),  
+      mRadius, mK, mTheta, &GetGameManager()->GetScene(),  
       GetGameManager()->GetApplication().GetKeyboard(), 
       GetGameManager()->GetApplication().GetMouse());
 
@@ -229,8 +229,12 @@ bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard,
             // We are crouched
             if(mPlayer->IsCrouched())
             {
-               //mMotionModel->SetMaximumFlySpeed(0.5f);
+               // Get the crouched height of the player and update the motion model
+               dtCore::Transform xform;
+               mPlayer->GetTransform(xform);
+
                mMotionModel->SetMaximumWalkSpeed(0.5f);
+               UpdateCollider(xform.GetTranslation().z());
                mCrouchSound->Play();
             }
             else
@@ -239,15 +243,17 @@ bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard,
                // Run 
                if(app.GetKeyboard()->GetKeyState(Producer::Key_Shift_L))
                {
-                  //mMotionModel->SetMaximumFlySpeed(6.0f);
                   mMotionModel->SetMaximumWalkSpeed(6.0f);
                   mRunSound->Play();
                }   
                // Walk
                else
                {
-                  //mMotionModel->SetMaximumFlySpeed(2.0f);
+                  dtCore::Transform xform;
+                  mPlayer->GetTransform(xform);
+
                   mMotionModel->SetMaximumWalkSpeed(2.0f);
+                  //UpdateCollider(xform.GetTranslation().z());
                   mWalkSound->Play();
                }
             }
@@ -287,12 +293,12 @@ bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard,
       }
       break;
 
-      case Producer::Key_C:
+      /*case Producer::Key_C:
       {
          if(isGameRunning)
             mPlayer->SetIsCrouched(!mPlayer->IsCrouched());
       }
-      break;
+      break;*/
 
       case Producer::Key_bracketleft:
       {
@@ -461,6 +467,11 @@ void InputComponent::OnAddedToGM()
    //                                          GetGameManager()->GetApplication().GetMouse());
 
    dtGame::BaseInputComponent::OnAddedToGM();
+}
+
+void InputComponent::UpdateCollider(float newHeight)
+{
+   mMotionModel->GetFPSCollider().SetDimensions(newHeight, mRadius, mK, mTheta);
 }
 
 void InputComponent::SendGameStateChangedMessage(GameState &oldState, GameState &newState)
