@@ -33,7 +33,7 @@ IMPLEMENT_MANAGEMENT_LAYER(Character)
 {
    RegisterInstance(this);
 
-   AddSender( System::Instance() );
+   AddSender( &dtCore::System::GetInstance() );
 
    // Default collision category = 12
    SetCollisionCategoryBits( UNSIGNED_BIT(12) );

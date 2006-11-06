@@ -19,7 +19,7 @@ StateManager::StateManager() : dtCore::Base("StateManager"),
    mEventFactory(new EventFactory()),
    mStateFactory(new StateFactory())
 {
-   AddSender( dtCore::System::Instance() );
+   AddSender( &dtCore::System::GetInstance() );
 }
 
 StateManager::~StateManager()

@@ -77,7 +77,7 @@ CEUIDrawable::CEUIDrawable( dtCore::DeltaWin *win, dtGUI::BaseScriptModule *sm):
 
 CEUIDrawable::~CEUIDrawable()
 {
-   RemoveSender( System::Instance() );
+   RemoveSender( &dtCore::System::GetInstance() );
    DeregisterInstance(this);
    
    SetOSGNode(0);
@@ -87,7 +87,7 @@ CEUIDrawable::~CEUIDrawable()
 
 void CEUIDrawable::Config()
 {
-   AddSender( System::Instance() );
+   AddSender( &dtCore::System::GetInstance() );
    
    RegisterInstance(this);
 
