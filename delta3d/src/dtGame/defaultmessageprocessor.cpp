@@ -127,15 +127,15 @@ namespace dtGame
       return gap;
    }
 
-   void DefaultMessageProcessor::ProcessRemoteUpdateActor(const ActorUpdateMessage &msg)
+   void DefaultMessageProcessor::ProcessRemoteUpdateActor(const ActorUpdateMessage &msg, GameActorProxy *ap)
    {
-      dtGame::GameActorProxy *ap = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
+      //dtGame::GameActorProxy *ap = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
       if (ap == NULL)
       {
-         LOG_ERROR("The about actor id is invalid");
+         LOG_ERROR("The about actor is invalid");
          return;
       }
-       
+
       ap->ApplyActorUpdate(msg);
    }
 
@@ -165,7 +165,7 @@ namespace dtGame
                dtCore::RefPtr<GameActorProxy> gap = ProcessRemoteCreateActor(msg);
                if (gap.valid())
                {
-                  gap->ApplyActorUpdate(msg);
+                  ProcessRemoteUpdateActor(msg, gap.get());
                   GetGameManager()->AddActor(*gap, true, false);
                }
             }
@@ -174,8 +174,6 @@ namespace dtGame
                LOG_ERROR(ex.TypeEnum().GetName() 
                   + " exception encountered trying to create a remote actor.  The actor will be ignored. Message: " + ex.What());
             }
-   
-            ProcessRemoteUpdateActor(msg);
          }
       }
       else if (!proxy->IsRemote())
@@ -184,7 +182,7 @@ namespace dtGame
       }
       else 
       {
-         ProcessRemoteUpdateActor(msg);
+         ProcessRemoteUpdateActor(msg, proxy);
       }
    }
 
@@ -194,7 +192,7 @@ namespace dtGame
       if (proxy != NULL)
       {
          if (proxy->IsRemote())
-            ProcessRemoteUpdateActor(msg);
+            ProcessRemoteUpdateActor(msg, proxy);
          else
             ProcessLocalUpdateActor(msg);
       }

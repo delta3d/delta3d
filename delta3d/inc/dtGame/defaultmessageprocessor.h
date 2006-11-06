@@ -88,7 +88,7 @@ namespace dtGame
           * Processes a remote update actor message
           * @param msg The message
           */
-         virtual void ProcessRemoteUpdateActor(const ActorUpdateMessage &msg);
+         virtual void ProcessRemoteUpdateActor(const ActorUpdateMessage &msg, GameActorProxy *ap);
 
          /**
           * Processes a remote delete actor message
@@ -98,21 +98,23 @@ namespace dtGame
 
          /**
           * Processes a create actor message
+          * Note - It is recommended that you do not override this unless you provide all of the 
+          * primary behavior.
           * @param msg The message
           */
-         void ProcessCreateActor(const ActorUpdateMessage &msg);
+         virtual void ProcessCreateActor(const ActorUpdateMessage &msg);
 
          /**
           * Processes an update actor message
           * @param msg The message
           */
-         void ProcessUpdateActor(const ActorUpdateMessage &msg);
+         virtual void ProcessUpdateActor(const ActorUpdateMessage &msg);
 
          /**
           * Processes a delete actor message
           * @param msg The message
           */
-         void ProcessDeleteActor(const ActorDeletedMessage &msg);
+         virtual void ProcessDeleteActor(const ActorDeletedMessage &msg);
 
          /**
           * Called when a pause command message is received.
