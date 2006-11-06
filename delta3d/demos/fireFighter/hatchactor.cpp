@@ -24,6 +24,7 @@
 #include <dtAudio/audiomanager.h>
 #include <dtGame/gamemanager.h>
 #include <dtDAL/actorproperty.h>
+#include <dtDAL/enginepropertytypes.h>
 #include <fireFighter/messagetype.h>
 #include <osg/MatrixTransform>
 
@@ -128,6 +129,8 @@ void HatchActor::OnEnteredWorld()
          LOG_ERROR("Failed to find the hatch node in the game level.");
       }
    }
+
+   //Activate(true);
 }
 
 void HatchActor::Activate(bool enable)

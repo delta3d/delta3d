@@ -169,6 +169,8 @@ void InputComponent::OnGame()
       GetGameManager()->GetApplication().GetKeyboard(), 
       GetGameManager()->GetApplication().GetMouse());
 
+   mMotionModel->SetMaximumTurnSpeed(1000.0f);
+
    mMotionModel->SetUseMouseButtons(false);
 
    mMotionModel->SetTarget(mPlayer);
