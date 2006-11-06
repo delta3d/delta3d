@@ -162,7 +162,14 @@ class FIRE_FIGHTER_EXPORT InputComponent : public dtGame::BaseInputComponent
        * @throws MISSING_REQUIRED_ACTOR_EXCEPTION 
        */
       template <class T>
-      void IsActorInGameMap(T *&actor, bool throwException);
+      void IsActorInGameMap(T *&actor, bool throwException = true);
+
+      /**
+       * Helper method to update the motion model when the player
+       * crouches or stands up
+       * @param newHeight The new height of the player actor
+       */
+      void UpdateCollider(float newHeight);
 
       GameState *mCurrentState;
       PlayerActor *mPlayer;
@@ -172,10 +179,11 @@ class FIRE_FIGHTER_EXPORT InputComponent : public dtGame::BaseInputComponent
 
       dtAudio::Sound *mBellSound, *mDebriefSound, *mWalkSound, *mRunSound, *mCrouchSound;
       GameItemActor *mCurrentIntersectedItem;
+      float mRadius, mTheta, mK;
 };
 
 template<class T>
-void InputComponent::IsActorInGameMap(T *&actor, bool throwException = true) 
+void InputComponent::IsActorInGameMap(T *&actor, bool throwException) 
 {
    std::vector<dtCore::RefPtr<dtGame::GameActorProxy> > proxies;
    GetGameManager()->GetAllGameActors(proxies);

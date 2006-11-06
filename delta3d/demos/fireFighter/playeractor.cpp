@@ -326,6 +326,6 @@ void PlayerActor::SetIsCrouched(bool crouch)
 
    dtCore::Transform xform;
    GetTransform(xform);
-   mIsCrouched ? xform.GetTranslation().z() /= 2 : xform.GetTranslation().z() *= 2; 
+   mIsCrouched ? xform.GetTranslation().z() /= 2.0 : xform.GetTranslation().z() *= 2.0; 
    SetTransform(xform);
 }

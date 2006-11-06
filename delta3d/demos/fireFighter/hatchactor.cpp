@@ -23,6 +23,7 @@
 #include <fireFighter/entityactorregistry.h>
 #include <dtAudio/audiomanager.h>
 #include <dtGame/gamemanager.h>
+#include <dtDAL/actorproperty.h>
 #include <fireFighter/messagetype.h>
 #include <osg/MatrixTransform>
 
@@ -152,7 +153,7 @@ void HatchActor::Activate(bool enable)
    // is universal. The base class does not do this. 
    static bool isFirst = true;
 
-   if(!IsActivated() && !isFirst)
+   if(!IsActivated() && !isFirst && !GetGameActorProxy().IsInSTAGE())
       PlayItemUseSnd();
 
    // If we are in STAGE, we have a NULL game manager. So peace out of here

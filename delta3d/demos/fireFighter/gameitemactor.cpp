@@ -98,7 +98,8 @@ GameItemActor::~GameItemActor()
 
 void GameItemActor::OnEnteredWorld()
 {
-   
+   // Turn off ODE
+   SetCollisionDetection(false);
 }
 
 void GameItemActor::SetItemUseSnd(const std::string &fileName)
