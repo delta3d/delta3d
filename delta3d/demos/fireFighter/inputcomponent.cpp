@@ -169,13 +169,12 @@ void InputComponent::OnGame()
       GetGameManager()->GetApplication().GetKeyboard(), 
       GetGameManager()->GetApplication().GetMouse());
 
-   mMotionModel->SetMaximumTurnSpeed(1000.0f);
-
+   mMotionModel->SetMaximumTurnSpeed(5000.0f);
    mMotionModel->SetUseMouseButtons(false);
-
+   mMotionModel->SetCanJump(false);
    mMotionModel->SetTarget(mPlayer);
 
-   // Turn off the scene light and use the light maps/shadows maps
+   // Turn off the scene light and use the light maps/shadow maps
    camera.GetSceneHandler()->GetSceneView()->setLightingMode(osgUtil::SceneView::NO_SCENEVIEW_LIGHT);
    osg::StateSet *globalState = camera.GetSceneHandler()->GetSceneView()->getGlobalStateSet();
    globalState->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
@@ -197,6 +196,7 @@ void InputComponent::OnGame()
 void InputComponent::OnDebrief()
 {
    StopSounds();
+
    if(mMotionModel != NULL)
       mMotionModel->SetTarget(NULL);
 
