@@ -29,7 +29,7 @@ BaseABC::BaseABC( const std::string& name /*= "BaseABC"*/ ) :  Base(name),
 {
    RegisterInstance(this);
 
-   System*  sys   = System::Instance();
+   System*  sys   = &dtCore::System::GetInstance();
    assert( sys );
    AddSender( sys );
 }
@@ -37,12 +37,12 @@ BaseABC::BaseABC( const std::string& name /*= "BaseABC"*/ ) :  Base(name),
 BaseABC::~BaseABC()
 {
    DeregisterInstance(this);
-   RemoveSender( System::Instance() );
+   RemoveSender( &dtCore::System::GetInstance() );
 }
 
 void BaseABC::Config()
 {
-   System*  sys   = System::Instance();
+   System*  sys   = &dtCore::System::GetInstance();
    assert( sys );
 
    sys->Config();

@@ -110,7 +110,7 @@ CollisionMotionModel::CollisionMotionModel(float pHeight, float pRadius, float k
 
    mMouse = mouse;
 
-   AddSender(System::Instance());
+   AddSender(&System::GetInstance());
 }
 
 /**
@@ -118,7 +118,7 @@ CollisionMotionModel::CollisionMotionModel(float pHeight, float pRadius, float k
 */
 CollisionMotionModel::~CollisionMotionModel()
 {
-   RemoveSender(System::Instance());
+   RemoveSender(&System::GetInstance());
 
    mLookUpDownAxis->RemoveAxisListener(mLookUpDownListener);
    mTurnLeftRightAxis->RemoveAxisListener(mLookLeftRightListener);

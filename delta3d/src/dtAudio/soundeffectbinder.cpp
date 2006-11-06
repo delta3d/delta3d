@@ -38,7 +38,7 @@ SoundEffectBinder::SoundEffectBinder( const std::string& name /*= "SoundEffectBi
 :  dtCore::Base(name),
    mSoundEffectListener(0)
 {
-   dtCore::System*  sys   = dtCore::System::Instance();
+   dtCore::System*  sys   = &dtCore::System::GetInstance();
    assert( sys );
 
    AddSender( sys );
@@ -56,7 +56,7 @@ SoundEffectBinder::SoundEffectBinder( const std::string& name /*= "SoundEffectBi
 SoundEffectBinder::~SoundEffectBinder()
 {
    Shutdown();
-   RemoveSender( dtCore::System::Instance() );
+   RemoveSender( &dtCore::System::GetInstance() );
 }
 
 

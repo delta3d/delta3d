@@ -13,13 +13,13 @@ Action::Action()
    mAccumTime = 0.0f;
    mIsRunning = false;
 
-   AddSender(dtCore::System::Instance());
+   AddSender(&dtCore::System::GetInstance());
 
 }
 
 Action::~Action()
 {
-   RemoveSender(dtCore::System::Instance());
+   RemoveSender(&dtCore::System::GetInstance());
 }
 
 void Action::Start()

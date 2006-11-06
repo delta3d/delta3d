@@ -160,7 +160,7 @@ AudioManager::~AudioManager()
 
       alutExit();
 
-      RemoveSender( dtCore::System::Instance() );
+      RemoveSender( &dtCore::System::GetInstance() );
    }
    catch(...)
    {
@@ -252,7 +252,7 @@ AudioManager::OnMessage( MessageData* data )
 {
    assert( data );
 
-   if( data->sender == dtCore::System::Instance() )
+   if( data->sender == &dtCore::System::GetInstance() )
    {
       // system messages
       if( data->message == "preframe" )
@@ -589,7 +589,7 @@ AudioManager::FreeSound( Sound*& sound )
 
    // stop listening to this guys messages
    snd->RemoveSender( this );
-   snd->RemoveSender( dtCore::System::Instance() );
+   snd->RemoveSender( &dtCore::System::GetInstance() );
    RemoveSender( snd.get() );
 
    // free the sound's source and buffer
@@ -1146,7 +1146,7 @@ AudioManager::PostFrame( const double deltaFrameTime )
       if (snd.valid())
       {
          snd->RemoveSender( this );
-         snd->RemoveSender( dtCore::System::Instance() );
+         snd->RemoveSender( &dtCore::System::GetInstance() );
 
          FreeSource( snd.get() );
       }
@@ -1657,7 +1657,7 @@ AudioManager::PlaySound( SoundObj* snd )
    }
 
    snd->AddSender( this );
-   snd->AddSender( dtCore::System::Instance() );
+   snd->AddSender( &dtCore::System::GetInstance() );
    mPlayQueue.push( snd->Source() );
 }
 
@@ -2494,7 +2494,7 @@ AudioManager::ListenerObj::ListenerObj()
    RegisterInstance( this );
 
    Clear();
-   AddSender( dtCore::System::Instance() );
+   AddSender( &dtCore::System::GetInstance() );
 }
 
 
@@ -2503,7 +2503,7 @@ AudioManager::ListenerObj::~ListenerObj()
 {
    DeregisterInstance( this );
 
-   RemoveSender( dtCore::System::Instance() );
+   RemoveSender( &dtCore::System::GetInstance() );
    Clear();
 }
 

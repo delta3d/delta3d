@@ -218,8 +218,8 @@ namespace dtTest
 
       mSender->FireEvent(&EventTypes::EVENT_A, mSM.get() );
 
-      dtCore::System::Instance()->Start();
-      dtCore::System::Instance()->Step(); //need to cycle the System once
+      dtCore::System::GetInstance().Start();
+      dtCore::System::GetInstance().Step(); //need to cycle the System once
 
       CPPUNIT_ASSERT_MESSAGE("Didn't transition",
                               mStateB.get() == mSM->GetCurrentState() );

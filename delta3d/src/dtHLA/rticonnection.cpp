@@ -85,7 +85,7 @@ RTIConnection::RTIConnection(std::string name)
 
    RegisterInstance(this);
 
-   AddSender(dtCore::System::Instance());
+   AddSender(&dtCore::System::GetInstance());
 
    SetGeoOrigin(0, 0, 0);
 
@@ -160,7 +160,7 @@ throw (RTI::FederateInternalError)
 
    mObjectHandleGhostDataMap.clear();
 
-   RemoveSender(dtCore::System::Instance());
+   RemoveSender(&dtCore::System::GetInstance());
 
    DeregisterInstance(this);
 }

@@ -51,7 +51,7 @@ Widget::~Widget()
 
 void Widget::Config( const WinData* d /*= NULL*/ )
 {
-   System*  sys   = System::Instance();
+   System*  sys   = &dtCore::System::GetInstance();
    assert( sys );
 
    if( sys->IsRunning() )
@@ -170,7 +170,7 @@ void Widget::OnMessage( Base::MessageData* data )
 
 void Widget::Step( void )
 {
-   System*  sys   = System::Instance();
+   System*  sys   = &dtCore::System::GetInstance();
    assert( sys );
 
    sys->Step();

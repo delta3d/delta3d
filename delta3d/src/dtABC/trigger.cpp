@@ -38,11 +38,11 @@ void Trigger::Fire()
       if( mTimesActive < 0 )
       {
          //Infintie activations
-         AddSender( dtCore::System::Instance() );
+         AddSender( &dtCore::System::GetInstance() );
       }
       else if( mTimesTriggered < mTimesActive )
       {
-         AddSender( dtCore::System::Instance() );
+         AddSender( &dtCore::System::GetInstance() );
          ++mTimesTriggered;
       }
    }
@@ -61,7 +61,7 @@ void Trigger::Update( double time )
             mActionToFire->Start();
          }
          mTimeLeft = mTimeDelay;
-         RemoveSender( dtCore::System::Instance() );
+         RemoveSender( &dtCore::System::GetInstance() );
       }
    }
 }
