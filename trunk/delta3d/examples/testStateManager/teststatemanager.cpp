@@ -18,7 +18,7 @@ StateWalker::StateWalker(dtABC::StateManager* gm) : BaseClass(), mStateManager(g
    if( mStateManager.valid() )
       mStateManager->AddSender( this );
 
-   AddSender( dtCore::System::Instance() );
+   AddSender( &dtCore::System::GetInstance() );
 
    mStateManager->RegisterEvent<Alt>( &MyEventType::ALT );
    mStateManager->RegisterEvent<Start>( &MyEventType::START );
@@ -36,7 +36,7 @@ StateWalker::StateWalker(dtABC::StateManager* gm) : BaseClass(), mStateManager(g
 StateWalker::~StateWalker()
 {
    mStateManager->RemoveSender(this);
-   RemoveSender( dtCore::System::Instance() );
+   RemoveSender( &dtCore::System::GetInstance() );
 }
 
 void StateWalker::OnMessage(dtCore::Base::MessageData* msg)

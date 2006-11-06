@@ -26,7 +26,7 @@ public:
       mCameraHeading(0.0f),
       mCameraPitch(0.0f)
    {
-      AddSender( System::Instance() );
+      AddSender( &dtCore::System::GetInstance() );
       srand( unsigned( time(0) ) );
    }
 

@@ -29,7 +29,7 @@ public:
       mCameraHeading(0.0f),
       mCameraPitch(0.0f)
    {
-      AddSender( System::Instance() );
+      AddSender( &dtCore::System::GetInstance() );
    }
 
    virtual void OnMessage( MessageData* data )

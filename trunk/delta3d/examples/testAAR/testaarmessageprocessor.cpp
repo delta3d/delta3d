@@ -499,7 +499,7 @@ void TestAARMessageProcessor::Reset()
    GetGameManager()->DeleteAllActors();
    mLmsComponent->ClearTaskList();
 
-   dtCore::System::Instance()->Step();
+   dtCore::System::GetInstance().Step();
 
    dtCore::RefPtr<dtDAL::ActorType> playerType = GetGameManager()->FindActorType("ExampleActors", "TestPlayer");
    dtCore::RefPtr<dtDAL::ActorProxy> player = GetGameManager()->CreateActor(*playerType);
