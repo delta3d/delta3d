@@ -451,9 +451,9 @@ void CollisionMotionModel::OnMessage(MessageData *data)
       else
       {
          //calculate our new heading
-         newH -= mLookLeftRightCtrl * mMaximumTurnSpeed * deltaFrameTime;
+         newH -= mLookLeftRightCtrl * mMaximumTurnSpeed * (deltaFrameTime / 3);
          //calculate our new pitch
-         newP += mLookUpDownCtrl * mMaximumTurnSpeed * deltaFrameTime;
+         newP += mLookUpDownCtrl * mMaximumTurnSpeed * (deltaFrameTime / 3);
          dtUtil::Clamp(newP, -89.9f, 89.9f); //stay away from 90.0 as it causes funky gimbal lock
          mLookUpDownAxis->SetState(0.0f);//necessary to stop camera drifting down
       }
