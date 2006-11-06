@@ -250,7 +250,7 @@ void TaskActorTests::TestTaskSubTasks()
       subTasksGroup->SetValue(*subTasksGroupParam);
       parentProxy->GetAllSubTasks(children);
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Setting the subtasks via the property should populate the list of children.", 
-         size_t(subTasksGroupParam->GetParameterCount()), children.size());
+         subTasksGroupParam->GetParameterCount(), (unsigned int) children.size());
       
       for (unsigned i = 0; i < children.size(); i++)
       {
