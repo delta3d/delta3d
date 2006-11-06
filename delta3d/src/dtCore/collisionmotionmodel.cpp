@@ -90,6 +90,7 @@ CollisionMotionModel::CollisionMotionModel(float pHeight, float pRadius, float k
       , mLookLeftRightCtrl(0.0f)
       , mLookUpDownCtrl(0.0f)
       , mUseMouseButtons(true)
+      , mCanJump(true)
 {
 
    //setup some axis listeners with functors 
@@ -473,7 +474,7 @@ void CollisionMotionModel::OnMessage(MessageData *data)
          translation.set(translation[0] * mMaximumWalkSpeed, translation[1] * mMaximumWalkSpeed, translation[2] * mMaximumWalkSpeed);
       }
 
-      newXYZ = mCollider.Update(xyz, translation, deltaFrameTime, mKeyboard->GetKeyState(Producer::Key_space));
+      newXYZ = mCollider.Update(xyz, translation, deltaFrameTime, mCanJump ? mKeyboard->GetKeyState(Producer::Key_space) : false);
 
       transform.SetTranslation(newXYZ);
       if(mUseMouseButtons && mMouse->GetButtonState(Mouse::LeftButton)) 

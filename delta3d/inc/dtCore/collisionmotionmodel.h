@@ -230,7 +230,23 @@ namespace dtCore
 
       FPSCollider& GetFPSCollider();
 
+      /**
+       * Sets having to use the mouse buttons to move the camera
+       * @param use True to use
+       */
       void SetUseMouseButtons(bool use) { mUseMouseButtons = use; }
+
+      /**
+       * Sets if the Target can jump
+       * @param jump True to enable jumping
+       */
+      void SetCanJump(bool jump) { mCanJump = jump; }
+
+      /**
+       * Returns true if the target can jump
+       * @return mCanJump
+       */
+      bool GetCanJump() const { return mCanJump; }
 
    private:
 
@@ -341,6 +357,7 @@ namespace dtCore
       float mLookUpDownCtrl;   ///<control value for up/down rotation (-1.0, 1.0)
 
       bool mUseMouseButtons;
+      bool mCanJump;
    };
 }
 

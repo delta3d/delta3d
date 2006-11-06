@@ -16,7 +16,7 @@ public:
       mCharacter(character),
       mKeyboard(keyboard)
    {
-      AddSender(System::Instance());
+      AddSender(&dtCore::System::GetInstance());
    }
 
    void OnMessage(dtCore::Base::MessageData* data)
@@ -68,7 +68,7 @@ public:
       mCharacter(character),
       mTarget(target)
    {
-      AddSender(System::Instance());
+      AddSender(&dtCore::System::GetInstance());
    }
 
    virtual void OnMessage(MessageData *data)
