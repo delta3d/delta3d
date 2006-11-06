@@ -47,6 +47,11 @@ class FIRE_FIGHTER_EXPORT GameLevelActor : public dtGame::GameActor, public dtCo
       /// Stops any sounds this actor has
       void StopSounds(const dtGame::Message &msg);
 
+      /**
+       * Rests the collision mesh of the level
+       */
+      void ResetCollisionMesh(const dtGame::Message &msg);
+
    protected:
 
       virtual void OnEnteredWorld();
@@ -87,6 +92,8 @@ class FIRE_FIGHTER_EXPORT GameLevelActorProxy : public dtGame::GameActorProxy
       }
 
    protected:
+
+      virtual void OnEnteredWorld();
 
       /// Destructor
       virtual ~GameLevelActorProxy();

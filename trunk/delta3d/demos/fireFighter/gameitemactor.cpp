@@ -98,8 +98,7 @@ GameItemActor::~GameItemActor()
 
 void GameItemActor::OnEnteredWorld()
 {
-   // Turn off ODE
-   SetCollisionDetection(false);
+  
 }
 
 void GameItemActor::SetItemUseSnd(const std::string &fileName)
@@ -133,7 +132,3 @@ void GameItemActor::Activate(bool enable)
    mIsActivated ? mItemUseSnd->Play() : mItemUseSnd->Stop();
 }
 
-/*void GameItemActor::SetInventoryIcon(dtHUD::HUDObject *icon)
-{
-   mInventoryIcon = icon;
-}*/

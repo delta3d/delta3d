@@ -276,7 +276,7 @@ void PlayerActor::ComputeSceneIntersections(const float deltaSimTime)
 
       // Now we know we have intersected with a game item
       // we need to send an intersection message
-      SendItemIntersectedMessage(dd->GetUniqueId());
+      SendItemIntersectedMessage(gia->GetUniqueId());
     }
    else
    {

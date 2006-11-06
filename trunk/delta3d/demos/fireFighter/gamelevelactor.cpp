@@ -22,7 +22,9 @@
 #include <fireFighter/messagetype.h>
 #include <fireFighter/messages.h>
 #include <fireFighter/gamestate.h>
+#include <fireFighter/hatchactor.h>
 #include <dtGame/invokable.h>
+#include <dtGame/gamemanager.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtUtil/log.h>
 #include <dtAudio/audiomanager.h>
@@ -63,6 +65,18 @@ dtDAL::ActorProxyIcon* GameLevelActorProxy::GetBillBoardIcon()
       mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IconType::STATICMESH);
    }
    return mBillBoardIcon.get();
+}
+
+void GameLevelActorProxy::OnEnteredWorld()
+{
+   dtGame::Invokable *invoke = new dtGame::Invokable("ResetCollisionMesh", 
+      dtDAL::MakeFunctor(static_cast<GameLevelActor&>(GetGameActor()), 
+      &GameLevelActor::ResetCollisionMesh));
+
+   AddInvokable(*invoke);
+
+   RegisterForMessages(MessageType::ITEM_ACTIVATED,   "ResetCollisionMesh");
+   RegisterForMessages(MessageType::ITEM_DEACTIVATED, "ResetCollisionMesh");
 }
 
 /////////////////////////////////////////////////////////////////
@@ -117,4 +131,14 @@ void GameLevelActor::LoadFile(const std::string &filename)
    }
 
    GetMatrixNode()->addChild(node);
+}
+
+void GameLevelActor::ResetCollisionMesh(const dtGame::Message &msg)
+{
+   dtGame::GameActorProxy *gap = GetGameActorProxy().GetGameManager()->FindGameActorById(msg.GetAboutActorId());
+   HatchActor *ha = dynamic_cast<HatchActor*>(&gap->GetGameActor());
+   if(ha == NULL)
+      return;
+
+   SetCollisionMesh();
 }

@@ -107,7 +107,7 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes::transparent_box.ive</resourceDisplayName>
                 <resource>StaticMeshes::transparent_box.ive</resource>
-            </property>
+            </property> 
             <property>
                 <name>use cache object</name>
                 <boolean>true</boolean>
