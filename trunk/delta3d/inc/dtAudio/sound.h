@@ -376,9 +376,10 @@ namespace dtAudio
          virtual  float       GetMinDistance( void )              const {  return   mMinDist;   }
 
          /**
-          * Set the maximum distance that sound plays at min_gain.
-          * Attenuation is not calculated above this distance
-          *
+          * Sets the distance where there will no longer be any attenuation of
+          * the source.  Used with the Inverse Clamped Distance model.
+          * 
+          * @see dmINVCLAMP
           * @param dist the maximum distance
           */
          virtual  void        SetMaxDistance( float dist );
