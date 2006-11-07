@@ -43,6 +43,7 @@ dtCore::RefPtr<dtDAL::ActorType> EntityActorRegistry::TYPE_PRIMARY_HALON_ACTOR(n
 dtCore::RefPtr<dtDAL::ActorType> EntityActorRegistry::TYPE_SECONDARY_HALON_ACTOR(new dtDAL::ActorType("SecondaryHalonActor", "SecondaryHalonActor"));
 dtCore::RefPtr<dtDAL::ActorType> EntityActorRegistry::TYPE_HATCH_ACTOR(new dtDAL::ActorType("HatchActor", "HatchActor"));
 dtCore::RefPtr<dtDAL::ActorType> EntityActorRegistry::TYPE_FUEL_VALVE_ACTOR(new dtDAL::ActorType("FuelValveActor", "FuelValveActor"));
+dtCore::RefPtr<dtDAL::ActorType> EntityActorRegistry::TYPE_COLLIDABLE_ACTOR(new dtDAL::ActorType("CollidableActor", "CollidableActor"));
 
 extern "C" FIRE_FIGHTER_EXPORT dtDAL::ActorPluginRegistry* CreatePluginRegistry()
 {
@@ -76,4 +77,5 @@ void EntityActorRegistry::RegisterActorTypes()
    mActorFactory->RegisterType<SecondaryHalonActorProxy>(TYPE_SECONDARY_HALON_ACTOR.get());
    mActorFactory->RegisterType<HatchActorProxy>(TYPE_HATCH_ACTOR.get());
    mActorFactory->RegisterType<FuelValveActorProxy>(TYPE_FUEL_VALVE_ACTOR.get());
+   mActorFactory->RegisterType<FuelValveActorProxy>(TYPE_COLLIDABLE_ACTOR.get());
 }

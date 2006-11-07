@@ -40,6 +40,7 @@ class FIRE_FIGHTER_EXPORT EntityActorRegistry : public dtDAL::ActorPluginRegistr
       static dtCore::RefPtr<dtDAL::ActorType> TYPE_SECONDARY_HALON_ACTOR;
       static dtCore::RefPtr<dtDAL::ActorType> TYPE_HATCH_ACTOR;
       static dtCore::RefPtr<dtDAL::ActorType> TYPE_FUEL_VALVE_ACTOR;
+      static dtCore::RefPtr<dtDAL::ActorType> TYPE_COLLIDABLE_ACTOR;
 
      /**
       * Constructs the engine actor registry.

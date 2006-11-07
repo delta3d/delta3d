@@ -68,5 +68,6 @@ class FIRE_FIGHTER_EXPORT FireFighterGameEntryPoint : public dtGame::GameEntryPo
    private:
       
       bool mUseLMS; 
+      dtCore::RefPtr<dtLMS::LmsComponent> mLmsComponent;
 };
 #endif

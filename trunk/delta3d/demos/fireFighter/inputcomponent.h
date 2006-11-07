@@ -171,11 +171,15 @@ class FIRE_FIGHTER_EXPORT InputComponent : public dtGame::BaseInputComponent
        */
       void UpdateCollider(float newHeight);
 
+      /**
+       * Helper method to link tasks in the map
+       */
+      void SetupTasks();
+
       GameState *mCurrentState;
       PlayerActor *mPlayer;
 
-      dtCore::CollisionMotionModel *mMotionModel;
-      //dtCore::FlyMotionModel *mMotionModel;
+      dtCore::RefPtr<dtCore::CollisionMotionModel> mMotionModel;
 
       dtAudio::Sound *mBellSound, *mDebriefSound, *mWalkSound, *mRunSound, *mCrouchSound;
       GameItemActor *mCurrentIntersectedItem;

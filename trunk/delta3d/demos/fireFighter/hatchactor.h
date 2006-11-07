@@ -45,6 +45,8 @@ class FIRE_FIGHTER_EXPORT HatchActor : public GameItemActor
 
       virtual void OnEnteredWorld();
 
+      void OnMapLoaded(const dtGame::Message &msg);
+
    protected:
 
       /// Destructor
@@ -53,6 +55,7 @@ class FIRE_FIGHTER_EXPORT HatchActor : public GameItemActor
    private:
 
       osg::MatrixTransform *mHatchNode;
+      bool mGameMapLoaded;
 };
 
 class FIRE_FIGHTER_EXPORT HatchActorProxy : public GameItemActorProxy

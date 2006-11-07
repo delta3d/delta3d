@@ -19,6 +19,13 @@
 * William E. Johnson II
 */
 #include <fireFighter/firesuitactor.h>
+#include <dtDAL/gameeventmanager.h>
+#include <dtDAL/map.h>
+#include <dtDAL/project.h>
+#include <dtGame/gamemanager.h>
+#include <dtGame/basemessages.h>
+
+using dtCore::RefPtr;
 
 ////////////////////////////////////////////////////
 FireSuitActorProxy::FireSuitActorProxy()
@@ -51,4 +58,29 @@ FireSuitActor::FireSuitActor(dtGame::GameActorProxy &proxy) :
 FireSuitActor::~FireSuitActor()
 {
 
+}
+
+void FireSuitActor::Activate(bool enable)
+{
+   GameItemActor::Activate(enable);
+
+   const std::string &name = "DonFireFighterEnsemble";
+
+   // No event, peace out
+   if(!IsActivated())
+      return;
+
+   dtDAL::GameEvent *event = dtDAL::GameEventManager::GetInstance().FindEvent(name);
+   if(event == NULL)
+   {
+      throw dtUtil::Exception("Failed to find the game event: " + name, __FILE__, __LINE__);
+   }
+
+   dtGame::GameManager &mgr = *GetGameActorProxy().GetGameManager();
+   RefPtr<dtGame::Message> msg = 
+      mgr.GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT);
+
+   dtGame::GameEventMessage &gem = static_cast<dtGame::GameEventMessage&>(*msg);
+   gem.SetGameEvent(*event);
+   mgr.SendMessage(gem);
 }

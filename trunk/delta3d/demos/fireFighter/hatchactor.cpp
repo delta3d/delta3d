@@ -23,6 +23,8 @@
 #include <fireFighter/entityactorregistry.h>
 #include <dtAudio/audiomanager.h>
 #include <dtGame/gamemanager.h>
+#include <dtGame/basemessages.h>
+#include <dtGame/invokable.h>
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <fireFighter/messagetype.h>
@@ -98,7 +100,8 @@ void HatchActorProxy::BuildInvokables()
 
 HatchActor::HatchActor(dtGame::GameActorProxy &proxy) : 
    GameItemActor(proxy), 
-   mHatchNode(NULL)
+   mHatchNode(NULL), 
+   mGameMapLoaded(false)
 {
 
 }
@@ -130,7 +133,13 @@ void HatchActor::OnEnteredWorld()
       }
    }
 
-   //Activate(true);
+   dtGame::Invokable *invoke = new dtGame::Invokable("MapLoaded", 
+      dtDAL::MakeFunctor(*this, &HatchActor::OnMapLoaded));
+
+   GetGameActorProxy().AddInvokable(*invoke);
+
+   GetGameActorProxy().RegisterForMessages(dtGame::MessageType::INFO_MAP_LOADED, "MapLoaded");
+   GetGameActorProxy().RegisterForMessages(dtGame::MessageType::INFO_MAP_UNLOADED, "MapLoaded");
 }
 
 void HatchActor::Activate(bool enable)
@@ -151,12 +160,7 @@ void HatchActor::Activate(bool enable)
       mHatchNode->preMult(rotMat);
    }
 
-   // Special case. The hatch actor is the only actor that needs to play
-   // its usage sound when it is deactivated, as the door sound it makes
-   // is universal. The base class does not do this. 
-   static bool isFirst = true;
-
-   if(!IsActivated() && !isFirst && !GetGameActorProxy().IsInSTAGE())
+   if(mGameMapLoaded && !IsActivated() && !GetGameActorProxy().IsInSTAGE())
       PlayItemUseSnd();
 
    // If we are in STAGE, we have a NULL game manager. So peace out of here
@@ -170,7 +174,7 @@ void HatchActor::Activate(bool enable)
    // crashes. This doesn't occur in other versions of Activate(bool) because
    // the base class version does not send a message. That behavior is handled
    // in the player class. 
-   if(!isFirst)
+   if(mGameMapLoaded)
    {
       dtGame::GameManager &mgr = *GetGameActorProxy().GetGameManager();
 
@@ -181,7 +185,25 @@ void HatchActor::Activate(bool enable)
       msg->SetAboutActorId(GetUniqueId());
       mgr.SendMessage(*msg);
    }
+}
+
+void HatchActor::OnMapLoaded(const dtGame::Message &msg)
+{
+   if(msg.GetMessageType() == dtGame::MessageType::INFO_MAP_LOADED)
+   {
+      const dtGame::MapLoadedMessage &mlm = static_cast<const dtGame::MapLoadedMessage&>(msg);
+      if(mlm.GetLoadedMapName() == "GameMap")
+         mGameMapLoaded = true;
+   }
+   else if(msg.GetMessageType() == dtGame::MessageType::INFO_MAP_UNLOADED)
+   {
+      const dtGame::MapLoadedMessage &mlm = static_cast<const dtGame::MapLoadedMessage&>(msg);
+      if(mlm.GetLoadedMapName() == "GameMap")
+         mGameMapLoaded = false;
+   }
    else
-      isFirst = false;
+   {
+      LOG_ERROR("Received a message of incorrect type: " + msg.GetMessageType().GetName());
+   }
 }
 

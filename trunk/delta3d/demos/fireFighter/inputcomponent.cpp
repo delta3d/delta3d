@@ -136,7 +136,11 @@ void InputComponent::ProcessMessage(const dtGame::Message &message)
 
 void InputComponent::OnIntro()
 {
-   mMotionModel->SetTarget(NULL);
+   if(mMotionModel != NULL)
+   {
+      mMotionModel->SetTarget(NULL);
+      mMotionModel = NULL;
+   }
 
    std::vector<RefPtr<dtGame::GameActorProxy> > proxies;
    GetGameManager()->GetAllGameActors(proxies);
@@ -154,7 +158,7 @@ void InputComponent::OnIntro()
 
 void InputComponent::OnGame()
 {  
-   dtCore::Scene &scene   =  GetGameManager()->GetScene();
+   dtCore::Scene  &scene  =  GetGameManager()->GetScene();
    dtCore::Camera &camera = *GetGameManager()->GetApplication().GetCamera();
 
    GameLevelActor *gla = NULL; 
@@ -169,7 +173,7 @@ void InputComponent::OnGame()
       GetGameManager()->GetApplication().GetKeyboard(), 
       GetGameManager()->GetApplication().GetMouse());
 
-   mMotionModel->SetMaximumTurnSpeed(5000.0f);
+   mMotionModel->SetMaximumTurnSpeed(4000.0f);
    mMotionModel->SetUseMouseButtons(false);
    mMotionModel->SetCanJump(false);
    mMotionModel->SetTarget(mPlayer);
@@ -464,10 +468,6 @@ bool InputComponent::HandleButtonReleased(const dtCore::Mouse* mouse,
 
 void InputComponent::OnAddedToGM()
 {
-    
-   //mMotionModel = new dtCore::FlyMotionModel(GetGameManager()->GetApplication().GetKeyboard(), 
-   //                                          GetGameManager()->GetApplication().GetMouse());
-
    dtGame::BaseInputComponent::OnAddedToGM();
 }
 
@@ -505,4 +505,10 @@ void InputComponent::StopSounds()
 
    if(mPlayer != NULL)
       mPlayer->StopAllSounds();
+}
+
+void InputComponent::SetupTasks()
+{
+   dtGame::GameManager &mgr = *GetGameManager();
+   //mgr.Find
 }

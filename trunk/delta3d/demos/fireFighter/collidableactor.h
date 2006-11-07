@@ -1,5 +1,5 @@
 /* -*-c++-*-
- * Delta3D Open Source Game and Simulation Engine
+ * Delta3D Open Source Game and Simulation Engine 
  * Copyright (C) 2006, Alion Science and Technology, BMH Operation
  *
  * This library is free software; you can redistribute it and/or modify it under
@@ -18,35 +18,34 @@
  *
  * William E. Johnson II
  */
-#ifndef DELTA_FIRE_FIGHTER_FIRE_SUIT_ACTOR
-#define DELTA_FIRE_FIGHTER_FIRE_SUIT_ACTOR
+#ifndef DELTA_FIRE_FIGHTER_COLLIDABLE_ACTOR
+#define DELTA_FIRE_FIGHTER_COLLIDABLE_ACTOR
 
-#include <fireFighter/gameitemactor.h>
+#include <dtGame/gameactor.h>
 #include <fireFighter/export.h>
+#include <dtDAL/actorproxyicon.h>
 
-class FIRE_FIGHTER_EXPORT FireSuitActor : public GameItemActor
+class FIRE_FIGHTER_EXPORT CollidableActor : public dtGame::GameActor
 {
    public:
 
       /// Constructor
-      FireSuitActor(dtGame::GameActorProxy &proxy);
-
-      virtual void Activate(bool enable = true);
+      CollidableActor(dtGame::GameActorProxy &proxy);
 
    protected:
 
       /// Destructor
-      virtual ~FireSuitActor();
+      virtual ~CollidableActor();
 
    private:
 };
 
-class FIRE_FIGHTER_EXPORT FireSuitActorProxy : public GameItemActorProxy
+class FIRE_FIGHTER_EXPORT CollidableActorProxy : public dtGame::GameActorProxy
 {
    public:
 
       /// Constructor
-      FireSuitActorProxy();
+      CollidableActorProxy();
 
       /// Builds the properties
       virtual void BuildPropertyMap();
@@ -54,15 +53,28 @@ class FIRE_FIGHTER_EXPORT FireSuitActorProxy : public GameItemActorProxy
       /// Builds the invokables
       virtual void BuildInvokables();
 
-      /// Instantiates the actor
-      virtual void CreateActor() { mActor = new FireSuitActor(*this); }
+      /// Creates the actor
+      virtual void CreateActor() { mActor = new CollidableActor(*this); }
+
+      /**
+       * Gets the billboard used to represent static meshes if this proxy's
+       * render mode is RenderMode::DRAW_BILLBOARD_ICON.
+       */
+      dtDAL::ActorProxyIcon* GetBillBoardIcon();
+
+      virtual const dtDAL::ActorProxy::RenderMode& GetRenderMode()
+      {
+         return dtDAL::ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON;
+      }
 
    protected:
 
       /// Destructor
-      virtual ~FireSuitActorProxy();
+      virtual ~CollidableActorProxy();
 
    private:
+
+      dtCore::RefPtr<dtDAL::ActorProxyIcon> mBillboardIcon;
 };
 
 #endif
