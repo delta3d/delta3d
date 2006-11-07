@@ -45,6 +45,11 @@ namespace dtCore
    class DeltaWin;
 }
 
+namespace dtActors
+{
+   class TaskActorProxy;
+}
+
 class GameState;
 class GameItemActor;
 
@@ -173,6 +178,34 @@ class FIRE_FIGHTER_EXPORT HUDComponent : public dtGame::GMComponent
        */
       void HideGameItemImage();
 
+      void UpdateMediumDetailData();
+
+      unsigned int RecursivelyAddTasks(const std::string &indent, 
+                                       unsigned int curIndex,
+                                       const dtActors::TaskActorProxy *taskProxy, 
+                                       unsigned int &numCompleted);
+
+      /**
+       * Utility method to set the text, position, and color of a text control
+       * Check to see if the data changed.  The default values for color and position
+       * won't do anything since they use a color and position < 0.
+       */
+      void UpdateStaticText(CEGUI::StaticText *textControl, 
+                            const std::string &newText,
+                            float red   = -1.0f, 
+                            float blue  = -1.0f, 
+                            float green = -1.0f,
+                            float x     = -1.0f, 
+                            float y     = -1.0f);
+
+      /**
+       * Private helper method to create text for the task actors
+       */
+      CEGUI::StaticText* CreateText(const std::string &name, 
+                                    CEGUI::StaticImage *parent, 
+                                    const std::string &text,
+                                    float x, float y, float width, float height);
+
       CEGUI::PushButton *mStartWithObjectives, *mStart, *mQuit;
       CEGUI::Window *mMainWindow;
       CEGUI::StaticImage *mWindowBackground, *mHUDBackground, *mDebriefBackground, 
@@ -189,6 +222,8 @@ class FIRE_FIGHTER_EXPORT HUDComponent : public dtGame::GMComponent
       bool mShowObjectives;
       GameState *mCurrentState;
       CEGUI::Point mFireSuitIconPos, mFireHoseIconPos, mSCBAIconPos; 
+      std::vector<CEGUI::StaticText*> mTaskTextList;
+      CEGUI::StaticText *mTasksHeaderText;
 };
 
 #endif

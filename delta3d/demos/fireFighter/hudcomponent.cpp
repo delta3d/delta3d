@@ -29,9 +29,12 @@
 #include <fireFighter/fireactor.h>
 #include <dtCore/globals.h>
 #include <dtCore/deltawin.h>
+#include <dtActors/taskactor.h>
 #include <dtUtil/fileutils.h>
 #include <dtABC/application.h>
 #include <dtGUI/ceuidrawable.h>
+#include <dtGame/taskcomponent.h>
+#include <iomanip>
 
 #ifdef None
 #undef None
@@ -68,7 +71,8 @@ HUDComponent::HUDComponent(dtCore::DeltaWin &win, const std::string &name) :
    mCurrentState(&GameState::STATE_UNKNOWN), 
    mFireSuitIconPos(0.525f, 0.8f), 
    mFireHoseIconPos(0.688f, 0.8f), 
-   mSCBAIconPos(0.85f, 0.8f)
+   mSCBAIconPos(0.85f, 0.8f), 
+   mTasksHeaderText(NULL)
 {
    SetupGUI(win);
 }
@@ -166,6 +170,10 @@ void HUDComponent::ProcessMessage(const dtGame::Message &msg)
       dtGame::GameActorProxy *proxy = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
       SetDeactivatedItem(dynamic_cast<GameItemActor*>(proxy->GetActor()));
    }
+   else if(msg.GetMessageType() == dtGame::MessageType::TICK_LOCAL)
+   {
+      UpdateMediumDetailData();
+   }
 }
 
 void HUDComponent::ShowMainMenu()
@@ -177,7 +185,9 @@ void HUDComponent::ShowMainMenu()
 
 void HUDComponent::ShowHUD()
 {
-   mGUI->SetActiveTextureUnit(1);
+   if(mGUI->GetActiveTextureUnit() != 1)
+      mGUI->SetActiveTextureUnit(1);
+   
    HideMenus();
    mHUDBackground->show();
 }
@@ -190,6 +200,9 @@ void HUDComponent::ShowEndMenu()
 
 void HUDComponent::ShowIntroMenu()
 {
+   if(mGUI->GetActiveTextureUnit() != 0)
+      mGUI->SetActiveTextureUnit(0);
+
    HideMenus();
    mIntroBackground->show();
 }
@@ -354,6 +367,28 @@ void HUDComponent::BuildHUD()
    mTargetIcon->setImage("TargetImage", "TargetImage");
    mHUDBackground->addChildWindow(mTargetIcon);
 
+   float curYPos       = 70.0f;
+   float mTextHeight   = 20.0f;
+   float taskTextWidth = 300.0f;
+
+   mTasksHeaderText = CreateText("Task Header", mHUDBackground, "Tasks:", 
+      4, curYPos, taskTextWidth - 2, mTextHeight + 2);
+
+   curYPos += 2;
+
+   // 11 placeholders for tasks
+   for(int i = 0; i < 11; i++)
+   {
+      std::ostringstream oss;
+      oss << "Task " << i;
+      curYPos += mTextHeight + 2;
+      CEGUI::StaticText *text = CreateText(oss.str(), mHUDBackground, "",
+         12, curYPos, taskTextWidth - 2, mTextHeight + 2);
+
+      mTaskTextList.push_back(text);
+      text->hide();
+   }
+  
    mHUDBackground->hide();
 }
 
@@ -550,4 +585,130 @@ void HUDComponent::SetDeactivatedItem(GameItemActor *item)
    {
       LOG_ERROR("Could not set the deactivated item. Unable to cast the parameter");
    }
+}
+
+void HUDComponent::UpdateMediumDetailData()
+{
+   std::ostringstream oss;
+   std::vector<dtCore::RefPtr<dtGame::GameActorProxy> > tasks;
+   unsigned int numAdded = 0;
+   unsigned int numComplete = 0;
+
+   dtGame::GMComponent *comp = GetGameManager()->GetComponentByName("LMSComponent");
+   dtGame::TaskComponent *mTaskComponent = static_cast<dtGame::TaskComponent*>(comp);
+   
+   mTaskComponent->GetTopLevelTasks(tasks);
+
+   // start our recursive method on each top level task
+   for(unsigned int i = 0; i < tasks.size(); i++)
+   {
+      dtActors::TaskActorProxy *taskProxy = dynamic_cast<dtActors::TaskActorProxy*>(tasks[i].get());
+      numAdded += RecursivelyAddTasks("", numAdded, taskProxy, numComplete);
+   }
+
+   // blank out any of our placeholder task text controls that were left over
+   for(unsigned int i = numAdded; i < mTaskTextList.size(); i++)
+      UpdateStaticText(mTaskTextList[i], "");
+
+   // update our task header
+   oss << "Tasks (" << numComplete << " of " << numAdded << ")";
+   if(numComplete < numAdded)
+      UpdateStaticText(mTasksHeaderText, oss.str(), 1.0, 1.0, 1.0);
+   else
+      UpdateStaticText(mTasksHeaderText, oss.str(), 0.1, 1.0, 0.1);
+}
+
+unsigned int HUDComponent::RecursivelyAddTasks(const std::string &indent, 
+                                               unsigned int curIndex,
+                                               const dtActors::TaskActorProxy *taskProxy, 
+                                               unsigned int &numCompleted)
+{
+   std::ostringstream oss;
+   oss.setf(std::ios_base::fixed, std::ios_base::floatfield);
+   oss.precision(2);
+
+   unsigned int totalNumAdded = 0;
+   if(curIndex < mTaskTextList.size())
+   {
+      // update the text for this task
+      const dtActors::TaskActor *task = dynamic_cast<const dtActors::TaskActor*>(taskProxy->GetActor());
+      if(task->IsComplete())
+      {
+         numCompleted++;
+
+         oss << indent << task->GetName() << " Y " << task->GetScore();
+         UpdateStaticText(mTaskTextList[curIndex + totalNumAdded], oss.str(), 0.0, 1.0, 0.0);
+      }
+      else
+      {
+         oss << indent << task->GetName() << " N " << task->GetScore();
+         UpdateStaticText(mTaskTextList[curIndex + totalNumAdded], oss.str(), 1.0, 1.0, 1.0);
+      }
+
+      totalNumAdded++;
+
+      // recurse for each child
+      const std::vector<dtCore::RefPtr<dtActors::TaskActorProxy> > &children = taskProxy->GetAllSubTasks();
+      if(!children.empty())
+      {
+         for(unsigned int i = 0; i < children.size(); i++)
+         {
+            const dtActors::TaskActorProxy *childProxy = dynamic_cast<const dtActors::TaskActorProxy*>(children[i].get());
+            totalNumAdded += RecursivelyAddTasks(indent + "     ", curIndex + totalNumAdded, childProxy, numCompleted);
+         }
+      }
+   }
+
+   return totalNumAdded;
+}
+
+void HUDComponent::UpdateStaticText(CEGUI::StaticText *textControl, 
+                                    const std::string &newText,
+                                    float red, 
+                                    float blue, 
+                                    float green,
+                                    float x, 
+                                    float y)
+{
+   if(textControl != NULL)
+   {
+      // text and color
+      if(!newText.empty() && textControl->getText() != newText)
+      {
+         textControl->setText(newText);
+         if(red >= 0.00 && blue >= 0.0 && green >= 0.0)
+            textControl->setTextColours(CEGUI::colour(red, blue, green));
+      }
+      // position
+      if(x > 0.0 && y > 0.0)
+      {
+         CEGUI::Point position = textControl->getPosition();
+         CEGUI::Point newPos(x, y);
+         if(position != newPos)
+            textControl->setPosition(newPos);
+      }
+      mShowObjectives ? textControl->show() : textControl->hide();
+   }
+}
+
+CEGUI::StaticText* HUDComponent::CreateText(const std::string &name, 
+                                            CEGUI::StaticImage *parent, 
+                                            const std::string &text,
+                                            float x, float y, float width, float height)
+{
+   CEGUI::WindowManager *wm = CEGUI::WindowManager::getSingletonPtr();
+
+   // create base window and set our default attribs
+   CEGUI::StaticText* result = static_cast<CEGUI::StaticText*>(wm->createWindow("WindowsLook/StaticText", name));
+   parent->addChildWindow(result);
+   result->setMetricsMode(CEGUI::Absolute);
+   result->setText(text);
+   result->setPosition(CEGUI::Point(x, y));
+   result->setSize(CEGUI::Size(width, height));
+   result->setFrameEnabled(false);
+   result->setBackgroundEnabled(false);
+   result->setHorizontalAlignment(CEGUI::HA_LEFT);
+   result->setVerticalAlignment(CEGUI::VA_TOP);
+
+   return result;
 }

@@ -73,7 +73,7 @@ void FireFighterGameEntryPoint::Initialize(dtGame::GameApplication& app, int arg
    }
 
    int commandLineParam = 0;
-   if(parser.read("--lms", commandLineParam))
+   if(parser.read("--useLMS", commandLineParam))
    {
       mUseLMS = commandLineParam ? true : false; 
    }
@@ -115,18 +115,18 @@ void FireFighterGameEntryPoint::OnStartup(dtGame::GameManager &gameManager)
    RefPtr<HUDComponent>   hudComp   = new HUDComponent(*gameManager.GetApplication().GetWindow());
    RefPtr<InputComponent> inputComp = new InputComponent;
    RefPtr<dtGame::DefaultMessageProcessor> dmp = new dtGame::DefaultMessageProcessor("DefaultMessageProcessor");
-   RefPtr<dtLMS::LmsComponent> lmsComp = new dtLMS::LmsComponent("LMSComponent");
+   mLmsComponent = new dtLMS::LmsComponent("LMSComponent");
 
-   gameManager.AddComponent(*hudComp,   dtGame::GameManager::ComponentPriority::HIGHER);
-   gameManager.AddComponent(*inputComp, dtGame::GameManager::ComponentPriority::NORMAL);
-   gameManager.AddComponent(*dmp,       dtGame::GameManager::ComponentPriority::HIGHEST);
-   gameManager.AddComponent(*lmsComp,   dtGame::GameManager::ComponentPriority::NORMAL);
+   gameManager.AddComponent(*hudComp,       dtGame::GameManager::ComponentPriority::HIGHER);
+   gameManager.AddComponent(*inputComp,     dtGame::GameManager::ComponentPriority::NORMAL);
+   gameManager.AddComponent(*dmp,           dtGame::GameManager::ComponentPriority::HIGHEST);
+   gameManager.AddComponent(*mLmsComponent, dtGame::GameManager::ComponentPriority::NORMAL);
 
    if(mUseLMS)
    {
       try
       {
-         lmsComp->ConnectToLms();
+         mLmsComponent->ConnectToLms();
       }
       catch(const dtUtil::Exception &e)
       {
@@ -140,11 +140,14 @@ void FireFighterGameEntryPoint::OnStartup(dtGame::GameManager &gameManager)
    RefPtr<dtGame::Message> msg = gameManager.GetMessageFactory().CreateMessage(MessageType::GAME_STATE_CHANGED);
    GameStateChangedMessage &gscm = static_cast<GameStateChangedMessage&>(*msg);
    gscm.SetOldState(GameState::STATE_UNKNOWN);
-   gscm.SetNewState(GameState::STATE_RUNNING);
+   gscm.SetNewState(GameState::STATE_MENU);
    gameManager.SendMessage(gscm);
 }
 
 void FireFighterGameEntryPoint::OnShutdown(dtGame::GameManager &gameManager)
 {  
+   if(mUseLMS && mLmsComponent.valid())
+      mLmsComponent->DisconnectFromLms();
+
    gameManager.CloseCurrentMap();
 }

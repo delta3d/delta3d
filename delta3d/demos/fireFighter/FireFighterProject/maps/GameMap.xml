@@ -7,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2006-10-11T17:11:58.0-05:00</createTimestamp>
-        <lastUpdateTimestamp>2006-11-06T11:40:33.0-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2006-11-07T16:39:31.0-05:00</lastUpdateTimestamp>
         <editorVersion>1.3.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -17,6 +17,13 @@
             <version></version>
         </library>
     </libraries>
+    <events>
+        <event>
+            <id>224c1a5f-0dd4-42da-bd54-446207325c71</id>
+            <name>DonFireFighterEnsemble</name>
+            <description>Locate a fireman's ensemble and don it. </description>
+        </event>
+    </events>
     <actors>
         <actor>
             <type>HatchActor.HatchActor</type>
@@ -107,7 +114,7 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes::transparent_box.ive</resourceDisplayName>
                 <resource>StaticMeshes::transparent_box.ive</resource>
-            </property> 
+            </property>
             <property>
                 <name>use cache object</name>
                 <boolean>true</boolean>
@@ -661,25 +668,25 @@
             <property>
                 <name>Rotation</name>
                 <vec3>
-                    <value1>0.799726</value1>
-                    <value2>-0.020945</value2>
-                    <value3>-0.499851</value3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000010</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>7.258051</value1>
-                    <value2>-26.886045</value2>
+                    <value1>7.299833</value1>
+                    <value2>-27.005234</value2>
                     <value3>0.355688</value3>
                 </vec3>
             </property>
             <property>
                 <name>Scale</name>
                 <vec3>
-                    <value1>0.700000</value1>
-                    <value2>0.700000</value2>
-                    <value3>0.650000</value3>
+                    <value1>0.700003</value1>
+                    <value2>0.700004</value2>
+                    <value3>0.650002</value3>
                 </vec3>
             </property>
             <property>
@@ -1170,6 +1177,131 @@
             <property>
                 <name>Collectable</name>
                 <boolean>true</boolean>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Tasks.GameEvent Task Actor</type>
+            <id>fcdd12e0-ac08-4872-85e5-12b9475a10d2</id>
+            <name>TaskFireSuit</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>4.683903</value1>
+                    <value2>-34.907898</value2>
+                    <value3>6.299998</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>1.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>NONE</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.188790321350098</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server Local</enumerated>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string></string>
+            </property>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>PassingScore</name>
+                <float>1</float>
+            </property>
+            <property>
+                <name>Score</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Weight</name>
+                <float>1</float>
+            </property>
+            <property>
+                <name>Complete</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>NotifyLMSOnUpdate</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>CompleteTime</name>
+                <double>-1</double>
+            </property>
+            <property>
+                <name>SubTasks</name>
+                <group></group>
+            </property>
+            <property>
+                <name>GameEvent</name>
+                <gameevent>224c1a5f-0dd4-42da-bd54-446207325c71</gameevent>
+            </property>
+            <property>
+                <name>MinOccurances</name>
+                <integer>1</integer>
             </property>
         </actor>
     </actors>
