@@ -547,6 +547,26 @@ namespace dtGame
          void SetStatisticsInterval(const int statisticsInterval) { mStatisticsInterval = statisticsInterval; }
 
          /**
+          * Gets the flag for whether we will remove the Game Events when we change a map or not.
+          * Normally, when a map is closed, the Game Manager removes the events that came from the
+          * map. This flag allows the case where sometimes an event comes from a map but you don't want
+          * it to go away.  The default is true.
+          * @return Flag for whether we remove a map's GameEvents from 
+          * the GameEventManager when closing a map. (default is true)
+          */
+         bool GetRemoveGameEventsOnMapChange() { return mRemoveGameEventsOnMapChange; }
+
+         /**
+          * Sets the flag for whether we will remove the Game Events when we change a map or not.
+          * Normally, when a map is closed, the Game Manager removes the events that came from the
+          * map. This flag allows the case where sometimes an event comes from a map but you don't want
+          * it to go away.  The default is true.
+          * @param removeGameEventsOnMapChange Flag for whether we remove a map's GameEvents from 
+          * the GameEventManager when closing a map. (default is true)
+          */
+         void SetRemoveGameEventsOnMapChange(const bool removeGameEventsOnMapChange) { mRemoveGameEventsOnMapChange = removeGameEventsOnMapChange; }
+
+         /**
           * Retrieves the message factor that is controlled by the GameManager
           * @return mFactory he message factory
           * @see class dtGame::MessageFactory
@@ -811,6 +831,7 @@ namespace dtGame
          GameManager(const GameManager&);
          GameManager& operator=(const GameManager&);
          
+         bool mRemoveGameEventsOnMapChange;
    };
 }
 

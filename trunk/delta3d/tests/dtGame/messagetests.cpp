@@ -992,6 +992,9 @@ void MessageTests::TestChangeMapGameEvents()
 {
    try
    {
+      // NOTE - This whole test should be with a map or with the GM. It definitely doesn't belong with 
+      // message tests.
+
       dtDAL::Project& project = dtDAL::Project::GetInstance();
       std::string mapName = "Many Game Actors";
       dtDAL::Map* map = &project.CreateMap(mapName, "mga");
@@ -1012,9 +1015,15 @@ void MessageTests::TestChangeMapGameEvents()
       dtDAL::GameEventManager& geMan = dtDAL::GameEventManager::GetInstance();
       geMan.ClearAllEvents();
 
+      // add one event that is not in the map - it shouldn't be removed by changing maps.
+      event = new dtDAL::GameEvent("non-map event", "");
+      geMan.AddEvent(*event);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Should be one event.", geMan.GetNumEvents(), (unsigned int) 1);
+
       mGameManager->ChangeMap(mapName, false, false);
 
-      CPPUNIT_ASSERT_MESSAGE("Three events should be in the game event manager singleton.", geMan.GetNumEvents() == 3);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Four events should be in the game event manager singleton.", 
+         geMan.GetNumEvents(), (unsigned int) 4);
 
       CPPUNIT_ASSERT_MESSAGE("The first game event should be in the Game Event Manager singleton on map change.", 
          geMan.FindEvent("one") != NULL); 
@@ -1022,6 +1031,22 @@ void MessageTests::TestChangeMapGameEvents()
          geMan.FindEvent("two") != NULL); 
       CPPUNIT_ASSERT_MESSAGE("The third game event should be in the Game Event Manager singleton on map change.", 
          geMan.FindEvent("three") != NULL); 
+      CPPUNIT_ASSERT_MESSAGE("The fourth game event should be in the Game Event Manager singleton on map change.", 
+         geMan.FindEvent("non-map event") != NULL); 
+
+      // test the new flag for removing game events
+      mGameManager->CloseCurrentMap();
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Closing the map should have removed some of the events since we didnt change the flag.", 
+         geMan.GetNumEvents(), (unsigned int) 1);
+
+      // re-add the events and try again.
+      mGameManager->ChangeMap(mapName, false, false);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Three events should be back in the game event manager singleton.", 
+         geMan.GetNumEvents(), (unsigned int) 4);
+      mGameManager->SetRemoveGameEventsOnMapChange(false);
+      mGameManager->CloseCurrentMap();
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The events should still be in the Game Manager since we changed the flag.", 
+         geMan.GetNumEvents(), (unsigned int) 4);
    }
    catch(const dtUtil::Exception &e) 
    {
