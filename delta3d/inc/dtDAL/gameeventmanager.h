@@ -51,7 +51,7 @@ namespace dtDAL
 
          GameEventManager(const GameEventManager &rhs);
          
-         GameEventManager& operator=(const GameEventManager &rhs);
+         //GameEventManager& operator=(const GameEventManager &rhs);
 
          /**
           * Gets the single global instance of this class.

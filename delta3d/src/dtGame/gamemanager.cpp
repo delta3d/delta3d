@@ -64,7 +64,8 @@ namespace dtGame
       mStatsNumSendNetworkMessages(0),
       mStatsNumFrames(0),
       mStatsCumGMProcessTime(0),
-      mApplication(NULL)
+      mApplication(NULL),
+      mRemoveGameEventsOnMapChange(true)
    {
       mLibMgr = &dtDAL::LibraryManager::GetInstance();
       mLogger = &dtUtil::Log::GetInstance("gamemanager.cpp");
@@ -1124,14 +1125,22 @@ namespace dtGame
    {
       //delete all actors after making sure the map loaded correctly.
       DeleteAllActors(true);
-      //Clear out all the events in the event manager because the map that populated them was closed.
-      dtDAL::GameEventManager::GetInstance().ClearAllEvents();
 
       if (!mLoadedMap.empty() )
       {
          //Close the old map.
          dtDAL::Map &oldMap = dtDAL::Project::GetInstance().GetMap(mLoadedMap);
          
+         // Clear out all the game events that came from our map
+         if (mRemoveGameEventsOnMapChange)
+         {
+            //dtDAL::GameEventManager::GetInstance().ClearAllEvents();
+            std::vector<dtDAL::GameEvent* > events;
+            oldMap.GetEventManager().GetAllEvents(events);
+            for (unsigned int i = 0; i < events.size(); i ++)
+               dtDAL::GameEventManager::GetInstance().RemoveEvent(events[i]->GetUniqueId());
+         }
+
          dtCore::RefPtr<MapLoadedMessage> closeMessage;
          mFactory.CreateMessage(MessageType::INFO_MAP_UNLOADED, closeMessage);
          closeMessage->SetLoadedMapName(oldMap.GetName());
@@ -1156,7 +1165,14 @@ namespace dtGame
       map.GetAllProxies(proxies);
 
       //add all the events in the map to the game manager.
-      dtDAL::GameEventManager::GetInstance() = map.GetEventManager();      
+      //dtDAL::GameEventManager::GetInstance() = map.GetEventManager();      
+      std::vector<dtDAL::GameEvent* > events;
+      map.GetEventManager().GetAllEvents(events);
+      for (unsigned int i = 0; i < events.size(); i ++)
+      {
+         if (dtDAL::GameEventManager::GetInstance().FindEvent(events[i]->GetUniqueId()) == NULL)
+            dtDAL::GameEventManager::GetInstance().AddEvent(*events[i]);
+      }
 
       //Set the loaded map now even if the code later fails because we
       //want to close the map on the next change.
