@@ -50,11 +50,6 @@ void FireHoseActorProxy::BuildPropertyMap()
       "StreamFile", "StreamFile", 
       dtDAL::MakeFunctor(fha, &FireHoseActor::SetStreamFilename), 
       "Sets the stream file particle system"));
-
-   AddProperty(new dtDAL::FloatActorProperty("ValvePosition", "ValvePosition", 
-      dtDAL::MakeFunctor(fha, &FireHoseActor::SetValvePosition),
-      dtDAL::MakeFunctorRet(fha, &FireHoseActor::GetValvePosition), 
-      "Sets the valve position"));
 }
 
 void FireHoseActorProxy::BuildInvokables()
@@ -64,7 +59,6 @@ void FireHoseActorProxy::BuildInvokables()
 
 FireHoseActor::FireHoseActor(dtGame::GameActorProxy &proxy) :
    GameItemActor(proxy),
-   mValvePosition(0.0f), 
    mParticleSystem(new dtCore::ParticleSystem)
 {
    mItemUseSnd->SetLooping(true);
@@ -79,26 +73,6 @@ FireHoseActor::~FireHoseActor()
 void FireHoseActor::Activate(bool enable)
 {
    GameItemActor::Activate(enable);
-
-   //const std::string &name = "AcquireFireHose";
-
-   //// No event, peace out
-   //if(!IsActivated())
-   //   return;
-
-   //dtDAL::GameEvent *event = dtDAL::GameEventManager::GetInstance().FindEvent(name);
-   //if(event == NULL)
-   //{
-   //   throw dtUtil::Exception("Failed to find the game event: " + name, __FILE__, __LINE__);
-   //}
-
-   //dtGame::GameManager &mgr = *GetGameActorProxy().GetGameManager();
-   //RefPtr<dtGame::Message> msg = 
-   //   mgr.GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT);
-
-   //dtGame::GameEventMessage &gem = static_cast<dtGame::GameEventMessage&>(*msg);
-   //gem.SetGameEvent(*event);
-   //mgr.SendMessage(gem);
 }
 
 void FireHoseActor::SetStreamFilename(const std::string &filename)
@@ -109,14 +83,4 @@ void FireHoseActor::SetStreamFilename(const std::string &filename)
 std::string FireHoseActor::GetStreamFilename() const
 {
    return mParticleSystem->GetFilename();
-}
-
-void FireHoseActor::SetValvePosition(float position)
-{
-   mValvePosition = position;
-}
-
-float FireHoseActor::GetValvePosition() const
-{
-   return mValvePosition;
 }
