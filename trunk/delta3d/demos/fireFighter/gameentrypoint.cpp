@@ -27,6 +27,7 @@
 #include <fireFighter/exception.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/camera.h>
+#include <dtCore/globals.h>
 #include <dtDAL/project.h>
 #include <dtABC/application.h>
 #include <dtAudio/audiomanager.h>
@@ -94,6 +95,7 @@ void FireFighterGameEntryPoint::Initialize(dtGame::GameApplication& app, int arg
 
    app.GetWindow()->SetWindowTitle("Fire Fighter Application");
 
+   dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
    dtDAL::Project::GetInstance().SetContext("../demos/fireFighter/FireFighterProject");
 }
 
