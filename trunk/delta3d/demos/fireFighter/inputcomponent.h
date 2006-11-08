@@ -41,6 +41,12 @@ namespace dtAudio
    class Sound;
 }
 
+namespace dtActors
+{
+   class TaskActorRollup;
+   class TaskActorOrdered;
+}
+
 class FIRE_FIGHTER_EXPORT InputComponent : public dtGame::BaseInputComponent
 {
    public:
@@ -184,6 +190,8 @@ class FIRE_FIGHTER_EXPORT InputComponent : public dtGame::BaseInputComponent
       dtAudio::Sound *mBellSound, *mDebriefSound, *mWalkSound, *mRunSound, *mCrouchSound;
       GameItemActor *mCurrentIntersectedItem;
       float mRadius, mTheta, mK;
+      dtCore::RefPtr<dtActors::TaskActorOrdered> mOrderedTask;
+      dtCore::RefPtr<dtActors::TaskActorRollup>  mRollupTask;
 };
 
 template<class T>
@@ -198,10 +206,9 @@ void InputComponent::IsActorInGameMap(T *&actor, bool throwException)
       if(actor != NULL)
          break;
    }
-   if(actor == NULL)
+   if(actor == NULL && throwException)
    {
-      if(throwException)
-         throw dtUtil::Exception(ExceptionEnum::MISSING_REQUIRED_ACTOR_EXCEPTION, 
+      throw dtUtil::Exception(ExceptionEnum::MISSING_REQUIRED_ACTOR_EXCEPTION, 
             "Failed to find the actor: " + actor->GetName(), __FILE__, __LINE__);
    }
 }

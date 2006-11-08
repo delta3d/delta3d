@@ -42,6 +42,9 @@
 #include <dtCore/infinitelight.h>
 #include <dtCore/keyboard.h>
 #include <dtGame/basemessages.h>
+#include <dtActors/taskactorordered.h>
+#include <dtActors/taskactorrollup.h>
+#include <dtActors/taskactorgameevent.h>
 #include <dtUtil/log.h>
 #include <osg/io_utils>
 
@@ -183,6 +186,8 @@ void InputComponent::OnGame()
    osg::StateSet *globalState = camera.GetSceneHandler()->GetSceneView()->getGlobalStateSet();
    globalState->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
    
+   SetupTasks();
+
    mBellSound = dtAudio::AudioManager::GetInstance().NewSound();
    mBellSound->LoadFile("Sounds/bellAndAnnouncement.wav");
    //mBellSound->Play();
@@ -510,5 +515,31 @@ void InputComponent::StopSounds()
 void InputComponent::SetupTasks()
 {
    dtGame::GameManager &mgr = *GetGameManager();
-   //mgr.Find
+   std::vector<RefPtr<dtDAL::ActorProxy> > proxies;
+
+   mgr.FindActorsByName("TaskFindGear", proxies);
+   mRollupTask = dynamic_cast<dtActors::TaskActorRollup*>(proxies[0]->GetActor());
+
+   mgr.FindActorsByName("TaskAcquireFireHose", proxies);
+   dtActors::TaskActorGameEventProxy *fireHose = dynamic_cast<dtActors::TaskActorGameEventProxy*>(proxies[0].get());
+   proxies.clear();
+
+   mgr.FindActorsByName("TaskUseSCBA", proxies);
+   dtActors::TaskActorGameEventProxy *scba = dynamic_cast<dtActors::TaskActorGameEventProxy*>(proxies[0].get());
+   proxies.clear();
+
+   mgr.FindActorsByName("TaskFireSuit", proxies);
+   dtActors::TaskActorGameEventProxy *fireSuit = dynamic_cast<dtActors::TaskActorGameEventProxy*>(proxies[0].get());
+   proxies.clear();
+
+   if(!mRollupTask.valid() || fireHose == NULL || scba == NULL || fireSuit == NULL)
+   {
+      LOG_ERROR("Failed to intialize the task actors");
+      return;
+   }
+
+   dtActors::TaskActorRollupProxy &tar = static_cast<dtActors::TaskActorRollupProxy&>(mRollupTask->GetGameActorProxy());
+   tar.AddSubTask(*fireHose);
+   tar.AddSubTask(*scba);
+   tar.AddSubTask(*fireSuit);
 }
