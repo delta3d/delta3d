@@ -89,7 +89,7 @@ void HUDComponent::SetupGUI(dtCore::DeltaWin &win)
 
    try 
    {
-      std::string scheme = "CEGUI/schemes/WindowsLook.scheme";
+      std::string scheme = "CEGUI/schemes/WindowsLookSkin.scheme";
       std::string path = dtCore::FindFileInPathList(scheme);
       if(path.empty())
       {
@@ -405,6 +405,7 @@ void HUDComponent::BuildEndMenu()
    mDebriefBackground->setFrameEnabled(false);
    mDebriefBackground->setImage("BackgroundImage", "BackgroundImage");
 
+   /*
    mTaskHeaderText = static_cast<CEGUI::StaticText*>(wm->createWindow("WindowsLook/StaticText", "taskHeaderText"));
    mTaskHeaderText->setText("Task Status");
    mTaskHeaderText->setBackgroundEnabled(false);
@@ -413,7 +414,7 @@ void HUDComponent::BuildEndMenu()
    mTaskHeaderText->setPosition(CEGUI::Point(0, 0.1));
    mTaskHeaderText->setHorizontalAlignment(CEGUI::HA_CENTRE);
    mDebriefBackground->addChildWindow(mTaskHeaderText);
-
+   */
    mDebriefBackground->hide();
 } 
 
@@ -590,33 +591,36 @@ void HUDComponent::SetDeactivatedItem(GameItemActor *item)
 
 void HUDComponent::UpdateMediumDetailData()
 {
-   std::ostringstream oss;
-   std::vector<dtCore::RefPtr<dtGame::GameActorProxy> > tasks;
-   unsigned int numAdded = 0;
-   unsigned int numComplete = 0;
-
-   dtGame::GMComponent *comp = GetGameManager()->GetComponentByName("LMSComponent");
-   dtGame::TaskComponent *mTaskComponent = static_cast<dtGame::TaskComponent*>(comp);
-   
-   mTaskComponent->GetTopLevelTasks(tasks);
-
-   // start our recursive method on each top level task
-   for(unsigned int i = 0; i < tasks.size(); i++)
+   if (mHUDBackground->isVisible())
    {
-      dtActors::TaskActorProxy *taskProxy = dynamic_cast<dtActors::TaskActorProxy*>(tasks[i].get());
-      numAdded += RecursivelyAddTasks("", numAdded, taskProxy, numComplete);
+      std::ostringstream oss;
+      std::vector<dtCore::RefPtr<dtGame::GameActorProxy> > tasks;
+      unsigned int numAdded = 0;
+      unsigned int numComplete = 0;
+
+      dtGame::GMComponent *comp = GetGameManager()->GetComponentByName("LMSComponent");
+      dtGame::TaskComponent *mTaskComponent = static_cast<dtGame::TaskComponent*>(comp);
+      
+      mTaskComponent->GetTopLevelTasks(tasks);
+
+      // start our recursive method on each top level task
+      for(unsigned int i = 0; i < tasks.size(); i++)
+      {
+         dtActors::TaskActorProxy *taskProxy = dynamic_cast<dtActors::TaskActorProxy*>(tasks[i].get());
+         numAdded += RecursivelyAddTasks("", numAdded, taskProxy, numComplete);
+      }
+
+      // blank out any of our placeholder task text controls that were left over
+      for(unsigned int i = numAdded; i < mTaskTextList.size(); i++)
+         UpdateStaticText(mTaskTextList[i], "");
+
+      // update our task header
+      oss << "Tasks (" << numComplete << " of " << numAdded << ")";
+      if(numComplete < numAdded)
+         UpdateStaticText(mTasksHeaderText, oss.str(), 1.0, 1.0, 1.0);
+      else
+         UpdateStaticText(mTasksHeaderText, oss.str(), 0.1, 1.0, 0.1);
    }
-
-   // blank out any of our placeholder task text controls that were left over
-   for(unsigned int i = numAdded; i < mTaskTextList.size(); i++)
-      UpdateStaticText(mTaskTextList[i], "");
-
-   // update our task header
-   oss << "Tasks (" << numComplete << " of " << numAdded << ")";
-   if(numComplete < numAdded)
-      UpdateStaticText(mTasksHeaderText, oss.str(), 1.0, 1.0, 1.0);
-   else
-      UpdateStaticText(mTasksHeaderText, oss.str(), 0.1, 1.0, 0.1);
 }
 
 unsigned int HUDComponent::RecursivelyAddTasks(const std::string &indent, 

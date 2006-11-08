@@ -1,5 +1,13 @@
 <?xml version="1.0" ?>
 <GUIScheme Name="WindowsLookSkin">
+      <Imageset Name="BackgroundImage" Filename="imagesets/BackgroundImage.imageset" />
+      <Imageset Name="GameItemImage" Filename="imagesets/GameItemImage.imageset" />
+	<Imageset Name="FireSuitImage" Filename="imagesets/FireSuitImage.imageset" />
+	<Imageset Name="FireHoseImage" Filename="imagesets/FireHoseImage.imageset" />
+	<Imageset Name="SCBAImage" Filename="imagesets/SCBAImage.imageset" />
+	<Imageset Name="TargetImage" Filename="imagesets/TargetImage.imageset" />
+	<Imageset Name="InventoryUseImage" Filename="imagesets/InventoryUseImage.imageset" />
+	<Imageset Name="InventorySelectImage" Filename="imagesets/InventorySelectImage.imageset" />
 	<Imageset Name="WindowsLook" Filename="imagesets/WindowsLook.imageset" />
    <Font Name="Tahoma-12" Filename="fonts/tahoma-12.font" />
 	<Font Name="Digi-48" Filename="fonts/digi-48.font" />
