@@ -76,7 +76,8 @@ PlayerActor::PlayerActor(dtGame::GameActorProxy &proxy) :
    mIsector(new dtCore::Isector), 
    mIsCrouched(false), 
    mFireHose(new dtCore::ParticleSystem), 
-   mFireHoseSound(dtAudio::AudioManager::GetInstance().NewSound())
+   mFireHoseSound(dtAudio::AudioManager::GetInstance().NewSound()),
+   mLastIntersectedMessage("__InitialID__")
 {
    AddChild(mFireHose.get());
    AddChild(mFireHoseSound);
@@ -327,11 +328,15 @@ void PlayerActor::ListenForTickMessages(const dtGame::Message &msg)
 
 void PlayerActor::SendItemIntersectedMessage(const dtCore::UniqueId &id)
 {
-   dtGame::GameManager &mgr = *GetGameActorProxy().GetGameManager();
-   RefPtr<dtGame::Message> msg = mgr.GetMessageFactory().CreateMessage(MessageType::ITEM_INTERSECTED);
+   if (mLastIntersectedMessage != id)
+   {
+      mLastIntersectedMessage = id;
+      dtGame::GameManager &mgr = *GetGameActorProxy().GetGameManager();
+      RefPtr<dtGame::Message> msg = mgr.GetMessageFactory().CreateMessage(MessageType::ITEM_INTERSECTED);
 
-   msg->SetAboutActorId(id);
-   mgr.SendMessage(*msg);
+      msg->SetAboutActorId(id);
+      mgr.SendMessage(*msg);
+   }
 }
 
 void PlayerActor::SetIsCrouched(bool crouch)

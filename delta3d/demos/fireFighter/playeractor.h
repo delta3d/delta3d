@@ -135,6 +135,7 @@ class FIRE_FIGHTER_EXPORT PlayerActor : public dtGame::GameActor
       bool mIsCrouched;
       dtCore::RefPtr<dtCore::ParticleSystem> mFireHose;
       dtAudio::Sound *mFireHoseSound;
+      dtCore::UniqueId mLastIntersectedMessage;
 };
 
 class FIRE_FIGHTER_EXPORT PlayerActorProxy : public dtGame::GameActorProxy
