@@ -156,9 +156,6 @@
 				RelativePath="..\..\..\demos\fireFighter\gameentrypoint.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\demos\fireFighter\gameevents.cpp">
-			</File>
-			<File
 				RelativePath="..\..\..\demos\fireFighter\gameitemactor.cpp">
 			</File>
 			<File
@@ -234,9 +231,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\demos\fireFighter\gameentrypoint.h">
-			</File>
-			<File
-				RelativePath="..\..\..\demos\fireFighter\gameevents.h">
 			</File>
 			<File
 				RelativePath="..\..\..\demos\fireFighter\gameitemactor.h">
