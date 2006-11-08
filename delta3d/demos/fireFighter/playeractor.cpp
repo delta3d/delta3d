@@ -27,6 +27,7 @@
 #include <fireFighter/firehoseactor.h>
 #include <fireFighter/fireactor.h>
 #include <dtDAL/actorproxyicon.h>
+#include <dtDAL/gameeventmanager.h>
 #include <dtCore/isector.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/camera.h>
@@ -36,10 +37,6 @@
 #include <dtGame/basemessages.h>
 #include <dtGame/invokable.h>
 #include <dtAudio/audiomanager.h>
-#include <osgUtil/IntersectVisitor>
-#include <osg/LineSegment>
-#include <osg/Projection>
-#include <Producer/Camera>
 
 using dtCore::RefPtr;
 
@@ -158,6 +155,23 @@ void PlayerActor::AddItemToInventory(GameItemActor &item)
          mFireHose->GetTransform(xform);
          xform.GetTranslation().z() -= 0.1f;
          mFireHose->SetTransform(xform);
+
+         // Acquired the fire hose, fire the event
+         const std::string &name = "AcquireFireHose";
+
+         dtDAL::GameEvent *event = dtDAL::GameEventManager::GetInstance().FindEvent(name);
+         if(event == NULL)
+         {
+            throw dtUtil::Exception("Failed to find the game event: " + name, __FILE__, __LINE__);
+         }
+
+         dtGame::GameManager &mgr = *GetGameActorProxy().GetGameManager();
+         RefPtr<dtGame::Message> msg = 
+            mgr.GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT);
+
+         dtGame::GameEventMessage &gem = static_cast<dtGame::GameEventMessage&>(*msg);
+         gem.SetGameEvent(*event);
+         mgr.SendMessage(gem);
       } 
       
       // Play the added to inventory sound and send out a message 
