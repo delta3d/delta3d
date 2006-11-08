@@ -55,30 +55,12 @@ class FIRE_FIGHTER_EXPORT FireHoseActor : public GameItemActor
        */
       std::string GetStreamFilename() const;
 
-      /**
-       * Sets the position of the valve.
-       * @param position the position of the valve, from 0.0 (off)
-       * to 1.0 (full blast)
-       */
-      void SetValvePosition(float position);
-
-      /**
-       * Returns the position of the valve.
-       * @return the position of the valve, from 0.0 (off) to
-       * 1.0 (full blast)
-       */
-      float GetValvePosition() const;
-
    protected:
 
       /// Destructor
       virtual ~FireHoseActor();
 
    private:
-
-      std::string mStreamFilename;
-
-      float mValvePosition;
 
       dtCore::RefPtr<dtCore::ParticleSystem> mParticleSystem;
 };
