@@ -224,6 +224,7 @@ class FIRE_FIGHTER_EXPORT HUDComponent : public dtGame::GMComponent
       CEGUI::Point mFireSuitIconPos, mFireHoseIconPos, mSCBAIconPos; 
       std::vector<CEGUI::StaticText*> mTaskTextList;
       CEGUI::StaticText *mTasksHeaderText;
+      const unsigned int mNumTasks;
 };
 
 #endif

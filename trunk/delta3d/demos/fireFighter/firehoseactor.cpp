@@ -21,16 +21,13 @@
 #include <fireFighter/firehoseactor.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtCore/particlesystem.h>
-#include <osg/NodeVisitor>
-#include <osg/MatrixTransform>
-#include <osg/Math>
-#include <osgParticle/ModularEmitter>
-#include <osgParticle/ModularProgram>
-#include <osgParticle/Operator>
-#include <osgParticle/RadialShooter>
-#include <osgParticle/VariableRateCounter>
-#include <osgDB/ReadFile>
-#include <osg/io_utils>
+#include <dtDAL/gameeventmanager.h>
+#include <dtDAL/map.h>
+#include <dtGame/gamemanager.h>
+#include <dtGame/message.h>
+#include <dtGame/basemessages.h>
+
+using dtCore::RefPtr;
 
 ////////////////////////////////////////////////////////
 FireHoseActorProxy::FireHoseActorProxy()
@@ -83,13 +80,25 @@ void FireHoseActor::Activate(bool enable)
 {
    GameItemActor::Activate(enable);
 
-   /*mParticleSystem->SetEnabled(enable);
+   //const std::string &name = "AcquireFireHose";
 
-   dtCore::Transform xform;
-   mParticleSystem->GetTransform(xform);
+   //// No event, peace out
+   //if(!IsActivated())
+   //   return;
 
-   if(enable)
-      std::cout << "PS position is: " << xform.GetTranslation() << '\n';*/
+   //dtDAL::GameEvent *event = dtDAL::GameEventManager::GetInstance().FindEvent(name);
+   //if(event == NULL)
+   //{
+   //   throw dtUtil::Exception("Failed to find the game event: " + name, __FILE__, __LINE__);
+   //}
+
+   //dtGame::GameManager &mgr = *GetGameActorProxy().GetGameManager();
+   //RefPtr<dtGame::Message> msg = 
+   //   mgr.GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT);
+
+   //dtGame::GameEventMessage &gem = static_cast<dtGame::GameEventMessage&>(*msg);
+   //gem.SetGameEvent(*event);
+   //mgr.SendMessage(gem);
 }
 
 void FireHoseActor::SetStreamFilename(const std::string &filename)

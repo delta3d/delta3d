@@ -72,7 +72,8 @@ HUDComponent::HUDComponent(dtCore::DeltaWin &win, const std::string &name) :
    mFireSuitIconPos(0.525f, 0.8f), 
    mFireHoseIconPos(0.688f, 0.8f), 
    mSCBAIconPos(0.85f, 0.8f), 
-   mTasksHeaderText(NULL)
+   mTasksHeaderText(NULL), 
+   mNumTasks(11)
 {
    SetupGUI(win);
 }
@@ -377,7 +378,7 @@ void HUDComponent::BuildHUD()
    curYPos += 2;
 
    // 11 placeholders for tasks
-   for(int i = 0; i < 11; i++)
+   for(int i = 0; i < mNumTasks; i++)
    {
       std::ostringstream oss;
       oss << "Task " << i;

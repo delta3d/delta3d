@@ -31,6 +31,8 @@ class FIRE_FIGHTER_EXPORT SCBAActor : public GameItemActor
       /// Constructor
       SCBAActor(dtGame::GameActorProxy &proxy);
 
+      virtual void Activate(bool enable = true);
+
    protected:
 
       /// Destructor
