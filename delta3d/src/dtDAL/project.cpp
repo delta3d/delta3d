@@ -51,6 +51,7 @@
 #include <dtDAL/librarymanager.h>
 #include <dtDAL/actorproxyicon.h>
 #include <dtDAL/environmentactor.h>
+#include <dtDAL/gameevent.h>
 
 #include <dtAI/waypointmanager.h>
 #include <dtDAL/waypointactorproxy.h>
