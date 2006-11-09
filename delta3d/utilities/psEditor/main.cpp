@@ -855,7 +855,7 @@ void LoadFile( std::string filename, bool import = false )
       // OLD SCHOOLZ LOLLERZDUCK, QUACK QUACK
       if(newParticleSystemGroup->getNumChildren() == OldWay)
       {
-         for(int j = 0; j < OldWay; ++j)
+         for(unsigned int j = 0; j < OldWay; ++j)
          {
             node = newParticleSystemGroup->getChild(j);
             osg::Group* newerParticleSystemGroup = (osg::Group*)node;

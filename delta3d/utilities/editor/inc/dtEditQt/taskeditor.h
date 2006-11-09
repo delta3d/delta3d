@@ -33,6 +33,11 @@ class QComboBox;
 class QString;
 class QTableWidget;
 
+namespace dtDAL
+{
+   class ActorProxy;
+}
+
 namespace dtEditQt
 {
    class TaskEditor : public QDialog

@@ -28,7 +28,8 @@
 #include <QtGui/QTreeWidgetItem>
 #include <vector>
 #include <dtDAL/actorproxy.h>
-#include "dtEditQt/typedefs.h"
+#include <dtDAL/actorproperty.h>
+#include <dtEditQt/typedefs.h>
 
 class QGroupBox;
 class QPushButton;
