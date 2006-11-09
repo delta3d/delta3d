@@ -19,6 +19,11 @@
  * William E. Johnson II
  */
 #include <fireFighter/halonactors.h>
+#include <dtDAL/gameeventmanager.h>
+#include <dtGame/gamemanager.h>
+#include <dtGame/basemessages.h>
+
+using dtCore::RefPtr;
 
 ////////////////////////////////////////////////////////
 PrimaryHalonActorProxy::PrimaryHalonActorProxy()
@@ -53,6 +58,31 @@ PrimaryHalonActor::~PrimaryHalonActor()
 
 }
 
+void PrimaryHalonActor::Activate(bool enable)
+{
+   GameItemActor::Activate(enable);
+
+   const std::string &name = "ThrowPrimaryHalon";
+
+   // No event, peace out
+   if(!IsActivated())
+      return;
+
+   dtDAL::GameEvent *event = dtDAL::GameEventManager::GetInstance().FindEvent(name);
+   if(event == NULL)
+   {
+      throw dtUtil::Exception("Failed to find the game event: " + name, __FILE__, __LINE__);
+   }
+
+   dtGame::GameManager &mgr = *GetGameActorProxy().GetGameManager();
+   RefPtr<dtGame::Message> msg = 
+      mgr.GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT);
+
+   dtGame::GameEventMessage &gem = static_cast<dtGame::GameEventMessage&>(*msg);
+   gem.SetGameEvent(*event);
+   mgr.SendMessage(gem);
+}
+
 ////////////////////////////////////////////////////////
 SecondaryHalonActorProxy::SecondaryHalonActorProxy()
 {
@@ -84,4 +114,29 @@ SecondaryHalonActor::SecondaryHalonActor(dtGame::GameActorProxy &proxy) :
 SecondaryHalonActor::~SecondaryHalonActor()
 {
 
+}
+
+void SecondaryHalonActor::Activate(bool enable)
+{
+   GameItemActor::Activate(enable);
+
+   const std::string &name = "ThrowSecondaryHalon";
+
+   // No event, peace out
+   if(!IsActivated())
+      return;
+
+   dtDAL::GameEvent *event = dtDAL::GameEventManager::GetInstance().FindEvent(name);
+   if(event == NULL)
+   {
+      throw dtUtil::Exception("Failed to find the game event: " + name, __FILE__, __LINE__);
+   }
+
+   dtGame::GameManager &mgr = *GetGameActorProxy().GetGameManager();
+   RefPtr<dtGame::Message> msg = 
+      mgr.GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT);
+
+   dtGame::GameEventMessage &gem = static_cast<dtGame::GameEventMessage&>(*msg);
+   gem.SetGameEvent(*event);
+   mgr.SendMessage(gem);
 }

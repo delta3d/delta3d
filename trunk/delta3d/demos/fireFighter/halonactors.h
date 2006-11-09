@@ -31,6 +31,8 @@ class FIRE_FIGHTER_EXPORT PrimaryHalonActor : public GameItemActor
       /// Constructor
       PrimaryHalonActor(dtGame::GameActorProxy &proxy);
 
+      virtual void Activate(bool enable = true);
+
    protected:
 
       /// Destructor
@@ -66,6 +68,8 @@ class FIRE_FIGHTER_EXPORT SecondaryHalonActor : public GameItemActor
 
       /// Constructor
       SecondaryHalonActor(dtGame::GameActorProxy &proxy);
+
+      virtual void Activate(bool enable = true);
 
    protected:
 

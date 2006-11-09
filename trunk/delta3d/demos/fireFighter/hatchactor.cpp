@@ -25,6 +25,7 @@
 #include <dtGame/gamemanager.h>
 #include <dtGame/basemessages.h>
 #include <dtGame/invokable.h>
+#include <dtDAL/gameeventmanager.h>
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <fireFighter/messagetype.h>
@@ -146,6 +147,10 @@ void HatchActor::Activate(bool enable)
 {
    GameItemActor::Activate(enable);
 
+   // If we are in STAGE, we have a NULL game manager. So peace out of here
+   if(GetGameActorProxy().IsInSTAGE())
+      return;
+
    if(mHatchNode != NULL)
    {
       // Open or close the door
@@ -160,12 +165,8 @@ void HatchActor::Activate(bool enable)
       mHatchNode->preMult(rotMat);
    }
 
-   if(mGameMapLoaded && !IsActivated() && !GetGameActorProxy().IsInSTAGE())
+   if(mGameMapLoaded && !IsActivated())
       PlayItemUseSnd();
-
-   // If we are in STAGE, we have a NULL game manager. So peace out of here
-   if(GetGameActorProxy().IsInSTAGE())
-      return;
 
    // Special case. Since Activate(bool) is a property that is utilized in
    // STAGE, this function is called once on startup to initialize the
@@ -185,6 +186,26 @@ void HatchActor::Activate(bool enable)
       msg->SetAboutActorId(GetUniqueId());
       mgr.SendMessage(*msg);
    }
+
+   const std::string &name = "OpenHatch";
+
+   // No event, peace out
+   if(!IsActivated())
+      return;
+
+   dtDAL::GameEvent *event = dtDAL::GameEventManager::GetInstance().FindEvent(name);
+   if(event == NULL)
+   {
+      throw dtUtil::Exception("Failed to find the game event: " + name, __FILE__, __LINE__);
+   }
+
+   dtGame::GameManager &mgr = *GetGameActorProxy().GetGameManager();
+   RefPtr<dtGame::Message> msg = 
+      mgr.GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT);
+
+   dtGame::GameEventMessage &gem = static_cast<dtGame::GameEventMessage&>(*msg);
+   gem.SetGameEvent(*event);
+   mgr.SendMessage(gem);
 }
 
 void HatchActor::OnMapLoaded(const dtGame::Message &msg)

@@ -29,12 +29,12 @@
 #include <fireFighter/fireactor.h>
 #include <dtCore/globals.h>
 #include <dtCore/deltawin.h>
-#include <dtActors/taskactor.h>
+#include <dtActors/taskactorgameevent.h>
 #include <dtUtil/fileutils.h>
 #include <dtABC/application.h>
 #include <dtGUI/ceuidrawable.h>
 #include <dtGame/taskcomponent.h>
-#include <iomanip>
+#include <dtDAL/gameevent.h>
 
 #ifdef None
 #undef None
@@ -67,7 +67,7 @@ HUDComponent::HUDComponent(dtCore::DeltaWin &win, const std::string &name) :
    mAppHeader(NULL),
    mTaskHeaderText(NULL),
    mIntroText(NULL),
-   mShowObjectives(false), 
+   mShowObjectives(true), 
    mCurrentState(&GameState::STATE_UNKNOWN), 
    mFireSuitIconPos(0.525f, 0.8f), 
    mFireHoseIconPos(0.688f, 0.8f), 
@@ -368,9 +368,9 @@ void HUDComponent::BuildHUD()
    mTargetIcon->setImage("TargetImage", "TargetImage");
    mHUDBackground->addChildWindow(mTargetIcon);
 
-   float curYPos       = 70.0f;
-   float mTextHeight   = 20.0f;
-   float taskTextWidth = 300.0f;
+   float curYPos       = 20.0f;
+   float mTextHeight   = 25.0f;
+   float taskTextWidth = 500.0f;
 
    mTasksHeaderText = CreateText("Task Header", mHUDBackground, "Tasks:", 
       4, curYPos, taskTextWidth - 2, mTextHeight + 2);
@@ -378,7 +378,7 @@ void HUDComponent::BuildHUD()
    curYPos += 2;
 
    // 11 placeholders for tasks
-   for(int i = 0; i < mNumTasks; i++)
+   for(unsigned int i = 0; i < mNumTasks; i++)
    {
       std::ostringstream oss;
       oss << "Task " << i;
@@ -445,12 +445,13 @@ void HUDComponent::BuildIntroMenu()
 bool HUDComponent::OnStartWithObjectives(const CEGUI::EventArgs &e)
 {
    mShowObjectives = true;
-   SendGameStateChangedMessage(GameState::STATE_MENU, GameState::STATE_INTRO);
+   SendGameStateChangedMessage(GameState::STATE_MENU, GameState::STATE_RUNNING);
    return true;
 }
 
 bool HUDComponent::OnStart(const CEGUI::EventArgs &e)
 {
+   mShowObjectives = false;
    SendGameStateChangedMessage(GameState::STATE_MENU, GameState::STATE_INTRO);
    return true;
 }
@@ -591,7 +592,7 @@ void HUDComponent::SetDeactivatedItem(GameItemActor *item)
 
 void HUDComponent::UpdateMediumDetailData()
 {
-   if (mHUDBackground->isVisible())
+   if(mHUDBackground->isVisible())
    {
       std::ostringstream oss;
       std::vector<dtCore::RefPtr<dtGame::GameActorProxy> > tasks;
@@ -641,12 +642,27 @@ unsigned int HUDComponent::RecursivelyAddTasks(const std::string &indent,
       {
          numCompleted++;
 
-         oss << indent << task->GetName() << " Y " << task->GetScore();
+         const dtActors::TaskActorGameEvent *tage = dynamic_cast<const dtActors::TaskActorGameEvent*>(task);
+         if(tage != NULL)
+         {
+            dtDAL::GameEvent *event = tage->GetGameEvent();
+            oss << indent << event->GetDescription() << " Y " << task->GetScore();
+         }
+         else
+            oss << indent << task->GetDescription() << " Y " << task->GetScore();
+         
          UpdateStaticText(mTaskTextList[curIndex + totalNumAdded], oss.str(), 0.0, 1.0, 0.0);
       }
       else
       {
-         oss << indent << task->GetName() << " N " << task->GetScore();
+         const dtActors::TaskActorGameEvent *tage = dynamic_cast<const dtActors::TaskActorGameEvent*>(task);
+         if(tage != NULL)
+         {
+            dtDAL::GameEvent *event = tage->GetGameEvent();
+            oss << indent << event->GetDescription() << " N " << task->GetScore();
+         }
+         else
+            oss << indent << task->GetDescription() << " N " << task->GetScore();
          UpdateStaticText(mTaskTextList[curIndex + totalNumAdded], oss.str(), 1.0, 1.0, 1.0);
       }
 

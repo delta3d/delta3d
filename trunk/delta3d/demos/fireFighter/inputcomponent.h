@@ -43,8 +43,7 @@ namespace dtAudio
 
 namespace dtActors
 {
-   class TaskActorRollup;
-   class TaskActorOrdered;
+   class TaskActorOrderedProxy;
 }
 
 class FIRE_FIGHTER_EXPORT InputComponent : public dtGame::BaseInputComponent
@@ -190,8 +189,7 @@ class FIRE_FIGHTER_EXPORT InputComponent : public dtGame::BaseInputComponent
       dtAudio::Sound *mBellSound, *mDebriefSound, *mWalkSound, *mRunSound, *mCrouchSound;
       GameItemActor *mCurrentIntersectedItem;
       float mRadius, mTheta, mK;
-      dtCore::RefPtr<dtActors::TaskActorOrdered> mOrderedTask;
-      dtCore::RefPtr<dtActors::TaskActorRollup>  mRollupTask;
+      dtCore::RefPtr<dtActors::TaskActorOrderedProxy> mMission;
 };
 
 template<class T>
