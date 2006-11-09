@@ -7,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2006-10-11T17:11:58.0-05:00</createTimestamp>
-        <lastUpdateTimestamp>2006-11-09T12:21:22.0-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2006-11-09T15:53:18.0-05:00</lastUpdateTimestamp>
         <editorVersion>1.3.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -1195,24 +1195,24 @@
             <property>
                 <name>Rotation</name>
                 <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>0.000010</value3>
+                    <value1>0.000007</value1>
+                    <value2>0.000010</value2>
+                    <value3>-0.000000</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>7.299833</value1>
-                    <value2>-27.005234</value2>
+                    <value1>7.409382</value1>
+                    <value2>-26.792603</value2>
                     <value3>0.355688</value3>
                 </vec3>
             </property>
             <property>
                 <name>Scale</name>
                 <vec3>
-                    <value1>0.700003</value1>
-                    <value2>0.700004</value2>
+                    <value1>0.700005</value1>
+                    <value2>0.700006</value2>
                     <value3>0.650002</value3>
                 </vec3>
             </property>
