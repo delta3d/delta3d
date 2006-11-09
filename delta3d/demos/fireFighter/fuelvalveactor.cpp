@@ -19,6 +19,11 @@
  * William E. Johnson II
  */
 #include <fireFighter/fuelvalveactor.h>
+#include <dtDAL/gameeventmanager.h>
+#include <dtGame/gamemanager.h>
+#include <dtGame/basemessages.h>
+
+using dtCore::RefPtr;
 
 ////////////////////////////////////////////////////////
 FuelValveActorProxy::FuelValveActorProxy()
@@ -51,4 +56,29 @@ FuelValveActor::FuelValveActor(dtGame::GameActorProxy &proxy) :
 FuelValveActor::~FuelValveActor()
 {
 
+}
+
+void FuelValveActor::Activate(bool enable)
+{
+   GameItemActor::Activate(enable);
+
+   const std::string &name = "TripFuelValve";
+
+   // No event, peace out
+   if(!IsActivated())
+      return;
+
+   dtDAL::GameEvent *event = dtDAL::GameEventManager::GetInstance().FindEvent(name);
+   if(event == NULL)
+   {
+      throw dtUtil::Exception("Failed to find the game event: " + name, __FILE__, __LINE__);
+   }
+
+   dtGame::GameManager &mgr = *GetGameActorProxy().GetGameManager();
+   RefPtr<dtGame::Message> msg = 
+      mgr.GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT);
+
+   dtGame::GameEventMessage &gem = static_cast<dtGame::GameEventMessage&>(*msg);
+   gem.SetGameEvent(*event);
+   mgr.SendMessage(gem);
 }

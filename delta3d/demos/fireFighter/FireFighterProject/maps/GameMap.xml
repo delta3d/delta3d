@@ -7,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2006-10-11T17:11:58.0-05:00</createTimestamp>
-        <lastUpdateTimestamp>2006-11-08T15:06:47.0-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2006-11-09T12:21:22.0-05:00</lastUpdateTimestamp>
         <editorVersion>1.3.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -21,20 +21,166 @@
         <event>
             <id>224c1a5f-0dd4-42da-bd54-446207325c71</id>
             <name>DonFireFighterEnsemble</name>
-            <description>Locate a fireman's ensemble and don it. </description>
+            <description>Don fire suit</description>
+        </event>
+        <event>
+            <id>3f6b278d-c12a-4aec-a2d1-1f0c5b4320b6</id>
+            <name>ExtinguishFire</name>
+            <description>Extinguish engine room fire</description>
         </event>
         <event>
             <id>47019ef3-742a-4508-a67a-1f17fd1634cd</id>
             <name>UseSCBA</name>
-            <description>Locate a SCBA and activate it.</description>
+            <description>Activate SCBA</description>
+        </event>
+        <event>
+            <id>7c48e874-3a84-4c38-9b5a-c34c20b5c286</id>
+            <name>ThrowPrimaryHalon</name>
+            <description>Throw primary halon</description>
+        </event>
+        <event>
+            <id>8cd281eb-dcfa-40f0-9d31-a35fb9f0c934</id>
+            <name>OpenHatch</name>
+            <description>Open engine room hatch</description>
+        </event>
+        <event>
+            <id>bf2b9160-6687-43ef-84e0-02b96815b971</id>
+            <name>ThrowSecondaryHalon</name>
+            <description>Throw secondary halon</description>
         </event>
         <event>
             <id>f543168d-6f6d-451f-8e4b-6a7e09b10f5d</id>
             <name>AcquireFireHose</name>
-            <description>Locate a fire hose and acquire it. </description>
+            <description>Acquire fire hose</description>
+        </event>
+        <event>
+            <id>f8986e02-db88-44b4-8399-f01088eae872</id>
+            <name>TripFuelValve</name>
+            <description>Trip fuel valve</description>
         </event>
     </events>
     <actors>
+        <actor>
+            <type>dtcore.Tasks.Ordered Task Actor</type>
+            <id>039dea50-f74d-4e8d-bd55-574fe09b7d98</id>
+            <name>TaskRootMission</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>19.999998</value2>
+                    <value3>-0.000001</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>1.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>NONE</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.188790321350098</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server Local</enumerated>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string></string>
+            </property>
+            <property>
+                <name>Description</name>
+                <string>FireFighterMission</string>
+            </property>
+            <property>
+                <name>PassingScore</name>
+                <float>1</float>
+            </property>
+            <property>
+                <name>Score</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Weight</name>
+                <float>1</float>
+            </property>
+            <property>
+                <name>Complete</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>NotifyLMSOnUpdate</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>CompleteTime</name>
+                <double>-1</double>
+            </property>
+            <property>
+                <name>SubTasks</name>
+                <group></group>
+            </property>
+            <property>
+                <name>Order Enforcement</name>
+                <enumerated>CAUSE_FAILURE</enumerated>
+            </property>
+        </actor>
         <actor>
             <type>HatchActor.HatchActor</type>
             <id>0565dfbd-e7cc-49a8-b718-5917ca054b69</id>
@@ -486,7 +632,7 @@
             </property>
             <property>
                 <name>NotifyLMSOnUpdate</name>
-                <boolean>false</boolean>
+                <boolean>true</boolean>
             </property>
             <property>
                 <name>CompleteTime</name>
@@ -499,6 +645,131 @@
             <property>
                 <name>GameEvent</name>
                 <gameevent>47019ef3-742a-4508-a67a-1f17fd1634cd</gameevent>
+            </property>
+            <property>
+                <name>MinOccurances</name>
+                <integer>1</integer>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Tasks.GameEvent Task Actor</type>
+            <id>3f4f284b-ec6e-47c4-82af-66d09e003fb9</id>
+            <name>TaskExtinguishFire</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>19.999998</value2>
+                    <value3>-0.000001</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>1.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>NONE</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.188790321350098</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server Local</enumerated>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string></string>
+            </property>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>PassingScore</name>
+                <float>1</float>
+            </property>
+            <property>
+                <name>Score</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Weight</name>
+                <float>1</float>
+            </property>
+            <property>
+                <name>Complete</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>NotifyLMSOnUpdate</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>CompleteTime</name>
+                <double>-1</double>
+            </property>
+            <property>
+                <name>SubTasks</name>
+                <group></group>
+            </property>
+            <property>
+                <name>GameEvent</name>
+                <gameevent>3f6b278d-c12a-4aec-a2d1-1f0c5b4320b6</gameevent>
             </property>
             <property>
                 <name>MinOccurances</name>
@@ -797,6 +1068,127 @@
             </property>
         </actor>
         <actor>
+            <type>dtcore.Tasks.Ordered Task Actor</type>
+            <id>69ecc0bf-948e-4b6f-add9-00cca305e113</id>
+            <name>TaskSafelyEnterEngineRoom</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>19.999998</value2>
+                    <value3>-0.000001</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>1.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>NONE</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.188790321350098</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server Local</enumerated>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string></string>
+            </property>
+            <property>
+                <name>Description</name>
+                <string>SafelyEnterEngineRoom</string>
+            </property>
+            <property>
+                <name>PassingScore</name>
+                <float>1</float>
+            </property>
+            <property>
+                <name>Score</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Weight</name>
+                <float>1</float>
+            </property>
+            <property>
+                <name>Complete</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>NotifyLMSOnUpdate</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>CompleteTime</name>
+                <double>-1</double>
+            </property>
+            <property>
+                <name>SubTasks</name>
+                <group></group>
+            </property>
+            <property>
+                <name>Order Enforcement</name>
+                <enumerated>CAUSE_FAILURE</enumerated>
+            </property>
+        </actor>
+        <actor>
             <type>FireHoseActor.FireHoseActor</type>
             <id>7a513efa-df06-4fbf-9555-93f3fd3ad214</id>
             <name>FireHoseActor</name>
@@ -1023,7 +1415,7 @@
             </property>
             <property>
                 <name>NotifyLMSOnUpdate</name>
-                <boolean>false</boolean>
+                <boolean>true</boolean>
             </property>
             <property>
                 <name>CompleteTime</name>
@@ -1036,6 +1428,381 @@
             <property>
                 <name>GameEvent</name>
                 <gameevent>f543168d-6f6d-451f-8e4b-6a7e09b10f5d</gameevent>
+            </property>
+            <property>
+                <name>MinOccurances</name>
+                <integer>1</integer>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Tasks.GameEvent Task Actor</type>
+            <id>9225fa44-a79a-4f88-97e4-d3cba9e594f1</id>
+            <name>TaskThrowPrimaryHalon</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>19.999998</value2>
+                    <value3>-0.000001</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>1.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>NONE</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.188790321350098</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server Local</enumerated>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string></string>
+            </property>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>PassingScore</name>
+                <float>1</float>
+            </property>
+            <property>
+                <name>Score</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Weight</name>
+                <float>1</float>
+            </property>
+            <property>
+                <name>Complete</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>NotifyLMSOnUpdate</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>CompleteTime</name>
+                <double>-1</double>
+            </property>
+            <property>
+                <name>SubTasks</name>
+                <group></group>
+            </property>
+            <property>
+                <name>GameEvent</name>
+                <gameevent>7c48e874-3a84-4c38-9b5a-c34c20b5c286</gameevent>
+            </property>
+            <property>
+                <name>MinOccurances</name>
+                <integer>1</integer>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Tasks.GameEvent Task Actor</type>
+            <id>a8f7ef79-852e-47b5-b840-3194f2b7e9fc</id>
+            <name>TaskTripFuelValve</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>19.999998</value2>
+                    <value3>-0.000001</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>1.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>NONE</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.188790321350098</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server Local</enumerated>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string></string>
+            </property>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>PassingScore</name>
+                <float>1</float>
+            </property>
+            <property>
+                <name>Score</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Weight</name>
+                <float>1</float>
+            </property>
+            <property>
+                <name>Complete</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>NotifyLMSOnUpdate</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>CompleteTime</name>
+                <double>-1</double>
+            </property>
+            <property>
+                <name>SubTasks</name>
+                <group></group>
+            </property>
+            <property>
+                <name>GameEvent</name>
+                <gameevent>f8986e02-db88-44b4-8399-f01088eae872</gameevent>
+            </property>
+            <property>
+                <name>MinOccurances</name>
+                <integer>1</integer>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Tasks.GameEvent Task Actor</type>
+            <id>baa87300-eb43-4a69-b856-588838e228aa</id>
+            <name>TaskOpenHatch</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>19.999998</value2>
+                    <value3>-0.000001</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>1.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>NONE</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.188790321350098</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server Local</enumerated>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string></string>
+            </property>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>PassingScore</name>
+                <float>1</float>
+            </property>
+            <property>
+                <name>Score</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Weight</name>
+                <float>1</float>
+            </property>
+            <property>
+                <name>Complete</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>NotifyLMSOnUpdate</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>CompleteTime</name>
+                <double>-1</double>
+            </property>
+            <property>
+                <name>SubTasks</name>
+                <group></group>
+            </property>
+            <property>
+                <name>GameEvent</name>
+                <gameevent>8cd281eb-dcfa-40f0-9d31-a35fb9f0c934</gameevent>
             </property>
             <property>
                 <name>MinOccurances</name>
@@ -1406,6 +2173,123 @@
             </property>
             <property>
                 <name>Description</name>
+                <string>AcquireGear</string>
+            </property>
+            <property>
+                <name>PassingScore</name>
+                <float>1</float>
+            </property>
+            <property>
+                <name>Score</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Weight</name>
+                <float>1</float>
+            </property>
+            <property>
+                <name>Complete</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>NotifyLMSOnUpdate</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>CompleteTime</name>
+                <double>-1</double>
+            </property>
+            <property>
+                <name>SubTasks</name>
+                <group></group>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Tasks.GameEvent Task Actor</type>
+            <id>d14ac377-d5fc-491d-ad32-f5a7c94704b0</id>
+            <name>TaskThrowSecondaryHalon</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>19.999998</value2>
+                    <value3>-0.000001</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>1.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>NONE</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.188790321350098</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server Local</enumerated>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string></string>
+            </property>
+            <property>
+                <name>Description</name>
                 <string></string>
             </property>
             <property>
@@ -1426,7 +2310,7 @@
             </property>
             <property>
                 <name>NotifyLMSOnUpdate</name>
-                <boolean>false</boolean>
+                <boolean>true</boolean>
             </property>
             <property>
                 <name>CompleteTime</name>
@@ -1435,6 +2319,14 @@
             <property>
                 <name>SubTasks</name>
                 <group></group>
+            </property>
+            <property>
+                <name>GameEvent</name>
+                <gameevent>bf2b9160-6687-43ef-84e0-02b96815b971</gameevent>
+            </property>
+            <property>
+                <name>MinOccurances</name>
+                <integer>1</integer>
             </property>
         </actor>
         <actor>

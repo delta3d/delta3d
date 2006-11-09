@@ -20,7 +20,6 @@
 */
 #include <fireFighter/firesuitactor.h>
 #include <dtDAL/gameeventmanager.h>
-#include <dtDAL/map.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/basemessages.h>
 
