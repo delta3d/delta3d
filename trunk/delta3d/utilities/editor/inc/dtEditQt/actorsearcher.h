@@ -27,7 +27,8 @@
 #include <vector>
 #include <dtCore/refptr.h>
 #include <dtDAL/actorproxy.h>
-#include "dtEditQt/typedefs.h"
+#include <dtEditQt/typedefs.h>
+#include <dtDAL/actorproperty.h>
 
 class QComboBox;
 class QGroupBox;

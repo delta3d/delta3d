@@ -27,6 +27,7 @@
 #include <vector>
 #include <osg/Referenced>
 #include <dtDAL/actorproxy.h>
+#include <dtDAL/actorproperty.h>
 #include <dtEditQt/typedefs.h>
 #include <dtCore/refptr.h>
 
