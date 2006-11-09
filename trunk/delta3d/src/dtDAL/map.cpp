@@ -193,22 +193,40 @@ namespace dtDAL
    {
 
 
-      if (className != "" && !actorProxy.IsInstanceOf(className))
+      if (!className.empty() && !actorProxy.IsInstanceOf(className))
          return false;
 
-      const ActorType& actorType = actorProxy.GetActorType();
+      if (!typeName.empty() || !category.empty())
+      {
 
-      if (typeName != "" && actorType.GetName() != typeName)
-         return false;
-
-      const std::string& cat = actorType.GetCategory();
-
-      //The category needs to be either the whole name or be a substring up to a '.'
-      if (category != "" &&
-          (cat.substr(0, category.size()) != category
-           || (cat.size() != category.size() && cat[category.size()] != '.')))
-         return false;
-
+         const ActorType* actorType = &actorProxy.GetActorType();
+         
+         bool matches = false;
+         
+         while (!matches && actorType != NULL)
+         {
+            bool nameMatches = typeName.empty() || actorType->GetName() == typeName; 
+      
+            const std::string& actualCategory = actorType->GetCategory();
+      
+            bool catMatches = false; 
+            
+            if (actualCategory.size() >= category.size())
+            {
+               //The category needs to be either the whole name or be a substring up to a '.'
+               catMatches = category.empty() ||
+                            (actualCategory.substr(0, category.size()) == category
+                            && (actualCategory.size() == category.size() || actualCategory[category.size()] == '.'));
+            }
+            
+            matches = catMatches && nameMatches;
+            actorType = actorType->GetParentActorType();
+         }
+         
+         if (!matches)
+            return false;
+      }
+      
       if (placeable == Placeable && !actorProxy.IsPlaceable())
          return false;
       else if (placeable == NotPlaceable && actorProxy.IsPlaceable())

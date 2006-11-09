@@ -33,14 +33,13 @@
 
 namespace dtEditQt
 {
-   DynamicActorControl::DynamicActorControl() 
+   DynamicActorControl::DynamicActorControl():
+      myProperty(NULL), mTemporaryWrapper(NULL), mTemporaryEditControl(NULL), mTemporaryGotoButton(NULL)  
    {
-       
    }
 
    DynamicActorControl::~DynamicActorControl()
    {
-      
    }
 
    void DynamicActorControl::initializeData(DynamicAbstractControl *newParent,
@@ -70,9 +69,9 @@ namespace dtEditQt
 
          // set the current value from our property
          if(myProperty->GetValue() != NULL)
-           temporaryEditControl->setCurrentIndex(temporaryEditControl->findText(myProperty->GetValue()->GetName().c_str()));
+           mTemporaryEditControl->setCurrentIndex(mTemporaryEditControl->findText(myProperty->GetValue()->GetName().c_str()));
          else
-            temporaryEditControl->setCurrentIndex(temporaryEditControl->findText("None"));
+            mTemporaryEditControl->setCurrentIndex(mTemporaryEditControl->findText("None"));
       }
    }
 
@@ -86,8 +85,8 @@ namespace dtEditQt
          //SubQComboBox *editor = static_cast<SubQComboBox*>(widget);
 
          // Get the current selected string and the previously set string value
-         QString selection = temporaryEditControl->currentText();
-         int index = temporaryEditControl->findText(selection);
+         QString selection = mTemporaryEditControl->currentText();
+         int index = mTemporaryEditControl->currentIndex();
          std::string selectionString = selection.toStdString();
          std::string previousString = myProperty->GetValue() != NULL ? myProperty->GetValue()->GetName() : "None";
 
@@ -98,13 +97,16 @@ namespace dtEditQt
             EditorEvents::getInstance().emitActorPropertyAboutToChange(proxy, myProperty, previousString, selectionString);
 
             dtCore::RefPtr<dtDAL::Map> curMap = EditorData::getInstance().getCurrentMap();
-            if(!curMap.valid())
+            if (!curMap.valid())
                EXCEPT(dtDAL::ExceptionEnum::MapException, "There is no map open, there shouldn't be any controls");
             
             std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > proxies;
             GetActorProxies(proxies, myProperty->GetDesiredActorClass());
 
-            myProperty->SetValue((unsigned int)index < proxies.size() ? proxies[index].get() : NULL);
+            if (index == 0)
+               myProperty->SetValue(NULL);
+            else
+               myProperty->SetValue((unsigned int)index < proxies.size() ? proxies[index - 1].get() : NULL);
             dataChanged = true;
          }
       }
@@ -137,36 +139,34 @@ namespace dtEditQt
       grid->setMargin(0);
       grid->setSpacing(1);
 
-      temporaryEditControl = new SubQComboBox(wrapper, this);
+      mTemporaryEditControl = new SubQComboBox(wrapper, this);
 
-      temporaryGotoButton = new SubQPushButton(tr("Goto"), wrapper, this);
+      mTemporaryGotoButton = new SubQPushButton(tr("Goto"), wrapper, this);
 
-      connect(temporaryGotoButton, SIGNAL(clicked()), this, SLOT(onGotoClicked()));
+      connect(mTemporaryGotoButton, SIGNAL(clicked()), this, SLOT(onGotoClicked()));
       
       std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > names;
       GetActorProxies(names, myProperty->GetDesiredActorClass());
 
       // Insert the None option at the end of the list
-      temporaryEditControl->addItem(QString("None"));
+      mTemporaryEditControl->addItem(QString("None"));
 
       for(unsigned int i = 0; i < names.size(); i++)
-         temporaryEditControl->addItem(QString(names[i]->GetName().c_str()));
+         mTemporaryEditControl->addItem(QString(names[i]->GetName().c_str()));
 
-      connect(temporaryEditControl, SIGNAL(activated(int)), this, SLOT(itemSelected(int)));
+      connect(mTemporaryEditControl, SIGNAL(activated(int)), this, SLOT(itemSelected(int)));
 
-      updateEditorFromModel(temporaryEditControl);
+      updateEditorFromModel(mTemporaryEditControl);
 
       // set the tooltip
-      temporaryEditControl->setToolTip(getDescription());
+      mTemporaryEditControl->setToolTip(getDescription());
 
-      grid->addWidget(temporaryEditControl, 0, 0, 1, 1);
-      grid->addWidget(temporaryGotoButton, 0, 1, 1, 1);
-      grid->setColumnMinimumWidth(1, temporaryGotoButton->sizeHint().width() / 2);
+      grid->addWidget(mTemporaryEditControl, 0, 0, 1, 1);
+      grid->addWidget(mTemporaryGotoButton, 0, 1, 1, 1);
+      grid->setColumnMinimumWidth(1, mTemporaryGotoButton->sizeHint().width() / 2);
       grid->setColumnStretch(0, 2);
       
-      connect(this, SIGNAL(closeEditor(QWidget*, QAbstractItemDelegate::EndEditHint)), this,
-         SLOT(handleSubEditDestroy(QWidget*, QAbstractItemDelegate::EndEditHint)));
-      
+      mTemporaryWrapper = wrapper;
       return wrapper;
    }
 
@@ -202,9 +202,9 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicActorControl::itemSelected(int index) 
    {
-      if (temporaryEditControl != NULL) 
+      if (mTemporaryEditControl != NULL) 
       {
-         updateModelFromEditor(temporaryEditControl);
+         updateModelFromEditor(mTemporaryEditControl);
       }
    }
 
@@ -226,9 +226,9 @@ namespace dtEditQt
    {
       dtDAL::ActorActorProperty *changedProp = dynamic_cast<dtDAL::ActorActorProperty*>(property.get());
 
-      if (temporaryEditControl != NULL && proxy == this->proxy && changedProp == myProperty) 
+      if (mTemporaryEditControl != NULL && proxy == this->proxy && changedProp == myProperty) 
       {
-         updateEditorFromModel(temporaryEditControl);
+         updateEditorFromModel(mTemporaryEditControl);
       }
    }
 

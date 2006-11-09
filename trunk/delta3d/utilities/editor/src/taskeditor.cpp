@@ -35,8 +35,10 @@
 #include <QtGui/QTableWidget>
 #include <QtGui/QHeaderView>
 #include <QtCore/QString>
+#include <QtCore/QVariant>
 
 #include <dtEditQt/editordata.h>
+#include <dtEditQt/typedefs.h>
 
 #include <dtDAL/map.h>
 #include <dtDAL/namedparameter.h>
@@ -53,10 +55,9 @@ namespace dtEditQt
 
       QVBoxLayout *rightSideLayout = new QVBoxLayout;
       QLabel      *child       = new QLabel(tr("Children")); 
-      QPushButton *addExisting = new QPushButton(tr("Add Existing"));
       grid->addWidget(child, 0, 0);
-      //grid->addWidget(addExisting, 0, 1);
 
+     
       mChildrenView = new QTableWidget(NULL);
       mChildrenView->setSelectionMode(QAbstractItemView::SingleSelection);
       mChildrenView->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -64,10 +65,11 @@ namespace dtEditQt
       mChildrenView->setEditTriggers(QAbstractItemView::NoEditTriggers);
       grid->addWidget(mChildrenView, 1, 0);
 
+      mAddExisting = new QPushButton(tr("Add Existing"));
       mComboBox = new QComboBox;
-      rightSideLayout->addWidget(addExisting);
+      mComboBox->setEditable(false);
+      rightSideLayout->addWidget(mAddExisting);
       rightSideLayout->addWidget(mComboBox);
-      //grid->addWidget(mComboBox, 1, 1);
       grid->addLayout(rightSideLayout, 0, 1);
 
       QHBoxLayout *buttonLayout = new QHBoxLayout;
@@ -95,6 +97,7 @@ namespace dtEditQt
       //setMinimumSize(360, 375);
 
       connect(mComboBox, SIGNAL(activated(const QString&)), this, SLOT(RefreshComboBox(const QString&)));
+      connect(mAddExisting, SIGNAL(clicked()), this, SLOT(AddSelected()));
 
       connect(mMoveUp,      SIGNAL(clicked()), this, SLOT(OnMoveUpClicked()));
       connect(mMoveDown,    SIGNAL(clicked()), this, SLOT(OnMoveDownClicked()));
@@ -103,8 +106,6 @@ namespace dtEditQt
       connect(cancel,       SIGNAL(clicked()), this, SLOT(close()));      
       connect(mChildrenView,   SIGNAL(itemSelectionChanged()), this, SLOT(EnableEditButtons()));
 
-      RefreshChildren();
-      RefreshComboBox(tr(""));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -114,7 +115,7 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void TaskEditor::RefreshChildren()
+   void TaskEditor::PopulateChildren()
    {
       mChildrenView->clear();
       
@@ -159,29 +160,62 @@ namespace dtEditQt
                dtDAL::ActorProxy* child = currMap.GetProxyById(id);
                if (child != NULL)
                {
-                  dtDAL::ActorType& at = child->GetActorType();
-                  QTableWidgetItem *nm = new QTableWidgetItem;
-                  QTableWidgetItem *type = new QTableWidgetItem;
-               
-                  nm->setText(tr(child->GetName().c_str()));
-                  type->setText(tr((at.GetCategory() + "." + at.GetName()).c_str()));
-
-                  mChildrenView->setItem(i, 0, nm);
-                  mChildrenView->setItem(i, 1, type);
-                  names.push_back(tr(""));
+                  AddItemToList(*child);
                }
             }
          }
-
-         mChildrenView->setVerticalHeaderLabels(names);
-         
+         BlankRowLabels();         
       }
+   }
+
+   void TaskEditor::BlankRowLabels()
+   {
+      QStringList names;
+      QString blank(tr(""));
+      
+      for (int i = 0; i < mChildrenView->rowCount(); ++i)
+         names.push_back(blank);
+         
+      mChildrenView->setVerticalHeaderLabels(names);
+   }
+
+   void TaskEditor::AddItemToList(dtDAL::ActorProxy& proxy)
+   {
+      dtDAL::ActorType& at = proxy.GetActorType();
+      QTableWidgetItem *nm = new QTableWidgetItem;
+      QTableWidgetItem *type = new QTableWidgetItem;
+   
+      nm->setText(tr(proxy.GetName().c_str()));
+      nm->setData(Qt::UserRole, QVariant::fromValue(dtCore::RefPtr<dtDAL::ActorProxy>(&proxy)));
+      type->setText(tr((at.GetCategory() + "." + at.GetName()).c_str()));
+
+      int row = mChildrenView->rowCount();
+
+      mChildrenView->setItem(row, 0, nm);
+      mChildrenView->setItem(row, 1, type);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void TaskEditor::RefreshComboBox(const QString &itemName)
    {
-
+      mComboBox->clear();
+      dtDAL::Map* m = EditorData::getInstance().getCurrentMap();
+      
+      if (m == NULL)
+      {
+         LOG_ERROR("Unable read lookup the task actor types because the current map is NULL.");
+         return;
+      }
+      
+      std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > toFill;
+      m->FindProxies(toFill, "", "dtcore.Tasks", "Task Actor");
+      for (unsigned i = 0; i < toFill.size(); ++i)
+      {
+         dtDAL::ActorProxy* ap = toFill[i].get();
+         //TODO if it's not the currently selected actor
+         QVariant v = QVariant::fromValue(dtCore::RefPtr<dtDAL::ActorProxy>(ap)); 
+         mComboBox->addItem(tr(ap->GetName().c_str()), v);
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -224,17 +258,56 @@ namespace dtEditQt
       mRemoveChild->setDisabled(true);
    }
 
+   //Adds the selected task actor in the combo box 
+   void TaskEditor::AddSelected()
+   {
+      int index = mComboBox->currentIndex();
+      if (index >= 0)
+      {
+         QVariant v = mComboBox->itemData(index);
+         dtCore::RefPtr<dtDAL::ActorProxy> proxy = v.value<dtCore::RefPtr<dtDAL::ActorProxy> >();
+         AddItemToList(*proxy);
+         BlankRowLabels();
+      } 
+   }
+         
+   //called when the combo box selection changes.
+   void TaskEditor::OnComboSelectionChanged(int index)
+   {
+      if (index >= 0 && index < mComboBox->count())
+      {
+         mAddExisting->setDisabled(false);
+      }
+      else
+      {
+         mAddExisting->setDisabled(true);
+      }
+   }
+
    ///////////////////////////////////////////////////////////////////////////////
    void TaskEditor::SetTaskChildren(const dtDAL::NamedGroupParameter& children)
    {
       mChildren = new dtDAL::NamedGroupParameter(children);
-      RefreshChildren();
+      PopulateChildren();
    }
    
    ///////////////////////////////////////////////////////////////////////////////
    void TaskEditor::GetTaskChildren(dtDAL::NamedGroupParameter& toFill) const
    {
-      
+      for (int i = 0; i < mChildrenView->rowCount(); ++i)
+      {
+         QTableWidgetItem* item = mChildrenView->item(i, 0);
+         if (item != NULL)
+         {
+            QVariant v = item->data(Qt::UserRole);
+            dtCore::RefPtr<dtDAL::ActorProxy> proxy = v.value<dtCore::RefPtr<dtDAL::ActorProxy> >();
+            std::ostringstream ss;
+            ss << i;
+            dtCore::RefPtr<dtDAL::NamedActorParameter> aParam = new dtDAL::NamedActorParameter(ss.str());
+            aParam->SetValue(proxy->GetId());
+            toFill.AddParameter(*aParam);
+         }
+      }
    }
    
 }

@@ -131,7 +131,7 @@ namespace dtDAL
           * or not this type is a descendent or equal to the specified actor type.
           * @return True if a descendent or equal, false otherwise.
           */
-         bool InstanceOf(const ActorType &rhs);
+         bool InstanceOf(const ActorType &rhs) const;
 
          /**
           * Helper method which is the same as the other InstanceOf method, only this one
@@ -141,7 +141,7 @@ namespace dtDAL
           * @return True if a descendent or equal, false otherwise.
           * @see InstanceOf(const ActorType &rhs)
           */
-         bool InstanceOf(const std::string &category, const std::string &name);
+         bool InstanceOf(const std::string &category, const std::string &name) const;
             
          /**
           * Less-than comparison of the actor type's uniqueId strings.

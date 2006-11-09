@@ -50,7 +50,7 @@ namespace dtEditQt {
 
     ///////////////////////////////////////////////////////////////////////////////
     DynamicColorRGBAControl::DynamicColorRGBAControl()
-        : temporaryEditOnlyTextLabel(NULL), temporaryColorPicker(NULL)
+        : mTemporaryWrapper(NULL), mTemporaryEditOnlyTextLabel(NULL), mTemporaryColorPicker(NULL)
     {
     }
 
@@ -157,22 +157,23 @@ namespace dtEditQt {
         hBox->setSpacing(0);
 
         // label 
-        temporaryEditOnlyTextLabel = new SubQLabel(getValueAsString(), wrapper, this);
+        mTemporaryEditOnlyTextLabel = new SubQLabel(getValueAsString(), wrapper, this);
         // set the background color to white so that it sort of blends in with the rest of the controls
-        setBackgroundColor(temporaryEditOnlyTextLabel, PropertyEditorTreeView::ROW_COLOR_ODD);
+        setBackgroundColor(mTemporaryEditOnlyTextLabel, PropertyEditorTreeView::ROW_COLOR_ODD);
 
         // button
-        temporaryColorPicker = new SubQPushButton(tr("Pick ..."), wrapper, this);
+        mTemporaryColorPicker = new SubQPushButton(tr("Pick ..."), wrapper, this);
         //temporaryColorPicker->setMaximumHeight(18);
-        connect(temporaryColorPicker, SIGNAL(clicked()), this, SLOT(colorPickerPressed()));
-        temporaryColorPicker->setToolTip(getDescription());
+        connect(mTemporaryColorPicker, SIGNAL(clicked()), this, SLOT(colorPickerPressed()));
+        mTemporaryColorPicker->setToolTip(getDescription());
 
         // setup the horizontal layout 
-        hBox->addWidget(temporaryColorPicker);
+        hBox->addWidget(mTemporaryColorPicker);
         hBox->addSpacing(3);
-        hBox->addWidget(temporaryEditOnlyTextLabel);
+        hBox->addWidget(mTemporaryEditOnlyTextLabel);
         hBox->addStretch(1);
-
+        
+        mTemporaryWrapper = wrapper;
         return wrapper;
     }
 
@@ -192,22 +193,21 @@ namespace dtEditQt {
     /////////////////////////////////////////////////////////////////////////////////
     void DynamicColorRGBAControl::handleSubEditDestroy(QWidget *widget, QAbstractItemDelegate::EndEditHint hint)
     {
-        if (widget != NULL && temporaryEditOnlyTextLabel != NULL 
-            && widget->isAncestorOf(temporaryEditOnlyTextLabel))
+        if (widget == mTemporaryWrapper)
         {
-            updateData(widget);
-            temporaryEditOnlyTextLabel = NULL;
-            temporaryColorPicker = NULL;        
+            mTemporaryWrapper = NULL;
+            mTemporaryEditOnlyTextLabel = NULL;
+            mTemporaryColorPicker = NULL;        
         }
     }
 
     /////////////////////////////////////////////////////////////////////////////////
     void DynamicColorRGBAControl::installEventFilterOnControl(QObject *filterObj)
     {
-        if (temporaryEditOnlyTextLabel != NULL)
-            temporaryEditOnlyTextLabel->installEventFilter(filterObj);
-        if (temporaryColorPicker != NULL)
-            temporaryColorPicker->installEventFilter(filterObj);
+        if (mTemporaryEditOnlyTextLabel != NULL)
+            mTemporaryEditOnlyTextLabel->installEventFilter(filterObj);
+        if (mTemporaryColorPicker != NULL)
+            mTemporaryColorPicker->installEventFilter(filterObj);
     }
 
 
@@ -251,9 +251,9 @@ namespace dtEditQt {
                 oldValue, myProperty->GetStringValue());
 
             // update our label
-            if (temporaryEditOnlyTextLabel !=  NULL)
+            if (mTemporaryEditOnlyTextLabel !=  NULL)
             {
-                temporaryEditOnlyTextLabel->setText(getValueAsString());
+                mTemporaryEditOnlyTextLabel->setText(getValueAsString());
             }
 
             // notify the world (mostly the viewports) that our property changed
@@ -265,9 +265,9 @@ namespace dtEditQt {
     void DynamicColorRGBAControl::actorPropertyChanged(dtCore::RefPtr<dtDAL::ActorProxy> proxy,
         dtCore::RefPtr<dtDAL::ActorProperty> property)
     {
-        if (temporaryEditOnlyTextLabel != NULL && proxy == this->proxy && property == myProperty) 
+        if (mTemporaryEditOnlyTextLabel != NULL && proxy == this->proxy && property == myProperty) 
         {
-            temporaryEditOnlyTextLabel->setText(getValueAsString());
+            mTemporaryEditOnlyTextLabel->setText(getValueAsString());
         }
     }
 }

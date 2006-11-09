@@ -22,7 +22,7 @@
 #ifndef DELTA_DYNAMICVEC2CONTROL
 #define DELTA_DYNAMICVEC2CONTROL
 
-#include "dtEditQt/dynamicabstractparentcontrol.h"
+#include <dtEditQt/dynamicabstractparentcontrol.h>
 
 namespace dtDAL 
 {

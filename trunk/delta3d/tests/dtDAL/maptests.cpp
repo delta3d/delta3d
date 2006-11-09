@@ -435,23 +435,26 @@ void MapTests::TestMapProxySearch()
                 proxies[x]->GetId().ToString()).c_str() , results.size() == 1);
             CPPUNIT_ASSERT_MESSAGE((std::string("Correct proxy was not found with full search. Id:") +
                 proxies[x]->GetId().ToString()).c_str() ,
-                *results.begin() == &proxy);
+                results.front() == &proxy);
 
             map.FindProxies(results, proxyPTR->GetName());
 
-            CPPUNIT_ASSERT_MESSAGE((std::string("Results should have exactly one proxy. Id:") +
-                proxies[x]->GetId().ToString()).c_str() , results.size() == 1);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE((std::string("Results should have exactly one proxy. Id:") +
+                proxies[x]->GetId().ToString()).c_str(), size_t(1), results.size());
             CPPUNIT_ASSERT_MESSAGE((std::string("Correct proxy was not found with name search. Id:") +
                 proxies[x]->GetId().ToString()).c_str() ,
-                *results.begin() == &proxy);
+                results.front() == &proxy);
 
             map.FindProxies(results, std::string(""), cat, typeName);
-
-            CPPUNIT_ASSERT_MESSAGE((std::string("Results should have exactly proxy. Id:") +
-                proxies[x]->GetId().ToString()).c_str() , results.size() == 1);
-            CPPUNIT_ASSERT_MESSAGE((std::string("Correct proxy was not found with category and type search. Id:") +
-                proxies[x]->GetId().ToString()).c_str() ,
-                *results.begin() == &proxy);
+            
+            for (unsigned j = 0; j < results.size(); ++j)
+            {
+               const dtDAL::ActorType& at = results[j]->GetActorType();
+               std::ostringstream ss;
+               ss << "Each proxy in the results should have the type or be a subtype of \"" << cat << "." << typeName << 
+                  "\".  The result has type \"" << at.GetCategory() << "." << at.GetName() << "\"";
+               CPPUNIT_ASSERT_MESSAGE(ss.str(), at.InstanceOf(proxy.GetActorType()));
+            }
 
             map.RemoveProxy(proxy);
 
