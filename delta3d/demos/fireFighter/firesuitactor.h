@@ -31,14 +31,15 @@ class FIRE_FIGHTER_EXPORT FireSuitActor : public GameItemActor
       /// Constructor
       FireSuitActor(dtGame::GameActorProxy &proxy);
 
+      /**
+       * Activates this game item
+       */
       virtual void Activate(bool enable = true);
 
    protected:
 
       /// Destructor
       virtual ~FireSuitActor();
-
-   private:
 };
 
 class FIRE_FIGHTER_EXPORT FireSuitActorProxy : public GameItemActorProxy
@@ -61,8 +62,6 @@ class FIRE_FIGHTER_EXPORT FireSuitActorProxy : public GameItemActorProxy
 
       /// Destructor
       virtual ~FireSuitActorProxy();
-
-   private:
 };
 
 #endif

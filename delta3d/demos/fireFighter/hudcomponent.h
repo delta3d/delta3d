@@ -178,8 +178,15 @@ class FIRE_FIGHTER_EXPORT HUDComponent : public dtGame::GMComponent
        */
       void HideGameItemImage();
 
+      /**
+       * Private helper method called once per tick to update 
+       * the tasks UI
+       */
       void UpdateMediumDetailData();
 
+      /**
+       * Recursively adds subtasks to the UI from parent tasks
+       */
       unsigned int RecursivelyAddTasks(const std::string &indent, 
                                        unsigned int curIndex,
                                        const dtActors::TaskActorProxy *taskProxy, 

@@ -445,7 +445,7 @@ void HUDComponent::BuildIntroMenu()
 bool HUDComponent::OnStartWithObjectives(const CEGUI::EventArgs &e)
 {
    mShowObjectives = true;
-   SendGameStateChangedMessage(GameState::STATE_MENU, GameState::STATE_RUNNING);
+   SendGameStateChangedMessage(GameState::STATE_MENU, GameState::STATE_INTRO);
    return true;
 }
 
@@ -683,13 +683,8 @@ unsigned int HUDComponent::RecursivelyAddTasks(const std::string &indent,
    return totalNumAdded;
 }
 
-void HUDComponent::UpdateStaticText(CEGUI::StaticText *textControl, 
-                                    const std::string &newText,
-                                    float red, 
-                                    float blue, 
-                                    float green,
-                                    float x, 
-                                    float y)
+void HUDComponent::UpdateStaticText(CEGUI::StaticText *textControl, const std::string &newText,
+                                    float red, float blue, float green, float x, float y)
 {
    if(textControl != NULL)
    {
