@@ -31,14 +31,15 @@ class FIRE_FIGHTER_EXPORT PrimaryHalonActor : public GameItemActor
       /// Constructor
       PrimaryHalonActor(dtGame::GameActorProxy &proxy);
 
+      /**
+       * Activates this game item
+       */
       virtual void Activate(bool enable = true);
 
    protected:
 
       /// Destructor
       virtual ~PrimaryHalonActor();
-
-   private:
 };
 
 class FIRE_FIGHTER_EXPORT PrimaryHalonActorProxy : public GameItemActorProxy
@@ -48,18 +49,19 @@ class FIRE_FIGHTER_EXPORT PrimaryHalonActorProxy : public GameItemActorProxy
       /// Constructor
       PrimaryHalonActorProxy();
 
+      /// Builds the actor properties
       virtual void BuildPropertyMap();
 
+      /// Builds the invokables
       virtual void BuildInvokables();
 
+      /// Instantiates the actor
       virtual void CreateActor() { mActor = new PrimaryHalonActor(*this); }
 
    protected:
 
       /// Destructor
       virtual ~PrimaryHalonActorProxy();
-
-   private:
 };
 
 class FIRE_FIGHTER_EXPORT SecondaryHalonActor : public GameItemActor
@@ -69,14 +71,15 @@ class FIRE_FIGHTER_EXPORT SecondaryHalonActor : public GameItemActor
       /// Constructor
       SecondaryHalonActor(dtGame::GameActorProxy &proxy);
 
+      /**
+       * Activates this game item
+       */
       virtual void Activate(bool enable = true);
 
    protected:
 
       /// Destructor
       virtual ~SecondaryHalonActor();
-
-   private:
 };
 
 class FIRE_FIGHTER_EXPORT SecondaryHalonActorProxy : public GameItemActorProxy
@@ -86,18 +89,19 @@ class FIRE_FIGHTER_EXPORT SecondaryHalonActorProxy : public GameItemActorProxy
       /// Constructor
       SecondaryHalonActorProxy();
 
+      /// Builds the actor properties
       virtual void BuildPropertyMap();
 
+      /// Builds the invokables
       virtual void BuildInvokables();
 
+      /// Instantiates the actor
       virtual void CreateActor() { mActor = new SecondaryHalonActor(*this); }
 
    protected:
 
       /// Destructor
       virtual ~SecondaryHalonActorProxy();
-
-   private:
 };
 
 #endif

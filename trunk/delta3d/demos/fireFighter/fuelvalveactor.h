@@ -31,14 +31,15 @@ class FIRE_FIGHTER_EXPORT FuelValveActor : public GameItemActor
       /// Constructor
       FuelValveActor(dtGame::GameActorProxy &proxy);
 
+      /**
+       * Activates this game item
+       */
       virtual void Activate(bool enable = true);
 
    protected:
 
       /// Destructor
       virtual ~FuelValveActor();
-
-   private:
 };
 
 class FIRE_FIGHTER_EXPORT FuelValveActorProxy : public GameItemActorProxy
@@ -61,8 +62,6 @@ class FIRE_FIGHTER_EXPORT FuelValveActorProxy : public GameItemActorProxy
 
       /// Destructor
       virtual ~FuelValveActorProxy();
-
-   private:
 };
 
 #endif

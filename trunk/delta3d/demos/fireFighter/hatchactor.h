@@ -41,10 +41,15 @@ class FIRE_FIGHTER_EXPORT HatchActor : public GameItemActor
       /// Constructer
       HatchActor(dtGame::GameActorProxy &proxy);
 
+      /**
+       * Activates this game item
+       */
       virtual void Activate(bool enable = true);
 
+      /// Called when this actor is added to the scene
       virtual void OnEnteredWorld();
 
+      /// Invokable called when the GameMap is loaded
       void OnMapLoaded(const dtGame::Message &msg);
 
    protected:
@@ -78,8 +83,6 @@ class FIRE_FIGHTER_EXPORT HatchActorProxy : public GameItemActorProxy
 
       /// Destructor
       virtual ~HatchActorProxy();
-
-   private:
 };
 
 #endif
