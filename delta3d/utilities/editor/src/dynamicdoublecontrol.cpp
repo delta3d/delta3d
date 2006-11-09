@@ -20,13 +20,13 @@
 * Curtiss Murphy
 */
 #include <prefix/dtstageprefix-src.h>
-#include "dtEditQt/dynamicdoublecontrol.h"
-#include "dtEditQt/dynamicsubwidgets.h"
-#include "dtEditQt/editorevents.h"
-#include "dtDAL/actorproxy.h"
-#include "dtDAL/actorproperty.h"
-#include "dtDAL/datatype.h"
-#include "dtDAL/enginepropertytypes.h"
+#include <dtEditQt/dynamicdoublecontrol.h>
+#include <dtEditQt/dynamicsubwidgets.h>
+#include <dtEditQt/editorevents.h>
+#include <dtDAL/actorproxy.h>
+#include <dtDAL/actorproperty.h>
+#include <dtDAL/datatype.h>
+#include <dtDAL/enginepropertytypes.h>
 #include <dtUtil/log.h>
 #include <QtGui/QWidget>
 #include <QtGui/QLineEdit>

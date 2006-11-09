@@ -108,12 +108,11 @@ namespace dtEditQt
           */
          void handleSubEditDestroy(QWidget *widget, QAbstractItemDelegate::EndEditHint hint = QAbstractItemDelegate::NoHint)
          {
-            if (widget != NULL && temporaryEditControl != NULL
-                && widget->isAncestorOf(temporaryEditControl))
+            if (widget == mTemporaryWrapper)
             {
-               updateData(widget);
-               temporaryEditControl = NULL;
-               temporaryGotoButton = NULL;
+               mTemporaryWrapper = NULL;
+               mTemporaryEditControl = NULL;
+               mTemporaryGotoButton = NULL;
             }
          }
 
@@ -133,8 +132,9 @@ namespace dtEditQt
          // method and destroyed whenever QT feels like it (mostly when the control looses focus). 
          // We work around this by trapping the destruction of this object, it should
          // call our handleSubEditDestroy() method so we know to not hold this anymore
-         SubQComboBox *temporaryEditControl;
-         SubQPushButton *temporaryGotoButton;
+         QWidget *mTemporaryWrapper;
+         SubQComboBox *mTemporaryEditControl;
+         SubQPushButton *mTemporaryGotoButton;
    };
 }
 

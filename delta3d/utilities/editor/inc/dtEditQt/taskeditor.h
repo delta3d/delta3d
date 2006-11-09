@@ -53,15 +53,12 @@ namespace dtEditQt
       public slots:
 
          /**
-          * Slot to refresh the children table
-          */
-         void RefreshChildren();
-
-         /**
           * Slot to refresh the combo box
           */
          void RefreshComboBox(const QString &itemName);
 
+      private slots:
+         
          /**
           * Slot called when the move up button is clicked
           */
@@ -87,13 +84,27 @@ namespace dtEditQt
    
          ///Disables the buttons for manipulating the existing children
          void DisableEditButtons();
-      
+
+         //Adds the selected task actor in the combo box 
+         void AddSelected();
+               
+         //called when the combo box selection changes.
+         void OnComboSelectionChanged(int index);
+         
       private:
+
+         //builds the list of children.
+         void PopulateChildren();
+         //Adds a new proxy to the list of children.
+         void AddItemToList(dtDAL::ActorProxy& proxy);
+         //sets all the verical header labels on mChildrenView to ""
+         void BlankRowLabels();
 
          /// The visible list of child tasks
          QTableWidget* mChildrenView;
          QComboBox*    mComboBox;
 
+         QPushButton* mAddExisting;
          QPushButton* mMoveUp;
          QPushButton* mMoveDown;
          QPushButton* mRemoveChild;

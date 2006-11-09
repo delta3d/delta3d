@@ -148,9 +148,6 @@ namespace dtEditQt
 
         temporaryEditControl->setToolTip(getDescription());
 
-        connect(this, SIGNAL(closeEditor(QWidget*, QAbstractItemDelegate::EndEditHint)), this,
-           SLOT(handleSubEditDestroy(QWidget*, QAbstractItemDelegate::EndEditHint)));
-
         return temporaryEditControl;
     }
 

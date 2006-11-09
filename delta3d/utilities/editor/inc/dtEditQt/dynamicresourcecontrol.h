@@ -139,9 +139,10 @@ namespace dtEditQt
         // method and destroyed whenever QT feels like it (mostly when the control looses focus). 
         // We work around this by trapping the destruction of this object, it should
         // call our handleSubEditDestroy() method so we know to not hold this anymore
-        SubQLabel *temporaryEditOnlyTextLabel;
-        SubQPushButton *temporaryUseCurrentBtn;
-        SubQPushButton *temporaryClearBtn;
+        QWidget* mTemporaryWrapper;
+        SubQLabel *mTemporaryEditOnlyTextLabel;
+        SubQPushButton *mTemporaryUseCurrentBtn;
+        SubQPushButton *mTemporaryClearBtn;
 
         /**
          * Figure out which resource descriptor  to get from EditorData and get it.

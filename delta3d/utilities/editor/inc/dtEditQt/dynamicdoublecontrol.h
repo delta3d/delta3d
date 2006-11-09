@@ -115,7 +115,6 @@ namespace dtEditQt
             // next widget is created.  Then, when it is called, it sets the NEW editor to NULL!
             if (widget == temporaryEditControl)
             {
-               updateData(widget);
                temporaryEditControl = NULL;
             }
         }

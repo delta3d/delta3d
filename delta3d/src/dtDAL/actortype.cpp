@@ -19,7 +19,7 @@
  * Matthew W. Campbell
  */
 #include <prefix/dtdalprefix-src.h>
-#include "dtDAL/actortype.h"
+#include <dtDAL/actortype.h>
 
 namespace dtDAL 
 {
@@ -31,7 +31,7 @@ namespace dtDAL
    }
    
    ///////////////////////////////////////////////////////////////////////////////
-   bool ActorType::InstanceOf(const ActorType &rhs)
+   bool ActorType::InstanceOf(const ActorType &rhs) const
    {
       if (rhs == *this)
          return true;
@@ -48,7 +48,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   bool ActorType::InstanceOf(const std::string &category, const std::string &name)
+   bool ActorType::InstanceOf(const std::string &category, const std::string &name) const
    {
       dtCore::RefPtr<ActorType> typeToCheck = new ActorType(name,category);
       return InstanceOf(*typeToCheck);

@@ -1165,7 +1165,6 @@ namespace dtGame
       map.GetAllProxies(proxies);
 
       //add all the events in the map to the game manager.
-      //dtDAL::GameEventManager::GetInstance() = map.GetEventManager();      
       std::vector<dtDAL::GameEvent* > events;
       map.GetEventManager().GetAllEvents(events);
       for (unsigned int i = 0; i < events.size(); i ++)

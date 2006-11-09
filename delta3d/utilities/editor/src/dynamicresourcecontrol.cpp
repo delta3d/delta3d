@@ -55,7 +55,7 @@ namespace dtEditQt
 
     ///////////////////////////////////////////////////////////////////////////////
     DynamicResourceControl::DynamicResourceControl()
-        : temporaryEditOnlyTextLabel(NULL), temporaryUseCurrentBtn(NULL), temporaryClearBtn(NULL)
+        : mTemporaryWrapper(NULL), mTemporaryEditOnlyTextLabel(NULL), mTemporaryUseCurrentBtn(NULL), mTemporaryClearBtn(NULL)
     {
     }
 
@@ -183,37 +183,38 @@ namespace dtEditQt
         grid->setSpacing(1);
 
         // label 
-        temporaryEditOnlyTextLabel = new SubQLabel(getValueAsString(), wrapper, this);
+        mTemporaryEditOnlyTextLabel = new SubQLabel(getValueAsString(), wrapper, this);
         // set the background color to white so that it sort of blends in with the rest of the controls
-        setBackgroundColor(temporaryEditOnlyTextLabel, PropertyEditorTreeView::ROW_COLOR_ODD);
+        setBackgroundColor(mTemporaryEditOnlyTextLabel, PropertyEditorTreeView::ROW_COLOR_ODD);
 
         // Use Current button
-        temporaryUseCurrentBtn = new SubQPushButton(tr("Use Current"), wrapper, this);
+        mTemporaryUseCurrentBtn = new SubQPushButton(tr("Use Current"), wrapper, this);
         // make sure it hold's it's min width.  This is a work around for a wierd QT behavior that 
         // allowed the button to get really tiny and stupid looking (had 'U' instead of 'Use Current')
-        QSize size = temporaryUseCurrentBtn->sizeHint();
-        temporaryUseCurrentBtn->setMaximumWidth(size.width());
-        connect(temporaryUseCurrentBtn, SIGNAL(clicked()), this, SLOT(useCurrentPressed()));
+        QSize size = mTemporaryUseCurrentBtn->sizeHint();
+        mTemporaryUseCurrentBtn->setMaximumWidth(size.width());
+        connect(mTemporaryUseCurrentBtn, SIGNAL(clicked()), this, SLOT(useCurrentPressed()));
 
         // Clear button
-        temporaryClearBtn = new SubQPushButton(tr("Clear"), wrapper, this);
-        size = temporaryClearBtn->sizeHint();
-        temporaryClearBtn->setMaximumWidth(size.width());
-        connect(temporaryClearBtn, SIGNAL(clicked()), this, SLOT(clearPressed()));
+        mTemporaryClearBtn = new SubQPushButton(tr("Clear"), wrapper, this);
+        size = mTemporaryClearBtn->sizeHint();
+        mTemporaryClearBtn->setMaximumWidth(size.width());
+        connect(mTemporaryClearBtn, SIGNAL(clicked()), this, SLOT(clearPressed()));
         std::string tooltip = myProperty->GetDescription() + " - Clears the current resource";
-        temporaryClearBtn->setToolTip(QString(tr(tooltip.c_str())));
+        mTemporaryClearBtn->setToolTip(QString(tr(tooltip.c_str())));
 
-        grid->addWidget(temporaryEditOnlyTextLabel, 0, 0, 1, 1);
-        grid->addWidget(temporaryUseCurrentBtn, 0, 1, 1, 1);
-        grid->addWidget(temporaryClearBtn, 0, 2, 1, 1);
-        grid->setColumnMinimumWidth(1, temporaryUseCurrentBtn->sizeHint().width());
-        grid->setColumnMinimumWidth(2, temporaryClearBtn->sizeHint().width());
+        grid->addWidget(mTemporaryEditOnlyTextLabel, 0, 0, 1, 1);
+        grid->addWidget(mTemporaryUseCurrentBtn, 0, 1, 1, 1);
+        grid->addWidget(mTemporaryClearBtn, 0, 2, 1, 1);
+        grid->setColumnMinimumWidth(1, mTemporaryUseCurrentBtn->sizeHint().width());
+        grid->setColumnMinimumWidth(2, mTemporaryClearBtn->sizeHint().width());
         grid->setColumnStretch(0, 2);
         grid->setColumnStretch(1, 1);
         grid->setColumnStretch(2, 0);
 
-        temporaryUseCurrentBtn->setToolTip(getDescription());
-
+        mTemporaryUseCurrentBtn->setToolTip(getDescription());
+        mTemporaryWrapper = wrapper;
+        
         return wrapper;
     }
 
@@ -263,25 +264,24 @@ namespace dtEditQt
     /////////////////////////////////////////////////////////////////////////////////
     void DynamicResourceControl::handleSubEditDestroy(QWidget *widget, QAbstractItemDelegate::EndEditHint hint)
     {
-        if (widget != NULL && temporaryEditOnlyTextLabel != NULL
-            && widget->isAncestorOf(temporaryEditOnlyTextLabel))
+        if (widget == mTemporaryWrapper)
         {
-           updateData(widget);
-           temporaryEditOnlyTextLabel = NULL;
-           temporaryUseCurrentBtn = NULL;
-           temporaryClearBtn = NULL;
+           mTemporaryWrapper = NULL;
+           mTemporaryEditOnlyTextLabel = NULL;
+           mTemporaryUseCurrentBtn = NULL;
+           mTemporaryClearBtn = NULL;
         }
     }
 
     /////////////////////////////////////////////////////////////////////////////////
     void DynamicResourceControl::installEventFilterOnControl(QObject *filterObj)
     {
-        if (temporaryEditOnlyTextLabel != NULL)
-            temporaryEditOnlyTextLabel->installEventFilter(filterObj);
-        if (temporaryUseCurrentBtn != NULL)
-            temporaryUseCurrentBtn->installEventFilter(filterObj);
-        if (temporaryClearBtn != NULL)
-            temporaryClearBtn->installEventFilter(filterObj);
+        if (mTemporaryEditOnlyTextLabel != NULL)
+            mTemporaryEditOnlyTextLabel->installEventFilter(filterObj);
+        if (mTemporaryUseCurrentBtn != NULL)
+            mTemporaryUseCurrentBtn->installEventFilter(filterObj);
+        if (mTemporaryClearBtn != NULL)
+            mTemporaryClearBtn->installEventFilter(filterObj);
     }
 
 
@@ -319,9 +319,9 @@ namespace dtEditQt
                 oldValue, myProperty->GetStringValue());
 
             // update our label
-            if (temporaryEditOnlyTextLabel !=  NULL) 
+            if (mTemporaryEditOnlyTextLabel !=  NULL) 
             {
-                temporaryEditOnlyTextLabel->setText(getValueAsString());
+                mTemporaryEditOnlyTextLabel->setText(getValueAsString());
             }
 
             // notify the world (mostly the viewports) that our property changed
@@ -347,9 +347,9 @@ namespace dtEditQt
                 oldValue, myProperty->GetStringValue());
 
             // update our label
-            if (temporaryEditOnlyTextLabel !=  NULL) 
+            if (mTemporaryEditOnlyTextLabel !=  NULL) 
             {
-                temporaryEditOnlyTextLabel->setText(getValueAsString());
+                mTemporaryEditOnlyTextLabel->setText(getValueAsString());
             }
 
             // notify the world (mostly the viewports) that our property changed
@@ -362,9 +362,9 @@ namespace dtEditQt
         dtCore::RefPtr<dtDAL::ActorProperty> property)
     {
         // update our label
-        if (temporaryEditOnlyTextLabel != NULL && proxy == this->proxy && property == myProperty) 
+        if (mTemporaryEditOnlyTextLabel != NULL && proxy == this->proxy && property == myProperty) 
         {
-            temporaryEditOnlyTextLabel->setText(getValueAsString());
+            mTemporaryEditOnlyTextLabel->setText(getValueAsString());
         }
 
     }

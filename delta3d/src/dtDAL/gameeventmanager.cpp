@@ -45,14 +45,14 @@ namespace dtDAL
    }
    
    ///////////////////////////////////////////////////////////////////////////////
-   /*GameEventManager& GameEventManager::operator=(const GameEventManager &rhs) 
+   GameEventManager& GameEventManager::operator=(const GameEventManager &rhs) 
    {
       if (&rhs != this)
       {
          mEventList = rhs.mEventList;
       }  
       return *this; 
-   }*/
+   }
 
    ///////////////////////////////////////////////////////////////////////////////
    void GameEventManager::AddEvent(GameEvent &event)
