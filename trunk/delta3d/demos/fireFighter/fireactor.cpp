@@ -32,6 +32,11 @@
 #include <dtCore/particlesystem.h>
 #include <dtUtil/mathdefines.h>
 #include <dtCore/positionallight.h>
+#include <dtDAL/gameeventmanager.h>
+#include <dtGame/gamemanager.h>
+#include <dtGame/basemessages.h>
+
+using dtCore::RefPtr;
 
 /////////////////////////////////////////////////
 FireActorProxy::FireActorProxy()
@@ -229,6 +234,23 @@ void FireActor::DecreaseIntensity(float intensity)
          mSparkSystem->SetEnabled(false);
          mCeilingSystem->SetEnabled(false);
          mLight->SetEnabled(false);
+
+         const std::string &name = "ExtinguishFire";
+
+         dtDAL::GameEvent *event = dtDAL::GameEventManager::GetInstance().FindEvent(name);
+         if(event == NULL)
+         {
+            throw dtUtil::Exception("Failed to find the game event: " + name, __FILE__, __LINE__);
+         }
+
+         dtGame::GameManager &mgr = *GetGameActorProxy().GetGameManager();
+         RefPtr<dtGame::Message> msg = 
+            mgr.GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT);
+
+         dtGame::GameEventMessage &gem = static_cast<dtGame::GameEventMessage&>(*msg);
+         gem.SetGameEvent(*event);
+         mgr.SendMessage(gem);
+
          return;
       }
       else if(mIntensity < 2.0f)
