@@ -398,6 +398,8 @@ void HLATests::TestRuntimeMappingInfo()
 
       dtCore::UniqueId id1;
       dtCore::UniqueId id2;
+      std::string rtiid1 = "TestRTIID01";
+      std::string rtiid2 = "TestRTIID02";
 
       dtHLAGM::EntityIdentifier eid1(1,1,1), eid2(2,2,2);
 
@@ -412,13 +414,23 @@ void HLATests::TestRuntimeMappingInfo()
       CPPUNIT_ASSERT(mappingInfo.GetId(eid1) == NULL);
       CPPUNIT_ASSERT(mappingInfo.GetEntityId(id1) == NULL);
       CPPUNIT_ASSERT(mappingInfo.GetHandle(id1)  == NULL);
+      CPPUNIT_ASSERT(mappingInfo.GetIdByRTIId(rtiid1)  == NULL);
+      CPPUNIT_ASSERT(mappingInfo.GetRTIId(id1)  == NULL);
 
       CPPUNIT_ASSERT(mappingInfo.Put(mObjectHandle1, id1));
       CPPUNIT_ASSERT_MESSAGE("Adding a second mapping for an object handle should fail.",
-                             !mappingInfo.Put(mObjectHandle1, id2));
+                              !mappingInfo.Put(mObjectHandle1, id2));
       CPPUNIT_ASSERT_MESSAGE("Adding a second mapping for an id should fail.",
-                             !mappingInfo.Put(mObjectHandle2, id1));
+                              !mappingInfo.Put(mObjectHandle2, id1));
+
+      CPPUNIT_ASSERT(mappingInfo.PutRTIId(rtiid1, id1));
+      CPPUNIT_ASSERT_MESSAGE("Adding a second mapping for an RTI id should fail.",
+                              !mappingInfo.PutRTIId(rtiid1, id2));
+      CPPUNIT_ASSERT_MESSAGE("Adding a second mapping for an id should fail.",
+                              !mappingInfo.PutRTIId(rtiid2, id1));
+
       CPPUNIT_ASSERT(mappingInfo.Put(mObjectHandle2, id2));
+      CPPUNIT_ASSERT(mappingInfo.PutRTIId(rtiid2, id2));
 
       CPPUNIT_ASSERT(mappingInfo.GetId(mObjectHandle1) != NULL);
       CPPUNIT_ASSERT(*mappingInfo.GetId(mObjectHandle1) == id1);
@@ -429,6 +441,16 @@ void HLATests::TestRuntimeMappingInfo()
       CPPUNIT_ASSERT(*mappingInfo.GetHandle(id1) == mObjectHandle1);
       CPPUNIT_ASSERT(mappingInfo.GetHandle(id2) != NULL);
       CPPUNIT_ASSERT(*mappingInfo.GetHandle(id2) == mObjectHandle2);
+
+      CPPUNIT_ASSERT(mappingInfo.GetIdByRTIId(rtiid1) != NULL);
+      CPPUNIT_ASSERT(*mappingInfo.GetIdByRTIId(rtiid1) == id1);
+      CPPUNIT_ASSERT(mappingInfo.GetIdByRTIId(rtiid2) != NULL);
+      CPPUNIT_ASSERT(*mappingInfo.GetIdByRTIId(rtiid2) == id2);
+
+      CPPUNIT_ASSERT(mappingInfo.GetRTIId(id1) != NULL);
+      CPPUNIT_ASSERT(*mappingInfo.GetRTIId(id1) == rtiid1);
+      CPPUNIT_ASSERT(mappingInfo.GetRTIId(id2) != NULL);
+      CPPUNIT_ASSERT(*mappingInfo.GetRTIId(id2) == rtiid2);
 
       //The order of the addition lines differs from the object to id and entity to id in this
       //case because the mapping is not bi-directional.
@@ -486,6 +508,14 @@ void HLATests::TestRuntimeMappingInfo()
       CPPUNIT_ASSERT(*mappingInfo.GetEntityId(id1) == eid1);
       CPPUNIT_ASSERT(mappingInfo.GetEntityId(id2) == NULL);
 
+      CPPUNIT_ASSERT(mappingInfo.GetIdByRTIId(rtiid1) != NULL);
+      CPPUNIT_ASSERT(*mappingInfo.GetIdByRTIId(rtiid1) == id1);
+      CPPUNIT_ASSERT(mappingInfo.GetIdByRTIId(rtiid2) == NULL);
+
+      CPPUNIT_ASSERT(mappingInfo.GetRTIId(id1) != NULL);
+      CPPUNIT_ASSERT(*mappingInfo.GetRTIId(id1) == rtiid1);
+      CPPUNIT_ASSERT(mappingInfo.GetRTIId(id2) == NULL);
+
       //removing object id 1 should remove both the object handle and entity id mappings
       //which should, in turn, remove the object to actor mapped to the handle.
       mappingInfo.Remove(id1);
@@ -495,10 +525,13 @@ void HLATests::TestRuntimeMappingInfo()
       CPPUNIT_ASSERT(mappingInfo.GetObjectToActor(mObjectHandle1) == NULL);
       CPPUNIT_ASSERT(mappingInfo.GetId(eid1) == NULL);
       CPPUNIT_ASSERT(mappingInfo.GetEntityId(id1) == NULL);
+      CPPUNIT_ASSERT(mappingInfo.GetRTIId(id1) == NULL);
+      CPPUNIT_ASSERT(mappingInfo.GetIdByRTIId(rtiid1) == NULL);
 
       CPPUNIT_ASSERT(mappingInfo.Put(eid1, id1));
       CPPUNIT_ASSERT(mappingInfo.Put(mObjectHandle1, id1));
       CPPUNIT_ASSERT(mappingInfo.Put(mObjectHandle1, *ota1));
+      CPPUNIT_ASSERT(mappingInfo.PutRTIId(rtiid1, id1));
 
       //removing eid1 should remove both the object handle and actor id mappings
       //which should, in turn, remove the object to actor mapped to the handle.
@@ -509,14 +542,18 @@ void HLATests::TestRuntimeMappingInfo()
       CPPUNIT_ASSERT(mappingInfo.GetObjectToActor(mObjectHandle1) == NULL);
       CPPUNIT_ASSERT(mappingInfo.GetId(eid1) == NULL);
       CPPUNIT_ASSERT(mappingInfo.GetEntityId(id1) == NULL);
+      CPPUNIT_ASSERT(mappingInfo.GetRTIId(id1) == NULL);
+      CPPUNIT_ASSERT(mappingInfo.GetIdByRTIId(rtiid1) == NULL);
 
       //Fill the mapping again to make sure it can be cleared.
       CPPUNIT_ASSERT(mappingInfo.Put(eid1, id1));
       CPPUNIT_ASSERT(mappingInfo.Put(mObjectHandle1, id1));
       CPPUNIT_ASSERT(mappingInfo.Put(mObjectHandle1, *ota1));
+      CPPUNIT_ASSERT(mappingInfo.PutRTIId(rtiid1, id1));
       CPPUNIT_ASSERT(mappingInfo.Put(eid2, id2));
       CPPUNIT_ASSERT(mappingInfo.Put(mObjectHandle2, id2));
       CPPUNIT_ASSERT(mappingInfo.Put(mObjectHandle2, *ota2));
+      CPPUNIT_ASSERT(mappingInfo.PutRTIId(rtiid2, id2));
 
       mappingInfo.Clear();
 
@@ -526,6 +563,8 @@ void HLATests::TestRuntimeMappingInfo()
       CPPUNIT_ASSERT(mappingInfo.GetId(eid1) == NULL);
       CPPUNIT_ASSERT(mappingInfo.GetEntityId(id1) == NULL);
       CPPUNIT_ASSERT(mappingInfo.GetHandle(id1)  == NULL);
+      CPPUNIT_ASSERT(mappingInfo.GetIdByRTIId(rtiid1)  == NULL);
+      CPPUNIT_ASSERT(mappingInfo.GetRTIId(id1)  == NULL);
    }
    catch (const dtUtil::Exception& ex)
    {

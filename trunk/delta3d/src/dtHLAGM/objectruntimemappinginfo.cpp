@@ -29,6 +29,19 @@ namespace dtHLAGM
    ObjectRuntimeMappingInfo::~ObjectRuntimeMappingInfo()
    {}
 
+   bool ObjectRuntimeMappingInfo::PutRTIId(const std::string& rtiId, const dtCore::UniqueId& actorId)
+   {
+      //do a quick pre-check.  This will make sure that it doesn't insert in the first map only to fail at the second.
+      if (mActortoRTIIDMap.find(actorId) != mActortoRTIIDMap.end())
+         return false;
+
+      bool ok = mRTIIDtoActorMap.insert(std::make_pair(rtiId, actorId)).second;
+      if (ok)
+         ok = mActortoRTIIDMap.insert(std::make_pair(actorId, rtiId)).second;
+
+      return ok;
+   }
+
    bool ObjectRuntimeMappingInfo::Put(const RTI::ObjectHandle& handle, const dtCore::UniqueId& actorId)
    {
       //do a quick pre-check.  This will make sure that it doesn't insert in the first map only to fail at the second.
@@ -74,6 +87,26 @@ namespace dtHLAGM
    {
       std::map<EntityIdentifier, dtCore::UniqueId>::const_iterator i = mEntityIdentifierToUniqueIdMap.find(entityId);
       if (i != mEntityIdentifierToUniqueIdMap.end())
+      {
+         return &i->second;
+      }
+      return NULL;
+   }
+
+   const dtCore::UniqueId* ObjectRuntimeMappingInfo::GetIdByRTIId(const std::string& rtiId) const
+   {
+      std::map<std::string, dtCore::UniqueId>::const_iterator i = mRTIIDtoActorMap.find(rtiId);
+      if (i != mRTIIDtoActorMap.end())
+      {
+         return &i->second;
+      }
+      return NULL;
+   }
+
+   const std::string* ObjectRuntimeMappingInfo::GetRTIId(const dtCore::UniqueId& id) const
+   {
+      std::map<dtCore::UniqueId, std::string>::const_iterator i = mActortoRTIIDMap.find(id);
+      if (i != mActortoRTIIDMap.end())
       {
          return &i->second;
       }
@@ -164,10 +197,28 @@ namespace dtHLAGM
          mActorToHLAMap.erase(i2);
          Remove(handle);
       }
+
+      // Remove the RTI id string mapped to the actor id
+      std::map<dtCore::UniqueId, std::string>::iterator i3 = mActortoRTIIDMap.find(actorId);
+      std::string rtiId;
+      if (i3 != mActortoRTIIDMap.end())
+      {
+         rtiId = i3->second;
+         mActortoRTIIDMap.erase(i3);
+      }
+
+      // Remove the actor id mapped to RTI id string
+      std::map<std::string, dtCore::UniqueId>::iterator i4 = mRTIIDtoActorMap.find(rtiId);
+      if (i4 != mRTIIDtoActorMap.end())
+      {
+         mRTIIDtoActorMap.erase(i4);
+      }
    }
 
    void ObjectRuntimeMappingInfo::Clear()
    {
+      mActortoRTIIDMap.clear();
+      mRTIIDtoActorMap.clear();
       mHLAtoActorMap.clear();
       mActorToHLAMap.clear();
       mEntityIdentifierToUniqueIdMap.clear();

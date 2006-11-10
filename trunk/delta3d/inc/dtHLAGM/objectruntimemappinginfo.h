@@ -37,6 +37,12 @@ namespace dtHLAGM
          ObjectRuntimeMappingInfo();
          
          ~ObjectRuntimeMappingInfo();
+
+         /**
+          * Bidirectionally maps the given RTI id string (RTIObjectIdentifierStruct) to the actor id.
+          * @return false if either object is already involved in another like mapping.
+          */
+         bool PutRTIId(const std::string& rtiId, const dtCore::UniqueId& actorId);
          
          /**
           * Bidirectionally maps the given object handle to the unique id.
@@ -61,7 +67,13 @@ namespace dtHLAGM
       
          ///@return the unique id that was mapped to given entity id or NULL if none has been mapped
          const dtCore::UniqueId* GetId(const EntityIdentifier& entityId) const;
-      
+
+         ///@return the unique id that was mapped to given rti string id or NULL if none has been mapped
+         const dtCore::UniqueId* GetIdByRTIId(const std::string& rtiId) const;
+
+         ///@return the rti string id that was mapped to given unique id or NULL if none has been mapped
+         const std::string* GetRTIId(const dtCore::UniqueId& handle) const;
+
          ///@return the object handle that was mapped to given unique id or NULL if none has been mapped
          const RTI::ObjectHandle* GetHandle(const dtCore::UniqueId& actorId) const;
 
@@ -76,7 +88,7 @@ namespace dtHLAGM
 
          /**
           * Removes all mappings for the given handle including a unique id, an object to actor, 
-          * and an entity id mapped to the unique id.
+          * and an entity id id mapped to the unique id.
           */ 
          void Remove(const RTI::ObjectHandle& handle);
 
@@ -89,7 +101,8 @@ namespace dtHLAGM
 
          /**
           * Removes the mapping to an object handle and an entity id for the given unique id. 
-          * this will also remove the object to actor mapped to the object handle.
+          * This will also remove the object to actor mapped to the object handle; and remove
+          * the RTI id string mapping to the actor id.
           */ 
          void Remove(const dtCore::UniqueId& actorId);
 
@@ -97,7 +110,10 @@ namespace dtHLAGM
           * Removes all mappings in the instance.
           */
          void Clear();
+
       private:
+         std::map<dtCore::UniqueId, std::string> mActortoRTIIDMap;
+         std::map<std::string, dtCore::UniqueId> mRTIIDtoActorMap;
          std::map<RTI::ObjectHandle, dtCore::UniqueId> mHLAtoActorMap;
          std::map<dtCore::UniqueId, RTI::ObjectHandle> mActorToHLAMap;
          std::map<EntityIdentifier, dtCore::UniqueId> mEntityIdentifierToUniqueIdMap;

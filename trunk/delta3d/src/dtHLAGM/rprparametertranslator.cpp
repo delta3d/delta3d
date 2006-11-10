@@ -47,6 +47,7 @@ namespace dtHLAGM
    const RPRAttributeType RPRAttributeType::MARKING_TYPE("MARKING_TYPE", 1, 12);
    const RPRAttributeType RPRAttributeType::STRING_TYPE("STRING_TYPE", 1, 128);
    const RPRAttributeType RPRAttributeType::ARTICULATED_PART_TYPE("ARTICULATED_PART_TYPE", 1, 512);
+   const RPRAttributeType RPRAttributeType::RTI_OBJECT_ID_STRUCT_TYPE("RTI_OBJECT_ID_STRUCT_TYPE", 1, 128);
 
    RPRParameterTranslator::RPRParameterTranslator(dtUtil::Coordinates& coordinates, ObjectRuntimeMappingInfo& runtimeMappings):
       mCoordinates(coordinates), mRuntimeMappings(runtimeMappings)
@@ -495,6 +496,40 @@ namespace dtHLAGM
                RPRAttributeType::MARKING_TYPE.GetName().c_str());
          }
       }
+      else if (hlaType == RPRAttributeType::RTI_OBJECT_ID_STRUCT_TYPE)
+      {
+         if (parameterDataType == dtDAL::DataType::ACTOR)
+         {
+            const dtCore::UniqueId& value = static_cast<const dtGame::ActorMessageParameter&>(parameter).GetValue();
+
+            const std::string* rtiId = mRuntimeMappings.GetRTIId(value);
+            if( rtiId == NULL )
+            {
+               mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                  "No RTI string ID was mapped to ActorID \"%s\"",
+                  value.ToString().c_str());
+            }
+
+            const std::string& stringValue = *rtiId;
+            for (unsigned i = 0; i < RPRAttributeType::RTI_OBJECT_ID_STRUCT_TYPE.GetEncodedLength(); ++i)
+            {
+               if (i < stringValue.size())
+                  buffer[i] = stringValue[i];
+               else
+                  //zero anything after the string value.
+                  buffer[i] = '\0';
+            }
+            //change the size of this parameter to match the actual string length.
+            maxSize = stringValue.size() + 1;
+         }
+         else
+         {
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+               "Unable to map from Game Type \"%s\" to HLA type \"%s\"",
+               parameterDataType.GetName().c_str(),
+               RPRAttributeType::RTI_OBJECT_ID_STRUCT_TYPE.GetName().c_str());
+         }
+      }
      
    }
 
@@ -847,6 +882,34 @@ namespace dtHLAGM
             const dtCore::UniqueId* oid = mRuntimeMappings.GetId(eid);
             if (oid != NULL)
                static_cast<dtGame::ActorMessageParameter&>(parameter).SetValue(*oid);
+         }
+      }
+      else if (hlaType == RPRAttributeType::RTI_OBJECT_ID_STRUCT_TYPE)
+      {
+         if (parameterDataType == dtDAL::DataType::ACTOR)
+         {
+            std::string value;
+            for (unsigned i = 0; i < size; ++i)
+            {
+               char c = buffer[i];
+               if (c == '\0')
+                  break;
+               value.append(1, c);
+            }
+
+            // Get the actor id mapped to the RTI id
+            const dtCore::UniqueId* actorId = mRuntimeMappings.GetIdByRTIId(value);
+
+            // Set the actor id value
+            static_cast<dtGame::ActorMessageParameter&>(parameter)
+               .SetValue( actorId != NULL ? *actorId : dtCore::UniqueId(""));
+         }
+         else
+         {
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+               "Unable to map HLA type \"%s\" to \"%s\"",
+               RPRAttributeType::RTI_OBJECT_ID_STRUCT_TYPE.GetName().c_str(),
+               parameterDataType.GetName().c_str());
          }
       }
       else if (hlaType == RPRAttributeType::ARTICULATED_PART_TYPE)
