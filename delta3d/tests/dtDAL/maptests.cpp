@@ -51,6 +51,8 @@
 #include <dtDAL/gameeventmanager.h>
 #include <dtDAL/gameevent.h>
 
+#include <dtDAL/physicalactorproxy.h>
+
 #include <testActorLibrary/testactorlib.h>
 #include <testActorLibrary/testdalenvironmentactor.h>
 
@@ -71,6 +73,7 @@
    #endif // snprintf
 #endif // WIN32
 
+///////////////////////////////////////////////////////////////////////////////////////
 class MapTests : public CPPUNIT_NS::TestFixture
 {
    CPPUNIT_TEST_SUITE( MapTests );
@@ -87,6 +90,7 @@ class MapTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST( TestWildCard );
       CPPUNIT_TEST( TestEnvironmentMapLoading );
       CPPUNIT_TEST( TestLoadEnvironmentMapIntoScene );
+      CPPUNIT_TEST( TestActorProxyRemoveProperties );
    CPPUNIT_TEST_SUITE_END();
 
    public:
@@ -106,6 +110,7 @@ class MapTests : public CPPUNIT_NS::TestFixture
       void TestEnvironmentMapLoading();
       void TestLoadEnvironmentMapIntoScene();
       void TestWildCard();
+      void TestActorProxyRemoveProperties();
    private:
        static const std::string mExampleLibraryName;
    
@@ -126,6 +131,7 @@ const std::string PROJECTCONTEXT = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR
 
 const std::string MapTests::mExampleLibraryName="testActorLibrary";
 
+///////////////////////////////////////////////////////////////////////////////////////
 void MapTests::setUp()
 {
     try
@@ -166,6 +172,7 @@ void MapTests::setUp()
 }
 
 
+///////////////////////////////////////////////////////////////////////////////////////
 void MapTests::tearDown()
 {
     dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
@@ -202,6 +209,7 @@ void MapTests::tearDown()
 }
 
 
+///////////////////////////////////////////////////////////////////////////////////////
 void MapTests::createActors(dtDAL::Map& map)
 {
    dtDAL::LibraryManager& libMgr = dtDAL::LibraryManager::GetInstance();
@@ -273,6 +281,7 @@ void MapTests::createActors(dtDAL::Map& map)
       skippedActors >= 2);
 }
 
+///////////////////////////////////////////////////////////////////////////////////////
 void MapTests::TestMapAddRemoveProxies()
 {
     try
@@ -350,6 +359,7 @@ void MapTests::TestMapAddRemoveProxies()
     }
 }
 
+///////////////////////////////////////////////////////////////////////////////////////
 void MapTests::TestMapProxySearch()
 {
     try
@@ -468,6 +478,7 @@ void MapTests::TestMapProxySearch()
     }
 }
 
+///////////////////////////////////////////////////////////////////////////////////////
 dtDAL::ActorProperty* MapTests::getActorProperty(dtDAL::Map& map,
     const std::string& propName, dtDAL::DataType& type, unsigned which)
 {
@@ -517,6 +528,7 @@ dtDAL::ActorProperty* MapTests::getActorProperty(dtDAL::Map& map,
 }
 
 
+///////////////////////////////////////////////////////////////////////////////////////
 void MapTests::TestLibraryMethods()
 {
     try
@@ -607,6 +619,7 @@ void MapTests::TestLibraryMethods()
     }
 }
 
+///////////////////////////////////////////////////////////////////////////////////////
 void MapTests::TestMapLibraryHandling()
 {
     try
@@ -684,6 +697,7 @@ void MapTests::TestMapLibraryHandling()
     }
 }
 
+///////////////////////////////////////////////////////////////////////////////////////
 void MapTests::TestMapEventsModified()
 {
    try
@@ -725,6 +739,7 @@ void MapTests::TestMapEventsModified()
    }
 }
 
+///////////////////////////////////////////////////////////////////////////////////////
 void MapTests::TestMapSaveAndLoad()
 {
     try
@@ -1267,7 +1282,7 @@ void MapTests::TestMapSaveAndLoad()
         //I can delete with a changed name.
         map->SetName("some new name");
 
-        project.DeleteMap(*map, true);
+        //project.DeleteMap(*map, true);
     }
     catch (const dtUtil::Exception& e)
     {
@@ -1279,6 +1294,7 @@ void MapTests::TestMapSaveAndLoad()
 //    }
 }
 
+///////////////////////////////////////////////////////////////////////////////////////
 void MapTests::TestMapSaveAndLoadEvents()
 {
    try
@@ -1336,6 +1352,7 @@ void MapTests::TestMapSaveAndLoadEvents()
    }
 }
 
+///////////////////////////////////////////////////////////////////////////////////////
 void MapTests::TestMapSaveAndLoadGroup()
 {
    try
@@ -1496,6 +1513,7 @@ void MapTests::TestMapSaveAndLoadGroup()
    }
 }
 
+///////////////////////////////////////////////////////////////////////////////////////
 //This short test actually tests a lot of fairly complex things.
 //It tests that Group actor properties can be set and cause an actor to link actors when
 //loading from a map.  It tests the feature of looking into the current map being parsed
@@ -1567,6 +1585,7 @@ void MapTests::TestMapSaveAndLoadActorGroups()
    }
 }
 
+///////////////////////////////////////////////////////////////////////////////////////
 void MapTests::TestWildCard()
 {
    CPPUNIT_ASSERT(dtDAL::Map::WildMatch("*", "sthsthsth"));
@@ -1583,6 +1602,7 @@ void MapTests::TestWildCard()
 }
 
 
+///////////////////////////////////////////////////////////////////////////////////////
 void MapTests::TestLoadMapIntoScene()
 {
     try
@@ -1642,6 +1662,7 @@ void MapTests::TestLoadMapIntoScene()
     }
 }
 
+///////////////////////////////////////////////////////////////////////////////////////
 void MapTests::TestEnvironmentMapLoading()
 {
    try
@@ -1700,6 +1721,7 @@ void MapTests::TestEnvironmentMapLoading()
    }
 }
 
+///////////////////////////////////////////////////////////////////////////////////////
 void MapTests::TestLoadEnvironmentMapIntoScene()
 {
    dtDAL::LibraryManager::GetInstance().LoadActorRegistry(mExampleLibraryName);
@@ -1752,4 +1774,37 @@ void MapTests::TestLoadEnvironmentMapIntoScene()
 
    numChildren = tea->GetNumEnvironmentChildren();
    CPPUNIT_ASSERT_MESSAGE("The environment actor should have all the proxies as its children", numChildren == numProxies);
+}
+
+class OverriddenActorProxy : public dtDAL::TransformableActorProxy
+{
+   //dtCore::RefPtr<dtCore::Transformable> mActor;
+public:
+   OverriddenActorProxy() {SetClassName("OverriddenActorProxy");}
+   void CreateActor(){mActor = new dtCore::Transformable();}
+   bool RemoveTheProperty(std::string& stringToRemove)
+   {
+      // not in the list
+      if(GetProperty(stringToRemove) == false) return false;
+      // is in the list
+      RemoveProperty(stringToRemove);
+      return (GetProperty(stringToRemove) == NULL);
+   }
+
+protected:
+   virtual ~OverriddenActorProxy() {}
+};
+
+///////////////////////////////////////////////////////////////////////////////////////
+void MapTests::TestActorProxyRemoveProperties()
+{
+   dtCore::RefPtr<OverriddenActorProxy> actorProxy = new OverriddenActorProxy; 
+   std::string NameToRemove = "Rotation";
+   std::string DoesntExist = "TeagueHasAHawtMom";
+   CPPUNIT_ASSERT_MESSAGE("Tried to remove a property before initialized should have returned false", actorProxy->RemoveTheProperty(NameToRemove) == false );
+   actorProxy->CreateActor();
+   actorProxy->BuildPropertyMap();
+   CPPUNIT_ASSERT_MESSAGE("Tried to remove a property after initialized should have returned true", actorProxy->RemoveTheProperty(NameToRemove) == true );
+   CPPUNIT_ASSERT_MESSAGE("Tried to remove a property after initialized for a second time should have returned false", actorProxy->RemoveTheProperty(NameToRemove) == false );
+   CPPUNIT_ASSERT_MESSAGE("Tried to remove a property that we know doesnt exist should have returned false", actorProxy->RemoveTheProperty(DoesntExist) == false );
 }
