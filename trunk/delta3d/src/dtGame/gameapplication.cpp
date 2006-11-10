@@ -27,7 +27,7 @@
 #include <dtGame/exceptionenum.h>
 
 #include <dtUtil/exception.h>
-#include <dtAudio/audiomanager.h>
+//#include <dtAudio/audiomanager.h>
 #include <dtCore/camera.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/scene.h>

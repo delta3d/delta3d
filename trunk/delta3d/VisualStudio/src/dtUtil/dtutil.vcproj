@@ -35,7 +35,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ul_d.lib openthreadswin32d.lib osgd.lib osgDBd.lib xerces-c_2D.lib"
+				AdditionalDependencies="openthreadswin32d.lib osgd.lib osgDBd.lib xerces-c_2D.lib"
 				OutputFile="../../../bin/dtUtild.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -90,7 +90,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ul.lib openthreadswin32.lib osg.lib osgDB.lib xerces-c_2.lib"
+				AdditionalDependencies="openthreadswin32.lib osg.lib osgDB.lib xerces-c_2.lib"
 				OutputFile="../../../bin/dtUtil.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
