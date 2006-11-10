@@ -128,8 +128,7 @@ namespace dtEditQt
          * Gets a reference to the static singleton instance of the viewport manager.
          * @return
          */
-        static ViewportManager &getInstance();
-
+        static ViewportManager &GetInstance();
 
         /**
          * Disables or enables OpenGL context sharing.  This should be called

@@ -51,6 +51,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    TaskEditor::TaskEditor(QWidget *parent) : QDialog(parent)
    {
+      dtUtil::Log::GetInstance("taskeditor.cpp").SetLogLevel(dtUtil::Log::LOG_DEBUG);
       QGroupBox   *group = new QGroupBox(tr("Tasks"));
       QGridLayout *grid  = new QGridLayout(group);
 
@@ -97,7 +98,7 @@ namespace dtEditQt
       setWindowTitle(tr("Task Editor"));
       //setMinimumSize(360, 375);
 
-      connect(mComboBox, SIGNAL(activated(const QString&)), this, SLOT(RefreshComboBox(const QString&)));
+      connect(mComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(OnComboSelectionChanged(int)));
       connect(mAddExisting, SIGNAL(clicked()), this, SLOT(AddSelected()));
 
       connect(mMoveUp,      SIGNAL(clicked()), this, SLOT(OnMoveUpClicked()));
@@ -106,18 +107,19 @@ namespace dtEditQt
       connect(ok,           SIGNAL(clicked()), this, SLOT(OnOkClicked()));
       connect(cancel,       SIGNAL(clicked()), this, SLOT(close()));      
       connect(mChildrenView,   SIGNAL(itemSelectionChanged()), this, SLOT(EnableEditButtons()));
-
+      
+      RefreshComboBox("");
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    TaskEditor::~TaskEditor()
    {
-
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void TaskEditor::PopulateChildren()
    {
+      LOGN_DEBUG("taskeditor.cpp", "Populate Children");
       mChildrenView->clear();
       
       mChildrenView->setColumnCount(2);
@@ -137,7 +139,7 @@ namespace dtEditQt
       else
          mChildrenView->setItemSelected(mChildrenView->currentItem(), true);
 
-      dtDAL::Map* m = EditorData::getInstance().getCurrentMap();
+      dtDAL::Map* m = EditorData::GetInstance().getCurrentMap();
       if (m == NULL)
       {
          LOG_ERROR("Unable read the children of a task actor without a valid current map.");
@@ -150,7 +152,7 @@ namespace dtEditQt
          std::vector<dtDAL::NamedParameter*> toFill;
          mChildren->GetParameters(toFill);
          
-         mChildrenView->setRowCount(toFill.size());
+         //mChildrenView->setRowCount(toFill.size());
 
          for (unsigned i = 0; i < toFill.size(); ++i)
          {
@@ -169,6 +171,7 @@ namespace dtEditQt
       }
    }
 
+   ///////////////////////////////////////////////////////////////////////////////
    void TaskEditor::BlankRowLabels()
    {
       QStringList names;
@@ -180,6 +183,27 @@ namespace dtEditQt
       mChildrenView->setVerticalHeaderLabels(names);
    }
 
+   void TaskEditor::SwapRows(int firstRow, int secondRow)
+   {
+      if (firstRow == secondRow)
+         return;
+      if (firstRow < 0 || firstRow >= mChildrenView->rowCount())
+         return;
+      if (secondRow < 0 || secondRow >= mChildrenView->rowCount())
+         return;
+  
+      //have to copy the items because when you call setItem, the old item is deleted.
+      QTableWidgetItem *nm1 = new QTableWidgetItem(*mChildrenView->item(firstRow, 0));
+      QTableWidgetItem *type1 = new QTableWidgetItem(*mChildrenView->item(firstRow, 1));      
+      QTableWidgetItem *nm2 = new QTableWidgetItem(*mChildrenView->item(secondRow, 0));
+      QTableWidgetItem *type2 = new QTableWidgetItem(*mChildrenView->item(secondRow, 1));
+      mChildrenView->setItem(firstRow, 0, nm2);
+      mChildrenView->setItem(firstRow, 1, type2);
+      mChildrenView->setItem(secondRow, 0, nm1);
+      mChildrenView->setItem(secondRow, 1, type1);
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    void TaskEditor::AddItemToList(dtDAL::ActorProxy& proxy)
    {
       dtDAL::ActorType& at = proxy.GetActorType();
@@ -191,16 +215,35 @@ namespace dtEditQt
       type->setText(tr((at.GetCategory() + "." + at.GetName()).c_str()));
 
       int row = mChildrenView->rowCount();
+      mChildrenView->setRowCount(row + 1);
 
       mChildrenView->setItem(row, 0, nm);
       mChildrenView->setItem(row, 1, type);
    }
+   
+   ///////////////////////////////////////////////////////////////////////////////
+   bool TaskEditor::HasChild(dtDAL::ActorProxy& proxyToTest)
+   {
+      for (int i = 0; i < mChildrenView->rowCount(); ++i)
+      {
+         QTableWidgetItem* item = mChildrenView->item(i, 0);
+         if (item != NULL)
+         {
+            QVariant v = item->data(Qt::UserRole);
+            dtCore::RefPtr<dtDAL::ActorProxy> proxy = v.value<dtCore::RefPtr<dtDAL::ActorProxy> >();
+            if (proxy->GetId() == proxyToTest.GetId())
+               return true;
+         }
+      }
+      return false;
+   }   
 
    ///////////////////////////////////////////////////////////////////////////////
    void TaskEditor::RefreshComboBox(const QString &itemName)
    {
+      LOGN_DEBUG("taskeditor.cpp", "Refresh Combo Box");
       mComboBox->clear();
-      dtDAL::Map* m = EditorData::getInstance().getCurrentMap();
+      dtDAL::Map* m = EditorData::GetInstance().getCurrentMap();
       
       if (m == NULL)
       {
@@ -208,44 +251,110 @@ namespace dtEditQt
          return;
       }
       
+      const std::string topLevelProperty("IsTopLevel");
+      
       std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > toFill;
+      std::vector<dtDAL::ActorProxy*> selectedActors;
       m->FindProxies(toFill, "", "dtcore.Tasks", "Task Actor");
+      EditorData::GetInstance().GetSelectedActors(selectedActors);
+      
       for (unsigned i = 0; i < toFill.size(); ++i)
       {
          dtDAL::ActorProxy* ap = toFill[i].get();
-         //TODO if it's not the currently selected actor
-         QVariant v = QVariant::fromValue(dtCore::RefPtr<dtDAL::ActorProxy>(ap)); 
-         mComboBox->addItem(tr(ap->GetName().c_str()), v);
+         bool isRemoved = mRemovedTasks.find(ap) != mRemovedTasks.end();
+         if (!isRemoved)
+         {
+            dtDAL::BooleanActorProperty* bap = static_cast<dtDAL::BooleanActorProperty*>(ap->GetProperty(topLevelProperty)); 
+            if (bap == NULL)
+            {
+               LOG_ERROR("A task actor named \"" + ap->GetName() + "\" with type \"" + ap->GetActorType().GetCategory() 
+                  + "." + ap->GetActorType().GetName() + "\" was found that doesn't have an \"" 
+                  + topLevelProperty + "\" property.  Ignoring.");
+               continue;
+            }
+               
+            //don't add non-top-level tasks to the list.
+            if (!bap->GetValue())
+               continue;
+         }
+   
+         bool found = false;
+         for (unsigned j = 0; j < selectedActors.size(); ++j)
+         {
+            if (selectedActors[j] == toFill[i].get())
+            {
+               found = true;
+               break;
+            }
+         } 
+                  
+         if (!found && !HasChild(*ap))
+         {
+            //TODO if it's not the currently selected actor
+            QVariant v = QVariant::fromValue(dtCore::RefPtr<dtDAL::ActorProxy>(ap)); 
+            mComboBox->addItem(tr(ap->GetName().c_str()), v);
+         }
+         
       }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void TaskEditor::OnMoveUpClicked()
    {
-
+      LOGN_DEBUG("taskeditor.cpp", "Move Up");
+      int row = mChildrenView->currentRow();
+      if (row > 0)
+      {
+         SwapRows(row, row - 1);
+         mChildrenView->setCurrentCell(row - 1, 0);
+         RefreshComboBox(tr(""));
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void TaskEditor::OnMoveDownClicked()
    {
-
+      LOGN_DEBUG("taskeditor.cpp", "Move Down");
+      int row = mChildrenView->currentRow();
+      if (row < (mChildrenView->rowCount() - 1))
+      {
+         SwapRows(row, row + 1);
+         mChildrenView->setCurrentCell(row + 1, 0);
+         RefreshComboBox(tr(""));
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void TaskEditor::OnRemoveChildClicked()
    {
+      LOGN_DEBUG("taskeditor.cpp", "Remove Child");
+      int row = mChildrenView->currentRow();
+      if (row > 0)
+      {
+         QTableWidgetItem* item = mChildrenView->item(row, 0);
+         if (item != NULL)
+         {
+            QVariant v = item->data(Qt::UserRole);
+            dtCore::RefPtr<dtDAL::ActorProxy> proxy = v.value<dtCore::RefPtr<dtDAL::ActorProxy> >();
+            mRemovedTasks.insert(proxy);
+         }
 
+         mChildrenView->removeRow(mChildrenView->currentRow());
+         RefreshComboBox(tr(""));
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void TaskEditor::OnOkClicked()
    {
+      LOGN_DEBUG("taskeditor.cpp", "Okay Clicked");
       accept();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void TaskEditor::EnableEditButtons()
    {
+      LOGN_DEBUG("taskeditor.cpp", "Enable Edit Buttons");
       mMoveUp->setDisabled(false);
       mMoveDown->setDisabled(false);
       mRemoveChild->setDisabled(false);
@@ -254,14 +363,16 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void TaskEditor::DisableEditButtons()
    {
+      LOGN_DEBUG("taskeditor.cpp", "Disable Edit Buttons");
       mMoveUp->setDisabled(true);
       mMoveDown->setDisabled(true);
       mRemoveChild->setDisabled(true);
    }
 
-   //Adds the selected task actor in the combo box 
+   ///////////////////////////////////////////////////////////////////////////////
    void TaskEditor::AddSelected()
    {
+      LOGN_DEBUG("taskeditor.cpp", "Add Selected Clicked");
       int index = mComboBox->currentIndex();
       if (index >= 0)
       {
@@ -269,12 +380,20 @@ namespace dtEditQt
          dtCore::RefPtr<dtDAL::ActorProxy> proxy = v.value<dtCore::RefPtr<dtDAL::ActorProxy> >();
          AddItemToList(*proxy);
          BlankRowLabels();
+
+         //remove the item being added from the removed list, if necessary.
+         std::set<dtCore::RefPtr<dtDAL::ActorProxy> >::iterator itor = mRemovedTasks.find(proxy);
+         if (itor != mRemovedTasks.end())
+            mRemovedTasks.erase(itor);
+
+         RefreshComboBox("");
       } 
    }
          
-   //called when the combo box selection changes.
+   ///////////////////////////////////////////////////////////////////////////////
    void TaskEditor::OnComboSelectionChanged(int index)
    {
+      LOGN_DEBUG("taskeditor.cpp", "Combo Selection Changed");
       if (index >= 0 && index < mComboBox->count())
       {
          mAddExisting->setDisabled(false);

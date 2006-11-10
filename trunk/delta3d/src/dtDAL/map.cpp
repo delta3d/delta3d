@@ -90,8 +90,7 @@ namespace dtDAL
    {
       std::map<dtCore::UniqueId, dtCore::RefPtr<ActorProxy> >::const_iterator i = mProxyMap.find(id);
       if (i != mProxyMap.end()) 
-      {
-         
+      {     
          return i->second.get();
       }
       return NULL;
@@ -119,7 +118,6 @@ namespace dtDAL
                          const std::string& className,
                          PlaceableFilter placeable) 
    {
-      
       container.clear();
       
       if (name != "" || category != "" || typeName != "" || className != "" || placeable != Either ) 
@@ -136,7 +134,6 @@ namespace dtDAL
       } 
       else 
       {
-         
          //return everything.
          container.reserve(mProxyMap.size());
          for (std::map<dtCore::UniqueId, dtCore::RefPtr<ActorProxy> >::iterator i = mProxyMap.begin();
@@ -164,7 +161,6 @@ namespace dtDAL
          for (std::map<dtCore::UniqueId, dtCore::RefPtr<ActorProxy> >::const_iterator i = mProxyMap.begin();
               i != mProxyMap.end(); ++i) 
          {
-
             const ActorProxy* ap = i->second.get();
 
             if (name == "" || WildMatch(name, ap->GetName()))
@@ -198,17 +194,13 @@ namespace dtDAL
 
       if (!typeName.empty() || !category.empty())
       {
-
-         const ActorType* actorType = &actorProxy.GetActorType();
-         
+         const ActorType* actorType = &actorProxy.GetActorType();         
          bool matches = false;
          
          while (!matches && actorType != NULL)
          {
-            bool nameMatches = typeName.empty() || actorType->GetName() == typeName; 
-      
-            const std::string& actualCategory = actorType->GetCategory();
-      
+            bool nameMatches = typeName.empty() || actorType->GetName() == typeName;       
+            const std::string& actualCategory = actorType->GetCategory();      
             bool catMatches = false; 
             
             if (actualCategory.size() >= category.size())

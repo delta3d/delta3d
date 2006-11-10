@@ -38,7 +38,7 @@ namespace dtEditQt
         : temporaryEditControl(NULL)
     {
         // listen for name changes so we can update our own edit control
-        connect(&EditorEvents::getInstance(), SIGNAL(proxyNameChanged(ActorProxyRefPtr, std::string)),
+        connect(&EditorEvents::GetInstance(), SIGNAL(proxyNameChanged(ActorProxyRefPtr, std::string)),
             this, SLOT(proxyNameChanged(ActorProxyRefPtr, std::string)));
     }
 
@@ -92,7 +92,7 @@ namespace dtEditQt
 
         // no notification cause it's not a property 
         if (dataChanged) {
-            EditorEvents::getInstance().emitProxyNameChanged(proxy.get(), oldName);
+            EditorEvents::GetInstance().emitProxyNameChanged(proxy.get(), oldName);
         }
 
         return dataChanged;

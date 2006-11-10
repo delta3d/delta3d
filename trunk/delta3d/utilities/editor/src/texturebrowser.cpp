@@ -179,7 +179,7 @@ namespace dtEditQt
             dtDAL::Project &project = dtDAL::Project::GetInstance();
 
             // Find the currently selected tree item
-            dtDAL::ResourceDescriptor resource = EditorData::getInstance().getCurrentTextureResource();
+            dtDAL::ResourceDescriptor resource = EditorData::GetInstance().getCurrentTextureResource();
            
             try 
             {

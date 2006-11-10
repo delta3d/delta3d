@@ -94,9 +94,9 @@ namespace dtEditQt
          if (previousString != selectionString)
          {
             // give undo manager the ability to create undo/redo events
-            EditorEvents::getInstance().emitActorPropertyAboutToChange(proxy, myProperty, previousString, selectionString);
+            EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, myProperty, previousString, selectionString);
 
-            dtCore::RefPtr<dtDAL::Map> curMap = EditorData::getInstance().getCurrentMap();
+            dtCore::RefPtr<dtDAL::Map> curMap = EditorData::GetInstance().getCurrentMap();
             if (!curMap.valid())
                EXCEPT(dtDAL::ExceptionEnum::MapException, "There is no map open, there shouldn't be any controls");
             
@@ -114,7 +114,7 @@ namespace dtEditQt
       // notify the world (mostly the viewports) that our property changed
       if (dataChanged)
       {
-         EditorEvents::getInstance().emitActorPropertyChanged(proxy, myProperty);
+         EditorEvents::GetInstance().emitActorPropertyChanged(proxy, myProperty);
       }
 
       return dataChanged;    
@@ -239,12 +239,12 @@ namespace dtEditQt
       {
          dtCore::RefPtr<dtDAL::ActorProxy> proxy(myProperty->GetValue());
          
-         EditorEvents::getInstance().emitGotoActor(proxy);
+         EditorEvents::GetInstance().emitGotoActor(proxy);
 
          std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > vec;
          vec.push_back(proxy);
 
-         EditorEvents::getInstance().emitActorsSelected(vec);
+         EditorEvents::GetInstance().emitActorsSelected(vec);
       }
    }
 
@@ -253,7 +253,7 @@ namespace dtEditQt
    {
       toFill.clear();
 
-      dtCore::RefPtr<dtDAL::Map> curMap = EditorData::getInstance().getCurrentMap();
+      dtCore::RefPtr<dtDAL::Map> curMap = EditorData::GetInstance().getCurrentMap();
 
       if(!curMap.valid())
          EXCEPT(dtDAL::ExceptionEnum::MapException, "There is no map open, there shouldn't be any controls");

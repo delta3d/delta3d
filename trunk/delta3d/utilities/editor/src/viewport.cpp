@@ -97,7 +97,7 @@ namespace dtEditQt
         this->sceneView->setDefaults();
         this->sceneView->setFrameStamp(this->frameStamp.get());
         this->sceneView->setSceneData(this->rootNodeGroup.get());
-        setOverlay(ViewportManager::getInstance().getViewportOverlay());
+        setOverlay(ViewportManager::GetInstance().getViewportOverlay());
 
         setMouseTracking(false);
         this->cacheMouseLocation = true;
@@ -113,7 +113,7 @@ namespace dtEditQt
     void Viewport::initializeGL()
     {
         setupInitialRenderState();
-        ViewportManager::getInstance().initializeGL();
+        ViewportManager::GetInstance().initializeGL();
         this->initialized = true;
     }
 
@@ -200,7 +200,7 @@ namespace dtEditQt
         if (getAutoSceneUpdate())
             updateActorProxyBillboards();
 
-        if(ViewportManager::getInstance().IsPagingEnabled())
+        if(ViewportManager::GetInstance().IsPagingEnabled())
         {
            if (osgDB::Registry::instance()->getDatabasePager() != NULL)
            {
@@ -209,20 +209,20 @@ namespace dtEditQt
            }
         }
 
-        frameStamp->setReferenceTime(osg::Timer::instance()->delta_s(ViewportManager::getInstance().GetStartTick(), osg::Timer::instance()->tick()));
+        frameStamp->setReferenceTime(osg::Timer::instance()->delta_s(ViewportManager::GetInstance().GetStartTick(), osg::Timer::instance()->tick()));
         frameStamp->setFrameNumber(frameStamp->getFrameNumber() + 1);
 
         sceneView->update();
         sceneView->cull();
         sceneView->draw();
 
-        if(ViewportManager::getInstance().IsPagingEnabled())
+        if(ViewportManager::GetInstance().IsPagingEnabled())
         {
            if(osgDB::Registry::instance()->getDatabasePager() != NULL)
            {
               osgDB::Registry::instance()->getDatabasePager()->signalEndFrame();
 
-              double cleanupTime = ViewportManager::getInstance().getMasterScene()->GetPagingCleanup();
+              double cleanupTime = ViewportManager::GetInstance().getMasterScene()->GetPagingCleanup();
               osgDB::Registry::instance()->getDatabasePager()->compileGLObjects(*sceneView->getState(), cleanupTime);
 
               sceneView->flushDeletedGLObjects(cleanupTime);
@@ -234,7 +234,7 @@ namespace dtEditQt
     void Viewport::setRenderStyle(const RenderStyle &style, bool refreshView)
     {
         int i;
-        int numTextureUnits = ViewportManager::getInstance().getNumTextureUnits();
+        int numTextureUnits = ViewportManager::GetInstance().getNumTextureUnits();
 
         this->renderStyle = &style;
         if (!this->sceneView.valid())
@@ -293,7 +293,7 @@ namespace dtEditQt
             EXCEPT(dtDAL::ExceptionEnum::BaseException,
                    "Scene is invalid.  Cannot pick objects from an invalid scene.");
 
-        dtCore::RefPtr<dtDAL::Map> currMap = EditorData::getInstance().getCurrentMap();
+        dtCore::RefPtr<dtDAL::Map> currMap = EditorData::GetInstance().getCurrentMap();
         if (!currMap.valid() || getCamera() == NULL)
             return;
 
@@ -317,7 +317,7 @@ namespace dtEditQt
         //and return.
         if (!mIsector->Update())
         {
-            EditorEvents::getInstance().emitActorsSelected(toSelect);
+            EditorEvents::GetInstance().emitActorsSelected(toSelect);
             return;
         }
 
@@ -329,7 +329,7 @@ namespace dtEditQt
         }
 
         dtCore::DeltaDrawable *drawable = mIsector->GetClosestDeltaDrawable();
-        ViewportOverlay *overlay = ViewportManager::getInstance().getViewportOverlay();
+        ViewportOverlay *overlay = ViewportManager::GetInstance().getViewportOverlay();
         ViewportOverlay::ActorProxyList &selection = overlay->getCurrentActorSelection();
 
         //First see if the selected drawable is an actor.
@@ -375,7 +375,7 @@ namespace dtEditQt
             }
         }
 
-        EditorEvents::getInstance().emitActorsSelected(toSelect);
+        EditorEvents::GetInstance().emitActorsSelected(toSelect);
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -507,8 +507,8 @@ namespace dtEditQt
     void Viewport::connectInteractionModeSlots()
     {
         //Connect the global actions we want to track.
-        EditorActions &ga = EditorActions::getInstance();
-        EditorEvents &ge = EditorEvents::getInstance();
+        EditorActions &ga = EditorActions::GetInstance();
+        EditorEvents &ge = EditorEvents::GetInstance();
 
         connect(ga.actionSelectionCamera,SIGNAL(triggered()),this,SLOT(setCameraMode()));
         connect(ga.actionSelectionSelectActor,SIGNAL(triggered()),this,SLOT(setActorSelectMode()));
@@ -525,8 +525,8 @@ namespace dtEditQt
     void Viewport::disconnectInteractionModeSlots()
     {
         //Disconnect from all our global actions we were previously tracking.
-        EditorActions &ga = EditorActions::getInstance();
-        EditorEvents &ge = EditorEvents::getInstance();
+        EditorActions &ga = EditorActions::GetInstance();
+        EditorEvents &ge = EditorEvents::GetInstance();
 
         disconnect(ga.actionSelectionCamera,SIGNAL(triggered()),this,SLOT(setCameraMode()));
         disconnect(ga.actionSelectionSelectActor,SIGNAL(triggered()),this,SLOT(setActorSelectMode()));
@@ -541,14 +541,14 @@ namespace dtEditQt
     void Viewport::syncWithModeActions()
     {
         if (this->useAutoInteractionMode) {
-            QAction *action = EditorActions::getInstance().modeToolsGroup->checkedAction();
-            if (action == EditorActions::getInstance().actionSelectionCamera)
+            QAction *action = EditorActions::GetInstance().modeToolsGroup->checkedAction();
+            if (action == EditorActions::GetInstance().actionSelectionCamera)
                 setCameraMode();
-            else if (action == EditorActions::getInstance().actionSelectionSelectActor)
+            else if (action == EditorActions::GetInstance().actionSelectionSelectActor)
                 setActorSelectMode();
-            else if (action == EditorActions::getInstance().actionSelectionTranslateActor)
+            else if (action == EditorActions::GetInstance().actionSelectionTranslateActor)
                 setActorTranslateMode();
-            else if (action == EditorActions::getInstance().actionSelectionRotateActor)
+            else if (action == EditorActions::GetInstance().actionSelectionRotateActor)
                 setActorRotateMode();
         }
     }
@@ -557,7 +557,7 @@ namespace dtEditQt
     void Viewport::saveSelectedActorOrigValues(const std::string &propName)
     {
         ViewportOverlay::ActorProxyList &selection =
-            ViewportManager::getInstance().getViewportOverlay()->getCurrentActorSelection();
+            ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
         ViewportOverlay::ActorProxyList::iterator itor;
 
         //Clear the old list first.
@@ -581,7 +581,7 @@ namespace dtEditQt
     void Viewport::updateActorSelectionProperty(const std::string &propName)
     {
         ViewportOverlay::ActorProxyList &selection =
-            ViewportManager::getInstance().getViewportOverlay()->getCurrentActorSelection();
+            ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
         ViewportOverlay::ActorProxyList::iterator itor;
         std::map<std::string,std::vector<std::string> >::iterator saveEntry =
                 this->selectedActorOrigValues.find(propName);
@@ -599,10 +599,10 @@ namespace dtEditQt
                 // emit the old value before the change so undo/redo can recover.
                 std::string oldValue = saveEntry->second[oldValueIndex];
                 std::string newValue = prop->GetStringValue();
-                EditorEvents::getInstance().emitActorPropertyAboutToChange(proxy, prop, oldValue, newValue);
+                EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, prop, oldValue, newValue);
                 oldValueIndex++;
 
-                EditorEvents::getInstance().emitActorPropertyChanged(proxy,prop);
+                EditorEvents::GetInstance().emitActorPropertyChanged(proxy,prop);
             }
         }
     }
@@ -610,7 +610,7 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     void Viewport::updateActorProxyBillboards()
     {
-        dtDAL::Map *currentMap = EditorData::getInstance().getCurrentMap();
+        dtDAL::Map *currentMap = EditorData::GetInstance().getCurrentMap();
         std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > proxies;
         std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >::iterator itor;
 
@@ -703,7 +703,7 @@ namespace dtEditQt
     void Viewport::onEndChangeTransaction()
     {
         inChangeTransaction = false;
-        ViewportManager::getInstance().refreshAllViewports();
+        ViewportManager::GetInstance().refreshAllViewports();
     }
 
 }

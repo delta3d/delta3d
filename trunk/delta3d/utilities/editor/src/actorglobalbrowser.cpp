@@ -30,16 +30,16 @@
 #include <QtGui/QPushButton>
 #include <QtCore/QStringList>
 #include <QtGui/QTreeView>
-#include "dtDAL/actorproxy.h"
-#include "dtDAL/actortype.h"
-#include "dtDAL/librarymanager.h"
-#include "dtDAL/map.h"
-#include "dtEditQt/actorglobalbrowser.h"
-#include "dtEditQt/actorresultstable.h"
-#include "dtEditQt/editordata.h"
-#include "dtEditQt/editorevents.h"
-#include "dtEditQt/mainwindow.h"
-#include "dtEditQt/typedefs.h"
+#include <dtDAL/actorproxy.h>
+#include <dtDAL/actortype.h>
+#include <dtDAL/librarymanager.h>
+#include <dtDAL/map.h>
+#include <dtEditQt/actorglobalbrowser.h>
+#include <dtEditQt/actorresultstable.h>
+#include <dtEditQt/editordata.h>
+#include <dtEditQt/editorevents.h>
+#include <dtEditQt/mainwindow.h>
+#include <dtEditQt/typedefs.h>
 
 namespace dtEditQt 
 {
@@ -54,19 +54,19 @@ namespace dtEditQt
         vbox->setMargin(3);
 
         // connect 
-        connect(&EditorEvents::getInstance(), SIGNAL(mapLibraryImported()),
+        connect(&EditorEvents::GetInstance(), SIGNAL(mapLibraryImported()),
             this, SLOT(refreshAll()));
-        connect(&EditorEvents::getInstance(), SIGNAL(mapLibraryRemoved()),
+        connect(&EditorEvents::GetInstance(), SIGNAL(mapLibraryRemoved()),
             this, SLOT(refreshAll()));
-        connect(&EditorEvents::getInstance(), SIGNAL(currentMapChanged()), 
+        connect(&EditorEvents::GetInstance(), SIGNAL(currentMapChanged()), 
             this, SLOT(refreshAll()));
-        connect(&EditorEvents::getInstance(), SIGNAL(projectChanged()), 
+        connect(&EditorEvents::GetInstance(), SIGNAL(projectChanged()), 
             this, SLOT(refreshAll()));
-        connect(&EditorEvents::getInstance(), SIGNAL(mapLibraryAboutToBeRemoved()),
+        connect(&EditorEvents::GetInstance(), SIGNAL(mapLibraryAboutToBeRemoved()),
             this, SLOT(refreshAll()));
-        connect(&EditorEvents::getInstance(), SIGNAL(actorProxyCreated(ActorProxyRefPtr, bool)), 
+        connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyCreated(ActorProxyRefPtr, bool)), 
             this, SLOT(onActorProxyCreated(ActorProxyRefPtr, bool)));   
-        connect(&EditorEvents::getInstance(), SIGNAL(actorProxyDestroyed(ActorProxyRefPtr)), 
+        connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyDestroyed(ActorProxyRefPtr)), 
             this, SLOT(onActorProxyDestroyed(ActorProxyRefPtr)));
     }
 
@@ -98,10 +98,10 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     void ActorGlobalBrowser::refreshAll()
     {
-        EditorData::getInstance().getMainWindow()->startWaitCursor();
+        EditorData::GetInstance().getMainWindow()->startWaitCursor();
 
         std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > globalProxies;
-        dtDAL::Map *map = EditorData::getInstance().getCurrentMap();
+        dtDAL::Map *map = EditorData::GetInstance().getCurrentMap();
 
         // empty out our table, just in case - Must happen BEFORE libraries are removed
         resultsTable->clearAll();
@@ -112,7 +112,7 @@ namespace dtEditQt
             resultsTable->addProxies(globalProxies);
         }
 
-        EditorData::getInstance().getMainWindow()->endWaitCursor();
+        EditorData::GetInstance().getMainWindow()->endWaitCursor();
     }
 
     ///////////////////////////////////////////////////////////////////////////////

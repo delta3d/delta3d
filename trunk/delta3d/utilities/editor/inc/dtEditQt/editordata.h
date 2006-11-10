@@ -55,7 +55,7 @@ namespace dtEditQt
        *
        * @return Returns the singleton instance
        */
-      static EditorData &getInstance();
+      static EditorData &GetInstance();
       
       /**
        * Sets the Main Window.
@@ -70,6 +70,11 @@ namespace dtEditQt
        * @return Returns the current map that was set when opening or creating a new map
        */
       dtDAL::Map* getCurrentMap();
+      
+      /**
+       * Fills a vector with pointers to all the currently selected actor proxies.
+       */
+      void GetSelectedActors(std::vector<dtDAL::ActorProxy*> toFill);
       
       /**
        * Sets the currently selected Sound resource.  This is called when the user is

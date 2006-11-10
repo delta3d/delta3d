@@ -71,7 +71,7 @@ namespace dtEditQt
     * Gets the singleton instance of the EditorActions.
     * @return Returns the singleton instance.
     */
-   static EditorActions &getInstance();
+   static EditorActions &GetInstance();
 
     /**
      * Returns the window name with a *appended, if modified

@@ -105,9 +105,9 @@ namespace dtEditQt
         // notify the world (mostly the viewports) that our property changed
         if (dataChanged) {
             if (whichType == RGBA) {
-                EditorEvents::getInstance().emitActorPropertyChanged(proxy, colorRGBA);
+                EditorEvents::GetInstance().emitActorPropertyChanged(proxy, colorRGBA);
             //} else if (whichType == RGB) {
-            //    EditorEvents::getInstance().emitActorPropertyChanged(proxy, colorRGB);
+            //    EditorEvents::GetInstance().emitActorPropertyChanged(proxy, colorRGB);
             }
         }
 
@@ -196,15 +196,15 @@ namespace dtEditQt
     {
         if (whichType == RGBA) 
         {
-            std::string oldValue = colorRGBA->GetStringValue();
+            std::string oldValue = colorRGBA->ToString();
             osg::Vec4 vectorValue = colorRGBA->GetValue();
             double intermediate = DynamicColorElementControl::convertColorIntToFloat(value);
             vectorValue[elementIndex] = (double) intermediate;
             colorRGBA->SetValue(vectorValue);
 
             // give undo manager the ability to create undo/redo events
-            EditorEvents::getInstance().emitActorPropertyAboutToChange(proxy, colorRGBA,
-                oldValue, colorRGBA->GetStringValue());
+            EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, colorRGBA,
+                oldValue, colorRGBA->ToString());
         }
         //else { // == RGB
         //    osg::Vec3 vectorValue = colorRGB->getValue();

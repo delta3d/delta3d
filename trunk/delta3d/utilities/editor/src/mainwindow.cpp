@@ -61,15 +61,15 @@ namespace dtEditQt
     {
         //Ensure that the global singletons are lazily instantiated now
         dtDAL::LibraryManager::GetInstance();
-        EditorActions::getInstance();
-        EditorEvents::getInstance();
-        EditorData::getInstance();
+        EditorActions::GetInstance();
+        EditorEvents::GetInstance();
+        EditorData::GetInstance();
         
         //alert the project instance that we are working within STAGE
         //changed on 7/10/2006 banderegg
         dtDAL::Project::GetInstance().SetEditMode(true);
 
-        ViewportManager::getInstance();
+        ViewportManager::GetInstance();
 
         connectSlots();
         setupDockWindows();
@@ -77,12 +77,12 @@ namespace dtEditQt
         setupMenus();
         setupToolbar();
 
-        //EditorData::getInstance().setUndoManager(new UndoManager());
+        //EditorData::GetInstance().setUndoManager(new UndoManager());
 
         //Make sure some default UI states are correctly initialized.
-        EditorActions::getInstance().actionSelectionCamera->setChecked(true);
+        EditorActions::GetInstance().actionSelectionCamera->setChecked(true);
         setWindowTitle(tr("STAGE"));
-        EditorData::getInstance().setMainWindow(this);
+        EditorData::GetInstance().setMainWindow(this);
         
         // add the application icon
         QIcon *icon = new QIcon();
@@ -93,7 +93,7 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     void MainWindow::setupMenus()
     {
-        EditorActions &editorActions = EditorActions::getInstance();
+        EditorActions &editorActions = EditorActions::GetInstance();
 
         recentProjs = new QMenu(tr("Recent Projects"));
         recentMaps  = new QMenu(tr("Recent Maps"));
@@ -153,37 +153,37 @@ namespace dtEditQt
         fileToolBar = new QToolBar(this);
         fileToolBar->setObjectName("FileToolBar");
         fileToolBar->setWindowTitle(tr("File Toolbar"));
-        fileToolBar->addAction(EditorActions::getInstance().actionFileNewMap);
-        fileToolBar->addAction(EditorActions::getInstance().actionFileOpenMap);
-        fileToolBar->addAction(EditorActions::getInstance().actionFileSaveMap);
+        fileToolBar->addAction(EditorActions::GetInstance().actionFileNewMap);
+        fileToolBar->addAction(EditorActions::GetInstance().actionFileOpenMap);
+        fileToolBar->addAction(EditorActions::GetInstance().actionFileSaveMap);
         addToolBar(fileToolBar);
 
         editToolBar = new QToolBar(this);
         editToolBar->setObjectName("EditToolBar");
         editToolBar->setWindowTitle(tr("Edit Toolbar"));
         editToolBar->setMinimumWidth(4);
-        editToolBar->addAction(EditorActions::getInstance().actionEditDuplicateActor);
-        editToolBar->addAction(EditorActions::getInstance().actionEditDeleteActor);
-        editToolBar->addAction(EditorActions::getInstance().actionEditGotoActor);
-        editToolBar->addAction(EditorActions::getInstance().actionEditGroundClampActors);
-        editToolBar->addAction(EditorActions::getInstance().actionToggleTerrainPaging);
-        //editToolBar->addAction(EditorActions::getInstance().actionEditTaskEditor);
+        editToolBar->addAction(EditorActions::GetInstance().actionEditDuplicateActor);
+        editToolBar->addAction(EditorActions::GetInstance().actionEditDeleteActor);
+        editToolBar->addAction(EditorActions::GetInstance().actionEditGotoActor);
+        editToolBar->addAction(EditorActions::GetInstance().actionEditGroundClampActors);
+        editToolBar->addAction(EditorActions::GetInstance().actionToggleTerrainPaging);
+        //editToolBar->addAction(EditorActions::GetInstance().actionEditTaskEditor);
         addToolBar(editToolBar);
 
         undoToolBar = new QToolBar(this);
         undoToolBar->setObjectName("UndoToolBar");
         undoToolBar->setWindowTitle(tr("Undo Toolbar"));
-        undoToolBar->addAction(EditorActions::getInstance().actionEditUndo);
-        undoToolBar->addAction(EditorActions::getInstance().actionEditRedo);
+        undoToolBar->addAction(EditorActions::GetInstance().actionEditUndo);
+        undoToolBar->addAction(EditorActions::GetInstance().actionEditRedo);
         addToolBar(undoToolBar);
 
         selectionToolBar = new QToolBar(this);
         selectionToolBar->setObjectName("SelectionToolBar");
         selectionToolBar->setWindowTitle(tr("Selection Toolbar"));
-        selectionToolBar->addAction(EditorActions::getInstance().actionSelectionCamera);
-        selectionToolBar->addAction(EditorActions::getInstance().actionSelectionSelectActor);
-        selectionToolBar->addAction(EditorActions::getInstance().actionSelectionTranslateActor);
-        selectionToolBar->addAction(EditorActions::getInstance().actionSelectionRotateActor);
+        selectionToolBar->addAction(EditorActions::GetInstance().actionSelectionCamera);
+        selectionToolBar->addAction(EditorActions::GetInstance().actionSelectionSelectActor);
+        selectionToolBar->addAction(EditorActions::GetInstance().actionSelectionTranslateActor);
+        selectionToolBar->addAction(EditorActions::GetInstance().actionSelectionRotateActor);
         addToolBar(selectionToolBar);
     }
 
@@ -226,7 +226,7 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     QWidget *MainWindow::setupViewports()
     {
-        ViewportManager &vpMgr = ViewportManager::getInstance();
+        ViewportManager &vpMgr = ViewportManager::GetInstance();
 
         //Create our splitters which will house the newly created
         //viewports.
@@ -271,36 +271,36 @@ namespace dtEditQt
     void MainWindow::enableActions()
     {
         bool hasProject = dtDAL::Project::GetInstance().IsContextValid();
-        bool hasCurrentMap = (EditorData::getInstance().getCurrentMap() != NULL);
+        bool hasCurrentMap = (EditorData::GetInstance().getCurrentMap() != NULL);
         bool hasBoth = hasProject && hasCurrentMap;
 
-        EditorActions::getInstance().actionFileNewMap->setEnabled(hasProject);
-        EditorActions::getInstance().actionFileOpenMap->setEnabled(hasProject);
-        EditorActions::getInstance().actionFileCloseMap->setEnabled(hasBoth);
-        EditorActions::getInstance().actionFileSaveMap->setEnabled(hasBoth);
-        EditorActions::getInstance().actionFileSaveMapAs->setEnabled(hasBoth);
-        EditorActions::getInstance().actionFileExit->setEnabled(true);
+        EditorActions::GetInstance().actionFileNewMap->setEnabled(hasProject);
+        EditorActions::GetInstance().actionFileOpenMap->setEnabled(hasProject);
+        EditorActions::GetInstance().actionFileCloseMap->setEnabled(hasBoth);
+        EditorActions::GetInstance().actionFileSaveMap->setEnabled(hasBoth);
+        EditorActions::GetInstance().actionFileSaveMapAs->setEnabled(hasBoth);
+        EditorActions::GetInstance().actionFileExit->setEnabled(true);
 
-        EditorActions::getInstance().actionEditDuplicateActor->setEnabled(false);
-        EditorActions::getInstance().actionEditDeleteActor->setEnabled(false);
-        EditorActions::getInstance().actionEditGotoActor->setEnabled(false);
-        EditorActions::getInstance().actionEditGroundClampActors->setEnabled(false);
-        EditorActions::getInstance().actionEditMapProperties->setEnabled(hasBoth);
-        EditorActions::getInstance().actionEditMapLibraries->setEnabled(hasBoth);
-        EditorActions::getInstance().actionEditTaskEditor->setEnabled(hasBoth);
+        EditorActions::GetInstance().actionEditDuplicateActor->setEnabled(false);
+        EditorActions::GetInstance().actionEditDeleteActor->setEnabled(false);
+        EditorActions::GetInstance().actionEditGotoActor->setEnabled(false);
+        EditorActions::GetInstance().actionEditGroundClampActors->setEnabled(false);
+        EditorActions::GetInstance().actionEditMapProperties->setEnabled(hasBoth);
+        EditorActions::GetInstance().actionEditMapLibraries->setEnabled(hasBoth);
+        EditorActions::GetInstance().actionEditTaskEditor->setEnabled(hasBoth);
 
-        EditorActions::getInstance().actionSelectionCamera->setEnabled(hasBoth);
-        EditorActions::getInstance().actionSelectionSelectActor->setEnabled(hasBoth);
-        EditorActions::getInstance().actionSelectionTranslateActor->setEnabled(hasBoth);
-        EditorActions::getInstance().actionSelectionRotateActor->setEnabled(hasBoth);
+        EditorActions::GetInstance().actionSelectionCamera->setEnabled(hasBoth);
+        EditorActions::GetInstance().actionSelectionSelectActor->setEnabled(hasBoth);
+        EditorActions::GetInstance().actionSelectionTranslateActor->setEnabled(hasBoth);
+        EditorActions::GetInstance().actionSelectionRotateActor->setEnabled(hasBoth);
 
-        EditorActions::getInstance().actionWindowsActorSearch->setEnabled(hasBoth);
-        EditorActions::getInstance().actionWindowsPropertyEditor->setEnabled(hasBoth);
-        EditorActions::getInstance().actionWindowsResourceBrowser->setEnabled(hasBoth);
-        EditorActions::getInstance().actionWindowsResetWindows->setEnabled(hasBoth);
+        EditorActions::GetInstance().actionWindowsActorSearch->setEnabled(hasBoth);
+        EditorActions::GetInstance().actionWindowsPropertyEditor->setEnabled(hasBoth);
+        EditorActions::GetInstance().actionWindowsResourceBrowser->setEnabled(hasBoth);
+        EditorActions::GetInstance().actionWindowsResetWindows->setEnabled(hasBoth);
 
-        EditorActions::getInstance().actionHelpAboutEditor->setEnabled(true);
-        EditorActions::getInstance().actionHelpAboutQT->setEnabled(true);
+        EditorActions::GetInstance().actionHelpAboutEditor->setEnabled(true);
+        EditorActions::GetInstance().actionHelpAboutQT->setEnabled(true);
 
         // enable main window areas
         propertyWindow->setEnabled(hasBoth);
@@ -326,9 +326,9 @@ namespace dtEditQt
         actorTab->setVisible(true);
         resourceBrowser->setVisible(true);
 
-        EditorActions::getInstance().actionWindowsPropertyEditor->setChecked(true);
-        EditorActions::getInstance().actionWindowsActorSearch->setChecked(true);
-        EditorActions::getInstance().actionWindowsResourceBrowser->setChecked(true);
+        EditorActions::GetInstance().actionWindowsPropertyEditor->setChecked(true);
+        EditorActions::GetInstance().actionWindowsActorSearch->setChecked(true);
+        EditorActions::GetInstance().actionWindowsResourceBrowser->setChecked(true);
 
         addDockWidget(Qt::LeftDockWidgetArea,  propertyWindow);
         addDockWidget(Qt::LeftDockWidgetArea,  actorTab);
@@ -356,10 +356,10 @@ namespace dtEditQt
                    {
                        startWaitCursor();
                        dtDAL::Project::GetInstance().SetContext(contextName);
-                       EditorData::getInstance().setCurrentProjectContext(contextName);
-                       EditorData::getInstance().addRecentProject(contextName);
-                       EditorEvents::getInstance().emitProjectChanged();
-                       EditorActions::getInstance().refreshRecentProjects();
+                       EditorData::GetInstance().setCurrentProjectContext(contextName);
+                       EditorData::GetInstance().addRecentProject(contextName);
+                       EditorEvents::GetInstance().emitProjectChanged();
+                       EditorActions::GetInstance().refreshRecentProjects();
                        endWaitCursor();
                    }
                    catch (dtUtil::Exception &e)
@@ -375,15 +375,15 @@ namespace dtEditQt
                projectsExist = true;
    
                startWaitCursor();
-               EditorEvents::getInstance().emitProjectChanged();
+               EditorEvents::GetInstance().emitProjectChanged();
                endWaitCursor();
            }
    
            startWaitCursor();
-           EditorActions::getInstance().refreshRecentProjects();
+           EditorActions::GetInstance().refreshRecentProjects();
            endWaitCursor();
    
-           if(!EditorData::getInstance().getLoadLastMap())
+           if(!EditorData::GetInstance().getLoadLastMap())
            {
                return;
            }
@@ -396,7 +396,7 @@ namespace dtEditQt
                    checkAndLoadBackup(maps[i]);
            }
    
-           EditorActions::getInstance().getTimer()->start();
+           EditorActions::GetInstance().getTimer()->start();
    
            updateWindowTitle();
            perspView->onEditorPreferencesChanged();
@@ -422,7 +422,7 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     void MainWindow::onEditorShutDown()
     {
-        EditorData &editorData = EditorData::getInstance();
+        EditorData &editorData = EditorData::GetInstance();
         EditorSettings settings;
 
         //Save the main window state...
@@ -437,28 +437,28 @@ namespace dtEditQt
             settings.setValue(EditorSettings::LOAD_RECENT_PROJECTS,editorData.getLoadLastProject());
             settings.setValue(EditorSettings::LOAD_RECENT_MAPS,editorData.getLoadLastMap());
             settings.setValue(EditorSettings::RIGID_CAMERA, editorData.getRigidCamera());
-            settings.setValue(EditorSettings::SAVE_MILLISECONDS,EditorActions::getInstance().saveMilliSeconds);
+            settings.setValue(EditorSettings::SAVE_MILLISECONDS,EditorActions::GetInstance().saveMilliSeconds);
             settings.setValue(EditorSettings::SELECTION_COLOR,editorData.getSelectionColor());
         settings.endGroup();
 
         //Save the recent projects unless the user does not wish to do so.
-        if(!EditorData::getInstance().getLoadLastProject())
+        if(!EditorData::GetInstance().getLoadLastProject())
             return;
 
         //Save the current project state...
         settings.beginGroup(EditorSettings::RECENT_PROJECTS);
-            if(!EditorData::getInstance().getRecentProjects().empty() &&
-                EditorData::getInstance().getRecentProjects().front() != "")
+            if(!EditorData::GetInstance().getRecentProjects().empty() &&
+                EditorData::GetInstance().getRecentProjects().front() != "")
             {
                 settings.setValue(EditorSettings::RECENT_PROJECT0,
-                    QVariant(QString(EditorData::getInstance().getRecentProjects().front().c_str())));
-                EditorData::getInstance().getRecentProjects().pop_front();
+                    QVariant(QString(EditorData::GetInstance().getRecentProjects().front().c_str())));
+                EditorData::GetInstance().getRecentProjects().pop_front();
             }
         settings.endGroup();
 
         //Check to see if the user wants the app to remember the recently loaded map.
-        if(!EditorData::getInstance().getLoadLastMap() ||
-           !EditorData::getInstance().getCurrentMap())
+        if(!EditorData::GetInstance().getLoadLastMap() ||
+           !EditorData::GetInstance().getCurrentMap())
         {
             // Error check, if they have a previous settings file with a recent map in it, it
             // needs to be deleted as to not load it next time
@@ -468,12 +468,12 @@ namespace dtEditQt
 
         //Save the current map state...
         settings.beginGroup(EditorSettings::RECENT_MAPS);
-            if(!EditorData::getInstance().getRecentMaps().empty() &&
-                EditorData::getInstance().getRecentMaps().front() != "")
+            if(!EditorData::GetInstance().getRecentMaps().empty() &&
+                EditorData::GetInstance().getRecentMaps().front() != "")
             {
                 settings.setValue(EditorSettings::RECENT_MAP0,
-                    QVariant(QString(EditorData::getInstance().getRecentMaps().front().c_str())));
-                EditorData::getInstance().getRecentMaps().pop_front();
+                    QVariant(QString(EditorData::GetInstance().getRecentMaps().front().c_str())));
+                EditorData::GetInstance().getRecentMaps().pop_front();
             }
         settings.endGroup();
     }
@@ -485,91 +485,91 @@ namespace dtEditQt
         if (!dtDAL::Project::GetInstance().IsContextValid())
             return;
 
-        EditorData::getInstance().getCurrentMap()->SetModified(true);
+        EditorData::GetInstance().getCurrentMap()->SetModified(true);
         updateWindowTitle();
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     void MainWindow::closeEvent(QCloseEvent *e)
     {
-        EditorActions::getInstance().wasCancelled = false;
+        EditorActions::GetInstance().wasCancelled = false;
 
-        dtDAL::Map *curMap = dtEditQt::EditorData::getInstance().getCurrentMap();
+        dtDAL::Map *curMap = dtEditQt::EditorData::GetInstance().getCurrentMap();
         if(curMap == NULL)
         {
-            EditorEvents::getInstance().emitEditorCloseEvent();
+            EditorEvents::GetInstance().emitEditorCloseEvent();
             e->accept();
             return;
         }
 
-        dtEditQt::EditorActions::getInstance().slotFileExit();
-        EditorActions::getInstance().wasCancelled ? e->ignore() : e->accept();
+        dtEditQt::EditorActions::GetInstance().slotFileExit();
+        EditorActions::GetInstance().wasCancelled ? e->ignore() : e->accept();
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     void MainWindow::onPropertyEditorSelection()
     {
-        propertyWindow->setVisible(EditorActions::getInstance().actionWindowsPropertyEditor->isChecked());
+        propertyWindow->setVisible(EditorActions::GetInstance().actionWindowsPropertyEditor->isChecked());
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     void MainWindow::onActorSearchSelection()
     {
-        actorTab->setVisible(EditorActions::getInstance().actionWindowsActorSearch->isChecked());
+        actorTab->setVisible(EditorActions::GetInstance().actionWindowsActorSearch->isChecked());
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     void MainWindow::onResourceBrowserSelection()
     {
-        resourceBrowser->setVisible(EditorActions::getInstance().actionWindowsResourceBrowser->isChecked());
+        resourceBrowser->setVisible(EditorActions::GetInstance().actionWindowsResourceBrowser->isChecked());
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     void MainWindow::updateWindowTitle()
     {
-        setWindowTitle(EditorActions::getInstance().getWindowName().c_str());
+        setWindowTitle(EditorActions::GetInstance().getWindowName().c_str());
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     void MainWindow::onActorProxyDestroyed(dtCore::RefPtr<dtDAL::ActorProxy> proxy)
     {
-        EditorData::getInstance().getCurrentMap()->SetModified(true);
+        EditorData::GetInstance().getCurrentMap()->SetModified(true);
         updateWindowTitle();
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     void MainWindow::onActorProxyNameChanged(dtCore::RefPtr<dtDAL::ActorProxy> proxy, std::string oldName)
     {
-        EditorData::getInstance().getCurrentMap()->SetModified(true);
+        EditorData::GetInstance().getCurrentMap()->SetModified(true);
         updateWindowTitle();
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     void MainWindow::onActorProxyCreated(dtCore::RefPtr<dtDAL::ActorProxy> proxy, bool forceNoAdjustments)
     {
-        EditorData::getInstance().getCurrentMap()->SetModified(true);
+        EditorData::GetInstance().getCurrentMap()->SetModified(true);
         updateWindowTitle();
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     void MainWindow::onMapPropertyChanged()
     {
-        EditorData::getInstance().getCurrentMap()->SetModified(true);
+        EditorData::GetInstance().getCurrentMap()->SetModified(true);
         updateWindowTitle();
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     void MainWindow::setWindowMenuTabsChecked()
     {
-        EditorActions::getInstance().actionWindowsPropertyEditor->setChecked(propertyWindow->isVisible());
-        EditorActions::getInstance().actionWindowsActorSearch->setChecked(actorTab->isVisible());
-        EditorActions::getInstance().actionWindowsResourceBrowser->setChecked(resourceBrowser->isVisible());
+        EditorActions::GetInstance().actionWindowsPropertyEditor->setChecked(propertyWindow->isVisible());
+        EditorActions::GetInstance().actionWindowsActorSearch->setChecked(actorTab->isVisible());
+        EditorActions::GetInstance().actionWindowsResourceBrowser->setChecked(resourceBrowser->isVisible());
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     void MainWindow::connectSlots()
     {
-        EditorActions &editorActions = EditorActions::getInstance();
+        EditorActions &editorActions = EditorActions::GetInstance();
 
         connect(editorActions.actionWindowsPropertyEditor, SIGNAL(triggered()),
             this, SLOT(onPropertyEditorSelection()));
@@ -577,34 +577,34 @@ namespace dtEditQt
             this, SLOT(onActorSearchSelection()));
         connect(editorActions.actionWindowsResourceBrowser,SIGNAL(triggered()),
             this, SLOT(onResourceBrowserSelection()));
-        connect(&EditorEvents::getInstance(), SIGNAL(editorInitiationEvent()),
+        connect(&EditorEvents::GetInstance(), SIGNAL(editorInitiationEvent()),
             this, SLOT(onEditorInitiated()));
-        connect(&EditorEvents::getInstance(), SIGNAL(editorCloseEvent()),
+        connect(&EditorEvents::GetInstance(), SIGNAL(editorCloseEvent()),
             this, SLOT(onEditorShutDown()));
-        connect(&EditorEvents::getInstance(), SIGNAL(projectChanged()),
+        connect(&EditorEvents::GetInstance(), SIGNAL(projectChanged()),
             this, SLOT(enableActions()));
-        connect(&EditorEvents::getInstance(), SIGNAL(currentMapChanged()),
+        connect(&EditorEvents::GetInstance(), SIGNAL(currentMapChanged()),
             this, SLOT(enableActions()));
-        connect(&EditorEvents::getInstance(), SIGNAL(projectChanged()),
+        connect(&EditorEvents::GetInstance(), SIGNAL(projectChanged()),
             this, SLOT(updateWindowTitle()));
-        connect(&EditorEvents::getInstance(), SIGNAL(currentMapChanged()),
+        connect(&EditorEvents::GetInstance(), SIGNAL(currentMapChanged()),
             this, SLOT(updateWindowTitle()));
-        connect(&EditorEvents::getInstance(), SIGNAL(mapLibraryImported()),
+        connect(&EditorEvents::GetInstance(), SIGNAL(mapLibraryImported()),
             this, SLOT(updateWindowTitle()));
-        connect(&EditorEvents::getInstance(), SIGNAL(mapLibraryRemoved()),
+        connect(&EditorEvents::GetInstance(), SIGNAL(mapLibraryRemoved()),
             this, SLOT(updateWindowTitle()));
-        connect(&EditorEvents::getInstance(), SIGNAL(mapPropertyChanged()),
+        connect(&EditorEvents::GetInstance(), SIGNAL(mapPropertyChanged()),
             this, SLOT(onMapPropertyChanged()));
         connect(editorActions.actionWindowsResetWindows, SIGNAL(triggered()),
             this, SLOT(onResetWindows()));
-        connect(&EditorEvents::getInstance(), SIGNAL(actorProxyDestroyed(ActorProxyRefPtr)),
+        connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyDestroyed(ActorProxyRefPtr)),
             this, SLOT(onActorProxyDestroyed(ActorProxyRefPtr)));
-        connect(&EditorEvents::getInstance(), SIGNAL(actorProxyCreated(ActorProxyRefPtr, bool)),
+        connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyCreated(ActorProxyRefPtr, bool)),
             this, SLOT(onActorProxyCreated(ActorProxyRefPtr, bool)));
-        connect(&EditorEvents::getInstance(),
+        connect(&EditorEvents::GetInstance(),
             SIGNAL(actorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)),
             this, SLOT(onActorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)));
-        connect(&EditorEvents::getInstance(), SIGNAL(proxyNameChanged(ActorProxyRefPtr, std::string)), 
+        connect(&EditorEvents::GetInstance(), SIGNAL(proxyNameChanged(ActorProxyRefPtr, std::string)), 
            this, SLOT(onActorProxyNameChanged(ActorProxyRefPtr, std::string)));
     }
     
@@ -641,7 +641,7 @@ namespace dtEditQt
         {
             bool loadProjs = settings.value(EditorSettings::LOAD_RECENT_PROJECTS,
                 QVariant(true)).toBool();
-            EditorData::getInstance().setLoadLastProject(loadProjs);
+            EditorData::GetInstance().setLoadLastProject(loadProjs);
 
             if(loadProjs)
             {
@@ -649,35 +649,35 @@ namespace dtEditQt
                 {
                     bool loadMaps = settings.value(EditorSettings::LOAD_RECENT_MAPS,
                         QVariant(true)).toBool();
-                    EditorData::getInstance().setLoadLastMap(loadMaps);
+                    EditorData::GetInstance().setLoadLastMap(loadMaps);
                 }
             }
             else
-                EditorData::getInstance().setLoadLastMap(false);
+                EditorData::GetInstance().setLoadLastMap(false);
         }
         else
         {
-            EditorData::getInstance().setLoadLastProject(true);
-            EditorData::getInstance().setLoadLastMap(true);
+            EditorData::GetInstance().setLoadLastProject(true);
+            EditorData::GetInstance().setLoadLastMap(true);
         }
 
         if(settings.contains(EditorSettings::RIGID_CAMERA))
         {
             bool rigidCamera = settings.value(EditorSettings::RIGID_CAMERA, QVariant(true)).toBool();
-            EditorData::getInstance().setRigidCamera(rigidCamera);
+            EditorData::GetInstance().setRigidCamera(rigidCamera);
         }
 
         if(settings.contains(EditorSettings::SAVE_MILLISECONDS))
         {
             int ms = settings.value(EditorSettings::SAVE_MILLISECONDS, QVariant(300000)).toInt();
-            EditorActions::getInstance().saveMilliSeconds = ms;
-            EditorActions::getInstance().getTimer()->setInterval(ms);
+            EditorActions::GetInstance().saveMilliSeconds = ms;
+            EditorActions::GetInstance().getTimer()->setInterval(ms);
         }
 
         if (settings.contains(EditorSettings::SELECTION_COLOR))
         {
             QColor color = qvariant_cast<QColor>(settings.value(EditorSettings::SELECTION_COLOR));
-            EditorData::getInstance().setSelectionColor(color);
+            EditorData::GetInstance().setSelectionColor(color);
         }
         settings.endGroup();
     }
@@ -696,10 +696,10 @@ namespace dtEditQt
 
                 if(dtUtil::FileUtils::GetInstance().DirExists(project))
                 {
-                    EditorData::getInstance().addRecentProject(project);
-                    if(EditorData::getInstance().getLoadLastProject())
+                    EditorData::GetInstance().addRecentProject(project);
+                    if(EditorData::GetInstance().getLoadLastProject())
                     {
-                        EditorData::getInstance().setCurrentProjectContext(project);
+                        EditorData::GetInstance().setCurrentProjectContext(project);
                         dtDAL::Project::GetInstance().SetContext(project);
                     }
                     projects.push_back(project);
@@ -760,9 +760,9 @@ namespace dtEditQt
                 dtDAL::Map &backupMap =
                     dtDAL::Project::GetInstance().OpenMapBackup(str);
 
-                EditorActions::getInstance().changeMaps(
-                    EditorData::getInstance().getCurrentMap(), &backupMap);
-                EditorData::getInstance().addRecentMap(backupMap.GetName());
+                EditorActions::GetInstance().changeMaps(
+                    EditorData::GetInstance().getCurrentMap(), &backupMap);
+                EditorData::GetInstance().addRecentMap(backupMap.GetName());
                 endWaitCursor();
             }
             else if(result == 1)
@@ -778,9 +778,9 @@ namespace dtEditQt
 
                 startWaitCursor();
                 dtDAL::Project::GetInstance().ClearBackup(str);
-                EditorActions::getInstance().changeMaps(EditorData::getInstance().getCurrentMap(),
+                EditorActions::GetInstance().changeMaps(EditorData::GetInstance().getCurrentMap(),
                    &dtDAL::Project::GetInstance().GetMap(str));
-                EditorData::getInstance().addRecentMap(str);
+                EditorData::GetInstance().addRecentMap(str);
                 endWaitCursor();
             }
             else
@@ -790,9 +790,9 @@ namespace dtEditQt
         {
             startWaitCursor();
             dtDAL::Map &m = dtDAL::Project::GetInstance().GetMap(str);
-            EditorActions::getInstance().changeMaps(
-                EditorData::getInstance().getCurrentMap(), &m);
-            EditorData::getInstance().addRecentMap(m.GetName());
+            EditorActions::GetInstance().changeMaps(
+                EditorData::GetInstance().getCurrentMap(), &m);
+            EditorData::GetInstance().addRecentMap(m.GetName());
             endWaitCursor();
         }
     }

@@ -73,11 +73,11 @@ namespace dtEditQt {
     {
         if (actors.empty()) {
             clearCurrentSelection();
-            EditorActions::getInstance().actionEditDeleteActor->setEnabled(false);
-            EditorActions::getInstance().actionEditDuplicateActor->setEnabled(false);
-            EditorActions::getInstance().actionEditGroundClampActors->setEnabled(false);
-            EditorActions::getInstance().actionEditGotoActor->setEnabled(false);
-            ViewportManager::getInstance().refreshAllViewports();
+            EditorActions::GetInstance().actionEditDeleteActor->setEnabled(false);
+            EditorActions::GetInstance().actionEditDuplicateActor->setEnabled(false);
+            EditorActions::GetInstance().actionEditGroundClampActors->setEnabled(false);
+            EditorActions::GetInstance().actionEditGotoActor->setEnabled(false);
+            ViewportManager::GetInstance().refreshAllViewports();
             return;
         }
 
@@ -114,11 +114,11 @@ namespace dtEditQt {
             this->currentActorSelection.insert(actors[i]);
         }
 
-        EditorActions::getInstance().actionEditDeleteActor->setEnabled(true);
-        EditorActions::getInstance().actionEditDuplicateActor->setEnabled(true);
-        EditorActions::getInstance().actionEditGroundClampActors->setEnabled(true);
-        EditorActions::getInstance().actionEditGotoActor->setEnabled(true);
-        ViewportManager::getInstance().refreshAllViewports();
+        EditorActions::GetInstance().actionEditDeleteActor->setEnabled(true);
+        EditorActions::GetInstance().actionEditDuplicateActor->setEnabled(true);
+        EditorActions::GetInstance().actionEditGroundClampActors->setEnabled(true);
+        EditorActions::GetInstance().actionEditGotoActor->setEnabled(true);
+        ViewportManager::GetInstance().refreshAllViewports();
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -234,7 +234,7 @@ namespace dtEditQt {
                 osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF;
 
         //Set the material color using the editor's current preference.
-        QColor qtColor = EditorData::getInstance().getSelectionColor();
+        QColor qtColor = EditorData::GetInstance().getSelectionColor();
         osg::Vec4 color;
 
         color.set(qtColor.redF(),qtColor.greenF(),qtColor.blueF(),1.0f);
@@ -254,7 +254,7 @@ namespace dtEditQt {
         ss->setAttributeAndModes(pm,turnOn);
         ss->setAttributeAndModes(po,turnOn);
         ss->setMode(GL_LIGHTING,turnOff);
-        for (int i=0; i<ViewportManager::getInstance().getNumTextureUnits(); i++) {
+        for (int i=0; i<ViewportManager::GetInstance().getNumTextureUnits(); i++) {
             ss->setTextureMode(i,GL_TEXTURE_1D,turnOff);
             ss->setTextureMode(i,GL_TEXTURE_2D,turnOff);
             //ss->setTextureMode(i,GL_TEXTURE_3D,turnOff);
@@ -266,7 +266,7 @@ namespace dtEditQt {
     ///////////////////////////////////////////////////////////////////////////////
     void ViewportOverlay::onEditorPreferencesChanged()
     {
-        QColor qtColor = EditorData::getInstance().getSelectionColor();
+        QColor qtColor = EditorData::GetInstance().getSelectionColor();
         osg::Vec4 color;
 
         if (!this->selectionDecorator.valid())
@@ -280,7 +280,7 @@ namespace dtEditQt {
     ///////////////////////////////////////////////////////////////////////////////
     void ViewportOverlay::listenForEvents()
     {
-        EditorEvents &ge = EditorEvents::getInstance();
+        EditorEvents &ge = EditorEvents::GetInstance();
 
         connect(&ge,SIGNAL(selectedActors(ActorProxyRefPtrVector&)),
                 this,SLOT(onActorsSelected(ActorProxyRefPtrVector&)));

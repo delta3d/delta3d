@@ -103,7 +103,7 @@ namespace dtEditQt
         QGridLayout *grid = new QGridLayout(groupBox);
 
         // New reference of the viewport manager singleton
-        ViewportManager &vpMgr = ViewportManager::getInstance();
+        ViewportManager &vpMgr = ViewportManager::GetInstance();
 
         // Create the perspective viewport for the character preview window
         perspView = (PerspectiveViewport *)vpMgr.createViewport("Preview",
@@ -212,12 +212,12 @@ namespace dtEditQt
             QString context;
             bool validFile = false;
 
-            EditorData::getInstance().getMainWindow()->startWaitCursor();
+            EditorData::GetInstance().getMainWindow()->startWaitCursor();
 
             dtDAL::Project &project = dtDAL::Project::GetInstance();
 
             // Find the currently selected tree item
-            dtDAL::ResourceDescriptor resource = EditorData::getInstance().getCurrentCharacterResource();
+            dtDAL::ResourceDescriptor resource = EditorData::GetInstance().getCurrentCharacterResource();
 
             try
             {
@@ -270,7 +270,7 @@ namespace dtEditQt
                 perspView->refresh();
             }
 
-            EditorData::getInstance().getMainWindow()->endWaitCursor();
+            EditorData::GetInstance().getMainWindow()->endWaitCursor();
         }
     }
     ///////////////////////////////////////////////////////////////////////////////

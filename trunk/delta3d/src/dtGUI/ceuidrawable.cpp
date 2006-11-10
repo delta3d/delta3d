@@ -267,7 +267,8 @@ void CEUIDrawable::osgCEUIDrawable::drawImplementation(osg::State& state) const
    //tell the UI to update and to render
    if(!mUI) 
       return;       
-   
+   unsigned int oldActiveUnit = state.getActiveTextureUnit();
    state.setActiveTextureUnit(CEUIDrawable::mActiveTextureUnit);
-   mUI->getSingletonPtr()->renderGUI();   
+   mUI->getSingletonPtr()->renderGUI();
+   state.setActiveTextureUnit(oldActiveUnit);      
 }

@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
         delete splash;
         splash = NULL;
 
-        dtEditQt::EditorEvents::getInstance().emitEditorInitiationEvent();
+        dtEditQt::EditorEvents::GetInstance().emitEditorInitiationEvent();
         mainWindow.setWindowMenuTabsChecked();
 
         dtCore::System::GetInstance().SetShutdownOnWindowClose(false);

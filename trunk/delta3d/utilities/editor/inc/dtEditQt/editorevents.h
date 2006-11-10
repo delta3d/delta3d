@@ -52,7 +52,7 @@ namespace dtEditQt
 
     public:
 
-        static EditorEvents &getInstance();
+        static EditorEvents &GetInstance();
 
         /**
          * An actor(s) was selected in the viewport.  This event should cause other UI elements to

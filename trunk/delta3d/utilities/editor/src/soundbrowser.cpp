@@ -119,7 +119,7 @@ namespace dtEditQt
             dtDAL::Project &project = dtDAL::Project::GetInstance();
 
             // Find the currently selected tree item
-            dtDAL::ResourceDescriptor resource = EditorData::getInstance().getCurrentSoundResource();
+            dtDAL::ResourceDescriptor resource = EditorData::GetInstance().getCurrentSoundResource();
             
             if(!resource.GetResourceIdentifier().empty())
             {

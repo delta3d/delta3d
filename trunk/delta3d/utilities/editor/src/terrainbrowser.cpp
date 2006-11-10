@@ -61,7 +61,7 @@ namespace dtEditQt
         createActions();
         createContextMenu();
 
-        connect(&EditorEvents::getInstance(),SIGNAL(currentMapChanged()),
+        connect(&EditorEvents::GetInstance(),SIGNAL(currentMapChanged()),
             this,SLOT(selectionChanged()));
 
         QGridLayout *grid = new QGridLayout(this);

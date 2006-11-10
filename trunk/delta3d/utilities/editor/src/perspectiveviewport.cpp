@@ -60,9 +60,9 @@ namespace dtEditQt
             Viewport(ViewportManager::ViewportType::PERSPECTIVE,name,parent,shareWith)
     {
         this->currentMode = &InteractionModeExt::NOTHING;
-        this->camera = ViewportManager::getInstance().getWorldViewCamera();
+        this->camera = ViewportManager::GetInstance().getWorldViewCamera();
         this->camera->setFarClipPlane(250000.0f);
-        setMoveActorWithCamera(EditorData::getInstance().getRigidCamera());
+        setMoveActorWithCamera(EditorData::GetInstance().getRigidCamera());
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -105,16 +105,16 @@ namespace dtEditQt
                 }
                 else if (e->modifiers() == Qt::ControlModifier) {
                     setActorSelectMode();
-                    ViewportManager::getInstance().getViewportOverlay()->setMultiSelectMode(false);
+                    ViewportManager::GetInstance().getViewportOverlay()->setMultiSelectMode(false);
                     if (e->button() == Qt::LeftButton)
                         pick(e->pos().x(),e->pos().y());
                 }
                 else if (e->modifiers() == shiftAndControl) {
                     setActorSelectMode();
-                    ViewportManager::getInstance().getViewportOverlay()->setMultiSelectMode(true);
+                    ViewportManager::GetInstance().getViewportOverlay()->setMultiSelectMode(true);
                     if (e->button() == Qt::LeftButton)
                         pick(e->pos().x(),e->pos().y());
-                    ViewportManager::getInstance().getViewportOverlay()->setMultiSelectMode(false);
+                    ViewportManager::GetInstance().getViewportOverlay()->setMultiSelectMode(false);
                 }
                 else {
                     beginCameraMode(e);
@@ -126,9 +126,9 @@ namespace dtEditQt
         }
         else if (getInteractionMode() == Viewport::InteractionMode::SELECT_ACTOR) {
             if (e->modifiers() == Qt::ControlModifier)
-                ViewportManager::getInstance().getViewportOverlay()->setMultiSelectMode(true);
+                ViewportManager::GetInstance().getViewportOverlay()->setMultiSelectMode(true);
             else
-                ViewportManager::getInstance().getViewportOverlay()->setMultiSelectMode(false);
+                ViewportManager::GetInstance().getViewportOverlay()->setMultiSelectMode(false);
 
             if (e->button() == Qt::LeftButton)
                 pick(e->pos().x(),e->pos().y());
@@ -227,12 +227,12 @@ namespace dtEditQt
             {
                 // we could send hundreds of translation and rotation events, so make sure
                 // we surround it in a change transaction
-                EditorEvents::getInstance().emitBeginChangeTransaction();
+                EditorEvents::GetInstance().emitBeginChangeTransaction();
 
                 updateActorSelectionProperty("Translation");
                 updateActorSelectionProperty("Rotation");
 
-                EditorEvents::getInstance().emitEndChangeTransaction();
+                EditorEvents::GetInstance().emitEndChangeTransaction();
 
                 getCamera()->removeAllActorAttachments();
             }
@@ -282,7 +282,7 @@ namespace dtEditQt
 
             // we could send hundreds of translation and rotation events, so make sure
             // we surround it in a change transaction
-            EditorEvents::getInstance().emitBeginChangeTransaction();
+            EditorEvents::GetInstance().emitBeginChangeTransaction();
 
             //Update the selected actor proxies with their new values.
             if (getInteractionMode() == Viewport::InteractionMode::TRANSLATE_ACTOR)
@@ -290,7 +290,7 @@ namespace dtEditQt
             else if (getInteractionMode() == Viewport::InteractionMode::ROTATE_ACTOR)
                 updateActorSelectionProperty("Rotation");
 
-            EditorEvents::getInstance().emitEndChangeTransaction();
+            EditorEvents::GetInstance().emitEndChangeTransaction();
 
             //If a modifier key was pressed the current interaction mode was
             //temporarily overridden, so make sure we restore the previous mode.
@@ -327,7 +327,7 @@ namespace dtEditQt
     {
         ViewportOverlay::ActorProxyList::iterator itor;
         ViewportOverlay::ActorProxyList &selection =
-            ViewportManager::getInstance().getViewportOverlay()->getCurrentActorSelection();
+            ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
 
         if (getCamera() == NULL)
             return;
@@ -350,7 +350,7 @@ namespace dtEditQt
         osg::Vec3 trans;
         ViewportOverlay::ActorProxyList::iterator itor;
         ViewportOverlay::ActorProxyList &selection =
-                ViewportManager::getInstance().getViewportOverlay()->getCurrentActorSelection();
+                ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
 
         trans.set(0,0,0);
         if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_X)
@@ -378,7 +378,7 @@ namespace dtEditQt
     void PerspectiveViewport::rotateCurrentSelection(QMouseEvent *e, float dx, float dy)
     {
         ViewportOverlay::ActorProxyList &selection =
-                ViewportManager::getInstance().getViewportOverlay()->getCurrentActorSelection();
+                ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
         ViewportOverlay::ActorProxyList::iterator itor;
 
         for (itor=selection.begin(); itor!=selection.end(); ++itor) {
@@ -406,14 +406,14 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     void PerspectiveViewport::onEditorPreferencesChanged()
     {
-        this->attachActorToCamera = EditorData::getInstance().getRigidCamera();
+        this->attachActorToCamera = EditorData::GetInstance().getRigidCamera();
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     void PerspectiveViewport::connectInteractionModeSlots()
     {
         Viewport::connectInteractionModeSlots();
-        EditorEvents *editorEvents = &EditorEvents::getInstance();
+        EditorEvents *editorEvents = &EditorEvents::GetInstance();
 
         connect(editorEvents, SIGNAL(editorPreferencesChanged()),
                 this,SLOT(onEditorPreferencesChanged()));
@@ -423,7 +423,7 @@ namespace dtEditQt
     void PerspectiveViewport::disconnectInteractionModeSlots()
     {
         Viewport::disconnectInteractionModeSlots();
-        EditorEvents *editorEvents = &EditorEvents::getInstance();
+        EditorEvents *editorEvents = &EditorEvents::GetInstance();
 
         disconnect(editorEvents, SIGNAL(editorPreferencesChanged()),
                 this,SLOT(onEditorPreferencesChanged()));

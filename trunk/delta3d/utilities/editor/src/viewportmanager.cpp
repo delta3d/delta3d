@@ -60,7 +60,7 @@ namespace dtEditQt
         isPagingEnabled = false;
         startTick = 0;
 
-        EditorEvents* editorEvents = &EditorEvents::getInstance();
+        EditorEvents* editorEvents = &EditorEvents::GetInstance();
 
         connect(editorEvents, SIGNAL(actorProxyCreated(ActorProxyRefPtr, bool)),
                 this,SLOT(onActorProxyCreated(ActorProxyRefPtr, bool)));
@@ -79,7 +79,7 @@ namespace dtEditQt
         connect(editorEvents, SIGNAL(endChangeTransaction()),
             this, SLOT(onEndChangeTransaction()));
 
-        connect(&EditorEvents::getInstance(), SIGNAL(editorCloseEvent()),
+        connect(&EditorEvents::GetInstance(), SIGNAL(editorCloseEvent()),
                  this, SLOT(onEditorShutDown()));
     }
 
@@ -136,7 +136,7 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    ViewportManager &ViewportManager::getInstance()
+    ViewportManager &ViewportManager::GetInstance()
     {
         if (ViewportManager::instance.get() == NULL)
             ViewportManager::instance = new ViewportManager();
@@ -446,8 +446,8 @@ namespace dtEditQt
             tProxy->SetTranslation(pos+(viewDir*offset*2));
 
             std::string newValue = prop->GetStringValue();
-            EditorEvents::getInstance().emitActorPropertyAboutToChange(proxy, prop, oldValue, newValue);
-            EditorEvents::getInstance().emitActorPropertyChanged(proxy,prop);
+            EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, prop, oldValue, newValue);
+            EditorEvents::GetInstance().emitActorPropertyChanged(proxy,prop);
         }
 
         if (!inChangeTransaction)

@@ -226,7 +226,7 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    EditorEvents &EditorEvents::getInstance()
+    EditorEvents &EditorEvents::GetInstance()
     {
         if (EditorEvents::instance.get() == NULL)
             EditorEvents::instance = new EditorEvents();

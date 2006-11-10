@@ -122,7 +122,7 @@ namespace dtEditQt
                 tr("Maps must have a valid name."),tr("OK"));
         }
         else {
-            EditorEvents::getInstance().emitMapPropertyChanged();
+            EditorEvents::GetInstance().emitMapPropertyChanged();
             accept();
         }
     }
