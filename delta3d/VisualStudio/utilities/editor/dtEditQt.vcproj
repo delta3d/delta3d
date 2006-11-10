@@ -94,7 +94,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="osg.lib osgDB.lib osgParticle.lib osgUtil.lib osgText.lib dtDAL.lib dtCore.lib dtABC.lib dtAudio.lib dtUtil.lib dtBSP.lib dtGame.lib QtCore4.lib QtGui4.lib qtmain.lib QtOpenGL4.lib xerces-c_2.lib dtChar.lib"
+				AdditionalDependencies="osg.lib osgDB.lib osgParticle.lib osgUtil.lib osgText.lib dtDAL.lib dtCore.lib dtABC.lib dtAudio.lib dtUtil.lib dtGame.lib QtCore4.lib QtGui4.lib qtmain.lib QtOpenGL4.lib xerces-c_2.lib dtChar.lib"
 				OutputFile="..\..\..\bin\STAGE.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib;$(QTDIR)\lib"

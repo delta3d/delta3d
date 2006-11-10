@@ -106,7 +106,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtUtil.lib isense.lib js.lib ode.lib opengl32.lib openthreadswin32.lib osg.lib osgdb.lib osgparticle.lib osgtext.lib osgutil.lib producer.lib Rpcrt4.lib ul.lib winmm.lib xerces-c_2.lib"
+				AdditionalDependencies="dtUtil.lib isense.lib js.lib ul.lib ode.lib opengl32.lib openthreadswin32.lib osg.lib osgdb.lib osgparticle.lib osgtext.lib osgutil.lib producer.lib Rpcrt4.lib winmm.lib xerces-c_2.lib"
 				OutputFile="../../../bin/dtCore.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
