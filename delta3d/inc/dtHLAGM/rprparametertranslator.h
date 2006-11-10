@@ -94,6 +94,9 @@ namespace dtHLAGM
          ///A type for the articulation to be captured / sent
          static const RPRAttributeType ARTICULATED_PART_TYPE;
 
+         ///RTI string ID type used to identify a single federation entity, usually in firing and detonation events. 
+         static const RPRAttributeType RTI_OBJECT_ID_STRUCT_TYPE;
+
       private:
          RPRAttributeType(const std::string& name, unsigned char id, size_t encodedLength):AttributeType(name, id, encodedLength)
          {

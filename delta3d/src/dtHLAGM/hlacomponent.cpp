@@ -1321,6 +1321,14 @@ namespace dtHLAGM
    {
       dtCore::UniqueId newId;
       mRuntimeMappings.Put(theObject, newId);
+
+      // Set an RTI ID mapping if the RTI ID is valid
+      if( theObjectName != NULL )
+      {
+         std::string rtiId = theObjectName;
+         if( !rtiId.empty() )
+            mRuntimeMappings.PutRTIId(rtiId, newId);
+      }
    }
 
    const ParameterTranslator* HLAComponent::FindTranslatorForAttributeType(const AttributeType& type) const

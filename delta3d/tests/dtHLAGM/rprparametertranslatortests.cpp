@@ -50,10 +50,12 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestOutgoingEntityTypeEnumDataTranslation);
       CPPUNIT_TEST(TestOutgoingIntDataTranslation);
       CPPUNIT_TEST(TestOutgoingFloatDataTranslation);
+      CPPUNIT_TEST(TestOutgoingRTIIDStructDataTranslation);
       CPPUNIT_TEST(TestIncomingDataTranslation);
       CPPUNIT_TEST(TestIncomingEntityTypeDataTranslation);
       CPPUNIT_TEST(TestIncomingStringToEnumDataTranslation);
       CPPUNIT_TEST(TestIncomingStringDataTranslation);
+      CPPUNIT_TEST(TestIncomingRTIIDStructDataTranslation);
       CPPUNIT_TEST(TestFindTypeByName);
       CPPUNIT_TEST(TestAttributeSupportedQuery);
       CPPUNIT_TEST(TestIncomingArticulation);
@@ -356,6 +358,43 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          InternalTestOutgoingFloatDataTranslation<float>(float(expectedResult));
          mMapping.SetHLAType(dtHLAGM::RPRAttributeType::DOUBLE_TYPE);
          InternalTestOutgoingFloatDataTranslation<double>(expectedResult);
+      }
+
+      void TestOutgoingRTIIDStructDataTranslation()
+      {
+         std::string rtiId = "RTIObjectIdentifierStruct:TestID";
+         dtCore::UniqueId actorId;
+
+         // Map the RTI ID to an Actor ID
+         mRuntimeMappings.PutRTIId(rtiId,actorId);
+
+         mMapping.SetHLAType(dtHLAGM::RPRAttributeType::RTI_OBJECT_ID_STRUCT_TYPE);
+         InternalTestOutgoingRTIIDTypeDataTranslation(actorId.ToString(), rtiId);
+      }
+
+      void TestIncomingRTIIDStructDataTranslation()
+      {
+         std::vector<dtCore::RefPtr<dtGame::MessageParameter> > messageParameters;
+
+         std::string rtiId = "RTIObjectIdentifierStruct:TestID";
+         dtCore::UniqueId actorId;
+
+         // Map the RTI ID to an Actor ID
+         mRuntimeMappings.PutRTIId(rtiId,actorId);
+
+         dtCore::RefPtr<dtGame::ActorMessageParameter> actorParam = 
+            new dtGame::ActorMessageParameter("test",actorId);
+         mMapping.SetHLAType(dtHLAGM::RPRAttributeType::RTI_OBJECT_ID_STRUCT_TYPE);
+
+         dtHLAGM::OneToManyMapping::ParameterDefinition& pd = mMapping.GetParameterDefinitions()[0];
+         pd.SetGameType(actorParam->GetDataType());
+
+         messageParameters.push_back(actorParam.get());
+
+         mParameterTranslator->MapToMessageParameters(rtiId.c_str(), rtiId.size(), messageParameters, mMapping);
+
+         std::string paramValue = actorParam->GetValue().ToString();
+         CPPUNIT_ASSERT_EQUAL(actorId.ToString(), paramValue);
       }
 
       void TestIncomingEntityTypeDataTranslation()
@@ -773,6 +812,36 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          const std::string& expectedValue = testValue.substr(0, size - 1);
 
          CPPUNIT_ASSERT_MESSAGE("The result should have been \"" + expectedValue + "\" but it is \"" + result + "\"", result == expectedValue);
+      }
+
+      void InternalTestOutgoingRTIIDTypeDataTranslation(const std::string& testValue, const std::string& expectedValue)
+      {
+         std::vector<dtCore::RefPtr<const dtGame::MessageParameter> > messageParameters;
+
+         char* buffer = NULL;
+         size_t size = 0;
+
+         mMapping.GetParameterDefinitions()[0].SetGameType(dtDAL::DataType::ACTOR);
+         mMapping.SetHLAType(dtHLAGM::RPRAttributeType::RTI_OBJECT_ID_STRUCT_TYPE);
+         dtCore::RefPtr<dtGame::ActorMessageParameter> actorParam = new dtGame::ActorMessageParameter("test",dtCore::UniqueId(testValue));
+         actorParam->SetValue(testValue);
+         messageParameters.push_back(actorParam.get());
+
+         TranslateOutgoingParameter(buffer, size, messageParameters, mMapping);
+
+         std::string result;
+         for (unsigned i = 0; i < size; ++i)
+         {
+            if (buffer[i] == '\0')
+               break;
+
+            result.append(1, buffer[i]);
+         }
+
+         mParameterTranslator->DeallocateBuffer(buffer);
+
+         CPPUNIT_ASSERT_EQUAL(result, expectedValue);
+
       }
 
       void InternalTestOutgoingStringDataTranslation(const std::string& testValue)
