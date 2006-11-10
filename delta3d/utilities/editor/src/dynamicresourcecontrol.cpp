@@ -229,27 +229,27 @@ namespace dtEditQt
     {
         if (myProperty->GetPropertyType() == dtDAL::DataType::SOUND) 
         {
-            return EditorData::getInstance().getCurrentSoundResource();
+            return EditorData::GetInstance().getCurrentSoundResource();
         } 
         else if (myProperty->GetPropertyType() == dtDAL::DataType::STATIC_MESH) 
         {
-            return EditorData::getInstance().getCurrentMeshResource();
+            return EditorData::GetInstance().getCurrentMeshResource();
         } 
         else if (myProperty->GetPropertyType() == dtDAL::DataType::TEXTURE) 
         {
-            return EditorData::getInstance().getCurrentTextureResource();
+            return EditorData::GetInstance().getCurrentTextureResource();
         } 
         else if (myProperty->GetPropertyType() == dtDAL::DataType::TERRAIN) 
         {
-            return EditorData::getInstance().getCurrentTerrainResource();
+            return EditorData::GetInstance().getCurrentTerrainResource();
         } 
         else if (myProperty->GetPropertyType() == dtDAL::DataType::PARTICLE_SYSTEM) 
         {
-            return EditorData::getInstance().getCurrentParticleResource();
+            return EditorData::GetInstance().getCurrentParticleResource();
         } 
         else if (myProperty->GetPropertyType() == dtDAL::DataType::CHARACTER) 
         {
-            return EditorData::getInstance().getCurrentCharacterResource();
+            return EditorData::GetInstance().getCurrentCharacterResource();
         } 
         else 
         {
@@ -315,7 +315,7 @@ namespace dtEditQt
             // give undo manager the ability to create undo/redo events
             // technically, we're sending the about to change event AFTER we already 
             // changed it, but it doesn't matter.  It's the easiest way to get the string value.
-            EditorEvents::getInstance().emitActorPropertyAboutToChange(proxy, myProperty, 
+            EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, myProperty, 
                 oldValue, myProperty->GetStringValue());
 
             // update our label
@@ -325,7 +325,7 @@ namespace dtEditQt
             }
 
             // notify the world (mostly the viewports) that our property changed
-            EditorEvents::getInstance().emitActorPropertyChanged(proxy, myProperty);
+            EditorEvents::GetInstance().emitActorPropertyChanged(proxy, myProperty);
         }
     }
 
@@ -343,7 +343,7 @@ namespace dtEditQt
             // give undo manager the ability to create undo/redo events
             // technically, we're sending the about to change event AFTER we already 
             // changed it, but it doesn't matter.  It's the easiest way to get the string value.
-            EditorEvents::getInstance().emitActorPropertyAboutToChange(proxy, myProperty, 
+            EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, myProperty, 
                 oldValue, myProperty->GetStringValue());
 
             // update our label
@@ -353,7 +353,7 @@ namespace dtEditQt
             }
 
             // notify the world (mostly the viewports) that our property changed
-            EditorEvents::getInstance().emitActorPropertyChanged(proxy, myProperty);
+            EditorEvents::GetInstance().emitActorPropertyChanged(proxy, myProperty);
         }
     }
 

@@ -29,6 +29,7 @@
 #include <dtEditQt/dynamicsubwidgets.h>
 #include <dtEditQt/groupuiplugin.h>
 #include <dtEditQt/mainwindow.h>
+#include <dtEditQt/editorevents.h>
 
 #include <dtDAL/groupactorproperty.h>
 #include <dtUtil/log.h>
@@ -154,7 +155,7 @@ namespace dtEditQt
    {
       if (mGroupProperty == NULL)
          return NULL;
-      return EditorData::getInstance().GetGroupUIRegistry().GetPlugin(mGroupProperty->GetEditorType());
+      return EditorData::GetInstance().GetGroupUIRegistry().GetPlugin(mGroupProperty->GetEditorType());
    }
    
    /////////////////////////////////////////////////////////////////////////////////
@@ -172,16 +173,16 @@ namespace dtEditQt
    {
       if (mGroupProperty == NULL)
       {
-         QMessageBox::critical(EditorData::getInstance().getMainWindow(),
+         QMessageBox::critical(EditorData::GetInstance().getMainWindow(),
                  tr("Error"),tr("No Group Property is associated with this control.  An internal error has occurred."), QMessageBox::Ok, QMessageBox::Ok);
          return;
       }
       
       GroupUIPlugin* plugin = GetPlugin();
-      QWidget* pluginWidget = plugin->CreateWidget(EditorData::getInstance().getMainWindow());
+      QWidget* pluginWidget = plugin->CreateWidget(EditorData::GetInstance().getMainWindow());
       if (pluginWidget == NULL)
       {
-         QMessageBox::critical(EditorData::getInstance().getMainWindow(),
+         QMessageBox::critical(EditorData::GetInstance().getMainWindow(),
                  tr("Plugin Error"),tr("The plugin registered for this group actor property returned a NULL editor window."),QMessageBox::Ok, QMessageBox::Ok);
          return;
       }
@@ -197,11 +198,17 @@ namespace dtEditQt
          {
             dtCore::RefPtr<dtDAL::NamedGroupParameter> param = new dtDAL::NamedGroupParameter(mGroupProperty->GetName());
             plugin->UpdateModelFromWidget(*pluginWidget, *param);      
+            // give undo manager the ability to create undo/redo events
+            EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, mGroupProperty, 
+               mGroupProperty->ToString(), param->ToString());
+            mGroupProperty->SetValue(*param);
+            // notify the world (mostly the viewports) that our property changed
+            EditorEvents::GetInstance().emitActorPropertyChanged(proxy, mGroupProperty);
          }
       }
       else
       {
-         QMessageBox::critical(EditorData::getInstance().getMainWindow(),
+         QMessageBox::critical(EditorData::GetInstance().getMainWindow(),
                  tr("Plugin Error"),tr("Non-QDialog group property plugin widgets are not yet supported."), QMessageBox::Ok, QMessageBox::Ok);
       }
    }

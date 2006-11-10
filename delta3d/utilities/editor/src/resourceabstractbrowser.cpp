@@ -62,7 +62,7 @@ namespace dtEditQt
 
         // Connect the projectChanged signal so we can populate the tree
         // at the appropriate time
-        connect(&EditorEvents::getInstance(),SIGNAL(projectChanged()),
+        connect(&EditorEvents::GetInstance(),SIGNAL(projectChanged()),
         this,SLOT(onProjectChanged()));
 
         connect(tree,SIGNAL(doubleClicked(const QModelIndex)),this,SLOT(doubleClickEvent()));
@@ -531,27 +531,27 @@ namespace dtEditQt
     {
         if(*resourceType == dtDAL::DataType::SOUND)
         {
-            EditorData::getInstance().setCurrentSoundResource(dtDAL::ResourceDescriptor());
+            EditorData::GetInstance().setCurrentSoundResource(dtDAL::ResourceDescriptor());
         }
         else if(*resourceType == dtDAL::DataType::STATIC_MESH)
         {
-            EditorData::getInstance().setCurrentMeshResource(dtDAL::ResourceDescriptor());
+            EditorData::GetInstance().setCurrentMeshResource(dtDAL::ResourceDescriptor());
         }
         else if(*resourceType == dtDAL::DataType::TEXTURE)
         {
-            EditorData::getInstance().setCurrentTextureResource(dtDAL::ResourceDescriptor());
+            EditorData::GetInstance().setCurrentTextureResource(dtDAL::ResourceDescriptor());
         }
         else if(*resourceType == dtDAL::DataType::PARTICLE_SYSTEM)
         {
-            EditorData::getInstance().setCurrentParticleResource(dtDAL::ResourceDescriptor());
+            EditorData::GetInstance().setCurrentParticleResource(dtDAL::ResourceDescriptor());
         }
         else if(*resourceType == dtDAL::DataType::CHARACTER)
         {
-            EditorData::getInstance().setCurrentCharacterResource(dtDAL::ResourceDescriptor());
+            EditorData::GetInstance().setCurrentCharacterResource(dtDAL::ResourceDescriptor());
         }
         else if(*resourceType == dtDAL::DataType::TERRAIN)
         {
-            EditorData::getInstance().setCurrentTerrainResource(dtDAL::ResourceDescriptor());
+            EditorData::GetInstance().setCurrentTerrainResource(dtDAL::ResourceDescriptor());
         }
     }
     ///////////////////////////////////////////////////////////////////////////////
@@ -559,27 +559,27 @@ namespace dtEditQt
     {
         if(*resourceType == dtDAL::DataType::SOUND)
         {
-            EditorData::getInstance().setCurrentSoundResource(descriptor);
+            EditorData::GetInstance().setCurrentSoundResource(descriptor);
         }
         else if(*resourceType == dtDAL::DataType::STATIC_MESH)
         {
-            EditorData::getInstance().setCurrentMeshResource(descriptor);
+            EditorData::GetInstance().setCurrentMeshResource(descriptor);
         }
         else if(*resourceType == dtDAL::DataType::TEXTURE)
         {
-            EditorData::getInstance().setCurrentTextureResource(descriptor);
+            EditorData::GetInstance().setCurrentTextureResource(descriptor);
         }
         else if(*resourceType == dtDAL::DataType::PARTICLE_SYSTEM)
         {
-            EditorData::getInstance().setCurrentParticleResource(descriptor);
+            EditorData::GetInstance().setCurrentParticleResource(descriptor);
         }
         else if(*resourceType == dtDAL::DataType::CHARACTER)
         {
-            EditorData::getInstance().setCurrentCharacterResource(descriptor);
+            EditorData::GetInstance().setCurrentCharacterResource(descriptor);
         }
         else if(*resourceType == dtDAL::DataType::TERRAIN)
         {
-            EditorData::getInstance().setCurrentTerrainResource(descriptor);
+            EditorData::GetInstance().setCurrentTerrainResource(descriptor);
         }
     }
     ///////////////////////////////////////////////////////////////////////////////

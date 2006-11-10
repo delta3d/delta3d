@@ -103,7 +103,7 @@ namespace dtEditQt
             if (previousString != selectionString)
             {
                 // give undo manager the ability to create undo/redo events
-                EditorEvents::getInstance().emitActorPropertyAboutToChange(proxy,
+                EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy,
                     myProperty->AsActorProperty(), previousString, selectionString);
 
                 myProperty->SetValueFromString(selectionString);
@@ -114,7 +114,7 @@ namespace dtEditQt
         // notify the world (mostly the viewports) that our property changed
         if (dataChanged)
         {
-            EditorEvents::getInstance().emitActorPropertyChanged(proxy,
+            EditorEvents::GetInstance().emitActorPropertyChanged(proxy,
                 myProperty->AsActorProperty());
         }
 

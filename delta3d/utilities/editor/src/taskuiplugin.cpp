@@ -54,14 +54,18 @@ namespace dtEditQt
       if (taskEditor == NULL)
          return false;
       
-      
-      
+      taskEditor->SetTaskChildren(modelData);
       return true;
    }
     
    ///////////////////////////////////////////////////////////////////////////////
    bool TaskUIPlugin::UpdateModelFromWidget(QWidget& widget, dtDAL::NamedGroupParameter& modelData) const
    {
+      TaskEditor* taskEditor = dynamic_cast<TaskEditor*>(&widget);
+      if (taskEditor == NULL)
+         return false;
+      
+      taskEditor->GetTaskChildren(modelData);
       return true; 
    }
    

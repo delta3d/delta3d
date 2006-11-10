@@ -54,6 +54,17 @@ namespace dtEditQt
 
          void SetTaskChildren(const dtDAL::NamedGroupParameter& children);
          void GetTaskChildren(dtDAL::NamedGroupParameter& toFill) const;
+         
+         ///@return true if the list being edited contains the given proxy.
+         bool HasChild(dtDAL::ActorProxy& proxyToTest);
+         
+         /**
+          * Swaps the two given rows in the model for the table.
+          * It does nothing if the values match or are out of bounds.
+          * @param firstRow the index of the first row to swap.
+          * @param secondRow the index the second row to swap.
+          */
+         void SwapRows(int firstRow, int secondRow);
 
       public slots:
 
@@ -115,6 +126,7 @@ namespace dtEditQt
          QPushButton* mRemoveChild;
          
          dtCore::RefPtr<dtDAL::NamedGroupParameter> mChildren;
+         std::set<dtCore::RefPtr<dtDAL::ActorProxy> > mRemovedTasks;
    };
    
 }

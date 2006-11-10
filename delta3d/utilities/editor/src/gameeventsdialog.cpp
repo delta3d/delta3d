@@ -123,7 +123,7 @@ namespace dtEditQt
          
       std::string eventNameToEdit = mGameEventView->currentItem()->text().toStdString();
       
-      Map& curMap = *EditorData::getInstance().getCurrentMap();
+      Map& curMap = *EditorData::GetInstance().getCurrentMap();
       GameEvent* eventToEdit = curMap.GetEventManager().FindEvent(eventNameToEdit);
 
       if (eventToEdit == NULL)
@@ -136,7 +136,7 @@ namespace dtEditQt
       GameEventDialog editDialog(this, *eventToEdit, false);
       if (editDialog.exec() == QDialog::Accepted) 
       {
-         EditorEvents::getInstance().emitGameEventEdited();
+         EditorEvents::GetInstance().emitGameEventEdited();
          curMap.SetModified(true);
          RefreshGameEvents();
          //select the event just edited.
@@ -151,9 +151,9 @@ namespace dtEditQt
       if (editDialog.exec() == QDialog::Accepted) 
       {
          //select the event just edited.
-         Map& curMap = *EditorData::getInstance().getCurrentMap();
+         Map& curMap = *EditorData::GetInstance().getCurrentMap();
          curMap.GetEventManager().AddEvent(*newEvent);
-         EditorEvents::getInstance().emitGameEventAdded();
+         EditorEvents::GetInstance().emitGameEventAdded();
          RefreshGameEvents();
       }
    }
@@ -163,7 +163,7 @@ namespace dtEditQt
       if (mGameEventView->currentItem() == NULL)
          return;
          
-      Map& curMap = *EditorData::getInstance().getCurrentMap();
+      Map& curMap = *EditorData::GetInstance().getCurrentMap();
 
       std::string eventNameToDelete = mGameEventView->currentItem()->text().toStdString();
       
@@ -204,9 +204,9 @@ namespace dtEditQt
                                   tr("Are you sure you want to delete this game event?"),
                                   tr("&Yes"), tr("&No"), QString::null, 1) == 0)
          {            
-            EditorEvents::getInstance().emitGameEventAboutToBeRemoved();
+            EditorEvents::GetInstance().emitGameEventAboutToBeRemoved();
             curMap.GetEventManager().RemoveEvent(*eventToDelete);
-            EditorEvents::getInstance().emitGameEventRemoved();            
+            EditorEvents::GetInstance().emitGameEventRemoved();            
          }
       }
       else if (QMessageBox::question(this, tr("Confirm deletion"),
@@ -218,9 +218,9 @@ namespace dtEditQt
             eventPropsToClear[i]->SetValue(NULL);
          }            
 
-         EditorEvents::getInstance().emitGameEventAboutToBeRemoved();
+         EditorEvents::GetInstance().emitGameEventAboutToBeRemoved();
          curMap.GetEventManager().RemoveEvent(*eventToDelete);
-         EditorEvents::getInstance().emitGameEventRemoved();
+         EditorEvents::GetInstance().emitGameEventRemoved();
       }
       RefreshGameEvents();
    }
@@ -245,7 +245,7 @@ namespace dtEditQt
       std::vector<QTableWidgetItem*>& eventDescs) const
    {
       eventList.clear();
-      Map* currentMap = EditorData::getInstance().getCurrentMap();
+      Map* currentMap = EditorData::GetInstance().getCurrentMap();
       if (currentMap == NULL)
          return;
       

@@ -111,14 +111,14 @@ namespace dtEditQt
         setWindowTitle(tr("Preference Editor"));
         
         // Set the existing values
-        saveMins = (EditorActions::getInstance().saveMilliSeconds / 1000) / 60;
+        saveMins = (EditorActions::GetInstance().saveMilliSeconds / 1000) / 60;
         spin->setValue(saveMins);
         
         setNewPalette();
 
-        projectCheck->setCheckState(EditorData::getInstance().getLoadLastProject() ? Qt::Checked : Qt::Unchecked);
-        mapCheck->setCheckState(EditorData::getInstance().getLoadLastMap() ? Qt::Checked : Qt::Unchecked);
-        rigidCamCheck->setCheckState(EditorData::getInstance().getRigidCamera() ? Qt::Checked : Qt::Unchecked);
+        projectCheck->setCheckState(EditorData::GetInstance().getLoadLastProject() ? Qt::Checked : Qt::Unchecked);
+        mapCheck->setCheckState(EditorData::GetInstance().getLoadLastMap() ? Qt::Checked : Qt::Unchecked);
+        rigidCamCheck->setCheckState(EditorData::GetInstance().getRigidCamera() ? Qt::Checked : Qt::Unchecked);
         setModal(true);
         //resize(200, 300);
         setFixedSize(300, 300);
@@ -157,30 +157,30 @@ namespace dtEditQt
 
     void PreferencesDialog::onColorSelect()
     {
-        QColor selectedColor = QColorDialog::getColor(EditorData::getInstance().getSelectionColor(), this);
-        EditorData::getInstance().setSelectionColor(selectedColor);
+        QColor selectedColor = QColorDialog::getColor(EditorData::GetInstance().getSelectionColor(), this);
+        EditorData::GetInstance().setSelectionColor(selectedColor);
         
         setNewPalette();
     }
 
     void PreferencesDialog::onOk()
     {
-        EditorData::getInstance().setLoadLastProject(loadProjects);
-        EditorData::getInstance().setLoadLastMap(loadMaps);
-        EditorData::getInstance().setRigidCamera(rigidCamera);
+        EditorData::GetInstance().setLoadLastProject(loadProjects);
+        EditorData::GetInstance().setLoadLastMap(loadMaps);
+        EditorData::GetInstance().setRigidCamera(rigidCamera);
         // No point in resetting the interval if it didn't change
         int milliSecs = saveMins * 60 * 1000;
-        if(EditorActions::getInstance().saveMilliSeconds != milliSecs)
+        if(EditorActions::GetInstance().saveMilliSeconds != milliSecs)
         {
-            EditorActions::getInstance().saveMilliSeconds = milliSecs;
-            EditorActions::getInstance().getTimer()->setInterval(milliSecs);
+            EditorActions::GetInstance().saveMilliSeconds = milliSecs;
+            EditorActions::GetInstance().getTimer()->setInterval(milliSecs);
         }
         accept();
     }
 
     void PreferencesDialog::setNewPalette()
     {
-        QColor selectedColor = EditorData::getInstance().getSelectionColor();
+        QColor selectedColor = EditorData::GetInstance().getSelectionColor();
         QPalette *palette = new QPalette;
         palette->setColor(QPalette::Disabled, QPalette::Background, selectedColor);
         palette->setColor(QPalette::Active,   QPalette::Background, selectedColor);

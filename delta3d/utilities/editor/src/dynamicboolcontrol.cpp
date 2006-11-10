@@ -100,11 +100,11 @@ namespace dtEditQt
             // set our value to our object
             if (result != myProperty->GetValue()) 
             {
-                std::string oldValue = myProperty->GetStringValue();
+                std::string oldValue = myProperty->ToString();
                 myProperty->SetValue(result);
                 // give undo manager the ability to create undo/redo events
-                EditorEvents::getInstance().emitActorPropertyAboutToChange(proxy, myProperty,
-                    oldValue, myProperty->GetStringValue());
+                EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, myProperty,
+                    oldValue, myProperty->ToString());
                 dataChanged = true;
             }
         }
@@ -112,7 +112,7 @@ namespace dtEditQt
         // notify the world (mostly the viewports) that our property changed
         if (dataChanged) 
         {
-            EditorEvents::getInstance().emitActorPropertyChanged(proxy, myProperty);
+            EditorEvents::GetInstance().emitActorPropertyChanged(proxy, myProperty);
         }
 
         return dataChanged;

@@ -87,6 +87,6 @@ namespace dtEditQt
     /////////////////////////////////////////////////////////////////////////////////
     void ActorTab::closeEvent(QCloseEvent *e)
     {
-        EditorActions::getInstance().actionWindowsActorSearch->setChecked(false);
+        EditorActions::GetInstance().actionWindowsActorSearch->setChecked(false);
     }
 }

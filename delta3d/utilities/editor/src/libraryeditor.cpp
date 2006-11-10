@@ -116,7 +116,7 @@ LibraryEditor::~LibraryEditor()
 void LibraryEditor::getMapLibNames(vector<QListWidgetItem*>& items) const
 {
    items.clear();
-   Map *currentMap = EditorData::getInstance().getCurrentMap();
+   Map *currentMap = EditorData::GetInstance().getCurrentMap();
    if (currentMap == NULL)
       return;
    
@@ -156,7 +156,7 @@ void LibraryEditor::refreshLibraries()
 void LibraryEditor::spawnFileBrowser()
 {
    QString file;
-   string dir = EditorData::getInstance().getCurrentLibraryDirectory();
+   string dir = EditorData::GetInstance().getCurrentLibraryDirectory();
    QString hack = dir.c_str();
    hack.replace('\\', '/');
    
@@ -180,7 +180,7 @@ void LibraryEditor::spawnFileBrowser()
    }
    
    // If the map already contains this library, no point in continuing
-   vector<string> curLibs = EditorData::getInstance().getCurrentMap()->GetAllLibraries();
+   vector<string> curLibs = EditorData::GetInstance().getCurrentMap()->GetAllLibraries();
    for(unsigned int i = 0; i < curLibs.size(); i++)
       if(curLibs[i] == libName)
          return;
@@ -194,14 +194,14 @@ void LibraryEditor::spawnFileBrowser()
       handleFailure(ERROR_INVALID_LIB, e.What());
       return;
    }
-   EditorData::getInstance().getCurrentMap()->AddLibrary(libName,"");
+   EditorData::GetInstance().getCurrentMap()->AddLibrary(libName,"");
    
    refreshLibraries();
-   EditorEvents::getInstance().emitMapLibraryImported();
+   EditorEvents::GetInstance().emitMapLibraryImported();
    libView->setCurrentItem(libView->item(libView->count() - 1));
-   EditorData::getInstance().setCurrentLibraryDirectory(osgDB::getFilePath(file.toStdString()));
-   ((QMainWindow*)EditorData::getInstance().getMainWindow())->setWindowTitle(
-                                                                             EditorActions::getInstance().getWindowName(/*true*/).c_str());
+   EditorData::GetInstance().setCurrentLibraryDirectory(osgDB::getFilePath(file.toStdString()));
+   ((QMainWindow*)EditorData::GetInstance().getMainWindow())->setWindowTitle(
+                                                                             EditorActions::GetInstance().getWindowName(/*true*/).c_str());
 }
 
 void LibraryEditor::spawnDeleteConfirmation()
@@ -210,7 +210,7 @@ void LibraryEditor::spawnDeleteConfirmation()
                             tr("Are you sure you want to remove this library?"),
                             tr("&Yes"), tr("&No"), QString::null, 1) == 0)
    {
-      Map *curMap = EditorData::getInstance().getCurrentMap();
+      Map *curMap = EditorData::GetInstance().getCurrentMap();
       vector<dtCore::RefPtr<ActorProxy> > proxies;
       curMap->GetAllProxies(proxies);
       vector<string> loadedLibs = curMap->GetAllLibraries();
@@ -242,11 +242,11 @@ void LibraryEditor::spawnDeleteConfirmation()
                return;
             }
             
-            EditorEvents::getInstance().emitLibraryAboutToBeRemoved();
+            EditorEvents::GetInstance().emitLibraryAboutToBeRemoved();
             curMap->RemoveLibrary(libToRemove);
             LibraryManager::GetInstance().UnloadActorRegistry(libToRemove);
             refreshLibraries();
-            EditorEvents::getInstance().emitMapLibraryRemoved();
+            EditorEvents::GetInstance().emitMapLibraryRemoved();
             if(curMap->GetAllLibraries().size() > 0)
                libView->setCurrentItem(libView->item(libView->count() - 1));
             // we're done
@@ -258,7 +258,7 @@ void LibraryEditor::spawnDeleteConfirmation()
 
 void LibraryEditor::shiftLibraryUp()
 {
-   Map *curMap = EditorData::getInstance().getCurrentMap();
+   Map *curMap = EditorData::GetInstance().getCurrentMap();
    unsigned int i = 0;
    for(; i < curMap->GetAllLibraries().size(); i++)
       if(libView->currentItem())
@@ -288,7 +288,7 @@ void LibraryEditor::shiftLibraryUp()
 
 void LibraryEditor::shiftLibraryDown()
 {
-   Map *curMap = EditorData::getInstance().getCurrentMap();
+   Map *curMap = EditorData::GetInstance().getCurrentMap();
    unsigned int i = 0;
    for(; i < curMap->GetAllLibraries().size(); i++)
       if(libView->currentItem())

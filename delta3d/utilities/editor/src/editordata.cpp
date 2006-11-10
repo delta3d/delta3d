@@ -21,6 +21,7 @@
  */
 #include <prefix/dtstageprefix-src.h>
 #include <dtEditQt/mainwindow.h>
+#include <dtEditQt/propertyeditor.h>
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/groupuiregistry.h>
 #include <dtEditQt/groupuiplugin.h>
@@ -121,12 +122,13 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   EditorData &EditorData::getInstance()
+   EditorData &EditorData::GetInstance()
    {
       if (EditorData::instance.get() == NULL)
          EditorData::instance = new EditorData();
       return *(EditorData::instance.get());
    }
+   
    //////////////////////////////////////////////////////////////////////////////
    void EditorData::setMainWindow(MainWindow *window)
    {
@@ -137,40 +139,48 @@ namespace dtEditQt
    {
       myMap = map;
    }
+
    //////////////////////////////////////////////////////////////////////////////
    dtDAL::Map* EditorData::getCurrentMap()
    {
       return myMap.get();
    }
+   
+   //////////////////////////////////////////////////////////////////////////////
+   void EditorData::GetSelectedActors(std::vector<dtDAL::ActorProxy*> toFill)
+   {
+      getMainWindow()->GetPropertyEditor().GetSelectedActors(toFill);
+   }
+   
    //////////////////////////////////////////////////////////////////////////////
    void EditorData::setCurrentSoundResource(dtDAL::ResourceDescriptor newResource)
    {
-      this->soundResource = newResource;
+      soundResource = newResource;
    }
    //////////////////////////////////////////////////////////////////////////////
    void EditorData::setCurrentMeshResource(dtDAL::ResourceDescriptor newResource)
    {
-      this->meshResource = newResource;
+      meshResource = newResource;
    }
    //////////////////////////////////////////////////////////////////////////////
    void EditorData::setCurrentTextureResource(dtDAL::ResourceDescriptor newResource)
    {
-      this->textureResource = newResource;
+      textureResource = newResource;
    }
    //////////////////////////////////////////////////////////////////////////////
    void EditorData::setCurrentParticleResource(dtDAL::ResourceDescriptor newResource)
    {
-      this->particleResource = newResource;
+      particleResource = newResource;
    }
    //////////////////////////////////////////////////////////////////////////////
    void EditorData::setCurrentCharacterResource(dtDAL::ResourceDescriptor newResource)
    {
-      this->characterResource = newResource;
+      characterResource = newResource;
    }
    //////////////////////////////////////////////////////////////////////////////
    void EditorData::setCurrentTerrainResource(dtDAL::ResourceDescriptor newResource)
    {
-      this->terrainResource = newResource;
+      terrainResource = newResource;
    }
 }
 

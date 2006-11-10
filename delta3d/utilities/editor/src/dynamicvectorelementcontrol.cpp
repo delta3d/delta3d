@@ -284,39 +284,39 @@ namespace dtEditQt
         {
             if (whichType == VEC2) 
             {
-                EditorEvents::getInstance().emitActorPropertyChanged(proxy, vec2Prop);
+                EditorEvents::GetInstance().emitActorPropertyChanged(proxy, vec2Prop);
             } 
             else if (whichType == VEC2F) 
             {
-                EditorEvents::getInstance().emitActorPropertyChanged(proxy, vec2fProp);
+                EditorEvents::GetInstance().emitActorPropertyChanged(proxy, vec2fProp);
             } 
             else if (whichType == VEC2D) 
             {
-                EditorEvents::getInstance().emitActorPropertyChanged(proxy, vec2dProp);
+                EditorEvents::GetInstance().emitActorPropertyChanged(proxy, vec2dProp);
             } 
             else if (whichType == VEC3) 
             {
-                EditorEvents::getInstance().emitActorPropertyChanged(proxy, vec3Prop);
+                EditorEvents::GetInstance().emitActorPropertyChanged(proxy, vec3Prop);
             } 
             else if (whichType == VEC3F) 
             {
-                EditorEvents::getInstance().emitActorPropertyChanged(proxy, vec3fProp);
+                EditorEvents::GetInstance().emitActorPropertyChanged(proxy, vec3fProp);
             } 
             else if (whichType == VEC3D) 
             {
-                EditorEvents::getInstance().emitActorPropertyChanged(proxy, vec3dProp);
+                EditorEvents::GetInstance().emitActorPropertyChanged(proxy, vec3dProp);
             } 
             else if (whichType == VEC4) 
             {
-                EditorEvents::getInstance().emitActorPropertyChanged(proxy, vec4Prop);
+                EditorEvents::GetInstance().emitActorPropertyChanged(proxy, vec4Prop);
             } 
             else if (whichType == VEC4F) 
             {
-                EditorEvents::getInstance().emitActorPropertyChanged(proxy, vec4fProp);
+                EditorEvents::GetInstance().emitActorPropertyChanged(proxy, vec4fProp);
             } 
             else if (whichType == VEC4D)
             { 
-                EditorEvents::getInstance().emitActorPropertyChanged(proxy, vec4dProp);
+                EditorEvents::GetInstance().emitActorPropertyChanged(proxy, vec4dProp);
             }
         }
 
@@ -497,7 +497,7 @@ namespace dtEditQt
             vec2Prop->SetValue(vectorValue);
 
             // give undo manager the ability to create undo/redo events
-            EditorEvents::getInstance().emitActorPropertyAboutToChange(proxy, vec2Prop, 
+            EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, vec2Prop, 
                 oldValue, vec2Prop->GetStringValue());
         }
         else if (whichType == VEC2F) 
@@ -508,7 +508,7 @@ namespace dtEditQt
             vec2fProp->SetValue(vectorValue);
 
             // give undo manager the ability to create undo/redo events
-            EditorEvents::getInstance().emitActorPropertyAboutToChange(proxy, vec2fProp, 
+            EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, vec2fProp, 
                 oldValue, vec2fProp->GetStringValue());
         }
         else if (whichType == VEC2D) 
@@ -519,7 +519,7 @@ namespace dtEditQt
             vec2dProp->SetValue(vectorValue);
 
             // give undo manager the ability to create undo/redo events
-            EditorEvents::getInstance().emitActorPropertyAboutToChange(proxy, vec2dProp, 
+            EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, vec2dProp, 
                 oldValue, vec2dProp->GetStringValue());
         }
         else if (whichType == VEC3) 
@@ -530,7 +530,7 @@ namespace dtEditQt
             vec3Prop->SetValue(vectorValue);
 
             // give undo manager the ability to create undo/redo events
-            EditorEvents::getInstance().emitActorPropertyAboutToChange(proxy, vec3Prop, 
+            EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, vec3Prop, 
                 oldValue, vec3Prop->GetStringValue());
         } 
         else if (whichType == VEC3F) 
@@ -541,7 +541,7 @@ namespace dtEditQt
             vec3fProp->SetValue(vectorValue);
 
             // give undo manager the ability to create undo/redo events
-            EditorEvents::getInstance().emitActorPropertyAboutToChange(proxy, vec3fProp, 
+            EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, vec3fProp, 
                 oldValue, vec3fProp->GetStringValue());
         } 
         else if (whichType == VEC3D) 
@@ -552,7 +552,7 @@ namespace dtEditQt
             vec3dProp->SetValue(vectorValue);
 
             // give undo manager the ability to create undo/redo events
-            EditorEvents::getInstance().emitActorPropertyAboutToChange(proxy, vec3dProp, 
+            EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, vec3dProp, 
                 oldValue, vec3dProp->GetStringValue());
         } 
         else if (whichType == VEC4) 
@@ -563,7 +563,7 @@ namespace dtEditQt
             vec4Prop->SetValue(vectorValue);
 
             // give undo manager the ability to create undo/redo events
-            EditorEvents::getInstance().emitActorPropertyAboutToChange(proxy, vec4Prop, 
+            EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, vec4Prop, 
                 oldValue, vec4Prop->GetStringValue());
         } 
         else if (whichType == VEC4F) 
@@ -574,7 +574,7 @@ namespace dtEditQt
             vec4fProp->SetValue(vectorValue);
 
             // give undo manager the ability to create undo/redo events
-            EditorEvents::getInstance().emitActorPropertyAboutToChange(proxy, vec4fProp, 
+            EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, vec4fProp, 
                 oldValue, vec4fProp->GetStringValue());
         } 
         else if (whichType == VEC4D)
@@ -585,7 +585,7 @@ namespace dtEditQt
             vec4dProp->SetValue(vectorValue);
 
             // give undo manager the ability to create undo/redo events
-            EditorEvents::getInstance().emitActorPropertyAboutToChange(proxy, vec4dProp, 
+            EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, vec4dProp, 
                 oldValue, vec4dProp->GetStringValue());
         }
     }

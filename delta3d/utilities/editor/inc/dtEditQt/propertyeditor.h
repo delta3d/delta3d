@@ -31,7 +31,7 @@
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/actortype.h>
-#include "dtEditQt/typedefs.h"
+#include <dtEditQt/typedefs.h>
 
 class QMainWindow;
 class QTreeWidget;
@@ -80,6 +80,17 @@ namespace dtEditQt
            QWidget* lastFocused = focusWidget();
            if (lastFocused != NULL && lastFocused->hasFocus())
                lastFocused->clearFocus();
+        }
+
+        ///Fills a vector with pointers to all the currently selected actor proxies.
+        void GetSelectedActors(std::vector<dtDAL::ActorProxy*> toFill)
+        {
+           toFill.clear();
+           toFill.reserve(selectedActors.size());
+           for (unsigned i = 0; i != selectedActors.size(); ++i)
+           {
+              toFill.push_back(selectedActors[i].get());
+           }
         }
 
     public slots:

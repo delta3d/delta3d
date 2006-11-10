@@ -50,15 +50,15 @@ namespace dtEditQt
         :QWidget(parent), rootActorType(NULL), rootNodeWasExpanded(false)
     {
         setupGUI();
-        connect(&EditorEvents::getInstance(), SIGNAL(mapLibraryImported()),
+        connect(&EditorEvents::GetInstance(), SIGNAL(mapLibraryImported()),
             this, SLOT(refreshActorTypes()));
-        connect(&EditorEvents::getInstance(), SIGNAL(mapLibraryRemoved()),
+        connect(&EditorEvents::GetInstance(), SIGNAL(mapLibraryRemoved()),
             this, SLOT(refreshActorTypes()));
-        connect(&EditorEvents::getInstance(), SIGNAL(currentMapChanged()),
+        connect(&EditorEvents::GetInstance(), SIGNAL(currentMapChanged()),
             this, SLOT(refreshActorTypes()));
-        connect(&EditorEvents::getInstance(), SIGNAL(projectChanged()),
+        connect(&EditorEvents::GetInstance(), SIGNAL(projectChanged()),
             this, SLOT(refreshActorTypes()));
-        connect(&EditorEvents::getInstance(), SIGNAL(mapLibraryAboutToBeRemoved()),
+        connect(&EditorEvents::GetInstance(), SIGNAL(mapLibraryAboutToBeRemoved()),
             this, SLOT(clearActorTypesTree()));
     }
 
@@ -114,7 +114,7 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     void ActorBrowser::reloadActors()
     {
-        EditorData::getInstance().getMainWindow()->startWaitCursor();
+        EditorData::GetInstance().getMainWindow()->startWaitCursor();
 
         // resets everything and marks the current expansion
         clearActorTypesTree();
@@ -146,7 +146,7 @@ namespace dtEditQt
         // Now, go back and try to re-expand items and restore our scroll position
         restorePreviousExpansion();
 
-        EditorData::getInstance().getMainWindow()->endWaitCursor();
+        EditorData::GetInstance().getMainWindow()->endWaitCursor();
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -284,7 +284,7 @@ namespace dtEditQt
 
         // if we have an actor type, then create the proxy and emit the signal
         if (selectedWidget != NULL && selectedWidget->getActorType() != NULL) {
-            EditorData::getInstance().getMainWindow()->startWaitCursor();
+            EditorData::GetInstance().getMainWindow()->startWaitCursor();
 
             // create our new object
             dtCore::RefPtr<dtDAL::ActorProxy> proxy =
@@ -293,25 +293,25 @@ namespace dtEditQt
             if (proxy.valid())
             {
                 // add the new proxy to the map
-                dtCore::RefPtr<dtDAL::Map> mapPtr = EditorData::getInstance().getCurrentMap();
+                dtCore::RefPtr<dtDAL::Map> mapPtr = EditorData::GetInstance().getCurrentMap();
                 if (mapPtr.valid())
                 {
                     mapPtr->AddProxy(*(proxy.get()));
                 }
 
                 // let the world know that a new proxy exists
-                EditorEvents::getInstance().emitBeginChangeTransaction();
-                EditorEvents::getInstance().emitActorProxyCreated(proxy.get(), false);
-                ViewportManager::getInstance().placeProxyInFrontOfCamera(proxy.get());
-                EditorEvents::getInstance().emitEndChangeTransaction();
+                EditorEvents::GetInstance().emitBeginChangeTransaction();
+                EditorEvents::GetInstance().emitActorProxyCreated(proxy.get(), false);
+                ViewportManager::GetInstance().placeProxyInFrontOfCamera(proxy.get());
+                EditorEvents::GetInstance().emitEndChangeTransaction();
 
                 // Now, let the world that it should select the new actor proxy.
                 std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > actors;
                 actors.push_back(proxy.get());
-                EditorEvents::getInstance().emitActorsSelected(actors);
+                EditorEvents::GetInstance().emitActorsSelected(actors);
             }
 
-            EditorData::getInstance().getMainWindow()->endWaitCursor();
+            EditorData::GetInstance().getMainWindow()->endWaitCursor();
         }
 
     }

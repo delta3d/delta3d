@@ -77,7 +77,7 @@ namespace dtEditQt
         createActions();
         createContextMenu();
 
-        connect(&EditorEvents::getInstance(),SIGNAL(currentMapChanged()),
+        connect(&EditorEvents::GetInstance(),SIGNAL(currentMapChanged()),
             this,SLOT(selectionChanged()));
 
         QGridLayout *grid = new QGridLayout(this);
@@ -105,7 +105,7 @@ namespace dtEditQt
         QGridLayout *grid = new QGridLayout(groupBox);
 
         // New reference of the viewport manager singleton
-        ViewportManager &vpMgr = ViewportManager::getInstance();
+        ViewportManager &vpMgr = ViewportManager::GetInstance();
 
         // Create the perspective viewport for the static mesh preview window
         perspView = (PerspectiveViewport *)vpMgr.createViewport("Preview",
@@ -164,7 +164,7 @@ namespace dtEditQt
         dtDAL::Project &project = dtDAL::Project::GetInstance();
 
         // Find the currently selected tree item
-        dtDAL::ResourceDescriptor resource = EditorData::getInstance().getCurrentParticleResource();
+        dtDAL::ResourceDescriptor resource = EditorData::GetInstance().getCurrentParticleResource();
         context = QString(project.GetContext().c_str());
 
         file = QString(project.GetResourcePath(resource).c_str());
@@ -196,7 +196,7 @@ namespace dtEditQt
         {
             if(selection->isResource())
             {
-                if(EditorData::getInstance().getCurrentMap() != NULL)
+                if(EditorData::GetInstance().getCurrentMap() != NULL)
                 {
                     setCreateAction->setEnabled(true);
                 }
@@ -210,7 +210,7 @@ namespace dtEditQt
     void ParticleBrowser::createActor()
     {
 
-        EditorData::getInstance().getMainWindow()->startWaitCursor();
+        EditorData::GetInstance().getMainWindow()->startWaitCursor();
 
         if(selection->isResource())
         {
@@ -250,26 +250,26 @@ namespace dtEditQt
                     }
 
                     // add the new proxy to the map
-                    dtCore::RefPtr<dtDAL::Map> mapPtr = EditorData::getInstance().getCurrentMap();
+                    dtCore::RefPtr<dtDAL::Map> mapPtr = EditorData::GetInstance().getCurrentMap();
                     if (mapPtr.valid())
                     {
                         mapPtr->AddProxy(*proxy);
                     }
 
                     // Let the world know that a new proxy exists
-                    EditorEvents::getInstance().emitBeginChangeTransaction();
-                    EditorEvents::getInstance().emitActorProxyCreated(proxy, false);
-                    ViewportManager::getInstance().placeProxyInFrontOfCamera(proxy.get());
-                    EditorEvents::getInstance().emitEndChangeTransaction();
+                    EditorEvents::GetInstance().emitBeginChangeTransaction();
+                    EditorEvents::GetInstance().emitActorProxyCreated(proxy, false);
+                    ViewportManager::GetInstance().placeProxyInFrontOfCamera(proxy.get());
+                    EditorEvents::GetInstance().emitEndChangeTransaction();
 
                     // Now, let the world that it should select the new actor proxy.
                     std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > actors;
 
                     actors.push_back(proxy);
-                    EditorEvents::getInstance().emitActorsSelected(actors);
+                    EditorEvents::GetInstance().emitActorsSelected(actors);
                 }
             }
-            EditorData::getInstance().getMainWindow()->endWaitCursor();
+            EditorData::GetInstance().getMainWindow()->endWaitCursor();
         }
     }
 }

@@ -95,11 +95,11 @@ namespace dtEditQt
          if (previousString != selectionString)
          {
             // give undo manager the ability to create undo/redo events
-            EditorEvents::getInstance().emitActorPropertyAboutToChange(proxy, myProperty, previousString, selectionString);
+            EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, myProperty, previousString, selectionString);
 
             dtDAL::GameEvent *eventToSet = NULL;
             std::vector<dtDAL::GameEvent*> events;
-            dtDAL::Map &curMap = *EditorData::getInstance().getCurrentMap();
+            dtDAL::Map &curMap = *EditorData::GetInstance().getCurrentMap();
             curMap.GetEventManager().GetAllEvents(events);
             for(unsigned int i = 0; i < events.size(); i++)
             {
@@ -117,7 +117,7 @@ namespace dtEditQt
       // notify the world (mostly the viewports) that our property changed
       if (dataChanged)
       {
-         EditorEvents::getInstance().emitActorPropertyChanged(proxy, myProperty);
+         EditorEvents::GetInstance().emitActorPropertyChanged(proxy, myProperty);
       }
 
       return dataChanged;    
@@ -135,7 +135,7 @@ namespace dtEditQt
       }
 
       std::vector<dtDAL::GameEvent*> events;
-      dtDAL::Map &map = *EditorData::getInstance().getCurrentMap();
+      dtDAL::Map &map = *EditorData::GetInstance().getCurrentMap();
       map.GetEventManager().GetAllEvents(events);
 
       // Insert the None option at the end of the list

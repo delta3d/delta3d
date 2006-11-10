@@ -102,22 +102,22 @@ namespace dtEditQt
         setupUI();
 
         // listen for selection changed event
-        connect(&EditorEvents::getInstance(), SIGNAL(selectedActors(ActorProxyRefPtrVector &)),
+        connect(&EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorProxyRefPtrVector &)),
             this, SLOT(handleActorsSelected(ActorProxyRefPtrVector&)));
 
         // listen for property change events and update the tree.  These can be generated
         // by the viewports, or the tree itself.
-        connect(&EditorEvents::getInstance(), SIGNAL(actorPropertyChanged(ActorProxyRefPtr,
+        connect(&EditorEvents::GetInstance(), SIGNAL(actorPropertyChanged(ActorProxyRefPtr,
             ActorPropertyRefPtr)),
             this, SLOT(actorPropertyChanged(ActorProxyRefPtr,
             ActorPropertyRefPtr)));
 
         // listen for name changes so we can update our group box label or handle undo changes
-        connect(&EditorEvents::getInstance(), SIGNAL(proxyNameChanged(ActorProxyRefPtr, std::string)),
+        connect(&EditorEvents::GetInstance(), SIGNAL(proxyNameChanged(ActorProxyRefPtr, std::string)),
             this, SLOT(proxyNameChanged(ActorProxyRefPtr, std::string)));
         
         // listen for closing
-        connect(&EditorEvents::getInstance(), SIGNAL(editorCloseEvent()),
+        connect(&EditorEvents::GetInstance(), SIGNAL(editorCloseEvent()),
             this, SLOT(OnEditorClosing()));
 
         controlFactory = new dtUtil::ObjectFactory<dtDAL::DataType *, DynamicAbstractControl>;
@@ -155,18 +155,18 @@ namespace dtEditQt
     void PropertyEditor::OnEditorClosing()
     {
         // listen for selection changed event
-        disconnect(&EditorEvents::getInstance(), SIGNAL(selectedActors(ActorProxyRefPtrVector &)),
+        disconnect(&EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorProxyRefPtrVector &)),
             this, SLOT(handleActorsSelected(ActorProxyRefPtrVector&)));
 
         // listen for property change events and update the tree.  These can be generated
         // by the viewports, or the tree itself.
-        disconnect(&EditorEvents::getInstance(), SIGNAL(actorPropertyChanged(ActorProxyRefPtr,
+        disconnect(&EditorEvents::GetInstance(), SIGNAL(actorPropertyChanged(ActorProxyRefPtr,
             ActorPropertyRefPtr)),
             this, SLOT(actorPropertyChanged(ActorProxyRefPtr,
             ActorPropertyRefPtr)));
 
         // listen for name changes so we can update our group box label or handle undo changes
-        disconnect(&EditorEvents::getInstance(), SIGNAL(proxyNameChanged(ActorProxyRefPtr, std::string)),
+        disconnect(&EditorEvents::GetInstance(), SIGNAL(proxyNameChanged(ActorProxyRefPtr, std::string)),
             this, SLOT(proxyNameChanged(ActorProxyRefPtr, std::string)));
     }
 
@@ -520,17 +520,17 @@ namespace dtEditQt
 
         if(property->GetPropertyType() == dtDAL::DataType::TERRAIN)
         {
-           if(ViewportManager::getInstance().IsPagingEnabled())
-              ViewportManager::getInstance().EnablePaging(false);
+           if(ViewportManager::GetInstance().IsPagingEnabled())
+              ViewportManager::GetInstance().EnablePaging(false);
 
-           ViewportManager::getInstance().EnablePaging(true);
+           ViewportManager::GetInstance().EnablePaging(true);
         }
     }
 
     /////////////////////////////////////////////////////////////////////////////////
     void PropertyEditor::closeEvent(QCloseEvent *e)
     {
-        EditorActions::getInstance().actionWindowsPropertyEditor->setChecked(false);
+        EditorActions::GetInstance().actionWindowsPropertyEditor->setChecked(false);
     }
 
     /////////////////////////////////////////////////////////////////////////////////

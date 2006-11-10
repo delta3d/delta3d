@@ -232,7 +232,7 @@ namespace dtEditQt {
             DynamicColorElementControl::convertColorFloatToInt(vectorValue[2]));
 
         // show the dialog.  Blocks for user input.
-        QColor result = QColorDialog::getColor(startColor, EditorData::getInstance().getMainWindow());
+        QColor result = QColorDialog::getColor(startColor, EditorData::GetInstance().getMainWindow());
 
         // if the user pressed, OK, we set the color and assume it changed
         if (result.isValid()) 
@@ -243,12 +243,12 @@ namespace dtEditQt {
             propColor[2] = DynamicColorElementControl::convertColorIntToFloat(result.blue());
             // plus alpha...  remains the same.
 
-            std::string oldValue = myProperty->GetStringValue();
+            std::string oldValue = myProperty->ToString();
             myProperty->SetValue(propColor);
 
             // give undo manager the ability to create undo/redo events
-            EditorEvents::getInstance().emitActorPropertyAboutToChange(proxy, myProperty,
-                oldValue, myProperty->GetStringValue());
+            EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, myProperty,
+                oldValue, myProperty->ToString());
 
             // update our label
             if (mTemporaryEditOnlyTextLabel !=  NULL)
@@ -257,7 +257,7 @@ namespace dtEditQt {
             }
 
             // notify the world (mostly the viewports) that our property changed
-            EditorEvents::getInstance().emitActorPropertyChanged(proxy, myProperty);
+            EditorEvents::GetInstance().emitActorPropertyChanged(proxy, myProperty);
         }
     }
 

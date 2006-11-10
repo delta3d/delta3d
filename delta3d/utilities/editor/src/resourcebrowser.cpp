@@ -114,6 +114,6 @@ namespace dtEditQt
     /////////////////////////////////////////////////////////////////////////////////
     void ResourceBrowser::closeEvent(QCloseEvent *e)
     {
-        EditorActions::getInstance().actionWindowsResourceBrowser->setChecked(false);
+        EditorActions::GetInstance().actionWindowsResourceBrowser->setChecked(false);
     }
 }

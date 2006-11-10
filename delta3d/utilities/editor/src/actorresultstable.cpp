@@ -134,12 +134,12 @@ namespace dtEditQt
         //connect(table, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)),
         //    this, SLOT(itemDoubleClicked(QTreeWidgetItem *, int)));
 
-        connect(&EditorEvents::getInstance(), SIGNAL(mapLibraryImported()),
+        connect(&EditorEvents::GetInstance(), SIGNAL(mapLibraryImported()),
             this, SLOT(clearAll()));
         // Remove search items that are being destroyed
-        connect(&EditorEvents::getInstance(), SIGNAL(actorProxyAboutToBeDestroyed(ActorProxyRefPtr)),
+        connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyAboutToBeDestroyed(ActorProxyRefPtr)),
             this, SLOT(actorProxyAboutToBeDestroyed(ActorProxyRefPtr)));
-        connect(&EditorEvents::getInstance(), SIGNAL(selectedActors(ActorProxyRefPtrVector &)),
+        connect(&EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorProxyRefPtrVector &)),
             this, SLOT(selectedActors(ActorProxyRefPtrVector &)));
 
         // make sure buttons and count are correct on start up
@@ -268,7 +268,7 @@ namespace dtEditQt
     //    proxyVector.push_back(proxyPtr);
 
     //    // tell the world to select it
-    //    EditorEvents::getInstance().emitActorsSelected(proxyVector);
+    //    EditorEvents::GetInstance().emitActorsSelected(proxyVector);
     //}
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -284,7 +284,7 @@ namespace dtEditQt
             sendSelection();
 
             // now tell the viewports to goto that actor
-            EditorEvents::getInstance().emitGotoActor(proxyPtr);
+            EditorEvents::GetInstance().emitGotoActor(proxyPtr);
         }
     }
 
@@ -337,7 +337,7 @@ namespace dtEditQt
             recurseProtectSendingSelection = true;
             if (!recurseProtectEmitSelectionChanged) 
             {
-                EditorEvents::getInstance().emitActorsSelected(proxyVector);
+                EditorEvents::GetInstance().emitActorsSelected(proxyVector);
             }
             recurseProtectSendingSelection = false;
         }
@@ -402,7 +402,7 @@ namespace dtEditQt
         recurseProtectEmitSelectionChanged = true;
 
         // delete the currently selected actors
-        EditorActions::getInstance().slotEditDeleteActors();
+        EditorActions::GetInstance().slotEditDeleteActors();
 
         recurseProtectEmitSelectionChanged = false;
 
@@ -421,7 +421,7 @@ namespace dtEditQt
         recurseProtectEmitSelectionChanged = true;
 
         // duplicate the currently selected actors
-        EditorActions::getInstance().slotEditDuplicateActors();
+        EditorActions::GetInstance().slotEditDuplicateActors();
 
         recurseProtectEmitSelectionChanged = false;
 

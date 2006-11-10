@@ -91,17 +91,17 @@ namespace dtEditQt
         saveMilliSeconds = 300000;
         wasCancelled = false;
 
-        connect(&EditorEvents::getInstance(), SIGNAL(projectChanged()),
+        connect(&EditorEvents::GetInstance(), SIGNAL(projectChanged()),
                  this, SLOT(slotPauseAutosave()));
-        connect(&EditorEvents::getInstance(), SIGNAL(currentMapChanged()),
+        connect(&EditorEvents::GetInstance(), SIGNAL(currentMapChanged()),
                  this, SLOT(slotRestartAutosave()));
 
-        connect(&EditorEvents::getInstance(),
+        connect(&EditorEvents::GetInstance(),
             SIGNAL(selectedActors(ActorProxyRefPtrVector&)),
             this,
             SLOT(slotSelectedActors(ActorProxyRefPtrVector&)));
 
-        timer = new QTimer((QWidget*)EditorData::getInstance().getMainWindow());
+        timer = new QTimer((QWidget*)EditorData::GetInstance().getMainWindow());
         timer->setInterval(saveMilliSeconds);
         connect(timer, SIGNAL(timeout()), this, SLOT(slotAutosave()));
     }
@@ -113,7 +113,7 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    EditorActions &EditorActions::getInstance()
+    EditorActions &EditorActions::GetInstance()
     {
         if (EditorActions::instance.get() == NULL)
             EditorActions::instance = new EditorActions();
@@ -331,18 +331,18 @@ namespace dtEditQt
     //////////////////////////////////////////////////////////////////////////////
     void EditorActions::setupRecentItems()
     {
-        //std::vector<std::string> projs = EditorData::getInstance().getMainWindow()->findRecentProjects();
+        //std::vector<std::string> projs = EditorData::GetInstance().getMainWindow()->findRecentProjects();
         std::list<std::string>::iterator itor;
 
         actionFileRecentProject0 = new QAction(tr("(Recent Project 1)"), this);
         actionFileRecentProject0->setEnabled(false);
         connect(actionFileRecentProject0, SIGNAL(triggered()), this, SLOT(slotFileRecentProject0()));
 
-        itor = EditorData::getInstance().getRecentProjects().begin();
-        if(itor == EditorData::getInstance().getRecentProjects().end())
+        itor = EditorData::GetInstance().getRecentProjects().begin();
+        if(itor == EditorData::GetInstance().getRecentProjects().end())
             return;
 
-        if(EditorData::getInstance().getRecentProjects().size() > 0)
+        if(EditorData::GetInstance().getRecentProjects().size() > 0)
         {
             std::string str = (*itor);
             actionFileRecentProject0->setText((*itor).c_str());
@@ -356,14 +356,14 @@ namespace dtEditQt
     void EditorActions::refreshRecentProjects()
     {
         // do we have any recent projects?
-        if(EditorData::getInstance().getRecentProjects().size() == 0)
+        if(EditorData::GetInstance().getRecentProjects().size() == 0)
             return;
         // set the text on the actions now
-        std::list<std::string>::iterator itor = EditorData::getInstance().getRecentProjects().begin();
-        if(itor == EditorData::getInstance().getRecentProjects().end())
+        std::list<std::string>::iterator itor = EditorData::GetInstance().getRecentProjects().begin();
+        if(itor == EditorData::GetInstance().getRecentProjects().end())
             return;
 
-        //unsigned int i = EditorData::getInstance().getRecentProjects().size();
+        //unsigned int i = EditorData::GetInstance().getRecentProjects().size();
         QString curText = actionFileRecentProject0->text();
         actionFileRecentProject0->setText(tr((*itor).c_str()));
         ++itor;
@@ -374,9 +374,9 @@ namespace dtEditQt
     void EditorActions::slotFileEditPreferences()
     {
         slotPauseAutosave();
-        PreferencesDialog dlg((QWidget*)EditorData::getInstance().getMainWindow());
+        PreferencesDialog dlg((QWidget*)EditorData::GetInstance().getMainWindow());
         if (dlg.exec() == QDialog::Accepted)
-            EditorEvents::getInstance().emitEditorPreferencesChanged();
+            EditorEvents::GetInstance().emitEditorPreferencesChanged();
         slotRestartAutosave();
     }
 
@@ -394,11 +394,11 @@ namespace dtEditQt
             return;
 
         slotPauseAutosave();
-        MapDialog mapDialog((QWidget*)EditorData::getInstance().getMainWindow());
+        MapDialog mapDialog((QWidget*)EditorData::GetInstance().getMainWindow());
         if(mapDialog.exec() == QDialog::Accepted) {
-            changeMaps(EditorData::getInstance().getCurrentMap(),
+            changeMaps(EditorData::GetInstance().getCurrentMap(),
                 mapDialog.getFinalizedMap());
-            EditorData::getInstance().addRecentMap(mapDialog.getFinalizedMap()->GetName());
+            EditorData::GetInstance().addRecentMap(mapDialog.getFinalizedMap()->GetName());
         }
 
         slotRestartAutosave();
@@ -412,7 +412,7 @@ namespace dtEditQt
         if(!dtDAL::Project::GetInstance().IsContextValid())
         {
             slotPauseAutosave();
-            QMessageBox::critical(EditorData::getInstance().getMainWindow(),
+            QMessageBox::critical(EditorData::GetInstance().getMainWindow(),
                     tr("Map Open Error"),tr("The current project is not valid."),tr("OK"));
             slotRestartAutosave();
             return;
@@ -425,7 +425,7 @@ namespace dtEditQt
 
         slotPauseAutosave();
 
-        DialogListSelection openMapDialog(EditorData::getInstance().getMainWindow(),
+        DialogListSelection openMapDialog(EditorData::GetInstance().getMainWindow(),
             tr("Open Existing Map"),tr("Available Maps"));
 
         QStringList listItems;
@@ -441,21 +441,21 @@ namespace dtEditQt
             //Attempt to open the specified map..
             try
             {
-                EditorData::getInstance().getMainWindow()->startWaitCursor();
+                EditorData::GetInstance().getMainWindow()->startWaitCursor();
 
                 const QString &mapName = openMapDialog.getSelectedItem();
                 newMap = &dtDAL::Project::GetInstance().GetMap(mapName.toStdString());
 
-                EditorData::getInstance().getMainWindow()->endWaitCursor();
+                EditorData::GetInstance().getMainWindow()->endWaitCursor();
             }
             catch(dtUtil::Exception &e)
             {
-                EditorData::getInstance().getMainWindow()->endWaitCursor();
+                EditorData::GetInstance().getMainWindow()->endWaitCursor();
 
                 QString error = "An error occured while opening the map. ";
                 error += e.What().c_str();
                 LOG_ERROR(error.toStdString());
-                QMessageBox::critical((QWidget *)EditorData::getInstance().getMainWindow(),
+                QMessageBox::critical((QWidget *)EditorData::GetInstance().getMainWindow(),
                     tr("Map Open Error"),error,tr("OK"));
 
                 slotRestartAutosave();
@@ -464,7 +464,7 @@ namespace dtEditQt
 
             //Finally, change to the requested map.
             dtCore::RefPtr<dtDAL::Map> mapRef = newMap;
-            EditorData::getInstance().getMainWindow()->checkAndLoadBackup(newMap->GetName());
+            EditorData::GetInstance().getMainWindow()->checkAndLoadBackup(newMap->GetName());
             newMap->SetModified(false);
         }
 
@@ -475,21 +475,21 @@ namespace dtEditQt
     void EditorActions::slotFileCloseMap()
     {
         // no map open? peace out
-        if(!EditorData::getInstance().getCurrentMap())
+        if(!EditorData::GetInstance().getCurrentMap())
             return;
 
-        saveCurrentMapChanges(EditorData::getInstance().getCurrentMap()->IsModified());
+        saveCurrentMapChanges(EditorData::GetInstance().getCurrentMap()->IsModified());
 
-        changeMaps(EditorData::getInstance().getCurrentMap(), NULL);
-        EditorData::getInstance().getMainWindow()->enableActions();
+        changeMaps(EditorData::GetInstance().getCurrentMap(), NULL);
+        EditorData::GetInstance().getMainWindow()->enableActions();
     }
 
     //////////////////////////////////////////////////////////////////////////////
     void EditorActions::slotFileSaveMap()
     {
         LOG_INFO("Saving current map.");
-        //if (EditorData::getInstance().getMainWindow()->isActiveWindow())
-        //   EditorData::getInstance().getMainWindow()->
+        //if (EditorData::GetInstance().getMainWindow()->isActiveWindow())
+        //   EditorData::GetInstance().getMainWindow()->
         //Save the current map without asking the user for permission.
         saveCurrentMapChanges(false);
         slotRestartAutosave();
@@ -510,7 +510,7 @@ namespace dtEditQt
         std::string strippedName = osgDB::getSimpleFileName(dlg.getMapFileName());
         std::string name         = osgDB::getStrippedName(strippedName);
 
-        dtDAL::Map *myMap = EditorData::getInstance().getCurrentMap();
+        dtDAL::Map *myMap = EditorData::GetInstance().getCurrentMap();
         if(myMap == NULL)
         {
             slotRestartAutosave();
@@ -520,22 +520,22 @@ namespace dtEditQt
         try
         {
             myMap->SetDescription(dlg.getMapDescription());
-            EditorData::getInstance().getMainWindow()->startWaitCursor();
-            dtDAL::Project::GetInstance().SaveMapAs(*myMap, name, strippedName, ViewportManager::getInstance().getMasterScene());
-            EditorData::getInstance().getMainWindow()->endWaitCursor();
+            EditorData::GetInstance().getMainWindow()->startWaitCursor();
+            dtDAL::Project::GetInstance().SaveMapAs(*myMap, name, strippedName, ViewportManager::GetInstance().getMasterScene());
+            EditorData::GetInstance().getMainWindow()->endWaitCursor();
         }
         catch(const dtUtil::Exception &e)
         {
-            EditorData::getInstance().getMainWindow()->endWaitCursor();
+            EditorData::GetInstance().getMainWindow()->endWaitCursor();
             LOG_ERROR(e.What());
-            QMessageBox::critical((QWidget *)EditorData::getInstance().getMainWindow(),
+            QMessageBox::critical((QWidget *)EditorData::GetInstance().getMainWindow(),
                 tr("Error"), QString(e.What().c_str()), tr("OK"));
 
             slotRestartAutosave();
             return;
         }
 
-        EditorEvents::getInstance().emitCurrentMapChanged();
+        EditorEvents::GetInstance().emitCurrentMapChanged();
         slotRestartAutosave();
     }
 
@@ -544,10 +544,10 @@ namespace dtEditQt
     {
         slotPauseAutosave();
 
-        dtDAL::Map *currMap = dtEditQt::EditorData::getInstance().getCurrentMap();
+        dtDAL::Map *currMap = dtEditQt::EditorData::GetInstance().getCurrentMap();
         if (currMap == NULL)
         {
-            EditorEvents::getInstance().emitEditorCloseEvent();
+            EditorEvents::GetInstance().emitEditorCloseEvent();
             qApp->quit();
             return;
         }
@@ -556,10 +556,10 @@ namespace dtEditQt
         if (result == QMessageBox::Abort)
         {
             //An error occurred during saving.
-            if(QMessageBox::critical((QWidget*)EditorData::getInstance().getMainWindow(),
+            if(QMessageBox::critical((QWidget*)EditorData::GetInstance().getMainWindow(),
                 tr("Error"), tr("Continue exiting?"), tr("Yes"), tr("No")) == QMessageBox::Yes)
             {
-                EditorEvents::getInstance().emitEditorCloseEvent();
+                EditorEvents::GetInstance().emitEditorCloseEvent();
                 qApp->quit();
             }
 
@@ -573,7 +573,7 @@ namespace dtEditQt
             return;
         }
         
-        EditorEvents::getInstance().emitEditorCloseEvent();
+        EditorEvents::GetInstance().emitEditorCloseEvent();
         //close the map because the actor libraries will be closed before the DAL, so a crash could
         //happen when the project tries to close the open maps in the destructor.
         changeMaps(currMap, NULL);
@@ -584,14 +584,14 @@ namespace dtEditQt
     //////////////////////////////////////////////////////////////////////////////
     void EditorActions::slotEditMapProperties()
     {
-        DialogMapProperties mapPropsDialog((QWidget *)EditorData::getInstance().getMainWindow());
-        dtDAL::Map *map = EditorData::getInstance().getCurrentMap();
+        DialogMapProperties mapPropsDialog((QWidget *)EditorData::GetInstance().getMainWindow());
+        dtDAL::Map *map = EditorData::GetInstance().getCurrentMap();
 
         //If the current map is invalid, issue an error, else populate the dialog
         //box with the values from the current map.  The map "should" always be
         //valid since this action is only enabled when there is a valid map.
         if (map == NULL) {
-            QMessageBox::critical((QWidget *)EditorData::getInstance().getMainWindow(),tr("Error"),
+            QMessageBox::critical((QWidget *)EditorData::GetInstance().getMainWindow(),tr("Error"),
                 tr("Current map is not valid or no map is open."),tr("OK"));
             return;
         }
@@ -623,7 +623,7 @@ namespace dtEditQt
     void EditorActions::slotEditMapLibraries()
     {
         // we need a current map to edit libraries
-        if(!EditorData::getInstance().getCurrentMap())
+        if(!EditorData::GetInstance().getCurrentMap())
         {
             QMessageBox::critical(NULL, tr("Failure"),
                 tr("A map must be open in order to edit libraries"),
@@ -631,7 +631,7 @@ namespace dtEditQt
             return;
         }
 
-        LibraryEditor libEdit((QWidget *)EditorData::getInstance().getMainWindow());
+        LibraryEditor libEdit((QWidget *)EditorData::GetInstance().getMainWindow());
         libEdit.exec();
     }
 
@@ -639,7 +639,7 @@ namespace dtEditQt
     void EditorActions::slotEditMapEvents()
     {
         // we need a current map to edit libraries
-        if(!EditorData::getInstance().getCurrentMap())
+        if(!EditorData::GetInstance().getCurrentMap())
         {
             QMessageBox::critical(NULL, tr("Failure"),
                 tr("A map must be open in order to edit events"),
@@ -647,7 +647,7 @@ namespace dtEditQt
             return;
         }
 
-        GameEventsDialog editor((QWidget *)EditorData::getInstance().getMainWindow());
+        GameEventsDialog editor((QWidget *)EditorData::GetInstance().getMainWindow());
         editor.exec();
     }
 
@@ -657,14 +657,14 @@ namespace dtEditQt
         LOG_INFO("Duplicating current actor selection.");
 
         //This commits any changes in the property editor.
-        PropertyEditor& propEditor = EditorData::getInstance().getMainWindow()->GetPropertyEditor();
+        PropertyEditor& propEditor = EditorData::GetInstance().getMainWindow()->GetPropertyEditor();
         propEditor.CommitCurrentEdits();
 
         ViewportOverlay::ActorProxyList &selection =
-                ViewportManager::getInstance().getViewportOverlay()->getCurrentActorSelection();
-        dtCore::Scene *scene = ViewportManager::getInstance().getMasterScene();
-        dtCore::RefPtr<dtDAL::Map> currMap = EditorData::getInstance().getCurrentMap();
-        Camera *worldCam = ViewportManager::getInstance().getWorldViewCamera();
+                ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
+        dtCore::Scene *scene = ViewportManager::GetInstance().getMasterScene();
+        dtCore::RefPtr<dtDAL::Map> currMap = EditorData::GetInstance().getCurrentMap();
+        Camera *worldCam = ViewportManager::GetInstance().getWorldViewCamera();
 
         //Make sure we have valid data.
         if (!currMap.valid()) {
@@ -687,8 +687,8 @@ namespace dtEditQt
 
         // We're about to do a LOT of work, especially if lots of things are select
         // so, start a change transaction.
-        EditorData::getInstance().getMainWindow()->startWaitCursor();
-        EditorEvents::getInstance().emitBeginChangeTransaction();
+        EditorData::GetInstance().getMainWindow()->startWaitCursor();
+        EditorEvents::GetInstance().emitBeginChangeTransaction();
 
         //Once we have a reference to the current selection and the scene,
         //clone each proxy, add it to the scene, make the newly cloned
@@ -716,7 +716,7 @@ namespace dtEditQt
             //Add the new proxy to the map and send out a create event.
             currMap->AddProxy(*copy.get());
 
-            EditorEvents::getInstance().emitActorProxyCreated(copy, false);
+            EditorEvents::GetInstance().emitActorProxyCreated(copy, false);
 
             //Move the newly duplicated actor to where it is supposed to go.
             if (tProxy != NULL)
@@ -727,11 +727,11 @@ namespace dtEditQt
         }
 
         //Finally set the newly cloned proxies to be the current selection.
-        ViewportManager::getInstance().getViewportOverlay()->setMultiSelectMode(false);
-        EditorEvents::getInstance().emitActorsSelected(newSelection);
-        EditorEvents::getInstance().emitEndChangeTransaction();
+        ViewportManager::GetInstance().getViewportOverlay()->setMultiSelectMode(false);
+        EditorEvents::GetInstance().emitActorsSelected(newSelection);
+        EditorEvents::GetInstance().emitEndChangeTransaction();
 
-        EditorData::getInstance().getMainWindow()->endWaitCursor();
+        EditorData::GetInstance().getMainWindow()->endWaitCursor();
     }
 
     //////////////////////////////////////////////////////////////////////////////
@@ -740,8 +740,8 @@ namespace dtEditQt
         LOG_INFO("Deleting current actor selection. ");
 
         ViewportOverlay::ActorProxyList selection =
-                ViewportManager::getInstance().getViewportOverlay()->getCurrentActorSelection();
-        dtCore::RefPtr<dtDAL::Map> currMap = EditorData::getInstance().getCurrentMap();
+                ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
+        dtCore::RefPtr<dtDAL::Map> currMap = EditorData::GetInstance().getCurrentMap();
 
         //Make sure we have valid data.
         if (!currMap.valid()) {
@@ -751,8 +751,8 @@ namespace dtEditQt
 
         // We're about to do a LOT of work, especially if lots of things are select
         // so, start a change transaction.
-        EditorData::getInstance().getMainWindow()->startWaitCursor();
-        EditorEvents::getInstance().emitBeginChangeTransaction();
+        EditorData::GetInstance().getMainWindow()->startWaitCursor();
+        EditorEvents::GetInstance().emitBeginChangeTransaction();
 
         //Once we have a reference to the current selection and the scene,
         //remove each proxy's actor from the scene then remove the proxy from
@@ -768,17 +768,17 @@ namespace dtEditQt
 
         //Now that we have removed the selected objects, clear the current selection.
         std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > emptySelection;
-        EditorEvents::getInstance().emitActorsSelected(emptySelection);
-        EditorEvents::getInstance().emitEndChangeTransaction();
+        EditorEvents::GetInstance().emitActorsSelected(emptySelection);
+        EditorEvents::GetInstance().emitEndChangeTransaction();
 
-        EditorData::getInstance().getMainWindow()->endWaitCursor();
+        EditorData::GetInstance().getMainWindow()->endWaitCursor();
     }
 
 
     //////////////////////////////////////////////////////////////////////////////
     bool EditorActions::deleteProxy(dtDAL::ActorProxy *proxy, dtCore::RefPtr<dtDAL::Map> currMap)
     {
-        dtCore::Scene *scene = ViewportManager::getInstance().getMasterScene();
+        dtCore::Scene *scene = ViewportManager::GetInstance().getMasterScene();
         bool result = false;
 
         if (proxy != NULL && scene != NULL)
@@ -788,7 +788,7 @@ namespace dtEditQt
             if (proxy->GetBillBoardIcon() != NULL)
                 scene->RemoveDrawable(proxy->GetBillBoardIcon()->GetDrawable());
 
-            EditorEvents::getInstance().emitActorProxyAboutToBeDestroyed(tempRef);
+            EditorEvents::GetInstance().emitActorProxyAboutToBeDestroyed(tempRef);
 
             if (!currMap->RemoveProxy(*proxy))
             {
@@ -796,7 +796,7 @@ namespace dtEditQt
             }
             else
             {
-                EditorEvents::getInstance().emitActorProxyDestroyed(tempRef);
+                EditorEvents::GetInstance().emitActorProxyDestroyed(tempRef);
                 result = true;
             }
         }
@@ -807,19 +807,19 @@ namespace dtEditQt
     //////////////////////////////////////////////////////////////////////////////
     void EditorActions::slotEditUndo()
     {
-        EditorData::getInstance().getUndoManager().doUndo();
+        EditorData::GetInstance().getUndoManager().doUndo();
     }
 
     //////////////////////////////////////////////////////////////////////////////
     void EditorActions::slotEditRedo()
     {
-        EditorData::getInstance().getUndoManager().doRedo();
+        EditorData::GetInstance().getUndoManager().doRedo();
     }
 
     //////////////////////////////////////////////////////////////////////////////
     void EditorActions::slotTaskEditor()
     {
-       TaskEditor taskEditor(static_cast<QWidget*>(EditorData::getInstance().getMainWindow()));
+       TaskEditor taskEditor(static_cast<QWidget*>(EditorData::GetInstance().getMainWindow()));
        taskEditor.exec();
     }
 
@@ -829,8 +829,8 @@ namespace dtEditQt
         LOG_INFO("Ground clamping actors.");
 
         ViewportOverlay::ActorProxyList &selection =
-            ViewportManager::getInstance().getViewportOverlay()->getCurrentActorSelection();
-        dtCore::Scene *scene = ViewportManager::getInstance().getMasterScene();
+            ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
+        dtCore::Scene *scene = ViewportManager::GetInstance().getMasterScene();
 
         if (scene == NULL)
         {
@@ -840,8 +840,8 @@ namespace dtEditQt
 
         // We're about to do a LOT of work, especially if lots of things are select
         // so, start a change transaction.
-        EditorData::getInstance().getMainWindow()->startWaitCursor();
-        EditorEvents::getInstance().emitBeginChangeTransaction();
+        EditorData::GetInstance().getMainWindow()->startWaitCursor();
+        EditorEvents::GetInstance().emitBeginChangeTransaction();
 
         //Iterate through the current selection, trace a ray directly below it.  If there is
         //an intersection, move the current proxy to that point.
@@ -875,24 +875,24 @@ namespace dtEditQt
             }
         }
 
-        EditorEvents::getInstance().emitEndChangeTransaction();
-        EditorData::getInstance().getMainWindow()->endWaitCursor();
+        EditorEvents::GetInstance().emitEndChangeTransaction();
+        EditorData::GetInstance().getMainWindow()->endWaitCursor();
     }
    
     //////////////////////////////////////////////////////////////////////////////
     void EditorActions::slotToggleTerrainPaging()
     {
-       if (ViewportManager::getInstance().IsPagingEnabled())
-          ViewportManager::getInstance().EnablePaging(false);
+       if (ViewportManager::GetInstance().IsPagingEnabled())
+          ViewportManager::GetInstance().EnablePaging(false);
        else
-          ViewportManager::getInstance().EnablePaging(true);
+          ViewportManager::GetInstance().EnablePaging(true);
     }
 
     //////////////////////////////////////////////////////////////////////////////
     void EditorActions::slotEditGotoActor()
     {
         if(actors.size() > 0)
-            EditorEvents::getInstance().emitGotoActor(actors[0]);
+            EditorEvents::GetInstance().emitGotoActor(actors[0]);
     }
 
     //////////////////////////////////////////////////////////////////////////////
@@ -903,28 +903,28 @@ namespace dtEditQt
             return;
 
         slotPauseAutosave();
-        ProjectContextDialog dialog((QWidget *)EditorData::getInstance().getMainWindow());
+        ProjectContextDialog dialog((QWidget *)EditorData::GetInstance().getMainWindow());
         if (dialog.exec() == QDialog::Accepted) {
             std::string contextName = dialog.getProjectPath().toStdString();
 
             //First try to set the new project context.
             try
             {
-                changeMaps(EditorData::getInstance().getCurrentMap(), NULL);
+                changeMaps(EditorData::GetInstance().getCurrentMap(), NULL);
                 dtDAL::Project::GetInstance().SetContext(contextName);
             }
             catch (dtUtil::Exception &e)
             {
-                QMessageBox::critical((QWidget *)EditorData::getInstance().getMainWindow(),
+                QMessageBox::critical((QWidget *)EditorData::GetInstance().getMainWindow(),
                     tr("Error"), tr(e.What().c_str()), tr("OK"));
 
                 slotRestartAutosave();
                 return;
             }
 
-            EditorData::getInstance().setCurrentProjectContext(contextName);
-            EditorData::getInstance().addRecentProject(contextName);
-            EditorEvents::getInstance().emitProjectChanged();
+            EditorData::GetInstance().setCurrentProjectContext(contextName);
+            EditorData::GetInstance().addRecentProject(contextName);
+            EditorEvents::GetInstance().emitProjectChanged();
             refreshRecentProjects();
         }
 
@@ -935,7 +935,7 @@ namespace dtEditQt
     void EditorActions::slotHelpAboutEditor()
     {
         slotPauseAutosave();
-        EditorAboutBox box((QWidget *)EditorData::getInstance().getMainWindow());
+        EditorAboutBox box((QWidget *)EditorData::GetInstance().getMainWindow());
         box.exec();
         slotRestartAutosave();
     }
@@ -944,7 +944,7 @@ namespace dtEditQt
     void EditorActions::slotHelpAboutQT()
     {
         slotPauseAutosave();
-        QMessageBox::aboutQt((QWidget *)EditorData::getInstance().getMainWindow());
+        QMessageBox::aboutQt((QWidget *)EditorData::GetInstance().getMainWindow());
         slotRestartAutosave();
     }
 
@@ -953,9 +953,9 @@ namespace dtEditQt
     {
         try
         {
-            if(EditorData::getInstance().getCurrentMap())
+            if(EditorData::GetInstance().getCurrentMap())
             {
-                dtDAL::Project::GetInstance().SaveMapBackup(*EditorData::getInstance().getCurrentMap());
+                dtDAL::Project::GetInstance().SaveMapBackup(*EditorData::GetInstance().getCurrentMap());
             }
         }
         catch(const dtUtil::Exception &e)
@@ -967,7 +967,7 @@ namespace dtEditQt
     //////////////////////////////////////////////////////////////////////////////
     const std::string EditorActions::getWindowName() const
     {
-        ((QMainWindow*)EditorData::getInstance().getMainWindow())->windowTitle().clear();
+        ((QMainWindow*)EditorData::GetInstance().getMainWindow())->windowTitle().clear();
         std::string name("STAGE");
         std::string projDir;
         std::string temp = dtDAL::Project::GetInstance().GetContext();
@@ -979,7 +979,7 @@ namespace dtEditQt
         name += projDir;
 
         // if we have a map, append the name
-        dtCore::RefPtr<dtDAL::Map> map = EditorData::getInstance().getCurrentMap();
+        dtCore::RefPtr<dtDAL::Map> map = EditorData::GetInstance().getCurrentMap();
         if (map.valid())
         {
             name += " - " + map->GetName();
@@ -1012,11 +1012,11 @@ namespace dtEditQt
         if (saveCurrentMapChanges(true) == QMessageBox::Cancel)
             return;
 
-        changeMaps(EditorData::getInstance().getCurrentMap(),NULL);
+        changeMaps(EditorData::GetInstance().getCurrentMap(),NULL);
 
-        EditorData::getInstance().setCurrentProjectContext(actionFileRecentProject0->text().toStdString());
+        EditorData::GetInstance().setCurrentProjectContext(actionFileRecentProject0->text().toStdString());
         dtDAL::Project::GetInstance().SetContext(actionFileRecentProject0->text().toStdString());
-        EditorEvents::getInstance().emitProjectChanged();
+        EditorEvents::GetInstance().emitProjectChanged();
     }
 
     //////////////////////////////////////////////////////////////////////////////
@@ -1033,12 +1033,12 @@ namespace dtEditQt
         }
         catch (dtUtil::Exception &e)
         {
-            QMessageBox::critical((QWidget *)EditorData::getInstance().getMainWindow(),
+            QMessageBox::critical((QWidget *)EditorData::GetInstance().getMainWindow(),
                     tr("Map Open Error"), e.What().c_str(), tr("OK"));
             return;
         }
 
-        changeMaps(EditorData::getInstance().getCurrentMap(), newMap);
+        changeMaps(EditorData::GetInstance().getCurrentMap(), newMap);
     }
 
     //////////////////////////////////////////////////////////////////////////////
@@ -1059,30 +1059,30 @@ namespace dtEditQt
         //Remove all the old map drawables from the current scene.
         if (oldMap != NULL)
         {
-            EditorData::getInstance().getMainWindow()->startWaitCursor();
-            ViewportManager::getInstance().clearMasterScene(oldMap->GetAllProxies());
+            EditorData::GetInstance().getMainWindow()->startWaitCursor();
+            ViewportManager::GetInstance().clearMasterScene(oldMap->GetAllProxies());
             oldMapName = oldMap->GetName();
 
             //Close the old map...
             try
             {
-                EditorEvents::getInstance().emitLibraryAboutToBeRemoved();
+                EditorEvents::GetInstance().emitLibraryAboutToBeRemoved();
                 dtDAL::Project::GetInstance().CloseMap(*oldMap,true);
-                if (ViewportManager::getInstance().IsPagingEnabled())
-                   ViewportManager::getInstance().EnablePaging(false);
-                EditorEvents::getInstance().emitMapLibraryRemoved();
+                if (ViewportManager::GetInstance().IsPagingEnabled())
+                   ViewportManager::GetInstance().EnablePaging(false);
+                EditorEvents::GetInstance().emitMapLibraryRemoved();
 
-                EditorData::getInstance().getMainWindow()->endWaitCursor();
+                EditorData::GetInstance().getMainWindow()->endWaitCursor();
             }
             catch(const dtUtil::Exception &e)
             {
-                EditorData::getInstance().getMainWindow()->endWaitCursor();
-                QMessageBox::critical((QWidget *)EditorData::getInstance().getMainWindow(),
+                EditorData::GetInstance().getMainWindow()->endWaitCursor();
+                QMessageBox::critical((QWidget *)EditorData::GetInstance().getMainWindow(),
                     tr("Error"), e.What().c_str(), tr("OK"));
             }
         }
 
-        EditorData::getInstance().getMainWindow()->startWaitCursor();
+        EditorData::GetInstance().getMainWindow()->startWaitCursor();
         //If we tried to load the same map, make sure to re-open it since we just closed
         //it.
         if (areSameMap)
@@ -1093,8 +1093,8 @@ namespace dtEditQt
             }
             catch (dtUtil::Exception &e)
             {
-                EditorData::getInstance().getMainWindow()->endWaitCursor();
-                QMessageBox::critical((QWidget *)EditorData::getInstance().getMainWindow(),
+                EditorData::GetInstance().getMainWindow()->endWaitCursor();
+                QMessageBox::critical((QWidget *)EditorData::GetInstance().getMainWindow(),
                         tr("Map Open Error"), e.What().c_str(), tr("OK"));
                 return;
             }
@@ -1106,38 +1106,38 @@ namespace dtEditQt
             try
             {
                dtDAL::Project::GetInstance().LoadMapIntoScene(*newMap,
-                    *(ViewportManager::getInstance().getMasterScene()), true, false);
+                    *(ViewportManager::GetInstance().getMasterScene()), true, false);
                
             }
             catch (const dtUtil::Exception& e)
             {
-                QMessageBox::critical((QWidget *)EditorData::getInstance().getMainWindow(),
+                QMessageBox::critical((QWidget *)EditorData::GetInstance().getMainWindow(),
                     tr("Error"), e.What().c_str(), tr("OK"));
             }
         }
 
-        EditorData::getInstance().getMainWindow()->endWaitCursor();
+        EditorData::GetInstance().getMainWindow()->endWaitCursor();
         //Update the editor state to reflect the changes.
-        EditorData::getInstance().setCurrentMap(newMap);
-        EditorEvents::getInstance().emitCurrentMapChanged();
+        EditorData::GetInstance().setCurrentMap(newMap);
+        EditorEvents::GetInstance().emitCurrentMapChanged();
 
-        if (ViewportManager::getInstance().IsPagingEnabled())
-           ViewportManager::getInstance().EnablePaging(false);
-        ViewportManager::getInstance().EnablePaging(true);        
+        if (ViewportManager::GetInstance().IsPagingEnabled())
+           ViewportManager::GetInstance().EnablePaging(false);
+        ViewportManager::GetInstance().EnablePaging(true);        
         
         //Now that we have changed maps, clear the current selection.
         std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > emptySelection;
-        EditorEvents::getInstance().emitActorsSelected(emptySelection);
+        EditorEvents::GetInstance().emitActorsSelected(emptySelection);
     }
 
     //////////////////////////////////////////////////////////////////////////////
     int EditorActions::saveCurrentMapChanges(bool askPermission)
     {
         //This commits any changes in the property editor.
-        PropertyEditor& propEditor = EditorData::getInstance().getMainWindow()->GetPropertyEditor();
+        PropertyEditor& propEditor = EditorData::GetInstance().getMainWindow()->GetPropertyEditor();
         propEditor.CommitCurrentEdits();
 
-        dtDAL::Map *currMap = EditorData::getInstance().getCurrentMap();
+        dtDAL::Map *currMap = EditorData::GetInstance().getCurrentMap();
         int result = QMessageBox::NoButton;
 
         if (currMap == NULL || !currMap->IsModified())
@@ -1149,7 +1149,7 @@ namespace dtEditQt
 
         if (askPermission)
         {
-            result = QMessageBox::information((QWidget *)EditorData::getInstance().getMainWindow(),
+            result = QMessageBox::information((QWidget *)EditorData::GetInstance().getMainWindow(),
                 tr("Save Map?"), tr("The current map has been modified, would you like to save it?"),
                 QMessageBox::Yes, QMessageBox::No, QMessageBox::Cancel);
         }
@@ -1158,19 +1158,19 @@ namespace dtEditQt
         {
             try
             {
-                EditorData::getInstance().getMainWindow()->startWaitCursor();
-                dtDAL::Project::GetInstance().SaveMap(*currMap, ViewportManager::getInstance().getMasterScene());
-                ((QMainWindow*)EditorData::getInstance().getMainWindow())->setWindowTitle(
+                EditorData::GetInstance().getMainWindow()->startWaitCursor();
+                dtDAL::Project::GetInstance().SaveMap(*currMap, ViewportManager::GetInstance().getMasterScene());
+                ((QMainWindow*)EditorData::GetInstance().getMainWindow())->setWindowTitle(
                     getWindowName().c_str());
-                EditorData::getInstance().getMainWindow()->endWaitCursor();
+                EditorData::GetInstance().getMainWindow()->endWaitCursor();
             }
             catch (dtUtil::Exception &e)
             {
-                EditorData::getInstance().getMainWindow()->endWaitCursor();
+                EditorData::GetInstance().getMainWindow()->endWaitCursor();
                 QString error = "An error occured while saving the map. ";
                 error += e.What().c_str();
                 LOG_ERROR(error.toStdString());
-                QMessageBox::critical((QWidget *)EditorData::getInstance().getMainWindow(),
+                QMessageBox::critical((QWidget *)EditorData::GetInstance().getMainWindow(),
                     tr("Map Save Error"),error,tr("OK"));
 
                 slotRestartAutosave();

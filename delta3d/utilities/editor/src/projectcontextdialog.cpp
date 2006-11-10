@@ -83,7 +83,7 @@ namespace dtEditQt
 
         applyButton->setEnabled(false);
         pathEdit->setDisabled(true);
-        pathEdit->setText(tr(EditorData::getInstance().getCurrentProjectContext().c_str()));
+        pathEdit->setText(tr(EditorData::GetInstance().getCurrentProjectContext().c_str()));
         setMinimumSize(530, 100);
     }
 

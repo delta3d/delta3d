@@ -55,17 +55,17 @@ namespace dtEditQt
         vbox->setMargin(3);
 
         // connect 
-        connect(&EditorEvents::getInstance(), SIGNAL(mapLibraryImported()),
+        connect(&EditorEvents::GetInstance(), SIGNAL(mapLibraryImported()),
             this, SLOT(refreshAll()));
-        connect(&EditorEvents::getInstance(), SIGNAL(mapLibraryRemoved()),
+        connect(&EditorEvents::GetInstance(), SIGNAL(mapLibraryRemoved()),
             this, SLOT(refreshAll()));
-        connect(&EditorEvents::getInstance(), SIGNAL(currentMapChanged()), 
+        connect(&EditorEvents::GetInstance(), SIGNAL(currentMapChanged()), 
             this, SLOT(refreshAll()));
-        connect(&EditorEvents::getInstance(), SIGNAL(projectChanged()), 
+        connect(&EditorEvents::GetInstance(), SIGNAL(projectChanged()), 
             this, SLOT(refreshAll()));
-        connect(&EditorEvents::getInstance(), SIGNAL(LibraryAboutToBeRemoved()),
+        connect(&EditorEvents::GetInstance(), SIGNAL(LibraryAboutToBeRemoved()),
             this, SLOT(refreshAll())); // make sure the table is emptied here or crash!
-        connect(&EditorEvents::getInstance(), SIGNAL(actorProxyCreated(ActorProxyRefPtr, bool)), 
+        connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyCreated(ActorProxyRefPtr, bool)), 
             this, SLOT(onActorProxyCreated(ActorProxyRefPtr, bool)));   
     }
 
@@ -168,7 +168,7 @@ namespace dtEditQt
         std::vector<dtCore::RefPtr<dtDAL::ActorType> > actorTypes;
         std::vector<dtCore::RefPtr<dtDAL::ActorType> >::const_iterator actorTypesIter;
         std::set<std::string>::const_iterator setIter;
-        dtDAL::Map *map = EditorData::getInstance().getCurrentMap();
+        dtDAL::Map *map = EditorData::GetInstance().getCurrentMap();
         QStringList categoryList;
         QStringList typeList;
 
@@ -197,7 +197,7 @@ namespace dtEditQt
 
         if (map != NULL) 
         {
-            EditorData::getInstance().getMainWindow()->startWaitCursor();
+            EditorData::GetInstance().getMainWindow()->startWaitCursor();
 
             // walk through all the actor types and pull out the unique categories and types
             dtDAL::LibraryManager::GetInstance().GetActorTypes(actorTypes);
@@ -238,18 +238,18 @@ namespace dtEditQt
             classBox->addItems(classList);
             classBox->setCurrentIndex(0);
 
-            EditorData::getInstance().getMainWindow()->endWaitCursor();
+            EditorData::GetInstance().getMainWindow()->endWaitCursor();
         }
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     void ActorSearcher::searchPressed()
     {
-        EditorData::getInstance().getMainWindow()->startWaitCursor();
+        EditorData::GetInstance().getMainWindow()->startWaitCursor();
 
         LOG_ERROR("User pressed the search button");
         std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > foundProxies;
-        dtDAL::Map *map = EditorData::getInstance().getCurrentMap();
+        dtDAL::Map *map = EditorData::GetInstance().getCurrentMap();
 
         // get the search values
         QString searchName = actorNameEdit->text();
@@ -276,13 +276,13 @@ namespace dtEditQt
         resultsTable->setUpdatesEnabled(true);
         //showResults(foundProxies);
 
-        EditorData::getInstance().getMainWindow()->endWaitCursor();
+        EditorData::GetInstance().getMainWindow()->endWaitCursor();
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     void ActorSearcher::onActorProxyCreated(dtCore::RefPtr<dtDAL::ActorProxy> proxy, bool forceNoAdjustments)
     {
-        EditorData::getInstance().getMainWindow()->startWaitCursor();
+        EditorData::GetInstance().getMainWindow()->startWaitCursor();
 
         std::set<std::string>::const_iterator setIter;
         bool addedClasses = false;
@@ -323,7 +323,7 @@ namespace dtEditQt
             classBox->setCurrentIndex(previousIndex);
         }
 
-        EditorData::getInstance().getMainWindow()->endWaitCursor();
+        EditorData::GetInstance().getMainWindow()->endWaitCursor();
     }
 
 }

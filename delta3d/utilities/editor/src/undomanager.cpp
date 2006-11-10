@@ -47,33 +47,33 @@ namespace dtEditQt
         LOG_INFO("Initializing the UndoManager.");
 
         // connect all my signals  that cause the undo list to be trashed.
-        connect(&EditorEvents::getInstance(), SIGNAL(editorInitiationEvent()),
+        connect(&EditorEvents::GetInstance(), SIGNAL(editorInitiationEvent()),
             this, SLOT(clearAllHistories()));
-        connect(&EditorEvents::getInstance(), SIGNAL(editorCloseEvent()),
+        connect(&EditorEvents::GetInstance(), SIGNAL(editorCloseEvent()),
             this, SLOT(clearAllHistories()));
-        connect(&EditorEvents::getInstance(), SIGNAL(projectChanged()),
+        connect(&EditorEvents::GetInstance(), SIGNAL(projectChanged()),
             this, SLOT(clearAllHistories()));
-        connect(&EditorEvents::getInstance(), SIGNAL(currentMapChanged()),
+        connect(&EditorEvents::GetInstance(), SIGNAL(currentMapChanged()),
             this, SLOT(clearAllHistories()));
-        connect(&EditorEvents::getInstance(), SIGNAL(mapLibraryImported()),
+        connect(&EditorEvents::GetInstance(), SIGNAL(mapLibraryImported()),
             this, SLOT(clearAllHistories()));
-        connect(&EditorEvents::getInstance(), SIGNAL(mapLibraryRemoved()),
+        connect(&EditorEvents::GetInstance(), SIGNAL(mapLibraryRemoved()),
             this, SLOT(clearAllHistories()));
 
         // trap destry, create, change, and about to change
-        connect(&EditorEvents::getInstance(), SIGNAL(actorProxyDestroyed(ActorProxyRefPtr)),
+        connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyDestroyed(ActorProxyRefPtr)),
             this, SLOT(onActorProxyDestroyed(ActorProxyRefPtr)));
-        connect(&EditorEvents::getInstance(), SIGNAL(actorProxyCreated(ActorProxyRefPtr, bool)),
+        connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyCreated(ActorProxyRefPtr, bool)),
             this, SLOT(onActorProxyCreated(ActorProxyRefPtr, bool)));
-        connect(&EditorEvents::getInstance(),
+        connect(&EditorEvents::GetInstance(),
             SIGNAL(actorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)),
             this, SLOT(onActorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)));
-        connect(&EditorEvents::getInstance(),
+        connect(&EditorEvents::GetInstance(),
             SIGNAL(actorPropertyAboutToChange(ActorProxyRefPtr, ActorPropertyRefPtr,
             std::string, std::string)),
             this, SLOT(actorPropertyAboutToChange(ActorProxyRefPtr, ActorPropertyRefPtr,
             std::string, std::string)));
-        connect(&EditorEvents::getInstance(), SIGNAL(proxyNameChanged(ActorProxyRefPtr, std::string)),
+        connect(&EditorEvents::GetInstance(), SIGNAL(proxyNameChanged(ActorProxyRefPtr, std::string)),
             this, SLOT(onProxyNameChanged(ActorProxyRefPtr, std::string)));
     }
 
@@ -246,7 +246,7 @@ namespace dtEditQt
     //////////////////////////////////////////////////////////////////////////////
     void UndoManager::handleUndoRedoEvent(ChangeEvent *event, bool isUndo)
     {
-        dtCore::RefPtr<dtDAL::Map> currMap = EditorData::getInstance().getCurrentMap();
+        dtCore::RefPtr<dtDAL::Map> currMap = EditorData::GetInstance().getCurrentMap();
 
         if (currMap.valid())
         {
@@ -293,7 +293,7 @@ namespace dtEditQt
         // notify the world of our change to the data.
         dtCore::RefPtr<dtDAL::ActorProxy> ActorProxyRefPtr = proxy;
         recursePrevent = true;
-        EditorEvents::getInstance().emitProxyNameChanged(ActorProxyRefPtr, currentName);
+        EditorEvents::GetInstance().emitProxyNameChanged(ActorProxyRefPtr, currentName);
         recursePrevent = false;
 
         // now turn the undo into a redo event
@@ -337,15 +337,15 @@ namespace dtEditQt
 
         // Delete the sucker
         recursePrevent = true;
-        EditorData::getInstance().getMainWindow()->startWaitCursor();
-        dtCore::RefPtr<dtDAL::Map> currMap = EditorData::getInstance().getCurrentMap();
-        EditorActions::getInstance().deleteProxy(proxy, currMap);
+        EditorData::GetInstance().getMainWindow()->startWaitCursor();
+        dtCore::RefPtr<dtDAL::Map> currMap = EditorData::GetInstance().getCurrentMap();
+        EditorActions::GetInstance().deleteProxy(proxy, currMap);
 
         //We are deleting an object, so clear the current selection for safety.
         std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > emptySelection;
-        EditorEvents::getInstance().emitActorsSelected(emptySelection);
+        EditorEvents::GetInstance().emitActorsSelected(emptySelection);
 
-        EditorData::getInstance().getMainWindow()->endWaitCursor();
+        EditorData::GetInstance().getMainWindow()->endWaitCursor();
         recursePrevent = false;
     }
 
@@ -360,7 +360,7 @@ namespace dtEditQt
         // properties. Then, we need to add a CREATE change event to the REDO list.
 
         std::vector<dtCore::RefPtr < UndoPropertyData > >::const_iterator undoPropIter;
-        dtCore::RefPtr<dtDAL::Map> currMap = EditorData::getInstance().getCurrentMap();
+        dtCore::RefPtr<dtDAL::Map> currMap = EditorData::GetInstance().getCurrentMap();
 
         // figure out the actor type
         dtCore::RefPtr<dtDAL::ActorType> actorType = dtDAL::LibraryManager::GetInstance().
@@ -368,7 +368,7 @@ namespace dtEditQt
 
         if (currMap.valid() && actorType.valid())
         {
-            EditorData::getInstance().getMainWindow()->startWaitCursor();
+            EditorData::GetInstance().getMainWindow()->startWaitCursor();
 
             // recreate the actor!
             dtCore::RefPtr<dtDAL::ActorProxy> proxy =
@@ -393,10 +393,10 @@ namespace dtEditQt
                 proxy->SetName(event->oldName);
                 currMap->AddProxy(*(proxy.get()));
                 recursePrevent = true;
-                EditorEvents::getInstance().emitBeginChangeTransaction();
-                EditorEvents::getInstance().emitActorProxyCreated(proxy, true);
-                ViewportManager::getInstance().placeProxyInFrontOfCamera(proxy.get());
-                EditorEvents::getInstance().emitEndChangeTransaction();
+                EditorEvents::GetInstance().emitBeginChangeTransaction();
+                EditorEvents::GetInstance().emitActorProxyCreated(proxy, true);
+                ViewportManager::GetInstance().placeProxyInFrontOfCamera(proxy.get());
+                EditorEvents::GetInstance().emitEndChangeTransaction();
                 recursePrevent = false;
 
                 // create our redo event
@@ -411,7 +411,7 @@ namespace dtEditQt
                 }
             }
         }
-        EditorData::getInstance().getMainWindow()->endWaitCursor();
+        EditorData::GetInstance().getMainWindow()->endWaitCursor();
 
     }
 
@@ -438,9 +438,9 @@ namespace dtEditQt
                 dtCore::RefPtr<dtDAL::ActorProxy> ActorProxyRefPtr = proxy;
                 dtCore::RefPtr<dtDAL::ActorProperty> ActorPropertyRefPtr = property;
                 recursePrevent = true;
-                EditorData::getInstance().getMainWindow()->startWaitCursor();
-                EditorEvents::getInstance().emitActorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr);
-                EditorData::getInstance().getMainWindow()->endWaitCursor();
+                EditorData::GetInstance().getMainWindow()->startWaitCursor();
+                EditorEvents::GetInstance().emitActorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr);
+                EditorData::GetInstance().getMainWindow()->endWaitCursor();
                 recursePrevent = false;
 
                 // Create the Redo event - reverse old and new.
@@ -493,8 +493,8 @@ namespace dtEditQt
     //////////////////////////////////////////////////////////////////////////////
     void UndoManager::enableButtons()
     {
-        EditorActions::getInstance().actionEditUndo->setEnabled(!undoStack.empty());
-        EditorActions::getInstance().actionEditRedo->setEnabled(!redoStack.empty());
+        EditorActions::GetInstance().actionEditUndo->setEnabled(!undoStack.empty());
+        EditorActions::GetInstance().actionEditRedo->setEnabled(!redoStack.empty());
     }
 
     //////////////////////////////////////////////////////////////////////////////
