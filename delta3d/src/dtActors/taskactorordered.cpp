@@ -93,18 +93,18 @@ namespace dtActors
 
       //Need to see if all the tasks added prior to the task in question have been
       //completed.  If not we have to reject.
-      for (itor=subTasks.begin(); itor!=subTasks.end(); ++itor)
+      for(itor=subTasks.begin(); itor!=subTasks.end(); ++itor)
       {
          const TaskActorProxy &task = *itor->get();
 
          //If we encounter a task before the task in question that has not yet been
          //completed, we cannot continue.
-         if (task.GetProperty("Complete")->GetStringValue() == "false" && task.GetId() != childTask.GetId())
+         if(task.GetProperty("Complete")->GetStringValue() == "false" && task.GetId() != childTask.GetId())
          {
             //Set the task that got rejected so a user can query for this a report
             //additional information.
             SetFailingTaskProxy(origTask);
-            if (GetProperty("Order Enforcement")->GetStringValue() ==
+            if(GetProperty("Order Enforcement")->GetStringValue() ==
                 TaskActorOrdered::FailureType::CAUSE_FAILURE.GetName())
             {
                mAlwaysFail = true;
@@ -115,7 +115,7 @@ namespace dtActors
 
          //If we got here, then all the tasks before the current task have been completed.
          //So we can accept it and stopping checking...
-         if (itor->get() == &childTask)
+         if(itor->get() == &childTask)
          {
             result = true;
             break;
@@ -123,7 +123,7 @@ namespace dtActors
       }
 
       //Make sure to forward the request up the task's chain of command so to speak...
-      if (GetParentTask() != NULL)
+      if(GetParentTask() != NULL)
          return result && GetParentTask()->RequestScoreChange(*this,origTask);
       
       return result;
