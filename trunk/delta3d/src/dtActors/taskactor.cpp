@@ -186,7 +186,7 @@ namespace dtActors
       //a top level task, else just passes the request up the chain.  Note, the original
       //task is the task that this method was first called on.
       if (GetParentTask() != NULL)
-         return true && GetParentTask()->RequestScoreChange(*this,origTask);
+         return GetParentTask()->RequestScoreChange(*this,origTask);
       else
          return true;
    }

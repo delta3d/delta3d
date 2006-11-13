@@ -347,6 +347,16 @@ namespace dtActors
           */
          bool IsTopLevelTask() const { return mParentTaskProxy == NULL; }
 
+         /**
+          * Wrapper for the actor method
+          */
+         float GetPassingScore() const { return static_cast<const TaskActor&>(GetGameActor()).GetPassingScore(); }
+
+         /**
+          * Wrapper for the actor method
+          */
+         float GetScore() const { return static_cast<const TaskActor&>(GetGameActor()).GetScore(); }
+
       protected:
 
          /**
