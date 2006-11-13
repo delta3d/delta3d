@@ -27,6 +27,7 @@
 #include <QtGui/QDialog>
 #include <dtEditQt/groupuiplugin.h>
 #include <dtCore/refptr.h>
+#include <set>
 
 // Forward declarations
 class QComboBox;
