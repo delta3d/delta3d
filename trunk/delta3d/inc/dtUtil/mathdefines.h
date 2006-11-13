@@ -102,7 +102,7 @@ namespace dtUtil
       return Lerp(sMin, sMax, coefficient);
    }
 
-   /// Caclulates the corresponding value for a mirrored space.
+   /// Calculates the corresponding value for a mirrored space.
    /// Given defined ranges for X space and Y space, and a known value in X space,
    /// where X space and Y space are linearly related, find the corresponding value in Y space.
    /// Usage: float y = MapRangeValue(x,xMin,xMax,yMin,yMax);
@@ -114,7 +114,7 @@ namespace dtUtil
    template<typename T>
    T MapRangeValue(T sX, T xMin, T xMax, T yMin, T yMax)
    {
-      return( CalculateValueForRange( CalculateNormal(sX,xMin,xMax), yMin, yMax ) );
+      return( Lerp( yMin, yMax, CalculateNormal(sX,xMin,xMax)) );
    }
 
    /**
