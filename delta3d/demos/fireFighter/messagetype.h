@@ -37,7 +37,8 @@ class FIRE_FIGHTER_EXPORT MessageType : public dtGame::MessageType
       static const MessageType ITEM_USED;
       static const MessageType ITEM_SELECTED;
       static const MessageType ITEM_INTERSECTED;
-      static const MessageType PLAY_SOUND;
+      static const MessageType MISSION_COMPLETE;
+      static const MessageType MISSION_FAILED;
 
    private:
 

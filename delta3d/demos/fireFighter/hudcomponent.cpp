@@ -73,7 +73,11 @@ HUDComponent::HUDComponent(dtCore::DeltaWin &win, const std::string &name) :
    mFireHoseIconPos(0.688f, 0.8f), 
    mSCBAIconPos(0.85f, 0.8f), 
    mTasksHeaderText(NULL), 
-   mNumTasks(11)
+   mNumTasks(11), 
+   mMissionCompletedText(NULL), 
+   mMissionFailedText(NULL), 
+   mMissionComplete(false), 
+   mMissionFailed(false)
 {
    SetupGUI(win);
 }
@@ -175,6 +179,18 @@ void HUDComponent::ProcessMessage(const dtGame::Message &msg)
    {
       UpdateMediumDetailData();
    }
+   else if(msg.GetMessageType() == MessageType::MISSION_COMPLETE)
+   {
+      mMissionComplete = true;
+      mMissionFailed = false;
+      Refresh();
+   }
+   else if(msg.GetMessageType() == MessageType::MISSION_FAILED)
+   {
+      mMissionFailed = true;
+      mMissionComplete = false;
+      Refresh();
+   }
 }
 
 void HUDComponent::ShowMainMenu()
@@ -191,6 +207,10 @@ void HUDComponent::ShowHUD()
    
    HideMenus();
    mHUDBackground->show();
+   if(mMissionComplete)
+      mMissionCompletedText->show();
+   else if(mMissionFailed)
+      mMissionFailedText->show();
 }
 
 void HUDComponent::ShowEndMenu()
@@ -368,6 +388,28 @@ void HUDComponent::BuildHUD()
    mTargetIcon->setImage("TargetImage", "TargetImage");
    mHUDBackground->addChildWindow(mTargetIcon);
 
+   mMissionCompletedText = static_cast<CEGUI::StaticText*>(wm->createWindow("WindowsLook/StaticText", "MissionCompleteText"));
+   mMissionCompletedText->setText("Mission Completed. Press M to debrief");
+   mMissionCompletedText->setTextColours(CEGUI::colour(0.0f, 1.0f, 0.0f, 1.0f));
+   mMissionCompletedText->setBackgroundEnabled(false);
+   mMissionCompletedText->setFrameEnabled(false);
+   mMissionCompletedText->setSize(CEGUI::Size(0.5f, 0.1f));
+   mMissionCompletedText->setPosition(CEGUI::Point(0.1f, 0.1f));
+   mMissionCompletedText->setHorizontalAlignment(CEGUI::HA_CENTRE);
+   mHUDBackground->addChildWindow(mMissionCompletedText);
+   mMissionCompletedText->hide();
+
+   mMissionFailedText = static_cast<CEGUI::StaticText*>(wm->createWindow("WindowsLook/StaticText", "MissionFailedText"));
+   mMissionFailedText->setText("Mission Failed. Press M to debrief");
+   mMissionFailedText->setTextColours(CEGUI::colour(1.0f, 0.0f, 0.0f, 1.0f));
+   mMissionFailedText->setBackgroundEnabled(false);
+   mMissionFailedText->setFrameEnabled(false);
+   mMissionFailedText->setSize(CEGUI::Size(0.5f, 0.1f));
+   mMissionFailedText->setPosition(CEGUI::Point(0.1f, 0.1f));
+   mMissionFailedText->setHorizontalAlignment(CEGUI::HA_CENTRE);
+   mHUDBackground->addChildWindow(mMissionFailedText);
+   mMissionFailedText->hide();
+
    float curYPos       = 20.0f;
    float mTextHeight   = 25.0f;
    float taskTextWidth = 500.0f;
@@ -445,7 +487,7 @@ void HUDComponent::BuildIntroMenu()
 bool HUDComponent::OnStartWithObjectives(const CEGUI::EventArgs &e)
 {
    mShowObjectives = true;
-   SendGameStateChangedMessage(GameState::STATE_MENU, GameState::STATE_INTRO);
+   SendGameStateChangedMessage(GameState::STATE_MENU, GameState::STATE_RUNNING);
    return true;
 }
 
@@ -646,10 +688,10 @@ unsigned int HUDComponent::RecursivelyAddTasks(const std::string &indent,
          if(tage != NULL)
          {
             dtDAL::GameEvent *event = tage->GetGameEvent();
-            oss << indent << event->GetDescription() << " Y " << task->GetScore();
+            oss << indent << event->GetDescription();// << " Y " << task->GetScore();
          }
          else
-            oss << indent << task->GetDescription() << " Y " << task->GetScore();
+            oss << indent << task->GetDescription();// << " Y " << task->GetScore();
          
          UpdateStaticText(mTaskTextList[curIndex + totalNumAdded], oss.str(), 0.0, 1.0, 0.0);
       }
@@ -659,10 +701,10 @@ unsigned int HUDComponent::RecursivelyAddTasks(const std::string &indent,
          if(tage != NULL)
          {
             dtDAL::GameEvent *event = tage->GetGameEvent();
-            oss << indent << event->GetDescription() << " N " << task->GetScore();
+            oss << indent << event->GetDescription();// << " N " << task->GetScore();
          }
          else
-            oss << indent << task->GetDescription() << " N " << task->GetScore();
+            oss << indent << task->GetDescription();// << " N " << task->GetScore();
          UpdateStaticText(mTaskTextList[curIndex + totalNumAdded], oss.str(), 1.0, 1.0, 1.0);
       }
 

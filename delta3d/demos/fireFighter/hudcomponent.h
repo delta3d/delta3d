@@ -232,6 +232,8 @@ class FIRE_FIGHTER_EXPORT HUDComponent : public dtGame::GMComponent
       std::vector<CEGUI::StaticText*> mTaskTextList;
       CEGUI::StaticText *mTasksHeaderText;
       const unsigned int mNumTasks;
+      CEGUI::StaticText *mMissionCompletedText, *mMissionFailedText;
+      bool mMissionComplete, mMissionFailed;
 };
 
 #endif

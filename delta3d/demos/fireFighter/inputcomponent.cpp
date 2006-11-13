@@ -65,7 +65,8 @@ InputComponent::InputComponent(const std::string &name) :
    mCurrentIntersectedItem(NULL), 
    mRadius(0.1f), 
    mTheta(0.10f),
-   mK(0.40f)
+   mK(0.40f), 
+   mTasksSetup(false)
 {
 
 }
@@ -134,6 +135,11 @@ void InputComponent::ProcessMessage(const dtGame::Message &message)
          mCurrentIntersectedItem = dynamic_cast<GameItemActor*>(GetGameManager()->FindGameActorById(message.GetAboutActorId())->GetActor());
       else
          mCurrentIntersectedItem = NULL;
+   }
+   else if(message.GetMessageType() == dtGame::MessageType::TICK_LOCAL)
+   {
+      if(*mCurrentState == GameState::STATE_RUNNING)
+         ProcessTasks();
    }
 }
 
@@ -598,4 +604,61 @@ void InputComponent::SetupTasks()
    mMission->AddSubTask(*rollup); // Find Gear
    mMission->AddSubTask(*taop);   // Safely enter room
    mMission->AddSubTask(*fire);   // Extinguish Fire
+
+   mTasksSetup = true;
+}
+
+void InputComponent::ProcessTasks()
+{
+   if(!mTasksSetup)
+      return;
+
+   // Mission completed?
+   if(mMission->GetScore() == mMission->GetPassingScore())
+   {
+      RefPtr<dtGame::Message> msg = 
+         GetGameManager()->GetMessageFactory().CreateMessage(MessageType::MISSION_COMPLETE);
+
+      msg->SetAboutActorId(mMission->GetId());
+      GetGameManager()->SendMessage(*msg);
+      return;
+   }
+
+   // Mission failed?
+   // Process the subtasks
+   const std::vector<RefPtr<dtActors::TaskActorProxy> > &tasks = mMission->GetAllSubTasks();
+   for(unsigned int i = 0; i < tasks.size(); i++)
+   {
+      // Ensure this subtask isn't another parent task
+      const dtActors::TaskActorOrderedProxy *orderedTask = dynamic_cast<const dtActors::TaskActorOrderedProxy*>(tasks[i].get());
+      if(orderedTask != NULL)
+      {
+         const dtActors::TaskActorProxy *failedTask = orderedTask->GetFailingTaskProxy();
+         // Failure
+         if(failedTask != NULL)
+         {
+            const dtActors::TaskActorOrderedProxy *failedOrderedTask = dynamic_cast<const dtActors::TaskActorOrderedProxy*>(failedTask);
+            if(failedOrderedTask != NULL)
+            {
+               const dtActors::TaskActorProxy *failedChildTask = failedOrderedTask->GetFailingTaskProxy();
+               if(failedChildTask != NULL)
+               {
+                  RefPtr<dtGame::Message> msg = 
+                     GetGameManager()->GetMessageFactory().CreateMessage(MessageType::MISSION_FAILED);
+
+                  msg->SetAboutActorId(failedChildTask->GetId());
+                  GetGameManager()->SendMessage(*msg);
+               }
+            }
+            else
+            {
+               RefPtr<dtGame::Message> msg = 
+                  GetGameManager()->GetMessageFactory().CreateMessage(MessageType::MISSION_FAILED);
+
+               msg->SetAboutActorId(failedTask->GetId());
+               GetGameManager()->SendMessage(*msg);
+            }
+         }
+      }
+   }
 }
