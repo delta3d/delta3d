@@ -234,6 +234,7 @@ class FIRE_FIGHTER_EXPORT HUDComponent : public dtGame::GMComponent
       const unsigned int mNumTasks;
       CEGUI::StaticText *mMissionCompletedText, *mMissionFailedText;
       bool mMissionComplete, mMissionFailed;
+      dtActors::TaskActorProxy *mFailedProxy;
 };
 
 #endif

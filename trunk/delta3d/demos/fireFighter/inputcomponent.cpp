@@ -523,77 +523,77 @@ void InputComponent::SetupTasks()
    dtGame::GameManager &mgr = *GetGameManager();
    std::vector<RefPtr<dtDAL::ActorProxy> > proxies;
 
-   ////////////////////// Find Gear ///////////////////////////////////////////
-   mgr.FindActorsByName("TaskFindGear", proxies);
-   dtActors::TaskActorRollupProxy *rollup = dynamic_cast<dtActors::TaskActorRollupProxy*>(proxies[0].get());
+   //////////////////////// Find Gear ///////////////////////////////////////////
+   //mgr.FindActorsByName("TaskFindGear", proxies);
+   //dtActors::TaskActorRollupProxy *rollup = dynamic_cast<dtActors::TaskActorRollupProxy*>(proxies[0].get());
 
-   mgr.FindActorsByName("TaskAcquireFireHose", proxies);
-   dtActors::TaskActorGameEventProxy *fireHose = dynamic_cast<dtActors::TaskActorGameEventProxy*>(proxies[0].get());
-   proxies.clear();
+   //mgr.FindActorsByName("TaskAcquireFireHose", proxies);
+   //dtActors::TaskActorGameEventProxy *fireHose = dynamic_cast<dtActors::TaskActorGameEventProxy*>(proxies[0].get());
+   //proxies.clear();
 
-   mgr.FindActorsByName("TaskUseSCBA", proxies);
-   dtActors::TaskActorGameEventProxy *scba = dynamic_cast<dtActors::TaskActorGameEventProxy*>(proxies[0].get());
-   proxies.clear();
+   //mgr.FindActorsByName("TaskUseSCBA", proxies);
+   //dtActors::TaskActorGameEventProxy *scba = dynamic_cast<dtActors::TaskActorGameEventProxy*>(proxies[0].get());
+   //proxies.clear();
 
-   mgr.FindActorsByName("TaskFireSuit", proxies);
-   dtActors::TaskActorGameEventProxy *fireSuit = dynamic_cast<dtActors::TaskActorGameEventProxy*>(proxies[0].get());
-   proxies.clear();
+   //mgr.FindActorsByName("TaskFireSuit", proxies);
+   //dtActors::TaskActorGameEventProxy *fireSuit = dynamic_cast<dtActors::TaskActorGameEventProxy*>(proxies[0].get());
+   //proxies.clear();
 
-   if(rollup == NULL || fireHose == NULL || scba == NULL || fireSuit == NULL)
-   {
-      LOG_ERROR("Failed to intialize the rollup task actors");
-      return;
-   }
+   //if(rollup == NULL || fireHose == NULL || scba == NULL || fireSuit == NULL)
+   //{
+   //   LOG_ERROR("Failed to intialize the rollup task actors");
+   //   return;
+   //}
 
-   rollup->AddSubTask(*fireHose);
-   rollup->AddSubTask(*scba);
-   rollup->AddSubTask(*fireSuit);
-   ////////////////////////////////////////////////////////////////////////////
+   //rollup->AddSubTask(*fireHose);
+   //rollup->AddSubTask(*scba);
+   //rollup->AddSubTask(*fireSuit);
+   //////////////////////////////////////////////////////////////////////////////
 
-   //////////////////////////// Safely Enter Engine Room //////////////////////
-   mgr.FindActorsByName("TaskSafelyEnterEngineRoom", proxies);
-   dtActors::TaskActorOrderedProxy *taop = dynamic_cast<dtActors::TaskActorOrderedProxy*>(proxies[0].get());
-   proxies.clear();
+   ////////////////////////////// Safely Enter Engine Room //////////////////////
+   //mgr.FindActorsByName("TaskSafelyEnterEngineRoom", proxies);
+   //dtActors::TaskActorOrderedProxy *taop = dynamic_cast<dtActors::TaskActorOrderedProxy*>(proxies[0].get());
+   //proxies.clear();
 
-   mgr.FindActorsByName("TaskThrowPrimaryHalon", proxies);
-   dtActors::TaskActorGameEventProxy *pHalon = dynamic_cast<dtActors::TaskActorGameEventProxy*>(proxies[0].get());
-   proxies.clear();
+   //mgr.FindActorsByName("TaskThrowPrimaryHalon", proxies);
+   //dtActors::TaskActorGameEventProxy *pHalon = dynamic_cast<dtActors::TaskActorGameEventProxy*>(proxies[0].get());
+   //proxies.clear();
 
-   mgr.FindActorsByName("TaskThrowSecondaryHalon", proxies);
-   dtActors::TaskActorGameEventProxy *sHalon = dynamic_cast<dtActors::TaskActorGameEventProxy*>(proxies[0].get());
-   proxies.clear();
+   //mgr.FindActorsByName("TaskThrowSecondaryHalon", proxies);
+   //dtActors::TaskActorGameEventProxy *sHalon = dynamic_cast<dtActors::TaskActorGameEventProxy*>(proxies[0].get());
+   //proxies.clear();
 
-   mgr.FindActorsByName("TaskTripFuelValve", proxies);
-   dtActors::TaskActorGameEventProxy *valve = dynamic_cast<dtActors::TaskActorGameEventProxy*>(proxies[0].get());
-   proxies.clear();
+   //mgr.FindActorsByName("TaskTripFuelValve", proxies);
+   //dtActors::TaskActorGameEventProxy *valve = dynamic_cast<dtActors::TaskActorGameEventProxy*>(proxies[0].get());
+   //proxies.clear();
 
-   mgr.FindActorsByName("TaskOpenHatch", proxies);
-   dtActors::TaskActorGameEventProxy *hatch = dynamic_cast<dtActors::TaskActorGameEventProxy*>(proxies[0].get());
-   proxies.clear();
+   //mgr.FindActorsByName("TaskOpenHatch", proxies);
+   //dtActors::TaskActorGameEventProxy *hatch = dynamic_cast<dtActors::TaskActorGameEventProxy*>(proxies[0].get());
+   //proxies.clear();
 
-   if(taop == NULL || pHalon == NULL || sHalon == NULL || valve == NULL || hatch == NULL)
-   {
+   //if(taop == NULL || pHalon == NULL || sHalon == NULL || valve == NULL || hatch == NULL)
+   //{
 
-      LOG_ERROR("Failed to intialize the ordered task actors");
-      return;
-   }
+   //   LOG_ERROR("Failed to intialize the ordered task actors");
+   //   return;
+   //}
 
-   taop->AddSubTask(*pHalon);
-   taop->AddSubTask(*sHalon);
-   taop->AddSubTask(*valve);
-   taop->AddSubTask(*hatch);
-   ////////////////////////////////////////////////////////////////////////////
+   //taop->AddSubTask(*pHalon);
+   //taop->AddSubTask(*sHalon);
+   //taop->AddSubTask(*valve);
+   //taop->AddSubTask(*hatch);
+   //////////////////////////////////////////////////////////////////////////////
 
-   ///////////////////////// Extinguish Fire //////////////////////////////////
-   mgr.FindActorsByName("TaskExtinguishFire", proxies);
-   dtActors::TaskActorGameEventProxy *fire = dynamic_cast<dtActors::TaskActorGameEventProxy*>(proxies[0].get());
-   proxies.clear();
+   /////////////////////////// Extinguish Fire //////////////////////////////////
+   //mgr.FindActorsByName("TaskExtinguishFire", proxies);
+   //dtActors::TaskActorGameEventProxy *fire = dynamic_cast<dtActors::TaskActorGameEventProxy*>(proxies[0].get());
+   //proxies.clear();
 
-   if(fire == NULL)
-   {
-      LOG_ERROR("Failed to intialize the fire task actor");
-      return;
-   }
+   //if(fire == NULL )
+   //{
+   //   LOG_ERROR("Failed to intialize the fire task actor");
+   //   return;
+   //}
    ////////////////////////////////////////////////////////////////////////////
 
    ///////////////////////// Mission Task /////////////////////////////////////
@@ -601,9 +601,9 @@ void InputComponent::SetupTasks()
    mMission = dynamic_cast<dtActors::TaskActorOrderedProxy*>(proxies[0].get());
    proxies.clear();
 
-   mMission->AddSubTask(*rollup); // Find Gear
-   mMission->AddSubTask(*taop);   // Safely enter room
-   mMission->AddSubTask(*fire);   // Extinguish Fire
+   //mMission->AddSubTask(*rollup); // Find Gear
+   //mMission->AddSubTask(*taop);   // Safely enter room
+   //mMission->AddSubTask(*fire);   // Extinguish Fire
 
    mTasksSetup = true;
 }
