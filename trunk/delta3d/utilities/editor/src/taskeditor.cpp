@@ -44,6 +44,7 @@
 #include <dtDAL/namedparameter.h>
 #include <dtDAL/actortype.h>
 #include <dtDAL/actorproxy.h>
+#include <dtDAL/enginepropertytypes.h>
 #include <dtCore/uniqueid.h>
 
 namespace dtEditQt
