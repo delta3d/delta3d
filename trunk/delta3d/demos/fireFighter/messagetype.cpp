@@ -29,4 +29,5 @@ const MessageType MessageType::ITEM_DEACTIVATED("ITEM_DEACTIVATED", "INFO", "Sen
 const MessageType MessageType::ITEM_USED("ITEM_USED", "INFO", "Sent when an item in the inventory is used", USER_DEFINED_MESSAGE_TYPE + 4);
 const MessageType MessageType::ITEM_SELECTED("ITEM_SELECTED", "INFO", "Sent when an item in the inventory is selected", USER_DEFINED_MESSAGE_TYPE + 8);
 const MessageType MessageType::ITEM_INTERSECTED("ITEM_INTERSECTED", "INFO", "Sent when an item is collided with", USER_DEFINED_MESSAGE_TYPE + 5);
-const MessageType MessageType::PLAY_SOUND("PLAY_SOUND", "COMMAND", "Send when a sound needs to be played", USER_DEFINED_MESSAGE_TYPE + 6);
+const MessageType MessageType::MISSION_COMPLETE("MISSION_COMPLETE", "INFO", "Sent when the top level game task is completed", USER_DEFINED_MESSAGE_TYPE + 6);
+const MessageType MessageType::MISSION_FAILED("MISSION_FAILED", "INFO", "Sent when the mission is failed", USER_DEFINED_MESSAGE_TYPE + 10);

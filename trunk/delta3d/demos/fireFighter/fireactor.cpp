@@ -250,8 +250,6 @@ void FireActor::DecreaseIntensity(float intensity)
          dtGame::GameEventMessage &gem = static_cast<dtGame::GameEventMessage&>(*msg);
          gem.SetGameEvent(*event);
          mgr.SendMessage(gem);
-
-         return;
       }
       else if(mIntensity < 2.0f)
       {

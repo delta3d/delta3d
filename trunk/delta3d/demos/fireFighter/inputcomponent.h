@@ -181,6 +181,12 @@ class FIRE_FIGHTER_EXPORT InputComponent : public dtGame::BaseInputComponent
        */
       void SetupTasks();
 
+      /**
+       * Helper method to go through the list of tasks and send a message if 
+       * a task has failed
+       */
+      void ProcessTasks();
+
       GameState *mCurrentState;
       PlayerActor *mPlayer;
 
@@ -190,6 +196,7 @@ class FIRE_FIGHTER_EXPORT InputComponent : public dtGame::BaseInputComponent
       GameItemActor *mCurrentIntersectedItem;
       float mRadius, mTheta, mK;
       dtCore::RefPtr<dtActors::TaskActorOrderedProxy> mMission;
+      bool mTasksSetup;
 };
 
 template<class T>
