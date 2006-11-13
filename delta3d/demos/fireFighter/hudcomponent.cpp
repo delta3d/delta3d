@@ -77,7 +77,8 @@ HUDComponent::HUDComponent(dtCore::DeltaWin &win, const std::string &name) :
    mMissionCompletedText(NULL), 
    mMissionFailedText(NULL), 
    mMissionComplete(false), 
-   mMissionFailed(false)
+   mMissionFailed(false), 
+   mFailedProxy(NULL)
 {
    SetupGUI(win);
 }
@@ -189,6 +190,7 @@ void HUDComponent::ProcessMessage(const dtGame::Message &msg)
    {
       mMissionFailed = true;
       mMissionComplete = false;
+      GetGameManager()->FindActorById(msg.GetAboutActorId(), mFailedProxy);
       Refresh();
    }
 }
@@ -660,9 +662,9 @@ void HUDComponent::UpdateMediumDetailData()
       // update our task header
       oss << "Tasks (" << numComplete << " of " << numAdded << ")";
       if(numComplete < numAdded)
-         UpdateStaticText(mTasksHeaderText, oss.str(), 1.0, 1.0, 1.0);
+         UpdateStaticText(mTasksHeaderText, oss.str(), 1.0f, 1.0f, 1.0f);
       else
-         UpdateStaticText(mTasksHeaderText, oss.str(), 0.1, 1.0, 0.1);
+         UpdateStaticText(mTasksHeaderText, oss.str(), 0.0f, 1.0f, 0.0f);
    }
 }
 
@@ -693,7 +695,7 @@ unsigned int HUDComponent::RecursivelyAddTasks(const std::string &indent,
          else
             oss << indent << task->GetDescription();// << " Y " << task->GetScore();
          
-         UpdateStaticText(mTaskTextList[curIndex + totalNumAdded], oss.str(), 0.0, 1.0, 0.0);
+         UpdateStaticText(mTaskTextList[curIndex + totalNumAdded], oss.str(), 0.0f, 1.0f, 0.0f);
       }
       else
       {
@@ -705,7 +707,11 @@ unsigned int HUDComponent::RecursivelyAddTasks(const std::string &indent,
          }
          else
             oss << indent << task->GetDescription();// << " N " << task->GetScore();
-         UpdateStaticText(mTaskTextList[curIndex + totalNumAdded], oss.str(), 1.0, 1.0, 1.0);
+
+         if(&task->GetGameActorProxy() == mFailedProxy)
+            UpdateStaticText(mTaskTextList[curIndex + totalNumAdded], oss.str(), 1.0f, 0.0f, 0.0f);
+         else
+            UpdateStaticText(mTaskTextList[curIndex + totalNumAdded], oss.str(), 1.0f, 1.0f, 1.0f);
       }
 
       totalNumAdded++;
@@ -731,14 +737,15 @@ void HUDComponent::UpdateStaticText(CEGUI::StaticText *textControl, const std::s
    if(textControl != NULL)
    {
       // text and color
-      if(!newText.empty() && textControl->getText() != newText)
+      if(!newText.empty())// && textControl->getText() != newText)
       {
-         textControl->setText(newText);
-         if(red >= 0.00 && blue >= 0.0 && green >= 0.0)
+         if(textControl->getText() != newText)
+            textControl->setText(newText);
+         if(red >= 0.0f && blue >= 0.0f && green >= 0.0f)
             textControl->setTextColours(CEGUI::colour(red, blue, green));
       }
       // position
-      if(x > 0.0 && y > 0.0)
+      if(x > 0.0f && y > 0.0f)
       {
          CEGUI::Point position = textControl->getPosition();
          CEGUI::Point newPos(x, y);
