@@ -308,7 +308,15 @@ namespace dtActors
    //////////////////////////////////////////////////////////////////////////////
    void TaskActorProxy::SetSubTaskGroup(const dtDAL::NamedGroupParameter& subTasks)
    {
+      //first remove all subtasks, even if the parameter may have some
+      //of the same tasks in it.
+      for (unsigned i = 0; i < mSubTaskProxies.size(); ++i)
+      {
+         mSubTaskProxies[i]->SetParentTaskProxy(NULL);
+      }
+      
       mSubTaskProxies.clear();
+      
       std::vector<const dtDAL::NamedParameter*> toFill;
       subTasks.GetParameters(toFill);
 

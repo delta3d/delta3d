@@ -34,6 +34,8 @@
 #include <QtGui/QLabel>
 #include <QtGui/QTableWidget>
 #include <QtGui/QHeaderView>
+#include <QtGui/QCheckBox>
+
 #include <QtCore/QString>
 #include <QtCore/QVariant>
 
@@ -69,11 +71,20 @@ namespace dtEditQt
       grid->addWidget(mChildrenView, 1, 0);
 
       mAddExisting = new QPushButton(tr("Add Existing"));
+      
       mComboBox = new QComboBox;
       mComboBox->setEditable(false);
+
+      mShowTasksWithParents = new QCheckBox("Show Tasks With Parents");
+      mShowTasksWithParents->setCheckState(Qt::Unchecked);
+      mShowTasksWithParents->setTristate(false);
+
       rightSideLayout->addWidget(mAddExisting);
       rightSideLayout->addWidget(mComboBox);
-      grid->addLayout(rightSideLayout, 0, 1);
+      rightSideLayout->addWidget(mShowTasksWithParents);
+      rightSideLayout->addStretch(1);
+      
+      grid->addLayout(rightSideLayout, 0, 1, 2, 1);
 
       QHBoxLayout *buttonLayout = new QHBoxLayout;
       mMoveUp = new QPushButton(tr("Move Up"));
@@ -88,8 +99,11 @@ namespace dtEditQt
 
       QHBoxLayout *okCancelLayout = new QHBoxLayout;
       QPushButton *ok = new QPushButton(tr("OK")), *cancel = new QPushButton(tr("Cancel"));
+      okCancelLayout->addStretch(1);
       okCancelLayout->addWidget(ok);
+      okCancelLayout->addStretch(1);
       okCancelLayout->addWidget(cancel);
+      okCancelLayout->addStretch(1);
       
       QVBoxLayout *mainLayout = new QVBoxLayout(this);
       mainLayout->addWidget(group);
@@ -101,6 +115,8 @@ namespace dtEditQt
 
       connect(mComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(OnComboSelectionChanged(int)));
       connect(mAddExisting, SIGNAL(clicked()), this, SLOT(AddSelected()));
+
+      connect(mShowTasksWithParents, SIGNAL(stateChanged(int)), this, SLOT(OnShowTasksWithParentsChanged(int)));
 
       connect(mMoveUp,      SIGNAL(clicked()), this, SLOT(OnMoveUpClicked()));
       connect(mMoveDown,    SIGNAL(clicked()), this, SLOT(OnMoveDownClicked()));
@@ -153,8 +169,6 @@ namespace dtEditQt
          std::vector<dtDAL::NamedParameter*> toFill;
          mChildren->GetParameters(toFill);
          
-         //mChildrenView->setRowCount(toFill.size());
-
          for (unsigned i = 0; i < toFill.size(); ++i)
          {
             dtDAL::NamedParameter* np = toFill[i];
@@ -263,7 +277,9 @@ namespace dtEditQt
       {
          dtDAL::ActorProxy* ap = toFill[i].get();
          bool isRemoved = mRemovedTasks.find(ap) != mRemovedTasks.end();
-         if (!isRemoved)
+         // We don't want to see actors with parents unless it has been removed from the current parent actor
+         // or the checkbox has been selected by the user to explicitly show them. 
+         if (!isRemoved && mShowTasksWithParents->checkState() == Qt::Unchecked)
          {
             dtDAL::BooleanActorProperty* bap = static_cast<dtDAL::BooleanActorProperty*>(ap->GetProperty(topLevelProperty)); 
             if (bap == NULL)
@@ -279,17 +295,17 @@ namespace dtEditQt
                continue;
          }
    
-         bool found = false;
+         bool isSelected = false;
          for (unsigned j = 0; j < selectedActors.size(); ++j)
          {
             if (selectedActors[j] == toFill[i].get())
             {
-               found = true;
+               isSelected = true;
                break;
             }
          } 
                   
-         if (!found && !HasChild(*ap))
+         if (!isSelected && !HasChild(*ap))
          {
             //TODO if it's not the currently selected actor
             QVariant v = QVariant::fromValue(dtCore::RefPtr<dtDAL::ActorProxy>(ap)); 
@@ -330,7 +346,7 @@ namespace dtEditQt
    {
       LOGN_DEBUG("taskeditor.cpp", "Remove Child");
       int row = mChildrenView->currentRow();
-      if (row > 0)
+      if (row >= 0)
       {
          QTableWidgetItem* item = mChildrenView->item(row, 0);
          if (item != NULL)
@@ -350,6 +366,12 @@ namespace dtEditQt
    {
       LOGN_DEBUG("taskeditor.cpp", "Okay Clicked");
       accept();
+   }
+   
+   void TaskEditor::OnShowTasksWithParentsChanged(int state)
+   {
+      LOGN_DEBUG("taskeditor.cpp", "ShowTasksWithParents changed.");
+      RefreshComboBox(tr(""));
    }
 
    ///////////////////////////////////////////////////////////////////////////////

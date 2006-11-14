@@ -147,7 +147,7 @@ namespace dtEditQt
    }
    
    //////////////////////////////////////////////////////////////////////////////
-   void EditorData::GetSelectedActors(std::vector<dtDAL::ActorProxy*> toFill)
+   void EditorData::GetSelectedActors(std::vector<dtDAL::ActorProxy*>& toFill)
    {
       getMainWindow()->GetPropertyEditor().GetSelectedActors(toFill);
    }

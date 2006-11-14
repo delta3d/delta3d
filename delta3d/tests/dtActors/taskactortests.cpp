@@ -35,6 +35,7 @@
 #include <dtDAL/groupactorproperty.h>
 #include <dtDAL/gameeventmanager.h>
 #include <dtDAL/gameevent.h>
+#include <dtDAL/namedparameter.h>
 
 #include <dtCore/globals.h>
 #include <dtCore/system.h>
@@ -53,6 +54,7 @@ class TaskActorTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST_SUITE(TaskActorTests);
       CPPUNIT_TEST(TestTaskActorDefaultValues);
       CPPUNIT_TEST(TestTaskSubTasks);
+      CPPUNIT_TEST(TestGroupPropertySubTasks);
       CPPUNIT_TEST(TestTaskReparentOnAdd);
       CPPUNIT_TEST(TestGameEventTaskActor);
       CPPUNIT_TEST(TestRollupTaskActor);
@@ -65,16 +67,22 @@ class TaskActorTests : public CPPUNIT_NS::TestFixture
 
       void TestTaskActorDefaultValues();
       void TestTaskSubTasks();
+      void TestGroupPropertySubTasks();
       void TestTaskReparentOnAdd();
       void TestGameEventTaskActor();
       void TestRollupTaskActor();
       void TestOrderedTaskActor();
 
    private:
+      void CreateParentChildProxies();
       dtDAL::GameEventManager *mEventMgr;
       dtCore::RefPtr<dtGame::GameManager> mGameManager;
       static const std::string mTestGameActorLibrary;
       static const std::string mTestActorLibrary;
+      dtCore::RefPtr<dtActors::TaskActorProxy> mParentProxy;
+      dtCore::RefPtr<dtActors::TaskActorProxy> mChildProxy1;
+      dtCore::RefPtr<dtActors::TaskActorProxy> mChildProxy2;
+      dtCore::RefPtr<dtActors::TaskActorProxy> mChildProxy3;
 };
 
 //Registers the fixture into the 'registry'
@@ -170,11 +178,11 @@ void TaskActorTests::TestTaskSubTasks()
          mGameManager->FindActorType("dtcore.Tasks","Task Actor");
       CPPUNIT_ASSERT_MESSAGE("Could not find actor type.", taskActorType.valid());
 
-      dtCore::RefPtr<dtActors::TaskActorProxy> parentProxy;
-      mGameManager->CreateActor(*taskActorType, parentProxy);
-      mGameManager->AddActor(*parentProxy, false, false);
+      dtCore::RefPtr<dtActors::TaskActorProxy> mParentProxy;
+      mGameManager->CreateActor(*taskActorType, mParentProxy);
+      mGameManager->AddActor(*mParentProxy, false, false);
       
-      CPPUNIT_ASSERT_MESSAGE("Could not create task actor proxy.", parentProxy.valid());
+      CPPUNIT_ASSERT_MESSAGE("Could not create task actor proxy.", mParentProxy.valid());
 
       std::vector<dtActors::TaskActorProxy* > children;      
 
@@ -190,14 +198,14 @@ void TaskActorTests::TestTaskSubTasks()
          children.push_back(childProxy.get());
 
          childProxy->SetName("ChildProxy" + dtUtil::ToString(i));
-         parentProxy->AddSubTask(*childProxy);
+         mParentProxy->AddSubTask(*childProxy);
       }
 
-      parentProxy->GetAllSubTasks(children);
+      mParentProxy->GetAllSubTasks(children);
       CPPUNIT_ASSERT_MESSAGE("Number of child tasks should have been 25, and the GetAllSubTasks method should clear before filling.", 
          children.size() == 25);
 
-      dtDAL::GroupActorProperty* subTasksGroup = dynamic_cast<dtDAL::GroupActorProperty*>(parentProxy->GetProperty("SubTasks"));
+      dtDAL::GroupActorProperty* subTasksGroup = dynamic_cast<dtDAL::GroupActorProperty*>(mParentProxy->GetProperty("SubTasks"));
       CPPUNIT_ASSERT(subTasksGroup != NULL);
       dtCore::RefPtr<dtDAL::NamedGroupParameter> subTasksGroupParam = subTasksGroup->GetValue();
       CPPUNIT_ASSERT(subTasksGroupParam.valid());
@@ -209,11 +217,11 @@ void TaskActorTests::TestTaskSubTasks()
       //Make sure the parent was set correctly and that we can find the task.
       for (unsigned i = 0; i < 25; i++)
       {
-         CPPUNIT_ASSERT_MESSAGE("Parent was not set correctly.",children[i]->GetParentTask() == parentProxy.get());
+         CPPUNIT_ASSERT_MESSAGE("Parent was not set correctly.",children[i]->GetParentTask() == mParentProxy.get());
          CPPUNIT_ASSERT_MESSAGE("Should have found the task by unique id.",
-            parentProxy->FindSubTask(children[i]->GetId()) != NULL);
+            mParentProxy->FindSubTask(children[i]->GetId()) != NULL);
          CPPUNIT_ASSERT_MESSAGE("Should have found the task by unique id.",
-            parentProxy->FindSubTask(children[i]->GetName()) != NULL);
+            mParentProxy->FindSubTask(children[i]->GetName()) != NULL);
          
          dtDAL::NamedActorParameter* subTaskActorParam = dynamic_cast<dtDAL::NamedActorParameter*>(subTaskActorIds[i]);
          CPPUNIT_ASSERT_MESSAGE("The parameters in the subtasks group prop should all be NamedActorParameters.",
@@ -224,23 +232,23 @@ void TaskActorTests::TestTaskSubTasks()
 
       for (unsigned i = 0; i < 25; i += 2)
       {
-         parentProxy->RemoveSubTask(*children[i]);
+         mParentProxy->RemoveSubTask(*children[i]);
          CPPUNIT_ASSERT_MESSAGE("Child's parent task should be NULL after removing it.",
             children[i]->GetParentTask() == NULL);
       }
 
       std::vector<const dtActors::TaskActorProxy* > children2;
-      parentProxy->GetAllSubTasks(children2);
+      mParentProxy->GetAllSubTasks(children2);
       
       for (unsigned i = 0; i < children2.size(); i++)
       {
-         parentProxy->RemoveSubTask(children2[i]->GetGameActor().GetName());
+         mParentProxy->RemoveSubTask(children2[i]->GetGameActor().GetName());
          CPPUNIT_ASSERT_MESSAGE("Child's parent task should be NULL after removing it by name.",
             children2[i]->GetParentTask() == NULL);
       }
 
       CPPUNIT_ASSERT_MESSAGE("There should be no more child tasks left.",
-         parentProxy->GetSubTaskCount() == 0);
+         mParentProxy->GetSubTaskCount() == 0);
       
       dtCore::RefPtr<dtDAL::NamedGroupParameter> subTasksGroupParam2 = subTasksGroup->GetValue();
       CPPUNIT_ASSERT(subTasksGroupParam2.valid());
@@ -248,7 +256,7 @@ void TaskActorTests::TestTaskSubTasks()
          subTasksGroupParam2->GetParameterCount() == 0);
       
       subTasksGroup->SetValue(*subTasksGroupParam);
-      parentProxy->GetAllSubTasks(children);
+      mParentProxy->GetAllSubTasks(children);
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Setting the subtasks via the property should populate the list of children.", 
          subTasksGroupParam->GetParameterCount(), (unsigned int) children.size());
       
@@ -273,6 +281,31 @@ void TaskActorTests::TestTaskSubTasks()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+void TaskActorTests::CreateParentChildProxies()
+{
+   dtCore::RefPtr<dtDAL::ActorType> taskActorType =
+         mGameManager->FindActorType("dtcore.Tasks","Task Actor");
+   CPPUNIT_ASSERT_MESSAGE("Could not find actor type.",taskActorType.valid());
+
+   mGameManager->CreateActor(*taskActorType, mParentProxy);
+   CPPUNIT_ASSERT_MESSAGE("Could not create task actor proxy.",mParentProxy.valid());
+
+   mGameManager->CreateActor(*taskActorType, mChildProxy1);
+   CPPUNIT_ASSERT_MESSAGE("Could not create task actor proxy.",mChildProxy1.valid());
+
+   mGameManager->CreateActor(*taskActorType, mChildProxy2);
+   CPPUNIT_ASSERT_MESSAGE("Could not create task actor proxy.",mChildProxy2.valid());
+
+   mGameManager->CreateActor(*taskActorType, mChildProxy3);
+   CPPUNIT_ASSERT_MESSAGE("Could not create task actor proxy.",mChildProxy3.valid());
+   
+   mGameManager->AddActor(*mParentProxy, false, false);
+   mGameManager->AddActor(*mChildProxy1, false, false);
+   mGameManager->AddActor(*mChildProxy2, false, false);
+   mGameManager->AddActor(*mChildProxy3, false, false);
+}
+
+///////////////////////////////////////////////////////////////////////////////
 void TaskActorTests::TestTaskReparentOnAdd()
 {
    try
@@ -283,51 +316,94 @@ void TaskActorTests::TestTaskReparentOnAdd()
       //          --> Child2
       //                 --> Child3
 
-      dtCore::RefPtr<dtDAL::ActorType> taskActorType =
-            mGameManager->FindActorType("dtcore.Tasks","Task Actor");
-      CPPUNIT_ASSERT_MESSAGE("Could not find actor type.",taskActorType.valid());
+      CreateParentChildProxies();
 
-      dtCore::RefPtr<dtActors::TaskActorProxy> parentProxy;
-      mGameManager->CreateActor(*taskActorType, parentProxy);
-      CPPUNIT_ASSERT_MESSAGE("Could not create task actor proxy.",parentProxy.valid());
-
-      dtCore::RefPtr<dtActors::TaskActorProxy> childProxy1;
-      mGameManager->CreateActor(*taskActorType, childProxy1);
-      CPPUNIT_ASSERT_MESSAGE("Could not create task actor proxy.",childProxy1.valid());
-
-      dtCore::RefPtr<dtActors::TaskActorProxy> childProxy2;
-      mGameManager->CreateActor(*taskActorType, childProxy2);
-      CPPUNIT_ASSERT_MESSAGE("Could not create task actor proxy.",childProxy2.valid());
-
-      dtCore::RefPtr<dtActors::TaskActorProxy> childProxy3;
-      mGameManager->CreateActor(*taskActorType, childProxy3);
-      CPPUNIT_ASSERT_MESSAGE("Could not create task actor proxy.",childProxy3.valid());
-
-      parentProxy->AddSubTask(*childProxy1);
-      childProxy1->AddSubTask(*childProxy2);
-      childProxy2->AddSubTask(*childProxy3);
+      mParentProxy->AddSubTask(*mChildProxy1);
+      mChildProxy1->AddSubTask(*mChildProxy2);
+      mChildProxy2->AddSubTask(*mChildProxy3);
 
       CPPUNIT_ASSERT_MESSAGE("Parent proxy should be parent of child 1.",
-         childProxy1->GetParentTask() == parentProxy.get());
+         mChildProxy1->GetParentTask() == mParentProxy.get());
       CPPUNIT_ASSERT_MESSAGE("Child1 proxy should be parent of child 2.",
-         childProxy2->GetParentTask() == childProxy1.get());
+         mChildProxy2->GetParentTask() == mChildProxy1.get());
       CPPUNIT_ASSERT_MESSAGE("Child2 proxy should be parent of child 3.",
-         childProxy3->GetParentTask() == childProxy2.get());
+         mChildProxy3->GetParentTask() == mChildProxy2.get());
 
-      parentProxy->RemoveSubTask(*childProxy1);
-      childProxy1->RemoveSubTask(*childProxy2);
-      childProxy2->RemoveSubTask(*childProxy3);
+      mParentProxy->RemoveSubTask(*mChildProxy1);
+      mChildProxy1->RemoveSubTask(*mChildProxy2);
+      mChildProxy2->RemoveSubTask(*mChildProxy3);
       CPPUNIT_ASSERT_MESSAGE("Child1 proxy's parent should be NULL",
-         childProxy1->GetParentTask() == NULL);
+         mChildProxy1->GetParentTask() == NULL);
       CPPUNIT_ASSERT_MESSAGE("Child2 proxy's should be parent of child 2.",
-         childProxy2->GetParentTask() == NULL);
+         mChildProxy2->GetParentTask() == NULL);
       CPPUNIT_ASSERT_MESSAGE("Child3 proxy's should be parent of child 3.",
-         childProxy3->GetParentTask() == NULL);
+         mChildProxy3->GetParentTask() == NULL);
    }
    catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.ToString());
    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void TaskActorTests::TestGroupPropertySubTasks()
+{
+   try
+   {
+      CreateParentChildProxies();
+      dtDAL::ActorProperty* subTasksProp = mParentProxy->GetProperty("SubTasks");
+      CPPUNIT_ASSERT(subTasksProp != NULL);
+      CPPUNIT_ASSERT(subTasksProp->GetDataType() == dtDAL::DataType::GROUP);
+      
+      dtCore::RefPtr<dtDAL::NamedGroupParameter> expectedValue = new dtDAL::NamedGroupParameter("SubTasks"); 
+      
+      dtCore::RefPtr<dtDAL::NamedActorParameter> temp;
+      temp = new dtDAL::NamedActorParameter("0", mChildProxy1->GetId());
+      expectedValue->AddParameter(*temp);
+      temp = new dtDAL::NamedActorParameter("1", mChildProxy2->GetId());
+      expectedValue->AddParameter(*temp);
+      temp = new dtDAL::NamedActorParameter("2", mChildProxy3->GetId());
+      expectedValue->AddParameter(*temp);
+      
+      dtDAL::GroupActorProperty* gap = static_cast<dtDAL::GroupActorProperty*>(subTasksProp);
+      gap->SetValue(*expectedValue);
+      
+      dtCore::RefPtr<dtDAL::NamedGroupParameter> actualValue = gap->GetValue();
+      std::ostringstream ss;
+      ss << "Setting the list of task children and then getting it should yield the same list: \nActual:\n";
+      ss << actualValue->ToString();
+      ss << "\nExpected:\n";
+      ss << expectedValue->ToString();
+      CPPUNIT_ASSERT_MESSAGE(ss.str(),
+         *actualValue == *expectedValue);
+
+      CPPUNIT_ASSERT_MESSAGE("Setting the parent of a proxy should set its parent pointer (mChildProxy1).", 
+         mChildProxy1->GetParentTask() == mParentProxy.get());
+      CPPUNIT_ASSERT_MESSAGE("Setting the parent of a proxy should set its parent pointer (mChildProxy2).", 
+         mChildProxy2->GetParentTask() == mParentProxy.get());
+      CPPUNIT_ASSERT_MESSAGE("Setting the parent of a proxy should set its parent pointer (mChildProxy3).", 
+         mChildProxy3->GetParentTask() == mParentProxy.get());
+
+
+      ///Now change the value and make sure the removed one's don't have their parent's still set set.
+      expectedValue = new dtDAL::NamedGroupParameter("test"); 
+      
+      temp = new dtDAL::NamedActorParameter("1", mChildProxy1->GetId());
+      expectedValue->AddParameter(*temp);
+      gap->SetValue(*expectedValue);
+
+      CPPUNIT_ASSERT_MESSAGE("Resetting the parent of a proxy should leave its parent pointer (mChildProxy1).", 
+         mChildProxy1->GetParentTask() == mParentProxy.get());
+      CPPUNIT_ASSERT_MESSAGE("Changing the list of child proxies should set the removed proxy's (mChildProxy2) parent to NULL.", 
+         mChildProxy2->GetParentTask() == NULL);
+      CPPUNIT_ASSERT_MESSAGE("Changing the list of child proxies should set the removed proxy's (mChildProxy3) parent to NULL.", 
+         mChildProxy3->GetParentTask() == NULL);
+
+   }
+   catch (const dtUtil::Exception& e)
+   {
+      CPPUNIT_FAIL(e.ToString());
+   } 
 }
 
 ///////////////////////////////////////////////////////////////////////////////

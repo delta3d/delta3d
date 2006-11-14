@@ -74,7 +74,7 @@ namespace dtEditQt
       /**
        * Fills a vector with pointers to all the currently selected actor proxies.
        */
-      void GetSelectedActors(std::vector<dtDAL::ActorProxy*> toFill);
+      void GetSelectedActors(std::vector<dtDAL::ActorProxy*>& toFill);
       
       /**
        * Sets the currently selected Sound resource.  This is called when the user is
