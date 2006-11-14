@@ -29,7 +29,7 @@ namespace dtHLAGM
    ObjectRuntimeMappingInfo::~ObjectRuntimeMappingInfo()
    {}
 
-   bool ObjectRuntimeMappingInfo::PutRTIId(const std::string& rtiId, const dtCore::UniqueId& actorId)
+   bool ObjectRuntimeMappingInfo::Put(const std::string& rtiId, const dtCore::UniqueId& actorId)
    {
       //do a quick pre-check.  This will make sure that it doesn't insert in the first map only to fail at the second.
       if (mActortoRTIIDMap.find(actorId) != mActortoRTIIDMap.end())
@@ -200,18 +200,17 @@ namespace dtHLAGM
 
       // Remove the RTI id string mapped to the actor id
       std::map<dtCore::UniqueId, std::string>::iterator i3 = mActortoRTIIDMap.find(actorId);
-      std::string rtiId;
       if (i3 != mActortoRTIIDMap.end())
       {
-         rtiId = i3->second;
+         std::string rtiId = i3->second;
          mActortoRTIIDMap.erase(i3);
-      }
 
-      // Remove the actor id mapped to RTI id string
-      std::map<std::string, dtCore::UniqueId>::iterator i4 = mRTIIDtoActorMap.find(rtiId);
-      if (i4 != mRTIIDtoActorMap.end())
-      {
-         mRTIIDtoActorMap.erase(i4);
+         // Remove the actor id mapped to RTI id string
+         std::map<std::string, dtCore::UniqueId>::iterator i4 = mRTIIDtoActorMap.find(rtiId);
+         if (i4 != mRTIIDtoActorMap.end())
+         {
+            mRTIIDtoActorMap.erase(i4);
+         }
       }
    }
 

@@ -366,7 +366,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          dtCore::UniqueId actorId;
 
          // Map the RTI ID to an Actor ID
-         mRuntimeMappings.PutRTIId(rtiId,actorId);
+         mRuntimeMappings.Put(rtiId,actorId);
 
          mMapping.SetHLAType(dtHLAGM::RPRAttributeType::RTI_OBJECT_ID_STRUCT_TYPE);
          InternalTestOutgoingRTIIDTypeDataTranslation(actorId.ToString(), rtiId);
@@ -380,7 +380,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          dtCore::UniqueId actorId;
 
          // Map the RTI ID to an Actor ID
-         mRuntimeMappings.PutRTIId(rtiId,actorId);
+         mRuntimeMappings.Put(rtiId,actorId);
 
          dtCore::RefPtr<dtGame::ActorMessageParameter> actorParam = 
             new dtGame::ActorMessageParameter("test",actorId);

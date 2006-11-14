@@ -1327,7 +1327,7 @@ namespace dtHLAGM
       {
          std::string rtiId = theObjectName;
          if( !rtiId.empty() )
-            mRuntimeMappings.PutRTIId(rtiId, newId);
+            mRuntimeMappings.Put(rtiId, newId);
       }
    }
 
