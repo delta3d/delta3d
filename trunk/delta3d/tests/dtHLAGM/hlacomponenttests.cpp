@@ -423,14 +423,14 @@ void HLATests::TestRuntimeMappingInfo()
       CPPUNIT_ASSERT_MESSAGE("Adding a second mapping for an id should fail.",
                               !mappingInfo.Put(mObjectHandle2, id1));
 
-      CPPUNIT_ASSERT(mappingInfo.PutRTIId(rtiid1, id1));
+      CPPUNIT_ASSERT(mappingInfo.Put(rtiid1, id1));
       CPPUNIT_ASSERT_MESSAGE("Adding a second mapping for an RTI id should fail.",
-                              !mappingInfo.PutRTIId(rtiid1, id2));
+                              !mappingInfo.Put(rtiid1, id2));
       CPPUNIT_ASSERT_MESSAGE("Adding a second mapping for an id should fail.",
-                              !mappingInfo.PutRTIId(rtiid2, id1));
+                              !mappingInfo.Put(rtiid2, id1));
 
       CPPUNIT_ASSERT(mappingInfo.Put(mObjectHandle2, id2));
-      CPPUNIT_ASSERT(mappingInfo.PutRTIId(rtiid2, id2));
+      CPPUNIT_ASSERT(mappingInfo.Put(rtiid2, id2));
 
       CPPUNIT_ASSERT(mappingInfo.GetId(mObjectHandle1) != NULL);
       CPPUNIT_ASSERT(*mappingInfo.GetId(mObjectHandle1) == id1);
@@ -531,7 +531,7 @@ void HLATests::TestRuntimeMappingInfo()
       CPPUNIT_ASSERT(mappingInfo.Put(eid1, id1));
       CPPUNIT_ASSERT(mappingInfo.Put(mObjectHandle1, id1));
       CPPUNIT_ASSERT(mappingInfo.Put(mObjectHandle1, *ota1));
-      CPPUNIT_ASSERT(mappingInfo.PutRTIId(rtiid1, id1));
+      CPPUNIT_ASSERT(mappingInfo.Put(rtiid1, id1));
 
       //removing eid1 should remove both the object handle and actor id mappings
       //which should, in turn, remove the object to actor mapped to the handle.
@@ -549,11 +549,11 @@ void HLATests::TestRuntimeMappingInfo()
       CPPUNIT_ASSERT(mappingInfo.Put(eid1, id1));
       CPPUNIT_ASSERT(mappingInfo.Put(mObjectHandle1, id1));
       CPPUNIT_ASSERT(mappingInfo.Put(mObjectHandle1, *ota1));
-      CPPUNIT_ASSERT(mappingInfo.PutRTIId(rtiid1, id1));
+      CPPUNIT_ASSERT(mappingInfo.Put(rtiid1, id1));
       CPPUNIT_ASSERT(mappingInfo.Put(eid2, id2));
       CPPUNIT_ASSERT(mappingInfo.Put(mObjectHandle2, id2));
       CPPUNIT_ASSERT(mappingInfo.Put(mObjectHandle2, *ota2));
-      CPPUNIT_ASSERT(mappingInfo.PutRTIId(rtiid2, id2));
+      CPPUNIT_ASSERT(mappingInfo.Put(rtiid2, id2));
 
       mappingInfo.Clear();
 

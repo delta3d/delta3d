@@ -42,7 +42,7 @@ namespace dtHLAGM
           * Bidirectionally maps the given RTI id string (RTIObjectIdentifierStruct) to the actor id.
           * @return false if either object is already involved in another like mapping.
           */
-         bool PutRTIId(const std::string& rtiId, const dtCore::UniqueId& actorId);
+         bool Put(const std::string& rtiId, const dtCore::UniqueId& actorId);
          
          /**
           * Bidirectionally maps the given object handle to the unique id.
