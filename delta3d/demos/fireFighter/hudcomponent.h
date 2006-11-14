@@ -131,6 +131,11 @@ class FIRE_FIGHTER_EXPORT HUDComponent : public dtGame::GMComponent
       bool OnQuit(const CEGUI::EventArgs &e);
 
       /**
+       * Callback for when the quit button is clicked
+       */
+      bool OnReturnToMenu(const CEGUI::EventArgs &e);
+
+      /**
        * Helper method to quickly build and send game state changed messages
        * @param oldState the old state
        * @param newState the new state
@@ -182,7 +187,7 @@ class FIRE_FIGHTER_EXPORT HUDComponent : public dtGame::GMComponent
        * Private helper method called once per tick to update 
        * the tasks UI
        */
-      void UpdateMediumDetailData();
+      void UpdateMediumDetailData(CEGUI::StaticImage *parent);
 
       /**
        * Recursively adds subtasks to the UI from parent tasks
@@ -190,7 +195,8 @@ class FIRE_FIGHTER_EXPORT HUDComponent : public dtGame::GMComponent
       unsigned int RecursivelyAddTasks(const std::string &indent, 
                                        unsigned int curIndex,
                                        const dtActors::TaskActorProxy *taskProxy, 
-                                       unsigned int &numCompleted);
+                                       unsigned int &numCompleted, 
+                                       CEGUI::StaticImage *parent);
 
       /**
        * Utility method to set the text, position, and color of a text control
@@ -213,7 +219,12 @@ class FIRE_FIGHTER_EXPORT HUDComponent : public dtGame::GMComponent
                                     const std::string &text,
                                     float x, float y, float width, float height);
 
-      CEGUI::PushButton *mStartWithObjectives, *mStart, *mQuit;
+      /**
+       * Refreshes the debriefing screen
+       */
+      void RefreshDebriefScreen();
+
+      CEGUI::PushButton *mStartWithObjectives, *mStart, *mQuit, *mReturnToMenu;
       CEGUI::Window *mMainWindow;
       CEGUI::StaticImage *mWindowBackground, *mHUDBackground, *mDebriefBackground, 
                          *mIntroBackground, *mGameItemImage, 
@@ -222,7 +233,7 @@ class FIRE_FIGHTER_EXPORT HUDComponent : public dtGame::GMComponent
                          *mInventorySelectIcon, 
                          *mTargetIcon;
 
-      CEGUI::StaticText *mAppHeader, *mTaskHeaderText, *mIntroText;
+      CEGUI::StaticText *mAppHeader, *mDebriefHeaderText, *mIntroText;
 
       dtCore::RefPtr<dtGUI::CEUIDrawable> mGUI;
 
@@ -235,6 +246,8 @@ class FIRE_FIGHTER_EXPORT HUDComponent : public dtGame::GMComponent
       CEGUI::StaticText *mMissionCompletedText, *mMissionFailedText;
       bool mMissionComplete, mMissionFailed;
       dtActors::TaskActorProxy *mFailedProxy;
+      CEGUI::StaticText *mCompleteOrFail, *mFailReason;
+      std::vector<CEGUI::StaticText*> mDebriefList;
 };
 
 #endif
