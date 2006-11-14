@@ -105,23 +105,13 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////////////
    GameActor& GameActorProxy::GetGameActor() 
    {
-      GameActor* ga = dynamic_cast<GameActor*> (mActor.get());
-      if(ga == NULL)
-      {
-         EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type GameActor");
-      }
-      return *ga;
+      return static_cast<GameActor&>(*GetActor());
    }
 
    //////////////////////////////////////////////////////////////////////////////
    const GameActor& GameActorProxy::GetGameActor() const
    {
-      const GameActor* ga = dynamic_cast<const GameActor*> (mActor.get());
-      if(ga == NULL)
-      {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type GameActor", __FILE__,__LINE__);
-      }
-      return *ga;
+      return static_cast<const GameActor&>(*GetActor());
    }
 
    //////////////////////////////////////////////////////////////////////////////
