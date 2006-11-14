@@ -1,6 +1,7 @@
 #include <dtGUI/scriptmodule.h>
 
 #include <dtUtil/log.h>
+#include <CEGUI/CEGUIEventSet.h>
 
 using namespace dtGUI;
 
@@ -49,12 +50,43 @@ CEGUI::Event::Connection ScriptModule::subscribeEvent(   CEGUI::EventSet* target
                                                          const CEGUI::String& name,
                                                          const CEGUI::String& subscriber_name)
 {
-   return CEGUI::Event::Connection();
+   CEGUI::Event::Connection con;
+   
+   CallbackRegistry::iterator iter = mCallbacks.find( subscriber_name.c_str() );
+   if( iter != mCallbacks.end() )
+   {
+      CallbackRegistry::value_type::second_type aFunction = (*iter).second;
+      con = target->subscribeEvent(name, CEGUI::Event::Subscriber(aFunction));
+   }
+   else
+   {
+      dtUtil::Log::GetInstance().LogMessage( dtUtil::Log::LOG_WARNING, __FUNCTION__,
+         "ScriptModule: function '%s' not found in registry.", subscriber_name.c_str() );
+   }
+
+   return con;
 }
 
-CEGUI::Event::Connection ScriptModule::subscribeEvent(CEGUI::EventSet* target, const CEGUI::String& name, CEGUI::Event::Group group, const CEGUI::String& subscriber_name)
+CEGUI::Event::Connection ScriptModule::subscribeEvent(CEGUI::EventSet* target,
+                                                      const CEGUI::String& name,
+                                                      CEGUI::Event::Group group,
+                                                      const CEGUI::String& subscriber_name)
 {
-   return CEGUI::Event::Connection();
+   CEGUI::Event::Connection con;
+
+   CallbackRegistry::iterator iter = mCallbacks.find( subscriber_name.c_str() );
+   if( iter != mCallbacks.end() )
+   {
+      CallbackRegistry::value_type::second_type aFunction = (*iter).second;
+      con = target->subscribeEvent(name, group, CEGUI::Event::Subscriber(aFunction));
+   }
+   else
+   {
+      dtUtil::Log::GetInstance().LogMessage( dtUtil::Log::LOG_WARNING, __FUNCTION__,
+         "ScriptModule: function '%s' not found in registry.", subscriber_name.c_str() );
+   }
+
+   return con;
 }
 #endif // CEGUI 0.5.0
 
