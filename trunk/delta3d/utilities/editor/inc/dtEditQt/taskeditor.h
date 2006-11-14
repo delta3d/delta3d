@@ -33,6 +33,7 @@
 class QComboBox;
 class QString;
 class QTableWidget;
+class QCheckBox;
 
 namespace dtDAL
 {
@@ -95,31 +96,35 @@ namespace dtEditQt
           * Slot called when the remove child button is clicked
           */
          void OnRemoveChildClicked();
+
+         /// Slot called when the checkbox with the same name changes.
+         void OnShowTasksWithParentsChanged(int state);
          
-         ///Enables the buttons for manipulating the existing children
+         /// Enables the buttons for manipulating the existing children
          void EnableEditButtons();
    
-         ///Disables the buttons for manipulating the existing children
+         /// Disables the buttons for manipulating the existing children
          void DisableEditButtons();
 
-         //Adds the selected task actor in the combo box 
+         /// Adds the selected task actor in the combo box 
          void AddSelected();
                
-         //called when the combo box selection changes.
+         /// called when the combo box selection changes.
          void OnComboSelectionChanged(int index);
          
       private:
 
-         //builds the list of children.
+         /// builds the list of children.
          void PopulateChildren();
-         //Adds a new proxy to the list of children.
+         /// Adds a new proxy to the list of children.
          void AddItemToList(dtDAL::ActorProxy& proxy);
-         //sets all the verical header labels on mChildrenView to ""
+         /// sets all the verical header labels on mChildrenView to ""
          void BlankRowLabels();
 
          /// The visible list of child tasks
          QTableWidget* mChildrenView;
          QComboBox*    mComboBox;
+         QCheckBox*    mShowTasksWithParents;
 
          QPushButton* mAddExisting;
          QPushButton* mMoveUp;

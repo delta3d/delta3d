@@ -99,13 +99,13 @@ namespace dtActors
 
          //If we encounter a task before the task in question that has not yet been
          //completed, we cannot continue.
-         if(task.GetProperty("Complete")->GetStringValue() == "false" && task.GetId() != childTask.GetId())
+         if (!static_cast<const TaskActor*>(task.GetActor())->IsComplete() && task.GetId() != childTask.GetId())
          {
             //Set the task that got rejected so a user can query for this a report
             //additional information.
             SetFailingTaskProxy(origTask);
-            if(GetProperty("Order Enforcement")->GetStringValue() ==
-                TaskActorOrdered::FailureType::CAUSE_FAILURE.GetName())
+            if (static_cast<TaskActorOrdered*>(GetActor())->GetFailureType() ==
+                TaskActorOrdered::FailureType::CAUSE_FAILURE)
             {
                mAlwaysFail = true;
             }
