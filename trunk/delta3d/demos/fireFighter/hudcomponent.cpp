@@ -50,6 +50,7 @@ HUDComponent::HUDComponent(dtCore::DeltaWin &win, const std::string &name) :
    mStartWithObjectives(NULL), 
    mStart(NULL), 
    mQuit(NULL), 
+   mReturnToMenu(NULL), 
    mMainWindow(NULL), 
    mWindowBackground(NULL), 
    mHUDBackground(NULL),
@@ -65,7 +66,7 @@ HUDComponent::HUDComponent(dtCore::DeltaWin &win, const std::string &name) :
    mInventorySelectIcon(NULL), 
    mTargetIcon(NULL), 
    mAppHeader(NULL),
-   mTaskHeaderText(NULL),
+   mDebriefHeaderText(NULL),
    mIntroText(NULL),
    mShowObjectives(true), 
    mCurrentState(&GameState::STATE_UNKNOWN), 
@@ -78,7 +79,9 @@ HUDComponent::HUDComponent(dtCore::DeltaWin &win, const std::string &name) :
    mMissionFailedText(NULL), 
    mMissionComplete(false), 
    mMissionFailed(false), 
-   mFailedProxy(NULL)
+   mFailedProxy(NULL), 
+   mCompleteOrFail(NULL), 
+   mFailReason(NULL)
 {
    SetupGUI(win);
 }
@@ -178,7 +181,10 @@ void HUDComponent::ProcessMessage(const dtGame::Message &msg)
    }
    else if(msg.GetMessageType() == dtGame::MessageType::TICK_LOCAL)
    {
-      UpdateMediumDetailData();
+      if(*mCurrentState == GameState::STATE_RUNNING)
+         UpdateMediumDetailData(mHUDBackground);
+      else if(*mCurrentState == GameState::STATE_DEBRIEF)
+         RefreshDebriefScreen();
    }
    else if(msg.GetMessageType() == MessageType::MISSION_COMPLETE)
    {
@@ -219,6 +225,8 @@ void HUDComponent::ShowEndMenu()
 {
    HideMenus();
    ShowMouse(true);
+
+   mDebriefBackground->show();
 }
 
 void HUDComponent::ShowIntroMenu()
@@ -421,7 +429,6 @@ void HUDComponent::BuildHUD()
 
    curYPos += 2;
 
-   // 11 placeholders for tasks
    for(unsigned int i = 0; i < mNumTasks; i++)
    {
       std::ostringstream oss;
@@ -449,16 +456,59 @@ void HUDComponent::BuildEndMenu()
    mDebriefBackground->setFrameEnabled(false);
    mDebriefBackground->setImage("BackgroundImage", "BackgroundImage");
 
-   /*
-   mTaskHeaderText = static_cast<CEGUI::StaticText*>(wm->createWindow("WindowsLook/StaticText", "taskHeaderText"));
-   mTaskHeaderText->setText("Task Status");
-   mTaskHeaderText->setBackgroundEnabled(false);
-   mTaskHeaderText->setFrameEnabled(false);
-   mTaskHeaderText->setSize(CEGUI::Size(0.3f, 0.1f));
-   mTaskHeaderText->setPosition(CEGUI::Point(0, 0.1));
-   mTaskHeaderText->setHorizontalAlignment(CEGUI::HA_CENTRE);
-   mDebriefBackground->addChildWindow(mTaskHeaderText);
-   */
+   mDebriefHeaderText = static_cast<CEGUI::StaticText*>(wm->createWindow("WindowsLook/StaticText", "DebriefHeaderText"));
+   mDebriefHeaderText->setText("Debriefing");
+   mDebriefHeaderText->setBackgroundEnabled(false);
+   mDebriefHeaderText->setFrameEnabled(false);
+   mDebriefHeaderText->setSize(CEGUI::Size(0.5f, 0.1f));
+   mDebriefHeaderText->setPosition(CEGUI::Point(0.18f, 0.01f));
+   mDebriefHeaderText->setHorizontalAlignment(CEGUI::HA_CENTRE);
+   mDebriefBackground->addChildWindow(mDebriefHeaderText);
+
+   mCompleteOrFail = static_cast<CEGUI::StaticText*>(wm->createWindow("WindowsLook/StaticText", "CompleteOrFailText"));
+   mCompleteOrFail->setBackgroundEnabled(false);
+   mCompleteOrFail->setFrameEnabled(false);
+   mCompleteOrFail->setSize(CEGUI::Size(0.5f, 0.1f));
+   mCompleteOrFail->setPosition(CEGUI::Point(0.17f, 0.1f));
+   mCompleteOrFail->setHorizontalAlignment(CEGUI::HA_CENTRE);
+   mDebriefBackground->addChildWindow(mCompleteOrFail);
+
+   mFailReason = static_cast<CEGUI::StaticText*>(wm->createWindow("WindowsLook/StaticText", "reasonText"));
+   mFailReason->setBackgroundEnabled(false);
+   mFailReason->setFrameEnabled(false);
+   mFailReason->setSize(CEGUI::Size(0.5f, 0.1f));
+   mFailReason->setPosition(CEGUI::Point(0.1f, 0.2f));
+   mFailReason->setHorizontalAlignment(CEGUI::HA_CENTRE);
+   mDebriefBackground->addChildWindow(mFailReason);
+
+   mReturnToMenu = static_cast<CEGUI::PushButton*>(wm->createWindow("WindowsLook/Button", "ReturnToMenuButton"));
+   mReturnToMenu->setText("Return to Menu");
+   mReturnToMenu->setSize(CEGUI::Size(0.3f, 0.1f));
+   mReturnToMenu->setPosition(CEGUI::Point(0, 0.8));
+   mReturnToMenu->setMouseCursor(NULL);
+   mReturnToMenu->setHorizontalAlignment(CEGUI::HA_CENTRE);
+   mDebriefBackground->addChildWindow(mReturnToMenu);
+
+   mReturnToMenu->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&HUDComponent::OnReturnToMenu, this));
+
+   float curYPos       = 40.0f;
+   float mTextHeight   = 25.0f;
+   float taskTextWidth = 500.0f;
+
+   curYPos += 2;
+
+   for(unsigned int i = 0; i < mNumTasks; i++)
+   {
+      std::ostringstream oss;
+      oss << "Debrief Task " << i;
+      curYPos += mTextHeight + 2;
+      CEGUI::StaticText *text = CreateText(oss.str(), mDebriefBackground, "",
+         12, curYPos, taskTextWidth - 2, mTextHeight + 2);
+
+      mDebriefList.push_back(text);
+      text->hide();
+   }
+   
    mDebriefBackground->hide();
 } 
 
@@ -503,6 +553,12 @@ bool HUDComponent::OnStart(const CEGUI::EventArgs &e)
 bool HUDComponent::OnQuit(const CEGUI::EventArgs &e)
 {
    GetGameManager()->GetApplication().Quit();
+   return true;
+}
+
+bool HUDComponent::OnReturnToMenu(const CEGUI::EventArgs &e)
+{
+   SendGameStateChangedMessage(GameState::STATE_DEBRIEF, GameState::STATE_MENU);
    return true;
 }
 
@@ -634,9 +690,9 @@ void HUDComponent::SetDeactivatedItem(GameItemActor *item)
    }
 }
 
-void HUDComponent::UpdateMediumDetailData()
+void HUDComponent::UpdateMediumDetailData(CEGUI::StaticImage *parent)
 {
-   if(mHUDBackground->isVisible())
+   if(parent->isVisible())
    {
       std::ostringstream oss;
       std::vector<dtCore::RefPtr<dtGame::GameActorProxy> > tasks;
@@ -652,12 +708,20 @@ void HUDComponent::UpdateMediumDetailData()
       for(unsigned int i = 0; i < tasks.size(); i++)
       {
          dtActors::TaskActorProxy *taskProxy = dynamic_cast<dtActors::TaskActorProxy*>(tasks[i].get());
-         numAdded += RecursivelyAddTasks("", numAdded, taskProxy, numComplete);
+         numAdded += RecursivelyAddTasks("", numAdded, taskProxy, numComplete, parent);
       }
 
       // blank out any of our placeholder task text controls that were left over
-      for(unsigned int i = numAdded; i < mTaskTextList.size(); i++)
-         UpdateStaticText(mTaskTextList[i], "");
+      if(parent == mHUDBackground)
+      {
+         for(unsigned int i = numAdded; i < mTaskTextList.size(); i++)
+            UpdateStaticText(mTaskTextList[i], "");
+      }
+      else
+      {
+         for(unsigned int i = numAdded; i < mDebriefList.size(); i++)
+            UpdateStaticText(mDebriefList[i], "");
+      }
 
       // update our task header
       oss << "Tasks (" << numComplete << " of " << numAdded << ")";
@@ -671,7 +735,8 @@ void HUDComponent::UpdateMediumDetailData()
 unsigned int HUDComponent::RecursivelyAddTasks(const std::string &indent, 
                                                unsigned int curIndex,
                                                const dtActors::TaskActorProxy *taskProxy, 
-                                               unsigned int &numCompleted)
+                                               unsigned int &numCompleted, 
+                                               CEGUI::StaticImage *parent)
 {
    std::ostringstream oss;
    oss.setf(std::ios_base::fixed, std::ios_base::floatfield);
@@ -690,12 +755,15 @@ unsigned int HUDComponent::RecursivelyAddTasks(const std::string &indent,
          if(tage != NULL)
          {
             dtDAL::GameEvent *event = tage->GetGameEvent();
-            oss << indent << event->GetDescription();// << " Y " << task->GetScore();
+            oss << indent << event->GetDescription();
          }
          else
-            oss << indent << task->GetDescription();// << " Y " << task->GetScore();
+            oss << indent << task->GetDescription();
          
-         UpdateStaticText(mTaskTextList[curIndex + totalNumAdded], oss.str(), 0.0f, 1.0f, 0.0f);
+         if(parent == mHUDBackground)
+            UpdateStaticText(mTaskTextList[curIndex + totalNumAdded], oss.str(), 0.0f, 1.0f, 0.0f);
+         else
+            UpdateStaticText(mDebriefList[curIndex + totalNumAdded], oss.str(), 0.0f, 1.0f, 0.0f);
       }
       else
       {
@@ -703,15 +771,25 @@ unsigned int HUDComponent::RecursivelyAddTasks(const std::string &indent,
          if(tage != NULL)
          {
             dtDAL::GameEvent *event = tage->GetGameEvent();
-            oss << indent << event->GetDescription();// << " N " << task->GetScore();
+            oss << indent << event->GetDescription();
          }
          else
-            oss << indent << task->GetDescription();// << " N " << task->GetScore();
+            oss << indent << task->GetDescription();
 
-         if(&task->GetGameActorProxy() == mFailedProxy)
-            UpdateStaticText(mTaskTextList[curIndex + totalNumAdded], oss.str(), 1.0f, 0.0f, 0.0f);
+         if(parent == mHUDBackground)
+         {
+            if(&task->GetGameActorProxy() == mFailedProxy)
+               UpdateStaticText(mTaskTextList[curIndex + totalNumAdded], oss.str(), 1.0f, 0.0f, 0.0f);
+            else
+               UpdateStaticText(mTaskTextList[curIndex + totalNumAdded], oss.str(), 1.0f, 1.0f, 1.0f);
+         }
          else
-            UpdateStaticText(mTaskTextList[curIndex + totalNumAdded], oss.str(), 1.0f, 1.0f, 1.0f);
+         {
+            if(&task->GetGameActorProxy() == mFailedProxy)
+               UpdateStaticText(mDebriefList[curIndex + totalNumAdded], oss.str(), 1.0f, 0.0f, 0.0f);
+            else
+               UpdateStaticText(mDebriefList[curIndex + totalNumAdded], oss.str(), 1.0f, 1.0f, 1.0f);
+         }
       }
 
       totalNumAdded++;
@@ -723,7 +801,7 @@ unsigned int HUDComponent::RecursivelyAddTasks(const std::string &indent,
          for(unsigned int i = 0; i < children.size(); i++)
          {
             const dtActors::TaskActorProxy *childProxy = dynamic_cast<const dtActors::TaskActorProxy*>(children[i].get());
-            totalNumAdded += RecursivelyAddTasks(indent + "     ", curIndex + totalNumAdded, childProxy, numCompleted);
+            totalNumAdded += RecursivelyAddTasks(indent + "     ", curIndex + totalNumAdded, childProxy, numCompleted, parent);
          }
       }
    }
@@ -752,7 +830,10 @@ void HUDComponent::UpdateStaticText(CEGUI::StaticText *textControl, const std::s
          if(position != newPos)
             textControl->setPosition(newPos);
       }
-      mShowObjectives ? textControl->show() : textControl->hide();
+      if(*mCurrentState == GameState::STATE_RUNNING) 
+         mShowObjectives ? textControl->show() : textControl->hide();
+      else
+         textControl->show();
    }
 }
 
@@ -776,4 +857,12 @@ CEGUI::StaticText* HUDComponent::CreateText(const std::string &name,
    result->setVerticalAlignment(CEGUI::VA_TOP);
 
    return result;
+}
+
+void HUDComponent::RefreshDebriefScreen()
+{
+   mCompleteOrFail->setText(mMissionComplete ? "Mission Completed" : "Mission Failed");
+   mCompleteOrFail->setTextColours(mMissionComplete ? CEGUI::colour(0.0f, 1.0f, 0.0f) : CEGUI::colour(1.0f, 0.0f, 0.0f));
+   
+   UpdateMediumDetailData(mDebriefBackground);
 }
