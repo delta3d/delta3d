@@ -539,7 +539,7 @@ void HUDComponent::BuildIntroMenu()
 bool HUDComponent::OnStartWithObjectives(const CEGUI::EventArgs &e)
 {
    mShowObjectives = true;
-   SendGameStateChangedMessage(GameState::STATE_MENU, GameState::STATE_RUNNING);
+   SendGameStateChangedMessage(GameState::STATE_MENU, GameState::STATE_INTRO);
    return true;
 }
 
@@ -810,17 +810,17 @@ unsigned int HUDComponent::RecursivelyAddTasks(const std::string &indent,
 }
 
 void HUDComponent::UpdateStaticText(CEGUI::StaticText *textControl, const std::string &newText,
-                                    float red, float blue, float green, float x, float y)
+                                    float red, float green, float blue, float x, float y)
 {
    if(textControl != NULL)
    {
       // text and color
-      if(!newText.empty())// && textControl->getText() != newText)
+      if(!newText.empty())
       {
          if(textControl->getText() != newText)
             textControl->setText(newText);
          if(red >= 0.0f && blue >= 0.0f && green >= 0.0f)
-            textControl->setTextColours(CEGUI::colour(red, blue, green));
+            textControl->setTextColours(CEGUI::colour(red, green, blue));
       }
       // position
       if(x > 0.0f && y > 0.0f)
@@ -831,9 +831,20 @@ void HUDComponent::UpdateStaticText(CEGUI::StaticText *textControl, const std::s
             textControl->setPosition(newPos);
       }
       if(*mCurrentState == GameState::STATE_RUNNING) 
-         mShowObjectives ? textControl->show() : textControl->hide();
+      {
+         if(mHUDBackground->isVisible())
+         {
+            if(mShowObjectives)
+               textControl->show();
+            else
+               textControl->hide();
+         }
+      }   
       else
-         textControl->show();
+      {
+         if(mDebriefBackground->isVisible())
+            textControl->show();
+      }
    }
 }
 

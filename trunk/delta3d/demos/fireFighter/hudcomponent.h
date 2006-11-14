@@ -206,8 +206,8 @@ class FIRE_FIGHTER_EXPORT HUDComponent : public dtGame::GMComponent
       void UpdateStaticText(CEGUI::StaticText *textControl, 
                             const std::string &newText,
                             float red   = -1.0f, 
-                            float blue  = -1.0f, 
-                            float green = -1.0f,
+                            float green = -1.0f, 
+                            float blue  = -1.0f,
                             float x     = -1.0f, 
                             float y     = -1.0f);
 
