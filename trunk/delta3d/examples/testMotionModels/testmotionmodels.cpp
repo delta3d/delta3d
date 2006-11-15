@@ -1,7 +1,6 @@
 #include <dtCore/dt.h>
 #include <dtABC/dtabc.h>
 
-#include <CEGUI/elements/CEGUIStaticProperties.h>
 #include <CEGUI/elements/CEGUIRadioButton.h>
 #include <CEGUI/CEGUIExceptions.h>
 #include <CEGUI/CEGUISystem.h>
@@ -103,7 +102,7 @@ namespace dtExample
       {
          try
          {
-            std::string schemefile( dtCore::FindFileInPathList("schemes/WindowsLookSkin.scheme") );
+            std::string schemefile( dtCore::FindFileInPathList("schemes/WindowsLook.scheme") );
             CEGUI::SchemeManager* sm = CEGUI::SchemeManager::getSingletonPtr();
             sm->loadScheme( schemefile );  ///< populate the window factories
          }
@@ -115,47 +114,55 @@ namespace dtExample
          try
          {
             CEGUI::Window* frame = CreateWidget("WindowsLook/StaticText","frame");
-            frame->setAreaRect(CEGUI::Rect(CEGUI::Point(0,0),CEGUI::Size(1.0,0.2)));
+            frame->setArea(CEGUI::UVector2(cegui_reldim(0.f),cegui_reldim(0.f)),
+                           CEGUI::UVector2(cegui_reldim(1.f),cegui_reldim(0.2f)));
             frame->setProperty("BackgroundEnabled","True");
             frame->setProperty("BackgroundColours","tl:FFDFDFDF tr:FFDFDFDF bl:FFDFDFDF br:FFDFDFDF");
             frame->setText("");
 
             CEGUI::Window* menu = CreateWidget("DefaultWindow","SelectionBar");
-            menu->setAreaRect(CEGUI::Rect(CEGUI::Point(0,0),CEGUI::Size(1.0,1.0)));
+            menu->setArea(CEGUI::UVector2(cegui_reldim(0),cegui_reldim(0)),
+                          CEGUI::UVector2(cegui_reldim(1.0),cegui_reldim(1.0)));
             frame->addChildWindow( menu );
 
             CEGUI::Window* walk = CreateWidget("WindowsLook/RadioButton","WALK");
-            walk->setAreaRect(CEGUI::Rect(CEGUI::Point(0.05,0),CEGUI::Size(0.2,1.0)));
+            walk->setArea(CEGUI::UVector2(cegui_reldim(0.05),cegui_reldim(0)),
+                          CEGUI::UVector2(cegui_reldim(0.2),cegui_reldim(1.0)));
             walk->setText("WALK (1)");
             walk->subscribeEvent(CEGUI::RadioButton::EventSelectStateChanged, CEGUI::Event::Subscriber(&QuickMenuManager::ChangeMotionModelCB,this));
             menu->addChildWindow( walk );
 
             CEGUI::Window* fly = CreateWidget("WindowsLook/RadioButton","FLY");
-            fly->setAreaRect(CEGUI::Rect(CEGUI::Point(0.25,0),CEGUI::Size(0.2,1.0)));
+            fly->setArea(CEGUI::UVector2(cegui_reldim(0.25),cegui_reldim(0)),
+                         CEGUI::UVector2(cegui_reldim(0.2),cegui_reldim(1.0)));
             fly->setText("FLY (2)");
             fly->subscribeEvent(CEGUI::RadioButton::EventSelectStateChanged, CEGUI::Event::Subscriber(&QuickMenuManager::ChangeMotionModelCB,this));
             menu->addChildWindow( fly );
 
             CEGUI::Window* ufo = CreateWidget("WindowsLook/RadioButton","UFO");
-            ufo->setAreaRect(CEGUI::Rect(CEGUI::Point(0.45,0),CEGUI::Size(0.2,1.0)));
+            ufo->setArea(CEGUI::UVector2(cegui_reldim(0.45),cegui_reldim(0)),
+                         CEGUI::UVector2(cegui_reldim(0.2),cegui_reldim(1.0)));
             ufo->setText("UFO (3)");
             ufo->subscribeEvent(CEGUI::RadioButton::EventSelectStateChanged, CEGUI::Event::Subscriber(&QuickMenuManager::ChangeMotionModelCB,this));
             menu->addChildWindow( ufo );
 
             CEGUI::Window* orb = CreateWidget("WindowsLook/RadioButton","ORBIT");
-            orb->setAreaRect(CEGUI::Rect(CEGUI::Point(0.65,0),CEGUI::Size(0.2,1.0)));
+            orb->setArea(CEGUI::UVector2(cegui_reldim(0.65),cegui_reldim(0)),
+                         CEGUI::UVector2(cegui_reldim(0.2),cegui_reldim(1.0)));
             orb->setText("ORBIT (4)");
             orb->subscribeEvent(CEGUI::RadioButton::EventSelectStateChanged, CEGUI::Event::Subscriber(&QuickMenuManager::ChangeMotionModelCB,this));
             menu->addChildWindow( orb );
 
             CEGUI::Window* fps = CreateWidget("WindowsLook/RadioButton","FPS");
-            fps->setAreaRect(CEGUI::Rect(CEGUI::Point(0.85,0),CEGUI::Size(0.2,1.0)));
+            fps->setArea(CEGUI::UVector2(cegui_reldim(0.85),cegui_reldim(0)),
+                         CEGUI::UVector2(cegui_reldim(0.2),cegui_reldim(1.0)));
             fps->setText("FPS (5)");
             fps->subscribeEvent(CEGUI::RadioButton::EventSelectStateChanged, CEGUI::Event::Subscriber(&QuickMenuManager::ChangeMotionModelCB,this));
             menu->addChildWindow( fps );
 
             CEGUI::Window* col = CreateWidget("WindowsLook/RadioButton","COLLISION");
-            col->setAreaRect(CEGUI::Rect(CEGUI::Point(0.05,0.25),CEGUI::Size(0.2,1.0)));
+            col->setArea(CEGUI::UVector2(cegui_reldim(0.05),cegui_reldim(0.25)),
+                         CEGUI::UVector2(cegui_reldim(0.2),cegui_reldim(1.0)));
             col->setText("COLLISION (6)");
             col->subscribeEvent(CEGUI::RadioButton::EventSelectStateChanged, CEGUI::Event::Subscriber(&QuickMenuManager::ChangeMotionModelCB,this));
             menu->addChildWindow( col );
@@ -169,7 +176,6 @@ namespace dtExample
                               static_cast<CEGUI::RadioButton*>(fps),
                               static_cast<CEGUI::RadioButton*>(col));
 
-            //RegisterCallbacks( sm );
          }
          catch(CEGUI::Exception& )
          {
@@ -280,8 +286,6 @@ public:
       AddDrawable( mGUIDrawable.get() );
       mMenuManager->BuildMenu();
       mMenuManager->SetSelected( dtExample::WALK );
-
-      GetCamera()->SetPerspective(90,90,0.0001,100);
    }
 
    /**

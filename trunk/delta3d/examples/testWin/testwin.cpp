@@ -70,11 +70,11 @@ void TestWinApp::BuildGUI( DeltaWin::ResolutionVec &resolutions,
 {
    try
    {
-      std::string schemeFileName = dtCore::FindFileInPathList("schemes/WindowsLookSkin.scheme");
+      std::string schemeFileName = dtCore::FindFileInPathList("schemes/WindowsLook.scheme");
 
       CEGUI::SchemeManager::getSingleton().loadScheme(schemeFileName);
       CEGUI::System::getSingleton().setDefaultMouseCursor("WindowsLook", "MouseArrow");
-      CEGUI::System::getSingleton().setDefaultFont("Tahoma-12");
+      CEGUI::System::getSingleton().setDefaultFont("DejaVuSans-10");
 
       CEGUI::WindowManager *wm = CEGUI::WindowManager::getSingletonPtr();
 
@@ -90,7 +90,7 @@ void TestWinApp::BuildGUI( DeltaWin::ResolutionVec &resolutions,
            itr != resolutions.end();
            itr++ )
       {         
-         list->addRow();
+         rowNum = list->addRow();
 
          str = ToString<int>( (*itr).width );
          CEGUI::ListboxTextItem *item = new CEGUI::ListboxTextItem( str );
@@ -123,8 +123,6 @@ void TestWinApp::BuildGUI( DeltaWin::ResolutionVec &resolutions,
          item->setSelectionBrushImage("WindowsLook", "Background");
          item->setUserData( static_cast<void*>(&(*itr)) );
          list->setItem(item, 3, rowNum);
-
-         rowNum++;
       }
 
       //use our current resolution to look up it's position in the available
