@@ -3,9 +3,9 @@
 #include <CEGUI/CEGUIWindow.h>
 #include <CEGUI/CEGUIExceptions.h>
 #include <CEGUI/CEGUIVersion.h>
-#if defined(CEGUI_VERSION_MAJOR) && CEGUI_VERSION_MAJOR >= 0 && defined(CEGUI_VERSION_MINOR) && CEGUI_VERSION_MINOR >= 5
-#   include <CEGUI/XMLParserModules/XercesParser/CEGUIXercesParser.h>
-#endif
+//#if defined(CEGUI_VERSION_MAJOR) && CEGUI_VERSION_MAJOR >= 0 && defined(CEGUI_VERSION_MINOR) && CEGUI_VERSION_MINOR >= 5
+//#   include <CEGUI/XMLParserModules/XercesParser/CEGUIXercesParser.h>
+//#endif
 
 #include <dtGUI/ceuidrawable.h>
 #include <dtGUI/ceguimouselistener.h>       // for member
@@ -98,20 +98,20 @@ void CEUIDrawable::Config()
          #if defined(CEGUI_VERSION_MAJOR) && CEGUI_VERSION_MAJOR >= 0 && defined(CEGUI_VERSION_MINOR) && CEGUI_VERSION_MINOR >= 5
          // CEGUI 0.5.0 introduces a "unified" constructor. 
          // The new 0 here is for using the default ResourceProvider as well as the default XML parser.
-         new CEGUI::System(mRenderer,0,new CEGUI::XercesParser(),mScriptModule);          
+         new CEGUI::System(mRenderer, NULL, NULL, mScriptModule);          
          #else
          new CEGUI::System(mRenderer,mScriptModule);
          #endif // CEGUI 0.5.0
       }
       else
       {
-         #if defined(CEGUI_VERSION_MAJOR) && CEGUI_VERSION_MAJOR >= 0 && defined(CEGUI_VERSION_MINOR) && CEGUI_VERSION_MINOR >= 5
+         //#if defined(CEGUI_VERSION_MAJOR) && CEGUI_VERSION_MAJOR >= 0 && defined(CEGUI_VERSION_MINOR) && CEGUI_VERSION_MINOR >= 5
          // CEGUI 0.5.0 introduces a "unified" constructor. 
          // The new 0 here is for using the default ResourceProvider as well as the default XML parser.
-         new CEGUI::System(mRenderer,0,new CEGUI::XercesParser());          
-         #else
+         //new CEGUI::System(mRenderer);          
+         //#else
          new CEGUI::System(mRenderer);
-         #endif // CEGUI 0.5.0
+         //#endif // CEGUI 0.5.0
       }
    }
 
