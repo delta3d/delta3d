@@ -119,8 +119,11 @@ CEGUI::Window* GUIManager::LoadLayout(const std::string& file)
 CEGUI::Imageset* GUIManager::CreateImageset(const std::string& name, void* buffer, int width, int height)
 {
    CEGUI::Texture* cetex = CEGUI::System::getSingletonPtr()->getRenderer()->createTexture();
-   cetex->loadFromMemory( buffer, width, height );
-
+#if defined(CEGUI_VERSION_MAJOR) && CEGUI_VERSION_MAJOR >= 0 && defined(CEGUI_VERSION_MINOR) && CEGUI_VERSION_MINOR >= 5
+   cetex->loadFromMemory( buffer, width, height, CEGUI::Texture::PF_RGBA);
+#else
+    cetex->loadFromMemory( buffer, width, height );
+#endif
    CEGUI::ImagesetManager* mgr = CEGUI::ImagesetManager::getSingletonPtr();
    CEGUI::Imageset* imgset = mgr->createImageset(name,cetex);
 
