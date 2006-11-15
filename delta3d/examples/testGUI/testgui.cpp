@@ -3,16 +3,30 @@
 #undef None
 #endif
 
-#include <CEGUI/CEGUI.h>
+#include <dtABC/application.h>
+#include <dtCore/object.h>
+#include <dtCore/camera.h>
+#include <dtCore/deltawin.h>
+#include <dtCore/scene.h>
+#include <dtCore/globals.h>
+#include <dtGUI/scriptmodule.h>
+#include <dtGUI/ceuidrawable.h>
+#include <dtUtil/log.h>
+#include <dtUtil/mathdefines.h>
 
-#include <dtGUI/dtgui.h>
-#include <dtCore/dt.h>
-#include <dtABC/dtabc.h>
+#include <CEGUI/CEGUISchemeManager.h>
+#include <CEGUI/CEGUISystem.h>
+#include <CEGUI/CEGUIWindowManager.h>
+#include <CEGUI/CEGUIWindow.h>
+#include <CEGUI/CEGUIExceptions.h>
+#include <CEGUI/elements/CEGUIScrollbar.h>
+#include <CEGUI/elements/CEGUIPushButton.h>
 
 using namespace dtCore;
 using namespace dtABC;
 using namespace dtUtil;
 using namespace dtGUI;
+
 
 class TestGUIApp : public dtABC::Application
 {
@@ -74,11 +88,12 @@ private:
    {
       try
       {
-         std::string schemeFileName = dtCore::FindFileInPathList("schemes/WindowsLookSkin.scheme");
+         std::string schemeFileName = dtCore::FindFileInPathList("schemes/WindowsLook.scheme");
 
          CEGUI::SchemeManager::getSingleton().loadScheme(schemeFileName);
          CEGUI::System::getSingleton().setDefaultMouseCursor("WindowsLook", "MouseArrow");
-         CEGUI::System::getSingleton().setDefaultFont("Tahoma-12");
+         CEGUI::System::getSingleton().setDefaultFont("DejaVuSans-10");
+         CEGUI::System::getSingleton().getDefaultFont()->setProperty("PointSize", "20");
 
          CEGUI::WindowManager *wm = CEGUI::WindowManager::getSingletonPtr();
 
@@ -94,47 +109,46 @@ private:
          else
          {
             // background panel
-            CEGUI::StaticImage* panel = (CEGUI::StaticImage*)wm->createWindow("WindowsLook/StaticImage", "Panel 1");
+            CEGUI::Window* panel = wm->createWindow("WindowsLook/StaticImage", "Panel 1");
             sheet->addChildWindow(panel);
-            panel->setPosition(CEGUI::Point(0.0f, 0.0f));
-            panel->setSize(CEGUI::Size(1.f, 1.f));
+            panel->setPosition(CEGUI::UVector2(cegui_reldim(0.f), cegui_reldim(0.f)));
+            panel->setSize(CEGUI::UVector2(cegui_reldim(1.f), cegui_reldim(1.f)));
 
             //Delta3D text
-            CEGUI::StaticText* st = (CEGUI::StaticText*)wm->createWindow("WindowsLook/StaticText","Delta_3D");
+            CEGUI::Window* st = wm->createWindow("WindowsLook/StaticText","Delta_3D");
             panel->addChildWindow(st);
-            st->setPosition(CEGUI::Point(0.2f, 0.3f));
-            st->setSize(CEGUI::Size(0.6f, 0.2f));
+            st->setPosition(CEGUI::UVector2(cegui_reldim(0.2f), cegui_reldim(0.3f)));
+            st->setSize(CEGUI::UVector2(cegui_reldim(0.6f), cegui_reldim(0.2f)));
             st->setText("Delta 3D");
-            st->setFrameEnabled(false);
-            st->setBackgroundEnabled(false);
-            st->setFont("Digi-48");
-            st->setHorizontalFormatting(CEGUI::StaticText::HorzCentred);
+            st->setProperty("FrameEnabled", "false");
+            st->setProperty("BackgroundEnabled", "false");
+            st->setProperty("HorzFormatting", "HorzCentred");
 
             // Edit box for text entry
-            CEGUI::Editbox* eb = (CEGUI::Editbox*)wm->createWindow("WindowsLook/Editbox", "EditBox");
+            CEGUI::Window* eb = wm->createWindow("WindowsLook/Editbox", "EditBox");
             panel->addChildWindow(eb);
-            eb->setPosition(CEGUI::Point(0.3f, 0.55f));
-            eb->setSize(CEGUI::Size(0.4f, 0.1f));
+            eb->setPosition(CEGUI::UVector2(cegui_reldim(0.3f), cegui_reldim(0.55f)));
+            eb->setSize(CEGUI::UVector2(cegui_reldim(0.4f), cegui_reldim(0.1f)));
             eb->setText("Editable text box");
 
             //slider
-            CEGUI::Scrollbar* slider = (CEGUI::Scrollbar*)wm->createWindow("WindowsLook/HorizontalScrollbar", "slider1");
+            CEGUI::Window* slider = wm->createWindow("WindowsLook/HorizontalScrollbar", "slider1");
             panel->addChildWindow(slider);
-            slider->setPosition(CEGUI::Point(0.12f, 0.1f));
-            slider->setSize(CEGUI::Size(0.76f, 0.05f));
-            slider->setDocumentSize(100.f);
-            slider->setPageSize(16.f);
-            slider->setStepSize(1.f);
-            slider->setOverlapSize(1.f);
-            slider->setScrollPosition(100.f);
+            slider->setPosition(CEGUI::UVector2(cegui_reldim(0.12f), cegui_reldim(0.1f)));
+            slider->setSize(CEGUI::UVector2(cegui_reldim(0.76f), cegui_reldim(0.05f)));
+            slider->setProperty("DocumentSize", "100");
+            slider->setProperty("PageSize", "16");
+            slider->setProperty("StepSize", "1");
+            slider->setProperty("OverlapSize", "1");
+            slider->setProperty("ScrollPosition", "100");
             slider->subscribeEvent(CEGUI::Scrollbar::EventScrollPositionChanged, &sliderHandler);
 
             // quit button
-            CEGUI::PushButton* btn = (CEGUI::PushButton*)wm->createWindow("WindowsLook/Button", "QuitButton");
+            CEGUI::Window* btn = wm->createWindow("WindowsLook/Button", "QuitButton");
             panel->addChildWindow(btn);
             btn->setText("Exit");
-            btn->setPosition( CEGUI::Point(0.4f, 0.7f) );
-            btn->setSize( CEGUI::Size(0.2f, 0.1f) );
+            btn->setPosition( CEGUI::UVector2(cegui_reldim(0.4f), cegui_reldim(0.7f)) );
+            btn->setSize( CEGUI::UVector2(cegui_reldim(0.2f), cegui_reldim(0.1f)) );
             btn->subscribeEvent(CEGUI::PushButton::EventClicked, &quitHandler);
          }
       }

@@ -169,6 +169,9 @@
 		<File
 			RelativePath="..\..\..\examples\testWin\readme.txt">
 		</File>
+		<File
+			RelativePath="..\..\..\examples\testWin\testWinLayout.xml">
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

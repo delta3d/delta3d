@@ -29,7 +29,8 @@
 #ifdef None
 #undef None
 #endif
-#include <CEGUI/CEGUI.h>
+//#include <CEGUI/CEGUI.h>
+#include <CEGUI/CEGUIWindow.h>
 #include <dtGUI/ceuidrawable.h>
 #include "export.h"
 
@@ -131,8 +132,8 @@ class TEST_AAR_EXPORT TestAARHUD : public dtGame::GMComponent
        * Check to see if the data changed.  The default values for color and position
        * won't do anything since they use a color and position < 0.
        */
-      void UpdateStaticText(CEGUI::StaticText *textControl, char *newText,
-                            float red = -1.0, float blue = -1.0, float green = -1.0,
+      void UpdateStaticText(CEGUI::Window *textControl, char *newText,
+                            const std::string &color = "00000000",
                             float x = -1, float y = -1);
    private:
 
@@ -157,7 +158,7 @@ class TEST_AAR_EXPORT TestAARHUD : public dtGame::GMComponent
       /**
        * Utility method to create text
        */
-      CEGUI::StaticText *CreateText(const std::string &name, CEGUI::StaticImage *parent, const std::string &text,
+      CEGUI::Window *CreateText(const std::string &name, CEGUI::Window *parent, const std::string &text,
                                      float x, float y, float width, float height);
 
       HUDState *mHUDState;
@@ -170,52 +171,52 @@ class TEST_AAR_EXPORT TestAARHUD : public dtGame::GMComponent
       dtCore::DeltaWin *mWin;
       CEGUI::Window *mMainWindow;
       dtCore::RefPtr<dtGUI::CEUIDrawable> mGUI;
-      CEGUI::StaticImage *mHUDOverlay;
-      CEGUI::StaticImage *mHelpOverlay;
+      CEGUI::Window *mHUDOverlay;
+      CEGUI::Window *mHelpOverlay;
 
 
       // main info
-      CEGUI::StaticText *mStateText;
-      CEGUI::StaticText *mSimTimeText;
-      CEGUI::StaticText *mSpeedFactorText;
-      CEGUI::StaticText *mNumMessagesText;
-      CEGUI::StaticText *mRecordDurationText;
-      CEGUI::StaticText *mNumTagsText;
-      CEGUI::StaticText *mLastTagText;
-      CEGUI::StaticText *mNumFramesText;
-      CEGUI::StaticText *mLastFrameText;
-      CEGUI::StaticText *mCurLogText;
-      CEGUI::StaticText *mCurMapText;
+      CEGUI::Window *mStateText;
+      CEGUI::Window *mSimTimeText;
+      CEGUI::Window *mSpeedFactorText;
+      CEGUI::Window *mNumMessagesText;
+      CEGUI::Window *mRecordDurationText;
+      CEGUI::Window *mNumTagsText;
+      CEGUI::Window *mLastTagText;
+      CEGUI::Window *mNumFramesText;
+      CEGUI::Window *mLastFrameText;
+      CEGUI::Window *mCurLogText;
+      CEGUI::Window *mCurMapText;
 
       // tips messages
-      CEGUI::StaticText *mFirstTipText;
-      CEGUI::StaticText *mSecondTipText;
+      CEGUI::Window *mFirstTipText;
+      CEGUI::Window *mSecondTipText;
 
       // help fields
-      CEGUI::StaticText *mHelpTipText;
-      CEGUI::StaticText *mHelp1Text;
-      CEGUI::StaticText *mHelp2Text;
-      CEGUI::StaticText *mHelp3Text;
-      CEGUI::StaticText *mHelp4Text;
-      CEGUI::StaticText *mHelp5Text;
-      CEGUI::StaticText *mHelp6Text;
-      CEGUI::StaticText *mHelp7Text;
-      CEGUI::StaticText *mHelp8Text;
-      CEGUI::StaticText *mHelp9Text;
-      CEGUI::StaticText *mHelp10Text;
-      CEGUI::StaticText *mHelp11Text;
-      CEGUI::StaticText *mHelp12Text;
-      CEGUI::StaticText *mHelp13Text;
-      CEGUI::StaticText *mHelp14Text;
-      CEGUI::StaticText *mHelp15Text;
-      CEGUI::StaticText *mHelp16Text;
-      CEGUI::StaticText *mHelp17Text;
-      CEGUI::StaticText *mHelp18Text;
-      CEGUI::StaticText *mHelp19Text;
+      CEGUI::Window *mHelpTipText;
+      CEGUI::Window *mHelp1Text;
+      CEGUI::Window *mHelp2Text;
+      CEGUI::Window *mHelp3Text;
+      CEGUI::Window *mHelp4Text;
+      CEGUI::Window *mHelp5Text;
+      CEGUI::Window *mHelp6Text;
+      CEGUI::Window *mHelp7Text;
+      CEGUI::Window *mHelp8Text;
+      CEGUI::Window *mHelp9Text;
+      CEGUI::Window *mHelp10Text;
+      CEGUI::Window *mHelp11Text;
+      CEGUI::Window *mHelp12Text;
+      CEGUI::Window *mHelp13Text;
+      CEGUI::Window *mHelp14Text;
+      CEGUI::Window *mHelp15Text;
+      CEGUI::Window *mHelp16Text;
+      CEGUI::Window *mHelp17Text;
+      CEGUI::Window *mHelp18Text;
+      CEGUI::Window *mHelp19Text;
 
       // task texts
-      CEGUI::StaticText *mTasksHeaderText;
-      std::vector<CEGUI::StaticText *> mTaskTextList;
+      CEGUI::Window *mTasksHeaderText;
+      std::vector<CEGUI::Window *> mTaskTextList;
 
       float mRightTextXOffset;
       float mTextYTopOffset;

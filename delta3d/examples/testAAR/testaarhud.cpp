@@ -31,6 +31,9 @@
 #include <dtGame/serverloggercomponent.h>
 #include <dtGame/taskcomponent.h>
 #include <dtActors/taskactor.h>
+#include <CEGUI/CEGUISchemeManager.h>
+#include <CEGUI/CEGUIWindowManager.h>
+#include <CEGUI/CEGUIExceptions.h>
 
 #include <ctime>
 
@@ -154,17 +157,16 @@ void TestAARHUD::SetupGUI(dtCore::DeltaWin *win)
 
       // MEDIUM FIELDS - on in Medium or max
 
-      mHUDOverlay = static_cast<CEGUI::StaticImage*>(wm->createWindow
-         ("WindowsLook/StaticImage", "medium_overlay"));
+      mHUDOverlay = wm->createWindow("WindowsLook/StaticImage", "medium_overlay");
       mMainWindow->addChildWindow(mHUDOverlay);
-      mHUDOverlay->setPosition(CEGUI::Point(0.0f, 0.0f));
-      mHUDOverlay->setSize(CEGUI::Size(1.0f, 1.0f));
-      mHUDOverlay->setFrameEnabled(false);
-      mHUDOverlay->setBackgroundEnabled(false);
+      mHUDOverlay->setPosition(CEGUI::UVector2(cegui_reldim(0.0f),cegui_reldim(0.0f)));
+      mHUDOverlay->setSize(CEGUI::UVector2(cegui_reldim(0.0f), cegui_reldim(0.0f)));
+      mHUDOverlay->setProperty("FrameEnabled", "false");
+      mHUDOverlay->setProperty("BackgroundEnabled", "false");
 
       // Main State - idle/playback/record
       mStateText = CreateText("State Text", mHUDOverlay, "", 10.0f, 20.0f, 120.0f, mTextHeight + 5);
-      mStateText->setTextColours(CEGUI::colour(1.0, 0.1, 0.1));
+      mStateText->setProperty("TextColours", "tl:FFFF1919 tr:FFFF1919 bl:FFFF1919 br:FFFF1919");
       mStateText->setFont("Tahoma-12");
 
       // Core sim info
@@ -220,13 +222,13 @@ void TestAARHUD::SetupGUI(dtCore::DeltaWin *win)
 
       // HELP FIELDS
 
-      mHelpOverlay = static_cast<CEGUI::StaticImage*>(wm->createWindow
+      mHelpOverlay = static_cast<CEGUI::Window*>(wm->createWindow
          ("WindowsLook/StaticImage", "Help Overlay"));
       mMainWindow->addChildWindow(mHelpOverlay);
-      mHelpOverlay->setPosition(CEGUI::Point(0.0f, 0.0f));
-      mHelpOverlay->setSize(CEGUI::Size(1.0f, 1.0f));
-      mHelpOverlay->setFrameEnabled(false);
-      mHelpOverlay->setBackgroundEnabled(false);
+      mHelpOverlay->setPosition(CEGUI::UVector2(cegui_reldim(0.0f), cegui_reldim(0.0f)));
+      mHelpOverlay->setSize(CEGUI::UVector2(cegui_reldim(1.0f), cegui_reldim(0.0f)));
+      mHelpOverlay->setProperty("FrameEnabled", "false");
+      mHelpOverlay->setProperty("BackgroundEnabled", "false");
       mHelpOverlay->hide();
 
       // help tip
@@ -328,26 +330,26 @@ void TestAARHUD::TickHUD()
 
       // Playback State
       if (dtGame::LogStateEnumeration::LOGGER_STATE_IDLE == mLogController->GetLastKnownStatus().GetStateEnum())
-         UpdateStaticText(mStateText, "IDLE", 1.0, 1.0, 1.0);
+         UpdateStaticText(mStateText, "IDLE", "FFFFFFFF");
       else if (dtGame::LogStateEnumeration::LOGGER_STATE_PLAYBACK == mLogController->GetLastKnownStatus().GetStateEnum())
-         UpdateStaticText(mStateText, "PLAYBACK", 0.1, 1.0, 0.1);
+         UpdateStaticText(mStateText, "PLAYBACK", "FF19FF19");
       else // if (dtGame::LogStateEnumeration::LOGGER_STATE_RECORD == mLogController->GetLastKnownStatus().GetStateEnum())
-         UpdateStaticText(mStateText, "RECORD", 1.0, 0.1, 0.1);
+         UpdateStaticText(mStateText, "RECORD", "FFFF1919");
 
       // Sim Time
       snprintf(clin, HUDCONTROLMAXTEXTSIZE, "SimTime: %.2f", GetGameManager()->GetSimulationTime());
       curYPos = mTextYTopOffset;
-      UpdateStaticText(mSimTimeText, clin, -1.0, -1.0, -1.0, w - mRightTextXOffset, curYPos);
+      UpdateStaticText(mSimTimeText, clin, "", w - mRightTextXOffset, curYPos);
 
       // speed factor
       curYPos += mTextHeight + 2;
       if (!GetGameManager()->IsPaused())
       {
          snprintf(clin, HUDCONTROLMAXTEXTSIZE, "Speed: %.2fX", GetGameManager()->GetTimeScale());
-         UpdateStaticText(mSpeedFactorText, clin, 1.0, 1.0, 1.0, w - mRightTextXOffset, curYPos);
+         UpdateStaticText(mSpeedFactorText, clin, "FFFFFFFF", w - mRightTextXOffset, curYPos);
       }
       else
-         UpdateStaticText(mSpeedFactorText, "Speed: *Paused*", 1.0, 0.1, 0.1, w - mRightTextXOffset, curYPos);
+         UpdateStaticText(mSpeedFactorText, "Speed: *Paused*", "FFFF1919", w - mRightTextXOffset, curYPos);
 
       UpdateMediumDetailData();
       UpdateHighDetailData((int)(w - mRightTextXOffset), curYPos);
@@ -381,9 +383,9 @@ void TestAARHUD::UpdateMediumDetailData()
       // update our task header
       snprintf(clin, HUDCONTROLMAXTEXTSIZE, "Tasks (%i of %i):", numComplete, numAdded);
       if (numComplete < numAdded)
-         UpdateStaticText(mTasksHeaderText, clin, 1.0, 1.0, 1.0);
+         UpdateStaticText(mTasksHeaderText, clin, "FFFFFFFF");
       else
-         UpdateStaticText(mTasksHeaderText, clin, 0.1, 1.0, 0.1);
+         UpdateStaticText(mTasksHeaderText, clin, "FF19FF10");
    }
 }
 
@@ -452,38 +454,38 @@ void TestAARHUD::UpdateHighDetailData(int baseWidth, float &curYPos)
       // Num Messages
       snprintf(clin, HUDCONTROLMAXTEXTSIZE, "Num Msgs: %lu", mLogController->GetLastKnownStatus().GetNumMessages());
       curYPos += (mTextHeight + 2) * 2;
-      UpdateStaticText(mNumMessagesText, clin, -1.0, -1.0, -1.0, baseWidth, curYPos);
+      UpdateStaticText(mNumMessagesText, clin, "", baseWidth, curYPos);
 
       // Record Duration
       snprintf(clin, HUDCONTROLMAXTEXTSIZE, "Duration: %.2f", mLogController->GetLastKnownStatus().GetCurrentRecordDuration());
       curYPos += mTextHeight + 2;
-      UpdateStaticText(mRecordDurationText, clin, -1.0, -1.0, -1.0, baseWidth, curYPos);
+      UpdateStaticText(mRecordDurationText, clin, "", baseWidth, curYPos);
 
       // Number of Tags
       curYPos += mTextHeight + 2;
-      UpdateStaticText(mNumTagsText, numTagsStr, -1.0, -1.0, -1.0, baseWidth, curYPos);
+      UpdateStaticText(mNumTagsText, numTagsStr, "", baseWidth, curYPos);
 
       // Last Tag
       curYPos += mTextHeight + 2;
-      UpdateStaticText(mLastTagText, lastTagStr, -1.0, -1.0, -1.0, baseWidth, curYPos);
+      UpdateStaticText(mLastTagText, lastTagStr, "", baseWidth, curYPos);
 
       // Num Frames
       curYPos += mTextHeight + 2;
-      UpdateStaticText(mNumFramesText, numFramesStr, -1.0, -1.0, -1.0, baseWidth, curYPos);
+      UpdateStaticText(mNumFramesText, numFramesStr, "", baseWidth, curYPos);
 
       // Num Frames
       curYPos += mTextHeight + 2;
-      UpdateStaticText(mLastFrameText, lastFrameStr, -1.0, -1.0, -1.0, baseWidth, curYPos);
+      UpdateStaticText(mLastFrameText, lastFrameStr, "", baseWidth, curYPos);
 
       // Current Log
       snprintf(clin, HUDCONTROLMAXTEXTSIZE, "LogFile: %s", mLogController->GetLastKnownStatus().GetLogFile().c_str());
       curYPos += mTextHeight + 2;
-      UpdateStaticText(mCurLogText, clin, -1.0, -1.0, -1.0, baseWidth, curYPos);
+      UpdateStaticText(mCurLogText, clin, "", baseWidth, curYPos);
 
       // Current Map
       snprintf(clin, HUDCONTROLMAXTEXTSIZE, "CurMap: %s", mLogController->GetLastKnownStatus().GetActiveMap().c_str());
       curYPos += mTextHeight + 2;
-      UpdateStaticText(mCurMapText, clin, -1.0, -1.0, -1.0, baseWidth, curYPos);
+      UpdateStaticText(mCurMapText, clin, "", baseWidth, curYPos);
    }
 }
 
@@ -504,13 +506,13 @@ int TestAARHUD::RecursivelyAddTasks(const std::string &indent, int curIndex,
 
          snprintf(clin, HUDCONTROLMAXTEXTSIZE, "%s %s - %s - %.2f", indent.c_str(), task->GetName().c_str(),
             "Y", task->GetScore());
-         UpdateStaticText(mTaskTextList[curIndex + totalNumAdded], clin, 0.0, 1.0, 0.0);
+         UpdateStaticText(mTaskTextList[curIndex + totalNumAdded], clin, "FF00FF00");
       }
       else
       {
          snprintf(clin, HUDCONTROLMAXTEXTSIZE, "%s %s - %s - %.2f", indent.c_str(), task->GetName().c_str(),
             "N", task->GetScore());
-         UpdateStaticText(mTaskTextList[curIndex + totalNumAdded], clin, 1.0, 1.0, 1.0);
+         UpdateStaticText(mTaskTextList[curIndex + totalNumAdded], clin, "FFFFFFFF");
       }
 
       totalNumAdded += 1;
@@ -531,8 +533,8 @@ int TestAARHUD::RecursivelyAddTasks(const std::string &indent, int curIndex,
 }
 
 //////////////////////////////////////////////////////////////////////////
-void TestAARHUD::UpdateStaticText(CEGUI::StaticText *textControl, char *newText,
-                                  float red, float blue, float green, float x, float y)
+void TestAARHUD::UpdateStaticText(CEGUI::Window *textControl, char *newText,
+                                  const std::string &color, float x, float y)
 {
    if (textControl != NULL)
    {
@@ -540,14 +542,18 @@ void TestAARHUD::UpdateStaticText(CEGUI::StaticText *textControl, char *newText,
       if (newText != NULL && textControl->getText() != std::string(newText))
       {
          textControl->setText(newText);
-         if (red >= 0.00 && blue >= 0.0 && green >= 0.0)
-            textControl->setTextColours(CEGUI::colour(red, blue, green));
+         if (!color.empty())
+         {
+            CEGUI::String col = "tl:";
+            col += color;
+            textControl->setProperty("TextColours", col);
+         }
       }
       // position
       if (x > 0.0 && y > 0.0)
       {
-         CEGUI::Point position = textControl->getPosition();
-         CEGUI::Point newPos(x, y);
+         CEGUI::UVector2 position = textControl->getPosition();
+         CEGUI::UVector2 newPos(cegui_reldim(x), cegui_reldim(y));
          if (position != newPos)
             textControl->setPosition(newPos);
       }
@@ -692,20 +698,20 @@ void TestAARHUD::UpdateState()
 }
 
 //////////////////////////////////////////////////////////////////////////
-CEGUI::StaticText * TestAARHUD::CreateText(const std::string &name, CEGUI::StaticImage *parent, const std::string &text,
+CEGUI::Window * TestAARHUD::CreateText(const std::string &name, CEGUI::Window *parent, const std::string &text,
                                  float x, float y, float width, float height)
 {
    CEGUI::WindowManager *wm = CEGUI::WindowManager::getSingletonPtr();
 
    // create base window and set our default attribs
-   CEGUI::StaticText* result = static_cast<CEGUI::StaticText*>(wm->createWindow("WindowsLook/StaticText", name));
+   CEGUI::Window* result = wm->createWindow("WindowsLook/StaticText", name);
    parent->addChildWindow(result);
-   result->setMetricsMode(CEGUI::Absolute);
+   //result->setMetricsMode(CEGUI::Absolute);
    result->setText(text);
-   result->setPosition(CEGUI::Point(x, y));
-   result->setSize(CEGUI::Size(width, height));
-   result->setFrameEnabled(false);
-   result->setBackgroundEnabled(false);
+   result->setPosition(CEGUI::UVector2(cegui_reldim(x), cegui_reldim(y)));
+   result->setSize(CEGUI::UVector2(cegui_reldim(width), cegui_reldim(height)));
+   result->setProperty("FrameEnabled", "false");
+   result->setProperty("BackgroundEnabled", "false");
    result->setHorizontalAlignment(CEGUI::HA_LEFT);
    result->setVerticalAlignment(CEGUI::VA_TOP);
    result->show();

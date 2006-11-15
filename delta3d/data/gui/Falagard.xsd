@@ -9,6 +9,7 @@
 	<xsd:complexType name="widgetLookType">
 		<xsd:sequence>
             <xsd:element name="PropertyDefinition" type="propertyDefinitionType" minOccurs="0" maxOccurs="unbounded" />
+            <xsd:element name="PropertyLinkDefinition" type="propertyLinkDefinitionType" minOccurs="0" maxOccurs="unbounded" />
             <xsd:element name="Property" type="propertyType" minOccurs="0" maxOccurs="unbounded" />
             <xsd:element name="NamedArea" type="namedAreaType" minOccurs="0" maxOccurs="unbounded" />
 			<xsd:element name="Child" type="widgetComponentType" minOccurs="0" maxOccurs="unbounded" />
@@ -20,6 +21,15 @@
     <xsd:complexType name="propertyDefinitionType">
         <xsd:attribute name="type" type="propertyTypeEnum" use="optional" default="Generic" />
         <xsd:attribute name="name" type="xsd:string" use="required" />
+        <xsd:attribute name="initialValue" type="xsd:string" use="optional" default="" />
+        <xsd:attribute name="layoutOnWrite" type="xsd:boolean" use="optional" default="false" />
+        <xsd:attribute name="redrawOnWrite" type="xsd:boolean" use="optional" default="false" />
+    </xsd:complexType>
+    <xsd:complexType name="propertyLinkDefinitionType">
+        <xsd:attribute name="type" type="propertyTypeEnum" use="optional" default="Generic" />
+        <xsd:attribute name="name" type="xsd:string" use="required" />
+        <xsd:attribute name="widget" type="xsd:string" use="required" />
+        <xsd:attribute name="targetProperty" type="xsd:string" use="optional" default="" />
         <xsd:attribute name="initialValue" type="xsd:string" use="optional" default="" />
         <xsd:attribute name="layoutOnWrite" type="xsd:boolean" use="optional" default="false" />
         <xsd:attribute name="redrawOnWrite" type="xsd:boolean" use="optional" default="false" />
@@ -45,16 +55,19 @@
 	</xsd:complexType>
     <xsd:complexType name="sectionSpecType">
         <xsd:choice  minOccurs="0" maxOccurs="1">
+            <xsd:element name="Colour" type="colourType" />
             <xsd:element name="Colours" type="colourRectType" />
             <xsd:element name="ColourProperty" type="settingByPropertyType" />
             <xsd:element name="ColourRectProperty" type="settingByPropertyType" />
         </xsd:choice>
         <xsd:attribute name="look" type="xsd:string" use="optional" default="" />
         <xsd:attribute name="section" type="xsd:string" use="required" />
+        <xsd:attribute name="controlProperty" type="xsd:string" use="optional" default="" />
     </xsd:complexType>
 	<xsd:complexType name="imagerySectionType">
 		<xsd:sequence>
             <xsd:choice  minOccurs="0" maxOccurs="1">
+                <xsd:element name="Colour" type="colourType" />
                 <xsd:element name="Colours" type="colourRectType" />
                 <xsd:element name="ColourProperty" type="settingByPropertyType" />
                 <xsd:element name="ColourRectProperty" type="settingByPropertyType" />
@@ -70,6 +83,7 @@
             <xsd:element name="Area" type="componentAreaType" />
             <xsd:element name="Image" type="frameImageType" minOccurs="0" maxOccurs="9" />
             <xsd:choice  minOccurs="0" maxOccurs="1">
+                <xsd:element name="Colour" type="colourType" />
                 <xsd:element name="Colours" type="colourRectType" />
                 <xsd:element name="ColourProperty" type="settingByPropertyType" />
                 <xsd:element name="ColourRectProperty" type="settingByPropertyType" />
@@ -88,7 +102,10 @@
         <xsd:sequence>
             <xsd:element name="Area" type="componentAreaType" />
             <xsd:element name="Text" type="textStringType" minOccurs="0" maxOccurs="1" />
+            <xsd:element name="TextProperty" type="textPropertyType" minOccurs="0" maxOccurs="1" />
+            <xsd:element name="FontProperty" type="fontPropertyType" minOccurs="0" maxOccurs="1" />
             <xsd:choice  minOccurs="0" maxOccurs="1">
+                <xsd:element name="Colour" type="colourType" />
                 <xsd:element name="Colours" type="colourRectType" />
                 <xsd:element name="ColourProperty" type="settingByPropertyType" />
                 <xsd:element name="ColourRectProperty" type="settingByPropertyType" />
@@ -111,6 +128,7 @@
                 <xsd:element name="ImageProperty" type="settingByPropertyType" />
             </xsd:choice>
             <xsd:choice  minOccurs="0" maxOccurs="1">
+                <xsd:element name="Colour" type="colourType" />
                 <xsd:element name="Colours" type="colourRectType" />
                 <xsd:element name="ColourProperty" type="settingByPropertyType" />
                 <xsd:element name="ColourRectProperty" type="settingByPropertyType" />
@@ -134,6 +152,7 @@
 		</xsd:sequence>
 		<xsd:attribute name="type" type="xsd:string" use="required" />
 		<xsd:attribute name="nameSuffix" type="xsd:string" use="required" />
+		<xsd:attribute name="renderer" type="xsd:string" use="optional" default="" />
 		<xsd:attribute name="look" type="xsd:string" use="optional" default="" />
 	</xsd:complexType>
 	<xsd:complexType name="horzFormatType">
@@ -202,6 +221,7 @@
         </xsd:sequence>
         <xsd:attribute name="widget" type="xsd:string" use="optional" default="" />
         <xsd:attribute name="name" type="xsd:string" use="required" />
+        <xsd:attribute name="type" type="propertyDimensionTypeEnum" use="optional" default="" />
     </xsd:complexType>
 	<xsd:complexType name="unifiedDimType">
         <xsd:sequence>
@@ -241,6 +261,9 @@
 		<xsd:attribute name="bottomLeft" type="colourValType" use="required" />
 		<xsd:attribute name="bottomRight" type="colourValType" use="required" />
 	</xsd:complexType>
+	<xsd:complexType name="colourType">
+		<xsd:attribute name="colour" type="colourValType" use="required" />
+	</xsd:complexType>
 	<xsd:simpleType name="colourValType">
 		<xsd:restriction base="xsd:string">
 			<xsd:pattern value="[a-fA-F0-9]{8}" />
@@ -249,6 +272,12 @@
     <xsd:complexType name="textStringType">
         <xsd:attribute name="string" type="xsd:string" use="optional" default="" />
         <xsd:attribute name="font" type="xsd:string" use="optional" default="" />
+    </xsd:complexType>
+    <xsd:complexType name="textPropertyType">
+        <xsd:attribute name="name" type="xsd:string" use="required" />
+    </xsd:complexType>
+    <xsd:complexType name="fontPropertyType">
+        <xsd:attribute name="name" type="xsd:string" use="required" />
     </xsd:complexType>
     <xsd:complexType name="dimensionOperatorType">
         <xsd:choice>
@@ -261,6 +290,13 @@
         </xsd:choice>
         <xsd:attribute name="op" type="dimensionOperatorEnum" use="required" />
     </xsd:complexType>
+    <xsd:simpleType name="propertyDimensionTypeEnum">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="" />
+			<xsd:enumeration value="Width" />
+			<xsd:enumeration value="Height" />
+		</xsd:restriction>
+	</xsd:simpleType>
 	<xsd:simpleType name="dimensionTypeEnum">
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="LeftEdge" />

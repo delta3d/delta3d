@@ -134,11 +134,11 @@ public:
 
       try
       {
-         std::string schemeFileName = dtCore::FindFileInPathList("schemes/WindowsLookSkin.scheme");
+         std::string schemeFileName = dtCore::FindFileInPathList("schemes/WindowsLook.scheme");
          CEGUI::SchemeManager::getSingleton().loadScheme(schemeFileName);
 
          CEGUI::System::getSingleton().setDefaultMouseCursor("WindowsLook", "MouseArrow");
-         CEGUI::System::getSingleton().setDefaultFont("Tahoma-12");
+         CEGUI::System::getSingleton().setDefaultFont("DejaVuSans-10");
 
          CEGUI::Window* sheet = CEGUI::WindowManager::getSingleton().createWindow("DefaultGUISheet", "root_wnd");
          CEGUI::System::getSingleton().setGUISheet(sheet);
@@ -231,38 +231,38 @@ protected:
       Joystick::PollInstances();
 
       {
-         CEGUI::Static *w = static_cast<CEGUI::Static*>(CEGUI::WindowManager::getSingleton().getWindow("Checkbox6"));
+         CEGUI::Window *w = CEGUI::WindowManager::getSingleton().getWindow("Checkbox6");
          if (mApplicationInputDevice->GetButton(0)->GetState())
          {
-            w->setBackgroundColours( kOn );
+            w->setProperty("BackgroundColours", "tl:FFFF0000 tr:FFFF0000 bl:FFFF0000 br:FFFF0000" );
          }
          else
          {
-            w->setBackgroundColours( kOff );
+            w->setProperty("BackgroundColours", "tl:FF000000 tr:FF000000 bl:FF000000 br:FF000000" );
          }
       }
 
       {
-         CEGUI::Static *w = static_cast<CEGUI::Static*>(CEGUI::WindowManager::getSingleton().getWindow("Checkbox7"));
+         CEGUI::Window *w = CEGUI::WindowManager::getSingleton().getWindow("Checkbox7");
          if (mApplicationInputDevice->GetButton(1)->GetState())
          {
-            w->setBackgroundColours( kOn );
+            w->setProperty("BackgroundColours", "tl:FFFF0000 tr:FFFF0000 bl:FFFF0000 br:FFFF0000" );
          }
          else
          {
-            w->setBackgroundColours( kOff );
+            w->setProperty("BackgroundColours", "tl:FF000000 tr:FF000000 bl:FF000000 br:FF000000" );
          }
       }
 
       {
-         CEGUI::Static *w = static_cast<CEGUI::Static*>(CEGUI::WindowManager::getSingleton().getWindow("Checkbox8"));
+         CEGUI::Window *w = CEGUI::WindowManager::getSingleton().getWindow("Checkbox8");
          if (mApplicationInputDevice->GetButton(2)->GetState())
          {
-            w->setBackgroundColours( kOn );
+            w->setProperty("BackgroundColours", "tl:FFFF0000 tr:FFFF0000 bl:FFFF0000 br:FFFF0000" );
          }
          else
          {
-            w->setBackgroundColours( kOff );
+            w->setProperty("BackgroundColours", "tl:FF000000 tr:FF000000 bl:FF000000 br:FF000000" );
          }
       }
 
