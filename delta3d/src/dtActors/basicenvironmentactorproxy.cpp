@@ -164,7 +164,7 @@ namespace dtActors
 
    BasicEnvironmentActor::~BasicEnvironmentActor()
    {
-
+      mAddedActors.clear();
    }
 
    void BasicEnvironmentActor::AddActor(dtDAL::ActorProxy &child)

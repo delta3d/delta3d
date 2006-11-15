@@ -853,8 +853,8 @@ namespace dtGame
 
          if (itor != mActorProxyMap.end())
          {
-            mActorProxyMap.erase(itor);
             RemoveActorFromScene(actorProxy);
+            mActorProxyMap.erase(itor);
          }
       }
       else
@@ -906,15 +906,36 @@ namespace dtGame
       }
       else
       {
-         //add all the children to the parent drawable.
-         for (unsigned i = 0; i < childrenToMove.size(); ++i)
+         dtCore::RefPtr<dtGame::EnvironmentActor> envActor = NULL;
+         if(mEnvironment.valid())
          {
-            dtCore::DeltaDrawable* child = childrenToMove[i]->GetActor();
-            child->Emancipate();
-            dd.GetParent()->AddChild(child);
+            envActor = static_cast<dtGame::EnvironmentActor*>(mEnvironment->GetActor());
          }
-         //remove the proxy drawable from the parent.
-         dd.Emancipate();
+
+         if ( envActor.valid() && envActor->ContainsActor(proxy) )
+         {
+            //add all the children to the parent drawable.
+            for (unsigned i = 0; i < childrenToMove.size(); ++i)
+            {
+               dtCore::DeltaDrawable* child = childrenToMove[i]->GetActor();
+               child->Emancipate();
+               envActor->AddActor(*childrenToMove[i]);
+            }
+            envActor->RemoveActor(proxy);
+         }
+         else
+         {
+            //add all the children to the parent drawable.
+            for (unsigned i = 0; i < childrenToMove.size(); ++i)
+            {
+               dtCore::DeltaDrawable* child = childrenToMove[i]->GetActor();
+               child->Emancipate();
+               dd.GetParent()->AddChild(child);
+            }
+            //remove the proxy drawable from the parent.
+            dd.Emancipate();
+
+         }
       }
 
    }
