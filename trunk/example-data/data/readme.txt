@@ -12,6 +12,7 @@ Note: Mostly the IVE binary versions of the models are used in our examples.
       
 History
 -------
+1.4.0 Upgraded GUI data files for CEGUI 0.5.0
 
 1.2.0 Upgraded gui data files for CEGUI 0.4.1
 
