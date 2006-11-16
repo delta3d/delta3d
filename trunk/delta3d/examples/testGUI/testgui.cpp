@@ -13,6 +13,7 @@
 #include <dtGUI/ceuidrawable.h>
 #include <dtUtil/log.h>
 #include <dtUtil/mathdefines.h>
+#include <dtUtil/exception.h>
 
 #include <CEGUI/CEGUISchemeManager.h>
 #include <CEGUI/CEGUISystem.h>
@@ -63,8 +64,17 @@ public:
       mScriptModule->AddCallback("quitHandler", &quitHandler );
       mScriptModule->AddCallback("sliderHandler", &sliderHandler );
 
-      ///make a new drawable, supplying the DeltaWin and the ScriptModule
-      mGUI = new dtGUI::CEUIDrawable(GetWindow(), mScriptModule);
+      try
+      {
+         ///make a new drawable, supplying the DeltaWin and the ScriptModule
+         mGUI = new dtGUI::CEUIDrawable(GetWindow(), mScriptModule);
+      }
+      catch (dtUtil::Exception &e)
+      {
+         LOG_ERROR("Something bad happened when creating the CEUIDrawable.  I can't go on!\n" +
+                   e.What());
+         exit(1);
+      }
 
       ///make some cool UI
       BuildGUI();
