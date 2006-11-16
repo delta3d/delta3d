@@ -164,52 +164,36 @@ namespace dtActors
 
    BasicEnvironmentActor::~BasicEnvironmentActor()
    {
-      mAddedActors.clear();
+      
    }
 
-   void BasicEnvironmentActor::AddActor(dtDAL::ActorProxy &child)
+   void BasicEnvironmentActor::AddActor(dtCore::DeltaDrawable &dd)
    {
-      mWeather->GetEnvironment()->AddChild(child.GetActor());
-      mAddedActors.insert(std::make_pair(&child, child.GetActor()));
+      mWeather->GetEnvironment()->AddChild(&dd);
    }
 
-   void BasicEnvironmentActor::RemoveActor(dtDAL::ActorProxy &proxy)
+   void BasicEnvironmentActor::RemoveActor(dtCore::DeltaDrawable &dd)
    {
-      mWeather->GetEnvironment()->RemoveChild(proxy.GetActor());
-
-      std::map<dtCore::RefPtr<dtDAL::ActorProxy>, dtCore::DeltaDrawable*>::iterator i =
-         mAddedActors.find(&proxy);
-
-      if (i != mAddedActors.end())
-         mAddedActors.erase(i);
+      mWeather->GetEnvironment()->RemoveChild(&dd);
    }
 
-   bool BasicEnvironmentActor::ContainsActor(dtDAL::ActorProxy &proxy) const
+   bool BasicEnvironmentActor::ContainsActor(dtCore::DeltaDrawable &dd) const
    {
-      std::map<dtCore::RefPtr<dtDAL::ActorProxy>, dtCore::DeltaDrawable*>::const_iterator i =
-         mAddedActors.find(&proxy);
-
-      return i != mAddedActors.end();
+      return mWeather->GetEnvironment()->GetChildIndex(&dd) < mWeather->GetEnvironment()->GetNumChildren();
    }
 
    void BasicEnvironmentActor::RemoveAllActors()
    {
       while(mWeather->GetEnvironment()->GetNumChildren() > 0)
          mWeather->GetEnvironment()->RemoveChild(mWeather->GetEnvironment()->GetChild(0));
-
-      mAddedActors.clear();
    }
 
-   void BasicEnvironmentActor::GetAllActors(std::vector<const dtDAL::ActorProxy*> &vec) const
+   void BasicEnvironmentActor::GetAllActors(std::vector<dtCore::DeltaDrawable*> &vec)
    {
       vec.clear();
 
-      std::map<dtCore::RefPtr<dtDAL::ActorProxy>, dtCore::DeltaDrawable*>::const_iterator i;
-      for(i = mAddedActors.begin(); i != mAddedActors.end(); ++i)
-      {
-         const dtDAL::ActorProxy *proxy = i->first.get();
-         vec.push_back(proxy);
-      }
+      for(unsigned int i = 0; i < mWeather->GetEnvironment()->GetNumChildren(); i++)
+         vec.push_back(mWeather->GetEnvironment()->GetChild(i));
    }
 
    void BasicEnvironmentActor::GetTimeAndDate(int &year, int &month, int &day, int &hour, int &min, int &sec) const
@@ -225,7 +209,7 @@ namespace dtActors
 
    unsigned int BasicEnvironmentActor::GetNumEnvironmentChildren() const
    {
-      return mAddedActors.size();
+      return mWeather->GetEnvironment()->GetNumChildren();
    }
 
    void BasicEnvironmentActor::SetTimeAndDateString(const std::string &timeAndDate)

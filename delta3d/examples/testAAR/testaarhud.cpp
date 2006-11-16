@@ -138,7 +138,7 @@ void TestAARHUD::SetupGUI(dtCore::DeltaWin *win)
       // Initialize CEGUI
       mGUI = new dtGUI::CEUIDrawable(win);
 
-      std::string scheme = "gui/schemes/WindowsLookSkin.scheme";
+      std::string scheme = "gui/schemes/WindowsLook.scheme";
       std::string path = dtCore::FindFileInPathList(scheme);
       if(path.empty())
       {

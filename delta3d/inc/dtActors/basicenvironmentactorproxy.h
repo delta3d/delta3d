@@ -167,13 +167,13 @@ namespace dtActors
            * Adds an actor proxy to the internal hierarchy of the environment
            * @param proxy The proxy to add
            */
-         virtual void AddActor(dtDAL::ActorProxy &proxy);
+         virtual void AddActor(dtCore::DeltaDrawable &dd);
 
          /**
            * Removes an actor proxy from the internal hierarchy
            * @param proxy The proxy to remove
            */
-         virtual void RemoveActor(dtDAL::ActorProxy &proxy);
+         virtual void RemoveActor(dtCore::DeltaDrawable &dd);
 
          /**
            * Removes all actors associated with this environment
@@ -185,14 +185,14 @@ namespace dtActors
            * @param proxy The proxy to look for
            * @return True if it contains it, false if not
            */
-         virtual bool ContainsActor(dtDAL::ActorProxy &proxy) const;
+         virtual bool ContainsActor(dtCore::DeltaDrawable &dd) const;
 
          /**
            * const version of the above function
            * Gets all the actors associated with this environment
            * @param vec The vector to fill
            */
-         virtual void GetAllActors(std::vector<const dtDAL::ActorProxy*> &vec) const;
+         virtual void GetAllActors(std::vector<dtCore::DeltaDrawable*> &vec);
 
          /**
            * Sets the date and time on this environment
@@ -377,7 +377,6 @@ namespace dtActors
          dtCore::RefPtr<dtABC::Weather> mWeather;
          dtCore::RefPtr<dtCore::CloudPlane> mCloudPlane;
          dtABC::Weather::WeatherTheme mWeatherTheme;
-         std::map<dtCore::RefPtr<dtDAL::ActorProxy>, dtCore::DeltaDrawable*> mAddedActors;
    };
 
    class DT_PLUGIN_EXPORT BasicEnvironmentActorProxy : public dtGame::EnvironmentActorProxy
