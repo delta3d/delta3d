@@ -12,6 +12,7 @@
 #include <dtGUI/ceguikeyboardlistener.h>    // for member
 #include <dtGUI/renderer.h>
 #include <dtGUI/basescriptmodule.h>
+#include <dtGUI/guiexceptionenum.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/system.h>
 #include <dtUtil/log.h>
@@ -33,6 +34,7 @@ int CEUIDrawable::mActiveTextureUnit(0);
   * size onto the CEGUI Renderer.
   * @param win : The DeltaWin to monitor for size change
   * @param sm : The ScriptModule to use for CEGUI script processing
+  * @exception dtUtil::Exception Gets thrown if CEGUI cannot be initialized
   */
 CEUIDrawable::CEUIDrawable( dtCore::DeltaWin *win, dtGUI::BaseScriptModule *sm):
    DeltaDrawable("CEUIDrawable"),
@@ -48,29 +50,12 @@ CEUIDrawable::CEUIDrawable( dtCore::DeltaWin *win, dtGUI::BaseScriptModule *sm):
    mKeyboardListener(new CEGUIKeyboardListener()),
    mMouseListener(new CEGUIMouseListener()) 
 {
+   AddSender( &dtCore::System::GetInstance() );
+
+   RegisterInstance(this);
+
    mProjection->setName("CEUIDrawable_Projection");
    mTransform->setName("CEUIDrawable_MatrixTransform");
-
-   // make the listener the first in the list
-   dtCore::Mouse* ms = mWindow->GetMouse();
-   if( ms->GetListeners().empty() )
-   {
-      ms->AddMouseListener( mMouseListener.get() );
-   }
-   else
-   {
-      ms->InsertMouseListener( ms->GetListeners().front() , mMouseListener.get() );
-   }
-
-   dtCore::Keyboard* kb = mWindow->GetKeyboard();
-   if( kb->GetListeners().empty() )
-   {
-      kb->AddKeyboardListener( mKeyboardListener.get() );
-   }
-   else
-   {
-      kb->InsertKeyboardListener( kb->GetListeners().front() , mKeyboardListener.get() );
-   }
 
    Config();
 }
@@ -85,35 +70,60 @@ CEUIDrawable::~CEUIDrawable()
    delete mRenderer;
 }
 
+/** 
+*  \exception dtUtil::Exception Gets thrown if CEGUI cannot be initialized
+*/
 void CEUIDrawable::Config()
 {
-   AddSender( &dtCore::System::GetInstance() );
-   
-   RegisterInstance(this);
-
    if(CEGUI::System::getSingletonPtr() == NULL)
    {
-      if(mScriptModule)
+      try
       {
-         #if defined(CEGUI_VERSION_MAJOR) && CEGUI_VERSION_MAJOR >= 0 && defined(CEGUI_VERSION_MINOR) && CEGUI_VERSION_MINOR >= 5
-         // CEGUI 0.5.0 introduces a "unified" constructor. 
-         // The new 0 here is for using the default ResourceProvider as well as the default XML parser.
-         new CEGUI::System(mRenderer, NULL, NULL, mScriptModule);          
-         #else
-         new CEGUI::System(mRenderer,mScriptModule);
-         #endif // CEGUI 0.5.0
+         if(mScriptModule)
+         {
+            #if defined(CEGUI_VERSION_MAJOR) && CEGUI_VERSION_MAJOR >= 0 && defined(CEGUI_VERSION_MINOR) && CEGUI_VERSION_MINOR >= 5
+            // CEGUI 0.5.0 introduces a "unified" constructor. 
+            // The new 0 here is for using the default ResourceProvider as well as the default XML parser.
+            new CEGUI::System(mRenderer, NULL, NULL, mScriptModule);          
+            #else
+            new CEGUI::System(mRenderer,mScriptModule);
+            #endif // CEGUI 0.5.0
+         }
+         else
+         {
+            new CEGUI::System(mRenderer);
+         }
       }
-      else
+      catch (CEGUI::Exception &e)
       {
-         //#if defined(CEGUI_VERSION_MAJOR) && CEGUI_VERSION_MAJOR >= 0 && defined(CEGUI_VERSION_MINOR) && CEGUI_VERSION_MINOR >= 5
-         // CEGUI 0.5.0 introduces a "unified" constructor. 
-         // The new 0 here is for using the default ResourceProvider as well as the default XML parser.
-         //new CEGUI::System(mRenderer);          
-         //#else
-         new CEGUI::System(mRenderer);
-         //#endif // CEGUI 0.5.0
+         dtUtil::Log::GetInstance().LogMessage(Log::LOG_ERROR, __FUNCTION__,
+            "CEGUI says: %s", e.getMessage().c_str());
+
+         EXCEPT( ExceptionEnum::GenericCEGUIException, "Can't initialize dtGUI system.  UI operations will fail!");
       }
    }
+
+   // make the listener the first in the list
+   dtCore::Mouse* ms = mWindow->GetMouse();
+   if( ms->GetListeners().empty() )
+   {
+      ms->AddMouseListener( mMouseListener.get() );
+   }
+   else
+   {
+      ms->InsertMouseListener( ms->GetListeners().front() , mMouseListener.get() );
+   }  
+
+   dtCore::Keyboard* kb = mWindow->GetKeyboard();
+   if( kb->GetListeners().empty() )
+   {
+      kb->AddKeyboardListener( mKeyboardListener.get() );
+   }
+   else
+   {
+      kb->InsertKeyboardListener( kb->GetListeners().front() , mKeyboardListener.get() );
+   }
+
 
    int x(0), y(0), w(0), h(0);
    mWindow->GetPosition(x, y, w, h);
