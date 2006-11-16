@@ -47,13 +47,14 @@ osg::Node* Loadable::LoadFile(const std::string& filename, bool useCache)
    osg::Node *model = osgDB::readNodeFile(mFilename, options.get());
    if (model != 0)
    {
-      // this crashes - prolly should be called from the Update traversal
-//      if (mDrawableNode.get()->getNumChildren() != 0)
-//      {
-//         mDrawableNode.get()->removeChild(0,mDrawableNode.get()->getNumChildren() );
-//      }
-
-      //mDrawableNode.get()->addChild( model );
+      if(useCache)
+      {
+         return static_cast<osg::Node*>(model->clone(osg::CopyOp( osg::CopyOp::DEEP_COPY_OBJECTS 
+            | osg::CopyOp::DEEP_COPY_NODES 
+            | osg::CopyOp::DEEP_COPY_STATESETS 
+            | osg::CopyOp::DEEP_COPY_STATEATTRIBUTES 
+            | osg::CopyOp::DEEP_COPY_UNIFORMS ) ));
+      }
       return model;
    }
    else
