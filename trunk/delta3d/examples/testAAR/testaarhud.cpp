@@ -153,6 +153,7 @@ void TestAARHUD::SetupGUI(dtCore::DeltaWin *win)
 
       CEGUI::WindowManager *wm = CEGUI::WindowManager::getSingletonPtr();
       CEGUI::System::getSingleton().setDefaultFont("DejaVuSans-10");
+      CEGUI::System::getSingleton().getDefaultFont()->setProperty("PointSize", "20");
 
       mMainWindow = wm->createWindow("DefaultGUISheet", "root");
       CEGUI::System::getSingleton().setGUISheet(mMainWindow);
