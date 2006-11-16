@@ -905,36 +905,15 @@ namespace dtGame
       }
       else
       {
-         dtCore::RefPtr<dtGame::EnvironmentActor> envActor = NULL;
-         if(mEnvironment.valid())
+         //add all the children to the parent drawable.
+         for (unsigned i = 0; i < childrenToMove.size(); ++i)
          {
-            envActor = static_cast<dtGame::EnvironmentActor*>(mEnvironment->GetActor());
+            dtCore::DeltaDrawable* child = childrenToMove[i]->GetActor();
+            child->Emancipate();
+            dd.GetParent()->AddChild(child);
          }
-
-         if(envActor.valid() && envActor->ContainsActor(*proxy.GetActor()))
-         {
-            //add all the children to the parent drawable.
-            for (unsigned i = 0; i < childrenToMove.size(); ++i)
-            {
-               dtCore::DeltaDrawable* child = childrenToMove[i]->GetActor();
-               child->Emancipate();
-               envActor->AddActor(*childrenToMove[i]->GetActor());
-            }
-            envActor->RemoveActor(*proxy.GetActor());
-         }
-         else
-         {
-            //add all the children to the parent drawable.
-            for (unsigned i = 0; i < childrenToMove.size(); ++i)
-            {
-               dtCore::DeltaDrawable* child = childrenToMove[i]->GetActor();
-               child->Emancipate();
-               dd.GetParent()->AddChild(child);
-            }
-            //remove the proxy drawable from the parent.
-            dd.Emancipate();
-
-         }
+         //remove the proxy drawable from the parent.
+         dd.Emancipate();
       }
 
    }
