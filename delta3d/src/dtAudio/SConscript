@@ -4,7 +4,7 @@ srcs = env.SGlob( '*.cpp' )
                 
 deps = [ 'dtCore', 'openal', 'alut', 'dtUtil', 'isense', 'OpenThreads',
          'osg', 'osgDB', 'osgParticle', 'osgText', 'osgUtil',
-         'osgGA', 'osgSim', 'osgFX', 'osgProducer', 'ul', 'js', 'Producer',
+         'osgSim', 'osgFX', 'ul', 'js', 'Producer',
          'opengl', 'alut', 'User32' ]
 
 defines = []
