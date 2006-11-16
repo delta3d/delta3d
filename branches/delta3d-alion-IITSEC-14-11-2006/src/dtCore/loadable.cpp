@@ -27,7 +27,7 @@ Loadable::~Loadable(void)
 * @param filename : The name of the file to be loaded
 * @param useCache : If true, use OSG's object cache
 */
-osg::Node* Loadable::LoadFile(const std::string& filename, bool useCache)
+osg::Node* Loadable::LoadFile(const std::string& filename, bool useCache, unsigned int cacheFlags)
 {   
    mFilename = filename;
    Log::GetInstance().LogMessage(Log::LOG_DEBUG, __FUNCTION__,
@@ -49,11 +49,7 @@ osg::Node* Loadable::LoadFile(const std::string& filename, bool useCache)
    {
       if(useCache)
       {
-         return static_cast<osg::Node*>(model->clone(osg::CopyOp( osg::CopyOp::DEEP_COPY_OBJECTS 
-            | osg::CopyOp::DEEP_COPY_NODES 
-            | osg::CopyOp::DEEP_COPY_STATESETS 
-            | osg::CopyOp::DEEP_COPY_STATEATTRIBUTES 
-            | osg::CopyOp::DEEP_COPY_UNIFORMS ) ));
+         return static_cast<osg::Node*>(model->clone(osg::CopyOp( cacheFlags ) ));
       }
       return model;
    }
