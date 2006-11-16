@@ -99,11 +99,13 @@ void CloudPlaneTests::TestSaveAndLoad()
       new dtCore::CloudPlane(6, 0.75f, 2, 1, .2, .96, 1, 1.f, 
       "Test Clouds", mTextureDir );
 
+   bool result = clouds->SaveTexture(mAbsolutePath+mPathDelimiter+"_testclouds.png");
    // Test Save
-   CPPUNIT_ASSERT( clouds->SaveTexture(mAbsolutePath+mPathDelimiter+"_testclouds.png") );
+   CPPUNIT_ASSERT(result);
 
+   result = clouds->LoadTexture(mTextureDir+mPathDelimiter+"_testclouds.png");
    // Test Load
-   CPPUNIT_ASSERT( clouds->LoadTexture(mTextureDir+mPathDelimiter+"_testclouds.png") );
+   CPPUNIT_ASSERT(result);
 
 
    clouds = NULL;
