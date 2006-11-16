@@ -48,6 +48,7 @@ namespace dtCore
          DEEP_COPY_ALL               = 0xffffffff
          };
       */
+
       
       /// Uses the basic osg::CopyOp SHALLOW_COPY.
       static const unsigned int COPY_OPS_DEFAULT = osg::CopyOp::SHALLOW_COPY;
