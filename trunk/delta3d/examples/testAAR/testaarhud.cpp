@@ -34,6 +34,7 @@
 #include <CEGUI/CEGUISchemeManager.h>
 #include <CEGUI/CEGUIWindowManager.h>
 #include <CEGUI/CEGUIExceptions.h>
+#include <CEGUI/CEGUIPropertyHelper.h>
 
 #include <ctime>
 
@@ -153,7 +154,7 @@ void TestAARHUD::SetupGUI(dtCore::DeltaWin *win)
 
       CEGUI::WindowManager *wm = CEGUI::WindowManager::getSingletonPtr();
       CEGUI::System::getSingleton().setDefaultFont("DejaVuSans-10");
-      CEGUI::System::getSingleton().getDefaultFont()->setProperty("PointSize", "20");
+      CEGUI::System::getSingleton().getDefaultFont()->setProperty("PointSize", "14");
 
       mMainWindow = wm->createWindow("DefaultGUISheet", "root");
       CEGUI::System::getSingleton().setGUISheet(mMainWindow);
@@ -539,6 +540,8 @@ int TestAARHUD::RecursivelyAddTasks(const std::string &indent, int curIndex,
 void TestAARHUD::UpdateStaticText(CEGUI::Window *textControl, char *newText,
                                   const std::string &color, float x, float y)
 {
+   using namespace CEGUI;
+
    if (textControl != NULL)
    {
       // text and color
@@ -547,8 +550,7 @@ void TestAARHUD::UpdateStaticText(CEGUI::Window *textControl, char *newText,
          textControl->setText(newText);
          if (!color.empty())
          {
-            CEGUI::String col = "tl:";
-            col += color;
+            String col = PropertyHelper::colourRectToString(ColourRect(PropertyHelper::stringToColour(String(color))));
             textControl->setProperty("TextColours", col);
          }
       }
