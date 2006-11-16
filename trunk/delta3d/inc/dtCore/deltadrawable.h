@@ -86,8 +86,14 @@ namespace dtCore
          ///Return the number of DeltaDrawable children added
          unsigned int GetNumChildren() { return mChildList.size(); }
 
+         ///Return the number of DeltaDrawable children added
+         unsigned int GetNumChildren() const { return mChildList.size(); }
+
          ///Get the child specified by idx (0 to number of children-1)
          DeltaDrawable* GetChild( unsigned int idx ) { return mChildList[idx].get(); }
+
+         ///Get the child specified by idx (0 to number of children-1)
+         const DeltaDrawable* GetChild( unsigned int idx ) const { return mChildList[idx].get(); }
 
          /** 
           * Get the index number of child. Return a value between
@@ -103,6 +109,14 @@ namespace dtCore
           * @return true if the supplied parameter can be a child
           */
          bool CanBeChild( DeltaDrawable *child );
+
+         /**
+          * Check if the supplied DeltaDrawable can actually be a chil of this instance.
+          *
+          * @param child : The child to test
+          * @return true if the supplied parameter can be a child
+          */
+         bool CanBeChild( DeltaDrawable *child ) const;
 
          virtual void RenderProxyNode( bool enable = true );
 

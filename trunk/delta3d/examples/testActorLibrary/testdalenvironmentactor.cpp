@@ -45,61 +45,33 @@ TestDALEnvironmentActor::~TestDALEnvironmentActor()
 
 }
 
-void TestDALEnvironmentActor::AddActor(dtDAL::ActorProxy &child)
+void TestDALEnvironmentActor::AddActor(dtCore::DeltaDrawable &dd)
 {
-   AddChild(child.GetActor());
-   mAddedActors.insert(std::make_pair(&child, child.GetActor()));
+   AddChild(&dd);
 }
 
-void TestDALEnvironmentActor::RemoveActor(dtDAL::ActorProxy &proxy)
+void TestDALEnvironmentActor::RemoveActor(dtCore::DeltaDrawable &dd)
 {
-   RemoveChild(proxy.GetActor());
-
-   std::map<dtCore::RefPtr<dtDAL::ActorProxy>, dtCore::DeltaDrawable*>::iterator i =
-      mAddedActors.find(&proxy);
-
-   if (i != mAddedActors.end())
-      mAddedActors.erase(i);
+   RemoveChild(&dd);
 }
 
-bool TestDALEnvironmentActor::ContainsActor(dtDAL::ActorProxy &proxy) const
+bool TestDALEnvironmentActor::ContainsActor(dtCore::DeltaDrawable &dd) const
 {
-   std::map<dtCore::RefPtr<dtDAL::ActorProxy>, dtCore::DeltaDrawable*>::const_iterator i =
-      mAddedActors.find(&proxy);
-
-   return i != mAddedActors.end();
+   return !CanBeChild(&dd);
 }
 
 void TestDALEnvironmentActor::RemoveAllActors()
 {
    while(GetNumChildren() > 0)
-      RemoveChild(GetChild(GetNumChildren() - 1));
-
-   mAddedActors.clear();
+      RemoveChild(GetChild(0));
 }
 
-void TestDALEnvironmentActor::GetAllActors(std::vector<dtDAL::ActorProxy*> &vec)
+void TestDALEnvironmentActor::GetAllActors(std::vector<dtCore::DeltaDrawable*> &vec)
 {
    vec.clear();
 
-   std::map<dtCore::RefPtr<dtDAL::ActorProxy>, dtCore::DeltaDrawable*>::iterator i;
-   for(i = mAddedActors.begin(); i != mAddedActors.end(); ++i)
-   {
-      dtCore::RefPtr<dtDAL::ActorProxy> proxy = i->first;
-      vec.push_back(proxy.get());
-   }
-}
-
-void TestDALEnvironmentActor::GetAllActors(std::vector<const dtDAL::ActorProxy*> &vec) const
-{
-   vec.clear();
-
-   std::map<dtCore::RefPtr<dtDAL::ActorProxy>, dtCore::DeltaDrawable*>::const_iterator i;
-   for(i = mAddedActors.begin(); i != mAddedActors.end(); ++i)
-   {
-      dtCore::RefPtr<dtDAL::ActorProxy> proxy = i->first;
-      vec.push_back(proxy.get());
-   }
+   for(unsigned int i = 0; i < GetNumChildren(); i++)
+      vec.push_back(GetChild(i));
 }
 
 void TestDALEnvironmentActor::SetTimeAndDate(const int year, const int month, const int day, const int hour, 
@@ -116,5 +88,5 @@ void TestDALEnvironmentActor::GetTimeAndDate(int &year, int &month, int &day,
 
 unsigned int TestDALEnvironmentActor::GetNumEnvironmentChildren() const
 {
-   return mAddedActors.size();
+   return GetNumChildren();
 }

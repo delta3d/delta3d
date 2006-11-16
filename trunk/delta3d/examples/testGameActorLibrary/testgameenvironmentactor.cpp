@@ -22,81 +22,54 @@
 #include <dtUtil/stringutils.h>
 #include <sstream>
 
-void TestGameEnvironmentActor::AddActor(dtDAL::ActorProxy &proxy)
+void TestGameEnvironmentActor::AddActor(dtCore::DeltaDrawable &dd)
 {
-   AddChild(proxy.GetActor());
-   mAddedActors.insert(std::make_pair(&proxy, proxy.GetActor()));
+   AddChild(&dd);
 }
 
-void TestGameEnvironmentActor::RemoveActor(dtDAL::ActorProxy &proxy)
+void TestGameEnvironmentActor::RemoveActor(dtCore::DeltaDrawable &dd)
 {
-   RemoveChild(proxy.GetActor());
-   std::map<dtCore::RefPtr<dtDAL::ActorProxy>, dtCore::DeltaDrawable*>::iterator i =
-      mAddedActors.find(&proxy);
-
-   if(i != mAddedActors.end())
-      mAddedActors.erase(i);
+   RemoveChild(&dd);
 }
 
 void TestGameEnvironmentActor::RemoveAllActors()
 {
    while(GetNumChildren() > 0)
-      RemoveChild(GetChild(GetNumChildren() - 1));
-
-   mAddedActors.clear();
+      RemoveChild(GetChild(0));
 }
 
-bool TestGameEnvironmentActor::ContainsActor(dtDAL::ActorProxy &proxy) const
+bool TestGameEnvironmentActor::ContainsActor(dtCore::DeltaDrawable &dd) const
 {
-   std::map<dtCore::RefPtr<dtDAL::ActorProxy>, dtCore::DeltaDrawable*>::const_iterator i =
-      mAddedActors.find(&proxy);
-
-   return i != mAddedActors.end();
+   return !CanBeChild(&dd);
 }
 
-void TestGameEnvironmentActor::GetAllActors(std::vector<dtDAL::ActorProxy*> &vec)
+void TestGameEnvironmentActor::GetAllActors(std::vector<dtCore::DeltaDrawable*> &vec)
 {
    vec.clear();
 
-   for(std::map<dtCore::RefPtr<dtDAL::ActorProxy>, dtCore::DeltaDrawable*>::iterator i =
-      mAddedActors.begin(); i != mAddedActors.end(); ++i)
-   {
-      dtCore::RefPtr<dtDAL::ActorProxy> proxy = i->first;
-      vec.push_back(proxy.get());
-   }
-}
-
-void TestGameEnvironmentActor::GetAllActors(std::vector<const dtDAL::ActorProxy*> &vec) const
-{
-   vec.clear();
-
-   for(std::map<dtCore::RefPtr<dtDAL::ActorProxy>, dtCore::DeltaDrawable*>::const_iterator i = 
-      mAddedActors.begin(); i != mAddedActors.end(); ++i)
-   {
-      dtCore::RefPtr<dtDAL::ActorProxy> proxy = i->first; 
-      vec.push_back(proxy.get());
-   }
+   for(unsigned int i = 0; i < GetNumChildren(); i++)
+      vec.push_back(GetChild(i));
 }
 
 void TestGameEnvironmentActor::SetTimeAndDate(const int year, const int month, const int day, 
                                           const int hour, const int min,   const int sec)
 {
-   mYear = year;
+   mYear  = year;
    mMonth = month;
-   mDay = day;
-   mHour = hour;
-   mMin = min;
-   mSec = sec;
+   mDay   = day;
+   mHour  = hour;
+   mMin   = min;
+   mSec   = sec;
 }
 
 void TestGameEnvironmentActor::GetTimeAndDate(int &year, int &month, int &day, int &hour, int &min, int &sec) const
 {
-   year = mYear;
+   year  = mYear;
    month = mMonth;
-   day = mDay;
-   hour = mHour;
-   min = mMin;
-   sec = mSec;
+   day   = mDay;
+   hour  = mHour;
+   min   = mMin;
+   sec   = mSec;
 }
 
 void TestGameEnvironmentActor::SetTimeAndDateString(const std::string &timeAndDate)

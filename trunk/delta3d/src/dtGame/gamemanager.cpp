@@ -647,7 +647,7 @@ namespace dtGame
                LOG_ERROR("An environment actor proxy has an invalid actor");
                return;
             }
-            ea->AddActor(actorProxy);
+            ea->AddActor(*actorProxy.GetActor());
             mActorProxyMap.insert(std::make_pair(actorProxy.GetId(), &actorProxy));
          }
          else
@@ -680,7 +680,7 @@ namespace dtGame
                LOG_ERROR("An environment actor proxy has an invalid actor");
                return;
             }
-            ea->AddActor(gameActorProxy);
+            ea->AddActor(*gameActorProxy.GetActor());
             mGameActorProxyMap.insert(std::make_pair(gameActorProxy.GetId(), &gameActorProxy));
          }
          else
@@ -750,7 +750,7 @@ namespace dtGame
          for(unsigned int i = 0; i < actors.size(); i++)
          {
             if(actors[i].get() != oldProxy.get())
-               ea->AddActor(*actors[i]);
+               ea->AddActor(*actors[i]->GetActor());
          }
 
 
@@ -825,21 +825,20 @@ namespace dtGame
       {
          // First we have to remove all of the actors from it
          EnvironmentActor *e = dynamic_cast<EnvironmentActor*>(&eap->GetGameActor());
-         std::vector<const dtDAL::ActorProxy*> actors;
+         std::vector<dtCore::DeltaDrawable*> actors;
          e->GetAllActors(actors);
          e->RemoveAllActors();
 
          // Now that all the old actors are removed add them back to the scene
          // Also invalidate the delete environment parent by calling Emancipate
-         for(unsigned i = 0; i < actors.size(); ++i)
+         for(unsigned int i = 0; i < actors.size(); ++i)
          {
-            mScene->AddDrawable(const_cast<dtDAL::ActorProxy*>(actors[i])->GetActor());
+            mScene->AddDrawable(actors[i]);
          }
 
          // Are we deleting the environment pointer?
          if(eap == mEnvironment.get())
             mEnvironment = NULL;
-
       }
 
       std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> >::iterator itor = mGameActorProxyMap.find(actorProxy.GetId());
@@ -912,16 +911,16 @@ namespace dtGame
             envActor = static_cast<dtGame::EnvironmentActor*>(mEnvironment->GetActor());
          }
 
-         if ( envActor.valid() && envActor->ContainsActor(proxy) )
+         if(envActor.valid() && envActor->ContainsActor(*proxy.GetActor()))
          {
             //add all the children to the parent drawable.
             for (unsigned i = 0; i < childrenToMove.size(); ++i)
             {
                dtCore::DeltaDrawable* child = childrenToMove[i]->GetActor();
                child->Emancipate();
-               envActor->AddActor(*childrenToMove[i]);
+               envActor->AddActor(*childrenToMove[i]->GetActor());
             }
-            envActor->RemoveActor(proxy);
+            envActor->RemoveActor(*proxy.GetActor());
          }
          else
          {

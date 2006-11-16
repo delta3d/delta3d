@@ -557,7 +557,7 @@ namespace dtDAL
                   if(ea == NULL)
                      EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be of type dtDAL::EnvironmentActor");
 
-                  ea->AddActor(proxy);
+                  ea->AddActor(*proxy.GetActor());
                }
                else
                   scene.AddDrawable(proxy.GetActor());
@@ -574,7 +574,7 @@ namespace dtDAL
 
                // Hack to ensure the environment doesn't add itself from the map 
                if(proxy.GetActor() != dynamic_cast<dtCore::DeltaDrawable*>(ea))
-                  ea->AddActor(proxy);
+                  ea->AddActor(*proxy.GetActor());
             }
             else
                scene.AddDrawable(proxy.GetActor());

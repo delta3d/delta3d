@@ -39,13 +39,13 @@ namespace dtDAL
           * Adds an actor proxy to the internal hierarchy of the environment
           * @param proxy The proxy to add
           */
-         virtual void AddActor(dtDAL::ActorProxy &proxy) = 0;
+         virtual void AddActor(dtCore::DeltaDrawable &dd) = 0;
 
          /**
           * Removes an actor proxy from the internal hierarchy
           * @param proxy The proxy to remove
           */
-         virtual void RemoveActor(dtDAL::ActorProxy &proxy) = 0;
+         virtual void RemoveActor(dtCore::DeltaDrawable &dd) = 0;
 
          /**
           * Removes all actors associated with this environment
@@ -57,14 +57,14 @@ namespace dtDAL
           * @param proxy The proxy to look for
           * @return True if it contains it, false if not
           */
-         virtual bool ContainsActor(dtDAL::ActorProxy &proxy) const = 0;
+         virtual bool ContainsActor(dtCore::DeltaDrawable &dd) const = 0;
 
          /**
           * const version of the above function
           * Gets all the actors associated with this environment
           * @param vec The vector to fill
           */
-         virtual void GetAllActors(std::vector<const dtDAL::ActorProxy*> &vec) const = 0;
+         virtual void GetAllActors(std::vector<dtCore::DeltaDrawable*> &vec) = 0;
 
          /**
           * Sets the date and time on this environment

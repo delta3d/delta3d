@@ -535,7 +535,7 @@ void GameActorTests::TestSetEnvironmentActor()
       dtCore::RefPtr<TestGameEnvironmentActor> ea = dynamic_cast<TestGameEnvironmentActor*>(eap->GetActor());
       CPPUNIT_ASSERT_MESSAGE("Should have been able to cast the environment proxy's actor to an environment actor", ea != NULL);
 
-      std::vector<const dtDAL::ActorProxy*> actors;
+      std::vector<dtCore::DeltaDrawable*> actors;
       std::vector<dtCore::RefPtr<dtCore::DeltaDrawable> > drawables;
       ea->GetAllActors(actors);
       CPPUNIT_ASSERT(actors.empty());

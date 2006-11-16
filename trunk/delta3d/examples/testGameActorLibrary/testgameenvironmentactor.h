@@ -31,17 +31,15 @@ class DT_EXAMPLE_EXPORT TestGameEnvironmentActor : public dtGame::EnvironmentAct
       TestGameEnvironmentActor(dtGame::GameActorProxy &proxy) :
          dtGame::EnvironmentActor(proxy), mYear(0), mMonth(0), mDay(0), mHour(0), mMin(0), mSec(0) { }
 
-      virtual void AddActor(dtDAL::ActorProxy &proxy);
+      virtual void AddActor(dtCore::DeltaDrawable &dd);
 
-      virtual void RemoveActor(dtDAL::ActorProxy &proxy);
+      virtual void RemoveActor(dtCore::DeltaDrawable &dd);
 
       virtual void RemoveAllActors();
 
-      virtual bool ContainsActor(dtDAL::ActorProxy &proxy) const;
+      virtual bool ContainsActor(dtCore::DeltaDrawable &dd) const;
 
-      virtual void GetAllActors(std::vector<dtDAL::ActorProxy*> &vec);
-
-      virtual void GetAllActors(std::vector<const dtDAL::ActorProxy*> &vec) const;
+      virtual void GetAllActors(std::vector<dtCore::DeltaDrawable*> &vec);
 
       virtual void SetTimeAndDate(const int year, const int month, const int day,
                                   const int hour, const int min,   const int sec);
@@ -54,21 +52,20 @@ class DT_EXAMPLE_EXPORT TestGameEnvironmentActor : public dtGame::EnvironmentAct
 
       std::string GetTimeAndDateString() const;
 
-      unsigned int GetNumEnvironmentChildren() const { return mAddedActors.size(); }
+      unsigned int GetNumEnvironmentChildren() const { return GetNumChildren(); }
 
    protected:
 
       virtual ~TestGameEnvironmentActor() { }
 
    private:
+
       int mYear; 
       int mMonth;
       int mDay;
       int mHour; 
       int mMin;   
       int mSec;
-      
-      std::map<dtCore::RefPtr<dtDAL::ActorProxy>, dtCore::DeltaDrawable*> mAddedActors;
 };
 
 class DT_EXAMPLE_EXPORT TestGameEnvironmentActorProxy : public dtGame::EnvironmentActorProxy
