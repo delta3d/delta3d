@@ -177,7 +177,11 @@ void TestAAR::ParseCommandLineOptions(int argc, char **argv) const
    }
 
    if(!argParser.read("-d", dataPath))
-      dataPath = dtCore::GetDeltaDataPathList();
+   {
+      dataPath =  dtCore::GetDeltaDataPathList() + ";" +
+                     dtCore::GetDeltaDataPathList()+"/gui/;" + 
+                     dtCore::GetDeltaRootPath() + "/examples/testAAR";
+   }
 
    argParser.reportRemainingOptionsAsUnrecognized();
    if(argParser.errors())
