@@ -134,7 +134,8 @@ void TestAARHUD::SetupGUI(dtCore::DeltaWin *win)
    float helpTextWidth = 400;
    float taskTextWidth = 300;
 
-   try {
+   try
+   {
       // Initialize CEGUI
       mGUI = new dtGUI::CEUIDrawable(win);
 
@@ -151,7 +152,8 @@ void TestAARHUD::SetupGUI(dtCore::DeltaWin *win)
       dtUtil::FileUtils::GetInstance().PopDirectory();
 
       CEGUI::WindowManager *wm = CEGUI::WindowManager::getSingletonPtr();
-      CEGUI::System::getSingleton().setDefaultFont("Tahoma-12");
+      CEGUI::System::getSingleton().setDefaultFont("DejaVuSans-10");
+
       mMainWindow = wm->createWindow("DefaultGUISheet", "root");
       CEGUI::System::getSingleton().setGUISheet(mMainWindow);
 
@@ -160,14 +162,14 @@ void TestAARHUD::SetupGUI(dtCore::DeltaWin *win)
       mHUDOverlay = wm->createWindow("WindowsLook/StaticImage", "medium_overlay");
       mMainWindow->addChildWindow(mHUDOverlay);
       mHUDOverlay->setPosition(CEGUI::UVector2(cegui_reldim(0.0f),cegui_reldim(0.0f)));
-      mHUDOverlay->setSize(CEGUI::UVector2(cegui_reldim(0.0f), cegui_reldim(0.0f)));
+      mHUDOverlay->setSize(CEGUI::UVector2(cegui_reldim(1.0f), cegui_reldim(1.0f)));
       mHUDOverlay->setProperty("FrameEnabled", "false");
       mHUDOverlay->setProperty("BackgroundEnabled", "false");
 
       // Main State - idle/playback/record
       mStateText = CreateText("State Text", mHUDOverlay, "", 10.0f, 20.0f, 120.0f, mTextHeight + 5);
       mStateText->setProperty("TextColours", "tl:FFFF1919 tr:FFFF1919 bl:FFFF1919 br:FFFF1919");
-      mStateText->setFont("Tahoma-12");
+      //mStateText->setFont("DejaVuSans-10");
 
       // Core sim info
       mSimTimeText = CreateText("Sim Time", mHUDOverlay, "Sim Time",
@@ -208,7 +210,7 @@ void TestAARHUD::SetupGUI(dtCore::DeltaWin *win)
       curYPos = 70;
       mTasksHeaderText = CreateText(std::string("Task Header"), mHUDOverlay, std::string("Tasks:"),
          4, curYPos, taskTextWidth - 2, mTextHeight + 2);
-      mTasksHeaderText->setFont("Tahoma-12");
+      //mTasksHeaderText->setFont("DejaVuSans-10");
       curYPos += 2;
 
       // 11 placeholders for tasks
@@ -226,7 +228,7 @@ void TestAARHUD::SetupGUI(dtCore::DeltaWin *win)
          ("WindowsLook/StaticImage", "Help Overlay"));
       mMainWindow->addChildWindow(mHelpOverlay);
       mHelpOverlay->setPosition(CEGUI::UVector2(cegui_reldim(0.0f), cegui_reldim(0.0f)));
-      mHelpOverlay->setSize(CEGUI::UVector2(cegui_reldim(1.0f), cegui_reldim(0.0f)));
+      mHelpOverlay->setSize(CEGUI::UVector2(cegui_reldim(1.0f), cegui_reldim(1.0f)));
       mHelpOverlay->setProperty("FrameEnabled", "false");
       mHelpOverlay->setProperty("BackgroundEnabled", "false");
       mHelpOverlay->hide();
@@ -369,7 +371,7 @@ void TestAARHUD::UpdateMediumDetailData()
       mTaskComponent->GetTopLevelTasks(tasks);
 
       // start our recursive method on each top level task
-      for (int i = 0; i < (int) tasks.size(); i ++)
+      for(unsigned int i = 0; i < tasks.size(); i ++)
       {
          dtActors::TaskActorProxy *taskProxy =
             dynamic_cast<dtActors::TaskActorProxy *> (tasks[i].get());
@@ -553,7 +555,7 @@ void TestAARHUD::UpdateStaticText(CEGUI::Window *textControl, char *newText,
       if (x > 0.0 && y > 0.0)
       {
          CEGUI::UVector2 position = textControl->getPosition();
-         CEGUI::UVector2 newPos(cegui_reldim(x), cegui_reldim(y));
+         CEGUI::UVector2 newPos(cegui_absdim(x), cegui_absdim(y));
          if (position != newPos)
             textControl->setPosition(newPos);
       }
@@ -605,16 +607,17 @@ HUDState & TestAARHUD::CycleToNextHUDState()
 //////////////////////////////////////////////////////////////////////////
 void TestAARHUD::UpdateState()
 {
-   if (*mHUDState == HUDState::HELP)
+   if(*mHUDState == HUDState::HELP)
    {
       mHUDOverlay->hide();
       mHelpOverlay->show();
    }
-   else {
+   else 
+   {
       mHUDOverlay->show();
       mHelpOverlay->hide();
 
-      if (*mHUDState == HUDState::MINIMAL)
+      if(*mHUDState == HUDState::MINIMAL)
       {
          mStateText->show();
          mSimTimeText->show();
@@ -634,7 +637,7 @@ void TestAARHUD::UpdateState()
          for (unsigned int i = 0; i < mTaskTextList.size(); i ++)
             mTaskTextList[i]->hide();
       }
-      else if (*mHUDState == HUDState::MEDIUM)
+      else if(*mHUDState == HUDState::MEDIUM)
       {
          mStateText->show();
          mSimTimeText->show();
@@ -651,10 +654,10 @@ void TestAARHUD::UpdateState()
          mCurMapText->hide();
 
          mTasksHeaderText->show();
-         for (unsigned int i = 0; i < mTaskTextList.size(); i ++)
+         for(unsigned int i = 0; i < mTaskTextList.size(); i ++)
             mTaskTextList[i]->show();
       }
-      else if (*mHUDState == HUDState::MAXIMUM)
+      else if(*mHUDState == HUDState::MAXIMUM)
       {
          mStateText->show();
          mSimTimeText->show();
@@ -671,7 +674,7 @@ void TestAARHUD::UpdateState()
          mCurMapText->show();
 
          mTasksHeaderText->show();
-         for (unsigned int i = 0; i < mTaskTextList.size(); i ++)
+         for(unsigned int i = 0; i < mTaskTextList.size(); i ++)
             mTaskTextList[i]->show();
       }
       else // if (*mHUDState == HUDState::NONE)
@@ -691,7 +694,7 @@ void TestAARHUD::UpdateState()
          mCurMapText->hide();
 
          mTasksHeaderText->hide();
-         for (unsigned int i = 0; i < mTaskTextList.size(); i ++)
+         for(unsigned int i = 0; i < mTaskTextList.size(); i ++)
             mTaskTextList[i]->hide();
       }
    }
@@ -706,10 +709,9 @@ CEGUI::Window * TestAARHUD::CreateText(const std::string &name, CEGUI::Window *p
    // create base window and set our default attribs
    CEGUI::Window* result = wm->createWindow("WindowsLook/StaticText", name);
    parent->addChildWindow(result);
-   //result->setMetricsMode(CEGUI::Absolute);
    result->setText(text);
-   result->setPosition(CEGUI::UVector2(cegui_reldim(x), cegui_reldim(y)));
-   result->setSize(CEGUI::UVector2(cegui_reldim(width), cegui_reldim(height)));
+   result->setPosition(CEGUI::UVector2(cegui_absdim(x), cegui_absdim(y)));
+   result->setSize(CEGUI::UVector2(cegui_absdim(width), cegui_absdim(height)));
    result->setProperty("FrameEnabled", "false");
    result->setProperty("BackgroundEnabled", "false");
    result->setHorizontalAlignment(CEGUI::HA_LEFT);
