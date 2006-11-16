@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCored.lib dtUtild.lib osgd.lib osgDBd.lib openthreadswin32d.lib producerd.lib CEGUIBase_d.lib OpenGLGUIRenderer_d.lib CEGUIXercesParser_d.lib"
+				AdditionalDependencies="dtCored.lib dtUtild.lib osgd.lib osgDBd.lib openthreadswin32d.lib producerd.lib CEGUIBase_d.lib OpenGLGUIRenderer_d.lib"
 				OutputFile="../../../bin/dtGUId.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -86,7 +86,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCore.lib dtUtil.lib osg.lib osgDB.lib openthreadswin32.lib producer.lib CEGUIBase.lib OpenGLGUIRenderer.lib CEGUIXercesParser.lib"
+				AdditionalDependencies="dtCore.lib dtUtil.lib osg.lib osgDB.lib openthreadswin32.lib producer.lib CEGUIBase.lib OpenGLGUIRenderer.lib"
 				OutputFile="../../../bin/dtGUI.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
