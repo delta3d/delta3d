@@ -71,7 +71,7 @@ namespace dtEditQt
             case QEvent::KeyRelease: {
                 QKeyEvent *ke = static_cast<QKeyEvent*>(event);
 
-                // Up and Down
+                /* // Up and Down
                 if (ke->key() == Qt::Key_Up || ke->key() == Qt::Key_Down) {
                     // Check for combo box
                     QWidget *widget = static_cast<QWidget*>(object);
@@ -92,7 +92,7 @@ namespace dtEditQt
                         event->ignore();
                         return true;
                     }
-                }
+                }*/
 
                 // Enter and Return
                 if (ke->key() == Qt::Key_Enter || ke->key() == Qt::Key_Return) {
