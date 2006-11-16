@@ -466,7 +466,7 @@ def TOOL_BUNDLE(env):
         env.Append(FRAMEWORKPATH=['ext/Frameworks' ])
         env['FRAMEWORKS'] = []
         env.Append(LIBPATH=['/usr/lib','/usr/local/lib'])
-        env['SHLINKFLAGS'] = '$LINKFLAGS -Wl,-single_module -dynamiclib -compatibility_version 1 -current_version 3 -install_name "' + env.get('prefix') + '/lib/$SHLIBPREFIX$LIBNAME$SHLIBSUFFIX"'
+        env['SHLINKFLAGS'] = '$LINKFLAGS -Wl,-single_module -dynamiclib -compatibility_version 1 -current_version 4 -install_name "' + env.get('prefix') + '/lib/$SHLIBPREFIX$LIBNAME$SHLIBSUFFIX"'
       
       #############################################
       # Configure: Testing for dependencies 
