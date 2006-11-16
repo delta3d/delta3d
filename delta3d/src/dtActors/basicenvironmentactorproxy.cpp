@@ -37,7 +37,6 @@ namespace dtActors
 
    BasicEnvironmentActorProxy::~BasicEnvironmentActorProxy()
    {
-
    }
 
    void BasicEnvironmentActorProxy::BuildPropertyMap()
@@ -164,7 +163,6 @@ namespace dtActors
 
    BasicEnvironmentActor::~BasicEnvironmentActor()
    {
-      
    }
 
    void BasicEnvironmentActor::AddActor(dtCore::DeltaDrawable &dd)
