@@ -40,7 +40,12 @@ namespace dtGame
 {
    IMPLEMENT_MANAGEMENT_LAYER(GameApplication)
 
-   GameApplication::GameApplication(int argc, char** argv): dtABC::Application("config.xml"), mArgc(argc), mArgv(argv)
+   GameApplication::GameApplication(int argc, char** argv): 
+   dtABC::Application("config.xml"),
+      mArgc(argc),
+      mArgv(argv),
+      mCreateFunction(NULL),
+      mDestroyFunction(NULL)
    {
       RegisterInstance(this);
       mKeyboard->RemoveKeyboardListener(GetKeyboardListener());
