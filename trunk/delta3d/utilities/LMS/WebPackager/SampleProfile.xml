@@ -9,7 +9,7 @@
           <!--<Platform>Linux</Platform>-->
 
 		  <Keystore>
-		       <File>$(DELTA_ROOT)/utilities/LMS/Java/netc.keystore</File>
+		       <File>$(DELTA_ROOT)/utilities/LMS/Java/bmh.keystore</File>
 			   <Key>lmsKey</Key>
 		  </Keystore>
 
