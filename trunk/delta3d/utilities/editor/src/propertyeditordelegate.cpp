@@ -71,29 +71,6 @@ namespace dtEditQt
             case QEvent::KeyRelease: {
                 QKeyEvent *ke = static_cast<QKeyEvent*>(event);
 
-                /* // Up and Down
-                if (ke->key() == Qt::Key_Up || ke->key() == Qt::Key_Down) {
-                    // Check for combo box
-                    QWidget *widget = static_cast<QWidget*>(object);
-                    QComboBox *comboBox= qobject_cast<QComboBox*>(widget);
-                    if (comboBox != NULL && !(ke->modifiers() & Qt::ControlModifier)) {
-                        break;  // send the event on to the combo box.
-                    } else {
-                        event->ignore();
-                        return true;
-                    }
-                }
-
-                // Right and left
-                if (ke->key() == Qt::Key_Left || ke->key() == Qt::Key_Right) {
-                    // if we have a push button, ignore hte left and right buttons
-                    QWidget *widget = static_cast<QWidget*>(object);
-                    if (qobject_cast<QPushButton*>(widget)) {
-                        event->ignore();
-                        return true;
-                    }
-                }*/
-
                 // Enter and Return
                 if (ke->key() == Qt::Key_Enter || ke->key() == Qt::Key_Return) {
                     QWidget *widget = static_cast<QWidget*>(object);

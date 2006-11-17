@@ -25,9 +25,12 @@
 #include <dtEditQt/dynamicabstractcontrol.h>
 #include <dtEditQt/propertyeditormodel.h>
 #include <QtCore/QAbstractItemModel>
+#include <QtGui/QAbstractItemDelegate>
 
 #include <QtGui/QTreeView>
 #include <QtGui/QColor>
+
+class QWidget;
 
 namespace dtEditQt 
 {
@@ -88,10 +91,11 @@ namespace dtEditQt
       protected slots:
          virtual void currentChanged ( const QModelIndex & current, const QModelIndex & previous ) ;
          virtual void selectionChanged ( const QItemSelection & selected, const QItemSelection & deselected );
-   
+         virtual void closeEditor(QWidget * editor, QAbstractItemDelegate::EndEditHint hint);
       private:
          PropertyEditorModel *propertyModel;
          PropertyEditorDelegate *delegate;
+         const QModelIndex* mPreviousIndex;
    };
 
 };

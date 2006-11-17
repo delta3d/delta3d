@@ -39,7 +39,7 @@ namespace dtEditQt
 
     /////////////////////////////////////////////////////////////////////////////////
     PropertyEditorTreeView::PropertyEditorTreeView(PropertyEditorModel *model, QWidget *parent)
-        : QTreeView(parent), propertyModel(model)
+        : QTreeView(parent), propertyModel(model), mPreviousIndex(NULL)
     {
         setModel(model);
 
@@ -69,13 +69,18 @@ namespace dtEditQt
     /////////////////////////////////////////////////////////////////////////////////
     void PropertyEditorTreeView::currentChanged ( const QModelIndex & current, const QModelIndex & previous ) 
     {
-        QTreeView::currentChanged(current, previous);
-
-        if (current.isValid() && current.column() == 0) {
-            DynamicAbstractControl *property = propertyModel->privateData(current);
-            QModelIndex newSelection = propertyModel->indexOf(property, 1);
-            setCurrentIndex(newSelection);
-        }
+      //I have to save the previous index so that I can look it up on
+      //the closeEditor call so I can tell the control to 
+      //cleanup.
+      mPreviousIndex = &previous;
+      QTreeView::currentChanged(current, previous);
+      mPreviousIndex = NULL;
+      
+      if (current.isValid() && current.column() == 0) {
+         DynamicAbstractControl *property = propertyModel->privateData(current);
+         QModelIndex newSelection = propertyModel->indexOf(property, 1);
+         setCurrentIndex(newSelection);
+      }
     }
 
     /////////////////////////////////////////////////////////////////////////////////
@@ -97,6 +102,25 @@ namespace dtEditQt
             }
         }
     }
+   
+   /////////////////////////////////////////////////////////////////////////////////
+   void PropertyEditorTreeView::closeEditor(QWidget * editor, QAbstractItemDelegate::EndEditHint hint)
+   {
+      QTreeView::closeEditor(editor, hint);
+      
+      // On certain events, the delegate is not notified that the 
+      // editor is being closed, which doesn't allow us to clean up our pointers.
+      // This work around handles that case.
+      PropertyEditorModel *currentModel = dynamic_cast<PropertyEditorModel *>(model());
+      if (currentModel != NULL && mPreviousIndex != NULL) 
+      {
+         DynamicAbstractControl *control = currentModel->privateData(*mPreviousIndex);
+         if (control != NULL) 
+         {
+            control->handleSubEditDestroy(editor, hint);
+         }
+      }
+   }
 
    /////////////////////////////////////////////////////////////////////////////////
    void PropertyEditorTreeView::reset()
