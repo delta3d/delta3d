@@ -70,9 +70,9 @@ HUDComponent::HUDComponent(dtCore::DeltaWin &win, const std::string &name) :
    mIntroText(NULL),
    mShowObjectives(true), 
    mCurrentState(&GameState::STATE_UNKNOWN), 
-   mFireSuitIconPos(0.525f, 0.8f), 
-   mFireHoseIconPos(0.688f, 0.8f), 
-   mSCBAIconPos(0.85f, 0.8f), 
+   mFireSuitIconPos(cegui_reldim(.525f), cegui_reldim(.8f)), 
+   mFireHoseIconPos(cegui_reldim(.688f), cegui_reldim(.8f)), 
+   mSCBAIconPos(cegui_reldim(.85f), cegui_reldim(.8f)), 
    mTasksHeaderText(NULL), 
    mNumTasks(11), 
    mMissionCompletedText(NULL), 
@@ -97,7 +97,7 @@ void HUDComponent::SetupGUI(dtCore::DeltaWin &win)
 
    try 
    {
-      std::string scheme = "CEGUI/schemes/WindowsLookSkin.scheme";
+      std::string scheme = "CEGUI/schemes/WindowsLook.scheme";
       std::string path = dtCore::FindFileInPathList(scheme);
       if(path.empty())
       {
@@ -111,7 +111,7 @@ void HUDComponent::SetupGUI(dtCore::DeltaWin &win)
       dtUtil::FileUtils::GetInstance().PopDirectory();
 
       CEGUI::WindowManager *wm = CEGUI::WindowManager::getSingletonPtr();
-      CEGUI::System::getSingleton().setDefaultFont("Tahoma-12");
+      CEGUI::System::getSingleton().setDefaultFont("DejaVuSans-10");
       mMainWindow = wm->createWindow("DefaultGUISheet", "root");
       CEGUI::System::getSingleton().setGUISheet(mMainWindow);
    
@@ -181,8 +181,17 @@ void HUDComponent::ProcessMessage(const dtGame::Message &msg)
    }
    else if(msg.GetMessageType() == dtGame::MessageType::TICK_LOCAL)
    {
+      //double simTime = static_cast<const dtGame::TickMessage&>(msg).GetDeltaSimTime();
+      //static dtCore::Timer timer = simTime;
+
       if(*mCurrentState == GameState::STATE_RUNNING)
-         UpdateMediumDetailData(mHUDBackground);
+      {
+         //if(timer + 2 > simTime)
+        // {
+            UpdateMediumDetailData(mHUDBackground);
+          //  timer = simTime;
+         //}
+      }
       else if(*mCurrentState == GameState::STATE_DEBRIEF)
          RefreshDebriefScreen();
    }
@@ -214,6 +223,7 @@ void HUDComponent::ShowHUD()
       mGUI->SetActiveTextureUnit(1);
    
    HideMenus();
+   ShowMouse(false);
    mHUDBackground->show();
    if(mMissionComplete)
       mMissionCompletedText->show();
@@ -260,43 +270,43 @@ void HUDComponent::BuildMainMenu()
 {
    CEGUI::WindowManager *wm = CEGUI::WindowManager::getSingletonPtr();
 
-   mWindowBackground = static_cast<CEGUI::StaticImage*>(wm->createWindow("WindowsLook/StaticImage", "MenuBackgroundImage"));
+   mWindowBackground = wm->createWindow("WindowsLook/StaticImage", "MenuBackgroundImage");
    mMainWindow->addChildWindow(mWindowBackground);
-   mWindowBackground->setPosition(CEGUI::Point(0.0f, 0.0f));
-   mWindowBackground->setSize(CEGUI::Size(1.0f, 1.0f));
-   mWindowBackground->setBackgroundEnabled(false);
-   mWindowBackground->setFrameEnabled(false);
-   mWindowBackground->setImage("BackgroundImage", "BackgroundImage");
+   mWindowBackground->setPosition(CEGUI::UVector2(cegui_reldim(0.0f), cegui_reldim(0.0f)));
+   mWindowBackground->setSize(CEGUI::UVector2(cegui_reldim(1.0f), cegui_reldim(1.0f)));
+   mWindowBackground->setProperty("BackgroundEnabled", "false");
+   mWindowBackground->setProperty("FrameEnabled", "false");
+   mWindowBackground->setProperty("Image", "set:BackgroundImage image:BackgroundImage");
 
-   mAppHeader = static_cast<CEGUI::StaticText*>(wm->createWindow("WindowsLook/StaticText", "applicationHeaderText"));
+   mAppHeader = wm->createWindow("WindowsLook/StaticText", "applicationHeaderText");
    mAppHeader->setText("  Fire Fighter");
-   mAppHeader->setBackgroundEnabled(false);
-   mAppHeader->setFrameEnabled(false);
-   mAppHeader->setSize(CEGUI::Size(0.2f, 0.1f));
-   mAppHeader->setPosition(CEGUI::Point(0, 0.1));
+   mAppHeader->setProperty("BackgroundEnabled", "false");
+   mAppHeader->setProperty("FrameEnabled", "false");
+   mAppHeader->setSize(CEGUI::UVector2(cegui_reldim(0.2f), cegui_reldim(0.1f)));
+   mAppHeader->setPosition(CEGUI::UVector2(cegui_reldim(0.0f), cegui_reldim(0.1f)));
    mAppHeader->setHorizontalAlignment(CEGUI::HA_CENTRE);
    mWindowBackground->addChildWindow(mAppHeader);
 
    mStartWithObjectives = static_cast<CEGUI::PushButton*>(wm->createWindow("WindowsLook/Button", "startWithObjectivesButton"));
    mStartWithObjectives->setText("Start With Objectives");
-   mStartWithObjectives->setSize(CEGUI::Size(0.3f, 0.1f));
-   mStartWithObjectives->setPosition(CEGUI::Point(0, 0.4));
+   mStartWithObjectives->setSize(CEGUI::UVector2(cegui_reldim(0.3f), cegui_reldim(0.1f)));
+   mStartWithObjectives->setPosition(CEGUI::UVector2(cegui_reldim(0.0f), cegui_reldim(0.4f)));
    mStartWithObjectives->setMouseCursor(NULL);
    mStartWithObjectives->setHorizontalAlignment(CEGUI::HA_CENTRE);
    mWindowBackground->addChildWindow(mStartWithObjectives);
 
    mStart = static_cast<CEGUI::PushButton*>(wm->createWindow("WindowsLook/Button", "startButton"));
    mStart->setText("Start");
-   mStart->setSize(CEGUI::Size(0.3f, 0.1f));
-   mStart->setPosition(CEGUI::Point(0, 0.3));
+   mStart->setSize(CEGUI::UVector2(cegui_reldim(0.3f), cegui_reldim(0.1f)));
+   mStart->setPosition(CEGUI::UVector2(cegui_reldim(0.0f), cegui_reldim(0.3f)));
    mStart->setMouseCursor(NULL);
    mStart->setHorizontalAlignment(CEGUI::HA_CENTRE);
    mWindowBackground->addChildWindow(mStart);
 
    mQuit = static_cast<CEGUI::PushButton*>(wm->createWindow("WindowsLook/Button", "quitButton"));
    mQuit->setText("Quit");
-   mQuit->setSize(CEGUI::Size(0.3f, 0.1f));
-   mQuit->setPosition(CEGUI::Point(0, 0.8));
+   mQuit->setSize(CEGUI::UVector2(cegui_reldim(0.3f), cegui_reldim(0.1f)));
+   mQuit->setPosition(CEGUI::UVector2(cegui_reldim(0.0f), cegui_reldim(0.8f)));
    mQuit->setMouseCursor(NULL);
    mQuit->setHorizontalAlignment(CEGUI::HA_CENTRE);
    mWindowBackground->addChildWindow(mQuit);
@@ -312,110 +322,110 @@ void HUDComponent::BuildHUD()
 {
    CEGUI::WindowManager *wm = CEGUI::WindowManager::getSingletonPtr();
 
-   mHUDBackground = static_cast<CEGUI::StaticImage*>(wm->createWindow("WindowsLook/StaticImage", "HUDBackgroundImage"));
+   mHUDBackground = wm->createWindow("WindowsLook/StaticImage", "HUDBackgroundImage");
    mMainWindow->addChildWindow(mHUDBackground);
-   mHUDBackground->setPosition(CEGUI::Point(0.0f, 0.0f));
-   mHUDBackground->setSize(CEGUI::Size(1.0f, 1.0f));
-   mHUDBackground->setBackgroundEnabled(false);
-   mHUDBackground->setFrameEnabled(false);
+   mHUDBackground->setPosition(CEGUI::UVector2(cegui_reldim(0.0f), cegui_reldim(0.0f)));
+   mHUDBackground->setSize(CEGUI::UVector2(cegui_reldim(1.0f), cegui_reldim(1.0f)));
+   mHUDBackground->setProperty("BackgroundEnabled", "false");
+   mHUDBackground->setProperty("FrameEnabled", "false");
    
-   mGameItemImage = static_cast<CEGUI::StaticImage*>(wm->createWindow("WindowsLook/StaticImage", "gameItemImage"));
-   mGameItemImage->setSize(CEGUI::Size(0.15f, 0.15f));
-   mGameItemImage->setPosition(CEGUI::Point(0.6f, 0.4f));
-   mGameItemImage->setBackgroundEnabled(false);
-   mGameItemImage->setFrameEnabled(false);
-   mGameItemImage->setImage("GameItemImage", "GameItemImage");
+   mGameItemImage = wm->createWindow("WindowsLook/StaticImage", "gameItemImage");
+   mGameItemImage->setSize(CEGUI::UVector2(cegui_reldim(0.15f), cegui_reldim(0.15f)));
+   mGameItemImage->setPosition(CEGUI::UVector2(cegui_reldim(0.6f), cegui_reldim(0.4f)));
+   mGameItemImage->setProperty("BackgroundEnabled", "false");
+   mGameItemImage->setProperty("FrameEnabled", "false");
+   mGameItemImage->setProperty("Image", "set:GameItemImage image:GameItemImage");
    mHUDBackground->addChildWindow(mGameItemImage);
    mGameItemImage->hide();
 
-   mFireSuitIcon = static_cast<CEGUI::StaticImage*>(wm->createWindow("WindowsLook/StaticImage", "fireSuitIcon"));
-   mFireSuitIcon->setSize(CEGUI::Size(0.15f, 0.15f));
+   mFireSuitIcon = wm->createWindow("WindowsLook/StaticImage", "fireSuitIcon");
+   mFireSuitIcon->setSize(CEGUI::UVector2(cegui_reldim(0.15f), cegui_reldim(0.15f)));
    mFireSuitIcon->setPosition(mFireSuitIconPos);
-   mFireSuitIcon->setBackgroundEnabled(false);
-   mFireSuitIcon->setFrameEnabled(false);
-   mFireSuitIcon->setImage("FireSuitImage", "FireSuitImage");
+   mFireSuitIcon->setProperty("BackgroundEnabled", "false");
+   mFireSuitIcon->setProperty("FrameEnabled", "false");
+   mFireSuitIcon->setProperty("Image", "set:FireSuitImage image:FireSuitImage");
    mHUDBackground->addChildWindow(mFireSuitIcon);
    mFireSuitIcon->hide();
 
-   mFireHoseIcon = static_cast<CEGUI::StaticImage*>(wm->createWindow("WindowsLook/StaticImage", "fireHoseIcon"));
-   mFireHoseIcon->setSize(CEGUI::Size(0.15f, 0.15f));
+   mFireHoseIcon = wm->createWindow("WindowsLook/StaticImage", "fireHoseIcon");
+   mFireHoseIcon->setSize(CEGUI::UVector2(cegui_reldim(0.15f), cegui_reldim(0.15f)));
    mFireHoseIcon->setPosition(mFireHoseIconPos);
-   mFireHoseIcon->setBackgroundEnabled(false);
-   mFireHoseIcon->setFrameEnabled(false);
-   mFireHoseIcon->setImage("FireHoseImage", "FireHoseImage");
+   mFireHoseIcon->setProperty("BackgroundEnabled", "false");
+   mFireHoseIcon->setProperty("FrameEnabled", "false");
+   mFireHoseIcon->setProperty("Image", "set:FireHoseImage image:FireHoseImage");
    mHUDBackground->addChildWindow(mFireHoseIcon);
    mFireHoseIcon->hide();
 
-   mSCBAIcon = static_cast<CEGUI::StaticImage*>(wm->createWindow("WindowsLook/StaticImage", "SCBAIcon"));
-   mSCBAIcon->setSize(CEGUI::Size(0.15f, 0.15f));
+   mSCBAIcon = wm->createWindow("WindowsLook/StaticImage", "SCBAIcon");
+   mSCBAIcon->setSize(CEGUI::UVector2(cegui_reldim(0.15f), cegui_reldim(0.15f)));
    mSCBAIcon->setPosition(mSCBAIconPos);
-   mSCBAIcon->setBackgroundEnabled(false);
-   mSCBAIcon->setFrameEnabled(false);
-   mSCBAIcon->setImage("SCBAImage", "SCBAImage");
+   mSCBAIcon->setProperty("BackgroundEnabled", "false");
+   mSCBAIcon->setProperty("FrameEnabled", "false");
+   mSCBAIcon->setProperty("Image", "set:SCBAImage image:SCBAImage");
    mHUDBackground->addChildWindow(mSCBAIcon);
    mSCBAIcon->hide();
 
-   mInventoryUseFireSuitIcon = static_cast<CEGUI::StaticImage*>(wm->createWindow("WindowsLook/StaticImage", "InventoryUseFireSuitIcon"));
-   mInventoryUseFireSuitIcon->setSize(CEGUI::Size(0.15f, 0.15f));
-   mInventoryUseFireSuitIcon->setPosition(CEGUI::Point(mFireSuitIconPos.d_x, mFireSuitIconPos.d_y + 0.025f));
-   mInventoryUseFireSuitIcon->setBackgroundEnabled(false);
-   mInventoryUseFireSuitIcon->setFrameEnabled(false);
-   mInventoryUseFireSuitIcon->setImage("InventoryUseImage", "InventoryUseImage");
+   mInventoryUseFireSuitIcon = wm->createWindow("WindowsLook/StaticImage", "InventoryUseFireSuitIcon");
+   mInventoryUseFireSuitIcon->setSize(CEGUI::UVector2(cegui_reldim(0.15f), cegui_reldim(0.15f)));
+   mInventoryUseFireSuitIcon->setPosition(CEGUI::UVector2(mFireSuitIconPos.d_x, mFireSuitIconPos.d_y + cegui_reldim(.025f)));
+   mInventoryUseFireSuitIcon->setProperty("BackgroundEnabled", "false");
+   mInventoryUseFireSuitIcon->setProperty("FrameEnabled", "false");
+   mInventoryUseFireSuitIcon->setProperty("Image", "set:InventoryUseImage image:InventoryUseImage");
    mHUDBackground->addChildWindow(mInventoryUseFireSuitIcon);
    mInventoryUseFireSuitIcon->hide();
 
-   mInventoryUseFireHoseIcon = static_cast<CEGUI::StaticImage*>(wm->createWindow("WindowsLook/StaticImage", "InventoryUseFireHoseIcon"));
-   mInventoryUseFireHoseIcon->setSize(CEGUI::Size(0.15f, 0.15f));
-   mInventoryUseFireHoseIcon->setPosition(CEGUI::Point(mFireHoseIconPos.d_x, mFireHoseIconPos.d_y + 0.025f));
-   mInventoryUseFireHoseIcon->setBackgroundEnabled(false);
-   mInventoryUseFireHoseIcon->setFrameEnabled(false);
-   mInventoryUseFireHoseIcon->setImage("InventoryUseImage", "InventoryUseImage");
+   mInventoryUseFireHoseIcon = wm->createWindow("WindowsLook/StaticImage", "InventoryUseFireHoseIcon");
+   mInventoryUseFireHoseIcon->setSize(CEGUI::UVector2(cegui_reldim(0.15f), cegui_reldim(0.15f)));
+   mInventoryUseFireHoseIcon->setPosition(CEGUI::UVector2(mFireHoseIconPos.d_x, mFireHoseIconPos.d_y + cegui_reldim(.025f)));
+   mInventoryUseFireHoseIcon->setProperty("BackgroundEnabled", "false");
+   mInventoryUseFireHoseIcon->setProperty("FrameEnabled", "false");
+   mInventoryUseFireHoseIcon->setProperty("Image", "set:InventoryUseImage image:InventoryUseImage");
    mHUDBackground->addChildWindow(mInventoryUseFireHoseIcon);
    mInventoryUseFireHoseIcon->hide();
 
-   mInventoryUseSCBAIcon = static_cast<CEGUI::StaticImage*>(wm->createWindow("WindowsLook/StaticImage", "InventoryUseSCBAIcon"));
-   mInventoryUseSCBAIcon->setSize(CEGUI::Size(0.15f, 0.15f));
-   mInventoryUseSCBAIcon->setPosition(CEGUI::Point(mSCBAIconPos.d_x, mSCBAIconPos.d_y + 0.025f));
-   mInventoryUseSCBAIcon->setBackgroundEnabled(false);
-   mInventoryUseSCBAIcon->setFrameEnabled(false);
-   mInventoryUseSCBAIcon->setImage("InventoryUseImage", "InventoryUseImage");
+   mInventoryUseSCBAIcon = wm->createWindow("WindowsLook/StaticImage", "InventoryUseSCBAIcon");
+   mInventoryUseSCBAIcon->setSize(CEGUI::UVector2(cegui_reldim(0.15f), cegui_reldim(0.15f)));
+   mInventoryUseSCBAIcon->setPosition(CEGUI::UVector2(mSCBAIconPos.d_x, mSCBAIconPos.d_y + cegui_reldim(.025f)));
+   mInventoryUseSCBAIcon->setProperty("BackgroundEnabled", "false");
+   mInventoryUseSCBAIcon->setProperty("FrameEnabled", "false");
+   mInventoryUseSCBAIcon->setProperty("Image", "set:InventoryUseImage image:InventoryUseImage");
    mHUDBackground->addChildWindow(mInventoryUseSCBAIcon);
    mInventoryUseSCBAIcon->hide();
 
-   mInventorySelectIcon = static_cast<CEGUI::StaticImage*>(wm->createWindow("WindowsLook/StaticImage", "InventorySelectIcon"));
-   mInventorySelectIcon->setSize(CEGUI::Size(0.15f, 0.15f));
-   mInventorySelectIcon->setBackgroundEnabled(false);
-   mInventorySelectIcon->setFrameEnabled(false);
-   mInventorySelectIcon->setImage("InventorySelectImage", "InventorySelectImage");
+   mInventorySelectIcon = wm->createWindow("WindowsLook/StaticImage", "InventorySelectIcon");
+   mInventorySelectIcon->setSize(CEGUI::UVector2(cegui_reldim(0.15f), cegui_reldim(0.15f)));
+   mInventorySelectIcon->setProperty("BackgroundEnabled", "false");
+   mInventorySelectIcon->setProperty("FrameEnabled", "false");
+   mInventorySelectIcon->setProperty("Image", "set:InventorySelectImage image:InventorySelectImage");
    mHUDBackground->addChildWindow(mInventorySelectIcon);
    mInventorySelectIcon->hide();
 
-   mTargetIcon = static_cast<CEGUI::StaticImage*>(wm->createWindow("WindowsLook/StaticImage", "TargetIcon"));
-   mTargetIcon->setSize(CEGUI::Size(0.15f, 0.15f));
-   mTargetIcon->setPosition(CEGUI::Point(0.45f, 0.45f));
-   mTargetIcon->setBackgroundEnabled(false);
-   mTargetIcon->setFrameEnabled(false);
-   mTargetIcon->setImage("TargetImage", "TargetImage");
+   mTargetIcon = wm->createWindow("WindowsLook/StaticImage", "TargetIcon");
+   mTargetIcon->setSize(CEGUI::UVector2(cegui_reldim(0.15f), cegui_reldim(0.15f)));
+   mTargetIcon->setPosition(CEGUI::UVector2(cegui_reldim(0.45f), cegui_reldim(0.45f)));
+   mTargetIcon->setProperty("BackgroundEnabled", "false");
+   mTargetIcon->setProperty("FrameEnabled", "false");
+   mTargetIcon->setProperty("Image", "set:TargetImage image:TargetImage");
    mHUDBackground->addChildWindow(mTargetIcon);
 
-   mMissionCompletedText = static_cast<CEGUI::StaticText*>(wm->createWindow("WindowsLook/StaticText", "MissionCompleteText"));
+   mMissionCompletedText = wm->createWindow("WindowsLook/StaticText", "MissionCompleteText");
    mMissionCompletedText->setText("Mission Completed. Press M to debrief");
-   mMissionCompletedText->setTextColours(CEGUI::colour(0.0f, 1.0f, 0.0f, 1.0f));
-   mMissionCompletedText->setBackgroundEnabled(false);
-   mMissionCompletedText->setFrameEnabled(false);
-   mMissionCompletedText->setSize(CEGUI::Size(0.5f, 0.1f));
-   mMissionCompletedText->setPosition(CEGUI::Point(0.1f, 0.1f));
+   mMissionCompletedText->setProperty("TextColours", CEGUI::PropertyHelper::colourToString(CEGUI::colour(0.0f, 1.0f, 0.0f)));
+   mMissionCompletedText->setProperty("BackgroundEnabled", "false");
+   mMissionCompletedText->setProperty("FrameEnabled", "false");
+   mMissionCompletedText->setSize(CEGUI::UVector2(cegui_reldim(0.5f), cegui_reldim(0.1f)));
+   mMissionCompletedText->setPosition(CEGUI::UVector2(cegui_reldim(0.1f), cegui_reldim(0.1f)));
    mMissionCompletedText->setHorizontalAlignment(CEGUI::HA_CENTRE);
    mHUDBackground->addChildWindow(mMissionCompletedText);
    mMissionCompletedText->hide();
 
-   mMissionFailedText = static_cast<CEGUI::StaticText*>(wm->createWindow("WindowsLook/StaticText", "MissionFailedText"));
+   mMissionFailedText = wm->createWindow("WindowsLook/StaticText", "MissionFailedText");
    mMissionFailedText->setText("Mission Failed. Press M to debrief");
-   mMissionFailedText->setTextColours(CEGUI::colour(1.0f, 0.0f, 0.0f, 1.0f));
-   mMissionFailedText->setBackgroundEnabled(false);
-   mMissionFailedText->setFrameEnabled(false);
-   mMissionFailedText->setSize(CEGUI::Size(0.5f, 0.1f));
-   mMissionFailedText->setPosition(CEGUI::Point(0.1f, 0.1f));
+   mMissionFailedText->setProperty("TextColours", CEGUI::PropertyHelper::colourToString(CEGUI::colour(1.0f, 0.0f, 0.0f)));
+   mMissionFailedText->setProperty("BackgroundEnabled", "false");
+   mMissionFailedText->setProperty("FrameEnabled", "false");
+   mMissionFailedText->setSize(CEGUI::UVector2(cegui_reldim(0.5f), cegui_reldim(0.1f)));
+   mMissionFailedText->setPosition(CEGUI::UVector2(cegui_reldim(0.1f), cegui_reldim(0.1f)));
    mMissionFailedText->setHorizontalAlignment(CEGUI::HA_CENTRE);
    mHUDBackground->addChildWindow(mMissionFailedText);
    mMissionFailedText->hide();
@@ -434,7 +444,7 @@ void HUDComponent::BuildHUD()
       std::ostringstream oss;
       oss << "Task " << i;
       curYPos += mTextHeight + 2;
-      CEGUI::StaticText *text = CreateText(oss.str(), mHUDBackground, "",
+      CEGUI::Window *text = CreateText(oss.str(), mHUDBackground, "",
          12, curYPos, taskTextWidth - 2, mTextHeight + 2);
 
       mTaskTextList.push_back(text);
@@ -448,43 +458,43 @@ void HUDComponent::BuildEndMenu()
 {
    CEGUI::WindowManager *wm = CEGUI::WindowManager::getSingletonPtr();
    
-   mDebriefBackground = static_cast<CEGUI::StaticImage*>(wm->createWindow("WindowsLook/StaticImage", "DebriefBackgroundImage"));
+   mDebriefBackground = wm->createWindow("WindowsLook/StaticImage", "DebriefBackgroundImage");
    mMainWindow->addChildWindow(mDebriefBackground);
-   mDebriefBackground->setPosition(CEGUI::Point(0.0f, 0.0f));
-   mDebriefBackground->setSize(CEGUI::Size(1.0f, 1.0f));
-   mDebriefBackground->setBackgroundEnabled(false);
-   mDebriefBackground->setFrameEnabled(false);
-   mDebriefBackground->setImage("BackgroundImage", "BackgroundImage");
+   mDebriefBackground->setPosition(CEGUI::UVector2(cegui_reldim(0.0f), cegui_reldim(0.0f)));
+   mDebriefBackground->setSize(CEGUI::UVector2(cegui_reldim(1.0f), cegui_reldim(1.0f)));
+   mDebriefBackground->setProperty("BackgroundEnabled", "false");
+   mDebriefBackground->setProperty("FrameEnabled", "false");
+   mDebriefBackground->setProperty("Image", "set:BackgroundImage image:BackgroundImage");
 
-   mDebriefHeaderText = static_cast<CEGUI::StaticText*>(wm->createWindow("WindowsLook/StaticText", "DebriefHeaderText"));
+   mDebriefHeaderText = wm->createWindow("WindowsLook/StaticText", "DebriefHeaderText");
    mDebriefHeaderText->setText("Debriefing");
-   mDebriefHeaderText->setBackgroundEnabled(false);
-   mDebriefHeaderText->setFrameEnabled(false);
-   mDebriefHeaderText->setSize(CEGUI::Size(0.5f, 0.1f));
-   mDebriefHeaderText->setPosition(CEGUI::Point(0.18f, 0.01f));
+   mDebriefHeaderText->setProperty("BackgroundEnabled", "false");
+   mDebriefHeaderText->setProperty("FrameEnabled", "false");
+   mDebriefHeaderText->setSize(CEGUI::UVector2(cegui_reldim(0.5f), cegui_reldim(0.1f)));
+   mDebriefHeaderText->setPosition(CEGUI::UVector2(cegui_reldim(0.18f), cegui_reldim(0.01f)));
    mDebriefHeaderText->setHorizontalAlignment(CEGUI::HA_CENTRE);
    mDebriefBackground->addChildWindow(mDebriefHeaderText);
 
-   mCompleteOrFail = static_cast<CEGUI::StaticText*>(wm->createWindow("WindowsLook/StaticText", "CompleteOrFailText"));
-   mCompleteOrFail->setBackgroundEnabled(false);
-   mCompleteOrFail->setFrameEnabled(false);
-   mCompleteOrFail->setSize(CEGUI::Size(0.5f, 0.1f));
-   mCompleteOrFail->setPosition(CEGUI::Point(0.17f, 0.1f));
+   mCompleteOrFail = wm->createWindow("WindowsLook/StaticText", "CompleteOrFailText");
+   mCompleteOrFail->setProperty("BackgroundEnabled", "false");
+   mCompleteOrFail->setProperty("FrameEnabled", "false");
+   mCompleteOrFail->setSize(CEGUI::UVector2(cegui_reldim(0.5f), cegui_reldim(0.1f)));
+   mCompleteOrFail->setPosition(CEGUI::UVector2(cegui_reldim(0.17f), cegui_reldim(0.1f)));
    mCompleteOrFail->setHorizontalAlignment(CEGUI::HA_CENTRE);
    mDebriefBackground->addChildWindow(mCompleteOrFail);
 
-   mFailReason = static_cast<CEGUI::StaticText*>(wm->createWindow("WindowsLook/StaticText", "reasonText"));
-   mFailReason->setBackgroundEnabled(false);
-   mFailReason->setFrameEnabled(false);
-   mFailReason->setSize(CEGUI::Size(0.5f, 0.1f));
-   mFailReason->setPosition(CEGUI::Point(0.1f, 0.2f));
+   mFailReason = wm->createWindow("WindowsLook/StaticText", "reasonText");
+   mFailReason->setProperty("BackgroundEnabled", "false");
+   mFailReason->setProperty("FrameEnabled", "false");
+   mFailReason->setSize(CEGUI::UVector2(cegui_reldim(0.5f), cegui_reldim(0.1f)));
+   mFailReason->setPosition(CEGUI::UVector2(cegui_reldim(0.1f), cegui_reldim(0.2f)));
    mFailReason->setHorizontalAlignment(CEGUI::HA_CENTRE);
    mDebriefBackground->addChildWindow(mFailReason);
 
    mReturnToMenu = static_cast<CEGUI::PushButton*>(wm->createWindow("WindowsLook/Button", "ReturnToMenuButton"));
    mReturnToMenu->setText("Return to Menu");
-   mReturnToMenu->setSize(CEGUI::Size(0.3f, 0.1f));
-   mReturnToMenu->setPosition(CEGUI::Point(0, 0.8));
+   mReturnToMenu->setSize(CEGUI::UVector2(cegui_reldim(0.3f), cegui_reldim(0.1f)));
+   mReturnToMenu->setPosition(CEGUI::UVector2(cegui_reldim(0.0f), cegui_reldim(0.8f)));
    mReturnToMenu->setMouseCursor(NULL);
    mReturnToMenu->setHorizontalAlignment(CEGUI::HA_CENTRE);
    mDebriefBackground->addChildWindow(mReturnToMenu);
@@ -502,7 +512,7 @@ void HUDComponent::BuildEndMenu()
       std::ostringstream oss;
       oss << "Debrief Task " << i;
       curYPos += mTextHeight + 2;
-      CEGUI::StaticText *text = CreateText(oss.str(), mDebriefBackground, "",
+      CEGUI::Window *text = CreateText(oss.str(), mDebriefBackground, "",
          12, curYPos, taskTextWidth - 2, mTextHeight + 2);
 
       mDebriefList.push_back(text);
@@ -516,21 +526,21 @@ void HUDComponent::BuildIntroMenu()
 {
    CEGUI::WindowManager *wm = CEGUI::WindowManager::getSingletonPtr();
    
-   mIntroBackground = static_cast<CEGUI::StaticImage*>(wm->createWindow("WindowsLook/StaticImage", "IntroBackgroundImage"));
+   mIntroBackground = wm->createWindow("WindowsLook/StaticImage", "IntroBackgroundImage");
    mMainWindow->addChildWindow(mIntroBackground);
-   mIntroBackground->setPosition(CEGUI::Point(0.0f, 0.0f));
-   mIntroBackground->setSize(CEGUI::Size(1.0f, 1.0f));
-   mIntroBackground->setBackgroundEnabled(false);
-   mIntroBackground->setFrameEnabled(false);
+   mIntroBackground->setPosition(CEGUI::UVector2(cegui_reldim(0.0f), cegui_reldim(0.0f)));
+   mIntroBackground->setSize(CEGUI::UVector2(cegui_reldim(1.0f), cegui_reldim(1.0f)));
+   mIntroBackground->setProperty("BackgroundEnabled", "false");
+   mIntroBackground->setProperty("FrameEnabled", "false");
 
-   mIntroText = static_cast<CEGUI::StaticText*>(wm->createWindow("WindowsLook/StaticText", "IntroText"));
+   mIntroText = wm->createWindow("WindowsLook/StaticText", "IntroText");
    mIntroText->setText("Press N to skip");
-   mIntroText->setBackgroundEnabled(false);
-   mIntroText->setFrameEnabled(false);
-   mIntroText->setSize(CEGUI::Size(0.4f, 0.1f));
-   mIntroText->setPosition(CEGUI::Point(0.125, 0.01));
+   mIntroText->setProperty("BackgroundEnabled", "false");
+   mIntroText->setProperty("FrameEnabled", "false");
+   mIntroText->setSize(CEGUI::UVector2(cegui_reldim(0.4f), cegui_reldim(0.1f)));
+   mIntroText->setPosition(CEGUI::UVector2(cegui_reldim(0.125f), cegui_reldim(0.01f)));
    mIntroText->setHorizontalAlignment(CEGUI::HA_CENTRE);
-   mIntroText->setTextColours(CEGUI::colour(1.0f, 1.0f, 1.0f));
+   mIntroText->setProperty("TextColours", CEGUI::PropertyHelper::colourToString(CEGUI::colour(1.0f, 1.0f, 1.0f)));
    mIntroBackground->addChildWindow(mIntroText);
 
    mIntroBackground->hide();
@@ -539,7 +549,7 @@ void HUDComponent::BuildIntroMenu()
 bool HUDComponent::OnStartWithObjectives(const CEGUI::EventArgs &e)
 {
    mShowObjectives = true;
-   SendGameStateChangedMessage(GameState::STATE_MENU, GameState::STATE_INTRO);
+   SendGameStateChangedMessage(GameState::STATE_MENU, GameState::STATE_RUNNING);
    return true;
 }
 
@@ -634,15 +644,15 @@ void HUDComponent::SetSelectedItem(GameItemActor *item)
 {
    if(dynamic_cast<FireSuitActor*>(item) != NULL)
    {
-      mInventorySelectIcon->setPosition(CEGUI::Point(mFireSuitIconPos.d_x, mFireSuitIconPos.d_y - 0.025f));
+      mInventorySelectIcon->setPosition(CEGUI::UVector2(mFireSuitIconPos.d_x, mFireSuitIconPos.d_y - cegui_reldim(0.025f)));
    }
    else if(dynamic_cast<FireHoseActor*>(item) != NULL)
    {
-      mInventorySelectIcon->setPosition(CEGUI::Point(mFireHoseIconPos.d_x, mFireHoseIconPos.d_y - 0.025f));
+      mInventorySelectIcon->setPosition(CEGUI::UVector2(mFireHoseIconPos.d_x, mFireHoseIconPos.d_y - cegui_reldim(0.025f)));
    }
    else if(dynamic_cast<SCBAActor*>(item) != NULL)
    {
-      mInventorySelectIcon->setPosition(CEGUI::Point(mSCBAIconPos.d_x, mSCBAIconPos.d_y - 0.025f));
+      mInventorySelectIcon->setPosition(CEGUI::UVector2(mSCBAIconPos.d_x, mSCBAIconPos.d_y - cegui_reldim(0.025f)));
    }
    else
    {
@@ -690,7 +700,7 @@ void HUDComponent::SetDeactivatedItem(GameItemActor *item)
    }
 }
 
-void HUDComponent::UpdateMediumDetailData(CEGUI::StaticImage *parent)
+void HUDComponent::UpdateMediumDetailData(CEGUI::Window *parent)
 {
    if(parent->isVisible())
    {
@@ -736,7 +746,7 @@ unsigned int HUDComponent::RecursivelyAddTasks(const std::string &indent,
                                                unsigned int curIndex,
                                                const dtActors::TaskActorProxy *taskProxy, 
                                                unsigned int &numCompleted, 
-                                               CEGUI::StaticImage *parent)
+                                               CEGUI::Window *parent)
 {
    std::ostringstream oss;
    oss.setf(std::ios_base::fixed, std::ios_base::floatfield);
@@ -809,9 +819,10 @@ unsigned int HUDComponent::RecursivelyAddTasks(const std::string &indent,
    return totalNumAdded;
 }
 
-void HUDComponent::UpdateStaticText(CEGUI::StaticText *textControl, const std::string &newText,
+void HUDComponent::UpdateStaticText(CEGUI::Window *textControl, const std::string &newText,
                                     float red, float green, float blue, float x, float y)
 {
+   
    if(textControl != NULL)
    {
       // text and color
@@ -820,13 +831,13 @@ void HUDComponent::UpdateStaticText(CEGUI::StaticText *textControl, const std::s
          if(textControl->getText() != newText)
             textControl->setText(newText);
          if(red >= 0.0f && blue >= 0.0f && green >= 0.0f)
-            textControl->setTextColours(CEGUI::colour(red, green, blue));
+            textControl->setProperty("TextColours", CEGUI::PropertyHelper::colourToString(CEGUI::colour(red, green, blue)));
       }
       // position
       if(x > 0.0f && y > 0.0f)
       {
-         CEGUI::Point position = textControl->getPosition();
-         CEGUI::Point newPos(x, y);
+         CEGUI::UVector2 position = textControl->getPosition();
+         CEGUI::UVector2 newPos(cegui_reldim(x), cegui_reldim(y));
          if(position != newPos)
             textControl->setPosition(newPos);
       }
@@ -835,7 +846,7 @@ void HUDComponent::UpdateStaticText(CEGUI::StaticText *textControl, const std::s
          if(mHUDBackground->isVisible())
          {
             if(mShowObjectives)
-               textControl->show();
+               textControl->show(); 
             else
                textControl->hide();
          }
@@ -848,22 +859,21 @@ void HUDComponent::UpdateStaticText(CEGUI::StaticText *textControl, const std::s
    }
 }
 
-CEGUI::StaticText* HUDComponent::CreateText(const std::string &name, 
-                                            CEGUI::StaticImage *parent, 
-                                            const std::string &text,
-                                            float x, float y, float width, float height)
+CEGUI::Window* HUDComponent::CreateText(const std::string &name, 
+                                        CEGUI::Window *parent, 
+                                        const std::string &text,
+                                        float x, float y, float width, float height)
 {
    CEGUI::WindowManager *wm = CEGUI::WindowManager::getSingletonPtr();
 
    // create base window and set our default attribs
-   CEGUI::StaticText* result = static_cast<CEGUI::StaticText*>(wm->createWindow("WindowsLook/StaticText", name));
+   CEGUI::Window *result = wm->createWindow("WindowsLook/StaticText", name);
    parent->addChildWindow(result);
-   result->setMetricsMode(CEGUI::Absolute);
    result->setText(text);
-   result->setPosition(CEGUI::Point(x, y));
-   result->setSize(CEGUI::Size(width, height));
-   result->setFrameEnabled(false);
-   result->setBackgroundEnabled(false);
+   result->setPosition(CEGUI::UVector2(cegui_absdim(x), cegui_absdim(y)));
+   result->setSize(CEGUI::UVector2(cegui_absdim(width), cegui_absdim(height)));
+   result->setProperty("FrameEnabled", "false");
+   result->setProperty("BackgroundEnabled", "false");
    result->setHorizontalAlignment(CEGUI::HA_LEFT);
    result->setVerticalAlignment(CEGUI::VA_TOP);
 
@@ -873,7 +883,9 @@ CEGUI::StaticText* HUDComponent::CreateText(const std::string &name,
 void HUDComponent::RefreshDebriefScreen()
 {
    mCompleteOrFail->setText(mMissionComplete ? "Mission Completed" : "Mission Failed");
-   mCompleteOrFail->setTextColours(mMissionComplete ? CEGUI::colour(0.0f, 1.0f, 0.0f) : CEGUI::colour(1.0f, 0.0f, 0.0f));
+   mCompleteOrFail->setProperty("TextColours", mMissionComplete ? 
+      CEGUI::PropertyHelper::colourToString(CEGUI::colour(0.0f, 1.0f, 0.0f)) : 
+      CEGUI::PropertyHelper::colourToString(CEGUI::colour(1.0f, 0.0f, 0.0f)));
    
    UpdateMediumDetailData(mDebriefBackground);
 }
