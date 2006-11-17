@@ -794,8 +794,11 @@ namespace dtDAL
    {
       ValidatePropertyType(property);
 
-      const dtDAL::ActorActorProperty *ap = static_cast<const dtDAL::ActorActorProperty*> (&property);
-      SetValue(ap->GetValue()->GetId());
+       const dtDAL::ActorActorProperty *ap = static_cast<const dtDAL::ActorActorProperty*> (&property);
+      if (ap->GetValue() == NULL)
+         SetValue(dtCore::UniqueId(""));
+      else 
+         SetValue(ap->GetValue()->GetId());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
