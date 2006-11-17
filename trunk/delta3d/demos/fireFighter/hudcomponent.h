@@ -22,17 +22,17 @@
 #define DELTA_FIRE_FIGHTER_HUD_COMPONENT
 
 #include <dtGame/gmcomponent.h>
+#include <dtCore/timer.h>
 #include <fireFighter/export.h>
-#include <CEGUIVector.h> // So we get CEGUI::Point without including everything in CEGUI.h
+#include <ceguiudim.h> // So we get CEGUI::UVector2 without including everything in CEGUI.h
 
 // Forward declarations
 namespace CEGUI
 {
    class PushButton;
-   class StaticImage;
    class Window;
    class EventArgs;
-   class StaticText;
+   class UVector2;
 }
 
 namespace dtGUI
@@ -187,7 +187,7 @@ class FIRE_FIGHTER_EXPORT HUDComponent : public dtGame::GMComponent
        * Private helper method called once per tick to update 
        * the tasks UI
        */
-      void UpdateMediumDetailData(CEGUI::StaticImage *parent);
+      void UpdateMediumDetailData(CEGUI::Window *parent);
 
       /**
        * Recursively adds subtasks to the UI from parent tasks
@@ -196,14 +196,14 @@ class FIRE_FIGHTER_EXPORT HUDComponent : public dtGame::GMComponent
                                        unsigned int curIndex,
                                        const dtActors::TaskActorProxy *taskProxy, 
                                        unsigned int &numCompleted, 
-                                       CEGUI::StaticImage *parent);
+                                       CEGUI::Window *parent);
 
       /**
        * Utility method to set the text, position, and color of a text control
        * Check to see if the data changed.  The default values for color and position
        * won't do anything since they use a color and position < 0.
        */
-      void UpdateStaticText(CEGUI::StaticText *textControl, 
+      void UpdateStaticText(CEGUI::Window *textControl, 
                             const std::string &newText,
                             float red   = -1.0f, 
                             float green = -1.0f, 
@@ -214,10 +214,10 @@ class FIRE_FIGHTER_EXPORT HUDComponent : public dtGame::GMComponent
       /**
        * Private helper method to create text for the task actors
        */
-      CEGUI::StaticText* CreateText(const std::string &name, 
-                                    CEGUI::StaticImage *parent, 
-                                    const std::string &text,
-                                    float x, float y, float width, float height);
+      CEGUI::Window* CreateText(const std::string &name, 
+                                CEGUI::Window *parent, 
+                                const std::string &text,
+                                float x, float y, float width, float height);
 
       /**
        * Refreshes the debriefing screen
@@ -226,28 +226,29 @@ class FIRE_FIGHTER_EXPORT HUDComponent : public dtGame::GMComponent
 
       CEGUI::PushButton *mStartWithObjectives, *mStart, *mQuit, *mReturnToMenu;
       CEGUI::Window *mMainWindow;
-      CEGUI::StaticImage *mWindowBackground, *mHUDBackground, *mDebriefBackground, 
+      CEGUI::Window *mWindowBackground, *mHUDBackground, *mDebriefBackground, 
                          *mIntroBackground, *mGameItemImage, 
                          *mFireSuitIcon, *mFireHoseIcon, *mSCBAIcon, 
                          *mInventoryUseFireSuitIcon, *mInventoryUseFireHoseIcon, *mInventoryUseSCBAIcon, 
                          *mInventorySelectIcon, 
                          *mTargetIcon;
 
-      CEGUI::StaticText *mAppHeader, *mDebriefHeaderText, *mIntroText;
+      CEGUI::Window *mAppHeader, *mDebriefHeaderText, *mIntroText;
 
       dtCore::RefPtr<dtGUI::CEUIDrawable> mGUI;
 
       bool mShowObjectives;
       GameState *mCurrentState;
-      CEGUI::Point mFireSuitIconPos, mFireHoseIconPos, mSCBAIconPos; 
-      std::vector<CEGUI::StaticText*> mTaskTextList;
-      CEGUI::StaticText *mTasksHeaderText;
+      CEGUI::UVector2 mFireSuitIconPos, mFireHoseIconPos, mSCBAIconPos; 
+      std::vector<CEGUI::Window*> mTaskTextList;
+      CEGUI::Window *mTasksHeaderText;
       const unsigned int mNumTasks;
-      CEGUI::StaticText *mMissionCompletedText, *mMissionFailedText;
+      CEGUI::Window *mMissionCompletedText, *mMissionFailedText;
       bool mMissionComplete, mMissionFailed;
       dtActors::TaskActorProxy *mFailedProxy;
-      CEGUI::StaticText *mCompleteOrFail, *mFailReason;
-      std::vector<CEGUI::StaticText*> mDebriefList;
+      CEGUI::Window *mCompleteOrFail, *mFailReason;
+      std::vector<CEGUI::Window*> mDebriefList;
+      dtCore::Timer_t mTimer;
 };
 
 #endif

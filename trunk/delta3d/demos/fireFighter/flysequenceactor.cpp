@@ -86,6 +86,7 @@ FlySequenceActor::FlySequenceActor(dtGame::GameActorProxy &proxy) :
 
 FlySequenceActor::~FlySequenceActor()
 {
+   mPlayer = NULL;
    if(snd != NULL)
    {
       snd->UnloadFile();
