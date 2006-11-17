@@ -21,6 +21,8 @@
  */
 
 //#include <osg/Vec3>
+#include <sstream>
+
 #include <prefix/dtstageprefix-src.h>
 #include <dtEditQt/dynamicvectorelementcontrol.h>
 #include <dtEditQt/dynamicsubwidgets.h>
@@ -42,7 +44,7 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     DynamicVectorElementControl::DynamicVectorElementControl(dtDAL::Vec2ActorProperty *newVectorProp, 
             int whichIndex, const std::string &newLabel)
-            : label(newLabel), elementIndex(whichIndex), temporaryEditControl(NULL)
+            : label(newLabel), mElementIndex(whichIndex), temporaryEditControl(NULL)
     {
 
         vec2Prop  = newVectorProp;
@@ -60,7 +62,7 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     DynamicVectorElementControl::DynamicVectorElementControl(dtDAL::Vec2fActorProperty *newVectorProp, 
         int whichIndex, const std::string &newLabel)
-        : label(newLabel), elementIndex(whichIndex), temporaryEditControl(NULL)
+        : label(newLabel), mElementIndex(whichIndex), temporaryEditControl(NULL)
     {
 
         vec2Prop  = NULL;
@@ -78,7 +80,7 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     DynamicVectorElementControl::DynamicVectorElementControl(dtDAL::Vec2dActorProperty *newVectorProp, 
         int whichIndex, const std::string &newLabel)
-        : label(newLabel), elementIndex(whichIndex), temporaryEditControl(NULL)
+        : label(newLabel), mElementIndex(whichIndex), temporaryEditControl(NULL)
     {
 
         vec2Prop  = NULL;
@@ -96,7 +98,7 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     DynamicVectorElementControl::DynamicVectorElementControl(dtDAL::Vec3ActorProperty *newVectorProp, 
             int whichIndex, const std::string &newLabel)
-            : label(newLabel), elementIndex(whichIndex), temporaryEditControl(NULL)
+            : label(newLabel), mElementIndex(whichIndex), temporaryEditControl(NULL)
     {
 
         vec2Prop  = NULL;
@@ -114,7 +116,7 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     DynamicVectorElementControl::DynamicVectorElementControl(dtDAL::Vec3fActorProperty *newVectorProp, 
         int whichIndex, const std::string &newLabel)
-        : label(newLabel), elementIndex(whichIndex), temporaryEditControl(NULL)
+        : label(newLabel), mElementIndex(whichIndex), temporaryEditControl(NULL)
     {
 
         vec2Prop  = NULL;
@@ -132,7 +134,7 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     DynamicVectorElementControl::DynamicVectorElementControl(dtDAL::Vec3dActorProperty *newVectorProp, 
         int whichIndex, const std::string &newLabel)
-        : label(newLabel), elementIndex(whichIndex), temporaryEditControl(NULL)
+        : label(newLabel), mElementIndex(whichIndex), temporaryEditControl(NULL)
     {
 
         vec2Prop  = NULL;
@@ -150,7 +152,7 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     DynamicVectorElementControl::DynamicVectorElementControl(dtDAL::Vec4ActorProperty *newVectorProp, 
             int whichIndex, const std::string &newLabel)
-            : label(newLabel), elementIndex(whichIndex), temporaryEditControl(NULL)
+            : label(newLabel), mElementIndex(whichIndex), temporaryEditControl(NULL)
     {
 
         vec2Prop  = NULL;
@@ -168,7 +170,7 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     DynamicVectorElementControl::DynamicVectorElementControl(dtDAL::Vec4fActorProperty *newVectorProp, 
         int whichIndex, const std::string &newLabel)
-        : label(newLabel), elementIndex(whichIndex), temporaryEditControl(NULL)
+        : label(newLabel), mElementIndex(whichIndex), temporaryEditControl(NULL)
     {
 
         vec2Prop  = NULL;
@@ -186,7 +188,7 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     DynamicVectorElementControl::DynamicVectorElementControl(dtDAL::Vec4dActorProperty *newVectorProp, 
         int whichIndex, const std::string &newLabel)
-        : label(newLabel), elementIndex(whichIndex), temporaryEditControl(NULL)
+        : label(newLabel), mElementIndex(whichIndex), temporaryEditControl(NULL)
     {
 
         vec2Prop  = NULL;
@@ -228,18 +230,18 @@ namespace dtEditQt
     /////////////////////////////////////////////////////////////////////////////////
     void DynamicVectorElementControl::updateEditorFromModel(QWidget *widget)
     {
-        if (widget != NULL)
+        if (widget != NULL && widget == temporaryEditControl)
         {
-            // Note, don't use the temporary variable here.  It can cause errors with QT.
-            SubQLineEdit *editBox = static_cast<SubQLineEdit *>(widget);
-
+           std::ostringstream ss;
+           ss << "Updating editor for index " << mElementIndex;
+           LOGN_DEBUG("dynamicvectorelementcontrol.cpp", ss.str());
             // set the current value from our property
             double value = getValue();
             //QString strValue = QString::number(value, 'f', NUM_DECIMAL_DIGITS);
             QLocale locale(QLocale::C);
             QString strValue = locale.toString(value, 'f', NUM_DECIMAL_DIGITS);
-            editBox->setText(strValue);
-            editBox->selectAll();
+            temporaryEditControl->setText(strValue);
+            temporaryEditControl->selectAll();
         }
     }
 
@@ -248,8 +250,12 @@ namespace dtEditQt
     {
         bool dataChanged = false;
 
-        if (widget != NULL) 
+        if (widget != NULL && widget == temporaryEditControl) 
         {
+           std::ostringstream ss;
+           ss << "Updating model for index " << mElementIndex;
+           LOGN_DEBUG("dynamicvectorelementcontrol.cpp", ss.str());
+
             // Note, don't use the temporary variable here.  It can cause errors with QT.
             SubQLineEdit *editBox = static_cast<SubQLineEdit *>(widget);
             bool success = false;
@@ -271,7 +277,7 @@ namespace dtEditQt
             } 
             else 
             {
-                LOG_ERROR("updateData() failed to convert our value successfully");
+                LOGN_ERROR("dynamicvectorelementcontrol.cpp", "updateData() failed to convert our value successfully");
             }
 
             // reselect all the text when we commit.  
@@ -282,6 +288,10 @@ namespace dtEditQt
         // notify the world (mostly the viewports) that our property changed
         if (dataChanged) 
         {
+           std::ostringstream ss;
+           ss << "Updating model (data changed) for index " << mElementIndex;
+           LOGN_DEBUG("dynamicvectorelementcontrol.cpp", ss.str());
+
             if (whichType == VEC2) 
             {
                 EditorEvents::GetInstance().emitActorPropertyChanged(proxy, vec2Prop);
@@ -328,6 +338,9 @@ namespace dtEditQt
     QWidget *DynamicVectorElementControl::createEditor(QWidget *parent, 
         const QStyleOptionViewItem &option, const QModelIndex &index)
     {
+        std::ostringstream ss;
+        ss << "Creating editor for index " << mElementIndex;
+        LOGN_DEBUG("dynamicvectorelementcontrol.cpp", ss.str());
         // create and init the edit box
         //editBox = new QLineEdit(parent);
         temporaryEditControl = new SubQLineEdit (parent, this);
@@ -336,7 +349,7 @@ namespace dtEditQt
         temporaryEditControl->setValidator(validator);
 
         if (!initialized)  {
-            LOG_ERROR("Tried to add itself to the parent widget before being initialized");
+            LOGN_ERROR("dynamicvectorelementcontrol.cpp", "Tried to add itself to the parent widget before being initialized");
             return temporaryEditControl;
         }
 
@@ -440,47 +453,47 @@ namespace dtEditQt
         if (whichType == VEC2) 
         {
             osg::Vec2 vectorValue = vec2Prop->GetValue();
-            result = vectorValue[elementIndex];
+            result = vectorValue[mElementIndex];
         } 
         else if (whichType == VEC2F) 
         {
             osg::Vec2f vectorValue = vec2fProp->GetValue();
-            result = vectorValue[elementIndex];
+            result = vectorValue[mElementIndex];
         } 
         else if (whichType == VEC2D) 
         {
             osg::Vec2d vectorValue = vec2dProp->GetValue();
-            result = vectorValue[elementIndex];
+            result = vectorValue[mElementIndex];
         } 
         else if (whichType == VEC3) 
         {
             osg::Vec3 vectorValue = vec3Prop->GetValue();
-            result = vectorValue[elementIndex];
+            result = vectorValue[mElementIndex];
         } 
         else if (whichType == VEC3F) 
         {
             osg::Vec3f vectorValue = vec3fProp->GetValue();
-            result = vectorValue[elementIndex];
+            result = vectorValue[mElementIndex];
         } 
         else if (whichType == VEC3D) 
         {
             osg::Vec3d vectorValue = vec3dProp->GetValue();
-            result = vectorValue[elementIndex];
+            result = vectorValue[mElementIndex];
         } 
         else if (whichType == VEC4) 
         {
             osg::Vec4 vectorValue = vec4Prop->GetValue();
-            result = vectorValue[elementIndex];
+            result = vectorValue[mElementIndex];
         } 
         else if (whichType == VEC4F) 
         {
             osg::Vec4f vectorValue = vec4fProp->GetValue();
-            result = vectorValue[elementIndex];
+            result = vectorValue[mElementIndex];
         } 
         else if (whichType == VEC4D)
         { 
             osg::Vec4d vectorValue = vec4dProp->GetValue();
-            result = vectorValue[elementIndex];
+            result = vectorValue[mElementIndex];
         }
 
         return result;
@@ -493,7 +506,7 @@ namespace dtEditQt
         {
             std::string oldValue = vec2Prop->GetStringValue();
             osg::Vec2 vectorValue = vec2Prop->GetValue();
-            vectorValue[elementIndex] = value;
+            vectorValue[mElementIndex] = value;
             vec2Prop->SetValue(vectorValue);
 
             // give undo manager the ability to create undo/redo events
@@ -504,7 +517,7 @@ namespace dtEditQt
         {
             std::string oldValue = vec2fProp->GetStringValue();
             osg::Vec2f vectorValue = vec2fProp->GetValue();
-            vectorValue[elementIndex] = value;
+            vectorValue[mElementIndex] = value;
             vec2fProp->SetValue(vectorValue);
 
             // give undo manager the ability to create undo/redo events
@@ -515,7 +528,7 @@ namespace dtEditQt
         {
             std::string oldValue = vec2dProp->GetStringValue();
             osg::Vec2d vectorValue = vec2dProp->GetValue();
-            vectorValue[elementIndex] = value;
+            vectorValue[mElementIndex] = value;
             vec2dProp->SetValue(vectorValue);
 
             // give undo manager the ability to create undo/redo events
@@ -526,7 +539,7 @@ namespace dtEditQt
         {
             std::string oldValue = vec3Prop->GetStringValue();
             osg::Vec3 vectorValue = vec3Prop->GetValue();
-            vectorValue[elementIndex] = value;
+            vectorValue[mElementIndex] = value;
             vec3Prop->SetValue(vectorValue);
 
             // give undo manager the ability to create undo/redo events
@@ -537,7 +550,7 @@ namespace dtEditQt
         {
             std::string oldValue = vec3fProp->GetStringValue();
             osg::Vec3f vectorValue = vec3fProp->GetValue();
-            vectorValue[elementIndex] = value;
+            vectorValue[mElementIndex] = value;
             vec3fProp->SetValue(vectorValue);
 
             // give undo manager the ability to create undo/redo events
@@ -548,7 +561,7 @@ namespace dtEditQt
         {
             std::string oldValue = vec3dProp->GetStringValue();
             osg::Vec3d vectorValue = vec3dProp->GetValue();
-            vectorValue[elementIndex] = value;
+            vectorValue[mElementIndex] = value;
             vec3dProp->SetValue(vectorValue);
 
             // give undo manager the ability to create undo/redo events
@@ -559,7 +572,7 @@ namespace dtEditQt
         {
             std::string oldValue = vec4Prop->GetStringValue();
             osg::Vec4 vectorValue = vec4Prop->GetValue();
-            vectorValue[elementIndex] = value;
+            vectorValue[mElementIndex] = value;
             vec4Prop->SetValue(vectorValue);
 
             // give undo manager the ability to create undo/redo events
@@ -570,7 +583,7 @@ namespace dtEditQt
         {
             std::string oldValue = vec4fProp->GetStringValue();
             osg::Vec4f vectorValue = vec4fProp->GetValue();
-            vectorValue[elementIndex] = value;
+            vectorValue[mElementIndex] = value;
             vec4fProp->SetValue(vectorValue);
 
             // give undo manager the ability to create undo/redo events
@@ -581,7 +594,7 @@ namespace dtEditQt
         {
             std::string oldValue = vec4dProp->GetStringValue();
             osg::Vec4d vectorValue = vec4dProp->GetValue();
-            vectorValue[elementIndex] = value;
+            vectorValue[mElementIndex] = value;
             vec4dProp->SetValue(vectorValue);
 
             // give undo manager the ability to create undo/redo events

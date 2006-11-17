@@ -196,7 +196,7 @@ namespace dtEditQt
         {
             // we have to check - sometimes the destructor won't get called before the 
             // next widget is created.  Then, when it is called, it sets the NEW editor to NULL!
-            if (widget == temporaryEditControl)
+            if (widget != NULL && widget == temporaryEditControl)
             {
                temporaryEditControl = NULL;
             }
@@ -221,7 +221,7 @@ namespace dtEditQt
         dtDAL::Vec2dActorProperty *vec2dProp;
         dtDAL::Vec3dActorProperty *vec3dProp;
         dtDAL::Vec4dActorProperty *vec4dProp;
-        int elementIndex;
+        int mElementIndex;
 
         // This pointer is not really in our control.  It is constructed in the createEditor() 
         // method and destroyed whenever QT feels like it (mostly when the control looses focus). 

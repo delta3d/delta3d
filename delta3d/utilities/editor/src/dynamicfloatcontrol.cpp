@@ -69,7 +69,7 @@ namespace dtEditQt
     /////////////////////////////////////////////////////////////////////////////////
     void DynamicFloatControl::updateEditorFromModel(QWidget *widget)
     {
-        if (widget != NULL) 
+        if (widget != NULL && widget == temporaryEditControl) 
         {
             SubQLineEdit *editBox = static_cast<SubQLineEdit *>(widget);
 
@@ -85,7 +85,7 @@ namespace dtEditQt
     {
         bool dataChanged = false;
 
-        if (widget != NULL) 
+        if (widget != NULL && widget == temporaryEditControl) 
         {
             SubQLineEdit *editBox = static_cast<SubQLineEdit *>(widget);
             bool success = false;
