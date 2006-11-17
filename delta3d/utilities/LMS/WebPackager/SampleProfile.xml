@@ -10,7 +10,7 @@
 
 		  <Keystore>
 		       <File>$(DELTA_ROOT)/utilities/LMS/Java/bmh.keystore</File>
-			   <Key>lmsKey</Key>
+			   <Key>bmhKey</Key>
 		  </Keystore>
 
           <JavaLaunchConfig>JavaLaunch.xml</JavaLaunchConfig>
