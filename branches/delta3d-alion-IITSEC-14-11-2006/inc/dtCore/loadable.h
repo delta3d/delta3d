@@ -3,6 +3,7 @@
 
 #include <string>
 #include <dtCore/export.h>
+#include <osg/CopyOp>
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
