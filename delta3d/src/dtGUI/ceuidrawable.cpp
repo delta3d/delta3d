@@ -65,7 +65,7 @@ CEUIDrawable::~CEUIDrawable()
    RemoveSender( &dtCore::System::GetInstance() );
    DeregisterInstance(this);
    
-   SetOSGNode(0);
+   SetOSGNode(NULL);
 
    delete mRenderer;
 }
@@ -84,9 +84,9 @@ void CEUIDrawable::Config()
             #if defined(CEGUI_VERSION_MAJOR) && CEGUI_VERSION_MAJOR >= 0 && defined(CEGUI_VERSION_MINOR) && CEGUI_VERSION_MINOR >= 5
             // CEGUI 0.5.0 introduces a "unified" constructor. 
             // The new 0 here is for using the default ResourceProvider as well as the default XML parser.
-            new CEGUI::System(mRenderer, NULL, NULL, mScriptModule);          
+               new CEGUI::System(mRenderer, NULL, NULL, mScriptModule);          
             #else
-            new CEGUI::System(mRenderer,mScriptModule);
+               new CEGUI::System(mRenderer,mScriptModule);
             #endif // CEGUI 0.5.0
          }
          else
@@ -94,12 +94,13 @@ void CEUIDrawable::Config()
             new CEGUI::System(mRenderer);
          }
       }
-      catch (CEGUI::Exception &e)
+      catch(CEGUI::Exception &e)
       {
          dtUtil::Log::GetInstance().LogMessage(Log::LOG_ERROR, __FUNCTION__,
             "CEGUI says: %s", e.getMessage().c_str());
 
-         EXCEPT( ExceptionEnum::GenericCEGUIException, "Can't initialize dtGUI system.  UI operations will fail!");
+         throw dtUtil::Exception(ExceptionEnum::GenericCEGUIException, 
+            "Can't initialize dtGUI system. UI operations will fail!", __FILE__, __LINE__);
       }
    }
 
