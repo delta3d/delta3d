@@ -20,9 +20,6 @@
  * Curtiss Murphy
  */
 
-//#include <osg/Vec3>
-#include <sstream>
-
 #include <prefix/dtstageprefix-src.h>
 #include <dtEditQt/dynamicvectorelementcontrol.h>
 #include <dtEditQt/dynamicsubwidgets.h>
@@ -36,7 +33,7 @@
 #include <QtCore/QLocale>
 #include <QtGui/QWidget>
 #include <QtGui/QDoubleValidator>
-
+#include <sstream>
 
 namespace dtEditQt 
 {
