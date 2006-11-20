@@ -111,7 +111,7 @@ namespace dtEditQt
       // On certain events, the delegate is not notified that the 
       // editor is being closed, which doesn't allow us to clean up our pointers.
       // This work around handles that case.
-      PropertyEditorModel *currentModel = dynamic_cast<PropertyEditorModel *>(model());
+      PropertyEditorModel*currentModel = dynamic_cast<PropertyEditorModel*>(model());
       if (currentModel != NULL && mPreviousIndex != NULL) 
       {
          DynamicAbstractControl *control = currentModel->privateData(*mPreviousIndex);
