@@ -70,12 +70,12 @@ class TUTORIAL_TANK_EXPORT HUDComponent : public dtGame::GMComponent
        * Check to see if the data changed.  The default values for color and position
        * won't do anything since they use a color and position < 0.
        */
-      void UpdateStaticText(CEGUI::StaticText *textControl, char *newText,
+      void UpdateStaticText(CEGUI::Window *textControl, char *newText,
                             float red = -1.0, float blue = -1.0, float green = -1.0,
                             float x = -1, float y = -1);
 
       // Utility method to create text
-      CEGUI::StaticText *CreateText(const std::string &name, CEGUI::StaticImage *parent, 
+      CEGUI::Window *CreateText(const std::string &name, CEGUI::Window *parent, 
          const std::string &text, float x, float y, float width, float height);
 
    private:
@@ -85,13 +85,13 @@ class TUTORIAL_TANK_EXPORT HUDComponent : public dtGame::GMComponent
 
       dtCore::RefPtr<dtGUI::CEUIDrawable> mGUI;
       CEGUI::Window *mMainWindow;
-      CEGUI::StaticImage *mOverlay;
+      CEGUI::Window *mOverlay;
 
       // main info
-      CEGUI::StaticText *mNumMessagesText;
-      CEGUI::StaticText *mSimTimeText;
-      CEGUI::StaticText *mLastMessageText;
-      CEGUI::StaticText *mStateText;
+      CEGUI::Window *mNumMessagesText;
+      CEGUI::Window *mSimTimeText;
+      CEGUI::Window *mLastMessageText;
+      CEGUI::Window *mStateText;
 
       long mUnHandledMessages;
 
