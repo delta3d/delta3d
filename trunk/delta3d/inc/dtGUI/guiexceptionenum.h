@@ -23,7 +23,7 @@
 
 #include <dtUtil/enumeration.h>
 #include <dtUtil/exception.h>
-#include "dtGUI/export.h"
+#include <dtGUI/export.h>
 
 
 namespace dtGUI
