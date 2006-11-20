@@ -73,7 +73,7 @@ namespace dtLMS
       //does this task require notifying an LMS of its changes in status?
       bool notifyLms = false;
       dtDAL::ActorProperty *prop = proxy->GetProperty("NotifyLMSOnUpdate");
-      if(prop)
+      if(prop != NULL)
          notifyLms = static_cast<dtDAL::BooleanActorProperty*>(prop)->GetValue();
       
       if (notifyLms)
@@ -99,6 +99,7 @@ namespace dtLMS
       mClientSocket = new LmsClientSocket(mHost, mPort, mReverseBytes);
       mClientSocket->Connect();
    }
+   
    ///////////////////////////////////////////////////////////////////////
    void LmsComponent::DisconnectFromLms()
    {
@@ -117,14 +118,15 @@ namespace dtLMS
          }
       }
    }
+   
    ///////////////////////////////////////////////////////////////////////
    void LmsComponent::SendLmsUpdate(dtGame::GameActorProxy &proxy)
    {
       //if the client socket is not connected, then return (exceptions should have been
       //thrown elsewhere)
-      if(mNeedValidSocket)
+      if (mNeedValidSocket)
       {
-         if(mClientSocket == NULL)
+         if (mClientSocket == NULL)
          {
             return;
          }
@@ -137,12 +139,13 @@ namespace dtLMS
          mMessageVector.clear();
 
       //if this lms task is not yet being tracked for changes, then start tracking it;
-      dtCore::UniqueId taskID = proxy.GetId();
+      std::string taskID = proxy.GetName();
 
-      if (mPreviousTaskStatus.count(taskID) == 0)
+      std::map<std::string, LmsTaskStatus>::iterator currentTask = mPreviousTaskStatus.find(taskID); 
+      if (currentTask == mPreviousTaskStatus.end())
       {
          //LmsTaskStatus initializes with GetCompleted = false and GetScore = 0
-         mPreviousTaskStatus[taskID] = LmsTaskStatus();
+         currentTask = mPreviousTaskStatus.insert(std::make_pair(taskID, LmsTaskStatus())).first;
       }
 
       //if the completion status changed, then send message to LMS;
@@ -151,31 +154,32 @@ namespace dtLMS
       dtDAL::BooleanActorProperty *prop = static_cast<dtDAL::BooleanActorProperty*>(proxy.GetProperty("Complete"));
       bool taskIsComplete = prop->GetValue();
 
-      if (taskIsComplete != mPreviousTaskStatus[taskID].GetCompleted())
+      if (taskIsComplete != currentTask->second.GetCompleted())
       {
          if(mNeedValidSocket)
             mClientSocket->SendLmsMessage(TranslateObjectiveCompleteMessage(taskID, taskIsComplete));
          else
             mMessageVector.push_back(TranslateObjectiveCompleteMessage(taskID, taskIsComplete));
          
-         mPreviousTaskStatus[taskID].SetCompleted(taskIsComplete); //remember last "complete" value we sent
+         currentTask->second.SetCompleted(taskIsComplete); //remember last "complete" value we sent
       }
 
       //if the score changed, then send message to LMS;
       //also we will remember the last value we sent so that we can
       //just send when changed
       float taskScore = static_cast<dtDAL::FloatActorProperty*>(proxy.GetProperty("Score"))->GetValue();
-      if(taskScore != mPreviousTaskStatus[taskID].GetScore())
+      if(taskScore != currentTask->second.GetScore())
       {
          if(mNeedValidSocket)
             mClientSocket->SendLmsMessage(TranslateObjectiveScoreMessage(taskID, taskScore));
          else
             mMessageVector.push_back(TranslateObjectiveScoreMessage(taskID, taskScore));
-         mPreviousTaskStatus[taskID].SetScore(taskScore); //remember last "score" value we sent
+         currentTask->second.SetScore(taskScore); //remember last "score" value we sent
       }
    }
+   
    ///////////////////////////////////////////////////////////////////////
-   LmsMessage LmsComponent::TranslateObjectiveCompleteMessage(const dtCore::UniqueId &taskID, bool taskIsComplete)
+   LmsMessage LmsComponent::TranslateObjectiveCompleteMessage(const std::string& taskID, bool taskIsComplete)
    {
       std::string messageValue;
 
@@ -188,17 +192,19 @@ namespace dtLMS
          messageValue = LmsMessageValue::ObjectiveCompletionValue::INCOMPLETE.GetName();
       }
 
-      return LmsMessage(mClientSocket != NULL ? mClientSocket->GetClientID() : "", LmsMessageType::OBJECTIVE_COMPLETION, messageValue, taskID.ToString());
+      return LmsMessage(mClientSocket != NULL ? mClientSocket->GetClientID() : "", LmsMessageType::OBJECTIVE_COMPLETION, messageValue, taskID);
    }
+   
    ///////////////////////////////////////////////////////////////////////
-   LmsMessage LmsComponent::TranslateObjectiveScoreMessage(const dtCore::UniqueId &taskID, float taskScore)
+   LmsMessage LmsComponent::TranslateObjectiveScoreMessage(const std::string& taskID, float taskScore)
    {
       //convert score float value to string
       std::ostringstream oss;
       oss << taskScore;
 
-      return LmsMessage(mClientSocket != NULL ? mClientSocket->GetClientID() : "", LmsMessageType::OBJECTIVE_SCORE, oss.str(), taskID.ToString());
+      return LmsMessage(mClientSocket != NULL ? mClientSocket->GetClientID() : "", LmsMessageType::OBJECTIVE_SCORE, oss.str(), taskID);
    }
+   
    ///////////////////////////////////////////////////////////////////////
    LmsComponent::~LmsComponent()
    {

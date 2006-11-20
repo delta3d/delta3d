@@ -53,12 +53,12 @@ class TestLmsComponent : public dtLMS::LmsComponent
 
       }
 
-      dtLMS::LmsMessage TranslateObjectiveScoreMessage(const dtCore::UniqueId &taskID, float taskScore)
+      dtLMS::LmsMessage TranslateObjectiveScoreMessage(const std::string& taskID, float taskScore)
       {
          return dtLMS::LmsComponent::TranslateObjectiveScoreMessage(taskID, taskScore);
       }
 
-      dtLMS::LmsMessage TranslateObjectiveCompleteMessage(const dtCore::UniqueId &taskID, bool taskIsComplete)
+      dtLMS::LmsMessage TranslateObjectiveCompleteMessage(const std::string& taskID, bool taskIsComplete)
       {
          return dtLMS::LmsComponent::TranslateObjectiveCompleteMessage(taskID, taskIsComplete);
       }
@@ -165,24 +165,24 @@ void LMSTests::TestLmsComponentHelperMethods()
    dtCore::RefPtr<TestLmsComponent> lmsComp = new TestLmsComponent("TestLmsComponent");
    CPPUNIT_ASSERT(lmsComp.valid());
    
-   dtCore::UniqueId id, senderId;;
+   std::string id("1"), senderId("2");
    float taskScore = 5.4f;
    std::ostringstream oss;
    oss << taskScore;
 
    dtLMS::LmsMessage msg = lmsComp->TranslateObjectiveScoreMessage(id, taskScore);
-   CPPUNIT_ASSERT_MESSAGE("The objective id should be the value passed in", msg.GetObjectiveID() == id.ToString());
+   CPPUNIT_ASSERT_MESSAGE("The objective id should be the value passed in", msg.GetObjectiveID() == id);
    CPPUNIT_ASSERT_MESSAGE("The sender id should be be empty", msg.GetSenderID().empty());
    CPPUNIT_ASSERT_MESSAGE("The value should also be what was passed in", msg.GetValue() == oss.str());
    CPPUNIT_ASSERT_MESSAGE("The message type should have been set correctly", msg.GetMessageType() == dtLMS::LmsMessageType::OBJECTIVE_SCORE);
 
    msg = lmsComp->TranslateObjectiveCompleteMessage(id, false);
-   CPPUNIT_ASSERT_MESSAGE("The id should have been set correctly", msg.GetObjectiveID() == id.ToString());
+   CPPUNIT_ASSERT_MESSAGE("The id should have been set correctly", msg.GetObjectiveID() == id);
    CPPUNIT_ASSERT_MESSAGE("The sender id should be empty", msg.GetSenderID().empty());
    CPPUNIT_ASSERT_MESSAGE("The value should be set correctly", msg.GetValue() == dtLMS::LmsMessageValue::ObjectiveCompletionValue::INCOMPLETE.GetName());
    CPPUNIT_ASSERT_MESSAGE("The message should be set correctly", msg.GetMessageType() == dtLMS::LmsMessageType::OBJECTIVE_COMPLETION);
 
-   msg.SetSenderID(senderId.ToString());
+   msg.SetSenderID(senderId);
 
    std::string msgString = msg.ToString();
    oss.str("");
@@ -227,6 +227,7 @@ void LMSTests::TestLmsComponentMessaging()
 
    dtCore::RefPtr<dtActors::TaskActorProxy> proxy;
    mGameManager->CreateActor(*dtActors::EngineActorRegistry::TASK_ACTOR_TYPE, proxy);
+   proxy->SetName("Test Name");
    CPPUNIT_ASSERT(proxy.valid());
    mGameManager->AddActor(*proxy, false, false);
 
@@ -241,7 +242,7 @@ void LMSTests::TestLmsComponentMessaging()
    CPPUNIT_ASSERT(!msgs.empty());
 
    dtLMS::LmsMessage msg = msgs[0];
-   CPPUNIT_ASSERT_MESSAGE("The id of the message should match the id of the proxy", msg.GetObjectiveID() == proxy->GetId().ToString());
+   CPPUNIT_ASSERT_MESSAGE("The id of the message should match the name of the proxy", msg.GetObjectiveID() == proxy->GetName());
    CPPUNIT_ASSERT_MESSAGE("The value of the message should match the property", 
       msg.GetValue() == dtLMS::LmsMessageValue::ObjectiveCompletionValue::COMPLETE.GetName());
 
@@ -251,7 +252,7 @@ void LMSTests::TestLmsComponentMessaging()
    CPPUNIT_ASSERT(!msgs.empty());
 
    msg = msgs[0];
-   CPPUNIT_ASSERT_MESSAGE("The id of the message should match the id of the proxy", msg.GetObjectiveID() == proxy->GetId().ToString());
+   CPPUNIT_ASSERT_MESSAGE("The id of the message should match the name of the proxy", msg.GetObjectiveID() == proxy->GetName());
    CPPUNIT_ASSERT_MESSAGE("The value of the message should match the property", 
       msg.GetValue() == dtLMS::LmsMessageValue::ObjectiveCompletionValue::INCOMPLETE.GetName());
 
@@ -271,7 +272,7 @@ void LMSTests::TestLmsComponentMessaging()
    oss << score;
    CPPUNIT_ASSERT_MESSAGE("The value of the message should be correct", msg.GetValue() == oss.str());
    CPPUNIT_ASSERT_MESSAGE("The message type should be correct", msg.GetMessageType() == dtLMS::LmsMessageType::OBJECTIVE_SCORE);
-   CPPUNIT_ASSERT_MESSAGE("The id of the message should be the proxy's id", msg.GetObjectiveID() == proxy->GetId().ToString());
+   CPPUNIT_ASSERT_MESSAGE("The id of the message should be the proxy's name", msg.GetObjectiveID() == proxy->GetName());
 
    static_cast<dtDAL::FloatActorProperty*>(proxy->GetProperty("Score"))->SetValue(1.3f);
    lmsComp->SendLmsUpdate(*proxy);
@@ -283,7 +284,7 @@ void LMSTests::TestLmsComponentMessaging()
    oss << 1;
    CPPUNIT_ASSERT_MESSAGE("The value of the message should be 1, since the value is clamped", msg.GetValue() == oss.str());
    CPPUNIT_ASSERT_MESSAGE("The message type should be correct", msg.GetMessageType() == dtLMS::LmsMessageType::OBJECTIVE_SCORE);
-   CPPUNIT_ASSERT_MESSAGE("The id of the message should be the proxy's id", msg.GetObjectiveID() == proxy->GetId().ToString());
+   CPPUNIT_ASSERT_MESSAGE("The id of the message should be the proxy's name", msg.GetObjectiveID() == proxy->GetName());
 
    static_cast<dtDAL::FloatActorProperty*>(proxy->GetProperty("Score"))->SetValue(5.0f);
    lmsComp->SendLmsUpdate(*proxy);

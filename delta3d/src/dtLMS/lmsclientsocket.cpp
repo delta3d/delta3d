@@ -83,6 +83,7 @@ namespace dtLMS
 
       srand((unsigned int)0);
 	}
+   
 	//////////////////////////////////////////////////////////////////////////
 	void LmsClientSocket::Connect()
 	{
@@ -97,6 +98,7 @@ namespace dtLMS
 
 		ProcessHandshake();
 	}
+   
 	//////////////////////////////////////////////////////////////////////////
 	void LmsClientSocket::ProcessHandshake()
 	{
@@ -163,6 +165,7 @@ namespace dtLMS
 			EXCEPT(LmsExceptionEnum::INVALID_LMS_MESSAGE_EXCEPTION, "LMS server returned invalid handshake message.");
 		}
 	}
+   
 	//////////////////////////////////////////////////////////////////////////
    std::string LmsClientSocket::CreateRandomID()
 	{

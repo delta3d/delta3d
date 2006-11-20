@@ -110,23 +110,23 @@ namespace dtLMS
           * This utility method creates an 'OBJECTIVE_COMPLETION' type LmsMessage object that can be
           * sent to the lms via the mClientSocket::SendLmsMessage() method.
           *
-          * @param taskID The unique ID of the task.
+          * @param taskID The unique name of the task.
           * @param taskIsComplete The completion status of the task.
           * @return An LmsMessage object that is understood by the
           * mClientSocket::SendLmsMessage() method.
           */
-         LmsMessage TranslateObjectiveCompleteMessage(const dtCore::UniqueId &taskID, bool taskIsComplete);
+         LmsMessage TranslateObjectiveCompleteMessage(const std::string& taskID, bool taskIsComplete);
 
          /**
           * This utility method creates an 'OBJECTIVE_SCORE' type LmsMessage object that can be
           * sent to the lms via the mClientSocket::SendLmsMessage() method.
           *
-          * @param taskID The unique ID of the task.
+          * @param taskID The unique name of the task.
           * @param taskScore The current raw score of the task.
           * @return An LmsMessage object that is understood by the
           * mClientSocket::SendLmsMessage() method.
           */
-         LmsMessage TranslateObjectiveScoreMessage(const dtCore::UniqueId &taskID, float taskScore);
+         LmsMessage TranslateObjectiveScoreMessage(const std::string& taskID, float taskScore);
 
        private:
          
@@ -138,7 +138,7 @@ namespace dtLMS
          ///stores the previous task values, so that we know what has changed when
          ///we receive a task update message; this is needed because we only
          ///want to send messages to the lms when something changes
-         std::map<dtCore::UniqueId, LmsTaskStatus> mPreviousTaskStatus;
+         std::map<std::string, LmsTaskStatus> mPreviousTaskStatus;
 
          ///generally you can just keep the default values for the following:
          std::string mHost; ///host machine where lms messaging applet is running (defaults to 'localhost')
