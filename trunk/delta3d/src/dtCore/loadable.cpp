@@ -27,7 +27,7 @@ Loadable::~Loadable(void)
 * @param filename : The name of the file to be loaded
 * @param useCache : If true, use OSG's object cache
 */
-osg::Node* Loadable::LoadFile(const std::string& filename, bool useCache)
+osg::Node* Loadable::LoadFile(const std::string& filename, bool useCache, unsigned int cacheFlags)
 {   
    mFilename = filename;
    Log::GetInstance().LogMessage(Log::LOG_DEBUG, __FUNCTION__,
@@ -44,16 +44,14 @@ osg::Node* Loadable::LoadFile(const std::string& filename, bool useCache)
       options->setObjectCacheHint(osgDB::ReaderWriter::Options::CACHE_NONE);
    }
 
+
    osg::Node *model = osgDB::readNodeFile(mFilename, options.get());
    if (model != 0)
    {
-      // this crashes - prolly should be called from the Update traversal
-//      if (mDrawableNode.get()->getNumChildren() != 0)
-//      {
-//         mDrawableNode.get()->removeChild(0,mDrawableNode.get()->getNumChildren() );
-//      }
-
-      //mDrawableNode.get()->addChild( model );
+      if(useCache)
+      {
+         return static_cast<osg::Node*>(model->clone(osg::CopyOp( cacheFlags ) ));
+      }
       return model;
    }
    else

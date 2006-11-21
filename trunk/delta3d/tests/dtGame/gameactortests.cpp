@@ -643,6 +643,7 @@ void GameActorTests::TestSetEnvironmentActor()
 
       type = mManager->FindActorType("ExampleActors", "TestPlayer");
       CPPUNIT_ASSERT_MESSAGE("Should have been able to find the test player actor in the game manager", type.valid());
+
       const unsigned int numActors = 20;
       for(unsigned int i = 0; i < numActors; i++)
       {
@@ -766,6 +767,68 @@ void GameActorTests::TestSetEnvironmentActor()
       mManager->DeleteAllActors(true);
       mManager->GetActorsInScene(drawables);
       CPPUNIT_ASSERT(drawables.empty());
+
+
+      // --- TEST GM REMOVAL --- START --- //
+      // Re-insert environment actor for this sub-test
+      mManager->SetEnvironmentActor(eap.get());
+
+      // Add actor 1
+      ap = mManager->CreateActor(*type);
+      mManager->AddActor(*ap);
+      // Add actor 2
+      dtCore::RefPtr<dtDAL::ActorProxy> ap2 = mManager->CreateActor(*type);
+      mManager->AddActor(*ap2);
+
+      // Check GM count
+      CPPUNIT_ASSERT_MESSAGE("The game manager should have 2 actors in its scene", 
+         ea->GetNumEnvironmentChildren() == 2);
+
+      // Remove actor 2
+      ea->RemoveActor(*ap2);
+      CPPUNIT_ASSERT_MESSAGE("The actor 2 should be removed from the scene", ! ea->ContainsActor(*ap2) );
+      CPPUNIT_ASSERT_MESSAGE("The game manager should have 1 actor in its scene", 
+         ea->GetNumEnvironmentChildren() == 1);
+
+      // Add actor 2 as child to actor 1
+      ap->GetActor()->AddChild(ap2->GetActor());
+
+      // Delete actor 1 from GM
+      mManager->DeleteActor(*ap);
+      dtCore::System::GetInstance().Step();
+
+      // Ensure environment contains actor 2.
+      CPPUNIT_ASSERT_MESSAGE("The environment actor should have actor 2 as a child", ea->ContainsActor(*ap2) );
+
+      // Ensure actor 2 is also returned in the list of actors returned by the environment.
+      bool foundActor = false;
+      ea->GetAllActors(actors);
+      for( unsigned int i = 0; i < actors.size(); ++i )
+      {
+         if( ap2->GetId() == actors[i]->GetId() )
+         {
+            foundActor = true;
+            break;
+         }
+      }
+      actors.clear();
+      CPPUNIT_ASSERT_MESSAGE("The environment actor should return actor 2 in the list returned from GetAllActors().", foundActor );
+
+
+      // Remove actor 2 so no actors are in the GM for the next section of this test function.
+      mManager->DeleteActor(*ap2);
+      dtCore::System::GetInstance().Step();
+
+      // Ensure environment has removed actor 2.
+      CPPUNIT_ASSERT_MESSAGE("The environment actor should have removed actor 2", ! ea->ContainsActor(*ap2) );
+
+      // Ensure all actors are removed from the environment
+      ea->GetAllActors(actors);
+      CPPUNIT_ASSERT(actors.empty());
+      mManager->DeleteAllActors(true);
+      mManager->GetActorsInScene(drawables);
+      CPPUNIT_ASSERT(drawables.empty());
+      // --- TEST GM REMOVAL --- END --- //
    }
    catch(const dtUtil::Exception &e)
    {
