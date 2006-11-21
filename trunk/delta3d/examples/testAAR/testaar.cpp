@@ -23,16 +23,15 @@
 #include "testaarmessagetypes.h"
 #include "testaarmessageprocessor.h"
 #include "testaarinput.h"
-#include "testaargameevent.h"
 #include "testaarhud.h"
 
-#include <dtCore/object.h>
 #include <dtCore/globals.h>
 #include <dtCore/flymotionmodel.h>
 #include <dtCore/camera.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/scene.h>
 #include <dtDAL/actortype.h>
+#include <dtDAL/project.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/gameapplication.h>
 #include <dtGame/logcontroller.h>
@@ -85,17 +84,6 @@ void TestAAR::Initialize(dtGame::GameApplication& app, int argc, char **argv)
 
    mFMM = new dtCore::FlyMotionModel(app.GetKeyboard(), app.GetMouse(), false);
    mFMM->SetTarget(app.GetCamera());
-
-   // setup terrain
-   dtCore::RefPtr<dtCore::Object> terrain = new dtCore::Object();
-   std::string path = dtCore::FindFileInPathList("models/terrain_simple.ive");
-   if(path.empty())
-   {
-      EXCEPT(dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR, "Failed to find the terrain file. Aborting.");
-   }   
-   terrain->LoadFile(path);
-   app.GetScene()->AddDrawable(terrain.get());
-   TestAARGameEvent::InitEvents();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -107,8 +95,8 @@ dtCore::RefPtr<dtGame::GameManager> TestAAR::CreateGameManager(dtCore::Scene& sc
 //////////////////////////////////////////////////////////////////////////
 void TestAAR::OnStartup(dtGame::GameManager &gameManager)
 {
-   gameManager.LoadActorRegistry("testGameActorLibrary");
-
+   dtDAL::Project::GetInstance().SetContext(dtCore::GetDeltaDataPathList() + "/AARProject");
+   
    dtCore::DeltaWin *win = gameManager.GetApplication().GetWindow();
 
    // Add Component - Input Component
@@ -133,10 +121,8 @@ void TestAAR::OnStartup(dtGame::GameManager &gameManager)
    gameManager.GetMessageFactory().RegisterMessageType<dtGame::Message>(TestAARMessageType::PRINT_TASKS);
    gameManager.GetMessageFactory().RegisterMessageType<dtGame::Message>(TestAARMessageType::UPDATE_TASK_CAMERA);
 
-   //Load the library with the test game actors...
    gameManager.SetStatisticsInterval(5);
    gameManager.SendMessage(*gameManager.GetMessageFactory().CreateMessage(TestAARMessageType::RESET));
-   gameManager.GetScene().AddDrawable(hudComp->GetGUIDrawable());
 
    if(mUseLMS)
    {

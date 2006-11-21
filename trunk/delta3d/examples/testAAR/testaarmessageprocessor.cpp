@@ -29,6 +29,8 @@
 #include <dtCore/globals.h>
 #include <dtCore/keyboard.h>
 #include <dtCore/system.h>
+#include <dtCore/object.h>
+#include <dtCore/scene.h>
 #include <dtGame/logcontroller.h>
 #include <dtGame/actorupdatemessage.h>
 #include <dtGame/logkeyframe.h>
@@ -46,6 +48,7 @@
 #include <dtActors/taskactorrollup.h>
 #include <dtLMS/lmscomponent.h>
 #include <dtUtil/mathdefines.h>
+#include <dtUtil/exception.h>
 
 TestAARMessageProcessor::TestAARMessageProcessor(dtLMS::LmsComponent &lmsComp, 
                                                        dtGame::LogController &logCtrl, 
@@ -56,12 +59,10 @@ TestAARMessageProcessor::TestAARMessageProcessor(dtLMS::LmsComponent &lmsComp,
    mServerLogger(&srvrCtrl),
    mPlayer(NULL)
 {
-
 }
 
 TestAARMessageProcessor::~TestAARMessageProcessor()
 {
-
 }
 
 void TestAARMessageProcessor::ProcessMessage(const dtGame::Message &msg)
@@ -128,7 +129,7 @@ TestAARMessageProcessor::CreateNewMovingActor(const std::string &meshName,
                                                  bool bSetLocation,
                                                  bool ignoreRecording)
 {
-   if(mLogController->GetLastKnownStatus().GetStateEnum() ==
+   if (mLogController->GetLastKnownStatus().GetStateEnum() ==
       dtGame::LogStateEnumeration::LOGGER_STATE_PLAYBACK)
       return NULL;
 
@@ -140,7 +141,7 @@ TestAARMessageProcessor::CreateNewMovingActor(const std::string &meshName,
    dtCore::RefPtr<dtDAL::ActorType> playerType = GetGameManager()->FindActorType("ExampleActors", "TestPlayer");
    object = dynamic_cast<dtGame::GameActorProxy *>(GetGameManager()->CreateActor(*playerType).get());
 
-   if(bSetLocation)
+   if (bSetLocation)
    {
       object->SetTranslation(mPlayer->GetTranslation());
 
@@ -162,7 +163,7 @@ TestAARMessageProcessor::CreateNewMovingActor(const std::string &meshName,
       }
    }
 
-   if(ignoreRecording)
+   if (ignoreRecording)
    {
       mLogController->RequestAddIgnoredActor(object->GetId());
    }
@@ -232,7 +233,7 @@ void TestAARMessageProcessor::PlaceActor(bool ignored)
    else
    {
       path = dtCore::FindFileInPathList("models/physics_barrel.ive");
-      if(!path.empty())
+      if (!path.empty())
       {
          obj = CreateNewMovingActor(path,velocity,turn,true,ignored);
       }
@@ -340,7 +341,9 @@ void TestAARMessageProcessor::PreFrame(const double deltaFrameTime)
 {
    // roughly every 3 real seconds, we force status update so the HUD updates and doesn't look broken.
    if (mLastAutoRequestStatus > GetGameManager()->GetSimulationTime())
+   {
       mLastAutoRequestStatus = GetGameManager()->GetSimulationTime();
+   }
    else if ((mLastAutoRequestStatus + 3.0*GetGameManager()->GetTimeScale()) < GetGameManager()->GetSimulationTime())
    {
       RequestAllControllerUpdates();
@@ -349,157 +352,28 @@ void TestAARMessageProcessor::PreFrame(const double deltaFrameTime)
 }
 
 //////////////////////////////////////////////////////////////////////////
-void TestAARMessageProcessor::SetupTasks()
-{
-   //Get our actor types...
-   dtCore::RefPtr<dtDAL::ActorType> taskType = GetGameManager()->FindActorType("dtcore.Tasks","Task Actor");
-   if (taskType == NULL)
-      EXCEPT(AppException::INIT_ERROR,"Could not find task actor type.");
-   dtCore::RefPtr<dtDAL::ActorType> eventTaskType = GetGameManager()->FindActorType("dtcore.Tasks","GameEvent Task Actor");
-   if (eventTaskType == NULL)
-      EXCEPT(AppException::INIT_ERROR,"Could not find Game Event Task Actor.");
-   dtCore::RefPtr<dtDAL::ActorType> orderedTaskType = GetGameManager()->FindActorType("dtcore.Tasks","Ordered Task Actor");
-   if (orderedTaskType == NULL)
-      EXCEPT(AppException::INIT_ERROR,"Could not find Ordered Task Actor.");
-   dtCore::RefPtr<dtDAL::ActorType> rollupTaskType = GetGameManager()->FindActorType("dtcore.Tasks","Rollup Task Actor");
-   if (rollupTaskType == NULL)
-      EXCEPT(AppException::INIT_ERROR,"Could not find Rollup Task Actor.");
-
-   // task - root - event - start record  where are all the comments for this code
-   dtCore::RefPtr<dtActors::TaskActorGameEventProxy> taskStartRecordProxy =
-      dynamic_cast<dtActors::TaskActorGameEventProxy*>(GetGameManager()->CreateActor(*eventTaskType).get());
-   dtActors::TaskActorGameEvent &taskStart = static_cast<dtActors::TaskActorGameEvent &>
-      (taskStartRecordProxy->GetGameActor());
-   taskStart.SetGameEvent(TestAARGameEvent::EVENT_START_RECORD.get());
-   taskStart.SetMinOccurances(1);
-   taskStart.SetName("Start a Record");
-   taskStart.SetNotifyLMSOnUpdate(true);
-   taskStartRecordProxy->SetId(dtCore::UniqueId("Start a Record"));
-   GetGameManager()->AddActor(*taskStartRecordProxy,false,false);
-
-   // task - root - event - create 10 boxes
-   dtCore::RefPtr<dtActors::TaskActorGameEventProxy> taskDrop10BoxesProxy =
-      dynamic_cast<dtActors::TaskActorGameEventProxy*>(GetGameManager()->CreateActor(*eventTaskType).get());
-   dtActors::TaskActorGameEvent &taskDrop10Boxes = static_cast<dtActors::TaskActorGameEvent &>
-      (taskDrop10BoxesProxy->GetGameActor());
-   taskDrop10Boxes.SetGameEvent(TestAARGameEvent::EVENT_BOX_PLACED.get());
-   taskDrop10Boxes.SetMinOccurances(10);
-   taskDrop10Boxes.SetName("Drop 10 boxes");
-   taskDrop10Boxes.SetNotifyLMSOnUpdate(true);
-   taskDrop10BoxesProxy->SetId(dtCore::UniqueId("Drop 10 boxes"));
-   GetGameManager()->AddActor(*taskDrop10BoxesProxy,false,false);
-
-   // * task - root - base - move camera, any direction
-   mTaskMoveCameraProxy = dynamic_cast<dtActors::TaskActorProxy *>(GetGameManager()->CreateActor(*taskType).get());
-   mTaskMoveCamera = static_cast<dtActors::TaskActor*>(&(mTaskMoveCameraProxy->GetGameActor()));
-   mTaskMoveCamera->SetNotifyLMSOnUpdate(true);
-   mTaskMoveCameraProxy->SetId(dtCore::UniqueId("TaskMoveCamera"));
-   mTaskMoveCameraProxy->SetName("Move Camera");
-   mTaskMoveCameraProxy->SetId(dtCore::UniqueId("Move Camera"));
-   GetGameManager()->AddActor(*mTaskMoveCameraProxy,false,false);
-
-   // SETUP THE NESTED TASKS
-
-   // task - root - ordered (blocking) - 'Place Objects'
-   dtCore::RefPtr<dtActors::TaskActorOrderedProxy> taskPlaceObjectsProxy =
-      dynamic_cast<dtActors::TaskActorOrderedProxy*>(GetGameManager()->CreateActor(*orderedTaskType).get());
-   dtActors::TaskActorOrdered &taskPlaceObjects = static_cast<dtActors::TaskActorOrdered &>
-      (taskPlaceObjectsProxy->GetGameActor());
-   taskPlaceObjects.SetFailureType(dtActors::TaskActorOrdered::FailureType::BLOCK);
-   taskPlaceObjects.SetName("Place Objects (Ordered)");
-   taskPlaceObjects.SetNotifyLMSOnUpdate(true);
-   taskPlaceObjectsProxy->SetId(dtCore::UniqueId("Place Objects (Ordered)"));
-   GetGameManager()->AddActor(*taskPlaceObjectsProxy,false,false);
-
-   //   task - child - rollup - (.75 to pass) - 'Move Player'
-   dtCore::RefPtr<dtActors::TaskActorRollupProxy> taskMovePlayerProxy =
-      dynamic_cast<dtActors::TaskActorRollupProxy*>(GetGameManager()->CreateActor(*rollupTaskType).get());
-   dtActors::TaskActorRollup &taskMovePlayer = static_cast<dtActors::TaskActorRollup &>
-      (taskMovePlayerProxy->GetGameActor());
-   taskMovePlayer.SetName("Move the Player (Rollup)");
-   taskMovePlayerProxy->SetId(dtCore::UniqueId("Move the Player (Rollup)"));
-   taskMovePlayer.SetPassingScore(0.75f); // only need 3 to succeed
-   taskMovePlayer.SetNotifyLMSOnUpdate(true);
-   taskPlaceObjectsProxy->AddSubTask(*taskMovePlayerProxy);
-   GetGameManager()->AddActor(*taskMovePlayerProxy,false,false);
-
-   //      task - child - event - move left (.25)
-   dtCore::RefPtr<dtActors::TaskActorGameEventProxy> taskPlayerLeftProxy =
-      dynamic_cast<dtActors::TaskActorGameEventProxy*>(GetGameManager()->CreateActor(*eventTaskType).get());
-   dtActors::TaskActorGameEvent &taskPlayerLeft = static_cast<dtActors::TaskActorGameEvent &>
-      (taskPlayerLeftProxy->GetGameActor());
-   taskPlayerLeft.SetGameEvent(TestAARGameEvent::EVENT_PLAYER_LEFT.get());
-   taskPlayerLeft.SetMinOccurances(1);
-   taskPlayerLeft.SetWeight(0.25f);
-   taskPlayerLeft.SetName("Turn Player Left");
-   taskPlayerLeft.SetNotifyLMSOnUpdate(true);
-   taskPlayerLeftProxy->SetId(dtCore::UniqueId("Turn Player Left"));
-   taskMovePlayerProxy->AddSubTask(*taskPlayerLeftProxy);
-   GetGameManager()->AddActor(*taskPlayerLeftProxy,false,false);
-
-   //      task - child - event - move right (.25)
-   dtCore::RefPtr<dtActors::TaskActorGameEventProxy> taskPlayerRightProxy =
-      dynamic_cast<dtActors::TaskActorGameEventProxy*>(GetGameManager()->CreateActor(*eventTaskType).get());
-   dtActors::TaskActorGameEvent &taskPlayerRight = static_cast<dtActors::TaskActorGameEvent &>
-      (taskPlayerRightProxy->GetGameActor());
-   taskPlayerRight.SetGameEvent(TestAARGameEvent::EVENT_PLAYER_RIGHT.get());
-   taskPlayerRight.SetMinOccurances(1);
-   taskPlayerRight.SetWeight(0.25f);
-   taskPlayerRight.SetName("Turn Player Right");
-   taskPlayerRight.SetNotifyLMSOnUpdate(true);
-   taskPlayerRightProxy->SetId(dtCore::UniqueId("Turn Player Right"));
-   taskMovePlayerProxy->AddSubTask(*taskPlayerRightProxy);
-   GetGameManager()->AddActor(*taskPlayerRightProxy,false,false);
-
-   //      task - child - event - move forward (.25)
-   dtCore::RefPtr<dtActors::TaskActorGameEventProxy> taskPlayerForwardProxy =
-      dynamic_cast<dtActors::TaskActorGameEventProxy*>(GetGameManager()->CreateActor(*eventTaskType).get());
-   dtActors::TaskActorGameEvent &taskPlayerForward = static_cast<dtActors::TaskActorGameEvent &>
-      (taskPlayerForwardProxy->GetGameActor());
-   taskPlayerForward.SetGameEvent(TestAARGameEvent::EVENT_PLAYER_FORWARD.get());
-   taskPlayerForward.SetMinOccurances(1);
-   taskPlayerForward.SetWeight(0.25f);
-   taskPlayerForward.SetName("Move Player Forward");
-   taskPlayerForward.SetNotifyLMSOnUpdate(true);
-   taskPlayerForwardProxy->SetId(dtCore::UniqueId("Move Player Forward"));
-   taskMovePlayerProxy->AddSubTask(*taskPlayerForwardProxy);
-   GetGameManager()->AddActor(*taskPlayerForwardProxy,false,false);
-
-   //      task - child - event - move back (.25)
-   dtCore::RefPtr<dtActors::TaskActorGameEventProxy> taskPlayerBackProxy =
-      dynamic_cast<dtActors::TaskActorGameEventProxy*>(GetGameManager()->CreateActor(*eventTaskType).get());
-   dtActors::TaskActorGameEvent &taskPlayerBack = static_cast<dtActors::TaskActorGameEvent &>
-      (taskPlayerBackProxy->GetGameActor());
-   taskPlayerBack.SetGameEvent(TestAARGameEvent::EVENT_PLAYER_BACKWARD.get());
-   taskPlayerBack.SetMinOccurances(1);
-   taskPlayerBack.SetWeight(0.25f);
-   taskPlayerBack.SetName("Move Player Back");
-   taskPlayerBack.SetNotifyLMSOnUpdate(true);
-   taskPlayerBackProxy->SetId(dtCore::UniqueId("Move Player Back"));
-   taskMovePlayerProxy->AddSubTask(*taskPlayerBackProxy);
-   GetGameManager()->AddActor(*taskPlayerBackProxy,false,false);
-
-   //   task - child - event - place 5 boxes
-   dtCore::RefPtr<dtActors::TaskActorGameEventProxy> taskDrop5BoxesProxy =
-      dynamic_cast<dtActors::TaskActorGameEventProxy*>(GetGameManager()->CreateActor(*eventTaskType).get());
-   dtActors::TaskActorGameEvent &taskDrop5Boxes = static_cast<dtActors::TaskActorGameEvent &>
-      (taskDrop5BoxesProxy->GetGameActor());
-   taskDrop5Boxes.SetGameEvent(TestAARGameEvent::EVENT_BOX_PLACED.get());
-   taskDrop5Boxes.SetMinOccurances(5);
-   taskDrop5Boxes.SetName("Drop 5 boxes");
-   taskDrop5Boxes.SetNotifyLMSOnUpdate(true);
-   taskDrop5BoxesProxy->SetId(dtCore::UniqueId("Drop 5 boxes"));
-   taskPlaceObjectsProxy->AddSubTask(*taskDrop5BoxesProxy);
-   GetGameManager()->AddActor(*taskDrop5BoxesProxy,false,false);
-}
-
-//////////////////////////////////////////////////////////////////////////
 void TestAARMessageProcessor::Reset()
 {
-   GetGameManager()->DeleteAllActors();
+   GetGameManager()->ChangeMap("testAAR");
+   GetGameManager()->GetScene().UseSceneLight(true);
    mLmsComponent->ClearTaskList();
 
-   dtCore::System::GetInstance().Step();
+   //dtCore::System::GetInstance().Step();
+
+   TestAARGameEvent::InitEvents();
+
+   // setup terrain
+   dtCore::RefPtr<dtCore::Object> terrain = new dtCore::Object();
+   std::string path = dtCore::FindFileInPathList("models/terrain_simple.ive");
+   if(path.empty())
+   {
+      LOG_ERROR("Failed to find the terrain model.");
+   }
+   else
+   {   
+      terrain->LoadFile(path);
+      GetGameManager()->GetScene().AddDrawable(terrain.get());
+   }
 
    dtCore::RefPtr<dtDAL::ActorType> playerType = GetGameManager()->FindActorType("ExampleActors", "TestPlayer");
    dtCore::RefPtr<dtDAL::ActorProxy> player = GetGameManager()->CreateActor(*playerType);
@@ -507,7 +381,7 @@ void TestAARMessageProcessor::Reset()
    GetGameManager()->AddActor(*mPlayer, false, false);
 
    dtDAL::StringActorProperty *prop = static_cast<dtDAL::StringActorProperty*>(mPlayer->GetProperty("mesh"));
-   std::string path = dtCore::FindFileInPathList("models/physics_happy_sphere.ive");
+   path = dtCore::FindFileInPathList("models/physics_happy_sphere.ive");
    if(!path.empty())
    {
       prop->SetValue(path);
@@ -523,7 +397,23 @@ void TestAARMessageProcessor::Reset()
       static_cast<TestAARInput*>(gmc)->SetPlayerActor(*mPlayer);
    }
 
-   SetupTasks();
+   //SetupTasks();
+   std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > toFill;
+   GetGameManager()->FindActorsByName("Move Camera", toFill);
+
+   if (toFill.size() == 0)
+   {
+      LOG_ERROR("Unable to find the \"Move Camera\" task.  The application will likely fail.");
+      return;      
+   }
+
+   mTaskMoveCameraProxy = dynamic_cast<dtActors::TaskActorProxy *>(toFill[0].get());
+   if (mTaskMoveCameraProxy == NULL)
+   {
+      LOG_ERROR("The \"Move Camera\" actor was found but it is not a task.  The application will likely fail.");
+      return;      
+   }
+   mTaskMoveCamera = &static_cast<dtActors::TaskActor&>(mTaskMoveCameraProxy->GetGameActor());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -568,9 +458,9 @@ void TestAARMessageProcessor::OnReceivedKeyframes(const std::vector<dtGame::LogK
 //////////////////////////////////////////////////////////////////////////
 void TestAARMessageProcessor::UpdateTaskCamera()
 {
-   if(mLogController->GetLastKnownStatus().GetStateEnum() != dtGame::LogStateEnumeration::LOGGER_STATE_PLAYBACK)
+   if (mLogController->GetLastKnownStatus().GetStateEnum() != dtGame::LogStateEnumeration::LOGGER_STATE_PLAYBACK)
    {
-      if(!mTaskMoveCamera->IsComplete())
+      if (!mTaskMoveCamera->IsComplete())
       {
          mTaskMoveCamera->SetScore(1.0);
          mTaskMoveCamera->SetComplete(true);
