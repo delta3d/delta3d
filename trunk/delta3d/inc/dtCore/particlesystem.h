@@ -59,10 +59,19 @@ namespace dtCore
 
          /// accessors for RefPtrVariables and string
          osg::Geode& GetGeode();
+         const osg::Geode& GetGeode() const;
+
          osgParticle::ParticleSystem&  GetParticleSystem();
+         const osgParticle::ParticleSystem&  GetParticleSystem() const;
+
          osg::MatrixTransform& GetEmitterTransform();
+         const osg::MatrixTransform& GetEmitterTransform() const;
+
          osgParticle::ModularEmitter& GetModularEmitter();
+         const osgParticle::ModularEmitter& GetModularEmitter() const;
+
          osgParticle::Program& GetProgram();
+         const osgParticle::Program& GetProgram() const;
          
          const std::string& GetLayerName() { return mLayerName; }
 
@@ -188,6 +197,7 @@ namespace dtCore
           * @return The link list of all the layers
           */
          std::list<ParticleLayer>& GetAllLayers() {return mLayers;}
+         const std::list<ParticleLayer>& GetAllLayers() const {return mLayers;}
 
          /**
           * GetSingleLayer will return the Layer of said name,

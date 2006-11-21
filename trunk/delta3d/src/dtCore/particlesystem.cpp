@@ -235,7 +235,17 @@ osg::Geode& ParticleLayer::GetGeode()
    return *mGeode;
 }
 
+const osg::Geode& ParticleLayer::GetGeode() const
+{
+   return *mGeode;
+}
+
 osgParticle::ParticleSystem&  ParticleLayer::GetParticleSystem()  
+{
+   return *mParticleSystem;
+}
+
+const osgParticle::ParticleSystem&  ParticleLayer::GetParticleSystem() const
 {
    return *mParticleSystem;
 }
@@ -245,12 +255,27 @@ osg::MatrixTransform& ParticleLayer::GetEmitterTransform()
    return *mEmitterTransform;
 }
 
+const osg::MatrixTransform& ParticleLayer::GetEmitterTransform() const
+{
+   return *mEmitterTransform;
+}
+
 osgParticle::ModularEmitter& ParticleLayer::GetModularEmitter() 
 {
    return *mModularEmitter;
 }
 
+const osgParticle::ModularEmitter& ParticleLayer::GetModularEmitter() const
+{
+   return *mModularEmitter;
+}
+
 osgParticle::Program& ParticleLayer::GetProgram() 
+{
+   return *mProgram;
+}
+
+const osgParticle::Program& ParticleLayer::GetProgram() const
 {
    return *mProgram;
 }
@@ -396,6 +421,9 @@ void ParticleSystem::SetupParticleLayers()
    
    // iterating through children var
    unsigned int    i                       = 0;
+
+   // clear the list in case it is loaded twice.
+   mLayers.clear();
 
    //    Not everything has a name.... which sucks. usually only the geode
    //    we will bind the geode name to the whole struct with newly created var
