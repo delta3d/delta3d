@@ -66,6 +66,7 @@ namespace dtDAL
          struct ActorProxyIconConfig
          {
             ActorProxyIconConfig(): mUpVector(true), mForwardVector(true), /*mRightVector(true),*/ mScale(1.0) {}
+            ActorProxyIconConfig(bool pUp, bool pForward, float pScale): mUpVector(pUp), mForwardVector(pForward), /*mRightVector(true),*/ mScale(pScale) {}
             bool mUpVector;
             bool mForwardVector;
             //bool mRightVector;
