@@ -9,6 +9,9 @@
 	<Imageset Name="TargetImage" Filename="imagesets/TargetImage.imageset" />
 	<Imageset Name="InventoryUseImage" Filename="imagesets/InventoryUseImage.imageset" />
 	<Imageset Name="InventorySelectImage" Filename="imagesets/InventorySelectImage.imageset" />
+      <Imageset Name="HUD_SCBAImage" Filename="imagesets/HUD_SCBAImage.imageset" />
+	<Imageset Name="HUD_SCBA_FirehoseImage" Filename="imagesets/HUD_SCBA_FirehoseImage.imageset" />
+      <Imageset Name="HUD_FirehoseImage" Filename="imagesets/HUD_FirehoseImage.imageset" />
 	<LookNFeel Filename="looknfeel/WindowsLook.looknfeel" />
 	<WindowSet Filename="CEGUIFalagardWRBase" />
         <Font Name="DejaVuSans-10" Filename="fonts/DejaVuSans-10.font" />
