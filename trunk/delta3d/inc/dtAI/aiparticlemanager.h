@@ -62,20 +62,31 @@ namespace dtAI
 
          void AddAgent(BaseNPC* pAgent, float pProbability);
          BaseNPC* CloneAgent(BaseNPC* pAgent);
-         void RemoveAgent(BaseNPC* pAgent);
 
+         void RemoveAgent(BaseNPC* pAgent);
          void RemoveAgents(const AgentList& pList);
+
+         void CombineAgents(BaseNPC* pAgentToDelete, BaseNPC* pAgentToAddTo);
 
          void ClearAllAgents();
 
          void UpdateAgents(double dt);
 
          const ParticleList& GetParticleList() const;
+         ParticleList& GetParticleList();
+
+         unsigned GetMaxAgents() const;
+         void SetMaxAgents(unsigned pMaxAgents);
+
+         AgentParticle* GetAgentParticle(BaseNPC* pNPC);
+
+         bool InRemoveList(const BaseNPC* pNPC) const;
 
    private:
 
       void SortAgents();
       void ReAdjustProbabilities(float pProbRemoved);
+      float RemoveOverflowAgents(); 
 
       ParticleList mAgents;
       AgentList mRemoveList;
@@ -83,6 +94,7 @@ namespace dtAI
       CloneFunctor mClone;
       FilterFunctor mFilter;
    
+      unsigned mMaxAgents;
    };
 }//namespace 
 
