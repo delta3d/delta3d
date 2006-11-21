@@ -25,6 +25,7 @@
 #include <dtUtil/fileutils.h>
 #include <dtCore/globals.h>
 #include <dtCore/deltawin.h>
+#include <dtCore/scene.h>
 #include <dtGame/logtag.h>
 #include <dtGame/logstatus.h>
 #include <dtGame/logcontroller.h>
@@ -124,6 +125,10 @@ void TestAARHUD::ProcessMessage(const dtGame::Message& message)
    if (message.GetMessageType() == dtGame::MessageType::TICK_LOCAL)
    {
       TickHUD();
+   }
+   else if (message.GetMessageType() == dtGame::MessageType::INFO_MAP_LOADED)
+   {
+      GetGameManager()->GetScene().AddDrawable(GetGUIDrawable());
    }
 }
 

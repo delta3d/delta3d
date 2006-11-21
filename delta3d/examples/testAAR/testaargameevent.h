@@ -21,23 +21,21 @@
 #ifndef DELTA_TEST_AAR_GAME_EVENT
 #define DELTA_TEST_AAR_GAME_EVENT
 
+#include <dtCore/refptr.h>
 #include <dtDAL/gameevent.h>
 #include <dtCore/refptr.h>
 #include "export.h"
 
-class TEST_AAR_EXPORT TestAARGameEvent : public dtDAL::GameEvent
+class TEST_AAR_EXPORT TestAARGameEvent
 {
    public:
-
-      /// Constructor
-      TestAARGameEvent(const std::string &name);
-
-      static dtCore::RefPtr<TestAARGameEvent> EVENT_START_RECORD;
-      static dtCore::RefPtr<TestAARGameEvent> EVENT_BOX_PLACED;
-      static dtCore::RefPtr<TestAARGameEvent> EVENT_PLAYER_LEFT;
-      static dtCore::RefPtr<TestAARGameEvent> EVENT_PLAYER_RIGHT;
-      static dtCore::RefPtr<TestAARGameEvent> EVENT_PLAYER_FORWARD;
-      static dtCore::RefPtr<TestAARGameEvent> EVENT_PLAYER_BACKWARD;
+   
+      static dtCore::RefPtr<dtDAL::GameEvent> EVENT_START_RECORD;
+      static dtCore::RefPtr<dtDAL::GameEvent> EVENT_BOX_PLACED;
+      static dtCore::RefPtr<dtDAL::GameEvent> EVENT_PLAYER_LEFT;
+      static dtCore::RefPtr<dtDAL::GameEvent> EVENT_PLAYER_RIGHT;
+      static dtCore::RefPtr<dtDAL::GameEvent> EVENT_PLAYER_FORWARD;
+      static dtCore::RefPtr<dtDAL::GameEvent> EVENT_PLAYER_BACKWARD;
 
       /**
        * Static function called to ensure the statics are initialized and 
@@ -46,6 +44,8 @@ class TEST_AAR_EXPORT TestAARGameEvent : public dtDAL::GameEvent
       static void InitEvents();
 
    protected:
+      /// Constructor
+      TestAARGameEvent();
 
       /// Destructor
       virtual ~TestAARGameEvent();

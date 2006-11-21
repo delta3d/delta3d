@@ -80,7 +80,7 @@ class TEST_AAR_EXPORT TestAARInput : public dtGame::BaseInputComponent
       /**
        * Utility method to fire an event message
        */
-      void FireEvent(TestAARGameEvent &event);
+      void FireEvent(dtDAL::GameEvent &event);
 
       /**
        * Method that will go to the previous key frame

@@ -21,15 +21,15 @@
 #include "testaargameevent.h"
 #include <dtDAL/gameeventmanager.h>
 
-dtCore::RefPtr<TestAARGameEvent> TestAARGameEvent::EVENT_START_RECORD(new TestAARGameEvent("Event - Start Record"));
-dtCore::RefPtr<TestAARGameEvent> TestAARGameEvent::EVENT_BOX_PLACED(new TestAARGameEvent("Event - Box Placed"));
-dtCore::RefPtr<TestAARGameEvent> TestAARGameEvent::EVENT_PLAYER_LEFT(new TestAARGameEvent("Event - Player Left"));
-dtCore::RefPtr<TestAARGameEvent> TestAARGameEvent::EVENT_PLAYER_RIGHT(new TestAARGameEvent("Event - Player Right"));
-dtCore::RefPtr<TestAARGameEvent> TestAARGameEvent::EVENT_PLAYER_FORWARD(new TestAARGameEvent("Event - Player Forward"));
-dtCore::RefPtr<TestAARGameEvent> TestAARGameEvent::EVENT_PLAYER_BACKWARD(new TestAARGameEvent("Event - Player Backward"));
+dtCore::RefPtr<dtDAL::GameEvent> TestAARGameEvent::EVENT_START_RECORD;
+dtCore::RefPtr<dtDAL::GameEvent> TestAARGameEvent::EVENT_BOX_PLACED;
+dtCore::RefPtr<dtDAL::GameEvent> TestAARGameEvent::EVENT_PLAYER_LEFT;
+dtCore::RefPtr<dtDAL::GameEvent> TestAARGameEvent::EVENT_PLAYER_RIGHT;
+dtCore::RefPtr<dtDAL::GameEvent> TestAARGameEvent::EVENT_PLAYER_FORWARD;
+dtCore::RefPtr<dtDAL::GameEvent> TestAARGameEvent::EVENT_PLAYER_BACKWARD;
 
 
-TestAARGameEvent::TestAARGameEvent(const std::string &name) : dtDAL::GameEvent(name) 
+TestAARGameEvent::TestAARGameEvent() 
 {
 
 }
@@ -41,17 +41,12 @@ TestAARGameEvent::~TestAARGameEvent()
 
 void TestAARGameEvent::InitEvents()
 {
-   EVENT_START_RECORD->SetUniqueId(dtCore::UniqueId("Event - Start Record"));
-   EVENT_BOX_PLACED->SetUniqueId(dtCore::UniqueId("Event - Box Placed"));
-   EVENT_PLAYER_LEFT->SetUniqueId(dtCore::UniqueId("Event - Player Left"));
-   EVENT_PLAYER_RIGHT->SetUniqueId(dtCore::UniqueId("Event - player Right"));
-   EVENT_PLAYER_FORWARD->SetUniqueId(dtCore::UniqueId("Event - Player Forward"));
-   EVENT_PLAYER_BACKWARD->SetUniqueId(dtCore::UniqueId("Event - Player Backward"));
-
-   dtDAL::GameEventManager::GetInstance().AddEvent(*EVENT_START_RECORD);
-   dtDAL::GameEventManager::GetInstance().AddEvent(*EVENT_BOX_PLACED);
-   dtDAL::GameEventManager::GetInstance().AddEvent(*EVENT_PLAYER_LEFT);
-   dtDAL::GameEventManager::GetInstance().AddEvent(*EVENT_PLAYER_RIGHT);
-   dtDAL::GameEventManager::GetInstance().AddEvent(*EVENT_PLAYER_FORWARD);
-   dtDAL::GameEventManager::GetInstance().AddEvent(*EVENT_PLAYER_BACKWARD);
+   dtDAL::GameEventManager& geMan = dtDAL::GameEventManager::GetInstance();
+   
+   EVENT_START_RECORD    = geMan.FindEvent("Event - Start Record");
+   EVENT_BOX_PLACED      = geMan.FindEvent("Event - Box Placed");
+   EVENT_PLAYER_LEFT     = geMan.FindEvent("Event - Player Left");
+   EVENT_PLAYER_RIGHT    = geMan.FindEvent("Event - Player Right");
+   EVENT_PLAYER_FORWARD  = geMan.FindEvent("Event - Player Forward");
+   EVENT_PLAYER_BACKWARD = geMan.FindEvent("Event - Player Backward");
 }

@@ -318,7 +318,7 @@ bool TestAARInput::HandleKeyReleased(const dtCore::Keyboard* keyboard,
 }
 
 //////////////////////////////////////////////////////////////////////////
-void TestAARInput::FireEvent(TestAARGameEvent &event)
+void TestAARInput::FireEvent(dtDAL::GameEvent &event)
 {
    if(mLogController->GetLastKnownStatus().GetStateEnum() != dtGame::LogStateEnumeration::LOGGER_STATE_PLAYBACK)
    {
