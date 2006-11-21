@@ -28,7 +28,11 @@
 
 namespace dtAI
 {
-   Waypoint::Waypoint(): mRenderFlag(Waypoint::RENDER_DEFUALT)
+   Waypoint::Waypoint()
+   : mRenderFlag(Waypoint::RENDER_DEFUALT)
+   , mID(0)
+   , mGradient(1.0f)
+   , mPosition()
    {
    }
 
@@ -74,4 +78,15 @@ namespace dtAI
    {
       return mID;
    }
+
+   void Waypoint::SetGradient(float pGradient) const
+   {
+      mGradient = pGradient;
+   }
+
+   float Waypoint::GetGradient() const
+   {
+      return mGradient;
+   }
+
 }//namespace 

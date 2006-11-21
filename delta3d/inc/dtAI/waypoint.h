@@ -59,10 +59,14 @@ namespace dtAI
          void SetRenderFlag(RenderFlag rf) const{mRenderFlag = rf;}
          RenderFlag GetRenderFlag() const {return mRenderFlag;}
 
+         void SetGradient(float pGradient) const;
+         float GetGradient() const;
+
       private:
          
          mutable RenderFlag mRenderFlag;
          unsigned mID;
+         mutable float mGradient;
 
          osg::Vec3 mPosition;
    };

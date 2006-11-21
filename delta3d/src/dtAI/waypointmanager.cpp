@@ -479,22 +479,24 @@ namespace dtAI
 
          while(iter != endOfMap)
          {
+            float gradient = (*iter).second->GetGradient();
+
             if((*iter).second->GetRenderFlag() == Waypoint::RENDER_RED)
             {
-               glColor4f(1.0, 0.0, 0.0, 1.0);
+               glColor4f(1.0 * gradient, 0.0, 0.0, 1.0);
             }
             else if((*iter).second->GetRenderFlag() == Waypoint::RENDER_GREEN)
             {
-               glColor4f(0.0, 1.0, 0.0, 1.0);
+               glColor4f(0.0, 1.0 * gradient, 0.0, 1.0);
             }
             else if((*iter).second->GetRenderFlag() == Waypoint::RENDER_BLUE)
             {
-               glColor4f(0.0, 0.0, 1.0, 1.0);
+               glColor4f(0.0, 0.0, 1.0 * gradient, 1.0);
             }
             else
             {
                osg::Vec4 waypointColor(mHelper->mWaypointColor);
-               glColor4fv(&waypointColor[0]);
+               glColor4f(waypointColor[0] * gradient, waypointColor[1] * gradient, waypointColor[2] * gradient, waypointColor[3]);
             }
             
             osg::Vec3 pPos = (*iter).second->GetPosition();
@@ -545,6 +547,8 @@ namespace dtAI
 
       glDisable(GL_BLEND);
       glEnable(GL_LIGHTING);
+
+      glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
       
    }
 
