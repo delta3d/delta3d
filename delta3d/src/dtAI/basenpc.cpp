@@ -1,4 +1,5 @@
 /*
+
  * Delta3D Open Source Game and Simulation Engine
  * Copyright (C) 2004-2006 Bradley Anderegg
  *
@@ -42,6 +43,8 @@ namespace dtAI
    
    BaseNPC::~BaseNPC()
    {
+      mCurrentPlan.clear();
+      mGoals.clear();
    }
 
    const std::string& BaseNPC::GetName() const
@@ -122,7 +125,7 @@ namespace dtAI
      mCurrentPlan = mPlanner.GetPlan();
    }
 
-   Planner::OperatorList BaseNPC::GetPlan() const
+   const Planner::OperatorList& BaseNPC::GetPlan() const
    {
       return mCurrentPlan;
    }

@@ -147,7 +147,7 @@ namespace dtAI
          * GetPlan() returns the last plan generated through GeneratePlan()
          * where a plan is just a list of Operators designed to achieve a specific Goal
          */
-         Planner::OperatorList GetPlan() const;
+         const Planner::OperatorList& GetPlan() const;
  
          /**
          * GetWSTemplate() returns the template of the WorldState for this NPC
