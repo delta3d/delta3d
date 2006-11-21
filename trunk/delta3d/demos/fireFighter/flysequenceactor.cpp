@@ -107,7 +107,7 @@ void FlySequenceActor::OnEnteredWorld()
    std::ifstream input(waypointsFile.c_str());
    if(!input.is_open())
    {
-      LOG_ERROR("CameraPath::Could not open waypoints.txt - Creating single waypoint at the origin");
+      LOG_ERROR("Could not open waypoints.txt - Creating single waypoint at the origin");
       numWaypoints = 1;
       wayptArray = new Waypoint[numWaypoints];
       wayptArray[0].x = 0.0;

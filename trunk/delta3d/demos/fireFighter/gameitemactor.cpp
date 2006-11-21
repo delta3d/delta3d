@@ -79,11 +79,11 @@ dtDAL::ActorProxyIcon* GameItemActorProxy::GetBillBoardIcon()
 ////////////////////////////////////////////////////////////
 GameItemActor::GameItemActor(dtGame::GameActorProxy &proxy) :
    dtActors::GameMeshActor(proxy), 
-   mCollectable(false),
-   mIsActivated(false), 
-   mItemIndex(-1), 
+   mInventoryAddSnd(dtAudio::AudioManager::GetInstance().NewSound()),
    mItemUseSnd(dtAudio::AudioManager::GetInstance().NewSound()), 
-   mInventoryAddSnd(dtAudio::AudioManager::GetInstance().NewSound())
+   mItemIndex(-1),
+   mCollectable(false),
+   mIsActivated(false) 
 {
    
 }
