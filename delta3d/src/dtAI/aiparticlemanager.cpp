@@ -22,29 +22,33 @@
 #include <dtAI/aiparticlemanager.h>
 #include <dtAI/basenpc.h>
 
-struct funcRemoveAgent
+#include <dtUtil/log.h>
+
+//vs thinks std::numeric_limits<>::max() is a macro
+#ifdef max
+#undef max
+#endif
+
+#include <limits>
+#include <algorithm>
+
+
+struct funcCompareAgent
 {
-   funcRemoveAgent(const dtAI::BaseNPC* pNPC){mRemoveElement = pNPC;}
+   funcCompareAgent(const dtAI::BaseNPC* pNPC){mRemoveElement = pNPC;}
 
    template<class T>
    bool operator()(T pObj)
    {
       if(pObj.second.get() == mRemoveElement)
       {
-         mProbability = pObj.first;
          return true;
       }
       
       return false;
    }
 
-   float GetProbability()
-   {
-      return mProbability;
-   }
-
   private:
-   float mProbability;
    const dtAI::BaseNPC* mRemoveElement;
 };
 
@@ -60,6 +64,7 @@ namespace dtAI
       , mRemoveList()
       , mClone(pClone)
       , mFilter(pFilter)
+      , mMaxAgents(std::numeric_limits<unsigned>::max())
    {
    }
    
@@ -68,6 +73,16 @@ namespace dtAI
       ClearAllAgents();
    }
 
+
+   void AIParticleManager::SetMaxAgents(unsigned pMaxAgents)
+   {
+      mMaxAgents = pMaxAgents;
+   }
+
+   unsigned AIParticleManager::GetMaxAgents() const
+   {
+      return mMaxAgents;
+   }
 
 
    void AIParticleManager::AddAgent(BaseNPC* pAgent, float pProbability)
@@ -101,7 +116,14 @@ namespace dtAI
 
    void AIParticleManager::RemoveAgent(BaseNPC* pAgent)
    {
-      mRemoveList.push_back(pAgent);
+      if(!InRemoveList(pAgent)) mRemoveList.push_back(pAgent);
+   }
+
+   bool AIParticleManager::InRemoveList(const BaseNPC* pNPC) const
+   {
+      AgentList::const_iterator iter = std::find(mRemoveList.begin(), mRemoveList.end(), pNPC);
+
+      return (iter != mRemoveList.end());
    }
 
    void AIParticleManager::RemoveAgents(const AgentList& pList)
@@ -113,11 +135,18 @@ namespace dtAI
 
       while(iter != endOfList)
       {
-         funcRemoveAgent pRemovePred((*iter));
-         mAgents.remove_if(pRemovePred);
-         pProbability += pRemovePred.GetProbability();
+         funcCompareAgent pRemovePred((*iter));
+         ParticleList::iterator agentIter = std::find_if(mAgents.begin(), mAgents.end(), pRemovePred);
+         if(agentIter != mAgents.end())  
+         {
+           pProbability += (*agentIter).first;
+           mAgents.erase(agentIter);
+         }
+
          ++iter;
       }
+
+      pProbability += RemoveOverflowAgents();
 
       ReAdjustProbabilities(pProbability);
 
@@ -141,6 +170,20 @@ namespace dtAI
          ++iter;
       }
 
+   }
+
+   float AIParticleManager::RemoveOverflowAgents()
+   {
+      float probRemoved = 0.0f;
+      //since we are sorted on probability we will remove the least probable agents
+      //until we are under our limit
+      while(mAgents.size() > mMaxAgents && !mAgents.empty())
+      {
+         probRemoved += mAgents.back().first;
+         mAgents.pop_back();
+      }
+
+      return probRemoved;
    }
 
    void AIParticleManager::ClearAllAgents()
@@ -174,12 +217,48 @@ namespace dtAI
       RemoveAgents(mRemoveList);
    }
 
+
+   AIParticleManager::AgentParticle* AIParticleManager::GetAgentParticle(BaseNPC* pNPC)
+   {
+      ParticleList::iterator iter = std::find_if(mAgents.begin(), mAgents.end(), funcCompareAgent(pNPC));
+      if(iter == mAgents.end())
+      {
+         return 0;
+      }
+      else
+      {
+         return &*iter;
+      }
+   }
+
+   void AIParticleManager::CombineAgents(BaseNPC* pAgentToDelete, BaseNPC* pAgentToAddTo)
+   {
+      AgentParticle* pParticleToAdd = GetAgentParticle(pAgentToAddTo);
+      AgentParticle* pParticleToDelete = GetAgentParticle(pAgentToDelete);
+
+      if(!pParticleToAdd || !pParticleToDelete)
+      {
+         LOG_ERROR("Attempting to combine unknown agents");
+         return;
+      }
+
+      float prob = pParticleToDelete->first;
+      RemoveAgent(pAgentToDelete);
+      pParticleToAdd->first += prob;
+
+   }
+
    void AIParticleManager::SortAgents()
    {
       mAgents.sort(funcAgentSorter);
    }
 
    const AIParticleManager::ParticleList& AIParticleManager::GetParticleList() const
+   {
+      return mAgents;
+   }
+
+   AIParticleManager::ParticleList& AIParticleManager::GetParticleList()
    {
       return mAgents;
    }
