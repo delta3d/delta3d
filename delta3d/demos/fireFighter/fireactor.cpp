@@ -133,8 +133,8 @@ void FireActorProxy::OnEnteredWorld()
 FireActor::FireActor(dtGame::GameActorProxy &proxy) :
    GameItemActor(proxy),
    mFlameSystem(new dtCore::ParticleSystem),
-   mSmokeSystem(new dtCore::ParticleSystem),
    mSparkSystem(new dtCore::ParticleSystem),
+   mSmokeSystem(new dtCore::ParticleSystem),
    mCeilingSystem(new dtCore::ParticleSystem),
    mLight(new dtCore::PositionalLight(5)),
    mRadius(1.0f),
