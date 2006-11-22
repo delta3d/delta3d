@@ -497,6 +497,9 @@
 				RelativePath="..\..\..\inc\dtCore\object.h">
 			</File>
 			<File
+				RelativePath="..\..\..\inc\dtCore\observerptr.h">
+			</File>
+			<File
 				RelativePath="..\..\..\inc\dtCore\orbitmotionmodel.h">
 			</File>
 			<File

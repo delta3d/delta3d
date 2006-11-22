@@ -115,6 +115,8 @@ void FireFighterGameEntryPoint::OnStartup(dtGame::GameManager &gameManager)
    gameManager.GetMessageFactory().RegisterMessageType<dtGame::Message>(MessageType::ITEM_DEACTIVATED);
    gameManager.GetMessageFactory().RegisterMessageType<dtGame::Message>(MessageType::MISSION_COMPLETE);
    gameManager.GetMessageFactory().RegisterMessageType<dtGame::Message>(MessageType::MISSION_FAILED);
+   gameManager.GetMessageFactory().RegisterMessageType<dtGame::Message>(MessageType::HELP_WINDOW_OPENED);
+   gameManager.GetMessageFactory().RegisterMessageType<dtGame::Message>(MessageType::HELP_WINDOW_CLOSED);
 
    RefPtr<HUDComponent>   hudComp   = new HUDComponent(*gameManager.GetApplication().GetWindow());
    RefPtr<InputComponent> inputComp = new InputComponent;

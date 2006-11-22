@@ -31,3 +31,6 @@ const MessageType MessageType::ITEM_SELECTED("ITEM_SELECTED", "INFO", "Sent when
 const MessageType MessageType::ITEM_INTERSECTED("ITEM_INTERSECTED", "INFO", "Sent when an item is collided with", USER_DEFINED_MESSAGE_TYPE + 5);
 const MessageType MessageType::MISSION_COMPLETE("MISSION_COMPLETE", "INFO", "Sent when the top level game task is completed", USER_DEFINED_MESSAGE_TYPE + 6);
 const MessageType MessageType::MISSION_FAILED("MISSION_FAILED", "INFO", "Sent when the mission is failed", USER_DEFINED_MESSAGE_TYPE + 10);
+const MessageType MessageType::HELP_WINDOW_OPENED("HELP_WINDOW_OPENED", "INFO", "Sent when F1 is pressed", USER_DEFINED_MESSAGE_TYPE + 11);
+const MessageType MessageType::HELP_WINDOW_CLOSED("HELP_WINDOW_CLOSED", "INFO", "Sent when F1 is pressed", USER_DEFINED_MESSAGE_TYPE + 12);
+
