@@ -27,8 +27,8 @@
 
 #include <ostream>
 
-namespace dtCore {
-
+namespace dtCore 
+{
    /** Smart pointer for handling referenced counted objects.*/
    template<class T>
    class RefPtr
