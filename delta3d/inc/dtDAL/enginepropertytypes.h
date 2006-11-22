@@ -273,7 +273,10 @@ namespace dtDAL
          FloatActorProperty(const std::string &name, const std::string &label,
                            Functor1<float> set, Functor0Ret<float> get,
                            const std::string &desc = "", const std::string &groupName = "") :
-         GenericActorProperty<float,float>(DataType::FLOAT, name,label,set,get,desc,groupName){ }
+         GenericActorProperty<float,float>(DataType::FLOAT, name,label,set,get,desc,groupName)
+         {
+            SetNumberPrecision(8); 
+         }
 
          /**
           * Sets the value of the property based on a string.
@@ -631,7 +634,10 @@ namespace dtDAL
          Vec2ActorProperty(const std::string &name, const std::string &label,
                            Functor1<const osg::Vec2&> set, Functor0Ret<osg::Vec2> get,
                            const std::string &desc = "", const std::string &groupName = "") :
-         GenericActorProperty<const osg::Vec2&,osg::Vec2>(DataType::VEC2, name,label,set,get,desc,groupName) { }
+         GenericActorProperty<const osg::Vec2&,osg::Vec2>(DataType::VEC2, name,label,set,get,desc,groupName) 
+         { 
+            SetNumberPrecision(2 * sizeof(GetValue()[0]) + 1);
+         }
 
          /**
           * Sets the value of the property based on a string.
@@ -666,7 +672,10 @@ namespace dtDAL
          Vec2fActorProperty(const std::string &name, const std::string &label,
                            Functor1<const osg::Vec2f&> set, Functor0Ret<osg::Vec2f> get,
                            const std::string &desc = "", const std::string &groupName = "") :
-         GenericActorProperty<const osg::Vec2f&,osg::Vec2f>(DataType::VEC2F,name,label,set,get,desc,groupName) { }
+         GenericActorProperty<const osg::Vec2f&,osg::Vec2f>(DataType::VEC2F,name,label,set,get,desc,groupName) 
+         { 
+            SetNumberPrecision(2 * sizeof(GetValue()[0]) + 1);
+         }
 
          /**
           * Sets the value of the property based on a string.
@@ -701,7 +710,10 @@ namespace dtDAL
          Vec2dActorProperty(const std::string &name, const std::string &label,
                            Functor1<const osg::Vec2d&> set, Functor0Ret<osg::Vec2d> get,
                            const std::string &desc = "", const std::string &groupName = "") :
-         GenericActorProperty<const osg::Vec2d&,osg::Vec2d>(DataType::VEC2D, name, label, set, get, desc, groupName) { }
+         GenericActorProperty<const osg::Vec2d&,osg::Vec2d>(DataType::VEC2D, name, label, set, get, desc, groupName) 
+         { 
+            SetNumberPrecision(2 * sizeof(GetValue()[0]) + 1);
+         }
 
          /**
           * Sets the value of the property based on a string.
@@ -736,7 +748,10 @@ namespace dtDAL
          Vec3ActorProperty(const std::string &name, const std::string &label,
                            Functor1<const osg::Vec3&> set, Functor0Ret<osg::Vec3> get,
                            const std::string &desc = "", const std::string &groupName = "") :
-         GenericActorProperty<const osg::Vec3&,osg::Vec3>(DataType::VEC3, name,label,set,get,desc,groupName) { }
+         GenericActorProperty<const osg::Vec3&,osg::Vec3>(DataType::VEC3, name,label,set,get,desc,groupName) 
+         { 
+            SetNumberPrecision(2 * sizeof(GetValue()[0]) + 1);
+         }
 
          /**
           * Sets the value of the property based on a string.
@@ -770,7 +785,10 @@ namespace dtDAL
          Vec3fActorProperty(const std::string &name, const std::string &label,
                            Functor1<const osg::Vec3f&> set, Functor0Ret<osg::Vec3f> get,
                            const std::string &desc = "", const std::string &groupName = "") :
-         GenericActorProperty<const osg::Vec3f&,osg::Vec3f>(DataType::VEC3F, name,label,set,get,desc,groupName) { }
+         GenericActorProperty<const osg::Vec3f&,osg::Vec3f>(DataType::VEC3F, name,label,set,get,desc,groupName) 
+         {
+            SetNumberPrecision(2 * sizeof(GetValue()[0]) + 1);
+         }
 
          /**
           * Sets the value of the property based on a string.
@@ -804,7 +822,10 @@ namespace dtDAL
          Vec3dActorProperty(const std::string &name, const std::string &label,
                            Functor1<const osg::Vec3d&> set, Functor0Ret<osg::Vec3d> get,
                            const std::string &desc = "", const std::string &groupName = "") :
-         GenericActorProperty<const osg::Vec3d&,osg::Vec3d>(DataType::VEC3D, name,label,set,get,desc,groupName) { }
+         GenericActorProperty<const osg::Vec3d&,osg::Vec3d>(DataType::VEC3D, name,label,set,get,desc,groupName) 
+         { 
+            SetNumberPrecision(2 * sizeof(GetValue()[0]) + 1);
+         }
 
          /**
           * Sets the value of the property based on a string.
@@ -839,7 +860,10 @@ namespace dtDAL
                            Functor1<const osg::Vec4&> set, Functor0Ret<osg::Vec4> get,
                            const std::string &desc = "", const std::string &groupName = "", 
                            dtDAL::DataType& dataType = DataType::VEC4) :
-         GenericActorProperty<const osg::Vec4&,osg::Vec4>(dataType, name,label,set,get,desc,groupName) { }
+         GenericActorProperty<const osg::Vec4&,osg::Vec4>(dataType, name,label,set,get,desc,groupName) 
+         { 
+            SetNumberPrecision(2 * sizeof(GetValue()[0]) + 1);
+         }
 
          /**
           * Sets the value of the property based on a string.
@@ -875,7 +899,10 @@ namespace dtDAL
          Vec4fActorProperty(const std::string &name, const std::string &label,
                            Functor1<const osg::Vec4f&> set, Functor0Ret<osg::Vec4f> get,
                            const std::string &desc = "", const std::string &groupName = "") :
-         GenericActorProperty<const osg::Vec4f&,osg::Vec4f>(DataType::VEC4F, name,label,set,get,desc,groupName) { }
+         GenericActorProperty<const osg::Vec4f&,osg::Vec4f>(DataType::VEC4F, name,label,set,get,desc,groupName) 
+         { 
+            SetNumberPrecision(2 * sizeof(GetValue()[0]) + 1);
+         }
 
          /**
           * Sets the value of the property based on a string.
@@ -910,7 +937,10 @@ namespace dtDAL
          Vec4dActorProperty(const std::string &name, const std::string &label,
                            Functor1<const osg::Vec4d&> set, Functor0Ret<osg::Vec4d> get,
                            const std::string &desc = "", const std::string &groupName = "") :
-         GenericActorProperty<const osg::Vec4d&,osg::Vec4d>(DataType::VEC4D, name,label,set,get,desc,groupName) { }
+         GenericActorProperty<const osg::Vec4d&,osg::Vec4d>(DataType::VEC4D, name,label,set,get,desc,groupName) 
+         { 
+            SetNumberPrecision(2 * sizeof(GetValue()[0]) + 1);
+         }
 
          /**
           * Sets the value of the property based on a string.

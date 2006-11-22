@@ -103,6 +103,13 @@ public:
    void TestVecMessageParameter(int size)
    {
       dtCore::RefPtr<ParamType> param = new ParamType("a");
+      
+      unsigned int expectedPrecision = 2 * sizeof(param->GetValue()[0]) + 1;
+      
+      std::ostringstream ss;
+      ss << expectedPrecision;
+
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Precision should be " + ss.str(), expectedPrecision, param->GetNumberPrecision());
 
       VecType r = param->GetValue();
       for (int i = 0; i < size; ++i)
@@ -1131,6 +1138,8 @@ void MessageParameterTests::TestFloatMessageParameter()
       dtCore::RefPtr<dtGame::FloatMessageParameter>  param = new dtGame::FloatMessageParameter("a");
       CPPUNIT_ASSERT_MESSAGE("MessageParameter should default to 0.0", osg::equivalent(param->GetValue(), 0.0f, 1e-2f));
 
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Precision should be 9", (unsigned int)9, param->GetNumberPrecision());
+
       float c = 201.32;
       param->SetValue(c);
       float r = param->GetValue();
@@ -1177,6 +1186,7 @@ void MessageParameterTests::TestDoubleMessageParameter()
    {
       dtCore::RefPtr<dtGame::DoubleMessageParameter>  param = new dtGame::DoubleMessageParameter("a");
       CPPUNIT_ASSERT_MESSAGE("MessageParameter should default to 0.0", osg::equivalent(param->GetValue(), 0.0, 1e-2));
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Precision should be 17", (unsigned int)17, param->GetNumberPrecision());
 
       double c = -23425201.32234;
       param->SetValue(c);

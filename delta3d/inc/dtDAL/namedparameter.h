@@ -244,7 +244,7 @@ namespace dtDAL
             : NamedParameter(name,isList)
          {
             mValue = defaultValue;
-            mNumberPrecision = 16;
+            mNumberPrecision = 17;
 
             if (IsList())
             {
@@ -749,7 +749,10 @@ namespace dtDAL
 
       protected:
          NamedVecParameter(const std::string &name, const ParamType& defaultValue,
-            bool isList=false) : NamedGenericParameter<ParamType>(name, defaultValue, isList) {}
+            bool isList=false) : NamedGenericParameter<ParamType>(name, defaultValue, isList) 
+         {
+               NamedGenericParameter<ParamType>::SetNumberPrecision(2 * sizeof(defaultValue[0]) + 1);
+         }
          virtual ~NamedVecParameter() {}
 
          bool InternalFromString(const std::string &value, unsigned size)
