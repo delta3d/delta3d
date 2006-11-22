@@ -22,9 +22,13 @@
 #ifndef DELTA_GAMEACTOR
 #define DELTA_GAMEACTOR
 
+#include <osg/observer_ptr>
+
 #include <dtCore/physical.h>
 #include <dtDAL/physicalactorproxy.h>
 #include <dtGame/export.h>
+#include <dtUtil/exception.h>
+#include <dtGame/exceptionenum.h>
 
 namespace dtGame
 {
@@ -46,23 +50,34 @@ namespace dtGame
       public:
          /// Constructor
    		GameActor(GameActorProxy& proxy);
-
-      protected:
-             
-         /// Destructor
-   		virtual ~GameActor();
-
-      public:
       
          /**
           * @return the GameActorProxy for this game actor.
           */
-         GameActorProxy& GetGameActorProxy() { return *mProxy; }
+         GameActorProxy& GetGameActorProxy() 
+         {
+            if (!mProxy.valid())
+            {
+               throw dtUtil::Exception(ExceptionEnum::INVALID_ACTOR_STATE,
+                  NULL_PROXY_ERROR,
+                  __FILE__, __LINE__);
+            }
+            return *mProxy; 
+         }
 
          /**
           * @return the GameActorProxy for this game actor.
           */
-         const GameActorProxy& GetGameActorProxy() const { return *mProxy; }
+         const GameActorProxy& GetGameActorProxy() const 
+         { 
+            if (!mProxy.valid())
+            {
+               throw dtUtil::Exception(ExceptionEnum::INVALID_ACTOR_STATE,
+                  NULL_PROXY_ERROR,
+                  __FILE__, __LINE__);
+            }
+            return *mProxy; 
+         }
                 	                  
          /** 
           * Returns if the actor is remote
@@ -122,6 +137,9 @@ namespace dtGame
 
       protected:
    
+         /// Destructor
+         virtual ~GameActor();
+
           /**
            * Called when an actor is first placed in the "world"
            */
@@ -129,6 +147,7 @@ namespace dtGame
       
       private:
    		
+         static const std::string NULL_PROXY_ERROR;
          /** 
           * Sets is an actor is remote
           * @param remote Should be true is the actor is remote, false if not
@@ -142,8 +161,7 @@ namespace dtGame
          void SetPublished(bool published) { mPublished = published; }
             
          friend class GameActorProxy;
-         GameActorProxy* mProxy;
-         
+         osg::observer_ptr<GameActorProxy> mProxy;         
          bool mPublished;
          bool mRemote;
          std::string mShaderGroup;

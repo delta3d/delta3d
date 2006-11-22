@@ -607,6 +607,7 @@ namespace dtDAL
    NamedFloatParameter::NamedFloatParameter(const std::string &name, float defaultValue,
          bool isList) : NamedPODParameter<float>(name, defaultValue, isList)
    {
+      SetNumberPrecision(9);
    }
 
    ///////////////////////////////////////////////////////////////////////////////

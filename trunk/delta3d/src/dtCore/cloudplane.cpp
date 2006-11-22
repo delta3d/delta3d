@@ -187,8 +187,9 @@ void CloudPlane::Create(const std::string& textureFilePath)
 	stateset->setTextureAttribute(0, texenv);
 
 	// Transparnt Bin
-	stateset->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
-	
+	//stateset->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+   stateset->setRenderBinDetails(9, "Test Transparent Bin");
+   
 	// Blending Function
 	osg::BlendFunc *trans = new osg::BlendFunc();
 	trans->setFunction(osg::BlendFunc::SRC_ALPHA ,osg::BlendFunc::ONE_MINUS_SRC_ALPHA);

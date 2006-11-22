@@ -468,6 +468,8 @@ namespace dtGame
    ///////////////////////////////////////////
    // Actor code
    ///////////////////////////////////////////
+   const std::string GameActor::NULL_PROXY_ERROR("The actor proxy for a game actor is NULL.  This usually happens if the actor is held in RefPtr, but not the proxy.");
+   
    GameActor::GameActor(GameActorProxy& proxy) : mProxy(&proxy), mPublished(false), mRemote(false)
    {
    }
@@ -475,7 +477,7 @@ namespace dtGame
    GameActor::~GameActor()
    {
    }
-
+      
    void GameActor::TickLocal(const Message& tickMessage)
    {
    }

@@ -113,6 +113,7 @@ class GameActorTests : public CPPUNIT_NS::TestFixture
 
       CPPUNIT_TEST(TestGameActor);
       CPPUNIT_TEST(TestGameActorProxy);
+      CPPUNIT_TEST(TestGameActorProxyDeleteError);
       CPPUNIT_TEST(TestSetEnvironmentActor);
       CPPUNIT_TEST(TestAddRemoveFromEnvActor);
       CPPUNIT_TEST(TestInvokables);
@@ -130,6 +131,7 @@ public:
    void tearDown();
    void TestGameActor();
    void TestGameActorProxy();
+   void TestGameActorProxyDeleteError();
    void TestSetEnvironmentActor();
    void TestAddRemoveFromEnvActor();
    void TestInvokables();
@@ -217,7 +219,7 @@ void GameActorTests::TestGameActorProxy()
       CPPUNIT_ASSERT_MESSAGE("GameActorProxy should not be NULL", gap != NULL);
       CPPUNIT_ASSERT_MESSAGE("GameActor should have a reference to the proxy", &gap->GetGameActor().GetGameActorProxy() == gap.get());
 
-      dtGame::GameActor *p = dynamic_cast<dtGame::GameActor*> (&gap->GetGameActor());
+      dtGame::GameActor *p = &gap->GetGameActor();
 
       CPPUNIT_ASSERT_MESSAGE("Actor should not be NULL", p != NULL);
       CPPUNIT_ASSERT_MESSAGE("IsGameActor should always return true", gap->IsGameActorProxy());
@@ -232,10 +234,45 @@ void GameActorTests::TestGameActorProxy()
    {
       CPPUNIT_FAIL(e.What());
    }
-   catch (const std::exception &e)
+//   catch (const std::exception &e)
+//   {
+//      CPPUNIT_FAIL(std::string("Caught exception of type: ") + typeid(e).name() + " " + e.what());
+//   }
+}
+
+void GameActorTests::TestGameActorProxyDeleteError()
+{
+   // This test verifies that an error is thrown if the proxy is deleted but the actor is still around
+   // but the developer calls GetGameActorProxy.  This can happen because the GameACtor only holds onto
+   // an observer_ptr to the parent.
+   try
    {
-      CPPUNIT_FAIL(std::string("Caught exception of type: ") + typeid(e).name() + " " + e.what());
+      dtCore::RefPtr<dtDAL::ActorType> actorType = mManager->FindActorType("ExampleActors", "Test1Actor");
+
+      CPPUNIT_ASSERT(actorType != NULL);
+
+      dtCore::RefPtr<dtGame::GameActorProxy> gap;
+      mManager->CreateActor(*actorType, gap);
+
+      CPPUNIT_ASSERT_MESSAGE("GameActorProxy should not be NULL", gap != NULL);
+      CPPUNIT_ASSERT_MESSAGE("GameActor should have a reference to the proxy", &gap->GetGameActor().GetGameActorProxy() == gap.get());
+
+      dtCore::RefPtr<dtGame::GameActor> actor = &gap->GetGameActor();
+      osg::observer_ptr<dtGame::GameActorProxy> gapObserver = gap.get();
+      gap = NULL;
+      
+      CPPUNIT_ASSERT_MESSAGE("Nothing should be holding onto the proxy, so the observer should be NULL", !gapObserver.valid());
+      ///This should throw an exception because the proxy should have been cleaned up.
+      CPPUNIT_ASSERT_THROW(actor->GetGameActorProxy(), dtUtil::Exception);
    }
+   catch (const dtUtil::Exception &e)
+   {
+      CPPUNIT_FAIL(e.What());
+   }
+//   catch (const std::exception &e)
+//   {
+//      CPPUNIT_FAIL(std::string("Caught exception of type: ") + typeid(e).name() + " " + e.what());
+//   }
 }
 
 void GameActorTests::TestInvokables()

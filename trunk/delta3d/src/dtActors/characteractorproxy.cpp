@@ -21,9 +21,9 @@
 
 #include <rbody/config_error.h>
 
-#include "dtActors/characteractorproxy.h"
-#include "dtDAL/enginepropertytypes.h"
-#include "dtDAL/actorproxyicon.h"
+#include <dtActors/characteractorproxy.h>
+#include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/actorproxyicon.h>
 
 using namespace dtDAL;
 using namespace dtChar;

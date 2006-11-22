@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////
 #include <prefix/dtcoreprefix-src.h>
 #include <dtCore/particlesystem.h>
-#include <dtCore/scene.h>
 #include <dtUtil/log.h>
 
 #include <osg/Group>
