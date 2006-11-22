@@ -785,8 +785,8 @@ void GameActorTests::TestSetEnvironmentActor()
          ea->GetNumEnvironmentChildren() == 2);
 
       // Remove actor 2
-      ea->RemoveActor(*ap2);
-      CPPUNIT_ASSERT_MESSAGE("The actor 2 should be removed from the scene", ! ea->ContainsActor(*ap2) );
+      ea->RemoveActor(*ap2->GetActor());
+      CPPUNIT_ASSERT_MESSAGE("The actor 2 should be removed from the scene", !ea->ContainsActor(*ap2->GetActor()));
       CPPUNIT_ASSERT_MESSAGE("The game manager should have 1 actor in its scene", 
          ea->GetNumEnvironmentChildren() == 1);
 
@@ -798,14 +798,14 @@ void GameActorTests::TestSetEnvironmentActor()
       dtCore::System::GetInstance().Step();
 
       // Ensure environment contains actor 2.
-      CPPUNIT_ASSERT_MESSAGE("The environment actor should have actor 2 as a child", ea->ContainsActor(*ap2) );
+      CPPUNIT_ASSERT_MESSAGE("The environment actor should have actor 2 as a child", ea->ContainsActor(*ap2->GetActor()));
 
       // Ensure actor 2 is also returned in the list of actors returned by the environment.
       bool foundActor = false;
       ea->GetAllActors(actors);
       for( unsigned int i = 0; i < actors.size(); ++i )
       {
-         if( ap2->GetId() == actors[i]->GetId() )
+         if( ap2->GetId() == actors[i]->GetUniqueId() )
          {
             foundActor = true;
             break;
@@ -820,7 +820,7 @@ void GameActorTests::TestSetEnvironmentActor()
       dtCore::System::GetInstance().Step();
 
       // Ensure environment has removed actor 2.
-      CPPUNIT_ASSERT_MESSAGE("The environment actor should have removed actor 2", ! ea->ContainsActor(*ap2) );
+      CPPUNIT_ASSERT_MESSAGE("The environment actor should have removed actor 2", !ea->ContainsActor(*ap2->GetActor()));
 
       // Ensure all actors are removed from the environment
       ea->GetAllActors(actors);
