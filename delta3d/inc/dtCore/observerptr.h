@@ -61,7 +61,7 @@ namespace dtCore
          return *this;
       }
 
-      virtual void ObserverPtr(void* ptr)
+      virtual void objectDeleted(void* ptr)
       {
          if (_ptr==ptr)
          {
