@@ -171,7 +171,7 @@
 				RelativePath="..\..\..\demos\fireFighter\hatchactor.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\demos\fireFighter\HelpWindow.cpp">
+				RelativePath="..\..\..\demos\fireFighter\helpwindow.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\demos\fireFighter\hudcomponent.cpp">
@@ -251,7 +251,7 @@
 				RelativePath="..\..\..\demos\fireFighter\hatchactor.h">
 			</File>
 			<File
-				RelativePath="..\..\..\demos\fireFighter\HelpWindow.h">
+				RelativePath="..\..\..\demos\fireFighter\helpwindow.h">
 			</File>
 			<File
 				RelativePath="..\..\..\demos\fireFighter\hudcomponent.h">
