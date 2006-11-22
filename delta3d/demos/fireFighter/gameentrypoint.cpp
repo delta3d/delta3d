@@ -48,7 +48,7 @@ extern "C" FIRE_FIGHTER_EXPORT void DestroyGameEntryPoint(dtGame::GameEntryPoint
    delete entryPoint;
 }
 
-FireFighterGameEntryPoint::FireFighterGameEntryPoint() : mUseLMS(false)
+FireFighterGameEntryPoint::FireFighterGameEntryPoint() : mUseLMS(true)
 {
    dtAudio::AudioManager::Instantiate();
    dtAudio::AudioManager::GetInstance().Config(AudioConfigData(32));
@@ -64,7 +64,7 @@ void FireFighterGameEntryPoint::Initialize(dtGame::GameApplication& app, int arg
    osg::ArgumentParser parser(&argc, argv);
    parser.getApplicationUsage()->setCommandLineUsage("Fire Fighter Application [options] value ...");
    parser.getApplicationUsage()->addCommandLineOption("-h or --help","Display command line options");
-   parser.getApplicationUsage()->addCommandLineOption("--lms", "Pass 1 to indicate you wish to communicate with an external LMS, or 0 to ignore.");
+   parser.getApplicationUsage()->addCommandLineOption("--useLms", "Pass 1 to indicate you wish to communicate with an external LMS, or 0 to ignore.");
 
    if(parser.read("-h") || parser.read("--help"))
    {
@@ -83,8 +83,8 @@ void FireFighterGameEntryPoint::Initialize(dtGame::GameApplication& app, int arg
    if(parser.errors())
    {
       parser.writeErrorMessages(std::cout);
-      throw dtUtil::Exception(ExceptionEnum::COMMAND_LINE_EXCEPTION, "Command Line Error.", 
-         __FILE__, __LINE__);
+      //throw dtUtil::Exception(ExceptionEnum::COMMAND_LINE_EXCEPTION, "Command Line Error.", 
+      //   __FILE__, __LINE__);
    }
 
 #ifdef _DEBUG
@@ -96,7 +96,7 @@ void FireFighterGameEntryPoint::Initialize(dtGame::GameApplication& app, int arg
    app.GetWindow()->SetWindowTitle("Fire Fighter Application");
 
    dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
-   dtDAL::Project::GetInstance().SetContext("../demos/fireFighter/FireFighterProject");
+   dtDAL::Project::GetInstance().SetContext("demos/fireFighter/FireFighterProject");
 }
 
 dtCore::RefPtr<dtGame::GameManager> FireFighterGameEntryPoint::CreateGameManager(dtCore::Scene& scene)

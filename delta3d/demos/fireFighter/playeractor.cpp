@@ -188,6 +188,18 @@ bool PlayerActor::IsItemInInventory(GameItemActor &item) const
    return mInventory.find(item.GetItemIndex()) != mInventory.end();
 }
 
+bool PlayerActor::IsItemInInventory(const std::string &itemName) const
+{
+   for(std::map<int, RefPtr<GameItemActor> >::const_iterator i = mInventory.begin(); 
+       i != mInventory.end(); ++i)
+   {
+      if(i->second->GetName() == itemName)
+         return true;
+   }
+
+   return false;
+}
+
 void PlayerActor::UseSelectedItem(bool use)
 {
    if(mInventory.empty())
