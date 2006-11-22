@@ -81,7 +81,8 @@ HUDComponent::HUDComponent(dtCore::DeltaWin &win, const std::string &name) :
    mMissionFailed(false), 
    mFailedProxy(NULL), 
    mCompleteOrFail(NULL), 
-   mFailReason(NULL)
+   mFailReason(NULL), 
+   mHUDOverlay(NULL)
 {
    SetupGUI(win);
 }
@@ -181,16 +182,9 @@ void HUDComponent::ProcessMessage(const dtGame::Message &msg)
    }
    else if(msg.GetMessageType() == dtGame::MessageType::TICK_LOCAL)
    {
-      //double simTime = static_cast<const dtGame::TickMessage&>(msg).GetDeltaSimTime();
-      //static dtCore::Timer timer = simTime;
-
       if(*mCurrentState == GameState::STATE_RUNNING)
       {
-         //if(timer + 2 > simTime)
-        // {
-            UpdateMediumDetailData(mHUDBackground);
-          //  timer = simTime;
-         //}
+         UpdateMediumDetailData(mHUDBackground);
       }
       else if(*mCurrentState == GameState::STATE_DEBRIEF)
          RefreshDebriefScreen();
@@ -221,9 +215,10 @@ void HUDComponent::ShowHUD()
 {
    if(mGUI->GetActiveTextureUnit() != 1)
       mGUI->SetActiveTextureUnit(1);
-   
+    
    HideMenus();
    ShowMouse(false);
+   
    mHUDBackground->show();
    if(mMissionComplete)
       mMissionCompletedText->show();
@@ -328,14 +323,22 @@ void HUDComponent::BuildHUD()
    mHUDBackground->setSize(CEGUI::UVector2(cegui_reldim(1.0f), cegui_reldim(1.0f)));
    mHUDBackground->setProperty("BackgroundEnabled", "false");
    mHUDBackground->setProperty("FrameEnabled", "false");
-   
+
+   mHUDOverlay = wm->createWindow("WindowsLook/StaticImage", "HUDOverlay");
+   mHUDBackground->addChildWindow(mHUDOverlay);
+   mHUDOverlay->setPosition(CEGUI::UVector2(cegui_reldim(0.0f), cegui_reldim(0.0f)));
+   mHUDOverlay->setSize(CEGUI::UVector2(cegui_reldim(1.0f), cegui_reldim(1.0f)));
+   mHUDOverlay->setProperty("BackgroundEnabled", "false");
+   mHUDOverlay->setProperty("FrameEnabled", "false");
+   //mHUDOverlay->setProperty("Image", "set:HUD_SCBAImage image:HUD_SCBAImage");
+
    mGameItemImage = wm->createWindow("WindowsLook/StaticImage", "gameItemImage");
    mGameItemImage->setSize(CEGUI::UVector2(cegui_reldim(0.15f), cegui_reldim(0.15f)));
    mGameItemImage->setPosition(CEGUI::UVector2(cegui_reldim(0.6f), cegui_reldim(0.4f)));
    mGameItemImage->setProperty("BackgroundEnabled", "false");
    mGameItemImage->setProperty("FrameEnabled", "false");
    mGameItemImage->setProperty("Image", "set:GameItemImage image:GameItemImage");
-   mHUDBackground->addChildWindow(mGameItemImage);
+   mHUDOverlay->addChildWindow(mGameItemImage);
    mGameItemImage->hide();
 
    mFireSuitIcon = wm->createWindow("WindowsLook/StaticImage", "fireSuitIcon");
@@ -344,7 +347,7 @@ void HUDComponent::BuildHUD()
    mFireSuitIcon->setProperty("BackgroundEnabled", "false");
    mFireSuitIcon->setProperty("FrameEnabled", "false");
    mFireSuitIcon->setProperty("Image", "set:FireSuitImage image:FireSuitImage");
-   mHUDBackground->addChildWindow(mFireSuitIcon);
+   mHUDOverlay->addChildWindow(mFireSuitIcon);
    mFireSuitIcon->hide();
 
    mFireHoseIcon = wm->createWindow("WindowsLook/StaticImage", "fireHoseIcon");
@@ -353,7 +356,7 @@ void HUDComponent::BuildHUD()
    mFireHoseIcon->setProperty("BackgroundEnabled", "false");
    mFireHoseIcon->setProperty("FrameEnabled", "false");
    mFireHoseIcon->setProperty("Image", "set:FireHoseImage image:FireHoseImage");
-   mHUDBackground->addChildWindow(mFireHoseIcon);
+   mHUDOverlay->addChildWindow(mFireHoseIcon);
    mFireHoseIcon->hide();
 
    mSCBAIcon = wm->createWindow("WindowsLook/StaticImage", "SCBAIcon");
@@ -362,7 +365,7 @@ void HUDComponent::BuildHUD()
    mSCBAIcon->setProperty("BackgroundEnabled", "false");
    mSCBAIcon->setProperty("FrameEnabled", "false");
    mSCBAIcon->setProperty("Image", "set:SCBAImage image:SCBAImage");
-   mHUDBackground->addChildWindow(mSCBAIcon);
+   mHUDOverlay->addChildWindow(mSCBAIcon);
    mSCBAIcon->hide();
 
    mInventoryUseFireSuitIcon = wm->createWindow("WindowsLook/StaticImage", "InventoryUseFireSuitIcon");
@@ -371,7 +374,7 @@ void HUDComponent::BuildHUD()
    mInventoryUseFireSuitIcon->setProperty("BackgroundEnabled", "false");
    mInventoryUseFireSuitIcon->setProperty("FrameEnabled", "false");
    mInventoryUseFireSuitIcon->setProperty("Image", "set:InventoryUseImage image:InventoryUseImage");
-   mHUDBackground->addChildWindow(mInventoryUseFireSuitIcon);
+   mHUDOverlay->addChildWindow(mInventoryUseFireSuitIcon);
    mInventoryUseFireSuitIcon->hide();
 
    mInventoryUseFireHoseIcon = wm->createWindow("WindowsLook/StaticImage", "InventoryUseFireHoseIcon");
@@ -380,7 +383,7 @@ void HUDComponent::BuildHUD()
    mInventoryUseFireHoseIcon->setProperty("BackgroundEnabled", "false");
    mInventoryUseFireHoseIcon->setProperty("FrameEnabled", "false");
    mInventoryUseFireHoseIcon->setProperty("Image", "set:InventoryUseImage image:InventoryUseImage");
-   mHUDBackground->addChildWindow(mInventoryUseFireHoseIcon);
+   mHUDOverlay->addChildWindow(mInventoryUseFireHoseIcon);
    mInventoryUseFireHoseIcon->hide();
 
    mInventoryUseSCBAIcon = wm->createWindow("WindowsLook/StaticImage", "InventoryUseSCBAIcon");
@@ -389,7 +392,7 @@ void HUDComponent::BuildHUD()
    mInventoryUseSCBAIcon->setProperty("BackgroundEnabled", "false");
    mInventoryUseSCBAIcon->setProperty("FrameEnabled", "false");
    mInventoryUseSCBAIcon->setProperty("Image", "set:InventoryUseImage image:InventoryUseImage");
-   mHUDBackground->addChildWindow(mInventoryUseSCBAIcon);
+   mHUDOverlay->addChildWindow(mInventoryUseSCBAIcon);
    mInventoryUseSCBAIcon->hide();
 
    mInventorySelectIcon = wm->createWindow("WindowsLook/StaticImage", "InventorySelectIcon");
@@ -397,7 +400,7 @@ void HUDComponent::BuildHUD()
    mInventorySelectIcon->setProperty("BackgroundEnabled", "false");
    mInventorySelectIcon->setProperty("FrameEnabled", "false");
    mInventorySelectIcon->setProperty("Image", "set:InventorySelectImage image:InventorySelectImage");
-   mHUDBackground->addChildWindow(mInventorySelectIcon);
+   mHUDOverlay->addChildWindow(mInventorySelectIcon);
    mInventorySelectIcon->hide();
 
    mTargetIcon = wm->createWindow("WindowsLook/StaticImage", "TargetIcon");
@@ -406,7 +409,7 @@ void HUDComponent::BuildHUD()
    mTargetIcon->setProperty("BackgroundEnabled", "false");
    mTargetIcon->setProperty("FrameEnabled", "false");
    mTargetIcon->setProperty("Image", "set:TargetImage image:TargetImage");
-   mHUDBackground->addChildWindow(mTargetIcon);
+   mHUDOverlay->addChildWindow(mTargetIcon);
 
    mMissionCompletedText = wm->createWindow("WindowsLook/StaticText", "MissionCompleteText");
    mMissionCompletedText->setText("Mission Completed. Press M to debrief");
@@ -416,7 +419,7 @@ void HUDComponent::BuildHUD()
    mMissionCompletedText->setSize(CEGUI::UVector2(cegui_reldim(0.5f), cegui_reldim(0.1f)));
    mMissionCompletedText->setPosition(CEGUI::UVector2(cegui_reldim(0.1f), cegui_reldim(0.1f)));
    mMissionCompletedText->setHorizontalAlignment(CEGUI::HA_CENTRE);
-   mHUDBackground->addChildWindow(mMissionCompletedText);
+   mHUDOverlay->addChildWindow(mMissionCompletedText);
    mMissionCompletedText->hide();
 
    mMissionFailedText = wm->createWindow("WindowsLook/StaticText", "MissionFailedText");
@@ -427,14 +430,14 @@ void HUDComponent::BuildHUD()
    mMissionFailedText->setSize(CEGUI::UVector2(cegui_reldim(0.5f), cegui_reldim(0.1f)));
    mMissionFailedText->setPosition(CEGUI::UVector2(cegui_reldim(0.1f), cegui_reldim(0.1f)));
    mMissionFailedText->setHorizontalAlignment(CEGUI::HA_CENTRE);
-   mHUDBackground->addChildWindow(mMissionFailedText);
+   mHUDOverlay->addChildWindow(mMissionFailedText);
    mMissionFailedText->hide();
 
    float curYPos       = 20.0f;
    float mTextHeight   = 25.0f;
    float taskTextWidth = 500.0f;
 
-   mTasksHeaderText = CreateText("Task Header", mHUDBackground, "Tasks:", 
+   mTasksHeaderText = CreateText("Task Header", mHUDOverlay, "Tasks:", 
       4, curYPos, taskTextWidth - 2, mTextHeight + 2);
 
    curYPos += 2;
@@ -444,7 +447,7 @@ void HUDComponent::BuildHUD()
       std::ostringstream oss;
       oss << "Task " << i;
       curYPos += mTextHeight + 2;
-      CEGUI::Window *text = CreateText(oss.str(), mHUDBackground, "",
+      CEGUI::Window *text = CreateText(oss.str(), mHUDOverlay, "",
          12, curYPos, taskTextWidth - 2, mTextHeight + 2);
 
       mTaskTextList.push_back(text);
@@ -549,7 +552,7 @@ void HUDComponent::BuildIntroMenu()
 bool HUDComponent::OnStartWithObjectives(const CEGUI::EventArgs &e)
 {
    mShowObjectives = true;
-   SendGameStateChangedMessage(GameState::STATE_MENU, GameState::STATE_RUNNING);
+   SendGameStateChangedMessage(GameState::STATE_MENU, GameState::STATE_INTRO);
    return true;
 }
 
@@ -625,11 +628,7 @@ void HUDComponent::AddItemToHUD(GameItemActor *item)
    {
       mSCBAIcon->show();
    }
-   else
-   {
-      LOG_ERROR("Failed to add the item to the HUD. Unable to cast the parameter");
-      return;
-   }
+ 
    // Since we now have items in the HUD, show the select icon
    static bool hackIsFirstTime = true;
    if(hackIsFirstTime)
@@ -678,6 +677,22 @@ void HUDComponent::SetActivatedItem(GameItemActor *item)
    {
       LOG_ERROR("Could not set the activated item. Unable to cast the parameter");
    }
+
+   if(mInventoryUseFireHoseIcon->isVisible())
+   {
+      if(mInventoryUseSCBAIcon->isVisible())
+      {
+         mHUDOverlay->setProperty("Image", "set:HUD_SCBA_FirehoseImage image:HUD_SCBA_FirehoseImage");
+      }
+      else
+      {
+         mHUDOverlay->setProperty("Image", "set:HUD_FirehoseImage image:HUD_FirehoseImage");
+      }
+   }
+   else if(mInventoryUseSCBAIcon->isVisible())
+   {
+      mHUDOverlay->setProperty("Image", "set:HUD_SCBAImage image:HUD_SCBAImage");
+   }
 }
 
 void HUDComponent::SetDeactivatedItem(GameItemActor *item)
@@ -698,6 +713,22 @@ void HUDComponent::SetDeactivatedItem(GameItemActor *item)
    {
       LOG_ERROR("Could not set the deactivated item. Unable to cast the parameter");
    }
+
+   /*if(mInventoryUseFireHoseIcon->isVisible())
+   {
+      if(mInventoryUseSCBAIcon->isVisible())
+      {
+         mHUDOverlay->setProperty("Image", "set:HUD_SCBA_FirehoseImage image:HUD_SCBA_FirehoseImage");
+      }
+      else
+      {
+         mHUDOverlay->setProperty("Image", "set:HUD_FirehoseImage image:HUD_FirehoseImage");
+      }
+   }
+   else if(mInventoryUseSCBAIcon->isVisible())
+   {
+      mHUDOverlay->setProperty("Image", "set: image:");
+   }*/
 }
 
 void HUDComponent::UpdateMediumDetailData(CEGUI::Window *parent)

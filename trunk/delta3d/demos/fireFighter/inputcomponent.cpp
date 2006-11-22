@@ -31,6 +31,7 @@
 #include <fireFighter/firehoseactor.h>
 #include <fireFighter/scbaactor.h>
 #include <fireFighter/hatchactor.h>
+#include <fireFighter/entityactorregistry.h>
 #include <dtABC/application.h>
 #include <dtAudio/audiomanager.h>
 #include <dtCore/fpsmotionmodel.h>
@@ -42,6 +43,8 @@
 #include <dtCore/infinitelight.h>
 #include <dtCore/keyboard.h>
 #include <dtGame/basemessages.h>
+#include <dtDAL/actorproperty.h>
+#include <dtDAL/transformableactorproxy.h>
 #include <dtActors/taskactorordered.h>
 #include <dtActors/taskactorrollup.h>
 #include <dtActors/taskactorgameevent.h>
@@ -97,6 +100,7 @@ void InputComponent::ProcessMessage(const dtGame::Message &message)
       else if(*mCurrentState == GameState::STATE_INTRO)
       {
          GetGameManager()->ChangeMap("IntroMap");
+         //OnIntro();
       }
       else if(*mCurrentState == GameState::STATE_RUNNING)
       {
@@ -146,7 +150,6 @@ void InputComponent::OnIntro()
    if(mMotionModel != NULL)
    {
       mMotionModel->SetTarget(NULL);
-      mMotionModel = NULL;
    }
 
    std::vector<RefPtr<dtGame::GameActorProxy> > proxies;
@@ -165,7 +168,6 @@ void InputComponent::OnIntro()
 
 void InputComponent::OnGame()
 {  
-   dtCore::Scene  &scene  =  GetGameManager()->GetScene();
    dtCore::Camera &camera = *GetGameManager()->GetApplication().GetCamera();
 
    GameLevelActor *gla = NULL; 
@@ -175,14 +177,17 @@ void InputComponent::OnGame()
    dtCore::Transform xform;
    mPlayer->GetTransform(xform);
 
-   mMotionModel = new dtCore::CollisionMotionModel(xform.GetTranslation().z(), 
-      mRadius, mK, mTheta, &GetGameManager()->GetScene(),  
-      GetGameManager()->GetApplication().GetKeyboard(), 
-      GetGameManager()->GetApplication().GetMouse());
+   if(!mMotionModel.valid())
+   {
+      mMotionModel = new dtCore::CollisionMotionModel(xform.GetTranslation().z(), 
+         mRadius, mK, mTheta, &GetGameManager()->GetScene(),  
+         GetGameManager()->GetApplication().GetKeyboard(), 
+         GetGameManager()->GetApplication().GetMouse());
 
-   mMotionModel->SetMaximumTurnSpeed(4000.0f);
-   mMotionModel->SetUseMouseButtons(false);
-   mMotionModel->SetCanJump(false);
+      mMotionModel->SetMaximumTurnSpeed(4000.0f);
+      mMotionModel->SetUseMouseButtons(false);
+      mMotionModel->SetCanJump(false);
+   }
    mMotionModel->SetTarget(mPlayer);
 
    // Turn off the scene light and use the light maps/shadow maps
@@ -192,17 +197,21 @@ void InputComponent::OnGame()
    
    SetupTasks();
 
-   mBellSound = dtAudio::AudioManager::GetInstance().NewSound();
+   if(mBellSound == NULL)
+      mBellSound = dtAudio::AudioManager::GetInstance().NewSound();
    mBellSound->LoadFile("Sounds/bellAndAnnouncement.wav");
    mBellSound->Play();
 
-   mWalkSound = dtAudio::AudioManager::GetInstance().NewSound();
+   if(mWalkSound == NULL)
+      mWalkSound = dtAudio::AudioManager::GetInstance().NewSound();
    mWalkSound->LoadFile("Sounds/walk.wav");
 
-   mRunSound = dtAudio::AudioManager::GetInstance().NewSound();
+   if(mRunSound == NULL)
+      mRunSound = dtAudio::AudioManager::GetInstance().NewSound();
    mRunSound->LoadFile("Sounds/running.wav");
 
-   mCrouchSound = dtAudio::AudioManager::GetInstance().NewSound();
+   if(mCrouchSound == NULL)
+      mCrouchSound = dtAudio::AudioManager::GetInstance().NewSound();
    mCrouchSound->LoadFile("Sounds/walkingCrouched.wav");
 }
 
@@ -213,7 +222,8 @@ void InputComponent::OnDebrief()
    if(mMotionModel != NULL)
       mMotionModel->SetTarget(NULL);
 
-   mDebriefSound = dtAudio::AudioManager::GetInstance().NewSound();
+   if(mDebriefSound == NULL)
+      mDebriefSound = dtAudio::AudioManager::GetInstance().NewSound();
    mDebriefSound->LoadFile("Sounds/anchorsAweigh.wav");
    mDebriefSound->Play();
 }

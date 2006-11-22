@@ -62,10 +62,10 @@ DDGActor::DDGActor(dtGame::GameActorProxy &proxy) :
    mCoordSys = &VehicleActor::CoordSys::SYS_ABS;
    SetPosition(position);
 
-   float deltaZ = 105.f;
-   float deltaY = -3.f;
-   float deltaWakeY = 25.f;
-   float deltaRoosterY = -2.f;
+   float deltaZ = 4.0f;
+   float deltaY = -3.0f;
+   float deltaWakeY = 25.0f;
+   float deltaRoosterY = -2.0f;
 
    portWake = new dtCore::ParticleSystem;
    portWake->LoadFile("Particles/wake.osg");
@@ -83,26 +83,30 @@ DDGActor::DDGActor(dtGame::GameActorProxy &proxy) :
    //port bow wake
    portBowWake = new dtCore::ParticleSystem;
    portBowWake->LoadFile("Particles/BreakingWake.osg");
-   position.Set(1.0f, -63.0f + deltaY, -5.5f + deltaZ, -40.0f, 0.0f, 0.0f);
+   position.Set(1.0f, -63.0f + deltaY, 0/*-5.5f + deltaZ*/, -40.0f, 0.0f, 0.0f);
    SetPortBowWake(portBowWake.get(), position);
+   AddChild(portBowWake.get());
 
    //stbd bow wake
    stbdBowWake = new dtCore::ParticleSystem;
    stbdBowWake->LoadFile("Particles/BreakingWake.osg");
-   position.Set(-1.0f, -63.0f + deltaY, -5.5f + deltaZ, 40.0f, 0.0f, 0.0f);
+   position.Set(-1.0f, -63.0f + deltaY, 0/*-5.5f + deltaZ*/, 40.0f, 0.0f, 0.0f);
    SetStbdBowWake(stbdBowWake.get(), position);
+   AddChild(stbdBowWake.get());
 
    //port rooster tail
    portRooster = new dtCore::ParticleSystem;
    portRooster->LoadFile("Particles/BreakingWake.osg");
-   position.Set(0.25f, 81.0f + deltaRoosterY, -4.5f + deltaZ, 45.0f, 0.0f, 0.0f);
+   position.Set(0.25f, 81.0f + deltaRoosterY, 0/*-4.5f + deltaZ*/, 45.0f, 0.0f, 0.0f);
    SetPortRooster(portRooster.get(), position);
+   AddChild(portRooster.get());
 
    //stbd rooster tail
    stbdRooster = new dtCore::ParticleSystem;
    stbdRooster->LoadFile("Particles/BreakingWake.osg");
-   position.Set(-0.25f, 81.0f + deltaRoosterY, -4.5f + deltaZ, -45.0f, 0.0f, 0.0f);
+   position.Set(-0.25f, 81.0f + deltaRoosterY, 0/*-4.5f + deltaZ*/, -45.0f, 0.0f, 0.0f);
    SetStbdRooster(stbdRooster.get(), position);
+   AddChild(stbdRooster.get());
 
    //forward stack
    fwdStack = new dtCore::ParticleSystem;

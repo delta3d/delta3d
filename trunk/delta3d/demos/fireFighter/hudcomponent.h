@@ -227,11 +227,11 @@ class FIRE_FIGHTER_EXPORT HUDComponent : public dtGame::GMComponent
       CEGUI::PushButton *mStartWithObjectives, *mStart, *mQuit, *mReturnToMenu;
       CEGUI::Window *mMainWindow;
       CEGUI::Window *mWindowBackground, *mHUDBackground, *mDebriefBackground, 
-                         *mIntroBackground, *mGameItemImage, 
-                         *mFireSuitIcon, *mFireHoseIcon, *mSCBAIcon, 
-                         *mInventoryUseFireSuitIcon, *mInventoryUseFireHoseIcon, *mInventoryUseSCBAIcon, 
-                         *mInventorySelectIcon, 
-                         *mTargetIcon;
+                    *mIntroBackground, *mGameItemImage, 
+                    *mFireSuitIcon, *mFireHoseIcon, *mSCBAIcon, 
+                    *mInventoryUseFireSuitIcon, *mInventoryUseFireHoseIcon, *mInventoryUseSCBAIcon, 
+                    *mInventorySelectIcon, 
+                    *mTargetIcon;
 
       CEGUI::Window *mAppHeader, *mDebriefHeaderText, *mIntroText;
 
@@ -248,7 +248,7 @@ class FIRE_FIGHTER_EXPORT HUDComponent : public dtGame::GMComponent
       dtActors::TaskActorProxy *mFailedProxy;
       CEGUI::Window *mCompleteOrFail, *mFailReason;
       std::vector<CEGUI::Window*> mDebriefList;
-      dtCore::Timer_t mTimer;
+      CEGUI::Window *mHUDOverlay;
 };
 
 #endif

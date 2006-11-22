@@ -65,6 +65,11 @@ class FIRE_FIGHTER_EXPORT PlayerActor : public dtGame::GameActor
       bool IsItemInInventory(GameItemActor &item) const;
 
       /**
+       * Returns true if the player has item
+       */
+      bool IsItemInInventory(const std::string &itemName) const;
+
+      /**
        * Used the currently selected item in the player's inventory
        * @param use True to enable, false to disable
        */
