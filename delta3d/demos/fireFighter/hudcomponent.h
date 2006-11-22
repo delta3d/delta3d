@@ -52,6 +52,7 @@ namespace dtActors
 
 class GameState;
 class GameItemActor;
+class HelpWindow;
 
 class FIRE_FIGHTER_EXPORT HUDComponent : public dtGame::GMComponent
 {
@@ -134,6 +135,11 @@ class FIRE_FIGHTER_EXPORT HUDComponent : public dtGame::GMComponent
        * Callback for when the quit button is clicked
        */
       bool OnReturnToMenu(const CEGUI::EventArgs &e);
+
+      /**
+       * Callback for when the quit button is clicked
+       */
+      bool OnHelpWindowClosed(const CEGUI::EventArgs &e);
 
       /**
        * Helper method to quickly build and send game state changed messages
@@ -249,6 +255,7 @@ class FIRE_FIGHTER_EXPORT HUDComponent : public dtGame::GMComponent
       CEGUI::Window *mCompleteOrFail, *mFailReason;
       std::vector<CEGUI::Window*> mDebriefList;
       CEGUI::Window *mHUDOverlay;
+      dtCore::RefPtr<HelpWindow> mHelpWindow;
 };
 
 #endif

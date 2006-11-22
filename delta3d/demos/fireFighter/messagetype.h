@@ -39,6 +39,8 @@ class FIRE_FIGHTER_EXPORT MessageType : public dtGame::MessageType
       static const MessageType ITEM_INTERSECTED;
       static const MessageType MISSION_COMPLETE;
       static const MessageType MISSION_FAILED;
+      static const MessageType HELP_WINDOW_OPENED;
+      static const MessageType HELP_WINDOW_CLOSED;
 
    private:
 

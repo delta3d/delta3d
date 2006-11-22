@@ -27,6 +27,7 @@
 #include <fireFighter/firesuitactor.h>
 #include <fireFighter/scbaactor.h>
 #include <fireFighter/fireactor.h>
+#include <fireFighter/helpwindow.h>
 #include <dtCore/globals.h>
 #include <dtCore/deltawin.h>
 #include <dtActors/taskactorgameevent.h>
@@ -201,6 +202,16 @@ void HUDComponent::ProcessMessage(const dtGame::Message &msg)
       mMissionComplete = false;
       GetGameManager()->FindActorById(msg.GetAboutActorId(), mFailedProxy);
       Refresh();
+   }
+   else if(msg.GetMessageType() == MessageType::HELP_WINDOW_OPENED)
+   {
+      mHelpWindow->Enable(true);
+      ShowMouse(true);
+   }
+   else if(msg.GetMessageType() == MessageType::HELP_WINDOW_CLOSED)
+   {
+      mHelpWindow->Enable(false);
+      ShowMouse(false);
    }
 }
 
@@ -433,6 +444,10 @@ void HUDComponent::BuildHUD()
    mHUDOverlay->addChildWindow(mMissionFailedText);
    mMissionFailedText->hide();
 
+   mHelpWindow = new HelpWindow(mHUDBackground);
+   mHelpWindow->GetCloseButton()->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&HUDComponent::OnHelpWindowClosed, this));
+
+
    float curYPos       = 20.0f;
    float mTextHeight   = 25.0f;
    float taskTextWidth = 500.0f;
@@ -572,6 +587,13 @@ bool HUDComponent::OnQuit(const CEGUI::EventArgs &e)
 bool HUDComponent::OnReturnToMenu(const CEGUI::EventArgs &e)
 {
    SendGameStateChangedMessage(GameState::STATE_DEBRIEF, GameState::STATE_MENU);
+   return true;
+}
+
+bool HUDComponent::OnHelpWindowClosed(const CEGUI::EventArgs &e)
+{
+   RefPtr<dtGame::Message> msg = GetGameManager()->GetMessageFactory().CreateMessage(MessageType::HELP_WINDOW_CLOSED);
+   GetGameManager()->SendMessage(*msg);
    return true;
 }
 

@@ -31,7 +31,7 @@
 #include <fireFighter/firehoseactor.h>
 #include <fireFighter/scbaactor.h>
 #include <fireFighter/hatchactor.h>
-#include <fireFighter/entityactorregistry.h>
+#include <fireFighter/helpwindow.h>
 #include <dtABC/application.h>
 #include <dtAudio/audiomanager.h>
 #include <dtCore/fpsmotionmodel.h>
@@ -142,6 +142,14 @@ void InputComponent::ProcessMessage(const dtGame::Message &message)
    {
       if(*mCurrentState == GameState::STATE_RUNNING)
          ProcessTasks();
+   }
+   else if(message.GetMessageType() == MessageType::HELP_WINDOW_OPENED)
+   {
+      mMotionModel->SetTarget(NULL);
+   }
+   else if(message.GetMessageType() == MessageType::HELP_WINDOW_CLOSED)
+   {
+      mMotionModel->SetTarget(mPlayer);
    }
 }
 
@@ -366,6 +374,16 @@ bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard,
          else
          {
             handled = false;
+         }
+      }
+      break;
+
+      case Producer::Key_F1:
+      {
+         if(isGameRunning)
+         {
+            RefPtr<dtGame::Message> msg = GetGameManager()->GetMessageFactory().CreateMessage(MessageType::HELP_WINDOW_OPENED);
+            GetGameManager()->SendMessage(*msg);
          }
       }
       break;
