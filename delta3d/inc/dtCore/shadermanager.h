@@ -27,7 +27,7 @@
 #include <dtCore/shadergroup.h>
 #include <dtCore/export.h>
 
-#include <osg/observer_ptr>
+#include <dtCore/observerptr.h>
 #include <osg/Node>
 
 #include <map>
@@ -38,7 +38,6 @@
 namespace osg
 {
    class Node;
-   //class observer_ptr;
 }
 /// @endcond
 
@@ -116,7 +115,7 @@ namespace dtCore
           */
          struct ActiveNodeEntry
          {
-            osg::observer_ptr<osg::Node> nodeWeakReference;
+            dtCore::ObserverPtr<osg::Node> nodeWeakReference;
             dtCore::RefPtr<dtCore::Shader> shaderInstance;
          };
 

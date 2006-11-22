@@ -22,12 +22,11 @@
 #ifndef DELTA_GAMEACTOR
 #define DELTA_GAMEACTOR
 
-#include <osg/observer_ptr>
-
+#include <dtUtil/exception.h>
+#include <dtCore/observerptr.h>
 #include <dtCore/physical.h>
 #include <dtDAL/physicalactorproxy.h>
 #include <dtGame/export.h>
-#include <dtUtil/exception.h>
 #include <dtGame/exceptionenum.h>
 
 namespace dtGame
@@ -161,7 +160,7 @@ namespace dtGame
          void SetPublished(bool published) { mPublished = published; }
             
          friend class GameActorProxy;
-         osg::observer_ptr<GameActorProxy> mProxy;         
+         dtCore::ObserverPtr<GameActorProxy> mProxy;         
          bool mPublished;
          bool mRemote;
          std::string mShaderGroup;

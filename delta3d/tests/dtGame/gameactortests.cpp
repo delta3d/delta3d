@@ -49,7 +49,7 @@
 #include <testGameActorLibrary/testgameenvironmentactor.h>
 #include <testGameActorLibrary/testgamepropertyproxy.h>
 
-#include <osg/observer_ptr>
+#include <dtCore/observerptr.h>
 
 #include <cppunit/extensions/HelperMacros.h>
 
@@ -258,7 +258,8 @@ void GameActorTests::TestGameActorProxyDeleteError()
       CPPUNIT_ASSERT_MESSAGE("GameActor should have a reference to the proxy", &gap->GetGameActor().GetGameActorProxy() == gap.get());
 
       dtCore::RefPtr<dtGame::GameActor> actor = &gap->GetGameActor();
-      osg::observer_ptr<dtGame::GameActorProxy> gapObserver = gap.get();
+      dtCore::ObserverPtr<dtGame::GameActorProxy> gapObserver(gap.get());
+      dtCore::ObserverPtr<dtGame::GameActorProxy> gapOb2(gapObserver);
       gap = NULL;
       
       CPPUNIT_ASSERT_MESSAGE("Nothing should be holding onto the proxy, so the observer should be NULL", !gapObserver.valid());
