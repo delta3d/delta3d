@@ -60,32 +60,94 @@ namespace dtAI
       
       public:
 
+        /**
+         * Adds a new agent to the particle list with the assigned probability
+         */
          void AddAgent(BaseNPC* pAgent, float pProbability);
+
+        /**
+         * Clones a given agent and adds it to the particle list, uses the CloneFunctor
+         * assigned in the constructor
+         */
          BaseNPC* CloneAgent(BaseNPC* pAgent);
 
+        /**
+         * Adds the given agent to the remove list, it is important to note
+         * that the agent won't actually be removed until update.
+         * once the agents are removed the probabilities are renormalized
+         */
          void RemoveAgent(BaseNPC* pAgent);
+
+        /**
+         * Removes all the agents in the list from the particle list
+         * this function will remove the agents immediately and re-normalize 
+         * the probability pool
+         */
          void RemoveAgents(const AgentList& pList);
 
+        /**
+         * Adds one agent to the remove list and adds its probability to the 
+         * other agent instead of equally re-normalizing probabilities which 
+         * would happen if the agent was simply just removed
+         */
          void CombineAgents(BaseNPC* pAgentToDelete, BaseNPC* pAgentToAddTo);
 
+        /**
+         * Removes all agents from the list, happens immediately
+         */
          void ClearAllAgents();
 
+        /**
+         * Updates all agents, filters them using the filter function assigned in
+         * the constructor, pops off all excess particles of least probability
+         * (use SetMaxAgents() to adjust this number, removes all agents that are 
+         * on the remove list and the re-normalizes the remaining particles probabilities
+         */
          void UpdateAgents(double dt);
 
+        /**
+         * Returns a const version of the particle list
+         */
          const ParticleList& GetParticleList() const;
+
+        /**
+         * Returns a non const version of the particle list
+         * NOTE: unexpected behavoir will result if agent particles
+         * are removed from this list, please use RemoveAgent() for that
+         */
          ParticleList& GetParticleList();
 
+        /**
+         * Returns the max number of agents allowed, when the agent list gets too big
+         * the agents of least probability are removed from the list
+         */
          unsigned GetMaxAgents() const;
+
+        /**
+         * Sets the maximum number of allowable agents, additional agents are removed
+         * on update starting with the least probable
+         */
          void SetMaxAgents(unsigned pMaxAgents);
 
+        /**
+         * Given a pointer to a BaseNPC, this returns the associated AgentParticle
+         * in the list
+         */
          AgentParticle* GetAgentParticle(BaseNPC* pNPC);
-
+ 
+        /**
+         * Returns true if an NPC has been added to the remove list, and will be removed
+         * on update
+         */
          bool InRemoveList(const BaseNPC* pNPC) const;
 
    private:
 
+      ///Sorts agents based on their probability
       void SortAgents();
-      void ReAdjustProbabilities(float pProbRemoved);
+      //re-normalizes probabilities when agents are removed
+      void ReAdjustProbabilities(float pProbRemoved); 
+      //removes excess agents starting with the least probable
       float RemoveOverflowAgents(); 
 
       ParticleList mAgents;
