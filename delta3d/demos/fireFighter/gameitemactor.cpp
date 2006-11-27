@@ -90,9 +90,9 @@ GameItemActor::GameItemActor(dtGame::GameActorProxy &proxy) :
 
 GameItemActor::~GameItemActor()
 {
-   dtAudio::Sound *snd = mInventoryAddSnd.take();
+   dtAudio::Sound *snd = mInventoryAddSnd.release();
    dtAudio::AudioManager::GetInstance().FreeSound(snd);
-   snd = mItemUseSnd.take();
+   snd = mItemUseSnd.release();
    dtAudio::AudioManager::GetInstance().FreeSound(snd);
 }
 

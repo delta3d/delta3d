@@ -18,7 +18,7 @@
  * 
  * @author William E. Johnson II
  */
-#include <fireFighter/HelpWindow.h>
+#include <fireFighter/helpwindow.h>
 #include <fireFighter/exception.h>
 
 //solves a problem with the prefix headers

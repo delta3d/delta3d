@@ -90,7 +90,7 @@ FlySequenceActor::~FlySequenceActor()
    if(snd != NULL)
    {
       snd->UnloadFile();
-      dtAudio::Sound *sound = snd.take();
+      dtAudio::Sound *sound = snd.release();
       dtAudio::AudioManager::GetInstance().FreeSound(sound);
       snd = NULL;
    }
