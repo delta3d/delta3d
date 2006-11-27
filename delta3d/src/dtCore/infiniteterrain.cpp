@@ -103,7 +103,8 @@ InfiniteTerrain::InfiniteTerrain(const std::string& name, osg::Image* textureIma
       mVerticalScale(30.0f),
       mBuildDistance(3000.0f),
       mSmoothCollisionsEnabled(false),
-      mClearFlag(false)
+      mClearFlag(false),
+      mLOSPostSpacing(0.f)
 {
    SetName(name);
 
@@ -192,6 +193,8 @@ InfiniteTerrain::InfiniteTerrain(const std::string& name, osg::Image* textureIma
 
    // Default collision category = 3
    SetCollisionCategoryBits( UNSIGNED_BIT(3) );
+
+   SetLineOfSightSpacing(25.f); // a bit less than DTED L2
 }
 
 /**
@@ -914,5 +917,43 @@ int InfiniteTerrain::AABBTest(dGeomID o1, dGeomID o2, dReal aabb2[6])
       return 0;
    }
 }
+
+bool InfiniteTerrain::IsClearLineOfSight( const osg::Vec3& pointOne,
+                                         const osg::Vec3& pointTwo )
+{
+   // A smarter version would check basic generation parameters 
+   // to see if two points are above any generated terrain 
+
+   // cant see undergound (or underwater)
+   if (pointOne.z() < 0 || pointTwo.z() < 0)
+      return false;
+
+   osg::Vec3 ray = pointTwo - pointOne;
+   double length( ray.length() );
+   // If closer than post spacing, then clear LOS
+   if( length < GetLineOfSightSpacing() )
+   {
+      return true;
+   }
+
+   float stepsize( GetLineOfSightSpacing() / length );
+   double s( 0.0 );
+
+   while( s < 1.0 )
+   {
+      osg::Vec3 testPt = pointOne + ray*s;
+      double h( GetHeight( testPt.x(), testPt.y() ) );
+
+      // Segment blocked by terrain
+      if( h >= testPt.z() )
+      {
+         return false;
+      }
+      s += stepsize;
+   }
+
+   // Walked full ray, so clear LOS
+   return true;
+}   
 
 }

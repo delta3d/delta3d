@@ -185,6 +185,30 @@ namespace dtCore
           */
          virtual bool FilterContact( dContact* contact, Transformable* collider ) { return true; }
 
+        /**
+          * Given pointOne and pointTwo, both in world space and with all coordinates
+          * in Cartesian space (essentially in meters along X, Y and Z),
+          * returns true if there is a clear line of sight and false if the view
+          * is blocked.
+          * @note This method only samples points at a predetermined distance from
+          *       pointOne to pointTwo and not be 100% accurate with actual terrrain.
+          *
+          * @param pointOne The start point.
+          * @param pointTwo The end point.
+          * @return Returns true if there is a clear line of sight from pointOne to
+          * pointTwo and false if the view is blocked.
+          * @see SetLineOfSightSpacing()
+          */
+         bool IsClearLineOfSight( const osg::Vec3& pointOne,
+                                  const osg::Vec3& pointTwo );
+
+         /**
+           * Set the stepping distance to sample points for the line of sight calculation (meters).
+           * Defaults to 25 meters.
+           */
+         void SetLineOfSightSpacing(float spacing) {mLOSPostSpacing = spacing;}
+
+         float GetLineOfSightSpacing() const {return mLOSPostSpacing;}
 
       private:
 
@@ -329,6 +353,7 @@ namespace dtCore
          float mMinColorIncrement, mMaxColorIncrement;
          osg::Vec3 mMinColor, mIdealColor, mMaxColor;
 
+         float mLOSPostSpacing; ///<used to samples points for LOS calculations
    };
 }
 
