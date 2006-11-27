@@ -24,7 +24,7 @@
 #include <dtGame/gmcomponent.h>
 #include <dtCore/timer.h>
 #include <fireFighter/export.h>
-#include <ceguiudim.h> // So we get CEGUI::UVector2 without including everything in CEGUI.h
+#include <CEGUIUDim.h> // So we get CEGUI::UVector2 without including everything in CEGUI.h
 
 // Forward declarations
 namespace CEGUI
