@@ -121,7 +121,8 @@ void MyGameEntryPoint::OnStartup(dtGame::GameManager &gameManager)
 
    // init our file path so it can find GUI Scheme
    // add extra data paths here if you need them
-   dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());   
+   dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList() + 
+      ":" + dtCore::GetDeltaDataPathList() + "/gui");   
 
    dtDAL::Project::GetInstance().SetContext("StageProject");
 
