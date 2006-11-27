@@ -104,8 +104,8 @@ void CEUIDrawableTests::TestInput()
 
    // CHECK THE ORDER OF THE LISTENERS!  GUI SHOULD BE FIRST
    dtGUI::GUIManager* gmgr = app->GetGUIManager();
-   CPPUNIT_ASSERT_EQUAL(static_cast<const dtCore::KeyboardListener*>(gmgr->GetGUIDrawable()->GetKeyboardListener()),
-                        kb->GetListeners().front().get() );
+   CPPUNIT_ASSERT(static_cast<const dtCore::KeyboardListener*>(gmgr->GetGUIDrawable()->GetKeyboardListener())
+                       == kb->GetListeners().front().get() );
 
    KeyScanObserver obs(CEGUI::Key::N);
    obs.ResetHit();
