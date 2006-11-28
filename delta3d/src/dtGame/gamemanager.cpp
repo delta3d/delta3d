@@ -19,6 +19,7 @@
 * Matthew W. Campbell, William E. Johnson II, David Guthrie
 */
 #include <prefix/dtgameprefix-src.h>
+
 #include <dtGame/gamemanager.h>
 #include <dtGame/messagefactory.h>
 #include <dtGame/basemessages.h>
@@ -26,15 +27,18 @@
 #include <dtGame/exceptionenum.h>
 #include <dtGame/gmcomponent.h>
 #include <dtGame/invokable.h>
+
 #include <dtDAL/actortype.h>
 #include <dtDAL/project.h>
 #include <dtDAL/map.h>
 #include <dtDAL/librarymanager.h>
 #include <dtDAL/gameeventmanager.h>
+
 #include <dtCore/system.h>
 #include <dtCore/camera.h>
 #include <dtCore/scene.h>
 #include <dtCore/timer.h>
+
 #include <dtUtil/stringutils.h>
 #include <dtUtil/log.h>
 
@@ -1196,8 +1200,6 @@ namespace dtGame
          {
             mActorProxyMap.insert(std::make_pair(proxies[i]->GetId(), dtCore::RefPtr<dtDAL::ActorProxy>(proxies[i].get())));
          }
-
-         //mScene->AddDrawable(proxies[i]->GetActor());
 
       }
       dtDAL::Project::GetInstance().LoadMapIntoScene(map, *mScene.get(), addBillboards, enableDatabasePaging);

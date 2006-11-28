@@ -60,12 +60,13 @@
 #include <dtEditQt/taskeditor.h>
 
 #include <dtUtil/log.h>
+#include <dtUtil/fileutils.h>
+#include <dtUtil/librarysharingmanager.h>
 #include <dtCore/isector.h>
 #include <dtDAL/project.h>
 #include <dtDAL/map.h>
 #include <dtDAL/exceptionenum.h>
 #include <dtDAL/transformableactorproxy.h>
-#include <dtUtil/fileutils.h>
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/actorproxyicon.h>
 
@@ -1089,20 +1090,40 @@ namespace dtEditQt
         {
             try
             {
-                newMap = &dtDAL::Project::GetInstance().GetMap(oldMapName);
+               newMap = &dtDAL::Project::GetInstance().GetMap(oldMapName);
             }
             catch (dtUtil::Exception &e)
             {
-                EditorData::GetInstance().getMainWindow()->endWaitCursor();
-                QMessageBox::critical((QWidget *)EditorData::GetInstance().getMainWindow(),
-                        tr("Map Open Error"), e.What().c_str(), tr("OK"));
-                return;
+               EditorData::GetInstance().getMainWindow()->endWaitCursor();
+               QMessageBox::critical((QWidget *)EditorData::GetInstance().getMainWindow(),
+                  tr("Map Open Error"), e.What().c_str(), tr("OK"));
+               return;
             }
         }
 
         //Load the new map into the current scene.
         if (newMap != NULL)
         {
+            const std::vector<std::string>& missingLibs = newMap->GetMissingLibraries();
+   
+            if (!missingLibs.empty())
+            {
+               QString errors(tr("The following libraries listed in the map could not be loaded:\n\n"));
+               for (unsigned i = 0; i < missingLibs.size(); ++i)
+               {
+                  std::string nativeName = dtUtil::LibrarySharingManager::GetPlatformSpecificLibraryName(missingLibs[i]);
+                  errors.append(nativeName.c_str());
+                  errors.append("\n");
+               }
+
+               errors.append("\nThis could happen for a number of reasons. Please ensure that the name is correct, ");
+               errors.append("the library is in the path (or the working directory), the library can load correctly, and dependent libraries are available.");
+               errors.append("If you save this map, the library and any actors referenced by the library will be lost.");
+
+               QMessageBox::warning((QWidget *)EditorData::GetInstance().getMainWindow(),
+                  tr("Missing Libraries"), errors, tr("OK"));
+            }
+
             try
             {
                dtDAL::Project::GetInstance().LoadMapIntoScene(*newMap,
