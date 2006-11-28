@@ -61,7 +61,7 @@ namespace dtGame
    GameManager::GameManager(dtCore::Scene &scene) :
       mMachineInfo(new MachineInfo()),
       mScene(&scene),
-      mFactory("GameManager MessageFactory",*mMachineInfo,""),
+      mFactory("GameManager MessageFactory", *mMachineInfo, ""),
       mStatisticsInterval(0),
       mStatsLastFragmentDump(0),
       mStatsNumProcMessages(0),
