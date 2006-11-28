@@ -903,7 +903,7 @@ void GameActorTests::TestMessageProcessingPerformance()
       // loop multiple ticks. 
       for (int tickCounter = 0; tickCounter < numTicks; tickCounter ++)
       {
-         // loop through the TON of actors (22 properties each) 
+         // loop through the TON of actors (38 properties each) 
          for (unsigned int actorIndex = 0; actorIndex < testProxies.size(); actorIndex++)
          {
             // get one of hte actors
@@ -929,7 +929,7 @@ void GameActorTests::TestMessageProcessingPerformance()
 
       // 1 second???
       std::ostringstream ss;
-      ss << "Update Msgs for " << numActors << " actors, 22 props, " << numTicks << " ticks took - [" << timeDelta << "] seconds " << std::endl;
+      ss << "Update Msgs for " << numActors << " actors, 38 props, " << numTicks << " ticks took - [" << timeDelta << "] seconds " << std::endl;
       //CPPUNIT_ASSERT_MESSAGE(ss.str(), timeDelta < 10.0);
    }
    catch (const dtUtil::Exception &e)
