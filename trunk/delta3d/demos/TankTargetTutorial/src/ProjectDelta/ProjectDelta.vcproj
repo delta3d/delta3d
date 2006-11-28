@@ -34,7 +34,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="dtDALd.lib CEGUIBase_d.lib dtActorsd.lib Producerd.lib OpenThreadsWin32d.lib osgd.lib osgDBd.lib osgUtild.lib oded.lib dtCored.lib dtABCd.lib dtChard.lib dtAudiod.lib dtUtild.lib dtGamed.lib xerces-c_2D.lib osgParticled.lib"
-				OutputFile="..\..\TutorialLibraryd.dll"
+				OutputFile="..\..\..\..\bin\TutorialLibraryd.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(DELTA_LIB)"
 				IgnoreDefaultLibraryNames="libc.lib;libcmt;libcd;libcmtd"
@@ -85,7 +85,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="dtDAL.lib CEGUIBase.lib dtActors.lib Producer.lib OpenThreadsWin32.lib osg.lib osgDB.lib osgParticle.lib osgUtil.lib ode.lib dtCore.lib dtABC.lib dtChar.lib dtAudio.lib dtUtil.lib dtGame.lib xerces-c_2.lib"
-				OutputFile="..\..\TutorialLibrary.dll"
+				OutputFile="..\..\..\..\bin\TutorialLibrary.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(DELTA_LIB)"
 				IgnoreDefaultLibraryNames="libc;libcmt"

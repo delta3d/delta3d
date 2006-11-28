@@ -98,11 +98,8 @@ void HUDComponent::SetupGUI(dtCore::DeltaWin *win)
       // Initialize CEGUI
       mGUI = new dtGUI::CEUIDrawable(win);
 
-      // BEGIN - MAKE THIS PART OF BaseHUDComponent ???
-      // probably have params for the scheme, the default font, and main win name
-
       // get our scheme path
-      std::string scheme = "gui/schemes/WindowsLookSkin.scheme";
+      std::string scheme = "gui/schemes/WindowsLook.scheme";
       std::string path = dtCore::FindFileInPathList(scheme);
       if(path.empty())
       {
@@ -115,37 +112,38 @@ void HUDComponent::SetupGUI(dtCore::DeltaWin *win)
       CEGUI::SchemeManager::getSingleton().loadScheme(path);
       dtUtil::FileUtils::GetInstance().PopDirectory();
 
+      // Setup our root window
       CEGUI::WindowManager *wm = CEGUI::WindowManager::getSingletonPtr();
-      CEGUI::System::getSingleton().setDefaultFont("Tahoma-12");
+      CEGUI::System::getSingleton().setDefaultFont("DejaVuSans-10");
       mMainWindow = wm->createWindow("DefaultGUISheet", "root");
       CEGUI::System::getSingleton().setGUISheet(mMainWindow);
 
-      // END - MAKE THIS PART OF BaseHUDComponent ???
-
-
       // main HUD window for drawing, covers full window size
-      mOverlay = static_cast<CEGUI::StaticImage*>(
+      mOverlay = static_cast<CEGUI::Window*>(
          wm->createWindow("WindowsLook/StaticImage", "Main Overlay"));
       mMainWindow->addChildWindow(mOverlay);
-      mOverlay->setPosition(CEGUI::Point(0.0f, 0.0f));
-      mOverlay->setSize(CEGUI::Size(1.0f, 1.0f));
-      mOverlay->setFrameEnabled(false);
-      mOverlay->setBackgroundEnabled(false);
+      mOverlay->setPosition(CEGUI::UVector2(cegui_absdim(0), cegui_absdim(0)));
+      mOverlay->setSize(CEGUI::UVector2(cegui_reldim(1.0f), cegui_reldim(1.0f)));
+      mOverlay->setProperty("FrameEnabled", "false");
+      mOverlay->setProperty("BackgroundEnabled", "false");
 
       // Sim Time
       mSimTimeText = CreateText("Sim Time", mOverlay, "",
          5.0f, 20.0f, 200.0f, 25.0f);
-      mSimTimeText->setTextColours(CEGUI::colour(1.0, 1.0, 1.0));
+      mSimTimeText->setProperty("TextColours", 
+         CEGUI::PropertyHelper::colourToString(CEGUI::colour(1.0f, 1.0f, 1.0f)));
 
       // Num Messages
       mNumMessagesText = CreateText("Num Messages", mOverlay, "",
          5.0f, 45.0f, 200.0f, 25.0f);
-      mNumMessagesText->setTextColours(CEGUI::colour(1.0, 1.0, 1.0));
+      mNumMessagesText->setProperty("TextColours", 
+         CEGUI::PropertyHelper::colourToString(CEGUI::colour(1.0f, 1.0f, 1.0f)));
 
       // Last Message
       mLastMessageText = CreateText("Last Message", mOverlay, "Last Msg:",
          5.0f, 70.0f, 300.0f, 25.0f);
-      mLastMessageText->setTextColours(CEGUI::colour(1.0, 1.0, 1.0));
+      mLastMessageText->setProperty("TextColours", 
+         CEGUI::PropertyHelper::colourToString(CEGUI::colour(1.0f, 1.0f, 1.0f)));
 
       // Note - don't forget to add the cegui drawable to the scene after this method, or you get nothing.
    }
@@ -159,8 +157,8 @@ void HUDComponent::SetupGUI(dtCore::DeltaWin *win)
 }
 
 //////////////////////////////////////////////////////////////////////////
-void HUDComponent::UpdateStaticText(CEGUI::StaticText *textControl, char *newText,
-                                  float red, float blue, float green, float x, float y)
+void HUDComponent::UpdateStaticText(CEGUI::Window *textControl, char *newText,
+                                    float red, float blue, float green, float x, float y)
 {
    if (textControl != NULL)
    {
@@ -169,13 +167,17 @@ void HUDComponent::UpdateStaticText(CEGUI::StaticText *textControl, char *newTex
       {
          textControl->setText(newText);
          if (red >= 0.00 && blue >= 0.0 && green >= 0.0)
-            textControl->setTextColours(CEGUI::colour(red, blue, green));
+         {
+            textControl->setProperty("TextColours", 
+               CEGUI::PropertyHelper::colourToString(CEGUI::colour(red, green, blue)));
+            //textControl->setTextColours(CEGUI::colour(red, blue, green));
+         }
       }
       // position
       if (x > 0.0 && y > 0.0)
       {
-         CEGUI::Point position = textControl->getPosition();
-         CEGUI::Point newPos(x, y);
+         CEGUI::UVector2 position = textControl->getPosition();
+         CEGUI::UVector2 newPos(cegui_absdim(x), cegui_absdim(y));
          if (position != newPos)
             textControl->setPosition(newPos);
       }
@@ -183,20 +185,24 @@ void HUDComponent::UpdateStaticText(CEGUI::StaticText *textControl, char *newTex
 }
 
 //////////////////////////////////////////////////////////////////////////
-CEGUI::StaticText * HUDComponent::CreateText(const std::string &name, CEGUI::StaticImage *parent, const std::string &text,
-                                 float x, float y, float width, float height)
+CEGUI::Window * HUDComponent::CreateText(const std::string &name, CEGUI::Window *parent, const std::string &text,
+                                         float x, float y, float width, float height)
 {
    CEGUI::WindowManager *wm = CEGUI::WindowManager::getSingletonPtr();
 
    // create base window and set our default attribs
-   CEGUI::StaticText* result = static_cast<CEGUI::StaticText*>(wm->createWindow("WindowsLook/StaticText", name));
+   CEGUI::Window* result = wm->createWindow("WindowsLook/StaticText", name);
    parent->addChildWindow(result);
-   result->setMetricsMode(CEGUI::Absolute);
+   //result->setMetricsMode(CEGUI::Absolute);
+   //result->setPosition(CEGUI::Point(x, y));
+   //result->setSize(CEGUI::Size(width, height));
+   //result->setFrameEnabled(false);
+   //result->setBackgroundEnabled(false);
    result->setText(text);
-   result->setPosition(CEGUI::Point(x, y));
-   result->setSize(CEGUI::Size(width, height));
-   result->setFrameEnabled(false);
-   result->setBackgroundEnabled(false);
+   result->setPosition(CEGUI::UVector2(cegui_absdim(x), cegui_absdim(y)));
+   result->setSize(CEGUI::UVector2(cegui_absdim(width), cegui_absdim(height)));
+   result->setProperty("FrameEnabled", "false");
+   result->setProperty("BackgroundEnabled", "false");
    result->setHorizontalAlignment(CEGUI::HA_LEFT);
    result->setVerticalAlignment(CEGUI::VA_TOP);
    result->show();
