@@ -176,7 +176,7 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
 
-   void NamedGroupParameter::ToDataStream(DataStream& stream) const 
+   void NamedGroupParameter::ToDataStream(dtUtil::DataStream& stream) const 
    {
       // Write out the size of the list so we know how many times to loop in FromDataStream
       stream << (unsigned int)mParameterList.size();
@@ -192,7 +192,7 @@ namespace dtDAL
 
    ///////////////////////////////////////////////////////////////////////////////
 
-   void NamedGroupParameter::FromDataStream(DataStream& stream) 
+   void NamedGroupParameter::FromDataStream(dtUtil::DataStream& stream) 
    {
       // Read in the size of the stream
       unsigned int size;
@@ -1286,7 +1286,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedResourceParameter::ToDataStream(DataStream &stream) const
+   void NamedResourceParameter::ToDataStream(dtUtil::DataStream &stream) const
    {
       if (IsList())
       {
@@ -1305,7 +1305,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedResourceParameter::FromDataStream(DataStream &stream)
+   void NamedResourceParameter::FromDataStream(dtUtil::DataStream &stream)
    {
       std::string resourceId;
       std::string resourceDisplayName;

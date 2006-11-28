@@ -203,7 +203,7 @@ void MessageTests::setUp()
       dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
       dtCore::System::GetInstance().Start();
 
-      dtDAL::Project::GetInstance().SetContext("dtGame/TestGameProject");
+      dtDAL::Project::GetInstance().SetContext("TestGameProject");
    }
    catch (const dtUtil::Exception& ex)
    {
