@@ -75,5 +75,7 @@ void initDeltaDrawableBindings()
       .def("GetChildIndex", &DeltaDrawable::GetChildIndex)
       .def("CanBeChild", &DeltaDrawable::CanBeChild)
       .def("RenderProxyNode", &DeltaDrawable::RenderProxyNode, RPN_overloads())
-      .def("Emancipate", &DeltaDrawable::Emancipate);
+      .def("Emancipate", &DeltaDrawable::Emancipate)
+      .def("GetBoundingSphere", &DeltaDrawable::GetBoundingSphere)
+      ;
 }

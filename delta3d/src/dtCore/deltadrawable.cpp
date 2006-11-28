@@ -189,3 +189,18 @@ void DeltaDrawable::SetProxyNode( osg::Node* proxyNode )
 {
    mProxyNode = proxyNode;
 }
+
+void DeltaDrawable::GetBoundingSphere( osg::Vec3 *center, float *radius )
+{
+   osg::Node* node = GetOSGNode();
+   if (node != NULL)
+   {
+      osg::BoundingSphere bs = node->getBound();
+      center->set(bs.center());
+      *radius = bs.radius();
+   }
+   else
+   {
+      LOG_WARNING("Can't calculate Bounding Sphere, there is no geometry associated with this DeltaDrawable");
+   }
+}

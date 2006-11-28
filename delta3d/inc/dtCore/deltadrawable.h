@@ -120,6 +120,13 @@ namespace dtCore
 
          virtual void RenderProxyNode( bool enable = true );
 
+         /**
+           * Get the bounding sphere information for this Drawable.
+           * @param center : pointer to fill out with the sphere's center position
+           * @param radius : float pointer to fill out with the sphere's radius
+           */
+         void GetBoundingSphere( osg::Vec3 *center, float *radius );
+
       protected:
 
          DeltaDrawable( const std::string& name = "DeltaDrawable" );
