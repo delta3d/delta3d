@@ -1031,6 +1031,8 @@ void Transformable::SetCollisionCappedCylinder(osg::Node* node)
       DrawableVisitor<CylinderFunctor> cv;
       node->accept(cv);
 
+      GetMatrixNode()->setMatrix( oldMatrix );
+
       float radius = cv.mFunctor.mRadius;
       float length = cv.mFunctor.mMaxZ - cv.mFunctor.mMinZ;
 
@@ -1047,7 +1049,7 @@ void Transformable::SetCollisionCappedCylinder(osg::Node* node)
 
          dGeomTransformSetGeom(mGeomID, subTransformID);
 
-         GetMatrixNode()->setMatrix( oldMatrix );
+         //GetMatrixNode()->setMatrix( oldMatrix );
 
          RenderCollisionGeometry(mRenderingGeometry);
          SetCollisionDetection(true);
