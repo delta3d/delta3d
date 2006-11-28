@@ -133,8 +133,8 @@ class TEST_AAR_EXPORT TestAARHUD : public dtGame::GMComponent
        * won't do anything since they use a color and position < 0.
        */
       void UpdateStaticText(CEGUI::Window *textControl, char *newText,
-                            const std::string &color = "00000000",
-                            float x = -1, float y = -1);
+         float red = -1.0f, float green = -1.0f, float blue = -1.0f, float x = -1.0f, float y = -1.0f);
+
    private:
 
       /**
