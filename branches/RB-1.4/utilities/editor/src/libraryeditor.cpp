@@ -319,10 +319,11 @@ void LibraryEditor::shiftLibraryDown()
 void LibraryEditor::handleFailure(const int errorCode, const std::string &errorMsg)
 {
    if(errorCode == ERROR_LIB_NOT_LOADED)
+   {
       QMessageBox::critical(this, tr("Failed to delete library"),
                             tr("Library is not currently loaded"),
                             tr("&OK"));
-   
+   }
    else if(errorCode == ERROR_ACTORS_IN_LIB)
    {
       QString str = "Failed to remove the library, " + QString::number(numActorsInScene) +
@@ -332,16 +333,23 @@ void LibraryEditor::handleFailure(const int errorCode, const std::string &errorM
                             str,
                             tr("&OK"));
    }
-   
    else if(errorCode == ERROR_INVALID_LIB)
+   {
+      QString message(tr("Error Message: "));
+      message.append(errorMsg.c_str());
+      message.append("\n\nPlease ensure that the name is correct, the library is in the path (or the working directory), ");
+      message.append("the library can load correctly, and dependent libraries are available.");
+
       QMessageBox::critical(this, tr("Failed to import library"),
-                            tr(errorMsg.c_str()),
+                            message,
                             tr("&OK"));
-   
+   }
    else
+   {
       QMessageBox::critical(this, tr("Failed to delete library"),
                             tr("Failed to remove the library, unknown error"),
                             tr("&OK"));
+   }
 }
 
 void LibraryEditor::enableButtons()
