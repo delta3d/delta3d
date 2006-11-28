@@ -45,7 +45,7 @@
 #include <dtDAL/exceptionenum.h>
 #include <dtDAL/abstractparameter.h>
 
-using dtUtil::DataStream;
+//using dtUtil::dtUtil::DataStream;
 
 namespace dtDAL
 {
@@ -69,9 +69,9 @@ namespace dtDAL
          ///@return the name of this message parameter
          const std::string &GetName() const { return mName; }
 
-         virtual void ToDataStream(DataStream &stream) const = 0;
+         virtual void ToDataStream(dtUtil::DataStream &stream) const = 0;
 
-         virtual void FromDataStream(DataStream &stream) = 0;
+         virtual void FromDataStream(dtUtil::DataStream &stream) = 0;
 
          /**
           * @param otherParam the message parameter to make this one match.
@@ -162,9 +162,9 @@ namespace dtDAL
 
          virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::GROUP; }
 
-         virtual void ToDataStream(DataStream &stream) const;
+         virtual void ToDataStream(dtUtil::DataStream &stream) const;
 
-         virtual void FromDataStream(DataStream &stream);
+         virtual void FromDataStream(dtUtil::DataStream &stream);
 
          virtual const std::string ToString() const;
 
@@ -346,7 +346,7 @@ namespace dtDAL
             *mValueList = newValues;
          }
 
-         inline virtual void ToDataStream(DataStream &stream) const
+         inline virtual void ToDataStream(dtUtil::DataStream &stream) const
          {
             if (IsList())
             {
@@ -360,7 +360,7 @@ namespace dtDAL
             }
          }
 
-         inline virtual void FromDataStream(DataStream &stream)
+         inline virtual void FromDataStream(dtUtil::DataStream &stream)
          {
             if (IsList())
             {
@@ -1004,9 +1004,9 @@ namespace dtDAL
 
          virtual const dtDAL::DataType& GetDataType() const { return *mDataType; }
 
-         virtual void ToDataStream(DataStream &stream) const;
+         virtual void ToDataStream(dtUtil::DataStream &stream) const;
 
-         virtual void FromDataStream(DataStream &stream);
+         virtual void FromDataStream(dtUtil::DataStream &stream);
 
          virtual const std::string ToString() const;
 
