@@ -84,9 +84,6 @@ namespace dtCore
          void Emancipate();
 
          ///Return the number of DeltaDrawable children added
-         unsigned int GetNumChildren() { return mChildList.size(); }
-
-         ///Return the number of DeltaDrawable children added
          unsigned int GetNumChildren() const { return mChildList.size(); }
 
          ///Get the child specified by idx (0 to number of children-1)
@@ -101,14 +98,6 @@ namespace dtCore
           * return the number of children.
           */
          unsigned int GetChildIndex( const DeltaDrawable* child ) const;
-
-         /**
-          * Check if the supplied DeltaDrawable can actually be a chil of this instance.
-          *
-          * @param child : The child to test
-          * @return true if the supplied parameter can be a child
-          */
-         bool CanBeChild( DeltaDrawable *child );
 
          /**
           * Check if the supplied DeltaDrawable can actually be a chil of this instance.
