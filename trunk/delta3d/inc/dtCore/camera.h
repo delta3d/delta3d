@@ -76,7 +76,7 @@ namespace dtCore
                unsigned int width, height;
                camera.getProjectionRectangle( x,y,width, height);
                image->allocateImage(width, height, 1, GL_RGB, GL_UNSIGNED_BYTE);
-               image->readPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE);
+               image->readPixels(x, y, width, height, GL_RGB, GL_UNSIGNED_BYTE);
                osgDB::writeImageFile( *image.get(), mNameOfScreenShotToOutPut.c_str() ); // jpg, rgb, png, bmp
             }
          }
