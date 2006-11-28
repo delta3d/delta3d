@@ -1,2 +1,2 @@
 @echo off
-"%DELTA_ROOT%"\bin\Stage.exe
+"%DELTA_ROOT%"\bin\Staged.exe
