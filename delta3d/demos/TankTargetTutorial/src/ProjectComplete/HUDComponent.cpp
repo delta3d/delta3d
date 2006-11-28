@@ -214,7 +214,6 @@ void HUDComponent::UpdateStaticText(CEGUI::Window *textControl, char *newText,
          {
             textControl->setProperty("TextColours", 
                CEGUI::PropertyHelper::colourToString(CEGUI::colour(red, green, blue)));
-            //textControl->setTextColours(CEGUI::colour(red, blue, green));
          }
       }
       // position
@@ -237,11 +236,6 @@ CEGUI::Window * HUDComponent::CreateText(const std::string &name, CEGUI::Window 
    // create base window and set our default attribs
    CEGUI::Window* result = wm->createWindow("WindowsLook/StaticText", name);
    parent->addChildWindow(result);
-   //result->setMetricsMode(CEGUI::Absolute);
-   //result->setPosition(CEGUI::Point(x, y));
-   //result->setSize(CEGUI::Size(width, height));
-   //result->setFrameEnabled(false);
-   //result->setBackgroundEnabled(false);
    result->setText(text);
    result->setPosition(CEGUI::UVector2(cegui_absdim(x), cegui_absdim(y)));
    result->setSize(CEGUI::UVector2(cegui_absdim(width), cegui_absdim(height)));
