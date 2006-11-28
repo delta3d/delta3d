@@ -96,31 +96,6 @@ unsigned int DeltaDrawable::GetChildIndex( const DeltaDrawable* child ) const
 *
 * @return bool  : True if it can be a child, false otherwise
 */
-bool DeltaDrawable::CanBeChild(DeltaDrawable *child)
-{
-   if (child->GetParent()!=NULL) return false;
-   if (this == child) return false;
-   
-   //loop through parent's parents and make sure they're not == child
-   RefPtr<DeltaDrawable> t = this->GetParent();
-   while (t != NULL)
-   {
-      if (t==child) return false;
-      t = t->GetParent();
-   }
-   
-   return true;
-}
-
-/*!
-* Check to see if the supplied DeltaDrawable can be a child to this instance.
-* To be valid, it can't already have a parent, can't be this instance, and
-* can't be the parent of this instance.
-*
-* @param *child : The candidate child to be tested
-*
-* @return bool  : True if it can be a child, false otherwise
-*/
 bool DeltaDrawable::CanBeChild(DeltaDrawable *child) const
 {
    if(child->GetParent() != NULL) 
