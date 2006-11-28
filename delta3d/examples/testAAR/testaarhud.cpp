@@ -339,26 +339,26 @@ void TestAARHUD::TickHUD()
 
       // Playback State
       if (dtGame::LogStateEnumeration::LOGGER_STATE_IDLE == mLogController->GetLastKnownStatus().GetStateEnum())
-         UpdateStaticText(mStateText, "IDLE", "FFFFFFFF");
+         UpdateStaticText(mStateText, "IDLE", 1.0f, 1.0f, 1.0f);
       else if (dtGame::LogStateEnumeration::LOGGER_STATE_PLAYBACK == mLogController->GetLastKnownStatus().GetStateEnum())
-         UpdateStaticText(mStateText, "PLAYBACK", "FF19FF19");
+         UpdateStaticText(mStateText, "PLAYBACK", 0.1f, 1.0f, 0.1f);
       else // if (dtGame::LogStateEnumeration::LOGGER_STATE_RECORD == mLogController->GetLastKnownStatus().GetStateEnum())
-         UpdateStaticText(mStateText, "RECORD", "FFFF1919");
+         UpdateStaticText(mStateText, "RECORD", 1.0f, 0.1f, 0.1f);
 
       // Sim Time
       snprintf(clin, HUDCONTROLMAXTEXTSIZE, "SimTime: %.2f", GetGameManager()->GetSimulationTime());
       curYPos = mTextYTopOffset;
-      UpdateStaticText(mSimTimeText, clin, "", w - mRightTextXOffset, curYPos);
+      UpdateStaticText(mSimTimeText, clin, -1.0f, -1.0f, -1.0f, w - mRightTextXOffset, curYPos);
 
       // speed factor
       curYPos += mTextHeight + 2;
       if (!GetGameManager()->IsPaused())
       {
          snprintf(clin, HUDCONTROLMAXTEXTSIZE, "Speed: %.2fX", GetGameManager()->GetTimeScale());
-         UpdateStaticText(mSpeedFactorText, clin, "FFFFFFFF", w - mRightTextXOffset, curYPos);
+         UpdateStaticText(mSpeedFactorText, clin, 1.0f, 1.0f, 1.0f, w - mRightTextXOffset, curYPos);
       }
       else
-         UpdateStaticText(mSpeedFactorText, "Speed: *Paused*", "FFFF1919", w - mRightTextXOffset, curYPos);
+         UpdateStaticText(mSpeedFactorText, "Speed: *Paused*", 1.0f, 0.1f, 0.1f, w - mRightTextXOffset, curYPos);
 
       UpdateMediumDetailData();
       UpdateHighDetailData((int)(w - mRightTextXOffset), curYPos);
@@ -392,9 +392,9 @@ void TestAARHUD::UpdateMediumDetailData()
       // update our task header
       snprintf(clin, HUDCONTROLMAXTEXTSIZE, "Tasks (%i of %i):", numComplete, numAdded);
       if (numComplete < numAdded)
-         UpdateStaticText(mTasksHeaderText, clin, "FFFFFFFF");
+         UpdateStaticText(mTasksHeaderText, clin, 1.0f, 1.0f, 1.0f);
       else
-         UpdateStaticText(mTasksHeaderText, clin, "FF19FF10");
+         UpdateStaticText(mTasksHeaderText, clin, 0.1f, 1.0f, 0.1f);
    }
 }
 
@@ -463,38 +463,38 @@ void TestAARHUD::UpdateHighDetailData(int baseWidth, float &curYPos)
       // Num Messages
       snprintf(clin, HUDCONTROLMAXTEXTSIZE, "Num Msgs: %lu", mLogController->GetLastKnownStatus().GetNumMessages());
       curYPos += (mTextHeight + 2) * 2;
-      UpdateStaticText(mNumMessagesText, clin, "", baseWidth, curYPos);
+      UpdateStaticText(mNumMessagesText, clin, -1.0f, -1.0f, -1.0f, baseWidth, curYPos);
 
       // Record Duration
       snprintf(clin, HUDCONTROLMAXTEXTSIZE, "Duration: %.2f", mLogController->GetLastKnownStatus().GetCurrentRecordDuration());
       curYPos += mTextHeight + 2;
-      UpdateStaticText(mRecordDurationText, clin, "", baseWidth, curYPos);
+      UpdateStaticText(mRecordDurationText, clin, -1.0f, -1.0f, -1.0f, baseWidth, curYPos);
 
       // Number of Tags
       curYPos += mTextHeight + 2;
-      UpdateStaticText(mNumTagsText, numTagsStr, "", baseWidth, curYPos);
+      UpdateStaticText(mNumTagsText, numTagsStr, -1.0f, -1.0f, -1.0f, baseWidth, curYPos);
 
       // Last Tag
       curYPos += mTextHeight + 2;
-      UpdateStaticText(mLastTagText, lastTagStr, "", baseWidth, curYPos);
+      UpdateStaticText(mLastTagText, lastTagStr, -1.0f, -1.0f, -1.0f, baseWidth, curYPos);
 
       // Num Frames
       curYPos += mTextHeight + 2;
-      UpdateStaticText(mNumFramesText, numFramesStr, "", baseWidth, curYPos);
+      UpdateStaticText(mNumFramesText, numFramesStr, -1.0f, -1.0f, -1.0f, baseWidth, curYPos);
 
       // Num Frames
       curYPos += mTextHeight + 2;
-      UpdateStaticText(mLastFrameText, lastFrameStr, "", baseWidth, curYPos);
+      UpdateStaticText(mLastFrameText, lastFrameStr, -1.0f, -1.0f, -1.0f, baseWidth, curYPos);
 
       // Current Log
       snprintf(clin, HUDCONTROLMAXTEXTSIZE, "LogFile: %s", mLogController->GetLastKnownStatus().GetLogFile().c_str());
       curYPos += mTextHeight + 2;
-      UpdateStaticText(mCurLogText, clin, "", baseWidth, curYPos);
+      UpdateStaticText(mCurLogText, clin, -1.0f, -1.0f, -1.0f, baseWidth, curYPos);
 
       // Current Map
       snprintf(clin, HUDCONTROLMAXTEXTSIZE, "CurMap: %s", mLogController->GetLastKnownStatus().GetActiveMap().c_str());
       curYPos += mTextHeight + 2;
-      UpdateStaticText(mCurMapText, clin, "", baseWidth, curYPos);
+      UpdateStaticText(mCurMapText, clin, -1.0f, -1.0f, -1.0f, baseWidth, curYPos);
    }
 }
 
@@ -515,13 +515,13 @@ int TestAARHUD::RecursivelyAddTasks(const std::string &indent, int curIndex,
 
          snprintf(clin, HUDCONTROLMAXTEXTSIZE, "%s %s - %s - %.2f", indent.c_str(), task->GetName().c_str(),
             "Y", task->GetScore());
-         UpdateStaticText(mTaskTextList[curIndex + totalNumAdded], clin, "FF00FF00");
+         UpdateStaticText(mTaskTextList[curIndex + totalNumAdded], clin, 0.1f, 1.0f, 0.1f);
       }
       else
       {
          snprintf(clin, HUDCONTROLMAXTEXTSIZE, "%s %s - %s - %.2f", indent.c_str(), task->GetName().c_str(),
             "N", task->GetScore());
-         UpdateStaticText(mTaskTextList[curIndex + totalNumAdded], clin, "FFFFFFFF");
+         UpdateStaticText(mTaskTextList[curIndex + totalNumAdded], clin, 1.0f, 1.0f, 1.0f);
       }
 
       totalNumAdded += 1;
@@ -543,20 +543,21 @@ int TestAARHUD::RecursivelyAddTasks(const std::string &indent, int curIndex,
 
 //////////////////////////////////////////////////////////////////////////
 void TestAARHUD::UpdateStaticText(CEGUI::Window *textControl, char *newText,
-                                  const std::string &color, float x, float y)
+                                    float red, float green, float blue, float x, float y)
 {
-   using namespace CEGUI;
-
    if (textControl != NULL)
    {
       // text and color
       if (newText != NULL && textControl->getText() != std::string(newText))
       {
          textControl->setText(newText);
-         if (!color.empty())
+         if (red >= 0.00 && blue >= 0.0 && green >= 0.0)
          {
-            String col = PropertyHelper::colourRectToString(ColourRect(PropertyHelper::stringToColour(String(color))));
-            textControl->setProperty("TextColours", col);
+            textControl->setProperty("TextColours", 
+               CEGUI::PropertyHelper::colourToString(CEGUI::colour(red, green, blue)));
+            // how to do it with a string.  Use "FF00FF00" or "FFFFFFFF" for examples
+            //String col = PropertyHelper::colourRectToString(ColourRect(PropertyHelper::stringToColour(String(color))));
+            //textControl->setProperty("TextColours", col);         }
          }
       }
       // position
@@ -724,6 +725,9 @@ CEGUI::Window * TestAARHUD::CreateText(const std::string &name, CEGUI::Window *p
    result->setProperty("BackgroundEnabled", "false");
    result->setHorizontalAlignment(CEGUI::HA_LEFT);
    result->setVerticalAlignment(CEGUI::VA_TOP);
+   // set default color to white
+   result->setProperty("TextColours", 
+      CEGUI::PropertyHelper::colourToString(CEGUI::colour(1.0f, 1.0f, 1.0f)));
    result->show();
 
    return result;
