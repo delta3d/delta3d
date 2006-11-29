@@ -56,6 +56,12 @@ namespace dtGame
          static const MessageType INFO_GAME_EVENT;
          static const MessageType INFO_ENVIRONMENT_CHANGED;
 
+         static const MessageType INFO_MAP_LOAD_BEGIN;
+         static const MessageType INFO_MAP_UNLOAD_BEGIN;
+         static const MessageType INFO_MAP_CHANGE_BEGIN;
+         static const MessageType INFO_MAP_CHANGED;
+
+
          ///Message sent when a player enters the world.  The Actor deleted message can be used when the player leaves.
          static const MessageType INFO_PLAYER_ENTERED_WORLD;
 
