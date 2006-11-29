@@ -18,6 +18,9 @@
  *
  * William E. Johnson II
  */
+#ifndef DELTA_PLAYER_START_ACTOR_PROXY
+#define DELTA_PLAYER_START_ACTOR_PROXY
+ 
 #include <dtCore/transformable.h>
 #include <dtDAL/plugin_export.h>
 #include <dtDAL/transformableactorproxy.h>
@@ -79,3 +82,4 @@ namespace dtActors
          virtual ~PlayerStartActorProxy();
    };
 }
+#endif

@@ -18,6 +18,9 @@
  *
  * William E. Johnson II
  */
+#ifndef DELTA_TEST_DAL_ENVIRONMENT_ACTOR
+#define DELTA_TEST_DAL_ENVIRONMENT_ACTOR
+
 #include <dtDAL/plugin_export.h>
 #include <dtDAL/environmentactor.h>
 #include <dtABC/weather.h>
@@ -115,3 +118,4 @@ class DT_PLUGIN_EXPORT TestDALEnvironmentActorProxy : public dtDAL::ActorProxy
 
       virtual bool IsPlaceable() const { return false; }
 };
+#endif
