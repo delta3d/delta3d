@@ -239,16 +239,13 @@ int main( int argc, const char* argv[] )
 * \image html testGui.jpg
 *
 * We need to include some header files to define the classes we'll be using.
+* \skip <dtABC/application.h
+* \until <dtUtil/exception.h>
 *
-* This is the main header definition for the CEGUI system.
-* \skipline CEGUI.h
+* Now includes the headers for the CEGUI classes we'll be using.
+* \skip <CEGUI/CEGUISchemeManager.h>
+* \until <CEGUI/elements/CEGUIPushButton.h>
 * 
-* Here are our Delta3D header files.
-* \note Keep in mind, the namespace header files will automatically link in the appropriate
-* library files on Windows platforms.
-*
-* \skip dtgui.h
-* \until dtabc.h
 * 
 * Lets also tell the compiler about the namespaces we're using so we don't have to
 * type as much.
@@ -304,7 +301,7 @@ int main( int argc, const char* argv[] )
 * CEGUI scheme, default cursor, and font.  We absolutely have to have a Scheme file
 * loaded before we can continue.
 * \skip BuildGUI
-* \until setDefaultFont
+* \until getDefaultFont
 * \note Notice we use the dtCore::FindFileInPathList method to find the .scheme file. This will
 * use the search paths we supplied to find the file.
 *
