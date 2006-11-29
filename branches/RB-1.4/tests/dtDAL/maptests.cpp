@@ -163,7 +163,6 @@ void MapTests::setUp()
         {
             dtDAL::Project::GetInstance().DeleteMap(*i, true);
         }
-
     }
     catch (const dtUtil::Exception& e)
     {
@@ -175,37 +174,44 @@ void MapTests::setUp()
 ///////////////////////////////////////////////////////////////////////////////////////
 void MapTests::tearDown()
 {
-    dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-    try
-    {
-        dtDAL::Project::GetInstance().SetContext("WorkingMapProject");
-        //copy the vector because the act of deleting a map will reload the map names list.
-        const std::set<std::string> v = dtDAL::Project::GetInstance().GetMapNames();
+   dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+   bool shouldPopDir;
+   
+   std::string currentDir = fileUtils.CurrentDirectory();
+   std::string projectDir("dtDAL");
+   shouldPopDir = currentDir.substr(currentDir.size() - projectDir.size()) == projectDir;
+   
+   try
+   {
+      dtDAL::Project::GetInstance().SetContext("WorkingMapProject");
+      //copy the vector because the act of deleting a map will reload the map names list.
+      const std::set<std::string> v = dtDAL::Project::GetInstance().GetMapNames();
 
-        for (std::set<std::string>::const_iterator i = v.begin(); i != v.end(); i++) {
-            dtDAL::Project::GetInstance().DeleteMap(*i);
-        }
+      for (std::set<std::string>::const_iterator i = v.begin(); i != v.end(); i++) {
+         dtDAL::Project::GetInstance().DeleteMap(*i);
+      }
 
-        std::string rbodyToDelete("WorkingMapProject/Characters/marine/marine.rbody");
+      std::string rbodyToDelete("WorkingMapProject/Characters/marine/marine.rbody");
 
-        if (fileUtils.DirExists(rbodyToDelete))
-            fileUtils.DirDelete(rbodyToDelete, true);
-        else if (fileUtils.FileExists(rbodyToDelete))
-           fileUtils.FileDelete(rbodyToDelete);
+      if (fileUtils.DirExists(rbodyToDelete))
+         fileUtils.DirDelete(rbodyToDelete, true);
+      else if (fileUtils.FileExists(rbodyToDelete))
+         fileUtils.FileDelete(rbodyToDelete);
 
-        if (dtDAL::LibraryManager::GetInstance().GetRegistry(mExampleLibraryName) != NULL)
-        {
-           dtDAL::LibraryManager::GetInstance().UnloadActorRegistry(mExampleLibraryName);
-        }
-
-    }
-    catch (const dtUtil::Exception& e)
-    {
-        fileUtils.PopDirectory();
-        CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
-    }
-    fileUtils.PopDirectory();
-
+      if (dtDAL::LibraryManager::GetInstance().GetRegistry(mExampleLibraryName) != NULL)
+      {
+         dtDAL::LibraryManager::GetInstance().UnloadActorRegistry(mExampleLibraryName);
+      }
+            
+      if (shouldPopDir)
+         fileUtils.PopDirectory();      
+   }
+   catch (const dtUtil::Exception& e)
+   {
+      if (shouldPopDir)
+         fileUtils.PopDirectory();
+      CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
+   }
 }
 
 

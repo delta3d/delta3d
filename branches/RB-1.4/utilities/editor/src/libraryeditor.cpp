@@ -106,103 +106,103 @@ namespace dtEditQt
       mainLayout->addLayout(buttonLayout);
       
       refreshLibraries();
-}
-
-LibraryEditor::~LibraryEditor()
-{
-   
-}
-
-void LibraryEditor::getMapLibNames(vector<QListWidgetItem*>& items) const
-{
-   items.clear();
-   Map *currentMap = EditorData::GetInstance().getCurrentMap();
-   if (currentMap == NULL)
-      return;
-   
-   const vector<string>& libNames = currentMap->GetAllLibraries();
-   
-   for(unsigned int i = 0; i < libNames.size(); i++)
-   {
-      QListWidgetItem *p = new QListWidgetItem;
-      ActorPluginRegistry *reg =
-         LibraryManager::GetInstance().GetRegistry(libNames[i]);
-      QString toolTip = tr("File: ") +
-         tr(LibraryManager::GetInstance().GetPlatformSpecificLibraryName(libNames[i]).c_str()) +
-         tr(" \nDescription: ") + tr(reg->GetDescription().c_str());
-      p->setText(tr(libNames[i].c_str()));
-      p->setToolTip(toolTip);
-      items.push_back(p);
    }
-}
 
-void LibraryEditor::refreshLibraries()
-{
-   libView->clear();
-
-   vector<QListWidgetItem*> libs;
-   getMapLibNames(libs);
-   for(unsigned int i = 0; i < libs.size(); i++)
-      libView->addItem(libs[i]);
-   
-   connect(libView, SIGNAL(itemSelectionChanged()), this, SLOT(enableButtons()));
-   if(libView->currentItem() == NULL)
-      emit noLibsSelected();
-   else
-      libView->setItemSelected(libView->currentItem(), true);
-}
-
-///////////////////////// Slots /////////////////////////
-void LibraryEditor::spawnFileBrowser()
-{
-   QString file;
-   string dir = EditorData::GetInstance().getCurrentLibraryDirectory();
-   QString hack = dir.c_str();
-   hack.replace('\\', '/');
-   
-   string libs= "Libraries(" + LibraryManager::GetInstance().GetPlatformSpecificLibraryName("*") + ")";
-   
-   file = QFileDialog::getOpenFileName(this, tr("Select a library"), "", tr(libs.c_str()));
-   
-   // did they hit cancel?
-   if(file.isEmpty())
-      return;
-   
-   std::string libName =
-      LibraryManager::GetInstance().GetPlatformIndependentLibraryName(file.toStdString());
-   
-   if(libName == "dtActors" || libName == "dtActorsd")
+   LibraryEditor::~LibraryEditor()
    {
-      QMessageBox::information(this, tr("Library already loaded"),
-                               tr("This is the base Delta3D actors library and is loaded by default"),
-                               tr("&OK"));
-      return;
+      
    }
-   
-   // If the map already contains this library, no point in continuing
-   vector<string> curLibs = EditorData::GetInstance().getCurrentMap()->GetAllLibraries();
-   for(unsigned int i = 0; i < curLibs.size(); i++)
-      if(curLibs[i] == libName)
+
+   void LibraryEditor::getMapLibNames(vector<QListWidgetItem*>& items) const
+   {
+      items.clear();
+      Map *currentMap = EditorData::GetInstance().getCurrentMap();
+      if (currentMap == NULL)
          return;
-   try
-   {
-      LibraryManager::GetInstance().LoadActorRegistry(libName);
+      
+      const vector<string>& libNames = currentMap->GetAllLibraries();
+      
+      for(unsigned int i = 0; i < libNames.size(); i++)
+      {
+         QListWidgetItem *p = new QListWidgetItem;
+         ActorPluginRegistry *reg =
+            LibraryManager::GetInstance().GetRegistry(libNames[i]);
+         QString toolTip = tr("File: ") +
+            tr(LibraryManager::GetInstance().GetPlatformSpecificLibraryName(libNames[i]).c_str()) +
+            tr(" \nDescription: ") + tr(reg->GetDescription().c_str());
+         p->setText(tr(libNames[i].c_str()));
+         p->setToolTip(toolTip);
+         items.push_back(p);
+      }
    }
-   catch(const dtUtil::Exception &e)
+
+   void LibraryEditor::refreshLibraries()
    {
-      LOG_ERROR(e.What());
-      handleFailure(ERROR_INVALID_LIB, e.What());
-      return;
-   }
-   EditorData::GetInstance().getCurrentMap()->AddLibrary(libName,"");
+      libView->clear();
    
-   refreshLibraries();
-   EditorEvents::GetInstance().emitMapLibraryImported();
-   libView->setCurrentItem(libView->item(libView->count() - 1));
-   EditorData::GetInstance().setCurrentLibraryDirectory(osgDB::getFilePath(file.toStdString()));
-   ((QMainWindow*)EditorData::GetInstance().getMainWindow())->setWindowTitle(
-                                                                             EditorActions::GetInstance().getWindowName(/*true*/).c_str());
-}
+      vector<QListWidgetItem*> libs;
+      getMapLibNames(libs);
+      for(unsigned int i = 0; i < libs.size(); i++)
+         libView->addItem(libs[i]);
+      
+      connect(libView, SIGNAL(itemSelectionChanged()), this, SLOT(enableButtons()));
+      if(libView->currentItem() == NULL)
+         emit noLibsSelected();
+      else
+         libView->setItemSelected(libView->currentItem(), true);
+   }
+
+   ///////////////////////// Slots /////////////////////////
+   void LibraryEditor::spawnFileBrowser()
+   {
+      QString file;
+      string dir = EditorData::GetInstance().getCurrentLibraryDirectory();
+      QString hack = dir.c_str();
+      hack.replace('\\', '/');
+      
+      string libs= "Libraries(" + LibraryManager::GetInstance().GetPlatformSpecificLibraryName("*") + ")";
+      
+      file = QFileDialog::getOpenFileName(this, tr("Select a library"), "", tr(libs.c_str()));
+      
+      // did they hit cancel?
+      if(file.isEmpty())
+         return;
+      
+      std::string libName =
+         LibraryManager::GetInstance().GetPlatformIndependentLibraryName(file.toStdString());
+      
+      if(libName == "dtActors" || libName == "dtActorsd")
+      {
+         QMessageBox::information(this, tr("Library already loaded"),
+                                  tr("This is the base Delta3D actors library and is loaded by default"),
+                                  tr("&OK"));
+         return;
+      }
+      
+      // If the map already contains this library, no point in continuing
+      vector<string> curLibs = EditorData::GetInstance().getCurrentMap()->GetAllLibraries();
+      for(unsigned int i = 0; i < curLibs.size(); i++)
+         if(curLibs[i] == libName)
+            return;
+      try
+      {
+         LibraryManager::GetInstance().LoadActorRegistry(libName);
+      }
+      catch(const dtUtil::Exception &e)
+      {
+         LOG_ERROR(e.What());
+         handleFailure(ERROR_INVALID_LIB, e.What());
+         return;
+      }
+      EditorData::GetInstance().getCurrentMap()->AddLibrary(libName,"");
+      
+      refreshLibraries();
+      EditorEvents::GetInstance().emitMapLibraryImported();
+      libView->setCurrentItem(libView->item(libView->count() - 1));
+      EditorData::GetInstance().setCurrentLibraryDirectory(osgDB::getFilePath(file.toStdString()));
+      ((QMainWindow*)EditorData::GetInstance().getMainWindow())->setWindowTitle(
+                                                                                EditorActions::GetInstance().getWindowName(/*true*/).c_str());
+   }
 
 void LibraryEditor::spawnDeleteConfirmation()
 {
