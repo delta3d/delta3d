@@ -18,8 +18,8 @@
 *
 * William E. Johnson II
 */
-#ifndef _EXAMPLE_ACTOR_LIB_H_
-#define _EXAMPLE_ACTOR_LIB_H_
+#ifndef DELTA_TEST_ACTOR_LIB
+#define DELTA_TEST_ACTOR_LIB
 
 #include <dtDAL/plugin_export.h>
 #include <dtDAL/actorpluginregistry.h>

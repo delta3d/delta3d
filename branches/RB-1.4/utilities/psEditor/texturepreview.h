@@ -1,6 +1,8 @@
 // texturepreview.h: Declaration of the TexturePreview class.
 //
 //////////////////////////////////////////////////////////////////////
+#ifndef DELTA_PSEDITOR_TEXTURE_PREVIEW
+#define DELTA_PSEDITOR_TEXTURE_PREVIEW
 
 #ifdef _MSC_VER
 #	pragma warning(push)
@@ -76,3 +78,4 @@ class TexturePreview : public Fl_Widget
        */
       osg::ref_ptr<osg::Image> mImage;   
 };
+#endif

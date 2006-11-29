@@ -18,7 +18,7 @@
 *
 * Matthew W. Campbell
 */
-#ifndef DELTA_SOARXTERRIANRENDERER
+#ifndef DELTA_SOARXTERRAINRENDERER
 #define DELTA_SOARXTERRAINRENDERER
 
 #include <osg/Image>
