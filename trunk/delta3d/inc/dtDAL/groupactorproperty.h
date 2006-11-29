@@ -18,6 +18,8 @@
  * 
  * David Guthrie
  */
+#ifndef DELTA_GROUP_ACTOR_PROPERTY
+#define DELTA_GROUP_ACTOR_PROPERTY
 
 #include <string> 
 #include <dtDAL/actorproperty.h>
@@ -114,3 +116,4 @@ namespace dtDAL
          const std::string mEditorType;
    };
 }
+#endif

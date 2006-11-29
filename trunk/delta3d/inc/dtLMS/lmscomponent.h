@@ -18,6 +18,9 @@
  *
  * @author Christopher DuBuc
  */
+#ifndef DELTA_LMS_COMPONENT
+#define DELTA_LMS_COMPONENT
+ 
 #include <dtGame/taskcomponent.h>
 #include <dtLMS/lmstaskstatus.h>
 #include <dtLMS/lmsmessage.h>
@@ -147,3 +150,4 @@ namespace dtLMS
          bool mNeedValidSocket;
    };
 }
+#endif
