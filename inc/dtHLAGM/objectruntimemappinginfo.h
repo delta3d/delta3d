@@ -18,6 +18,10 @@
  *
  * David Guthrie
  */
+
+#ifndef DELTA_OBJECT_RUNTIME_MAPPING_INFO
+#define DELTA_OBJECT_RUNTIME_MAPPING_INFO
+
 #include <map>
 #include <dtCore/uniqueid.h>
 #include <dtHLAGM/distypes.h>
@@ -121,3 +125,4 @@ namespace dtHLAGM
          std::map<RTI::ObjectHandle, dtCore::RefPtr<ObjectToActor> > mObjectHandleToClassMap;
    };
 }
+#endif
