@@ -22,6 +22,8 @@
 #include <dtUtil/deprecationmgr.h>
 #include <dtUtil/log.h>
 
+#include <cassert>
+
 using namespace dtUtil;
 
 namespace dtCore
@@ -40,7 +42,7 @@ extern "C" void ODEDebugHandler(int errnum, const char *msg, va_list ap)
 {
    Log::GetInstance().LogMessage(Log::LOG_ERROR, __FILE__, msg, ap);
 
-   exit(1);
+   assert(false);
 }
 
 // Replacement error handler for ODE
@@ -48,7 +50,7 @@ extern "C" void ODEErrorHandler(int errnum, const char *msg, va_list ap)
 {
    Log::GetInstance().LogMessage(Log::LOG_ERROR, __FILE__, msg, ap);
 
-   exit(1);
+   assert(false);
 }
 
 Scene::ParticleSystemFreezer::ParticleSystemFreezer()

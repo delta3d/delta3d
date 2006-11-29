@@ -312,6 +312,12 @@ namespace dtDAL
             for (dtUtil::DirectoryContents::const_iterator i = contents.begin(); i < contents.end(); ++i)
             {
                const std::string& f = *i;
+               
+               if (f.size() < 4 || f.substr(f.size()-4) != ".xml")
+               {
+                  continue;
+               }
+               
                std::string fp = Project::MAP_DIRECTORY + dtUtil::FileUtils::PATH_SEPARATOR + f;
                if (fileUtils.GetFileInfo(fp).fileType == dtUtil::REGULAR_FILE)
                {
