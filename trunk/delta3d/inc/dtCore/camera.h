@@ -54,37 +54,7 @@ namespace dtCore
    class CameraGroup;
    class DeltaWin;
    class Scene;
-
-   class DT_CORE_EXPORT ScreenShotCallback : public Producer::Camera::Callback
-   {
-      public :
-         ScreenShotCallback() : mTakeScreenShotNextFrame(false){}
-
-         void SetNameToOutPut(const std::string& name)
-         {
-            mTakeScreenShotNextFrame  = true;
-            mNameOfScreenShotToOutPut = name + ".jpg";
-         }
-
-         virtual void operator()(const Producer::Camera &camera)
-         {
-            if(mTakeScreenShotNextFrame)
-            {
-               mTakeScreenShotNextFrame = false;
-               osg::ref_ptr<osg::Image> image = new osg::Image;
-               int x,y;
-               unsigned int width, height;
-               camera.getProjectionRectangle( x,y,width, height);
-               image->allocateImage(width, height, 1, GL_RGB, GL_UNSIGNED_BYTE);
-               image->readPixels(x, y, width, height, GL_RGB, GL_UNSIGNED_BYTE);
-               osgDB::writeImageFile( *image.get(), mNameOfScreenShotToOutPut.c_str() ); // jpg, rgb, png, bmp
-            }
-         }
-
-      private:
-         bool  mTakeScreenShotNextFrame;
-         std::string mNameOfScreenShotToOutPut;
-   };
+   class ScreenShotCallback;
 
    /**
     * A dtCore::Camera is a view into the Scene.  It requires a dtCore::DeltaWin to 
@@ -171,8 +141,12 @@ namespace dtCore
       ///Get the supplied DeltaWin (could be NULL)
       DeltaWin* GetWindow();
 
-      /// Take a screen shot at end of next frame
-      void TakeScreenShot(std::string& nameToOutPut);
+      /**
+       * Take a screen shot at end of next frame
+       * @param namePrefix the prefix of the screenshot file to write
+       * @return the final file name of the screenshot that will be written next frame.
+       */
+      const std::string TakeScreenShot(const std::string& namePrefix);
 
       /** 
        *  Redraw the view.

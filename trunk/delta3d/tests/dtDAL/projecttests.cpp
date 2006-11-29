@@ -127,14 +127,23 @@ void ProjectTests::setUp() {
 
 
 void ProjectTests::tearDown() {
-    dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+   dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
-    fileUtils.FileDelete("terrain_simple.ive");
-    fileUtils.FileDelete("flatdirt.ive");
-    fileUtils.DirDelete("Testing", true);
-    fileUtils.DirDelete("recursiveDir", true);
+   fileUtils.FileDelete("terrain_simple.ive");
+   fileUtils.FileDelete("flatdirt.ive");
+   fileUtils.DirDelete("Testing", true);
+   fileUtils.DirDelete("recursiveDir", true);
 
-    fileUtils.PopDirectory();
+   //Delete a couple other projects
+   if (fileUtils.DirExists("TestProject"))
+      fileUtils.DirDelete("TestProject", true);
+   if (fileUtils.DirExists("Test2Project"))
+      fileUtils.DirDelete("Test2Project", true);
+
+   std::string currentDir = fileUtils.CurrentDirectory();
+   std::string projectDir("dtDAL");
+   if (currentDir.substr(currentDir.size() - projectDir.size()) == projectDir)
+      fileUtils.PopDirectory();
 }
 
 void ProjectTests::testFileIO()
