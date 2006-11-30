@@ -22,6 +22,7 @@
 
 #include <dtUtil/log.h>
 #include <dtUtil/fileutils.h>
+#include <dtUtil/exception.h>
 
 #include <dtCore/refptr.h>
 #include <dtCore/scene.h>
