@@ -50,7 +50,12 @@ namespace dtCore
                camera.getProjectionRectangle( x,y,width, height);
                image->allocateImage(width, height, 1, GL_RGB, GL_UNSIGNED_BYTE);
                image->readPixels(x, y, width, height, GL_RGB, GL_UNSIGNED_BYTE);
-               osgDB::writeImageFile( *image.get(), mNameOfScreenShotToOutput.c_str() ); // jpg, rgb, png, bmp
+               bool status = osgDB::writeImageFile( *image.get(), mNameOfScreenShotToOutput.c_str() ); // jpg, rgb, png, bmp
+               if (status == false)
+               {
+                  LOG_ERROR("Can't write out screenshot file: " + mNameOfScreenShotToOutput + 
+                            ". Does the osgDB plugin exist?");
+               }
             }
          }
 
