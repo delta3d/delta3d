@@ -627,7 +627,7 @@ namespace dtCore
    {
       if(mTargetAxis.valid())
       {
-         if(mSourceAxes.size() == 0)
+         if(mSourceAxes.size() != 0)
          {
             return mTargetAxis->SetState( mSourceAxes[mSourceAxes.size()-1]->GetState() );
          }
