@@ -29,6 +29,7 @@
 #include <dtHLAGM/rprparametertranslator.h>
 #include <dtHLAGM/distypes.h>
 #include <dtHLAGM/objectruntimemappinginfo.h>
+#include <dtGame/deadreckoningcomponent.h>
 
 namespace dtHLAGM
 {
@@ -1061,7 +1062,7 @@ namespace dtHLAGM
                   case 1:
                   {
                      dtCore::RefPtr<dtGame::FloatMessageParameter>  positionParam = 
-                        new dtGame::FloatMessageParameter( "Position", (float)(*paramsIter).GetParameterValue().GetArticulatedParts().GetValue());
+                        new dtGame::FloatMessageParameter( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_POSITION, (float)(*paramsIter).GetParameterValue().GetArticulatedParts().GetValue());
                      newGroupParam->AddParameter(*(dtGame::MessageParameter*)&(*positionParam.get()));
                   }
                   break;
@@ -1070,7 +1071,7 @@ namespace dtHLAGM
                   case 2:
                   {
                      dtCore::RefPtr<dtGame::FloatMessageParameter>  positionRateParam = 
-                        new dtGame::FloatMessageParameter( "PositionRate",(float)(*paramsIter).GetParameterValue().GetArticulatedParts().GetValue());
+                        new dtGame::FloatMessageParameter( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_POSITIONRATE,(float)(*paramsIter).GetParameterValue().GetArticulatedParts().GetValue());
                      newGroupParam->AddParameter(*(dtGame::MessageParameter*)&(*positionRateParam.get()));
                   }
                   break;
@@ -1079,7 +1080,7 @@ namespace dtHLAGM
                   case 3:
                   {
                      dtCore::RefPtr<dtGame::FloatMessageParameter>  extensionParam = 
-                        new dtGame::FloatMessageParameter( "Extension",(float)(*paramsIter).GetParameterValue().GetArticulatedParts().GetValue());
+                        new dtGame::FloatMessageParameter( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_EXTENSION,(float)(*paramsIter).GetParameterValue().GetArticulatedParts().GetValue());
                      newGroupParam->AddParameter(*(dtGame::MessageParameter*)&(*extensionParam.get()));
                   }
                   break;
@@ -1088,7 +1089,7 @@ namespace dtHLAGM
                   case 4:
                   {
                      dtCore::RefPtr<dtGame::FloatMessageParameter>  extensionRateParam = 
-                        new dtGame::FloatMessageParameter( "ExtensionRate",(float)(*paramsIter).GetParameterValue().GetArticulatedParts().GetValue());
+                        new dtGame::FloatMessageParameter( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_EXTENSIONRATE,(float)(*paramsIter).GetParameterValue().GetArticulatedParts().GetValue());
                      newGroupParam->AddParameter(*(dtGame::MessageParameter*)&(*extensionRateParam.get()));
                   }
                   break;
@@ -1097,7 +1098,7 @@ namespace dtHLAGM
                   case 5:
                   {
                      dtCore::RefPtr<dtGame::FloatMessageParameter>  locationXParam =
-                        new dtGame::FloatMessageParameter( "LocationX",(float)(*paramsIter).GetParameterValue().GetArticulatedParts().GetValue());
+                        new dtGame::FloatMessageParameter(  dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_X,(float)(*paramsIter).GetParameterValue().GetArticulatedParts().GetValue());
                      newGroupParam->AddParameter(*(dtGame::MessageParameter*)&(*locationXParam.get()));
                   }
                   break;
@@ -1106,7 +1107,7 @@ namespace dtHLAGM
                   case 6:
                   {
                      dtCore::RefPtr<dtGame::FloatMessageParameter>  locationXRateParam = 
-                        new dtGame::FloatMessageParameter( "LocationXRate",(float)(*paramsIter).GetParameterValue().GetArticulatedParts().GetValue());
+                        new dtGame::FloatMessageParameter( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_XRATE,(float)(*paramsIter).GetParameterValue().GetArticulatedParts().GetValue());
                      newGroupParam->AddParameter(*(dtGame::MessageParameter*)&(*locationXRateParam.get()));
                   }
                   break;
@@ -1115,7 +1116,7 @@ namespace dtHLAGM
                   case 7:
                   {
                         dtCore::RefPtr<dtGame::FloatMessageParameter>  locationYParam =
-                           new dtGame::FloatMessageParameter( "LocationY",(float)(*paramsIter).GetParameterValue().GetArticulatedParts().GetValue());
+                           new dtGame::FloatMessageParameter( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_Y,(float)(*paramsIter).GetParameterValue().GetArticulatedParts().GetValue());
                      newGroupParam->AddParameter(*(dtGame::MessageParameter*)&(*locationYParam.get()));
                   }
                   break;
@@ -1124,7 +1125,7 @@ namespace dtHLAGM
                   case 8:
                   {
                      dtCore::RefPtr<dtGame::FloatMessageParameter>  locationYRateParam =
-                        new dtGame::FloatMessageParameter( "LocationYRate",(float)(*paramsIter).GetParameterValue().GetArticulatedParts().GetValue());
+                        new dtGame::FloatMessageParameter( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_YRATE,(float)(*paramsIter).GetParameterValue().GetArticulatedParts().GetValue());
                      newGroupParam->AddParameter(*(dtGame::MessageParameter*)&(*locationYRateParam.get()));
                   }
                   break;
@@ -1133,7 +1134,7 @@ namespace dtHLAGM
                   case 9:
                   {
                      dtCore::RefPtr<dtGame::FloatMessageParameter>  locationZParam = 
-                        new dtGame::FloatMessageParameter( "LocationZ",(float)(*paramsIter).GetParameterValue().GetArticulatedParts().GetValue());
+                        new dtGame::FloatMessageParameter( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_Z,(float)(*paramsIter).GetParameterValue().GetArticulatedParts().GetValue());
                      newGroupParam->AddParameter(*(dtGame::MessageParameter*)&(*locationZParam.get()));
                   }
                   break;
@@ -1142,7 +1143,7 @@ namespace dtHLAGM
                   case 10:
                   {
                      dtCore::RefPtr<dtGame::FloatMessageParameter>  locationZRateParam = 
-                        new dtGame::FloatMessageParameter( "LocationZRate",(float)(*paramsIter).GetParameterValue().GetArticulatedParts().GetValue());
+                        new dtGame::FloatMessageParameter( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_ZRATE,(float)(*paramsIter).GetParameterValue().GetArticulatedParts().GetValue());
                      newGroupParam->AddParameter(*(dtGame::MessageParameter*)&(*locationZRateParam.get()));
                   }
                   break;
@@ -1151,7 +1152,7 @@ namespace dtHLAGM
                   case 11:
                   {
                      dtCore::RefPtr<dtGame::FloatMessageParameter>  azimuthParam = 
-                        new dtGame::FloatMessageParameter( "Azimuth",(float)(*paramsIter).GetParameterValue().GetArticulatedParts().GetValue());
+                        new dtGame::FloatMessageParameter( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_AZIMUTH,(float)(*paramsIter).GetParameterValue().GetArticulatedParts().GetValue());
                      newGroupParam->AddParameter(*(dtGame::MessageParameter*)&(*azimuthParam.get()));
                   }
                   break;
@@ -1160,7 +1161,7 @@ namespace dtHLAGM
                   case 12:
                   {
                      dtCore::RefPtr<dtGame::FloatMessageParameter>  azimuthRateParam = 
-                        new dtGame::FloatMessageParameter( "AzimuthRate",(float)(*paramsIter).GetParameterValue().GetArticulatedParts().GetValue());
+                        new dtGame::FloatMessageParameter( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_AZIMUTHRATE,(float)(*paramsIter).GetParameterValue().GetArticulatedParts().GetValue());
                      newGroupParam->AddParameter(*(dtGame::MessageParameter*)&(*azimuthRateParam.get()));
                   }
                   break;
@@ -1169,7 +1170,7 @@ namespace dtHLAGM
                   case 13:
                   {
                      dtCore::RefPtr<dtGame::FloatMessageParameter>  elevationParam = 
-                        new dtGame::FloatMessageParameter( "Elevation",(float)(*paramsIter).GetParameterValue().GetArticulatedParts().GetValue());
+                        new dtGame::FloatMessageParameter( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_ELEVATION,(float)(*paramsIter).GetParameterValue().GetArticulatedParts().GetValue());
                      newGroupParam->AddParameter(*(dtGame::MessageParameter*)&(*elevationParam.get()));
                   }
                   break;
@@ -1178,7 +1179,7 @@ namespace dtHLAGM
                   case 14:
                   {
                      dtCore::RefPtr<dtGame::FloatMessageParameter>  elevationRateParam = 
-                        new dtGame::FloatMessageParameter( "ElevationRate",(float)(*paramsIter).GetParameterValue().GetArticulatedParts().GetValue());
+                        new dtGame::FloatMessageParameter( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_ELEVATIONRATE,(float)(*paramsIter).GetParameterValue().GetArticulatedParts().GetValue());
                      newGroupParam->AddParameter(*(dtGame::MessageParameter*)&(*elevationRateParam.get()));
                   }
                   break;
@@ -1187,7 +1188,7 @@ namespace dtHLAGM
                   case 15:
                   {
                      dtCore::RefPtr<dtGame::FloatMessageParameter>  rotationParam = 
-                        new dtGame::FloatMessageParameter( "Rotation",(float)(*paramsIter).GetParameterValue().GetArticulatedParts().GetValue());
+                        new dtGame::FloatMessageParameter( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_ROTATION,(float)(*paramsIter).GetParameterValue().GetArticulatedParts().GetValue());
                      newGroupParam->AddParameter(*(dtGame::MessageParameter*)&(*rotationParam.get()));
                   }
                   break;
@@ -1196,7 +1197,7 @@ namespace dtHLAGM
                   case 16:
                   {
                      dtCore::RefPtr<dtGame::FloatMessageParameter>  rotationRateParam = 
-                        new dtGame::FloatMessageParameter( "RotationRate",(float)(*paramsIter).GetParameterValue().GetArticulatedParts().GetValue());
+                        new dtGame::FloatMessageParameter( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_ROTATIONRATE,(float)(*paramsIter).GetParameterValue().GetArticulatedParts().GetValue());
                      newGroupParam->AddParameter(*(dtGame::MessageParameter*)&(*rotationRateParam.get()));
                   }
                   break;
