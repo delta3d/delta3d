@@ -157,6 +157,9 @@ cd $(TargetDir)
 				RelativePath="..\..\..\tests\dtCore\buttontests.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\tests\dtCore\cameratests.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\tests\dtGUI\ceuidrawabletests.cpp">
 			</File>
 			<File
