@@ -41,6 +41,7 @@
 #include <dtGame/basemessages.h>
 #include <dtGame/gameactor.h>
 #include <dtGame/defaultmessageprocessor.h>
+#include <dtGame/actorupdatemessage.h>
 #include <dtActors/gamemeshactor.h>
 #include <dtActors/engineactorregistry.h>
 #include <dtDAL/librarymanager.h>
@@ -876,8 +877,8 @@ void GMLoggerTests::TestBinaryLogStreamJumpToKeyFrame()
 {
    dtGame::MessageFactory &msgFactory = mGameManager->GetMessageFactory();
    dtCore::RefPtr<dtGame::BinaryLogStream> stream =  new dtGame::BinaryLogStream(msgFactory);
-   dtCore::RefPtr<dtGame::TickMessage> tickMessage =
-      (dtGame::TickMessage *)(msgFactory.CreateMessage(dtGame::MessageType::TICK_LOCAL)).get();
+   dtCore::RefPtr<dtGame::ActorUpdateMessage> actorUpdateMessage;
+   msgFactory.CreateMessage(dtGame::MessageType::INFO_ACTOR_UPDATED, actorUpdateMessage);
    unsigned int i;
 
    try
@@ -885,22 +886,30 @@ void GMLoggerTests::TestBinaryLogStreamJumpToKeyFrame()
       stream->Create(TESTS_DIR,LOGFILE);
       for (i=0; i<250; i++)
       {
-         tickMessage->SetDeltaSimTime(i);
-         tickMessage->SetDeltaRealTime(i+1);
-         tickMessage->SetSimTimeScale(i+2);
-         tickMessage->SetSimulationTime(i+3);
+         std::ostringstream ss;
+         ss << i;
+         actorUpdateMessage->SetName("Jojo" + ss.str());
+         actorUpdateMessage->SetActorTypeName("Bob" + ss.str());
+         actorUpdateMessage->SetActorTypeCategory("Smith" + ss.str());
+
+         actorUpdateMessage->AddUpdateParameter("Jed" + ss.str(),
+            dtDAL::DataType::STRING)->FromString("TestMe " + ss.str());
+
+         actorUpdateMessage->AddUpdateParameter("Jobob" + ss.str(),
+            dtDAL::DataType::INT)->FromString(ss.str());
 
          //Insert a keyframe every several messages...
-         if ((i%25) == 0)
-         {
-            dtGame::LogKeyframe keyFrame;
-            keyFrame.SetName("bob");
-            keyFrame.SetDescription("bob_desc");
-            keyFrame.SetSimTimeStamp(i);
-            stream->InsertKeyFrame(keyFrame);
-         }
+         //if ((i%25) == 0)
+         //{
+         //}
 
-         stream->WriteMessage(*tickMessage.get(),i);
+         dtGame::LogKeyframe keyFrame;
+         keyFrame.SetName("bob");
+         keyFrame.SetDescription("bob_desc");
+         keyFrame.SetSimTimeStamp(i);
+         stream->InsertKeyFrame(keyFrame);
+
+         stream->WriteMessage(*actorUpdateMessage.get(),i);
       }
 
       stream->Close();
@@ -914,12 +923,22 @@ void GMLoggerTests::TestBinaryLogStreamJumpToKeyFrame()
 
          double timeStamp;
          dtCore::RefPtr<dtGame::Message> m = stream->ReadMessage(timeStamp).get();
-         CPPUNIT_ASSERT(m != NULL);
+         CPPUNIT_ASSERT(m.valid());
 
-         dtCore::RefPtr<dtGame::TickMessage> msgToTest = static_cast<dtGame::TickMessage*>(m.get());
-         CPPUNIT_ASSERT_MESSAGE("Timestamps should be equal.",
-             (msgToTest->GetDeltaSimTime() == kfList[i].GetSimTimeStamp()) &&
-             (msgToTest->GetDeltaSimTime() == timeStamp));
+         dtCore::RefPtr<dtGame::ActorUpdateMessage> actorUpdateMessageRead = static_cast<dtGame::ActorUpdateMessage*>(m.get());
+         
+         std::ostringstream ss;
+         ss << i;
+         
+         CPPUNIT_ASSERT_EQUAL(actorUpdateMessageRead->GetName(),"Jojo" + ss.str());
+         CPPUNIT_ASSERT_EQUAL(actorUpdateMessageRead->GetActorTypeName(), "Bob" + ss.str());
+         CPPUNIT_ASSERT_EQUAL(actorUpdateMessageRead->GetActorTypeCategory(), "Smith" + ss.str());
+
+         CPPUNIT_ASSERT(actorUpdateMessageRead->GetUpdateParameter("Jed" + ss.str()) != NULL);
+         CPPUNIT_ASSERT_EQUAL(actorUpdateMessageRead->GetUpdateParameter("Jed" + ss.str())->ToString(), "TestMe " + ss.str());
+
+         CPPUNIT_ASSERT(actorUpdateMessageRead->GetUpdateParameter("Jobob" + ss.str()) != NULL);
+         CPPUNIT_ASSERT_EQUAL(actorUpdateMessageRead->GetUpdateParameter("Jobob" + ss.str())->ToString(), ss.str());
       }
 
       stream->Close();
