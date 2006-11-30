@@ -63,7 +63,7 @@ void HUDComponent::ProcessMessage(const dtGame::Message& message)
       else if (dtGame::LogStateEnumeration::LOGGER_STATE_IDLE == mLogController->GetLastKnownStatus().GetStateEnum())
          UpdateStaticText(mStateText, "IDLE", 1.0, 1.0, 1.0);
       else if (dtGame::LogStateEnumeration::LOGGER_STATE_PLAYBACK == mLogController->GetLastKnownStatus().GetStateEnum())
-         UpdateStaticText(mStateText, "PLAYBACK", 0.1, 1.0, 0.1);
+         UpdateStaticText(mStateText, "PLAYBACK", 0.1, 0.1, 1.0);
       else // if (dtGame::LogStateEnumeration::LOGGER_STATE_RECORD == mLogController->GetLastKnownStatus().GetStateEnum())
          UpdateStaticText(mStateText, "RECORD", 1.0, 0.1, 0.1);
    } 

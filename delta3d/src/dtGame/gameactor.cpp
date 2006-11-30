@@ -225,7 +225,13 @@ namespace dtGame
                GetActorType().GetName().c_str(), nameParam->ToString().c_str()
                );
          }
-         SetName(nameParam->GetValue());
+         // we prevent users from setting an empty name because there are many cases where a component will 
+         // generate an actor update message without knowing what the actor's name is (for instance the HLA 
+         // component doesn't know) in which case, it would overwrite the real name with an empty string == bad.
+         // But, we go ahead and allow this if it is the create message.  So, you can create an actor with an 
+         // empty name, but can't ever override it to an empty string after that.
+         if (msg.GetMessageType() == MessageType::INFO_ACTOR_CREATED || !nameParam->GetValue().empty())
+            SetName(nameParam->GetValue());
       }
 
       std::vector<const MessageParameter*> params;

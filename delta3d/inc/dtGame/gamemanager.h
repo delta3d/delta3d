@@ -247,6 +247,14 @@ namespace dtGame
          EnvironmentActorProxy* GetEnvironmentActor() { return mEnvironment.get(); }
 
          /**
+          * Creates a game actor based on the actor type but sets the isRemote status to true (== remote).
+          * @param The actor type to create.
+          * @throws dtDAL::ExceptionEnum::ObjectFactoryUnknownType
+          * @throws dtGame::ExceptionEnum::INVALID_PARAMETER if actortype is NOT a game actor
+          */
+         dtCore::RefPtr<dtGame::GameActorProxy> CreateRemoteGameActor(dtDAL::ActorType& actorType);
+
+         /**
           * Creates an actor based on the actor type.
           * @param The actor type to create.
           * @throws dtDAL::ExceptionEnum::ObjectFactoryUnknownType

@@ -53,7 +53,8 @@ TankActor::TankActor(dtGame::GameActorProxy &proxy) :
    mLastReportedVelocity(0.0f),
    mIsector( new dtCore::Isector() ),
    mNoTargetId("NO_TARGET_ID"),
-   mCurrentTargetId(mNoTargetId)
+   mCurrentTargetId(mNoTargetId),
+   mPropertiesUpdated(false)
 {
    SetName("HoverTank");
 }
@@ -65,6 +66,8 @@ void TankActor::TickLocal(const dtGame::Message &tickMessage)
    float deltaSimTime = tick.GetDeltaSimTime();
 
    ComputeVelocityAndTurn(deltaSimTime);
+   if (mPropertiesUpdated)
+      GetGameActorProxy().NotifyFullActorUpdate();
 
    MoveTheTank(deltaSimTime);
 
@@ -213,9 +216,13 @@ void TankActor::MoveTheTank(float deltaSimTime)
    if (mIsector->Update())
    {
       osgUtil::IntersectVisitor &iv = mIsector->GetIntersectVisitor();
-      osg::Vec3 p = iv.getHitList(mIsector->GetLineSegment())[0].getWorldIntersectPoint();
-      // make it hover
-      pos.z() = p.z() + 2.0f;
+      const dtCore::DeltaDrawable *hitActor = mIsector->GetClosestDeltaDrawable();
+      if (hitActor != this)
+      {
+         osg::Vec3 p = iv.getHitList(mIsector->GetLineSegment())[0].getWorldIntersectPoint();
+         // make it hover
+         pos.z() = p.z() + 2.0f;
+      }
    }
    
    osg::Vec3 xyz = GetGameActorProxy().GetRotation();
@@ -342,7 +349,7 @@ void TankActor::SetVelocity(float velocity)
             (mVelocity == MAXTANKVELOCITY || mVelocity == 0.0f || mVelocity == -MAXTANKVELOCITY )))
       {
          mLastReportedVelocity = mVelocity;
-         GetGameActorProxy().NotifyFullActorUpdate();
+         mPropertiesUpdated = true;
       }
 }
 
@@ -354,7 +361,7 @@ void TankActor::SetTurnRate(float rate)
       mTurnRate = rate;
       if (!IsRemote())
          // Notify the world that our turn rate changed. Only changes on keypress
-         GetGameActorProxy().NotifyFullActorUpdate();
+         mPropertiesUpdated = true;
    }
 }
 

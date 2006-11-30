@@ -111,7 +111,7 @@ void MyGameEntryPoint::Initialize(dtGame::GameApplication& app, int argc, char *
       if (mInPlaybackMode)
          LOG_ERROR("NOTE - Enabling Playback mode. If you have not already done so, please consider using a different map without the tank actor in it ('--mapName mapone_playback'). Playback will not be able to control a local instance of the tank properly."); 
    }
-   
+   //  --startPlayback 1 --mapName mapone_playback
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -98,32 +98,22 @@ namespace dtGame
 
    dtCore::RefPtr<GameActorProxy> DefaultMessageProcessor::ProcessRemoteCreateActor(const ActorUpdateMessage& msg) 
    {
-      const std::string typeName = msg.GetActorTypeName();
-      const std::string catName = msg.GetActorTypeCategory();
+      const std::string &typeName = msg.GetActorTypeName();
+      const std::string &catName = msg.GetActorTypeCategory();
 
-      dtCore::RefPtr<dtDAL::ActorProxy> ap;
+      dtCore::RefPtr<dtGame::GameActorProxy> gap;
       dtCore::RefPtr<dtDAL::ActorType> type = GetGameManager()->FindActorType(catName, typeName);
-      if (type == NULL)
-         EXCEPT(dtGame::ExceptionEnum::INVALID_PARAMETER, "The actor type parameters with value \"" 
-           + catName + "." +  typeName + "\" are invalid because no such actor type is registered.");
-           
-      ap = GetGameManager()->CreateActor(*type);
-      //Change the id to match the one this is ghosting.
-      ap->SetId(msg.GetAboutActorId());
-         
-      if (!ap->IsGameActorProxy())
+
+      if (!type.valid())
       {
          EXCEPT(dtGame::ExceptionEnum::INVALID_PARAMETER, "The actor type parameters with value \"" 
-            + catName + "." +  typeName + "\" are invalid because the specify a non-game actor proxy.");
+           + catName + "." + typeName + "\" are invalid because no such actor type is registered.");
       }
-      
-      GameActorProxy* gap = dynamic_cast<dtGame::GameActorProxy*>(ap.get());
-      
-      if (gap == NULL)
-         EXCEPT(dtGame::ExceptionEnum::INVALID_PARAMETER, "The actor type parameters with value \"" 
-            + catName + "." +  typeName 
-            + "\" are invalid because the specify a non-game actor proxy despite IsGameActorProxy returning true.");
-      
+           
+      gap = GetGameManager()->CreateRemoteGameActor(*type);
+      //Change the id to match the one this is ghosting.
+      gap->SetId(msg.GetAboutActorId());         
+     
       return gap;
    }
 

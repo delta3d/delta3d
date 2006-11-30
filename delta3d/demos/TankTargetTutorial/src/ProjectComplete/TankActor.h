@@ -120,6 +120,8 @@ class TUTORIAL_TANK_EXPORT TankActor : public dtActors::GameMeshActor
       dtCore::UniqueId mNoTargetId;
       dtCore::UniqueId mCurrentTargetId;
       dtCore::Transform mOriginalPosition;   
+
+      bool mPropertiesUpdated;
 };
 
 /**
