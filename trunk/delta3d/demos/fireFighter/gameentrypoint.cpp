@@ -83,12 +83,12 @@ void FireFighterGameEntryPoint::Initialize(dtGame::GameApplication& app, int arg
    if(parser.errors())
    {
       parser.writeErrorMessages(std::cout);
-      throw dtUtil::Exception(ExceptionEnum::COMMAND_LINE_EXCEPTION, "Command Line Error.", 
-         __FILE__, __LINE__);
+      //throw dtUtil::Exception(ExceptionEnum::COMMAND_LINE_EXCEPTION, "Command Line Error.", 
+      //   __FILE__, __LINE__);
    }
 
 #ifdef _DEBUG
-   app.GetWindow()->SetFullScreenMode(true);
+   app.GetWindow()->SetFullScreenMode(false);
 #else
    app.GetWindow()->SetFullScreenMode(true);
 #endif
