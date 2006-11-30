@@ -230,6 +230,11 @@ class FIRE_FIGHTER_EXPORT HUDComponent : public dtGame::GMComponent
        */
       void RefreshDebriefScreen();
 
+      /**
+       * Updates the main background during game play
+       */
+      void UpdateHUDBackground();
+
       CEGUI::PushButton *mStartWithObjectives, *mStart, *mQuit, *mReturnToMenu;
       CEGUI::Window *mMainWindow;
       CEGUI::Window *mWindowBackground, *mHUDBackground, *mDebriefBackground, 
