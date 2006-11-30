@@ -700,6 +700,7 @@ void HUDComponent::SetActivatedItem(GameItemActor *item)
       LOG_ERROR("Could not set the activated item. Unable to cast the parameter");
    }
 
+   // Update the main background
    if(mInventoryUseFireHoseIcon->isVisible())
    {
       if(mInventoryUseSCBAIcon->isVisible())
@@ -714,6 +715,10 @@ void HUDComponent::SetActivatedItem(GameItemActor *item)
    else if(mInventoryUseSCBAIcon->isVisible())
    {
       mHUDOverlay->setProperty("Image", "set:HUD_SCBAImage image:HUD_SCBAImage");
+   }
+   else
+   {
+      mHUDOverlay->setProperty("Image", "set:AlphaImage image:AlphaImage");
    }
 }
 
@@ -736,7 +741,8 @@ void HUDComponent::SetDeactivatedItem(GameItemActor *item)
       LOG_ERROR("Could not set the deactivated item. Unable to cast the parameter");
    }
 
-   /*if(mInventoryUseFireHoseIcon->isVisible())
+   // Update the main background
+   if(mInventoryUseFireHoseIcon->isVisible())
    {
       if(mInventoryUseSCBAIcon->isVisible())
       {
@@ -749,8 +755,12 @@ void HUDComponent::SetDeactivatedItem(GameItemActor *item)
    }
    else if(mInventoryUseSCBAIcon->isVisible())
    {
-      mHUDOverlay->setProperty("Image", "set: image:");
-   }*/
+      mHUDOverlay->setProperty("Image", "set:HUD_SCBAImage image:HUD_SCBAImage");
+   }
+   else
+   {
+      mHUDOverlay->setProperty("Image", "set:AlphaImage image:AlphaImage");
+   }
 }
 
 void HUDComponent::UpdateMediumDetailData(CEGUI::Window *parent)
