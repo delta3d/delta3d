@@ -76,7 +76,7 @@ InputComponent::InputComponent(const std::string &name) :
 
 InputComponent::~InputComponent()
 {
-   if(mBellSound != NULL)
+   /*if(mBellSound != NULL)
       dtAudio::AudioManager::GetInstance().FreeSound(mBellSound);
    if(mDebriefSound != NULL)
       dtAudio::AudioManager::GetInstance().FreeSound(mDebriefSound);
@@ -85,7 +85,7 @@ InputComponent::~InputComponent()
    if(mRunSound != NULL)
       dtAudio::AudioManager::GetInstance().FreeSound(mRunSound);
    if(mCrouchSound != NULL)
-      dtAudio::AudioManager::GetInstance().FreeSound(mCrouchSound);
+      dtAudio::AudioManager::GetInstance().FreeSound(mCrouchSound);*/
 }
 
 void InputComponent::ProcessMessage(const dtGame::Message &message)

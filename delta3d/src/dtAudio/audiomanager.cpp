@@ -2610,8 +2610,8 @@ void AudioManager::ListenerObj::Clear( void )
    ALfloat  pos[3L]  = { 0.0f, 0.0f, 0.0f };
 
    mGain       = 1.0f;
-   mVelo[0L]   =
-   mVelo[1L]   =
+   //mVelo[0L]   =
+   //mVelo[1L]   =
    mVelo[2L]   = 0.0f;
 
    alListenerf( AL_GAIN, mGain );
