@@ -603,6 +603,25 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   dtCore::RefPtr<dtGame::GameActorProxy> GameManager::CreateRemoteGameActor(dtDAL::ActorType& actorType)
+   {
+      dtCore::RefPtr<dtGame::GameActorProxy> result;
+      CreateActor(actorType, result);
+
+      if (result.valid())
+      {
+         result->SetRemote(true);
+      }
+      else 
+      {
+         EXCEPT(dtGame::ExceptionEnum::INVALID_PARAMETER, "The actor type \"" 
+            + actorType.GetCategory() + "." + actorType.GetName() + "\" is invalid because it is not a game actor type.");
+      }
+
+      return result;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    dtCore::RefPtr<dtDAL::ActorProxy> GameManager::CreateActor(dtDAL::ActorType& actorType) 
    {
       try
