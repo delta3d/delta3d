@@ -65,11 +65,28 @@ namespace dtGame
    class DT_GAME_EXPORT DeadReckoningHelper : public dtCore::Base
    {
       public:
-         class DeadReckoningDOF : public osg::Referenced
+         class DT_GAME_EXPORT DeadReckoningDOF : public osg::Referenced
          {
             public:
                DeadReckoningDOF(){}
-            
+          
+               static const std::string REPRESENATION_POSITION;
+               static const std::string REPRESENATION_POSITIONRATE;
+               static const std::string REPRESENATION_EXTENSION;
+               static const std::string REPRESENATION_EXTENSIONRATE;
+               static const std::string REPRESENATION_X;
+               static const std::string REPRESENATION_XRATE;
+               static const std::string REPRESENATION_Y;
+               static const std::string REPRESENATION_YRATE;
+               static const std::string REPRESENATION_Z;
+               static const std::string REPRESENATION_ZRATE;
+               static const std::string REPRESENATION_AZIMUTH;
+               static const std::string REPRESENATION_AZIMUTHRATE;
+               static const std::string REPRESENATION_ELEVATION;
+               static const std::string REPRESENATION_ELEVATIONRATE;
+               static const std::string REPRESENATION_ROTATION;
+               static const std::string REPRESENATION_ROTATIONRATE;
+
             protected:
                virtual ~DeadReckoningDOF(){}
             
