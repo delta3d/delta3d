@@ -157,6 +157,10 @@ void PlayerActor::AddItemToInventory(GameItemActor &item)
          xform.GetTranslation().z() -= 0.1f;
          mFireHose->SetTransform(xform);
 
+         mFireHose->GetTransform(xform, REL_CS);
+         xform.GetTranslation().y() += 0.1f;
+         mFireHose->SetTransform(xform, REL_CS);
+
          // Acquired the fire hose, fire the event
          const std::string &name = "AcquireFireHose";
 
