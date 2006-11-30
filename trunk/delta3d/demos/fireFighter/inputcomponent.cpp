@@ -100,7 +100,6 @@ void InputComponent::ProcessMessage(const dtGame::Message &message)
       else if(*mCurrentState == GameState::STATE_INTRO)
       {
          GetGameManager()->ChangeMap("IntroMap");
-         //OnIntro();
       }
       else if(*mCurrentState == GameState::STATE_RUNNING)
       {
@@ -159,6 +158,14 @@ void InputComponent::OnIntro()
    {
       mMotionModel->SetTarget(NULL);
    }
+
+   // Turn off the scene light and use the light maps/shadow maps
+   dtCore::Camera &camera = *GetGameManager()->GetApplication().GetCamera();
+   camera.GetSceneHandler()->GetSceneView()->setLightingMode(osgUtil::SceneView::NO_SCENEVIEW_LIGHT);
+   osg::StateSet *globalState = camera.GetSceneHandler()->GetSceneView()->getGlobalStateSet();
+   globalState->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
+
+   GetGameManager()->GetScene().UseSceneLight(true);
 
    std::vector<RefPtr<dtGame::GameActorProxy> > proxies;
    GetGameManager()->GetAllGameActors(proxies);

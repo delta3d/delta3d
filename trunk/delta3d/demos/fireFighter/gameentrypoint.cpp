@@ -156,4 +156,6 @@ void FireFighterGameEntryPoint::OnShutdown(dtGame::GameManager &gameManager)
       mLmsComponent->DisconnectFromLms();
 
    gameManager.CloseCurrentMap();
+
+   dtAudio::AudioManager::Destroy();
 }
