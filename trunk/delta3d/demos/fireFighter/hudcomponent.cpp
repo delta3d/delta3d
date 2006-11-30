@@ -71,9 +71,9 @@ HUDComponent::HUDComponent(dtCore::DeltaWin &win, const std::string &name) :
    mIntroText(NULL),
    mShowObjectives(true), 
    mCurrentState(&GameState::STATE_UNKNOWN), 
-   mFireSuitIconPos(cegui_reldim(.525f), cegui_reldim(.8f)), 
-   mFireHoseIconPos(cegui_reldim(.688f), cegui_reldim(.8f)), 
-   mSCBAIconPos(cegui_reldim(.85f), cegui_reldim(.8f)), 
+   mFireSuitIconPos(cegui_reldim(0.525f), cegui_reldim(0.8f)), 
+   mFireHoseIconPos(cegui_reldim(.688f), cegui_reldim(0.8f)), 
+   mSCBAIconPos(cegui_reldim(0.85f), cegui_reldim(0.8f)), 
    mTasksHeaderText(NULL), 
    mNumTasks(11), 
    mMissionCompletedText(NULL), 
@@ -175,11 +175,13 @@ void HUDComponent::ProcessMessage(const dtGame::Message &msg)
    {
       dtGame::GameActorProxy *proxy = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
       SetActivatedItem(dynamic_cast<GameItemActor*>(proxy->GetActor()));
+      UpdateHUDBackground();
    }
    else if(msg.GetMessageType() == MessageType::ITEM_DEACTIVATED)
    {
       dtGame::GameActorProxy *proxy = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
       SetDeactivatedItem(dynamic_cast<GameItemActor*>(proxy->GetActor()));
+      UpdateHUDBackground();
    }
    else if(msg.GetMessageType() == dtGame::MessageType::TICK_LOCAL)
    {
@@ -275,6 +277,7 @@ void HUDComponent::HideMenus()
 void HUDComponent::BuildMainMenu()
 {
    CEGUI::WindowManager *wm = CEGUI::WindowManager::getSingletonPtr();
+   //CEGUI::System::getSingleton().getDefaultFont()->setProperty("PointSize", "14");
 
    mWindowBackground = wm->createWindow("WindowsLook/StaticImage", "MenuBackgroundImage");
    mMainWindow->addChildWindow(mWindowBackground);
@@ -285,10 +288,10 @@ void HUDComponent::BuildMainMenu()
    mWindowBackground->setProperty("Image", "set:BackgroundImage image:BackgroundImage");
 
    mAppHeader = wm->createWindow("WindowsLook/StaticText", "applicationHeaderText");
-   mAppHeader->setText("  Fire Fighter");
+   mAppHeader->setText("Fire Fighter");
    mAppHeader->setProperty("BackgroundEnabled", "false");
    mAppHeader->setProperty("FrameEnabled", "false");
-   mAppHeader->setSize(CEGUI::UVector2(cegui_reldim(0.2f), cegui_reldim(0.1f)));
+   mAppHeader->setSize(CEGUI::UVector2(cegui_reldim(0.2f), cegui_reldim(0.2f)));
    mAppHeader->setPosition(CEGUI::UVector2(cegui_reldim(0.0f), cegui_reldim(0.1f)));
    mAppHeader->setHorizontalAlignment(CEGUI::HA_CENTRE);
    mWindowBackground->addChildWindow(mAppHeader);
@@ -699,27 +702,6 @@ void HUDComponent::SetActivatedItem(GameItemActor *item)
    {
       LOG_ERROR("Could not set the activated item. Unable to cast the parameter");
    }
-
-   // Update the main background
-   if(mInventoryUseFireHoseIcon->isVisible())
-   {
-      if(mInventoryUseSCBAIcon->isVisible())
-      {
-         mHUDOverlay->setProperty("Image", "set:HUD_SCBA_FirehoseImage image:HUD_SCBA_FirehoseImage");
-      }
-      else
-      {
-         mHUDOverlay->setProperty("Image", "set:HUD_FirehoseImage image:HUD_FirehoseImage");
-      }
-   }
-   else if(mInventoryUseSCBAIcon->isVisible())
-   {
-      mHUDOverlay->setProperty("Image", "set:HUD_SCBAImage image:HUD_SCBAImage");
-   }
-   else
-   {
-      mHUDOverlay->setProperty("Image", "set:AlphaImage image:AlphaImage");
-   }
 }
 
 void HUDComponent::SetDeactivatedItem(GameItemActor *item)
@@ -739,27 +721,6 @@ void HUDComponent::SetDeactivatedItem(GameItemActor *item)
    else 
    {
       LOG_ERROR("Could not set the deactivated item. Unable to cast the parameter");
-   }
-
-   // Update the main background
-   if(mInventoryUseFireHoseIcon->isVisible())
-   {
-      if(mInventoryUseSCBAIcon->isVisible())
-      {
-         mHUDOverlay->setProperty("Image", "set:HUD_SCBA_FirehoseImage image:HUD_SCBA_FirehoseImage");
-      }
-      else
-      {
-         mHUDOverlay->setProperty("Image", "set:HUD_FirehoseImage image:HUD_FirehoseImage");
-      }
-   }
-   else if(mInventoryUseSCBAIcon->isVisible())
-   {
-      mHUDOverlay->setProperty("Image", "set:HUD_SCBAImage image:HUD_SCBAImage");
-   }
-   else
-   {
-      mHUDOverlay->setProperty("Image", "set:AlphaImage image:AlphaImage");
    }
 }
 
@@ -951,4 +912,27 @@ void HUDComponent::RefreshDebriefScreen()
       CEGUI::PropertyHelper::colourToString(CEGUI::colour(1.0f, 0.0f, 0.0f)));
    
    UpdateMediumDetailData(mDebriefBackground);
+}
+
+void HUDComponent::UpdateHUDBackground()
+{
+   bool scbaActive = mInventoryUseSCBAIcon->isVisible(), 
+        hoseActive = mInventoryUseFireHoseIcon->isVisible();
+  
+   if(scbaActive && hoseActive)
+   {
+      mHUDBackground->setProperty("Image", "set:HUD_SCBA_FirehoseImage image:HUD_SCBA_FirehoseImage");
+   }
+   else if(scbaActive)
+   {
+      mHUDBackground->setProperty("Image", "set:HUD_SCBAImage image:HUD_SCBAImage");
+   }
+   else if(hoseActive)
+   {
+      mHUDBackground->setProperty("Image", "set:HUD_FirehoseImage image:HUD_FirehoseImage");
+   }
+   else
+   {
+      mHUDBackground->setProperty("Image", "set:AlphaImage image:AlphaImage");
+   }
 }

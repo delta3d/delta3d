@@ -95,8 +95,8 @@ void FireFighterGameEntryPoint::Initialize(dtGame::GameApplication& app, int arg
 
    app.GetWindow()->SetWindowTitle("Fire Fighter Application");
 
-   dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
    dtDAL::Project::GetInstance().SetContext("demos/fireFighter/FireFighterProject");
+   //dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList() + ";" + "demos/fireFighter/FireFighterProject/CEGUI");
 }
 
 dtCore::RefPtr<dtGame::GameManager> FireFighterGameEntryPoint::CreateGameManager(dtCore::Scene& scene)
