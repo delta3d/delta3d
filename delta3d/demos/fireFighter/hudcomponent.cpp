@@ -287,12 +287,12 @@ void HUDComponent::BuildMainMenu()
    mWindowBackground->setProperty("FrameEnabled", "false");
    mWindowBackground->setProperty("Image", "set:BackgroundImage image:BackgroundImage");
 
-   mAppHeader = wm->createWindow("WindowsLook/StaticText", "applicationHeaderText");
-   mAppHeader->setText("Fire Fighter");
+   mAppHeader = wm->createWindow("WindowsLook/StaticImage", "applicationHeaderText");
+   mAppHeader->setProperty("Image", "set:TitleImage image:TitleImage");//setText("Fire Fighter");
    mAppHeader->setProperty("BackgroundEnabled", "false");
    mAppHeader->setProperty("FrameEnabled", "false");
-   mAppHeader->setSize(CEGUI::UVector2(cegui_reldim(0.2f), cegui_reldim(0.2f)));
-   mAppHeader->setPosition(CEGUI::UVector2(cegui_reldim(0.0f), cegui_reldim(0.1f)));
+   mAppHeader->setSize(CEGUI::UVector2(cegui_reldim(0.2f), cegui_reldim(0.1f)));
+   mAppHeader->setPosition(CEGUI::UVector2(cegui_reldim(0.00f), cegui_reldim(0.1f)));
    mAppHeader->setHorizontalAlignment(CEGUI::HA_CENTRE);
    mWindowBackground->addChildWindow(mAppHeader);
 
