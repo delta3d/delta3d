@@ -72,7 +72,7 @@ HUDComponent::HUDComponent(dtCore::DeltaWin &win, const std::string &name) :
    mShowObjectives(true), 
    mCurrentState(&GameState::STATE_UNKNOWN), 
    mFireSuitIconPos(cegui_reldim(0.525f), cegui_reldim(0.8f)), 
-   mFireHoseIconPos(cegui_reldim(.688f), cegui_reldim(0.8f)), 
+   mFireHoseIconPos(cegui_reldim(0.688f), cegui_reldim(0.8f)), 
    mSCBAIconPos(cegui_reldim(0.85f), cegui_reldim(0.8f)), 
    mTasksHeaderText(NULL), 
    mNumTasks(11), 
@@ -344,7 +344,6 @@ void HUDComponent::BuildHUD()
    mHUDOverlay->setSize(CEGUI::UVector2(cegui_reldim(1.0f), cegui_reldim(1.0f)));
    mHUDOverlay->setProperty("BackgroundEnabled", "false");
    mHUDOverlay->setProperty("FrameEnabled", "false");
-   //mHUDOverlay->setProperty("Image", "set:HUD_SCBAImage image:HUD_SCBAImage");
 
    mGameItemImage = wm->createWindow("WindowsLook/StaticImage", "gameItemImage");
    mGameItemImage->setSize(CEGUI::UVector2(cegui_reldim(0.15f), cegui_reldim(0.15f)));
@@ -449,7 +448,6 @@ void HUDComponent::BuildHUD()
 
    mHelpWindow = new HelpWindow(mHUDBackground);
    mHelpWindow->GetCloseButton()->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&HUDComponent::OnHelpWindowClosed, this));
-
 
    float curYPos       = 20.0f;
    float mTextHeight   = 25.0f;

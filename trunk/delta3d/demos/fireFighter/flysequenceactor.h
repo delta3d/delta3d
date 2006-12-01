@@ -24,6 +24,7 @@
 #include <dtGame/gameactor.h>
 #include <fireFighter/export.h>
 
+// Forward declarations
 namespace dtGame
 {
    class Message;
@@ -66,9 +67,16 @@ class FIRE_FIGHTER_EXPORT FlySequenceActor : public dtGame::GameActor
       /// Invokable to update the camera
       void TickLocal(const dtGame::Message &msg);
 
+      /// Starts moving the player
       void StartFlying();
+
+      /// Stops moving the player
       void StopFlying();
 
+      /**
+       * Sets the player actor this FlySequence will manipulate
+       * @param player The new player actor
+       */
       void SetPlayerActor(PlayerActor &player) { mPlayer = &player; }
 
    protected:
@@ -76,6 +84,7 @@ class FIRE_FIGHTER_EXPORT FlySequenceActor : public dtGame::GameActor
       /// Destructor
       virtual ~FlySequenceActor();
 
+      /// Called when the actor is added to the game manager
       virtual void OnEnteredWorld();
 
    private:
@@ -117,6 +126,7 @@ class FIRE_FIGHTER_EXPORT FlySequenceActorProxy : public dtGame::GameActorProxy
       /// Creates the actor
       virtual void CreateActor() { mActor = new FlySequenceActor(*this); }
 
+      /// Called when the actor is added to the game manager
       virtual void OnEnteredWorld();
 
       // Used in STAGE
