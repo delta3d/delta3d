@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * @author Roy Newton
+ * Roy Newton
  */
 #include <prefix/dtgameprefix-src.h>
 #include <dtUtil/log.h>
@@ -28,7 +28,8 @@
  * @class LogTests
  * @brief Unit tests for the log module
  */
-class LogTests : public CPPUNIT_NS::TestFixture {
+class LogTests : public CPPUNIT_NS::TestFixture 
+{
    CPPUNIT_TEST_SUITE( LogTests );
       CPPUNIT_TEST( TestLogMessage1 );
       CPPUNIT_TEST( TestLogMessage2 );
@@ -94,11 +95,7 @@ void LogTests::setUp()
 ///////////////////////////////////////////////////////////////////////////////
 void LogTests::tearDown() 
 {
-   mMsgStr.empty();
-   mSource.empty();
    //turn of logging when done.
-   //this is actually bad, it should save the log level and reset it.
-   mLogger->SetLogLevel(dtUtil::Log::LOG_ERROR);
    mLogger = NULL;
 }
 
@@ -128,12 +125,10 @@ void LogTests::TestLogMessage1()
          mLogger->LogMessage(mSource, 1, mMsgStr, logType);
 
          //test with max characters
-         mMsgStr.empty();
-         mSource.empty();
-         for(unsigned i=0; i<=MAX_LENGTH-1; i++)
+         //for(unsigned i=0; i<=MAX_LENGTH-1; i++)
          {
-            mMsgStr += "s";
-            mSource += "f";
+            mMsgStr += "stuff";
+            mSource += "foo";
          }				
          mLogger->LogMessage(mSource, 1, mMsgStr);		
          mLogger->LogMessage(mSource, 1, mMsgStr, logType);
@@ -142,11 +137,11 @@ void LogTests::TestLogMessage1()
    }
    catch (const dtUtil::Exception& e)
    {
-      CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
+      CPPUNIT_FAIL(std::string("Error: ") + e.What());
    }
    catch (const std::exception& e)
    {
-      CPPUNIT_FAIL((std::string("Error: ") + e.what()).c_str());
+      CPPUNIT_FAIL(std::string("Error: ") + e.what());
    }
 
 }
@@ -177,13 +172,10 @@ void LogTests::TestLogMessage2()
          mLogger->LogMessage(logType, mSource, 1, "a %d %s %f %lf", 1, "c", 1.0, 1.1);
          
          //test with max characters
-         mMsgStr.empty();
-         mSource.empty();
-         
-         for(unsigned i=0; i<=MAX_LENGTH-1; i++)
+         //for(unsigned i=0; i<=MAX_LENGTH-1; i++)
          {
-            mMsgStr += "g";
-            mSource += "h";         
+            mMsgStr += "grand";
+            mSource += "horse";         
          }         
          mLogger->LogMessage(logType, mSource, 1, mMsgStr.c_str());
          mLogger->LogMessage(logType, mSource, 1, "a %d %s %f %lf", 1, "c", 1.0, 1.1);
@@ -192,11 +184,11 @@ void LogTests::TestLogMessage2()
    }
    catch (const dtUtil::Exception& e)
    {
-      CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
+      CPPUNIT_FAIL(std::string("Error: ") + e.What());
    }
    catch (const std::exception& e)
    {
-      CPPUNIT_FAIL((std::string("Error: ") + e.what()).c_str());
+      CPPUNIT_FAIL(std::string("Error: ") + e.what());
    }
 }
 
@@ -229,10 +221,10 @@ void LogTests::TestLogMessage3()
          mMsgStr.empty();
          mSource.empty();
          
-         for(unsigned i=0; i<=MAX_LENGTH-1; i++)
+         //for(unsigned i=0; i<=MAX_LENGTH-1; i++)
          {
-            mMsgStr += "i";
-            mSource += "j";         
+            mMsgStr += "igloo";
+            mSource += "jack-o-lantern";         
          }         
          mLogger->LogMessage(logType, mSource, mMsgStr.c_str());
          mLogger->LogMessage(logType, mSource, "a %d %s %f %lf", 1, "c", 1.0, 1.1);
@@ -241,11 +233,11 @@ void LogTests::TestLogMessage3()
    }
    catch (const dtUtil::Exception& e)
    {
-      CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
+      CPPUNIT_FAIL(std::string("Error: ") + e.What());
    }
    catch (const std::exception& e)
    {
-      CPPUNIT_FAIL((std::string("Error: ") + e.what()).c_str());
+      CPPUNIT_FAIL(std::string("Error: ") + e.what());
    }
 }
 
@@ -266,11 +258,11 @@ void LogTests::TestIsLevelEnabled()
    }
    catch (const dtUtil::Exception& e)
    {
-      CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
+      CPPUNIT_FAIL(std::string("Error: ") + e.What());
    }
    catch (const std::exception& e)
    {
-      CPPUNIT_FAIL((std::string("Error: ") + e.what()).c_str());
+      CPPUNIT_FAIL(std::string("Error: ") + e.what());
    }
 }
 
