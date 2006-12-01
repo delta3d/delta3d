@@ -38,9 +38,8 @@ class FIRE_FIGHTER_EXPORT SCBAActor : public GameItemActor
       /// Destructor
       virtual ~SCBAActor();
 
+      /// Called when the actor is added to the game manager
       virtual void OnEnteredWorld();
-
-   private:
 };
 
 class FIRE_FIGHTER_EXPORT SCBAActorProxy : public GameItemActorProxy
@@ -63,8 +62,6 @@ class FIRE_FIGHTER_EXPORT SCBAActorProxy : public GameItemActorProxy
 
       /// Destructor
       virtual ~SCBAActorProxy();
-
-   private:
 };
 
 #endif

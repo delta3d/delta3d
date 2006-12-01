@@ -21,11 +21,11 @@
 #ifndef DELTA_SKYDOME_ACTOR_PROXY
 #define DELTA_SKYDOME_ACTOR_PROXY
 
-#include "dtDAL/plugin_export.h"
-#include "dtDAL/actorproxy.h"
+#include <dtDAL/plugin_export.h>
+#include <dtDAL/actorproxy.h>
 #include <dtDAL/exceptionenum.h>
-#include "dtActors/enveffectactorproxy.h"
-#include "dtCore/skydome.h"
+#include <dtActors/enveffectactorproxy.h>
+#include <dtCore/skydome.h>
 
 namespace dtActors 
 {

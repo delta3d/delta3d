@@ -54,6 +54,7 @@ class FIRE_FIGHTER_EXPORT GameLevelActor : public dtGame::GameActor, public dtCo
 
    protected:
 
+      /// Called when the actor is added to the game manager
       virtual void OnEnteredWorld();
 
       /// Destructor
@@ -93,6 +94,7 @@ class FIRE_FIGHTER_EXPORT GameLevelActorProxy : public dtGame::GameActorProxy
 
    protected:
 
+      /// Called when the actor is added to the game manager
       virtual void OnEnteredWorld();
 
       /// Destructor

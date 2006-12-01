@@ -162,6 +162,7 @@ class FIRE_FIGHTER_EXPORT FireActor : public GameItemActor
 
    protected:
 
+      /// Called when the actor is added to the game manager
       virtual void OnEnteredWorld();
 
       /// Destructor
@@ -209,6 +210,7 @@ class FIRE_FIGHTER_EXPORT FireActorProxy : public GameItemActorProxy
 
    protected:
 
+      /// Called when the actor is added to the game manager
       virtual void OnEnteredWorld();
 
       /// Destructor

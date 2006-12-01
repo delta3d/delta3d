@@ -33,6 +33,7 @@
 #include <fireFighter/hatchactor.h>
 #include <fireFighter/helpwindow.h>
 #include <dtABC/application.h>
+#include <dtABC/weather.h>
 #include <dtAudio/audiomanager.h>
 #include <dtCore/fpsmotionmodel.h>
 #include <dtCore/flymotionmodel.h>
@@ -48,6 +49,8 @@
 #include <dtActors/taskactorordered.h>
 #include <dtActors/taskactorrollup.h>
 #include <dtActors/taskactorgameevent.h>
+#include <dtActors/engineactorregistry.h>
+#include <dtActors/basicenvironmentactorproxy.h>
 #include <dtUtil/log.h>
 #include <osg/io_utils>
 
@@ -165,8 +168,6 @@ void InputComponent::OnIntro()
    osg::StateSet *globalState = camera.GetSceneHandler()->GetSceneView()->getGlobalStateSet();
    globalState->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
 
-   GetGameManager()->GetScene().UseSceneLight(true);
-
    std::vector<RefPtr<dtGame::GameActorProxy> > proxies;
    GetGameManager()->GetAllGameActors(proxies);
    FlySequenceActor *fsa = NULL;
@@ -183,8 +184,6 @@ void InputComponent::OnIntro()
 
 void InputComponent::OnGame()
 {  
-   dtCore::Camera &camera = *GetGameManager()->GetApplication().GetCamera();
-
    GameLevelActor *gla = NULL; 
    IsActorInGameMap(gla);
    gla->SetCollisionMesh();
@@ -206,6 +205,7 @@ void InputComponent::OnGame()
    mMotionModel->SetTarget(mPlayer);
 
    // Turn off the scene light and use the light maps/shadow maps
+   dtCore::Camera &camera = *GetGameManager()->GetApplication().GetCamera();
    camera.GetSceneHandler()->GetSceneView()->setLightingMode(osgUtil::SceneView::NO_SCENEVIEW_LIGHT);
    osg::StateSet *globalState = camera.GetSceneHandler()->GetSceneView()->getGlobalStateSet();
    globalState->setMode(GL_LIGHTING, osg::StateAttribute::OFF);

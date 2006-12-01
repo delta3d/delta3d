@@ -61,6 +61,7 @@ FireFighterGameEntryPoint::~FireFighterGameEntryPoint()
 
 void FireFighterGameEntryPoint::Initialize(dtGame::GameApplication& app, int argc, char **argv)
 {
+   // Parse the command line options
    osg::ArgumentParser parser(&argc, argv);
    parser.getApplicationUsage()->setCommandLineUsage("Fire Fighter Application [options] value ...");
    parser.getApplicationUsage()->addCommandLineOption("-h or --help","Display command line options");
@@ -82,21 +83,18 @@ void FireFighterGameEntryPoint::Initialize(dtGame::GameApplication& app, int arg
    parser.reportRemainingOptionsAsUnrecognized();
    if(parser.errors())
    {
-      parser.writeErrorMessages(std::cout);
-      //throw dtUtil::Exception(ExceptionEnum::COMMAND_LINE_EXCEPTION, "Command Line Error.", 
-      //   __FILE__, __LINE__);
+      std::ostringstream oss;
+      parser.writeErrorMessages(oss);
+      LOG_ERROR("Command line error: " + oss.str());
    }
 
-#ifdef _DEBUG
    app.GetWindow()->SetFullScreenMode(false);
-#else
-   app.GetWindow()->SetFullScreenMode(true);
-#endif
 
    app.GetWindow()->SetWindowTitle("Fire Fighter Application");
 
    dtDAL::Project::GetInstance().SetContext("demos/fireFighter/FireFighterProject");
-   //dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList() + ";" + "demos/fireFighter/FireFighterProject/CEGUI");
+   dtCore::SetDataFilePathList(dtCore::GetDataFilePathList() + ";" + 
+      dtDAL::Project::GetInstance().GetContext() + "/CEGUI");
 }
 
 dtCore::RefPtr<dtGame::GameManager> FireFighterGameEntryPoint::CreateGameManager(dtCore::Scene& scene)
@@ -106,7 +104,10 @@ dtCore::RefPtr<dtGame::GameManager> FireFighterGameEntryPoint::CreateGameManager
 
 void FireFighterGameEntryPoint::OnStartup(dtGame::GameManager &gameManager)
 {
+   // Make sure we can hear audio
    gameManager.GetApplication().GetCamera()->AddChild(dtAudio::AudioManager::GetListener());
+
+   // Register the messages of the game with the game manager
    gameManager.GetMessageFactory().RegisterMessageType<GameStateChangedMessage>(MessageType::GAME_STATE_CHANGED);
    gameManager.GetMessageFactory().RegisterMessageType<dtGame::Message>(MessageType::ITEM_INTERSECTED);
    gameManager.GetMessageFactory().RegisterMessageType<dtGame::Message>(MessageType::ITEM_ACQUIRED);
@@ -118,6 +119,7 @@ void FireFighterGameEntryPoint::OnStartup(dtGame::GameManager &gameManager)
    gameManager.GetMessageFactory().RegisterMessageType<dtGame::Message>(MessageType::HELP_WINDOW_OPENED);
    gameManager.GetMessageFactory().RegisterMessageType<dtGame::Message>(MessageType::HELP_WINDOW_CLOSED);
 
+   // Create the components and add them to the game manager
    RefPtr<HUDComponent>   hudComp   = new HUDComponent(*gameManager.GetApplication().GetWindow());
    RefPtr<InputComponent> inputComp = new InputComponent;
    RefPtr<dtGame::DefaultMessageProcessor> dmp = new dtGame::DefaultMessageProcessor("DefaultMessageProcessor");
@@ -128,13 +130,14 @@ void FireFighterGameEntryPoint::OnStartup(dtGame::GameManager &gameManager)
    gameManager.AddComponent(*dmp,           dtGame::GameManager::ComponentPriority::HIGHEST);
    gameManager.AddComponent(*mLmsComponent, dtGame::GameManager::ComponentPriority::NORMAL);
 
+   // Connect to the LMS
    if(mUseLMS)
    {
       try
       {
          mLmsComponent->ConnectToLms();
       }
-      catch(const dtUtil::Exception &e)
+      catch(const dtUtil::Exception &e) 
       {
          // Failed to connect to the LMS, log the exception and continue with
          // the game as normal.
@@ -156,6 +159,4 @@ void FireFighterGameEntryPoint::OnShutdown(dtGame::GameManager &gameManager)
       mLmsComponent->DisconnectFromLms();
 
    gameManager.CloseCurrentMap();
-
-   dtAudio::AudioManager::Destroy();
 }
