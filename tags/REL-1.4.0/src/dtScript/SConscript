@@ -1,0 +1,15 @@
+Import('*')
+
+srcs = env.SGlob('*.cpp')
+deps = [ 'dtCore', 'python' ]
+
+extraLink = []
+if env['OS'] == 'windows':
+   extraLink = ['/NODEFAULTLIB:'+env['extLibs']['python']+'_d']
+
+defines = []
+if env['OS'] == 'windows':
+   defines = ['DT_SCRIPT_LIBRARY']
+       
+env.BuildLib( 'dtScript', srcs, deps, defines, extraLink )
+

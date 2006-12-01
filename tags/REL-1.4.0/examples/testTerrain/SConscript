@@ -1,0 +1,7 @@
+Import('*')
+
+testSrcs = ['testterrain.cpp']
+
+testDeps = [ 'dtCore', 'dtABC', 'dtUtil', 'dtTerrain', 'dtDAL' ]
+
+env.BuildProgram( 'testTerrain', testSrcs, testDeps )
