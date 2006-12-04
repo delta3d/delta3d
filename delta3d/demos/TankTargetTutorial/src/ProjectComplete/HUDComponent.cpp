@@ -166,25 +166,25 @@ void HUDComponent::SetupGUI(dtCore::DeltaWin *win)
 
       // Sim Time
       mSimTimeText = CreateText("Sim Time", mOverlay, "",
-         5.0f, 20.0f, 200.0f, 25.0f);
+         5.0f, 20.0f, 600.0f, 60.0f);
       mSimTimeText->setProperty("TextColours", 
          CEGUI::PropertyHelper::colourToString(CEGUI::colour(1.0f, 1.0f, 1.0f)));
 
       // Num Messages
       mNumMessagesText = CreateText("Num Messages", mOverlay, "",
-         5.0f, 45.0f, 200.0f, 25.0f);
+         5.0f, 45.0f, 600.0f, 60.0f);
       mNumMessagesText->setProperty("TextColours", 
          CEGUI::PropertyHelper::colourToString(CEGUI::colour(1.0f, 1.0f, 1.0f)));
 
       // Last Message
       mLastMessageText = CreateText("Last Message", mOverlay, "Last Msg:",
-         5.0f, 70.0f, 300.0f, 25.0f);
+         5.0f, 70.0f, 600.0f, 60.0f);
       mLastMessageText->setProperty("TextColours", 
          CEGUI::PropertyHelper::colourToString(CEGUI::colour(1.0f, 1.0f, 1.0f)));
 
       // AAR playback/idle state
       mStateText = CreateText("State Text", mOverlay, "", 
-         5.0f, 90.0f, 120.0f, 25);
+         5.0f, 100.0f, 600.0f, 60.0f);
       mStateText->setProperty("TextColours", 
          CEGUI::PropertyHelper::colourToString(CEGUI::colour(1.0f, 0.1f, 0.1f)));
       //mStateText->setFont("Tahoma-14");
