@@ -1604,7 +1604,7 @@ void GMLoggerTests::TestLoggerGetTags()
          CPPUNIT_ASSERT_MESSAGE("Tag description was not correct.",
             tagList[i].GetDescription() == std::string("TagDescription" + count));
 
-         CPPUNIT_ASSERT_EQUAL(tagSimTimes[i],tagList[i].GetSimTimeStamp());
+         CPPUNIT_ASSERT(osg::equivalent(tagSimTimes[i], tagList[i].GetSimTimeStamp(), 0.00001));
          CPPUNIT_ASSERT_MESSAGE("Tag unique id was not correct",
             tagList[i].GetUniqueId() == std::string("TagUniqueId" + count));
          if ((i%2) == 0)

@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * @author David Guthrie
+ * David Guthrie
  */
 #include <prefix/dtgameprefix-src.h>
 #include <cppunit/CompilerOutputter.h>
@@ -29,8 +29,11 @@
 #include <cppunit/TestListener.h>
 #include <cppunit/Test.h>
 #include <cppunit/TestFailure.h>
-#include <time.h>    // for clock()
+#include <ctime>   
 #include <dtCore/timer.h>
+#include <dtUtil/fileutils.h>
+#include <dtUtil/log.h>
+#include <dtUtil/exception.h>
 
 #include <sstream>
 
@@ -76,6 +79,28 @@ class TimingListener : public CppUnit::TestListener
 
 int main(int argc, char* argv[])
 {
+   const std::string &executable = argv[0];
+   dtUtil::FileInfo info = dtUtil::FileUtils::GetInstance().GetFileInfo(executable);
+   if(info.fileType == dtUtil::FILE_NOT_FOUND)
+   {
+      LOG_ERROR(std::string("Unable to change to the directory of application \"")
+         + executable + "\": file not found.");
+   }
+   else
+   {
+      LOG_ALWAYS(std::string("Changing to directory \"") + info.path + "\".");
+
+      try 
+      {
+         if(!info.path.empty())
+            dtUtil::FileUtils::GetInstance().ChangeDirectory(info.path);
+      } 
+      catch(const dtUtil::Exception &ex)
+      {
+         ex.LogException(dtUtil::Log::LOG_ERROR);
+      }
+   }
+
    dtCore::Timer testsClock;
    dtCore::Timer_t testsTimerStart = testsClock.Tick(); 
 
@@ -98,7 +123,7 @@ int main(int argc, char* argv[])
    dtCore::Timer_t testsTimerStop = testsClock.Tick();
    double timeDelta = testsClock.DeltaSec(testsTimerStart, testsTimerStop);
    timeDelta = ((int)(timeDelta * 10000)) / 10000.0; // force data truncation
-   if (mSlowTests.str() != "")
+   if(mSlowTests.str().empty())
    {
       std::cerr << " <<< SLOW TEST RESULTS ::: START >>> " << std::endl << 
          mSlowTests.str() << " <<< SLOW TEST RESULTS ::: END ::: TotalTime[" << 

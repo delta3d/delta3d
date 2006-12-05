@@ -35,7 +35,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="dtUtild.lib dtCored.lib dtDALd.lib dtAId.lib dtGamed.lib dtABCd.lib dtLMSd.lib dtGUId.lib dtActorsd.lib testGameActorLibraryd.lib CEGUIBase_d.lib cppunitd.lib xerces-c_2D.lib"
-				OutputFile="../../../bin/UnitTestsMaind.exe"
+				OutputFile="../../../tests/UnitTestsMaind.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib"
 				GenerateDebugInformation="TRUE"
@@ -49,7 +49,6 @@
 				CommandLine="set PATH=$(PATH);$(DELTA_ROOT)\bin;$(DELTA_ROOT)\ext\bin;$(rti)/lib/winnt_vc++-7.1;
 set DELTA_ROOT=$(DELTA_ROOT)
 set DELTA_DATA=$(DELTA_DATA)
-cd $(TargetDir)
 &quot;$(TargetPath)&quot;
 "/>
 			<Tool
@@ -91,7 +90,7 @@ cd $(TargetDir)
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="dtUtil.lib dtCore.lib dtDAL.lib dtAI.lib dtGame.lib dtABC.lib dtLMS.lib dtGUI.lib dtActors.lib testGameActorLibrary.lib CEGUIBase.lib cppunit.lib xerces-c_2.lib"
-				OutputFile="../../../bin/UnitTestsMain.exe"
+				OutputFile="../../../tests/UnitTestsMain.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib"
 				GenerateDebugInformation="FALSE"
@@ -106,7 +105,6 @@ cd $(TargetDir)
 				CommandLine="set PATH=$(PATH);$(DELTA_ROOT)\bin;$(DELTA_ROOT)\ext\bin;$(rti)/lib/winnt_vc++-7.1;
 set DELTA_ROOT=$(DELTA_ROOT)
 set DELTA_DATA=$(DELTA_DATA)
-cd $(TargetDir)
 &quot;$(TargetPath)&quot;
 "/>
 			<Tool
