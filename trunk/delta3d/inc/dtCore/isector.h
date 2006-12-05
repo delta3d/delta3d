@@ -32,6 +32,7 @@
 
 #include <osg/Vec3>
 #include <osgUtil/IntersectVisitor>
+#include <osg/observer_ptr>
 
 namespace dtCore
 {
@@ -347,8 +348,8 @@ namespace dtCore
 
       Scene* mScene;
       RefPtr<osg::LineSegment> mLineSegment;
-      RefPtr<DeltaDrawable> mSceneRoot;
-      RefPtr<DeltaDrawable> mClosestDrawable;
+      osg::observer_ptr<DeltaDrawable> mSceneRoot;
+      osg::observer_ptr<DeltaDrawable> mClosestDrawable;
       osgUtil::IntersectVisitor mIntersectVisitor;
       osgUtil::IntersectVisitor::HitList mHitList; 
       void CalcLineSegment();
