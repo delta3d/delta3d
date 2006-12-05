@@ -24,6 +24,10 @@
 #include <iostream>
 #include <algorithm>
 
+#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
+   #pragma warning(disable : 4355) // 'this' used in initializer list
+#endif
+
 namespace dtAI
 {
 
@@ -71,7 +75,7 @@ namespace dtAI
          hm->SetHungerLevel(0.0f);
       }
       
-      std::cout << "Force Hungry" << std::endl;
+      //std::cout << "Force Hungry" << std::endl;
    }
 
    float MyNPC::RemainingCost(const WorldState* pWS) const
@@ -128,28 +132,28 @@ namespace dtAI
    bool MyNPC::ActionCallGrandma(double dt, WorldState* pWS)
    {
       mHelper.GetOperator("CallGrandma")->Apply(pWS, pWS);
-      std::cout << "Action Call Grandma" << std::endl;
+      //std::cout << "Action Call Grandma" << std::endl;
       return true;
    }
 
    bool MyNPC::ActionGoToStore(double dt, WorldState* pWS)
    {
       mHelper.GetOperator("GoToStore")->Apply(pWS, pWS);
-      std::cout << "Action Go To Store" << std::endl;
+      //std::cout << "Action Go To Store" << std::endl;
       return true;
    }
 
    bool MyNPC::ActionCook(double dt, WorldState* pWS)
    {
       mHelper.GetOperator("Cook")->Apply(pWS, pWS);
-      std::cout << "Action Cook" << std::endl;
+      //std::cout << "Action Cook" << std::endl;
       return true;
    }
 
    bool MyNPC::ActionEat(double dt, WorldState* pWS)
    {
       mHelper.GetOperator("Eat")->Apply(pWS, pWS);
-      std::cout << "Action Eat" << std::endl;
+      //std::cout << "Action Eat" << std::endl;
       return true;
    }
 
@@ -184,7 +188,7 @@ namespace dtAI
          return StringInList("Pizza", rec->GetRecipes());
       }
 
-      assert(0);
+      assert(false);
       return false;
    }
 
@@ -220,7 +224,7 @@ namespace dtAI
          return (StringInList("Dough", pGroc) && StringInList("Cheese", pGroc) && StringInList("Tomato Sauce", pGroc));
       }
 
-      assert(0);
+      assert(false);
       return false;
    }
 
@@ -255,7 +259,7 @@ namespace dtAI
          return pf->HaveFood();
       }
 
-      assert(0);
+      assert(false);
       return false;
    }
 
@@ -290,7 +294,7 @@ namespace dtAI
          return (hm->GetHungerLevel() < 0.5);
       }
       //we shouldnt get here
-      assert(0);
+      assert(false);
       return false;
    }
 
@@ -395,7 +399,7 @@ namespace dtAI
 //PreparedFood
 //////////////////////////////////////////////////////////////////////////
 
-   PreparedFood::PreparedFood(): mHaveFood(0)
+   PreparedFood::PreparedFood(): mHaveFood(false)
    {
 
    }
@@ -579,7 +583,7 @@ namespace dtAI
          pWSIn->AddCost(1.0f);
          return true;
       }
-      assert(0);
+      assert(false);
       return false;
    }
 

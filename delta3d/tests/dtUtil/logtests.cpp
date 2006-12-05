@@ -102,8 +102,6 @@ void LogTests::tearDown()
 ///////////////////////////////////////////////////////////////////////////////
 void LogTests::TestLogMessage1()
 {	
-   //void LogMessage(const std::string &source, int line, const std::string &msg,
-   //                     LogMessageType msgType = LOG_INFO);
    try
    {
       dtUtil::Log::LogMessageType logType;
@@ -111,8 +109,6 @@ void LogTests::TestLogMessage1()
       {
          logType = (dtUtil::Log::LogMessageType)type;
          mLogger->SetLogLevel(logType);
-         mMsgStr.empty();
-         mSource.empty();
          mMsgStr = "s";
          mSource = "f";
 
@@ -149,8 +145,6 @@ void LogTests::TestLogMessage1()
 ///////////////////////////////////////////////////////////////////////////////
 void LogTests::TestLogMessage2()
 {	
-   //void LogMessage(LogMessageType msgType, const std::string &source, int line,
-   //                         const char *msg, ...);
    try
    {
       dtUtil::Log::LogMessageType logType;
@@ -158,8 +152,6 @@ void LogTests::TestLogMessage2()
       {
          logType = (dtUtil::Log::LogMessageType)type;
          mLogger->SetLogLevel(logType);
-         mMsgStr.empty();
-         mSource.empty();
          mMsgStr = "g";
          mSource = "h";
          
@@ -195,8 +187,6 @@ void LogTests::TestLogMessage2()
 ///////////////////////////////////////////////////////////////////////////////
 void LogTests::TestLogMessage3()
 {	
-   //void LogMessage(LogMessageType msgType, const std::string &source,
-   //                            const char *msg, ...);
    try
    {
       dtUtil::Log::LogMessageType logType;
@@ -204,8 +194,7 @@ void LogTests::TestLogMessage3()
       {
          logType = (dtUtil::Log::LogMessageType)type;
          mLogger->SetLogLevel(logType);
-         mMsgStr.empty();
-         mSource.empty();
+
          mMsgStr = "i";
          mSource = "j";
          
@@ -216,10 +205,6 @@ void LogTests::TestLogMessage3()
          //test with one character
          mLogger->LogMessage(logType, mSource, mMsgStr.c_str());
          mLogger->LogMessage(logType, mSource, "a %d %s %f %lf", 1, "c", 1.0, 1.1);
-         
-         //test with max characters
-         mMsgStr.empty();
-         mSource.empty();
          
          //for(unsigned i=0; i<=MAX_LENGTH-1; i++)
          {
@@ -244,7 +229,6 @@ void LogTests::TestLogMessage3()
 ///////////////////////////////////////////////////////////////////////////////
 void LogTests::TestIsLevelEnabled()
 {
-   //bool IsLevelEnabled(LogMessageType msgType) const { return msgType >= mLevel; };
    try
    {
       mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, "TestIsLevelEnabled", "Running TestIsLevelEnabled");
@@ -284,7 +268,6 @@ void LogTests::TestLogFilename()
 
    bool exists = dtUtil::FileUtils::GetInstance().FileExists(newFileName);
    
-   //dtUtil::FileUtils::GetInstance().FileDelete(newFileName);
    CPPUNIT_ASSERT(exists);
 }
 
