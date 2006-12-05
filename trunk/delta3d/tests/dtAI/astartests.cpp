@@ -16,21 +16,20 @@
 * along with this library; if not, write to the Free Software Foundation, Inc.,
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
-* @author Bradley Anderegg
+* Bradley Anderegg
 */
 #include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include "testastarutils.h"
 #include <list>
-#include <vector>
 
 using namespace dtAI;
 
 //////////////////////////////////////////////////////////////////////////
 //these are static from testastarutils.h
-dtAI::AStarTest_PathData* dtAI::AStarTest_PathData::sPathData = 0;
+dtAI::AStarTest_PathData* dtAI::AStarTest_PathData::sPathData = NULL;
 
-dtAI::PathCostData* dtAI::PathCostData::sCostData = 0;
+dtAI::PathCostData* dtAI::PathCostData::sCostData = NULL;
 
 typedef std::list<unsigned> PATH;
 //////////////////////////////////////////////////////////////////////////
