@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * @author Erik Johnson 05/16/2006
+ * Erik Johnson 05/16/2006
  */
 #include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
@@ -71,6 +71,8 @@ void DeltaWinTests::TestWindow()
 
       CPPUNIT_ASSERT_MESSAGE("Window GetPosition() didn't return the values from SetPosition()",
                               (x2==x || y2==y || w2==w || h2==h));
+
+      win->SetPosition(0, 0, 50, 50);
 
       const std::string title("hello there");
       win->SetWindowTitle(title);
