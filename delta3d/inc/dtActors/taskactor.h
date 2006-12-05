@@ -24,8 +24,6 @@
 #include <dtGame/gameactor.h>
 #include <dtUtil/mathdefines.h>
 #include <dtDAL/plugin_export.h>
-
-#include <map>
 #include <vector>
 
 namespace dtDAL 

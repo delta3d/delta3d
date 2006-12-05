@@ -34,7 +34,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="dtHLAGMd.lib cppunitd.lib osgd.lib librti13d.lib"
-				OutputFile="../../../bin/UnitTestsExtrasd.exe"
+				OutputFile="../../../tests/UnitTestsExtrasd.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib"
 				GenerateDebugInformation="TRUE"
@@ -83,7 +83,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="dtHLAGM.lib cppunit.lib osg.lib librti13.lib"
-				OutputFile="../../../bin/UnitTestsExtras.exe"
+				OutputFile="../../../tests/UnitTestsExtras.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib;"
 				GenerateDebugInformation="FALSE"

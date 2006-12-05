@@ -42,6 +42,7 @@
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
 				SubSystem="1"
+				ImportLibrary="../../../lib/testAARd.lib"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -95,6 +96,7 @@
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				ImportLibrary="../../../lib/testAAR.lib"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
