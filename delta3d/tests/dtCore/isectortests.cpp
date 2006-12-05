@@ -73,7 +73,7 @@ class IsectorTests : public CPPUNIT_NS::TestFixture
          mWin = NULL;
          dtCore::System::GetInstance().Stop();
       }
-      
+
       void TestProperties()
       {
          //call it to make sure it doesn't blow.
