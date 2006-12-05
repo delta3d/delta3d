@@ -36,6 +36,7 @@
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/gameeventmanager.h>
 #include <dtDAL/gameevent.h>
+#include <dtUtil/fileutils.h>
 #include <dtUtil/datastream.h>
 #include <dtGame/messageparameter.h>
 #include <dtGame/machineinfo.h>
@@ -220,13 +221,13 @@ void MessageTests::tearDown()
    {
       try
       {
-
          dtCore::System::GetInstance().SetPause(false);
          dtCore::System::GetInstance().Stop();
 
-         if (!mGameManager->GetCurrentMap().empty())
+         if(!mGameManager->GetCurrentMap().empty())
          {
             dtDAL::Project::GetInstance().CloseMap(dtDAL::Project::GetInstance().GetMap(mGameManager->GetCurrentMap()), true);
+            dtDAL::Project::GetInstance().DeleteMap(dtDAL::Project::GetInstance().GetMap(mGameManager->GetCurrentMap()));
          }
 
          dtDAL::GameEventManager::GetInstance().ClearAllEvents();
@@ -235,18 +236,17 @@ void MessageTests::tearDown()
          mGameManager->UnloadActorRegistry(mTestActorLibrary);
          mGameManager = NULL;
       }
-      catch (const dtUtil::Exception& e)
+      catch(const dtUtil::Exception &e)
       {
          CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
       }
-
    }
 
    try
    {
       dtUtil::FileUtils::GetInstance().DirDelete("dtGame/TestGameProject", true);
    }
-   catch (const dtUtil::Exception& e)
+   catch(const dtUtil::Exception &e)
    {
       CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
    }
@@ -1227,6 +1227,8 @@ void MessageTests::TestChangeMapErrorConditions()
       // correct
    }
 
+   dtUtil::FileUtils::GetInstance().DirDelete("dtGame/WorkingProject", true);
+   CPPUNIT_ASSERT(!dtUtil::FileUtils::GetInstance().DirExists("dtGame/WorkingProject"));
 }
 
 

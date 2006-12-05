@@ -922,6 +922,9 @@ void GameActorTests::TestMessageProcessingPerformance()
          dtCore::System::GetInstance().Step();
       }
 
+      dtUtil::FileUtils::GetInstance().DirDelete("Working Project", true);
+      CPPUNIT_ASSERT(!dtUtil::FileUtils::GetInstance().DirExists("Working Project"));
+
       // Start time in microseconds
       dtCore::Timer_t stopTime = statsTickClock.Tick();
       double timeDelta = statsTickClock.DeltaSec(startTime, stopTime);
