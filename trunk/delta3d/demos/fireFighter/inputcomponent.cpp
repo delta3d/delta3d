@@ -198,7 +198,7 @@ void InputComponent::OnGame()
          GetGameManager()->GetApplication().GetKeyboard(), 
          GetGameManager()->GetApplication().GetMouse());
 
-      mMotionModel->SetMaximumTurnSpeed(4000.0f);
+      mMotionModel->SetMaximumTurnSpeed(2000.0f);
       mMotionModel->SetUseMouseButtons(false);
       mMotionModel->SetCanJump(false);
    }
