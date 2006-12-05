@@ -214,7 +214,7 @@ void InputComponent::IsActorInGameMap(T *&actor, bool throwException)
    if(actor == NULL && throwException)
    {
       throw dtUtil::Exception(ExceptionEnum::MISSING_REQUIRED_ACTOR_EXCEPTION, 
-            "Failed to find the actor: " + actor->GetName(), __FILE__, __LINE__);
+         std::string("Failed to find the actor: ") + typeid(actor).name(), __FILE__, __LINE__);
    }
 }
 
