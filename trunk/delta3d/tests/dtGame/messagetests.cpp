@@ -217,7 +217,7 @@ void MessageTests::setUp()
 //////////////////////////////////////////////////////////////////////////
 void MessageTests::tearDown()
 {
-   if (mGameManager.valid())
+   if(mGameManager.valid())
    {
       try
       {
