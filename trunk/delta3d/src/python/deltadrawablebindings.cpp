@@ -62,6 +62,9 @@ void initDeltaDrawableBindings()
    Scene* (DeltaDrawable::*GetSceneParent1)() = &DeltaDrawable::GetSceneParent;
    const Scene* (DeltaDrawable::*GetSceneParent2)() const = &DeltaDrawable::GetSceneParent;
 
+   DeltaDrawable* (DeltaDrawable::*GetChild1)(unsigned int) = &DeltaDrawable::GetChild;
+   const DeltaDrawable* (DeltaDrawable::*GetChild2)(unsigned int) const = &DeltaDrawable::GetChild;
+
    class_<DeltaDrawable, bases<Base>, dtCore::RefPtr<DeltaDrawableWrap>, boost::noncopyable>("DeltaDrawable", no_init)
       .def("SetParent", &DeltaDrawable::SetParent, &DeltaDrawableWrap::DefaultSetParent)
       .def("AddChild", &DeltaDrawable::AddChild, with_custodian_and_ward<1, 2>())
@@ -71,7 +74,8 @@ void initDeltaDrawableBindings()
       .def("GetSceneParent", GetSceneParent1, return_internal_reference<>())
       .def("GetSceneParent", GetSceneParent2, return_internal_reference<>())      
       .def("GetNumChildren", &DeltaDrawable::GetNumChildren)
-      .def("GetChild", &DeltaDrawable::GetChild, return_internal_reference<>())
+      .def("GetChild", GetChild1, return_internal_reference<>())
+	  .def("GetChild", GetChild2, return_internal_reference<>())
       .def("GetChildIndex", &DeltaDrawable::GetChildIndex)
       .def("CanBeChild", &DeltaDrawable::CanBeChild)
       .def("RenderProxyNode", &DeltaDrawable::RenderProxyNode, RPN_overloads())

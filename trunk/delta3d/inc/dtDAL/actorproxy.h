@@ -31,6 +31,11 @@
 #include <dtCore/refptr.h>
 #include <dtDAL/export.h>
 
+// Counteracts the "#define GetClassName GetClassNameA" in winuser.h
+#if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
+#undef GetClassName
+#endif
+
 namespace dtCore
 {
    class DeltaDrawable;
