@@ -45,7 +45,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="dtUtild.lib isensed.lib js_d.lib oded.lib opengl32.lib openthreadswin32d.lib osgd.lib osgdbd.lib osgparticled.lib osgtextd.lib osgutild.lib producerd.lib Rpcrt4.lib ul_d.lib winmm.lib xerces-c_2D.lib"
 				OutputFile="../../../bin/dtCored.dll"
-				LinkIncremental="1"
+				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libc.lib;libcmt;libcd;libcmtd"
