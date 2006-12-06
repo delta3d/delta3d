@@ -163,7 +163,7 @@
             </attrToProp>            
         </object>
 
-        <object>
+<!--        <object>
             <objectClass>TryingToMapTheJetBidirectionallyAgain</objectClass>
             <actorType>TestHLA.Jet</actorType>
             <remoteOnly>false</remoteOnly>
@@ -176,6 +176,12 @@
                 <specific>0</specific>
                 <extra>0</extra>
             </disEntityEnum>
+        </object>-->
+
+        <object>
+            <objectClass>EmitterBeam.RadarBeam</objectClass>
+            <actorType>TestHLA.EmitterBeam</actorType>
+            <remoteOnly>false</remoteOnly>
         </object>
     </objects>
     

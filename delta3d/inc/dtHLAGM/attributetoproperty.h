@@ -25,12 +25,14 @@
 // attributetoproperty.h: Declaration of the AttributeToProperty class.
 //
 ///////////////////////////////////////////////////////////////////////
+#ifndef RTI_USES_STD_FSTREAM
 #define RTI_USES_STD_FSTREAM
-#include"RTI.hh"
+#endif
+#include <RTI.hh>
 
-#include "dtHLAGM/export.h"
-#include "dtHLAGM/onetoonemapping.h"
-#include "dtHLAGM/onetomanymapping.h"
+#include <dtHLAGM/export.h>
+#include <dtHLAGM/onetoonemapping.h>
+#include <dtHLAGM/onetomanymapping.h>
 
 namespace dtHLAGM
 {

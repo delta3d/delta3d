@@ -19,7 +19,7 @@
  * David Guthrie
  */
 
-#include "dtHLAGM/onetomanymapping.h"
+#include <dtHLAGM/onetomanymapping.h>
 
 namespace dtHLAGM
 {

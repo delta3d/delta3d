@@ -28,7 +28,10 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-//You must include RTI.hh before including this file.
+#ifndef RTI_USES_STD_FSTREAM
+#define RTI_USES_STD_FSTREAM
+#endif
+#include <RTI.hh>
 
 #include <dtHLAGM/export.h>
 #include <dtHLAGM/onetoonemapping.h>

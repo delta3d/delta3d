@@ -30,9 +30,9 @@
 #include <dtDAL/project.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/resourcedescriptor.h>
+#include <dtHLAGM/hlacomponent.h>
 #include <dtHLAGM/objecttoactor.h>
 #include <dtHLAGM/interactiontomessage.h>
-#include <dtHLAGM/hlacomponent.h>
 #include <dtHLAGM/attributetoproperty.h>
 #include <dtHLAGM/parametertoparameter.h>
 #include <dtHLAGM/onetoonemapping.h>
@@ -143,6 +143,7 @@ class HLATests : public CPPUNIT_NS::TestFixture
       void RunAllTests();
 
       void TestReflectAttributes();
+      void TestReflectAttributesEntityTypeMissing();
       void TestReflectAttributesNoEntityType();
       void TestPrepareUpdate();
       void TestPrepareInteraction();
@@ -204,8 +205,8 @@ class HLATests : public CPPUNIT_NS::TestFixture
       dtCore::RefPtr<TestHLAComponent> mHLAComponent;
       dtCore::RefPtr<TestComponent> mTestComponent;
 
-      RTI::ObjectClassHandle mClassHandle1, mClassHandle2;
-      RTI::ObjectHandle mObjectHandle1, mObjectHandle2;
+      RTI::ObjectClassHandle mClassHandle1, mClassHandle2, mClassHandle3;
+      RTI::ObjectHandle mObjectHandle1, mObjectHandle2, mObjectHandle3;
 
       static const std::string mTestGameActorLibrary;
 
@@ -226,6 +227,7 @@ void HLATests::setUp()
       dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
       std::string logName("HLATests");
       logger = &dtUtil::Log::GetInstance(logName);
+      dtUtil::Log::GetInstance("hlacomponent.cpp").SetLogLevel(dtUtil::Log::LOG_DEBUG);
       dtCore::RefPtr<dtCore::Scene> scene = new dtCore::Scene();
       mGameManager = new dtGame::GameManager(*scene);
       mGameManager->LoadActorRegistry(mTestGameActorLibrary);
@@ -268,7 +270,9 @@ void HLATests::setUp()
    }
    catch (const RTI::Exception& ex)
    {
-      CPPUNIT_FAIL(std::string("Error joining federation : ") + ex._reason);
+      std::ostringstream ss;
+      ss << ex;
+      CPPUNIT_FAIL(std::string("Error joining federation : ") + ss.str());
    }
    
 }
@@ -306,26 +310,17 @@ void HLATests::BetweenTestSetUp()
          "BaseEntity.PhysicalEntity.Platform.Aircraft");
       mObjectHandle2 = rtiamb->registerObjectInstance(mClassHandle2,
                                                      "TestObject2");
+
+      mClassHandle3 = rtiamb->getObjectClassHandle(
+         "EmitterBeam.RadarBeam");
+      mObjectHandle3 = rtiamb->registerObjectInstance(mClassHandle3,
+                                                     "TestObject3");
    }
-   catch (RTI::NameNotFound &)
+   catch (const RTI::Exception &e)
    {
-      CPPUNIT_FAIL("Could not find Object Class Name");
-   }
-   catch (RTI::ObjectAlreadyRegistered &)
-   {
-      CPPUNIT_FAIL("Object was already registered!");
-   }
-   catch (RTI::FederateNotExecutionMember &)
-   {
-      CPPUNIT_FAIL("Federate not Execution Member");
-   }
-   catch (RTI::ConcurrentAccessAttempted &)
-   {
-      CPPUNIT_FAIL("Concurrent Access Attempted");
-   }
-   catch (RTI::RTIinternalError &)
-   {
-      CPPUNIT_FAIL("RTIinternal Error");
+      std::ostringstream ss; 
+      ss << e;
+      CPPUNIT_FAIL(ss.str());
    }
 
    mTestComponent->reset();
@@ -341,6 +336,50 @@ void HLATests::BetweenTestTearDown()
    {
       rtiamb->deleteObjectInstance(mObjectHandle1, "TestObject1");
       rtiamb->deleteObjectInstance(mObjectHandle2, "TestObject2");
+      rtiamb->deleteObjectInstance(mObjectHandle3, "TestObject3");
+   }
+   catch (const RTI::Exception &e)
+   {
+      std::ostringstream ss; 
+      ss << e;
+      CPPUNIT_FAIL(ss.str());
+   }
+}
+
+void HLATests::RunAllTests()
+{
+   try
+   {
+      //This is a quick, read-only test.
+      TestSubscription();
+   
+      BetweenTestSetUp();
+      TestReflectAttributes();
+      BetweenTestTearDown();
+      
+      BetweenTestSetUp();
+      TestReflectAttributesNoEntityType();
+      BetweenTestTearDown();
+   
+      BetweenTestSetUp();
+      TestReflectAttributesEntityTypeMissing();
+      BetweenTestTearDown();
+   
+      BetweenTestSetUp();
+      TestPrepareUpdate();
+      BetweenTestTearDown();
+   
+      BetweenTestSetUp();
+      TestPrepareInteraction();
+      BetweenTestTearDown();
+   
+      BetweenTestSetUp();
+      TestReceiveInteraction();
+      BetweenTestTearDown();
+   
+      BetweenTestSetUp();
+      TestRuntimeMappingInfo();
+      BetweenTestTearDown();
    }
    catch (RTI::ObjectNotKnown &)
    {
@@ -358,36 +397,6 @@ void HLATests::BetweenTestTearDown()
    {
       CPPUNIT_FAIL("RTIinternal Error");
    }
-}
-
-void HLATests::RunAllTests()
-{
-   //This is a quick, read-only test.
-   TestSubscription();
-
-   BetweenTestSetUp();
-   TestReflectAttributes();
-   BetweenTestTearDown();
-   
-   BetweenTestSetUp();
-   TestReflectAttributesNoEntityType();
-   BetweenTestTearDown();
-
-   BetweenTestSetUp();
-   TestPrepareUpdate();
-   BetweenTestTearDown();
-
-   BetweenTestSetUp();
-   TestPrepareInteraction();
-   BetweenTestTearDown();
-
-   BetweenTestSetUp();
-   TestReceiveInteraction();
-   BetweenTestTearDown();
-
-   BetweenTestSetUp();
-   TestRuntimeMappingInfo();
-   BetweenTestTearDown();
 }
 
 void HLATests::TestRuntimeMappingInfo()
@@ -622,6 +631,46 @@ void HLATests::TestSubscription()
 }
 
 void HLATests::TestReflectAttributesNoEntityType()
+{
+   try
+   {
+      RTI::AttributeHandleValuePairSet* ahs =
+         RTI::AttributeSetFactory::create(0);
+
+      mHLAComponent->discoverObjectInstance(mObjectHandle3, mClassHandle3, "testMapping");
+      const dtCore::UniqueId* id = mHLAComponent->GetRuntimeMappings().GetId(mObjectHandle3);
+      CPPUNIT_ASSERT(id != NULL);
+
+      mHLAComponent->reflectAttributeValues(mObjectHandle1, *ahs, "");
+
+      dtCore::System::GetInstance().Step();
+
+      id = mHLAComponent->GetRuntimeMappings().GetId(mObjectHandle3);
+      CPPUNIT_ASSERT_MESSAGE("It should have mapped in the new actor id, even with a NULL DisID.",
+                     id != NULL);
+
+      //Check the actual message to see if it was a create message.
+      dtCore::RefPtr<const dtGame::Message> msg =
+            mTestComponent->FindProcessMessageOfType(dtGame::MessageType::INFO_ACTOR_CREATED);
+
+      CPPUNIT_ASSERT_MESSAGE("A create message should have been sent.", msg.valid());
+
+      //There is a mapping to set the sending id to the new actor as well.
+      CPPUNIT_ASSERT(msg->GetSendingActorId() == *id);
+
+      dtCore::RefPtr<const dtGame::ActorUpdateMessage> aum = static_cast<const dtGame::ActorUpdateMessage*>(msg.get());
+
+      CPPUNIT_ASSERT_MESSAGE("The actor type should not be NULL.", aum->GetActorType() != NULL);
+      CPPUNIT_ASSERT_MESSAGE("The actor type should be the EmitterBeam.", aum->GetActorType()->GetName() == "EmitterBeam");
+
+   }
+   catch (const dtUtil::Exception& ex)
+   {
+      CPPUNIT_FAIL(ex.What());
+   }
+}
+
+void HLATests::TestReflectAttributesEntityTypeMissing()
 {
    try
    {

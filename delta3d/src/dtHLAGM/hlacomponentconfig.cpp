@@ -45,7 +45,7 @@
 
 namespace dtHLAGM
 {
-   static const std::string logName("hlafomtranslatorconfig.cpp");
+   const std::string HLAComponentConfig::LOG_NAME("hlafomtranslatorconfig.cpp");
 
    HLAComponentConfig::HLAComponentConfig() throw (dtUtil::Exception):
       mHandler(new HLAFOMConfigContentHandler)
@@ -64,7 +64,7 @@ namespace dtHLAGM
          EXCEPT(dtHLAGM::ExceptionEnum::XML_INTERNAL_EXCEPTION, "Error, unable to initialize Xerces XML parser.  Aborting.");
       }
 
-      mLogger = &dtUtil::Log::GetInstance(logName);
+      mLogger = &dtUtil::Log::GetInstance(LOG_NAME);
 
       mXercesParser = xercesc_dt::XMLReaderFactory::createXMLReader();
 

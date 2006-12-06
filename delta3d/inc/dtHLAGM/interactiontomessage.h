@@ -23,7 +23,10 @@
 #ifndef DELTA_INTERACTION_TO_MESSAGE
 #define DELTA_INTERACTION_TO_MESSAGE
 
-//You must include RTI.hh before including this file.
+#ifndef RTI_USES_STD_FSTREAM
+#define RTI_USES_STD_FSTREAM
+#endif
+#include <RTI.hh>
 
 #include <string>
 #include <vector>

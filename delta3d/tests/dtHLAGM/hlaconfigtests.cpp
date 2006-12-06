@@ -378,6 +378,11 @@ void HLAConfigTests::TestConfigure()
          //it should refuse to map it bidirectionally and spit out an error in the log, but it shouldn't blow up
          CheckObjectToActorMapping("TestHLA", "Jet", "TryingToMapTheJetBidirectionallyAgain", "",  &type, true, props);
       }
+      {
+         std::vector<dtHLAGM::AttributeToPropertyList> props;
+         // Test a NULL dis id.
+         CheckObjectToActorMapping("TestHLA", "EmitterBeam", "EmitterBeam", "",  NULL, false, props);
+      }
 
       {
          std::vector<dtHLAGM::ParameterToParameterList> params;

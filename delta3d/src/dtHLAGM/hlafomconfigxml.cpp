@@ -20,7 +20,7 @@
  * William E. Johnson II
  */
 
-#include "dtHLAGM/hlafomconfigxml.h"
+#include <dtHLAGM/hlafomconfigxml.h>
 
 #include <sstream>
 
@@ -36,17 +36,17 @@
 #include <dtDAL/librarymanager.h>
 #include <dtGame/gamemanager.h>
 
-#include "dtHLAGM/hlacomponent.h"
-#include "dtHLAGM/objecttoactor.h"
-#include "dtHLAGM/interactiontomessage.h"
-#include "dtHLAGM/attributetype.h"
-#include "dtHLAGM/parametertranslator.h"
-#include "dtHLAGM/exceptionenum.h"
+#include <dtHLAGM/hlacomponent.h>
+#include <dtHLAGM/objecttoactor.h>
+#include <dtHLAGM/interactiontomessage.h>
+#include <dtHLAGM/attributetype.h>
+#include <dtHLAGM/parametertranslator.h>
+#include <dtHLAGM/exceptionenum.h>
 
 namespace dtHLAGM
 {
 
-   const static std::string logName("hlafomconfigxml.cpp");
+   const std::string HLAFOMConfigContentHandler::LOG_NAME("hlafomconfigxml.cpp");
 
    const std::string HLAFOMConfigContentHandler::HLA_FOM_ELEMENT("hla");
 
@@ -125,7 +125,7 @@ namespace dtHLAGM
 
    HLAFOMConfigContentHandler::HLAFOMConfigContentHandler()
    {
-      mLogger = &dtUtil::Log::GetInstance(logName);
+      mLogger = &dtUtil::Log::GetInstance(LOG_NAME);
    }
 
    HLAFOMConfigContentHandler::~HLAFOMConfigContentHandler()
