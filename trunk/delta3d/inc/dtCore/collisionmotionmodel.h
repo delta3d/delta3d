@@ -57,6 +57,8 @@ namespace dtCore
    class DT_CORE_EXPORT CollisionMotionModel : public MotionModel
    {
 
+      DECLARE_MANAGEMENT_LAYER(CollisionMotionModel);
+
    public:
       enum eMode{WALKING = 0, FALLING, SLIDING};
 

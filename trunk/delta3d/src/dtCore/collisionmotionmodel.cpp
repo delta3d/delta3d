@@ -51,6 +51,7 @@ bool CollisionMotionModel::FPSAxisListener::AxisStateChanged(const Axis* axis,
    return mSetFunctor(newState, delta);
 }
 
+IMPLEMENT_MANAGEMENT_LAYER(CollisionMotionModel);
 
 /**
 * Constructor.
@@ -112,6 +113,8 @@ CollisionMotionModel::CollisionMotionModel(float pHeight, float pRadius, float k
    mMouse = mouse;
 
    AddSender(&System::GetInstance());
+
+   RegisterInstance(this);
 }
 
 /**
@@ -119,6 +122,7 @@ CollisionMotionModel::CollisionMotionModel(float pHeight, float pRadius, float k
 */
 CollisionMotionModel::~CollisionMotionModel()
 {
+   DeregisterInstance(this);
    RemoveSender(&System::GetInstance());
 
    mLookUpDownAxis->RemoveAxisListener(mLookUpDownListener);
