@@ -87,7 +87,7 @@ namespace dtActors
          dtDAL::MakeFunctorRet(*env, &BasicEnvironmentActor::GetTimeAndDateString),
          "Sets the time and date of the application. This string must be in the following UTC format: yyyy-mm-ddThh:mm:ss"));
 
-      AddProperty(new dtDAL::Vec3ActorProperty("Sky Color", "Sky Color",
+      AddProperty(new dtDAL::ColorRgbaActorProperty("Sky Color", "Sky Color",
          dtDAL::MakeFunctor(*env, &BasicEnvironmentActor::SetSkyColor),
          dtDAL::MakeFunctorRet(*env, &BasicEnvironmentActor::GetSkyColor),
          "Sets the sky color of this environment"));
@@ -353,16 +353,17 @@ namespace dtActors
       return BasicEnvironmentActor::WindTypeEnum::WIND_NONE;
    }
 
-   void BasicEnvironmentActor::SetSkyColor(const osg::Vec3 &color)
+   void BasicEnvironmentActor::SetSkyColor(const osg::Vec4 &color)
    {
-      mWeather->GetEnvironment()->SetSkyColor(color);
+      osg::Vec3 tempColor(color[0], color[1], color[2]);
+      mWeather->GetEnvironment()->SetSkyColor(tempColor);
    }
 
-   osg::Vec3 BasicEnvironmentActor::GetSkyColor() const
+   osg::Vec4 BasicEnvironmentActor::GetSkyColor() const
    {
       osg::Vec3 color;
       mWeather->GetEnvironment()->GetSkyColor(color);
-      return color;
+      return osg::Vec4(color[0], color[1], color[2], 0.0f);
    }
 
    void BasicEnvironmentActor::SetRateOfChange(float rate)
