@@ -153,7 +153,7 @@ namespace dtActors
       dtGame::EnvironmentActor(proxy),
       mIsCloudPlaneEnabled(false),
       mWeather(new dtABC::Weather),
-      mCloudPlane( NULL ),//new dtCore::CloudPlane(6, 0.5f, 6, 1, 0.3f, 0.96f, 512, 1400.0f))
+      mCloudPlane(new dtCore::CloudPlane(6, 0.5f, 6, 1, 0.3f, 0.96f, 512, 1400.0f)),
       mWeatherTheme(dtABC::Weather::THEME_CLEAR)
    {
       AddChild(mWeather->GetEnvironment());
@@ -271,7 +271,7 @@ namespace dtActors
 
    void BasicEnvironmentActor::EnableCloudPlane(bool enable)
    {
-      if( enable == false && mIsCloudPlaneEnabled )
+      /*if( enable == false && mIsCloudPlaneEnabled )
          mWeatherTheme = mWeather->GetTheme();
 
       mIsCloudPlaneEnabled = enable;
@@ -279,7 +279,13 @@ namespace dtActors
       if(mIsCloudPlaneEnabled)
          mWeather->SetTheme(mWeatherTheme);
       else
-         mWeather->SetTheme(dtABC::Weather::THEME_CLEAR);
+         mWeather->SetTheme(dtABC::Weather::THEME_CLEAR);*/
+      mIsCloudPlaneEnabled = enable;
+
+      if(mIsCloudPlaneEnabled)
+         mWeather->GetEnvironment()->AddEffect(mCloudPlane.get());
+      else
+         mWeather->GetEnvironment()->RemEffect(mCloudPlane.get());
    }
 
    bool BasicEnvironmentActor::IsCloudPlaneEnabled() const
