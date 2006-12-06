@@ -63,7 +63,6 @@ IMPLEMENT_MANAGEMENT_LAYER(CollisionMotionModel);
 */
 CollisionMotionModel::CollisionMotionModel(float pHeight, float pRadius, float k, float theta, dtCore::Scene* pScene, Keyboard* keyboard, Mouse* mouse)
       : MotionModel("CollisionMotionModel")
-      , mDefaultInputDevice()
       , mLeftRightMouseMovement(NULL)
       , mUpDownMouseMovement(NULL)
       , mArrowKeysUpDownMapping(NULL)
