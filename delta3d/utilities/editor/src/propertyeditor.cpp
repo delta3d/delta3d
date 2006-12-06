@@ -46,6 +46,7 @@
 #include <dtEditQt/dynamicgameeventcontrol.h>
 #include <dtEditQt/editoractions.h>
 #include <dtEditQt/editorevents.h>
+#include <dtEditQt/editordata.h>
 #include <dtEditQt/propertyeditormodel.h>
 #include <dtEditQt/propertyeditortreeview.h>
 #include <dtEditQt/viewportmanager.h>
@@ -72,6 +73,7 @@
 #include <dtDAL/exceptionenum.h>
 #include <dtDAL/datatype.h>
 #include <dtDAL/librarymanager.h>
+#include <dtDAL/map.h>
 
 #include <dtUtil/log.h>
 #include <dtUtil/tree.h>
@@ -304,7 +306,11 @@ namespace dtEditQt
         {
             // set the name in the group box.
             dtCore::RefPtr<dtDAL::ActorProxy> myProxy = selectedActors[0];
-            QString label = baseGroupBoxName + " ('" + tr(myProxy->GetName().c_str()) + "' selected)";
+            QString label;
+            if(myProxy == EditorData::GetInstance().getCurrentMap()->GetEnvironmentActor())
+               label = baseGroupBoxName + " ('" + tr(myProxy->GetName().c_str()) + " *Environment Actor*' selected)";
+            else
+               label = baseGroupBoxName + " ('" + tr(myProxy->GetName().c_str()) + "' selected)";
             actorPropBox->setTitle(label);
         }
         else

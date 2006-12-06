@@ -69,6 +69,7 @@
 #include <dtDAL/transformableactorproxy.h>
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/actorproxyicon.h>
+#include <dtDAL/environmentactor.h>
 
 #include <sstream>
 
@@ -79,7 +80,7 @@ namespace dtEditQt
 
     ///////////////////////////////////////////////////////////////////////////////
     EditorActions::EditorActions() :
-      mIsector( new dtCore::Isector() )
+      mIsector(new dtCore::Isector)
     {
         LOG_INFO("Initializing Editor Actions.");
         setupFileActions();
@@ -105,6 +106,11 @@ namespace dtEditQt
         timer = new QTimer((QWidget*)EditorData::GetInstance().getMainWindow());
         timer->setInterval(saveMilliSeconds);
         connect(timer, SIGNAL(timeout()), this, SLOT(slotAutosave()));
+
+        connect(&EditorEvents::GetInstance(), 
+                 SIGNAL(actorProxyCreated(ActorProxyRefPtr, bool)), 
+                 this, 
+                 SLOT(slotOnActorCreated(ActorProxyRefPtr, bool)));
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -668,12 +674,14 @@ namespace dtEditQt
         Camera *worldCam = ViewportManager::GetInstance().getWorldViewCamera();
 
         //Make sure we have valid data.
-        if (!currMap.valid()) {
+        if (!currMap.valid()) 
+        {
             LOG_ERROR("Current map is not valid.");
             return;
         }
 
-        if (scene == NULL) {
+        if (scene == NULL) 
+        {
             LOG_ERROR("Current scene is not valid.");
             return;
         }
@@ -779,30 +787,104 @@ namespace dtEditQt
     //////////////////////////////////////////////////////////////////////////////
     bool EditorActions::deleteProxy(dtDAL::ActorProxy *proxy, dtCore::RefPtr<dtDAL::Map> currMap)
     {
-        dtCore::Scene *scene = ViewportManager::GetInstance().getMasterScene();
-        bool result = false;
+       bool result = false;
+       dtCore::Scene *scene = ViewportManager::GetInstance().getMasterScene();
+       dtDAL::ActorProxy *envProxy = currMap->GetEnvironmentActor();
+       if(envProxy != NULL)
+       {
+          if(envProxy == proxy)
+          {
+             dtDAL::EnvironmentActor *envActor = dynamic_cast<dtDAL::EnvironmentActor*>(envProxy->GetActor());
+             std::vector<dtCore::DeltaDrawable*> drawables;
+             envActor->GetAllActors(drawables);
+             envActor->RemoveAllActors();
+             for(unsigned int i = 0; i < drawables.size(); i++)
+             {
+                scene->AddDrawable(drawables[i]);
+             }
 
-        if (proxy != NULL && scene != NULL)
-        {
-            dtCore::RefPtr<dtDAL::ActorProxy> tempRef = proxy;
-            scene->RemoveDrawable(proxy->GetActor());
-            if (proxy->GetBillBoardIcon() != NULL)
-                scene->RemoveDrawable(proxy->GetBillBoardIcon()->GetDrawable());
-
-            EditorEvents::GetInstance().emitActorProxyAboutToBeDestroyed(tempRef);
-
-            if (!currMap->RemoveProxy(*proxy))
-            {
+             currMap->SetEnvironmentActor(NULL);
+             
+             if(!currMap->RemoveProxy(*proxy))
+             {
                 LOG_ERROR("Unable to remove actor proxy: " + proxy->GetName());
-            }
-            else
-            {
-                EditorEvents::GetInstance().emitActorProxyDestroyed(tempRef);
+             }
+             else
+             {
+                EditorEvents::GetInstance().emitActorProxyDestroyed(proxy);
                 result = true;
-            }
-        }
+             }
+             return result;
+          }
+       }
+       
+       if(proxy != NULL && scene != NULL)
+       {
+          dtCore::RefPtr<dtDAL::ActorProxy> tempRef = proxy;
+          scene->RemoveDrawable(proxy->GetActor());
+          if(proxy->GetBillBoardIcon() != NULL)
+              scene->RemoveDrawable(proxy->GetBillBoardIcon()->GetDrawable());
 
-        return result;
+          EditorEvents::GetInstance().emitActorProxyAboutToBeDestroyed(tempRef);
+
+          if(!currMap->RemoveProxy(*proxy))
+          {
+             LOG_ERROR("Unable to remove actor proxy: " + proxy->GetName());
+          }
+          else
+          {
+             EditorEvents::GetInstance().emitActorProxyDestroyed(tempRef);
+             result = true;
+          }
+       }
+       return result;
+    }
+
+    //////////////////////////////////////////////////////////////////////////////
+    void EditorActions::slotOnActorCreated(ActorProxyRefPtr actor, bool forceNoAdjustments)
+    {
+       dtDAL::EnvironmentActor *envActor = dynamic_cast<dtDAL::EnvironmentActor*>(actor->GetActor());
+       if(envActor == NULL)
+          return;
+
+       dtDAL::Map *map = EditorData::GetInstance().getCurrentMap();
+       if(map == NULL)
+          return;
+
+       dtDAL::ActorProxy *envProxy = map->GetEnvironmentActor();
+       QWidget *window = static_cast<QWidget*>(EditorData::GetInstance().getMainWindow());
+       if(envProxy != NULL)
+       {
+          QMessageBox::Button button = QMessageBox::information(window, 
+             tr("Set Environment Actor"), 
+             tr("Would you like to set this actor as the scene's environment, overwriting the current environment actor?"), 
+             QMessageBox::Yes, QMessageBox::No);
+
+          if(button == QMessageBox::Yes)
+          {
+             dtCore::Scene *scene = ViewportManager::GetInstance().getMasterScene();
+             dtDAL::EnvironmentActor *env = dynamic_cast<dtDAL::EnvironmentActor*>(envProxy->GetActor());
+             if(env != NULL)
+                env->RemoveAllActors();
+             map->SetEnvironmentActor(actor.get());
+             dtDAL::Project::GetInstance().LoadMapIntoScene(*map, *scene);
+          }
+       }
+       else
+       {
+          QMessageBox::Button button = QMessageBox::information(window, 
+             tr("Set Environment Actor"), 
+             tr("Would you like to set this actor as the scene's environment?"), 
+             QMessageBox::Yes, QMessageBox::No);
+
+          if(button == QMessageBox::Yes)
+          {
+             dtCore::Scene *scene = ViewportManager::GetInstance().getMasterScene();
+             scene->RemoveAllDrawables();
+             map->SetEnvironmentActor(actor.get());
+             dtDAL::Project::GetInstance().LoadMapIntoScene(*map, *scene);
+          }
+       }
     }
 
     //////////////////////////////////////////////////////////////////////////////
