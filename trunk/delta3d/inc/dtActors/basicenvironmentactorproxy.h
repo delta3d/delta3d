@@ -406,6 +406,11 @@ namespace dtActors
            */
          virtual void OnEnteredWorld();
 
+         /**
+          * This actor is global
+          */
+         virtual bool IsPlaceable() const { return false; }
+
       protected:
 
          /// Destructor
