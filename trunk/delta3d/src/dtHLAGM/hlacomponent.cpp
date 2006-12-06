@@ -19,6 +19,17 @@
  * David Guthrie
  */
 
+#include <sstream>
+
+#include <dtHLAGM/hlacomponent.h>
+#include <dtHLAGM/objecttoactor.h>
+#include <dtHLAGM/distypes.h>
+#include <dtHLAGM/attributetoproperty.h>
+#include <dtHLAGM/parametertoparameter.h>
+#include <dtHLAGM/interactiontomessage.h>
+#include <dtHLAGM/parametertranslator.h>
+#include <dtHLAGM/rprparametertranslator.h>
+
 #include <dtUtil/matrixutil.h>
 #include <dtUtil/log.h>
 
@@ -37,14 +48,6 @@
 #include <osg/io_utils>
 //#include <osgDB/FileNameUtils>
 
-#include <dtHLAGM/hlacomponent.h>
-#include <dtHLAGM/objecttoactor.h>
-#include <dtHLAGM/distypes.h>
-#include <dtHLAGM/attributetoproperty.h>
-#include <dtHLAGM/parametertoparameter.h>
-#include <dtHLAGM/interactiontomessage.h>
-#include <dtHLAGM/parametertranslator.h>
-#include <dtHLAGM/rprparametertranslator.h>
 
 #if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
 
@@ -114,28 +117,12 @@ namespace dtHLAGM
       {
          thisObjectClassHandle = mRTIAmbassador->getObjectClassHandle(thisObjectClassString.c_str());
       }
-      catch (const RTI::NameNotFound &)
+      catch (const RTI::Exception &ex)
       {
+         std::ostringstream ss; 
+         ss << &ex;
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                              "Could not find Object Class Name: %s", thisObjectClassString.c_str());
-         return;
-      }
-      catch (const RTI::FederateNotExecutionMember &)
-      {
-         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                              "Federate not Execution Member");
-         return;
-      }
-      catch (const RTI::ConcurrentAccessAttempted &)
-      {
-         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                              "Concurrent Access Attempted");
-         return;
-      }
-      catch (const RTI::RTIinternalError &)
-      {
-         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                              "RTIinternal Error");
+                              "Could not find Object Class Name: %s - Message: %s", thisObjectClassString.c_str(), ss.str().c_str());
          return;
       }
 
@@ -215,7 +202,7 @@ namespace dtHLAGM
       {
          if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
             mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                                "Subscribing to object class %s.", thisObjectClassString.c_str());
+                                "Subscribing to object class \"%s\" handle %u.", thisObjectClassString.c_str(), thisObjectClassHandle);
 
          mRTIAmbassador->subscribeObjectClassAttributes(thisObjectClassHandle, *ahs);
          subscribed = true;
@@ -224,19 +211,21 @@ namespace dtHLAGM
          {
             if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                                   "Publishing object class %s.", thisObjectClassString.c_str());
+                                   "Publishing object class \"%s\" handle %u.", thisObjectClassString.c_str(), thisObjectClassHandle);
 
             mRTIAmbassador->publishObjectClass(thisObjectClassHandle, *ahs);
          }
       }
-      catch (const RTI::Exception &)
+      catch (const RTI::Exception &ex)
       {
+         std::ostringstream ss;
+         //ss << ex;
          if (!subscribed)
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                                 "Error subscribing to object class %s.", thisObjectClassString.c_str());
+                                 "Error subscribing to object class \"%s\": \"%s\"", thisObjectClassString.c_str(), ss.str().c_str());
          else
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                                 "Error publishing object class %s.", thisObjectClassString.c_str());
+                                 "Error publishing object class \"%s\": \"%s\"", thisObjectClassString.c_str(), ss.str().c_str());
       }
 
       delete ahs;
@@ -250,7 +239,7 @@ namespace dtHLAGM
 
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                             "interaction class %s has handle id %u.",
+                             "interaction class \"%s\" has handle id %u.",
                              thisInteractionClassString.c_str(),
                              thisInteractionClassHandle);
 
@@ -266,7 +255,7 @@ namespace dtHLAGM
 
          if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
             mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                                "Parameter handle for %s on interaction class %s is %u.",
+                                "Parameter handle for \"%s\" on interaction class \"%s\" is %u.",
                                 thisParameterHandleString.c_str(),
                                 thisInteractionClassString.c_str(),
                                 thisParameterHandle);
@@ -1240,7 +1229,7 @@ namespace dtHLAGM
       {
          RTI::AttributeHandle handle = theAttributes.getHandle(i);
 
-		 std::string attribName = std::string(mRTIAmbassador->getAttributeName(handle, classHandle));
+		   std::string attribName = std::string(mRTIAmbassador->getAttributeName(handle, classHandle));
          if (attribName == "EntityType")
          {
             unsigned long length;
@@ -1252,7 +1241,7 @@ namespace dtHLAGM
             std::multimap<std::string, dtCore::RefPtr<ObjectToActor> >::iterator objectToActorIterator;
 
             for (objectToActorIterator = mObjectToActorMap.find(classHandleString); objectToActorIterator != mObjectToActorMap.end();
-                 objectToActorIterator++)
+                 ++objectToActorIterator)
             {
                ObjectToActor& thisObjectToActor = *objectToActorIterator->second;
                //TODO check for nulls
@@ -1294,8 +1283,24 @@ namespace dtHLAGM
          }
          else
          {
-            mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
-               "Ignoring entity update with no entity type.");
+            std::multimap<std::string, dtCore::RefPtr<ObjectToActor> >::iterator i;
+
+            // if we didn't have an entity type and we have a mapping that uses no entity type
+            // we assign that as the best object to actor.  This would break in the case where 
+            // a user tried to add mappings both with and without an entity type and actors didn't
+            // always send their entity type in an update.
+            for (i = mObjectToActorMap.find(classHandleString); i != mObjectToActorMap.end();
+                 ++i)
+            {
+               ObjectToActor& thisObjectToActor = *i->second;
+               if (thisObjectToActor.GetDisID() == NULL)
+                  bestObjectToActor = &thisObjectToActor;
+            }
+            
+            //If we still don't have a mapping
+            if (bestObjectToActor == NULL)              
+               mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+                  "Ignoring entity update with no entity type.");
          }
 
       }

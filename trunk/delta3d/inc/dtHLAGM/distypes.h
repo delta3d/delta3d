@@ -178,7 +178,7 @@ namespace dtHLAGM
          unsigned short mEntityIdentifier;
    };
 
-   std::ostream& operator << (std::ostream &o, const EntityIdentifier &eid);
+   DT_HLAGM_EXPORT std::ostream& operator << (std::ostream &o, const EntityIdentifier &eid);
 
 
    /**

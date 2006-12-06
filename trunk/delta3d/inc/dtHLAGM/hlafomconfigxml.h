@@ -177,6 +177,8 @@ namespace dtHLAGM
          HLAComponent& GetTargetTranslator() { return *mTargetTranslator; }
 
       private:
+         static const std::string LOG_NAME;
+      
          static const std::string HLA_FOM_ELEMENT;
 
          static const std::string HEADER_ELEMENT;

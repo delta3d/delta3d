@@ -27,7 +27,9 @@
 // objecttoactor.h: Declaration of the ObjectToActor class.
 //
 ///////////////////////////////////////////////////////////////////////
+#ifndef RTI_USES_STD_FSTREAM
 #define RTI_USES_STD_FSTREAM
+#endif
 #include <RTI.hh>
 
 #include <string>

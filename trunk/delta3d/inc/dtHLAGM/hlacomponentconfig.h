@@ -60,6 +60,8 @@ namespace dtHLAGM
          dtCore::RefPtr<HLAFOMConfigContentHandler> mHandler;
          xercesc_dt::SAX2XMLReader* mXercesParser;
          dtCore::RefPtr<dtUtil::Log> mLogger;
+         //The name of the logger
+         static const std::string LOG_NAME;
    };
 
 }

@@ -116,6 +116,4 @@ void EntityTypeTests::TestEncodeDecode()
    
    CheckValues(et2);
    CPPUNIT_ASSERT(et2.EncodedLength() == 8);
-
-   std::cout << et;
 }

@@ -27,6 +27,11 @@
 // hlacomponent.h: Declaration of the HLACOMPONENT class.
 //
 ///////////////////////////////////////////////////////////////////////
+#ifndef RTI_USES_STD_FSTREAM
+#define RTI_USES_STD_FSTREAM
+#endif
+#include <RTI.hh>
+#include <NullFederateAmbassador.hh>
 
 #include <string>
 #include <vector>
@@ -39,10 +44,6 @@
 
 #include <dtHLAGM/export.h>
 #include <dtHLAGM/objectruntimemappinginfo.h>
-
-#define RTI_USES_STD_FSTREAM
-#include <RTI.hh>
-#include <NullFederateAmbassador.hh>
 
 namespace dtCore
 {
