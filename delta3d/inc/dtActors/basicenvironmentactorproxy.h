@@ -316,13 +316,13 @@ namespace dtActors
           * Sets the sky color on this environment
           * @param color The color to set, in RGBA format
           */
-         void SetSkyColor(const osg::Vec3 &color);
+         void SetSkyColor(const osg::Vec4 &color);
 
          /**
           * Gets the current sky color
           * @return the sky color
           */
-         osg::Vec3 GetSkyColor() const;
+         osg::Vec4 GetSkyColor() const;
 
          /**
           * Sets the rate of change of this environment
