@@ -91,7 +91,8 @@ namespace dtEditQt
         }
 
         // no notification cause it's not a property 
-        if (dataChanged) {
+        if(dataChanged) 
+        {
             EditorEvents::GetInstance().emitProxyNameChanged(proxy.get(), oldName);
         }
 

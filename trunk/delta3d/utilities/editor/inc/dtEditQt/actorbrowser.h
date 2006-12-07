@@ -30,7 +30,7 @@
 #include <dtUtil/tree.h>
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/actortype.h>
-#include "dtEditQt/actortypetreewidget.h"
+#include <dtEditQt/actortypetreewidget.h>
 
 class QGroupBox;
 class QTreeWidget;
@@ -51,7 +51,7 @@ namespace dtEditQt
         /**
         * Constructor
         */
-        ActorBrowser(QWidget *parent = 0);
+        ActorBrowser(QWidget *parent = NULL);
 
         /**
         * Destructor
