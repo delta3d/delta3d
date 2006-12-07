@@ -16,10 +16,17 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * @author David Guthrie
+ * David Guthrie
  */
 #include <prefix/dtgameprefix-src.h>
-#include <cppunit/extensions/HelperMacros.h>
+
+#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
+   #pragma warning(push)
+      #pragma warning(disable : 4267)
+      #include <cppunit/extensions/HelperMacros.h>
+   #pragma warning(pop)
+#endif
+
 #include <iostream>
 #include <vector>
 #include <string>

@@ -3,7 +3,6 @@
 #include "testai.h"
 #include <dtCore/globals.h>
 
-
 //we attempt to take a map name from the command line argument
 //if none is present we call the default constructor which has a default map name
 int main ( int argc, char *argv[] )

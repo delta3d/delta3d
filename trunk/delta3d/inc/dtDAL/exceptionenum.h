@@ -24,7 +24,7 @@
 
 #include <dtUtil/enumeration.h>
 #include <dtUtil/exception.h>
-#include "dtDAL/export.h"
+#include <dtDAL/export.h>
 
 
 namespace dtDAL

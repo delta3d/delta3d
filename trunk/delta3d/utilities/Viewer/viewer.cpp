@@ -1,3 +1,8 @@
+#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
+   #pragma warning(push)
+   #pragma warning(disable : 4005)
+#endif
+
 #include <osg/PolygonMode>
 #include <osg/Group>
 #include <osg/StateSet>
@@ -33,6 +38,9 @@
 #include "viewstate.h"
 #include "viewer.h"
 
+#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
+   #pragma warning(pop)
+#endif
 
 using namespace   dtCore;
 using namespace   dtABC;
