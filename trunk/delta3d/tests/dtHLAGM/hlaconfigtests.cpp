@@ -380,8 +380,15 @@ void HLAConfigTests::TestConfigure()
       }
       {
          std::vector<dtHLAGM::AttributeToPropertyList> props;
+         {
+            dtHLAGM::AttributeToPropertyList attrToProp("Orientation", dtHLAGM::RPRAttributeType::EULER_ANGLES_TYPE, true);
+
+            dtHLAGM::OneToManyMapping::ParameterDefinition pd("Rotation", dtDAL::DataType::VEC3, "", true);
+            attrToProp.GetParameterDefinitions().push_back(pd); 
+            props.push_back(attrToProp);
+         }
          // Test a NULL dis id.
-         CheckObjectToActorMapping("TestHLA", "EmitterBeam", "EmitterBeam", "",  NULL, false, props);
+         CheckObjectToActorMapping("TestHLA", "CulturalFeature", "BaseEntity.PhysicalEntity.CulturalFeature", "",  NULL, false, props);
       }
 
       {
