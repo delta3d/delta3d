@@ -45,12 +45,12 @@ namespace dtEditQt
      */
     class ActorGlobalBrowser: public QWidget
     {
-      Q_OBJECT
+        Q_OBJECT
         public:
             /**
              * Constructor
              */
-            ActorGlobalBrowser(QWidget *parent = 0);
+            ActorGlobalBrowser(QWidget *parent = NULL);
 
             /**
              * Destructor
@@ -73,9 +73,20 @@ namespace dtEditQt
              */
             void onActorProxyDestroyed(ActorProxyRefPtr proxy);
 
+            /**
+             * Called when a property changes to update the list
+             */
+            void onActorPropertyChanged(ActorProxyRefPtr proxy, ActorPropertyRefPtr property);
+
+            /**
+             * Called when a proxy's name is changed
+             */
+            void onActorProxyNameChanged(ActorProxyRefPtr proxy, std::string oldName);
+
         private:
-            QGroupBox *resultsGroup();
-            ActorResultsTable *resultsTable;
+            
+           QGroupBox *resultsGroup();
+           ActorResultsTable *resultsTable;
     };
 }
 

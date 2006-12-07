@@ -39,7 +39,6 @@
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/editorevents.h>
 #include <dtEditQt/mainwindow.h>
-#include <dtEditQt/typedefs.h>
 
 namespace dtEditQt 
 {
@@ -68,6 +67,16 @@ namespace dtEditQt
             this, SLOT(onActorProxyCreated(ActorProxyRefPtr, bool)));   
         connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyDestroyed(ActorProxyRefPtr)), 
             this, SLOT(onActorProxyDestroyed(ActorProxyRefPtr)));
+        
+        connect(&EditorEvents::GetInstance(), 
+           SIGNAL(actorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)), 
+           this, 
+           SLOT(onActorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)));
+
+        connect(&EditorEvents::GetInstance(), 
+           SIGNAL(proxyNameChanged(ActorProxyRefPtr, std::string)), 
+           this, 
+           SLOT(onActorProxyNameChanged(ActorProxyRefPtr, std::string)));
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -106,10 +115,11 @@ namespace dtEditQt
         // empty out our table, just in case - Must happen BEFORE libraries are removed
         resultsTable->clearAll();
 
-        if (map != NULL) {
-            map->FindProxies(globalProxies, "", "", "", "", dtDAL::Map::NotPlaceable);
+        if(map != NULL) 
+        {
+           map->FindProxies(globalProxies, "", "", "", "", dtDAL::Map::NotPlaceable);
 
-            resultsTable->addProxies(globalProxies);
+           resultsTable->addProxies(globalProxies);
         }
 
         EditorData::GetInstance().getMainWindow()->endWaitCursor();
@@ -118,13 +128,28 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     void ActorGlobalBrowser::onActorProxyCreated(dtCore::RefPtr<dtDAL::ActorProxy> proxy, bool forceNoAdjustments)
     {
-        if (!proxy->IsPlaceable())
-            resultsTable->addProxy(proxy);
+        if(!proxy->IsPlaceable())
+           resultsTable->addProxy(proxy);
+
+        refreshAll();
     }
 
+    ///////////////////////////////////////////////////////////////////////////////
     void ActorGlobalBrowser::onActorProxyDestroyed(dtCore::RefPtr<dtDAL::ActorProxy> proxy)
     {
-        if(!proxy->IsPlaceable())
-            refreshAll();
+        //if(!proxy->IsPlaceable())
+        refreshAll();
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void ActorGlobalBrowser::onActorPropertyChanged(ActorProxyRefPtr proxy, ActorPropertyRefPtr property)
+    {
+       refreshAll();
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void ActorGlobalBrowser::onActorProxyNameChanged(ActorProxyRefPtr proxy, std::string oldName)
+    {
+       refreshAll();
     }
 }

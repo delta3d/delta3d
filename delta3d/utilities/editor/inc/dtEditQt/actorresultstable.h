@@ -34,9 +34,9 @@
 class QGroupBox;
 class QPushButton;
 class QKeyEvent;
-//class QTableWidget;
 
-namespace dtEditQt {
+namespace dtEditQt 
+{
     class ActorResultsTable;
 
     /**
@@ -46,25 +46,25 @@ namespace dtEditQt {
      */
     class ActorResultsTreeItem : public QTreeWidgetItem
     {
-    public:
-        /**
-         * Constructor - showActions lets you indicate whether you should show the 
-         * buttons for various behaviors such as select and goto.
-         */
-        ActorResultsTreeItem(QTreeWidget *parent, dtCore::RefPtr<dtDAL::ActorProxy> proxy);
+      public:
+         /**
+            * Constructor - showActions lets you indicate whether you should show the 
+            * buttons for various behaviors such as select and goto.
+            */
+         ActorResultsTreeItem(QTreeWidget *parent, dtCore::RefPtr<dtDAL::ActorProxy> proxy);
 
-        /**
-         * Destructor
-         */
-        virtual ~ActorResultsTreeItem();
+         /**
+            * Destructor
+            */
+         virtual ~ActorResultsTreeItem();
 
-        /**
-         * Gets the actor proxy for this tree item
-         */
-        dtCore::RefPtr<dtDAL::ActorProxy> getProxy()  {  return myProxy;  }
+         /**
+            * Gets the actor proxy for this tree item
+            */
+         dtCore::RefPtr<dtDAL::ActorProxy> getProxy()  {  return myProxy;  }
 
-    private: 
-        dtCore::RefPtr<dtDAL::ActorProxy> myProxy;
+      private: 
+         dtCore::RefPtr<dtDAL::ActorProxy> myProxy;
     };
 
 
@@ -74,22 +74,22 @@ namespace dtEditQt {
      */
     class ActorResultsSubTree : public QTreeWidget
     {
-    public: 
-        /**
-         * Constructor
-         */
-        ActorResultsSubTree(QWidget *parent, ActorResultsTable *newOwner) 
-            : QTreeWidget(parent), owner(newOwner)     {   }
+      public: 
+         /**
+            * Constructor
+            */
+         ActorResultsSubTree(QWidget *parent, ActorResultsTable *newOwner) 
+               : QTreeWidget(parent), owner(newOwner)     {   }
 
-        /**
-         * Destructor
-         */
-        virtual ~ActorResultsSubTree()   {   }
+         /**
+            * Destructor
+            */
+         virtual ~ActorResultsSubTree()   {   }
 
-    protected: 
-        virtual void keyPressEvent(QKeyEvent *e)   { QTreeWidget::keyPressEvent(e);   }
-    private:
-        ActorResultsTable *owner;
+      protected: 
+         virtual void keyPressEvent(QKeyEvent *e)   { QTreeWidget::keyPressEvent(e);   }
+      private:
+         ActorResultsTable *owner;
     };
 
 
