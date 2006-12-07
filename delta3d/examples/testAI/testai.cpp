@@ -1,4 +1,8 @@
 // TestAI.cpp : defines the implementation of the application
+#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
+   #pragma warning(push)
+   #pragma warning(disable : 4005)
+#endif
 
 #include "testai.h"
 #include <dtCore/camera.h>
@@ -17,6 +21,10 @@
 #include <dtUtil/mathdefines.h>
 #include <dtUtil/log.h>
 #include <dtUtil/fileutils.h>
+
+#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
+   #pragma warning(pop)
+#endif
 
 using namespace dtCore;
 using namespace dtABC;
@@ -155,7 +163,7 @@ bool TestAI::KeyPressed(const dtCore::Keyboard* keyboard, Producer::KeyboardKey 
 
 void TestAI::PreFrame( const double deltaFrameTime )
 {
-   mCharacter->Update(deltaFrameTime);
+   mCharacter->Update(float(deltaFrameTime));
 
    if(mCharacter->GetCurrentWaypoint() == mCurrentWaypoint)
    {
