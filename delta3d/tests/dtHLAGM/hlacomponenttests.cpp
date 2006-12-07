@@ -48,7 +48,6 @@
 #include <dtCore/globals.h>
 #include <dtCore/transform.h>
 
-
 class TestHLAComponent: public dtHLAGM::HLAComponent
 {
    public:
@@ -312,7 +311,7 @@ void HLATests::BetweenTestSetUp()
                                                      "TestObject2");
 
       mClassHandle3 = rtiamb->getObjectClassHandle(
-         "EmitterBeam.RadarBeam");
+         "BaseEntity.PhysicalEntity.CulturalFeature");
       mObjectHandle3 = rtiamb->registerObjectInstance(mClassHandle3,
                                                      "TestObject3");
    }
@@ -635,13 +634,22 @@ void HLATests::TestReflectAttributesNoEntityType()
    try
    {
       RTI::AttributeHandleValuePairSet* ahs =
-         RTI::AttributeSetFactory::create(0);
+         RTI::AttributeSetFactory::create(1);
+
+      char encodedEulerAngles[sizeof(float) * 3];
+      dtHLAGM::EulerAngles rotation(2.0f, 1.1f, 3.14f);
+      rotation.Encode(encodedEulerAngles);
+      AddAttribute("Orientation",
+                   mClassHandle3,
+                   *ahs,
+                   encodedEulerAngles,
+                   rotation.EncodedLength());
 
       mHLAComponent->discoverObjectInstance(mObjectHandle3, mClassHandle3, "testMapping");
       const dtCore::UniqueId* id = mHLAComponent->GetRuntimeMappings().GetId(mObjectHandle3);
       CPPUNIT_ASSERT(id != NULL);
 
-      mHLAComponent->reflectAttributeValues(mObjectHandle1, *ahs, "");
+      mHLAComponent->reflectAttributeValues(mObjectHandle3, *ahs, "");
 
       dtCore::System::GetInstance().Step();
 
@@ -655,13 +663,10 @@ void HLATests::TestReflectAttributesNoEntityType()
 
       CPPUNIT_ASSERT_MESSAGE("A create message should have been sent.", msg.valid());
 
-      //There is a mapping to set the sending id to the new actor as well.
-      CPPUNIT_ASSERT(msg->GetSendingActorId() == *id);
-
       dtCore::RefPtr<const dtGame::ActorUpdateMessage> aum = static_cast<const dtGame::ActorUpdateMessage*>(msg.get());
 
       CPPUNIT_ASSERT_MESSAGE("The actor type should not be NULL.", aum->GetActorType() != NULL);
-      CPPUNIT_ASSERT_MESSAGE("The actor type should be the EmitterBeam.", aum->GetActorType()->GetName() == "EmitterBeam");
+      CPPUNIT_ASSERT_MESSAGE("The actor type should be the EmitterBeam.", aum->GetActorType()->GetName() == "CulturalFeature");
 
    }
    catch (const dtUtil::Exception& ex)

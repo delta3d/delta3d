@@ -120,7 +120,8 @@ namespace dtHLAGM
       catch (const RTI::Exception &ex)
       {
          std::ostringstream ss; 
-         ss << &ex;
+         //workaround for a strange namespace issue
+         ::operator<<(ss, ex);
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                               "Could not find Object Class Name: %s - Message: %s", thisObjectClassString.c_str(), ss.str().c_str());
          return;
@@ -219,7 +220,8 @@ namespace dtHLAGM
       catch (const RTI::Exception &ex)
       {
          std::ostringstream ss;
-         //ss << ex;
+         //workaround for a strange namespace issue
+         ::operator<<(ss, ex);
          if (!subscribed)
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                                  "Error subscribing to object class \"%s\": \"%s\"", thisObjectClassString.c_str(), ss.str().c_str());
