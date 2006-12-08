@@ -91,8 +91,8 @@ namespace dtTerrain
       //Before we load a tile, make sure the heightfield is valid AND
       //make sure the heightfield has valid dimensions. ( (2^n+1) x (2^n+1) )
       if (tile.GetHeightField() == NULL)
-         EXCEPT(TerrainRendererException::INVALID_HEIGHTFIELD_DATA,
-            "Cannot load terrain tile.  HeightField is NULL.");
+         throw dtUtil::Exception(TerrainRendererException::INVALID_HEIGHTFIELD_DATA,
+            "Cannot load terrain tile.  HeightField is NULL.", __FILE__, __LINE__);
             
       //TODO CHECK DIMENSIONS!!!
       

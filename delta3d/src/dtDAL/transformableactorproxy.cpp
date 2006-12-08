@@ -36,8 +36,8 @@ namespace dtDAL
 
       dtCore::Transformable *trans = dynamic_cast<dtCore::Transformable*>(mActor.get());
       if(trans == NULL)
-         EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type "
-                "dtCore::Transformable");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type "
+                "dtCore::Transformable", __FILE__, __LINE__);
 
       AddProperty(new Vec3ActorProperty("Rotation", "Rotation",
                                         MakeFunctor(*this, &TransformableActorProxy::SetRotation),
@@ -111,8 +111,8 @@ namespace dtDAL
    {
       dtCore::Transformable *t = dynamic_cast<dtCore::Transformable*>(mActor.get());
       if (t == NULL)
-         EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type "
-                "dtCore::Transformable\n");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type "
+                "dtCore::Transformable", __FILE__, __LINE__);
 
       osg::Vec3 hpr = rotation;
 
@@ -164,8 +164,8 @@ namespace dtDAL
    {
       dtCore::Transformable *t = dynamic_cast<dtCore::Transformable*>(mActor.get());
       if (t == NULL)
-         EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type "
-                "dtCore::Transformable\n");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type "
+                "dtCore::Transformable", __FILE__, __LINE__);
 
       dtCore::Transform trans;
       t->GetTransform(trans);
@@ -181,8 +181,8 @@ namespace dtDAL
    {
       dtCore::Transformable *t = dynamic_cast<dtCore::Transformable*>(mActor.get());
       if (t == NULL)
-         EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type "
-                "dtCore::Transformable\n");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type "
+                "dtCore::Transformable", __FILE__, __LINE__);
 
       dtCore::Transform trans;
       t->GetTransform(trans);
@@ -208,8 +208,8 @@ namespace dtDAL
    {
       dtCore::Transformable *t = dynamic_cast<dtCore::Transformable*>(mActor.get());
       if (t == NULL)
-         EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type "
-                " dtCore::Transformable\n");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type "
+                " dtCore::Transformable", __FILE__, __LINE__);
 
       dtCore::Transform trans;
       t->GetTransform(trans);
@@ -223,8 +223,8 @@ namespace dtDAL
    {
       dtCore::Transformable *t = dynamic_cast<dtCore::Transformable*>(mActor.get());
       if (t == NULL)
-         EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type "
-                "dtCore::Transformable\n");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type "
+                "dtCore::Transformable", __FILE__, __LINE__);
 
       dtCore::Transform trans;
       t->GetTransform(trans);
@@ -250,7 +250,8 @@ namespace dtDAL
    {
       dtCore::Transformable *t = dynamic_cast<dtCore::Transformable*>(mActor.get());
       if (t == NULL)
-         EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Transformable\n");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+         "Actor should be type dtCore::Transformable", __FILE__, __LINE__);
 
       dtCore::Transform trans;
       t->GetTransform(trans);
@@ -264,7 +265,8 @@ namespace dtDAL
    {
       dtCore::Transformable *phys = dynamic_cast<dtCore::Transformable*>(mActor.get());
       if (phys == NULL)
-         EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Transformable.");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+         "Actor should be type dtCore::Transformable.", __FILE__, __LINE__);
 
       phys->RenderCollisionGeometry(enable);
    }
@@ -274,7 +276,8 @@ namespace dtDAL
    {
       const dtCore::Transformable *phys = dynamic_cast<const dtCore::Transformable*>(mActor.get());
       if (phys == NULL)
-         EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Transformable.");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+         "Actor should be type dtCore::Transformable.", __FILE__, __LINE__);
 
       return phys->GetRenderCollisionGeometry();
    }
@@ -284,7 +287,8 @@ namespace dtDAL
    {
       dtCore::Transformable *phys = dynamic_cast<dtCore::Transformable*>(mActor.get());
       if (phys == NULL)
-         EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Transformable.");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+         "Actor should be type dtCore::Transformable.", __FILE__, __LINE__);
 
       mCollisionType = &type;
       if (mCollisionType == &dtCore::Transformable::CollisionGeomType::NONE)
@@ -312,7 +316,8 @@ namespace dtDAL
    {
       dtCore::Transformable *phys = dynamic_cast<dtCore::Transformable*>(mActor.get());
       if (phys == NULL)
-         EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Transformable.");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+         "Actor should be type dtCore::Transformable.", __FILE__, __LINE__);
 
       mCollisionRadius = radius;
       if (mCollisionType == &dtCore::Transformable::CollisionGeomType::CYLINDER)
@@ -332,7 +337,8 @@ namespace dtDAL
    {
       dtCore::Transformable *phys = dynamic_cast<dtCore::Transformable*>(mActor.get());
       if (phys == NULL)
-         EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Transformable.");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+         "Actor should be type dtCore::Transformable.", __FILE__, __LINE__);
 
       mCollisionBoxDims = dims;
       SetBoxCollision();
@@ -349,7 +355,8 @@ namespace dtDAL
    {
       dtCore::Transformable *phys = dynamic_cast<dtCore::Transformable*>(mActor.get());
       if (phys == NULL)
-         EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Transformable.");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+         "Actor should be type dtCore::Transformable.", __FILE__, __LINE__);
 
       mCollisionLength = length;
       if (mCollisionType == &dtCore::Transformable::CollisionGeomType::CYLINDER)
@@ -372,7 +379,8 @@ namespace dtDAL
 
       dtCore::Transformable *phys = dynamic_cast<dtCore::Transformable*>(mActor.get());
       if (phys == NULL)
-         EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Transformable.");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+         "Actor should be type dtCore::Transformable.", __FILE__, __LINE__);
 
       phys->ClearCollisionGeometry();
       if (mCollisionBoxDims.x() == 0.0f || mCollisionBoxDims.y() == 0.0f ||
@@ -395,7 +403,8 @@ namespace dtDAL
 
       dtCore::Transformable *phys = dynamic_cast<dtCore::Transformable*>(mActor.get());
       if (phys == NULL)
-         EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Transformable.");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+         "Actor should be type dtCore::Transformable.", __FILE__, __LINE__);
 
       phys->ClearCollisionGeometry();
       if (mCollisionRadius == 0.0f)
@@ -412,7 +421,8 @@ namespace dtDAL
 
       dtCore::Transformable *phys = dynamic_cast<dtCore::Transformable*>(mActor.get());
       if (phys == NULL)
-         EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Transformable.");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+         "Actor should be type dtCore::Transformable.", __FILE__, __LINE__);
 
       phys->ClearCollisionGeometry();
       if (mCollisionRadius == 0.0f || mCollisionLength == 0.0f)
@@ -429,7 +439,8 @@ namespace dtDAL
 
       dtCore::Transformable *phys = dynamic_cast<dtCore::Transformable*>(mActor.get());
       if (phys == NULL)
-         EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Transformable.");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+         "Actor should be type dtCore::Transformable.", __FILE__, __LINE__);
 
       phys->ClearCollisionGeometry();
       phys->SetCollisionRay(mCollisionLength);
@@ -443,7 +454,8 @@ namespace dtDAL
 
       dtCore::Transformable *phys = dynamic_cast<dtCore::Transformable*>(mActor.get());
       if (phys == NULL)
-         EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Transformable.");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+         "Actor should be type dtCore::Transformable.", __FILE__, __LINE__);
 
       phys->ClearCollisionGeometry();
       phys->SetCollisionMesh(NULL);

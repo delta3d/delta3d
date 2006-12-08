@@ -61,8 +61,8 @@ namespace dtDAL
             mEventList.find(event.GetUniqueId());
 
       if (itor != mEventList.end())
-         EXCEPT(ExceptionEnum::BaseException,"Cannot add event: " + event.GetName() +
-               " Event with same id already exists.");
+         throw dtUtil::Exception(ExceptionEnum::BaseException,"Cannot add event: " + event.GetName() +
+               " Event with same id already exists.", __FILE__, __LINE__);
 
       mEventList.insert(std::make_pair(event.GetUniqueId(),&event));
    }

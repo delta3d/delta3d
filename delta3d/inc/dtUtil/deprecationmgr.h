@@ -41,7 +41,7 @@
    #define DEPRECATE(a,b) { \
       void * fptr;	\
       _asm { mov fptr, ebp }                                       \
-		DeprecationMgr::GetInstance()->AddDeprecatedFunction(a, b, fptr); \
+		DeprecationMgr::GetInstance().AddDeprecatedFunction(a, b, fptr); \
    }
 #else
    #define DEPRECATE(a,b)
@@ -51,10 +51,10 @@
 class DeprecationMgr
 {
   public:
-	static DeprecationMgr * GetInstance ( void )
+	static DeprecationMgr& GetInstance()
    {
       static DeprecationMgr Instance;
-      return &Instance;
+      return Instance;
    }
 
 	~DeprecationMgr ( void )
@@ -166,7 +166,7 @@ class DeprecationMgr
 		std::set<int> CalledFrom;
 	};
 
-   DeprecationMgr ( void ) {};
+   DeprecationMgr() {}
 
 	std::map<const char *, DeprecatedFunction> m_Functions;
 };

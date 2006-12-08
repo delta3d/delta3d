@@ -19,10 +19,9 @@
 * William E. Johnson II
 */
 
-#include "dtActors/soundactorproxy.h"
-#include "dtDAL/enginepropertytypes.h"
-#include "dtDAL/actorproxyicon.h"
-
+#include <dtActors/soundactorproxy.h>
+#include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/actorproxyicon.h>
 #include <dtAudio/dtaudio.h>
 
 using namespace dtAudio;
@@ -34,7 +33,8 @@ namespace dtActors
     {
         dtAudio::Sound *snd = dynamic_cast<dtAudio::Sound*>(mActor.get());
         if(!snd)
-            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtAudio::Sound");
+            throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException,
+            "Actor should be type dtAudio::Sound", __FILE__, __LINE__);
 
         if(snd->GetFilename())
             snd->UnloadFile();
@@ -54,7 +54,8 @@ namespace dtActors
 
         Sound *sound = dynamic_cast<Sound*>(mActor.get());
         if(!sound)
-            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtAudio::Sound");
+            throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+            "Actor should be type dtAudio::Sound", __FILE__, __LINE__);
 
         // This property toggles whether or not a sound loops. A
         // value of true will loop the sound, while a value of false
@@ -152,7 +153,8 @@ namespace dtActors
     {
         Sound* snd = dynamic_cast<Sound*>(mActor.get());
         if(!snd)
-            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtAudio::Sound");
+            throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+            "Actor should be type dtAudio::Sound", __FILE__, __LINE__);
 
         if(!fileName.empty())
             snd->LoadFile(fileName.c_str());
@@ -163,7 +165,8 @@ namespace dtActors
     {
         Sound* snd = dynamic_cast<Sound*>(mActor.get());
         if(!snd)
-            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtAudio::Sound");
+            throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException,
+            "Actor should be type dtAudio::Sound", __FILE__, __LINE__);
 
         snd->SetDirection(dir);
     }
@@ -173,7 +176,8 @@ namespace dtActors
     {
         Sound* snd = dynamic_cast<Sound*>(mActor.get());
         if(!snd)
-            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtAudio::Sound");
+            throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+            "Actor should be type dtAudio::Sound", __FILE__, __LINE__);
 
         osg::Vec3 pos;
         snd->GetDirection(pos);
@@ -185,7 +189,8 @@ namespace dtActors
     {
         Sound* snd = dynamic_cast<Sound*>(mActor.get());
         if(!snd)
-            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtAudio::Sound");
+            throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+            "Actor should be type dtAudio::Sound", __FILE__, __LINE__);
 
         snd->SetVelocity(vel);
     }
@@ -195,7 +200,8 @@ namespace dtActors
     {
         Sound* snd = dynamic_cast<Sound*>(mActor.get());
         if(!snd)
-            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtAudio::Sound");
+            throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+            "Actor should be type dtAudio::Sound", __FILE__, __LINE__);
 
         osg::Vec3 pos;
         snd->GetVelocity(pos);
@@ -207,7 +213,8 @@ namespace dtActors
     {
         Sound* snd = dynamic_cast<Sound*>(mActor.get());
         if(!snd)
-            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtAudio::Sound");
+            throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+            "Actor should be type dtAudio::Sound", __FILE__, __LINE__);
 
         snd->Play();
     }
@@ -215,7 +222,8 @@ namespace dtActors
     ///////////////////////////////////////////////////////////////////////////////
     dtDAL::ActorProxyIcon* SoundActorProxy::GetBillBoardIcon()
     {
-        if(!mBillBoardIcon.valid()) {
+        if(!mBillBoardIcon.valid()) 
+        {
             mBillBoardIcon =
                  new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IconType::SOUND);
         }

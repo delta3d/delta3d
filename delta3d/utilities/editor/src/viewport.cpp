@@ -238,8 +238,8 @@ namespace dtEditQt
 
         this->renderStyle = &style;
         if (!this->sceneView.valid())
-            EXCEPT(dtDAL::ExceptionEnum::BaseException,"Cannot set render style "
-                   "because the current scene view is invalid.");
+            throw dtUtil::Exception(dtDAL::ExceptionEnum::BaseException,"Cannot set render style "
+                   "because the current scene view is invalid.", __FILE__, __LINE__);
 
         osg::StateAttribute::GLModeValue turnOn =
                 osg::StateAttribute::OVERRIDE | 
@@ -278,8 +278,8 @@ namespace dtEditQt
 
         if (refreshView) {
             if (!isInitialized())
-                EXCEPT(dtDAL::ExceptionEnum::BaseException,"Cannot refresh the viewport. "
-                       "It has not been initialized.");
+                throw dtUtil::Exception(dtDAL::ExceptionEnum::BaseException,"Cannot refresh the viewport. "
+                       "It has not been initialized.", __FILE__, __LINE__);
             updateGL();
         }
 
@@ -290,8 +290,8 @@ namespace dtEditQt
     void Viewport::pick(int x, int y)
     {
         if (!this->scene.valid())
-            EXCEPT(dtDAL::ExceptionEnum::BaseException,
-                   "Scene is invalid.  Cannot pick objects from an invalid scene.");
+            throw dtUtil::Exception(dtDAL::ExceptionEnum::BaseException,
+                   "Scene is invalid.  Cannot pick objects from an invalid scene.", __FILE__, __LINE__);
 
         dtCore::RefPtr<dtDAL::Map> currMap = EditorData::GetInstance().getCurrentMap();
         if (!currMap.valid() || getCamera() == NULL)

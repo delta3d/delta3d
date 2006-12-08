@@ -87,7 +87,8 @@ namespace dtActors
       
       Object *obj = dynamic_cast<Object*>(GetActor());
       if (obj == NULL)
-         EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Object");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+         "Actor should be type dtCore::Object", __FILE__, __LINE__);
       
       AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::TERRAIN,
                                                    "terrain mesh", "Terrain Mesh", MakeFunctor(*this, &MeshTerrainActorProxy::LoadFile),
@@ -101,8 +102,8 @@ namespace dtActors
       dtCore::Object *obj = dynamic_cast<dtCore::Object*>(GetActor());
       if (obj == NULL)
       {
-         EXCEPT(dtDAL::ExceptionEnum::InvalidActorException,
-                "Actor should be type dtCore::Object");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException,
+                "Actor should be type dtCore::Object", __FILE__, __LINE__);
       }
       
       if (obj->LoadFile(fileName, false) == NULL)

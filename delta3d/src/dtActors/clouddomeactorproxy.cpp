@@ -40,7 +40,8 @@ namespace dtActors
         const std::string GROUPNAME = "dtCore_CloudPlane";
 
         if(!cd)
-            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::CloudDome");
+            throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+            "Actor should be type dtCore::CloudDome", __FILE__, __LINE__);
 
         AddProperty(new FloatActorProperty("Scale", "Scale",
             MakeFunctor(*cd, &CloudDome::SetScale),
@@ -88,7 +89,8 @@ namespace dtActors
     {
         CloudDome *cd = dynamic_cast<CloudDome*> (mActor.get());
         if(cd == NULL)
-            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::CloudDome");
+            throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+            "Actor should be type dtCore::CloudDome", __FILE__, __LINE__);
 
         cd->SetCloudColor(color);
     }
@@ -98,7 +100,8 @@ namespace dtActors
     {
         CloudDome *cd = dynamic_cast<CloudDome*> (mActor.get());
         if(cd == NULL)
-            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::CloudDome");
+            throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+            "Actor should be type dtCore::CloudDome", __FILE__, __LINE__);
 
         return cd->GetCloudColor();
     }

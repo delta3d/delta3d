@@ -98,7 +98,8 @@ namespace dtEditQt
 
             dtCore::RefPtr<dtDAL::Map> curMap = EditorData::GetInstance().getCurrentMap();
             if (!curMap.valid())
-               EXCEPT(dtDAL::ExceptionEnum::MapException, "There is no map open, there shouldn't be any controls");
+               throw dtUtil::Exception(dtDAL::ExceptionEnum::MapException,
+               "There is no map open, there shouldn't be any controls", __FILE__, __LINE__);
             
             std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > proxies;
             GetActorProxies(proxies, myProperty->GetDesiredActorClass());
@@ -256,7 +257,8 @@ namespace dtEditQt
       dtCore::RefPtr<dtDAL::Map> curMap = EditorData::GetInstance().getCurrentMap();
 
       if(!curMap.valid())
-         EXCEPT(dtDAL::ExceptionEnum::MapException, "There is no map open, there shouldn't be any controls");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::MapException, 
+         "There is no map open, there shouldn't be any controls", __FILE__, __LINE__);
             
       curMap->FindProxies(toFill, "", "", "", className);
 

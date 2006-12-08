@@ -18,7 +18,6 @@
  *
  * Matthew W. Campbell
  */
-
 #ifndef DELTA_EXCEPTION_ENUM
 #define DELTA_EXCEPTION_ENUM
 
@@ -60,4 +59,4 @@ namespace dtDAL
 
 }//namespace dtDAL
 
-#endif //__EXCEPTION_ENUM_H__
+#endif //__throw dtUtil::ExceptionION_ENUM_H__

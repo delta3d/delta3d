@@ -74,7 +74,8 @@ namespace dtActors
       //Get our actual actor te set
       dtABC::BezierControlPoint *bcp = dynamic_cast<dtABC::BezierControlPoint*> (GetActor());
       if(bcp == NULL)
-         EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtABC::BezierControlPoint");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+         "Actor should be type dtABC::BezierControlPoint", __FILE__, __LINE__);
 
       dtABC::BezierNode* bn = NULL;
 
@@ -82,7 +83,8 @@ namespace dtActors
       {
          bn = dynamic_cast<dtABC::BezierNode*> (node->GetActor());
          if(!bn)
-            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtABC::BezierNode");
+            throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+            "Actor should be type dtABC::BezierNode", __FILE__, __LINE__);
       }
 
       //set the actual node on the control point.
@@ -95,7 +97,8 @@ namespace dtActors
       dtABC::BezierControlPoint* bcp = dynamic_cast<dtABC::BezierControlPoint*>( mActor.get() );
       if( bcp == 0 )
       {
-         EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtABC::BezierControlPoint");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+            "Actor should be type dtABC::BezierControlPoint", __FILE__, __LINE__);
       }
 
       return bcp->GetParent();
@@ -105,7 +108,8 @@ namespace dtActors
    {
       dtABC::BezierControlPoint *bcp = dynamic_cast<dtABC::BezierControlPoint*> (mActor.get());
       if (bcp == NULL)
-         EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtABC::BezierControlPoint");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+         "Actor should be type dtABC::BezierControlPoint", __FILE__, __LINE__);
 
       dtDAL::TransformableActorProxy::BuildPropertyMap();
 
@@ -139,7 +143,8 @@ namespace dtActors
    {
       dtABC::BezierControlPoint *bcp = dynamic_cast<dtABC::BezierControlPoint*> (mActor.get());
       if (bcp == NULL)
-         EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtABC::BezierControlPoint");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+         "Actor should be type dtABC::BezierControlPoint", __FILE__, __LINE__);
 
       if(bcp->GetParent())
       {
@@ -151,7 +156,8 @@ namespace dtActors
    {
       dtABC::BezierControlPoint *bcp = dynamic_cast<dtABC::BezierControlPoint*> (mActor.get());
       if (bcp == NULL)
-         EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtABC::BezierControlPoint");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+         "Actor should be type dtABC::BezierControlPoint", __FILE__, __LINE__);
       
       if(bcp->GetParent())
       {
@@ -163,7 +169,8 @@ namespace dtActors
    {
       dtABC::BezierControlPoint *bcp = dynamic_cast<dtABC::BezierControlPoint*> (mActor.get());
       if (bcp == NULL)
-         EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtABC::BezierControlPoint");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+         "Actor should be type dtABC::BezierControlPoint", __FILE__, __LINE__);
 
       if(bcp->GetParent())
       {

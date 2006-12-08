@@ -45,7 +45,8 @@ namespace dtActors
       AutoTrigger* trigger = dynamic_cast<AutoTrigger*>(mActor.get());
       if(!trigger)
       {
-         EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::AutoTrigger");
+         throw dtUtil::Exception(ExceptionEnum::InvalidActorException, 
+            "Actor should be type dtCore::AutoTrigger", __FILE__, __LINE__);
       }
 
       AddProperty(new ActorActorProperty(*this, "Action","Action",
@@ -65,7 +66,8 @@ namespace dtActors
       AutoTrigger* autoTrigger = dynamic_cast<AutoTrigger*>( mActor.get() );
       if( autoTrigger == 0 )
       {
-         EXCEPT(ExceptionEnum::BaseException,"Expected an AutoTrigger actor.");
+         throw dtUtil::Exception(ExceptionEnum::BaseException,
+            "Expected an AutoTrigger actor.", __FILE__, __LINE__);
       }
 
       return autoTrigger->GetTrigger()->GetAction();  
@@ -78,7 +80,8 @@ namespace dtActors
       AutoTrigger* autoTrigger = dynamic_cast<AutoTrigger*>( mActor.get() );
       if( autoTrigger == 0 )
       {
-         EXCEPT(ExceptionEnum::BaseException,"Expected an AutoTrigger actor.");
+         throw dtUtil::Exception(ExceptionEnum::BaseException,
+            "Expected an AutoTrigger actor.", __FILE__, __LINE__);
       }
 
       Action* a = NULL;

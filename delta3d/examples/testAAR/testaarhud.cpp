@@ -149,7 +149,8 @@ void TestAARHUD::SetupGUI(dtCore::DeltaWin *win)
       std::string path = dtCore::FindFileInPathList(scheme);
       if(path.empty())
       {
-         EXCEPT(ARRHUDException::INIT_ERROR,"Failed to find the scheme file.");
+         throw dtUtil::Exception(ARRHUDException::INIT_ERROR,
+            "Failed to find the scheme file.", __FILE__, __LINE__);
       }
 
       std::string dir = path.substr(0, path.length() - (scheme.length() - 3));
@@ -321,7 +322,7 @@ void TestAARHUD::SetupGUI(dtCore::DeltaWin *win)
    {
       std::ostringstream oss;
       oss << "CEGUI while setting up AAR GUI: " << e.getMessage().c_str();
-      EXCEPT(ARRHUDException::INIT_ERROR,oss.str());
+      throw dtUtil::Exception(ARRHUDException::INIT_ERROR,oss.str(), __FILE__, __LINE__);
    }
 
 }

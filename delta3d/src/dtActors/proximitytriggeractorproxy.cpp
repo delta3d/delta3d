@@ -88,7 +88,8 @@ namespace dtActors
       ProximityTrigger *trigger = dynamic_cast<ProximityTrigger*>(mActor.get());
       if(!trigger)
       {
-         EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::ProximityTrigger");
+         throw dtUtil::Exception(ExceptionEnum::InvalidActorException, 
+            "Actor should be type dtCore::ProximityTrigger", __FILE__, __LINE__);
       }
 
       AddProperty(new ActorActorProperty(*this, "Action","Action",
@@ -122,7 +123,8 @@ namespace dtActors
       ProximityTrigger* proximityTrigger = dynamic_cast<ProximityTrigger*>( mActor.get() );
       if( proximityTrigger == 0 )
       {
-         EXCEPT(ExceptionEnum::BaseException,"Expected a ProximityTrigger actor.");
+         throw dtUtil::Exception(ExceptionEnum::BaseException,
+            "Expected a ProximityTrigger actor.", __FILE__, __LINE__);
       }
       
       Action* a = NULL;
@@ -139,7 +141,8 @@ namespace dtActors
       ProximityTrigger* proximityTrigger = dynamic_cast<ProximityTrigger*>( mActor.get() );
       if( proximityTrigger == 0 )
       {
-         EXCEPT(ExceptionEnum::BaseException,"Expected a ProximityTrigger actor.");
+         throw dtUtil::Exception(ExceptionEnum::BaseException,
+            "Expected a ProximityTrigger actor.", __FILE__, __LINE__);
       }
 
       return proximityTrigger->GetTrigger()->GetAction();

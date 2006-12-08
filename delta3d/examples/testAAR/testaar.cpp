@@ -159,7 +159,8 @@ void TestAAR::ParseCommandLineOptions(int argc, char **argv) const
    if(argParser.read("-h") || argParser.read("--help") || argParser.argc() == 0)
    {
       argParser.getApplicationUsage()->write(std::cerr);
-      EXCEPT(dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR, "Command Line Error.");
+      throw dtUtil::Exception(dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR, 
+         "Command Line Error.", __FILE__, __LINE__);
    }
 
    if(!argParser.read("-d", dataPath))
@@ -173,7 +174,8 @@ void TestAAR::ParseCommandLineOptions(int argc, char **argv) const
    if(argParser.errors())
    {
       argParser.writeErrorMessages(std::cout);
-      EXCEPT(dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR, "Command Line Error.");
+      throw dtUtil::Exception(dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR, 
+         "Command Line Error.", __FILE__, __LINE__);
    }
 
    dtCore::SetDataFilePathList(dataPath);

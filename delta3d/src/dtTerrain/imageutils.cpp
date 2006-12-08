@@ -506,8 +506,8 @@ namespace dtTerrain
       int height2 = mask_image.t();
 
       if ((width!=width2) || (height!=height2))
-         EXCEPT(ImageUtilException::INVALID_IMAGE_DIMENSIONS,"Source and mask image must be of the "
-            "same dimensions.");
+         throw dtUtil::Exception(ImageUtilException::INVALID_IMAGE_DIMENSIONS,"Source and mask image must be of the "
+            "same dimensions.", __FILE__, __LINE__);
       
       dtCore::RefPtr<osg::Image> dst_image = new osg::Image;
       dst_image->allocateImage(width, height, 1, GL_RGB, GL_UNSIGNED_BYTE);
@@ -832,7 +832,7 @@ namespace dtTerrain
             error << "Image file: " << gslcc.mFileName << " has an invalid raster format. NumBands = " 
                << bands;
             delete ds;
-            EXCEPT(ImageUtilException::INVALID_RASTER_FORMAT,error.str());
+            throw dtUtil::Exception(ImageUtilException::INVALID_RASTER_FORMAT,error.str(), __FILE__, __LINE__);
          }
 
          delete ds;
@@ -843,7 +843,7 @@ namespace dtTerrain
          std::string errorFile = gslcc.mFileName;
          if (gslcc.mFileName.empty())
             errorFile = "nil";         
-         EXCEPT(ImageUtilException::LOAD_FAILED,"Failed to load: " + errorFile);
+         throw dtUtil::Exception(ImageUtilException::LOAD_FAILED,"Failed to load: " + errorFile, __FILE__, __LINE__);
       }
          
       double d = gslcc.mGeoTransform[1]*gslcc.mGeoTransform[5] - 

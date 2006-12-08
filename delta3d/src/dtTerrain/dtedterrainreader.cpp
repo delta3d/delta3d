@@ -98,13 +98,13 @@ namespace dtTerrain
          osgDB::Registry::instance()->getReaderWriterForExtension("gdal");
       
       if (!gdalReader.valid())
-         EXCEPT(TerrainDataReaderException::READER_PLUGIN_NOT_FOUND,
-            "The resource could not be read.  Check for available gdal osg plugin.");
+         throw dtUtil::Exception(TerrainDataReaderException::READER_PLUGIN_NOT_FOUND,
+            "The resource could not be read.  Check for available gdal osg plugin.", __FILE__, __LINE__);
             
       osgDB::ReaderWriter::ReadResult rr;
       rr = gdalReader->readHeightField(dtedPath);
       if (!rr.success())
-         EXCEPT(TerrainDataReaderException::COULD_NOT_READ_DATA,rr.message());
+         throw dtUtil::Exception(TerrainDataReaderException::COULD_NOT_READ_DATA,rr.message(), __FILE__, __LINE__);
       else
       {
          HeightField *hf = ConvertHeightField(rr.getHeightField());

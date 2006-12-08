@@ -36,8 +36,8 @@ namespace dtDAL
       dtCore::Physical *phys = dynamic_cast<dtCore::Physical*>(mActor.get());
       if (phys == NULL)
       {
-         EXCEPT(dtDAL::ExceptionEnum::InvalidActorException,
-                "Actor should be type dtCore::Physical.");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException,
+                "Actor should be type dtCore::Physical.", __FILE__, __LINE__);
       }
 
       //PHYSICS PROPS...
@@ -62,7 +62,8 @@ namespace dtDAL
    {
       dtCore::Physical *phys = dynamic_cast<dtCore::Physical*>(mActor.get());
       if (phys == NULL)
-         EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Physical.");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+         "Actor should be type dtCore::Physical.", __FILE__, __LINE__);
 
       phys->SetMass(mass);
    }
@@ -72,7 +73,8 @@ namespace dtDAL
    {
       const dtCore::Physical *phys = dynamic_cast<const dtCore::Physical*>(mActor.get());
       if (phys == NULL)
-         EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Physical.");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+         "Actor should be type dtCore::Physical.", __FILE__, __LINE__);
 
       return phys->GetMass();
    }
@@ -82,7 +84,8 @@ namespace dtDAL
    {
       dtCore::Physical *phys = dynamic_cast<dtCore::Physical*>(mActor.get());
       if (phys == NULL)
-         EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Physical.");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+         "Actor should be type dtCore::Physical.", __FILE__, __LINE__);
 
       phys->SetCenterOfGravity(g);
    }
@@ -92,7 +95,8 @@ namespace dtDAL
    {
       const dtCore::Physical *phys = dynamic_cast<const dtCore::Physical*>(mActor.get());
       if (phys == NULL)
-         EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Physical.");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+         "Actor should be type dtCore::Physical.", __FILE__, __LINE__);
 
       osg::Vec3 r;
       phys->GetCenterOfGravity(r);

@@ -129,8 +129,8 @@ namespace dtDAL
 
       if (ftype != dtUtil::REGULAR_FILE)
       {
-         EXCEPT(dtDAL::ExceptionEnum::ProjectFileNotFound,
-                std::string("No such file:\"") + srcPath + "\".");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectFileNotFound,
+                std::string("No such file:\"") + srcPath + "\".", __FILE__, __LINE__);
       }
 
       std::string extension = osgDB::getLowerCaseFileExtension(srcPath);
@@ -287,8 +287,8 @@ namespace dtDAL
       size_t numRead = fread(srcFileData, 1, size, srcFile);
       if( numRead < size && !feof(srcFile) )
       {
-         EXCEPT(dtDAL::ExceptionEnum::ProjectResourceError,
-                std::string("Error occurred while reading material file " + srcPath));
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectResourceError,
+                std::string("Error occurred while reading material file " + srcPath), __FILE__, __LINE__);
       }
 
       srcFileData[size] = '\0';
@@ -468,8 +468,9 @@ namespace dtDAL
 
       if (!error.empty())
       {
-         EXCEPT(dtDAL::ExceptionEnum::ProjectResourceError,
-                std::string("Error \"") + error + "\" occurred parsing material file " + srcPath);
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectResourceError,
+                std::string("Error \"") + error + "\" occurred parsing material file " + 
+                srcPath, __FILE__, __LINE__);
       }
    }
 

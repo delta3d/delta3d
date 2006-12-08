@@ -40,7 +40,8 @@ namespace dtActors
 
         InfiniteTerrain *ter = dynamic_cast<InfiniteTerrain*>(mActor.get());
         if(!ter)
-            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::InfiniteTerrain");
+            throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+            "Actor should be type dtCore::InfiniteTerrain", __FILE__, __LINE__);
 
         // This property manipulates the segment size of an InfiniteTerrain.
         // Uses a float type to represent the segment size.

@@ -38,7 +38,8 @@ void BezierControllerActorProxy::BuildPropertyMap()
 
    if(!bc)
    {
-      EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtABC::BezierController");
+      throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+         "Actor should be type dtABC::BezierController", __FILE__, __LINE__);
    }
 
    AddProperty(new dtDAL::ActorActorProperty(*this, "Start Node", "Start Node",
@@ -61,7 +62,8 @@ dtCore::DeltaDrawable* BezierControllerActorProxy::GetActorStartNode()
 
    if( bc == 0 )
    {
-      EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor of invalid type, should be a BezierController");
+      throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+         "Actor of invalid type, should be a BezierController", __FILE__, __LINE__);
    }
 
    return bc->GetStartNode();
@@ -78,7 +80,8 @@ void BezierControllerActorProxy::SetActorStartNode(ActorProxy* node)
       bNode = dynamic_cast<BezierNode*>(node->GetActor());
       if(!bNode)
       {
-         EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Invalid property type to set start node of BezierController");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+            "Invalid property type to set start node of BezierController", __FILE__, __LINE__);
       }
    }
 
@@ -86,7 +89,8 @@ void BezierControllerActorProxy::SetActorStartNode(ActorProxy* node)
 
    if(!bc)
    {
-      EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor of invalid type, should be a BezierController");
+      throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+         "Actor of invalid type, should be a BezierController", __FILE__, __LINE__);
    }
 
    bc->SetStartNode(bNode);

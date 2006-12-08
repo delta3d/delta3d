@@ -305,10 +305,10 @@ namespace dtGame
    {
       if (!mRegisteredActors.insert(std::make_pair(toRegister.GetId(), &helper)).second)
       {
-         EXCEPT(ExceptionEnum::DEAD_RECKONING_EXCEPTION,
+         throw dtUtil::Exception(ExceptionEnum::DEAD_RECKONING_EXCEPTION,
             "Actor \"" + toRegister.GetName() +
             "\" is already registered with a helper in the DeadReckoingComponent with name \"" +
-            GetName() +  ".\"" );
+            GetName() +  ".\"" , __FILE__, __LINE__);
       }
       else if (helper.IsUpdated())
       {

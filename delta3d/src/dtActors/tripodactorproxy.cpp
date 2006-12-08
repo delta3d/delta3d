@@ -47,9 +47,10 @@ void TripodActorProxy::CreateActor()
 
    Tripod* tripod = dynamic_cast< Tripod* >( mActor.get() );
    
-   if( tripod == 0 )
+   if( tripod == NULL )
    {
-      EXCEPT( ExceptionEnum::InvalidActorException, "Actor should be dtCore::Tripod." );
+      throw dtUtil::Exception( ExceptionEnum::InvalidActorException,
+         "Actor should be dtCore::Tripod.", __FILE__, __LINE__);
    }
 }
 
@@ -62,7 +63,8 @@ void TripodActorProxy::BuildPropertyMap()
    
    if( tripod == 0 )
    {
-      EXCEPT( ExceptionEnum::InvalidActorException, "Actor should be dtCore::Tripod." );
+      throw dtUtil::Exception( ExceptionEnum::InvalidActorException, 
+         "Actor should be dtCore::Tripod." , __FILE__, __LINE__);
    }
 
    AddProperty(new ActorActorProperty(*this, "Camera", "Camera",
@@ -116,7 +118,7 @@ void TripodActorProxy::SetCamera( ActorProxy* cameraProxy )
    Tripod* tripod = dynamic_cast< Tripod* >( mActor.get() );
    if( tripod == 0 )
    {
-      EXCEPT( ExceptionEnum::BaseException,"Expected a Tripod actor." );
+      throw dtUtil::Exception( ExceptionEnum::BaseException,"Expected a Tripod actor.", __FILE__, __LINE__ );
    }
 
    Camera* camera(0);
@@ -135,7 +137,7 @@ DeltaDrawable* TripodActorProxy::GetCamera()
    Tripod* tripod = dynamic_cast< Tripod* >( mActor.get() );
    if( tripod == 0 )
    {
-      EXCEPT( ExceptionEnum::BaseException,"Expected a Tripod actor." );
+      throw dtUtil::Exception( ExceptionEnum::BaseException,"Expected a Tripod actor." , __FILE__, __LINE__);
    }
 
    return tripod->GetCamera();
@@ -149,7 +151,7 @@ void TripodActorProxy::SetAttachToTransformable( ActorProxy* transformableProxy 
    Tripod* tripod = dynamic_cast< Tripod* >( mActor.get() );
    if( tripod == 0 )
    {
-      EXCEPT( ExceptionEnum::BaseException,"Expected a Tripod actor." );
+      throw dtUtil::Exception( ExceptionEnum::BaseException,"Expected a Tripod actor.", __FILE__, __LINE__ );
    }
 
    Transformable* parent(0);
@@ -168,7 +170,7 @@ DeltaDrawable* TripodActorProxy::GetAttachedTransformable()
    Tripod* tripod = dynamic_cast< Tripod* >( mActor.get() );
    if( tripod == 0 )
    {
-      EXCEPT( ExceptionEnum::BaseException,"Expected a Tripod actor." );
+      throw dtUtil::Exception( ExceptionEnum::BaseException,"Expected a Tripod actor." , __FILE__, __LINE__);
    }
 
    return tripod->GetAttachedTransformable();
@@ -182,7 +184,7 @@ void TripodActorProxy::SetLookAtTarget( ActorProxy* targetProxy )
    Tripod* tripod = dynamic_cast< Tripod* >( mActor.get() );
    if( tripod == 0 )
    {
-      EXCEPT( ExceptionEnum::BaseException, "Expected a dtCore::Tripod actor." );
+      throw dtUtil::Exception( ExceptionEnum::BaseException, "Expected a dtCore::Tripod actor." , __FILE__, __LINE__);
    }
 
    Transformable* target(0);
@@ -201,7 +203,7 @@ DeltaDrawable* TripodActorProxy::GetLookAtTarget()
    Tripod* tripod = dynamic_cast< Tripod* >( mActor.get() );
    if( tripod == 0 )
    {
-      EXCEPT( ExceptionEnum::BaseException,"Expected a Tripod actor." );
+      throw dtUtil::Exception( ExceptionEnum::BaseException,"Expected a Tripod actor." , __FILE__, __LINE__);
    }
 
    return tripod->GetLookAtTarget();
@@ -214,7 +216,7 @@ void TripodActorProxy::SetRotationOffset( const osg::Vec3 &rotation )
 
    if( tripod == 0 )
    {
-      EXCEPT( ExceptionEnum::InvalidActorException, "Actor should be dtCore::Tripod." );
+      throw dtUtil::Exception( ExceptionEnum::InvalidActorException, "Actor should be dtCore::Tripod." , __FILE__, __LINE__);
    }
 
    osg::Vec3 hpr = rotation;
@@ -260,7 +262,7 @@ osg::Vec3 TripodActorProxy::GetRotationOffset()
 
    if( tripod == 0 )
    {
-      EXCEPT( ExceptionEnum::InvalidActorException, "Actor should be dtCore::Tripod." );
+      throw dtUtil::Exception( ExceptionEnum::InvalidActorException, "Actor should be dtCore::Tripod." , __FILE__, __LINE__);
    }
 
    osg::Vec3 xyz;
@@ -277,7 +279,7 @@ void TripodActorProxy::SetTranslationOffset( const osg::Vec3& translation )
 
    if( tripod == 0 )
    {
-      EXCEPT( ExceptionEnum::InvalidActorException, "Actor should be dtCore::Tripod." );
+      throw dtUtil::Exception( ExceptionEnum::InvalidActorException, "Actor should be dtCore::Tripod." , __FILE__, __LINE__);
    }
 
    osg::Vec3 oldXYZ;
@@ -293,7 +295,7 @@ osg::Vec3 TripodActorProxy::GetTranslationOffset()
 
    if( tripod == 0 )
    {
-      EXCEPT( ExceptionEnum::InvalidActorException, "Actor should be dtCore::Tripod." );
+      throw dtUtil::Exception( ExceptionEnum::InvalidActorException, "Actor should be dtCore::Tripod." , __FILE__, __LINE__);
    }
 
    osg::Vec3 xyz;
@@ -310,7 +312,7 @@ void TripodActorProxy::SetTranslationScaleOffset( const osg::Vec3& scale )
 
    if( tripod == 0 )
    {
-      EXCEPT( ExceptionEnum::InvalidActorException, "Actor should be dtCore::Tripod." );
+      throw dtUtil::Exception( ExceptionEnum::InvalidActorException, "Actor should be dtCore::Tripod." , __FILE__, __LINE__);
    }
 
    osg::Vec3 oldXYZ;
@@ -326,7 +328,7 @@ osg::Vec3 TripodActorProxy::GetTranslationScaleOffset()
 
    if( tripod == 0 )
    {
-      EXCEPT( ExceptionEnum::InvalidActorException, "Actor should be dtCore::Tripod." );
+      throw dtUtil::Exception( ExceptionEnum::InvalidActorException, "Actor should be dtCore::Tripod." , __FILE__, __LINE__);
    }
 
    osg::Vec3 xyz;
@@ -343,7 +345,7 @@ void TripodActorProxy::SetRotationScaleOffset( const osg::Vec3& scale )
 
    if( tripod == 0 )
    {
-      EXCEPT( ExceptionEnum::InvalidActorException, "Actor should be dtCore::Tripod." );
+      throw dtUtil::Exception( ExceptionEnum::InvalidActorException, "Actor should be dtCore::Tripod." , __FILE__, __LINE__);
    }
 
    osg::Vec3 xyz;
@@ -359,7 +361,7 @@ osg::Vec3 TripodActorProxy::GetRotationScaleOffset()
 
    if( tripod == 0 )
    {
-      EXCEPT( ExceptionEnum::InvalidActorException, "Actor should be dtCore::Tripod." );
+      throw dtUtil::Exception( ExceptionEnum::InvalidActorException, "Actor should be dtCore::Tripod." , __FILE__, __LINE__);
    }
 
    osg::Vec3 xyz;
@@ -376,8 +378,8 @@ void TripodActorProxy::SetTetherMode( TripodActorProxy::TetherModeEnum& mode )
 
    if( tripod == 0 )
    {
-      EXCEPT(ExceptionEnum::InvalidActorException,
-         "Actor should be type dtCore::Tripod.");
+      throw dtUtil::Exception(ExceptionEnum::InvalidActorException,
+         "Actor should be type dtCore::Tripod.", __FILE__, __LINE__);
    }
 
    if( mode == TetherModeEnum::TETHER_PARENT_REL )
@@ -397,8 +399,8 @@ TripodActorProxy::TetherModeEnum& TripodActorProxy::GetTetherMode() const
 
    if( tripod == 0 )
    {
-      EXCEPT(ExceptionEnum::InvalidActorException,
-         "Actor should be type dtCore::Tripod.");
+      throw dtUtil::Exception(ExceptionEnum::InvalidActorException,
+         "Actor should be type dtCore::Tripod.", __FILE__, __LINE__);
    }
 
    if( tripod->GetTetherMode() == Tripod::TETHER_PARENT_REL )

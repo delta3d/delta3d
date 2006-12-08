@@ -57,8 +57,8 @@ namespace dtTerrain
    void HeightField::Allocate(unsigned int numCols, unsigned int numRows)
    {
       if (numCols == 0 || numRows == 0) 
-         EXCEPT(HeightFieldException::OUT_OF_BOUNDS,"Cannot allocate heightfield. "
-            "Width and height must be greater than zero.");
+         throw dtUtil::Exception(HeightFieldException::OUT_OF_BOUNDS,"Cannot allocate heightfield. "
+            "Width and height must be greater than zero.", __FILE__, __LINE__);
       
       if (mNumColumns != numCols || mNumRows != numRows)
       {   
@@ -72,7 +72,8 @@ namespace dtTerrain
    short HeightField::GetHeight(unsigned int c, unsigned int r) const
    {
       if (mData.capacity() == 0)
-         EXCEPT(HeightFieldException::INVALID_HEIGHTFIELD,"Height field data is null.");
+         throw dtUtil::Exception(HeightFieldException::INVALID_HEIGHTFIELD,
+         "Height field data is null.", __FILE__, __LINE__);
          
       if (c >= mNumColumns)
          c = mNumColumns-1;
@@ -86,7 +87,7 @@ namespace dtTerrain
             << r << ")  is greater that the heightfield dimensions (" << mNumColumns << ","
             << mNumRows << ").";
             
-         EXCEPT(HeightFieldException::OUT_OF_BOUNDS,errorString.str());
+         throw dtUtil::Exception(HeightFieldException::OUT_OF_BOUNDS,errorString.str());
       }*/
       
       return mData[c+(r*mNumColumns)];      
@@ -96,7 +97,8 @@ namespace dtTerrain
    void HeightField::SetHeight(unsigned int c, unsigned int r, short newHeight)
    {
       if (mData.capacity() == 0)
-         EXCEPT(HeightFieldException::INVALID_HEIGHTFIELD,"Height field data is null.");
+         throw dtUtil::Exception(HeightFieldException::INVALID_HEIGHTFIELD,
+         "Height field data is null.", __FILE__, __LINE__);
          
       if (c >= mNumColumns || r >= mNumRows)
       {
@@ -105,7 +107,7 @@ namespace dtTerrain
             << r << ")  is greater that the heightfield dimensions (" << mNumColumns << ","
             << mNumRows << ").";
             
-         EXCEPT(HeightFieldException::OUT_OF_BOUNDS,errorString.str());
+         throw dtUtil::Exception(HeightFieldException::OUT_OF_BOUNDS,errorString.str(), __FILE__, __LINE__);
       }
       
       mData[c+(r*mNumColumns)] = newHeight;

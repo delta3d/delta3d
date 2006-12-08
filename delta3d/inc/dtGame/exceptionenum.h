@@ -22,7 +22,7 @@
 #define DELTA_GAME_EXCEPTION_ENUM
 
 #include <dtUtil/enumeration.h>
-#include "dtGame/export.h"
+#include <dtGame/export.h>
 
 namespace dtGame
 {

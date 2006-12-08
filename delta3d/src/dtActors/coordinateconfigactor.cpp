@@ -46,7 +46,8 @@ namespace dtActors
       
       CoordinateConfigActor *cca = dynamic_cast<CoordinateConfigActor*>(mActor.get());
       if(cca == NULL)
-         EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type CoordinateConfigActor");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+         "Actor should be type CoordinateConfigActor", __FILE__, __LINE__);
 
       dtCore::RefPtr<dtDAL::Vec3dActorProperty> currentOriginProp = new dtDAL::Vec3dActorProperty("Current Origin", "Current Origin Translation", 
          dtDAL::MakeFunctor(*cca, &CoordinateConfigActor::SetOriginLocation), 

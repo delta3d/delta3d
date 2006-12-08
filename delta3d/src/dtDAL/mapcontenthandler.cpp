@@ -1310,7 +1310,8 @@ namespace  dtDAL
             EnvironmentActor *ea = dynamic_cast<EnvironmentActor*>(proxy->GetActor());
             if(ea == NULL)
             {
-               EXCEPT(ExceptionEnum::InvalidActorException, "The environment actor proxy's actor should be an environment, but a dynamic_cast failed");
+               throw dtUtil::Exception(ExceptionEnum::InvalidActorException, 
+                  "The environment actor proxy's actor should be an environment, but a dynamic_cast failed", __FILE__, __LINE__);
             }
             mMap->SetEnvironmentActor(proxy.get());
          }

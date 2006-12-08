@@ -478,7 +478,8 @@ namespace dtGame
           nameList.size() != tagIdList.size() ||
           nameList.size() != logFileOffsetList.size())
       {
-         EXCEPT(ExceptionEnum::INVALID_PARAMETER,"Parameter list sizes were not equal.");
+         throw dtUtil::Exception(ExceptionEnum::INVALID_PARAMETER,
+            "Parameter list sizes were not equal.", __FILE__, __LINE__);
       }
 
       mKeyframeList.clear();
@@ -544,8 +545,8 @@ namespace dtGame
           nameList.size() != kfIdList.size() ||
           nameList.size() != captureKfList.size())
       {
-         EXCEPT(ExceptionEnum::INVALID_PARAMETER,"Parameter list sizes were not "
-            "equal.");
+         throw dtUtil::Exception(ExceptionEnum::INVALID_PARAMETER,"Parameter list sizes were not "
+            "equal.", __FILE__, __LINE__);
       }
 
       mTagList.clear();

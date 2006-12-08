@@ -83,7 +83,8 @@ void TestHLAObjectProxy::SetLastKnownRotation(const osg::Vec3 &vec)
 {
    TestHLAObject *e = dynamic_cast<TestHLAObject*> (GetActor());
    if(e == NULL)
-      EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type TestHLAObject");
+      throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+      "Actor should be type TestHLAObject", __FILE__, __LINE__);
    
    e->SetLastKnownRotation(osg::Vec3(vec.z(), vec.x(), vec.y()));
 }
@@ -92,7 +93,8 @@ osg::Vec3 TestHLAObjectProxy::GetLastKnownRotation() const
 {
    const TestHLAObject *e = dynamic_cast<const TestHLAObject*> (GetActor());
    if(e == NULL)
-      EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type TestHLAObject");
+      throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+      "Actor should be type TestHLAObject", __FILE__, __LINE__);
    
    const osg::Vec3& result = e->GetLastKnownRotation();
    return osg::Vec3(result.y(), result.z(), result.x());

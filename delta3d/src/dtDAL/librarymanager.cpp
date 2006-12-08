@@ -97,7 +97,7 @@ namespace dtDAL
          msg.clear();
          msg.str("");
          msg << "Unable to load actor registry " << libName;
-         EXCEPT(dtDAL::ExceptionEnum::ProjectResourceError,msg.str());
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectResourceError,msg.str(), __FILE__, __LINE__);
       }
         
       dtUtil::LibrarySharingManager::LibraryHandle::SYMBOL_ADDRESS createFn;
@@ -113,7 +113,7 @@ namespace dtDAL
          msg.str("");
          msg << "Actor plugin libraries must implement the function " <<
             " CreatePluginRegistry.";
-         EXCEPT(dtDAL::ExceptionEnum::ProjectResourceError, msg.str());
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectResourceError, msg.str(), __FILE__, __LINE__);
       }
 
       if (!destroyFn)
@@ -122,7 +122,7 @@ namespace dtDAL
          msg.str("");
          msg << "Actor plugin libraries must implement the function " <<
             " DestroyPluginRegistry.";
-         EXCEPT(dtDAL::ExceptionEnum::ProjectResourceError,msg.str());
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectResourceError,msg.str(), __FILE__, __LINE__);
       }
 
       //Well we made it here so that means the plugin was loaded
@@ -137,7 +137,7 @@ namespace dtDAL
          msg.str("");
          msg << "Can't add Registry Entry: " << libName << " to Registry. " <<
             "Possibly it might have been added already.";
-         EXCEPT(dtDAL::ExceptionEnum::ProjectResourceError, msg.str());
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectResourceError, msg.str(), __FILE__, __LINE__);
       }
    }
 
@@ -236,7 +236,8 @@ namespace dtDAL
    {
       dtCore::RefPtr<ActorType> type = FindActorType(category, name);
       if(!type.valid())
-         EXCEPT(dtDAL::ExceptionEnum::ObjectFactoryUnknownType, "No actor exists of the specified name and category");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::ObjectFactoryUnknownType, 
+         "No actor exists of the specified name and category", __FILE__, __LINE__);
 
       return CreateActorProxy(*type);
    }
@@ -277,7 +278,7 @@ namespace dtDAL
       {
          error << "Requested actor type: \"" << actorType.GetCategory() << "." <<  actorType.GetName() <<
             "\" but is unknown or has not been registered.";
-         EXCEPT(dtDAL::ExceptionEnum::ObjectFactoryUnknownType,error.str());
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::ObjectFactoryUnknownType,error.str(), __FILE__, __LINE__);
       }
         
       return found->second;        

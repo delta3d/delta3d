@@ -197,7 +197,8 @@ namespace dtUtil
    dtCore::RefPtr<LibrarySharingManager::LibraryHandle> LibrarySharingManager::LoadSharedLibrary(const string& libName) 
    {
       if (mShuttingDown)
-         EXCEPT(LibrarySharingManager::ExceptionEnum::LibraryLoadingError, "Library Manager is shutting down.");  
+         throw dtUtil::Exception(LibrarySharingManager::ExceptionEnum::LibraryLoadingError, 
+            "Library Manager is shutting down.", __FILE__, __LINE__);  
          
       dtCore::RefPtr<LibrarySharingManager::LibraryHandle> dynLib;
         
@@ -219,7 +220,8 @@ namespace dtUtil
             msg.clear();
             msg.str("");
             msg << "Unable to load library " << actualLibName;
-            EXCEPT(LibrarySharingManager::ExceptionEnum::LibraryLoadingError, msg.str());  
+            throw dtUtil::Exception(LibrarySharingManager::ExceptionEnum::LibraryLoadingError,
+               msg.str(), __FILE__, __LINE__);  
          }
          else
          {

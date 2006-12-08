@@ -904,8 +904,8 @@ namespace dtUtil
    
        //resolution must be 0-5
        if (resolution < 0 || resolution > 5)
-          EXCEPT(CoordinateConversionExceptionEnum::INVALID_INPUT, 
-                 "The resolution for the mgrs conversion must be between 0 and 5 inclusive.");            
+          throw dtUtil::Exception(CoordinateConversionExceptionEnum::INVALID_INPUT, 
+                 "The resolution for the mgrs conversion must be between 0 and 5 inclusive.", __FILE__, __LINE__);            
 
        // Calculate east-west 100,000 km square grid designator       
        // Note that origin repeats every 3 zones (18 degrees)         
@@ -951,8 +951,8 @@ namespace dtUtil
 
       // Is it too long?
       if ( mgrs.length() > 15 )
-         EXCEPT(CoordinateConversionExceptionEnum::INVALID_INPUT, 
-                "The MGRS string must be no longer that 12 digits.");
+         throw dtUtil::Exception(CoordinateConversionExceptionEnum::INVALID_INPUT, 
+                "The MGRS string must be no longer that 12 digits.", __FILE__, __LINE__);
 
       std::string working;
       if( (mgrs.length() % 2) != 0 )
@@ -960,8 +960,8 @@ namespace dtUtil
          if (! (isdigit(mgrs[0]) &&
                 isdigit(mgrs[1]) &&
                 isalpha(mgrs[2]) ) )
-            EXCEPT(CoordinateConversionExceptionEnum::INVALID_INPUT, 
-                   "The string must begin with 2 digits followed by a letter.");
+            throw dtUtil::Exception(CoordinateConversionExceptionEnum::INVALID_INPUT, 
+                   "The string must begin with 2 digits followed by a letter.", __FILE__, __LINE__);
 
          zone = 10*(mgrs[0] - '0') + (mgrs[1] - '0');
          z_char = mgrs[2];
@@ -976,16 +976,16 @@ namespace dtUtil
 
       // Are the first two characters letters?
       if (!(isalpha( working[0] ) && isalpha( working[1] )) )
-         EXCEPT(CoordinateConversionExceptionEnum::INVALID_INPUT, 
-                "The intra-zone grid designations must be letters.");            
+         throw dtUtil::Exception(CoordinateConversionExceptionEnum::INVALID_INPUT, 
+                "The intra-zone grid designations must be letters.", __FILE__, __LINE__);            
          
 
       // Are the rest of the characters numbers?
       for( unsigned int i = 2; i < working.length(); i++ )
       {
          if (!isdigit(working[i]))
-            EXCEPT(CoordinateConversionExceptionEnum::INVALID_INPUT, 
-                   "All characters following the zone designations must be digits.");            
+            throw dtUtil::Exception(CoordinateConversionExceptionEnum::INVALID_INPUT, 
+                   "All characters following the zone designations must be digits.", __FILE__, __LINE__);            
       }
 
       // Passed preliminary error checking, go ahead and parse the string
@@ -999,8 +999,8 @@ namespace dtUtil
       sprintf( control, "%%c%%c%%%ud%%%ud", unsigned(numLen), unsigned(numLen) );
       int sscanf_return = sscanf( working.c_str(), control, &e_char, &n_char, &e_num, &n_num );
       if (sscanf_return != 4)
-         EXCEPT(CoordinateConversionExceptionEnum::INVALID_INPUT, 
-                "Internal error when parsing input.  Check input syntax: " + mgrs);            
+         throw dtUtil::Exception(CoordinateConversionExceptionEnum::INVALID_INPUT, 
+                "Internal error when parsing input.  Check input syntax: " + mgrs, __FILE__, __LINE__);            
 
       // The string has passed error checking.
 

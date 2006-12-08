@@ -82,8 +82,8 @@ namespace dtCore
          mParameters.find(newParam.GetName());
 
       if (itor != mParameters.end())
-         EXCEPT(ShaderException::DUPLICATE_SHADER_PARAMETER_FOUND,
-            "Shader parameters must have unique names.");
+         throw dtUtil::Exception(ShaderException::DUPLICATE_SHADER_PARAMETER_FOUND,
+            "Shader parameters must have unique names.", __FILE__, __LINE__);
 
       mParameters.insert(std::make_pair(newParam.GetName(),&newParam));
       newParam.SetParentShader(this);
@@ -165,8 +165,8 @@ namespace dtCore
       std::string path = dtCore::FindFileInPathList(fileName);
       if (path.empty())
       {
-         EXCEPT(ShaderException::SHADER_SOURCE_ERROR,"Could not find shader source: " +
-            fileName + " in path list.");
+         throw dtUtil::Exception(ShaderException::SHADER_SOURCE_ERROR,"Could not find shader source: " +
+            fileName + " in path list.", __FILE__, __LINE__);
       }
 
       mVertexShaderFileName = fileName;
@@ -178,8 +178,8 @@ namespace dtCore
       std::string path = dtCore::FindFileInPathList(fileName);
       if (path.empty())
       {
-         EXCEPT(ShaderException::SHADER_SOURCE_ERROR,"Could not find shader source: " +
-            fileName + " in path list.");
+         throw dtUtil::Exception(ShaderException::SHADER_SOURCE_ERROR,"Could not find shader source: " +
+            fileName + " in path list.", __FILE__, __LINE__);
       }
 
       mFragmentShaderFileName = fileName;

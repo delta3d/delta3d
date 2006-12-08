@@ -76,8 +76,8 @@ namespace dtTerrain
    bool LCCAnalyzer::ProcessLCCData(const PagedTerrainTile &tile, LCCType &type)
    {
       if (!tile.IsCachingEnabled())
-         EXCEPT(LCCAnalyzerException::INVALID_CACHE,"Must enable terrain caching for "
-            " the LCC analyzer to function properly.");      
+         throw dtUtil::Exception(LCCAnalyzerException::INVALID_CACHE,"Must enable terrain caching for "
+            " the LCC analyzer to function properly.", __FILE__, __LINE__);      
             
       //First, we need to check and see if we have a combined image for the
       //LCC type.  The combined image represents the final composited probability

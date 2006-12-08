@@ -88,8 +88,8 @@ namespace dtGame
 
       if (libName.empty())
       {
-         EXCEPT(dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR,
-            "The game library name must be set before configuring a application.");
+         throw dtUtil::Exception(dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR,
+            "The game library name must be set before configuring a application.", __FILE__, __LINE__);
       }
 
       std::ostringstream msg;
@@ -101,7 +101,8 @@ namespace dtGame
       {
          msg.str("");
          msg << "Unable to load game library " << libName;
-         EXCEPT(dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR, msg.str());
+         throw dtUtil::Exception(dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR, 
+            msg.str(), __FILE__, __LINE__);
       }
 
       dtUtil::LibrarySharingManager::LibraryHandle::SYMBOL_ADDRESS createAddr;
@@ -116,7 +117,8 @@ namespace dtGame
          msg.str("");
          msg << "Game libraries must implement the function " <<
                 " \"CreateGameEntryPoint.\"";
-         throw dtUtil::Exception(dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR, msg.str(), __FILE__, __LINE__);
+         throw dtUtil::Exception(dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR, 
+            msg.str(), __FILE__, __LINE__);
       }
 
       if(destroyAddr == NULL)
@@ -124,7 +126,8 @@ namespace dtGame
          msg.str("");
          msg << "Game libraries must implement the function " <<
                 " \"DestroyGameEntryPoint.\"";
-         throw dtUtil::Exception(dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR, msg.str(), __FILE__, __LINE__);
+         throw dtUtil::Exception(dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR, 
+            msg.str(), __FILE__, __LINE__);
       }
 
       //Well we made it here so that means the plugin was loaded

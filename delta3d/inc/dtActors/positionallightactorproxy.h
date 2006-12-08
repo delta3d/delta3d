@@ -77,7 +77,8 @@ namespace dtActors
         {
             dtCore::PositionalLight *pl = dynamic_cast<dtCore::PositionalLight*>(mActor.get());
             if(!pl)
-                EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::PositionalLight");
+                throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+                "Actor should be type dtCore::PositionalLight", __FILE__, __LINE__);
 
             pl->SetAttenuation(atten[0], atten[1], atten[2]);
         }
@@ -90,7 +91,8 @@ namespace dtActors
         {
             dtCore::PositionalLight *pl = dynamic_cast<dtCore::PositionalLight*>(mActor.get());
             if(!pl)
-                EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::PositionalLight");
+                throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+                "Actor should be type dtCore::PositionalLight", __FILE__, __LINE__);
 
             float c, l, q;
             pl->GetAttenuation(c, l, q);

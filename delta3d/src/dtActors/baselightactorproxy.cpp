@@ -39,8 +39,8 @@ namespace dtActors
         dtCore::Light *light = dynamic_cast<dtCore::Light *>(mActor.get());
         if(!light)
         {
-            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException,
-                "Actor should be type dtCore::Light.");
+            throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException,
+                "Actor should be type dtCore::Light.", __FILE__, __LINE__);
         }
 
         //Now, add all of the properties for the actor.

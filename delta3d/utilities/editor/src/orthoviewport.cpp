@@ -23,11 +23,11 @@
 #include <QtGui/QMouseEvent>
 #include <osg/Math>
 #include <osg/CullSettings>
-#include "dtEditQt/orthoviewport.h"
-#include "dtEditQt/viewportoverlay.h"
-#include "dtEditQt/editorevents.h"
+#include <dtEditQt/orthoviewport.h>
+#include <dtEditQt/viewportoverlay.h>
+#include <dtEditQt/editorevents.h>
 #include <dtDAL/exceptionenum.h>
-#include "dtDAL/transformableactorproxy.h"
+#include <dtDAL/transformableactorproxy.h>
 
 namespace dtEditQt
 {
@@ -90,25 +90,29 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     void OrthoViewport::setViewType(const OrthoViewType &type, bool refreshView)
     {
-        if (type == OrthoViewType::TOP) {
+        if (type == OrthoViewType::TOP) 
+        {
             this->viewType = &OrthoViewType::TOP;
             getCamera()->resetRotation();
             getCamera()->pitch(-90);
         }
-        else if (type == OrthoViewType::FRONT) {
+        else if (type == OrthoViewType::FRONT) 
+        {
             this->viewType = &OrthoViewType::FRONT;
             getCamera()->resetRotation();
         }
-        else if (type == OrthoViewType::SIDE) {
+        else if (type == OrthoViewType::SIDE) 
+        {
             this->viewType = &OrthoViewType::SIDE;
             getCamera()->resetRotation();
             getCamera()->yaw(90);
         }
 
-        if (refreshView) {
+        if (refreshView)
+        {
             if (!isInitialized())
-                EXCEPT(dtDAL::ExceptionEnum::BaseException,"Cannot refresh the viewport. "
-                       "It has not been initialized.");
+                throw dtUtil::Exception(dtDAL::ExceptionEnum::BaseException,"Cannot refresh the viewport. "
+                       "It has not been initialized.", __FILE__, __LINE__);
             refresh();
         }
     }

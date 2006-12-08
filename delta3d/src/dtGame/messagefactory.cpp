@@ -125,7 +125,8 @@ namespace dtGame
       if (msg == NULL)
       {
          LOGN_ERROR("messagefactory.cpp", "Object factory returned NULL, the message could not be created");
-         EXCEPT(MessageFactory::MessageFactoryException::TYPE_NOT_REGISTERED, std::string("Could not create type ") + msgType.GetName());
+         throw dtUtil::Exception(MessageFactory::MessageFactoryException::TYPE_NOT_REGISTERED,
+            std::string("Could not create type ") + msgType.GetName(), __FILE__, __LINE__);
       }
       msg->SetMessageType(msgType);
       msg->SetSource(*mMachine);
@@ -165,7 +166,7 @@ namespace dtGame
          std::ostringstream ss;
          ss << "Message ID: " << id << " was not found in the message "
             "type map.";
-         EXCEPT(MessageFactoryException::TYPE_NOT_REGISTERED,ss.str());
+         throw dtUtil::Exception(MessageFactoryException::TYPE_NOT_REGISTERED,ss.str(), __FILE__, __LINE__);
       }
 
       return *itor->second;

@@ -327,8 +327,8 @@ namespace dtGame
             mLogStream->GetKeyFrameIndex(kfList);
             mLogStatus.SetCurrentRecordDuration(mLogStream->GetRecordDuration());
             if (kfList.empty())
-               EXCEPT(LogStreamException::LOGGER_IO_EXCEPTION,"Malformed log.  No initial "
-                  "keyframe could be found in the log.");
+               throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION,"Malformed log.  No initial "
+                  "keyframe could be found in the log.", __FILE__, __LINE__);
 
             JumpToKeyFrame(kfList[0]);
             mLogStatus.SetStateEnum(LogStateEnumeration::LOGGER_STATE_PLAYBACK);
@@ -815,8 +815,8 @@ namespace dtGame
       //Now read the first message.  It should be a LOG_COMMAND_BEGIN_LOAD_KEYFRAME message.
       dtCore::RefPtr<Message> kfMsg = mLogStream->ReadMessage(simTime);
       if (!kfMsg.valid() || kfMsg->GetMessageType() != MessageType::LOG_COMMAND_BEGIN_LOADKEYFRAME_TRANS)
-         EXCEPT(LogStreamException::LOGGER_IO_EXCEPTION,"Malformed keyframe detected in the log "
-            "stream.  Cannot proceed.");
+         throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION,"Malformed keyframe detected in the log "
+            "stream.  Cannot proceed.", __FILE__, __LINE__);
 
       GetGameManager()->SendMessage(*kfMsg.get());
       GetGameManager()->SendNetworkMessage(*kfMsg.get());

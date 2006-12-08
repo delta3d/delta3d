@@ -44,11 +44,6 @@ namespace dtUtil
             AddInstance(this);
          }
    };
-
-   /*
-    * Save some typing if the base exception class is thrown.
-    */
-   #define EXCEPT(type,str) throw dtUtil::Exception(type, str,__FILE__,__LINE__)
    
    /*
     * This is the exception class used throughout the dtDAL module.
@@ -56,7 +51,7 @@ namespace dtUtil
     * logs them for you.  However, applications using the dtDAL module
     * should excercise proper exception handling.
     */
-   class DT_UTIL_EXPORT Exception
+   class DT_UTIL_EXPORT Exception 
    {
       public:
          
