@@ -203,8 +203,8 @@ namespace dtActors
    void TaskActorProxy::AddSubTask(TaskActorProxy &subTask)
    {
       if (FindSubTask(subTask.GetGameActor().GetUniqueId()) != NULL)
-         EXCEPT(dtGame::ExceptionEnum::INVALID_PARAMETER,"Cannot add a duplicate "
-            "sub task.");
+         throw dtUtil::Exception(dtGame::ExceptionEnum::INVALID_PARAMETER,
+         "Cannot add a duplicate sub task." , __FILE__, __LINE__);
 
       if (subTask.GetParentTask() != NULL)
          subTask.GetParentTask()->RemoveSubTask(subTask);

@@ -50,7 +50,8 @@ namespace dtActors
       Trigger *trigger = dynamic_cast<Trigger*>(mActor.get());
       if(!trigger)
       {
-         EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtABC::Trigger");
+         throw dtUtil::Exception(ExceptionEnum::InvalidActorException, 
+            "Actor should be type dtABC::Trigger", __FILE__, __LINE__);
       }
 
       AddProperty(new BooleanActorProperty("Enable","Enabled",
@@ -76,7 +77,7 @@ namespace dtActors
       Trigger* trigger = dynamic_cast<Trigger*>( mActor.get() );
       if( trigger == 0 )
       {
-         EXCEPT(ExceptionEnum::BaseException,"Expected a Trigger actor.");
+         throw dtUtil::Exception(ExceptionEnum::BaseException,"Expected a Trigger actor.", __FILE__, __LINE__);
       }
 
       Action* a(0);
@@ -94,7 +95,7 @@ namespace dtActors
       Trigger* trigger = dynamic_cast<Trigger*>( mActor.get() );
       if( trigger == 0 )
       {
-         EXCEPT(ExceptionEnum::BaseException,"Expected a Trigger actor.");
+         throw dtUtil::Exception(ExceptionEnum::BaseException,"Expected a Trigger actor.", __FILE__, __LINE__);
       }
 
       return trigger->GetAction();

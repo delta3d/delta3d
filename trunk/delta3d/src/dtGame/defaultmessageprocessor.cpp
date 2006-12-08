@@ -106,8 +106,8 @@ namespace dtGame
 
       if (!type.valid())
       {
-         EXCEPT(dtGame::ExceptionEnum::INVALID_PARAMETER, "The actor type parameters with value \"" 
-           + catName + "." + typeName + "\" are invalid because no such actor type is registered.");
+         throw dtUtil::Exception(dtGame::ExceptionEnum::INVALID_PARAMETER, "The actor type parameters with value \"" 
+           + catName + "." + typeName + "\" are invalid because no such actor type is registered.", __FILE__, __LINE__);
       }
            
       gap = GetGameManager()->CreateRemoteGameActor(*type);

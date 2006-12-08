@@ -61,7 +61,8 @@ namespace dtHLAGM
          std::string msg(message);
          LOG_ERROR("Error during parser initialization!: "+ msg)
          xercesc_dt::XMLString::release( &message );
-         EXCEPT(dtHLAGM::ExceptionEnum::XML_INTERNAL_EXCEPTION, "Error, unable to initialize Xerces XML parser.  Aborting.");
+         throw dtUtil::Exception(dtHLAGM::ExceptionEnum::XML_INTERNAL_EXCEPTION, 
+            "Error, unable to initialize Xerces XML parser.  Aborting.", __FILE__, __LINE__);
       }
 
       mLogger = &dtUtil::Log::GetInstance(LOG_NAME);
@@ -85,7 +86,8 @@ namespace dtHLAGM
       {
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
              "Error, unable to load required file \"Federations/HLAMapping.xsd\".  Aborting.");
-         EXCEPT(dtHLAGM::ExceptionEnum::XML_CONFIG_EXCEPTION, "Error, unable to load required file \"Federations/HLAMapping.xsd\".  Aborting.");
+         throw dtUtil::Exception(dtHLAGM::ExceptionEnum::XML_CONFIG_EXCEPTION, 
+            "Error, unable to load required file \"Federations/HLAMapping.xsd\".  Aborting.", __FILE__, __LINE__);
       }
 
       XMLCh* schemaFileNameXMLCh = xercesc_dt::XMLString::transcode(schemaFileName.c_str());
@@ -109,11 +111,11 @@ namespace dtHLAGM
             {
                mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
                    "XML configuration file \"%s\" not found.  Aborting.", dataFilePath.c_str());
-               EXCEPT(dtHLAGM::ExceptionEnum::XML_CONFIG_EXCEPTION, "Error, unable to load required file \"" + dataFilePath  +  "\".  Aborting.");
+               throw dtUtil::Exception(dtHLAGM::ExceptionEnum::XML_CONFIG_EXCEPTION, "Error, unable to load required file \"" + dataFilePath  +  "\".  Aborting.", __FILE__, __LINE__);
             }
             
             if (translator.GetGameManager() == NULL)
-               EXCEPT(dtHLAGM::ExceptionEnum::XML_CONFIG_EXCEPTION, "Translators must be associated with a game manager before.  Aborting.");               
+               throw dtUtil::Exception(dtHLAGM::ExceptionEnum::XML_CONFIG_EXCEPTION, "Translators must be associated with a game manager before.  Aborting.", __FILE__, __LINE__);               
             
             mHandler->SetTargetTranslator(translator);
             mXercesParser->setContentHandler(mHandler.get());
@@ -124,18 +126,18 @@ namespace dtHLAGM
         catch (const xercesc_dt::OutOfMemoryException&)
         {
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Ran out of memory parsing!");
-            EXCEPT(dtHLAGM::ExceptionEnum::XML_INTERNAL_EXCEPTION, "Ran out of memory parsing save file.");
+            throw dtUtil::Exception(dtHLAGM::ExceptionEnum::XML_INTERNAL_EXCEPTION, "Ran out of memory parsing save file.", __FILE__, __LINE__);
         }
         catch (const xercesc_dt::XMLException& toCatch)
         {
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Error during parsing! %ls :\n",
                 toCatch.getMessage());
-            EXCEPT(dtHLAGM::ExceptionEnum::XML_INTERNAL_EXCEPTION, "Error while parsing hla config file. See log for more information.");
+            throw dtUtil::Exception(dtHLAGM::ExceptionEnum::XML_INTERNAL_EXCEPTION, "Error while parsing hla config file. See log for more information.", __FILE__, __LINE__);
         }
         catch (const xercesc_dt::SAXParseException&)
         {
             //this will already by logged by the content handler
-            EXCEPT(dtHLAGM::ExceptionEnum::XML_INTERNAL_EXCEPTION, "Error while parsing hla config file. See log for more information.");
+            throw dtUtil::Exception(dtHLAGM::ExceptionEnum::XML_INTERNAL_EXCEPTION, "Error while parsing hla config file. See log for more information.", __FILE__, __LINE__);
         }
    }
 

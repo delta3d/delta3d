@@ -17,7 +17,8 @@ namespace dtActors
       dtABC::Action *a = dynamic_cast<dtABC::Action*>(mActor.get());
       if(!a)
       {
-         EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtABC::Action");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+            "Actor should be type dtABC::Action", __FILE__, __LINE__);
       }
 
       AddProperty(new dtDAL::FloatActorProperty("Time Step","Time Step",

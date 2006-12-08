@@ -65,8 +65,8 @@ namespace dtTerrain
    {
       if (mLCCTypes.empty())
       {
-         EXCEPT(VegetationException::INVALID_LCC_TYPES,"No LCC types have been specified "
-            "for this decorator.  Therefore, no LCC vegetation placement can occur.");
+         throw dtUtil::Exception(VegetationException::INVALID_LCC_TYPES,"No LCC types have been specified "
+            "for this decorator.  Therefore, no LCC vegetation placement can occur.", __FILE__, __LINE__);
       }
       
       //Make sure we clear out any precomputed data that may be tile 

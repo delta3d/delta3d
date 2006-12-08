@@ -54,7 +54,8 @@ namespace dtActors
         {
             dtCore::ParticleSystem *ps = dynamic_cast<dtCore::ParticleSystem*>(mActor.get());
             if(!ps)
-                EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::ParticleSystem");
+                throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+                "Actor should be type dtCore::ParticleSystem", __FILE__, __LINE__);
 
             if(!ps->LoadFile(fileName))
                LOG_ERROR("Could not load the file" + fileName);

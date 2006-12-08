@@ -28,10 +28,10 @@
 #include <sstream>
 #include <dtUtil/objectfactory.h>
 #include <dtUtil/enumeration.h>
-#include "dtGame/export.h"
-#include "dtGame/messagetype.h"
-#include "dtGame/message.h"
-#include "dtGame/machineinfo.h"
+#include <dtGame/export.h>
+#include <dtGame/messagetype.h>
+#include <dtGame/message.h>
+#include <dtGame/machineinfo.h>
 
 namespace dtGame
 {
@@ -165,7 +165,8 @@ namespace dtGame
       {
          std::ostringstream ss;
          ss << "A MessageType with id " << type.GetId() << " has already been registered.";
-         EXCEPT(MessageFactory::MessageFactoryException::TYPE_ALREADY_REGISTERED, ss.str());
+         throw dtUtil::Exception(MessageFactory::MessageFactoryException::TYPE_ALREADY_REGISTERED, 
+            ss.str(), __FILE__, __LINE__);
       }
       
       mMessageFactory->template RegisterType<T>(&type);

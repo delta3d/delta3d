@@ -40,7 +40,8 @@ namespace dtActors
 
         SpotLight *sl = dynamic_cast<SpotLight*>(mActor.get());
         if(!sl)
-            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::SpotLight");
+            throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+            "Actor should be type dtCore::SpotLight", __FILE__, __LINE__);
 
 
         // This property manipulates the cutoff oa spotlight. It uses

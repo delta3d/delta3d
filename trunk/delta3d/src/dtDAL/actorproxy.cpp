@@ -167,7 +167,8 @@ namespace dtDAL
    {
       if(newProp == NULL)
       {
-         EXCEPT(ExceptionEnum::InvalidParameter, "AddProperty cannot add a NULL property");
+         throw dtUtil::Exception(ExceptionEnum::InvalidParameter, 
+            "AddProperty cannot add a NULL property", __FILE__, __LINE__);
       }
 
       std::map<std::string,dtCore::RefPtr<ActorProperty> >::iterator itor =

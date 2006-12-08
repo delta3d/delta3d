@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * @author Chris DuBuc
+ * Chris DuBuc
  */
 
 #ifndef DELTA_LMS_EXCEPTION_ENUM
@@ -49,4 +49,4 @@ namespace dtLMS
 
 }
 
-#endif /*DELTA_GAME_LMS_EXCEPTION_ENUM*/
+#endif /*DELTA_GAME_LMS_throw dtUtil::ExceptionION_ENUM*/

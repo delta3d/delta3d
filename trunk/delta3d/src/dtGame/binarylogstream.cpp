@@ -102,16 +102,16 @@ namespace dtGame
       mMessagesFileName += BinaryLogStream::MESSAGE_DB_EXT;
       mMessagesFile = fopen(mMessagesFileName.c_str(),"wb");
       if (mMessagesFile == NULL)
-         EXCEPT(LogStreamException::LOGGER_IO_EXCEPTION,"Could not create the messages"
-            " database file: " + mMessagesFileName);
+         throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION,"Could not create the messages"
+            " database file: " + mMessagesFileName, __FILE__, __LINE__);
 
       //Create the index tables file...
       mIndexTablesFileName = newPath + "/" + logResourceName;
       mIndexTablesFileName += BinaryLogStream::INDEX_EXT;
       mIndexTablesFile = fopen(mIndexTablesFileName.c_str(),"wb");
       if (mIndexTablesFile == NULL)
-         EXCEPT(LogStreamException::LOGGER_IO_EXCEPTION,"Could not create the logger"
-            " index file: " + mIndexTablesFileName);
+         throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION,"Could not create the logger"
+            " index file: " + mIndexTablesFileName, __FILE__, __LINE__);
 
 
       //Write out the headers for both files.
@@ -143,8 +143,8 @@ namespace dtGame
       //This check is done in case the file is not in write mode as Mac OS X won't set
       //ferror if it couldn't write the data.
       if (written < count)
-         EXCEPT(LogStreamException::LOGGER_IO_EXCEPTION,"Error writing to IO stream.  Data not written. "
-            "Check to see if the log file is in write mode.");
+         throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION,"Error writing to IO stream.  Data not written. "
+            "Check to see if the log file is in write mode.", __FILE__, __LINE__);
 
    }
 
@@ -164,8 +164,8 @@ namespace dtGame
       mMessagesFileName += BinaryLogStream::MESSAGE_DB_EXT;
       mMessagesFile = fopen(mMessagesFileName.c_str(),"rb");
       if (mMessagesFile == NULL)
-         EXCEPT(LogStreamException::LOGGER_IO_EXCEPTION,"Could not open the messages"
-            " database file: " + mMessagesFileName);
+         throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION,"Could not open the messages"
+            " database file: " + mMessagesFileName, __FILE__, __LINE__);
 
       //Open the index tables file.  Note, we open this file in
       //read and write mode so we can read the existing index and
@@ -174,8 +174,8 @@ namespace dtGame
       mIndexTablesFileName += BinaryLogStream::INDEX_EXT;
       mIndexTablesFile = fopen(mIndexTablesFileName.c_str(),"rb");
       if (mIndexTablesFile == NULL)
-         EXCEPT(LogStreamException::LOGGER_IO_EXCEPTION,"Could not open the logger"
-            " index file: " + mIndexTablesFileName);
+         throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION,"Could not open the logger"
+            " index file: " + mIndexTablesFileName, __FILE__, __LINE__);
 
       //Write out the headers for both files.
       MessageDataBaseHeader msgHeader;
@@ -233,8 +233,8 @@ namespace dtGame
    {
       dtUtil::FileUtils &fileUtils = dtUtil::FileUtils::GetInstance();
       if (!fileUtils.DirExists(logsPath))
-         EXCEPT(LogStreamException::LOGGER_IO_EXCEPTION,"Could not get available log"
-            " files.  Log Directory: " + logsPath + " does not exist.");
+         throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION,"Could not get available log"
+            " files.  Log Directory: " + logsPath + " does not exist.", __FILE__, __LINE__);
 
       logs.clear();
 
@@ -270,8 +270,8 @@ namespace dtGame
    void BinaryLogStream::ReadMessageDataBaseHeader(MessageDataBaseHeader &header)
    {
       if (mMessagesFile == NULL)
-         EXCEPT(LogStreamException::LOGGER_IO_EXCEPTION,"Failed to read messages "
-            "database header.  File is not valid.");
+         throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION,"Failed to read messages "
+            "database header.  File is not valid.", __FILE__, __LINE__);
 
       //Move to the beginning of the file.
       fseek(mMessagesFile,0L,SEEK_SET);
@@ -300,21 +300,21 @@ namespace dtGame
 
       std::string errorString;
       if (!header.validate(errorString))
-         EXCEPT(LogStreamException::LOGGER_IO_EXCEPTION,"Malformed message database"
-            " header. Reason: " + errorString);
+         throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION,"Malformed message database"
+            " header. Reason: " + errorString, __FILE__, __LINE__);
    }
 
    //////////////////////////////////////////////////////////////////////////
    void BinaryLogStream::WriteMessageDataBaseHeader(MessageDataBaseHeader &header)
    {
       if (mMessagesFile == NULL)
-         EXCEPT(LogStreamException::LOGGER_IO_EXCEPTION,"Failed to write messages "
-            "database header.  File is not valid.");
+         throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION,"Failed to write messages "
+            "database header.  File is not valid.", __FILE__, __LINE__);
 
       std::string errorString;
       if (!header.validate(errorString))
-         EXCEPT(LogStreamException::LOGGER_IO_EXCEPTION,"Malformed message database"
-            " header. Reason: " + errorString);
+         throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION,"Malformed message database"
+            " header. Reason: " + errorString, __FILE__, __LINE__);
 
       WriteToLog(header.magicNumber.c_str(),1,header.magicNumber.length(),mMessagesFile);
       WriteToLog((char *)&header.majorVersion,1,1,mMessagesFile);
@@ -329,8 +329,8 @@ namespace dtGame
    void BinaryLogStream::ReadIndexTableHeader(IndexTableHeader &header)
    {
       if (mIndexTablesFile == NULL)
-         EXCEPT(LogStreamException::LOGGER_IO_EXCEPTION,"Failed to read index "
-            "tables header.  File is not valid.");
+         throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION,"Failed to read index "
+            "tables header.  File is not valid.", __FILE__, __LINE__);
 
       //Move to the beginning of the file.
       fseek(mIndexTablesFile,0L,SEEK_SET);
@@ -358,21 +358,21 @@ namespace dtGame
 
       std::string errorString;
       if (!header.validate(errorString))
-         EXCEPT(LogStreamException::LOGGER_IO_EXCEPTION,"Malformed index database"
-            " header. Reason: " + errorString);
+         throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION,"Malformed index database"
+            " header. Reason: " + errorString, __FILE__, __LINE__);
    }
 
    //////////////////////////////////////////////////////////////////////////
    void BinaryLogStream::WriteIndexTableHeader(IndexTableHeader &header)
    {
       if (mIndexTablesFile == NULL)
-         EXCEPT(LogStreamException::LOGGER_IO_EXCEPTION,"Failed to write index "
-            "tables header.  File is not valid.");
+         throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION,"Failed to write index "
+            "tables header.  File is not valid.", __FILE__, __LINE__);
 
       std::string errorString;
       if (!header.validate(errorString))
-         EXCEPT(LogStreamException::LOGGER_IO_EXCEPTION,"Malformed message database"
-            " header. Reason: " + errorString);
+         throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION,"Malformed message database"
+            " header. Reason: " + errorString, __FILE__, __LINE__);
 
       WriteToLog(header.magicNumber.c_str(),1,header.magicNumber.length(),mIndexTablesFile);
       WriteToLog((char *)&header.majorVersion,1,1,mIndexTablesFile);
@@ -387,8 +387,8 @@ namespace dtGame
    {
       //Make sure we have a valid file.
       if (mMessagesFile == NULL)
-         EXCEPT(LogStreamException::LOGGER_IO_EXCEPTION,"Failed to write message. "
-            "Message database file is not valid.");
+         throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION,"Failed to write message. "
+            "Message database file is not valid.", __FILE__, __LINE__);
 
       unsigned short msgID = msg.GetMessageType().GetId();
       WriteToLog((char *)&BinaryLogStream::MESSAGE_DEID,1,1,mMessagesFile);
@@ -417,10 +417,11 @@ namespace dtGame
    {
       //Make sure we have a valid file.
       if (mMessagesFile == NULL)
-         EXCEPT(LogStreamException::LOGGER_IO_EXCEPTION,"Failed to read message. "
-            "Message database file is not valid.");
+         throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION,"Failed to read message. "
+            "Message database file is not valid.", __FILE__, __LINE__);
 
-      if (feof(mMessagesFile)) {
+      if (feof(mMessagesFile)) 
+      {
          mEndOfStream = true;
          return NULL;
       }
@@ -433,8 +434,8 @@ namespace dtGame
 
       CheckFileStatus(mMessagesFile);
       if (dEID != BinaryLogStream::MESSAGE_DEID)
-         EXCEPT(LogStreamException::LOGGER_IO_EXCEPTION,"Failed to read message. "
-            "Invalid message element identifier found.");
+         throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION,"Failed to read message. "
+            "Invalid message element identifier found.", __FILE__, __LINE__);
 
       //Get the type of message and create the message object.
       unsigned short msgID;
@@ -475,8 +476,8 @@ namespace dtGame
    {
       //Make sure we have a valid file.
       if (mIndexTablesFile == NULL)
-         EXCEPT(LogStreamException::LOGGER_IO_EXCEPTION,"Failed to read index table. "
-            "Index table file is not valid.");
+         throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION,"Failed to read index table. "
+            "Index table file is not valid.", __FILE__, __LINE__);
 
       unsigned char deID;
       size_t numRead = fread((char *)&deID,1,1,mIndexTablesFile);
@@ -494,8 +495,8 @@ namespace dtGame
                break;
 
             default:
-               EXCEPT(LogStreamException::LOGGER_IO_EXCEPTION,"Malformed index tables file. "
-                  "Encountered an invalid data element id.");
+               throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION,"Malformed index tables file. "
+                  "Encountered an invalid data element id.", __FILE__, __LINE__);
                break;
          }
 
@@ -557,8 +558,8 @@ namespace dtGame
    void BinaryLogStream::InsertKeyFrame(LogKeyframe &newKeyFrame)
    {
       if (mMessagesFile == NULL)
-         EXCEPT(LogStreamException::LOGGER_IO_EXCEPTION,"Could not insert a new keyframe. "
-            "The messages database file is invalid.");
+         throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION,"Could not insert a new keyframe. "
+            "The messages database file is invalid.", __FILE__, __LINE__);
 
       newKeyFrame.SetLogFileOffset(ftell(mMessagesFile));
       mNewKeyFrames.push_back(newKeyFrame);
@@ -568,8 +569,8 @@ namespace dtGame
    void BinaryLogStream::JumpToKeyFrame(const LogKeyframe &keyFrame)
    {
       if (mMessagesFile == NULL)
-         EXCEPT(LogStreamException::LOGGER_IO_EXCEPTION,"Could not jump to the keyframe. "
-            "The messages database file is invalid.");
+         throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION,"Could not jump to the keyframe. "
+            "The messages database file is invalid.", __FILE__, __LINE__);
 
       //First determine if this keyframe exists within the keyframe index.
       bool validKeyFrame = false;
@@ -597,8 +598,8 @@ namespace dtGame
       }
 
       if (!validKeyFrame)
-         EXCEPT(LogStreamException::LOGGER_IO_EXCEPTION,"Cannot jump to keyframe:" +
-            keyFrame.GetName() + " .  The Keyframe has not been added.");
+         throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION,"Cannot jump to keyframe:" +
+            keyFrame.GetName() + " .  The Keyframe has not been added.", __FILE__, __LINE__);
 
       //Now we can proceed with the jump.
       fseek(mMessagesFile,keyFrame.GetLogFileOffset(),SEEK_SET);
@@ -618,8 +619,8 @@ namespace dtGame
          //reading.  So to flush, we need to open the index file in write mode.
          mIndexTablesFile = fopen(mIndexTablesFileName.c_str(),"ab");
          if (mIndexTablesFile == NULL)
-            EXCEPT(LogStreamException::LOGGER_IO_EXCEPTION,"Cannot flush the stream. "
-               "Index tables file is invalid.");
+            throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION,"Cannot flush the stream. "
+               "Index tables file is invalid.", __FILE__, __LINE__);
       }
 
       //Add the new tags...

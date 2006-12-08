@@ -151,7 +151,8 @@ namespace dtGame
    dtABC::Application& GameManager::GetApplication()
    {
       if (mApplication == NULL)
-         EXCEPT(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION, "No Application was ever assigned to the GameManager.");
+         throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION, 
+         "No Application was ever assigned to the GameManager.", __FILE__, __LINE__);
 
       return *mApplication;
    }
@@ -160,7 +161,8 @@ namespace dtGame
    const dtABC::Application& GameManager::GetApplication() const
    {
       if (mApplication == NULL)
-         EXCEPT(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION, "No Application was ever assigned to the GameManager.");
+         throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION, 
+         "No Application was ever assigned to the GameManager.", __FILE__, __LINE__);
 
       return *mApplication;
    }
@@ -520,7 +522,8 @@ namespace dtGame
    void GameManager::AddComponent(GMComponent& component, const GameManager::ComponentPriority& priority)
    {
       if(GetComponentByName(component.GetName()) != NULL)
-         EXCEPT(ExceptionEnum::INVALID_PARAMETER, "A component was already registered with the Game Manager with the name: " + component.GetName());
+         throw dtUtil::Exception(ExceptionEnum::INVALID_PARAMETER, 
+         "A component was already registered with the Game Manager with the name: " + component.GetName(), __FILE__, __LINE__);
       
       component.SetGameManager(this);
       component.SetComponentPriority(priority);
@@ -614,8 +617,9 @@ namespace dtGame
       }
       else 
       {
-         EXCEPT(dtGame::ExceptionEnum::INVALID_PARAMETER, "The actor type \"" 
-            + actorType.GetCategory() + "." + actorType.GetName() + "\" is invalid because it is not a game actor type.");
+         throw dtUtil::Exception(dtGame::ExceptionEnum::INVALID_PARAMETER, "The actor type \"" 
+            + actorType.GetCategory() + "." + actorType.GetName() + "\" is invalid because it is not a game actor type."
+            , __FILE__, __LINE__);
       }
 
       return result;
@@ -635,7 +639,8 @@ namespace dtGame
                gap->BuildInvokables();
             }
             else
-               EXCEPT(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION, "ERROR: Actor has the type of a GameActor, but casting it to a GameActorProxy failed.");
+               throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION, 
+               "ERROR: Actor has the type of a GameActor, but casting it to a GameActorProxy failed.", __FILE__, __LINE__);
          }
 
          return ap;
@@ -652,7 +657,8 @@ namespace dtGame
    {
       dtCore::RefPtr<dtDAL::ActorType> type = FindActorType(category, name);
       if(!type.valid())
-         EXCEPT(ExceptionEnum::UNKNOWN_ACTOR_TYPE, "No actor exists of the specified name and category");
+         throw dtUtil::Exception(ExceptionEnum::UNKNOWN_ACTOR_TYPE, 
+         "No actor exists of the specified name and category", __FILE__, __LINE__);
 
       return CreateActor(*type);
    }
@@ -825,11 +831,12 @@ namespace dtGame
 
       if (itor == mGameActorProxyMap.end())
       {
-         EXCEPT(ExceptionEnum::INVALID_ACTOR_STATE, "A GameActor may only be published if it's added to the GameManager as a game actor.");
+         throw dtUtil::Exception(ExceptionEnum::INVALID_ACTOR_STATE,
+            "A GameActor may only be published if it's added to the GameManager as a game actor.", __FILE__, __LINE__);
       }
 
       if (gameActorProxy.IsRemote())
-         EXCEPT(ExceptionEnum::ACTOR_IS_REMOTE, "A remote game actor may not be published");
+         throw dtUtil::Exception(ExceptionEnum::ACTOR_IS_REMOTE, "A remote game actor may not be published", __FILE__, __LINE__);
 
       gameActorProxy.SetPublished(true);
       dtCore::RefPtr<Message> msg = mFactory.CreateMessage(MessageType::INFO_ACTOR_PUBLISHED);
@@ -1393,7 +1400,8 @@ namespace dtGame
             mapForType = &itor->second;
          else
             //this is one of those "it should never happen" things.
-            EXCEPT(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION, "Internal Error: Unable to find item just inserted in the map.");
+            throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION, 
+            "Internal Error: Unable to find item just inserted in the map.", __FILE__, __LINE__);
       }
       else
       {

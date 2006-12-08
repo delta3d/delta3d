@@ -53,7 +53,8 @@ namespace dtLMS
 			if (WSAStartup(MAKEWORD(1, 1), &wsaData) != 0)
 			{
 				mClientState = &LmsConnectionState::ERRORSTATE;
-				EXCEPT(LmsExceptionEnum::LMS_CONNECTION_EXCEPTION, "Lms client socket failed to initialize.");
+				throw dtUtil::Exception(LmsExceptionEnum::LMS_CONNECTION_EXCEPTION, 
+               "Lms client socket failed to initialize.", __FILE__, __LINE__);
 			}
 		#endif
 
@@ -61,14 +62,14 @@ namespace dtLMS
 		if ((mHostent = gethostbyname(host.c_str())) == NULL)
 		{
 			mClientState = &LmsConnectionState::ERRORSTATE;
-			EXCEPT(LmsExceptionEnum::LMS_CONNECTION_EXCEPTION, "Lms client socket failed to initialize.");
+			throw dtUtil::Exception(LmsExceptionEnum::LMS_CONNECTION_EXCEPTION, "Lms client socket failed to initialize.", __FILE__, __LINE__);
 		}
 
 		//initialize socket
 		if ((mSocket = socket(AF_INET, SOCK_STREAM, 0)) == -1)
 		{
 			mClientState = &LmsConnectionState::ERRORSTATE;
-			EXCEPT(LmsExceptionEnum::LMS_CONNECTION_EXCEPTION, "Lms client socket failed to initialize.");
+			throw dtUtil::Exception(LmsExceptionEnum::LMS_CONNECTION_EXCEPTION, "Lms client socket failed to initialize.", __FILE__, __LINE__);
 		}
 
 		//initialize address
@@ -91,7 +92,7 @@ namespace dtLMS
 		if (connect(mSocket, (struct sockaddr *)&mAddress, sizeof(struct sockaddr)) == -1)
 		{
 			mClientState = &LmsConnectionState::ERRORSTATE;
-			EXCEPT(LmsExceptionEnum::LMS_CONNECTION_EXCEPTION, "Lms client socket failed to connect.");
+			throw dtUtil::Exception(LmsExceptionEnum::LMS_CONNECTION_EXCEPTION, "Lms client socket failed to connect.", __FILE__, __LINE__);
 		}
 
 		mClientState = &LmsConnectionState::HANDSHAKING;
@@ -121,7 +122,7 @@ namespace dtLMS
 		catch (...)
 		{
 			mClientState = &LmsConnectionState::ERRORSTATE;
-			EXCEPT(LmsExceptionEnum::LMS_CONNECTION_EXCEPTION, "Lms client socket failed sending ReverseBytes request.");
+			throw dtUtil::Exception(LmsExceptionEnum::LMS_CONNECTION_EXCEPTION, "Lms client socket failed sending ReverseBytes request.", __FILE__, __LINE__);
 		}
 
 		//PROTOCOL:
@@ -135,7 +136,7 @@ namespace dtLMS
 		{
 			//write more specific error message and re-throw
 			mClientState = &LmsConnectionState::ERRORSTATE;
-			EXCEPT(LmsExceptionEnum::LMS_CONNECTION_EXCEPTION, "Lms client socket failed sending handshake message: " + e.What());
+			throw dtUtil::Exception(LmsExceptionEnum::LMS_CONNECTION_EXCEPTION, "Lms client socket failed sending handshake message: " + e.What(), __FILE__, __LINE__);
 		}
 
 		//PROTOCOL:
@@ -149,7 +150,7 @@ namespace dtLMS
 		{
 			//write more specific error message and re-throw
 			mClientState = &LmsConnectionState::ERRORSTATE;
-			EXCEPT(LmsExceptionEnum::LMS_CONNECTION_EXCEPTION, "Lms client socket failed receiving handshake message: " + e.What());
+			throw dtUtil::Exception(LmsExceptionEnum::LMS_CONNECTION_EXCEPTION, "Lms client socket failed receiving handshake message: " + e.What(), __FILE__, __LINE__);
 		}
 
 		//validate received handshake message and retrieve server ID
@@ -162,7 +163,7 @@ namespace dtLMS
 		else
 		{
 			mClientState = &LmsConnectionState::ERRORSTATE;
-			EXCEPT(LmsExceptionEnum::INVALID_LMS_MESSAGE_EXCEPTION, "LMS server returned invalid handshake message.");
+			throw dtUtil::Exception(LmsExceptionEnum::INVALID_LMS_MESSAGE_EXCEPTION, "LMS server returned invalid handshake message.", __FILE__, __LINE__);
 		}
 	}
    
@@ -197,7 +198,7 @@ namespace dtLMS
 
 		if (send(mSocket, tempStr.c_str(), tempStr.size(), 0) == -1)
 		{
-			EXCEPT(LmsExceptionEnum::LMS_CONNECTION_EXCEPTION, "LMS client failed to send string: " + sendString);
+			throw dtUtil::Exception(LmsExceptionEnum::LMS_CONNECTION_EXCEPTION, "LMS client failed to send string: " + sendString, __FILE__, __LINE__);
 		}
 		//printf("Client: Sending %s", strC);                       
 	}
@@ -230,7 +231,7 @@ namespace dtLMS
 			if ((numBytes = recv(mSocket, temp, BUFFSIZE, 0)) == -1)
 			{
 				LOG_ERROR("LMS client failed to receive string from LMS server");
-				EXCEPT(LmsExceptionEnum::LMS_CONNECTION_EXCEPTION, "LMS client failed receiving string from LMS server");
+				throw dtUtil::Exception(LmsExceptionEnum::LMS_CONNECTION_EXCEPTION, "LMS client failed receiving string from LMS server", __FILE__, __LINE__);
 			}
 
 			//loop through bytes in chunk and fill char buffer until we 
@@ -284,7 +285,7 @@ namespace dtLMS
 		catch (...)
 		{
 			mClientState = &LmsConnectionState::ERRORSTATE;
-			EXCEPT(LmsExceptionEnum::LMS_CONNECTION_EXCEPTION, "LMS client failed closing the socket");
+			throw dtUtil::Exception(LmsExceptionEnum::LMS_CONNECTION_EXCEPTION, "LMS client failed closing the socket", __FILE__, __LINE__);
 		}
 
 	}

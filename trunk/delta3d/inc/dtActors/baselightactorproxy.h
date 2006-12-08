@@ -101,8 +101,8 @@ namespace dtActors
             dtCore::Light *l = dynamic_cast<dtCore::Light *>(mActor.get());
             if(!l)
             {
-                EXCEPT(dtDAL::ExceptionEnum::InvalidActorException,
-                    "Actor should be type dtCore::Light.");
+                throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException,
+                    "Actor should be type dtCore::Light.", __FILE__, __LINE__);
             }
 
             l->SetNumber(num);
@@ -114,8 +114,8 @@ namespace dtActors
             dtCore::Light *l = dynamic_cast<dtCore::Light *>(mActor.get());
             if(!l)
             {
-                EXCEPT(dtDAL::ExceptionEnum::InvalidActorException,
-                    "Actor should be type dtCore::Light.");
+                throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException,
+                    "Actor should be type dtCore::Light.", __FILE__, __LINE__);
             }
 
             l->SetAmbient(color[0],color[1],color[2],color[3]);
@@ -127,8 +127,8 @@ namespace dtActors
             const dtCore::Light *l = dynamic_cast<const dtCore::Light *>(mActor.get());
             if(!l)
             {
-                EXCEPT(dtDAL::ExceptionEnum::InvalidActorException,
-                    "Actor should be type dtCore::Light.");
+                throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException,
+                    "Actor should be type dtCore::Light.", __FILE__, __LINE__);
             }
 
             float r,g,b,a;
@@ -142,8 +142,8 @@ namespace dtActors
             dtCore::Light *l = dynamic_cast<dtCore::Light *>(mActor.get());
             if(!l)
             {
-                EXCEPT(dtDAL::ExceptionEnum::InvalidActorException,
-                    "Actor should be type dtCore::Light.");
+                throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException,
+                    "Actor should be type dtCore::Light.", __FILE__, __LINE__);
             }
 
             l->SetDiffuse(color[0],color[1],color[2],color[3]);
@@ -155,8 +155,8 @@ namespace dtActors
             const dtCore::Light *l = dynamic_cast<const dtCore::Light *>(mActor.get());
             if(!l)
             {
-                EXCEPT(dtDAL::ExceptionEnum::InvalidActorException,
-                    "Actor should be type dtCore::Light.");
+                throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException,
+                    "Actor should be type dtCore::Light.", __FILE__, __LINE__);
             }
 
             float r,g,b,a;
@@ -170,8 +170,8 @@ namespace dtActors
             dtCore::Light *l = dynamic_cast<dtCore::Light *>(mActor.get());
             if(!l)
             {
-                EXCEPT(dtDAL::ExceptionEnum::InvalidActorException,
-                    "Actor should be type dtCore::Light.");
+                throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException,
+                    "Actor should be type dtCore::Light.", __FILE__, __LINE__);
             }
 
             l->SetSpecular(color[0],color[1],color[2],color[3]);
@@ -183,8 +183,8 @@ namespace dtActors
             const dtCore::Light *l = dynamic_cast<const dtCore::Light *>(mActor.get());
             if(!l)
             {
-                EXCEPT(dtDAL::ExceptionEnum::InvalidActorException,
-                    "Actor should be type dtCore::Light.");
+                throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException,
+                    "Actor should be type dtCore::Light.", __FILE__, __LINE__);
             }
 
             float r,g,b,a;
@@ -198,8 +198,8 @@ namespace dtActors
             dtCore::Light *l = dynamic_cast<dtCore::Light *>(mActor.get());
             if(!l)
             {
-                EXCEPT(dtDAL::ExceptionEnum::InvalidActorException,
-                    "Actor should be type dtCore::Light.");
+                throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException,
+                    "Actor should be type dtCore::Light.", __FILE__, __LINE__);
             }
 
             if (mode == LightModeEnum::GLOBAL)
@@ -214,8 +214,8 @@ namespace dtActors
             const dtCore::Light *l = dynamic_cast<const dtCore::Light *>(mActor.get());
             if(!l)
             {
-                EXCEPT(dtDAL::ExceptionEnum::InvalidActorException,
-                    "Actor should be type dtCore::Light.");
+                throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException,
+                    "Actor should be type dtCore::Light.", __FILE__, __LINE__);
             }
 
             if (l->GetLightingMode() == dtCore::Light::GLOBAL)

@@ -73,8 +73,8 @@ namespace dtDAL
 
          if (ftype != dtUtil::REGULAR_FILE)
          {
-            EXCEPT(dtDAL::ExceptionEnum::ProjectFileNotFound,
-                   std::string("No such file:\"") + srcPath + "\".");
+            throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectFileNotFound,
+                   std::string("No such file:\"") + srcPath + "\".", __FILE__, __LINE__);
          }
 
          std::string extension = osgDB::getLowerCaseFileExtension(srcPath);
@@ -260,7 +260,8 @@ namespace dtDAL
       }
       else
       {
-         EXCEPT(dtDAL::ExceptionEnum::ProjectResourceError, "The datatype passed must be a resource type.");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectResourceError, 
+            "The datatype passed must be a resource type.", __FILE__, __LINE__);
       }
       return NULL;
    }
@@ -338,7 +339,8 @@ namespace dtDAL
       }
       else
       {
-         EXCEPT(dtDAL::ExceptionEnum::ProjectResourceError, "The datatype passed must be a resource type.");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectResourceError, 
+            "The datatype passed must be a resource type.", __FILE__, __LINE__);
       }
 
    }
@@ -349,7 +351,8 @@ namespace dtDAL
       DataType* dt = const_cast<DataType*>(&handler.GetResourceType());
 
       if (!dt->IsResource())
-         EXCEPT(dtDAL::ExceptionEnum::ProjectResourceError, "The datatype of resource handlers must a resource type.");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectResourceError, 
+         "The datatype of resource handlers must a resource type.", __FILE__, __LINE__);
 
       //get the map for the
       std::map<DataType*, std::map<std::string, dtCore::RefPtr<ResourceTypeHandler> > >::iterator found
@@ -456,8 +459,8 @@ namespace dtDAL
       //Finding out the datatype for the resource descriptor.
       dtUtil::Enumeration* e = DataType::GetValueForName(*tokens.begin());
       if (e == NULL)
-         EXCEPT(dtDAL::ExceptionEnum::ProjectResourceError,
-                std::string("Could not find data type to match ") + *tokens.begin() + ".");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectResourceError,
+                std::string("Could not find data type to match ") + *tokens.begin() + ".", __FILE__, __LINE__);
 
       DataType& type = static_cast<DataType&>(*e);
 
@@ -484,9 +487,9 @@ namespace dtDAL
       //it's only a problem that we don't have a handler if the file doesn't exist.
       if (handler == NULL && dtUtil::FileUtils::GetInstance().FileExists(currentPath))
       {
-         EXCEPT(dtDAL::ExceptionEnum::ProjectResourceError,
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectResourceError,
                 std::string("Could not find a resource handler for resource descriptor: ")
-                + resource.GetResourceIdentifier() + " with type " + type.GetName() + ".");
+                + resource.GetResourceIdentifier() + " with type " + type.GetName() + ".", __FILE__, __LINE__);
       }
       else if (handler != NULL)
          handler->RemoveResource(GetResourcePath(resource));
@@ -513,8 +516,8 @@ namespace dtDAL
 
       if (ftype == dtUtil::FILE_NOT_FOUND)
       {
-         EXCEPT(dtDAL::ExceptionEnum::ProjectFileNotFound,
-                std::string("No such file:\"") + pathToFile + "\".");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectFileNotFound,
+                std::string("No such file:\"") + pathToFile + "\".", __FILE__, __LINE__);
       }
 
       dtUtil::tree<ResourceTreeNode>* categoryInTree;
@@ -527,8 +530,8 @@ namespace dtDAL
       const ResourceTypeHandler* rth = GetHandlerForFile(type, pathToFile);
 
       if (rth == NULL)
-         EXCEPT(dtDAL::ExceptionEnum::ProjectResourceError,
-                std::string("Could not find data type to match ") + pathToFile + ".");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectResourceError,
+                std::string("Could not find data type to match ") + pathToFile + ".", __FILE__, __LINE__);
 
       const std::string& resourceFileName = rth->ImportResourceToPath(newName, pathToFile, resourcePath);
 
@@ -681,8 +684,8 @@ namespace dtDAL
 	   dtUtil::FileType ft = dtUtil::FileUtils::GetInstance().GetFileInfo(path).fileType;
       if (ft == dtUtil::REGULAR_FILE)
       {
-         EXCEPT(dtDAL::ExceptionEnum::ProjectResourceError, std::string("File: \"")
-                + path + "\" must be a directory.");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectResourceError, std::string("File: \"")
+                + path + "\" must be a directory.", __FILE__, __LINE__);
       }
       else if (ft == dtUtil::FILE_NOT_FOUND)
       {
@@ -694,7 +697,7 @@ namespace dtDAL
          {
             std::ostringstream ss;
             ss << "Unable to create directory " << path << ". Error: " << ex.What();
-            EXCEPT(dtDAL::ExceptionEnum::ProjectInvalidContext, ss.str());
+            throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext, ss.str(), __FILE__, __LINE__);
          }
 
       }

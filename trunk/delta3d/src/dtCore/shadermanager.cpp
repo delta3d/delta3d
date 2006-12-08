@@ -101,7 +101,9 @@ namespace dtCore
 
       //Do not allow shader groups with the same name...
       if (itor != mShaderGroups.end())
-         EXCEPT(ShaderException::DUPLICATE_SHADERGROUP_FOUND, "Shader groups must have unique names.  The conflicting name is \"" + shaderGroup.GetName() + "\".");
+         throw dtUtil::Exception(ShaderException::DUPLICATE_SHADERGROUP_FOUND, 
+         "Shader groups must have unique names.  The conflicting name is \"" + 
+         shaderGroup.GetName() + "\".", __FILE__, __LINE__);
 
       //Before we insert the group, we need to check our program cache and update it
       //if necessary for each shader in the group.  Also update our total shader count.
@@ -346,14 +348,14 @@ namespace dtCore
 
       path = dtCore::FindFileInPathList(shader.GetVertexShaderSource());
       if (path.empty() || !vertexShader->loadShaderSourceFromFile(path))
-         EXCEPT(ShaderException::SHADER_SOURCE_ERROR,"Error loading vertex shader file: " +
-            shader.GetVertexShaderSource() + " from shader: " + shader.GetName());
+         throw dtUtil::Exception(ShaderException::SHADER_SOURCE_ERROR,"Error loading vertex shader file: " +
+            shader.GetVertexShaderSource() + " from shader: " + shader.GetName(), __FILE__, __LINE__);
 
       dtCore::RefPtr<osg::Shader> fragmentShader = new osg::Shader(osg::Shader::FRAGMENT);
       path = dtCore::FindFileInPathList(shader.GetFragmentShaderSource());
       if (path.empty() || !fragmentShader->loadShaderSourceFromFile(path))
-         EXCEPT(ShaderException::SHADER_SOURCE_ERROR,"Error loading fragment shader file: " +
-            shader.GetFragmentShaderSource() + " from shader: " + shader.GetName());
+         throw dtUtil::Exception(ShaderException::SHADER_SOURCE_ERROR,"Error loading fragment shader file: " +
+            shader.GetFragmentShaderSource() + " from shader: " + shader.GetName(), __FILE__, __LINE__);
 
       dtCore::RefPtr<osg::Program> program = new osg::Program();
       program->addShader(vertexShader.get());
@@ -391,7 +393,7 @@ namespace dtCore
       }
       catch (const dtUtil::Exception &e)
       {
-         EXCEPT(ShaderException::XML_PARSER_ERROR,e.ToString());
+         throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,e.ToString(), __FILE__, __LINE__);
       }
    }
 }

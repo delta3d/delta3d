@@ -82,7 +82,8 @@ namespace dtGame
    void Message::AddParameter(dtDAL::NamedParameter *param)
    {
       if (param == NULL)
-         EXCEPT(ExceptionEnum::INVALID_PARAMETER,"NULL parameters are not legal.");
+         throw dtUtil::Exception(ExceptionEnum::INVALID_PARAMETER,
+         "NULL parameters are not legal.", __FILE__, __LINE__);
       
       std::map<std::string,dtCore::RefPtr<MessageParameter> >::iterator itor =
          mParameterList.find(param->GetName());         

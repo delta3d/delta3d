@@ -23,12 +23,12 @@
 
 #include <string>
 #include <osg/Referenced>
-#include "dtGame/export.h"
-#include "dtGame/message.h"
-#include "dtGame/messagefactory.h"
-#include "dtGame/logtag.h"
-#include "dtGame/logkeyframe.h"
-#include "dtUtil/enumeration.h"
+#include <dtGame/export.h>
+#include <dtGame/message.h>
+#include <dtGame/messagefactory.h>
+#include <dtGame/logtag.h>
+#include <dtGame/logkeyframe.h>
+#include <dtUtil/enumeration.h>
 
 namespace dtGame
 {

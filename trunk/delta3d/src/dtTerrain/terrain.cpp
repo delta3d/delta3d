@@ -129,8 +129,8 @@ namespace dtTerrain
    float Terrain::GetHeight(float x, float y)
    {
       if (!mDataRenderer.valid())
-         EXCEPT(TerrainException::INVALID_DATA_RENDERER,
-         "Cannot retrieve the height of the terrain.");
+         throw dtUtil::Exception(TerrainException::INVALID_DATA_RENDERER,
+         "Cannot retrieve the height of the terrain.", __FILE__, __LINE__);
 
       return mDataRenderer->GetHeight(x,y);  
    }
@@ -385,12 +385,12 @@ namespace dtTerrain
       //tile (heightfield, decorators, etc.) may still load assuming they are not
       //dependent on the failed stages.
       if (!mDataReader.valid())
-         EXCEPT(TerrainException::INVALID_DATA_READER,
-         "Cannot flush the terrain tile load queue.  The terrain reader is not valid.");
+         throw dtUtil::Exception(TerrainException::INVALID_DATA_READER,
+         "Cannot flush the terrain tile load queue.  The terrain reader is not valid.", __FILE__, __LINE__);
 
       if (!mDataRenderer.valid())
-         EXCEPT(TerrainException::INVALID_DATA_RENDERER,
-         "Cannot flush the terrain tile load queue.  The terrain renderer is not valid.");
+         throw dtUtil::Exception(TerrainException::INVALID_DATA_RENDERER,
+         "Cannot flush the terrain tile load queue.  The terrain renderer is not valid.", __FILE__, __LINE__);
 
       while (!mTilesToLoadQ.empty())      
       {
@@ -524,12 +524,12 @@ namespace dtTerrain
       //allows each stage to possibly cache data before unloading and perform
       //any necessary clean up operations that should occur.      
       if (!mDataReader.valid())
-         EXCEPT(TerrainException::INVALID_DATA_READER,
-         "Cannot flush the terrain tile load queue.  The terrain reader is not valid.");
+         throw dtUtil::Exception(TerrainException::INVALID_DATA_READER,
+         "Cannot flush the terrain tile load queue.  The terrain reader is not valid.", __FILE__, __LINE__);
 
       if (!mDataRenderer.valid())
-         EXCEPT(TerrainException::INVALID_DATA_RENDERER,
-         "Cannot flush the terrain tile load queue.  The terrain renderer is not valid.");
+         throw dtUtil::Exception(TerrainException::INVALID_DATA_RENDERER,
+         "Cannot flush the terrain tile load queue.  The terrain renderer is not valid.", __FILE__, __LINE__);
 
       while (!mTilesToUnloadQ.empty())
       {
@@ -629,8 +629,8 @@ namespace dtTerrain
    void Terrain::AddDecorationLayer(TerrainDecorationLayer *newLayer)
    {
       if (newLayer == NULL)
-         EXCEPT(TerrainException::INVALID_DECORATION_LAYER,
-         "Cannot add NULL decoration layer.");
+         throw dtUtil::Exception(TerrainException::INVALID_DECORATION_LAYER,
+         "Cannot add NULL decoration layer.", __FILE__, __LINE__);
 
       //First make sure we have a unique name for the new layer.      
       TerrainLayerMap::iterator itor = mDecorationLayers.find(newLayer->GetName());

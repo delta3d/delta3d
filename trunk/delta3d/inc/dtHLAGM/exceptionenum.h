@@ -45,4 +45,4 @@ namespace dtHLAGM
 
 }
 
-#endif /*DELTA_HLAGM_EXCEPTION_ENUM*/
+#endif /*DELTA_HLAGM_throw dtUtil::ExceptionION_ENUM*/

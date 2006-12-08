@@ -290,7 +290,8 @@ class TestLogStream : public dtGame::LogStream
       void DoException()
       {
          if (mExceptionEnabled)
-            EXCEPT(dtGame::LogStreamException::LOGGER_IO_EXCEPTION,"Test Exception - Not an Error!");
+            throw dtUtil::Exception(dtGame::LogStreamException::LOGGER_IO_EXCEPTION,
+            "Test Exception - Not an Error!", __FILE__, __LINE__);
       }
       virtual ~TestLogStream() { }
    private:

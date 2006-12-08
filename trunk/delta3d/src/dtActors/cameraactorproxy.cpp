@@ -42,7 +42,8 @@ void CameraActorProxy::CreateActor()
 
    Camera *cam = dynamic_cast<Camera*>(mActor.get());
    if(cam == NULL)
-      EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be dtCore::Camera.");
+      throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+      "Actor should be dtCore::Camera.", __FILE__, __LINE__);
 
    cam->SetEnabled(false);
 }
@@ -55,7 +56,8 @@ void CameraActorProxy::BuildPropertyMap()
 
    Camera *cam = dynamic_cast<Camera*>(mActor.get());
    if(!cam)
-      EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be dtCore::Camera.");
+      throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+      "Actor should be dtCore::Camera.", __FILE__, __LINE__);
 
    AddProperty( new BooleanActorProperty("Enable", "Enabled",
       MakeFunctor(*cam, &dtCore::Camera::SetEnabled),
@@ -88,7 +90,8 @@ osg::Vec4f CameraActorProxy::GetClearColor()
 {
    Camera *cam = dynamic_cast<Camera*>(mActor.get());
    if(cam == NULL)
-      EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be dtCore::Camera.");
+      throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+      "Actor should be dtCore::Camera.", __FILE__, __LINE__);
 
    osg::Vec4 color;
    cam->GetClearColor(color);
@@ -100,7 +103,8 @@ void CameraActorProxy::SetClearColor(const osg::Vec4 &color)
 {
    Camera *cam = dynamic_cast<Camera*>(mActor.get());
    if(cam == NULL)
-      EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be dtCore::Camera.");
+      throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+      "Actor should be dtCore::Camera.", __FILE__, __LINE__);
 
    cam->SetClearColor(color);
 }

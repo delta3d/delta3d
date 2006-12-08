@@ -19,8 +19,8 @@
  * Erik Johnson 05/16/2006
  */
 
-#ifndef __DELTA_CORE_EXCEPTIONENUM_H__
-#define __DELTA_CORE_EXCEPTIONENUM_H__
+#ifndef __DELTA_CORE_EXCEPTION_ENUM_H__
+#define __DELTA_CORE_EXCEPTION_ENUM_H__
 
 #include <dtUtil/enumeration.h>
 #include <dtCore/export.h>
@@ -46,4 +46,4 @@ namespace dtCore
    };
 }//namespace dtCore
 
-#endif // __DELTA_CORE_EXCEPTIONENUM_H__
+#endif // __DELTA_CORE_throw dtUtil::ExceptionIONENUM_H__

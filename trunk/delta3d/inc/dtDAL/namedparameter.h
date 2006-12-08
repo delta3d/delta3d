@@ -286,8 +286,8 @@ namespace dtDAL
             //First make sure this parameter does not have a list if the
             //other parameter does and vice versa.
             if ((IsList() && !otherParam.IsList()) ||(!IsList() && otherParam.IsList()))
-               EXCEPT(ExceptionEnum::BaseException,
-                  "Cannot assign two parameters with one being a list of values and the other not.");
+               throw dtUtil::Exception(ExceptionEnum::BaseException,
+                  "Cannot assign two parameters with one being a list of values and the other not.", __FILE__, __LINE__);
 
             if (param != NULL)
             {
@@ -306,8 +306,8 @@ namespace dtDAL
          inline virtual void SetValue(const ParamType& value)
          {
             if (IsList())
-               EXCEPT(ExceptionEnum::BaseException,
-                  "Cannot call SetValue() on message parameter with a list of values.");
+               throw dtUtil::Exception(ExceptionEnum::BaseException,
+                  "Cannot call SetValue() on message parameter with a list of values.", __FILE__, __LINE__);
 
             mValue = value;
          }
@@ -315,8 +315,8 @@ namespace dtDAL
          inline virtual const ParamType& GetValue() const
          {
             if (IsList())
-               EXCEPT(ExceptionEnum::BaseException,
-                  "Cannot call GetValue() on message parameter with a list of values.");
+               throw dtUtil::Exception(ExceptionEnum::BaseException,
+                  "Cannot call GetValue() on message parameter with a list of values.", __FILE__, __LINE__);
 
             return mValue;
          }
@@ -324,24 +324,24 @@ namespace dtDAL
          inline const std::vector<ParamType> &GetValueList() const
          {
             if (!IsList())
-               EXCEPT(ExceptionEnum::BaseException,
-                  "Cannot retrieve the parameters value list.  Parameter does not contain a list.");
+               throw dtUtil::Exception(ExceptionEnum::BaseException,
+                  "Cannot retrieve the parameters value list.  Parameter does not contain a list.", __FILE__, __LINE__);
             return *mValueList;
          }
 
          inline std::vector<ParamType> &GetValueList()
          {
             if (!IsList())
-               EXCEPT(ExceptionEnum::BaseException,
-                  "Cannot retrieve the parameters value list.  Parameter does not contain a list.");
+               throw dtUtil::Exception(ExceptionEnum::BaseException,
+                  "Cannot retrieve the parameters value list.  Parameter does not contain a list.", __FILE__, __LINE__);
             return *mValueList;
          }
 
          inline void SetValueList(const std::vector<ParamType> &newValues)
          {
             if (!IsList())
-               EXCEPT(ExceptionEnum::BaseException,
-                  "Cannot set a list of new values on a parameter that is not a list.");
+               throw dtUtil::Exception(ExceptionEnum::BaseException,
+                  "Cannot set a list of new values on a parameter that is not a list.", __FILE__, __LINE__);
 
             *mValueList = newValues;
          }
