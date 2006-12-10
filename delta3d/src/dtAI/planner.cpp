@@ -36,7 +36,7 @@ namespace dtAI
       FreeMem();
    }
 
-   struct deleteFunc
+   struct PlannerDeleteFunc
    {
       template<class _Type>
          void operator()(_Type p1)
@@ -48,7 +48,7 @@ namespace dtAI
 
    void Planner::FreeMem()
    {
-      std::for_each(mOpen.begin(), mOpen.end(), deleteFunc());  
+      std::for_each(mOpen.begin(), mOpen.end(), PlannerDeleteFunc());  
       mOpen.clear();
       mConfig.mResult.clear();
    }

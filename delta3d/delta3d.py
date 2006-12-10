@@ -27,6 +27,18 @@ def TOOL_BUNDLE(env):
     
        target = '#bin/' + name
     
+       if env.get('fastBuild'):
+          path = string.replace(env.GetBuildPath('SConscript'),  'SConscript', '')
+          cxxFileName = name + "_.cxx"
+          cxxFile = open(path + cxxFileName, "w")
+          for srcFile in srcs :
+             if srcFile != cxxFileName:
+                cxxFile.write("#include \"" + srcFile + "\"\n")
+          
+          sourceList = [cxxFileName]
+       else:
+          sourceList = srcs
+    
        if env['OS'] == 'windows' and env.get('mode') == 'debug' :
           target += 'd'
     
@@ -73,7 +85,7 @@ def TOOL_BUNDLE(env):
        if envProg.has_key('CPPDEFINES'):
          cppDefines = envProg['CPPDEFINES']
 
-       if len(prefixHeader) > 0 and envProg.get('usePrefixHeaders'):
+       if len(prefixHeader) > 0 and envProg.get('pch'):
           cppDefines += ['DELTA_PCH']
 
           prefixHeaderName = prefixHeader.split('/')[2][0:-2]
@@ -92,7 +104,7 @@ def TOOL_BUNDLE(env):
              envProg['PCH'] = envProg.PCH("precomp.cpp", CPPDEFINES = cppDefines + extraDefines)[0]
        
     
-       program = envProg.Program( target, srcs,
+       program = envProg.Program( target, sourceList,
                                 CPPDEFINES = cppDefines + extraDefines, 
                                 LIBS = addToLibs, LINKFLAGS = addToLink + extraLinkFlags )
     
@@ -125,6 +137,18 @@ def TOOL_BUNDLE(env):
        #remove the windows precompiled header file.
        if "precomp.cpp" in srcs:
           srcs.remove("precomp.cpp")
+
+       if env.get('fastBuild'):
+          path = string.replace(env.GetBuildPath('SConscript'),  'SConscript', '')
+          cxxFileName = name + "_.cxx"
+          cxxFile = open(path + cxxFileName, "w")
+          for srcFile in srcs :
+             if srcFile != cxxFileName:
+                cxxFile.write("#include \"" + srcFile + "\"\n")
+          
+          sourceList = [cxxFileName]
+       else:
+          sourceList = srcs
 
        target = name
        if env['OS'] == 'windows' and env.get('mode') == 'debug' :
@@ -188,7 +212,7 @@ def TOOL_BUNDLE(env):
 
        staticLib = name == 'dtNet'
 
-       if len(prefixHeader) > 0 and envLib.get('usePrefixHeaders'):
+       if len(prefixHeader) > 0 and envLib.get('pch'):
           cppDefines += ['DELTA_PCH']
 
           prefixHeaderName = prefixHeader.split('/')[2][0:-2]
@@ -216,13 +240,15 @@ def TOOL_BUNDLE(env):
              envLib['PCH'] = envLib.PCH("precomp.cpp", CPPDEFINES = cppDefines + extraDefines)[0]
        
        if not staticLib :
-          builtlib = envLib.SharedLibrary( target, srcs, 
+          builtlib = envLib.SharedLibrary( target, sourceList, 
                                            CPPDEFINES = cppDefines + extraDefines,
                                            LIBS = addToLibs, LINKFLAGS = addToLink + extraLinkFlags )
        else :
-          builtlib = envLib.StaticLibrary( target, srcs, 
+          builtlib = envLib.StaticLibrary( target, sourceList, 
                                            CPPDEFINES = cppDefines + extraDefines,
                                            LIBS = addToLibs, LINKFLAGS = addToLink + extraLinkFlags )
+           
+       #envLib.AddPostAction(builtlib, env.Action ('strip ' + inst[0].get_abspath()))
            
        envLib.Precious( builtlib )
        
@@ -434,8 +460,6 @@ def TOOL_BUNDLE(env):
       if os.environ.has_key('CPPFLAGS'):
          env.Append(CPPFLAGS=os.environ['CPPFLAGS'])
 
-      env.get('usePrefixHeaders')
-         
       if env['OS'] == 'windows':
          env.Append(CXXFLAGS=['/W3'])
       elif env['OS'] == 'linux' or env['OS'] == 'darwin':

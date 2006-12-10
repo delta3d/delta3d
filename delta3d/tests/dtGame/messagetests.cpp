@@ -208,7 +208,7 @@ void MessageTests::setUp()
    }
    catch (const dtUtil::Exception& ex)
    {
-      CPPUNIT_FAIL((std::string("Error: ") + ex.What()).c_str());
+      CPPUNIT_FAIL((std::string("Error: ") + ex.ToString()).c_str());
    }
 
    //dtGame::MessageFactory& msgF = mGameManager->GetMessageFactory();
@@ -238,7 +238,7 @@ void MessageTests::tearDown()
       }
       catch(const dtUtil::Exception &e)
       {
-         CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
+         CPPUNIT_FAIL((std::string("Error: ") + e.ToString()).c_str());
       }
    }
 
@@ -248,7 +248,7 @@ void MessageTests::tearDown()
    }
    catch(const dtUtil::Exception &e)
    {
-      CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
+      CPPUNIT_FAIL((std::string("Error: ") + e.ToString()).c_str());
    }
 }
 
@@ -1021,38 +1021,51 @@ void MessageTests::TestChangeMapGameEvents()
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Should be one event.", geMan.GetNumEvents(), (unsigned int) 1);
 
       mGameManager->ChangeMap(mapName, false, false);
+      //two ticks to finish the change.
+      dtCore::System::GetInstance().Step();
+      dtCore::System::GetInstance().Step();
 
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Four events should be in the game event manager singleton.", 
-         geMan.GetNumEvents(), (unsigned int) 4);
+         geMan.GetNumEvents(), (unsigned int)4);
 
       CPPUNIT_ASSERT_MESSAGE("The first game event should be in the Game Event Manager singleton on map change.", 
-         geMan.FindEvent("one") != NULL); 
+         geMan.FindEvent("one") != NULL);
       CPPUNIT_ASSERT_MESSAGE("The second game event should be in the Game Event Manager singleton on map change.", 
-         geMan.FindEvent("two") != NULL); 
+         geMan.FindEvent("two") != NULL);
       CPPUNIT_ASSERT_MESSAGE("The third game event should be in the Game Event Manager singleton on map change.", 
-         geMan.FindEvent("three") != NULL); 
+         geMan.FindEvent("three") != NULL);
       CPPUNIT_ASSERT_MESSAGE("The fourth game event should be in the Game Event Manager singleton on map change.", 
-         geMan.FindEvent("non-map event") != NULL); 
+         geMan.FindEvent("non-map event") != NULL);
 
       // test the new flag for removing game events
       mGameManager->CloseCurrentMap();
+      //two ticks to finish the change.
+      dtCore::System::GetInstance().Step();
+      dtCore::System::GetInstance().Step();
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Closing the map should have removed some of the events since we didnt change the flag.", 
          geMan.GetNumEvents(), (unsigned int) 1);
 
       // re-add the events and try again.
       mGameManager->ChangeMap(mapName, false, false);
+      //two ticks to finish the change.
+      dtCore::System::GetInstance().Step();
+      dtCore::System::GetInstance().Step();
+
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Three events should be back in the game event manager singleton.", 
          geMan.GetNumEvents(), (unsigned int) 4);
       mGameManager->SetRemoveGameEventsOnMapChange(false);
       mGameManager->CloseCurrentMap();
+      //two ticks to finish the change.
+      dtCore::System::GetInstance().Step();
+      dtCore::System::GetInstance().Step();
+
       CPPUNIT_ASSERT_EQUAL_MESSAGE("The events should still be in the Game Manager since we changed the flag.", 
          geMan.GetNumEvents(), (unsigned int) 4);
    }
    catch(const dtUtil::Exception &e) 
    {
-      CPPUNIT_FAIL(e.What());
+      CPPUNIT_FAIL(e.ToString());
    }
-
 }
 
 void MessageTests::TestChangeMap()
@@ -1078,8 +1091,8 @@ void MessageTests::TestChangeMap()
       //remove one proxy to make the maps have different sizes.
       map2->RemoveProxy(*map2->GetAllProxies().begin()->second);
       
-      unsigned numActors = map->GetAllProxies().size();
-      unsigned numActors2 = map2->GetAllProxies().size();
+      size_t numActors = map->GetAllProxies().size();
+      size_t numActors2 = map2->GetAllProxies().size();
 
       CPPUNIT_ASSERT(numActors != numActors2);
 
@@ -1097,21 +1110,41 @@ void MessageTests::TestChangeMap()
       std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > toFill;
       mGameManager->GetAllActors(toFill);
 
-      CPPUNIT_ASSERT_MESSAGE("The number of actors in the GM should match the map.", numActors == toFill.size());
-
+      CPPUNIT_ASSERT_MESSAGE("The number of actors in the GM should be 0.", toFill.size() == 0);
       //SLEEP(10);
       dtCore::System::GetInstance().Step();
-
-      mGameManager->GetAllActors(toFill);
-      CPPUNIT_ASSERT_MESSAGE("The number of actors in the GM should match the map.", numActors == toFill.size());
+      dtCore::RefPtr<const dtGame::Message> processMapChange = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_CHANGE_BEGIN);
+      CPPUNIT_ASSERT_MESSAGE("An INFO_MAP_CHANGE_BEGIN message should have been processed.", processMapChange.valid());
+      const dtGame::MapLoadedMessage* mapLoadedMsg = static_cast<const dtGame::MapLoadedMessage*>(processMapChange.get());
+      CPPUNIT_ASSERT_MESSAGE("The Map name in the INFO_MAP_CHANGE_BEGIN message should be " + mapName,  mapLoadedMsg->GetLoadedMapName() == mapName);
 
       dtCore::RefPtr<const dtGame::Message> processMapUnloadedMsg = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_UNLOADED);
       CPPUNIT_ASSERT_MESSAGE("A map unloaded message should NOT have been processed.", !processMapUnloadedMsg.valid());
-
+      processMapUnloadedMsg = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_UNLOAD_BEGIN);
+      CPPUNIT_ASSERT_MESSAGE("A map unload begin message should NOT have been processed.", !processMapUnloadedMsg.valid());
       dtCore::RefPtr<const dtGame::Message> processMapLoadedMsg = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_LOADED);
+      CPPUNIT_ASSERT_MESSAGE("A map loaded message should not have been processed.", !processMapLoadedMsg.valid());
+
+      processMapLoadedMsg = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_LOAD_BEGIN);
+      CPPUNIT_ASSERT_MESSAGE("An INFO_MAP_LOAD_BEGIN message should have been processed.", processMapLoadedMsg.valid());
+      mapLoadedMsg = static_cast<const dtGame::MapLoadedMessage*>(processMapLoadedMsg.get());
+      CPPUNIT_ASSERT_MESSAGE("The Map name in the INFO_MAP_LOAD_BEGIN message should be " + mapName,  mapLoadedMsg->GetLoadedMapName() == mapName);
+
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of actors in the GM should be 0.", size_t(0),  toFill.size());
+
+      dtCore::System::GetInstance().Step();
+      mGameManager->GetAllActors(toFill);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of actors in the GM should match the map.", numActors, toFill.size());
+
+      processMapLoadedMsg = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_LOADED);
       CPPUNIT_ASSERT_MESSAGE("A map loaded message should have been processed.", processMapLoadedMsg.valid());
-      const dtGame::MapLoadedMessage* mapLoadedMsg = static_cast<const dtGame::MapLoadedMessage*>(processMapLoadedMsg.get());
-      CPPUNIT_ASSERT_MESSAGE("The Map name in the message should be " + mapName,  mapLoadedMsg->GetLoadedMapName() == mapName);
+      mapLoadedMsg = static_cast<const dtGame::MapLoadedMessage*>(processMapLoadedMsg.get());
+      CPPUNIT_ASSERT_MESSAGE("The Map name in the INFO_MAP_LOADED message should be " + mapName,  mapLoadedMsg->GetLoadedMapName() == mapName);
+
+      processMapChange = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_CHANGED);
+      CPPUNIT_ASSERT_MESSAGE("A INFO_MAP_CHANGED message should have been processed.", processMapChange.valid());
+      mapLoadedMsg = static_cast<const dtGame::MapLoadedMessage*>(processMapChange.get());
+      CPPUNIT_ASSERT_MESSAGE("The Map name in the INFO_MAP_CHANGED message should be " + mapName,  mapLoadedMsg->GetLoadedMapName() == mapName);
 
       for (unsigned i = 0; i < toFill.size(); ++i)
       {
@@ -1133,24 +1166,51 @@ void MessageTests::TestChangeMap()
       mGameManager->ChangeMap(mapName2, false, false);
 
       dtCore::System::GetInstance().Step();
-      mGameManager->GetAllActors(toFill);
 
-      CPPUNIT_ASSERT_MESSAGE("The number of actors in the GM should match the second map.", numActors2 == toFill.size());
-
-      processMapUnloadedMsg = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_UNLOADED);
-      CPPUNIT_ASSERT_MESSAGE("A map unloaded message should have been processed.", processMapUnloadedMsg.valid());
+      processMapUnloadedMsg = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_UNLOAD_BEGIN);
+      CPPUNIT_ASSERT_MESSAGE("An INFO_MAP_UNLOAD_BEGIN message should have been processed.", processMapUnloadedMsg.valid());
       mapLoadedMsg = static_cast<const dtGame::MapLoadedMessage*>(processMapUnloadedMsg.get());
       CPPUNIT_ASSERT_EQUAL_MESSAGE("The unloaded Map name in the message should be " + mapName,  mapName, mapLoadedMsg->GetLoadedMapName());
+
+      processMapUnloadedMsg = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_UNLOADED);
+      CPPUNIT_ASSERT_MESSAGE("An INFO_MAP_UNLOADED message should have been processed.", processMapUnloadedMsg.valid());
+      mapLoadedMsg = static_cast<const dtGame::MapLoadedMessage*>(processMapUnloadedMsg.get());
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The unloaded Map name in the message should be " + mapName,  mapName, mapLoadedMsg->GetLoadedMapName());
+
+      processMapChange = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_CHANGE_BEGIN);
+      CPPUNIT_ASSERT_MESSAGE("An INFO_MAP_CHANGE_BEGIN message should have been processed.", processMapChange.valid());
+
+      processMapLoadedMsg = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_LOAD_BEGIN);
+      CPPUNIT_ASSERT_MESSAGE("An INFO_MAP_LOAD_BEGIN message should have been processed.", processMapLoadedMsg.valid());
+
+      processMapLoadedMsg = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_LOADED);
+      CPPUNIT_ASSERT_MESSAGE("An INFO_MAP_LOADED message should NOT have been processed.", !processMapLoadedMsg.valid());
+
+      processMapChange = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_CHANGED);
+      CPPUNIT_ASSERT_MESSAGE("A INFO_MAP_CHANGED message should NOT have been processed.", !processMapChange.valid());
+
+      mGameManager->GetAllActors(toFill);
+
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of actors in the GM should be 0.", size_t(0), toFill.size());
+
+      dtCore::System::GetInstance().Step();
+
+      mGameManager->GetAllActors(toFill);
+
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of actors in the GM should match the second map.", numActors2, toFill.size());
 
       processMapLoadedMsg = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_LOADED);
       CPPUNIT_ASSERT_MESSAGE("A map loaded message should have been processed.", processMapLoadedMsg.valid());
       mapLoadedMsg = static_cast<const dtGame::MapLoadedMessage*>(processMapLoadedMsg.get());
       CPPUNIT_ASSERT_EQUAL_MESSAGE("The Map name in the message should be " + mapName2,  mapName2, mapLoadedMsg->GetLoadedMapName());
 
+      processMapChange = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_CHANGED);
+      CPPUNIT_ASSERT_MESSAGE("A INFO_MAP_CHANGED message should have been processed.", processMapChange.valid());
+
    }
    catch(const dtUtil::Exception &e) 
    {
-      CPPUNIT_FAIL(e.What());
+      CPPUNIT_FAIL(e.ToString());
    }
    
 }
@@ -1184,53 +1244,26 @@ void MessageTests::TestGameEventMessage()
 
 void MessageTests::TestChangeMapErrorConditions()
 {
-   try
-   {
-      dtDAL::Project::GetInstance().SetContext("");
-      mGameManager->ChangeMap("A Testy Map");
-      CPPUNIT_FAIL("The game manager should not have been able to change to any map without a context.");
-   }
-   catch(const dtUtil::Exception&)
-   {
-      // correct
-   }
-
-   try
+   try 
    {
       dtDAL::Project::GetInstance().SetContext("dtGame/WorkingProject");
-      mGameManager->ChangeMap("");
-      CPPUNIT_FAIL("The game manager should not have been able to change to an empty string");
-   }
-   catch(const dtUtil::Exception&)
-   {
-      // correct
-   }
-
-   try
-   {
+      CPPUNIT_ASSERT_THROW(mGameManager->ChangeMap(""), dtUtil::Exception);
+   
       dtDAL::Project::GetInstance().SetContext("dtGame/WorkingProject");
-      mGameManager->ChangeMap("This map does not exist");
-      CPPUNIT_FAIL("The game manager should not have been able to set the map");
-   }
-   catch(const dtUtil::Exception&)
-   {
-      // correct
-   }
-
-   try
-   {
+      CPPUNIT_ASSERT_THROW(mGameManager->ChangeMap("This map does not exist"), dtUtil::Exception);
+   
       dtDAL::Project::GetInstance().SetContext("dtGame/WorkingProject");
-      mGameManager->ChangeMap("../examples/testMap/testMap");
+      CPPUNIT_ASSERT_THROW(mGameManager->ChangeMap("../examples/testMap/testMap"), dtUtil::Exception);
+   
+      dtUtil::FileUtils::GetInstance().DirDelete("dtGame/WorkingProject", true);
+      CPPUNIT_ASSERT(!dtUtil::FileUtils::GetInstance().DirExists("dtGame/WorkingProject"));
    }
-   catch(const dtUtil::Exception&)
+   catch (const dtUtil::Exception& ex)
    {
-      // correct
+      CPPUNIT_FAIL(ex.ToString());
    }
-
-   dtUtil::FileUtils::GetInstance().DirDelete("dtGame/WorkingProject", true);
-   CPPUNIT_ASSERT(!dtUtil::FileUtils::GetInstance().DirExists("dtGame/WorkingProject"));
+   
 }
-
 
 void MessageTests::TestDefaultMessageProcessorWithPauseResumeCommands()
 {

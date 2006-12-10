@@ -33,7 +33,7 @@ namespace dtAI
    {
    }
 
-   struct deleteFunc
+   struct PlannerHelperDeleteFunc
    {
       template<class _Type>
          void operator()(_Type p1)
@@ -45,7 +45,7 @@ namespace dtAI
    PlannerHelper::~PlannerHelper()
    {    
       //\fix me- this crashes boost python... define ownership of operators
-      std::for_each(mOperators.begin(), mOperators.end(), deleteFunc());
+      std::for_each(mOperators.begin(), mOperators.end(), PlannerHelperDeleteFunc());
       mOperators.clear();
 
       delete mCurrentState;

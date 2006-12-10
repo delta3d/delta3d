@@ -31,7 +31,7 @@ namespace dtAI
 
    }
    
-   struct deleteFunc
+   struct WorldStateDeleteFunc
    {
       template<class _Type>
          void operator()(_Type p1)
@@ -47,7 +47,7 @@ namespace dtAI
 
    void WorldState::FreeMem()
    {
-      std::for_each(mStateVariables.begin(), mStateVariables.end(), deleteFunc());
+      std::for_each(mStateVariables.begin(), mStateVariables.end(), WorldStateDeleteFunc());
       mStateVariables.clear();
    }
 

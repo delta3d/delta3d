@@ -142,8 +142,14 @@ opts.AddOptions(
    EnumOption( 'mode', 'Build as either debug or release', 'release',
             allowed_values = ( 'debug', 'release' ),
             map = {}, ignorecase = 1 ),
-   BoolOption( 'usePrefixHeaders', 'use a prefix/precompiled header', False ),
+   BoolOption( 'pch', 'use a prefix/precompiled header', False ),
    BoolOption( 'buildPythonBindings', 'compile the python binding libraries', True ),
+   BoolOption( 'buildExamples', 'compile the python binding libraries', True ),
+   BoolOption( 'buildDemos', 'compile the python binding libraries', True ),
+   BoolOption( 'fastBuild', 
+     'Experimental option for full builds that combines the cpp files into one ' 
+     'large one and builds them together.  This greatly speeds up building from scratch, '
+     'but not necessarily incremental builds.  Don\'t use this with precompiled headers.', False ),
    PackageOption( 'boost', 'Boost installation directory', 'no' ),
    PackageOption( 'rti', 'RTI installation directory', 'no' )
 )
@@ -210,8 +216,14 @@ env.Alias( 'install', '$prefix' )
 
 SConscript( dirs=['doc'] )
 SConscript( dirs=['src'] )
+
+#we still go into the examples dir because the example libraries are needed
+#for the unit tests
 SConscript( dirs=['examples'] )
-SConscript( dirs=['demos'] )
+
+if env.get("buildDemos"):
+   SConscript( dirs=['demos'] )
+
 SConscript( dirs=['utilities'] )
 
 # TODO: this should defintely be using the env['TOOLS'] list and extracting the 'default' cxx tool,

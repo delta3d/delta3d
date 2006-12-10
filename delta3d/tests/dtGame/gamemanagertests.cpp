@@ -71,6 +71,7 @@ class GameManagerTests : public CPPUNIT_NS::TestFixture
 
         CPPUNIT_TEST(TestActorSearching);
         CPPUNIT_TEST(TestAddActor);
+        CPPUNIT_TEST(TestCreateRemoteActor);
         CPPUNIT_TEST(TestComplexScene);
         CPPUNIT_TEST(TestAddRemoveComponents);
         CPPUNIT_TEST(TestComponentPriority);
@@ -95,6 +96,7 @@ public:
 
    void TestActorSearching();
    void TestAddActor();
+   void TestCreateRemoteActor();
    void TestComplexScene();
    void TestAddRemoveComponents();
    void TestComponentPriority();
@@ -725,6 +727,24 @@ void GameManagerTests::TestComponentPriority()
 
 }
 
+void GameManagerTests::TestCreateRemoteActor()
+{
+   dtCore::RefPtr<dtDAL::ActorType> type = mManager->FindActorType("dtcore.examples", "Test All Properties");
+   dtCore::RefPtr<dtDAL::ActorType> gameActorType = mManager->FindActorType("ExampleActors","Test1Actor");
+
+   //sanity check.
+   CPPUNIT_ASSERT(type.valid());
+   CPPUNIT_ASSERT(gameActorType.valid());
+  
+   CPPUNIT_ASSERT_THROW(mManager->CreateRemoteGameActor(*type), dtUtil::Exception);
+   
+   dtCore::RefPtr<dtGame::GameActorProxy> proxy; 
+   CPPUNIT_ASSERT_NO_THROW(proxy = mManager->CreateRemoteGameActor(*gameActorType));
+   
+   CPPUNIT_ASSERT_MESSAGE("The proxy created as remote should not be NULL.", proxy.valid());
+   CPPUNIT_ASSERT_MESSAGE("The proxy created as remote should have a valid actor.", proxy->GetActor() != NULL);
+   CPPUNIT_ASSERT_MESSAGE("The proxy should already be remote.", proxy->IsRemote());
+}
 
 void GameManagerTests::TestAddActor()
 {

@@ -27,6 +27,7 @@
 #include <dtGame/exceptionenum.h>
 #include <dtGame/gmcomponent.h>
 #include <dtGame/invokable.h>
+#include <dtGame/mapchangestatedata.h>
 
 #include <dtDAL/actortype.h>
 #include <dtDAL/project.h>
@@ -46,7 +47,6 @@ using namespace dtCore;
 
 namespace dtGame
 {
-
    IMPLEMENT_MANAGEMENT_LAYER(GameManager);
 
    IMPLEMENT_ENUM(GameManager::ComponentPriority);
@@ -60,6 +60,8 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    GameManager::GameManager(dtCore::Scene &scene) :
       mMachineInfo(new MachineInfo()),
+      mSendCreatesAndDeletes(true),
+      mAddActorsToScene(true),
       mScene(&scene),
       mFactory("GameManager MessageFactory", *mMachineInfo, ""),
       mStatisticsInterval(0),
@@ -76,6 +78,8 @@ namespace dtGame
       AddSender(&dtCore::System::GetInstance());
       mPaused = dtCore::System::GetInstance().GetPause();
 
+      mMapChangeStateData = new MapChangeStateData(*this);
+
       // when we come alive, the first message everyone gets will be INFO_RESTARTED
       dtCore::RefPtr<Message> restartMessage = 
          GetMessageFactory().CreateMessage(MessageType::INFO_RESTARTED);
@@ -87,7 +91,6 @@ namespace dtGame
       mMachineInfo(new MachineInfo()),
       mFactory("GameManager MessageFactory",*mMachineInfo,"")
    {
-
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -339,6 +342,15 @@ namespace dtGame
       tickRemoteMessage.SetSimTimeScale(GetTimeScale());
       tickRemoteMessage.SetDestination(&GetMachineInfo());
       tickRemoteMessage.SetSimulationTime(simulationTime);
+
+      if (mMapChangeStateData.valid())
+      {
+         mMapChangeStateData->ContinueMapChange();
+         if (mMapChangeStateData->GetCurrentState() == MapChangeStateData::MapChangeState::IDLE)
+         {
+            mLoadedMap = mMapChangeStateData->GetNewMapName();
+         }
+      }
 
       SendMessage(*tick);
       SendMessage(*tickRemote);
@@ -725,7 +737,9 @@ namespace dtGame
          mScene->AddDrawable(gameActorProxy.GetActor());
       }
 
-      if (!isRemote)
+      // Remote actors are normally created in response to a create message, so sending another is silly.
+      // Also, this doen't currently send messages when loading a map, so check here for that state.
+      if (!isRemote && mMapChangeStateData->GetCurrentState() == MapChangeStateData::MapChangeState::IDLE)
       {
          dtCore::RefPtr<Message> msg = mFactory.CreateMessage(MessageType::INFO_ACTOR_CREATED);
          gameActorProxy.PopulateActorUpdate(static_cast<ActorUpdateMessage&>(*msg));
@@ -891,7 +905,9 @@ namespace dtGame
          id = itor->first;
          GameActorProxy& gameActorProxy = *itor->second;
          mDeleteList.push_back(itor->second);
-         if (!gameActorProxy.IsRemote())
+         // Remote actors are deleted in response to a delete message, so sending another is silly.
+         // Also, this doen't currently send messages when closing a map, so check here for that state.
+         if (!gameActorProxy.IsRemote() && mMapChangeStateData->GetCurrentState() == MapChangeStateData::MapChangeState::IDLE)
          {
             dtCore::RefPtr<Message> msg = mFactory.CreateMessage(MessageType::INFO_ACTOR_DELETED);
             msg->SetAboutActorId(id);
@@ -1152,100 +1168,29 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::CloseCurrentMap()
    {
-      //delete all actors after making sure the map loaded correctly.
-      DeleteAllActors(true);
-
-      if (!mLoadedMap.empty() )
+      if (mMapChangeStateData->GetCurrentState() != MapChangeStateData::MapChangeState::IDLE)
       {
-         //Close the old map.
-         dtDAL::Map &oldMap = dtDAL::Project::GetInstance().GetMap(mLoadedMap);
-         
-         // Clear out all the game events that came from our map
-         if (mRemoveGameEventsOnMapChange)
-         {
-            //dtDAL::GameEventManager::GetInstance().ClearAllEvents();
-            std::vector<dtDAL::GameEvent* > events;
-            oldMap.GetEventManager().GetAllEvents(events);
-            for (unsigned int i = 0; i < events.size(); i ++)
-               dtDAL::GameEventManager::GetInstance().RemoveEvent(events[i]->GetUniqueId());
-         }
-
-         dtCore::RefPtr<MapLoadedMessage> closeMessage;
-         mFactory.CreateMessage(MessageType::INFO_MAP_UNLOADED, closeMessage);
-         closeMessage->SetLoadedMapName(oldMap.GetName());
-
-         dtDAL::Project::GetInstance().CloseMap(oldMap, true);
-
-         SendMessage(*closeMessage);
+         static std::string changeMessage("You may not close the map while a map change is already in progress.");
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, changeMessage.c_str());
+         throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION, changeMessage, __FILE__, __LINE__);
       }
+      mMapChangeStateData->BeginMapChange(mLoadedMap, "", false, false);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::ChangeMap(const std::string &mapName, bool addBillboards, bool enableDatabasePaging) 
    {
-      //delete all actors after making sure the map loaded correctly.
-      DeleteAllActors(true);
-
-      CloseCurrentMap();
-      
-      dtDAL::Map &map = dtDAL::Project::GetInstance().GetMap(mapName);
-
-      std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > proxies;
-      map.GetAllProxies(proxies);
-
-      //add all the events in the map to the game manager.
-      std::vector<dtDAL::GameEvent* > events;
-      map.GetEventManager().GetAllEvents(events);
-      for (unsigned int i = 0; i < events.size(); i ++)
+      if (mMapChangeStateData->GetCurrentState() != MapChangeStateData::MapChangeState::IDLE)
       {
-         if (dtDAL::GameEventManager::GetInstance().FindEvent(events[i]->GetUniqueId()) == NULL)
-            dtDAL::GameEventManager::GetInstance().AddEvent(*events[i]);
+         static std::string changeMessage("You may not change the map while a map change is already in progress.");
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, changeMessage.c_str());
+         throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION, changeMessage, __FILE__, __LINE__);
       }
 
-      //Set the loaded map now even if the code later fails because we
-      //want to close the map on the next change.
-      mLoadedMap = mapName;
-
-      for (unsigned int i = 0; i < proxies.size(); i++)
-      {
-         if (proxies[i]->IsInstanceOf("dtGame::GameActor"))
-         {
-            dtCore::RefPtr<GameActorProxy> proxy = dynamic_cast<GameActorProxy*> (proxies[i].get());
-            if (proxy.valid())
-            {
-               proxy->BuildInvokables();
-               mGameActorProxyMap.insert(std::make_pair(proxy->GetId(), proxy));
-               proxy->SetGameManager(this);
-            }
-            else
-               mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                  "ERROR: Actor has the type of a GameActor, but casting it to a GameActorProxy failed.  Actor %s of type %s.%s will not be added to the scene.",
-                  proxies[i]->GetName().c_str(), proxies[i]->GetActorType().GetCategory().c_str(), proxies[i]->GetActorType().GetName().c_str());
-         }
-         else
-         {
-            mActorProxyMap.insert(std::make_pair(proxies[i]->GetId(), dtCore::RefPtr<dtDAL::ActorProxy>(proxies[i].get())));
-         }
-
-      }
-      dtDAL::Project::GetInstance().LoadMapIntoScene(map, *mScene.get(), addBillboards, enableDatabasePaging);
-
-      for (unsigned int i = 0; i < proxies.size(); i++)
-      {
-         if (proxies[i]->IsGameActorProxy())
-         {
-            dtCore::RefPtr<GameActorProxy> proxy = dynamic_cast<GameActorProxy*> (proxies[i].get());
-            proxy->InvokeEnteredWorld();
-
-            if (proxy->GetInitialOwnership() == GameActorProxy::Ownership::SERVER_PUBLISHED)
-               PublishActor(*proxy);
-         }
-      }
-
-      dtCore::RefPtr<MapLoadedMessage> refMsg;
-      mFactory.CreateMessage(MessageType::INFO_MAP_LOADED, refMsg);
-      refMsg->SetLoadedMapName(mapName);
-      SendMessage(*refMsg); // rules component determines whether to send and/or process
+      if (mapName.empty())
+         throw dtUtil::Exception(ExceptionEnum::INVALID_PARAMETER, "Empty string is not a valid map name.", __FILE__, __LINE__);
+               
+      mMapChangeStateData->BeginMapChange(mLoadedMap, mapName, addBillboards, enableDatabasePaging);      
    }
 
    ///////////////////////////////////////////////////////////////////////////////

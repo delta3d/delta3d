@@ -30,7 +30,7 @@
 
 namespace dtTerrain
 {
-   const std::string IMAGE_NAME = "geo_tiff_decorator_image.rgb";
+   const std::string GEOTIFF_IMAGE_NAME = "geo_tiff_decorator_image.rgb";
    
    //////////////////////////////////////////////////////////////////////////
    GeoTiffDecorator::GeoTiffDecorator(const std::string &name) : TerrainDecorationLayer(name)
@@ -48,7 +48,7 @@ namespace dtTerrain
       
       if (tile.IsCachingEnabled())
       {
-         std::string imagePath = tile.GetCachePath() + "/" + IMAGE_NAME;         
+         std::string imagePath = tile.GetCachePath() + "/" + GEOTIFF_IMAGE_NAME;         
          if (dtUtil::FileUtils::GetInstance().FileExists(imagePath))
          {
             LOG_INFO("Reading geo tiff base image from cache: " + imagePath);

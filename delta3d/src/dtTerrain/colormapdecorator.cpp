@@ -27,7 +27,7 @@
 
 namespace dtTerrain
 {
-   const std::string IMAGE_NAME = "colormap_decorator_image.rgb";
+   const std::string COLOR_MAP_IMAGE_NAME = "colormap_decorator_image.rgb";
    
    //////////////////////////////////////////////////////////////////////////
    ColorMapDecorator::ColorMapDecorator(const std::string &name) : TerrainDecorationLayer(name)
@@ -62,7 +62,7 @@ namespace dtTerrain
       
       if (tile.IsCachingEnabled())
       {
-         std::string imagePath = tile.GetCachePath() + "/" + IMAGE_NAME;         
+         std::string imagePath = tile.GetCachePath() + "/" + COLOR_MAP_IMAGE_NAME;         
          if (dtUtil::FileUtils::GetInstance().FileExists(imagePath))
          {
             LOG_INFO("Reading colormap image from cache: " + imagePath);

@@ -31,7 +31,7 @@ namespace dtAI
    {
    }
 
-   struct deleteFunc 
+   struct OperatorDeleteFunc 
    {
       template<class _Type>
          void operator()(_Type p1)
@@ -42,7 +42,7 @@ namespace dtAI
    
    Operator::~Operator()
    {
-      std::for_each(mPreConditionals.begin(), mPreConditionals.end(), deleteFunc());
+      std::for_each(mPreConditionals.begin(), mPreConditionals.end(), OperatorDeleteFunc());
       mPreConditionals.clear();
    }
 

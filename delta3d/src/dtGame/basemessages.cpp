@@ -19,57 +19,67 @@
  * William E. Johnson II
  */
 #include <prefix/dtgameprefix-src.h>
-#include "dtGame/basemessages.h"
-#include "dtDAL/gameeventmanager.h"
+#include <dtGame/basemessages.h>
+#include <dtDAL/gameeventmanager.h>
 
 namespace dtGame
 {
+   const std::string TickMessage::PARAM_DELTA_SIM_TIME("DeltaSimTime");
+   const std::string TickMessage::PARAM_DELTA_REAL_TIME("DeltaRealTime");
+   const std::string TickMessage::PARAM_SIM_TIME_SCALE("SimTimeScale");
+   const std::string TickMessage::PARAM_SIMULATION_TIME("SimulationTime");;
+
+   /// Constructor
+   TickMessage::TickMessage() : Message()
+   {
+      mDeltaSimTime = new FloatMessageParameter(PARAM_DELTA_SIM_TIME); 
+      mDeltaRealTime = new FloatMessageParameter(PARAM_DELTA_REAL_TIME);
+      mSimTimeScale = new FloatMessageParameter(PARAM_SIM_TIME_SCALE);
+      mSimulationTime = new DoubleMessageParameter(PARAM_SIMULATION_TIME);   
+      AddParameter(mDeltaSimTime.get());
+      AddParameter(mDeltaRealTime.get());
+      AddParameter(mSimTimeScale.get());
+      AddParameter(mSimulationTime.get());
+   }
+
    float TickMessage::GetDeltaSimTime() const
    {
-      const FloatMessageParameter *mp = static_cast<const FloatMessageParameter*>(GetParameter("DeltaSimTime"));
-      return mp->GetValue();
+      return mDeltaSimTime->GetValue();
    }
 
    float TickMessage::GetDeltaRealTime() const
    {
-      const FloatMessageParameter *mp = static_cast<const FloatMessageParameter*>(GetParameter("DeltaRealTime"));
-      return mp->GetValue();
+      return mDeltaRealTime->GetValue();
    }
 
    float TickMessage::GetSimTimeScale() const
    {
-      const FloatMessageParameter *mp = static_cast<const FloatMessageParameter*>(GetParameter("SimTimeScale"));
-      return mp->GetValue();
+      return mSimTimeScale->GetValue();
    }
 
    double TickMessage::GetSimulationTime() const
    {
-      const DoubleMessageParameter *mp = static_cast<const DoubleMessageParameter*>(GetParameter("SimulationTime"));
-      return mp->GetValue();
+      return mSimulationTime->GetValue();
    }
 
    void TickMessage::SetSimulationTime(double newSimulationTime)
    {
-      DoubleMessageParameter *mp = static_cast<DoubleMessageParameter*>(GetParameter("SimulationTime"));
-      mp->SetValue(newSimulationTime);
+      mSimulationTime->SetValue(newSimulationTime);
    }
 
    void TickMessage::SetDeltaSimTime(float newTime)
    {
-      FloatMessageParameter *mp = static_cast<FloatMessageParameter*>(GetParameter("DeltaSimTime"));
-      mp->SetValue(newTime);
+      mDeltaSimTime->SetValue(newTime);
    }
 
    void TickMessage::SetDeltaRealTime(float newTime)
    {
-      FloatMessageParameter *mp = static_cast<FloatMessageParameter*>(GetParameter("DeltaRealTime"));
-      mp->SetValue(newTime);
+      mDeltaRealTime->SetValue(newTime);
    }
 
    void TickMessage::SetSimTimeScale(float newScale)
    {
-      FloatMessageParameter *mp = static_cast<FloatMessageParameter*>(GetParameter("SimTimeScale"));
-      mp->SetValue(newScale);
+      mSimTimeScale->SetValue(newScale);
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -133,17 +143,24 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////////////
+   
+   const std::string MapLoadedMessage::PARAM_LOADED_MAP_NAME("LoadedMapName");
+
+   /// Constructor
+   MapLoadedMessage::MapLoadedMessage() : Message()
+   {
+      mLoadedMapName = new StringMessageParameter(PARAM_LOADED_MAP_NAME); 
+      AddParameter(mLoadedMapName.get());
+   }
 
    const std::string& MapLoadedMessage::GetLoadedMapName() const
    {
-      const StringMessageParameter *mp = static_cast<const StringMessageParameter*> (GetParameter("LoadedMapName"));
-      return mp->GetValue();
+      return mLoadedMapName->GetValue();
    }
 
    void MapLoadedMessage::SetLoadedMapName(const std::string &name)
    {
-      StringMessageParameter *mp = static_cast<StringMessageParameter*> (GetParameter("LoadedMapName"));
-      mp->SetValue(name);
+      mLoadedMapName->SetValue(name);
    }
 
    //////////////////////////////////////////////////////////////////////////////

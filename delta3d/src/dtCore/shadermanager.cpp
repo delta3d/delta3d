@@ -25,7 +25,6 @@
 
 #include <osg/Texture2D>
 #include <osg/Node>
-#include <dtUtil/fileutils.h>
 
 #include <dtCore/globals.h>
 #include <dtCore/system.h>

@@ -3,7 +3,10 @@ import os
 Import('*')
 
 modules = [ 'testActorLibrary',
-            'testGameActorLibrary',
+            'testGameActorLibrary' ]
+
+if env.get("buildExamples"):
+   modules += [
             'testApp',
             'testAI',
             'testAAR', 
