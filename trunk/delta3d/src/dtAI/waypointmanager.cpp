@@ -373,7 +373,7 @@ namespace dtAI
        mDrawWaypoints = pDraw;
    }
 
-   struct deleteFunc
+   struct WaypointManagerDeleteFunc
    {
       template<class _Type>
          void operator()(_Type p1)
@@ -385,7 +385,7 @@ namespace dtAI
    void WaypointManager::Clear()
    {
       //free memory      
-      std::for_each(mWaypoints.begin(), mWaypoints.end(), deleteFunc());
+      std::for_each(mWaypoints.begin(), mWaypoints.end(), WaypointManagerDeleteFunc());
       mWaypoints.clear();
       mNavMesh.Clear();
    }   

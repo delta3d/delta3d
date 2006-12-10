@@ -104,9 +104,26 @@ if 'qt' in env['TOOLS'] :
       EditorEnv['QT_MOCFROMHFLAGS'] =['-Iutilities/editor/inc']
       moc_targets.append(EditorEnv.Moc(target=target, source=currHeader))
 
-   sources = env.SGlob('*.cpp') + moc_targets
-   if "precomp.cpp" in sources:
-      sources.remove("precomp.cpp")
+   initialSources = env.SGlob('*.cpp')
+
+   if "precomp.cpp" in initialSources:
+      initialSources.remove("precomp.cpp")
+
+   #must be built separately.
+
+   if EditorEnv.get('fastBuild'):
+      if "taskuiplugin.cpp" in initalSources:
+         initialSources.remove("taskuiplugin.cpp")
+      
+      path = string.replace(EditorEnv.GetBuildPath('SConscript'),  'SConscript', '')
+      cxxFileName = "STAGE.cxx"
+      cxxFile = open(path + cxxFileName, "w")
+      for srcFile in initalSources :
+         cxxFile.write("#include \"" + srcFile + "\"\n")   
+      
+      sources = [cxxFileName, "taskuiplugin.cpp"] + moc_targets
+   else:
+      sources = initialSources + moc_targets
 
    # Hack to avoid Qt warning about unused file. This should probably just be removed
    # from CVS.
@@ -123,17 +140,17 @@ if 'qt' in env['TOOLS'] :
    #charBrowserSrc = 'characterbrowser.cpp'
    #if charBrowserSrc in sources:      
    #   sources.remove(charBrowserSrc)
-   
+         
    # Build the icon
    if env['OS'] == 'windows' :
       sources += env.RES( '#utilities\editor\dtEditQt.rc' )
    
    if mode == 'debug' and env['OS'] == 'windows' :
-      app = EditorEnv.Program('#/bin/STAGEd',sources)
+      app = EditorEnv.Program('#/bin/STAGEd', sources)
    else:   
        prefixHeader = "inc/prefix/dtstageprefix.h"
 
-       if len(prefixHeader) > 0 and EditorEnv.get('usePrefixHeaders'):
+       if len(prefixHeader) > 0 and EditorEnv.get('pch'):
           EditorEnv['CPPDEFINES'] += ['DELTA_PCH']
           if env['OS'] == 'darwin' or env['OS'] == 'linux':
              oldCxxFlags = EditorEnv['CXXFLAGS'] + ""
@@ -145,7 +162,7 @@ if 'qt' in env['TOOLS'] :
              EditorEnv['PCH'] = EditorEnv.PCH("precomp.cpp")[0]
        
     
-       app = EditorEnv.Program('#/bin/STAGE',sources)
+       app = EditorEnv.Program('#/bin/STAGE', sources)
       
    if (app == '[]') :
       result = 'false'

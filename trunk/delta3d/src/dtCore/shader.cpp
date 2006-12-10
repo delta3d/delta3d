@@ -19,13 +19,12 @@
  * Matthew W. Campbell, Curtiss Murphy
  */
 #include <prefix/dtcoreprefix-src.h>
-#include "dtCore/shader.h"
-#include "dtCore/shadermanager.h"
-#include "dtCore/shaderparameter.h"
-#include "dtCore/shadergroup.h"
+#include <dtCore/shader.h>
+#include <dtCore/shadermanager.h>
+#include <dtCore/shaderparameter.h>
+#include <dtCore/shadergroup.h>
 
 #include <dtUtil/exception.h>
-#include <dtUtil/fileutils.h>
 
 #include <dtCore/globals.h>
 

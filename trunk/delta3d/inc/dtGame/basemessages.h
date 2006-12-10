@@ -31,16 +31,15 @@ namespace dtGame
    class DT_GAME_EXPORT TickMessage : public Message
    {
       public:
+         static const std::string PARAM_DELTA_SIM_TIME;
+         static const std::string PARAM_DELTA_REAL_TIME;
+         static const std::string PARAM_SIM_TIME_SCALE;
+         static const std::string PARAM_SIMULATION_TIME;
+         
 
          /// Constructor
-         TickMessage() : Message()
-         {
-            AddParameter(new FloatMessageParameter("DeltaSimTime"));
-            AddParameter(new FloatMessageParameter("DeltaRealTime"));
-            AddParameter(new FloatMessageParameter("SimTimeScale"));
-            AddParameter(new DoubleMessageParameter("SimulationTime"));
-         }
-
+         TickMessage();
+         
          /**
           * Gets the delta sim time variable associated with this message
           * @return The deltaSimTime
@@ -93,8 +92,11 @@ namespace dtGame
       protected:
          /// Destructor
          virtual ~TickMessage() { }
-
-
+         
+         dtCore::RefPtr<FloatMessageParameter> mDeltaSimTime;
+         dtCore::RefPtr<FloatMessageParameter> mDeltaRealTime;
+         dtCore::RefPtr<FloatMessageParameter> mSimTimeScale;
+         dtCore::RefPtr<DoubleMessageParameter> mSimulationTime;
    };
 
    class DT_GAME_EXPORT TimerElapsedMessage : public Message
@@ -197,11 +199,10 @@ namespace dtGame
    {
       public:
 
+         static const std::string PARAM_LOADED_MAP_NAME;
+
          /// Constructor
-         MapLoadedMessage() : Message()
-         {
-            AddParameter(new StringMessageParameter("LoadedMapName"));
-         }
+         MapLoadedMessage();
 
          /**
           * Gets the name of the map that was loaded
@@ -216,6 +217,7 @@ namespace dtGame
       protected:
          /// Destructor
          virtual ~MapLoadedMessage() { }
+         dtCore::RefPtr<StringMessageParameter> mLoadedMapName;
 
    };
 

@@ -19,11 +19,11 @@
  * William E. Johnson II
  */
 #include <prefix/dtgameprefix-src.h>
-#include "dtGame/messagefactory.h"
-#include "dtGame/message.h"
-#include "dtGame/basemessages.h"
-#include "dtGame/loggermessages.h"
-#include "dtGame/actorupdatemessage.h"
+#include <dtGame/messagefactory.h>
+#include <dtGame/message.h>
+#include <dtGame/basemessages.h>
+#include <dtGame/loggermessages.h>
+#include <dtGame/actorupdatemessage.h>
 #include <dtCore/refptr.h>
 
 namespace dtGame
@@ -45,8 +45,13 @@ namespace dtGame
       RegisterMessageType<TickMessage>(MessageType::TICK_LOCAL);
       RegisterMessageType<TickMessage>(MessageType::TICK_REMOTE);
       RegisterMessageType<TimerElapsedMessage>(MessageType::INFO_TIMER_ELAPSED);
+
       RegisterMessageType<MapLoadedMessage>(MessageType::INFO_MAP_LOADED);
       RegisterMessageType<MapLoadedMessage>(MessageType::INFO_MAP_UNLOADED);
+      RegisterMessageType<MapLoadedMessage>(MessageType::INFO_MAP_LOAD_BEGIN);
+      RegisterMessageType<MapLoadedMessage>(MessageType::INFO_MAP_UNLOAD_BEGIN);
+      RegisterMessageType<MapLoadedMessage>(MessageType::INFO_MAP_CHANGE_BEGIN);
+      RegisterMessageType<MapLoadedMessage>(MessageType::INFO_MAP_CHANGED);
 
       RegisterMessageType<Message>(MessageType::INFO_PAUSED);
       RegisterMessageType<Message>(MessageType::INFO_RESUMED);
@@ -75,32 +80,32 @@ namespace dtGame
       RegisterMessageType<TimeChangeMessage>(MessageType::REQUEST_SET_TIME);
 
       //Logger messages.
-      RegisterMessageType<dtGame::Message>(dtGame::MessageType::LOG_REQ_CHANGESTATE_PLAYBACK);
-      RegisterMessageType<dtGame::Message>(dtGame::MessageType::LOG_REQ_CHANGESTATE_RECORD);
-      RegisterMessageType<dtGame::Message>(dtGame::MessageType::LOG_REQ_CHANGESTATE_IDLE);
-      RegisterMessageType<dtGame::Message>(dtGame::MessageType::LOG_REQ_GET_KEYFRAMES);
-      RegisterMessageType<dtGame::Message>(dtGame::MessageType::LOG_REQ_GET_LOGFILES);
-      RegisterMessageType<dtGame::Message>(dtGame::MessageType::LOG_REQ_GET_TAGS);
-      RegisterMessageType<dtGame::Message>(dtGame::MessageType::LOG_REQ_GET_STATUS);
-      RegisterMessageType<dtGame::LogCaptureKeyframeMessage>(dtGame::MessageType::LOG_REQ_CAPTURE_KEYFRAME);
-      RegisterMessageType<dtGame::LogInsertTagMessage>(dtGame::MessageType::LOG_REQ_INSERT_TAG);
-      RegisterMessageType<dtGame::LogDeleteLogfileMessage>(dtGame::MessageType::LOG_REQ_DELETE_LOG);
-      RegisterMessageType<dtGame::LogSetLogfileMessage>(dtGame::MessageType::LOG_REQ_SET_LOGFILE);
-      RegisterMessageType<dtGame::LogSetAutoKeyframeIntervalMessage>
-         (dtGame::MessageType::LOG_REQ_SET_AUTOKEYFRAMEINTERVAL);
-      RegisterMessageType<dtGame::LogAvailableLogsMessage>(dtGame::MessageType::LOG_INFO_LOGFILES);
-      RegisterMessageType<dtGame::LogGetKeyframeListMessage>(dtGame::MessageType::LOG_INFO_KEYFRAMES);
-      RegisterMessageType<dtGame::LogGetTagListMessage>(dtGame::MessageType::LOG_INFO_TAGS);
-      RegisterMessageType<dtGame::LogStatusMessage>(dtGame::MessageType::LOG_INFO_STATUS);
-      RegisterMessageType<dtGame::Message>(dtGame::MessageType::LOG_COMMAND_BEGIN_LOADKEYFRAME_TRANS);
-      RegisterMessageType<dtGame::LogEndLoadKeyframeMessage>(dtGame::MessageType::LOG_COMMAND_END_LOADKEYFRAME_TRANS);
-      RegisterMessageType<dtGame::LogJumpToKeyframeMessage>(dtGame::MessageType::LOG_REQ_JUMP_TO_KEYFRAME);
-      RegisterMessageType<dtGame::Message>(MessageType::LOG_REQ_ADD_IGNORED_ACTOR);
-      RegisterMessageType<dtGame::Message>(MessageType::LOG_REQ_REMOVE_IGNORED_ACTOR);
-      RegisterMessageType<dtGame::Message>(MessageType::LOG_REQ_CLEAR_IGNORE_LIST);
+      RegisterMessageType<Message>(MessageType::LOG_REQ_CHANGESTATE_PLAYBACK);
+      RegisterMessageType<Message>(MessageType::LOG_REQ_CHANGESTATE_RECORD);
+      RegisterMessageType<Message>(MessageType::LOG_REQ_CHANGESTATE_IDLE);
+      RegisterMessageType<Message>(MessageType::LOG_REQ_GET_KEYFRAMES);
+      RegisterMessageType<Message>(MessageType::LOG_REQ_GET_LOGFILES);
+      RegisterMessageType<Message>(MessageType::LOG_REQ_GET_TAGS);
+      RegisterMessageType<Message>(MessageType::LOG_REQ_GET_STATUS);
+      RegisterMessageType<LogCaptureKeyframeMessage>(MessageType::LOG_REQ_CAPTURE_KEYFRAME);
+      RegisterMessageType<LogInsertTagMessage>(MessageType::LOG_REQ_INSERT_TAG);
+      RegisterMessageType<LogDeleteLogfileMessage>(MessageType::LOG_REQ_DELETE_LOG);
+      RegisterMessageType<LogSetLogfileMessage>(MessageType::LOG_REQ_SET_LOGFILE);
+      RegisterMessageType<LogSetAutoKeyframeIntervalMessage>
+         (MessageType::LOG_REQ_SET_AUTOKEYFRAMEINTERVAL);
+      RegisterMessageType<LogAvailableLogsMessage>(MessageType::LOG_INFO_LOGFILES);
+      RegisterMessageType<LogGetKeyframeListMessage>(MessageType::LOG_INFO_KEYFRAMES);
+      RegisterMessageType<LogGetTagListMessage>(MessageType::LOG_INFO_TAGS);
+      RegisterMessageType<LogStatusMessage>(MessageType::LOG_INFO_STATUS);
+      RegisterMessageType<Message>(MessageType::LOG_COMMAND_BEGIN_LOADKEYFRAME_TRANS);
+      RegisterMessageType<LogEndLoadKeyframeMessage>(MessageType::LOG_COMMAND_END_LOADKEYFRAME_TRANS);
+      RegisterMessageType<LogJumpToKeyframeMessage>(MessageType::LOG_REQ_JUMP_TO_KEYFRAME);
+      RegisterMessageType<Message>(MessageType::LOG_REQ_ADD_IGNORED_ACTOR);
+      RegisterMessageType<Message>(MessageType::LOG_REQ_REMOVE_IGNORED_ACTOR);
+      RegisterMessageType<Message>(MessageType::LOG_REQ_CLEAR_IGNORE_LIST);
 
       //Game Event...
-      RegisterMessageType<dtGame::GameEventMessage>(dtGame::MessageType::INFO_GAME_EVENT);
+      RegisterMessageType<GameEventMessage>(MessageType::INFO_GAME_EVENT);
    }
 
    MessageFactory::~MessageFactory()

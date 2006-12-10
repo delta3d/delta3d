@@ -19,7 +19,7 @@
  * William E. Johnson II
  */
 #include <prefix/dtgameprefix-src.h>
-#include "dtGame/messagetype.h"
+#include <dtGame/messagetype.h>
 
 namespace dtGame
 {
@@ -43,6 +43,10 @@ namespace dtGame
    const MessageType MessageType::INFO_TIME_CHANGED("Simulation Time Changed", "Info", "Sent when a game manager changes the simulation time.", 20);
    const MessageType MessageType::INFO_GAME_EVENT("Game Event","Info","Sent when a game event is fired.",21);
    const MessageType MessageType::INFO_ENVIRONMENT_CHANGED("Environment Changed", "Info", "Sent when an environment actor is set on the game manager", 22);
+   const MessageType MessageType::INFO_MAP_LOAD_BEGIN("Map Load Began", "Info", "Sent when loading a map has begun.", 23);
+   const MessageType MessageType::INFO_MAP_UNLOAD_BEGIN("Map Unload Began", "Info", "Sent when unloading a map has begun.", 24);
+   const MessageType MessageType::INFO_MAP_CHANGE_BEGIN("Map Change Began", "Info", "Sent when the program has begun to unload a map and load a new one.  Unload and load messages will be sent", 25);
+   const MessageType MessageType::INFO_MAP_CHANGED("Map Changed", "Info", "Sent when the program has completed unloading and loading a new map.", 26);
 
    const MessageType MessageType::INFO_PLAYER_ENTERED_WORLD("Player entered world", "Info", "Sent when the player of a game enters the world.", 30);
 

@@ -121,7 +121,7 @@ void ProjectTests::setUp() {
         fileUtils.FileCopy(DATA_DIR + "/models/terrain_simple.ive", ".", false);
         fileUtils.FileCopy(DATA_DIR + "/models/flatdirt.ive", ".", false);
     } catch (const dtUtil::Exception& ex) {
-        CPPUNIT_FAIL(ex.What());
+        CPPUNIT_FAIL(ex.ToString());
     }
 }
 
@@ -163,7 +163,7 @@ void ProjectTests::testFileIO()
         }
         catch (const dtUtil::Exception& ex)
         {
-            CPPUNIT_ASSERT_MESSAGE((ex.What() + ": Error deleting Directory, but file exists.").c_str(),
+            CPPUNIT_ASSERT_MESSAGE((ex.ToString() + ": Error deleting Directory, but file exists.").c_str(),
                 ex.TypeEnum() == dtDAL::ExceptionEnum::ProjectFileNotFound);
         }
 
@@ -182,7 +182,7 @@ void ProjectTests::testFileIO()
         }
         catch (const dtUtil::Exception& ex) {
             //this should throw a file not found.
-            CPPUNIT_ASSERT_MESSAGE(ex.What().c_str(), ex.TypeEnum() == dtDAL::ExceptionEnum::ProjectFileNotFound);
+            CPPUNIT_ASSERT_MESSAGE(ex.ToString().c_str(), ex.TypeEnum() == dtDAL::ExceptionEnum::ProjectFileNotFound);
             //correct
         }
 
@@ -217,7 +217,7 @@ void ProjectTests::testFileIO()
         try {
             fileUtils.FileCopy(file2, Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + file1, true);
         } catch (const dtUtil::Exception& ex) {
-            CPPUNIT_FAIL(ex.What().c_str());
+            CPPUNIT_FAIL(ex.ToString().c_str());
         }
 
         CPPUNIT_ASSERT_MESSAGE("The original flatdirt.ive should exist.", fileUtils.FileExists(file2));
@@ -232,7 +232,7 @@ void ProjectTests::testFileIO()
         try {
             fileUtils.FileMove(Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + file1, Dir2 + dtUtil::FileUtils::PATH_SEPARATOR + file1, false);
         } catch (const dtUtil::Exception& ex) {
-            CPPUNIT_FAIL(ex.What().c_str());
+            CPPUNIT_FAIL(ex.ToString().c_str());
         }
 
         CPPUNIT_ASSERT_MESSAGE("terrain_simple.ive should not exist.",!fileUtils.FileExists(Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + file1));
@@ -247,7 +247,7 @@ void ProjectTests::testFileIO()
         try {
             fileUtils.FileCopy(Dir2 + dtUtil::FileUtils::PATH_SEPARATOR + file1, Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + file1, false);
         } catch (const dtUtil::Exception& ex) {
-            CPPUNIT_FAIL(ex.What().c_str());
+            CPPUNIT_FAIL(ex.ToString().c_str());
         }
 
         try {
@@ -260,7 +260,7 @@ void ProjectTests::testFileIO()
         try {
             fileUtils.FileMove(Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + file1, Dir2 + dtUtil::FileUtils::PATH_SEPARATOR + file1, true);
         } catch (const dtUtil::Exception& ex) {
-            CPPUNIT_FAIL(ex.What().c_str());
+            CPPUNIT_FAIL(ex.ToString().c_str());
         }
 
         CPPUNIT_ASSERT_MESSAGE("terrain_simple.ive should not exist.",
@@ -388,11 +388,11 @@ void ProjectTests::testFileIO()
         try {
             fileUtils.DirDelete(Dir1, true);
         } catch (const dtUtil::Exception& ex) {
-            CPPUNIT_FAIL((ex.What() + ": Deleting non-empty Directory with a non-recursive call should not have generated an Exception.").c_str());
+            CPPUNIT_FAIL((ex.ToString() + ": Deleting non-empty Directory with a non-recursive call should not have generated an Exception.").c_str());
         }
         CPPUNIT_ASSERT_MESSAGE(Dir1 + " should not still exist.", !fileUtils.DirExists(Dir1));
     } catch (const dtUtil::Exception& ex) {
-        CPPUNIT_FAIL(ex.What());
+        CPPUNIT_FAIL(ex.ToString());
     }
 }
 
@@ -467,13 +467,13 @@ void ProjectTests::testReadonlyFailure()
         try {
             p.SetContext(projectDir);
         } catch (const dtUtil::Exception& e) {
-            CPPUNIT_FAIL(std::string("Project should have been able to set context. Exception: ") + e.What());
+            CPPUNIT_FAIL(std::string("Project should have been able to set context. Exception: ") + e.ToString());
         }
 
         try {
             p.SetContext(projectDir, true);
         } catch (const dtUtil::Exception& e) {
-            CPPUNIT_FAIL(std::string("Project should have been able to set context. Exception: ") + e.What());
+            CPPUNIT_FAIL(std::string("Project should have been able to set context. Exception: ") + e.ToString());
         }
 
         CPPUNIT_ASSERT_MESSAGE("context should be valid", p.IsContextValid());
@@ -482,20 +482,20 @@ void ProjectTests::testReadonlyFailure()
         try {
             p.Refresh();
         } catch (const dtUtil::Exception& e) {
-            CPPUNIT_FAIL(std::string("Project should have been able to call refresh: ") + e.What());
+            CPPUNIT_FAIL(std::string("Project should have been able to call refresh: ") + e.ToString());
         }
 
         try {
             dtUtil::tree<dtDAL::ResourceTreeNode> toFill;
             p.GetResourcesOfType(dtDAL::DataType::STATIC_MESH, toFill);
         } catch (const dtUtil::Exception& e) {
-            CPPUNIT_FAIL(std::string("Project should have been able to call GetResourcesOfType: ") + e.What());
+            CPPUNIT_FAIL(std::string("Project should have been able to call GetResourcesOfType: ") + e.ToString());
         }
 
         try {
             p.GetAllResources();
         } catch (const dtUtil::Exception& e) {
-            CPPUNIT_FAIL(std::string("Project should have been able to call GetResourcesOfType: ") + e.What());
+            CPPUNIT_FAIL(std::string("Project should have been able to call GetResourcesOfType: ") + e.ToString());
         }
 
         try {
@@ -572,7 +572,7 @@ void ProjectTests::testReadonlyFailure()
                 e.TypeEnum() == dtDAL::ExceptionEnum::ProjectReadOnly);
         }
     } catch (const dtUtil::Exception& ex) {
-        CPPUNIT_FAIL(ex.What());
+        CPPUNIT_FAIL(ex.ToString());
     }
 //    catch (const std::exception &e) {
 //       CPPUNIT_FAIL(std::string("Caught an exception of type") + typeid(e).name() + " with message " + e.what());
@@ -593,7 +593,7 @@ void ProjectTests::testCategories()
         try {
             p.SetContext(projectDir);
         } catch (const dtUtil::Exception& e) {
-            CPPUNIT_FAIL(std::string(std::string("Project should have been able to set context. Exception: ") + e.What()).c_str());
+            CPPUNIT_FAIL(std::string(std::string("Project should have been able to set context. Exception: ") + e.ToString()).c_str());
         }
 
         for (std::vector<dtDAL::DataType*>::const_iterator i = dtDAL::DataType::EnumerateType().begin();
@@ -662,7 +662,7 @@ void ProjectTests::testCategories()
     }
     catch (const dtUtil::Exception& ex)
     {
-        CPPUNIT_FAIL(ex.What());
+        CPPUNIT_FAIL(ex.ToString());
     }
 //    catch (const std::exception& ex) {
 //        CPPUNIT_FAIL(ex.what());
@@ -688,7 +688,7 @@ void ProjectTests::testResources()
         catch (const dtUtil::Exception& e)
         {
             CPPUNIT_FAIL((std::string("Project should have been able to Set context. Exception: ")
-                + e.What()).c_str());
+                + e.ToString()).c_str());
         }
 
         CPPUNIT_ASSERT_MESSAGE("Project should not be read only.", !p.IsReadOnly());
@@ -718,7 +718,7 @@ void ProjectTests::testResources()
                 std::string("fun:bigmamajama"), dtDAL::DataType::STATIC_MESH);
             CPPUNIT_FAIL("The add resource call to add a non-existent file should have failed.");
         } catch (const dtUtil::Exception& ex) {
-            CPPUNIT_ASSERT_MESSAGE(ex.What().c_str(), ex.TypeEnum() == dtDAL::ExceptionEnum::ProjectFileNotFound);
+            CPPUNIT_ASSERT_MESSAGE(ex.ToString().c_str(), ex.TypeEnum() == dtDAL::ExceptionEnum::ProjectFileNotFound);
             //correct otherwise
         }
 
@@ -728,7 +728,7 @@ void ProjectTests::testResources()
             CPPUNIT_FAIL("The add resource call to add boolean should have failed.");
         } catch (const dtUtil::Exception& ex) {
             //should not allow a boolean resource to be added.
-            CPPUNIT_ASSERT_MESSAGE(ex.What().c_str(), ex.TypeEnum() == dtDAL::ExceptionEnum::ProjectResourceError);
+            CPPUNIT_ASSERT_MESSAGE(ex.ToString().c_str(), ex.TypeEnum() == dtDAL::ExceptionEnum::ProjectResourceError);
             //correct otherwise
         }
 
@@ -939,7 +939,7 @@ void ProjectTests::testResources()
     }
     catch (const dtUtil::Exception& ex)
     {
-        CPPUNIT_FAIL(ex.What());
+        CPPUNIT_FAIL(ex.ToString());
     }
 //    catch (const std::exception& ex) {
 //        CPPUNIT_FAIL(ex.what());
@@ -976,7 +976,7 @@ void ProjectTests::testProject()
             }
             catch (const dtUtil::Exception& ex)
             {
-                CPPUNIT_FAIL(ex.What().c_str());
+                CPPUNIT_FAIL(ex.ToString().c_str());
             }
 
             CPPUNIT_ASSERT_MESSAGE("The project Directory should not yet exist.", !fileUtils.FileExists(projectDir));
@@ -997,7 +997,7 @@ void ProjectTests::testProject()
         try {
             p.SetContext(projectDir);
         } catch (const dtUtil::Exception& e) {
-            CPPUNIT_FAIL(std::string(std::string("Project should have been able to Set context. Exception: ") + e.What()).c_str());
+            CPPUNIT_FAIL(std::string(std::string("Project should have been able to Set context. Exception: ") + e.ToString()).c_str());
         }
 
         CPPUNIT_ASSERT_MESSAGE("Project should not be read only.", !p.IsReadOnly());
@@ -1009,7 +1009,7 @@ void ProjectTests::testProject()
         try {
             p.SetContext(projectDir, true);
         } catch (const dtUtil::Exception& e) {
-            CPPUNIT_FAIL(std::string(std::string("Project should have been able to Set context. Exception: ") + e.What()).c_str());
+            CPPUNIT_FAIL(std::string(std::string("Project should have been able to Set context. Exception: ") + e.ToString()).c_str());
         }
 
         CPPUNIT_ASSERT_MESSAGE("Project should be read only.", p.IsReadOnly());
@@ -1022,7 +1022,7 @@ void ProjectTests::testProject()
         try {
             p.SetContext(projectDir2);
         } catch (const dtUtil::Exception& e) {
-            CPPUNIT_FAIL(std::string(std::string("Project should have been able to Set context. Exception: ") + e.What()).c_str());
+            CPPUNIT_FAIL(std::string(std::string("Project should have been able to Set context. Exception: ") + e.ToString()).c_str());
         }
 
         CPPUNIT_ASSERT_MESSAGE("Project should be read only.", !p.IsReadOnly());
@@ -1039,14 +1039,14 @@ void ProjectTests::testProject()
         try {
             fileUtils.DirDelete(projectDir, true);
         } catch (const dtUtil::Exception& ex) {
-            CPPUNIT_FAIL(ex.What().c_str());
+            CPPUNIT_FAIL(ex.ToString().c_str());
         }
 
 
         CPPUNIT_ASSERT_MESSAGE("The project Directory should have been deleted.", !fileUtils.FileExists(projectDir));
 
     } catch (const dtUtil::Exception& ex) {
-        CPPUNIT_FAIL(ex.What());
+        CPPUNIT_FAIL(ex.ToString());
     }
 //    catch (const std::exception& ex) {
 //        CPPUNIT_FAIL(ex.what());

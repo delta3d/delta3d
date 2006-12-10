@@ -33,7 +33,7 @@ namespace dtAI
 
    }
 
-   struct deleteFunc
+   struct NavMeshDeleteFunc
    {
       template<class _Type>
          void operator()(_Type p1)
@@ -49,7 +49,7 @@ namespace dtAI
 
    void NavMesh::Clear()
    {
-      std::for_each(mNavMesh.begin(), mNavMesh.end(), deleteFunc());
+      std::for_each(mNavMesh.begin(), mNavMesh.end(), NavMeshDeleteFunc());
       mNavMesh.clear();
    }  
 

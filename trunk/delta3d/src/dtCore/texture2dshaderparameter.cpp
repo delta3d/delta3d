@@ -23,7 +23,6 @@
 #include <dtCore/texture2dshaderparameter.h>
 #include <dtUtil/exception.h>
 #include <dtCore/refptr.h>
-#include <dtUtil/fileutils.h>
 
 #include <dtCore/globals.h>
 #include <osg/StateSet>

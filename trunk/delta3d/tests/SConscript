@@ -50,7 +50,7 @@ result = 'true'
 
 prefixHeader = "inc/prefix/dtcoreprefix.h"
 
-if len(prefixHeader) > 0 and projectEnv.get('usePrefixHeaders'):
+if len(prefixHeader) > 0 and projectEnv.get('pch'):
    projectEnv['CPPDEFINES'] += ['DELTA_PCH']
    if env['OS'] == 'darwin' or env['OS'] == 'linux':
       oldCxxFlags = projectEnv['CXXFLAGS'] + ""

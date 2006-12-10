@@ -1,23 +1,23 @@
 /* -*-c++-*-
-* Delta3D Open Source Game and Simulation Engine
-* Copyright (C) 2005, BMH Associates, Inc.
-*
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
-* any later version.
-*
-* This library is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
-* details.
-*
-* You should have received a copy of the GNU Lesser General Public License
-* along with this library; if not, write to the Free Software Foundation, Inc.,
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*
-* Matthew W. Campbell, William E. Johnson II, and David Guthrie
-*/
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2005, BMH Associates, Inc.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * Matthew W. Campbell, William E. Johnson II, and David Guthrie
+ */
 #ifndef DELTA_GAMEMANANGER
 #define DELTA_GAMEMANANGER
 
@@ -67,6 +67,7 @@ namespace dtGame
 {
    //class Message;
    class GMComponent;
+   class MapChangeStateData;
 
    class DT_GAME_EXPORT GameManager : public dtCore::Base 
    {
@@ -562,7 +563,7 @@ namespace dtGame
           * @return Flag for whether we remove a map's GameEvents from 
           * the GameEventManager when closing a map. (default is true)
           */
-         bool GetRemoveGameEventsOnMapChange() { return mRemoveGameEventsOnMapChange; }
+         bool GetRemoveGameEventsOnMapChange() const { return mRemoveGameEventsOnMapChange; }
 
          /**
           * Sets the flag for whether we will remove the Game Events when we change a map or not.
@@ -807,6 +808,10 @@ namespace dtGame
          std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> > mGameActorProxyMap;
          std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> > mActorProxyMap;
          std::vector<dtCore::RefPtr<GameActorProxy> > mDeleteList;
+         //These are used during changing the map so that 
+         //the map code can modify game manager with some control.
+         bool mSendCreatesAndDeletes;
+         bool mAddActorsToScene;
 
          std::set<TimerInfo> mSimulationTimers, mRealTimeTimers;
 
@@ -822,6 +827,7 @@ namespace dtGame
          
          bool mPaused;
          std::string mLoadedMap;
+         dtCore::RefPtr<MapChangeStateData> mMapChangeStateData;
          int mStatisticsInterval;
 
          // statistics data

@@ -27,6 +27,7 @@
    #pragma warning(pop)
 #endif
 
+#include <cppunit/extensions/HelperMacros.h>
 #include <iostream>
 #include <vector>
 #include <string>
