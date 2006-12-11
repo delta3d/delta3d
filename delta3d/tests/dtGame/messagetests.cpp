@@ -224,14 +224,15 @@ void MessageTests::tearDown()
          dtCore::System::GetInstance().SetPause(false);
          dtCore::System::GetInstance().Stop();
 
+         dtDAL::GameEventManager::GetInstance().ClearAllEvents();
+         mGameManager->DeleteAllActors(true);
+
          if(!mGameManager->GetCurrentMap().empty())
          {
             dtDAL::Project::GetInstance().CloseMap(dtDAL::Project::GetInstance().GetMap(mGameManager->GetCurrentMap()), true);
             dtDAL::Project::GetInstance().DeleteMap(dtDAL::Project::GetInstance().GetMap(mGameManager->GetCurrentMap()));
          }
 
-         dtDAL::GameEventManager::GetInstance().ClearAllEvents();
-         mGameManager->DeleteAllActors(true);
          mGameManager->UnloadActorRegistry(mTestGameActorLibrary);
          mGameManager->UnloadActorRegistry(mTestActorLibrary);
          mGameManager = NULL;
@@ -1111,7 +1112,7 @@ void MessageTests::TestChangeMap()
       mGameManager->GetAllActors(toFill);
 
       CPPUNIT_ASSERT_MESSAGE("The number of actors in the GM should be 0.", toFill.size() == 0);
-      //SLEEP(10);
+      SLEEP(10);
       dtCore::System::GetInstance().Step();
       dtCore::RefPtr<const dtGame::Message> processMapChange = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_CHANGE_BEGIN);
       CPPUNIT_ASSERT_MESSAGE("An INFO_MAP_CHANGE_BEGIN message should have been processed.", processMapChange.valid());
@@ -1132,6 +1133,7 @@ void MessageTests::TestChangeMap()
 
       CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of actors in the GM should be 0.", size_t(0),  toFill.size());
 
+      SLEEP(10);
       dtCore::System::GetInstance().Step();
       mGameManager->GetAllActors(toFill);
       CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of actors in the GM should match the map.", numActors, toFill.size());
@@ -1165,6 +1167,7 @@ void MessageTests::TestChangeMap()
       
       mGameManager->ChangeMap(mapName2, false, false);
 
+      SLEEP(10);
       dtCore::System::GetInstance().Step();
 
       processMapUnloadedMsg = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_UNLOAD_BEGIN);
@@ -1193,6 +1196,7 @@ void MessageTests::TestChangeMap()
 
       CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of actors in the GM should be 0.", size_t(0), toFill.size());
 
+      SLEEP(10);
       dtCore::System::GetInstance().Step();
 
       mGameManager->GetAllActors(toFill);
@@ -1212,7 +1216,6 @@ void MessageTests::TestChangeMap()
    {
       CPPUNIT_FAIL(e.ToString());
    }
-   
 }
 
 void MessageTests::TestGameEventMessage()
