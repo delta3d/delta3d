@@ -132,7 +132,7 @@ namespace dtGame
             {
                dtDAL::Project::GetInstance().GetMap(mNewMapName);
             }
-            catch (const dtUtil::Exception& ex)
+            catch (const dtUtil::Exception&)
             {
                //if we can't load the map, we go back to idle and send and
                //empty string map change ended message
