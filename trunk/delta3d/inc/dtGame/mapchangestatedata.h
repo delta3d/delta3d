@@ -35,11 +35,11 @@ namespace dtGame
    class MessageType;
    
    //intentionally not exported
-   class MapChangeStateData: public osg::Referenced
+   class DT_GAME_EXPORT MapChangeStateData: public osg::Referenced
    {
       public:
       
-         class MapChangeState : public dtUtil::Enumeration
+         class DT_GAME_EXPORT MapChangeState : public dtUtil::Enumeration
          {
             DECLARE_ENUM(MapChangeState);
             public:
