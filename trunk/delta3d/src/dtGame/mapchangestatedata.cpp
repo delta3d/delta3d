@@ -24,6 +24,7 @@
 
 #include <dtDAL/project.h>
 #include <dtDAL/map.h>
+#include <dtDAL/actortype.h>
 
 #include <dtGame/exceptionenum.h>
 #include <dtGame/mapchangestatedata.h>
