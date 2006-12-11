@@ -191,6 +191,9 @@
 				RelativePath="..\..\..\src\dtGame\logtagindex.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtGame\mapchangestatedata.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtGame\message.cpp">
 			</File>
 			<File
@@ -302,6 +305,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtGame\machineinfo.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtGame\mapchangestatedata.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtGame\message.h">
