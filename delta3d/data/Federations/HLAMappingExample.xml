@@ -194,6 +194,23 @@
                 <default></default>
             </attrToProp>            
         </object>
+
+        <object>
+            <objectClass>BaseEntity.PhysicalEntity.Sensor</objectClass>
+            <actorType>TestHLA.Sensor</actorType>
+            <remoteOnly>false</remoteOnly>
+            <!-- Every class must have a mapped attribute or it can't be
+                 published or subscribed to -->
+            <attrToProp>
+                <hlaName>Orientation</hlaName>
+                <hlaDataType>EULER_ANGLES_TYPE</hlaDataType>
+                <hlaRequired>true</hlaRequired>
+                <gameName>Rotation</gameName>
+                <gameDataType>VEC3</gameDataType>
+                <gameRequired>true</gameRequired>
+                <default></default>
+            </attrToProp>            
+        </object>
     </objects>
     
     <interactions>
