@@ -15,6 +15,7 @@ void MatrixUtil::Print( const osg::Matrix& matrix )
    }
 }
 
+
 void MatrixUtil::Print( const osg::Vec3& vec )
 {
    for( int i = 0; i < 3; i++ )
@@ -23,6 +24,7 @@ void MatrixUtil::Print( const osg::Vec3& vec )
    }
    std::cout << std::endl;
 }
+
 
 void MatrixUtil::Print( const osg::Vec4& vec )
 {
@@ -33,6 +35,7 @@ void MatrixUtil::Print( const osg::Vec4& vec )
    std::cout << std::endl;
 }
 
+
 void MatrixUtil::Transpose( osg::Matrix& dest, const osg::Matrix& src )
 {
    for( int i = 0; i < 4; i++ )
@@ -40,15 +43,18 @@ void MatrixUtil::Transpose( osg::Matrix& dest, const osg::Matrix& src )
          dest(i,j) = src(j,i);
 }
 
+
 osg::Vec3 MatrixUtil::GetRow3( const osg::Matrix& matrix, int row )
 {
    return osg::Vec3( matrix(row,0), matrix(row, 1), matrix(row,2) );
 }
 
+
 osg::Vec4 MatrixUtil::GetRow4( const osg::Matrix& matrix, int row )
 {
    return osg::Vec4( matrix(row,0), matrix(row,1), matrix(row,2), matrix(row,3) );
 }
+
 
 void MatrixUtil::SetRow( osg::Matrix& matrix, const osg::Vec3& vec, int row )
 {
@@ -56,15 +62,16 @@ void MatrixUtil::SetRow( osg::Matrix& matrix, const osg::Vec3& vec, int row )
       matrix(row,i) = vec[i];
 }
 
+
 void MatrixUtil::SetRow( osg::Matrix& matrix, const osg::Vec4& vec, int row )
 {
    for( int i = 0; i < 4; i++ )
       matrix(row, i) = vec[i];
 }
 
+
 void MatrixUtil::HprToMatrix( osg::Matrix& rotation, const osg::Vec3& hpr )
 {
-
    //implementation converted from plib's sg.cxx
    //PLIB - A Suite of Portable Game Libraries
    //Copyright (C) 1998,2002  Steve Baker
@@ -128,9 +135,9 @@ void MatrixUtil::HprToMatrix( osg::Matrix& rotation, const osg::Vec3& hpr )
    rotation(0, 3) =  0.0;
    rotation(1, 3) =  0.0;
    rotation(2, 3) =  0.0;
-	rotation(3, 3) =  1.0;
-
+   rotation(3, 3) =  1.0;
 }
+
 
 void MatrixUtil::PositionAndHprToMatrix( osg::Matrix& rotation, const osg::Vec3& xyz, const osg::Vec3& hpr )
 {
@@ -144,7 +151,6 @@ void MatrixUtil::PositionAndHprToMatrix( osg::Matrix& rotation, const osg::Vec3&
 
 void MatrixUtil::MatrixToHpr( osg::Vec3& hpr, const osg::Matrix& rotation )
 {
-
    //implementation converted from plib's sg.cxx
    //PLIB - A Suite of Portable Game Libraries
    //Copyright (C) 1998,2002  Steve Baker
@@ -174,8 +180,8 @@ void MatrixUtil::MatrixToHpr( osg::Vec3& hpr, const osg::Matrix& rotation )
 
    if ( cp > -0.00001 && cp < 0.00001 )
    {
-      double cr = ClampUnity(mat(0,1));
-      double sr = ClampUnity(-mat(2,1));
+      double cr = ClampUnity(-mat(2,1));
+      double sr = ClampUnity(mat(0,1));
 
       hpr[0] = 0.0f;
       hpr[2] = osg::RadiansToDegrees(atan2(sr,cr));
@@ -190,8 +196,8 @@ void MatrixUtil::MatrixToHpr( osg::Vec3& hpr, const osg::Matrix& rotation )
 
       if ( (sh == 0.0f && ch == 0.0f) || (sr == 0.0f && cr == 0.0f) )
       {
-         cr = ClampUnity(mat(0,1));
-         sr = ClampUnity(-mat(2,1));
+         cr = ClampUnity(-mat(2,1));
+         sr = ClampUnity(mat(0,1));;
 
          hpr[0] = 0.0f;
       }
@@ -202,9 +208,8 @@ void MatrixUtil::MatrixToHpr( osg::Vec3& hpr, const osg::Matrix& rotation )
 
       hpr[2] = osg::RadiansToDegrees(atan2(sr, cr));
    }
-
-
 }
+
 
 float MatrixUtil::ClampUnity( float x )
 {
@@ -213,27 +218,26 @@ float MatrixUtil::ClampUnity( float x )
    return x ;
 }
 
+
 void MatrixUtil::MatrixToHprAndPosition( osg::Vec3& xyz, osg::Vec3& hpr, const osg::Matrix& rotation )
 {
-
    MatrixToHpr(hpr, rotation);
    xyz[0] = rotation(3, 0);
    xyz[1] = rotation(3, 1);
    xyz[2] = rotation(3, 2);
-
 }
+
 
 void MatrixUtil::TransformVec3(osg::Vec3& xyz, const osg::Matrix& transformMat)
 {
    TransformVec3(xyz, xyz, transformMat);
 }
 
+
 void MatrixUtil::TransformVec3(osg::Vec3& vec_in, const osg::Vec3& xyz, const osg::Matrix& transformMat)
 {
-
    vec_in = osg::Matrix::transform3x3(xyz, transformMat);
    vec_in[0] += transformMat(3,0);
    vec_in[1] += transformMat(3,1);
    vec_in[2] += transformMat(3,2);
-
 }

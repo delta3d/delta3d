@@ -53,12 +53,14 @@ void Transform::Set( const osg::Matrix& mat )
 {
    osg::Matrix rotation, scale;
    osg::Vec3 translation;
+   osg::Vec3 hpr;
 
-   dtUtil::PolarDecomp::Decompose( mat, rotation, scale, translation );
+   //dtUtil::PolarDecomp::Decompose( mat, rotation, scale, translation );
+   dtUtil::MatrixUtil::MatrixToHpr( hpr, mat );
 
-   SetTranslation( translation );
-   SetRotation( rotation );
-   mScale.set( scale(0,0), scale(1,1), scale(2,2) );   
+   SetTranslation( mat.getTrans() );
+   SetRotation( hpr );
+   mScale.set( mat.getScale() );   
 
 }
 
