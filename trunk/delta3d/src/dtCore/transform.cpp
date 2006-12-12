@@ -23,7 +23,7 @@ Transform::~Transform()
 }
 
 void Transform::Set( float tx, float ty, float tz, float h, float p, float r, float sx, float sy, float sz )
-{
+{ 
    osg::Vec3 xyz( tx, ty, tz );
    osg::Vec3 hpr( h, p, r );
    osg::Vec3 scale( sx, sy, sz );
@@ -51,17 +51,20 @@ void Transform::Set(const osg::Vec3& xyz, const osg::Vec3& hpr, const osg::Vec3&
 
 void Transform::Set( const osg::Matrix& mat )
 {
-   osg::Matrix rotation, scale;
-   osg::Vec3 translation;
-   osg::Vec3 hpr;
+   osg::Vec3 x_vec( mat(0, 0), mat(0, 1), mat(0, 2) );
+   osg::Vec3 y_vec( mat(1, 0), mat(1, 1), mat(1, 2) );
+   osg::Vec3 z_vec( mat(2, 0), mat(2, 1), mat(2, 2) );
+   osg::Vec3 scale(x_vec.length(), y_vec.length(), z_vec.length());
 
-   //dtUtil::PolarDecomp::Decompose( mat, rotation, scale, translation );
-   dtUtil::MatrixUtil::MatrixToHpr( hpr, mat );
+   mRotation.set(
+                     mat(0, 0) / scale[0], mat(0, 1) / scale[0], mat(0, 2) / scale[0],  0.0f,
+                     mat(1, 0) / scale[1], mat(1, 1) / scale[1], mat(1, 2) / scale[1],  0.0f,
+                     mat(2, 0) / scale[2], mat(2, 1) / scale[2], mat(2, 2) / scale[2],  0.0f,
+                     0.0f,                 0.0f,                 0.0f,                  1.0f
+                 );
 
-   SetTranslation( mat.getTrans() );
-   SetRotation( hpr );
-   mScale.set( mat.getScale() );   
-
+   mTranslation.set(mat(3, 0), mat(3, 1), mat(3, 2));
+   mScale.set(scale);
 }
 
 void Transform::SetRotation( float h, float p, float r )
@@ -156,7 +159,7 @@ void Transform::SetLookAt( const osg::Vec3& xyz, const osg::Vec3& lookAtXYZ, con
    x.normalize();
    y.normalize();
    z.normalize();
-   
+
    dtUtil::MatrixUtil::SetRow(mat, x, 0);
    dtUtil::MatrixUtil::SetRow(mat, y, 1);
    dtUtil::MatrixUtil::SetRow(mat, z, 2);
@@ -199,7 +202,7 @@ Transform & Transform::operator=(const Transform & rhs)
    SetTranslation( rhs.mTranslation );
    SetRotation( rhs.mRotation );
    SetScale( rhs.mScale );
-   
+
    return *this;
 }
 

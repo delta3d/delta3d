@@ -269,7 +269,7 @@ bool TransformableTests::CompareMatrix(const osg::Matrix& rhs, const osg::Matrix
     {   
         for(int j = 0; j < 4; ++j)
         {
-            if ( (rhs(i, j) - lhs(i, j)) > FLT_EPSILON ) return false;
+            if ( fabs(rhs(i, j) - lhs(i, j)) > FLT_EPSILON ) return false;
         }
     }
 
