@@ -53,6 +53,7 @@ class TransformableTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST(TestGetCollisionGeomDimensions);
    CPPUNIT_TEST(TestSetCollisionBox);
    CPPUNIT_TEST(TestSetTransform);
+   CPPUNIT_TEST(TestSetMatrix);
    CPPUNIT_TEST(TestReplaceMatrixNode);
    CPPUNIT_TEST_SUITE_END();
 
@@ -65,8 +66,11 @@ public:
    void TestSetCollisionBox();
    void TestSetTransform();
    void TestReplaceMatrixNode();
+   void TestSetMatrix();
 
 private:
+    bool CompareMatrix(const osg::Matrix& rhs, const osg::Matrix& lhs) const;
+    bool CompareVector(const osg::Vec3& rhs, const osg::Vec3& lhs) const;    
 
    RefPtr<Transformable> mTransformable;
    Transform mTransform;
@@ -231,6 +235,50 @@ bool HasChild( dtCore::DeltaDrawable* parent, dtCore::DeltaDrawable* child )
 bool HasChild( osg::Group* parent, osg::Node* child )
 {
    return parent->containsNode(child);
+}
+
+void TransformableTests::TestSetMatrix()
+{
+    osg::Vec3 trans(10.0f, 7.0f, 2.0f);
+    osg::Vec3 scale(3.0f, 1.0f, 5.0f);
+    osg::Matrix matRotate, matScale, matTest;    
+
+    matRotate.makeRotate(osg::DegreesToRadians(45.0), osg::Vec3(1.0f, 0.0f, 0.0f));
+    matScale.makeScale(scale);
+    matTest = matScale * matRotate;
+    matTest.setTrans(trans);
+
+    osg::Vec3 testScale, testTrans;
+    osg::Matrix testRot;
+
+    dtCore::Transform transformTest;
+    transformTest.Set(matTest);
+    transformTest.GetTranslation(testTrans);
+    transformTest.GetScale(testScale);
+    transformTest.GetRotation(testRot);
+
+    CPPUNIT_ASSERT(CompareMatrix(matRotate, testRot));
+    CPPUNIT_ASSERT(CompareVector(scale, testScale));
+    CPPUNIT_ASSERT(CompareVector(trans, testTrans));
+    
+}
+
+bool TransformableTests::CompareMatrix(const osg::Matrix& rhs, const osg::Matrix& lhs) const
+{
+    for(int i = 0; i < 4; ++i)
+    {   
+        for(int j = 0; j < 4; ++j)
+        {
+            if ( (rhs(i, j) - lhs(i, j)) > FLT_EPSILON ) return false;
+        }
+    }
+
+    return true;
+}
+
+bool TransformableTests::CompareVector(const osg::Vec3& rhs, const osg::Vec3& lhs) const
+{
+    return ( (rhs[0] - lhs[0]) < FLT_EPSILON ) && ( (rhs[1] - lhs[1]) < FLT_EPSILON ) && ( (rhs[2] - lhs[2]) < FLT_EPSILON );
 }
 
 void TransformableTests::TestReplaceMatrixNode()
