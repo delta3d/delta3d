@@ -122,7 +122,7 @@ int main(int argc, char* argv[])
    // print out slow tests and total time.
    dtCore::Timer_t testsTimerStop = testsClock.Tick();
    double timeDelta = testsClock.DeltaSec(testsTimerStart, testsTimerStop);
-   timeDelta = ((int)(timeDelta * 10000)) / 10000.0; // force data truncation
+   timeDelta = int((timeDelta * 10000)) / 10000.0; // force data truncation
    if(mSlowTests.str().empty())
    {
       std::cerr << " <<< SLOW TEST RESULTS ::: START >>> " << std::endl << 
