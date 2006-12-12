@@ -87,7 +87,7 @@ public:
       double ly = 1.0;
       double lz = 1.0;
 
-      //create collision meshes
+      //create ollision meshes
       obj1->SetCollisionMesh(); 
       obj2->SetCollisionBox();
       obj3->SetCollisionBox();
@@ -170,7 +170,7 @@ protected:
             i!=mObjects.end(); 
             ++i )
       {
-         DampenBody( i->get(), -0.03f, -0.04f );
+         DampenBody( i->get(), 0.10f, -0.04f );
       }
    }
 
@@ -178,6 +178,9 @@ protected:
                               Producer::KeyboardKey key,
                               Producer::KeyCharacter character)
    {
+	  // SetCollision____ must be called before setTransform so
+	  // that a dGeomID will exist before a prePhysicsUpdate, otherwise
+	  // the scale will never be applied to the physics geometry
       bool verdict(false);
       switch( key )
       {
@@ -224,14 +227,13 @@ protected:
 
                float randomScale = RandFloat( 0.5f, 2.0f );
                xform.SetScale( randomScale, randomScale, randomScale );
-               
+            
+			   box->SetCollisionBox();
                box->SetTransform(xform);
             
                double lx = 1.0;
                double ly = 1.0;
-               double lz = 1.0;
-               
-               box->SetCollisionBox();
+               double lz = 1.0;             
                
                dMass mass;
                dMassSetBox( &mass, 1.0, lx, ly, lz );
@@ -265,11 +267,10 @@ protected:
                float randomScale = RandFloat( 0.5f, 2.0f );
                xform.SetScale( randomScale, randomScale, randomScale );
                
+			   sphere->SetCollisionSphere();
                sphere->SetTransform(xform);
                
                double radius = 0.5;
-               
-               sphere->SetCollisionSphere();
                
                dMass mass;
                dMassSetSphere( &mass, 1.0, radius );
@@ -302,12 +303,11 @@ protected:
                float randomScale = RandFloat( 0.5f, 2.0f );
                xform.SetScale( randomScale, randomScale, randomScale );
                
+			   cyl->SetCollisionCappedCylinder();
                cyl->SetTransform(xform);
                
                double radius = 0.321; 
-               double length = 1.0;            
-               
-               cyl->SetCollisionCappedCylinder();
+               double length = 1.0;                       
                
                dMass mass;
                dMassSetCappedCylinder(&mass, 1.0, 2, radius, length);

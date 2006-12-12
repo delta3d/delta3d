@@ -1189,8 +1189,8 @@ namespace dtGame
 
       if (mapName.empty())
          throw dtUtil::Exception(ExceptionEnum::INVALID_PARAMETER, "Empty string is not a valid map name.", __FILE__, __LINE__);
-               
-      mMapChangeStateData->BeginMapChange(mLoadedMap, mapName, addBillboards, enableDatabasePaging);      
+
+      mMapChangeStateData->BeginMapChange(mLoadedMap, mapName, addBillboards, enableDatabasePaging);
    }
 
    ///////////////////////////////////////////////////////////////////////////////

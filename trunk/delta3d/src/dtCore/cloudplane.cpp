@@ -189,7 +189,7 @@ void CloudPlane::Create(const std::string& textureFilePath)
 	// Transparent Bin
 	//stateset->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
    stateset->setRenderBinDetails(9, "DepthSortedBin");
-   
+
 	// Blending Function
 	osg::BlendFunc *trans = new osg::BlendFunc();
 	trans->setFunction(osg::BlendFunc::SRC_ALPHA ,osg::BlendFunc::ONE_MINUS_SRC_ALPHA);
