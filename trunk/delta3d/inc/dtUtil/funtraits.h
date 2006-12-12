@@ -13,7 +13,7 @@ namespace dtUtil
 // Function traits
 
 template <typename T> struct FunTraits;
-#if defined(_MSC_VER)
+#if (defined(_MSC_VER)) && (_MANAGED != 1)
 template <typename R>
 struct FunTraits<R (__cdecl *)()>
 {
