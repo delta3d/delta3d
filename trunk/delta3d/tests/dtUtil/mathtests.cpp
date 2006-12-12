@@ -22,12 +22,14 @@
 #include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtUtil/mathdefines.h>
+#include <dtUtil/matrixutil.h>
 #include <osg/Vec2>
 #include <osg/Vec2d>
 #include <osg/Vec3>
 #include <osg/Vec3d>
 #include <osg/Vec4>
 #include <osg/Vec4d>
+#include <osg/Matrix>
 #include <cmath>
 
 namespace dtUtil
@@ -40,6 +42,7 @@ namespace dtUtil
          CPPUNIT_TEST( TestEquivalentVec2 );
          CPPUNIT_TEST( TestEquivalentVec3);
          CPPUNIT_TEST( TestEquivalentVec4 );
+		 CPPUNIT_TEST( TestMatrixEulerConversions );
       CPPUNIT_TEST_SUITE_END();
 
       public:
@@ -50,6 +53,7 @@ namespace dtUtil
          void TestEquivalentVec2();
          void TestEquivalentVec3();
          void TestEquivalentVec4();
+		 void TestMatrixEulerConversions();
 
       private:
    };
@@ -175,5 +179,31 @@ namespace dtUtil
       CPPUNIT_ASSERT(!Equivalent(v4da, v4db, 4, 1e-6));
       CPPUNIT_ASSERT(!Equivalent(v4da, v4db, 4, 0.001));
       CPPUNIT_ASSERT(Equivalent(v4da, v4db, 4, 0.1));
+   }
+
+   void MathTests::TestMatrixEulerConversions()
+   {
+	   osg::Matrix testMatrix; 
+	   osg::Vec3 hprResult;
+
+	   // Test special cases with 90 degree angles
+	   osg::Vec3 hprTest1(0.0f, 90.0f, -10.0f);
+	   osg::Vec3 hprTest2(90.0f, 45.0f, 90.0f);
+	   osg::Vec3 hprTest3(5.0f, 80.0f, -10.0f);
+
+	   dtUtil::MatrixUtil::HprToMatrix(testMatrix, hprTest1);
+	   dtUtil::MatrixUtil::MatrixToHpr(hprResult, testMatrix);
+
+	   CPPUNIT_ASSERT(Equivalent(hprResult, hprTest1, 3, 1e-5f));
+
+	   dtUtil::MatrixUtil::HprToMatrix(testMatrix, hprTest2);
+	   dtUtil::MatrixUtil::MatrixToHpr(hprResult, testMatrix);
+
+	   CPPUNIT_ASSERT(Equivalent(hprResult, hprTest2, 3, 1e-5f));
+
+	   dtUtil::MatrixUtil::HprToMatrix(testMatrix, hprTest3);
+	   dtUtil::MatrixUtil::MatrixToHpr(hprResult, testMatrix);
+
+	   CPPUNIT_ASSERT(Equivalent(hprResult, hprTest3, 3, 1e-5f));
    }
 }
