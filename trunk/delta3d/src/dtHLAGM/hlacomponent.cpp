@@ -1242,11 +1242,15 @@ namespace dtHLAGM
 
             std::multimap<std::string, dtCore::RefPtr<ObjectToActor> >::iterator objectToActorIterator;
 
-            for (objectToActorIterator = mObjectToActorMap.find(classHandleString); objectToActorIterator != mObjectToActorMap.end();
+            for (objectToActorIterator = mObjectToActorMap.find(classHandleString); objectToActorIterator != mObjectToActorMap.end()
+                && objectToActorIterator->first == classHandleString;
                  ++objectToActorIterator)
             {
                ObjectToActor& thisObjectToActor = *objectToActorIterator->second;
-               //TODO check for nulls
+
+               if (thisObjectToActor.GetDisID() == NULL)
+                  continue;
+
                int thisRank = currentEntityType.RankMatch(*thisObjectToActor.GetDisID());
                if (thisRank > bestRank)
                {
@@ -1291,12 +1295,16 @@ namespace dtHLAGM
             // we assign that as the best object to actor.  This would break in the case where 
             // a user tried to add mappings both with and without an entity type and actors didn't
             // always send their entity type in an update.
-            for (i = mObjectToActorMap.find(classHandleString); i != mObjectToActorMap.end();
+            for (i = mObjectToActorMap.find(classHandleString); i != mObjectToActorMap.end()
+               && i->first == classHandleString;
                  ++i)
             {
                ObjectToActor& thisObjectToActor = *i->second;
                if (thisObjectToActor.GetDisID() == NULL)
+               {
                   bestObjectToActor = &thisObjectToActor;
+                  break;
+               }
             }
             
             //If we still don't have a mapping

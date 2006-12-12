@@ -432,6 +432,19 @@ void HLAConfigTests::TestConfigure()
 
          CheckInteractionToMessageMapping(dtGame::MessageType::INFO_TIMER_ELAPSED, "WeaponFire", params);
       }
+      // Test Non-Entity Types
+      {
+         std::vector<dtHLAGM::AttributeToPropertyList> props;
+         {
+            dtHLAGM::AttributeToPropertyList attrToProp("Orientation", dtHLAGM::RPRAttributeType::EULER_ANGLES_TYPE, true);
+
+            dtHLAGM::OneToManyMapping::ParameterDefinition pd("Rotation", dtDAL::DataType::VEC3, "", true);
+            attrToProp.GetParameterDefinitions().push_back(pd); 
+            props.push_back(attrToProp);
+         }
+         // Test a NULL dis id.
+         CheckObjectToActorMapping("TestHLA", "Sensor", "BaseEntity.PhysicalEntity.Sensor", "",  NULL, false, props);
+      }
    }
    catch (const dtUtil::Exception& ex)
    {
