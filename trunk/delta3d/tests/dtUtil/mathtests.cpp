@@ -30,7 +30,9 @@
 #include <osg/Vec4>
 #include <osg/Vec4d>
 #include <osg/Matrix>
+#include <osg/io_utils>
 #include <cmath>
+#include <sstream>
 
 namespace dtUtil
 {
@@ -191,19 +193,29 @@ namespace dtUtil
 	   osg::Vec3 hprTest2(90.0f, 45.0f, 90.0f);
 	   osg::Vec3 hprTest3(5.0f, 80.0f, -10.0f);
 
+      std::ostringstream ss;
+
 	   dtUtil::MatrixUtil::HprToMatrix(testMatrix, hprTest1);
 	   dtUtil::MatrixUtil::MatrixToHpr(hprResult, testMatrix);
 
-	   CPPUNIT_ASSERT(Equivalent(hprResult, hprTest1, 3, 1e-5f));
+      ss << "Expected \"" << hprTest1 << "\" but got \"" << hprResult << "\"";
+
+	   CPPUNIT_ASSERT_MESSAGE(ss.str(), Equivalent(hprResult, hprTest1, 3, 1e-4f));
 
 	   dtUtil::MatrixUtil::HprToMatrix(testMatrix, hprTest2);
 	   dtUtil::MatrixUtil::MatrixToHpr(hprResult, testMatrix);
 
-	   CPPUNIT_ASSERT(Equivalent(hprResult, hprTest2, 3, 1e-5f));
+      ss.str("");
+      ss << "Expected \"" << hprTest2 << "\" but got \"" << hprResult << "\"";
+
+	   CPPUNIT_ASSERT_MESSAGE(ss.str(), Equivalent(hprResult, hprTest2, 3, 1e-4f));
 
 	   dtUtil::MatrixUtil::HprToMatrix(testMatrix, hprTest3);
 	   dtUtil::MatrixUtil::MatrixToHpr(hprResult, testMatrix);
 
-	   CPPUNIT_ASSERT(Equivalent(hprResult, hprTest3, 3, 1e-5f));
+      ss.str("");
+      ss << "Expected \"" << hprTest3 << "\" but got \"" << hprResult << "\"";
+
+	   CPPUNIT_ASSERT_MESSAGE(ss.str(), Equivalent(hprResult, hprTest3, 3, 1e-4f));
    }
 }
