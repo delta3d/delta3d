@@ -177,6 +177,10 @@ namespace dtGame
          for (unsigned int i = 0; i < proxies.size(); i++)
          {
             dtDAL::ActorProxy& aProxy = *proxies[i];
+            // Ensure that we don't try and add the environment actor
+            if(map.GetEnvironmentActor() == &aProxy)
+               continue;
+            
             if (aProxy.IsGameActorProxy())
             {
                GameActorProxy* gameProxy = dynamic_cast<GameActorProxy*>(&aProxy);
