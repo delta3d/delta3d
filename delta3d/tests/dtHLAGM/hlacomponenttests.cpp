@@ -666,7 +666,7 @@ void HLATests::TestReflectAttributesNoEntityType()
       dtCore::RefPtr<const dtGame::ActorUpdateMessage> aum = static_cast<const dtGame::ActorUpdateMessage*>(msg.get());
 
       CPPUNIT_ASSERT_MESSAGE("The actor type should not be NULL.", aum->GetActorType() != NULL);
-      CPPUNIT_ASSERT_MESSAGE("The actor type should be the EmitterBeam.", aum->GetActorType()->GetName() == "CulturalFeature");
+      CPPUNIT_ASSERT_MESSAGE("The actor type should be the CulturalFeature.", aum->GetActorType()->GetName() == "CulturalFeature");
 
    }
    catch (const dtUtil::Exception& ex)

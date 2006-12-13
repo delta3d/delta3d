@@ -1041,7 +1041,7 @@ void GameManagerTests::TestOnAddedToGM()
 
 void GameManagerTests::TestTimers()
 {
-    dtCore::RefPtr<dtDAL::ActorType> type = mManager->FindActorType("ExampleActors","Test2Actor");
+   dtCore::RefPtr<dtDAL::ActorType> type = mManager->FindActorType("ExampleActors","Test2Actor");
    CPPUNIT_ASSERT(type != NULL);
 
    dtCore::RefPtr<dtGame::GameActorProxy> proxy;

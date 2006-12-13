@@ -1060,7 +1060,7 @@ void MapTests::TestMapSaveAndLoad()
                 "Vec3f Property values: %f, %f, %f", val[0], val[1], val[2]);
         }
 
-        v3ap = static_cast<dtDAL::Vec3ActorProperty*>(ap)
+        v3ap = static_cast<dtDAL::Vec3ActorProperty*>(ap);
         CPPUNIT_ASSERT_MESSAGE(ap->GetName() + " value should be 3.125, 90.25, 87.0625",
              osg::equivalent(double(v3ap->GetValue()[0]), double(testVec3_3[0]), 1e-2)
              && osg::equivalent(double(v3ap->GetValue()[1]), double(testVec3_3[1]), 1e-2)
