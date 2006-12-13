@@ -163,6 +163,14 @@ namespace dtGame
                mainGEM.AddEvent(*events[i]);
          }
 
+         if (map.GetEnvironmentActor() != NULL)
+         {
+            dtGame::EnvironmentActorProxy *eap = 
+               static_cast<dtGame::EnvironmentActorProxy*>(map.GetEnvironmentActor());
+            
+            mGameManager->SetEnvironmentActor(eap);
+         }
+
          std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > proxies;
          map.GetAllProxies(proxies);
 
