@@ -120,14 +120,14 @@ namespace dtGame
          virtual void ProcessMessage(const Message& message);
 
          /**
-          * Sets the shader group on the terrain actor.  This implementation uses
+          * Sets the shader group on the game actor.  This implementation uses
           * the default shader in the group to shade the terrain.
           * @param groupName The name of the shader group.
           */
          virtual void SetShaderGroup(const std::string &groupName);
 
          /**
-          * Gets the current shader group assigned to this terrain.
+          * Gets the current shader group assigned to this game actor.
           * @return The name of the group.
           */
          std::string GetShaderGroup() const { return mShaderGroup; }
