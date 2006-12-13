@@ -121,7 +121,7 @@ namespace dtGame
 
          /**
           * Sets the shader group on the game actor.  This implementation uses
-          * the default shader in the group to shade the terrain.
+          * the default shader in the group to shade the game actor.
           * @param groupName The name of the shader group.
           */
          virtual void SetShaderGroup(const std::string &groupName);
