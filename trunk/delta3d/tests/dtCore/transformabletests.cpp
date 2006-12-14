@@ -256,7 +256,7 @@ void TransformableTests::TestSetMatrix()
 
    matRotate.makeRotate(osg::DegreesToRadians(45.0), osg::Vec3(1.0f, 0.0f, 0.0f));
    matScale.makeScale(scale);
-   matTest = matScale * matRotate;
+   matTest = matRotate * matScale;
    matTest.setTrans(trans);
 
    osg::Vec3 testScale, testTrans;
