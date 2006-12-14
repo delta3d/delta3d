@@ -51,20 +51,29 @@ void Transform::Set(const osg::Vec3& xyz, const osg::Vec3& hpr, const osg::Vec3&
 
 void Transform::Set( const osg::Matrix& mat )
 {
-   osg::Vec3 x_vec( mat(0, 0), mat(0, 1), mat(0, 2) );
-   osg::Vec3 y_vec( mat(1, 0), mat(1, 1), mat(1, 2) );
-   osg::Vec3 z_vec( mat(2, 0), mat(2, 1), mat(2, 2) );
-   osg::Vec3 scale(x_vec.length(), y_vec.length(), z_vec.length());
+   //osg::Vec3 x_vec( mat(0, 0), mat(0, 1), mat(0, 2) );
+   //osg::Vec3 y_vec( mat(1, 0), mat(1, 1), mat(1, 2) );
+   //osg::Vec3 z_vec( mat(2, 0), mat(2, 1), mat(2, 2) );
+   //osg::Vec3 scale(x_vec.length(), y_vec.length(), z_vec.length());
 
-   mRotation.set(
-                     mat(0, 0) / scale[0], mat(0, 1) / scale[0], mat(0, 2) / scale[0],  0.0f,
-                     mat(1, 0) / scale[1], mat(1, 1) / scale[1], mat(1, 2) / scale[1],  0.0f,
-                     mat(2, 0) / scale[2], mat(2, 1) / scale[2], mat(2, 2) / scale[2],  0.0f,
-                     0.0f,                 0.0f,                 0.0f,                  1.0f
-                 );
+   //mRotation.set(
+   //                  mat(0, 0) / scale[0], mat(0, 1) / scale[0], mat(0, 2) / scale[0],  0.0f,
+   //                  mat(1, 0) / scale[1], mat(1, 1) / scale[1], mat(1, 2) / scale[1],  0.0f,
+   //                  mat(2, 0) / scale[2], mat(2, 1) / scale[2], mat(2, 2) / scale[2],  0.0f,
+   //                  0.0f,                 0.0f,                 0.0f,                  1.0f
+   //              );
 
-   mTranslation.set(mat(3, 0), mat(3, 1), mat(3, 2));
-   mScale.set(scale);
+   //mTranslation.set(mat(3, 0), mat(3, 1), mat(3, 2));
+   //mScale.set(scale);
+
+    osg::Matrix rotation, scale;
+    osg::Vec3 translation;
+    
+    dtUtil::PolarDecomp::Decompose( mat, rotation, scale, translation );
+    
+    SetTranslation( translation );
+    SetRotation( rotation );
+    mScale.set( scale(0,0), scale(1,1), scale(2,2) );
 }
 
 void Transform::SetRotation( float h, float p, float r )
