@@ -84,11 +84,7 @@ class ApplicationWrap : public Application, public wrapper<Application>
    {
       if( override pOverride = this->get_override("OnCollisionMessage") )
       {
-         #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
-            call<>( this->get_override("OnCollisionMessage").ptr(), pData);
-         #else
-            this->get_override("OnCollisionMessage")(pData);
-         #endif
+         this->get_override("OnCollisionMessage")(pData);       
       }
    }
 
