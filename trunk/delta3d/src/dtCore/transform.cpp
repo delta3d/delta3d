@@ -1,8 +1,8 @@
 #include <prefix/dtcoreprefix-src.h>
-#include "dtCore/transform.h"
-#include "dtUtil/matrixutil.h"
-#include "dtUtil/polardecomp.h"
-#include "dtUtil/deprecationmgr.h"
+#include <dtCore/transform.h>
+#include <dtUtil/matrixutil.h>
+#include <dtUtil/polardecomp.h>
+#include <dtUtil/deprecationmgr.h>
 
 using namespace dtCore;
 
@@ -103,10 +103,8 @@ void Transform::Get( osg::Vec3& xyz, osg::Matrix& rotation, osg::Vec3& scale ) c
 
 void Transform::Get( osg::Matrix& matrix ) const
 {
-   osg::Matrix fullMatrix = mRotation * osg::Matrix::scale( mScale );
-   dtUtil::MatrixUtil::SetRow( fullMatrix, mTranslation, 3 );
-
-   matrix.set(fullMatrix);
+   matrix = mRotation * osg::Matrix::scale( mScale );
+   dtUtil::MatrixUtil::SetRow( matrix, mTranslation, 3 );
 }
 
 void Transform::Get( osg::Vec3& xyz, osg::Vec3& hpr, osg::Vec3& scale ) const

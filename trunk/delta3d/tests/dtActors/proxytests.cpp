@@ -288,7 +288,7 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
                continue;
             std::ostringstream ss;
             ss << proxyTypeName << " proxy TEST FAILED: Vec[" << x
-               << "] property: " << name << " - Value: " << result;
+               << "] property: " << name << " expected: " << test << " - actual: " << result;
             CPPUNIT_ASSERT_MESSAGE(ss.str(),
                                    osg::equivalent(result[x], test[x], epsilon));
          }
@@ -327,8 +327,8 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
             if (x == 1 && name == "Direction")
                continue;
             std::ostringstream ss;
-            ss << proxyTypeName << " proxy TEST FAILED: Vec[" << x
-               << "f] property: " << name << " - Value: " << result;
+            ss << proxyTypeName << " proxy TEST FAILED: Vecf[" << x
+               << "] property: " << name << " expected: " << test << " - actual: " << result;
             CPPUNIT_ASSERT_MESSAGE(ss.str(),
                                    osg::equivalent(result[x], test[x], epsilon));
          }
@@ -367,8 +367,8 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
             if (x == 1 && name == "Direction")
                continue;
             std::ostringstream ss;
-            ss << proxyTypeName << " proxy TEST FAILED: Vec[" << x
-               << "d] property: " << name << " - Value: " << result;
+            ss << proxyTypeName << " proxy TEST FAILED: Vecd[" << x
+               << "] property: " << name << " expected: " << test << " - actual: " << result;
             CPPUNIT_ASSERT_MESSAGE(ss.str(),
                                    osg::equivalent(double(result[x]), double(test[x]), double(epsilon)));
          }
@@ -402,7 +402,7 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
          {
             std::ostringstream ss;
             ss << proxyTypeName << " proxy TEST FAILED: Vec[" << x
-               << "] property: " << name << " - Value: " << result;
+               << "] property: " << name << " expected: " << test << " - actual: " << result;
             CPPUNIT_ASSERT_MESSAGE(ss.str(),
                                    osg::equivalent(result[x], test[x], epsilon));
          }
@@ -434,7 +434,7 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
          {
             std::ostringstream ss;
             ss << proxyTypeName << " proxy TEST FAILED: Vec[" << x
-               << "f] property: " << name << " - Value: " << result;
+               << "] property: " << name << " expected: " << test << " - actual: " << result;
             CPPUNIT_ASSERT_MESSAGE(ss.str(),
                                    osg::equivalent(result[x], test[x], epsilon));
          }
@@ -467,7 +467,7 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
          {
             std::ostringstream ss;
             ss << proxyTypeName << " proxy TEST FAILED: Vec[" << x
-               << "d] property: " << name << " - Value: " << result;
+               << "] property: " << name << " expected: " << test << " - actual: " << result;
             CPPUNIT_ASSERT_MESSAGE(ss.str(),
                                    osg::equivalent(double(result[x]), double(test[x]), double(epsilon)));
          }
@@ -500,7 +500,7 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
          {
             std::ostringstream ss;
             ss << proxyTypeName << " proxy TEST FAILED: Vec[" << x
-               << "] property: " << name << " - Value: " << result;
+               << "] property: " << name << " expected: " << test << " - actual: " << result;
             CPPUNIT_ASSERT_MESSAGE(ss.str(),
                                    osg::equivalent(result[x], test[x], epsilon));
          }
@@ -532,7 +532,7 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
          {
             std::ostringstream ss;
             ss << proxyTypeName << " proxy TEST FAILED: Vec[" << x
-               << "f] property: " << name << " - Value: " << result;
+               << "] property: " << name << " expected: " << test << " - actual: " << result;
             CPPUNIT_ASSERT_MESSAGE(ss.str(),
                                    osg::equivalent(result[x], test[x], epsilon));
          }
@@ -564,7 +564,7 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
          {
             std::ostringstream ss;
             ss << proxyTypeName << " proxy TEST FAILED: Vec[" << x
-               << "d] property: " << name << " - Value: " << result;
+               << "] property: " << name << " expected: " << test << " - actual: " << result;
             CPPUNIT_ASSERT_MESSAGE(ss.str(),
                                    osg::equivalent(double(result[x]), double(test[x]), double(epsilon)));
          }
@@ -596,7 +596,7 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
          {
             std::ostringstream ss;
             ss << proxyTypeName << " proxy TEST FAILED: Vec[" << x
-               << "] property: " << name << " - Value: " << result;
+               << "] property: " << name << " expected: " << test << " - actual: " << result;
             CPPUNIT_ASSERT_MESSAGE(ss.str(),
                                    osg::equivalent(result[x], test[x], epsilon));
          }

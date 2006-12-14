@@ -54,6 +54,10 @@ class TransformableTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST(TestSetCollisionBox);
    CPPUNIT_TEST(TestSetTransform);
    CPPUNIT_TEST(TestSetMatrix);
+   CPPUNIT_TEST(TestScale);
+   CPPUNIT_TEST(TestTranslation);
+   CPPUNIT_TEST(TestRotationHPR);
+   CPPUNIT_TEST(TestTransRotScaleGetSet);
    CPPUNIT_TEST(TestReplaceMatrixNode);
    CPPUNIT_TEST_SUITE_END();
 
@@ -65,6 +69,10 @@ public:
    void TestGetCollisionGeomDimensions();
    void TestSetCollisionBox();
    void TestSetTransform();
+   void TestScale();
+   void TestTranslation();
+   void TestRotationHPR();
+   void TestTransRotScaleGetSet();
    void TestReplaceMatrixNode();
    void TestSetMatrix();
 
@@ -79,9 +87,12 @@ private:
 
    float mRadius; ///Radius for sphere or cylinder
    float mHeight; ///Height for cylinder or ray
+   static const float TEST_EPSILON;
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(TransformableTests);
+
+const float TransformableTests::TEST_EPSILON(1e-5f);
 
 void TransformableTests::setUp()
 {
@@ -239,29 +250,110 @@ bool HasChild( osg::Group* parent, osg::Node* child )
 
 void TransformableTests::TestSetMatrix()
 {
-    osg::Vec3 trans(10.0f, 7.0f, 2.0f);
-    osg::Vec3 scale(3.0f, 1.0f, 5.0f);
-    osg::Matrix matRotate, matScale, matTest;    
+   osg::Vec3 trans(10.0f, 7.0f, 2.0f);
+   osg::Vec3 scale(3.0f, 1.0f, 5.0f);
+   osg::Matrix matRotate, matScale, matTest;    
 
-    matRotate.makeRotate(osg::DegreesToRadians(45.0), osg::Vec3(1.0f, 0.0f, 0.0f));
-    matScale.makeScale(scale);
-    matTest = matScale * matRotate;
-    matTest.setTrans(trans);
+   matRotate.makeRotate(osg::DegreesToRadians(45.0), osg::Vec3(1.0f, 0.0f, 0.0f));
+   matScale.makeScale(scale);
+   matTest = matScale * matRotate;
+   matTest.setTrans(trans);
 
-    osg::Vec3 testScale, testTrans;
-    osg::Matrix testRot;
+   osg::Vec3 testScale, testTrans;
+   osg::Matrix testRot;
 
-    dtCore::Transform transformTest;
-    transformTest.Set(matTest);
-    transformTest.GetTranslation(testTrans);
-    transformTest.GetScale(testScale);
-    transformTest.GetRotation(testRot);
-
-    CPPUNIT_ASSERT(CompareMatrix(matRotate, testRot));
-    CPPUNIT_ASSERT(CompareVector(scale, testScale));
-    CPPUNIT_ASSERT(CompareVector(trans, testTrans));
+   dtCore::Transform transformTest;
     
+   transformTest.Set(matTest);
+   transformTest.GetTranslation(testTrans);
+   transformTest.GetScale(testScale);
+   transformTest.GetRotation(testRot);
+
+   CPPUNIT_ASSERT(CompareMatrix(matRotate, testRot));
+   CPPUNIT_ASSERT(CompareVector(scale, testScale));
+   CPPUNIT_ASSERT(CompareVector(trans, testTrans));
 }
+
+void TransformableTests::TestScale()
+{
+   osg::Vec3 scale(3.0f, 1.0f, 5.0f);
+
+   dtCore::Transform transformTest;
+   transformTest.SetScale(scale);
+   mTransformable->SetTransform(transformTest);
+   mTransformable->GetTransform(transformTest);
+
+   osg::Vec3 testScale;
+   transformTest.GetScale(testScale);
+
+   std::ostringstream ss;
+   ss << "Value is: \"" << testScale << "\" but it should be \"" << scale << "\"";
+   CPPUNIT_ASSERT_MESSAGE(ss.str(), CompareVector(scale, testScale));
+}
+
+void TransformableTests::TestTranslation()
+{
+   osg::Vec3 trans(10.0f, 7.0f, 2.0f);
+
+   dtCore::Transform transformTest;
+   transformTest.SetTranslation(trans);
+   mTransformable->SetTransform(transformTest);
+   mTransformable->GetTransform(transformTest);
+
+   osg::Vec3 testTrans;
+   transformTest.GetTranslation(testTrans);
+
+   std::ostringstream ss;
+   ss << "Value is: \"" << testTrans << "\" but it should be \"" << trans << "\"";
+   CPPUNIT_ASSERT_MESSAGE(ss.str(), CompareVector(trans, testTrans));
+}
+
+void TransformableTests::TestRotationHPR()
+{
+   osg::Vec3 rot(10.0f, 7.0f, 2.0f);
+
+   dtCore::Transform transformTest;
+   transformTest.SetRotation(rot);
+   mTransformable->SetTransform(transformTest);
+   mTransformable->GetTransform(transformTest);
+
+   osg::Vec3 testRot;
+   transformTest.GetRotation(testRot);
+
+   std::ostringstream ss;
+   ss << "Value is: \"" << testRot << "\" but it should be \"" << rot << "\"";
+   CPPUNIT_ASSERT_MESSAGE(ss.str(), CompareVector(rot, testRot));
+}
+
+void TransformableTests::TestTransRotScaleGetSet()
+{
+   osg::Vec3 trans(10.0f, 7.0f, 2.0f);
+   osg::Vec3 scale(3.0f, 1.0f, 5.0f);
+   osg::Vec3 rot(10.0f, 7.0f, 2.0f);
+
+   dtCore::Transform transformTest;
+   transformTest.SetTranslation(trans);
+   transformTest.SetRotation(rot);
+   transformTest.SetScale(scale);
+   mTransformable->SetTransform(transformTest);
+   mTransformable->GetTransform(transformTest);
+
+   osg::Vec3 testScale, testRot, testTrans;
+   transformTest.GetTranslation(testTrans);
+   transformTest.GetRotation(testRot);
+   transformTest.GetScale(testScale);
+
+   std::ostringstream ss;
+   ss << "rotation value is: \"" << testRot << "\" but it should be \"" << rot << "\"";
+   CPPUNIT_ASSERT_MESSAGE(ss.str(), CompareVector(rot, testRot));
+   ss.str("");
+   ss << "translation value is: \"" << testTrans << "\" but it should be \"" << trans << "\"";
+   CPPUNIT_ASSERT_MESSAGE(ss.str(), CompareVector(trans, testTrans));
+   ss.str("");
+   ss << "scale value is: \"" << testScale << "\" but it should be \"" << scale << "\"";
+   CPPUNIT_ASSERT_MESSAGE(ss.str(), CompareVector(scale, testScale));
+}
+
 
 bool TransformableTests::CompareMatrix(const osg::Matrix& rhs, const osg::Matrix& lhs) const
 {
@@ -269,7 +361,7 @@ bool TransformableTests::CompareMatrix(const osg::Matrix& rhs, const osg::Matrix
     {   
         for(int j = 0; j < 4; ++j)
         {
-            if ( fabs(rhs(i, j) - lhs(i, j)) > FLT_EPSILON ) return false;
+            if ( fabs(rhs(i, j) - lhs(i, j)) > TEST_EPSILON ) return false;
         }
     }
 
@@ -278,7 +370,7 @@ bool TransformableTests::CompareMatrix(const osg::Matrix& rhs, const osg::Matrix
 
 bool TransformableTests::CompareVector(const osg::Vec3& rhs, const osg::Vec3& lhs) const
 {
-    return ( (rhs[0] - lhs[0]) < FLT_EPSILON ) && ( (rhs[1] - lhs[1]) < FLT_EPSILON ) && ( (rhs[2] - lhs[2]) < FLT_EPSILON );
+    return ( (rhs[0] - lhs[0]) < TEST_EPSILON ) && ( (rhs[1] - lhs[1]) < TEST_EPSILON ) && ( (rhs[2] - lhs[2]) < TEST_EPSILON );
 }
 
 void TransformableTests::TestReplaceMatrixNode()

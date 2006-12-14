@@ -79,10 +79,10 @@ namespace dtActors
 
       dtABC::BezierNode* bn = NULL;
 
-      if(node)
+      if(node != NULL)
       {
          bn = dynamic_cast<dtABC::BezierNode*> (node->GetActor());
-         if(!bn)
+         if(bn == NULL)
             throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
             "Actor should be type dtABC::BezierNode", __FILE__, __LINE__);
       }
@@ -95,7 +95,7 @@ namespace dtActors
    dtCore::DeltaDrawable* BezierControlPointActorProxy::GetBezierNode()
    {
       dtABC::BezierControlPoint* bcp = dynamic_cast<dtABC::BezierControlPoint*>( mActor.get() );
-      if( bcp == 0 )
+      if( bcp == NULL )
       {
          throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
             "Actor should be type dtABC::BezierControlPoint", __FILE__, __LINE__);
@@ -146,7 +146,7 @@ namespace dtActors
          throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
          "Actor should be type dtABC::BezierControlPoint", __FILE__, __LINE__);
 
-      if(bcp->GetParent())
+      if (bcp->GetParent() != NULL)
       {
          bcp->GetParent()->SetDirtyFlag(true);
       }
@@ -159,7 +159,7 @@ namespace dtActors
          throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
          "Actor should be type dtABC::BezierControlPoint", __FILE__, __LINE__);
       
-      if(bcp->GetParent())
+      if (bcp->GetParent() != NULL)
       {
          bcp->GetParent()->SetDirtyFlag(true);
       }
@@ -172,7 +172,7 @@ namespace dtActors
          throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
          "Actor should be type dtABC::BezierControlPoint", __FILE__, __LINE__);
 
-      if(bcp->GetParent())
+      if(bcp->GetParent() != NULL)
       {
          bcp->GetParent()->SetDirtyFlag(true);
       }
