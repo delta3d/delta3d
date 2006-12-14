@@ -838,18 +838,21 @@ void MapTests::TestMapSaveAndLoad()
         //library is unloadad.
         toFill.clear();
 
-        osg::Vec3 testVec3_1(33.5f, 12.25f, 49.125);
+        osg::Vec3 testVec3_1(33.5f, 12.25f, 49.125f);
         osg::Vec3 testVec3_2(-34.75f, 96.03125f, 8.0f);
-        osg::Vec3 testVec3_3(3.125, 90.25, 87.0625);
+        osg::Vec3 testVec3_3(3.125f, 90.25f, 87.0625f);
 
         ap = getActorProperty(*map, "Rotation", dtDAL::DataType::VEC3, 1);
         static_cast<dtDAL::Vec3ActorProperty*>(ap)->SetValue(testVec3_1);
+        testVec3_1 = static_cast<dtDAL::Vec3ActorProperty*>(ap)->GetValue();
 
         ap = getActorProperty(*map, "Translation", dtDAL::DataType::VEC3, 1);
         static_cast<dtDAL::Vec3ActorProperty*>(ap)->SetValue(testVec3_2);
+        testVec3_2 = static_cast<dtDAL::Vec3ActorProperty*>(ap)->GetValue();
 
         ap = getActorProperty(*map, "Scale", dtDAL::DataType::VEC3, 1);
         static_cast<dtDAL::Vec3ActorProperty*>(ap)->SetValue(testVec3_3);
+        testVec3_3 = static_cast<dtDAL::Vec3ActorProperty*>(ap)->GetValue();
 
         // Note - some properties, especially orientation ones, tend to mangle the 
         // values that we set so that we don't get back what we passed in.  To handle that

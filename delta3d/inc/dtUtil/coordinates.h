@@ -33,10 +33,10 @@
 #include <osg/Matrix>
 #include <osg/Math>
 
-#include "dtUtil/export.h"
-#include "dtUtil/enumeration.h"
-#include "dtUtil/exception.h"
-#include "dtUtil/mathdefines.h"
+#include <dtUtil/export.h>
+#include <dtUtil/enumeration.h>
+#include <dtUtil/exception.h>
+#include <dtUtil/mathdefines.h>
 
 namespace dtUtil
 {
