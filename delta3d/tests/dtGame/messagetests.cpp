@@ -239,13 +239,19 @@ void MessageTests::tearDown()
       }
       catch(const dtUtil::Exception &e)
       {
+         if(!mGameManager->GetCurrentMap().empty())
+         {
+            dtDAL::Project::GetInstance().CloseMap(dtDAL::Project::GetInstance().GetMap(mGameManager->GetCurrentMap()), true);
+            dtDAL::Project::GetInstance().DeleteMap(dtDAL::Project::GetInstance().GetMap(mGameManager->GetCurrentMap()));
+         }
          CPPUNIT_FAIL((std::string("Error: ") + e.ToString()).c_str());
       }
    }
 
    try
    {
-      dtUtil::FileUtils::GetInstance().DirDelete("dtGame/TestGameProject", true);
+      if(dtUtil::FileUtils::GetInstance().DirExists("dtGame/TestGameProject"))
+         dtUtil::FileUtils::GetInstance().DirDelete("dtGame/TestGameProject", true);
    }
    catch(const dtUtil::Exception &e)
    {
