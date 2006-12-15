@@ -16,8 +16,9 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * @author Olen A. Bruce
- * @author David Guthrie
+ * Olen A. Bruce
+ * David Guthrie
+ * William E. Johnson II
  */
 #include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
@@ -149,6 +150,7 @@ class HLATests : public CPPUNIT_NS::TestFixture
       void TestReceiveInteraction();
       void TestRuntimeMappingInfo();
       void TestSubscription();
+      void TestGMLookup();
 
    private:
 
@@ -378,6 +380,10 @@ void HLATests::RunAllTests()
    
       BetweenTestSetUp();
       TestRuntimeMappingInfo();
+      BetweenTestTearDown();
+
+      BetweenTestSetUp();
+      TestGMLookup();
       BetweenTestTearDown();
    }
    catch (RTI::ObjectNotKnown &)
@@ -1234,5 +1240,34 @@ void HLATests::TestReceiveInteraction()
    catch (const dtUtil::Exception& ex)
    {
       CPPUNIT_FAIL(ex.What());
+   }
+}
+
+void HLATests::TestGMLookup()
+{
+   try
+   {
+      CPPUNIT_ASSERT(mGameManager.valid());
+
+      mGameManager->RemoveComponent(*mHLAComponent);
+
+      dtCore::RefPtr<TestHLAComponent> hlaComp = new TestHLAComponent;
+      CPPUNIT_ASSERT(hlaComp.valid());
+
+      mGameManager->AddComponent(*hlaComp, dtGame::GameManager::ComponentPriority::NORMAL);
+
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The default name should equal the constant", 
+         dtHLAGM::HLAComponent::DEFAULT_NAME, hlaComp->GetName());
+
+      dtGame::GMComponent *component = 
+         mGameManager->GetComponentByName(dtHLAGM::HLAComponent::DEFAULT_NAME);
+
+      CPPUNIT_ASSERT(component != NULL);
+      CPPUNIT_ASSERT_MESSAGE("The component found should match the component added to the GM", 
+         component == hlaComp.get());
+   }
+   catch(const dtUtil::Exception &e)
+   {
+      CPPUNIT_FAIL(e.What());
    }
 }
