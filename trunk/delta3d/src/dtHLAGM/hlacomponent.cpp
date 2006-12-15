@@ -89,6 +89,7 @@ namespace dtHLAGM
 {
    const std::string HLAComponent::ABOUT_ACTOR_ID("aboutActorId");
    const std::string HLAComponent::SENDING_ACTOR_ID("sendingActorId");
+   const std::string HLAComponent::DEFAULT_NAME("HLAComponent");
 
    HLAComponent::HLAComponent(const std::string& name)
       : GMComponent(name), mRTIAmbassador(NULL),

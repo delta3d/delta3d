@@ -78,7 +78,11 @@ namespace dtHLAGM
          //It's used to map data to it like a message parameter in the mapping.
          static const std::string SENDING_ACTOR_ID;
 
-         HLAComponent(const std::string& name = "hla");
+         // Constant used for the component name so this component can be
+         // successfully looked up in the Game Manager by name
+         static const std::string DEFAULT_NAME;
+
+         HLAComponent(const std::string& name = DEFAULT_NAME);
 
          /**
           * Creates/joins a federation execution.
