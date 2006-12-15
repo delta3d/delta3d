@@ -16,7 +16,7 @@
 * along with this library; if not, write to the Free Software Foundation, Inc., 
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 *
-* @author Chris Osborn
+* Chris Osborn
 */ 
 #include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
@@ -24,6 +24,7 @@
 #include <dtCore/transformable.h>
 
 #include <osg/MatrixTransform>
+#include <osg/io_utils>
 #include <ode/collision.h>
 
 using namespace dtCore;
