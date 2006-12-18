@@ -88,14 +88,14 @@ namespace dtActors
 
    dtCore::DeltaDrawable* BezierControlPointActorProxy::GetBezierNode()
    {
-      dtABC::BezierControlPoint* bcp = static_cast<dtABC::BezierControlPoint*>( mActor.get() );
+      dtABC::BezierControlPoint* bcp = static_cast<dtABC::BezierControlPoint*>( GetActor() );
 
       return bcp->GetParent();
    }
 
    void BezierControlPointActorProxy::BuildPropertyMap()
    {
-      dtABC::BezierControlPoint *bcp = static_cast<dtABC::BezierControlPoint*> (mActor.get());
+      dtABC::BezierControlPoint *bcp = static_cast<dtABC::BezierControlPoint*> (GetActor());
 
       dtDAL::TransformableActorProxy::BuildPropertyMap();
 
@@ -127,7 +127,7 @@ namespace dtActors
 
    void BezierControlPointActorProxy::OnScale(const osg::Vec3 &oldValue, const osg::Vec3 &newValue)
    {
-      dtABC::BezierControlPoint *bcp = static_cast<dtABC::BezierControlPoint*> (mActor.get());
+      dtABC::BezierControlPoint *bcp = static_cast<dtABC::BezierControlPoint*> (GetActor());
 
       if (bcp->GetParent() != NULL)
       {
@@ -137,7 +137,7 @@ namespace dtActors
 
    void BezierControlPointActorProxy::OnRotation(const osg::Vec3 &oldValue, const osg::Vec3 &newValue)
    {
-      dtABC::BezierControlPoint *bcp = static_cast<dtABC::BezierControlPoint*> (mActor.get());
+      dtABC::BezierControlPoint *bcp = static_cast<dtABC::BezierControlPoint*> (GetActor());
       
       if (bcp->GetParent() != NULL)
       {
@@ -147,7 +147,7 @@ namespace dtActors
 
    void BezierControlPointActorProxy::OnTranslation(const osg::Vec3 &oldValue, const osg::Vec3 &newValue)
    {
-      dtABC::BezierControlPoint *bcp = static_cast<dtABC::BezierControlPoint*> (mActor.get());
+      dtABC::BezierControlPoint *bcp = static_cast<dtABC::BezierControlPoint*> (GetActor());
 
       if(bcp->GetParent() != NULL)
       {

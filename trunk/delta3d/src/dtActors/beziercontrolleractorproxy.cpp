@@ -22,7 +22,7 @@ int BezierControllerActorProxy::mNumControllers = 0;
 void BezierControllerActorProxy::CreateActor()
 {
    mActor = new BezierController();
-   static_cast<BezierController*>(mActor.get())->RenderProxyNode(true);
+   static_cast<BezierController*>(GetActor())->RenderProxyNode(true);
    
    std::ostringstream ss;
    ss << "Controller" << mNumControllers++;
@@ -34,7 +34,7 @@ void BezierControllerActorProxy::BuildPropertyMap()
 {
    MotionActionActorProxy::BuildPropertyMap();
 
-   BezierController* bc = static_cast<BezierController*>(mActor.get());
+   BezierController* bc = static_cast<BezierController*>(GetActor());
 
    AddProperty(new dtDAL::ActorActorProperty(*this, "Start Node", "Start Node",
       MakeFunctor(*this, &BezierControllerActorProxy::SetActorStartNode),
@@ -52,7 +52,7 @@ void BezierControllerActorProxy::BuildPropertyMap()
 
 dtCore::DeltaDrawable* BezierControllerActorProxy::GetActorStartNode()
 {
-   BezierController* bc = static_cast<BezierController*>(mActor.get());
+   BezierController* bc = static_cast<BezierController*>(GetActor());
 
    return bc->GetStartNode();
 }
@@ -68,7 +68,7 @@ void BezierControllerActorProxy::SetActorStartNode(ActorProxy* node)
       bNode = static_cast<BezierNode*>(node->GetActor());
    }
 
-   BezierController* bc = static_cast<BezierController*>(mActor.get());
+   BezierController* bc = static_cast<BezierController*>(GetActor());
 
    bc->SetStartNode(bNode);
 

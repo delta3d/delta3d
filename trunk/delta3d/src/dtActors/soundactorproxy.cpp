@@ -31,7 +31,7 @@ namespace dtActors
 {
     SoundActorProxy::~SoundActorProxy()
     {
-        dtAudio::Sound *snd = static_cast<dtAudio::Sound*>(mActor.get());
+        dtAudio::Sound *snd = static_cast<dtAudio::Sound*>(GetActor());
 
         if(snd->GetFilename())
             snd->UnloadFile();
@@ -49,7 +49,7 @@ namespace dtActors
         const std::string &GROUPNAME = "Sound";
         TransformableActorProxy::BuildPropertyMap();
 
-        Sound *sound = static_cast<Sound*>(mActor.get());
+        Sound *sound = static_cast<Sound*>(GetActor());
         
         // This property toggles whether or not a sound loops. A
         // value of true will loop the sound, while a value of false
@@ -145,7 +145,7 @@ namespace dtActors
     ///////////////////////////////////////////////////////////////////////////////
     void SoundActorProxy::LoadFile(const std::string &fileName)
     {
-        Sound* snd = static_cast<Sound*>(mActor.get());
+        Sound* snd = static_cast<Sound*>(GetActor());
 
         if(!fileName.empty())
             snd->LoadFile(fileName.c_str());
@@ -154,7 +154,7 @@ namespace dtActors
     ///////////////////////////////////////////////////////////////////////////////
     void SoundActorProxy::SetDirection(const osg::Vec3 &dir)
     {
-        Sound* snd = static_cast<Sound*>(mActor.get());
+        Sound* snd = static_cast<Sound*>(GetActor());
 
         snd->SetDirection(dir);
     }
@@ -162,7 +162,7 @@ namespace dtActors
     ///////////////////////////////////////////////////////////////////////////////
     osg::Vec3 SoundActorProxy::GetDirection()
     {
-        Sound* snd = static_cast<Sound*>(mActor.get());
+        Sound* snd = static_cast<Sound*>(GetActor());
 
         osg::Vec3 pos;
         snd->GetDirection(pos);
@@ -172,7 +172,7 @@ namespace dtActors
     ///////////////////////////////////////////////////////////////////////////////
     void SoundActorProxy::SetVelocity(const osg::Vec3 &vel)
     {
-        Sound* snd = static_cast<Sound*>(mActor.get());
+        Sound* snd = static_cast<Sound*>(GetActor());
 
         snd->SetVelocity(vel);
     }
@@ -180,7 +180,7 @@ namespace dtActors
     ///////////////////////////////////////////////////////////////////////////////
     osg::Vec3 SoundActorProxy::GetVelocity()
     {
-        Sound* snd = static_cast<Sound*>(mActor.get());
+        Sound* snd = static_cast<Sound*>(GetActor());
 
         osg::Vec3 pos;
         snd->GetVelocity(pos);
@@ -190,7 +190,7 @@ namespace dtActors
     ///////////////////////////////////////////////////////////////////////////////
     void SoundActorProxy::Play()
     {
-        Sound* snd = static_cast<Sound*>(mActor.get());
+        Sound* snd = static_cast<Sound*>(GetActor());
 
         snd->Play();
     }

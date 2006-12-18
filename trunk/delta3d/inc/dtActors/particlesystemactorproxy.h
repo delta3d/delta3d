@@ -52,7 +52,7 @@ namespace dtActors
          */
         void LoadFile(const std::string &fileName)
         {
-            dtCore::ParticleSystem *ps = dynamic_cast<dtCore::ParticleSystem*>(mActor.get());
+            dtCore::ParticleSystem *ps = dynamic_cast<dtCore::ParticleSystem*>(GetActor());
             if(!ps)
                 throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
                 "Actor should be type dtCore::ParticleSystem", __FILE__, __LINE__);

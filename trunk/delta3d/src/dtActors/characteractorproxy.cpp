@@ -42,7 +42,7 @@ namespace dtActors
         const std::string &GROUPNAME = "Character";
         TransformableActorProxy::BuildPropertyMap();
 
-        Character *c = static_cast<Character*>(mActor.get());
+        Character *c = static_cast<Character*>(GetActor());
 
         // This property is used for the manipulation of the velocity
         // of a Character. Uses a float type to represent the velocity
@@ -63,7 +63,7 @@ namespace dtActors
     ///////////////////////////////////////////////////////////////////////////////
     void CharacterActorProxy::LoadFile(const std::string &fileName)
     {
-        dtChar::Character *c = static_cast<dtChar::Character*>(mActor.get());
+        dtChar::Character *c = static_cast<dtChar::Character*>(GetActor());
 
         try
         {

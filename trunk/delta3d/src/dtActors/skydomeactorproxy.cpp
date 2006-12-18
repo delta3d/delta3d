@@ -36,7 +36,7 @@ namespace dtActors
     void SkyDomeActorProxy::BuildPropertyMap()
     {
         const std::string &GROUPNAME = "Sky";
-        SkyDome *sd = static_cast<SkyDome*> (mActor.get());
+        SkyDome *sd = static_cast<SkyDome*> (GetActor());
 
         AddProperty(new Vec3ActorProperty("Base Color", "Base Color",
             MakeFunctor(*this, &SkyDomeActorProxy::SetBaseColor),
@@ -47,7 +47,7 @@ namespace dtActors
     ///////////////////////////////////////////////////////////////////////////////
     osg::Vec3 SkyDomeActorProxy::GetBaseColor()
     {
-        SkyDome *sd = static_cast<SkyDome*> (mActor.get());
+        SkyDome *sd = static_cast<SkyDome*> (GetActor());
 
         osg::Vec3 color;
         sd->GetBaseColor(color);
@@ -57,7 +57,7 @@ namespace dtActors
     ///////////////////////////////////////////////////////////////////////////////
     void SkyDomeActorProxy::SetBaseColor(const osg::Vec3 &color)
     {
-        SkyDome *sd = static_cast<SkyDome*> (mActor.get());
+        SkyDome *sd = static_cast<SkyDome*> (GetActor());
         
         sd->SetBaseColor(color);
     }

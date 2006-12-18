@@ -43,7 +43,7 @@ namespace dtActors
 
    void BezierNodeActorProxy::BuildPropertyMap()
    {
-      dtABC::BezierNode *bn = static_cast<dtABC::BezierNode*> (mActor.get());
+      dtABC::BezierNode *bn = static_cast<dtABC::BezierNode*> (GetActor());
 
       dtDAL::TransformableActorProxy::BuildPropertyMap();
 
@@ -316,21 +316,21 @@ namespace dtActors
 
    void BezierNodeActorProxy::OnScale(const osg::Vec3 &oldValue, const osg::Vec3 &newValue)
    {
-      dtABC::BezierNode *bn = static_cast<dtABC::BezierNode*> (mActor.get());
+      dtABC::BezierNode *bn = static_cast<dtABC::BezierNode*> (GetActor());
 
       bn->SetDirtyFlag(true);
    }
 
    void BezierNodeActorProxy::OnRotation(const osg::Vec3 &oldValue, const osg::Vec3 &newValue)
    {
-      dtABC::BezierNode *bn = static_cast<dtABC::BezierNode*> (mActor.get());
+      dtABC::BezierNode *bn = static_cast<dtABC::BezierNode*> (GetActor());
       
       bn->SetDirtyFlag(true);
    }
 
    void BezierNodeActorProxy::OnTranslation(const osg::Vec3 &oldValue, const osg::Vec3 &newValue)
    {
-      dtABC::BezierNode *bn = static_cast<dtABC::BezierNode*> (mActor.get());
+      dtABC::BezierNode *bn = static_cast<dtABC::BezierNode*> (GetActor());
       
       bn->SetDirtyFlag(true);
    }

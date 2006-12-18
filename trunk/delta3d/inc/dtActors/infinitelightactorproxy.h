@@ -61,7 +61,7 @@ namespace dtActors
          */
         void SetDirection(const osg::Vec3 &dir) 
         {
-            dtCore::InfiniteLight *l = dynamic_cast<dtCore::InfiniteLight *>(mActor.get());
+            dtCore::InfiniteLight *l = dynamic_cast<dtCore::InfiniteLight *>(GetActor());
             if (l == NULL) 
             {
                 throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException,
@@ -77,7 +77,7 @@ namespace dtActors
          */
         osg::Vec3 GetDirection() const 
         {
-            const dtCore::InfiniteLight *l = dynamic_cast<const dtCore::InfiniteLight *>(mActor.get());
+            const dtCore::InfiniteLight *l = dynamic_cast<const dtCore::InfiniteLight *>(GetActor());
             if (l == NULL) 
             {
                 throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException,

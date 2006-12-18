@@ -36,7 +36,7 @@ namespace dtActors
     {
         const std::string GROUPNAME = "Light";
 
-        dtCore::Light *light = static_cast<dtCore::Light *>(mActor.get());
+        dtCore::Light *light = static_cast<dtCore::Light *>(GetActor());
        
         //Now, add all of the properties for the actor.
         AddProperty(new dtDAL::BooleanActorProperty("Enable","Enabled",

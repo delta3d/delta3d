@@ -39,7 +39,7 @@ namespace dtActors
         const std::string &GROUPNAME = "Particle System";
         TransformableActorProxy::BuildPropertyMap();
 
-        ParticleSystem *ps = static_cast<ParticleSystem*>(mActor.get());
+        ParticleSystem *ps = static_cast<ParticleSystem*>(GetActor());
 
         // This property toggles the enabling of a Particle System.
         // A value of true enables the particle system, which in turn

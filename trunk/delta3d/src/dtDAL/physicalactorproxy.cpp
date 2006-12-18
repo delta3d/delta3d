@@ -33,7 +33,7 @@ namespace dtDAL
         
       TransformableActorProxy::BuildPropertyMap();
 
-      dtCore::Physical *phys = static_cast<dtCore::Physical*>(mActor.get());
+      dtCore::Physical *phys = static_cast<dtCore::Physical*>(GetActor());
 
       //PHYSICS PROPS...
       AddProperty(new BooleanActorProperty("Enable Dynamics", "Enable Dynamics",
@@ -55,7 +55,7 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////
    void PhysicalActorProxy::SetMass(float mass)
    {
-      dtCore::Physical *phys = static_cast<dtCore::Physical*>(mActor.get());
+      dtCore::Physical *phys = static_cast<dtCore::Physical*>(GetActor());
 
       phys->SetMass(mass);
    }
@@ -63,7 +63,7 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////
    float PhysicalActorProxy::GetMass() const
    {
-      const dtCore::Physical *phys = static_cast<const dtCore::Physical*>(mActor.get());
+      const dtCore::Physical *phys = static_cast<const dtCore::Physical*>(GetActor());
 
       return phys->GetMass();
    }
@@ -71,7 +71,7 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////
    void PhysicalActorProxy::SetCenterOfGravity(const osg::Vec3 &g)
    {
-      dtCore::Physical *phys = static_cast<dtCore::Physical*>(mActor.get());
+      dtCore::Physical *phys = static_cast<dtCore::Physical*>(GetActor());
 
       phys->SetCenterOfGravity(g);
    }
@@ -79,7 +79,7 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////
    osg::Vec3 PhysicalActorProxy::GetCenterOfGravity() const
    {
-      const dtCore::Physical *phys = static_cast<const dtCore::Physical*>(mActor.get());
+      const dtCore::Physical *phys = static_cast<const dtCore::Physical*>(GetActor());
  
       osg::Vec3 r;
       phys->GetCenterOfGravity(r);

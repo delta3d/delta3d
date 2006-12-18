@@ -75,7 +75,7 @@ namespace dtActors
          */
         void SetAttenuation(const osg::Vec3 &atten)
         {
-            dtCore::PositionalLight *pl = dynamic_cast<dtCore::PositionalLight*>(mActor.get());
+            dtCore::PositionalLight *pl = dynamic_cast<dtCore::PositionalLight*>(GetActor());
             if(!pl)
                 throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
                 "Actor should be type dtCore::PositionalLight", __FILE__, __LINE__);
@@ -89,7 +89,7 @@ namespace dtActors
          */
         osg::Vec3 GetAttenuation()
         {
-            dtCore::PositionalLight *pl = dynamic_cast<dtCore::PositionalLight*>(mActor.get());
+            dtCore::PositionalLight *pl = dynamic_cast<dtCore::PositionalLight*>(GetActor());
             if(!pl)
                 throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
                 "Actor should be type dtCore::PositionalLight", __FILE__, __LINE__);
