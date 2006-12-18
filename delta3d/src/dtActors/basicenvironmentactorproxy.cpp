@@ -41,7 +41,7 @@ namespace dtActors
 
    void BasicEnvironmentActorProxy::BuildPropertyMap()
    {
-      BasicEnvironmentActor *env = static_cast<BasicEnvironmentActor*>(mActor.get());
+      BasicEnvironmentActor *env = static_cast<BasicEnvironmentActor*>(GetActor());
 
       dtGame::GameActorProxy::BuildPropertyMap();
 
@@ -98,7 +98,7 @@ namespace dtActors
 
    void BasicEnvironmentActorProxy::BuildInvokables()
    {
-      BasicEnvironmentActor *env = static_cast<BasicEnvironmentActor*>(mActor.get());
+      BasicEnvironmentActor *env = static_cast<BasicEnvironmentActor*>(GetActor());
  
       dtGame::GameActorProxy::BuildInvokables();
    }

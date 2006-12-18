@@ -44,7 +44,7 @@ namespace dtActors
    {
       dtGame::GameActorProxy::BuildPropertyMap();
       
-      CoordinateConfigActor *cca = static_cast<CoordinateConfigActor*>(mActor.get());
+      CoordinateConfigActor *cca = static_cast<CoordinateConfigActor*>(GetActor());
 
       dtCore::RefPtr<dtDAL::Vec3dActorProperty> currentOriginProp = new dtDAL::Vec3dActorProperty("Current Origin", "Current Origin Translation", 
          dtDAL::MakeFunctor(*cca, &CoordinateConfigActor::SetOriginLocation), 

@@ -85,7 +85,7 @@ namespace dtActors
 
       TransformableActorProxy::BuildPropertyMap();
 
-      ProximityTrigger *trigger = static_cast<ProximityTrigger*>(mActor.get());
+      ProximityTrigger *trigger = static_cast<ProximityTrigger*>(GetActor());
 
       AddProperty(new ActorActorProperty(*this, "Action","Action",
          MakeFunctor(*this ,&ProximityTriggerActorProxy::SetAction),
@@ -115,7 +115,7 @@ namespace dtActors
    {
       SetLinkedActor("Action", action);
 
-      ProximityTrigger* proximityTrigger = static_cast<ProximityTrigger*>( mActor.get() );
+      ProximityTrigger* proximityTrigger = static_cast<ProximityTrigger*>( GetActor() );
       
       Action* a = NULL;
       if(action)
@@ -128,7 +128,7 @@ namespace dtActors
 
    DeltaDrawable* ProximityTriggerActorProxy::GetAction()
    {
-      ProximityTrigger* proximityTrigger = static_cast<ProximityTrigger*>( mActor.get() );
+      ProximityTrigger* proximityTrigger = static_cast<ProximityTrigger*>( GetActor() );
 
       return proximityTrigger->GetTrigger()->GetAction();
    }

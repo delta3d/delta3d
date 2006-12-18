@@ -27,7 +27,7 @@ namespace dtActors
    {
       ActionActorProxy::BuildPropertyMap();
 
-      MotionAction* mo = static_cast<MotionAction*>(mActor.get());
+      MotionAction* mo = static_cast<MotionAction*>(GetActor());
 
       AddProperty(new ActorActorProperty(*this, "Target Object", "Target Object",
          MakeFunctor(*this, &MotionActionActorProxy::SetActorTargetObject),
@@ -68,7 +68,7 @@ namespace dtActors
 
    DeltaDrawable* MotionActionActorProxy::GetActorTargetObject()
    {
-      MotionAction* mo = static_cast< MotionAction* >( mActor.get() );
+      MotionAction* mo = static_cast< MotionAction* >( GetActor() );
       if( mo == 0 )
       {
          throw dtUtil::Exception( ExceptionEnum::InvalidActorException,
@@ -80,7 +80,7 @@ namespace dtActors
 
    DeltaDrawable* MotionActionActorProxy::GetActorParentObject()
    {
-      MotionAction * mo = static_cast< MotionAction* >( mActor.get() );
+      MotionAction * mo = static_cast< MotionAction* >( GetActor() );
       if( mo == 0 )
       {
          throw dtUtil::Exception( ExceptionEnum::InvalidActorException,
@@ -94,7 +94,7 @@ namespace dtActors
    {
       SetLinkedActor("Target Object", node);
 
-      dtABC::MotionAction* ma = static_cast<dtABC::MotionAction*>(mActor.get());
+      dtABC::MotionAction* ma = static_cast<dtABC::MotionAction*>(GetActor());
 
       dtCore::Transformable* trans  = NULL;
 
@@ -110,7 +110,7 @@ namespace dtActors
    {
       SetLinkedActor("Parent Object", proxy);
 
-      dtABC::MotionAction* ma = static_cast<dtABC::MotionAction*>(mActor.get());
+      dtABC::MotionAction* ma = static_cast<dtABC::MotionAction*>(GetActor());
 
       dtCore::Transformable* trans  = NULL;
 
@@ -124,7 +124,7 @@ namespace dtActors
 
    MotionActionActorProxy::ParentRelationEnum& MotionActionActorProxy::GetActorParentRelation() 
    {
-      dtABC::MotionAction* ma = static_cast<dtABC::MotionAction*>(mActor.get());
+      dtABC::MotionAction* ma = static_cast<dtABC::MotionAction*>(GetActor());
 
       MotionAction::PARENT_RELATION pr = ma->GetParentRelation();
 
@@ -142,7 +142,7 @@ namespace dtActors
 
    void MotionActionActorProxy::SetActorParentRelation(ParentRelationEnum& e)
    {
-      dtABC::MotionAction* ma = static_cast<dtABC::MotionAction*>(mActor.get());
+      dtABC::MotionAction* ma = static_cast<dtABC::MotionAction*>(GetActor());
       if(e == ParentRelationEnum::FOLLOW_PARENT)
          ma->SetParentRelation(dtABC::MotionAction::FOLLOW_PARENT);
 
@@ -161,7 +161,7 @@ namespace dtActors
    ///////////////////////////////////////////////////////////////////////////////
    void MotionActionActorProxy::SetRotation(const osg::Vec3 &rotation)
    {
-      dtABC::MotionAction *t = static_cast<dtABC::MotionAction*>(mActor.get());
+      dtABC::MotionAction *t = static_cast<dtABC::MotionAction*>(GetActor());
 
       osg::Vec3 hpr = rotation;
 
@@ -191,7 +191,7 @@ namespace dtActors
    ///////////////////////////////////////////////////////////////////////////////
    osg::Vec3 MotionActionActorProxy::GetRotation()
    {
-      dtABC::MotionAction *t = static_cast<dtABC::MotionAction*>(mActor.get());
+      dtABC::MotionAction *t = static_cast<dtABC::MotionAction*>(GetActor());
 
       osg::Vec3 hpr;
       t->GetLocalTransform().GetRotation(hpr);
@@ -202,7 +202,7 @@ namespace dtActors
    ///////////////////////////////////////////////////////////////////////////////
    void MotionActionActorProxy::SetTranslation(const osg::Vec3 &translation)
    {
-      dtABC::MotionAction *t = static_cast<dtABC::MotionAction*>(mActor.get());
+      dtABC::MotionAction *t = static_cast<dtABC::MotionAction*>(GetActor());
 
       dtCore::Transform trans = t->GetLocalTransform();
      
@@ -215,7 +215,7 @@ namespace dtActors
    ///////////////////////////////////////////////////////////////////////////////
    osg::Vec3 MotionActionActorProxy::GetTranslation()
    {
-      dtABC::MotionAction *t = static_cast<dtABC::MotionAction*>(mActor.get());
+      dtABC::MotionAction *t = static_cast<dtABC::MotionAction*>(GetActor());
       if (t == NULL)
          throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type "
          " dtABC::MotionAction", __FILE__, __LINE__);
@@ -228,7 +228,7 @@ namespace dtActors
    ///////////////////////////////////////////////////////////////////////////////
    void MotionActionActorProxy::SetScale(const osg::Vec3 &scale)
    {
-      dtABC::MotionAction *t = static_cast<dtABC::MotionAction*>(mActor.get());
+      dtABC::MotionAction *t = static_cast<dtABC::MotionAction*>(GetActor());
 
       dtCore::Transform trans = t->GetLocalTransform();
       
@@ -242,7 +242,7 @@ namespace dtActors
    ///////////////////////////////////////////////////////////////////////////////
    osg::Vec3 MotionActionActorProxy::GetScale()
    {
-      dtABC::MotionAction *t = static_cast<dtABC::MotionAction*>(mActor.get());
+      dtABC::MotionAction *t = static_cast<dtABC::MotionAction*>(GetActor());
 
       osg::Vec3 scale;
       t->GetLocalTransform().GetScale(scale);

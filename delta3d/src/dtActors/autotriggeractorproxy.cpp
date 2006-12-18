@@ -42,7 +42,7 @@ namespace dtActors
    ///////////////////////////////////////////////////////////////////////////////
    void AutoTriggerActorProxy::BuildPropertyMap()
    {
-      AutoTrigger* trigger = static_cast<AutoTrigger*>(mActor.get());
+      AutoTrigger* trigger = static_cast<AutoTrigger*>(GetActor());
      
       AddProperty(new ActorActorProperty(*this, "Action","Action",
          MakeFunctor(*this ,&AutoTriggerActorProxy::SetAction),
@@ -58,7 +58,7 @@ namespace dtActors
 
    DeltaDrawable* AutoTriggerActorProxy::GetAction()
    {
-      AutoTrigger* autoTrigger = static_cast<AutoTrigger*>( mActor.get() );
+      AutoTrigger* autoTrigger = static_cast<AutoTrigger*>( GetActor() );
      
       return autoTrigger->GetTrigger()->GetAction();  
    }
@@ -67,7 +67,7 @@ namespace dtActors
    {
       SetLinkedActor("Action", action);
 
-      AutoTrigger* autoTrigger = static_cast<AutoTrigger*>( mActor.get() );
+      AutoTrigger* autoTrigger = static_cast<AutoTrigger*>( GetActor() );
 
       Action* a = NULL;
       if(action)

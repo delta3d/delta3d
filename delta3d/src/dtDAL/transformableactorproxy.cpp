@@ -34,11 +34,8 @@ namespace dtDAL
       const std::string GROUPNAME = "Transformable";
       const std::string COLLISION_GROUP = "Collision";
 
-      dtCore::Transformable *trans = dynamic_cast<dtCore::Transformable*>(mActor.get());
-      if(trans == NULL)
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type "
-                "dtCore::Transformable", __FILE__, __LINE__);
-
+      dtCore::Transformable *trans = static_cast<dtCore::Transformable*>(GetActor());
+      
       AddProperty(new Vec3ActorProperty("Rotation", "Rotation",
                                         MakeFunctor(*this, &TransformableActorProxy::SetRotation),
                                         MakeFunctorRet(*this, &TransformableActorProxy::GetRotation),
@@ -109,7 +106,7 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////
    void TransformableActorProxy::SetRotation(const osg::Vec3 &rotation)
    {
-      dtCore::Transformable *t = static_cast<dtCore::Transformable*>(mActor.get());
+      dtCore::Transformable *t = static_cast<dtCore::Transformable*>(GetActor());
       
       osg::Vec3 hpr = rotation;
 
@@ -159,7 +156,7 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////
    osg::Vec3 TransformableActorProxy::GetRotation()
    {
-      dtCore::Transformable *t = static_cast<dtCore::Transformable*>(mActor.get());
+      dtCore::Transformable *t = static_cast<dtCore::Transformable*>(GetActor());
 
       dtCore::Transform trans;
       t->GetTransform(trans);
@@ -173,7 +170,7 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////
    void TransformableActorProxy::SetTranslation(const osg::Vec3 &translation)
    {
-      dtCore::Transformable *t = static_cast<dtCore::Transformable*>(mActor.get());
+      dtCore::Transformable *t = static_cast<dtCore::Transformable*>(GetActor());
       
       dtCore::Transform trans;
       t->GetTransform(trans);
@@ -197,7 +194,7 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////
    osg::Vec3 TransformableActorProxy::GetTranslation()
    {
-      dtCore::Transformable *t = static_cast<dtCore::Transformable*>(mActor.get());
+      dtCore::Transformable *t = static_cast<dtCore::Transformable*>(GetActor());
       
       dtCore::Transform trans;
       t->GetTransform(trans);
@@ -209,7 +206,7 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////
    void TransformableActorProxy::SetScale(const osg::Vec3 &scale)
    {
-      dtCore::Transformable *t = static_cast<dtCore::Transformable*>(mActor.get());
+      dtCore::Transformable *t = static_cast<dtCore::Transformable*>(GetActor());
       
       dtCore::Transform trans;
       t->GetTransform(trans);
@@ -233,7 +230,7 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////
    osg::Vec3 TransformableActorProxy::GetScale()
    {
-      dtCore::Transformable *t = static_cast<dtCore::Transformable*>(mActor.get());
+      dtCore::Transformable *t = static_cast<dtCore::Transformable*>(GetActor());
       
       dtCore::Transform trans;
       t->GetTransform(trans);
@@ -245,7 +242,7 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////
    void TransformableActorProxy::SetRenderCollisionGeometry(bool enable)
    {
-      dtCore::Transformable *phys = static_cast<dtCore::Transformable*>(mActor.get());
+      dtCore::Transformable *phys = static_cast<dtCore::Transformable*>(GetActor());
 
       phys->RenderCollisionGeometry(enable);
    }
@@ -253,7 +250,7 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////
    bool TransformableActorProxy::GetRenderCollisionGeometry() const
    {
-      const dtCore::Transformable *phys = static_cast<const dtCore::Transformable*>(mActor.get());
+      const dtCore::Transformable *phys = static_cast<const dtCore::Transformable*>(GetActor());
 
       return phys->GetRenderCollisionGeometry();
    }
@@ -261,7 +258,7 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////
    void TransformableActorProxy::SetCollisionType(dtCore::Transformable::CollisionGeomType &type)
    {
-      dtCore::Transformable *phys = static_cast<dtCore::Transformable*>(mActor.get());
+      dtCore::Transformable *phys = static_cast<dtCore::Transformable*>(GetActor());
 
       mCollisionType = &type;
       if (mCollisionType == &dtCore::Transformable::CollisionGeomType::NONE)
@@ -287,7 +284,7 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////
    void TransformableActorProxy::SetCollisionRadius(float radius)
    {
-      dtCore::Transformable *phys = static_cast<dtCore::Transformable*>(mActor.get());
+      dtCore::Transformable *phys = static_cast<dtCore::Transformable*>(GetActor());
 
       mCollisionRadius = radius;
       if (mCollisionType == &dtCore::Transformable::CollisionGeomType::CYLINDER)
@@ -305,7 +302,7 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////
    void TransformableActorProxy::SetCollisionBoxDims(const osg::Vec3 &dims)
    {
-      dtCore::Transformable *phys = static_cast<dtCore::Transformable*>(mActor.get());
+      dtCore::Transformable *phys = static_cast<dtCore::Transformable*>(GetActor());
 
       mCollisionBoxDims = dims;
       SetBoxCollision();
@@ -320,7 +317,7 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////
    void TransformableActorProxy::SetCollisionLength(float length)
    {
-      dtCore::Transformable *phys = static_cast<dtCore::Transformable*>(mActor.get());
+      dtCore::Transformable *phys = static_cast<dtCore::Transformable*>(GetActor());
 
       mCollisionLength = length;
       if (mCollisionType == &dtCore::Transformable::CollisionGeomType::CYLINDER)
@@ -341,7 +338,7 @@ namespace dtDAL
       if (mCollisionType != &dtCore::Transformable::CollisionGeomType::CUBE)
          return;
 
-      dtCore::Transformable *phys = static_cast<dtCore::Transformable*>(mActor.get());
+      dtCore::Transformable *phys = static_cast<dtCore::Transformable*>(GetActor());
 
       phys->ClearCollisionGeometry();
       if (mCollisionBoxDims.x() == 0.0f || mCollisionBoxDims.y() == 0.0f ||
@@ -362,7 +359,7 @@ namespace dtDAL
       if (mCollisionType != &dtCore::Transformable::CollisionGeomType::SPHERE)
          return;
 
-      dtCore::Transformable *phys = static_cast<dtCore::Transformable*>(mActor.get());
+      dtCore::Transformable *phys = static_cast<dtCore::Transformable*>(GetActor());
 
       phys->ClearCollisionGeometry();
       if (mCollisionRadius == 0.0f)
@@ -377,7 +374,7 @@ namespace dtDAL
       if (mCollisionType != &dtCore::Transformable::CollisionGeomType::CYLINDER)
          return;
 
-      dtCore::Transformable *phys = static_cast<dtCore::Transformable*>(mActor.get());
+      dtCore::Transformable *phys = static_cast<dtCore::Transformable*>(GetActor());
 
       phys->ClearCollisionGeometry();
       if (mCollisionRadius == 0.0f || mCollisionLength == 0.0f)
@@ -392,7 +389,7 @@ namespace dtDAL
       if (mCollisionType != &dtCore::Transformable::CollisionGeomType::RAY)
          return;
 
-      dtCore::Transformable *phys = static_cast<dtCore::Transformable*>(mActor.get());
+      dtCore::Transformable *phys = static_cast<dtCore::Transformable*>(GetActor());
 
       phys->ClearCollisionGeometry();
       phys->SetCollisionRay(mCollisionLength);
@@ -404,7 +401,7 @@ namespace dtDAL
       if (mCollisionType != &dtCore::Transformable::CollisionGeomType::MESH)
          return;
 
-      dtCore::Transformable *phys = static_cast<dtCore::Transformable*>(mActor.get());
+      dtCore::Transformable *phys = static_cast<dtCore::Transformable*>(GetActor());
 
       phys->ClearCollisionGeometry();
       phys->SetCollisionMesh(NULL);

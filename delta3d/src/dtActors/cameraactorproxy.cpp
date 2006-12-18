@@ -40,7 +40,7 @@ void CameraActorProxy::CreateActor()
    ss << "Camera" << actorCount++;
    SetName(ss.str());
 
-   Camera *cam = static_cast<Camera*>(mActor.get());
+   Camera *cam = static_cast<Camera*>(GetActor());
 
    cam->SetEnabled(false);
 }
@@ -51,7 +51,7 @@ void CameraActorProxy::BuildPropertyMap()
    const std::string &GROUPNAME = "Camera";
    TransformableActorProxy::BuildPropertyMap();
 
-   Camera *cam = static_cast<Camera*>(mActor.get());
+   Camera *cam = static_cast<Camera*>(GetActor());
 
    AddProperty( new BooleanActorProperty("Enable", "Enabled",
       MakeFunctor(*cam, &dtCore::Camera::SetEnabled),
@@ -82,7 +82,7 @@ dtDAL::ActorProxyIcon* CameraActorProxy::GetBillBoardIcon()
 ///////////////////////////////////////////////////////////////////////////////
 osg::Vec4f CameraActorProxy::GetClearColor()
 {
-   Camera *cam = static_cast<Camera*>(mActor.get());
+   Camera *cam = static_cast<Camera*>(GetActor());
 
    osg::Vec4 color;
    cam->GetClearColor(color);
@@ -92,7 +92,7 @@ osg::Vec4f CameraActorProxy::GetClearColor()
 ///////////////////////////////////////////////////////////////////////////////
 void CameraActorProxy::SetClearColor(const osg::Vec4 &color)
 {
-   Camera *cam = static_cast<Camera*>(mActor.get());
+   Camera *cam = static_cast<Camera*>(GetActor());
 
    cam->SetClearColor(color);
 }

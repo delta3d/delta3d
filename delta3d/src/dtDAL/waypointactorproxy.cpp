@@ -85,7 +85,7 @@ namespace dtDAL
 
    void WaypointActorProxy::OnTranslation(const osg::Vec3 &oldValue, const osg::Vec3 &newValue)
    {
-      WaypointActor *pWaypointActor = static_cast<WaypointActor*> (mActor.get());
+      WaypointActor *pWaypointActor = static_cast<WaypointActor*> (GetActor());
       WaypointManager::GetInstance()->MoveWaypoint(pWaypointActor->GetIndex(), newValue);
    }
 
@@ -106,7 +106,7 @@ namespace dtDAL
 
    void WaypointActorProxy::RemoveFromWaypointManager() const
    {
-      WaypointManager::GetInstance()->RemoveWaypoint(static_cast<const WaypointActor*> (mActor.get()));
+      WaypointManager::GetInstance()->RemoveWaypoint(static_cast<const WaypointActor*> (GetActor()));
    }
 
 

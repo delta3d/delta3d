@@ -47,7 +47,7 @@ namespace dtActors
    {
       const std::string GROUPNAME = "Trigger";
 
-      Trigger *trigger = static_cast<Trigger*>(mActor.get());
+      Trigger *trigger = static_cast<Trigger*>(GetActor());
 
       AddProperty(new BooleanActorProperty("Enable","Enabled",
          MakeFunctor(*trigger,&Trigger::SetEnabled),
@@ -69,7 +69,7 @@ namespace dtActors
    {
       SetLinkedActor("Action", action);
 
-      Trigger* trigger = static_cast<Trigger*>( mActor.get() );
+      Trigger* trigger = static_cast<Trigger*>( GetActor() );
      
       Action* a(0);
       
@@ -83,7 +83,7 @@ namespace dtActors
 
    dtCore::DeltaDrawable* TriggerActorProxy::GetAction()
    {
-      Trigger* trigger = static_cast<Trigger*>( mActor.get() );
+      Trigger* trigger = static_cast<Trigger*>( GetActor() );
 
       return trigger->GetAction();
    }

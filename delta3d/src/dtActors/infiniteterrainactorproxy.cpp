@@ -38,7 +38,7 @@ namespace dtActors
         const std::string &GROUPNAME = "InfiniteTerrain";
         TransformableActorProxy::BuildPropertyMap();
 
-        InfiniteTerrain *ter = static_cast<InfiniteTerrain*>(mActor.get());
+        InfiniteTerrain *ter = static_cast<InfiniteTerrain*>(GetActor());
 
         // This property manipulates the segment size of an InfiniteTerrain.
         // Uses a float type to represent the segment size.

@@ -14,7 +14,7 @@ namespace dtActors
    {
       const std::string GROUPNAME = "Action";
 
-      dtABC::Action *a = static_cast<dtABC::Action*>(mActor.get());
+      dtABC::Action *a = static_cast<dtABC::Action*>(GetActor());
 
       AddProperty(new dtDAL::FloatActorProperty("Time Step","Time Step",
          dtDAL::MakeFunctor(*a,&dtABC::Action::SetTimeStep),
