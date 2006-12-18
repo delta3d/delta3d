@@ -387,7 +387,7 @@ namespace dtActors
          dtCore::RefPtr<dtABC::Weather> mWeather;
          dtCore::RefPtr<dtCore::CloudPlane> mCloudPlane;
          dtABC::Weather::WeatherTheme mWeatherTheme;
-         osg::Vec3 mWind;
+         osg::Vec3 mWind; 
    };
 
    class DT_PLUGIN_EXPORT BasicEnvironmentActorProxy : public dtGame::EnvironmentActorProxy
