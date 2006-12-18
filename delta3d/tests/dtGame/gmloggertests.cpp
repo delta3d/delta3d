@@ -2481,6 +2481,31 @@ void GMLoggerTests::TestServerLogger()
       CPPUNIT_ASSERT_MESSAGE("Valid Request Change State to Idle should have sent status with IDLE.",
          testSignal->mStatus.GetStateEnum() == dtGame::LogStateEnumeration::LOGGER_STATE_IDLE);
 
+      // Test recording is set to IDLE after a map change event
+
+      msgCount = 0;
+      testSignal->Reset();
+      logController->RequestChangeStateToRecord();
+      SLEEP(10); // tick the GM so it can send the messages
+      dtCore::System::GetInstance().Step();
+      CPPUNIT_ASSERT_MESSAGE("Request Change State to Record should have sent status with RECORD.",
+         testSignal->mStatus.GetStateEnum() == dtGame::LogStateEnumeration::LOGGER_STATE_RECORD);
+      msgCount = testSignal->mStatus.GetNumMessages();
+      unsigned long lastMsgCount = msgCount;
+      // Send the map change message
+      dtCore::RefPtr<dtGame::Message> message = mGameManager
+         ->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_MAP_CHANGE_BEGIN);
+      mGameManager->SendMessage(*message);
+      SLEEP(10); // tick the GM so it can send the messages
+      dtCore::System::GetInstance().Step();
+      // force at least one extra message to check that # count goes up
+      logController->RequestServerGetStatus();
+      SLEEP(10); // tick the GM so it can send the messages
+      dtCore::System::GetInstance().Step();
+      CPPUNIT_ASSERT_MESSAGE("State should have been changed to IDLE after the map change event", 
+         logController->GetLastKnownStatus().GetStateEnum() == dtGame::LogStateEnumeration::LOGGER_STATE_IDLE);
+      msgCount = logController->GetLastKnownStatus().GetNumMessages();
+      CPPUNIT_ASSERT_MESSAGE("We should NOT have recorded the msg", msgCount == lastMsgCount);
 
       // check the ability to change to IDLE that also has an exception
 
@@ -2516,7 +2541,7 @@ void GMLoggerTests::TestServerLogger()
       CPPUNIT_ASSERT_MESSAGE("Failed Record (exception) should still get Status message.", testSignal->mStatusSignalReceived);
       CPPUNIT_ASSERT_MESSAGE("Failed Record (exception) should have sent status with IDLE.",
          testSignal->mStatus.GetStateEnum() == dtGame::LogStateEnumeration::LOGGER_STATE_IDLE);
-      CPPUNIT_ASSERT_MESSAGE("Failed Record (exceptio), should get reject message.", testSignal->mRejectionSignalReceived);
+      CPPUNIT_ASSERT_MESSAGE("Failed Record (exception), should get reject message.", testSignal->mRejectionSignalReceived);
       const dtGame::Message *causeMsg4 = testSignal->mRejectMessage->GetCausingMessage();
       CPPUNIT_ASSERT_MESSAGE("Change to Idle with error should have gotten reject message.",
          (testSignal->mRejectMessage->GetMessageType() == dtGame::MessageType::SERVER_REQUEST_REJECTED) &&
@@ -2579,4 +2604,3 @@ void GMLoggerTests::TestServerLogger2()
    //   CPPUNIT_FAIL(std::string("Caught exception of type: ") + typeid(e).name() + " " + e.what());
    //}
 }
-
