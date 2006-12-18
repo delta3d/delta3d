@@ -112,7 +112,7 @@ class DT_PLUGIN_EXPORT TestDALEnvironmentActorProxy : public dtDAL::ActorProxy
 
       virtual ~TestDALEnvironmentActorProxy();
 
-      virtual void CreateActor() { mActor = new TestDALEnvironmentActor; }
+      virtual void CreateActor() { SetActor(*new TestDALEnvironmentActor); }
 
       virtual void BuildPropertyMap();
 

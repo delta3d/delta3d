@@ -85,7 +85,7 @@ void TestGameActorProxy1::BuildInvokables()
 
 void TestGameActorProxy1::CreateActor()
 {
-   mActor = new TestGameActor1(*this);
+   SetActor(*new TestGameActor1(*this));
 }
 
 void TestGameActorProxy1::ToggleTicks(const dtGame::Message& message)

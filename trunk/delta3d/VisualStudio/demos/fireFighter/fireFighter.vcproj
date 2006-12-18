@@ -180,9 +180,6 @@
 				RelativePath="..\..\..\demos\fireFighter\inputcomponent.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\demos\fireFighter\messages.cpp">
-			</File>
-			<File
 				RelativePath="..\..\..\demos\fireFighter\messagetype.cpp">
 			</File>
 			<File
@@ -258,6 +255,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\demos\fireFighter\inputcomponent.h">
+			</File>
+			<File
+				RelativePath="..\..\..\demos\fireFighter\messages.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\demos\fireFighter\messages.h">

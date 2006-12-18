@@ -124,7 +124,7 @@ class FIRE_FIGHTER_EXPORT FlySequenceActorProxy : public dtGame::GameActorProxy
       virtual void BuildInvokables();
 
       /// Creates the actor
-      virtual void CreateActor() { mActor = new FlySequenceActor(*this); }
+      virtual void CreateActor() { SetActor(*new FlySequenceActor(*this)); }
 
       /// Called when the actor is added to the game manager
       virtual void OnEnteredWorld();

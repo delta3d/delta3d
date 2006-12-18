@@ -208,7 +208,7 @@ namespace dtActors
          CoordinateConfigActorProxy();
 
          /// Create the actual actor this proxy encapsulates
-         void CreateActor() { mActor = new CoordinateConfigActor(*this); }
+         void CreateActor() { SetActor(*new CoordinateConfigActor(*this)); }
 
          /// Builds the properties associated with this actor proxy
          void BuildPropertyMap();

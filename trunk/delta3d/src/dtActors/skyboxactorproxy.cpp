@@ -26,7 +26,7 @@ namespace dtActors
 {
     void SkyBoxActorProxy::CreateActor()
     {
-        mActor = new dtCore::SkyBox;
+        SetActor(*new dtCore::SkyBox);
     }
 
     ///////////////////////////////////////////////////////////////////////////////

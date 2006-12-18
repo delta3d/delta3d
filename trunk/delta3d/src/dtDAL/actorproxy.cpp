@@ -297,6 +297,12 @@ namespace dtDAL
    }
 
    //////////////////////////////////////////////////////////////////////////
+   void ActorProxy::SetActor(dtCore::DeltaDrawable &actor)
+   {
+      mActor = &actor;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    dtCore::RefPtr<ActorProxy> ActorProxy::Clone() 
    {
       std::ostringstream error;

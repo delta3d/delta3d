@@ -33,7 +33,7 @@ namespace dtActors
 
    void BezierNodeActorProxy::CreateActor()
    {
-      mActor = new dtABC::BezierNode;
+      SetActor(*new dtABC::BezierNode);
       
       std::ostringstream ss;
       ss << "BezierNode" << mNumNodes++;

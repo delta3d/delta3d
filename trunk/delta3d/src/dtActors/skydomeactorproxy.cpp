@@ -29,7 +29,7 @@ namespace dtActors
 {
     void SkyDomeActorProxy::CreateActor()
     {
-        mActor = new dtCore::SkyDome;
+        SetActor(*new dtCore::SkyDome);
     }
 
     ///////////////////////////////////////////////////////////////////////////////

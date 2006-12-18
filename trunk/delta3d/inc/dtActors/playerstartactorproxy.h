@@ -55,7 +55,7 @@ namespace dtActors
          PlayerStartActorProxy();
 
          /// Creates the actor associated with this proxy
-         void CreateActor() { mActor = new PlayerStartActor; }
+         void CreateActor() { SetActor(*new PlayerStartActor); }
 
          /// Builds the properties of this proxy
          void BuildPropertyMap();

@@ -111,7 +111,7 @@ class FIRE_FIGHTER_EXPORT DDGActorProxy : public ShipActorProxy
       virtual void BuildInvokables();
 
       /// Instantiates the actor itself
-      virtual void CreateActor() { mActor = new DDGActor(*this); }
+      virtual void CreateActor() { SetActor(*new DDGActor(*this)); }
 
    protected:
 

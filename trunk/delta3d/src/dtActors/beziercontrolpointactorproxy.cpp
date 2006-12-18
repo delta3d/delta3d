@@ -33,7 +33,7 @@ namespace dtActors
 
    void BezierControlPointActorProxy::CreateActor()
    {
-      mActor = new dtABC::BezierControlPoint; 
+      SetActor(*new dtABC::BezierControlPoint); 
       
       std::ostringstream ss;
       ss << "ControlPoint" << mNumControlPoints++;

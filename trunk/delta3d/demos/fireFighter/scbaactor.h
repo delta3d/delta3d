@@ -56,7 +56,7 @@ class FIRE_FIGHTER_EXPORT SCBAActorProxy : public GameItemActorProxy
       virtual void BuildInvokables();
 
       /// Instantiates the actor
-      virtual void CreateActor() { mActor = new SCBAActor(*this); }
+      virtual void CreateActor() { SetActor(*new SCBAActor(*this)); }
 
    protected:
 

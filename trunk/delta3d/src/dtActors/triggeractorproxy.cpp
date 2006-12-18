@@ -34,7 +34,7 @@ namespace dtActors
 {
    void TriggerActorProxy::CreateActor()
    {
-      mActor = new Trigger;
+      SetActor(*new Trigger);
 
       static int mNumTriggers = 0;
       std::ostringstream ss;

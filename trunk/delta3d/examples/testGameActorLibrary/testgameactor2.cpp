@@ -68,7 +68,7 @@ void TestGameActorProxy2::BuildPropertyMap()
 
 void TestGameActorProxy2::CreateActor()
 {
-   mActor = new TestGameActor2(*this);
+   SetActor(*new TestGameActor2(*this));
 }
 
 /////////////////////////////////////////////////////

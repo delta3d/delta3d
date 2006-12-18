@@ -27,7 +27,7 @@ namespace dtActors
 {
     void PositionalLightActorProxy::CreateActor()
     {
-        mActor = new dtCore::PositionalLight(0);
+        SetActor(*new dtCore::PositionalLight(0));
     }
 
     ///////////////////////////////////////////////////////////////////////////////

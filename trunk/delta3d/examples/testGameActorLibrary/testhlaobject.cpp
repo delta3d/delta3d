@@ -76,7 +76,7 @@ void TestHLAObjectProxy::BuildInvokables()
 
 void TestHLAObjectProxy::CreateActor()
 {
-   mActor = new TestHLAObject(*this);
+   SetActor(*new TestHLAObject(*this));
 }
 
 void TestHLAObjectProxy::SetLastKnownRotation(const osg::Vec3 &vec)

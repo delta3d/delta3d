@@ -166,7 +166,7 @@ namespace dtActors
     ///////////////////////////////////////////////////////////////////////////////
     void StaticMeshActorProxy::CreateActor()
     {
-        mActor = new dtCore::Object;
+        SetActor(*new dtCore::Object);
 
         static int actorCount = 0;
         std::ostringstream ss;
@@ -244,7 +244,7 @@ namespace dtActors
         dtDAL::ResourceDescriptor *resource = GetResource("static mesh");
         if (resource != NULL)
         {
-            if (resource->GetResourceIdentifier().empty() || mActor->GetOSGNode() == NULL)
+            if (resource->GetResourceIdentifier().empty() || GetActor()->GetOSGNode() == NULL)
                 return dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON;
             else
                 return dtDAL::ActorProxy::RenderMode::DRAW_ACTOR;

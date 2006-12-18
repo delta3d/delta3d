@@ -86,7 +86,7 @@ namespace dtActors
    //////////////////////////////////////////////////////////////////////////////
    void TaskActorRollupProxy::CreateActor()
    {
-      mActor = new TaskActorRollup(*this);
+      SetActor(*new TaskActorRollup(*this));
    }
 
 }
