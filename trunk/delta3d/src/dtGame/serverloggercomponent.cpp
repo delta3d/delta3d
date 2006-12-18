@@ -66,81 +66,105 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////////
    void ServerLoggerComponent::ProcessMessage(const Message& message)
    {
-      if (message.GetMessageType() == MessageType::TICK_LOCAL)
+      const MessageType& type = message.GetMessageType();
+
+      if (type == MessageType::TICK_LOCAL)
       {
          ProcessTickMessage(static_cast<const TickMessage&>(message));
       }
-      else if (message.GetMessageType() == MessageType::TICK_REMOTE)
+      else if (type == MessageType::TICK_REMOTE)
       {
          // do nothing.  Don't let it fall through or it will get logged!
       }
-      else if (message.GetMessageType() == MessageType::LOG_REQ_GET_STATUS)
+      else if (type == MessageType::LOG_REQ_GET_STATUS)
       {
          HandleStatusMessageRequest(message);
       }
-      else if (message.GetMessageType() == MessageType::LOG_REQ_CHANGESTATE_PLAYBACK)
+      else if (type == MessageType::LOG_REQ_CHANGESTATE_PLAYBACK)
       {
          HandleChangeStatePlayback(message);
       }
-      else if (message.GetMessageType() == MessageType::LOG_REQ_CHANGESTATE_RECORD)
+      else if (type == MessageType::LOG_REQ_CHANGESTATE_RECORD)
       {
          HandleChangeStateRecord(message);
       }
-      else if (message.GetMessageType() == MessageType::LOG_REQ_CHANGESTATE_IDLE)
+      else if (type == MessageType::LOG_REQ_CHANGESTATE_IDLE)
       {
          HandleChangeStateIdle(message);
       }
-      else if (message.GetMessageType() == MessageType::LOG_REQ_CAPTURE_KEYFRAME)
+      else if (type == MessageType::LOG_REQ_CAPTURE_KEYFRAME)
       {
          HandleCaptureKeyFrame(static_cast<const LogCaptureKeyframeMessage&>(message));
       }
-      else if (message.GetMessageType() == MessageType::LOG_REQ_JUMP_TO_KEYFRAME)
+      else if (type == MessageType::LOG_REQ_JUMP_TO_KEYFRAME)
       {
          HandleJumpToKeyFrame(static_cast<const LogJumpToKeyframeMessage&>(message));
       }
-      else if (message.GetMessageType() == MessageType::LOG_REQ_GET_KEYFRAMES)
+      else if (type == MessageType::LOG_REQ_GET_KEYFRAMES)
       {
          HandleRequestGetKeyFrames(message);
       }
-      else if (message.GetMessageType() == MessageType::LOG_REQ_GET_LOGFILES)
+      else if (type == MessageType::LOG_REQ_GET_LOGFILES)
       {
          HandleRequestGetLogs(message);
       }
-      else if (message.GetMessageType() == MessageType::LOG_REQ_GET_TAGS)
+      else if (type == MessageType::LOG_REQ_GET_TAGS)
       {
          HandleRequestGetTags(message);
       }
-      else if (message.GetMessageType() == MessageType::LOG_REQ_INSERT_TAG)
+      else if (type == MessageType::LOG_REQ_INSERT_TAG)
       {
          HandleRequestInsertTag(static_cast<const LogInsertTagMessage&>(message));
       }
-      else if (message.GetMessageType() == MessageType::LOG_REQ_DELETE_LOG)
+      else if (type == MessageType::LOG_REQ_DELETE_LOG)
       {
          HandleRequestDeleteLogFile(message);
       }
-      else if (message.GetMessageType() == MessageType::LOG_REQ_SET_LOGFILE)
+      else if (type == MessageType::LOG_REQ_SET_LOGFILE)
       {
          HandleRequestSetLogFile(message);
       }
-      else if (message.GetMessageType() == MessageType::LOG_REQ_SET_AUTOKEYFRAMEINTERVAL)
+      else if (type == MessageType::LOG_REQ_SET_AUTOKEYFRAMEINTERVAL)
       {
          HandleRequestSetAutoKeyframeInterval(message);
       }
-      else if (message.GetMessageType() == MessageType::INFO_MAP_LOADED)
+      else if (type == MessageType::INFO_MAP_LOADED)
       {
          HandleMapLoadedMessage(message);
       }
-      else if (message.GetMessageType() == MessageType::LOG_REQ_ADD_IGNORED_ACTOR)
+      else if (type == MessageType::LOG_REQ_ADD_IGNORED_ACTOR)
       {
          HandleAddIgnoredActorMessage(message);
       }
-      else if (message.GetMessageType() == MessageType::LOG_REQ_REMOVE_IGNORED_ACTOR)
+      else if (type == MessageType::LOG_REQ_REMOVE_IGNORED_ACTOR)
       {
          HandleRemoveIgnoredActorMessage(message);
       }
-      else if (message.GetMessageType() == MessageType::LOG_REQ_CLEAR_IGNORE_LIST)
+      else if (type == MessageType::LOG_REQ_CLEAR_IGNORE_LIST)
       {
          HandleClearIgnoreListMessage();
+      }
+      else if(type == MessageType::INFO_MAP_CHANGE_BEGIN)
+      {
+         // Avoid recording map change events because they may cause havok
+         // with lots of messages and state changes.
+         if (mLogStatus.GetStateEnum() != LogStateEnumeration::LOGGER_STATE_IDLE)
+         {
+            try
+            {
+               // close any open records or playbacks.
+               if (mLogStatus.GetStateEnum() == LogStateEnumeration::LOGGER_STATE_RECORD)
+                  mLogStream->SetRecordDuration(mLogStatus.GetCurrentRecordDuration());
+               mLogStream->Close();
+            }
+            catch(const dtUtil::Exception &e)
+            {
+               LOG_ERROR("FAILURE:\tchanging state to IDLE from a map change event.");
+            }
+
+            SetToIdleState();
+            DoSendStatusMessage(NULL); // notify the world of our status change
+         }
       }
       else
       {
