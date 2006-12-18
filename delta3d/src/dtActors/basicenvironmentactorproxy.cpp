@@ -94,6 +94,11 @@ namespace dtActors
          dtDAL::MakeFunctor(*env, &BasicEnvironmentActor::SetRateOfChange),
          dtDAL::MakeFunctorRet(*env, &BasicEnvironmentActor::GetRateOfChange),
          "Sets the rate of change of this environment. This effects how fast clouds move, etc."));
+
+      AddProperty(new dtDAL::Vec3ActorProperty("Wind", "Wind",
+         dtDAL::MakeFunctor(*env, &BasicEnvironmentActor::SetWind),
+         dtDAL::MakeFunctorRet(*env, &BasicEnvironmentActor::GetWind),
+         "Sets the force of wind, measured in meters per second"));
    }
 
    void BasicEnvironmentActorProxy::BuildInvokables()
@@ -424,6 +429,16 @@ namespace dtActors
             return v;
       }
       return BasicEnvironmentActor::SeasonEnum::SEASON_SUMMER;
+   }
+
+   void BasicEnvironmentActor::SetWind( const osg::Vec3& wind )
+   {
+      mWind = wind;
+   }
+
+   osg::Vec3 BasicEnvironmentActor::GetWind() const
+   {
+      return mWind;
    }
 
    bool BasicEnvironmentActor::ValidateUTCString(std::istringstream &iss, const std::string &string)
