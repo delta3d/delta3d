@@ -98,7 +98,7 @@ namespace dtActors
       AddProperty(new dtDAL::Vec3ActorProperty("Wind", "Wind",
          dtDAL::MakeFunctor(*env, &BasicEnvironmentActor::SetWind),
          dtDAL::MakeFunctorRet(*env, &BasicEnvironmentActor::GetWind),
-         "Sets the force of wind, measured in meters per second"));
+         "Sets the force of wind, measured in meters per second")); 
    }
 
    void BasicEnvironmentActorProxy::BuildInvokables()
