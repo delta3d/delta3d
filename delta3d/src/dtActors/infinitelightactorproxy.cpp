@@ -27,7 +27,7 @@ namespace dtActors
 {
     void InfiniteLightActorProxy::CreateActor()
     {
-        mActor = new dtCore::InfiniteLight(0);
+        SetActor(*new dtCore::InfiniteLight(0));
     }
 
     ///////////////////////////////////////////////////////////////////////////////

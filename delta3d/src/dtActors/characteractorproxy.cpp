@@ -33,7 +33,7 @@ namespace dtActors
     ///////////////////////////////////////////////////////////////////////////////
     void CharacterActorProxy::CreateActor()
     {
-        mActor = new dtChar::Character;
+        SetActor(*new dtChar::Character);
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -88,7 +88,7 @@ namespace dtActors
         dtDAL::ResourceDescriptor *resource = GetResource("model");
         if (resource != NULL)
         {
-            if (resource->GetResourceIdentifier().empty() || mActor->GetOSGNode() == NULL)
+            if (resource->GetResourceIdentifier().empty() || GetActor()->GetOSGNode() == NULL)
                 return dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON;
             else
                 return dtDAL::ActorProxy::RenderMode::DRAW_ACTOR;

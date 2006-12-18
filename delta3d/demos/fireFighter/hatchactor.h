@@ -77,7 +77,7 @@ class FIRE_FIGHTER_EXPORT HatchActorProxy : public GameItemActorProxy
       virtual void BuildInvokables();
 
       /// Instantiates the actor
-      virtual void CreateActor() { mActor = new HatchActor(*this); }
+      virtual void CreateActor() { SetActor(*new HatchActor(*this)); }
 
    protected:
 

@@ -29,7 +29,7 @@ namespace dtActors
 {
     void SpotlightActorProxy::CreateActor()
     {
-        mActor = new dtCore::SpotLight(0);
+        SetActor(*new dtCore::SpotLight(0));
     }
 
     ///////////////////////////////////////////////////////////////////////////////

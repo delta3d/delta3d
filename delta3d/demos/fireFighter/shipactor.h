@@ -268,7 +268,7 @@ class FIRE_FIGHTER_EXPORT ShipActorProxy : public VehicleActorProxy
       virtual void BuildInvokables();
 
       /// Instantiates the actor itself
-      virtual void CreateActor() { mActor = new ShipActor(*this); }
+      virtual void CreateActor() { SetActor(*new ShipActor(*this)); }
 
    protected:
 

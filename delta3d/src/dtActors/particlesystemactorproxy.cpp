@@ -30,7 +30,7 @@ namespace dtActors
 {
     void ParticleSystemActorProxy::CreateActor()
     {
-        mActor = new dtCore::ParticleSystem;
+        SetActor(*new dtCore::ParticleSystem);
     }
 
     //////////////////////////////////////////////////////////////////////////

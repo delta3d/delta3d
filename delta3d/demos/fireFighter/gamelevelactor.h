@@ -79,7 +79,7 @@ class FIRE_FIGHTER_EXPORT GameLevelActorProxy : public dtGame::GameActorProxy
       virtual void BuildInvokables();
 
       /// Creates the actor
-      virtual void CreateActor() { mActor = new GameLevelActor(*this); }
+      virtual void CreateActor() { SetActor(*new GameLevelActor(*this)); }
 
       /**
        * Gets the billboard used to represent static meshes if this proxy's

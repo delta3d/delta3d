@@ -167,7 +167,7 @@ namespace dtActors
    //////////////////////////////////////////////////////////////////////////////
    void TaskActorOrderedProxy::CreateActor()
    {
-      mActor = new TaskActorOrdered(*this);
+      SetActor(*new TaskActorOrdered(*this));
    }
 
 }

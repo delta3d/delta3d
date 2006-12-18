@@ -37,7 +37,7 @@ namespace dtActors
    void ProximityTriggerActorProxy::CreateActor()
    {
       ProximityTrigger* trigger = new ProximityTrigger;
-      mActor = trigger;
+      SetActor(*trigger);
 
       static int mNumTriggers = 0;
       std::ostringstream ss;

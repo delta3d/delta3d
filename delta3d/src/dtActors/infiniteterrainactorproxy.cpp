@@ -29,7 +29,7 @@ namespace dtActors
 {
     void InfiniteTerrainActorProxy::CreateActor()
     {
-        mActor = new dtCore::InfiniteTerrain();
+        SetActor(*new dtCore::InfiniteTerrain);
     }
 
     ///////////////////////////////////////////////////////////////////////////////

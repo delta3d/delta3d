@@ -1781,7 +1781,7 @@ class OverriddenActorProxy : public dtDAL::TransformableActorProxy
    //dtCore::RefPtr<dtCore::Transformable> mActor;
 public:
    OverriddenActorProxy() {SetClassName("OverriddenActorProxy");}
-   void CreateActor(){mActor = new dtCore::Transformable();}
+   void CreateActor(){SetActor(*new dtCore::Transformable());}
    bool RemoveTheProperty(std::string& stringToRemove)
    {
       // not in the list

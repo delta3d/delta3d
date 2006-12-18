@@ -26,7 +26,7 @@ namespace dtActors
 {
     void DeltaObjectActorProxy::CreateActor()
     {
-        mActor = new dtCore::Object;
+        SetActor(*new dtCore::Object);
         //std::cout << "Creating actor proxy." << std::endl;
     }
 

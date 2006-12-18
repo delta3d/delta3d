@@ -33,7 +33,7 @@ using namespace dtActors;
 ///////////////////////////////////////////////////////////////////////////////
 void CameraActorProxy::CreateActor()
 {
-   mActor = new dtCore::Camera;
+   SetActor(*new dtCore::Camera);
 
    static int actorCount = 0;
    std::ostringstream ss;

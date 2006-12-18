@@ -56,7 +56,7 @@ class FIRE_FIGHTER_EXPORT FireSuitActorProxy : public GameItemActorProxy
       virtual void BuildInvokables();
 
       /// Instantiates the actor
-      virtual void CreateActor() { mActor = new FireSuitActor(*this); }
+      virtual void CreateActor() { SetActor(*new FireSuitActor(*this)); }
 
    protected:
 

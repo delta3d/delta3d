@@ -38,7 +38,7 @@ TripodActorProxy::TetherModeEnum TripodActorProxy::TetherModeEnum::TETHER_WORLD_
 ///////////////////////////////////////////////////////////////////////////////
 void TripodActorProxy::CreateActor()
 {
-   mActor = new Tripod;
+   SetActor(*new Tripod);
 
    static int actorCount = 0;
    std::ostringstream ss;

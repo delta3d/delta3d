@@ -47,7 +47,7 @@ namespace dtDAL
 
    void WaypointActorProxy::CreateActor()
    {
-      mActor = new WaypointActor;      
+      SetActor(*new WaypointActor);      
       WaypointManager::GetInstance()->AddWaypoint(static_cast<WaypointActor*>(GetActor()));    
 
       std::ostringstream ss;

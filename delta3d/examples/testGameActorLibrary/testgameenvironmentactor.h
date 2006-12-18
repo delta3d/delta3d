@@ -74,7 +74,7 @@ class DT_EXAMPLE_EXPORT TestGameEnvironmentActorProxy : public dtGame::Environme
 
       TestGameEnvironmentActorProxy() { SetClassName("TestGameEnvironmentActorProxy"); }
 
-      virtual void CreateActor()      { mActor = new TestGameEnvironmentActor(*this); }
+      virtual void CreateActor()      { SetActor(*new TestGameEnvironmentActor(*this)); }
 
       virtual void BuildPropertyMap() { dtGame::GameActorProxy::BuildPropertyMap(); }
 

@@ -273,5 +273,5 @@ void TestPlayerProxy::OnEnteredWorld()
 //////////////////////////////////////////////////////////////////////////////
 void TestPlayerProxy::CreateActor()
 {
-   mActor = new TestPlayer(*this);
+   SetActor(*new TestPlayer(*this));
 }

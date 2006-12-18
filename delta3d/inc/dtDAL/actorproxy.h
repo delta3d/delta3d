@@ -357,6 +357,13 @@ namespace dtDAL
          friend class ActorPluginRegistry;
 
       protected:
+
+         /**
+          * Sets the actor on this proxy. This should be only called from subclasses
+          * @param actor The actor to set
+          */
+         void SetActor(dtCore::DeltaDrawable &actor);
+
          ///Keep the destructor protected since we use dtCore::RefPtr to
          ///track any object created.
          virtual ~ActorProxy();
@@ -372,9 +379,6 @@ namespace dtDAL
           */
          void SetClassName(const std::string &name);
 
-         ///Pointer to the Delta3D object (Actor) this proxy is wrapping.
-         dtCore::RefPtr<dtCore::DeltaDrawable> mActor;
-
          /**
           * Each actor proxy may have a billboard associated with it.  Billboards
           * are displayed in place of the actual actor if the actor has no
@@ -387,6 +391,10 @@ namespace dtDAL
          void RemoveProperty(const std::string& nameToRemove);
 
       private:
+         
+         ///Pointer to the Delta3D object (Actor) this proxy is wrapping.
+         dtCore::RefPtr<dtCore::DeltaDrawable> mActor;
+
          ///Map of properties.
          std::map<std::string, dtCore::RefPtr<ActorProperty> > mPropertyMap;
 

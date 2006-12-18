@@ -157,9 +157,9 @@ namespace dtGame
                   mLogStream->SetRecordDuration(mLogStatus.GetCurrentRecordDuration());
                mLogStream->Close();
             }
-            catch(const dtUtil::Exception &e)
+            catch(const dtUtil::Exception &)
             {
-               LOG_ERROR("FAILURE:\tchanging state to IDLE from a map change event.");
+               LOG_ERROR("FAILURE:changing state to IDLE from a map change event.");
             }
 
             SetToIdleState();

@@ -21,7 +21,7 @@ int BezierControllerActorProxy::mNumControllers = 0;
 
 void BezierControllerActorProxy::CreateActor()
 {
-   mActor = new BezierController();
+   SetActor(*new BezierController());
    static_cast<BezierController*>(GetActor())->RenderProxyNode(true);
    
    std::ostringstream ss;

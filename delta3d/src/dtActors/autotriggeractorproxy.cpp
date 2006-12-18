@@ -34,7 +34,7 @@ namespace dtActors
 {
    void AutoTriggerActorProxy::CreateActor()
    {
-      mActor = new AutoTrigger;
+      SetActor(*new AutoTrigger);
 
       SetName( "AutoTrigger" );
    }
