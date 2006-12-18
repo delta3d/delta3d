@@ -180,10 +180,8 @@ namespace dtActors
         const std::string &GROUPNAME = "Mesh";
         DeltaObjectActorProxy::BuildPropertyMap();
 
-        dtCore::Object *obj = dynamic_cast<dtCore::Object*>(mActor.get());
-        if (obj == NULL)
-            throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Object", __FILE__, __LINE__);
-
+        dtCore::Object *obj = static_cast<dtCore::Object*>(mActor.get());
+       
         AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::STATIC_MESH,
                     "static mesh", "Static Mesh", MakeFunctor(*this, &StaticMeshActorProxy::LoadFile),
                     "The static mesh resource that defines the geometry", GROUPNAME));
@@ -192,12 +190,7 @@ namespace dtActors
     ///////////////////////////////////////////////////////////////////////////////
     void StaticMeshActorProxy::LoadFile(const std::string &fileName)
     {
-        dtCore::Object *obj = dynamic_cast<dtCore::Object*>(mActor.get());
-        if (obj == NULL)
-        {
-            throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException,
-                "Actor should be type dtCore::Object", __FILE__, __LINE__);
-        }
+        dtCore::Object *obj = static_cast<dtCore::Object*>(mActor.get());
 
         //First load the mesh (with cacheing on).
         if (obj->LoadFile(fileName,true) == NULL)

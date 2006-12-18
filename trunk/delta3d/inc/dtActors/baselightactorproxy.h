@@ -98,12 +98,7 @@ namespace dtActors
         ///Sets the light number of the light actor.
         void SetNumber(int num)
         {
-            dtCore::Light *l = dynamic_cast<dtCore::Light *>(mActor.get());
-            if(!l)
-            {
-                throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException,
-                    "Actor should be type dtCore::Light.", __FILE__, __LINE__);
-            }
+            dtCore::Light *l = static_cast<dtCore::Light *>(mActor.get());
 
             l->SetNumber(num);
         }
@@ -111,12 +106,7 @@ namespace dtActors
         ///Sets the ambient color of the light actor.
         void SetAmbient(const osg::Vec4 &color)
         {
-            dtCore::Light *l = dynamic_cast<dtCore::Light *>(mActor.get());
-            if(!l)
-            {
-                throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException,
-                    "Actor should be type dtCore::Light.", __FILE__, __LINE__);
-            }
+            dtCore::Light *l = static_cast<dtCore::Light *>(mActor.get());
 
             l->SetAmbient(color[0],color[1],color[2],color[3]);
         }
@@ -124,13 +114,8 @@ namespace dtActors
         ///Gets the ambient color of the light actor.
         osg::Vec4 GetAmbient() const
         {
-            const dtCore::Light *l = dynamic_cast<const dtCore::Light *>(mActor.get());
-            if(!l)
-            {
-                throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException,
-                    "Actor should be type dtCore::Light.", __FILE__, __LINE__);
-            }
-
+            const dtCore::Light *l = static_cast<const dtCore::Light *>(mActor.get());
+         
             float r,g,b,a;
             l->GetAmbient(r,g,b,a);
             return osg::Vec4(r,g,b,a);
@@ -139,12 +124,7 @@ namespace dtActors
         ///Sets the diffuse color of the light actor.
         void SetDiffuse(const osg::Vec4 &color)
         {
-            dtCore::Light *l = dynamic_cast<dtCore::Light *>(mActor.get());
-            if(!l)
-            {
-                throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException,
-                    "Actor should be type dtCore::Light.", __FILE__, __LINE__);
-            }
+            dtCore::Light *l = static_cast<dtCore::Light *>(mActor.get());
 
             l->SetDiffuse(color[0],color[1],color[2],color[3]);
         }
@@ -152,12 +132,7 @@ namespace dtActors
         ///Gets the diffuse color of the light actor.
         osg::Vec4 GetDiffuse() const
         {
-            const dtCore::Light *l = dynamic_cast<const dtCore::Light *>(mActor.get());
-            if(!l)
-            {
-                throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException,
-                    "Actor should be type dtCore::Light.", __FILE__, __LINE__);
-            }
+            const dtCore::Light *l = static_cast<const dtCore::Light *>(mActor.get());
 
             float r,g,b,a;
             l->GetDiffuse(r,g,b,a);
@@ -167,12 +142,7 @@ namespace dtActors
         ///Sets the specular color of the light actor.
         void SetSpecular(const osg::Vec4 &color)
         {
-            dtCore::Light *l = dynamic_cast<dtCore::Light *>(mActor.get());
-            if(!l)
-            {
-                throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException,
-                    "Actor should be type dtCore::Light.", __FILE__, __LINE__);
-            }
+            dtCore::Light *l = static_cast<dtCore::Light *>(mActor.get());
 
             l->SetSpecular(color[0],color[1],color[2],color[3]);
         }
@@ -180,12 +150,7 @@ namespace dtActors
         ///Gets the specular color of the light actor.
         osg::Vec4 GetSpecular() const
         {
-            const dtCore::Light *l = dynamic_cast<const dtCore::Light *>(mActor.get());
-            if(!l)
-            {
-                throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException,
-                    "Actor should be type dtCore::Light.", __FILE__, __LINE__);
-            }
+            const dtCore::Light *l = static_cast<const dtCore::Light *>(mActor.get());
 
             float r,g,b,a;
             l->GetSpecular(r,g,b,a);
@@ -195,13 +160,8 @@ namespace dtActors
         ///Sets the lighting mode for this light actor.
         void SetLightingMode(LightModeEnum &mode)
         {
-            dtCore::Light *l = dynamic_cast<dtCore::Light *>(mActor.get());
-            if(!l)
-            {
-                throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException,
-                    "Actor should be type dtCore::Light.", __FILE__, __LINE__);
-            }
-
+            dtCore::Light *l = static_cast<dtCore::Light *>(mActor.get());
+     
             if (mode == LightModeEnum::GLOBAL)
                 l->SetLightingMode(dtCore::Light::GLOBAL);
             else if (mode == LightModeEnum::LOCAL)
@@ -211,12 +171,7 @@ namespace dtActors
         ///Gets the lighting mode for this light actor.
         LightModeEnum& GetLightingMode() const
         {
-            const dtCore::Light *l = dynamic_cast<const dtCore::Light *>(mActor.get());
-            if(!l)
-            {
-                throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException,
-                    "Actor should be type dtCore::Light.", __FILE__, __LINE__);
-            }
+            const dtCore::Light *l = static_cast<const dtCore::Light *>(mActor.get());
 
             if (l->GetLightingMode() == dtCore::Light::GLOBAL)
                 return LightModeEnum::GLOBAL;

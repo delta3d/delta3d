@@ -40,10 +40,7 @@ void CameraActorProxy::CreateActor()
    ss << "Camera" << actorCount++;
    SetName(ss.str());
 
-   Camera *cam = dynamic_cast<Camera*>(mActor.get());
-   if(cam == NULL)
-      throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
-      "Actor should be dtCore::Camera.", __FILE__, __LINE__);
+   Camera *cam = static_cast<Camera*>(mActor.get());
 
    cam->SetEnabled(false);
 }
@@ -54,10 +51,7 @@ void CameraActorProxy::BuildPropertyMap()
    const std::string &GROUPNAME = "Camera";
    TransformableActorProxy::BuildPropertyMap();
 
-   Camera *cam = dynamic_cast<Camera*>(mActor.get());
-   if(!cam)
-      throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
-      "Actor should be dtCore::Camera.", __FILE__, __LINE__);
+   Camera *cam = static_cast<Camera*>(mActor.get());
 
    AddProperty( new BooleanActorProperty("Enable", "Enabled",
       MakeFunctor(*cam, &dtCore::Camera::SetEnabled),
@@ -88,10 +82,7 @@ dtDAL::ActorProxyIcon* CameraActorProxy::GetBillBoardIcon()
 ///////////////////////////////////////////////////////////////////////////////
 osg::Vec4f CameraActorProxy::GetClearColor()
 {
-   Camera *cam = dynamic_cast<Camera*>(mActor.get());
-   if(cam == NULL)
-      throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
-      "Actor should be dtCore::Camera.", __FILE__, __LINE__);
+   Camera *cam = static_cast<Camera*>(mActor.get());
 
    osg::Vec4 color;
    cam->GetClearColor(color);
@@ -101,10 +92,7 @@ osg::Vec4f CameraActorProxy::GetClearColor()
 ///////////////////////////////////////////////////////////////////////////////
 void CameraActorProxy::SetClearColor(const osg::Vec4 &color)
 {
-   Camera *cam = dynamic_cast<Camera*>(mActor.get());
-   if(cam == NULL)
-      throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
-      "Actor should be dtCore::Camera.", __FILE__, __LINE__);
+   Camera *cam = static_cast<Camera*>(mActor.get());
 
    cam->SetClearColor(color);
 }

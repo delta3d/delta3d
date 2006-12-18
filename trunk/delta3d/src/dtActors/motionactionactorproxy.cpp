@@ -27,13 +27,7 @@ namespace dtActors
    {
       ActionActorProxy::BuildPropertyMap();
 
-      MotionAction* mo = dynamic_cast<MotionAction*>(mActor.get());
-
-      if(!mo)
-      {
-          throw dtUtil::Exception(ExceptionEnum::InvalidActorException, 
-             "Actor should be type dtABC::MotionAction", __FILE__, __LINE__);
-      }
+      MotionAction* mo = static_cast<MotionAction*>(mActor.get());
 
       AddProperty(new ActorActorProperty(*this, "Target Object", "Target Object",
          MakeFunctor(*this, &MotionActionActorProxy::SetActorTargetObject),
@@ -74,7 +68,7 @@ namespace dtActors
 
    DeltaDrawable* MotionActionActorProxy::GetActorTargetObject()
    {
-      MotionAction* mo = dynamic_cast< MotionAction* >( mActor.get() );
+      MotionAction* mo = static_cast< MotionAction* >( mActor.get() );
       if( mo == 0 )
       {
          throw dtUtil::Exception( ExceptionEnum::InvalidActorException,
@@ -86,7 +80,7 @@ namespace dtActors
 
    DeltaDrawable* MotionActionActorProxy::GetActorParentObject()
    {
-      MotionAction * mo = dynamic_cast< MotionAction* >( mActor.get() );
+      MotionAction * mo = static_cast< MotionAction* >( mActor.get() );
       if( mo == 0 )
       {
          throw dtUtil::Exception( ExceptionEnum::InvalidActorException,
@@ -100,24 +94,13 @@ namespace dtActors
    {
       SetLinkedActor("Target Object", node);
 
-      dtABC::MotionAction* ma = dynamic_cast<dtABC::MotionAction*>(mActor.get());
-      if(!ma)
-      {
-         throw dtUtil::Exception(ExceptionEnum::InvalidActorException, 
-            "Actor should be type dtABC::MotionAction", __FILE__, __LINE__);
-      }
+      dtABC::MotionAction* ma = static_cast<dtABC::MotionAction*>(mActor.get());
 
       dtCore::Transformable* trans  = NULL;
 
       if(node)
       {
-          trans = dynamic_cast<dtCore::Transformable*>(node->GetActor());
-          if(!trans)
-          {
-             throw dtUtil::Exception(ExceptionEnum::InvalidActorException, 
-                "Cannot set MotionAction target to non-transformable", __FILE__, __LINE__);
-          }
-
+          trans = static_cast<dtCore::Transformable*>(node->GetActor());
       }
       
       ma->SetTargetObject(trans);      
@@ -127,24 +110,13 @@ namespace dtActors
    {
       SetLinkedActor("Parent Object", proxy);
 
-      dtABC::MotionAction* ma = dynamic_cast<dtABC::MotionAction*>(mActor.get());
-      if(!ma)
-      {
-         throw dtUtil::Exception(ExceptionEnum::InvalidActorException, 
-            "Actor should be type dtABC::MotionAction", __FILE__, __LINE__);
-      }
+      dtABC::MotionAction* ma = static_cast<dtABC::MotionAction*>(mActor.get());
 
       dtCore::Transformable* trans  = NULL;
 
       if(proxy)
       {
-         trans = dynamic_cast<dtCore::Transformable*>(proxy->GetActor());
-         if(!trans)
-         {
-            throw dtUtil::Exception(ExceptionEnum::InvalidActorException, 
-               "Cannot set MotionAction parent to non-transformable", __FILE__, __LINE__);
-         }
-
+         trans = static_cast<dtCore::Transformable*>(proxy->GetActor());
       }
 
       ma->SetParent(trans);
@@ -152,12 +124,7 @@ namespace dtActors
 
    MotionActionActorProxy::ParentRelationEnum& MotionActionActorProxy::GetActorParentRelation() 
    {
-      dtABC::MotionAction* ma = dynamic_cast<dtABC::MotionAction*>(mActor.get());
-      if(!ma)
-      {
-         throw dtUtil::Exception(ExceptionEnum::InvalidActorException, 
-            "Actor should be type dtABC::MotionAction", __FILE__, __LINE__);
-      }
+      dtABC::MotionAction* ma = static_cast<dtABC::MotionAction*>(mActor.get());
 
       MotionAction::PARENT_RELATION pr = ma->GetParentRelation();
 
@@ -175,14 +142,7 @@ namespace dtActors
 
    void MotionActionActorProxy::SetActorParentRelation(ParentRelationEnum& e)
    {
-      dtABC::MotionAction* ma = dynamic_cast<dtABC::MotionAction*>(mActor.get());
-      if(!ma)
-      {
-         throw dtUtil::Exception(ExceptionEnum::InvalidActorException, 
-            "Actor should be type dtABC::MotionAction", __FILE__, __LINE__);
-      }
-
-
+      dtABC::MotionAction* ma = static_cast<dtABC::MotionAction*>(mActor.get());
       if(e == ParentRelationEnum::FOLLOW_PARENT)
          ma->SetParentRelation(dtABC::MotionAction::FOLLOW_PARENT);
 
@@ -201,10 +161,7 @@ namespace dtActors
    ///////////////////////////////////////////////////////////////////////////////
    void MotionActionActorProxy::SetRotation(const osg::Vec3 &rotation)
    {
-      dtABC::MotionAction *t = dynamic_cast<dtABC::MotionAction*>(mActor.get());
-      if (t == NULL)
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
-         "Actor should be type dtABC::MotionAction", __FILE__, __LINE__);
+      dtABC::MotionAction *t = static_cast<dtABC::MotionAction*>(mActor.get());
 
       osg::Vec3 hpr = rotation;
 
@@ -234,10 +191,7 @@ namespace dtActors
    ///////////////////////////////////////////////////////////////////////////////
    osg::Vec3 MotionActionActorProxy::GetRotation()
    {
-      dtABC::MotionAction *t = dynamic_cast<dtABC::MotionAction*>(mActor.get());
-      if (t == NULL)
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
-         "Actor should be type dtABC::MotionAction", __FILE__, __LINE__);
+      dtABC::MotionAction *t = static_cast<dtABC::MotionAction*>(mActor.get());
 
       osg::Vec3 hpr;
       t->GetLocalTransform().GetRotation(hpr);
@@ -248,10 +202,7 @@ namespace dtActors
    ///////////////////////////////////////////////////////////////////////////////
    void MotionActionActorProxy::SetTranslation(const osg::Vec3 &translation)
    {
-      dtABC::MotionAction *t = dynamic_cast<dtABC::MotionAction*>(mActor.get());
-      if (t == NULL)
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type "
-         "dtABC::MotionAction", __FILE__, __LINE__);
+      dtABC::MotionAction *t = static_cast<dtABC::MotionAction*>(mActor.get());
 
       dtCore::Transform trans = t->GetLocalTransform();
      
@@ -264,7 +215,7 @@ namespace dtActors
    ///////////////////////////////////////////////////////////////////////////////
    osg::Vec3 MotionActionActorProxy::GetTranslation()
    {
-      dtABC::MotionAction *t = dynamic_cast<dtABC::MotionAction*>(mActor.get());
+      dtABC::MotionAction *t = static_cast<dtABC::MotionAction*>(mActor.get());
       if (t == NULL)
          throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type "
          " dtABC::MotionAction", __FILE__, __LINE__);
@@ -277,10 +228,7 @@ namespace dtActors
    ///////////////////////////////////////////////////////////////////////////////
    void MotionActionActorProxy::SetScale(const osg::Vec3 &scale)
    {
-      dtABC::MotionAction *t = dynamic_cast<dtABC::MotionAction*>(mActor.get());
-      if (t == NULL)
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type "
-         "dtABC::MotionAction", __FILE__, __LINE__);
+      dtABC::MotionAction *t = static_cast<dtABC::MotionAction*>(mActor.get());
 
       dtCore::Transform trans = t->GetLocalTransform();
       
@@ -294,10 +242,7 @@ namespace dtActors
    ///////////////////////////////////////////////////////////////////////////////
    osg::Vec3 MotionActionActorProxy::GetScale()
    {
-      dtABC::MotionAction *t = dynamic_cast<dtABC::MotionAction*>(mActor.get());
-      if (t == NULL)
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException,
-         "Actor should be type dtABC::MotionAction", __FILE__, __LINE__);
+      dtABC::MotionAction *t = static_cast<dtABC::MotionAction*>(mActor.get());
 
       osg::Vec3 scale;
       t->GetLocalTransform().GetScale(scale);

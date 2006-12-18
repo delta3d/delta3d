@@ -44,10 +44,7 @@ namespace dtActors
    {
       dtGame::GameActorProxy::BuildPropertyMap();
       
-      CoordinateConfigActor *cca = dynamic_cast<CoordinateConfigActor*>(mActor.get());
-      if(cca == NULL)
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
-         "Actor should be type CoordinateConfigActor", __FILE__, __LINE__);
+      CoordinateConfigActor *cca = static_cast<CoordinateConfigActor*>(mActor.get());
 
       dtCore::RefPtr<dtDAL::Vec3dActorProperty> currentOriginProp = new dtDAL::Vec3dActorProperty("Current Origin", "Current Origin Translation", 
          dtDAL::MakeFunctor(*cca, &CoordinateConfigActor::SetOriginLocation), 

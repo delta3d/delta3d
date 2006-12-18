@@ -85,10 +85,7 @@ namespace dtActors
       const std::string &GROUPNAME = "Terrain";
       DeltaObjectActorProxy::BuildPropertyMap();
       
-      Object *obj = dynamic_cast<Object*>(GetActor());
-      if (obj == NULL)
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
-         "Actor should be type dtCore::Object", __FILE__, __LINE__);
+      Object *obj = static_cast<Object*>(GetActor());
       
       AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::TERRAIN,
                                                    "terrain mesh", "Terrain Mesh", MakeFunctor(*this, &MeshTerrainActorProxy::LoadFile),
@@ -99,12 +96,7 @@ namespace dtActors
    ///////////////////////////////////////////////////////////////////////////////
    void MeshTerrainActorProxy::LoadFile(const std::string &fileName)
    {
-      dtCore::Object *obj = dynamic_cast<dtCore::Object*>(GetActor());
-      if (obj == NULL)
-      {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException,
-                "Actor should be type dtCore::Object", __FILE__, __LINE__);
-      }
+      dtCore::Object *obj = static_cast<dtCore::Object*>(GetActor());
       
       if (obj->LoadFile(fileName, false) == NULL)
       {

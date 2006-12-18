@@ -36,13 +36,8 @@ namespace dtActors
     {
         const std::string GROUPNAME = "Light";
 
-        dtCore::Light *light = dynamic_cast<dtCore::Light *>(mActor.get());
-        if(!light)
-        {
-            throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException,
-                "Actor should be type dtCore::Light.", __FILE__, __LINE__);
-        }
-
+        dtCore::Light *light = static_cast<dtCore::Light *>(mActor.get());
+       
         //Now, add all of the properties for the actor.
         AddProperty(new dtDAL::BooleanActorProperty("Enable","Enabled",
             dtDAL::MakeFunctor(*light,&dtCore::Light::SetEnabled),
