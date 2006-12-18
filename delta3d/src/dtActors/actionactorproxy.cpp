@@ -14,12 +14,7 @@ namespace dtActors
    {
       const std::string GROUPNAME = "Action";
 
-      dtABC::Action *a = dynamic_cast<dtABC::Action*>(mActor.get());
-      if(!a)
-      {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
-            "Actor should be type dtABC::Action", __FILE__, __LINE__);
-      }
+      dtABC::Action *a = static_cast<dtABC::Action*>(mActor.get());
 
       AddProperty(new dtDAL::FloatActorProperty("Time Step","Time Step",
          dtDAL::MakeFunctor(*a,&dtABC::Action::SetTimeStep),

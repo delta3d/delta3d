@@ -31,10 +31,7 @@ namespace dtActors
 {
     SoundActorProxy::~SoundActorProxy()
     {
-        dtAudio::Sound *snd = dynamic_cast<dtAudio::Sound*>(mActor.get());
-        if(!snd)
-            throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException,
-            "Actor should be type dtAudio::Sound", __FILE__, __LINE__);
+        dtAudio::Sound *snd = static_cast<dtAudio::Sound*>(mActor.get());
 
         if(snd->GetFilename())
             snd->UnloadFile();
@@ -52,11 +49,8 @@ namespace dtActors
         const std::string &GROUPNAME = "Sound";
         TransformableActorProxy::BuildPropertyMap();
 
-        Sound *sound = dynamic_cast<Sound*>(mActor.get());
-        if(!sound)
-            throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
-            "Actor should be type dtAudio::Sound", __FILE__, __LINE__);
-
+        Sound *sound = static_cast<Sound*>(mActor.get());
+        
         // This property toggles whether or not a sound loops. A
         // value of true will loop the sound, while a value of false
         // will not loop/stop looping a sound.
@@ -151,10 +145,7 @@ namespace dtActors
     ///////////////////////////////////////////////////////////////////////////////
     void SoundActorProxy::LoadFile(const std::string &fileName)
     {
-        Sound* snd = dynamic_cast<Sound*>(mActor.get());
-        if(!snd)
-            throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
-            "Actor should be type dtAudio::Sound", __FILE__, __LINE__);
+        Sound* snd = static_cast<Sound*>(mActor.get());
 
         if(!fileName.empty())
             snd->LoadFile(fileName.c_str());
@@ -163,10 +154,7 @@ namespace dtActors
     ///////////////////////////////////////////////////////////////////////////////
     void SoundActorProxy::SetDirection(const osg::Vec3 &dir)
     {
-        Sound* snd = dynamic_cast<Sound*>(mActor.get());
-        if(!snd)
-            throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException,
-            "Actor should be type dtAudio::Sound", __FILE__, __LINE__);
+        Sound* snd = static_cast<Sound*>(mActor.get());
 
         snd->SetDirection(dir);
     }
@@ -174,10 +162,7 @@ namespace dtActors
     ///////////////////////////////////////////////////////////////////////////////
     osg::Vec3 SoundActorProxy::GetDirection()
     {
-        Sound* snd = dynamic_cast<Sound*>(mActor.get());
-        if(!snd)
-            throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
-            "Actor should be type dtAudio::Sound", __FILE__, __LINE__);
+        Sound* snd = static_cast<Sound*>(mActor.get());
 
         osg::Vec3 pos;
         snd->GetDirection(pos);
@@ -187,10 +172,7 @@ namespace dtActors
     ///////////////////////////////////////////////////////////////////////////////
     void SoundActorProxy::SetVelocity(const osg::Vec3 &vel)
     {
-        Sound* snd = dynamic_cast<Sound*>(mActor.get());
-        if(!snd)
-            throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
-            "Actor should be type dtAudio::Sound", __FILE__, __LINE__);
+        Sound* snd = static_cast<Sound*>(mActor.get());
 
         snd->SetVelocity(vel);
     }
@@ -198,10 +180,7 @@ namespace dtActors
     ///////////////////////////////////////////////////////////////////////////////
     osg::Vec3 SoundActorProxy::GetVelocity()
     {
-        Sound* snd = dynamic_cast<Sound*>(mActor.get());
-        if(!snd)
-            throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
-            "Actor should be type dtAudio::Sound", __FILE__, __LINE__);
+        Sound* snd = static_cast<Sound*>(mActor.get());
 
         osg::Vec3 pos;
         snd->GetVelocity(pos);
@@ -211,10 +190,7 @@ namespace dtActors
     ///////////////////////////////////////////////////////////////////////////////
     void SoundActorProxy::Play()
     {
-        Sound* snd = dynamic_cast<Sound*>(mActor.get());
-        if(!snd)
-            throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
-            "Actor should be type dtAudio::Sound", __FILE__, __LINE__);
+        Sound* snd = static_cast<Sound*>(mActor.get());
 
         snd->Play();
     }

@@ -38,11 +38,7 @@ namespace dtActors
         const std::string &GROUPNAME = "Light";
         PositionalLightActorProxy::BuildPropertyMap();
 
-        SpotLight *sl = dynamic_cast<SpotLight*>(mActor.get());
-        if(!sl)
-            throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
-            "Actor should be type dtCore::SpotLight", __FILE__, __LINE__);
-
+        SpotLight *sl = static_cast<SpotLight*>(mActor.get());
 
         // This property manipulates the cutoff oa spotlight. It uses
         // a float type to represent the cutoff factor.

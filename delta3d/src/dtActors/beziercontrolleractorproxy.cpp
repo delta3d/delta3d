@@ -22,7 +22,7 @@ int BezierControllerActorProxy::mNumControllers = 0;
 void BezierControllerActorProxy::CreateActor()
 {
    mActor = new BezierController();
-   dynamic_cast<BezierController*>(mActor.get())->RenderProxyNode(true);
+   static_cast<BezierController*>(mActor.get())->RenderProxyNode(true);
    
    std::ostringstream ss;
    ss << "Controller" << mNumControllers++;
@@ -34,13 +34,7 @@ void BezierControllerActorProxy::BuildPropertyMap()
 {
    MotionActionActorProxy::BuildPropertyMap();
 
-   BezierController* bc = dynamic_cast<BezierController*>(mActor.get());
-
-   if(!bc)
-   {
-      throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
-         "Actor should be type dtABC::BezierController", __FILE__, __LINE__);
-   }
+   BezierController* bc = static_cast<BezierController*>(mActor.get());
 
    AddProperty(new dtDAL::ActorActorProperty(*this, "Start Node", "Start Node",
       MakeFunctor(*this, &BezierControllerActorProxy::SetActorStartNode),
@@ -58,13 +52,7 @@ void BezierControllerActorProxy::BuildPropertyMap()
 
 dtCore::DeltaDrawable* BezierControllerActorProxy::GetActorStartNode()
 {
-   BezierController* bc = dynamic_cast<BezierController*>(mActor.get());
-
-   if( bc == 0 )
-   {
-      throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
-         "Actor of invalid type, should be a BezierController", __FILE__, __LINE__);
-   }
+   BezierController* bc = static_cast<BezierController*>(mActor.get());
 
    return bc->GetStartNode();
 }
@@ -77,21 +65,10 @@ void BezierControllerActorProxy::SetActorStartNode(ActorProxy* node)
    BezierNode* bNode = NULL;
    if(node)
    {
-      bNode = dynamic_cast<BezierNode*>(node->GetActor());
-      if(!bNode)
-      {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
-            "Invalid property type to set start node of BezierController", __FILE__, __LINE__);
-      }
+      bNode = static_cast<BezierNode*>(node->GetActor());
    }
 
-   BezierController* bc = dynamic_cast<BezierController*>(mActor.get());
-
-   if(!bc)
-   {
-      throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
-         "Actor of invalid type, should be a BezierController", __FILE__, __LINE__);
-   }
+   BezierController* bc = static_cast<BezierController*>(mActor.get());
 
    bc->SetStartNode(bNode);
 

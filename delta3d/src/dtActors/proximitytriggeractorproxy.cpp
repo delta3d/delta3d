@@ -85,12 +85,7 @@ namespace dtActors
 
       TransformableActorProxy::BuildPropertyMap();
 
-      ProximityTrigger *trigger = dynamic_cast<ProximityTrigger*>(mActor.get());
-      if(!trigger)
-      {
-         throw dtUtil::Exception(ExceptionEnum::InvalidActorException, 
-            "Actor should be type dtCore::ProximityTrigger", __FILE__, __LINE__);
-      }
+      ProximityTrigger *trigger = static_cast<ProximityTrigger*>(mActor.get());
 
       AddProperty(new ActorActorProperty(*this, "Action","Action",
          MakeFunctor(*this ,&ProximityTriggerActorProxy::SetAction),
@@ -120,12 +115,7 @@ namespace dtActors
    {
       SetLinkedActor("Action", action);
 
-      ProximityTrigger* proximityTrigger = dynamic_cast<ProximityTrigger*>( mActor.get() );
-      if( proximityTrigger == 0 )
-      {
-         throw dtUtil::Exception(ExceptionEnum::BaseException,
-            "Expected a ProximityTrigger actor.", __FILE__, __LINE__);
-      }
+      ProximityTrigger* proximityTrigger = static_cast<ProximityTrigger*>( mActor.get() );
       
       Action* a = NULL;
       if(action)
@@ -138,12 +128,7 @@ namespace dtActors
 
    DeltaDrawable* ProximityTriggerActorProxy::GetAction()
    {
-      ProximityTrigger* proximityTrigger = dynamic_cast<ProximityTrigger*>( mActor.get() );
-      if( proximityTrigger == 0 )
-      {
-         throw dtUtil::Exception(ExceptionEnum::BaseException,
-            "Expected a ProximityTrigger actor.", __FILE__, __LINE__);
-      }
+      ProximityTrigger* proximityTrigger = static_cast<ProximityTrigger*>( mActor.get() );
 
       return proximityTrigger->GetTrigger()->GetAction();
    }

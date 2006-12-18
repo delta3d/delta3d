@@ -47,12 +47,7 @@ namespace dtActors
    {
       const std::string GROUPNAME = "Trigger";
 
-      Trigger *trigger = dynamic_cast<Trigger*>(mActor.get());
-      if(!trigger)
-      {
-         throw dtUtil::Exception(ExceptionEnum::InvalidActorException, 
-            "Actor should be type dtABC::Trigger", __FILE__, __LINE__);
-      }
+      Trigger *trigger = static_cast<Trigger*>(mActor.get());
 
       AddProperty(new BooleanActorProperty("Enable","Enabled",
          MakeFunctor(*trigger,&Trigger::SetEnabled),
@@ -74,12 +69,8 @@ namespace dtActors
    {
       SetLinkedActor("Action", action);
 
-      Trigger* trigger = dynamic_cast<Trigger*>( mActor.get() );
-      if( trigger == 0 )
-      {
-         throw dtUtil::Exception(ExceptionEnum::BaseException,"Expected a Trigger actor.", __FILE__, __LINE__);
-      }
-
+      Trigger* trigger = static_cast<Trigger*>( mActor.get() );
+     
       Action* a(0);
       
       if( action != 0 )
@@ -92,11 +83,7 @@ namespace dtActors
 
    dtCore::DeltaDrawable* TriggerActorProxy::GetAction()
    {
-      Trigger* trigger = dynamic_cast<Trigger*>( mActor.get() );
-      if( trigger == 0 )
-      {
-         throw dtUtil::Exception(ExceptionEnum::BaseException,"Expected a Trigger actor.", __FILE__, __LINE__);
-      }
+      Trigger* trigger = static_cast<Trigger*>( mActor.get() );
 
       return trigger->GetAction();
    }

@@ -42,13 +42,8 @@ namespace dtActors
    ///////////////////////////////////////////////////////////////////////////////
    void AutoTriggerActorProxy::BuildPropertyMap()
    {
-      AutoTrigger* trigger = dynamic_cast<AutoTrigger*>(mActor.get());
-      if(!trigger)
-      {
-         throw dtUtil::Exception(ExceptionEnum::InvalidActorException, 
-            "Actor should be type dtCore::AutoTrigger", __FILE__, __LINE__);
-      }
-
+      AutoTrigger* trigger = static_cast<AutoTrigger*>(mActor.get());
+     
       AddProperty(new ActorActorProperty(*this, "Action","Action",
          MakeFunctor(*this ,&AutoTriggerActorProxy::SetAction),
          MakeFunctorRet(*this ,&AutoTriggerActorProxy::GetAction),
@@ -63,13 +58,8 @@ namespace dtActors
 
    DeltaDrawable* AutoTriggerActorProxy::GetAction()
    {
-      AutoTrigger* autoTrigger = dynamic_cast<AutoTrigger*>( mActor.get() );
-      if( autoTrigger == 0 )
-      {
-         throw dtUtil::Exception(ExceptionEnum::BaseException,
-            "Expected an AutoTrigger actor.", __FILE__, __LINE__);
-      }
-
+      AutoTrigger* autoTrigger = static_cast<AutoTrigger*>( mActor.get() );
+     
       return autoTrigger->GetTrigger()->GetAction();  
    }
 
@@ -77,12 +67,7 @@ namespace dtActors
    {
       SetLinkedActor("Action", action);
 
-      AutoTrigger* autoTrigger = dynamic_cast<AutoTrigger*>( mActor.get() );
-      if( autoTrigger == 0 )
-      {
-         throw dtUtil::Exception(ExceptionEnum::BaseException,
-            "Expected an AutoTrigger actor.", __FILE__, __LINE__);
-      }
+      AutoTrigger* autoTrigger = static_cast<AutoTrigger*>( mActor.get() );
 
       Action* a = NULL;
       if(action)

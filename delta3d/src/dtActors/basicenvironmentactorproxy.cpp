@@ -41,10 +41,7 @@ namespace dtActors
 
    void BasicEnvironmentActorProxy::BuildPropertyMap()
    {
-      BasicEnvironmentActor *env = dynamic_cast<BasicEnvironmentActor*>(mActor.get());
-      if(env == NULL)
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
-         "Actor should be of type dtCore::Environment", __FILE__, __LINE__);
+      BasicEnvironmentActor *env = static_cast<BasicEnvironmentActor*>(mActor.get());
 
       dtGame::GameActorProxy::BuildPropertyMap();
 
@@ -101,11 +98,8 @@ namespace dtActors
 
    void BasicEnvironmentActorProxy::BuildInvokables()
    {
-      BasicEnvironmentActor *env = dynamic_cast<BasicEnvironmentActor*>(mActor.get());
-      if(env == NULL)
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
-         "Actor should be of type dtCore::Environment", __FILE__, __LINE__);
-
+      BasicEnvironmentActor *env = static_cast<BasicEnvironmentActor*>(mActor.get());
+ 
       dtGame::GameActorProxy::BuildInvokables();
    }
 

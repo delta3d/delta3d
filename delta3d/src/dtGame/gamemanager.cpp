@@ -715,12 +715,7 @@ namespace dtGame
       {
          if(mEnvironment.get() != &gameActorProxy)
          {
-            EnvironmentActor *ea = dynamic_cast<EnvironmentActor*>(mEnvironment->GetActor());
-            if(ea == NULL)
-            {
-               LOG_ERROR("An environment actor proxy has an invalid actor");
-               return;
-            }
+            EnvironmentActor *ea = static_cast<EnvironmentActor*>(mEnvironment->GetActor());
             ea->AddActor(*gameActorProxy.GetActor());
             mGameActorProxyMap.insert(std::make_pair(gameActorProxy.GetId(), &gameActorProxy));
          }
@@ -763,12 +758,7 @@ namespace dtGame
             return;
          }
 
-         EnvironmentActor *ea = dynamic_cast<EnvironmentActor*>(envActor->GetActor());
-         if(ea == NULL)
-         {
-            LOG_ERROR("The environment actor proxy parameter has an invalid actor");
-            return;
-         }
+         EnvironmentActor *ea = static_cast<EnvironmentActor*>(envActor->GetActor());
 
          dtCore::RefPtr<EnvironmentActorProxy> oldProxy = mEnvironment;
          bool wasPagingEnabled = mScene->IsPagingEnabled();
@@ -795,7 +785,6 @@ namespace dtGame
             if(actors[i].get() != oldProxy.get())
                ea->AddActor(*actors[i]->GetActor());
          }
-
 
          mEnvironment = envActor;
          AddActor(*mEnvironment, false, false);
