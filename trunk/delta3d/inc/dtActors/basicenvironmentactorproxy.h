@@ -358,16 +358,6 @@ namespace dtActors
           */
          SeasonEnum& GetSeason() const;
 
-         /**
-          * Sets the current wind force
-          */
-         void SetWind( const osg::Vec3& wind );
-
-         /**
-          * Gets the current wind force
-          */
-         osg::Vec3 BasicEnvironmentActor::GetWind() const;
-
       protected:
 
          /// Destructor
@@ -387,7 +377,6 @@ namespace dtActors
          dtCore::RefPtr<dtABC::Weather> mWeather;
          dtCore::RefPtr<dtCore::CloudPlane> mCloudPlane;
          dtABC::Weather::WeatherTheme mWeatherTheme;
-         osg::Vec3 mWind; 
    };
 
    class DT_PLUGIN_EXPORT BasicEnvironmentActorProxy : public dtGame::EnvironmentActorProxy
