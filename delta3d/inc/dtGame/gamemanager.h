@@ -373,67 +373,67 @@ namespace dtGame
           * Retrieves all the game actors added to the GM
           * @param toFill The vector to fill
           */
-         void GetAllGameActors(std::vector<dtCore::RefPtr<GameActorProxy> > &toFill);
+         void GetAllGameActors(std::vector<dtCore::RefPtr<GameActorProxy> > &toFill) const;
 
          /**
           * Retrieves all the non game actors added to the GM
           * @param toFill The vector to fill
           */
-         void GetAllNonGameActors(std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill);
+         void GetAllNonGameActors(std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill) const;
 
          /**
           * Retrieves all the actors added to the GM
           * @param toFill The vector to fill
           */
-         void GetAllActors(std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill);
+         void GetAllActors(std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill) const;
 
          /**
           * Fills a vector with actors that are currently in the scene
           * @param vec The vector to fill
           */
-         void GetActorsInScene(std::vector<dtCore::RefPtr<dtCore::DeltaDrawable> > &vec);
+         void GetActorsInScene(std::vector<dtCore::RefPtr<dtCore::DeltaDrawable> > &vec) const;
 
          /**
           * Fills a vector with the game proxys whose names match the name parameter
           * @param The name to search for
           * @param The vector to fill
           */
-         void FindActorsByName(const std::string &name, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill);
+         void FindActorsByName(const std::string &name, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill) const;
 
          /**
           * Fills a vector with the game proxys whose types match the type parameter
           * @param The type to search for
           * @param The vector to fill
           */
-         void FindActorsByType(const dtDAL::ActorType &type, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill);
+         void FindActorsByType(const dtDAL::ActorType &type, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill) const;
 
          /**
           * Fills out a vector of actors with the specified class name
           * @param className the classname
           * @param toFill The vector to fill
           */
-         void FindActorsByClassName(const std::string &className, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill);
+         void FindActorsByClassName(const std::string &className, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill) const;
          
          /**
           * Fills a vector with the game proxys whose position is within the radius parameter
           * @param radius The radius to search in 
           * @param toFill The vector to fill
           */
-         void FindActorsWithinRadius(const float radius, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill);
+         void FindActorsWithinRadius(const float radius, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill) const;
 
          /**
           * Returns the game actor proxy whose is matches the parameter
           * @param id The id of the proxy to find
           * @return The proxy, or NULL if not found
           */
-         GameActorProxy* FindGameActorById(const dtCore::UniqueId &id);
+         GameActorProxy* FindGameActorById(const dtCore::UniqueId &id) const;
 
          /**
           * Getst the game actor proxy whose is matches the parameter
           * @param id The id of the proxy to find
           */
          template<typename ProxyType>
-         void FindGameActorById(const dtCore::UniqueId &id, ProxyType*& proxy)
+         void FindGameActorById(const dtCore::UniqueId &id, ProxyType*& proxy) const
          {
             proxy = dynamic_cast<ProxyType*>(FindGameActorById(id));
          }
@@ -444,7 +444,7 @@ namespace dtGame
           * @param id The id of the proxy to find
           * @return The proxy, or NULL if not found
           */
-         dtDAL::ActorProxy* FindActorById(const dtCore::UniqueId &id);
+         dtDAL::ActorProxy* FindActorById(const dtCore::UniqueId &id) const;
 
          /**
           * Returns the actor proxy whose is matches the parameter. This will search both the game actors and the
@@ -453,7 +453,7 @@ namespace dtGame
           * @return The proxy, or NULL if not found
           */
          template<typename ProxyType>
-         void FindActorById(const dtCore::UniqueId &id, ProxyType*& proxy)
+         void FindActorById(const dtCore::UniqueId &id, ProxyType*& proxy) const
          {
             proxy = dynamic_cast<ProxyType*>(FindActorById(id));
          }
@@ -622,13 +622,13 @@ namespace dtGame
           * @return the current simulation wall-clock time
           * @see dtCore::System#GetSimulationClockTime
           */
-         dtCore::Timer_t GetSimulationClockTime() const;
+         const dtCore::Timer_t& GetSimulationClockTime() const;
          
          /**
           * @return The current real clock time
           * @see dtCore::System#GetRealClockTime
           */
-         dtCore::Timer_t GetRealClockTime() const;
+         const dtCore::Timer_t& GetRealClockTime() const;
 
          /**
           * Change the time settings.
@@ -636,14 +636,14 @@ namespace dtGame
           * @param newTimeScale the new simulation time progression as a factor of real time.
           * @param newClockTime  The new simulation wall-clock time.
           */
-         void ChangeTimeSettings(double newTime, float newTimeScale, dtCore::Timer_t newClockTime);
+         void ChangeTimeSettings(double newTime, float newTimeScale, const dtCore::Timer_t &newClockTime);
          
          /**
           * Get all of the GameActorProxies registered to receive all messages of a certain type.
           * @param type the message type to query for.
           * @param toFill a vector to fill with pairs GameActorProxies and the name of the invokable.
           */
-         void GetRegistrantsForMessages(const MessageType& type, std::vector<std::pair<GameActorProxy*, std::string > >& toFill);
+         void GetRegistrantsForMessages(const MessageType& type, std::vector<std::pair<GameActorProxy*, std::string > >& toFill) const;
          
          /**
           * Get all of the GameActorProxies registered to receive messages of a given type for a given GameActor.
@@ -654,7 +654,7 @@ namespace dtGame
          void GetRegistrantsForMessagesAboutActor(
             const MessageType& type, 
             const dtCore::UniqueId& targetActorId, 
-            std::vector<std::pair<GameActorProxy*, std::string > >& toFill);
+            std::vector<std::pair<GameActorProxy*, std::string > >& toFill) const;
 
          /**
           * @param type
@@ -794,7 +794,7 @@ namespace dtGame
           * @param total The total value used to determine the percentage
           * @param partial The partial amount that we are using for the percentage
           */
-         float ComputeStatsPercent(dtCore::Timer_t total, dtCore::Timer_t partial);
+         float ComputeStatsPercent(const dtCore::Timer_t &total, const dtCore::Timer_t &partial) const;
 
          /**
           * Private helper method to send an environment changed message
