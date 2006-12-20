@@ -340,6 +340,8 @@ namespace dtGame
    void GameActorProxy::GetInvokables(std::vector<Invokable*>& toFill)
    {
       toFill.clear();
+      toFill.reserve(mInvokables.size());
+
       for (std::map<std::string,dtCore::RefPtr<Invokable> >::iterator i = mInvokables.begin();
          i != mInvokables.end(); ++i)
       {
@@ -350,6 +352,8 @@ namespace dtGame
    void GameActorProxy::GetInvokables(std::vector<const Invokable*>& toFill) const
    {
       toFill.clear();
+      toFill.reserve(mInvokables.size());
+
       for (std::map<std::string,dtCore::RefPtr<Invokable> >::const_iterator i = mInvokables.begin();
          i != mInvokables.end(); ++i)
       {
@@ -360,6 +364,8 @@ namespace dtGame
    void GameActorProxy::GetMessageHandlers(const MessageType& type, std::vector<Invokable*>& toFill)
    {
       toFill.clear();
+      toFill.reserve(mMessageHandlers.size());
+
       for (std::multimap<const MessageType*, dtCore::RefPtr<Invokable> >::iterator i = mMessageHandlers.find(&type);
             (i != mMessageHandlers.end()) && (*i->first == type); ++i)
       {

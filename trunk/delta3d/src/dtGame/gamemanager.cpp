@@ -996,6 +996,7 @@ namespace dtGame
    void GameManager::GetActorTypes(std::vector<const dtDAL::ActorType*> &toFill) const
    {
       toFill.clear();
+      toFill.reserve(mGameActorProxyMap.size() + mActorProxyMap.size());
 
       for (std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> >::const_iterator itor = mGameActorProxyMap.begin();
          itor != mGameActorProxyMap.end(); ++itor)
@@ -1010,6 +1011,7 @@ namespace dtGame
    void GameManager::GetAllGameActors(std::vector<dtCore::RefPtr<GameActorProxy> > &toFill)
    {
       toFill.clear();
+      toFill.reserve(mGameActorProxyMap.size());
 
       std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> >::iterator itor;
       for(itor = mGameActorProxyMap.begin(); itor != mGameActorProxyMap.end(); ++itor)
@@ -1020,6 +1022,7 @@ namespace dtGame
    void GameManager::GetAllNonGameActors(std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill)
    {
       toFill.clear();
+      toFill.reserve(mActorProxyMap.size());
 
       std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> >::iterator itor;
       for(itor = mActorProxyMap.begin(); itor != mActorProxyMap.end(); ++itor)
@@ -1030,6 +1033,7 @@ namespace dtGame
    void GameManager::GetAllActors(std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill)
    {
       toFill.clear();
+      toFill.reserve(mGameActorProxyMap.size() + mActorProxyMap.size());
 
       std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> >::iterator itor;
       for(itor = mGameActorProxyMap.begin(); itor != mGameActorProxyMap.end(); ++itor)
@@ -1044,6 +1048,7 @@ namespace dtGame
    void GameManager::GetActorsInScene(std::vector<dtCore::RefPtr<dtCore::DeltaDrawable> > &vec)
    {
       vec.clear();
+      vec.reserve(mScene->GetNumberOfAddedDrawable());
 
       for(unsigned int i = 0; i < mScene->GetNumberOfAddedDrawable(); i++)
          vec.push_back(mScene->GetDrawable(i));
@@ -1053,6 +1058,7 @@ namespace dtGame
    void GameManager::FindActorsByName(const std::string &name, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill)
    {
       toFill.clear();
+      toFill.reserve(mGameActorProxyMap.size() + mActorProxyMap.size());
 
       for (std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> >::iterator itor = mGameActorProxyMap.begin();
           itor != mGameActorProxyMap.end(); ++itor)
@@ -1073,6 +1079,7 @@ namespace dtGame
    void GameManager::FindActorsByType(const dtDAL::ActorType &type, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill)
    {
       toFill.clear();
+      toFill.reserve(mGameActorProxyMap.size() + mActorProxyMap.size());
 
       for (std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> >::iterator itor = mGameActorProxyMap.begin();
          itor != mGameActorProxyMap.end(); ++itor)
@@ -1262,6 +1269,8 @@ namespace dtGame
    void GameManager::GetRegistrantsForMessages(const MessageType& type, std::vector<std::pair<GameActorProxy*, std::string > >& toFill)
    {
       toFill.clear();
+      toFill.reserve(mGlobalMessageListeners.size());
+
       std::multimap<const MessageType*, std::pair<dtCore::RefPtr<GameActorProxy>, std::string> >::iterator  itor
          = mGlobalMessageListeners.find(&type);
 
@@ -1277,6 +1286,8 @@ namespace dtGame
    void GameManager::GetRegistrantsForMessagesAboutActor(const MessageType& type, const dtCore::UniqueId& targetActorId, std::vector<std::pair<GameActorProxy*, std::string > >& toFill)
    {
       toFill.clear();
+      toFill.reserve(mActorMessageListeners.size());
+
       std::map<const MessageType*, std::multimap<dtCore::UniqueId, std::pair<dtCore::RefPtr<GameActorProxy>, std::string> > >::iterator itor
          = mActorMessageListeners.find(&type);
 
