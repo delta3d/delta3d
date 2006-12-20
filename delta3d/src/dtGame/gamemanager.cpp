@@ -242,13 +242,13 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   const Timer_t& GameManager::GetSimulationClockTime() const
+   Timer_t GameManager::GetSimulationClockTime() const
    {
       return dtCore::System::GetInstance().GetSimulationClockTime();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   const Timer_t& GameManager::GetRealClockTime() const
+   Timer_t GameManager::GetRealClockTime() const
    {
       return dtCore::System::GetInstance().GetRealClockTime();
    }

@@ -622,13 +622,13 @@ namespace dtGame
           * @return the current simulation wall-clock time
           * @see dtCore::System#GetSimulationClockTime
           */
-         const dtCore::Timer_t& GetSimulationClockTime() const;
+         dtCore::Timer_t GetSimulationClockTime() const;
          
          /**
           * @return The current real clock time
           * @see dtCore::System#GetRealClockTime
           */
-         const dtCore::Timer_t& GetRealClockTime() const;
+         dtCore::Timer_t GetRealClockTime() const;
 
          /**
           * Change the time settings.
