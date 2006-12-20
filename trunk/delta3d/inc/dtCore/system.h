@@ -145,19 +145,19 @@ namespace dtCore
        * @note the clock time is a 64 bit int in microseconds
        * @return the current real clock
        */
-      dtCore::Timer_t GetRealClockTime() const { return mClockTime; }
+      const dtCore::Timer_t& GetRealClockTime() const { return mClockTime; }
 
       /**
        * @note the simulation clock time is a 64 bit int in microseconds
        * @return the current simulation clock
        */
-      dtCore::Timer_t GetSimulationClockTime() const { return mSimulationClockTime; }
+      const dtCore::Timer_t& GetSimulationClockTime() const { return mSimulationClockTime; }
       
       /**
        * Sets the simulation wall clock time.  This is used for things like time of day.
        * @param newTime the new time in microseconds, like the real clock time.
        */
-      void SetSimulationClockTime(dtCore::Timer_t newTime) { mSimulationClockTime = newTime; }
+      void SetSimulationClockTime(const dtCore::Timer_t &newTime) { mSimulationClockTime = newTime; }
 
       /**
        * The simulation time starts at 0 at the beginning of the simulation.
