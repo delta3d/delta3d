@@ -27,12 +27,11 @@
 #include <QtGui/QTabWidget>
 #include <vector>
 
-#include "dtEditQt/tabwrapper.h"
-
 class QIcon;
 
 namespace dtEditQt 
 {
+   class TabWrapper;
 
     /**
     * @class TabContainer

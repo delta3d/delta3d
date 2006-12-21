@@ -20,7 +20,7 @@
 * Teague Coonan
 */
 #include <prefix/dtstageprefix-src.h>
-#include "dtEditQt/tabwrapper.h"
+#include <dtEditQt/tabwrapper.h>
 
 namespace dtEditQt 
 {
