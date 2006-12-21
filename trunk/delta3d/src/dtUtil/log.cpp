@@ -414,6 +414,74 @@ namespace dtUtil
 
    }
 
+   void Log::LogMessage(LogMessageType msgType, 
+                        const std::string &source, 
+                        int line,
+                        const std::string &msg) const
+   {
+      struct tm *t;
+      time_t cTime;
+      std::string color;
+
+      if (mOutputStreamBit == Log::NO_OUTPUT) 
+         return;
+
+      if (msgType < mLevel)
+         return;
+
+      if (!manager->logFile.is_open())
+         return;
+
+      time(&cTime);
+      t = localtime(&cTime);
+
+      switch (msgType)
+      {
+      case LOG_DEBUG:
+         color = "<b><font color=#808080>";
+         break;
+
+      case LOG_INFO:
+         color = "<b><font color=#008080>";
+         break;
+
+      case LOG_ERROR:
+         color = "<b><font color=#FF0000>";
+         break;
+
+      case LOG_WARNING:
+         color = "<b><font color=#808000>";
+         break;
+
+      case LOG_ALWAYS:
+         color = "<b><font color=#000000>";
+         break;
+
+      }
+
+      if (dtUtil::Bits::Has(mOutputStreamBit, Log::TO_FILE))
+      {
+         manager->logFile << color << GetLogLevelString(msgType) << ": "
+            << std::setw(2) << std::setfill('0') << t->tm_hour << ":"
+            << std::setw(2) << std::setfill('0') << t->tm_min << ":"
+            << std::setw(2) << std::setfill('0') << t->tm_sec << ": &lt;"
+            << source << ":" << line << "&gt; " << msg << "</font></b><br>" << std::endl;
+
+         manager->logFile.flush();
+      }
+
+
+      if (dtUtil::Bits::Has(mOutputStreamBit, Log::TO_CONSOLE))
+      {
+         std::cout << GetLogLevelString(msgType) << ": "
+            << std::setw(2) << std::setfill('0') << t->tm_hour << ":"
+            << std::setw(2) << std::setfill('0') << t->tm_min << ":"
+            << std::setw(2) << std::setfill('0') << t->tm_sec << ":<"
+            << source << ":" << line << ">" << msg << std::endl;
+      }
+
+   }
+
    //////////////////////////////////////////////////////////////////////////
    void Log::LogHorizRule()
    {
