@@ -23,7 +23,8 @@
 #include <QtGui/QIcon>
 #include <QtGui/QPixmap>
 
-#include "dtEditQt/tabcontainer.h"
+#include <dtEditQt/tabcontainer.h>
+#include <dtEditQt/tabwrapper.h>
 
 namespace dtEditQt 
 {
@@ -36,7 +37,7 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     TabContainer::~TabContainer()
     {
-        for(int i = 0; i<(signed)tabVector.size();i++)
+        for(unsigned int i = 0; i < tabVector.size(); i++)
             delete tabVector.at(i);
  
         tabVector.clear();
