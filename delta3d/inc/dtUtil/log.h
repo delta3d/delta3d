@@ -134,6 +134,19 @@ namespace dtUtil
          *  an unlimited number of parameters in a C-style printf syntax.
          *  @param msgType - Type of message being displayed. (error,warning,info)
          *  @param source - String identifier of the source of the message.
+         *  @param line - the line number.
+         *  @param msg - std::string that has been formatted.
+         *  @note
+         *      Max length of the string to be printed is 2048 characters.
+         */
+        void LogMessage(LogMessageType msgType, const std::string &source, int line,
+                        const std::string &msg) const;
+
+        /**
+         * Little more sophisticated method for logging messages.  Allows for
+         *  an unlimited number of parameters in a C-style printf syntax.
+         *  @param msgType - Type of message being displayed. (error,warning,info)
+         *  @param source - String identifier of the source of the message.
          *  @param msg - Printf - style format string.
          *  @note
          *      Max length of the string to be printed is 2048 characters.
