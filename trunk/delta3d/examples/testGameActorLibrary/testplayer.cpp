@@ -23,7 +23,7 @@
 #include <osg/MatrixTransform>
 #include <osgDB/ReadFile>
 
-#include <dtCore/isector.h>
+//#include <dtCore/isector.h>
 
 #include <dtDAL/enginepropertytypes.h>
 
@@ -47,6 +47,7 @@ TestPlayer::TestPlayer(dtGame::GameActorProxy& proxy): dtGame::GameActor(proxy),
 //////////////////////////////////////////////////////////////////////////////
 TestPlayer::~TestPlayer()
 {
+   mIsector = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -24,12 +24,14 @@
 #include <osg/Vec3>
 #include <string>
 #include <dtGame/gameactor.h>
+#include <dtCore/observerptr.h>
+#include <dtCore/isector.h>
 #include "export.h"
 
-namespace dtCore
-{
-   class Isector;
-}
+//namespace dtCore
+//{
+//   class Isector;
+//}
 
 class DT_EXAMPLE_EXPORT TestPlayer : public dtGame::GameActor
 {
@@ -57,7 +59,7 @@ class DT_EXAMPLE_EXPORT TestPlayer : public dtGame::GameActor
    private:
       float mVelocity,mTurnRate;
       std::string mModelFile;
-      dtCore::RefPtr<dtCore::Isector> mIsector;
+      dtCore::ObserverPtr<dtCore::Isector> mIsector;
 };
 
 class DT_EXAMPLE_EXPORT TestPlayerProxy : public dtGame::GameActorProxy
