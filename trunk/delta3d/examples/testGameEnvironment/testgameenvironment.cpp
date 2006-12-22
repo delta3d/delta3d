@@ -141,7 +141,12 @@ class TestGameEnvironmentApp : public dtABC::Application
             }
             case Producer::Key_space:
             {
-               mGM->SetEnvironmentActor(mGM->GetEnvironmentActor() != NULL ? NULL : mEnvironmentProxy.get());
+               dtActors::BasicEnvironmentActorProxy *proxy = 
+                  mGM->GetEnvironmentActor() == NULL ?
+                  static_cast<dtActors::BasicEnvironmentActorProxy*>(&mEnvironmentActor->GetGameActorProxy()) :
+                  NULL;
+
+               mGM->SetEnvironmentActor(proxy);
                GetScene()->UseSceneLight(true);
                break;
             }
