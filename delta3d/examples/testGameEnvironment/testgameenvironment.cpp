@@ -36,6 +36,8 @@ class TestGameEnvironmentApp : public dtABC::Application
 
       TestGameEnvironmentApp()
       {
+         Config();
+
          mGM = new dtGame::GameManager(*GetScene());
         
          dtCore::RefPtr<dtDAL::ActorProxy> proxy = mGM->CreateActor("dtcore.Terrain", "Infinite Terrain");
@@ -44,27 +46,20 @@ class TestGameEnvironmentApp : public dtABC::Application
             LOG_ERROR("Failed to create the infinite terrain proxy. Aborting.");
             Quit();
          }
-         mTerrain = dynamic_cast<dtCore::InfiniteTerrain*>(proxy->GetActor());
-         if(!mTerrain.valid())
-         {
-            LOG_ERROR("The infinite terrain proxy was created, but has an invalid actor. Aborting.");
-            Quit();
-         }
+         mTerrain = static_cast<dtCore::InfiniteTerrain*>(proxy->GetActor());
+         
          mGM->AddActor(*proxy);
 
-         mEnvironmentProxy = dynamic_cast<dtActors::BasicEnvironmentActorProxy*>(mGM->CreateActor("dtcore.Environment", "Environment").get());
-         if(!mEnvironmentProxy.valid())
+         proxy = mGM->CreateActor("dtcore.Environment", "Environment");
+         if(!proxy.valid())
          {
-            LOG_ERROR("Failed to create the environment actor. Aborting.");
+            LOG_ERROR("Failed to create the environment proxy. Aborting.");
             Quit();
          }
-         mEnvironmentActor = dynamic_cast<dtActors::BasicEnvironmentActor*>(mEnvironmentProxy->GetActor());
-         if(!mEnvironmentActor.valid())
-         {
-            LOG_ERROR("The environment actor proxy had an invalid actor. Aborting.");
-            Quit();
-         }
-         mGM->SetEnvironmentActor(mEnvironmentProxy.get());
+            
+         mEnvironmentActor = static_cast<dtActors::BasicEnvironmentActor*>(proxy->GetActor());
+         
+         mGM->SetEnvironmentActor(static_cast<dtActors::BasicEnvironmentActorProxy*>(&mEnvironmentActor->GetGameActorProxy()));
 
          mFMM = new dtCore::FlyMotionModel(GetKeyboard(), GetMouse());
          mFMM->SetTarget(GetCamera());
@@ -77,7 +72,8 @@ class TestGameEnvironmentApp : public dtABC::Application
 
       virtual void Config()
       {
-         GetWindow()->SetWindowTitle("testGameEnvironment");
+         GetWindow()->SetWindowTitle("TestGameEnvironment");
+         dtABC::Application::Config();
       }
 
       virtual bool KeyPressed(const dtCore::Keyboard* keyboard, 
@@ -89,16 +85,12 @@ class TestGameEnvironmentApp : public dtABC::Application
          {
             case Producer::Key_1:
             {
-               static bool enable = false;
-               mEnvironmentActor->EnableCloudPlane(enable);
-               enable = !enable;
+               mEnvironmentActor->EnableCloudPlane(!mEnvironmentActor->IsCloudPlaneEnabled());
                break;
             }
             case Producer::Key_2:
             {
-               static bool enable = false;
-               mEnvironmentActor->EnableFog(enable);
-               enable = !enable;
+               mEnvironmentActor->EnableFog(!mEnvironmentActor->IsFogEnabled());
                break;
             }
             case Producer::Key_3:
@@ -177,7 +169,6 @@ class TestGameEnvironmentApp : public dtABC::Application
    private:
 
       dtCore::RefPtr<dtGame::GameManager> mGM;
-      dtCore::RefPtr<dtActors::BasicEnvironmentActorProxy> mEnvironmentProxy;
       dtCore::RefPtr<dtActors::BasicEnvironmentActor> mEnvironmentActor;
       dtCore::RefPtr<dtCore::InfiniteTerrain> mTerrain;
       dtCore::RefPtr<dtCore::FlyMotionModel> mFMM;
@@ -194,7 +185,8 @@ int main(int argc, char **argv)
    }
    catch(const dtUtil::Exception &e) 
    {
-      LOG_ERROR("Exception caught: " + e.What());
+      e.LogException(dtUtil::Log::LOG_ERROR);
+      return -1;
    }
    return 0;
 }
