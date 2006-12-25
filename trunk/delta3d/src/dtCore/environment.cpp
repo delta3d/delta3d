@@ -228,9 +228,9 @@ void Environment::RemEffect( EnvEffect *effect )
   */
 void Environment::RemoveEffectCache()
 {
-   for(  EnvEffectList::iterator it = mToBeRemoved.begin();
-         it != mToBeRemoved.end();
-         it++ )
+   for(EnvEffectList::iterator it = mToBeRemoved.begin();
+       it != mToBeRemoved.end();
+       ++it)
    {
       EnvEffect *effect = it->get();
 
@@ -273,7 +273,7 @@ void Environment::OnMessage(MessageData *data)
 {
    if (data->message == "preframe")
    {
-      double deltaFrameTime = *static_cast<double*>( data->userData );
+      double deltaFrameTime = *static_cast<double*>(data->userData);
       Update(deltaFrameTime);
    }
    else if (data->message == "postframe")
@@ -316,7 +316,7 @@ void dtCore::Environment::Repaint()
    osg::Vec3 fogColor = mModFogColor;
    if (!GetFogEnable()) fogColor = mModSkyColor;
 
-   for (EnvEffectList::iterator it=mEffectList.begin(); it!=mEffectList.end(); it++)
+   for (EnvEffectList::iterator it=mEffectList.begin(); it!=mEffectList.end(); ++it)
    {
       (*it)->Repaint(mModSkyColor, fogColor, mSunAltitude, mSunAzimuth, vis );
    }
@@ -593,7 +593,7 @@ void dtCore::Environment::UpdateSkyLight()
 {
    if(mSkyLight.valid())
    {
-      if( InfiniteLight *sun = dynamic_cast<InfiniteLight*>( mSkyLight.get() ) )
+      if( InfiniteLight *sun = static_cast<InfiniteLight*>( mSkyLight.get() ) )
       {
          sun->SetAzimuthElevation( mSunAzimuth, mSunAltitude );
       }

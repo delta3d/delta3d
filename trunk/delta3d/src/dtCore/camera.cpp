@@ -379,7 +379,7 @@ namespace dtCore
    {
       mScene = scene;
    
-      if(mScene == 0)
+      if(mScene == NULL)
       {
          mCamera->setSceneHandler(0);
       }
@@ -487,7 +487,7 @@ namespace dtCore
    
    void Camera::AddedToScene( Scene* scene )
    {
-      mAddedToSceneGraph = bool(scene != 0);
+      mAddedToSceneGraph = bool(scene != NULL);
       
       Transformable::AddedToScene(scene);
    }
