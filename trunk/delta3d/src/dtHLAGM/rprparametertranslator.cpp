@@ -531,7 +531,31 @@ namespace dtHLAGM
                RPRAttributeType::RTI_OBJECT_ID_STRUCT_TYPE.GetName().c_str());
          }
       }
-     
+      else if (hlaType == RPRAttributeType::ARTICULATED_PART_TYPE)
+      {
+         printf("Buffer b4 = %s\n", buffer);
+         printf("Size = %d\n", (int)maxSize);
+         maxSize = 0;
+         
+         //ArticulatedParameter artParam;
+         ////mapping.
+         ////artParam.
+         //artParam.Encode(buffer);
+
+         ////parameters.
+         ////int amount = (int)(size / 20);
+         ////ArticulatedParameter artParam[amount];
+         ////for(int i = )
+
+         //artParam.Decode(buffer);
+         //artParams.push_back(artParam);
+
+
+         //   ArticulatedParameter artParam;
+         //artParam.Encode(buffer);
+
+         printf("Buffer after = %s\n", buffer);
+      }
    }
 
    void RPRParameterTranslator::MapFromWorldCoordToMessageParam(
