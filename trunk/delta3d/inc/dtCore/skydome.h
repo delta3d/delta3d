@@ -43,7 +43,7 @@ namespace dtCore
 
    public:
    
-      SkyDome( const std::string& name = "SkyDome" );
+      SkyDome( const std::string& name = "SkyDome", bool createCapGeometry = true );
    
    protected:
       
@@ -72,6 +72,7 @@ namespace dtCore
       osg::Vec3 mBaseColor;
       dtCore::RefPtr<osg::Geode> mGeode;
       dtCore::RefPtr<MoveEarthySkyWithEyePointTransformAzimuth> mXform;
+      bool mEnableCap;
    };
 }
 
