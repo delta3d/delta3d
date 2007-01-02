@@ -1049,7 +1049,11 @@ namespace dtHLAGM
             }
             else
             {
-               mRuntimeMappings.Put(theObject, *bestObjectToActor);
+               if( ! mRuntimeMappings.Put(theObject, *bestObjectToActor) )
+               {
+                  mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+                     "Unable to map in object (RTI handle %i). ObjectToActor struct may already be mapped or corrupt.", theObject);
+               }
             }
          }
 
@@ -1606,6 +1610,14 @@ namespace dtHLAGM
                                  thisObjectToActor->GetObjectClassName().c_str());
             return;
          }
+         catch (RTI::ObjectAlreadyRegistered&)
+         {
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+               "RTI Object Already Registered Exception: Object \"%s\" already registered with class handle %i. Tryied to send and update for object class: %s",
+               actorName.c_str(), classHandle,
+               thisObjectToActor->GetObjectClassName().c_str());
+            return;
+         }
          catch (RTI::Exception&)
          {
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
@@ -1624,8 +1636,6 @@ namespace dtHLAGM
       //Create AttributeHandleValuePairSet to hold the attributes.
       RTI::AttributeHandleValuePairSet* theAttributes =
             RTI::AttributeSetFactory::create(thisObjectToActor->GetOneToManyMappingVector().size() + 2);
-
-      theAttributes->empty();
 
       PrepareUpdate(aum, *theAttributes, *thisObjectToActor, newObject);
 
@@ -2025,7 +2035,7 @@ namespace dtHLAGM
          if (mRTIAmbassador != NULL)
             mRTIAmbassador->tick();
       }
-      else if (message.GetMessageType() == dtGame::MessageType::INFO_MAP_LOADED)
+      else if (message.GetMessageType() == dtGame::MessageType::INFO_MAP_UNLOADED)
       {
          mRuntimeMappings.Clear();
       }
