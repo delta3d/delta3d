@@ -151,6 +151,7 @@ class HLATests : public CPPUNIT_NS::TestFixture
       void TestRuntimeMappingInfo();
       void TestSubscription();
       void TestGMLookup();
+      void TestMessageProcessing();
 
    private:
 
@@ -380,6 +381,10 @@ void HLATests::RunAllTests()
    
       BetweenTestSetUp();
       TestRuntimeMappingInfo();
+      BetweenTestTearDown();
+
+      BetweenTestSetUp();
+      TestMessageProcessing();
       BetweenTestTearDown();
 
       BetweenTestSetUp();
@@ -1270,4 +1275,77 @@ void HLATests::TestGMLookup()
    {
       CPPUNIT_FAIL(e.What());
    }
+}
+
+void HLATests::TestMessageProcessing()
+{
+   dtHLAGM::ObjectRuntimeMappingInfo& mappingInfo = mHLAComponent->GetRuntimeMappings();
+
+   // Create some test mappings
+   dtCore::UniqueId id1;
+   std::string rtiid1 = "TestRTIID01";
+
+   dtHLAGM::EntityIdentifier eid1(1,1,1);
+
+   dtCore::RefPtr<dtHLAGM::ObjectToActor> ota1 = new dtHLAGM::ObjectToActor();
+   ota1->SetObjectClassName("BaseEntity.PhysicalEntity.Platform.GroundVehicle");
+
+   // Make sure the mappings start off empty
+   CPPUNIT_ASSERT(mappingInfo.GetId(mObjectHandle1) == NULL);
+   CPPUNIT_ASSERT(mappingInfo.GetObjectToActor(mObjectHandle1) == NULL);
+   CPPUNIT_ASSERT(static_cast<const dtHLAGM::ObjectRuntimeMappingInfo*>(&mappingInfo)->GetObjectToActor(mObjectHandle1) == NULL);
+   CPPUNIT_ASSERT(mappingInfo.GetId(eid1) == NULL);
+   CPPUNIT_ASSERT(mappingInfo.GetEntityId(id1) == NULL);
+   CPPUNIT_ASSERT(mappingInfo.GetHandle(id1)  == NULL);
+   CPPUNIT_ASSERT(mappingInfo.GetIdByRTIId(rtiid1)  == NULL);
+   CPPUNIT_ASSERT(mappingInfo.GetRTIId(id1)  == NULL);
+
+   // Create the mappings
+   CPPUNIT_ASSERT(mappingInfo.Put(mObjectHandle1, id1));
+   CPPUNIT_ASSERT(mappingInfo.Put(rtiid1, id1));
+   CPPUNIT_ASSERT(mappingInfo.Put(mObjectHandle1, *ota1));
+   CPPUNIT_ASSERT(mappingInfo.Put(eid1, id1));
+
+   // Make sure the mappings are valid
+   CPPUNIT_ASSERT(mappingInfo.GetId(mObjectHandle1) != NULL);
+   CPPUNIT_ASSERT(mappingInfo.GetObjectToActor(mObjectHandle1) != NULL);
+   CPPUNIT_ASSERT(static_cast<const dtHLAGM::ObjectRuntimeMappingInfo*>(&mappingInfo)->GetObjectToActor(mObjectHandle1) != NULL);
+   CPPUNIT_ASSERT(mappingInfo.GetId(eid1) != NULL);
+   CPPUNIT_ASSERT(mappingInfo.GetEntityId(id1) != NULL);
+   CPPUNIT_ASSERT(mappingInfo.GetHandle(id1)  != NULL);
+   CPPUNIT_ASSERT(mappingInfo.GetIdByRTIId(rtiid1)  != NULL);
+   CPPUNIT_ASSERT(mappingInfo.GetRTIId(id1)  != NULL);
+
+   // Send a map loaded message
+   dtCore::RefPtr<dtGame::MapLoadedMessage> msg;
+   mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_MAP_LOADED, msg);
+   mGameManager->SendMessage(*msg);
+   dtCore::System::GetInstance().Step();
+
+
+   // Make sure mappings have not been cleared
+   CPPUNIT_ASSERT(mappingInfo.GetId(mObjectHandle1) != NULL);
+   CPPUNIT_ASSERT(mappingInfo.GetObjectToActor(mObjectHandle1) != NULL);
+   CPPUNIT_ASSERT(static_cast<const dtHLAGM::ObjectRuntimeMappingInfo*>(&mappingInfo)->GetObjectToActor(mObjectHandle1) != NULL);
+   CPPUNIT_ASSERT(mappingInfo.GetId(eid1) != NULL);
+   CPPUNIT_ASSERT(mappingInfo.GetEntityId(id1) != NULL);
+   CPPUNIT_ASSERT(mappingInfo.GetHandle(id1)  != NULL);
+   CPPUNIT_ASSERT(mappingInfo.GetIdByRTIId(rtiid1)  != NULL);
+   CPPUNIT_ASSERT(mappingInfo.GetRTIId(id1)  != NULL);
+
+   // Send a map unloaded message
+   mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_MAP_UNLOADED, msg);
+   mGameManager->SendMessage(*msg);
+   dtCore::System::GetInstance().Step();
+
+   // Make sure the mappings have been cleared
+   CPPUNIT_ASSERT(mappingInfo.GetId(mObjectHandle1) == NULL);
+   CPPUNIT_ASSERT(mappingInfo.GetObjectToActor(mObjectHandle1) == NULL);
+   CPPUNIT_ASSERT(static_cast<const dtHLAGM::ObjectRuntimeMappingInfo*>(&mappingInfo)->GetObjectToActor(mObjectHandle1) == NULL);
+   CPPUNIT_ASSERT(mappingInfo.GetId(eid1) == NULL);
+   CPPUNIT_ASSERT(mappingInfo.GetEntityId(id1) == NULL);
+   CPPUNIT_ASSERT(mappingInfo.GetHandle(id1)  == NULL);
+   CPPUNIT_ASSERT(mappingInfo.GetIdByRTIId(rtiid1)  == NULL);
+   CPPUNIT_ASSERT(mappingInfo.GetRTIId(id1)  == NULL);
+
 }
