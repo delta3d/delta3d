@@ -16,8 +16,9 @@ namespace dtCore
 
 IMPLEMENT_MANAGEMENT_LAYER(SkyDome)
 
-SkyDome::SkyDome(const std::string& name)
-:EnvEffect(name)
+SkyDome::SkyDome( const std::string& name, bool createCapGeometry )
+:EnvEffect(name),
+mEnableCap(createCapGeometry)
 {
    RegisterInstance(this);
 
@@ -40,10 +41,10 @@ void dtCore::SkyDome::Config()
    mXform = new MoveEarthySkyWithEyePointTransformAzimuth();
    mXform->SetAzimuth( 0.0f ); //zero out the rotation of the dome
 
-    // transform's value isn't knowm until in the cull traversal so its bounding
-    // volume is can't be determined, therefore culling will be invalid,
-    // so switch it off, this cause all our paresnts to switch culling
-    // off as well. But don't worry culling will be back on once underneath
+    // Transform's value isn't known until the cull traversal, so its bounding
+    // volume can't be determined. Therefore culling will be invalid,
+    // so switch it off. This will cause all of our parents to switch culling
+    // off as well. But don't worry, culling will be back on once underneath
     // this node or any other branch above this transform.
    mXform->setCullingActive(false);
    
@@ -58,94 +59,112 @@ osg::Node* dtCore::SkyDome::MakeDome()
 {
    //5 levels with 18 points each spaced 20 degrees apart
 
-    int i, j;
-    float lev[] = { -9.0, 0.0, 7.2, 15.0, 90.0  };
-    float cc[][3] =
-    {
-        { 0.15, 0.25, 0.1 },
-        { 0.6, 0.6, 0.7 },
-        { 0.4, 0.4, 0.7 },
-        { 0.2, 0.2, 0.6 },
-        { 0.1, 0.1, 0.6 },
-    };
-    float x, y, z;
-    float alpha, theta;
-    float radius = 6000.0f;
-    int nlev = sizeof( lev )/sizeof(float);
+   int i, j;
+   float lev[] = { -9.0, -9.0, 0.0, 7.2, 15.0, 90.0  };
+   float cc[][3] =
+   {
+      { 0.15, 0.25, 0.1 },
+      { 0.6, 0.6, 0.7 },
+      { 0.4, 0.4, 0.7 },
+      { 0.2, 0.2, 0.6 },
+      { 0.1, 0.1, 0.6 },
+   };
+   float x, y, z;
+   float alpha, theta;
+   float radius = 6000.0f;
+   int nlev = sizeof( lev )/sizeof(float) - (mEnableCap?0:1);
 
-    osg::Geometry *geom = new osg::Geometry;
+   osg::Geometry *geom = new osg::Geometry;
 
-    osg::Vec3Array& coords = *(new osg::Vec3Array(19*nlev));
+   osg::Vec3Array& coords = *(new osg::Vec3Array(19*nlev));
 
-    osg::Vec4Array& colors = *(new osg::Vec4Array(19*nlev));
-    
-    int ci = 0;
+   osg::Vec4Array& colors = *(new osg::Vec4Array(19*nlev));
 
-    for( i = 0; i < nlev; i++ )
-    {
-        for( j = 0; j < 19; j++ )
-        {
-            alpha = osg::DegreesToRadians(lev[i]);
-            theta = osg::DegreesToRadians((float)(j*20));
+   int ci = mEnableCap?19:0;
 
-            x = radius * cosf( alpha ) * cosf( theta );
-            y = radius * cosf( alpha ) * -sinf( theta );
-            z = radius * sinf( alpha );
+   // Set dome coordinates & colors
+   for( i = mEnableCap?1:0; i < nlev; i++ )
+   {
+      for( j = 0; j < 19; j++ )
+      {
+         alpha = osg::DegreesToRadians(lev[i+(mEnableCap?0:1)]);
+         theta = osg::DegreesToRadians((float)(j*20));
 
-            coords[ci][0] = x;
-            coords[ci][1] = y;
-            coords[ci][2] = z;
+         x = radius * cosf( alpha ) * cosf( theta );
+         y = radius * cosf( alpha ) * -sinf( theta );
+         z = radius * sinf( alpha );
 
-            colors[ci][0] = cc[i][0];
-            colors[ci][1] = cc[i][1];
-            colors[ci][2] = cc[i][2];
-            colors[ci][3] = 1.f;
+         coords[ci][0] = x;
+         coords[ci][1] = y;
+         coords[ci][2] = z;
 
-            ci++;
-        }
-    }
+         colors[ci][0] = cc[i][0];
+         colors[ci][1] = cc[i][1];
+         colors[ci][2] = cc[i][2];
+         colors[ci][3] = 1.f;
 
-    for( i = 0; i < nlev-1; i++ )
-    {
-        osg::DrawElementsUShort* drawElements = new osg::DrawElementsUShort(osg::PrimitiveSet::TRIANGLE_STRIP);
-        drawElements->reserve(38);
+         ci++;
+      }
+   }
 
-        for( j = 0; j < 19; j++ )
-        {
-            drawElements->push_back((i+1)*19+j);
-            drawElements->push_back((i+0)*19+j);
-        }
+   // Set cap coordinates & colors
+   if( mEnableCap )
+   {
+      int centerIndex = 0;
+      osg::Vec3 capCenter( 0.0, 0.0, radius * osg::DegreesToRadians(sinf(lev[0])) );
+      for( j = 0; j < 19; j++ )
+      {
+         coords[j] = capCenter;
+         centerIndex = j+19;
+         colors[j][0] = cc[centerIndex][0];
+         colors[j][1] = cc[centerIndex][1];
+         colors[j][2] = cc[centerIndex][2];
+         colors[j][3] = 1.f;
+      }
+   }
 
-        geom->addPrimitiveSet(drawElements);
-    }
-    
-    geom->setVertexArray( &coords );
-    geom->setColorArray( &colors );
-    geom->setColorBinding( osg::Geometry::BIND_PER_VERTEX );
+   // Create the triangle strips
+   for( i = 0; i < nlev-1; i++ )
+   {
+      osg::DrawElementsUShort* drawElements = new osg::DrawElementsUShort(osg::PrimitiveSet::TRIANGLE_STRIP);
+      drawElements->reserve(38);
 
-    osg::StateSet *dstate = new osg::StateSet;
+      for( j = 0; j < 19; j++ )
+      {
+         drawElements->push_back((i+1)*19+j);
+         drawElements->push_back((i+0)*19+j);
+      }
 
-    dstate->setMode( GL_LIGHTING, osg::StateAttribute::OFF );
-    dstate->setMode( GL_CULL_FACE, osg::StateAttribute::ON );
-    
-    // clear the depth to the far plane.
-    osg::Depth* depth = new osg::Depth;
-    depth->setFunction(osg::Depth::ALWAYS);
-    depth->setWriteMask(false);   
-    dstate->setAttributeAndModes(depth,osg::StateAttribute::ON );
-    dstate->setMode(GL_FOG, osg::StateAttribute::OFF );
-    dstate->setTextureMode(0, GL_TEXTURE_2D, osg::StateAttribute::OFF|osg::StateAttribute::PROTECTED);
+      geom->addPrimitiveSet(drawElements);
+   }
 
-    dstate->setRenderBinDetails(-2,"RenderBin");
+   geom->setVertexArray( &coords );
+   geom->setColorArray( &colors );
+   geom->setColorBinding( osg::Geometry::BIND_PER_VERTEX );
 
-    geom->setStateSet( dstate );
+   osg::StateSet *dstate = new osg::StateSet;
 
-    mGeode = new osg::Geode;
-    mGeode->addDrawable( geom );
+   dstate->setMode( GL_LIGHTING, osg::StateAttribute::OFF );
+   dstate->setMode( GL_CULL_FACE, osg::StateAttribute::ON );
 
-    mGeode->setName( "Sky" );
+   // clear the depth to the far plane.
+   osg::Depth* depth = new osg::Depth;
+   depth->setFunction(osg::Depth::ALWAYS);
+   depth->setWriteMask(false);   
+   dstate->setAttributeAndModes(depth,osg::StateAttribute::ON );
+   dstate->setMode(GL_FOG, osg::StateAttribute::OFF );
+   dstate->setTextureMode(0, GL_TEXTURE_2D, osg::StateAttribute::OFF|osg::StateAttribute::PROTECTED);
 
-    return mGeode.get();
+   dstate->setRenderBinDetails(-2,"RenderBin");
+
+   geom->setStateSet( dstate );
+
+   mGeode = new osg::Geode;
+   mGeode->addDrawable( geom );
+
+   mGeode->setName( "Sky" );
+
+   return mGeode.get();
 }
 
 void dtCore::SkyDome::SetBaseColor(const osg::Vec3& color)
@@ -157,7 +176,8 @@ void dtCore::SkyDome::SetBaseColor(const osg::Vec3& color)
       mBaseColor.set(color);
 
       osg::Vec4Array *color = static_cast<osg::Vec4Array*>(array);
-      for (int i=0; i<19; i++)
+      int limit = mEnableCap?38:19;
+      for (int i=0; i<limit; i++)
       {
          (*color)[i].set(mBaseColor[0], mBaseColor[1], mBaseColor[2], 1.f);
       }
@@ -215,11 +235,11 @@ void dtCore::SkyDome::Repaint(   const osg::Vec3& skyColor,
 
    // First, recaclulate the basic colors
 
-   osg::Vec4 center_color;
-   osg::Vec4 upper_color[19];
-   osg::Vec4 middle_color[19];
-   osg::Vec4 lower_color[19];
-   osg::Vec4 bottom_color[19];
+   static osg::Vec4 center_color;
+   static osg::Vec4 upper_color[19];
+   static osg::Vec4 middle_color[19];
+   static osg::Vec4 lower_color[19];
+   static osg::Vec4 bottom_color[19];
 
    double vis_factor, cvf = visibility;
    if (cvf > 20000.f)
@@ -320,13 +340,23 @@ void dtCore::SkyDome::Repaint(   const osg::Vec3& skyColor,
    if (array && array->getType()==osg::Array::Vec4ArrayType)
    {
       osg::Vec4Array *color = static_cast<osg::Vec4Array*>(array);
-      for (int i=0; i<19; i++)
+      // Set cap color
+      if( mEnableCap )
       {
-         (*color)[i].set(bottom_color[i][0], bottom_color[i][1], bottom_color[i][2], 1.f);
-         (*color)[i+19].set(lower_color[i][0], lower_color[i][1], lower_color[i][2], 1.f);
-         (*color)[i+19+19].set(middle_color[i][0], middle_color[i][1], middle_color[i][2], 1.f);
-         (*color)[i+19+19+19].set(upper_color[i][0], upper_color[i][1], upper_color[i][2], 1.f);
-         (*color)[i+19+19+19+19].set(center_color[0], center_color[1], center_color[2], 1.f);
+         for (i=0; i<19; i++)
+         {
+            (*color)[i].set(bottom_color[i][0], bottom_color[i][1], bottom_color[i][2], 1.f);
+         }
+      }
+      // Set dome colors
+      int c;
+      for(i=0, c=mEnableCap?19:0; i<19; i++, c++ )
+      {
+         (*color)[c].set(bottom_color[i][0], bottom_color[i][1], bottom_color[i][2], 1.f);
+         (*color)[c+19].set(lower_color[i][0], lower_color[i][1], lower_color[i][2], 1.f);
+         (*color)[c+19+19].set(middle_color[i][0], middle_color[i][1], middle_color[i][2], 1.f);
+         (*color)[c+19+19+19].set(upper_color[i][0], upper_color[i][1], upper_color[i][2], 1.f);
+         (*color)[c+19+19+19+19].set(center_color[0], center_color[1], center_color[2], 1.f);
       }
 
    }
