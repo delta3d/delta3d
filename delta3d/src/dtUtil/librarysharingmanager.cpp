@@ -64,9 +64,9 @@ namespace dtUtil
          
          ///Loads the library and returns a ref pointer to it.  This will not reload libraries that are already
          ///loaded.
-         static dtCore::RefPtr<LibrarySharingManager::LibraryHandle> LoadLibrary(const string& libraryName)
+         static dtCore::RefPtr<LibrarySharingManager::LibraryHandle> LoadSharedLibrary(const string& libraryName)
          {
-            HANDLE handle = NULL;
+            HANDLE handle  = NULL;
             
             string fullLibraryName = osgDB::findLibraryFile(libraryName);            
             if (fullLibraryName.empty())
@@ -86,14 +86,34 @@ namespace dtUtil
             
 #if defined(WIN32) && !defined(__CYGWIN__)
             //see if the library is already loaded because windows will load libraries multiple times.
-            handle = GetModuleHandle( libraryName.c_str() );
+            handle = GetModuleHandle( (LPCTSTR)libraryName.c_str() );
             if (handle != NULL)
                close = false;
             else
-               handle = ::LoadLibrary( fullLibraryName.c_str() );
+               handle = LoadLibrary( fullLibraryName.c_str() );
             
             if (handle == NULL)
                LOG_ERROR("Unable to load library \"" + fullLibraryName + ".\"");
+
+            LPVOID lpMsgBuf;
+            FormatMessage( 
+               FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+               FORMAT_MESSAGE_FROM_SYSTEM | 
+               FORMAT_MESSAGE_IGNORE_INSERTS,
+               NULL,
+               GetLastError(),
+               0, // Default language
+               (LPTSTR) &lpMsgBuf,
+               0,
+               NULL 
+               );
+            // Process any inserts in lpMsgBuf.
+            // ...
+            // Display the string.
+            MessageBox(NULL, (LPCTSTR)lpMsgBuf, "Error", MB_OK);
+            // Free the buffer.
+            LocalFree(lpMsgBuf);
+
 
 #else
             // dlopen will not work with files in the current directory unless
@@ -182,7 +202,7 @@ namespace dtUtil
    LibrarySharingManager::~LibrarySharingManager()
    {
       mShuttingDown = true;
-      mLibraries.clear();
+      //mLibraries.clear();
    }
    
    ///////////////////////////////////////////////////////////////////////////////
@@ -214,7 +234,7 @@ namespace dtUtil
          //First, try and load the dynamic library.
          msg << "Loading library " << actualLibName;
          LOG_INFO(msg.str());
-         dynLib = InternalLibraryHandle::LoadLibrary(actualLibName);
+         dynLib = InternalLibraryHandle::LoadSharedLibrary(actualLibName);
          if (dynLib == NULL)
          {
             msg.clear();
