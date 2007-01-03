@@ -1222,6 +1222,11 @@ void MessageTests::TestChangeMap()
    {
       CPPUNIT_FAIL(e.ToString());
    }
+   catch(const std::exception &e)
+   {
+      CPPUNIT_FAIL(std::string("Exception: ") + typeid(e).name() + 
+                   std::string(" Message: ")  + e.what());
+   }
 }
 
 void MessageTests::TestGameEventMessage()
