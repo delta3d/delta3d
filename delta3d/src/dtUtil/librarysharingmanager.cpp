@@ -107,14 +107,11 @@ namespace dtUtil
                0,
                NULL 
                );
-            // Process any inserts in lpMsgBuf.
-            // ...
+      
             // Display the string.
-            MessageBox(NULL, (LPCTSTR)lpMsgBuf, "Error", MB_OK);
+            LOG_ERROR(std::string((char*)lpMsgBuf));
             // Free the buffer.
             LocalFree(lpMsgBuf);
-
-
 #else
             // dlopen will not work with files in the current directory unless
             // they are prefaced with './'  (DB - Nov 5, 2003).
