@@ -91,3 +91,9 @@ Rudolf Kastl
 
 Jerry Isdale
 - Contributions to dtTerrain & Python bindings
+
+"Avariant"
+- Changes to Loadable and Camera to clean up GL objects and cache
+
+Matt Prichard
+- Early artwork for Delta3D, including the design for the logo.
