@@ -13,12 +13,12 @@ namespace osg
 
 
 namespace dtCore
-{   
-   /** 
+{
+   /**
     * The Loadable class is a simple mechanism for loading files.  Inheriting
     * from this class will supply the derived class the API to load any type
     * of file in a generic fashion.  The LoadFile()
-    * method stores the supplied filename for later retrieval.  The default 
+    * method stores the supplied filename for later retrieval.  The default
     * behavior will pass the supplied filename to the OSG reader functions
     * and return back the osg::Node.  The LoadFile() method is intended to be
     * overwritten if the default behavior doesn't support the needs of the derive
@@ -33,6 +33,9 @@ namespace dtCore
       ///Get the filename of the last loaded file
       const std::string& GetFilename() const { return mFilename; }
 
+      ///flush all objects that have been previously cached.
+      static void FlushObjectCache();
+
    protected:
 	   Loadable();
 		virtual ~Loadable();
@@ -43,3 +46,4 @@ namespace dtCore
 }
 
 #endif //LOADABLE_INCLUDED
+
