@@ -18,6 +18,11 @@ Loadable::~Loadable(void)
 {
 }
 
+void Loadable::FlushObjectCache()
+{
+	osgDB::Registry::instance()->releaseGLObjects();
+	osgDB::Registry::instance()->clearObjectCache();
+}
 
 /*!
 * Load a geometry from a file using any supplied data file paths set in
@@ -28,7 +33,7 @@ Loadable::~Loadable(void)
 * @param useCache : If true, use OSG's object cache
 */
 osg::Node* Loadable::LoadFile(const std::string& filename, bool useCache)
-{   
+{
    mFilename = filename;
    Log::GetInstance().LogMessage(Log::LOG_DEBUG, __FUNCTION__,
                                  "Loading '%s'", filename.c_str());
@@ -40,7 +45,7 @@ osg::Node* Loadable::LoadFile(const std::string& filename, bool useCache)
       options->setObjectCacheHint(osgDB::ReaderWriter::Options::CACHE_ALL);
    }
    else
-   {  
+   {
       options->setObjectCacheHint(osgDB::ReaderWriter::Options::CACHE_NONE);
    }
 
@@ -58,9 +63,9 @@ osg::Node* Loadable::LoadFile(const std::string& filename, bool useCache)
    }
    else
    {
-      Log::GetInstance().LogMessage(Log::LOG_WARNING, __FUNCTION__, 
+      Log::GetInstance().LogMessage(Log::LOG_WARNING, __FUNCTION__,
                "Can't load '%s'", mFilename.c_str() );
       return NULL;
    }
-   
+
 }
