@@ -85,6 +85,9 @@ namespace dtUtil
             bool close = true;
             
 #if defined(WIN32) && !defined(__CYGWIN__)
+            // Make sure the error state is set to a non-garbage value
+            SetLastError(0);
+
             //see if the library is already loaded because windows will load libraries multiple times.
             handle = GetModuleHandle( (LPCTSTR)libraryName.c_str() );
             if (handle != NULL)
