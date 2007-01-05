@@ -38,6 +38,8 @@ void initLightBindings()
       .def("SetSpecular", SetSpecular1)
       .def("SetSpecular", SetSpecular2)
       .def("GetSpecular", GetSpecular1, return_value_policy<copy_const_reference>())
+      .def("AddChild", &Light::AddChild, with_custodian_and_ward<1, 2>())
+      .def("RemoveChild", &Light::RemoveChild)
       ;
 
    enum_<Light::LightingMode>("LightingMode")

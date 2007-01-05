@@ -117,20 +117,3 @@ osg::Vec3 PositionalLight::GetAttenuation() const
    return constantLinearQuadratic;
 }
 
-bool PositionalLight::AddChild( DeltaDrawable *child )
-{
-   if ( DeltaDrawable::AddChild(child) )
-   {
-      mLightSource->addChild( child->GetOSGNode() );
-      return true;
-   }
-  
-   return false;
-}
-
-void PositionalLight::RemoveChild( DeltaDrawable *child )
-{
-   mLightSource->removeChild( child->GetOSGNode() );
-
-   DeltaDrawable::RemoveChild(child);
-}

@@ -206,3 +206,21 @@ void Light::AddedToScene( Scene *scene )
       DeltaDrawable::AddedToScene( scene );
    }
 }
+
+bool Light::AddChild( DeltaDrawable *child )
+{
+   if ( DeltaDrawable::AddChild(child) )
+   {
+      mLightSource->addChild( child->GetOSGNode() );
+      return true;
+   }
+  
+   return false;
+}
+
+void Light::RemoveChild( DeltaDrawable *child )
+{
+   mLightSource->removeChild( child->GetOSGNode() );
+
+   DeltaDrawable::RemoveChild(child);
+}
