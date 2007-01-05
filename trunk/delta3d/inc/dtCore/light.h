@@ -127,6 +127,11 @@ namespace dtCore
 
       ///adds the light to the root node of the scene
       virtual void AddedToScene( Scene* scene );
+  
+      ///adds a drawable as a child of this node
+      virtual bool AddChild( DeltaDrawable *child ); 
+      ///removes a drawable as a child of this node
+      virtual void RemoveChild( DeltaDrawable *child );
 
    protected:
 

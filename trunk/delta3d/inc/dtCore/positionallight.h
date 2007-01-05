@@ -61,11 +61,7 @@ namespace dtCore
       ///gets the value of the attenuation which controls how the light fades as objects get farther away
       void GetAttenuation( float& constant, float& linear, float& quadratic ) const;
       osg::Vec3 GetAttenuation() const;
-      
-      ///adds a drawable as a child of this node
-      virtual bool AddChild( DeltaDrawable *child ); 
-      ///removes a drawable as a child of this node
-      virtual void RemoveChild( DeltaDrawable *child );
+
    };
 }
 

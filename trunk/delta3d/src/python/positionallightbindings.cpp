@@ -18,6 +18,5 @@ void initPositionalLightBindings()
       .def("SetAttenuation", SetAttenuation1)
       .def("SetAttenuation", SetAttenuation2)
       .def("GetAttenuation", GetAttenuation1)
-      .def("AddChild", &PositionalLight::AddChild, with_custodian_and_ward<1, 2>())
-      .def("RemoveChild", &PositionalLight::RemoveChild);
+	  ;
 }
