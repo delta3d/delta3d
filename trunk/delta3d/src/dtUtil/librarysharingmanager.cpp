@@ -89,7 +89,7 @@ namespace dtUtil
             SetLastError(0);
 
             //see if the library is already loaded because windows will load libraries multiple times.
-            handle = GetModuleHandle( (LPCTSTR)libraryName.c_str() );
+            handle = GetModuleHandle( (LPCSTR)libraryName.c_str() );
             if (handle != NULL)
                close = false;
             else
