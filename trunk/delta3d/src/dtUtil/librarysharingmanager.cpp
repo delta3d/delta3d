@@ -112,7 +112,7 @@ namespace dtUtil
                );
       
             // Display the string.
-            LOG_ERROR(std::string((char*)lpMsgBuf));
+            LOG_DEBUG(std::string(reinterpret_cast<char*>(lpMsgBuf)));
             // Free the buffer.
             LocalFree(lpMsgBuf);
 #else
