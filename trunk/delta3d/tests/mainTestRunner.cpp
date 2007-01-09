@@ -36,6 +36,7 @@
 #include <dtUtil/exception.h>
 
 #include <sstream>
+#include <cmath>
 
 static std::ostringstream mSlowTests;
 
@@ -54,7 +55,7 @@ class TimingListener : public CppUnit::TestListener
          std::ostringstream testResult;
          dtCore::Timer_t testClockStop = mTestClock.Tick();
          double timeDelta = mTestClock.DeltaSec(mTestClockStart, testClockStop);
-         timeDelta = ((int)(timeDelta * 10000)) / 10000.0; // force data truncation
+         timeDelta = (floor(timeDelta * 10000.0)) / 10000.0; // force data truncation
          testResult << test->getName()  << ((!mFailure) ? ": OK " : ": FAILURE ") <<
             ": time [" << timeDelta << "]";
          if (timeDelta > 2.0)
@@ -122,8 +123,8 @@ int main(int argc, char* argv[])
    // print out slow tests and total time.
    dtCore::Timer_t testsTimerStop = testsClock.Tick();
    double timeDelta = testsClock.DeltaSec(testsTimerStart, testsTimerStop);
-   timeDelta = int((timeDelta * 10000)) / 10000.0; // force data truncation
-   if(mSlowTests.str().empty())
+   timeDelta = (floor(timeDelta * 10000.0)) / 10000.0; // force data truncation
+   if(!mSlowTests.str().empty())
    {
       std::cerr << " <<< SLOW TEST RESULTS ::: START >>> " << std::endl << 
          mSlowTests.str() << " <<< SLOW TEST RESULTS ::: END ::: TotalTime[" << 

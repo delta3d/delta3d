@@ -993,18 +993,19 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::GetActorTypes(std::vector<const dtDAL::ActorType*> &toFill) const
+   void GameManager::GetUsedActorTypes(std::set<const dtDAL::ActorType*>& toFill) const
    {
-      toFill.clear();
-      toFill.reserve(mGameActorProxyMap.size() + mActorProxyMap.size());
+      toFill.clear();      
 
+      // spin through the actors and add all used actor types to the set, so that we don't
+      // get duplicates. 
       for (std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> >::const_iterator itor = mGameActorProxyMap.begin();
          itor != mGameActorProxyMap.end(); ++itor)
-         toFill.push_back(&itor->second->GetActorType());
+         toFill.insert(&itor->second->GetActorType());
 
       for (std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> >::const_iterator itor = mActorProxyMap.begin();
          itor != mActorProxyMap.end(); ++itor)
-         toFill.push_back(&itor->second->GetActorType());
+         toFill.insert(&itor->second->GetActorType());
    }
 
    ///////////////////////////////////////////////////////////////////////////////

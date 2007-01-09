@@ -205,8 +205,6 @@ namespace dtGame
             }
          }
 
-         dtDAL::Project::GetInstance().LoadMapIntoScene(map, mGameManager->GetScene(), mAddBillboards, mEnableDatabasePaging);
-
          SendMapMessage(MessageType::INFO_MAP_LOADED, mNewMapName);            
          SendMapMessage(MessageType::INFO_MAP_CHANGED, mNewMapName);            
          mCurrentState = &MapChangeState::IDLE;

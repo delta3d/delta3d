@@ -577,9 +577,9 @@ void MessageTests::TestMessageDelivery()
 
       CPPUNIT_ASSERT(gap->IsGameActorProxy());
       mGameManager->AddActor(*gap, false, false);
-      std::vector<const dtDAL::ActorType*> vec;
-      mGameManager->GetActorTypes(vec);
-      CPPUNIT_ASSERT_MESSAGE("The amount of actor types supported should not be 0", vec.size() != 0);
+      std::set<const dtDAL::ActorType*> typeSet;
+      mGameManager->GetUsedActorTypes(typeSet);
+      CPPUNIT_ASSERT_MESSAGE("The amount of actor types supported should not be 0", typeSet.size() != 0);
 
       mGameManager->ChangeTimeSettings(mGameManager->GetSimulationTime(), 1.5, mGameManager->GetSimulationClockTime());
 

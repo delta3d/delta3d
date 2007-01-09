@@ -356,11 +356,11 @@ namespace dtGame
          void DeleteAllActors(bool immediate);
          
          /**
-          * Returns a list of actor types that have been registered with the
-          * game manager
-          * @param The vector to fill
+          * Returns a list of actor types that are being used by existing actors in the
+          * game manager.  This call is slow.
+          * @param The set to fill
           */
-         void GetActorTypes(std::vector<const dtDAL::ActorType*> &vec) const;
+         void GetUsedActorTypes(std::set<const dtDAL::ActorType*>& vec) const;
 
          /**
           * Gets the number of game actors currently managed by this game
