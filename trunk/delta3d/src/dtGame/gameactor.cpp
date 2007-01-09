@@ -133,6 +133,19 @@ namespace dtGame
       GetGameManager()->SendMessage(*updateMsg);
    }
 
+   //////////////////////////////////////////////////////////////////////////////
+   void GameActorProxy::NotifyPartialActorUpdate(const std::vector<std::string> &propNames)
+   {
+      if (GetGameManager() == NULL || GetGameActor().IsRemote())
+         return;
+
+      dtCore::RefPtr<dtGame::Message> updateMsg =
+         GetGameManager()->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_UPDATED);
+      dtGame::ActorUpdateMessage *message = static_cast<dtGame::ActorUpdateMessage *>(updateMsg.get());
+      PopulateActorUpdate(*message, propNames, true);
+      GetGameManager()->SendMessage(*updateMsg);
+   }
+
    void GameActorProxy::PopulateActorUpdate(ActorUpdateMessage& update, const std::vector<std::string> &propNames) 
    {
       PopulateActorUpdate(update, propNames, true);
