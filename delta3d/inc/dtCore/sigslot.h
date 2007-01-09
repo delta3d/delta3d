@@ -301,6 +301,7 @@ namespace sigslot {
 	{
 	public:
 		virtual has_slots<mt_policy>* getdest() const = 0;
+      virtual void cleardest() = 0;
 		virtual void emit_signal() = 0;
 		virtual _connection_base0* clone() = 0;
 		virtual _connection_base0* duplicate(has_slots<mt_policy>* pnewdest) = 0;
@@ -312,6 +313,7 @@ namespace sigslot {
 	public:
       virtual ~_connection_base1(){}
 		virtual has_slots<mt_policy>* getdest() const = 0;
+      virtual void cleardest() = 0;
 		virtual void emit_signal(arg1_type) = 0;
 		virtual _connection_base1<arg1_type, mt_policy>* clone() = 0;
 		virtual _connection_base1<arg1_type, mt_policy>* duplicate(has_slots<mt_policy>* pnewdest) = 0;
@@ -323,6 +325,7 @@ namespace sigslot {
 	public:
       virtual ~_connection_base2(){}
 		virtual has_slots<mt_policy>* getdest() const = 0;
+      virtual void cleardest() = 0;
 		virtual void emit_signal(arg1_type, arg2_type) = 0;
 		virtual _connection_base2<arg1_type, arg2_type, mt_policy>* clone() = 0;
 		virtual _connection_base2<arg1_type, arg2_type, mt_policy>* duplicate(has_slots<mt_policy>* pnewdest) = 0;
@@ -334,6 +337,7 @@ namespace sigslot {
 	public:
       virtual ~_connection_base3(){}
 		virtual has_slots<mt_policy>* getdest() const = 0;
+      virtual void cleardest() = 0;
 		virtual void emit_signal(arg1_type, arg2_type, arg3_type) = 0;
 		virtual _connection_base3<arg1_type, arg2_type, arg3_type, mt_policy>* clone() = 0;
 		virtual _connection_base3<arg1_type, arg2_type, arg3_type, mt_policy>* duplicate(has_slots<mt_policy>* pnewdest) = 0;
@@ -345,6 +349,7 @@ namespace sigslot {
 	public:
       virtual ~_connection_base4(){}
 		virtual has_slots<mt_policy>* getdest() const = 0;
+      virtual void cleardest() = 0;
 		virtual void emit_signal(arg1_type, arg2_type, arg3_type, arg4_type) = 0;
 		virtual _connection_base4<arg1_type, arg2_type, arg3_type, arg4_type, mt_policy>* clone() = 0;
 		virtual _connection_base4<arg1_type, arg2_type, arg3_type, arg4_type, mt_policy>* duplicate(has_slots<mt_policy>* pnewdest) = 0;
@@ -357,6 +362,7 @@ namespace sigslot {
 	public:
       virtual ~_connection_base5(){}
 		virtual has_slots<mt_policy>* getdest() const = 0;
+      virtual void cleardest() = 0;
 		virtual void emit_signal(arg1_type, arg2_type, arg3_type, arg4_type, 
 			arg5_type) = 0;
 		virtual _connection_base5<arg1_type, arg2_type, arg3_type, arg4_type,
@@ -372,6 +378,7 @@ namespace sigslot {
 	public:
       virtual ~_connection_base6(){}
 		virtual has_slots<mt_policy>* getdest() const = 0;
+      virtual void cleardest() = 0;
 		virtual void emit_signal(arg1_type, arg2_type, arg3_type, arg4_type, arg5_type,
 			arg6_type) = 0;
 		virtual _connection_base6<arg1_type, arg2_type, arg3_type, arg4_type,
@@ -387,6 +394,7 @@ namespace sigslot {
 	public:
       virtual ~_connection_base7(){}
 		virtual has_slots<mt_policy>* getdest() const = 0;
+      virtual void cleardest() = 0;
 		virtual void emit_signal(arg1_type, arg2_type, arg3_type, arg4_type, arg5_type,
 			arg6_type, arg7_type) = 0;
 		virtual _connection_base7<arg1_type, arg2_type, arg3_type, arg4_type,
@@ -402,6 +410,7 @@ namespace sigslot {
 	public:
       virtual ~_connection_base8(){}
 		virtual has_slots<mt_policy>* getdest() const = 0;
+      virtual void cleardest() = 0;
 		virtual void emit_signal(arg1_type, arg2_type, arg3_type, arg4_type, arg5_type,
 			arg6_type, arg7_type, arg8_type) = 0;
 		virtual _connection_base8<arg1_type, arg2_type, arg3_type, arg4_type,
@@ -414,8 +423,11 @@ namespace sigslot {
 	class _signal_base : public mt_policy
 	{
 	public:
+      _signal_base() : mIterating(false) {}
 		virtual void slot_disconnect(has_slots<mt_policy>* pslot) = 0;
 		virtual void slot_duplicate(const has_slots<mt_policy>* poldslot, has_slots<mt_policy>* pnewslot) = 0;
+   protected:
+      bool mIterating;
 	};
 
 	template<class  mt_policy = SIGSLOT_DEFAULT_MT_POLICY>
@@ -543,10 +555,18 @@ namespace sigslot {
 			{
 				if((*it)->getdest() == pclass)
 				{
-					delete *it;
-					m_connected_slots.erase(it);
-					pclass->signal_disconnect(this);
-					return;
+               if (_signal_base<mt_policy>::mIterating)
+               {
+                  pclass->signal_disconnect(this);
+                  (*it)->cleardest();
+               }
+               else
+               {
+					   delete *it;
+					   m_connected_slots.erase(it);
+					   pclass->signal_disconnect(this);
+					   return;
+               }
 				}
 
 				++it;
@@ -566,7 +586,14 @@ namespace sigslot {
 
 				if((*it)->getdest() == pslot)
 				{
-					m_connected_slots.erase(it);
+               if (_signal_base<mt_policy>::mIterating)
+               {
+                  (*it)->cleardest();
+               }
+               else
+               {
+                  m_connected_slots.erase(it);
+               }
 					//			delete *it;
 				}
 
@@ -593,6 +620,7 @@ namespace sigslot {
 
 	protected:
 		connections_list m_connected_slots;   
+      
 	};
 
 	template<class arg1_type, class mt_policy>
@@ -673,10 +701,18 @@ namespace sigslot {
 			{
 				if((*it)->getdest() == pclass)
 				{
-					delete *it;
-					m_connected_slots.erase(it);
-					pclass->signal_disconnect(this);
-					return;
+               if (_signal_base<mt_policy>::mIterating)
+               {
+                  pclass->signal_disconnect(this);
+                  (*it)->cleardest();
+               }
+               else
+               {
+                  delete *it;
+                  m_connected_slots.erase(it);
+                  pclass->signal_disconnect(this);
+                  return;
+               }
 				}
 
 				++it;
@@ -696,7 +732,14 @@ namespace sigslot {
 
 				if((*it)->getdest() == pslot)
 				{
-					m_connected_slots.erase(it);
+               if (_signal_base<mt_policy>::mIterating)
+               {
+                  (*it)->cleardest();
+               }
+               else
+               {
+                  m_connected_slots.erase(it);
+               }
 					//			delete *it;
 				}
 
@@ -707,6 +750,7 @@ namespace sigslot {
 
 	protected:
 		connections_list m_connected_slots;   
+      
 	};
 
 	template<class arg1_type, class arg2_type, class mt_policy>
@@ -788,10 +832,18 @@ namespace sigslot {
 			{
 				if((*it)->getdest() == pclass)
 				{
-					delete *it;
-					m_connected_slots.erase(it);
-					pclass->signal_disconnect(this);
-					return;
+               if (_signal_base<mt_policy>::mIterating)
+               {
+                  pclass->signal_disconnect(this);
+                  (*it)->cleardest();
+               }
+               else
+               {
+                  delete *it;
+                  m_connected_slots.erase(it);
+                  pclass->signal_disconnect(this);
+                  return;
+               }
 				}
 
 				++it;
@@ -811,7 +863,14 @@ namespace sigslot {
 
 				if((*it)->getdest() == pslot)
 				{
-					m_connected_slots.erase(it);
+               if (_signal_base<mt_policy>::mIterating)
+               {
+                  (*it)->cleardest();
+               }
+               else
+               {
+                  m_connected_slots.erase(it);
+               }
 					//			delete *it;
 				}
 
@@ -821,6 +880,7 @@ namespace sigslot {
 
 	protected:
 		connections_list m_connected_slots;   
+      
 	};
 
 	template<class arg1_type, class arg2_type, class arg3_type, class mt_policy>
@@ -902,10 +962,18 @@ namespace sigslot {
 			{
 				if((*it)->getdest() == pclass)
 				{
-					delete *it;
-					m_connected_slots.erase(it);
-					pclass->signal_disconnect(this);
-					return;
+               if (_signal_base<mt_policy>::mIterating)
+               {
+                  pclass->signal_disconnect(this);
+                  (*it)->cleardest();
+               }
+               else
+               {
+                  delete *it;
+                  m_connected_slots.erase(it);
+                  pclass->signal_disconnect(this);
+                  return;
+               }
 				}
 
 				++it;
@@ -925,7 +993,14 @@ namespace sigslot {
 
 				if((*it)->getdest() == pslot)
 				{
-					m_connected_slots.erase(it);
+               if (_signal_base<mt_policy>::mIterating)
+               {
+                  (*it)->cleardest();
+               }
+               else
+               {
+                  m_connected_slots.erase(it);
+               }
 					//			delete *it;
 				}
 
@@ -935,6 +1010,7 @@ namespace sigslot {
 
 	protected:
 		connections_list m_connected_slots;   
+      
 	};
 
 	template<class arg1_type, class arg2_type, class arg3_type, class arg4_type, class mt_policy>
@@ -1016,10 +1092,18 @@ namespace sigslot {
 			{
 				if((*it)->getdest() == pclass)
 				{
-					delete *it;
-					this->m_connected_slots.erase(it);
-					pclass->signal_disconnect(this);
-					return;
+               if (_signal_base<mt_policy>::mIterating)
+               {
+                  pclass->signal_disconnect(this);
+                  (*it)->cleardest();
+               }
+               else
+               {
+                  delete *it;
+                  m_connected_slots.erase(it);
+                  pclass->signal_disconnect(this);
+                  return;
+               }
 				}
 
 				++it;
@@ -1039,7 +1123,14 @@ namespace sigslot {
 
 				if((*it)->getdest() == pslot)
 				{
-					m_connected_slots.erase(it);
+               if (_signal_base<mt_policy>::mIterating)
+               {
+                  (*it)->cleardest();
+               }
+               else
+               {
+                  m_connected_slots.erase(it);
+               }
 					//			delete *it;
 				}
 
@@ -1049,6 +1140,7 @@ namespace sigslot {
 
 	protected:
 		connections_list m_connected_slots;   
+      
 	};
 
 	template<class arg1_type, class arg2_type, class arg3_type, class arg4_type,
@@ -1132,10 +1224,18 @@ namespace sigslot {
 			{
 				if((*it)->getdest() == pclass)
 				{
-					delete *it;
-					m_connected_slots.erase(it);
-					pclass->signal_disconnect(this);
-					return;
+               if (_signal_base<mt_policy>::mIterating)
+               {
+                  pclass->signal_disconnect(this);
+                  (*it)->cleardest();
+               }
+               else
+               {
+                  delete *it;
+                  m_connected_slots.erase(it);
+                  pclass->signal_disconnect(this);
+                  return;
+               }
 				}
 
 				++it;
@@ -1155,7 +1255,14 @@ namespace sigslot {
 
 				if((*it)->getdest() == pslot)
 				{
-					m_connected_slots.erase(it);
+               if (_signal_base<mt_policy>::mIterating)
+               {
+                  (*it)->cleardest();
+               }
+               else
+               {
+                  m_connected_slots.erase(it);
+               }
 					//			delete *it;
 				}
 
@@ -1165,6 +1272,7 @@ namespace sigslot {
 
 	protected:
 		connections_list m_connected_slots;   
+      
 	};
 
 	template<class arg1_type, class arg2_type, class arg3_type, class arg4_type,
@@ -1248,10 +1356,18 @@ namespace sigslot {
 			{
 				if((*it)->getdest() == pclass)
 				{
-					delete *it;
-					m_connected_slots.erase(it);
-					pclass->signal_disconnect(this);
-					return;
+               if (_signal_base<mt_policy>::mIterating)
+               {
+                  pclass->signal_disconnect(this);
+                  (*it)->cleardest();
+               }
+               else
+               {
+                  delete *it;
+                  m_connected_slots.erase(it);
+                  pclass->signal_disconnect(this);
+                  return;
+               }
 				}
 
 				++it;
@@ -1271,7 +1387,14 @@ namespace sigslot {
 
 				if((*it)->getdest() == pslot)
 				{
-					m_connected_slots.erase(it);
+               if (_signal_base<mt_policy>::mIterating)
+               {
+                  (*it)->cleardest();
+               }
+               else
+               {
+                  m_connected_slots.erase(it);
+               }
 					//			delete *it;
 				}
 
@@ -1281,6 +1404,7 @@ namespace sigslot {
 
 	protected:
 		connections_list m_connected_slots;   
+      
 	};
 
 	template<class arg1_type, class arg2_type, class arg3_type, class arg4_type,
@@ -1364,10 +1488,18 @@ namespace sigslot {
 			{
 				if((*it)->getdest() == pclass)
 				{
-					delete *it;
-					m_connected_slots.erase(it);
-					pclass->signal_disconnect(this);
-					return;
+               if (_signal_base<mt_policy>::mIterating)
+               {
+                  pclass->signal_disconnect(this);
+                  (*it)->cleardest();
+               }
+               else
+               {
+                  delete *it;
+                  m_connected_slots.erase(it);
+                  pclass->signal_disconnect(this);
+                  return;
+               }
 				}
 
 				++it;
@@ -1387,7 +1519,14 @@ namespace sigslot {
 
 				if((*it)->getdest() == pslot)
 				{
-					m_connected_slots.erase(it);
+               if (_signal_base<mt_policy>::mIterating)
+               {
+                  (*it)->cleardest();
+               }
+               else
+               {
+                  m_connected_slots.erase(it);
+               }
 					//			delete *it;
 				}
 
@@ -1397,6 +1536,7 @@ namespace sigslot {
 
 	protected:
 		connections_list m_connected_slots;   
+      
 	};
 
 	template<class arg1_type, class arg2_type, class arg3_type, class arg4_type,
@@ -1481,10 +1621,18 @@ namespace sigslot {
 			{
 				if((*it)->getdest() == pclass)
 				{
-					delete *it;
-					m_connected_slots.erase(it);
-					pclass->signal_disconnect(this);
-					return;
+               if (_signal_base<mt_policy>::mIterating)
+               {
+                  pclass->signal_disconnect(this);
+                  (*it)->cleardest();
+               }
+               else
+               {
+                  delete *it;
+                  m_connected_slots.erase(it);
+                  pclass->signal_disconnect(this);
+                  return;
+               }
 				}
 
 				++it;
@@ -1504,7 +1652,14 @@ namespace sigslot {
 
 				if((*it)->getdest() == pslot)
 				{
-					m_connected_slots.erase(it);
+               if (_signal_base<mt_policy>::mIterating)
+               {
+                  (*it)->cleardest();
+               }
+               else
+               {
+                  m_connected_slots.erase(it);
+               }
 					//			delete *it;
 				}
 
@@ -1553,6 +1708,12 @@ namespace sigslot {
 			return m_pobject;
 		}
 
+      virtual void cleardest() 
+      {
+         this->m_pobject = NULL;
+         this->m_pmemfun = NULL;
+      }
+
 	private:
 		dest_type* m_pobject;
 		void (dest_type::* m_pmemfun)();
@@ -1590,13 +1751,20 @@ namespace sigslot {
 
 		virtual void emit_signal(arg1_type a1)
 		{
-			(m_pobject->*m_pmemfun)(a1);
+			if (m_pobject != NULL && m_pmemfun != NULL)
+            (m_pobject->*m_pmemfun)(a1);
 		}
 
 		virtual has_slots<mt_policy>* getdest() const
 		{
 			return m_pobject;
 		}
+
+      virtual void cleardest() 
+      {
+         this->m_pobject = NULL;
+         this->m_pmemfun = NULL;
+      }
 
 	private:
 		dest_type* m_pobject;
@@ -1644,6 +1812,12 @@ namespace sigslot {
 			return m_pobject;
 		}
 
+      virtual void cleardest() 
+      {
+         this->m_pobject = NULL;
+         this->m_pmemfun = NULL;
+      }
+
 	private:
 		dest_type* m_pobject;
 		void (dest_type::* m_pmemfun)(arg1_type, arg2_type);
@@ -1689,6 +1863,12 @@ namespace sigslot {
 		{
 			return m_pobject;
 		}
+
+      virtual void cleardest() 
+      {
+         this->m_pobject = NULL;
+         this->m_pmemfun = NULL;
+      }
 
 	private:
 		dest_type* m_pobject;
@@ -1738,6 +1918,12 @@ namespace sigslot {
 		{
 			return m_pobject;
 		}
+
+      virtual void cleardest() 
+      {
+         this->m_pobject = NULL;
+         this->m_pmemfun = NULL;
+      }
 
 	private:
 		dest_type* m_pobject;
@@ -1793,6 +1979,12 @@ namespace sigslot {
 			return m_pobject;
 		}
 
+      virtual void cleardest() 
+      {
+         this->m_pobject = NULL;
+         this->m_pmemfun = NULL;
+      }
+
 	private:
 		dest_type* m_pobject;
 		void (dest_type::* m_pmemfun)(arg1_type, arg2_type, arg3_type, arg4_type,
@@ -1847,6 +2039,12 @@ namespace sigslot {
 			return m_pobject;
 		}
 
+      virtual void cleardest() 
+      {
+         this->m_pobject = NULL;
+         this->m_pmemfun = NULL;
+      }
+
 	private:
 		dest_type* m_pobject;
 		void (dest_type::* m_pmemfun)(arg1_type, arg2_type, arg3_type, arg4_type,
@@ -1900,6 +2098,12 @@ namespace sigslot {
 		{
 			return m_pobject;
 		}
+
+      virtual void cleardest() 
+      {
+         this->m_pobject = NULL;
+         this->m_pmemfun = NULL;
+      }
 
 	private:
 		dest_type* m_pobject;
@@ -1957,6 +2161,12 @@ namespace sigslot {
 			return m_pobject;
 		}
 
+      virtual void cleardest() 
+      {
+         this->m_pobject = NULL;
+         this->m_pmemfun = NULL;
+      }
+
 	private:
 		dest_type* m_pobject;
 		void (dest_type::* m_pmemfun)(arg1_type, arg2_type, arg3_type, arg4_type,
@@ -1967,7 +2177,7 @@ namespace sigslot {
 	class signal0 : public _signal_base0<mt_policy>
 	{
 	public:
-    	typedef typename _signal_base0<mt_policy>::connections_list::const_iterator const_iterator;
+    	typedef typename _signal_base0<mt_policy>::connections_list::iterator iterator;
 		signal0()
 		{
 			;
@@ -1991,36 +2201,32 @@ namespace sigslot {
 
 		void emit_signal()
 		{
-			lock_block<mt_policy> lock(this);
-			const_iterator itNext, it = this->m_connected_slots.begin();
-			const_iterator itEnd = this->m_connected_slots.end();
+         lock_block<mt_policy> lock(this);
+         iterator itNext, it = this->m_connected_slots.begin();
+         iterator itEnd = this->m_connected_slots.end();
 
-			while(it != itEnd)
-			{
-				itNext = it;
-				++itNext;
+         this->mIterating = true;
+         while(it != itEnd)
+         {
+            itNext = it;
+            ++itNext;
 
-				(*it)->emit_signal();
+            if ((*it)->getdest() != NULL)
+               (*it)->emit_signal();
+            else
+            {
+               delete *it;
+               this->m_connected_slots.erase(it);
+            }
 
-				it = itNext;
-			}
+            it = itNext;
+         }
+         this->mIterating = false;
 		}
 
 		void operator()()
 		{
-			lock_block<mt_policy> lock(this);
-			const_iterator itNext, it = this->m_connected_slots.begin();
-			const_iterator itEnd = this->m_connected_slots.end();
-
-			while(it != itEnd)
-			{
-				itNext = it;
-				++itNext;
-
-				(*it)->emit_signal();
-
-				it = itNext;
-			}
+         emit_signal();
 		}
 	};
 
@@ -2028,7 +2234,7 @@ namespace sigslot {
 	class signal1 : public _signal_base1<arg1_type, mt_policy>
 	{
 	public:
-    	typedef typename _signal_base1<arg1_type, mt_policy>::connections_list::const_iterator const_iterator;
+      typedef typename _signal_base1<arg1_type, mt_policy>::connections_list::iterator iterator;
 		signal1()
 		{
 			;
@@ -2053,35 +2259,31 @@ namespace sigslot {
 		void emit_signal(arg1_type a1)
 		{
 			lock_block<mt_policy> lock(this);
-			const_iterator itNext, it = this->m_connected_slots.begin();
-			const_iterator itEnd = this->m_connected_slots.end();
+			iterator itNext, it = this->m_connected_slots.begin();
+			iterator itEnd = this->m_connected_slots.end();
 
+         this->mIterating = true;
 			while(it != itEnd)
 			{
 				itNext = it;
 				++itNext;
 
-				(*it)->emit_signal(a1);
+            if ((*it)->getdest() != NULL)
+               (*it)->emit_signal(a1);
+            else
+            {
+               delete *it;
+               this->m_connected_slots.erase(it);
+            }
 
 				it = itNext;
 			}
+         this->mIterating = false;
 		}
 
 		void operator()(arg1_type a1)
 		{
-			lock_block<mt_policy> lock(this);
-			const_iterator itNext, it = this->m_connected_slots.begin();
-			const_iterator itEnd = this->m_connected_slots.end();
-
-			while(it != itEnd)
-			{
-				itNext = it;
-				++itNext;
-
-				(*it)->emit_signal(a1);
-
-				it = itNext;
-			}
+         emit_signal(a1);  
 		}
 	};
 
@@ -2090,6 +2292,7 @@ namespace sigslot {
 	{
 	public:
     	typedef typename _signal_base2<arg1_type, arg2_type, mt_policy>::connections_list::const_iterator const_iterator;
+      typedef typename _signal_base2<arg1_type, arg2_type, mt_policy>::connections_list::iterator iterator;
 		signal2()
 		{
 			;
@@ -2114,36 +2317,32 @@ namespace sigslot {
 
 		void emit_signal(arg1_type a1, arg2_type a2)
 		{
-			lock_block<mt_policy> lock(this);
-			const_iterator itNext, it = this->m_connected_slots.begin();
-			const_iterator itEnd = this->m_connected_slots.end();
+         lock_block<mt_policy> lock(this);
+         iterator itNext, it = this->m_connected_slots.begin();
+         iterator itEnd = this->m_connected_slots.end();
 
-			while(it != itEnd)
-			{
-				itNext = it;
-				++itNext;
+         this->mIterating = true;
+         while(it != itEnd)
+         {
+            itNext = it;
+            ++itNext;
 
-				(*it)->emit_signal(a1, a2);
+            if ((*it)->getdest() != NULL)
+               (*it)->emit_signal(a1, a1);
+            else
+            {
+               delete *it;
+               this->m_connected_slots.erase(it);
+            }
 
-				it = itNext;
-			}
+            it = itNext;
+         }
+         this->mIterating = false;
 		}
 
 		void operator()(arg1_type a1, arg2_type a2)
 		{
-			lock_block<mt_policy> lock(this);
-			const_iterator itNext, it = this->m_connected_slots.begin();
-			const_iterator itEnd = this->m_connected_slots.end();
-
-			while(it != itEnd)
-			{
-				itNext = it;
-				++itNext;
-
-				(*it)->emit_signal(a1, a2);
-
-				it = itNext;
-			}
+         emit_signal(a1, a2);
 		}
 	};
 
@@ -2151,7 +2350,7 @@ namespace sigslot {
 	class signal3 : public _signal_base3<arg1_type, arg2_type, arg3_type, mt_policy>
 	{
 	public:
-    	typedef typename _signal_base3<arg1_type, arg2_type, arg3_type, mt_policy>::connections_list::const_iterator const_iterator;
+    	typedef typename _signal_base3<arg1_type, arg2_type, arg3_type, mt_policy>::connections_list::iterator iterator;
 		signal3()
 		{
 			;
@@ -2177,36 +2376,32 @@ namespace sigslot {
 
 		void emit_signal(arg1_type a1, arg2_type a2, arg3_type a3)
 		{
-			lock_block<mt_policy> lock(this);
-			const_iterator itNext, it = this->m_connected_slots.begin();
-			const_iterator itEnd = this->m_connected_slots.end();
+         lock_block<mt_policy> lock(this);
+         iterator itNext, it = this->m_connected_slots.begin();
+         iterator itEnd = this->m_connected_slots.end();
 
-			while(it != itEnd)
-			{
-				itNext = it;
-				++itNext;
+         this->mIterating = true;
+         while(it != itEnd)
+         {
+            itNext = it;
+            ++itNext;
 
-				(*it)->emit_signal(a1, a2, a3);
+            if ((*it)->getdest() != NULL)
+               (*it)->emit_signal(a1, a2, a3);
+            else
+            {
+               delete *it;
+               this->m_connected_slots.erase(it);
+            }
 
-				it = itNext;
-			}
+            it = itNext;
+         }
+         this->mIterating = false;
 		}
 
 		void operator()(arg1_type a1, arg2_type a2, arg3_type a3)
 		{
-			lock_block<mt_policy> lock(this);
-			const_iterator itNext, it = this->m_connected_slots.begin();
-			const_iterator itEnd = this->m_connected_slots.end();
-
-			while(it != itEnd)
-			{
-				itNext = it;
-				++itNext;
-
-				(*it)->emit_signal(a1, a2, a3);
-
-				it = itNext;
-			}
+         emit_signal(a1, a2, a3);
 		}
 	};
 
@@ -2215,7 +2410,7 @@ namespace sigslot {
 		arg4_type, mt_policy>
 	{
 	public:
-    	typedef typename _signal_base4<arg1_type, arg2_type, arg3_type, arg4_type, mt_policy>::connections_list::const_iterator const_iterator;
+    	typedef typename _signal_base4<arg1_type, arg2_type, arg3_type, arg4_type, mt_policy>::connections_list::iterator iterator;
 		signal4()
 		{
 			;
@@ -2241,36 +2436,32 @@ namespace sigslot {
 
 		void emit_signal(arg1_type a1, arg2_type a2, arg3_type a3, arg4_type a4)
 		{
-			lock_block<mt_policy> lock(this);
-			const_iterator itNext, it = this->m_connected_slots.begin();
-			const_iterator itEnd = this->m_connected_slots.end();
+         lock_block<mt_policy> lock(this);
+         iterator itNext, it = this->m_connected_slots.begin();
+         iterator itEnd = this->m_connected_slots.end();
 
-			while(it != itEnd)
-			{
-				itNext = it;
-				++itNext;
+         this->mIterating = true;
+         while(it != itEnd)
+         {
+            itNext = it;
+            ++itNext;
 
-				(*it)->emit_signal(a1, a2, a3, a4);
+            if ((*it)->getdest() != NULL)
+               (*it)->emit_signal(a1, a2, a3, a4);
+            else
+            {
+               delete *it;
+               this->m_connected_slots.erase(it);
+            }
 
-				it = itNext;
-			}
+            it = itNext;
+         }
+         this->mIterating = false;
 		}
 
 		void operator()(arg1_type a1, arg2_type a2, arg3_type a3, arg4_type a4)
 		{
-			lock_block<mt_policy> lock(this);
-			const_iterator itNext, it = this->m_connected_slots.begin();
-			const_iterator itEnd = this->m_connected_slots.end();
-
-			while(it != itEnd)
-			{
-				itNext = it;
-				++itNext;
-
-				(*it)->emit_signal(a1, a2, a3, a4);
-
-				it = itNext;
-			}
+         emit_signal(a1, a2, a3, a4);
 		}
 	};
 
@@ -2280,7 +2471,7 @@ namespace sigslot {
 		arg4_type, arg5_type, mt_policy>
 	{
 	public:
-    	typedef typename _signal_base5<arg1_type, arg2_type, arg3_type, arg4_type, arg5_type, mt_policy>::connections_list::const_iterator const_iterator;
+    	typedef typename _signal_base5<arg1_type, arg2_type, arg3_type, arg4_type, arg5_type, mt_policy>::connections_list::iterator iterator;
 		signal5()
 		{
 			;
@@ -2309,37 +2500,33 @@ namespace sigslot {
 		void emit_signal(arg1_type a1, arg2_type a2, arg3_type a3, arg4_type a4,
 			arg5_type a5)
 		{
-			lock_block<mt_policy> lock(this);
-			const_iterator itNext, it = this->m_connected_slots.begin();
-			const_iterator itEnd = this->m_connected_slots.end();
+         lock_block<mt_policy> lock(this);
+         iterator itNext, it = this->m_connected_slots.begin();
+         iterator itEnd = this->m_connected_slots.end();
 
-			while(it != itEnd)
-			{
-				itNext = it;
-				++itNext;
+         this->mIterating = true;
+         while(it != itEnd)
+         {
+            itNext = it;
+            ++itNext;
 
-				(*it)->emit_signal(a1, a2, a3, a4, a5);
+            if ((*it)->getdest() != NULL)
+               (*it)->emit_signal(a1, a2, a3, a4, a5);
+            else
+            {
+               delete *it;
+               this->m_connected_slots.erase(it);
+            }
 
-				it = itNext;
-			}
+            it = itNext;
+         }
+         this->mIterating = false;
 		}
 
 		void operator()(arg1_type a1, arg2_type a2, arg3_type a3, arg4_type a4,
 			arg5_type a5)
 		{
-			lock_block<mt_policy> lock(this);
-			const_iterator itNext, it = this->m_connected_slots.begin();
-			const_iterator itEnd = this->m_connected_slots.end();
-
-			while(it != itEnd)
-			{
-				itNext = it;
-				++itNext;
-
-				(*it)->emit_signal(a1, a2, a3, a4, a5);
-
-				it = itNext;
-			}
+         emit_signal(a1, a2, a3, a4, a5);
 		}
 	};
 
@@ -2351,7 +2538,7 @@ namespace sigslot {
 	{
 	public:
     	typedef typename _signal_base6<arg1_type, arg2_type, arg3_type,
-		arg4_type, arg5_type, arg6_type, mt_policy>::connections_list::const_iterator const_iterator;
+		arg4_type, arg5_type, arg6_type, mt_policy>::connections_list::iterator iterator;
 		signal6()
 		{
 			;
@@ -2381,37 +2568,33 @@ namespace sigslot {
 		void emit_signal(arg1_type a1, arg2_type a2, arg3_type a3, arg4_type a4,
 			arg5_type a5, arg6_type a6)
 		{
-			lock_block<mt_policy> lock(this);
-			const_iterator itNext, it = this->m_connected_slots.begin();
-			const_iterator itEnd = this->m_connected_slots.end();
+         lock_block<mt_policy> lock(this);
+         iterator itNext, it = this->m_connected_slots.begin();
+         iterator itEnd = this->m_connected_slots.end();
 
-			while(it != itEnd)
-			{
-				itNext = it;
-				++itNext;
+         this->mIterating = true;
+         while(it != itEnd)
+         {
+            itNext = it;
+            ++itNext;
 
-				(*it)->emit_signal(a1, a2, a3, a4, a5, a6);
+            if ((*it)->getdest() != NULL)
+               (*it)->emit_signal(a1, a2, a3, a4, a5, a6);
+            else
+            {
+               delete *it;
+               this->m_connected_slots.erase(it);
+            }
 
-				it = itNext;
-			}
+            it = itNext;
+         }
+         this->mIterating = false;
 		}
 
 		void operator()(arg1_type a1, arg2_type a2, arg3_type a3, arg4_type a4,
 			arg5_type a5, arg6_type a6)
 		{
-			lock_block<mt_policy> lock(this);
-			const_iterator itNext, it = this->m_connected_slots.begin();
-			const_iterator itEnd = this->m_connected_slots.end();
-
-			while(it != itEnd)
-			{
-				itNext = it;
-				++itNext;
-
-				(*it)->emit_signal(a1, a2, a3, a4, a5, a6);
-
-				it = itNext;
-			}
+         emit_signal(a1, a2, a3, a4, a5, a6);
 		}
 	};
 
@@ -2422,7 +2605,7 @@ namespace sigslot {
 	{
 	public:
     	typedef typename _signal_base7<arg1_type, arg2_type, arg3_type,
-		arg4_type, arg5_type, arg6_type, arg7_type, mt_policy>::connections_list::const_iterator const_iterator;
+		arg4_type, arg5_type, arg6_type, arg7_type, mt_policy>::connections_list::iterator iterator;
 		signal7()
 		{
 			;
@@ -2453,37 +2636,33 @@ namespace sigslot {
 		void emit_signal(arg1_type a1, arg2_type a2, arg3_type a3, arg4_type a4,
 			arg5_type a5, arg6_type a6, arg7_type a7)
 		{
-			lock_block<mt_policy> lock(this);
-			const_iterator itNext, it = this->m_connected_slots.begin();
-			const_iterator itEnd = this->m_connected_slots.end();
+         lock_block<mt_policy> lock(this);
+         iterator itNext, it = this->m_connected_slots.begin();
+         iterator itEnd = this->m_connected_slots.end();
 
-			while(it != itEnd)
-			{
-				itNext = it;
-				++itNext;
+         this->mIterating = true;
+         while(it != itEnd)
+         {
+            itNext = it;
+            ++itNext;
 
-				(*it)->emit_signal(a1, a2, a3, a4, a5, a6, a7);
+            if ((*it)->getdest() != NULL)
+               (*it)->emit_signal(a1, a2, a3, a4, a5, a6, a7);
+            else
+            {
+               delete *it;
+               this->m_connected_slots.erase(it);
+            }
 
-				it = itNext;
-			}
+            it = itNext;
+         }
+         this->mIterating = false;
 		}
 
 		void operator()(arg1_type a1, arg2_type a2, arg3_type a3, arg4_type a4,
 			arg5_type a5, arg6_type a6, arg7_type a7)
 		{
-			lock_block<mt_policy> lock(this);
-			const_iterator itNext, it = this->m_connected_slots.begin();
-			const_iterator itEnd = this->m_connected_slots.end();
-
-			while(it != itEnd)
-			{
-				itNext = it;
-				++itNext;
-
-				(*it)->emit_signal(a1, a2, a3, a4, a5, a6, a7);
-
-				it = itNext;
-			}
+	       emit_signal(a1, a2, a3, a4, a5, a6, a7);
 		}
 	};
 
@@ -2494,7 +2673,7 @@ namespace sigslot {
 	{
 	public:
     	typedef typename _signal_base8<arg1_type, arg2_type, arg3_type,
-		arg4_type, arg5_type, arg6_type, arg7_type, arg8_type, mt_policy>::connections_list::const_iterator const_iterator;
+		arg4_type, arg5_type, arg6_type, arg7_type, arg8_type, mt_policy>::connections_list::iterator iterator;
 		signal8()
 		{
 			;
@@ -2526,37 +2705,33 @@ namespace sigslot {
 		void emit_signal(arg1_type a1, arg2_type a2, arg3_type a3, arg4_type a4,
 			arg5_type a5, arg6_type a6, arg7_type a7, arg8_type a8)
 		{
-			lock_block<mt_policy> lock(this);
-			const_iterator itNext, it = this->m_connected_slots.begin();
-			const_iterator itEnd = this->m_connected_slots.end();
+         lock_block<mt_policy> lock(this);
+         iterator itNext, it = this->m_connected_slots.begin();
+         iterator itEnd = this->m_connected_slots.end();
 
-			while(it != itEnd)
-			{
-				itNext = it;
-				++itNext;
+         this->mIterating = true;
+         while(it != itEnd)
+         {
+            itNext = it;
+            ++itNext;
 
-				(*it)->emit_signal(a1, a2, a3, a4, a5, a6, a7, a8);
+            if ((*it)->getdest() != NULL)
+               (*it)->emit_signal(a1, a2, a3, a4, a5, a6, a7, a8);
+            else
+            {
+               delete *it;
+               this->m_connected_slots.erase(it);
+            }
 
-				it = itNext;
-			}
+            it = itNext;
+         }
+         this->mIterating = false;
 		}
 
 		void operator()(arg1_type a1, arg2_type a2, arg3_type a3, arg4_type a4,
 			arg5_type a5, arg6_type a6, arg7_type a7, arg8_type a8)
 		{
-			lock_block<mt_policy> lock(this);
-			const_iterator itNext, it = this->m_connected_slots.begin();
-			const_iterator itEnd = this->m_connected_slots.end();
-
-			while(it != itEnd)
-			{
-				itNext = it;
-				++itNext;
-
-				(*it)->emit_signal(a1, a2, a3, a4, a5, a6, a7, a8);
-
-				it = itNext;
-			}
+	     emit_signal(a1, a2, a3, a4, a5, a6, a7, a8);
 		}
 	};
 

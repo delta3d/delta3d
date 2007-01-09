@@ -508,8 +508,8 @@ void GameManagerTests::TestActorSearching()
          gm.AddActor(*gm.CreateActor(*typeVec[i]));
       }
 
-      std::vector<const dtDAL::ActorType*> supportedTypes;
-      gm.GetActorTypes(supportedTypes);
+      std::set<const dtDAL::ActorType*> supportedTypes;
+      gm.GetUsedActorTypes(supportedTypes);
       CPPUNIT_ASSERT_MESSAGE("The number of supported actor types should not be 0", !supportedTypes.empty());
 
       gm.DeleteAllActors(true);
@@ -520,13 +520,13 @@ void GameManagerTests::TestActorSearching()
 
       for(unsigned i = 0; i < size; i++)
       {
-         proxies[i] = gm.CreateActor(const_cast<dtDAL::ActorType&>(*supportedTypes[0]));
+         proxies[i] = gm.CreateActor(const_cast<dtDAL::ActorType&>(**supportedTypes.begin()));
          gm.AddActor(*proxies[i].get());
       }
 
       std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > supportedProxies;
 
-      gm.FindActorsByType(*supportedTypes[0], supportedProxies);
+      gm.FindActorsByType(**supportedTypes.begin(), supportedProxies);
 
       //unsigned t = supportedProxies.size();
 

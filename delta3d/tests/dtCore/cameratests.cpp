@@ -57,14 +57,13 @@ class CameraTests : public CPPUNIT_NS::TestFixture
             dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
       
             mScene = new dtCore::Scene;
-            mCamera = new dtCore::Camera;
             mWin = new dtCore::DeltaWin();
             mWin->SetPosition(0, 0, 50, 50);
-            mCamera = new dtCore::Camera();
-            mCamera->SetScene(mScene.get());
+            mCamera = new dtCore::Camera;
             mCamera->SetWindow(mWin.get());
+            mCamera->SetScene(mScene.get());
             dtCore::System::GetInstance().Config();
-   
+
             dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
             dtCore::System::GetInstance().Start();
              

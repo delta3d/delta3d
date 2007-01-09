@@ -97,8 +97,11 @@ namespace dtCore
 
    Camera::_SceneHandler::~_SceneHandler()
    {
-      GetSceneView()->releaseAllGLObjects();
-      GetSceneView()->flushAllDeletedGLObjects();
+      if (mSceneView->getState()->getContextID() != 0)
+      {
+         GetSceneView()->releaseAllGLObjects();
+         GetSceneView()->flushAllDeletedGLObjects();
+      }
       LOG_DEBUG("Destroying _SceneHandler");
    }
 
