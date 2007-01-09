@@ -274,6 +274,14 @@ namespace dtGame
          virtual void NotifyFullActorUpdate();
 
          /** 
+          * Creates an ActorUpdateMessage, populates it with specific properties on the actor
+          * and calls SendMessage() on the Game Manager.
+          * Note - This will do nothing if the actor is Remote.
+          * @param propNames  the properties to include in the update message.
+          */
+         virtual void NotifyPartialActorUpdate(const std::vector<std::string> &propNames);
+
+         /** 
           * This is like NotifyFullActorUpdate() except that on subclasses, it might
           * only update some fields.  The Full would always send all properties, where
           * this one might only send what it thinks has updated since the last update. 
