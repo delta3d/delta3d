@@ -61,6 +61,12 @@ namespace dtHLAGM
           */
          static const RPRAttributeType VELOCITY_VECTOR_TYPE;
 
+         /**
+          * Three double values specifying the angular velocity vector (rotational acceleration) 
+          * in the coordinate system of the entity.  This will NOT be multiplied by the rotation offset.
+          */
+         static const RPRAttributeType ANGULAR_VELOCITY_VECTOR_TYPE;
+
          ///An unsigned integer.
          static const RPRAttributeType UNSIGNED_INT_TYPE;
 
@@ -150,46 +156,56 @@ namespace dtHLAGM
             char* buffer, 
             const size_t maxSize,
             const dtGame::MessageParameter& parameter, 
-            const dtDAL::DataType& parameterDataType) const throw();
+            const dtDAL::DataType& parameterDataType) const;
             
          void MapFromParamToEulerAngles(
             char* buffer, 
             const size_t maxSize,
             const dtGame::MessageParameter& parameter, 
-            const dtDAL::DataType& parameterDataType) const throw();
+            const dtDAL::DataType& parameterDataType) const;
 
          void MapFromParamToVelocityVector(
             char* buffer, 
             const size_t maxSize,
             const dtGame::MessageParameter& parameter, 
-            const dtDAL::DataType& parameterDataType) const throw();
+            const dtDAL::DataType& parameterDataType) const;
+
+         void MapFromParamToAngularVelocityVector(
+            char* buffer, 
+            const size_t maxSize, 
+            const dtGame::MessageParameter& parameter, 
+            const dtDAL::DataType& parameterDataType) const;
 
          void MapFromParamToEntityType(
             char* buffer,
             const size_t maxSize,
             const dtGame::MessageParameter& parameter,
             const OneToManyMapping& mapping,
-            const OneToManyMapping::ParameterDefinition& paramDef) const throw();
+            const OneToManyMapping::ParameterDefinition& paramDef) const;
             
          void MapFromWorldCoordToMessageParam(
             const char* buffer, 
             const size_t size,
             dtGame::MessageParameter& parameter,
-            const dtDAL::DataType& parameterDataType ) const throw();
+            const dtDAL::DataType& parameterDataType ) const;
 
          void MapFromEulerAnglesToMessageParam(
             const char* buffer, 
             const size_t size,
             dtGame::MessageParameter& parameter,
-            const dtDAL::DataType& parameterDataType ) const throw();
+            const dtDAL::DataType& parameterDataType ) const;
             
          void MapFromVelocityVectorToMessageParam(
             const char* buffer, 
             const size_t size,
             dtGame::MessageParameter& parameter,
-            const dtDAL::DataType& parameterDataType ) const throw();
+            const dtDAL::DataType& parameterDataType ) const;
 
-
+         void MapFromAngularVelocityVectorToMessageParam(
+            const char* buffer, 
+            const size_t size,
+            dtGame::MessageParameter& parameter,
+            const dtDAL::DataType& parameterDataType ) const;
    };
 
 }

@@ -103,6 +103,8 @@ namespace dtGame
          {
             dtCore::RefPtr<DeadReckoningHelper> helper = new DeadReckoningHelper;
    	      CPPUNIT_ASSERT_MESSAGE("Updated flag should default to false", !helper->IsUpdated());
+            CPPUNIT_ASSERT_MESSAGE("Updated flag should default to false", !helper->IsUpdated());
+            CPPUNIT_ASSERT_MESSAGE("Updated flag should default to false", !helper->IsUpdated());
    	      CPPUNIT_ASSERT_MESSAGE("DeadReckoning algorithm should default to NONE.", 
    	      helper->GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::NONE);
             CPPUNIT_ASSERT_MESSAGE("Flying should default to false", !helper->IsFlying());
@@ -115,7 +117,7 @@ namespace dtGame
             CPPUNIT_ASSERT(helper->GetAccelerationVector() == vec);
             CPPUNIT_ASSERT(helper->GetAngularVelocityVector() == vec);
             CPPUNIT_ASSERT(helper->GetGroundOffset() == 0.0f);
-            CPPUNIT_ASSERT(helper->GetMaxRotationSmoothingSteps() == 3.0f);
+            CPPUNIT_ASSERT(helper->GetMaxRotationSmoothingSteps() == 2.0f);
             CPPUNIT_ASSERT(helper->GetMaxTranslationSmoothingSteps() == 8.0f);
          }
    
@@ -334,11 +336,18 @@ namespace dtGame
             helper->SetVelocityVector(osg::Vec3(0.0f, 0.0f, 0.0f));
 
             //make sure the average update time is high.
-            helper->SetLastUpdatedTime(20.0);
-            helper->SetLastUpdatedTime(40.0);
+            helper->SetLastTranslationUpdatedTime(20.0);
+            helper->SetLastTranslationUpdatedTime(40.0);
 
             CPPUNIT_ASSERT_MESSAGE("The average time between updates is too low for the rest of the test to be valid", 
-               helper->GetAverageTimeBetweenUpdates() > 10.0);
+               helper->GetAverageTimeBetweenTranslationUpdates() > 10.0);
+
+            //make sure the average update time is high.
+            helper->SetLastRotationUpdatedTime(20.0);
+            helper->SetLastRotationUpdatedTime(40.0);
+
+            CPPUNIT_ASSERT_MESSAGE("The average time between updates is too low for the rest of the test to be valid", 
+               helper->GetAverageTimeBetweenRotationUpdates() > 10.0);
 
             mDeadReckoningComponent->InternalCalcTotSmoothingSteps(*helper, xform);
             
