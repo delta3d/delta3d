@@ -54,6 +54,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestOutgoingStringDataTranslation);
       CPPUNIT_TEST(TestOutgoingEulerAngleDataTranslation);
       CPPUNIT_TEST(TestOutgoingVectorDataTranslation);
+      CPPUNIT_TEST(TestOutgoingAngularVectorDataTranslation);
       CPPUNIT_TEST(TestOutgoingEnumDataTranslation);
       CPPUNIT_TEST(TestOutgoingEntityTypeEnumDataTranslation);
       CPPUNIT_TEST(TestOutgoingIntDataTranslation);
@@ -63,6 +64,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestIncomingEntityTypeDataTranslation);
       CPPUNIT_TEST(TestIncomingStringToEnumDataTranslation);
       CPPUNIT_TEST(TestIncomingStringDataTranslation);
+      CPPUNIT_TEST(TestIncomingVelocityVectorDataTranslation);
       CPPUNIT_TEST(TestIncomingRTIIDStructDataTranslation);
       CPPUNIT_TEST(TestFindTypeByName);
       CPPUNIT_TEST(TestAttributeSupportedQuery);
@@ -252,30 +254,12 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
 
       void TestOutgoingVectorDataTranslation()
       {
-         std::vector<dtCore::RefPtr<const dtGame::MessageParameter> > messageParameters;
+         InternalTestOutgoingVectorDataTranslation(dtHLAGM::RPRAttributeType::VELOCITY_VECTOR_TYPE);
+      }
 
-         char* buffer = NULL;
-         size_t size = 0;
-
-         mMapping.GetParameterDefinitions()[0].SetGameType(dtDAL::DataType::VEC3);
-         mMapping.SetHLAType(dtHLAGM::RPRAttributeType::VELOCITY_VECTOR_TYPE);
-         dtCore::RefPtr<dtGame::Vec3MessageParameter> vec3Param = new dtGame::Vec3MessageParameter("test");
-         osg::Vec3 testVec(1.5f, 3.11f, -2.73f);
-         vec3Param->SetValue(testVec);
-         messageParameters.push_back(vec3Param.get());
-
-         TranslateOutgoingParameter(buffer, size, messageParameters, mMapping);
-
-         osg::Vec3 expectedVec =  mCoordinates.GetOriginRotationMatrix().preMult(testVec);
-
-         dtHLAGM::VelocityVector vv;
-
-         vv.Decode(buffer);
-         mParameterTranslator->DeallocateBuffer(buffer);
-
-         CPPUNIT_ASSERT(osg::equivalent(expectedVec.x(), vv.GetX(), 1e-6f) &&
-                        osg::equivalent(expectedVec.y(), vv.GetY(), 1e-6f) &&
-                        osg::equivalent(expectedVec.z(), vv.GetZ(), 1e-6f) );
+      void TestOutgoingAngularVectorDataTranslation()
+      {
+         InternalTestOutgoingVectorDataTranslation(dtHLAGM::RPRAttributeType::ANGULAR_VELOCITY_VECTOR_TYPE);
       }
 
       void TestOutgoingEnumDataTranslation()
@@ -437,6 +421,36 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          mParameterTranslator->MapToMessageParameters(mBuffer, inputValue2.EncodedLength(), messageParameters, mMapping);
 
          CPPUNIT_ASSERT_EQUAL(expectedValue, enumParam->GetValue());
+      }
+
+      void TestIncomingVelocityVectorDataTranslation()
+      {
+         std::vector<dtCore::RefPtr<dtGame::MessageParameter> > messageParameters;
+
+         dtCore::RefPtr<dtGame::Vec3MessageParameter> vec3Param = new dtGame::Vec3MessageParameter("test");
+         mMapping.SetHLAType(dtHLAGM::RPRAttributeType::VELOCITY_VECTOR_TYPE);
+
+         dtHLAGM::OneToManyMapping::ParameterDefinition& pd = mMapping.GetParameterDefinitions()[0];
+         pd.SetGameType(vec3Param->GetDataType());
+
+         messageParameters.push_back(vec3Param.get());
+
+         dtHLAGM::VelocityVector inputValue(1.5f, 2.3f, 3.3f);
+         inputValue.Encode(mBuffer);
+
+         mParameterTranslator->MapToMessageParameters(mBuffer, inputValue.EncodedLength(), messageParameters, mMapping);
+
+         osg::Vec3 expectedValue;
+         expectedValue =  mCoordinates.GetOriginRotationMatrix().preMult(osg::Vec3(inputValue.GetX(), inputValue.GetY(), inputValue.GetZ()));
+
+         CPPUNIT_ASSERT_EQUAL(expectedValue, vec3Param->GetValue());
+
+         mMapping.SetHLAType(dtHLAGM::RPRAttributeType::VELOCITY_VECTOR_TYPE);
+         mParameterTranslator->MapToMessageParameters(mBuffer, inputValue.EncodedLength(), messageParameters, mMapping);
+         //The value should be passed as is.
+         expectedValue.set(inputValue.GetX(), inputValue.GetY(), inputValue.GetZ());
+
+         CPPUNIT_ASSERT_EQUAL(expectedValue, vec3Param->GetValue());
       }
 
       void TestIncomingStringToEnumDataTranslation()
@@ -788,6 +802,39 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
             (double)expectedResult == doubleParam->GetValue());
       }
       
+      void InternalTestOutgoingVectorDataTranslation(const dtHLAGM::RPRAttributeType& type)
+      {
+         std::vector<dtCore::RefPtr<const dtGame::MessageParameter> > messageParameters;
+
+         char* buffer = NULL;
+         size_t size = 0;
+
+         mMapping.GetParameterDefinitions()[0].SetGameType(dtDAL::DataType::VEC3);
+         mMapping.SetHLAType(type);
+         dtCore::RefPtr<dtGame::Vec3MessageParameter> vec3Param = new dtGame::Vec3MessageParameter("test");
+         osg::Vec3 testVec(1.5f, 3.11f, -2.73f);
+         vec3Param->SetValue(testVec);
+         messageParameters.push_back(vec3Param.get());
+
+         TranslateOutgoingParameter(buffer, size, messageParameters, mMapping);
+
+         osg::Vec3 expectedVec;
+         if (type == dtHLAGM::RPRAttributeType::VELOCITY_VECTOR_TYPE)
+            expectedVec =  mCoordinates.GetOriginRotationMatrix().preMult(testVec);
+         else
+            expectedVec = testVec;
+
+         dtHLAGM::VelocityVector vv;
+
+         vv.Decode(buffer);
+         mParameterTranslator->DeallocateBuffer(buffer);
+
+         CPPUNIT_ASSERT(osg::equivalent(expectedVec.x(), vv.GetX(), 1e-6f) &&
+                        osg::equivalent(expectedVec.y(), vv.GetY(), 1e-6f) &&
+                        osg::equivalent(expectedVec.z(), vv.GetZ(), 1e-6f) );
+      }
+
+
       void InternalTestOutgoingMarkingTypeDataTranslation(const std::string& testValue)
       {
          std::vector<dtCore::RefPtr<const dtGame::MessageParameter> > messageParameters;

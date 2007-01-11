@@ -24,6 +24,7 @@
 #include <string>
 #include <map>
 
+#include <dtCore/refptr.h>
 #include <dtGame/export.h>
 #include <dtGame/gmcomponent.h>
 #include <dtCore/nodecollector.h>
@@ -115,7 +116,7 @@ namespace dtGame
          DeadReckoningHelper();
  
          bool IsUpdated() const { return mUpdated; }
-         void ClearUpdated() { mUpdated = false; }
+         void ClearUpdated() { mUpdated = false; mTranslationUpdated= false; mRotationUpdated= false;}
  
          /**
           * @return true if no ground following should be performed on this actor.
@@ -224,29 +225,46 @@ namespace dtGame
           */
          const osg::Vec3& GetAngularVelocityVector() const { return mAngularVelocityVector; }
 
+         /**
+          * Retrieves this entity's Dead Reckoning matrix.
+          * @return the Dead Reckoning matrix
+          */
+         const osg::Matrix& GetDeadReckoningMatrix() const { return mDeadReckoningMatrix; }
+         
+         /**
+          * Sets this entity's Dead Reckoning matrix.
+          * @param deltaTime the time elapsed since the last measured attitude 
+          */
+         void SetDeadReckoningMatrix(double deltaTime);
+         
          ///@return the total amount of time to use when smoothing the translation for this last update.
          float GetCurrentTotalTranslationSmoothingSteps() const { return mCurrentTotalTranslationSmoothingSteps; }
          ///@return the total amount of time to use when smoothing the rotation for this last update.
          float GetCurrentTotalRotationSmoothingSteps() const { return mCurrentTotalRotationSmoothingSteps; }
 
-         ///@return the last simulation time this helper was updated.
-         double GetLastUpdatedTime() const { return mLastUpdatedTime; };
+         ///@return the last simulation time this helper was updated for translation.
+         double GetLastTranslationUpdatedTime() const { return mLastTranslationUpdatedTime; };
 
-         ///Sets the last time this was updated.  This will also updated the average time between updates.
-         void SetLastUpdatedTime(double newUpdatedTime);
+         ///@return the last simulation time this helper was updated for rotation.
+         double GetLastRotationUpdatedTime() const { return mLastRotationUpdatedTime; };
 
-         ///@return the rough average amount of time between updates.  This is based on values sent to SetLastUpdatedTime.
-         double GetAverageTimeBetweenUpdates() const { return mAverageTimeBetweenUpdates; };
-
+         ///Sets the last time this helper was updated for translation.  This will also updated the average time between updates.
+         void SetLastTranslationUpdatedTime(double newUpdatedTime);
          ///@return wether or not this is a dofcontainer helper
          dtCore::NodeCollector* GetNodeCollector() {return mDOFDeadReckoning.get();}
 
+		 ///Sets the last time this helper was updated for rotation.  This will also updated the average time between updates.
+         void SetLastRotationUpdatedTime(double newUpdatedTime);
          /// Set the dof container to what the entity is using for reference.
          void SetDofContainer(dtCore::NodeCollector& dofContainerToSet){mDOFDeadReckoning = &dofContainerToSet;}
 
+         ///@return the rough average amount of time between translation updates.  This is based on values sent to SetLastTranslationUpdatedTime.
+         double GetAverageTimeBetweenTranslationUpdates() const { return mAverageTimeBetweenTranslationUpdates; };
          /// Add onto the dof dead reckoning list where the dof should move 
          void AddToDeadReckonDOF(const std::string &DofName, osg::Vec3& position, osg::Vec3& rateOverTime);
 
+         ///@return the rough average amount of time between rotation updates.  This is based on values sent to SetLastRotationUpdatedTime.
+         double GetAverageTimeBetweenRotationUpdates() const { return mAverageTimeBetweenRotationUpdates; };
          /// Remove a drDOF from the list at this spot
          void RemoveDRDOF(std::list<dtCore::RefPtr<DeadReckoningDOF> >::iterator &iter);
 
@@ -259,27 +277,36 @@ namespace dtGame
       private:
          friend class DeadReckoningComponent;
          
+         bool mTranslationInitiated;
+         bool mRotationInitiated;
          bool mUpdated;
+         bool mTranslationUpdated;
+         bool mRotationUpdated;
          bool mFlying;
+
+         double mLastTimeTag;
          
          ///the simulation time this was last updated.
-         double mLastUpdatedTime;
-         
-         ///This should be fairly clear.
-         float mAverageTimeBetweenUpdates;
+         double mLastTranslationUpdatedTime;
+         double mLastRotationUpdatedTime;
 
-         ///The maximum amount of time to use when smoothing rotation.
-         float mMaxRotationSmoothingSteps;
+         ///This should be fairly clear.
+         float mAverageTimeBetweenTranslationUpdates;
+         float mAverageTimeBetweenRotationUpdates;
+
          ///The maximum amount of time to use when smoothing translation.
          float mMaxTranslationSmoothingSteps;
-         
+		 ///The maximum amount of time to use when smoothing rotation.
+         float mMaxRotationSmoothingSteps;
+                 
          ///the amount of time since this actor started smoothing.
-         float mSmoothingSteps;
+         float mTranslationSmoothingSteps;
+         float mRotationSmoothingSteps;
          
-         ///the total number of smoothing steps to use when smoothing rotation since the last update.
-         float mCurrentTotalRotationSmoothingSteps;
-         ///the total number of smoothing steps to use when smoothing translation since the last update.
+           ///the total number of smoothing steps to use when smoothing translation since the last update.
          float mCurrentTotalTranslationSmoothingSteps;
+		 ///the total number of smoothing steps to use when smoothing rotation since the last update.
+         float mCurrentTotalRotationSmoothingSteps;
          
          ///The distance from the ground that the actor should be.
          float mGroundOffset;
@@ -289,16 +316,24 @@ namespace dtGame
 
          ///The Dead-Reckoned position prior to the last update.
          osg::Vec3 mTransBeforeLastUpdate;
+         // Current Dead Reckoned Position
+         osg::Vec3 mCurrentDeadReckonedTranslation;
          
-         ///last known orientation.
+         ///last known orientation (vector)
          osg::Vec3 mLastRotation;
+         ///last known orientation (matrix)
          osg::Matrix mLastRotationMatrix;
+         ///last known orientation (quaternion)
          osg::Quat mLastQuatRotation;
-         ///The Dead-Reckoned rotation prior to the last update.
+         ///dead reckoned attitude quaternion prior update
          osg::Quat mRotQuatBeforeLastUpdate;
-         //if the rotation has been resolved to the last updated version.
+         ///current dead reckoned attitude quaternion  
+         osg::Quat mCurrentDeadReckonedRotation;
+         osg::Vec3 mCurrentAttitudeVector;
+ 
+          //if the rotation has been resolved to the last updated version.
          bool mRotationResolved;
-   
+ 
          /// The velocity vector.
          osg::Vec3 mVelocityVector;
          
@@ -307,6 +342,9 @@ namespace dtGame
          
          ///The angular velocity vector.
          osg::Vec3 mAngularVelocityVector;
+         
+         // The Dead Reckoning Matrix
+         osg::Matrix mDeadReckoningMatrix;
          
          DeadReckoningAlgorithm* mMinDRAlgorithm;
 
@@ -419,29 +457,16 @@ namespace dtGame
          
          ///Version of clamping that uses one intersection points and the vertex normal.
          void ClampToGroundOnePoint(float timeSinceUpdate, dtCore::Transform& xform);
-
-         /**
-          * Calculates how long the associated actor's position and rotation should be smoothed into a updated value.
-          * The values are assigned to the helper.
-          * @param helper the DR helper for the actor.
-          * @param xform the actors current absolute transform.
-          */
-         void CalculateTotalSmoothingSteps(DeadReckoningHelper& helper, const dtCore::Transform& xform);
-
-         ///perform static dead-reckoning, which means applying the new position directly and ground clamping.  xform will be updated.
-         void DRStatic(DeadReckoningHelper& helper, const double timeSinceUpdate, GameActor& gameActor, dtCore::Transform& xform);
-         ///perform velocity + acceleration dead-reckoning.  Acceleration may be ignored.  xform will be updated.
-         void DRVelocityAcceleration(DeadReckoningHelper& helper, const float deltaTime, const double timeSinceUpdate, const bool forceClamp, GameActor& gameActor, dtCore::Transform& xform);
-   
+         
          dtCore::Isector& GetGroundClampIsector();
 
-      private:
          ///number of seconds between forcing vehicles to ground clamp.
          static const float ForceClampTime;
          
          dtUtil::Log* mLogger;
          dtCore::RefPtr<dtCore::Transformable> mEyePointActor;
          dtCore::RefPtr<dtCore::Transformable> mTerrainActor;
+
          dtCore::RefPtr<dtCore::Isector> mIsector;
          
          float mTimeUntilForceClamp, mHighResClampRange, mHighResClampRange2;
@@ -450,8 +475,21 @@ namespace dtGame
          
          void TickRemote(const dtGame::TickMessage& tickMessage);
                   
-         double GetTerrainZIntersectionPoint(dtCore::DeltaDrawable& terrainActor, const osg::Vec3& point, osg::Vec3& groundNormalOut);
-      
+         //double GetTerrainZIntersectionPoint(dtCore::DeltaDrawable& terrainActor, const osg::Vec3& point, osg::Vec3& groundNormalOut);
+         virtual double GetTerrainZIntersectionPoint(dtCore::DeltaDrawable& terrainActor, const osg::Vec3& point, osg::Vec3& groundNormalOut);
+
+         /**
+          * Calculates how long the associated actor's position and rotation should be smoothed into a updated value.
+          * The values are assigned to the helper.
+          * @param helper the DR helper for the actor.
+          * @param xform the actors current absolute transform.
+          */
+         void CalculateTotalSmoothingSteps(DeadReckoningHelper& helper,  const dtCore::Transform& xform);
+
+         ///perform static dead-reckoning, which means applying the new position directly and ground clamping.  xform will be updated.
+         void DRStatic(DeadReckoningHelper& helper, const double timeSinceTranslationUpdate, const double timeSinceRotationUpdate, GameActor& gameActor, dtCore::Transform& xform);
+         ///perform velocity + acceleration dead-reckoning.  Acceleration may be ignored.  xform will be updated.
+         void DRVelocityAcceleration(DeadReckoningHelper& helper, const float deltaTime, const double timeSinceTranslationUpdate, const double timeSinceRotationUpdate, const bool forceClamp, GameActor& gameActor, dtCore::Transform& xform); 
    };
    
 }

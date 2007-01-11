@@ -490,6 +490,24 @@ namespace dtHLAGM
              RTI::AttributeNotOwned,
              RTI::FederateInternalError)
    {
+      const dtCore::UniqueId* actorId = mRuntimeMappings.GetId(theObject);
+      if (actorId != NULL)
+      {
+         dtGame::GameActorProxy* gap = GetGameManager()->FindGameActorById(*actorId);
+         if (gap != NULL)
+         {
+            // This won't work if the actor is remote because it won't send the update.
+            if (gap->IsRemote() && mLogger->IsLevelEnabled(dtUtil::Log::LOG_WARNING))
+            {
+               mLogger->LogMessage(dtUtil::Log::LOG_WARNING, 
+                  "An update was requested from the RTI for actor %s with type %s.%s, but the actor is Remote.",
+                  gap->GetName().c_str(), gap->GetActorType().GetCategory().c_str(), gap->GetActorType().GetName().c_str());
+            } 
+            
+            // We eventually need to lookup the list of properties needed using the attr handle set.
+            gap->NotifyActorUpdate();
+         }
+      }
    }
 
    /**
@@ -986,6 +1004,10 @@ namespace dtHLAGM
    {
       try
       {
+	      //Tag tag;
+         //tag.Decode(theTag);
+         //std::cout << tag.GetTag() << std::endl;
+
          dtCore::RefPtr<ObjectToActor> bestObjectToActor;
          const dtCore::UniqueId* currentActorId;
          bool bNewObject = false;
