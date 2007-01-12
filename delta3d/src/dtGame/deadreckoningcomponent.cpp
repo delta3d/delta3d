@@ -81,6 +81,12 @@ namespace dtGame
       mMinDRAlgorithm(&DeadReckoningAlgorithm::NONE)
    {}
 
+
+//   //////////////////////////////////////////////////////////////////////
+//   void DeadReckoningHelper::CreateProperties(std::vector<dtCore::RefPtr<dtDAL::ActorProperty> >& toFill)
+//   {
+//   }
+
    //////////////////////////////////////////////////////////////////////
    void DeadReckoningHelper::SetFlying(bool newFlying)
    {
@@ -981,8 +987,7 @@ namespace dtGame
          bool forceClamp = false;
 
          double timeSinceTranslationUpdate = helper.mTranslationSmoothingSteps;
-		 //double timeSinceRotationUpdate = tickMessage.GetSimulationTime() - helper.mLastRotationUpdatedTime;
-		 double timeSinceRotationUpdate = helper.mRotationSmoothingSteps;
+         double timeSinceRotationUpdate = helper.mRotationSmoothingSteps;
          mTimeUntilForceClamp -= tickMessage.GetDeltaSimTime();
 
          if (mTimeUntilForceClamp <= 0.0f)
@@ -998,7 +1003,7 @@ namespace dtGame
 
          //make sure it's greater than 0 in case of time being set.
          dtUtil::Clamp(timeSinceTranslationUpdate, 0.0, timeSinceTranslationUpdate);
-		 dtUtil::Clamp(timeSinceRotationUpdate, 0.0, timeSinceRotationUpdate);
+         dtUtil::Clamp(timeSinceRotationUpdate, 0.0, timeSinceRotationUpdate);
 
          if (helper.GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::NONE)
          {

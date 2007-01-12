@@ -102,6 +102,9 @@ namespace dtHLAGM
 
          ///RTI string ID type used to identify a single federation entity, usually in firing and detonation events. 
          static const RPRAttributeType RTI_OBJECT_ID_STRUCT_TYPE;
+      
+         ///The time string passed to time tag 
+         static const RPRAttributeType TIME_TAG_TYPE;
 
       private:
          RPRAttributeType(const std::string& name, unsigned char id, size_t encodedLength):AttributeType(name, id, encodedLength)
