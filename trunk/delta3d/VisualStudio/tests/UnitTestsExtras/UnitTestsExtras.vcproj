@@ -138,6 +138,9 @@
 			<File
 				RelativePath="..\..\..\tests\dtHLAGM\rprparametertranslatortests.cpp">
 			</File>
+			<File
+				RelativePath="..\..\..\tests\dtHLAGM\tagtests.cpp">
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
