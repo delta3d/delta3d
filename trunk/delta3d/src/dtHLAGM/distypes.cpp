@@ -1492,5 +1492,127 @@ namespace dtHLAGM
       return mParameterValue;
    }
 
+   /**
+    * Constructor.
+    *
+    * @param tagValue the value of the Tag
+    */
+   Tag::Tag(double tagValue):mTagValue(tagValue)
+   {
+   }
+
+   /**
+    * Returns the encoded length of this object.
+    *
+    * @return the encoded length of this object, in bytes
+    */
+   size_t Tag::EncodedLength() const
+   {
+      return 17;
+   }
+
+   /**
+    * Encodes this object into the specified buffer.
+    *
+    * @param buf the buffer to contain the encoded object
+    */
+   void Tag::Encode(char* buf) const
+   {
+      double tagValue = mTagValue;
+      
+      if(getCpuByteOrder() == LittleEndian)
+      {
+         endianSwap(&tagValue);
+      }
+
+      char* dAsI = (char*)(&tagValue);
+      
+      size_t len = EncodedLength() - 1;
+      for (size_t i = 0; i < len; ++i)
+      {
+         char vals[2]; 
+         vals[0] = dAsI[i] >> 4;
+         vals[1] = dAsI[i] & 0x0F;
+         for (unsigned j = 0; j < 2; ++j)
+         {
+            if (vals[j] <= 9)
+               vals[j] += '0';
+            else
+               vals[j] += 'A' - 10;
+         }
+         buf[2*i] = vals[0];
+         buf[2*i+1] = vals[1];
+      }
+      buf[len] = '\0';
+   }
+
+
+   /**
+    * Sets the value of the Tag.
+    *
+    * @param tagValue the value of the Tag
+    */
+   void Tag::SetTag(double tagValue)
+   {
+      mTagValue = tagValue;
+   }
+   
+   /**
+    * Returns the value of the Tag.
+    *
+    * @return the value of the Tag
+    */
+   double Tag::GetTag() const
+   {
+      return mTagValue;
+   }
+
+   static void toVoid(unsigned char &to,  char *from)
+   {
+      char tmp=from[0];
+      
+      if (tmp <= '9')
+         tmp -= '0';
+      else
+         tmp -= 'A'-10;
+      
+      to=tmp*16;
+      tmp = from[1];
+      
+      if (tmp <= '9')
+         tmp -= '0';
+      else
+         tmp -= 'A'-10;
+      
+      to+=tmp; 
+   }
+
+   /**
+    * Decodes the values contained in the specified buffer.
+    *
+    * @param buf the buffer containing the encoded object
+    */
+   void Tag::Decode (const char* buf) 
+   {
+      char tmp[2];   
+      int sz=8;
+      unsigned char* tmpbuf;
+      tmpbuf = new unsigned char[8];
+      memset((void*)tmpbuf, 0, 8);
+      for (int i=0; i<sz; i++)
+      {
+         tmp[0]=buf[2*i];
+         tmp[1]=buf[2*i+1];
+         toVoid(tmpbuf[i],tmp);
+      }
+      double tagValue = *(double *)(&tmpbuf[0]);
+      if(getCpuByteOrder() == LittleEndian)
+      {
+         endianSwap(&tagValue);
+      }
+      
+      mTagValue = tagValue;
+   }
+
 }
 

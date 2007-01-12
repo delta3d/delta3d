@@ -1196,6 +1196,65 @@ namespace dtHLAGM
           */
          ParameterValue mParameterValue;
    };
+   
+   /**
+    * A Tag type.
+    */
+   class DT_HLAGM_EXPORT Tag
+   {
+      public:
+
+         /**
+          * Constructor.
+          *
+          * @param tagValue the value of the Tag
+          */
+         Tag(double tagValue = 0.0);
+
+         /**
+          * Returns the encoded length of this object.
+          *
+          * @return the encoded length of this object, in bytes
+          */
+         size_t EncodedLength() const;
+
+         /**
+          * Encodes this object into the specified buffer.
+          *
+          * @param buf the buffer to contain the encoded object
+          */
+         void Encode(char* buf) const;
+
+         /**
+          * Decodes the values contained in the specified buffer.
+          *
+          * @param buf the buffer containing the encoded object
+          */
+         void Decode(const char* buf);
+
+         /**
+          * Sets the value of the Tag.
+          *
+          * @param tagValue the value of the Tag
+          */
+         void SetTag(double tagValue);
+
+         /**
+          * Returns the value of the Tag.
+          *
+          * @return the value of the Tag
+          */
+         double GetTag() const;
+
+      private:
+
+         /**
+          * The value of the Tag.
+          */
+         double mTagValue;
+         
+    };
+   
 }
 
 #endif // DELTA_DIS_TYPES
