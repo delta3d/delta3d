@@ -970,15 +970,15 @@ namespace dtGame
             //when calculating movement.
             if (helper.mTranslationUpdated)
             {
-            	//helper.SetLastTranslationUpdatedTime(tickMessage.GetSimulationTime() - tickMessage.GetDeltaSimTime());
-            	helper.SetLastTranslationUpdatedTime(helper.mLastTimeTag);
+            	helper.SetLastTranslationUpdatedTime(tickMessage.GetSimulationTime() - tickMessage.GetDeltaSimTime());
+            	//helper.SetLastTranslationUpdatedTime(helper.mLastTimeTag);
             	helper.mTranslationSmoothingSteps = tickMessage.GetDeltaSimTime();
             }
             
             if (helper.mRotationUpdated)
             {
-            	//helper.SetLastRotationUpdatedTime(tickMessage.() - tickMessage.GetDeltaSimTime());
-            	helper.SetLastRotationUpdatedTime(helper.mLastTimeTag);
+            	helper.SetLastRotationUpdatedTime(tickMessage.GetSimulationTime() - tickMessage.GetDeltaSimTime());
+            	//helper.SetLastRotationUpdatedTime(helper.mLastTimeTag);
             	helper.mRotationSmoothingSteps = tickMessage.GetDeltaSimTime();
             	helper.mRotationResolved = false;
             }
