@@ -25,6 +25,8 @@
       #pragma warning(disable : 4267)
       #include <cppunit/extensions/HelperMacros.h>
    #pragma warning(pop)
+#else
+   #include <cppunit/extensions/HelperMacros.h>
 #endif
 
 #include <cppunit/extensions/HelperMacros.h>

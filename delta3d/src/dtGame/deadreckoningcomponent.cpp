@@ -427,11 +427,30 @@ namespace dtGame
       }
       else if (helper.IsUpdated())
       {
+         if (toRegister.GetGameActor().IsRemote())
+         {
+            dtCore::Transform xform;
+            toRegister.GetGameActor().GetTransform(xform);
+            xform.SetTranslation(helper.GetLastKnownTranslation());
+            xform.SetRotation(helper.GetLastKnownRotation());
+            toRegister.GetGameActor().SetTransform(xform);
+            helper.mTransBeforeLastUpdate = helper.GetLastKnownTranslation();
+            helper.mRotQuatBeforeLastUpdate = helper.mLastQuatRotation;
+         }
+      }
+      
+      // If the actor is local, don't move it, and force the 
+      // helper to match as if it was just updated.
+      if (!toRegister.GetGameActor().IsRemote())
+      {
          dtCore::Transform xform;
          toRegister.GetGameActor().GetTransform(xform);
-         xform.SetTranslation(helper.GetLastKnownTranslation());
-         xform.SetRotation(helper.GetLastKnownRotation());
-         toRegister.GetGameActor().SetTransform(xform);
+
+         helper.SetLastKnownTranslation(xform.GetTranslation());
+         osg::Vec3 rot;
+         xform.GetRotation(rot);
+         helper.SetLastKnownRotation(rot);
+
          helper.mTransBeforeLastUpdate = helper.GetLastKnownTranslation();
          helper.mRotQuatBeforeLastUpdate = helper.mLastQuatRotation;
       }
@@ -664,7 +683,10 @@ namespace dtGame
 
 	   helper.mCurrentDeadReckonedTranslation = xform.GetTranslation();
       xform.GetRotation().get(helper.mCurrentDeadReckonedRotation);
-      gameActor.SetTransform(xform);
+
+      //Only actually move remote ones.
+      if (gameActor.IsRemote())
+         gameActor.SetTransform(xform);
    }
 
    //////////////////////////////////////////////////////////////////////
@@ -868,21 +890,25 @@ namespace dtGame
          helper.mCurrentDeadReckonedTranslation = pos;
          helper.mCurrentDeadReckonedRotation = newRot;
 
-         xform.SetTranslation(pos);
-         xform.SetRotation(rot);
-         gameActor.SetTransform(xform);
-
-         osg::Matrix mCurrentRotation = xform.GetRotation();
-         dtUtil::MatrixUtil::MatrixToHpr(helper.mCurrentAttitudeVector,mCurrentRotation);
-         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         //Only actually move remote ones.
+         if (gameActor.IsRemote())
          {
-            std::ostringstream ss;
-            ss << "Actor " << gameActor.GetUniqueId() << " - " << gameActor.GetName() << " has attitude "
-               << "\"" << helper.mCurrentAttitudeVector << " au temps" 
-               << helper.mLastRotationUpdatedTime + helper.mRotationSmoothingSteps << "\"";
-            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, 
-                  ss.str().c_str());               
+            xform.SetTranslation(pos);
+            xform.SetRotation(rot);
+            gameActor.SetTransform(xform);
+            osg::Matrix mCurrentRotation = xform.GetRotation();
+            dtUtil::MatrixUtil::MatrixToHpr(helper.mCurrentAttitudeVector,mCurrentRotation);
+            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            {
+               std::ostringstream ss;
+               ss << "Actor " << gameActor.GetUniqueId() << " - " << gameActor.GetName() << " has attitude "
+                  << "\"" << helper.mCurrentAttitudeVector << " au temps" 
+                  << helper.mLastRotationUpdatedTime + helper.mRotationSmoothingSteps << "\"";
+               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, 
+                     ss.str().c_str());               
+            }
          }
+
       } 
       else
       {
@@ -1024,7 +1050,7 @@ namespace dtGame
             DRVelocityAcceleration(helper, tickMessage.GetDeltaSimTime(), timeSinceTranslationUpdate, timeSinceRotationUpdate, forceClamp, gameActor, xform);
          }
 
-         if (helper.GetNodeCollector() != NULL)
+         if (gameActor.IsRemote() && helper.GetNodeCollector() != NULL)
          {
             std::list<dtCore::RefPtr<DeadReckoningHelper::DeadReckoningDOF> >::iterator iterDOF = helper.mDeadReckonDOFS.begin();
             

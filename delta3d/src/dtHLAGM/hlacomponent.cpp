@@ -21,9 +21,9 @@
 
 #include <sstream>
 
+#include <dtHLAGM/distypes.h>
 #include <dtHLAGM/hlacomponent.h>
 #include <dtHLAGM/objecttoactor.h>
-#include <dtHLAGM/distypes.h>
 #include <dtHLAGM/attributetoproperty.h>
 #include <dtHLAGM/parametertoparameter.h>
 #include <dtHLAGM/interactiontomessage.h>
