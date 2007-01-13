@@ -98,10 +98,24 @@ namespace dtAI
       mWaypoints.insert(std::pair<unsigned, Waypoint*>(pIndex, new Waypoint(pWaypointActor)));      
    }
 
+   int WaypointManager::AddWaypoint(const osg::Vec3& pWaypoint)
+   {
+      unsigned pIndex = mWaypoints.size();
+      Waypoint* pWay = new Waypoint(pWaypoint);
+      mWaypoints.insert(std::pair<unsigned, Waypoint*>(pIndex, pWay));   
+      return pIndex;
+   }
+
    void WaypointManager::RemoveWaypoint(const WaypointActor* pWaypoint)
    {
       //we are indexing into map with a key generated on AddWaypoint
        mWaypoints.erase(pWaypoint->GetIndex());
+   }
+
+   void WaypointManager::RemoveWaypoint(unsigned pIndex)
+   {
+      //we are indexing into map with a key generated on AddWaypoint
+       mWaypoints.erase(pIndex);
    }
 
    void WaypointManager::MoveWaypoint(unsigned pIndex, const osg::Vec3& pPos)
