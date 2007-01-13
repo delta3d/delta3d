@@ -129,6 +129,18 @@ namespace dtAI
          osg::Node* GetOSGNode();
 
          /**
+         * Use this function to create your own waypoints
+         * @return the index to use for deleting this waypoint
+         */
+         int AddWaypoint(const osg::Vec3& pWaypoint);
+
+         /**
+         * Use this function to remove waypoints you have created
+         */
+         void RemoveWaypoint(unsigned pIndex);
+
+
+         /**
          * These are utility functions used by STAGE and dtDAL::Project         
          */
          void AddWaypoint(WaypointActor* pWaypoint);
