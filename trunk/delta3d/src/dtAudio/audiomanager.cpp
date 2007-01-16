@@ -570,6 +570,12 @@ AudioManager::FreeSound( Sound*& sound )
 {
    SOB_PTR  snd   = static_cast<SoundObj*>(sound);
 
+   if(snd == NULL)
+   {
+      LOG_ERROR("Cannot free a NULL sound");
+      return;
+   }
+
    // remove user's copy of pointer
    sound = NULL;
 

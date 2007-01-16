@@ -40,7 +40,7 @@ Weather::~Weather()
    DeregisterInstance(this);
 }
 
-void Weather::SetTheme(const WeatherTheme theme, const std::string textureDirectory )
+void Weather::SetTheme(const WeatherTheme theme, const std::string &textureDirectory )
 {
    if (theme == mTheme)
    {
@@ -88,7 +88,7 @@ void Weather::SetTheme(const WeatherTheme theme, const std::string textureDirect
    mTheme = theme;
 }
 
-void Weather::SetBasicCloudType(const CloudType type, const std::string textureDirectory)
+void Weather::SetBasicCloudType(const CloudType type, const std::string &textureDirectory)
 {
    //create a set of cloud layers EnvEffects to represent the 
    //supplied cloud type
@@ -118,7 +118,7 @@ void Weather::SetBasicCloudType(const CloudType type, const std::string textureD
       }
       case CLOUD_FEW:
       {
-         if( mClouds[CLOUD_FEW-1].valid() == false )
+         if(!mClouds[CLOUD_FEW-1].valid())
          {
             mClouds[CLOUD_FEW-1] = new dtCore::CloudPlane(6, 0.75f, 2, 1, .2, .96, 512, 1100.f, 
                "Clouds Few", textureDirectory);//few
@@ -128,7 +128,7 @@ void Weather::SetBasicCloudType(const CloudType type, const std::string textureD
       }
       case CLOUD_SCATTERED:
       {
-         if( mClouds[CLOUD_SCATTERED-1].valid() == false )
+         if(!mClouds[CLOUD_SCATTERED-1].valid())
          {
             mClouds[CLOUD_SCATTERED-1] = new dtCore::CloudPlane(6, 0.5f, 4, 1, .3, .97,  512, 1000.f, 
                "Clouds Scattered", textureDirectory);// scattered
@@ -138,7 +138,7 @@ void Weather::SetBasicCloudType(const CloudType type, const std::string textureD
       }
       case CLOUD_BROKEN:
       {
-         if( mClouds[CLOUD_BROKEN-1].valid() == false )
+         if(!mClouds[CLOUD_BROKEN-1].valid())
          {
             mClouds[CLOUD_BROKEN-1] = new dtCore::CloudPlane(6, 0.5f, 4, 1, .3, .96,  512, 800.f, 
                "Clouds Broken", textureDirectory); //broken
@@ -148,7 +148,7 @@ void Weather::SetBasicCloudType(const CloudType type, const std::string textureD
       }
    	case CLOUD_OVERCAST:
       {
-         if( mClouds[CLOUD_OVERCAST-1].valid() == false )
+         if(!mClouds[CLOUD_OVERCAST-1].valid())
          {
             mClouds[CLOUD_OVERCAST-1] = new dtCore::CloudPlane(6, 0.4f, 6, 1, .2, .98,  512, 600.f, 
                "Clouds Overcast", textureDirectory);//overcast

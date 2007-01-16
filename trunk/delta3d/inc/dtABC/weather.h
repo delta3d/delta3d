@@ -126,7 +126,7 @@ namespace dtABC
       };
 
       ///Creates a set of clouds to represent the generic cloud description
-      void SetBasicCloudType( const CloudType type, const std::string textureDirectory = "" );
+      void SetBasicCloudType( const CloudType type, const std::string &textureDirectory = "" );
       CloudType GetBasicCloudType() const {return mCloudType;}
 
       ///Creates wind layers to represent the wind description
@@ -138,7 +138,7 @@ namespace dtABC
       VisibilityType GetBasicVisibilityType()const {return mVisType;}
 
       ///Preset weather themes which control clouds, winds, and visibility
-      void SetTheme(const WeatherTheme theme, const std::string textureDirectory = "" );
+      void SetTheme(const WeatherTheme theme, const std::string &textureDirectory = "" );
       WeatherTheme GetTheme() const {return mTheme;}
 
       ///Get a handle to the Weather's Environment instance
