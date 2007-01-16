@@ -568,6 +568,12 @@ AudioManager::NewSound( void )
 void
 AudioManager::FreeSound( Sound*& sound )
 {
+   if(sound == NULL)
+   {
+      LOG_ERROR("Cannot free a NULL sound");
+      return;
+   }
+
    SOB_PTR  snd   = static_cast<SoundObj*>(sound);
 
    if(snd == NULL)
