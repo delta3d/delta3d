@@ -2328,7 +2328,7 @@ namespace sigslot {
             ++itNext;
 
             if ((*it)->getdest() != NULL)
-               (*it)->emit_signal(a1, a1);
+               (*it)->emit_signal(a1, a2);
             else
             {
                delete *it;
