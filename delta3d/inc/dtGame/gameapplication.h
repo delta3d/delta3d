@@ -67,6 +67,9 @@ namespace dtGame
          /**
           * Configures the application, loads the game library,
           * and calls the entry point to configure the game.
+          * After loading the library, it searches for the following interfaces by name:
+          * - "CreateGameEntryPoint", with the signature of CreateEntryPointFn
+          * - "DestroyGameEntryPoint", with the signature of DestroyEntryPointFn
           */
          virtual void Config();
          
