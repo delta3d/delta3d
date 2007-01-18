@@ -22,11 +22,14 @@
 #include <cppunit/extensions/HelperMacros.h>
 #include <osg/Vec3>
 #include <osg/Math>
+#include <osg/Group>
+#include <dtUtil/mathdefines.h>
 #include <dtCore/system.h>
 #include <dtCore/transform.h>
 #include <dtCore/transformable.h>
 #include <dtCore/isector.h>
 #include <dtCore/scene.h>
+#include <dtCore/nodecollector.h>
 #include <dtGame/gamemanager.h> 
 #include <dtGame/exceptionenum.h>
 #include <dtGame/deadreckoningcomponent.h>
@@ -69,7 +72,8 @@ namespace dtGame
          CPPUNIT_TEST(TestTerrainProperty);
          CPPUNIT_TEST(TestEyePointProperty);
          CPPUNIT_TEST(TestActorRegistration);
-         CPPUNIT_TEST(TestSimpleBehavior);
+         CPPUNIT_TEST(TestSimpleBehaviorLocal);
+         CPPUNIT_TEST(TestSimpleBehaviorRemote);
          CPPUNIT_TEST(TestHighResClampProperty);
          CPPUNIT_TEST(TestSmoothingStepsCalc);
    
@@ -106,7 +110,13 @@ namespace dtGame
             CPPUNIT_ASSERT_MESSAGE("Updated flag should default to false", !helper->IsUpdated());
             CPPUNIT_ASSERT_MESSAGE("Updated flag should default to false", !helper->IsUpdated());
    	      CPPUNIT_ASSERT_MESSAGE("DeadReckoning algorithm should default to NONE.", 
-   	      helper->GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::NONE);
+      	      helper->GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::NONE);
+            CPPUNIT_ASSERT_MESSAGE("The Update Mode should default to AUTO.", 
+               helper->GetUpdateMode() == DeadReckoningHelper::UpdateMode::AUTO);
+            CPPUNIT_ASSERT_MESSAGE("The Effective Update Mode for a local actor should default to CALCULATE_ONLY.", 
+               helper->GetEffectiveUpdateMode(false) == DeadReckoningHelper::UpdateMode::CALCULATE_ONLY);
+            CPPUNIT_ASSERT_MESSAGE("The Effective Update Mode for a remote actor should default to CALCULATE_AND_MOVE_ACTOR.", 
+               helper->GetEffectiveUpdateMode(true) == DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR);
             CPPUNIT_ASSERT_MESSAGE("Flying should default to false", !helper->IsFlying());
             
    	      osg::Vec3 vec(0.0f, 0.0f, 0.0f);
@@ -119,6 +129,8 @@ namespace dtGame
             CPPUNIT_ASSERT(helper->GetGroundOffset() == 0.0f);
             CPPUNIT_ASSERT(helper->GetMaxRotationSmoothingSteps() == 2.0f);
             CPPUNIT_ASSERT(helper->GetMaxTranslationSmoothingSteps() == 8.0f);
+
+            CPPUNIT_ASSERT(helper->GetNodeCollector() == NULL);
          }
    
          void TestDeadReckoningHelperProperties()
@@ -138,7 +150,22 @@ namespace dtGame
             CPPUNIT_ASSERT(helper->IsUpdated());
             helper->ClearUpdated();
    
+            helper->SetUpdateMode(DeadReckoningHelper::UpdateMode::CALCULATE_ONLY);
+            CPPUNIT_ASSERT_MESSAGE("The Update Mode should now be CALCULATE_ONLY.", 
+               helper->GetUpdateMode() == DeadReckoningHelper::UpdateMode::CALCULATE_ONLY);
+            CPPUNIT_ASSERT_MESSAGE("The Effective Update Mode for remote should now be CALCULATE_ONLY.", 
+               helper->GetEffectiveUpdateMode(true) == DeadReckoningHelper::UpdateMode::CALCULATE_ONLY);
+            CPPUNIT_ASSERT_MESSAGE("The Effective Update Mode for local should now be CALCULATE_ONLY.", 
+               helper->GetEffectiveUpdateMode(false) == DeadReckoningHelper::UpdateMode::CALCULATE_ONLY);
             
+            helper->SetUpdateMode(DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR);
+            CPPUNIT_ASSERT_MESSAGE("The Update Mode should now be CALCULATE_AND_MOVE_ACTOR.", 
+               helper->GetUpdateMode() == DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR);
+            CPPUNIT_ASSERT_MESSAGE("The Effective Update Mode for remote should now be CALCULATE_AND_MOVE_ACTOR.", 
+               helper->GetEffectiveUpdateMode(true) == DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR);
+            CPPUNIT_ASSERT_MESSAGE("The Effective Update Mode for local should now be CALCULATE_AND_MOVE_ACTOR.", 
+               helper->GetEffectiveUpdateMode(false) == DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR);
+
             osg::Vec3 vec(3.1f, 9900.032f, 493.738f);
    	 
             helper->SetLastKnownTranslation(vec);
@@ -178,6 +205,11 @@ namespace dtGame
             helper->SetMaxTranslationSmoothingSteps(4.8f);
             CPPUNIT_ASSERT(!helper->IsUpdated());
             CPPUNIT_ASSERT(helper->GetMaxTranslationSmoothingSteps() == 4.8f);
+            
+            dtCore::RefPtr<dtCore::NodeCollector> nodeCollector = new dtCore::NodeCollector(new osg::Group()); 
+            helper->SetNodeCollector(*nodeCollector);
+            
+            CPPUNIT_ASSERT(helper->GetNodeCollector() == nodeCollector.get());
          }
    
          void TestTerrainProperty()
@@ -198,7 +230,8 @@ namespace dtGame
                               
             dtCore::System::GetInstance().Step();
    
-            CPPUNIT_ASSERT_MESSAGE("The terrain should have been deleted.", mDeadReckoningComponent->GetTerrainActor() == NULL);
+            CPPUNIT_ASSERT_MESSAGE("The terrain should have been deleted.", 
+               mDeadReckoningComponent->GetTerrainActor() == NULL);
          }
    
          void TestEyePointProperty()
@@ -222,13 +255,15 @@ namespace dtGame
                mDeadReckoningComponent->GetEyePointActor() == eyePointActor);
 
             dtCore::System::GetInstance().Step();
-            CPPUNIT_ASSERT_EQUAL(expectedEyePoint, mDeadReckoningComponent->GetInternalIsector().GetEyePoint());
+            CPPUNIT_ASSERT_EQUAL(expectedEyePoint, 
+               mDeadReckoningComponent->GetInternalIsector().GetEyePoint());
    
             mGM->DeleteActor(*eyePointActorProxy);
                               
             dtCore::System::GetInstance().Step();
    
-            CPPUNIT_ASSERT_MESSAGE("The eye point actor should have been deleted.", mDeadReckoningComponent->GetEyePointActor() == NULL);
+            CPPUNIT_ASSERT_MESSAGE("The eye point actor should have been deleted.",
+               mDeadReckoningComponent->GetEyePointActor() == NULL);
          }
    
          void TestHighResClampProperty()
@@ -254,11 +289,26 @@ namespace dtGame
             CPPUNIT_ASSERT(!mDeadReckoningComponent->IsRegisteredActor(*actor));
          }
          
-         void TestSimpleBehavior()
+         void TestSimpleBehaviorLocal()
+         {
+            TestSimpleBehavior(false);
+         }
+
+         void TestSimpleBehaviorRemote()
+         {
+            TestSimpleBehavior(true);
+         }
+
+         void TestSimpleBehavior(bool updateActor)
          {
             dtCore::RefPtr<dtDAL::ActorType> type;
             dtCore::RefPtr<GameActorProxy> actor;
             dtCore::RefPtr<DeadReckoningHelper> helper = new DeadReckoningHelper;
+   
+            if (updateActor)
+               helper->SetUpdateMode(DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR);
+            else
+               helper->SetUpdateMode(DeadReckoningHelper::UpdateMode::CALCULATE_ONLY);
    
             type = mGM->FindActorType("ExampleActors", "Test1Actor");
             CPPUNIT_ASSERT(type.valid());
@@ -294,33 +344,48 @@ namespace dtGame
             
             dtCore::System::GetInstance().Step();
          
-            actor->GetGameActor().GetTransform(xform);
-            xform.GetTranslation(vec);
-            CPPUNIT_ASSERT(osg::equivalent(vec.x(), 0.0f, 1e-2f) &&
-                           osg::equivalent(vec.y(), 0.0f, 1e-2f) &&
-                           osg::equivalent(vec.z(), 0.0f, 1e-2f)
-                           );
-            xform.GetRotation(vec);
-            CPPUNIT_ASSERT(osg::equivalent(vec.x(), 0.0f, 1e-2f) &&
-                           osg::equivalent(vec.y(), 0.0f, 1e-2f) &&
-                           osg::equivalent(vec.z(), 0.0f, 1e-2f)
-                           );
+            std::ostringstream ss;
+            vec = helper->GetCurrentDeadReckonedTranslation();
+            ss.str("");
+            ss << "The position should be 0,0,0 but it is " << vec;
+            CPPUNIT_ASSERT_MESSAGE(ss.str(), dtUtil::Equivalent(vec, osg::Vec3(0.0f, 0.0f, 0.0f), 3, 1e-2f));
+   
+            vec = helper->GetCurrentDeadReckonedRotation();
+            ss.str("");
+            ss << "The position should be 0,0,0 but it is " << vec;
+            CPPUNIT_ASSERT_MESSAGE(ss.str(), dtUtil::Equivalent(vec, osg::Vec3(0.0f, 0.0f, 0.0f), 3, 1e-2f));
          
             helper->SetDeadReckoningAlgorithm(DeadReckoningAlgorithm::STATIC);
             dtCore::System::GetInstance().Step();
-         
+            
+            const osg::Vec3& currentPos = helper->GetCurrentDeadReckonedTranslation();
+            ss.str("");
+            ss << "The position should be " << setVec << " but it is " << currentPos;
+            CPPUNIT_ASSERT_MESSAGE(ss.str(), dtUtil::Equivalent(setVec, currentPos, 3, 1e-2f));
+
+            const osg::Vec3& currentHPR = helper->GetCurrentDeadReckonedRotation();
+            ss.str("");
+            ss << "The position should be " << setVec << " but it is " << currentHPR;
+            CPPUNIT_ASSERT_MESSAGE(ss.str(), dtUtil::Equivalent(setVec, currentHPR, 3, 1e-2f));
+                        
             actor->GetGameActor().GetTransform(xform);
-            xform.GetTranslation(vec);
-            CPPUNIT_ASSERT(osg::equivalent(vec.x(), setVec.x(), 1e-2f) &&
-                           osg::equivalent(vec.y(), setVec.y(), 1e-2f) &&
-                           osg::equivalent(vec.z(), setVec.z(), 1e-2f)
-                           );
-            xform.GetRotation(vec);
-            CPPUNIT_ASSERT(osg::equivalent(vec.x(), setVec.x(), 1e-2f) &&
-                           osg::equivalent(vec.y(), setVec.y(), 1e-2f) &&
-                           osg::equivalent(vec.z(), setVec.z(), 1e-2f)
-                           );
-         
+
+            if (updateActor)
+            {
+               xform.GetTranslation(vec);
+               CPPUNIT_ASSERT(dtUtil::Equivalent(vec, currentPos, 3, 1e-2f));
+   
+               xform.GetRotation(vec);
+               CPPUNIT_ASSERT(dtUtil::Equivalent(vec, currentHPR, 3, 1e-2f));
+            }
+            else
+            {
+               xform.GetTranslation(vec);
+               CPPUNIT_ASSERT(dtUtil::Equivalent(vec, osg::Vec3(0.0f, 0.0f, 0.0f), 3, 1e-2f));
+   
+               xform.GetRotation(vec);
+               CPPUNIT_ASSERT(dtUtil::Equivalent(vec, osg::Vec3(0.0f, 0.0f, 0.0f), 3, 1e-2f));
+            }
             
             mDeadReckoningComponent->UnregisterActor(*actor);
             CPPUNIT_ASSERT(!mDeadReckoningComponent->IsRegisteredActor(*actor));
@@ -366,7 +431,6 @@ namespace dtGame
 
             CPPUNIT_ASSERT_EQUAL_MESSAGE("The rotation smoothing steps should be set to the maximum because the actor is moving.",
                helper->GetCurrentTotalRotationSmoothingSteps(), helper->GetCurrentTotalRotationSmoothingSteps());
-            
          }
    
       private:

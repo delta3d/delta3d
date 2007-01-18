@@ -111,12 +111,28 @@ namespace dtGame
                DeadReckoningDOF *mNext, *mPrev;
          };
 
-      public:
+         class DT_GAME_EXPORT UpdateMode : public dtUtil::Enumeration
+         {
+            DECLARE_ENUM(UpdateMode);
+            public:
+               static UpdateMode AUTO;
+               static UpdateMode CALCULATE_ONLY;
+               static UpdateMode CALCULATE_AND_MOVE_ACTOR;
+            private:
+               UpdateMode(const std::string &name) : dtUtil::Enumeration(name)
+               {
+                  AddInstance(this);
+               }
+         };
    
          DeadReckoningHelper();
  
          bool IsUpdated() const { return mUpdated; }
          void ClearUpdated() { mUpdated = false; mTranslationUpdated= false; mRotationUpdated= false;}
+ 
+         UpdateMode& GetUpdateMode() const { return *mUpdateMode; }
+         UpdateMode& GetEffectiveUpdateMode(bool isRemote) const;
+         void SetUpdateMode(UpdateMode& newUpdateMode) { mUpdateMode = &newUpdateMode; }
  
          /**
           * @return true if no ground following should be performed on this actor.
@@ -250,13 +266,15 @@ namespace dtGame
 
          ///Sets the last time this helper was updated for translation.  This will also updated the average time between updates.
          void SetLastTranslationUpdatedTime(double newUpdatedTime);
-         ///@return wether or not this is a dofcontainer helper
-         dtCore::NodeCollector* GetNodeCollector() {return mDOFDeadReckoning.get();}
 
-		 ///Sets the last time this helper was updated for rotation.  This will also updated the average time between updates.
+         /// Sets the last time this helper was updated for rotation.  This will also updated the average time between updates.
          void SetLastRotationUpdatedTime(double newUpdatedTime);
+
+         /// @return The node collector for this helper or NULL none has been set.
+         dtCore::NodeCollector* GetNodeCollector() { return mDOFDeadReckoning.get(); }
+         
          /// Set the dof container to what the entity is using for reference.
-         void SetDofContainer(dtCore::NodeCollector& dofContainerToSet){mDOFDeadReckoning = &dofContainerToSet;}
+         void SetNodeCollector(dtCore::NodeCollector& dofContainerToSet) { mDOFDeadReckoning = &dofContainerToSet; }
 
          ///@return the rough average amount of time between translation updates.  This is based on values sent to SetLastTranslationUpdatedTime.
          double GetAverageTimeBetweenTranslationUpdates() const { return mAverageTimeBetweenTranslationUpdates; };
@@ -270,6 +288,9 @@ namespace dtGame
 
          /// Remove a drdof by checking against values compared to everything else.
          void RemoveDRDOF(DeadReckoningDOF &obj);
+
+         const osg::Vec3& GetCurrentDeadReckonedTranslation() const { return mCurrentDeadReckonedTranslation; }
+         const osg::Vec3& GetCurrentDeadReckonedRotation() const { return mCurrentAttitudeVector; }
  
       protected:
          virtual ~DeadReckoningHelper() {}
@@ -347,6 +368,9 @@ namespace dtGame
          osg::Matrix mDeadReckoningMatrix;
          
          DeadReckoningAlgorithm* mMinDRAlgorithm;
+         
+         /// The update mode - whether to actually move the actor or to just calculate. 
+         UpdateMode* mUpdateMode;
 
          /// The Dead reckoning DOF Container object
          dtCore::RefPtr<dtCore::NodeCollector> mDOFDeadReckoning;

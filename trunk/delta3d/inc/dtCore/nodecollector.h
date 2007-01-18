@@ -17,16 +17,19 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
  *
  * Allen Danklefsen -Morgas on forums.
-*/
+ */
 #ifndef DELTA_DOF_CONTAINER
 #define DELTA_DOF_CONTAINER
 
 #include <osg/Node>
-#include <osgSim/DOFTransform>
 #include <osg/MatrixTransform>
+#include <osgSim/DOFTransform>
+
+#include <dtUtil/enumeration.h>
+
 #include <dtCore/refptr.h>
 #include <dtCore/export.h>
-#include <dtUtil/enumeration.h>
+
 #include <list>
 
 namespace dtUtil
@@ -73,11 +76,6 @@ namespace dtCore
          /// Constructor
          NodeCollector(osg::Node* NodeToLoad, const NodeCollectorTypes& type = NodeCollectorTypes::LOAD_ALL_NODE_TYPES, bool LogErroneus = false);
 
-      protected:
-         /// Destructor
-         virtual ~NodeCollector();
-
-      public:
          /**
          * Function : AddDOFSFromModelNode
          * Purpose  : Fill in the std::list full of all the models dofs
@@ -183,6 +181,12 @@ namespace dtCore
          */
          const NodeCollectorTypes& GetNodeCollectorFlag() {return *NodeCollectorFlag;}
 
+      protected:
+         /// Destructor
+         virtual ~NodeCollector();
+
+         dtUtil::Log* mLogger;
+
       private:
          /**
          * Var Name  : mDOFTransforms
@@ -208,9 +212,6 @@ namespace dtCore
 
          /// Classes Util Flag
          const NodeCollectorTypes* NodeCollectorFlag;
-
-      protected:
-         dtUtil::Log* mLogger;
    };
 } // namespace
 
