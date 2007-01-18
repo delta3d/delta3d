@@ -57,6 +57,11 @@ namespace dtGame
    const std::string DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_ROTATION("Rotation");
    const std::string DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_ROTATIONRATE("RotationRate");
 
+   IMPLEMENT_ENUM(DeadReckoningHelper::UpdateMode);
+   DeadReckoningHelper::UpdateMode DeadReckoningHelper::UpdateMode::AUTO("AUTO");
+   DeadReckoningHelper::UpdateMode DeadReckoningHelper::UpdateMode::CALCULATE_ONLY("CALCULATE_ONLY");
+   DeadReckoningHelper::UpdateMode DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR("CALCULATE_AND_MOVE_ACTOR");
+
    //////////////////////////////////////////////////////////////////////
    DeadReckoningHelper::DeadReckoningHelper() :
       mTranslationInitiated(false),
@@ -78,7 +83,8 @@ namespace dtGame
       mCurrentTotalRotationSmoothingSteps(0.0f),
       mGroundOffset(0.0f),
       mRotationResolved(true),
-      mMinDRAlgorithm(&DeadReckoningAlgorithm::NONE)
+      mMinDRAlgorithm(&DeadReckoningAlgorithm::NONE),
+      mUpdateMode(&DeadReckoningHelper::UpdateMode::AUTO)
    {}
 
 
@@ -87,6 +93,19 @@ namespace dtGame
 //   {
 //   }
 
+   //////////////////////////////////////////////////////////////////////
+   DeadReckoningHelper::UpdateMode& DeadReckoningHelper::GetEffectiveUpdateMode(bool isRemote) const
+   {
+      if (*mUpdateMode == DeadReckoningHelper::UpdateMode::AUTO)
+      {
+         if (isRemote)
+            return DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR;
+         else        
+            return DeadReckoningHelper::UpdateMode::CALCULATE_ONLY;
+      }
+      return *mUpdateMode;
+   }
+   
    //////////////////////////////////////////////////////////////////////
    void DeadReckoningHelper::SetFlying(bool newFlying)
    {
@@ -112,8 +131,8 @@ namespace dtGame
       {
    		mTransBeforeLastUpdate = mCurrentDeadReckonedTranslation;
    		mLastTranslation = vec;
-   		if (!mFlying)
-   			mLastTranslation[2] = mTransBeforeLastUpdate[2];
+   		//if (!mFlying)
+   		//	mLastTranslation[2] = mTransBeforeLastUpdate[2];
    		mTranslationSmoothingSteps = 0.0;
    		mTranslationUpdated = true;
    		mUpdated = true;
@@ -122,7 +141,6 @@ namespace dtGame
       {
    		mTranslationInitiated = true;
    		mTransBeforeLastUpdate = vec;
-   		mCurrentDeadReckonedTranslation = vec;
    		mLastTranslation = vec;
    		mTranslationSmoothingSteps = 0.0;
    		mTranslationUpdated = true;
@@ -418,6 +436,16 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////
    void DeadReckoningComponent::RegisterActor(dtGame::GameActorProxy& toRegister, DeadReckoningHelper& helper) 
    {
+      DeadReckoningHelper::UpdateMode* updateMode = &helper.GetUpdateMode();
+      if (*updateMode == DeadReckoningHelper::UpdateMode::AUTO)
+      {
+         if (toRegister.GetGameActor().IsRemote())
+            updateMode = &DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR;
+         else
+            updateMode = &DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR;
+            
+      }
+      
       if (!mRegisteredActors.insert(std::make_pair(toRegister.GetId(), &helper)).second)
       {
          throw dtUtil::Exception(ExceptionEnum::DEAD_RECKONING_EXCEPTION,
@@ -427,7 +455,8 @@ namespace dtGame
       }
       else if (helper.IsUpdated())
       {
-         if (toRegister.GetGameActor().IsRemote())
+         if (helper.GetEffectiveUpdateMode(toRegister.GetGameActor().IsRemote()) 
+            == DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR)
          {
             dtCore::Transform xform;
             toRegister.GetGameActor().GetTransform(xform);
@@ -441,7 +470,8 @@ namespace dtGame
       
       // If the actor is local, don't move it, and force the 
       // helper to match as if it was just updated.
-      if (!toRegister.GetGameActor().IsRemote())
+      if (helper.GetEffectiveUpdateMode(toRegister.GetGameActor().IsRemote()) 
+         == DeadReckoningHelper::UpdateMode::CALCULATE_ONLY)
       {
          dtCore::Transform xform;
          toRegister.GetGameActor().GetTransform(xform);
@@ -683,9 +713,11 @@ namespace dtGame
 
 	   helper.mCurrentDeadReckonedTranslation = xform.GetTranslation();
       xform.GetRotation().get(helper.mCurrentDeadReckonedRotation);
+      xform.GetRotation(helper.mCurrentAttitudeVector);
 
       //Only actually move remote ones.
-      if (gameActor.IsRemote())
+      if (helper.GetEffectiveUpdateMode(gameActor.IsRemote()) 
+         == DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR)
          gameActor.SetTransform(xform);
    }
 
@@ -889,15 +921,16 @@ namespace dtGame
 
          helper.mCurrentDeadReckonedTranslation = pos;
          helper.mCurrentDeadReckonedRotation = newRot;
+   
+         xform.SetRotation(rot);
+         xform.GetRotation(helper.mCurrentAttitudeVector);
 
          //Only actually move remote ones.
-         if (gameActor.IsRemote())
+         if (helper.GetEffectiveUpdateMode(gameActor.IsRemote()) 
+            == DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR)
          {
             xform.SetTranslation(pos);
-            xform.SetRotation(rot);
             gameActor.SetTransform(xform);
-            osg::Matrix mCurrentRotation = xform.GetRotation();
-            dtUtil::MatrixUtil::MatrixToHpr(helper.mCurrentAttitudeVector,mCurrentRotation);
             if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
             {
                std::ostringstream ss;
@@ -1037,6 +1070,7 @@ namespace dtGame
             {
                mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Dead Reckoning Algorithm set to NONE, doing nothing.");
             }
+            return;
          }
          else if (helper.GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::STATIC)
          {
@@ -1047,10 +1081,13 @@ namespace dtGame
          }
          else
          {
-            DRVelocityAcceleration(helper, tickMessage.GetDeltaSimTime(), timeSinceTranslationUpdate, timeSinceRotationUpdate, forceClamp, gameActor, xform);
+            DRVelocityAcceleration(helper, tickMessage.GetDeltaSimTime(), 
+               timeSinceTranslationUpdate, timeSinceRotationUpdate, forceClamp, gameActor, xform);
          }
 
-         if (gameActor.IsRemote() && helper.GetNodeCollector() != NULL)
+         if (helper.GetEffectiveUpdateMode(gameActor.IsRemote()) 
+            == DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR 
+            && helper.GetNodeCollector() != NULL)
          {
             std::list<dtCore::RefPtr<DeadReckoningHelper::DeadReckoningDOF> >::iterator iterDOF = helper.mDeadReckonDOFS.begin();
             
