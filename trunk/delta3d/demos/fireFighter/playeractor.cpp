@@ -88,7 +88,8 @@ PlayerActor::PlayerActor(dtGame::GameActorProxy &proxy) :
 
 PlayerActor::~PlayerActor()
 {
-   dtAudio::AudioManager::GetInstance().FreeSound(mFireHoseSound);
+   //if(mFireHoseSound != NULL && dtAudio::AudioManager::GetManager() != NULL)
+   //   dtAudio::AudioManager::GetInstance().FreeSound(mFireHoseSound);
 }
 
 void PlayerActor::OnEnteredWorld()
