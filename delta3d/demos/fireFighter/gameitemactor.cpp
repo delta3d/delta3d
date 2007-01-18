@@ -89,11 +89,13 @@ GameItemActor::GameItemActor(dtGame::GameActorProxy &proxy) :
 }
 
 GameItemActor::~GameItemActor()
-{
-   dtAudio::Sound *snd = mInventoryAddSnd.release();
-   dtAudio::AudioManager::GetInstance().FreeSound(snd);
+{  
+   /*dtAudio::Sound *snd = mInventoryAddSnd.release();
+   if(snd != NULL)
+      dtAudio::AudioManager::GetInstance().FreeSound(snd);
    snd = mItemUseSnd.release();
-   dtAudio::AudioManager::GetInstance().FreeSound(snd);
+   if(snd != NULL)
+      dtAudio::AudioManager::GetInstance().FreeSound(snd);*/
 }
 
 void GameItemActor::OnEnteredWorld()

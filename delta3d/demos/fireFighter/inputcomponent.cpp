@@ -33,26 +33,23 @@
 #include <fireFighter/hatchactor.h>
 #include <fireFighter/helpwindow.h>
 #include <dtABC/application.h>
-#include <dtABC/weather.h>
 #include <dtAudio/audiomanager.h>
-#include <dtCore/fpsmotionmodel.h>
-#include <dtCore/flymotionmodel.h>
 #include <dtCore/collisionmotionmodel.h>
+#include <dtCore/flymotionmodel.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/camera.h>
 #include <dtCore/scene.h>
-#include <dtCore/infinitelight.h>
 #include <dtCore/keyboard.h>
+#include <dtCore/system.h>
 #include <dtGame/basemessages.h>
 #include <dtDAL/actorproperty.h>
-#include <dtDAL/transformableactorproxy.h>
+#include <dtDAL/project.h>
+#include <dtDAL/map.h>
 #include <dtActors/taskactorordered.h>
 #include <dtActors/taskactorrollup.h>
 #include <dtActors/taskactorgameevent.h>
 #include <dtActors/engineactorregistry.h>
 #include <dtActors/basicenvironmentactorproxy.h>
-#include <dtUtil/log.h>
-#include <osg/io_utils>
 
 using dtCore::RefPtr;
 
@@ -79,16 +76,16 @@ InputComponent::InputComponent(const std::string &name) :
 
 InputComponent::~InputComponent()
 {
-   /*if(mBellSound != NULL)
+   if(mBellSound != NULL && dtAudio::AudioManager::GetManager() != NULL)
       dtAudio::AudioManager::GetInstance().FreeSound(mBellSound);
-   if(mDebriefSound != NULL)
+   if(mDebriefSound != NULL && dtAudio::AudioManager::GetManager() != NULL)
       dtAudio::AudioManager::GetInstance().FreeSound(mDebriefSound);
-   if(mWalkSound != NULL)
+   if(mWalkSound != NULL && dtAudio::AudioManager::GetManager() != NULL)
       dtAudio::AudioManager::GetInstance().FreeSound(mWalkSound);
-   if(mRunSound != NULL)
+   if(mRunSound != NULL && dtAudio::AudioManager::GetManager() != NULL)
       dtAudio::AudioManager::GetInstance().FreeSound(mRunSound);
-   if(mCrouchSound != NULL)
-      dtAudio::AudioManager::GetInstance().FreeSound(mCrouchSound);*/
+   if(mCrouchSound != NULL && dtAudio::AudioManager::GetManager() != NULL)
+      dtAudio::AudioManager::GetInstance().FreeSound(mCrouchSound);
 }
 
 void InputComponent::ProcessMessage(const dtGame::Message &message)
@@ -106,7 +103,36 @@ void InputComponent::ProcessMessage(const dtGame::Message &message)
       }
       else if(*mCurrentState == GameState::STATE_RUNNING)
       {
-         GetGameManager()->ChangeMap("GameMap");
+         GetGameManager()->DeleteAllActors(true);
+
+         dtDAL::Map &map = dtDAL::Project::GetInstance().GetMap("GameMap");
+         std::vector<RefPtr<dtDAL::ActorProxy> > proxies;
+         map.GetAllProxies(proxies);
+         for(size_t i = 0; i < proxies.size(); i++)
+         {
+            dtGame::GameActorProxy *gap = dynamic_cast<dtGame::GameActorProxy*>(proxies[i].get());
+            if(gap != NULL)
+            {
+               gap->BuildInvokables();
+               GetGameManager()->AddActor(*gap, false, false);
+            }
+            else
+            {
+               GetGameManager()->AddActor(*proxies[i]);
+            }
+         }
+         dtDAL::Project::GetInstance().LoadMapIntoScene(map, GetGameManager()->GetScene(), false, false);
+         RefPtr<dtGame::Message> msg = 
+            GetGameManager()->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_MAP_LOADED);
+
+         std::vector<dtDAL::GameEvent*> events;
+         map.GetEventManager().GetAllEvents(events);
+         for(size_t i = 0; i < events.size(); i++)
+            dtDAL::GameEventManager::GetInstance().AddEvent(*events[i]);
+         
+         static_cast<dtGame::MapLoadedMessage&>(*msg).SetLoadedMapName("GameMap");
+         GetGameManager()->SendMessage(*msg);
+         //GetGameManager()->ChangeMap("GameMap");
       }
       else if(*mCurrentState == GameState::STATE_DEBRIEF)
       {
@@ -201,6 +227,9 @@ void InputComponent::OnGame()
       mMotionModel->SetMaximumTurnSpeed(2000.0f);
       mMotionModel->SetUseMouseButtons(false);
       mMotionModel->SetCanJump(false);
+      //mMotionModel = 
+      //   new dtCore::FlyMotionModel(GetGameManager()->GetApplication().GetKeyboard(), 
+      //                              GetGameManager()->GetApplication().GetMouse());
    }
    mMotionModel->SetTarget(mPlayer);
 
@@ -293,7 +322,7 @@ bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard,
                   mPlayer->GetTransform(xform);
 
                   mMotionModel->SetMaximumWalkSpeed(2.0f);
-                  //UpdateCollider(xform.GetTranslation().z());
+                  UpdateCollider(xform.GetTranslation().z());
                   mWalkSound->Play();
                }
             }
@@ -517,7 +546,7 @@ void InputComponent::OnAddedToGM()
 
 void InputComponent::UpdateCollider(float newHeight)
 {
-   mMotionModel->GetFPSCollider().SetDimensions(newHeight, mRadius, mK, mTheta);
+   //mMotionModel->GetFPSCollider().SetDimensions(newHeight, mRadius, mK, mTheta);
 }
 
 void InputComponent::SendGameStateChangedMessage(GameState &oldState, GameState &newState)

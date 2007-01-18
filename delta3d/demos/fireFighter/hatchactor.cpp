@@ -116,24 +116,6 @@ void HatchActor::OnEnteredWorld()
 {
    GameItemActor::OnEnteredWorld();
 
-   // Find the game level actor and search with its node
-   std::vector<RefPtr<dtDAL::ActorProxy> > proxies;
-   GetGameActorProxy().GetGameManager()->FindActorsByType(*EntityActorRegistry::TYPE_GAME_LEVEL_ACTOR, proxies);
-   GameLevelActor *gla = dynamic_cast<GameLevelActor*>(proxies[0]->GetActor());
-   if(gla == NULL)
-   {
-      LOG_ERROR("Failed to find the game level actor in the map. Unable to open or close the hatch door");
-   }
-   else
-   {
-      osg::Node *hatchNode = FindNamedNode("HatchEngr", gla->GetOSGNode());
-      mHatchNode = dynamic_cast<osg::MatrixTransform*>(hatchNode);
-      if(mHatchNode == NULL)
-      {
-         LOG_ERROR("Failed to find the hatch node in the game level.");
-      }
-   }
-
    dtGame::Invokable *invoke = new dtGame::Invokable("MapLoaded", 
       dtDAL::MakeFunctor(*this, &HatchActor::OnMapLoaded));
 
@@ -214,7 +196,26 @@ void HatchActor::OnMapLoaded(const dtGame::Message &msg)
    {
       const dtGame::MapLoadedMessage &mlm = static_cast<const dtGame::MapLoadedMessage&>(msg);
       if(mlm.GetLoadedMapName() == "GameMap")
+      {
          mGameMapLoaded = true;
+         // Find the game level actor and search with its node
+         std::vector<RefPtr<dtDAL::ActorProxy> > proxies;
+         GetGameActorProxy().GetGameManager()->FindActorsByType(*EntityActorRegistry::TYPE_GAME_LEVEL_ACTOR, proxies);
+         GameLevelActor *gla = dynamic_cast<GameLevelActor*>(proxies[0]->GetActor());
+         if(gla == NULL)
+         {
+            LOG_ERROR("Failed to find the game level actor in the map. Unable to open or close the hatch door");
+         }
+         else
+         {
+            osg::Node *hatchNode = FindNamedNode("HatchEngr", gla->GetOSGNode());
+            mHatchNode = dynamic_cast<osg::MatrixTransform*>(hatchNode);
+            if(mHatchNode == NULL)
+            {
+               LOG_ERROR("Failed to find the hatch node in the game level.");
+            }
+         }
+      }
    }
    else if(msg.GetMessageType() == dtGame::MessageType::INFO_MAP_UNLOADED)
    {
