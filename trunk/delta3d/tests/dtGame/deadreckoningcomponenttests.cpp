@@ -325,15 +325,11 @@ namespace dtGame
             actor->GetGameActor().GetTransform(xform);
             osg::Vec3 vec;
             xform.GetTranslation(vec);
-            CPPUNIT_ASSERT(osg::equivalent(vec.x(), 0.0f, 1e-2f) &&
-                           osg::equivalent(vec.y(), 0.0f, 1e-2f) &&
-                           osg::equivalent(vec.z(), 0.0f, 1e-2f)
-                           );
+            CPPUNIT_ASSERT_MESSAGE("The translation should be 0,0,0 because nothing has changed yet.", 
+               dtUtil::Equivalent(vec, osg::Vec3(0.0f,0.0f,0.0f), 3, 1e-2f));
             xform.GetRotation(vec);
-            CPPUNIT_ASSERT(osg::equivalent(vec.x(), 0.0f, 1e-2f) &&
-                           osg::equivalent(vec.y(), 0.0f, 1e-2f) &&
-                           osg::equivalent(vec.z(), 0.0f, 1e-2f)
-                           );
+            CPPUNIT_ASSERT_MESSAGE("The rotation should be 0,0,0 because nothing has changed yet.", 
+               dtUtil::Equivalent(vec, osg::Vec3(0.0f,0.0f,0.0f), 3, 1e-2f));
                                  
             osg::Vec3 setVec = osg::Vec3(1.0, 1.2, 1.3);
             
