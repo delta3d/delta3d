@@ -436,7 +436,7 @@ def TOOL_BUNDLE(env):
          elif env['OS'] == 'darwin':      
             env.Append(CXXFLAGS=['-gdwarf-2', '-O0', '-pipe', '-isysroot', '/Developer/SDKs/MacOSX10.4u.sdk'], 
               CPPDEFINES=['_DEBUG', '__USE_OSX_AGL_IMPLEMENTATION__', 'SIGSLOT_PURE_ISO', 'MAC_OS_X_VERSION_MIN_REQUIRED=1030' ],
-         LINKFLAGS=['-Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk'] )
+         	LINKFLAGS=['-Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk'] )
       else:
          print 'Build Configuration: Release'
          errorLog.write('Build Configuration: Release\n\n')
@@ -459,6 +459,8 @@ def TOOL_BUNDLE(env):
       #add to the CPPFLAGS variable if it's set in the environment
       if os.environ.has_key('CPPFLAGS'):
          env.Append(CPPFLAGS=os.environ['CPPFLAGS'])
+      if os.environ.has_key('LINKFLAGS'):
+         env.Append(LINKFLAGS=os.environ['LINKFLAGS'])
 
       if env['OS'] == 'windows':
          env.Append(CXXFLAGS=['/W3'])
