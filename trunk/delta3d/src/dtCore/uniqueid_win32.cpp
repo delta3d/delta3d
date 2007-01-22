@@ -1,3 +1,5 @@
+/// Modifier : Pjotr from Virthualis 
+
 #include <prefix/dtcoreprefix-src.h>
 #include <cassert>
 #include <iostream>
@@ -23,6 +25,10 @@ UniqueId::UniqueId()
       if( UuidToString( const_cast<UUID*>(&guid), &guidChar ) == RPC_S_OK )
       {
          mId = std::string( reinterpret_cast<const char*>(guidChar) );
+         if(RpcStringFree(&guidChar) != RPC_S_OK) 
+         {
+            LOG_ERROR("Could not free memory.");
+         }
       }
       else
       {
