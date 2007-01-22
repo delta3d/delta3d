@@ -214,15 +214,15 @@ void TransformableTests::TestSetTransform()
    mTransform.GetRotation(osgRotation);
    odeRotation = dGeomGetRotation(geomID);
    CPPUNIT_ASSERT_MESSAGE( "ODE and OSG's rotation should be in sync",
-      osg::equivalent( osgRotation(0,0), double(odeRotation[0]), 1e-2 ) && 
-      osg::equivalent( osgRotation(1,0), double(odeRotation[1]), 1e-2 ) && 
-      osg::equivalent( osgRotation(2,0), double(odeRotation[2]), 1e-2 ) && 
-      osg::equivalent( osgRotation(0,1), double(odeRotation[4]), 1e-2 ) && 
-      osg::equivalent( osgRotation(1,1), double(odeRotation[5]), 1e-2 ) && 
-      osg::equivalent( osgRotation(2,1), double(odeRotation[6]), 1e-2 ) && 
-      osg::equivalent( osgRotation(0,2), double(odeRotation[8]), 1e-2 ) && 
-      osg::equivalent( osgRotation(1,2), double(odeRotation[9]), 1e-2 ) && 
-      osg::equivalent( osgRotation(2,2), double(odeRotation[10]), 1e-2 ) );
+      osg::equivalent( double(osgRotation(0,0)), double(odeRotation[0]), 1e-2 ) && 
+      osg::equivalent( double(osgRotation(1,0)), double(odeRotation[1]), 1e-2 ) && 
+      osg::equivalent( double(osgRotation(2,0)), double(odeRotation[2]), 1e-2 ) && 
+      osg::equivalent( double(osgRotation(0,1)), double(odeRotation[4]), 1e-2 ) && 
+      osg::equivalent( double(osgRotation(1,1)), double(odeRotation[5]), 1e-2 ) && 
+      osg::equivalent( double(osgRotation(2,1)), double(odeRotation[6]), 1e-2 ) && 
+      osg::equivalent( double(osgRotation(0,2)), double(odeRotation[8]), 1e-2 ) && 
+      osg::equivalent( double(osgRotation(1,2)), double(odeRotation[9]), 1e-2 ) && 
+      osg::equivalent( double(osgRotation(2,2)), double(odeRotation[10]), 1e-2 ) );
 
    // Scale
    osg::Vec3 scale;
