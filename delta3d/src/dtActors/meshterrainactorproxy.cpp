@@ -85,7 +85,7 @@ namespace dtActors
       const std::string &GROUPNAME = "Terrain";
       DeltaObjectActorProxy::BuildPropertyMap();
       
-      Object *obj = static_cast<Object*>(GetActor());
+      //Object *obj = static_cast<Object*>(GetActor());
       
       AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::TERRAIN,
                                                    "terrain mesh", "Terrain Mesh", MakeFunctor(*this, &MeshTerrainActorProxy::LoadFile),

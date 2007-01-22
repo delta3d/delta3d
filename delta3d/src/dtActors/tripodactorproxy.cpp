@@ -45,7 +45,7 @@ void TripodActorProxy::CreateActor()
    ss << "Tripod" << actorCount++;
    SetName( ss.str() );
 
-   Tripod* tripod = static_cast< Tripod* >( GetActor() );
+   //Tripod* tripod = static_cast< Tripod* >( GetActor() );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -53,7 +53,7 @@ void TripodActorProxy::BuildPropertyMap()
 {
    const std::string& GROUPNAME = "Tripod";
 
-   Tripod* tripod = static_cast< Tripod* >( GetActor() );
+   //Tripod* tripod = static_cast< Tripod* >( GetActor() );
   
    AddProperty(new ActorActorProperty(*this, "Camera", "Camera",
       MakeFunctor(*this,&TripodActorProxy::SetCamera),

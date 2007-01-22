@@ -98,7 +98,7 @@ namespace dtActors
 
    void BasicEnvironmentActorProxy::BuildInvokables()
    {
-      BasicEnvironmentActor *env = static_cast<BasicEnvironmentActor*>(GetActor());
+      //BasicEnvironmentActor *env = static_cast<BasicEnvironmentActor*>(GetActor());
  
       dtGame::GameActorProxy::BuildInvokables();
    }

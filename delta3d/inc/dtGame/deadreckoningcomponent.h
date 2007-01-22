@@ -297,14 +297,13 @@ namespace dtGame
          
       private:
          friend class DeadReckoningComponent;
-         
-         bool mTranslationInitiated;
-         bool mRotationInitiated;
-         bool mUpdated;
-         bool mTranslationUpdated;
-         bool mRotationUpdated;
-         bool mFlying;
 
+         /// The list of DeadReckoningDOFs, might want to change to has table of list later.
+         std::list<dtCore::RefPtr<DeadReckoningDOF> > mDeadReckonDOFS;
+
+         /// The Dead reckoning DOF Container object
+         dtCore::RefPtr<dtCore::NodeCollector> mDOFDeadReckoning;
+         
          double mLastTimeTag;
          
          ///the simulation time this was last updated.
@@ -351,10 +350,7 @@ namespace dtGame
          ///current dead reckoned attitude quaternion  
          osg::Quat mCurrentDeadReckonedRotation;
          osg::Vec3 mCurrentAttitudeVector;
- 
-          //if the rotation has been resolved to the last updated version.
-         bool mRotationResolved;
- 
+  
          /// The velocity vector.
          osg::Vec3 mVelocityVector;
          
@@ -371,12 +367,15 @@ namespace dtGame
          
          /// The update mode - whether to actually move the actor or to just calculate. 
          UpdateMode* mUpdateMode;
-
-         /// The Dead reckoning DOF Container object
-         dtCore::RefPtr<dtCore::NodeCollector> mDOFDeadReckoning;
       
-         /// The list of DeadReckoningDOFs, might want to change to has table of list later.
-         std::list<dtCore::RefPtr<DeadReckoningDOF> > mDeadReckonDOFS;
+         bool mTranslationInitiated;
+         bool mRotationInitiated;
+         bool mUpdated;
+         bool mTranslationUpdated;
+         bool mRotationUpdated;
+         bool mFlying;
+          //if the rotation has been resolved to the last updated version.
+         bool mRotationResolved;
          
          // -----------------------------------------------------------------------
          //  Unimplemented constructors and operators

@@ -284,7 +284,7 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////
    void TransformableActorProxy::SetCollisionRadius(float radius)
    {
-      dtCore::Transformable *phys = static_cast<dtCore::Transformable*>(GetActor());
+      //dtCore::Transformable *phys = static_cast<dtCore::Transformable*>(GetActor());
 
       mCollisionRadius = radius;
       if (mCollisionType == &dtCore::Transformable::CollisionGeomType::CYLINDER)
@@ -302,7 +302,7 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////
    void TransformableActorProxy::SetCollisionBoxDims(const osg::Vec3 &dims)
    {
-      dtCore::Transformable *phys = static_cast<dtCore::Transformable*>(GetActor());
+      //dtCore::Transformable *phys = static_cast<dtCore::Transformable*>(GetActor());
 
       mCollisionBoxDims = dims;
       SetBoxCollision();
@@ -317,7 +317,7 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////
    void TransformableActorProxy::SetCollisionLength(float length)
    {
-      dtCore::Transformable *phys = static_cast<dtCore::Transformable*>(GetActor());
+      //dtCore::Transformable *phys = static_cast<dtCore::Transformable*>(GetActor());
 
       mCollisionLength = length;
       if (mCollisionType == &dtCore::Transformable::CollisionGeomType::CYLINDER)
