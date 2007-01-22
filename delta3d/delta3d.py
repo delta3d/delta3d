@@ -535,8 +535,6 @@ def TOOL_BUNDLE(env):
                'osgSim'              : 'osgSimd',
                'osgFX'               : 'osgFXd',
                'osgParticle'         : 'osgParticled',
-               'osgGA'               : 'osgGAd',
-               'osgProducer'         : 'osgProducerd',
                'Producer'            : 'Producerd',
                'OpenThreads'         : 'OpenThreadsWin32d',
                'python'              : python_version,
@@ -578,8 +576,6 @@ def TOOL_BUNDLE(env):
                'osgSim'              : 'osgSim',
                'osgFX'               : 'osgFX',
                'osgParticle'         : 'osgParticle',
-               'osgGA'               : 'osgGA',
-               'osgProducer'         : 'osgProducer',
                'Producer'            : 'Producer',
                'OpenThreads'         : 'OpenThreadsWin32',
                'python'              :  python_version,
@@ -622,8 +618,6 @@ def TOOL_BUNDLE(env):
             'osgSim'              : 'osgSim',
             'osgFX'               : 'osgFX',
             'osgParticle'         : 'osgParticle',
-            'osgGA'               : 'osgGA',
-            'osgProducer'         : 'osgProducer',
             'Producer'            : 'Producer',
             'python'              :  python_version,
             'OpenThreads'         : 'OpenThreads',
@@ -659,8 +653,6 @@ def TOOL_BUNDLE(env):
             'osgSim'         : 'osgSim',
             'osgFX'          : 'osgFX',
             'osgParticle'    : 'osgParticle',
-            'osgGA'          : 'osgGA',
-            'osgProducer'    : 'osgProducer',
             'Producer'       : 'Producer',
       #      'python'         : python_version,
       #Default to the system level framework in OS X
@@ -703,9 +695,7 @@ def TOOL_BUNDLE(env):
          'osgText',
          'osgSim',
          'osgFX',
-         'osgParticle',
-         'osgGA',
-         'osgProducer']
+         'osgParticle']
 
       if env.get('buildPythonBindings'):
          linkOrder += ['python']
