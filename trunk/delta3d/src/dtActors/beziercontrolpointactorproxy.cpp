@@ -95,7 +95,7 @@ namespace dtActors
 
    void BezierControlPointActorProxy::BuildPropertyMap()
    {
-      dtABC::BezierControlPoint *bcp = static_cast<dtABC::BezierControlPoint*> (GetActor());
+      //dtABC::BezierControlPoint *bcp = static_cast<dtABC::BezierControlPoint*> (GetActor());
 
       dtDAL::TransformableActorProxy::BuildPropertyMap();
 

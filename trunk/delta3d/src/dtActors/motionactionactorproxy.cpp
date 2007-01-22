@@ -27,7 +27,7 @@ namespace dtActors
    {
       ActionActorProxy::BuildPropertyMap();
 
-      MotionAction* mo = static_cast<MotionAction*>(GetActor());
+      //MotionAction* mo = static_cast<MotionAction*>(GetActor());
 
       AddProperty(new ActorActorProperty(*this, "Target Object", "Target Object",
          MakeFunctor(*this, &MotionActionActorProxy::SetActorTargetObject),

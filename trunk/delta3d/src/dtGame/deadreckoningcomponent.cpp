@@ -64,12 +64,6 @@ namespace dtGame
 
    //////////////////////////////////////////////////////////////////////
    DeadReckoningHelper::DeadReckoningHelper() :
-      mTranslationInitiated(false),
-      mRotationInitiated(false),
-      mUpdated(false), 
-	   mTranslationUpdated(false), 
-	   mRotationUpdated(false), 
-      mFlying(false), 
 	   mLastTimeTag(0.0),
       mLastTranslationUpdatedTime(0.0), 
 	   mLastRotationUpdatedTime(0.0), 
@@ -82,9 +76,15 @@ namespace dtGame
       mCurrentTotalTranslationSmoothingSteps(0.0f),
       mCurrentTotalRotationSmoothingSteps(0.0f),
       mGroundOffset(0.0f),
-      mRotationResolved(true),
       mMinDRAlgorithm(&DeadReckoningAlgorithm::NONE),
-      mUpdateMode(&DeadReckoningHelper::UpdateMode::AUTO)
+      mUpdateMode(&DeadReckoningHelper::UpdateMode::AUTO),
+      mTranslationInitiated(false),
+      mRotationInitiated(false),
+      mUpdated(false), 
+      mTranslationUpdated(false), 
+      mRotationUpdated(false), 
+      mFlying(false), 
+      mRotationResolved(true)
    {}
 
 

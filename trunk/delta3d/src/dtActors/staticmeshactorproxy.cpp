@@ -180,7 +180,7 @@ namespace dtActors
         const std::string &GROUPNAME = "Mesh";
         DeltaObjectActorProxy::BuildPropertyMap();
 
-        dtCore::Object *obj = static_cast<dtCore::Object*>(GetActor());
+        //dtCore::Object *obj = static_cast<dtCore::Object*>(GetActor());
        
         AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::STATIC_MESH,
                     "static mesh", "Static Mesh", MakeFunctor(*this, &StaticMeshActorProxy::LoadFile),
