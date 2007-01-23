@@ -380,8 +380,11 @@ def TOOL_BUNDLE(env):
       rtiLibs = []
       if env.get('rti') not in [ 0, 1 ] and os.path.exists( env.get('rti') ) and os.path.isdir( env.get('rti') ) :
 
-         rtiHeader = find_file( 'RTI.hh', [ env.get('rti') ] )
+         rtiHeader = find_file( 'RTI.hh', [ env.get('rti') + '/include' ] )
          env.Append( CPPPATH = [ os.path.dirname( rtiHeader ) ] )
+         
+         #we don't need the java libraries
+         javaPattern = '(.*?)java(.*?)'
          
          if env['OS'] == 'windows' :      
            pattern = '(.*?)\.dll'
@@ -391,13 +394,15 @@ def TOOL_BUNDLE(env):
            pattern = 'lib(.*?)\.so'
 
          rtiLibPath = ''
-         for root, dirs, files in os.walk( env.get('rti') ) :
+         libDir = env.get('rti') + "/lib"
+         for root, dirs, files in os.walk( libDir ) :
             for file in files :
                match = re.search( pattern, file )
                if match is not None :
                   rtiLibPath = root
-                  rtiLibs.append( match.group(1) )
-
+                  if re.search( javaPattern, file) is None:
+                     rtiLibs.append( match.group(1) )
+	         
          if rtiLibPath is not '' :
             env.Append( LIBPATH = [ rtiLibPath ] )
             if 'rtiada' in rtiLibs :
