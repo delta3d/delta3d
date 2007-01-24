@@ -470,6 +470,7 @@ void dtCore::Environment::SetDateTime( int yr, int mo, int da,
    {
       mCurrTime = GetGMT(yr-1900, mo-1, da, hr, mi, sc);
    }
+   if( mCurrTime < 0 ) { mCurrTime = 0; }
    Log::GetInstance().LogMessage(Log::LOG_DEBUG, __FILE__, "Sim time set to:%s",
       asctime( localtime(&mCurrTime) ) );
 
@@ -491,6 +492,11 @@ void dtCore::Environment::SetDateTime(const DateTime& dateTime)
 */
 void dtCore::Environment::GetDateTime( int& yr, int& mo, int& da, int& hr, int& mi, int& sc ) const
 {
+   if( mCurrTime < 0 )
+   {
+      yr = mo = da = hr = mi = sc = 0;
+      return;
+   }
    struct tm *tmp = localtime(&mCurrTime);
    yr = tmp->tm_year+1900;
    mo = tmp->tm_mon+1;
