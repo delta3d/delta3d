@@ -611,7 +611,6 @@ namespace dtGame
                mNextMessage->SetSource(*mLogComponentMachineInfo);
                mLogStatus.SetNumMessages(mLogStatus.GetNumMessages() + 1);
                GetGameManager()->SendMessage(*mNextMessage);
-               GetGameManager()->SendNetworkMessage(*mNextMessage);
             }
             else if(type == MessageType::INFO_ACTOR_CREATED ||
                type == MessageType::INFO_ACTOR_UPDATED)
@@ -620,7 +619,6 @@ namespace dtGame
                mNextMessage->SetSource(*mLogComponentMachineInfo);
                mLogStatus.SetNumMessages(mLogStatus.GetNumMessages() + 1);
                GetGameManager()->SendMessage(*mNextMessage);
-               GetGameManager()->SendNetworkMessage(*mNextMessage);
             }
             // For keyframes, we loop to skip it all!  Later, this data may be resent to
             // create a heartbeat.  For now, we skip
