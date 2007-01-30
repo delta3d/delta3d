@@ -783,7 +783,7 @@ namespace dtGame
             CalculateTotalSmoothingSteps(helper, xform);
    			if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
    			{
-                  std::ostringstream ss;
+               std::ostringstream ss;
    			   osg::Vec3 temp;
    			   temp[0] = helper.mLastRotation[0];
    			   temp[1] = helper.mLastRotation[1];
@@ -911,9 +911,6 @@ namespace dtGame
                   ss.str().c_str());               
          }
 
-         helper.mTranslationSmoothingSteps += deltaTime;
-         helper.mRotationSmoothingSteps += deltaTime;
-
          if (!helper.IsFlying() && gameActor.GetCollisionGeomType() == &dtCore::Transformable::CollisionGeomType::CUBE)
          {
             ClampToGround(timeSinceTranslationUpdate, xform, gameActor.GetGameActorProxy(), helper);
@@ -1003,6 +1000,20 @@ namespace dtGame
          }
       }
 
+      bool forceClamp = false;
+      mTimeUntilForceClamp -= tickMessage.GetDeltaSimTime();
+
+      if (mTimeUntilForceClamp <= 0.0f)
+      {
+         mTimeUntilForceClamp = ForceClampTime;
+         forceClamp = true;
+
+         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         {
+            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Forcing a ground clamp on all entities.");
+         }
+      }
+
       for (std::map<dtCore::UniqueId, dtCore::RefPtr<DeadReckoningHelper> >::iterator i = mRegisteredActors.begin();
          i != mRegisteredActors.end(); ++i)
       {
@@ -1031,39 +1042,29 @@ namespace dtGame
             {
             	helper.SetLastTranslationUpdatedTime(tickMessage.GetSimulationTime() - tickMessage.GetDeltaSimTime());
             	//helper.SetLastTranslationUpdatedTime(helper.mLastTimeTag);
-            	helper.mTranslationSmoothingSteps = tickMessage.GetDeltaSimTime();
+            	helper.mTranslationSmoothingSteps = 0.0;
             }
             
             if (helper.mRotationUpdated)
             {
             	helper.SetLastRotationUpdatedTime(tickMessage.GetSimulationTime() - tickMessage.GetDeltaSimTime());
             	//helper.SetLastRotationUpdatedTime(helper.mLastTimeTag);
-            	helper.mRotationSmoothingSteps = tickMessage.GetDeltaSimTime();
+            	helper.mRotationSmoothingSteps = 0.0;
             	helper.mRotationResolved = false;
             }
          }
 
-         bool forceClamp = false;
-
-         double timeSinceTranslationUpdate = helper.mTranslationSmoothingSteps;
-         double timeSinceRotationUpdate = helper.mRotationSmoothingSteps;
-         mTimeUntilForceClamp -= tickMessage.GetDeltaSimTime();
-
-         if (mTimeUntilForceClamp <= 0.0f)
-         {
-            mTimeUntilForceClamp = ForceClampTime;
-            forceClamp = true;
-
-            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-            {
-               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Forcing a ground clamp.");
-            }
-         }
+         //We want to do this every time.
+         helper.mTranslationSmoothingSteps += tickMessage.GetDeltaSimTime();
+         helper.mRotationSmoothingSteps += tickMessage.GetDeltaSimTime();
+         
 
          //make sure it's greater than 0 in case of time being set.
-         dtUtil::Clamp(timeSinceTranslationUpdate, 0.0, timeSinceTranslationUpdate);
-         dtUtil::Clamp(timeSinceRotationUpdate, 0.0, timeSinceRotationUpdate);
-
+         if (helper.mTranslationSmoothingSteps < 0.0) 
+            helper.mTranslationSmoothingSteps = 0.0;
+         if (helper.mRotationSmoothingSteps < 0.0) 
+            helper.mRotationSmoothingSteps = 0.0;
+                  
          if (helper.GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::NONE)
          {
             if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
@@ -1076,13 +1077,13 @@ namespace dtGame
          {
             if (helper.IsUpdated() || forceClamp)
             {
-               DRStatic(helper, timeSinceTranslationUpdate, timeSinceRotationUpdate, gameActor, xform);
+               DRStatic(helper, helper.mTranslationSmoothingSteps, helper.mRotationSmoothingSteps, gameActor, xform);
             }
          }
          else
          {
             DRVelocityAcceleration(helper, tickMessage.GetDeltaSimTime(), 
-               timeSinceTranslationUpdate, timeSinceRotationUpdate, forceClamp, gameActor, xform);
+               helper.mTranslationSmoothingSteps, helper.mRotationSmoothingSteps, forceClamp, gameActor, xform);
          }
 
          if (helper.GetEffectiveUpdateMode(gameActor.IsRemote()) 

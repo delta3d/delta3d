@@ -32,6 +32,12 @@ namespace dtCore
            
          ObserverPtr(const osg::observer_ptr<T>& rp): 
             osg::observer_ptr<T>(rp) {}
+
+         virtual void objectDeleted(void* ptr)
+         {
+            //Work around for bug in osg 1.2 dealing with multiple inheritance.
+            osg::observer_ptr<T>::objectDeleted(osg::observer_ptr<T>::get());
+         }
    };
 }
 
