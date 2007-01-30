@@ -22,17 +22,17 @@
 #include <prefix/dtstageprefix-src.h>
 #include <QtGui/QAction>
 
-#include "dtEditQt/resourcebrowser.h"
-#include "dtEditQt/tabcontainer.h"
-#include "dtEditQt/tabwrapper.h"
-#include "dtEditQt/staticmeshbrowser.h"
-#include "dtEditQt/particlebrowser.h"
-#include "dtEditQt/texturebrowser.h"
-#include "dtEditQt/soundbrowser.h"
-//#include "dtEditQt/characterbrowser.h"
-#include "dtEditQt/terrainbrowser.h"
-#include "dtEditQt/editoractions.h"
-#include "dtEditQt/uiresources.h"
+#include <dtEditQt/resourcebrowser.h>
+#include <dtEditQt/tabcontainer.h>
+#include <dtEditQt/tabwrapper.h>
+#include <dtEditQt/staticmeshbrowser.h>
+#include <dtEditQt/particlebrowser.h>
+#include <dtEditQt/texturebrowser.h>
+#include <dtEditQt/soundbrowser.h>
+//#include <dtEditQt/characterbrowser.h>
+#include <dtEditQt/terrainbrowser.h>
+#include <dtEditQt/editoractions.h>
+#include <dtEditQt/uiresources.h>
 
 namespace dtEditQt
 {
