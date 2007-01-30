@@ -29,10 +29,10 @@
 #include <dtCore/export.h>
 #include <dtCore/macros.h>
 #include <dtCore/refptr.h>
+#include <dtCore/observerptr.h>
 
 #include <osg/Vec3>
 #include <osgUtil/IntersectVisitor>
-#include <osg/observer_ptr>
 
 namespace dtCore
 {
@@ -348,8 +348,8 @@ namespace dtCore
 
       Scene* mScene;
       RefPtr<osg::LineSegment> mLineSegment;
-      osg::observer_ptr<DeltaDrawable> mSceneRoot;
-      osg::observer_ptr<DeltaDrawable> mClosestDrawable;
+      dtCore::ObserverPtr<DeltaDrawable> mSceneRoot;
+      dtCore::ObserverPtr<DeltaDrawable> mClosestDrawable;
       osgUtil::IntersectVisitor mIntersectVisitor;
       osgUtil::IntersectVisitor::HitList mHitList; 
       void CalcLineSegment();

@@ -836,7 +836,18 @@ namespace dtHLAGM
                      mObjectToActors.push_back(mCurrentObjectToActor);
 
                      if (!mCurrentObjectToActorIsAbstract)
+                     {
+                        if (mCurrentObjectToActor->GetOneToManyMappingVector().size() == 0)
+                        {
+                           std::ostringstream ss;
+                           ss << "Non-Abstract ObjectToActor mapping HLA object class \"" 
+                              << mCurrentObjectToActor->GetObjectClassName() 
+                              << "\" to Actor Type \"" << mCurrentObjectToActor->GetActorType() 
+                              << "\" is invalid because it has no attribute mappings.";
+                           throw dtUtil::Exception(ExceptionEnum::XML_CONFIG_EXCEPTION, ss.str(), __FILE__, __LINE__);         
+                        }
                         mTargetTranslator->RegisterActorMapping(*mCurrentObjectToActor);
+                     }
 
                      ClearObjectValues();
                   }
@@ -902,8 +913,18 @@ namespace dtHLAGM
                      mInteractionToMessages.push_back(mCurrentInteractionToMessage);
 
                      if (!mCurrentInteractionToMessageIsAbstract)
+                     {
+                        if (mCurrentInteractionToMessage->GetOneToManyMappingVector().size() == 0)
+                        {
+                           std::ostringstream ss;
+                           ss << "Non-Abstract InteractionToMessage mapping HLA interaction class \"" 
+                              << mCurrentInteractionToMessage->GetInteractionName() 
+                              << "\" to Message Type \"" << mCurrentInteractionToMessage->GetMessageType().GetName() 
+                              << "\" is invalid because has it no parameter mappings.";
+                           throw dtUtil::Exception(ExceptionEnum::XML_CONFIG_EXCEPTION, ss.str(), __FILE__, __LINE__);         
+                        }
                         mTargetTranslator->RegisterMessageMapping(*mCurrentInteractionToMessage);
-
+                     }
                      ClearInteractionValues();
                   }
                }
