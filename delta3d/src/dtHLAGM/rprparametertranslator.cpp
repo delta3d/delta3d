@@ -571,8 +571,8 @@ namespace dtHLAGM
       }
       else if (hlaType == RPRAttributeType::ARTICULATED_PART_TYPE)
       {
-         printf("Buffer b4 = %s\n", buffer);
-         printf("Size = %d\n", (int)maxSize);
+         //printf("Buffer b4 = %s\n", buffer);
+         //printf("Size = %d\n", (int)maxSize);
          maxSize = 0;
          
          //ArticulatedParameter artParam;
@@ -592,7 +592,7 @@ namespace dtHLAGM
          //   ArticulatedParameter artParam;
          //artParam.Encode(buffer);
 
-         printf("Buffer after = %s\n", buffer);
+         //printf("Buffer after = %s\n", buffer);
       }
    }
 
