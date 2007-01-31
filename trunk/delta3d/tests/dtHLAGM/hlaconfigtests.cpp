@@ -376,6 +376,12 @@ void HLAConfigTests::TestConfigure()
          dtHLAGM::EntityType type(1, 2, 225, 0, 0, 0, 0);
          std::vector<dtHLAGM::AttributeToPropertyList> props;
          //it should refuse to map it bidirectionally and spit out an error in the log, but it shouldn't blow up
+         {
+            dtHLAGM::AttributeToPropertyList attrToProp("VelocityVector", dtHLAGM::RPRAttributeType::VELOCITY_VECTOR_TYPE, false);
+            dtHLAGM::OneToManyMapping::ParameterDefinition pd("Velocity Vector", dtDAL::DataType::VEC3D, "", false);
+            attrToProp.GetParameterDefinitions().push_back(pd); 
+            props.push_back(attrToProp);
+         }
          CheckObjectToActorMapping("TestHLA", "Jet", "TryingToMapTheJetBidirectionallyAgain", "",  &type, true, props);
       }
       {

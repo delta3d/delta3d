@@ -176,6 +176,13 @@
                 <specific>0</specific>
                 <extra>0</extra>
             </disEntityEnum>
+            <attrToProp>
+                <hlaName>VelocityVector</hlaName>
+                <hlaDataType>VELOCITY_VECTOR_TYPE</hlaDataType>
+                <gameName>Velocity Vector</gameName>
+                <gameDataType>VEC3D</gameDataType>
+                <default></default>
+            </attrToProp>            
         </object>
 
         <object>
