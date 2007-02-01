@@ -94,6 +94,16 @@ namespace dtGame
          MessageParameter* AddUpdateParameter(const std::string &name, const dtDAL::DataType &type);
          
          /**
+          * Adds an update parameter to an actor message
+          * @param paramToAdd The parameter to add.
+          * @throws dtUtil::Exception if a parameter with same name already exists.
+          */
+         void AddUpdateParameter(MessageParameter& paramToAdd)
+         {
+            mUpdateParameters->AddParameter(paramToAdd);
+         }
+
+         /**
           * Retrieves the update parameter for this actor update message for the given name.
           * @param name The name of the parameters to retrieve
           * @return A pointer to the update parameters or NULL if no such parameter exists
