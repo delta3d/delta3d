@@ -42,7 +42,7 @@ Group {
           GL_TEXTURE_2D ON
           Texture2D {
             DataVariance STATIC
-            file "../Textures/smoke.rgb"
+            file "Textures/smoke.rgb"
             wrap_s CLAMP
             wrap_t CLAMP
             wrap_r CLAMP
