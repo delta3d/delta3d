@@ -40,7 +40,7 @@ Group {
           GL_TEXTURE_2D ON
           Texture2D {
             DataVariance STATIC
-            file "../Textures/fire_wisp1.tga"
+            file "Textures/fire_wisp1.tga"
             wrap_s REPEAT
             wrap_t REPEAT
             wrap_r REPEAT

@@ -59,7 +59,7 @@ MatrixTransform {
             Texture2D {
               UniqueID Texture2D_3
               DataVariance STATIC
-              file "images\Plaster.tga"
+              file "images/Plaster.tga"
               wrap_s REPEAT
               wrap_t REPEAT
               wrap_r REPEAT
@@ -80,7 +80,7 @@ MatrixTransform {
             Texture2D {
               UniqueID Texture2D_4
               DataVariance STATIC
-              file "images\EngineeringShadowsMap.tga"
+              file "images/EngineeringShadowsMap.tga"
               wrap_s REPEAT
               wrap_t REPEAT
               wrap_r REPEAT
@@ -2347,7 +2347,7 @@ MatrixTransform {
             Texture2D {
               UniqueID Texture2D_6
               DataVariance STATIC
-              file "images\Plaster.tga"
+              file "images/Plaster.tga"
               wrap_s REPEAT
               wrap_t REPEAT
               wrap_r REPEAT
@@ -2368,7 +2368,7 @@ MatrixTransform {
             Texture2D {
               UniqueID Texture2D_7
               DataVariance STATIC
-              file "images\EngineeringShadowsMap.tga"
+              file "images/EngineeringShadowsMap.tga"
               wrap_s REPEAT
               wrap_t REPEAT
               wrap_r REPEAT
@@ -2739,7 +2739,7 @@ MatrixTransform {
             Texture2D {
               UniqueID Texture2D_9
               DataVariance STATIC
-              file "images\engrpanel.tga"
+              file "images/engrpanel.tga"
               wrap_s REPEAT
               wrap_t REPEAT
               wrap_r REPEAT
@@ -2760,7 +2760,7 @@ MatrixTransform {
             Texture2D {
               UniqueID Texture2D_10
               DataVariance STATIC
-              file "images\EngineeringShadowsMap.tga"
+              file "images/EngineeringShadowsMap.tga"
               wrap_s REPEAT
               wrap_t REPEAT
               wrap_r REPEAT
@@ -3043,7 +3043,7 @@ MatrixTransform {
                 Texture2D {
                   UniqueID Texture2D_13
                   DataVariance STATIC
-                  file "images\Stair01ShadowsMap.tga"
+                  file "images/Stair01ShadowsMap.tga"
                   wrap_s REPEAT
                   wrap_t REPEAT
                   wrap_r REPEAT
@@ -4602,7 +4602,7 @@ MatrixTransform {
                 Texture2D {
                   UniqueID Texture2D_15
                   DataVariance STATIC
-                  file "images\Stair01ShadowsMap.tga"
+                  file "images/Stair01ShadowsMap.tga"
                   wrap_s REPEAT
                   wrap_t REPEAT
                   wrap_r REPEAT
@@ -4946,7 +4946,7 @@ MatrixTransform {
                 Texture2D {
                   UniqueID Texture2D_17
                   DataVariance STATIC
-                  file "images\Stair01ShadowsMap.tga"
+                  file "images/Stair01ShadowsMap.tga"
                   wrap_s REPEAT
                   wrap_t REPEAT
                   wrap_r REPEAT
@@ -5217,7 +5217,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_20
                 DataVariance STATIC
-                file "images\Plaster.tga"
+                file "images/Plaster.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -5238,7 +5238,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_21
                 DataVariance STATIC
-                file "images\Corridor1ShadowsMap.tga"
+                file "images/Corridor1ShadowsMap.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -7277,7 +7277,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_23
                 DataVariance STATIC
-                file "images\deck.tga"
+                file "images/deck.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -7298,7 +7298,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_24
                 DataVariance STATIC
-                file "images\Corridor1ShadowsMap.tga"
+                file "images/Corridor1ShadowsMap.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -7501,7 +7501,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_26
                 DataVariance STATIC
-                file "images\doors.tga"
+                file "images/doors.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -7522,7 +7522,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_27
                 DataVariance STATIC
-                file "images\Corridor2ShadowsMap.tga"
+                file "images/Corridor2ShadowsMap.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -7917,7 +7917,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_29
                 DataVariance STATIC
-                file "images\Corridor1ShadowsMap.tga"
+                file "images/Corridor1ShadowsMap.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -8282,7 +8282,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_32
                 DataVariance STATIC
-                file "images\repair3.tga"
+                file "images/repair3.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -8303,7 +8303,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_33
                 DataVariance STATIC
-                file "images\Repair3ShadowsMap.tga"
+                file "images/Repair3ShadowsMap.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -8458,7 +8458,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_35
                 DataVariance STATIC
-                file "images\deck.tga"
+                file "images/deck.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -8479,7 +8479,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_36
                 DataVariance STATIC
-                file "images\Repair3ShadowsMap.tga"
+                file "images/Repair3ShadowsMap.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -8586,7 +8586,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_38
                 DataVariance STATIC
-                file "images\Repair3ShadowsMap.tga"
+                file "images/Repair3ShadowsMap.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -8912,7 +8912,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_40
                 DataVariance STATIC
-                file "images\Plaster.tga"
+                file "images/Plaster.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -8933,7 +8933,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_41
                 DataVariance STATIC
-                file "images\Repair3ShadowsMap.tga"
+                file "images/Repair3ShadowsMap.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -9086,7 +9086,7 @@ MatrixTransform {
             Texture2D {
               UniqueID Texture2D_44
               DataVariance STATIC
-              file "images\Plaster.tga"
+              file "images/Plaster.tga"
               wrap_s REPEAT
               wrap_t REPEAT
               wrap_r REPEAT
@@ -9107,7 +9107,7 @@ MatrixTransform {
             Texture2D {
               UniqueID Texture2D_45
               DataVariance STATIC
-              file "images\EquipCorridorShadowsMap.tga"
+              file "images/EquipCorridorShadowsMap.tga"
               wrap_s REPEAT
               wrap_t REPEAT
               wrap_r REPEAT
@@ -11230,7 +11230,7 @@ MatrixTransform {
             Texture2D {
               UniqueID Texture2D_47
               DataVariance STATIC
-              file "images\deck.tga"
+              file "images/deck.tga"
               wrap_s REPEAT
               wrap_t REPEAT
               wrap_r REPEAT
@@ -11251,7 +11251,7 @@ MatrixTransform {
             Texture2D {
               UniqueID Texture2D_48
               DataVariance STATIC
-              file "images\EquipCorridorShadowsMap.tga"
+              file "images/EquipCorridorShadowsMap.tga"
               wrap_s REPEAT
               wrap_t REPEAT
               wrap_r REPEAT
@@ -11606,7 +11606,7 @@ MatrixTransform {
                 Texture2D {
                   UniqueID Texture2D_51
                   DataVariance STATIC
-                  file "images\Plaster.tga"
+                  file "images/Plaster.tga"
                   wrap_s REPEAT
                   wrap_t REPEAT
                   wrap_r REPEAT
@@ -11627,7 +11627,7 @@ MatrixTransform {
                 Texture2D {
                   UniqueID Texture2D_52
                   DataVariance STATIC
-                  file "images\Hatch - Floor LrgShadowsMap.tga"
+                  file "images/Hatch - Floor LrgShadowsMap.tga"
                   wrap_s REPEAT
                   wrap_t REPEAT
                   wrap_r REPEAT
@@ -12622,7 +12622,7 @@ MatrixTransform {
                 Texture2D {
                   UniqueID Texture2D_54
                   DataVariance STATIC
-                  file "images\Carpet.tga"
+                  file "images/Carpet.tga"
                   wrap_s REPEAT
                   wrap_t REPEAT
                   wrap_r REPEAT
@@ -12643,7 +12643,7 @@ MatrixTransform {
                 Texture2D {
                   UniqueID Texture2D_55
                   DataVariance STATIC
-                  file "images\Hatch - Floor LrgShadowsMap.tga"
+                  file "images/Hatch - Floor LrgShadowsMap.tga"
                   wrap_s REPEAT
                   wrap_t REPEAT
                   wrap_r REPEAT
@@ -13302,7 +13302,7 @@ MatrixTransform {
                 Texture2D {
                   UniqueID Texture2D_57
                   DataVariance STATIC
-                  file "images\Hatch - Floor LrgShadowsMap.tga"
+                  file "images/Hatch - Floor LrgShadowsMap.tga"
                   wrap_s REPEAT
                   wrap_t REPEAT
                   wrap_r REPEAT
@@ -13646,7 +13646,7 @@ MatrixTransform {
                 Texture2D {
                   UniqueID Texture2D_59
                   DataVariance STATIC
-                  file "images\Hatch - Floor LrgShadowsMap.tga"
+                  file "images/Hatch - Floor LrgShadowsMap.tga"
                   wrap_s REPEAT
                   wrap_t REPEAT
                   wrap_r REPEAT
@@ -13904,7 +13904,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_62
                 DataVariance STATIC
-                file "images\Plaster.tga"
+                file "images/Plaster.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -13925,7 +13925,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_63
                 DataVariance STATIC
-                file "images\Deck - Dead EndShadowsMap.tga"
+                file "images/Deck - Dead EndShadowsMap.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -14104,7 +14104,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_65
                 DataVariance STATIC
-                file "images\deck.tga"
+                file "images/deck.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -14125,7 +14125,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_66
                 DataVariance STATIC
-                file "images\Deck - Dead EndShadowsMap.tga"
+                file "images/Deck - Dead EndShadowsMap.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -14241,7 +14241,7 @@ MatrixTransform {
                 Texture2D {
                   UniqueID Texture2D_69
                   DataVariance STATIC
-                  file "images\Hatch - Floor Lrg01ShadowsMap.tga"
+                  file "images/Hatch - Floor Lrg01ShadowsMap.tga"
                   wrap_s REPEAT
                   wrap_t REPEAT
                   wrap_r REPEAT
@@ -14603,7 +14603,7 @@ MatrixTransform {
                 Texture2D {
                   UniqueID Texture2D_71
                   DataVariance STATIC
-                  file "images\Hatch - Floor Lrg01ShadowsMap.tga"
+                  file "images/Hatch - Floor Lrg01ShadowsMap.tga"
                   wrap_s REPEAT
                   wrap_t REPEAT
                   wrap_r REPEAT
@@ -14808,7 +14808,7 @@ MatrixTransform {
             Texture2D {
               UniqueID Texture2D_74
               DataVariance STATIC
-              file "images\Plaster.tga"
+              file "images/Plaster.tga"
               wrap_s REPEAT
               wrap_t REPEAT
               wrap_r REPEAT
@@ -14829,7 +14829,7 @@ MatrixTransform {
             Texture2D {
               UniqueID Texture2D_75
               DataVariance STATIC
-              file "images\Corridor2ShadowsMap.tga"
+              file "images/Corridor2ShadowsMap.tga"
               wrap_s REPEAT
               wrap_t REPEAT
               wrap_r REPEAT
@@ -15728,7 +15728,7 @@ MatrixTransform {
             Texture2D {
               UniqueID Texture2D_77
               DataVariance STATIC
-              file "images\deck.tga"
+              file "images/deck.tga"
               wrap_s REPEAT
               wrap_t REPEAT
               wrap_r REPEAT
@@ -15749,7 +15749,7 @@ MatrixTransform {
             Texture2D {
               UniqueID Texture2D_78
               DataVariance STATIC
-              file "images\Corridor2ShadowsMap.tga"
+              file "images/Corridor2ShadowsMap.tga"
               wrap_s REPEAT
               wrap_t REPEAT
               wrap_r REPEAT
@@ -15856,7 +15856,7 @@ MatrixTransform {
             Texture2D {
               UniqueID Texture2D_80
               DataVariance STATIC
-              file "images\Plaster.tga"
+              file "images/Plaster.tga"
               wrap_s REPEAT
               wrap_t REPEAT
               wrap_r REPEAT
@@ -15877,7 +15877,7 @@ MatrixTransform {
             Texture2D {
               UniqueID Texture2D_81
               DataVariance STATIC
-              file "images\Corridor2ShadowsMap.tga"
+              file "images/Corridor2ShadowsMap.tga"
               wrap_s REPEAT
               wrap_t REPEAT
               wrap_r REPEAT
@@ -16104,7 +16104,7 @@ MatrixTransform {
             Texture2D {
               UniqueID Texture2D_83
               DataVariance STATIC
-              file "images\doors.tga"
+              file "images/doors.tga"
               wrap_s REPEAT
               wrap_t REPEAT
               wrap_r REPEAT
@@ -16125,7 +16125,7 @@ MatrixTransform {
             Texture2D {
               UniqueID Texture2D_84
               DataVariance STATIC
-              file "images\Corridor2ShadowsMap.tga"
+              file "images/Corridor2ShadowsMap.tga"
               wrap_s REPEAT
               wrap_t REPEAT
               wrap_r REPEAT
@@ -16373,7 +16373,7 @@ MatrixTransform {
             Texture2D {
               UniqueID Texture2D_87
               DataVariance STATIC
-              file "images\Plaster.tga"
+              file "images/Plaster.tga"
               wrap_s REPEAT
               wrap_t REPEAT
               wrap_r REPEAT
@@ -16394,7 +16394,7 @@ MatrixTransform {
             Texture2D {
               UniqueID Texture2D_88
               DataVariance STATIC
-              file "images\Corridor3ShadowsMap.tga"
+              file "images/Corridor3ShadowsMap.tga"
               wrap_s REPEAT
               wrap_t REPEAT
               wrap_r REPEAT
@@ -17953,7 +17953,7 @@ MatrixTransform {
             Texture2D {
               UniqueID Texture2D_90
               DataVariance STATIC
-              file "images\deck.tga"
+              file "images/deck.tga"
               wrap_s REPEAT
               wrap_t REPEAT
               wrap_r REPEAT
@@ -17974,7 +17974,7 @@ MatrixTransform {
             Texture2D {
               UniqueID Texture2D_91
               DataVariance STATIC
-              file "images\Corridor3ShadowsMap.tga"
+              file "images/Corridor3ShadowsMap.tga"
               wrap_s REPEAT
               wrap_t REPEAT
               wrap_r REPEAT
@@ -18149,7 +18149,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_94
                 DataVariance STATIC
-                file "images\Instruments.tga"
+                file "images/Instruments.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -18170,7 +18170,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_95
                 DataVariance STATIC
-                file "images\InstrumentsShadowsMap.tga"
+                file "images/InstrumentsShadowsMap.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -19069,7 +19069,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_97
                 DataVariance STATIC
-                file "images\Instruments.tga"
+                file "images/Instruments.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -19090,7 +19090,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_98
                 DataVariance STATIC
-                file "images\InstrumentsShadowsMap.tga"
+                file "images/InstrumentsShadowsMap.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -19365,7 +19365,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_100
                 DataVariance STATIC
-                file "images\Instruments.tga"
+                file "images/Instruments.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -19386,7 +19386,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_101
                 DataVariance STATIC
-                file "images\InstrumentsShadowsMap.tga"
+                file "images/InstrumentsShadowsMap.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -19586,7 +19586,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_104
                 DataVariance STATIC
-                file "images\halonCyl.tga"
+                file "images/halonCyl.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -19607,7 +19607,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_105
                 DataVariance STATIC
-                file "images\ExtinguisherShadowsMap.tga"
+                file "images/ExtinguisherShadowsMap.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -20275,7 +20275,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_108
                 DataVariance STATIC
-                file "images\halonCyl.tga"
+                file "images/halonCyl.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -20296,7 +20296,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_109
                 DataVariance STATIC
-                file "images\Extinguisher01ShadowsMap.tga"
+                file "images/Extinguisher01ShadowsMap.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -22239,7 +22239,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_114
                 DataVariance STATIC
-                file "images\RepairDoorShadowsMap.tga"
+                file "images/RepairDoorShadowsMap.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -22389,7 +22389,7 @@ MatrixTransform {
             Texture2D {
               UniqueID Texture2D_117
               DataVariance STATIC
-              file "images\bag.tga"
+              file "images/bag.tga"
               wrap_s REPEAT
               wrap_t REPEAT
               wrap_r REPEAT
@@ -22410,7 +22410,7 @@ MatrixTransform {
             Texture2D {
               UniqueID Texture2D_118
               DataVariance STATIC
-              file "images\SCBAShadowsMap.tga"
+              file "images/SCBAShadowsMap.tga"
               wrap_s REPEAT
               wrap_t REPEAT
               wrap_r REPEAT
@@ -31238,7 +31238,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_121
                 DataVariance STATIC
-                file "images\doors.tga"
+                file "images/doors.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -31259,7 +31259,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_122
                 DataVariance STATIC
-                file "images\HatchhalonShadowsMap.tga"
+                file "images/HatchhalonShadowsMap.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -32012,7 +32012,7 @@ MatrixTransform {
             Texture2D {
               UniqueID Texture2D_125
               DataVariance STATIC
-              file "images\grnLitesPnl.tga"
+              file "images/grnLitesPnl.tga"
               wrap_s REPEAT
               wrap_t REPEAT
               wrap_r REPEAT
@@ -32033,7 +32033,7 @@ MatrixTransform {
             Texture2D {
               UniqueID Texture2D_126
               DataVariance STATIC
-              file "images\Corr01 ClutterShadowsMap.tga"
+              file "images/Corr01 ClutterShadowsMap.tga"
               wrap_s REPEAT
               wrap_t REPEAT
               wrap_r REPEAT
@@ -32764,7 +32764,7 @@ MatrixTransform {
             Texture2D {
               UniqueID Texture2D_128
               DataVariance STATIC
-              file "images\grnLitesPnl.tga"
+              file "images/grnLitesPnl.tga"
               wrap_s REPEAT
               wrap_t REPEAT
               wrap_r REPEAT
@@ -32785,7 +32785,7 @@ MatrixTransform {
             Texture2D {
               UniqueID Texture2D_129
               DataVariance STATIC
-              file "images\Corr01 ClutterShadowsMap.tga"
+              file "images/Corr01 ClutterShadowsMap.tga"
               wrap_s REPEAT
               wrap_t REPEAT
               wrap_r REPEAT
@@ -32868,7 +32868,7 @@ MatrixTransform {
             Texture2D {
               UniqueID Texture2D_131
               DataVariance STATIC
-              file "images\doors.tga"
+              file "images/doors.tga"
               wrap_s REPEAT
               wrap_t REPEAT
               wrap_r REPEAT
@@ -32889,7 +32889,7 @@ MatrixTransform {
             Texture2D {
               UniqueID Texture2D_132
               DataVariance STATIC
-              file "images\Corr01 ClutterShadowsMap.tga"
+              file "images/Corr01 ClutterShadowsMap.tga"
               wrap_s REPEAT
               wrap_t REPEAT
               wrap_r REPEAT
@@ -33116,7 +33116,7 @@ MatrixTransform {
             Texture2D {
               UniqueID Texture2D_134
               DataVariance STATIC
-              file "images\Instruments.tga"
+              file "images/Instruments.tga"
               wrap_s REPEAT
               wrap_t REPEAT
               wrap_r REPEAT
@@ -33137,7 +33137,7 @@ MatrixTransform {
             Texture2D {
               UniqueID Texture2D_135
               DataVariance STATIC
-              file "images\Corr01 ClutterShadowsMap.tga"
+              file "images/Corr01 ClutterShadowsMap.tga"
               wrap_s REPEAT
               wrap_t REPEAT
               wrap_r REPEAT
@@ -33388,7 +33388,7 @@ MatrixTransform {
             Texture2D {
               UniqueID Texture2D_137
               DataVariance STATIC
-              file "images\Instruments.tga"
+              file "images/Instruments.tga"
               wrap_s REPEAT
               wrap_t REPEAT
               wrap_r REPEAT
@@ -33409,7 +33409,7 @@ MatrixTransform {
             Texture2D {
               UniqueID Texture2D_138
               DataVariance STATIC
-              file "images\Corr01 ClutterShadowsMap.tga"
+              file "images/Corr01 ClutterShadowsMap.tga"
               wrap_s REPEAT
               wrap_t REPEAT
               wrap_r REPEAT
@@ -33537,7 +33537,7 @@ MatrixTransform {
             Texture2D {
               UniqueID Texture2D_141
               DataVariance STATIC
-              file "images\AirDukShadowsMap.tga"
+              file "images/AirDukShadowsMap.tga"
               wrap_s REPEAT
               wrap_t REPEAT
               wrap_r REPEAT
@@ -50552,7 +50552,7 @@ MatrixTransform {
             Texture2D {
               UniqueID Texture2D_144
               DataVariance STATIC
-              file "images\HoseRoller.tga"
+              file "images/HoseRoller.tga"
               wrap_s REPEAT
               wrap_t REPEAT
               wrap_r REPEAT
@@ -50573,7 +50573,7 @@ MatrixTransform {
             Texture2D {
               UniqueID Texture2D_145
               DataVariance STATIC
-              file "images\Box03ShadowsMap.tga"
+              file "images/Box03ShadowsMap.tga"
               wrap_s REPEAT
               wrap_t REPEAT
               wrap_r REPEAT
@@ -50728,7 +50728,7 @@ MatrixTransform {
             Texture2D {
               UniqueID Texture2D_147
               DataVariance STATIC
-              file "images\Box03ShadowsMap.tga"
+              file "images/Box03ShadowsMap.tga"
               wrap_s REPEAT
               wrap_t REPEAT
               wrap_r REPEAT
@@ -51083,7 +51083,7 @@ MatrixTransform {
             Texture2D {
               UniqueID Texture2D_151
               DataVariance STATIC
-              file "images\HelmetsShadowsMap.tga"
+              file "images/HelmetsShadowsMap.tga"
               wrap_s REPEAT
               wrap_t REPEAT
               wrap_r REPEAT
@@ -54127,7 +54127,7 @@ MatrixTransform {
             Texture2D {
               UniqueID Texture2D_153
               DataVariance STATIC
-              file "images\HelmetsShadowsMap.tga"
+              file "images/HelmetsShadowsMap.tga"
               wrap_s REPEAT
               wrap_t REPEAT
               wrap_r REPEAT
@@ -61332,7 +61332,7 @@ MatrixTransform {
             Texture2D {
               UniqueID Texture2D_156
               DataVariance STATIC
-              file "images\Instruments.tga"
+              file "images/Instruments.tga"
               wrap_s REPEAT
               wrap_t REPEAT
               wrap_r REPEAT
@@ -61353,7 +61353,7 @@ MatrixTransform {
             Texture2D {
               UniqueID Texture2D_157
               DataVariance STATIC
-              file "images\Box01ShadowsMap.tga"
+              file "images/Box01ShadowsMap.tga"
               wrap_s REPEAT
               wrap_t REPEAT
               wrap_r REPEAT
@@ -61565,7 +61565,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_160
                 DataVariance STATIC
-                file "images\doors.tga"
+                file "images/doors.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -61586,7 +61586,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_161
                 DataVariance STATIC
-                file "images\HatchEngrShadowsMap.tga"
+                file "images/HatchEngrShadowsMap.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -62339,7 +62339,7 @@ MatrixTransform {
             Texture2D {
               UniqueID Texture2D_164
               DataVariance STATIC
-              file "images\hoseSwirl.tga"
+              file "images/hoseSwirl.tga"
               wrap_s REPEAT
               wrap_t REPEAT
               wrap_r REPEAT
@@ -62360,7 +62360,7 @@ MatrixTransform {
             Texture2D {
               UniqueID Texture2D_165
               DataVariance STATIC
-              file "images\orangeHoseShadowsMap.tga"
+              file "images/orangeHoseShadowsMap.tga"
               wrap_s REPEAT
               wrap_t REPEAT
               wrap_r REPEAT
@@ -63751,7 +63751,7 @@ MatrixTransform {
             Texture2D {
               UniqueID Texture2D_167
               DataVariance STATIC
-              file "images\orangeHoseShadowsMap.tga"
+              file "images/orangeHoseShadowsMap.tga"
               wrap_s REPEAT
               wrap_t REPEAT
               wrap_r REPEAT
@@ -64650,7 +64650,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_170
                 DataVariance STATIC
-                file "images\firesuit.tga"
+                file "images/firesuit.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -64671,7 +64671,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_171
                 DataVariance STATIC
-                file "images\FireSuitShadowsMap.tga"
+                file "images/FireSuitShadowsMap.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -70010,7 +70010,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_173
                 DataVariance STATIC
-                file "images\FireSuitShadowsMap.tga"
+                file "images/FireSuitShadowsMap.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -71234,7 +71234,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_176
                 DataVariance STATIC
-                file "images\HoseRoller.tga"
+                file "images/HoseRoller.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -71255,7 +71255,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_177
                 DataVariance STATIC
-                file "images\FireHoseShadowsMap.tga"
+                file "images/FireHoseShadowsMap.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -73474,7 +73474,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_179
                 DataVariance STATIC
-                file "images\hose.tga"
+                file "images/hose.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -73495,7 +73495,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_180
                 DataVariance STATIC
-                file "images\FireHoseShadowsMap.tga"
+                file "images/FireHoseShadowsMap.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -74370,7 +74370,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_182
                 DataVariance STATIC
-                file "images\FireHoseShadowsMap.tga"
+                file "images/FireHoseShadowsMap.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -74642,7 +74642,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_184
                 DataVariance STATIC
-                file "images\nozzle.tga"
+                file "images/nozzle.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -74663,7 +74663,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_185
                 DataVariance STATIC
-                file "images\FireHoseShadowsMap.tga"
+                file "images/FireHoseShadowsMap.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -75332,7 +75332,7 @@ MatrixTransform {
             Texture2D {
               UniqueID Texture2D_188
               DataVariance STATIC
-              file "images\FuelShutOffShadowsMap.tga"
+              file "images/FuelShutOffShadowsMap.tga"
               wrap_s REPEAT
               wrap_t REPEAT
               wrap_r REPEAT
@@ -76558,7 +76558,7 @@ MatrixTransform {
             Texture2D {
               UniqueID Texture2D_190
               DataVariance STATIC
-              file "images\FuelShutOffShadowsMap.tga"
+              file "images/FuelShutOffShadowsMap.tga"
               wrap_s REPEAT
               wrap_t REPEAT
               wrap_r REPEAT
@@ -76899,7 +76899,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_193
                 DataVariance STATIC
-                file "images\HoseRoller.tga"
+                file "images/HoseRoller.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -76920,7 +76920,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_194
                 DataVariance STATIC
-                file "images\FireHose01ShadowsMap.tga"
+                file "images/FireHose01ShadowsMap.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -78995,7 +78995,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_196
                 DataVariance STATIC
-                file "images\hose.tga"
+                file "images/hose.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -79016,7 +79016,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_197
                 DataVariance STATIC
-                file "images\FireHose01ShadowsMap.tga"
+                file "images/FireHose01ShadowsMap.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -79891,7 +79891,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_199
                 DataVariance STATIC
-                file "images\FireHose01ShadowsMap.tga"
+                file "images/FireHose01ShadowsMap.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -80163,7 +80163,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_201
                 DataVariance STATIC
-                file "images\nozzle.tga"
+                file "images/nozzle.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -80184,7 +80184,7 @@ MatrixTransform {
               Texture2D {
                 UniqueID Texture2D_202
                 DataVariance STATIC
-                file "images\FireHose01ShadowsMap.tga"
+                file "images/FireHose01ShadowsMap.tga"
                 wrap_s REPEAT
                 wrap_t REPEAT
                 wrap_r REPEAT
@@ -80853,7 +80853,7 @@ MatrixTransform {
             Texture2D {
               UniqueID Texture2D_205
               DataVariance STATIC
-              file "images\hose.tga"
+              file "images/hose.tga"
               wrap_s REPEAT
               wrap_t REPEAT
               wrap_r REPEAT
@@ -80874,7 +80874,7 @@ MatrixTransform {
             Texture2D {
               UniqueID Texture2D_206
               DataVariance STATIC
-              file "images\BlackHoseShadowsMap.tga"
+              file "images/BlackHoseShadowsMap.tga"
               wrap_s REPEAT
               wrap_t REPEAT
               wrap_r REPEAT

@@ -42,7 +42,7 @@ Group {
           GL_TEXTURE_2D ON
           Texture2D {
             DataVariance STATIC
-            file "../Textures/mist.tga"
+            file "Textures/mist.tga"
             wrap_s REPEAT
             wrap_t REPEAT
             wrap_r REPEAT
