@@ -187,6 +187,9 @@ set DELTA_DATA=$(DELTA_DATA)
 				RelativePath="..\..\..\tests\dtUtil\exceptiontests.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\tests\dtUtil\fileutilstests.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\tests\dtUtil\functortests.cpp">
 			</File>
 			<File

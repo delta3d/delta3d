@@ -725,6 +725,24 @@ namespace dtUtil
    }
 
    //-----------------------------------------------------------------------
+   std::string FileUtils::RelativePath(const std::string &absolutePath, const std::string &file) const
+   {
+      std::string relativePath;
+
+      for(size_t i = 0; i < file.size(); i++)
+      {
+         if(file[i] != absolutePath[i])
+         {
+            // i + 1 to eliminate the leading directory separator
+            relativePath = file.substr(i + 1);
+            break;
+         }
+      }
+
+      return relativePath;
+   }
+
+   //-----------------------------------------------------------------------
    void FileUtils::RecursDeleteDir( bool bRecursive )
    {
       //this method assumes one is IN the directory that you want to delete.
