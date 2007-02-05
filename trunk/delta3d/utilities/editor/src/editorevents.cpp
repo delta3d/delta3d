@@ -87,7 +87,7 @@ namespace dtEditQt
     void EditorEvents::emitEditorInitiationEvent()
     {
         LOG_INFO("Emitting UI event - [editorInitiationEvent]");
-        emit editorInitiationEvent();
+        emit editorInitiationEvent();           
     }
 
     ///////////////////////////////////////////////////////////////////////////////

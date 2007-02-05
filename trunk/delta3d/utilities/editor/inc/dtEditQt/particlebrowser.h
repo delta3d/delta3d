@@ -20,14 +20,15 @@
 * Teague Coonan
 */
 
-#ifndef __ParticleBrowser_h
-#define __ParticleBrowser_h
+#ifndef DELTA_PARTICLE_BROWSER
+#define DELTA_PARTICLE_BROWSER
 
-#include "dtEditQt/resourceabstractbrowser.h"
+#include <dtEditQt/resourceabstractbrowser.h>
 
 class QGroupBox;
 class QGridLayout;
 class QPushButton;
+class QCheckBox;
 class QAction;
 class QMenu;
 class QContextMenuEvent;
@@ -78,6 +79,11 @@ namespace dtEditQt
         void displaySelection();
 
         /**
+        * Slot - Handle the event when the checkbox is selected, preview selected item.
+        */
+        void checkBoxSelected();
+
+        /**
         * Slot - Handles the event when the user creates a selected actor
         */
         void createActor();
@@ -103,6 +109,9 @@ namespace dtEditQt
         QGroupBox *previewGroup();
 
         QGroupBox *buttonGroup();
+
+        // Checkboxes
+        QCheckBox *previewChk;
 
         // Button Objects
         QPushButton *previewBtn;

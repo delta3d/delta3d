@@ -36,15 +36,16 @@
 #include <QtGui/QAction>
 #include <QtGui/QContextMenuEvent>
 
-#include "dtEditQt/resourcetreewidget.h"
-#include "dtDAL/project.h"
-#include "dtEditQt/editordata.h"
-#include "dtEditQt/editorevents.h"
-#include "dtEditQt/mainwindow.h"
+#include <dtEditQt/resourcetreewidget.h>
+#include <dtEditQt/editordata.h>
+#include <dtEditQt/editorevents.h>
+#include <dtEditQt/mainwindow.h>
 
-#include "dtEditQt/uiresources.h"
+#include <dtEditQt/uiresources.h>
 
-#include "dtEditQt/terrainbrowser.h"
+#include <dtEditQt/terrainbrowser.h>
+
+#include <dtDAL/project.h>
 
 namespace dtEditQt
 {

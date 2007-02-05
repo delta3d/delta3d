@@ -34,6 +34,8 @@
 #include <QtGui/QContextMenuEvent>
 
 #include <QtGui/QGroupBox>
+#include <QtGui/QCheckBox>
+#include <QtGui/QSplitter>
 
 #include <QtGui/QPushButton>
 
@@ -44,15 +46,15 @@
 #include <dtDAL/datatype.h>
 #include <dtDAL/librarymanager.h>
 
-#include "dtEditQt/editordata.h"
-#include "dtEditQt/mainwindow.h"
-#include "dtEditQt/particlebrowser.h"
-#include "dtEditQt/perspectiveviewport.h"
-#include "dtEditQt/resourcetreewidget.h"
-#include "dtEditQt/viewportcontainer.h"
-#include "dtEditQt/viewportmanager.h"
-#include "dtEditQt/camera.h"
-#include "dtEditQt/uiresources.h"
+#include <dtEditQt/editordata.h>
+#include <dtEditQt/mainwindow.h>
+#include <dtEditQt/particlebrowser.h>
+#include <dtEditQt/perspectiveviewport.h>
+#include <dtEditQt/resourcetreewidget.h>
+#include <dtEditQt/viewportcontainer.h>
+#include <dtEditQt/viewportmanager.h>
+#include <dtEditQt/camera.h>
+#include <dtEditQt/uiresources.h>
 
 namespace dtEditQt
 {
@@ -72,6 +74,7 @@ namespace dtEditQt
         previewObject = new dtCore::Object();
         particleScene->AddDrawable(previewObject.get());
         camera = new Camera();
+        camera->makePerspective(60.0f,1.333f,0.1f,100000.0f);
 
         // setup right mouse click context menu
         createActions();
@@ -80,23 +83,48 @@ namespace dtEditQt
         connect(&EditorEvents::GetInstance(),SIGNAL(currentMapChanged()),
             this,SLOT(selectionChanged()));
 
+        QSplitter *splitter = new QSplitter(Qt::Vertical,this);
+
+        splitter->addWidget(previewGroup());
+        splitter->addWidget(listGroup());
+
+        splitter->setStretchFactor(0,1);
+        splitter->setStretchFactor(1,1);
+
         QGridLayout *grid = new QGridLayout(this);
-        grid->addWidget(listGroup(), 0, 0);
+        grid->addWidget(splitter, 0, 0);
         grid->addWidget(standardButtons(QString("Resource Tools")), 1, 0, Qt::AlignCenter);
     }
+
     ///////////////////////////////////////////////////////////////////////////////
     ParticleBrowser::~ParticleBrowser(){}
+
     ///////////////////////////////////////////////////////////////////////////////
     QGroupBox *ParticleBrowser::listGroup()
     {
-        QGroupBox *group = new QGroupBox(this);
+        QGroupBox *groupBox = new QGroupBox(this);
+        // Checkbox for auto preview
+        previewChk = new QCheckBox(tr("Auto Preview"),groupBox);
+        connect(previewChk,SIGNAL(stateChanged(int)),this,SLOT(checkBoxSelected()));
+        previewChk->setChecked(false);
 
-        QGridLayout *grid = new QGridLayout(group);
+        // Preview button for a selected mesh
+        previewBtn = new QPushButton("Preview",groupBox);
+        connect(previewBtn, SIGNAL(clicked()), this, SLOT(displaySelection()));
+        previewBtn->setDisabled(true);
 
-        grid->addWidget(tree,0,0);
+        QGridLayout *grid = new QGridLayout(groupBox);
+        QHBoxLayout *hbox = new QHBoxLayout();
 
-        return group;
+        hbox->addWidget(previewChk,0,Qt::AlignLeft);
+        hbox->addWidget(previewBtn,0,Qt::AlignRight);
+
+        grid->addLayout(hbox,0,0);
+        grid->addWidget(tree,1,0);
+
+        return groupBox;
     }
+
     ///////////////////////////////////////////////////////////////////////////////
     QGroupBox *ParticleBrowser::previewGroup()
     {
@@ -137,6 +165,7 @@ namespace dtEditQt
         grid->addWidget(container,0,0);
         return groupBox;
     }
+
     ///////////////////////////////////////////////////////////////////////////////
     void ParticleBrowser::createActions()
     {
@@ -147,12 +176,14 @@ namespace dtEditQt
         connect(setCreateAction, SIGNAL(triggered()),this,SLOT(createActor()));
         setCreateAction->setEnabled(false);
     }
+
     ///////////////////////////////////////////////////////////////////////////////
     void ParticleBrowser::createContextMenu()
     {
         ResourceAbstractBrowser::createContextMenu();
         contextMenu->addAction(setCreateAction);
     }
+
     ///////////////////////////////////////////////////////////////////////////////
     // Slots
     ///////////////////////////////////////////////////////////////////////////////
@@ -171,18 +202,34 @@ namespace dtEditQt
 
         if(file != NULL && !resource.GetResourceName().empty())
         {
-
             // The following is performed to comply with linux and windows file systems
             file = context+"\\"+file;
             file.replace("\\","/");
 
-            dtCore::Object *c = new dtCore::Object();
+            dtCore::RefPtr<dtCore::Object> c = new dtCore::Object();
 
             c->LoadFile(file.toStdString());
-            particleScene->AddDrawable(c);
-
+            particleScene->RemoveAllDrawables();
+            particleScene->AddDrawable(c.get());
+            perspView->setFocus();
+            SetCameraLookAt(*camera, *c);
         }
     }
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    void ParticleBrowser::checkBoxSelected()
+    {
+        if(previewChk->isChecked())
+        {
+            if(selection->isResource())
+            {
+                // preview current item
+                selectionChanged();
+                displaySelection();
+            }
+        }
+    }
+
     ///////////////////////////////////////////////////////////////////////////////
     void ParticleBrowser::selectionChanged()
     {
@@ -196,6 +243,12 @@ namespace dtEditQt
         {
             if(selection->isResource())
             {
+                // auto preview
+                if(previewChk->isChecked())
+                {
+                    displaySelection();
+                }
+                previewBtn->setDisabled(false);
                 if(EditorData::GetInstance().getCurrentMap() != NULL)
                 {
                     setCreateAction->setEnabled(true);
@@ -206,6 +259,7 @@ namespace dtEditQt
             }
         }
     }
+
     ///////////////////////////////////////////////////////////////////////////////
     void ParticleBrowser::createActor()
     {
