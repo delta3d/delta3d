@@ -31,9 +31,9 @@
 
 #include <dtDAL/project.h>
 #include <dtDAL/datatype.h>
-#include "dtEditQt/editordata.h"
-#include "dtEditQt/editorevents.h"
-#include "dtEditQt/resourceimportdialog.h"
+#include <dtEditQt/editordata.h>
+#include <dtEditQt/editorevents.h>
+#include <dtEditQt/resourceimportdialog.h>
 
 class QPushButton;
 class QGroupBox;
@@ -43,6 +43,11 @@ class QTreeWidgetItem;
 class QContextMenuEvent;
 class QIcon;
 
+namespace dtCore
+{
+   class Transfomable;
+}
+
 namespace dtDAL
 {
     class ResourceDescriptor;
@@ -51,6 +56,7 @@ namespace dtDAL
 namespace dtEditQt
 {
 
+    class Camera;
     class ResourceTreeWidget;
     class ResourceTree;
 
@@ -198,6 +204,14 @@ namespace dtEditQt
         virtual void buildResourceTree(dtDAL::DataType &type, QWidget *parent, QIcon *resourceIcon);
 
     protected:
+    
+       /**
+        * Sets the camera to look at the given transformable based on the bounding sphere.  
+        * @param camera The camera to position.
+        * @param transformableToView the transformable actor to look at.
+        */
+       static void SetCameraLookAt(dtEditQt::Camera& camera, dtCore::Transformable& transformableToView);
+      
         /**
         * Overridden to ensure the right-click menu only appears when right clicking
         * on the tree widget.

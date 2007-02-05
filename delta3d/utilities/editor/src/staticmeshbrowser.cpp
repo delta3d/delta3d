@@ -259,7 +259,8 @@ namespace dtEditQt
                 file = context+"\\"+file;
                 file.replace("\\","/");
 
-                if(meshScene->GetDrawableIndex(previewObject.get())==(unsigned)meshScene->GetNumberOfAddedDrawable()){
+                if(meshScene->GetDrawableIndex(previewObject.get())==(unsigned)meshScene->GetNumberOfAddedDrawable())
+                {
                     meshScene->AddDrawable(previewObject.get());
                 }
 
@@ -267,24 +268,11 @@ namespace dtEditQt
                 previewObject->LoadFile(file.toStdString());
                 previewObject->RecenterGeometryUponLoad();
                 perspView->refresh();
-
-                //Now we need to get the bounding volume to determine the extents
-                //of the new static mesh.  If the extents are within a reasonable
-                //size, the camera will be placed such that the static mesh is
-                //slightly in front of the camera.  If the mesh is too large,
-                //the camera is placed in the center of the mesh.
-                const osg::BoundingSphere &bs = previewObject->GetOSGNode()->getBound();
-                float offset = (bs.radius() < 1000.0f) ? bs.radius() : 0.0f;
-
-                camera->resetRotation();
-                osg::Vec3 viewDir = camera->getViewDir();
-
-                if (offset > 0.0f)
-                    camera->setPosition(viewDir*offset*-2.0f);
-                else
-                    camera->setPosition(bs.center());
+                
+                SetCameraLookAt(*camera, *previewObject);
 
                 perspView->refresh();
+                perspView->setFocus();
             }
         }
     }

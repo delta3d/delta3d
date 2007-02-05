@@ -41,13 +41,15 @@
 #include <QtGui/QScrollArea>
 #include <QtGui/QLabel>
 #include <QtGui/QIcon>
-#include "dtEditQt/resourcetreewidget.h"
-#include "dtEditQt/resourceimportdialog.h"
-#include "dtDAL/project.h"
-#include "dtEditQt/editordata.h"
-#include "dtEditQt/editorevents.h"
-#include "dtEditQt/texturebrowser.h"
-#include "dtEditQt/uiresources.h"
+
+#include <dtEditQt/resourcetreewidget.h>
+#include <dtEditQt/resourceimportdialog.h>
+#include <dtEditQt/editordata.h>
+#include <dtEditQt/editorevents.h>
+#include <dtEditQt/texturebrowser.h>
+#include <dtEditQt/uiresources.h>
+
+#include <dtDAL/project.h>
 
 namespace dtEditQt 
 {

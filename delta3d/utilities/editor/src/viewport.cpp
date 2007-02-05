@@ -79,17 +79,18 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     Viewport::Viewport(ViewportManager::ViewportType &type, const std::string &name,
         QWidget *parent, QGLWidget *shareWith) :
-         QGLWidget(parent,shareWith), inChangeTransaction(false), name(name), viewPortType(type), mIsector(new dtCore::Isector())
+         QGLWidget(parent,shareWith), inChangeTransaction(false), name(name), viewPortType(type), 
+         mRedrawContinuously(true),
+         useAutoInteractionMode(false),
+         autoSceneUpdate(true),
+         initialized(false),
+         enableKeyBindings(true),
+         mIsector(new dtCore::Isector())
     {
         this->frameStamp = new osg::FrameStamp();
         this->mouseSensitivity = 10.0f;
         this->interactionMode = &InteractionMode::CAMERA;
         this->renderStyle = &RenderStyle::WIREFRAME;
-
-        this->useAutoInteractionMode = false;
-        this->initialized = false;
-        this->autoSceneUpdate = true;
-        this->enableKeyBindings = true;
 
         this->rootNodeGroup = new osg::Group();
         this->sceneView = new osgUtil::SceneView();
@@ -101,6 +102,10 @@ namespace dtEditQt
 
         setMouseTracking(false);
         this->cacheMouseLocation = true;
+
+        connect(&mTimer, SIGNAL(timeout()), this, SLOT(updateGL()));
+        mTimer.setInterval(10);
+        //mTimer.setSingleShot(true);
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -115,6 +120,8 @@ namespace dtEditQt
         setupInitialRenderState();
         ViewportManager::GetInstance().initializeGL();
         this->initialized = true;
+        if (mRedrawContinuously)
+           mTimer.start();
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -160,6 +167,19 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
+    void Viewport::SetRedrawContinuously(bool contRedraw)
+    {
+       if (mRedrawContinuously == contRedraw)
+         return;
+         
+       mRedrawContinuously = contRedraw;
+       if (mRedrawContinuously)
+          mTimer.start();
+       else
+          mTimer.stop();
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
     void Viewport::resizeGL(int width, int height)
     {
         this->sceneView->setViewport(0,0,width,height);
@@ -183,8 +203,8 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     void Viewport::setClearColor(const osg::Vec4 &color)
     {
-        if (this->clearNode.valid())
-            this->clearNode->setClearColor(color);
+        if (clearNode.valid())
+            clearNode->setClearColor(color);
     }
 
 
@@ -478,6 +498,22 @@ namespace dtEditQt
         
         refresh();
     }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void Viewport::focusInEvent(QFocusEvent* event)
+    {
+       QGLWidget::focusInEvent(event);
+       mTimer.setInterval(10);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void Viewport::focusOutEvent(QFocusEvent* event)
+    {
+       QGLWidget::focusOutEvent(event);
+       //One half of a second.
+       mTimer.setInterval(500);
+    }
+
 
     ///////////////////////////////////////////////////////////////////////////////
     void Viewport::setCameraMode()

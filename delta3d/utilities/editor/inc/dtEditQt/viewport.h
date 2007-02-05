@@ -1,27 +1,29 @@
 /*
-* Delta3D Open Source Game and Simulation Engine 
-* Simulation, Training, and Game Editor (STAGE)
-* Copyright (C) 2005, BMH Associates, Inc.
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free
-* Software Foundation; either version 2 of the License, or (at your option)
-* any later version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this library; if not, write to the Free Software Foundation, Inc.,
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*
-* Matthew W. Campbell
-*/
+ * Delta3D Open Source Game and Simulation Engine 
+ * Simulation, Training, and Game Editor (STAGE)
+ * Copyright (C) 2005, BMH Associates, Inc.
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * Matthew W. Campbell
+ * David Guthrie
+ */
 #ifndef DELTA_STAGE_VIEWPORT
 #define DELTA_STAGE_VIEWPORT
 
+#include <QtCore/QTimer>
 #include <QtOpenGL/QGLWidget>
 #include <QtGui/QCursor>
 
@@ -33,9 +35,9 @@
 #include <dtCore/transformable.h>
 #include <dtUtil/enumeration.h>
 #include <dtDAL/actorproxy.h>
-#include "dtEditQt/camera.h"
-#include "dtEditQt/viewportmanager.h"
-#include "dtEditQt/typedefs.h"
+#include <dtEditQt/camera.h>
+#include <dtEditQt/viewportmanager.h>
+#include <dtEditQt/typedefs.h>
 #include <dtCore/refptr.h>
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
@@ -193,17 +195,13 @@ namespace dtEditQt
          *  loaded scene.  For example, the static mesh browser has this property
          *  set to false.
          */
-        void setAutoSceneUpdate(bool on) {
-            this->autoSceneUpdate = on;
-        }
+        void setAutoSceneUpdate(bool on)  { autoSceneUpdate = on; }
 
         /**
          * Gets the auto scene update property.
          * @return
          */
-        bool getAutoSceneUpdate() const {
-            return this->autoSceneUpdate;
-        }
+        bool getAutoSceneUpdate() const { return autoSceneUpdate; }
 
         /**
          * Sets whether or not the hot keys for actor manipulation and selection
@@ -215,18 +213,14 @@ namespace dtEditQt
          *  may or may not have key bindings.  However, if key bindings are present,
          *  this method allows the user to disable them if desired.
          */
-        void setEnableKeyBindings(bool enable) {
-            this->enableKeyBindings = enable;
-        }
+        void setEnableKeyBindings(bool enable) { enableKeyBindings = enable; }
 
         /**
          * Gets whether or not key bindings (hot keys) are enabled for this
          * viewport.
          * @return True if enabled.
          */
-        bool getEnableKeyBindings() const {
-            return this->enableKeyBindings;
-        }
+        bool getEnableKeyBindings() const { return this->enableKeyBindings; }
 
         /**
          * Projects the 2D window coordinates into the current scene and determines
@@ -429,6 +423,9 @@ namespace dtEditQt
          */
         virtual void renderFrame();
 
+        void SetRedrawContinuously(bool contRedraw);
+        bool GetRedrawContinuously() const { return mRedrawContinuously; }
+         
         /**
          * Returns the underlying scene view that is attached to this viewport.
          * @return
@@ -498,8 +495,14 @@ namespace dtEditQt
          */
         void mouseMoveEvent(QMouseEvent *e);
    
-        ///Called by the mouse move event with the adjusted x and y so that subclasses can do what they need. 
+        /// Called by the mouse move event with the adjusted x and y so that subclasses can do what they need. 
         virtual void onMouseMoveEvent(QMouseEvent *e, float dx, float dy) = 0;
+
+        /// Overridden to adjust the update interval when focus is received
+        virtual void focusInEvent(QFocusEvent* event);
+
+        /// Overridden to adjust the update interval when focus is lost
+        virtual void focusOutEvent(QFocusEvent* event);
 
         /**
          * Camera attached to this viewport.
@@ -521,13 +524,13 @@ namespace dtEditQt
         ///Allow the viewport manager to have access to the viewport so it can create it.
         friend class ViewportManager;
 
-    private:
         float mouseSensitivity;
         std::string name;
         ViewportManager::ViewportType &viewPortType;
         const RenderStyle *renderStyle;
         const InteractionMode *interactionMode;
 
+        bool mRedrawContinuously;
         bool useAutoInteractionMode;
         bool autoSceneUpdate;
         bool initialized;
@@ -538,6 +541,7 @@ namespace dtEditQt
         bool cacheMouseLocation;
 
         QPoint lastMouseUpdateLocation;
+        QTimer mTimer;
          
         // holds the original values of translation and/or rotation.  This should
         // be set in BeginEdit and cleared in EndEdit
