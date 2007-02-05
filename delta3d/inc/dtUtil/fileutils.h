@@ -241,8 +241,18 @@ namespace dtUtil
           * @return true if the path exists and is a directory
           */
          bool DirExists( const std::string& strDir ) const;
+
+         /**
+          * Helper function that returns the relative path between absolutePath and file
+          * @param absolutePath The absolute path to search
+          * @param file The absolute path to the file 
+          * @return The relative path or empty string for failure
+          * @note This function assumes that directory separaters are equal for both paths
+          */
+         std::string RelativePath(const std::string &absolutePath, const std::string &file) const;
            
       private:
+
          FileUtils();
 
          virtual ~FileUtils();

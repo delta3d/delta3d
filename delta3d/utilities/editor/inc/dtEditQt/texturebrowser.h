@@ -20,10 +20,10 @@
 * Teague Coonan
 */
 
-#ifndef __TextureBrowser_h
-#define __TextureBrowser_h
+#ifndef DELTA_TEXTURE_BROWSER
+#define DELTA_TEXTURE_BROWSER
 
-#include "dtEditQt/resourceabstractbrowser.h"
+#include <dtEditQt/resourceabstractbrowser.h>
 
 #include <dtDAL/resourcehelper.h>
 
