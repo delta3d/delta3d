@@ -87,7 +87,12 @@ namespace dtEditQt
         * Slot - Handles the event when the user creates a selected actor
         */
         void createActor();
-        
+
+		/**
+		* Slot - Handles the event when the user views an osg or ive scene graph
+		*/
+        void viewSceneGraph();
+
     protected:
         /**
         * Added an event filter to capture keyboard events sent to the tree widget 
@@ -154,6 +159,7 @@ namespace dtEditQt
 
         // Actions
         QAction *setCreateAction;
+		QAction *setSGPreviewAction;
 
         // Resource Icon - this is our leaf node icon
         QIcon *resourceIcon;
