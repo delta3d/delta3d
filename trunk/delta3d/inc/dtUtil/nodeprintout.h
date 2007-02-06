@@ -26,6 +26,7 @@
 #include <cstdio>
 #include <osg/Referenced>
 #include <osg/Node>
+#include <sstream>
 
 // Foward declarations
 namespace osg
@@ -47,8 +48,11 @@ namespace dtUtil
 
       public:
          /// Called from anyone that wants to print out a file, takes in a node, outputs file*
-         void PrintOutNode(std::string& printOutFileName, osg::Node* nodeToPrint, bool PrintVerts = false);
+         void PrintOutNode(std::string& printOutFileName, osg::Node* nodeToPrint, bool PrintVerts = false, bool printToFile = true);
       
+         /// Returns the file stream
+         std::string GetFileOutput() const;
+
       protected:
          /// Called from printoutnode user should never call
          void Analyze(osg::Node *nd, std::string indent);
@@ -68,6 +72,8 @@ namespace dtUtil
 
          /// do we want to print out extensive vertice data?
          bool mPrintingVerts;
+
+         std::ostringstream mOutputStream[3];
    };
 }
 

@@ -37,6 +37,8 @@
 #include <QtGui/QMenu>
 #include <QtGui/QContextMenuEvent>
 #include <QtGui/QIcon>
+#include <QtGui/QTextEdit>
+#include <QtGui/QScrollBar>
 
 #include <dtEditQt/staticmeshbrowser.h>
 #include <dtEditQt/resourcetreewidget.h>
@@ -59,6 +61,7 @@
 #include <dtCore/object.h>
 
 #include <dtUtil/log.h>
+#include <dtUtil/nodeprintout.h>
 
 #include <osg/BoundingSphere>
 
@@ -220,9 +223,9 @@ namespace dtEditQt
 
 		// Allow the preview of the scene graph for an ive file
 		setSGPreviewAction = new QAction(tr("Preview Scene Graph"), getCurrentParent());
-		setSGPreviewAction->setCheckable(false);
-		connect(setCreateAction, SIGNAL(triggered()),this,SLOT(viewSceneGraph()));
-		setSGPreviewAction->setEnabled(false);
+		//setSGPreviewAction->setCheckable(false);
+		connect(setSGPreviewAction, SIGNAL(triggered()),this,SLOT(viewSceneGraph()));
+		//setSGPreviewAction->setEnabled(false);
     }
     ///////////////////////////////////////////////////////////////////////////////
     void StaticMeshBrowser::createContextMenu()
@@ -424,7 +427,38 @@ namespace dtEditQt
 		QString resourceName;
 		// Make sure we have a valid resource
 		if(selection->isResource())
-        {
+      {
+         QDialog dlg(this);
+         dlg.setModal(true);
+         dlg.setWindowTitle(tr("Node Hierarchy"));
+         dlg.setFixedSize(400, 400);
+
+         QVBoxLayout *vLayout = new QVBoxLayout(&dlg);
+         QTextEdit *text = new QTextEdit(&dlg);
+         QPushButton *close = new QPushButton(tr("Close"), &dlg);
+
+         dtDAL::ResourceDescriptor &rd = selection->getResourceDescriptor();
+         const std::string fileName = dtDAL::Project::GetInstance().GetResourcePath(rd);
+
+         dtCore::RefPtr<dtCore::Object> obj = new dtCore::Object;
+         osg::Node *node = obj->LoadFile(fileName);
+         
+         dtCore::RefPtr<dtUtil::NodePrintOut> nodepo = new dtUtil::NodePrintOut;
+         std::string file = "temp.txt";
+         nodepo->PrintOutNode(file, node, false, false);
+         
+         text->addScrollBarWidget(new QScrollBar(this), Qt::AlignRight);
+         text->addScrollBarWidget(new QScrollBar(this), Qt::AlignBottom);
+         text->setText(tr(nodepo->GetFileOutput().c_str()));
+
+         obj = NULL;
+         nodepo = NULL;
+
+         vLayout->addWidget(text);
+         vLayout->addWidget(close);
+
+         connect(close, SIGNAL(clicked()), &dlg, SLOT(close()));
+         dlg.exec();
 		  // open up our dialog
 			
 		}
