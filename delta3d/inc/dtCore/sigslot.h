@@ -1688,6 +1688,10 @@ namespace sigslot {
 			m_pmemfun = pmemfun;
 		}
 
+      virtual ~_connection0()
+      {
+      }
+
 		virtual _connection_base0<mt_policy>* clone()
 		{
 			return new _connection0<dest_type, mt_policy>(*this);
