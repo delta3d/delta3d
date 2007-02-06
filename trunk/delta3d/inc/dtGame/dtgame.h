@@ -4,7 +4,6 @@
 #include <dtGame/actorupdatemessage.h>
 #include <dtGame/basemessages.h>
 #include <dtGame/binarylogstream.h>
-#include <dtGame/datastream.h>
 #include <dtGame/defaultmessageprocessor.h>
 #include <dtGame/exceptionenum.h>
 #include <dtGame/environmentactor.h>
