@@ -1527,7 +1527,7 @@ namespace dtHLAGM
 
       char* dAsI = (char*)(&tagValue);
       
-      size_t len = EncodedLength() - 1;
+      size_t len = sizeof(double);
       for (size_t i = 0; i < len; ++i)
       {
          char vals[2]; 
@@ -1543,7 +1543,7 @@ namespace dtHLAGM
          buf[2*i] = vals[0];
          buf[2*i+1] = vals[1];
       }
-      buf[len] = '\0';
+      buf[EncodedLength() - 1] = '\0';
    }
 
 
@@ -1605,6 +1605,7 @@ namespace dtHLAGM
          tmp[1]=buf[2*i+1];
          toVoid(tmpbuf[i],tmp);
       }
+      delete[] tmpbuf;
       double tagValue = *(double *)(&tmpbuf[0]);
       if(getCpuByteOrder() == LittleEndian)
       {
