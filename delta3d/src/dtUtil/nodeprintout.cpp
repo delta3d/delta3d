@@ -41,7 +41,8 @@ namespace dtUtil
 
 
    /// Called from anyone that wants to print out a file, takes in a node, outputs file*
-   void NodePrintOut::PrintOutNode(std::string& printOutFileName, osg::Node* nodeToPrint, bool PrintVerts) 
+   void NodePrintOut::PrintOutNode(std::string& printOutFileName, osg::Node* nodeToPrint, 
+                                   bool PrintVerts, bool printToFile) 
    {
       if(nodeToPrint == NULL)
          return;
@@ -49,15 +50,26 @@ namespace dtUtil
       mFile = fopen(printOutFileName.c_str(), "w");
       mPrintingVerts = PrintVerts;
       Analyze(nodeToPrint, "");
+      
+      if(printToFile)
+      {
+         for(int i = 0; i < 3; i++)
+         {
+            fwrite(mOutputStream[i].str().c_str(), 
+                  mOutputStream[i].str().size() * sizeof(char), 
+                  1, 
+                  mFile);
+         }
+      }
+      
       fclose(mFile);
    }
 
    /// Called from printoutnode user should never call
    void NodePrintOut::Analyze(osg::Node *nd, std::string indent)
    {
-      std::ostringstream StreamOne;
-      StreamOne << indent << "Node - Class Name [" <<  nd->className() << "], Node Name [" << nd->getName() << "]" << std::endl;
-      fwrite((void*)StreamOne.str().c_str(), StreamOne.str().size() * sizeof(char), 1, mFile);
+      mOutputStream[0] << indent << "Node - Class Name [" <<  nd->className() << "], Node Name [" << nd->getName() << "]" << std::endl;
+      //fwrite((void*)StreamOne.str().c_str(), StreamOne.str().size() * sizeof(char), 1, mFile);
 
       osg::Geode *geode = dynamic_cast<osg::Geode *> (nd);
       if (geode != NULL) 
@@ -98,9 +110,9 @@ namespace dtUtil
             for (unsigned int ipr=0; ipr<geom->getNumPrimitiveSets(); ipr++)
             {
                osg::PrimitiveSet* prset=geom->getPrimitiveSet(ipr);
-               std::ostringstream StreamOne;
-               StreamOne << indent << "Primitive Set " << ipr << std::endl;
-               fwrite((void*)StreamOne.str().c_str(), StreamOne.str().size() * sizeof(char), 1, mFile);
+               //std::ostringstream StreamOne;
+               mOutputStream[0] << indent << "Primitive Set " << ipr << std::endl;
+               //fwrite((void*)StreamOne.str().c_str(), StreamOne.str().size() * sizeof(char), 1, mFile);
                AnalyzePrimSet(prset, static_cast<const osg::Vec3Array*>(geom->getVertexArray()), indent + "   ");
             }
          }
@@ -110,9 +122,9 @@ namespace dtUtil
    /// Called from AnalyzeGeode user should never call
    void NodePrintOut::AnalyzePrimSet(osg::PrimitiveSet* prset, const osg::Vec3Array *verts, std::string indent)
    {
-      std::ostringstream StreamOne;
-      StreamOne << indent << "Prim set type "<< prset->getMode() << std::endl;
-      fwrite((void*)StreamOne.str().c_str(), StreamOne.str().size() * sizeof(char), 1, mFile);
+      //std::ostringstream StreamOne;
+      mOutputStream[0] << indent << "Prim set type "<< prset->getMode() << std::endl;
+      //fwrite((void*)StreamOne.str().c_str(), StreamOne.str().size() * sizeof(char), 1, mFile);
 
       if(mPrintingVerts)
       {
@@ -121,27 +133,27 @@ namespace dtUtil
          for (ic=0; ic < prset->getNumIndices(); ic++)
          { 
             // NB the vertices are held in the drawable -
-            std::ostringstream StreamTwo;
-            StreamTwo << indent <<  "vertex "<< ic << " is index "<<prset->index(ic) << " at " <<
+            //std::ostringstream StreamTwo;
+            mOutputStream[1] << indent <<  "vertex "<< ic << " is index "<<prset->index(ic) << " at " <<
             (* verts)[prset->index(ic)].x() << "," <<
             (* verts)[prset->index(ic)].y() << "," << 
             (* verts)[prset->index(ic)].z() << std::endl;
 
-            fwrite((void*)StreamTwo.str().c_str(), StreamTwo.str().size() * sizeof(char), 1, mFile);
+            //fwrite((void*)StreamTwo.str().c_str(), StreamTwo.str().size() * sizeof(char), 1, mFile);
          }
          // you might want to handle each type of primset differently: such as:
 
-         std::ostringstream StreamThr;
+         //std::ostringstream StreamThr;
          switch (prset->getMode()) 
          {
             case osg::PrimitiveSet::TRIANGLES: // get vertices of triangle
             {
-               StreamThr << indent << "Triangles "<< nprim << " is index "<<prset->index(ic) << std::endl;
+               mOutputStream[2] << indent << "Triangles "<< nprim << " is index "<<prset->index(ic) << std::endl;
                for(unsigned int i2=0; i2<prset->getNumIndices()-2; i2+=3) 
                {
                   // This is where you would write your indices out with the information they have.
                }
-               fwrite((void*)StreamThr.str().c_str(), StreamThr.str().size() * sizeof(char), 1, mFile);
+               //fwrite((void*)StreamThr.str().c_str(), StreamThr.str().size() * sizeof(char), 1, mFile);
             }
             break;
             
@@ -149,5 +161,14 @@ namespace dtUtil
             break;
          }
       }
+   }
+
+   std::string NodePrintOut::GetFileOutput() const
+   {
+      std::string result;
+      for(int i = 0; i < 3; i++)
+         result += mOutputStream[i].str();
+
+      return result;
    }
 }
