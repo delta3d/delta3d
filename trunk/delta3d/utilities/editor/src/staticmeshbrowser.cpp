@@ -217,12 +217,19 @@ namespace dtEditQt
         setCreateAction->setCheckable(false);
         connect(setCreateAction, SIGNAL(triggered()),this,SLOT(createActor()));
         setCreateAction->setEnabled(false);
+
+		// Allow the preview of the scene graph for an ive file
+		setSGPreviewAction = new QAction(tr("Preview Scene Graph"), getCurrentParent());
+		setSGPreviewAction->setCheckable(false);
+		connect(setCreateAction, SIGNAL(triggered()),this,SLOT(viewSceneGraph()));
+		setSGPreviewAction->setEnabled(false);
     }
     ///////////////////////////////////////////////////////////////////////////////
     void StaticMeshBrowser::createContextMenu()
     {
         ResourceAbstractBrowser::createContextMenu();
         contextMenu->addAction(setCreateAction);
+		contextMenu->addAction(setSGPreviewAction);
     }
     ///////////////////////////////////////////////////////////////////////////////
     // Slots
@@ -411,4 +418,15 @@ namespace dtEditQt
             EditorData::GetInstance().getMainWindow()->endWaitCursor();
         }
     }
+    ///////////////////////////////////////////////////////////////////////////////
+	void StaticMeshBrowser::viewSceneGraph()
+	{
+		QString resourceName;
+		// Make sure we have a valid resource
+		if(selection->isResource())
+        {
+		  // open up our dialog
+			
+		}
+	}
 }
