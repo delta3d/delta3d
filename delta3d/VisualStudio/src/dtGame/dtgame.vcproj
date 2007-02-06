@@ -250,6 +250,9 @@
 				RelativePath="..\..\..\inc\dtGame\defaultmessageprocessor.h">
 			</File>
 			<File
+				RelativePath="..\..\..\inc\dtGame\dtgame.h">
+			</File>
+			<File
 				RelativePath="..\..\..\inc\prefix\dtgameprefix-src.h">
 			</File>
 			<File
