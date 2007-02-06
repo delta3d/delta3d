@@ -22,6 +22,8 @@
 #include <cppunit/extensions/HelperMacros.h>
 
 #include <dtUtil/fileutils.h>
+#include <dtUtil/log.h>
+#include <dtDAL/enginepropertytypes.h>
 #include <dtCore/globals.h>
 
 class FileUtilsTests : public CPPUNIT_NS::TestFixture
