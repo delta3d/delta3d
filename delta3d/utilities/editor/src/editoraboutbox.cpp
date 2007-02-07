@@ -51,6 +51,7 @@ namespace dtEditQt
         splashLabel->setPixmap(splashImage);
         splashLabel->setFrameStyle(QFrame::StyledPanel | QFrame::Raised);
 
+        tabs->addTab(createEditorShortcutsTab(), "Shortcuts");
         tabs->addTab(createEditorInfoTab(),"About");
         tabs->addTab(createLicenseTab(),"License Agreement");
 
@@ -63,6 +64,31 @@ namespace dtEditQt
 
         connect(ok,SIGNAL(clicked()),this,SLOT(accept()));
         setModal(true);
+    }
+
+    //////////////////////////////////////////////////////////////////////////////
+    QTextEdit *EditorAboutBox::createEditorShortcutsTab()
+    {
+       QTextEdit *textEdit = new QTextEdit();
+
+       textEdit->setReadOnly(true);
+       textEdit->setHtml("<h3>Select</h3>"
+          "'Ctrl LMB' = select mesh<br>"
+          "'Crtl + Alt LMB' = multi select mesh"
+          "<h3>Rotate</h3>"
+          "'Alt LMB' = rotate object local X axis<br>"
+          "'Alt MMB' = &nbsp; &nbsp; \"  &nbsp; &nbsp; \"  &nbsp; &nbsp; \"  &nbsp; &nbsp; Y axis<br>"
+          "'Alt RMB' = &nbsp; &nbsp; \"  &nbsp; &nbsp; \"  &nbsp; &nbsp; \"  &nbsp; &nbsp; Z axis"
+          "<h3>Move/Translate</h3>"
+          "<h4>Orthographic Views</h4>"
+          "'Shift LMB' = moves along both horizontal and vertical  axes of view window<br>"
+          "'Shift MMB' = move only on vertical axis of view window<br>"
+          "'Shift RMB' = move only on horizontal axis of view window"
+          "<h4>Perspective View</h4>"
+          "Selected objects seem to remain in place as the World moves about it.  What actually happens is that the object is moving but the Perspective View makes it seem like the World is moving.<br><br>"
+          "Remember you need to be in 'Camera Mode', little camera icon selected, and pressing the keys allows access to those other modes but does not really switch the Modes (Notice your icons don't change).<br>");
+
+       return textEdit;
     }
 
     //////////////////////////////////////////////////////////////////////////////
