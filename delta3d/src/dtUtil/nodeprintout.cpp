@@ -28,6 +28,7 @@
 #include <osg/Group>
 #include <osg/Node>
 #include <osg/PrimitiveSet>
+#include <osgDB/WriteFile>
 
 namespace dtUtil
 {
@@ -176,5 +177,35 @@ namespace dtUtil
          result += mOutputStream[i].str();
 
       return result;
+   }
+
+   void NodePrintOut::PrintNodeToOSGFile(const osg::Node &node, const std::string &fileName)
+   {
+      if(!osgDB::writeNodeFile(node, fileName))
+      {
+         std::ostringstream oss;
+         oss << "Failed to write node: " << node.getName() << " to file: " << fileName;
+         LOG_ERROR(oss.str());
+      }
+   }
+
+   void NodePrintOut::PrintNodeToOSGFile(const osg::Node &node, std::ostringstream &oss)
+   {
+      const std::string &tempFile = "temp.osg";
+      osgDB::writeNodeFile(node, tempFile);
+
+      std::ifstream in(tempFile.c_str());
+      if(!in.is_open())
+         return;
+
+      std::string toWrite;
+      while(!in.eof())
+      {
+         in >> toWrite;
+      }
+
+      oss << toWrite;
+
+      dtUtil::FileUtils::GetInstance().FileDelete(tempFile);
    }
 }
