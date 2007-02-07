@@ -53,6 +53,11 @@ namespace dtUtil
          /// Returns the file stream
          std::string GetFileOutput() const;
 
+         /// Dumps a node to an osg file
+         void PrintNodeToOSGFile(const osg::Node &node, const std::string &fileName);
+
+         /// Dumps a node to a stream in osg formate
+         void PrintNodeToOSGFile(const osg::Node &node, std::ostringstream &oss);
       protected:
          /// Called from printoutnode user should never call
          void Analyze(osg::Node *nd, std::string indent);
