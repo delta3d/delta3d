@@ -54,12 +54,13 @@ namespace dtUtil
          mOutputStream[i].str("");
       }
 
-      mFile = fopen(printOutFileName.c_str(), "w");
       mPrintingVerts = PrintVerts;
       Analyze(nodeToPrint, "");
       
       if(printToFile)
       {
+         mFile = fopen(printOutFileName.c_str(), "w");
+
          for(int i = 0; i < 3; i++)
          {
             fwrite(mOutputStream[i].str().c_str(), 
@@ -67,9 +68,9 @@ namespace dtUtil
                   1, 
                   mFile);
          }
+
+         fclose(mFile);
       }
-      
-      fclose(mFile);
    }
 
    /// Called from printoutnode user should never call

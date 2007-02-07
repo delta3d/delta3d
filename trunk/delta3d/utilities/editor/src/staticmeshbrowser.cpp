@@ -448,11 +448,10 @@ namespace dtEditQt
          osg::Node *node = obj->LoadFile(fileName);
          
          dtCore::RefPtr<dtUtil::NodePrintOut> nodepo = new dtUtil::NodePrintOut;
-         std::string file = "temp.txt";
+         std::string file = "";
          nodepo->PrintOutNode(file, node, false, false);
          
          text->addScrollBarWidget(new QScrollBar(this), Qt::AlignRight);
-         text->addScrollBarWidget(new QScrollBar(this), Qt::AlignBottom);
          text->setText(tr(nodepo->GetFileOutput().c_str()));
 
          obj = NULL;
@@ -463,10 +462,8 @@ namespace dtEditQt
 
          connect(close, SIGNAL(clicked()), &dlg, SLOT(close()));
          dlg.exec();
-		  // open up our dialog
          dtUtil::FileUtils::GetInstance().FileDelete(file);
-			
-		}
+	   }
 	}
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -508,8 +505,6 @@ namespace dtEditQt
 
          connect(close, SIGNAL(clicked()), &dlg, SLOT(close()));
          dlg.exec();
-         // open up our dialog
-
       }
    }
 }
