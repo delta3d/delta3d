@@ -88,10 +88,15 @@ namespace dtEditQt
         */
         void createActor();
 
-		/**
-		* Slot - Handles the event when the user views an osg or ive scene graph
-		*/
+		 /**
+	 	  * Slot - Handles the event when the user views an osg or ive scene graph
+		  */
         void viewSceneGraph();
+
+       /**
+        * Slot - Handles event to preview osg contents
+        */
+        void viewOSGContents();
 
     protected:
         /**
@@ -159,7 +164,8 @@ namespace dtEditQt
 
         // Actions
         QAction *setCreateAction;
-		QAction *setSGPreviewAction;
+		  QAction *setSGPreviewAction;
+        QAction *setOSGDump;
 
         // Resource Icon - this is our leaf node icon
         QIcon *resourceIcon;

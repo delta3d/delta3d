@@ -226,13 +226,17 @@ namespace dtEditQt
 		//setSGPreviewAction->setCheckable(false);
 		connect(setSGPreviewAction, SIGNAL(triggered()),this,SLOT(viewSceneGraph()));
 		//setSGPreviewAction->setEnabled(false);
+
+      setOSGDump = new QAction(tr("Preview OSG File"), getCurrentParent());
+      connect(setOSGDump, SIGNAL(triggered()), this, SLOT(viewOSGContents()));
     }
     ///////////////////////////////////////////////////////////////////////////////
     void StaticMeshBrowser::createContextMenu()
     {
         ResourceAbstractBrowser::createContextMenu();
         contextMenu->addAction(setCreateAction);
-		contextMenu->addAction(setSGPreviewAction);
+		  contextMenu->addAction(setSGPreviewAction);
+        contextMenu->addAction(setOSGDump);
     }
     ///////////////////////////////////////////////////////////////////////////////
     // Slots
@@ -460,7 +464,52 @@ namespace dtEditQt
          connect(close, SIGNAL(clicked()), &dlg, SLOT(close()));
          dlg.exec();
 		  // open up our dialog
+         dtUtil::FileUtils::GetInstance().FileDelete(file);
 			
 		}
 	}
+
+   /////////////////////////////////////////////////////////////////////////////////
+   void StaticMeshBrowser::viewOSGContents()
+   {
+      QString resourceName;
+      // Make sure we have a valid resource
+      if(selection->isResource())
+      {
+         QDialog dlg(this);
+         dlg.setModal(true);
+         dlg.setWindowTitle(tr("OSG Hierarchy"));
+         dlg.setFixedSize(400, 400);
+
+         QVBoxLayout *vLayout = new QVBoxLayout(&dlg);
+         QTextEdit *text = new QTextEdit(&dlg);
+         QPushButton *close = new QPushButton(tr("Close"), &dlg);
+
+         text->addScrollBarWidget(new QScrollBar(this), Qt::AlignRight);
+
+         dtDAL::ResourceDescriptor &rd = selection->getResourceDescriptor();
+         const std::string fileName = dtDAL::Project::GetInstance().GetResourcePath(rd);
+
+         dtCore::RefPtr<dtCore::Object> obj = new dtCore::Object;
+         osg::Node *node = obj->LoadFile(fileName);
+
+         std::ostringstream oss;
+         dtCore::RefPtr<dtUtil::NodePrintOut> nodepo = new dtUtil::NodePrintOut;
+         nodepo->PrintNodeToOSGFile(*node, oss);
+
+         std::string osgOutput = oss.str();
+         text->setText(tr(oss.str().c_str()));
+
+         obj = NULL;
+         nodepo = NULL;
+
+         vLayout->addWidget(text);
+         vLayout->addWidget(close);
+
+         connect(close, SIGNAL(clicked()), &dlg, SLOT(close()));
+         dlg.exec();
+         // open up our dialog
+
+      }
+   }
 }

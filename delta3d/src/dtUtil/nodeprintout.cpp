@@ -191,6 +191,7 @@ namespace dtUtil
 
    void NodePrintOut::PrintNodeToOSGFile(const osg::Node &node, std::ostringstream &oss)
    {
+      oss.str("");
       const std::string &tempFile = "temp.osg";
       osgDB::writeNodeFile(node, tempFile);
 
@@ -201,10 +202,15 @@ namespace dtUtil
       std::string toWrite;
       while(!in.eof())
       {
-         in >> toWrite;
+         char buffer[1024] = { 0 };
+         in.getline(buffer, 1023);
+         toWrite += buffer;
+         toWrite += '\n';
       }
 
       oss << toWrite;
+
+      in.close();
 
       dtUtil::FileUtils::GetInstance().FileDelete(tempFile);
    }
