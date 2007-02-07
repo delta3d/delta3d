@@ -47,6 +47,12 @@ namespace dtUtil
       if(nodeToPrint == NULL)
          return;
 
+      // Clear any previous data
+      for(int i = 0; i < 3; i++)
+      {
+         mOutputStream[i].str("");
+      }
+
       mFile = fopen(printOutFileName.c_str(), "w");
       mPrintingVerts = PrintVerts;
       Analyze(nodeToPrint, "");
