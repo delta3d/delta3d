@@ -49,6 +49,12 @@ namespace dtEditQt
         virtual ~EditorAboutBox() { }
 
     private:
+       /**
+       * Creates a tab displaying shortcuts that can be used in the editor
+       * @return Text edit object.
+       */
+       QTextEdit *createEditorShortcutsTab();
+
         /**
          * Creates a tab displaying copyright information about the level editor.
          * @return Text edit object.
