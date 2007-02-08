@@ -21,8 +21,11 @@
 
 #include <prefix/dtutilprefix-src.h>
 #include <dtUtil/nodeprintout.h>
+#include <dtUtil/fileutils.h>
+#include <dtUtil/log.h>
 
 #include <sstream>
+#include <fstream>
 #include <osg/Geode>
 #include <osg/Geometry>
 #include <osg/Group>
