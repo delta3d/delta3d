@@ -568,19 +568,7 @@ AudioManager::NewSound( void )
 void
 AudioManager::FreeSound( Sound*& sound )
 {
-   if(sound == NULL)
-   {
-      LOG_ERROR("Cannot free a NULL sound");
-      return;
-   }
-
    SOB_PTR  snd   = static_cast<SoundObj*>(sound);
-
-   if(snd == NULL)
-   {
-      LOG_ERROR("Cannot free a NULL sound");
-      return;
-   }
 
    // remove user's copy of pointer
    sound = NULL;
@@ -1467,6 +1455,7 @@ AudioManager::PlaySound( SoundObj* snd )
    ALuint   buf(0);
    ALuint   src(0);
    ALenum   err(alGetError());
+   bool source_is_new = false;
 
    assert( snd );
 
@@ -1492,6 +1481,7 @@ AudioManager::PlaySound( SoundObj* snd )
       }
 
       src   = snd->Source();
+	  source_is_new = true; 
    }
    else
    {
@@ -1609,7 +1599,7 @@ AudioManager::PlaySound( SoundObj* snd )
    }
 
    // set reference distance
-   if( snd->GetState( Sound::MIN_DIST ) )
+   if( snd->GetState( Sound::MIN_DIST ) || source_is_new)
    {
       snd->ResetState( Sound::MIN_DIST );
       alSourcef( src, AL_REFERENCE_DISTANCE, static_cast<ALfloat>(snd->GetMinDistance()) );
@@ -1621,7 +1611,7 @@ AudioManager::PlaySound( SoundObj* snd )
    }
 
    // set maximum distance
-   if( snd->GetState( Sound::MAX_DIST ) )
+   if( snd->GetState( Sound::MAX_DIST ) || source_is_new)
    {
       snd->ResetState( Sound::MAX_DIST );
       alSourcef( src, AL_MAX_DISTANCE, static_cast<ALfloat>(snd->GetMaxDistance()) );
@@ -1633,7 +1623,7 @@ AudioManager::PlaySound( SoundObj* snd )
    }
 
    // set rolloff factor
-   if( snd->GetState( Sound::ROL_FACT ) )
+   if( snd->GetState( Sound::ROL_FACT ) || source_is_new)
    {
       snd->ResetState( Sound::ROL_FACT );
       alSourcef( src, AL_ROLLOFF_FACTOR, static_cast<ALfloat>(snd->GetRolloffFactor()) );
@@ -1645,7 +1635,7 @@ AudioManager::PlaySound( SoundObj* snd )
    }
 
    // set minimum gain
-   if( snd->GetState( Sound::MIN_GAIN ) )
+   if( snd->GetState( Sound::MIN_GAIN ) || source_is_new)
    {
       snd->ResetState( Sound::MIN_GAIN );
       alSourcef( src, AL_MIN_GAIN, static_cast<ALfloat>(snd->GetMinGain()) );
@@ -1657,7 +1647,7 @@ AudioManager::PlaySound( SoundObj* snd )
    }
 
    // set maximum gain
-   if( snd->GetState( Sound::MAX_GAIN ) )
+   if( snd->GetState( Sound::MAX_GAIN ) || source_is_new)
    {
       snd->ResetState( Sound::MAX_GAIN );
       alSourcef( src, AL_MAX_GAIN, static_cast<ALfloat>(snd->GetMaxGain()) );
