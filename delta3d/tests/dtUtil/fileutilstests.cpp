@@ -20,11 +20,11 @@
  */
 #include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
-
 #include <dtUtil/fileutils.h>
 #include <dtUtil/log.h>
 #include <dtUtil/exception.h>
 #include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/exceptionenum.h>
 #include <dtCore/globals.h>
 
 class FileUtilsTests : public CPPUNIT_NS::TestFixture
