@@ -458,9 +458,9 @@ void
 Sound::SetMinGain( float gain )
 {
    dtUtil::Clamp<float>( gain, 0.0f, 1.0f );
-   mMinDist = gain;
+   mMinGain = gain;
 
-   SendMessage( kCommand[MIN_DIST], this );
+   SendMessage( kCommand[MIN_GAIN], this );
 }
 
 
@@ -475,9 +475,9 @@ void
 Sound::SetMaxGain( float gain )
 {
    dtUtil::Clamp<float>( gain, 0.0f, 1.0f );
-   mMaxDist = gain;
+   mMaxGain = gain;
 
-   SendMessage( kCommand[MAX_DIST], this );
+   SendMessage( kCommand[MAX_GAIN], this );
 }
 
 Sound::FrameData* Sound::CreateFrameData() const
