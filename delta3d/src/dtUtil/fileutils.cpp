@@ -72,6 +72,9 @@ _CRTIMP extern int errno;
 #define S_ISDIR(x) (((x) & S_IFMT) == S_IFDIR)
 #endif
 
+#include <stack>
+#include <queue>
+
 
 namespace dtUtil
 {
@@ -804,5 +807,81 @@ namespace dtUtil
 
    //-----------------------------------------------------------------------
    FileUtils::~FileUtils() {}
-    
+   
+   std::string FileUtils::Abs2Rel(const std::string &pcAbsPath, const std::string &pcRelPath)
+   {
+      char acTmpCurrDir[MAX_PATH];
+      char acTmpAbsPath[MAX_PATH];
+      strcpy(acTmpCurrDir,CurrentDirectory().c_str());
+      strcpy(acTmpAbsPath,pcAbsPath.c_str());
+
+      std::stack<char*> tmpStackAbsPath;
+      std::stack<char*> tmpStackCurrPath;
+      std::stack<char*> tmpStackOutput;
+      std::queue<char*> tmpMatchQueue;
+
+#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
+      const char *pathSep = "\\";
+#else
+      const char *pathSep = "/";
+#endif
+      char *sTmp = strtok(acTmpAbsPath, pathSep);
+      while(sTmp)
+      {
+         tmpStackAbsPath.push(sTmp);
+         sTmp = strtok(0, pathSep);
+      }
+
+      sTmp = strtok(acTmpCurrDir, pathSep);
+      while(sTmp)
+      {
+         tmpStackCurrPath.push(sTmp);
+         sTmp = strtok(0, pathSep);
+      }
+
+      sTmp = const_cast<char*>(pcRelPath.c_str());
+      while(tmpStackCurrPath.size() > tmpStackAbsPath.size() )
+      {
+         *sTmp++ = '.';
+         *sTmp++ = '.';
+         *sTmp++ = FileUtils::PATH_SEPARATOR;
+         tmpStackCurrPath.pop();
+      }
+
+      while(tmpStackAbsPath.size() > tmpStackCurrPath.size() )
+      {
+         char *pcTmp = tmpStackAbsPath.top();
+         tmpStackOutput.push(pcTmp);
+         tmpStackAbsPath.pop();
+      }
+
+      while(tmpStackAbsPath.size() > 0)
+      {
+         if(strcmp(tmpStackAbsPath.top(),tmpStackCurrPath.top())== 0  )
+            tmpMatchQueue.push(tmpStackAbsPath.top());
+         else
+         {
+            while(tmpMatchQueue.size() > 0)
+               tmpStackOutput.push(tmpMatchQueue.front());
+            tmpStackOutput.push(tmpStackAbsPath.top());
+            *sTmp++ = '.';
+            *sTmp++ = '.';
+            *sTmp++ = FileUtils::PATH_SEPARATOR;
+         }
+         tmpStackAbsPath.pop();
+         tmpStackCurrPath.pop();	
+      }
+      while(tmpStackOutput.size() > 0)
+      {
+         char *pcTmp= tmpStackOutput.top();
+         while(*pcTmp != '\0')	
+            *sTmp++ = *pcTmp++;
+         tmpStackOutput.pop();
+         *sTmp++ = FileUtils::PATH_SEPARATOR;
+      }
+      *(--sTmp) = '\0';
+
+      return pcRelPath;
+   }
+
 }
