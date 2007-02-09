@@ -25,7 +25,6 @@
 #include <osg/Matrix>
 #include <osg/MatrixTransform>
 
-
 namespace dtAI
 {
    Waypoint::Waypoint()
@@ -41,7 +40,10 @@ namespace dtAI
       Set(pActor);
    }
 
-   Waypoint::Waypoint(osg::Vec3 pPos)
+   Waypoint::Waypoint(const osg::Vec3 pPos)
+   : mRenderFlag(Waypoint::RENDER_DEFUALT)
+   , mID(0)
+   , mGradient(1.0f)
    {
       mPosition = pPos;
    }

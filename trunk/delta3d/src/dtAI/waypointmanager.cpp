@@ -37,7 +37,6 @@
 #include <fstream>
 #include <algorithm>
 
-
 namespace dtAI
 {
    
@@ -102,6 +101,7 @@ namespace dtAI
    {
       unsigned pIndex = mWaypoints.size();
       Waypoint* pWay = new Waypoint(pWaypoint);
+	  pWay->SetID( pIndex );
       mWaypoints.insert(std::pair<unsigned, Waypoint*>(pIndex, pWay));   
       return pIndex;
    }
@@ -118,10 +118,20 @@ namespace dtAI
        mWaypoints.erase(pIndex);
    }
 
+   Waypoint* WaypointManager::GetWaypoint(unsigned pIndex)
+   {
+	   return mWaypoints[pIndex];
+   }
+
    void WaypointManager::MoveWaypoint(unsigned pIndex, const osg::Vec3& pPos)
    {
       //we are indexing into map with a key generated on AddWaypoint
       mWaypoints[pIndex]->SetPosition(pPos);
+   }
+
+   void WaypointManager::AddPathSegment(unsigned pIndexFrom, unsigned pIndexTo)
+   {
+	   mNavMesh.AddPathSegment( mWaypoints[pIndexFrom], mWaypoints[pIndexTo] );
    }
 
    bool WaypointManager::WriteFile(const std::string& pFileToWrite)
