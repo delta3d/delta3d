@@ -435,7 +435,8 @@ namespace dtEditQt
          QDialog dlg(this);
          dlg.setModal(true);
          dlg.setWindowTitle(tr("Node Hierarchy"));
-         dlg.setFixedSize(400, 400);
+         dlg.setMinimumSize(400, 400);
+         dlg.setSizeGripEnabled(true);
 
          QVBoxLayout *vLayout = new QVBoxLayout(&dlg);
          QTextEdit *text = new QTextEdit(&dlg);
@@ -476,7 +477,8 @@ namespace dtEditQt
          QDialog dlg(this);
          dlg.setModal(true);
          dlg.setWindowTitle(tr("OSG Hierarchy"));
-         dlg.setFixedSize(400, 400);
+         dlg.setMinimumSize(400, 400);
+         dlg.setSizeGripEnabled(true);
 
          QVBoxLayout *vLayout = new QVBoxLayout(&dlg);
          QTextEdit *text = new QTextEdit(&dlg);
