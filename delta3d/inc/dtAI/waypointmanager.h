@@ -91,6 +91,12 @@ namespace dtAI
          */
          std::ostream& GetWaypoints(std::ostream& pStream);
 
+		 /**
+         * Returns a single waypoint by index
+         */
+         Waypoint* GetWaypoint(unsigned pIndex);
+
+
          /**
          * Given a scene we create a NavMesh
          * the scene is used for doing Isector tests
@@ -138,7 +144,11 @@ namespace dtAI
          * Use this function to remove waypoints you have created
          */
          void RemoveWaypoint(unsigned pIndex);
-
+		 
+		 /**
+         * Adds a path segment to the navigation mesh
+         */
+         void AddPathSegment(unsigned pIndexFrom, unsigned pIndexTo);
 
          /**
          * These are utility functions used by STAGE and dtDAL::Project         

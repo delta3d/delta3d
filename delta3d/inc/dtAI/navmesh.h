@@ -19,8 +19,8 @@
  * Bradley Anderegg 06/27/2006
  */
 
-#ifndef __DELTA_WaypointPair_H__
-#define __DELTA_WaypointPair_H__
+#ifndef __DELTA_NAVMESH_H__
+#define __DELTA_NAVMESH_H__
 
 #include <dtAI/export.h>
 #include <map>
@@ -91,4 +91,4 @@ namespace dtAI
    };
 }//namespace dtAI
 
-#endif // __DELTA_WaypointPair_H__
+#endif // __DELTA_NAVMESH_H__

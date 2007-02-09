@@ -17,6 +17,8 @@ void init_WaypointManagerBindings()
    //class_<WaypointManager::WaypointMap>("WaypointMap")
    //   .def(map_indexing_suite<WaypointManager::WaypointMap>());
 
+   int (WaypointManager::*AddWaypoint1)(const osg::Vec3&) = &WaypointManager::AddWaypoint;
+
    class_<std::vector<Waypoint*> >("WaypointList")
       .def(vector_indexing_suite<std::vector<Waypoint*> >());
 
@@ -32,6 +34,11 @@ void init_WaypointManagerBindings()
       .def("ReadFile", &WaypointManager::ReadFile)
       .def("AvgDistBetweenWaypoints", &WaypointManager::AvgDistBetweenWaypoints)
       .def("Clear", &WaypointManager::Clear)
+      .def("AddWaypoint", AddWaypoint1)
+      .def("AddPathSegment", &WaypointManager::AddPathSegment)
+      .def("GetWaypoint", &WaypointManager::GetWaypoint, return_value_policy<reference_existing_object>())
+      .def("SetWaypointColor", &WaypointManager::SetWaypointColor)
+      .def("SetWaypointSize", &WaypointManager::SetWaypointSize)
       ;
       
 

@@ -14,6 +14,7 @@ void init_WaypointBindings()
       .def("SetPosition", &Waypoint::SetPosition)
       .def("GetRenderFlag", &Waypoint::GetRenderFlag)
       .def("SetRenderFlag", &Waypoint::SetRenderFlag)
+      .def("SetGradient", &Waypoint::SetGradient)
       ;
    
 

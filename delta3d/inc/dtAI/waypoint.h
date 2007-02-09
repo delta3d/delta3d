@@ -45,7 +45,7 @@ namespace dtAI
    
          Waypoint();
          Waypoint(const WaypointActor* pActor);
-         Waypoint(osg::Vec3 pPos);
+         Waypoint(const osg::Vec3 pPos);
          ~Waypoint();
 
          void Set(const WaypointActor* pActor);
