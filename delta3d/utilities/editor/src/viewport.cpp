@@ -80,7 +80,7 @@ namespace dtEditQt
     Viewport::Viewport(ViewportManager::ViewportType &type, const std::string &name,
         QWidget *parent, QGLWidget *shareWith) :
          QGLWidget(parent,shareWith), inChangeTransaction(false), name(name), viewPortType(type), 
-         mRedrawContinuously(true),
+         mRedrawContinuously(false),
          useAutoInteractionMode(false),
          autoSceneUpdate(true),
          initialized(false),
@@ -128,12 +128,15 @@ namespace dtEditQt
     void Viewport::setScene(dtCore::Scene *scene)
     {
         //First, remove the old scene, then add the new one.
-        if (this->sceneView.valid()) {
-            if (this->scene != NULL) {
+        if (this->sceneView.valid()) 
+        {
+            if (this->scene != NULL) 
+            {
                 this->rootNodeGroup->replaceChild(this->scene->GetSceneNode(),
                                                   scene->GetSceneNode());
             }
-            else {
+            else 
+            {
                 this->rootNodeGroup->addChild(scene->GetSceneNode());
             }
 
@@ -145,20 +148,24 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     void Viewport::setOverlay(ViewportOverlay *overlay)
     {
-        if (this->sceneView.valid()) {
+        if (this->sceneView.valid()) 
+        {
             //If the new overlay is NULL, clear the current overlay.
-            if (overlay == NULL) {
+            if (overlay == NULL) 
+            {
                 this->rootNodeGroup->removeChild(this->overlay->getOverlayGroup());
                 this->overlay = NULL;
                 return;
             }
 
             //Else update the current overlay in both the scene and in the viewport.
-            if (this->overlay != NULL) {
+            if (this->overlay != NULL) 
+            {
                 this->rootNodeGroup->replaceChild(this->overlay->getOverlayGroup(),
                     overlay->getOverlayGroup());
             }
-            else {
+            else 
+            {
                 this->rootNodeGroup->addChild(overlay->getOverlayGroup());
             }
 
@@ -271,32 +278,37 @@ namespace dtEditQt
         osg::PolygonMode *pm = dynamic_cast<osg::PolygonMode *>(
                 this->globalStateSet->getAttribute(osg::StateAttribute::POLYGONMODE));
 
-        if (*this->renderStyle == RenderStyle::WIREFRAME) {
+        if (*this->renderStyle == RenderStyle::WIREFRAME) 
+        {
             for (i=0; i<numTextureUnits; i++)
                 this->globalStateSet->setTextureMode(i,GL_TEXTURE_2D,turnOff);
             this->globalStateSet->setMode(GL_LIGHTING,turnOff);
             pm->setMode(osg::PolygonMode::FRONT_AND_BACK,osg::PolygonMode::LINE);
         }
-        else if (*this->renderStyle == RenderStyle::TEXTURED) {
+        else if (*this->renderStyle == RenderStyle::TEXTURED) 
+        {
             for (i=0; i<numTextureUnits; i++)
                 this->globalStateSet->removeTextureMode(i,GL_TEXTURE_2D);
             this->globalStateSet->setMode(GL_LIGHTING,turnOff);
             pm->setMode(osg::PolygonMode::FRONT_AND_BACK,osg::PolygonMode::FILL);
         }
-        else if (*this->renderStyle == RenderStyle::LIT) {
+        else if (*this->renderStyle == RenderStyle::LIT) 
+        {
             for (i=0; i<numTextureUnits; i++)
                 this->globalStateSet->setTextureMode(i,GL_TEXTURE_2D,turnOff);
             this->globalStateSet->setMode(GL_LIGHTING,turnOn);
             pm->setMode(osg::PolygonMode::FRONT_AND_BACK,osg::PolygonMode::FILL);
         }
-        else if (*this->renderStyle == RenderStyle::LIT_AND_TEXTURED) {
+        else if (*this->renderStyle == RenderStyle::LIT_AND_TEXTURED) 
+        {
             for (i=0; i<numTextureUnits; i++)
                 this->globalStateSet->removeTextureMode(i,GL_TEXTURE_2D);
             this->globalStateSet->setMode(GL_LIGHTING,turnOn);
             pm->setMode(osg::PolygonMode::FRONT_AND_BACK,osg::PolygonMode::FILL);
         }
 
-        if (refreshView) {
+        if (refreshView) 
+        {
             if (!isInitialized())
                 throw dtUtil::Exception(dtDAL::ExceptionEnum::BaseException,"Cannot refresh the viewport. "
                        "It has not been initialized.", __FILE__, __LINE__);
@@ -356,14 +368,16 @@ namespace dtEditQt
         dtDAL::ActorProxy *newSelection = currMap->GetProxyById(drawable->GetUniqueId());
 
         //If its not an actor then it may be a billboard placeholder for an actor.
-        if (newSelection == NULL) {
+        if (newSelection == NULL) 
+        {
             const std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> > &proxyList =
                 currMap->GetAllProxies();
             std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> >::const_iterator proxyItor;
 
             //Loop through the proxies searching for the one with billboard geometry
             //matching what was selected.
-            for (proxyItor=proxyList.begin(); proxyItor!=proxyList.end(); ++proxyItor) {
+            for (proxyItor=proxyList.begin(); proxyItor!=proxyList.end(); ++proxyItor)
+            {
                 dtDAL::ActorProxy *proxy =
                         const_cast<dtDAL::ActorProxy *>(proxyItor->second.get());
 
@@ -371,14 +385,16 @@ namespace dtEditQt
                     continue;
 
                 const dtDAL::ActorProxyIcon *billBoard = proxy->GetBillBoardIcon();
-                if (billBoard && billBoard->OwnsDrawable(drawable)) {
+                if (billBoard && billBoard->OwnsDrawable(drawable)) 
+                {
                     newSelection = proxy;
                     break;
                 }
            }
         }
 
-        if (newSelection) {
+        if (newSelection) 
+        {
             if (overlay->isActorSelected(newSelection))
                 overlay->removeActorFromCurrentSelection(newSelection);
             else
@@ -388,9 +404,11 @@ namespace dtEditQt
         //Inform the world what objects were selected and refresh all the viewports
         //affected by the change.  If we are in multi-selection mode (i.e. the control
         //key is pressed) add the current selection to the newly selected proxy.
-        if (overlay->getMultiSelectMode()) {
+        if (overlay->getMultiSelectMode()) 
+        {
             ViewportOverlay::ActorProxyList::iterator itor;
-            for (itor=selection.begin(); itor!=selection.end(); ++itor) {
+            for (itor=selection.begin(); itor!=selection.end(); ++itor) 
+            {
                 toSelect.push_back(const_cast<dtDAL::ActorProxy *>(itor->get()));
             }
         }
@@ -403,7 +421,8 @@ namespace dtEditQt
     {
         dtDAL::TransformableActorProxy *tProxy = dynamic_cast<dtDAL::TransformableActorProxy *>(proxy.get());
 
-        if (tProxy != NULL && getCamera() != NULL) {
+        if (tProxy != NULL && getCamera() != NULL) 
+        {
             osg::Vec3 viewDir = getCamera()->getViewDir();
 
             osg::Vec3 translation = tProxy->GetTranslation();
@@ -413,7 +432,8 @@ namespace dtEditQt
                 offset = 10.0f;
 
             getCamera()->setPosition(translation);
-            if (this->viewPortType == ViewportManager::ViewportType::PERSPECTIVE) {
+            if (this->viewPortType == ViewportManager::ViewportType::PERSPECTIVE) 
+            {
                 getCamera()->move(viewDir*-offset*1.5f);
             }
 
@@ -431,7 +451,8 @@ namespace dtEditQt
 
         //Cache the old mouse location so the cursor doesn't appear to jump when
         //the camera mode operation is complete.
-        if (this->cacheMouseLocation) {
+        if (this->cacheMouseLocation) 
+        {
             this->oldMouseLocation = QCursor::pos();
             this->cacheMouseLocation = false;
         }
@@ -576,7 +597,8 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     void Viewport::syncWithModeActions()
     {
-        if (this->useAutoInteractionMode) {
+        if (this->useAutoInteractionMode) 
+        {
             QAction *action = EditorActions::GetInstance().modeToolsGroup->checkedAction();
             if (action == EditorActions::GetInstance().actionSelectionCamera)
                 setCameraMode();
@@ -600,11 +622,13 @@ namespace dtEditQt
         this->selectedActorOrigValues.erase(propName);
         std::vector<std::string> savedValues;
 
-        for (itor=selection.begin(); itor!=selection.end(); ++itor) {
+        for (itor=selection.begin(); itor!=selection.end(); ++itor)
+        {
             dtDAL::ActorProxy *proxy = const_cast<dtDAL::ActorProxy *>(itor->get());
             dtDAL::ActorProperty *prop = proxy->GetProperty(propName);
 
-            if (prop != NULL) {
+            if (prop != NULL) 
+            {
                 std::string oldValue = prop->GetStringValue();
                 savedValues.push_back(oldValue);
             }
@@ -627,11 +651,13 @@ namespace dtEditQt
         if (saveEntry == this->selectedActorOrigValues.end())
             return;
 
-        for (itor=selection.begin(); itor!=selection.end(); ++itor) {
+        for (itor=selection.begin(); itor!=selection.end(); ++itor) 
+        {
             dtDAL::ActorProxy *proxy = const_cast<dtDAL::ActorProxy *>(itor->get());
             dtDAL::ActorProperty *prop = proxy->GetProperty(propName);
 
-            if (prop != NULL) {
+            if (prop != NULL) 
+            {
                 // emit the old value before the change so undo/redo can recover.
                 std::string oldValue = saveEntry->second[oldValueIndex];
                 std::string newValue = prop->GetStringValue();
@@ -676,18 +702,22 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     void Viewport::setAutoInteractionMode(bool on)
     {
-        if (on) {
+        if (on)
+        {
             if (this->useAutoInteractionMode)
                 return; //Already on, so do nothing.
-            else {
+            else 
+            {
                 this->useAutoInteractionMode = true;
                 connectInteractionModeSlots();
             }
         }
-        else {
+        else
+        {
             if (!this->useAutoInteractionMode)
                 return; //Already off, so do nothing.
-            else {
+            else 
+            {
                 this->useAutoInteractionMode = false;
                 disconnectInteractionModeSlots();
             }
