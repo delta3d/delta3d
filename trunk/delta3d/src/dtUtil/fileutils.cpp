@@ -814,10 +814,11 @@ namespace dtUtil
    //-----------------------------------------------------------------------
    FileUtils::~FileUtils() {}
    
-   std::string FileUtils::AbsoluteToRelative(const std::string &pcAbsPath, const std::string &pcRelPath)
+   void FileUtils::AbsoluteToRelative(const std::string &pcAbsPath, std::string &pcRelPath)
    {
       char acTmpCurrDir[MAX_PATH];
       char acTmpAbsPath[MAX_PATH];
+      int count = 0;
       std::string curDir = CurrentDirectory();
 
       for(size_t i = 0; i < curDir.size(); i++)
@@ -878,9 +879,9 @@ namespace dtUtil
                tmpMatchQueue.pop();
             }
             tmpStackOutput.push(tmpStackAbsPath.top());
-            *sTmp++ = '.';
-            *sTmp++ = '.';
-            *sTmp++ = '/';
+            sTmp[count++] = '.';
+            sTmp[count++] = '.';
+            sTmp[count++] = '/';
          }
          tmpStackAbsPath.pop();
          tmpStackCurrPath.pop();	
@@ -889,13 +890,13 @@ namespace dtUtil
       {
          char *pcTmp= tmpStackOutput.top();
          while(*pcTmp != '\0')	
-            *sTmp++ = *pcTmp++;
+            sTmp[count++] = *pcTmp++;
          tmpStackOutput.pop();
-         *sTmp++ = '/';
+         sTmp[count++] = '/';
       }
-      *(--sTmp) = '\0';
+      sTmp[--count] = '\0';
 
-      return pcRelPath;
+      pcRelPath = sTmp;
    }
 
 }
