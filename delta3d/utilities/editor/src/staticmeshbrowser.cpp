@@ -450,7 +450,7 @@ namespace dtEditQt
          
          dtCore::RefPtr<dtUtil::NodePrintOut> nodepo = new dtUtil::NodePrintOut;
          std::string file = "";
-         nodepo->PrintOutNode(file, node, false, false);
+         nodepo->PrintOutNode(file, *node, false, false);
          
          text->addScrollBarWidget(new QScrollBar(this), Qt::AlignRight);
          text->setText(tr(nodepo->GetFileOutput().c_str()));
