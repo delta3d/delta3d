@@ -818,19 +818,24 @@ namespace dtUtil
    {
       char acTmpCurrDir[MAX_PATH];
       char acTmpAbsPath[MAX_PATH];
-      strcpy(acTmpCurrDir,CurrentDirectory().c_str());
-      strcpy(acTmpAbsPath,pcAbsPath.c_str());
+      std::string curDir = CurrentDirectory();
+
+      for(size_t i = 0; i < curDir.size(); i++)
+      {
+         if(curDir[i] == '\\')
+            curDir[i] = '/';
+      }
+
+      strcpy(acTmpCurrDir, curDir.c_str());
+      strcpy(acTmpAbsPath, pcAbsPath.c_str());
 
       std::stack<char*> tmpStackAbsPath;
       std::stack<char*> tmpStackCurrPath;
       std::stack<char*> tmpStackOutput;
       std::queue<char*> tmpMatchQueue;
 
-#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
-      const char *pathSep = "\\";
-#else
       const char *pathSep = "/";
-#endif
+
       char *sTmp = strtok(acTmpAbsPath, pathSep);
       while(sTmp)
       {
@@ -850,7 +855,7 @@ namespace dtUtil
       {
          *sTmp++ = '.';
          *sTmp++ = '.';
-         *sTmp++ = FileUtils::PATH_SEPARATOR;
+         *sTmp++ = '/';
          tmpStackCurrPath.pop();
       }
 
@@ -868,11 +873,14 @@ namespace dtUtil
          else
          {
             while(tmpMatchQueue.size() > 0)
+            {
                tmpStackOutput.push(tmpMatchQueue.front());
+               tmpMatchQueue.pop();
+            }
             tmpStackOutput.push(tmpStackAbsPath.top());
             *sTmp++ = '.';
             *sTmp++ = '.';
-            *sTmp++ = FileUtils::PATH_SEPARATOR;
+            *sTmp++ = '/';
          }
          tmpStackAbsPath.pop();
          tmpStackCurrPath.pop();	
@@ -883,7 +891,7 @@ namespace dtUtil
          while(*pcTmp != '\0')	
             *sTmp++ = *pcTmp++;
          tmpStackOutput.pop();
-         *sTmp++ = FileUtils::PATH_SEPARATOR;
+         *sTmp++ = '/';
       }
       *(--sTmp) = '\0';
 
