@@ -72,6 +72,12 @@ _CRTIMP extern int errno;
 #define S_ISDIR(x) (((x) & S_IFMT) == S_IFDIR)
 #endif
 
+#ifdef MAX_PATH
+   #undef MAX_PATH
+#endif
+
+#define MAX_PATH 1024
+
 #include <stack>
 #include <queue>
 
