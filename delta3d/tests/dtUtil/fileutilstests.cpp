@@ -33,7 +33,7 @@ class FileUtilsTests : public CPPUNIT_NS::TestFixture
       
       CPPUNIT_TEST(testFileIO);
       CPPUNIT_TEST(testRelativePath);
-      //CPPUNIT_TEST(testAbsoluteToRelativePath);
+      CPPUNIT_TEST(testAbsoluteToRelativePath);
 
    CPPUNIT_TEST_SUITE_END();
 
@@ -66,17 +66,8 @@ void FileUtilsTests::setUp()
       dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
       std::string logName("projectTest");
 
-      //        logger = &dtUtil::Log::GetInstance("project.cpp");
-      //        logger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
-      //        logger = &dtUtil::Log::GetInstance("fileutils.cpp");
-      //        logger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
-      //        logger = &dtUtil::Log::GetInstance("mapxml.cpp");
-      //        logger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
-
       logger = &dtUtil::Log::GetInstance(logName);
 
-      //        logger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
-      //        logger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Log initialized.\n");
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
       fileUtils.ChangeDirectory(TESTS_DIR);
       fileUtils.PushDirectory("dtDAL");
@@ -445,9 +436,15 @@ void FileUtilsTests::testAbsoluteToRelativePath()
 {
    dtUtil::FileUtils &instance = dtUtil::FileUtils::GetInstance();
 
-   std::string mapXSD     = "map.xsd";
-   std::string mapXSDPath = dtCore::FindFileInPathList(mapXSD);
+   std::string path;
+   std::string mapXSDPath = dtCore::FindFileInPathList("map.xsd");
+
+   for(size_t i = 0; i < mapXSDPath.size(); i++)
+   {
+      if(mapXSDPath[i] == '\\')
+         mapXSDPath[i] = '/';
+   }
   
-   mapXSD = instance.AbsoluteToRelative(mapXSDPath, mapXSD);
-   std::cout << mapXSD;
+   instance.AbsoluteToRelative(mapXSDPath, path);
+   CPPUNIT_ASSERT(path == "../../data/map.xsd");
 }
