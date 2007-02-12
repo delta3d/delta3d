@@ -808,7 +808,7 @@ namespace dtUtil
    //-----------------------------------------------------------------------
    FileUtils::~FileUtils() {}
    
-   std::string FileUtils::Abs2Rel(const std::string &pcAbsPath, const std::string &pcRelPath)
+   std::string FileUtils::AbsoluteToRelative(const std::string &pcAbsPath, const std::string &pcRelPath)
    {
       char acTmpCurrDir[MAX_PATH];
       char acTmpAbsPath[MAX_PATH];

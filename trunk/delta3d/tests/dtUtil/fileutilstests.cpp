@@ -30,8 +30,11 @@
 class FileUtilsTests : public CPPUNIT_NS::TestFixture
 {
    CPPUNIT_TEST_SUITE(FileUtilsTests);
+      
       CPPUNIT_TEST(testFileIO);
       CPPUNIT_TEST(testRelativePath);
+      CPPUNIT_TEST(testAbsoluteToRelativePath);
+
    CPPUNIT_TEST_SUITE_END();
 
    public:
@@ -41,6 +44,7 @@ class FileUtilsTests : public CPPUNIT_NS::TestFixture
 
       void testFileIO();
       void testRelativePath();
+      void testAbsoluteToRelativePath();
    
    private:
 
@@ -422,7 +426,10 @@ void FileUtilsTests::testRelativePath()
    {
       if(file[i] == '\\')
          file[i] = '/';
+   }
 
+   for(size_t i = 0; i < deltaRoot.size(); i++)
+   {
       if(deltaRoot[i] == '\\')
          deltaRoot[i] = '/';
    }
@@ -432,4 +439,15 @@ void FileUtilsTests::testRelativePath()
 
    CPPUNIT_ASSERT_MESSAGE("The relative path should be: data/map.xsd", 
                           relativePath == "data/map.xsd");
+}
+
+void FileUtilsTests::testAbsoluteToRelativePath()
+{
+   dtUtil::FileUtils &instance = dtUtil::FileUtils::GetInstance();
+
+   std::string mapXSD     = "map.xsd";
+   std::string mapXSDPath = dtCore::FindFileInPathList(mapXSD);
+  
+   mapXSD = instance.AbsoluteToRelative(mapXSDPath, mapXSD);
+   std::cout << mapXSD;
 }
