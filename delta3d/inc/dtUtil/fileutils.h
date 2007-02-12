@@ -251,7 +251,7 @@ namespace dtUtil
           */
          std::string RelativePath(const std::string &absolutePath, const std::string &file) const;
            
-         std::string FileUtils::Abs2Rel(const std::string &pcAbsPath, const std::string &pcRelPath);
+         std::string AbsoluteToRelative(const std::string &absPath, const std::string &relPath);
 
       private:
 
