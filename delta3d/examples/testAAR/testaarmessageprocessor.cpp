@@ -89,7 +89,7 @@ void TestAARMessageProcessor::ProcessMessage(const dtGame::Message &msg)
    }
    else if(type == TestAARMessageType::RESET)
    {
-      Reset();
+      GetGameManager()->ChangeMap("testAAR");
    }
    else if(type == TestAARMessageType::REQUEST_ALL_CONTROLLER_UPDATES)
    {
@@ -107,6 +107,10 @@ void TestAARMessageProcessor::ProcessMessage(const dtGame::Message &msg)
    {
       if(mPlayer != NULL && msg.GetAboutActorId() == mPlayer->GetId())
          UpdatePlayerActor(static_cast<const dtGame::ActorUpdateMessage&>(msg));
+   }
+   else if (type == dtGame::MessageType::INFO_MAP_CHANGED)
+   {
+      Reset();
    }
    
    dtGame::DefaultMessageProcessor::ProcessMessage(msg);
@@ -354,8 +358,6 @@ void TestAARMessageProcessor::PreFrame(const double deltaFrameTime)
 //////////////////////////////////////////////////////////////////////////
 void TestAARMessageProcessor::Reset()
 {
-   GetGameManager()->ChangeMap("testAAR");
-   GetGameManager()->GetScene().UseSceneLight(true);
    mLmsComponent->ClearTaskList();
 
    //dtCore::System::GetInstance().Step();
