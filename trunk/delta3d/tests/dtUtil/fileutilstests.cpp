@@ -33,7 +33,7 @@ class FileUtilsTests : public CPPUNIT_NS::TestFixture
       
       CPPUNIT_TEST(testFileIO);
       CPPUNIT_TEST(testRelativePath);
-      CPPUNIT_TEST(testAbsoluteToRelativePath);
+      //CPPUNIT_TEST(testAbsoluteToRelativePath);
 
    CPPUNIT_TEST_SUITE_END();
 
