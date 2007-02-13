@@ -814,7 +814,7 @@ namespace dtUtil
    //-----------------------------------------------------------------------
    FileUtils::~FileUtils() {}
    
-   void FileUtils::AbsoluteToRelative(const std::string &pcAbsPath, std::string &pcRelPath)
+   void FileUtils::AbsoluteToRelative(const std::string &pcAbsPath, char *pcRelPath)
    {
       char acTmpCurrDir[MAX_PATH];
       char acTmpAbsPath[MAX_PATH];
@@ -851,7 +851,7 @@ namespace dtUtil
          sTmp = strtok(0, pathSep);
       }
 
-      sTmp = const_cast<char*>(pcRelPath.c_str());
+      sTmp = pcRelPath;
       while(tmpStackCurrPath.size() > tmpStackAbsPath.size() )
       {
          *sTmp++ = '.';
