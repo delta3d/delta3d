@@ -48,6 +48,15 @@ class FileUtilsTests : public CPPUNIT_NS::TestFixture
    
    private:
 
+      void NormalizeDirectorySlashes(std::string &str)
+      {
+         for(size_t i = 0; i < str.size(); i++)
+         {
+            if(str[i] == '\\')
+               str[i] = '/';
+         }
+      }
+
       dtUtil::Log* logger;
 };
 
@@ -413,18 +422,10 @@ void FileUtilsTests::testRelativePath()
    CPPUNIT_ASSERT(!deltaRoot.empty());
 
    // Normalize directory separators
-   for(size_t i = 0; i < file.size(); i++)
-   {
-      if(file[i] == '\\')
-         file[i] = '/';
-   }
+   NormalizeDirectorySlashes(file);
 
-   for(size_t i = 0; i < deltaRoot.size(); i++)
-   {
-      if(deltaRoot[i] == '\\')
-         deltaRoot[i] = '/';
-   }
-
+   NormalizeDirectorySlashes(deltaRoot);
+  
    std::string relativePath = dtUtil::FileUtils::GetInstance().RelativePath(deltaRoot, file);
    CPPUNIT_ASSERT(!relativePath.empty());
 
@@ -443,11 +444,7 @@ void FileUtilsTests::testAbsoluteToRelativePath()
 
       std::string mapXSDPath = dtCore::FindFileInPathList("map.xsd");
 
-      for(size_t i = 0; i < mapXSDPath.size(); i++)
-      {
-         if(mapXSDPath[i] == '\\')
-            mapXSDPath[i] = '/';
-      }
+      NormalizeDirectorySlashes(mapXSDPath);
      
       instance.AbsoluteToRelative(mapXSDPath, path);
       CPPUNIT_ASSERT(path == "../../data/map.xsd");
