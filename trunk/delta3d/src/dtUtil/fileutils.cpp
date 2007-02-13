@@ -867,13 +867,13 @@ namespace dtUtil
          tmpStackAbsPath.pop();
       }
 
-      while(tmpStackAbsPath.size() > 0)
+      while(!tmpStackAbsPath.empty())
       {
          if(strcmp(tmpStackAbsPath.top(),tmpStackCurrPath.top())== 0  )
             tmpMatchQueue.push(tmpStackAbsPath.top());
          else
          {
-            while(tmpMatchQueue.size() > 0)
+            while(!tmpMatchQueue.empty())
             {
                tmpStackOutput.push(tmpMatchQueue.front());
                tmpMatchQueue.pop();
@@ -886,7 +886,7 @@ namespace dtUtil
          tmpStackAbsPath.pop();
          tmpStackCurrPath.pop();	
       }
-      while(tmpStackOutput.size() > 0)
+      while(!tmpStackOutput.empty())
       {
          char *pcTmp= tmpStackOutput.top();
          while(*pcTmp != '\0')	
@@ -896,7 +896,7 @@ namespace dtUtil
       }
       sTmp[--count] = '\0';
 
-      pcRelPath = sTmp;
+      sTmp = strstr(sTmp, "/");
    }
 
 }
