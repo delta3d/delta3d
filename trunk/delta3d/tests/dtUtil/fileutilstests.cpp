@@ -434,17 +434,26 @@ void FileUtilsTests::testRelativePath()
 
 void FileUtilsTests::testAbsoluteToRelativePath()
 {
-   dtUtil::FileUtils &instance = dtUtil::FileUtils::GetInstance();
-
-   std::string path;
-   std::string mapXSDPath = dtCore::FindFileInPathList("map.xsd");
-
-   for(size_t i = 0; i < mapXSDPath.size(); i++)
+   try
    {
-      if(mapXSDPath[i] == '\\')
-         mapXSDPath[i] = '/';
+      dtUtil::FileUtils &instance = dtUtil::FileUtils::GetInstance();
+
+      char path[MAX_PATH];
+      memset(path, 0, sizeof(char) * MAX_PATH);
+
+      std::string mapXSDPath = dtCore::FindFileInPathList("map.xsd");
+
+      for(size_t i = 0; i < mapXSDPath.size(); i++)
+      {
+         if(mapXSDPath[i] == '\\')
+            mapXSDPath[i] = '/';
+      }
+     
+      instance.AbsoluteToRelative(mapXSDPath, path);
+      CPPUNIT_ASSERT(path == "../../data/map.xsd");
    }
-  
-   instance.AbsoluteToRelative(mapXSDPath, path);
-   CPPUNIT_ASSERT(path == "../../data/map.xsd");
+   catch(const dtUtil::Exception &e)
+   {
+      CPPUNIT_FAIL(e.What());
+   }
 }
