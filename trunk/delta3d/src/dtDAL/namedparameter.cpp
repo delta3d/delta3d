@@ -22,6 +22,7 @@
 #include <string>
 #include <dtDAL/namedparameter.h>
 #include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/groupactorproperty.h>
 
 namespace dtDAL
 {
@@ -226,9 +227,25 @@ namespace dtDAL
          param->FromDataStream(stream);
       }      
    }
+   ///////////////////////////////////////////////////////////////////////////////
+   void NamedGroupParameter::SetFromProperty(const dtDAL::ActorProperty &property)
+   {
+      ValidatePropertyType(property);
+
+      const dtDAL::GroupActorProperty *gap = static_cast<const dtDAL::GroupActorProperty*>(&property);
+      CopyFrom(*gap->GetValue());
+   }
 
    ///////////////////////////////////////////////////////////////////////////////
+   void NamedGroupParameter::ApplyValueToProperty(dtDAL::ActorProperty &property) const
+   {
+      ValidatePropertyType(property);
 
+      dtDAL::GroupActorProperty *gap = static_cast<dtDAL::GroupActorProperty*>(&property);
+      gap->SetValue(*this);
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    const std::string NamedGroupParameter::ToString() const 
    {
       std::string toFill;

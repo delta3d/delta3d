@@ -57,13 +57,6 @@ namespace dtGame
           */
          GameApplication(int argc, char** argv);
       
-      protected:
-         
-         ///Destructor
-         virtual ~GameApplication();
-      
-      public:
-      
          /**
           * Configures the application, loads the game library,
           * and calls the entry point to configure the game.
@@ -79,6 +72,14 @@ namespace dtGame
          ///Sets the name of the library to load that has the game.  This should be a platform independent name (no lib, .so, .dll, etc.).  
          void SetGameLibraryName(const std::string& newName) { mLibName = newName; }
          
+         /// @return the game manager used by the application.
+         dtGame::GameManager* GetGameManager() { return mGameManager.get(); }
+         
+      protected:
+         
+         ///Destructor
+         virtual ~GameApplication();
+      
       private:
       
          std::string mLibName;
