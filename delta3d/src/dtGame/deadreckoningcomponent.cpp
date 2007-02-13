@@ -711,7 +711,7 @@ namespace dtGame
          ClampToGround(timeSinceTranslationUpdate, xform, gameActor.GetGameActorProxy(), helper);
       }
 
-	   helper.mCurrentDeadReckonedTranslation = xform.GetTranslation();
+      helper.mCurrentDeadReckonedTranslation = xform.GetTranslation();
       xform.GetRotation().get(helper.mCurrentDeadReckonedRotation);
       xform.GetRotation(helper.mCurrentAttitudeVector);
 

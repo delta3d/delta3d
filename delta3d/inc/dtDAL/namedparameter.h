@@ -230,6 +230,16 @@ namespace dtDAL
           */
          unsigned int GetParameterCount() {return mParameterList.size();}
 
+         /** 
+          * Sets the message parameter's value from the actor property's value
+          */
+         virtual void SetFromProperty(const dtDAL::ActorProperty &property);
+
+         /** 
+          * Sets the actor property's value from the message parameter's value
+          */
+         virtual void ApplyValueToProperty(dtDAL::ActorProperty &property) const;
+
          virtual bool operator==(const NamedParameter& toCompare) const;
 
       private:
