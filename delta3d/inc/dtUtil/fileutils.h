@@ -250,8 +250,13 @@ namespace dtUtil
           * @note This function assumes that directory separaters are equal for both paths
           */
          std::string RelativePath(const std::string &absolutePath, const std::string &file) const;
-           
-         void AbsoluteToRelative(const std::string &absPath, char *relPath);
+         
+         /**
+          *  Converts an absolute path to a relative path based on the current working directory.
+          *  @param absPath the absolute path to process
+          *  @param relPath output parameter that will contain the relative path.
+          */
+         void AbsoluteToRelative(const std::string &absPath, std::string& relPath);
 
       private:
 

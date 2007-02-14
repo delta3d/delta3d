@@ -439,15 +439,13 @@ void FileUtilsTests::testAbsoluteToRelativePath()
    {
       dtUtil::FileUtils &instance = dtUtil::FileUtils::GetInstance();
 
-      char path[MAX_PATH];
-      memset(path, 0, sizeof(char) * MAX_PATH);
-
+      std::string path;
       std::string mapXSDPath = dtCore::FindFileInPathList("map.xsd");
 
       NormalizeDirectorySlashes(mapXSDPath);
      
       instance.AbsoluteToRelative(mapXSDPath, path);
-      CPPUNIT_ASSERT(path == "../../data/map.xsd");
+      CPPUNIT_ASSERT_EQUAL(std::string("../../data/map.xsd"), path);
    }
    catch(const dtUtil::Exception &e)
    {
