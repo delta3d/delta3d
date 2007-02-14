@@ -244,9 +244,6 @@ set DELTA_DATA=$(DELTA_DATA)
 				RelativePath="..\..\..\tests\dtUtil\mathtests.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\tests\dtDAL\messageparametertests.cpp">
-			</File>
-			<File
 				RelativePath="..\..\..\tests\dtGame\messagetests.cpp">
 			</File>
 			<File
@@ -254,6 +251,9 @@ set DELTA_DATA=$(DELTA_DATA)
 			</File>
 			<File
 				RelativePath="..\..\..\tests\dtCore\mousetests.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\tests\dtDAL\namedparametertests.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\tests\dtCore\nodecollectortests.cpp">
