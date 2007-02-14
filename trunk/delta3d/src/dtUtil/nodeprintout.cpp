@@ -55,7 +55,8 @@ namespace dtUtil
       }
 
       mPrintingVerts = PrintVerts;
-      Analyze(nodeToPrint, std::string(""));
+      std::string empty;
+      Analyze(nodeToPrint, empty);
       
       if(printToFile)
       {
@@ -99,7 +100,8 @@ namespace dtUtil
 
             for(unsigned int ic=0; ic<gp->getNumChildren(); ic++) 
             {
-               Analyze(*gp->getChild(ic), indent + "   ");
+            std::string newIndent = indent + "   ";
+               Analyze(*gp->getChild(ic), newIndent);
             }
          }
       }
@@ -121,7 +123,8 @@ namespace dtUtil
                //std::ostringstream StreamOne;
                mOutputStream[0] << indent << "Primitive Set " << ipr << std::endl;
                //fwrite((void*)StreamOne.str().c_str(), StreamOne.str().size() * sizeof(char), 1, mFile);
-               AnalyzePrimSet(*prset, *static_cast<const osg::Vec3Array*>(geom->getVertexArray()), indent + "   ");
+               std::string newIndent = indent + "   ";
+               AnalyzePrimSet(*prset, *static_cast<const osg::Vec3Array*>(geom->getVertexArray()), newIndent);
             }
          }
       }
