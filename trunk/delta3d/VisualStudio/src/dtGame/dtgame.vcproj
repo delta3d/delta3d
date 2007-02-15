@@ -149,6 +149,9 @@
 				RelativePath="..\..\..\src\dtGame\deadreckoningcomponent.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtGame\deadreckoninghelper.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtGame\defaultmessageprocessor.cpp">
 			</File>
 			<File
@@ -245,6 +248,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtGame\deadreckoningcomponent.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtGame\deadreckoninghelper.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtGame\defaultmessageprocessor.h">
