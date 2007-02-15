@@ -1510,13 +1510,14 @@ void NamedParameterTests::TestNamedGroupParameterWithProperty()
       TestNamedGroupParameter(*groupParam);
 
       // Assign to a group property then read the value back out.
-      dtDAL::GroupActorProperty* groupProp = static_cast<dtDAL::GroupActorProperty*>(mExampleActor->GetProperty("TestGroup"));
-      CPPUNIT_ASSERT(groupProp != NULL);
+      //dtDAL::GroupActorProperty* groupProp = dynamic_cast<dtDAL::GroupActorProperty*>(mExampleActor->GetProperty("TestGroup"));
+      dtDAL::ActorProperty *prop = mExampleActor->GetProperty("TestGroup");
+      CPPUNIT_ASSERT(prop != NULL);
       
-      groupParam->ApplyValueToProperty(*groupProp);
+      groupParam->ApplyValueToProperty(*prop);
 
       dtCore::RefPtr<dtDAL::NamedGroupParameter> groupCopy = new dtDAL::NamedGroupParameter("testCopy");
-      groupCopy->SetFromProperty(*groupProp);
+      groupCopy->SetFromProperty(*prop);
 
       TestNamedGroupParameter(*groupCopy);      
    }
