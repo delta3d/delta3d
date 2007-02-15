@@ -1519,7 +1519,7 @@ void NamedParameterTests::TestNamedGroupParameterWithProperty()
       dtCore::RefPtr<dtDAL::NamedGroupParameter> groupCopy = new dtDAL::NamedGroupParameter("testCopy");
       groupCopy->SetFromProperty(*prop);
 
-      TestNamedGroupParameter(*groupCopy);      
+      TestNamedGroupParameter(*groupCopy);
    }
    catch(const dtUtil::Exception &e)
    {
