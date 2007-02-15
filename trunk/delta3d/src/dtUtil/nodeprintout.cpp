@@ -75,7 +75,7 @@ namespace dtUtil
    }
 
    /// Called from printoutnode user should never call
-   void NodePrintOut::Analyze(const osg::Node* nd, std::string& indent)
+   void NodePrintOut::Analyze(const osg::Node* nd, const std::string& indent)
    {
       mOutputStream[0] << indent << "Node - Class Name [" <<  nd->className() << "], Node Name [" << nd->getName() << "]" << std::endl;
       //fwrite((void*)StreamOne.str().c_str(), StreamOne.str().size() * sizeof(char), 1, mFile);
@@ -100,14 +100,15 @@ namespace dtUtil
 
             for(unsigned int ic=0; ic<gp->getNumChildren(); ic++) 
             {
-               Analyze(gp->getChild(ic), indent + "   ");
+               std::string newIndent = indent + "   ";
+               Analyze(gp->getChild(ic), newIndent);
             }
          }
       }
    } // divide the geode into its drawables and primitivesets: 
 
    /// Called from Analyze user should never call
-   void NodePrintOut::AnalyzeGeode(const osg::Geode* geode, std::string &indent)
+   void NodePrintOut::AnalyzeGeode(const osg::Geode* geode, const std::string &indent)
    {
       if (mPrintingVerts)
       {
@@ -128,7 +129,7 @@ namespace dtUtil
    }
 
    /// Called from AnalyzeGeode user should never call
-   void NodePrintOut::AnalyzePrimSet(const osg::PrimitiveSet* prset, const osg::Vec3Array &verts, std::string &indent)
+   void NodePrintOut::AnalyzePrimSet(const osg::PrimitiveSet* prset, const osg::Vec3Array &verts, const std::string &indent)
    {
       //std::ostringstream StreamOne;
       mOutputStream[0] << indent << "Prim set type "<< prset->getMode() << std::endl;
