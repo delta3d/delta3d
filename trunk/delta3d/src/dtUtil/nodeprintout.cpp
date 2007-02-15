@@ -45,7 +45,7 @@ namespace dtUtil
 
 
    /// Called from anyone that wants to print out a file, takes in a node, outputs file*
-   void NodePrintOut::PrintOutNode(const std::string& printOutFileName, const osg::Node* nodeToPrint, 
+   void NodePrintOut::PrintOutNode(const std::string& printOutFileName, const osg::Node& nodeToPrint, 
                                    bool PrintVerts, bool printToFile) 
    {
       // Clear any previous data
@@ -55,8 +55,7 @@ namespace dtUtil
       }
 
       mPrintingVerts = PrintVerts;
-      std::string empty;
-      Analyze(nodeToPrint, empty);
+      Analyze(nodeToPrint, "");
       
       if(printToFile)
       {
@@ -75,20 +74,20 @@ namespace dtUtil
    }
 
    /// Called from printoutnode user should never call
-   void NodePrintOut::Analyze(const osg::Node* nd, const std::string& indent)
+   void NodePrintOut::Analyze(const osg::Node& nd, const std::string& indent)
    {
-      mOutputStream[0] << indent << "Node - Class Name [" <<  nd->className() << "], Node Name [" << nd->getName() << "]" << std::endl;
+      mOutputStream[0] << indent << "Node - Class Name [" <<  nd.className() << "], Node Name [" << nd.getName() << "]" << std::endl;
       //fwrite((void*)StreamOne.str().c_str(), StreamOne.str().size() * sizeof(char), 1, mFile);
 
-      const osg::Geode *geode =  dynamic_cast<const osg::Geode *>(nd);
+      const osg::Geode *geode =  dynamic_cast<const osg::Geode *>(&nd);
       if (geode != NULL) 
       { 
          // Analyze the geode. If it isnt a geode the dynamic cast gives NULL.
-         AnalyzeGeode(geode, indent);
+         AnalyzeGeode(*geode, indent);
       } 
       else 
       {
-         const osg::Group *gp = dynamic_cast<const osg::Group *>(nd);
+         const osg::Group *gp = dynamic_cast<const osg::Group *>(&nd);
          if (gp != NULL)
          {
             //if(gp->getName() != "")
@@ -101,64 +100,64 @@ namespace dtUtil
             for(unsigned int ic=0; ic<gp->getNumChildren(); ic++) 
             {
                std::string newIndent = indent + "   ";
-               Analyze(gp->getChild(ic), newIndent);
+               Analyze(*gp->getChild(ic), newIndent);
             }
          }
       }
    } // divide the geode into its drawables and primitivesets: 
 
    /// Called from Analyze user should never call
-   void NodePrintOut::AnalyzeGeode(const osg::Geode* geode, const std::string &indent)
+   void NodePrintOut::AnalyzeGeode(const osg::Geode& geode, const std::string &indent)
    {
       if (mPrintingVerts)
       {
-         for (unsigned int i=0; i<geode->getNumDrawables(); i++) 
+         for (unsigned int i=0; i<geode.getNumDrawables(); i++) 
          {
-            const osg::Drawable *drawable= geode->getDrawable(i);
+            const osg::Drawable *drawable = geode.getDrawable(i);
             const osg::Geometry *geom = dynamic_cast<const osg::Geometry*>(drawable);
             for (unsigned int ipr=0; ipr<geom->getNumPrimitiveSets(); ipr++)
             {
-               const osg::PrimitiveSet* prset=geom->getPrimitiveSet(ipr);
+               const osg::PrimitiveSet* prset = geom->getPrimitiveSet(ipr);
                //std::ostringstream StreamOne;
                mOutputStream[0] << indent << "Primitive Set " << ipr << std::endl;
                //fwrite((void*)StreamOne.str().c_str(), StreamOne.str().size() * sizeof(char), 1, mFile);
-               AnalyzePrimSet(prset, *static_cast<const osg::Vec3Array*>(geom->getVertexArray()), indent + "   ");
+               AnalyzePrimSet(*prset, *static_cast<const osg::Vec3Array*>(geom->getVertexArray()), indent + "   ");
             }
          }
       }
    }
 
    /// Called from AnalyzeGeode user should never call
-   void NodePrintOut::AnalyzePrimSet(const osg::PrimitiveSet* prset, const osg::Vec3Array &verts, const std::string &indent)
+   void NodePrintOut::AnalyzePrimSet(const osg::PrimitiveSet& prset, const osg::Vec3Array &verts, const std::string &indent)
    {
       //std::ostringstream StreamOne;
-      mOutputStream[0] << indent << "Prim set type "<< prset->getMode() << std::endl;
+      mOutputStream[0] << indent << "Prim set type "<< prset.getMode() << std::endl;
       //fwrite((void*)StreamOne.str().c_str(), StreamOne.str().size() * sizeof(char), 1, mFile);
 
       if(mPrintingVerts)
       {
          unsigned int ic;
          unsigned int nprim=0;
-         for (ic=0; ic < prset->getNumIndices(); ic++)
+         for (ic=0; ic < prset.getNumIndices(); ic++)
          { 
             // NB the vertices are held in the drawable -
             //std::ostringstream StreamTwo;
-            mOutputStream[1] << indent <<  "vertex "<< ic << " is index "<<prset->index(ic) << " at " <<
-            (verts)[prset->index(ic)].x() << "," <<
-            (verts)[prset->index(ic)].y() << "," << 
-            (verts)[prset->index(ic)].z() << std::endl;
+            mOutputStream[1] << indent <<  "vertex "<< ic << " is index "<<prset.index(ic) << " at " <<
+            (verts)[prset.index(ic)].x() << "," <<
+            (verts)[prset.index(ic)].y() << "," << 
+            (verts)[prset.index(ic)].z() << std::endl;
 
             //fwrite((void*)StreamTwo.str().c_str(), StreamTwo.str().size() * sizeof(char), 1, mFile);
          }
          // you might want to handle each type of primset differently: such as:
 
          //std::ostringstream StreamThr;
-         switch (prset->getMode()) 
+         switch (prset.getMode()) 
          {
             case osg::PrimitiveSet::TRIANGLES: // get vertices of triangle
             {
-               mOutputStream[2] << indent << "Triangles "<< nprim << " is index "<<prset->index(ic) << std::endl;
-               for(unsigned int i2=0; i2<prset->getNumIndices()-2; i2+=3) 
+               mOutputStream[2] << indent << "Triangles "<< nprim << " is index "<<prset.index(ic) << std::endl;
+               for(unsigned int i2=0; i2<prset.getNumIndices()-2; i2+=3) 
                {
                   // This is where you would write your indices out with the information they have.
                }

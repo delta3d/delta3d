@@ -449,7 +449,7 @@ namespace dtEditQt
          osg::Node *node = obj->LoadFile(fileName);
          
          dtCore::RefPtr<dtUtil::NodePrintOut> nodepo = new dtUtil::NodePrintOut;
-         std::string file = "";
+         std::string file;
          nodepo->PrintOutNode(file, *node, false, false);
          
          text->addScrollBarWidget(new QScrollBar(this), Qt::AlignRight);

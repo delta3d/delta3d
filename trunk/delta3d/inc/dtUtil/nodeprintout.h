@@ -48,7 +48,7 @@ namespace dtUtil
 
       public:
          /// Called from anyone that wants to print out a file, takes in a node, outputs file*
-         void PrintOutNode(const std::string& printOutFileName, const osg::Node* nodeToPrint, bool PrintVerts = false, bool printToFile = true);
+         void PrintOutNode(const std::string& printOutFileName, const osg::Node& nodeToPrint, bool PrintVerts = false, bool printToFile = true);
       
          /// Returns the file stream
          std::string GetFileOutput() const;
@@ -60,13 +60,13 @@ namespace dtUtil
          void PrintNodeToOSGFile(const osg::Node& node, std::ostringstream &oss);
       protected:
          /// Called from printoutnode user should never call
-         void Analyze(const osg::Node *nd, const std::string &indent);
+         void Analyze(const osg::Node& nd, const std::string &indent);
 
          /// Called from Analyze user should never call
-         void AnalyzeGeode(const osg::Geode *geode, const std::string &indent);
+         void AnalyzeGeode(const osg::Geode& geode, const std::string &indent);
 
          /// Called from AnalyzeGeode user should never call
-         void AnalyzePrimSet(const osg::PrimitiveSet* prset, const osg::Vec3Array& verts, const std::string &indent);
+         void AnalyzePrimSet(const osg::PrimitiveSet& prset, const osg::Vec3Array& verts, const std::string &indent);
 
       private:
          /// to keep track for file* sake
