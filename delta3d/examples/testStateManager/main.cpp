@@ -17,7 +17,10 @@ int main(unsigned int argc, char* argv[])
    // This is a console app, so we don't want to shutdown if there are no windows.
    dtCore::System::GetInstance().SetShutdownOnWindowClose( false );
 
-   dtCore::SetDataFilePathList( dtCore::GetDeltaDataPathList()+ ";" + dtCore::GetDeltaRootPath() + "/examples/testStateManager" );
+   std::string dataPath = dtCore::GetDeltaDataPathList();
+   dtCore::SetDataFilePathList(dataPath + ";" + 
+      dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
+      dataPath + "/gui");
 
    dtCore::RefPtr<dtABC::StateManager> mgr = new dtABC::StateManager();
    dtCore::RefPtr<StateWalker> app = new StateWalker( mgr.get() );

@@ -143,7 +143,8 @@ public:
          CEGUI::Window* sheet = CEGUI::WindowManager::getSingleton().createWindow("DefaultGUISheet", "root_wnd");
          CEGUI::System::getSingleton().setGUISheet(sheet);
           
-         CEGUI::Window *w = CEGUI::WindowManager::getSingleton().loadWindowLayout("gui.xml");
+         std::string gui = dtCore::FindFileInPathList("gui.xml");
+         CEGUI::Window *w = CEGUI::WindowManager::getSingleton().loadWindowLayout(gui);
          if (w != NULL)
          {
             mGUILoaded = true;
@@ -370,9 +371,10 @@ private:
 
 int main( int argc, char **argv )
 {
-   SetDataFilePathList( GetDeltaRootPath() + "/examples/testInput/;" +
-                        GetDeltaDataPathList() + ";" +
-                        GetDeltaDataPathList()+"/gui/;" );
+   std::string dataPath = dtCore::GetDeltaDataPathList();
+   dtCore::SetDataFilePathList(dataPath + ";" + 
+      dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
+      dataPath + "/gui;" + dtCore::GetDeltaRootPath() + "/examples/testInput");
 
    app = new TestInputApp( "config.xml" );
 

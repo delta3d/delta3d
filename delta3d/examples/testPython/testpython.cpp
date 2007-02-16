@@ -81,8 +81,10 @@ IMPLEMENT_MANAGEMENT_LAYER(TestPythonApp)
 
 int main()
 {
-   SetDataFilePathList( GetDeltaRootPath() + "/examples/testPython/;" +
-                        GetDeltaDataPathList()  );
+   std::string dataPath = dtCore::GetDeltaDataPathList();
+   dtCore::SetDataFilePathList(dataPath + ";" + 
+      dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
+      dataPath + "/gui");
 
    dtCore::RefPtr< TestPythonApp > app = new TestPythonApp( "config.xml" );
 

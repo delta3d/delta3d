@@ -73,8 +73,10 @@ IMPLEMENT_MANAGEMENT_LAYER( TestWeatherApp )
 
 int main()
 {
-   SetDataFilePathList( GetDeltaRootPath() + "/examples/testWeather/;" +
-                        GetDeltaDataPathList()  );
+   std::string dataPath = dtCore::GetDeltaDataPathList();
+   dtCore::SetDataFilePathList(dataPath + ";" + 
+      dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
+      dataPath + "/gui");
 
    RefPtr<TestWeatherApp> app = new TestWeatherApp( "config.xml" );
    app->Config();

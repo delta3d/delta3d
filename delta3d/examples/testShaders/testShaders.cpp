@@ -121,8 +121,10 @@ private:
 int main(int argc, char* argv[])
 {
 
-   SetDataFilePathList( GetDeltaRootPath() + "/examples/testShaders/;" +
-                        GetDeltaDataPathList()  );
+   std::string dataPath = dtCore::GetDeltaDataPathList();
+   dtCore::SetDataFilePathList(dataPath + ";" + 
+      dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
+      dataPath + "/gui");
 
    RefPtr<TestShadersApp> app = new TestShadersApp( "testshadersconfig.xml" );
    app->Config();

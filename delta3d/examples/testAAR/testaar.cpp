@@ -95,7 +95,12 @@ dtCore::RefPtr<dtGame::GameManager> TestAAR::CreateGameManager(dtCore::Scene& sc
 //////////////////////////////////////////////////////////////////////////
 void TestAAR::OnStartup(dtGame::GameManager &gameManager)
 {
-   dtDAL::Project::GetInstance().SetContext(dtCore::GetDeltaDataPathList() + "/AARProject");
+   std::string dataPath = dtCore::GetDeltaDataPathList();
+   dtCore::SetDataFilePathList(dataPath + ";" + 
+                               dtCore::GetDeltaRootPath() + "examples/data" + ";" +
+                               dataPath + "/gui");
+
+   dtDAL::Project::GetInstance().SetContext("AARProject");
    
    dtCore::DeltaWin *win = gameManager.GetApplication().GetWindow();
 

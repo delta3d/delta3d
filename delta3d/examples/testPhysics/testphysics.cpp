@@ -348,8 +348,10 @@ protected:
 
 int main( int argc, char **argv )
 {
-   SetDataFilePathList( GetDeltaRootPath() + "/examples/testPhysics/;" +
-                        GetDeltaDataPathList()  );
+   std::string dataPath = dtCore::GetDeltaDataPathList();
+   dtCore::SetDataFilePathList(dataPath + ";" + 
+      dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
+      dataPath + "/gui");
 
 
    RefPtr<TestPhysicsApp> app = new TestPhysicsApp( "config.xml" );

@@ -38,8 +38,8 @@ int CEUIDrawable::mActiveTextureUnit(0);
   */
 CEUIDrawable::CEUIDrawable( dtCore::DeltaWin *win, dtGUI::BaseScriptModule *sm):
    DeltaDrawable("CEUIDrawable"),
-   mUI(0),
-   mRenderer(new dtGUI::Renderer(0)),
+   mUI(NULL),
+   mRenderer(new dtGUI::Renderer(NULL)),
    mScriptModule(sm),
    mProjection(new osg::Projection()),
    mTransform(new osg::MatrixTransform(osg::Matrix::identity())),
@@ -68,6 +68,8 @@ CEUIDrawable::~CEUIDrawable()
    SetOSGNode(NULL);
 
    delete mRenderer;
+
+   ShutdownGUI();
 }
 
 /** 
@@ -255,6 +257,7 @@ void CEUIDrawable::ShutdownGUI()
    mWindow->GetKeyboard()->RemoveKeyboardListener( mKeyboardListener.get() );
 
    delete mUI;
+   mUI = NULL;
 }
 
 // implementation details for private class

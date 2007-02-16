@@ -815,8 +815,10 @@ void TestAudioApp::StopRecording()
 
 int main()
 {
-   SetDataFilePathList( GetDeltaRootPath() + "/examples/testAudio/;" +
-                        GetDeltaDataPathList() + ";" + GetDeltaDataPathList()+"/effects/"  );
+   std::string dataPath = dtCore::GetDeltaDataPathList();
+   dtCore::SetDataFilePathList(dataPath + ";" + 
+      dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
+      dataPath + "/gui");
 
    RefPtr<TestAudioApp>  app   = new TestAudioApp( "config.xml" );
 

@@ -4,8 +4,10 @@
 int main()
 {
    //set data search path to parent directory and delta3d/data
-   dtCore::SetDataFilePathList(  dtCore::GetDeltaRootPath() + "/examples/testTrigger/;" +
-                                 dtCore::GetDeltaDataPathList()  );
+   std::string dataPath = dtCore::GetDeltaDataPathList();
+   dtCore::SetDataFilePathList(dataPath + ";" + 
+      dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
+      dataPath + "/gui");
 	
    //Instantiate the application and look for the config file
    dtCore::RefPtr<TestTrigger> app = new TestTrigger();

@@ -27,8 +27,10 @@
 //////////////////////////////////////////////////////////////////////////
 int main(int argc, char *argv[])
 {
-   dtCore::SetDataFilePathList(dtCore::GetDeltaRootPath() + "/examples/testClient/;" +
-      dtCore::GetDeltaDataPathList());   
+   std::string dataPath = dtCore::GetDeltaDataPathList();
+   dtCore::SetDataFilePathList(dataPath + ";" + 
+      dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
+      dataPath + "/gui");   
    
    dtCore::RefPtr<EchoClient> app; 
 

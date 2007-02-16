@@ -24,8 +24,10 @@
 //////////////////////////////////////////////////////////////////////////
 int main(int argc, char *argv[])
 {
-   dtCore::SetDataFilePathList(dtCore::GetDeltaRootPath() + "/examples/testEchoServer/;" +
-      dtCore::GetDeltaDataPathList());
+   std::string dataPath = dtCore::GetDeltaDataPathList();
+   dtCore::SetDataFilePathList(dataPath + ";" + 
+      dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
+      dataPath + "/gui");
 
    dtCore::RefPtr<EchoServer> app;
    dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_INFO);

@@ -567,8 +567,10 @@ private:
 //////////////////////////////////////////////////////////////////////////
 int main(int argc, char **argv)
 {
-   dtCore::SetDataFilePathList( dtCore::GetDeltaDataPathList() + ";" +
-                                dtCore::GetDeltaRootPath() + "/examples/testTerrain" );
+   std::string dataPath = dtCore::GetDeltaDataPathList();
+   dtCore::SetDataFilePathList(dataPath + ";" + 
+      dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
+      dataPath + "/gui");
 
    dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_DEBUG);
 

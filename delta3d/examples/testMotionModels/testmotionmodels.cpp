@@ -377,8 +377,10 @@ IMPLEMENT_MANAGEMENT_LAYER( TestMotionModelsApp )
 
 int main( int argc, char **argv )
 {
-   SetDataFilePathList( GetDeltaRootPath() + "/examples/testMotionModels/;" +
-                        GetDeltaDataPathList() + ";" + GetDeltaDataPathList()+"/gui" );
+   std::string dataPath = dtCore::GetDeltaDataPathList();
+   dtCore::SetDataFilePathList(dataPath + ";" + 
+      dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
+      dataPath + "/gui");
 
    RefPtr<TestMotionModelsApp> app = new TestMotionModelsApp( "config.xml" );
 
