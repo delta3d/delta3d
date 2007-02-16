@@ -18,6 +18,7 @@
  * 
  * David Guthrie
  */
+
 #include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <osg/Vec3>
@@ -59,7 +60,7 @@ namespace dtGame
          
          void InternalCalcTotSmoothingSteps(DeadReckoningHelper& helper, const dtCore::Transform& xform)
          {
-            CalculateTotalSmoothingSteps(helper, xform);
+            helper.CalculateTotalSmoothingSteps(xform);
          }      
    };
    
