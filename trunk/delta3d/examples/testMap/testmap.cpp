@@ -177,9 +177,10 @@ private:
 
 int main()
 {
-   dtCore::SetDataFilePathList( GetDeltaRootPath() + "/examples/testMap/;" +
-                                GetDeltaDataPathList() + ";" +
-                                GetDeltaDataPathList() + "/demoMap/Particles;" );
+   std::string dataPath = dtCore::GetDeltaDataPathList();
+   dtCore::SetDataFilePathList(dataPath + ";" + 
+      dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
+      dataPath + "/gui");
    RefPtr<TestMap> app;
    
    try

@@ -12,8 +12,10 @@ using namespace dtCore;
 int main(int argc, char *argv[] )
 {
    //set data search path to parent directory and delta3d/data
-   SetDataFilePathList( GetDeltaRootPath() + "/examples/testNetwork/;" +
-                        GetDeltaDataPathList()  );
+   std::string dataPath = dtCore::GetDeltaDataPathList();
+   dtCore::SetDataFilePathList(dataPath + ";" + 
+      dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
+      dataPath + "/gui");
 
    dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_ALWAYS, "",
       "Usage: testNetwork.exe [hostname]");

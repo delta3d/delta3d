@@ -9,8 +9,12 @@ int main ( int argc, char *argv[] )
 {
 
    //set data search path to parent delta3d/data
-   dtCore::SetDataFilePathList( dtCore::GetDeltaRootPath()+"/data" );
-   dtCore::RefPtr<TestAI> app = 0;
+   std::string dataPath = dtCore::GetDeltaDataPathList();
+   dtCore::SetDataFilePathList(dataPath + ";" + 
+      dtCore::GetDeltaRootPath() + "examples/data" + ";" +
+      dataPath + "/gui");
+
+   dtCore::RefPtr<TestAI> app;
 
    if ( argc != 2 ) 
    {

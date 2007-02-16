@@ -234,9 +234,10 @@ bool TestWinApp::ChangeResolutionCB( const CEGUI::EventArgs &e)
 
 int main( int argc, char **argv )
 {
-   SetDataFilePathList( GetDeltaRootPath() + "/examples/testWin/;" +
-                        GetDeltaDataPathList() + ";" +
-                        GetDeltaDataPathList()+"/gui/;" );
+   std::string dataPath = dtCore::GetDeltaDataPathList();
+   dtCore::SetDataFilePathList(dataPath + ";" + 
+      dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
+      dataPath + "/gui;" + dtCore::GetDeltaRootPath() + "/examples/testWin");
 
    RefPtr<TestWinApp> app = new TestWinApp( "config.xml" );
 

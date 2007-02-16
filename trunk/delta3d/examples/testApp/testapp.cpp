@@ -7,8 +7,10 @@
 int main()
 {
 
-   dtCore::SetDataFilePathList( dtCore::GetDeltaRootPath() + "/examples/testApp/;" +
-                                dtCore::GetDeltaDataPathList()  );
+   std::string dataPath = dtCore::GetDeltaDataPathList();
+   dtCore::SetDataFilePathList(dataPath + ";" + 
+      dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
+      dataPath + "/gui");
                         
  
    dtCore::RefPtr<dtABC::Application> app = new dtABC::Application( "config.xml" );

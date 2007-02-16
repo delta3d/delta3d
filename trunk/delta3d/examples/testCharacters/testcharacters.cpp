@@ -245,8 +245,10 @@ protected:
 
 int main()
 {
-   SetDataFilePathList( GetDeltaRootPath() + "/examples/testCharacters/;" +
-                        GetDeltaDataPathList()  );
+   std::string dataPath = dtCore::GetDeltaDataPathList();
+   dtCore::SetDataFilePathList(dataPath + ";" + 
+      dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
+      dataPath + "/gui");
   
    RefPtr<TestCharactersApp> app = new TestCharactersApp( "config.xml" );
 

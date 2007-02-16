@@ -156,8 +156,10 @@ public:
 
 int main()
 {
-   SetDataFilePathList( GetDeltaRootPath() + "/examples/testEffects/;" +
-                        GetDeltaDataPathList()+ ";" + GetDeltaDataPathList()+"/effects/"  );
+   std::string dataPath = dtCore::GetDeltaDataPathList();
+   dtCore::SetDataFilePathList(dataPath + ";" + 
+      dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
+      dataPath + "/gui");
 
    RefPtr<TestEffectsApp> app = new TestEffectsApp( "config.xml" );
    

@@ -182,8 +182,10 @@ int
 main( int argc, const char* argv[] )
 {
    // set the directory to find the sound files & config.xml
-   SetDataFilePathList( GetDeltaRootPath() + "/examples/testSound/;" +
-                        GetDeltaDataPathList()  );
+   std::string dataPath = dtCore::GetDeltaDataPathList();
+   dtCore::SetDataFilePathList(dataPath + ";" + 
+      dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
+      dataPath + "/gui");
 
    RefPtr<TestSoundApp> app = new TestSoundApp("config.xml");
    app->Run();

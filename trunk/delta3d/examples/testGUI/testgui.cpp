@@ -203,14 +203,13 @@ int main( int argc, const char* argv[] )
 {
    //set data search path to parent directory and delta3d/data
 
-   std::string guifilespath(  dtCore::GetDeltaDataPathList() + ";" +
-                              dtCore::GetDeltaDataPathList()+"/gui/;" + 
-                              dtCore::GetDeltaRootPath() + "/examples/testGUI" );
+   std::string dataPath = dtCore::GetDeltaDataPathList();
+   dtCore::SetDataFilePathList(dataPath + ";" + 
+      dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
+      dataPath + "/gui");
 
-   dtCore::SetDataFilePathList( guifilespath );
 
-
-   std::string filename = "";
+   std::string filename;
    if (argc > 1)
    {
       Log::GetInstance().LogMessage(Log::LOG_ALWAYS, __FUNCTION__,

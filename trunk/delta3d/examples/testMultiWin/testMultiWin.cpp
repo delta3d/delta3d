@@ -88,8 +88,10 @@ void TestMultiWin::Config()
 int main()
 {
    //set data search path to parent directory and delta3d/data
-   SetDataFilePathList( GetDeltaRootPath() + "/examples/testMultiWin/;" +
-                        GetDeltaDataPathList()  );
+   std::string dataPath = dtCore::GetDeltaDataPathList();
+   dtCore::SetDataFilePathList(dataPath + ";" + 
+      dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
+      dataPath + "/gui");
 
    //Instantiate the application and look for the config file
    RefPtr<TestMultiWin> app = new TestMultiWin( "config.xml" );

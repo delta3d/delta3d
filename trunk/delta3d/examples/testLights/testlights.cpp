@@ -159,8 +159,10 @@ void TestLightsApp::PreFrame( const double deltaFrameTime )
 
 int main( int argc, const char* argv[] )
 {
-   SetDataFilePathList( GetDeltaRootPath() + "/examples/testLights/;" +
-                        GetDeltaDataPathList()  );
+   std::string dataPath = dtCore::GetDeltaDataPathList();
+   dtCore::SetDataFilePathList(dataPath + ";" + 
+      dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
+      dataPath + "/gui");
 
 
    RefPtr<TestLightsApp> app = new TestLightsApp( "config.xml" );

@@ -179,8 +179,10 @@ public:
 
 int main( int argc, char **argv )
 {
-   SetDataFilePathList( GetDeltaRootPath() + "/examples/testHLA/;" +
-                        GetDeltaDataPathList() + ";" + GetDeltaDataPathList()+"/effects/"  );
+   std::string dataPath = dtCore::GetDeltaDataPathList();
+   dtCore::SetDataFilePathList(dataPath + ";" + 
+      dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
+      dataPath + "/gui");
 
    RefPtr<TestHLAApp> app = new TestHLAApp( "config.xml" );
 

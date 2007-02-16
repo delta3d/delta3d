@@ -126,8 +126,10 @@ IMPLEMENT_MANAGEMENT_LAYER( TestCloudsApp )
 
 int main(int argc, char* argv[])
 {
-   SetDataFilePathList( GetDeltaRootPath() + "/examples/testClouds/;" +
-                        GetDeltaDataPathList()  );
+   std::string dataPath = dtCore::GetDeltaDataPathList();
+   dtCore::SetDataFilePathList(dataPath + ";" + 
+      dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
+      dataPath + "/gui");
 
    RefPtr<TestCloudsApp> app = new TestCloudsApp( "config.xml" );
    app->Config();

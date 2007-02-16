@@ -13,7 +13,10 @@
 
 int main(unsigned int argc, char* argv[])
 {
-   dtCore::SetDataFilePathList( dtCore::GetDeltaRootPath() + "/examples/testRecorder/;" + dtCore::GetDeltaDataPathList() );
+   std::string dataPath = dtCore::GetDeltaDataPathList();
+   dtCore::SetDataFilePathList(dataPath + ";" + 
+      dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
+      dataPath + "/gui");
    dtCore::RefPtr<TestRecorder> app = new TestRecorder( "config.xml" );
 
    app->Config();
