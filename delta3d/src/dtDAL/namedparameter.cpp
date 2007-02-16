@@ -233,7 +233,10 @@ namespace dtDAL
       ValidatePropertyType(property);
 
       const dtDAL::GroupActorProperty *gap = static_cast<const dtDAL::GroupActorProperty*>(&property);
-      CopyFrom(*gap->GetValue());
+      if (gap->GetValue().valid()) 
+      {
+         CopyFrom(*gap->GetValue());
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -254,7 +257,7 @@ namespace dtDAL
       {
          toFill.append(i->first);
          toFill.append(" ");
-         toFill.append(dtUtil::ToString(i->second->GetDataType().GetTypeId()));
+         toFill.append(dtUtil::ToString(i->second->GetDataType().GetName()));
          toFill.append(" ");
          toFill.append(i->second->ToString());
          toFill.append(1, '\n');
@@ -266,46 +269,34 @@ namespace dtDAL
 
    bool NamedGroupParameter::FromString(const std::string& value) 
    {
-       // we have the parameter, the type and the value separated with spaces
-       std::istringstream iss(value);
-
-       std::string paramName;
-       std::string typeName;
-       std::string paramValue;
-
-       // get values
-       std::getline(iss, paramName, ' ');
-       std::getline(iss, typeName, ' ');
-       std::getline(iss, paramValue);
-
-       dtDAL::DataType *type = NULL;
-       for(unsigned int j = 0; j < dtDAL::DataType::Enumerate().size(); j++)
-       {
-           if(dtUtil::ToString(static_cast<dtDAL::DataType*>(dtDAL::DataType::Enumerate()[j])->GetTypeId()) == typeName)
-           {
-               type = static_cast<dtDAL::DataType*>(dtDAL::DataType::Enumerate()[j]);
-               break;
-           }
-       }
-
-       if(type == NULL) //|| type == &dtDAL::DataType::UNKNOWN)
-          throw dtUtil::Exception(ExceptionEnum::InvalidParameter,
-                                 "The datatype could not be retrieved the stream\n",
-                                 __FILE__, __LINE__);
-
-       // try and retrieve the parameter
-       dtCore::RefPtr<NamedParameter> param = GetParameter(paramName);
-
-       if (param == NULL) // add it if it does not exist
-           param = AddParameter(paramName, *type);
-
-       param->FromString(paramValue);
-
+      std::istringstream iss(value);
+      
+      std::string paramName;
+      std::string typeString;
+      std::string paramValue;
+      
+      // get values
+      std::getline(iss, paramName, ' ');
+      std::getline(iss, typeString, ' ');
+      std::getline(iss, paramValue);
+      
+      dtDAL::DataType *type = dtDAL::DataType::GetValueForName(typeString);
+      
+      if(type == NULL)
+         return false;
+      
+      // try and retrieve the parameter
+      dtCore::RefPtr<NamedParameter> param = GetParameter(paramName);
+      
+      if (param == NULL) // add it if it does not exist
+         param = AddParameter(paramName, *type);
+      
+      param->FromString(paramValue);
       return true; 
+      
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-
    void NamedGroupParameter::CopyFrom(const NamedParameter& otherParam) 
    {
       if (otherParam.GetDataType() != GetDataType())
