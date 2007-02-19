@@ -814,7 +814,7 @@ namespace dtUtil
    //-----------------------------------------------------------------------
    FileUtils::~FileUtils() {}
    
-   void FileUtils::AbsoluteToRelative(const std::string &pcAbsPath, std::string& relPath)
+   /*void FileUtils::AbsoluteToRelative(const std::string &pcAbsPath, std::string& relPath)
    {
       char pcRelPath[MAX_PATH];
       char acTmpCurrDir[MAX_PATH];
@@ -898,6 +898,5 @@ namespace dtUtil
       sTmp[--count] = '\0';
 
       relPath = sTmp;
-   }
-
+   }*/
 }

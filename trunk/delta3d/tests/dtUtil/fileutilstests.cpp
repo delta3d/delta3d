@@ -33,7 +33,7 @@ class FileUtilsTests : public CPPUNIT_NS::TestFixture
       
       CPPUNIT_TEST(testFileIO);
       CPPUNIT_TEST(testRelativePath);
-      CPPUNIT_TEST(testAbsoluteToRelativePath);
+      //CPPUNIT_TEST(testAbsoluteToRelativePath);
 
    CPPUNIT_TEST_SUITE_END();
 
@@ -44,7 +44,7 @@ class FileUtilsTests : public CPPUNIT_NS::TestFixture
 
       void testFileIO();
       void testRelativePath();
-      void testAbsoluteToRelativePath();
+      //void testAbsoluteToRelativePath();
    
    private:
 
@@ -433,7 +433,7 @@ void FileUtilsTests::testRelativePath()
                           relativePath == "data/map.xsd");
 }
 
-void FileUtilsTests::testAbsoluteToRelativePath()
+/*void FileUtilsTests::testAbsoluteToRelativePath()
 {
    try
    {
@@ -451,4 +451,4 @@ void FileUtilsTests::testAbsoluteToRelativePath()
    {
       CPPUNIT_FAIL(e.What());
    }
-}
+}*/

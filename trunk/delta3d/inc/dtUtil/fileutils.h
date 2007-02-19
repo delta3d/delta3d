@@ -256,7 +256,7 @@ namespace dtUtil
           *  @param absPath the absolute path to process
           *  @param relPath output parameter that will contain the relative path.
           */
-         void AbsoluteToRelative(const std::string &absPath, std::string& relPath);
+         //void AbsoluteToRelative(const std::string &absPath, std::string& relPath);
 
       private:
 
