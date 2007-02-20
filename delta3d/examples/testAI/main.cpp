@@ -11,7 +11,7 @@ int main ( int argc, char *argv[] )
    //set data search path to parent delta3d/data
    std::string dataPath = dtCore::GetDeltaDataPathList();
    dtCore::SetDataFilePathList(dataPath + ";" + 
-      dtCore::GetDeltaRootPath() + "examples/data" + ";" +
+      dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
       dataPath + "/gui");
 
    dtCore::RefPtr<TestAI> app;

@@ -179,7 +179,7 @@ void TestAI::LoadDemoMap(const std::string& pStr)
 {
    try
    {
-      std::string contextName =  dtCore::GetDeltaRootPath()+"/data/demoMap";
+      std::string contextName =  dtCore::GetDeltaRootPath()+"/examples/data/demoMap";
       Project::GetInstance().SetContext(contextName);
       std::string pContext = Project::GetInstance().GetContext();
       Map &myMap = Project::GetInstance().GetMap(pStr);
