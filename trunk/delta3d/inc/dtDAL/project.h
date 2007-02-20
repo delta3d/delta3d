@@ -174,7 +174,7 @@ namespace dtDAL
           * Assigns the context for the project.  If it is not opened read only, the code will attempt to make the path
           * into a project.  If the path does not exist, it will attempt to create and initialize it as well.  The method
           * will throw exceptions if the directory cannot be a valid project for some reason, or if it is not initialized and
-          * the programmer passed a trie for opening it read only.
+          * the programmer passed a true for opening it read only.
           * @param path the file path of to the project
           * @param openReadOnly optional parameter that defaults to false.  If true, the class will not attempt to modify
           * the project directory.
