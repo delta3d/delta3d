@@ -112,13 +112,25 @@ namespace dtGame
           * Gets the category of this message type
           * @return The category
           */
-         const std::string& GetCategory() { return category; }
+         std::string GetCategory() { return mCategory; }
 
          /**
           * Gets the description of this message type
           * @return The description
           */
-         const std::string& GetDescription() { return description; }
+         std::string GetDescription() { return mDescription; }
+
+         /**
+          * Gets the category of this message type
+          * @return The category
+          */
+         const std::string& GetCategory() const { return mCategory; }
+
+         /**
+          * Gets the description of this message type
+          * @return The description
+          */
+         const std::string& GetDescription() const { return mDescription; }
 
          /**
           * Gets the id of this message type
@@ -130,20 +142,20 @@ namespace dtGame
           * Sets the category of this message type
           * @param The new category
           */
-         void SetCategory(const std::string &newCategory) { category = newCategory; }
+         void SetCategory(const std::string &newCategory) { mCategory = newCategory; }
 
          /**
           * Sets the description of this message type
           * @param The new description
           */
-         void SetDescription(const std::string &newDescription) { description = newDescription; }
+         void SetDescription(const std::string &newDescription) { mDescription = newDescription; }
 
       protected:
 
          /// Constructor
          MessageType(const std::string &name, const std::string &category = "",
                      const std::string description = "", const unsigned short id = 0) :
-                     dtUtil::Enumeration(name), category(category), description(description), mId(id)
+                     dtUtil::Enumeration(name), mCategory(category), mDescription(description), mId(id)
          {
             AddInstance(this);
          }
@@ -151,7 +163,7 @@ namespace dtGame
          /// Destructor
          virtual ~MessageType() { }
 
-         std::string category, description;
+         std::string mCategory, mDescription;
          const unsigned short mId;
          static const unsigned short USER_DEFINED_MESSAGE_TYPE = 1024;
    };
