@@ -97,10 +97,20 @@ void TestAAR::OnStartup(dtGame::GameManager &gameManager)
 {
    std::string dataPath = dtCore::GetDeltaDataPathList();
    dtCore::SetDataFilePathList(dataPath + ";" + 
-                               dtCore::GetDeltaRootPath() + "examples/data" + ";" +
-                               dataPath + "/gui");
+                               dataPath + "/gui;" +
+                               dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
+                               dtCore::GetDeltaRootPath() + "/examples/data/gui");
 
-   dtDAL::Project::GetInstance().SetContext("AARProject");
+   std::string context = dtCore::GetDeltaRootPath() + "/examples/testAAR/AARProject";
+
+   try
+   {
+      dtDAL::Project::GetInstance().SetContext(context, true);
+   }
+   catch (dtUtil::Exception &e)
+   {
+      LOG_ERROR("Can't find the project context: " + e.What());
+   }
    
    dtCore::DeltaWin *win = gameManager.GetApplication().GetWindow();
 
@@ -146,16 +156,12 @@ void TestAAR::OnStartup(dtGame::GameManager &gameManager)
 
 void TestAAR::ParseCommandLineOptions(int argc, char **argv) const
 {
-   std::string dataPath;
    osg::ArgumentParser argParser(&argc, argv);
 
    argParser.getApplicationUsage()->setCommandLineUsage("TestAAR [options] value ...");
    argParser.getApplicationUsage()->addCommandLineOption("-lms", "Specify 1 to use LMS, or 0 otherwise");
    argParser.getApplicationUsage()->addCommandLineOption("-h or --help","Display command line options");
    argParser.getApplicationUsage()->addCommandLineOption("-d", "The datapath to be used for the application");
-   argParser.getApplicationUsage()->addCommandLineOption("-a", "The name of the main application library");
-   argParser.getApplicationUsage()->addCommandLineOption("-w", "The working directory");
-   argParser.getApplicationUsage()->addCommandLineOption("-c", "The JavaLaunch configuration file");
 
    int lms;
    if(argParser.read("-lms", lms))
@@ -168,12 +174,6 @@ void TestAAR::ParseCommandLineOptions(int argc, char **argv) const
          "Command Line Error.", __FILE__, __LINE__);
    }
 
-   if(!argParser.read("-d", dataPath))
-   {
-      dataPath =  dtCore::GetDeltaDataPathList() + ";" +
-                     dtCore::GetDeltaDataPathList()+"/gui/;" + 
-                     dtCore::GetDeltaRootPath() + "/examples/testAAR";
-   }
 
    argParser.reportRemainingOptionsAsUnrecognized();
    if(argParser.errors())
@@ -182,6 +182,4 @@ void TestAAR::ParseCommandLineOptions(int argc, char **argv) const
       throw dtUtil::Exception(dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR, 
          "Command Line Error.", __FILE__, __LINE__);
    }
-
-   dtCore::SetDataFilePathList(dataPath);
 }
