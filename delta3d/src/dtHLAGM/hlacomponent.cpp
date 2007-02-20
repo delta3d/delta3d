@@ -404,27 +404,43 @@ namespace dtHLAGM
     */
    void HLAComponent::LeaveFederationExecution()  //this is kind of broken
    {
-      //drop all instance mapping data.
-      mRuntimeMappings.Clear();
-
       if (!mExecutionName.empty())
       {
+         // send delete messages for all actors created by the hla component
+         std::vector<dtCore::UniqueId> allActorsCreatedByHLA;
+         mRuntimeMappings.GetAllActorIds(allActorsCreatedByHLA);
+         
+         for (unsigned i = 0; i < allActorsCreatedByHLA.size(); ++i)
+         {
+            DeleteActor(allActorsCreatedByHLA[i]); 
+         }
+         
+         //drop all instance mapping data.
+         mRuntimeMappings.Clear();
          try
          {
             mRTIAmbassador->resignFederationExecution(RTI::DELETE_OBJECTS_AND_RELEASE_ATTRIBUTES);
          }
-         catch(RTI::RTIinternalError&)
+         catch(RTI::RTIinternalError& ex)
          {
-            //okay since we already resigned
+            std::ostringstream ss; 
+            //workaround for a strange namespace issue
+            ::operator<<(ss, ex);
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                                 "Could not resign from the federation execution: ", ss.str().c_str());
          }
 
          try
          {
             mRTIAmbassador->destroyFederationExecution(mExecutionName.c_str());
          }
-         catch(RTI::FederatesCurrentlyJoined&)
+         catch(RTI::FederatesCurrentlyJoined& ex)
          {
-            //std::cout<<"Problem DestroyingFed: " << fcj <<std::endl;
+            std::ostringstream ss; 
+            //workaround for a strange namespace issue
+            ::operator<<(ss, ex);
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                                 "Could not delete the federation execution: ", ss.str().c_str());
          }
 
          mExecutionName.clear();
@@ -474,6 +490,12 @@ namespace dtHLAGM
    unsigned short HLAComponent::GetApplicationIdentifier() const
    {
       return mApplicationIdentifier;
+   }
+
+   /// Adds a new custom parameter translator to the hla component.
+   void HLAComponent::AddParameterTranslator(ParameterTranslator& newTranslator) 
+   { 
+      mParameterTranslators.push_back(&newTranslator); 
    }
 
    /**

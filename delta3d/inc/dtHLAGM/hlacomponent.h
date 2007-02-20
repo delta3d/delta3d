@@ -377,6 +377,9 @@ namespace dtHLAGM
          ///@return the list of parameter translators used by this component.
          const std::vector<dtCore::RefPtr<ParameterTranslator> >& GetParameterTranslators() const { return mParameterTranslators; }
 
+         /// Adds a new custom parameter translator to the hla component.
+         void AddParameterTranslator(ParameterTranslator& newTranslator);
+
          ///@return the current RTIambassador instance.  This will return NULL if this component is not connected to the RTI.
          RTI::RTIambassador* GetRTIAmbassador() { return mRTIAmbassador; }
          const RTI::RTIambassador* GetRTIAmbassador() const { return mRTIAmbassador; }

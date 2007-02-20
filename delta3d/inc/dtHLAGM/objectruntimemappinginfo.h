@@ -115,6 +115,9 @@ namespace dtHLAGM
           */
          void Clear();
 
+         /// @return a list of all existing actors in the mapping file that are mapped to RTI object handles.
+         void GetAllActorIds(std::vector<dtCore::UniqueId>& toFill) const;
+
       private:
          std::map<dtCore::UniqueId, std::string> mActortoRTIIDMap;
          std::map<std::string, dtCore::UniqueId> mRTIIDtoActorMap;

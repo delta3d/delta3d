@@ -224,4 +224,16 @@ namespace dtHLAGM
       mUniqueIdToEntityIdentifierMap.clear();
       mObjectHandleToClassMap.clear();
    }
+   
+   void ObjectRuntimeMappingInfo::GetAllActorIds(std::vector<dtCore::UniqueId>& toFill) const
+   { 
+      toFill.clear();
+      toFill.reserve(mActorToHLAMap.size());
+      for (std::map<dtCore::UniqueId, RTI::ObjectHandle>::const_iterator i = mActorToHLAMap.begin();
+         i != mActorToHLAMap.end(); ++i)
+      {
+         toFill.push_back(i->first);
+      }
+   }
+
 }
