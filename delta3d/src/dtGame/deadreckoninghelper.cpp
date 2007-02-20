@@ -21,7 +21,9 @@
 #include <prefix/dtgameprefix-src.h>
 #include <dtGame/deadreckoningcomponent.h>
 #include <dtDAL/actorproperty.h>
+#include <dtDAL/enginepropertytypes.h>
 #include <dtUtil/log.h>
+#include <dtUtil/matrixutil.h>
 #include <dtGame/gameactor.h>
 #include <dtDAL/functor.h>
 
