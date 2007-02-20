@@ -282,12 +282,13 @@ void HLATests::setUp()
 // Called implicitly by CPPUNIT when the app terminates
 void HLATests::tearDown()
 {
-   dtCore::System::GetInstance().Stop();
    if(mHLAComponent.valid())
    {
       mHLAComponent->LeaveFederationExecution();
       CPPUNIT_ASSERT(mHLAComponent->GetRTIAmbassador() == NULL);
    }
+
+   dtCore::System::GetInstance().Stop();
    if (mGameManager.valid())
    {
       mHLAComponent = NULL;
@@ -390,6 +391,36 @@ void HLATests::RunAllTests()
       BetweenTestSetUp();
       TestGMLookup();
       BetweenTestTearDown();
+
+      //Test disconnect delete.
+
+      dtHLAGM::ObjectRuntimeMappingInfo& mappings = mHLAComponent->GetRuntimeMappings();
+      mappings.Clear();
+      mappings.Put(0, dtCore::UniqueId());
+      mappings.Put(1, dtCore::UniqueId());
+      mappings.Put(2, dtCore::UniqueId());
+      std::vector<dtCore::UniqueId> actorIdList;
+      mappings.GetAllActorIds(actorIdList);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("3 mappings should be in the mapping list.", unsigned(3), unsigned(actorIdList.size()));
+      
+      mHLAComponent->LeaveFederationExecution();
+      
+      mTestComponent->reset();
+      
+      dtCore::System::GetInstance().Step();
+      
+      std::vector<dtCore::RefPtr<const dtGame::Message> >& messages = mTestComponent->GetReceivedProcessMessages();
+
+      unsigned deleteCount = 0;
+      for (unsigned i = 0; i < messages.size(); ++i)
+      {
+         if (messages[i]->GetMessageType() == dtGame::MessageType::INFO_ACTOR_DELETED)
+         {
+            deleteCount++;
+         }
+      }
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of messages in the process list should equal the number of deletes", 
+         unsigned(deleteCount), unsigned(actorIdList.size()));
    }
    catch (RTI::ObjectNotKnown &)
    {
@@ -414,7 +445,8 @@ void HLATests::TestRuntimeMappingInfo()
    dtHLAGM::ObjectRuntimeMappingInfo mappingInfo;
    try
    {
-
+      std::vector<dtCore::UniqueId> actorIdList;
+      
       dtCore::UniqueId id1;
       dtCore::UniqueId id2;
       std::string rtiid1 = "TestRTIID01";
@@ -450,6 +482,9 @@ void HLATests::TestRuntimeMappingInfo()
 
       CPPUNIT_ASSERT(mappingInfo.Put(mObjectHandle2, id2));
       CPPUNIT_ASSERT(mappingInfo.Put(rtiid2, id2));
+
+      mappingInfo.GetAllActorIds(actorIdList);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The mapping info object should return two actor ids.", unsigned(2), unsigned(actorIdList.size()));
 
       CPPUNIT_ASSERT(mappingInfo.GetId(mObjectHandle1) != NULL);
       CPPUNIT_ASSERT(*mappingInfo.GetId(mObjectHandle1) == id1);
@@ -564,6 +599,10 @@ void HLATests::TestRuntimeMappingInfo()
       CPPUNIT_ASSERT(mappingInfo.GetRTIId(id1) == NULL);
       CPPUNIT_ASSERT(mappingInfo.GetIdByRTIId(rtiid1) == NULL);
 
+      mappingInfo.GetAllActorIds(actorIdList);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The mapping info object has be cleared out, so it should have no actor id's.", 
+         unsigned(0), unsigned(actorIdList.size()));
+
       //Fill the mapping again to make sure it can be cleared.
       CPPUNIT_ASSERT(mappingInfo.Put(eid1, id1));
       CPPUNIT_ASSERT(mappingInfo.Put(mObjectHandle1, id1));
@@ -574,7 +613,15 @@ void HLATests::TestRuntimeMappingInfo()
       CPPUNIT_ASSERT(mappingInfo.Put(mObjectHandle2, *ota2));
       CPPUNIT_ASSERT(mappingInfo.Put(rtiid2, id2));
 
+      mappingInfo.GetAllActorIds(actorIdList);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The mapping info object should return two actor ids.",
+         unsigned(2), unsigned(actorIdList.size()));
+
       mappingInfo.Clear();
+      
+      mappingInfo.GetAllActorIds(actorIdList);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The mapping info object has be cleared out, so it should have no actor id's.", 
+         unsigned(0), unsigned(actorIdList.size()));
 
       CPPUNIT_ASSERT(mappingInfo.GetId(mObjectHandle1) == NULL);
       CPPUNIT_ASSERT(mappingInfo.GetObjectToActor(mObjectHandle1) == NULL);
@@ -1254,22 +1301,15 @@ void HLATests::TestGMLookup()
    {
       CPPUNIT_ASSERT(mGameManager.valid());
 
-      mGameManager->RemoveComponent(*mHLAComponent);
-
-      dtCore::RefPtr<TestHLAComponent> hlaComp = new TestHLAComponent;
-      CPPUNIT_ASSERT(hlaComp.valid());
-
-      mGameManager->AddComponent(*hlaComp, dtGame::GameManager::ComponentPriority::NORMAL);
-
       CPPUNIT_ASSERT_EQUAL_MESSAGE("The default name should equal the constant", 
-         dtHLAGM::HLAComponent::DEFAULT_NAME, hlaComp->GetName());
+         dtHLAGM::HLAComponent::DEFAULT_NAME, mHLAComponent->GetName());
 
       dtGame::GMComponent *component = 
          mGameManager->GetComponentByName(dtHLAGM::HLAComponent::DEFAULT_NAME);
 
       CPPUNIT_ASSERT(component != NULL);
       CPPUNIT_ASSERT_MESSAGE("The component found should match the component added to the GM", 
-         component == hlaComp.get());
+         component == mHLAComponent.get());
    }
    catch(const dtUtil::Exception &e)
    {

@@ -266,7 +266,6 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-
    bool NamedGroupParameter::FromString(const std::string& value) 
    {
       std::istringstream iss(value);

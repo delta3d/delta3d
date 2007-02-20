@@ -269,7 +269,7 @@ namespace dtDAL
           *      an actor is any class that contains dtCore::DeltaDrawable
           *      in its inheritance tree.
           */
-         virtual dtCore::DeltaDrawable* GetActor();
+         dtCore::DeltaDrawable* GetActor();
 
          /**
           * Gets the actor who's properties are modeled by this proxy.
@@ -280,7 +280,7 @@ namespace dtDAL
           *      an actor is any class that contains dtCore::DeltaDrawable
           *      in its inheritance tree.
           */
-         virtual const dtCore::DeltaDrawable* GetActor() const;
+         const dtCore::DeltaDrawable* GetActor() const;
 
          /**
           * Sets the billboard icon used to represent this actor proxy.
