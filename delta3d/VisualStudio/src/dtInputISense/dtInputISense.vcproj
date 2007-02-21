@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="dtInputISense"
-	ProjectGUID="{F91AB03E-59A0-4c2f-BC0A-ABA41F0492A9}"
+	ProjectGUID="{F91AB03E-59A0-4C2F-BC0A-ABA41F0492A9}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
