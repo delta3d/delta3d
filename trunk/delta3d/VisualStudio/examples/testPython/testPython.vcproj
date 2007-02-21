@@ -42,7 +42,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtScript.lib odbc32.lib odbccp32.lib winmm.lib"
+				AdditionalDependencies="dtScript.lib odbc32.lib odbccp32.lib"
 				OutputFile="../../../bin/testPython.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"

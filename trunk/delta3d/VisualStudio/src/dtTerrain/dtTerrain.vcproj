@@ -38,7 +38,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="gdal_i.lib dtUtild.lib dtCored.lib dtDALd.lib isensed.lib js_d.lib oded.lib opengl32.lib OpenThreadsWin32d.lib osgd.lib osgDBd.lib osgParticled.lib osgTextd.lib osgUtild.lib producerd.lib Rpcrt4.lib ul_d.lib winmm.lib"
+				AdditionalDependencies="gdal_i.lib dtUtild.lib dtCored.lib dtDALd.lib oded.lib opengl32.lib OpenThreadsWin32d.lib osgd.lib osgDBd.lib osgParticled.lib osgTextd.lib osgUtild.lib producerd.lib Rpcrt4.lib"
 				OutputFile="../../../bin/dtTerraind.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -95,7 +95,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="gdal_i.lib dtCore.lib dtDAL.lib osg.lib osgUtil.lib osgDB.lib ul.lib ode.lib opengl32.lib dtutil.lib"
+				AdditionalDependencies="gdal_i.lib dtCore.lib dtDAL.lib osg.lib osgUtil.lib osgDB.lib ode.lib opengl32.lib dtutil.lib"
 				OutputFile="../../../bin/dtTerrain.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
