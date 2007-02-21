@@ -97,9 +97,7 @@ void TestAAR::OnStartup(dtGame::GameManager &gameManager)
 {
    std::string dataPath = dtCore::GetDeltaDataPathList();
    dtCore::SetDataFilePathList(dataPath + ";" + 
-                               dataPath + "/gui;" +
-                               dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
-                               dtCore::GetDeltaRootPath() + "/examples/data/gui");
+                               dtCore::GetDeltaRootPath() + "/examples/data" + ";");
 
    std::string context = dtCore::GetDeltaRootPath() + "/examples/testAAR/AARProject";
 

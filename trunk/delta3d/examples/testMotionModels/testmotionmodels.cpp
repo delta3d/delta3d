@@ -379,8 +379,8 @@ int main( int argc, char **argv )
 {
    std::string dataPath = dtCore::GetDeltaDataPathList();
    dtCore::SetDataFilePathList(dataPath + ";" + 
-                               dataPath + "/gui" + ";" +
-                               dtCore::GetDeltaRootPath() + "/examples/data" + ";" );
+                               dtCore::GetDeltaRootPath() + "/examples/data/;" +
+                               dtCore::GetDeltaRootPath() + "/examples/testMotionModels/;");
 
    RefPtr<TestMotionModelsApp> app = new TestMotionModelsApp( "config.xml" );
 

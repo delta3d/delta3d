@@ -7,13 +7,13 @@
 #include <dtCore/globals.h>
 #include <dtCore/inputmapper.h>
 #include <dtCore/logicalinputdevice.h>
-#include <dtCore/joystick.h>
 #include <dtGUI/ceuidrawable.h>
 #include <dtCore/scene.h>
 #include <dtUtil/log.h>
 #include <dtCore/keyboard.h>
 #include <dtCore/mouse.h>
 #include <dtCore/deltawin.h>
+#include <dtInputPLIB/joystick.h>
 
 using namespace dtCore;
 using namespace dtABC;
@@ -104,11 +104,11 @@ public:
       mInputMapper->AddDevice(mKeyboardAxisInputDevice.get());
       mInputMapper->AddDevice(GetMouse());
 
-      Joystick::CreateInstances();
+      dtInputPLIB::Joystick::CreateInstances();
 
-      for(int i=0;i<Joystick::GetInstanceCount();i++)
+      for(int i=0;i<dtInputPLIB::Joystick::GetInstanceCount();i++)
       {
-         mInputMapper->AddDevice(Joystick::GetInstance(i));
+         mInputMapper->AddDevice(dtInputPLIB::Joystick::GetInstance(i));
       }
 
       mInputMapper->SetCancelButton(GetKeyboard()->GetButton(Producer::Key_Escape));
@@ -229,7 +229,7 @@ protected:
    */
    virtual void PreFrame(const double deltaFrameTime)
    {
-      Joystick::PollInstances();
+      dtInputPLIB::Joystick::PollInstances();
 
       {
          CEGUI::Window *w = CEGUI::WindowManager::getSingleton().getWindow("Checkbox6");
@@ -373,7 +373,6 @@ int main( int argc, char **argv )
 {
    std::string dataPath = dtCore::GetDeltaDataPathList();
    dtCore::SetDataFilePathList(dataPath + ";" + 
-                               dataPath + "/gui;" +
                                dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
                                dtCore::GetDeltaRootPath() + "/examples/testInput");
 

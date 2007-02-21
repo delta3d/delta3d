@@ -201,13 +201,12 @@ private:
 
 int main( int argc, const char* argv[] )
 {
-   //set data search path to parent directory and delta3d/data
+   //set data search path to find the required Delta3D files and the example data files
 
    std::string dataPath = dtCore::GetDeltaDataPathList();
-   dtCore::SetDataFilePathList(dataPath + ";" + 
-                               dataPath + "/gui" + ";" +
-      dtCore::GetDeltaRootPath() + "/examples/data" + ";");
-
+   dtCore::SetDataFilePathList(dataPath + ";" +
+                               dtCore::GetDeltaRootPath() + "/examples/data;" +
+                               dtCore::GetDeltaRootPath() + "/examples/testGUI;");
 
    std::string filename;
    if (argc > 1)
@@ -350,7 +349,7 @@ int main( int argc, const char* argv[] )
 * Here is the typical Delta3D main:
 * \skip main
 * \until SetDataFilePathList
-* \note Notice we added a search path to the Delta3D/data/gui folder.  We have to do this
+* \note Notice we added a search path to the Delta3D/data/ folder.  We have to do this
 * to pickup some schema and GUI files.  If CEGUI can't find the schema files, exceptions
 * will be thrown all over the place.
 *
