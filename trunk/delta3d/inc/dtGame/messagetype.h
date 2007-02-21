@@ -112,18 +112,6 @@ namespace dtGame
           * Gets the category of this message type
           * @return The category
           */
-         std::string GetCategory() { return mCategory; }
-
-         /**
-          * Gets the description of this message type
-          * @return The description
-          */
-         std::string GetDescription() { return mDescription; }
-
-         /**
-          * Gets the category of this message type
-          * @return The category
-          */
          const std::string& GetCategory() const { return mCategory; }
 
          /**
