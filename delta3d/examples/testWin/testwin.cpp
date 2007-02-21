@@ -70,7 +70,7 @@ void TestWinApp::BuildGUI( DeltaWin::ResolutionVec &resolutions,
 {
    try
    {
-      std::string schemeFileName = dtCore::FindFileInPathList("schemes/WindowsLook.scheme");
+      std::string schemeFileName = dtCore::FindFileInPathList("gui/schemes/WindowsLook.scheme");
 
       CEGUI::SchemeManager::getSingleton().loadScheme(schemeFileName);
       CEGUI::System::getSingleton().setDefaultMouseCursor("WindowsLook", "MouseArrow");
@@ -235,9 +235,9 @@ bool TestWinApp::ChangeResolutionCB( const CEGUI::EventArgs &e)
 int main( int argc, char **argv )
 {
    std::string dataPath = dtCore::GetDeltaDataPathList();
-   dtCore::SetDataFilePathList(dataPath + ";" + 
+   dtCore::SetDataFilePathList(dataPath + ";" + dataPath + "/gui;" +
       dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
-      dataPath + "/gui;" + dtCore::GetDeltaRootPath() + "/examples/testWin");
+      dtCore::GetDeltaRootPath() + "/examples/testWin");
 
    RefPtr<TestWinApp> app = new TestWinApp( "config.xml" );
 

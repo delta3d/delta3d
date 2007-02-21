@@ -98,7 +98,7 @@ private:
    {
       try
       {
-         std::string schemeFileName = dtCore::FindFileInPathList("schemes/WindowsLook.scheme");
+         std::string schemeFileName = dtCore::FindFileInPathList("gui/schemes/WindowsLook.scheme");
 
          CEGUI::SchemeManager::getSingleton().loadScheme(schemeFileName);
          CEGUI::System::getSingleton().setDefaultMouseCursor("WindowsLook", "MouseArrow");
@@ -205,8 +205,8 @@ int main( int argc, const char* argv[] )
 
    std::string dataPath = dtCore::GetDeltaDataPathList();
    dtCore::SetDataFilePathList(dataPath + ";" + 
-      dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
-      dataPath + "/gui");
+                               dataPath + "/gui" + ";" +
+      dtCore::GetDeltaRootPath() + "/examples/data" + ";");
 
 
    std::string filename;

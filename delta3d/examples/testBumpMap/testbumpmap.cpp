@@ -96,11 +96,10 @@ private:
 
 int main(int argc, char* argv[])
 {
-   
+  
    std::string dataPath = dtCore::GetDeltaDataPathList();
    dtCore::SetDataFilePathList(dataPath + ";" + 
-      dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
-      dataPath + "/gui");
+                               dtCore::GetDeltaRootPath() + "/examples/data" + ";");
 
 	RefPtr<TestBumpMapApp> app = new TestBumpMapApp( "config.xml" );
 	app->Config();
