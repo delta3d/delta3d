@@ -1,25 +1,24 @@
 // joystick.cpp: Implementation of the Joystick class.
 //
 //////////////////////////////////////////////////////////////////////
-#include <prefix/dtcoreprefix-src.h>
-#include <dtCore/joystick.h>
+#include <dtInputPLIB/joystick.h>
 
 #include <iostream>
 #include <sstream>
 
-using namespace dtCore;
+using namespace dtInputPLIB;
 
 IMPLEMENT_MANAGEMENT_LAYER(Joystick)
 
 /**
- * The maximum number of joystick buttons.
- */
+* The maximum number of joystick buttons.
+*/
 const int maxJoystickButtons = 16;
 
 /**
- * Creates instances of Joystick corresponding to each
- * connected joystick device.
- */
+* Creates instances of Joystick corresponding to each
+* connected joystick device.
+*/
 void Joystick::CreateInstances()
 {
    bool keepGoing = true;
@@ -47,8 +46,8 @@ void Joystick::CreateInstances()
 }
 
 /**
- * Destroys all Joystick instances.
- */
+* Destroys all Joystick instances.
+*/
 void Joystick::DestroyInstances()
 {
    while(GetInstanceCount() > 0)
@@ -58,8 +57,8 @@ void Joystick::DestroyInstances()
 }
 
 /**
- * Polls all Joystick instances.
- */
+* Polls all Joystick instances.
+*/
 void Joystick::PollInstances()
 {
    for(int i=0;i<GetInstanceCount();i++)
@@ -69,14 +68,14 @@ void Joystick::PollInstances()
 }
 
 /**
- * Constructor.
- *
- * @param name the instance name
- * @param joystick the underlying PLIB joystick object
- */
+* Constructor.
+*
+* @param name the instance name
+* @param joystick the underlying PLIB joystick object
+*/
 Joystick::Joystick(std::string name, jsJoystick* joystick)
-   : InputDevice(name),
-     mJoystick(joystick)
+: InputDevice(name),
+mJoystick(joystick)
 {
    RegisterInstance(this);
 
@@ -87,8 +86,8 @@ Joystick::Joystick(std::string name, jsJoystick* joystick)
       buf << GetName() << " button " << i;
 
       AddFeature(
-         new Button(this, buf.str())
-      );
+         new dtCore::Button(this, buf.str())
+         );
    }
 
    for(int j=0;j<mJoystick->getNumAxes();j++)
@@ -98,14 +97,14 @@ Joystick::Joystick(std::string name, jsJoystick* joystick)
       buf << GetName() << " axis " << j;
 
       AddFeature(
-         new Axis(this, buf.str())
-      );
+         new dtCore::Axis(this, buf.str())
+         );
    }
 }
 
 /**
- * Destructor.
- */
+* Destructor.
+*/
 Joystick::~Joystick()
 {
    DeregisterInstance(this);
@@ -114,9 +113,9 @@ Joystick::~Joystick()
 }
 
 /**
- * Manually polls the state of this joystick, updating
- * all of its features.
- */
+* Manually polls the state of this joystick, updating
+* all of its features.
+*/
 void Joystick::Poll()
 {
    int buttons, numAxes = mJoystick->getNumAxes();

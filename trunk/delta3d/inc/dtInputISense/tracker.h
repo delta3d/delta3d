@@ -18,8 +18,8 @@
  *
 */
 
-#ifndef DELTA_TRACKER
-#define DELTA_TRACKER
+#ifndef DELTA_INPUT_ISENSE_TRACKER
+#define DELTA_INPUT_ISENSE_TRACKER
 
 // tracker.h: Declaration of the Tracker class.
 //
@@ -35,16 +35,16 @@
 
 #include <isense.h>
 #include <dtCore/inputdevice.h>
+#include <dtInputISense/export.h>
 
-namespace dtCore
+namespace dtInputISense
 {
    /**
     * A tracker device.
     */
-   class DT_CORE_EXPORT Tracker : public InputDevice
+   class DT_INPUT_ISENSE_EXPORT Tracker : public dtCore::InputDevice
    {
       DECLARE_MANAGEMENT_LAYER(Tracker)
-
 
       public:
 
@@ -94,4 +94,4 @@ namespace dtCore
 }
 
 
-#endif // DELTA_TRACKER
+#endif // DELTA_INPUT_ISENSE_TRACKER

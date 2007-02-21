@@ -43,7 +43,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtUtild.lib isensed.lib js_d.lib oded.lib opengl32.lib openthreadswin32d.lib osgd.lib osgdbd.lib osgparticled.lib osgtextd.lib osgutild.lib producerd.lib Rpcrt4.lib ul_d.lib winmm.lib xerces-c_2D.lib"
+				AdditionalDependencies="dtUtild.lib oded.lib opengl32.lib openthreadswin32d.lib osgd.lib osgdbd.lib osgparticled.lib osgtextd.lib osgutild.lib producerd.lib Rpcrt4.lib xerces-c_2D.lib"
 				OutputFile="../../../bin/dtCored.dll"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
@@ -106,7 +106,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtUtil.lib isense.lib js.lib ul.lib ode.lib opengl32.lib openthreadswin32.lib osg.lib osgdb.lib osgparticle.lib osgtext.lib osgutil.lib producer.lib Rpcrt4.lib winmm.lib xerces-c_2.lib"
+				AdditionalDependencies="dtUtil.lib ode.lib opengl32.lib openthreadswin32.lib osg.lib osgdb.lib osgparticle.lib osgtext.lib osgutil.lib producer.lib Rpcrt4.lib winmm.lib xerces-c_2.lib"
 				OutputFile="../../../bin/dtCore.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -228,9 +228,6 @@
 				RelativePath="..\..\..\src\dtCore\isector.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\src\dtCore\joystick.cpp">
-			</File>
-			<File
 				RelativePath="..\..\..\src\dtCore\keyboard.cpp">
 			</File>
 			<File
@@ -338,9 +335,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtCore\timer.cpp">
-			</File>
-			<File
-				RelativePath="..\..\..\src\dtCore\tracker.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtCore\transform.cpp">
@@ -458,9 +452,6 @@
 				RelativePath="..\..\..\inc\dtCore\isector.h">
 			</File>
 			<File
-				RelativePath="..\..\..\inc\dtCore\joystick.h">
-			</File>
-			<File
 				RelativePath="..\..\..\inc\dtCore\keyboard.h">
 			</File>
 			<File
@@ -570,9 +561,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtCore\timer.h">
-			</File>
-			<File
-				RelativePath="..\..\..\inc\dtCore\tracker.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtCore\transform.h">
