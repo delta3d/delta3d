@@ -1,11 +1,11 @@
 // tracker.cpp: Implementation of the Tracker class.
 //
 //////////////////////////////////////////////////////////////////////
-#include <prefix/dtcoreprefix-src.h>
-#include <dtCore/tracker.h>
+//#include <prefix/dtcoreprefix-src.h>
+#include <dtInputISense/tracker.h>
 #include <sstream>
 
-using namespace dtCore;
+using namespace dtInputISense;
 
 IMPLEMENT_MANAGEMENT_LAYER(Tracker)
 
@@ -66,37 +66,37 @@ Tracker::Tracker(const std::string& name, ISD_TRACKER_HANDLE trackerHandle)
       bufs[0] << GetName() << " station " << i << ", x axis";
 
       AddFeature(
-         new Axis(this, bufs[0].str())
+         new dtCore::Axis(this, bufs[0].str())
       );
    
       bufs[1] << GetName() << " station " << i << ", y axis";
 
       AddFeature(
-         new Axis(this, bufs[1].str())
+         new dtCore::Axis(this, bufs[1].str())
       );
 
       bufs[2] << GetName() << " station " << i << ", z axis";
 
       AddFeature(
-         new Axis(this, bufs[2].str())
+         new dtCore::Axis(this, bufs[2].str())
       );
 
       bufs[3] << GetName() << " station " << i << ", azimuth";
 
       AddFeature(
-         new Axis(this, bufs[3].str())
+         new dtCore::Axis(this, bufs[3].str())
       );
 
       bufs[4] << GetName() << " station " << i << ", elevation";
 
       AddFeature(
-         new Axis(this, bufs[4].str())
+         new dtCore::Axis(this, bufs[4].str())
       );
 
       bufs[5] << GetName() << " station " << i << ", roll";
 
       AddFeature(
-         new Axis(this, bufs[5].str())
+         new dtCore::Axis(this, bufs[5].str())
       );
    }
 }
