@@ -40,7 +40,6 @@
 #include <dtCore/inputdevice.h>
 #include <dtCore/inputmapper.h>
 #include <dtCore/isector.h>
-//#include <dtCore/joystick.h>
 #include <dtCore/keyboard.h>
 #include <dtCore/light.h>
 #include <dtCore/logicalinputdevice.h>
@@ -60,7 +59,6 @@
 #include <dtCore/skydome.h>
 #include <dtCore/spotlight.h>
 #include <dtCore/stats.h>
-#include <dtCore/tracker.h>
 #include <dtCore/transform.h>
 #include <dtCore/transformable.h>
 #include <dtCore/tripod.h>

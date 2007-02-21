@@ -235,7 +235,7 @@ bool TestWinApp::ChangeResolutionCB( const CEGUI::EventArgs &e)
 int main( int argc, char **argv )
 {
    std::string dataPath = dtCore::GetDeltaDataPathList();
-   dtCore::SetDataFilePathList(dataPath + ";" + dataPath + "/gui;" +
+   dtCore::SetDataFilePathList(dataPath + ";" +
       dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
       dtCore::GetDeltaRootPath() + "/examples/testWin");
 
