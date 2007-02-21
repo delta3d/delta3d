@@ -28,6 +28,41 @@
 namespace dtCore
 {
    /// Provides generic callback support for Mouse events.
+
+   /** This class is an optional MouseListener-derived class which can be used instead
+     * of MouseListener.  GenericMouseListener uses a callback approach to listening
+     * to Mouse events.  Instead of deriving a class from MouseListener and overwriting
+     * the methods, you can create an instance of GenericMouseListener and supply callback
+     * functions which will be called.
+     *
+     * To use this class, supply an instance to the mouse you wish to listen to.  Then 
+     * add any callback functions to want to be triggered using:
+     * - SetPressedCallback()
+     * - SetReleasedCallback()
+     * - SetClickedCallback()
+     * - SetMovedCallback()
+     * - SetDraggedCallback()
+     * - SetScrolledCallback()
+     *
+     * @code
+     * class Handler
+     * {
+     * public:
+     *    bool Pressed( const dtCore::Mouse *mouse, dtCore::Mouse::MouseButton button);
+     *    {
+     *       return true;
+     *    }
+     * }; 
+     * 
+     * Handler *h = new Handler();
+     *
+     * RefPtr<GenericMouseListener> ml = new GenericMouseListener();
+     * myMouse->AddMouseListener( ml.get() );
+     * 
+     * ml->SetPressedCallback( GenericMouseListener::ButtonCallbackType(h, &Handler::Pressed) );
+     * @endcode
+     */
+     
    class DT_CORE_EXPORT GenericMouseListener : public MouseListener
    {
    public:
