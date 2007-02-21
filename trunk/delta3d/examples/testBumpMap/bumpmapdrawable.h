@@ -10,7 +10,6 @@
 #include <osg/Texture2D>
 #include <osg/PrimitiveSet>
 #include <osg/Program>
-#include <osgDB/ReadFile>   
 #include <osg/Uniform>
 #include <osg/Vec3>
 #include <osg/Vec4>

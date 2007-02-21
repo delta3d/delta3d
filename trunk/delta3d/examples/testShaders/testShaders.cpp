@@ -56,8 +56,8 @@ public:
       mProg->addShader( vertexShader.get() );
       mProg->addShader( fragmentShader.get() );
 
-      vertexShader->loadShaderSourceFromFile( GetDeltaRootPath()+ "/data/shaders/testshader.vert");
-      fragmentShader->loadShaderSourceFromFile( GetDeltaRootPath()+ "/data/shaders/testshader.frag");
+      vertexShader->loadShaderSourceFromFile( dtCore::FindFileInPathList("/shaders/testshader.vert") );
+      fragmentShader->loadShaderSourceFromFile( dtCore::FindFileInPathList("/shaders/testshader.frag") );
 
       ss->setAttributeAndModes( mProg.get(), osg::StateAttribute::ON );
       mEnabled = true;
@@ -123,8 +123,8 @@ int main(int argc, char* argv[])
 
    std::string dataPath = dtCore::GetDeltaDataPathList();
    dtCore::SetDataFilePathList(dataPath + ";" + 
-      dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
-      dataPath + "/gui");
+                               dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
+                               dtCore::GetDeltaRootPath() + "/examples/testShaders");
 
    RefPtr<TestShadersApp> app = new TestShadersApp( "testshadersconfig.xml" );
    app->Config();

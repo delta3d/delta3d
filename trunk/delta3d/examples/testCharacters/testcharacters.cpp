@@ -247,8 +247,7 @@ int main()
 {
    std::string dataPath = dtCore::GetDeltaDataPathList();
    dtCore::SetDataFilePathList(dataPath + ";" + 
-      dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
-      dataPath + "/gui");
+      dtCore::GetDeltaRootPath() + "/examples/data" + ";");
   
    RefPtr<TestCharactersApp> app = new TestCharactersApp( "config.xml" );
 

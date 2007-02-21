@@ -817,8 +817,7 @@ int main()
 {
    std::string dataPath = dtCore::GetDeltaDataPathList();
    dtCore::SetDataFilePathList(dataPath + ";" + 
-      dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
-      dataPath + "/gui");
+      dtCore::GetDeltaRootPath() + "/examples/data" + ";");
 
    RefPtr<TestAudioApp>  app   = new TestAudioApp( "config.xml" );
 

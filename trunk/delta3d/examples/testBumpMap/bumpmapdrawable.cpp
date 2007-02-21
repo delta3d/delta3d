@@ -2,7 +2,10 @@
 #include "cubevertices.h"
 
 #include <osg/PolygonMode>
+#include <osgDB/FileUtils>
+#include <osgDB/ReadFile>
 #include <dtCore/globals.h>
+
 
 BumpMapDrawable::BumpMapDrawable()
 {
@@ -106,8 +109,11 @@ void BumpMapDrawable::EnableShaders()
    //ss->setMode(osg::StateAttribute::CULLFACE, GL_FRONT);
 
    //set up textures
-   RefPtr<osg::Image> img1 = osgDB::readImageFile( std::string(GetDeltaRootPath()+ "/data/textures/sheetmetal.tga"));
-   RefPtr<osg::Image> img2 = osgDB::readImageFile( std::string(GetDeltaRootPath()+ "/data/textures/delta3d_logo_normal_map.tga"));
+   std::string filename = osgDB::findDataFile("/textures/sheetmetal.tga");
+   RefPtr<osg::Image> img1 = osgDB::readImageFile( filename );
+
+   filename = osgDB::findDataFile("textures/delta3d_logo_normal_map.tga");
+   RefPtr<osg::Image> img2 = osgDB::readImageFile( filename );
 
 
    RefPtr<osg::Texture2D> tex1 = new osg::Texture2D(img1.get());
@@ -135,8 +141,11 @@ void BumpMapDrawable::EnableShaders()
    mProg->addShader( bumpMapVert.get() );
    mProg->addShader( bumpMapFrag.get() );
 
-   bumpMapVert->loadShaderSourceFromFile( GetDeltaRootPath()+ "/data/shaders/bumpmap.vert");
-   bumpMapFrag->loadShaderSourceFromFile( GetDeltaRootPath()+ "/data/shaders/bumpmap.frag");
+   filename = osgDB::findDataFile("/shaders/bumpmap.vert");
+   bumpMapVert->loadShaderSourceFromFile( filename );
+
+   filename = osgDB::findDataFile("/shaders/bumpmap.frag");
+   bumpMapFrag->loadShaderSourceFromFile( filename );
 
    mLightPos = new osg::Uniform(osg::Uniform::FLOAT_VEC4, "lightPos");
    mLightPos->set(osg::Vec4(0.0f, 0.0f, 0.0f, 0.0f));

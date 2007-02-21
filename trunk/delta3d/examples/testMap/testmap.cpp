@@ -35,8 +35,8 @@ class TestMap : public Application
       // 1. Set the project context, just like in the editor
       // 2. Get a reference to the map
       // 3. Load the map into the scene through the project class
-      std::string contextName = GetDeltaDataPathList() + "/demoMap";
-      Project::GetInstance().SetContext(contextName);
+      std::string contextName = dtCore::GetDeltaRootPath() + "/examples/data/demoMap";
+      Project::GetInstance().SetContext(contextName, true);
       Map &myMap = Project::GetInstance().GetMap("MyCoolMap");
       
       //Since we are in an Application we can simply call...
@@ -179,8 +179,7 @@ int main()
 {
    std::string dataPath = dtCore::GetDeltaDataPathList();
    dtCore::SetDataFilePathList(dataPath + ";" + 
-      dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
-      dataPath + "/gui");
+                               dtCore::GetDeltaRootPath() + "/examples/data" + ";");
    RefPtr<TestMap> app;
    
    try

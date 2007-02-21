@@ -31,7 +31,9 @@ void MyWindow::show()
 {
    MyParent::show();
 
-   std::string path((dtCore::GetDeltaRootPath() + PATH) + dtCore::GetDeltaDataPathList() );
+   std::string path((dtCore::GetDeltaRootPath() + PATH) + ";" +
+                     dtCore::GetDeltaDataPathList() + ";" +
+                     dtCore::GetDeltaRootPath() + "/examples/data/");
 
    SendMessage( "setpath", &path );
    SendMessage( "loadfile", &FILE );

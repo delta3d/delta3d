@@ -102,7 +102,7 @@ namespace dtExample
       {
          try
          {
-            std::string schemefile( dtCore::FindFileInPathList("schemes/WindowsLook.scheme") );
+            std::string schemefile( dtCore::FindFileInPathList("gui/schemes/WindowsLook.scheme") );
             CEGUI::SchemeManager* sm = CEGUI::SchemeManager::getSingletonPtr();
             sm->loadScheme( schemefile );  ///< populate the window factories
          }
@@ -379,8 +379,8 @@ int main( int argc, char **argv )
 {
    std::string dataPath = dtCore::GetDeltaDataPathList();
    dtCore::SetDataFilePathList(dataPath + ";" + 
-      dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
-      dataPath + "/gui");
+                               dataPath + "/gui" + ";" +
+                               dtCore::GetDeltaRootPath() + "/examples/data" + ";" );
 
    RefPtr<TestMotionModelsApp> app = new TestMotionModelsApp( "config.xml" );
 
