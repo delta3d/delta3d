@@ -40,7 +40,7 @@
 #include <dtCore/inputdevice.h>
 #include <dtCore/inputmapper.h>
 #include <dtCore/isector.h>
-#include <dtCore/joystick.h>
+//#include <dtCore/joystick.h>
 #include <dtCore/keyboard.h>
 #include <dtCore/light.h>
 #include <dtCore/logicalinputdevice.h>
