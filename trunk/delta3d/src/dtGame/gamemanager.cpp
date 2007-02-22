@@ -71,8 +71,12 @@ namespace dtGame
       mStatsNumFrames(0),
       mStatsCumGMProcessTime(0),
       mApplication(NULL),
-      mRemoveGameEventsOnMapChange(true)
+      mRemoveGameEventsOnMapChange(true),
+      mPrintFileToConsole(false),
+      mDoStatsOnTheActors(false),
+      mDoStatsOnTheComponents(false)
    {
+
       mLibMgr = &dtDAL::LibraryManager::GetInstance();
       mLogger = &dtUtil::Log::GetInstance("gamemanager.cpp");
       AddSender(&dtCore::System::GetInstance());
@@ -374,8 +378,22 @@ namespace dtGame
             continue;
          }
          
+         bool  isATickLocalMessage  = false;
+         if(mDoStatsOnTheActors || mDoStatsOnTheComponents)
+         {
+            const TickMessage* tickType = dynamic_cast<const TickMessage*>(message.get());
+            if(tickType != NULL)    isATickLocalMessage = true;
+         }
+
          for (std::vector<dtCore::RefPtr<GMComponent> >::iterator i = mComponentList.begin(); i != mComponentList.end(); ++i)
          {
+            /////////////////////////
+            // Statistics information
+            Timer statsTickClockComponent;
+            Timer_t frameTickStartComponent(0);
+            frameTickStartComponent = statsTickClockComponent.Tick();
+            /////////////////////////
+
             try
             {
                (*i)->ProcessMessage(*message);
@@ -384,6 +402,17 @@ namespace dtGame
             {
                ex.LogException(dtUtil::Log::LOG_ERROR, *mLogger);
             }
+
+            /////////////////////////
+            // Statistics information
+            if(mDoStatsOnTheComponents)
+            {
+               Timer_t frameTickStopComponent = statsTickClockComponent.Tick();
+               double fragmentDeltaComponent = statsTickClockComponent.DeltaSec(frameTickStartComponent, frameTickStopComponent);
+               FindLogDebugInformationAndChangeOrCreateInformation((*i)->GetUniqueId().ToString(),(*i)->GetName(), 
+                  fragmentDeltaComponent, true, isATickLocalMessage);
+            }
+            /////////////////////////
          }
 
          // GLOBAL INVOKABLES - Process it on globally registered invokables
@@ -397,6 +426,13 @@ namespace dtGame
             Invokable* invokable = listener.first->GetInvokable(listener.second);
             if (invokable != NULL)
             {
+               /////////////////////////
+               // Statistics information
+               Timer statsTickClockActor;
+               Timer_t frameTickStartActor(0);
+               frameTickStartActor = statsTickClockActor.Tick();
+               /////////////////////////
+
                try
                {
                   invokable->Invoke(*message);
@@ -405,6 +441,17 @@ namespace dtGame
                {
                   ex.LogException(dtUtil::Log::LOG_ERROR, *mLogger);
                }
+
+               /////////////////////////
+               // Statistics information
+               if(mDoStatsOnTheActors)
+               {
+                  Timer_t frameTickStopActor = statsTickClockActor.Tick();
+                  double fragmentDeltaActor = statsTickClockActor.DeltaSec(frameTickStartActor, frameTickStopActor);
+                  FindLogDebugInformationAndChangeOrCreateInformation(listener.first->GetActor()->GetUniqueId().ToString(),listener.first->GetName(), 
+                     fragmentDeltaActor, false, isATickLocalMessage);
+               }
+               /////////////////////////
             }
             else
             {
@@ -449,14 +496,14 @@ namespace dtGame
                Invokable* invokable = listener.first->GetInvokable(listener.second);
                if (invokable != NULL)
                {
-                  try
+                 try
                   {
                      invokable->Invoke(*message);
                   }
                   catch (const dtUtil::Exception& ex)
                   {
                      ex.LogException(dtUtil::Log::LOG_ERROR, *mLogger);
-                  }
+                  }                  
                }
                else
                {
@@ -507,20 +554,8 @@ namespace dtGame
          else if (fragmentDelta >= (mStatisticsInterval * 1000000))
          {
             Timer_t realTimeElapsed = dtCore::Timer_t(statsTickClock.DeltaMicro(mStatsLastFragmentDump, frameTickStop));
-            float gmPercentTime = ComputeStatsPercent(realTimeElapsed, mStatsCumGMProcessTime);
-
-            std::ostringstream ss;
-            ss << "GM Stats: SimTime[" << GetSimulationTime() << "], TimeInGM[" << gmPercentTime << "%], Ticks[" <<
-                  mStatsNumFrames << "], #Msgs[" << mStatsNumProcMessages << " P/" << mStatsNumSendNetworkMessages <<
-                  " S], #Actors[" << mActorProxyMap.size() << "/" << mGameActorProxyMap.size() << " Game]";
-            mLogger->LogMessage(__FUNCTION__, __LINE__, ss.str(), dtUtil::Log::LOG_ALWAYS);
-
-            // reset values for next fragment
-            mStatsLastFragmentDump = frameTickStop;
-            mStatsNumFrames = 0;
-            mStatsNumProcMessages = 0;
-            mStatsNumSendNetworkMessages = 0;
-            mStatsCumGMProcessTime = 0;
+            DebugStatisticsPrintOut(realTimeElapsed);
+            mStatsLastFragmentDump  = frameTickStop;
          }
       }
    }
@@ -1494,6 +1529,178 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   void GameManager::SendEnvironmentChangedMessage(EnvironmentActorProxy *envActor)
+   {
+      dtCore::RefPtr<Message> msg = mFactory.CreateMessage(MessageType::INFO_ENVIRONMENT_CHANGED);
+      msg->SetAboutActorId(mEnvironment.valid() ? envActor->GetActor()->GetUniqueId() : dtCore::UniqueId(""));
+      msg->SetSource(*mMachineInfo);
+      SendMessage(*msg);
+   }
+   
+   ////////////////////////////////////////////////////////////////////////////////
+   /*                            Statistics Information                          */
+   ////////////////////////////////////////////////////////////////////////////////
+
+   //////////////////////////////////////////////////////////////////////////////
+   void GameManager::FindLogDebugInformationAndChangeOrCreateInformation(const std::string& uniqueIDToFind, 
+      const std::string& nameOfObject, float elapsedTime, bool isComponent, bool ticklocal)
+   {
+      std::vector<dtCore::RefPtr<LogDebugInformation> >::iterator iter = mDebugLoggerInformation.begin();
+      bool foundWhatWeWereLookingFor = false;
+      for(; iter != mDebugLoggerInformation.end(); ++iter)
+      {
+         if(uniqueIDToFind == (*iter)->mUniqueID)
+         {
+            if(ticklocal)
+            {
+               (*iter)->mTickLocalTime +=elapsedTime;
+               (*iter)->mTimesThrough += 1;
+               (*iter)->mTotalTime += elapsedTime; 
+            }
+            else
+            {
+               (*iter)->mTotalTime += elapsedTime;  
+            }
+            foundWhatWeWereLookingFor = true;
+            break;
+         }
+      }
+
+      if(foundWhatWeWereLookingFor == false)
+      {
+         dtCore::RefPtr<LogDebugInformation> toPushDebugInfo = new LogDebugInformation(nameOfObject, uniqueIDToFind, isComponent);
+         toPushDebugInfo->mTotalTime     = elapsedTime;
+         mDebugLoggerInformation.push_back(toPushDebugInfo);
+      }
+   }
+
+
+   //////////////////////////////////////////////////////////////////////////////
+   void GameManager::DebugStatisticsTurnOn(bool logComponents, bool logActors, 
+      const int statisticsInterval, bool toConsole, const std::string& path)
+   {
+      mDoStatsOnTheComponents    = logComponents;
+      mDoStatsOnTheActors        = logActors;
+      mPrintFileToConsole        = toConsole;
+      mFilePathToPrintDebugInformation = path;
+      mStatisticsInterval        = statisticsInterval;
+   }
+
+   void GameManager::DebugStatisticsTurnOff(bool logLastTime, bool clearList)
+   {
+      mDoStatsOnTheComponents    = false;
+      mDoStatsOnTheActors        = false;
+      mStatisticsInterval        = 0;
+      if(logLastTime)
+      {
+         // temporarily 100, fill in to correct time if needbe.
+         DebugStatisticsPrintOut(100);
+      }
+
+      if(clearList)
+      {
+         mDebugLoggerInformation.clear();
+      }
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void GameManager::DebugStatisticsPrintOut(const float realTimeElapsed)
+   {
+      float gmPercentTime = ComputeStatsPercent(realTimeElapsed, mStatsCumGMProcessTime);
+
+      std::ostringstream ss;
+      ss << "GM Stats: SimTime[" << GetSimulationTime() << "], TimeInGM[" << gmPercentTime << "%], Ticks[" <<
+         mStatsNumFrames << "], #Msgs[" << mStatsNumProcMessages << " P/" << mStatsNumSendNetworkMessages <<
+         " S], #Actors[" << mActorProxyMap.size() << "/" << mGameActorProxyMap.size() << " Game]";
+      
+      // reset values for next fragment
+      mStatsNumFrames         = 0;
+      mStatsNumProcMessages   = 0;
+      mStatsCumGMProcessTime  = 0;
+      mStatsNumSendNetworkMessages = 0;
+
+      if(mPrintFileToConsole)
+      {
+         std::vector<dtCore::RefPtr<LogDebugInformation> >::iterator iter = mDebugLoggerInformation.begin();
+         printf("=======================================Printing Debug information=======================================\n");
+         mLogger->LogMessage(__FUNCTION__, __LINE__, ss.str(), dtUtil::Log::LOG_ALWAYS);
+         if(mDoStatsOnTheComponents)
+         {
+            
+            printf("***************************************\nSTARTING LOGGING OF TIME IN COMPONENT\n***************************************\n");
+            for(; iter != mDebugLoggerInformation.end(); ++iter)
+            {
+               if((*iter)->mIsComponent)
+               {
+                  printf("* CMPT:NAME[%s]:TOTAL_TIME[%f]:AVG_TICKLOCAL[%f]:LOCALTICKS[%d]\n", 
+                     (*iter)->mNameOfLogInfo.c_str(), float((*iter)->mTotalTime), 
+                     float((*iter)->mTickLocalTime / (*iter)->mTimesThrough), (*iter)->mTimesThrough );
+                  (*iter)->mTotalTime = 0;
+               }
+            }
+            printf("***************************************\nENDING LOGGING OF TIME IN COMPONENT\n***************************************\n");
+         }
+         if(mDoStatsOnTheActors)
+         {
+            printf("***************************************\nSTARTING LOGGING OF TIME IN ACTORS\n***************************************\n");
+            for(iter = mDebugLoggerInformation.begin(); iter != mDebugLoggerInformation.end(); ++iter)
+            {
+               if(!(*iter)->mIsComponent)
+               {
+                  printf("* ACTR:NAME[%s]:UNIQUEID[%s]:TOTAL_TIME[%f]:AVG_TICKLOCAL[%f]:LOCALTICKS[%d]\n", 
+                     (*iter)->mNameOfLogInfo.c_str(), (*iter)->mUniqueID.c_str(), float((*iter)->mTotalTime), 
+                     float((*iter)->mTotalTime / (*iter)->mTimesThrough), 
+                     (*iter)->mTimesThrough );
+                  (*iter)->mTotalTime = 0;
+               }
+            }
+            printf("***************************************\nENDING LOGGING OF TIME IN ACTORS\n***************************************\n");
+         }
+         printf("=======================================Ending Debug information=======================================\n");
+      }
+      else
+      {
+         std::vector<dtCore::RefPtr<LogDebugInformation> >::iterator iter = mDebugLoggerInformation.begin();
+         FILE* temp = fopen(mFilePathToPrintDebugInformation.c_str(), "a");
+         fprintf(temp, "=======================================Printing Debug information=======================================\n");
+         fprintf(temp, "%s", ss.str().c_str());
+         if(mDoStatsOnTheComponents)
+         {
+            fprintf(temp, "***************************************\nSTARTING LOGGING OF TIME IN COMPONENT\n***************************************\n");
+            for(; iter != mDebugLoggerInformation.end(); ++iter)
+            {
+               if((*iter)->mIsComponent)
+               {
+                  fprintf(temp, "* CMPT:NAME[%s]:TOTAL_TIME[%f]:AVG_TICKLOCAL[%f]:LOCALTICKS[%d]\n", 
+                     (*iter)->mNameOfLogInfo.c_str(), float((*iter)->mTotalTime), 
+                     float((*iter)->mTickLocalTime / (*iter)->mTimesThrough), (*iter)->mTimesThrough );
+                  (*iter)->mTotalTime = 0;
+               }
+            }
+            fprintf(temp, "***************************************\nENDING LOGGING OF TIME IN COMPONENT\n***************************************\n");
+         }
+         if(mDoStatsOnTheActors)
+         {
+            fprintf(temp, "***************************************\nSTARTING LOGGING OF TIME IN ACTORS\n***************************************\n");
+            for(iter = mDebugLoggerInformation.begin(); iter != mDebugLoggerInformation.end(); ++iter)
+            {
+               if(!(*iter)->mIsComponent)
+               {
+                  fprintf(temp, "* ACTR:NAME[%s]:UNIQUEID[%s]:TOTAL_TIME[%f]:AVG_TICKLOCAL[%f]:LOCALTICKS[%d]\n", 
+                     (*iter)->mNameOfLogInfo.c_str(), (*iter)->mUniqueID.c_str(), float((*iter)->mTotalTime), 
+                     float((*iter)->mTotalTime / (*iter)->mTimesThrough), 
+                     (*iter)->mTimesThrough );
+                  (*iter)->mTotalTime = 0;
+               }
+            }
+            fprintf(temp, "***************************************\nENDING LOGGING OF TIME IN ACTORS\n***************************************\n");
+         }
+         fprintf(temp, "=======================================Ending Debug information=======================================\n");
+         fclose(temp);
+      }
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    float GameManager::ComputeStatsPercent(const Timer_t &total, const Timer_t &partial) const
    {
       float returnValue = 0.0;
@@ -1506,12 +1713,4 @@ namespace dtGame
 
       return returnValue;
    }
-
-   void GameManager::SendEnvironmentChangedMessage(EnvironmentActorProxy *envActor)
-   {
-      dtCore::RefPtr<Message> msg = mFactory.CreateMessage(MessageType::INFO_ENVIRONMENT_CHANGED);
-      msg->SetAboutActorId(mEnvironment.valid() ? envActor->GetActor()->GetUniqueId() : dtCore::UniqueId(""));
-      msg->SetSource(*mMachineInfo);
-      SendMessage(*msg);
-   }
-}
+} // end namespace

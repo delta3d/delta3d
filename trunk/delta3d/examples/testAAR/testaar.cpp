@@ -134,7 +134,7 @@ void TestAAR::OnStartup(dtGame::GameManager &gameManager)
    gameManager.GetMessageFactory().RegisterMessageType<dtGame::Message>(TestAARMessageType::PRINT_TASKS);
    gameManager.GetMessageFactory().RegisterMessageType<dtGame::Message>(TestAARMessageType::UPDATE_TASK_CAMERA);
 
-   gameManager.SetStatisticsInterval(5);
+   gameManager.DebugStatisticsTurnOn(false, false, 5);
    gameManager.SendMessage(*gameManager.GetMessageFactory().CreateMessage(TestAARMessageType::RESET));
 
    if(mUseLMS)
