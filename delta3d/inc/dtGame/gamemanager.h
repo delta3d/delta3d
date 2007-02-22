@@ -564,7 +564,7 @@ namespace dtGame
           */
          void DebugStatisticsTurnOn(bool logComponents, bool logActors, 
                                     const int statisticsInterval, bool toConsole = true, 
-                                    const std::string& path = std::string("C:/Code/gamemanagerDebugInfo.txt"));
+                                    const std::string& path = "gamemanagerDebugInfo.txt");
 
          /// Turn off statistics information - params to log before stopping, and if user wants to clear history
          void DebugStatisticsTurnOff(bool logLastTime = false, bool clearList = false);
