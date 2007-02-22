@@ -2,9 +2,9 @@ Import('*')
 
 srcs = env.SGlob('*.cpp')
 
-deps = [ 'dtCore', 'dtAI', 'dtDAL', 'fltk', 'dtUtil', 'isense', 'OpenThreads', 'osg', 'osgDB',
+deps = [ 'dtCore', 'dtAI', 'dtDAL', 'fltk', 'dtUtil', 'OpenThreads', 'osg', 'osgDB',
          'osgParticle', 'osgText', 'osgUtil', 'osgSim', 'osgFX',
-         'ul', 'js', 'Producer', 'xerces-c', 'opengl', 'User32', 'rbody', 'cal3d' ]
+	 'Producer', 'xerces-c', 'opengl', 'User32', 'rbody', 'cal3d' ]
 
 defines = []
 if env['OS'] == 'windows':

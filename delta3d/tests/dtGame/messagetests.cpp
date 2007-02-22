@@ -47,7 +47,7 @@
 #include <dtGame/gamemanager.h>
 #include <dtGame/actorupdatemessage.h>
 #include <dtGame/exceptionenum.h>
-#include <dtGame/rulescomponent.h>
+#include <dtGame/defaultnetworkpublishingcomponent.h>
 #include <dtGame/defaultmessageprocessor.h>
 
 #include <cppunit/extensions/HelperMacros.h>
@@ -625,7 +625,7 @@ void MessageTests::TestActorPublish()
    try
    {
       TestComponent* tc = new TestComponent();
-      dtGame::RulesComponent* rc = new dtGame::RulesComponent();
+      dtGame::DefaultNetworkRulesComponent* rc = new dtGame::DefaultNetworkRulesComponent();
 
       mGameManager->AddComponent(*tc, dtGame::GameManager::ComponentPriority::NORMAL);
       mGameManager->AddComponent(*rc, dtGame::GameManager::ComponentPriority::NORMAL);

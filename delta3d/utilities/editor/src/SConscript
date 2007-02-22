@@ -40,7 +40,7 @@ if 'qt' in env['TOOLS'] :
       return passed
    
    # Environment settings for Qt
-   qtdir = EditorEnv['QTDIR']
+   qtdir = EditorEnv['ENV']['QTDIR']
    
    EditorEnv['QT_AUTOSCAN'] = 0
    EditorEnv['QT_LIB'] = ''

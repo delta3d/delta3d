@@ -124,7 +124,7 @@ if CheckForBoost() :
    else :
       boostLib = 'boost_python-gcc-mt'
    
-   pythonDeps = ['osg','Producer','OpenThreads','xerces-c','python','osgUtil','osgText','osgParticle','osgDB','ode','js','isense','ul','cal3d','rbody','rvrutils','rcfgscript']
+   pythonDeps = ['osg','Producer','OpenThreads','xerces-c','python','osgUtil','osgText','osgParticle','osgDB','ode','cal3d','rbody','rvrutils','rcfgscript']
    
    if env['OS'] == 'windows' :
       pythonDeps += [  'User32' ] 

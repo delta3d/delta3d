@@ -406,15 +406,17 @@ namespace dtHLAGM
    {
       if (!mExecutionName.empty())
       {
-         // send delete messages for all actors created by the hla component
-         std::vector<dtCore::UniqueId> allActorsCreatedByHLA;
-         mRuntimeMappings.GetAllActorIds(allActorsCreatedByHLA);
-         
-         for (unsigned i = 0; i < allActorsCreatedByHLA.size(); ++i)
+         if (GetGameManager() != NULL)
          {
-            DeleteActor(allActorsCreatedByHLA[i]); 
+            // send delete messages for all actors created by the hla component
+            std::vector<dtCore::UniqueId> allActorsCreatedByHLA;
+            mRuntimeMappings.GetAllActorIds(allActorsCreatedByHLA);
+            
+            for (unsigned i = 0; i < allActorsCreatedByHLA.size(); ++i)
+            {
+               DeleteActor(allActorsCreatedByHLA[i]); 
+            }
          }
-         
          //drop all instance mapping data.
          mRuntimeMappings.Clear();
          try
