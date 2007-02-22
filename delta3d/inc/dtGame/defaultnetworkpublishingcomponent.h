@@ -18,8 +18,8 @@
  *
  * William E. Johnson II
  */
-#ifndef DELTA_DEFAULT_NETWORK_RULES_COMPONENT
-#define DELTA_DEFAULT_NETWORK_RULES_COMPONENT
+#ifndef DELTA_DEFAULT_NETWORK_PUBLISHING_COMPONENT
+#define DELTA_DEFAULT_NETWORK_PUBLISHING_COMPONENT
 
 #include <dtGame/gmcomponent.h>
 
@@ -36,12 +36,12 @@ namespace dtGame
    class ActorDeletedMessage;
    class ActorUpdateMessage;
 
-   class DT_GAME_EXPORT DefaultNetworkRulesComponent : public GMComponent
+   class DT_GAME_EXPORT DefaultNetworkPublishingComponentt : public GMComponent
    {
       public:
 
          /// Constructor
-         DefaultNetworkRulesComponent(const std::string& name = "rules");
+         DefaultNetworkPublishingComponentt(const std::string& name = "rules");
 
          /**
           * Processes messages sent from the Game Manager
@@ -59,7 +59,7 @@ namespace dtGame
       protected:
 
          /// Destructor
-         virtual ~DefaultNetworkRulesComponent();
+         virtual ~DefaultNetworkPublishingComponentt();
 
          /**
           * Processes an incoming tick message
