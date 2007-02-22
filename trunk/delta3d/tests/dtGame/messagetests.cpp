@@ -625,7 +625,7 @@ void MessageTests::TestActorPublish()
    try
    {
       TestComponent* tc = new TestComponent();
-      dtGame::DefaultNetworkRulesComponent* rc = new dtGame::DefaultNetworkRulesComponent();
+      dtGame::DefaultNetworkPublishingComponentt* rc = new dtGame::DefaultNetworkPublishingComponentt();
 
       mGameManager->AddComponent(*tc, dtGame::GameManager::ComponentPriority::NORMAL);
       mGameManager->AddComponent(*rc, dtGame::GameManager::ComponentPriority::NORMAL);

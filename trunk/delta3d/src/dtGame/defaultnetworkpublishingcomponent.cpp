@@ -28,17 +28,17 @@
 
 namespace dtGame
 {
-   DefaultNetworkRulesComponent::DefaultNetworkRulesComponent(const std::string& name) : GMComponent(name)
+   DefaultNetworkPublishingComponentt::DefaultNetworkPublishingComponentt(const std::string& name) : GMComponent(name)
    {
       logger = &dtUtil::Log::GetInstance("rulescomponent.cpp");
    }
 
-   DefaultNetworkRulesComponent::~DefaultNetworkRulesComponent()
+   DefaultNetworkPublishingComponentt::~DefaultNetworkPublishingComponentt()
    {
 
    }
 
-   void DefaultNetworkRulesComponent::ProcessMessage(const Message &msg)
+   void DefaultNetworkPublishingComponentt::ProcessMessage(const Message &msg)
    {
       if (GetGameManager() == NULL)
       {
@@ -81,7 +81,7 @@ namespace dtGame
       }
    }
 
-   void DefaultNetworkRulesComponent::DispatchNetworkMessage(const Message &msg)
+   void DefaultNetworkPublishingComponentt::DispatchNetworkMessage(const Message &msg)
    {
       if (GetGameManager() == NULL)
       {
@@ -90,11 +90,11 @@ namespace dtGame
       }
    }
 
-   void DefaultNetworkRulesComponent::ProcessTick(const TickMessage &msg)
+   void DefaultNetworkPublishingComponentt::ProcessTick(const TickMessage &msg)
    {
    }
 
-   void DefaultNetworkRulesComponent::ProcessPublishActor(const ActorPublishedMessage &msg)
+   void DefaultNetworkPublishingComponentt::ProcessPublishActor(const ActorPublishedMessage &msg)
    {
       GameActorProxy *gap = GetGameManager()->FindGameActorById(msg.GetSendingActorId());
       if(gap != NULL)
@@ -107,7 +107,7 @@ namespace dtGame
          logger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Received a publish message from an actor that isn't part of the GameManager");
    }
 
-   void DefaultNetworkRulesComponent::ProcessDeleteActor(const ActorDeletedMessage &msg)
+   void DefaultNetworkPublishingComponentt::ProcessDeleteActor(const ActorDeletedMessage &msg)
    {
       GameActorProxy *gap = GetGameManager()->FindGameActorById(msg.GetSendingActorId());
       if(gap != NULL)
@@ -127,7 +127,7 @@ namespace dtGame
             "Received a delete actor message from an actor that isn't part of the GameManager");
    }
 
-   void DefaultNetworkRulesComponent::ProcessUpdateActor(const ActorUpdateMessage &msg)
+   void DefaultNetworkPublishingComponentt::ProcessUpdateActor(const ActorUpdateMessage &msg)
    {
       GameActorProxy *gap = GetGameManager()->FindGameActorById(msg.GetSendingActorId());
       if(gap != NULL)
@@ -138,12 +138,12 @@ namespace dtGame
          logger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Received a update actor message from an actor that isn't part of the GameManager");
    }
 
-   void DefaultNetworkRulesComponent::ProcessUnhandledLocalMessage(const Message &msg)
+   void DefaultNetworkPublishingComponentt::ProcessUnhandledLocalMessage(const Message &msg)
    {
 
    }
 
-   void DefaultNetworkRulesComponent::ProcessUnhandleRemoteMessage(const Message &msg)
+   void DefaultNetworkPublishingComponentt::ProcessUnhandleRemoteMessage(const Message &msg)
    {
 
    }

@@ -564,7 +564,7 @@ void GameManagerTests::TestActorSearching()
 
 void GameManagerTests::TestAddRemoveComponents()
 {
-   dtCore::RefPtr<dtGame::DefaultNetworkRulesComponent> rc = new dtGame::DefaultNetworkRulesComponent();
+   dtCore::RefPtr<dtGame::DefaultNetworkPublishingComponentt> rc = new dtGame::DefaultNetworkPublishingComponentt();
    dtCore::RefPtr<dtGame::DefaultMessageProcessor> dmc = new dtGame::DefaultMessageProcessor();
 
    //check default names.
