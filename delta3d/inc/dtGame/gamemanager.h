@@ -65,30 +65,6 @@ namespace dtABC
  */
 namespace dtGame 
 {
-   class LogDebugInformation : public osg::Referenced
-   {
-      public:
-         LogDebugInformation(const std::string name, const std::string uniqueID, bool isComponent)
-         {
-            mUniqueID      = uniqueID;
-            mNameOfLogInfo = name;
-            mTotalTime     = 0.0f;
-            mTickLocalTime = 0.0f;
-            mTimesThrough  = 1;
-            mIsComponent   = isComponent;
-         }
-
-         float          mTotalTime;
-         float          mTickLocalTime;
-         unsigned int   mTimesThrough;
-         std::string    mNameOfLogInfo;
-         std::string    mUniqueID;
-         bool           mIsComponent;
-
-      protected:
-         virtual ~LogDebugInformation(){}
-   };
-
    //class Message;
    class GMComponent;
    class MapChangeStateData;
@@ -580,11 +556,11 @@ namespace dtGame
           * is usually a debug setting that can be used to see how much work the GM is doing
           * as compared to how much work your scene is doing.  If this is > 0, and the 
           * appropriate log level is on, the GM will output statistics periodically
-          * @param logComponents - log timing for components
-          * @param logActors     - log timing for actors
-          * @param statisticsInterval - The new interval (in seconds). Make sure  > 0
-          * @param toConsole     - true to print to console, false to print to file
-          * @param path          - if toConsole == false, print to this file.
+          * @param logComponents log timing for components
+          * @param logActors log timing for actors
+          * @param statisticsInterval The new interval (in seconds). Make sure  > 0
+          * @param toConsole true to print to console, false to print to file
+          * @param path if toConsole == false, print to this file.
           */
          void DebugStatisticsTurnOn(bool logComponents, bool logActors, 
                                     const int statisticsInterval, bool toConsole = true, 
@@ -811,6 +787,30 @@ namespace dtGame
          virtual void PostFrame();        
       
       private:
+
+         class LogDebugInformation : public osg::Referenced
+         {
+            public:
+               LogDebugInformation(const std::string name, const std::string uniqueID, bool isComponent)
+               {
+                  mUniqueID      = uniqueID;
+                  mNameOfLogInfo = name;
+                  mTotalTime     = 0.0f;
+                  mTickLocalTime = 0.0f;
+                  mTimesThrough  = 1;
+                  mIsComponent   = isComponent;
+               }
+
+               float          mTotalTime;
+               float          mTickLocalTime;
+               unsigned int   mTimesThrough;
+               std::string    mNameOfLogInfo;
+               std::string    mUniqueID;
+               bool           mIsComponent;
+
+            protected:
+               virtual ~LogDebugInformation(){}
+         };
 
          std::set<TimerInfo>& GetSimulationTimerList() { return mSimulationTimers; }
 
