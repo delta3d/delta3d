@@ -155,6 +155,9 @@
 				RelativePath="..\..\..\src\dtGame\defaultmessageprocessor.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtGame\defaultnetworkpublishingcomponent.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtGame\environmentactor.cpp">
 			</File>
 			<File
@@ -221,9 +224,6 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\src\dtGame\rulescomponent.cpp">
-			</File>
-			<File
 				RelativePath="..\..\..\src\dtGame\serverloggercomponent.cpp">
 			</File>
 			<File
@@ -254,6 +254,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtGame\defaultmessageprocessor.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtGame\defaultnetworkpublishingcomponent.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtGame\dtgame.h">
@@ -329,9 +332,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtGame\messagetype.h">
-			</File>
-			<File
-				RelativePath="..\..\..\inc\dtGame\rulescomponent.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtGame\serverloggercomponent.h">
