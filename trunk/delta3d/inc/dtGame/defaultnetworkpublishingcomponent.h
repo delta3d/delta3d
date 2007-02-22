@@ -97,7 +97,7 @@ namespace dtGame
           */
          virtual void ProcessUnhandleRemoteMessage(const Message &msg);
 
-         dtUtil::Log* logger;
+         dtUtil::Log* mLogger;
       private:
    };
 }
