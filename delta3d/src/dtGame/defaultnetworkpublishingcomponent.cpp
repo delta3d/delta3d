@@ -30,7 +30,7 @@ namespace dtGame
 {
    DefaultNetworkPublishingComponentt::DefaultNetworkPublishingComponentt(const std::string& name) : GMComponent(name)
    {
-      logger = &dtUtil::Log::GetInstance("rulescomponent.cpp");
+      mLogger = &dtUtil::Log::GetInstance("rulescomponent.cpp");
    }
 
    DefaultNetworkPublishingComponentt::~DefaultNetworkPublishingComponentt()
@@ -42,7 +42,7 @@ namespace dtGame
    {
       if (GetGameManager() == NULL)
       {
-         logger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Rules Component has no GameManager, but a message was received.");
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Rules Component has no GameManager, but a message was received.");
          return;
       }
 
@@ -74,8 +74,8 @@ namespace dtGame
       }
       else
       {
-         if (logger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-            logger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                "Received a message of unknown type: ",  msg.GetMessageType().GetName().c_str());
          ProcessUnhandledLocalMessage(msg);
       }
@@ -85,7 +85,7 @@ namespace dtGame
    {
       if (GetGameManager() == NULL)
       {
-         logger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Rules Component has no GameManager, but a message was received.");
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Rules Component has no GameManager, but a message was received.");
          return;
       }
    }
@@ -104,7 +104,7 @@ namespace dtGame
          GetGameManager()->SendNetworkMessage(*newMsg);
       }
       else
-         logger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Received a publish message from an actor that isn't part of the GameManager");
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Received a publish message from an actor that isn't part of the GameManager");
    }
 
    void DefaultNetworkPublishingComponentt::ProcessDeleteActor(const ActorDeletedMessage &msg)
@@ -118,12 +118,12 @@ namespace dtGame
          }
          catch (const dtUtil::Exception& ex)
          {
-            logger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                "Exception trying to clone a delete message: ", ex.What().c_str());
          }
       }
       else
-         logger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
             "Received a delete actor message from an actor that isn't part of the GameManager");
    }
 
@@ -135,7 +135,7 @@ namespace dtGame
          GetGameManager()->SendNetworkMessage(msg);
       }
       else
-         logger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Received a update actor message from an actor that isn't part of the GameManager");
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Received a update actor message from an actor that isn't part of the GameManager");
    }
 
    void DefaultNetworkPublishingComponentt::ProcessUnhandledLocalMessage(const Message &msg)
