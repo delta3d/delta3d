@@ -1,7 +1,7 @@
 Import('*')
 
 srcs = env.SGlob('*.cpp')
-deps =[ 'OpenThreads', 'Producer', 'osg', 'osgDB', 'ul', 'xerces-c', 'User32']
+deps =[ 'OpenThreads', 'Producer', 'osg', 'osgDB', 'xerces-c', 'User32']
 
 defines = []
 if env['OS'] == 'windows':

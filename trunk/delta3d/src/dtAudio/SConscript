@@ -2,9 +2,9 @@ Import('*')
 
 srcs = env.SGlob( '*.cpp' )
                 
-deps = [ 'dtCore', 'openal', 'alut', 'dtUtil', 'isense', 'OpenThreads',
+deps = [ 'dtCore', 'openal', 'alut', 'dtUtil', 'OpenThreads',
          'osg', 'osgDB', 'osgParticle', 'osgText', 'osgUtil',
-         'osgSim', 'osgFX', 'ul', 'js', 'Producer',
+         'osgSim', 'osgFX', 'Producer',
          'opengl', 'alut', 'User32' ]
 
 defines = []

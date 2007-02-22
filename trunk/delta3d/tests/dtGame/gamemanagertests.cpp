@@ -45,7 +45,7 @@
 #include <dtGame/gamemanager.h>
 #include <dtGame/actorupdatemessage.h>
 #include <dtGame/exceptionenum.h>
-#include <dtGame/rulescomponent.h>
+#include <dtGame/defaultnetworkpublishingcomponent.h>
 #include <dtGame/defaultmessageprocessor.h>
 #include <dtGame/environmentactor.h>
 #include <dtActors/playerstartactorproxy.h>
@@ -564,7 +564,7 @@ void GameManagerTests::TestActorSearching()
 
 void GameManagerTests::TestAddRemoveComponents()
 {
-   dtCore::RefPtr<dtGame::RulesComponent> rc = new dtGame::RulesComponent();
+   dtCore::RefPtr<dtGame::DefaultNetworkRulesComponent> rc = new dtGame::DefaultNetworkRulesComponent();
    dtCore::RefPtr<dtGame::DefaultMessageProcessor> dmc = new dtGame::DefaultMessageProcessor();
 
    //check default names.
