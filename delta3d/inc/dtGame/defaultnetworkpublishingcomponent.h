@@ -36,12 +36,12 @@ namespace dtGame
    class ActorDeletedMessage;
    class ActorUpdateMessage;
 
-   class DT_GAME_EXPORT DefaultNetworkPublishingComponentt : public GMComponent
+   class DT_GAME_EXPORT DefaultNetworkPublishingComponent : public GMComponent
    {
       public:
 
          /// Constructor
-         DefaultNetworkPublishingComponentt(const std::string& name = "rules");
+         DefaultNetworkPublishingComponent(const std::string& name = "rules");
 
          /**
           * Processes messages sent from the Game Manager
@@ -59,7 +59,7 @@ namespace dtGame
       protected:
 
          /// Destructor
-         virtual ~DefaultNetworkPublishingComponentt();
+         virtual ~DefaultNetworkPublishingComponent();
 
          /**
           * Processes an incoming tick message
