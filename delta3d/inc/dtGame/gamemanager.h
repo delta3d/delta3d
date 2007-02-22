@@ -65,6 +65,30 @@ namespace dtABC
  */
 namespace dtGame 
 {
+   class LogDebugInformation : public osg::Referenced
+   {
+      public:
+         LogDebugInformation(const std::string name, const std::string uniqueID, bool isComponent)
+         {
+            mUniqueID      = uniqueID;
+            mNameOfLogInfo = name;
+            mTotalTime     = 0.0f;
+            mTickLocalTime = 0.0f;
+            mTimesThrough  = 1;
+            mIsComponent   = isComponent;
+         }
+
+         float          mTotalTime;
+         float          mTickLocalTime;
+         unsigned int   mTimesThrough;
+         std::string    mNameOfLogInfo;
+         std::string    mUniqueID;
+         bool           mIsComponent;
+
+      protected:
+         virtual ~LogDebugInformation(){}
+   };
+
    //class Message;
    class GMComponent;
    class MapChangeStateData;
@@ -113,8 +137,12 @@ namespace dtGame
          /// Destructor
          virtual ~GameManager();
       
+         /// Used for statistics information, should never have to call yourself.
+         void FindLogDebugInformationAndChangeOrCreateInformation(const std::string& uniqueIDToFind, const std::string& nameOfObject, float realTimeElapsed,
+            bool isComponent, bool ticklocal);
+
       public:
-      
+
          /**
           * Loads an actor registry
           * @param libName the name of the library to load
@@ -547,14 +575,27 @@ namespace dtGame
          int GetStatisticsInterval() { return mStatisticsInterval; }
 
          /**
+          * Records statistics about different components and actors.
           * Sets the interval (in seconds) used for writing out GM Statistics. This 
           * is usually a debug setting that can be used to see how much work the GM is doing
           * as compared to how much work your scene is doing.  If this is > 0, and the 
           * appropriate log level is on, the GM will output statistics periodically
-          * @param The new interval (in seconds).  <=0 turns off statistics logging
+          * @param logComponents - log timing for components
+          * @param logActors     - log timing for actors
+          * @param statisticsInterval - The new interval (in seconds). Make sure  > 0
+          * @param toConsole     - true to print to console, false to print to file
+          * @param path          - if toConsole == false, print to this file.
           */
-         void SetStatisticsInterval(const int statisticsInterval) { mStatisticsInterval = statisticsInterval; }
+         void DebugStatisticsTurnOn(bool logComponents, bool logActors, 
+                                    const int statisticsInterval, bool toConsole = true, 
+                                    const std::string& path = std::string("C:/Code/gamemanagerDebugInfo.txt"));
 
+         /// Turn off statistics information - params to log before stopping, and if user wants to clear history
+         void DebugStatisticsTurnOff(bool logLastTime = false, bool clearList = false);
+
+         /// print out the information from member vars
+         void DebugStatisticsPrintOut(const float gmPercentTime);
+        
          /**
           * Gets the flag for whether we will remove the Game Events when we change a map or not.
           * Normally, when a map is closed, the Game Manager removes the events that came from the
@@ -802,8 +843,8 @@ namespace dtGame
           */
          void SendEnvironmentChangedMessage(EnvironmentActorProxy *envActor);
       
-         dtCore::RefPtr<MachineInfo> mMachineInfo;
-         dtCore::RefPtr<EnvironmentActorProxy> mEnvironment;
+         dtCore::RefPtr<MachineInfo>            mMachineInfo;
+         dtCore::RefPtr<EnvironmentActorProxy>  mEnvironment;
 
          std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> > mGameActorProxyMap;
          std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> > mActorProxyMap;
@@ -828,15 +869,23 @@ namespace dtGame
          bool mPaused;
          std::string mLoadedMap;
          dtCore::RefPtr<MapChangeStateData> mMapChangeStateData;
-         int mStatisticsInterval;
 
+         ////////////////////////////////////////////////
          // statistics data
-         dtCore::Timer_t mStatsLastFragmentDump;
-         long mStatsNumProcMessages;
-         long mStatsNumSendNetworkMessages;
-         long mStatsNumFrames;
-         dtCore::Timer_t mStatsCumGMProcessTime;
-         
+         dtCore::Timer_t      mStatsLastFragmentDump;
+         long                 mStatsNumProcMessages;
+         long                 mStatsNumSendNetworkMessages;
+         long                 mStatsNumFrames;
+         dtCore::Timer_t      mStatsCumGMProcessTime;
+         int                  mStatisticsInterval;                                  /// how often we print the information out.
+         std::string          mFilePathToPrintDebugInformation;                     /// where the file is located at that we print out to
+         bool                 mPrintFileToConsole;                                  /// if the information goes to console or file
+         bool                 mDoStatsOnTheComponents;                              /// do we fill in the information for the components.
+         bool                 mDoStatsOnTheActors;                                  /// Do we fill in information for the actors
+         std::vector<dtCore::RefPtr<LogDebugInformation> > mDebugLoggerInformation; /// hold onto all the information.
+         ////////////////////////////////////////////////
+
+         /// application the gm has. the one and only.
          dtABC::Application* mApplication;
          
          // -----------------------------------------------------------------------
