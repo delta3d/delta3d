@@ -408,6 +408,12 @@ dWorldID Scene::GetWorldID() const
    return mWorldID;
 }
 
+// Get the ODE contact join group ID
+dJointGroupID Scene::GetContactJoinGroupID() const
+{
+   return mContactJointGroupID;
+}
+
 // Performs collision detection and updates physics
 void Scene::OnMessage(MessageData *data)
 {

@@ -131,6 +131,9 @@ namespace dtCore
       
       ///Get the ODE world ID
       dWorldID GetWorldID() const;
+
+      ///Get the ODE contact join group ID
+      dJointGroupID GetContactJoinGroupID() const;
       
       ///Set the gravity vector
       void SetGravity(const osg::Vec3& gravity);
