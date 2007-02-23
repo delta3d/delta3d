@@ -1091,7 +1091,29 @@ namespace dtHLAGM
 
       try
       {
-         //TODO Actually load the translator library
+         dtUtil::LibrarySharingManager& lsm = dtUtil::LibrarySharingManager::GetInstance();
+         dtCore::RefPtr<dtUtil::LibrarySharingManager::LibraryHandle> lib;
+
+         lib = lsm.LoadSharedLibrary(mLibName);
+
+         dtUtil::LibrarySharingManager::LibraryHandle::SYMBOL_ADDRESS createFn;
+         createFn = lib->FindSymbol("CreateParameterTranslator");
+
+         //Make sure the plugin actually implemented these functions and they
+         //have been exported.
+         std::ostringstream msg;
+
+         if (!createFn)
+         {
+            msg.clear();
+            msg.str("");
+            msg << "Actor plugin libraries must implement the function " <<
+               " CreateParameterTranslator.";
+            throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectResourceError, msg.str(), __FILE__, __LINE__);
+         }
+
+          mTargetTranslator->AddParameterTranslator(*((ParameterTranslator*(*)())createFn)());
+        
       }
       catch (const dtUtil::Exception& e)
       {
