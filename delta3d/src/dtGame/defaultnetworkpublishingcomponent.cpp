@@ -30,7 +30,7 @@ namespace dtGame
 {
    DefaultNetworkPublishingComponent::DefaultNetworkPublishingComponent(const std::string& name) : GMComponent(name)
    {
-      mLogger = &dtUtil::Log::GetInstance("rulescomponent.cpp");
+      mLogger = &dtUtil::Log::GetInstance("defaultnetworkpublishingcomponent.cpp");
    }
 
    DefaultNetworkPublishingComponent::~DefaultNetworkPublishingComponent()
@@ -42,7 +42,7 @@ namespace dtGame
    {
       if (GetGameManager() == NULL)
       {
-         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Rules Component has no GameManager, but a message was received.");
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "DefaultNetworkPublishingComponent has no GameManager, but a message was received.");
          return;
       }
 
@@ -85,7 +85,7 @@ namespace dtGame
    {
       if (GetGameManager() == NULL)
       {
-         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Rules Component has no GameManager, but a message was received.");
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "DefaultNetworkPublishingComponent has no GameManager, but a message was received.");
          return;
       }
    }
