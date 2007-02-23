@@ -93,7 +93,7 @@ namespace dtUtil
          mIsLittleEndian = rhs.mIsLittleEndian;
 
          if (mBufferSize > 0)
-            memcpy(&rhs.mBuffer[0],&mBuffer[0],mBufferSize);
+            memcpy(&mBuffer[0], &rhs.mBuffer[0], mBufferSize);
       }
 
       return *this;
