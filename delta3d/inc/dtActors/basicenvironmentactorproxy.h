@@ -32,6 +32,31 @@ namespace dtActors
    {
       public:
 
+         class DT_PLUGIN_EXPORT CloudCoverEnum : public dtUtil::Enumeration
+         {
+            DECLARE_ENUM(CloudCoverEnum);
+
+            public:
+
+               static CloudCoverEnum CLEAR;
+               static CloudCoverEnum FEW;
+               static CloudCoverEnum SCATTERED;
+               static CloudCoverEnum BROKEN;
+               static CloudCoverEnum OVERCAST;
+
+               dtABC::Weather::CloudType GetEnumValue() const { return mValue; }
+
+            private:
+
+               CloudCoverEnum(const std::string &name, dtABC::Weather::CloudType tp) 
+                  : dtUtil::Enumeration(name), mValue(tp) 
+               {
+                  AddInstance(this);
+               }
+
+               dtABC::Weather::CloudType mValue;
+         }; 
+
          /**
           * Class that encapsulates Visibility Type
           * @see class dtCore::Weather
@@ -357,6 +382,16 @@ namespace dtActors
           * Gets the current season
           */
          SeasonEnum& GetSeason() const;
+
+         /**
+          * Sets the current cloud cover
+          */
+         void SetCloudCover(CloudCoverEnum &clouds);
+
+         /**
+          * Gets the current cloud cover
+          */
+         CloudCoverEnum& GetCloudCover() const;
 
       protected:
 
