@@ -225,21 +225,9 @@ namespace dtGame
 
    void DefaultMessageProcessor::ProcessUnhandledLocalMessage(const Message &msg)
    {
-      if (dtUtil::Log::GetInstance().IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-      {
-         std::string msgStr;
-         msg.ToString(msgStr);
-         LOG_DEBUG(msgStr);
-      }
    }
       
    void DefaultMessageProcessor::ProcessUnhandledRemoteMessage(const Message &msg)
    {
-      if (dtUtil::Log::GetInstance().IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-      {
-         std::string msgStr;
-         msg.ToString(msgStr);
-         LOG_DEBUG(msgStr);
-      }
    }
 }
