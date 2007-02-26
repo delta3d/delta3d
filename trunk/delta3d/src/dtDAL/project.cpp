@@ -22,7 +22,6 @@
 #include <string>
 #include <sstream>
 #include <set>
-#include <cstdio>
 #include <cassert>
 
 #ifdef _MSC_VER
@@ -55,12 +54,6 @@
 
 #include <dtAI/waypointmanager.h>
 #include <dtDAL/waypointactorproxy.h>
-
-#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
-   #ifndef snprintf
-      #define snprintf _snprintf
-   #endif
-#endif
 
 namespace dtDAL
 {
@@ -101,6 +94,95 @@ namespace dtDAL
       return *this;
    }
 
+   void Project::CreateContext(const std::string& path)
+   {
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+      dtUtil::FileType ft = fileUtils.GetFileInfo(path).fileType;      
+      if (ft == dtUtil::FILE_NOT_FOUND)
+      {
+         try
+         {
+            fileUtils.MakeDirectory(path);
+            ft = dtUtil::DIRECTORY;
+         }
+         catch (const dtUtil::Exception& ex)
+         {
+            std::ostringstream ss;
+            ss << "Unable to create directory " << path << ". Error: " << ex.What();
+            throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext, ss.str(), __FILE__, __LINE__);
+         }
+      }
+      else if (ft == dtUtil::REGULAR_FILE)
+      {
+         std::string s(path);
+         s.append(" is not a directory");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext, s, __FILE__, __LINE__);
+      }
+      
+      // from this point on, we know we have a valid directory
+      std::string pPath = path;
+      std::string::iterator last = pPath.end();
+      --last;
+      if (*last == dtUtil::FileUtils::PATH_SEPARATOR)
+         pPath.erase(last);
+
+      fileUtils.PushDirectory(path);
+
+      try
+      {
+         const dtUtil::DirectoryContents contents = fileUtils.DirGetFiles(".");
+         if (contents.empty())
+         {
+            try
+            {
+               fileUtils.MakeDirectory(Project::MAP_DIRECTORY);
+            }
+            catch(const dtUtil::Exception& ex)
+            {
+               std::ostringstream ss;
+               ss << "Unable to create directory " << Project::MAP_DIRECTORY << ". Error: " << ex.What();
+               throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext, 
+                  ss.str(), __FILE__, __LINE__);
+            }
+         }
+         else
+         {
+            std::set<std::string> contentsSet;
+            contentsSet.insert(contents.begin(), contents.end());
+            if (contentsSet.find(Project::MAP_DIRECTORY) == contentsSet.end())
+            {
+               try
+               {
+                  fileUtils.MakeDirectory(Project::MAP_DIRECTORY);
+               }
+               catch (const dtUtil::Exception& ex)
+               {
+                  std::ostringstream ss;
+                  ss << "Unable to create directory " << Project::MAP_DIRECTORY << ". Error: " << ex.What();
+                  throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext, ss.str(), __FILE__, __LINE__);
+               }
+            }
+            else if (fileUtils.GetFileInfo(Project::MAP_DIRECTORY).fileType != dtUtil::DIRECTORY)
+            {
+               std::string s(path);
+               s.append(" is not a valid project directory.  The ");
+               s.append(Project::MAP_DIRECTORY);
+               if (fileUtils.GetFileInfo(Project::MAP_DIRECTORY).fileType == dtUtil::REGULAR_FILE)
+                  s.append(" is not a directory.");
+               else
+                  s.append(" cannot be created.");
+               throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext, s, __FILE__, __LINE__);
+            }
+         }
+      }
+      catch (const dtUtil::Exception& ex)
+      {
+         dtUtil::FileUtils::GetInstance().PopDirectory();
+         throw ex;
+      }
+      dtUtil::FileUtils::GetInstance().PopDirectory();
+   }
+   
    //////////////////////////////////////////////////////////
    void Project::SetContext(const std::string& path, bool mOpenReadOnly)
    {
@@ -136,30 +218,11 @@ namespace dtDAL
          dtCore::SetDataFilePathList(searchPath);
       }
 
-      if (!mOpenReadOnly)
-      {
-         try
-         {
-            fileUtils.MakeDirectory(path);
-            ft = dtUtil::DIRECTORY;
-         }
-         catch (const dtUtil::Exception& ex)
-         {
-            std::ostringstream ss;
-            ss << "Unable to create directory " << path << ". Error: " << ex.What();
-            throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext, ss.str(), __FILE__, __LINE__);
-         }
-      }
-
       if (ft == dtUtil::FILE_NOT_FOUND)
       {
-         char* fmt = "Directory %s does not exist";
-         int size = strlen(fmt) + path.length();
-         char* buffer = new char[size + 1];
-         snprintf(buffer, size, fmt, path.c_str());
-         std::string s(buffer);
-         delete buffer;
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext, s, __FILE__, __LINE__);
+         std::ostringstream ss;
+         ss << "Directory \"" << path << "\" does not exist"; 
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext, ss.str(), __FILE__, __LINE__);
       }
 
       if (ft == dtUtil::REGULAR_FILE)
@@ -184,53 +247,21 @@ namespace dtDAL
          const dtUtil::DirectoryContents contents = fileUtils.DirGetFiles(".");
          if (contents.empty())
          {
-            if (mOpenReadOnly)
-            {
-               std::string s(path);
-               s.append(" is not a valid project directory.");
-               throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext, s, __FILE__, __LINE__);
-            }
-            else
-            {
-               try
-               {
-                  fileUtils.MakeDirectory(Project::MAP_DIRECTORY);
-               }
-               catch(const dtUtil::Exception& ex)
-               {
-                  std::ostringstream ss;
-                  ss << "Unable to create directory " << Project::MAP_DIRECTORY << ". Error: " << ex.What();
-                  throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext, 
-                     ss.str(), __FILE__, __LINE__);
-               }
-            }
+            std::string s(path);
+            s.append(" is not a valid project directory.");
+            throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext, s, __FILE__, __LINE__);
          }
          else
          {
-            std::set<std::string> contentsSet;
-            contentsSet.insert(contents.begin(), contents.end());
-            if (!mOpenReadOnly && contentsSet.find(Project::MAP_DIRECTORY) == contentsSet.end())
-            {
-               try
-               {
-                  fileUtils.MakeDirectory(Project::MAP_DIRECTORY);
-               }
-               catch (const dtUtil::Exception& ex)
-               {
-                  std::ostringstream ss;
-                  ss << "Unable to create directory " << Project::MAP_DIRECTORY << ". Error: " << ex.What();
-                  throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext, ss.str(), __FILE__, __LINE__);
-               }
-            }
-            else if (fileUtils.GetFileInfo(Project::MAP_DIRECTORY).fileType != dtUtil::DIRECTORY)
+            if (fileUtils.GetFileInfo(Project::MAP_DIRECTORY).fileType != dtUtil::DIRECTORY)
             {
                std::string s(path);
                s.append(" is not a valid project directory.  The ");
                s.append(Project::MAP_DIRECTORY);
                if (fileUtils.GetFileInfo(Project::MAP_DIRECTORY).fileType == dtUtil::REGULAR_FILE)
-                  s.append(" is not a directory.");
+                  s.append(" file is not a directory.");
                else
-                  s.append(" does not exist.");
+                  s.append(" directory does not exist.");
                throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext, s, __FILE__, __LINE__);
             }
          }
@@ -1592,12 +1623,12 @@ namespace dtDAL
             if (proxy.valid())
             {            
                dtAI::WaypointActor* pActor = dynamic_cast<dtAI::WaypointActor*>(proxy->GetActor());
-               assert(pActor);
+               assert(pActor != NULL);
 
                osg::Vec3 vec = (*iter).second->GetPosition();
 
                dtDAL::WaypointActorProxy* pActorProxy = dynamic_cast<dtDAL::WaypointActorProxy*>(proxy.get());
-               assert(pActorProxy);
+               assert(pActorProxy != NULL);
 
                //note.. this will crash if we dont set the index first
                //cause setting the translation will trigger a callback in our move waypoint function

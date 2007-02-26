@@ -868,6 +868,7 @@ void GameActorTests::TestMessageProcessingPerformance()
    int numTicks = 100;
    try 
    {
+      dtDAL::Project::GetInstance().CreateContext("Working Project");
       dtDAL::Project::GetInstance().SetContext("Working Project");
       dtCore::RefPtr<dtGame::DefaultMessageProcessor> dmc = new dtGame::DefaultMessageProcessor();
       mManager->AddComponent(*dmc, dtGame::GameManager::ComponentPriority::HIGHEST);

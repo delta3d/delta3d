@@ -155,6 +155,7 @@ void MapTests::setUp()
             fileUtils.FileDelete(rbodyToDelete);
 
 
+        dtDAL::Project::GetInstance().CreateContext("WorkingMapProject");
         dtDAL::Project::GetInstance().SetContext("WorkingMapProject");
         //copy the vector because the act of deleting a map will reload the map names list.
         const std::set<std::string> v = dtDAL::Project::GetInstance().GetMapNames();
@@ -293,8 +294,6 @@ void MapTests::TestMapAddRemoveProxies()
     try
     {
         dtDAL::Project& project = dtDAL::Project::GetInstance();
-
-        project.SetContext("WorkingMapProject");
 
         dtDAL::Map& map = project.CreateMap(std::string("Neato Map"), std::string("neatomap"));
 
@@ -541,8 +540,6 @@ void MapTests::TestLibraryMethods()
     {
         dtDAL::Project& project = dtDAL::Project::GetInstance();
 
-        project.SetContext("WorkingMapProject");
-
         dtDAL::Map* map = &project.CreateMap("Neato Map", "neatomap");
 
         std::string lib1("hello1");
@@ -632,8 +629,6 @@ void MapTests::TestMapLibraryHandling()
     {
        dtDAL::Project& project = dtDAL::Project::GetInstance();
 
-       project.SetContext("WorkingMapProject");
-
        std::string mapName("Neato Map");
        std::string mapFileName("neatomap");
 
@@ -709,7 +704,6 @@ void MapTests::TestMapEventsModified()
    try
    {
       dtDAL::Project& project = dtDAL::Project::GetInstance();
-      project.SetContext("WorkingMapProject");
       dtDAL::Map& map = project.CreateMap("Neato Map", "neatomap");
       
       CPPUNIT_ASSERT(!map.IsModified());
@@ -751,8 +745,6 @@ void MapTests::TestMapSaveAndLoad()
     try
     {
         dtDAL::Project& project = dtDAL::Project::GetInstance();
-
-        project.SetContext("WorkingMapProject");
 
         std::string mapName("Neato Map");
         std::string mapFileName("neatomap");
@@ -1301,8 +1293,6 @@ void MapTests::TestMapSaveAndLoadEvents()
    {
       dtDAL::Project& project = dtDAL::Project::GetInstance();
 
-      project.SetContext("WorkingMapProject");
-
       const std::string mapName("Neato Map");
       const std::string mapFileName("neatomap");
 
@@ -1358,8 +1348,6 @@ void MapTests::TestMapSaveAndLoadGroup()
    try
    {
       dtDAL::Project& project = dtDAL::Project::GetInstance();
-
-      project.SetContext("WorkingMapProject");
 
       std::string mapName("Neato Map");
       std::string mapFileName("neatomap");
@@ -1525,8 +1513,6 @@ void MapTests::TestMapSaveAndLoadActorGroups()
    {
       dtDAL::Project& project = dtDAL::Project::GetInstance();
 
-      project.SetContext("WorkingMapProject");
-
       std::string mapName("Neato Map");
       std::string mapFileName("neatomap");
 
@@ -1608,8 +1594,6 @@ void MapTests::TestLoadMapIntoScene()
     try
     {
         dtDAL::Project& project = dtDAL::Project::GetInstance();
-
-        project.SetContext("WorkingMapProject");
 
         dtDAL::Map& map = project.CreateMap(std::string("Neato Map"), std::string("neatomap"));
 

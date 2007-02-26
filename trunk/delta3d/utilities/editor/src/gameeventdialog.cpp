@@ -41,15 +41,17 @@
 namespace dtEditQt
 {
    /// Constructor
-   GameEventDialog::GameEventDialog(QWidget *parent, dtDAL::GameEvent& event, bool isNew): QDialog(parent)
+   GameEventDialog::GameEventDialog(QWidget *parent, dtDAL::GameEvent& event,
+         bool isNew) :
+      QDialog(parent)
    {
       if (isNew)
          setWindowTitle(tr("New Game Event"));
       else
          setWindowTitle(tr("Edit Game Event"));
-         
-      mGameEvent = &event;   
-      
+
+      mGameEvent = &event;
+
       QGroupBox *groupBox = new QGroupBox(tr("Game Event"), this);
       QGridLayout *gridLayout = new QGridLayout(groupBox);
       QLabel *label;
@@ -57,15 +59,15 @@ namespace dtEditQt
       label = new QLabel(tr("Name:"),this);
       label->setAlignment(Qt::AlignRight);
       mNameEdit = new QLineEdit(this);
-      gridLayout->addWidget(label,0,0);
-      gridLayout->addWidget(mNameEdit,0,1);
+      gridLayout->addWidget(label, 0, 0);
+      gridLayout->addWidget(mNameEdit, 0, 1);
 
       label = new QLabel(tr("Description:"),this);
       label->setAlignment(Qt::AlignRight);
       mDescEdit = new QTextEdit(this);
-      gridLayout->addWidget(label,1,0);
-      gridLayout->addWidget(mDescEdit,1,1);
-      
+      gridLayout->addWidget(label, 1, 0);
+      gridLayout->addWidget(mDescEdit, 1, 1);
+
       if (!isNew)
       {
          mNameEdit->insert(event.GetName().c_str());
@@ -91,7 +93,7 @@ namespace dtEditQt
       mainLayout->addLayout(buttonLayout);
 
       setLayout(mainLayout);
-      
+
       connect(mNameEdit, SIGNAL(textChanged(const QString&)), this, SLOT(Edited(const QString&)));
 
       //Make sure the button is enabled/disabled properly.
@@ -108,10 +110,10 @@ namespace dtEditQt
    /// slot for applying the changes made
    void GameEventDialog::ApplyChanges()
    {
-      if(mNameEdit->text().isEmpty()) 
+      if (mNameEdit->text().isEmpty())
       {
          QMessageBox::critical(this, tr("Error"),
-             tr("A Game Event must have a valid name."),tr("OK"));
+               tr("A Game Event must have a valid name."), tr("OK"));
       }
       else
       {
@@ -120,5 +122,5 @@ namespace dtEditQt
          accept();
       }
    }
-   
+
 }

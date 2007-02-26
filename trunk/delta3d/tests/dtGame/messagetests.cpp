@@ -28,6 +28,7 @@
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
 #include <dtCore/globals.h>
+
 #include <dtDAL/datatype.h>
 #include <dtDAL/resourcedescriptor.h>
 #include <dtDAL/actortype.h>
@@ -36,8 +37,10 @@
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/gameeventmanager.h>
 #include <dtDAL/gameevent.h>
+
 #include <dtUtil/fileutils.h>
 #include <dtUtil/datastream.h>
+
 #include <dtGame/messageparameter.h>
 #include <dtGame/machineinfo.h>
 #include <dtGame/gameactor.h>
@@ -204,7 +207,8 @@ void MessageTests::setUp()
       dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
       dtCore::System::GetInstance().Start();
 
-      dtDAL::Project::GetInstance().SetContext("dtGame/TestGameProject");
+      dtDAL::Project::GetInstance().CreateContext("data/TestGameProject");
+      dtDAL::Project::GetInstance().SetContext("data/TestGameProject");
    }
    catch (const dtUtil::Exception& ex)
    {
@@ -250,8 +254,8 @@ void MessageTests::tearDown()
 
    try
    {
-      if(dtUtil::FileUtils::GetInstance().DirExists("dtGame/TestGameProject"))
-         dtUtil::FileUtils::GetInstance().DirDelete("dtGame/TestGameProject", true);
+      if(dtUtil::FileUtils::GetInstance().DirExists("data/TestGameProject"))
+         dtUtil::FileUtils::GetInstance().DirDelete("data/TestGameProject", true);
    }
    catch(const dtUtil::Exception &e)
    {
@@ -1260,13 +1264,12 @@ void MessageTests::TestChangeMapErrorConditions()
 {
    try 
    {
-      dtDAL::Project::GetInstance().SetContext("dtGame/WorkingProject");
+      dtDAL::Project::GetInstance().CreateContext("data/ChangeMapErrorProject");
+      dtDAL::Project::GetInstance().SetContext("data/ChangeMapErrorProject");
       CPPUNIT_ASSERT_THROW(mGameManager->ChangeMap(""), dtUtil::Exception);
    
-      dtDAL::Project::GetInstance().SetContext("dtGame/WorkingProject");
       CPPUNIT_ASSERT_THROW(mGameManager->ChangeMap("This map does not exist"), dtUtil::Exception);
    
-      dtDAL::Project::GetInstance().SetContext("dtGame/WorkingProject");
       CPPUNIT_ASSERT_THROW(mGameManager->ChangeMap("../examples/testMap/testMap"), dtUtil::Exception);
    
       dtUtil::FileUtils::GetInstance().DirDelete("dtGame/WorkingProject", true);

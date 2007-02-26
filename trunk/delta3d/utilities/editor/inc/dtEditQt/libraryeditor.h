@@ -37,63 +37,63 @@ namespace dtEditQt
 {
    class LibraryEditor : public QDialog
    {
-         Q_OBJECT
-         
+      Q_OBJECT
+
       public:
-         
+
          /// Constructor
          LibraryEditor(QWidget *parent = NULL);
-         
+
          /// Destructor
          virtual ~LibraryEditor();
-         
-      signals:
-         
-         /// This signal is emitted if no libraries in the list
-         /// are selected so the delete button knows to grey 
-         /// itself out
-         void noLibsSelected();
-      
+
+         signals:
+
+            /// This signal is emitted if no libraries in the list
+            /// are selected so the delete button knows to grey 
+            /// itself out
+            void noLibsSelected();
+
          /// This signal enables the remove library button
          void librarySelected();
-      
+
       public slots:
-         
+
          /// Pop up the file browser for libraries
          void spawnFileBrowser();
-      
+
          /// Confirm deletion of libraries
          void spawnDeleteConfirmation();
-      
+
          /// Handle a deletion failure
          void handleFailure(const int code, const std::string &errorMsg = "");
-      
+
          /// Received when a library is currently selected
          void enableButtons();
-      
+
          /// Disable the delete button if no libraries are selected
          void disableButtons();
-      
+
          /// Shift the current library up 1 position
          void shiftLibraryUp();
-      
+
          /// Shift the current library down 1 position
          void shiftLibraryDown();
-      
+
       private:
-         
+
          /// The visible list of libraries
          QListWidget *libView;
-      
+
          /// Our buttons
          QPushButton *deleteLib, *upLib, *downLib;
-      
+
          unsigned int numActorsInScene;
-      
+
          // private function to obtain the library names from the map
          // and convert them to QT format
          void getMapLibNames(std::vector<QListWidgetItem*>& items) const;
-      
+
          // private function to refresh the list of libraries after
          // the user has imported his own libraries
          void refreshLibraries();

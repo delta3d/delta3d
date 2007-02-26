@@ -582,7 +582,7 @@ namespace dtGame
           */
          bool GetRemoveGameEventsOnMapChange() const { return mRemoveGameEventsOnMapChange; }
 
-         /**
+         /**no
           * Sets the flag for whether we will remove the Game Events when we change a map or not.
           * Normally, when a map is closed, the Game Manager removes the events that came from the
           * map. This flag allows the case where sometimes an event comes from a map but you don't want
