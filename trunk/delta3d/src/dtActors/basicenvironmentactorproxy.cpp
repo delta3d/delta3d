@@ -110,7 +110,14 @@ namespace dtActors
 
    ////////////////////////////////////////////////////////////////////////
    // Actor code
-   ////////////////////////////////////////////////////////////////////////
+   ////////////////////////////////////////////////////////////////////////'
+   IMPLEMENT_ENUM(BasicEnvironmentActor::CloudCoverEnum);
+   BasicEnvironmentActor::CloudCoverEnum BasicEnvironmentActor::CloudCoverEnum::CLEAR("Clear",       dtABC::Weather::CLOUD_CLEAR);
+   BasicEnvironmentActor::CloudCoverEnum BasicEnvironmentActor::CloudCoverEnum::FEW("Few",           dtABC::Weather::CLOUD_FEW);
+   BasicEnvironmentActor::CloudCoverEnum BasicEnvironmentActor::CloudCoverEnum::BROKEN("Broken",     dtABC::Weather::CLOUD_BROKEN);
+   BasicEnvironmentActor::CloudCoverEnum BasicEnvironmentActor::CloudCoverEnum::SCATTERED("Clear",   dtABC::Weather::CLOUD_SCATTERED);
+   BasicEnvironmentActor::CloudCoverEnum BasicEnvironmentActor::CloudCoverEnum::OVERCAST("Overcast", dtABC::Weather::CLOUD_OVERCAST);
+
    IMPLEMENT_ENUM(BasicEnvironmentActor::VisibilityTypeEnum);
    BasicEnvironmentActor::VisibilityTypeEnum BasicEnvironmentActor::VisibilityTypeEnum::VISIBILITY_UNLIMITED("Visibility Unlimited", dtABC::Weather::VIS_UNLIMITED);
    BasicEnvironmentActor::VisibilityTypeEnum BasicEnvironmentActor::VisibilityTypeEnum::VISIBILITY_FAR("Visibility Far", dtABC::Weather::VIS_FAR);
@@ -424,6 +431,24 @@ namespace dtActors
             return v;
       }
       return BasicEnvironmentActor::SeasonEnum::SEASON_SUMMER;
+   }
+
+   void BasicEnvironmentActor::SetCloudCover(CloudCoverEnum &clouds)
+   {
+      mWeather->SetBasicCloudType(clouds.GetEnumValue());
+   }
+
+   BasicEnvironmentActor::CloudCoverEnum& BasicEnvironmentActor::GetCloudCover() const
+   {
+      for(unsigned int i = 0; i < BasicEnvironmentActor::CloudCoverEnum::EnumerateType().size(); i++)
+      {
+         BasicEnvironmentActor::CloudCoverEnum &currentCloud = 
+            *BasicEnvironmentActor::CloudCoverEnum::EnumerateType()[i];  
+         
+         if(mWeather->GetBasicCloudType() == currentCloud.GetEnumValue())
+            return currentCloud;
+      }
+      return BasicEnvironmentActor::CloudCoverEnum::CLEAR;
    }
 
    bool BasicEnvironmentActor::ValidateUTCString(std::istringstream &iss, const std::string &string)
