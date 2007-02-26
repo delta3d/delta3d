@@ -124,7 +124,7 @@ namespace dtDAL
       std::map<std::string, ResourceDescriptor>::iterator itor = mResourceMap.find(name);
       if(itor != mResourceMap.end())
          mResourceMap.erase(itor);
-
+      
       // insert the new value, if we have one.
       if(source != NULL)
       {

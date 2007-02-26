@@ -164,6 +164,13 @@ namespace dtDAL
             }
             return *mInstance;
          }
+         
+         /**
+          * Creates a new project context if it doesn't exist.
+          * @param path the full path to the new context directory
+          * @throws dtUtil::Exception with ExceptionEnum::ProjectInvalidContext if the path specified is invalid.
+          */
+         void CreateContext(const std::string& path);
 
          /**
           * @return true if the context is valid.
@@ -172,13 +179,12 @@ namespace dtDAL
 
          /**
           * Assigns the context for the project.  If it is not opened read only, the code will attempt to make the path
-          * into a project.  If the path does not exist, it will attempt to create and initialize it as well.  The method
-          * will throw exceptions if the directory cannot be a valid project for some reason, or if it is not initialized and
-          * the programmer passed a true for opening it read only.
+          * into a project.  It no longer creates a context if it does not exist.
+          * @see #CreateContext
           * @param path the file path of to the project
           * @param openReadOnly optional parameter that defaults to false.  If true, the class will not attempt to modify
           * the project directory.
-          * @throws ExceptionEnum::ProjectInvalidContext if the path specified is invalid.
+          * @throw ExceptionEnum::ProjectInvalidContext if the path specified is invalid.
           */
          void SetContext(const std::string& path, bool openReadOnly=false);
 

@@ -151,9 +151,12 @@ namespace dtGame
          /// Destructor
          virtual ~MessageType() { }
 
+         static const unsigned short USER_DEFINED_MESSAGE_TYPE = 1024;
+         
+      private:
+         
          std::string mCategory, mDescription;
          const unsigned short mId;
-         static const unsigned short USER_DEFINED_MESSAGE_TYPE = 1024;
    };
 }
 

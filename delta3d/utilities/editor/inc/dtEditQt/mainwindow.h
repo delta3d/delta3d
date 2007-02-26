@@ -1,24 +1,24 @@
 /*
-* Delta3D Open Source Game and Simulation Engine 
-* Simulation, Training, and Game Editor (STAGE)
-* Copyright (C) 2005, BMH Associates, Inc.
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free
-* Software Foundation; either version 2 of the License, or (at your option)
-* any later version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this library; if not, write to the Free Software Foundation, Inc.,
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*
-* Matthew W. Campbell
-*/
+ * Delta3D Open Source Game and Simulation Engine 
+ * Simulation, Training, and Game Editor (STAGE)
+ * Copyright (C) 2005, BMH Associates, Inc.
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * Matthew W. Campbell
+ */
 #ifndef DELTA_MAIN_WINDOW
 #define DELTA_MAIN_WINDOW
 
@@ -32,219 +32,219 @@
 namespace dtEditQt 
 {
 
-    class PerspectiveViewport;
-    class OrthoViewport;
-    class PropertyEditor;
-    class ActorTab;
-    class ResourceBrowser;
+   class PerspectiveViewport;
+   class OrthoViewport;
+   class PropertyEditor;
+   class ActorTab;
+   class ResourceBrowser;
 
-    /**
-     * This class is the main window of the application.  It contains the menu bar,
-     * toolbar, statusbar, and main UI interface.
-     */
-    class MainWindow : public QMainWindow
-    {
-        Q_OBJECT
+   /**
+    * This class is the main window of the application.  It contains the menu bar,
+    * toolbar, statusbar, and main UI interface.
+    */
+   class MainWindow : public QMainWindow
+   {
+      Q_OBJECT
 
-    public:
+      public:
 
-        /**
-         * Constructor
-         */
-        MainWindow();
+         /**
+          * Constructor
+          */
+         MainWindow();
 
-        /**
-         * Overloaded so that the context menu is not displayed.  By default, the MainWindow
-         * displays a right-click menu when the right mouse button is clicked.  Unfortunantly,
-         * this causes problems for other right mouse button behavior.
-         * @todo
-         *  Allow application wide right click menu when mouse is only over certain
-         *  widgets.
-         */
-        QMenu *createPopupMenu() { return NULL; }
+         /**
+          * Overloaded so that the context menu is not displayed.  By default, the MainWindow
+          * displays a right-click menu when the right mouse button is clicked.  Unfortunantly,
+          * this causes problems for other right mouse button behavior.
+          * @todo
+          *  Allow application wide right click menu when mouse is only over certain
+          *  widgets.
+          */
+         QMenu *createPopupMenu() { return NULL; }
 
-        /**
-         * Finds the recently opened projects, if applicable
-         * @return The number of projects found
-         */
-        std::vector<std::string> findRecentProjects();
+         /**
+          * Finds the recently opened projects, if applicable
+          * @return The number of projects found
+          */
+         std::vector<std::string> findRecentProjects();
 
-        /**
-         * Finds the recently opened maps, if applicable
-         * @return A vector containing the maps
-         */
-        std::vector<std::string> findRecentMaps();
+         /**
+          * Finds the recently opened maps, if applicable
+          * @return A vector containing the maps
+          */
+         std::vector<std::string> findRecentMaps();
 
-        /**
-         * Searches for stored preferences
-         */
-        void findAndLoadPreferences();
-        
-        /**
-         * @return the property editor.
-         */
-       PropertyEditor& GetPropertyEditor();
-    public slots:
+         /**
+          * Searches for stored preferences
+          */
+         void findAndLoadPreferences();
 
-        /**
-         * This slot is triggered when the application is started and initialized.
-         */
-        void onEditorInitiated();
+         /**
+          * @return the property editor.
+          */
+         PropertyEditor& GetPropertyEditor();
+      public slots:
 
-        /**
-         * This slot is triggered just before the editor is about to shut down.  This is
-         * where the main window settings (size, position, docked windows, etc.) are
-         * saved.
-         */
-        void onEditorShutDown();
+         /**
+          * This slot is triggered when the application is started and initialized.
+          */
+         void onEditorInitiated();
 
-        /**
-        * Enables or disables all the actions on the main window depending on the state of data.
-        * There should be a project and/or a map for most actions.  Call this when something
-        * major changes in the app to disable the UI appropriately.  Note that this is tied to
-        * the EditorEvents::editorInitiationEvent.
-        */
-        void enableActions();
+         /**
+          * This slot is triggered just before the editor is about to shut down.  This is
+          * where the main window settings (size, position, docked windows, etc.) are
+          * saved.
+          */
+         void onEditorShutDown();
 
-        /**
-         * This slot will either hide or retrieve the property editor window when the tab is 
-         * selected from the main menu
-         */
-        void onPropertyEditorSelection();
+         /**
+          * Enables or disables all the actions on the main window depending on the state of data.
+          * There should be a project and/or a map for most actions.  Call this when something
+          * major changes in the app to disable the UI appropriately.  Note that this is tied to
+          * the EditorEvents::editorInitiationEvent.
+          */
+         void enableActions();
 
-        /**
-         * This slot will either hide or retrieve the actor tab window when the tab is 
-         * selected from the main menu
-         */
-        void onActorSearchSelection();
+         /**
+          * This slot will either hide or retrieve the property editor window when the tab is 
+          * selected from the main menu
+          */
+         void onPropertyEditorSelection();
 
-        /**
-         * This slot will either hide or retrieve the resource browser window when the tab is 
-         * selected from the main menu
-         */
-        void onResourceBrowserSelection();
+         /**
+          * This slot will either hide or retrieve the actor tab window when the tab is 
+          * selected from the main menu
+          */
+         void onActorSearchSelection();
 
-        /**
-         * Called when an actor property changes.  This method will then flag the
-         * current map as being modified.
-         * @param proxy The proxy that was changed.
-         * @param property The property of the proxy that was modified.
-         */
-        void onActorPropertyChanged(ActorProxyRefPtr proxy, ActorPropertyRefPtr property);
+         /**
+          * This slot will either hide or retrieve the resource browser window when the tab is 
+          * selected from the main menu
+          */
+         void onResourceBrowserSelection();
 
-        /// Updates the window title
-        void updateWindowTitle();
+         /**
+          * Called when an actor property changes.  This method will then flag the
+          * current map as being modified.
+          * @param proxy The proxy that was changed.
+          * @param property The property of the proxy that was modified.
+          */
+         void onActorPropertyChanged(ActorProxyRefPtr proxy, ActorPropertyRefPtr property);
 
-        void onActorProxyCreated(ActorProxyRefPtr proxy, bool forceNoAdjustments);
+         /// Updates the window title
+         void updateWindowTitle();
 
-        void onActorProxyDestroyed(ActorProxyRefPtr proxy);
+         void onActorProxyCreated(ActorProxyRefPtr proxy, bool forceNoAdjustments);
 
-        void onActorProxyNameChanged(ActorProxyRefPtr proxy, std::string oldName);
+         void onActorProxyDestroyed(ActorProxyRefPtr proxy);
 
-        void onMapPropertyChanged();
+         void onActorProxyNameChanged(ActorProxyRefPtr proxy, std::string oldName);
 
-        /**
-         * Starts a new wait cursor.  You MUST call endWaitCursor() for each 
-         * startWaitCursor().
-         *
-         * @Note - This behavior is extremely trivial, but is pulled to mainWindow for 
-         * future expansion
-         */
-        void startWaitCursor();
+         void onMapPropertyChanged();
 
-        /** 
-         * Ends a previously started wait cursor.  You must call this for each startWaitCursor().
-         *
-         * @Note - This behavior is extremely trivial, but is pulled to mainWindow for 
-         * future expansion
-         */
-        void endWaitCursor();
+         /**
+          * Starts a new wait cursor.  You MUST call endWaitCursor() for each 
+          * startWaitCursor().
+          *
+          * @Note - This behavior is extremely trivial, but is pulled to mainWindow for 
+          * future expansion
+          */
+         void startWaitCursor();
 
-        /**
-         * Restores the docking windows to the default state
-         */
-        void onResetWindows();
-        
-        // This function sets the checkmarks in the Window menu. I used to do this explicitly
-        // in onEditorInitiated, but it doesn't function correctly because the actual windows
-        // aren't visible yet. 
-        void setWindowMenuTabsChecked();
+         /** 
+          * Ends a previously started wait cursor.  You must call this for each startWaitCursor().
+          *
+          * @Note - This behavior is extremely trivial, but is pulled to mainWindow for 
+          * future expansion
+          */
+         void endWaitCursor();
 
-    protected:
-        /**
-         * Called when the window receives the event to close itself.
-         */
-        void closeEvent(QCloseEvent *e);
+         /**
+          * Restores the docking windows to the default state
+          */
+         void onResetWindows();
 
-    private:
+         // This function sets the checkmarks in the Window menu. I used to do this explicitly
+         // in onEditorInitiated, but it doesn't function correctly because the actual windows
+         // aren't visible yet. 
+         void setWindowMenuTabsChecked();
 
-        QMenu *fileMenu;
-        QMenu *editMenu;
-        QMenu *projectMenu;
-        QMenu *selectionMenu;
-        QMenu *windowMenu;
-        QMenu *helpMenu;
-        QMenu *recentProjs;
-        QMenu *recentMaps;
+      protected:
+         /**
+          * Called when the window receives the event to close itself.
+          */
+         void closeEvent(QCloseEvent *e);
 
-        QToolBar *fileToolBar;
-        QToolBar *editToolBar;
-        QToolBar *undoToolBar;
-        QToolBar *selectionToolBar;
+      private:
 
-        PerspectiveViewport *perspView;
-        OrthoViewport *topView;
-        OrthoViewport *sideView;
-        OrthoViewport *frontView;
+         QMenu *fileMenu;
+         QMenu *editMenu;
+         QMenu *projectMenu;
+         QMenu *selectionMenu;
+         QMenu *windowMenu;
+         QMenu *helpMenu;
+         QMenu *recentProjs;
+         QMenu *recentMaps;
 
-        // main controls
-        PropertyEditor *propertyWindow;
-        ActorTab *actorTab;
-        ResourceBrowser *resourceBrowser;
+         QToolBar *fileToolBar;
+         QToolBar *editToolBar;
+         QToolBar *undoToolBar;
+         QToolBar *selectionToolBar;
 
-        QWidget *mainViewportParent;
+         PerspectiveViewport *perspView;
+         OrthoViewport *topView;
+         OrthoViewport *sideView;
+         OrthoViewport *frontView;
 
-        /**
-         * Connects the signals and slots the main window needs.
-         */
-        void connectSlots();
+         // main controls
+         PropertyEditor *propertyWindow;
+         ActorTab *actorTab;
+         ResourceBrowser *resourceBrowser;
 
-        /**
-         * Create the main menus.
-         */
-        void setupMenus();
+         QWidget *mainViewportParent;
 
-        /**
-         * Create the toolbar.
-         */
-        void setupToolbar();
+         /**
+          * Connects the signals and slots the main window needs.
+          */
+         void connectSlots();
 
-        /**
-         * Creates the status bar and attaches it to the main window.
-         */
-        void setupStatusBar();
+         /**
+          * Create the main menus.
+          */
+         void setupMenus();
 
-        /**
-         * Creates the docking windows and central widget.
-         * @note
-         *      The Qt docking framework consists of docking areas in the borders
-         *      of the main window as well as a central widget.  The central widget
-         *      is not a dockable entity.  Therefore, the central widget is a
-         *      nested splitter window which contains the 4 viewports.  All tools
-         *    (browsers, viewers, etc.) are dockable around the viewports.
-         */
-        void setupDockWindows();
+         /**
+          * Create the toolbar.
+          */
+         void setupToolbar();
 
-        /**
-         * Creates the splitter windows and viewport widgets.
-         * @return The root splitter pane for the viewports.
-         */
-        QWidget *setupViewports();
+         /**
+          * Creates the status bar and attaches it to the main window.
+          */
+         void setupStatusBar();
 
-        void checkAndLoadBackup(const std::string &str);
+         /**
+          * Creates the docking windows and central widget.
+          * @note
+          *      The Qt docking framework consists of docking areas in the borders
+          *      of the main window as well as a central widget.  The central widget
+          *      is not a dockable entity.  Therefore, the central widget is a
+          *      nested splitter window which contains the 4 viewports.  All tools
+          *    (browsers, viewers, etc.) are dockable around the viewports.
+          */
+         void setupDockWindows();
 
-        friend class EditorActions;
-    };
+         /**
+          * Creates the splitter windows and viewport widgets.
+          * @return The root splitter pane for the viewports.
+          */
+         QWidget *setupViewports();
+
+         void checkAndLoadBackup(const std::string &str);
+
+         friend class EditorActions;
+   };
 }
 
 #endif

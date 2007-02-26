@@ -225,6 +225,7 @@ void HLATests::setUp()
 {
    try
    {
+      dtDAL::Project::GetInstance().CreateContext("data/ProjectContext");
       dtDAL::Project::GetInstance().SetContext("data/ProjectContext");
       dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
       std::string logName("HLATests");
