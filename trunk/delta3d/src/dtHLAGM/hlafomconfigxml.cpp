@@ -358,7 +358,7 @@ namespace dtHLAGM
             }
             else if (sLocalName == LIBRARY_TRANSLATOR_ELEMENT)
             {
-               mInTranslatorLibrary = false;
+               mInTranslatorLibrary = true;
             }
          }
          else if (!mInHeader)
