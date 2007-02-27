@@ -30,7 +30,6 @@ if CheckForBoost() :
                      'inputdevicebindings.cpp',
                      'inputmapperbindings.cpp',
                      'isectorbindings.cpp',
-                     'joystickbindings.cpp',
                      'keyboardbindings.cpp',
                      'lightbindings.cpp',
                      'loadablebindings.cpp',
@@ -54,7 +53,6 @@ if CheckForBoost() :
                      'skydomebindings.cpp',
                      'spotlightbindings.cpp',
                      'systembindings.cpp',
-                     'trackerbindings.cpp',
                      'transformablebindings.cpp',
                      'transformbindings.cpp',
                      'tripodbindings.cpp',
@@ -120,7 +118,6 @@ if CheckForBoost() :
       # This only has a hard-coded version since Boost.Python does not output
       # with the same file naming convention as other platform (as of 1.33.1)
       boostLib = 'boost_python-1_33_1'
-      pythonSrcs['dtCore'].remove('trackerbindings.cpp')
    else :
       boostLib = 'boost_python-gcc-mt'
    

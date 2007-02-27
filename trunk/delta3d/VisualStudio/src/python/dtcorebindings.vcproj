@@ -130,9 +130,6 @@
 				RelativePath="..\..\..\src\python\isectorbindings.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\src\python\joystickbindings.cpp">
-			</File>
-			<File
 				RelativePath="..\..\..\src\python\keyboardbindings.cpp">
 			</File>
 			<File
@@ -200,9 +197,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\python\systembindings.cpp">
-			</File>
-			<File
-				RelativePath="..\..\..\src\python\trackerbindings.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\src\python\transformablebindings.cpp">
