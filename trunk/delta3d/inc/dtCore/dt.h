@@ -82,8 +82,6 @@ namespace dtCore
 
 // Automatic library inclusion macros that use the #pragma/lib feature
 #undef DT_H_PRODUCER_LIB
-#undef DT_H_PLIB_UL_LIB
-#undef DT_H_WINMM_LIB
 #undef DT_H_OPENTHREADS_LIB
 #undef DT_H_DTCORE_LIB
 #undef DT_H_OSG_LIB
@@ -93,8 +91,6 @@ namespace dtCore
 #undef DT_H_ODE_LIB
 #undef DT_H_OSGTEXT_LIB
 #undef DT_H_OPENGL_LIB
-#undef DT_H_PLIB_JS_LIB
-#undef DT_H_ISENSE_LIB
 
 // Setup debug vs. release library names
 #if defined(_DEBUG)
@@ -102,7 +98,6 @@ namespace dtCore
       #define  DT_H_DTCORE_LIB "dtCored.lib"
    #endif
    #define DT_H_PRODUCER_LIB   "Producerd.lib"
-   #define DT_H_PLIB_UL_LIB  "ul_d.lib"
    #define DT_H_OPENTHREADS_LIB  "OpenThreadsWin32d.lib"  
    #define DT_H_OSG_LIB  "osgd.lib"
    #define DT_H_OSGDB_LIB  "osgDBd.lib"
@@ -110,14 +105,11 @@ namespace dtCore
    #define DT_H_OSGUTIL_LIB "osgUtild.lib"
    #define DT_H_ODE_LIB "oded.lib"
    #define DT_H_OSGTEXT_LIB "osgTextd.lib"
-   #define DT_H_PLIB_JS_LIB "js_d.lib"
-   #define DT_H_ISENSE_LIB "isensed.lib"
 #else
    #ifndef DT_CORE_LIBRARY
       #define DT_H_DTCORE_LIB "dtCore.lib"
    #endif
    #define DT_H_PRODUCER_LIB   "Producer.lib"
-   #define DT_H_PLIB_UL_LIB  "ul.lib"
    #define DT_H_OPENTHREADS_LIB  "OpenThreadsWin32.lib"  
    #define DT_H_OSG_LIB  "osg.lib"
    #define DT_H_OSGDB_LIB  "osgDB.lib"
@@ -125,18 +117,13 @@ namespace dtCore
    #define DT_H_OSGUTIL_LIB "osgUtil.lib"
    #define DT_H_ODE_LIB "ode.lib"
    #define DT_H_OSGTEXT_LIB "osgText.lib"
-   #define DT_H_PLIB_JS_LIB "js.lib"
-   #define DT_H_ISENSE_LIB "isense.lib"
 #endif
 
-#define DT_H_WINMM_LIB  "winmm.lib"
 #define DT_H_OPENGL_LIB "opengl32.lib"
 
 // You may turn off this include message by defining _NOAUTOLIB 
 #ifndef _NOAUTOLIBMSG
    #pragma message( "Will automatically link with " DT_H_PRODUCER_LIB )
-   #pragma message( "Will automatically link with " DT_H_PLIB_UL_LIB )
-   #pragma message( "Will automatically link with " DT_H_WINMM_LIB )
    #pragma message( "Will automatically link with " DT_H_OPENTHREADS_LIB )
    #pragma message( "Will automatically link with " DT_H_OSG_LIB )
    #pragma message( "Will automatically link with " DT_H_OSGDB_LIB )
@@ -145,8 +132,6 @@ namespace dtCore
    #pragma message( "Will automatically link with " DT_H_ODE_LIB )
    #pragma message( "Will automatically link with " DT_H_OSGTEXT_LIB )
    #pragma message( "Will automatically link with " DT_H_OPENGL_LIB )
-   #pragma message( "Will automatically link with " DT_H_PLIB_JS_LIB )
-   #pragma message( "Will automatically link with " DT_H_ISENSE_LIB )
    #ifndef DT_CORE_LIBRARY
       #pragma message( "Will automatically link with " DT_H_DTCORE_LIB )
    #endif
@@ -154,8 +139,6 @@ namespace dtCore
 
 // Actually do the linking
 #pragma comment(lib, DT_H_PRODUCER_LIB)
-#pragma comment(lib, DT_H_PLIB_UL_LIB)
-#pragma comment(lib, DT_H_WINMM_LIB)
 #pragma comment(lib, DT_H_OPENTHREADS_LIB)
 #pragma comment(lib, DT_H_OSG_LIB)
 #pragma comment(lib, DT_H_OSGDB_LIB)
@@ -164,8 +147,6 @@ namespace dtCore
 #pragma comment(lib, DT_H_ODE_LIB)
 #pragma comment(lib, DT_H_OSGTEXT_LIB)
 #pragma comment(lib, DT_H_OPENGL_LIB)
-#pragma comment(lib, DT_H_PLIB_JS_LIB)
-#pragma comment(lib, DT_H_ISENSE_LIB)
 #ifndef DT_CORE_LIBRARY
    #pragma comment(lib, DT_H_DTCORE_LIB)
 #endif
