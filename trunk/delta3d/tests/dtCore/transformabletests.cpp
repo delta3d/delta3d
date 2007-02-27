@@ -52,6 +52,7 @@ class TransformableSubClass : public Transformable
 class TransformableTests : public CPPUNIT_NS::TestFixture 
 {
    CPPUNIT_TEST_SUITE(TransformableTests);
+   CPPUNIT_TEST(TestDefaultBools);
    CPPUNIT_TEST(TestGetCollisionGeomDimensions);
    CPPUNIT_TEST(TestSetCollisionBox);
    CPPUNIT_TEST(TestSetTransform);
@@ -68,6 +69,7 @@ public:
    void setUp();
    void tearDown();
 
+   void TestDefaultBools();
    void TestGetCollisionGeomDimensions();
    void TestSetCollisionBox();
    void TestSetTransform();
@@ -110,6 +112,16 @@ void TransformableTests::tearDown()
    mTransformable->SetCollisionMesh(NULL);
    mTransformable->SetCollisionBox( mBoxLengths[0], mBoxLengths[1], mBoxLengths[2] );
    mTransformable = NULL;
+}
+
+void TransformableTests::TestDefaultBools()
+{
+   CPPUNIT_ASSERT(!mTransformable->GetRenderCollisionGeometry());
+   CPPUNIT_ASSERT(!mTransformable->GetIsRenderingProxyNode());
+   CPPUNIT_ASSERT(mTransformable->GetPhysicsUpdateEnabled());
+   
+   mTransformable->SetPhysicsUpdateEnabled(false);
+   CPPUNIT_ASSERT(!mTransformable->GetPhysicsUpdateEnabled());
 }
 
 void TransformableTests::TestGetCollisionGeomDimensions()

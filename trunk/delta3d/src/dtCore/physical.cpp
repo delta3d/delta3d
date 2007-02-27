@@ -249,6 +249,8 @@ void Physical::GetInertiaTensor(osg::Matrix& dest) const
  */
 void Physical::PostPhysicsStepUpdate()
 {
+   if (!GetPhysicsUpdateEnabled()) return;
+   
    if( DynamicsEnabled() )
    {
       const dReal* position = dGeomGetPosition(GetGeomID());

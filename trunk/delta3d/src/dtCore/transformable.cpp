@@ -59,7 +59,8 @@ Transformable::Transformable( const std::string& name )
       mGeomGeod(NULL),
       mNode(new osg::MatrixTransform),
       mRenderingGeometry(false), 
-      mRenderProxyNode(false)
+      mRenderProxyNode(false), 
+      mPhysicsUpdateEnabled(true)
 {
    RegisterInstance(this);
 
@@ -1267,6 +1268,8 @@ void Transformable::ClearCollisionGeometry()
 */
 void Transformable::PrePhysicsStepUpdate()
 {
+   if (!GetPhysicsUpdateEnabled()) return;
+   
    Transform transform;
 
    this->GetTransform(transform, Transformable::ABS_CS);
