@@ -3,9 +3,10 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "python/dtpython.h"
-#include "dtCore/joystick.h"
+#include "dtInputPLIB/joystick.h"
 
 using namespace boost::python;
+using namespace dtInputPLIB;
 using namespace dtCore;
 
 void initJoystickBindings()
@@ -27,3 +28,10 @@ void initJoystickBindings()
       .staticmethod("PollInstances")
       .def("Poll", &Joystick::Poll);
 }
+
+
+BOOST_PYTHON_MODULE(PyDtInputPLIB)
+{
+   initJoystickBindings();
+}
+
