@@ -227,7 +227,7 @@ void HLATests::setUp()
    {
       dtDAL::Project::GetInstance().CreateContext("data/ProjectContext");
       dtDAL::Project::GetInstance().SetContext("data/ProjectContext");
-      dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
+      dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList() + ":" + dtCore::GetDeltaRootPath() + "/tests/data");
       std::string logName("HLATests");
       logger = &dtUtil::Log::GetInstance(logName);
       dtUtil::Log::GetInstance("hlacomponent.cpp").SetLogLevel(dtUtil::Log::LOG_DEBUG);

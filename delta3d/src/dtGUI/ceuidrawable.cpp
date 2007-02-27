@@ -69,7 +69,7 @@ CEUIDrawable::~CEUIDrawable()
 
    delete mRenderer;
 
-   ShutdownGUI();
+   //ShutdownGUI();
 }
 
 /** 

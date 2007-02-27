@@ -303,6 +303,11 @@ namespace dtCore
        */
       void ClearCollisionGeometry();
 
+      /// @return true if the pre and post physics updates will be run.
+      bool GetPhysicsUpdateEnabled() const { return mPhysicsUpdateEnabled; }
+      /// Sets if the pre and post physics updates are running.
+      void SetPhysicsUpdateEnabled(bool enable) { mPhysicsUpdateEnabled = enable; }
+      
       /**
        * Updates the state of this object just before a physical
        * simulation step.  Should only be called by dtCore::Scene.
@@ -455,6 +460,8 @@ namespace dtCore
        * If we're rendering the proxy node
        */
       bool mRenderProxyNode; 
+      
+      bool mPhysicsUpdateEnabled;
 
       // These functions are are deprecated. The dummy BreakOverride struct
       // forces subclasses that override these functions to have a compile
