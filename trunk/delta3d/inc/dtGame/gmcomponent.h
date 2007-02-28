@@ -35,7 +35,8 @@ namespace dtGame
       public:
 
          /// Constructor
-         GMComponent(const std::string& name = "GMComponent");
+         /// @param name client code must supply a unique name for this instance.
+         GMComponent(const std::string& name);
 
       protected:
 

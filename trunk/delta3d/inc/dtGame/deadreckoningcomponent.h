@@ -127,6 +127,18 @@ namespace dtGame
       protected:
          virtual ~DeadReckoningComponent();
 
+         /// apply the articulation support
+         /// @param helper the instance containing the articulation data.
+         /// @param gameActor the instance to be articulated.
+         /// @param tickMessage the time data to be used when interpolating.
+         void DoArticulation(dtGame::DeadReckoningHelper& helper, const dtGame::GameActor& gameActor, const dtGame::TickMessage& tickMessage) const;
+
+         /// modifies the scene graph node by smoothing the articulation data.
+         void DoArticulationSmooth(osgSim::DOFTransform& dofxform, const osg::Vec3& currLocation, const osg::Vec3& nextLocation, float currentTimeStep) const;
+
+         /// modifies the scene graph node by predicting the articulation data.
+         void DoArticulationPrediction(osgSim::DOFTransform& dofxform, const osg::Vec3& currLocation, const osg::Vec3& currentRate, float currentTimeStep) const;
+
          /**
           * Clamps an actor to the ground.  This doesn't actually move an actor, it just outputs the position and rotation.
           * @param timeSinceUpdate the amount of time since the last actor update.

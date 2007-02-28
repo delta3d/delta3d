@@ -142,6 +142,10 @@ private:
 class TestComponent: public dtGame::GMComponent
 {
    public:
+      TestComponent(const std::string& name): dtGame::GMComponent(name)
+      {
+      }
+
       std::vector<dtCore::RefPtr<const dtGame::Message> >& GetReceivedProcessMessages()
          { return mReceivedProcessMessages; }
       std::vector<dtCore::RefPtr<const dtGame::Message> >& GetReceivedDispatchNetworkMessages()
@@ -180,6 +184,12 @@ class TestComponent: public dtGame::GMComponent
          }
          return NULL;
       }
+
+protected:
+   ~TestComponent()
+   {
+   }
+
    private:
       std::vector<dtCore::RefPtr<const dtGame::Message> > mReceivedProcessMessages;
       std::vector<dtCore::RefPtr<const dtGame::Message> > mReceivedDispatchNetworkMessages;
@@ -565,7 +575,7 @@ void MessageTests::TestMessageDelivery()
 {
    try
    {
-      dtCore::RefPtr<TestComponent> tc = new TestComponent();
+      dtCore::RefPtr<TestComponent> tc = new TestComponent("name");
 
       mGameManager->AddComponent(*tc, dtGame::GameManager::ComponentPriority::NORMAL);
 
@@ -628,7 +638,7 @@ void MessageTests::TestActorPublish()
 {
    try
    {
-      TestComponent* tc = new TestComponent();
+      TestComponent* tc = new TestComponent("name");
       dtGame::DefaultNetworkPublishingComponent* rc = new dtGame::DefaultNetworkPublishingComponent();
 
       mGameManager->AddComponent(*tc, dtGame::GameManager::ComponentPriority::NORMAL);
@@ -727,7 +737,7 @@ void MessageTests::TestActorPublish()
 //////////////////////////////////////////////////////////////////////////
 void MessageTests::TestPauseResume()
 {
-   TestComponent* tc = new TestComponent();
+   TestComponent* tc = new TestComponent("name");
    mGameManager->AddComponent(*tc, dtGame::GameManager::ComponentPriority::NORMAL);
    CPPUNIT_ASSERT_MESSAGE("The Game Manager should not start out paused.", !mGameManager->IsPaused());
 
@@ -789,7 +799,7 @@ void MessageTests::TestPauseResumeSystem()
 {
    try
    {
-      TestComponent* tc = new TestComponent();
+      TestComponent* tc = new TestComponent("name");
       mGameManager->AddComponent(*tc, dtGame::GameManager::ComponentPriority::NORMAL);
       CPPUNIT_ASSERT_MESSAGE("The Game Manager should not start out paused.", !mGameManager->IsPaused());
 
@@ -830,7 +840,7 @@ void MessageTests::TestPauseResumeSystem()
 //////////////////////////////////////////////////////////////////////////
 void MessageTests::TestRejectMessage()
 {
-   TestComponent* tc = new TestComponent();
+   TestComponent* tc = new TestComponent("name");
    mGameManager->AddComponent(*tc, dtGame::GameManager::ComponentPriority::NORMAL);
    tc->reset();
 
@@ -893,7 +903,7 @@ void MessageTests::TestRejectMessage()
 
 void MessageTests::TestTimeScaling()
 {
-   TestComponent* tc = new TestComponent();
+   TestComponent* tc = new TestComponent("name");
    mGameManager->AddComponent(*tc, dtGame::GameManager::ComponentPriority::NORMAL);
    CPPUNIT_ASSERT_MESSAGE("The Game Manager should not start out paused.", !mGameManager->IsPaused());
 
@@ -954,7 +964,7 @@ void MessageTests::TestTimeScaling()
 
 void MessageTests::TestTimeChange()
 {
-   TestComponent* tc = new TestComponent();
+   TestComponent* tc = new TestComponent("name");
    mGameManager->AddComponent(*tc, dtGame::GameManager::ComponentPriority::NORMAL);
    CPPUNIT_ASSERT_MESSAGE("The Game Manager should not start out paused.", !mGameManager->IsPaused());
 
@@ -1113,7 +1123,7 @@ void MessageTests::TestChangeMap()
       project.SaveMap(*map2);
       project.CloseMap(*map2);
 
-      TestComponent& tc = *new TestComponent();
+      TestComponent& tc = *new TestComponent("name");
       mGameManager->AddComponent(tc, dtGame::GameManager::ComponentPriority::NORMAL);
 
       mGameManager->ChangeMap(mapName, false, false);
@@ -1575,7 +1585,7 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorCreates(bool
 
 void MessageTests::TestActorEnteredWorldMessage()
 {
-   dtCore::RefPtr<TestComponent> tc = new TestComponent;
+   dtCore::RefPtr<TestComponent> tc = new TestComponent("name");
    CPPUNIT_ASSERT(tc.valid());
    mGameManager->AddComponent(*tc, dtGame::GameManager::ComponentPriority::HIGHEST);
    std::vector<dtCore::RefPtr<const dtGame::Message> > msgs;

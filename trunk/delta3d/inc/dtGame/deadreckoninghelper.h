@@ -297,7 +297,10 @@ namespace dtGame
 
          /// @return The node collector for this helper or NULL none has been set.
          dtCore::NodeCollector* GetNodeCollector() { return mDOFDeadReckoning.get(); }
-         
+
+         /// @return The node collector for this helper or NULL none has been set.
+         const dtCore::NodeCollector* GetNodeCollector() const { return mDOFDeadReckoning.get(); }
+
          /// Set the dof container to what the entity is using for reference.
          void SetNodeCollector(dtCore::NodeCollector& dofContainerToSet) { mDOFDeadReckoning = &dofContainerToSet; }
 
@@ -316,7 +319,20 @@ namespace dtGame
 
          const osg::Vec3& GetCurrentDeadReckonedTranslation() const { return mCurrentDeadReckonedTranslation; }
          const osg::Vec3& GetCurrentDeadReckonedRotation() const { return mCurrentAttitudeVector; }
- 
+
+         const std::list<dtCore::RefPtr<DeadReckoningDOF> >& GetDeadReckoningDOFs() const { return mDeadReckonDOFS; }
+
+         void SetTranslationBeforeLastUpdate(const osg::Vec3& trans) { mTransBeforeLastUpdate = trans; }
+         void SetRotationBeforeLastUpdate(const osg::Quat& rot) { mRotQuatBeforeLastUpdate = rot; }
+         const osg::Quat& GetLastKnownRotationByQuaternion() const { return mLastQuatRotation; }
+         bool IsTranslationUpdated() const { return mTranslationUpdated; }
+         void SetTranslationSmoothing(float smoothing) { mTranslationSmoothingSteps=smoothing; }
+         float GetTranslationSmoothing() const { return mTranslationSmoothingSteps; }
+         bool IsRotationUpdated() const { return mRotationUpdated; }
+         void SetRotationSmoothing(float smoothing) { mRotationSmoothingSteps=smoothing; }
+         float GetRotationSmoothing() const { return mRotationSmoothingSteps; }
+         void SetRotationResolved(bool resolved) { mRotationResolved=resolved; }
+
       protected:
          virtual ~DeadReckoningHelper() {}
 
@@ -325,10 +341,7 @@ namespace dtGame
          ///perform velocity + acceleration dead-reckoning.  Acceleration may be ignored.  xform will be updated.
          void DRVelocityAcceleration(GameActor& gameActor, dtCore::Transform& xform, dtUtil::Log* pLogger); 
 
-         
       private:
-         friend class DeadReckoningComponent;
-
          /// The list of DeadReckoningDOFs, might want to change to has table of list later.
          std::list<dtCore::RefPtr<DeadReckoningDOF> > mDeadReckonDOFS;
 
