@@ -64,6 +64,10 @@
 class TestComponent: public dtGame::GMComponent
 {
    public:
+      TestComponent(const std::string& name): dtGame::GMComponent(name)
+      {
+      }
+
       std::vector<dtCore::RefPtr<const dtGame::Message> >& GetReceivedProcessMessages()
       { return mReceivedProcessMessages; }
       std::vector<dtCore::RefPtr<const dtGame::Message> >& GetReceivedDispatchNetworkMessages()
@@ -102,6 +106,12 @@ class TestComponent: public dtGame::GMComponent
          }
          return NULL;
       }
+
+protected:
+   ~TestComponent()
+   {
+   }
+
    private:
       std::vector<dtCore::RefPtr<const dtGame::Message> > mReceivedProcessMessages;
       std::vector<dtCore::RefPtr<const dtGame::Message> > mReceivedDispatchNetworkMessages;
@@ -661,7 +671,7 @@ void GameActorTests::TestSetEnvironmentActor()
       //One cannot enable paging without a window.
       //mManager->GetScene().EnablePaging();
       //CPPUNIT_ASSERT(mManager->GetScene().IsPagingEnabled());
-      dtCore::RefPtr<TestComponent> tc = new TestComponent;
+      dtCore::RefPtr<TestComponent> tc = new TestComponent("name");
       CPPUNIT_ASSERT(tc.valid());
       mManager->AddComponent(*tc, dtGame::GameManager::ComponentPriority::NORMAL);
       dtCore::RefPtr<dtDAL::ActorType> type = mManager->FindActorType("ExampleActors", "TestEnvironmentActor");

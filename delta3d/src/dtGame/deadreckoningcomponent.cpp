@@ -128,8 +128,8 @@ namespace dtGame
             xform.SetTranslation(helper.GetLastKnownTranslation());
             xform.SetRotation(helper.GetLastKnownRotation());
             toRegister.GetGameActor().SetTransform(xform);
-            helper.mTransBeforeLastUpdate = helper.GetLastKnownTranslation();
-            helper.mRotQuatBeforeLastUpdate = helper.mLastQuatRotation;
+            helper.SetTranslationBeforeLastUpdate( helper.GetLastKnownTranslation() );
+            helper.SetRotationBeforeLastUpdate( helper.GetLastKnownRotationByQuaternion() );
          }
       }
       
@@ -146,8 +146,8 @@ namespace dtGame
          xform.GetRotation(rot);
          helper.SetLastKnownRotation(rot);
 
-         helper.mTransBeforeLastUpdate = helper.GetLastKnownTranslation();
-         helper.mRotQuatBeforeLastUpdate = helper.mLastQuatRotation;
+         helper.SetTranslationBeforeLastUpdate( helper.GetLastKnownTranslation() );
+         helper.SetRotationBeforeLastUpdate( helper.GetLastKnownRotationByQuaternion() );
       }
    }
 
@@ -424,140 +424,178 @@ namespace dtGame
          {
             //Pretend we were updated on the last tick so we have time delta to work with
             //when calculating movement.
-            if (helper.mTranslationUpdated)
+            if ( helper.IsTranslationUpdated() )
             {
-            	helper.SetLastTranslationUpdatedTime(tickMessage.GetSimulationTime() - tickMessage.GetDeltaSimTime());
-            	//helper.SetLastTranslationUpdatedTime(helper.mLastTimeTag);
-            	helper.mTranslationSmoothingSteps = 0.0;
+               helper.SetLastTranslationUpdatedTime(tickMessage.GetSimulationTime() - tickMessage.GetDeltaSimTime());
+               //helper.SetLastTranslationUpdatedTime(helper.mLastTimeTag);
+               helper.SetTranslationSmoothing( 0.0 );
             }
-            
-            if (helper.mRotationUpdated)
+
+            if ( helper.IsRotationUpdated() )
             {
-            	helper.SetLastRotationUpdatedTime(tickMessage.GetSimulationTime() - tickMessage.GetDeltaSimTime());
-            	//helper.SetLastRotationUpdatedTime(helper.mLastTimeTag);
-            	helper.mRotationSmoothingSteps = 0.0;
-            	helper.mRotationResolved = false;
+               helper.SetLastRotationUpdatedTime(tickMessage.GetSimulationTime() - tickMessage.GetDeltaSimTime());
+               //helper.SetLastRotationUpdatedTime(helper.mLastTimeTag);
+               helper.SetRotationSmoothing( 0.0 );
+               helper.SetRotationResolved( false );
             }
          }
 
          //We want to do this every time.
-         helper.mTranslationSmoothingSteps += tickMessage.GetDeltaSimTime();
-         helper.mRotationSmoothingSteps += tickMessage.GetDeltaSimTime();
-         
+         helper.SetTranslationSmoothing( helper.GetTranslationSmoothing() + tickMessage.GetDeltaSimTime() );
+         helper.SetRotationSmoothing( helper.GetRotationSmoothing() + tickMessage.GetDeltaSimTime() );
+
 
          //make sure it's greater than 0 in case of time being set.
-         if (helper.mTranslationSmoothingSteps < 0.0) 
-            helper.mTranslationSmoothingSteps = 0.0;
-         if (helper.mRotationSmoothingSteps < 0.0) 
-            helper.mRotationSmoothingSteps = 0.0;
+         if (helper.GetTranslationSmoothing() < 0.0) 
+            helper.SetTranslationSmoothing( 0.0 );
+         if (helper.GetRotationSmoothing() < 0.0) 
+            helper.SetRotationSmoothing( 0.0 );
 
 
          //actual dead reckoning code moved into the helper..
          helper.DoDR(gameActor, xform, mLogger);
-                  
+
          //we could probably group these queries together...
          if (!helper.IsFlying() && gameActor.GetCollisionGeomType() == &dtCore::Transformable::CollisionGeomType::CUBE)
          {
-            ClampToGround(helper.mTranslationSmoothingSteps, xform, gameActor.GetGameActorProxy(), helper);
+            ClampToGround(helper.GetTranslationSmoothing(), xform, gameActor.GetGameActorProxy(), helper);
          }
 
-         if (helper.GetEffectiveUpdateMode(gameActor.IsRemote()) 
-            == DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR 
-            && helper.GetNodeCollector() != NULL)
-         {
-            std::list<dtCore::RefPtr<DeadReckoningHelper::DeadReckoningDOF> >::iterator iterDOF = helper.mDeadReckonDOFS.begin();
-            
-            for(iterDOF = helper.mDeadReckonDOFS.begin();iterDOF != helper.mDeadReckonDOFS.end(); ++iterDOF)
-            {
-               (*iterDOF)->mUpdate = false;
-            }
-
-            iterDOF = helper.mDeadReckonDOFS.begin();
-            while(iterDOF != helper.mDeadReckonDOFS.end())
-            {
-               DeadReckoningHelper::DeadReckoningDOF *currentDOF = (*iterDOF).get();
-               if(currentDOF->mPrev == NULL && !currentDOF->mUpdate)
-               {
-                  currentDOF->mCurrentTime += tickMessage.GetDeltaSimTime();
-                  currentDOF->mUpdate = true;
-
-                  // there is something in the chain
-                  if(currentDOF->mNext != NULL)
-                  {
-                     osg::Vec3 NewDistance = (currentDOF->mNext->mStartLocation  - currentDOF->mStartLocation);
-                     
-                     for (int i = 0; i < 3; ++i)
-                     {
-                        while (NewDistance[i] > osg::PI)
-                           NewDistance[i] -= 2 * osg::PI;
-                        while (NewDistance[i] < -osg::PI)
-                           NewDistance[i] += 2 * osg::PI;
-                     }
-                     
-                     osg::Vec3 RateOverTime = (NewDistance * currentDOF->mCurrentTime);
-                     
-                     osg::Vec3 result(currentDOF->mStartLocation[0] + RateOverTime[0],
-                                     currentDOF->mStartLocation[1] + RateOverTime[1],
-                                     currentDOF->mStartLocation[2] + RateOverTime[2]);
-                     
-                     for (int i = 0; i < 3; ++i)
-                     {
-                        while (result[i] > 2 * osg::PI)
-                           result[i] -= 2 * osg::PI;
-                           
-                        while (result[i] < 0)
-                           result[i] += 2 * osg::PI;
-                     }
-                     
-                     osgSim::DOFTransform* dofTransform = helper.mDOFDeadReckoning->GetDOFByName(currentDOF->mName);
-                     if (dofTransform != NULL)
-                        dofTransform->updateCurrentHPR(result);
-                  }
-                  else
-                  {
-                     osg::Vec3 result( currentDOF->mStartLocation[0] + (currentDOF->mCurrentTime * currentDOF->mRateOverTime[0]),
-                                       currentDOF->mStartLocation[1] + (currentDOF->mCurrentTime * currentDOF->mRateOverTime[1]),
-                                       currentDOF->mStartLocation[2] + (currentDOF->mCurrentTime * currentDOF->mRateOverTime[2]));
-                     osgSim::DOFTransform* dofTransform = helper.mDOFDeadReckoning->GetDOFByName(currentDOF->mName);
-                     if (dofTransform != NULL)
-                        dofTransform->updateCurrentHPR(result);
-                  }
-
-                  // Get rid of middle man, would take out if u want full movement
-                  // between multiple steps
-                  if(currentDOF->mNext != NULL)
-                  {
-                     bool changedList = false;
-                     while((*iterDOF)->mNext->mNext != NULL)
-                     {
-                        helper.RemoveDRDOF(*(*iterDOF)->mNext);
-                        // start over at the beginning of the DOF list.  Hence the use of the Update flag.
-                        iterDOF = helper.mDeadReckonDOFS.begin();
-                        changedList = true;
-                     }
-                     if (changedList)
-                        continue;
-                  }
-
-                  // One second has passed, and this has more in its chain
-                  if(currentDOF->mNext != NULL && currentDOF->mCurrentTime >= 1)
-                  {
-                     currentDOF->mNext->mStartLocation = helper.mDOFDeadReckoning->GetDOFByName(currentDOF->mName)->getCurrentHPR();
-                     currentDOF->mNext->mCurrentTime = 0;
-
-                     // Get rid of the rotation
-                     helper.RemoveDRDOF(*currentDOF);
-                     // start over at the beginning of the DOF list.  Hence the use of the Update flag.
-                     iterDOF = helper.mDeadReckonDOFS.begin();
-                     continue;
-                  }                  
-               }
-               ++iterDOF;
-            }
-         }
+         DoArticulation(helper, gameActor, tickMessage);
 
          //clear the updated flag.
          helper.ClearUpdated();
       }
    }
-}
+
+   void DeadReckoningComponent::DoArticulation(dtGame::DeadReckoningHelper& helper,
+                                               const dtGame::GameActor& gameActor,
+                                               const dtGame::TickMessage& tickMessage) const
+   {
+      if( helper.GetNodeCollector() == NULL )
+      {
+         return;
+      }
+
+      dtGame::DeadReckoningHelper::UpdateMode& um = helper.GetEffectiveUpdateMode(gameActor.IsRemote());
+      if((um != DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR) )
+      {
+         return;
+      }
+
+      const std::list<dtCore::RefPtr<DeadReckoningHelper::DeadReckoningDOF> > containerDOFs = helper.GetDeadReckoningDOFs();
+      std::list<dtCore::RefPtr<DeadReckoningHelper::DeadReckoningDOF> >::const_iterator endDOF = containerDOFs.end();
+
+      std::list<dtCore::RefPtr<DeadReckoningHelper::DeadReckoningDOF> >::const_iterator iterDOF = containerDOFs.begin();
+      for(; iterDOF != endDOF; ++iterDOF)
+      {
+         (*iterDOF)->mUpdate = false;
+      }
+
+      iterDOF = containerDOFs.begin();
+      while(iterDOF != endDOF)
+      {
+         DeadReckoningHelper::DeadReckoningDOF *currentDOF = (*iterDOF).get();
+         if(currentDOF->mPrev == NULL && !currentDOF->mUpdate)
+         {
+            currentDOF->mCurrentTime += tickMessage.GetDeltaSimTime();
+            currentDOF->mUpdate = true;
+
+            // there is something in the chain
+            if(currentDOF->mNext != NULL)
+            {
+               osgSim::DOFTransform* dofTransform = helper.GetNodeCollector()->GetDOFByName(currentDOF->mName);
+               if( dofTransform != NULL )
+               {
+                  DoArticulationSmooth(*dofTransform, currentDOF->mStartLocation, currentDOF->mNext->mStartLocation, currentDOF->mCurrentTime);
+               }
+            }
+            else
+            {
+               osgSim::DOFTransform* dofTransform = helper.GetNodeCollector()->GetDOFByName(currentDOF->mName);
+               if (dofTransform != NULL)
+               {
+                  DoArticulationPrediction(*dofTransform, currentDOF->mStartLocation, currentDOF->mRateOverTime, currentDOF->mCurrentTime);
+               }
+            }
+
+            // Get rid of middle man, would take out if u want full movement
+            // between multiple steps
+            if(currentDOF->mNext != NULL)
+            {
+               bool changedList = false;
+               while((*iterDOF)->mNext->mNext != NULL)
+               {
+                  helper.RemoveDRDOF(*(*iterDOF)->mNext);
+                  // start over at the beginning of the DOF list.  Hence the use of the Update flag.
+                  iterDOF = containerDOFs.begin();
+                  changedList = true;
+               }
+               if (changedList)
+                  continue;
+            }
+
+            // One second has passed, and this has more in its chain
+            if(currentDOF->mNext != NULL && currentDOF->mCurrentTime >= 1)
+            {
+               osgSim::DOFTransform* ptr = helper.GetNodeCollector()->GetDOFByName(currentDOF->mName);
+               if( ptr )
+               {
+                  currentDOF->mNext->mStartLocation = ptr->getCurrentHPR();
+               }
+               currentDOF->mNext->mCurrentTime = 0;
+
+               // Get rid of the rotation
+               helper.RemoveDRDOF(*currentDOF);
+               // start over at the beginning of the DOF list.  Hence the use of the Update flag.
+               iterDOF = containerDOFs.begin();
+               continue;
+            }                  
+         }
+         ++iterDOF;
+      }
+   } // end function DoArticulation
+
+   void DeadReckoningComponent::DoArticulationSmooth(osgSim::DOFTransform& dofxform,
+                                                     const osg::Vec3& currLocation,
+                                                     const osg::Vec3& nextLocation,
+                                                     float currentTimeStep) const
+   {
+      osg::Vec3 NewDistance = (nextLocation  - currLocation);
+
+      for (int i = 0; i < 3; ++i)
+      {
+         while (NewDistance[i] > osg::PI)
+            NewDistance[i] -= 2 * osg::PI;
+         while (NewDistance[i] < -osg::PI)
+            NewDistance[i] += 2 * osg::PI;
+      }
+
+      osg::Vec3 RateOverTime = (NewDistance * currentTimeStep);
+
+      osg::Vec3 result(currLocation[0] + RateOverTime[0],
+                       currLocation[1] + RateOverTime[1],
+                       currLocation[2] + RateOverTime[2]);
+
+      for (int i = 0; i < 3; ++i)
+      {
+         while (result[i] > 2 * osg::PI)
+            result[i] -= 2 * osg::PI;
+
+         while (result[i] < 0)
+            result[i] += 2 * osg::PI;
+      }
+
+      dofxform.updateCurrentHPR(result);
+   } // end function DoArticulationSmooth
+
+   void DeadReckoningComponent::DoArticulationPrediction(osgSim::DOFTransform& dofxform, const osg::Vec3& currLocation, const osg::Vec3& currentRate, float currentTimeStep) const
+   {
+      osg::Vec3 result( currLocation[0] + (currentTimeStep * currentRate[0]),
+                        currLocation[1] + (currentTimeStep * currentRate[1]),
+                        currLocation[2] + (currentTimeStep * currentRate[2]));
+
+      dofxform.updateCurrentHPR(result);
+   } // end function DoArticulationPrediction
+
+} // end namespace dtGame

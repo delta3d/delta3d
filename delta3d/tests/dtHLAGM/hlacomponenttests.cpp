@@ -81,6 +81,10 @@ class TestHLAComponent: public dtHLAGM::HLAComponent
 class TestComponent: public dtGame::GMComponent
 {
    public:
+      TestComponent(const std::string& name): dtGame::GMComponent(name)
+      {
+      }
+
       std::vector<dtCore::RefPtr<const dtGame::Message> >& GetReceivedProcessMessages()
       { return mReceivedProcessMessages; }
       std::vector<dtCore::RefPtr<const dtGame::Message> >& GetReceivedDispatchNetworkMessages()
@@ -119,6 +123,12 @@ class TestComponent: public dtGame::GMComponent
          }
          return NULL;
       }
+
+protected:
+   ~TestComponent()
+   {
+   }
+
    private:
       std::vector<dtCore::RefPtr<const dtGame::Message> > mReceivedProcessMessages;
       std::vector<dtCore::RefPtr<const dtGame::Message> > mReceivedDispatchNetworkMessages;
@@ -237,7 +247,7 @@ void HLATests::setUp()
 
       dtCore::RefPtr<dtGame::DefaultMessageProcessor> defMsgComp = new dtGame::DefaultMessageProcessor();
       mGameManager->AddComponent(*defMsgComp, dtGame::GameManager::ComponentPriority::HIGHEST);
-      mTestComponent = new TestComponent();
+      mTestComponent = new TestComponent("name");
       mGameManager->AddComponent(*mTestComponent, dtGame::GameManager::ComponentPriority::NORMAL);
       dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
       dtCore::System::GetInstance().Start();
