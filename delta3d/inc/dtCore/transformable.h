@@ -149,6 +149,12 @@ namespace dtCore
          return mNode.get(); 
       }
 
+      /// @returns the matrix for this transformable.  Call this instead of getMatrixNode->getMatrix
+      const osg::Matrix& GetMatrix() const;
+
+      /// set the matrix for this transformable.  Call this instead of getMatrixNode->setMatrix
+      void SetMatrix(const osg::Matrix& mat);
+      
       ///Render method for an object which may not have geometry
       virtual void RenderProxyNode( bool enable = true );
 
@@ -303,11 +309,6 @@ namespace dtCore
        */
       void ClearCollisionGeometry();
 
-      /// @return true if the pre and post physics updates will be run.
-      bool GetPhysicsUpdateEnabled() const { return mPhysicsUpdateEnabled; }
-      /// Sets if the pre and post physics updates are running.
-      void SetPhysicsUpdateEnabled(bool enable) { mPhysicsUpdateEnabled = enable; }
-      
       /**
        * Updates the state of this object just before a physical
        * simulation step.  Should only be called by dtCore::Scene.
@@ -461,8 +462,6 @@ namespace dtCore
        */
       bool mRenderProxyNode; 
       
-      bool mPhysicsUpdateEnabled;
-
       // These functions are are deprecated. The dummy BreakOverride struct
       // forces subclasses that override these functions to have a compile
       // error. Use the Transform& versions instead.

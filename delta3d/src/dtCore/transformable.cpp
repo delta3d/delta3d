@@ -59,8 +59,7 @@ Transformable::Transformable( const std::string& name )
       mGeomGeod(NULL),
       mNode(new osg::MatrixTransform),
       mRenderingGeometry(false), 
-      mRenderProxyNode(false), 
-      mPhysicsUpdateEnabled(true)
+      mRenderProxyNode(false)
 {
    RegisterInstance(this);
 
@@ -299,6 +298,18 @@ void Transformable::GetTransform( Transform& xform, CoordSysEnum cs ) const
    }
 
    xform.Set( newMat );
+}
+
+////////////////////////////////////////////////////////////////////////////
+const osg::Matrix& Transformable::GetMatrix() const 
+{ 
+   return mNode->getMatrix(); 
+}
+
+////////////////////////////////////////////////////////////////////////////
+void Transformable::SetMatrix(const osg::Matrix& mat) 
+{ 
+   mNode->setMatrix(mat); 
 }
 
 /**
@@ -1268,7 +1279,7 @@ void Transformable::ClearCollisionGeometry()
 */
 void Transformable::PrePhysicsStepUpdate()
 {
-   if (!GetPhysicsUpdateEnabled()) return;
+   if (!GetCollisionDetection()) return;
    
    Transform transform;
 

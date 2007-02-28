@@ -114,24 +114,25 @@ namespace dtHLAGM
       const std::string& thisObjectClassString = objectToActor.GetObjectClassName();
       RTI::ObjectClassHandle thisObjectClassHandle(0);
 
-      try
+      try 
       {
          thisObjectClassHandle = mRTIAmbassador->getObjectClassHandle(thisObjectClassString.c_str());
-      }
-      catch (const RTI::Exception &ex)
+      } 
+      catch (const RTI::Exception &ex) 
       {
          std::ostringstream ss; 
          //workaround for a strange namespace issue
          ::operator<<(ss, ex);
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                              "Could not find Object Class Name: %s - Message: %s", thisObjectClassString.c_str(), ss.str().c_str());
+                              "Could not find Object Class Name: %s - Message: %s", 
+                              thisObjectClassString.c_str(), ss.str().c_str());
          return;
       }
 
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                             "Object class handle of object class %s is %u.",
-                             thisObjectClassString.c_str(), thisObjectClassHandle);
+         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,              
+               "Object class handle of object class %s is %u.",
+               thisObjectClassString.c_str(), thisObjectClassHandle);
 
       objectToActor.SetObjectClassHandle(thisObjectClassHandle);
       std::vector<AttributeToPropertyList>& thisAttributeToPropertyListVector = objectToActor.GetOneToManyMappingVector();
@@ -144,17 +145,31 @@ namespace dtHLAGM
       //if we have a name for the entity id attribute, subscribe to it and save the handle.
       if (!objectToActor.GetEntityIdAttributeName().empty())
       {
-         RTI::AttributeHandle entityIdentifierAttributeHandle =
+         try
+         {
+            RTI::AttributeHandle entityIdentifierAttributeHandle =
                mRTIAmbassador->getAttributeHandle(objectToActor.GetEntityIdAttributeName().c_str(), thisObjectClassHandle);
 
-         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                                "AttributeHandle for entity identifier on object class %s is %u.",
-                                thisObjectClassString.c_str(), entityIdentifierAttributeHandle);
+               if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                                   "AttributeHandle for entity identifier on object class %s is %u.",
+                                   thisObjectClassString.c_str(), entityIdentifierAttributeHandle);
 
-         objectToActor.SetEntityIdAttributeHandle(entityIdentifierAttributeHandle);
+            objectToActor.SetEntityIdAttributeHandle(entityIdentifierAttributeHandle);
 
-         ahs->add(entityIdentifierAttributeHandle);
+            ahs->add(entityIdentifierAttributeHandle);
+         }
+         catch (const RTI::Exception& ex)
+         {
+            std::ostringstream ss; 
+            //workaround for a strange namespace issue
+            ::operator<<(ss, ex);
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                                 "Could not find Attribute %s for Object Class Name: %s - Message: %s", 
+                                 objectToActor.GetEntityIdAttributeName().c_str(),
+                                 thisObjectClassString.c_str(), ss.str().c_str());
+         }
+         
       }
 
       //if we have a name for the entity type attribute, subscribe to it and save the handle.
@@ -180,20 +195,34 @@ namespace dtHLAGM
 
          if (!(thisAttributeHandleString.empty()))
          {
-            RTI::AttributeHandle thisAttributeHandle = mRTIAmbassador->getAttributeHandle(thisAttributeHandleString.c_str(),
-                  thisObjectClassHandle);
+            try
+            {
+               RTI::AttributeHandle entityIdentifierAttributeHandle =
+                  mRTIAmbassador->getAttributeHandle(thisAttributeHandleString.c_str(), thisObjectClassHandle);
+                  
+               if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                  mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                                      "Attribute handle for %s on object class %s is %u.",
+                                      thisAttributeHandleString.c_str(),
+                                      thisObjectClassString.c_str(),
+                                      entityIdentifierAttributeHandle);
 
-            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                                   "Attribute handle for %s on object class %s is %u.",
-                                   thisAttributeHandleString.c_str(),
-                                   thisObjectClassString.c_str(),
-                                   thisAttributeHandle);
+               thisAttributeToPropertyList.SetAttributeHandle(entityIdentifierAttributeHandle);
 
-            thisAttributeToPropertyList.SetAttributeHandle(thisAttributeHandle);
+               if (!ahs->isMember(entityIdentifierAttributeHandle))
+                  ahs->add(entityIdentifierAttributeHandle);
+            }
+            catch (const RTI::Exception& ex)
+            {
+               std::ostringstream ss; 
+               //workaround for a strange namespace issue
+               ::operator<<(ss, ex);
+               mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                                    "Could not find Attribute %s for Object Class Name: %s - Message: %s", 
+                                    thisAttributeHandleString.c_str(),
+                                    thisObjectClassString.c_str(), ss.str().c_str());
+            }
 
-            if (!ahs->isMember(thisAttributeHandle))
-               ahs->add(thisAttributeHandle);
          }
 
          ++attributeToPropertyListIterator;
@@ -237,36 +266,51 @@ namespace dtHLAGM
    void HLAComponent::RegisterInteractionToMessageWithRTI(InteractionToMessage& interactionToMessage)
    {
       const std::string& thisInteractionClassString = interactionToMessage.GetInteractionName();
-      RTI::InteractionClassHandle thisInteractionClassHandle
-            = mRTIAmbassador->getInteractionClassHandle(thisInteractionClassString.c_str());
-
-      if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                             "interaction class \"%s\" has handle id %u.",
-                             thisInteractionClassString.c_str(),
-                             thisInteractionClassHandle);
-
-      interactionToMessage.SetInteractionClassHandle(thisInteractionClassHandle);
-      std::vector<ParameterToParameterList>& thisParameterToParameterListVector = interactionToMessage.GetOneToManyMappingVector();
-      std::vector<ParameterToParameterList>::iterator parameterToParameterIterator = thisParameterToParameterListVector.begin();
-
-      while (parameterToParameterIterator != thisParameterToParameterListVector.end())
+      RTI::InteractionClassHandle thisInteractionClassHandle = 0;
+      try
       {
-         ParameterToParameterList& thisParameterToParameterList = *parameterToParameterIterator;
-         const std::string& thisParameterHandleString = thisParameterToParameterList.GetHLAName();
-         RTI::ParameterHandle thisParameterHandle = mRTIAmbassador->getParameterHandle(thisParameterHandleString.c_str(), thisInteractionClassHandle);
-
+         
+         thisInteractionClassHandle = mRTIAmbassador->getInteractionClassHandle(thisInteractionClassString.c_str());
+   
          if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
             mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                                "Parameter handle for \"%s\" on interaction class \"%s\" is %u.",
-                                thisParameterHandleString.c_str(),
+                                "interaction class \"%s\" has handle id %u.",
                                 thisInteractionClassString.c_str(),
-                                thisParameterHandle);
-
-         thisParameterToParameterList.SetParameterHandle(thisParameterHandle);
-         ++parameterToParameterIterator;
+                                thisInteractionClassHandle);
+   
+         interactionToMessage.SetInteractionClassHandle(thisInteractionClassHandle);
+         std::vector<ParameterToParameterList>& thisParameterToParameterListVector = interactionToMessage.GetOneToManyMappingVector();
+         std::vector<ParameterToParameterList>::iterator parameterToParameterIterator = thisParameterToParameterListVector.begin();
+   
+         while (parameterToParameterIterator != thisParameterToParameterListVector.end())
+         {
+            ParameterToParameterList& thisParameterToParameterList = *parameterToParameterIterator;
+            const std::string& thisParameterHandleString = thisParameterToParameterList.GetHLAName();
+            RTI::ParameterHandle thisParameterHandle = mRTIAmbassador->getParameterHandle(thisParameterHandleString.c_str(), thisInteractionClassHandle);
+   
+            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                                   "Parameter handle for \"%s\" on interaction class \"%s\" is %u.",
+                                   thisParameterHandleString.c_str(),
+                                   thisInteractionClassString.c_str(),
+                                   thisParameterHandle);
+   
+            thisParameterToParameterList.SetParameterHandle(thisParameterHandle);
+            ++parameterToParameterIterator;
+         }
       }
-
+      catch (const RTI::Exception& ex)
+      {
+         std::ostringstream ss; 
+         //workaround for a strange namespace issue
+         ::operator<<(ss, ex);
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                              "Could not register for interaction \"%s\" with error \"%s\"", 
+                              thisInteractionClassString.c_str(),
+                              ss.str().c_str());
+         return;
+      }
+      
       bool subscribed = false;
       try
       {
@@ -284,7 +328,7 @@ namespace dtHLAGM
 
          mRTIAmbassador->publishInteractionClass(thisInteractionClassHandle);
       }
-      catch (const RTI::Exception &)
+      catch (const RTI::Exception &ex)
       {
          if (!subscribed)
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
