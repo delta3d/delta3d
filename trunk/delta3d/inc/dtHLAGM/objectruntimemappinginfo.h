@@ -52,7 +52,7 @@ namespace dtHLAGM
           * Bidirectionally maps the given object handle to the unique id.
           * @return false if either object is already involved in another like mapping.
           */
-         bool Put(const RTI::ObjectHandle& handle, const dtCore::UniqueId& actorId);
+         bool Put(const RTI::ObjectHandle handle, const dtCore::UniqueId& actorId);
 
          /**
           * Bidirectionally maps the given entity id to the unique id.
@@ -64,10 +64,10 @@ namespace dtHLAGM
           * Maps the given object handle to the object to actor.
           * @return false if an object to actor is already mapped to the handle passed in.
           */
-         bool Put(const RTI::ObjectHandle& handle, ObjectToActor& ota);
+         bool Put(const RTI::ObjectHandle handle, ObjectToActor& ota);
 
          ///@return the unique id that was mapped to given object handle or NULL if none has been mapped
-         const dtCore::UniqueId* GetId(const RTI::ObjectHandle& handle) const;
+         const dtCore::UniqueId* GetId(const RTI::ObjectHandle handle) const;
       
          ///@return the unique id that was mapped to given entity id or NULL if none has been mapped
          const dtCore::UniqueId* GetId(const EntityIdentifier& entityId) const;
@@ -85,16 +85,16 @@ namespace dtHLAGM
          const EntityIdentifier* GetEntityId(const dtCore::UniqueId& actorId) const;
 
          ///@return the object to actor that was mapped to given object handle or NULL if none has been mapped
-         const ObjectToActor* GetObjectToActor(const RTI::ObjectHandle& handle) const;
+         const ObjectToActor* GetObjectToActor(const RTI::ObjectHandle handle) const;
 
          ///@return the object to actor that was mapped to given object handle or NULL if none has been mapped
-         ObjectToActor* GetObjectToActor(const RTI::ObjectHandle& handle);
+         ObjectToActor* GetObjectToActor(const RTI::ObjectHandle handle);
 
          /**
           * Removes all mappings for the given handle including a unique id, an object to actor, 
           * and an entity id id mapped to the unique id.
           */ 
-         void Remove(const RTI::ObjectHandle& handle);
+         void Remove(const RTI::ObjectHandle handle);
 
          /**
           * Removes the mapping to a unique id for the given entity id. 

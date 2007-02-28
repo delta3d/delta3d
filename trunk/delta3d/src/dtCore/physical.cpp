@@ -249,7 +249,7 @@ void Physical::GetInertiaTensor(osg::Matrix& dest) const
  */
 void Physical::PostPhysicsStepUpdate()
 {
-   if (!GetPhysicsUpdateEnabled()) return;
+   if (!GetCollisionDetection()) return;
    
    if( DynamicsEnabled() )
    {

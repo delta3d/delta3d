@@ -118,10 +118,7 @@ void TransformableTests::TestDefaultBools()
 {
    CPPUNIT_ASSERT(!mTransformable->GetRenderCollisionGeometry());
    CPPUNIT_ASSERT(!mTransformable->GetIsRenderingProxyNode());
-   CPPUNIT_ASSERT(mTransformable->GetPhysicsUpdateEnabled());
-   
-   mTransformable->SetPhysicsUpdateEnabled(false);
-   CPPUNIT_ASSERT(!mTransformable->GetPhysicsUpdateEnabled());
+   CPPUNIT_ASSERT(!mTransformable->GetCollisionDetection());
 }
 
 void TransformableTests::TestGetCollisionGeomDimensions()

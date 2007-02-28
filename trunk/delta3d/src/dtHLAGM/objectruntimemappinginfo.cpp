@@ -19,7 +19,7 @@
  * David Guthrie
  */
 
-#include "dtHLAGM/objectruntimemappinginfo.h"
+#include <dtHLAGM/objectruntimemappinginfo.h>
 
 namespace dtHLAGM
 {
@@ -42,7 +42,7 @@ namespace dtHLAGM
       return ok;
    }
 
-   bool ObjectRuntimeMappingInfo::Put(const RTI::ObjectHandle& handle, const dtCore::UniqueId& actorId)
+   bool ObjectRuntimeMappingInfo::Put(const RTI::ObjectHandle handle, const dtCore::UniqueId& actorId)
    {
       //do a quick pre-check.  This will make sure that it doesn't insert in the first map only to fail at the second.
       if (mActorToHLAMap.find(actorId) != mActorToHLAMap.end())
@@ -68,12 +68,12 @@ namespace dtHLAGM
       return ok;
    }
 
-   bool ObjectRuntimeMappingInfo::Put(const RTI::ObjectHandle& handle, ObjectToActor& ota)
+   bool ObjectRuntimeMappingInfo::Put(const RTI::ObjectHandle handle, ObjectToActor& ota)
    {
       return mObjectHandleToClassMap.insert(std::make_pair(handle, &ota)).second;
    }
 
-   const dtCore::UniqueId* ObjectRuntimeMappingInfo::GetId(const RTI::ObjectHandle& handle) const
+   const dtCore::UniqueId* ObjectRuntimeMappingInfo::GetId(const RTI::ObjectHandle handle) const
    {
       std::map<RTI::ObjectHandle, dtCore::UniqueId>::const_iterator i = mHLAtoActorMap.find(handle);
       if (i != mHLAtoActorMap.end())
@@ -133,7 +133,7 @@ namespace dtHLAGM
       return NULL;
    }
 
-   const ObjectToActor* ObjectRuntimeMappingInfo::GetObjectToActor(const RTI::ObjectHandle& handle) const
+   const ObjectToActor* ObjectRuntimeMappingInfo::GetObjectToActor(const RTI::ObjectHandle handle) const
    {
       std::map<RTI::ObjectHandle, dtCore::RefPtr<ObjectToActor> >::const_iterator i = mObjectHandleToClassMap.find(handle);
       if (i != mObjectHandleToClassMap.end())
@@ -143,7 +143,7 @@ namespace dtHLAGM
       return NULL;
    }
 
-   ObjectToActor* ObjectRuntimeMappingInfo::GetObjectToActor(const RTI::ObjectHandle& handle)
+   ObjectToActor* ObjectRuntimeMappingInfo::GetObjectToActor(const RTI::ObjectHandle handle)
    {
       std::map<RTI::ObjectHandle, dtCore::RefPtr<ObjectToActor> >::iterator i = mObjectHandleToClassMap.find(handle);
       if (i != mObjectHandleToClassMap.end())
@@ -154,7 +154,7 @@ namespace dtHLAGM
    }
 
 
-   void ObjectRuntimeMappingInfo::Remove(const RTI::ObjectHandle& handle)
+   void ObjectRuntimeMappingInfo::Remove(const RTI::ObjectHandle handle)
    {
       std::map<RTI::ObjectHandle, dtCore::UniqueId>::iterator i = mHLAtoActorMap.find(handle);
       if (i != mHLAtoActorMap.end())
@@ -182,7 +182,10 @@ namespace dtHLAGM
 
    void ObjectRuntimeMappingInfo::Remove(const dtCore::UniqueId& actorId)
    {
-      std::map<dtCore::UniqueId, EntityIdentifier>::iterator i = mUniqueIdToEntityIdentifierMap.find(actorId);
+      //Incase the caller is passing the ACTUAL object that is stored in one of these maps.
+      dtCore::UniqueId toErase = actorId;
+      
+      std::map<dtCore::UniqueId, EntityIdentifier>::iterator i = mUniqueIdToEntityIdentifierMap.find(toErase);
       if (i != mUniqueIdToEntityIdentifierMap.end())
       {
          const EntityIdentifier id = i->second;
@@ -190,7 +193,7 @@ namespace dtHLAGM
          Remove(id);
       }
 
-      std::map<dtCore::UniqueId, RTI::ObjectHandle>::iterator i2 = mActorToHLAMap.find(actorId);
+      std::map<dtCore::UniqueId, RTI::ObjectHandle>::iterator i2 = mActorToHLAMap.find(toErase);
       if (i2 != mActorToHLAMap.end())
       {
          const RTI::ObjectHandle handle = i2->second;
@@ -199,7 +202,7 @@ namespace dtHLAGM
       }
 
       // Remove the RTI id string mapped to the actor id
-      std::map<dtCore::UniqueId, std::string>::iterator i3 = mActortoRTIIDMap.find(actorId);
+      std::map<dtCore::UniqueId, std::string>::iterator i3 = mActortoRTIIDMap.find(toErase);
       if (i3 != mActortoRTIIDMap.end())
       {
          std::string rtiId = i3->second;
