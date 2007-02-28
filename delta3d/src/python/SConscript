@@ -185,7 +185,7 @@ if CheckForBoost() :
    pythonDtTerrainLib = env.SharedLibrary(  dtTerrainBindingsTarget,  pythonSrcs['dtTerrain'],   LIBS = addToLibs + [env['dtLibs']['dtTerrain'],env['dtLibs']['dtCore'],env['dtLibs']['dtUtil']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )
    pythonDtUtilLib = env.SharedLibrary(  dtUtilBindingsTarget,    pythonSrcs['dtUtil'],   LIBS = addToLibs + [env['dtLibs']['dtUtil']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )
    
-   env.Precious( pythonDtCoreLib, pythonDtAbcLib, pythonDtAudioLib, pythonDtCharLib, pythonDtDALLib, pythonDtAILib, pythonInputPLIBLib, pythonDtInspectorLib, pythonDtTerrainLib, pythonDtUtilLib )
+   env.Precious( pythonDtCoreLib, pythonDtAbcLib, pythonDtAudioLib, pythonDtCharLib, pythonDtDALLib, pythonDtAILib, pythonDtInputPLIBLib, pythonDtInspectorLib, pythonDtTerrainLib, pythonDtUtilLib )
    
    if env.get('rti') != 0 :
       pythonDtHlaLib = env.SharedLibrary( dtHlaBindingsTarget, pythonSrcs['dtHLA'], LIBS = addToLibs + [env['dtLibs'][ 'dtHLA' ]], CPPFLAGS=pythonCPPFlags )
