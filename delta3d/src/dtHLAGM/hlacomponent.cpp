@@ -408,9 +408,18 @@ namespace dtHLAGM
 
       mEntityIdentifierCounter = 1;
       mEventIdentifierCounter = 1;
+      try
+      {
 
-      mRTIAmbassador->joinFederationExecution(federateName.c_str(),
+         mRTIAmbassador->joinFederationExecution(federateName.c_str(),
                                               executionName.c_str(), this);
+      }
+      catch(const RTI::Exception& ex)
+      {
+         std::ostringstream ss;
+         ::operator<<(ss, ex);
+         throw dtUtil::Exception(ss.str(), __FILE__, __LINE__);
+      }
 
       mExecutionName = executionName;
 

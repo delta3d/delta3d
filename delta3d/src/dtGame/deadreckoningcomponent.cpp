@@ -124,10 +124,10 @@ namespace dtGame
             == DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR)
          {
             dtCore::Transform xform;
-            toRegister.GetGameActor().GetTransform(xform);
+            toRegister.GetGameActor().GetTransform(xform, dtCore::Transformable::REL_CS);
             xform.SetTranslation(helper.GetLastKnownTranslation());
             xform.SetRotation(helper.GetLastKnownRotation());
-            toRegister.GetGameActor().SetTransform(xform);
+            toRegister.GetGameActor().SetTransform(xform, dtCore::Transformable::REL_CS);
             helper.SetTranslationBeforeLastUpdate( helper.GetLastKnownTranslation() );
             helper.SetRotationBeforeLastUpdate( helper.GetLastKnownRotationByQuaternion() );
          }
@@ -139,7 +139,7 @@ namespace dtGame
          == DeadReckoningHelper::UpdateMode::CALCULATE_ONLY)
       {
          dtCore::Transform xform;
-         toRegister.GetGameActor().GetTransform(xform);
+         toRegister.GetGameActor().GetTransform(xform, dtCore::Transformable::REL_CS);
 
          helper.SetLastKnownTranslation(xform.GetTranslation());
          osg::Vec3 rot;
@@ -209,7 +209,7 @@ namespace dtGame
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {
 	     std::ostringstream ss;
-	     ss << "Found no hit";
+	     ss << "Found no hit: " << point;
 	     mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
       }
       groundNormalOut.set(0.0f, 0.0f, 1.0f);
@@ -364,7 +364,7 @@ namespace dtGame
       if(GetEyePointActor() != NULL)
       {
          dtCore::Transform xform;
-         GetEyePointActor()->GetTransform(xform);
+         GetEyePointActor()->GetTransform(xform, dtCore::Transformable::ABS_CS);
          mIsector->SetEyePoint(xform.GetTranslation());
          mIsector->SetUseEyePoint(true);
 
@@ -418,7 +418,7 @@ namespace dtGame
          }
 
          dtCore::Transform xform;
-         gameActor.GetTransform(xform);
+         gameActor.GetTransform(xform, dtCore::Transformable::REL_CS);
 
          if (helper.IsUpdated())
          {
@@ -455,10 +455,26 @@ namespace dtGame
          //actual dead reckoning code moved into the helper..
          helper.DoDR(gameActor, xform, mLogger);
 
-         //we could probably group these queries together...
-         if (!helper.IsFlying() && gameActor.GetCollisionGeomType() == &dtCore::Transformable::CollisionGeomType::CUBE)
+         //Only actually ground clamp and move remote ones.
+         if (helper.GetEffectiveUpdateMode(gameActor.IsRemote()) 
+            == DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR)
          {
-            ClampToGround(helper.GetTranslationSmoothing(), xform, gameActor.GetGameActorProxy(), helper);
+            //we could probably group these queries together...
+            if (!helper.IsFlying() && gameActor.GetCollisionGeomType() == &dtCore::Transformable::CollisionGeomType::CUBE)
+            {
+               ClampToGround(helper.GetTranslationSmoothing(), xform, gameActor.GetGameActorProxy(), helper);
+            }
+         
+            gameActor.SetTransform(xform, dtCore::Transformable::REL_CS);
+            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            {
+               std::ostringstream ss;
+               ss << "Actor " << gameActor.GetUniqueId() << " - " << gameActor.GetName() << " has attitude "
+                  << "\"" << helper.GetCurrentDeadReckonedRotation() << " at time " 
+                  << helper.GetLastRotationUpdatedTime() +  helper.GetRotationSmoothing() << "\"";
+               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, 
+                     ss.str().c_str());               
+            }
          }
 
          DoArticulation(helper, gameActor, tickMessage);

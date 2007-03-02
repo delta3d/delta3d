@@ -19,6 +19,7 @@
  * David Guthrie
  */
 #include <prefix/dtgameprefix-src.h>
+#include <dtGame/deadreckoninghelper.h>
 #include <dtGame/deadreckoningcomponent.h>
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/enginepropertytypes.h>
@@ -369,69 +370,69 @@ namespace dtGame
    
    void DeadReckoningHelper::GetActorProperties(std::vector<dtCore::RefPtr<dtDAL::ActorProperty> >& pFillVector)
    {
-         pFillVector.push_back(new dtDAL::Vec3ActorProperty("Last Known Translation", "Last Known Translation",
-            dtDAL::MakeFunctor(*this, &DeadReckoningHelper::SetLastKnownTranslation),
-            dtDAL::MakeFunctorRet(*this, &DeadReckoningHelper::GetLastKnownTranslationByCopy),
-            "Sets the last know position of this Entity", ""));
+      pFillVector.push_back(new dtDAL::Vec3ActorProperty("Last Known Translation", "Last Known Translation",
+         dtDAL::MakeFunctor(*this, &DeadReckoningHelper::SetLastKnownTranslation),
+         dtDAL::MakeFunctorRet(*this, &DeadReckoningHelper::GetLastKnownTranslationByCopy),
+         "Sets the last know position of this Entity", ""));
 
-         pFillVector.push_back(new dtDAL::Vec3ActorProperty("Last Known Rotation", "Last Known Rotation",
-            dtDAL::MakeFunctor(*this, &DeadReckoningHelper::SetLastKnownRotation),
-            dtDAL::MakeFunctorRet(*this, &DeadReckoningHelper::GetLastKnownRotationByCopy),
-            "Sets the last known rotation of this Entity", ""));
+      pFillVector.push_back(new dtDAL::Vec3ActorProperty("Last Known Rotation", "Last Known Rotation",
+         dtDAL::MakeFunctor(*this, &DeadReckoningHelper::SetLastKnownRotation),
+         dtDAL::MakeFunctorRet(*this, &DeadReckoningHelper::GetLastKnownRotationByCopy),
+         "Sets the last known rotation of this Entity", ""));
 
-         pFillVector.push_back(new dtDAL::Vec3ActorProperty("Velocity Vector", "Velocity Vector",
-            dtDAL::MakeFunctor(*this, &DeadReckoningHelper::SetVelocityVector),
-            dtDAL::MakeFunctorRet(*this, &DeadReckoningHelper::GetVelocityVectorByCopy),
-            "Sets the velocity vector of this Entity", ""));
+      pFillVector.push_back(new dtDAL::Vec3ActorProperty("Velocity Vector", "Velocity Vector",
+         dtDAL::MakeFunctor(*this, &DeadReckoningHelper::SetVelocityVector),
+         dtDAL::MakeFunctorRet(*this, &DeadReckoningHelper::GetVelocityVectorByCopy),
+         "Sets the velocity vector of this Entity", ""));
 
-         pFillVector.push_back(new dtDAL::Vec3ActorProperty("Acceleration Vector", "Acceleration Vector",
-            dtDAL::MakeFunctor(*this, &DeadReckoningHelper::SetAccelerationVector),
-            dtDAL::MakeFunctorRet(*this, &DeadReckoningHelper::GetAccelerationVectorByCopy),
-            "Sets the acceleration vector of this Entity", ""));
+      pFillVector.push_back(new dtDAL::Vec3ActorProperty("Acceleration Vector", "Acceleration Vector",
+         dtDAL::MakeFunctor(*this, &DeadReckoningHelper::SetAccelerationVector),
+         dtDAL::MakeFunctorRet(*this, &DeadReckoningHelper::GetAccelerationVectorByCopy),
+         "Sets the acceleration vector of this Entity", ""));
 
-         pFillVector.push_back(new dtDAL::Vec3ActorProperty("Angular Velocity Vector", "Angular Velocity Vector",
-            dtDAL::MakeFunctor(*this, &DeadReckoningHelper::SetAngularVelocityVector),
-            dtDAL::MakeFunctorRet(*this, &DeadReckoningHelper::GetAngularVelocityVectorByCopy),
-            "Sets the acceleration vector of this Entity", ""));
+      pFillVector.push_back(new dtDAL::Vec3ActorProperty("Angular Velocity Vector", "Angular Velocity Vector",
+         dtDAL::MakeFunctor(*this, &DeadReckoningHelper::SetAngularVelocityVector),
+         dtDAL::MakeFunctorRet(*this, &DeadReckoningHelper::GetAngularVelocityVectorByCopy),
+         "Sets the acceleration vector of this Entity", ""));
 
-         pFillVector.push_back(new dtDAL::EnumActorProperty<dtGame::DeadReckoningAlgorithm>("Dead Reckoning Algorithm", "Dead Reckoning Algorithm",
-            dtDAL::MakeFunctor(*this, &DeadReckoningHelper::SetDeadReckoningAlgorithm),
-            dtDAL::MakeFunctorRet(*this, &DeadReckoningHelper::GetDeadReckoningAlgorithm),
-            "Sets the enumerated dead reckoning algorithm to use.", ""));
+      pFillVector.push_back(new dtDAL::EnumActorProperty<dtGame::DeadReckoningAlgorithm>("Dead Reckoning Algorithm", "Dead Reckoning Algorithm",
+         dtDAL::MakeFunctor(*this, &DeadReckoningHelper::SetDeadReckoningAlgorithm),
+         dtDAL::MakeFunctorRet(*this, &DeadReckoningHelper::GetDeadReckoningAlgorithm),
+         "Sets the enumerated dead reckoning algorithm to use.", ""));
 
-         pFillVector.push_back(new dtDAL::BooleanActorProperty("Flying", "Should Not Follow the Ground",
-            dtDAL::MakeFunctor(*this, &DeadReckoningHelper::SetFlying),
-            dtDAL::MakeFunctorRet(*this, &DeadReckoningHelper::IsFlying),
-            "Flags if the dead-reckoning code should not make this actor follow the ground as it moves."));
+      pFillVector.push_back(new dtDAL::BooleanActorProperty("Flying", "Should Not Follow the Ground",
+         dtDAL::MakeFunctor(*this, &DeadReckoningHelper::SetFlying),
+         dtDAL::MakeFunctorRet(*this, &DeadReckoningHelper::IsFlying),
+         "Flags if the dead-reckoning code should not make this actor follow the ground as it moves."));
 
-         pFillVector.push_back(new dtDAL::FloatActorProperty("Ground Offset", "Ground Offset", 
-            dtDAL::MakeFunctor(*this, &DeadReckoningHelper::SetGroundOffset), 
-            dtDAL::MakeFunctorRet(*this, &DeadReckoningHelper::GetGroundOffset), 
-            "Sets the offset from the ground this entity should have.  This only matters if it is not flying."));
+      pFillVector.push_back(new dtDAL::FloatActorProperty("Ground Offset", "Ground Offset", 
+         dtDAL::MakeFunctor(*this, &DeadReckoningHelper::SetGroundOffset), 
+         dtDAL::MakeFunctorRet(*this, &DeadReckoningHelper::GetGroundOffset), 
+         "Sets the offset from the ground this entity should have.  This only matters if it is not flying."));
 
    }
 
    void DeadReckoningHelper::DoDR(GameActor& gameActor, dtCore::Transform& xform, dtUtil::Log* pLogger)
    {         
-        if (GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::NONE)
+      if (GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::NONE)
+      {
+         if (pLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
          {
-            if (pLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-            {
-               pLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Dead Reckoning Algorithm set to NONE, doing nothing.");
-            }
-            return;
+            pLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Dead Reckoning Algorithm set to NONE, doing nothing.");
          }
-         else if (GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::STATIC)
+         return;
+      }
+      else if (GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::STATIC)
+      {
+         if (IsUpdated())
          {
-            if (IsUpdated())
-            {
-               DRStatic(gameActor, xform, pLogger);
-            }
+            DRStatic(gameActor, xform, pLogger);
          }
-         else
-         {
-            DRVelocityAcceleration(gameActor, xform, pLogger);
-         }
+      }
+      else
+      {
+         DRVelocityAcceleration(gameActor, xform, pLogger);
+      }
    }
 
      //////////////////////////////////////////////////////////////////////
@@ -453,14 +454,9 @@ namespace dtGame
 
       mRotationResolved = true;
 
-	   mCurrentDeadReckonedTranslation = xform.GetTranslation();
-      xform.GetRotation().get(mCurrentDeadReckonedRotation);
+      mCurrentDeadReckonedTranslation = mLastTranslation;
       xform.GetRotation(mCurrentAttitudeVector);
-
-      //Only actually move remote ones.
-      if (GetEffectiveUpdateMode(gameActor.IsRemote()) 
-         == DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR)
-         gameActor.SetTransform(xform);
+      mLastRotationMatrix.get(mCurrentDeadReckonedRotation);
    }
 
    //////////////////////////////////////////////////////////////////////
@@ -651,29 +647,9 @@ namespace dtGame
                   ss.str().c_str());               
          }
 
-         mCurrentDeadReckonedTranslation = pos;
          mCurrentDeadReckonedRotation = newRot;
-   
-         xform.SetRotation(rot);
          xform.GetRotation(mCurrentAttitudeVector);
-
-         //Only actually move remote ones.
-         if (GetEffectiveUpdateMode(gameActor.IsRemote()) 
-            == DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR)
-         {
-            xform.SetTranslation(pos);
-            gameActor.SetTransform(xform);
-            if (pLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-            {
-               std::ostringstream ss;
-               ss << "Actor " << gameActor.GetUniqueId() << " - " << gameActor.GetName() << " has attitude "
-                  << "\"" << mCurrentAttitudeVector << " au temps" 
-                  << mLastRotationUpdatedTime + mRotationSmoothingSteps << "\"";
-               pLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, 
-                     ss.str().c_str());               
-            }
-         }
-
+         mCurrentDeadReckonedTranslation = pos;
       } 
       else
       {
