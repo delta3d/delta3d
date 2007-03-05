@@ -134,6 +134,8 @@ if OS == 'darwin':
    tools.append(macosx.TOOL_BUNDLE)
 
 tools.append(delta3d.TOOL_BUNDLE)
+if os.environ.has_key('QTDIR') :
+   tools.append('qt4') 
 
 # some basic command-line options
 optCache = 'options.cache'

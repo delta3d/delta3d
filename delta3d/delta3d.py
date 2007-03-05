@@ -18,6 +18,82 @@ from SCons.Script.SConscript import SConsEnvironment
 def TOOL_BUNDLE(env):
 
 ########################
+   def SetupDepsAndPCH(env, envCopy, deps, prefixHeader, extraDefines=[], sharedLib = False):
+      #expand pre-built libs
+      for lib in deps :
+         if env['depsHash'].has_key(lib) :
+            for newLib in env['depsHash'][lib] :
+               if not newLib in deps :
+                  deps.append(newLib)
+          
+      # merge external deps and delta libs
+      # there's probably some function to do this
+      allLibs = {}
+      for lib_name in env['dtLibs'].keys() :
+         allLibs[lib_name] = env['dtLibs'][lib_name]
+      for lib_name in env['extLibs'].keys() :
+         allLibs[lib_name] = env['extLibs'][lib_name]
+          
+      # change to platform+mode specific names
+      deps = [ allLibs[lib] for lib in deps if allLibs.has_key(lib) ]
+      
+      addToLink = []
+      if envCopy.has_key('LINKFLAGS'):
+         addToLink = envCopy['LINKFLAGS']
+    
+      addToLibs = []
+      addToFrameworks = []
+      if env['OS'] == 'darwin':
+          for lib_name in deps:
+            if env['foundLibs'].has_key(lib_name):
+              if env['foundLibs'][lib_name] == 'framework':
+                addToFrameworks.append(lib_name)
+              else:
+                addToLibs.append(lib_name)
+            else:
+              addToLibs.append(lib_name);
+      else:
+          addToLibs = deps
+   
+      envCopy['FRAMEWORKS'] = addToFrameworks
+ 
+      cppDefines = []
+      if envCopy.has_key('CPPDEFINES'):
+         cppDefines = envCopy['CPPDEFINES']
+    
+      if len(prefixHeader) > 0 and envCopy.get('pch'):
+          cppDefines += ['DELTA_PCH']
+
+          prefixHeaderName = prefixHeader.split('/')[2][0:-2]
+
+          if env['OS'] == 'darwin' or env['OS'] == 'linux':
+             oldCxxFlags = envCopy['CXXFLAGS'] + ""
+             envCopy['CXXFLAGS'] += " -include " + prefixHeader
+             srcHeader = (prefixHeader[0:-2]) + "-src.h"
+             if sharedLib:
+                outputGCH = "#" + prefixHeader + ".gch/lib.h.gch"
+                if not env.has_key('BuiltLibHeader' + prefixHeaderName):
+                   envCopy['GchSh'] = env.GchSh(outputGCH, "#" + srcHeader, CPPDEFINES = cppDefines + extraDefines, CXXFLAGS=oldCxxFlags)[0]
+                   env['BuiltLibHeader' + prefixHeaderName] = envCopy['GchSh']
+                else:
+                   envCopy['GchSh'] = env['BuiltLibHeader' + prefixHeaderName]   
+             else:
+                outputGCH = "#" + prefixHeader + ".gch/staticlib.h.gch"
+                if not env.has_key('BuiltStaticLibHeader' + prefixHeaderName):
+                   envCopy['Gch'] = env.Gch(outputGCH, "#" + srcHeader, CPPDEFINES = cppDefines + extraDefines, CXXFLAGS=oldCxxFlags)[0]
+                   env['BuiltStaticLibHeader' + prefixHeaderName] = envCopy['Gch']
+                else:
+                   envCopy['Gch'] = env['BuiltStaticLibHeader' + prefixHeaderName]
+
+          elif env['OS'] == 'windows':
+             envCopy['PCH'] = envCopy.PCH("precomp.cpp", CPPDEFINES = cppDefines + extraDefines)[0]
+      
+      addMap = {}
+      addMap['addToLink'] = addToLink
+      addMap['addToLibs'] = addToLibs
+      return addMap
+   
+########################
 
    def BuildProgram(env,  name, srcs, deps, extraDefines = [], extraLinkFlags = [], buildAppBundle = 1, prefixHeader='inc/prefix/dtcoreprefix.h') :
     
@@ -44,66 +120,15 @@ def TOOL_BUNDLE(env):
     
        envProg = env.Copy()
     
-       for lib in deps :
-          if env['depsHash'].has_key(lib) :
-             for newLib in env['depsHash'][lib] :
-                if not newLib in deps :
-                   deps.append(newLib)
+       addMap = SetupDepsAndPCH(env, envProg, deps, prefixHeader, extraDefines)
        
-       # merge external deps and delta libs
-       # there's probably some function to do this
-       allLibs = {}
-       for lib_name in env['dtLibs'].keys() :
-          allLibs[lib_name] = env['dtLibs'][lib_name]
-       for lib_name in env['extLibs'].keys() :
-          allLibs[lib_name] = env['extLibs'][lib_name]
-          
-       # change to platform+mode specific names
-       deps = [ allLibs[lib] for lib in deps if allLibs.has_key(lib) ]
-    
-       addToLink = []
-       if envProg.has_key('LINKFLAGS'):
-         addToLink = envProg['LINKFLAGS']
-    
-       addToLibs = []
-       addToFrameworks = []
-       if env['OS'] == 'darwin':
-          for lib_name in deps:
-            if env['foundLibs'].has_key(lib_name):
-              if env['foundLibs'][lib_name] == 'framework':
-                addToFrameworks.append(lib_name)
-              else:
-                addToLibs.append(lib_name)
-            else:
-              addToLibs.append(lib_name);
-       else:
-          addToLibs = deps
-       
-       envProg['FRAMEWORKS'] = addToFrameworks
+       addToLink = addMap['addToLink']
+       addToLibs = addMap['addToLibs']
 
        cppDefines = []
        if envProg.has_key('CPPDEFINES'):
-         cppDefines = envProg['CPPDEFINES']
-
-       if len(prefixHeader) > 0 and envProg.get('pch'):
-          cppDefines += ['DELTA_PCH']
-
-          prefixHeaderName = prefixHeader.split('/')[2][0:-2]
-
-          if env['OS'] == 'darwin' or env['OS'] == 'linux':
-             oldCxxFlags = envProg['CXXFLAGS'] + ""
-             envProg['CXXFLAGS'] += " -include " + prefixHeader
-             srcHeader = (prefixHeader[0:-2]) + "-src.h"
-             outputGCH = "#" + prefixHeader + ".gch/prog.h.gch"
-             if not env.has_key('BuiltExecHeader' + prefixHeaderName):
-                envProg['Gch'] = env.Gch(outputGCH, "#" + srcHeader, CPPDEFINES = cppDefines + extraDefines, CXXFLAGS=oldCxxFlags)[0]
-                env['BuiltExecHeader' + prefixHeaderName] = envProg['Gch']
-             else:
-                envProg['Gch'] = env['BuiltExecHeader' + prefixHeaderName]
-          elif env['OS'] == 'windows':
-             envProg['PCH'] = envProg.PCH("precomp.cpp", CPPDEFINES = cppDefines + extraDefines)[0]
+          cppDefines = envProg['CPPDEFINES']
        
-    
        program = envProg.Program( target, sourceList,
                                 CPPDEFINES = cppDefines + extraDefines, 
                                 LIBS = addToLibs, LINKFLAGS = addToLink + extraLinkFlags )
@@ -132,7 +157,7 @@ def TOOL_BUNDLE(env):
 ########################
     
    def BuildLib(env, name, srcs, deps, extraDefines = [], extraLinkFlags = [],
-          overrideShLinkFlags = '',  overrideShLibSuffix = '', prefixHeader='inc/prefix/dtcoreprefix.h' ) :
+          overrideShLinkFlags = '',  overrideShLibSuffix = '', prefixHeader='inc/prefix/dtcoreprefix.h', staticLib = False) :
 
        #remove the windows precompiled header file.
        if "precomp.cpp" in srcs:
@@ -167,77 +192,14 @@ def TOOL_BUNDLE(env):
     
        envLib['LIBNAME'] = name
     
-       #expand pre-built libs
-       for lib in deps :
-          envLib.Depends(target,lib)
-          if env['depsHash'].has_key(lib) :
-             for newLib in env['depsHash'][lib] :
-                if not newLib in deps :
-                   deps.append(newLib)
-          
-       # merge external deps and delta libs
-       # there's probably some function to do this
-       allLibs = {}
-       for lib_name in env['dtLibs'].keys() :
-          allLibs[lib_name] = env['dtLibs'][lib_name]
-       for lib_name in env['extLibs'].keys() :
-          allLibs[lib_name] = env['extLibs'][lib_name]
-          
-       # change to platform+mode specific names
-       deps = [ allLibs[lib] for lib in deps if allLibs.has_key(lib) ]
-    
-       addToLink = []
-       if envLib.has_key('LINKFLAGS'):
-         addToLink = envLib['LINKFLAGS']
-    
-       addToLibs = []
-       addToFrameworks = []
-       if env['OS'] == 'darwin':
-          for lib_name in deps:
-            if env['foundLibs'].has_key(lib_name):
-              if env['foundLibs'][lib_name] == 'framework':
-                addToFrameworks.append(lib_name)
-              else:
-                addToLibs.append(lib_name)
-            else:
-              addToLibs.append(lib_name);
-       else:
-          addToLibs = deps
-   
-       envLib['FRAMEWORKS'] = addToFrameworks
- 
+       addMap = SetupDepsAndPCH(env, envLib, deps, prefixHeader, extraDefines, not staticLib)
+       
+       addToLink = addMap['addToLink']
+       addToLibs = addMap['addToLibs']
+       
        cppDefines = []
        if envLib.has_key('CPPDEFINES'):
           cppDefines = envLib['CPPDEFINES']
-
-       staticLib = name == 'dtNet'
-
-       if len(prefixHeader) > 0 and envLib.get('pch'):
-          cppDefines += ['DELTA_PCH']
-
-          prefixHeaderName = prefixHeader.split('/')[2][0:-2]
-
-          if env['OS'] == 'darwin' or env['OS'] == 'linux':
-             oldCxxFlags = envLib['CXXFLAGS'] + ""
-             envLib['CXXFLAGS'] += " -include " + prefixHeader
-             srcHeader = (prefixHeader[0:-2]) + "-src.h"
-             if not staticLib:
-                outputGCH = "#" + prefixHeader + ".gch/lib.h.gch"
-                if not env.has_key('BuiltLibHeader' + prefixHeaderName):
-                   envLib['GchSh'] = env.GchSh(outputGCH, "#" + srcHeader, CPPDEFINES = cppDefines + extraDefines, CXXFLAGS=oldCxxFlags)[0]
-                   env['BuiltLibHeader' + prefixHeaderName] = envLib['GchSh']
-                else:
-                   envLib['GchSh'] = env['BuiltLibHeader' + prefixHeaderName]   
-             else:
-                outputGCH = "#" + prefixHeader + ".gch/staticlib.h.gch"
-                if not env.has_key('BuiltStaticLibHeader' + prefixHeaderName):
-                   envLib['Gch'] = env.Gch(outputGCH, "#" + srcHeader, CPPDEFINES = cppDefines + extraDefines, CXXFLAGS=oldCxxFlags)[0]
-                   env['BuiltStaticLibHeader' + prefixHeaderName] = envLib['Gch']
-                else:
-                   envLib['Gch'] = env['BuiltStaticLibHeader' + prefixHeaderName]
-
-          elif env['OS'] == 'windows':
-             envLib['PCH'] = envLib.PCH("precomp.cpp", CPPDEFINES = cppDefines + extraDefines)[0]
        
        if not staticLib :
           builtlib = envLib.SharedLibrary( target, sourceList, 
@@ -278,7 +240,6 @@ def TOOL_BUNDLE(env):
                       'dtAudio'     : 'dtAudio',
                       'dtChar'      : 'dtChar',
                       'dtCore'      : 'dtCore',
-                      'dtInputPLIB' : 'dtInputPLIB',
                       'dtDAL'       : 'dtDAL',
                       'dtHLA'       : 'dtHLA',
                       'dtHLAGM'     : 'dtHLAGM',
@@ -345,9 +306,6 @@ def TOOL_BUNDLE(env):
       env.Append( CPPPATH = env.get('cpppath') )
       env.Append( LIBPATH = env.get('libpath') )
 
-      if env['ENV'].has_key('QTDIR') :
-         env.Append( TOOLS = 'qt' ) 
-
       #add Xerces framework includes in case xerces is a framework
       #since the xerces framework has broken headers.
       #the Crazy eddie's case is similar, but they were wrtten not to have
@@ -403,7 +361,7 @@ def TOOL_BUNDLE(env):
                   rtiLibPath = root
                   if re.search( javaPattern, file) is None:
                      rtiLibs.append( match.group(1) )
-	         
+            
          if rtiLibPath is not '' :
             env.Append( LIBPATH = [ rtiLibPath ] )
             if 'rtiada' in rtiLibs :
@@ -442,7 +400,7 @@ def TOOL_BUNDLE(env):
          elif env['OS'] == 'darwin':      
             env.Append(CXXFLAGS=['-gdwarf-2', '-O0', '-pipe', '-isysroot', '/Developer/SDKs/MacOSX10.4u.sdk'], 
               CPPDEFINES=['_DEBUG', '__USE_OSX_AGL_IMPLEMENTATION__', 'SIGSLOT_PURE_ISO', 'MAC_OS_X_VERSION_MIN_REQUIRED=1030' ],
-         	LINKFLAGS=['-Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk'] )
+            LINKFLAGS=['-Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk'] )
       else:
          print 'Build Configuration: Release'
          errorLog.write('Build Configuration: Release\n\n')
@@ -512,7 +470,6 @@ def TOOL_BUNDLE(env):
                  'dtAudio'              : 'dtAudio',
                  'dtChar'               : 'dtChar',
                  'dtCore'               : 'dtCore',
-                 'dtInputPLIB'          : 'dtInputPLIB',
                  'dtDAL'                : 'dtDAL',
                  'dtHLA'                : 'dtHLA',
                  'dtHLAGM'              : 'dtHLAGM',
@@ -572,7 +529,11 @@ def TOOL_BUNDLE(env):
                'shell32'             : 'shell32',
                'ole32'               : 'ole32',
                'Comctl32'            : 'Comctl32',
-               'cppunit'             : 'cppunit' 
+               'cppunit'             : 'cppunit',
+               'QtCore'              : 'QtCored4',
+               'QtGui'               : 'QtGuid4',
+               'QtOpenGL'            : 'QtOpenGLd4'
+                
            }
          else :
             extLibs = { 
@@ -613,7 +574,10 @@ def TOOL_BUNDLE(env):
                'shell32'             : 'shell32',
                'ole32'               : 'ole32', 
                'Comctl32'            : 'Comctl32',
-               'cppunit'             : 'cppunit' 
+               'cppunit'             : 'cppunit',
+               'QtCore'              : 'QtCore4',
+               'QtGui'               : 'QtGui4',
+               'QtOpenGL'            : 'QtOpenGL4'
                }
          
       elif env['OS'] == 'linux' :
@@ -649,7 +613,11 @@ def TOOL_BUNDLE(env):
             'uuid'                : 'uuid',
             'opengl'              : 'GL',
             'cppunit'             : 'cppunit',
-            'ncurses'             : 'ncurses'
+            'ncurses'             : 'ncurses',
+            'QtCore'              : 'QtCore',
+            'QtGui'               : 'QtGui',
+            'QtOpenGL'            : 'QtOpenGL'
+            
             }
       elif env['OS'] == 'darwin' :
          extLibs = { 
@@ -681,84 +649,94 @@ def TOOL_BUNDLE(env):
             'rbody'          : 'rbody',
             'xerces-c'       : 'Xerces',
             'opengl'         : 'OpenGL',
+            'AGL'            : 'AGL',
             'CoreFoundation' : 'CoreFoundation',
             'IOKit'          : 'IOKit',
             'Carbon'         : 'Carbon',
             'cppunit'        : 'cppunit',
-            'ncurses'        : 'ncurses'
+            'ncurses'        : 'ncurses',
+            'QtCore'         : 'QtCore',
+            'QtGui'          : 'QtGui',
+            'QtOpenGL'       : 'QtOpenGL'
             }
       else :
          extLibs = {}
 
-      linkOrder = [
-         'OpenThreads',
-         'Producer',
-         'opengl',
-         'xerces-c',
-         'gdal',
-         'gne',
-         'HawkNL',
-         'osg',
-         'osgDB',
-         'osgUtil',
-         'osgText',
-         'osgSim',
-         'osgFX',
-         'osgParticle']
-
-      if env.get('buildPythonBindings'):
-         linkOrder += ['python']
-
-      linkOrder += [
-         'cal3d',
-         'fltk',
-         'isense',
-         'openal',
-         'alut',
-         'ode',
-         'js',
-         'ul',
-         'rvrutils',
-         'rcfgscript', 
-         'rbody',
-         'CEGUIBase',   
-         'CEGUIOpenGLRenderer',
-         'cppunit' ]
-
-      if env['OS'] == 'windows' :
-         linkOrder = linkOrder + [ 'User32', 'Advapi32', 'Rpcrt4',  'Winmm', 'Gdi32', 'opengl', 'winsock', 'shell32', 'ole32' ]
-      elif env['OS'] == 'darwin' :
-         linkOrder = [ 'CoreFoundation', 'IOKit', 'Carbon', 'ncurses' ] + linkOrder
-      elif env['OS'] == 'linux' :
-         linkOrder = [ 'Xxf86vm', 'uuid', 'ncurses' ] + linkOrder 
-
-      foundLibs = {}
-
+      
       conf = env.Configure(custom_tests = {
          'CheckFramework' : CheckFramework,
-         })
+      })
+		
+      conf.env['LIBS'] = []
+      conf.env['FRAMEWORKS'] = []
 
+      foundLibs = {}
+      
       # TODO: don't run for install
       if not env.GetOption('clean') :
-          
-         for lib in linkOrder :
-            if extLibs.has_key(lib):
-               resultText = "notFound"
-               result = False
-               if env['OS'] == 'darwin':
-                  result = conf.CheckFramework(extLibs[lib], language = 'C++', autoadd = 1, symbol="printf")
-                  if result:
-                     resultText = 'framework'
-               else:
+         def CheckLinkGroup(linkGroup, name, required, add=True):
+            oldLibs = conf.env['LIBS']
+            oldFrameworks = conf.env['FRAMEWORKS']
+            for lib in linkGroup :
+               if extLibs.has_key(lib):
+                  resultText = "notFound"
                   result = False
+                  if env['OS'] == 'darwin':
+                     result = conf.CheckFramework(extLibs[lib], language = 'C++', autoadd = 1, symbol="printf")
+                     if result:
+                        resultText = 'framework'
+                  else:
+                     result = False
 
-               if not result:
-                  result = conf.CheckLib(extLibs[lib], language = 'C++', autoadd = 1, symbol="printf");
-                  if result:
-                     resultText = 'sharedLib'
-                     
-               foundLibs[extLibs[lib]] = resultText 
+                  if not result:
+                     result = conf.CheckLib(extLibs[lib], language = 'C++', autoadd = 1, symbol="printf");
+                     if result:
+                        resultText = 'sharedLib'
+         
+                  foundLibs[extLibs[lib]] = resultText 
+            if not add:
+               conf.env.Replace(FRAMEWORKS = oldFrameworks) 
+               conf.env.Replace(LIBS = oldLibs) 
 
+         if env['OS'] == 'windows' :
+            CheckLinkGroup([ 'opengl', 'User32', 'Advapi32', 'Rpcrt4',  'Winmm', 'Gdi32', 'opengl', 'winsock', 'shell32', 'ole32' ], 'OS', True)
+         elif env['OS'] == 'darwin' :
+            CheckLinkGroup([ 'opengl', 'AGL', 'CoreFoundation', 'IOKit', 'Carbon', 'ncurses', 'uuid' ], 'OS', True)
+         elif env['OS'] == 'linux' :
+            CheckLinkGroup([ 'opengl', 'Xxf86vm', 'uuid', 'ncurses' ], 'OS', True)
+   
+         CheckLinkGroup(['ode'], 'ode', True, False)
+   
+         CheckLinkGroup(['js', 'ul'], 'plib', False, False)
+         CheckLinkGroup(['cppunit'], 'cppunit', False, False)
+         CheckLinkGroup(['python'], 'python', False, False)
+         CheckLinkGroup(['openal', 'alut'], 'openal', True, False)
+         if env['ENV'].has_key('QTDIR'):
+            CheckLinkGroup(['QtCore', 'QtGui', 'QtOpenGL'], 'qt', False, False)
+         
+         CheckLinkGroup(['fltk'], 'fltk', False, False)
+         CheckLinkGroup(['isense'], 'isense', False, False) 
+      
+         CheckLinkGroup([
+            'OpenThreads',
+            'Producer',
+            'opengl',
+            'xerces-c',
+            'gdal',
+            'gne',
+            'HawkNL',
+            'osg',
+            'osgDB',
+            'osgUtil',
+            'osgText',
+            'osgSim',
+            'osgFX',
+            'osgParticle'], 'osg', True)
+                  
+         CheckLinkGroup(['cal3d','rvrutils','rcfgscript','rbody'], 'rbody', True)
+         CheckLinkGroup([ 'CEGUIBase', 'CEGUIOpenGLRenderer' ], 'CEGUI', False, False)
+         
+         
          #this actually SEARCHES, not good
          #foundLibs[ os.path.join('boost','python.hpp') ] = conf.CheckHeader( os.path.join('boost','python.hpp'), language='C++')
          
@@ -805,6 +783,7 @@ def TOOL_BUNDLE(env):
    # So just make it available as a method of Environment.
    SConsEnvironment.BuildProgram = BuildProgram
    SConsEnvironment.BuildLib = BuildLib
+   SConsEnvironment.SetupDepsAndPCH = SetupDepsAndPCH
    SConsEnvironment.CompilerConf = CompilerConf
    SConsEnvironment.SGlob = SGlob
 
@@ -992,8 +971,8 @@ def find_file( findThis, startDirs ) :
 ########################
 
 def exit_with_error() :
-	sys.stderr.write('Build failed.  See BuildLog.txt for details.\n')
-	errorLog.write('Build Failed: Build ended: ' + CurrentTime() + '\n')
-	errorLog.close()
-	env.Exit(-1)	
+   sys.stderr.write('Build failed.  See BuildLog.txt for details.\n')
+   errorLog.write('Build Failed: Build ended: ' + CurrentTime() + '\n')
+   errorLog.close()
+   env.Exit(-1)
 
