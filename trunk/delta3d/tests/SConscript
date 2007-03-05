@@ -5,8 +5,6 @@ import sys
 # Import the variables defined in the global SConstruct build script.
 Import ('*')
 
-projectEnv = env.Copy()
-
 #there will be one program per test dir here plus an all tests.
 #To add a new one, add a new one, simply put the directory 
 #in this list, put your test cpp files in with the names "*tests.cpp"
@@ -34,46 +32,13 @@ sources['all'] += ['#utilities/LMS/WebPackager/package_utils.cpp']
 
 mainlibs = suites + ['dtAudio', 'dtABC', 'dtChar', 'dtActors', 'cppunit', 'testGameActorLibrary']
 
-mainlibs = [ env['dtLibs'][lib] for lib in mainlibs if env['dtLibs'].has_key(lib) ]
-
+mainlibs += ['cppunit']
 if env.get('rti') != 0:
 	mainlibs += env['rtiLibs']
 
-projectEnv.Append(LIBS = mainlibs)
-
 #Add this so we can include files from testActorLib.h
-projectEnv.Append(CPPPATH = ['#examples', '#utilities'])
+env.Append(CPPPATH = ['#examples', '#utilities'])
 
-programs = {}
-
+app = env.BuildProgram('allTests', sources['all'], mainlibs, prefixHeader='inc/prefix/dtcoreprefix.h')
 result = 'true'
-
-prefixHeader = "inc/prefix/dtcoreprefix.h"
-
-if len(prefixHeader) > 0 and projectEnv.get('pch'):
-   projectEnv['CPPDEFINES'] += ['DELTA_PCH']
-   if env['OS'] == 'darwin' or env['OS'] == 'linux':
-      oldCxxFlags = projectEnv['CXXFLAGS'] + ""
-      projectEnv['CXXFLAGS']  += " -include " + prefixHeader
-      srcHeader = (prefixHeader[0:-2]) + "-src.h"
-      outputGCH = "#" + prefixHeader + ".gch/unitTests" 
-      projectEnv['Gch'] = projectEnv.Gch(outputGCH, "#" + srcHeader, CXXFLAGS = oldCxxFlags)[0]             
-   elif env['OS'] == 'windows':
-      projectEnv['PCH'] = projectEnv.PCH("precomp.cpp")[0]
-   
-#create all the program names base on the sets of sources.
-for prog in sources.keys():
-   programs[prog] = '#tests/' + prog + 'Tests'
-
-   #add the "d" at the end for windows
-   if mode == 'debug' and env['OS'] == 'windows':
-      programs[prog] += 'd'
-   #create the program
-     
-   app = projectEnv.Program(programs[prog], sources[prog])
-   
-   if (app == '[]') :
-      result = 'false'
-      errorLog.write("Failed to build test program " + programs[prog] + ".\n")
-
 Return('result')

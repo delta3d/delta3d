@@ -1355,14 +1355,14 @@ namespace dtDAL
          {
             stream >> resourceId;
             stream >> resourceDisplayName;
-            mValueList->push_back(dtDAL::ResourceDescriptor(resourceId,resourceDisplayName));
+            mValueList->push_back(dtDAL::ResourceDescriptor(resourceDisplayName, resourceId));
          }
       }
       else
       {
          stream >> resourceId;
          stream >> resourceDisplayName;
-         mDescriptor = dtDAL::ResourceDescriptor(resourceId,resourceDisplayName);
+         mDescriptor = dtDAL::ResourceDescriptor(resourceDisplayName, resourceId);
       }
    }
 
