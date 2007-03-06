@@ -95,13 +95,13 @@ def TOOL_BUNDLE(env):
    
 ########################
 
-   def BuildProgram(env,  name, srcs, deps, extraDefines = [], extraLinkFlags = [], buildAppBundle = 1, prefixHeader='inc/prefix/dtcoreprefix.h') :
+   def BuildProgram(env,  name, srcs, deps, extraDefines = [], extraLinkFlags = [], buildAppBundle = 1, prefixHeader='inc/prefix/dtcoreprefix.h', targetPath = "bin") :
     
        #remove the windows precompiled header file.
        if "precomp.cpp" in srcs:
           srcs.remove("precomp.cpp")
     
-       target = '#bin/' + name
+       target = '#'+ targetPath + '/' + name
     
        if env.get('fastBuild'):
           path = string.replace(env.GetBuildPath('SConscript'),  'SConscript', '')
@@ -146,13 +146,13 @@ def TOOL_BUNDLE(env):
     
           inst = envProg.InstallBundle ('$prefix/share/delta3d/Applications', bundle)
        elif env['OS'] == 'linux':
-          if env.get('bindir') and env.GetLaunchDir()+'/bin' != env.get('bindir'):
+          if env.get('bindir') and env.GetLaunchDir()+'/' + targetPath != env.get('bindir'):
              envProg.Install( '$bindir', program )
           elif env.get('prefix') and env.GetLaunchDir() != env.get('prefix') :
-             envProg.Install( '$prefix/share/delta3d/bin', program )
+             envProg.Install( '$prefix/share/delta3d/' + targetPath, program )
        else:
           if env.GetLaunchDir() != env.get('prefix') : 
-             envProg.Install( '$prefix/share/delta3d/bin', program )
+             envProg.Install( '$prefix/share/delta3d/' + targetPath, program )
                    
 ########################
     
@@ -470,6 +470,8 @@ def TOOL_BUNDLE(env):
                  'dtAudio'              : 'dtAudio',
                  'dtChar'               : 'dtChar',
                  'dtCore'               : 'dtCore',
+                 'dtInputPLIB'          : 'dtInputPLIB',
+                 'dtInputISense'        : 'dtInputISense',
                  'dtDAL'                : 'dtDAL',
                  'dtHLA'                : 'dtHLA',
                  'dtHLAGM'              : 'dtHLAGM',
