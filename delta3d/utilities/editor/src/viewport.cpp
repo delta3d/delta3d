@@ -70,8 +70,8 @@ namespace dtEditQt
    IMPLEMENT_ENUM(Viewport::InteractionMode);
    const Viewport::InteractionMode Viewport::InteractionMode::CAMERA("CAMERA");
    const Viewport::InteractionMode Viewport::InteractionMode::SELECT_ACTOR("SELECT_ACTOR");
-   const Viewport::InteractionModeViewport::InteractionMode::TRANSLATE_ACTOR("TRANSLATE_ACTOR");
-   const Viewport::InteractionModeViewport::InteractionMode::ROTATE_ACTOR("ROTATE_ACTOR");
+   const Viewport::InteractionMode Viewport::InteractionMode::TRANSLATE_ACTOR("TRANSLATE_ACTOR");
+   const Viewport::InteractionMode Viewport::InteractionMode::ROTATE_ACTOR("ROTATE_ACTOR");
    const Viewport::InteractionMode Viewport::InteractionMode::SCALE_ACTOR("SCALE_ACTOR");
    ///////////////////////////////////////////////////////////////////////////////
 
@@ -261,8 +261,8 @@ namespace dtEditQt
          throw dtUtil::Exception(dtDAL::ExceptionEnum::BaseException,"Cannot set render style "
                "because the current scene view is invalid.", __FILE__, __LINE__);
 
-      osg::StateAttribute::GLModeValueturnOn =osg::StateAttribute::OVERRIDE |osg::StateAttribute::ON;
-      osg::StateAttribute::GLModeValueturnOff =osg::StateAttribute::OVERRIDE |osg::StateAttribute::OFF;
+      osg::StateAttribute::GLModeValue turnOn =osg::StateAttribute::OVERRIDE |osg::StateAttribute::ON;
+      osg::StateAttribute::GLModeValue turnOff =osg::StateAttribute::OVERRIDE |osg::StateAttribute::OFF;
 
       osg::PolygonMode *pm = dynamic_cast<osg::PolygonMode *>(
             this->globalStateSet->getAttribute(osg::StateAttribute::POLYGONMODE));
@@ -361,7 +361,7 @@ emit             renderStyleChanged();
       {
          const std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> >
                &proxyList =currMap->GetAllProxies();
-         std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> >::const_iteratorproxyItor;
+         std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> >::const_iterator proxyItor;
 
          //Loop through the proxies searching for the one with billboard geometry
          //matching what was selected.
