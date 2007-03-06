@@ -39,6 +39,6 @@ if env.get('rti') != 0:
 #Add this so we can include files from testActorLib.h
 env.Append(CPPPATH = ['#examples', '#utilities'])
 
-app = env.BuildProgram('allTests', sources['all'], mainlibs, prefixHeader='inc/prefix/dtcoreprefix.h')
+app = env.BuildProgram('allTests', sources['all'], mainlibs, prefixHeader='inc/prefix/dtcoreprefix.h', targetPath = 'tests')
 result = 'true'
 Return('result')
