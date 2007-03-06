@@ -63,31 +63,25 @@ namespace dtEditQt
    const Viewport::RenderStyle Viewport::RenderStyle::WIREFRAME("WIREFRAME");
    const Viewport::RenderStyle Viewport::RenderStyle::LIT("LIT");
    const Viewport::RenderStyle Viewport::RenderStyle::TEXTURED("TEXTURED");
-   const Viewport::RenderStyle
-         Viewport::RenderStyle::LIT_AND_TEXTURED("LIT_AND_TEXTURED");
+   const Viewport::RenderStyle Viewport::RenderStyle::LIT_AND_TEXTURED("LIT_AND_TEXTURED");
    ///////////////////////////////////////////////////////////////////////////////
 
    ///////////////////////////////////////////////////////////////////////////////
-   IMPLEMENT_ENUM(Viewport::InteractionMode)
-   ;
+   IMPLEMENT_ENUM(Viewport::InteractionMode);
    const Viewport::InteractionMode Viewport::InteractionMode::CAMERA("CAMERA");
-   const Viewport::InteractionMode
-         Viewport::InteractionMode::SELECT_ACTOR("SELECT_ACTOR");
-   const Viewport::InteractionMode
-         Viewport::InteractionMode::TRANSLATE_ACTOR("TRANSLATE_ACTOR");
-   const Viewport::InteractionMode
-         Viewport::InteractionMode::ROTATE_ACTOR("ROTATE_ACTOR");
+   const Viewport::InteractionMode Viewport::InteractionMode::SELECT_ACTOR("SELECT_ACTOR");
+   const Viewport::InteractionModeViewport::InteractionMode::TRANSLATE_ACTOR("TRANSLATE_ACTOR");
+   const Viewport::InteractionModeViewport::InteractionMode::ROTATE_ACTOR("ROTATE_ACTOR");
    const Viewport::InteractionMode Viewport::InteractionMode::SCALE_ACTOR("SCALE_ACTOR");
    ///////////////////////////////////////////////////////////////////////////////
 
 
    ///////////////////////////////////////////////////////////////////////////////
-   Viewport::Viewport(ViewportManager::ViewportType &type, const std::string &name,
-         QWidget *parent, QGLWidget *shareWith) :
-      QGLWidget(parent, shareWith), inChangeTransaction(false), name(name),
-            viewPortType(type), mRedrawContinuously(false),
-            useAutoInteractionMode(false), autoSceneUpdate(true), initialized(false),
-            enableKeyBindings(true), mIsector(new dtCore::Isector())
+   Viewport::Viewport(ViewportManager::ViewportType &type, const std::string &name, QWidget *parent,
+         QGLWidget *shareWith) :
+      QGLWidget(parent, shareWith), inChangeTransaction(false), name(name), viewPortType(type),
+            mRedrawContinuously(false), useAutoInteractionMode(false), autoSceneUpdate(true),
+            initialized(false), enableKeyBindings(true), mIsector(new dtCore::Isector())
    {
       this->frameStamp = new osg::FrameStamp();
       this->mouseSensitivity = 10.0f;
@@ -134,8 +128,7 @@ namespace dtEditQt
       {
          if (this->scene != NULL)
          {
-            this->rootNodeGroup->replaceChild(this->scene->GetSceneNode(),
-                  scene->GetSceneNode());
+            this->rootNodeGroup->replaceChild(this->scene->GetSceneNode(), scene->GetSceneNode());
          }
          else
          {
@@ -163,8 +156,7 @@ namespace dtEditQt
          //Else update the current overlay in both the scene and in the viewport.
          if (this->overlay != NULL)
          {
-            this->rootNodeGroup->replaceChild(this->overlay->getOverlayGroup(),
-                  overlay->getOverlayGroup());
+            this->rootNodeGroup->replaceChild(this->overlay->getOverlayGroup(), overlay->getOverlayGroup());
          }
          else
          {
@@ -269,10 +261,8 @@ namespace dtEditQt
          throw dtUtil::Exception(dtDAL::ExceptionEnum::BaseException,"Cannot set render style "
                "because the current scene view is invalid.", __FILE__, __LINE__);
 
-      osg::StateAttribute::GLModeValue
-            turnOn =osg::StateAttribute::OVERRIDE |osg::StateAttribute::ON;
-      osg::StateAttribute::GLModeValue
-            turnOff =osg::StateAttribute::OVERRIDE |osg::StateAttribute::OFF;
+      osg::StateAttribute::GLModeValueturnOn =osg::StateAttribute::OVERRIDE |osg::StateAttribute::ON;
+      osg::StateAttribute::GLModeValueturnOff =osg::StateAttribute::OVERRIDE |osg::StateAttribute::OFF;
 
       osg::PolygonMode *pm = dynamic_cast<osg::PolygonMode *>(
             this->globalStateSet->getAttribute(osg::StateAttribute::POLYGONMODE));
@@ -314,7 +304,7 @@ namespace dtEditQt
          updateGL();
       }
 
-emit       renderStyleChanged();
+emit             renderStyleChanged();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -371,8 +361,7 @@ emit       renderStyleChanged();
       {
          const std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> >
                &proxyList =currMap->GetAllProxies();
-         std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> >::const_iterator
-               proxyItor;
+         std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> >::const_iteratorproxyItor;
 
          //Loop through the proxies searching for the one with billboard geometry
          //matching what was selected.
@@ -418,8 +407,7 @@ emit       renderStyleChanged();
    ///////////////////////////////////////////////////////////////////////////////
    void Viewport::onGotoActor(dtCore::RefPtr<dtDAL::ActorProxy> proxy)
    {
-      dtDAL::TransformableActorProxy
-            *tProxy = dynamic_cast<dtDAL::TransformableActorProxy *>(proxy.get());
+      dtDAL::TransformableActorProxy*tProxy = dynamic_cast<dtDAL::TransformableActorProxy *>(proxy.get());
 
       if (tProxy != NULL && getCamera()!= NULL)
       {
