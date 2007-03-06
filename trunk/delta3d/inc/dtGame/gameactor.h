@@ -190,6 +190,7 @@ namespace dtGame
                static Ownership SERVER_LOCAL;
                static Ownership CLIENT_LOCAL;
                static Ownership CLIENT_AND_SERVER_LOCAL;
+               static Ownership TEMPLATE;
                Ownership(const std::string &name) : dtUtil::Enumeration(name)
                {
                   AddInstance(this);

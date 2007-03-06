@@ -51,6 +51,8 @@
 #include <dtActors/playerstartactorproxy.h>
 #include <testGameActorLibrary/testplayer.h>
 #include <cppunit/extensions/HelperMacros.h>
+#include <dtActors/gamemeshactor.h>
+#include <dtActors/engineactorregistry.h>
 
 #if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
    #include <Windows.h>
@@ -77,9 +79,9 @@ class GameManagerTests : public CPPUNIT_NS::TestFixture
         CPPUNIT_TEST(TestComponentPriority);
         CPPUNIT_TEST(TestFindActorById);
         CPPUNIT_TEST(TestFindGameActorById);
+        CPPUNIT_TEST(TestTemplateActors);
 
         CPPUNIT_TEST(TestTimers);
-
         CPPUNIT_TEST(TestOnAddedToGM);
         CPPUNIT_TEST(TestSetProjectContext);
 
@@ -102,6 +104,7 @@ public:
    void TestComponentPriority();
    void TestFindActorById();
    void TestFindGameActorById();
+   void TestTemplateActors();
 
    void TestTimers();
 
@@ -216,13 +219,13 @@ class TestOrderComponent: public dtGame::GMComponent
 
 int TestOrderComponent::MessageCounter(0);
 
-
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(GameManagerTests);
 
 const std::string GameManagerTests::mTestGameActorLibrary="testGameActorLibrary";
 const std::string GameManagerTests::mTestActorLibrary="testActorLibrary";
 
+/////////////////////////////////////////////////
 void GameManagerTests::setUp()
 {
    dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
@@ -246,6 +249,7 @@ void GameManagerTests::setUp()
 
 }
 
+/////////////////////////////////////////////////
 void GameManagerTests::tearDown()
 {
    if (mManager.valid())
@@ -265,6 +269,36 @@ void GameManagerTests::tearDown()
    }
 }
 
+/////////////////////////////////////////////////
+void GameManagerTests::TestTemplateActors()
+{
+   //GameManager::CreateActor()
+   dtCore::RefPtr<dtActors::GameMeshActorProxy> toMakeAsATemplate;
+   mManager->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, toMakeAsATemplate);
+   toMakeAsATemplate->SetName("TemplateActorProxy");
+
+   std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > toFill;
+   mManager->GetAllTemplates(toFill);
+   CPPUNIT_ASSERT_MESSAGE("GameManager shouldnt have had templates in it currently...", toFill.size() == 0);
+
+   mManager->AddActorAsATemplate(*toMakeAsATemplate.get());
+
+   mManager->GetAllTemplates(toFill);
+   CPPUNIT_ASSERT_MESSAGE("Tried adding a template into the game manager, but it surely didnt want to stay around.", toFill.size() != 0);
+
+   toFill.clear();
+
+   dtCore::RefPtr<dtDAL::ActorProxy> templateToFill;
+   mManager->FindTemplateByID(toMakeAsATemplate->GetId(),templateToFill);
+   CPPUNIT_ASSERT_MESSAGE("Tried finding a template that should be in the gm, but its not....",templateToFill != 0 );
+
+   dtCore::RefPtr<dtDAL::ActorProxy> ourActualActor = mManager->CreateAnActorProxyFromATemplate(toMakeAsATemplate->GetId());
+   
+   CPPUNIT_ASSERT_MESSAGE("Tried cloning from a template, didn't work out to well...", ourActualActor != NULL);
+   CPPUNIT_ASSERT_MESSAGE("Tried cloning from a template, didn't work out to well...", ourActualActor->GetName() == toMakeAsATemplate->GetName());
+
+}
+/////////////////////////////////////////////////
 void GameManagerTests::TestApplicationMember()
 {
    try
@@ -292,6 +326,7 @@ void GameManagerTests::TestApplicationMember()
    
 }
 
+/////////////////////////////////////////////////
 void GameManagerTests::TestDataStream()
 {
    dtUtil::DataStream ds;
@@ -449,6 +484,7 @@ void GameManagerTests::TestDataStream()
 }
 
 
+/////////////////////////////////////////////////
 void GameManagerTests::TestMachineInfo()
 {
    dtCore::RefPtr<dtGame::MachineInfo> mp1 = new dtGame::MachineInfo("Bob");
@@ -485,6 +521,7 @@ void GameManagerTests::TestMachineInfo()
    CPPUNIT_ASSERT_MESSAGE("After all the setting, m1 should now equal m2", m1 == m2);
 }
 
+/////////////////////////////////////////////////
 void GameManagerTests::TestActorSearching()
 {
    try
@@ -562,6 +599,7 @@ void GameManagerTests::TestActorSearching()
 //   }
 }
 
+/////////////////////////////////////////////////
 void GameManagerTests::TestAddRemoveComponents()
 {
    dtCore::RefPtr<dtGame::DefaultNetworkPublishingComponent> rc = new dtGame::DefaultNetworkPublishingComponent();
@@ -659,6 +697,7 @@ void GameManagerTests::TestAddRemoveComponents()
    CPPUNIT_ASSERT_MESSAGE("There should be 0 components in the GameManager.",toFill2.size() == 0);
 }
 
+/////////////////////////////////////////////////
 void GameManagerTests::TestComponentPriority()
 {
    std::vector<dtCore::RefPtr<TestOrderComponent> > tocList;
@@ -727,6 +766,7 @@ void GameManagerTests::TestComponentPriority()
 
 }
 
+/////////////////////////////////////////////////
 void GameManagerTests::TestCreateRemoteActor()
 {
    dtCore::RefPtr<dtDAL::ActorType> type = mManager->FindActorType("dtcore.examples", "Test All Properties");
@@ -746,6 +786,7 @@ void GameManagerTests::TestCreateRemoteActor()
    CPPUNIT_ASSERT_MESSAGE("The proxy should already be remote.", proxy->IsRemote());
 }
 
+/////////////////////////////////////////////////
 void GameManagerTests::TestAddActor()
 {
 
@@ -913,6 +954,7 @@ void GameManagerTests::TestAddActor()
    }
 }
 
+/////////////////////////////////////////////////
 void GameManagerTests::TestComplexScene()
 {
    dtCore::RefPtr<dtDAL::ActorType> type = mManager->FindActorType("ExampleActors","Test1Actor");
@@ -1020,6 +1062,7 @@ void GameManagerTests::TestComplexScene()
 
 }
 
+/////////////////////////////////////////////////
 void GameManagerTests::TestOnAddedToGM()
 {
    dtCore::RefPtr<TestGMComponent> tc = new TestGMComponent;
@@ -1039,6 +1082,7 @@ void GameManagerTests::TestOnAddedToGM()
       msgs[0]->GetMessageType() == dtGame::MessageType::INFO_RESTARTED);
 }
 
+/////////////////////////////////////////////////
 void GameManagerTests::TestTimers()
 {
    dtCore::RefPtr<dtDAL::ActorType> type = mManager->FindActorType("ExampleActors","Test2Actor");
@@ -1158,6 +1202,7 @@ void GameManagerTests::TestTimers()
    CPPUNIT_ASSERT_MESSAGE("The number of received messages should be equal to the number of timers set", msgCount == numToTest);
 }
 
+/////////////////////////////////////////////////
 void GameManagerTests::TestFindActorById()
 {
    dtCore::RefPtr<dtDAL::TransformableActorProxy> transActor;
@@ -1176,6 +1221,7 @@ void GameManagerTests::TestFindActorById()
    CPPUNIT_ASSERT_MESSAGE("The template version of FindGameActorById should have returned NULL", shouldBeNULL == NULL);
 }
 
+/////////////////////////////////////////////////
 void GameManagerTests::TestFindGameActorById()
 {
    dtCore::RefPtr<dtGame::EnvironmentActorProxy> envActor;
@@ -1194,6 +1240,7 @@ void GameManagerTests::TestFindGameActorById()
    CPPUNIT_ASSERT_MESSAGE("The template version of FindGameActorById should have returned NULL", shouldBeNULL == NULL);
 }
 
+/////////////////////////////////////////////////
 void GameManagerTests::TestSetProjectContext()
 {
    std::string context = "data/ProjectContext";

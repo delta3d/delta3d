@@ -187,10 +187,17 @@ namespace dtGame
                if (gameProxy != NULL)
                {
                   gameProxy->BuildInvokables();
-                  bool shouldPublish = gameProxy->GetInitialOwnership() == GameActorProxy::Ownership::SERVER_PUBLISHED;
-                  //neither sends create messages nor adds to the scene when
-                  //this object is not in IDLE state :-) 
-                  mGameManager->AddActor(*gameProxy, false, shouldPublish);
+                  if(gameProxy->GetInitialOwnership() == GameActorProxy::Ownership::TEMPLATE)
+                  {
+                     mGameManager->AddActorAsATemplate(*gameProxy);
+                  }
+                  else
+                  {
+                     bool shouldPublish = gameProxy->GetInitialOwnership() == GameActorProxy::Ownership::SERVER_PUBLISHED;
+                     //neither sends create messages nor adds to the scene when
+                     //this object is not in IDLE state :-) 
+                     mGameManager->AddActor(*gameProxy, false, shouldPublish);
+                  }
                }
                else
                {

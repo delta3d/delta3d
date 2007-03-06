@@ -145,6 +145,41 @@ namespace dtGame
           * @return A pointer to the actor type if the actor type was found or NULL otherwise.
           */
          dtDAL::ActorType* FindActorType(const std::string &category, const std::string &name);
+         
+         /**
+         * Fills a vector with the game proxys whose types match the name parameter
+         * @param The name to search for
+         * @param The vector to fill
+         */
+         void FindTemplatesByActorType(const dtDAL::ActorType &type, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill) const;
+
+         /**
+         * Fills a vector with the game proxys whose names match the name parameter
+         * @param The name to search for
+         * @param The vector to fill
+         */
+         void FindTemplatesByName(const std::string &name, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill) const;
+         
+         /**
+         * Fills a vector with all the templates.
+         * @param The vector to fill
+         */
+         void GetAllTemplates(std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill) const;
+
+         /**
+         * @param The uniqueID to look for
+         * @return the actor proxy with that ID
+         */
+         void FindTemplateByID(const dtCore::UniqueId& uniqueID, dtCore::RefPtr<dtDAL::ActorProxy> &ourObject);
+
+         /// Clears the mTemplateActors map.
+         void DeleteAllTemplates();
+
+         /// Deletes a single Template.
+         void DeleteATemplate(const dtCore::UniqueId& uniqueId);
+
+         /// Makes a new GameActorProxy, and returns it to the user
+         dtCore::RefPtr<dtDAL::ActorProxy> CreateAnActorProxyFromATemplate(const dtCore::UniqueId& uniqueID);
 
          /**
           * Gets a registry currently loaded by the library manager.  
@@ -319,6 +354,12 @@ namespace dtGame
           * @throws ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION if the actor is flagged as a game actor, but is not a GameActorProxy.
           */
          void AddActor(GameActorProxy& gameActorProxy, bool isRemote, bool publish);
+
+         /**
+          * Adds an actor as a templated actor.
+          * @param actorProxy The actor proxy to add
+          */
+         void AddActorAsATemplate(GameActorProxy& gameActorProxy);
 
          /**
           * Publishes an actor to the world.  Remote actors may not be published
@@ -848,6 +889,8 @@ namespace dtGame
 
          std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> > mGameActorProxyMap;
          std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> > mActorProxyMap;
+         std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> > mTemplateActors;
+
          std::vector<dtCore::RefPtr<GameActorProxy> > mDeleteList;
          //These are used during changing the map so that 
          //the map code can modify game manager with some control.
