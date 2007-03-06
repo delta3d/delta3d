@@ -782,6 +782,23 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   void GameManager::AddActorAsATemplate(GameActorProxy& gameActorProxy)
+   {
+      gameActorProxy.SetGameManager(this);
+      mTemplateActors.insert(std::make_pair(gameActorProxy.GetId(), &gameActorProxy));
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   dtCore::RefPtr<dtDAL::ActorProxy> GameManager::CreateAnActorProxyFromATemplate(const dtCore::UniqueId& uniqueID)
+   {
+      dtCore::RefPtr<dtDAL::ActorProxy> ourObject;
+      FindTemplateByID(uniqueID, ourObject);
+      if(ourObject != NULL)
+         return ourObject->Clone().get();
+      return NULL;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    void GameManager::SetEnvironmentActor(EnvironmentActorProxy *envActor)
    {
       if(envActor != NULL)
@@ -1025,6 +1042,24 @@ namespace dtGame
             DeleteActor(*i->second);
          }
       }
+
+      DeleteAllTemplates();
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void GameManager::DeleteAllTemplates()
+   {
+      mTemplateActors.clear();
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void GameManager::DeleteATemplate(const dtCore::UniqueId& uniqueId)
+   {
+      std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> >::iterator itor = mTemplateActors.find(uniqueId);
+      if(itor != mTemplateActors.end())
+      {
+         mTemplateActors.erase(itor);
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -1069,7 +1104,7 @@ namespace dtGame
    void GameManager::GetAllActors(std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill) const
    {
       toFill.clear();
-      toFill.reserve(mGameActorProxyMap.size() + mActorProxyMap.size());
+      toFill.reserve(mGameActorProxyMap.size() + mActorProxyMap.size() + mTemplateActors.size());
 
       std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> >::const_iterator itor;
       for(itor = mGameActorProxyMap.begin(); itor != mGameActorProxyMap.end(); ++itor)
@@ -1078,6 +1113,20 @@ namespace dtGame
       std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> >::const_iterator iter;
       for(iter = mActorProxyMap.begin(); iter != mActorProxyMap.end(); ++iter)
          toFill.push_back(iter->second);
+
+      for(itor = mTemplateActors.begin(); itor != mTemplateActors.end(); ++itor)
+         toFill.push_back(itor->second.get());
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void GameManager::GetAllTemplates(std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill) const
+   {  
+      toFill.clear();
+      toFill.reserve(mTemplateActors.size());
+
+      std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> >::const_iterator itor;
+      for(itor = mTemplateActors.begin(); itor != mTemplateActors.end(); ++itor)
+         toFill.push_back(itor->second.get());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -1158,6 +1207,42 @@ namespace dtGame
                toFill.push_back(gap);
          }
       } 
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void GameManager::FindTemplatesByActorType(const dtDAL::ActorType &type, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill) const
+   {
+      toFill.clear();
+      toFill.reserve(mTemplateActors.size());
+
+      for (std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> >::const_iterator itor = mTemplateActors.begin();
+         itor != mTemplateActors.end(); ++itor)
+      {
+         if (itor->second->GetActorType() == type)
+            toFill.push_back(itor->second.get());
+      }
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void GameManager::FindTemplatesByName(const std::string &name, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill) const
+   {
+      toFill.clear();
+      toFill.reserve(mTemplateActors.size());
+
+      for (std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> >::const_iterator itor = mTemplateActors.begin();
+         itor != mTemplateActors.end(); ++itor)
+      {
+         if (dtUtil::Match(const_cast<char*>(name.c_str()), const_cast<char*>(itor->second->GetName().c_str())))
+            toFill.push_back(itor->second.get());
+      }
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void GameManager::FindTemplateByID(const dtCore::UniqueId& uniqueID, dtCore::RefPtr<dtDAL::ActorProxy> &ourObject)
+   {
+      std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> >::const_iterator itor = mTemplateActors.find(uniqueID);
+      if(itor != mTemplateActors.end())
+         ourObject = itor->second.get();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -1586,6 +1671,7 @@ namespace dtGame
       mStatisticsInterval        = statisticsInterval;
    }
 
+   ///////////////////////////////////////////////////////////////////////////////
    void GameManager::DebugStatisticsTurnOff(bool logLastTime, bool clearList)
    {
       mDoStatsOnTheComponents    = false;
