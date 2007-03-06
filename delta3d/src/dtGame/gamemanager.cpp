@@ -789,7 +789,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<dtDAL::ActorProxy> GameManager::CreateAnActorProxyFromATemplate(const dtCore::UniqueId& uniqueID)
+   dtCore::RefPtr<dtDAL::ActorProxy> GameManager::CreateActorFromTemplate(const dtCore::UniqueId& uniqueID)
    {
       dtCore::RefPtr<dtDAL::ActorProxy> ourObject;
       FindTemplateByID(uniqueID, ourObject);
@@ -1053,7 +1053,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::DeleteATemplate(const dtCore::UniqueId& uniqueId)
+   void GameManager::DeleteTemplate(const dtCore::UniqueId& uniqueId)
    {
       std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> >::iterator itor = mTemplateActors.find(uniqueId);
       if(itor != mTemplateActors.end())
