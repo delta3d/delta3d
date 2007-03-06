@@ -176,10 +176,10 @@ namespace dtGame
          void DeleteAllTemplates();
 
          /// Deletes a single Template.
-         void DeleteATemplate(const dtCore::UniqueId& uniqueId);
+         void DeleteTemplate(const dtCore::UniqueId& uniqueId);
 
          /// Makes a new GameActorProxy, and returns it to the user
-         dtCore::RefPtr<dtDAL::ActorProxy> CreateAnActorProxyFromATemplate(const dtCore::UniqueId& uniqueID);
+         dtCore::RefPtr<dtDAL::ActorProxy> CreateActorFromTemplate(const dtCore::UniqueId& uniqueID);
 
          /**
           * Gets a registry currently loaded by the library manager.  
