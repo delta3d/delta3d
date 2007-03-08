@@ -51,12 +51,13 @@ namespace dtGame
       public:
       
          static const std::string AUTO_KEYFRAME_TIMER_NAME;
+         static const std::string &DEFAULT_NAME;
          
          /**
           * Constructs the logger component.
           * @param logStream The stream with which to serialize game and other state data.
           */          
-         ServerLoggerComponent(LogStream &logStream, const std::string &name = "ServerLoggerComponent");
+         ServerLoggerComponent(LogStream &logStream, const std::string &name = DEFAULT_NAME);
          
          /**
           * Called when a message arrives at the Game Manager.  In most cases the message is 
