@@ -35,6 +35,7 @@ namespace dtGame
 {
    const std::string DEFAULT_LOGNAME = "D3DDefaultMessageLog";
    const std::string ServerLoggerComponent::AUTO_KEYFRAME_TIMER_NAME = "ServerLoggerKeyframeTimer";
+   const std::string &ServerLoggerComponent::DEFAULT_NAME = "ServerLoggerComponent";
 
    //////////////////////////////////////////////////////////////////////////
    ServerLoggerComponent::ServerLoggerComponent(LogStream &logStream, const std::string &name) :
