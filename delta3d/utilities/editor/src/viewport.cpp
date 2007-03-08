@@ -304,7 +304,7 @@ namespace dtEditQt
          updateGL();
       }
 
-emit             renderStyleChanged();
+      emit renderStyleChanged();
    }
 
    ///////////////////////////////////////////////////////////////////////////////

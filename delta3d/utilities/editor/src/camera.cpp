@@ -21,11 +21,11 @@
 */
 #include <prefix/dtstageprefix-src.h>
 #include <osg/Math>
-#include "dtEditQt/camera.h"
+#include <dtEditQt/camera.h>
 #include <dtCore/transformable.h>
 #include <dtUtil/matrixutil.h>
 #include <dtUtil/log.h>
-#include "dtDAL/actorproxyicon.h"
+#include <dtDAL/actorproxyicon.h>
 
 namespace dtEditQt
 {
