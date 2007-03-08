@@ -185,6 +185,13 @@ namespace dtHLAGM
             const dtGame::MessageParameter& parameter,
             const OneToManyMapping& mapping,
             const OneToManyMapping::ParameterDefinition& paramDef) const;
+
+         void MapFromStringParamToCharArray(
+            char* buffer,
+            size_t& maxSize,
+            const dtGame::StringMessageParameter& parameter,
+            const OneToManyMapping::ParameterDefinition& paramDef,
+            const dtDAL::DataType& parameterDataType) const;
             
          void MapFromWorldCoordToMessageParam(
             const char* buffer, 
@@ -209,6 +216,13 @@ namespace dtHLAGM
             const size_t size,
             dtGame::MessageParameter& parameter,
             const dtDAL::DataType& parameterDataType ) const;
+
+         void MapFromCharArrayToStringParam(
+            const char* buffer, 
+            const size_t size, 
+            dtGame::StringMessageParameter& parameter,
+            const OneToManyMapping::ParameterDefinition& paramDef) const;
+
    };
 
 }

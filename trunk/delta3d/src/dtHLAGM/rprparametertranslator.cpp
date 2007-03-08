@@ -308,6 +308,44 @@ namespace dtHLAGM
       entityType.Encode(buffer);
    }
 
+   void RPRParameterTranslator::MapFromStringParamToCharArray(
+         char* buffer,
+         size_t& maxSize,
+         const dtGame::StringMessageParameter& parameter,
+         const OneToManyMapping::ParameterDefinition& paramDef,
+         const dtDAL::DataType& parameterDataType) const
+   {
+      const std::string& parameterValue = parameter.GetValue();
+
+      std::string value;
+      if (parameterDataType == dtDAL::DataType::ENUMERATION)
+         value = GetEnumValue(parameterValue, paramDef, false);
+      else
+         value = parameterValue;
+
+      //change the size of this parameter to match the actual string length.
+      maxSize = value.size() + 1;
+
+      for (unsigned i = 0; i < maxSize; ++i)
+      {
+         if (i < value.size())
+         {
+            buffer[i] = value[i];
+         }
+         else
+         {
+            //zero anything after the string value.
+            buffer[i] = '\0';
+         }
+      }
+      
+      if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+            "Mapped parameter to a string value.  The result with size \"%u\" is \"%s\".",
+            maxSize, buffer);
+   
+   }
+   
    void RPRParameterTranslator::MapFromMessageParameters(char* buffer, size_t& maxSize,
       std::vector<dtCore::RefPtr<const dtGame::MessageParameter> >& parameters, const OneToManyMapping& mapping) const
    {
@@ -431,39 +469,14 @@ namespace dtHLAGM
          EventIdentifier eventIdentifier;
          eventIdentifier.Encode(buffer);
       }
-      else if (hlaType == RPRAttributeType::ENTITY_TYPE)
-      {
-         EntityType entityType;
-         entityType.Encode(buffer);
-      }
       else if (hlaType == RPRAttributeType::STRING_TYPE)
       {
          if (parameterDataType == dtDAL::DataType::STRING ||
              parameterDataType == dtDAL::DataType::ENUMERATION)
          {
-            const std::string& parameterValue = static_cast<const dtGame::StringMessageParameter&>(parameter).GetValue();
-
-            std::string value;
-            if (parameterDataType == dtDAL::DataType::ENUMERATION)
-               value = GetEnumValue(parameterValue, paramDef, false);
-            else
-               value = parameterValue;
-
-            for (unsigned i = 0; i < RPRAttributeType::STRING_TYPE.GetEncodedLength(); ++i)
-            {
-               if (i < value.size())
-                  buffer[i] = value[i];
-               else
-                  //zero anything after the string value.
-                  buffer[i] = '\0';
-            }
-            //change the size of this parameter to match the actual string length.
-            maxSize = value.size() + 1;
-            
-            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                  "Mapped parameter to a string value.  The result with size \"%u\" is \"%s\".",
-                  maxSize, buffer);
+            MapFromStringParamToCharArray(buffer, maxSize, 
+                  static_cast<const dtGame::StringMessageParameter&>(parameter), 
+                  paramDef, parameterDataType);
          }
          else if (parameterDataType == dtDAL::DataType::ACTOR)
          {
@@ -504,7 +517,6 @@ namespace dtHLAGM
                else
                   buffer[i] = '\0';
             }
-
          }
          else
          {
@@ -560,6 +572,15 @@ namespace dtHLAGM
             }
             //change the size of this parameter to match the actual string length.
             maxSize = stringValue.size() + 1;
+         }
+         // enumeration doesn't really make sense for an ID, but the method it calls supports
+         // enumerations, so there is no reason to limit it.
+         else if (parameterDataType == dtDAL::DataType::STRING ||
+               parameterDataType == dtDAL::DataType::ENUMERATION)
+         {
+            MapFromStringParamToCharArray(buffer, maxSize, 
+                  static_cast<const dtGame::StringMessageParameter&>(parameter),
+                  paramDef, parameterDataType);
          }
          else
          {
@@ -778,7 +799,27 @@ namespace dtHLAGM
          return "";
       }
    }
+
+   void RPRParameterTranslator::MapFromCharArrayToStringParam(
+         const char* buffer, const size_t size, 
+         dtGame::StringMessageParameter& parameter,
+         const OneToManyMapping::ParameterDefinition& paramDef) const
+   {
+      std::string value;
+      for (unsigned i = 0; i < size; ++i)
+      {
+         char c = buffer[i];
+         if (c == '\0')
+            break;
+         value.append(1, c);
+      }
       
+      if (parameter.GetDataType() == dtDAL::DataType::ENUMERATION)
+         value = GetEnumValue(value, paramDef, true);
+      
+      parameter.SetValue(value);
+   }
+   
    void RPRParameterTranslator::MapToMessageParameters(const char* buffer, size_t size,
       std::vector<dtCore::RefPtr<dtGame::MessageParameter> >& parameters, const OneToManyMapping& mapping) const
    {
@@ -863,7 +904,6 @@ namespace dtHLAGM
          {
             static_cast<dtGame::FloatMessageParameter&>(parameter).SetValue(value);
          }
-
       }
       else if (hlaType == RPRAttributeType::UNSIGNED_INT_TYPE)
       {
@@ -875,7 +915,6 @@ namespace dtHLAGM
          }
 
          SetIntegerValue((long)value, parameter, mapping, 0);
-
       }
       else if (hlaType == RPRAttributeType::UNSIGNED_SHORT_TYPE)
       {
@@ -913,24 +952,22 @@ namespace dtHLAGM
 
             static_cast<dtGame::EnumMessageParameter&>(parameter).SetValue(mappedValue);            
          }
+         else
+         {
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+               "Unable to map HLA type \"%s\" to \"%s\"",
+               RPRAttributeType::ENTITY_TYPE.GetName().c_str(),
+               parameterDataType.GetName().c_str());
+         }
       }
       else if (hlaType == RPRAttributeType::STRING_TYPE)
       {
          if (parameterDataType == dtDAL::DataType::STRING ||
              parameterDataType == dtDAL::DataType::ENUMERATION)
          {
-            std::string value;
-            for (unsigned i = 0; i < size; ++i)
-            {
-               char c = buffer[i];
-               if (c == '\0')
-                  break;
-               value.append(1, c);
-            }
-            if (parameterDataType == dtDAL::DataType::ENUMERATION)
-               value = GetEnumValue(value, paramDef, true);
-            
-            static_cast<dtGame::StringMessageParameter&>(parameter).SetValue(value);
+            MapFromCharArrayToStringParam(buffer, size, 
+                  static_cast<dtGame::StringMessageParameter&>(parameter),
+                  paramDef);
          }
          else if (parameterDataType == dtDAL::DataType::ACTOR)
          {
@@ -990,6 +1027,13 @@ namespace dtHLAGM
             if (oid != NULL)
                static_cast<dtGame::ActorMessageParameter&>(parameter).SetValue(*oid);
          }
+         else
+         {
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+               "Unable to map HLA type \"%s\" to \"%s\"",
+               RPRAttributeType::ENTITY_IDENTIFIER_TYPE.GetName().c_str(),
+               parameterDataType.GetName().c_str());
+         }
       }
       else if (hlaType == RPRAttributeType::RTI_OBJECT_ID_STRUCT_TYPE)
       {
@@ -1010,6 +1054,12 @@ namespace dtHLAGM
             // Set the actor id value
             static_cast<dtGame::ActorMessageParameter&>(parameter)
                .SetValue( actorId != NULL ? *actorId : dtCore::UniqueId(""));
+         }
+         else if (parameterDataType == dtDAL::DataType::STRING ||
+               parameterDataType == dtDAL::DataType::ENUMERATION)
+         {
+            MapFromCharArrayToStringParam(buffer, size, 
+                  static_cast<dtGame::StringMessageParameter&>(parameter), paramDef);
          }
          else
          {

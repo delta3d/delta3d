@@ -61,13 +61,15 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestOutgoingEntityTypeEnumDataTranslation);
       CPPUNIT_TEST(TestOutgoingIntDataTranslation);
       CPPUNIT_TEST(TestOutgoingFloatDataTranslation);
-      CPPUNIT_TEST(TestOutgoingRTIIDStructDataTranslation);
+      CPPUNIT_TEST(TestOutgoingStringToRTIIDStructDataTranslation);
+      CPPUNIT_TEST(TestOutgoingActorIdToRTIIDStructDataTranslation);
       CPPUNIT_TEST(TestIncomingDataTranslation);
       CPPUNIT_TEST(TestIncomingEntityTypeDataTranslation);
       CPPUNIT_TEST(TestIncomingStringToEnumDataTranslation);
       CPPUNIT_TEST(TestIncomingStringDataTranslation);
       CPPUNIT_TEST(TestIncomingVelocityVectorDataTranslation);
-      CPPUNIT_TEST(TestIncomingRTIIDStructDataTranslation);
+      CPPUNIT_TEST(TestIncomingRTIIDStructToActorIdDataTranslation);
+      CPPUNIT_TEST(TestIncomingRTIIDStructToStringDataTranslation);
       CPPUNIT_TEST(TestFindTypeByName);
       CPPUNIT_TEST(TestAttributeSupportedQuery);
       CPPUNIT_TEST(TestIncomingArticulation);
@@ -354,7 +356,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          InternalTestOutgoingFloatDataTranslation<double>(expectedResult);
       }
 
-      void TestOutgoingRTIIDStructDataTranslation()
+      void TestOutgoingActorIdToRTIIDStructDataTranslation()
       {
          std::string rtiId = "RTIObjectIdentifierStruct:TestID";
          dtCore::UniqueId actorId;
@@ -363,10 +365,18 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          mRuntimeMappings.Put(rtiId,actorId);
 
          mMapping.SetHLAType(dtHLAGM::RPRAttributeType::RTI_OBJECT_ID_STRUCT_TYPE);
-         InternalTestOutgoingRTIIDTypeDataTranslation(actorId.ToString(), rtiId);
+         InternalTestOutgoingRTIIDTypeDataTranslation(actorId.ToString(), rtiId, dtDAL::DataType::ACTOR);
       }
 
-      void TestIncomingRTIIDStructDataTranslation()
+      void TestOutgoingStringToRTIIDStructDataTranslation()
+      {
+         std::string rtiId = "RTIObjectIdentifierStruct:TestID";
+
+         mMapping.SetHLAType(dtHLAGM::RPRAttributeType::RTI_OBJECT_ID_STRUCT_TYPE);
+         InternalTestOutgoingRTIIDTypeDataTranslation(rtiId, rtiId, dtDAL::DataType::STRING);
+      }
+
+      void TestIncomingRTIIDStructToActorIdDataTranslation()
       {
          std::vector<dtCore::RefPtr<dtGame::MessageParameter> > messageParameters;
 
@@ -389,6 +399,27 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
 
          std::string paramValue = actorParam->GetValue().ToString();
          CPPUNIT_ASSERT_EQUAL(actorId.ToString(), paramValue);
+      }
+
+      void TestIncomingRTIIDStructToStringDataTranslation()
+      {
+         std::vector<dtCore::RefPtr<dtGame::MessageParameter> > messageParameters;
+
+         std::string rtiId = "RTIObjectIdentifierStruct:TestID";
+         
+         dtCore::RefPtr<dtGame::StringMessageParameter> stringParam = 
+            new dtGame::StringMessageParameter("test","");
+         mMapping.SetHLAType(dtHLAGM::RPRAttributeType::RTI_OBJECT_ID_STRUCT_TYPE);
+
+         dtHLAGM::OneToManyMapping::ParameterDefinition& pd = mMapping.GetParameterDefinitions()[0];
+         pd.SetGameType(stringParam->GetDataType());
+
+         messageParameters.push_back(stringParam.get());
+
+         mParameterTranslator->MapToMessageParameters(rtiId.c_str(), rtiId.size(), messageParameters, mMapping);
+
+         std::string paramValue = stringParam->GetValue();
+         CPPUNIT_ASSERT_EQUAL(rtiId, paramValue);
       }
 
       void TestIncomingEntityTypeDataTranslation()
@@ -871,18 +902,18 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          CPPUNIT_ASSERT_MESSAGE("The result should have been \"" + expectedValue + "\" but it is \"" + result + "\"", result == expectedValue);
       }
 
-      void InternalTestOutgoingRTIIDTypeDataTranslation(const std::string& testValue, const std::string& expectedValue)
+      void InternalTestOutgoingRTIIDTypeDataTranslation(const std::string& testValue, const std::string& expectedValue, dtDAL::DataType& dataType)
       {
          std::vector<dtCore::RefPtr<const dtGame::MessageParameter> > messageParameters;
 
          char* buffer = NULL;
          size_t size = 0;
 
-         mMapping.GetParameterDefinitions()[0].SetGameType(dtDAL::DataType::ACTOR);
+         mMapping.GetParameterDefinitions()[0].SetGameType(dataType);
          mMapping.SetHLAType(dtHLAGM::RPRAttributeType::RTI_OBJECT_ID_STRUCT_TYPE);
-         dtCore::RefPtr<dtGame::ActorMessageParameter> actorParam = new dtGame::ActorMessageParameter("test",dtCore::UniqueId(testValue));
-         actorParam->SetValue(testValue);
-         messageParameters.push_back(actorParam.get());
+         dtCore::RefPtr<dtGame::MessageParameter> param = dtGame::MessageParameter::CreateFromType(dataType, "test");
+         param->FromString(testValue);
+         messageParameters.push_back(param.get());
 
          TranslateOutgoingParameter(buffer, size, messageParameters, mMapping);
 
