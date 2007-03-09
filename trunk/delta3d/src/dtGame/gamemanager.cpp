@@ -64,17 +64,17 @@ namespace dtGame
       mAddActorsToScene(true),
       mScene(&scene),
       mFactory("GameManager MessageFactory", *mMachineInfo, ""),
-      mStatisticsInterval(0),
       mStatsLastFragmentDump(0),
       mStatsNumProcMessages(0),
       mStatsNumSendNetworkMessages(0),
       mStatsNumFrames(0),
       mStatsCumGMProcessTime(0),
-      mApplication(NULL),
-      mRemoveGameEventsOnMapChange(true),
+      mStatisticsInterval(0),
       mPrintFileToConsole(false),
+      mDoStatsOnTheComponents(false),
       mDoStatsOnTheActors(false),
-      mDoStatsOnTheComponents(false)
+      mApplication(NULL),
+      mRemoveGameEventsOnMapChange(true)
    {
 
       mLibMgr = &dtDAL::LibraryManager::GetInstance();
