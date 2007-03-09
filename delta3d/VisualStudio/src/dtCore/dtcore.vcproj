@@ -147,6 +147,9 @@
 				RelativePath="..\..\..\src\dtCore\base.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtCore\batchisector.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtCore\camera.cpp">
 			</File>
 			<File
@@ -360,6 +363,9 @@
 			Filter="h;hpp;hxx;hm;inl">
 			<File
 				RelativePath="..\..\..\inc\dtCore\base.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtCore\batchisector.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtCore\camera.h">
