@@ -185,6 +185,12 @@ namespace dtCore
          /// Create an isector if not made already, else makes one
          SingleISector& CreateOrGetISector(const std::string& nameOfISector);
          
+         /// creates a single isector adds it to the list and returns the reference
+         SingleISector& AddSingleISector(int nID);
+
+         /// creates a single isector adds it to the list and returns the reference
+         SingleISector& AddSingleISector(const std::string& nameOfISector);
+
          /// Get an SingleISector for reference vars
          const SingleISector& GetSingleISector(int nID);
          /// Get an SingleISector for reference vars
