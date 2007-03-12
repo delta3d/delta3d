@@ -1,0 +1,38 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AnimationViewer", "AnimationViewer.vcproj", "{F62A8DBC-3E5B-4F00-A507-56A87A64C613}"
+	ProjectSection(ProjectDependencies) = postProject
+		{91F7CF8D-9297-426F-B760-7E49EDA92A80} = {91F7CF8D-9297-426F-B760-7E49EDA92A80}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtChar", "..\..\src\dtChar\dtchar.vcproj", "{91F7CF8D-9297-426F-B760-7E49EDA92A80}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtABC", "..\..\src\dtABC\dtabc.vcproj", "{D1B34D72-1FCC-45E4-8CA7-BFF9C7D7689C}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{F62A8DBC-3E5B-4F00-A507-56A87A64C613}.Debug.ActiveCfg = Debug|Win32
+		{F62A8DBC-3E5B-4F00-A507-56A87A64C613}.Debug.Build.0 = Debug|Win32
+		{F62A8DBC-3E5B-4F00-A507-56A87A64C613}.Release.ActiveCfg = Release|Win32
+		{F62A8DBC-3E5B-4F00-A507-56A87A64C613}.Release.Build.0 = Release|Win32
+		{91F7CF8D-9297-426F-B760-7E49EDA92A80}.Debug.ActiveCfg = Debug|Win32
+		{91F7CF8D-9297-426F-B760-7E49EDA92A80}.Debug.Build.0 = Debug|Win32
+		{91F7CF8D-9297-426F-B760-7E49EDA92A80}.Release.ActiveCfg = Release|Win32
+		{91F7CF8D-9297-426F-B760-7E49EDA92A80}.Release.Build.0 = Release|Win32
+		{D1B34D72-1FCC-45E4-8CA7-BFF9C7D7689C}.Debug.ActiveCfg = Debug|Win32
+		{D1B34D72-1FCC-45E4-8CA7-BFF9C7D7689C}.Debug.Build.0 = Debug|Win32
+		{D1B34D72-1FCC-45E4-8CA7-BFF9C7D7689C}.Release.ActiveCfg = Release|Win32
+		{D1B34D72-1FCC-45E4-8CA7-BFF9C7D7689C}.Release.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
