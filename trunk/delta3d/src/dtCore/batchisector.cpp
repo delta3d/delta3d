@@ -81,7 +81,6 @@ namespace dtCore
 
       if(intersectVisitor.hits())
       {
-         printf("Number of hits = %d\n", intersectVisitor.hits());
          for(iter = mISectors.begin(); iter != mISectors.end(); ++iter)
          {
             (*iter)->mHitList = intersectVisitor.getHitList((*iter)->mLineSegment.get());

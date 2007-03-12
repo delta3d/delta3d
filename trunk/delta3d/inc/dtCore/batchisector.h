@@ -120,6 +120,13 @@ namespace dtCore
                ///Get the number of intersected items
                int GetNumberOfHits() const;
 
+               /// get the hit information...
+               osgUtil::Hit GetIntersectionHit(int num) const
+               {
+                  // error check this....
+                  return mHitList[num];
+               }
+
                ////////////////////////////////////////////////////////////////////
                /// gets for the class.
                ////////////////////////////////////////////////////////////////////
