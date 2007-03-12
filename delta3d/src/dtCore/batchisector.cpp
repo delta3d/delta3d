@@ -202,6 +202,22 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   BatchIsector::SingleISector& BatchIsector::AddSingleISector(int nID)
+   {
+      dtCore::RefPtr<SingleISector> tempSector = new SingleISector(nID);
+      mISectors.push_back(tempSector);
+      return *mISectors.back().get();
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   BatchIsector::SingleISector& BatchIsector::AddSingleISector(const std::string& nameOfISector)
+   {
+      dtCore::RefPtr<SingleISector> tempSector = new SingleISector(nameOfISector);
+      mISectors.push_back(tempSector);
+      return *mISectors.back().get();
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    const BatchIsector::SingleISector& BatchIsector::GetSingleISector(int nID)
    {
       return CreateOrGetISector(nID);
