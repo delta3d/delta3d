@@ -22,6 +22,11 @@
 #define DELTA_DTCHAR
 
 #include "dtChar/character.h"
+#include "dtChar/characterfilehandler.h"
+#include "dtChar/chardrawable.h"
+#include "dtChar/coremodel.h"
+#include "dtChar/model.h"
+#include "dtChar/submesh.h"
 
 /** The Character Library contains classes used to control the rendering of 
 * animated characters.  
