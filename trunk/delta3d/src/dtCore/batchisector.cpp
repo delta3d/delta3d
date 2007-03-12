@@ -23,6 +23,7 @@
 
 #include <dtCore/deltadrawable.h>
 #include <dtCore/scene.h>
+#include <dtUtil/log.h>
 
 #include <osg/Group>
 #include <osg/Version>
@@ -41,6 +42,7 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    BatchIsector::~BatchIsector()
    {
+      
       mISectors.clear();
    }
 
