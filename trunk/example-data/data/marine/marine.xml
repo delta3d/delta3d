@@ -1,0 +1,16 @@
+<character>
+      <skeleton filename="Skeleton.csf" />
+      <animation filename="LowWalk.CAF" />  
+      <animation filename="LowWalk_Wpn.CAF" />     
+      <animation filename="Breath.CAF" /> 
+      <animation filename="Run.CAF" />
+      <animation filename="Walk.CAF" />    
+      <mesh filename="HEAD.CMF" /> 
+      <mesh filename="BODY.CMF" />
+      <mesh filename="Helmet.CMF" />
+      <mesh filename="M16m80.CMF" />      
+      <material filename="HEAD.CRF" />
+      <material filename="BODY.CRF" />
+      <material filename="Helmet.CRF" />
+      <material filename="M16m80.CRF" />
+</character>
