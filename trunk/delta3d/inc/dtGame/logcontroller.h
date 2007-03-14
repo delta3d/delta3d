@@ -22,10 +22,10 @@
 #define DELTA_LOGCONTROLLER
 
 #include <string>
-#include "dtGame/gmcomponent.h"
-#include "dtGame/logstatus.h"
-#include "dtGame/logkeyframe.h"
-#include "dtCore/sigslot.h"
+#include <dtGame/gmcomponent.h>
+#include <dtGame/logstatus.h>
+#include <dtGame/logkeyframe.h>
+#include <dtCore/sigslot.h>
 
 namespace dtGame
 {
