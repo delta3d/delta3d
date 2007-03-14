@@ -33,7 +33,52 @@ namespace dtGame
    Message::Message() : mMessageType(&MessageType::UNKNOWN), mDestination(NULL), mSendingActorId(""), mAboutActorId("")
    {
    }
-
+   
+   ///////////////////////////////////////////////////////////////////////////////
+   bool Message::operator ==(const dtGame::Message& toCompare) const
+   {
+      if ((&toCompare) == this) 
+         return true;
+      
+      if (*mMessageType != *toCompare.mMessageType)
+         return false;
+      
+      if (mDestination != toCompare.mDestination)
+         return false;
+      
+      if (mSource != toCompare.mSource)
+         return false;
+      
+      if (mDestination != toCompare.mDestination)
+         return false;
+      
+      if (mSendingActorId != toCompare.mSendingActorId)  
+         return false;
+      
+      if (mAboutActorId != toCompare.mAboutActorId)
+         return false;
+      
+      if (mParameterList.size() != toCompare.mParameterList.size())
+         return false;
+      
+      std::map<std::string,dtCore::RefPtr<MessageParameter> >::const_iterator i, j;
+      i = mParameterList.begin();
+      j = toCompare.mParameterList.begin();
+      
+      // must compare the value of each parameter.
+      while (i != mParameterList.end() && j != toCompare.mParameterList.end())
+      {
+         if (*i->second != *j->second)
+            return false;
+         ++i;
+         ++j;
+      }
+         
+      return (mCausingMessage == toCompare.mCausingMessage
+               || (mCausingMessage.valid() && toCompare.mCausingMessage.valid() && 
+                     *mCausingMessage == *toCompare.mCausingMessage));
+   }
+   
    ///////////////////////////////////////////////////////////////////////////////
    void Message::ToString(std::string &toFill) const
    {
@@ -110,7 +155,7 @@ namespace dtGame
          return NULL;
    }
    
-   const MessageParameter *Message::GetParameter(const std::string &name) const
+   const MessageParameter* Message::GetParameter(const std::string &name) const
    {
       std::map<std::string,dtCore::RefPtr<MessageParameter> >::const_iterator itor =
          mParameterList.find(name);
