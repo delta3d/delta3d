@@ -170,6 +170,9 @@ namespace dtGame
             return mCausingMessage.get();
          }
 
+         bool operator==(const Message& toCompare) const;
+         bool operator!=(const Message& toCompare) const { return !(*this == toCompare); }
+         
       protected:
          /**
           * Adds a parameter to this message. This method is protected because only a message class

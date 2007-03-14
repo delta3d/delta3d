@@ -75,6 +75,7 @@ class MessageTests : public CPPUNIT_NS::TestFixture
 {
    CPPUNIT_TEST_SUITE(MessageTests);
 
+      CPPUNIT_TEST(TestOperatorEquals);
       CPPUNIT_TEST(TestBaseMessages);
       CPPUNIT_TEST(TestMessageFactory);
       CPPUNIT_TEST(TestMessageDelivery);
@@ -103,6 +104,7 @@ public:
    void setUp();
    void tearDown();
 
+   void TestOperatorEquals();
    void TestBaseMessages();
    void TestMessageFactory();
    void TestMessageDelivery();
@@ -185,10 +187,10 @@ class TestComponent: public dtGame::GMComponent
          return NULL;
       }
 
-protected:
-   ~TestComponent()
-   {
-   }
+   protected:
+      ~TestComponent()
+      {
+      }
 
    private:
       std::vector<dtCore::RefPtr<const dtGame::Message> > mReceivedProcessMessages;
@@ -328,6 +330,64 @@ void MessageTests::createActors(dtDAL::Map& map)
    }
 }
 
+void MessageTests::TestOperatorEquals()
+{
+   dtGame::MessageFactory& factory = mGameManager->GetMessageFactory();
+
+   dtCore::RefPtr<dtGame::MachineInfo> machineInfo1 = new dtGame::MachineInfo;
+   dtCore::RefPtr<dtGame::MachineInfo> machineInfo2 = new dtGame::MachineInfo;
+   
+   dtCore::RefPtr<dtGame::TickMessage> msg1;
+   dtCore::RefPtr<dtGame::TickMessage> msg2;
+   dtCore::RefPtr<dtGame::TickMessage> msg3;
+   dtCore::RefPtr<dtGame::TickMessage> msg4;
+   factory.CreateMessage(dtGame::MessageType::TICK_LOCAL, msg1);
+   factory.CreateMessage(dtGame::MessageType::TICK_LOCAL, msg2);
+   factory.CreateMessage(dtGame::MessageType::TICK_REMOTE, msg3);
+   factory.CreateMessage(dtGame::MessageType::TICK_REMOTE, msg4);
+
+   CPPUNIT_ASSERT(*msg1 == *msg1);
+   CPPUNIT_ASSERT(*msg1 == *msg2);
+   CPPUNIT_ASSERT(*msg1 != *msg3);
+
+   msg1->SetSource(*machineInfo1);
+   msg1->SetDestination(machineInfo2.get());
+   CPPUNIT_ASSERT(*msg1 == *msg1);
+   CPPUNIT_ASSERT(*msg1 != *msg2);
+   msg2->SetSource(*machineInfo1);
+   msg2->SetDestination(machineInfo2.get());
+   CPPUNIT_ASSERT(*msg1 == *msg2);
+
+   
+   msg1->SetSendingActorId(dtCore::UniqueId());
+   CPPUNIT_ASSERT(*msg1 == *msg1);
+   CPPUNIT_ASSERT(*msg1 != *msg2);
+   msg2->SetSendingActorId(msg1->GetSendingActorId());
+   CPPUNIT_ASSERT(*msg1 == *msg2);
+   
+   
+   msg1->SetAboutActorId(dtCore::UniqueId());
+   CPPUNIT_ASSERT(*msg1 == *msg1);
+   CPPUNIT_ASSERT(*msg1 != *msg2);
+   msg2->SetAboutActorId(msg1->GetAboutActorId());
+   CPPUNIT_ASSERT(*msg1 == *msg2);
+   
+
+   msg1->SetDeltaRealTime(22.343);
+   CPPUNIT_ASSERT(*msg1 == *msg1);
+   CPPUNIT_ASSERT(*msg1 != *msg2);
+   msg2->SetDeltaRealTime(msg1->GetDeltaRealTime());
+   CPPUNIT_ASSERT(*msg1 == *msg2);
+   
+   msg1->SetCausingMessage(msg3.get());
+   CPPUNIT_ASSERT(*msg1 == *msg1);
+   CPPUNIT_ASSERT(*msg1 != *msg2);
+   msg2->SetCausingMessage(msg1->GetCausingMessage());
+   CPPUNIT_ASSERT(*msg1 == *msg2);
+   msg2->SetCausingMessage(msg4.get());
+   CPPUNIT_ASSERT(*msg1 == *msg2);
+
+}
 
 //////////////////////////////////////////////////////////////////////////
 void MessageTests::TestBaseMessages()

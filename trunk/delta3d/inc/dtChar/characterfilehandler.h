@@ -18,10 +18,11 @@
  * 
  * Erik Johnson
  */
-#ifndef characterfilehandler_h__
-#define characterfilehandler_h__
+#ifndef DELTA_CHARACTER_FILE_HANDLER
+#define DELTA_CHARACTER_FILE_HANDLER
 
 #include <dtChar/export.h>
+#include <dtCore/macros.h>
 #include <xercesc/sax2/ContentHandler.hpp>  // for a base class
 #include <vector>
 #include <string>
@@ -74,9 +75,11 @@ namespace dtChar
       virtual void skippedEntity(const XMLCh* const name) {};
 
 
-      //need these definition to properly export a std::vector<std::string>
+#ifdef DELTA_WIN32
+      //need these definitions to properly export a std::vector<std::string>
       template class DT_CHAR_EXPORT std::allocator<std::string>;
       template class DT_CHAR_EXPORT std::vector<std::string>;
+#endif
 
       std::vector<std::string> mAnimationFilenames; ///<Container of animation filenames
       std::vector<std::string> mMaterialFilenames;  ///<Container of material filenames
@@ -84,4 +87,4 @@ namespace dtChar
       std::string mSkeletonFilename;                ///<The one skeleton filename
    };
 }
-#endif // characterfilehandler_h__
+#endif // DELTA_CHARACTER_FILE_HANDLER
