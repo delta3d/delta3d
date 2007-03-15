@@ -34,7 +34,10 @@
 namespace dtEditQt
 {
    DynamicActorControl::DynamicActorControl():
-      myProperty(NULL), mTemporaryWrapper(NULL), mTemporaryEditControl(NULL), mTemporaryGotoButton(NULL)  
+      myProperty(NULL), 
+      mTemporaryWrapper(NULL), 
+      mTemporaryEditControl(NULL), 
+      mTemporaryGotoButton(NULL)  
    {
    }
 
@@ -86,7 +89,7 @@ namespace dtEditQt
 
          // Get the current selected string and the previously set string value
          QString selection = mTemporaryEditControl->currentText();
-         int index = mTemporaryEditControl->currentIndex();
+         unsigned int index = (unsigned int)(mTemporaryEditControl->currentIndex());
          std::string selectionString = selection.toStdString();
          std::string previousString = myProperty->GetValue() != NULL ? myProperty->GetValue()->GetName() : "None";
 
@@ -96,8 +99,8 @@ namespace dtEditQt
             // give undo manager the ability to create undo/redo events
             EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, myProperty, previousString, selectionString);
 
-            dtCore::RefPtr<dtDAL::Map> curMap = EditorData::GetInstance().getCurrentMap();
-            if (!curMap.valid())
+            dtDAL::Map *curMap = EditorData::GetInstance().getCurrentMap();
+            if(curMap == NULL)
                throw dtUtil::Exception(dtDAL::ExceptionEnum::MapException,
                "There is no map open, there shouldn't be any controls", __FILE__, __LINE__);
             
@@ -105,9 +108,22 @@ namespace dtEditQt
             GetActorProxies(proxies, myProperty->GetDesiredActorClass());
 
             if (index == 0)
+            {
                myProperty->SetValue(NULL);
+            }
             else
-               myProperty->SetValue((unsigned int)index < proxies.size() ? proxies[index - 1].get() : NULL);
+            {
+               if(index <= proxies.size())
+               {
+                  dtDAL::ActorProxy *proxy = proxies[index - 1].get();
+                  myProperty->SetValue(proxy);
+               }
+               else
+               {
+                  myProperty->SetValue(NULL);
+               }
+            }
+
             dataChanged = true;
          }
       }
