@@ -15,6 +15,7 @@
 #include <dtUtil/matrixutil.h>
 //#include <dtUtil/stringutils.h>
 #include <dtUtil/exception.h>
+#include <dtUtil/macros.h>
 
 #endif
 #endif

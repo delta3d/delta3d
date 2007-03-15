@@ -6,7 +6,6 @@
 #include <prefix/dtutilprefix-src.h>
 
 #include <dtCore/base.h>
-#include <dtCore/macros.h>
 #include <dtCore/deltadrawable.h>
 #include <dtCore/transformable.h>
 
