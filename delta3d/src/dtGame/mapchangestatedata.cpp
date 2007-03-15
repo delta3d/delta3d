@@ -211,7 +211,11 @@ namespace dtGame
                mGameManager->AddActor(aProxy);
             }
          }
-
+         
+         mGameManager->GetScene().DisablePaging();
+         if (mEnableDatabasePaging)
+            mGameManager->GetScene().EnablePaging();
+            
          SendMapMessage(MessageType::INFO_MAP_LOADED, mNewMapName);            
          SendMapMessage(MessageType::INFO_MAP_CHANGED, mNewMapName);            
          mCurrentState = &MapChangeState::IDLE;
