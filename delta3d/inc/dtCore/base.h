@@ -30,7 +30,7 @@
 
 #include <dtCore/uniqueid.h>
 #include <dtCore/export.h>
-#include <dtCore/macros.h>
+#include <dtUtil/macros.h>
 #include <dtCore/sigslot.h>
 
 #include <osg/Referenced>

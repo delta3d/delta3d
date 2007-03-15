@@ -27,7 +27,7 @@
 #include <osg/Vec4>
 
 #include <osg/MatrixTransform>
-#include <dtCore/macros.h>
+#include <dtUtil/macros.h>
 #include <dtCore/transformable.h>
 
 #include <string>

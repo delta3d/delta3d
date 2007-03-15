@@ -23,7 +23,7 @@
 #define DELTA_BATCHISECTOR
 
 #include <dtCore/export.h>
-#include <dtCore/macros.h>
+#include <dtUtil/macros.h>
 #include <dtCore/refptr.h>
 #include <dtCore/observerptr.h>
 

@@ -22,7 +22,7 @@
 #define DELTA_LIGHT
 
 #include <dtCore/export.h>
-#include <dtCore/macros.h>
+#include <dtUtil/macros.h>
 #include <dtCore/transformable.h>
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
