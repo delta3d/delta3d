@@ -21,7 +21,7 @@
 #ifndef DELTA_COMPASS
 #define DELTA_COMPASS
 
-#include <dtCore/macros.h>
+#include <dtUtil/macros.h>
 #include <dtCore/refptr.h>
 #include <dtCore/transformable.h>
 
