@@ -23,8 +23,9 @@
 #define chardrawable_h__
 
 #include "dtCore/transformable.h"
-#include "dtChar/model.h"
 #include "dtChar/export.h"
+
+class CalModel;
 
 namespace dtChar
 {
@@ -42,13 +43,67 @@ namespace dtChar
      *   myScene->AddDrawable( *char );
      * @endcode
      */
+
+   class CoreModel;
+
    class DT_CHAR_EXPORT CharDrawable : public dtCore::Transformable
    {
    public:
    	CharDrawable();
    	~CharDrawable();
 
-      osg::ref_ptr<dtChar::Model> mModel; ///<handle to the actual dtChar::Model
+    void OnMessage(Base::MessageData *data);
+
+    /**
+    * Create an "instance" of the reference (core) model given.
+    * This method creates lots of drawables each one with a single
+    * material, to take advantage of OSG state sorting.
+    */
+    void Create(CoreModel *core);
+
+    /**
+    * Starts an animation in loop mode
+    * @param id The animation id
+    * @param weigth The strength of the loop (there can be several simultaneous)
+    * @param delay Time to reach the indicated weigth
+    */
+    void StartLoop(unsigned id, float weight, float delay);
+
+    /**
+    * Stops an animation
+    * @param id The animation id
+    * @param delay Time to fade out
+    */
+    void StopLoop(unsigned id, float delay);
+
+    /**
+    * Starts an animation with max strength over other animations
+    * @param id The animation id
+    * @param delay_in Time to reach max strength at begining of animation
+    * @param delay_out Time to leave max strength at end of animation
+    */
+    void StartAction(unsigned id, float delay_in, float delay_out);
+
+    /**
+    * Stop an action animation
+    * @param id The animation id
+    */
+    void StopAction(unsigned id);
+
+    /// Expose the underlying Cal3D model
+    CalModel *GetCalModel(void) { return mCalModel; }
+
+    /// Expose the underlying Cal3D model
+    const CalModel *GetCalModel(void) const { return mCalModel; }
+
+    /// Get the core model
+    const CoreModel *GetCoreModel() const { return mCoreModel.get(); }
+
+   private:
+      
+      osg::ref_ptr<osg::Geode>    mGeode; 
+      osg::ref_ptr<CoreModel>     mCoreModel;
+      CalModel                   *mCalModel;            
    };
 }
 #endif // chardrawable_h__
