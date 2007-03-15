@@ -22,7 +22,7 @@
 #define DELTA_CHARACTER_FILE_HANDLER
 
 #include <dtChar/export.h>
-#include <dtCore/macros.h>
+#include <dtUtil/macros.h>
 #include <xercesc/sax2/ContentHandler.hpp>  // for a base class
 #include <vector>
 #include <string>
