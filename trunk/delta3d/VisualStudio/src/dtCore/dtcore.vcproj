@@ -470,9 +470,6 @@
 				RelativePath="..\..\..\inc\dtCore\logicalinputdevice.h">
 			</File>
 			<File
-				RelativePath="..\..\..\inc\dtCore\macros.h">
-			</File>
-			<File
 				RelativePath="..\..\..\inc\dtCore\mainpage.h">
 			</File>
 			<File
