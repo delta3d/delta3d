@@ -10,7 +10,7 @@
 #include <dtDAL/map.h>
 #include <dtDAL/project.h>
 #include <dtDAL/exceptionenum.h>
-#include <dtCore/macros.h>
+#include <dtUtil/macros.h>
 
 #include <dtAI/waypoint.h>
 #include <dtAI/waypointmanager.h>
