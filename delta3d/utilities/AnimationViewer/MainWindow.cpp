@@ -5,6 +5,8 @@
 #include <QTableWidget>
 #include <QSettings>
 #include <QStatusBar>
+#include <QToolBar>
+#include <QPushButton>
 
 MainWindow::MainWindow():
 mExitAct(NULL),
@@ -24,6 +26,13 @@ mAnimListWidget(NULL)
    connect(mAnimListWidget, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(OnItemChanged(QTableWidgetItem*)));
    connect(mAnimListWidget, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(OnItemDoubleClicked(QTableWidgetItem*)));
    setCentralWidget(mAnimListWidget);
+
+   //QPushButton *testButt = new QPushButton;
+   //testButt->setCheckable(true);
+
+   //QToolBar *testBar = addToolBar("hey baby");
+   //testBar->addWidget(testButt);
+   
 
    QStringList headers;
    headers << "Name" << "Weight (L)" << "Delay (L)" << "Delay In (A)" << "Delay Out (A)";

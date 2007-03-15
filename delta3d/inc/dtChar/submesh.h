@@ -89,17 +89,20 @@ public:
 	osg::BoundingBox computeBound() const;
 
 private:
-    void setUpMaterial();
-    unsigned mesh, submesh;
-    float *meshVertices;
-    float *meshNormals;
-    float *meshTextureCoordinates;
-    CalIndex *meshFaces;
+    
+    unsigned int mMeshID;
+    unsigned int mSubmeshID;
+    float       *mMeshVertices;
+    float       *mMeshNormals;
+    float       *mMeshTextureCoordinates;
+    CalIndex    *mMeshFaces;
     CalRenderer *pCalRenderer;
     
-    mutable CalModel *model;
-    mutable unsigned vertexCount;
-    mutable unsigned faceCount;
+    mutable CalModel    *mCalModel;
+    mutable unsigned int vertexCount;
+    mutable unsigned int faceCount;
+
+    void setUpMaterial();
 };
 
 }; //namespace dtChar

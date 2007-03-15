@@ -11,7 +11,7 @@
 #include <dtChar/chardrawable.h>
 #include <dtChar/characterfilehandler.h>
 #include <dtChar/coremodel.h>
-#include <dtChar/model.h>
+#include <dtChar/chardrawable.h>
 #include <dtUtil/xercesparser.h>
 #include <dtUtil/stringutils.h>
 
@@ -96,7 +96,6 @@ void Viewer::OnLoadCharFile( const QString &filename )
    //create the coreModel ("template")
    mCoreModel = new dtChar::CoreModel("test");
 
-
    //load skeleton
    mCoreModel->LoadSkeleton( FindFileInPathList(handler.mSkeletonFilename) );
 
@@ -134,22 +133,22 @@ void Viewer::OnLoadCharFile( const QString &filename )
    AddDrawable(mCharacter.get());
 
    //create an instance from the coreModel template
-   mCharacter->mModel->Create(mCoreModel.get());
+   mCharacter->Create(mCoreModel.get());
 }
 
 void Viewer::OnStartAnimation( unsigned int id, float weight, float delay )
 {
-   mCharacter->mModel->StartLoop(id, weight, delay);
+   mCharacter->StartLoop(id, weight, delay);
    LOG_DEBUG("Started:" + dtUtil::ToString(id) + ", weight:" + dtUtil::ToString(weight) + ", delay:" + dtUtil::ToString(delay));
 }
 
 void Viewer::OnStopAnimation( unsigned int id, float delay )
 {
-   mCharacter->mModel->StopLoop(id, delay);
+   mCharacter->StopLoop(id, delay);
    LOG_DEBUG("Stopped:" + dtUtil::ToString(id) + ", delay:" + dtUtil::ToString(delay));
 }
 
 void Viewer::OnStartAction( unsigned int id, float delayIn, float delayOut )
 {
-   mCharacter->mModel->StartAction( id, delayIn, delayOut );
+   mCharacter->StartAction( id, delayIn, delayOut );
 }

@@ -3,11 +3,13 @@
 
 using namespace dtChar;
 
-CoreModel::CoreModel() {
+CoreModel::CoreModel() 
+{
 	//nothing
 }
 
-CoreModel::CoreModel(const std::string& name) {
+CoreModel::CoreModel(const std::string& name) 
+{
 	mCalCoreModel = new CalCoreModel(name);
 }
 
@@ -26,6 +28,8 @@ void CoreModel::LoadMaterialTextures(std::string directory, int materialId) {
 
 		// load the texture from the file
 		osg::Image *img = osgDB::readImageFile(directory+"/"+strFilename);
+        assert(img);
+
 		osg::Texture2D *texture = new osg::Texture2D();
 		texture->setImage(img);
 		texture->setWrap(osg::Texture::WRAP_S, osg::Texture::REPEAT);
@@ -94,62 +98,87 @@ void CoreModel::LoadAllTextures(std::string directory) {
 	}
 }
 
-void CoreModel::LoadSkeleton(std::string skeleton_file) {
-	if (mCalCoreModel->loadCoreSkeleton(skeleton_file)) {
+void CoreModel::LoadSkeleton(std::string skeleton_file) 
+{
+	if (mCalCoreModel->loadCoreSkeleton(skeleton_file)) 
+    {
 		mSkeleton=skeleton_file;
-	} else {
+	}
+    else
+    {
 		CalError::printLastError();
 	}
 }
 
-void CoreModel::LoadAnimation(std::string animation_file) {
-	if (mCalCoreModel->loadCoreAnimation(animation_file) >= 0) {
+void CoreModel::LoadAnimation(std::string animation_file) 
+{
+	if (mCalCoreModel->loadCoreAnimation(animation_file) >= 0) 
+    {
 		mAnimations.push_back(std::make_pair(animation_file,"nombre_animacion"));
-	} else {
+	} 
+    else
+    {
 		CalError::printLastError();
 	}
 }
 
-void CoreModel::LoadAnimation(std::string animation_file, std::string animation_name) {
-	if (mCalCoreModel->loadCoreAnimation(animation_file, animation_name) >= 0) {
+void CoreModel::LoadAnimation(std::string animation_file, std::string animation_name) 
+{
+	if (mCalCoreModel->loadCoreAnimation(animation_file, animation_name) >= 0) 
+    {
 		mAnimations.push_back(std::make_pair(animation_file,animation_name));
-	} else {
+	}
+    else
+    {
 		CalError::printLastError();
 	}
 }
 
-int CoreModel::GetAnimationId(std::string animation_name) const {
+int CoreModel::GetAnimationId(std::string animation_name) const
+{
     int animation_id;
-	if ((animation_id = mCalCoreModel->getCoreAnimationId(animation_name)) >= 0) {
+	if ((animation_id = mCalCoreModel->getCoreAnimationId(animation_name)) >= 0) 
+    {
 		return animation_id;
 	}
-	else {
-		CalError::printLastError();
-      return -1;
+	else
+    {
+	   CalError::printLastError();
+       return -1;
 	}
 }
 
-void CoreModel::LoadMesh(std::string mesh_file) {
-	if (mCalCoreModel->loadCoreMesh(mesh_file) >= 0) {
+void CoreModel::LoadMesh(std::string mesh_file)
+{
+	if (mCalCoreModel->loadCoreMesh(mesh_file) >= 0) 
+    {
 		mMeshes.push_back(mesh_file);
-	} else {
+	}
+    else
+    {
 		CalError::printLastError();
 	}
 }
 
-void CoreModel::LoadMaterial(std::string material_file) {
+void CoreModel::LoadMaterial(std::string material_file) 
+{
     int material_id;
-	if ((material_id = mCalCoreModel->loadCoreMaterial(material_file)) >= 0) {
+	if ((material_id = mCalCoreModel->loadCoreMaterial(material_file)) >= 0) 
+    {
 		mMaterials.push_back(material_file);
 		// get the directory path of the textures
-		std::string textures_path = std::string(material_file,0,material_file.rfind("/"));
+		std::string textures_path = std::string(material_file,0,material_file.rfind("/"));        
+
 		LoadMaterialTextures(textures_path,material_id);
-	} else {
+	}
+    else
+    {
 		CalError::printLastError();
 	}
 }
 
-osg::Object* CoreModel::clone(const osg::CopyOp&) const {
+osg::Object* CoreModel::clone(const osg::CopyOp&) const 
+{
 	dtChar::CoreModel *model = new dtChar::CoreModel("dummy");
 	return model;
 }
