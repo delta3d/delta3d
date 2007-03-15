@@ -328,7 +328,7 @@ namespace dtHLAGM
 
          mRTIAmbassador->publishInteractionClass(thisInteractionClassHandle);
       }
-      catch (const RTI::Exception &ex)
+      catch (const RTI::Exception&)
       {
          if (!subscribed)
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
