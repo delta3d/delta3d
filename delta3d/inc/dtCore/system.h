@@ -143,13 +143,14 @@ namespace dtCore
       
       /**
        * @note the clock time is a 64 bit int in microseconds
-       * @return the current real clock
+       * @return the current real clock in microseconds since January 1, 1970
        */
-      dtCore::Timer_t GetRealClockTime() const { return mClockTime; }
+      dtCore::Timer_t GetRealClockTime() const { return mRealClockTime; }
 
       /**
        * @note the simulation clock time is a 64 bit int in microseconds
-       * @return the current simulation clock
+       * @return the current simulation clock in the same format as the real clock time but can be changed
+       *         and follows the time scale.
        */
       dtCore::Timer_t GetSimulationClockTime() const { return mSimulationClockTime; }
       
@@ -177,8 +178,13 @@ namespace dtCore
       static bool mInstanceFlag;///<Have we created a System yet?
       dtCore::Timer mClock;
 
-      ///time keeping vars
-      dtCore::Timer_t mClockTime, mSimulationClockTime, mLastClockTime;
+      /// time keeping variable.  This clock is used for calculating accurate time deltas using
+      /// system dependent algorithms.  The value is not necessarily human understandable.
+      dtCore::Timer_t mTickClockTime;
+      
+      //The real world time (UTC) and a simulated, settable version of it. They are both
+      // in microseconds since January 1, 1970.
+      dtCore::Timer_t mRealClockTime, mSimulationClockTime;
       double mSimulationTime;
       double mTimeScale;
       double mDt;

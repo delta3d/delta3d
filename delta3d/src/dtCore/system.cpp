@@ -8,6 +8,7 @@
 #include <dtCore/camera.h>
 #include <dtCore/cameragroup.h>
 #include <dtCore/deltawin.h>
+#include <ctime>
 
 using namespace dtUtil;
 
@@ -26,8 +27,7 @@ System::System():
    mShutdownOnWindowClose(true),
    mPaused(false)
 {
-   mClockTime = 0;
-   mLastClockTime = mClock.Tick();
+   mTickClockTime = mClock.Tick();
    mDt = 0.0;
    RegisterInstance(this);
 }
@@ -97,8 +97,9 @@ void System::Pause( const double deltaRealTime )
 ///private
 void System::SystemStep()
 {
-   mClockTime = mClock.Tick();
-   mDt = mClock.DeltaSec(mLastClockTime, mClockTime);
+   Timer_t lastClockTime  = mTickClockTime;
+   mTickClockTime = mClock.Tick();
+   mDt = mClock.DeltaSec(lastClockTime, mTickClockTime);
 
    if( mPaused )
    {
@@ -109,6 +110,7 @@ void System::SystemStep()
       //scale time.
       double mSimDt = mDt * mTimeScale;         
       mSimulationTime += mSimDt;
+      mRealClockTime  += Timer_t(mDt * 1000000);
       mSimulationClockTime += Timer_t(mSimDt * 1000000); 
 
       PreFrame(mSimDt, mDt);
@@ -116,7 +118,6 @@ void System::SystemStep()
       PostFrame(mSimDt, mDt);
    }
 
-   mLastClockTime = mClockTime;
 }
 
 void System::StepWindow()
@@ -144,8 +145,11 @@ void System::StepWindow()
 void System::Run()
 {
    mRunning = true;
-   mLastClockTime = mClock.Tick();
-   mSimulationClockTime = mLastClockTime;
+   mTickClockTime = mClock.Tick();
+   time_t realTime;
+   time(&realTime); 
+   mRealClockTime = realTime * 1000000;
+   mSimulationClockTime = mRealClockTime;
 
    //This should have been ifdef'd, not commented out.
    #ifdef __APPLE__   
@@ -173,11 +177,11 @@ void System::Run()
 void System::Start()
 {
    mRunning = true;
-   //make the time delta reset
-   mLastClockTime = mClock.Tick();
-   mSimulationClockTime = mLastClockTime;
-   //This should have been ifdef'd, not commented out.
-
+   mTickClockTime = mClock.Tick();
+   time_t realTime;
+   time(&realTime); 
+   mRealClockTime = realTime * 1000000;
+   mSimulationClockTime = mRealClockTime;
 }
 
 void System::Step()
@@ -191,8 +195,11 @@ void System::Step()
 
    if (first)
    {
-      mLastClockTime = mClock.Tick();
-      mSimulationClockTime = mLastClockTime;
+      mTickClockTime = mClock.Tick();
+      time_t realTime;
+      time(&realTime); 
+      mRealClockTime = realTime * 1000000;
+      mSimulationClockTime = mRealClockTime;
       first = false;
    }
 
