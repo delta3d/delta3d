@@ -4,7 +4,6 @@ import shutil
 import re
 import sys
 import time
-import smtplib
 import string
 import platform
 import macosx
@@ -751,9 +750,7 @@ def TOOL_BUNDLE(env):
            errorLog.write('Build Failed: Missing required libraries\n\n')
            errorLog.close()
 
-           if email == 'true' :
-             EmailResults()
-            
+             
            env.Exit(-1)
 
       # add the rti libs to the external library dictionary, but only

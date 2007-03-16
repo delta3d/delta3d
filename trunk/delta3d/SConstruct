@@ -4,7 +4,6 @@ import shutil
 import re
 import sys
 import time
-import smtplib
 import string
 import SCons.Util
 import delta3d
@@ -13,7 +12,6 @@ import gch
 import platform
 from SCons.Script.SConscript import SConsEnvironment
 
-from email.MIMEText import MIMEText
 
 # TODO:
 # install headers, libs, to prefix
@@ -22,23 +20,6 @@ from email.MIMEText import MIMEText
 # make packaged release
 # CVS support
    
-########################
-# Build error emailing #
-########################
-
-# set this to true to enable build emailing
-email = 'false'
-
-# fill this in with interested parties
-peopleToEmail = []
-
-# replcae with your local outgoing SMTP server
-smtpServer = 'mysmtp@server.com'
-
-SetOption('implicit_cache', 1)
-
-# this is who the build email will come from
-fromAddress = 'myaddress@company.com'
 
 ############################
 
@@ -48,19 +29,6 @@ def CurrentTime() :
    display = time.strftime('%A, %B %d %Y, %X', now)
    return display
 
-########################
-
-# Function to email the result of the build
-def EmailResults() :
-	file = open('BuildLog.txt', 'r')
-	buffer = MIMEText(file.read())
-	buffer['Subject'] = 'Editor Build Log'
-	file.close()
-
-	s = smtplib.SMTP()
-	s.connect(smtpServer) 
-	s.sendmail(fromAddress, peopleToEmail, buffer.as_string())
-	s.close()
 
 ########################
 
@@ -239,17 +207,3 @@ elif OS == 'linux' or OS == 'darwin' :
 
 SConscript( dirs=['tests'], build_dir = os.path.join( buildProductsDir, 'tests', OS+'-'+tool+'-'+mode ), duplicate = 0 )
 
-#if libs == '[]' :
-#   errorLog.write('Failed to create the libraries or executable file')
-#   errorLog.write('Build Failed: Build ended: ' + CurrentTime() + '\n')
-#   errorLog.close()
-#   env.Exit(-1)
-#else :
-#   # Close the error log and print the results
-#   print 'Build Succeeded: Build ended: ' + CurrentTime()
-#   errorLog.write('Build Succeeded: Build ended: ' + CurrentTime() + '\n')
-#   errorLog.close()
-#
-#   # email the results
-#   if email == 'true' :
-#     EmailResults() 
