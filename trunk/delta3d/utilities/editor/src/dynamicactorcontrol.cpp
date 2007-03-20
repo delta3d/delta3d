@@ -72,7 +72,7 @@ namespace dtEditQt
 
          // set the current value from our property
          if(myProperty->GetValue() != NULL)
-           mTemporaryEditControl->setCurrentIndex(mTemporaryEditControl->findText(myProperty->GetValue()->GetName().c_str()));
+            mTemporaryEditControl->setCurrentIndex(mTemporaryEditControl->findText(myProperty->GetValue()->GetName().c_str()));
          else
             mTemporaryEditControl->setCurrentIndex(mTemporaryEditControl->findText("None"));
       }
