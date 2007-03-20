@@ -1,6 +1,7 @@
 #include <osg/Material>
 #include <osg/Texture2D>
 #include <dtChar/submesh.h>
+#include <dtChar/cal3dwrapper.h>
 
 using namespace dtChar;
 
@@ -16,9 +17,9 @@ SubMesh::SubMesh() {
 	exit(1);
 }
 
-SubMesh::SubMesh(CalModel *model, unsigned mesh, unsigned submesh) 
+SubMesh::SubMesh(Cal3DWrapper *wrapper, unsigned mesh, unsigned submesh) 
 {
-	this->mCalModel  = model;
+   this->mWrapper = wrapper;
 	this->mMeshID    = mesh;
 	this->mSubmeshID = submesh;
 
@@ -33,23 +34,23 @@ SubMesh::SubMesh(CalModel *model, unsigned mesh, unsigned submesh)
 
 	// set the model to LOD 1, so that we have the maximal number of
 	// vertices and faces in order to be able to pre-allocate the arrays
-	model->setLodLevel(1);
-	pCalRenderer = model->getRenderer();
-	if(pCalRenderer->beginRendering())
+	mWrapper->SetLODLevel(1);
+	
+	if(mWrapper->BeginRenderingQuery())
 	{
-		if(pCalRenderer->selectMeshSubmesh(mesh, submesh))
+		if(mWrapper->SelectMeshSubmesh(mesh, submesh))
 		{
-			vertexCount             = pCalRenderer->getVertexCount();
-			faceCount               = pCalRenderer->getFaceCount();
+			vertexCount             = mWrapper->GetVertexCount();
+			faceCount               = mWrapper->GetFaceCount();
 			mMeshVertices           = new float[vertexCount*3];
 			mMeshNormals            = new float[vertexCount*3];
 			mMeshTextureCoordinates = new float[vertexCount*2];
-			mMeshFaces              = new CalIndex[faceCount*3];
+			mMeshFaces              = new int[faceCount*3];
 
-			pCalRenderer->getFaces(mMeshFaces);
+			mWrapper->GetFaces(mMeshFaces);
 		}
 
-		pCalRenderer->endRendering();
+		mWrapper->EndRenderingQuery();
 	}
 	setUpdateCallback(new SubMeshDirtyCallback());
 }
@@ -64,11 +65,10 @@ SubMesh::~SubMesh(void)
 
 void SubMesh::setUpMaterial() 
 {
-	CalRenderer *pCalRenderer = mCalModel->getRenderer();
 	osg::StateSet *set = this->getOrCreateStateSet();
 	
 	  // select mesh and submesh for further data access
-	  if(pCalRenderer->selectMeshSubmesh(mMeshID, mSubmeshID)) 
+	  if(mWrapper->SelectMeshSubmesh(mMeshID, mSubmeshID)) 
       {
 		 //osg::Material *material = new osg::Material();
 		 //material->setColorMode(osg::Material::AMBIENT_AND_DIFFUSE);
@@ -99,9 +99,9 @@ void SubMesh::setUpMaterial()
 		 //shininess = pCalRenderer->getShininess();
 		 //material->setShininess(osg::Material::FRONT, shininess);
 
-		 if (pCalRenderer->getMapCount() > 0)
+		 if (mWrapper->GetMapCount() > 0)
 		 {
-			osg::Texture2D *texture = (osg::Texture2D*)pCalRenderer->getMapUserData(0);
+			osg::Texture2D *texture = (osg::Texture2D*)mWrapper->GetMapUserData(0);
 			if (texture != 0) {
 			   set->setTextureAttributeAndModes(0, texture, osg::StateAttribute::ON);
 			}
@@ -111,22 +111,22 @@ void SubMesh::setUpMaterial()
 
 void SubMesh::drawImplementation(osg::State& state) const {
 	// begin the rendering loop
-	if(pCalRenderer->beginRendering())
+	if(mWrapper->BeginRenderingQuery())
 	{
 		// select mesh and submesh for further data access
-		if(pCalRenderer->selectMeshSubmesh(mMeshID, mSubmeshID))
+		if(mWrapper->SelectMeshSubmesh(mMeshID, mSubmeshID))
 		{
 			// get the transformed vertices of the submesh
-			vertexCount = pCalRenderer->getVertexCount();
-			vertexCount = pCalRenderer->getVertices(mMeshVertices);
+			vertexCount = mWrapper->GetVertexCount();
+			vertexCount = mWrapper->GetVertices(mMeshVertices);
 
 			// get the transformed normals of the submesh
-			pCalRenderer->getNormals(mMeshNormals);
+			mWrapper->GetNormals(mMeshNormals);
 
 			// get the texture coordinates of the submesh
 			// this is still buggy, it renders only the first texture.
 			// it should be a loop rendering each texture on its own texture unit
-			unsigned tcount = pCalRenderer->getTextureCoordinates(0, mMeshTextureCoordinates);
+			unsigned tcount = mWrapper->GetTextureCoords(0, mMeshTextureCoordinates);
 
 			// flip coordinates
 			for (unsigned int i=1;i<vertexCount*2;i=i+2)
@@ -139,7 +139,7 @@ void SubMesh::drawImplementation(osg::State& state) const {
 			state.setNormalPointer(GL_FLOAT, 0, mMeshNormals);
 
 			// set the texture coordinate buffer and state if necessary
-			if((pCalRenderer->getMapCount() > 0) && (tcount > 0))
+			if((mWrapper->GetMapCount() > 0) && (tcount > 0))
 			{
 				// set the texture coordinate buffer
 				state.setTexCoordPointer(0, 2, GL_FLOAT, 0, mMeshTextureCoordinates);
@@ -158,11 +158,11 @@ void SubMesh::drawImplementation(osg::State& state) const {
             }
 
 			// get the faces of the submesh for the next frame
-			faceCount = pCalRenderer->getFaces(mMeshFaces);
+			faceCount = mWrapper->GetFaces(mMeshFaces);
 		}
 
 		// end the rendering
-		pCalRenderer->endRendering();
+		mWrapper->EndRenderingQuery();
 	}
 }
 
@@ -189,25 +189,24 @@ void SubMesh::accept(osg::PrimitiveFunctor& functor) const
 
 osg::Object* SubMesh::clone(const osg::CopyOp&) const 
 {
-	return new SubMesh(mCalModel, mMeshID, mSubmeshID);
+	return new SubMesh(mWrapper, mMeshID, mSubmeshID);
 }
 
 osg::BoundingBox SubMesh::computeBound() const 
 {
 	osg::BoundingBox bbox;
     bbox.init();
-	// We have to traverse all vertices to racalculate bounds
-	CalRenderer *pCalRenderer;
-	pCalRenderer = mCalModel->getRenderer();
 
-	if(pCalRenderer->beginRendering()) 
+	// We have to traverse all vertices to recalculate bounds
+	
+	if(mWrapper->BeginRenderingQuery()) 
     {
-		if(pCalRenderer->selectMeshSubmesh(mMeshID, mSubmeshID)) 
+		if(mWrapper->SelectMeshSubmesh(mMeshID, mSubmeshID)) 
         {
 			// get the transformed vertices of the submesh
-			int vertexCount = pCalRenderer->getVertexCount();
+			int vertexCount = mWrapper->GetVertexCount();
 			float *meshVertices = new float[vertexCount*3];
-			vertexCount = pCalRenderer->getVertices(meshVertices);
+			vertexCount = mWrapper->GetVertices(meshVertices);
 
 			for (int vertex=0;vertex<vertexCount;vertex++) 
             {
@@ -217,7 +216,7 @@ osg::BoundingBox SubMesh::computeBound() const
 
 			delete []meshVertices;
 		}
-		pCalRenderer->endRendering();
+		mWrapper->EndRenderingQuery();
 	}
 	return bbox;
 }

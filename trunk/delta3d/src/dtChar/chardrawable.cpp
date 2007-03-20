@@ -5,6 +5,7 @@
 #include <dtChar/submesh.h>
 #include <dtChar/chardrawable.h>
 #include <dtChar/coremodel.h>
+#include <dtChar/cal3dwrapper.h>
 #include <dtCore/system.h>
 #include <dtUtil/log.h>
 #include <cassert>
@@ -13,10 +14,11 @@ using namespace dtChar;
 
 CharDrawable::CharDrawable()
    : mGeode(new osg::Geode)
-   , mCalModel(NULL)   
+   ,mCal3DWrapper(NULL)
 {
-   GetMatrixNode()->addChild(mGeode.get()); 
+
    AddSender(&dtCore::System::GetInstance());
+
 }
 
 CharDrawable::~CharDrawable()
@@ -31,7 +33,7 @@ void CharDrawable::OnMessage(Base::MessageData *data)
    if( data->message == "preframe" )
    {
       double dt = *static_cast<double*>(data->userData);      
-      mCalModel->update(dt);
+      mCal3DWrapper->Update(dt);
    }
 }
 
@@ -39,116 +41,92 @@ void CharDrawable::OnMessage(Base::MessageData *data)
 void CharDrawable::Create(CoreModel *core) 
 {
    // Create a new cal model and an associated update callback
-   if (!mCalModel)
-   {     
-      mCalModel  = new CalModel(core->get());      
-   }   
+
+   CalModel *model  = new CalModel(core->get());
+   mCal3DWrapper = new Cal3DWrapper(model);
 
    osg::NodeCallback* nodeCallback = mGeode->getUpdateCallback();
    
    // attach all meshes to the model
    for(int meshId = 0; meshId < core->get()->getCoreMeshCount(); meshId++)
    {
-      mCalModel->attachMesh(meshId);
+      mCal3DWrapper->AttachMesh(meshId);
    }
 
-   mCalModel->setMaterialSet(0);
+   mCal3DWrapper->SetMaterialSet(0);
 
-   CalRenderer *pCalRenderer = mCalModel->getRenderer();
-   if(pCalRenderer->beginRendering()) 
+   if(mCal3DWrapper->BeginRenderingQuery()) 
    {
-      int meshCount = pCalRenderer->getMeshCount();
+      int meshCount = mCal3DWrapper->GetMeshCount();
 
       for(int meshId = 0; meshId < meshCount; meshId++) 
       {
-         int submeshCount = pCalRenderer->getSubmeshCount(meshId);
+         int submeshCount = mCal3DWrapper->GetSubmeshCount(meshId);
       
          for(int submeshId = 0; submeshId < submeshCount; submeshId++) 
          {
-            SubMesh *submesh = new SubMesh(mCalModel, meshId, submeshId);
+            SubMesh *submesh = new SubMesh(mCal3DWrapper.get(), meshId, submeshId);
             mGeode->addDrawable(submesh);
          }
       }
-      pCalRenderer->endRendering();
+      mCal3DWrapper->EndRenderingQuery();
    }
 
    /// Force generation of first mesh
-   mCalModel->update(0);
+   mCal3DWrapper->Update(0);
    mCoreModel = core;
+
+   GetMatrixNode()->addChild(mGeode.get()); 
+
 }
 
 void CharDrawable::StartAction(unsigned id, float delay_in, float delay_out)
 {
-   assert(mCalModel);
+   assert(mCal3DWrapper.get());
 
-   if (!mCalModel) 
+   if (!mCal3DWrapper) 
    {
       LOG_ERROR("Error!  Trying to call StartAction without a valid model");   
       return;
    }
 
-   if (mCalModel->getMixer() != 0)
-   {
-      mCalModel->getMixer()->executeAction(id, delay_in, delay_out);
-   }
-   else
-   {
-      LOG_ERROR("Model::action: ERROR: The model doesn't have a mixer");      
-   }
+
+   mCal3DWrapper->ExecuteAction(id, delay_in, delay_out);
 }
 
 void CharDrawable::StopAction(unsigned id) 
 {
-   assert(mCalModel);
+   assert(mCal3DWrapper.get());
 
-   if (!mCalModel) 
+   if (!mCal3DWrapper) 
    {
       LOG_ERROR("Error!  Trying to call StopAction without a valid model");    
       return;
    }
 
-   if (mCalModel->getMixer() != 0)
-   {
-      mCalModel->getMixer()->removeAction(id);
-   }
-   else
-   {
-      LOG_ERROR("Model::action: ERROR: The model doesn't have a mixer");      
-   }
+
+   mCal3DWrapper->RemoveAction(id);
 }
 
 void CharDrawable::StartLoop(unsigned id, float weight, float delay) 
 {
-   if (!mCalModel) 
+   if (!mCal3DWrapper.get()) 
    {
       LOG_ERROR("Error!  Trying to call StartLoop without a valid model");    
       return;
    }
    
-   if (mCalModel->getMixer() != 0)
-   {
-      mCalModel->getMixer()->blendCycle(id, weight, delay);
-   }
-   else
-   {
-     LOG_ERROR("Model::action: ERROR: The model doesn't have a mixer");  
-   }
+
+   mCal3DWrapper->BlendCycle(id, weight, delay);
 }
 
 void CharDrawable::StopLoop(unsigned id, float delay) 
 {
-   if (!mCalModel) 
+   if (!mCal3DWrapper.get()) 
    {
       LOG_ERROR("Error!  Trying to call StartLoop without a valid model");    
       return;
    }
 
-   if (mCalModel->getMixer() != 0)
-   {
-      mCalModel->getMixer()->clearCycle(id, delay);
-   }
-   else
-   {
-      LOG_ERROR("Model::action: ERROR: The model doesn't have a mixer");  
-   }
+   mCal3DWrapper->ClearCycle(id, delay);
 }

@@ -128,6 +128,9 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
+				RelativePath="..\..\..\src\dtChar\cal3dwrapper.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtChar\character.cpp">
 			</File>
 			<File
@@ -140,9 +143,6 @@
 				RelativePath="..\..\..\src\dtChar\coremodel.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\src\dtChar\model.cpp">
-			</File>
-			<File
 				RelativePath="..\..\..\src\dtChar\submesh.cpp">
 			</File>
 		</Filter>
@@ -150,6 +150,9 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
+			<File
+				RelativePath="..\..\..\inc\dtChar\cal3dwrapper.h">
+			</File>
 			<File
 				RelativePath="..\..\..\inc\dtChar\character.h">
 			</File>
@@ -167,9 +170,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtChar\export.h">
-			</File>
-			<File
-				RelativePath="..\..\..\inc\dtChar\model.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtChar\submesh.h">
