@@ -44,6 +44,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 namespace dtChar {
 
+   class Cal3DWrapper;
+
 ///Adapter that converts cal3d submeshes into osg::Drawables
 
 /** 
@@ -65,7 +67,7 @@ public:
     /**
      * Creates a submesh for one model given the mesh and submesh of this mesh
      */
-    SubMesh(CalModel *model, unsigned mesh, unsigned submesh);
+    SubMesh(Cal3DWrapper *wrapper, unsigned mesh, unsigned submesh);
 
     /**
      * Draws the geometry.
@@ -95,10 +97,8 @@ private:
     float       *mMeshVertices;
     float       *mMeshNormals;
     float       *mMeshTextureCoordinates;
-    CalIndex    *mMeshFaces;
-    CalRenderer *pCalRenderer;
-    
-    mutable CalModel    *mCalModel;
+    int         *mMeshFaces;
+    Cal3DWrapper *mWrapper;
     mutable unsigned int vertexCount;
     mutable unsigned int faceCount;
 

@@ -30,8 +30,7 @@ class CalModel;
 namespace dtChar
 {
    /** Simple class that wraps up a dtChar::Model so it can be added to the
-     * Scene.  It is expected to interact with the public dtChar::Model mModel
-     * directly.
+     * Scene.  
      *
      * Usage:
      * @code
@@ -39,12 +38,13 @@ namespace dtChar
      *   dtCore::RefPtr<dtChar::CoreModel> core = new dtChar::CoreModel();
      *   core->LoadSkeleton(...);
      *   core->LoadAnimation(...);
-     *   char->mModel->Create( *core );
+     *   char->Create( *core );
      *   myScene->AddDrawable( *char );
      * @endcode
      */
 
    class CoreModel;
+   class Cal3DWrapper;
 
    class DT_CHAR_EXPORT CharDrawable : public dtCore::Transformable
    {
@@ -64,7 +64,7 @@ namespace dtChar
     /**
     * Starts an animation in loop mode
     * @param id The animation id
-    * @param weigth The strength of the loop (there can be several simultaneous)
+    * @param weight The strength of the loop (there can be several simultaneous)
     * @param delay Time to reach the indicated weigth
     */
     void StartLoop(unsigned id, float weight, float delay);
@@ -90,12 +90,6 @@ namespace dtChar
     */
     void StopAction(unsigned id);
 
-    /// Expose the underlying Cal3D model
-    CalModel *GetCalModel(void) { return mCalModel; }
-
-    /// Expose the underlying Cal3D model
-    const CalModel *GetCalModel(void) const { return mCalModel; }
-
     /// Get the core model
     const CoreModel *GetCoreModel() const { return mCoreModel.get(); }
 
@@ -103,7 +97,7 @@ namespace dtChar
       
       osg::ref_ptr<osg::Geode>    mGeode; 
       osg::ref_ptr<CoreModel>     mCoreModel;
-      CalModel                   *mCalModel;            
+      dtCore::RefPtr<dtChar::Cal3DWrapper> mCal3DWrapper;
    };
 }
 #endif // chardrawable_h__
