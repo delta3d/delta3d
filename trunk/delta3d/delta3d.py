@@ -712,8 +712,8 @@ def TOOL_BUNDLE(env):
          CheckLinkGroup(['cppunit'], 'cppunit', False, False)
          CheckLinkGroup(['python'], 'python', False, False)
          CheckLinkGroup(['openal', 'alut'], 'openal', True, False)
-         if env['ENV'].has_key('QTDIR'):
-            CheckLinkGroup(['QtCore', 'QtGui', 'QtOpenGL'], 'qt', False, False)
+         #if env['ENV'].has_key('QTDIR'):
+         CheckLinkGroup(['QtCore', 'QtGui', 'QtOpenGL'], 'qt', False, False)
          
          CheckLinkGroup(['fltk'], 'fltk', False, False)
          CheckLinkGroup(['isense'], 'isense', False, False) 
