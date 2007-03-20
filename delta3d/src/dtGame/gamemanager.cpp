@@ -423,7 +423,12 @@ namespace dtGame
          while (itor != mGlobalMessageListeners.end() && itor->first == &msgType)
          {
             std::pair<dtCore::RefPtr<GameActorProxy>, std::string >& listener = itor->second;
+            // hold onto the actor in a refptr so that the stats code
+            // won't crash if the actor unregisters for the message. 
+            dtCore::RefPtr<GameActorProxy> listenerActorProxy = listener.first;
             Invokable* invokable = listener.first->GetInvokable(listener.second);
+            ++itor;
+
             if (invokable != NULL)
             {
                /////////////////////////
@@ -448,7 +453,7 @@ namespace dtGame
                {
                   Timer_t frameTickStopActor = statsTickClockActor.Tick();
                   double fragmentDeltaActor = statsTickClockActor.DeltaSec(frameTickStartActor, frameTickStopActor);
-                  FindLogDebugInformationAndChangeOrCreateInformation(listener.first->GetActor()->GetUniqueId().ToString(),listener.first->GetName(), 
+                  FindLogDebugInformationAndChangeOrCreateInformation(listenerActorProxy->GetId().ToString(), listenerActorProxy->GetName(), 
                      fragmentDeltaActor, false, isATickLocalMessage);
                }
                /////////////////////////
@@ -460,7 +465,6 @@ namespace dtGame
                                       "Invokable named %s is registered as a listener, but Proxy %s does not have an invokable by that name.",
                                       listener.second.c_str(), listener.first->GetActorType().GetName().c_str());
             }
-            ++itor;
          }
 
          // ABOUT ACTOR - The actor itself and others registered against a particular actor
