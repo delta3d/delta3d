@@ -78,7 +78,7 @@ ParticleSystem::ParticleSystem(std::string name)
  */
 ParticleSystem::~ParticleSystem()
 {
-   mLayers.empty();
+   mLayers.clear();
    DeregisterInstance(this);
 }
 
