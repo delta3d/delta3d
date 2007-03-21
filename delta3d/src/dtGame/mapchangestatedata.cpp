@@ -187,9 +187,9 @@ namespace dtGame
                if (gameProxy != NULL)
                {
                   gameProxy->BuildInvokables();
-                  if(gameProxy->GetInitialOwnership() == GameActorProxy::Ownership::TEMPLATE)
+                  if(gameProxy->GetInitialOwnership() == GameActorProxy::Ownership::PROTOTYPE)
                   {
-                     mGameManager->AddActorAsATemplate(*gameProxy);
+                     mGameManager->AddActorAsAPrototype(*gameProxy);
                   }
                   else
                   {

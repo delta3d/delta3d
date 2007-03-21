@@ -49,7 +49,7 @@ namespace dtGame
    GameActorProxy::Ownership GameActorProxy::Ownership::SERVER_LOCAL("Server Local");
    GameActorProxy::Ownership GameActorProxy::Ownership::CLIENT_LOCAL("Client Local");
    GameActorProxy::Ownership GameActorProxy::Ownership::CLIENT_AND_SERVER_LOCAL("Client and Server Local");
-   GameActorProxy::Ownership GameActorProxy::Ownership::TEMPLATE("TEMPLATE");
+   GameActorProxy::Ownership GameActorProxy::Ownership::PROTOTYPE("PROTOTYPE");
 
 	///////////////////////////////////////////
 	// Actor Proxy code

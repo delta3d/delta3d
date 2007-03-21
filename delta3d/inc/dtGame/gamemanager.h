@@ -151,35 +151,35 @@ namespace dtGame
          * @param The name to search for
          * @param The vector to fill
          */
-         void FindTemplatesByActorType(const dtDAL::ActorType &type, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill) const;
+         void FindPrototypesByActorType(const dtDAL::ActorType &type, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill) const;
 
          /**
          * Fills a vector with the game proxys whose names match the name parameter
          * @param The name to search for
          * @param The vector to fill
          */
-         void FindTemplatesByName(const std::string &name, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill) const;
+         void FindPrototypesByName(const std::string &name, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill) const;
          
          /**
          * Fills a vector with all the templates.
          * @param The vector to fill
          */
-         void GetAllTemplates(std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill) const;
+         void GetAllPrototypes(std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill) const;
 
          /**
          * @param The uniqueID to look for
          * @return the actor proxy with that ID
          */
-         void FindTemplateByID(const dtCore::UniqueId& uniqueID, dtCore::RefPtr<dtDAL::ActorProxy> &ourObject);
+         void FindPrototypeByID(const dtCore::UniqueId& uniqueID, dtCore::RefPtr<dtDAL::ActorProxy> &ourObject);
 
-         /// Clears the mTemplateActors map.
-         void DeleteAllTemplates();
+         /// Clears the mPrototypeActors map.
+         void DeleteAllPrototypes();
 
          /// Deletes a single Template.
-         void DeleteTemplate(const dtCore::UniqueId& uniqueId);
+         void DeletePrototype(const dtCore::UniqueId& uniqueId);
 
          /// Makes a new GameActorProxy, and returns it to the user
-         dtCore::RefPtr<dtDAL::ActorProxy> CreateActorFromTemplate(const dtCore::UniqueId& uniqueID);
+         dtCore::RefPtr<dtDAL::ActorProxy> CreateActorFromPrototype(const dtCore::UniqueId& uniqueID);
 
          /**
           * Gets a registry currently loaded by the library manager.  
@@ -356,10 +356,10 @@ namespace dtGame
          void AddActor(GameActorProxy& gameActorProxy, bool isRemote, bool publish);
 
          /**
-          * Adds an actor as a templated actor.
+          * Adds an actor as a prototype actor.
           * @param actorProxy The actor proxy to add
           */
-         void AddActorAsATemplate(GameActorProxy& gameActorProxy);
+         void AddActorAsAPrototype(GameActorProxy& gameActorProxy);
 
          /**
           * Publishes an actor to the world.  Remote actors may not be published
@@ -889,7 +889,7 @@ namespace dtGame
 
          std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> > mGameActorProxyMap;
          std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> > mActorProxyMap;
-         std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> > mTemplateActors;
+         std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> > mPrototypeActors;
 
          std::vector<dtCore::RefPtr<GameActorProxy> > mDeleteList;
          //These are used during changing the map so that 
