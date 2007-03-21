@@ -72,9 +72,10 @@ namespace dtEditQt
         ViewportManager::GetInstance();
 
         // set up initial OSG library path from environment variable.
-        std::string osgLibPath = getenv("OSG_LIBRARY_PATH");
+        char *path = getenv("OSG_LIBRARY_PATH");
 
-        EditorData::GetInstance().setOriginalOsgLibraryPath(osgLibPath);
+        if(path != NULL)
+           EditorData::GetInstance().setOriginalOsgLibraryPath(std::string(path));
 
         connectSlots();
         setupDockWindows();
@@ -117,8 +118,11 @@ namespace dtEditQt
         fileMenu->addSeparator();
         fileMenu->addMenu(recentProjs);
         fileMenu->addSeparator();
-        fileMenu->addAction(editorActions.actionFileLibraryPaths);
-        fileMenu->addSeparator();
+        if(getenv("OSG_LIBRARY_PATH") != NULL)
+        {
+           fileMenu->addAction(editorActions.actionFileLibraryPaths);
+           fileMenu->addSeparator();
+        }
         fileMenu->addAction(editorActions.actionFileExit);
 
         editMenu = menuBar()->addMenu(tr("&Edit"));
@@ -459,25 +463,21 @@ namespace dtEditQt
         //Save the current project state...
         settings.remove(EditorSettings::LIBRARY_PATHS);
         settings.beginGroup(EditorSettings::LIBRARY_PATHS);
-            if(!EditorData::GetInstance().getLibraryPaths()->empty() &&
-                EditorData::GetInstance().getLibraryPaths()->front() != "")
+            if(!EditorData::GetInstance().getLibraryPaths().empty())
             {
-                int pos=0;
+                int pos = 0;
                 
-                std::list<std::string> *pathList = EditorData::GetInstance().getLibraryPaths();
-                std::list<std::string>::iterator iter;
-                int i = 0;
-
-                for(iter = pathList->begin(); iter != pathList->end(); iter++, i++)
+                std::list<std::string> &pathList = EditorData::GetInstance().getLibraryPaths();
+                
+                for(std::list<std::string>::iterator iter = pathList.begin(); 
+                    iter != pathList.end(); 
+                    ++iter)
                 {
-                    char number[5] = {0}; // hopefullly there won't be > 10000 paths
-                    std::string text = *iter;
-
                     QString item = EditorSettings::LIBRARY_PATH_N;
                     
-                    item += itoa(pos++, number, 10);
+                    item += QString::number(pos++);
 
-                    settings.setValue(item, QVariant(QString(text.c_str())));
+                    settings.setValue(item, tr((*iter).c_str()));
                 }
             }
         settings.endGroup();
@@ -488,8 +488,7 @@ namespace dtEditQt
 
         //Save the current project state...
         settings.beginGroup(EditorSettings::RECENT_PROJECTS);
-            if(!EditorData::GetInstance().getRecentProjects().empty() &&
-                EditorData::GetInstance().getRecentProjects().front() != "")
+            if(!EditorData::GetInstance().getRecentProjects().empty())
             {
                 settings.setValue(EditorSettings::RECENT_PROJECT0,
                     QVariant(QString(EditorData::GetInstance().getRecentProjects().front().c_str())));
@@ -509,8 +508,7 @@ namespace dtEditQt
 
         //Save the current map state...
         settings.beginGroup(EditorSettings::RECENT_MAPS);
-            if(!EditorData::GetInstance().getRecentMaps().empty() &&
-                EditorData::GetInstance().getRecentMaps().front() != "")
+            if(!EditorData::GetInstance().getRecentMaps().empty())
             {
                 settings.setValue(EditorSettings::RECENT_MAP0,
                     QVariant(QString(EditorData::GetInstance().getRecentMaps().front().c_str())));
@@ -730,8 +728,8 @@ namespace dtEditQt
         EditorSettings settings;
         std::string customPath = "OSG_LIBRARY_PATH=";
 
-        std::list<std::string> *pathList = EditorData::GetInstance().getLibraryPaths();
-        pathList->clear();
+        std::list<std::string> &pathList = EditorData::GetInstance().getLibraryPaths();
+        pathList.clear();
 
         settings.beginGroup(EditorSettings::LIBRARY_PATHS);
         
@@ -739,24 +737,23 @@ namespace dtEditQt
         {
             int pos = 0;
 
-            std::string path = "";
+            std::string path;
 
             do
             {
-                char number[5] = {0}; // hopefullly there won't be > 10000 paths
-                QString item = EditorSettings::LIBRARY_PATH_N;
-                
-                item += itoa(pos++, number, 10);
+               QString item = EditorSettings::LIBRARY_PATH_N;
 
-                path = settings.value(item, QString("")).toString().toStdString();
+               item += QString::number(pos++);
 
-                if (path != "")
-                {
-                    pathList->push_back(path);
-                    customPath += path;
-                    customPath += ";";
-                }
-            } while (path != "");
+               path = settings.value(item).toString().toStdString();
+
+               if(!path.empty())
+               {
+                  pathList.push_back(path);
+                  customPath += path;
+                  customPath += ";";
+               }
+            } while(!path.empty());
 
             customPath += EditorData::GetInstance().getOriginalOsgLibraryPath();
             putenv(customPath.c_str());

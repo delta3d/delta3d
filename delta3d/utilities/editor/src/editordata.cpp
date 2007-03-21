@@ -183,7 +183,7 @@ namespace dtEditQt
       terrainResource = newResource;
    }
    //////////////////////////////////////////////////////////////////////////////
-   void EditorData::setOriginalOsgLibraryPath(std::string path)
+   void EditorData::setOriginalOsgLibraryPath(const std::string &path)
    {
        osgLibraryPath = path;
    }

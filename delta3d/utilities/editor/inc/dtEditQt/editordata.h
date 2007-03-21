@@ -69,7 +69,7 @@ namespace dtEditQt
        *
        * @param Sets the user-defined custom path that OSG uses in addition to its main search path for libraries.
        */
-      void setOriginalOsgLibraryPath(std::string path);
+      void setOriginalOsgLibraryPath(const std::string &path);
       
       /**
        * Sets the Main Window.
@@ -297,7 +297,7 @@ namespace dtEditQt
       /**
        * Custom library paths
        */
-      inline std::list<std::string>  *getLibraryPaths() { return &libraryPaths; }
+      inline std::list<std::string>& getLibraryPaths() { return libraryPaths; }
       
       /**
        * Recent map accessor
