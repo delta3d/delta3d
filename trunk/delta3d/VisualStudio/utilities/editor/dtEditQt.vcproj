@@ -271,6 +271,9 @@
 				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\libraryeditor.h">
 			</File>
 			<File
+				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\librarypathseditor.h">
+			</File>
+			<File
 				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\mainwindow.h">
 			</File>
 			<File
@@ -919,6 +922,15 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\..\utilities\editor\src\moc\moc_librarypathseditor.cpp">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath="..\..\..\utilities\editor\src\moc\moc_mainwindow.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -1455,6 +1467,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\utilities\editor\src\libraryeditor.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\utilities\editor\src\librarypathseditor.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\utilities\editor\src\main.cpp">
