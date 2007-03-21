@@ -46,6 +46,7 @@
 #include <dtEditQt/viewportoverlay.h>
 #include <dtEditQt/editoraboutbox.h>
 #include <dtEditQt/libraryeditor.h>
+#include <dtEditQt/librarypathseditor.h>
 #include <dtEditQt/gameeventsdialog.h>
 #include <dtEditQt/camera.h>
 #include <dtEditQt/projectcontextdialog.h>
@@ -118,14 +119,13 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    EditorActions &EditorActions::GetInstance()
    {
-      if (EditorActions::instance.get()== NULL)
+      if (EditorActions::instance.get() == NULL)
          EditorActions::instance = new EditorActions();
       return *(EditorActions::instance.get());
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void EditorActions::slotSelectedActors(
-         std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > &newActors)
+   void EditorActions::slotSelectedActors(std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > &newActors)
    {
       actors.clear();
       actors.reserve(newActors.size());
@@ -186,6 +186,11 @@ namespace dtEditQt
       actionEditMapEvents = new QAction(tr("Map &Events..."), this);
       actionEditMapEvents->setStatusTip(tr("Add and Remove Game Events from the current map."));
       connect(actionEditMapEvents, SIGNAL(triggered()), this, SLOT(slotEditMapEvents()));
+
+      //File - Edit Library Paths...
+      actionFileLibraryPaths = new QAction(tr("Edit Library Pat&hs..."), this);
+      actionFileLibraryPaths->setStatusTip(tr("Add or Remove paths to actor library DLLs."));
+      connect(actionFileLibraryPaths, SIGNAL(triggered()), this, SLOT(slotFileLibraryPaths()));
 
       actionFileEditPreferences = new QAction(tr("Preferences..."), this);
       actionFileEditPreferences->setStatusTip(tr("Edit editor preferences"));
@@ -644,6 +649,14 @@ namespace dtEditQt
       }
 
       GameEventsDialog editor((QWidget *)EditorData::GetInstance().getMainWindow());
+      editor.exec();
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+   void EditorActions::slotFileLibraryPaths()
+   {
+      // Bring up the library paths editor
+      LibraryPathsEditor editor((QWidget *)EditorData::GetInstance().getMainWindow());
       editor.exec();
    }
 

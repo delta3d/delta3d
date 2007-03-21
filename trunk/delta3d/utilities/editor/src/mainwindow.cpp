@@ -51,7 +51,7 @@
 #include <dtEditQt/projectcontextdialog.h>
 #include <dtEditQt/uiresources.h>
 #include <osgDB/FileNameUtils>
-
+#include <osgDB/Registry>
 
 namespace dtEditQt
 {
@@ -70,6 +70,11 @@ namespace dtEditQt
         dtDAL::Project::GetInstance().SetEditMode(true);
 
         ViewportManager::GetInstance();
+
+        // set up initial OSG library path from environment variable.
+        std::string osgLibPath = getenv("OSG_LIBRARY_PATH");
+
+        EditorData::GetInstance().setOriginalOsgLibraryPath(osgLibPath);
 
         connectSlots();
         setupDockWindows();
@@ -111,6 +116,8 @@ namespace dtEditQt
         fileMenu->addAction(editorActions.actionFileChangeProject);
         fileMenu->addSeparator();
         fileMenu->addMenu(recentProjs);
+        fileMenu->addSeparator();
+        fileMenu->addAction(editorActions.actionFileLibraryPaths);
         fileMenu->addSeparator();
         fileMenu->addAction(editorActions.actionFileExit);
 
@@ -344,6 +351,12 @@ namespace dtEditQt
            enableActions();
    
            bool projectsExist = false;
+
+
+           //Load the custom library paths if they exist
+           loadLibraryPaths();
+
+
            if(findRecentProjects().empty())
            {
                ProjectContextDialog dialog(this);
@@ -439,6 +452,34 @@ namespace dtEditQt
             settings.setValue(EditorSettings::RIGID_CAMERA, editorData.getRigidCamera());
             settings.setValue(EditorSettings::SAVE_MILLISECONDS,EditorActions::GetInstance().saveMilliSeconds);
             settings.setValue(EditorSettings::SELECTION_COLOR,editorData.getSelectionColor());
+        settings.endGroup();
+
+
+        // Save any custom library paths
+        //Save the current project state...
+        settings.remove(EditorSettings::LIBRARY_PATHS);
+        settings.beginGroup(EditorSettings::LIBRARY_PATHS);
+            if(!EditorData::GetInstance().getLibraryPaths()->empty() &&
+                EditorData::GetInstance().getLibraryPaths()->front() != "")
+            {
+                int pos=0;
+                
+                std::list<std::string> *pathList = EditorData::GetInstance().getLibraryPaths();
+                std::list<std::string>::iterator iter;
+                int i = 0;
+
+                for(iter = pathList->begin(); iter != pathList->end(); iter++, i++)
+                {
+                    char number[5] = {0}; // hopefullly there won't be > 10000 paths
+                    std::string text = *iter;
+
+                    QString item = EditorSettings::LIBRARY_PATH_N;
+                    
+                    item += itoa(pos++, number, 10);
+
+                    settings.setValue(item, QVariant(QString(text.c_str())));
+                }
+            }
         settings.endGroup();
 
         //Save the recent projects unless the user does not wish to do so.
@@ -680,6 +721,48 @@ namespace dtEditQt
             EditorData::GetInstance().setSelectionColor(color);
         }
         settings.endGroup();
+    }
+
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void MainWindow::loadLibraryPaths()
+    {
+        EditorSettings settings;
+        std::string customPath = "OSG_LIBRARY_PATH=";
+
+        std::list<std::string> *pathList = EditorData::GetInstance().getLibraryPaths();
+        pathList->clear();
+
+        settings.beginGroup(EditorSettings::LIBRARY_PATHS);
+        
+        if(settings.contains(EditorSettings::LIBRARY_PATH_0))
+        {
+            int pos = 0;
+
+            std::string path = "";
+
+            do
+            {
+                char number[5] = {0}; // hopefullly there won't be > 10000 paths
+                QString item = EditorSettings::LIBRARY_PATH_N;
+                
+                item += itoa(pos++, number, 10);
+
+                path = settings.value(item, QString("")).toString().toStdString();
+
+                if (path != "")
+                {
+                    pathList->push_back(path);
+                    customPath += path;
+                    customPath += ";";
+                }
+            } while (path != "");
+
+            customPath += EditorData::GetInstance().getOriginalOsgLibraryPath();
+            putenv(customPath.c_str());
+            
+            osgDB::Registry::instance()->initLibraryFilePathList();
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////////

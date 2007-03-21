@@ -38,6 +38,10 @@ namespace dtEditQt
    const QString EditorSettings::RECENT_PROJECTS("Recently_Loaded_Projects");
    const QString EditorSettings::RECENT_MAPS("Recently_Loaded_Maps");
 
+   const QString EditorSettings::LIBRARY_PATHS("Custom_Library_Paths");
+   const QString EditorSettings::LIBRARY_PATH_0("Library_Path_0");
+   const QString EditorSettings::LIBRARY_PATH_N("Library_Path_");
+
    const QString EditorSettings::RECENT_PROJECT0("Recent_Project_0");
    const QString EditorSettings::RECENT_PROJECT1("Recent_Project_1");
    const QString EditorSettings::RECENT_PROJECT2("Recent_Project_2");

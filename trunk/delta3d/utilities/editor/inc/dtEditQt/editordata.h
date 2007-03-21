@@ -58,6 +58,20 @@ namespace dtEditQt
       static EditorData &GetInstance();
       
       /**
+       * Gets the environment string associated with OSG_LIBRARY_PATH.
+       *
+       * @return Returns the user-defined custom path that OSG uses in addition to its main search path for libraries.
+       */
+      std::string getOriginalOsgLibraryPath(){return osgLibraryPath;}
+      
+      /**
+       * Gets the environment string associated with OSG_LIBRARY_PATH.
+       *
+       * @param Sets the user-defined custom path that OSG uses in addition to its main search path for libraries.
+       */
+      void setOriginalOsgLibraryPath(std::string path);
+      
+      /**
        * Sets the Main Window.
        *
        * @param Takes the current map. Should be gotten from opening a map or creating a new map
@@ -281,6 +295,11 @@ namespace dtEditQt
       inline std::list<std::string>& getRecentProjects() { return recentProjects; }
       
       /**
+       * Custom library paths
+       */
+      inline std::list<std::string>  *getLibraryPaths() { return &libraryPaths; }
+      
+      /**
        * Recent map accessor
        */
       inline std::list<std::string>& getRecentMaps() { return recentMaps; }
@@ -344,6 +363,7 @@ namespace dtEditQt
       dtCore::RefPtr<dtDAL::Map> myMap;
       std::string currentLibraryDirectory;
       std::string currentProjectContext;
+      std::string osgLibraryPath;
       
       dtDAL::ResourceDescriptor soundResource;
       dtDAL::ResourceDescriptor meshResource;
@@ -354,6 +374,7 @@ namespace dtEditQt
       
       std::list<std::string> recentMaps;
       std::list<std::string> recentProjects;
+      std::list<std::string> libraryPaths;
       
       UndoManager undoManager;
       
