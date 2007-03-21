@@ -118,20 +118,15 @@ namespace dtEditQt
    {
       items.clear();
       
-      std::list<std::string> *pathList = EditorData::GetInstance().getLibraryPaths();
-      
-      if (pathList->empty())
+      std::list<std::string> &pathList = EditorData::GetInstance().getLibraryPaths();
+      if(pathList.empty())
          return;
 
-
-      std::list<std::string>::const_iterator iter;
-
-      for(iter = pathList->begin(); iter != pathList->end(); iter++)
+      for(std::list<std::string>::const_iterator iter = pathList.begin(); 
+          iter != pathList.end(); 
+          ++iter)
       {
-         QListWidgetItem *p = new QListWidgetItem;
-         std::string text = *iter;
-         p->setText(tr(text.c_str()));
-         items.push_back(p);
+         items.push_back(new QListWidgetItem(tr((*iter).c_str())));
       }
    }
 
@@ -149,24 +144,21 @@ namespace dtEditQt
       if(file.isEmpty())
          return;
       
-      
       // If the map already contains this library, no point in continuing
-    
-      std::list<std::string> *pathList = EditorData::GetInstance().getLibraryPaths();
-      std::list<std::string>::iterator iter;
+      std::list<std::string> &pathList = EditorData::GetInstance().getLibraryPaths();
       std::string selectedPath = file.toStdString();
 
-      for(iter = pathList->begin(); iter != pathList->end(); iter++)
+      for(std::list<std::string>::iterator iter = pathList.begin(); 
+          iter != pathList.end(); 
+          ++iter)
       {
-          std::string text = *iter;
-
-          if (text == selectedPath)
+          if((*iter) == selectedPath)
           {
               return;
           }
       }
     
-      pathList->push_back(selectedPath);
+      pathList.push_back(selectedPath);
 
       refreshPaths();
    }
@@ -177,47 +169,46 @@ void LibraryPathsEditor::spawnDeleteConfirmation()
                             tr("Are you sure you want to remove this path?"),
                             tr("&Yes"), tr("&No"), QString::null, 1) == 0)
    {
-       std::list<std::string> *pathList = EditorData::GetInstance().getLibraryPaths();
+      std::list<std::string> &pathList = EditorData::GetInstance().getLibraryPaths();
       
       std::string pathToRemove = pathView->currentItem()->text().toStdString();
       // Does the map have this library?
 
-      std::list<std::string>::iterator iter;
-
-      for(iter = pathList->begin(); iter != pathList->end(); iter++)
+      for(std::list<std::string>::iterator iter = pathList.begin(); 
+          iter != pathList.end(); 
+          ++iter)
       {
-         if (*iter == pathToRemove)
+         if(*iter == pathToRemove)
          {
-             pathList->erase(iter);
-             break;
+            pathList.erase(iter);
+            break;
          }
       }
 
       refreshPaths();
-
    }
 }
 
 void LibraryPathsEditor::shiftPathUp()
 {
-    std::list<std::string> *pathList = EditorData::GetInstance().getLibraryPaths();
+    std::list<std::string> &pathList = EditorData::GetInstance().getLibraryPaths();
     string itemText = pathView->currentItem()->text().toStdString();
     std::list<std::string>::iterator iter;
     int i = 0;
     bool found = false;
 
-    for(iter = pathList->begin(); iter != pathList->end(); iter++, i++)
+    for(iter = pathList.begin(); iter != pathList.end(); ++iter, ++i)
     {
         std::string text = *iter;
 
-        if (text == itemText && iter != pathList->begin())
+        if(text == itemText && iter != pathList.begin())
         {
             found = true;
             break;
         }
     }
 
-    if (false == found)
+    if(!found)
     {
         return;
     }
@@ -252,13 +243,13 @@ void LibraryPathsEditor::shiftPathUp()
 
 void LibraryPathsEditor::shiftPathDown()
 {
-    std::list<std::string> *pathList = EditorData::GetInstance().getLibraryPaths();
+    std::list<std::string> &pathList = EditorData::GetInstance().getLibraryPaths();
     string itemText = pathView->currentItem()->text().toStdString();
     std::list<std::string>::iterator iter;
     int i = 0;
     bool found = false;
 
-    if (pathList->size() <= 1)
+    if (pathList.size() <= 1)
     {
         return;
     }
@@ -266,7 +257,7 @@ void LibraryPathsEditor::shiftPathDown()
     // Need to get the actual end of the list so that we don't accidentally
     // attempt to swap positions with the last item and the list's end position
     
-    iter = pathList->end();
+    iter = pathList.end();
     iter--;
 
     
@@ -274,20 +265,19 @@ void LibraryPathsEditor::shiftPathDown()
     std::list<std::string>::iterator lastItem = iter;
 
 
-    for(iter = pathList->begin(); iter != pathList->end(); iter++, i++)
+    for(iter = pathList.begin(); iter != pathList.end(); ++iter, ++i)
     {
         std::string text = *iter;
 
-
         // Cannot test against pathList->end() 
-        if (text == itemText && iter != lastItem)
+        if(text == itemText && iter != lastItem)
         {
             found = true;
             break;
         }
     }
 
-    if (false == found)
+    if(!found)
     {
         return;
     }
