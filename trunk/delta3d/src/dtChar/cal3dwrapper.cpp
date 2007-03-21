@@ -1,5 +1,5 @@
 
-#include <dtChar/Cal3DWrapper.h>
+#include <dtChar/cal3dwrapper.h>
 #include <assert.h>
 
 using namespace dtChar;
