@@ -278,21 +278,21 @@ void GameManagerTests::TestTemplateActors()
    toMakeAsATemplate->SetName("TemplateActorProxy");
 
    std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > toFill;
-   mManager->GetAllTemplates(toFill);
+   mManager->GetAllPrototypes(toFill);
    CPPUNIT_ASSERT_MESSAGE("GameManager shouldnt have had templates in it currently...", toFill.size() == 0);
 
-   mManager->AddActorAsATemplate(*toMakeAsATemplate.get());
+   mManager->AddActorAsAPrototype(*toMakeAsATemplate.get());
 
-   mManager->GetAllTemplates(toFill);
+   mManager->GetAllPrototypes(toFill);
    CPPUNIT_ASSERT_MESSAGE("Tried adding a template into the game manager, but it surely didnt want to stay around.", toFill.size() != 0);
 
    toFill.clear();
 
    dtCore::RefPtr<dtDAL::ActorProxy> templateToFill;
-   mManager->FindTemplateByID(toMakeAsATemplate->GetId(),templateToFill);
+   mManager->FindPrototypeByID(toMakeAsATemplate->GetId(),templateToFill);
    CPPUNIT_ASSERT_MESSAGE("Tried finding a template that should be in the gm, but its not....",templateToFill != 0 );
 
-   dtCore::RefPtr<dtDAL::ActorProxy> ourActualActor = mManager->CreateActorFromTemplate(toMakeAsATemplate->GetId());
+   dtCore::RefPtr<dtDAL::ActorProxy> ourActualActor = mManager->CreateActorFromPrototype(toMakeAsATemplate->GetId());
    
    CPPUNIT_ASSERT_MESSAGE("Tried cloning from a template, didn't work out to well...", ourActualActor != NULL);
    CPPUNIT_ASSERT_MESSAGE("Tried cloning from a template, didn't work out to well...", ourActualActor->GetName() == toMakeAsATemplate->GetName());

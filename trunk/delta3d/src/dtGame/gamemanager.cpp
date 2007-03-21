@@ -786,17 +786,17 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::AddActorAsATemplate(GameActorProxy& gameActorProxy)
+   void GameManager::AddActorAsAPrototype(GameActorProxy& gameActorProxy)
    {
       gameActorProxy.SetGameManager(this);
-      mTemplateActors.insert(std::make_pair(gameActorProxy.GetId(), &gameActorProxy));
+      mPrototypeActors.insert(std::make_pair(gameActorProxy.GetId(), &gameActorProxy));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<dtDAL::ActorProxy> GameManager::CreateActorFromTemplate(const dtCore::UniqueId& uniqueID)
+   dtCore::RefPtr<dtDAL::ActorProxy> GameManager::CreateActorFromPrototype(const dtCore::UniqueId& uniqueID)
    {
       dtCore::RefPtr<dtDAL::ActorProxy> ourObject;
-      FindTemplateByID(uniqueID, ourObject);
+      FindPrototypeByID(uniqueID, ourObject);
       if(ourObject != NULL)
          return ourObject->Clone().get();
       return NULL;
@@ -1047,22 +1047,22 @@ namespace dtGame
          }
       }
 
-      DeleteAllTemplates();
+      DeleteAllPrototypes();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::DeleteAllTemplates()
+   void GameManager::DeleteAllPrototypes()
    {
-      mTemplateActors.clear();
+      mPrototypeActors.clear();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::DeleteTemplate(const dtCore::UniqueId& uniqueId)
+   void GameManager::DeletePrototype(const dtCore::UniqueId& uniqueId)
    {
-      std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> >::iterator itor = mTemplateActors.find(uniqueId);
-      if(itor != mTemplateActors.end())
+      std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> >::iterator itor = mPrototypeActors.find(uniqueId);
+      if(itor != mPrototypeActors.end())
       {
-         mTemplateActors.erase(itor);
+         mPrototypeActors.erase(itor);
       }
    }
 
@@ -1108,7 +1108,7 @@ namespace dtGame
    void GameManager::GetAllActors(std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill) const
    {
       toFill.clear();
-      toFill.reserve(mGameActorProxyMap.size() + mActorProxyMap.size() + mTemplateActors.size());
+      toFill.reserve(mGameActorProxyMap.size() + mActorProxyMap.size() + mPrototypeActors.size());
 
       std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> >::const_iterator itor;
       for(itor = mGameActorProxyMap.begin(); itor != mGameActorProxyMap.end(); ++itor)
@@ -1118,18 +1118,18 @@ namespace dtGame
       for(iter = mActorProxyMap.begin(); iter != mActorProxyMap.end(); ++iter)
          toFill.push_back(iter->second);
 
-      for(itor = mTemplateActors.begin(); itor != mTemplateActors.end(); ++itor)
+      for(itor = mPrototypeActors.begin(); itor != mPrototypeActors.end(); ++itor)
          toFill.push_back(itor->second.get());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::GetAllTemplates(std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill) const
+   void GameManager::GetAllPrototypes(std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill) const
    {  
       toFill.clear();
-      toFill.reserve(mTemplateActors.size());
+      toFill.reserve(mPrototypeActors.size());
 
       std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> >::const_iterator itor;
-      for(itor = mTemplateActors.begin(); itor != mTemplateActors.end(); ++itor)
+      for(itor = mPrototypeActors.begin(); itor != mPrototypeActors.end(); ++itor)
          toFill.push_back(itor->second.get());
    }
 
@@ -1214,13 +1214,13 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::FindTemplatesByActorType(const dtDAL::ActorType &type, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill) const
+   void GameManager::FindPrototypesByActorType(const dtDAL::ActorType &type, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill) const
    {
       toFill.clear();
-      toFill.reserve(mTemplateActors.size());
+      toFill.reserve(mPrototypeActors.size());
 
-      for (std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> >::const_iterator itor = mTemplateActors.begin();
-         itor != mTemplateActors.end(); ++itor)
+      for (std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> >::const_iterator itor = mPrototypeActors.begin();
+         itor != mPrototypeActors.end(); ++itor)
       {
          if (itor->second->GetActorType() == type)
             toFill.push_back(itor->second.get());
@@ -1228,13 +1228,13 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::FindTemplatesByName(const std::string &name, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill) const
+   void GameManager::FindPrototypesByName(const std::string &name, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill) const
    {
       toFill.clear();
-      toFill.reserve(mTemplateActors.size());
+      toFill.reserve(mPrototypeActors.size());
 
-      for (std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> >::const_iterator itor = mTemplateActors.begin();
-         itor != mTemplateActors.end(); ++itor)
+      for (std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> >::const_iterator itor = mPrototypeActors.begin();
+         itor != mPrototypeActors.end(); ++itor)
       {
          if (dtUtil::Match(const_cast<char*>(name.c_str()), const_cast<char*>(itor->second->GetName().c_str())))
             toFill.push_back(itor->second.get());
@@ -1242,10 +1242,10 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::FindTemplateByID(const dtCore::UniqueId& uniqueID, dtCore::RefPtr<dtDAL::ActorProxy> &ourObject)
+   void GameManager::FindPrototypeByID(const dtCore::UniqueId& uniqueID, dtCore::RefPtr<dtDAL::ActorProxy> &ourObject)
    {
-      std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> >::const_iterator itor = mTemplateActors.find(uniqueID);
-      if(itor != mTemplateActors.end())
+      std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> >::const_iterator itor = mPrototypeActors.find(uniqueID);
+      if(itor != mPrototypeActors.end())
          ourObject = itor->second.get();
    }
 
