@@ -27,6 +27,8 @@
 
 class CalModel;
 
+
+
 namespace dtChar
 {
    /** Simple class that wraps up a dtChar::Model so it can be added to the
@@ -59,7 +61,7 @@ namespace dtChar
     * This method creates lots of drawables each one with a single
     * material, to take advantage of OSG state sorting.
     */
-    void Create(CoreModel *core);
+    void Create(const std::string &filename);
 
     /**
     * Starts an animation in loop mode
@@ -90,14 +92,14 @@ namespace dtChar
     */
     void StopAction(unsigned id);
 
-    /// Get the core model
-    const CoreModel *GetCoreModel() const { return mCoreModel.get(); }
+    dtChar::Cal3DWrapper* GetCal3DWrapper() {return mCal3DWrapper.get(); }
 
    private:
       
       osg::ref_ptr<osg::Geode>    mGeode; 
-      osg::ref_ptr<CoreModel>     mCoreModel;
       dtCore::RefPtr<dtChar::Cal3DWrapper> mCal3DWrapper;
+
+
    };
 }
 #endif // chardrawable_h__

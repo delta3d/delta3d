@@ -33,7 +33,11 @@ void CharacterFileHandler::startElement( const XMLCh* const uri,const XMLCh* con
    dtUtil::AttributeSearch::ResultMap results;
    results = search(attrs);
 
-   if (elementStr == "skeleton")
+   if (elementStr == "character")
+   {
+      mName = results.find("name")->second;
+   }
+   else if (elementStr == "skeleton")
    {
       mSkeletonFilename = results.find("filename")->second;
    }

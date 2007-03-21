@@ -81,6 +81,7 @@ namespace dtChar
       template class DT_CHAR_EXPORT std::vector<std::string>;
 #endif
 
+      std::string mName;                            ///<The name of this animated entity
       std::vector<std::string> mAnimationFilenames; ///<Container of animation filenames
       std::vector<std::string> mMaterialFilenames;  ///<Container of material filenames
       std::vector<std::string> mMeshFilenames;      ///<Container of mesh filenames

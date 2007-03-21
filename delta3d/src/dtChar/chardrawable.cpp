@@ -2,13 +2,17 @@
 #include <osg/MatrixTransform>
 #include <osg/Geode>
 #include <osg/Timer>
+
 #include <dtChar/submesh.h>
 #include <dtChar/chardrawable.h>
 #include <dtChar/coremodel.h>
 #include <dtChar/cal3dwrapper.h>
+#include <dtChar/cal3dloader.h>
 #include <dtCore/system.h>
 #include <dtUtil/log.h>
 #include <cassert>
+
+#include <cal3d/corematerial.h>
 
 using namespace dtChar;
 
@@ -38,17 +42,19 @@ void CharDrawable::OnMessage(Base::MessageData *data)
 }
 
 
-void CharDrawable::Create(CoreModel *core) 
+void CharDrawable::Create(const std::string &filename) 
 {
    // Create a new cal model and an associated update callback
 
-   CalModel *model  = new CalModel(core->get());
+   Cal3DLoader loader;
+   CalModel *model = loader.Load(filename);
+
    mCal3DWrapper = new Cal3DWrapper(model);
 
    osg::NodeCallback* nodeCallback = mGeode->getUpdateCallback();
    
    // attach all meshes to the model
-   for(int meshId = 0; meshId < core->get()->getCoreMeshCount(); meshId++)
+   for(int meshId = 0; meshId < mCal3DWrapper->GetCoreMeshCount(); meshId++)
    {
       mCal3DWrapper->AttachMesh(meshId);
    }
@@ -72,12 +78,11 @@ void CharDrawable::Create(CoreModel *core)
       mCal3DWrapper->EndRenderingQuery();
    }
 
+
    /// Force generation of first mesh
    mCal3DWrapper->Update(0);
-   mCoreModel = core;
 
    GetMatrixNode()->addChild(mGeode.get()); 
-
 }
 
 void CharDrawable::StartAction(unsigned id, float delay_in, float delay_out)
