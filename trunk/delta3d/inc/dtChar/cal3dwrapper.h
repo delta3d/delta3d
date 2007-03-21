@@ -24,7 +24,7 @@
 
 #include <dtChar/export.h>
 #include <cal3d/model.h>
-//#include <cal3d/coremodel.h>
+#include <cal3d/coremodel.h>
 #include <cal3d/renderer.h>
 #include <cal3d/mixer.h>
 #include <osg/Referenced>
@@ -62,7 +62,11 @@ namespace dtChar
          int GetMapCount()    { return mRenderer->getMapCount(); }
          int GetMeshCount()                 { return mRenderer->getMeshCount(); }
          int GetSubmeshCount(int submeshID) { return mRenderer->getSubmeshCount(submeshID); }
-         //int GetCoreMeshCount() { return mCalModel->getCoreModel()->getCoreMeshCount(); }
+
+         int GetCoreMeshCount() { return mCalModel->getCoreModel()->getCoreMeshCount(); }
+         int GetCoreAnimationCount() {return mCalModel->getCoreModel()->getCoreAnimationCount(); }
+         int GetCoreMaterialCount() {return mCalModel->getCoreModel()->getCoreMaterialCount();}
+         CalCoreMaterial* GetCoreMaterial(int matID) {return mCalModel->getCoreModel()->getCoreMaterial(matID); }
 
          int GetFaces(int *faces)          { return mRenderer->getFaces( (CalIndex*)faces ); }
          int GetNormals(float *normals, int stride=0) { return mRenderer->getNormals(normals, stride); }

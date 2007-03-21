@@ -10,7 +10,7 @@
 #include <dtChar/characterfilehandler.h>
 #include <dtChar/chardrawable.h>
 #include <dtChar/characterfilehandler.h>
-#include <dtChar/coremodel.h>
+#include <dtChar/cal3dwrapper.h>
 #include <dtChar/chardrawable.h>
 #include <dtUtil/xercesparser.h>
 #include <dtUtil/stringutils.h>
@@ -28,7 +28,6 @@ using namespace dtCore;
 
 Viewer::Viewer():
 mMotion(NULL),
-mCoreModel(NULL),
 mCharacter(NULL)
 {
 
@@ -88,52 +87,16 @@ void Viewer::OnLoadCharFile( const QString &filename )
    SetDataFilePathList( GetDeltaDataPathList() + ";" +
                         dir.path().toStdString() + ";" );
 
-   //read the character's definition file
-   dtChar::CharacterFileHandler handler;
-   dtUtil::XercesParser parser;
-   bool result = parser.Parse(filename.toStdString(), handler ); 
-
-   //create the coreModel ("template")
-   mCoreModel = new dtChar::CoreModel("test");
-
-   //load skeleton
-   mCoreModel->LoadSkeleton( FindFileInPathList(handler.mSkeletonFilename) );
-
-   //load animations
-   unsigned int id = 0;
-   std::vector<std::string>::iterator animItr = handler.mAnimationFilenames.begin();
-   while (animItr != handler.mAnimationFilenames.end())
-   {
-      mCoreModel->LoadAnimation( FindFileInPathList(*animItr) );
-      emit OnAnimationLoaded(id, QString().fromStdString(*animItr) );
-      ++id;
-      ++animItr;
-   }
-
-   //load meshes
-   std::vector<std::string>::iterator meshItr = handler.mMeshFilenames.begin();
-   while (meshItr != handler.mMeshFilenames.end())
-   {
-      mCoreModel->LoadMesh( FindFileInPathList(*meshItr) );
-      ++meshItr;
-   }
-
-   //load materials
-   std::vector<std::string>::iterator matItr = handler.mMaterialFilenames.begin();
-   while (matItr != handler.mMaterialFilenames.end())
-   {
-      mCoreModel->LoadMaterial( FindFileInPathList(*matItr) );
-      ++matItr;
-   }
-
-   //load all the required textures (tries to do this from loadMaterial as well)
-   mCoreModel->LoadAllTextures(dtCore::GetDeltaRootPath() + "/examples/data/marine/");
-
    mCharacter = new dtChar::CharDrawable();
    AddDrawable(mCharacter.get());
 
-   //create an instance from the coreModel template
-   mCharacter->Create(mCoreModel.get());
+   //create an instance from the character definition file
+   mCharacter->Create(filename.toStdString());
+
+   for (int animID=0; animID<mCharacter->GetCal3DWrapper()->GetCoreAnimationCount(); animID++)
+   {
+      emit OnAnimationLoaded(animID, QString::number(animID) );
+   }
 }
 
 void Viewer::OnStartAnimation( unsigned int id, float weight, float delay )

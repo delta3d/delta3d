@@ -16,7 +16,6 @@ namespace dtCore
 namespace dtChar
 {
    class CharDrawable;
-   class CoreModel;
 }
 
 class Viewer : public QObject, public dtABC::Application
@@ -47,7 +46,6 @@ protected:
 
 private:
    QBasicTimer mTimer;
-   dtCore::RefPtr<dtChar::CoreModel> mCoreModel;
    dtCore::RefPtr<dtChar::CharDrawable> mCharacter;
    dtCore::RefPtr<dtCore::OrbitMotionModel> mMotion;
 };
