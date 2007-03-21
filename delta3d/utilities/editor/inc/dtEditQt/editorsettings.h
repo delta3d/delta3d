@@ -55,6 +55,10 @@ namespace dtEditQt
 
         static const QString RECENT_PROJECTS;
         static const QString RECENT_MAPS;
+        static const QString LIBRARY_PATHS;
+
+        static const QString LIBRARY_PATH_0;
+        static const QString LIBRARY_PATH_N;
 
         static const QString RECENT_PROJECT0;
         static const QString RECENT_PROJECT1;

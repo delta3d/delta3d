@@ -64,6 +64,12 @@ namespace dtEditQt
          QMenu *createPopupMenu() { return NULL; }
 
          /**
+          * Adds custom library paths as specified by the user settings
+          * @return No return value
+          */
+         void loadLibraryPaths();
+
+         /**
           * Finds the recently opened projects, if applicable
           * @return The number of projects found
           */
