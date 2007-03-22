@@ -29,6 +29,7 @@ void Delta3DThread::run()
    connect(mWin, SIGNAL(StartAnimation(unsigned int,float,float)), viewer.get(), SLOT(OnStartAnimation(unsigned int,float,float)));
    connect(mWin, SIGNAL(StopAnimation(unsigned int,float)), viewer.get(), SLOT(OnStopAnimation(unsigned int,float)));
    connect(mWin, SIGNAL(StartAction(unsigned int,float,float)), viewer.get(), SLOT(OnStartAction(unsigned int,float,float)));
+   connect(mWin, SIGNAL(LOD_Changed(float)), viewer.get(), SLOT(OnLOD_Changed(float)));
 
    dtCore::System::GetInstance().Start();
 

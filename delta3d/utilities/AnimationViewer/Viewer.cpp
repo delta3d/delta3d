@@ -115,3 +115,16 @@ void Viewer::OnStartAction( unsigned int id, float delayIn, float delayOut )
 {
    mCharacter->StartAction( id, delayIn, delayOut );
 }
+
+void Viewer::OnLOD_Changed( float zeroToOneValue )
+{
+   assert(fabs(zeroToOneValue)<= 1.0f);
+
+   if (mCharacter.get())
+   {
+      dtChar::Cal3DWrapper* mcHammer = mCharacter->GetCal3DWrapper();
+      assert(mcHammer);
+     
+      mcHammer->SetLODLevel(zeroToOneValue);
+   }  
+}

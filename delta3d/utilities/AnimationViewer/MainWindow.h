@@ -19,10 +19,12 @@ signals:
    void StartAnimation(unsigned int, float, float);
    void StopAnimation(unsigned int, float);
    void StartAction(unsigned int, float, float);
+   void LOD_Changed(float zeroToOneValue);
 
 public slots:
    void OnNewAnimation(unsigned int id, const QString &filename);
    void OnAnimationClicked( QTableWidgetItem *item);
+   void OnLOD_Changed(int newValue);
 	
 private:
    void CreateMenus();
