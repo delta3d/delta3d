@@ -136,6 +136,9 @@
 				RelativePath="..\..\..\src\dtActors\actionactorproxy.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtActors\animationGameActor.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtActors\autotriggeractorproxy.cpp">
 			</File>
 			<File
@@ -234,9 +237,6 @@
 			<File
 				RelativePath="..\..\..\src\dtActors\triggeractorproxy.cpp">
 			</File>
-			<File
-				RelativePath="..\..\..\src\dtActors\tripodactorproxy.cpp">
-			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -244,6 +244,9 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
 				RelativePath="..\..\..\inc\dtActors\actionactorproxy.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtActors\animationGameActor.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtActors\autotriggeractorproxy.h">
@@ -343,6 +346,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtActors\triggeractorproxy.h">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtActors\tripodactorproxy.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtActors\tripodactorproxy.h">

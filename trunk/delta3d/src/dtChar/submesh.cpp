@@ -7,19 +7,19 @@ using namespace dtChar;
 
 class SubMeshDirtyCallback: public osg::Geometry::UpdateCallback {
 public:
-	virtual void 	update (osg::NodeVisitor *, osg::Drawable *d) {
+	virtual void update (osg::NodeVisitor *, osg::Drawable *d) {
 		d->dirtyBound();
 	}
 };
 
-SubMesh::SubMesh() {
+SubMeshDrawable::SubMeshDrawable() {
 	std::cout << "SubMesh::SubMesh(): You should never call this constructor!" << std::endl;
 	exit(1);
 }
 
-SubMesh::SubMesh(Cal3DWrapper *wrapper, unsigned mesh, unsigned submesh) 
+SubMeshDrawable::SubMeshDrawable(Cal3DWrapper *wrapper, unsigned mesh, unsigned submesh) 
 {
-   this->mWrapper = wrapper;
+    this->mWrapper = wrapper;
 	this->mMeshID    = mesh;
 	this->mSubmeshID = submesh;
 
@@ -55,7 +55,7 @@ SubMesh::SubMesh(Cal3DWrapper *wrapper, unsigned mesh, unsigned submesh)
 	setUpdateCallback(new SubMeshDirtyCallback());
 }
 
-SubMesh::~SubMesh(void)
+SubMeshDrawable::~SubMeshDrawable(void)
 {
 	delete [] mMeshVertices;
 	delete [] mMeshNormals;
@@ -63,7 +63,7 @@ SubMesh::~SubMesh(void)
 	delete [] mMeshTextureCoordinates;
 }
 
-void SubMesh::setUpMaterial() 
+void SubMeshDrawable::setUpMaterial() 
 {
 	osg::StateSet *set = this->getOrCreateStateSet();
 	
@@ -102,14 +102,15 @@ void SubMesh::setUpMaterial()
 		 if (mWrapper->GetMapCount() > 0)
 		 {
 			osg::Texture2D *texture = (osg::Texture2D*)mWrapper->GetMapUserData(0);
-			if (texture != 0) {
+			if (texture != 0) 
+            {
 			   set->setTextureAttributeAndModes(0, texture, osg::StateAttribute::ON);
 			}
 		 }		
 	}
 }
 
-void SubMesh::drawImplementation(osg::State& state) const {
+void SubMeshDrawable::drawImplementation(osg::State& state) const {
 	// begin the rendering loop
 	if(mWrapper->BeginRenderingQuery())
 	{
@@ -167,7 +168,7 @@ void SubMesh::drawImplementation(osg::State& state) const {
 }
 
 
-void SubMesh::accept(osg::PrimitiveFunctor& functor) const
+void SubMeshDrawable::accept(osg::PrimitiveFunctor& functor) const
 {
 	functor.setVertexArray(vertexCount, (osg::Vec3f *)(mMeshVertices));
 
@@ -187,12 +188,12 @@ void SubMesh::accept(osg::PrimitiveFunctor& functor) const
 	return;
 }
 
-osg::Object* SubMesh::clone(const osg::CopyOp&) const 
+osg::Object* SubMeshDrawable::clone(const osg::CopyOp&) const 
 {
-	return new SubMesh(mWrapper, mMeshID, mSubmeshID);
+	return new SubMeshDrawable(mWrapper, mMeshID, mSubmeshID);
 }
 
-osg::BoundingBox SubMesh::computeBound() const 
+osg::BoundingBox SubMeshDrawable::computeBound() const 
 {
 	osg::BoundingBox bbox;
     bbox.init();

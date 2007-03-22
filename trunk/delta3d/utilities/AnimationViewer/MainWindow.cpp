@@ -7,6 +7,7 @@
 #include <QStatusBar>
 #include <QToolBar>
 #include <QPushButton>
+#include <QDockWidget>
 
 MainWindow::MainWindow():
 mExitAct(NULL),
@@ -30,9 +31,18 @@ mAnimListWidget(NULL)
    //QPushButton *testButt = new QPushButton;
    //testButt->setCheckable(true);
 
-   //QToolBar *testBar = addToolBar("hey baby");
-   //testBar->addWidget(testButt);
-   
+   QSlider *lodSlider = new QSlider(Qt::Horizontal);
+   lodSlider->setMinimumSize(QSize(100, 20));
+   lodSlider->setMaximumSize(QSize(100, 50));
+   lodSlider->setMaximum(100);
+   lodSlider->setMinimum(0);
+   lodSlider->setSliderPosition(100);  
+
+   QToolBar *toolBar = addToolBar("hey baby");     
+   toolBar->setMovable(true);
+   toolBar->addWidget(lodSlider); 
+  
+   connect(lodSlider, SIGNAL(valueChanged(int)), this, SLOT(OnLOD_Changed(int)));
 
    QStringList headers;
    headers << "Name" << "Weight (L)" << "Delay (L)" << "Delay In (A)" << "Delay Out (A)";
@@ -166,6 +176,12 @@ void MainWindow::OnAnimationClicked( QTableWidgetItem *item )
       //emit StartAnimation( item->data(Qt::UserRole).toUInt() );
       OnStopAnimation(item->row());
    }
+}
+
+void MainWindow::OnLOD_Changed(int newValue)
+{
+   float normalizedValue = (float)newValue / 100;
+   emit LOD_Changed(normalizedValue);
 }
 
 void MainWindow::UpdateRecentFileActions()

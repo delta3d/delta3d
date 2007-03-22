@@ -58,16 +58,16 @@ namespace dtChar {
  * Users of the osgCal library doesn't need to know about this class, it is
  * internal.
  */
-class SubMesh: public osg::Drawable {
+class SubMeshDrawable: public osg::Drawable {
 public:
-    SubMesh();
+    SubMeshDrawable();
 
-    ~SubMesh();
+    ~SubMeshDrawable();
 
     /**
      * Creates a submesh for one model given the mesh and submesh of this mesh
      */
-    SubMesh(Cal3DWrapper *wrapper, unsigned mesh, unsigned submesh);
+    SubMeshDrawable(Cal3DWrapper *wrapper, unsigned mesh, unsigned submesh);
 
     /**
      * Draws the geometry.
@@ -86,7 +86,7 @@ public:
     
 	virtual void accept(osg::PrimitiveFunctor& pf) const;
 
-    virtual osg::Object* cloneType() const { return new SubMesh(); }
+    virtual osg::Object* cloneType() const { return new SubMeshDrawable(); }
     virtual osg::Object* clone(const osg::CopyOp&) const;
 	osg::BoundingBox computeBound() const;
 

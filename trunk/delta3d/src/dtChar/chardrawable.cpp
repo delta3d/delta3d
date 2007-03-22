@@ -1,4 +1,3 @@
-#include <osg/NodeCallback>
 #include <osg/MatrixTransform>
 #include <osg/Geode>
 #include <osg/Timer>
@@ -19,9 +18,7 @@ using namespace dtChar;
 CharDrawable::CharDrawable()
    : mGeode(new osg::Geode)
    ,mCal3DWrapper(NULL)
-{
-
-   AddSender(&dtCore::System::GetInstance());
+{  
 
 }
 
@@ -33,6 +30,8 @@ CharDrawable::~CharDrawable()
 
 void CharDrawable::OnMessage(Base::MessageData *data)
 {
+   assert(mCal3DWrapper.get());
+
    // tick the animation
    if( data->message == "preframe" )
    {
@@ -51,16 +50,6 @@ void CharDrawable::Create(const std::string &filename)
 
    mCal3DWrapper = new Cal3DWrapper(model);
 
-   osg::NodeCallback* nodeCallback = mGeode->getUpdateCallback();
-   
-   // attach all meshes to the model
-   for(int meshId = 0; meshId < mCal3DWrapper->GetCoreMeshCount(); meshId++)
-   {
-      mCal3DWrapper->AttachMesh(meshId);
-   }
-
-   mCal3DWrapper->SetMaterialSet(0);
-
    if(mCal3DWrapper->BeginRenderingQuery()) 
    {
       int meshCount = mCal3DWrapper->GetMeshCount();
@@ -71,7 +60,7 @@ void CharDrawable::Create(const std::string &filename)
       
          for(int submeshId = 0; submeshId < submeshCount; submeshId++) 
          {
-            SubMesh *submesh = new SubMesh(mCal3DWrapper.get(), meshId, submeshId);
+            SubMeshDrawable *submesh = new SubMeshDrawable(mCal3DWrapper.get(), meshId, submeshId);
             mGeode->addDrawable(submesh);
          }
       }
@@ -83,6 +72,7 @@ void CharDrawable::Create(const std::string &filename)
    mCal3DWrapper->Update(0);
 
    GetMatrixNode()->addChild(mGeode.get()); 
+   AddSender(&dtCore::System::GetInstance());
 }
 
 void CharDrawable::StartAction(unsigned id, float delay_in, float delay_out)

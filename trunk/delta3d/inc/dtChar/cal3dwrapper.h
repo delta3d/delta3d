@@ -88,9 +88,9 @@ namespace dtChar
 
    
       private:
-         CalModel *mCalModel;
+         CalModel    *mCalModel;
          CalRenderer *mRenderer;
-         CalMixer *mMixer;
+         CalMixer    *mMixer;
    
    };
 }//namespace dtChar
