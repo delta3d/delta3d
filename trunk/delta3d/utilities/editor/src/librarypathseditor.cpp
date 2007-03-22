@@ -100,11 +100,13 @@ namespace dtEditQt
       connect(downPath,   SIGNAL(clicked()),   this, SLOT(shiftPathDown()));
       connect(close,     SIGNAL(clicked()),   this, SLOT(close()));
       connect(this, SIGNAL(noPathsSelected()), this, SLOT(disableButtons()));
-      connect(this, SIGNAL(pathSelected()),this, SLOT(enableButtons()));
+      //connect(this, SIGNAL(pathSelected()),this, SLOT(enableButtons()));
       
       QVBoxLayout *mainLayout = new QVBoxLayout(this);
       mainLayout->addWidget(groupBox);
       mainLayout->addLayout(buttonLayout);
+
+      disableButtons();
 
       refreshPaths();
    }
@@ -166,44 +168,8 @@ namespace dtEditQt
 
    void LibraryPathsEditor::shiftPathUp()
    {
-      std::vector<std::string> pathList;
-      dtUtil::LibrarySharingManager::GetInstance().GetSearchPath(pathList);
-
-      std::string itemText = pathView->currentItem()->text().toStdString();
-      std::vector<std::string>::iterator iter;
-      int i = 0;
-      bool found = false;
-
-      for(iter = pathList.begin(); iter != pathList.end(); ++iter, ++i)
-      {
-         std::string text = *iter;
-
-         if(text == itemText && iter != pathList.begin())
-         {
-            found = true;
-            break;
-         }
-      }
-
-      if(!found)
-      {
-         return;
-      }
-      else
-      {
-         std::vector<std::string>::iterator a = iter;
-         std::vector<std::string>::iterator b = --iter;
-           
-         std::string tmp = *a;
-         *a = *b;
-         *b = tmp;
-      }
-
-      refreshPaths();
-
-      // ensure the current item is selected
-      QListWidgetItem *item = pathView->item(i - 1);
-      if(item)
+      QListWidgetItem *item = pathView->item(pathView->count() - 1);
+      if(item != NULL)
       {
          pathView->setCurrentItem(item);
          if(item == pathView->item(0))
@@ -211,67 +177,27 @@ namespace dtEditQt
             upPath->setDisabled(true);
          }
 
-         if(item == pathView->item(pathView->count()-1))
+         if(item == pathView->item(pathView->count() - 1))
          {
             downPath->setDisabled(true);
          }
       }
+
+      dtUtil::LibrarySharingManager::GetInstance().ClearSearchPath();
+
+      for(int i = 0; i < pathView->count(); i++)
+      {
+         dtUtil::LibrarySharingManager::GetInstance().AddToSearchPath(pathView->item(i)->text().toStdString());
+      }
+
+      refreshPaths();
    }
 
    void LibraryPathsEditor::shiftPathDown()
    {
-      std::vector<std::string> pathList;
-      dtUtil::LibrarySharingManager::GetInstance().GetSearchPath(pathList);
-
-      std::string itemText = pathView->currentItem()->text().toStdString();
-      std::vector<std::string>::iterator iter;
-      int i = 0;
-      bool found = false;
-
-      if(pathList.size() <= 1)
-      {
-         return;
-      }
-
-      // Need to get the actual end of the list so that we don't accidentally
-      // attempt to swap positions with the last item and the list's end position
-      iter = pathList.end();
-      iter--;
-
-      // Store the actual last item position away for later use.
-      std::vector<std::string>::iterator lastItem = iter;
-
-      for(iter = pathList.begin(); iter != pathList.end(); ++iter, ++i)
-      {
-         std::string text = *iter;
-
-         // Cannot test against pathList->end() 
-         if(text == itemText && iter != lastItem)
-         {
-            found = true;
-            break;
-         }
-      }
-
-      if(!found)
-      {
-         return;
-      }
-      else
-      {
-         std::vector<std::string>::iterator a = iter;
-         std::vector<std::string>::iterator b = ++iter;
-           
-         std::string tmp = *a;
-         *a = *b;
-         *b = tmp;
-      }
-
-      refreshPaths();
-
       // ensure the current item is selected
-      QListWidgetItem *item = pathView->item(i + 1);
-      if(item)
+      QListWidgetItem *item = pathView->item(pathView->count() + 1);
+      if(item != NULL)
       {
          pathView->setCurrentItem(item);
          if(item == pathView->item(0))
@@ -279,11 +205,20 @@ namespace dtEditQt
             upPath->setDisabled(true);
          }
            
-         if(item == pathView->item(pathView->count()-1))
+         if(item == pathView->item(pathView->count() - 1))
          {
             downPath->setDisabled(true);
          }
       }
+
+      dtUtil::LibrarySharingManager::GetInstance().ClearSearchPath();
+
+      for(int i = 0; i < pathView->count(); i++)
+      {
+         dtUtil::LibrarySharingManager::GetInstance().AddToSearchPath(pathView->item(i)->text().toStdString());
+      }
+
+      refreshPaths();
    }
 
    void LibraryPathsEditor::enableButtons()
@@ -302,7 +237,6 @@ namespace dtEditQt
 
    void LibraryPathsEditor::refreshPaths()
    {
-      std::string customPath;
       pathView->clear();
 
       std::vector<QListWidgetItem*> paths;
@@ -311,11 +245,10 @@ namespace dtEditQt
       for(size_t i = 0; i < paths.size(); i++)
       {   
          pathView->addItem(paths[i]);
-         customPath += paths[i]->text().toStdString();
-         customPath += ";";
       }
        
-      connect(pathView, SIGNAL(itemSelectionChanged()), this, SLOT(enableButtons()));
+      // TODO uncomment this line when library recording is supported. 
+      //connect(pathView, SIGNAL(itemSelectionChanged()), this, SLOT(enableButtons()));
       if(pathView->currentItem() == NULL)
          emit noPathsSelected();
       else
