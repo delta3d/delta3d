@@ -175,8 +175,8 @@ namespace dtEditQt
          // Action - Edit - Map Events Editor
          QAction *actionEditMapEvents;
 
-         // Action - Edit - Edit Library Paths Dialog
-         QAction *actionFileLibraryPaths;
+         // Action - File - Library Paths Dialog
+         QAction *actionFileEditLibraryPaths;
 
          // Action - Edie - Task Editor
          QAction *actionEditTaskEditor;
@@ -314,7 +314,7 @@ namespace dtEditQt
          /**
          * Slot - File Library Paths event.  Spawns the edit library paths dialog.
          */
-         void slotFileLibraryPaths();
+         void slotFileEditLibraryPaths();
 
          /**
           * Slot - Project - Change context.  Spawns a dialog to change the current project context.

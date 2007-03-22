@@ -118,11 +118,12 @@ namespace dtEditQt
    {
       items.clear();
       
-      std::list<std::string> &pathList = EditorData::GetInstance().getLibraryPaths();
+      std::vector<std::string> pathList;
+      dtUtil::LibrarySharingManager::GetInstance().GetSearchPath(pathList);
       if(pathList.empty())
          return;
 
-      for(std::list<std::string>::const_iterator iter = pathList.begin(); 
+      for(std::vector<std::string>::const_iterator iter = pathList.begin(); 
           iter != pathList.end(); 
           ++iter)
       {
@@ -143,220 +144,183 @@ namespace dtEditQt
       // did they hit cancel?
       if(file.isEmpty())
          return;
-      
-      // If the map already contains this library, no point in continuing
-      std::list<std::string> &pathList = EditorData::GetInstance().getLibraryPaths();
-      std::string selectedPath = file.toStdString();
 
-      for(std::list<std::string>::iterator iter = pathList.begin(); 
-          iter != pathList.end(); 
-          ++iter)
-      {
-          if((*iter) == selectedPath)
-          {
-              return;
-          }
-      }
-    
-      pathList.push_back(selectedPath);
+      dtUtil::LibrarySharingManager::GetInstance().AddToSearchPath(file.toStdString());
 
       refreshPaths();
    }
 
-void LibraryPathsEditor::spawnDeleteConfirmation()
-{
-   if(QMessageBox::question(this, tr("Confirm deletion"),
-                            tr("Are you sure you want to remove this path?"),
-                            tr("&Yes"), tr("&No"), QString::null, 1) == 0)
+   void LibraryPathsEditor::spawnDeleteConfirmation()
    {
-      std::list<std::string> &pathList = EditorData::GetInstance().getLibraryPaths();
-      
-      std::string pathToRemove = pathView->currentItem()->text().toStdString();
-      // Does the map have this library?
-
-      for(std::list<std::string>::iterator iter = pathList.begin(); 
-          iter != pathList.end(); 
-          ++iter)
+      if(QMessageBox::question(this, tr("Confirm deletion"),
+                              tr("Are you sure you want to remove this path?"),
+                              tr("&Yes"), tr("&No"), QString::null, 1) == 0)
       {
-         if(*iter == pathToRemove)
+         std::string pathToRemove = pathView->currentItem()->text().toStdString();
+         
+         dtUtil::LibrarySharingManager::GetInstance().RemoveFromSearchPath(pathToRemove);
+          
+         refreshPaths();
+      }
+   }
+
+   void LibraryPathsEditor::shiftPathUp()
+   {
+      std::vector<std::string> pathList;
+      dtUtil::LibrarySharingManager::GetInstance().GetSearchPath(pathList);
+
+      std::string itemText = pathView->currentItem()->text().toStdString();
+      std::vector<std::string>::iterator iter;
+      int i = 0;
+      bool found = false;
+
+      for(iter = pathList.begin(); iter != pathList.end(); ++iter, ++i)
+      {
+         std::string text = *iter;
+
+         if(text == itemText && iter != pathList.begin())
          {
-            pathList.erase(iter);
+            found = true;
             break;
          }
       }
 
+      if(!found)
+      {
+         return;
+      }
+      else
+      {
+         std::vector<std::string>::iterator a = iter;
+         std::vector<std::string>::iterator b = --iter;
+           
+         std::string tmp = *a;
+         *a = *b;
+         *b = tmp;
+      }
+
       refreshPaths();
+
+      // ensure the current item is selected
+      QListWidgetItem *item = pathView->item(i - 1);
+      if(item)
+      {
+         pathView->setCurrentItem(item);
+         if(item == pathView->item(0))
+         {
+            upPath->setDisabled(true);
+         }
+
+         if(item == pathView->item(pathView->count()-1))
+         {
+            downPath->setDisabled(true);
+         }
+      }
    }
-}
 
-void LibraryPathsEditor::shiftPathUp()
-{
-    std::list<std::string> &pathList = EditorData::GetInstance().getLibraryPaths();
-    string itemText = pathView->currentItem()->text().toStdString();
-    std::list<std::string>::iterator iter;
-    int i = 0;
-    bool found = false;
+   void LibraryPathsEditor::shiftPathDown()
+   {
+      std::vector<std::string> pathList;
+      dtUtil::LibrarySharingManager::GetInstance().GetSearchPath(pathList);
 
-    for(iter = pathList.begin(); iter != pathList.end(); ++iter, ++i)
-    {
-        std::string text = *iter;
+      std::string itemText = pathView->currentItem()->text().toStdString();
+      std::vector<std::string>::iterator iter;
+      int i = 0;
+      bool found = false;
 
-        if(text == itemText && iter != pathList.begin())
-        {
+      if(pathList.size() <= 1)
+      {
+         return;
+      }
+
+      // Need to get the actual end of the list so that we don't accidentally
+      // attempt to swap positions with the last item and the list's end position
+      iter = pathList.end();
+      iter--;
+
+      // Store the actual last item position away for later use.
+      std::vector<std::string>::iterator lastItem = iter;
+
+      for(iter = pathList.begin(); iter != pathList.end(); ++iter, ++i)
+      {
+         std::string text = *iter;
+
+         // Cannot test against pathList->end() 
+         if(text == itemText && iter != lastItem)
+         {
             found = true;
             break;
-        }
-    }
+         }
+      }
 
-    if(!found)
-    {
-        return;
-    }
-    else
-    {
-        std::list<std::string>::iterator a = iter;
-        std::list<std::string>::iterator b = --iter;
-        
-        std::string tmp = *a;
-        *a = *b;
-        *b = tmp;
-    }
+      if(!found)
+      {
+         return;
+      }
+      else
+      {
+         std::vector<std::string>::iterator a = iter;
+         std::vector<std::string>::iterator b = ++iter;
+           
+         std::string tmp = *a;
+         *a = *b;
+         *b = tmp;
+      }
 
-    refreshPaths();
+      refreshPaths();
 
-    // ensure the current item is selected
-    QListWidgetItem *item = pathView->item(i - 1);
-    if(item)
-    {
-        pathView->setCurrentItem(item);
-        if(item == pathView->item(0))
-        {
+      // ensure the current item is selected
+      QListWidgetItem *item = pathView->item(i + 1);
+      if(item)
+      {
+         pathView->setCurrentItem(item);
+         if(item == pathView->item(0))
+         {
             upPath->setDisabled(true);
-        }
-
-        if(item == pathView->item(pathView->count()-1))
-        {
+         }
+           
+         if(item == pathView->item(pathView->count()-1))
+         {
             downPath->setDisabled(true);
-        }
-    }
-}
+         }
+      }
+   }
 
-void LibraryPathsEditor::shiftPathDown()
-{
-    std::list<std::string> &pathList = EditorData::GetInstance().getLibraryPaths();
-    string itemText = pathView->currentItem()->text().toStdString();
-    std::list<std::string>::iterator iter;
-    int i = 0;
-    bool found = false;
+   void LibraryPathsEditor::enableButtons()
+   {
+      deletePath->setDisabled(false);
+      upPath->setDisabled(false);
+      downPath->setDisabled(false);
+   }
 
-    if (pathList.size() <= 1)
-    {
-        return;
-    }
+   void LibraryPathsEditor::disableButtons()
+   {
+      deletePath->setDisabled(true);
+      upPath->setDisabled(true);
+      downPath->setDisabled(true);
+   }
 
-    // Need to get the actual end of the list so that we don't accidentally
-    // attempt to swap positions with the last item and the list's end position
-    
-    iter = pathList.end();
-    iter--;
+   void LibraryPathsEditor::refreshPaths()
+   {
+      std::string customPath;
+      pathView->clear();
 
-    
-    // Store the actual last item position away for later use.
-    std::list<std::string>::iterator lastItem = iter;
-
-
-    for(iter = pathList.begin(); iter != pathList.end(); ++iter, ++i)
-    {
-        std::string text = *iter;
-
-        // Cannot test against pathList->end() 
-        if(text == itemText && iter != lastItem)
-        {
-            found = true;
-            break;
-        }
-    }
-
-    if(!found)
-    {
-        return;
-    }
-    else
-    {
-        std::list<std::string>::iterator a = iter;
-        std::list<std::string>::iterator b = ++iter;
-        
-        std::string tmp = *a;
-        *a = *b;
-        *b = tmp;
-    }
-
-    refreshPaths();
-
-    // ensure the current item is selected
-    QListWidgetItem *item = pathView->item(i + 1);
-    if(item)
-    {
-        pathView->setCurrentItem(item);
-        if(item == pathView->item(0))
-        {
-            upPath->setDisabled(true);
-        }
-        
-        if(item == pathView->item(pathView->count()-1))
-        {
-            downPath->setDisabled(true);
-        }
-    }
-}
-
-void LibraryPathsEditor::enableButtons()
-{
-   deletePath->setDisabled(false);
-   upPath->setDisabled(false);
-   downPath->setDisabled(false);
-}
-
-void LibraryPathsEditor::disableButtons()
-{
-    deletePath->setDisabled(true);
-    upPath->setDisabled(true);
-    downPath->setDisabled(true);
-}
-
-void LibraryPathsEditor::refreshPaths()
-{
-    std::string customPath;
-    pathView->clear();
-
-    vector<QListWidgetItem*> paths;
-    getPathNames(paths);
-    
-    for(unsigned int i = 0; i < paths.size(); i++)
-    {
-        pathView->addItem(paths[i]);
-        customPath += paths[i]->text().toStdString();
-        customPath += ";";
-    }
-    
-    connect(pathView, SIGNAL(itemSelectionChanged()), this, SLOT(enableButtons()));
-    if(pathView->currentItem() == NULL)
-        emit noPathsSelected();
-    else
-        pathView->setItemSelected(pathView->currentItem(), true);
-
-    std::string osgLibPath = EditorData::GetInstance().getOriginalOsgLibraryPath();
-
-    customPath += osgLibPath;
-
-    std::string text = "OSG_LIBRARY_PATH=" + customPath;
-
-    putenv(text.c_str());
-
-    osgDB::Registry::instance()->initLibraryFilePathList();
-
-
-}
+      std::vector<QListWidgetItem*> paths;
+      getPathNames(paths);
+       
+      for(size_t i = 0; i < paths.size(); i++)
+      {   
+         pathView->addItem(paths[i]);
+         customPath += paths[i]->text().toStdString();
+         customPath += ";";
+      }
+       
+      connect(pathView, SIGNAL(itemSelectionChanged()), this, SLOT(enableButtons()));
+      if(pathView->currentItem() == NULL)
+         emit noPathsSelected();
+      else
+         pathView->setItemSelected(pathView->currentItem(), true);
+   }
 }
 
 

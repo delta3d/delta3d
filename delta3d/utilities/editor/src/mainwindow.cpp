@@ -71,12 +71,6 @@ namespace dtEditQt
 
         ViewportManager::GetInstance();
 
-        // set up initial OSG library path from environment variable.
-        char *path = getenv("OSG_LIBRARY_PATH");
-
-        if(path != NULL)
-           EditorData::GetInstance().setOriginalOsgLibraryPath(std::string(path));
-
         connectSlots();
         setupDockWindows();
         setupStatusBar();
@@ -118,11 +112,8 @@ namespace dtEditQt
         fileMenu->addSeparator();
         fileMenu->addMenu(recentProjs);
         fileMenu->addSeparator();
-        if(getenv("OSG_LIBRARY_PATH") != NULL)
-        {
-           fileMenu->addAction(editorActions.actionFileLibraryPaths);
-           fileMenu->addSeparator();
-        }
+        fileMenu->addAction(editorActions.actionFileEditLibraryPaths);
+        fileMenu->addSeparator();
         fileMenu->addAction(editorActions.actionFileExit);
 
         editMenu = menuBar()->addMenu(tr("&Edit"));
@@ -463,13 +454,13 @@ namespace dtEditQt
         //Save the current project state...
         settings.remove(EditorSettings::LIBRARY_PATHS);
         settings.beginGroup(EditorSettings::LIBRARY_PATHS);
-            if(!EditorData::GetInstance().getLibraryPaths().empty())
+        
+        std::vector<std::string> pathList;
+        dtUtil::LibrarySharingManager::GetInstance().GetSearchPath(pathList);
+            if(!pathList.empty())
             {
                 int pos = 0;
-                
-                std::list<std::string> &pathList = EditorData::GetInstance().getLibraryPaths();
-                
-                for(std::list<std::string>::iterator iter = pathList.begin(); 
+                for(std::vector<std::string>::iterator iter = pathList.begin(); 
                     iter != pathList.end(); 
                     ++iter)
                 {
@@ -726,10 +717,6 @@ namespace dtEditQt
     void MainWindow::loadLibraryPaths()
     {
         EditorSettings settings;
-        std::string customPath = "OSG_LIBRARY_PATH=";
-
-        std::list<std::string> &pathList = EditorData::GetInstance().getLibraryPaths();
-        pathList.clear();
 
         settings.beginGroup(EditorSettings::LIBRARY_PATHS);
         
@@ -749,16 +736,10 @@ namespace dtEditQt
 
                if(!path.empty())
                {
-                  pathList.push_back(path);
-                  customPath += path;
-                  customPath += ";";
+                  dtUtil::LibrarySharingManager::GetInstance().AddToSearchPath(path);
                }
-            } while(!path.empty());
-
-            customPath += EditorData::GetInstance().getOriginalOsgLibraryPath();
-            putenv(customPath.c_str());
-            
-            osgDB::Registry::instance()->initLibraryFilePathList();
+            } 
+            while(!path.empty());
         }
     }
 
