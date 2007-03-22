@@ -21,25 +21,23 @@
 */
 #include <prefix/dtstageprefix-src.h>
 #include <QtGui/QAction>
-#include "dtEditQt/editordata.h"
-#include "dtEditQt/editoractions.h"
-#include "dtEditQt/editorevents.h"
-#include "dtEditQt/undomanager.h"
-#include "dtEditQt/viewportmanager.h"
-#include "dtCore/uniqueid.h"
-#include "dtDAL/actorproxy.h"
-#include "dtDAL/actortype.h"
-#include "dtDAL/actorproperty.h"
-#include "dtDAL/librarymanager.h"
-#include "dtDAL/map.h"
-#include "dtDAL/project.h"
-#include "dtEditQt/mainwindow.h"
-#include "dtEditQt/undomanager.h"
-
+#include <dtEditQt/editordata.h>
+#include <dtEditQt/editoractions.h>
+#include <dtEditQt/editorevents.h>
+#include <dtEditQt/undomanager.h>
+#include <dtEditQt/viewportmanager.h>
+#include <dtCore/uniqueid.h>
+#include <dtDAL/actorproxy.h>
+#include <dtDAL/actortype.h>
+#include <dtDAL/actorproperty.h>
+#include <dtDAL/librarymanager.h>
+#include <dtDAL/map.h>
+#include <dtDAL/project.h>
+#include <dtEditQt/mainwindow.h>
+#include <dtEditQt/undomanager.h>
 
 namespace dtEditQt
 {
-
     ///////////////////////////////////////////////////////////////////////////////
     UndoManager::UndoManager()
         : recursePrevent(false)
