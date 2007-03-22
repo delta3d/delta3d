@@ -182,15 +182,15 @@ namespace dtEditQt
       actionEditMapLibraries->setStatusTip(tr("Add and Remove actor libraries from the current map."));
       connect(actionEditMapLibraries, SIGNAL(triggered()), this, SLOT(slotEditMapLibraries()));
 
-      //File - Map Libraries Editor...
+      //File - Map Events Editor...
       actionEditMapEvents = new QAction(tr("Map &Events..."), this);
       actionEditMapEvents->setStatusTip(tr("Add and Remove Game Events from the current map."));
       connect(actionEditMapEvents, SIGNAL(triggered()), this, SLOT(slotEditMapEvents()));
 
       //File - Edit Library Paths...
-      actionFileLibraryPaths = new QAction(tr("Edit Library Pat&hs..."), this);
-      actionFileLibraryPaths->setStatusTip(tr("Add or Remove paths to actor library DLLs."));
-      connect(actionFileLibraryPaths, SIGNAL(triggered()), this, SLOT(slotFileLibraryPaths()));
+      actionFileEditLibraryPaths = new QAction(tr("Edit Library Pat&hs..."), this);
+      actionFileEditLibraryPaths->setStatusTip(tr("Add or Remove paths to actor libraries."));
+      connect(actionFileEditLibraryPaths, SIGNAL(triggered()), this, SLOT(slotFileEditLibraryPaths()));
 
       actionFileEditPreferences = new QAction(tr("Preferences..."), this);
       actionFileEditPreferences->setStatusTip(tr("Edit editor preferences"));
@@ -648,15 +648,15 @@ namespace dtEditQt
          return;
       }
 
-      GameEventsDialog editor((QWidget *)EditorData::GetInstance().getMainWindow());
+      GameEventsDialog editor(static_cast<QWidget*>(EditorData::GetInstance().getMainWindow()));
       editor.exec();
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void EditorActions::slotFileLibraryPaths()
+   void EditorActions::slotFileEditLibraryPaths()
    {
       // Bring up the library paths editor
-      LibraryPathsEditor editor((QWidget *)EditorData::GetInstance().getMainWindow());
+      LibraryPathsEditor editor(static_cast<QWidget*>(EditorData::GetInstance().getMainWindow()));
       editor.exec();
    }
 

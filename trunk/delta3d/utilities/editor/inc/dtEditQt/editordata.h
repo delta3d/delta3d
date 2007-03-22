@@ -293,12 +293,7 @@ namespace dtEditQt
        * Recent project accessor
        */
       inline std::list<std::string>& getRecentProjects() { return recentProjects; }
-      
-      /**
-       * Custom library paths
-       */
-      inline std::list<std::string>& getLibraryPaths() { return libraryPaths; }
-      
+   
       /**
        * Recent map accessor
        */
@@ -374,7 +369,6 @@ namespace dtEditQt
       
       std::list<std::string> recentMaps;
       std::list<std::string> recentProjects;
-      std::list<std::string> libraryPaths;
       
       UndoManager undoManager;
       
