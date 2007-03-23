@@ -136,9 +136,6 @@
 				RelativePath="..\..\..\src\dtActors\actionactorproxy.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\src\dtActors\animationGameActor.cpp">
-			</File>
-			<File
 				RelativePath="..\..\..\src\dtActors\autotriggeractorproxy.cpp">
 			</File>
 			<File
@@ -244,9 +241,6 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
 				RelativePath="..\..\..\inc\dtActors\actionactorproxy.h">
-			</File>
-			<File
-				RelativePath="..\..\..\inc\dtActors\animationGameActor.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtActors\autotriggeractorproxy.h">
