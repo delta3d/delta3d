@@ -19,8 +19,9 @@
  * David Guthrie
  */
 #include <prefix/dtutilprefix-src.h>
+#include <dtUtil/macros.h>
 
-#if defined(WIN32) && !defined(__CYGWIN__)
+#if defined(DELTA_WIN32) && !defined(__CYGWIN__)
   #include <Io.h>
   #include <Windows.h>
   #include <Winbase.h>
@@ -321,6 +322,12 @@ namespace dtUtil
       set<string>::iterator i = mSearchPath.find(path);
       if (i != mSearchPath.end())
          mSearchPath.erase(i);      
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void LibrarySharingManager::ClearSearchPath()
+   {
+      mSearchPath.clear();
    }
 
    ///////////////////////////////////////////////////////////////////////////////

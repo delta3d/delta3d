@@ -32,16 +32,16 @@
 #include <QtGui/QTableWidgetItem>
 #include <QtGui/QTreeView>
 #include <QtGui/QTreeWidgetItem>
-#include "dtDAL/actorproxy.h"
-#include "dtDAL/actortype.h"
-#include "dtDAL/librarymanager.h"
+#include <dtDAL/actorproxy.h>
+#include <dtDAL/actortype.h>
+#include <dtDAL/librarymanager.h>
 #include <dtUtil/log.h>
-#include "dtDAL/map.h"
-#include "dtEditQt/actorresultstable.h"
-#include "dtEditQt/editoractions.h"
-#include "dtEditQt/editordata.h"
-#include "dtEditQt/editorevents.h"
-#include "dtEditQt/uiresources.h"
+#include <dtDAL/map.h>
+#include <dtEditQt/actorresultstable.h>
+#include <dtEditQt/editoractions.h>
+#include <dtEditQt/editordata.h>
+#include <dtEditQt/editorevents.h>
+#include <dtEditQt/uiresources.h>
 
 namespace dtEditQt 
 {
