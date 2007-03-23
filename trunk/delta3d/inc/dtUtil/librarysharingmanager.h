@@ -143,6 +143,11 @@ namespace dtUtil
           * @param path the path to remove.
           */
          void RemoveFromSearchPath(const std::string& path);
+
+         /**
+          * Clears the search path completely
+          */
+         void ClearSearchPath();
                   
          /**
           * Determines which platform we are running on and returns a
