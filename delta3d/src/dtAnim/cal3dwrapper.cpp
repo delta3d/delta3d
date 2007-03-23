@@ -1,8 +1,8 @@
-#include <dtChar/cal3dwrapper.h>
+#include <dtAnim/cal3dwrapper.h>
 #include <cal3d/cal3d.h>
 #include <assert.h>
 
-using namespace dtChar;
+using namespace dtAnim;
 
 Cal3DWrapper::Cal3DWrapper(CalModel *model):
 mCalModel(model),

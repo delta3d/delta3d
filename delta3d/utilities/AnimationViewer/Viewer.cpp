@@ -7,11 +7,11 @@
 #include <dtCore/orbitmotionmodel.h>
 #include <dtCore/globals.h>
 #include <dtCore/light.h>
-#include <dtChar/characterfilehandler.h>
-#include <dtChar/chardrawable.h>
-#include <dtChar/characterfilehandler.h>
-#include <dtChar/cal3dwrapper.h>
-#include <dtChar/chardrawable.h>
+#include <dtAnim/characterfilehandler.h>
+#include <dtAnim/chardrawable.h>
+#include <dtAnim/characterfilehandler.h>
+#include <dtAnim/cal3dwrapper.h>
+#include <dtAnim/chardrawable.h>
 #include <dtUtil/xercesparser.h>
 #include <dtUtil/stringutils.h>
 
@@ -87,7 +87,7 @@ void Viewer::OnLoadCharFile( const QString &filename )
    SetDataFilePathList( GetDeltaDataPathList() + ";" +
                         dir.path().toStdString() + ";" );
 
-   mCharacter = new dtChar::CharDrawable();
+   mCharacter = new dtAnim::CharDrawable();
    AddDrawable(mCharacter.get());
 
    //create an instance from the character definition file
@@ -122,7 +122,7 @@ void Viewer::OnLOD_Changed( float zeroToOneValue )
 
    if (mCharacter.get())
    {
-      dtChar::Cal3DWrapper* mcHammer = mCharacter->GetCal3DWrapper();
+      dtAnim::Cal3DWrapper* mcHammer = mCharacter->GetCal3DWrapper();
       assert(mcHammer);
      
       mcHammer->SetLODLevel(zeroToOneValue);

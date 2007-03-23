@@ -23,21 +23,21 @@
 #define chardrawable_h__
 
 #include "dtCore/transformable.h"
-#include "dtChar/export.h"
+#include "dtAnim/export.h"
 
 class CalModel;
 
 
 
-namespace dtChar
+namespace dtAnim
 {
-   /** Simple class that wraps up a dtChar::Model so it can be added to the
+   /** Simple class that wraps up a dtAnim::Model so it can be added to the
      * Scene.  
      *
      * Usage:
      * @code
-     *   dtCore::RefPtr<dtChar::CharDrawable> char = new dtChar::CharDrawable();
-     *   dtCore::RefPtr<dtChar::CoreModel> core = new dtChar::CoreModel();
+     *   dtCore::RefPtr<dtAnim::CharDrawable> char = new dtAnim::CharDrawable();
+     *   dtCore::RefPtr<dtAnim::CoreModel> core = new dtAnim::CoreModel();
      *   core->LoadSkeleton(...);
      *   core->LoadAnimation(...);
      *   char->Create( *core );
@@ -48,7 +48,7 @@ namespace dtChar
    class CoreModel;
    class Cal3DWrapper;
 
-   class DT_CHAR_EXPORT CharDrawable : public dtCore::Transformable
+   class DT_ANIM_EXPORT CharDrawable : public dtCore::Transformable
    {
    public:
    	CharDrawable();
@@ -92,12 +92,12 @@ namespace dtChar
     */
     void StopAction(unsigned id);
 
-    dtChar::Cal3DWrapper* GetCal3DWrapper() {return mCal3DWrapper.get(); }
+    dtAnim::Cal3DWrapper* GetCal3DWrapper() {return mCal3DWrapper.get(); }
 
    private:
       
       osg::ref_ptr<osg::Geode>    mGeode; 
-      dtCore::RefPtr<dtChar::Cal3DWrapper> mCal3DWrapper;
+      dtCore::RefPtr<dtAnim::Cal3DWrapper> mCal3DWrapper;
 
 
    };

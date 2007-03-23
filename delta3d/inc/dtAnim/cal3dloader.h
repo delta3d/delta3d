@@ -22,7 +22,7 @@
 #ifndef __DELTA_CAL3DLOADER_H__
 #define __DELTA_CAL3DLOADER_H__
 
-#include <dtChar/export.h>
+#include <dtAnim/export.h>
 #include <string>
 #include <map>
 #include <vector>
@@ -36,7 +36,7 @@ namespace osg
    class Texture2D;
 }
 
-namespace dtChar
+namespace dtAnim
 {
    /**
     * Loads a animation definition file and returns a valid CalModel.  Caches
@@ -44,7 +44,7 @@ namespace dtChar
     * instances of CalModels.  If you call Load() with the same filename twice,
     * it actually only loads once.
     */
-   class DT_CHAR_EXPORT Cal3DLoader
+   class DT_ANIM_EXPORT Cal3DLoader
    {
       public:
    
@@ -68,6 +68,6 @@ namespace dtChar
          std::vector< osg::ref_ptr<osg::Texture2D> > mTextures;
 
    };
-}//namespace dtChar
+}//namespace dtAnim
 
 #endif // __DELTA_CAL3DLOADER_H__

@@ -1,14 +1,14 @@
 
-#include <dtChar/cal3dloader.h>
+#include <dtAnim/cal3dloader.h>
 #include <cal3d/model.h>
 #include <cal3d/coremodel.h>
-#include <dtChar/characterfilehandler.h>
+#include <dtAnim/characterfilehandler.h>
 #include <dtUtil/xercesparser.h>
 #include <dtCore/globals.h>
 #include <osgDB/ReadFile>
 #include <osg/Texture2D>
 
-using namespace dtChar;
+using namespace dtAnim;
 
 Cal3DLoader::Cal3DLoader()
 {

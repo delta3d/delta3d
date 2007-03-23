@@ -21,13 +21,13 @@
 #ifndef DELTA_CHARACTER_FILE_HANDLER
 #define DELTA_CHARACTER_FILE_HANDLER
 
-#include <dtChar/export.h>
+#include <dtAnim/export.h>
 #include <dtUtil/macros.h>
 #include <xercesc/sax2/ContentHandler.hpp>  // for a base class
 #include <vector>
 #include <string>
 
-namespace dtChar
+namespace dtAnim
 {
    /** Simple Xerces XML handler that will store the data read from a character
      * definition .xml file.
@@ -35,7 +35,7 @@ namespace dtChar
      * Usage:
      * @code
      *  dtUtil::XercesParser parse;
-     *  dtChar::CharacterHandler handler;
+     *  dtAnim::CharacterHandler handler;
      *  parser.Parse(filename, handler);
      *
      *  std::string skeletonFilename = handler.mSkeletonFilename;
@@ -53,7 +53,7 @@ namespace dtChar
      *   </character>
      * @endcode
      */
-   class DT_CHAR_EXPORT CharacterFileHandler : public XERCES_CPP_NAMESPACE_QUALIFIER ContentHandler
+   class DT_ANIM_EXPORT CharacterFileHandler : public XERCES_CPP_NAMESPACE_QUALIFIER ContentHandler
    {
    public:
    	CharacterFileHandler();
@@ -77,8 +77,8 @@ namespace dtChar
 
 #ifdef DELTA_WIN32
       //need these definitions to properly export a std::vector<std::string>
-      template class DT_CHAR_EXPORT std::allocator<std::string>;
-      template class DT_CHAR_EXPORT std::vector<std::string>;
+      template class DT_ANIM_EXPORT std::allocator<std::string>;
+      template class DT_ANIM_EXPORT std::vector<std::string>;
 #endif
 
       std::string mName;                            ///<The name of this animated entity

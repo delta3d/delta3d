@@ -18,10 +18,10 @@
  * 
  * Erik Johnson
  */
-#include <dtChar/characterfilehandler.h>
+#include <dtAnim/characterfilehandler.h>
 #include <dtUtil/xercesutils.h>
 
-using namespace dtChar;
+using namespace dtAnim;
 
 void CharacterFileHandler::startElement( const XMLCh* const uri,const XMLCh* const localname,
                                                  const XMLCh* const qname, const XERCES_CPP_NAMESPACE_QUALIFIER Attributes& attrs )

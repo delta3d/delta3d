@@ -1,9 +1,9 @@
 #include <osg/Material>
 #include <osg/Texture2D>
-#include <dtChar/submesh.h>
-#include <dtChar/cal3dwrapper.h>
+#include <dtAnim/submesh.h>
+#include <dtAnim/cal3dwrapper.h>
 
-using namespace dtChar;
+using namespace dtAnim;
 
 class SubMeshDirtyCallback: public osg::Geometry::UpdateCallback {
 public:

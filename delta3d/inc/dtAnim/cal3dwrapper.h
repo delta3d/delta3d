@@ -22,19 +22,19 @@
 #ifndef __DELTA_CAL3DWRAPPER_H__
 #define __DELTA_CAL3DWRAPPER_H__
 
-#include <dtChar/export.h>
+#include <dtAnim/export.h>
 #include <cal3d/model.h>
 #include <cal3d/coremodel.h>
 #include <cal3d/renderer.h>
 #include <cal3d/mixer.h>
 #include <osg/Referenced>
 
-namespace dtChar
+namespace dtAnim
 {
    /**
     * Wraps the Cal3D API
     */
-   class DT_CHAR_EXPORT Cal3DWrapper : public osg::Referenced
+   class DT_ANIM_EXPORT Cal3DWrapper : public osg::Referenced
    {
       public:
    
@@ -93,6 +93,6 @@ namespace dtChar
          CalMixer    *mMixer;
    
    };
-}//namespace dtChar
+}//namespace dtAnim
 
 #endif // __DELTA_CAL3DWRAPPER_H__
