@@ -1,0 +1,15 @@
+Import('*')
+
+srcs = env.SGlob( '*.cpp' )
+
+deps = [ 'dtCore', 'cal3d','dtUtil',
+         'OpenThreads', 'osg', 'osgDB', 'osgParticle',
+         'osgText', 'osgUtil', 'osgSim', 'osgFX',
+         'Producer' ] 
+
+defines = []
+if env['OS'] == 'windows':
+   defines = ['DT_ANIM_LIBRARY']
+
+    
+env.BuildLib( 'dtAnim', srcs, deps, defines )

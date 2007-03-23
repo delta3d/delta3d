@@ -237,6 +237,7 @@ def TOOL_BUNDLE(env):
                       'dtAI'        : 'dtAI',
                       'dtActors'    : 'dtActors',
                       'dtAudio'     : 'dtAudio',
+                      'dtAnim'      : 'dtAnim',
                       'dtChar'      : 'dtChar',
                       'dtCore'      : 'dtCore',
                       'dtDAL'       : 'dtDAL',
