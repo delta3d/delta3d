@@ -92,6 +92,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtNetGM", "src\dtNetGM\dtNe
 		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtAnim", "src\dtAnim\dtanim.vcproj", "{1E2C3DB5-00E0-45B9-AA4B-F54BD5A9C60B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5F516A22-15B8-4160-B032-BDFD78707350} = {5F516A22-15B8-4160-B032-BDFD78707350}
+		{91F7CF8D-9297-426F-B760-7E49EDA92A80} = {91F7CF8D-9297-426F-B760-7E49EDA92A80}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -154,6 +160,10 @@ Global
 		{DD57A500-500C-42FA-938D-5172CC503393}.Debug.Build.0 = Debug|Win32
 		{DD57A500-500C-42FA-938D-5172CC503393}.Release.ActiveCfg = Release|Win32
 		{DD57A500-500C-42FA-938D-5172CC503393}.Release.Build.0 = Release|Win32
+		{1E2C3DB5-00E0-45B9-AA4B-F54BD5A9C60B}.Debug.ActiveCfg = Debug|Win32
+		{1E2C3DB5-00E0-45B9-AA4B-F54BD5A9C60B}.Debug.Build.0 = Debug|Win32
+		{1E2C3DB5-00E0-45B9-AA4B-F54BD5A9C60B}.Release.ActiveCfg = Release|Win32
+		{1E2C3DB5-00E0-45B9-AA4B-F54BD5A9C60B}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionItems) = postSolution
 		..\readme.txt = ..\readme.txt

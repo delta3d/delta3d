@@ -36,13 +36,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 *
 */
 
-#ifndef __DTCHAR__SUBMESH_H__
-#define __DTCHAR__SUBMESH_H__
+#ifndef __dtAnim__SUBMESH_H__
+#define __dtAnim__SUBMESH_H__
 
 #include <osg/Geometry>
 #include <cal3d/cal3d.h>
 
-namespace dtChar {
+namespace dtAnim {
 
    class Cal3DWrapper;
 
@@ -105,6 +105,6 @@ private:
     void setUpMaterial();
 };
 
-}; //namespace dtChar
+}; //namespace dtAnim
 
 #endif

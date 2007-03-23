@@ -2,18 +2,18 @@
 #include <osg/Geode>
 #include <osg/Timer>
 
-#include <dtChar/submesh.h>
-#include <dtChar/chardrawable.h>
-#include <dtChar/coremodel.h>
-#include <dtChar/cal3dwrapper.h>
-#include <dtChar/cal3dloader.h>
+#include <dtAnim/submesh.h>
+#include <dtAnim/chardrawable.h>
+#include <dtAnim/coremodel.h>
+#include <dtAnim/cal3dwrapper.h>
+#include <dtAnim/cal3dloader.h>
 #include <dtCore/system.h>
 #include <dtUtil/log.h>
 #include <cassert>
 
 #include <cal3d/corematerial.h>
 
-using namespace dtChar;
+using namespace dtAnim;
 
 CharDrawable::CharDrawable()
    : mGeode(new osg::Geode)

@@ -1,7 +1,7 @@
 #include <osgDB/ReadFile>
-#include <dtChar/coremodel.h>
+#include <dtAnim/coremodel.h>
 
-using namespace dtChar;
+using namespace dtAnim;
 
 CoreModel::CoreModel() 
 {
@@ -179,6 +179,6 @@ void CoreModel::LoadMaterial(std::string material_file)
 
 osg::Object* CoreModel::clone(const osg::CopyOp&) const 
 {
-	dtChar::CoreModel *model = new dtChar::CoreModel("dummy");
+	dtAnim::CoreModel *model = new dtAnim::CoreModel("dummy");
 	return model;
 }

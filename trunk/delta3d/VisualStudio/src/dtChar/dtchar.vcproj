@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtUtild.lib dtCored.lib Producerd.lib osgd.lib osgDBd.lib osgUtild.lib replicantbodyd.lib rvrutilsd.lib cal3d_d.lib xerces-c_2D.lib opengl32.lib"
+				AdditionalDependencies="dtUtild.lib dtCored.lib Producerd.lib osgd.lib osgDBd.lib osgUtild.lib replicantbodyd.lib rvrutilsd.lib cal3d_d.lib opengl32.lib"
 				OutputFile="../../../bin/dtChard.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -86,7 +86,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtUtil.lib dtCore.lib Producer.lib osg.lib osgDB.lib osgUtil.lib replicantbody.lib OpenThreadsWin32.lib rvrutils.lib cal3d.lib xerces-c_2.lib opengl32.lib"
+				AdditionalDependencies="dtUtil.lib dtCore.lib Producer.lib osg.lib osgDB.lib osgUtil.lib replicantbody.lib OpenThreadsWin32.lib rvrutils.lib cal3d.lib"
 				OutputFile="../../../bin/dtChar.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -128,25 +128,7 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
-				RelativePath="..\..\..\src\dtChar\cal3dloader.cpp">
-			</File>
-			<File
-				RelativePath="..\..\..\src\dtChar\cal3dwrapper.cpp">
-			</File>
-			<File
 				RelativePath="..\..\..\src\dtChar\character.cpp">
-			</File>
-			<File
-				RelativePath="..\..\..\src\dtChar\characterfilehandler.cpp">
-			</File>
-			<File
-				RelativePath="..\..\..\src\dtChar\chardrawable.cpp">
-			</File>
-			<File
-				RelativePath="..\..\..\src\dtChar\coremodel.cpp">
-			</File>
-			<File
-				RelativePath="..\..\..\src\dtChar\submesh.cpp">
 			</File>
 		</Filter>
 		<Filter
@@ -154,31 +136,13 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
-				RelativePath="..\..\..\inc\dtChar\cal3dloader.h">
-			</File>
-			<File
-				RelativePath="..\..\..\inc\dtChar\cal3dwrapper.h">
-			</File>
-			<File
 				RelativePath="..\..\..\inc\dtChar\character.h">
-			</File>
-			<File
-				RelativePath="..\..\..\inc\dtChar\characterfilehandler.h">
-			</File>
-			<File
-				RelativePath="..\..\..\inc\dtChar\chardrawable.h">
-			</File>
-			<File
-				RelativePath="..\..\..\inc\dtChar\coremodel.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtChar\dtchar.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtChar\export.h">
-			</File>
-			<File
-				RelativePath="..\..\..\inc\dtChar\submesh.h">
 			</File>
 		</Filter>
 		<Filter

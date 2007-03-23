@@ -1,4 +1,4 @@
-<character>
+<character name="marine">
       <skeleton filename="Skeleton.csf" />
       <animation filename="LowWalk.CAF" />  
       <animation filename="LowWalk_Wpn.CAF" />     

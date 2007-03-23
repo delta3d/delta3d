@@ -36,16 +36,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 *
 */
 
-#ifndef __DTCHAR__CORE_MODEL_H__
-#define __DTCHAR__CORE_MODEL_H__
+#ifndef __dtAnim__CORE_MODEL_H__
+#define __dtAnim__CORE_MODEL_H__
 
 #include <vector>
 #include <osg/Texture2D>
 #include <osg/Referenced>
-#include <dtChar/export.h>
+#include <dtAnim/export.h>
 #include <cal3d/cal3d.h>
 
-namespace dtChar {
+namespace dtAnim {
 
    ///Adapter that enables reference-counting of core models
 
@@ -54,7 +54,7 @@ namespace dtChar {
    * allows sharing lot of data, like the base geometry (the geometry before
    * deforming any vertex)
    */
-   class DT_CHAR_EXPORT CoreModel: public osg::Object {
+   class DT_ANIM_EXPORT CoreModel: public osg::Object {
    public:
       CoreModel();
 
@@ -71,7 +71,7 @@ namespace dtChar {
       /** return the name of the object's library. Must be defined
       by derived classes. The OpenSceneGraph convention the is
       that the namspace of a library is the same as the library name.*/
-      virtual const char* libraryName() const { return "dtChar"; }
+      virtual const char* libraryName() const { return "dtAnim"; }
 
       /** return the name of the object's class type. Must be defined
       by derived classes.*/
@@ -119,7 +119,7 @@ namespace dtChar {
       inline ~CoreModel() { /*coreModel.destroy();*/ }
 
       /* Get a pointer to the real core model, *DONT* keep pointers to
-      * it. Instead, keep references to this class (dtChar::CoreModel). */
+      * it. Instead, keep references to this class (dtAnim::CoreModel). */
       CalCoreModel *get() { return mCalCoreModel; }
 
       std::string GetSkeletonFileName() const { return mSkeleton; }
@@ -142,6 +142,6 @@ namespace dtChar {
       std::vector< std::string > mMaterials;
    };
 
-}; // namespace dtChar
+}; // namespace dtAnim
 
 #endif

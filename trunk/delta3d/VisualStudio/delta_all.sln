@@ -480,6 +480,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtinputplibbindings", "src\
 		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtAnim", "src\dtAnim\dtanim.vcproj", "{1E2C3DB5-00E0-45B9-AA4B-F54BD5A9C60B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5F516A22-15B8-4160-B032-BDFD78707350} = {5F516A22-15B8-4160-B032-BDFD78707350}
+		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -751,6 +757,10 @@ Global
 		{9748C933-1021-477A-9059-77DB18C9A949}.Debug.ActiveCfg = Debug|Win32
 		{9748C933-1021-477A-9059-77DB18C9A949}.Release.ActiveCfg = Release|Win32
 		{9748C933-1021-477A-9059-77DB18C9A949}.Release.Build.0 = Release|Win32
+		{1E2C3DB5-00E0-45B9-AA4B-F54BD5A9C60B}.Debug.ActiveCfg = Debug|Win32
+		{1E2C3DB5-00E0-45B9-AA4B-F54BD5A9C60B}.Debug.Build.0 = Debug|Win32
+		{1E2C3DB5-00E0-45B9-AA4B-F54BD5A9C60B}.Release.ActiveCfg = Release|Win32
+		{1E2C3DB5-00E0-45B9-AA4B-F54BD5A9C60B}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection

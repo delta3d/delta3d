@@ -13,7 +13,7 @@ namespace dtCore
 }
 
 
-namespace dtChar
+namespace dtAnim
 {
    class CharDrawable;
 }
@@ -47,7 +47,7 @@ protected:
 
 private:
    QBasicTimer mTimer;
-   dtCore::RefPtr<dtChar::CharDrawable> mCharacter;
+   dtCore::RefPtr<dtAnim::CharDrawable> mCharacter;
    dtCore::RefPtr<dtCore::OrbitMotionModel> mMotion;
 };
 
