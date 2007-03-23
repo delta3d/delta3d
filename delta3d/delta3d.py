@@ -738,6 +738,17 @@ def TOOL_BUNDLE(env):
          CheckLinkGroup(['cal3d','rvrutils','rcfgscript','rbody'], 'rbody', True)
          CheckLinkGroup([ 'CEGUIBase', 'CEGUIOpenGLRenderer' ], 'CEGUI', False, False)
          
+         foundGdalH = conf.CheckCXXHeader('gdal.h')
+         
+         if not foundGdalH:
+            if env['OS'] != 'windows' :
+               conf.env.Append(CPPPATH = ["/usr/include/gdal"])
+               foundGdalH = conf.CheckCXXHeader('gdal.h')
+         
+         if not foundGdalH: 
+            print "gdal.h was not found, aborting."
+            Exit(1)
+           
          
          #this actually SEARCHES, not good
          #foundLibs[ os.path.join('boost','python.hpp') ] = conf.CheckHeader( os.path.join('boost','python.hpp'), language='C++')
