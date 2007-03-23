@@ -32,7 +32,7 @@
 #include <QtGui/QMainWindow>
 #include <QtGui/QGroupBox>
 
-#include <dtEditQt/LibraryPathsEditor.h>
+#include <dtEditQt/librarypathseditor.h>
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/editorevents.h>
 #include <dtEditQt/editoractions.h>
