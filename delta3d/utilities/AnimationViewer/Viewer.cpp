@@ -10,7 +10,7 @@
 #include <dtAnim/characterfilehandler.h>
 #include <dtAnim/chardrawable.h>
 #include <dtAnim/characterfilehandler.h>
-#include <dtAnim/cal3dwrapper.h>
+#include <dtAnim/cal3dmodelwrapper.h>
 #include <dtAnim/chardrawable.h>
 #include <dtUtil/xercesparser.h>
 #include <dtUtil/stringutils.h>
@@ -122,7 +122,7 @@ void Viewer::OnLOD_Changed( float zeroToOneValue )
 
    if (mCharacter.get())
    {
-      dtAnim::Cal3DWrapper* mcHammer = mCharacter->GetCal3DWrapper();
+      dtAnim::Cal3DModelWrapper* mcHammer = mCharacter->GetCal3DWrapper();
       assert(mcHammer);
      
       mcHammer->SetLODLevel(zeroToOneValue);

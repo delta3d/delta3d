@@ -46,7 +46,7 @@ namespace dtAnim
      */
 
    class CoreModel;
-   class Cal3DWrapper;
+   class Cal3DModelWrapper;
 
    class DT_ANIM_EXPORT CharDrawable : public dtCore::Transformable
    {
@@ -92,12 +92,12 @@ namespace dtAnim
     */
     void StopAction(unsigned id);
 
-    dtAnim::Cal3DWrapper* GetCal3DWrapper() {return mCal3DWrapper.get(); }
+    dtAnim::Cal3DModelWrapper* GetCal3DWrapper() {return mCal3DWrapper.get(); }
 
    private:
       
       osg::ref_ptr<osg::Geode>    mGeode; 
-      dtCore::RefPtr<dtAnim::Cal3DWrapper> mCal3DWrapper;
+      dtCore::RefPtr<dtAnim::Cal3DModelWrapper> mCal3DWrapper;
 
 
    };

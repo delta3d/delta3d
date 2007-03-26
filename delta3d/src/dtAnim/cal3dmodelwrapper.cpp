@@ -1,10 +1,10 @@
-#include <dtAnim/cal3dwrapper.h>
+#include <dtAnim/cal3dmodelwrapper.h>
 #include <cal3d/cal3d.h>
 #include <assert.h>
 
 using namespace dtAnim;
 
-Cal3DWrapper::Cal3DWrapper(CalModel *model):
+Cal3DModelWrapper::Cal3DModelWrapper(CalModel *model):
 mCalModel(model),
 mRenderer(NULL),
 mMixer(NULL)
@@ -30,13 +30,13 @@ mMixer(NULL)
    SetMaterialSet(0);
 }
 
-Cal3DWrapper::~Cal3DWrapper()
+Cal3DModelWrapper::~Cal3DModelWrapper()
 {
    delete mCalModel;
 }
 
 
-void Cal3DWrapper::SetCalModel( CalModel *model )
+void Cal3DModelWrapper::SetCalModel( CalModel *model )
 {
    mCalModel = model;
    assert(mCalModel != NULL);

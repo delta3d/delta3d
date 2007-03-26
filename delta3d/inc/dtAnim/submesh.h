@@ -44,7 +44,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 namespace dtAnim {
 
-   class Cal3DWrapper;
+   class Cal3DModelWrapper;
 
 ///Adapter that converts cal3d submeshes into osg::Drawables
 
@@ -67,7 +67,7 @@ public:
     /**
      * Creates a submesh for one model given the mesh and submesh of this mesh
      */
-    SubMeshDrawable(Cal3DWrapper *wrapper, unsigned mesh, unsigned submesh);
+    SubMeshDrawable(Cal3DModelWrapper *wrapper, unsigned mesh, unsigned submesh);
 
     /**
      * Draws the geometry.
@@ -98,7 +98,7 @@ private:
     float       *mMeshNormals;
     float       *mMeshTextureCoordinates;
     int         *mMeshFaces;
-    Cal3DWrapper *mWrapper;
+    Cal3DModelWrapper *mWrapper;
     mutable unsigned int vertexCount;
     mutable unsigned int faceCount;
 

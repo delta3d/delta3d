@@ -34,12 +34,12 @@ namespace dtAnim
    /**
     * Wraps the Cal3D API
     */
-   class DT_ANIM_EXPORT Cal3DWrapper : public osg::Referenced
+   class DT_ANIM_EXPORT Cal3DModelWrapper : public osg::Referenced
    {
       public:
    
-         Cal3DWrapper( CalModel *model );
-         virtual ~Cal3DWrapper();
+         Cal3DModelWrapper( CalModel *model );
+         virtual ~Cal3DModelWrapper();
 
          void SetCalModel( CalModel *model );
 

@@ -5,7 +5,7 @@
 #include <dtAnim/submesh.h>
 #include <dtAnim/chardrawable.h>
 #include <dtAnim/coremodel.h>
-#include <dtAnim/cal3dwrapper.h>
+#include <dtAnim/cal3dmodelwrapper.h>
 #include <dtAnim/cal3dloader.h>
 #include <dtCore/system.h>
 #include <dtUtil/log.h>
@@ -48,7 +48,7 @@ void CharDrawable::Create(const std::string &filename)
    Cal3DLoader loader;
    CalModel *model = loader.Load(filename);
 
-   mCal3DWrapper = new Cal3DWrapper(model);
+   mCal3DWrapper = new Cal3DModelWrapper(model);
 
    if(mCal3DWrapper->BeginRenderingQuery()) 
    {
