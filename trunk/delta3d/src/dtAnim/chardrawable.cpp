@@ -24,7 +24,7 @@ CharDrawable::CharDrawable()
 
 CharDrawable::~CharDrawable()
 {
-   
+  
 }
 
 

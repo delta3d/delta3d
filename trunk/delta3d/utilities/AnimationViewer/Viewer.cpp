@@ -89,6 +89,12 @@ void Viewer::OnLoadCharFile( const QString &filename )
    SetDataFilePathList( GetDeltaDataPathList() + ";" +
                         dir.path().toStdString() + ";" );  
   
+   if (mCharacter.get())
+   {
+      RemoveDrawable(mCharacter.get());  
+      mCharacter = NULL;
+   }
+
    mCharacter = new dtAnim::CharDrawable();
    AddDrawable(mCharacter.get());
 

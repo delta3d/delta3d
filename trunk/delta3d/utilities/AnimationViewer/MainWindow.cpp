@@ -111,15 +111,21 @@ void MainWindow::LoadCharFile( const QString &filename )
 {
    if (dtUtil::FileUtils::GetInstance().FileExists( filename.toStdString() ))
    {
+      delete mAnimListWidget;
+      mAnimListWidget = new QTableWidget();
+      mAnimListWidget->setColumnCount(5);
+      mAnimListWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
+      setCentralWidget(mAnimListWidget);
+
       emit FileToLoad( filename );
 
       SetCurrentFile( filename );
-      mLoadCharAct->setEnabled( false ); //we can only load one file at a time.
+      //mLoadCharAct->setEnabled( false ); //we can only load one file at a time.
 
-      for (int i=0; i<5; i++)
-      {
-         mRecentFilesAct[i]->setEnabled( false );
-      }
+      //for (int i=0; i<5; i++)
+      //{
+      //   mRecentFilesAct[i]->setEnabled( false );
+      //}
 
        //statusBar()->showMessage(tr("File loaded"), 2000);
    }
