@@ -46,7 +46,5 @@ private slots:
    void OpenRecentFile();
    void OnItemChanged( QTableWidgetItem *item );
    void OnItemDoubleClicked(QTableWidgetItem *item);
-
-
 };
 #endif // MainWindow_h__

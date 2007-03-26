@@ -84,11 +84,11 @@ CalModel* Cal3DLoader::Load( const std::string &filename )
    CalModel *model = NULL;
 
    CalCoreModel *coreModel = GetCoreModel(filename);
-   
-   LoadAllTextures(coreModel); //this should be a user-level process.
+   assert(coreModel);   
 
    if (coreModel != NULL)
    {
+      LoadAllTextures(coreModel); //this should be a user-level process.
       model = new CalModel(coreModel);
    }
 

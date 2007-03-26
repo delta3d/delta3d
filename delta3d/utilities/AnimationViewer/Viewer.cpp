@@ -14,6 +14,7 @@
 #include <dtAnim/chardrawable.h>
 #include <dtUtil/xercesparser.h>
 #include <dtUtil/stringutils.h>
+#include <dtUtil/fileutils.h>
 
 #include <osg/Geode>
 #include <osg/Shape>
@@ -22,6 +23,7 @@
 #include <QDir>
 #include <QDebug>
 #include <QString>
+#include <QMessageBox>
 
 using namespace dtUtil;
 using namespace dtCore;
@@ -85,8 +87,8 @@ void Viewer::OnLoadCharFile( const QString &filename )
    dir.cdUp();
 
    SetDataFilePathList( GetDeltaDataPathList() + ";" +
-                        dir.path().toStdString() + ";" );
-
+                        dir.path().toStdString() + ";" );  
+  
    mCharacter = new dtAnim::CharDrawable();
    AddDrawable(mCharacter.get());
 
@@ -96,7 +98,7 @@ void Viewer::OnLoadCharFile( const QString &filename )
    for (int animID=0; animID<mCharacter->GetCal3DWrapper()->GetCoreAnimationCount(); animID++)
    {
       emit OnAnimationLoaded(animID, QString::number(animID) );
-   }
+   }        
 }
 
 void Viewer::OnStartAnimation( unsigned int id, float weight, float delay )
