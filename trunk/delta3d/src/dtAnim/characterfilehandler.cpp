@@ -20,6 +20,7 @@
  */
 #include <dtAnim/characterfilehandler.h>
 #include <dtUtil/xercesutils.h>
+#include <dtUtil/log.h>
 
 using namespace dtAnim;
 
@@ -31,29 +32,81 @@ void CharacterFileHandler::startElement( const XMLCh* const uri,const XMLCh* con
 
    dtUtil::AttributeSearch search;
    dtUtil::AttributeSearch::ResultMap results;
+   dtUtil::AttributeSearch::ResultMap::iterator resultIter;
    results = search(attrs);
+
+   std::string errorString;
 
    if (elementStr == "character")
    {
-      mName = results.find("name")->second;
+      resultIter = results.find("name");
+
+      if (resultIter != results.end())
+      {
+          mName = resultIter->second;
+      }
+      else
+      {
+         errorString = std::string("Invalid XML format: <character> missing <name> child");
+      }     
    }
    else if (elementStr == "skeleton")
-   {
-      mSkeletonFilename = results.find("filename")->second;
+   {     
+      resultIter = results.find("filename");
+
+      if (resultIter != results.end())
+      {
+         mSkeletonFilename = resultIter->second;
+      }
+      else
+      {
+         errorString = std::string("Invalid XML format: <character> missing <name> child");
+      }     
    }
    else if (elementStr == "animation")
-   {
-      mAnimationFilenames.push_back(results.find("filename")->second);
+   {      
+      resultIter = results.find("filename");
+
+      if (resultIter != results.end())
+      {
+         mAnimationFilenames.push_back(resultIter->second);
+      }
+      else
+      {
+         errorString = std::string("Invalid XML format: <character> missing <name> child");
+      }     
    }
    else if (elementStr == "mesh")
-   {
-      mMeshFilenames.push_back(results.find("filename")->second);
+   {     
+      resultIter = results.find("filename");
+
+      if (resultIter != results.end())
+      {
+         mMeshFilenames.push_back(resultIter->second);
+      }
+      else
+      {
+         errorString = std::string("Invalid XML format: <character> missing <name> child");
+      }     
    }
    else if (elementStr == "material")
-   {
-      mMaterialFilenames.push_back(results.find("filename")->second);
+   {      
+      resultIter = results.find("filename");
+
+      if (resultIter != results.end())
+      {
+         mMaterialFilenames.push_back(resultIter->second);
+      }
+      else
+      {
+         errorString = std::string("Invalid XML format: <character> missing <name> child");
+      }     
    }
 
+   if (!errorString.empty())
+   {      
+      LOG_ERROR(errorString);
+   }
 }
 
 CharacterFileHandler::CharacterFileHandler()

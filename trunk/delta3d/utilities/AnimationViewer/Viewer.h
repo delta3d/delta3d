@@ -36,7 +36,7 @@ public slots:
    void OnLOD_Changed( float zeroToOneValue );
 
 signals:
-   void OnAnimationLoaded( unsigned int, const QString & );
+   void OnAnimationLoaded( unsigned int, const QString & );  
 
 protected:
    virtual void timerEvent(QTimerEvent *event)

@@ -1,4 +1,5 @@
 #include "MainWindow.h"
+#include <dtUtil/fileutils.h>
 #include <QMenuBar>
 #include <QAction>
 #include <QFileDialog>
@@ -8,6 +9,7 @@
 #include <QToolBar>
 #include <QPushButton>
 #include <QDockWidget>
+#include <QMessageBox>
 
 MainWindow::MainWindow():
 mExitAct(NULL),
@@ -105,17 +107,27 @@ void MainWindow::OnOpenCharFile()
 
 }
 
-void MainWindow::LoadCharFile(const QString &filename)
+void MainWindow::LoadCharFile( const QString &filename )
 {
-   emit FileToLoad(filename);
-   SetCurrentFile(filename);
-   mLoadCharAct->setEnabled(false); //we can only load one file at a time.
-   for (int i=0; i<5; i++)
+   if (dtUtil::FileUtils::GetInstance().FileExists( filename.toStdString() ))
    {
-      mRecentFilesAct[i]->setEnabled(false);
-   }
+      emit FileToLoad( filename );
 
-   statusBar()->showMessage(tr("File loaded"), 2000);
+      SetCurrentFile( filename );
+      mLoadCharAct->setEnabled( false ); //we can only load one file at a time.
+
+      for (int i=0; i<5; i++)
+      {
+         mRecentFilesAct[i]->setEnabled( false );
+      }
+
+       //statusBar()->showMessage(tr("File loaded"), 2000);
+   }
+   else
+   {
+      QString errorString = QString("File not found: %1").arg( filename );
+      QMessageBox::warning( this, "Warning", errorString, "&Ok" );
+   }    
 }
 
 
@@ -298,6 +310,7 @@ void MainWindow::OnItemDoubleClicked(QTableWidgetItem *item)
       OnStartAction(item->row());
    }
 }
+
 
 void MainWindow::OnStartAction( int row )
 {
