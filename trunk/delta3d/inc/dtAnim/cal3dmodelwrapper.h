@@ -39,7 +39,6 @@ namespace dtAnim
       public:
    
          Cal3DModelWrapper( CalModel *model );
-         virtual ~Cal3DModelWrapper();
 
          void SetCalModel( CalModel *model );
 
@@ -103,6 +102,9 @@ namespace dtAnim
 
          /// Remove an existing one-time animation from the mixer
          bool RemoveAction(int id);
+
+   protected:
+      virtual ~Cal3DModelWrapper();
 
    
       private:
