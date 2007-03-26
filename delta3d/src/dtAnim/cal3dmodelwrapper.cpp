@@ -43,3 +43,49 @@ void Cal3DModelWrapper::SetCalModel( CalModel *model )
    mRenderer = mCalModel->getRenderer();
    mMixer = mCalModel->getMixer();
 }
+
+/** 
+ * @param id : a valid ID of an animation (0 based)
+ * @param weight : the strength of this animation in relation to the other
+ *                 animations already being blended.
+ * @param delay : how long it takes for this animation to become full strength (seconds)
+ * @return true if successful, false if an error happened.
+ */
+bool Cal3DModelWrapper::BlendCycle( int id, float weight, float delay )
+{
+   return mMixer->blendCycle(id, weight, delay);
+}
+
+/** 
+ * @param id : a valid ID of an animation already being blended (0 based)
+ * @param delay : how long it takes to fade this animation out (seconds)
+ * @return true if successful, false if an error happened.
+ */
+bool Cal3DModelWrapper::ClearCycle( int id, float delay )
+{
+   return mMixer->clearCycle(id, delay);
+}
+
+/** 
+ * @param id : a valid ID of a animation to perform one-time (0 based)
+ * @param delayIn : how long it takes to fade in this animation to full strength (seconds)
+ * @param delayOut: how long it takes to fade out this animation (seconds)
+ * @param weightTgt : the strength of this animation
+ * @param autoLock : true prevents the action from being reset and removed on the last
+ *                   key frame
+ * @return true if successful, false if an error happened.
+ */
+bool Cal3DModelWrapper::ExecuteAction( int id, float delayIn, float delayOut, 
+                                       float weightTgt/*=1.f*/, bool autoLock/*=false*/ )
+{
+   return mMixer->executeAction(id, delayIn, delayOut, weightTgt, autoLock);
+}
+
+/** 
+ * @param id : a valid ID of a one-time animation already playing (0 based)
+ * @return true if successful, false if an error happened or animation doesn't exist.
+ */
+bool Cal3DModelWrapper::RemoveAction( int id )
+{
+   return mMixer->removeAction(id);
+}

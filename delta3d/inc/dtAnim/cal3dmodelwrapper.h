@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * Erik Johnson 03/20/2007
+ * Erik Johnson
  */
 
 #ifndef __DELTA_CAL3DWRAPPER_H__
@@ -50,8 +50,17 @@ namespace dtAnim
          void SetMaterialSet(int materialSetID) { mCalModel->setMaterialSet(materialSetID); }
          void SetLODLevel(float level) { mCalModel->setLodLevel(level); }
 
+         /************************************************************************/
+         /// Update the Cal3D system using the CalModel's update.
          void Update(float deltaTime) {mCalModel->update(deltaTime); }
 
+         /// Update just the Cal3D's animation using the mixer
+         void UpdateAnimation(float deltaTime) {mCalModel->getMixer()->updateAnimation(deltaTime);}
+
+         /// Update just Cal3D's skeleton using ther mixer
+         void UpdateSkeleton()                 {mCalModel->getMixer()->updateSkeleton();}
+
+         /************************************************************************/
          bool BeginRenderingQuery() { return mRenderer->beginRendering(); } 
          void EndRenderingQuery()   { mRenderer->endRendering(); }
 
@@ -73,18 +82,27 @@ namespace dtAnim
          int GetTextureCoords(int mapID, float *coords, int stride=0) {return mRenderer->getTextureCoordinates(mapID, coords, stride);}
          int GetVertices(float *vertBuffer, int stride=0) {return mRenderer->getVertices(vertBuffer, stride);}
 
+         /************************************************************************/
          void GetAmbientColor( unsigned char *colorBuffer ) {mRenderer->getAmbientColor(colorBuffer);}
          void GetDiffuseColor( unsigned char *colorBuffer ) {mRenderer->getDiffuseColor(colorBuffer);}
          void GetSpecularColor( unsigned char *colorBuffer ) {mRenderer->getSpecularColor(colorBuffer);}
          float GetShininess() { return mRenderer->getShininess(); }
          void* GetMapUserData(int mapID) { return mRenderer->getMapUserData(mapID); }
 
-         bool BlendCycle(int id, float weight, float delay) {return mMixer->blendCycle(id, weight, delay);}
-         bool ClearCycle(int id, float delay)               {return mMixer->clearCycle(id, delay);}
-         bool ExecuteAction(int id, float delayIn, float delayOut,
-                            float weightTgt=1.f, bool autoLock=false) {return mMixer->executeAction(id, delayIn, delayOut, weightTgt, autoLock);}
 
-         bool RemoveAction(int id)                          {return mMixer->removeAction(id);}
+         /************************************************************************/         
+         /// Add a new looping animation to blend in using the mixer
+         bool BlendCycle(int id, float weight, float delay);
+
+         /// Remove an existing looping animation from the mixer
+         bool ClearCycle(int id, float delay);
+
+         /// Perform a one-time animation from the mixer
+         bool ExecuteAction(int id, float delayIn, float delayOut,
+                            float weightTgt=1.f, bool autoLock=false);
+
+         /// Remove an existing one-time animation from the mixer
+         bool RemoveAction(int id);
 
    
       private:
