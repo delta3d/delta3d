@@ -3,6 +3,7 @@
 #include <cal3d/model.h>
 #include <cal3d/coremodel.h>
 #include <dtAnim/characterfilehandler.h>
+#include <dtAnim/cal3dmodelwrapper.h>
 #include <dtUtil/xercesparser.h>
 #include <dtCore/globals.h>
 #include <osgDB/ReadFile>
@@ -77,11 +78,14 @@ CalCoreModel* Cal3DLoader::GetCoreModel( const std::string &filename )
 }
 
 /**
- * @return a fully defined CalMode, or NULL if file can't be read
+ * Will use the Delta3D search paths to find the supplied filename.
+ * @return A fully defined CalModel wrapped by a Cal3DModelWrapper.  RefPtr could
+ *         be not valid (wrapper->valid()==false) if the file didn't load correctly.
+ * @see SetDataFilePathList()
  */
-CalModel* Cal3DLoader::Load( const std::string &filename )
+dtCore::RefPtr<Cal3DModelWrapper> Cal3DLoader::Load( const std::string &filename )
 {
-   CalModel *model = NULL;
+   dtCore::RefPtr<Cal3DModelWrapper> wrapper;
 
    CalCoreModel *coreModel = GetCoreModel(filename);
    assert(coreModel);   
@@ -89,10 +93,11 @@ CalModel* Cal3DLoader::Load( const std::string &filename )
    if (coreModel != NULL)
    {
       LoadAllTextures(coreModel); //this should be a user-level process.
-      model = new CalModel(coreModel);
+      CalModel *model = new CalModel(coreModel);
+      wrapper = new Cal3DModelWrapper(model);
    }
 
-   return model;
+   return wrapper;
 }
 
 

@@ -27,8 +27,9 @@
 #include <map>
 #include <vector>
 #include <osg/ref_ptr>
+#include <dtCore/refptr.h>
 
-class CalModel;
+
 class CalCoreModel;
 
 namespace osg
@@ -36,8 +37,11 @@ namespace osg
    class Texture2D;
 }
 
+
 namespace dtAnim
 {
+   class Cal3DModelWrapper;
+
    /**
     * Loads a animation definition file and returns a valid CalModel.  Caches
     * the CalCoreModel defined by the file to make it faster to create additional
@@ -51,7 +55,8 @@ namespace dtAnim
          Cal3DLoader();
          virtual ~Cal3DLoader();
          
-         CalModel* Load( const std::string &filename );
+         ///Load an animated entity definition file and return the Cal3DModelWrapper
+         dtCore::RefPtr<Cal3DModelWrapper> Load( const std::string &filename );
    
       private:
          CalCoreModel* GetCoreModel( const std::string &filename );
