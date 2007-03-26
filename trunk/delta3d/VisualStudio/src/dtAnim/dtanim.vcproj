@@ -126,7 +126,7 @@
 				RelativePath="..\..\..\src\dtAnim\cal3dloader.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\src\dtAnim\cal3dwrapper.cpp">
+				RelativePath="..\..\..\src\dtAnim\cal3dmodelwrapper.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtAnim\characterfilehandler.cpp">
@@ -149,7 +149,7 @@
 				RelativePath="..\..\..\inc\dtAnim\cal3dloader.h">
 			</File>
 			<File
-				RelativePath="..\..\..\inc\dtAnim\cal3dwrapper.h">
+				RelativePath="..\..\..\inc\dtAnim\cal3dmodelwrapper.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtAnim\characterfilehandler.h">

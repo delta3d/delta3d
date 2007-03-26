@@ -1,7 +1,7 @@
 #include <osg/Material>
 #include <osg/Texture2D>
 #include <dtAnim/submesh.h>
-#include <dtAnim/cal3dwrapper.h>
+#include <dtAnim/cal3dmodelwrapper.h>
 
 using namespace dtAnim;
 
@@ -17,7 +17,7 @@ SubMeshDrawable::SubMeshDrawable() {
 	exit(1);
 }
 
-SubMeshDrawable::SubMeshDrawable(Cal3DWrapper *wrapper, unsigned mesh, unsigned submesh) 
+SubMeshDrawable::SubMeshDrawable(Cal3DModelWrapper *wrapper, unsigned mesh, unsigned submesh) 
 {
     this->mWrapper = wrapper;
 	this->mMeshID    = mesh;
