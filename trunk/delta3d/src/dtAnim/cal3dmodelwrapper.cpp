@@ -95,7 +95,17 @@ bool Cal3DModelWrapper::RemoveAction( int id )
   * Delta3D animation system.  You have been warned.
   * @return A pointer to the internal CalModel this class operates on.
   */
-CalModel* Cal3DModelWrapper::GetCalModel() const
+CalModel* Cal3DModelWrapper::GetCalModel() 
+{
+   return mCalModel;
+}
+
+/** Warning! This violates the protective services brought to you by the wrapper.
+  * Only modify the CalModel if you know how it will impact the rest of the 
+  * Delta3D animation system.  You have been warned.
+  * @return A const pointer to the internal CalModel this class operates on.
+  */
+const CalModel* Cal3DModelWrapper::GetCalModel() const
 {
    return mCalModel;
 }

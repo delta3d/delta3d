@@ -48,8 +48,10 @@ namespace dtAnim
          void SetCalModel( CalModel *model );
 
          ///Get a pointer to the internal CalModel.  For advanced users only!
-         CalModel* GetCalModel() const;
+         CalModel* GetCalModel();
 
+         ///Get a const pointer to the internal CalModel.  For advanced users only!
+         const CalModel* GetCalModel() const;
 
          bool AttachMesh( int meshID ) { return mCalModel->attachMesh(meshID); }
          bool DetachMesh( int meshID ) { return mCalModel->detachMesh(meshID); }
