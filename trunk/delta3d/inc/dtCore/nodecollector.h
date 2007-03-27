@@ -64,15 +64,26 @@ namespace dtCore
             }
       };
 
-   /**
-   * Class Name   : NodeCollector
-   * Derives From : NONE
-   * Purpose      : To hold onto dofs and other model nodes of an object loaded in for referencing
-   * /brief       : Make a new  class, call load function from model node,
-                     then get nodes by name or position for your use.
-   * Other Notes  : Destructor clean list, dont have to manually do so
-   *                unless you want to reuse the class
-   */
+
+   /** The NodeCollector is used to store particular nodes given a piece of scene
+     * graph.  Once the graph is searched, you can retrieve the particular node
+     * types by name or by index.
+     * To use:
+     * @code
+     * myObj->LoadFile("myTank.ive");
+     * RefPtr<NodeCollector> coll = new NodeCollector( myObj->GetOSGNode() );
+     * osgSim::DOFTransform *turret = coll->GetDOFByName("turretDOF");
+     * @endcode
+     *
+     * You can also do a more manual approach, like this:
+     * @code
+     * RefPtr<NodeCollector> coll = new NodeCollector(NULL);
+     * coll->AddHotSpotsFromModelNode( myObj->GetOSGNode(), 'x' );
+     * const osg::MatrixTransform* xform = coll->GetHotSpotByName("x_marks_the_spot");
+     * @endcode
+     *
+     * @note Destructor will empty all containers.
+     */
    class DT_CORE_EXPORT NodeCollector : public osg::Referenced
    {
       public:
@@ -126,12 +137,11 @@ namespace dtCore
          void CleanDofTransformList();
 
          /**
-         * Function : AddHotSpotsFromModelNode
-         * Purpose  : Fill in the std::list full of all the models hot spots
-         * @param   : osg::Node *nodepath - called from a dtCore::Object->GetOSGNode 
-         *            after loaded in
-         * Outs     : member variable std::list filled in
-         * @return  : NONE
+         * Collects all osg::MatrixTransform nodes that have names beginning with 
+         * the supplied character.
+         * @param osg::Node *nodepath : usually retrieved from a dtCore::Object::GetOSGNode()
+         *            after a file is loaded in
+         * @param TestLetter : The letter to check MatrixTransform node names with.
          */
          void AddHotSpotsFromModelNode(osg::Node *nodepath, char TestLetter = 'h');
          
