@@ -32,7 +32,12 @@
 namespace dtAnim
 {
    /**
-    * Wraps the Cal3D API
+    * Wraps the Cal3D CalModel class. It is expected that users will use the 
+    * Cal3DModelWrapper instead of using the CalModel class directly.
+    * To create a new Cal3DModelWrapper:
+    * @code
+    * dtCore::RefPtr<Cal3DModelWrapper> wrap = new Cal3DModelWrapper( calModel );
+    * @endcode
     */
    class DT_ANIM_EXPORT Cal3DModelWrapper : public osg::Referenced
    {
@@ -41,6 +46,9 @@ namespace dtAnim
          Cal3DModelWrapper( CalModel *model );
 
          void SetCalModel( CalModel *model );
+
+         ///Get a pointer to the internal CalModel.  For advanced users only!
+         CalModel* GetCalModel() const;
 
 
          bool AttachMesh( int meshID ) { return mCalModel->attachMesh(meshID); }
