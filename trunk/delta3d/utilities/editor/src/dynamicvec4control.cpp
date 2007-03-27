@@ -20,13 +20,13 @@
 * Curtiss Murphy
 */
 #include <prefix/dtstageprefix-src.h>
-#include "dtEditQt/dynamicvec4control.h"
-#include "dtEditQt/dynamicvectorelementcontrol.h"
+#include <dtEditQt/dynamicvec4control.h>
+#include <dtEditQt/dynamicvectorelementcontrol.h>
 #include <osg/Vec3>
-#include "dtDAL/actorproxy.h"
-#include "dtDAL/actorproperty.h"
-#include "dtDAL/datatype.h"
-#include "dtDAL/enginepropertytypes.h"
+#include <dtDAL/actorproxy.h>
+#include <dtDAL/actorproperty.h>
+#include <dtDAL/datatype.h>
+#include <dtDAL/enginepropertytypes.h>
 #include <dtUtil/log.h>
 #include <QtGui/QWidget>
 #include <QtGui/QGridLayout>
