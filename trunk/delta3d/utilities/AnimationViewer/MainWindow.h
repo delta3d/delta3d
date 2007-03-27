@@ -24,7 +24,7 @@ signals:
 public slots:
    void OnNewAnimation(unsigned int id, const QString &filename);
    void OnAnimationClicked( QTableWidgetItem *item);
-   void OnLOD_Changed(int newValue);
+   void OnLOD_Changed(double newValue);
 	
 private:
    void CreateMenus();
