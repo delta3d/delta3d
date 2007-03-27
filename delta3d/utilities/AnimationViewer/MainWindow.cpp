@@ -11,7 +11,7 @@
 #include <QRadioButton>
 #include <QDockWidget>
 #include <QMessageBox>
-#include <QSpinBox>
+#include <QDoubleSpinBox>
 
 #include <cassert>
 
@@ -26,10 +26,10 @@ mAnimListWidget(NULL)
    CreateMenus();
    (void)statusBar();
   
-   QSpinBox *lodSpinner = new QSpinBox(this);
-   lodSpinner->setRange(0, 100);
-   lodSpinner->setSingleStep(1);  
-   lodSpinner->setValue(100);
+   QDoubleSpinBox *lodSpinner = new QDoubleSpinBox(this);
+   lodSpinner->setRange(0, 1);
+   lodSpinner->setSingleStep(0.01);  
+   lodSpinner->setValue(1);
 
    QToolBar *shadingToolBar = addToolBar("hey baby"); 
    QToolBar *tempToolBar    = addToolBar("temp");
@@ -58,7 +58,7 @@ mAnimListWidget(NULL)
    
    tempToolBar->addWidget(lodSpinner);   
   
-   connect(lodSpinner, SIGNAL(valueChanged(int)), this, SLOT(OnLOD_Changed(int)));      
+   connect(lodSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnLOD_Changed(double)));      
 }
 
 MainWindow::~MainWindow()
@@ -210,10 +210,9 @@ void MainWindow::OnAnimationClicked( QTableWidgetItem *item )
    }
 }
 
-void MainWindow::OnLOD_Changed(int newValue)
-{
-   float normalizedValue = (float)newValue / 100;
-   emit LOD_Changed(normalizedValue);
+void MainWindow::OnLOD_Changed(double newValue)
+{   
+   emit LOD_Changed(newValue);
 }
 
 void MainWindow::UpdateRecentFileActions()
