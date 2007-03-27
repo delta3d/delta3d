@@ -101,11 +101,11 @@ void MainWindow::CreateToolbars()
    QActionGroup *actionGroup = new QActionGroup(this);
    actionGroup->setExclusive(true);     
 
-   QIcon wireframeIcon(":/images/wireframe.jpg");  
-   QIcon shadedIcon(":/images/shaded.jpg");
-   QIcon shadedWireIcon(":/images/shadedwire.jpg");
-   QIcon diffuseIcon(":/images/diffuseLight.jpg");
-   QIcon pointLightIcon(":/images/pointLight.jpg");
+   QIcon wireframeIcon(":/images/wireframe.png");  
+   QIcon shadedIcon(":/images/shaded.png");
+   QIcon shadedWireIcon(":/images/shadedwire.png");
+   QIcon diffuseIcon(":/images/diffuseLight.png");
+   QIcon pointLightIcon(":/images/pointLight.png");
 
    mWireframeAction  = actionGroup->addAction(wireframeIcon, "Wireframe");
    mShadedAction     = actionGroup->addAction(shadedIcon, "Shaded");
