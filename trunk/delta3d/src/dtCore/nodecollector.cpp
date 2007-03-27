@@ -30,6 +30,7 @@ namespace dtCore
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    const NodeCollectorTypes NodeCollectorTypes::DOF_LOAD_NODE_COLLECTOR_TYPE("DOF_LOAD_NODE_COLLECTOR_TYPE");
    const NodeCollectorTypes NodeCollectorTypes::HOT_SPOT_LOAD_NODE_COLLECTOR_TYPE("HOT_SPOT_LOAD_NODE_COLLECTOR_TYPE");
+   const NodeCollectorTypes NodeCollectorTypes::MULTISWITCH_NODE_COLLECTOR_TYPE("MULTISWITCH_NODE_COLLECTOR_TYPE");
    const NodeCollectorTypes NodeCollectorTypes::LOAD_ALL_NODE_TYPES("LOAD_ALL_NODE_TYPES");
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -39,6 +40,7 @@ namespace dtCore
       mLogger = &dtUtil::Log::GetInstance("NodeCollector.cpp");
       CleanDofTransformList();
       CleanHotSpotList();
+      CleanMultiSwitchList();
 
       SetNodeCollectorFlag(type);
       if(NodeCollectorTypes::DOF_LOAD_NODE_COLLECTOR_TYPE == type)
@@ -49,10 +51,15 @@ namespace dtCore
       {
          AddHotSpotsFromModelNode(NodeToLoad);
       }
+      else if(NodeCollectorTypes::MULTISWITCH_NODE_COLLECTOR_TYPE == type)
+      {
+         AddMultiSwitchesFromModelNode(NodeToLoad);
+      }
       else if(NodeCollectorTypes::LOAD_ALL_NODE_TYPES == type)
       {
          AddDOFSFromModelNode(NodeToLoad);
          AddHotSpotsFromModelNode(NodeToLoad);
+         AddMultiSwitchesFromModelNode(NodeToLoad);
       }
    }
 
@@ -60,6 +67,7 @@ namespace dtCore
    {
       CleanHotSpotList();
       CleanDofTransformList();
+      CleanMultiSwitchList();
    }
 
    void NodeCollector::AddDOFSFromModelNode(osg::Node *nodepath)
@@ -68,7 +76,7 @@ namespace dtCore
 
       // check to see if we have a valid (non-NULL) node.
       // if we do have a null node, return NULL.
-      if (!nodepath) 
+      if (nodepath==NULL) 
          return;
       
       // We have a valid node, check to see if this is the node we 
@@ -169,7 +177,7 @@ namespace dtCore
 
       // check to see if we have a valid (non-NULL) node.
       // if we do have a null node, return NULL.
-      if (!nodepath) 
+      if (nodepath==NULL) 
          return;
       
       // We have a valid node, check to see if this is the node we 
@@ -263,5 +271,106 @@ namespace dtCore
    void NodeCollector::CleanHotSpotList()
    {
       mHotSpots.clear();
+   }
+
+   void NodeCollector::AddMultiSwitchesFromModelNode(osg::Node *nodepath)
+   {
+      osg::Group* currGroup = NULL;
+
+      // check to see if we have a valid (non-NULL) node.
+      // if we do have a null node, return NULL.
+      if (nodepath==NULL) 
+         return;
+      
+      // We have a valid node, check to see if this is the node we 
+      // are looking for. If so, return the current node.
+      osgSim::MultiSwitch *multiswitch = dynamic_cast<osgSim::MultiSwitch*>(nodepath);
+      if(multiswitch)
+      {
+         //std::cout << "NodeCollector found MULTISWITCH: Class Name [" <<  multiswitch->className() << 
+         //   "], Node Name [" << multiswitch->getName() << "]" << std::endl;
+         mMultiSwitches.push_back(multiswitch);
+      }
+
+      // We have a valid node, but not the one we are looking for.
+      // Check to see if it has children (non-leaf node). If the node
+      // has children, check each of the child nodes by recursive call.
+      // If one of the recursive calls returns a non-null value we have
+      // found the correct node, so return this node.
+      // If we check all of the children and have not found the node,
+      // return NULL
+      currGroup = nodepath->asGroup(); // returns NULL if not a group.
+      if ( currGroup ) 
+      {
+         for (unsigned int i = 0 ; i < currGroup->getNumChildren(); i ++)
+         { 
+            AddMultiSwitchesFromModelNode(currGroup->getChild(i));
+         }
+         return; // We have checked each child node - no match found.
+      }
+      else 
+      {
+         return; // leaf node, no match 
+      }
+   }
+
+   osgSim::MultiSwitch* NodeCollector::GetMultiSwitchAtPosition(const unsigned int loc)
+   {
+      if(loc > GetMultiSwitchListSize())
+         return NULL;
+      
+      std::list<dtCore::RefPtr<osgSim::MultiSwitch> >::iterator iter = mMultiSwitches.begin();
+
+      unsigned int i = 0;
+      for(;iter != mMultiSwitches.end(); ++iter)
+      {
+         if(i == loc)
+            return iter->get();
+         i++;
+      }
+      return NULL;
+   }
+
+   osgSim::MultiSwitch* NodeCollector::GetMultiSwitchByName(const std::string &MultiSwitchName)
+   {
+      std::list<dtCore::RefPtr<osgSim::MultiSwitch> >::iterator iter = mMultiSwitches.begin();
+      for(;iter != mMultiSwitches.end(); ++iter)
+      {
+         osgSim::MultiSwitch *multiswitch = (*iter).get();
+         if(multiswitch->getName().c_str() == MultiSwitchName)
+            return multiswitch;
+      }
+      if(mIsLoggingEnabled)
+      {
+         std::list<std::string>::iterator stringiter = mLoggedMessages.begin();
+         bool toContinue = true;
+         for(;stringiter != mLoggedMessages.end(); ++stringiter)
+         {
+         if((*stringiter) == MultiSwitchName)
+            toContinue = false;
+         }
+         if(toContinue)
+         {
+            if(mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            {
+               // error message here
+               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                                 "Could not find MultiSwitch by name %s\n",
+                                 MultiSwitchName.c_str());
+               mLoggedMessages.push_back(MultiSwitchName);   
+            }
+         }
+      }
+      return NULL;   
+   }
+
+   const unsigned int NodeCollector::GetMultiSwitchListSize()
+   {
+      return mMultiSwitches.size();
+   }
+
+   void NodeCollector::CleanMultiSwitchList()
+   {
+      mMultiSwitches.clear();
    }
 }
