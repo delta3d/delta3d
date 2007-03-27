@@ -30,3 +30,5 @@ HEADERS = Delta3DThread.h \
 INCLUDEPATH +=  "$$(DELTA_INC)"
 
 VPATH = ../../../utilities/AnimationViewer/
+
+RESOURCES = AnimationViewerResources.qrc

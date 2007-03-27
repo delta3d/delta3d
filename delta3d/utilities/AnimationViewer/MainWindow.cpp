@@ -8,8 +8,12 @@
 #include <QStatusBar>
 #include <QToolBar>
 #include <QPushButton>
+#include <QRadioButton>
 #include <QDockWidget>
 #include <QMessageBox>
+#include <QSpinBox>
+
+#include <cassert>
 
 MainWindow::MainWindow():
 mExitAct(NULL),
@@ -28,27 +32,44 @@ mAnimListWidget(NULL)
    connect(mAnimListWidget, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(OnAnimationClicked(QTableWidgetItem*)));
    connect(mAnimListWidget, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(OnItemChanged(QTableWidgetItem*)));
    connect(mAnimListWidget, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(OnItemDoubleClicked(QTableWidgetItem*)));
-   setCentralWidget(mAnimListWidget);
 
-   //QPushButton *testButt = new QPushButton;
-   //testButt->setCheckable(true);
+   QSpinBox *lodSpinner = new QSpinBox(this);
+   lodSpinner->setRange(0, 100);
+   lodSpinner->setSingleStep(1);  
+   lodSpinner->setValue(100);
 
-   QSlider *lodSlider = new QSlider(Qt::Horizontal);
-   lodSlider->setMinimumSize(QSize(100, 20));
-   lodSlider->setMaximumSize(QSize(100, 50));
-   lodSlider->setMaximum(100);
-   lodSlider->setMinimum(0);
-   lodSlider->setSliderPosition(100);  
+   QToolBar *shadingToolBar = addToolBar("hey baby"); 
+   QToolBar *tempToolBar    = addToolBar("temp");
 
-   QToolBar *toolBar = addToolBar("hey baby");     
-   toolBar->setMovable(true);
-   toolBar->addWidget(lodSlider); 
+   // The actiongroup is used to make the action behave like radio buttons
+   QActionGroup *actionGroup = new QActionGroup(this);
+   actionGroup->setExclusive(true);     
+
+   QIcon wireframeIcon(":/images/wireframe.jpg");  
+   QIcon shadedIcon(":/images/wireframe.jpg");
+   QIcon shadedWireIcon(":/images/wireframe.jpg");
+
+   QAction *wireframeAction  = actionGroup->addAction(wireframeIcon, "Wireframe");
+   QAction *shadedAction     = actionGroup->addAction(shadedIcon, "Shaded");
+   QAction *shadedWireAction = actionGroup->addAction(shadedWireIcon, "Shaded Wireframe");
+
+   wireframeAction->setCheckable(true);
+   shadedAction->setCheckable(true); 
+   shadedWireAction->setCheckable(true);   
+   
+   shadingToolBar->addAction(wireframeAction);
+   shadingToolBar->addAction(shadedAction);
+   shadingToolBar->addAction(shadedWireAction);    
+   
+   tempToolBar->addWidget(lodSpinner);   
   
-   connect(lodSlider, SIGNAL(valueChanged(int)), this, SLOT(OnLOD_Changed(int)));
+   connect(lodSpinner, SIGNAL(valueChanged(int)), this, SLOT(OnLOD_Changed(int)));
 
    QStringList headers;
    headers << "Name" << "Weight (L)" << "Delay (L)" << "Delay In (A)" << "Delay Out (A)";
    mAnimListWidget->setHorizontalHeaderLabels(headers );
+
+   setCentralWidget(mAnimListWidget);
 }
 
 MainWindow::~MainWindow()
