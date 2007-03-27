@@ -1,5 +1,6 @@
 #include <osg/Material>
 #include <osg/Texture2D>
+#include <osg/PolygonMode>
 #include <dtAnim/submesh.h>
 #include <dtAnim/cal3dmodelwrapper.h>
 
@@ -66,6 +67,8 @@ SubMeshDrawable::~SubMeshDrawable(void)
 void SubMeshDrawable::setUpMaterial() 
 {
 	osg::StateSet *set = this->getOrCreateStateSet();
+    //osg::PolygonMode pm;
+    //set->setAttributeAndModes()
 	
 	  // select mesh and submesh for further data access
 	  if(mWrapper->SelectMeshSubmesh(mMeshID, mSubmeshID)) 
