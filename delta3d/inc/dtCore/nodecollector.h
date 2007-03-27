@@ -24,7 +24,7 @@
 #include <osg/Node>
 #include <osg/MatrixTransform>
 #include <osgSim/DOFTransform>
-
+#include <osgSim/MultiSwitch>
 #include <dtUtil/enumeration.h>
 
 #include <dtCore/refptr.h>
@@ -50,6 +50,9 @@ namespace dtCore
             
             // HOT SPOTS for offsets / placement helpers
             static const NodeCollectorTypes HOT_SPOT_LOAD_NODE_COLLECTOR_TYPE;
+
+            // MultiSwitches for selecting different model states
+            static const NodeCollectorTypes MULTISWITCH_NODE_COLLECTOR_TYPE;
 
             // LOAD both DOFS and HOT SPOTS
             static const NodeCollectorTypes LOAD_ALL_NODE_TYPES;
@@ -169,6 +172,52 @@ namespace dtCore
          void CleanHotSpotList();
 
          /**
+         * Function : AddMultiSwitchesFromModelNode
+         * Purpose  : Fill in the std::list full of all the models MultiSwitches
+         * @param   : osg::Node *nodepath - called from a dtCore::Object->GetOSGNode 
+         *            after loaded in
+         * Outs     : member variable std::list filled in
+         * @return  : NONE
+         */
+         void AddMultiSwitchesFromModelNode(osg::Node *nodepath);
+         
+         /**
+         * Function : GetMultiSwitchAtPosition
+         * Purpose  : To get a MultiSwitch for use
+         * @param   : loc - where in array of MultiSwitch you want
+         * Outs     : NONE
+         * @return  : osgSim::MultiSwitch* that you will modify
+         */
+         osgSim::MultiSwitch* GetMultiSwitchAtPosition(const unsigned int loc);
+      
+         /**
+         * Function : GetMultiSwitchByName
+         * Purpose  : Get a MultiSwitch for use
+         * @param   : std::string &MultiSwitchName - name of dof to get
+         * Outs     : NONE
+         * @return  : osgSim::MultiSwitch* that you will modify
+         */
+         osgSim::MultiSwitch* GetMultiSwitchByName(const std::string &MultiSwitchName);
+       
+         /**
+         * Function : GetMultiSwitchListSize
+         * Purpose  : Get the amounts of dof active
+         * @param   : NONE
+         * Outs     : NONE
+         * @return  : Size of the std::list
+         */
+         const unsigned int GetMultiSwitchListSize();
+        
+         /**
+         * Function : CleanMultiSwitchList
+         * Purpose  : Clears the list out
+         * @param   : NONE
+         * Outs     : list cleared called
+         * @return  : N/A
+         */
+         void CleanMultiSwitchList();
+
+         /**
          * Function  : SetNodeCollectorFlag
          * @param    : The type you want it to be.
          * @return  : N/A
@@ -201,6 +250,13 @@ namespace dtCore
          * Purpose   : Holds onto our hot spot data
          */
          std::list<dtCore::RefPtr<osg::MatrixTransform> > mHotSpots;
+
+         /**
+         * Var Name  : mMultiSwitches
+         * Type      : std::list<osgSim::MultiSwitch>
+         * Purpose   : Holds onto our multiSwitch data
+         */
+         std::list<dtCore::RefPtr<osgSim::MultiSwitch> > mMultiSwitches;
 
          /**
          * /brief   : Purpose - Logs a message once if enabled throws onto this list
