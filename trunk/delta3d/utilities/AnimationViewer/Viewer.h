@@ -12,6 +12,11 @@ namespace dtCore
    class RefPtr;
 }
 
+namespace osg
+{
+   class Group;
+}
+
 
 namespace dtAnim
 {
@@ -47,11 +52,15 @@ protected:
       dtCore::System::GetInstance().StepWindow();
    }
 
+   void InitShadeDecorator();
+   void InitWireDecorator();
 
 private:
    QBasicTimer mTimer;
    dtCore::RefPtr<dtAnim::CharDrawable> mCharacter;
    dtCore::RefPtr<dtCore::OrbitMotionModel> mMotion;
+   dtCore::RefPtr<osg::Group> mWireDecorator;
+   dtCore::RefPtr<osg::Group> mShadeDecorator;
 };
 
 #endif // Viewer_h__

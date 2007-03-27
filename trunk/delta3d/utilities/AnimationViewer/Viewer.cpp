@@ -19,6 +19,9 @@
 #include <osg/Geode>
 #include <osg/Shape>
 #include <osg/ShapeDrawable>
+#include <osg/PolygonMode>
+#include <osg/PolygonOffset>
+#include <osg/Material>
 
 #include <QDir>
 #include <QDebug>
@@ -67,11 +70,17 @@ void Viewer::Config()
    mMotion->SetTarget( GetCamera() );
    mMotion->SetDistance(5.f);
 
-   Light *l = GetScene()->GetLight(0);
-   l->SetAmbient(0.3f, 0.3f, 0.3f, 1.f);
+   //Light *l = GetScene()->GetLight(0);
+   ////l->SetAmbient(0.3f, 0.3f, 0.3f, 1.f);  
+   //l->SetAmbient(1.0f, 1.0f, 1.0f, 1.0f);  
   
-   GetScene()->GetSceneNode()->addChild( MakePlane() );
+   GetScene()->GetSceneNode()->addChild( MakePlane() );   
 
+   mWireDecorator  = new osg::Group;
+   mShadeDecorator = new osg::Group;
+
+   InitWireDecorator(); 
+   InitShadeDecorator();
 
    Log::GetInstance().SetLogLevel(Log::LOG_DEBUG);
    
@@ -90,13 +99,18 @@ void Viewer::OnLoadCharFile( const QString &filename )
                         dir.path().toStdString() + ";" );  
   
    if (mCharacter.get())
-   {
-      RemoveDrawable(mCharacter.get());  
+   {        
+      mShadeDecorator->removeChild(mCharacter.get()->mGeode.get());
+      mWireDecorator->removeChild(mCharacter.get()->mGeode.get());
       mCharacter = NULL;
    }
 
    mCharacter = new dtAnim::CharDrawable();
-   AddDrawable(mCharacter.get());
+
+   GetScene()->GetSceneNode()->addChild(mShadeDecorator.get());   
+
+   mShadeDecorator->addChild(mCharacter.get()->mGeode.get());
+   mWireDecorator->addChild(mCharacter.get()->mGeode.get());
 
    //create an instance from the character definition file
    mCharacter->Create(filename.toStdString());
@@ -139,15 +153,58 @@ void Viewer::OnLOD_Changed( float zeroToOneValue )
 
 void Viewer::OnSetShaded()
 {
-   GetScene()->SetRenderState(Scene::FRONT_AND_BACK, Scene::FILL);
+   GetScene()->GetSceneNode()->removeChild(mWireDecorator.get());
+   GetScene()->GetSceneNode()->removeChild(mShadeDecorator.get());
+
+   GetScene()->GetSceneNode()->addChild(mShadeDecorator.get());
 }
 
 void Viewer::OnSetWireframe()
 {
-    GetScene()->SetRenderState(Scene::FRONT_AND_BACK, Scene::LINE);
+   GetScene()->GetSceneNode()->removeChild(mWireDecorator.get());
+   GetScene()->GetSceneNode()->removeChild(mShadeDecorator.get());  
+
+   GetScene()->GetSceneNode()->addChild(mWireDecorator.get());
 }
 
 void Viewer::OnSetShadedWireframe()
 {
+   GetScene()->GetSceneNode()->removeChild(mWireDecorator.get());
+   GetScene()->GetSceneNode()->removeChild(mShadeDecorator.get());
 
+   GetScene()->GetSceneNode()->addChild(mWireDecorator.get());
+   GetScene()->GetSceneNode()->addChild(mShadeDecorator.get());   
+}
+
+void Viewer::InitShadeDecorator()
+{
+   osg::StateSet *stateset = new osg::StateSet;  
+   osg::PolygonMode *polyMode = new osg::PolygonMode;
+   polyMode->setMode(osg::PolygonMode::FRONT, osg::PolygonMode::FILL);
+   
+   osg::Material *material = new osg::Material;
+   stateset->setAttributeAndModes(material, osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);  
+   stateset->setMode(GL_LIGHTING, osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF);
+
+   mShadeDecorator->setStateSet(stateset);
+}
+
+void Viewer::InitWireDecorator()
+{
+   osg::StateSet *stateset = new osg::StateSet;
+   osg::PolygonOffset *polyOffset = new osg::PolygonOffset;
+   polyOffset->setFactor(-1.0f);
+   polyOffset->setUnits(-1.0f);
+   osg::PolygonMode *polyMode = new osg::PolygonMode;
+   polyMode->setMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::LINE);
+   stateset->setAttributeAndModes(polyOffset, osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
+   stateset->setAttributeAndModes(polyMode, osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
+
+   osg::Material *material = new osg::Material;
+   stateset->setAttributeAndModes(material, osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
+   stateset->setMode(GL_LIGHTING, osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF);
+
+   stateset->setTextureMode(0, GL_TEXTURE_2D, osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF );
+
+   mWireDecorator->setStateSet(stateset);
 }

@@ -94,9 +94,10 @@ namespace dtAnim
 
     dtAnim::Cal3DModelWrapper* GetCal3DWrapper() {return mCal3DWrapper.get(); }
 
+    osg::ref_ptr<osg::Geode>    mGeode; 
    private:
       
-      osg::ref_ptr<osg::Geode>    mGeode; 
+      
       dtCore::RefPtr<dtAnim::Cal3DModelWrapper> mCal3DWrapper;
 
 
