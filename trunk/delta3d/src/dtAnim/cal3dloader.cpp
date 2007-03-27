@@ -5,11 +5,13 @@
 #include <dtAnim/characterfilehandler.h>
 #include <dtAnim/cal3dmodelwrapper.h>
 #include <dtUtil/xercesparser.h>
+#include <dtUtil/log.h>
 #include <dtCore/globals.h>
 #include <osgDB/ReadFile>
 #include <osg/Texture2D>
 
 using namespace dtAnim;
+using namespace dtUtil;
 
 Cal3DLoader::Cal3DLoader()
 {
@@ -50,7 +52,12 @@ CalCoreModel* Cal3DLoader::GetCoreModel( const std::string &filename )
          std::vector<std::string>::iterator animItr = handler.mAnimationFilenames.begin();
          while (animItr != handler.mAnimationFilenames.end())
          {
-            coreModel->loadCoreAnimation( FindFileInPathList(*animItr) );
+            std::string name = FindFileInPathList(*animItr);
+            if (!name.empty()) coreModel->loadCoreAnimation( name );
+            else
+            {
+               LOG_ERROR("Can't find animation file named:'" + *animItr + "'.");
+            }
             ++animItr;
          }
 
@@ -58,7 +65,12 @@ CalCoreModel* Cal3DLoader::GetCoreModel( const std::string &filename )
          std::vector<std::string>::iterator meshItr = handler.mMeshFilenames.begin();
          while (meshItr != handler.mMeshFilenames.end())
          {
-            coreModel->loadCoreMesh( FindFileInPathList(*meshItr) );
+            std::string name = FindFileInPathList(*meshItr);
+            if (!name.empty())   coreModel->loadCoreMesh( name );
+            else
+            {
+               LOG_ERROR("Can't find mesh file named:'" + *meshItr + "'.");
+            }
             ++meshItr;
          }
 
@@ -66,7 +78,13 @@ CalCoreModel* Cal3DLoader::GetCoreModel( const std::string &filename )
          std::vector<std::string>::iterator matItr = handler.mMaterialFilenames.begin();
          while (matItr != handler.mMaterialFilenames.end())
          {
-            coreModel->loadCoreMaterial( FindFileInPathList(*matItr) );
+            std::string name = FindFileInPathList(*matItr);
+
+            if (!name.empty())  coreModel->loadCoreMaterial( name );
+            else
+            {
+               LOG_ERROR("Can't find material file named:'" + *matItr + "'.");
+            }
             ++matItr;
          }
 
