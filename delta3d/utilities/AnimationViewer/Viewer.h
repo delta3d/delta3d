@@ -34,6 +34,9 @@ public slots:
    void OnStopAnimation( unsigned int id, float delay );
    void OnStartAction( unsigned int id, float delayIn, float delayOut );
    void OnLOD_Changed( float zeroToOneValue );  
+   void OnSetShaded();
+   void OnSetWireframe();
+   void OnSetShadedWireframe();
 
 signals:
    void OnAnimationLoaded( unsigned int, const QString & );  

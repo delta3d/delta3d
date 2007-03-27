@@ -9,6 +9,7 @@ class QTableWidgetItem;
 
 class MainWindow : public QMainWindow
 {
+   friend class Delta3DThread;
    Q_OBJECT
 public:
 	MainWindow();
@@ -19,7 +20,7 @@ signals:
    void StartAnimation(unsigned int, float, float);
    void StopAnimation(unsigned int, float);
    void StartAction(unsigned int, float, float);
-   void LOD_Changed(float zeroToOneValue);
+   void LOD_Changed(float zeroToOneValue);  
 
 public slots:
    void OnNewAnimation(unsigned int id, const QString &filename);
@@ -39,6 +40,10 @@ private:
    QAction *mExitAct;
    QAction *mLoadCharAct;
    QAction *mRecentFilesAct[5];
+   QAction *mWireframeAction; 
+   QAction *mShadedAction;    
+   QAction *mShadedWireAction;
+
    QTableWidget *mAnimListWidget;
 
 private slots:

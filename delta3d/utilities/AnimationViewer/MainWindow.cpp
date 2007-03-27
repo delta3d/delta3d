@@ -42,19 +42,19 @@ mAnimListWidget(NULL)
    QIcon shadedIcon(":/images/shaded.jpg");
    QIcon shadedWireIcon(":/images/shadedwire.jpg");
 
-   QAction *wireframeAction  = actionGroup->addAction(wireframeIcon, "Wireframe");
-   QAction *shadedAction     = actionGroup->addAction(shadedIcon, "Shaded");
-   QAction *shadedWireAction = actionGroup->addAction(shadedWireIcon, "Shaded Wireframe");
+   mWireframeAction  = actionGroup->addAction(wireframeIcon, "Wireframe");
+   mShadedAction     = actionGroup->addAction(shadedIcon, "Shaded");
+   mShadedWireAction = actionGroup->addAction(shadedWireIcon, "Shaded Wireframe");   
 
-   wireframeAction->setCheckable(true);
-   shadedAction->setCheckable(true); 
-   shadedWireAction->setCheckable(true);   
+   mWireframeAction->setCheckable(true);
+   mShadedAction->setCheckable(true); 
+   mShadedWireAction->setCheckable(true);   
 
-   shadedAction->setChecked(true);
+   mShadedAction->setChecked(true);
    
-   shadingToolBar->addAction(wireframeAction);
-   shadingToolBar->addAction(shadedAction);
-   shadingToolBar->addAction(shadedWireAction);    
+   shadingToolBar->addAction(mWireframeAction);
+   shadingToolBar->addAction(mShadedAction);
+   shadingToolBar->addAction(mShadedWireAction);    
    
    tempToolBar->addWidget(lodSpinner);   
   

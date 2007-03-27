@@ -69,7 +69,7 @@ void Viewer::Config()
 
    Light *l = GetScene()->GetLight(0);
    l->SetAmbient(0.3f, 0.3f, 0.3f, 1.f);
-
+  
    GetScene()->GetSceneNode()->addChild( MakePlane() );
 
 
@@ -135,4 +135,19 @@ void Viewer::OnLOD_Changed( float zeroToOneValue )
      
       mcHammer->SetLODLevel(zeroToOneValue);
    }  
+}
+
+void Viewer::OnSetShaded()
+{
+   GetScene()->SetRenderState(Scene::FRONT_AND_BACK, Scene::FILL);
+}
+
+void Viewer::OnSetWireframe()
+{
+    GetScene()->SetRenderState(Scene::FRONT_AND_BACK, Scene::LINE);
+}
+
+void Viewer::OnSetShadedWireframe()
+{
+
 }
