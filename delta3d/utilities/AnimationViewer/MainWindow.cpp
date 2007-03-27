@@ -46,8 +46,8 @@ mAnimListWidget(NULL)
    actionGroup->setExclusive(true);     
 
    QIcon wireframeIcon(":/images/wireframe.jpg");  
-   QIcon shadedIcon(":/images/wireframe.jpg");
-   QIcon shadedWireIcon(":/images/wireframe.jpg");
+   QIcon shadedIcon(":/images/shaded.jpg");
+   QIcon shadedWireIcon(":/images/shadedwire.jpg");
 
    QAction *wireframeAction  = actionGroup->addAction(wireframeIcon, "Wireframe");
    QAction *shadedAction     = actionGroup->addAction(shadedIcon, "Shaded");
@@ -56,6 +56,8 @@ mAnimListWidget(NULL)
    wireframeAction->setCheckable(true);
    shadedAction->setCheckable(true); 
    shadedWireAction->setCheckable(true);   
+
+   shadedAction->setChecked(true);
    
    shadingToolBar->addAction(wireframeAction);
    shadingToolBar->addAction(shadedAction);
