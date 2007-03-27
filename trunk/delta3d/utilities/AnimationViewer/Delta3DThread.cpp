@@ -32,6 +32,10 @@ void Delta3DThread::run()
    connect(mWin, SIGNAL(StartAction(unsigned int,float,float)), viewer.get(), SLOT(OnStartAction(unsigned int,float,float)));
    connect(mWin, SIGNAL(LOD_Changed(float)), viewer.get(), SLOT(OnLOD_Changed(float)));
 
+   connect((QObject*)mWin->mShadedAction, SIGNAL(triggered()), viewer.get(), SLOT(OnSetShaded()));
+   connect((QObject*)mWin->mWireframeAction, SIGNAL(triggered()), viewer.get(), SLOT(OnSetWireframe()));
+   connect((QObject*)mWin->mShadedWireAction, SIGNAL(triggered()), viewer.get(), SLOT(OnSetShadedWireframe()));
+
    dtCore::System::GetInstance().Start();
 
    this->exec();
