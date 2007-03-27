@@ -6,14 +6,17 @@
 
 using namespace dtAnim;
 
-class SubMeshDirtyCallback: public osg::Geometry::UpdateCallback {
+class SubMeshDirtyCallback: public osg::Geometry::UpdateCallback 
+{
 public:
-	virtual void update (osg::NodeVisitor *, osg::Drawable *d) {
+	virtual void update (osg::NodeVisitor *, osg::Drawable *d) 
+    {
 		d->dirtyBound();
 	}
 };
 
-SubMeshDrawable::SubMeshDrawable() {
+SubMeshDrawable::SubMeshDrawable()
+{
 	std::cout << "SubMesh::SubMesh(): You should never call this constructor!" << std::endl;
 	exit(1);
 }
@@ -66,54 +69,53 @@ SubMeshDrawable::~SubMeshDrawable(void)
 
 void SubMeshDrawable::setUpMaterial() 
 {
-	osg::StateSet *set = this->getOrCreateStateSet();
-    //osg::PolygonMode pm;
-    //set->setAttributeAndModes()
+	osg::StateSet *set = this->getOrCreateStateSet();   
 	
-	  // select mesh and submesh for further data access
-	  if(mWrapper->SelectMeshSubmesh(mMeshID, mSubmeshID)) 
-      {
-		 //osg::Material *material = new osg::Material();
-		 //material->setColorMode(osg::Material::AMBIENT_AND_DIFFUSE);
-		 //set->setAttributeAndModes(material, osg::StateAttribute::ON);
-		 //unsigned char meshColor[4];
-		 //osg::Vec4 materialColor;
+   // select mesh and submesh for further data access
+   if(mWrapper->SelectMeshSubmesh(mMeshID, mSubmeshID)) 
+   {
+	  //osg::Material *material = new osg::Material();
+	  //material->setColorMode(osg::Material::AMBIENT_AND_DIFFUSE);
+	  //set->setAttributeAndModes(material, osg::StateAttribute::ON);
+	  //unsigned char meshColor[4];
+	  //osg::Vec4 materialColor;
 
-		 //// set the material ambient color
-		 //pCalRenderer->getAmbientColor(&meshColor[0]);
-		 //materialColor[0] = meshColor[0] / 255.0f;  materialColor[1] = meshColor[1] / 255.0f; materialColor[2] = meshColor[2] / 255.0f; materialColor[3] = meshColor[3] / 255.0f;
-		 //if (materialColor[3] == 0) materialColor[3]=1.0f;
-		 //material->setAmbient(osg::Material::FRONT, materialColor);
+	  //// set the material ambient color
+	  //pCalRenderer->getAmbientColor(&meshColor[0]);
+	  //materialColor[0] = meshColor[0] / 255.0f;  materialColor[1] = meshColor[1] / 255.0f; materialColor[2] = meshColor[2] / 255.0f; materialColor[3] = meshColor[3] / 255.0f;
+	  //if (materialColor[3] == 0) materialColor[3]=1.0f;
+	  //material->setAmbient(osg::Material::FRONT, materialColor);
 
-		 //// set the material diffuse color
-		 //pCalRenderer->getDiffuseColor(&meshColor[0]);
-		 //materialColor[0] = meshColor[0] / 255.0f;  materialColor[1] = meshColor[1] / 255.0f; materialColor[2] = meshColor[2] / 255.0f; materialColor[3] = meshColor[3] / 255.0f;
-		 //if (materialColor[3] == 0) materialColor[3]=1.0f;
-		 //material->setDiffuse(osg::Material::FRONT, materialColor);
+	  //// set the material diffuse color
+	  //pCalRenderer->getDiffuseColor(&meshColor[0]);
+	  //materialColor[0] = meshColor[0] / 255.0f;  materialColor[1] = meshColor[1] / 255.0f; materialColor[2] = meshColor[2] / 255.0f; materialColor[3] = meshColor[3] / 255.0f;
+	  //if (materialColor[3] == 0) materialColor[3]=1.0f;
+	  //material->setDiffuse(osg::Material::FRONT, materialColor);
 
-		 //// set the material specular color
-		 //pCalRenderer->getSpecularColor(&meshColor[0]);
-		 //materialColor[0] = meshColor[0] / 255.0f;  materialColor[1] = meshColor[1] / 255.0f; materialColor[2] = meshColor[2] / 255.0f; materialColor[3] = meshColor[3] / 255.0f;
-		 //if (materialColor[3] == 0) materialColor[3]=1.0f;
-		 //material->setSpecular(osg::Material::FRONT, materialColor);
+	  //// set the material specular color
+	  //pCalRenderer->getSpecularColor(&meshColor[0]);
+	  //materialColor[0] = meshColor[0] / 255.0f;  materialColor[1] = meshColor[1] / 255.0f; materialColor[2] = meshColor[2] / 255.0f; materialColor[3] = meshColor[3] / 255.0f;
+	  //if (materialColor[3] == 0) materialColor[3]=1.0f;
+	  //material->setSpecular(osg::Material::FRONT, materialColor);
 
-		 //// set the material shininess factor
-		 //float shininess;
-		 //shininess = pCalRenderer->getShininess();
-		 //material->setShininess(osg::Material::FRONT, shininess);
+	  //// set the material shininess factor
+	  //float shininess;
+	  //shininess = pCalRenderer->getShininess();
+	  //material->setShininess(osg::Material::FRONT, shininess);
 
-		 if (mWrapper->GetMapCount() > 0)
-		 {
-			osg::Texture2D *texture = (osg::Texture2D*)mWrapper->GetMapUserData(0);
-			if (texture != 0) 
-            {
-			   set->setTextureAttributeAndModes(0, texture, osg::StateAttribute::ON);
-			}
-		 }		
+	  if (mWrapper->GetMapCount() > 0)
+	  {
+		 osg::Texture2D *texture = (osg::Texture2D*)mWrapper->GetMapUserData(0);
+		 if (texture != 0) 
+         {
+			set->setTextureAttributeAndModes(0, texture, osg::StateAttribute::ON);
+		 }
+	  }		
 	}
 }
 
-void SubMeshDrawable::drawImplementation(osg::State& state) const {
+void SubMeshDrawable::drawImplementation(osg::State& state) const 
+{
 	// begin the rendering loop
 	if(mWrapper->BeginRenderingQuery())
 	{
@@ -132,8 +134,8 @@ void SubMeshDrawable::drawImplementation(osg::State& state) const {
 			// it should be a loop rendering each texture on its own texture unit
 			unsigned tcount = mWrapper->GetTextureCoords(0, mMeshTextureCoordinates);
 
-			// flip coordinates
-			for (unsigned int i=1;i<vertexCount*2;i=i+2)
+			// flip vertical coordinates
+			for (unsigned int i = 1; i < vertexCount * 2; i += 2)
             {
 				mMeshTextureCoordinates[i] = 1.0f - mMeshTextureCoordinates[i];
 			}
@@ -148,11 +150,13 @@ void SubMeshDrawable::drawImplementation(osg::State& state) const {
 				// set the texture coordinate buffer
 				state.setTexCoordPointer(0, 2, GL_FLOAT, 0, mMeshTextureCoordinates);
 			}
-            /// White color!
-			glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-			// draw the submesh
 
-			if(sizeof(CalIndex)==2)
+            // White 
+			glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+			
+
+            // draw the submesh
+			if(sizeof(CalIndex) == sizeof(short))
             {
 				glDrawElements(GL_TRIANGLES, faceCount * 3, GL_UNSIGNED_SHORT, mMeshFaces);
             }
@@ -175,7 +179,7 @@ void SubMeshDrawable::accept(osg::PrimitiveFunctor& functor) const
 {
 	functor.setVertexArray(vertexCount, (osg::Vec3f *)(mMeshVertices));
 
-	if(sizeof(CalIndex) == 2)
+	if(sizeof(CalIndex) == sizeof(short))
 	{
 		osg::ref_ptr<osg::DrawElementsUShort> pset = new osg::DrawElementsUShort(osg::PrimitiveSet::TRIANGLES,
 																				 faceCount*3, (GLushort *) mMeshFaces);
