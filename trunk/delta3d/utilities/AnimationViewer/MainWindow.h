@@ -6,6 +6,7 @@
 class QAction;
 class QTableWidget;
 class QTableWidgetItem;
+class QToolBar;
 
 class MainWindow : public QMainWindow
 {
@@ -26,10 +27,14 @@ public slots:
    void OnNewAnimation(unsigned int id, const QString &filename);
    void OnAnimationClicked( QTableWidgetItem *item);
    void OnLOD_Changed(double newValue);
+   void OnToggleShadingToolbar();
+   void OnToggleTempToolbar();
+   void OnToggleLightingToolbar();
 	
 private:
    void CreateMenus();
    void CreateActions();
+   void CreateToolbars();
    void UpdateRecentFileActions();
    void SetCurrentFile( const QString &filename );
    void LoadCharFile(const QString &filename);
@@ -43,6 +48,12 @@ private:
    QAction *mWireframeAction; 
    QAction *mShadedAction;    
    QAction *mShadedWireAction;
+   QAction *mDiffuseLightAction;
+   QAction *mPointLightAction;
+
+   QToolBar *mShadingToolbar;
+   QToolBar *mLightingToolbar;
+   QToolBar *mTempToolbar;
 
    QTableWidget *mAnimListWidget;
 

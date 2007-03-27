@@ -2,6 +2,8 @@
     <qresource prefix="/" >       
 	  <file>images/wireframe.jpg</file>  
  	  <file>images/shaded.jpg</file>              
-  	  <file>images/shadedwire.jpg</file>                          
+  	  <file>images/shadedwire.jpg</file>    
+	  <file>images/diffuseLight.jpg</file>                          
+ 	  <file>images/pointLight.jpg</file>                                                
     </qresource>
 </RCC>
