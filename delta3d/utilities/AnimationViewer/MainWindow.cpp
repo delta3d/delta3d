@@ -25,14 +25,7 @@ mAnimListWidget(NULL)
    CreateActions();
    CreateMenus();
    (void)statusBar();
-
-   mAnimListWidget = new QTableWidget();
-   mAnimListWidget->setColumnCount(5);
-   mAnimListWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
-   connect(mAnimListWidget, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(OnAnimationClicked(QTableWidgetItem*)));
-   connect(mAnimListWidget, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(OnItemChanged(QTableWidgetItem*)));
-   connect(mAnimListWidget, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(OnItemDoubleClicked(QTableWidgetItem*)));
-
+  
    QSpinBox *lodSpinner = new QSpinBox(this);
    lodSpinner->setRange(0, 100);
    lodSpinner->setSingleStep(1);  
@@ -65,13 +58,7 @@ mAnimListWidget(NULL)
    
    tempToolBar->addWidget(lodSpinner);   
   
-   connect(lodSpinner, SIGNAL(valueChanged(int)), this, SLOT(OnLOD_Changed(int)));
-
-   QStringList headers;
-   headers << "Name" << "Weight (L)" << "Delay (L)" << "Delay In (A)" << "Delay Out (A)";
-   mAnimListWidget->setHorizontalHeaderLabels(headers );
-
-   setCentralWidget(mAnimListWidget);
+   connect(lodSpinner, SIGNAL(valueChanged(int)), this, SLOT(OnLOD_Changed(int)));      
 }
 
 MainWindow::~MainWindow()
@@ -134,23 +121,27 @@ void MainWindow::LoadCharFile( const QString &filename )
 {
    if (dtUtil::FileUtils::GetInstance().FileExists( filename.toStdString() ))
    {
-      delete mAnimListWidget;
+      delete mAnimListWidget;  
+
       mAnimListWidget = new QTableWidget();
       mAnimListWidget->setColumnCount(5);
-      mAnimListWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
+      mAnimListWidget->setSelectionBehavior(QAbstractItemView::SelectRows);   
+
+      connect(mAnimListWidget, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(OnAnimationClicked(QTableWidgetItem*)));
+      connect(mAnimListWidget, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(OnItemChanged(QTableWidgetItem*)));
+      connect(mAnimListWidget, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(OnItemDoubleClicked(QTableWidgetItem*)));
+
+      QStringList headers;
+      headers << "Name" << "Weight (L)" << "Delay (L)" << "Delay In (A)" << "Delay Out (A)";
+      mAnimListWidget->setHorizontalHeaderLabels(headers );  
+
       setCentralWidget(mAnimListWidget);
 
       emit FileToLoad( filename );
 
-      SetCurrentFile( filename );
-      //mLoadCharAct->setEnabled( false ); //we can only load one file at a time.
+      SetCurrentFile( filename );     
 
-      //for (int i=0; i<5; i++)
-      //{
-      //   mRecentFilesAct[i]->setEnabled( false );
-      //}
-
-       //statusBar()->showMessage(tr("File loaded"), 2000);
+      //statusBar()->showMessage(tr("File loaded"), 2000);
    }
    else
    {
@@ -280,7 +271,6 @@ void MainWindow::OpenRecentFile()
 
 void MainWindow::OnItemChanged( QTableWidgetItem *item )
 {
-
    if (item->column() == 1 ||
       item->column() == 2) 
    {
