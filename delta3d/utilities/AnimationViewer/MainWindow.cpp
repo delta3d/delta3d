@@ -25,40 +25,7 @@ mAnimListWidget(NULL)
    CreateActions();
    CreateMenus();
    (void)statusBar();
-  
-   QDoubleSpinBox *lodSpinner = new QDoubleSpinBox(this);
-   lodSpinner->setRange(0, 1);
-   lodSpinner->setSingleStep(0.01);  
-   lodSpinner->setValue(1);
-
-   QToolBar *shadingToolBar = addToolBar("hey baby"); 
-   QToolBar *tempToolBar    = addToolBar("temp");
-
-   // The actiongroup is used to make the action behave like radio buttons
-   QActionGroup *actionGroup = new QActionGroup(this);
-   actionGroup->setExclusive(true);     
-
-   QIcon wireframeIcon(":/images/wireframe.jpg");  
-   QIcon shadedIcon(":/images/shaded.jpg");
-   QIcon shadedWireIcon(":/images/shadedwire.jpg");
-
-   mWireframeAction  = actionGroup->addAction(wireframeIcon, "Wireframe");
-   mShadedAction     = actionGroup->addAction(shadedIcon, "Shaded");
-   mShadedWireAction = actionGroup->addAction(shadedWireIcon, "Shaded Wireframe");   
-
-   mWireframeAction->setCheckable(true);
-   mShadedAction->setCheckable(true); 
-   mShadedWireAction->setCheckable(true);   
-
-   mShadedAction->setChecked(true);
-   
-   shadingToolBar->addAction(mWireframeAction);
-   shadingToolBar->addAction(mShadedAction);
-   shadingToolBar->addAction(mShadedWireAction);    
-   
-   tempToolBar->addWidget(lodSpinner);   
-  
-   connect(lodSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnLOD_Changed(double)));      
+   CreateToolbars();   
 }
 
 MainWindow::~MainWindow()
@@ -68,7 +35,23 @@ MainWindow::~MainWindow()
 void MainWindow::CreateMenus()
 {
    QMenu *windowMenu = menuBar()->addMenu("&File");
+   QMenu *viewMenu   = menuBar()->addMenu("&View");
+   QMenu *toolBarMenu = viewMenu->addMenu("&Toolbars");
+
    windowMenu->addAction(mLoadCharAct);
+
+   QAction *toggleShadeToolbarAction = toolBarMenu->addAction("Shading toolbar");
+   QAction *toggleTempToolbarAction  = toolBarMenu->addAction("Temp toolbar");
+   QAction *toggleLightToolBarAction = toolBarMenu->addAction("Lighting toolbar");
+
+   toggleShadeToolbarAction->setCheckable(true);
+   toggleShadeToolbarAction->setChecked(true);
+   toggleTempToolbarAction->setCheckable(true);
+   toggleTempToolbarAction->setChecked(true);
+   toggleLightToolBarAction->setCheckable(true);
+   toggleLightToolBarAction->setChecked(true);   
+
+   connect(toggleShadeToolbarAction, SIGNAL(triggered()), this, SLOT(OnToggleShadingToolbar()));
 
    for (int i=0; i<5; ++i)
    {
@@ -101,6 +84,49 @@ void MainWindow::CreateActions()
       mRecentFilesAct[i]->setVisible(false);
       connect(mRecentFilesAct[i], SIGNAL(triggered()), this, SLOT(OpenRecentFile()));
    }
+}
+
+void MainWindow::CreateToolbars()
+{
+   QDoubleSpinBox *lodSpinner = new QDoubleSpinBox(this);
+   lodSpinner->setRange(0, 1);
+   lodSpinner->setSingleStep(0.01);  
+   lodSpinner->setValue(1);
+
+   mShadingToolbar  = addToolBar("Shading toolbar"); 
+   mTempToolbar     = addToolBar("Temp toolbar");
+   mLightingToolbar = addToolBar("Lighting toolbar");
+
+   // The actiongroup is used to make the action behave like radio buttons
+   QActionGroup *actionGroup = new QActionGroup(this);
+   actionGroup->setExclusive(true);     
+
+   QIcon wireframeIcon(":/images/wireframe.jpg");  
+   QIcon shadedIcon(":/images/shaded.jpg");
+   QIcon shadedWireIcon(":/images/shadedwire.jpg");
+   QIcon diffuseIcon(":/images/diffuseLight.jpg");
+   QIcon pointLightIcon(":/images/pointLight.jpg");
+
+   mWireframeAction  = actionGroup->addAction(wireframeIcon, "Wireframe");
+   mShadedAction     = actionGroup->addAction(shadedIcon, "Shaded");
+   mShadedWireAction = actionGroup->addAction(shadedWireIcon, "Shaded Wireframe");     
+
+   mWireframeAction->setCheckable(true);
+   mShadedAction->setCheckable(true); 
+   mShadedWireAction->setCheckable(true);   
+
+   mShadedAction->setChecked(true);
+
+   mShadingToolbar->addAction(mWireframeAction);
+   mShadingToolbar->addAction(mShadedAction);
+   mShadingToolbar->addAction(mShadedWireAction);    
+
+   mTempToolbar->addWidget(lodSpinner);   
+
+   mLightingToolbar->addAction(diffuseIcon, "Diffuse Light");
+   mLightingToolbar->addAction(pointLightIcon, "Point Light");
+
+   connect(lodSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnLOD_Changed(double)));      
 }
 
 void MainWindow::OnOpenCharFile()
@@ -213,6 +239,28 @@ void MainWindow::OnAnimationClicked( QTableWidgetItem *item )
 void MainWindow::OnLOD_Changed(double newValue)
 {   
    emit LOD_Changed(newValue);
+}
+
+void MainWindow::OnToggleShadingToolbar()
+{
+   if (mShadingToolbar->isHidden())
+   {
+      mShadingToolbar->show();
+   }
+   else
+   {
+      mShadingToolbar->hide();
+   }   
+}
+
+void MainWindow::OnToggleTempToolbar()
+{
+
+}
+
+void MainWindow::OnToggleLightingToolbar()
+{
+
 }
 
 void MainWindow::UpdateRecentFileActions()
