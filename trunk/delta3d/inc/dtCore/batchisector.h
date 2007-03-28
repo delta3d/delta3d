@@ -45,21 +45,21 @@ namespace dtCore
       osg::Vec3 hitPt;
       isect->GetSingleISector(0)->GetHitPoint( hitPt );
    \endcode
-   */
+    */
 
    class DT_CORE_EXPORT BatchIsector : public osg::Referenced
    {
       public:
 
          /**
-         * @param scene The Delta3D scene to intersect.
-         */
+          * @param scene The Delta3D scene to intersect.
+          */
          BatchIsector(Scene *scene = NULL);
 
       protected:
 
          virtual ~BatchIsector();
-         
+
       public:
 
          ///////////////////////////////////////////////////////////////////////
@@ -143,9 +143,9 @@ namespace dtCore
                void SetToCheckForClosestDrawable(bool value) {mCheckClosestDrawables = value;}
                // other sets are purposely not here, you should not touch them
                ////////////////////////////////////////////////////////////////////
-      
+
             protected:
-   
+
                dtCore::RefPtr<osg::LineSegment>    mLineSegment;
                dtCore::ObserverPtr<DeltaDrawable>  mClosestDrawable;
                osgUtil::IntersectVisitor::HitList  mHitList; 
@@ -156,10 +156,10 @@ namespace dtCore
 
 
          /**
-         * Sets a drawable as the root of the intersection tests.  If this is specified,
-         * it will take precedence over the currently assigned Delta3D scene.
-         * @param drawable The drawable to intersect.
-         */
+          * Sets a drawable as the root of the intersection tests.  If this is specified,
+          * it will take precedence over the currently assigned Delta3D scene.
+          * @param drawable The drawable to intersect.
+          */
          void SetQueryRoot(DeltaDrawable *drawable) { mQueryRoot = drawable; }
 
          ///Clears the currently assigned root drawable of the intersection tests.
@@ -173,18 +173,18 @@ namespace dtCore
 
          ///Sets the scene to use as the base for the scene query.
          void SetScene(Scene* newScene){mScene = newScene;}
-         
+
          ///@return the scene being queried.
          Scene* GetScene(){ return mScene; }
- 
+
          ///@return the scene being queried.
          const Scene* GetScene() const { return mScene; }
-      
+
          /// Create an isector if not made already, else makes one
          SingleISector& CreateOrGetISector(int nID);
          /// Create an isector if not made already, else makes one
          SingleISector& CreateOrGetISector(const std::string& nameOfISector);
-         
+
          /// creates a single isector adds it to the list and returns the reference
          SingleISector& AddSingleISector(int nID);
 
@@ -195,7 +195,7 @@ namespace dtCore
          const SingleISector& GetSingleISector(int nID);
          /// Get an SingleISector for reference vars
          const SingleISector& GetSingleISector(const std::string& nameOfISector);
-         
+
          /// removes a single isector from the list
          void DeleteSingleISector(int nID);
          /// removes a single isector from the list
@@ -204,40 +204,40 @@ namespace dtCore
          void DeleteAllISectors() {Reset(); mISectors.clear();}
 
          /**
-         * Ray traces the scene.
-         *
-         * @return True if any intersections were detected.
-         * @note If the query root has been set, only the query root drawable and its
-         *  children are candidates for intersection.  If not, all drawables in the scene
-         *  are possibilities.
-         */
+          * Ray traces the scene.
+          *
+          * @return True if any intersections were detected.
+          * @note If the query root has been set, only the query root drawable and its
+          *  children are candidates for intersection.  If not, all drawables in the scene
+          *  are possibilities.
+          */
          bool Update(const osg::Vec3& cameraEyePoint, bool useHighestLvlOfDetail = true);
 
          /**
-         * Resets the intersection query.  Call this in between disjoint intersection
-         * executions.
-         */
+          * Resets the intersection query.  Call this in between disjoint intersection
+          * executions.
+          */
          void Reset();
 
          /**
-         * Finds the DeltaDrawable that contains the given geometry node.
-         * @param geode The node to search for.
-         * @return A valid DeltaDrawable if one was found or 0 otherwise.
-         */
+          * Finds the DeltaDrawable that contains the given geometry node.
+          * @param geode The node to search for.
+          * @return A valid DeltaDrawable if one was found or 0 otherwise.
+          */
          DeltaDrawable *MapNodePathToDrawable(osg::NodePath &geode);
 
-      private:
+         private:
 
-         // Disallowed to prevent compile errors on VS2003. It apparently
-         // creates this functions even if they are not used, and if
-         // this class is forward declared, these implicit functions will
-         // cause compiler errors for missing calls to "ref".
-         BatchIsector& operator=( const BatchIsector& ); 
-         BatchIsector( const BatchIsector& );
+            // Disallowed to prevent compile errors on VS2003. It apparently
+            // creates this functions even if they are not used, and if
+            // this class is forward declared, these implicit functions will
+            // cause compiler errors for missing calls to "ref".
+            BatchIsector& operator=( const BatchIsector& ); 
+            BatchIsector( const BatchIsector& );
 
-         Scene*                              mScene;     // the scene in which we start at
-         dtCore::ObserverPtr<DeltaDrawable>  mQueryRoot;
-         std::vector<dtCore::RefPtr<SingleISector> >  mISectors;  // all the isectors to be sent down in one batch call.
+            Scene*                              mScene;     // the scene in which we start at
+            dtCore::ObserverPtr<DeltaDrawable>  mQueryRoot;
+            std::vector<dtCore::RefPtr<SingleISector> >  mISectors;  // all the isectors to be sent down in one batch call.
    };
 } // namespace
 

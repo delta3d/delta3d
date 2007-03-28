@@ -29,9 +29,12 @@
 #include <dtHLAGM/interactiontomessage.h>
 #include <dtHLAGM/parametertranslator.h>
 #include <dtHLAGM/rprparametertranslator.h>
+#include <dtHLAGM/ddmregioncalculator.h>
+#include <dtHLAGM/ddmregiondata.h>
 
 #include <dtUtil/matrixutil.h>
 #include <dtUtil/log.h>
+#include <dtUtil/coordinates.h>
 
 #include <dtCore/uniqueid.h>
 #include <dtCore/globals.h>
@@ -46,7 +49,6 @@
 #include <osg/Vec3d>
 #include <osg/Endian>
 #include <osg/io_utils>
-//#include <osgDB/FileNameUtils>
 
 
 #if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
@@ -79,22 +81,19 @@ typedef int socklen_t;
 
 #endif
 
-/**
- * Flags nodes as entities, which should not be included in the ground clamping
- * intersection test.
- */
-const osg::Node::NodeMask entityMask = 0x01;
-
 namespace dtHLAGM
 {
    const std::string HLAComponent::ABOUT_ACTOR_ID("aboutActorId");
    const std::string HLAComponent::SENDING_ACTOR_ID("sendingActorId");
    const std::string HLAComponent::DEFAULT_NAME("HLAComponent");
 
-   HLAComponent::HLAComponent(const std::string& name)
-      : GMComponent(name), mRTIAmbassador(NULL),
-        mLocalIPAddress(0x7f000001),
-        mMachineInfo(new dtGame::MachineInfo)
+   /////////////////////////////////////////////////////////////////////////////////
+   HLAComponent::HLAComponent(const std::string& name): 
+      GMComponent(name),
+      mRTIAmbassador(NULL),
+      mLocalIPAddress(0x7f000001),
+      mDDMEnabled(false),
+      mMachineInfo(new dtGame::MachineInfo)
    {
       mLogger = &dtUtil::Log::GetInstance("hlacomponent.cpp");
 
@@ -103,12 +102,14 @@ namespace dtHLAGM
       mParameterTranslators.push_back(new RPRParameterTranslator(mCoordinates, mRuntimeMappings));
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    HLAComponent::~HLAComponent()
       throw (RTI::FederateInternalError)
    {
       LeaveFederationExecution();
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::RegisterObjectToActorWithRTI(ObjectToActor& objectToActor)
    {
       const std::string& thisObjectClassString = objectToActor.GetObjectClassName();
@@ -150,7 +151,7 @@ namespace dtHLAGM
             RTI::AttributeHandle entityIdentifierAttributeHandle =
                mRTIAmbassador->getAttributeHandle(objectToActor.GetEntityIdAttributeName().c_str(), thisObjectClassHandle);
 
-               if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                                    "AttributeHandle for entity identifier on object class %s is %u.",
                                    thisObjectClassString.c_str(), entityIdentifierAttributeHandle);
@@ -263,6 +264,7 @@ namespace dtHLAGM
       delete ahs;
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::RegisterInteractionToMessageWithRTI(InteractionToMessage& interactionToMessage)
    {
       const std::string& thisInteractionClassString = interactionToMessage.GetInteractionName();
@@ -339,13 +341,21 @@ namespace dtHLAGM
       }
    }
 
-   /**
-    * Creates/joins a federation execution.
-    *
-    * @param executionName the name of the federation execution to join
-    * @param fedFilename the fed filename
-    * @param federateName the name of this federate
-    */
+   /////////////////////////////////////////////////////////////////////////////////
+   void HLAComponent::SetDDMEnabled(bool enable)
+   {
+      if (mDDMEnabled == enable)
+         return;
+      
+      if (!mExecutionName.empty())
+      {
+         throw dtUtil::Exception("The HLAComponent may not register a mapping because it is connected to a federation.",
+               __FILE__, __LINE__);
+      }
+      mDDMEnabled = enable;   
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::JoinFederationExecution(std::string executionName,
                                                   std::string fedFilename,
                                                   std::string federateName)
@@ -399,6 +409,7 @@ namespace dtHLAGM
       {
          std::string fedFile = dtCore::FindFileInPathList(fedFilename).c_str();
          mRTIAmbassador->createFederationExecution(executionName.c_str(), fedFile.c_str());
+         //some other rti's want the data in more of this format.
          //mRTIAmbassador->createFederationExecution(osgDB::getStrippedName(fedFile).c_str(), ".fed");
       }
       catch(RTI::FederationExecutionAlreadyExists&)
@@ -426,6 +437,11 @@ namespace dtHLAGM
       std::multimap<std::string, dtCore::RefPtr<ObjectToActor> >::iterator objectToActorIterator
         = mObjectToActorMap.begin();
 
+      if (mDDMEnabled)
+      {
+         CreateDDMSubscriptionRegions();
+      }
+      
       while (objectToActorIterator != mObjectToActorMap.end())
       {
          ObjectToActor& thisObjectToActor = *(objectToActorIterator->second);
@@ -452,9 +468,7 @@ namespace dtHLAGM
       }
    }
 
-   /**
-    * Leaves/destroys the joined execution.
-    */
+   /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::LeaveFederationExecution()  //this is kind of broken
    {
       if (!mExecutionName.empty())
@@ -472,6 +486,12 @@ namespace dtHLAGM
          }
          //drop all instance mapping data.
          mRuntimeMappings.Clear();
+
+         if (mDDMEnabled)
+         {
+            DestroyDDMSubscriptionRegions();
+         }
+         
          try
          {
             mRTIAmbassador->resignFederationExecution(RTI::DELETE_OBJECTS_AND_RELEASE_ATTRIBUTES);
@@ -500,66 +520,63 @@ namespace dtHLAGM
 
          mExecutionName.clear();
       }
+      
       if (mRTIAmbassador != NULL)
          delete mRTIAmbassador;
 
       mRTIAmbassador = NULL;
-
    }
 
-   /**
-    * Sets the DIS/RPR-FOM site identifier.
-    *
-    * @param siteIdentifier the new site identifier
-    */
+   /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::SetSiteIdentifier(unsigned short siteIdentifier)
    {
       mSiteIdentifier = siteIdentifier;
    }
 
-   /**
-    * Returns the DIS/RPR-FOM site idntifier.
-    *
-    * @return the site identifier
-    */
+   /////////////////////////////////////////////////////////////////////////////////
    unsigned short HLAComponent::GetSiteIdentifier() const
    {
       return mSiteIdentifier;
    }
 
-   /**
-    * Sets the DIS/RPR-FOM application identifier.
-    *
-    * @param applicationIdentifier the new application identifier
-    */
+   /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::SetApplicationIdentifier(unsigned short applicationIdentifier)
    {
       mApplicationIdentifier = applicationIdentifier;
    }
 
-   /**
-    * Returns the DIS/RPR-FOM application identifier.
-    *
-    * @return the DIS/RPR-FOM application identifier
-    */
+   /////////////////////////////////////////////////////////////////////////////////
    unsigned short HLAComponent::GetApplicationIdentifier() const
    {
       return mApplicationIdentifier;
    }
 
-   /// Adds a new custom parameter translator to the hla component.
+   /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::AddParameterTranslator(ParameterTranslator& newTranslator) 
    { 
       mParameterTranslators.push_back(&newTranslator); 
    }
 
-   /**
-    * Invoked by the RTI ambassador to request that the federate provide
-    * updated attribute values for the specified object.
-    *
-    * @param theObject the handle of the object of interest
-    * @param theAttributes the set of attributes to update
-    */
+   /////////////////////////////////////////////////////////////////////////////////
+   void HLAComponent::AddDDMSubscriptionCalculator(DDMRegionCalculator& newCalc)
+   {
+      mDDMSubscriptionCalculators.push_back(&newCalc);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   void HLAComponent::RemoveDDMSubscriptionCalculator(DDMRegionCalculator& calc)
+   {
+      for (unsigned i = 0; i < mDDMSubscriptionCalculators.size(); ++i)
+      {
+         if (mDDMSubscriptionCalculators[i].get() == &calc)
+         {
+            mDDMSubscriptionCalculators.erase(mDDMSubscriptionCalculators.begin() + i);
+            break;
+         }
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::provideAttributeValueUpdate(RTI::ObjectHandle theObject,
                                                       const RTI::AttributeHandleSet& theAttributes)
       throw (RTI::ObjectNotKnown,
@@ -587,16 +604,7 @@ namespace dtHLAGM
       }
    }
 
-   /**
-    * Invoked by the RTI ambassador to notify the federate of updated object
-    * attribute values.
-    *
-    * @param theObject the handle of the modified object
-    * @param theAttributes the new attribute values
-    * @param theTime the event timestamp
-    * @param theTag the user-supplied tag associated with the event
-    * @param theHandle the event retraction handle
-    */
+   /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::reflectAttributeValues(RTI::ObjectHandle theObject,
                                                  const RTI::AttributeHandleValuePairSet& theAttributes,
                                                  const RTI::FedTime& theTime,
@@ -611,15 +619,7 @@ namespace dtHLAGM
       reflectAttributeValues(theObject, theAttributes, theTag);
    }
 
-   /**
-    * Invoked by the RTI ambassador to notify the federate of a deleted object
-    * instance.
-    *
-    * @param theObject the handle of the removed object
-    * @param theTime the event timestamp
-    * @param theTag the user-supplied tag associated with the event
-    * @param theHandle the event retraction handle
-    */
+   /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::removeObjectInstance(RTI::ObjectHandle theObject,
                                                const RTI::FedTime& theTime,
                                                const char *theTag,
@@ -631,6 +631,7 @@ namespace dtHLAGM
       removeObjectInstance(theObject, theTag);
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::removeObjectInstance(RTI::ObjectHandle theObject,
                                                const char *theTag)
       throw (RTI::ObjectNotKnown,
@@ -649,6 +650,7 @@ namespace dtHLAGM
       }
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::DeleteActor(const dtCore::UniqueId& toDelete)
    {
       dtCore::RefPtr<dtGame::Message> msg = GetGameManager()->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_DELETED);
@@ -657,6 +659,7 @@ namespace dtHLAGM
       GetGameManager()->SendMessage(*msg);
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    const ObjectToActor* HLAComponent::GetActorMapping(dtDAL::ActorType &type) const
    {
       std::map<dtCore::RefPtr<dtDAL::ActorType>, dtCore::RefPtr<ObjectToActor> >::const_iterator actorToObjectIterator;
@@ -671,6 +674,7 @@ namespace dtHLAGM
       return thisObjectToActor;
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    ObjectToActor* HLAComponent::GetActorMapping(dtDAL::ActorType &type)
    {
       std::map<dtCore::RefPtr<dtDAL::ActorType>, dtCore::RefPtr<ObjectToActor> >::iterator actorToObjectIterator;
@@ -686,16 +690,19 @@ namespace dtHLAGM
       return thisObjectToActor;
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    const ObjectToActor* HLAComponent::GetObjectMapping(const std::string& objTypeName, const EntityType* thisDisID) const
    {
       return InternalGetObjectMapping(objTypeName, thisDisID);
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    ObjectToActor* HLAComponent::GetObjectMapping(const std::string& objTypeName, const EntityType* thisDisID)
    {
       return const_cast<ObjectToActor*>(InternalGetObjectMapping(objTypeName, thisDisID));
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    const ObjectToActor* HLAComponent::InternalGetObjectMapping(const std::string& objTypeName, const EntityType* thisDisID) const
    {
       std::multimap<std::string, dtCore::RefPtr<ObjectToActor> >::const_iterator objectToActorIterator;
@@ -728,12 +735,18 @@ namespace dtHLAGM
       return thisObjectToActor;
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::RegisterActorMapping(dtDAL::ActorType &type,
                                                const std::string& objTypeName,
                                                const EntityType* thisDisID,
                                                std::vector<AttributeToPropertyList> &oneToOneActorVector,
                                                bool remoteOnly)
    {
+      if (!mExecutionName.empty())
+      {
+         throw dtUtil::Exception("The HLAComponent may not register a mapping because it is connected to a federation.",
+               __FILE__, __LINE__);
+      }
       dtCore::RefPtr<ObjectToActor> thisActorMapping = new ObjectToActor;
 
       thisActorMapping->SetActorType(type);
@@ -748,8 +761,14 @@ namespace dtHLAGM
 
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::RegisterActorMapping(ObjectToActor& objectToActor)
    {
+      if (!mExecutionName.empty())
+      {
+         throw dtUtil::Exception("The HLAComponent may not register a mapping because it is connected to a federation.",
+               __FILE__, __LINE__);
+      }
       if (!objectToActor.IsRemoteOnly())
       {
          if (!mActorToObjectMap.insert(std::make_pair(&objectToActor.GetActorType(), &objectToActor)).second)
@@ -766,20 +785,33 @@ namespace dtHLAGM
       mObjectToActorMap.insert(std::make_pair(objectToActor.GetObjectClassName(), &objectToActor));
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::UnregisterActorMapping(dtDAL::ActorType &type)
    {
+      if (!mExecutionName.empty())
+      {
+         throw dtUtil::Exception("The HLAComponent may not unregister a mapping because it is connected to a federation.",
+               __FILE__, __LINE__);
+      }
       dtCore::RefPtr<ObjectToActor> otoa =  InternalUnregisterActorMapping(type);
       if (otoa.valid())
          InternalUnregisterObjectMapping(otoa->GetObjectClassName(), otoa->GetDisID());
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::UnregisterObjectMapping(const std::string& objTypeName, const EntityType* thisDisID)
    {
+      if (!mExecutionName.empty())
+      {
+         throw dtUtil::Exception("The HLAComponent may not unregister a mapping because it is connected to a federation.",
+               __FILE__, __LINE__);
+      }
       dtCore::RefPtr<ObjectToActor> otoa =  InternalUnregisterObjectMapping(objTypeName, thisDisID);
       if (otoa.valid() && !otoa->IsRemoteOnly())
          InternalUnregisterActorMapping(otoa->GetActorType());
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    dtCore::RefPtr<ObjectToActor> HLAComponent::InternalUnregisterActorMapping(dtDAL::ActorType &type)
    {
       std::map<dtCore::RefPtr<dtDAL::ActorType>, dtCore::RefPtr<ObjectToActor> >::iterator actorToObjectIterator;
@@ -796,6 +828,7 @@ namespace dtHLAGM
       return thisObjectToActor;
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    dtCore::RefPtr<ObjectToActor> HLAComponent::InternalUnregisterObjectMapping(const std::string& objTypeName, const EntityType* thisDisID)
    {
       std::multimap<std::string, dtCore::RefPtr<ObjectToActor> >::iterator objectToActorIterator;
@@ -830,6 +863,7 @@ namespace dtHLAGM
       return thisObjectToActor;
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    const InteractionToMessage* HLAComponent::GetMessageMapping(const dtGame::MessageType &type) const
    {
       std::map<const dtGame::MessageType*, dtCore::RefPtr<InteractionToMessage> >::const_iterator messageToInteractionIterator;
@@ -842,6 +876,7 @@ namespace dtHLAGM
       return thisInteractionToMessage;
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    InteractionToMessage* HLAComponent::GetMessageMapping(const dtGame::MessageType &type)
    {
       std::map<const dtGame::MessageType*, dtCore::RefPtr<InteractionToMessage> >::iterator messageToInteractionIterator;
@@ -854,6 +889,7 @@ namespace dtHLAGM
       return thisInteractionToMessage;
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    const InteractionToMessage* HLAComponent::GetInteractionMapping(const std::string& interName) const
    {
       std::map<std::string, dtCore::RefPtr<InteractionToMessage> >::const_iterator interactionToMessageIterator;
@@ -867,6 +903,7 @@ namespace dtHLAGM
       return thisInteractionToMessage;
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    InteractionToMessage* HLAComponent::GetInteractionMapping(const std::string& interName)
    {
       std::map<std::string, dtCore::RefPtr<InteractionToMessage> >::iterator interactionToMessageIterator;
@@ -880,17 +917,29 @@ namespace dtHLAGM
       return thisInteractionToMessage;
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::RegisterMessageMapping(InteractionToMessage& interactionToMessage)
    {
+      if (!mExecutionName.empty())
+      {
+         throw dtUtil::Exception("The HLAComponent may not register a mapping because it is connected to a federation.",
+               __FILE__, __LINE__);
+      }
       mMessageToInteractionMap.insert(std::make_pair(&interactionToMessage.GetMessageType(), &interactionToMessage));
 
       mInteractionToMessageMap.insert(std::make_pair(interactionToMessage.GetInteractionName(), &interactionToMessage));
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::RegisterMessageMapping(const dtGame::MessageType &type,
                                                  const std::string& interactionTypeName,
                                                  std::vector<ParameterToParameterList> &oneToOneMessageVector)
    {
+      if (!mExecutionName.empty())
+      {
+         throw dtUtil::Exception("The HLAComponent may not register a mapping because it is connected to a federation.",
+               __FILE__, __LINE__);
+      }
       dtCore::RefPtr<InteractionToMessage> thisMessageMapping = new InteractionToMessage;
 
       thisMessageMapping->SetMessageType(type);
@@ -900,20 +949,33 @@ namespace dtHLAGM
       RegisterMessageMapping(*thisMessageMapping);
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::UnregisterMessageMapping(const dtGame::MessageType &type)
    {
+      if (!mExecutionName.empty())
+      {
+         throw dtUtil::Exception("The HLAComponent may not unregister a mapping because it is connected to a federation.",
+               __FILE__, __LINE__);
+      }
       dtCore::RefPtr<InteractionToMessage> itom = InternalUnregisterMessageMapping(type);
       if (itom.valid())
          InternalUnregisterInteractionMapping(itom->GetInteractionName());
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::UnregisterInteractionMapping(const std::string& interName)
    {
+      if (!mExecutionName.empty())
+      {
+         throw dtUtil::Exception("The HLAComponent may not unregister a mapping because it is connected to a federation.",
+               __FILE__, __LINE__);
+      }
       dtCore::RefPtr<InteractionToMessage> itom = InternalUnregisterInteractionMapping(interName);
       if (itom.valid())
          InternalUnregisterInteractionMapping(itom->GetInteractionName());
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    dtCore::RefPtr<InteractionToMessage> HLAComponent::InternalUnregisterMessageMapping(const dtGame::MessageType &type)
    {
       std::map<const dtGame::MessageType*, dtCore::RefPtr<InteractionToMessage> >::iterator messageToInteractionIterator;
@@ -929,6 +991,7 @@ namespace dtHLAGM
       return thisInteractionToMessage;
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    dtCore::RefPtr<InteractionToMessage> HLAComponent::InternalUnregisterInteractionMapping(const std::string& interName)
    {
       std::map<std::string, dtCore::RefPtr<InteractionToMessage> >::iterator interactionToMessageIterator;
@@ -944,6 +1007,7 @@ namespace dtHLAGM
       return thisInteractionToMessage;
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    template <typename MappingObject, typename mapType, typename mapTypeIterator>
    void GetAllMappings(std::vector<MappingObject*> toFill, mapType& readFrom, mapTypeIterator beginIt)
    {
@@ -962,52 +1026,38 @@ namespace dtHLAGM
       }
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::GetAllObjectToActorMappings(std::vector<ObjectToActor*> toFill)
    {
       GetAllMappings(toFill, mObjectToActorMap, mObjectToActorMap.begin());
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::GetAllObjectToActorMappings(std::vector<const ObjectToActor*> toFill) const
    {
       GetAllMappings(toFill, mObjectToActorMap, mObjectToActorMap.begin());
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::GetAllInteractionToMessageMappings(std::vector<InteractionToMessage*> toFill)
    {
       GetAllMappings(toFill, mInteractionToMessageMap, mInteractionToMessageMap.begin());
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::GetAllInteractionToMessageMappings(std::vector<const InteractionToMessage*> toFill) const
    {
       GetAllMappings(toFill, mInteractionToMessageMap, mInteractionToMessageMap.begin());
    }
 
-
-   void HLAComponent::RegisterMessageTranslator()
-   {
-
-   }
-
-   void HLAComponent::UnregisterMessageTranslator()
-   {
-
-   }
-
-   void HLAComponent::RegisterInteractionTranslator()
-   {
-
-   }
-
-   void HLAComponent::UnregisterInteractionTranslator()
-   {
-
-   }
-
-   /**
-    * Called to remove all current mappings from instance of HLAComponent class
-    */
+   /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::ClearConfiguration()
    {
+      if (!mExecutionName.empty())
+      {
+         throw dtUtil::Exception("The HLAComponent configuration may not be cleared because it is connected to a federation.",
+               __FILE__, __LINE__);
+      }
       mActorToObjectMap.clear();
       mObjectToActorMap.clear();
       mMessageToInteractionMap.clear();
@@ -1015,6 +1065,7 @@ namespace dtHLAGM
    }
 
 
+   /////////////////////////////////////////////////////////////////////////////////
    dtGame::MessageParameter* HLAComponent::FindOrAddMessageParameter(const std::string& name, const dtDAL::DataType& type, dtGame::Message& msg)
    {
       //first check to see if the named parameter is one of the default parameters
@@ -1061,16 +1112,7 @@ namespace dtHLAGM
       return propertyParameter.get();
    }
 
-   //void HLAComponent::ReadAndMapEntityId()
-
-   /**
-    * Invoked by the RTI ambassador to notify the federate of updated object
-    * attribute values.
-    *
-    * @param theObject the handle of the modified object
-    * @param theAttributes the new attribute values
-    * @param theTag the user-supplied tag associated with the event
-    */
+   /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::reflectAttributeValues(RTI::ObjectHandle theObject,
                                              const RTI::AttributeHandleValuePairSet& theAttributes,
                                              const char *theTag)
@@ -1318,6 +1360,7 @@ namespace dtHLAGM
       }
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    ObjectToActor* HLAComponent::GetBestObjectToActor(RTI::ObjectHandle theObject,
       const RTI::AttributeHandleValuePairSet& theAttributes, bool& hadEntityTypeProperty)
    {
@@ -1422,15 +1465,7 @@ namespace dtHLAGM
       return bestObjectToActor;
    }
 
-
-   /**
-    * Invoked by the RTI ambassador to notify the federate of a new object
-    * instance.
-    *
-    * @param theObject the handle of the discovered object
-    * @param theObjectClass the handle of the discovered object's class
-    * @param theObjectName the name of the discovered object
-    */
+   /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::discoverObjectInstance(RTI::ObjectHandle theObject,
                                                  RTI::ObjectClassHandle theObjectClassHandle,
                                                  const char* theObjectName)
@@ -1450,6 +1485,7 @@ namespace dtHLAGM
       }
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    const ParameterTranslator* HLAComponent::FindTranslatorForAttributeType(const AttributeType& type) const
    {
       for (unsigned i = 0; i < mParameterTranslators.size(); ++i)
@@ -1467,6 +1503,7 @@ namespace dtHLAGM
       return NULL;
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::MapToMessageParameters(const char* buffer,
                                              size_t size,
                                              std::vector<dtCore::RefPtr<dtGame::MessageParameter> >& parameters,
@@ -1478,6 +1515,7 @@ namespace dtHLAGM
          pt->MapToMessageParameters(buffer, size, parameters, mapping);
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::MapFromMessageParameters(char* buffer,
                                  size_t& maxSize,
                                  std::vector<dtCore::RefPtr<const dtGame::MessageParameter> >& parameters,
@@ -1489,14 +1527,7 @@ namespace dtHLAGM
          pt->MapFromMessageParameters(buffer, maxSize, parameters, mapping);
    }
 
-   /**
-    * Invoked by the RTI ambassador to notify the federate of a received
-    * interaction.
-    *
-    * @param theInteraction the handle of the received interaction
-    * @param theParameters the parameters of the interaction
-    * @param theTag the user-supplied tag associated with the event
-    */
+   /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::receiveInteraction(RTI::InteractionClassHandle theInteraction,
                                          const RTI::ParameterHandleValuePairSet& theParameters,
                                          const char *theTag)
@@ -1615,6 +1646,7 @@ namespace dtHLAGM
 
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::DispatchDelete(const dtGame::Message& message)
    {
       // Delete HLA Object, and all Mappings referencing the Actor or the Object.
@@ -1634,6 +1666,7 @@ namespace dtHLAGM
       }
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::DispatchUpdate(const dtGame::Message& message)
    {
       const dtGame::ActorUpdateMessage& aum = static_cast<const dtGame::ActorUpdateMessage&>(message);
@@ -1757,6 +1790,126 @@ namespace dtHLAGM
       mRTIAmbassador->tick();
    }
 
+
+   /////////////////////////////////////////////////////////////////////////////////
+   void HLAComponent::UpdateRegion(DDMRegionData& regionData)
+   {
+      static const char* const HYPERSPACE="HyperSpace";
+      
+      RTI::SpaceHandle spaceHandle = mRTIAmbassador->getRoutingSpaceHandle(HYPERSPACE);
+
+      for (unsigned i = 0; i < regionData.GetNumberOfExtents(); ++i)
+      {
+         const DDMRegionData::DimensionValues* dimension = regionData.GetDimensionValue(i);
+         if (dimension == NULL)
+         {
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                  "Unable to create region dimension %u because the region data object has a NULL value", i);
+            continue;
+         }
+         
+         try
+         {
+            RTI::DimensionHandle dimHandle = mRTIAmbassador->getDimensionHandle(dimension->mName.c_str(), spaceHandle);
+            RTI::Region* r = regionData.GetRegion();
+            
+            if (r != NULL && r->getNumberOfExtents() != regionData.GetNumberOfExtents() )
+            {
+               mRTIAmbassador->deleteRegion(r);
+               //just to be safe.
+               regionData.SetRegion(NULL);
+               r = NULL;
+            }
+            
+            if (r == NULL)
+            {
+               r = mRTIAmbassador->createRegion(spaceHandle, regionData.GetNumberOfExtents());
+               regionData.SetRegion(r);
+            }
+            r->setRangeUpperBound(i, dimHandle, dimension->mMax);
+            r->setRangeLowerBound(i, dimHandle, dimension->mMin);
+            
+         }
+         catch (const RTI::Exception& ex)
+         {
+            std::ostringstream ss; 
+            //workaround for a strange namespace issue
+            ::operator<<(ss, ex);
+            throw dtUtil::Exception("Error getting dimension handle \"" + dimension->mName + "\": " + ss.str(), __FILE__, __LINE__);
+         }
+      }
+      mRTIAmbassador->notifyAboutRegionModification(*regionData.GetRegion());
+   }
+   
+   /////////////////////////////////////////////////////////////////////////////////
+   void HLAComponent::UpdateDDMSubscriptions()
+   {
+      for (unsigned i = 0; i < mDDMSubscriptionCalculators.size(); ++i)
+      {
+         /// if the region is actually changed.
+         if (mDDMSubscriptionCalculators[i]->UpdateRegionData(*mDDMSubscriptionRegions[i]))
+         {
+            UpdateRegion(*mDDMSubscriptionRegions[i]);            
+         }
+      }      
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   void HLAComponent::CreateDDMSubscriptionRegions()
+   {
+      if (mDDMSubscriptionCalculators.empty())
+      {
+         throw dtUtil::Exception(
+               "DDM has been enabled, but no Subscription Region Calculators have been registered: ", 
+               __FILE__, __LINE__);         
+      }
+            
+      for (unsigned i = 0; i < mDDMSubscriptionCalculators.size(); ++i)
+      {
+         try
+         {
+            dtCore::RefPtr<DDMRegionData> regionData = mDDMSubscriptionCalculators[i]->CreateRegionData();
+            
+            UpdateRegion(*regionData);
+            
+            mDDMSubscriptionRegions.push_back(regionData);
+         }
+         catch (const RTI::Exception& ex)
+         {
+            std::ostringstream ss; 
+            //workaround for a strange namespace issue
+            ::operator<<(ss, ex);
+            throw dtUtil::Exception("Error creating region: " + ss.str(), __FILE__, __LINE__);
+         }
+      }
+   }
+   
+   /////////////////////////////////////////////////////////////////////////////////
+   void HLAComponent::DestroyDDMSubscriptionRegions()
+   {
+      for (unsigned i = 0; i < mDDMSubscriptionRegions.size(); ++i)
+      {
+         if (mDDMSubscriptionRegions[i]->GetRegion() != NULL)
+         {
+            try
+            {
+               mRTIAmbassador->deleteRegion(mDDMSubscriptionRegions[i]->GetRegion());            
+            }
+            catch (const RTI::Exception& ex)
+            {
+               std::ostringstream ss; 
+               //workaround for a strange namespace issue
+               ::operator<<(ss, ex);
+               mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                                    "Error deleting region, possible memory leak: %s", 
+                                    ss.str().c_str());
+            }            
+         }
+      }
+      mDDMSubscriptionRegions.clear();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::PrepareUpdate(const dtGame::ActorUpdateMessage& message, RTI::AttributeHandleValuePairSet& updateParams,
       const ObjectToActor& objectToActor, bool newObject)
    {
@@ -1961,6 +2114,7 @@ namespace dtHLAGM
       }
    }
    
+   /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::PrepareInteraction(const dtGame::Message& message, RTI::ParameterHandleValuePairSet& interactionParams,
       const InteractionToMessage& interactionToMessage)
    {
@@ -2068,6 +2222,7 @@ namespace dtHLAGM
       }
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::DispatchInteraction(const dtGame::Message& message)
    {
       const InteractionToMessage* interactionToMessage = GetMessageMapping(message.GetMessageType());
@@ -2107,6 +2262,7 @@ namespace dtHLAGM
 
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::DispatchNetworkMessage(const dtGame::Message& message)
    {
       if (mExecutionName != "")
@@ -2127,10 +2283,16 @@ namespace dtHLAGM
       }
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::ProcessMessage(const dtGame::Message& message)
    {
       if (message.GetMessageType() == dtGame::MessageType::TICK_LOCAL)
       {
+         if (IsDDMEnabled())
+         {
+            UpdateDDMSubscriptions();
+         }
+         
          if (mRTIAmbassador != NULL)
             mRTIAmbassador->tick();
       }
@@ -2138,35 +2300,6 @@ namespace dtHLAGM
       {
          mRuntimeMappings.Clear();
       }
-   }
-
-   void HLAComponent::SetOriginLocation(const osg::Vec3d& location)
-   {
-      mCoordinates.SetOriginLocation(location.x(), location.y(), location.z());
-   }
-
-   const osg::Vec3d HLAComponent::GetOriginLocation()
-   {
-      osg::Vec3d location;
-      mCoordinates.GetOriginLocation(location.x(), location.y(), location.z());
-      return location;
-   }
-
-   void HLAComponent::SetGeoOrigin(double lat, double lon, double elevation)
-   {
-      mCoordinates.SetGeoOrigin(lat, lon, elevation);
-   }
-
-   void HLAComponent::SetOriginRotation(const osg::Vec3& rotation)
-   {
-      mCoordinates.SetOriginRotation(rotation[0], rotation[1], rotation[2]);
-   }
-
-   const osg::Vec3 HLAComponent::GetOriginRotation() const
-   {
-      osg::Vec3 rotation;
-      mCoordinates.GetOriginRotation(rotation.x(), rotation.y(), rotation.z());
-      return rotation;
    }
 }
 
