@@ -37,7 +37,7 @@ namespace dtUtil
 
 namespace dtCore
 {
-   class Isector;
+   class BatchIsector;
 }
 
 namespace dtGame
@@ -109,6 +109,8 @@ namespace dtGame
          ///changes the actor to use for the terrain.
          void SetEyePointActor(dtCore::Transformable* newEyePointActor);
          
+         const osg::Vec3& GetLastEyePoint() const { return mCurrentEyePointABSPos; }
+         
          /**
           * Sets the maximum distance from the player that three intersection point clamping will be used.  
           * After this, one intersection will be used.
@@ -156,26 +158,24 @@ namespace dtGame
          ///Version of clamping that uses one intersection points and the vertex normal.
          void ClampToGroundOnePoint(float timeSinceUpdate, dtCore::Transform& xform);
          
-         dtCore::Isector& GetGroundClampIsector();
+         dtCore::BatchIsector& GetGroundClampIsector();
 
          ///number of seconds between forcing vehicles to ground clamp.
          static const float ForceClampTime;
          
          dtUtil::Log* mLogger;
          dtCore::RefPtr<dtCore::Transformable> mEyePointActor;
+         osg::Vec3 mCurrentEyePointABSPos;
          dtCore::RefPtr<dtCore::Transformable> mTerrainActor;
 
-         dtCore::RefPtr<dtCore::Isector> mIsector;
+         dtCore::RefPtr<dtCore::BatchIsector> mIsector;
          
          float mTimeUntilForceClamp, mHighResClampRange, mHighResClampRange2;
          
          std::map<dtCore::UniqueId, dtCore::RefPtr<DeadReckoningHelper> > mRegisteredActors;
          
          void TickRemote(const dtGame::TickMessage& tickMessage);
-                  
-         //double GetTerrainZIntersectionPoint(dtCore::DeltaDrawable& terrainActor, const osg::Vec3& point, osg::Vec3& groundNormalOut);
-         virtual double GetTerrainZIntersectionPoint(dtCore::DeltaDrawable& terrainActor, const osg::Vec3& point, osg::Vec3& groundNormalOut);
-     
+                       
    };
    
 }

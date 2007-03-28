@@ -53,9 +53,9 @@ namespace dtGame
       public:
          TestDeadReckoningComponent(): DeadReckoningComponent("DeadReckoningComponent") {}
          
-         dtCore::Isector& GetInternalIsector()
+         const osg::Vec3& GetLastUsedEyePoint() const
          {
-            return GetGroundClampIsector();
+            return GetLastEyePoint();
          }     
          
          void InternalCalcTotSmoothingSteps(DeadReckoningHelper& helper, const dtCore::Transform& xform)
@@ -257,7 +257,7 @@ namespace dtGame
 
             dtCore::System::GetInstance().Step();
             CPPUNIT_ASSERT_EQUAL(expectedEyePoint, 
-               mDeadReckoningComponent->GetInternalIsector().GetEyePoint());
+               mDeadReckoningComponent->GetLastUsedEyePoint());
    
             mGM->DeleteActor(*eyePointActorProxy);
                               

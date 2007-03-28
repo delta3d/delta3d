@@ -160,6 +160,7 @@ class HLATests : public CPPUNIT_NS::TestFixture
       void TestReceiveInteraction();
       void TestRuntimeMappingInfo();
       void TestSubscription();
+      void TestConfigurationLocking();
       void TestGMLookup();
       void TestMessageProcessing();
 
@@ -367,6 +368,10 @@ void HLATests::RunAllTests()
       //This is a quick, read-only test.
       TestSubscription();
    
+      BetweenTestSetUp();
+      TestConfigurationLocking();
+      BetweenTestTearDown();
+
       BetweenTestSetUp();
       TestReflectAttributes();
       BetweenTestTearDown();
@@ -647,7 +652,6 @@ void HLATests::TestRuntimeMappingInfo()
    {
       CPPUNIT_FAIL(ex.ToString());
    }
-
 }
 
 void HLATests::TestSubscription()
@@ -696,6 +700,52 @@ void HLATests::TestSubscription()
          
       }
    }
+}
+
+void HLATests::TestConfigurationLocking()
+{
+   CPPUNIT_ASSERT_THROW_MESSAGE("One may not enable or disable DDM while connected.", mHLAComponent->SetDDMEnabled(true), dtUtil::Exception);
+   CPPUNIT_ASSERT_THROW_MESSAGE("One may not clear the configuration which connected.", mHLAComponent->ClearConfiguration(), dtUtil::Exception);
+   
+   dtCore::RefPtr<dtDAL::ActorType> at = new dtDAL::ActorType("a", "b");
+   dtHLAGM::EntityType et(1,2,3,4,5,6,7);
+   std::vector<dtHLAGM::AttributeToPropertyList> testVec;
+   CPPUNIT_ASSERT_THROW_MESSAGE("One may not register an actor mapping while it's connected.", 
+         mHLAComponent->RegisterActorMapping(*at, "", &et, testVec), dtUtil::Exception);
+
+   dtCore::RefPtr<dtHLAGM::ObjectToActor> ota = new dtHLAGM::ObjectToActor;
+   ota->SetActorType(*at);
+   ota->SetObjectClassName("test1");
+   ota->SetDisID(&et);
+   CPPUNIT_ASSERT_THROW_MESSAGE("One may not register an actor mapping while it's connected.", 
+         mHLAComponent->RegisterActorMapping(*ota), dtUtil::Exception);
+
+   CPPUNIT_ASSERT_THROW_MESSAGE("One may not Unregister an actor mapping while it's connected.", 
+         mHLAComponent->UnregisterActorMapping(*at), dtUtil::Exception);
+
+   CPPUNIT_ASSERT_THROW_MESSAGE("One may not Unregister an actor mapping while it's connected.", 
+         mHLAComponent->UnregisterObjectMapping("test1", &et), dtUtil::Exception);
+
+   CPPUNIT_ASSERT_THROW_MESSAGE("One may not Unregister an actor mapping while it's connected.", 
+         mHLAComponent->UnregisterObjectMapping("test1", &et), dtUtil::Exception);
+   
+   dtCore::RefPtr<dtHLAGM::InteractionToMessage> itm = new dtHLAGM::InteractionToMessage;
+   
+   CPPUNIT_ASSERT_THROW_MESSAGE("One may not register an interaction mapping while it's connected.", 
+         mHLAComponent->RegisterMessageMapping(*itm), dtUtil::Exception);
+   
+   std::string interactionTypeName("");
+   std::vector<dtHLAGM::ParameterToParameterList> testOneToOneMessageVector;
+
+   CPPUNIT_ASSERT_THROW_MESSAGE("One may not register an interaction mapping while it's connected.", 
+         mHLAComponent->RegisterMessageMapping(dtGame::MessageType::INFO_ACTOR_UPDATED,
+               interactionTypeName, testOneToOneMessageVector), dtUtil::Exception);
+
+   CPPUNIT_ASSERT_THROW_MESSAGE("One may not Unregister an message mapping while it's connected.", 
+         mHLAComponent->UnregisterMessageMapping(dtGame::MessageType::INFO_ACTOR_UPDATED), dtUtil::Exception);
+
+   CPPUNIT_ASSERT_THROW_MESSAGE("One may not Unregister an interaction mapping while it's connected.", 
+         mHLAComponent->UnregisterInteractionMapping(interactionTypeName), dtUtil::Exception);
 }
 
 void HLATests::TestReflectAttributesNoEntityType()

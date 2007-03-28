@@ -37,9 +37,12 @@
 #include <vector>
 #include <map>
 #include <osg/Matrix>
+
 #include <dtUtil/coordinates.h>
-#include <dtGame/messagetype.h>
+
 #include <dtCore/refptr.h>
+
+#include <dtGame/messagetype.h>
 #include <dtGame/gmcomponent.h>
 
 #include <dtHLAGM/export.h>
@@ -66,7 +69,9 @@ namespace dtHLAGM
    class ParameterToParameterList;
    class OneToManyMapping;
    class ParameterTranslator;
-
+   class DDMRegionCalculator;
+   class DDMRegionData;
+   
    class DT_HLAGM_EXPORT HLAComponent : public dtGame::GMComponent,
       public NullFederateAmbassador
    {
@@ -129,6 +134,16 @@ namespace dtHLAGM
           */
          unsigned short GetApplicationIdentifier() const;
 
+         /// @return true if DDM is enabled for this hla component;
+         bool IsDDMEnabled() const { return mDDMEnabled; }
+         
+         /** 
+          * Sets DDM to be enabled or disabled
+          * @param enable whether to enable or disable DDM
+          * @throws dtUtil::Exception if component is connected to a federation.
+          */
+         void SetDDMEnabled(bool enable);
+         
          virtual void discoverObjectInstance(RTI::ObjectHandle theObject,
                                              RTI::ObjectClassHandle theObjectClassHandle,
                                              const char* theObjectName)
@@ -249,7 +264,6 @@ namespace dtHLAGM
          ///Fills a vector with all const interaction to message mappings.
          void GetAllInteractionToMessageMappings(std::vector<const InteractionToMessage*> toFill) const;
 
-
          /**
           * Called to Register an Object to Actor mapping.
           *
@@ -322,14 +336,10 @@ namespace dtHLAGM
           */
          void UnregisterInteractionMapping(const std::string& interName);
 
-         void RegisterMessageTranslator();
-
-         void UnregisterMessageTranslator();
-
-         void RegisterInteractionTranslator();
-
-         void UnregisterInteractionTranslator();
-
+         /**
+          * Clears all of the mapping configuration.
+          * @throws dtUtil::Exception if component is connected to a federation.
+          */
          void ClearConfiguration();
 
          void UpdateFromActor();
@@ -345,32 +355,6 @@ namespace dtHLAGM
           */
          virtual void ProcessMessage(const dtGame::Message& message);
 
-         /**
-          * Sets the location of the origin of the terrain to use for coordinate adjustment.
-          * @param location the origin location
-          */
-         void SetOriginLocation(const osg::Vec3d& location);
-
-         /**
-          * @return the location of the origin.
-          */
-         const osg::Vec3d GetOriginLocation();
-
-         void SetGeoOrigin(double lat, double lon, double elevation);
-
-         /**
-          * Sets the rotation of the origin relative to geocentric coordinates.
-          *
-          * @param rotation Rotation as h,p,r in degrees.
-          */
-         void SetOriginRotation(const osg::Vec3& rotation);
-
-         /**
-          * Retrieves the rotation of the origin relative to geocentric coordinates.
-          * @return a vector is the format heading, pitch, roll in degrees
-          */
-         const osg::Vec3 GetOriginRotation() const;
-
          dtUtil::Coordinates& GetCoordinateConverter() { return mCoordinates; };
          const dtUtil::Coordinates& GetCoordinateConverter() const { return mCoordinates; };
 
@@ -380,12 +364,28 @@ namespace dtHLAGM
          /// Adds a new custom parameter translator to the hla component.
          void AddParameterTranslator(ParameterTranslator& newTranslator);
 
+         ///@return the list of DDM region subscription calculators used by this component.
+         const std::vector<dtCore::RefPtr<DDMRegionCalculator> >& GetDDMSubscriptionCalculators() const { return mDDMSubscriptionCalculators; }
+
+         /// Adds a new custom DDM region subscription calculator to the hla component.
+         void AddDDMSubscriptionCalculator(DDMRegionCalculator& newCalc);
+
+         /// Removes a custom DDM region subscription calculator to the hla component.
+         void RemoveDDMSubscriptionCalculator(DDMRegionCalculator& calc);
+
          ///@return the current RTIambassador instance.  This will return NULL if this component is not connected to the RTI.
          RTI::RTIambassador* GetRTIAmbassador() { return mRTIAmbassador; }
          const RTI::RTIambassador* GetRTIAmbassador() const { return mRTIAmbassador; }
 
       protected:
 
+         /// Calls all of the subscription calculators to update their regions.
+         void UpdateDDMSubscriptions();
+         void CreateDDMSubscriptionRegions();
+         void DestroyDDMSubscriptionRegions();
+         
+         void UpdateRegion(DDMRegionData& regionData);
+         
          /**
           * Prepares the interaction parameters for an interaction.  This may be overridden in a subclass
           * to do one-off translations of outgoing data.
@@ -473,7 +473,6 @@ namespace dtHLAGM
           * The RTI ambassador.
           */
          RTI::RTIambassador* mRTIAmbassador;
-         //NullFederateAmbassador mRTIAmbassador;
 
          /**
           * The named of the joined execution.
@@ -497,6 +496,9 @@ namespace dtHLAGM
 
          unsigned short mEntityIdentifierCounter;
          unsigned short mEventIdentifierCounter;
+         
+         bool mDDMEnabled;
+         
          dtUtil::Coordinates mCoordinates;
 
          ObjectRuntimeMappingInfo mRuntimeMappings;
@@ -517,6 +519,10 @@ namespace dtHLAGM
          dtCore::RefPtr<InteractionToMessage> InternalUnregisterInteractionMapping(const std::string& interName);
 
          dtCore::RefPtr<dtGame::MachineInfo> mMachineInfo;
+         
+         std::vector<dtCore::RefPtr<DDMRegionCalculator> > mDDMSubscriptionCalculators;
+         std::vector<dtCore::RefPtr<DDMRegionData> > mDDMSubscriptionRegions;
+
          std::vector<dtCore::RefPtr<ParameterTranslator> > mParameterTranslators;
 
          dtCore::RefPtr<dtUtil::Log> mLogger;
