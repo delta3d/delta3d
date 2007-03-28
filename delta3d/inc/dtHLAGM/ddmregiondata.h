@@ -46,11 +46,11 @@ namespace dtHLAGM
     * deleted by the rti ambassador.  At that point the instance is no longer valid and should
     * be deleted itself.  Since deletion can't be guaranteed with a refptr, is not referenced.
     */
-   class DDMRegionData: public osg::Referenced
+   class DT_HLAGM_EXPORT DDMRegionData: public osg::Referenced
    {
       public:
          
-         class DimensionValues
+         class DT_HLAGM_EXPORT DimensionValues
          {
             public:
                DimensionValues():mMin(0), mMax(0) {}
@@ -58,13 +58,8 @@ namespace dtHLAGM
                unsigned long mMin;
                unsigned long mMax;
                
-               bool operator==(const DimensionValues& toComp) const
-               {
-                  if (this == &toComp)
-                     return true;
-                  
-                  return mName == toComp.mName && mMin == toComp.mMin && mMax == toComp.mMax; 
-               }
+               bool operator==(const DimensionValues& toComp) const;
+               
          };
          
          DDMRegionData(): mRegion(NULL) {}

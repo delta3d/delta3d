@@ -41,4 +41,16 @@ namespace dtHLAGM
       
       return &mDimensions[extent];
    }
+
+   bool DDMRegionData::DimensionValues::operator == (const DDMRegionData::DimensionValues& toComp) const
+   {
+      if (this == &toComp)
+         return true;
+
+      // TODO, figure out why you can't do == or != on 2 strings
+      if(strcmp(mName.c_str(), toComp.mName.c_str()) != 0)
+         return false;
+      
+      return mMin == toComp.mMin && mMax == toComp.mMax; 
+   }
 }
