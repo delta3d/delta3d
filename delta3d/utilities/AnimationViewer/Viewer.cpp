@@ -136,7 +136,10 @@ void Viewer::OnLoadCharFile( const QString &filename )
 
    for (int animID=0; animID<mCharacter->GetCal3DWrapper()->GetCoreAnimationCount(); animID++)
    {
-      emit OnAnimationLoaded(animID, QString::number(animID) );
+      QString nameToSend;
+      std::string name = mCharacter->GetCal3DWrapper()->GetCoreAnimationName(animID);
+      nameToSend = QString::fromStdString(name);
+      emit OnAnimationLoaded(animID, nameToSend );
    }        
 }
 

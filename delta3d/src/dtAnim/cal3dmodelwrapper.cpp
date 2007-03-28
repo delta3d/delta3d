@@ -109,3 +109,8 @@ const CalModel* Cal3DModelWrapper::GetCalModel() const
 {
    return mCalModel;
 }
+
+const std::string& Cal3DModelWrapper::GetCoreAnimationName( int animID )
+{
+   return mCalModel->getCoreModel()->getCoreAnimation(animID)->getName();
+}

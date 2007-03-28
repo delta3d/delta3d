@@ -69,7 +69,20 @@ void CharacterFileHandler::startElement( const XMLCh* const uri,const XMLCh* con
 
       if (resultIter != results.end())
       {
-         mAnimationFilenames.push_back(resultIter->second);
+         std::string filename = resultIter->second;
+         
+         //default the name of the animation to be the filename
+         std::string name = resultIter->second; 
+
+         resultIter = results.find("name");
+         if (resultIter != results.end() )
+         {
+            name = resultIter->second;
+         }
+         AnimationStruct anim;
+         anim.filename = filename;
+         anim.name = name;
+         mAnimations.push_back(anim);
       }
       else
       {
