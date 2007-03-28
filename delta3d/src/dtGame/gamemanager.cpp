@@ -798,7 +798,15 @@ namespace dtGame
       dtCore::RefPtr<dtDAL::ActorProxy> ourObject;
       FindPrototypeByID(uniqueID, ourObject);
       if(ourObject != NULL)
-         return ourObject->Clone().get();
+      {
+         dtCore::RefPtr<dtDAL::ActorProxy> temp = ourObject->Clone().get();
+         dtGame::GameActorProxy* gap = dynamic_cast<dtGame::GameActorProxy*>(temp.get());
+         if (gap != NULL)
+         {
+            gap->BuildInvokables();
+         }
+         return temp;
+      }
       return NULL;
    }
 
