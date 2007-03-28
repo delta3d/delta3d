@@ -1658,9 +1658,12 @@ AudioManager::PlaySound( SoundObj* snd )
       }
    }
 
-   snd->AddSender( this );
-   snd->AddSender( &dtCore::System::GetInstance() );
-   mPlayQueue.push( snd->Source() );
+   if (source_is_new)
+   {
+      snd->AddSender( this );
+      snd->AddSender( &dtCore::System::GetInstance() );
+      mPlayQueue.push( snd->Source() );
+   }
 }
 
 
