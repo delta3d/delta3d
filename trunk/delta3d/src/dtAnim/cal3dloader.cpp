@@ -52,14 +52,14 @@ CalCoreModel* Cal3DLoader::GetCoreModel( const std::string &filename )
       coreModel->loadCoreSkeleton(FindFileInPathList(handler.mSkeletonFilename));
 
       //load animations
-      std::vector<std::string>::iterator animItr = handler.mAnimationFilenames.begin();
-      while (animItr != handler.mAnimationFilenames.end())
+      std::vector<CharacterFileHandler::AnimationStruct>::iterator animItr = handler.mAnimations.begin();
+      while (animItr != handler.mAnimations.end())
       {
-         std::string name = FindFileInPathList(*animItr);
-         if (!name.empty()) coreModel->loadCoreAnimation( name );
+         std::string filename = FindFileInPathList((*animItr).filename);
+         if (!filename.empty()) coreModel->loadCoreAnimation( filename, (*animItr).name );
          else
          {
-            LOG_ERROR("Can't find animation file named:'" + *animItr + "'.");
+            LOG_ERROR("Can't find animation file named:'" + (*animItr).filename + "'.");
          }
          ++animItr;
       }
@@ -98,7 +98,10 @@ CalCoreModel* Cal3DLoader::GetCoreModel( const std::string &filename )
 }
 
 /**
- * Will use the Delta3D search paths to find the supplied filename.
+ * Will use the Delta3D search paths to find the supplied filename.  Will create
+ * a new Cal3DModelWrapper, but you're responsible for deleting it.
+ * @note The animations are named with their filenames by default, or by an
+ *       optional name attribute in the .xml file.
  * @return A fully defined CalModel wrapped by a Cal3DModelWrapper.  RefPtr could
  *         be not valid (wrapper->valid()==false) if the file didn't load correctly.
  * @see SetDataFilePathList()

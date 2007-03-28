@@ -81,11 +81,16 @@ namespace dtAnim
          int GetMeshCount()                 { return mRenderer->getMeshCount(); }
          int GetSubmeshCount(int submeshID) { return mRenderer->getSubmeshCount(submeshID); }
 
+         /************************************************************************/
          int GetCoreMeshCount() { return mCalModel->getCoreModel()->getCoreMeshCount(); }
          int GetCoreAnimationCount() {return mCalModel->getCoreModel()->getCoreAnimationCount(); }
+
+         ///Get the name that equates to the supplied animation ID
+         const std::string& GetCoreAnimationName(int animID);
          int GetCoreMaterialCount() {return mCalModel->getCoreModel()->getCoreMaterialCount();}
          CalCoreMaterial* GetCoreMaterial(int matID) {return mCalModel->getCoreModel()->getCoreMaterial(matID); }
 
+         /************************************************************************/
          int GetFaces(int *faces)          { return mRenderer->getFaces( (CalIndex*)faces ); }
          int GetNormals(float *normals, int stride=0) { return mRenderer->getNormals(normals, stride); }
          int GetTextureCoords(int mapID, float *coords, int stride=0) {return mRenderer->getTextureCoordinates(mapID, coords, stride);}
