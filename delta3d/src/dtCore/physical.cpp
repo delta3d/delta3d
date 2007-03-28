@@ -248,9 +248,7 @@ void Physical::GetInertiaTensor(osg::Matrix& dest) const
  * position into the user-accessible transformation.
  */
 void Physical::PostPhysicsStepUpdate()
-{
-   if (!GetCollisionDetection()) return;
-   
+{  
    if( DynamicsEnabled() )
    {
       const dReal* position = dGeomGetPosition(GetGeomID());
