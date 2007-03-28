@@ -14,12 +14,18 @@ using namespace dtUtil;
 
 XERCES_CPP_NAMESPACE_USE
 
-XercesParser::XercesParser()
+XercesParser::XercesParser():
+mParser(NULL)
 {
 }
 
 XercesParser::~XercesParser()
 {
+   if (mParser!=NULL)
+   {
+      delete mParser;
+      mParser = NULL;
+   }
 }
 
 bool XercesParser::Parse(  const std::string& datafile, 
@@ -51,12 +57,12 @@ bool XercesParser::Parse(  const std::string& datafile,
    }
 
    dtUtil::XercesErrorHandler xmlerror;                         // instantiate the error handler
-   SAX2XMLReader* parser;   // declare the parser
+   
    try  // to create a reader
    {
-      parser = XMLReaderFactory::createXMLReader();        // allocate the parser
-      parser->setContentHandler( &handler );
-      parser->setErrorHandler( &xmlerror );
+      mParser = XMLReaderFactory::createXMLReader();        // allocate the mParser
+      mParser->setContentHandler( &handler );
+      mParser->setErrorHandler( &xmlerror );
 
       if (!schemafile.empty())
       {
@@ -67,13 +73,13 @@ bool XercesParser::Parse(  const std::string& datafile,
          }
          else   // turn on schema checking
          {
-            parser->setFeature(XMLUni::fgXercesSchema, true);                  // enables schema checking.
-            parser->setFeature(XMLUni::fgSAX2CoreValidation, true);            // posts validation errors.
-            parser->setFeature(XMLUni::fgXercesValidationErrorAsFatal, true);  // does not allow parsing if schema is not fulfilled.
-            parser->loadGrammar( schema.c_str(), Grammar::SchemaGrammarType );
+            mParser->setFeature(XMLUni::fgXercesSchema, true);                  // enables schema checking.
+            mParser->setFeature(XMLUni::fgSAX2CoreValidation, true);            // posts validation errors.
+            mParser->setFeature(XMLUni::fgXercesValidationErrorAsFatal, true);  // does not allow parsing if schema is not fulfilled.
+            mParser->loadGrammar( schema.c_str(), Grammar::SchemaGrammarType );
             XMLCh* SCHEMA = XMLString::transcode( schema.c_str() );
-            parser->setFeature(XMLUni::fgXercesSchema, true);
-            parser->setProperty( XMLUni::fgXercesSchemaExternalNoNameSpaceSchemaLocation, SCHEMA );
+            mParser->setFeature(XMLUni::fgXercesSchema, true);
+            mParser->setProperty( XMLUni::fgXercesSchemaExternalNoNameSpaceSchemaLocation, SCHEMA );
             XMLString::release( &SCHEMA );
          }
       }
@@ -96,7 +102,7 @@ bool XercesParser::Parse(  const std::string& datafile,
    try  // to parse the file
    {
       LOG_DEBUG("About to parse file: " + filename)
-      parser->parse( filename.c_str() );
+      mParser->parse( filename.c_str() );
       LOG_DEBUG("...done parsing file: " + filename)
       retVal = true;
    }
@@ -106,18 +112,6 @@ bool XercesParser::Parse(  const std::string& datafile,
       LOG_ERROR(std::string("Exception message is: ") + message)
       XMLString::release(&message);
    }
-   catch (const SAXParseException& e)
-   {
-      //The error will already be logged by the errorHandler
-      char* message = XMLString::transcode(e.getMessage());
-      LOG_ERROR(std::string("An exception occurred while parsing file, ") + filename + std::string(", with message: ") + message)
-      XMLString::release(&message);
-   }
-   catch (...) 
-   {
-      LOG_ERROR("An exception occurred while parsing file, " + filename)
-   }
 
-   delete parser;
    return retVal;
 }

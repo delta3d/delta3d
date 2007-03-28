@@ -5,10 +5,10 @@ CONFIG += qt \
 TEMPLATE = vcapp
 
 CONFIG(debug, debug|release) {
-  LIBS += dtABCD.lib dtUtilD.lib dtCoreD.lib dtAnimD.lib osgD.lib cal3d_d.lib
+  LIBS += dtABCD.lib dtUtilD.lib dtCoreD.lib dtAnimD.lib osgD.lib cal3d_d.lib xerces-c_2D.lib
   TARGET = AnimationViewerD
 } else {
-   LIBS += dtABC.lib dtUtil.lib dtCore.lib dtAnim.lib osg.lib cal3d.lib
+   LIBS += dtABC.lib dtUtil.lib dtCore.lib dtAnim.lib osg.lib cal3d.lib xerces-c_2.lib
  TARGET = AnimationViewer
 }
 

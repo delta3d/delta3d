@@ -73,7 +73,7 @@ void CharacterFileHandler::startElement( const XMLCh* const uri,const XMLCh* con
       }
       else
       {
-         errorString = std::string("Invalid XML format: <character> missing <name> child");
+         errorString = std::string("Invalid XML format: <animation> missing <filename> child");
       }     
    }
    else if (elementStr == "mesh")

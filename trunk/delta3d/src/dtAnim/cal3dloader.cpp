@@ -23,6 +23,8 @@ Cal3DLoader::~Cal3DLoader()
 
 /**
  * @return Could return NULL if the file didn't load.
+ * @throw SAXParseException if the file didn't parse correctly
+ * @note Relies on the the "animationdefinition.xsd" schema file
  */
 CalCoreModel* Cal3DLoader::GetCoreModel( const std::string &filename )
 {
@@ -41,56 +43,56 @@ CalCoreModel* Cal3DLoader::GetCoreModel( const std::string &filename )
       //gotta parse the file and create/store a new CalCoreModel
       dtUtil::XercesParser parser;
       CharacterFileHandler handler;
-      if( parser.Parse(filename, handler) )
-      {
-         coreModel = new CalCoreModel(handler.mName);
-
-         //load skeleton
-         coreModel->loadCoreSkeleton(FindFileInPathList(handler.mSkeletonFilename));
       
-         //load animations
-         std::vector<std::string>::iterator animItr = handler.mAnimationFilenames.begin();
-         while (animItr != handler.mAnimationFilenames.end())
+      parser.Parse(filename, handler, "animationdefinition.xsd");
+
+      coreModel = new CalCoreModel(handler.mName);
+
+      //load skeleton
+      coreModel->loadCoreSkeleton(FindFileInPathList(handler.mSkeletonFilename));
+
+      //load animations
+      std::vector<std::string>::iterator animItr = handler.mAnimationFilenames.begin();
+      while (animItr != handler.mAnimationFilenames.end())
+      {
+         std::string name = FindFileInPathList(*animItr);
+         if (!name.empty()) coreModel->loadCoreAnimation( name );
+         else
          {
-            std::string name = FindFileInPathList(*animItr);
-            if (!name.empty()) coreModel->loadCoreAnimation( name );
-            else
-            {
-               LOG_ERROR("Can't find animation file named:'" + *animItr + "'.");
-            }
-            ++animItr;
+            LOG_ERROR("Can't find animation file named:'" + *animItr + "'.");
          }
+         ++animItr;
+      }
 
-         //load meshes
-         std::vector<std::string>::iterator meshItr = handler.mMeshFilenames.begin();
-         while (meshItr != handler.mMeshFilenames.end())
+      //load meshes
+      std::vector<std::string>::iterator meshItr = handler.mMeshFilenames.begin();
+      while (meshItr != handler.mMeshFilenames.end())
+      {
+         std::string name = FindFileInPathList(*meshItr);
+         if (!name.empty())   coreModel->loadCoreMesh( name );
+         else
          {
-            std::string name = FindFileInPathList(*meshItr);
-            if (!name.empty())   coreModel->loadCoreMesh( name );
-            else
-            {
-               LOG_ERROR("Can't find mesh file named:'" + *meshItr + "'.");
-            }
-            ++meshItr;
+            LOG_ERROR("Can't find mesh file named:'" + *meshItr + "'.");
          }
+         ++meshItr;
+      }
 
-         //load materials
-         std::vector<std::string>::iterator matItr = handler.mMaterialFilenames.begin();
-         while (matItr != handler.mMaterialFilenames.end())
+      //load materials
+      std::vector<std::string>::iterator matItr = handler.mMaterialFilenames.begin();
+      while (matItr != handler.mMaterialFilenames.end())
+      {
+         std::string name = FindFileInPathList(*matItr);
+
+         if (!name.empty())  coreModel->loadCoreMaterial( name );
+         else
          {
-            std::string name = FindFileInPathList(*matItr);
-
-            if (!name.empty())  coreModel->loadCoreMaterial( name );
-            else
-            {
-               LOG_ERROR("Can't find material file named:'" + *matItr + "'.");
-            }
-            ++matItr;
+            LOG_ERROR("Can't find material file named:'" + *matItr + "'.");
          }
+         ++matItr;
+      }
 
-         mFilenameCoreModelMap[filename] = coreModel; //store it for later
-      }      
-   }
+      mFilenameCoreModelMap[filename] = coreModel; //store it for later
+   }      
 
    return coreModel;
 }
@@ -100,13 +102,13 @@ CalCoreModel* Cal3DLoader::GetCoreModel( const std::string &filename )
  * @return A fully defined CalModel wrapped by a Cal3DModelWrapper.  RefPtr could
  *         be not valid (wrapper->valid()==false) if the file didn't load correctly.
  * @see SetDataFilePathList()
+ * @throw SAXParseException If the file wasn't formatted correctly
  */
 dtCore::RefPtr<Cal3DModelWrapper> Cal3DLoader::Load( const std::string &filename )
 {
    dtCore::RefPtr<Cal3DModelWrapper> wrapper;
 
    CalCoreModel *coreModel = GetCoreModel(filename);
-   assert(coreModel);   
 
    if (coreModel != NULL)
    {
