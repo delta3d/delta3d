@@ -50,7 +50,8 @@ namespace dtCore
           * Constructor.
           *
           * @param name the instance name
-          * @param textureImage An image to apply to the terrain
+          * @param textureImage An image to apply to the terrain.  The appearance 
+		  * of this texture will be effected by HighColor and LowColor 
           */
          InfiniteTerrain(const std::string& name = "infiniteTerrain",
                          osg::Image* textureImage = 0);
@@ -210,6 +211,20 @@ namespace dtCore
 
          float GetLineOfSightSpacing() const {return mLOSPostSpacing;}
 
+		 /**
+          * Set the color used for low areas of the terrain.  
+          *
+          * @param rgb The colour (0..255, 0..255, 0..255) of the low areas.
+          */
+		 void SetMinColor(const osg::Vec3 &rgb);
+
+		 /**
+          * Set the color used for high areas of the terrain.  
+          *
+          * @param rgb The colour (0..255, 0..255, 0..255) of the high areas.
+          */
+		 void SetMaxColor(const osg::Vec3 &rgb);
+
       private:
 
          /**
@@ -351,7 +366,7 @@ namespace dtCore
          //added for vertex coloring
          float mMinHeight, mIdealHeight, mMaxHeight;
          float mMinColorIncrement, mMaxColorIncrement;
-         osg::Vec3 mMinColor, mIdealColor, mMaxColor;
+         osg::Vec3 mMinColor, mMaxColor;
 
          float mLOSPostSpacing; ///<used to samples points for LOS calculations
    };

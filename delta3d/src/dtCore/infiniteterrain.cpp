@@ -94,6 +94,8 @@ static int dInfiniteTerrainClass = 0;
  * Constructor.
  *
  * @param name the instance name
+ * @param textureImage An image to apply to the terrain.
+ *
  */
 InfiniteTerrain::InfiniteTerrain(const std::string& name, osg::Image* textureImage)
    :  Transformable(name),
@@ -366,9 +368,7 @@ void InfiniteTerrain::SetupColorInfo()
 
    //set the colors to interpolate between
    mMinColor.set((89.0f / 255.0f), (80.0f / 255.0f), (67.0f / 255.0f));
-   mIdealColor.set((192.0f / 255.0f), (162.0f / 255.0f), (127.0f / 255.0f));
-   mMaxColor.set((98.0f / 255.0f), (98.0f / 255.0f), (98.0f / 255.0f));
-
+   mMaxColor.set((192.0f / 255.0f), (162.0f / 255.0f), (127.0f / 255.0f));
 }
 
 //returns an interpolated color based on the height
@@ -382,7 +382,7 @@ osg::Vec4 InfiniteTerrain::GetColor(float height)
 
    minPercent = std::min<float>(std::max<float>(0.0f, (mIdealHeight - height) / mMinColorIncrement), 1.0f);
    maxPercent = 1 - minPercent;
-   maxColor = &mIdealColor;
+   maxColor = &mMaxColor;
    minColor = &mMinColor;
 
    r = (*maxColor)[0] * maxPercent;
@@ -955,5 +955,15 @@ bool InfiniteTerrain::IsClearLineOfSight( const osg::Vec3& pointOne,
    // Walked full ray, so clear LOS
    return true;
 }   
+
+void InfiniteTerrain::SetMinColor(const osg::Vec3 &rgb)
+{   
+	mMinColor.set((rgb[0] / 255.0f), (rgb[1] / 255.0f), (rgb[2] / 255.0f));
+}
+
+void InfiniteTerrain::SetMaxColor(const osg::Vec3 &rgb)
+{
+   mMaxColor.set((rgb[0] / 255.0f), (rgb[1] / 255.0f), (rgb[2] / 255.0f));
+}
 
 }
