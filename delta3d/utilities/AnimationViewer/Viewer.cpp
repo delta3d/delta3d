@@ -16,6 +16,9 @@
 #include <dtUtil/stringutils.h>
 #include <dtUtil/fileutils.h>
 
+#include <xercesc/sax/SAXParseException.hpp>  // for base class
+#include <xercesc/util/XMLString.hpp>
+
 #include <osg/Geode>
 #include <osg/Shape>
 #include <osg/ShapeDrawable>
@@ -26,7 +29,6 @@
 #include <QDir>
 #include <QDebug>
 #include <QString>
-#include <QMessageBox>
 
 using namespace dtUtil;
 using namespace dtCore;
@@ -113,7 +115,24 @@ void Viewer::OnLoadCharFile( const QString &filename )
    mWireDecorator->addChild(mCharacter.get()->mGeode.get());
 
    //create an instance from the character definition file
-   mCharacter->Create(filename.toStdString());
+   try
+   {
+      mCharacter->Create(filename.toStdString());
+   }
+   catch (const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException& e)
+   {
+      //something bad happened while parsing, we should get out of here
+      char* msg = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(e.getMessage());
+
+      QString errorMsg;
+      errorMsg = QString("Parsing error at line %1 : %2")
+                        .arg(e.getLineNumber())
+                        .arg(msg);
+
+      XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release( &msg );
+      emit ErrorOccured(errorMsg);
+      return;
+   }
 
    for (int animID=0; animID<mCharacter->GetCal3DWrapper()->GetCoreAnimationCount(); animID++)
    {

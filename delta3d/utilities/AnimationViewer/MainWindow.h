@@ -30,6 +30,7 @@ public slots:
    void OnToggleShadingToolbar();
    void OnToggleTempToolbar();
    void OnToggleLightingToolbar();
+   void OnDisplayError( const QString &msg );
 	
 private:
    void CreateMenus();

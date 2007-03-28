@@ -31,6 +31,7 @@ void XercesErrorHandler::error(const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseExce
    std::string line = dtUtil::ToString( e.getLineNumber() );
    LOG_ERROR("Xerces error occurred while parsing at line, " + line + ", with message: " + std::string(msg) )
    XMLString::release( &msg );
+   throw(e);
 }
 
 void XercesErrorHandler::fatalError(const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException& e)
@@ -39,6 +40,7 @@ void XercesErrorHandler::fatalError(const XERCES_CPP_NAMESPACE_QUALIFIER SAXPars
    std::string line = dtUtil::ToString( e.getLineNumber() );
    LOG_ERROR("Xerces fatal error occurred while parsing at line, " + line + ", with message: " + std::string(msg) )
    XMLString::release( &msg );
+   throw(e);
 }
 
 void XercesErrorHandler::resetErrors()

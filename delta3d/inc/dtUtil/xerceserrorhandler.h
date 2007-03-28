@@ -44,8 +44,13 @@ namespace dtUtil
       ~XercesErrorHandler();
 
       virtual void warning(const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException& e);
+
+      /// \throw SAXParseException Upon errors
       virtual void error(const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException& e);
+
+      /// \throw SAXParseException Upon fatal errors
       virtual void fatalError(const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException& e);
+
       virtual void resetErrors();
    };
 }

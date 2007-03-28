@@ -43,10 +43,9 @@ void CharDrawable::OnMessage(Base::MessageData *data)
 
 void CharDrawable::Create(const std::string &filename) 
 {
-   // Create a new cal model and an associated update callback
-
+   // Create a new Cal3DWrapper
    Cal3DLoader loader;
-   mCal3DWrapper = loader.Load(filename);
+   mCal3DWrapper = loader.Load(filename);  
 
    if(mCal3DWrapper->BeginRenderingQuery()) 
    {

@@ -28,6 +28,10 @@
 #include <xercesc/sax2/ContentHandler.hpp>
 #include <dtUtil/export.h>
 
+XERCES_CPP_NAMESPACE_BEGIN
+   class SAX2XMLReader;
+XERCES_CPP_NAMESPACE_END
+
 namespace dtUtil
 {
    /** \brief A class to unify the usage of Xerces parsing.
@@ -47,10 +51,13 @@ namespace dtUtil
         * \param handler the object to handle content within the file to be parsed.
         * \param schema the file that defines the schema requirements.
         * \return if parsing the file threw an exception, return is false.  Otherwise, true.
+        * \throw SAXParseException if a parsing error occurs.
         */
       bool Parse(const std::string& data,
                  XERCES_CPP_NAMESPACE_QUALIFIER ContentHandler& handler,
                  const std::string& schema="");
+   private:
+      XERCES_CPP_NAMESPACE_QUALIFIER SAX2XMLReader* mParser;
    };
 }
 

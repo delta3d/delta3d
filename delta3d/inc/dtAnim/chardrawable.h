@@ -60,6 +60,7 @@ namespace dtAnim
     * Create an "instance" of the reference (core) model given.
     * This method creates lots of drawables each one with a single
     * material, to take advantage of OSG state sorting.
+    * @throw Could throw a SAXParseException exception if the file didn't parse correctly
     */
     void Create(const std::string &filename);
 
