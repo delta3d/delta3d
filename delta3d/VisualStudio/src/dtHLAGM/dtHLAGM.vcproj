@@ -126,6 +126,12 @@
 				RelativePath="..\..\..\src\dtHLAGM\attributetype.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtHLAGM\ddmregiondata.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtHLAGM\ddmutil.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtHLAGM\distypes.cpp">
 			</File>
 			<File
@@ -159,6 +165,15 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtHLAGM\attributetype.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtHLAGM\ddmregioncalculator.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtHLAGM\ddmregiondata.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtHLAGM\ddmutil.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtHLAGM\distypes.h">
