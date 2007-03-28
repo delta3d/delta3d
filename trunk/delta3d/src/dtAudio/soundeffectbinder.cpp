@@ -620,10 +620,7 @@ SoundEffectBinder::SfxObj::SfxObj( const std::string& name /*= "sfxobj"*/ )
    mSnd(NULL),
    mList(NULL)
 {
-   AudioManager*  mgr(AudioManager::GetManager());
-   assert( mgr );
-
-   mSnd  = mgr->NewSound();
+   mSnd  = AudioManager::GetInstance().NewSound();
    assert( mSnd );
 
    mSnd->SetName( name );
@@ -636,10 +633,7 @@ SoundEffectBinder::SfxObj::SfxObj( const std::string& name /*= "sfxobj"*/ )
  */
 SoundEffectBinder::SfxObj::~SfxObj()
 {
-   AudioManager*  mgr(AudioManager::GetManager());
-   assert( mgr );
-
-   mgr->FreeSound( mSnd );
+   AudioManager::GetInstance().FreeSound( mSnd );
 }
 
 
