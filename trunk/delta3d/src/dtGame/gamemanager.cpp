@@ -1696,12 +1696,23 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::DebugStatisticsPrintOut(const float realTimeElapsed)
    {
-      float gmPercentTime = ComputeStatsPercent(realTimeElapsed, mStatsCumGMProcessTime);
+      float gmPercentTime = ComputeStatsPercent(realTimeElapsed, (float) mStatsCumGMProcessTime);
+      // real time is milliseconds. Convert to seconds (*1 mil) and then trunc to 5 digits 
+      float truncRealTime = ((int)(realTimeElapsed / 10.0)) / 100000.0; 
 
       std::ostringstream ss;
-      ss << "GM Stats: SimTime[" << GetSimulationTime() << "], TimeInGM[" << gmPercentTime << "%], Ticks[" <<
-         mStatsNumFrames << "], #Msgs[" << mStatsNumProcMessages << " P/" << mStatsNumSendNetworkMessages <<
-         " S], #Actors[" << mActorProxyMap.size() << "/" << mGameActorProxyMap.size() << " Game]";
+      ss << "==========Printing Debug information===========" << 
+#ifdef _DEBUG
+         "  [DEBUG BUILD]  " << std::endl;
+#else
+         "  [RELEASE BUILD]  " << std::endl;
+#endif
+
+      ss << "GM Stats: SimTime[" << GetSimulationTime() << "], TimeInGM[" << gmPercentTime << 
+         "%], ReportTime[" << truncRealTime << "], Ticks[" << mStatsNumFrames << 
+         "], #Msgs[" << mStatsNumProcMessages << " P/" << mStatsNumSendNetworkMessages <<
+         " N], #Actors[" << mActorProxyMap.size() << "/" << mGameActorProxyMap.size() << " Game]" << std::endl;
+      // include templates?  mTemplateActors.size()?    
       
       // reset values for next fragment
       mStatsNumFrames         = 0;
@@ -1709,89 +1720,64 @@ namespace dtGame
       mStatsCumGMProcessTime  = 0;
       mStatsNumSendNetworkMessages = 0;
 
+      // Build up all the information in the stream
+      std::vector<dtCore::RefPtr<LogDebugInformation> >::iterator iter = mDebugLoggerInformation.begin();
+      if(mDoStatsOnTheComponents)
+      {
+         ss << "*************** STARTING LOGGING OF TIME IN COMPONENTS *****************" << std::endl;
+         for(; iter != mDebugLoggerInformation.end(); ++iter)
+         {
+            if((*iter)->mIsComponent)
+            {
+               float percentTime = ComputeStatsPercent(truncRealTime, (*iter)->mTotalTime);
+               float truncTotalTime = ((int)((*iter)->mTotalTime * 10000)) / 10000.0; // force data truncation to 4 places
+               ss << "* Name[" << (*iter)->mNameOfLogInfo.c_str() << "], Time[" << 
+                  percentTime << "% / " << truncTotalTime << " Total] " << std::endl;
+                  // Used to print average.  Was removed to simplify readability of output
+                  //float((*iter)->mTotalTime / (*iter)->mTimesThrough) << " TickAvg]" << std::endl;
+               (*iter)->mTotalTime = 0;
+               (*iter)->mTimesThrough = 0;
+               (*iter)->mTickLocalTime = 0;
+            }
+         }
+         ss << "*************** ENDING LOGGING OF TIME IN COMPONENTS *****************" << std::endl;
+      }
+      if(mDoStatsOnTheActors)
+      {
+         ss << "*************** STARTING LOGGING OF TIME IN ACTORS *****************" << std::endl;
+         for(iter = mDebugLoggerInformation.begin(); iter != mDebugLoggerInformation.end(); ++iter)
+         {
+            if(!(*iter)->mIsComponent)
+            {
+               float percentTime = ComputeStatsPercent(truncRealTime, (*iter)->mTotalTime);
+               float truncTotalTime = ((int)((*iter)->mTotalTime * 10000)) / 10000.0; // force data truncation to 4 places
+               ss << "* Name[" << (*iter)->mNameOfLogInfo.c_str() << "], Time[" << 
+                  percentTime << "% / " << truncTotalTime << " Total] " <<
+                  ", UniqueId[" << (*iter)->mUniqueID.c_str() << "]" << std::endl;
+               (*iter)->mTotalTime = 0;
+               (*iter)->mTimesThrough = 0;
+               (*iter)->mTickLocalTime = 0;
+            }
+         }
+         ss << "************ ENDING LOGGING OF TIME IN ACTORS *********************" << std::endl;
+      }
+      ss << "============ Ending Debug information ==============" << std::endl;
+
+      // Do the writing
       if(mPrintFileToConsole)
       {
-         std::vector<dtCore::RefPtr<LogDebugInformation> >::iterator iter = mDebugLoggerInformation.begin();
-         printf("=======================================Printing Debug information=======================================\n");
          mLogger->LogMessage(__FUNCTION__, __LINE__, ss.str(), dtUtil::Log::LOG_ALWAYS);
-         if(mDoStatsOnTheComponents)
-         {
-            
-            printf("***************************************\nSTARTING LOGGING OF TIME IN COMPONENT\n***************************************\n");
-            for(; iter != mDebugLoggerInformation.end(); ++iter)
-            {
-               if((*iter)->mIsComponent)
-               {
-                  printf("* CMPT:NAME[%s]:TOTAL_TIME[%f]:AVG_TICKLOCAL[%f]:LOCALTICKS[%d]\n", 
-                     (*iter)->mNameOfLogInfo.c_str(), float((*iter)->mTotalTime), 
-                     float((*iter)->mTickLocalTime / (*iter)->mTimesThrough), (*iter)->mTimesThrough );
-                  (*iter)->mTotalTime = 0;
-               }
-            }
-            printf("***************************************\nENDING LOGGING OF TIME IN COMPONENT\n***************************************\n");
-         }
-         if(mDoStatsOnTheActors)
-         {
-            printf("***************************************\nSTARTING LOGGING OF TIME IN ACTORS\n***************************************\n");
-            for(iter = mDebugLoggerInformation.begin(); iter != mDebugLoggerInformation.end(); ++iter)
-            {
-               if(!(*iter)->mIsComponent)
-               {
-                  printf("* ACTR:NAME[%s]:UNIQUEID[%s]:TOTAL_TIME[%f]:AVG_TICKLOCAL[%f]:LOCALTICKS[%d]\n", 
-                     (*iter)->mNameOfLogInfo.c_str(), (*iter)->mUniqueID.c_str(), float((*iter)->mTotalTime), 
-                     float((*iter)->mTotalTime / (*iter)->mTimesThrough), 
-                     (*iter)->mTimesThrough );
-                  (*iter)->mTotalTime = 0;
-               }
-            }
-            printf("***************************************\nENDING LOGGING OF TIME IN ACTORS\n***************************************\n");
-         }
-         printf("=======================================Ending Debug information=======================================\n");
       }
-      else
+      else // print to file
       {
-         std::vector<dtCore::RefPtr<LogDebugInformation> >::iterator iter = mDebugLoggerInformation.begin();
          FILE* temp = fopen(mFilePathToPrintDebugInformation.c_str(), "a");
-         fprintf(temp, "=======================================Printing Debug information=======================================\n");
          fprintf(temp, "%s", ss.str().c_str());
-         if(mDoStatsOnTheComponents)
-         {
-            fprintf(temp, "***************************************\nSTARTING LOGGING OF TIME IN COMPONENT\n***************************************\n");
-            for(; iter != mDebugLoggerInformation.end(); ++iter)
-            {
-               if((*iter)->mIsComponent)
-               {
-                  fprintf(temp, "* CMPT:NAME[%s]:TOTAL_TIME[%f]:AVG_TICKLOCAL[%f]:LOCALTICKS[%d]\n", 
-                     (*iter)->mNameOfLogInfo.c_str(), float((*iter)->mTotalTime), 
-                     float((*iter)->mTickLocalTime / (*iter)->mTimesThrough), (*iter)->mTimesThrough );
-                  (*iter)->mTotalTime = 0;
-               }
-            }
-            fprintf(temp, "***************************************\nENDING LOGGING OF TIME IN COMPONENT\n***************************************\n");
-         }
-         if(mDoStatsOnTheActors)
-         {
-            fprintf(temp, "***************************************\nSTARTING LOGGING OF TIME IN ACTORS\n***************************************\n");
-            for(iter = mDebugLoggerInformation.begin(); iter != mDebugLoggerInformation.end(); ++iter)
-            {
-               if(!(*iter)->mIsComponent)
-               {
-                  fprintf(temp, "* ACTR:NAME[%s]:UNIQUEID[%s]:TOTAL_TIME[%f]:AVG_TICKLOCAL[%f]:LOCALTICKS[%d]\n", 
-                     (*iter)->mNameOfLogInfo.c_str(), (*iter)->mUniqueID.c_str(), float((*iter)->mTotalTime), 
-                     float((*iter)->mTotalTime / (*iter)->mTimesThrough), 
-                     (*iter)->mTimesThrough );
-                  (*iter)->mTotalTime = 0;
-               }
-            }
-            fprintf(temp, "***************************************\nENDING LOGGING OF TIME IN ACTORS\n***************************************\n");
-         }
-         fprintf(temp, "=======================================Ending Debug information=======================================\n");
          fclose(temp);
       }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   float GameManager::ComputeStatsPercent(const Timer_t &total, const Timer_t &partial) const
+   float GameManager::ComputeStatsPercent(const float total, const float partial) const
    {
       float returnValue = 0.0;
 

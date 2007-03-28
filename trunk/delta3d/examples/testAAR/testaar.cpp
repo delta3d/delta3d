@@ -58,7 +58,7 @@ extern "C" TEST_AAR_EXPORT void DestroyGameEntryPoint(dtGame::GameEntryPoint* en
 //////////////////////////////////////////////////////////////////////////
 TestAAR::TestAAR() :  
    mLmsComponent(new dtLMS::LmsComponent("TestAARLmsComponent")), 
-   mUseLMS(true)
+   mUseLMS(false)
 {
    
 }

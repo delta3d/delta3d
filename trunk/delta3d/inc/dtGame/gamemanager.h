@@ -876,7 +876,7 @@ namespace dtGame
           * @param total The total value used to determine the percentage
           * @param partial The partial amount that we are using for the percentage
           */
-         float ComputeStatsPercent(const dtCore::Timer_t &total, const dtCore::Timer_t &partial) const;
+         float ComputeStatsPercent(const float total, const float partial) const;
 
          /**
           * Private helper method to send an environment changed message
