@@ -78,6 +78,7 @@ namespace dtUtil
       * Translates Euler angles Heading, pitch, and roll to an osg::Matrix
       * @param rotation: the matrix whose rotation will be filled
       * @param hpr: the current Heading, pitch, roll to translate to a matrix
+      *             (values are in degrees)
       */
       static void HprToMatrix( osg::Matrix& rotation, const osg::Vec3& hpr );
 

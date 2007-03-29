@@ -76,11 +76,19 @@ void Transform::Set( const osg::Matrix& mat )
     mScale.set( scale(0,0), scale(1,1), scale(2,2) );
 }
 
+/** 
+ * @param h : heading, in degrees
+ * @param p : pitch, in degrees
+ * @param r : roll, in degrees
+ */
 void Transform::SetRotation( float h, float p, float r )
 {
    SetRotation( osg::Vec3( h, p, r ) );
 }
 
+/** 
+ * @param hpr : corresponds to the heading, pitch, roll, in that order, in degrees
+ */
 void Transform::SetRotation( const osg::Vec3& hpr )
 {
    osg::Matrix rotation;
