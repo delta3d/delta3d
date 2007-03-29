@@ -10,8 +10,9 @@ mRenderer(NULL),
 mMixer(NULL)
 {
    assert(mCalModel != NULL);
+
    mRenderer = mCalModel->getRenderer();
-   mMixer = mCalModel->getMixer();
+   mMixer    = mCalModel->getMixer();
 
    if (model)
    {
@@ -38,10 +39,11 @@ Cal3DModelWrapper::~Cal3DModelWrapper()
 
 void Cal3DModelWrapper::SetCalModel( CalModel *model )
 {
-   mCalModel = model;
-   assert(mCalModel != NULL);
+   assert(model != NULL);
+
+   mCalModel = model;   
    mRenderer = mCalModel->getRenderer();
-   mMixer = mCalModel->getMixer();
+   mMixer    = mCalModel->getMixer();
 }
 
 /** 

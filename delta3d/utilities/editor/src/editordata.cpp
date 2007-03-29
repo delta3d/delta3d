@@ -187,5 +187,10 @@ namespace dtEditQt
    {
        osgLibraryPath = path;
    }
+   //////////////////////////////////////////////////////////////////////////////
+   void EditorData::setCurrentSkeletalModelResource(const dtDAL::ResourceDescriptor selectedResource)
+   {
+      skeletalModelResource = selectedResource;
+   }
 }
 

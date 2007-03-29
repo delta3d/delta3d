@@ -580,6 +580,10 @@ namespace dtEditQt
         {
             EditorData::GetInstance().setCurrentTerrainResource(dtDAL::ResourceDescriptor());
         }
+        else if(*resourceType == dtDAL::DataType::SKELETAL_MESH)
+        {
+           EditorData::GetInstance().setCurrentSkeletalModelResource(dtDAL::ResourceDescriptor());
+        }
     }
     ///////////////////////////////////////////////////////////////////////////////
     void ResourceAbstractBrowser::setEditorDataDescriptor(dtDAL::ResourceDescriptor &descriptor)
@@ -607,6 +611,10 @@ namespace dtEditQt
         else if(*resourceType == dtDAL::DataType::TERRAIN)
         {
             EditorData::GetInstance().setCurrentTerrainResource(descriptor);
+        }
+        else if(*resourceType == dtDAL::DataType::SKELETAL_MESH)
+        {
+           EditorData::GetInstance().setCurrentSkeletalModelResource(descriptor);
         }
     }
     ///////////////////////////////////////////////////////////////////////////////

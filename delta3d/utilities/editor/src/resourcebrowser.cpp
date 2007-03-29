@@ -26,6 +26,7 @@
 #include <dtEditQt/tabcontainer.h>
 #include <dtEditQt/tabwrapper.h>
 #include <dtEditQt/staticmeshbrowser.h>
+#include <dtEditQt/skeletalmeshbrowser.h>
 #include <dtEditQt/particlebrowser.h>
 #include <dtEditQt/texturebrowser.h>
 #include <dtEditQt/soundbrowser.h>
@@ -46,6 +47,7 @@ namespace dtEditQt
 
         // tabs
         tabMesh           = new TabWrapper();
+        tabSkeletal       = new TabWrapper();
         tabSound          = new TabWrapper();
         tabParticle       = new TabWrapper();
         tabTexture        = new TabWrapper();
@@ -54,6 +56,7 @@ namespace dtEditQt
 
         // widgets
         meshWidget        = new StaticMeshBrowser(dtDAL::DataType::STATIC_MESH);
+        skeletalWidget    = new SkeletalMeshBrowser(dtDAL::DataType::SKELETAL_MESH);
         soundWidget       = new SoundBrowser(dtDAL::DataType::SOUND);
         particleWidget    = new ParticleBrowser(dtDAL::DataType::PARTICLE_SYSTEM);
         textureWidget     = new TextureBrowser(dtDAL::DataType::TEXTURE);
@@ -74,6 +77,11 @@ namespace dtEditQt
         tabMesh->setName("Static Mesh");
         tabC->addTab(tabMesh);
         //tabC->addTab(tabMesh, UIResources::ICON_STATICMESH_TAB.c_str());
+
+        // Skeletal Mesh tab
+        tabSkeletal->setWidget(skeletalWidget);
+        tabSkeletal->setName("Skeletal Mesh");
+        tabC->addTab(tabSkeletal);
 
         // Sound tab
         tabSound->setWidget(soundWidget);

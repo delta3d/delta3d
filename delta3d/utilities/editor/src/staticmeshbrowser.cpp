@@ -448,22 +448,26 @@ namespace dtEditQt
          dtCore::RefPtr<dtCore::Object> obj = new dtCore::Object;
          osg::Node *node = obj->LoadFile(fileName);
          
-         dtCore::RefPtr<dtUtil::NodePrintOut> nodepo = new dtUtil::NodePrintOut;
-         std::string file;
-         nodepo->PrintOutNode(file, *node, false, false);
-         
-         text->addScrollBarWidget(new QScrollBar(this), Qt::AlignRight);
-         text->setText(tr(nodepo->GetFileOutput().c_str()));
+         // If the file was successfully loaded, continue
+         if (node)
+         {
+            dtCore::RefPtr<dtUtil::NodePrintOut> nodepo = new dtUtil::NodePrintOut;
+            std::string file;
+            nodepo->PrintOutNode(file, *node, false, false);
+            
+            text->addScrollBarWidget(new QScrollBar(this), Qt::AlignRight);
+            text->setText(tr(nodepo->GetFileOutput().c_str()));
 
-         obj = NULL;
-         nodepo = NULL;
+            obj = NULL;
+            nodepo = NULL;
 
-         vLayout->addWidget(text);
-         vLayout->addWidget(close);
+            vLayout->addWidget(text);
+            vLayout->addWidget(close);
 
-         connect(close, SIGNAL(clicked()), &dlg, SLOT(close()));
-         dlg.exec();
-         dtUtil::FileUtils::GetInstance().FileDelete(file);
+            connect(close, SIGNAL(clicked()), &dlg, SLOT(close()));
+            dlg.exec();
+            dtUtil::FileUtils::GetInstance().FileDelete(file);
+         }
 	   }
 	}
 
@@ -492,21 +496,25 @@ namespace dtEditQt
          dtCore::RefPtr<dtCore::Object> obj = new dtCore::Object;
          osg::Node *node = obj->LoadFile(fileName);
 
-         std::ostringstream oss;
-         dtCore::RefPtr<dtUtil::NodePrintOut> nodepo = new dtUtil::NodePrintOut;
-         nodepo->PrintNodeToOSGFile(*node, oss);
+         // If the file was successfully loaded, continue
+         if (node)
+         {
+            std::ostringstream oss;
+            dtCore::RefPtr<dtUtil::NodePrintOut> nodepo = new dtUtil::NodePrintOut;
+            nodepo->PrintNodeToOSGFile(*node, oss);
 
-         std::string osgOutput = oss.str();
-         text->setText(tr(oss.str().c_str()));
+            std::string osgOutput = oss.str();
+            text->setText(tr(oss.str().c_str()));
 
-         obj = NULL;
-         nodepo = NULL;
+            obj = NULL;
+            nodepo = NULL;
 
-         vLayout->addWidget(text);
-         vLayout->addWidget(close);
+            vLayout->addWidget(text);
+            vLayout->addWidget(close);
 
-         connect(close, SIGNAL(clicked()), &dlg, SLOT(close()));
-         dlg.exec();
+            connect(close, SIGNAL(clicked()), &dlg, SLOT(close()));
+            dlg.exec();
+         }
       }
    }
 }

@@ -151,6 +151,7 @@ namespace dtEditQt
         controlFactory->RegisterType<DynamicActorControl>(&(dtDAL::DataType::ACTOR));
         controlFactory->RegisterType<DynamicGameEventControl>(&(dtDAL::DataType::GAME_EVENT));
         controlFactory->RegisterType<DynamicGroupPropertyControl>(&(dtDAL::DataType::GROUP));
+        controlFactory->RegisterType<DynamicResourceControl>(&(dtDAL::DataType::SKELETAL_MESH));
     }
 
     /////////////////////////////////////////////////////////////////////////////////
