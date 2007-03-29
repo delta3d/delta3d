@@ -16,15 +16,21 @@
 * along with this library; if not, write to the Free Software Foundation, Inc.,
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
-* Curtiss Murphy
+* Michael Guerrero
 */
 #include <dtActors/animationgameactor.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/actorupdatemessage.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/actorproxyicon.h>
+#include <dtAnim/submesh.h>
+#include <dtAnim/cal3dloader.h>
+#include <dtAnim/cal3dmodelwrapper.h>
+#include <dtAnim/cal3danimator.h>
 
-#include <osg/MatrixTransform>
+//#include <osg/MatrixTransform>
+#include <osg/Geode>
+
 
 namespace dtActors
 {
@@ -34,8 +40,11 @@ namespace dtActors
 
    //////////////////////////////////////////////////////////////////////////////
    AnimationGameActor::AnimationGameActor(dtGame::GameActorProxy &proxy)
-      :dtGame::GameActor(proxy)
+      : dtGame::GameActor(proxy)
+      , mModelGeode(new osg::Geode)
+      , mModelLoader(new dtAnim::Cal3DLoader)
    {
+      
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -43,6 +52,38 @@ namespace dtActors
    {
    }
     
+   void AnimationGameActor::SetModel(const std::string &modelFile)
+   {
+      dtAnim::Cal3DModelWrapper *newModel = mModelLoader->Load(modelFile).get();
+
+      // If we successfully loaded the model, give it to the animator
+      if (newModel)
+      {
+         mAnimator = new dtAnim::Cal3DAnimator(newModel);         
+
+         //if(newModel->BeginRenderingQuery()) 
+         //{
+         //   int meshCount = newModel->GetMeshCount();
+
+         //   for(int meshId = 0; meshId < meshCount; meshId++) 
+         //   {
+         //      int submeshCount = newModel->GetSubmeshCount(meshId);
+
+         //      for(int submeshId = 0; submeshId < submeshCount; submeshId++) 
+         //      {
+         //         dtAnim::SubMeshDrawable *submesh = new dtAnim::SubMeshDrawable(newModel, meshId, submeshId);
+         //         mModelGeode->addDrawable(submesh);
+         //      }
+         //   }
+         //   newModel->EndRenderingQuery();
+         //}
+
+         ///// Force generation of first mesh
+         //newModel->Update(0);
+
+         //GetMatrixNode()->addChild(mGeode.get()); 
+      }
+   }
 
    //////////////////////////////////////////////////////////////////////////////
    void AnimationGameActor::AddedToScene(dtCore::Scene* scene)
@@ -62,7 +103,7 @@ namespace dtActors
    //////////////////////////////////////////////////////////////////////////////
    AnimationGameActorProxy::AnimationGameActorProxy()
    {
-      SetClassName("dtActors::GameMeshActor");
+      SetClassName("dtActors::AnimationGameActor");
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -73,20 +114,15 @@ namespace dtActors
    //////////////////////////////////////////////////////////////////////////////
    void AnimationGameActorProxy::BuildPropertyMap()
    {
-      const std::string GROUPNAME = "GameMesh";
+      const std::string GROUPNAME = "AnimationModel";
 
       dtGame::GameActorProxy::BuildPropertyMap();
 
-      //GameMeshActor &myActor = static_cast<GameMeshActor &>(GetGameActor());
+      AnimationGameActor &myActor = static_cast<AnimationGameActor&>(GetGameActor());
 
-      //AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::STATIC_MESH,
-      //   "static mesh", "Static Mesh", dtDAL::MakeFunctor(myActor, &GameMeshActor::SetMesh),
-      //   "The static mesh resource that defines the geometry", GROUPNAME));
-
-      //AddProperty(new dtDAL::BooleanActorProperty("use cache object", "Use Model Cache", 
-      //   dtDAL::MakeFunctor(myActor, &GameMeshActor::SetUseCache),
-      //   dtDAL::MakeFunctorRet(myActor, &GameMeshActor::GetUseCache),
-      //   "Indicates whether we will try to use the cache when we load our model.", GROUPNAME));
+      AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::SKELETAL_MESH,
+         "Skeletal Mesh", "Skeletal Mesh", dtDAL::MakeFunctor(myActor, &AnimationGameActor::SetModel),
+         "The model resource that defines the skeletal mesh", GROUPNAME));     
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -95,10 +131,39 @@ namespace dtActors
       dtGame::GameActorProxy::BuildInvokables();
    }
 
+   const dtDAL::ActorProxy::RenderMode& AnimationGameActorProxy::GetRenderMode()
+   {
+      dtDAL::ResourceDescriptor *resource = GetResource("skeletal mesh");
+      if (resource != NULL)
+      {
+         if (resource->GetResourceIdentifier().empty() || GetActor()->GetOSGNode() == NULL)
+         {
+            return dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON;
+         }
+         else
+         {
+            return dtDAL::ActorProxy::RenderMode::DRAW_ACTOR;
+         }
+      }
+      else
+      {
+         return dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON;
+      }
+   }
+
+   dtDAL::ActorProxyIcon* AnimationGameActorProxy::GetBillBoardIcon()
+   {
+      if(!mBillBoardIcon.valid())
+      {
+         mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IconType::STATICMESH);   
+      }
+
+      return mBillBoardIcon.get();
+   }
+
    //////////////////////////////////////////////////////////////////////////////
    void AnimationGameActorProxy::CreateActor()
    {
       SetActor(*new AnimationGameActor(*this));   
    }
-
 }

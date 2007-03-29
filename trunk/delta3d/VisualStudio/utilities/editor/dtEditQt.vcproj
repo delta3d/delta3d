@@ -325,6 +325,9 @@
 				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\resourcetreewidget.h">
 			</File>
 			<File
+				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\skeletalmeshbrowser.h">
+			</File>
+			<File
 				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\soundbrowser.h">
 			</File>
 			<File
@@ -1177,6 +1180,15 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\..\utilities\editor\src\moc\moc_skeletalmeshbrowser.cpp">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath="..\..\..\utilities\editor\src\moc\moc_soundbrowser.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -1545,6 +1557,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\utilities\editor\src\resourcetreewidget.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\utilities\editor\src\skeletalmeshbrowser.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\utilities\editor\src\soundbrowser.cpp">

@@ -94,7 +94,7 @@ namespace dtAnim
     void StopAction(unsigned id);
 
     dtAnim::Cal3DModelWrapper* GetCal3DWrapper() {return mCal3DWrapper.get(); }
-
+    
     osg::ref_ptr<osg::Geode>    mGeode; 
    private:
       

@@ -119,6 +119,10 @@ namespace dtEditQt
             {
                 type = dtDAL::DataType::STATIC_MESH.GetDisplayName().c_str();
             } 
+            else if (myProperty->GetPropertyType() == dtDAL::DataType::SKELETAL_MESH) 
+            {
+               type = dtDAL::DataType::SKELETAL_MESH.GetDisplayName().c_str();
+            } 
             else if (myProperty->GetPropertyType() == dtDAL::DataType::TEXTURE) 
             {
                 type = dtDAL::DataType::TEXTURE.GetDisplayName().c_str();
@@ -134,7 +138,7 @@ namespace dtEditQt
             else if (myProperty->GetPropertyType() == dtDAL::DataType::CHARACTER) 
             {
                 type = dtDAL::DataType::CHARACTER.GetDisplayName().c_str();
-            } 
+            }             
             else 
             {
                 type = "Unknown Type";
@@ -250,6 +254,10 @@ namespace dtEditQt
         else if (myProperty->GetPropertyType() == dtDAL::DataType::CHARACTER) 
         {
             return EditorData::GetInstance().getCurrentCharacterResource();
+        } 
+        else if (myProperty->GetPropertyType() == dtDAL::DataType::SKELETAL_MESH) 
+        {
+           return EditorData::GetInstance().getCurrentCharacterResource();
         } 
         else 
         {

@@ -24,10 +24,12 @@
 #include <dtGame/gameactor.h>
 #include <dtDAL/plugin_export.h>
 
-namespace dtCore
-{
-   class Scene;
-}
+// namespace specific forward declarations
+namespace dtCore{ class Scene;         }
+namespace dtAnim{ class Cal3DLoader;   }
+namespace dtAnim{ class Cal3DAnimator; }
+namespace osg   { class Geode;         }
+
 
 namespace dtActors
 {
@@ -44,22 +46,27 @@ namespace dtActors
       * Constructs a AnimationGameActor actor.
       * @param proxy The actor proxy owning this task actor.     
       */
-      AnimationGameActor(dtGame::GameActorProxy &proxy);     
+      AnimationGameActor(dtGame::GameActorProxy &proxy);   
+
+      /**
+      * Loads a model file.
+      * @param modelFile The filename of the model to load.
+      */
+      virtual void SetModel(const std::string &modelFile);
 
       /**
       * Called when the actor has been added to the game manager.
       */
-      virtual void AddedToScene(dtCore::Scene* scene);
+      virtual void AddedToScene(dtCore::Scene* scene);     
 
-    
+   protected:      
 
-   protected:
+      dtCore::RefPtr<osg::Geode>            mModelGeode;
+      dtAnim::Cal3DLoader                  *mModelLoader;
+      dtCore::RefPtr<dtAnim::Cal3DAnimator> mAnimator;     
 
-      /**
-      * Destroys this actor.
-      */
-      virtual ~AnimationGameActor();
-    
+      /// Destroys this actor.     
+      virtual ~AnimationGameActor();    
 
    private:
      
@@ -91,11 +98,25 @@ namespace dtActors
       */
       virtual void BuildInvokables();
 
-   protected:
+      /**
+      * Gets the method by which this static mesh is rendered. This is used by STAGE.
+      * @return If there is no geometry currently assigned, this
+      *  method will return RenderMode::DRAW_BILLBOARD_ICON.  If
+      *  there is geometry assigned to this static mesh, RenderMode::DRAW_ACTOR
+      *  is returned.
+      */
+      virtual const dtDAL::ActorProxy::RenderMode& GetRenderMode();
 
       /**
-      * Destroys the proxy.
+      * Gets the billboard used to represent static mesh if this proxy's
+      * render mode is RenderMode::DRAW_BILLBOARD_ICON. Used by STAGE.
+      * @return
       */
+      virtual dtDAL::ActorProxyIcon* GetBillBoardIcon();
+
+   protected:
+
+      /// Destroys the proxy.
       virtual ~AnimationGameActorProxy();
 
       /**
