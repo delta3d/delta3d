@@ -4,9 +4,9 @@
 #include <QMainWindow>
 
 class QAction;
-class QTableWidget;
 class QTableWidgetItem;
 class QToolBar;
+class AnimationTableWidget;
 
 class MainWindow : public QMainWindow
 {
@@ -24,7 +24,9 @@ signals:
    void LOD_Changed(float zeroToOneValue);  
 
 public slots:
-   void OnNewAnimation(unsigned int id, const QString &filename);
+   void OnNewAnimation(unsigned int id, const QString &filename, unsigned int trackCount,
+                       unsigned int keyframes, float duration);
+
    void OnAnimationClicked( QTableWidgetItem *item);
    void OnLOD_Changed(double newValue);
    void OnToggleShadingToolbar();
@@ -56,7 +58,7 @@ private:
    QToolBar *mLightingToolbar;
    QToolBar *mTempToolbar;
 
-   QTableWidget *mAnimListWidget;
+   AnimationTableWidget *mAnimListWidget;
 
 private slots:
    void OnOpenCharFile();

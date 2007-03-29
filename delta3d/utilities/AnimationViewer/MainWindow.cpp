@@ -1,4 +1,5 @@
 #include "MainWindow.h"
+#include "AnimationTableWidget.h"
 #include <dtUtil/fileutils.h>
 #include <QMenuBar>
 #include <QAction>
@@ -149,7 +150,7 @@ void MainWindow::LoadCharFile( const QString &filename )
    {
       delete mAnimListWidget;  
 
-      mAnimListWidget = new QTableWidget();
+      mAnimListWidget = new AnimationTableWidget(this);
       mAnimListWidget->setColumnCount(5);
       mAnimListWidget->setSelectionBehavior(QAbstractItemView::SelectRows);   
 
@@ -177,7 +178,9 @@ void MainWindow::LoadCharFile( const QString &filename )
 }
 
 
-void MainWindow::OnNewAnimation(unsigned int id, const QString &filename )
+void MainWindow::OnNewAnimation(unsigned int id, const QString &filename, 
+                                unsigned int trackCount, unsigned int keyframes,
+                                float duration)
 {
    mAnimListWidget->insertRow( mAnimListWidget->rowCount() );
 
@@ -185,6 +188,9 @@ void MainWindow::OnNewAnimation(unsigned int id, const QString &filename )
       QTableWidgetItem *item = new QTableWidgetItem( filename );
       item->setCheckState(Qt::Unchecked);
       item->setData(Qt::UserRole, id);
+      item->setData(Qt::UserRole+1, trackCount);
+      item->setData(Qt::UserRole+2, keyframes);
+      item->setData(Qt::UserRole+3, duration);
       item->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsSelectable | Qt::ItemIsEnabled);
       mAnimListWidget->setItem( id, 0, item );
    } 

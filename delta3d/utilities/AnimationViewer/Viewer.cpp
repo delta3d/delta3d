@@ -32,6 +32,7 @@
 
 using namespace dtUtil;
 using namespace dtCore;
+using namespace dtAnim;
 
 Viewer::Viewer():
 mMotion(NULL),
@@ -134,12 +135,15 @@ void Viewer::OnLoadCharFile( const QString &filename )
       return;
    }
 
-   for (int animID=0; animID<mCharacter->GetCal3DWrapper()->GetCoreAnimationCount(); animID++)
+   RefPtr<Cal3DModelWrapper> wrapper = mCharacter->GetCal3DWrapper();
+   for (int animID=0; animID<wrapper->GetCoreAnimationCount(); animID++)
    {
-      QString nameToSend;
-      std::string name = mCharacter->GetCal3DWrapper()->GetCoreAnimationName(animID);
-      nameToSend = QString::fromStdString(name);
-      emit OnAnimationLoaded(animID, nameToSend );
+      std::string name = wrapper->GetCoreAnimationName(animID);
+      QString nameToSend = QString::fromStdString(name);
+      unsigned int trackCount = wrapper->GetCoreAnimationTrackCount(animID);
+      unsigned int keyframes = wrapper->GetCoreAnimationKeyframeCount(animID);
+      float dur = wrapper->GetCoreAnimationDuration(animID);
+      emit OnAnimationLoaded(animID, nameToSend, trackCount, keyframes, dur );
    }        
 }
 

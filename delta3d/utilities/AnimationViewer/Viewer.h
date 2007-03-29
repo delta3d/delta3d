@@ -44,7 +44,9 @@ public slots:
    void OnSetShadedWireframe();
 
 signals:
-   void OnAnimationLoaded( unsigned int, const QString & );
+   void OnAnimationLoaded( unsigned int, const QString &, unsigned int trackCount,
+                           unsigned int keyframes, float duration);
+
    void ErrorOccured( const QString &msg );
 
 protected:
