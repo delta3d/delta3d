@@ -87,6 +87,16 @@ namespace dtAnim
 
          ///Get the name that equates to the supplied animation ID
          const std::string& GetCoreAnimationName(int animID);
+
+         ///Get the number of tracks this animation uses
+         unsigned int GetCoreAnimationTrackCount(int animID);
+
+         ///Get the total number of keyframes in this animation
+         unsigned int GetCoreAnimationKeyframeCount(int animID);
+
+         ///Get the duration of this animation (seconds?)
+         float GetCoreAnimationDuration(int animID);
+
          int GetCoreMaterialCount() {return mCalModel->getCoreModel()->getCoreMaterialCount();}
          CalCoreMaterial* GetCoreMaterial(int matID) {return mCalModel->getCoreModel()->getCoreMaterial(matID); }
 

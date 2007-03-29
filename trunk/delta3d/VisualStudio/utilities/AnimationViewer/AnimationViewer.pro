@@ -20,12 +20,14 @@ LIBS += -L"$$(DELTA_LIB)"
 SOURCES = Delta3DThread.cpp \
 	    main.cpp \
 	    MainWindow.cpp \
-	    Viewer.cpp
+	    Viewer.cpp \
+	    AnimationTableWidget.cpp
 	    
 	    
 HEADERS = Delta3DThread.h \
-	    MainWindow.h \
-                    Viewer.h
+	       MainWindow.h \
+          Viewer.h \
+          AnimationTableWidget.h
 
 INCLUDEPATH +=  "$$(DELTA_INC)"
 
