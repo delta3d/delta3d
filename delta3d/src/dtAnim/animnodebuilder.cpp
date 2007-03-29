@@ -20,18 +20,30 @@
  */
 
 #include <dtAnim/animnodebuilder.h>
-
+#include <osg/Geode>
 
 namespace dtAnim
 {
 
-AnimNodeBuilder::AnimNodeBuilder()
+AnimNodeBuilder::AnimNodeBuilder(const CreateFunc& pCreate)
+: mCreateFunc(pCreate)
 {
 }
 
 
 AnimNodeBuilder::~AnimNodeBuilder()
 {
+}
+
+void AnimNodeBuilder::SetCreate(const CreateFunc& pCreate)
+{
+   mCreateFunc = pCreate;
+}
+
+
+dtCore::RefPtr<osg::Geode> AnimNodeBuilder::CreateGeode(Cal3DModelWrapper* pWrapper)
+{
+   return mCreateFunc(pWrapper);
 }
 
 
