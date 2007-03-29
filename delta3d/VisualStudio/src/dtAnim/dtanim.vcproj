@@ -123,6 +123,15 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
+				RelativePath="..\..\..\src\dtAnim\animdriver.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtAnim\animnodebuilder.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtAnim\cal3danimator.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtAnim\cal3dloader.cpp">
 			</File>
 			<File
@@ -138,6 +147,18 @@
 				RelativePath="..\..\..\src\dtAnim\coremodel.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtAnim\morphdriver.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtAnim\physiquedriver.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtAnim\skeletondriver.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtAnim\springdriver.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtAnim\submesh.cpp">
 			</File>
 		</Filter>
@@ -145,6 +166,15 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
+			<File
+				RelativePath="..\..\..\inc\dtAnim\animdriver.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtAnim\animnodebuilder.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtAnim\cal3danimator.h">
+			</File>
 			<File
 				RelativePath="..\..\..\inc\dtAnim\cal3dloader.h">
 			</File>
@@ -162,6 +192,21 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtAnim\export.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtAnim\ical3ddriver.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtAnim\morphdriver.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtAnim\physiquedriver.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtAnim\skeletondriver.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtAnim\springdriver.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtAnim\submesh.h">
