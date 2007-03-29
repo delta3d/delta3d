@@ -41,7 +41,7 @@ AnimDriver::~AnimDriver()
 
 void AnimDriver::Update(double dt)
 {
-   mWrapper->GetCalModel()->getMixer()->updateAnimation(float(dt));
+   mWrapper->UpdateAnimation(float(dt));
 }
 
 void AnimDriver::SetWrapper(Cal3DModelWrapper* pWrapper)

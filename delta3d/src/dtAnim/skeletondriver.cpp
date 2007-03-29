@@ -41,7 +41,7 @@ SkeletonDriver::~SkeletonDriver()
 
 void SkeletonDriver::Update(double dt)
 {
-   mWrapper->GetCalModel()->getMixer()->updateSkeleton();
+   mWrapper->UpdateSkeleton();
 }
 
 void SkeletonDriver::SetWrapper(Cal3DModelWrapper* pWrapper)

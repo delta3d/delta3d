@@ -42,7 +42,7 @@ SpringDriver::~SpringDriver()
 
 void SpringDriver::Update(double dt)
 {
-   mWrapper->GetCalModel()->getSpringSystem()->update(float(dt));
+   mWrapper->UpdateSpringSystem(float(dt));
 }
 
 void SpringDriver::SetWrapper(Cal3DModelWrapper* pWrapper)

@@ -27,6 +27,10 @@
 #include <cal3d/coremodel.h>
 #include <cal3d/renderer.h>
 #include <cal3d/mixer.h>
+#include <cal3d/morphtargetmixer.h>
+#include <cal3d/physique.h>
+#include <cal3d/springsystem.h>
+
 #include <osg/Referenced>
 
 namespace dtAnim
@@ -66,8 +70,17 @@ namespace dtAnim
          /// Update just the Cal3D's animation using the mixer
          void UpdateAnimation(float deltaTime) {mCalModel->getMixer()->updateAnimation(deltaTime);}
 
-         /// Update just Cal3D's skeleton using ther mixer
+         /// Update just Cal3D's skeleton using the mixer
          void UpdateSkeleton()                 {mCalModel->getMixer()->updateSkeleton();}
+
+         /// Update the CalModel's morph target mixer
+         void UpdateMorphTargetMixer(float deltaTime)  {mCalModel->getMorphTargetMixer()->update(deltaTime);}
+
+         /// Update the CalModel's physique
+         void UpdatePhysique()                 {mCalModel->getPhysique()->update();}
+
+         /// Update the CalModel's spring system
+         void UpdateSpringSystem(float deltaTime)      {mCalModel->getSpringSystem()->update(deltaTime);}
 
          /************************************************************************/
          bool BeginRenderingQuery() { return mRenderer->beginRendering(); } 

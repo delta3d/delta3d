@@ -40,7 +40,7 @@ MorphDriver::~MorphDriver()
 
 void MorphDriver::Update(double dt)
 {
-   mWrapper->GetCalModel()->getMorphTargetMixer()->update(float(dt));
+   mWrapper->UpdateMorphTargetMixer(float(dt));
 }
 
 void MorphDriver::SetWrapper(Cal3DModelWrapper* pWrapper)
