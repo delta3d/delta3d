@@ -55,11 +55,13 @@ namespace dtCore
       ///Set only translation methods
       virtual void SetTranslation( const osg::Vec3& xyz ) { mTranslation.set( xyz ); }
       
-      //Set only rotation methods
+      ///Set the rotation using heading, pitch, roll (in degrees)
       virtual void SetRotation( float h, float p, float r );
-      //Set only rotation methods
+
+      ///Set the rotation using a osg::Vec3 as HPR (in degrees)
       virtual void SetRotation( const osg::Vec3& hpr );
-      //Set only rotation methods
+
+      ///Set the rotation using a rotation matrix
       virtual void SetRotation( const osg::Matrix& rotation ) { mRotation.set( rotation ); }
       
       ///Set the uniform scale factor
