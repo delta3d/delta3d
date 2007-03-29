@@ -4,12 +4,12 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
 	<xs:element name="character">
 		<xs:complexType>
-			<xs:sequence>
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
 				<xs:element ref="skeleton"/>
 				<xs:element ref="animation" maxOccurs="unbounded"/>
 				<xs:element ref="mesh" maxOccurs="unbounded"/>
 				<xs:element ref="material" maxOccurs="unbounded"/>
-			</xs:sequence>
+			</xs:choice>
 			<xs:attribute name="name" use="optional">
 				<xs:simpleType>
 					<xs:restriction base="xs:string"/>
