@@ -23,22 +23,39 @@
 #define __DELTA_ANIMNODEBUILDER_H__
 
 #include <dtAnim/export.h>
+#include <dtCore/refptr.h>
+#include <dtUtil/functor.h>
+
+#include <osg/Referenced>
+
+namespace osg
+{
+   class Geode;
+}
 
 namespace dtAnim
 {
    class Cal3DModelWrapper;
 
-class	DT_ANIM_EXPORT AnimNodeBuilder
+class	DT_ANIM_EXPORT AnimNodeBuilder: public osg::Referenced
 {
+public:
+   typedef dtUtil::Functor<osg::Geode*, TYPELIST_1(Cal3DModelWrapper*)> CreateFunc;
 
 public:
 
-   AnimNodeBuilder();
-   virtual ~AnimNodeBuilder();
+   AnimNodeBuilder(const CreateFunc& pCreate);
 
+   void SetCreate(const CreateFunc& pCreate);
+
+   dtCore::RefPtr<osg::Geode> CreateGeode(Cal3DModelWrapper* pWrapper);
+
+protected:
+   virtual ~AnimNodeBuilder();
 
 private:
 
+   CreateFunc mCreateFunc;
 
 };
 
