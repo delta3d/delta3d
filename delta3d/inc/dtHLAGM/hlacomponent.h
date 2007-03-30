@@ -106,6 +106,9 @@ namespace dtHLAGM
          void LeaveFederationExecution();
 
 
+         /// @return true if the HLA component has joined the federation
+         bool IsConnectedToFederation() const { return mRTIAmbassador != NULL; }
+
          /**
           * Sets the DIS/RPR-FOM site identifier.
           *
