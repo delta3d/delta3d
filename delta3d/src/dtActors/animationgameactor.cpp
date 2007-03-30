@@ -55,13 +55,13 @@ namespace dtActors
     
    void AnimationGameActor::SetModel(const std::string &modelFile)
    {
-      dtAnim::Cal3DModelWrapper *newModel = mModelLoader->Load(modelFile).get();
+      dtCore::RefPtr<dtAnim::Cal3DModelWrapper> newModel = mModelLoader->Load(modelFile);
 
       // If we successfully loaded the model, give it to the animator
-      if (newModel)
+      if (newModel.valid())
       {
          // Why does this crash??? threading issue???
-         mAnimator = new dtAnim::Cal3DAnimator(newModel);   
+         mAnimator = new dtAnim::Cal3DAnimator(newModel.get());   
 
          if(newModel->BeginRenderingQuery()) 
          {
@@ -73,7 +73,7 @@ namespace dtActors
 
                for(int submeshId = 0; submeshId < submeshCount; submeshId++) 
                {
-                  dtAnim::SubMeshDrawable *submesh = new dtAnim::SubMeshDrawable(newModel, meshId, submeshId);
+                  dtAnim::SubMeshDrawable *submesh = new dtAnim::SubMeshDrawable(newModel.get(), meshId, submeshId);
                   mModelGeode->addDrawable(submesh);
                }
             }
