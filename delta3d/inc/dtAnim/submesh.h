@@ -41,6 +41,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <osg/Geometry>
 #include <cal3d/cal3d.h>
+#include "dtAnim/export.h"
 
 namespace dtAnim {
 
@@ -58,11 +59,9 @@ namespace dtAnim {
  * Users of the osgCal library doesn't need to know about this class, it is
  * internal.
  */
-class SubMeshDrawable: public osg::Drawable {
+class DT_ANIM_EXPORT SubMeshDrawable: public osg::Drawable {
 public:
-    SubMeshDrawable();
-
-    ~SubMeshDrawable();
+    SubMeshDrawable();   
 
     /**
      * Creates a submesh for one model given the mesh and submesh of this mesh
@@ -89,6 +88,9 @@ public:
     virtual osg::Object* cloneType() const { return new SubMeshDrawable(); }
     virtual osg::Object* clone(const osg::CopyOp&) const;
 	osg::BoundingBox computeBound() const;
+
+protected:
+    ~SubMeshDrawable();
 
 private:
     
