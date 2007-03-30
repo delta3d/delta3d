@@ -48,18 +48,31 @@ CalCoreModel* Cal3DLoader::GetCoreModel( const std::string &filename )
 
       coreModel = new CalCoreModel(handler.mName);
 
+      std::string pathPrefix;
+      std::string::size_type stringIndex = filename.find_last_of("\\");
+
+      if (stringIndex != std::string::npos)
+      {
+         // The index is the position of the first backslash, so add 1
+         pathPrefix = filename.substr(0, stringIndex + 1);
+      }
+
       //load skeleton
-      coreModel->loadCoreSkeleton(FindFileInPathList(handler.mSkeletonFilename));
+      coreModel->loadCoreSkeleton(FindFileInPathList(pathPrefix + handler.mSkeletonFilename));
 
       //load animations
       std::vector<CharacterFileHandler::AnimationStruct>::iterator animItr = handler.mAnimations.begin();
       while (animItr != handler.mAnimations.end())
       {
-         std::string filename = FindFileInPathList((*animItr).filename);
-         if (!filename.empty()) coreModel->loadCoreAnimation( filename, (*animItr).name );
+         std::string filename = FindFileInPathList(pathPrefix + (*animItr).filename);
+
+         if (!filename.empty()) 
+         {
+            coreModel->loadCoreAnimation( filename, (*animItr).name );
+         }
          else
          {
-            LOG_ERROR("Can't find animation file named:'" + (*animItr).filename + "'.");
+            LOG_ERROR("Can't find animation file named:'" + pathPrefix + (*animItr).filename + "'.");
          }
          ++animItr;
       }
@@ -68,11 +81,14 @@ CalCoreModel* Cal3DLoader::GetCoreModel( const std::string &filename )
       std::vector<std::string>::iterator meshItr = handler.mMeshFilenames.begin();
       while (meshItr != handler.mMeshFilenames.end())
       {
-         std::string name = FindFileInPathList(*meshItr);
-         if (!name.empty())   coreModel->loadCoreMesh( name );
+         std::string name = FindFileInPathList(pathPrefix + (*meshItr));
+         if (!name.empty())
+         {
+            coreModel->loadCoreMesh( name );
+         }
          else
          {
-            LOG_ERROR("Can't find mesh file named:'" + *meshItr + "'.");
+            LOG_ERROR("Can't find mesh file named:'" + pathPrefix + (*meshItr) + "'.");
          }
          ++meshItr;
       }
@@ -81,12 +97,15 @@ CalCoreModel* Cal3DLoader::GetCoreModel( const std::string &filename )
       std::vector<std::string>::iterator matItr = handler.mMaterialFilenames.begin();
       while (matItr != handler.mMaterialFilenames.end())
       {
-         std::string name = FindFileInPathList(*matItr);
+         std::string name = FindFileInPathList(pathPrefix + (*matItr));
 
-         if (!name.empty())  coreModel->loadCoreMaterial( name );
+         if (!name.empty())  
+         {
+            coreModel->loadCoreMaterial( name );
+         }
          else
          {
-            LOG_ERROR("Can't find material file named:'" + *matItr + "'.");
+            LOG_ERROR("Can't find material file named:'" + pathPrefix + (*matItr) + "'.");
          }
          ++matItr;
       }
