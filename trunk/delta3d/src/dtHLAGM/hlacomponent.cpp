@@ -521,8 +521,7 @@ namespace dtHLAGM
          mExecutionName.clear();
       }
       
-      if (mRTIAmbassador != NULL)
-         delete mRTIAmbassador;
+      delete mRTIAmbassador;
 
       mRTIAmbassador = NULL;
    }
@@ -1637,7 +1636,7 @@ namespace dtHLAGM
       }
       catch (const RTI::Exception&)
       {
-         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "RTI Error receiving interation");
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "RTI Error receiving interaction");
       }
       catch (const dtUtil::Exception& ex)
       {
@@ -1780,14 +1779,24 @@ namespace dtHLAGM
             mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
          }
 
-         mRTIAmbassador->updateAttributeValues(objectHandle,
-                                               *theAttributes,
-                                               "");
+         try
+         {
+            mRTIAmbassador->updateAttributeValues(objectHandle,
+               *theAttributes,
+               "");
+         }
+         catch (const RTI::Exception& ex)
+         {
+            std::ostringstream ss;
+         	::operator<<(ss, ex);
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, ss.str().c_str());
+
+         }
       }
 
       delete theAttributes;
+      theAttributes = NULL;
 
-      mRTIAmbassador->tick();
    }
 
 
@@ -2259,6 +2268,7 @@ namespace dtHLAGM
       }
 
       delete interactionParams;
+      interactionParams = NULL;
 
    }
 
