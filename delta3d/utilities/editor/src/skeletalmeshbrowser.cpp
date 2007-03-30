@@ -361,7 +361,6 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void SkeletalMeshBrowser::createActor()
    {
-
       EditorData::GetInstance().getMainWindow()->startWaitCursor();
 
       if(selection->isResource())

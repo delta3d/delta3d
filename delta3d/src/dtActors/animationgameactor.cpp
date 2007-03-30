@@ -27,8 +27,9 @@
 #include <dtAnim/cal3dloader.h>
 #include <dtAnim/cal3dmodelwrapper.h>
 #include <dtAnim/cal3danimator.h>
+#include <dtCore/scene.h>
 
-//#include <osg/MatrixTransform>
+#include <osg/MatrixTransform>
 #include <osg/Geode>
 
 
@@ -59,27 +60,28 @@ namespace dtActors
       // If we successfully loaded the model, give it to the animator
       if (newModel)
       {
-         mAnimator = new dtAnim::Cal3DAnimator(newModel);         
+         // Why does this crash??? threading issue???
+         mAnimator = new dtAnim::Cal3DAnimator(newModel);   
 
-         //if(newModel->BeginRenderingQuery()) 
-         //{
-         //   int meshCount = newModel->GetMeshCount();
+         if(newModel->BeginRenderingQuery()) 
+         {
+            int meshCount = newModel->GetMeshCount();
 
-         //   for(int meshId = 0; meshId < meshCount; meshId++) 
-         //   {
-         //      int submeshCount = newModel->GetSubmeshCount(meshId);
+            for(int meshId = 0; meshId < meshCount; meshId++) 
+            {
+               int submeshCount = newModel->GetSubmeshCount(meshId);
 
-         //      for(int submeshId = 0; submeshId < submeshCount; submeshId++) 
-         //      {
-         //         dtAnim::SubMeshDrawable *submesh = new dtAnim::SubMeshDrawable(newModel, meshId, submeshId);
-         //         mModelGeode->addDrawable(submesh);
-         //      }
-         //   }
-         //   newModel->EndRenderingQuery();
-         //}
+               for(int submeshId = 0; submeshId < submeshCount; submeshId++) 
+               {
+                  dtAnim::SubMeshDrawable *submesh = new dtAnim::SubMeshDrawable(newModel, meshId, submeshId);
+                  mModelGeode->addDrawable(submesh);
+               }
+            }
+            newModel->EndRenderingQuery();
+         }
 
-         ///// Force generation of first mesh
-         //newModel->Update(0);
+         /// Force generation of first mesh
+         newModel->Update(0);
 
          //GetMatrixNode()->addChild(mGeode.get()); 
       }
@@ -89,6 +91,7 @@ namespace dtActors
    void AnimationGameActor::AddedToScene(dtCore::Scene* scene)
    {
       dtGame::GameActor::AddedToScene(scene);
+      GetMatrixNode()->addChild(mModelGeode.get());
    }
 
    //////////////////////////////////////////////////////////////////////////////
