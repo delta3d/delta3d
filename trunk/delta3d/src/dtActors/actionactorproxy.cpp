@@ -3,13 +3,8 @@
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/functor.h>
 
-
-using namespace dtABC;
-using namespace dtDAL;
-
 namespace dtActors
 {
-
    void ActionActorProxy::BuildPropertyMap()
    {
       const std::string GROUPNAME = "Action";
@@ -20,7 +15,5 @@ namespace dtActors
          dtDAL::MakeFunctor(*a,&dtABC::Action::SetTimeStep),
          dtDAL::MakeFunctorRet(*a,&dtABC::Action::GetTimeStep),
          "Sets the time step which will be the increment in seconds to update this Action by.", GROUPNAME));
-
    } 
-
 }
