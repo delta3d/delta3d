@@ -1,10 +1,10 @@
 #include <osg/MatrixTransform>
 #include <osg/Geode>
 #include <osg/Timer>
+#include <osg/Texture2D> //Cal3DLoader needs this
 
 #include <dtAnim/submesh.h>
 #include <dtAnim/chardrawable.h>
-#include <dtAnim/coremodel.h>
 #include <dtAnim/cal3dmodelwrapper.h>
 #include <dtAnim/cal3dloader.h>
 #include <dtCore/system.h>
