@@ -167,7 +167,7 @@ namespace dtEditQt
         void deleteSelected();
         void createCategory();
         void refreshSelected();
-        void importSelected();
+        void importSelected();       
 
     public slots:
         /**
@@ -255,7 +255,7 @@ namespace dtEditQt
         QPushButton *categoryBtn;
         QPushButton *importBtn;
         QPushButton *deleteBtn;
-        QPushButton *refreshBtn;
+        QPushButton *refreshBtn;       
 
         // Context Menu Objects
         QMenu *contextMenu;

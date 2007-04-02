@@ -58,10 +58,12 @@ namespace dtEditQt
         LARGE_ICON_EDIT_GOTO = dtCore::FindFileInPathList("icons/goto_large.png");
         LARGE_ICON_EDIT_IMPORT = dtCore::FindFileInPathList("icons/import_large.png");
         LARGE_ICON_EDIT_REFRESH = dtCore::FindFileInPathList("icons/refresh_large.png");
-        LARGE_ICON_EDIT_CATEGORY = dtCore::FindFileInPathList("icons/category_large.png");
+        LARGE_ICON_EDIT_CATEGORY = dtCore::FindFileInPathList("icons/category_large.png");       
 
         ICON_SOUND_STOP = dtCore::FindFileInPathList("icons/stop_sound.png");
         ICON_SOUND_PLAY = dtCore::FindFileInPathList("icons/play_sound.png");
+
+        ICON_EDITOR_SKELETAL_MESH = dtCore::FindFileInPathList("icons/subeditor_skeletal.png");
 
         ICON_SOUND_RESOURCE = dtCore::FindFileInPathList("icons/sound_resource.png");
         ICON_STATICMESH_RESOURCE = dtCore::FindFileInPathList("icons/staticmesh_resource.png");
@@ -113,10 +115,12 @@ namespace dtEditQt
     std::string UIResources::LARGE_ICON_EDIT_GOTO("");
     std::string UIResources::LARGE_ICON_EDIT_IMPORT("");
     std::string UIResources::LARGE_ICON_EDIT_REFRESH("");
-    std::string UIResources::LARGE_ICON_EDIT_CATEGORY("");
+    std::string UIResources::LARGE_ICON_EDIT_CATEGORY("");   
 
     std::string UIResources::ICON_SOUND_STOP("");
     std::string UIResources::ICON_SOUND_PLAY("");
+
+    std::string UIResources::ICON_EDITOR_SKELETAL_MESH("");
 
     std::string UIResources::ICON_SOUND_RESOURCE("");
     std::string UIResources::ICON_STATICMESH_RESOURCE("");

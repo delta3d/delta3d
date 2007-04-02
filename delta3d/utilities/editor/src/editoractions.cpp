@@ -90,6 +90,7 @@ namespace dtEditQt
       setupWindowActions();
       setupHelpActions();
       setupRecentItems();
+      setupSubeditorActions();
 
       saveMilliSeconds = 300000;
       wasCancelled = false;
@@ -288,6 +289,15 @@ namespace dtEditQt
       actionSelectionRotateActor->setCheckable(true);
       actionSelectionRotateActor->setActionGroup(modeToolsGroup);
       actionSelectionRotateActor->setStatusTip(tr("Use this tool to rotate the current actor selection."));
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+   void EditorActions::setupSubeditorActions()
+   {
+      actionEditSkeletalMesh = new QAction(QIcon(UIResources::ICON_EDITOR_SKELETAL_MESH.c_str()),tr("&Launch Skeletal Mesh Editor"), modeToolsGroup);     
+      actionEditSkeletalMesh->setCheckable(false);     
+      actionEditSkeletalMesh->setStatusTip(tr("Launches the skeletal mesh editor."));
+      connect(actionEditSkeletalMesh, SIGNAL(triggered()), this, SLOT(slotLaunchSkeletalMeshEditor()));
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -894,6 +904,12 @@ namespace dtEditQt
          }
       }
    }
+
+    //////////////////////////////////////////////////////////////////////////////
+    void EditorActions::slotLaunchSkeletalMeshEditor()
+    {
+      system("AnimationViewerD");
+    }
 
    //////////////////////////////////////////////////////////////////////////////
    void EditorActions::slotEditUndo()

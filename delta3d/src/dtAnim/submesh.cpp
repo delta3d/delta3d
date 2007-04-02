@@ -23,7 +23,7 @@ SubMeshDrawable::SubMeshDrawable()
 
 SubMeshDrawable::SubMeshDrawable(Cal3DModelWrapper *wrapper, unsigned mesh, unsigned submesh) 
 {
-    this->mWrapper = wrapper;
+    this->mWrapper   = wrapper;
 	this->mMeshID    = mesh;
 	this->mSubmeshID = submesh;
 

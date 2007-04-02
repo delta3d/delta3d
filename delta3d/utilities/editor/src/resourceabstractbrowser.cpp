@@ -293,13 +293,13 @@ namespace dtEditQt
         categoryBtn = new QPushButton(""/*Category"*/,group);
         categoryBtn->setToolTip("Create Category - create a new category folder in the current category");
         categoryBtn->setIcon(QPixmap(UIResources::LARGE_ICON_EDIT_CATEGORY.c_str()));
-        connect(categoryBtn,SIGNAL(clicked()),this,SLOT(createCategory()));
+        connect(categoryBtn,SIGNAL(clicked()),this,SLOT(createCategory()));       
 
         hbox->addStretch(1);
         hbox->addWidget(importBtn,0);
         hbox->addWidget(deleteBtn,0);
         hbox->addWidget(refreshBtn,0);
-        hbox->addWidget(categoryBtn,0);
+        hbox->addWidget(categoryBtn,0);       
         hbox->addStretch(1);
 
         grid->addLayout(hbox,0,0);
@@ -553,7 +553,7 @@ namespace dtEditQt
         // Save the last directory of the dialog
         fileDialogDir = importDialog->getLastDirectory();
     }
-    ///////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////  
     void ResourceAbstractBrowser::resetEditorDataDescriptor()
     {
         if(*resourceType == dtDAL::DataType::SOUND)
