@@ -1,0 +1,30 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtDIS", "dtDIS.vcproj", "{A52F91E9-EF5D-48E9-A91C-062645CEEFE5}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "default_dis_plugin", "plugins\default\default_dis_plugin.vcproj", "{ADFFAB64-9B32-48E8-908D-797335BE8663}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A52F91E9-EF5D-48E9-A91C-062645CEEFE5} = {A52F91E9-EF5D-48E9-A91C-062645CEEFE5}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{A52F91E9-EF5D-48E9-A91C-062645CEEFE5}.Debug.ActiveCfg = Debug|Win32
+		{A52F91E9-EF5D-48E9-A91C-062645CEEFE5}.Debug.Build.0 = Debug|Win32
+		{A52F91E9-EF5D-48E9-A91C-062645CEEFE5}.Release.ActiveCfg = Release|Win32
+		{A52F91E9-EF5D-48E9-A91C-062645CEEFE5}.Release.Build.0 = Release|Win32
+		{ADFFAB64-9B32-48E8-908D-797335BE8663}.Debug.ActiveCfg = Debug|Win32
+		{ADFFAB64-9B32-48E8-908D-797335BE8663}.Debug.Build.0 = Debug|Win32
+		{ADFFAB64-9B32-48E8-908D-797335BE8663}.Release.ActiveCfg = Release|Win32
+		{ADFFAB64-9B32-48E8-908D-797335BE8663}.Release.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
