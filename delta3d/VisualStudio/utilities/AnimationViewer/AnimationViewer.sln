@@ -12,9 +12,14 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtABC", "..\..\src\dtABC\dt
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtAnim", "..\..\src\dtAnim\dtanim.vcproj", "{1E2C3DB5-00E0-45B9-AA4B-F54BD5A9C60B}"
 	ProjectSection(ProjectDependencies) = postProject
+		{F4AF0428-087E-4AE9-BAB2-B18E910DF67A} = {F4AF0428-087E-4AE9-BAB2-B18E910DF67A}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtUtil", "..\..\src\dtUtil\dtutil.vcproj", "{5F516A22-15B8-4160-B032-BDFD78707350}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtDAL", "..\..\src\dtDAL\dtDAL.vcproj", "{F4AF0428-087E-4AE9-BAB2-B18E910DF67A}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
@@ -40,6 +45,10 @@ Global
 		{5F516A22-15B8-4160-B032-BDFD78707350}.Debug.Build.0 = Debug|Win32
 		{5F516A22-15B8-4160-B032-BDFD78707350}.Release.ActiveCfg = Release|Win32
 		{5F516A22-15B8-4160-B032-BDFD78707350}.Release.Build.0 = Release|Win32
+		{F4AF0428-087E-4AE9-BAB2-B18E910DF67A}.Debug.ActiveCfg = Debug|Win32
+		{F4AF0428-087E-4AE9-BAB2-B18E910DF67A}.Debug.Build.0 = Debug|Win32
+		{F4AF0428-087E-4AE9-BAB2-B18E910DF67A}.Release.ActiveCfg = Release|Win32
+		{F4AF0428-087E-4AE9-BAB2-B18E910DF67A}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
