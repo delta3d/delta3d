@@ -19,7 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\inc;$(DIS_INC_DIR);$(DELTA_INC)"
+				AdditionalIncludeDirectories="..\..\..\inc; ..\..\..\ext\inc"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;DT_DIS_LIBRARY"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -36,7 +36,7 @@
 				AdditionalDependencies="DIS_debug.lib NLstaticD.lib dtUtild.lib osgd.lib dtCored.lib osgDBd.lib dtGamed.lib dtDALd.lib xerces-c_2D.lib wsock32.lib"
 				OutputFile="$(OutDir)/dtDISd.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="$(DIS_LIB_DIR);$(DELTA_LIB);$(HAWKNL_LIB_DIR)"
+				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/dtDIS_d.pdb"
 				SubSystem="2"
@@ -71,7 +71,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\..\inc;$(DIS_INC_DIR);$(DELTA_INC)"
+				AdditionalIncludeDirectories="..\..\..\inc; ..\..\..\ext\inc"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;DT_DIS_LIBRARY"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
@@ -86,7 +86,7 @@
 				AdditionalDependencies="DIS.lib dtUtil.lib osg.lib NLstatic.lib dtCore.lib osgDB.lib dtGame.lib dtDAL.lib xerces-c_2.lib wsock32.lib"
 				OutputFile="$(OutDir)/dtDIS.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="$(DIS_LIB_DIR);$(DELTA_LIB);$(HAWKNL_LIB_DIR)"
+				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"
 				OptimizeReferences="2"
