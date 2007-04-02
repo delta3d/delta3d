@@ -23,10 +23,25 @@ mAnimListWidget(NULL)
 {
    resize(640, 300);
 
+   mAnimListWidget = new AnimationTableWidget(this);
+   mAnimListWidget->setColumnCount(5);
+   mAnimListWidget->setSelectionBehavior(QAbstractItemView::SelectRows);   
+
+   connect(mAnimListWidget, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(OnAnimationClicked(QTableWidgetItem*)));
+   connect(mAnimListWidget, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(OnItemChanged(QTableWidgetItem*)));
+   connect(mAnimListWidget, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(OnItemDoubleClicked(QTableWidgetItem*)));
+
+   QStringList headers;
+   headers << "Name" << "Weight (L)" << "Delay (L)" << "Delay In (A)" << "Delay Out (A)";
+   mAnimListWidget->setHorizontalHeaderLabels(headers );  
+
+   setCentralWidget(mAnimListWidget);
+
+
    CreateActions();
    CreateMenus();
    (void)statusBar();
-   CreateToolbars();   
+   CreateToolbars();
 }
 
 MainWindow::~MainWindow()
@@ -85,6 +100,24 @@ void MainWindow::CreateActions()
       mRecentFilesAct[i]->setVisible(false);
       connect(mRecentFilesAct[i], SIGNAL(triggered()), this, SLOT(OpenRecentFile()));
    }
+
+   // The actiongroup is used to make the action behave like radio buttons
+   QActionGroup *actionGroup = new QActionGroup(this);
+   actionGroup->setExclusive(true); 
+
+   QIcon wireframeIcon(":/images/wireframe.png");  
+   QIcon shadedIcon(":/images/shaded.png");
+   QIcon shadedWireIcon(":/images/shadedwire.png");
+
+   mWireframeAction  = actionGroup->addAction(wireframeIcon, "Wireframe");
+   mShadedAction     = actionGroup->addAction(shadedIcon, "Shaded");
+   mShadedWireAction = actionGroup->addAction(shadedWireIcon, "Shaded Wireframe");     
+
+   mWireframeAction->setCheckable(true);
+   mShadedAction->setCheckable(true); 
+   mShadedWireAction->setCheckable(true);   
+
+   mShadedAction->setChecked(true);
 }
 
 void MainWindow::CreateToolbars()
@@ -98,31 +131,15 @@ void MainWindow::CreateToolbars()
    mTempToolbar     = addToolBar("Temp toolbar");
    mLightingToolbar = addToolBar("Lighting toolbar");
 
-   // The actiongroup is used to make the action behave like radio buttons
-   QActionGroup *actionGroup = new QActionGroup(this);
-   actionGroup->setExclusive(true);     
-
-   QIcon wireframeIcon(":/images/wireframe.png");  
-   QIcon shadedIcon(":/images/shaded.png");
-   QIcon shadedWireIcon(":/images/shadedwire.png");
-   QIcon diffuseIcon(":/images/diffuseLight.png");
-   QIcon pointLightIcon(":/images/pointLight.png");
-
-   mWireframeAction  = actionGroup->addAction(wireframeIcon, "Wireframe");
-   mShadedAction     = actionGroup->addAction(shadedIcon, "Shaded");
-   mShadedWireAction = actionGroup->addAction(shadedWireIcon, "Shaded Wireframe");     
-
-   mWireframeAction->setCheckable(true);
-   mShadedAction->setCheckable(true); 
-   mShadedWireAction->setCheckable(true);   
-
-   mShadedAction->setChecked(true);
 
    mShadingToolbar->addAction(mWireframeAction);
    mShadingToolbar->addAction(mShadedAction);
    mShadingToolbar->addAction(mShadedWireAction);    
 
    mTempToolbar->addWidget(lodSpinner);   
+
+   QIcon diffuseIcon(":/images/diffuseLight.png");
+   QIcon pointLightIcon(":/images/pointLight.png");
 
    mLightingToolbar->addAction(diffuseIcon, "Diffuse Light");
    mLightingToolbar->addAction(pointLightIcon, "Point Light");
@@ -148,21 +165,11 @@ void MainWindow::LoadCharFile( const QString &filename )
 {
    if (dtUtil::FileUtils::GetInstance().FileExists( filename.toStdString() ))
    {
-      delete mAnimListWidget;  
-
-      mAnimListWidget = new AnimationTableWidget(this);
-      mAnimListWidget->setColumnCount(5);
-      mAnimListWidget->setSelectionBehavior(QAbstractItemView::SelectRows);   
-
-      connect(mAnimListWidget, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(OnAnimationClicked(QTableWidgetItem*)));
-      connect(mAnimListWidget, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(OnItemChanged(QTableWidgetItem*)));
-      connect(mAnimListWidget, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(OnItemDoubleClicked(QTableWidgetItem*)));
-
-      QStringList headers;
-      headers << "Name" << "Weight (L)" << "Delay (L)" << "Delay In (A)" << "Delay Out (A)";
-      mAnimListWidget->setHorizontalHeaderLabels(headers );  
-
-      setCentralWidget(mAnimListWidget);
+      mAnimListWidget->clear();
+      while (mAnimListWidget->rowCount()>0)
+      {
+         mAnimListWidget->removeRow(0);
+      }
 
       emit FileToLoad( filename );
 
