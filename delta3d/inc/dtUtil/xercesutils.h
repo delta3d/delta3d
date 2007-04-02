@@ -146,8 +146,8 @@ namespace dtUtil
 
       ~AttributeSearch();
 
-      /** searches for all keys on each attribute.
-        * @return ResultMap a map containing keys that were found, with attribute values as the second of the pair.
+      /** Process the Attributes and make an easier structure to use.
+        * @return produces an associative container indexed on the attribute names.
         */
       ResultMap operator ()(const XERCES_CPP_NAMESPACE_QUALIFIER Attributes& attrs);
    };
