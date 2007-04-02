@@ -59,8 +59,7 @@ namespace dtActors
 
       // If we successfully loaded the model, give it to the animator
       if (newModel.valid())
-      {
-         // Why does this crash??? threading issue???
+      {         
          mAnimator = new dtAnim::Cal3DAnimator(newModel.get());   
 
          if(newModel->BeginRenderingQuery()) 
@@ -82,8 +81,6 @@ namespace dtActors
 
          /// Force generation of first mesh
          newModel->Update(0);
-
-         //GetMatrixNode()->addChild(mGeode.get()); 
       }
    }
 
@@ -136,7 +133,7 @@ namespace dtActors
 
    const dtDAL::ActorProxy::RenderMode& AnimationGameActorProxy::GetRenderMode()
    {
-      dtDAL::ResourceDescriptor *resource = GetResource("skeletal mesh");
+      dtDAL::ResourceDescriptor *resource = GetResource("Skeletal Mesh");
       if (resource != NULL)
       {
          if (resource->GetResourceIdentifier().empty() || GetActor()->GetOSGNode() == NULL)

@@ -151,7 +151,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    QGroupBox *SkeletalMeshBrowser::listGroup()
    {
-      QGroupBox *groupBox = new QGroupBox(tr("Static Meshes"));
+      QGroupBox *groupBox = new QGroupBox(tr("Skeletal Meshes"));
       QGridLayout *grid = new QGridLayout(groupBox);
       QHBoxLayout *hbox = new QHBoxLayout();
 
@@ -226,7 +226,7 @@ namespace dtEditQt
       connect(setSGPreviewAction, SIGNAL(triggered()),this,SLOT(viewSceneGraph()));
       //setSGPreviewAction->setEnabled(false);
 
-      setOSGDump = new QAction(tr("Preview OSG File"), getCurrentParent());
+      setOSGDump = new QAction(tr("Preview File"), getCurrentParent());
       connect(setOSGDump, SIGNAL(triggered()), this, SLOT(viewOSGContents()));
    }
    ///////////////////////////////////////////////////////////////////////////////
