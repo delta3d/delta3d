@@ -187,6 +187,12 @@ namespace dtEditQt
         selectionToolBar->addAction(EditorActions::GetInstance().actionSelectionTranslateActor);
         selectionToolBar->addAction(EditorActions::GetInstance().actionSelectionRotateActor);
         addToolBar(selectionToolBar);
+
+        subeditorToolBar = new QToolBar(this);
+        subeditorToolBar->setObjectName("SubeditorToolBar");
+        subeditorToolBar->setWindowTitle(tr("Subeditor Toolbar"));
+        subeditorToolBar->addAction(EditorActions::GetInstance().actionEditSkeletalMesh);       
+        addToolBar(subeditorToolBar);        
     }
 
     ///////////////////////////////////////////////////////////////////////////////

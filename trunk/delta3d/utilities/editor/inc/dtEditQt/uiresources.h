@@ -67,10 +67,12 @@ namespace dtEditQt
             static std::string LARGE_ICON_EDIT_GOTO;
             static std::string LARGE_ICON_EDIT_IMPORT;
             static std::string LARGE_ICON_EDIT_REFRESH;
-            static std::string LARGE_ICON_EDIT_CATEGORY;
+            static std::string LARGE_ICON_EDIT_CATEGORY;           
 
             static std::string ICON_SOUND_STOP;
             static std::string ICON_SOUND_PLAY;
+
+            static std::string ICON_EDITOR_SKELETAL_MESH;
 
             static std::string ICON_SOUND_RESOURCE;
             static std::string ICON_STATICMESH_RESOURCE;

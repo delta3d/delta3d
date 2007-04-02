@@ -54,7 +54,7 @@ namespace dtEditQt
 
    /**
     * This class holds all the UI QActions.  It has a list of the actions that are
-    * used for menus, dialogs, popups, and shortcuts.  Each action uses the signla/slot
+    * used for menus, dialogs, popups, and shortcuts.  Each action uses the signal/slot
     * behavior from QT.
     * @note The EditorActions class follows the Singleton pattern.
     */
@@ -217,6 +217,9 @@ namespace dtEditQt
          // Action - Help - About QT
          QAction *actionHelpAboutQT;
 
+         // Action - edit skeletal mesh
+         QAction *actionEditSkeletalMesh;
+
       public slots:
 
          /**
@@ -354,7 +357,7 @@ namespace dtEditQt
          void slotPauseAutosave();
 
          // restarts the autosave
-         void slotRestartAutosave();
+         void slotRestartAutosave();     
 
          // helper method to keep track of the selected actors. this is needed in order to
          // be able to call the goto actor functionality from the menu. The signal requires
@@ -362,6 +365,8 @@ namespace dtEditQt
          void slotSelectedActors(ActorProxyRefPtrVector &actors);
 
          void slotOnActorCreated(ActorProxyRefPtr proxy, bool forceNoAdjustments);
+
+         void slotLaunchSkeletalMeshEditor();
 
       protected:
          /**
@@ -408,6 +413,7 @@ namespace dtEditQt
          void setupSelectionActions();
          void setupHelpActions();
          void setupWindowActions();
+         void setupSubeditorActions();
 
          QTimer *timer;
          std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > actors;
