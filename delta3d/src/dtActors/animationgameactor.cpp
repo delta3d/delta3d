@@ -31,6 +31,8 @@
 
 #include <osg/MatrixTransform>
 #include <osg/Geode>
+#include <osg/Material>
+#include <osg/PolygonMode>
 
 
 namespace dtActors
@@ -55,7 +57,7 @@ namespace dtActors
     
    void AnimationGameActor::SetModel(const std::string &modelFile)
    {
-      dtCore::RefPtr<dtAnim::Cal3DModelWrapper> newModel = mModelLoader->Load(modelFile);
+      dtCore::RefPtr<dtAnim::Cal3DModelWrapper> newModel = mModelLoader->Load(modelFile);    
 
       // If we successfully loaded the model, give it to the animator
       if (newModel.valid())
@@ -87,7 +89,7 @@ namespace dtActors
    //////////////////////////////////////////////////////////////////////////////
    void AnimationGameActor::AddedToScene(dtCore::Scene* scene)
    {
-      dtGame::GameActor::AddedToScene(scene);
+      dtGame::GameActor::AddedToScene(scene);     
       GetMatrixNode()->addChild(mModelGeode.get());
    }
 

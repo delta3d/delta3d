@@ -63,7 +63,7 @@ namespace dtActors
 
       dtCore::RefPtr<osg::Geode>            mModelGeode;
       dtAnim::Cal3DLoader                  *mModelLoader;
-      dtCore::RefPtr<dtAnim::Cal3DAnimator> mAnimator;     
+      dtCore::RefPtr<dtAnim::Cal3DAnimator> mAnimator;      
 
       /// Destroys this actor.     
       virtual ~AnimationGameActor();    

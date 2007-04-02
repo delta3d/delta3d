@@ -26,7 +26,7 @@ Cal3DLoader::~Cal3DLoader()
  * @throw SAXParseException if the file didn't parse correctly
  * @note Relies on the the "animationdefinition.xsd" schema file
  */
-CalCoreModel* Cal3DLoader::GetCoreModel( const std::string &filename )
+CalCoreModel* Cal3DLoader::GetCoreModel( const std::string &filename, const std::string &path )
 {
    using namespace dtCore;
 
@@ -46,25 +46,16 @@ CalCoreModel* Cal3DLoader::GetCoreModel( const std::string &filename )
       
       parser.Parse(filename, handler, "animationdefinition.xsd");
 
-      coreModel = new CalCoreModel(handler.mName);
-
-      std::string pathPrefix;
-      std::string::size_type stringIndex = filename.find_last_of("\\");
-
-      if (stringIndex != std::string::npos)
-      {
-         // The index is the position of the first backslash, so add 1
-         pathPrefix = filename.substr(0, stringIndex + 1);
-      }
+      coreModel = new CalCoreModel(handler.mName);      
 
       //load skeleton
-      coreModel->loadCoreSkeleton(FindFileInPathList(pathPrefix + handler.mSkeletonFilename));
+      coreModel->loadCoreSkeleton(FindFileInPathList(path + handler.mSkeletonFilename));
 
       //load animations
       std::vector<CharacterFileHandler::AnimationStruct>::iterator animItr = handler.mAnimations.begin();
       while (animItr != handler.mAnimations.end())
       {
-         std::string filename = FindFileInPathList(pathPrefix + (*animItr).filename);
+         std::string filename = FindFileInPathList(path + (*animItr).filename);
 
          if (!filename.empty()) 
          {
@@ -72,7 +63,7 @@ CalCoreModel* Cal3DLoader::GetCoreModel( const std::string &filename )
          }
          else
          {
-            LOG_ERROR("Can't find animation file named:'" + pathPrefix + (*animItr).filename + "'.");
+            LOG_ERROR("Can't find animation file named:'" + path + (*animItr).filename + "'.");
          }
          ++animItr;
       }
@@ -81,14 +72,14 @@ CalCoreModel* Cal3DLoader::GetCoreModel( const std::string &filename )
       std::vector<std::string>::iterator meshItr = handler.mMeshFilenames.begin();
       while (meshItr != handler.mMeshFilenames.end())
       {
-         std::string name = FindFileInPathList(pathPrefix + (*meshItr));
+         std::string name = FindFileInPathList(path + (*meshItr));
          if (!name.empty())
          {
             coreModel->loadCoreMesh( name );
          }
          else
          {
-            LOG_ERROR("Can't find mesh file named:'" + pathPrefix + (*meshItr) + "'.");
+            LOG_ERROR("Can't find mesh file named:'" + path + (*meshItr) + "'.");
          }
          ++meshItr;
       }
@@ -97,7 +88,7 @@ CalCoreModel* Cal3DLoader::GetCoreModel( const std::string &filename )
       std::vector<std::string>::iterator matItr = handler.mMaterialFilenames.begin();
       while (matItr != handler.mMaterialFilenames.end())
       {
-         std::string name = FindFileInPathList(pathPrefix + (*matItr));
+         std::string name = FindFileInPathList(path + (*matItr));
 
          if (!name.empty())  
          {
@@ -105,7 +96,7 @@ CalCoreModel* Cal3DLoader::GetCoreModel( const std::string &filename )
          }
          else
          {
-            LOG_ERROR("Can't find material file named:'" + pathPrefix + (*matItr) + "'.");
+            LOG_ERROR("Can't find material file named:'" + path + (*matItr) + "'.");
          }
          ++matItr;
       }
@@ -128,13 +119,21 @@ CalCoreModel* Cal3DLoader::GetCoreModel( const std::string &filename )
  */
 dtCore::RefPtr<Cal3DModelWrapper> Cal3DLoader::Load( const std::string &filename )
 {
-   dtCore::RefPtr<Cal3DModelWrapper> wrapper;
+   std::string path;
+   std::string::size_type stringIndex = filename.find_last_of("\\");
 
-   CalCoreModel *coreModel = GetCoreModel(filename);
+   if (stringIndex != std::string::npos)
+   {
+      // The index is the position of the first backslash, so add 1
+      path = filename.substr(0, stringIndex + 1);
+   }
+
+   dtCore::RefPtr<Cal3DModelWrapper> wrapper;
+   CalCoreModel *coreModel = GetCoreModel(filename, path);
 
    if (coreModel != NULL)
    {
-      LoadAllTextures(coreModel); //this should be a user-level process.
+      LoadAllTextures(coreModel, path); //this should be a user-level process.
       CalModel *model = new CalModel(coreModel);
       wrapper = new Cal3DModelWrapper(model);
    }
@@ -143,7 +142,7 @@ dtCore::RefPtr<Cal3DModelWrapper> Cal3DLoader::Load( const std::string &filename
 }
 
 
-void Cal3DLoader::LoadAllTextures(CalCoreModel *coreModel)
+void Cal3DLoader::LoadAllTextures(CalCoreModel *coreModel, const std::string &path)
 {
    int materialId;
    for(materialId = 0; materialId < coreModel->getCoreMaterialCount(); materialId++)
@@ -161,7 +160,9 @@ void Cal3DLoader::LoadAllTextures(CalCoreModel *coreModel)
          strFilename = pCoreMaterial->getMapFilename(mapId);
 
          // load the texture from the file
-         osg::Image *img = osgDB::readImageFile(strFilename);
+         osg::Image *img = osgDB::readImageFile(path + strFilename);
+         assert(img);
+
          osg::Texture2D *texture = new osg::Texture2D();
          texture->setImage(img);
          texture->setWrap(osg::Texture::WRAP_S, osg::Texture::REPEAT);
@@ -177,8 +178,12 @@ void Cal3DLoader::LoadAllTextures(CalCoreModel *coreModel)
    // NOTE: this is not the right way to do it, but this viewer can't do the right
    // mapping without further information on the model etc., so this is the only
    // thing we can do here.
-   // NOTE from Ryu: I don't know that the hell is a material thread, so I
-   // paste this code as is and pray for it to work...
+   
+   // Every part of the core model (every submesh to be more exact) has a material
+   // thread assigned. You can now very easily change the look of a model instance, 
+   // by simply select a new current material set for its parts. The Cal3D library 
+   // is now able to look up the material in the material grid with the given new 
+   // material set and the material thread stored in the core model parts.
    for(materialId = 0; materialId < coreModel->getCoreMaterialCount(); materialId++)
    {
       // create the a material thread

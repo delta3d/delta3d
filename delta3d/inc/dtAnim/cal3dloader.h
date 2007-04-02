@@ -59,14 +59,14 @@ namespace dtAnim
          dtCore::RefPtr<Cal3DModelWrapper> Load( const std::string &filename );
    
       private:
-         CalCoreModel* GetCoreModel( const std::string &filename );
+         CalCoreModel* GetCoreModel( const std::string &filename, const std::string &path );
 
          typedef std::map<std::string,CalCoreModel*>  FilenameCoreModelMap;
 
          FilenameCoreModelMap mFilenameCoreModelMap;
 
          //damned unpleasant place to load texture files.  Needs to be handled some other way
-         void LoadAllTextures(CalCoreModel *model);
+         void LoadAllTextures(CalCoreModel *model, const std::string &path);
 
          /** List of textures loaded by this class, to destroy them when this class
          * is destroyed. */
