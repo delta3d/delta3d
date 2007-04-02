@@ -17,7 +17,7 @@ using namespace dtAnim;
 
 CharDrawable::CharDrawable()
    : mGeode(new osg::Geode)
-   ,mCal3DWrapper(NULL)
+   , mCal3DWrapper(NULL)
 {  
 
 }
