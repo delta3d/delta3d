@@ -73,6 +73,8 @@ namespace dtEditQt
             static std::string ICON_SOUND_PLAY;
 
             static std::string ICON_EDITOR_SKELETAL_MESH;
+            static std::string ICON_EDITOR_PARTICLE_SYSTEM;
+            static std::string ICON_EDITOR_VIEWER;
 
             static std::string ICON_SOUND_RESOURCE;
             static std::string ICON_STATICMESH_RESOURCE;

@@ -191,8 +191,10 @@ namespace dtEditQt
         subeditorToolBar = new QToolBar(this);
         subeditorToolBar->setObjectName("SubeditorToolBar");
         subeditorToolBar->setWindowTitle(tr("Subeditor Toolbar"));
-        subeditorToolBar->addAction(EditorActions::GetInstance().actionEditSkeletalMesh);       
-        addToolBar(subeditorToolBar);        
+        subeditorToolBar->addAction(EditorActions::GetInstance().actionEditSkeletalMesh);  
+        subeditorToolBar->addAction(EditorActions::GetInstance().actionEditParticleSystem);  
+        subeditorToolBar->addAction(EditorActions::GetInstance().actionLaunchViewer);  
+        addToolBar(subeditorToolBar);    
     }
 
     ///////////////////////////////////////////////////////////////////////////////

@@ -36,6 +36,7 @@
 #include <QtGui/QTextEdit>
 #include <QtCore/QSettings>
 #include <QtCore/QTimer>
+#include <QtCore/QProcess>
 
 #include <osgDB/FileNameUtils>
 
@@ -71,6 +72,7 @@
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/actorproxyicon.h>
 #include <dtDAL/environmentactor.h>
+#include <dtCore/globals.h>
 
 #include <sstream>
 
@@ -80,8 +82,11 @@ namespace dtEditQt
    dtCore::RefPtr<EditorActions> EditorActions::instance(NULL);
 
    ///////////////////////////////////////////////////////////////////////////////
-   EditorActions::EditorActions() :
-      mIsector(new dtCore::Isector)
+   EditorActions::EditorActions() 
+      : mIsector(new dtCore::Isector)
+      , mSkeletalEditorProcess(NULL)
+      , mParticleEditorProcess(NULL)
+      , mViewerProcess(NULL)
    {
       LOG_INFO("Initializing Editor Actions.");
       setupFileActions();
@@ -294,10 +299,17 @@ namespace dtEditQt
    //////////////////////////////////////////////////////////////////////////////
    void EditorActions::setupSubeditorActions()
    {
-      actionEditSkeletalMesh = new QAction(QIcon(UIResources::ICON_EDITOR_SKELETAL_MESH.c_str()),tr("&Launch Skeletal Mesh Editor"), modeToolsGroup);     
-      actionEditSkeletalMesh->setCheckable(false);     
+      actionEditSkeletalMesh = new QAction(QIcon(UIResources::ICON_EDITOR_SKELETAL_MESH.c_str()),tr("&Launch Skeletal Mesh Editor"), modeToolsGroup);           
       actionEditSkeletalMesh->setStatusTip(tr("Launches the skeletal mesh editor."));
       connect(actionEditSkeletalMesh, SIGNAL(triggered()), this, SLOT(slotLaunchSkeletalMeshEditor()));
+
+      actionEditParticleSystem = new QAction(QIcon(UIResources::ICON_EDITOR_PARTICLE_SYSTEM.c_str()),tr("&Launch Particle System Editor"), modeToolsGroup);       
+      actionEditParticleSystem->setStatusTip(tr("Launches the particle system editor."));
+      connect(actionEditParticleSystem, SIGNAL(triggered()), this, SLOT(slotLaunchParticleEditor()));
+
+      actionLaunchViewer = new QAction(QIcon(UIResources::ICON_EDITOR_VIEWER.c_str()),tr("&Launch Delta3D Model Viewer"), modeToolsGroup);       
+      actionLaunchViewer->setStatusTip(tr("Launches the model viewer."));
+      connect(actionLaunchViewer, SIGNAL(triggered()), this, SLOT(slotLaunchDeltaViewer()));
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -907,8 +919,59 @@ namespace dtEditQt
 
     //////////////////////////////////////////////////////////////////////////////
     void EditorActions::slotLaunchSkeletalMeshEditor()
+    {       
+       // Create a new process if we don't already have one
+       if (!mSkeletalEditorProcess)
+       {
+          mSkeletalEditorProcess = new QProcess(this);           
+       }     
+
+       // Don't launch more than one copy of the editor
+       if (mSkeletalEditorProcess->state() != QProcess::Running)
+       {           
+          QString program = "AnimationViewerD";
+          QStringList arguments;
+
+          mSkeletalEditorProcess->start(program, arguments);     
+       }
+    }
+
+    //////////////////////////////////////////////////////////////////////////////
+    void EditorActions::slotLaunchParticleEditor()
     {
-      system("AnimationViewerD");
+       // Create a new process if we don't already have one
+       if (!mParticleEditorProcess)
+       {
+          mParticleEditorProcess = new QProcess(this);           
+       }     
+
+       // Don't launch more than one copy of the editor
+       if (mParticleEditorProcess->state() != QProcess::Running)
+       {           
+          QString program = "psEditor";
+          QStringList arguments;
+
+          mParticleEditorProcess->start(program, arguments);     
+       }
+    }
+
+    //////////////////////////////////////////////////////////////////////////////
+    void EditorActions::slotLaunchDeltaViewer()
+    {
+       // Create a new process if we don't already have one
+       if (!mViewerProcess)
+       {
+          mViewerProcess = new QProcess(this);           
+       }     
+
+       // Don't launch more than one copy of the editor
+       if (mViewerProcess->state() != QProcess::Running)
+       {           
+          QString program = "viewer";
+          QStringList arguments;
+
+          mViewerProcess->start(program, arguments);     
+       }
     }
 
    //////////////////////////////////////////////////////////////////////////////
