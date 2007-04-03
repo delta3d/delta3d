@@ -39,8 +39,8 @@ Cal3DAnimator::Cal3DAnimator(Cal3DModelWrapper* pWrapper)
 , mAnimDriver(new AnimDriver(pWrapper))
 , mSkelDriver(new SkeletonDriver(pWrapper))
 , mMorphDriver(new MorphDriver(pWrapper))
-, mPhysiqueDriver(new PhysiqueDriver(pWrapper))
 , mSpringDriver(new SpringDriver(pWrapper))
+, mPhysiqueDriver(new PhysiqueDriver(pWrapper))
 {
 }
 

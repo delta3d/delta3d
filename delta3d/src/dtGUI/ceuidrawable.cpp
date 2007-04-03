@@ -39,7 +39,7 @@ int CEUIDrawable::mActiveTextureUnit(0);
 CEUIDrawable::CEUIDrawable( dtCore::DeltaWin *win, dtGUI::BaseScriptModule *sm):
    DeltaDrawable("CEUIDrawable"),
    mUI(NULL),
-   mRenderer(new dtGUI::Renderer(NULL)),
+   mRenderer(new dtGUI::Renderer()),
    mScriptModule(sm),
    mProjection(new osg::Projection()),
    mTransform(new osg::MatrixTransform(osg::Matrix::identity())),
