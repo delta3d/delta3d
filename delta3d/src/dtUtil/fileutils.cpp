@@ -742,8 +742,11 @@ namespace dtUtil
       {
          if(file[i] != absolutePath[i])
          {
-            // i + 1 to eliminate the leading directory separator
-            relativePath = file.substr(i + 1);
+            if(file[i] == '/')
+               relativePath = file.substr(i + 1);
+            else
+               relativePath = file.substr(i);
+
             break;
          }
       }

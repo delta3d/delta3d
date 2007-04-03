@@ -26,6 +26,7 @@
 #include <string>
 #include <sstream>
 #include <dtHLAGM/ddmregiondata.h>
+#include <dtCore/refptr.h>
 
 class DDMRegionDataTests : public CPPUNIT_NS::TestFixture 
 {
