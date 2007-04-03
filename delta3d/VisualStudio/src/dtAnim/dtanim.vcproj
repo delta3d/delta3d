@@ -147,9 +147,6 @@
 				RelativePath="..\..\..\src\dtAnim\chardrawable.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\src\dtAnim\coremodel.cpp">
-			</File>
-			<File
 				RelativePath="..\..\..\src\dtAnim\morphdriver.cpp">
 			</File>
 			<File

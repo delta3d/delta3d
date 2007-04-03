@@ -57,8 +57,8 @@ namespace dtAnim
          ///Get a const pointer to the internal CalModel.  For advanced users only!
          const CalModel* GetCalModel() const;
 
-         bool AttachMesh( int meshID ) { return mCalModel->attachMesh(meshID); }
-         bool DetachMesh( int meshID ) { return mCalModel->detachMesh(meshID); }
+         bool AttachMesh( int meshID ); 
+         bool DetachMesh( int meshID ); 
 
          void SetMaterialSet(int materialSetID) { mCalModel->setMaterialSet(materialSetID); }
          void SetLODLevel(float level) { mCalModel->setLodLevel(level); }
