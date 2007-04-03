@@ -1451,6 +1451,10 @@ namespace dtHLAGM
       {
          return long(static_cast<const dtGame::UnsignedShortIntMessageParameter&>(parameter).GetValue());
       }
+      else if (parameterDataType == dtDAL::DataType::UCHAR)
+      {
+         return long(static_cast<const dtGame::UnsignedCharMessageParameter&>(parameter).GetValue());
+      }
       else if (parameterDataType == dtDAL::DataType::INT)
       {
          return long(static_cast<const dtGame::IntMessageParameter&>(parameter).GetValue());
