@@ -244,10 +244,10 @@ void MainWindow::OnNewAnimation(unsigned int id, const QString &filename,
 
 }
 
-void MainWindow::OnNewMesh(int meshID)
+void MainWindow::OnNewMesh(int meshID, const QString &meshName)
 {
    QListWidgetItem *meshItem = new QListWidgetItem();
-   meshItem->setText(QString::number(meshID));
+   meshItem->setText(meshName);
    meshItem->setData( Qt::UserRole, meshID );
 
    meshItem->setFlags(Qt::ItemIsSelectable |

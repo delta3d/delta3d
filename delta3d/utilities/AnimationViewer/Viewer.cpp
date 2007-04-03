@@ -151,7 +151,8 @@ void Viewer::OnLoadCharFile( const QString &filename )
    //get all data for the meshes and emit
    for (int meshID=0; meshID<wrapper->GetCoreMeshCount(); meshID++)
    {
-      emit OnMeshLoaded(meshID);
+      QString nameToSend = QString::fromStdString( wrapper->GetCoreMeshName(meshID) );
+      emit OnMeshLoaded(meshID, nameToSend);
    }
 }
 

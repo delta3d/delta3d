@@ -131,3 +131,8 @@ float Cal3DModelWrapper::GetCoreAnimationDuration( int animID )
 {
    return mCalModel->getCoreModel()->getCoreAnimation(animID)->getDuration();
 }
+
+const std::string& Cal3DModelWrapper::GetCoreMeshName( int meshID )
+{
+   return mCalModel->getCoreModel()->getCoreMesh(meshID)->getName();
+}

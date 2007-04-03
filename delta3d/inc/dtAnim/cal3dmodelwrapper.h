@@ -96,6 +96,10 @@ namespace dtAnim
 
          /************************************************************************/
          int GetCoreMeshCount() { return mCalModel->getCoreModel()->getCoreMeshCount(); }
+
+         ///Get the name for the mesh using the supplied meshID
+         const std::string& GetCoreMeshName(int meshID);
+
          int GetCoreAnimationCount() {return mCalModel->getCoreModel()->getCoreAnimationCount(); }
 
          ///Get the name that equates to the supplied animation ID

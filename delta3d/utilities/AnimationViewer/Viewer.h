@@ -54,7 +54,7 @@ signals:
    void OnAnimationLoaded( unsigned int, const QString &, unsigned int trackCount,
                            unsigned int keyframes, float duration);
 
-   void OnMeshLoaded(int meshID);
+   void OnMeshLoaded(int meshID, const QString &meshName);
 
    void ErrorOccured( const QString &msg );
 
