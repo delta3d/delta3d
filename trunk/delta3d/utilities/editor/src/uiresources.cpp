@@ -63,7 +63,9 @@ namespace dtEditQt
         ICON_SOUND_STOP = dtCore::FindFileInPathList("icons/stop_sound.png");
         ICON_SOUND_PLAY = dtCore::FindFileInPathList("icons/play_sound.png");
 
-        ICON_EDITOR_SKELETAL_MESH = dtCore::FindFileInPathList("icons/subeditor_skeletal.png");
+        ICON_EDITOR_SKELETAL_MESH   = dtCore::FindFileInPathList("icons/subeditor_skeletal.png");
+        ICON_EDITOR_PARTICLE_SYSTEM = dtCore::FindFileInPathList("icons/particle_tab.png");
+        ICON_EDITOR_VIEWER          = dtCore::FindFileInPathList("icons/viewer.png");       
 
         ICON_SOUND_RESOURCE = dtCore::FindFileInPathList("icons/sound_resource.png");
         ICON_STATICMESH_RESOURCE = dtCore::FindFileInPathList("icons/staticmesh_resource.png");
@@ -121,6 +123,8 @@ namespace dtEditQt
     std::string UIResources::ICON_SOUND_PLAY("");
 
     std::string UIResources::ICON_EDITOR_SKELETAL_MESH("");
+    std::string UIResources::ICON_EDITOR_PARTICLE_SYSTEM("");
+    std::string UIResources::ICON_EDITOR_VIEWER("");
 
     std::string UIResources::ICON_SOUND_RESOURCE("");
     std::string UIResources::ICON_STATICMESH_RESOURCE("");

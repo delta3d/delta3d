@@ -37,6 +37,7 @@ class QListWidgetItem;
 class QListWidget;
 class QDialog;
 class QTimer;
+class QProcess;
 
 namespace dtCore
 {
@@ -220,6 +221,12 @@ namespace dtEditQt
          // Action - edit skeletal mesh
          QAction *actionEditSkeletalMesh;
 
+         // Action - edit particle systems
+         QAction *actionEditParticleSystem;
+
+         // Action - launch the viewer
+         QAction *actionLaunchViewer;
+
       public slots:
 
          /**
@@ -366,7 +373,14 @@ namespace dtEditQt
 
          void slotOnActorCreated(ActorProxyRefPtr proxy, bool forceNoAdjustments);
 
+         // Launches the "animation viewer"
          void slotLaunchSkeletalMeshEditor();
+
+         // Launches the particle editor
+         void slotLaunchParticleEditor();
+
+         // Launches the delta viewer
+         void slotLaunchDeltaViewer();
 
       protected:
          /**
@@ -422,6 +436,10 @@ namespace dtEditQt
          static dtCore::RefPtr<EditorActions> instance;
 
          dtCore::RefPtr<dtCore::Isector> mIsector;
+
+         QProcess *mSkeletalEditorProcess;  
+         QProcess *mParticleEditorProcess; 
+         QProcess *mViewerProcess;  
    };
 }
 
