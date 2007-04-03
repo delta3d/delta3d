@@ -44,65 +44,66 @@ CalCoreModel* Cal3DLoader::GetCoreModel( const std::string &filename, const std:
       dtUtil::XercesParser parser;
       CharacterFileHandler handler;
       
-      parser.Parse(filename, handler, "animationdefinition.xsd");
-
-      coreModel = new CalCoreModel(handler.mName);      
-
-      //load skeleton
-      coreModel->loadCoreSkeleton(FindFileInPathList(path + handler.mSkeletonFilename));
-
-      //load animations
-      std::vector<CharacterFileHandler::AnimationStruct>::iterator animItr = handler.mAnimations.begin();
-      while (animItr != handler.mAnimations.end())
+      if (parser.Parse(filename, handler, "animationdefinition.xsd"))
       {
-         std::string filename = FindFileInPathList(path + (*animItr).filename);
+         coreModel = new CalCoreModel(handler.mName);      
 
-         if (!filename.empty()) 
-         {
-            coreModel->loadCoreAnimation( filename, (*animItr).name );
-         }
-         else
-         {
-            LOG_ERROR("Can't find animation file named:'" + path + (*animItr).filename + "'.");
-         }
-         ++animItr;
-      }
+         //load skeleton
+         coreModel->loadCoreSkeleton(FindFileInPathList(path + handler.mSkeletonFilename));
 
-      //load meshes
-      std::vector<std::string>::iterator meshItr = handler.mMeshFilenames.begin();
-      while (meshItr != handler.mMeshFilenames.end())
-      {
-         std::string name = FindFileInPathList(path + (*meshItr));
-         if (!name.empty())
+         //load animations
+         std::vector<CharacterFileHandler::AnimationStruct>::iterator animItr = handler.mAnimations.begin();
+         while (animItr != handler.mAnimations.end())
          {
-            coreModel->loadCoreMesh( name );
-         }
-         else
-         {
-            LOG_ERROR("Can't find mesh file named:'" + path + (*meshItr) + "'.");
-         }
-         ++meshItr;
-      }
+            std::string filename = FindFileInPathList(path + (*animItr).filename);
 
-      //load materials
-      std::vector<std::string>::iterator matItr = handler.mMaterialFilenames.begin();
-      while (matItr != handler.mMaterialFilenames.end())
-      {
-         std::string name = FindFileInPathList(path + (*matItr));
-
-         if (!name.empty())  
-         {
-            coreModel->loadCoreMaterial( name );
+            if (!filename.empty()) 
+            {
+               coreModel->loadCoreAnimation( filename, (*animItr).name );
+            }
+            else
+            {
+               LOG_ERROR("Can't find animation file named:'" + path + (*animItr).filename + "'.");
+            }
+            ++animItr;
          }
-         else
-         {
-            LOG_ERROR("Can't find material file named:'" + path + (*matItr) + "'.");
-         }
-         ++matItr;
-      }
 
-      mFilenameCoreModelMap[filename] = coreModel; //store it for later
-   }      
+         //load meshes
+         std::vector<std::string>::iterator meshItr = handler.mMeshFilenames.begin();
+         while (meshItr != handler.mMeshFilenames.end())
+         {
+            std::string name = FindFileInPathList(path + (*meshItr));
+            if (!name.empty())
+            {
+               coreModel->loadCoreMesh( name );
+            }
+            else
+            {
+               LOG_ERROR("Can't find mesh file named:'" + path + (*meshItr) + "'.");
+            }
+            ++meshItr;
+         }
+
+         //load materials
+         std::vector<std::string>::iterator matItr = handler.mMaterialFilenames.begin();
+         while (matItr != handler.mMaterialFilenames.end())
+         {
+            std::string name = FindFileInPathList(path + (*matItr));
+
+            if (!name.empty())  
+            {
+               coreModel->loadCoreMaterial( name );
+            }
+            else
+            {
+               LOG_ERROR("Can't find material file named:'" + path + (*matItr) + "'.");
+            }
+            ++matItr;
+         }
+
+         mFilenameCoreModelMap[filename] = coreModel; //store it for later
+      }      
+   }
 
    return coreModel;
 }
