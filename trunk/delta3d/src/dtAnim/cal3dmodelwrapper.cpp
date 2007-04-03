@@ -36,6 +36,19 @@ Cal3DModelWrapper::~Cal3DModelWrapper()
    delete mCalModel;
 }
 
+bool Cal3DModelWrapper::AttachMesh( int meshID )
+{
+   bool success = mCalModel->attachMesh(meshID); 
+   SetMaterialSet(0);
+
+   return success;
+}
+
+bool Cal3DModelWrapper::DetachMesh( int meshID )
+{
+   return mCalModel->detachMesh(meshID); 
+}
+
 
 void Cal3DModelWrapper::SetCalModel( CalModel *model )
 {

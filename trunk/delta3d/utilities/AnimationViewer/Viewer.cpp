@@ -260,7 +260,9 @@ void Viewer::PostFrame( const double deltaFrameTime )
       std::vector<int>::iterator attachItr = mMeshesToAttach.begin();
       while (attachItr != mMeshesToAttach.end())
       {
-         mCharacter->GetCal3DWrapper()->AttachMesh( (*attachItr) );
+         bool success = mCharacter->GetCal3DWrapper()->AttachMesh( (*attachItr) );
+         assert(success);
+
          ++attachItr;
       }
 
@@ -271,7 +273,8 @@ void Viewer::PostFrame( const double deltaFrameTime )
       std::vector<int>::iterator detachItr = mMeshesToDetach.begin();
       while (detachItr != mMeshesToDetach.end())
       {
-         mCharacter->GetCal3DWrapper()->DetachMesh( (*detachItr) );
+         bool success = mCharacter->GetCal3DWrapper()->DetachMesh( (*detachItr) );
+         assert(success);
          ++detachItr;
       }
 
