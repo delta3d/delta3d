@@ -85,13 +85,20 @@ namespace dtAnim
       struct AnimationStruct 
       {
          std::string filename; ///<The filename of the cal3D animation
-         std::string name; ///<The user friendly name of this animation
+         std::string name;     ///<The user friendly name of this animation
+      };
+
+      ///structure to contain all info related to a mesh
+      struct MeshStruct
+      {
+         std::string filename; ///<The filename of the Cal3D mesh
+         std::string name;     ///<The user friendly name of this mesh
       };
 
       std::string mName;                            ///<The name of this animated entity
-      std::vector<AnimationStruct> mAnimations;     ///<Container of animation filenames/names
+      std::vector<AnimationStruct> mAnimations;     ///<Container of animation structs
       std::vector<std::string> mMaterialFilenames;  ///<Container of material filenames
-      std::vector<std::string> mMeshFilenames;      ///<Container of mesh filenames
+      std::vector<MeshStruct> mMeshes;              ///<Container of mesh structs
       std::string mSkeletonFilename;                ///<The one skeleton filename
    };
 }

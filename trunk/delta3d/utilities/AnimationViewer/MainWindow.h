@@ -31,7 +31,7 @@ public slots:
    void OnNewAnimation(unsigned int id, const QString &filename, unsigned int trackCount,
                        unsigned int keyframes, float duration);
    
-   void OnNewMesh(int meshID);
+   void OnNewMesh(int meshID, const QString &meshName);
 
    void OnAnimationClicked( QTableWidgetItem *item);
    void OnMeshActivated( QListWidgetItem *item );

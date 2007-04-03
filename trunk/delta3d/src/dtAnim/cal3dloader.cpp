@@ -69,17 +69,17 @@ CalCoreModel* Cal3DLoader::GetCoreModel( const std::string &filename, const std:
          }
 
          //load meshes
-         std::vector<std::string>::iterator meshItr = handler.mMeshFilenames.begin();
-         while (meshItr != handler.mMeshFilenames.end())
+         std::vector<CharacterFileHandler::MeshStruct>::iterator meshItr = handler.mMeshes.begin();
+         while (meshItr != handler.mMeshes.end())
          {
-            std::string name = FindFileInPathList(path + (*meshItr));
-            if (!name.empty())
+            std::string filename = FindFileInPathList(path + (*meshItr).filename);
+            if (!filename.empty())
             {
-               coreModel->loadCoreMesh( name );
+               coreModel->loadCoreMesh( filename, (*meshItr).name );
             }
             else
             {
-               LOG_ERROR("Can't find mesh file named:'" + path + (*meshItr) + "'.");
+               LOG_ERROR("Can't find mesh file named:'" + path + (*meshItr).filename + "'.");
             }
             ++meshItr;
          }

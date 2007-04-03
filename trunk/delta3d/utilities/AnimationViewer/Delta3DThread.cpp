@@ -29,7 +29,7 @@ void Delta3DThread::run()
    QObject::connect(viewer.get(), SIGNAL(OnAnimationLoaded(unsigned int,const QString &,unsigned int,unsigned int,float)),
                     mWin, SLOT(OnNewAnimation(unsigned int,const QString &,unsigned int,unsigned int,float)));
 
-   QObject::connect(viewer.get(), SIGNAL(OnMeshLoaded(int)), mWin, SLOT(OnNewMesh(int)));
+   QObject::connect(viewer.get(), SIGNAL(OnMeshLoaded(int,const QString&)), mWin, SLOT(OnNewMesh(int,const QString&)));
 
    connect(mWin, SIGNAL(AttachMesh(int)), viewer.get(), SLOT(OnAttachMesh(int)));
    connect(mWin, SIGNAL(DetachMesh(int)), viewer.get(), SLOT(OnDetachMesh(int)));
