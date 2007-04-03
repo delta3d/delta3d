@@ -7,6 +7,8 @@ class QAction;
 class QTableWidgetItem;
 class QToolBar;
 class AnimationTableWidget;
+class QListWidget;
+class QListWidgetItem;
 
 class MainWindow : public QMainWindow
 {
@@ -21,13 +23,18 @@ signals:
    void StartAnimation(unsigned int, float, float);
    void StopAnimation(unsigned int, float);
    void StartAction(unsigned int, float, float);
-   void LOD_Changed(float zeroToOneValue);  
+   void LOD_Changed(float zeroToOneValue);
+   void AttachMesh(int meshID);
+   void DetachMesh(int meshID);
 
 public slots:
    void OnNewAnimation(unsigned int id, const QString &filename, unsigned int trackCount,
                        unsigned int keyframes, float duration);
+   
+   void OnNewMesh(int meshID);
 
    void OnAnimationClicked( QTableWidgetItem *item);
+   void OnMeshActivated( QListWidgetItem *item );
    void OnLOD_Changed(double newValue);
    void OnToggleShadingToolbar();
    void OnToggleTempToolbar();
@@ -59,6 +66,7 @@ private:
    QToolBar *mTempToolbar;
 
    AnimationTableWidget *mAnimListWidget;
+   QListWidget          *mMeshListWidget;
 
 private slots:
    void OnOpenCharFile();

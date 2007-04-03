@@ -6,7 +6,6 @@
 #include <dtAnim/submesh.h>
 #include <dtAnim/chardrawable.h>
 #include <dtAnim/cal3dmodelwrapper.h>
-#include <dtAnim/cal3dloader.h>
 #include <dtCore/system.h>
 #include <dtUtil/log.h>
 #include <cassert>
@@ -18,6 +17,7 @@ using namespace dtAnim;
 CharDrawable::CharDrawable()
    : mGeode(new osg::Geode)
    , mCal3DWrapper(NULL)
+   , mLastMeshCount(0)
 {  
 
 }
@@ -33,10 +33,18 @@ void CharDrawable::OnMessage(Base::MessageData *data)
    assert(mCal3DWrapper.get());
 
    // tick the animation
-   if( data->message == "preframe" )
+   if( data->message == "postframe" )
    {
       double dt = *static_cast<double*>(data->userData);      
       mCal3DWrapper->Update(dt);
+
+      if (mLastMeshCount != mCal3DWrapper->GetMeshCount())
+      {
+         //there are a different number of meshes, better rebuild our drawables
+         RebuildSubmeshes();
+         mLastMeshCount = mCal3DWrapper->GetMeshCount();
+      }
+
    }
 }
 
@@ -44,26 +52,10 @@ void CharDrawable::OnMessage(Base::MessageData *data)
 void CharDrawable::Create(const std::string &filename) 
 {
    // Create a new Cal3DWrapper
-   Cal3DLoader loader;
-   mCal3DWrapper = loader.Load(filename);  
+   mCal3DWrapper = mLoader.Load(filename);  
 
-   if(mCal3DWrapper->BeginRenderingQuery()) 
-   {
-      int meshCount = mCal3DWrapper->GetMeshCount();
-
-      for(int meshId = 0; meshId < meshCount; meshId++) 
-      {
-         int submeshCount = mCal3DWrapper->GetSubmeshCount(meshId);
-      
-         for(int submeshId = 0; submeshId < submeshCount; submeshId++) 
-         {
-            SubMeshDrawable *submesh = new SubMeshDrawable(mCal3DWrapper.get(), meshId, submeshId);
-            mGeode->addDrawable(submesh);
-         }
-      }
-      mCal3DWrapper->EndRenderingQuery();
-   }
-
+   RebuildSubmeshes();
+   mLastMeshCount = mCal3DWrapper->GetMeshCount();
 
    /// Force generation of first mesh
    mCal3DWrapper->Update(0);
@@ -121,4 +113,33 @@ void CharDrawable::StopLoop(unsigned id, float delay)
    }
 
    mCal3DWrapper->ClearCycle(id, delay);
+}
+
+/** Will delete all existing drawables added to the geode, then add in a whole
+  * new set.
+  */
+void CharDrawable::RebuildSubmeshes()
+{
+   while (mGeode->getNumDrawables() > 0)
+   {
+      mGeode->removeDrawable( mGeode->getDrawable(0) );
+   }
+
+   if(mCal3DWrapper->BeginRenderingQuery()) 
+   {
+      int meshCount = mCal3DWrapper->GetMeshCount();
+
+      for(int meshId = 0; meshId < meshCount; meshId++) 
+      {
+         int submeshCount = mCal3DWrapper->GetSubmeshCount(meshId);
+
+         for(int submeshId = 0; submeshId < submeshCount; submeshId++) 
+         {
+            SubMeshDrawable *submesh = new SubMeshDrawable(mCal3DWrapper.get(), meshId, submeshId);
+            mGeode->addDrawable(submesh);
+         }
+      }
+      mCal3DWrapper->EndRenderingQuery();
+   }
+
 }
