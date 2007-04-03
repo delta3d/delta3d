@@ -1247,7 +1247,7 @@ namespace dtHLAGM
 
          for (vectorIterator = currentAttributeToPropertyListVector.begin();
                vectorIterator != currentAttributeToPropertyListVector.end();
-               vectorIterator++)
+               ++vectorIterator)
          {
             if (vectorIterator->IsInvalid()) continue;
 
