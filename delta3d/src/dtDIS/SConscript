@@ -1,0 +1,14 @@
+Import('*')
+
+srcs = env.SGlob( '*.cpp' )
+
+deps = [ 'DIS', 'NL', 'xerces-c', 'osg', 'osgDB',
+         'dtCore', 'dtGame', 'dtDAL', 'dtUtil' ]
+
+defines = []
+if env['OS'] == 'windows':
+   defines = ['DT_DIS_LIBRARY']
+   deps.append('wsock32')
+
+    
+env.BuildLib( 'dtDIS', srcs, deps, defines )
