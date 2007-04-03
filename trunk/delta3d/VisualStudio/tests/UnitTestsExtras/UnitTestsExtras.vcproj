@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtHLAGMd.lib cppunitd.lib osgd.lib librti13d.lib dtDISd.lib"
+				AdditionalDependencies="dtHLAGMd.lib cppunitd.lib osgd.lib librti13d.lib dtCored.lib dtGamed.lib dtDISd.lib default_dis_plugind.lib DIS_debug.lib"
 				OutputFile="../../../tests/UnitTestsExtrasd.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib"
@@ -82,10 +82,10 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtHLAGM.lib cppunit.lib osg.lib librti13.lib dtDIS.lib"
+				AdditionalDependencies="dtHLAGM.lib cppunit.lib osg.lib librti13.lib DIS.lib dtDIS.lib default_dis_plugin.lib"
 				OutputFile="../../../tests/UnitTestsExtras.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="../../../lib;../../../ext/lib;"
+				AdditionalLibraryDirectories="../../../lib;../../../ext/lib"
 				GenerateDebugInformation="FALSE"
 				SubSystem="1"
 				OptimizeReferences="2"
