@@ -1,0 +1,12 @@
+Import('*')
+
+srcs = env.SGlob( '*.cpp' )
+
+deps = [ 'DIS', 'osg',
+         'dtDIS', 'dtCore', 'dtGame', 'dtDAL', 'dtUtil' ]
+
+defines = []
+if env['OS'] == 'windows':
+   defines = ['DT_DIS_DEFAULT_PLUGIN']
+
+env.BuildLib( 'default_dis_plugin', srcs, deps, defines )

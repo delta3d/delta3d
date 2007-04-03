@@ -241,6 +241,7 @@ def TOOL_BUNDLE(env):
                       'dtChar'      : 'dtChar',
                       'dtCore'      : 'dtCore',
                       'dtDAL'       : 'dtDAL',
+                      'dtDIS'       : 'dtDIS',
                       'dtHLA'       : 'dtHLA',
                       'dtHLAGM'     : 'dtHLAGM',
                       'dtGUI'       : 'dtGUI',
@@ -474,6 +475,7 @@ def TOOL_BUNDLE(env):
                  'dtInputPLIB'          : 'dtInputPLIB',
                  'dtInputISense'        : 'dtInputISense',
                  'dtDAL'                : 'dtDAL',
+                 'dtDIS'                : 'dtDIS',
                  'dtHLA'                : 'dtHLA',
                  'dtHLAGM'              : 'dtHLAGM',
                  'dtGUI'                : 'dtGUI',
@@ -508,6 +510,7 @@ def TOOL_BUNDLE(env):
                'OpenThreads'         : 'OpenThreadsWin32d',
                'python'              : python_version,
                'cal3d'               : 'cal3d_d',
+               'DIS'                 : 'DIS_debug',
                'fltk'                : 'fltkd',
                'gdal'                : 'gdal_i',
                'gne'                 : 'gned',
@@ -553,6 +556,7 @@ def TOOL_BUNDLE(env):
                'OpenThreads'         : 'OpenThreadsWin32',
                'python'              :  python_version,
                'cal3d'               : 'cal3d',
+               'DIS'                 : 'DIS',
                'fltk'                : 'fltk',
                'gdal'                : 'gdal_i',
                'gne'                 : 'gne',
@@ -598,6 +602,7 @@ def TOOL_BUNDLE(env):
             'python'              :  python_version,
             'OpenThreads'         : 'OpenThreads',
             'cal3d'               : 'cal3d',
+            'DIS'                 : 'DIS',
             'fltk'                : 'fltk',
             'gdal'                : 'gdal',
             'gne'                 : 'gne',
@@ -639,6 +644,7 @@ def TOOL_BUNDLE(env):
             'python'         : 'Python',
             'OpenThreads'    : 'OpenThreads',
             'cal3d'          : 'cal3d',
+            'DIS'            : 'DIS',
             'fltk'           : 'fltk',
             'gdal'           : 'gdal',
             'gne'            : 'gne',
@@ -737,6 +743,7 @@ def TOOL_BUNDLE(env):
             'osgParticle'], 'osg', True)
                   
          CheckLinkGroup(['cal3d','rvrutils','rcfgscript','rbody'], 'rbody', True)
+         CheckLinkGroup(['DIS'], 'DIS', True)
          CheckLinkGroup([ 'CEGUIBase', 'CEGUIOpenGLRenderer' ], 'CEGUI', False, False)
          
          foundGdalH = conf.CheckCXXHeader('gdal.h')
