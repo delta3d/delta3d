@@ -42,7 +42,7 @@ void ConnectionTests::TestConnection()
    unsigned int mtu(1500);
 
    dtDIS::Connection discon;
-   discon.Connect( inport , host );
+   discon.Connect( inport , host.c_str() );
 
    // make a buffer to write to the socket
    int ia(1), ib(2);

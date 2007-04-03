@@ -1,4 +1,4 @@
-#include <UnitTest_Plugin_EntityStatePdu/SampleGameActorProxy.h>
+#include <dtDIS/plugins/default/samplegameactorproxy.h>
 
 using namespace dtTest;
 

@@ -4,9 +4,9 @@
 
 #include <DIS/EntityStatePdu.h>                                      // for usage
 
-#include <UnitTest_Plugin_EntityStatePdu/InitializePdu.h>            // for usage
-#include <UnitTest_Plugin_EntityStatePdu/InitializeUpdateMessage.h>  // for usage
-#include <UnitTest_Plugin_EntityStatePdu/SampleGameActorProxy.h>     // for usage
+#include <dtDIS/plugins/default/initializepdu.h>            // for usage
+#include <dtDIS/plugins/default/initializeupdatemessage.h>  // for usage
+#include <dtDIS/plugins/default/samplegameactorproxy.h>     // for usage
 
 #include <dtGame/gamemanager.h>
 #include <dtCore/scene.h>
