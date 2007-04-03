@@ -40,7 +40,7 @@
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/Plugin_EntityStatePdu.pdb"
 				SubSystem="2"
-				ImportLibrary="../../../../../lib/plugins/$(ProjectName)d.lib"
+				ImportLibrary="../../../../../lib/$(ProjectName)d.lib"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -91,7 +91,7 @@
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				ImportLibrary="../../../../../lib/plugins/$(ProjectName).lib"
+				ImportLibrary="../../../../../lib/$(ProjectName).lib"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
