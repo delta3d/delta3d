@@ -10,14 +10,15 @@
 
 namespace dtDIS
 {
-   /// \todo does this duplicate the dtUtil::LibraryManager code.
    ///\brief manages a container of available plugins.
-   /// instantiates a GMComponent from the plugin.
    /// notifies observers when plugins are added or removed to the container.
    class DT_DIS_EXPORT PluginManager
    {
    public:
+      /// convenience typedef.
       typedef dtDIS::details::CreateDestroyPolicy<IDISPlugin> LibLoaderT;
+
+      /// the stored type, also passed to observers upon notification.
       typedef LibLoaderT::LibraryInterface RegistryEntry;
 
       /// specifies the required function signature for slots observing plugin events.
