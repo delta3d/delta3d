@@ -13,15 +13,20 @@
 #include <QDockWidget>
 #include <QMessageBox>
 #include <QDoubleSpinBox>
+#include <QTabWidget>
+#include <QListWidget>
 
 #include <cassert>
 
 MainWindow::MainWindow():
 mExitAct(NULL),
 mLoadCharAct(NULL),
-mAnimListWidget(NULL)
+mAnimListWidget(NULL),
+mMeshListWidget(NULL)
 {
    resize(640, 300);
+
+   
 
    mAnimListWidget = new AnimationTableWidget(this);
    mAnimListWidget->setColumnCount(5);
@@ -35,8 +40,15 @@ mAnimListWidget(NULL)
    headers << "Name" << "Weight (L)" << "Delay (L)" << "Delay In (A)" << "Delay Out (A)";
    mAnimListWidget->setHorizontalHeaderLabels(headers );  
 
-   setCentralWidget(mAnimListWidget);
+   mMeshListWidget = new QListWidget(this);
 
+   connect(mMeshListWidget, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(OnMeshActivated(QListWidgetItem*)));
+
+   QTabWidget *tab = new QTabWidget(this);
+   tab->addTab(mAnimListWidget, tr("Animations"));
+   tab->addTab(mMeshListWidget, tr("Meshes"));
+
+   setCentralWidget(tab);
 
    CreateActions();
    CreateMenus();
@@ -166,6 +178,8 @@ void MainWindow::LoadCharFile( const QString &filename )
    if (dtUtil::FileUtils::GetInstance().FileExists( filename.toStdString() ))
    {
       mAnimListWidget->clear();
+      mMeshListWidget->clear();
+
       while (mAnimListWidget->rowCount()>0)
       {
          mAnimListWidget->removeRow(0);
@@ -230,6 +244,22 @@ void MainWindow::OnNewAnimation(unsigned int id, const QString &filename,
 
 }
 
+void MainWindow::OnNewMesh(int meshID)
+{
+   QListWidgetItem *meshItem = new QListWidgetItem();
+   meshItem->setText(QString::number(meshID));
+   meshItem->setData( Qt::UserRole, meshID );
+
+   meshItem->setFlags(Qt::ItemIsSelectable |
+                      Qt::ItemIsUserCheckable |
+                      Qt::ItemIsEnabled);
+
+   meshItem->setCheckState(Qt::Checked);
+
+   mMeshListWidget->addItem(meshItem);
+}
+
+
 void MainWindow::OnAnimationClicked( QTableWidgetItem *item )
 {
    if (item->column() != 0) return;
@@ -248,6 +278,23 @@ void MainWindow::OnAnimationClicked( QTableWidgetItem *item )
       OnStopAnimation(item->row());
    }
 }
+
+void MainWindow::OnMeshActivated( QListWidgetItem *item )
+{
+   int meshID = item->data(Qt::UserRole).toInt();
+
+   if (item->checkState() == Qt::Checked)
+   {
+      //attach the mesh to the CalModel
+      emit AttachMesh(meshID);
+   }
+   else
+   {
+      //detach the mesh from the CalModel
+      emit DetachMesh(meshID);
+   }
+}
+
 
 void MainWindow::OnLOD_Changed(double newValue)
 {   
@@ -416,3 +463,5 @@ void MainWindow::OnDisplayError( const QString &msg )
 {
    QMessageBox::warning(this, "AnimationViewer", msg );
 }
+
+

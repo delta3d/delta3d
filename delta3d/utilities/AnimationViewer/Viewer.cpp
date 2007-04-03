@@ -136,6 +136,8 @@ void Viewer::OnLoadCharFile( const QString &filename )
    }
 
    RefPtr<Cal3DModelWrapper> wrapper = mCharacter->GetCal3DWrapper();
+
+   //get all the data for animations and tell the world
    for (int animID=0; animID<wrapper->GetCoreAnimationCount(); animID++)
    {
       std::string name = wrapper->GetCoreAnimationName(animID);
@@ -144,7 +146,13 @@ void Viewer::OnLoadCharFile( const QString &filename )
       unsigned int keyframes = wrapper->GetCoreAnimationKeyframeCount(animID);
       float dur = wrapper->GetCoreAnimationDuration(animID);
       emit OnAnimationLoaded(animID, nameToSend, trackCount, keyframes, dur );
-   }        
+   }
+
+   //get all data for the meshes and emit
+   for (int meshID=0; meshID<wrapper->GetCoreMeshCount(); meshID++)
+   {
+      emit OnMeshLoaded(meshID);
+   }
 }
 
 void Viewer::OnStartAnimation( unsigned int id, float weight, float delay )
@@ -233,4 +241,40 @@ void Viewer::InitWireDecorator()
    stateset->setTextureMode(0, GL_TEXTURE_2D, osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF );
 
    mWireDecorator->setStateSet(stateset);
+}
+
+void Viewer::OnAttachMesh( int meshID )
+{
+   mMeshesToAttach.push_back(meshID);
+}
+
+void Viewer::OnDetachMesh( int meshID )
+{
+   mMeshesToDetach.push_back(meshID);
+}
+
+void Viewer::PostFrame( const double deltaFrameTime )
+{
+   {
+      std::vector<int>::iterator attachItr = mMeshesToAttach.begin();
+      while (attachItr != mMeshesToAttach.end())
+      {
+         mCharacter->GetCal3DWrapper()->AttachMesh( (*attachItr) );
+         ++attachItr;
+      }
+
+      mMeshesToAttach.clear();
+   }
+   
+   {
+      std::vector<int>::iterator detachItr = mMeshesToDetach.begin();
+      while (detachItr != mMeshesToDetach.end())
+      {
+         mCharacter->GetCal3DWrapper()->DetachMesh( (*detachItr) );
+         ++detachItr;
+      }
+
+      mMeshesToDetach.clear();
+   }
+
 }

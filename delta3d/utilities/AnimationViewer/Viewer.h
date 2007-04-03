@@ -5,6 +5,7 @@
 #include <QObject>
 #include <dtCore/system.h>
 #include <QtCore/QBasicTimer>
+#include <vector>
 
 namespace dtCore
 {
@@ -42,10 +43,18 @@ public slots:
    void OnSetShaded();
    void OnSetWireframe();
    void OnSetShadedWireframe();
+   
+   ///attach a mesh to the CalModel
+   void OnAttachMesh( int meshID );
+
+   ///detach a mesh from the CalModel
+   void OnDetachMesh( int meshID );
 
 signals:
    void OnAnimationLoaded( unsigned int, const QString &, unsigned int trackCount,
                            unsigned int keyframes, float duration);
+
+   void OnMeshLoaded(int meshID);
 
    void ErrorOccured( const QString &msg );
 
@@ -54,6 +63,8 @@ protected:
    {
       dtCore::System::GetInstance().StepWindow();
    }
+
+   virtual void PostFrame( const double deltaFrameTime );
 
    void InitShadeDecorator();
    void InitWireDecorator();
@@ -64,6 +75,9 @@ private:
    dtCore::RefPtr<dtCore::OrbitMotionModel> mMotion;
    dtCore::RefPtr<osg::Group> mWireDecorator;
    dtCore::RefPtr<osg::Group> mShadeDecorator;
+
+   std::vector<int> mMeshesToAttach;
+   std::vector<int> mMeshesToDetach;
 };
 
 #endif // Viewer_h__
