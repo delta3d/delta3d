@@ -1,4 +1,4 @@
-#include <UnitTest_Plugin_EntityStatePdu/InitializePdu.h>
+#include <dtDIS/plugins/default/initializepdu.h>
 
 #include <DIS/EntityStatePdu.h>
 

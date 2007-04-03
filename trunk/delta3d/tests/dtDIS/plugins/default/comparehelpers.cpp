@@ -1,4 +1,4 @@
-#include <UnitTest_Plugin_EntityStatePdu/CompareHelpers.h>
+#include <dtDIS/plugins/default/comparehelpers.h>
 
 #include <dtGame/actorupdatemessage.h>
 #include <cppunit/extensions/HelperMacros.h>

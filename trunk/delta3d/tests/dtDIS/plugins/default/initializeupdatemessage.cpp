@@ -1,4 +1,4 @@
-#include <UnitTest_Plugin_EntityStatePdu/InitializeUpdateMessage.h>
+#include <dtDIS/plugins/default/initializeupdatemessage.h>
 
 #include <dtGame/messageparameter.h>
 #include <dtDIS/propertyname.h>
