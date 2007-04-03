@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtHLAGMd.lib cppunitd.lib osgd.lib librti13d.lib"
+				AdditionalDependencies="dtHLAGMd.lib cppunitd.lib osgd.lib librti13d.lib dtDISd.lib"
 				OutputFile="../../../tests/UnitTestsExtrasd.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib"
@@ -82,7 +82,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtHLAGM.lib cppunit.lib osg.lib librti13.lib"
+				AdditionalDependencies="dtHLAGM.lib cppunit.lib osg.lib librti13.lib dtDIS.lib"
 				OutputFile="../../../tests/UnitTestsExtras.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib;"
@@ -120,6 +120,12 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
+			<File
+				RelativePath="..\..\..\tests\dtHLAGM\ddmregiondatatests.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\tests\dtHLAGM\ddmutiltests.cpp">
+			</File>
 			<File
 				RelativePath="..\..\..\tests\mainTestRunner.cpp">
 			</File>
