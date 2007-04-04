@@ -74,43 +74,52 @@ void SubMeshDrawable::setUpMaterial()
    // select mesh and submesh for further data access
    if(mWrapper->SelectMeshSubmesh(mMeshID, mSubmeshID)) 
    {
-	  //osg::Material *material = new osg::Material();
+	  osg::Material *material = new osg::Material();
 	  //material->setColorMode(osg::Material::AMBIENT_AND_DIFFUSE);
-	  //set->setAttributeAndModes(material, osg::StateAttribute::ON);
-	  //unsigned char meshColor[4];
-	  //osg::Vec4 materialColor;
+	  set->setAttributeAndModes(material, osg::StateAttribute::ON);
+	  unsigned char meshColor[4];
+	  osg::Vec4 materialColor;
 
-	  //// set the material ambient color
-	  //pCalRenderer->getAmbientColor(&meshColor[0]);
-	  //materialColor[0] = meshColor[0] / 255.0f;  materialColor[1] = meshColor[1] / 255.0f; materialColor[2] = meshColor[2] / 255.0f; materialColor[3] = meshColor[3] / 255.0f;
+	  // set the material ambient color
+	  mWrapper->GetAmbientColor(&meshColor[0]);
+	  materialColor[0] = meshColor[0] / 255.0f;
+     materialColor[1] = meshColor[1] / 255.0f;
+     materialColor[2] = meshColor[2] / 255.0f;
+     materialColor[3] = meshColor[3] / 255.0f;
 	  //if (materialColor[3] == 0) materialColor[3]=1.0f;
-	  //material->setAmbient(osg::Material::FRONT, materialColor);
+	  material->setAmbient(osg::Material::FRONT_AND_BACK, materialColor);
 
-	  //// set the material diffuse color
-	  //pCalRenderer->getDiffuseColor(&meshColor[0]);
-	  //materialColor[0] = meshColor[0] / 255.0f;  materialColor[1] = meshColor[1] / 255.0f; materialColor[2] = meshColor[2] / 255.0f; materialColor[3] = meshColor[3] / 255.0f;
+	  // set the material diffuse color
+	  mWrapper->GetDiffuseColor( &meshColor[0] );
+	  materialColor[0] = meshColor[0] / 255.0f;
+     materialColor[1] = meshColor[1] / 255.0f;
+     materialColor[2] = meshColor[2] / 255.0f;
+     materialColor[3] = meshColor[3] / 255.0f;
 	  //if (materialColor[3] == 0) materialColor[3]=1.0f;
-	  //material->setDiffuse(osg::Material::FRONT, materialColor);
+	  material->setDiffuse(osg::Material::FRONT_AND_BACK, materialColor);
 
-	  //// set the material specular color
-	  //pCalRenderer->getSpecularColor(&meshColor[0]);
-	  //materialColor[0] = meshColor[0] / 255.0f;  materialColor[1] = meshColor[1] / 255.0f; materialColor[2] = meshColor[2] / 255.0f; materialColor[3] = meshColor[3] / 255.0f;
+	  // set the material specular color
+	  mWrapper->GetSpecularColor(&meshColor[0]);
+	  materialColor[0] = meshColor[0] / 255.0f;
+     materialColor[1] = meshColor[1] / 255.0f;
+     materialColor[2] = meshColor[2] / 255.0f;
+     materialColor[3] = meshColor[3] / 255.0f;
 	  //if (materialColor[3] == 0) materialColor[3]=1.0f;
-	  //material->setSpecular(osg::Material::FRONT, materialColor);
+	  material->setSpecular(osg::Material::FRONT_AND_BACK, materialColor);
 
-	  //// set the material shininess factor
-	  //float shininess;
-	  //shininess = pCalRenderer->getShininess();
-	  //material->setShininess(osg::Material::FRONT, shininess);
+	  // set the material shininess factor
+	  float shininess;
+	  shininess = mWrapper->GetShininess();
+	  material->setShininess(osg::Material::FRONT_AND_BACK, shininess);
 
-	  if (mWrapper->GetMapCount() > 0)
-	  {
-		 osg::Texture2D *texture = (osg::Texture2D*)mWrapper->GetMapUserData(0);
-		 if (texture != 0) 
-         {
-			set->setTextureAttributeAndModes(0, texture, osg::StateAttribute::ON);
-		 }
-	  }		
+     if (mWrapper->GetMapCount() > 0)
+     {
+        osg::Texture2D *texture = (osg::Texture2D*)mWrapper->GetMapUserData(0);
+        if (texture != 0) 
+        {
+           set->setTextureAttributeAndModes(0, texture, osg::StateAttribute::ON);
+        }
+     }		
 	}
 }
 
