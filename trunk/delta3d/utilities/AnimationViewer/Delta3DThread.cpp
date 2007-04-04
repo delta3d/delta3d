@@ -26,12 +26,12 @@ void Delta3DThread::run()
 
    connect(mWin, SIGNAL(FileToLoad(const QString&)), viewer.get(), SLOT(OnLoadCharFile(const QString&)) );
 
-   connect(viewer.get(), SIGNAL(OnAnimationLoaded(unsigned int,const QString &,unsigned int,unsigned int,float)),
+   connect(viewer.get(), SIGNAL(AnimationLoaded(unsigned int,const QString &,unsigned int,unsigned int,float)),
                     mWin, SLOT(OnNewAnimation(unsigned int,const QString &,unsigned int,unsigned int,float)));
 
-   connect(viewer.get(), SIGNAL(OnMeshLoaded(int,const QString&)), mWin, SLOT(OnNewMesh(int,const QString&)));
+   connect(viewer.get(), SIGNAL(MeshLoaded(int,const QString&)), mWin, SLOT(OnNewMesh(int,const QString&)));
 
-   connect(viewer.get(), SIGNAL(OnMaterialLoaded(int,const QString&)), mWin, SLOT(OnNewMaterial(int,const QString&)));
+   connect(viewer.get(), SIGNAL(MaterialLoaded(int,const QString&)), mWin, SLOT(OnNewMaterial(int,const QString&)));
 
    connect(mWin, SIGNAL(AttachMesh(int)), viewer.get(), SLOT(OnAttachMesh(int)));
    connect(mWin, SIGNAL(DetachMesh(int)), viewer.get(), SLOT(OnDetachMesh(int)));

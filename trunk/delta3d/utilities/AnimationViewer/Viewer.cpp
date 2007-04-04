@@ -144,21 +144,21 @@ void Viewer::OnLoadCharFile( const QString &filename )
       unsigned int trackCount = wrapper->GetCoreAnimationTrackCount(animID);
       unsigned int keyframes = wrapper->GetCoreAnimationKeyframeCount(animID);
       float dur = wrapper->GetCoreAnimationDuration(animID);
-      emit OnAnimationLoaded(animID, nameToSend, trackCount, keyframes, dur );
+      emit AnimationLoaded(animID, nameToSend, trackCount, keyframes, dur );
    }
 
    //get all data for the meshes and emit
    for (int meshID=0; meshID<wrapper->GetCoreMeshCount(); meshID++)
    {
       QString nameToSend = QString::fromStdString( wrapper->GetCoreMeshName(meshID) );
-      emit OnMeshLoaded(meshID, nameToSend);
+      emit MeshLoaded(meshID, nameToSend);
    }
 
    //get all material data and emit
    for (int matID=0; matID<wrapper->GetCoreMaterialCount(); matID++)
    {
       QString nameToSend = QString::fromStdString(wrapper->GetCoreMaterialName(matID));
-      emit OnMaterialLoaded(matID, nameToSend);
+      emit MaterialLoaded(matID, nameToSend);
    }
 }
 
