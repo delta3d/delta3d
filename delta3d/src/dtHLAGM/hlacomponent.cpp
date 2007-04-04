@@ -367,7 +367,9 @@ namespace dtHLAGM
       try
       {
          const dtUtil::FileInfo info = dtUtil::FileUtils::GetInstance().GetFileInfo(ridFile);
-         const std::string &absPath = info.path + "/" + ridFile;
+         // Should be correct
+         //const std::string &absPath = info.path + "/" + ridFile;
+         const std::string &absPath = info.fileName;
 
          std::ostringstream oss;
          oss << "RTI_RID_FILE=" << absPath; 
