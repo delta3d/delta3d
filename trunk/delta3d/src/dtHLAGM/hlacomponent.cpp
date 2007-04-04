@@ -35,6 +35,7 @@
 #include <dtUtil/matrixutil.h>
 #include <dtUtil/log.h>
 #include <dtUtil/coordinates.h>
+#include <dtUtil/fileutils.h>
 
 #include <dtCore/uniqueid.h>
 #include <dtCore/globals.h>
@@ -49,6 +50,8 @@
 #include <osg/Vec3d>
 #include <osg/Endian>
 #include <osg/io_utils>
+
+#include <cstdlib>
 
 
 #if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
@@ -356,10 +359,25 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void HLAComponent::JoinFederationExecution(std::string executionName,
-                                                  std::string fedFilename,
-                                                  std::string federateName)
+   void HLAComponent::JoinFederationExecution(const std::string &executionName,
+                                              const std::string &fedFilename,
+                                              const std::string &federateName, 
+                                              const std::string &ridFile)
    {
+      try
+      {
+         const dtUtil::FileInfo info = dtUtil::FileUtils::GetInstance().GetFileInfo(ridFile);
+         const std::string &absPath = info.path + "/" + ridFile;
+
+         std::ostringstream oss;
+         oss << "RTI_RID_FILE=" << absPath; 
+         putenv(oss.str().c_str());
+      }
+      catch(const dtUtil::Exception &e)
+      {
+         LOG_ERROR("Failed to set the RID file: " + ridFile + " for the following reason: " + e.ToString());
+      }
+
       SOCKET some_socket = socket(AF_INET, SOCK_DGRAM, 0);
       //
       // Code from http://faq.cprogramming.com/cgi-bin/smartfaq.cgi?answer=1047083789&id=1045780608
