@@ -33,6 +33,8 @@ public slots:
    
    void OnNewMesh(int meshID, const QString &meshName);
 
+   void OnNewMaterial(int matID, const QString &name);
+
    void OnAnimationClicked( QTableWidgetItem *item);
    void OnMeshActivated( QListWidgetItem *item );
    void OnLOD_Changed(double newValue);
@@ -67,6 +69,7 @@ private:
 
    AnimationTableWidget *mAnimListWidget;
    QListWidget          *mMeshListWidget;
+   QListWidget          *mMaterialListWidget;
 
 private slots:
    void OnOpenCharFile();

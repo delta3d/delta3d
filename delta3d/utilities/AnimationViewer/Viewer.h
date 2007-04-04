@@ -56,6 +56,8 @@ signals:
 
    void OnMeshLoaded(int meshID, const QString &meshName);
 
+   void OnMaterialLoaded(int materialID, const QString &name);
+
    void ErrorOccured( const QString &msg );
 
 protected:

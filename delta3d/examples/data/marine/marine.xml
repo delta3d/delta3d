@@ -5,12 +5,12 @@
 	<animation filename="Breath.CAF" name="Idle"/>
 	<animation filename="Run.CAF" name="Run"/>
 	<animation filename="Walk.CAF" name="Walk"/>
-	<mesh filename="HEAD.CMF" name = "Head"/>
+	<mesh filename="HEAD.CMF" name="Head"/>
 	<mesh filename="BODY.CMF" name="Body"/>
 	<mesh filename="Helmet.CMF" name="Helmet"/>
-	<mesh filename="M16m80.CMF" name ="M16"/>
-	<material filename="HEAD.CRF"/>
-	<material filename="BODY.CRF"/>
-	<material filename="Helmet.CRF"/>
-	<material filename="M16m80.CRF"/>
+	<mesh filename="M16m80.CMF" name="M16"/>
+	<material filename="HEAD.CRF" name="Head Material"/>
+	<material filename="BODY.CRF" name="Body Material"/>
+	<material filename="Helmet.CRF" name ="Helmet Material"/>
+	<material filename="M16m80.CRF" name="M16 Material"/>
 </character>
