@@ -95,9 +95,15 @@ namespace dtAnim
          std::string name;     ///<The user friendly name of this mesh
       };
 
+      struct MaterialStruct
+      {
+         std::string filename; ///<The filename of the Cal3D material
+         std::string name;     ///<The user friendly name of this material
+      };
+
       std::string mName;                            ///<The name of this animated entity
       std::vector<AnimationStruct> mAnimations;     ///<Container of animation structs
-      std::vector<std::string> mMaterialFilenames;  ///<Container of material filenames
+      std::vector<MaterialStruct> mMaterials;       ///<Container of material structs
       std::vector<MeshStruct> mMeshes;              ///<Container of mesh structs
       std::string mSkeletonFilename;                ///<The one skeleton filename
    };

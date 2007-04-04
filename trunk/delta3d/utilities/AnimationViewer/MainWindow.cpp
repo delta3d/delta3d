@@ -22,7 +22,8 @@ MainWindow::MainWindow():
 mExitAct(NULL),
 mLoadCharAct(NULL),
 mAnimListWidget(NULL),
-mMeshListWidget(NULL)
+mMeshListWidget(NULL),
+mMaterialListWidget(NULL)
 {
    resize(640, 300);
 
@@ -44,9 +45,13 @@ mMeshListWidget(NULL)
 
    connect(mMeshListWidget, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(OnMeshActivated(QListWidgetItem*)));
 
+
+   mMaterialListWidget = new QListWidget(this);
+
    QTabWidget *tab = new QTabWidget(this);
    tab->addTab(mAnimListWidget, tr("Animations"));
    tab->addTab(mMeshListWidget, tr("Meshes"));
+   tab->addTab(mMaterialListWidget, tr("Materials"));
 
    setCentralWidget(tab);
 
@@ -177,8 +182,9 @@ void MainWindow::LoadCharFile( const QString &filename )
 {
    if (dtUtil::FileUtils::GetInstance().FileExists( filename.toStdString() ))
    {
-      mAnimListWidget->clear();
+      //mAnimListWidget->clear(); //note, this also removes the header items
       mMeshListWidget->clear();
+      mMaterialListWidget->clear();
 
       while (mAnimListWidget->rowCount()>0)
       {
@@ -189,7 +195,7 @@ void MainWindow::LoadCharFile( const QString &filename )
 
       SetCurrentFile( filename );     
 
-      //statusBar()->showMessage(tr("File loaded"), 2000);
+      statusBar()->showMessage(tr("File loaded"), 2000);
    }
    else
    {
@@ -259,6 +265,13 @@ void MainWindow::OnNewMesh(int meshID, const QString &meshName)
    mMeshListWidget->addItem(meshItem);
 }
 
+void MainWindow::OnNewMaterial( int matID, const QString &name )
+{
+   QListWidgetItem *matItem = new QListWidgetItem();
+   matItem->setText( name );
+   matItem->setData( Qt::UserRole, matID );
+   mMaterialListWidget->addItem(matItem);
+}
 
 void MainWindow::OnAnimationClicked( QTableWidgetItem *item )
 {
@@ -463,5 +476,6 @@ void MainWindow::OnDisplayError( const QString &msg )
 {
    QMessageBox::warning(this, "AnimationViewer", msg );
 }
+
 
 

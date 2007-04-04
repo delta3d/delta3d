@@ -24,17 +24,19 @@ void Delta3DThread::run()
    viewer = new Viewer();
    viewer->Config();
 
-   QObject::connect(mWin, SIGNAL(FileToLoad(const QString&)), viewer.get(), SLOT(OnLoadCharFile(const QString&)) );
+   connect(mWin, SIGNAL(FileToLoad(const QString&)), viewer.get(), SLOT(OnLoadCharFile(const QString&)) );
 
-   QObject::connect(viewer.get(), SIGNAL(OnAnimationLoaded(unsigned int,const QString &,unsigned int,unsigned int,float)),
+   connect(viewer.get(), SIGNAL(OnAnimationLoaded(unsigned int,const QString &,unsigned int,unsigned int,float)),
                     mWin, SLOT(OnNewAnimation(unsigned int,const QString &,unsigned int,unsigned int,float)));
 
-   QObject::connect(viewer.get(), SIGNAL(OnMeshLoaded(int,const QString&)), mWin, SLOT(OnNewMesh(int,const QString&)));
+   connect(viewer.get(), SIGNAL(OnMeshLoaded(int,const QString&)), mWin, SLOT(OnNewMesh(int,const QString&)));
+
+   connect(viewer.get(), SIGNAL(OnMaterialLoaded(int,const QString&)), mWin, SLOT(OnNewMaterial(int,const QString&)));
 
    connect(mWin, SIGNAL(AttachMesh(int)), viewer.get(), SLOT(OnAttachMesh(int)));
    connect(mWin, SIGNAL(DetachMesh(int)), viewer.get(), SLOT(OnDetachMesh(int)));
 
-   QObject::connect(viewer.get(), SIGNAL(ErrorOccured(const QString&)), mWin, SLOT(OnDisplayError(const QString&)) );
+   connect(viewer.get(), SIGNAL(ErrorOccured(const QString&)), mWin, SLOT(OnDisplayError(const QString&)) );
 
    connect(mWin, SIGNAL(StartAnimation(unsigned int,float,float)), viewer.get(), SLOT(OnStartAnimation(unsigned int,float,float)));
    connect(mWin, SIGNAL(StopAnimation(unsigned int,float)), viewer.get(), SLOT(OnStopAnimation(unsigned int,float)));

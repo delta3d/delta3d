@@ -85,18 +85,18 @@ CalCoreModel* Cal3DLoader::GetCoreModel( const std::string &filename, const std:
          }
 
          //load materials
-         std::vector<std::string>::iterator matItr = handler.mMaterialFilenames.begin();
-         while (matItr != handler.mMaterialFilenames.end())
+         std::vector<CharacterFileHandler::MaterialStruct>::iterator matItr = handler.mMaterials.begin();
+         while (matItr != handler.mMaterials.end())
          {
-            std::string name = FindFileInPathList(path + (*matItr));
+            std::string filename = FindFileInPathList(path + (*matItr).filename);
 
-            if (!name.empty())  
+            if (!filename.empty())  
             {
-               coreModel->loadCoreMaterial( name );
+               coreModel->loadCoreMaterial( filename, (*matItr).name );
             }
             else
             {
-               LOG_ERROR("Can't find material file named:'" + path + (*matItr) + "'.");
+               LOG_ERROR("Can't find material file named:'" + path + (*matItr).filename + "'.");
             }
             ++matItr;
          }

@@ -117,6 +117,9 @@ namespace dtAnim
          int GetCoreMaterialCount() {return mCalModel->getCoreModel()->getCoreMaterialCount();}
          CalCoreMaterial* GetCoreMaterial(int matID) {return mCalModel->getCoreModel()->getCoreMaterial(matID); }
 
+         ///Get the name associated with the material using the supplied material ID
+         const std::string& GetCoreMaterialName(int matID) {return mCalModel->getCoreModel()->getCoreMaterial(matID)->getName(); }
+
          /************************************************************************/
          int GetFaces(int *faces)          { return mRenderer->getFaces( (CalIndex*)faces ); }
          int GetNormals(float *normals, int stride=0) { return mRenderer->getNormals(normals, stride); }

@@ -123,11 +123,26 @@ void CharacterFileHandler::startElement( const XMLCh* const uri,const XMLCh* con
 
       if (resultIter != results.end())
       {
-         mMaterialFilenames.push_back(resultIter->second);
+         std::string filename = resultIter->second;
+
+         //default the material name to be the same as the filename
+         std::string matName = filename;
+
+         resultIter = results.find("name");
+         if (resultIter != results.end() )
+         {
+            matName = resultIter->second;
+         }
+
+         MaterialStruct mat;
+         mat.filename = filename;
+         mat.name = matName;
+
+         mMaterials.push_back(mat);
       }
       else
       {
-         errorString = std::string("Invalid XML format: <character> missing <name> child");
+         errorString = std::string("Invalid XML format: <material> missing <filename> child");
       }     
    }
 

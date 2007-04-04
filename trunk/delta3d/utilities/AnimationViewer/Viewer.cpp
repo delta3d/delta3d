@@ -140,8 +140,7 @@ void Viewer::OnLoadCharFile( const QString &filename )
    //get all the data for animations and tell the world
    for (int animID=0; animID<wrapper->GetCoreAnimationCount(); animID++)
    {
-      std::string name = wrapper->GetCoreAnimationName(animID);
-      QString nameToSend = QString::fromStdString(name);
+      QString nameToSend = QString::fromStdString(wrapper->GetCoreAnimationName(animID));
       unsigned int trackCount = wrapper->GetCoreAnimationTrackCount(animID);
       unsigned int keyframes = wrapper->GetCoreAnimationKeyframeCount(animID);
       float dur = wrapper->GetCoreAnimationDuration(animID);
@@ -153,6 +152,13 @@ void Viewer::OnLoadCharFile( const QString &filename )
    {
       QString nameToSend = QString::fromStdString( wrapper->GetCoreMeshName(meshID) );
       emit OnMeshLoaded(meshID, nameToSend);
+   }
+
+   //get all material data and emit
+   for (int matID=0; matID<wrapper->GetCoreMaterialCount(); matID++)
+   {
+      QString nameToSend = QString::fromStdString(wrapper->GetCoreMaterialName(matID));
+      emit OnMaterialLoaded(matID, nameToSend);
    }
 }
 
