@@ -73,9 +73,9 @@ void Viewer::Config()
    mMotion->SetTarget( GetCamera() );
    mMotion->SetDistance(5.f);
 
-   //Light *l = GetScene()->GetLight(0);
-   ////l->SetAmbient(0.3f, 0.3f, 0.3f, 1.f);  
-   //l->SetAmbient(1.0f, 1.0f, 1.0f, 1.0f);  
+   Light *l = GetScene()->GetLight(0);
+   l->SetAmbient(0.3f, 0.3f, 0.3f, 1.f);  
+   l->SetDiffuse(1.0f, 1.0f, 1.0f, 1.0f);  
   
    GetScene()->GetSceneNode()->addChild( MakePlane() );   
 
@@ -219,15 +219,15 @@ void Viewer::OnSetShadedWireframe()
 
 void Viewer::InitShadeDecorator()
 {
-   osg::StateSet *stateset = new osg::StateSet;  
-   osg::PolygonMode *polyMode = new osg::PolygonMode;
-   polyMode->setMode(osg::PolygonMode::FRONT, osg::PolygonMode::FILL);
-   
-   osg::Material *material = new osg::Material;
-   stateset->setAttributeAndModes(material, osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);  
-   stateset->setMode(GL_LIGHTING, osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF);
+   //osg::StateSet *stateset = new osg::StateSet;  
+   //osg::PolygonMode *polyMode = new osg::PolygonMode;
+   //polyMode->setMode(osg::PolygonMode::FRONT, osg::PolygonMode::FILL);
+   //
+   //osg::Material *material = new osg::Material;
+   //stateset->setAttributeAndModes(material, osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);  
+   //stateset->setMode(GL_LIGHTING, osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF);
 
-   mShadeDecorator->setStateSet(stateset);
+   //mShadeDecorator->setStateSet(stateset);
 }
 
 void Viewer::InitWireDecorator()
