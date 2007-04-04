@@ -205,14 +205,14 @@ void MainWindow::LoadCharFile( const QString &filename )
 }
 
 
-void MainWindow::OnNewAnimation(unsigned int id, const QString &filename, 
+void MainWindow::OnNewAnimation(unsigned int id, const QString &animationName, 
                                 unsigned int trackCount, unsigned int keyframes,
                                 float duration)
 {
    mAnimListWidget->insertRow( mAnimListWidget->rowCount() );
 
    { //name
-      QTableWidgetItem *item = new QTableWidgetItem( filename );
+      QTableWidgetItem *item = new QTableWidgetItem( animationName );
       item->setCheckState(Qt::Unchecked);
       item->setData(Qt::UserRole, id);
       item->setData(Qt::UserRole+1, trackCount);

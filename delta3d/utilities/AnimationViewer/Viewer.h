@@ -51,12 +51,12 @@ public slots:
    void OnDetachMesh( int meshID );
 
 signals:
-   void OnAnimationLoaded( unsigned int, const QString &, unsigned int trackCount,
+   void AnimationLoaded( unsigned int, const QString &, unsigned int trackCount,
                            unsigned int keyframes, float duration);
 
-   void OnMeshLoaded(int meshID, const QString &meshName);
+   void MeshLoaded(int meshID, const QString &meshName);
 
-   void OnMaterialLoaded(int materialID, const QString &name);
+   void MaterialLoaded(int materialID, const QString &name);
 
    void ErrorOccured( const QString &msg );
 

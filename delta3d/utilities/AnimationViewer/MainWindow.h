@@ -28,7 +28,7 @@ signals:
    void DetachMesh(int meshID);
 
 public slots:
-   void OnNewAnimation(unsigned int id, const QString &filename, unsigned int trackCount,
+   void OnNewAnimation(unsigned int id, const QString &animationName, unsigned int trackCount,
                        unsigned int keyframes, float duration);
    
    void OnNewMesh(int meshID, const QString &meshName);
