@@ -96,9 +96,11 @@ namespace dtHLAGM
           * @param fedFilename the fed filename
           * @param federateName the name of this federate
           */
-         void JoinFederationExecution(std::string executionName = "dtCore",
-                                      std::string fedFilename = "jntc.fed",
-                                      std::string federateName = "Participant");
+         void JoinFederationExecution(const std::string &executionName = "dtCore",
+                                      const std::string &fedFilename = "jntc.fed",
+                                      const std::string &federateName = "Participant",
+                                      const std::string &ridFile = "RTI.rid"
+                                      );
 
          /**
           * Leaves/destroys the joined execution.
