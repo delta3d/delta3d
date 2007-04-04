@@ -375,7 +375,8 @@ namespace dtHLAGM
       }
       catch(const dtUtil::Exception &e)
       {
-         LOG_ERROR("Failed to set the RID file: " + ridFile + " for the following reason: " + e.ToString());
+         LOG_ERROR("Failed to set the RID file: " + ridFile + " for the following reason: " + e.ToString() +
+            " . Defaulting to RTI.rid");
       }
 
       SOCKET some_socket = socket(AF_INET, SOCK_DGRAM, 0);
