@@ -94,6 +94,7 @@ void CharDrawable::RebuildSubmeshes(Cal3DModelWrapper* wrapper, osg::Geode* geod
 
 void CharDrawable::SetCal3DWrapper(Cal3DModelWrapper* wrapper)
 {
+   mAnimator->SetWrapper(wrapper);
    RebuildSubmeshes(wrapper, mGeode.get());
    mLastMeshCount = wrapper->GetMeshCount();
 }

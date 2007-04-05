@@ -23,7 +23,7 @@ SubMeshDrawable::SubMeshDrawable()
 
 SubMeshDrawable::SubMeshDrawable(Cal3DModelWrapper *wrapper, unsigned mesh, unsigned submesh) 
 {
-    this->mWrapper   = wrapper;
+   this->mWrapper   = wrapper;
 	this->mMeshID    = mesh;
 	this->mSubmeshID = submesh;
 
@@ -206,7 +206,7 @@ void SubMeshDrawable::accept(osg::PrimitiveFunctor& functor) const
 
 osg::Object* SubMeshDrawable::clone(const osg::CopyOp&) const 
 {
-	return new SubMeshDrawable(mWrapper, mMeshID, mSubmeshID);
+	return new SubMeshDrawable(mWrapper.get(), mMeshID, mSubmeshID);
 }
 
 osg::BoundingBox SubMeshDrawable::computeBound() const 

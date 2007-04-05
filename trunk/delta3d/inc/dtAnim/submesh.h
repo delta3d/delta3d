@@ -42,6 +42,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <osg/Geometry>
 #include <cal3d/cal3d.h>
 #include "dtAnim/export.h"
+#include <dtCore/refptr.h>
 
 namespace dtAnim {
 
@@ -100,7 +101,7 @@ private:
     float       *mMeshNormals;
     float       *mMeshTextureCoordinates;
     int         *mMeshFaces;
-    Cal3DModelWrapper *mWrapper;
+    dtCore::RefPtr<Cal3DModelWrapper> mWrapper;
     mutable unsigned int vertexCount;
     mutable unsigned int faceCount;
 
