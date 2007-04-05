@@ -62,8 +62,11 @@ namespace dtAnim
 
       void OnMessage(dtCore::Base::MessageData *data);
 
-      dtAnim::Cal3DModelWrapper* GetCal3DWrapper();
+      Cal3DModelWrapper* GetCal3DWrapper();
       osg::Geode* GetGeode() { return mGeode.get(); }
+
+      /// change the data this class is viewing.
+      void SetCal3DWrapper(Cal3DModelWrapper* wrapper);
 
    private:
       CharDrawable();

@@ -27,8 +27,7 @@ CharDrawable::CharDrawable(Cal3DModelWrapper* wrapper)
 
    GetMatrixNode()->addChild(mGeode.get());
 
-   RebuildSubmeshes(wrapper, mGeode.get());
-   mLastMeshCount = wrapper->GetMeshCount();
+   SetCal3DWrapper( wrapper );
 }
 
 CharDrawable::~CharDrawable()
@@ -92,3 +91,10 @@ void CharDrawable::RebuildSubmeshes(Cal3DModelWrapper* wrapper, osg::Geode* geod
    }
 
 }
+
+void CharDrawable::SetCal3DWrapper(Cal3DModelWrapper* wrapper)
+{
+   RebuildSubmeshes(wrapper, mGeode.get());
+   mLastMeshCount = wrapper->GetMeshCount();
+}
+
