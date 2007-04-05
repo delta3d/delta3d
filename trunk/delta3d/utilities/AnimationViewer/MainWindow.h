@@ -9,6 +9,12 @@ class QToolBar;
 class AnimationTableWidget;
 class QListWidget;
 class QListWidgetItem;
+class QGraphicsView;
+class QGraphicsScene;
+class QTabWidget;
+class QGridLayout;
+class TrackView;
+class TrackScene;
 
 class MainWindow : public QMainWindow
 {
@@ -47,6 +53,7 @@ private:
    void CreateMenus();
    void CreateActions();
    void CreateToolbars();
+   void CreateTrackEditor();
    void UpdateRecentFileActions();
    void SetCurrentFile( const QString &filename );
    void LoadCharFile(const QString &filename);
@@ -67,9 +74,14 @@ private:
    QToolBar *mLightingToolbar;
    QToolBar *mTempToolbar;
 
+   QTabWidget  *mTabs;
+
+   QListWidget *mMaterialListWidget;
+
    AnimationTableWidget *mAnimListWidget;
    QListWidget          *mMeshListWidget;
-   QListWidget          *mMaterialListWidget;
+   TrackView            *mTrackViewer;
+   TrackScene           *mTrackScene;
 
 private slots:
    void OnOpenCharFile();

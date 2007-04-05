@@ -21,13 +21,19 @@ SOURCES = Delta3DThread.cpp \
 	    main.cpp \
 	    MainWindow.cpp \
 	    Viewer.cpp \
-	    AnimationTableWidget.cpp
+	    AnimationTableWidget.cpp \
+          TrackView.cpp \
+          TrackScene.cpp \
+          TrackItem.cpp
 	    
 	    
 HEADERS = Delta3DThread.h \
-	       MainWindow.h \
+	    MainWindow.h \
           Viewer.h \
-          AnimationTableWidget.h
+          AnimationTableWidget.h \
+          TrackView.h \
+          TrackScene.h \
+          TrackItem.h
 
 INCLUDEPATH +=  "$$(DELTA_INC)"
 
