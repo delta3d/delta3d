@@ -99,8 +99,9 @@ void Viewer::OnLoadCharFile( const QString &filename )
    dir.cdUp();
 
    SetDataFilePathList( GetDeltaDataPathList() + ";" +
-                        dir.path().toStdString() + ";" );  
-  
+                        dir.path().toStdString() + ";" );
+
+   // try to clean up the scene graph
    if (mCharacter.get())
    {        
       mShadeDecorator->removeChild(mCharacter->GetGeode());
@@ -114,11 +115,15 @@ void Viewer::OnLoadCharFile( const QString &filename )
    {
       // Create a new Cal3DWrapper
       dtCore::RefPtr<Cal3DModelWrapper> wrapper = mLoader.Load(filename.toStdString());  
-      mCharacter = new CharDrawable( wrapper.get() );;
 
-      GetScene()->GetSceneNode()->addChild(mShadeDecorator.get());   
-      mShadeDecorator->addChild(mCharacter->GetGeode());
-      mWireDecorator->addChild(mCharacter->GetGeode());
+      if( mCharacter.valid() )
+      {
+         mCharacter->SetCal3DWrapper( wrapper.get() );
+      }
+      else
+      {
+         mCharacter = new CharDrawable( wrapper.get() );
+      }
    }
    catch (const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException& e)
    {
@@ -135,7 +140,11 @@ void Viewer::OnLoadCharFile( const QString &filename )
       return;
    }
 
-   RefPtr<Cal3DModelWrapper> wrapper = mCharacter->GetCal3DWrapper();
+   // set up the viewer's scene graph
+   GetScene()->GetSceneNode()->addChild(mShadeDecorator.get());   
+   mShadeDecorator->addChild(mCharacter->GetGeode());
+   mWireDecorator->addChild(mCharacter->GetGeode());
+   dtCore::RefPtr<Cal3DModelWrapper> wrapper = mCharacter->GetCal3DWrapper();
 
    //get all the data for animations and tell the world
    for (int animID=0; animID<wrapper->GetCoreAnimationCount(); animID++)
