@@ -6,6 +6,7 @@
 #include <dtCore/system.h>
 #include <QtCore/QBasicTimer>
 #include <vector>
+#include <dtAnim/cal3dloader.h>
 
 namespace dtCore
 {
@@ -80,6 +81,8 @@ private:
 
    std::vector<int> mMeshesToAttach;
    std::vector<int> mMeshesToDetach;
+
+   dtAnim::Cal3DLoader mLoader; ///<Need to keep this around since it holds our textures
 };
 
 #endif // Viewer_h__

@@ -103,22 +103,22 @@ void Viewer::OnLoadCharFile( const QString &filename )
   
    if (mCharacter.get())
    {        
-      mShadeDecorator->removeChild(mCharacter.get()->mGeode.get());
-      mWireDecorator->removeChild(mCharacter.get()->mGeode.get());
+      mShadeDecorator->removeChild(mCharacter->GetGeode());
+      mWireDecorator->removeChild(mCharacter->GetGeode());
       mCharacter = NULL;
    }
 
-   mCharacter = new dtAnim::CharDrawable();
-
-   GetScene()->GetSceneNode()->addChild(mShadeDecorator.get());   
-
-   mShadeDecorator->addChild(mCharacter.get()->mGeode.get());
-   mWireDecorator->addChild(mCharacter.get()->mGeode.get());
 
    //create an instance from the character definition file
    try
    {
-      mCharacter->Create(filename.toStdString());
+      // Create a new Cal3DWrapper
+      dtCore::RefPtr<Cal3DModelWrapper> wrapper = mLoader.Load(filename.toStdString());  
+      mCharacter = new CharDrawable( wrapper.get() );;
+
+      GetScene()->GetSceneNode()->addChild(mShadeDecorator.get());   
+      mShadeDecorator->addChild(mCharacter->GetGeode());
+      mWireDecorator->addChild(mCharacter->GetGeode());
    }
    catch (const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException& e)
    {
@@ -164,19 +164,33 @@ void Viewer::OnLoadCharFile( const QString &filename )
 
 void Viewer::OnStartAnimation( unsigned int id, float weight, float delay )
 {
-   mCharacter->StartLoop(id, weight, delay);
-   LOG_DEBUG("Started:" + dtUtil::ToString(id) + ", weight:" + dtUtil::ToString(weight) + ", delay:" + dtUtil::ToString(delay));
+   if( mCharacter.valid() )
+   {
+      Cal3DModelWrapper* wrapper = mCharacter->GetCal3DWrapper();
+      wrapper->BlendCycle(id, weight, delay);
+
+      LOG_DEBUG("Started:" + dtUtil::ToString(id) + ", weight:" + dtUtil::ToString(weight) + ", delay:" + dtUtil::ToString(delay));
+   }
 }
 
 void Viewer::OnStopAnimation( unsigned int id, float delay )
 {
-   mCharacter->StopLoop(id, delay);
-   LOG_DEBUG("Stopped:" + dtUtil::ToString(id) + ", delay:" + dtUtil::ToString(delay));
+   if( mCharacter.valid() )
+   {
+      Cal3DModelWrapper* wrapper = mCharacter->GetCal3DWrapper();
+      wrapper->ClearCycle(id, delay);
+
+      LOG_DEBUG("Stopped:" + dtUtil::ToString(id) + ", delay:" + dtUtil::ToString(delay));
+   }
 }
 
 void Viewer::OnStartAction( unsigned int id, float delayIn, float delayOut )
 {
-   mCharacter->StartAction( id, delayIn, delayOut );
+   if( mCharacter.valid() )
+   {
+      Cal3DModelWrapper* wrapper = mCharacter->GetCal3DWrapper();
+      wrapper->ExecuteAction(id, delayIn, delayOut);
+   }
 }
 
 void Viewer::OnLOD_Changed( float zeroToOneValue )
@@ -187,7 +201,7 @@ void Viewer::OnLOD_Changed( float zeroToOneValue )
    {
       dtAnim::Cal3DModelWrapper* mcHammer = mCharacter->GetCal3DWrapper();
       assert(mcHammer);
-     
+
       mcHammer->SetLODLevel(zeroToOneValue);
    }  
 }
@@ -288,3 +302,4 @@ void Viewer::PostFrame( const double deltaFrameTime )
    }
 
 }
+
