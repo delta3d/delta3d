@@ -1,5 +1,7 @@
 #include "MainWindow.h"
 #include "AnimationTableWidget.h"
+#include "TrackView.h"
+#include "TrackScene.h"
 #include <dtUtil/fileutils.h>
 #include <QMenuBar>
 #include <QAction>
@@ -15,6 +17,10 @@
 #include <QDoubleSpinBox>
 #include <QTabWidget>
 #include <QListWidget>
+#include <QGraphicsScene>
+#include <QGridLayout>
+
+#include <QGraphicsEllipseItem>
 
 #include <cassert>
 
@@ -25,9 +31,7 @@ mAnimListWidget(NULL),
 mMeshListWidget(NULL),
 mMaterialListWidget(NULL)
 {
-   resize(640, 300);
-
-   
+   resize(640, 300);   
 
    mAnimListWidget = new AnimationTableWidget(this);
    mAnimListWidget->setColumnCount(5);
@@ -39,30 +43,38 @@ mMaterialListWidget(NULL)
 
    QStringList headers;
    headers << "Name" << "Weight (L)" << "Delay (L)" << "Delay In (A)" << "Delay Out (A)";
-   mAnimListWidget->setHorizontalHeaderLabels(headers );  
+   mAnimListWidget->setHorizontalHeaderLabels(headers );    
 
    mMeshListWidget = new QListWidget(this);
-
    connect(mMeshListWidget, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(OnMeshActivated(QListWidgetItem*)));
 
-
-   mMaterialListWidget = new QListWidget(this);
-
-   QTabWidget *tab = new QTabWidget(this);
-   tab->addTab(mAnimListWidget, tr("Animations"));
-   tab->addTab(mMeshListWidget, tr("Meshes"));
-   tab->addTab(mMaterialListWidget, tr("Materials"));
-
-   setCentralWidget(tab);
+   mMaterialListWidget = new QListWidget(this);   
 
    CreateActions();
    CreateMenus();
    (void)statusBar();
    CreateToolbars();
+   CreateTrackEditor(); 
+
+   mTabs = new QTabWidget(this);
+   mTabs->addTab(mAnimListWidget, tr("Animations"));
+   mTabs->addTab(mMeshListWidget, tr("Meshes"));
+   mTabs->addTab(mMaterialListWidget, tr("Materials"));
+   //mTabs->addTab(mTrackViewer, tr("Tracks"));   
+
+   setCentralWidget(mTabs);
 }
 
 MainWindow::~MainWindow()
 {
+}
+
+void MainWindow::CreateTrackEditor()
+{  
+   mTrackScene  = new TrackScene(this);
+   mTrackViewer = new TrackView(mTrackScene, this);     
+   
+   mTrackViewer->setDragMode(QGraphicsView::ScrollHandDrag);
 }
 
 void MainWindow::CreateMenus()

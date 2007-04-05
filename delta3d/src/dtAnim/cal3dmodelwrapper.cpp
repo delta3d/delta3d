@@ -26,9 +26,7 @@ mMixer(NULL)
             AttachMesh(meshId);
          }
       }      
-   }  
-
-   SetMaterialSet(0);
+   }     
 }
 
 Cal3DModelWrapper::~Cal3DModelWrapper()
@@ -39,8 +37,8 @@ Cal3DModelWrapper::~Cal3DModelWrapper()
 bool Cal3DModelWrapper::AttachMesh( int meshID )
 {
    bool success = mCalModel->attachMesh(meshID); 
-   SetMaterialSet(0);
-
+   mCalModel->setMaterialSet(0);
+  
    return success;
 }
 
