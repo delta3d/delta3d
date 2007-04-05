@@ -205,12 +205,23 @@ void Cal3DLoader::LoadAllTextures(CalCoreModel *coreModel, const std::string &pa
 }
 
 /** Use if you want to completely start over with no history of previous 
-  * animated entities that have been created.
+  * animated entities that have been created.  This will allow you to reload
+  * files for a second time.
   * @note: currently this will remove reference to all created osg Textures as well, which
   *        might cause the texture to be deleted.
   */
 void Cal3DLoader::PurgeAllCaches()
 {
    mTextures.clear();
+
+   FilenameCoreModelMap::iterator itr = mFilenameCoreModelMap.begin();
+
+   while (itr != mFilenameCoreModelMap.end())
+   {
+      delete itr->second;
+      itr->second = NULL;
+      ++itr;
+   }
+
    mFilenameCoreModelMap.clear();
 }
