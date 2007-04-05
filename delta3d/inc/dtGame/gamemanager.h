@@ -348,7 +348,11 @@ namespace dtGame
          /**
           * Adds a game actor to the list of actors that the game manager knows about
           * @param actorProxy The actor proxy to add
-          * @param isRemote true if the actor is remote, false if not
+          * @param isRemote true if the actor is remotely controlled, false if not.  If a GameActor
+          *                 is remote, then it is assumed it will be controlled via
+          *                 dtGame::Message sent through the GameManager.  If it's local,
+          *                 the GameActor will be controlling itself and creating and 
+          *                 sending dtGame::Message with its updated data.
           * @param publish true if the actor should be immediately published.
           * @throws ExceptionEnum::ACTOR_IS_REMOTE if the actor is remote and publish is true.
           * @throws ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION if the actor is flagged as a game actor, but is not a GameActorProxy.
