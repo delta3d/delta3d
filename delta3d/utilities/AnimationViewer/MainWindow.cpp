@@ -54,7 +54,7 @@ mMaterialListWidget(NULL)
    CreateMenus();
    (void)statusBar();
    CreateToolbars();
-   CreateTrackEditor(); 
+   //CreateTrackEditor(); 
 
    mTabs = new QTabWidget(this);
    mTabs->addTab(mAnimListWidget, tr("Animations"));
