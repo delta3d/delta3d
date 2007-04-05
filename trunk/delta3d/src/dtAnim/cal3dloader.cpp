@@ -49,7 +49,15 @@ CalCoreModel* Cal3DLoader::GetCoreModel( const std::string &filename, const std:
          coreModel = new CalCoreModel(handler.mName);      
 
          //load skeleton
-         coreModel->loadCoreSkeleton(FindFileInPathList(path + handler.mSkeletonFilename));
+         std::string skelFile = FindFileInPathList(path + handler.mSkeletonFilename);
+         if (!skelFile.empty())
+         {
+            coreModel->loadCoreSkeleton(FindFileInPathList(path + handler.mSkeletonFilename));
+         }
+         else
+         {
+            LOG_ERROR("Can't find the skeleton file named:'" + path + handler.mSkeletonFilename + "'.");
+         }
 
          //load animations
          std::vector<CharacterFileHandler::AnimationStruct>::iterator animItr = handler.mAnimations.begin();
