@@ -19,6 +19,7 @@ Cal3DLoader::Cal3DLoader()
 
 Cal3DLoader::~Cal3DLoader()
 {
+   PurgeAllCaches();
 }
 
 /**
@@ -201,4 +202,15 @@ void Cal3DLoader::LoadAllTextures(CalCoreModel *coreModel, const std::string &pa
       // initialize the material thread
       coreModel->setCoreMaterialId(materialId, 0, materialId);
    }
+}
+
+/** Use if you want to completely start over with no history of previous 
+  * animated entities that have been created.
+  * @note: currently this will remove reference to all created osg Textures as well, which
+  *        might cause the texture to be deleted.
+  */
+void Cal3DLoader::PurgeAllCaches()
+{
+   mTextures.clear();
+   mFilenameCoreModelMap.clear();
 }
