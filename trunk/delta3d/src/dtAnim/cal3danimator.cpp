@@ -112,4 +112,20 @@ void Cal3DAnimator::SetPostDriver(ICal3DDriver* pDriver)
    mPostDriver = pDriver;
 }
 
+/** Will pass the wrapper unto any ICal3DDrivers that may be present.
+ * @param wrapper : the new Cal3DModelWrapper this instance should use.
+ */
+void Cal3DAnimator::SetWrapper( Cal3DModelWrapper *wrapper )
+{
+   mWrapper = wrapper;
+
+   if (mPreDriver.valid()) mPreDriver->SetWrapper(wrapper);
+   if (mPostDriver.valid()) mPostDriver->SetWrapper(wrapper);
+   if (mAnimDriver.valid()) mAnimDriver->SetWrapper(wrapper);
+   if (mSkelDriver.valid())  mSkelDriver->SetWrapper(wrapper);
+   if (mMorphDriver.valid()) mMorphDriver->SetWrapper(wrapper);
+   if (mSpringDriver.valid()) mSpringDriver->SetWrapper(wrapper);
+   if (mPhysiqueDriver.valid()) mPhysiqueDriver->SetWrapper(wrapper);
+}
+
 }//namespace dtAnim
