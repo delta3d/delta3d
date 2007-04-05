@@ -24,10 +24,13 @@
 
 #include "dtCore/transformable.h"
 #include "dtAnim/export.h"
-#include <dtAnim/cal3dloader.h>
 
 class CalModel;
 
+namespace osg
+{
+   class Geode;
+}
 
 
 namespace dtAnim
@@ -47,65 +50,31 @@ namespace dtAnim
    */
 
    class CoreModel;
+   class Cal3DAnimator;
    class Cal3DModelWrapper;
 
+   /// A "view" of the cal3d animation state.
    class DT_ANIM_EXPORT CharDrawable : public dtCore::Transformable
    {
    public:
-      CharDrawable();
+      CharDrawable(Cal3DModelWrapper* wrapper);
       ~CharDrawable();
 
-      void OnMessage(Base::MessageData *data);
+      void OnMessage(dtCore::Base::MessageData *data);
 
-      /**
-      * Create an "instance" of the reference (core) model given.
-      * This method creates lots of drawables each one with a single
-      * material, to take advantage of OSG state sorting.
-      * @throw Could throw a SAXParseException exception if the file didn't parse correctly
-      */
-      void Create(const std::string &filename);
+      dtAnim::Cal3DModelWrapper* GetCal3DWrapper();
+      osg::Geode* GetGeode() { return mGeode.get(); }
 
-      /**
-      * Starts an animation in loop mode
-      * @param id The animation id
-      * @param weight The strength of the loop (there can be several simultaneous)
-      * @param delay Time to reach the indicated weigth
-      */
-      void StartLoop(unsigned id, float weight, float delay);
-
-      /**
-      * Stops an animation
-      * @param id The animation id
-      * @param delay Time to fade out
-      */
-      void StopLoop(unsigned id, float delay);
-
-      /**
-      * Starts an animation with max strength over other animations
-      * @param id The animation id
-      * @param delay_in Time to reach max strength at begining of animation
-      * @param delay_out Time to leave max strength at end of animation
-      */
-      void StartAction(unsigned id, float delay_in, float delay_out);
-
-      /**
-      * Stop an action animation
-      * @param id The animation id
-      */
-      void StopAction(unsigned id);
-
-      dtAnim::Cal3DModelWrapper* GetCal3DWrapper() {return mCal3DWrapper.get(); }
-
-      osg::ref_ptr<osg::Geode>    mGeode; 
    private:
+      CharDrawable();
 
+      dtCore::RefPtr<osg::Geode>    mGeode;
+      dtCore::RefPtr<Cal3DAnimator> mAnimator;
 
-      dtCore::RefPtr<dtAnim::Cal3DModelWrapper> mCal3DWrapper;
-      Cal3DLoader mLoader; ///<Need to keep this around since it holds our textures
       int mLastMeshCount;
-      
+
       ///Delete and rebuild all the SubMeshDrawables required, based on the CalRenderer
-      void RebuildSubmeshes();
+      void RebuildSubmeshes(Cal3DModelWrapper* wrapper, osg::Geode* geode);
    };
 }
 #endif // chardrawable_h__
