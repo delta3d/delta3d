@@ -74,7 +74,7 @@ void Viewer::Config()
    mMotion->SetDistance(5.f);
 
    Light *l = GetScene()->GetLight(0);
-   l->SetAmbient(0.3f, 0.3f, 0.3f, 1.f);  
+   l->SetAmbient(0.7f, 0.7f, 0.7f, 1.f);  
    l->SetDiffuse(1.0f, 1.0f, 1.0f, 1.0f);  
   
    GetScene()->GetSceneNode()->addChild( MakePlane() );   
@@ -84,6 +84,8 @@ void Viewer::Config()
 
    InitWireDecorator(); 
    InitShadeDecorator();
+
+   OnSetShaded();
 
    Log::GetInstance().SetLogLevel(Log::LOG_DEBUG);
    
@@ -144,7 +146,6 @@ void Viewer::OnLoadCharFile( const QString &filename )
    }
 
    // set up the viewer's scene graph
-   GetScene()->GetSceneNode()->addChild(mShadeDecorator.get());   
    mShadeDecorator->addChild(mCharacter->GetGeode());
    mWireDecorator->addChild(mCharacter->GetGeode());
    dtCore::RefPtr<Cal3DModelWrapper> wrapper = mCharacter->GetCal3DWrapper();
