@@ -57,6 +57,9 @@ namespace dtAnim
          
          ///Load an animated entity definition file and return the Cal3DModelWrapper
          dtCore::RefPtr<Cal3DModelWrapper> Load( const std::string &filename );
+
+         ///empty all containers of CalCoreModels and the stored textures
+         void PurgeAllCaches();
    
       private:
          CalCoreModel* GetCoreModel( const std::string &filename, const std::string &path );

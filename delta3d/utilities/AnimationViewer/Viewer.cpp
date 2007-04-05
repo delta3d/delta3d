@@ -109,6 +109,9 @@ void Viewer::OnLoadCharFile( const QString &filename )
       mCharacter = NULL;
    }
 
+   //wipe out any previously loaded characters. This will ensure we can 
+   //reload the same file (which might have been modified).
+   mLoader.PurgeAllCaches();
 
    //create an instance from the character definition file
    try
