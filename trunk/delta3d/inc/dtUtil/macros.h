@@ -87,7 +87,7 @@
    {                                                           \
       for(std::vector<T*>::iterator it = instances.begin();    \
           it != instances.end();                               \
-          it++)                                                \
+          ++it)                                                \
       {                                                        \
          if((*it) == instance)                                 \
          {                                                     \
@@ -102,7 +102,7 @@
    {                                                           \
       for(std::vector<T*>::iterator it = instances.begin();    \
           it != instances.end();                               \
-          it++)                                                \
+          ++it)                                                \
       {                                                        \
          if((*it)->GetName() == name)                          \
          {                                                     \
@@ -132,6 +132,9 @@
 
 #if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
    #define DELTA_WIN32
+   #ifndef snprintf
+      #define snprintf _snprintf
+   #endif
 #endif
 
 #endif // DELTA_MACROS

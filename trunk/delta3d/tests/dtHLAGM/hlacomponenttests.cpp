@@ -1085,6 +1085,9 @@ void HLATests::TestPrepareUpdate()
       if (oToA != NULL)
       {
          mHLAComponent->TestPrepareUpdate(*testMsg, *ahs, *oToA, true);
+         const std::string* rtiID = mHLAComponent->GetRuntimeMappings().GetRTIId(fakeActorId);
+         CPPUNIT_ASSERT_MESSAGE("The RTI Object ID  string should be set when an object is first sent out via HLA",
+               rtiID != NULL);
          
          bool foundEntityTypeAttr = false;
          //There are two entity id's to be mapped because

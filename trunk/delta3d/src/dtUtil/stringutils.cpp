@@ -1,11 +1,8 @@
 #include <prefix/dtutilprefix-src.h>
 #include <dtUtil/stringutils.h>
+#include <dtUtil/macros.h>
 
 #include <cstdio>        // for sscanf, atoi
-
-#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
-   #define snprintf _snprintf
-#endif
 
 // scan '?' and '*'
 static bool Scan(char*& wildCards, char*& str) 

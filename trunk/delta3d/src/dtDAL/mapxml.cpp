@@ -67,12 +67,6 @@
 
 XERCES_CPP_NAMESPACE_USE;
 
-#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
-   #ifndef snprintf
-      #define snprintf _snprintf
-   #endif
-#endif
-
 namespace dtDAL
 {
 

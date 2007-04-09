@@ -194,10 +194,10 @@ namespace dtDAL
          static DataType STATIC_MESH;
 
          /**
-         * A Skeletal Mesh
-         */
+          * A Skeletal Mesh
+          */
          static DataType SKELETAL_MESH;
-
+         
          /**
           * A texture resource
           */

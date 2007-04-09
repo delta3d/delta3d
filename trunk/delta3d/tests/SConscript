@@ -14,6 +14,11 @@ suites = ['dtCore', 'dtDAL', 'dtGame', 'dtAI', 'dtUtil', 'dtABC', 'dtActors', 'd
 
 if env.get('rti') != 0 :
 	suites += [ 'dtHLAGM' ]
+
+wantDIS = False;
+if env['foundLibs'][env['extLibs']['DIS']] != 'notFound' :
+	suites += [ 'dtDIS' ]
+	wantDIS = True;
 	
 sources = {}
 mainSources = env.SGlob( '*.cpp' )
@@ -35,6 +40,9 @@ mainlibs = suites + [ 'dtAnim', 'dtAudio', 'dtABC', 'dtChar', 'dtActors', 'cppun
 mainlibs += ['cppunit']
 if env.get('rti') != 0:
 	mainlibs += env['rtiLibs']
+
+if wantDIS:
+	mainlibs += ["DIS"]
 
 #Add this so we can include files from testActorLib.h
 env.Append(CPPPATH = ['#examples', '#utilities'])

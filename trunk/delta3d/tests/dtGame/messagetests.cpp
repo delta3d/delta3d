@@ -29,6 +29,7 @@
 #include <dtCore/system.h>
 #include <dtCore/globals.h>
 
+#include <dtUtil/macros.h>
 #include <dtDAL/datatype.h>
 #include <dtDAL/resourcedescriptor.h>
 #include <dtDAL/actortype.h>
@@ -58,7 +59,6 @@
 #if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
    #include <Windows.h>
    #define SLEEP(milliseconds) Sleep((milliseconds))
-   #define snprintf _snprintf
 #else
    #include <unistd.h>
    #define SLEEP(milliseconds) usleep(((milliseconds) * 1000))

@@ -6,11 +6,6 @@ import delta3d
 # Import the variables defined in the global SConstruct build script.
 Import ('*')
 
-#if env['OS'] == 'darwin':
-   #overrideShLink = '$LINKFLAGS -bundle -flat_namespace -undefined suppress'
-#   overrideShSuffix = '.dylib'
-#else:
-
 overrideShLink = ''
 overrideShSuffix = ''
 
@@ -24,14 +19,9 @@ testActorLibraryDeps =[ 'dtDAL', 'dtUtil', 'dtCore', 'ode', 'OpenThreads', 'osg'
                         'Advapi32', 'Rpcrt4', 'Winmm', 'Gdi32', 'uuid', 'Xxf86vm',
                         'CoreFoundation', 'IOKit', 'Carbon', 'dtActors' ]
 
-#if env['OS'] == 'windows':
-#   testActorLibraryDeps += ['dtActors']
 
 testActorLibrary = env.BuildLib( 'testActorLibrary', sources, testActorLibraryDeps, ['DT_PLUGIN'], 
                              overrideShLinkFlags = overrideShLink,
                              overrideShLibSuffix = overrideShSuffix )
-
-if env['OS'] == 'darwin':
-   Depends(testActorLibrary, libdtDAL)
 
 Export('testActorLibrary')
