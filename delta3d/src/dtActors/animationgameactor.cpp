@@ -19,6 +19,7 @@
 * Michael Guerrero
 */
 #include <dtActors/animationgameactor.h>
+#include <dtDAL/groupactorproperty.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/actorupdatemessage.h>
 #include <dtDAL/enginepropertytypes.h>
@@ -37,6 +38,10 @@
 
 namespace dtActors
 {
+
+   const char AnimationGameActor::PropertyNames::ANIMATION_GROUP[] = { "ANIMATION_GROUP\0" };
+   const char AnimationGameActor::PropertyNames::ANIMATION_GROUP_LABEL[] = { "Animation Group\0" };
+
    //////////////////////////////////////////////////////////////////////////////
    /////////////////////////// BEGIN ACTOR //////////////////////////////////////
    //////////////////////////////////////////////////////////////////////////////
@@ -124,7 +129,16 @@ namespace dtActors
 
       AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::SKELETAL_MESH,
          "Skeletal Mesh", "Skeletal Mesh", dtDAL::MakeFunctor(myActor, &AnimationGameActor::SetModel),
-         "The model resource that defines the skeletal mesh", GROUPNAME));     
+         "The model resource that defines the skeletal mesh", GROUPNAME));
+
+      AddProperty(new dtDAL::GroupActorProperty(AnimationGameActor::PropertyNames::ANIMATION_GROUP,
+                                                AnimationGameActor::PropertyNames::ANIMATION_GROUP_LABEL,
+                                                dtDAL::MakeFunctor(myActor, &AnimationGameActor::ApplyAnimationGroup),
+                                                dtDAL::MakeFunctorRet(myActor, &AnimationGameActor::MakeAnimationGroup),
+                                                "A pipe for processing animation requests",
+                                                "Slot: animation parameter",
+                                                "no thanks editor",
+                                                true));
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -168,4 +182,15 @@ namespace dtActors
    {
       SetActor(*new AnimationGameActor(*this));   
    }
+
+   void AnimationGameActor::ApplyAnimationGroup(const dtDAL::NamedGroupParameter& prop)
+   {
+   }
+
+   dtCore::RefPtr<dtDAL::NamedGroupParameter> AnimationGameActor::MakeAnimationGroup()
+   {
+      dtCore::RefPtr<dtDAL::NamedGroupParameter> group = new dtDAL::NamedGroupParameter(PropertyNames::ANIMATION_GROUP);
+      return group;
+   }
+
 }
