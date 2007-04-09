@@ -29,6 +29,7 @@
 #include <osg/Math>
 #include <osg/io_utils>
 
+#include <dtUtil/macros.h>
 #include <dtUtil/exception.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/log.h>
@@ -65,13 +66,6 @@
 #endif
 
 #include <cppunit/extensions/HelperMacros.h>
-
-// TODO: replace this with a platform-independant wrapper
-#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
-   #ifndef snprintf
-      #define snprintf _snprintf
-   #endif // snprintf
-#endif // WIN32
 
 ///////////////////////////////////////////////////////////////////////////////////////
 class MapTests : public CPPUNIT_NS::TestFixture
@@ -788,7 +782,7 @@ void MapTests::TestMapSaveAndLoad()
         map->AddLibrary(mExampleLibraryName, "1.0");
         dtDAL::LibraryManager::GetInstance().LoadActorRegistry(mExampleLibraryName);
 
-#if !defined (WIN32) && !defined (_WIN32) && !defined (__WIN32__)
+#if 0 //!defined (WIN32) && !defined (_WIN32) && !defined (__WIN32__)
         dtDAL::ResourceDescriptor marineRD = project.AddResource("marine", DATA_DIR + "/marine/marine.rbody", "marine",
             dtDAL::DataType::CHARACTER);
 #else
@@ -892,7 +886,7 @@ void MapTests::TestMapSaveAndLoad()
         else
            logger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, "Enum only has one value.");
 
-#if !defined (WIN32) && !defined (_WIN32) && !defined (__WIN32__)
+#if 0 //!defined (WIN32) && !defined (_WIN32) && !defined (__WIN32__)
         ap = getActorProperty(*map, "model", dtDAL::DataType::CHARACTER);
         dtDAL::ResourceActorProperty& rap = static_cast<dtDAL::ResourceActorProperty&>(*ap);
 
@@ -1125,7 +1119,7 @@ void MapTests::TestMapSaveAndLoad()
            + " but it is " + eap->GetEnumValue().GetName(),
            eap->GetEnumValue() == **(eap->GetList().begin()+1));
 
-#if !defined (WIN32) && !defined (_WIN32) && !defined (__WIN32__)
+#if 0
         ap = getActorProperty(*map, "model", dtDAL::DataType::CHARACTER);
         dtDAL::ResourceDescriptor* rdVal = ((dtDAL::ResourceActorProperty*)ap)->GetValue();
         //testRD is declared in the setup section prior to the save and load.

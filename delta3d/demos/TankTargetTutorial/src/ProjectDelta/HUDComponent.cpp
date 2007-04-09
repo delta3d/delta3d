@@ -21,6 +21,7 @@
 
 #include "HUDComponent.h"
 
+#include <dtUtil/macros.h>
 #include <dtCore/globals.h>
 #include <dtUtil/exception.h>
 
@@ -30,10 +31,6 @@
 
 #include <dtCore/globals.h>
 #include <dtDAL/project.h>
-
-#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
-#define snprintf _snprintf
-#endif
 
 //////////////////////////////////////////////////////////////////////////
 HUDComponent::HUDComponent(dtCore::DeltaWin *win, const std::string &name) :

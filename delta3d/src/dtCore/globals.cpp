@@ -27,141 +27,157 @@
 
 #include <osgDB/FileUtils>
 
-/**
- * Set the list of paths that dtCore should use to search for files to load.  Paths
- * are separated with a single ";" on Win32 and a single ":" on Linux. Remember to
- * double-up your backslashes, lest they be escaped.
- *
- * @param pathList : The list of all paths to be used to find data files
- */
-void dtCore::SetDataFilePathList( const std::string& pathList )
+namespace dtCore
 {
-   std::string modpath = pathList;
-   for( std::string::size_type i = 0; i < pathList.size(); i++ )
+
+   /**
+    * Set the list of paths that dtCore should use to search for files to load.  Paths
+    * are separated with a single ";" on Win32 and a single ":" on Linux. Remember to
+    * double-up your backslashes, lest they be escaped.
+    *
+    * @param pathList : The list of all paths to be used to find data files
+    */
+   void SetDataFilePathList( const std::string& pathList )
    {
-      #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
-      try
-      {
-         if( modpath.at(i) == ':' && modpath.at(i+1) != '\\' )
-         {
-            modpath.at(i) = ';';
-         }
-      }
-      catch( std::out_of_range myexcept )
-      {
-         LOG_WARNING(myexcept.what());
-      }
-      #else
-      if( modpath[i] == ';' )
-      {
-         modpath[i] = ':'; 
-      }
-      #endif
-   }
-   osgDB::setDataFilePathList(modpath);
-}
-
-/**
- * Get the list of paths that dtCore should use to search for files to load.  Paths
- * are separated with a single ";" on Win32 and a single ":" on Linux.
- * 
- * @see SetDataFilePathList()
- */
-std::string dtCore::GetDataFilePathList()
-{
-   osgDB::FilePathList pathList = osgDB::getDataFilePathList();
-
-   std::string pathString = "";
-
-   typedef std::deque<std::string> StringDeque;
-   for(StringDeque::iterator itr = pathList.begin(); itr != pathList.end(); itr++)
-   {
-      pathString += *itr;
-
-      StringDeque::iterator next = itr + 1;
-      if( next != pathList.end() )
+      std::string modpath = pathList;
+      for( std::string::size_type i = 0; i < pathList.size(); i++ )
       {
          #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
-         pathString += ';';
+         try
+         {
+            if( modpath.at(i) == ':' && modpath.at(i+1) != '\\' )
+            {
+               modpath.at(i) = ';';
+            }
+         }
+         catch( std::out_of_range myexcept )
+         {
+            LOG_WARNING(myexcept.what());
+         }
          #else
-         pathString += ':';
+         if( modpath[i] == ';' )
+         {
+            modpath[i] = ':'; 
+         }
          #endif
       }
+      osgDB::setDataFilePathList(modpath);
    }
-
-   return pathString;
-}
-
-std::string dtCore::FindFileInPathList(const std::string &fileName)
-{
-   return osgDB::findDataFile(fileName);
-/**   
-   std::vector<std::string> pathList;
-   std::vector<std::string>::const_iterator itor;
    
-#if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
-   dtUtil::IsDelimeter delimCheck(';');
+   /**
+    * Get the list of paths that dtCore should use to search for files to load.  Paths
+    * are separated with a single ";" on Win32 and a single ":" on Linux.
+    * 
+    * @see SetDataFilePathList()
+    */
+   std::string GetDataFilePathList()
+   {
+      osgDB::FilePathList pathList = osgDB::getDataFilePathList();
+   
+      std::string pathString = "";
+   
+      typedef std::deque<std::string> StringDeque;
+      for(StringDeque::iterator itr = pathList.begin(); itr != pathList.end(); itr++)
+      {
+         pathString += *itr;
+   
+         StringDeque::iterator next = itr + 1;
+         if( next != pathList.end() )
+         {
+            #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
+            pathString += ';';
+            #else
+            pathString += ':';
+            #endif
+         }
+      }
+   
+      return pathString;
+   }
+   
+   std::string FindFileInPathList(const std::string &fileName)
+   {
+      return osgDB::findDataFile(fileName);
+   /**   
+      std::vector<std::string> pathList;
+      std::vector<std::string>::const_iterator itor;
+      
+   #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
+      dtUtil::IsDelimeter delimCheck(';');
+   #else
+      dtUtil::IsDelimeter delimCheck(':');
+   #endif
+      
+      dtUtil::StringTokenizer<dtUtil::IsDelimeter>::tokenize(pathList,
+                                                             GetDataFilePathList(),delimCheck);
+      
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+      
+      std::string path;
+      for (itor=pathList.begin(); itor!=pathList.end(); ++itor)
+      {
+         path = *itor;
+         //Make sure we remove any trailing slashes from the cache path.
+         if (path[path.length()-1] == '/' || path[path.length()-1] == '\\')
+            path = path.substr(0,path.length()-1);
+   
+         if (fileUtils.FileExists(path + dtUtil::FileUtils::PATH_SEPARATOR + fileName))
+            return path + dtUtil::FileUtils::PATH_SEPARATOR + fileName;
+      }     
+      
+      return std::string();
+      */
+   }
+   
+   
+   /** 
+    * Simple method to return the system environment variable.  If the env var
+    * is not set, the local path will be returned.
+    *
+    * @param env The system environment variable to be queried
+    * @return The value of the environment variable
+    */
+   std::string GetEnvironment( const std::string& env )
+   {
+      if( char* ptr = getenv( env.c_str() ) )
+      {
+         return std::string(ptr);
+      }
+      else
+      {
+         return std::string("./");
+      }
+   }
+  
+   //////////////////////////////////////////////////////////////////////
+   void SetEnvironment(const std::string& name, const std::string& value)
+   {
+#ifdef DELTA_WIN32
+      std::ostringstream oss;
+      oss << name << "=" << value;  
+      putenv(oss.str().c_str());
 #else
-   dtUtil::IsDelimeter delimCheck(':');
+      setenv(name.c_str(), value.c_str(), true);
 #endif
-   
-   dtUtil::StringTokenizer<dtUtil::IsDelimeter>::tokenize(pathList,
-                                                          GetDataFilePathList(),delimCheck);
-   
-   dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-   
-   std::string path;
-   for (itor=pathList.begin(); itor!=pathList.end(); ++itor)
-   {
-      path = *itor;
-      //Make sure we remove any trailing slashes from the cache path.
-      if (path[path.length()-1] == '/' || path[path.length()-1] == '\\')
-         path = path.substr(0,path.length()-1);
-
-      if (fileUtils.FileExists(path + dtUtil::FileUtils::PATH_SEPARATOR + fileName))
-         return path + dtUtil::FileUtils::PATH_SEPARATOR + fileName;
-   }     
-   
-   return std::string();
-   */
-}
-
-
-/** 
- * Simple method to return the system environment variable.  If the env var
- * is not set, the local path will be returned.
- *
- * @param env The system environment variable to be queried
- * @return The value of the environment variable
- */
-DT_CORE_EXPORT std::string dtCore::GetEnvironment( const std::string& env )
-{
-   if( char* ptr = getenv( env.c_str() ) )
-   {
-      return std::string(ptr);
    }
-   else
+   
+   /**
+    * Get the Delta Data file path.  This comes directly from the environment 
+    * variable "DELTA_DATA".  If the environment variable is not set, the local
+    * directory will be returned.
+    * @todo need to decide how paths will be handled.  We need to decide if DELTA_DATA is a list or a single item.
+    */
+   std::string GetDeltaDataPathList()
    {
-      return std::string("./");
+      return GetEnvironment("DELTA_DATA");
    }
-}
-
-/**
- * Get the Delta Data file path.  This comes directly from the environment 
- * variable "DELTA_DATA".  If the environment variable is not set, the local
- * directory will be returned.
- * @todo need to decide how paths will be handled.  We need to decide if DELTA_DATA is a list or a single item.
- */
-DT_CORE_EXPORT std::string dtCore::GetDeltaDataPathList()
-{
-   return GetEnvironment("DELTA_DATA");
-}
-
-/** 
- * If the DELTA_ROOT environment is not set, the local directory will be
- * returned.
- */
-DT_CORE_EXPORT std::string dtCore::GetDeltaRootPath()
-{
-   return GetEnvironment("DELTA_ROOT");
+   
+   /** 
+    * If the DELTA_ROOT environment is not set, the local directory will be
+    * returned.
+    */
+   std::string GetDeltaRootPath()
+   {
+      return GetEnvironment("DELTA_ROOT");
+   }
 }

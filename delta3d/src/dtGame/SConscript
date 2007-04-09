@@ -8,10 +8,9 @@ Import ('*')
 # Grab all the sources from the source directory.
 sources = env.SGlob('*.cpp')
 
-dtGameDeps =[ 'dtDAL','dtAI', 'dtUtil', 'dtCore', 'dtChar', 'dtAudio', 'dtABC', 
+dtGameDeps =[ 'dtDAL','dtAI', 'dtUtil', 'dtCore', 'dtAudio', 'dtABC', 
               'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgText', 'osgUtil', 
-              'osgSim', 'osgFX' ,'rbody', 'rvrutils', 'rcfgscript', 
-              'cal3d', 'xerces-c', 'openal',
+              'osgSim', 'osgFX' ,'xerces-c', 'openal',
               'Producer', 'tinyxml', 'opengl' ]
 defines = []
 

@@ -34,12 +34,10 @@
 #include <xercesc/sax/SAXParseException.hpp>
 
 #include <osgDB/FileNameUtils>
-#include "dtDAL/rbodyresourcetypehandler.h"
+#include <dtDAL/rbodyresourcetypehandler.h>
 #include <dtUtil/xercesutils.h>
+#include <dtUtil/macros.h>
 
-#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
-#define snprintf _snprintf
-#endif
 
 XERCES_CPP_NAMESPACE_USE;
 

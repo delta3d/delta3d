@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <cfloat>
 
+#include <dtUtil/macros.h>
 #include <dtUtil/matrixutil.h>
 #include <dtUtil/coordinates.h>
 #include <dtUtil/log.h>
@@ -10,10 +11,6 @@
 #include <dtUtil/deprecationmgr.h>
 #include <dtUtil/mathdefines.h>
 
-
-#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
-   #define snprintf _snprintf
-#endif
 
 namespace dtUtil
 {     

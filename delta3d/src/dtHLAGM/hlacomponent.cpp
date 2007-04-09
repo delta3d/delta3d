@@ -370,10 +370,8 @@ namespace dtHLAGM
          // Should be correct
          //const std::string &absPath = info.path + "/" + ridFile;
          const std::string &absPath = info.fileName;
-
-         std::ostringstream oss;
-         oss << "RTI_RID_FILE=" << absPath; 
-         putenv(oss.str().c_str());
+         
+         dtCore::SetEnvironment("RTI_RID_FILE", absPath);
       }
       catch(const dtUtil::Exception &e)
       {
@@ -1734,9 +1732,17 @@ namespace dtHLAGM
       {
          try
          {
+            const std::string* rtiID = mRuntimeMappings.GetRTIId(actorID);
+            if (rtiID == NULL)
+            { 
+               mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                     "PrepareUpdate should have set the RTI Object ID string for this actor \"%s\".",
+                     thisObjectToActor->GetObjectClassName().c_str());
+               
+               rtiID = &actorName;
+            }
             //Pass ClassHandle to registerObjectInstance
-            objectHandle = mRTIAmbassador->registerObjectInstance(classHandle,
-               actorName.c_str());
+            objectHandle = mRTIAmbassador->registerObjectInstance(classHandle, rtiID->c_str());
             newObject = true;
          }
          catch (RTI::ObjectClassNotDefined&)
@@ -1996,6 +2002,12 @@ namespace dtHLAGM
          ParameterTranslator::DeallocateBuffer(buffer);
       }
 
+      if (newObject)
+      {
+         //Add the RTIObjectID string.  This needs to be changed to use the proper format.
+         mRuntimeMappings.Put(actorID.ToString(), actorID);
+      }
+      
       if (objectToActor.GetDisID() != NULL)
       {
          size_t bufferSize;

@@ -32,11 +32,11 @@
 #include <fireFighter/gamestate.h>
 #include <fireFighter/inputcomponent.h>
 #include <cppunit/extensions/HelperMacros.h>
+#include <dtUtil/macros.h>
 
 #if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
    #include <Windows.h>
    #define SLEEP(milliseconds) Sleep((milliseconds))
-   #define snprintf _snprintf
 #else
    #include <unistd.h>
    #define SLEEP(milliseconds) usleep(((milliseconds) * 1000))

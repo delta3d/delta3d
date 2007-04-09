@@ -531,8 +531,8 @@ void ProjectTests::testResources()
       std::string dirtCategory = "fun:bigmamajama";
 
       //add one marine before indexing
-      dtDAL::ResourceDescriptor marineRD = p.AddResource("marine", DATA_DIR + "/marine/marine.rbody", "",
-            dtDAL::DataType::CHARACTER);
+      //dtDAL::ResourceDescriptor marineRD = p.AddResource("marine", DATA_DIR + "/marine/marine.rbody", "",
+      //      dtDAL::DataType::CHARACTER);
 
       dtDAL::ResourceDescriptor terrain1RD = p.AddResource("terrain1", DATA_DIR + "/models/exampleTerrain", "terrain",
             dtDAL::DataType::TERRAIN);
@@ -541,8 +541,8 @@ void ProjectTests::testResources()
       p.GetAllResources();
 
       //add one marine after indexing
-      dtDAL::ResourceDescriptor marine2RD = p.AddResource("marine2", DATA_DIR + "/marine/marine.rbody", "marine",
-            dtDAL::DataType::CHARACTER);
+      //dtDAL::ResourceDescriptor marine2RD = p.AddResource("marine2", DATA_DIR + "/marine/marine.rbody", "marine",
+      //      dtDAL::DataType::CHARACTER);
 
 
       dtDAL::ResourceDescriptor terrain2RD = p.AddResource("terrain2", DATA_DIR + "/models/exampleTerrain/terrain.3ds", "",
@@ -551,17 +551,17 @@ void ProjectTests::testResources()
       //printTree(p.GetAllResources());
 
       dtUtil::tree<dtDAL::ResourceTreeNode> toFill;
-      p.GetResourcesOfType(dtDAL::DataType::CHARACTER, toFill);
-      dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator marineCategory =
-         findTreeNodeFromCategory(toFill, NULL, "");
+      //p.GetResourcesOfType(dtDAL::DataType::CHARACTER, toFill);
+      //dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator marineCategory =
+      //   findTreeNodeFromCategory(toFill, NULL, "");
 
-      CPPUNIT_ASSERT_MESSAGE(std::string("the category \"")
-            + "\" should have been found in the resource tree", marineCategory != p.GetAllResources().end());
+      //CPPUNIT_ASSERT_MESSAGE(std::string("the category \"")
+      //      + "\" should have been found in the resource tree", marineCategory != p.GetAllResources().end());
 
-      dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator marineResource =
-         marineCategory.tree_ref().find(dtDAL::ResourceTreeNode("marine.rbody", marineCategory->getFullCategory(), &marineRD));
+      //dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator marineResource =
+      //   marineCategory.tree_ref().find(dtDAL::ResourceTreeNode("marine.rbody", marineCategory->getFullCategory(), &marineRD));
 
-
+      /**
       marineCategory = findTreeNodeFromCategory(toFill, NULL, "marine");
 
       CPPUNIT_ASSERT_MESSAGE(std::string("the category \"marine")
@@ -581,7 +581,7 @@ void ProjectTests::testResources()
       CPPUNIT_ASSERT(fileUtils.DirExists(characterDir + "marine" +
             dtUtil::FileUtils::PATH_SEPARATOR + "marine2.rbody") &&
             fileUtils.FileExists(characterDir + "marine" + dtUtil::FileUtils::PATH_SEPARATOR + "marine2.rbody" + dtUtil::FileUtils::PATH_SEPARATOR + "marine2.rbody"));
-
+      */
       //Done with the marines
 
       p.GetResourcesOfType(dtDAL::DataType::TERRAIN, toFill);
@@ -707,8 +707,8 @@ void ProjectTests::testResources()
 
       p.RemoveResource(rd);
       p.RemoveResource(rd1);
-      p.RemoveResource(marineRD);
-      p.RemoveResource(marine2RD);
+      //p.RemoveResource(marineRD);
+      //p.RemoveResource(marine2RD);
       p.RemoveResource(terrain1RD);
       p.RemoveResource(terrain2RD);
 

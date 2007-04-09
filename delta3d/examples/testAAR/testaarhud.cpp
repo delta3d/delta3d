@@ -22,6 +22,7 @@
 #include "testaarhud.h"
 #include "testaarexceptionenum.h"
 
+#include <dtUtil/macros.h>
 #include <dtUtil/fileutils.h>
 #include <dtCore/globals.h>
 #include <dtCore/deltawin.h>
@@ -38,13 +39,6 @@
 #include <CEGUI/CEGUIPropertyHelper.h>
 
 #include <ctime>
-
-// TODO: replace this with a platform-independant wrapper
-#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
-   #ifndef snprintf
-      #define snprintf _snprintf
-   #endif // snprintf
-#endif // WIN32
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_ENUM(HUDState);

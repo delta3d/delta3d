@@ -76,7 +76,7 @@ namespace dtHLAGM
          const dtCore::UniqueId* GetIdByRTIId(const std::string& rtiId) const;
 
          ///@return the rti string id that was mapped to given unique id or NULL if none has been mapped
-         const std::string* GetRTIId(const dtCore::UniqueId& handle) const;
+         const std::string* GetRTIId(const dtCore::UniqueId& actorId) const;
 
          ///@return the object handle that was mapped to given unique id or NULL if none has been mapped
          const RTI::ObjectHandle* GetHandle(const dtCore::UniqueId& actorId) const;

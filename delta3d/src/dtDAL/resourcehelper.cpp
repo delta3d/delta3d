@@ -168,7 +168,7 @@ namespace dtDAL
       }
 
       //Not yet working properly
-      RegisterResourceTypeHander(*new RBodyResourceTypeHandler);
+      //RegisterResourceTypeHander(*new RBodyResourceTypeHandler);
 
       std::vector<std::string> fltMasterFiles;
       fltMasterFiles.push_back("main.flt");
