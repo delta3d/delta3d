@@ -23,6 +23,7 @@
 
 #include <dtGame/gameactor.h>
 #include <dtDAL/plugin_export.h>
+#include <dtDAL/namedparameter.h>  // for function signatures
 
 // namespace specific forward declarations
 namespace dtCore{ class Scene;         }
@@ -41,6 +42,12 @@ namespace dtActors
    class DT_PLUGIN_EXPORT AnimationGameActor : public dtGame::GameActor
    {
    public:
+      /// string constants for this actor
+      struct PropertyNames
+      {
+         static const char ANIMATION_GROUP[];
+         static const char ANIMATION_GROUP_LABEL[];
+      };
 
       /**
       * Constructs a AnimationGameActor actor.
@@ -58,6 +65,9 @@ namespace dtActors
       * Called when the actor has been added to the game manager.
       */
       virtual void AddedToScene(dtCore::Scene* scene);     
+
+      void ApplyAnimationGroup(const dtDAL::NamedGroupParameter& prop);
+      dtCore::RefPtr<dtDAL::NamedGroupParameter> MakeAnimationGroup();
 
    protected:      
 
