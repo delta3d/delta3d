@@ -275,11 +275,12 @@ void HLATests::setUp()
    {
       const std::string fom = "RPR-FOM.fed";
       const std::string fedFile = dtCore::FindFileInPathList(fom);
+      const std::string ridFile = dtCore::FindFileInPathList("testRID.rid");
       CPPUNIT_ASSERT_MESSAGE("Couldn't find \"" + fom +
                              "\", make sure you install the Delta3D data package and set the DELTA_DATA environment var.",
                              !fedFile.empty());
       CPPUNIT_ASSERT(mHLAComponent->GetRTIAmbassador() == NULL);
-      mHLAComponent->JoinFederationExecution("hla", fedFile, "delta3d");
+      mHLAComponent->JoinFederationExecution("hla", fedFile, "delta3d", ridFile);
       CPPUNIT_ASSERT(mHLAComponent->GetRTIAmbassador() != NULL);
    }
    catch (const RTI::Exception& ex)

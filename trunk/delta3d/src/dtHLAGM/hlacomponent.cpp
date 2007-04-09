@@ -366,17 +366,15 @@ namespace dtHLAGM
    {
       try
       {
-         const dtUtil::FileInfo info = dtUtil::FileUtils::GetInstance().GetFileInfo(ridFile);
-         // Should be correct
-         //const std::string &absPath = info.path + "/" + ridFile;
-         const std::string &absPath = info.fileName;
+         dtUtil::FileInfo fi = dtUtil::FileUtils::GetInstance().GetFileInfo(ridFile);
+         std::string absPath = dtUtil::FileUtils::GetInstance().GetAbsolutePath(fi.path);
          
-         dtCore::SetEnvironment("RTI_RID_FILE", absPath);
+         dtCore::SetEnvironment("RTI_RID_FILE", absPath + dtUtil::FileUtils::PATH_SEPARATOR + fi.baseName);
       }
       catch(const dtUtil::Exception &e)
       {
-         LOG_ERROR("Failed to set the RID file: " + ridFile + " for the following reason: " + e.ToString() +
-            " . Defaulting to RTI.rid");
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+               "Failed to set the RID file name to \"%s\" for the following reason: %s", ridFile.c_str(), e.ToString().c_str());
       }
 
       SOCKET some_socket = socket(AF_INET, SOCK_DGRAM, 0);
