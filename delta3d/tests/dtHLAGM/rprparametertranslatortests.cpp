@@ -791,7 +791,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          dtCore::RefPtr<dtGame::UnsignedCharMessageParameter> uCharParam = new dtGame::UnsignedCharMessageParameter("test");
          RunIncomingTranslation(*uCharParam, mapping, bufferSize);
          CPPUNIT_ASSERT_MESSAGE("Value for " + mapping.GetHLAType().GetName() + " data should assign a param of type unsigned char",
-            (unsigned)expectedResult == uCharParam->GetValue());
+            (unsigned char)expectedResult == uCharParam->GetValue());
 
          //boolean
          dtCore::RefPtr<dtGame::BooleanMessageParameter> boolParam = new dtGame::BooleanMessageParameter("test");
