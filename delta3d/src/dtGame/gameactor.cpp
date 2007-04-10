@@ -227,7 +227,6 @@ namespace dtGame
 
    void GameActorProxy::ApplyActorUpdate(const ActorUpdateMessage& msg)
    {
-
       const StringMessageParameter* nameParam = static_cast<const StringMessageParameter*>(msg.GetParameter("Name"));
       if (nameParam != NULL)
       {

@@ -44,7 +44,7 @@ namespace dtActors
    {
    public:
       /// string constants for this actor
-      struct PropertyNames
+      struct DT_PLUGIN_EXPORT PropertyNames
       {
          static const std::string ANIMATION_GROUP;
          static const std::string ANIMATION_GROUP_LABEL;
