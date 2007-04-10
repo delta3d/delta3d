@@ -141,7 +141,7 @@ namespace dtActors
                                                 "A pipe for processing animation requests",
                                                 "Slot: animation parameter",
                                                 "no thanks editor",
-                                                true));
+                                                false));
    }
 
    //////////////////////////////////////////////////////////////////////////////
