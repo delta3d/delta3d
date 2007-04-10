@@ -39,8 +39,11 @@
 namespace dtActors
 {
 
-   const char AnimationGameActor::PropertyNames::ANIMATION_GROUP[] = { "ANIMATION_GROUP\0" };
-   const char AnimationGameActor::PropertyNames::ANIMATION_GROUP_LABEL[] = { "Animation Group\0" };
+   const std::string AnimationGameActor::PropertyNames::ANIMATION_GROUP("ANIMATION_GROUP");
+   const std::string AnimationGameActor::PropertyNames::ANIMATION_GROUP_LABEL("Animation Group");
+   const std::string AnimationGameActor::PropertyNames::ANIMATION_BLEND_GROUP("ANIMATION_BLEND_GROUP_");
+   const std::string AnimationGameActor::PropertyNames::ANIMATION_BLEND_WEIGHT("ANIMATION_BLEND_WEIGHT_");
+   const std::string AnimationGameActor::PropertyNames::ANIMATION_BLEND_ID("ANIMATION_BLEND_ID_");
 
    //////////////////////////////////////////////////////////////////////////////
    /////////////////////////// BEGIN ACTOR //////////////////////////////////////
@@ -185,11 +188,30 @@ namespace dtActors
 
    void AnimationGameActor::ApplyAnimationGroup(const dtDAL::NamedGroupParameter& prop)
    {
+      // unpack the creative method used to pack all the needed params into the group.
+      unsigned int childcount = prop.GetParameterCount();
+      for(unsigned int child=0; child<childcount; ++child)
+      {
+         if( const dtDAL::NamedParameter* childparam = prop.GetParameter( AnimationGameActor::PropertyNames::ANIMATION_BLEND_GROUP + dtUtil::ToString(child)) )
+         {
+            const dtDAL::NamedGroupParameter* childgroup = static_cast<const dtDAL::NamedGroupParameter*>(childparam);
+            const dtDAL::NamedParameter* idchild = childgroup->GetParameter( AnimationGameActor::PropertyNames::ANIMATION_BLEND_ID + dtUtil::ToString(child));
+            const dtDAL::NamedParameter* wchild = childgroup->GetParameter( AnimationGameActor::PropertyNames::ANIMATION_BLEND_WEIGHT + dtUtil::ToString(child));
+            if( idchild && wchild )
+            {
+               const dtDAL::NamedUnsignedIntParameter* idparam = static_cast<const dtDAL::NamedUnsignedIntParameter*>( idchild );
+               const dtDAL::NamedFloatParameter* wparam = static_cast<const dtDAL::NamedFloatParameter*>( wchild );
+
+               dtAnim::Cal3DModelWrapper* wrapper = mAnimator->GetWrapper();
+               wrapper->BlendCycle( idparam->GetValue(), wparam->GetValue(), 0.f );
+            }
+         }
+      }
    }
 
    dtCore::RefPtr<dtDAL::NamedGroupParameter> AnimationGameActor::MakeAnimationGroup()
    {
-      dtCore::RefPtr<dtDAL::NamedGroupParameter> group = new dtDAL::NamedGroupParameter(PropertyNames::ANIMATION_GROUP);
+      dtCore::RefPtr<dtDAL::NamedGroupParameter> group = new dtDAL::NamedGroupParameter(AnimationGameActor::PropertyNames::ANIMATION_GROUP);
       return group;
    }
 

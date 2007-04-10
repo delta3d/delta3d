@@ -24,6 +24,7 @@
 #include <dtGame/gameactor.h>
 #include <dtDAL/plugin_export.h>
 #include <dtDAL/namedparameter.h>  // for function signatures
+#include <string>                  // for static constants
 
 // namespace specific forward declarations
 namespace dtCore{ class Scene;         }
@@ -45,8 +46,11 @@ namespace dtActors
       /// string constants for this actor
       struct PropertyNames
       {
-         static const char ANIMATION_GROUP[];
-         static const char ANIMATION_GROUP_LABEL[];
+         static const std::string ANIMATION_GROUP;
+         static const std::string ANIMATION_GROUP_LABEL;
+         static const std::string ANIMATION_BLEND_GROUP;
+         static const std::string ANIMATION_BLEND_WEIGHT;
+         static const std::string ANIMATION_BLEND_ID;
       };
 
       /**
