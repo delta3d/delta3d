@@ -228,7 +228,7 @@ namespace dtDAL
           * Return the amount of iters in the group list
           * @return the size of the internal messageparam map size
           */
-         unsigned int GetParameterCount() {return mParameterList.size();}
+         unsigned int GetParameterCount() const {return mParameterList.size();}
 
          /** 
           * Sets the message parameter's value from the actor property's value
