@@ -283,7 +283,7 @@ namespace dtDAL
             //create the parser after setting the context.
             //because the parser looks for map.xsd in the constructor.
             //that way users can put map.xsd in the project and not need
-            //a "data" path.
+            //a "data" path(.
             mParser = new MapParser;
          }
 
