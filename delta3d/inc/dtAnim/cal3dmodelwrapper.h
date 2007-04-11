@@ -95,30 +95,30 @@ namespace dtAnim
          int GetSubmeshCount(int submeshID) { return mRenderer->getSubmeshCount(submeshID); }
 
          /************************************************************************/
-         int GetCoreMeshCount() { return mCalModel->getCoreModel()->getCoreMeshCount(); }
+         int GetCoreMeshCount() const { return mCalModel->getCoreModel()->getCoreMeshCount(); }
 
          ///Get the name for the mesh using the supplied meshID
-         const std::string& GetCoreMeshName(int meshID);
+         const std::string& GetCoreMeshName(int meshID) const;
 
-         int GetCoreAnimationCount() {return mCalModel->getCoreModel()->getCoreAnimationCount(); }
+         int GetCoreAnimationCount() const;
 
          ///Get the name that equates to the supplied animation ID
-         const std::string& GetCoreAnimationName(int animID);
+         const std::string& GetCoreAnimationName(int animID) const;
 
          ///Get the number of tracks this animation uses
-         unsigned int GetCoreAnimationTrackCount(int animID);
+         unsigned int GetCoreAnimationTrackCount(int animID) const;
 
          ///Get the total number of keyframes in this animation
-         unsigned int GetCoreAnimationKeyframeCount(int animID);
+         unsigned int GetCoreAnimationKeyframeCount(int animID) const;
 
          ///Get the duration of this animation (seconds?)
-         float GetCoreAnimationDuration(int animID);
+         float GetCoreAnimationDuration(int animID) const;
 
-         int GetCoreMaterialCount() {return mCalModel->getCoreModel()->getCoreMaterialCount();}
+         int GetCoreMaterialCount() const {return mCalModel->getCoreModel()->getCoreMaterialCount();}
          CalCoreMaterial* GetCoreMaterial(int matID) {return mCalModel->getCoreModel()->getCoreMaterial(matID); }
 
          ///Get the name associated with the material using the supplied material ID
-         const std::string& GetCoreMaterialName(int matID) {return mCalModel->getCoreModel()->getCoreMaterial(matID)->getName(); }
+         const std::string& GetCoreMaterialName(int matID) const {return mCalModel->getCoreModel()->getCoreMaterial(matID)->getName(); }
 
          /************************************************************************/
          int GetFaces(int *faces)          { return mRenderer->getFaces( (CalIndex*)faces ); }
