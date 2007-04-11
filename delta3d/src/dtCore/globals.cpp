@@ -21,9 +21,9 @@
 #include <dtUtil/fileutils.h>
 #include <dtUtil/stringutils.h>
 #include <dtUtil/log.h>
+#include <dtUtil/macros.h>
 
 #include <dtCore/globals.h>
-#include <stdexcept>
 
 #include <osgDB/FileUtils>
 
@@ -84,10 +84,10 @@ namespace dtCore
          StringDeque::iterator next = itr + 1;
          if( next != pathList.end() )
          {
-            #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
-            pathString += ';';
+            #ifdef DELTA_WIN32
+               pathString += ';';
             #else
-            pathString += ':';
+               pathString += ':';
             #endif
          }
       }
