@@ -35,6 +35,7 @@
 #include <osg/Material>
 #include <osg/PolygonMode>
 
+#include <cstddef>  // for NULL
 
 namespace dtActors
 {
@@ -54,6 +55,7 @@ namespace dtActors
       : dtGame::GameActor(proxy)
       , mModelGeode(new osg::Geode)
       , mModelLoader(new dtAnim::Cal3DLoader)
+      , mAnimator( NULL )
    {
       
    }
@@ -62,7 +64,7 @@ namespace dtActors
    AnimationGameActor::~AnimationGameActor()
    {
    }
-    
+
    void AnimationGameActor::SetModel(const std::string &modelFile)
    {
       dtCore::RefPtr<dtAnim::Cal3DModelWrapper> newModel = mModelLoader->Load(modelFile);    
@@ -215,4 +217,8 @@ namespace dtActors
       return group;
    }
 
+   const dtAnim::Cal3DAnimator* AnimationGameActor::GetAnimator() const
+   {
+      return mAnimator.get();
+   }
 }

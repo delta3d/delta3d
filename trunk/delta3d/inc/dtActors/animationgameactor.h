@@ -73,6 +73,8 @@ namespace dtActors
       void ApplyAnimationGroup(const dtDAL::NamedGroupParameter& prop);
       dtCore::RefPtr<dtDAL::NamedGroupParameter> MakeAnimationGroup();
 
+      const dtAnim::Cal3DAnimator* GetAnimator() const;
+
    protected:      
 
       dtCore::RefPtr<osg::Geode>            mModelGeode;
