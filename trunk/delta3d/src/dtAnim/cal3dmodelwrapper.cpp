@@ -123,27 +123,32 @@ const CalModel* Cal3DModelWrapper::GetCalModel() const
    return mCalModel;
 }
 
-const std::string& Cal3DModelWrapper::GetCoreAnimationName( int animID )
+int Cal3DModelWrapper::GetCoreAnimationCount() const
+{
+   return mCalModel->getCoreModel()->getCoreAnimationCount();
+}
+
+const std::string& Cal3DModelWrapper::GetCoreAnimationName( int animID ) const
 {
    return mCalModel->getCoreModel()->getCoreAnimation(animID)->getName();
 }
 
-unsigned int Cal3DModelWrapper::GetCoreAnimationTrackCount( int animID )
+unsigned int Cal3DModelWrapper::GetCoreAnimationTrackCount( int animID ) const
 {
    return mCalModel->getCoreModel()->getCoreAnimation(animID)->getTrackCount();
 }
 
-unsigned int Cal3DModelWrapper::GetCoreAnimationKeyframeCount( int animID )
+unsigned int Cal3DModelWrapper::GetCoreAnimationKeyframeCount( int animID ) const
 {
    return mCalModel->getCoreModel()->getCoreAnimation(animID)->getTotalNumberOfKeyframes();
 }
 
-float Cal3DModelWrapper::GetCoreAnimationDuration( int animID )
+float Cal3DModelWrapper::GetCoreAnimationDuration( int animID ) const
 {
    return mCalModel->getCoreModel()->getCoreAnimation(animID)->getDuration();
 }
 
-const std::string& Cal3DModelWrapper::GetCoreMeshName( int meshID )
+const std::string& Cal3DModelWrapper::GetCoreMeshName( int meshID ) const
 {
    return mCalModel->getCoreModel()->getCoreMesh(meshID)->getName();
 }
