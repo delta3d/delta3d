@@ -22,16 +22,16 @@
 #include <prefix/dtstageprefix-src.h>
 #include <QtGui/QIcon>
 
-#include "dtEditQt/actortypetreewidget.h"
-#include "dtDAL/librarymanager.h"
-#include "dtEditQt/uiresources.h"
+#include <dtEditQt/actortypetreewidget.h>
+#include <dtDAL/librarymanager.h>
+#include <dtEditQt/uiresources.h>
 #include <QtCore/QStringList>
 #include <dtUtil/log.h>
 namespace dtEditQt 
 {
 
     // constant 
-    std::string ActorTypeTreeWidget::CATEGORY_SEPARATOR = ".";
+    const std::string &ActorTypeTreeWidget::CATEGORY_SEPARATOR = ".";
 
     ///////////////////////////////////////////////////////////////////////////////
     ActorTypeTreeWidget::ActorTypeTreeWidget(ActorTypeTreeWidget* parent, dtCore::RefPtr<dtDAL::ActorType> actorType) 
@@ -39,8 +39,7 @@ namespace dtEditQt
     {
         LOG_INFO("Initializing ActorTypeTreeWidget - leaf Actor Type Node:" + actorType->GetName());
 
-        myActorType = actorType;    
-        categorySegment = (const char *) NULL;
+        myActorType = actorType;  
         
         // setup data
         if (myActorType != NULL)
