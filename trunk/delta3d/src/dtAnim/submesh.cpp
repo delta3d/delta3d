@@ -1,8 +1,9 @@
+#include <dtAnim/submesh.h>
 #include <osg/Material>
 #include <osg/Texture2D>
 #include <osg/PolygonMode>
-#include <dtAnim/submesh.h>
 #include <dtAnim/cal3dmodelwrapper.h>
+#include <osg/Geometry>
 
 using namespace dtAnim;
 
@@ -14,12 +15,6 @@ public:
 		d->dirtyBound();
 	}
 };
-
-SubMeshDrawable::SubMeshDrawable()
-{
-	std::cout << "SubMesh::SubMesh(): You should never call this constructor!" << std::endl;
-	exit(1);
-}
 
 SubMeshDrawable::SubMeshDrawable(Cal3DModelWrapper *wrapper, unsigned mesh, unsigned submesh) 
 {
@@ -207,6 +202,11 @@ void SubMeshDrawable::accept(osg::PrimitiveFunctor& functor) const
 osg::Object* SubMeshDrawable::clone(const osg::CopyOp&) const 
 {
 	return new SubMeshDrawable(mWrapper.get(), mMeshID, mSubmeshID);
+}
+
+osg::Object* SubMeshDrawable::cloneType() const
+{
+   return new SubMeshDrawable(mWrapper.get(), mMeshID, mSubmeshID);
 }
 
 osg::BoundingBox SubMeshDrawable::computeBound() const 
