@@ -31,6 +31,7 @@
 #include <cal3d/physique.h>
 #include <cal3d/springsystem.h>
 
+#include <osg/Quat>                   // for return type
 #include <osg/Referenced>
 
 namespace dtAnim
@@ -101,6 +102,13 @@ namespace dtAnim
          const std::string& GetCoreMeshName(int meshID) const;
 
          int GetCoreAnimationCount() const;
+
+         /// Get the Cal3D rotation values.
+         /// @param animid the core animation of interest.
+         /// @param boneid the core bone within the animation, identifying the track.
+         /// @param keyframeindex the keyframe array index of interest for the animation track.
+         /// @return the rotation values that cal3d is using.
+         osg::Quat GetCoreTrackKeyFrameQuat(unsigned int animid, unsigned int boneid, unsigned int keyframeindex) const;
 
          ///Get the name that equates to the supplied animation ID
          const std::string& GetCoreAnimationName(int animID) const;
