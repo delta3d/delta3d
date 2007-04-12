@@ -1,6 +1,9 @@
 #include <dtAnim/cal3dmodelwrapper.h>
 #include <cal3d/cal3d.h>
-#include <assert.h>
+#include <cal3d/coretrack.h>
+#include <cal3d/corekeyframe.h>
+
+#include <cassert>
 
 using namespace dtAnim;
 
@@ -126,6 +129,14 @@ const CalModel* Cal3DModelWrapper::GetCalModel() const
 int Cal3DModelWrapper::GetCoreAnimationCount() const
 {
    return mCalModel->getCoreModel()->getCoreAnimationCount();
+}
+
+osg::Quat Cal3DModelWrapper::GetCoreTrackKeyFrameQuat(unsigned int animid, unsigned int boneid, unsigned int keyframeindex) const
+{
+   CalCoreTrack* cct = mCalModel->getCoreModel()->getCoreAnimation(animid)->getCoreTrack(boneid);
+   CalCoreKeyframe* ckf = cct->getCoreKeyframe(keyframeindex);
+   const CalQuaternion& calq = ckf->getRotation();
+   return osg::Quat(calq.x, calq.y, calq.z, calq.w);
 }
 
 const std::string& Cal3DModelWrapper::GetCoreAnimationName( int animID ) const
