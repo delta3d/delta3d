@@ -39,7 +39,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #ifndef __dtAnim__SUBMESH_H__
 #define __dtAnim__SUBMESH_H__
 
-#include <osg/Geometry>
+#include <osg/Drawable>
 #include <cal3d/cal3d.h>
 #include "dtAnim/export.h"
 #include <dtCore/refptr.h>
@@ -62,8 +62,6 @@ namespace dtAnim {
  */
 class DT_ANIM_EXPORT SubMeshDrawable: public osg::Drawable {
 public:
-    SubMeshDrawable();   
-
     /**
      * Creates a submesh for one model given the mesh and submesh of this mesh
      */
@@ -86,7 +84,7 @@ public:
     
 	virtual void accept(osg::PrimitiveFunctor& pf) const;
 
-    virtual osg::Object* cloneType() const { return new SubMeshDrawable(); }
+    virtual osg::Object* cloneType() const;
     virtual osg::Object* clone(const osg::CopyOp&) const;
 	osg::BoundingBox computeBound() const;
 
@@ -94,7 +92,8 @@ protected:
     ~SubMeshDrawable();
 
 private:
-    
+    SubMeshDrawable();   ///< not implemented by design
+
     unsigned int mMeshID;
     unsigned int mSubmeshID;
     float       *mMeshVertices;
