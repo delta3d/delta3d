@@ -356,6 +356,16 @@ namespace dtDAL
           */
          friend class ActorPluginRegistry;
 
+         bool operator == (const ActorProxy &rhs) const
+         {
+            return GetId() == rhs.GetId();
+         }
+
+         bool operator != (const ActorProxy &rhs) const
+         {
+            return !(*this == rhs);
+         }
+
       protected:
 
          /**
