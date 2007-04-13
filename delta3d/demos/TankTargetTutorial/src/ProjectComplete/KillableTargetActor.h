@@ -83,7 +83,7 @@ class TUTORIAL_TANK_EXPORT KillableTargetActor : public dtActors::GameMeshActor
       // You can respond to OnEnteredWorld on either the proxy or actor or both.
       virtual void OnEnteredWorld();
 
-      void UpdateShaderParams();
+      //void UpdateShaderParams();
 
    protected:
       virtual ~KillableTargetActor() { };
@@ -100,17 +100,7 @@ class TUTORIAL_TANK_EXPORT KillableTargetActor : public dtActors::GameMeshActor
       int mCurrentHealth;
       bool mIsTargeted;
 
-      float mShaderTextureCycleTime;
-      float mShaderMoveXCycleTime;
-      float mShaderMoveYCycleTime;
-      float mShaderMoveZCycleTime;
-
-
       dtCore::RefPtr<dtCore::Shader> mCurrentShader;
-      dtCore::RefPtr<dtCore::FloatShaderParameter> mTextureDilationParam;
-      dtCore::RefPtr<dtCore::FloatShaderParameter> mMoveXDilationParam;
-      dtCore::RefPtr<dtCore::FloatShaderParameter> mMoveYDilationParam;
-      dtCore::RefPtr<dtCore::FloatShaderParameter> mMoveZDilationParam;
       std::string mCurrentShaderName;
 
       dtCore::RefPtr<dtCore::ParticleSystem> mSmallExplosion;

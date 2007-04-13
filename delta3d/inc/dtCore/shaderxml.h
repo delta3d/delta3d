@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * Matthew W. Campbell
+ * Matthew W. Campbell, Curtiss Murphy
  */
 #ifndef DELTA_SHADERXML
 #define DELTA_SHADERXML
@@ -104,6 +104,16 @@ namespace dtCore
                const std::string &paramName);
 
          /**
+          * Parses a shader parameter which represents an oscillating floating 
+          * point timer value.
+          * @param floatElem The DOM element for the float parameter.
+          * @param paramName Name to assign to the parameter.
+          * @return The newly constructed parameter.
+          */
+         dtCore::RefPtr<ShaderParameter> ParseFloatTimerParameter(xercesc::DOMElement *timerElem,
+            const std::string &paramName);
+
+         /**
           * Parses a shader parameter which represents an integer value.
           * @param intElem The DOM element for the integer parameter.
           * @param paramName Name to assign to the parameter.
@@ -163,6 +173,15 @@ namespace dtCore
          static const std::string FLOAT_ELEMENT;
          static const std::string INT_ELEMENT;
          static const std::string PARAM_ELEMENT_ATTRIBUTE_DEFAULTVALUE;
+
+         static const std::string FLOATTIMER_ELEMENT;
+         static const std::string FLOATTIMER_ATTRIB_OFFSET;
+         static const std::string FLOATTIMER_ATTRIB_RANGE_MIN;
+         static const std::string FLOATTIMER_ATTRIB_RANGE_MAX;
+         static const std::string FLOATTIMER_ATTRIB_CYCLETIME_MIN;
+         static const std::string FLOATTIMER_ATTRIB_CYCLETIME_MAX;
+         static const std::string FLOATTIMER_ATTRIB_USEREALTIME;
+         static const std::string FLOATTIMER_ATTRIB_OSCILLATION_TYPE;
 
          //Disable the copy constructor and assignment operator.
          ShaderXML(const ShaderXML &rhs) { }

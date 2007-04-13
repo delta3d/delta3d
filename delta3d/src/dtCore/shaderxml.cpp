@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * Matthew W. Campbell
+ * Matthew W. Campbell, Curtiss Murphy
  */
 #include <prefix/dtcoreprefix-src.h>
 #include "dtCore/shaderxml.h"
@@ -26,6 +26,7 @@
 #include "dtCore/texture2dshaderparameter.h"
 #include "dtCore/floatshaderparameter.h"
 #include "dtCore/integershaderparameter.h"
+#include "dtCore/shaderparameterfloattimer.h"
 
 #include <dtUtil/xercesutils.h>
 
@@ -56,7 +57,7 @@ namespace dtCore
    const std::string ShaderXML::SHADER_SOURCE_ELEMENT("source");
    const std::string ShaderXML::SHADER_SOURCE_ATTRIBUTE_TYPE("type");
    const std::string ShaderXML::SHADER_SOURCE_TYPE_VERTEX("Vertex");
-   const std::string ShaderXML:: SHADER_SOURCE_TYPE_FRAGMENT("Fragment");
+   const std::string ShaderXML::SHADER_SOURCE_TYPE_FRAGMENT("Fragment");
 
    const std::string ShaderXML::PARAMETER_ELEMENT("parameter");
    const std::string ShaderXML::PARAMETER_ATTRIBUTE_NAME("name");
@@ -72,6 +73,15 @@ namespace dtCore
    const std::string ShaderXML::FLOAT_ELEMENT("float");
    const std::string ShaderXML::INT_ELEMENT("integer");
    const std::string ShaderXML::PARAM_ELEMENT_ATTRIBUTE_DEFAULTVALUE("defaultValue");
+
+   const std::string ShaderXML::FLOATTIMER_ELEMENT("floattimer");
+   const std::string ShaderXML::FLOATTIMER_ATTRIB_OFFSET("offset");
+   const std::string ShaderXML::FLOATTIMER_ATTRIB_RANGE_MIN("rangemin");
+   const std::string ShaderXML::FLOATTIMER_ATTRIB_RANGE_MAX("rangemax");
+   const std::string ShaderXML::FLOATTIMER_ATTRIB_CYCLETIME_MIN("cycletimemin");
+   const std::string ShaderXML::FLOATTIMER_ATTRIB_CYCLETIME_MAX("cycletimemax");
+   const std::string ShaderXML::FLOATTIMER_ATTRIB_USEREALTIME("userealtime");
+   const std::string ShaderXML::FLOATTIMER_ATTRIB_OSCILLATION_TYPE("oscillation");
 
    ///////////////////////////////////////////////////////////////////////////////
    ShaderXML::ShaderXML()
@@ -291,6 +301,8 @@ namespace dtCore
             newParam = ParseFloatParameter(typeElement,paramName);
          else if (toString == ShaderXML::INT_ELEMENT)
             newParam = ParseIntParameter(typeElement,paramName);
+         else if (toString == ShaderXML::FLOATTIMER_ELEMENT)
+            newParam = ParseFloatTimerParameter(typeElement, paramName);
          else
             throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Invalid element found while parsing "
                   "shader parameter.", __FILE__, __LINE__);
@@ -412,6 +424,106 @@ namespace dtCore
 
       return static_cast<ShaderParameter*>(newParam.get());
    }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   dtCore::RefPtr<ShaderParameter> ShaderXML::ParseFloatTimerParameter(xercesc::DOMElement *timerElem,
+      const std::string &paramName)
+   {
+      std::string valueString;
+      float tempValue;
+      dtCore::RefPtr<ShaderParameterFloatTimer> newParam = new ShaderParameterFloatTimer(paramName);
+
+      // OFFSET 
+      valueString = GetElementAttribute(*timerElem, ShaderXML::FLOATTIMER_ATTRIB_OFFSET);
+      if (!valueString.empty())
+      {
+         std::istringstream ss;
+         ss.str(valueString);
+         ss >> tempValue;
+         newParam->SetOffset(tempValue);
+      }
+
+      // RANGEMIN
+      valueString = GetElementAttribute(*timerElem, ShaderXML::FLOATTIMER_ATTRIB_RANGE_MIN);
+      if (!valueString.empty())
+      {
+         std::istringstream ss;
+         ss.str(valueString);
+         ss >> tempValue;
+         newParam->SetRangeMin(tempValue);
+      }
+
+      // RANGEMAX
+      valueString = GetElementAttribute(*timerElem, ShaderXML::FLOATTIMER_ATTRIB_RANGE_MAX);
+      if (!valueString.empty())
+      {
+         std::istringstream ss;
+         ss.str(valueString);
+         ss >> tempValue;
+         newParam->SetRangeMax(tempValue);
+      }
+
+      // CYCLE TIME MIN
+      valueString = GetElementAttribute(*timerElem, ShaderXML::FLOATTIMER_ATTRIB_CYCLETIME_MIN);
+      if (!valueString.empty())
+      {
+         std::istringstream ss;
+         ss.str(valueString);
+         ss >> tempValue;
+         newParam->SetCycleTimeMin(tempValue);
+      }
+
+      // CYCLE TIME MAX
+      valueString = GetElementAttribute(*timerElem, ShaderXML::FLOATTIMER_ATTRIB_CYCLETIME_MAX);
+      if (!valueString.empty())
+      {
+         std::istringstream ss;
+         ss.str(valueString);
+         ss >> tempValue;
+         newParam->SetCycleTimeMax(tempValue);
+      }
+
+      // USE REAL TIME
+      valueString = GetElementAttribute(*timerElem,ShaderXML::FLOATTIMER_ATTRIB_USEREALTIME);
+      if (!valueString.empty())
+      {
+         if (valueString == "true")
+            newParam->SetUseRealTime(true);
+         else if (valueString == "false")
+            newParam->SetUseRealTime(false);
+         else 
+         {
+            std::ostringstream error;
+            error << "Error parsing floattimer on parameter [" << paramName << 
+               "] for userealtime attribute [" << valueString << "].  Should be 'true' or 'false'.";
+            throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,error.str(), __FILE__, __LINE__);
+         }
+      }
+
+      // OSCILLATION
+      valueString = GetElementAttribute(*timerElem,ShaderXML::FLOATTIMER_ATTRIB_OSCILLATION_TYPE);
+      if (!valueString.empty())
+      {
+         if (valueString == ShaderParameterFloatTimer::OscillationType::UP.GetName())
+            newParam->SetOscillationType(ShaderParameterFloatTimer::OscillationType::UP);
+         else if (valueString == ShaderParameterFloatTimer::OscillationType::DOWN.GetName())
+            newParam->SetOscillationType(ShaderParameterFloatTimer::OscillationType::DOWN);
+         else if (valueString == ShaderParameterFloatTimer::OscillationType::UPANDDOWN.GetName())
+            newParam->SetOscillationType(ShaderParameterFloatTimer::OscillationType::UPANDDOWN);
+         else if (valueString == ShaderParameterFloatTimer::OscillationType::DOWNANDUP.GetName())
+            newParam->SetOscillationType(ShaderParameterFloatTimer::OscillationType::DOWNANDUP);
+         else 
+         {
+            std::ostringstream error;
+            error << "Error parsing floattimer on parameter [" << paramName << 
+               "] for oscillation attribute [" << valueString << "].  Should be 'Up', 'Down', 'UpAndDown', or 'DownAndUp'.";
+            throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,error.str(), __FILE__, __LINE__);
+         }
+      }
+
+      return static_cast<ShaderParameter*>(newParam.get());
+   }
+
 
    ///////////////////////////////////////////////////////////////////////////////
    dtCore::RefPtr<ShaderParameter> ShaderXML::ParseIntParameter(xercesc::DOMElement *intElem,

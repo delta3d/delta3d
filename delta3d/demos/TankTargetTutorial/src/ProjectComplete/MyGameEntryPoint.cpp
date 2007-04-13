@@ -34,7 +34,7 @@
 
 #include <dtGame/gamemanager.h>
 #include <dtGame/defaultmessageprocessor.h>
-#include <dtGame/rulescomponent.h>
+//#include <dtGame/rulescomponent.h>
 #include <dtGame/gameapplication.h>
 #include <dtGame/exceptionenum.h>
 #include <dtGame/binarylogstream.h>
@@ -137,8 +137,8 @@ void MyGameEntryPoint::OnStartup(dtGame::GameManager &gameManager)
    TutorialMessageType::RegisterMessageTypes( gameManager.GetMessageFactory() );
 
    // Add Component - Rules Component
-   dtCore::RefPtr<dtGame::RulesComponent> rc = new dtGame::RulesComponent("Rules");
-   gameManager.AddComponent(*rc, dtGame::GameManager::ComponentPriority::NORMAL);
+   //dtCore::RefPtr<dtGame::RulesComponent> rc = new dtGame::RulesComponent("Rules");
+   //gameManager.AddComponent(*rc, dtGame::GameManager::ComponentPriority::NORMAL);
 
    // Add Component - Input Component
    dtCore::RefPtr<InputComponent> inputComp = new InputComponent("InputComponent", mInPlaybackMode);
@@ -223,5 +223,5 @@ void MyGameEntryPoint::OnStartup(dtGame::GameManager &gameManager)
    // ServerLoggerComponent state changes; such as transitions from PLAYBACK to IDLE states.
    //mLogController->RequestAddIgnoredActor(mInputComp->GetTerrainActor().GetId());
 
-   gameManager.SetStatisticsInterval(10);
+   gameManager.DebugStatisticsTurnOn(true, false, 10, true);
 }

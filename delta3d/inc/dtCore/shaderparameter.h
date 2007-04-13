@@ -26,7 +26,8 @@
 #include <dtCore/refptr.h>
 #include <osg/Referenced>
 #include <string>
-
+#include <dtCore/base.h>
+ 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
 {
@@ -64,7 +65,7 @@ namespace dtCore
     * however, they can potential contain must more information about
     * the actual render state.
     */
-   class DT_CORE_EXPORT ShaderParameter : public osg::Referenced
+   class DT_CORE_EXPORT ShaderParameter : public Base //osg::Referenced
    {
       public:
 
@@ -102,6 +103,8 @@ namespace dtCore
                static const ParamType SAMPLER_CUBE;
                static const ParamType SAMPLER_SHADOW_1D;
                static const ParamType SAMPLER_SHADOW_2D;
+
+               static const ParamType TIMER_FLOAT;
 
             protected:
                ParamType(const std::string &name) : dtUtil::Enumeration(name)

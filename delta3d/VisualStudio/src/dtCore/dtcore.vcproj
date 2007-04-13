@@ -307,6 +307,9 @@
 				RelativePath="..\..\..\src\dtCore\shaderparameter.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtCore\shaderparameterfloattimer.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtCore\shaderxml.cpp">
 			</File>
 			<File
@@ -528,6 +531,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtCore\shaderparameter.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtCore\shaderparameterfloattimer.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtCore\shaderxml.h">

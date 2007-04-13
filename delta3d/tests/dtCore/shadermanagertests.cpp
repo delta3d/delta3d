@@ -29,6 +29,7 @@
 #include <dtCore/texture2dshaderparameter.h>
 #include <dtCore/integershaderparameter.h>
 #include <dtCore/floatshaderparameter.h>
+#include <dtCore/shaderparameterfloattimer.h>
 #include <dtCore/globals.h>
 #include <osg/Geode>
 
@@ -54,6 +55,7 @@ class ShaderManagerTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestTexture2DXMLParam);
       CPPUNIT_TEST(TestIntXMLParam);
       CPPUNIT_TEST(TestFloatXMLParam);
+      CPPUNIT_TEST(TestFloatTimerXMLParam);
    CPPUNIT_TEST_SUITE_END();
 
    public:
@@ -70,6 +72,7 @@ class ShaderManagerTests : public CPPUNIT_NS::TestFixture
       void TestTexture2DXMLParam();
       void TestIntXMLParam();
       void TestFloatXMLParam();
+      void TestFloatTimerXMLParam();
 
    private:
       dtCore::ShaderManager *mShaderMgr;
@@ -630,6 +633,31 @@ void ShaderManagerTests::TestFloatXMLParam()
       dtCore::FloatShaderParameter *floatParam = static_cast<dtCore::FloatShaderParameter*>(param);
       CPPUNIT_ASSERT(floatParam != NULL);
       CPPUNIT_ASSERT_EQUAL(10.0f,floatParam->GetValue());
+   }
+   catch (const dtUtil::Exception &e)
+   {
+      CPPUNIT_FAIL(e.ToString());
+   }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void ShaderManagerTests::TestFloatTimerXMLParam()
+{
+   try
+   {
+      dtCore::ShaderParameter *param = mTestShader->FindParameter("TimerFloatParam");
+      CPPUNIT_ASSERT(param != NULL);
+      CPPUNIT_ASSERT_EQUAL(dtCore::ShaderParameter::ParamType::TIMER_FLOAT,param->GetType());
+
+      dtCore::ShaderParameterFloatTimer *floatTimerParam = static_cast<dtCore::ShaderParameterFloatTimer*>(param);
+      CPPUNIT_ASSERT(floatTimerParam != NULL);
+      CPPUNIT_ASSERT_EQUAL(4.0f,floatTimerParam->GetOffset());
+      CPPUNIT_ASSERT_EQUAL(3.0f,floatTimerParam->GetRangeMin());
+      CPPUNIT_ASSERT_EQUAL(4.0f,floatTimerParam->GetRangeMax());
+      CPPUNIT_ASSERT_EQUAL(2.0f,floatTimerParam->GetCycleTimeMin());
+      CPPUNIT_ASSERT_EQUAL(2.5f,floatTimerParam->GetCycleTimeMax());
+      CPPUNIT_ASSERT_EQUAL(false,floatTimerParam->GetUseRealTime());
+      CPPUNIT_ASSERT(dtCore::ShaderParameterFloatTimer::OscillationType::UPANDDOWN == floatTimerParam->GetOscillationType());
    }
    catch (const dtUtil::Exception &e)
    {
