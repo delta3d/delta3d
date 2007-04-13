@@ -211,7 +211,7 @@ namespace   dtAudio
                /// override method so sound knows when it's becoming a child
                virtual void            SetParent( dtCore::DeltaDrawable* parent );
 
-               /// override methods for user to querry sound state
+               /// override methods for user to query sound state
                virtual  bool           IsPlaying( void )          const;
                virtual  bool           IsPaused( void )           const;
                virtual  bool           IsStopped( void )          const;
