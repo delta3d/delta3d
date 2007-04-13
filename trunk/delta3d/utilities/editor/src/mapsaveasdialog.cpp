@@ -20,7 +20,7 @@
 * William E. Johnson II
 */
 #include <prefix/dtstageprefix-src.h>
-#include "dtEditQt/mapsaveasdialog.h"
+#include <dtEditQt/mapsaveasdialog.h>
 
 #include <QtGui/QGroupBox>
 #include <QtGui/QLineEdit>
@@ -34,8 +34,8 @@
 #include <QtGui/QGroupBox>
 #include <QtGui/QLabel>
 
-#include "dtDAL/project.h"
-#include "dtDAL/map.h"
+#include <dtDAL/project.h>
+#include <dtDAL/map.h>
 #include <dtDAL/exceptionenum.h>
 
 namespace dtEditQt
