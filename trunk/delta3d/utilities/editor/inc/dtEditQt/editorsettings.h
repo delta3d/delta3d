@@ -53,6 +53,8 @@ namespace dtEditQt
         ///Size of the main window.
         static const QString MAINWIN_SIZE;
 
+        static const QString MAINWIN_GEOMETRY;
+
         static const QString RECENT_PROJECTS;
         static const QString RECENT_MAPS;
         static const QString LIBRARY_PATHS;

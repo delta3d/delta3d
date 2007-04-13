@@ -32,6 +32,7 @@ namespace dtEditQt
    const QString EditorSettings::MAINWIN_GROUP("MainWindow");
    const QString EditorSettings::MAINWIN_POSITION("MainWindow_Position");
    const QString EditorSettings::MAINWIN_SIZE("MainWindow_Size");
+   const QString EditorSettings::MAINWIN_GEOMETRY("MainWindow_Geometry");
    const int EditorSettings::MAINWIN_DOCK_STATE_ID = 0;
    const QString EditorSettings::MAINWIN_DOCK_STATE("MainWindow_DockState");
 

@@ -443,9 +443,10 @@ namespace dtEditQt
 
         //Save the main window state...
         settings.beginGroup(EditorSettings::MAINWIN_GROUP);
-        settings.setValue(EditorSettings::MAINWIN_POSITION,pos());
-        settings.setValue(EditorSettings::MAINWIN_SIZE,size());
-        settings.setValue(EditorSettings::MAINWIN_DOCK_STATE,saveState(EditorSettings::MAINWIN_DOCK_STATE_ID));
+            settings.setValue(EditorSettings::MAINWIN_POSITION,pos());
+            settings.setValue(EditorSettings::MAINWIN_SIZE,size());
+            settings.setValue(EditorSettings::MAINWIN_DOCK_STATE,saveState(EditorSettings::MAINWIN_DOCK_STATE_ID));
+            settings.setValue(EditorSettings::MAINWIN_GEOMETRY, saveGeometry());
         settings.endGroup();
 
         //Save the general preferences...
@@ -670,6 +671,13 @@ namespace dtEditQt
         {
             QByteArray state = settings.value(EditorSettings::MAINWIN_DOCK_STATE).toByteArray();
             restoreState(state,EditorSettings::MAINWIN_DOCK_STATE_ID);
+        }
+
+        //When restoring the window state, first see if the key exists.
+        if(settings.contains(EditorSettings::MAINWIN_GEOMETRY))
+        {
+           QByteArray state = settings.value(EditorSettings::MAINWIN_GEOMETRY).toByteArray();
+           restoreGeometry(state);
         }
         settings.endGroup();
         
