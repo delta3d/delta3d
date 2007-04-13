@@ -53,7 +53,7 @@
       <shader name="AllParamsShader">
          <source type="Vertex">Shaders/perpixel_lighting_detailmap_vert.glsl</source>
          <source type="Fragment">Shaders/perpixel_lighting_detailmap_frag.glsl</source>
-
+ 
          <parameter name="FloatParam">
             <float defaultValue="10.0"/>
          </parameter>
@@ -62,6 +62,10 @@
             <integer defaultValue="25"/>
          </parameter>
 
+         <parameter name="TimerFloatParam">
+            <floattimer offset="4.0" rangemin="3.0" rangemax="4.0" cycletimemin="2.0" cycletimemax="2.5" userealtime="false" oscillation="UpAndDown"/>
+         </parameter>
+ 
          <parameter name="Texture2DParam">
             <texture2D textureUnit="2">
                <source type="Image">Textures/detailmap.png</source>

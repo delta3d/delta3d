@@ -59,6 +59,9 @@ namespace dtCore
    const ShaderParameter::ParamType ShaderParameter::ParamType::SAMPLER_CUBE("SAMPLER_CUBE");
    const ShaderParameter::ParamType ShaderParameter::ParamType::SAMPLER_SHADOW_1D("SAMPLER_SHADOW_1D");
    const ShaderParameter::ParamType ShaderParameter::ParamType::SAMPLER_SHADOW_2D("SAMPLER_SHADOW_2D");
+
+   const ShaderParameter::ParamType ShaderParameter::ParamType::TIMER_FLOAT("TIMER_FLOAT");
+
    ///////////////////////////////////////////////////////////////////////////////
 
    ///////////////////////////////////////////////////////////////////////////////

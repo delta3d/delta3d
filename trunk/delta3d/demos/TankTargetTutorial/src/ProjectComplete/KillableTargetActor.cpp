@@ -29,7 +29,8 @@
 #include <dtUtil/mathdefines.h>
 #include <dtCore/shadermanager.h>
 #include <dtCore/shaderparameter.h>
-#include <dtCore/floatshaderparameter.h>
+//#include <dtCore/floatshaderparameter.h>
+#include <dtCore/shaderparameterfloattimer.h>
 #include <dtCore/scene.h>
 #include <osg/Switch>
 
@@ -70,11 +71,7 @@ KillableTargetActor::KillableTargetActor(dtGame::GameActorProxy &proxy) :
    mShaderEffect(),
    mMaxHealth(100),
    mCurrentHealth(0),
-   mIsTargeted(false),
-   mShaderTextureCycleTime(dtUtil::RandFloat(2.0, 4.0)),
-   mShaderMoveXCycleTime(dtUtil::RandFloat(5.0, 8.0)),
-   mShaderMoveYCycleTime(dtUtil::RandFloat(5.0, 8.0)),
-   mShaderMoveZCycleTime(dtUtil::RandFloat(5.0, 8.0))
+   mIsTargeted(false)
 {
    SetName("KillableTarget");
 }
@@ -85,7 +82,7 @@ void KillableTargetActor::TickLocal(const dtGame::Message &tickMessage)
    //static const int CYCLETIME = 3;
    const dtGame::TickMessage &tick = static_cast<const dtGame::TickMessage&>(tickMessage);
 
-   UpdateShaderParams();
+   //UpdateShaderParams();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -94,7 +91,7 @@ void KillableTargetActor::TickRemote(const dtGame::Message &tickMessage)
    const dtGame::TickMessage &tick = static_cast<const dtGame::TickMessage&>(tickMessage);
    //float deltaSimTime = tick.GetDeltaSimTime();
 
-   UpdateShaderParams();
+   //UpdateShaderParams();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -149,57 +146,43 @@ void KillableTargetActor::ProcessMessage(const dtGame::Message &message)
       ApplyMyShader();
    } 
 
-
-}
-
-///////////////////////////////////////////////////////////////////////////////
-void KillableTargetActor::UpdateShaderParams()
-{
-   double simTime = GetGameActorProxy().GetGameManager()->GetSimulationTime();
-
-   // If we have a shader, then calculate a number from 0 to 1 over X seconds and apply it.
-   if (mCurrentShader.valid() && mCurrentHealth > 0 /*&& mIsTargeted*/)
-   {
-      // Texture dilation
-      if (mTextureDilationParam != NULL)
-      {
-         float temp = simTime/mShaderTextureCycleTime;
-         mTextureDilationParam->SetValue(temp - (int) temp);
-         // old code to make the num go from 1 to 0 to 1 over X seconds
-         //float timeDistort = fabs(variance/(float)CYCLETIME * 2.0f - 1.0f);
-      }
-
-      // X Dilation
-      if (mMoveXDilationParam != NULL)
-      {
-         float temp = simTime/mShaderMoveXCycleTime;
-         mMoveXDilationParam->SetValue(temp - (int) temp);
-      }
-
-      // Y Dilation
-      if (mMoveYDilationParam != NULL)
-      {
-         float temp = simTime/mShaderMoveYCycleTime;
-         mMoveYDilationParam->SetValue(temp - (int) temp);
-      }
-
-      // Z Dilation
-      if (mMoveZDilationParam != NULL)
-      {
-         float temp = simTime/mShaderMoveZCycleTime;
-         mMoveZDilationParam->SetValue(temp - (int) temp);
-      }
-   }
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 void KillableTargetActor::ApplyMyShader()
 {
+   float prevTime = 0.0, prevX = 0.0, prevY = 0.0, prevZ = 0.0; 
+   dtCore::ShaderParameterFloatTimer *timerParam;
+
    if (mCurrentShader != NULL && mCurrentShader->GetName() == mCurrentShaderName)
    {
       // don't reload stuff or we kill our processing.
       return;
+   }
+
+   // if we had a previous shader, then get the current values of our float timers.  Then,
+   // after we reassign them, we can put them back where they were.  Avoids 'jumping'
+   if (mCurrentShader != NULL)
+   {
+      // TIME DILATION
+      timerParam = dynamic_cast<dtCore::ShaderParameterFloatTimer*> (mCurrentShader->FindParameter("TimeDilation"));
+      if (timerParam != NULL)
+         prevTime = timerParam->GetValue();
+
+      // X DILATION
+      timerParam = dynamic_cast<dtCore::ShaderParameterFloatTimer*> (mCurrentShader->FindParameter("MoveXDilation"));
+      if (timerParam != NULL)
+         prevX = timerParam->GetValue();
+
+      // Y DILATION
+      timerParam = dynamic_cast<dtCore::ShaderParameterFloatTimer*> (mCurrentShader->FindParameter("MoveYDilation"));
+      if (timerParam != NULL)
+         prevY = timerParam->GetValue();
+
+      // Z DILATION
+      timerParam = dynamic_cast<dtCore::ShaderParameterFloatTimer*> (mCurrentShader->FindParameter("MoveZDilation"));
+      if (timerParam != NULL)
+         prevZ = timerParam->GetValue();
    }
 
    // clean up any previous shaders, if any
@@ -211,21 +194,32 @@ void KillableTargetActor::ApplyMyShader()
    {
       mCurrentShader = dtCore::ShaderManager::GetInstance().
          AssignShaderFromTemplate( *templateShader, *GetOSGNode() );
-      mTextureDilationParam = dynamic_cast<dtCore::FloatShaderParameter*> (mCurrentShader->FindParameter("TimeDilation"));
-      mMoveXDilationParam = dynamic_cast<dtCore::FloatShaderParameter*> (mCurrentShader->FindParameter("MoveXDilation"));
-      mMoveYDilationParam = dynamic_cast<dtCore::FloatShaderParameter*> (mCurrentShader->FindParameter("MoveYDilation"));
-      mMoveZDilationParam = dynamic_cast<dtCore::FloatShaderParameter*> (mCurrentShader->FindParameter("MoveZDilation"));
 
-      UpdateShaderParams();
+      // Put the shader values back (again, to avoid jumping since we are moving XYZ in our shader)
+      // TIME DILATION
+      timerParam = dynamic_cast<dtCore::ShaderParameterFloatTimer*> (mCurrentShader->FindParameter("TimeDilation"));
+      if (timerParam != NULL)
+         timerParam->SetValue(prevTime);
+
+      // X DILATION
+      timerParam = dynamic_cast<dtCore::ShaderParameterFloatTimer*> (mCurrentShader->FindParameter("MoveXDilation"));
+      if (timerParam != NULL)
+         timerParam->SetValue(prevX);
+
+      // Y DILATION
+      timerParam = dynamic_cast<dtCore::ShaderParameterFloatTimer*> (mCurrentShader->FindParameter("MoveYDilation"));
+      if (timerParam != NULL)
+         timerParam->SetValue(prevY);
+
+      // Z DILATION
+      timerParam = dynamic_cast<dtCore::ShaderParameterFloatTimer*> (mCurrentShader->FindParameter("MoveZDilation"));
+      if (timerParam != NULL)
+         timerParam->SetValue(prevZ);
    }
    else 
    {
       LOG_ERROR("KillableTargetActor could not load shader for group[TargetShaders] with name [" + mCurrentShaderName + "]"); 
       mCurrentShader = NULL;
-      mTextureDilationParam = NULL;
-      mMoveXDilationParam = NULL;
-      mMoveYDilationParam = NULL;
-      mMoveZDilationParam = NULL;
    }
 }
 
@@ -298,10 +292,7 @@ void KillableTargetActor::ResetState()
    // Force the shader to reload
    mCurrentShaderName = "Normal";
    mCurrentShader = NULL;
-   mTextureDilationParam = NULL;
-   mMoveXDilationParam = NULL;
-   mMoveYDilationParam = NULL;
-   mMoveZDilationParam = NULL;
+   //mTextureDilationParam = NULL;
    ApplyMyShader();
 
 	mSmallExplosion->SetEnabled(false);
