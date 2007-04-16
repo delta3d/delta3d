@@ -47,6 +47,7 @@ namespace dtAnim
    class DT_ANIM_EXPORT Cal3DModelWrapper : public osg::Referenced
    {
       public:
+         static const int NULL_BONE = -1;
    
          Cal3DModelWrapper( CalModel *model );
 
@@ -110,11 +111,18 @@ namespace dtAnim
          /// @return the rotation values that cal3d is using.
          osg::Quat GetCoreTrackKeyFrameQuat(unsigned int animid, unsigned int boneid, unsigned int keyframeindex) const;
 
+         osg::Quat GetCoreBoneAbsoluteRotation(unsigned int boneID) const;
+
+         osg::Quat GetCoreBoneRelativeRotation(unsigned int boneID) const;
+
          ///Get the name that equates to the supplied animation ID
          const std::string& GetCoreAnimationName(int animID) const;
 
          ///Get the number of tracks this animation uses
          unsigned int GetCoreAnimationTrackCount(int animID) const;
+
+         ///Get the id of the parent to boneID
+         int GetParentBoneID(unsigned int boneID) const;
 
          ///Get the total number of keyframes in this animation
          unsigned int GetCoreAnimationKeyframeCount(int animID) const;
@@ -142,7 +150,10 @@ namespace dtAnim
          void* GetMapUserData(int mapID) { return mRenderer->getMapUserData(mapID); }
 
 
-         /************************************************************************/         
+         /************************************************************************/     
+
+         bool HasTrackForBone(unsigned int animID, int boneID) const;
+
          /// Add a new looping animation to blend in using the mixer
          bool BlendCycle(int id, float weight, float delay);
 

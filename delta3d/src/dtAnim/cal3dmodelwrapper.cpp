@@ -134,9 +134,49 @@ int Cal3DModelWrapper::GetCoreAnimationCount() const
 osg::Quat Cal3DModelWrapper::GetCoreTrackKeyFrameQuat(unsigned int animid, unsigned int boneid, unsigned int keyframeindex) const
 {
    CalCoreTrack* cct = mCalModel->getCoreModel()->getCoreAnimation(animid)->getCoreTrack(boneid);
-   CalCoreKeyframe* ckf = cct->getCoreKeyframe(keyframeindex);
-   const CalQuaternion& calq = ckf->getRotation();
-   return osg::Quat(calq.x, calq.y, calq.z, calq.w);
+   assert(cct);
+
+   if (cct)
+   {
+      CalCoreKeyframe* ckf = cct->getCoreKeyframe(keyframeindex);
+      const CalQuaternion& calq = ckf->getRotation();
+      return osg::Quat(calq.x, calq.y, calq.z, calq.w);
+   }  
+  
+   return osg::Quat();
+}
+
+osg::Quat Cal3DModelWrapper::GetCoreBoneAbsoluteRotation(unsigned int boneID) const
+{
+   CalBone *bone = mCalModel->getSkeleton()->getBone(boneID);
+   assert(bone);
+
+   if (bone)
+   {
+      const CalQuaternion& calQuat = bone->getRotationAbsolute();
+      return osg::Quat(calQuat.x, calQuat.y, calQuat.z, calQuat.w);
+   }
+
+   return osg::Quat();
+}
+
+osg::Quat Cal3DModelWrapper::GetCoreBoneRelativeRotation(unsigned int boneID) const
+{
+   CalBone *bone = mCalModel->getSkeleton()->getBone(boneID);
+   assert(bone);
+
+   if (bone)
+   {
+      const CalQuaternion& calQuat = bone->getRotation();
+      return osg::Quat(calQuat.x, calQuat.y, calQuat.z, calQuat.w);
+   }
+
+   return osg::Quat();
+}
+
+bool Cal3DModelWrapper::HasTrackForBone(unsigned int animID, int boneID) const
+{
+   return (mCalModel->getCoreModel()->getCoreAnimation(animID)->getCoreTrack(boneID) != NULL);
 }
 
 const std::string& Cal3DModelWrapper::GetCoreAnimationName( int animID ) const
@@ -147,6 +187,19 @@ const std::string& Cal3DModelWrapper::GetCoreAnimationName( int animID ) const
 unsigned int Cal3DModelWrapper::GetCoreAnimationTrackCount( int animID ) const
 {
    return mCalModel->getCoreModel()->getCoreAnimation(animID)->getTrackCount();
+}
+
+int Cal3DModelWrapper::GetParentBoneID(unsigned int boneID) const
+{
+   CalBone *currentBone = const_cast<CalBone*>(mCalModel->getSkeleton()->getBone(boneID));
+   
+   if (currentBone)
+   {
+      CalCoreBone *coreBone = currentBone->getCoreBone();     
+      return coreBone->getParentId();      
+   }
+
+   return NULL_BONE;
 }
 
 unsigned int Cal3DModelWrapper::GetCoreAnimationKeyframeCount( int animID ) const
