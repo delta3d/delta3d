@@ -1,28 +1,19 @@
 Import('*')
 
 if env['foundLibs'][env['extLibs']['DIS']] != 'notFound':
-   srcs = env.SGlob( '*.cpp' )
+   srcs1 = env.SGlob( '*.cpp' )
+   srcs2 = env.SGlob( 'plugins/default/*.cpp' )
+   srcs = srcs1 + srcs2;
 
    deps = [ 'DIS', 'NL', 'xerces-c', 'osg', 'osgDB',
          'dtCore', 'dtGame', 'dtDAL', 'dtUtil', 'HawkNL' ]
 
    defines = []
    if env['OS'] == 'windows':
-      defines = ['DT_DIS_LIBRARY']
+      defines = ['DT_DIS_LIBRARY', 'DT_DIS_DEFAULT_PLUGIN']
       deps.append('wsock32')
-   
+
    env.BuildLib( 'dtDIS', srcs, deps, defines )
-   
-   srcs = env.SGlob( 'plugins/default/*.cpp' )
 
-   deps = [ 'DIS', 'osg',
-         'dtDIS', 'dtCore', 'dtGame', 'dtDAL', 'dtUtil' ]
-
-   defines = []
-   if env['OS'] == 'windows':
-      defines = ['DT_DIS_DEFAULT_PLUGIN']
-
-   env.BuildLib( 'default_dis_plugin', srcs, deps, defines )
-   
 else:
    env['dtLibs'].remove('dtDIS')
