@@ -78,6 +78,8 @@ namespace dtDIS
       typedef LibraryRegistry::iterator LibRegIter;
       void UnloadImplementation(LibRegIter& iter);
 
+      bool LoadLibraryHandle(const std::string& path, dtUtil::LibrarySharingManager::LibraryHandle* lh);
+
       /// a registry of all currently loaded plugins
       LibraryRegistry mPlugins;
 

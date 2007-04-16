@@ -7,9 +7,9 @@ CreateDestroyPolicy<T>::CreateDestroyPolicy()
 }
 
 template<typename T>
-bool CreateDestroyPolicy<T>::LoadSymbols( dtUtil::LibrarySharingManager::LibraryHandle* handle, LibraryInterface& pi )
+bool CreateDestroyPolicy<T>::LoadSymbols(const dtUtil::LibrarySharingManager::LibraryHandle* handle,
+                                         LibraryInterface& pi )
 {
-   pi.mHandle = handle;
    dtUtil::LibrarySharingManager::LibraryHandle::SYMBOL_ADDRESS csa = handle->FindSymbol( mCreateName );
    dtUtil::LibrarySharingManager::LibraryHandle::SYMBOL_ADDRESS dsa = handle->FindSymbol( mDestroyName );
 

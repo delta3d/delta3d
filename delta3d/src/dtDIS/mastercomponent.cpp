@@ -7,10 +7,7 @@
 #include <list>
 #include <dtDIS/dllfinder.h>
 
-#include <DIS/EntityStatePdu.h>
-#include <DIS/FirePdu.h>
-#include <DIS/DetonationPdu.h>
-#include <DIS/CollisionPdu.h>
+#include <dtDIS/plugins/default/defaultplugin.h>
 
 
 using namespace dtDIS;
@@ -23,6 +20,7 @@ MasterComponent::MasterComponent(SharedState* config)
    , mIncomingMessage()
    , mOutgoingMessage(DIS::BIG, config->GetConnectionData().exercise_id )
    , mConfig( config )
+   , mDefaultPlugin(new dtDIS::DefaultPlugin())
 {
    // add support for the network packets
    LoadPlugins( mConfig->GetConnectionData().plug_dir );
@@ -30,6 +28,8 @@ MasterComponent::MasterComponent(SharedState* config)
 
 MasterComponent::~MasterComponent()
 {
+   delete mDefaultPlugin;
+
    // release the memory for the packet support plugins
    mPluginManager.UnloadAllPlugins();
 
@@ -46,6 +46,9 @@ void MasterComponent::OnAddedToGM()
 {
    const ConnectionData& connect_data = mConfig->GetConnectionData();
 
+   // add the default "plugin"
+   mDefaultPlugin->Start( mIncomingMessage, mOutgoingMessage, GetGameManager(), mConfig );
+
    // initialize all the plugins
    typedef dtUtil::Functor<void,TYPELIST_1(PluginManager::LibraryRegistry::value_type&)> ForEachPluginFunctor;
    ForEachPluginFunctor func(this,&MasterComponent::OnPluginLoaded);
@@ -59,6 +62,9 @@ void MasterComponent::OnAddedToGM()
 
 void MasterComponent::OnRemovedFromGM()
 {
+   // add the default "plugin"
+   mDefaultPlugin->Finish( mIncomingMessage, mOutgoingMessage );
+
    // shutdown all the plugins
    typedef dtUtil::Functor<void,TYPELIST_1(PluginManager::LibraryRegistry::value_type&)> ForEachPluginFunctor;
    ForEachPluginFunctor func(this,&MasterComponent::OnPluginUnloaded);
@@ -151,4 +157,34 @@ void MasterComponent::ProcessMessage(const dtGame::Message& msg)
          mOutgoingMessage.Handle( msg );
       }
    }
+}
+
+DIS::IncomingMessage& MasterComponent::GetIncomingMessage()
+{
+   return mIncomingMessage;
+}
+
+const DIS::IncomingMessage& MasterComponent::GetIncomingMessage() const
+{
+   return mIncomingMessage;
+}
+
+OutgoingMessage& MasterComponent::GetOutgoingMessage()
+{
+   return mOutgoingMessage;
+}
+
+const OutgoingMessage& MasterComponent::GetOutgoingMessage() const
+{
+   return mOutgoingMessage;
+}
+
+SharedState* MasterComponent::GetSharedState()
+{
+   return mConfig;
+}
+
+const SharedState* MasterComponent::GetSharedState() const
+{
+   return mConfig;
 }
