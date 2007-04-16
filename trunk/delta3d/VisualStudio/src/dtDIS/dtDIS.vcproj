@@ -20,7 +20,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\..\..\inc; ..\..\..\ext\inc"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;DT_DIS_LIBRARY"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;DT_DIS_LIBRARY;DT_DIS_DEFAULT_PLUGIN"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -72,7 +72,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="..\..\..\inc; ..\..\..\ext\inc"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;DT_DIS_LIBRARY"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;DT_DIS_LIBRARY;DT_DIS_DEFAULT_PLUGIN"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
@@ -161,6 +161,35 @@
 			<File
 				RelativePath="..\..\..\src\dtDIS\valuemaps.cpp">
 			</File>
+			<Filter
+				Name="plugin"
+				Filter="">
+				<Filter
+					Name="default"
+					Filter="">
+					<File
+						RelativePath="..\..\..\src\dtDIS\plugins\default\actorupdatetoentitystate.cpp">
+					</File>
+					<File
+						RelativePath="..\..\..\src\dtDIS\plugins\default\createentityprocessor.cpp">
+					</File>
+					<File
+						RelativePath="..\..\..\src\dtDIS\plugins\default\defaultplugin.cpp">
+					</File>
+					<File
+						RelativePath="..\..\..\src\dtDIS\plugins\default\espduapplicator.cpp">
+					</File>
+					<File
+						RelativePath="..\..\..\src\dtDIS\plugins\default\espduprocessor.cpp">
+					</File>
+					<File
+						RelativePath="..\..\..\src\dtDIS\plugins\default\pluginsymbols.cpp">
+					</File>
+					<File
+						RelativePath="..\..\..\src\dtDIS\plugins\default\removeentityprocessor.cpp">
+					</File>
+				</Filter>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -229,6 +258,38 @@
 			<File
 				RelativePath="..\..\..\inc\dtDIS\valuemaps.h">
 			</File>
+			<Filter
+				Name="plugin"
+				Filter="">
+				<Filter
+					Name="default"
+					Filter="">
+					<File
+						RelativePath="..\..\..\inc\dtDIS\plugins\default\actorupdatetoentitystate.h">
+					</File>
+					<File
+						RelativePath="..\..\..\inc\dtDIS\plugins\default\createentityprocessor.h">
+					</File>
+					<File
+						RelativePath="..\..\..\inc\dtDIS\plugins\default\defaultplugin.h">
+					</File>
+					<File
+						RelativePath="..\..\..\inc\dtDIS\plugins\default\dtdisdefaultpluginexport.h">
+					</File>
+					<File
+						RelativePath="..\..\..\inc\dtDIS\plugins\default\espduapplicator.h">
+					</File>
+					<File
+						RelativePath="..\..\..\inc\dtDIS\plugins\default\espduprocessor.h">
+					</File>
+					<File
+						RelativePath="..\..\..\inc\dtDIS\plugins\default\pluginsymbols.h">
+					</File>
+					<File
+						RelativePath="..\..\..\inc\dtDIS\plugins\default\removeentityprocessor.h">
+					</File>
+				</Filter>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Resource Files"

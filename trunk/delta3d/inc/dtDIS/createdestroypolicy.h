@@ -43,7 +43,8 @@ namespace dtDIS
 
          CreateDestroyPolicy();
 
-         bool LoadSymbols( dtUtil::LibrarySharingManager::LibraryHandle* handle, LibraryInterface& pi );
+         bool LoadSymbols(const dtUtil::LibrarySharingManager::LibraryHandle* handle,
+                          LibraryInterface& pi );
       };
 #include <dtDIS/createdestroypolicy.inl>
 

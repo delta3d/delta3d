@@ -21,18 +21,25 @@ bool PluginManager::LoadPlugin(const std::string& path)
    }
 #endif
 
-   dtCore::RefPtr<dtUtil::LibrarySharingManager::LibraryHandle> lh = lsm.LoadSharedLibrary( candidate );
+   dtCore::RefPtr<dtUtil::LibrarySharingManager::LibraryHandle> libhandle = lsm.LoadSharedLibrary( candidate );
 
+   return LoadLibraryHandle( path, libhandle.get() );
+}
+
+
+bool PluginManager::LoadLibraryHandle(const std::string& path, dtUtil::LibrarySharingManager::LibraryHandle* lib)
+{
    // find the symbols in the library
-   RegistryEntry lib;
-   if( mLoadStrategy.LoadSymbols( lh.get(), lib ) )
+   RegistryEntry reg;
+   if( mLoadStrategy.LoadSymbols( lib, reg ) )
    {
-      lib.mCreated = lib.mCreator();
+      reg.mHandle = lib;
+      reg.mCreated = reg.mCreator();
 
       // add the entry object to the container
-      if( mPlugins.insert( LibraryRegistry::value_type( path , lib ) ).second )
+      if( mPlugins.insert( LibraryRegistry::value_type( path , reg ) ).second )
       {
-         mLoaded( path , lib );
+         mLoaded( path , reg );
          return true;
       }
       else

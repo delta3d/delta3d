@@ -33,6 +33,7 @@
 namespace dtDIS
 {
    class SharedState;
+   class DefaultPlugin;
 
    ///\brief Supports a framework to translate DIS PDUs into dtGame::Message instances.
    ///
@@ -69,6 +70,29 @@ namespace dtDIS
       ///// a convenience accessor, not needed usually.
       //const PluginManager& GetPluginManager() const;
 
+      /// obtain the IncomingMessage for attaching and removing processors.
+      /// @return the IncomingMessage instance.
+      DIS::IncomingMessage& GetIncomingMessage();
+
+      /// obtain the IncomingMessage for attaching and removing processors.
+      /// @return the IncomingMessage instance.
+      const DIS::IncomingMessage& GetIncomingMessage() const;
+
+      /// obtain the OutgoingMessage for attaching and removing adapters.
+      /// @return the OutgoingMessage instance.
+      OutgoingMessage& GetOutgoingMessage();
+
+      /// obtain the OutgoingMessage for attaching and removing adapters.
+      /// @return the OutgoingMessage instance.
+      const OutgoingMessage& GetOutgoingMessage() const;
+
+      /// obtain the SharedState to know the current state of entity management and configurations.
+      /// @return the SharedState instance.
+      SharedState* GetSharedState();
+
+      /// obtain the SharedState to know the current state of entity management and configurations.
+      /// @return the SharedState instance.
+      const SharedState* GetSharedState() const;
 
    protected:
       ~MasterComponent();
@@ -95,6 +119,7 @@ namespace dtDIS
       DIS::IncomingMessage mIncomingMessage;
       OutgoingMessage mOutgoingMessage;
       SharedState* mConfig;
+      DefaultPlugin* mDefaultPlugin;
    };
 }
 
