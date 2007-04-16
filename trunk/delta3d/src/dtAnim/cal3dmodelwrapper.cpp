@@ -146,7 +146,7 @@ osg::Quat Cal3DModelWrapper::GetCoreTrackKeyFrameQuat(unsigned int animid, unsig
    return osg::Quat();
 }
 
-osg::Quat Cal3DModelWrapper::GetCoreBoneAbsoluteRotation(unsigned int boneID) const
+osg::Quat Cal3DModelWrapper::GetBoneAbsoluteRotation(unsigned int boneID) const
 {
    CalBone *bone = mCalModel->getSkeleton()->getBone(boneID);
    assert(bone);
@@ -160,7 +160,7 @@ osg::Quat Cal3DModelWrapper::GetCoreBoneAbsoluteRotation(unsigned int boneID) co
    return osg::Quat();
 }
 
-osg::Quat Cal3DModelWrapper::GetCoreBoneRelativeRotation(unsigned int boneID) const
+osg::Quat Cal3DModelWrapper::GetBoneRelativeRotation(unsigned int boneID) const
 {
    CalBone *bone = mCalModel->getSkeleton()->getBone(boneID);
    assert(bone);
