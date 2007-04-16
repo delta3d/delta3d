@@ -111,9 +111,9 @@ namespace dtAnim
          /// @return the rotation values that cal3d is using.
          osg::Quat GetCoreTrackKeyFrameQuat(unsigned int animid, unsigned int boneid, unsigned int keyframeindex) const;
 
-         osg::Quat GetCoreBoneAbsoluteRotation(unsigned int boneID) const;
+         osg::Quat GetBoneAbsoluteRotation(unsigned int boneID) const;
 
-         osg::Quat GetCoreBoneRelativeRotation(unsigned int boneID) const;
+         osg::Quat GetBoneRelativeRotation(unsigned int boneID) const;
 
          ///Get the name that equates to the supplied animation ID
          const std::string& GetCoreAnimationName(int animID) const;
