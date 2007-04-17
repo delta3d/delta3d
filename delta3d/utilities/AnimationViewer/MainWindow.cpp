@@ -297,6 +297,8 @@ void MainWindow::OnNewMaterial( int matID, const QString &name,
                                const QColor &diff, const QColor &amb, const QColor &spec,
                                float shininess )
 {
+   QString tooltip;
+
    QStandardItem *idItem = new QStandardItem(QString::number(matID) );
    idItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
 
@@ -305,15 +307,21 @@ void MainWindow::OnNewMaterial( int matID, const QString &name,
 
    QStandardItem *diffItem = new QStandardItem( diff.name() );
    diffItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
-   diffItem->setBackground( QBrush(diff) );
+   diffItem->setData(diff, Qt::BackgroundRole);
+   tooltip = tr("R:%1\nG:%2\nB:%3\nA:%4").arg(diff.red()).arg(diff.green()).arg(diff.blue()).arg(diff.alpha());
+   diffItem->setData( tooltip, Qt::ToolTipRole);
 
    QStandardItem *ambItem = new QStandardItem( amb.name() );
    ambItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
-   ambItem->setBackground( QBrush(amb) );
+   ambItem->setData(amb, Qt::BackgroundRole);
+   tooltip = tr("R:%1\nG:%2\nB:%3\nA:%4").arg(amb.red()).arg(amb.green()).arg(amb.blue()).arg(amb.alpha());
+   ambItem->setData( tooltip, Qt::ToolTipRole);
 
    QStandardItem *specItem = new QStandardItem( spec.name() );
    specItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
-   specItem->setBackground( QBrush(spec) );
+   specItem->setData(amb, Qt::BackgroundRole);
+   tooltip = tr("R:%1\nG:%2\nB:%3\nA:%4").arg(spec.red()).arg(spec.green()).arg(spec.blue()).arg(spec.alpha());
+   specItem->setData( tooltip, Qt::ToolTipRole);
 
    QStandardItem *shinItem = new QStandardItem( QString::number(shininess) );
    shinItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
