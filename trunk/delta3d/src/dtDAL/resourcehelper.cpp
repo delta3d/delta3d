@@ -30,7 +30,7 @@
 #include <dtDAL/resourcedescriptor.h>
 #include <dtDAL/datatype.h>
 #include <dtDAL/resourcetreenode.h>
-#include <dtDAL/rbodyresourcetypehandler.h>
+//#include <dtDAL/rbodyresourcetypehandler.h>
 #include <dtDAL/directoryresourcetypehandler.h>
 #include <dtDAL/resourcehelper.h>
 
