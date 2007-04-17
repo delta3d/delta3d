@@ -21,9 +21,8 @@
 #ifndef DELTA_ShaderParameterFloatTimer
 #define DELTA_ShaderParameterFloatTimer
 
-#include "dtCore/export.h"
-#include "dtCore/shaderparameter.h"
-#include <dtCore/base.h>
+#include <dtCore/export.h>
+#include <dtCore/shaderparameter.h>
 
 namespace dtCore
 {
