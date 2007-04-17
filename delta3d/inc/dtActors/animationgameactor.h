@@ -75,6 +75,10 @@ namespace dtActors
 
       const dtAnim::Cal3DAnimator* GetAnimator() const;
 
+      //virtual void TickRemote(const dtGame::Message& tickMessage);
+      //virtual void TickLocal(const dtGame::Message& tickMessage);
+      virtual void OnMessage(dtCore::Base::MessageData *data);
+
    protected:      
 
       dtCore::RefPtr<osg::Geode>            mModelGeode;

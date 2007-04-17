@@ -29,6 +29,8 @@
 #include <dtAnim/cal3dmodelwrapper.h>
 #include <dtAnim/cal3danimator.h>
 #include <dtCore/scene.h>
+#include <dtGame/basemessages.h>
+#include <dtCore/system.h>
 
 #include <osg/MatrixTransform>
 #include <osg/Geode>
@@ -57,12 +59,13 @@ namespace dtActors
       , mModelLoader(new dtAnim::Cal3DLoader)
       , mAnimator( NULL )
    {
-      
+      AddSender(&dtCore::System::GetInstance());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    AnimationGameActor::~AnimationGameActor()
    {
+      RemoveSender(&dtCore::System::GetInstance()); 
    }
 
    void AnimationGameActor::SetModel(const std::string &modelFile)
@@ -220,5 +223,28 @@ namespace dtActors
    const dtAnim::Cal3DAnimator* AnimationGameActor::GetAnimator() const
    {
       return mAnimator.get();
+   }
+
+   //void AnimationGameActor::TickRemote(const dtGame::Message& msg)
+   //{
+   //   const dtGame::TickMessage& tickmsg = static_cast<const dtGame::TickMessage&>( msg );
+   //   float dt = tickmsg.GetDeltaSimTime();
+   //   mAnimator->Update(dt);
+   //}
+
+   //void AnimationGameActor::TickLocal(const dtGame::Message& msg)
+   //{
+   //   const dtGame::TickMessage& tickmsg = static_cast<const dtGame::TickMessage&>( msg );
+   //   float dt = tickmsg.GetDeltaSimTime();
+   //   mAnimator->Update(dt);
+   //}
+
+   void AnimationGameActor::OnMessage(dtCore::Base::MessageData* data)
+   {
+      if( data->message == "preframe" )
+      {
+         double dt = *static_cast<double*>(data->userData);      
+         mAnimator->Update(dt);
+      }
    }
 }
