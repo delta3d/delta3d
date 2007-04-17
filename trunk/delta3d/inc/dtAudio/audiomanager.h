@@ -352,6 +352,9 @@ namespace   dtAudio
          /// initialize AudioManager
          virtual  void              Config( const AudioConfigData& data = _DefCfg );
 
+         /// Returns true if initialized
+         bool IsInitialized() const { return _Mgr != NULL; }
+
          /**
           * receive messages
           * handles the timeing messages (pre-post-frame) from the system

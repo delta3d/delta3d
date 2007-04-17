@@ -34,7 +34,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtUtild.lib dtCored.lib dtDALd.lib dtAId.lib dtGamed.lib dtABCd.lib dtLMSd.lib dtGUId.lib dtActorsd.lib testGameActorLibraryd.lib CEGUIBase_d.lib cppunitd.lib xerces-c_2D.lib"
+				AdditionalDependencies="dtUtild.lib dtCored.lib dtDALd.lib dtAId.lib dtGamed.lib dtABCd.lib dtLMSd.lib dtGUId.lib dtActorsd.lib dtAudiod.lib testGameActorLibraryd.lib CEGUIBase_d.lib cppunitd.lib xerces-c_2D.lib"
 				OutputFile="../../../tests/UnitTestsMaind.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib"
@@ -89,7 +89,7 @@ set DELTA_DATA=$(DELTA_DATA)
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtUtil.lib dtCore.lib dtDAL.lib dtAI.lib dtGame.lib dtABC.lib dtLMS.lib dtGUI.lib dtActors.lib testGameActorLibrary.lib CEGUIBase.lib cppunit.lib xerces-c_2.lib"
+				AdditionalDependencies="dtUtil.lib dtCore.lib dtDAL.lib dtAI.lib dtGame.lib dtABC.lib dtLMS.lib dtGUI.lib dtActors.lib dtAudio.lib testGameActorLibrary.lib CEGUIBase.lib cppunit.lib xerces-c_2.lib"
 				OutputFile="../../../tests/UnitTestsMain.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib"
@@ -143,6 +143,9 @@ set DELTA_DATA=$(DELTA_DATA)
 			</File>
 			<File
 				RelativePath="..\..\..\tests\dtAI\astartests.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\tests\dtAudio\audiomanagertests.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\tests\dtCore\axistests.cpp">
