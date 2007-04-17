@@ -13,6 +13,8 @@ class QGraphicsView;
 class QGraphicsScene;
 class QTabWidget;
 class QGridLayout;
+class QStandardItemModel;
+class QTableView;
 class TrackView;
 class TrackScene;
 
@@ -39,7 +41,9 @@ public slots:
    
    void OnNewMesh(int meshID, const QString &meshName);
 
-   void OnNewMaterial(int matID, const QString &name);
+   void OnNewMaterial(int matID, const QString &name,
+                      const QColor &diff, const QColor &amb, const QColor &spec,
+                      float shininess );
 
    void OnAnimationClicked( QTableWidgetItem *item);
    void OnMeshActivated( QListWidgetItem *item );
@@ -76,12 +80,13 @@ private:
 
    QTabWidget  *mTabs;
 
-   QListWidget *mMaterialListWidget;
-
    AnimationTableWidget *mAnimListWidget;
    QListWidget          *mMeshListWidget;
    TrackView            *mTrackViewer;
    TrackScene           *mTrackScene;
+   QStandardItemModel   *mMaterialModel; ///<Model for the character's materials
+   QTableView           *mMaterialView;  ///<View for the character's materials
+
 
 private slots:
    void OnOpenCharFile();

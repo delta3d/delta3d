@@ -33,6 +33,7 @@
 
 #include <osg/Quat>                   // for return type
 #include <osg/Referenced>
+#include <osg/Vec4>
 
 namespace dtAnim
 {
@@ -132,6 +133,18 @@ namespace dtAnim
 
          int GetCoreMaterialCount() const {return mCalModel->getCoreModel()->getCoreMaterialCount();}
          CalCoreMaterial* GetCoreMaterial(int matID) {return mCalModel->getCoreModel()->getCoreMaterial(matID); }
+
+         ///Get the core material diffuse color (rgba 0-255)
+         osg::Vec4 GetCoreMaterialDiffuse(int matID) const;
+
+         ///Get the core material ambient color (rgba 0-255)
+         osg::Vec4 GetCoreMaterialAmbient(int matID) const;
+
+         ///Get the core material specular color (rgba 0-255)
+         osg::Vec4 GetCoreMaterialSpecular(int matID) const;
+
+         ///Get the core material shininess
+         float     GetCoreMaterialShininess(int matID) const;
 
          ///Get the name associated with the material using the supplied material ID
          const std::string& GetCoreMaterialName(int matID) const {return mCalModel->getCoreModel()->getCoreMaterial(matID)->getName(); }

@@ -31,7 +31,8 @@ void Delta3DThread::run()
 
    connect(viewer.get(), SIGNAL(MeshLoaded(int,const QString&)), mWin, SLOT(OnNewMesh(int,const QString&)));
 
-   connect(viewer.get(), SIGNAL(MaterialLoaded(int,const QString&)), mWin, SLOT(OnNewMaterial(int,const QString&)));
+   connect(viewer.get(), SIGNAL(MaterialLoaded(int,const QString&,const QColor&,const QColor&,const QColor&,float )), 
+           mWin, SLOT(OnNewMaterial(int,const QString&,const QColor&,const QColor&,const QColor&,float)));
 
    connect(mWin, SIGNAL(AttachMesh(int)), viewer.get(), SLOT(OnAttachMesh(int)));
    connect(mWin, SIGNAL(DetachMesh(int)), viewer.get(), SLOT(OnDetachMesh(int)));
