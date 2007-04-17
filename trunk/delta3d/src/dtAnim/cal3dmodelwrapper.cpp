@@ -191,11 +191,12 @@ unsigned int Cal3DModelWrapper::GetCoreAnimationTrackCount( int animID ) const
 
 int Cal3DModelWrapper::GetParentBoneID(unsigned int boneID) const
 {
-   CalBone *currentBone = const_cast<CalBone*>(mCalModel->getSkeleton()->getBone(boneID));
+   //CalBone *currentBone = const_cast<CalBone*>(mCalModel->getSkeleton()->getBone(boneID));
+   CalCoreBone *coreBone = const_cast<CalCoreBone*>(mCalModel->getCoreModel()->getCoreSkeleton()->getCoreBone(boneID));
    
-   if (currentBone)
+   if (coreBone)
    {
-      CalCoreBone *coreBone = currentBone->getCoreBone();     
+      //CalCoreBone *coreBone = currentBone->getCoreBone();     
       return coreBone->getParentId();      
    }
 
