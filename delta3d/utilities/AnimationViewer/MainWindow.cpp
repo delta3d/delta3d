@@ -20,6 +20,9 @@
 #include <QGraphicsScene>
 #include <QGridLayout>
 
+#include <QStandardItemModel>
+#include <QStandardItem>
+
 #include <QGraphicsEllipseItem>
 
 #include <cassert>
@@ -29,7 +32,8 @@ mExitAct(NULL),
 mLoadCharAct(NULL),
 mAnimListWidget(NULL),
 mMeshListWidget(NULL),
-mMaterialListWidget(NULL)
+mMaterialModel(NULL),
+mMaterialView(NULL)
 {
    resize(640, 300);   
 
@@ -48,7 +52,15 @@ mMaterialListWidget(NULL)
    mMeshListWidget = new QListWidget(this);
    connect(mMeshListWidget, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(OnMeshActivated(QListWidgetItem*)));
 
-   mMaterialListWidget = new QListWidget(this);   
+
+   mMaterialModel = new QStandardItemModel(this);
+   mMaterialView = new QTableView(this);
+   mMaterialView->setModel( mMaterialModel );
+   {
+      QStringList headers;
+      headers << "ID" << "Name" << "Diffuse" << "Ambient" << "Specular" << "Shininess";
+      mMaterialModel->setHorizontalHeaderLabels(headers);
+   }
 
    CreateActions();
    CreateMenus();
@@ -59,7 +71,7 @@ mMaterialListWidget(NULL)
    mTabs = new QTabWidget(this);
    mTabs->addTab(mAnimListWidget, tr("Animations"));
    mTabs->addTab(mMeshListWidget, tr("Meshes"));
-   mTabs->addTab(mMaterialListWidget, tr("Materials"));
+   mTabs->addTab(mMaterialView, tr("Materials"));
    //mTabs->addTab(mTrackViewer, tr("Tracks"));   
 
    setCentralWidget(mTabs);
@@ -196,11 +208,15 @@ void MainWindow::LoadCharFile( const QString &filename )
    {
       //mAnimListWidget->clear(); //note, this also removes the header items
       mMeshListWidget->clear();
-      mMaterialListWidget->clear();
 
       while (mAnimListWidget->rowCount()>0)
       {
          mAnimListWidget->removeRow(0);
+      }
+
+      while (mMaterialModel->rowCount() > 0 )
+      {
+         mMaterialModel->removeRow(0);
       }
 
       emit FileToLoad( filename );
@@ -277,12 +293,34 @@ void MainWindow::OnNewMesh(int meshID, const QString &meshName)
    mMeshListWidget->addItem(meshItem);
 }
 
-void MainWindow::OnNewMaterial( int matID, const QString &name )
+void MainWindow::OnNewMaterial( int matID, const QString &name, 
+                               const QColor &diff, const QColor &amb, const QColor &spec,
+                               float shininess )
 {
-   QListWidgetItem *matItem = new QListWidgetItem();
-   matItem->setText( name );
-   matItem->setData( Qt::UserRole, matID );
-   mMaterialListWidget->addItem(matItem);
+   QStandardItem *idItem = new QStandardItem(QString::number(matID) );
+   idItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+
+   QStandardItem *nameItem = new QStandardItem( name );
+   nameItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+
+   QStandardItem *diffItem = new QStandardItem( diff.name() );
+   diffItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+   diffItem->setBackground( QBrush(diff) );
+
+   QStandardItem *ambItem = new QStandardItem( amb.name() );
+   ambItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+   ambItem->setBackground( QBrush(amb) );
+
+   QStandardItem *specItem = new QStandardItem( spec.name() );
+   specItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+   specItem->setBackground( QBrush(spec) );
+
+   QStandardItem *shinItem = new QStandardItem( QString::number(shininess) );
+   shinItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+
+   QList<QStandardItem*> items;
+   items << idItem << nameItem << diffItem << ambItem << specItem << shinItem;
+   mMaterialModel->appendRow( items);
 }
 
 void MainWindow::OnAnimationClicked( QTableWidgetItem *item )

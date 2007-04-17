@@ -8,6 +8,8 @@
 #include <vector>
 #include <dtAnim/cal3dloader.h>
 
+class QColor;
+
 namespace dtCore
 {
    class OrbitMotionModel;
@@ -57,7 +59,9 @@ signals:
 
    void MeshLoaded(int meshID, const QString &meshName);
 
-   void MaterialLoaded(int materialID, const QString &name);
+   void MaterialLoaded(int materialID, const QString &name, 
+                       const QColor &diffuse, const QColor &ambient, const QColor &specular,
+                       float shininess);
 
    void ErrorOccured( const QString &msg );
 

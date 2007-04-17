@@ -216,3 +216,58 @@ const std::string& Cal3DModelWrapper::GetCoreMeshName( int meshID ) const
 {
    return mCalModel->getCoreModel()->getCoreMesh(meshID)->getName();
 }
+
+osg::Vec4 Cal3DModelWrapper::GetCoreMaterialDiffuse( int matID ) const
+{
+   osg::Vec4 retColor;
+
+   CalCoreMaterial *mat = mCalModel->getCoreModel()->getCoreMaterial(matID);
+   if (mat != NULL)
+   {
+      CalCoreMaterial::Color color = mat->getDiffuseColor();
+      retColor.set(color.red, color.green, color.blue, color.alpha);
+   }
+
+   return retColor;
+}
+
+osg::Vec4 Cal3DModelWrapper::GetCoreMaterialAmbient( int matID ) const 
+{
+   osg::Vec4 retColor;
+
+   CalCoreMaterial *mat = mCalModel->getCoreModel()->getCoreMaterial(matID);
+   if (mat != NULL)
+   {
+      CalCoreMaterial::Color color = mat->getAmbientColor();
+      retColor.set(color.red, color.green, color.blue, color.alpha);
+   }
+
+   return retColor;
+}
+
+osg::Vec4 Cal3DModelWrapper::GetCoreMaterialSpecular( int matID ) const
+{
+   osg::Vec4 retColor;
+
+   CalCoreMaterial *mat = mCalModel->getCoreModel()->getCoreMaterial(matID);
+   if (mat != NULL)
+   {
+      CalCoreMaterial::Color color = mat->getSpecularColor();
+      retColor.set(color.red, color.green, color.blue, color.alpha);
+   }
+
+   return retColor;
+}
+
+float Cal3DModelWrapper::GetCoreMaterialShininess( int matID ) const
+{
+   CalCoreMaterial *mat = mCalModel->getCoreModel()->getCoreMaterial(matID);
+   if (mat != NULL)
+   {
+      return mat->getShininess();
+   }
+   else
+   {
+      return 0.f;
+   }
+}

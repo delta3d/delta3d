@@ -29,6 +29,7 @@
 #include <QDir>
 #include <QDebug>
 #include <QString>
+#include <QColor>
 
 using namespace dtUtil;
 using namespace dtCore;
@@ -171,7 +172,19 @@ void Viewer::OnLoadCharFile( const QString &filename )
    for (int matID=0; matID<wrapper->GetCoreMaterialCount(); matID++)
    {
       QString nameToSend = QString::fromStdString(wrapper->GetCoreMaterialName(matID));
-      emit MaterialLoaded(matID, nameToSend);
+
+      osg::Vec4 diffuse = wrapper->GetCoreMaterialDiffuse(matID);
+      QColor diffColor(diffuse[0], diffuse[1], diffuse[2], diffuse[3]);
+
+      osg::Vec4 ambient = wrapper->GetCoreMaterialAmbient(matID);
+      QColor ambColor(ambient[0], ambient[1], ambient[2], ambient[3]);
+
+      osg::Vec4 specular = wrapper->GetCoreMaterialSpecular(matID);
+      QColor specColor(specular[0], specular[1], specular[2], specular[3]);
+
+      float shininess = wrapper->GetCoreMaterialShininess(matID);
+
+      emit MaterialLoaded(matID, nameToSend, diffColor, ambColor, specColor, shininess);
    }
 }
 
