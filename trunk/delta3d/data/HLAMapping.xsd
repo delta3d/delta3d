@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
-	targetNamespace="hlaComponent"
-	elementFormDefault="qualified"
-	attributeFormDefault="unqualified">
+  targetNamespace="hlaComponent"
+  elementFormDefault="qualified"
+  attributeFormDefault="unqualified">
 
   <xsd:annotation>
     <xsd:documentation xml:lang="en">
@@ -11,12 +11,19 @@
     </xsd:documentation>
   </xsd:annotation>
 
+  <xsd:simpleType name='nonEmptyString'>
+    <xsd:restriction base='xsd:normalizedString'>
+      <xsd:minLength value='1'/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
   <xsd:element name="hla" type="HLAMappingType"/>
 
   <xsd:complexType name="HLAMappingType">
     <xsd:sequence>
       <xsd:element name="header" type="HeaderType"/>
       <xsd:element name="libraries" type="LibrariesType"/>
+      <xsd:element name="ddm" type="DDMType"/>
       <xsd:element name="objects" type="ObjectsType"/>
       <xsd:element name="interactions" type="InteractionsType"/>
     </xsd:sequence>
@@ -41,18 +48,32 @@
       <xsd:element name="actorLibrary" minOccurs="0" maxOccurs="unbounded">
         <xsd:complexType>
           <xsd:sequence>
-            <xsd:element name="name" type="xsd:string"/>
-            <xsd:element name="version" type="xsd:string"/>
+            <xsd:element name="name" type="xsd:normalizedString"/>
+            <xsd:element name="version" type="xsd:normalizedString"/>
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
       <xsd:element name="translatorLibrary" minOccurs="0" maxOccurs="unbounded">
         <xsd:complexType>
           <xsd:sequence>
-            <xsd:element name="name" type="xsd:string"/>
-            <xsd:element name="version" type="xsd:string"/>
+            <xsd:element name="name" type="xsd:normalizedString"/>
+            <xsd:element name="version" type="xsd:normalizedString"/>
           </xsd:sequence>
         </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="DDMType">
+    <xsd:sequence>
+      <xsd:element name="enabled" type="xsd:boolean"/>
+      <xsd:element name="space" minOccurs="0" maxOccurs="unbounded">
+        <xsd:attribute name="name" use="required" type="nonEmptyString"/>
+        <xsd:sequence>
+          <xsd:element name="property" type="xsd:string" minOccurs="0" maxOccurs="unbounded">
+            <xsd:attribute name="name" use="required" type="nonEmptyString"/>
+          </xsd:element>
+        </xsd:sequence>
       </xsd:element>
     </xsd:sequence>
   </xsd:complexType>
@@ -60,22 +81,23 @@
   <xsd:complexType name="ObjectsType">
     <xsd:sequence>
       <xsd:element name="object" minOccurs="0" maxOccurs="unbounded">  
-        <xsd:attribute name="name" type="xsd:string"/>
-        <xsd:attribute name="extends" type="xsd:string"/>
+        <xsd:attribute name="name" type="xsd:normalizedString"/>
+        <xsd:attribute name="ddmSpaceName" type="xsd:normalizedString"/>
+        <xsd:attribute name="extends" type="xsd:normalizedString"/>
         <xsd:complexType>
           <xsd:sequence>
             <xsd:choice>
-	      <xsd:complexType>
+              <xsd:complexType>
                 <xsd:sequence>
-                  <xsd:element name="objectClass" type="xsd:string" />
-                  <xsd:element name="actorType" type="xsd:string"/>
+                  <xsd:element name="objectClass" type="xsd:normalizedString" />
+                  <xsd:element name="actorType" type="xsd:normalizedString"/>
                   <xsd:element name="remoteOnly" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
                   <xsd:element name="disEntityEnum" minOccurs="0" maxOccurs="1" type="DISEntityEnumType"/>
                 </xsd:sequence>
-              </xsd:complexType>	             
+              </xsd:complexType>               
               <xsd:element name="abstract" type="xsd:string"/>
             </xsd:choice>
-            <xsd:element name="entityIdAttributeName" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
+            <xsd:element name="entityIdAttributeName" type="xsd:normalizedString" minOccurs="0" maxOccurs="1" />
             <xsd:element name="attrToProp" minOccurs="0" maxOccurs="unbounded" type="OneToOneType"/>
           </xsd:sequence>
         </xsd:complexType>
@@ -83,9 +105,9 @@
       <xsd:element name="objectHandler" minOccurs="0" maxOccurs="unbounded">
         <xsd:complexType>
           <xsd:sequence>
-            <xsd:element name="objectClass" type="xsd:string" />
+            <xsd:element name="objectClass" type="xsd:normalizedString" />
             <xsd:element name="disEntityEnum" minOccurs="0" maxOccurs="1" type="DISEntityEnumType"/>
-            <xsd:element name="handler" type="xsd:string"/>
+            <xsd:element name="handler" type="xsd:normalizedString"/>
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
@@ -103,17 +125,18 @@
   <xsd:complexType name="InteractionsType">
     <xsd:sequence>
       <xsd:element name="interaction" minOccurs="0" maxOccurs="unbounded">
-        <xsd:attribute name="name" type="xsd:string"/>
-        <xsd:attribute name="extends" type="xsd:string"/>
+        <xsd:attribute name="name" type="xsd:normalizedString"/>
+        <xsd:attribute name="ddmSpaceName" type="xsd:normalizedString"/>
+        <xsd:attribute name="extends" type="xsd:normalizedString"/>
         <xsd:complexType>
           <xsd:sequence>
             <xsd:choice>
-		        <xsd:complexType>
-		          <xsd:sequence>
-		            <xsd:element name="interactionClass" type="xsd:string" />
-		            <xsd:element name="messageType" type="xsd:string"/>
-		          </xsd:sequence>
-		        </xsd:complexType>	             
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="interactionClass" type="xsd:normalizedString" />
+                <xsd:element name="messageType" type="xsd:normalizedString"/>
+              </xsd:sequence>
+            </xsd:complexType>               
               <xsd:element name="abstract" type="xsd:string"/>
             </xsd:choice>
             <xsd:element name="paramToParam" minOccurs="0" maxOccurs="unbounded" type="OneToOneType"/>
@@ -165,7 +188,7 @@
         <xsd:complexType>
           <xsd:sequence>
             <xsd:element name="value" type="xsd:string">
-    	        <xsd:attribute name="id" type="xsd:int"/>      	
+              <xsd:attribute name="id" type="xsd:int"/>        
             </xsd:element>
           </xsd:sequence>
         </xsd:complexType>

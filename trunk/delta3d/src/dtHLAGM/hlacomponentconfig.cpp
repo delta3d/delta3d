@@ -34,6 +34,7 @@
 #include <dtHLAGM/interactiontomessage.h>
 #include <dtHLAGM/distypes.h>
 #include <dtHLAGM/hlafomconfigxml.h>
+#include <dtHLAGM/ddmregioncalculator.h>
 
 #include <xercesc/util/XMLUniDefs.hpp>
 #include <xercesc/util/XMLUni.hpp>

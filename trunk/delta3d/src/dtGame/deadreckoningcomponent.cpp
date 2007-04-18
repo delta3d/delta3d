@@ -193,25 +193,48 @@ namespace dtGame
       std::vector<float> dimensions;
       gameActorProxy.GetGameActor().GetCollisionGeomDimensions(dimensions);
 
+      if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+      {
+         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, 
+               "Actor dimensions [%f, %f, %f] size %u.", 
+               dimensions[0], dimensions[1], dimensions[2], unsigned(dimensions.size()));
+      }
+
       //make points for the front center and back corners in relative coordinates.
       osg::Vec3 points[3];
       points[0].set(0.0f, dimensions[1] / 2, 0.0f);
       points[1].set(dimensions[0] / 2, -(dimensions[1] / 2), 0.0f);
       points[2].set(-(dimensions[0] / 2), -(dimensions[1] / 2), 0.0f);
 
-      osg::Matrix m;
-      xform.Get(m);
+      const osg::Matrix& m = gameActorProxy.GetGameActor().GetMatrix();
 
       mIsector->Reset();
       mIsector->SetQueryRoot(mTerrainActor.get());
 
       for (unsigned i = 0; i < 3; ++i)
       {
+         dtCore::BatchIsector::SingleISector& single = mIsector->CreateOrGetISector(i);
+
          //convert point to absolute space.
          points[i] = points[i] * m;
-
-         dtCore::BatchIsector::SingleISector& single = mIsector->CreateOrGetISector(i);
-         osg::Vec3& singlePoint = points[i];
+         const osg::Vec3& singlePoint = points[i];
+         
+         if (osg::isNaN(singlePoint.x()) || osg::isNaN(singlePoint.y()) || osg::isNaN(singlePoint.z()))
+         {
+            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_INFO))
+            {
+               mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, 
+                     "Intersect point has parts that are NAN, no ground clamping will be performed "
+                     "on actor named \"%s\".", gameActorProxy.GetName().c_str());
+            } 
+            return;
+         }
+         
+         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         {
+            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, 
+                  "Intersect point %d [%f, %f, %f].", i, singlePoint.x(), singlePoint.y(), singlePoint.z());
+         } 
          single.SetSectorAsLineSegment(osg::Vec3(singlePoint[0], singlePoint[1], singlePoint[2] + 100.0f),
                osg::Vec3(singlePoint[0], singlePoint[1], singlePoint[2] - 100.0f));
       }
@@ -234,7 +257,19 @@ namespace dtGame
                   mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
                }
                points[i] = hp;
-            }            
+            }
+            else
+            {
+               std::ostringstream ss;
+               ss << "Found no hit on line segment [" << i <<  "] on points:";
+               for (unsigned i = 0; i < 3; ++i)
+               {
+                  ss << " [" << points[i] << "]";
+               }
+               
+               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
+               
+            }
          }
       } 
       else if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))

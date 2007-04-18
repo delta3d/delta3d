@@ -21,6 +21,19 @@
       </actorLibrary>
     </libraries>
     
+    <ddm>
+      <space name="Geographic">
+         <property name="blueForceCalcType">Geographic</property>
+         <property name="redForceCalcType">Geographic</property>
+         <property name="yellowForceCalcType">AppSpace</property>
+         <property name="greenForceCalcType">AppSpace</property>
+      </space>
+      <space name="NoSuchSpace">
+         <property name="hi">junk</property>
+         <property name="another">rubbish</property>
+      </space>
+    </ddm>
+    
     <objects>
         <object name="BaseEntity">
             <abstract/>

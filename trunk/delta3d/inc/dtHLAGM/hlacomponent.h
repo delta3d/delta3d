@@ -47,6 +47,7 @@
 
 #include <dtHLAGM/export.h>
 #include <dtHLAGM/objectruntimemappinginfo.h>
+#include <dtHLAGM/ddmregioncalculatorgroup.h>
 
 namespace dtCore
 {
@@ -69,6 +70,7 @@ namespace dtHLAGM
    class ParameterToParameterList;
    class OneToManyMapping;
    class ParameterTranslator;
+   class DDMRegionCalculatorGroup;
    class DDMRegionCalculator;
    class DDMRegionData;
    
@@ -369,15 +371,16 @@ namespace dtHLAGM
          /// Adds a new custom parameter translator to the hla component.
          void AddParameterTranslator(ParameterTranslator& newTranslator);
 
-         ///@return the list of DDM region subscription calculators used by this component.
-         const std::vector<dtCore::RefPtr<DDMRegionCalculator> >& GetDDMSubscriptionCalculators() const { return mDDMSubscriptionCalculators; }
+         /// @return The DDMRegionCalculators used for publishing.
+         DDMRegionCalculatorGroup& GetDDMPublishingCalculators();
+         /// @return The DDMRegionCalculators used for publishing as const.
+         const DDMRegionCalculatorGroup& GetDDMPublishingCalculators() const;
 
-         /// Adds a new custom DDM region subscription calculator to the hla component.
-         void AddDDMSubscriptionCalculator(DDMRegionCalculator& newCalc);
-
-         /// Removes a custom DDM region subscription calculator to the hla component.
-         void RemoveDDMSubscriptionCalculator(DDMRegionCalculator& calc);
-
+         /// @return The DDMRegionCalculators used for subscription.
+         DDMRegionCalculatorGroup& GetDDMSubscriptionCalculators();
+         /// @return The DDMRegionCalculators used for subscription as const.
+         const DDMRegionCalculatorGroup& GetDDMSubscriptionCalculators() const;
+         
          ///@return the current RTIambassador instance.  This will return NULL if this component is not connected to the RTI.
          RTI::RTIambassador* GetRTIAmbassador() { return mRTIAmbassador; }
          const RTI::RTIambassador* GetRTIAmbassador() const { return mRTIAmbassador; }
@@ -525,7 +528,9 @@ namespace dtHLAGM
 
          dtCore::RefPtr<dtGame::MachineInfo> mMachineInfo;
          
-         std::vector<dtCore::RefPtr<DDMRegionCalculator> > mDDMSubscriptionCalculators;
+         DDMRegionCalculatorGroup mDDMSubscriptionCalculators;
+         DDMRegionCalculatorGroup mDDMPublishingCalculators;
+
          std::vector<dtCore::RefPtr<DDMRegionData> > mDDMSubscriptionRegions;
 
          std::vector<dtCore::RefPtr<ParameterTranslator> > mParameterTranslators;

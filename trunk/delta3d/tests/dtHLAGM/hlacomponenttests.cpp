@@ -304,10 +304,10 @@ void HLATests::tearDown()
    dtCore::System::GetInstance().Stop();
    if (mGameManager.valid())
    {
-      mHLAComponent = NULL;
+      mHLAComponent  = NULL;
       mTestComponent = NULL;
       mGameManager->UnloadActorRegistry(mTestGameActorLibrary);
-      mGameManager = NULL;
+      mGameManager   = NULL;
    }
 }
 

@@ -54,7 +54,6 @@ namespace dtDAL
 
 namespace dtHLAGM
 {
-
    class HLAComponent;
    class ObjectToActor;
    class AttributeToPropertyList;
@@ -63,6 +62,7 @@ namespace dtHLAGM
    class ParameterToParameterList;
    class EntityType;
    class OneToManyMapping;
+   class DDMRegionCalculator;
 
    class DT_HLAGM_EXPORT HLAFOMConfigContentHandler : public xercesc_dt::ContentHandler, public xercesc_dt::ErrorHandler,
         public xercesc_dt::EntityResolver, public osg::Referenced
@@ -197,6 +197,13 @@ namespace dtHLAGM
          static const std::string LIBRARY_NAME_ELEMENT;
          static const std::string LIBRARY_VERSION_ELEMENT;
 
+         static const std::string DDM_ELEMENT;
+         static const std::string DDM_ENABLED_ELEMENT;
+         static const std::string DDM_SPACE_ELEMENT;
+         static const std::string DDM_SPACE_NAME_ATTRIBUTE;
+         static const std::string DDM_PROPERTY_ELEMENT;
+         static const std::string DDM_PROPERTY_NAME_ATTRIBUTE;
+
          static const std::string OBJECTS_ELEMENT;
          static const std::string OBJECT_ELEMENT;
          static const std::string OBJECT_KEYNAME_ATTRIBUTE;
@@ -260,45 +267,20 @@ namespace dtHLAGM
 
          std::stack<std::string> mElements;
          std::vector<std::string> mMissingLibraries;
-         std::set<std::string> mMissingActorTypes;
-
-         bool mInHLAConfig;
-         bool mInHeader;
-
-         bool mUsingDisID;
-
-         bool mInLibraries;
-         bool mInActorLibrary;
-         bool mInTranslatorLibrary;
-
-         bool mInObjects;
-         bool mInObject;
-         bool mInObjectHandler;
-         bool mInActorTypeHandler;
-
-         bool mInInteractions;
-         bool mInInteraction;
-         bool mInInteractionHandler;
-         bool mInMessageHandler;
-
-
-         //DIS ID's are used in a couple places
-         //this flag is used for each case.
-         bool mParsingDISID;
-
-         //Enum mapping is used when the game datatype is a Enumeration
-         //and that needs to be mapped to the numeric values coming
-         //from HLA.
-         bool mParsingEnumMapping;
+         std::set<std::string> mMissingActorTypes;         
+         
          std::string mCurrentEnumHLAID;
 
+         std::string mCurrentDDMSpaceName;
+         std::string mCurrentDDMPropertyName;
+         dtCore::RefPtr<DDMRegionCalculator> mCurrentDDMSubscriptionCalculator;
+         dtCore::RefPtr<DDMRegionCalculator> mCurrentDDMPublishingCalculator;
+         
          std::string mLibName;
          std::string mLibVersion;
 
          dtCore::RefPtr<ObjectToActor> mCurrentObjectToActor;
-         bool mCurrentObjectToActorIsAbstract;
          dtCore::RefPtr<InteractionToMessage> mCurrentInteractionToMessage;
-         bool mCurrentInteractionToMessageIsAbstract;
 
          std::map<std::string, dtCore::RefPtr<ObjectToActor> > mNamedObjectToActors;
          std::map<std::string, dtCore::RefPtr<InteractionToMessage> > mNamedInteractionToMessages;
@@ -309,22 +291,61 @@ namespace dtHLAGM
          std::vector<dtCore::RefPtr<ObjectToActor> > mObjectToActors;
          std::vector<dtCore::RefPtr<InteractionToMessage> > mInteractionToMessages;
 
+         bool mInHLAConfig:1;
+         bool mInHeader:1;
+
+         bool mUsingDisID:1;
+
+         bool mInLibraries:1;
+         bool mInActorLibrary:1;
+         bool mInTranslatorLibrary:1;
+         
+         bool mInDDM:1;
+         bool mDDMEnabled:1;
+         
+         bool mInObjects:1;
+         bool mInObject:1;
+         bool mInObjectHandler:1;
+         bool mInActorTypeHandler:1;
+
+         bool mInInteractions:1;
+         bool mInInteraction:1;
+         bool mInInteractionHandler:1;
+         bool mInMessageHandler:1;
+
+         //DIS ID's are used in a couple places
+         //this flag is used for each case.
+         bool mParsingDISID:1;
+
+         //Enum mapping is used when the game datatype is a Enumeration
+         //and that needs to be mapped to the numeric values coming
+         //from HLA.
+         bool mParsingEnumMapping:1;
+
+         bool mCurrentObjectToActorIsAbstract:1;
+         bool mCurrentInteractionToMessageIsAbstract:1;
+
          void StartElementEnumMapping(const std::string& elementName, const xercesc_dt::Attributes& attrs);
 
          void ObjectToActorCharacters(const std::string& elementName, const std::string& characters);
          dtDAL::ActorType* FindActorType(const std::string& actorTypeFullName);
          void DISIDCharacters(EntityType& entityType, const std::string& elementName, const std::string& characters);
-
+         void DDMCharacters(const std::string& elementName, const std::string& characters);
+         
          void InteractionToMessageCharacters(const std::string& elementName, const std::string& characters);
 
          ///Handles the characters for any OneToManyMapping object.  This is used by both object and interation mappings
          void OneToManyCharacters(const std::string& elementName, const std::string& characters, OneToManyMapping& mapping);
+
+         void GetAttributeValue(const std::string& attrName, const xercesc_dt::Attributes& attrs, std::string& toFill);
 
          void LoadActorLibrary();
          void LoadTranslatorLibrary();
 
          //reset/clear all of the library data/state variables
          void ClearLibraryValues();
+         //reset/clear all of the DDM data/state variables
+         void ClearDDMValues();
          //reset/clear all of the Object data/state variables
          void ClearObjectValues();
          //reset/clear all of the Interation data/state variables
