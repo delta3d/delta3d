@@ -47,6 +47,7 @@ namespace dtActors
    const std::string AnimationGameActor::PropertyNames::ANIMATION_BLEND_GROUP("ANIMATION_BLEND_GROUP_");
    const std::string AnimationGameActor::PropertyNames::ANIMATION_BLEND_WEIGHT("ANIMATION_BLEND_WEIGHT_");
    const std::string AnimationGameActor::PropertyNames::ANIMATION_BLEND_ID("ANIMATION_BLEND_ID_");
+   const std::string AnimationGameActor::PropertyNames::ANIMATION_BLEND_DELAY("ANIMATION_BLEND_DELAY_");
 
    //////////////////////////////////////////////////////////////////////////////
    /////////////////////////// BEGIN ACTOR //////////////////////////////////////
@@ -207,8 +208,16 @@ namespace dtActors
                const dtDAL::NamedUnsignedIntParameter* idparam = static_cast<const dtDAL::NamedUnsignedIntParameter*>( idchild );
                const dtDAL::NamedFloatParameter* wparam = static_cast<const dtDAL::NamedFloatParameter*>( wchild );
 
+               float delay=0.f;
+               const dtDAL::NamedParameter* dchild = childgroup->GetParameter( AnimationGameActor::PropertyNames::ANIMATION_BLEND_DELAY + dtUtil::ToString(child));
+               if( dchild )
+               {
+                  const dtDAL::NamedFloatParameter* dparam = static_cast<const dtDAL::NamedFloatParameter*>( dchild );
+                  delay = dparam->GetValue();
+               }
+
                dtAnim::Cal3DModelWrapper* wrapper = mAnimator->GetWrapper();
-               wrapper->BlendCycle( idparam->GetValue(), wparam->GetValue(), 0.f );
+               wrapper->BlendCycle( idparam->GetValue(), wparam->GetValue(), delay );
             }
          }
       }

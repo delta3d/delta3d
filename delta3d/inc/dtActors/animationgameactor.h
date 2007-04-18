@@ -51,6 +51,7 @@ namespace dtActors
          static const std::string ANIMATION_BLEND_GROUP;
          static const std::string ANIMATION_BLEND_WEIGHT;
          static const std::string ANIMATION_BLEND_ID;
+         static const std::string ANIMATION_BLEND_DELAY;
       };
 
       /**
