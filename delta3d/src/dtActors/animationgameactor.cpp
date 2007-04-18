@@ -253,7 +253,8 @@ namespace dtActors
       if( data->message == "preframe" )
       {
          double dt = *static_cast<double*>(data->userData);      
-         mAnimator->Update(dt);
+         if (mAnimator.valid())
+            mAnimator->Update(dt);
       }
    }
 }
