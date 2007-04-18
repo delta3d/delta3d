@@ -574,25 +574,6 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void HLAComponent::AddDDMSubscriptionCalculator(DDMRegionCalculator& newCalc)
-   {
-      mDDMSubscriptionCalculators.push_back(&newCalc);
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////
-   void HLAComponent::RemoveDDMSubscriptionCalculator(DDMRegionCalculator& calc)
-   {
-      for (unsigned i = 0; i < mDDMSubscriptionCalculators.size(); ++i)
-      {
-         if (mDDMSubscriptionCalculators[i].get() == &calc)
-         {
-            mDDMSubscriptionCalculators.erase(mDDMSubscriptionCalculators.begin() + i);
-            break;
-         }
-      }
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::provideAttributeValueUpdate(RTI::ObjectHandle theObject,
                                                       const RTI::AttributeHandleSet& theAttributes)
       throw (RTI::ObjectNotKnown,
@@ -1875,10 +1856,34 @@ namespace dtHLAGM
       mRTIAmbassador->notifyAboutRegionModification(*regionData.GetRegion());
    }
    
+   /// @return The DDMRegionCalculators used for publishing.
+   DDMRegionCalculatorGroup& HLAComponent::GetDDMPublishingCalculators()
+   {
+      return mDDMPublishingCalculators;
+   }
+   
+   /// @return The DDMRegionCalculators used for publishing as const.
+   const DDMRegionCalculatorGroup& HLAComponent::GetDDMPublishingCalculators() const
+   {
+      return mDDMPublishingCalculators;
+   }
+
+   /// @return The DDMRegionCalculators used for subscription.
+   DDMRegionCalculatorGroup& HLAComponent::GetDDMSubscriptionCalculators()
+   {
+      return mDDMSubscriptionCalculators;
+   }
+   
+   /// @return The DDMRegionCalculators used for subscription as const.
+   const DDMRegionCalculatorGroup& HLAComponent::GetDDMSubscriptionCalculators() const
+   {
+      return mDDMSubscriptionCalculators;      
+   }
+
    /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::UpdateDDMSubscriptions()
    {
-      for (unsigned i = 0; i < mDDMSubscriptionCalculators.size(); ++i)
+      for (unsigned i = 0; i < mDDMSubscriptionCalculators.GetSize(); ++i)
       {
          /// if the region is actually changed.
          if (mDDMSubscriptionCalculators[i]->UpdateRegionData(*mDDMSubscriptionRegions[i]))
@@ -1891,14 +1896,14 @@ namespace dtHLAGM
    /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::CreateDDMSubscriptionRegions()
    {
-      if (mDDMSubscriptionCalculators.empty())
+      if (mDDMSubscriptionCalculators.IsEmpty())
       {
          throw dtUtil::Exception(
                "DDM has been enabled, but no Subscription Region Calculators have been registered: ", 
                __FILE__, __LINE__);         
       }
             
-      for (unsigned i = 0; i < mDDMSubscriptionCalculators.size(); ++i)
+      for (unsigned i = 0; i < mDDMSubscriptionCalculators.GetSize(); ++i)
       {
          try
          {

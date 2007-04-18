@@ -766,32 +766,32 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          //Unsigned Int param
          dtCore::RefPtr<dtGame::UnsignedIntMessageParameter> uIntParam = new dtGame::UnsignedIntMessageParameter("test");
          RunIncomingTranslation(*uIntParam, mapping, bufferSize);
-         CPPUNIT_ASSERT_MESSAGE("Value for " + mapping.GetHLAType().GetName() + " data should assign a param of type unsigned int",
-            (unsigned)expectedResult == uIntParam->GetValue());
+         CPPUNIT_ASSERT_EQUAL_MESSAGE("Value for " + mapping.GetHLAType().GetName() + " data should assign a param of type unsigned int",
+            unsigned(expectedResult), uIntParam->GetValue());
 
          //Int param
          dtCore::RefPtr<dtGame::IntMessageParameter> intParam = new dtGame::IntMessageParameter("test");
          RunIncomingTranslation(*intParam, mapping, bufferSize);
-         CPPUNIT_ASSERT_MESSAGE("Value for " + mapping.GetHLAType().GetName() + " data should assign a param of type int",
-            (int)expectedResult == intParam->GetValue());
+         CPPUNIT_ASSERT_EQUAL_MESSAGE("Value for " + mapping.GetHLAType().GetName() + " data should assign a param of type int",
+            int(expectedResult), intParam->GetValue());
 
          //short param
          dtCore::RefPtr<dtGame::ShortIntMessageParameter> shortParam = new dtGame::ShortIntMessageParameter("test");
          RunIncomingTranslation(*shortParam, mapping, bufferSize);
-         CPPUNIT_ASSERT_MESSAGE("Value for " + mapping.GetHLAType().GetName() + " data should assign a param of type short",
-            (short int)expectedResult == shortParam->GetValue());
+         CPPUNIT_ASSERT_EQUAL_MESSAGE("Value for " + mapping.GetHLAType().GetName() + " data should assign a param of type short",
+            (short int)expectedResult, shortParam->GetValue());
 
          //unsigned short
          dtCore::RefPtr<dtGame::UnsignedShortIntMessageParameter> uShortParam = new dtGame::UnsignedShortIntMessageParameter("test");
          RunIncomingTranslation(*uShortParam, mapping, bufferSize);
-         CPPUNIT_ASSERT_MESSAGE("Value for " + mapping.GetHLAType().GetName() + " data should assign a param of type unsigned short",
-            (short int)expectedResult == uShortParam->GetValue());
+         CPPUNIT_ASSERT_EQUAL_MESSAGE("Value for " + mapping.GetHLAType().GetName() + " data should assign a param of type unsigned short",
+            (unsigned short)expectedResult, uShortParam->GetValue());
 
          //unsigned char
          dtCore::RefPtr<dtGame::UnsignedCharMessageParameter> uCharParam = new dtGame::UnsignedCharMessageParameter("test");
          RunIncomingTranslation(*uCharParam, mapping, bufferSize);
-         CPPUNIT_ASSERT_MESSAGE("Value for " + mapping.GetHLAType().GetName() + " data should assign a param of type unsigned char",
-            (unsigned char)expectedResult == uCharParam->GetValue());
+         CPPUNIT_ASSERT_EQUAL_MESSAGE("Value for " + mapping.GetHLAType().GetName() + " data should assign a param of type unsigned char",
+            (unsigned int)expectedResult, (unsigned int)uCharParam->GetValue());
 
          //boolean
          dtCore::RefPtr<dtGame::BooleanMessageParameter> boolParam = new dtGame::BooleanMessageParameter("test");

@@ -36,6 +36,7 @@
 #include <dtDAL/librarymanager.h>
 #include <dtGame/gamemanager.h>
 
+#include <dtHLAGM/ddmregioncalculator.h>
 #include <dtHLAGM/hlacomponent.h>
 #include <dtHLAGM/objecttoactor.h>
 #include <dtHLAGM/interactiontomessage.h>
@@ -65,6 +66,13 @@ namespace dtHLAGM
    const std::string HLAFOMConfigContentHandler::LIBRARY_TRANSLATOR_ELEMENT("translatorLibrary");
    const std::string HLAFOMConfigContentHandler::LIBRARY_NAME_ELEMENT("name");
    const std::string HLAFOMConfigContentHandler::LIBRARY_VERSION_ELEMENT("version");
+
+   const std::string HLAFOMConfigContentHandler::DDM_ELEMENT("ddm");
+   const std::string HLAFOMConfigContentHandler::DDM_ENABLED_ELEMENT("enabled");
+   const std::string HLAFOMConfigContentHandler::DDM_SPACE_ELEMENT("space");
+   const std::string HLAFOMConfigContentHandler::DDM_SPACE_NAME_ATTRIBUTE("name");
+   const std::string HLAFOMConfigContentHandler::DDM_PROPERTY_ELEMENT("property");
+   const std::string HLAFOMConfigContentHandler::DDM_PROPERTY_NAME_ATTRIBUTE("name");
 
    const std::string HLAFOMConfigContentHandler::OBJECTS_ELEMENT("objects");
    const std::string HLAFOMConfigContentHandler::OBJECT_ELEMENT("object");
@@ -132,6 +140,22 @@ namespace dtHLAGM
    {
    }
 
+   void HLAFOMConfigContentHandler::GetAttributeValue(const std::string& attrName, const xercesc_dt::Attributes& attrs, std::string& toFill)
+   {
+      dtUtil::AttributeSearch as;
+      dtUtil::AttributeSearch::ResultMap rMap = as(attrs);
+      //see if this interaction mapping extends another, i.e. inherits all attribute mappings.
+      dtUtil::AttributeSearch::ResultMap::iterator itor = rMap.find(attrName);
+      if (itor != rMap.end())
+      {
+         toFill = itor->second;
+      }
+      else
+      {
+         toFill = "";
+      }
+   }
+   
    void HLAFOMConfigContentHandler::startDocument()
    {
       mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
@@ -212,14 +236,11 @@ namespace dtHLAGM
             {
                mInObject = true;
                mCurrentObjectToActor = new ObjectToActor;
-               dtUtil::AttributeSearch as;
-               dtUtil::AttributeSearch::ResultMap rMap = as(attrs);
-               //see if this object mapping extends another, i.e. inherits all attribute mappings.
-               dtUtil::AttributeSearch::ResultMap::iterator itor = rMap.find(OBJECT_EXTENDS_ATTRIBUTE);
-               if (itor != rMap.end())
+               std::string extendsName;
+               GetAttributeValue(OBJECT_EXTENDS_ATTRIBUTE, attrs, extendsName);
+               if (!extendsName.empty())
                {
-                  const std::string& keyName = itor->second;
-                  std::map<std::string, dtCore::RefPtr<ObjectToActor> >::iterator superItor = mNamedObjectToActors.find(keyName);
+                  std::map<std::string, dtCore::RefPtr<ObjectToActor> >::iterator superItor = mNamedObjectToActors.find(extendsName);
                   if (superItor != mNamedObjectToActors.end())
                   {
                      dtCore::RefPtr<ObjectToActor> super = superItor->second;
@@ -234,28 +255,26 @@ namespace dtHLAGM
                      if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                            "Added field mappings from object mapping \"%s\" to the current mapping.",
-                           keyName.c_str());
-
+                           extendsName.c_str());
                   }
                   else
                   {
                      std::ostringstream ss;
-                     ss << "Unable to extend from mapping named " << keyName << " because no such mapping has been found in the XML."; 
+                     ss << "Unable to extend from mapping named " << extendsName << " because no such mapping has been found in the XML."; 
                      throw dtUtil::Exception(ExceptionEnum::XML_CONFIG_EXCEPTION, ss.str(), __FILE__, __LINE__);
                   }
-
                }
 
                //see if this object mapping has a key name so that others may inherit all attribute mappings.
-               itor = rMap.find(OBJECT_KEYNAME_ATTRIBUTE);
-               if (itor != rMap.end())
+               std::string keyName;
+               GetAttributeValue(OBJECT_KEYNAME_ATTRIBUTE, attrs, keyName);
+               if (!keyName.empty())
                {
-                  const std::string& newKeyName = itor->second;
-                  mNamedObjectToActors.insert(std::make_pair(newKeyName, mCurrentObjectToActor));
+                  mNamedObjectToActors.insert(std::make_pair(keyName, mCurrentObjectToActor));
                   if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                      mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                         "Setting mapping name for current object mapping to \"%s\".",
-                        newKeyName.c_str());
+                        keyName.c_str());
                }
             }
             else if (sLocalName == OBJECT_HANDLER_ELEMENT)
@@ -266,7 +285,6 @@ namespace dtHLAGM
             {
                mInActorTypeHandler = true;
             }
-
          }
          else if (mInInteractions)
          {
@@ -298,19 +316,16 @@ namespace dtHLAGM
             {
                mInInteraction = true;
                mCurrentInteractionToMessage = new InteractionToMessage;
-               dtUtil::AttributeSearch as;
-               dtUtil::AttributeSearch::ResultMap rMap = as(attrs);
-               //see if this interaction mapping extends another, i.e. inherits all attribute mappings.
-               dtUtil::AttributeSearch::ResultMap::iterator itor = rMap.find(INTERACTION_EXTENDS_ATTRIBUTE);
-               if (itor != rMap.end())
+               std::string extendsName;
+               GetAttributeValue(INTERACTION_EXTENDS_ATTRIBUTE, attrs, extendsName);
+               if (!extendsName.empty())
                {
-                  const std::string& keyName = itor->second;
                   if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                      mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                         "Current mapping extends interaction mapping \"%s\".",
-                        keyName.c_str());
+                        extendsName.c_str());
 
-                  std::map<std::string, dtCore::RefPtr<InteractionToMessage> >::iterator superItor = mNamedInteractionToMessages.find(keyName);
+                  std::map<std::string, dtCore::RefPtr<InteractionToMessage> >::iterator superItor = mNamedInteractionToMessages.find(extendsName);
                   if (superItor != mNamedInteractionToMessages.end())
                   {
                      //copy all data from the one vector to the other.
@@ -321,28 +336,27 @@ namespace dtHLAGM
                      if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                            "Added parameter mappings from interaction mapping \"%s\" to the current mapping.",
-                           keyName.c_str());
-
+                           extendsName.c_str());
                   }
                   else
                   {
                      std::ostringstream ss;
-                     ss << "Unable to extend from mapping named " << keyName << " because no such mapping has been found in the XML."; 
+                     ss << "Unable to extend from mapping named " << extendsName << " because no such mapping has been found in the XML."; 
                      throw dtUtil::Exception(ExceptionEnum::XML_CONFIG_EXCEPTION, ss.str(), __FILE__, __LINE__);
                   }
 
                }
 
                //see if this interaction mapping has a key name so that others may inherit all attribute mappings.
-               itor = rMap.find(INTERACTION_KEYNAME_ATTRIBUTE);
-               if (itor != rMap.end())
+               std::string keyName;
+               GetAttributeValue(INTERACTION_KEYNAME_ATTRIBUTE, attrs, keyName);
+               if (!keyName.empty())
                {
-                  const std::string& newKeyName = itor->second;
-                  mNamedInteractionToMessages.insert(make_pair(newKeyName, mCurrentInteractionToMessage));
+                  mNamedInteractionToMessages.insert(make_pair(keyName, mCurrentInteractionToMessage));
                   if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                      mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                         "Setting mapping name for current interaction mapping to \"%s\".",
-                        newKeyName.c_str());
+                        keyName.c_str());
                }
             }
             else if (sLocalName == INTERACTION_HANDLER_ELEMENT)
@@ -361,14 +375,49 @@ namespace dtHLAGM
                mInTranslatorLibrary = true;
             }
          }
+         else if (mInDDM)
+         {
+            if (sLocalName == DDM_SPACE_ELEMENT)
+            {
+               GetAttributeValue(DDM_SPACE_NAME_ATTRIBUTE, attrs, mCurrentDDMSpaceName);
+               if (mCurrentDDMSpaceName.empty())
+               {
+                  mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__,  __LINE__, 
+                        "A DDM space name is empty or missing, this is invalid and will be ignored.");
+               }
+               //mTargetTranslator->
+            }
+            else if (sLocalName == DDM_PROPERTY_ELEMENT)
+            {
+               if (!mCurrentDDMSpaceName.empty())
+               {
+                  GetAttributeValue(DDM_PROPERTY_NAME_ATTRIBUTE, attrs, mCurrentDDMPropertyName);               
+                  if (mCurrentDDMPropertyName.empty())
+                  {
+                     mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__,  __LINE__, 
+                           "A DDM space property name is empty or missing, this is invalid and will be ignored.");
+                  }
+               }
+            }
+         }
          else if (!mInHeader)
          {
             if (sLocalName == OBJECTS_ELEMENT)
+            {
                mInObjects = true;
+            }
             else if (sLocalName == INTERACTIONS_ELEMENT)
+            {
                mInInteractions = true;
+            }
             else if (sLocalName == HEADER_ELEMENT)
+            {
                mInHeader = true;
+            }
+            else if (sLocalName == DDM_ELEMENT)
+            {
+               mInDDM = true;
+            }
             else if (sLocalName == LIBRARIES_ELEMENT)
             {
                ClearLibraryValues();
@@ -477,9 +526,34 @@ namespace dtHLAGM
             mLibVersion = sChars;
          }
       }
-
+      else if (mInDDM)
+      {
+         DDMCharacters(topElement, sChars);
+      }
    }
 
+   void HLAFOMConfigContentHandler::DDMCharacters(const std::string& elementName, const std::string& characters)
+   {
+      if (elementName == DDM_PROPERTY_ELEMENT)
+      {
+         if (!mCurrentDDMPropertyName.empty())
+         {
+            if (mCurrentDDMPublishingCalculator.valid())
+            {
+               mCurrentDDMPublishingCalculator->SetProperty(mCurrentDDMPropertyName, characters);
+            }
+            if (mCurrentDDMSubscriptionCalculator.valid())
+            {
+               mCurrentDDMSubscriptionCalculator->SetProperty(mCurrentDDMPropertyName, characters);               
+            }
+         }
+      }
+      else if (elementName == DDM_ENABLED_ELEMENT)
+      {
+         mTargetTranslator->SetDDMEnabled(characters == "true" || characters == "1");           
+      }
+   }
+   
    void HLAFOMConfigContentHandler::ObjectToActorCharacters(const std::string& elementName, const std::string& characters)
    {
       if (mCurrentObjectToActor == NULL)
@@ -947,7 +1021,6 @@ namespace dtHLAGM
                         sLocalName.c_str(), INTERACTION_ELEMENT.c_str()
                         );
                }
-
             }
             else if (sLocalName == INTERACTION_HANDLER_ELEMENT)
             {
@@ -999,6 +1072,24 @@ namespace dtHLAGM
                      );
             }
          }
+         else if (mInDDM)
+         {
+            if (sLocalName == DDM_PROPERTY_ELEMENT)
+            {
+               mCurrentDDMPropertyName.clear();
+            }
+            else if (sLocalName == DDM_SPACE_ELEMENT)
+            {
+               mCurrentDDMSpaceName.clear();
+               mCurrentDDMSubscriptionCalculator = NULL;
+               mCurrentDDMPublishingCalculator = NULL;
+            }
+            else if (sLocalName == DDM_ELEMENT)
+            {
+               mInDDM = false;
+               ClearDDMValues();
+            }
+         }
          else
          {
             if (sLocalName == HEADER_ELEMENT)
@@ -1031,7 +1122,6 @@ namespace dtHLAGM
                );
       }
 
-
       mElements.pop();
    }
 
@@ -1063,7 +1153,6 @@ namespace dtHLAGM
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                 "Error loading library %s version %s in the library manager.  Exception message to follow.",
                  mLibName.c_str(), mLibVersion.c_str());
-
          }
          else
          {
@@ -1210,6 +1299,10 @@ namespace dtHLAGM
 
       ClearLibraryValues();
 
+      mInDDM = false;
+      mDDMEnabled = false;
+      ClearDDMValues();
+      
       mInObject = false;
       ClearObjectValues();
       mNamedObjectToActors.clear();
@@ -1230,6 +1323,14 @@ namespace dtHLAGM
 
       mLibName.clear();
       mLibVersion.clear();
+   }
+
+   void HLAFOMConfigContentHandler::ClearDDMValues()
+   {
+      mCurrentDDMSpaceName.clear();
+      mCurrentDDMPropertyName.clear();
+      mCurrentDDMSubscriptionCalculator = NULL;
+      mCurrentDDMPublishingCalculator = NULL;
    }
 
    void HLAFOMConfigContentHandler::ClearObjectValues()

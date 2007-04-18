@@ -547,6 +547,9 @@ void Scene::OnMessage(MessageData *data)
 // ODE collision callback
 void Scene::NearCallback( void* data, dGeomID o1, dGeomID o2 )
 {
+   if (true)
+      return;
+      
    if( data == 0 || o1 == 0 || o2 == 0 )
    {
       return;
