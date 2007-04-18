@@ -31,6 +31,8 @@
 #include <dtCore/scene.h>
 #include <dtGame/basemessages.h>
 #include <dtCore/system.h>
+#include <dtGame/invokable.h>
+#include <dtDAL/functor.h>
 
 #include <osg/MatrixTransform>
 #include <osg/Geode>
@@ -60,13 +62,11 @@ namespace dtActors
       , mModelLoader(new dtAnim::Cal3DLoader)
       , mAnimator( NULL )
    {
-      AddSender(&dtCore::System::GetInstance());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    AnimationGameActor::~AnimationGameActor()
    {
-      RemoveSender(&dtCore::System::GetInstance()); 
    }
 
    void AnimationGameActor::SetModel(const std::string &modelFile)
@@ -153,7 +153,8 @@ namespace dtActors
    //////////////////////////////////////////////////////////////////////////////
    void AnimationGameActorProxy::BuildInvokables()
    {
-      dtGame::GameActorProxy::BuildInvokables();
+      dtCore::RefPtr<dtGame::Invokable> invokable_tick_local = new dtGame::Invokable(dtGame::GameActorProxy::TICK_LOCAL_INVOKABLE, dtDAL::MakeFunctor(GetGameActor(),&dtGame::GameActor::TickLocal) );
+      AddInvokable( *invokable_tick_local );
    }
 
    const dtDAL::ActorProxy::RenderMode& AnimationGameActorProxy::GetRenderMode()
@@ -226,6 +227,7 @@ namespace dtActors
    dtCore::RefPtr<dtDAL::NamedGroupParameter> AnimationGameActor::MakeAnimationGroup()
    {
       dtCore::RefPtr<dtDAL::NamedGroupParameter> group = new dtDAL::NamedGroupParameter(AnimationGameActor::PropertyNames::ANIMATION_GROUP);
+      ///\todo add all animations currently being blended
       return group;
    }
 
@@ -234,27 +236,17 @@ namespace dtActors
       return mAnimator.get();
    }
 
-   //void AnimationGameActor::TickRemote(const dtGame::Message& msg)
-   //{
-   //   const dtGame::TickMessage& tickmsg = static_cast<const dtGame::TickMessage&>( msg );
-   //   float dt = tickmsg.GetDeltaSimTime();
-   //   mAnimator->Update(dt);
-   //}
-
-   //void AnimationGameActor::TickLocal(const dtGame::Message& msg)
-   //{
-   //   const dtGame::TickMessage& tickmsg = static_cast<const dtGame::TickMessage&>( msg );
-   //   float dt = tickmsg.GetDeltaSimTime();
-   //   mAnimator->Update(dt);
-   //}
-
-   void AnimationGameActor::OnMessage(dtCore::Base::MessageData* data)
+   void AnimationGameActor::TickLocal(const dtGame::Message& msg)
    {
-      if( data->message == "preframe" )
-      {
-         double dt = *static_cast<double*>(data->userData);      
-         if (mAnimator.valid())
-            mAnimator->Update(dt);
-      }
+      const dtGame::TickMessage& tickmsg = static_cast<const dtGame::TickMessage&>( msg );
+      float dt = tickmsg.GetDeltaSimTime();
+      mAnimator->Update(dt);
    }
+
+   void AnimationGameActor::OnEnteredWorld()
+   {
+      dtGame::GameActorProxy& gap = GetGameActorProxy();
+      gap.RegisterForMessages( dtGame::MessageType::TICK_LOCAL, dtGame::GameActorProxy::TICK_LOCAL_INVOKABLE );
+   }
+
 }
