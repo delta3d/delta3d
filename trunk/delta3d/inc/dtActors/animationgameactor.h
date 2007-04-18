@@ -71,14 +71,14 @@ namespace dtActors
           */
          virtual void AddedToScene(dtCore::Scene* scene);     
 
-         void ApplyAnimationGroup(const dtDAL::NamedGroupParameter& prop);
-         dtCore::RefPtr<dtDAL::NamedGroupParameter> MakeAnimationGroup();
+      virtual void OnEnteredWorld();
+
+      void ApplyAnimationGroup(const dtDAL::NamedGroupParameter& prop);
+      dtCore::RefPtr<dtDAL::NamedGroupParameter> MakeAnimationGroup();
 
          const dtAnim::Cal3DAnimator* GetAnimator() const;
 
-         //virtual void TickRemote(const dtGame::Message& tickMessage);
-         //virtual void TickLocal(const dtGame::Message& tickMessage);
-         virtual void OnMessage(dtCore::Base::MessageData *data);
+      virtual void TickLocal(const dtGame::Message& tickMessage);
 
       protected:      
 
