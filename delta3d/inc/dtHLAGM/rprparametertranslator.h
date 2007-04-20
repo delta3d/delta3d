@@ -186,6 +186,12 @@ namespace dtHLAGM
             const OneToManyMapping& mapping,
             const OneToManyMapping::ParameterDefinition& paramDef) const;
 
+         void MapFromParamToArticulations(
+            char* buffer, 
+            size_t& maxSize, 
+            const dtGame::MessageParameter& parameter,
+            const OneToManyMapping::ParameterDefinition& paramDef) const;
+
          void MapFromStringParamToCharArray(
             char* buffer,
             size_t& maxSize,

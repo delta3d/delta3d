@@ -36,6 +36,7 @@
 #include <osg/Endian>
 #include <dtUtil/coordinates.h>
 #include <dtUtil/log.h>
+#include <dtUtil/stringutils.h>
 #include <dtCore/uniqueid.h>
 #include <dtDAL/datatype.h>
 #include <dtHLAGM/objecttoactor.h>
@@ -57,6 +58,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestOutgoingEulerAngleDataTranslation);
       CPPUNIT_TEST(TestOutgoingVectorDataTranslation);
       CPPUNIT_TEST(TestOutgoingAngularVectorDataTranslation);
+      CPPUNIT_TEST(TestOutgoingArticulationDataTranslation);
       CPPUNIT_TEST(TestOutgoingEnumDataTranslation);
       CPPUNIT_TEST(TestOutgoingEntityTypeEnumDataTranslation);
       CPPUNIT_TEST(TestOutgoingIntDataTranslation);
@@ -264,6 +266,142 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
       void TestOutgoingAngularVectorDataTranslation()
       {
          InternalTestOutgoingVectorDataTranslation(dtHLAGM::RPRAttributeType::ANGULAR_VELOCITY_VECTOR_TYPE);
+      }
+
+      void TestOutgoingArticulationDataTranslation()
+      {
+         // Set the mapping direction
+         mMapping.SetHLAType( dtHLAGM::RPRAttributeType::ARTICULATED_PART_TYPE );
+         dtHLAGM::OneToManyMapping::ParameterDefinition& pd = mMapping.GetParameterDefinitions()[0];
+         pd.SetGameType( dtDAL::DataType::GROUP );
+
+         // NOTE: All values used are arbitrary and have no relevance to the
+         //       real world values used in articulations.
+
+         dtHLAGM::ArticulatedParts articParts;
+         articParts.SetClass( 99 );
+         articParts.SetTypeMetric( 11 );
+         articParts.SetValue( 987.654f );
+         pd.AddEnumerationMapping("99","testDOF");
+         pd.AddEnumerationMapping("11","Azimuth"); // "Azimuth" is 1 of 16 possible Metric names.
+
+         dtHLAGM::EntityType dis( 5, 10, 15, 20, 25, 30, 35 );
+         pd.AddEnumerationMapping("5 10 15 20 25 30 35","testDIS");
+
+         dtHLAGM::AttachedParts attachParts;
+         attachParts.SetStation( 246 );
+         attachParts.SetStoreType( dis );
+
+         dtHLAGM::ParameterValue articValue;
+         articValue.SetArticulatedParts( articParts );
+         articValue.SetAttachedParts( attachParts );
+
+         dtHLAGM::ArticulatedParameter articParam;
+         articParam.SetArticulatedParameterChange( 123 );
+         articParam.SetParameterValue( articValue );
+         articParam.SetPartAttachedTo( 1 ); // DOF2 @ index 1
+         pd.AddEnumerationMapping("2000","Parent_DOF2"); // DOF2
+
+         // NOTE: Internal tests will add 2 extra ArticulatedParameters to the
+         //       articulations array while adding this test parameter object to
+         //       the end at index 2.
+         pd.AddEnumerationMapping("1000","DOF1");
+         pd.AddEnumerationMapping("0","Parent_DOF0"); // Base Hull (0)
+         pd.AddEnumerationMapping("2000","DOF2");
+         pd.AddEnumerationMapping("1000","Parent_DOF1"); // DOF1
+
+
+         // Test Articulated Parts
+         articValue.SetArticulatedParameterType( (dtHLAGM::ArticulatedParameterType) 1 );
+         articParam.SetParameterValue( articValue );
+         InternalTestOutgoingArticulationDataTranslation( articParam );
+
+         // Test Attached Parts
+         articValue.SetArticulatedParameterType( (dtHLAGM::ArticulatedParameterType) 0 );
+         articParam.SetParameterValue( articValue );
+         InternalTestOutgoingArticulationDataTranslation( articParam );
+      }
+
+      void InternalTestOutgoingArticulationDataTranslation(const dtHLAGM::ArticulatedParameter& expectedResult)
+      {
+         // Create the array for articulated parameters.
+         std::vector<dtCore::RefPtr<const dtGame::MessageParameter> > messageParameters;
+
+         // The main group parameter "value" to be assigned
+         dtCore::RefPtr<dtGame::GroupMessageParameter> mainParam = new dtGame::GroupMessageParameter( "Articulated Parameters Array" );
+
+         // The sub group of parameters pertaining to either an
+         // ArticulatedPart or an AttachPart
+         dtCore::RefPtr<dtGame::GroupMessageParameter> subParam = NULL;
+
+
+
+         // Create other articulated parameters to lengthen the array
+         // --- Extra 0
+         subParam = new dtGame::GroupMessageParameter( "ArticulatedPartMessageParam0" );
+         subParam->AddParameter( *new dtGame::FloatMessageParameter( "Azimuth", 0.0f ) );
+         subParam->AddParameter( *new dtGame::StringMessageParameter( "OurName", "DOF1" ) );
+         subParam->AddParameter( *new dtGame::StringMessageParameter( "OurParent", "Parent_DOF0" ) );
+         subParam->AddParameter( *new dtGame::UnsignedShortIntMessageParameter( "Change", 0 ) );
+         mainParam->AddParameter( *subParam );
+         // --- Extra 1
+         subParam = new dtGame::GroupMessageParameter( "ArticulatedPartMessageParam1" );
+         subParam->AddParameter( *new dtGame::FloatMessageParameter( "Azimuth", 0.0f ) );
+         subParam->AddParameter( *new dtGame::StringMessageParameter( "OurName", "DOF2" ) );
+         subParam->AddParameter( *new dtGame::StringMessageParameter( "OurParent", "Parent_DOF1" ) );
+         subParam->AddParameter( *new dtGame::UnsignedShortIntMessageParameter( "Change", 0 ) );
+         mainParam->AddParameter( *subParam );
+
+
+
+         // Create the test articulated parameter
+         const dtHLAGM::ParameterValue& articValue = expectedResult.GetParameterValue();
+         if( articValue.GetArticulatedParameterType() == 1 )
+         {
+            const dtHLAGM::AttachedParts& attachParts = articValue.GetAttachedParts();
+
+            // Attach Parts
+            subParam = new dtGame::GroupMessageParameter( "AttachedPartMessageParam0" );
+
+            subParam->AddParameter( *new dtGame::EnumMessageParameter( "DISInfo", "testDIS" ) );
+            subParam->AddParameter( *new dtGame::UnsignedIntMessageParameter( "Station", attachParts.GetStation() ) );
+         }
+         else
+         {
+            const dtHLAGM::ArticulatedParts& articParts = articValue.GetArticulatedParts();
+
+            // Articulated Parts
+            subParam = new dtGame::GroupMessageParameter( "ArticulatedPartMessageParam2" );
+
+            subParam->AddParameter( *new dtGame::FloatMessageParameter( "Azimuth", articParts.GetValue() ) );
+            subParam->AddParameter( *new dtGame::StringMessageParameter( "OurName", "testDOF" ) );
+         }
+
+         subParam->AddParameter( *new dtGame::StringMessageParameter( "OurParent", "Parent_DOF2" ) );
+         subParam->AddParameter( *new dtGame::UnsignedShortIntMessageParameter( "Change", expectedResult.GetArticulatedParameterChange() ) );
+
+         // Assign the group as a value to the main group parameter
+         mainParam->AddParameter( *subParam );
+
+         // Assign the parameter to be translated
+         messageParameters.push_back(mainParam.get());
+
+         // Encode the message parameter into the buffer.
+         char* buffer = NULL;
+         size_t size = 0;
+         TranslateOutgoingParameter(buffer, size, messageParameters, mMapping);
+
+         // Test expected size of the returned buffer.
+         unsigned expectedBufferSize = expectedResult.EncodedLength() * mainParam->GetParameterCount();
+         CPPUNIT_ASSERT_EQUAL(unsigned(size), unsigned(expectedBufferSize));
+
+         // Capture the last parameter from the buffer; this should be the translated test parameter.
+         dtHLAGM::ArticulatedParameter actualOutgoingParam;
+         actualOutgoingParam.Decode(&buffer[expectedBufferSize-expectedResult.EncodedLength()]);
+
+         mParameterTranslator->DeallocateBuffer(buffer);
+
+         CPPUNIT_ASSERT( actualOutgoingParam.IsEqual( expectedResult ) );
       }
 
       void TestOutgoingEnumDataTranslation()
@@ -791,7 +929,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          dtCore::RefPtr<dtGame::UnsignedCharMessageParameter> uCharParam = new dtGame::UnsignedCharMessageParameter("test");
          RunIncomingTranslation(*uCharParam, mapping, bufferSize);
          CPPUNIT_ASSERT_EQUAL_MESSAGE("Value for " + mapping.GetHLAType().GetName() + " data should assign a param of type unsigned char",
-            (unsigned int)expectedResult, (unsigned int)uCharParam->GetValue());
+            (unsigned char)expectedResult, (unsigned char)uCharParam->GetValue());
 
          //boolean
          dtCore::RefPtr<dtGame::BooleanMessageParameter> boolParam = new dtGame::BooleanMessageParameter("test");
