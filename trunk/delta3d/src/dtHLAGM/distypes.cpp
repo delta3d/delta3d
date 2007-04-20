@@ -430,6 +430,20 @@ namespace dtHLAGM
       mExtra = buf[7];
    }
 
+   /**
+    * Returns true this equals another EntityType object
+    *
+    * @return true if this is equal to other
+    */
+   bool EntityType::IsEqual( const EntityType& other ) const
+   {
+      return this == &other ||
+         mKind == other.mKind && mDomain == other.mDomain &&
+         mCountry == other.mCountry && mCategory == other.mCategory &&
+         mSubcategory == other.mSubcategory && mSpecific == other.mSpecific &&
+         mExtra == other.mExtra;
+   }
+
    std::ostream& operator << (std::ostream &o, const EntityType &et)
    {
       std::string space(" ");
@@ -1095,6 +1109,17 @@ namespace dtHLAGM
    }
 
    /**
+    * Returns true this equals another ArticulatedParts object
+    *
+    * @return true if this is equal to other
+    */
+   bool ArticulatedParts::IsEqual( const ArticulatedParts& other ) const
+   {
+      return this == &other ||
+         mValue == other.mValue && mClass == other.mClass && mTypeMetric == other.mTypeMetric;
+   }
+
+   /**
     * Constructor.
     *
     * @param station the part station
@@ -1190,6 +1215,17 @@ namespace dtHLAGM
    void AttachedParts::SetStoreType(const EntityType& storeType)
    {
       mStoreType = storeType;
+   }
+
+   /**
+    * Returns true this equals another AttachParts object
+    *
+    * @return true if this is equal to other
+    */
+   bool AttachedParts::IsEqual( const AttachedParts& other ) const
+   {
+      return this == &other ||
+         mStation == other.mStation && mStoreType.IsEqual( other.mStoreType );
    }
 
    /**
@@ -1329,6 +1365,10 @@ namespace dtHLAGM
     *
     * @return the articulated parts structure
     */
+   ArticulatedParts& ParameterValue::GetArticulatedParts()
+   {
+      return mArticulatedParts;
+   }
    const ArticulatedParts& ParameterValue::GetArticulatedParts() const
    {
       return mArticulatedParts;
@@ -1345,10 +1385,35 @@ namespace dtHLAGM
    }
 
    /**
+    * Returns true if the parameter types and the relevant structures match.
+    * If parameter type is AttachedPart, comparisons will be performed 
+    * only on the contained AttachedParts structures while ignoring
+    * the ArticulatedParts structures.
+    * If parameter type is ArticulatedPart, comparisons will be performed 
+    * only on the contained ArticulatedParts structures while ignoring
+    * the AttachedParts structures.
+    *
+    * @param other The other ParameterValue to be compared
+    * @return true if the relevant values are equal between this and other
+    */
+   bool ParameterValue::IsEqual( const ParameterValue& other ) const
+   {
+      return this == &other
+         || mArticulatedParameterType == other.mArticulatedParameterType
+         && (  ( mArticulatedParameterType == AttachedPart && mAttachedParts.IsEqual( other.mAttachedParts ) )
+            || ( mArticulatedParameterType == ArticulatedPart && mArticulatedParts.IsEqual( other.mArticulatedParts ) )
+            );
+   }
+
+   /**
     * Returns the attached parts structure.
     *
     * @return the attached parts structure
     */
+   AttachedParts& ParameterValue::GetAttachedParts()
+   {
+      return mAttachedParts;
+   }
    const AttachedParts& ParameterValue::GetAttachedParts() const
    {
       return mAttachedParts;
@@ -1487,9 +1552,27 @@ namespace dtHLAGM
     *
     * @return the parameter value
     */
+   ParameterValue& ArticulatedParameter::GetParameterValue()
+   {
+      return mParameterValue;
+   }
    const ParameterValue& ArticulatedParameter::GetParameterValue() const
    {
       return mParameterValue;
+   }
+
+   /**
+    * Returns true this equals another ArticulatedParameter object.
+    * This will handle the complexity of comparing all contained objects.
+    *
+    * @return true if this is equal to other
+    */
+   bool ArticulatedParameter::IsEqual( const ArticulatedParameter& other ) const
+   {
+      return this == &other ||
+         mArticulatedParameterChange == other.mArticulatedParameterChange &&
+         mPartAttachedTo == other.mPartAttachedTo &&
+         mParameterValue.IsEqual( other.mParameterValue );
    }
 
    /**
@@ -1596,8 +1679,7 @@ namespace dtHLAGM
    {
       char tmp[2];   
       int sz=8;
-      unsigned char* tmpbuf;
-      tmpbuf = new unsigned char[8];
+      unsigned char tmpbuf[8];
       memset((void*)tmpbuf, 0, 8);
       for (int i=0; i<sz; i++)
       {
@@ -1605,7 +1687,6 @@ namespace dtHLAGM
          tmp[1]=buf[2*i+1];
          toVoid(tmpbuf[i],tmp);
       }
-      delete[] tmpbuf;
       double tagValue = *(double *)(&tmpbuf[0]);
       if(getCpuByteOrder() == LittleEndian)
       {

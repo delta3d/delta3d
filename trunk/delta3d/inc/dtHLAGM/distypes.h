@@ -355,6 +355,13 @@ namespace dtHLAGM
           */
          unsigned char GetExtra() const { return mExtra; }
 
+         /**
+          * Returns true this equals another EntityType object.
+          *
+          * @return true if this is equal to other
+          */
+         bool IsEqual( const EntityType& other ) const;
+
       private:
 
          /**
@@ -868,6 +875,13 @@ namespace dtHLAGM
           */
          float GetValue() const;
 
+         /**
+          * Returns true this equals another ArticulatedParts object.
+          *
+          * @return true if this is equal to other
+          */
+         bool IsEqual( const ArticulatedParts& other ) const;
+
       private:
 
          /**
@@ -957,6 +971,13 @@ namespace dtHLAGM
           * @return the store type
           */
          const EntityType& GetStoreType() const;
+
+         /**
+          * Returns true this equals another AttachParts object.
+          *
+          * @return true if this is equal to other
+          */
+         bool IsEqual( const AttachedParts& other ) const;
 
       private:
 
@@ -1055,6 +1076,7 @@ namespace dtHLAGM
           *
           * @return the articulated parts structure
           */
+         ArticulatedParts& GetArticulatedParts();
          const ArticulatedParts& GetArticulatedParts() const;
 
          /**
@@ -1069,7 +1091,22 @@ namespace dtHLAGM
           *
           * @return the attached parts structure
           */
+         AttachedParts& GetAttachedParts();
          const AttachedParts& GetAttachedParts() const;
+
+         /**
+          * Returns true if the parameter types and the relevant structures match.
+          * If parameter type is AttachedPart, comparisons will be performed 
+          * only on the contained AttachedParts structures while ignoring
+          * the ArticulatedParts structures.
+          * If parameter type is ArticulatedPart, comparisons will be performed 
+          * only on the contained ArticulatedParts structures while ignoring
+          * the AttachedParts structures.
+          *
+          * @param other The other ParameterValue to be compared
+          * @return true if the relevant values are equal between this and other
+          */
+         bool IsEqual( const ParameterValue& other ) const;
 
       private:
 
@@ -1177,7 +1214,16 @@ namespace dtHLAGM
           *
           * @return the parameter value
           */
+         ParameterValue& GetParameterValue();
          const ParameterValue& GetParameterValue() const;
+
+         /**
+          * Returns true this equals another ArticulatedParameter object.
+          * This will handle the complexity of comparing all contained objects.
+          *
+          * @return true if this is equal to other
+          */
+         bool IsEqual( const ArticulatedParameter& other ) const;
 
       private:
 
