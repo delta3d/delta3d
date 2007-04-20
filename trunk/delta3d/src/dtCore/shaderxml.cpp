@@ -316,7 +316,7 @@ namespace dtCore
          xercesc::DOMElement *tex2DElem, const std::string &paramName)
    {
       //First get the texture unit attribute from the element.
-      dtCore::RefPtr<Texture2DShaderParameter> newParam = new Texture2DShaderParameter(paramName);
+      dtCore::RefPtr<ShaderParamTexture2D> newParam = new ShaderParamTexture2D(paramName);
       xercesc::DOMNodeList *children = tex2DElem->getChildNodes();
 
       //Get the integer for the texture unit.
@@ -352,7 +352,7 @@ namespace dtCore
             std::string sourceType = GetElementAttribute(*texElement,
                   ShaderXML::TEXTURE2D_SOURCE_ATTRIBUTE_TYPE);
 
-            if (sourceType == TextureShaderParameter::TextureSourceType::IMAGE.GetName())
+            if (sourceType == ShaderParamTexture::TextureSourceType::IMAGE.GetName())
             {
                xercesc::DOMNodeList *children = texElement->getChildNodes();
                if (children->getLength() != 1 ||
@@ -365,11 +365,11 @@ namespace dtCore
 
                dtUtil::XMLStringConverter fileConverter(file->getNodeValue());
                newParam->SetTexture(fileConverter.ToString());
-               newParam->SetTextureSourceType(TextureShaderParameter::TextureSourceType::IMAGE);
+               newParam->SetTextureSourceType(ShaderParamTexture::TextureSourceType::IMAGE);
             }
-            else if (sourceType == TextureShaderParameter::TextureSourceType::AUTO.GetName())
+            else if (sourceType == ShaderParamTexture::TextureSourceType::AUTO.GetName())
             {
-               newParam->SetTextureSourceType(TextureShaderParameter::TextureSourceType::AUTO);
+               newParam->SetTextureSourceType(ShaderParamTexture::TextureSourceType::AUTO);
             }
             else
             {
@@ -383,8 +383,8 @@ namespace dtCore
 
             if (!axis.empty() && !mode.empty())
             {
-               const TextureShaderParameter::AddressMode *wrapMode = GetTextureAddressMode(mode);
-               const TextureShaderParameter::TextureAxis *texAxis = GetTextureAxis(axis);
+               const ShaderParamTexture::AddressMode *wrapMode = GetTextureAddressMode(mode);
+               const ShaderParamTexture::TextureAxis *texAxis = GetTextureAxis(axis);
 
                if (wrapMode == NULL)
                   throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Invalid address mode of: " + mode +
@@ -410,7 +410,7 @@ namespace dtCore
    dtCore::RefPtr<ShaderParameter> ShaderXML::ParseFloatParameter(xercesc::DOMElement *floatElem,
          const std::string &paramName)
    {
-      dtCore::RefPtr<FloatShaderParameter> newParam = new FloatShaderParameter(paramName);
+      dtCore::RefPtr<ShaderParamFloat> newParam = new ShaderParamFloat(paramName);
 
       std::string value = GetElementAttribute(*floatElem,ShaderXML::PARAM_ELEMENT_ATTRIBUTE_DEFAULTVALUE);
       if (!value.empty())
@@ -431,7 +431,7 @@ namespace dtCore
    {
       std::string valueString;
       float tempValue;
-      dtCore::RefPtr<ShaderParameterFloatTimer> newParam = new ShaderParameterFloatTimer(paramName);
+      dtCore::RefPtr<ShaderParamOscillator> newParam = new ShaderParamOscillator(paramName);
 
       // OFFSET 
       valueString = GetElementAttribute(*timerElem, ShaderXML::FLOATTIMER_ATTRIB_OFFSET);
@@ -504,14 +504,14 @@ namespace dtCore
       valueString = GetElementAttribute(*timerElem,ShaderXML::FLOATTIMER_ATTRIB_OSCILLATION_TYPE);
       if (!valueString.empty())
       {
-         if (valueString == ShaderParameterFloatTimer::OscillationType::UP.GetName())
-            newParam->SetOscillationType(ShaderParameterFloatTimer::OscillationType::UP);
-         else if (valueString == ShaderParameterFloatTimer::OscillationType::DOWN.GetName())
-            newParam->SetOscillationType(ShaderParameterFloatTimer::OscillationType::DOWN);
-         else if (valueString == ShaderParameterFloatTimer::OscillationType::UPANDDOWN.GetName())
-            newParam->SetOscillationType(ShaderParameterFloatTimer::OscillationType::UPANDDOWN);
-         else if (valueString == ShaderParameterFloatTimer::OscillationType::DOWNANDUP.GetName())
-            newParam->SetOscillationType(ShaderParameterFloatTimer::OscillationType::DOWNANDUP);
+         if (valueString == ShaderParamOscillator::OscillationType::UP.GetName())
+            newParam->SetOscillationType(ShaderParamOscillator::OscillationType::UP);
+         else if (valueString == ShaderParamOscillator::OscillationType::DOWN.GetName())
+            newParam->SetOscillationType(ShaderParamOscillator::OscillationType::DOWN);
+         else if (valueString == ShaderParamOscillator::OscillationType::UPANDDOWN.GetName())
+            newParam->SetOscillationType(ShaderParamOscillator::OscillationType::UPANDDOWN);
+         else if (valueString == ShaderParamOscillator::OscillationType::DOWNANDUP.GetName())
+            newParam->SetOscillationType(ShaderParamOscillator::OscillationType::DOWNANDUP);
          else 
          {
             std::ostringstream error;
@@ -529,7 +529,7 @@ namespace dtCore
    dtCore::RefPtr<ShaderParameter> ShaderXML::ParseIntParameter(xercesc::DOMElement *intElem,
          const std::string &paramName)
    {
-      dtCore::RefPtr<IntegerShaderParameter> newParam = new IntegerShaderParameter(paramName);
+      dtCore::RefPtr<ShaderParameterInt> newParam = new ShaderParameterInt(paramName);
 
       std::string value = GetElementAttribute(*intElem,ShaderXML::PARAM_ELEMENT_ATTRIBUTE_DEFAULTVALUE);
       if (!value.empty())
@@ -555,29 +555,29 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   const TextureShaderParameter::AddressMode *ShaderXML::GetTextureAddressMode(const std::string &mode)
+   const ShaderParamTexture::AddressMode *ShaderXML::GetTextureAddressMode(const std::string &mode)
    {
-      if (TextureShaderParameter::AddressMode::CLAMP == mode)
-         return &TextureShaderParameter::AddressMode::CLAMP;
-      else if (TextureShaderParameter::AddressMode::REPEAT == mode)
-         return &TextureShaderParameter::AddressMode::REPEAT;
-      else if (TextureShaderParameter::AddressMode::MIRROR == mode)
-         return &TextureShaderParameter::AddressMode::MIRROR;
+      if (ShaderParamTexture::AddressMode::CLAMP == mode)
+         return &ShaderParamTexture::AddressMode::CLAMP;
+      else if (ShaderParamTexture::AddressMode::REPEAT == mode)
+         return &ShaderParamTexture::AddressMode::REPEAT;
+      else if (ShaderParamTexture::AddressMode::MIRROR == mode)
+         return &ShaderParamTexture::AddressMode::MIRROR;
       else
          return NULL;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   const TextureShaderParameter::TextureAxis *ShaderXML::GetTextureAxis(const std::string &axis)
+   const ShaderParamTexture::TextureAxis *ShaderXML::GetTextureAxis(const std::string &axis)
    {
-      if (TextureShaderParameter::TextureAxis::S == axis)
-         return &TextureShaderParameter::TextureAxis::S;
-      else if (TextureShaderParameter::TextureAxis::T == axis)
-         return &TextureShaderParameter::TextureAxis::T;
-      else if (TextureShaderParameter::TextureAxis::R == axis)
-         return &TextureShaderParameter::TextureAxis::R;
-      else if (TextureShaderParameter::TextureAxis::Q == axis)
-         return &TextureShaderParameter::TextureAxis::Q;
+      if (ShaderParamTexture::TextureAxis::S == axis)
+         return &ShaderParamTexture::TextureAxis::S;
+      else if (ShaderParamTexture::TextureAxis::T == axis)
+         return &ShaderParamTexture::TextureAxis::T;
+      else if (ShaderParamTexture::TextureAxis::R == axis)
+         return &ShaderParamTexture::TextureAxis::R;
+      else if (ShaderParamTexture::TextureAxis::Q == axis)
+         return &ShaderParamTexture::TextureAxis::Q;
       else
          return NULL;
    }

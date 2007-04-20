@@ -26,18 +26,18 @@
 namespace dtCore
 {
    ///////////////////////////////////////////////////////////////////////////////
-   IntegerShaderParameter::IntegerShaderParameter(const std::string &name) : ShaderParameter(name)
+   ShaderParameterInt::ShaderParameterInt(const std::string &name) : ShaderParameter(name)
    {
       mValue = 0;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   IntegerShaderParameter::~IntegerShaderParameter()
+   ShaderParameterInt::~ShaderParameterInt()
    {
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void IntegerShaderParameter::AttachToRenderState(osg::StateSet &stateSet)
+   void ShaderParameterInt::AttachToRenderState(osg::StateSet &stateSet)
    {
       osg::Uniform *intUniform = new osg::Uniform(osg::Uniform::INT,GetName());
       SetUniformParam(*intUniform);
@@ -46,7 +46,7 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void IntegerShaderParameter::Update()
+   void ShaderParameterInt::Update()
    {
       if (!IsDirty() || GetUniformParam() == NULL)
          return;
@@ -56,9 +56,9 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   ShaderParameter *IntegerShaderParameter::Clone() const
+   ShaderParameter *ShaderParameterInt::Clone() const
    {
-      IntegerShaderParameter *newParam = new IntegerShaderParameter(GetName());
+      ShaderParameterInt *newParam = new ShaderParameterInt(GetName());
 
       newParam->SetDirty(false);
       newParam->mValue = mValue;

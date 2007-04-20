@@ -36,24 +36,24 @@
 namespace dtCore
 {
    ///////////////////////////////////////////////////////////////////////////////
-   Texture2DShaderParameter::Texture2DShaderParameter(const std::string &name) :
-      TextureShaderParameter(name)
+   ShaderParamTexture2D::ShaderParamTexture2D(const std::string &name) :
+      ShaderParamTexture(name)
    {
       SetTextureObject(*(new osg::Texture2D()));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   Texture2DShaderParameter::~Texture2DShaderParameter()
+   ShaderParamTexture2D::~ShaderParamTexture2D()
    {
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void Texture2DShaderParameter::AttachToRenderState(osg::StateSet &stateSet)
+   void ShaderParamTexture2D::AttachToRenderState(osg::StateSet &stateSet)
    {
       //bool needToCreateNewTex2D = (GetTextureObject() == NULL);
       dtCore::RefPtr<osg::Texture2D> tex2D;
 
-      if (GetTexture().empty() && GetTextureSourceType() != TextureShaderParameter::TextureSourceType::AUTO)
+      if (GetTexture().empty() && GetTextureSourceType() != ShaderParamTexture::TextureSourceType::AUTO)
          throw dtUtil::Exception(ShaderParameterException::INVALID_ATTRIBUTE,"Cannot attach to render state.  Texture "
                "for parameter " + GetName() + " has not been specified.", __FILE__, __LINE__);
 
@@ -62,7 +62,7 @@ namespace dtCore
       stateSet.addUniform(uniform);
       SetUniformParam(*uniform);
 
-      if (GetTextureSourceType() == TextureShaderParameter::TextureSourceType::IMAGE)
+      if (GetTextureSourceType() == ShaderParamTexture::TextureSourceType::IMAGE)
       {
          tex2D = static_cast<osg::Texture2D*>(GetTextureObject());
 
@@ -83,7 +83,7 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void Texture2DShaderParameter::DetachFromRenderState(osg::StateSet &stateSet)
+   void ShaderParamTexture2D::DetachFromRenderState(osg::StateSet &stateSet)
    {
       osg::Texture2D *tex2D = static_cast<osg::Texture2D*>(GetTextureObject());
       if (tex2D != NULL)
@@ -99,7 +99,7 @@ namespace dtCore
 
 
    ///////////////////////////////////////////////////////////////////////////////
-   void Texture2DShaderParameter::Update()
+   void ShaderParamTexture2D::Update()
    {
       osg::Uniform *uniform = GetUniformParam();
       osg::Texture2D *tex2D = static_cast<osg::Texture2D*>(GetTextureObject());
@@ -130,9 +130,9 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void Texture2DShaderParameter::LoadImage()
+   void ShaderParamTexture2D::LoadImage()
    {
-      if (GetTextureSourceType() == TextureShaderParameter::TextureSourceType::IMAGE)
+      if (GetTextureSourceType() == ShaderParamTexture::TextureSourceType::IMAGE)
       {
          //Timer statsTickClock;
          //Timer_t frameTickStart = statsTickClock.Tick();
@@ -168,7 +168,7 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void Texture2DShaderParameter::ApplyTexture2DValues()
+   void ShaderParamTexture2D::ApplyTexture2DValues()
    {
       osg::Texture2D *tex2D = static_cast<osg::Texture2D*>(GetTextureObject());
 
@@ -177,36 +177,36 @@ namespace dtCore
       tex2D->setFilter(osg::Texture::MAG_FILTER,osg::Texture::LINEAR);
 
       //Set the texture addressing...
-      const TextureShaderParameter::AddressMode &wrapModeS =
-         GetAddressMode(TextureShaderParameter::TextureAxis::S);
-      if (wrapModeS == TextureShaderParameter::AddressMode::CLAMP)
+      const ShaderParamTexture::AddressMode &wrapModeS =
+         GetAddressMode(ShaderParamTexture::TextureAxis::S);
+      if (wrapModeS == ShaderParamTexture::AddressMode::CLAMP)
          tex2D->setWrap(osg::Texture::WRAP_S,osg::Texture::CLAMP_TO_EDGE);
-      else if (wrapModeS == TextureShaderParameter::AddressMode::REPEAT)
+      else if (wrapModeS == ShaderParamTexture::AddressMode::REPEAT)
          tex2D->setWrap(osg::Texture::WRAP_S,osg::Texture::REPEAT);
-      else if (wrapModeS == TextureShaderParameter::AddressMode::MIRROR)
+      else if (wrapModeS == ShaderParamTexture::AddressMode::MIRROR)
          tex2D->setWrap(osg::Texture::WRAP_S,osg::Texture::MIRROR);
 
-      const TextureShaderParameter::AddressMode &wrapModeT =
-         GetAddressMode(TextureShaderParameter::TextureAxis::T);
-      if (wrapModeT == TextureShaderParameter::AddressMode::CLAMP)
+      const ShaderParamTexture::AddressMode &wrapModeT =
+         GetAddressMode(ShaderParamTexture::TextureAxis::T);
+      if (wrapModeT == ShaderParamTexture::AddressMode::CLAMP)
          tex2D->setWrap(osg::Texture::WRAP_T,osg::Texture::CLAMP_TO_EDGE);
-      else if (wrapModeT == TextureShaderParameter::AddressMode::REPEAT)
+      else if (wrapModeT == ShaderParamTexture::AddressMode::REPEAT)
          tex2D->setWrap(osg::Texture::WRAP_T,osg::Texture::REPEAT);
-      else if (wrapModeT == TextureShaderParameter::AddressMode::MIRROR)
+      else if (wrapModeT == ShaderParamTexture::AddressMode::MIRROR)
          tex2D->setWrap(osg::Texture::WRAP_T,osg::Texture::MIRROR);
 
-      const TextureShaderParameter::AddressMode &wrapModeR =
-         GetAddressMode(TextureShaderParameter::TextureAxis::R);
-      if (wrapModeR == TextureShaderParameter::AddressMode::CLAMP)
+      const ShaderParamTexture::AddressMode &wrapModeR =
+         GetAddressMode(ShaderParamTexture::TextureAxis::R);
+      if (wrapModeR == ShaderParamTexture::AddressMode::CLAMP)
          tex2D->setWrap(osg::Texture::WRAP_R,osg::Texture::CLAMP_TO_EDGE);
-      else if (wrapModeR == TextureShaderParameter::AddressMode::REPEAT)
+      else if (wrapModeR == ShaderParamTexture::AddressMode::REPEAT)
          tex2D->setWrap(osg::Texture::WRAP_R,osg::Texture::REPEAT);
-      else if (wrapModeR == TextureShaderParameter::AddressMode::MIRROR)
+      else if (wrapModeR == ShaderParamTexture::AddressMode::MIRROR)
          tex2D->setWrap(osg::Texture::WRAP_R,osg::Texture::MIRROR);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void Texture2DShaderParameter::SetTexture(const std::string &path)
+   void ShaderParamTexture2D::SetTexture(const std::string &path)
    {
       mTexturePath = path;
 
@@ -215,16 +215,16 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void Texture2DShaderParameter::SetAddressMode(const TextureAxis &axis, const AddressMode &mode)
+   void ShaderParamTexture2D::SetAddressMode(const TextureAxis &axis, const AddressMode &mode)
    {
-      TextureShaderParameter::SetAddressMode(axis, mode);
+      ShaderParamTexture::SetAddressMode(axis, mode);
       ApplyTexture2DValues();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   ShaderParameter *Texture2DShaderParameter::Clone() const
+   ShaderParameter *ShaderParamTexture2D::Clone() const
    {
-      Texture2DShaderParameter *newParam = new Texture2DShaderParameter(GetName());
+      ShaderParamTexture2D *newParam = new ShaderParamTexture2D(GetName());
 
       newParam->mTextureAddressMode[0] = mTextureAddressMode[0];
       newParam->mTextureAddressMode[1] = mTextureAddressMode[1];

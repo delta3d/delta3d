@@ -29,23 +29,23 @@
 namespace dtCore
 {
    ///////////////////////////////////////////////////////////////////////////////
-   IMPLEMENT_ENUM(TextureShaderParameter::AddressMode)
-   const TextureShaderParameter::AddressMode TextureShaderParameter::AddressMode::CLAMP("Clamp");
-   const TextureShaderParameter::AddressMode TextureShaderParameter::AddressMode::REPEAT("Repeat");
-   const TextureShaderParameter::AddressMode TextureShaderParameter::AddressMode::MIRROR("Mirror");
+   IMPLEMENT_ENUM(ShaderParamTexture::AddressMode)
+   const ShaderParamTexture::AddressMode ShaderParamTexture::AddressMode::CLAMP("Clamp");
+   const ShaderParamTexture::AddressMode ShaderParamTexture::AddressMode::REPEAT("Repeat");
+   const ShaderParamTexture::AddressMode ShaderParamTexture::AddressMode::MIRROR("Mirror");
 
-   IMPLEMENT_ENUM(TextureShaderParameter::TextureAxis)
-   const TextureShaderParameter::TextureAxis TextureShaderParameter::TextureAxis::S("S");
-   const TextureShaderParameter::TextureAxis TextureShaderParameter::TextureAxis::T("T");
-   const TextureShaderParameter::TextureAxis TextureShaderParameter::TextureAxis::R("R");
-   const TextureShaderParameter::TextureAxis TextureShaderParameter::TextureAxis::Q("Q");
+   IMPLEMENT_ENUM(ShaderParamTexture::TextureAxis)
+   const ShaderParamTexture::TextureAxis ShaderParamTexture::TextureAxis::S("S");
+   const ShaderParamTexture::TextureAxis ShaderParamTexture::TextureAxis::T("T");
+   const ShaderParamTexture::TextureAxis ShaderParamTexture::TextureAxis::R("R");
+   const ShaderParamTexture::TextureAxis ShaderParamTexture::TextureAxis::Q("Q");
 
-   IMPLEMENT_ENUM(TextureShaderParameter::TextureSourceType)
-   const TextureShaderParameter::TextureSourceType TextureShaderParameter::TextureSourceType::IMAGE("Image");
-   const TextureShaderParameter::TextureSourceType TextureShaderParameter::TextureSourceType::AUTO("Auto");
+   IMPLEMENT_ENUM(ShaderParamTexture::TextureSourceType)
+   const ShaderParamTexture::TextureSourceType ShaderParamTexture::TextureSourceType::IMAGE("Image");
+   const ShaderParamTexture::TextureSourceType ShaderParamTexture::TextureSourceType::AUTO("Auto");
 
    ///////////////////////////////////////////////////////////////////////////////
-   TextureShaderParameter::TextureShaderParameter(const std::string &name) :
+   ShaderParamTexture::ShaderParamTexture(const std::string &name) :
          ShaderParameter(name), mImageSrcChanged(false), mTextureUnit(0), mTextureObject(NULL), mTexturePath("")
    {
       mTextureAddressMode[0] = &AddressMode::CLAMP;
@@ -56,12 +56,12 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   TextureShaderParameter::~TextureShaderParameter()
+   ShaderParamTexture::~ShaderParamTexture()
    {
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void TextureShaderParameter::SetAddressMode(const TextureAxis &axis, const AddressMode &mode)
+   void ShaderParamTexture::SetAddressMode(const TextureAxis &axis, const AddressMode &mode)
    {
       if (axis == TextureAxis::S)
          mTextureAddressMode[0] = &mode;
@@ -76,8 +76,8 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   const TextureShaderParameter::AddressMode &TextureShaderParameter::GetAddressMode(
-      const TextureShaderParameter::TextureAxis &axis)
+   const ShaderParamTexture::AddressMode &ShaderParamTexture::GetAddressMode(
+      const ShaderParamTexture::TextureAxis &axis)
    {
       if (axis == TextureAxis::S)
          return *mTextureAddressMode[0];

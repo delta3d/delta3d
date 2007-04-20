@@ -26,18 +26,18 @@
 namespace dtCore
 {
    ///////////////////////////////////////////////////////////////////////////////
-   FloatShaderParameter::FloatShaderParameter(const std::string &name) : ShaderParameter(name)
+   ShaderParamFloat::ShaderParamFloat(const std::string &name) : ShaderParameter(name)
    {
       mValue = 0.0f;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   FloatShaderParameter::~FloatShaderParameter()
+   ShaderParamFloat::~ShaderParamFloat()
    {
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void FloatShaderParameter::AttachToRenderState(osg::StateSet &stateSet)
+   void ShaderParamFloat::AttachToRenderState(osg::StateSet &stateSet)
    {
       osg::Uniform *floatUniform = new osg::Uniform(osg::Uniform::FLOAT,GetName());
       SetUniformParam(*floatUniform);
@@ -46,7 +46,7 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void FloatShaderParameter::Update()
+   void ShaderParamFloat::Update()
    {
       if (!IsDirty() || GetUniformParam() == NULL)
          return;
@@ -56,9 +56,9 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   ShaderParameter *FloatShaderParameter::Clone() const
+   ShaderParameter *ShaderParamFloat::Clone() const
    {
-      FloatShaderParameter *newParam = new FloatShaderParameter(GetName());
+      ShaderParamFloat *newParam = new ShaderParamFloat(GetName());
 
       newParam->SetDirty(false);
       newParam->mValue = mValue;

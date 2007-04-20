@@ -30,7 +30,7 @@
 #include <dtCore/shadermanager.h>
 #include <dtCore/shaderparameter.h>
 //#include <dtCore/floatshaderparameter.h>
-#include <dtCore/shaderparameterfloattimer.h>
+#include <dtCore/shaderparameterfloatTimer.h>
 #include <dtCore/scene.h>
 #include <osg/Switch>
 
@@ -152,7 +152,7 @@ void KillableTargetActor::ProcessMessage(const dtGame::Message &message)
 void KillableTargetActor::ApplyMyShader()
 {
    float prevTime = 0.0, prevX = 0.0, prevY = 0.0, prevZ = 0.0; 
-   dtCore::ShaderParameterFloatTimer *timerParam;
+   dtCore::ShaderParamOscillator *timerParam;
 
    if (mCurrentShader != NULL && mCurrentShader->GetName() == mCurrentShaderName)
    {
@@ -165,22 +165,22 @@ void KillableTargetActor::ApplyMyShader()
    if (mCurrentShader != NULL)
    {
       // TIME DILATION
-      timerParam = dynamic_cast<dtCore::ShaderParameterFloatTimer*> (mCurrentShader->FindParameter("TimeDilation"));
+      timerParam = dynamic_cast<dtCore::ShaderParamOscillator*> (mCurrentShader->FindParameter("TimeDilation"));
       if (timerParam != NULL)
          prevTime = timerParam->GetValue();
 
       // X DILATION
-      timerParam = dynamic_cast<dtCore::ShaderParameterFloatTimer*> (mCurrentShader->FindParameter("MoveXDilation"));
+      timerParam = dynamic_cast<dtCore::ShaderParamOscillator*> (mCurrentShader->FindParameter("MoveXDilation"));
       if (timerParam != NULL)
          prevX = timerParam->GetValue();
 
       // Y DILATION
-      timerParam = dynamic_cast<dtCore::ShaderParameterFloatTimer*> (mCurrentShader->FindParameter("MoveYDilation"));
+      timerParam = dynamic_cast<dtCore::ShaderParamOscillator*> (mCurrentShader->FindParameter("MoveYDilation"));
       if (timerParam != NULL)
          prevY = timerParam->GetValue();
 
       // Z DILATION
-      timerParam = dynamic_cast<dtCore::ShaderParameterFloatTimer*> (mCurrentShader->FindParameter("MoveZDilation"));
+      timerParam = dynamic_cast<dtCore::ShaderParamOscillator*> (mCurrentShader->FindParameter("MoveZDilation"));
       if (timerParam != NULL)
          prevZ = timerParam->GetValue();
    }
@@ -197,22 +197,22 @@ void KillableTargetActor::ApplyMyShader()
 
       // Put the shader values back (again, to avoid jumping since we are moving XYZ in our shader)
       // TIME DILATION
-      timerParam = dynamic_cast<dtCore::ShaderParameterFloatTimer*> (mCurrentShader->FindParameter("TimeDilation"));
+      timerParam = dynamic_cast<dtCore::ShaderParamOscillator*> (mCurrentShader->FindParameter("TimeDilation"));
       if (timerParam != NULL)
          timerParam->SetValue(prevTime);
 
       // X DILATION
-      timerParam = dynamic_cast<dtCore::ShaderParameterFloatTimer*> (mCurrentShader->FindParameter("MoveXDilation"));
+      timerParam = dynamic_cast<dtCore::ShaderParamOscillator*> (mCurrentShader->FindParameter("MoveXDilation"));
       if (timerParam != NULL)
          timerParam->SetValue(prevX);
 
       // Y DILATION
-      timerParam = dynamic_cast<dtCore::ShaderParameterFloatTimer*> (mCurrentShader->FindParameter("MoveYDilation"));
+      timerParam = dynamic_cast<dtCore::ShaderParamOscillator*> (mCurrentShader->FindParameter("MoveYDilation"));
       if (timerParam != NULL)
          timerParam->SetValue(prevY);
 
       // Z DILATION
-      timerParam = dynamic_cast<dtCore::ShaderParameterFloatTimer*> (mCurrentShader->FindParameter("MoveZDilation"));
+      timerParam = dynamic_cast<dtCore::ShaderParamOscillator*> (mCurrentShader->FindParameter("MoveZDilation"));
       if (timerParam != NULL)
          timerParam->SetValue(prevZ);
    }

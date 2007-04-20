@@ -241,6 +241,27 @@ namespace dtActors
       const dtGame::TickMessage& tickmsg = static_cast<const dtGame::TickMessage&>( msg );
       float dt = tickmsg.GetDeltaSimTime();
       mAnimator->Update(dt);
+
+      //static double doIt = 0;
+      //doIt += dt;
+      //if (doIt > 1.0)
+      //{
+      //   doIt = 0.0;
+
+      //   std::vector<CalAnimation*> animVec = mAnimator->GetWrapper()->GetCalModel()->getMixer()->getAnimationVector();
+
+      //   std::vector<CalAnimation*>::iterator animItr = animVec.begin();
+      //   while (animItr != animVec.end())
+      //   {
+      //      CalAnimation *anim = *(animItr);
+      //      if (anim!=NULL)
+      //      {
+      //         LOG_DEBUG("Anim: " + anim->getCoreAnimation()->getName() + " Weight: " + dtUtil::ToString(anim->getWeight()));
+      //      }
+      //      ++animItr;
+      //   }
+      //}
+   
    }
 
    void AnimationGameActor::OnEnteredWorld()

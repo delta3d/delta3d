@@ -17,6 +17,7 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  * Curtiss Murphy
+ * Erik Johnson
  */
 #ifndef DELTA_ShaderParameterFloatTimer
 #define DELTA_ShaderParameterFloatTimer
@@ -30,7 +31,7 @@ namespace dtCore
     * This class is a shader parameter that has an oscillating parameter.  If you assign 
     * this to a node, it will oscillate the value as if it were a time constraint.
     */
-   class DT_CORE_EXPORT ShaderParameterFloatTimer : public ShaderParameter
+   class DT_CORE_EXPORT ShaderParamOscillator : public ShaderParameter
    {
 
    public:
@@ -60,7 +61,7 @@ namespace dtCore
           * @param name Name given to this parameter.  If it is to be used in a hardware shader,
           *   this name must match the corresponding uniform variable in the shader.
           */
-         ShaderParameterFloatTimer(const std::string &name);
+         ShaderParamOscillator(const std::string &name);
 
          /**
           * Gets the type of this parameter.
@@ -250,7 +251,7 @@ namespace dtCore
 
 
       protected:
-         virtual ~ShaderParameterFloatTimer();
+         virtual ~ShaderParamOscillator();
 
          /**
           * Does the actual work for the shader.  When called, make sure you pass in the
