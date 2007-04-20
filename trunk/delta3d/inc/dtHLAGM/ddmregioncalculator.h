@@ -28,6 +28,7 @@
 
 #include <dtCore/refptr.h>
 #include <dtCore/base.h>
+#include <dtHLAGM/export.h>
 
 namespace dtGame
 {
@@ -43,7 +44,7 @@ namespace dtHLAGM
     * That is, it modifies the RTI region based on implemented algoriths using the state data provided
     * on the DDMRegionData object.
     */
-   class DDMRegionCalculator : public dtCore::Base
+   class DT_HLAGM_EXPORT DDMRegionCalculator : public dtCore::Base
    {
       public:
          /**

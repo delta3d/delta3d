@@ -3,13 +3,14 @@
 
 #include <osg/Referenced>
 #include <dtCore/refptr.h>
+#include <dtHLAGM/export.h>
 #include <vector>
 
 namespace dtHLAGM
 {
    class DDMRegionCalculator;
    
-   class DDMRegionCalculatorGroup
+   class DT_HLAGM_EXPORT DDMRegionCalculatorGroup
    {
       public:
       	DDMRegionCalculatorGroup();
