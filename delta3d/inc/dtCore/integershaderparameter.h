@@ -17,6 +17,7 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  * Matthew W. Campbell, Curtiss Murphy
+ * Erik Johnson
  */
 #ifndef DELTA_INTEGERSHADERPARAMETER
 #define DELTA_INTEGERSHADERPARAMETER
@@ -29,7 +30,7 @@ namespace dtCore
    /**
     * This class is a shader parameter containing a single integer value.
     */
-   class DT_CORE_EXPORT IntegerShaderParameter : public ShaderParameter
+   class DT_CORE_EXPORT ShaderParameterInt : public ShaderParameter
    {
       public:
 
@@ -38,7 +39,7 @@ namespace dtCore
           * @param name Name given to this parameter.  If it is to be used in a hardware shader,
           *   this name must match the corresponding uniform variable in the shader.
           */
-         IntegerShaderParameter(const std::string &name);
+         ShaderParameterInt(const std::string &name);
 
          /**
           * Gets the type of this parameter.
@@ -78,7 +79,7 @@ namespace dtCore
          virtual ShaderParameter *Clone() const;
 
       protected:
-         virtual ~IntegerShaderParameter();
+         virtual ~ShaderParameterInt();
 
       private:
          int mValue;

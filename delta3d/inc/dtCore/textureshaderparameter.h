@@ -17,6 +17,7 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  * Matthew W. Campbell, Curtiss Murphy
+ * Erik Johnson
  */
 #ifndef DELTA_TEXTURESHADERPARAMETER
 #define DELTA_TEXTURESHADERPARAMETER
@@ -37,7 +38,7 @@ namespace dtCore
     * @note For specialized classes see the Texture1D, Texture2D, and
     *    Texture3D subclasses.
     */
-   class DT_CORE_EXPORT TextureShaderParameter : public ShaderParameter
+   class DT_CORE_EXPORT ShaderParamTexture : public ShaderParameter
    {
       public:
 
@@ -112,7 +113,7 @@ namespace dtCore
           * @note If this is to be used by a GLSL shader, the name
           *    must match the name of the uniform variable.
           */
-         TextureShaderParameter(const std::string &name);
+         ShaderParamTexture(const std::string &name);
 
          /**
           * Gets the type of this parameter.
@@ -199,7 +200,7 @@ namespace dtCore
          /**
           * Cleans up the parameter.
           */
-         virtual ~TextureShaderParameter();
+         virtual ~ShaderParamTexture();
 
          /**
           * Sets the texture state attribute used by this shader parameter.
@@ -239,8 +240,8 @@ namespace dtCore
          // creates this functions even if they are not used, and if
          // this class is forward declared, these implicit functions will
          // cause compiler errors for missing calls to "ref".
-         TextureShaderParameter& operator=( const TextureShaderParameter& ); 
-         TextureShaderParameter( const TextureShaderParameter& );
+         ShaderParamTexture& operator=( const ShaderParamTexture& ); 
+         ShaderParamTexture( const ShaderParamTexture& );
    };
 }
 

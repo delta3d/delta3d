@@ -136,14 +136,14 @@ namespace dtCore
           * @param mode String to match to the appropriate address mode enumueration.
           * @return The matching enumeration or NULL if there was no match.
           */
-         const TextureShaderParameter::AddressMode *GetTextureAddressMode(const std::string &mode);
+         const ShaderParamTexture::AddressMode *GetTextureAddressMode(const std::string &mode);
 
          /**
           * Simple helper method to get the texture axis enumeration matching the specified string.
           * @param axis String to match to the appropriate axis enumueration.
           * @return The matching enumeration or NULL if there was no match.
           */
-         const TextureShaderParameter::TextureAxis *GetTextureAxis(const std::string &axis);
+         const ShaderParamTexture::TextureAxis *GetTextureAxis(const std::string &axis);
 
          //Elements and attributes found in the shader definitions XML file.
          static const std::string SHADERLIST_ELEMENT;

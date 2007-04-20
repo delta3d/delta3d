@@ -187,14 +187,14 @@ void ShaderManagerTests::TestShader()
       dtCore::RefPtr<dtCore::ShaderParameter> shaderParam = NULL;
       for (i=0; i<100; i++)
       {
-         shaderParam = new dtCore::Texture2DShaderParameter("Param" + dtUtil::ToString(i));
+         shaderParam = new dtCore::ShaderParamTexture2D("Param" + dtUtil::ToString(i));
          newShader->AddParameter(*shaderParam);
       }
 
       //Make sure we can't add parameters with the same name...
       try
       {
-         shaderParam = new dtCore::Texture2DShaderParameter("Param20");
+         shaderParam = new dtCore::ShaderParamTexture2D("Param20");
          newShader->AddParameter(*shaderParam);
          CPPUNIT_FAIL("Should not be able to add shader parameters with duplicate names.");
       }
@@ -247,9 +247,9 @@ void ShaderManagerTests::TestShaderManager()
             shader = new dtCore::Shader("Shader" + dtUtil::ToString(j));
             shader->SetVertexShaderSource("Shaders/perpixel_lighting_detailmap_vert.glsl");
             shader->SetFragmentShaderSource("Shaders/perpixel_lighting_detailmap_frag.glsl");
-            shader->AddParameter(*(new dtCore::Texture2DShaderParameter("Param0")));
-            shader->AddParameter(*(new dtCore::Texture2DShaderParameter("Param1")));
-            shader->AddParameter(*(new dtCore::Texture2DShaderParameter("Param2")));
+            shader->AddParameter(*(new dtCore::ShaderParamTexture2D("Param0")));
+            shader->AddParameter(*(new dtCore::ShaderParamTexture2D("Param1")));
+            shader->AddParameter(*(new dtCore::ShaderParamTexture2D("Param2")));
             group->AddShader(*shader);
          }
 
@@ -341,14 +341,14 @@ void ShaderManagerTests::TestAssignShader()
       //This code creates a shader parameter of each type and assigns the shader
       //to a node.  The shader parameter tests ensures that each parameter type
       //actually got properly bound to the node's render state.
-      dtCore::RefPtr<dtCore::Texture2DShaderParameter> tex1Param =
-            new dtCore::Texture2DShaderParameter("baseTexture");
+      dtCore::RefPtr<dtCore::ShaderParamTexture2D> tex1Param =
+            new dtCore::ShaderParamTexture2D("baseTexture");
       tex1Param->SetTexture("Textures/smoke.rgb");
       tex1Param->SetTextureUnit(0);
       shader->AddParameter(*tex1Param);
 
-      dtCore::RefPtr<dtCore::Texture2DShaderParameter> tex2Param =
-            new dtCore::Texture2DShaderParameter("detailTexture");
+      dtCore::RefPtr<dtCore::ShaderParamTexture2D> tex2Param =
+            new dtCore::ShaderParamTexture2D("detailTexture");
       tex2Param->SetTexture("Textures/detailmap.png");
       tex2Param->SetTextureUnit(1);
       shader->AddParameter(*tex2Param);
@@ -384,8 +384,8 @@ void ShaderManagerTests::TestShaderInstancesAreUnique()
 
       // We just use an int param for this test.  We aren't testing params in general, just that they
       // get their own copy.
-      dtCore::RefPtr<dtCore::IntegerShaderParameter> intParam = 
-         new dtCore::IntegerShaderParameter("intTest");
+      dtCore::RefPtr<dtCore::ShaderParameterInt> intParam = 
+         new dtCore::ShaderParameterInt("intTest");
       intParam->SetValue(29);
       shader->AddParameter(*intParam);
 
@@ -408,7 +408,7 @@ void ShaderManagerTests::TestShaderInstancesAreUnique()
 
       dtCore::ShaderParameter *newParam1 = newShader1->FindParameter("intTest");
       CPPUNIT_ASSERT_MESSAGE("The new shader instance should have the int param", newParam1 != NULL);
-      dtCore::IntegerShaderParameter *newIntParam1 = dynamic_cast<dtCore::IntegerShaderParameter *>(newParam1);
+      dtCore::ShaderParameterInt *newIntParam1 = dynamic_cast<dtCore::ShaderParameterInt *>(newParam1);
       CPPUNIT_ASSERT_MESSAGE("The new shader instance should be an int param", newIntParam1 != NULL);
 
       CPPUNIT_ASSERT_EQUAL_MESSAGE("New int param should initially have the same value", 
@@ -420,7 +420,7 @@ void ShaderManagerTests::TestShaderInstancesAreUnique()
       // Make sure the 2nd shader didn't get changed either.
       dtCore::ShaderParameter *newParam2 = newShader2->FindParameter("intTest");
       CPPUNIT_ASSERT_MESSAGE("The new shader instance should have the int param", newParam2 != NULL);
-      dtCore::IntegerShaderParameter *newIntParam2 = dynamic_cast<dtCore::IntegerShaderParameter *>(newParam2);
+      dtCore::ShaderParameterInt *newIntParam2 = dynamic_cast<dtCore::ShaderParameterInt *>(newParam2);
       CPPUNIT_ASSERT_MESSAGE("The new shader instance should be an int param", newIntParam2 != NULL);
       CPPUNIT_ASSERT_MESSAGE("New int param should NOT be the same as the 2nd int param instance", 
          newIntParam1->GetValue() != newIntParam2->GetValue());
@@ -482,25 +482,25 @@ void ShaderManagerTests::TestXMLParsing()
                              shader2->GetFragmentShaderSource() == "Shaders/perpixel_lighting_detailmap_frag.glsl");
 
       dtCore::ShaderParameter *param;
-      dtCore::Texture2DShaderParameter *texParam;
+      dtCore::ShaderParamTexture2D *texParam;
       param = shader2->FindParameter("baseTexture");
       CPPUNIT_ASSERT_MESSAGE("Shader 2 in Group 1 should have had a parameter named baseTexture.",
                              param != NULL);
       CPPUNIT_ASSERT_MESSAGE("Shader 2 in Group 1 should have had a 2D texture parameter.",
                              param->GetType() == dtCore::ShaderParameter::ParamType::SAMPLER_2D);
 
-      texParam = static_cast<dtCore::Texture2DShaderParameter*>(param);
+      texParam = static_cast<dtCore::ShaderParamTexture2D*>(param);
       CPPUNIT_ASSERT_MESSAGE("Parameter should be named baseTexture.",texParam->GetName() == "baseTexture");
       CPPUNIT_ASSERT_MESSAGE("Parameter source should have been image.",
-                             texParam->GetTextureSourceType() == dtCore::TextureShaderParameter::TextureSourceType::IMAGE);
+                             texParam->GetTextureSourceType() == dtCore::ShaderParamTexture::TextureSourceType::IMAGE);
       CPPUNIT_ASSERT_MESSAGE("Parameter should have had image Textures/detailmap.png.",
                              texParam->GetTexture() == "Textures/detailmap.png");
       CPPUNIT_ASSERT_MESSAGE("Texture parameter should have repeat assigned to axis S.",
-                             texParam->GetAddressMode(dtCore::TextureShaderParameter::TextureAxis::S) ==
-                                   dtCore::TextureShaderParameter::AddressMode::REPEAT);
+                             texParam->GetAddressMode(dtCore::ShaderParamTexture::TextureAxis::S) ==
+                                   dtCore::ShaderParamTexture::AddressMode::REPEAT);
       CPPUNIT_ASSERT_MESSAGE("Texture parameter should have repeat assigned to axis T.",
-                             texParam->GetAddressMode(dtCore::TextureShaderParameter::TextureAxis::T) ==
-                                   dtCore::TextureShaderParameter::AddressMode::REPEAT);
+                             texParam->GetAddressMode(dtCore::ShaderParamTexture::TextureAxis::T) ==
+                                   dtCore::ShaderParamTexture::AddressMode::REPEAT);
       CPPUNIT_ASSERT_MESSAGE("Texture parameter should be assigned to unit 1.",
                              texParam->GetTextureUnit() == 1);
 
@@ -527,16 +527,16 @@ void ShaderManagerTests::TestXMLParsing()
       CPPUNIT_ASSERT_MESSAGE("Shader 1 in Group 2 should have had a 2D texture parameter.",
                              param->GetType() == dtCore::ShaderParameter::ParamType::SAMPLER_2D);
 
-      texParam = static_cast<dtCore::Texture2DShaderParameter*>(param);
+      texParam = static_cast<dtCore::ShaderParamTexture2D*>(param);
       CPPUNIT_ASSERT_MESSAGE("Parameter should be named baseTexture.",texParam->GetName() == "baseTexture");
       CPPUNIT_ASSERT_MESSAGE("Parameter source should have been auto.",
-                             texParam->GetTextureSourceType() == dtCore::TextureShaderParameter::TextureSourceType::AUTO);
+                             texParam->GetTextureSourceType() == dtCore::ShaderParamTexture::TextureSourceType::AUTO);
       CPPUNIT_ASSERT_MESSAGE("Texture parameter should have clamp assigned to axis S.",
-                             texParam->GetAddressMode(dtCore::TextureShaderParameter::TextureAxis::S) ==
-                                   dtCore::TextureShaderParameter::AddressMode::CLAMP);
+                             texParam->GetAddressMode(dtCore::ShaderParamTexture::TextureAxis::S) ==
+                                   dtCore::ShaderParamTexture::AddressMode::CLAMP);
       CPPUNIT_ASSERT_MESSAGE("Texture parameter should have clamp assigned to axis T.",
-                             texParam->GetAddressMode(dtCore::TextureShaderParameter::TextureAxis::T) ==
-                                   dtCore::TextureShaderParameter::AddressMode::CLAMP);
+                             texParam->GetAddressMode(dtCore::ShaderParamTexture::TextureAxis::T) ==
+                                   dtCore::ShaderParamTexture::AddressMode::CLAMP);
       CPPUNIT_ASSERT_MESSAGE("Texture parameter should be assigned to unit 1.",
                              texParam->GetTextureUnit() == 1);
 
@@ -555,18 +555,18 @@ void ShaderManagerTests::TestXMLParsing()
       CPPUNIT_ASSERT_MESSAGE("Shader 2 in Group 2 should have had a 2D texture parameter.",
                              param->GetType() == dtCore::ShaderParameter::ParamType::SAMPLER_2D);
 
-      texParam = static_cast<dtCore::Texture2DShaderParameter*>(param);
+      texParam = static_cast<dtCore::ShaderParamTexture2D*>(param);
       CPPUNIT_ASSERT_MESSAGE("Parameter should be named baseTexture.",texParam->GetName() == "baseTexture");
       CPPUNIT_ASSERT_MESSAGE("Parameter source should have been image.",
-                             texParam->GetTextureSourceType() == dtCore::TextureShaderParameter::TextureSourceType::IMAGE);
+                             texParam->GetTextureSourceType() == dtCore::ShaderParamTexture::TextureSourceType::IMAGE);
       CPPUNIT_ASSERT_MESSAGE("Parameter should have had image Textures/detailmap.png.",
                              texParam->GetTexture() == "Textures/detailmap.png");
       CPPUNIT_ASSERT_MESSAGE("Texture parameter should have mirror assigned to axis S.",
-                             texParam->GetAddressMode(dtCore::TextureShaderParameter::TextureAxis::S) ==
-                                   dtCore::TextureShaderParameter::AddressMode::MIRROR);
+                             texParam->GetAddressMode(dtCore::ShaderParamTexture::TextureAxis::S) ==
+                                   dtCore::ShaderParamTexture::AddressMode::MIRROR);
       CPPUNIT_ASSERT_MESSAGE("Texture parameter should have mirror assigned to axis T.",
-                             texParam->GetAddressMode(dtCore::TextureShaderParameter::TextureAxis::T) ==
-                                   dtCore::TextureShaderParameter::AddressMode::MIRROR);
+                             texParam->GetAddressMode(dtCore::ShaderParamTexture::TextureAxis::T) ==
+                                   dtCore::ShaderParamTexture::AddressMode::MIRROR);
       CPPUNIT_ASSERT_MESSAGE("Texture parameter should be assigned to unit 2.",
                              texParam->GetTextureUnit() == 2);
    }
@@ -585,15 +585,15 @@ void ShaderManagerTests::TestTexture2DXMLParam()
       CPPUNIT_ASSERT(param != NULL);
       CPPUNIT_ASSERT_EQUAL(dtCore::ShaderParameter::ParamType::SAMPLER_2D,param->GetType());
 
-      dtCore::Texture2DShaderParameter *texParam = static_cast<dtCore::Texture2DShaderParameter*>(param);
+      dtCore::ShaderParamTexture2D *texParam = static_cast<dtCore::ShaderParamTexture2D*>(param);
       CPPUNIT_ASSERT(texParam != NULL);
       CPPUNIT_ASSERT_EQUAL(std::string("Texture2DParam"),texParam->GetName());
-      CPPUNIT_ASSERT_EQUAL(dtCore::TextureShaderParameter::TextureSourceType::IMAGE,texParam->GetTextureSourceType());
+      CPPUNIT_ASSERT_EQUAL(dtCore::ShaderParamTexture::TextureSourceType::IMAGE,texParam->GetTextureSourceType());
       CPPUNIT_ASSERT_EQUAL(std::string("Textures/detailmap.png"),texParam->GetTexture());
-      CPPUNIT_ASSERT_EQUAL(dtCore::TextureShaderParameter::AddressMode::MIRROR,
-                           texParam->GetAddressMode(dtCore::TextureShaderParameter::TextureAxis::S));
-      CPPUNIT_ASSERT_EQUAL(dtCore::TextureShaderParameter::AddressMode::MIRROR,
-                           texParam->GetAddressMode(dtCore::TextureShaderParameter::TextureAxis::T));
+      CPPUNIT_ASSERT_EQUAL(dtCore::ShaderParamTexture::AddressMode::MIRROR,
+                           texParam->GetAddressMode(dtCore::ShaderParamTexture::TextureAxis::S));
+      CPPUNIT_ASSERT_EQUAL(dtCore::ShaderParamTexture::AddressMode::MIRROR,
+                           texParam->GetAddressMode(dtCore::ShaderParamTexture::TextureAxis::T));
       CPPUNIT_ASSERT_EQUAL((unsigned int)2,texParam->GetTextureUnit());
    }
    catch (const dtUtil::Exception &e)
@@ -611,7 +611,7 @@ void ShaderManagerTests::TestIntXMLParam()
       CPPUNIT_ASSERT(param != NULL);
       CPPUNIT_ASSERT_EQUAL(dtCore::ShaderParameter::ParamType::INT,param->GetType());
 
-      dtCore::IntegerShaderParameter *intParam = static_cast<dtCore::IntegerShaderParameter*>(param);
+      dtCore::ShaderParameterInt *intParam = static_cast<dtCore::ShaderParameterInt*>(param);
       CPPUNIT_ASSERT(intParam != NULL);
       CPPUNIT_ASSERT_EQUAL(25,intParam->GetValue());
    }
@@ -630,7 +630,7 @@ void ShaderManagerTests::TestFloatXMLParam()
       CPPUNIT_ASSERT(param != NULL);
       CPPUNIT_ASSERT_EQUAL(dtCore::ShaderParameter::ParamType::FLOAT,param->GetType());
 
-      dtCore::FloatShaderParameter *floatParam = static_cast<dtCore::FloatShaderParameter*>(param);
+      dtCore::ShaderParamFloat *floatParam = static_cast<dtCore::ShaderParamFloat*>(param);
       CPPUNIT_ASSERT(floatParam != NULL);
       CPPUNIT_ASSERT_EQUAL(10.0f,floatParam->GetValue());
    }
@@ -649,7 +649,7 @@ void ShaderManagerTests::TestFloatTimerXMLParam()
       CPPUNIT_ASSERT(param != NULL);
       CPPUNIT_ASSERT_EQUAL(dtCore::ShaderParameter::ParamType::TIMER_FLOAT,param->GetType());
 
-      dtCore::ShaderParameterFloatTimer *floatTimerParam = static_cast<dtCore::ShaderParameterFloatTimer*>(param);
+      dtCore::ShaderParamOscillator *floatTimerParam = static_cast<dtCore::ShaderParamOscillator*>(param);
       CPPUNIT_ASSERT(floatTimerParam != NULL);
       CPPUNIT_ASSERT_EQUAL(4.0f,floatTimerParam->GetOffset());
       CPPUNIT_ASSERT_EQUAL(3.0f,floatTimerParam->GetRangeMin());
@@ -657,7 +657,7 @@ void ShaderManagerTests::TestFloatTimerXMLParam()
       CPPUNIT_ASSERT_EQUAL(2.0f,floatTimerParam->GetCycleTimeMin());
       CPPUNIT_ASSERT_EQUAL(2.5f,floatTimerParam->GetCycleTimeMax());
       CPPUNIT_ASSERT_EQUAL(false,floatTimerParam->GetUseRealTime());
-      CPPUNIT_ASSERT(dtCore::ShaderParameterFloatTimer::OscillationType::UPANDDOWN == floatTimerParam->GetOscillationType());
+      CPPUNIT_ASSERT(dtCore::ShaderParamOscillator::OscillationType::UPANDDOWN == floatTimerParam->GetOscillationType());
    }
    catch (const dtUtil::Exception &e)
    {

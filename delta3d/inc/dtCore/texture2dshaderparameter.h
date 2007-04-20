@@ -17,6 +17,7 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  * Matthew W. Campbell, Curtiss Murphy
+ * Erik Johnson
  */
 #ifndef DELTA_TEXTURE2DSHADERPARAMETER
 #define DELTA_TEXTURE2DSHADERPARAMETER
@@ -29,14 +30,14 @@ namespace dtCore
    /**
      * This class represents a 2D texture parameter.
      */
-   class DT_CORE_EXPORT Texture2DShaderParameter : public TextureShaderParameter
+   class DT_CORE_EXPORT ShaderParamTexture2D : public ShaderParamTexture
    {
       public:
 
          /**
           * Constructs the texture parameter.
           */
-         Texture2DShaderParameter(const std::string &name);
+         ShaderParamTexture2D(const std::string &name);
 
          /**
           * Gets the type of this shader parameter.
@@ -104,7 +105,7 @@ namespace dtCore
          /**
           * Destroys the texture parameter.
           */
-         virtual ~Texture2DShaderParameter();
+         virtual ~ShaderParamTexture2D();
 
       private:
 
@@ -112,8 +113,8 @@ namespace dtCore
          // creates this functions even if they are not used, and if
          // this class is forward declared, these implicit functions will
          // cause compiler errors for missing calls to "ref".
-         Texture2DShaderParameter& operator=( const Texture2DShaderParameter& ); 
-         Texture2DShaderParameter( const Texture2DShaderParameter& );
+         ShaderParamTexture2D& operator=( const ShaderParamTexture2D& ); 
+         ShaderParamTexture2D( const ShaderParamTexture2D& );
    };
 }
 

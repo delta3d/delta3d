@@ -28,14 +28,14 @@
 namespace dtCore
 {
    ///////////////////////////////////////////////////////////////////////////////
-   IMPLEMENT_ENUM(ShaderParameterFloatTimer::OscillationType)
-   const ShaderParameterFloatTimer::OscillationType ShaderParameterFloatTimer::OscillationType::UP("Up");
-   const ShaderParameterFloatTimer::OscillationType ShaderParameterFloatTimer::OscillationType::DOWN("Down");
-   const ShaderParameterFloatTimer::OscillationType ShaderParameterFloatTimer::OscillationType::UPANDDOWN("UpAndDown");
-   const ShaderParameterFloatTimer::OscillationType ShaderParameterFloatTimer::OscillationType::DOWNANDUP("DownAndUp");
+   IMPLEMENT_ENUM(ShaderParamOscillator::OscillationType)
+   const ShaderParamOscillator::OscillationType ShaderParamOscillator::OscillationType::UP("Up");
+   const ShaderParamOscillator::OscillationType ShaderParamOscillator::OscillationType::DOWN("Down");
+   const ShaderParamOscillator::OscillationType ShaderParamOscillator::OscillationType::UPANDDOWN("UpAndDown");
+   const ShaderParamOscillator::OscillationType ShaderParamOscillator::OscillationType::DOWNANDUP("DownAndUp");
 
    ///////////////////////////////////////////////////////////////////////////////
-   ShaderParameterFloatTimer::ShaderParameterFloatTimer(const std::string &name) : 
+   ShaderParamOscillator::ShaderParamOscillator(const std::string &name) : 
       ShaderParameter(name), 
       mValue(0.0),
       mOffset(0.0),
@@ -46,18 +46,18 @@ namespace dtCore
       mCycleTimeMax(1.0),
       mCurrentCycleTime(1.0), // init not really needed since calced before used
       mUseRealTime(true),
-      mOscillationType(&ShaderParameterFloatTimer::OscillationType::UP),
+      mOscillationType(&ShaderParamOscillator::OscillationType::UP),
       mCycleDirection(1.0)
    {
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   ShaderParameterFloatTimer::~ShaderParameterFloatTimer()
+   ShaderParamOscillator::~ShaderParamOscillator()
    {
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ShaderParameterFloatTimer::AttachToRenderState(osg::StateSet &stateSet)
+   void ShaderParamOscillator::AttachToRenderState(osg::StateSet &stateSet)
    {
       osg::Uniform *floatUniform = new osg::Uniform(osg::Uniform::FLOAT,GetName());
       SetUniformParam(*floatUniform);
@@ -73,7 +73,7 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ShaderParameterFloatTimer::Update()
+   void ShaderParamOscillator::Update()
    {
       // Update doesn't actually update the shader.  Instead, it resets the ranges and such 
       // so that PreFrame can do it's thing.
@@ -113,9 +113,9 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   ShaderParameter *ShaderParameterFloatTimer::Clone() const
+   ShaderParameter *ShaderParamOscillator::Clone() const
    {
-      ShaderParameterFloatTimer *newParam = new ShaderParameterFloatTimer(GetName());
+      ShaderParamOscillator *newParam = new ShaderParamOscillator(GetName());
 
       newParam->SetDirty(true); // force a recompute of range and stuff.
       newParam->mOffset = mOffset;
@@ -132,7 +132,7 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ShaderParameterFloatTimer::OnMessage(MessageData *data)
+   void ShaderParamOscillator::OnMessage(MessageData *data)
    {
       if (data->message == "preframe")
       {
@@ -147,7 +147,7 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ShaderParameterFloatTimer::DoShaderUpdate(float timeDelta)
+   void ShaderParamOscillator::DoShaderUpdate(float timeDelta)
    {
       float timePercent = timeDelta/mCurrentCycleTime; 
       float cycleDelta = timePercent*mCurrentRange;

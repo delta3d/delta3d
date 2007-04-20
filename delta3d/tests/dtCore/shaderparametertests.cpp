@@ -45,10 +45,10 @@ const std::string projectContext = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR
 
 ///////////////////////////////////////////////////////////////////////////////
 // TEST Wrapper for float timer - so I can call privates.
-class TestShaderParameterFloatTimer : public dtCore::ShaderParameterFloatTimer
+class TestShaderParameterFloatTimer : public dtCore::ShaderParamOscillator
 {
 public:
-   TestShaderParameterFloatTimer::TestShaderParameterFloatTimer() : ShaderParameterFloatTimer("test")
+   TestShaderParameterFloatTimer::TestShaderParameterFloatTimer() : ShaderParamOscillator("test")
    {
    }
 
@@ -102,8 +102,8 @@ void ShaderParameterTests::TestTexture2DParameter()
 {
    try
    {
-      dtCore::RefPtr<dtCore::Texture2DShaderParameter> param =
-         new dtCore::Texture2DShaderParameter("TestTexture2D");
+      dtCore::RefPtr<dtCore::ShaderParamTexture2D> param =
+         new dtCore::ShaderParamTexture2D("TestTexture2D");
       dtCore::RefPtr<osg::StateSet> stateSet = new osg::StateSet();
 
       CPPUNIT_ASSERT_MESSAGE("Parameter name should be TestTexture2D.",param->GetName() == "TestTexture2D");
@@ -112,19 +112,19 @@ void ShaderParameterTests::TestTexture2DParameter()
 
       param->SetTexture("Textures/detailmap.png");
       param->SetTextureUnit(2);
-      param->SetAddressMode(dtCore::TextureShaderParameter::TextureAxis::S,
-                            dtCore::TextureShaderParameter::AddressMode::MIRROR);
-      param->SetAddressMode(dtCore::TextureShaderParameter::TextureAxis::T,
-                            dtCore::TextureShaderParameter::AddressMode::MIRROR);
+      param->SetAddressMode(dtCore::ShaderParamTexture::TextureAxis::S,
+                            dtCore::ShaderParamTexture::AddressMode::MIRROR);
+      param->SetAddressMode(dtCore::ShaderParamTexture::TextureAxis::T,
+                            dtCore::ShaderParamTexture::AddressMode::MIRROR);
 
       CPPUNIT_ASSERT_MESSAGE("Texture source was wrong.",param->GetTexture() == "Textures/detailmap.png");
       CPPUNIT_ASSERT_MESSAGE("Texture unit was wrong.",param->GetTextureUnit() == 2);
       CPPUNIT_ASSERT_MESSAGE("Texture S axis address mode was wrong.",
-                             param->GetAddressMode(dtCore::TextureShaderParameter::TextureAxis::S) ==
-                                   dtCore::TextureShaderParameter::AddressMode::MIRROR);
+                             param->GetAddressMode(dtCore::ShaderParamTexture::TextureAxis::S) ==
+                                   dtCore::ShaderParamTexture::AddressMode::MIRROR);
       CPPUNIT_ASSERT_MESSAGE("Texture T axis address mode was wrong.",
-                             param->GetAddressMode(dtCore::TextureShaderParameter::TextureAxis::T) ==
-                                   dtCore::TextureShaderParameter::AddressMode::MIRROR);
+                             param->GetAddressMode(dtCore::ShaderParamTexture::TextureAxis::T) ==
+                                   dtCore::ShaderParamTexture::AddressMode::MIRROR);
 
       //Bind the parameter to the render state and verify that the proper attributes were set.
       param->AttachToRenderState(*stateSet);
@@ -141,18 +141,18 @@ void ShaderParameterTests::TestTexture2DParameter()
       CPPUNIT_ASSERT_MESSAGE("Uniform should have an integer value of 2.",value == 2);
 
       // Test clone behavior
-      dtCore::RefPtr<dtCore::Texture2DShaderParameter> clonedParam = 
-         static_cast<dtCore::Texture2DShaderParameter *>(param->Clone());
+      dtCore::RefPtr<dtCore::ShaderParamTexture2D> clonedParam = 
+         static_cast<dtCore::ShaderParamTexture2D *>(param->Clone());
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Cloned value for texture unit should be the same.", 
          clonedParam->GetTextureUnit(), param->GetTextureUnit());
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Cloned value for texture should be the same.", 
          clonedParam->GetTexture(), param->GetTexture());
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Cloned value for address mode S should be the same.", 
-         clonedParam->GetAddressMode(dtCore::TextureShaderParameter::TextureAxis::S), 
-         param->GetAddressMode(dtCore::TextureShaderParameter::TextureAxis::S));
+         clonedParam->GetAddressMode(dtCore::ShaderParamTexture::TextureAxis::S), 
+         param->GetAddressMode(dtCore::ShaderParamTexture::TextureAxis::S));
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Cloned value for address mode T should be the same.", 
-         clonedParam->GetAddressMode(dtCore::TextureShaderParameter::TextureAxis::T), 
-         param->GetAddressMode(dtCore::TextureShaderParameter::TextureAxis::T));
+         clonedParam->GetAddressMode(dtCore::ShaderParamTexture::TextureAxis::T), 
+         param->GetAddressMode(dtCore::ShaderParamTexture::TextureAxis::T));
 
       // Test Detach
       param->DetachFromRenderState(*stateSet);
@@ -173,23 +173,23 @@ void ShaderParameterTests::TestTexture2DParameterReverseOrder()
       // Basically the same test as above but this one checks that we can load our image
       // After we set our address modes and it should still work right.
 
-      dtCore::RefPtr<dtCore::Texture2DShaderParameter> param =
-         new dtCore::Texture2DShaderParameter("TestTexture2D");
+      dtCore::RefPtr<dtCore::ShaderParamTexture2D> param =
+         new dtCore::ShaderParamTexture2D("TestTexture2D");
       dtCore::RefPtr<osg::StateSet> stateSet = new osg::StateSet();
 
-      param->SetAddressMode(dtCore::TextureShaderParameter::TextureAxis::S,
-         dtCore::TextureShaderParameter::AddressMode::MIRROR);
-      param->SetAddressMode(dtCore::TextureShaderParameter::TextureAxis::T,
-         dtCore::TextureShaderParameter::AddressMode::MIRROR);
+      param->SetAddressMode(dtCore::ShaderParamTexture::TextureAxis::S,
+         dtCore::ShaderParamTexture::AddressMode::MIRROR);
+      param->SetAddressMode(dtCore::ShaderParamTexture::TextureAxis::T,
+         dtCore::ShaderParamTexture::AddressMode::MIRROR);
       param->SetTexture("Textures/detailmap.png");
       param->SetTextureUnit(2);
 
       CPPUNIT_ASSERT_MESSAGE("Texture S axis address mode was wrong.",
-         param->GetAddressMode(dtCore::TextureShaderParameter::TextureAxis::S) ==
-         dtCore::TextureShaderParameter::AddressMode::MIRROR);
+         param->GetAddressMode(dtCore::ShaderParamTexture::TextureAxis::S) ==
+         dtCore::ShaderParamTexture::AddressMode::MIRROR);
       CPPUNIT_ASSERT_MESSAGE("Texture T axis address mode was wrong.",
-         param->GetAddressMode(dtCore::TextureShaderParameter::TextureAxis::T) ==
-         dtCore::TextureShaderParameter::AddressMode::MIRROR);
+         param->GetAddressMode(dtCore::ShaderParamTexture::TextureAxis::T) ==
+         dtCore::ShaderParamTexture::AddressMode::MIRROR);
 
       //Bind the parameter to the render state and verify that the proper attributes were set.
       param->AttachToRenderState(*stateSet);
@@ -212,7 +212,7 @@ void ShaderParameterTests::TestFloatParameter()
 {
    try
    {
-      dtCore::RefPtr<dtCore::FloatShaderParameter> param = new dtCore::FloatShaderParameter("test");
+      dtCore::RefPtr<dtCore::ShaderParamFloat> param = new dtCore::ShaderParamFloat("test");
       dtCore::RefPtr<osg::StateSet> ss = new osg::StateSet();
 
       param->SetValue(101.0f);
@@ -229,8 +229,8 @@ void ShaderParameterTests::TestFloatParameter()
       CPPUNIT_ASSERT_EQUAL(101.0f,value);
 
       // Test clone behavior
-      dtCore::RefPtr<dtCore::FloatShaderParameter> clonedParam = 
-         static_cast<dtCore::FloatShaderParameter *>(param->Clone());
+      dtCore::RefPtr<dtCore::ShaderParamFloat> clonedParam = 
+         static_cast<dtCore::ShaderParamFloat *>(param->Clone());
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Cloned value should be the same.", 
          clonedParam->GetValue(), param->GetValue());
 
@@ -250,7 +250,7 @@ void ShaderParameterTests::TestIntParameter()
 {
    try
    {
-      dtCore::RefPtr<dtCore::IntegerShaderParameter> param = new dtCore::IntegerShaderParameter("test");
+      dtCore::RefPtr<dtCore::ShaderParameterInt> param = new dtCore::ShaderParameterInt("test");
       dtCore::RefPtr<osg::StateSet> ss = new osg::StateSet();
 
       param->SetValue(25);
@@ -267,8 +267,8 @@ void ShaderParameterTests::TestIntParameter()
       CPPUNIT_ASSERT_EQUAL(25,value);
 
       // Test clone behavior
-      dtCore::RefPtr<dtCore::IntegerShaderParameter> clonedParam = 
-         static_cast<dtCore::IntegerShaderParameter *>(param->Clone());
+      dtCore::RefPtr<dtCore::ShaderParameterInt> clonedParam = 
+         static_cast<dtCore::ShaderParameterInt *>(param->Clone());
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Cloned value should be the same.", 
          clonedParam->GetValue(), param->GetValue());
 
@@ -324,9 +324,9 @@ void ShaderParameterTests::TestTimerFloatParameter()
          param->GetUseRealTime(), !tempBool);
       param->SetUseRealTime(false); // we want to use sim time below
 
-      param->SetOscillationType(dtCore::ShaderParameterFloatTimer::OscillationType::DOWN);
+      param->SetOscillationType(dtCore::ShaderParamOscillator::OscillationType::DOWN);
       CPPUNIT_ASSERT_MESSAGE("Oscillation Type should have been set", 
-         param->GetOscillationType() == dtCore::ShaderParameterFloatTimer::OscillationType::DOWN);
+         param->GetOscillationType() == dtCore::ShaderParamOscillator::OscillationType::DOWN);
 
 
       param->AttachToRenderState(*ss);
@@ -337,7 +337,7 @@ void ShaderParameterTests::TestTimerFloatParameter()
       // CHECK INITIAL CONDITIONS FROM FIRST Update()
 
       CPPUNIT_ASSERT_MESSAGE("Current Oscillation Type should have been set", 
-         param->GetOscillationType() == dtCore::ShaderParameterFloatTimer::OscillationType::DOWN);
+         param->GetOscillationType() == dtCore::ShaderParamOscillator::OscillationType::DOWN);
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Cycle Direction should be down", -1.0f, param->GetCycleDirection());
       CPPUNIT_ASSERT_MESSAGE("Current Range should be valid", 
          (param->GetCurrentRange() >= 3.0 && param->GetCurrentRange() <= 4.0));
@@ -375,7 +375,7 @@ void ShaderParameterTests::TestTimerFloatParameter()
       // OSCILLATE - UP
       ////////////////////////////
 
-      param->SetOscillationType(dtCore::ShaderParameterFloatTimer::OscillationType::UP);
+      param->SetOscillationType(dtCore::ShaderParamOscillator::OscillationType::UP);
       param->SetValue(param->GetOffset());
       startValue = param->GetValue();
       stopValue = param->GetOffset() + param->GetCurrentRange();
@@ -398,7 +398,7 @@ void ShaderParameterTests::TestTimerFloatParameter()
       // OSCILLATE - UPANDDOWN
       ////////////////////////////
 
-      param->SetOscillationType(dtCore::ShaderParameterFloatTimer::OscillationType::UPANDDOWN);
+      param->SetOscillationType(dtCore::ShaderParamOscillator::OscillationType::UPANDDOWN);
       param->SetValue(param->GetOffset());
       startValue = param->GetValue();
       stopValue = startValue + param->GetCurrentRange();
@@ -433,7 +433,7 @@ void ShaderParameterTests::TestTimerFloatParameter()
       // OSCILLATE - DOWNANDUP
       ///////////////////////////
 
-      param->SetOscillationType(dtCore::ShaderParameterFloatTimer::OscillationType::DOWNANDUP);
+      param->SetOscillationType(dtCore::ShaderParamOscillator::OscillationType::DOWNANDUP);
       param->SetValue(param->GetOffset() + param->GetCurrentRange());
       startValue = param->GetValue();
       stopValue = startValue - param->GetCurrentRange();
@@ -484,8 +484,8 @@ void ShaderParameterTests::TestTimerFloatParameter()
       CPPUNIT_ASSERT_MESSAGE("Cycle timer max should be 1.0", 1.0 == param->GetCycleTimeMax());
 
       // TEST CLONE BEHAVIOR
-      dtCore::RefPtr<dtCore::ShaderParameterFloatTimer> clonedParam = 
-         static_cast<dtCore::ShaderParameterFloatTimer *>(param->Clone());
+      dtCore::RefPtr<dtCore::ShaderParamOscillator> clonedParam = 
+         static_cast<dtCore::ShaderParamOscillator *>(param->Clone());
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Cloned offset should be the same.", 
          clonedParam->GetOffset(), param->GetOffset());
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Cloned value should be the same.", 
