@@ -39,6 +39,7 @@ namespace dtCore
    ShaderParamTexture2D::ShaderParamTexture2D(const std::string &name) :
       ShaderParamTexture(name)
    {
+      SetShared(true); // we want to share Textures by default
       SetTextureObject(*(new osg::Texture2D()));
    }
 
@@ -50,33 +51,42 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    void ShaderParamTexture2D::AttachToRenderState(osg::StateSet &stateSet)
    {
-      //bool needToCreateNewTex2D = (GetTextureObject() == NULL);
       dtCore::RefPtr<osg::Texture2D> tex2D;
 
       if (GetTexture().empty() && GetTextureSourceType() != ShaderParamTexture::TextureSourceType::AUTO)
          throw dtUtil::Exception(ShaderParameterException::INVALID_ATTRIBUTE,"Cannot attach to render state.  Texture "
                "for parameter " + GetName() + " has not been specified.", __FILE__, __LINE__);
 
-      osg::Uniform *uniform = new osg::Uniform(osg::Uniform::SAMPLER_2D,GetName());
-      uniform->set((int)GetTextureUnit());
-      stateSet.addUniform(uniform);
-      SetUniformParam(*uniform);
+      osg::Uniform *uniform = NULL;
 
+      if (IsShared())
+         uniform = GetUniformParam();
+      // Create a new one if unshared or if shared but not set yet
+      if (uniform == NULL)
+      {
+         uniform = new osg::Uniform(osg::Uniform::SAMPLER_2D,GetName());
+         uniform->set((int)GetTextureUnit());
+         SetUniformParam(*uniform);
+      }
+
+      stateSet.addUniform(uniform);
+
+      // Load (if necessary) and Set the Tex2D on the StateSet 
       if (GetTextureSourceType() == ShaderParamTexture::TextureSourceType::IMAGE)
       {
          tex2D = static_cast<osg::Texture2D*>(GetTextureObject());
 
          // load or reload the image - allows caching from the template
          // Note - ImageSourceDirty may not be relevant anymore cause it now loads the image when you call SetTexture().
+         // note - If shared, load only happens the first time it is assigned. 
          if (tex2D->getImage() == NULL || IsImageSourceDirty()) 
          {
             LoadImage();
-            //SetTextureObject(*tex2D);
             ApplyTexture2DValues();
          }
 
          //Assign the completed texture attribute to the render state.
-         stateSet.setTextureAttributeAndModes(GetTextureUnit(),tex2D.get(),osg::StateAttribute::ON);
+         stateSet.setTextureAttributeAndModes(GetTextureUnit(), tex2D.get(), osg::StateAttribute::ON);
       }
 
       SetDirty(false);
@@ -88,8 +98,11 @@ namespace dtCore
       osg::Texture2D *tex2D = static_cast<osg::Texture2D*>(GetTextureObject());
       if (tex2D != NULL)
       {
-         osg::Image *image = new osg::Image();
-         tex2D->setImage(image);
+         if (!IsShared())
+         {
+            osg::Image *image = new osg::Image();
+            tex2D->setImage(image);
+         }
          stateSet.setTextureAttributeAndModes(GetTextureUnit(),tex2D,osg::StateAttribute::OFF);
       }
 
@@ -155,7 +168,6 @@ namespace dtCore
 
          osg::Texture2D *tex2D = static_cast<osg::Texture2D*>(GetTextureObject());
          tex2D->setImage(image);
-         //tex2D->setUnRefImageDataAfterApply(true);
 
          // we aren't dirty anymore
 
@@ -222,21 +234,28 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   ShaderParameter *ShaderParamTexture2D::Clone() const
+   ShaderParameter *ShaderParamTexture2D::Clone()
    {
-      ShaderParamTexture2D *newParam = new ShaderParamTexture2D(GetName());
+      ShaderParamTexture2D *newParam;
 
-      newParam->mTextureAddressMode[0] = mTextureAddressMode[0];
-      newParam->mTextureAddressMode[1] = mTextureAddressMode[1];
-      newParam->mTextureAddressMode[2] = mTextureAddressMode[2];
-      newParam->mTextureAddressMode[3] = mTextureAddressMode[3];
-      newParam->SetTextureSourceType(GetTextureSourceType());
-      newParam->SetTexture(GetTexture());
-      newParam->SetTextureUnit(GetTextureUnit());
-      newParam->SetImageSourceDirty(false);
-      newParam->SetDirty(false);
+      // Shared params are shared at the pointer level, exactly the same. Non shared are new instances
+      if (IsShared())
+         newParam = this;
+      else
+      {
+         newParam = new ShaderParamTexture2D(GetName());
 
-      // no need to copy over the image. It will get loaded when you attach to render state.
+         newParam->mTextureAddressMode[0] = mTextureAddressMode[0];
+         newParam->mTextureAddressMode[1] = mTextureAddressMode[1];
+         newParam->mTextureAddressMode[2] = mTextureAddressMode[2];
+         newParam->mTextureAddressMode[3] = mTextureAddressMode[3];
+         newParam->SetTextureSourceType(GetTextureSourceType());
+         newParam->SetTexture(GetTexture());
+         newParam->SetTextureUnit(GetTextureUnit());
+         newParam->SetImageSourceDirty(false);
+         newParam->SetDirty(false);
+         // no need to copy over the image. It will get loaded when you attach to render state.
+      }
 
       return newParam;
    }

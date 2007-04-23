@@ -61,6 +61,7 @@ namespace dtCore
 
    const std::string ShaderXML::PARAMETER_ELEMENT("parameter");
    const std::string ShaderXML::PARAMETER_ATTRIBUTE_NAME("name");
+   const std::string ShaderXML::PARAMETER_ATTRIBUTE_SHARED("shared");
 
    const std::string ShaderXML::TEXTURE2D_ELEMENT("texture2D");
    const std::string ShaderXML::TEXTURE2D_ATTRIBUTE_TEXUNIT("textureUnit");
@@ -278,6 +279,7 @@ namespace dtCore
    void ShaderXML::ParseParameterElement(xercesc::DOMElement *paramElement, Shader &shader)
    {
       std::string paramName = GetElementAttribute(*paramElement,ShaderXML::PARAMETER_ATTRIBUTE_NAME);
+      std::string isShared = GetElementAttribute(*paramElement,ShaderXML::PARAMETER_ATTRIBUTE_SHARED);
       xercesc::DOMNodeList *children = paramElement->getChildNodes();
 
       for (XMLSize_t i=0; i<children->getLength(); i++)
@@ -306,6 +308,19 @@ namespace dtCore
          else
             throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Invalid element found while parsing "
                   "shader parameter.", __FILE__, __LINE__);
+
+         // Set shared
+         if (!isShared.empty())
+         {
+            if (isShared == "yes")
+               newParam->SetShared(true);
+            else if (isShared == "no")
+               newParam->SetShared(false);
+            else
+               throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Invalid option for 'shared' on parameter [" +
+                  newParam->GetName() + "]. Shared is optional, to override the default for this parameter type, use 'yes' or 'no'.",
+                  __FILE__, __LINE__);
+         }
 
          shader.AddParameter(*newParam);
       }

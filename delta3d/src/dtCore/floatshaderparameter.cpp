@@ -28,6 +28,7 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    ShaderParamFloat::ShaderParamFloat(const std::string &name) : ShaderParameter(name)
    {
+      SetShared(false); // floats are probably not intended to be shared by default.
       mValue = 0.0f;
    }
 
@@ -39,10 +40,22 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    void ShaderParamFloat::AttachToRenderState(osg::StateSet &stateSet)
    {
-      osg::Uniform *floatUniform = new osg::Uniform(osg::Uniform::FLOAT,GetName());
-      SetUniformParam(*floatUniform);
+      osg::Uniform *floatUniform = NULL;
+
+      if (IsShared())
+      {
+         floatUniform = GetUniformParam();
+      }
+
+      // Create a new one if unshared or if shared but not set yet
+      if (floatUniform == NULL)
+      {
+         floatUniform = new osg::Uniform(osg::Uniform::FLOAT,GetName());
+         SetUniformParam(*floatUniform);
+         floatUniform->set(mValue);
+      }
+
       stateSet.addUniform(floatUniform);
-      floatUniform->set(mValue);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -56,12 +69,20 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   ShaderParameter *ShaderParamFloat::Clone() const
+   ShaderParameter *ShaderParamFloat::Clone()
    {
-      ShaderParamFloat *newParam = new ShaderParamFloat(GetName());
+      ShaderParamFloat *newParam;
 
-      newParam->SetDirty(false);
-      newParam->mValue = mValue;
+      // Shared params are shared at the pointer level, exactly the same. Non shared are new instances
+      if (IsShared())
+         newParam = this;
+      else
+      {
+         newParam = new ShaderParamFloat(GetName());
+
+         newParam->SetDirty(false);
+         newParam->mValue = mValue;
+      }
 
       return newParam;
    }

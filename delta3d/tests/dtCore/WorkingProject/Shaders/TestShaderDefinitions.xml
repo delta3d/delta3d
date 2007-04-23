@@ -30,7 +30,7 @@
       <shader name="ShaderOne">
          <source type="Vertex">Shaders/perpixel_lighting_detailmap_vert.glsl</source>
          <source type="Fragment">Shaders/perpixel_lighting_detailmap_frag.glsl</source>
-         <parameter name="baseTexture">
+         <parameter name="baseTexture" shared="no">
             <texture2D textureUnit="1">
                <source type="Auto"/>
             </texture2D>
@@ -39,7 +39,7 @@
       <shader name="ShaderTwo">
          <source type="Vertex">Shaders/perpixel_lighting_detailmap_vert.glsl</source>
          <source type="Fragment">Shaders/perpixel_lighting_detailmap_frag.glsl</source>
-         <parameter name="baseTexture">
+         <parameter name="baseTexture" shared="yes">
             <texture2D textureUnit="2">
                <source type="Image">Textures/detailmap.png</source>
                <wrap axis="S" mode="Mirror"/>

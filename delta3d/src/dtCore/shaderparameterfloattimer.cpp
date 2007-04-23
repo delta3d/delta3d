@@ -49,6 +49,7 @@ namespace dtCore
       mOscillationType(&ShaderParamOscillator::OscillationType::UP),
       mCycleDirection(1.0)
    {
+      SetShared(false); // we don't want to oscillating parameters by default
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -59,17 +60,27 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    void ShaderParamOscillator::AttachToRenderState(osg::StateSet &stateSet)
    {
-      osg::Uniform *floatUniform = new osg::Uniform(osg::Uniform::FLOAT,GetName());
-      SetUniformParam(*floatUniform);
+      osg::Uniform *floatUniform = NULL;
+
+      if (IsShared())
+      {
+         floatUniform = GetUniformParam();
+      }
+
+      // Create a new one if unshared or if shared but not set yet
+      if (floatUniform == NULL)
+      {
+         floatUniform = new osg::Uniform(osg::Uniform::FLOAT,GetName());
+         SetUniformParam(*floatUniform);
+
+         // force an update
+         Update();
+
+         // register for PreFrame
+         AddSender(&dtCore::System::GetInstance());
+      }
+
       stateSet.addUniform(floatUniform);
-
-      // force an update
-      Update();
-
-      //floatUniform->set(mValue);
-
-      // register for PreFrame
-      AddSender(&dtCore::System::GetInstance());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -113,20 +124,28 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   ShaderParameter *ShaderParamOscillator::Clone() const
+   ShaderParameter *ShaderParamOscillator::Clone()
    {
-      ShaderParamOscillator *newParam = new ShaderParamOscillator(GetName());
+      ShaderParamOscillator *newParam;
 
-      newParam->SetDirty(true); // force a recompute of range and stuff.
-      newParam->mOffset = mOffset;
-      newParam->mRangeMin = mRangeMin;
-      newParam->mRangeMax = mRangeMax;
-      newParam->mCycleTimeMin = mCycleTimeMin;
-      newParam->mCycleTimeMax = mCycleTimeMax;
-      newParam->mUseRealTime = mUseRealTime;
-      newParam->mOscillationType = mOscillationType;
-      // Note - you don't copy the current values since they are gonna change on update
-      // anyway.
+      // Shared params are shared at the pointer level, exactly the same. Non shared are new instances
+      if (IsShared())
+         newParam = this;
+      else
+      {
+         newParam = new ShaderParamOscillator(GetName());
+
+         newParam->SetDirty(true); // force a recompute of range and stuff.
+         newParam->mOffset = mOffset;
+         newParam->mRangeMin = mRangeMin;
+         newParam->mRangeMax = mRangeMax;
+         newParam->mCycleTimeMin = mCycleTimeMin;
+         newParam->mCycleTimeMax = mCycleTimeMax;
+         newParam->mUseRealTime = mUseRealTime;
+         newParam->mOscillationType = mOscillationType;
+         // Note - you don't copy the current values since they are gonna change on update
+         // anyway.
+      }
 
       return newParam;
    }

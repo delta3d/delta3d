@@ -48,6 +48,7 @@ namespace dtCore
    ShaderParamTexture::ShaderParamTexture(const std::string &name) :
          ShaderParameter(name), mImageSrcChanged(false), mTextureUnit(0), mTextureObject(NULL), mTexturePath("")
    {
+      SetShared(true); // we want to share Texture parameters by default
       mTextureAddressMode[0] = &AddressMode::CLAMP;
       mTextureAddressMode[1] = &AddressMode::CLAMP;
       mTextureAddressMode[2] = &AddressMode::CLAMP;

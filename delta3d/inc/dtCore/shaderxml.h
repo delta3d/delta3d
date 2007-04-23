@@ -161,6 +161,7 @@ namespace dtCore
 
          static const std::string PARAMETER_ELEMENT;
          static const std::string PARAMETER_ATTRIBUTE_NAME;
+         static const std::string PARAMETER_ATTRIBUTE_SHARED;
 
          static const std::string TEXTURE2D_ELEMENT;
          static const std::string TEXTURE2D_ATTRIBUTE_TEXUNIT;
