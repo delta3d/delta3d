@@ -31,8 +31,8 @@ namespace dtHLAGM
    class DT_HLAGM_EXPORT DDMUtil
    {
       public:
-         static const unsigned long MIN_EXTENT;
-         static const unsigned long MAX_EXTENT; // 2^32-1
+         static const unsigned long HLAGM_MIN_EXTENT;
+         static const unsigned long HLAGM_MAX_EXTENT;
          
          /**
           * Maps an enumerated value into the MIN_EXTENT MAX_EXTENT range given the known min and max.

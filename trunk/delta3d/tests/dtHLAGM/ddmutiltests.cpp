@@ -48,13 +48,13 @@ class DDMUtilTests : public CPPUNIT_NS::TestFixture
       void TestLinear()
       {
          unsigned long result = dtHLAGM::DDMUtil::MapLinear(15.0, 0.0, 15.0);
-         CPPUNIT_ASSERT_EQUAL(dtHLAGM::DDMUtil::MAX_EXTENT, result);
+         CPPUNIT_ASSERT_EQUAL(dtHLAGM::DDMUtil::HLAGM_MAX_EXTENT, result);
          
          result = dtHLAGM::DDMUtil::MapLinear(0.0, 0.0, 15.0);
-         CPPUNIT_ASSERT_EQUAL(dtHLAGM::DDMUtil::MIN_EXTENT, result);
+         CPPUNIT_ASSERT_EQUAL(dtHLAGM::DDMUtil::HLAGM_MIN_EXTENT, result);
          
          result = dtHLAGM::DDMUtil::MapLinear(7.5, 0.0, 15.0);
-         CPPUNIT_ASSERT_EQUAL(dtHLAGM::DDMUtil::MAX_EXTENT/2, result);
+         CPPUNIT_ASSERT_EQUAL(dtHLAGM::DDMUtil::HLAGM_MAX_EXTENT/2, result);
       }
       
       void TestEnumerated()
@@ -66,7 +66,7 @@ class DDMUtilTests : public CPPUNIT_NS::TestFixture
          CPPUNIT_ASSERT_EQUAL(134217727UL, result);
          
          result = dtHLAGM::DDMUtil::MapEnumerated(8, 0, 16);
-         CPPUNIT_ASSERT_EQUAL(dtHLAGM::DDMUtil::MAX_EXTENT/2, result);         
+         CPPUNIT_ASSERT_EQUAL(dtHLAGM::DDMUtil::HLAGM_MAX_EXTENT/2, result);         
       }
 
       void TestPartitioned()
@@ -86,7 +86,7 @@ class DDMUtilTests : public CPPUNIT_NS::TestFixture
          partitionValues.push_back(17.0);
 
          result = dtHLAGM::DDMUtil::MapPartitioned(8.0, partitionValues);
-         CPPUNIT_ASSERT_EQUAL(dtHLAGM::DDMUtil::MAX_EXTENT/2, result);
+         CPPUNIT_ASSERT_EQUAL(dtHLAGM::DDMUtil::HLAGM_MAX_EXTENT/2, result);
       }
    
    private:

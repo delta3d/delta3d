@@ -45,6 +45,7 @@ public:
    typedef std::pair<ResourceKey, dtCore::RefPtr<Resource> > ResourceHandle;
    typedef std::map<ResourceKey, dtCore::RefPtr<Resource> > ResourceMap;
    typedef typename ResourceMap::iterator ResourceIterator;   
+   typedef typename ResourceMap::iterator ResourceConstIterator;   
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -69,7 +70,7 @@ public:
   {
     while(!mResource.empty())
      {
-        ResourceMap::iterator iter = mResource.begin();
+       ResourceIterator iter = mResource.begin();
         mLoader->FreeResource((*iter).second.get());
         mResource.erase(iter);
      }
@@ -95,7 +96,7 @@ public:
 
   virtual bool LoadResource(const ResourceKey& pHandle, const std::string& pFilename)
   {
-     ResourceMap::const_iterator iter = mResource.find(pHandle);
+     ResourceConstIterator iter = mResource.find(pHandle);
      if(iter == mResource.end())
      {
         Resource* pResource = mLoader->LoadResource(pFilename);
@@ -115,7 +116,7 @@ public:
 
   virtual void FreeResource(const ResourceKey& pHandle)
   {
-     ResourceMap::iterator iter = mResource.find(pHandle);
+     ResourceIterator iter = mResource.find(pHandle);
      if(iter != mResource.end())
      {
          mLoader->FreeResource((*iter).second.get());
@@ -130,7 +131,7 @@ public:
 
   Resource* GetResource(const ResourceKey& pHandle) 
   {
-     ResourceMap::const_iterator iter = mResource.find(pHandle);
+     ResourceConstIterator iter = mResource.find(pHandle);
      if(iter != mResource.end())
      {
         return (*iter).second.get();
@@ -144,7 +145,7 @@ public:
 
   const Resource* GetResource(const ResourceKey& pHandle) const
   {
-     ResourceMap::const_iterator iter = mResource.find(pHandle);
+     ResourceConstIterator iter = mResource.find(pHandle);
      if(iter != mResource.end())
      {
         return (*iter).second.get();
