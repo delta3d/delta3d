@@ -22,10 +22,15 @@
 #include <dtHLAGM/ddmutil.h>
 #include <dtUtil/mathdefines.h>
 
+#ifndef RTI_USES_STD_FSTREAM
+#define RTI_USES_STD_FSTREAM
+#endif
+#include <RTI.hh>
+
 namespace dtHLAGM
 {
-   const unsigned long DDMUtil::MIN_EXTENT = 0;
-   const unsigned long DDMUtil::MAX_EXTENT = 0xffffffffL; // 2^32-1
+   const unsigned long DDMUtil::HLAGM_MIN_EXTENT = RTI::Region::getMinExtent();
+   const unsigned long DDMUtil::HLAGM_MAX_EXTENT = RTI::Region::getMaxExtent();
 
    unsigned long DDMUtil::MapEnumerated(unsigned value, unsigned min, unsigned max)
    {
@@ -36,13 +41,13 @@ namespace dtHLAGM
       // for the fact that we are mapping into a closed range (min <= ev
       // <= max) and therefore the number of bins in the range is one
       // more than the difference..
-      double scale = double(MAX_EXTENT - MIN_EXTENT) / 
+      double scale = double(HLAGM_MAX_EXTENT - HLAGM_MIN_EXTENT) / 
                      double(max - min + 1);
 
       // now, the value we are looking for is the value exactly in the
       // center of the appropriate bin.  the last part of the following
       // equation (scale/2) moves the value into the center of that bin.
-      double result = double(MIN_EXTENT) + scale * double(value-min) + scale/2.0;
+      double result = double(HLAGM_MIN_EXTENT) + scale * double(value-min) + scale/2.0;
       return (unsigned long)(result);
    }
 
@@ -63,10 +68,10 @@ namespace dtHLAGM
       dtUtil::Clamp(value, min, max);
       // scale in this case represents a scaler used to put the value
       // in the right place in the linear mapping..
-      double scale = double(MAX_EXTENT - MIN_EXTENT) / 
+      double scale = double(HLAGM_MAX_EXTENT - HLAGM_MIN_EXTENT) / 
                      double(max - min);
 
-      double result = double(MIN_EXTENT) + scale*(value-min);
+      double result = double(HLAGM_MIN_EXTENT) + scale*(value-min);
       
       return (unsigned long)(result);
    }
