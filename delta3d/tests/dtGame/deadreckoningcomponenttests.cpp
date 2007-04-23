@@ -77,7 +77,11 @@ namespace dtGame
          CPPUNIT_TEST(TestSimpleBehaviorRemote);
          CPPUNIT_TEST(TestHighResClampProperty);
          CPPUNIT_TEST(TestSmoothingStepsCalc);
-   
+         CPPUNIT_TEST(TestDoDRVelocityAccel);
+         CPPUNIT_TEST(TestDoDRVelocityAccelNoMotion);
+         CPPUNIT_TEST(TestDoDRStatic);
+         CPPUNIT_TEST(TestDoDRNoDR);
+         
       CPPUNIT_TEST_SUITE_END();
    
       public:
@@ -90,6 +94,9 @@ namespace dtGame
             mDeadReckoningComponent = new TestDeadReckoningComponent();
             mGM->AddComponent(*mDeadReckoningComponent, GameManager::ComponentPriority::NORMAL);
             mGM->LoadActorRegistry(mTestGameActorRegistry);
+
+            mGM->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, mTestGameActor);
+            CPPUNIT_ASSERT(mTestGameActor.valid());
          }
          
          void tearDown()
@@ -97,6 +104,7 @@ namespace dtGame
             dtCore::System::GetInstance().Stop();
             if(mGM.valid())
             {
+               mTestGameActor = NULL;
                mGM->DeleteAllActors(true);
                mGM->UnloadActorRegistry(mTestGameActorRegistry);
                mGM = NULL;
@@ -217,17 +225,15 @@ namespace dtGame
          {
             CPPUNIT_ASSERT(mDeadReckoningComponent->GetTerrainActor() == NULL);
             
-            dtCore::RefPtr<dtGame::GameActorProxy> terrainProxy;
-            mGM->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, terrainProxy);
-            mGM->AddActor(*terrainProxy, false, false);
-            dtCore::Transformable* terrain = &terrainProxy->GetGameActor();
+            mGM->AddActor(*mTestGameActor, false, false);
+            dtCore::Transformable* terrain = &mTestGameActor->GetGameActor();
    
             mDeadReckoningComponent->SetTerrainActor(terrain);
           
             CPPUNIT_ASSERT_MESSAGE("The terrain should be set.", 
                mDeadReckoningComponent->GetTerrainActor() == terrain);
    
-            mGM->DeleteActor(*terrainProxy);
+            mGM->DeleteActor(*mTestGameActor);
                               
             dtCore::System::GetInstance().Step();
    
@@ -239,11 +245,9 @@ namespace dtGame
          {
             CPPUNIT_ASSERT(mDeadReckoningComponent->GetEyePointActor() == NULL);
             
-            dtCore::RefPtr<dtGame::GameActorProxy> eyePointActorProxy;
-            mGM->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, eyePointActorProxy);
-            mGM->AddActor(*eyePointActorProxy, false, false);
+            mGM->AddActor(*mTestGameActor, false, false);
             
-            dtCore::Transformable* eyePointActor = &eyePointActorProxy->GetGameActor();
+            dtCore::Transformable* eyePointActor = &mTestGameActor->GetGameActor();
             
             osg::Vec3 expectedEyePoint(3.3f, 3.2f, 97.2233f);
             dtCore::Transform xform;
@@ -259,7 +263,7 @@ namespace dtGame
             CPPUNIT_ASSERT_EQUAL(expectedEyePoint, 
                mDeadReckoningComponent->GetLastUsedEyePoint());
    
-            mGM->DeleteActor(*eyePointActorProxy);
+            mGM->DeleteActor(*mTestGameActor);
                               
             dtCore::System::GetInstance().Step();
    
@@ -277,17 +281,73 @@ namespace dtGame
    
          void TestActorRegistration()
          {
-            dtCore::RefPtr<dtDAL::ActorType> type;
-            dtCore::RefPtr<GameActorProxy> actor;
-            type = mGM->FindActorType("ExampleActors", "Test1Actor");
-            CPPUNIT_ASSERT(type.valid());
-            mGM->CreateActor(*type, actor);
-            CPPUNIT_ASSERT(actor.valid());
             dtCore::RefPtr<DeadReckoningHelper> helper = new DeadReckoningHelper;
-            mDeadReckoningComponent->RegisterActor(*actor, *helper);
-            CPPUNIT_ASSERT(mDeadReckoningComponent->IsRegisteredActor(*actor));
-            mDeadReckoningComponent->UnregisterActor(*actor);
-            CPPUNIT_ASSERT(!mDeadReckoningComponent->IsRegisteredActor(*actor));
+            mDeadReckoningComponent->RegisterActor(*mTestGameActor, *helper);
+            CPPUNIT_ASSERT(mDeadReckoningComponent->IsRegisteredActor(*mTestGameActor));
+            mDeadReckoningComponent->UnregisterActor(*mTestGameActor);
+            CPPUNIT_ASSERT(!mDeadReckoningComponent->IsRegisteredActor(*mTestGameActor));
+         }
+         
+         void InitDoDRTestHelper(dtGame::DeadReckoningHelper& helper)
+         {
+            osg::Vec3 trans(1.1, 2.2, 3.3);
+            osg::Vec3 rot(1.2, 2.3, 3.4);
+
+            helper.SetLastKnownTranslation(trans);
+            helper.SetLastKnownRotation(rot);
+            helper.SetLastTranslationUpdatedTime(dtCore::System::GetInstance().GetSimulationTime());
+            helper.SetLastRotationUpdatedTime(dtCore::System::GetInstance().GetSimulationTime());
+         }
+         
+         void TestDoDRNoDR()
+         {
+            dtCore::RefPtr<DeadReckoningHelper> helper = new DeadReckoningHelper;
+            
+            InitDoDRTestHelper(*helper);
+            
+            helper->SetDeadReckoningAlgorithm(DeadReckoningAlgorithm::NONE);
+
+            dtCore::Transform xform;
+                        
+            bool shouldGroundClamp = false;
+            bool wasTransformed = helper->DoDR(mTestGameActor->GetGameActor(), xform, 
+                  &dtUtil::Log::GetInstance(), shouldGroundClamp);
+            
+            CPPUNIT_ASSERT(!wasTransformed);
+         }
+
+         void TestDoDRVelocityAccel()
+         {
+            TestDoDRVelocityAccel(true); 
+            TestDoDRVelocityAccel(false); 
+         }
+         
+         void TestDoDRVelocityAccelNoMotion()
+         {
+            dtCore::RefPtr<DeadReckoningHelper> helper = new DeadReckoningHelper;
+            
+            InitDoDRTestHelper(*helper);
+            
+            helper->SetDeadReckoningAlgorithm(DeadReckoningAlgorithm::VELOCITY_AND_ACCELERATION);
+
+            dtCore::Transform xform;
+            
+            // we don't want this to update.
+            xform.SetTranslation(helper->GetLastKnownTranslation());
+            xform.SetRotation(helper->GetLastKnownRotation());
+            helper->ClearUpdated();
+            
+            bool shouldGroundClamp = false;
+            bool wasTransformed = helper->DoDR(mTestGameActor->GetGameActor(), xform, 
+                  &dtUtil::Log::GetInstance(), shouldGroundClamp);
+            
+            CPPUNIT_ASSERT(!wasTransformed);
+         }
+         
+         void TestDoDRStatic()
+         {
+            TestDoDRStatic(true);
+            TestDoDRStatic(false);
          }
          
          void TestSimpleBehaviorLocal()
@@ -302,8 +362,6 @@ namespace dtGame
 
          void TestSimpleBehavior(bool updateActor)
          {
-            dtCore::RefPtr<dtDAL::ActorType> type;
-            dtCore::RefPtr<GameActorProxy> actor;
             dtCore::RefPtr<DeadReckoningHelper> helper = new DeadReckoningHelper;
    
             if (updateActor)
@@ -311,19 +369,12 @@ namespace dtGame
             else
                helper->SetUpdateMode(DeadReckoningHelper::UpdateMode::CALCULATE_ONLY);
    
-            type = mGM->FindActorType("ExampleActors", "Test1Actor");
-            CPPUNIT_ASSERT(type.valid());
-            mGM->CreateActor(*type, actor);
-            CPPUNIT_ASSERT(actor.valid());
-            
-            mGM->CreateActor(*type, actor);
-            CPPUNIT_ASSERT(actor.valid());
-            mGM->AddActor(*actor, true, false);
-            mDeadReckoningComponent->RegisterActor(*actor, *helper);
-            CPPUNIT_ASSERT(mDeadReckoningComponent->IsRegisteredActor(*actor));
+            mGM->AddActor(*mTestGameActor, true, false);
+            mDeadReckoningComponent->RegisterActor(*mTestGameActor, *helper);
+            CPPUNIT_ASSERT(mDeadReckoningComponent->IsRegisteredActor(*mTestGameActor));
             
             dtCore::Transform xform;
-            actor->GetGameActor().GetTransform(xform);
+            mTestGameActor->GetGameActor().GetTransform(xform);
             osg::Vec3 vec;
             xform.GetTranslation(vec);
             CPPUNIT_ASSERT_MESSAGE("The translation should be 0,0,0 because nothing has changed yet.", 
@@ -365,7 +416,7 @@ namespace dtGame
             ss << "The position should be " << setVec << " but it is " << currentHPR;
             CPPUNIT_ASSERT_MESSAGE(ss.str(), dtUtil::Equivalent(setVec, currentHPR, 3, 1e-2f));
                         
-            actor->GetGameActor().GetTransform(xform);
+            mTestGameActor->GetGameActor().GetTransform(xform);
 
             if (updateActor)
             {
@@ -384,8 +435,8 @@ namespace dtGame
                CPPUNIT_ASSERT(dtUtil::Equivalent(vec, osg::Vec3(0.0f, 0.0f, 0.0f), 3, 1e-2f));
             }
             
-            mDeadReckoningComponent->UnregisterActor(*actor);
-            CPPUNIT_ASSERT(!mDeadReckoningComponent->IsRegisteredActor(*actor));
+            mDeadReckoningComponent->UnregisterActor(*mTestGameActor);
+            CPPUNIT_ASSERT(!mDeadReckoningComponent->IsRegisteredActor(*mTestGameActor));
          }
    
          void TestSmoothingStepsCalc()
@@ -432,8 +483,59 @@ namespace dtGame
    
       private:
    
+         void TestDoDRVelocityAccel(bool flying)
+         {
+            dtCore::RefPtr<DeadReckoningHelper> helper = new DeadReckoningHelper;
+          
+            InitDoDRTestHelper(*helper);
+            
+            helper->SetDeadReckoningAlgorithm(DeadReckoningAlgorithm::VELOCITY_AND_ACCELERATION);
+            helper->SetFlying(flying);
+
+            dtCore::Transform xform;
+            bool shouldGroundClamp = false;
+            bool wasTransformed = helper->DoDR(mTestGameActor->GetGameActor(), xform, 
+                  &dtUtil::Log::GetInstance(), shouldGroundClamp);
+            
+            CPPUNIT_ASSERT(shouldGroundClamp == !flying);
+            CPPUNIT_ASSERT(wasTransformed);
+         }
+
+         void TestDoDRStatic(bool flying)
+         {
+            dtCore::RefPtr<DeadReckoningHelper> helper = new DeadReckoningHelper;
+            
+            InitDoDRTestHelper(*helper);
+            
+            helper->SetDeadReckoningAlgorithm(DeadReckoningAlgorithm::STATIC);
+            helper->SetFlying(flying);
+
+            dtCore::Transform xform;
+            bool shouldGroundClamp = false;
+            bool wasTransformed = helper->DoDR(mTestGameActor->GetGameActor(), xform, 
+                  &dtUtil::Log::GetInstance(), shouldGroundClamp);
+            
+            CPPUNIT_ASSERT(shouldGroundClamp == !flying);
+            CPPUNIT_ASSERT(wasTransformed);            
+
+            std::ostringstream ss;
+            ss << "The position should be " << helper->GetLastKnownTranslation() << " but it is " << xform.GetTranslation();
+
+            CPPUNIT_ASSERT_MESSAGE(ss.str(), 
+                  dtUtil::Equivalent(helper->GetLastKnownTranslation(), xform.GetTranslation(), 3, 1e-2f));
+
+            ss.str("");
+            osg::Vec3 hpr;
+            xform.GetRotation(hpr);
+            ss << "The rotation should be " << helper->GetLastKnownRotation() << " but it is " << hpr;
+
+            CPPUNIT_ASSERT_MESSAGE(ss.str(), 
+                  dtUtil::Equivalent(helper->GetLastKnownRotation(), hpr, 3, 1e-2f));
+         }
+
          dtCore::RefPtr<GameManager> mGM;
          dtCore::RefPtr<TestDeadReckoningComponent> mDeadReckoningComponent;
+         dtCore::RefPtr<GameActorProxy> mTestGameActor;
          static const std::string mTestGameActorRegistry;
    };
    

@@ -424,7 +424,8 @@ namespace dtGame
       {
          if (pLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
          {
-            pLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Dead Reckoning Algorithm set to NONE, doing nothing.");
+            pLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, 
+                  "Dead Reckoning Algorithm set to NONE, doing nothing.");
          }
       }
       else if (GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::STATIC)
