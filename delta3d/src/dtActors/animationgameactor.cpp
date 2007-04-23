@@ -231,6 +231,11 @@ namespace dtActors
       return group;
    }
 
+   dtAnim::Cal3DAnimator* AnimationGameActor::GetAnimator()
+   {
+      return mAnimator.get();
+   }
+
    const dtAnim::Cal3DAnimator* AnimationGameActor::GetAnimator() const
    {
       return mAnimator.get();
