@@ -162,6 +162,22 @@ osg::Quat Cal3DModelWrapper::GetBoneAbsoluteRotation(unsigned int boneID) const
    return osg::Quat();
 }
 
+osg::Vec3 Cal3DModelWrapper::GetBoneAbsoluteTranslation(unsigned int boneID) const
+{
+   CalBone *bone = mCalModel->getSkeleton()->getBone(boneID);
+   assert(bone);
+
+   if (bone)
+   {
+      const CalVector& calvec = bone->getTranslationAbsolute();
+      // Cal3D has a left-hand coordinate system, so the X-axis must be reversed
+      // to make sense in OSG's right-hand system.
+      return osg::Vec3(-calvec.x, calvec.y, calvec.z);
+   }
+
+   return osg::Vec3();
+}
+
 osg::Quat Cal3DModelWrapper::GetBoneRelativeRotation(unsigned int boneID) const
 {
    CalBone *bone = mCalModel->getSkeleton()->getBone(boneID);
@@ -177,9 +193,25 @@ osg::Quat Cal3DModelWrapper::GetBoneRelativeRotation(unsigned int boneID) const
    return osg::Quat();
 }
 
+int Cal3DModelWrapper::GetCoreBoneID(const std::string& name) const
+{
+   CalCoreBone* corebone = mCalModel->getCoreModel()->getCoreSkeleton()->getCoreBone(name);
+   if( corebone == NULL )
+   {
+      return Cal3DModelWrapper::NULL_BONE;
+   }
+
+   return mCalModel->getCoreModel()->getCoreSkeleton()->getCoreBoneId(name);
+}
+
 bool Cal3DModelWrapper::HasTrackForBone(unsigned int animID, int boneID) const
 {
    return (mCalModel->getCoreModel()->getCoreAnimation(animID)->getCoreTrack(boneID) != NULL);
+}
+
+bool Cal3DModelWrapper::HasBone(int boneID) const
+{
+   return( mCalModel->getSkeleton()->getBone(boneID) != NULL );
 }
 
 const std::string& Cal3DModelWrapper::GetCoreAnimationName( int animID ) const
@@ -275,3 +307,4 @@ float Cal3DModelWrapper::GetCoreMaterialShininess( int matID ) const
       return 0.f;
    }
 }
+
