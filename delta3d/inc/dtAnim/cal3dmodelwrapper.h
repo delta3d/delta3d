@@ -34,6 +34,7 @@
 #include <osg/Quat>                   // for return type
 #include <osg/Referenced>
 #include <osg/Vec4>
+#include <osg/Vec3>
 
 namespace dtAnim
 {
@@ -109,12 +110,23 @@ namespace dtAnim
          /// @param animid the core animation of interest.
          /// @param boneid the core bone within the animation, identifying the track.
          /// @param keyframeindex the keyframe array index of interest for the animation track.
-         /// @return the rotation values that cal3d is using.
+         /// @return the rotation values that cal3d is using, inverted into right hand coordinate frame.
          osg::Quat GetCoreTrackKeyFrameQuat(unsigned int animid, unsigned int boneid, unsigned int keyframeindex) const;
 
+         /// @param boneID the ID for the CalBone instance.
          osg::Quat GetBoneAbsoluteRotation(unsigned int boneID) const;
 
+         /// Get the current translation for the CalBone.
+         /// @param boneID the ID for the CalBone of interest.
+         /// @return the translation vector in a right-hand coordinate system.
+         osg::Vec3 GetBoneAbsoluteTranslation(unsigned int boneID) const;
+
+         /// @param boneID the ID for the CalBone instance.
          osg::Quat GetBoneRelativeRotation(unsigned int boneID) const;
+
+         /// Get the Cal3D CoreBone ID
+         /// @return the ID for the CoreBone.
+         int GetCoreBoneID(const std::string& name) const;
 
          ///Get the name that equates to the supplied animation ID
          const std::string& GetCoreAnimationName(int animID) const;
@@ -166,6 +178,8 @@ namespace dtAnim
          /************************************************************************/     
 
          bool HasTrackForBone(unsigned int animID, int boneID) const;
+
+         bool HasBone(int boneID) const;
 
          /// Add a new looping animation to blend in using the mixer
          bool BlendCycle(int id, float weight, float delay);
