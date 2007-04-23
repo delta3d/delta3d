@@ -368,6 +368,7 @@ namespace dtGame
    }
 
    
+   /////////////////////////////////////////////////////////////////////////////////
    void DeadReckoningHelper::GetActorProperties(std::vector<dtCore::RefPtr<dtDAL::ActorProperty> >& pFillVector)
    {
       pFillVector.push_back(new dtDAL::Vec3ActorProperty("Last Known Translation", "Last Known Translation",
@@ -412,30 +413,37 @@ namespace dtGame
 
    }
 
-   void DeadReckoningHelper::DoDR(GameActor& gameActor, dtCore::Transform& xform, dtUtil::Log* pLogger)
+   /////////////////////////////////////////////////////////////////////////////////
+   bool DeadReckoningHelper::DoDR(GameActor& gameActor, dtCore::Transform& xform, 
+         dtUtil::Log* pLogger, bool& bShouldGroundClamp)
    {         
+      bool returnValue = false; // indicates we changed the transform
+      bShouldGroundClamp = !IsFlying();
+
       if (GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::NONE)
       {
          if (pLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
          {
             pLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Dead Reckoning Algorithm set to NONE, doing nothing.");
          }
-         return;
       }
       else if (GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::STATIC)
       {
          if (IsUpdated())
          {
             DRStatic(gameActor, xform, pLogger);
+            returnValue = true;
          }
       }
       else
       {
-         DRVelocityAcceleration(gameActor, xform, pLogger);
+         returnValue = DRVelocityAcceleration(gameActor, xform, pLogger);
       }
+
+      return returnValue;
    }
 
-     //////////////////////////////////////////////////////////////////////
+   //////////////////////////////////////////////////////////////////////
    void DeadReckoningHelper::DRStatic(GameActor& gameActor, dtCore::Transform& xform, dtUtil::Log* pLogger)
    {
       if (pLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
@@ -460,8 +468,9 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::DRVelocityAcceleration(GameActor& gameActor, dtCore::Transform& xform, dtUtil::Log* pLogger)
+   bool DeadReckoningHelper::DRVelocityAcceleration(GameActor& gameActor, dtCore::Transform& xform, dtUtil::Log* pLogger)
    {
+      bool returnValue = false; // indicates that we made a change to the transform
       osg::Vec3& pos = xform.GetTranslation();
       osg::Matrix& rot = xform.GetRotation();
 
@@ -650,12 +659,16 @@ namespace dtGame
          mCurrentDeadReckonedRotation = newRot;
          xform.GetRotation(mCurrentAttitudeVector);
          mCurrentDeadReckonedTranslation = pos;
+
+         returnValue = true;
       } 
       else
       {
          if (pLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
             pLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Entity does not need to be Dead Reckoned");
       }
+
+      return returnValue;
    }
 
       //////////////////////////////////////////////////////////////////////

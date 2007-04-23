@@ -124,8 +124,14 @@ namespace dtGame
          /**
          * This function is responsible for manipulating the internal data types to do the actual
          * dead reckoning.  To implement another dead reckoning algorithm, overload this function.
+         * @param gameActor the actor to DR
+         * @param xform the resulting position of the actor after DR. 
+         * @param pLogger The Dead Reckoning Components instance of logger
+         * @param bShouldGroundClamp whether or not the component should ground clamp when you return - defaults to false if you don't change
+         * @return Return true if you think you changed the Transform, false if you did not.
          */
-         virtual void DoDR(GameActor& gameActor, dtCore::Transform& xform, dtUtil::Log* pLogger);
+         virtual bool DoDR(GameActor& gameActor, dtCore::Transform& xform, 
+               dtUtil::Log* pLogger, bool& bShouldGroundClamp);
 
          /**
          * This is a utility function to make it easier to have a dead reckoned actor.  The actor
@@ -338,8 +344,12 @@ namespace dtGame
 
          ///perform static dead-reckoning, which means applying the new position directly and ground clamping.  xform will be updated.
          void DRStatic(GameActor& gameActor, dtCore::Transform& xform, dtUtil::Log* pLogger);
-         ///perform velocity + acceleration dead-reckoning.  Acceleration may be ignored.  xform will be updated.
-         void DRVelocityAcceleration(GameActor& gameActor, dtCore::Transform& xform, dtUtil::Log* pLogger); 
+
+         /**
+          * perform velocity + acceleration dead-reckoning.  Acceleration may be ignored.  xform will be updated.
+          * @return returns true if it thinks it made a change, false otherwise.
+          */
+         bool DRVelocityAcceleration(GameActor& gameActor, dtCore::Transform& xform, dtUtil::Log* pLogger); 
 
       private:
          /// The list of DeadReckoningDOFs, might want to change to has table of list later.

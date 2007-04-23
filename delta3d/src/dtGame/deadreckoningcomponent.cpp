@@ -497,14 +497,15 @@ namespace dtGame
 
 
          //actual dead reckoning code moved into the helper..
-         helper.DoDR(gameActor, xform, mLogger);
+         bool bShouldGroundClamp = false;
+         bool bTransformChanged = helper.DoDR(gameActor, xform, mLogger, bShouldGroundClamp);
 
          //Only actually ground clamp and move remote ones.
-         if (helper.GetEffectiveUpdateMode(gameActor.IsRemote()) 
+         if (bTransformChanged && helper.GetEffectiveUpdateMode(gameActor.IsRemote()) 
             == DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR)
          {
             //we could probably group these queries together...
-            if (!helper.IsFlying() && gameActor.GetCollisionGeomType() == &dtCore::Transformable::CollisionGeomType::CUBE)
+            if (bShouldGroundClamp && gameActor.GetCollisionGeomType() == &dtCore::Transformable::CollisionGeomType::CUBE)
             {
                ClampToGround(helper.GetTranslationSmoothing(), xform, gameActor.GetGameActorProxy(), helper);
             }
