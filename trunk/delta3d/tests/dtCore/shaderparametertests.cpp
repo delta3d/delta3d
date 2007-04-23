@@ -54,6 +54,20 @@ public:
 
    void PassThroughDoUpdate(float deltaTime) { DoShaderUpdate(deltaTime); }
 };
+
+///////////////////////////////////////////////////////////////////////////////
+// TEST Wrapper for textures - so I can call privates/protected.
+class TestShaderParamTexture2D : public dtCore::ShaderParamTexture2D
+{
+public:
+   TestShaderParamTexture2D::TestShaderParamTexture2D() : ShaderParamTexture2D("test")
+   {
+   }
+
+   osg::Texture *TestGetTextureObject() { return GetTextureObject(); }
+};
+
+
 ///////////////////////////////////////////////////////////////////////////////
 
 
@@ -62,9 +76,13 @@ class ShaderParameterTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST_SUITE(ShaderParameterTests);
       CPPUNIT_TEST(TestTexture2DParameter);
       CPPUNIT_TEST(TestTexture2DParameterReverseOrder);
+      CPPUNIT_TEST(TestTexture2DParameterShared);
       CPPUNIT_TEST(TestFloatParameter);
+      CPPUNIT_TEST(TestFloatParameterShared);
       CPPUNIT_TEST(TestIntParameter);
+      CPPUNIT_TEST(TestIntParameterShared);
       CPPUNIT_TEST(TestTimerFloatParameter);
+      CPPUNIT_TEST(TestTimerFloatParameterShared);
    CPPUNIT_TEST_SUITE_END();
 
    public:
@@ -74,9 +92,13 @@ class ShaderParameterTests : public CPPUNIT_NS::TestFixture
    protected:
       void TestTexture2DParameter();
       void TestTexture2DParameterReverseOrder();
+      void TestTexture2DParameterShared();
       void TestFloatParameter();
+      void TestFloatParameterShared();
       void TestIntParameter();
+      void TestIntParameterShared();
       void TestTimerFloatParameter();
+      void TestTimerFloatParameterShared();
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(ShaderParameterTests);
@@ -105,6 +127,10 @@ void ShaderParameterTests::TestTexture2DParameter()
       dtCore::RefPtr<dtCore::ShaderParamTexture2D> param =
          new dtCore::ShaderParamTexture2D("TestTexture2D");
       dtCore::RefPtr<osg::StateSet> stateSet = new osg::StateSet();
+
+      CPPUNIT_ASSERT_MESSAGE("ShaderParamFloat should have a default of 'true' for shared.", 
+         param->IsShared());
+      param->SetShared(false);
 
       CPPUNIT_ASSERT_MESSAGE("Parameter name should be TestTexture2D.",param->GetName() == "TestTexture2D");
       CPPUNIT_ASSERT_MESSAGE("Parameter type should be SAMPLER_2D.",
@@ -143,6 +169,8 @@ void ShaderParameterTests::TestTexture2DParameter()
       // Test clone behavior
       dtCore::RefPtr<dtCore::ShaderParamTexture2D> clonedParam = 
          static_cast<dtCore::ShaderParamTexture2D *>(param->Clone());
+      CPPUNIT_ASSERT_MESSAGE("Cloned param should be a different pointer.", 
+         clonedParam != param);
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Cloned value for texture unit should be the same.", 
          clonedParam->GetTextureUnit(), param->GetTextureUnit());
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Cloned value for texture should be the same.", 
@@ -208,12 +236,74 @@ void ShaderParameterTests::TestTexture2DParameterReverseOrder()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+void ShaderParameterTests::TestTexture2DParameterShared()
+{
+   try
+   {
+      dtCore::RefPtr<TestShaderParamTexture2D> param = new TestShaderParamTexture2D();
+      dtCore::RefPtr<osg::StateSet> ss1 = new osg::StateSet();
+      dtCore::RefPtr<osg::StateSet> ss2 = new osg::StateSet();
+
+      // TEST SHARED BEHAVIOR
+      param->SetTexture("Textures/detailmap.png");
+      param->SetTextureUnit(2);
+      param->SetAddressMode(dtCore::ShaderParamTexture::TextureAxis::S,
+         dtCore::ShaderParamTexture::AddressMode::MIRROR);
+      param->SetAddressMode(dtCore::ShaderParamTexture::TextureAxis::T,
+         dtCore::ShaderParamTexture::AddressMode::MIRROR);
+      param->SetShared(true);
+      param->AttachToRenderState(*ss1);
+      osg::Texture2D *tex2D1 = static_cast<osg::Texture2D*>(param->TestGetTextureObject());
+      osg::Image *image1 = tex2D1->getImage();
+      osg::Uniform *uniform1 = ss1->getUniform(param->GetName());
+
+      // Test clone behavior
+      dtCore::RefPtr<TestShaderParamTexture2D> clonedParam = 
+         static_cast<TestShaderParamTexture2D *>(param->Clone());
+      CPPUNIT_ASSERT_MESSAGE("Cloned param should be the same when shared.", 
+         clonedParam == param);
+      clonedParam->AttachToRenderState(*ss2);
+      osg::Texture2D *tex2D2 = static_cast<osg::Texture2D*>(clonedParam->TestGetTextureObject());
+      osg::Image *image2 = tex2D2->getImage();
+      osg::Uniform *uniform2 = ss2->getUniform(param->GetName());
+      CPPUNIT_ASSERT_MESSAGE("Cloned uniforms should be the same when shared.", 
+         uniform2 == uniform1);
+      // Want to make sure the image and textures did not get reloaded during the clone or 2nd attach
+      CPPUNIT_ASSERT_MESSAGE("Cloned image should not have changed when shared.", 
+         image1 == image2);
+      CPPUNIT_ASSERT_MESSAGE("Cloned textures should not have changed when shared.", 
+         tex2D1 == tex2D2);
+
+      // Test Detach
+      param->DetachFromRenderState(*ss1);
+      osg::Texture2D *tex2D3 = static_cast<osg::Texture2D*>(clonedParam->TestGetTextureObject());
+      osg::Image *image3 = tex2D3->getImage();
+      uniform1 = ss1->getUniform(param->GetName());
+      CPPUNIT_ASSERT_MESSAGE("Uniform should go away when detached from stateset.", uniform1 == NULL);
+      CPPUNIT_ASSERT_MESSAGE("Image should not have changed on a shared param when another guy is detached",
+         image3 == image2);
+   }
+   catch (const dtUtil::Exception &e)
+   {
+      CPPUNIT_FAIL(e.ToString());
+   }
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
 void ShaderParameterTests::TestFloatParameter()
 {
    try
    {
       dtCore::RefPtr<dtCore::ShaderParamFloat> param = new dtCore::ShaderParamFloat("test");
       dtCore::RefPtr<osg::StateSet> ss = new osg::StateSet();
+
+      CPPUNIT_ASSERT_MESSAGE("ShaderParamFloat should have a default of 'false' for shared.", 
+         !param->IsShared());
+      // test setting just once for all the params
+      param->SetShared(true);
+      CPPUNIT_ASSERT_EQUAL(true,param->IsShared());
+      param->SetShared(false);
 
       param->SetValue(101.0f);
       CPPUNIT_ASSERT_EQUAL(std::string("test"),param->GetName());
@@ -233,11 +323,44 @@ void ShaderParameterTests::TestFloatParameter()
          static_cast<dtCore::ShaderParamFloat *>(param->Clone());
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Cloned value should be the same.", 
          clonedParam->GetValue(), param->GetValue());
+      CPPUNIT_ASSERT_MESSAGE("Cloned param should be a different pointer.", 
+         clonedParam != param);
 
       // Test Detach
       param->DetachFromRenderState(*ss);
       uniform = ss->getUniform(param->GetName());
       CPPUNIT_ASSERT_MESSAGE("Uniform should go away when detached from stateset.", uniform == NULL);
+   }
+   catch (const dtUtil::Exception &e)
+   {
+      CPPUNIT_FAIL(e.ToString());
+   }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void ShaderParameterTests::TestFloatParameterShared()
+{
+   try
+   {
+      dtCore::RefPtr<dtCore::ShaderParamFloat> param = new dtCore::ShaderParamFloat("test");
+      dtCore::RefPtr<osg::StateSet> ss1 = new osg::StateSet();
+      dtCore::RefPtr<osg::StateSet> ss2 = new osg::StateSet();
+
+      // TEST SHARED BEHAVIOR
+      param->SetShared(true);
+      param->AttachToRenderState(*ss1);
+      osg::Uniform *uniform1 = ss1->getUniform(param->GetName());
+
+      // Test clone behavior
+      dtCore::RefPtr<dtCore::ShaderParamFloat> clonedParam = 
+         static_cast<dtCore::ShaderParamFloat *>(param->Clone());
+      CPPUNIT_ASSERT_MESSAGE("Cloned param should be the same when shared.", 
+         clonedParam == param);
+      clonedParam->AttachToRenderState(*ss2);
+      osg::Uniform *uniform2 = ss2->getUniform(param->GetName());
+      CPPUNIT_ASSERT_MESSAGE("Cloned uniforms should be the same when shared.", 
+         uniform2 == uniform1);
+
    }
    catch (const dtUtil::Exception &e)
    {
@@ -252,6 +375,9 @@ void ShaderParameterTests::TestIntParameter()
    {
       dtCore::RefPtr<dtCore::ShaderParameterInt> param = new dtCore::ShaderParameterInt("test");
       dtCore::RefPtr<osg::StateSet> ss = new osg::StateSet();
+
+      CPPUNIT_ASSERT_MESSAGE("ShaderParamInt should have a default of 'false' for shared.", 
+         !param->IsShared());
 
       param->SetValue(25);
       CPPUNIT_ASSERT_EQUAL(std::string("test"),param->GetName());
@@ -271,11 +397,43 @@ void ShaderParameterTests::TestIntParameter()
          static_cast<dtCore::ShaderParameterInt *>(param->Clone());
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Cloned value should be the same.", 
          clonedParam->GetValue(), param->GetValue());
+      CPPUNIT_ASSERT_MESSAGE("Cloned param should be a different pointer.", 
+         clonedParam != param);
 
       // Test Detach
       param->DetachFromRenderState(*ss);
       uniform = ss->getUniform(param->GetName());
       CPPUNIT_ASSERT_MESSAGE("Uniform should go away when detached from stateset.", uniform == NULL);
+   }
+   catch (const dtUtil::Exception &e)
+   {
+      CPPUNIT_FAIL(e.ToString());
+   }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void ShaderParameterTests::TestIntParameterShared()
+{
+   try
+   {
+      dtCore::RefPtr<dtCore::ShaderParameterInt> param = new dtCore::ShaderParameterInt("test");
+      dtCore::RefPtr<osg::StateSet> ss1 = new osg::StateSet();
+      dtCore::RefPtr<osg::StateSet> ss2 = new osg::StateSet();
+
+      // TEST SHARED BEHAVIOR
+      param->SetShared(true);
+      param->AttachToRenderState(*ss1);
+      osg::Uniform *uniform1 = ss1->getUniform(param->GetName());
+
+      // Test clone behavior
+      dtCore::RefPtr<dtCore::ShaderParameterInt> clonedParam = 
+         static_cast<dtCore::ShaderParameterInt *>(param->Clone());
+      CPPUNIT_ASSERT_MESSAGE("Cloned param should be the same when shared.", 
+         clonedParam == param);
+      clonedParam->AttachToRenderState(*ss2);
+      osg::Uniform *uniform2 = ss2->getUniform(param->GetName());
+      CPPUNIT_ASSERT_MESSAGE("Cloned uniforms should be the same when shared.", 
+         uniform2 == uniform1);
    }
    catch (const dtUtil::Exception &e)
    {
@@ -291,6 +449,9 @@ void ShaderParameterTests::TestTimerFloatParameter()
    {
       dtCore::RefPtr<TestShaderParameterFloatTimer> param = new TestShaderParameterFloatTimer();
       dtCore::RefPtr<osg::StateSet> ss = new osg::StateSet();
+
+      CPPUNIT_ASSERT_MESSAGE("ShaderParameterFloatTimer should have a default of 'false' for shared.", 
+         !param->IsShared());
 
       CPPUNIT_ASSERT_EQUAL(std::string("test"),param->GetName());
       CPPUNIT_ASSERT_MESSAGE("Timer should be a timer.", 
@@ -484,8 +645,10 @@ void ShaderParameterTests::TestTimerFloatParameter()
       CPPUNIT_ASSERT_MESSAGE("Cycle timer max should be 1.0", 1.0 == param->GetCycleTimeMax());
 
       // TEST CLONE BEHAVIOR
-      dtCore::RefPtr<dtCore::ShaderParamOscillator> clonedParam = 
-         static_cast<dtCore::ShaderParamOscillator *>(param->Clone());
+      dtCore::RefPtr<TestShaderParameterFloatTimer> clonedParam = 
+         static_cast<TestShaderParameterFloatTimer *>(param->Clone());
+      CPPUNIT_ASSERT_MESSAGE("Cloned param should be a different pointer.", 
+         clonedParam != param);
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Cloned offset should be the same.", 
          clonedParam->GetOffset(), param->GetOffset());
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Cloned value should be the same.", 
@@ -505,6 +668,36 @@ void ShaderParameterTests::TestTimerFloatParameter()
       param->DetachFromRenderState(*ss);
       uniform = ss->getUniform(param->GetName());
       CPPUNIT_ASSERT_MESSAGE("Uniform should go away when detached from stateset.", uniform == NULL);
+   }
+   catch (const dtUtil::Exception &e)
+   {
+      CPPUNIT_FAIL(e.ToString());
+   }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void ShaderParameterTests::TestTimerFloatParameterShared()
+{
+   try
+   {
+      dtCore::RefPtr<TestShaderParameterFloatTimer> param = new TestShaderParameterFloatTimer();
+      dtCore::RefPtr<osg::StateSet> ss1 = new osg::StateSet();
+      dtCore::RefPtr<osg::StateSet> ss2 = new osg::StateSet();
+
+      // TEST SHARED BEHAVIOR
+      param->SetShared(true);
+      param->AttachToRenderState(*ss1);
+      osg::Uniform *uniform1 = ss1->getUniform(param->GetName());
+
+      // Test clone behavior
+      dtCore::RefPtr<TestShaderParameterFloatTimer> clonedParam = 
+         static_cast<TestShaderParameterFloatTimer *>(param->Clone());
+      CPPUNIT_ASSERT_MESSAGE("Cloned param should be the same when shared.", 
+         clonedParam == param);
+      clonedParam->AttachToRenderState(*ss2);
+      osg::Uniform *uniform2 = ss2->getUniform(param->GetName());
+      CPPUNIT_ASSERT_MESSAGE("Cloned uniforms should be the same when shared.", 
+         uniform2 == uniform1);
    }
    catch (const dtUtil::Exception &e)
    {

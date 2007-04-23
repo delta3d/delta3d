@@ -172,11 +172,33 @@ namespace dtCore
          bool IsDirty() const { return mIsDirty; }
 
          /**
+          * Sets whether this parameter is shared or not. When a shader is assigned to node 
+          * with ShaderManager::AssignShaderFromTemplate, the shared flag indicates if the 
+          * templates parameter should be cloned or 'shared'.  A Shared parameter means that multiple
+          * nodes will a reference to exactly the same parameter.  It makes hte parameter global and 
+          * prevents multiple memory allocations and facilitates State Sorting.  
+          * @param shared Changes the template shared flag value - shared params are not cloned when assigning.
+          * @note Each param type has it's own default for this. Most default to true (base class default). 
+          */
+         void SetShared(bool shared) { mIsShared = shared; }
+
+         /**
+          * Indicates whether this parameter is shared or not. When a shader is assigned to node 
+          * with ShaderManager::AssignShaderFromTemplate, the shared flag indicates if the 
+          * templates parameter should be cloned or 'shared'.  A Shared parameter means that multiple
+          * nodes will a reference to exactly the same parameter.  It makes hte parameter global and 
+          * prevents multiple memory allocations and facilitates State Sorting.  
+          * @return Whether the param is 'shared' or not - shared params are not cloned when assigning.
+          * @note Each param type has it's own default for this. Most default to true (base class default). 
+          */
+         bool IsShared() const { return mIsShared; }
+
+         /**
           * Makes a deep copy of the Shader Parameter. Used when a user assigns
           * a shader to a node because we clone the template shader and its parameters.
           * Note - Like Update(), this is a pure virtual method that must be implemented on each param.
           */
-         virtual ShaderParameter *Clone() const = 0;
+         virtual ShaderParameter *Clone() = 0;
 
       protected:
 
@@ -217,6 +239,7 @@ namespace dtCore
 
       private:
          bool mIsDirty;
+         bool mIsShared; // Default is true. Indicates that when Cloning, it should simply return a copy of this param, not a new instance
          std::string mVarName;
          Shader *mParentShader;
          dtCore::RefPtr<osg::Uniform> mUniform;

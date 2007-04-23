@@ -526,6 +526,7 @@ void ShaderManagerTests::TestXMLParsing()
                              param != NULL);
       CPPUNIT_ASSERT_MESSAGE("Shader 1 in Group 2 should have had a 2D texture parameter.",
                              param->GetType() == dtCore::ShaderParameter::ParamType::SAMPLER_2D);
+      CPPUNIT_ASSERT_MESSAGE("Shader 1 in Group 2, baseTexture should not be shared.", !param->IsShared());
 
       texParam = static_cast<dtCore::ShaderParamTexture2D*>(param);
       CPPUNIT_ASSERT_MESSAGE("Parameter should be named baseTexture.",texParam->GetName() == "baseTexture");
@@ -554,6 +555,7 @@ void ShaderManagerTests::TestXMLParsing()
                              param != NULL);
       CPPUNIT_ASSERT_MESSAGE("Shader 2 in Group 2 should have had a 2D texture parameter.",
                              param->GetType() == dtCore::ShaderParameter::ParamType::SAMPLER_2D);
+      CPPUNIT_ASSERT_MESSAGE("Shader 2 in Group 2, baseTexture should be shared.", param->IsShared());
 
       texParam = static_cast<dtCore::ShaderParamTexture2D*>(param);
       CPPUNIT_ASSERT_MESSAGE("Parameter should be named baseTexture.",texParam->GetName() == "baseTexture");

@@ -102,7 +102,7 @@ namespace dtCore
           * a shader to a node because we clone the template shader and its parameters.
           * Note - Like Update(), this is a pure virtual method that must be implemented on each param.
           */
-         virtual ShaderParameter *Clone() const;
+         virtual ShaderParameter *Clone();
 
          /**
          * The starting point for the timer oscillation. In [1.0, 5.0], this would be 1.0.

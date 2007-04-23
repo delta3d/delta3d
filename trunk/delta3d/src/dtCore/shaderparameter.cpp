@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * Matthew W. Campbell
+ * Matthew W. Campbell, Curtiss Murphy
  */
 #include <prefix/dtcoreprefix-src.h>
 #include <dtCore/shaderparameter.h>
@@ -65,7 +65,11 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
 
    ///////////////////////////////////////////////////////////////////////////////
-   ShaderParameter::ShaderParameter(const std::string &name) : mIsDirty(false), mVarName(name), mParentShader(NULL),
+   ShaderParameter::ShaderParameter(const std::string &name) : 
+      mIsDirty(false), 
+      mIsShared(true),
+      mVarName(name), 
+      mParentShader(NULL),
       mUniform(NULL)
    {
    }

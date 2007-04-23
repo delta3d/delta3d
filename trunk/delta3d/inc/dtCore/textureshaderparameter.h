@@ -137,7 +137,7 @@ namespace dtCore
           * a shader to a node because we clone the template shader and its parameters.
           * Note - Like Update(), this is a pure virtual method that must be implemented on each param.
           */
-         virtual ShaderParameter *Clone() const = 0;
+         virtual ShaderParameter *Clone() = 0;
 
          /**
           * Sets the path to the texture to use for this parameter.
