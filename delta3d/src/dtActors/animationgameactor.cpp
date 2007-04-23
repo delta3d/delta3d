@@ -240,7 +240,9 @@ namespace dtActors
    {
       const dtGame::TickMessage& tickmsg = static_cast<const dtGame::TickMessage&>( msg );
       float dt = tickmsg.GetDeltaSimTime();
-      mAnimator->Update(dt);
+      
+      if (mAnimator.valid())
+         mAnimator->Update(dt);
 
       //static double doIt = 0;
       //doIt += dt;
