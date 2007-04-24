@@ -41,7 +41,8 @@
 				ProgramDatabaseFile="$(OutDir)/dtanim.pdb"
 				SubSystem="2"
 				ImportLibrary="../../../lib/dtAnimD.lib"
-				TargetMachine="1"/>
+				TargetMachine="1"
+				FixedBaseAddress="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -92,7 +93,8 @@
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				ImportLibrary="../../../lib/dtAnim.lib"
-				TargetMachine="1"/>
+				TargetMachine="1"
+				FixedBaseAddress="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -123,7 +125,22 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
+				RelativePath="..\..\..\src\dtAnim\animatable.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtAnim\animationchannel.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtAnim\animationcontroller.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtAnim\animationhelper.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtAnim\animationsequence.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtAnim\animationwrapper.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtAnim\animdriver.cpp">
@@ -153,6 +170,12 @@
 				RelativePath="..\..\..\src\dtAnim\physiquedriver.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtAnim\sequencemixer.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtAnim\skeletalconfiguration.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtAnim\skeletondriver.cpp">
 			</File>
 			<File
@@ -167,7 +190,22 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
+				RelativePath="..\..\..\inc\dtAnim\animatable.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtAnim\animationchannel.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtAnim\animationcontroller.h">
+			</File>
+			<File
 				RelativePath="..\..\..\inc\dtAnim\animationhelper.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtAnim\animationsequence.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtAnim\animationwrapper.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtAnim\animdriver.h">
@@ -204,6 +242,12 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtAnim\physiquedriver.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtAnim\sequencemixer.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtAnim\skeletalconfiguration.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtAnim\skeletondriver.h">
