@@ -27,6 +27,7 @@
 #include <dtUtil/mathdefines.h>
 #include <dtUtil/matrixutil.h>
 #include <dtCore/batchisector.h>
+#include <dtCore/boundingboxvisitor.h>
 #include <dtDAL/actortype.h>
 #include <dtGame/gameactor.h>
 #include <dtGame/messagetype.h>
@@ -177,10 +178,33 @@ namespace dtGame
       itor = mRegisteredActors.find(gameActorProxy.GetId());
       return itor != mRegisteredActors.end();
    }
+   
+   //////////////////////////////////////////////////////////////////////
+   void DeadReckoningComponent::CalculateAndSetBoundingBox(osg::Vec3& modelDimensions,
+         dtGame::GameActorProxy& gameActorProxy, DeadReckoningHelper& helper)
+   {
+      if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+      {
+         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, 
+               "Determining Actor dimensions via Bounding Box visitor.");
+      }
+      osg::Matrix oldMatrix = gameActorProxy.GetGameActor().GetMatrix();
+      gameActorProxy.GetGameActor().SetMatrix( osg::Matrix::identity() );
 
+      dtCore::BoundingBoxVisitor bbv;
+      gameActorProxy.GetGameActor().GetOSGNode()->accept(bbv);
+
+      gameActorProxy.GetGameActor().SetMatrix(oldMatrix);
+
+      modelDimensions.x() = bbv.mBoundingBox.xMax() - bbv.mBoundingBox.xMin();
+      modelDimensions.y() = bbv.mBoundingBox.yMax() - bbv.mBoundingBox.yMin();
+      modelDimensions.z() = bbv.mBoundingBox.zMax() - bbv.mBoundingBox.zMin();
+      helper.SetModelDimensions(modelDimensions);      
+   }
+   
    //////////////////////////////////////////////////////////////////////
    void DeadReckoningComponent::ClampToGroundThreePoint(float timeSinceUpdate, dtCore::Transform& xform,
-      dtGame::GameActorProxy& gameActorProxy)
+      dtGame::GameActorProxy& gameActorProxy, DeadReckoningHelper& helper)
    {
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {
@@ -190,21 +214,24 @@ namespace dtGame
       osg::Vec3& position = xform.GetTranslation();
       osg::Matrix& rotation = xform.GetRotation();
 
-      std::vector<float> dimensions;
-      gameActorProxy.GetGameActor().GetCollisionGeomDimensions(dimensions);
-
+      osg::Vec3 modelDimensions = helper.GetModelDimensions(); 
+      if (!helper.UseModelDimensions())
+      {
+         CalculateAndSetBoundingBox(modelDimensions, gameActorProxy, helper);
+      }
+      
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, 
-               "Actor dimensions [%f, %f, %f] size %u.", 
-               dimensions[0], dimensions[1], dimensions[2], unsigned(dimensions.size()));
+               "Actor dimensions [%f, %f, %f].", 
+               modelDimensions[0], modelDimensions[1], modelDimensions[2]);
       }
 
       //make points for the front center and back corners in relative coordinates.
       osg::Vec3 points[3];
-      points[0].set(0.0f, dimensions[1] / 2, 0.0f);
-      points[1].set(dimensions[0] / 2, -(dimensions[1] / 2), 0.0f);
-      points[2].set(-(dimensions[0] / 2), -(dimensions[1] / 2), 0.0f);
+      points[0].set(0.0f, modelDimensions[1] / 2, 0.0f);
+      points[1].set(modelDimensions[0] / 2, -(modelDimensions[1] / 2), 0.0f);
+      points[2].set(-(modelDimensions[0] / 2), -(modelDimensions[1] / 2), 0.0f);
 
       const osg::Matrix& m = gameActorProxy.GetGameActor().GetMatrix();
 
@@ -385,11 +412,11 @@ namespace dtGame
          if ((position - vec).length2() > mHighResClampRange2)
             ClampToGroundOnePoint(timeSinceUpdate, xform);
          else
-            ClampToGroundThreePoint(timeSinceUpdate, xform, gameActorProxy);
+            ClampToGroundThreePoint(timeSinceUpdate, xform, gameActorProxy, helper);
       }
       else
       {
-         ClampToGroundThreePoint(timeSinceUpdate, xform, gameActorProxy);
+         ClampToGroundThreePoint(timeSinceUpdate, xform, gameActorProxy, helper);
       }
       
       position.z() += helper.GetGroundOffset();
@@ -501,24 +528,27 @@ namespace dtGame
          bool bTransformChanged = helper.DoDR(gameActor, xform, mLogger, bShouldGroundClamp);
 
          //Only actually ground clamp and move remote ones.
-         if (bTransformChanged && helper.GetEffectiveUpdateMode(gameActor.IsRemote()) 
-            == DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR)
+         if (helper.GetEffectiveUpdateMode(gameActor.IsRemote()) 
+               == DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR)
          {
-            //we could probably group these queries together...
-            if (bShouldGroundClamp && gameActor.GetCollisionGeomType() == &dtCore::Transformable::CollisionGeomType::CUBE)
+            if (bTransformChanged || (forceClamp && bShouldGroundClamp))
             {
-               ClampToGround(helper.GetTranslationSmoothing(), xform, gameActor.GetGameActorProxy(), helper);
-            }
-         
-            gameActor.SetTransform(xform, dtCore::Transformable::REL_CS);
-            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-            {
-               std::ostringstream ss;
-               ss << "Actor " << gameActor.GetUniqueId() << " - " << gameActor.GetName() << " has attitude "
-                  << "\"" << helper.GetCurrentDeadReckonedRotation() << "\" and position \"" << helper.GetCurrentDeadReckonedTranslation() << "\" at time " 
-                  << helper.GetLastRotationUpdatedTime() +  helper.GetRotationSmoothing() << "";
-               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, 
-                     ss.str().c_str());               
+               //we could probably group these queries together...
+               if (bShouldGroundClamp)
+               {
+                  ClampToGround(helper.GetTranslationSmoothing(), xform, gameActor.GetGameActorProxy(), helper);
+               }
+            
+               gameActor.SetTransform(xform, dtCore::Transformable::REL_CS);
+               if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+               {
+                  std::ostringstream ss;
+                  ss << "Actor " << gameActor.GetUniqueId() << " - " << gameActor.GetName() << " has attitude "
+                     << "\"" << helper.GetCurrentDeadReckonedRotation() << "\" and position \"" << helper.GetCurrentDeadReckonedTranslation() << "\" at time " 
+                     << helper.GetLastRotationUpdatedTime() +  helper.GetRotationSmoothing() << "";
+                  mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, 
+                        ss.str().c_str());               
+               }
             }
          }
 

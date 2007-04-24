@@ -141,6 +141,10 @@ namespace dtGame
          /// modifies the scene graph node by predicting the articulation data.
          void DoArticulationPrediction(osgSim::DOFTransform& dofxform, const osg::Vec3& currLocation, const osg::Vec3& currentRate, float currentTimeStep) const;
 
+         /// Calculates the bounding box for the given proxy, stores it in the helper, and populates the Vec3.
+         void CalculateAndSetBoundingBox(osg::Vec3& modelDimensions,
+               dtGame::GameActorProxy& gameActorProxy, DeadReckoningHelper& helper);
+         
          /**
           * Clamps an actor to the ground.  This doesn't actually move an actor, it just outputs the position and rotation.
           * @param timeSinceUpdate the amount of time since the last actor update.
@@ -153,7 +157,7 @@ namespace dtGame
          
          ///Version of clamping that uses three intersection points to calculate the height and the rotation.
          void ClampToGroundThreePoint(float timeSinceUpdate, dtCore::Transform& xform,
-            dtGame::GameActorProxy& gameActorProxy);
+            dtGame::GameActorProxy& gameActorProxy, DeadReckoningHelper& helper);
          
          ///Version of clamping that uses one intersection points and the vertex normal.
          void ClampToGroundOnePoint(float timeSinceUpdate, dtCore::Transform& xform);

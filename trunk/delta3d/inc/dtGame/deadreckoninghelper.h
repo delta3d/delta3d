@@ -339,6 +339,19 @@ namespace dtGame
          float GetRotationSmoothing() const { return mRotationSmoothingSteps; }
          void SetRotationResolved(bool resolved) { mRotationResolved=resolved; }
 
+         /// Set this to true to tell the DR comp than the model dimensions are now valid. Defaults to false.
+         void SetUseModelDimensions(bool newUse) { mUseModelDimensions = newUse; }
+         /// @return true if the model dimensions are now valid.
+         bool UseModelDimensions() const { return mUseModelDimensions; }
+         
+         /// Sets the model dimensions of this helper.  This will call SetUseModelDimensions(true) internally.
+         void SetModelDimensions(const osg::Vec3& newDimensions);
+         
+         /// @return the current assigned dimensions of the model for the actor being dead-reckoned
+         const osg::Vec3& GetModelDimensions() { return mModelDimensions; }
+         /// @return the current assigned dimensions of the model for the actor being dead-reckoned by copy.
+         osg::Vec3 GetModelDimensionsByCopy() const { return mModelDimensions; }
+         
       protected:
          virtual ~DeadReckoningHelper() {}
 
@@ -414,6 +427,9 @@ namespace dtGame
          ///The angular velocity vector.
          osg::Vec3 mAngularVelocityVector;
          
+         /// The size of the actors model.  This is used for ground clamping.
+         osg::Vec3 mModelDimensions;
+         
          // The Dead Reckoning Matrix
          osg::Matrix mDeadReckoningMatrix;
          
@@ -430,7 +446,7 @@ namespace dtGame
          bool mFlying;
           //if the rotation has been resolved to the last updated version.
          bool mRotationResolved;
-         
+         bool mUseModelDimensions;
          // -----------------------------------------------------------------------
          //  Unimplemented constructors and operators
          // -----------------------------------------------------------------------

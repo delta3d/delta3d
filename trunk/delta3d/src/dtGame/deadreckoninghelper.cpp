@@ -261,6 +261,7 @@ namespace dtGame
       mUpdated = true;
    }
 
+   //////////////////////////////////////////////////////////////////////
    void DeadReckoningHelper::SetLastTranslationUpdatedTime(double newUpdatedTime)
    {
       //the average of the last average and the current time since an update.
@@ -268,11 +269,19 @@ namespace dtGame
       mLastTranslationUpdatedTime = newUpdatedTime;
    }
 
+   //////////////////////////////////////////////////////////////////////
    void DeadReckoningHelper::SetLastRotationUpdatedTime(double newUpdatedTime)
    {
       //the average of the last average and the current time since an update.
       mAverageTimeBetweenRotationUpdates = 0.5f * (float(newUpdatedTime - mLastRotationUpdatedTime) + mAverageTimeBetweenRotationUpdates); 
       mLastRotationUpdatedTime = newUpdatedTime;
+   }
+
+   //////////////////////////////////////////////////////////////////////
+   void DeadReckoningHelper::SetModelDimensions(const osg::Vec3& newDimensions) 
+   { 
+      mModelDimensions = newDimensions; 
+      SetUseModelDimensions(true); 
    }
 
    //////////////////////////////////////////////////////////////////////
@@ -411,6 +420,15 @@ namespace dtGame
          dtDAL::MakeFunctorRet(*this, &DeadReckoningHelper::GetGroundOffset), 
          "Sets the offset from the ground this entity should have.  This only matters if it is not flying."));
 
+      pFillVector.push_back(new dtDAL::Vec3ActorProperty("Model Dimensions", "Actor Model Dimensions", 
+            dtDAL::MakeFunctor(*this, &DeadReckoningHelper::SetModelDimensions), 
+            dtDAL::MakeFunctorRet(*this, &DeadReckoningHelper::GetModelDimensionsByCopy), 
+            "Sets the x,y,z dimensions of the model the actor loads.  This is used by the ground clamping code."));
+
+      pFillVector.push_back(new dtDAL::BooleanActorProperty("Use Model Dimensions", "Use Model Dimensions", 
+            dtDAL::MakeFunctor(*this, &DeadReckoningHelper::SetUseModelDimensions), 
+            dtDAL::MakeFunctorRet(*this, &DeadReckoningHelper::UseModelDimensions), 
+            "Should the DR Component use the currently set model dimension values when ground clamping?"));
    }
 
    /////////////////////////////////////////////////////////////////////////////////
