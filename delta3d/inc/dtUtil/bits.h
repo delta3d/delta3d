@@ -34,23 +34,27 @@ namespace dtUtil
     * @namespace dtUtil::Bits
     *
     * Contains bit-wise operation functionality which makes using bits
-    * a little bit easier.
+    * a little "bit" easier.
     */
    namespace Bits
    {
 
-      //
-      //  See if the "bits" are in "number".
-      //
+      /**
+        * See if the "bits" are in "number".
+        * @code
+        * unsigned int accum = 3;
+        * Bits::Has( accum, 1 ); //true
+        * Bits::Has( accum, 7 ); //false
+        * @endcode
+        */
       template < class N, class B > inline bool Has ( N number, B bits )
       {
          return ( ( number & bits ) == ( static_cast<N>(bits) ) );
       }
 
-      //
-      //  Add the "bits" to "number".
-      //
-
+      /**
+        * Add the "bits" to "number".
+        */
       template < class N, class B > inline N Add ( N number, B bits )
       {
          return ( number | bits );
@@ -59,20 +63,25 @@ namespace dtUtil
       //
       //  Remove the "bits" from "number".
       //
-
       template < class N, class B > inline N Remove ( N number, B bits )
       {
          return ( ( number & bits ) ? ( number ^ bits ) : number );
       }
 
-      //
-      //  Toggle the "bits" in "number".
-      //
-
+      /**
+       * Toggle the "bits" in "number".
+       * @code
+       * unsigned int accum = 3;
+       * unsigned int newBits;
+       * newBits = Bits::Toggle(accum, 1); //newBits = 2
+       * newBits = Bits::Toggle(accum, 1); //newBits = 3
+       * @endcode
+       */
       template < class N, class B > inline N Toggle ( N number, B bits )
       {
          return ( number ^ bits );
       }
+
    } //namespace Bits
 }//namespace dtUtil
 
