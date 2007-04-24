@@ -25,7 +25,7 @@
 #include <dtCore/texture2dshaderparameter.h>
 #include <dtCore/floatshaderparameter.h>
 #include <dtCore/integershaderparameter.h>
-#include <dtCore/ShaderParameterFloatTimer.h>
+#include <dtCore/shaderparameterfloattimer.h>
 #include <dtCore/globals.h>
 #include <dtCore/system.h>
 

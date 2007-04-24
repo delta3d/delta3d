@@ -1,6 +1,6 @@
 #include <cppunit/extensions/HelperMacros.h>
 
-#include <dtDIS/PluginManager.h>         // for testing
+#include <dtDIS/pluginmanager.h>         // for testing
 #include <dtCore/base.h>                 // for base class
 
 namespace dtTest

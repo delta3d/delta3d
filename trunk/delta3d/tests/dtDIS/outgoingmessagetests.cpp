@@ -1,9 +1,9 @@
 #include <cppunit/extensions/HelperMacros.h>
-#include <dtDIS/OutgoingMessage.h>        // for testing
+#include <dtDIS/outgoingmessage.h>        // for testing
 
-#include <dtDIS/IMessageToPacketAdapter.h>    // for base class
+#include <dtDIS/imessagetopacketadapter.h>    // for base class
 #include <DIS/Pdu.h>                      // for usage
-#include <dtDIS/Connection.h>             // for usage
+#include <dtDIS/connection.h>             // for usage
 
 #include <dtGame/actorupdatemessage.h>         // for usage
 #include <dtGame/basemessages.h>          // for usage

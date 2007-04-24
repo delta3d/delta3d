@@ -1,7 +1,7 @@
 #include <cppunit/extensions/HelperMacros.h>
 
-#include <dtDIS/MasterComponent.h>       // for testing
-#include <dtDIS/SharedState.h>
+#include <dtDIS/mastercomponent.h>       // for testing
+#include <dtDIS/sharedstate.h>
 
 #include <dtCore/scene.h>                // for using the GM
 #include <dtGame/gamemanager.h>          // for using the GM

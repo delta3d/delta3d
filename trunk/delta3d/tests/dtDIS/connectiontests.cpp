@@ -1,5 +1,5 @@
 #include <cppunit/extensions/HelperMacros.h>
-#include <dtDIS/Connection.h>
+#include <dtDIS/connection.h>
 #include <DIS/DataStream.h>
 
 #include <cstdlib>  // for NULL
