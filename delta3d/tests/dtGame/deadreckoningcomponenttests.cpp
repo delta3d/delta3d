@@ -179,26 +179,31 @@ namespace dtGame
    	 
             helper->SetLastKnownTranslation(vec);
             CPPUNIT_ASSERT(helper->GetLastKnownTranslation() == vec);
+            CPPUNIT_ASSERT(helper->GetLastKnownTranslationByCopy() == vec);
             CPPUNIT_ASSERT(helper->IsUpdated());
             helper->ClearUpdated();
    
             helper->SetLastKnownRotation(vec);
             CPPUNIT_ASSERT(helper->GetLastKnownRotation() == vec);
+            CPPUNIT_ASSERT(helper->GetLastKnownRotationByCopy() == vec);
             CPPUNIT_ASSERT(helper->IsUpdated());
             helper->ClearUpdated();
    
             helper->SetVelocityVector(vec);
             CPPUNIT_ASSERT(helper->GetVelocityVector() == vec);
+            CPPUNIT_ASSERT(helper->GetVelocityVectorByCopy() == vec);
             CPPUNIT_ASSERT(helper->IsUpdated());
             helper->ClearUpdated();
    
             helper->SetAccelerationVector(vec);
             CPPUNIT_ASSERT(helper->GetAccelerationVector() == vec);
+            CPPUNIT_ASSERT(helper->GetAccelerationVectorByCopy() == vec);
             CPPUNIT_ASSERT(helper->IsUpdated());
             helper->ClearUpdated();
    
             helper->SetAngularVelocityVector(vec);
             CPPUNIT_ASSERT(helper->GetAngularVelocityVector() == vec);
+            CPPUNIT_ASSERT(helper->GetAngularVelocityVectorByCopy() == vec);
             CPPUNIT_ASSERT(helper->IsUpdated());
             helper->ClearUpdated();
    
@@ -206,6 +211,17 @@ namespace dtGame
             CPPUNIT_ASSERT(helper->GetGroundOffset() == 43.4f);
             CPPUNIT_ASSERT(helper->IsUpdated());
             helper->ClearUpdated();
+
+            CPPUNIT_ASSERT_MESSAGE("Use the model dimensions should default to false.",
+                  !helper->UseModelDimensions());
+            helper->SetModelDimensions(vec);
+            CPPUNIT_ASSERT_MESSAGE("Setting the model dimensions should set the use property to true", 
+                  helper->UseModelDimensions());
+            CPPUNIT_ASSERT(helper->GetModelDimensions() == vec);
+            CPPUNIT_ASSERT(helper->GetModelDimensionsByCopy() == vec);
+
+            helper->SetUseModelDimensions(false);
+            CPPUNIT_ASSERT(!helper->UseModelDimensions());
 
             helper->SetMaxRotationSmoothingSteps(5.3f);
             CPPUNIT_ASSERT(!helper->IsUpdated());
