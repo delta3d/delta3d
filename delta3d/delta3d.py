@@ -111,8 +111,7 @@ def TOOL_BUNDLE(env):
                 cxxFile.write("#include \"" + srcFile + "\"\n")
           
           sourceList = [cxxFileName]
-       else:
-          sourceList = srcs
+       else:          sourceList = srcs
     
        if env['OS'] == 'windows' and env.get('mode') == 'debug' :
           target += 'd'
@@ -749,16 +748,17 @@ def TOOL_BUNDLE(env):
       CheckLinkGroup(['DIS'], 'DIS', True)
       CheckLinkGroup([ 'CEGUIBase', 'CEGUIOpenGLRenderer' ], 'CEGUI', False, False)
       
-      foundGdalH = conf.CheckCXXHeader('gdal.h')
+      if not env.GetOption('clean') :
+         foundGdalH = conf.CheckCXXHeader('gdal.h')
       
-      if not foundGdalH:
-         if env['OS'] != 'windows' :
-            conf.env.Append(CPPPATH = ["/usr/include/gdal"])
-            foundGdalH = conf.CheckCXXHeader('gdal.h')
+         if not foundGdalH:
+            if env['OS'] != 'windows' :
+               conf.env.Append(CPPPATH = ["/usr/include/gdal"])
+               foundGdalH = conf.CheckCXXHeader('gdal.h')
       
-      if not foundGdalH: 
-         print "gdal.h was not found, aborting."
-         Exit(1)
+         if not foundGdalH: 
+            print "gdal.h was not found, aborting."
+            Exit(1)
          
       
       #this actually SEARCHES, not good
