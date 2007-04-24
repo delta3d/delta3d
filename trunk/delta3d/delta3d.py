@@ -682,8 +682,10 @@ def TOOL_BUNDLE(env):
       foundLibs = {}
       
       # TODO: don't run for install
-      if not env.GetOption('clean') :
-         def CheckLinkGroup(linkGroup, name, required, add=True):
+      def CheckLinkGroup(linkGroup, name, required, add=True):
+         if env.GetOption('clean') :
+            foundLibs[extLibs[lib]] = 'sharedLib'
+         else:
             oldLibs = conf.env['LIBS']
             oldFrameworks = conf.env['FRAMEWORKS']
             for lib in linkGroup :
@@ -696,7 +698,7 @@ def TOOL_BUNDLE(env):
                         resultText = 'framework'
                   else:
                      result = False
-
+   
                   if not result:
                      result = conf.CheckLib(extLibs[lib], language = 'C++', autoadd = 1, symbol="printf");
                      if result:
@@ -707,71 +709,71 @@ def TOOL_BUNDLE(env):
                conf.env.Replace(FRAMEWORKS = oldFrameworks) 
                conf.env.Replace(LIBS = oldLibs) 
 
-         if env['OS'] == 'windows' :
-            CheckLinkGroup([ 'opengl', 'User32', 'Advapi32', 'Rpcrt4',  'Winmm', 'Gdi32', 'opengl', 'winsock', 'shell32', 'ole32' ], 'OS', True)
-         elif env['OS'] == 'darwin' :
-            CheckLinkGroup([ 'opengl', 'AGL', 'CoreFoundation', 'IOKit', 'Carbon', 'ncurses', 'uuid' ], 'OS', True)
-         elif env['OS'] == 'linux' :
-            CheckLinkGroup([ 'opengl', 'Xxf86vm', 'uuid', 'ncurses' ], 'OS', True)
-   
-         CheckLinkGroup(['ode'], 'ode', True, False)
-   
-         CheckLinkGroup(['js', 'ul'], 'plib', False, False)
-         CheckLinkGroup(['cppunit'], 'cppunit', False, False)
-         CheckLinkGroup(['python'], 'python', False, False)
-         CheckLinkGroup(['openal', 'alut'], 'openal', True, False)
-         #if env['ENV'].has_key('QTDIR'):
-         CheckLinkGroup(['QtCore', 'QtGui', 'QtOpenGL'], 'qt', False, False)
-         
-         CheckLinkGroup(['fltk'], 'fltk', False, False)
-         CheckLinkGroup(['isense'], 'isense', False, False) 
+      if env['OS'] == 'windows' :
+         CheckLinkGroup([ 'opengl', 'User32', 'Advapi32', 'Rpcrt4',  'Winmm', 'Gdi32', 'opengl', 'winsock', 'shell32', 'ole32' ], 'OS', True)
+      elif env['OS'] == 'darwin' :
+         CheckLinkGroup([ 'opengl', 'AGL', 'CoreFoundation', 'IOKit', 'Carbon', 'ncurses', 'uuid' ], 'OS', True)
+      elif env['OS'] == 'linux' :
+         CheckLinkGroup([ 'opengl', 'Xxf86vm', 'uuid', 'ncurses' ], 'OS', True)
+
+      CheckLinkGroup(['ode'], 'ode', True, False)
+
+      CheckLinkGroup(['js', 'ul'], 'plib', False, False)
+      CheckLinkGroup(['cppunit'], 'cppunit', False, False)
+      CheckLinkGroup(['python'], 'python', False, False)
+      CheckLinkGroup(['openal', 'alut'], 'openal', True, False)
+      #if env['ENV'].has_key('QTDIR'):
+      CheckLinkGroup(['QtCore', 'QtGui', 'QtOpenGL'], 'qt', False, False)
       
-         CheckLinkGroup([
-            'OpenThreads',
-            'Producer',
-            'opengl',
-            'xerces-c',
-            'gdal',
-            'gne',
-            'HawkNL',
-            'osg',
-            'osgDB',
-            'osgUtil',
-            'osgText',
-            'osgSim',
-            'osgFX',
-            'osgParticle'], 'osg', True)
-                  
-         CheckLinkGroup(['cal3d','rvrutils','rcfgscript','rbody'], 'rbody', True)
-         CheckLinkGroup(['DIS'], 'DIS', True)
-         CheckLinkGroup([ 'CEGUIBase', 'CEGUIOpenGLRenderer' ], 'CEGUI', False, False)
+      CheckLinkGroup(['fltk'], 'fltk', False, False)
+      CheckLinkGroup(['isense'], 'isense', False, False) 
+   
+      CheckLinkGroup([
+         'OpenThreads',
+         'Producer',
+         'opengl',
+         'xerces-c',
+         'gdal',
+         'gne',
+         'HawkNL',
+         'osg',
+         'osgDB',
+         'osgUtil',
+         'osgText',
+         'osgSim',
+         'osgFX',
+         'osgParticle'], 'osg', True)
+               
+      CheckLinkGroup(['cal3d','rvrutils','rcfgscript','rbody'], 'rbody', True)
+      CheckLinkGroup(['DIS'], 'DIS', True)
+      CheckLinkGroup([ 'CEGUIBase', 'CEGUIOpenGLRenderer' ], 'CEGUI', False, False)
+      
+      foundGdalH = conf.CheckCXXHeader('gdal.h')
+      
+      if not foundGdalH:
+         if env['OS'] != 'windows' :
+            conf.env.Append(CPPPATH = ["/usr/include/gdal"])
+            foundGdalH = conf.CheckCXXHeader('gdal.h')
+      
+      if not foundGdalH: 
+         print "gdal.h was not found, aborting."
+         Exit(1)
          
-         foundGdalH = conf.CheckCXXHeader('gdal.h')
-         
-         if not foundGdalH:
-            if env['OS'] != 'windows' :
-               conf.env.Append(CPPPATH = ["/usr/include/gdal"])
-               foundGdalH = conf.CheckCXXHeader('gdal.h')
-         
-         if not foundGdalH: 
-            print "gdal.h was not found, aborting."
-            Exit(1)
-           
-         
-         #this actually SEARCHES, not good
-         #foundLibs[ os.path.join('boost','python.hpp') ] = conf.CheckHeader( os.path.join('boost','python.hpp'), language='C++')
-         
-         env = conf.Finish()
+      
+      #this actually SEARCHES, not good
+      #foundLibs[ os.path.join('boost','python.hpp') ] = conf.CheckHeader( os.path.join('boost','python.hpp'), language='C++')
+      
+      env = conf.Finish()
 
-         # check if we found all the libraries
-         # TODO: it's ok if we are missing boost_python, but make this explicit!
-         if len( foundLibs.keys() ) < len( extLibs.keys() ) - 2  : 
-           print 'Build Failed: Missing required libraries'
-           errorLog.write('Build Failed: Missing required libraries\n\n')
-           errorLog.close()
+      # check if we found all the libraries
+      # TODO: it's ok if we are missing boost_python, but make this explicit!
+      if len( foundLibs.keys() ) < len( extLibs.keys() ) - 2  : 
+         print 'Build Failed: Missing required libraries'
+         errorLog.write('Build Failed: Missing required libraries\n\n')
+         errorLog.close()
 
-             
-           env.Exit(-1)
+            
+         env.Exit(-1)
 
       # add the rti libs to the external library dictionary, but only
       # after the configure check is complete 
