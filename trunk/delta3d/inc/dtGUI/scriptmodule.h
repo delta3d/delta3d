@@ -30,14 +30,44 @@ namespace dtGUI
       virtual ~ScriptModule();
 
       /** 
-       * Add a callback handler.
+       * Add a static callback handler.
+       * Example:
+       * @code
+       * class MyClass
+       * {
+       *   ...
+       *   static bool OnClick( const CEGUI::EventArgs &e );
+       *   ...
+       * }
+       * 
+       *  ...
+       *  mScriptModule->AddCallback("OnDoSomething", &OnClick);
+       *  ...
+       * @endcode
        * @param name is the string representation of the handler function to be executed for the CEGUI::Event.
        * @param func is the pointer to the function to be called when the CEGUI::Event is activated.
        */
       bool AddCallback(const std::string& name, STATIC_FUNCTION func);
 
       /** 
-       * Add a callback handler. 
+       * Add a non-static callback handler. 
+       * Example:
+       * @code
+       * class App
+       * {
+       *   ...
+       *  public:
+       *   bool OnClick( const CEGUI::EventArgs &e );
+       *   ...
+       * }
+       * 
+       *  ...
+       *  App *mApp = new App();
+       *
+       *  dtGUI::ScriptModule::HandlerFunctor handler( dtUtil::MakeFunctor( &App::OnClick, mApp ) );
+       *  mScriptModule->AddCallback("OnDoSomething", handler );
+       * ...
+       * @endcode
        * @param name is the string representation of the handler function to be executed for the CEGUI::Event.
        * @param func is an instance of a function object to be called when the CEGUI::Event is activated.
        * @attention An attempt was make an implemenation with the signature template<typename InstT> bool 
