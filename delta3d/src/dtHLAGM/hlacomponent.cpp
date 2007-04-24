@@ -367,7 +367,11 @@ namespace dtHLAGM
       try
       {
          dtUtil::FileInfo fi = dtUtil::FileUtils::GetInstance().GetFileInfo(ridFile);
-         std::string absPath = dtUtil::FileUtils::GetInstance().GetAbsolutePath(fi.path);
+         std::string path = fi.path;
+         if (path.empty())
+            path = "./";
+         
+         std::string absPath = dtUtil::FileUtils::GetInstance().GetAbsolutePath(path);
          
          dtCore::SetEnvironment("RTI_RID_FILE", absPath + dtUtil::FileUtils::PATH_SEPARATOR + fi.baseName);
       }
