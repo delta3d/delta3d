@@ -684,7 +684,8 @@ def TOOL_BUNDLE(env):
       # TODO: don't run for install
       def CheckLinkGroup(linkGroup, name, required, add=True):
          if env.GetOption('clean') :
-            foundLibs[extLibs[lib]] = 'sharedLib'
+            for lib in linkGroup :
+               foundLibs[extLibs[lib]] = 'sharedLib'
          else:
             oldLibs = conf.env['LIBS']
             oldFrameworks = conf.env['FRAMEWORKS']
