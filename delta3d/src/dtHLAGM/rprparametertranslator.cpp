@@ -869,7 +869,7 @@ namespace dtHLAGM
          ParameterValue& curParamValue = curArtParam.GetParameterValue();
 
          // Fill in Attached Parts
-         if( groupName.substr(0,2) == "At" ) // "AttachedPartMessageParam"
+         if( groupName[1] == 't' ) // "AttachedPartMessageParam"
          {
             curParamValue.SetArticulatedParameterType( AttachedPart ); // 1
 
@@ -934,7 +934,7 @@ namespace dtHLAGM
             }
          }
          // Fill in Articulated Parts
-         else if( groupName.substr(0,2) == "Ar" ) // "ArticulatedPartMessageParam"
+         else if( groupName[1] == 'r' ) // "ArticulatedPartMessageParam"
          {
             curParamValue.SetArticulatedParameterType( ArticulatedPart ); // 0
 
@@ -1102,6 +1102,7 @@ namespace dtHLAGM
                && articulatedParams[j].GetParameterValue().GetArticulatedParts().GetClass() == parentClassIds[i] )
             {
                curArtParam->SetPartAttachedTo( j );
+               break;
             }
          }
 
