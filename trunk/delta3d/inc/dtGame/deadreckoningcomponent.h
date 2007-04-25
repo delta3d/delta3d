@@ -125,6 +125,18 @@ namespace dtGame
           * @return the maximum distance from the player that three intersection point clamping will be used.  
           */
          float GetHighResGroundClampingRange() const { return mHighResClampRange; }
+
+         /**
+          * Typically actors are only ground clamped when their positions are updated
+          * but with this time, the actors are reclamped every so often in case LOD's have changed
+          * on the terrain.
+          * 
+          * @param newTime the new time in seconds.  It defaults to 3.  Setting it to 0 disables force clamping.
+          */
+         void SetForceClampInterval(float newTime) { mForceClampInterval = newTime; }            
+         
+         /// @return the interval at which entities will be re-clamped.
+         float GetForceClampInterval() const { return mForceClampInterval; }
          
       protected:
          virtual ~DeadReckoningComponent();
@@ -159,24 +171,24 @@ namespace dtGame
          void ClampToGroundThreePoint(float timeSinceUpdate, dtCore::Transform& xform,
             dtGame::GameActorProxy& gameActorProxy, DeadReckoningHelper& helper);
          
-         ///Version of clamping that uses one intersection points and the vertex normal.
-         void ClampToGroundOnePoint(float timeSinceUpdate, dtCore::Transform& xform);
+         void RunClampBatch();
+
+         /// @return true if the entity should be force clamped based on saved values.
+         bool ShouldForceClamp(DeadReckoningHelper& helper, float deltaRealTime, bool bTransformChanged);
          
          dtCore::BatchIsector& GetGroundClampIsector();
 
-         ///number of seconds between forcing vehicles to ground clamp.
-         static const float ForceClampTime;
-         
+         std::map<dtCore::UniqueId, dtCore::RefPtr<DeadReckoningHelper> > mRegisteredActors;
+         std::vector<std::pair<dtCore::Transform, dtGame::GameActorProxy*> > mGroundClampBatch;
+         osg::Vec3 mCurrentEyePointABSPos;
          dtUtil::Log* mLogger;
          dtCore::RefPtr<dtCore::Transformable> mEyePointActor;
-         osg::Vec3 mCurrentEyePointABSPos;
          dtCore::RefPtr<dtCore::Transformable> mTerrainActor;
 
-         dtCore::RefPtr<dtCore::BatchIsector> mIsector;
+         dtCore::RefPtr<dtCore::BatchIsector> mTripleIsector, mIsector;
          
-         float mTimeUntilForceClamp, mHighResClampRange, mHighResClampRange2;
-         
-         std::map<dtCore::UniqueId, dtCore::RefPtr<DeadReckoningHelper> > mRegisteredActors;
+         float mHighResClampRange, mHighResClampRange2;
+         float mForceClampInterval;
          
          void TickRemote(const dtGame::TickMessage& tickMessage);
                        

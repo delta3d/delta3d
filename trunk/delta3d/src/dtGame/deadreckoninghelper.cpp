@@ -63,6 +63,7 @@ namespace dtGame
 	   mLastTimeTag(0.0),
       mLastTranslationUpdatedTime(0.0), 
 	   mLastRotationUpdatedTime(0.0), 
+	   mTimeUntilForceClamp(0.0f),
       mAverageTimeBetweenTranslationUpdates(0.0f), 
 	   mAverageTimeBetweenRotationUpdates(0.0f), 
       mMaxTranslationSmoothingSteps(8.0f),
@@ -80,7 +81,8 @@ namespace dtGame
       mTranslationUpdated(false), 
       mRotationUpdated(false), 
       mFlying(false), 
-      mRotationResolved(true)
+      mRotationResolved(true),
+      mUseModelDimensions(false)
    {}
 
 
@@ -127,8 +129,6 @@ namespace dtGame
       {
    		mTransBeforeLastUpdate = mCurrentDeadReckonedTranslation;
    		mLastTranslation = vec;
-   		//if (!mFlying)
-   		//	mLastTranslation[2] = mTransBeforeLastUpdate[2];
    		mTranslationSmoothingSteps = 0.0;
    		mTranslationUpdated = true;
    		mUpdated = true;
