@@ -40,12 +40,8 @@ namespace dtGame
    const std::string DeadReckoningComponent::DEFAULT_NAME("Dead Reckoning Component");
 
    //////////////////////////////////////////////////////////////////////
-   const float DeadReckoningComponent::ForceClampTime(1.25f);
-
-   //////////////////////////////////////////////////////////////////////
    DeadReckoningComponent::DeadReckoningComponent(const std::string& name): dtGame::GMComponent(name),
-      mTimeUntilForceClamp(ForceClampTime),
-      mHighResClampRange(0.0f), mHighResClampRange2(0.0f)
+      mHighResClampRange(0.0f), mHighResClampRange2(0.0f), mForceClampInterval(3.0f)
    {
       mLogger = &dtUtil::Log::GetInstance("deadreckoningcomponent.cpp");
    }
@@ -108,7 +104,6 @@ namespace dtGame
             updateMode = &DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR;
          else
             updateMode = &DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR;
-            
       }
       
       if (!mRegisteredActors.insert(std::make_pair(toRegister.GetId(), &helper)).second)
@@ -235,12 +230,12 @@ namespace dtGame
 
       const osg::Matrix& m = gameActorProxy.GetGameActor().GetMatrix();
 
-      mIsector->Reset();
-      mIsector->SetQueryRoot(mTerrainActor.get());
+      mTripleIsector->Reset();
+      mTripleIsector->SetQueryRoot(mTerrainActor.get());
 
       for (unsigned i = 0; i < 3; ++i)
       {
-         dtCore::BatchIsector::SingleISector& single = mIsector->CreateOrGetISector(i);
+         dtCore::BatchIsector::SingleISector& single = mTripleIsector->CreateOrGetISector(i);
 
          //convert point to absolute space.
          points[i] = points[i] * m;
@@ -266,11 +261,11 @@ namespace dtGame
                osg::Vec3(singlePoint[0], singlePoint[1], singlePoint[2] - 100.0f));
       }
       
-      if (mIsector->Update(mCurrentEyePointABSPos, GetEyePointActor() == NULL))
+      if (mTripleIsector->Update(mCurrentEyePointABSPos, GetEyePointActor() == NULL))
       {
          for (unsigned i = 0; i < 3; ++i)
          {
-            dtCore::BatchIsector::SingleISector& single = mIsector->CreateOrGetISector(i);
+            dtCore::BatchIsector::SingleISector& single = mTripleIsector->CreateOrGetISector(i);
             if (single.GetNumberOfHits() > 0)
             {
                osg::Vec3 hp;
@@ -337,58 +332,83 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningComponent::ClampToGroundOnePoint(float timeSinceUpdate, dtCore::Transform& xform)
-   {
-      osg::Matrix& rotation = xform.GetRotation();
+   void DeadReckoningComponent::RunClampBatch()
+   {      
+      if (mGroundClampBatch.empty())
+         return;
       
-      if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+      if (mGroundClampBatch.size() > 32)
       {
-         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Using one point ground clamping.");
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Attempted to batch %u entities, when 32 is the max.", mGroundClampBatch.size());        
       }
-
-      osg::Vec3& singlePoint = xform.GetTranslation();
-
-      osg::Vec3 normal;
       
-      mIsector->Reset();
+      //I don't really like doing this, but there doesn't seem to be an efficient way to 
+      //reuse the ones that exist.  This should be revisited.
+      mIsector->DeleteAllISectors();
       mIsector->SetQueryRoot(mTerrainActor.get());
 
-      dtCore::BatchIsector::SingleISector& single = mIsector->CreateOrGetISector(0);
-      
-      single.SetSectorAsLineSegment(osg::Vec3(singlePoint[0], singlePoint[1], singlePoint[2] + 100.0f),
-            osg::Vec3(singlePoint[0], singlePoint[1], singlePoint[2] - 100.0f));
+      for (unsigned i = 0; i < mGroundClampBatch.size(); ++i)
+      {
+         dtCore::BatchIsector::SingleISector& single = mIsector->CreateOrGetISector(i);
+         
+         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         {
+            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Using one point ground clamping.");
+         }
+         
+         dtCore::Transform& xform = mGroundClampBatch[i].first;
+         osg::Vec3& singlePoint = xform.GetTranslation();
+         
+         single.SetSectorAsLineSegment(osg::Vec3(singlePoint[0], singlePoint[1], singlePoint[2] + 100.0f),
+               osg::Vec3(singlePoint[0], singlePoint[1], singlePoint[2] - 100.0f));
+      }
       
       if (mIsector->Update(mCurrentEyePointABSPos, GetEyePointActor() == NULL))
       {
+         osg::Vec3 normal;
          osg::Vec3 hp;
-         dtCore::BatchIsector::SingleISector& single = mIsector->CreateOrGetISector(0);
-         single.GetHitPoint(hp, 0);
-         single.GetHitPointNormal(normal, 0);
-            
-         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         for (unsigned i = 0; i < mGroundClampBatch.size(); ++i)
          {
-            std::ostringstream ss;
-            ss << "Found a hit - old z " << singlePoint.z() << " new z " << hp.z();
-            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
+            dtCore::Transform& xform = mGroundClampBatch[i].first;
+            osg::Matrix& rotation = xform.GetRotation();
+            osg::Vec3& singlePoint = xform.GetTranslation();
+
+            dtCore::BatchIsector::SingleISector& single = mIsector->CreateOrGetISector(i);
+            if (single.GetNumberOfHits() > 0)
+            {
+               single.GetHitPoint(hp, 0);
+               single.GetHitPointNormal(normal, 0);
+                  
+               if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+               {
+                  std::ostringstream ss;
+                  ss << "Found a hit - old z " << singlePoint.z() << " new z " << hp.z();
+                  mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
+               }
+               
+               singlePoint = hp;
+   
+               normal.normalize();
+   
+               osg::Vec3 oldNormal(0, 0, 1);
+   
+               oldNormal = osg::Matrix::transform3x3(oldNormal, rotation);
+               osg::Matrix normalRot;
+               normalRot.makeRotate(oldNormal, normal);
+   
+               rotation = rotation * normalRot;
+
+               mGroundClampBatch[i].second->GetGameActor().SetTransform(xform, dtCore::Transformable::REL_CS);
+            }
          }
-         singlePoint = hp;
       } 
       else if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {
          std::ostringstream ss;
-         ss << "Found no hit: " << singlePoint;
+         ss << "Found no hits with batch query.";
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
       }
-
-      normal.normalize();
-
-      osg::Vec3 oldNormal(0, 0, 1);
-
-      oldNormal = osg::Matrix::transform3x3(oldNormal, rotation);
-      osg::Matrix normalRot;
-      normalRot.makeRotate(oldNormal, normal);
-
-      rotation = rotation * normalRot;
+      mGroundClampBatch.clear();
    }
 
    //////////////////////////////////////////////////////////////////////
@@ -405,36 +425,67 @@ namespace dtGame
 
       osg::Vec3& position = xform.GetTranslation();
 
-      if (GetEyePointActor() != NULL && GetHighResGroundClampingRange() > 0.0f)
+      const osg::Vec3 vec = GetLastEyePoint();
+      if (GetEyePointActor() != NULL 
+            && GetHighResGroundClampingRange() > 0.0f
+            && (position - vec).length2() > mHighResClampRange2)
       {
-         const osg::Vec3 vec = GetLastEyePoint();
-
-         if ((position - vec).length2() > mHighResClampRange2)
-            ClampToGroundOnePoint(timeSinceUpdate, xform);
-         else
-            ClampToGroundThreePoint(timeSinceUpdate, xform, gameActorProxy, helper);
+         // this should be moved.
+         mGroundClampBatch.reserve(32);
+         mGroundClampBatch.push_back(std::make_pair(xform, &gameActorProxy));
+         if (mGroundClampBatch.size() == 32)
+            RunClampBatch();
       }
       else
       {
          ClampToGroundThreePoint(timeSinceUpdate, xform, gameActorProxy, helper);
+         position.z() += helper.GetGroundOffset();
+         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         {
+            std::ostringstream ss;
+            ss << "New ground-clamped actor position [" << position << "].";
+            
+            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
+         }
+         
+         gameActorProxy.GetGameActor().SetTransform(xform, dtCore::Transformable::REL_CS);
       }
       
-      position.z() += helper.GetGroundOffset();
-
-      if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-      {
-         std::ostringstream ss;
-         ss << "New ground-clamped actor position [" << position << "].";
-         
-         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
-      }
    }
 
+   bool DeadReckoningComponent::ShouldForceClamp(DeadReckoningHelper& helper, float deltaRealTime, bool bTransformChanged)
+   {
+      bool bForceClamp = false;
+      if (mForceClampInterval > 0)
+      {
+         float newForceClampInterval = helper.GetTimeUntilForceClamp() - deltaRealTime;
+         if (bTransformChanged)
+         {   
+            newForceClampInterval = mForceClampInterval;
+         }
+         else
+         {  
+            bForceClamp = newForceClampInterval < 0;
+
+            // reset the force clamp time if the transformed, which means it will be clamped anyway
+            // or the timer has elapsed
+            if (bForceClamp)
+               newForceClampInterval = mForceClampInterval;
+         }
+         
+         helper.SetTimeUntilForceClamp(newForceClampInterval);
+      }
+      return bForceClamp;
+   }
+   
    //////////////////////////////////////////////////////////////////////
    void DeadReckoningComponent::TickRemote(const dtGame::TickMessage& tickMessage)
    {
       if(!mIsector.valid())
          mIsector = new dtCore::BatchIsector;
+      
+      if(!mTripleIsector.valid())
+         mTripleIsector = new dtCore::BatchIsector;
 
       //Setup the iSector to use the player position only once so that get transform is not called
       //for every single actor to be clamped.
@@ -455,20 +506,6 @@ namespace dtGame
       else if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {         
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Setting the isector to not use an eye point.");
-      }
-
-      bool forceClamp = false;
-      mTimeUntilForceClamp -= tickMessage.GetDeltaSimTime();
-
-      if (mTimeUntilForceClamp <= 0.0f)
-      {
-         mTimeUntilForceClamp = ForceClampTime;
-         forceClamp = true;
-
-         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-         {
-            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Forcing a ground clamp on all entities.");
-         }
       }
 
       for (std::map<dtCore::UniqueId, dtCore::RefPtr<DeadReckoningHelper> >::iterator i = mRegisteredActors.begin();
@@ -522,7 +559,6 @@ namespace dtGame
          if (helper.GetRotationSmoothing() < 0.0) 
             helper.SetRotationSmoothing( 0.0 );
 
-
          //actual dead reckoning code moved into the helper..
          bool bShouldGroundClamp = false;
          bool bTransformChanged = helper.DoDR(gameActor, xform, mLogger, bShouldGroundClamp);
@@ -531,15 +567,20 @@ namespace dtGame
          if (helper.GetEffectiveUpdateMode(gameActor.IsRemote()) 
                == DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR)
          {
-            if (bTransformChanged || (forceClamp && bShouldGroundClamp))
+            bool bForceClamp = ShouldForceClamp(helper, tickMessage.GetDeltaRealTime(), bTransformChanged);
+            
+            if (bTransformChanged || (bForceClamp && bShouldGroundClamp))
             {
                //we could probably group these queries together...
                if (bShouldGroundClamp)
                {
                   ClampToGround(helper.GetTranslationSmoothing(), xform, gameActor.GetGameActorProxy(), helper);
                }
-            
-               gameActor.SetTransform(xform, dtCore::Transformable::REL_CS);
+               else
+               {
+                  gameActor.SetTransform(xform, dtCore::Transformable::REL_CS);
+               }
+               
                if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                {
                   std::ostringstream ss;
@@ -557,6 +598,9 @@ namespace dtGame
          //clear the updated flag.
          helper.ClearUpdated();
       }
+      
+      //Make sure the last of them ran.
+      RunClampBatch();
    }
 
    void DeadReckoningComponent::DoArticulation(dtGame::DeadReckoningHelper& helper,
