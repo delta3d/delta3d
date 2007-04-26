@@ -27,39 +27,84 @@
 
 #include <dtCore/refptr.h>
 
-#include <map>
+#include <list>
 #include <string>
 
 namespace dtAnim
 {
    class AnimationController;
 
+/**
+*  AnimationSequence derives from Animatable and contains a child list of 
+*  animations to play. The animations can be AnimationChannels or other 
+*  AnimationSequences.
+*
+*/
 class	DT_ANIM_EXPORT AnimationSequence: public Animatable
 {
 public:
-   typedef std::map<std::string, dtCore::RefPtr<Animatable> > AnimationContainer;
-   typedef AnimationContainer::allocator_type::value_type ContainerMapping;
+   typedef std::list<dtCore::RefPtr<Animatable> > AnimationContainer;
+   typedef AnimationContainer::allocator_type::value_type ContainerType;
 
 public:
    AnimationSequence();
 
+   /**
+   *  Add an animation as a child of this sequence.
+   *  @param the child animatable
+   */
    void AddAnimation(Animatable* pAnimation);
-   void RemoveAnimation(const std::string& pAnimName);
 
+   /**
+   * Fade out an animation by name.
+   * @param time in ms to fade out over
+   */
+   void ClearAnimation(const std::string& pAnimName, float fadeTime);
+
+   /**
+   *  Get a child animation by name
+   *  @return the child animation, or 0 if it isnt a child
+   */
    Animatable* GetAnimation(const std::string& pAnimName);
    const Animatable* GetAnimation(const std::string& pAnimName) const;
 
+   /**
+   *  Get the controller for this sequence
+   *  @return the controller for this sequence
+   */
    AnimationController* GetController();
    const AnimationController* GetController() const;
+
+   /**
+   *  Override the default controller
+   *  @param the new controller to use
+   */
    void SetController(AnimationController* pController);
 
-   AnimationContainer& GetActiveAnimations();
-   const AnimationContainer& GetActiveAnimations() const;
+   /**
+   * Get a reference to the child animations
+   * @return the container of child animations
+   */
+   AnimationContainer& GetChildAnimations();
+   const AnimationContainer& GetChildAnimations() const;
 
+   /**
+   * Our virtual update function 
+   * @param delta time
+   * @param the current weight of our parent
+   */
    /*virtual*/ void Update(float dt, float parent_weight);
 
+   /**
+   * Force fade out will make this animation and all child animations
+   * fade out over time
+   * @param the time to fade out over
+   */
    /*virtual*/ void ForceFadeOut(float time);
 
+   /**
+   * Getters and setters for the name
+   */
    /*virtual*/ const std::string& GetName() const;
    /*virtual*/ void SetName(const std::string& pName);
 
@@ -71,6 +116,8 @@ private:
 
    void Insert(Animatable* pAnimation);
    void Remove(const std::string& pAnim);
+   Animatable* GetAnimatable(const std::string& pAnim);   
+   const Animatable* GetAnimatable(const std::string& pAnim) const;
    void CalculateBaseWeight();
    void PruneChildren();
 

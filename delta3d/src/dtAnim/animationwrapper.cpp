@@ -25,12 +25,11 @@
 namespace dtAnim
 {
 
-AnimationWrapper::AnimationWrapper(int pAnimationID)
+AnimationWrapper::AnimationWrapper(const std::string& pName, int pAnimationID)
 : mAnimationID(pAnimationID)
 , mDuration(0.0f)
-, mSpeed(0.0f)
-, mLooped(true)
-, mName()
+, mSpeed(1.0f)
+, mName(pName)
 {
 }
 
@@ -63,16 +62,6 @@ float AnimationWrapper::GetSpeed() const
 void AnimationWrapper::SetSpeed(float pSpeed)
 {
    mSpeed = pSpeed;
-}
-
-bool AnimationWrapper::IsLooped() const
-{
-   return mLooped;
-}
-
-void AnimationWrapper::SetLooping(bool b)
-{
-   mLooped = b;
 }
 
 const std::string& AnimationWrapper::GetName() const

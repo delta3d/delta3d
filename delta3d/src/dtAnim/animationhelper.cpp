@@ -25,6 +25,10 @@
 #include <dtAnim/cal3dmodelwrapper.h>
 #include <dtAnim/cal3danimator.h>
 #include <dtAnim/ical3ddriver.h>
+#include <dtAnim/sequencemixer.h>
+#include <dtAnim/skeletalconfiguration.h>
+#include <dtAnim/animationsequence.h>
+#include <dtAnim/animationcontroller.h>
 
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/enginepropertytypes.h>
@@ -43,6 +47,8 @@ AnimationHelper::AnimationHelper(AnimNodeBuilder* pBuilder)
 : mGeode(0)
 , mAnimator(0)
 , mNodeBuilder(pBuilder)
+, mSequenceMixer(new SequenceMixer())
+, mSkeleton(new SkeletalConfiguration())
 {
 }
 
@@ -51,15 +57,25 @@ AnimationHelper::~AnimationHelper()
 {
 }
 
-osg::Geode* AnimationHelper::GetGeode()
+void AnimationHelper::Update(float dt)
 {
-   return mGeode.get();
+   if(mAnimator.valid())
+   {
+      mSequenceMixer->Update(dt);
+      mAnimator->Update(dt);
+   }
 }
 
-Cal3DAnimator* AnimationHelper::GetAnimator()
+void AnimationHelper::PlayAnimation(const std::string& pAnim)
 {
-   return mAnimator.get();
+   mSequenceMixer->PlayAnimation(pAnim);
 }
+
+void AnimationHelper::ClearAnimation(const std::string& pAnim, float fadeOutTime)
+{
+   mSequenceMixer->ClearAnimation(pAnim, fadeOutTime);
+}
+
 
 void AnimationHelper::LoadModel(const std::string& pFilename)
 {
@@ -83,6 +99,46 @@ void AnimationHelper::GetActorProperties(dtDAL::ActorProxy& pProxy, std::vector<
    pFillVector.push_back(new dtDAL::ResourceActorProperty(pProxy, dtDAL::DataType::SKELETAL_MESH,
       "Skeletal Mesh", "Skeletal Mesh", dtDAL::MakeFunctor(*this, &AnimationHelper::LoadModel),
       "The model resource that defines the skeletal mesh", "AnimationModel"));     
+}
+
+osg::Geode* AnimationHelper::GetGeode()
+{
+   return mGeode.get();
+}
+
+const osg::Geode* AnimationHelper::GetGeode() const
+{
+   return mGeode.get();
+}
+
+Cal3DAnimator* AnimationHelper::GetAnimator()
+{
+   return mAnimator.get();
+}
+
+const Cal3DAnimator* AnimationHelper::GetAnimator() const
+{
+   return mAnimator.get();
+}
+
+SequenceMixer* AnimationHelper::GetSequenceMixer()
+{
+   return mSequenceMixer.get();
+}
+
+const SequenceMixer* AnimationHelper::GetSequenceMixer() const
+{
+   return mSequenceMixer.get();
+}
+
+SkeletalConfiguration* AnimationHelper::GetSkeletalConfiguration()
+{
+   return mSkeleton.get();
+}
+
+const SkeletalConfiguration* AnimationHelper::GetSkeletalConfiguration() const
+{
+   return mSkeleton.get();
 }
 
 

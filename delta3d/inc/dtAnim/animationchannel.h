@@ -31,17 +31,44 @@ namespace dtAnim
    class AnimationWrapper;
    class Cal3DModelWrapper;
 
+/**
+*  AnimationChannel derives from Animatable and holds an AnimationWrapper, and 
+*  contains semantics for playing an animation using the Cal3DModelWrapper API.
+*/
 class	DT_ANIM_EXPORT AnimationChannel: public Animatable
 {
 
 public:
+   /**
+   * @param the model wrapper used to play animations with
+   * @param the animation wrapper to specify which animation to play
+   */
    AnimationChannel(Cal3DModelWrapper* pModelWrapper, AnimationWrapper* pAnimationWrapper);
 
+   /**
+   * The per frame update function.
+   * @param delta time
+   * @param the parents weight
+   */
    /*virtual*/ void Update(float dt, float parent_weight);
+
+   /**
+   * ForceFadeOut will ignore the EndTime and automatically fade out
+   * this animation over the time specified.
+   * 
+   * @param the time to fade out over
+   */
 
    /*virtual*/ void ForceFadeOut(float time);
 
+   /**
+   * @return the name of this animation
+   */
    /*virtual*/ const std::string& GetName() const;
+   
+   /**
+   * @param the name to set this animation to
+   */
    /*virtual*/ void SetName(const std::string& pName);
 
 protected:
