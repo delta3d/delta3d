@@ -1477,4 +1477,28 @@ namespace dtUtil
       return osg::RadiansToDegrees(atan2(cosPhiMN * sinf(ldiff), 
          (cosf(phi) * sinf(phiMN) - sinf(phi) * cosPhiMN * cosf(ldiff))));
    }
+
+   std::string Coordinates::XYZToMGRS(const osg::Vec3 &pos)
+   {
+      // preserve the old value
+      const dtUtil::IncomingCoordinateType &oldType = GetIncomingCoordinateType();
+
+      SetIncomingCoordinateType(dtUtil::IncomingCoordinateType::GEODETIC);
+      osg::Vec3d latLonElev = ConvertToRemoteTranslation(pos);
+
+      unsigned ewZone;
+      char nsZone;
+
+      CalculateUTMZone(latLonElev[0], latLonElev[1], ewZone, nsZone);
+
+      SetIncomingCoordinateType(dtUtil::IncomingCoordinateType::UTM);
+      osg::Vec3d eastingNorthingElev = ConvertToRemoteTranslation(pos);
+
+      std::string milgrid = 
+         ConvertUTMToMGRS(eastingNorthingElev.x(), eastingNorthingElev.y(), ewZone, nsZone, 5);
+
+      SetIncomingCoordinateType(oldType);
+
+      return milgrid;
+   }
 }

@@ -498,6 +498,8 @@ namespace dtUtil
           */
          static float CalculateMagneticNorthOffset(const float latitude, const float longitude); 
          
+         std::string XYZToMGRS(const osg::Vec3 &pos);
+
       private:
          
          Log* mLogger;
