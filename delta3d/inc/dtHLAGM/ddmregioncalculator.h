@@ -30,6 +30,11 @@
 #include <dtCore/base.h>
 #include <dtHLAGM/export.h>
 
+namespace dtDAL
+{
+   class ActorProperty;
+}
+
 namespace dtGame
 {
    class ActorUpdateMessage;
@@ -61,22 +66,30 @@ namespace dtHLAGM
           */
          virtual bool UpdateRegionData(DDMRegionData& ddmData) const = 0;
          
-         /**
-          * Sets a property value on the region calculator.  These properties are defined by the class, but 
-          * can be set generically using this method so that they can be put in the xml config file.
-          * @param name the name of the property to set
-          * @param value the value to set
-          */
-         virtual void SetProperty(const std::string& name, const std::string& value) = 0;
+         dtDAL::ActorProperty* GetProperty(const std::string& name);
 
-         /**
-          * @param name the name of the property to fetch.
-          * @param valueToFill an output parameter string to fill with the value of the property. It's value
-          *                    is undefined if the method returns false.
-          * @return true if the property exists or false if not.
-          */
-         virtual bool GetProperty(const std::string& name, std::string& valueToFill) = 0;
-        
+         template <class PropertyType>
+         void GetProperty(const std::string& name, PropertyType*& toSet)
+         {
+            dtDAL::ActorProperty* prop = GetProperty(name);
+            toSet = static_cast<PropertyType*>(prop);
+         }
+         
+         const dtDAL::ActorProperty* GetProperty(const std::string& name) const;
+
+         template <class PropertyType>
+         void GetProperty(const std::string& name, PropertyType*& toSet) const
+         {
+            const dtDAL::ActorProperty* prop = GetProperty(name);
+            toSet = static_cast<PropertyType*>(prop);
+         }
+
+         void GetAllProperties(std::vector<dtDAL::ActorProperty*> toFill);
+         
+      protected:
+         void AddProperty(dtDAL::ActorProperty& newProperty);
+      private:
+         std::map<std::string, dtCore::RefPtr<dtDAL::ActorProperty> > mProperties;
    };
 }
 

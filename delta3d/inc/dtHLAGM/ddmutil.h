@@ -34,6 +34,11 @@ namespace dtHLAGM
          static const unsigned long HLAGM_MIN_EXTENT;
          static const unsigned long HLAGM_MAX_EXTENT;
          
+         static const std::string DDM_SPACE_LABEL;
+         static const std::string DDM_SUBSPACE_EXTENT_LABEL;
+         static const std::string DDM_FIRST_EXTENT_LABEL;
+         static const std::string DDM_SECOND_EXTENT_LABEL;
+         
          /**
           * Maps an enumerated value into the MIN_EXTENT MAX_EXTENT range given the known min and max.
           * @param value the value to map
@@ -58,6 +63,8 @@ namespace dtHLAGM
           * @param max the maximum value, it should be greater than min.
           */
          static unsigned long MapLinear(double value, double min, double max);
+
+         unsigned long MapAppSpaceValue(unsigned spaceNumber);
    };
 
 }

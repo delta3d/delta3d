@@ -22,8 +22,8 @@
 #ifndef DELTA_ATTRIBUTE_TYPE
 #define DELTA_ATTRIBUTE_TYPE
 
-#include "dtHLAGM/export.h"
-#include "dtUtil/enumeration.h"
+#include <dtHLAGM/export.h>
+#include <dtUtil/enumeration.h>
 
 namespace dtHLAGM 
 {
