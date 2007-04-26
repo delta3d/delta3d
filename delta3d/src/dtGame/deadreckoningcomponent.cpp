@@ -416,7 +416,11 @@ namespace dtGame
       dtGame::GameActorProxy& gameActorProxy, DeadReckoningHelper& helper)
    {
       if (GetTerrainActor() == NULL)
+      {
+         //No terrain? just set the position and exit
+         gameActorProxy.GetGameActor().SetTransform(xform, dtCore::Transformable::REL_CS);
          return;
+      }
 
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {
