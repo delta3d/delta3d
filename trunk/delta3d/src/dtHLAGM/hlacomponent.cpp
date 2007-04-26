@@ -1889,10 +1889,15 @@ namespace dtHLAGM
    {
       for (unsigned i = 0; i < mDDMSubscriptionCalculators.GetSize(); ++i)
       {
-         /// if the region is actually changed.
+         // if the region is actually changed.
          if (mDDMSubscriptionCalculators[i]->UpdateRegionData(*mDDMSubscriptionRegions[i]))
          {
-            UpdateRegion(*mDDMSubscriptionRegions[i]);            
+            RTI::Region* r = mDDMSubscriptionRegions[i]->GetRegion();
+            UpdateRegion(*mDDMSubscriptionRegions[i]);
+            if (r != mDDMSubscriptionRegions[i]->GetRegion())
+            {
+               // TODO subscribe with new region.
+            }
          }
       }      
    }

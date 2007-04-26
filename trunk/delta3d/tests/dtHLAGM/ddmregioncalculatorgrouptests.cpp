@@ -1,6 +1,6 @@
 /* -*-c++-*-
  * Delta3D Open Source Game and Simulation Engine 
- * Copyright (C) 2006, Alion Science and Technology, BMH Operation.
+ * Copyright (C) 2007, Alion Science and Technology, BMH Operation.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free 
@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc., 
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
  *
- * @author David Guthrie
+ * David Guthrie
  */
 #include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
@@ -39,31 +39,6 @@ class TestDDMRegionCalculator : public dtHLAGM::DDMRegionCalculator
          return false;
       }
       
-      virtual void SetProperty(const std::string& name, const std::string& value)
-      {
-         if (!mProperties.insert(std::make_pair(name, value)).second)
-         {
-            std::map<std::string, std::string>::iterator i = mProperties.find(name);
-            if (i != mProperties.end())
-            {
-               i->second = value;
-            }
-         }
-      }
-
-      virtual bool GetProperty(const std::string& name, std::string& valueToFill)
-      {
-         std::map<std::string, std::string>::iterator i = mProperties.find(name);
-         if (i != mProperties.end())
-         {
-            valueToFill = i->second;
-            return true;
-         }
-         return false;
-      }
-
-   private:
-      std::map<std::string, std::string> mProperties;
 };
 
 class DDMRegionCalculatorGroupTests : public CPPUNIT_NS::TestFixture 
@@ -137,7 +112,6 @@ class DDMRegionCalculatorGroupTests : public CPPUNIT_NS::TestFixture
          CPPUNIT_ASSERT(mCalcGroup.GetCalculator(calc2Name) == NULL);
       }
       
-   
    private:
       dtHLAGM::DDMRegionCalculatorGroup mCalcGroup; 
 };

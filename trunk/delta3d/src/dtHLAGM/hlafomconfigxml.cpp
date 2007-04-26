@@ -34,6 +34,7 @@
 #include <dtUtil/log.h>
 
 #include <dtDAL/librarymanager.h>
+#include <dtDAL/actorproperty.h>
 #include <dtGame/gamemanager.h>
 
 #include <dtHLAGM/ddmregioncalculator.h>
@@ -540,11 +541,15 @@ namespace dtHLAGM
          {
             if (mCurrentDDMPublishingCalculator.valid())
             {
-               mCurrentDDMPublishingCalculator->SetProperty(mCurrentDDMPropertyName, characters);
+               dtDAL::ActorProperty* prop = mCurrentDDMPublishingCalculator->GetProperty(mCurrentDDMPropertyName);
+               if (prop != NULL)
+                  prop->FromString(characters);
             }
             if (mCurrentDDMSubscriptionCalculator.valid())
             {
-               mCurrentDDMSubscriptionCalculator->SetProperty(mCurrentDDMPropertyName, characters);               
+               dtDAL::ActorProperty* prop = mCurrentDDMSubscriptionCalculator->GetProperty(mCurrentDDMPropertyName);
+               if (prop != NULL)
+                  prop->FromString(characters);
             }
          }
       }
