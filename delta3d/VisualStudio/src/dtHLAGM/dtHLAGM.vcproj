@@ -28,7 +28,8 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="3"/>
+				DebugInformationFormat="3"
+				DisableSpecificWarnings="4290"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -78,7 +79,8 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="0"/>
+				DebugInformationFormat="0"
+				DisableSpecificWarnings="4290"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -126,6 +128,15 @@
 				RelativePath="..\..\..\src\dtHLAGM\attributetype.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtHLAGM\ddmcalculatorgeographic.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtHLAGM\ddmgeographicregiondata.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtHLAGM\ddmregioncalculator.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtHLAGM\ddmregioncalculatorgroup.cpp">
 			</File>
 			<File
@@ -168,6 +179,12 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtHLAGM\attributetype.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtHLAGM\ddmcalculatorgeographic.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtHLAGM\ddmgeographicregiondata.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtHLAGM\ddmregioncalculator.h">

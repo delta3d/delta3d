@@ -28,7 +28,9 @@
 
 #include <dtCore/refptr.h>
 #include <dtCore/base.h>
+#include <dtDAL/actorproperty.h>
 #include <dtHLAGM/export.h>
+#include <map>
 
 namespace dtDAL
 {

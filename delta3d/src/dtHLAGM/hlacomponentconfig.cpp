@@ -25,6 +25,8 @@
 
 #include <dtCore/globals.h>
 
+#include <dtDAL/actorproperty.h>
+
 #include <dtHLAGM/hlacomponentconfig.h>
 #include <dtHLAGM/exceptionenum.h>
 #include <dtHLAGM/hlacomponent.h>
