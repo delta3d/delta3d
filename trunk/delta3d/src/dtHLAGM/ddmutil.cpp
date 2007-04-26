@@ -56,7 +56,7 @@ namespace dtHLAGM
       for (unsigned i = 0; i < partitionValues.size() - 1; ++i)
       {
         if ((value >= partitionValues[i]) && (value < partitionValues[i+1]))
-           return(MapEnumerated(i, 0, partitionValues.size() - 2));
+           return(MapEnumerated(i, 0, (unsigned int)(partitionValues.size() - 2)));
       }
       return 0;
    }

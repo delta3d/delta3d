@@ -1,6 +1,5 @@
 
 #include <dtHLAGM/ddmregioncalculator.h>
-#include <dtDAL/actorproperty.h>
 
 namespace dtHLAGM
 {

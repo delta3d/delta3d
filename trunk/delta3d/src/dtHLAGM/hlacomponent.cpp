@@ -41,6 +41,7 @@
 #include <dtCore/globals.h>
 
 #include <dtDAL/actortype.h>
+#include <dtDAL/actorproperty.h>
 
 #include <dtGame/message.h>
 #include <dtGame/actorupdatemessage.h>
