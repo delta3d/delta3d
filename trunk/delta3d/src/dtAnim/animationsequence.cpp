@@ -37,7 +37,7 @@ struct AnimSequenceUpdater
    template<typename T>
    void operator()(T& pChild)
    {
-      pChild.second->Update(mDT, mParentWeight);
+      pChild->Update(mDT, mParentWeight);
    }
 
 private:
@@ -50,7 +50,7 @@ struct AnimSeqForceFade
    template<typename T>
    void operator()(T& pChild)
    {
-      pChild.second->ForceFadeOut(mTime);
+      pChild->ForceFadeOut(mTime);
    }
 
 private:
@@ -92,39 +92,41 @@ void AnimationSequence::AddAnimation(Animatable* pAnimation)
    Insert(pAnimation);
 }
 
-void AnimationSequence::RemoveAnimation(const std::string& pAnimName)
+void AnimationSequence::ClearAnimation(const std::string& pAnimName, float fadeTime)
 {
    Remove(pAnimName);
 }
 
 Animatable* AnimationSequence::GetAnimation(const std::string& pAnimName)
 {
-   AnimationContainer::iterator iter = mActiveAnimations.find(pAnimName);
-   if(iter == mActiveAnimations.end())
+   Animatable* anim = GetAnimatable(pAnimName);
+   if(anim == 0)
    {
       LOG_WARNING("Unable to find animation '" + pAnimName + "' in AnimationSequence '" + GetName() + "'." )
+      return 0;
    }
 
-   return (*iter).second.get();
+   return anim;
 }
 
 const Animatable* AnimationSequence::GetAnimation(const std::string& pAnimName) const
 {
-   AnimationContainer::const_iterator iter = mActiveAnimations.find(pAnimName);
-   if(iter == mActiveAnimations.end())
+   const Animatable* anim = GetAnimatable(pAnimName);
+   if(anim == 0)
    {
       LOG_WARNING("Unable to find animation '" + pAnimName + "' in AnimationSequence '" + GetName() + "'." )
+      return 0;
    }
 
-   return (*iter).second.get();
+   return anim;
 }
 
-AnimationSequence::AnimationContainer& AnimationSequence::GetActiveAnimations()
+AnimationSequence::AnimationContainer& AnimationSequence::GetChildAnimations()
 {
    return mActiveAnimations;
 }
 
-const AnimationSequence::AnimationContainer& AnimationSequence::GetActiveAnimations() const
+const AnimationSequence::AnimationContainer& AnimationSequence::GetChildAnimations() const
 {
    return mActiveAnimations;
 }
@@ -175,34 +177,70 @@ void AnimationSequence::PruneChildren()
 
    for(;iter != end; ++iter)
    {
-      if((*iter).second->Prune())
+      if((*iter)->Prune())
       {
-         //erasing from a map doesnt invalidate the iterator.. hurray!!!
-         mActiveAnimations.erase(iter);
+        iter = mActiveAnimations.erase(iter);
       }
    }
 }
 
 void AnimationSequence::Insert(Animatable* pAnimation)
 {
-   AnimationContainer::iterator iter = mActiveAnimations.find(pAnimation->GetName());
-   if(iter != mActiveAnimations.end())
+   if(GetAnimatable(pAnimation->GetName()) != 0)
    {
       LOG_WARNING("Trying to add already existing animation '" + pAnimation->GetName() + "' to AnimationSequence '" + GetName() + "'." )
    }
+   else
+   {
+      mActiveAnimations.push_back(pAnimation);
+   }
+}
 
-   mActiveAnimations.insert(ContainerMapping(pAnimation->GetName(), pAnimation));
+Animatable* AnimationSequence::GetAnimatable(const std::string& pAnim)
+{
+   AnimationContainer::iterator iter = mActiveAnimations.begin();
+   AnimationContainer::iterator end = mActiveAnimations.end();
+
+   for(;iter != end; ++iter)
+   {
+      if((*iter)->GetName() == pAnim)
+      {
+        return (*iter).get();
+      }
+   }
+   return 0;
+}
+
+const Animatable* AnimationSequence::GetAnimatable(const std::string& pAnim) const
+{
+   AnimationContainer::const_iterator iter = mActiveAnimations.begin();
+   AnimationContainer::const_iterator end = mActiveAnimations.end();
+
+   for(;iter != end; ++iter)
+   {
+      if((*iter)->GetName() == pAnim)
+      {
+        return (*iter).get();
+      }
+   }
+   return 0;
 }
 
 void AnimationSequence::Remove(const std::string& pAnim)
 {
-   AnimationContainer::iterator iter = mActiveAnimations.find(pAnim);
-   if(iter == mActiveAnimations.end())
+   AnimationContainer::iterator iter = mActiveAnimations.begin();
+   AnimationContainer::iterator end = mActiveAnimations.end();
+
+   for(;iter != end; ++iter)
    {
-      LOG_WARNING("Unable to remove animation '" + pAnim + "' from AnimationSequence '" + GetName() + "'." )
+      if((*iter)->GetName() == pAnim)
+      {
+        iter = mActiveAnimations.erase(iter);
+        return;
+      }
    }
 
-   mActiveAnimations.erase(iter);
+   LOG_WARNING("Unable to remove animation '" + pAnim + "' from AnimationSequence '" + GetName() + "'." )
 }
 
 }//namespace dtAnim

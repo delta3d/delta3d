@@ -30,23 +30,41 @@
 namespace dtAnim
 {
 
+/**
+* The AnimationWrapper is meant to be a wrapper around a Cal3D animation.
+* The wrapper is used to keep our API from passing Cal3D specific objects
+* and to attach additional information to the animation.
+*/
 class	DT_ANIM_EXPORT AnimationWrapper: public osg::Referenced
 {
 
 public:
-   AnimationWrapper(int pAnimationID);
+   AnimationWrapper(const std::string& pName, int pAnimationID);
 
+   /**
+   * The ID of the Animation Wrapper refers to the Cal3D animation ID
+   * @return the Cal3D animation ID 
+   */
    int GetID() const;
 
+   /**
+   * The duration of an animation is defined to be the amount of time
+   * it takes to play through a single cycle
+   */
    float GetDuration() const;
    void SetDuration(float duration);
 
+   /**
+   * The speed of an animation is defined to be a percentage of the 
+   * export speed, defaulting to 1.0
+   */
    float GetSpeed() const;
    void SetSpeed(float pSpeed);
 
-   bool IsLooped() const;
-   void SetLooping(bool b);
 
+   /**
+   *  The name of this animation as it is defined in the XML file
+   */
    const std::string& GetName() const;
    void SetName(const std::string& pName);
 
@@ -61,7 +79,6 @@ private:
    float mDuration;
 
    float mSpeed;
-   bool mLooped;
     
    std::string mName;
 };

@@ -61,7 +61,13 @@ void SequenceMixer::PlayAnimation(const std::string& pAnim)
    }
 }
 
-void SequenceMixer::FadeOutActiveAnimations(float time)
+void SequenceMixer::ClearAnimation(const std::string& pAnim, float time)
+{
+   mRootSequence->ClearAnimation(pAnim, time);
+}
+
+
+void SequenceMixer::ClearActiveAnimations(float time)
 {
    mRootSequence->ForceFadeOut(time);
 }
@@ -69,11 +75,6 @@ void SequenceMixer::FadeOutActiveAnimations(float time)
 void SequenceMixer::ClearRegisteredAnimations()
 {
    mAnimatables.clear();
-}
-
-void SequenceMixer::RemoveActiveAnimation(const std::string& pAnim)
-{
-   mRootSequence->RemoveAnimation(pAnim);
 }
 
 void SequenceMixer::RemoveRegisteredAnimation(const std::string& pAnim)
@@ -107,16 +108,16 @@ const Animatable* SequenceMixer::GetRegisteredAnimation(const std::string& pAnim
    return Lookup(pAnim);
 }
 
-void SequenceMixer::RegisterAnimation(const std::string& pAnim, Animatable* pAnimation)
+void SequenceMixer::RegisterAnimation(Animatable* pAnimation)
 {
-   AnimationTable::iterator iter = mAnimatables.find(pAnim);
+   AnimationTable::iterator iter = mAnimatables.find(pAnimation->GetName());
    if(iter != mAnimatables.end())
    {
-      LOG_WARNING("Animation '" + pAnim+ "' already added to SequenceMixer." )
+      LOG_WARNING("Animation '" + pAnimation->GetName() + "' already added to SequenceMixer." )
    }
    else
    {   
-      mAnimatables.insert(TableKey(pAnim, pAnimation));
+      mAnimatables.insert(TableKey(pAnimation->GetName(), pAnimation));
    }
 }
 
