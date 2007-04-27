@@ -33,7 +33,7 @@ Animatable::Animatable()
 , mElapsedTime(0.0f)
 , mBaseWeight(1.0f)
 , mCurrentWeight(0.0)
-, mActive(true)
+, mActive(false)
 , mLooping(true)
 , mPrune(false)
 {
