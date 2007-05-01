@@ -384,8 +384,8 @@ void ShaderManagerTests::TestShaderInstancesAreUnique()
 
       // We just use an int param for this test.  We aren't testing params in general, just that they
       // get their own copy.
-      dtCore::RefPtr<dtCore::ShaderParameterInt> intParam = 
-         new dtCore::ShaderParameterInt("intTest");
+      dtCore::RefPtr<dtCore::ShaderParamInt> intParam = 
+         new dtCore::ShaderParamInt("intTest");
       intParam->SetValue(29);
       shader->AddParameter(*intParam);
 
@@ -408,7 +408,7 @@ void ShaderManagerTests::TestShaderInstancesAreUnique()
 
       dtCore::ShaderParameter *newParam1 = newShader1->FindParameter("intTest");
       CPPUNIT_ASSERT_MESSAGE("The new shader instance should have the int param", newParam1 != NULL);
-      dtCore::ShaderParameterInt *newIntParam1 = dynamic_cast<dtCore::ShaderParameterInt *>(newParam1);
+      dtCore::ShaderParamInt *newIntParam1 = dynamic_cast<dtCore::ShaderParamInt *>(newParam1);
       CPPUNIT_ASSERT_MESSAGE("The new shader instance should be an int param", newIntParam1 != NULL);
 
       CPPUNIT_ASSERT_EQUAL_MESSAGE("New int param should initially have the same value", 
@@ -420,7 +420,7 @@ void ShaderManagerTests::TestShaderInstancesAreUnique()
       // Make sure the 2nd shader didn't get changed either.
       dtCore::ShaderParameter *newParam2 = newShader2->FindParameter("intTest");
       CPPUNIT_ASSERT_MESSAGE("The new shader instance should have the int param", newParam2 != NULL);
-      dtCore::ShaderParameterInt *newIntParam2 = dynamic_cast<dtCore::ShaderParameterInt *>(newParam2);
+      dtCore::ShaderParamInt *newIntParam2 = dynamic_cast<dtCore::ShaderParamInt *>(newParam2);
       CPPUNIT_ASSERT_MESSAGE("The new shader instance should be an int param", newIntParam2 != NULL);
       CPPUNIT_ASSERT_MESSAGE("New int param should NOT be the same as the 2nd int param instance", 
          newIntParam1->GetValue() != newIntParam2->GetValue());
@@ -613,7 +613,7 @@ void ShaderManagerTests::TestIntXMLParam()
       CPPUNIT_ASSERT(param != NULL);
       CPPUNIT_ASSERT_EQUAL(dtCore::ShaderParameter::ParamType::INT,param->GetType());
 
-      dtCore::ShaderParameterInt *intParam = static_cast<dtCore::ShaderParameterInt*>(param);
+      dtCore::ShaderParamInt *intParam = static_cast<dtCore::ShaderParamInt*>(param);
       CPPUNIT_ASSERT(intParam != NULL);
       CPPUNIT_ASSERT_EQUAL(25,intParam->GetValue());
    }
