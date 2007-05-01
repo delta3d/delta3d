@@ -22,10 +22,10 @@
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtUtil/exception.h>
 #include <dtUtil/fileutils.h>
-#include <dtCore/texture2dshaderparameter.h>
-#include <dtCore/floatshaderparameter.h>
-#include <dtCore/integershaderparameter.h>
-#include <dtCore/shaderparameterfloattimer.h>
+#include <dtCore/shaderparamtexture2d.h>
+#include <dtCore/shaderparamfloat.h>
+#include <dtCore/shaderparamint.h>
+#include <dtCore/shaderparamoscillator.h>
 #include <dtCore/globals.h>
 #include <dtCore/system.h>
 

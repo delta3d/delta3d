@@ -26,10 +26,10 @@
 //#include <dtDAL/project.h>
 #include <dtCore/shadermanager.h>
 #include <dtCore/shader.h>
-#include <dtCore/texture2dshaderparameter.h>
-#include <dtCore/integershaderparameter.h>
-#include <dtCore/floatshaderparameter.h>
-#include <dtCore/shaderparameterfloattimer.h>
+#include <dtCore/shaderparamtexture2d.h>
+#include <dtCore/shaderparamint.h>
+#include <dtCore/shaderparamfloat.h>
+#include <dtCore/shaderparamoscillator.h>
 #include <dtCore/globals.h>
 #include <osg/Geode>
 
