@@ -238,9 +238,18 @@ int Cal3DModelWrapper::GetParentBoneID(unsigned int boneID) const
    return NULL_BONE;
 }
 
+
+/// This function assumes that every track in an animation has the same number of keyframes
 unsigned int Cal3DModelWrapper::GetCoreAnimationKeyframeCount( int animID ) const
 {
-   return mCalModel->getCoreModel()->getCoreAnimation(animID)->getTotalNumberOfKeyframes();
+   CalCoreAnimation *pAnimation = mCalModel->getCoreModel()->getCoreAnimation(animID);
+   assert(pAnimation);
+
+   int numberOfTracks = pAnimation->getTrackCount();
+   int totalKeyFrames = pAnimation->getTotalNumberOfKeyframes();   
+   assert((totalKeyFrames % numberOfTracks) == 0);
+
+   return totalKeyFrames / numberOfTracks;
 }
 
 float Cal3DModelWrapper::GetCoreAnimationDuration( int animID ) const
