@@ -87,7 +87,7 @@ public:
       double ly = 1.0;
       double lz = 1.0;
 
-      //create ollision meshes
+      //create collision meshes
       obj1->SetCollisionMesh(); 
       obj2->SetCollisionBox();
       obj3->SetCollisionBox();
@@ -228,7 +228,7 @@ protected:
                float randomScale = RandFloat( 0.5f, 2.0f );
                xform.SetScale( randomScale, randomScale, randomScale );
             
-			   box->SetCollisionBox();
+               box->SetCollisionBox();
                box->SetTransform(xform);
             
                double lx = 1.0;
@@ -267,7 +267,7 @@ protected:
                float randomScale = RandFloat( 0.5f, 2.0f );
                xform.SetScale( randomScale, randomScale, randomScale );
                
-			   sphere->SetCollisionSphere();
+               sphere->SetCollisionSphere();
                sphere->SetTransform(xform);
                
                double radius = 0.5;
@@ -303,7 +303,7 @@ protected:
                float randomScale = RandFloat( 0.5f, 2.0f );
                xform.SetScale( randomScale, randomScale, randomScale );
                
-			   cyl->SetCollisionCappedCylinder();
+               cyl->SetCollisionCappedCylinder();
                cyl->SetTransform(xform);
                
                double radius = 0.321; 
