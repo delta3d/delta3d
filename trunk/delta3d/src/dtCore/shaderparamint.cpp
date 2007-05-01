@@ -19,7 +19,7 @@
  * Matthew W. Campbell, Curtiss Murphy
  */
 #include <prefix/dtcoreprefix-src.h>
-#include "dtCore/integershaderparameter.h"
+#include "dtCore/shaderparamint.h"
 #include <osg/Uniform>
 #include <osg/StateSet>
 

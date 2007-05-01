@@ -22,7 +22,7 @@
 #ifndef DELTA_TEXTURE2DSHADERPARAMETER
 #define DELTA_TEXTURE2DSHADERPARAMETER
 
-#include <dtCore/textureshaderparameter.h>
+#include <dtCore/shaderparamtexture.h>
 #include <dtCore/export.h>
 
 namespace dtCore

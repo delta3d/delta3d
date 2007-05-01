@@ -20,7 +20,7 @@
  */
 
 #include <prefix/dtcoreprefix-src.h>
-#include <dtCore/texture2dshaderparameter.h>
+#include <dtCore/shaderparamtexture2d.h>
 #include <dtUtil/exception.h>
 #include <dtCore/refptr.h>
 
