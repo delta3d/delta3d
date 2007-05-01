@@ -48,18 +48,25 @@ public:
 
    //these are listed in the order in which they are called on update
    void SetPreDriver(ICal3DDriver* pDriver);
+   ICal3DDriver* GetPreDriver() const {return mPreDriver.get(); }
 
    void SetAnimationDriver(ICal3DDriver* pDriver);
+   ICal3DDriver* GetAnimationDriver() const {return mAnimDriver.get(); }
 
    void SetSkeletonDriver(ICal3DDriver* pDriver);
+   ICal3DDriver* GetSkeletonDriver() const {return mSkelDriver.get(); }
 
    void SetMorphTargetDriver(ICal3DDriver* pDriver);
+   ICal3DDriver* GetMorphTargetDriver() const {return mMorphDriver.get(); }
 
    void SetPhysiqueDriver(ICal3DDriver* pDriver);
+   ICal3DDriver* GetPhysiqueDriver() const {return mPhysiqueDriver.get(); }
 
    void SetSpringDriver(ICal3DDriver* pDriver);
+   ICal3DDriver* GetSpringDriver() const {return mSpringDriver.get(); }
 
    void SetPostDriver(ICal3DDriver* pDriver);
+   ICal3DDriver* GetPostDriver() const {return mPostDriver.get(); }
 
 protected:
       virtual ~Cal3DAnimator();
