@@ -22,8 +22,8 @@
 #define DELTA_SHADERXML
 
 #include "dtCore/export.h"
-#include "dtCore/textureshaderparameter.h"
 #include <dtCore/refptr.h>
+#include <dtCore/shaderparamtexture.h>
 #include <string>
 
 #include <xercesc/dom/DOMElement.hpp>
