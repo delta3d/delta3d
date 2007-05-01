@@ -36,14 +36,19 @@ namespace dtCore
    BatchIsector::BatchIsector(dtCore::Scene *scene) :
       mScene(scene)
    {
-      // TODO Set nodemask on query
+      for(int i = 0 ; i < 32; ++i)
+      {
+         mISectors[i] = new SingleISector(i);
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    BatchIsector::~BatchIsector()
    {
-      
-      mISectors.clear();
+      for(int i = 0 ; i < 32; ++i)
+      {
+         mISectors[i] = NULL;
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -62,10 +67,12 @@ namespace dtCore
       else
          intersectVisitor.setLODSelectionMode(osgUtil::IntersectVisitor::USE_SEGMENT_START_POINT_AS_EYE_POINT_FOR_LOD_LEVEL_SELECTION);
 
-      std::vector<dtCore::RefPtr<SingleISector> >::iterator iter = mISectors.begin();
-      for(; iter != mISectors.end(); ++iter)
+      for(int i = 0 ; i < 32; ++i)
       {
-         intersectVisitor.addLineSegment((*iter)->mLineSegment.get());
+         if(mISectors[i]->GetIsOn())
+         {
+            intersectVisitor.addLineSegment(mISectors[i]->mLineSegment.get());
+         }
       }
 
       intersectVisitor.setEyePoint(cameraEyePoint);
@@ -81,15 +88,19 @@ namespace dtCore
 
       if(intersectVisitor.hits())
       {
-         for(iter = mISectors.begin(); iter != mISectors.end(); ++iter)
+         for(int i = 0 ; i < 32; ++i)
          {
-            (*iter)->mHitList = intersectVisitor.getHitList((*iter)->mLineSegment.get());
-            if((*iter)->mCheckClosestDrawables == true)
+            if(mISectors[i]->GetIsOn())
             {
-               osg::NodePath &nodePath = (*iter)->mHitList[0].getNodePath();
-               (*iter)->mClosestDrawable = MapNodePathToDrawable(nodePath);
+               mISectors[i]->mHitList = intersectVisitor.getHitList(mISectors[i]->mLineSegment.get());
+               if(mISectors[i]->mCheckClosestDrawables == true)
+               {
+                  osg::NodePath &nodePath = mISectors[i]->mHitList[0].getNodePath();
+                  mISectors[i]->mClosestDrawable = MapNodePathToDrawable(nodePath);
+               }
             }
          }
+
          return true;
       }
       return false;
@@ -142,118 +153,72 @@ namespace dtCore
          drawables.pop();
    
          if (nodeCache.find(d->GetOSGNode()) != nodeCache.end())
-		 {
-			 // save the current result
-			 pCurrClosest = d;
-			 // iterate through the children
-			 drawables.empty();
-			 for (unsigned i = 0; i < d->GetNumChildren(); i++)
-			 {
-				 drawables.push(d->GetChild(i));
-			 }
-			 //return d;
-		 }
+		   {
+			   // save the current result
+			   pCurrClosest = d;
+			   // iterate through the children
+			   drawables.empty();
+			   for (unsigned i = 0; i < d->GetNumChildren(); i++)
+			   {
+				   drawables.push(d->GetChild(i));
+			   }
+			   //return d;
+		   }
       }
    
       return pCurrClosest;
    }
+
    ///////////////////////////////////////////////////////////////////////////////
    void BatchIsector::Reset()
    {
-      std::vector<dtCore::RefPtr<SingleISector> >::iterator iter = mISectors.begin();
-      for(; iter != mISectors.end(); ++iter)
-      {
-         (*iter)->ResetSingleISector();
-      }
+      StopUsingAllISectors();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   BatchIsector::SingleISector& BatchIsector::CreateOrGetISector(int nID)
+   BatchIsector::SingleISector& BatchIsector::EnableAndGetISector(int nIndexID)
    {
-      std::vector<dtCore::RefPtr<SingleISector> >::iterator iter = mISectors.begin();
-      for(; iter != mISectors.end(); ++iter)
-      {
-         if((*iter)->mIDForReference == nID)
-         {
-            return *(*iter).get();
-         }
-      }
+      CheckBoundsOnArray(nIndexID);
+      mISectors[nIndexID]->ToggleIsOn(true);
+      return *mISectors[nIndexID];
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   const BatchIsector::SingleISector& BatchIsector::GetSingleISector(int nIndexID)
+   {
+      CheckBoundsOnArray(nIndexID);
+      return *mISectors[nIndexID].get();
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void BatchIsector::StopUsingSingleISector(int nIndexID)
+   {
+      if(CheckBoundsOnArray(nIndexID) == false)
+         return;  
       
-      dtCore::RefPtr<SingleISector> tempSector = new SingleISector(nID);
-      mISectors.push_back(tempSector);
-      return *mISectors.back().get();
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   BatchIsector::SingleISector& BatchIsector::CreateOrGetISector(const std::string& nameOfISector)
-   {
-      std::vector<dtCore::RefPtr<SingleISector> >::iterator iter = mISectors.begin();
-      for(; iter != mISectors.end(); ++iter)
+      if(mISectors[nIndexID]->GetIsOn())
       {
-         if((*iter)->mNameForReference == nameOfISector)
-         {
-            return *(*iter).get();
-         }
+         mISectors[nIndexID]->ResetSingleISector();
       }
-
-      dtCore::RefPtr<SingleISector> tempSector = new SingleISector(nameOfISector);
-      mISectors.push_back(tempSector);
-      return *mISectors.back().get();
+      mISectors[nIndexID]->ToggleIsOn(false);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   BatchIsector::SingleISector& BatchIsector::AddSingleISector(int nID)
+   void BatchIsector::StopUsingAllISectors()
    {
-      dtCore::RefPtr<SingleISector> tempSector = new SingleISector(nID);
-      mISectors.push_back(tempSector);
-      return *mISectors.back().get();
+      for(int i = 0 ; i < 32; ++i)
+         StopUsingSingleISector(i);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   BatchIsector::SingleISector& BatchIsector::AddSingleISector(const std::string& nameOfISector)
+   bool BatchIsector::CheckBoundsOnArray(int index)
    {
-      dtCore::RefPtr<SingleISector> tempSector = new SingleISector(nameOfISector);
-      mISectors.push_back(tempSector);
-      return *mISectors.back().get();
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   const BatchIsector::SingleISector& BatchIsector::GetSingleISector(int nID)
-   {
-      return CreateOrGetISector(nID);
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   const BatchIsector::SingleISector& BatchIsector::GetSingleISector(const std::string& nameOfISector)
-   {
-      return CreateOrGetISector(nameOfISector);
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void BatchIsector::DeleteSingleISector(int nID)
-   {
-      std::vector<dtCore::RefPtr<SingleISector> >::iterator iter = mISectors.begin();
-      for(; iter != mISectors.end(); ++iter)
+      if(index < 0 || index > 31)
       {
-         if((*iter)->mIDForReference == nID)
-         {
-            mISectors.erase(iter);
-            return;
-         }
+         LOG_ERROR("You sent in a bad index to the batchISector");
+         return false;
       }
-   }
-   ///////////////////////////////////////////////////////////////////////////////
-   void BatchIsector::DeleteSingleISector(const std::string& nameOfISector)
-   {
-      std::vector<dtCore::RefPtr<SingleISector> >::iterator iter = mISectors.begin();
-      for(; iter != mISectors.end(); ++iter)
-      {
-         if((*iter)->mNameForReference == nameOfISector)
-         {
-            mISectors.erase(iter);
-            return;
-         }
-      }
+      return true;
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////////////

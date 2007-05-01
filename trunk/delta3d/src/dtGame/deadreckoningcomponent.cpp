@@ -235,7 +235,7 @@ namespace dtGame
 
       for (unsigned i = 0; i < 3; ++i)
       {
-         dtCore::BatchIsector::SingleISector& single = mTripleIsector->CreateOrGetISector(i);
+         dtCore::BatchIsector::SingleISector& single = mTripleIsector->EnableAndGetISector(i);
 
          //convert point to absolute space.
          points[i] = points[i] * m;
@@ -265,7 +265,7 @@ namespace dtGame
       {
          for (unsigned i = 0; i < 3; ++i)
          {
-            dtCore::BatchIsector::SingleISector& single = mTripleIsector->CreateOrGetISector(i);
+            dtCore::BatchIsector::SingleISector& single = mTripleIsector->EnableAndGetISector(i);
             if (single.GetNumberOfHits() > 0)
             {
                osg::Vec3 hp;
@@ -343,13 +343,14 @@ namespace dtGame
       }
       
       //I don't really like doing this, but there doesn't seem to be an efficient way to 
-      //reuse the ones that exist.  This should be revisited.
-      mIsector->DeleteAllISectors();
+      //reuse the ones that exist.  This should be revisited. - DID - AD 5/1/2007
+      //mIsector->DeleteAllISectors();
+      mIsector->Reset();
       mIsector->SetQueryRoot(mTerrainActor.get());
 
       for (unsigned i = 0; i < mGroundClampBatch.size(); ++i)
       {
-         dtCore::BatchIsector::SingleISector& single = mIsector->CreateOrGetISector(i);
+         dtCore::BatchIsector::SingleISector& single = mIsector->EnableAndGetISector(i);
          
          if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
          {
@@ -373,7 +374,7 @@ namespace dtGame
             osg::Matrix& rotation = xform.GetRotation();
             osg::Vec3& singlePoint = xform.GetTranslation();
 
-            dtCore::BatchIsector::SingleISector& single = mIsector->CreateOrGetISector(i);
+            dtCore::BatchIsector::SingleISector& single = mIsector->EnableAndGetISector(i);
             if (single.GetNumberOfHits() > 0)
             {
                single.GetHitPoint(hp, 0);
