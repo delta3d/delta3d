@@ -373,7 +373,7 @@ void ShaderParameterTests::TestIntParameter()
 {
    try
    {
-      dtCore::RefPtr<dtCore::ShaderParameterInt> param = new dtCore::ShaderParameterInt("test");
+      dtCore::RefPtr<dtCore::ShaderParamInt> param = new dtCore::ShaderParamInt("test");
       dtCore::RefPtr<osg::StateSet> ss = new osg::StateSet();
 
       CPPUNIT_ASSERT_MESSAGE("ShaderParamInt should have a default of 'false' for shared.", 
@@ -393,8 +393,8 @@ void ShaderParameterTests::TestIntParameter()
       CPPUNIT_ASSERT_EQUAL(25,value);
 
       // Test clone behavior
-      dtCore::RefPtr<dtCore::ShaderParameterInt> clonedParam = 
-         static_cast<dtCore::ShaderParameterInt *>(param->Clone());
+      dtCore::RefPtr<dtCore::ShaderParamInt> clonedParam = 
+         static_cast<dtCore::ShaderParamInt *>(param->Clone());
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Cloned value should be the same.", 
          clonedParam->GetValue(), param->GetValue());
       CPPUNIT_ASSERT_MESSAGE("Cloned param should be a different pointer.", 
@@ -416,7 +416,7 @@ void ShaderParameterTests::TestIntParameterShared()
 {
    try
    {
-      dtCore::RefPtr<dtCore::ShaderParameterInt> param = new dtCore::ShaderParameterInt("test");
+      dtCore::RefPtr<dtCore::ShaderParamInt> param = new dtCore::ShaderParamInt("test");
       dtCore::RefPtr<osg::StateSet> ss1 = new osg::StateSet();
       dtCore::RefPtr<osg::StateSet> ss2 = new osg::StateSet();
 
@@ -426,8 +426,8 @@ void ShaderParameterTests::TestIntParameterShared()
       osg::Uniform *uniform1 = ss1->getUniform(param->GetName());
 
       // Test clone behavior
-      dtCore::RefPtr<dtCore::ShaderParameterInt> clonedParam = 
-         static_cast<dtCore::ShaderParameterInt *>(param->Clone());
+      dtCore::RefPtr<dtCore::ShaderParamInt> clonedParam = 
+         static_cast<dtCore::ShaderParamInt *>(param->Clone());
       CPPUNIT_ASSERT_MESSAGE("Cloned param should be the same when shared.", 
          clonedParam == param);
       clonedParam->AttachToRenderState(*ss2);

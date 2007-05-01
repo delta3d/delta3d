@@ -30,7 +30,7 @@ namespace dtCore
    /**
     * This class is a shader parameter containing a single integer value.
     */
-   class DT_CORE_EXPORT ShaderParameterInt : public ShaderParameter
+   class DT_CORE_EXPORT ShaderParamInt : public ShaderParameter
    {
       public:
 
@@ -39,7 +39,7 @@ namespace dtCore
           * @param name Name given to this parameter.  If it is to be used in a hardware shader,
           *   this name must match the corresponding uniform variable in the shader.
           */
-         ShaderParameterInt(const std::string &name);
+         ShaderParamInt(const std::string &name);
 
          /**
           * Gets the type of this parameter.
@@ -79,7 +79,7 @@ namespace dtCore
          virtual ShaderParameter *Clone();
 
       protected:
-         virtual ~ShaderParameterInt();
+         virtual ~ShaderParamInt();
 
       private:
          int mValue;

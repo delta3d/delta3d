@@ -26,19 +26,19 @@
 namespace dtCore
 {
    ///////////////////////////////////////////////////////////////////////////////
-   ShaderParameterInt::ShaderParameterInt(const std::string &name) : ShaderParameter(name)
+   ShaderParamInt::ShaderParamInt(const std::string &name) : ShaderParameter(name)
    {
       SetShared(false); // ints are probably not intended to be shared by default.
       mValue = 0;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   ShaderParameterInt::~ShaderParameterInt()
+   ShaderParamInt::~ShaderParamInt()
    {
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ShaderParameterInt::AttachToRenderState(osg::StateSet &stateSet)
+   void ShaderParamInt::AttachToRenderState(osg::StateSet &stateSet)
    {
       osg::Uniform *intUniform = NULL;
 
@@ -59,7 +59,7 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ShaderParameterInt::Update()
+   void ShaderParamInt::Update()
    {
       if (!IsDirty() || GetUniformParam() == NULL)
          return;
@@ -69,16 +69,16 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   ShaderParameter *ShaderParameterInt::Clone()
+   ShaderParameter *ShaderParamInt::Clone()
    {
-      ShaderParameterInt *newParam;
+      ShaderParamInt *newParam;
       
       // Shared params are shared at the pointer level, exactly the same. Non shared are new instances
       if (IsShared())
          newParam = this;
       else
       {
-         newParam = new ShaderParameterInt(GetName());
+         newParam = new ShaderParamInt(GetName());
 
          newParam->SetDirty(false);
          newParam->mValue = mValue;

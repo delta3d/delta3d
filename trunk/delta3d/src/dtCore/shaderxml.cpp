@@ -544,7 +544,7 @@ namespace dtCore
    dtCore::RefPtr<ShaderParameter> ShaderXML::ParseIntParameter(xercesc::DOMElement *intElem,
          const std::string &paramName)
    {
-      dtCore::RefPtr<ShaderParameterInt> newParam = new ShaderParameterInt(paramName);
+      dtCore::RefPtr<ShaderParamInt> newParam = new ShaderParamInt(paramName);
 
       std::string value = GetElementAttribute(*intElem,ShaderXML::PARAM_ELEMENT_ATTRIBUTE_DEFAULTVALUE);
       if (!value.empty())
