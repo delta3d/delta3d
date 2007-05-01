@@ -60,6 +60,9 @@ namespace dtCore
 
          virtual ~BatchIsector();
 
+         ///////////////////////////////////////////////////////////////////////////
+         bool CheckBoundsOnArray(int index);
+
       public:
 
          ///////////////////////////////////////////////////////////////////////
@@ -67,13 +70,14 @@ namespace dtCore
          {
             friend class BatchIsector;
             public:
-               SingleISector(const std::string& nameForISector, bool checkClosestDrawables = false)
+               SingleISector(const int idForISector, const std::string& nameForISector, bool checkClosestDrawables = false)
                {
                   mCheckClosestDrawables = checkClosestDrawables;
                   mNameForReference = nameForISector;
                   mIDForReference = -1;
                   mClosestDrawable = NULL;
                   mLineSegment = new osg::LineSegment();
+                  mIsOn = false;
                }
 
                SingleISector(const int idForISector, bool checkClosestDrawables = false)
@@ -82,6 +86,7 @@ namespace dtCore
                   mIDForReference = idForISector;
                   mClosestDrawable = NULL;
                   mLineSegment = new osg::LineSegment();
+                  mIsOn = false;
                }
 
             protected:
@@ -136,11 +141,13 @@ namespace dtCore
                bool CheckForClosestDrawable()      {return mCheckClosestDrawables;}
                std::string GetReferenceName()      {return mNameForReference;}
                int GetReferenceID()                {return mIDForReference;}
+               bool GetIsOn()                      {return mIsOn;}
                ////////////////////////////////////////////////////////////////////
 
                ////////////////////////////////////////////////////////////////////
                // sets
                void SetToCheckForClosestDrawable(bool value) {mCheckClosestDrawables = value;}
+               void ToggleIsOn(bool value)         {mIsOn = value;}
                // other sets are purposely not here, you should not touch them
                ////////////////////////////////////////////////////////////////////
 
@@ -152,6 +159,7 @@ namespace dtCore
                bool                                mCheckClosestDrawables;
                std::string                         mNameForReference;
                int                                 mIDForReference;
+               bool                                mIsOn;
          };
 
 
@@ -181,27 +189,16 @@ namespace dtCore
          const Scene* GetScene() const { return mScene; }
 
          /// Create an isector if not made already, else makes one
-         SingleISector& CreateOrGetISector(int nID);
-         /// Create an isector if not made already, else makes one
-         SingleISector& CreateOrGetISector(const std::string& nameOfISector);
-
-         /// creates a single isector adds it to the list and returns the reference
-         SingleISector& AddSingleISector(int nID);
-
-         /// creates a single isector adds it to the list and returns the reference
-         SingleISector& AddSingleISector(const std::string& nameOfISector);
+         SingleISector& EnableAndGetISector(int nID);
 
          /// Get an SingleISector for reference vars
-         const SingleISector& GetSingleISector(int nID);
-         /// Get an SingleISector for reference vars
-         const SingleISector& GetSingleISector(const std::string& nameOfISector);
+         const SingleISector& GetSingleISector(int nIndexID);
 
          /// removes a single isector from the list
-         void DeleteSingleISector(int nID);
+         void StopUsingSingleISector(int nIndexID);
+         
          /// removes a single isector from the list
-         void DeleteSingleISector(const std::string& nameOfISector);
-         /// removes all isectors from the list
-         void DeleteAllISectors() {Reset(); mISectors.clear();}
+         void StopUsingAllISectors();
 
          /**
           * Ray traces the scene.
@@ -235,9 +232,9 @@ namespace dtCore
             BatchIsector& operator=( const BatchIsector& ); 
             BatchIsector( const BatchIsector& );
 
-            Scene*                              mScene;     // the scene in which we start at
+            Scene*                              mScene;           // the scene in which we start at
             dtCore::ObserverPtr<DeltaDrawable>  mQueryRoot;
-            std::vector<dtCore::RefPtr<SingleISector> >  mISectors;  // all the isectors to be sent down in one batch call.
+            dtCore::RefPtr<SingleISector>       mISectors[32];    // all the isectors to be sent down in one batch call.
    };
 } // namespace
 

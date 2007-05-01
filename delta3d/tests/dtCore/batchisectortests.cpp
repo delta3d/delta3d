@@ -55,7 +55,7 @@ class BatchISectorTests : public CPPUNIT_NS::TestFixture
          dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
          dtCore::System::GetInstance().Start();
 
-         mBatchIsector->CreateOrGetISector(0);
+         mBatchIsector->EnableAndGetISector(0);
       }
       
       void tearDown()
@@ -72,7 +72,7 @@ class BatchISectorTests : public CPPUNIT_NS::TestFixture
      
       void TestIntersection()
       {
-         dtCore::BatchIsector::SingleISector& iSector = mBatchIsector->CreateOrGetISector(0);
+         dtCore::BatchIsector::SingleISector& iSector = mBatchIsector->EnableAndGetISector(0);
 
          osg::Vec3 point1(0.0f, 0.0f, 1000.0f);
          osg::Vec3 point2(0.0f, 0.0f, -1000.0f);
@@ -102,14 +102,12 @@ class BatchISectorTests : public CPPUNIT_NS::TestFixture
          CPPUNIT_ASSERT(NULL == iSector.GetClosestDrawable());
       
             
-         CPPUNIT_ASSERT(mBatchIsector->Update(osg::Vec3(0,0,0)));
-         CPPUNIT_ASSERT(iSector.GetNumberOfHits() > 0);
-         CheckIsectorValues(height, expectedNormal);
-         CPPUNIT_ASSERT(iSector.GetClosestDrawable() == terrain.get());
+         CPPUNIT_ASSERT(!mBatchIsector->Update(osg::Vec3(0,0,0)));
                 
          mBatchIsector->SetQueryRoot(terrain.get());
          
          mBatchIsector->Reset();
+         iSector.ToggleIsOn(true);
          CPPUNIT_ASSERT(mBatchIsector->Update(osg::Vec3(0,0,0), true));
          CPPUNIT_ASSERT(iSector.GetNumberOfHits() > 0);
          CheckIsectorValues(height, expectedNormal);
@@ -118,6 +116,7 @@ class BatchISectorTests : public CPPUNIT_NS::TestFixture
 
          //0.0, 0.0, 0.0 should be within the LOD
          mBatchIsector->Reset();
+         iSector.ToggleIsOn(true);
          CPPUNIT_ASSERT(mBatchIsector->Update(osg::Vec3(3.0f, 11.5f, 9.4f), true));
          CPPUNIT_ASSERT(iSector.GetNumberOfHits() > 0);
          CheckIsectorValues(height, expectedNormal);
@@ -126,6 +125,7 @@ class BatchISectorTests : public CPPUNIT_NS::TestFixture
 
          //0.0, 0.0, 0.0 should NOT be within the LOD
          mBatchIsector->Reset();
+         iSector.ToggleIsOn(true);
          printf("iSector.GetNumberOfHits() %d\n", iSector.GetNumberOfHits());
          CPPUNIT_ASSERT(!mBatchIsector->Update(osg::Vec3(500000.0f, 938380.5f, 9.4f), false));
          CPPUNIT_ASSERT(iSector.GetNumberOfHits() == 0);
@@ -144,7 +144,7 @@ class BatchISectorTests : public CPPUNIT_NS::TestFixture
          osg::Vec3 hitPoint;
          osg::Vec3 normal;
 
-         dtCore::BatchIsector::SingleISector& iSector = mBatchIsector->CreateOrGetISector(0);
+         dtCore::BatchIsector::SingleISector& iSector = mBatchIsector->EnableAndGetISector(0);
 
          iSector.GetHitPoint(hitPoint, 0);
          iSector.GetHitPointNormal(normal, 0);
