@@ -154,9 +154,9 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   osg::Vec3 TransformableActorProxy::GetRotation()
+   osg::Vec3 TransformableActorProxy::GetRotation() const
    {
-      dtCore::Transformable *t = static_cast<dtCore::Transformable*>(GetActor());
+      const dtCore::Transformable *t = static_cast<const dtCore::Transformable*>(GetActor());
 
       dtCore::Transform trans;
       t->GetTransform(trans, dtCore::Transformable::REL_CS);
@@ -192,9 +192,9 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   osg::Vec3 TransformableActorProxy::GetTranslation()
+   osg::Vec3 TransformableActorProxy::GetTranslation() const
    {
-      dtCore::Transformable *t = static_cast<dtCore::Transformable*>(GetActor());
+      const dtCore::Transformable *t = static_cast<const dtCore::Transformable*>(GetActor());
       
       dtCore::Transform trans;
       t->GetTransform(trans, dtCore::Transformable::REL_CS);
@@ -226,9 +226,9 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   osg::Vec3 TransformableActorProxy::GetScale()
+   osg::Vec3 TransformableActorProxy::GetScale() const
    {
-      dtCore::Transformable *t = static_cast<dtCore::Transformable*>(GetActor());
+      const dtCore::Transformable *t = static_cast<const dtCore::Transformable*>(GetActor());
       
       dtCore::Transform trans;
       t->GetTransform(trans, dtCore::Transformable::REL_CS);

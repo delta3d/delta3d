@@ -71,7 +71,7 @@ namespace dtDAL
           * Gets the rotation of an object
           * @return The current rotation vector
           */
-         osg::Vec3 GetRotation();
+         osg::Vec3 GetRotation() const;
 
          /**
           * Sets the translation of an object
@@ -83,7 +83,7 @@ namespace dtDAL
           * Gets the translation of an object
           * @return The current translation
           */
-         osg::Vec3 GetTranslation();
+         osg::Vec3 GetTranslation() const;
 
          /**
           * Sets the scale of an object
@@ -95,7 +95,7 @@ namespace dtDAL
           * Gets the scale of an object
           * @return The current scale vector
           */
-         osg::Vec3 GetScale();
+         osg::Vec3 GetScale() const;
 
          /**
           * Called when the SetScale function is called
