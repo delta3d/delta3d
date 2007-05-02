@@ -243,6 +243,17 @@ unsigned int Cal3DModelWrapper::GetCoreAnimationKeyframeCount( int animID ) cons
    return mCalModel->getCoreModel()->getCoreAnimation(animID)->getTotalNumberOfKeyframes();
 }
 
+unsigned int Cal3DModelWrapper::GetCoreAnimationKeyframeCountForTrack(int animID, int boneID) const
+{
+   CalCoreAnimation *pAnimation = mCalModel->getCoreModel()->getCoreAnimation(animID);
+   assert(pAnimation);
+
+   CalCoreTrack *pTrack = pAnimation->getCoreTrack(boneID);
+   assert(pTrack);
+
+   return pTrack->getCoreKeyframeCount();
+}
+
 float Cal3DModelWrapper::GetCoreAnimationDuration( int animID ) const
 {
    return mCalModel->getCoreModel()->getCoreAnimation(animID)->getDuration();
