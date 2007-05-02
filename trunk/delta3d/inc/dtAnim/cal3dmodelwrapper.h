@@ -140,6 +140,9 @@ namespace dtAnim
          ///Get the total number of keyframes in this animation
          unsigned int GetCoreAnimationKeyframeCount(int animID) const;
 
+         ///Get the number of keyframes in the animation for a particular bone
+         unsigned int GetCoreAnimationKeyframeCountForTrack(int animID, int boneID) const;
+
          ///Get the duration of this animation (seconds?)
          float GetCoreAnimationDuration(int animID) const;
 
