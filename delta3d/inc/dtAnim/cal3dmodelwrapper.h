@@ -110,7 +110,7 @@ namespace dtAnim
          /// @param animid the core animation of interest.
          /// @param boneid the core bone within the animation, identifying the track.
          /// @param keyframeindex the keyframe array index of interest for the animation track.
-         /// @return the rotation values that cal3d is using, inverted into right hand coordinate frame.
+         /// @return the rotation values that cal3d is using, converted into right hand coordinate frame.
          osg::Quat GetCoreTrackKeyFrameQuat(unsigned int animid, unsigned int boneid, unsigned int keyframeindex) const;
 
          /// @param boneID the ID for the CalBone instance.
