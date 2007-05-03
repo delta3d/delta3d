@@ -140,8 +140,7 @@ osg::Quat Cal3DModelWrapper::GetCoreTrackKeyFrameQuat(unsigned int animid, unsig
    {
       CalCoreKeyframe* calKeyFrame = cct->getCoreKeyframe(keyframeindex);
       const CalQuaternion& calQuat = calKeyFrame->getRotation();
-      osg::Quat FixedQuat(calQuat.x, calQuat.y, calQuat.z, calQuat.w);
-      return FixedQuat.inverse();
+      return osg::Quat(calQuat.x, calQuat.y, calQuat.z, -calQuat.w);     
    }  
   
    return osg::Quat();
@@ -186,8 +185,7 @@ osg::Quat Cal3DModelWrapper::GetBoneRelativeRotation(unsigned int boneID) const
    if (bone)
    {
       const CalQuaternion& calQuat = bone->getRotation();
-      osg::Quat FixedQuat(calQuat.x, calQuat.y, calQuat.z, calQuat.w);
-      return FixedQuat.inverse();
+      return osg::Quat(calQuat.x, calQuat.y, calQuat.z, -calQuat.w);     
    }
 
    return osg::Quat();
