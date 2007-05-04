@@ -329,11 +329,9 @@ namespace dtDAL
       //Now copy all of the properties from this proxy to the clone.
       for (unsigned i = 0; i < mProperties.size(); ++i)
       {
-         copy->mProperties[i]->CopyFrom(*mProperties[i]);
+         if (!mProperties[i]->IsReadOnly())
+            copy->mProperties[i]->CopyFrom(*mProperties[i]);
       }
-
-      //Now copy all the resource descriptors from this proxy to the clone.
-      copy->mResourceMap = mResourceMap;
 
       return copy;
    }
