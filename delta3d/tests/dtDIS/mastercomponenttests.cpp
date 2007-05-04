@@ -30,7 +30,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION( MasterComponentTests );
 
 void MasterComponentTests::Test()
 {
-   dtUtil::Log::GetInstance().SetLogLevel( dtUtil::Log::LOG_DEBUG );
+   //dtUtil::Log::GetInstance().SetLogLevel( dtUtil::Log::LOG_DEBUG );
 
    // get a GM going
    dtCore::RefPtr<dtCore::Scene> tscene = new dtCore::Scene();
