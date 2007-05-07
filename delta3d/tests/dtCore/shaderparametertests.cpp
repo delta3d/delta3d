@@ -48,7 +48,7 @@ const std::string projectContext = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR
 class TestShaderParameterFloatTimer : public dtCore::ShaderParamOscillator
 {
 public:
-   TestShaderParameterFloatTimer::TestShaderParameterFloatTimer() : ShaderParamOscillator("test")
+   TestShaderParameterFloatTimer() : ShaderParamOscillator("test")
    {
    }
 
@@ -60,7 +60,7 @@ public:
 class TestShaderParamTexture2D : public dtCore::ShaderParamTexture2D
 {
 public:
-   TestShaderParamTexture2D::TestShaderParamTexture2D() : ShaderParamTexture2D("test")
+   TestShaderParamTexture2D() : ShaderParamTexture2D("test")
    {
    }
 
