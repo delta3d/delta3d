@@ -57,14 +57,6 @@
 #include <testActorLibrary/testactorlib.h>
 #include <testActorLibrary/testdalenvironmentactor.h>
 
-#ifdef _MSC_VER
-   #pragma warning(disable : 4005)
-      #include <rbody/config_error.h>
-   #pragma warning(default : 4005) 
-#else
-   #include <rbody/config_error.h>
-#endif
-
 #include <cppunit/extensions/HelperMacros.h>
 
 ///////////////////////////////////////////////////////////////////////////////////////
