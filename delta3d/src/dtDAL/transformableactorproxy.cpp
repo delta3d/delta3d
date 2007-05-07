@@ -103,7 +103,10 @@ namespace dtDAL
          GROUPNAME));
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /** 
+    * @note rotation parameter order is [0]=pitch, [1]=roll, [2]=heading which
+    * is different than dtCore::Transform::SetRotation().
+    */
    void TransformableActorProxy::SetRotation(const osg::Vec3 &rotation)
    {
       dtCore::Transformable *t = static_cast<dtCore::Transformable*>(GetActor());
