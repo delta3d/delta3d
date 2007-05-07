@@ -49,7 +49,7 @@ HUDState HUDState::MAXIMUM("MAXIMUM");
 HUDState HUDState::NONE("NONE");
 
 //////////////////////////////////////////////////////////////////////////
-TestAARHUD::TestAARHUD(dtCore::DeltaWin *win,
+TestAARHUD::TestAARHUD(dtCore::DeltaWin &win,
                        dtGame::LogController &logController, 
                        dtGame::TaskComponent &taskComponent,
                        dtGame::ServerLoggerComponent &serverLogger)
@@ -59,7 +59,7 @@ TestAARHUD::TestAARHUD(dtCore::DeltaWin *win,
    mLogController(&logController),
    mTaskComponent(&taskComponent),
    mServerLoggerComponent(&serverLogger),
-   mWin(win),
+   mWin(&win),
    mMainWindow(NULL),
    mGUI(NULL),
    mHUDOverlay(NULL),
@@ -127,7 +127,7 @@ void TestAARHUD::ProcessMessage(const dtGame::Message& message)
 }
 
 //////////////////////////////////////////////////////////////////////////
-void TestAARHUD::SetupGUI(dtCore::DeltaWin *win)
+void TestAARHUD::SetupGUI(dtCore::DeltaWin &win)
 {
    char clin[HUDCONTROLMAXTEXTSIZE]; // general buffer to print
    float curYPos;
@@ -137,7 +137,7 @@ void TestAARHUD::SetupGUI(dtCore::DeltaWin *win)
    try
    {
       // Initialize CEGUI
-      mGUI = new dtGUI::CEUIDrawable(win);
+      mGUI = new dtGUI::CEUIDrawable(&win);
 
       std::string scheme = "gui/schemes/WindowsLook.scheme";
       std::string path = dtCore::FindFileInPathList(scheme);

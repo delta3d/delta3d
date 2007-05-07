@@ -79,7 +79,7 @@ class TEST_AAR_EXPORT TestAARHUD : public dtGame::GMComponent
       /**
        * Constructs the test application.
        */
-      TestAARHUD(dtCore::DeltaWin *win, 
+      TestAARHUD(dtCore::DeltaWin &win, 
                  dtGame::LogController &logController, 
                  dtGame::TaskComponent &taskComponent,
                  dtGame::ServerLoggerComponent &serverLogger);
@@ -100,7 +100,7 @@ class TEST_AAR_EXPORT TestAARHUD : public dtGame::GMComponent
       /**
        * Sets up the basic GUI.
        */
-      void SetupGUI(dtCore::DeltaWin *win);
+      void SetupGUI(dtCore::DeltaWin &win);
 
       /**
        * Cycles HUD state to the next most data.  From minimal, to moderate, to max,
