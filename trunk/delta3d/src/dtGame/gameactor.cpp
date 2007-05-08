@@ -290,8 +290,19 @@ namespace dtGame
          {
             dtDAL::ActorActorProperty *aap = static_cast<dtDAL::ActorActorProperty*>(property);
             const ActorMessageParameter* amp = static_cast<const ActorMessageParameter*>(params[i]);
-            dtGame::GameActorProxy* valueProxy = GetGameManager()->FindGameActorById(amp->GetValue());
-            aap->SetValue(valueProxy);
+            if( GetGameManager() != NULL )
+            {
+               dtGame::GameActorProxy* valueProxy = GetGameManager()->FindGameActorById(amp->GetValue());
+               aap->SetValue(valueProxy);
+            }
+            else
+            {
+               std::stringstream ss;
+               ss << GetActorType().GetName().c_str() << "." << GetClassName().c_str() 
+                  << " GameActorProxy (" << GetId().ToString().c_str() 
+                  << ") could not access the GameManager." << std::endl;
+               LOG_ERROR( ss.str() );
+            }
          }
          else
          {
