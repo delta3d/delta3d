@@ -24,6 +24,7 @@
 
 #include <dtAnim/export.h>
 #include <osg/Referenced>
+#include <dtCore/refptr.h>
 
 #include <string>
 
@@ -47,18 +48,32 @@ protected:
 public:
    
    /**
-   * The start time is the time in ms this animation will start playing 
+   * The start time is the time in seconds this animation will start playing 
    * after it was added to an AnimationSequence.
    */
    void SetStartTime(float t);
    float GetStartTime() const;
 
    /**
-   * The end time is the time in ms that this animation will start
+   * The start delay specifies how long in seconds this animation will delay once
+   * its parent has started playing.
+   */
+   void SetStartDelay(float t);
+   float GetStartDelay() const;
+
+   /**
+   * The end time is the time in seconds that this animation will start
    * fading out relative to when it was added to an AnimationSequence.
    */
    float GetEndTime() const;
    void SetEndTime(float t);
+
+   /**
+   * The elapsed time is the time in seconds since this animation has been
+   * added to the play list.
+   */
+   float GetElapsedTime() const;
+   void SetElapsedTime(float t);
 
    /**
    *  The FadeIn time, is the amount of time takes for an animation to blend
@@ -87,6 +102,7 @@ public:
    * this is calculated from the BaseWeight, linear blending from fades, and the parent weight
    */
    float GetCurrentWeight() const;
+   void SetCurrentWeight(float weight);
 
    /**
    *  An animation is active if it is currently playing.
@@ -95,25 +111,42 @@ public:
    void SetActive(bool b);
 
    /**
-   *  If an animation is not looping then it will be considered an action
-   *  and the blend weights will be ignored.
+   *  The speed of an animation is the percentage relative to the actual speed
+   *  of playback.  It defaults to 1.0, a speed of 2.0 would play twice as fast.
    */
-   bool IsLooping() const;
-   void SetLooping(bool b);
+   float GetSpeed() const;
+   void SetSpeed(bool b);
 
    /**
    *  This flag specifies whether or not this animation has stopped playing
    */
-   bool Prune() const;
+   bool ShouldPrune() const;
+
+
+   /**
+   * This virtual function is called before this animation is removed from
+   * the system
+   */
+   virtual void Prune() = 0;
+
+   /**
+   *  This function is used to copy Animatables
+   */
+   virtual dtCore::RefPtr<Animatable> Clone() const = 0;
 
 
    /**
    *  The virtual update, should be called every frame
    *
    *  @param delta time
-   *  @param the parents weight to be multiplied to the base weight
    */
-   virtual void Update(float dt, float parent_weight) = 0;
+   virtual void Update(float dt) = 0;
+
+   /**
+   * Recalculate is called on PlayAnimation()
+   * it calculates the start and end times of our animation
+   */
+   virtual void Recalculate() = 0;
 
    /**
    * ForceFadeOut will ignore the EndTime and automatically fade out
@@ -135,16 +168,19 @@ public:
 
 protected:
 
-   void SetCurrentWeight(float weight);
    void SetPrune(bool b);
 
-   float mStartTime, mEndTime;
+
+   //user editable fields are: fade in, fade out, base weight, and speed
+
+   float mSpeed;
+   float mStartTime, mStartDelay, mEndTime;
    float mFadeIn, mFadeOut;
    float mElapsedTime;
 
    float mBaseWeight, mCurrentWeight;
 
-   bool mActive, mLooping, mPrune;
+   bool mActive, mShouldPrune;
 
 };
 

@@ -44,21 +44,56 @@ public:
    * @param the animation wrapper to specify which animation to play
    */
    AnimationChannel(Cal3DModelWrapper* pModelWrapper, AnimationWrapper* pAnimationWrapper);
+   
+   /**
+   *  This function copies the animation channel
+   */
+   virtual dtCore::RefPtr<Animatable> Clone() const;
+
+   /**
+   *  If an animation is not looping then it will be considered an action
+   *  and the blend weights will be ignored.
+   */
+   bool IsLooping() const;
+   void SetLooping(bool b);
+
+   /**
+   *  If an animation is an action it will play once and automatically delete itself
+   *  it will also be weighted to override all other conflicting animations.
+   */
+   bool IsAction() const;
+   void SetAction(bool b);
+
+   /**
+   *  The Max Duration will allow a user to set the amount of time this animation 
+   *  will play in seconds.
+   */
+   float GetMaxDuration() const;
+   void SetMaxDuration(float b);
 
    /**
    * The per frame update function.
    * @param delta time
-   * @param the parents weight
    */
-   /*virtual*/ void Update(float dt, float parent_weight);
+   /*virtual*/ void Update(float dt);
 
+   /**
+   * Recalculate is called on PlayAnimation()
+   * it calculates the start and end times of our animation
+   */
+   /*virtual*/ void Recalculate();
+
+   /**
+   * Prune is called before the animation is deleted.
+   */
+   /*virtual*/ void Prune();
+   
    /**
    * ForceFadeOut will ignore the EndTime and automatically fade out
    * this animation over the time specified.
    * 
    * @param the time to fade out over
    */
-
    /*virtual*/ void ForceFadeOut(float time);
 
    /**
@@ -71,11 +106,15 @@ public:
    */
    /*virtual*/ void SetName(const std::string& pName);
 
+
 protected:
    /*virtual*/ ~AnimationChannel();
 
 
 private:
+
+   bool mIsAction, mIsLooping;
+   float mMaxDuration;
 
    //todo, verify holding a refptr to the model wrapper is ok
    dtCore::RefPtr<Cal3DModelWrapper> mModelWrapper;

@@ -59,14 +59,6 @@ public:
    *  @param delta time
    */
    void Update(float dt);
-   
-   /**
-   *  PlayAnimation adds the given animation to active play list. Use this function
-   *  if the animation has not been registered with the mixer or if it is created dynamically.
-   *
-   *  @param An Animatable which could be an AnimationChannel or another Sequence
-   */
-   void PlayAnimation(Animatable* pAnim);
 
    /**
    *  PlayAnimation adds the given animation to active play list. Use this function

@@ -28,7 +28,10 @@ namespace dtAnim
 {
 
 AnimationChannel::AnimationChannel(Cal3DModelWrapper* pModelWrapper, AnimationWrapper* pAnimationWrapper)
-: mModelWrapper(pModelWrapper)
+: mIsAction(false)
+, mIsLooping(true)
+, mMaxDuration(0.0f)
+, mModelWrapper(pModelWrapper)
 , mAnimationWrapper(pAnimationWrapper)
 {
 }
@@ -37,39 +40,89 @@ AnimationChannel::AnimationChannel(Cal3DModelWrapper* pModelWrapper, AnimationWr
 AnimationChannel::~AnimationChannel()
 {
 }
-
-
-void AnimationChannel::Update(float dt, float parent_weight)
+//TODO should probably make a copy constructor for this
+dtCore::RefPtr<Animatable> AnimationChannel::Clone() const
 {
-   mElapsedTime += dt;
-   mCurrentWeight = parent_weight * mBaseWeight;
+   return new AnimationChannel(*this);
+}
 
-   if(mElapsedTime >= mStartTime)
+
+void AnimationChannel::Update(float dt)
+{
+   
+   if(mEndTime > 0.0f && mElapsedTime > mEndTime)
    {
-      if(mElapsedTime >= (mEndTime - mFadeOut))
+      SetPrune(true);
+   }
+   else if(!IsActive())
+   {
+      if(mIsAction)
       {
-         ForceFadeOut(mFadeOut);
+         mModelWrapper->ExecuteAction(mAnimationWrapper->GetID(), mFadeIn, mFadeOut);         
       }
       else
       {
-         if(!IsActive())
-         {
-            SetActive(true);       
-         }
+         mModelWrapper->BlendCycle(mAnimationWrapper->GetID(), mCurrentWeight, 0.0f);
+      }
 
-         float t = (mStartTime + mFadeIn) - mElapsedTime;
+      SetActive(true);
+   }
+   else
+   {
+      if(!mIsAction)
+      {
+         mModelWrapper->BlendCycle(mAnimationWrapper->GetID(), mCurrentWeight, 0.0f);
+      }         
+   }
 
-         mModelWrapper->BlendCycle(mAnimationWrapper->GetID(), mCurrentWeight, (t > 0.0f) ? t : 0.0f);
+}
+
+
+void AnimationChannel::Recalculate()
+{
+   if(GetEndTime() <= 0.0f)
+   {
+      if(!mIsLooping)
+      {
+         SetEndTime(GetStartTime() + mAnimationWrapper->GetDuration());
       }
    }
-   
+   else
+   {
+      SetEndTime(GetStartTime() + GetEndTime());
+   }
+
+}
+
+void AnimationChannel::Prune()
+{  
+   if(mActive)
+   {
+      if(mIsAction)
+      {
+         mModelWrapper->RemoveAction(mAnimationWrapper->GetID());
+      }
+      else
+      {
+         mModelWrapper->ClearCycle(mAnimationWrapper->GetID(), 0.0f);
+      }
+
+      mActive = false;
+   }   
 
 }
 
 void AnimationChannel::ForceFadeOut(float time)
 {
-   mPrune = true;
-   mModelWrapper->ClearCycle(mAnimationWrapper->GetID(), time);
+   SetPrune(true);
+
+   //only non actions can fade out, else by keeping active true
+   //we will do a remove action if necessary on prune
+   if(!mIsAction)
+   {
+      mModelWrapper->ClearCycle(mAnimationWrapper->GetID(), time);
+      SetActive(false);
+   }
 }
 
 const std::string& AnimationChannel::GetName() const
@@ -81,5 +134,37 @@ void AnimationChannel::SetName(const std::string& pName)
 {
    mAnimationWrapper->SetName(pName);
 }
+
+bool AnimationChannel::IsLooping() const
+{
+   return mIsLooping;
+}
+
+void AnimationChannel::SetLooping(bool b)
+{
+   mIsLooping = b;
+}
+
+
+bool AnimationChannel::IsAction() const
+{
+   return mIsAction;
+}
+
+void AnimationChannel::SetAction(bool b)
+{
+   mIsAction = b;
+}
+
+float AnimationChannel::GetMaxDuration() const
+{
+   return mMaxDuration;
+}
+
+void AnimationChannel::SetMaxDuration(float b)
+{
+   mMaxDuration = b;
+}
+
 
 }//namespace dtAnim
