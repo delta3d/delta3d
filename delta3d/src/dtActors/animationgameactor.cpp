@@ -25,6 +25,7 @@
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/actorproxyicon.h>
 #include <dtAnim/submesh.h>
+#include <dtAnim/skeletaldrawable.h>
 #include <dtAnim/cal3dloader.h>
 #include <dtAnim/cal3dmodelwrapper.h>
 #include <dtAnim/cal3danimator.h>
@@ -38,6 +39,7 @@
 #include <osg/Geode>
 #include <osg/Material>
 #include <osg/PolygonMode>
+#include <dtUtil/bits.h>
 
 #include <cstddef>  // for NULL
 
@@ -50,6 +52,8 @@ namespace dtActors
    const std::string AnimationGameActor::PropertyNames::ANIMATION_BLEND_WEIGHT("ANIMATION_BLEND_WEIGHT_");
    const std::string AnimationGameActor::PropertyNames::ANIMATION_BLEND_ID("ANIMATION_BLEND_ID_");
    const std::string AnimationGameActor::PropertyNames::ANIMATION_BLEND_DELAY("ANIMATION_BLEND_DELAY_");
+   const std::string AnimationGameActor::PropertyNames::RENDER_MODE("RENDER_MODE");
+   const std::string AnimationGameActor::PropertyNames::RENDER_MODE_LABEL("Render mode");
 
    //////////////////////////////////////////////////////////////////////////////
    /////////////////////////// BEGIN ACTOR //////////////////////////////////////
@@ -59,9 +63,13 @@ namespace dtActors
    AnimationGameActor::AnimationGameActor(dtGame::GameActorProxy &proxy)
       : dtGame::GameActor(proxy)
       , mModelGeode(new osg::Geode)
+      , mSkeletalGeode(new osg::Geode)
       , mModelLoader(new dtAnim::Cal3DLoader)
       , mAnimator( NULL )
+      , mRenderModeBits( RENDER_MODE_SKIN )
    {
+      mSkeletalGeode->setName("AnimationGameActor_mSkeletalGeode");
+      mSkeletalGeode->setNodeMask( 0x0 );  // will not be drawn
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -78,6 +86,10 @@ namespace dtActors
       {         
          mAnimator = new dtAnim::Cal3DAnimator(newModel.get());   
 
+         // support to draw the skeleton
+         mSkeletalGeode->addDrawable(new dtAnim::SkeletalDrawable(newModel.get()));
+
+         // support to draw the mesh
          if(newModel->BeginRenderingQuery()) 
          {
             int meshCount = newModel->GetMeshCount();
@@ -100,11 +112,43 @@ namespace dtActors
       }
    }
 
+   void AnimationGameActor::SetRenderMode(int bits)
+   {
+      mRenderModeBits = bits;
+
+      // parse the bits
+      if( RENDER_MODE_NONE == mRenderModeBits )
+      {
+         mModelGeode->setNodeMask( 0x0 );  // will not be drawn
+         mSkeletalGeode->setNodeMask( 0x0 );  // will not be drawn
+      }
+      else
+      {
+         mModelGeode->setNodeMask( 0x0 );  // will not be drawn
+         mSkeletalGeode->setNodeMask( 0x0 );  // will not be drawn
+
+         if( dtUtil::Bits::Has(mRenderModeBits,RENDER_MODE_SKIN) )
+         {
+            mModelGeode->setNodeMask( 0xffffffff );  // will be drawn
+         }
+         if( dtUtil::Bits::Has(mRenderModeBits,RENDER_MODE_BONES) )
+         {
+            mSkeletalGeode->setNodeMask( 0xffffffff );  // will be drawn
+         }
+      }
+   }
+
+   int AnimationGameActor::GetRenderMode() const
+   {
+      return mRenderModeBits;
+   }
+
    //////////////////////////////////////////////////////////////////////////////
    void AnimationGameActor::AddedToScene(dtCore::Scene* scene)
    {
       dtGame::GameActor::AddedToScene(scene);     
       GetMatrixNode()->addChild(mModelGeode.get());
+      GetMatrixNode()->addChild(mSkeletalGeode.get());
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -148,6 +192,14 @@ namespace dtActors
                                                 "Slot: animation parameter",
                                                 "no thanks editor",
                                                 false));
+
+      ///\todo make a UChar actor property and use it here.
+      AddProperty(new dtDAL::IntActorProperty(AnimationGameActor::PropertyNames::RENDER_MODE,
+                                              AnimationGameActor::PropertyNames::RENDER_MODE_LABEL,
+                                              dtDAL::MakeFunctor(myActor, &AnimationGameActor::SetRenderMode),
+                                              dtDAL::MakeFunctorRet(myActor, &AnimationGameActor::GetRenderMode),
+                                              "Bits to control what is rendered.",
+                                              "No idea what is meant by _group name_"));
    }
 
    //////////////////////////////////////////////////////////////////////////////

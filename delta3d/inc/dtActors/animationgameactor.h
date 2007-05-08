@@ -52,6 +52,17 @@ namespace dtActors
             static const std::string ANIMATION_BLEND_WEIGHT;
             static const std::string ANIMATION_BLEND_ID;
             static const std::string ANIMATION_BLEND_DELAY;
+            static const std::string RENDER_MODE;
+            static const std::string RENDER_MODE_LABEL;
+         };
+
+         /// used to describe what to render.
+         /// \todo should this be a dtUtil::Enumeration?
+         enum RenderModeBits
+         {
+            RENDER_MODE_NONE  =0,
+            RENDER_MODE_SKIN  =1<<0,
+            RENDER_MODE_BONES =1<<1,
          };
 
          /**
@@ -81,11 +92,18 @@ namespace dtActors
 
          virtual void TickLocal(const dtGame::Message& tickMessage);
 
+         void SetRenderMode(int bits);
+         int GetRenderMode() const;
+
       protected:      
 
          dtCore::RefPtr<osg::Geode>            mModelGeode;
+         dtCore::RefPtr<osg::Geode>            mSkeletalGeode;   ///< support to visualize the skeletal.
          dtAnim::Cal3DLoader                  *mModelLoader;
          dtCore::RefPtr<dtAnim::Cal3DAnimator> mAnimator;      
+
+         typedef unsigned char RenderModeBitContainer;
+         RenderModeBitContainer mRenderModeBits;
 
          /// Destroys this actor.     
          virtual ~AnimationGameActor();    

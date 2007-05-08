@@ -236,6 +236,24 @@ int Cal3DModelWrapper::GetParentBoneID(unsigned int boneID) const
    return NULL_BONE;
 }
 
+void Cal3DModelWrapper::GetCoreBoneChildrenIDs(int parentCoreBoneID, std::vector<int>& toFill) const
+{
+   std::list<int> childIdList = mCalModel->getCoreModel()->getCoreSkeleton()->getCoreBone(parentCoreBoneID)->getListChildId();
+
+   // prefer a container that is contiguous
+   toFill.clear();
+   std::list<int>::iterator listEnd=childIdList.end();
+   for(std::list<int>::iterator listIndex=childIdList.begin(); listIndex!=listEnd; ++listIndex)
+   {
+      toFill.push_back( *listIndex );
+   }
+}
+
+void Cal3DModelWrapper::GetRootBoneIDs(std::vector<int>& toFill) const
+{
+   toFill = mCalModel->getCoreModel()->getCoreSkeleton()->getVectorRootCoreBoneId();
+}
+
 unsigned int Cal3DModelWrapper::GetCoreAnimationKeyframeCount( int animID ) const
 {
    return mCalModel->getCoreModel()->getCoreAnimation(animID)->getTotalNumberOfKeyframes();
