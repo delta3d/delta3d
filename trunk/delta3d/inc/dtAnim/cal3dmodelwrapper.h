@@ -36,6 +36,8 @@
 #include <osg/Vec4>
 #include <osg/Vec3>
 
+#include <vector>                     // for param type
+
 namespace dtAnim
 {
    /**
@@ -136,6 +138,15 @@ namespace dtAnim
 
          ///Get the id of the parent to boneID
          int GetParentBoneID(unsigned int boneID) const;
+
+         /// Get the bone IDs of all children for a parent bone.
+         /// @param parentCoreBoneID the bone ID for the parent bone.
+         /// @param toFill a vector to be filled with the bone IDS for all child bones.
+         void GetCoreBoneChildrenIDs(int parentCoreBoneID, std::vector<int>& toFill) const;
+
+         /// Get all the root bone IDs
+         /// @param toFill a container of bone IDs consisting only of root bones.
+         void GetRootBoneIDs(std::vector<int>& toFill) const;
 
          ///Get the total number of keyframes in this animation
          unsigned int GetCoreAnimationKeyframeCount(int animID) const;

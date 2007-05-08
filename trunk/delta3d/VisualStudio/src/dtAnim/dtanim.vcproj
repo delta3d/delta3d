@@ -176,6 +176,9 @@
 				RelativePath="..\..\..\src\dtAnim\skeletalconfiguration.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtAnim\skeletaldrawable.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtAnim\skeletondriver.cpp">
 			</File>
 			<File
@@ -248,6 +251,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtAnim\skeletalconfiguration.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtAnim\skeletaldrawable.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtAnim\skeletondriver.h">
