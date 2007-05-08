@@ -132,6 +132,12 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
+				RelativePath="..\..\..\src\dtUtil\celestialmath.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtUtil\celestialmesh.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtUtil\coordinates.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -220,10 +226,19 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
+				RelativePath="..\..\..\inc\dtUtil\barycentric.h">
+			</File>
+			<File
 				RelativePath="..\..\..\inc\dtUtil\bits.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtUtil\breakoverride.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtUtil\celestialmath.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtUtil\celestialmesh.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtUtil\command.h">
