@@ -169,9 +169,7 @@ osg::Vec3 Cal3DModelWrapper::GetBoneAbsoluteTranslation(unsigned int boneID) con
    if (bone)
    {
       const CalVector& calvec = bone->getTranslationAbsolute();
-      // Cal3D has a left-hand coordinate system, so the X-axis must be reversed
-      // to make sense in OSG's right-hand system.
-      return osg::Vec3(-calvec.x, calvec.y, calvec.z);
+      return osg::Vec3(calvec.x, calvec.y, calvec.z);
    }
 
    return osg::Vec3();
