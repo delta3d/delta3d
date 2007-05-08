@@ -78,6 +78,7 @@ set DELTA_DATA=$(DELTA_DATA)
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="../../../inc;../../../ext/inc;../../../utilities;../../../examples;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;NOMINMAX;_NOAUTOLIBMSG;"
+				StringPooling="TRUE"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="3"
