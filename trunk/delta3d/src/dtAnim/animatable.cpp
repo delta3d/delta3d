@@ -26,7 +26,9 @@ namespace dtAnim
 {
 
 Animatable::Animatable()
-: mStartTime(0.0f)
+: mSpeed(1.0f)
+, mStartTime(0.0f)
+, mStartDelay(0.0f)
 , mEndTime(0.0f)
 , mFadeIn(0.0f)
 , mFadeOut(0.0f)
@@ -34,8 +36,7 @@ Animatable::Animatable()
 , mBaseWeight(1.0f)
 , mCurrentWeight(0.0)
 , mActive(false)
-, mLooping(true)
-, mPrune(false)
+, mShouldPrune(false)
 {
 }
 
@@ -54,6 +55,16 @@ void Animatable::SetStartTime(float t)
    mStartTime = t;
 }
 
+void Animatable::SetStartDelay(float t)
+{
+   mStartDelay = t;
+}
+
+float Animatable::GetStartDelay() const
+{ 
+   return mStartDelay;
+}
+
 float Animatable::GetEndTime() const
 {
    return mEndTime;
@@ -61,6 +72,16 @@ float Animatable::GetEndTime() const
 void Animatable::SetEndTime(float t)
 {
    mEndTime = t;
+}
+
+float Animatable::GetElapsedTime() const
+{
+   return mElapsedTime;
+}
+
+void Animatable::SetElapsedTime(float t)
+{
+   mElapsedTime = t;
 }
 
 float Animatable::GetFadeIn() const
@@ -107,20 +128,19 @@ void Animatable::SetActive(bool b)
    mActive = b;
 }
 
-bool Animatable::IsLooping() const
+float Animatable::GetSpeed() const
 {
-   return mLooping;
+   return mSpeed;
 }
 
-void Animatable::SetLooping(bool b)
+void Animatable::SetSpeed(bool b)
 {
-   mLooping = b;
+   mSpeed = b;
 }
 
-
-bool Animatable::Prune() const
+bool Animatable::ShouldPrune() const
 {
-   return mPrune;
+   return mShouldPrune;
 }
 
 void Animatable::SetCurrentWeight(float weight)
@@ -130,7 +150,8 @@ void Animatable::SetCurrentWeight(float weight)
 
 void Animatable::SetPrune(bool b)
 {
-   mPrune = b;
+   mShouldPrune = b;
 }
+
 
 }//namespace dtAnim

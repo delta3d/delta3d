@@ -24,25 +24,37 @@
 
 #include <dtAnim/export.h>
 #include <osg/Referenced>
+#include <dtCore/observerptr.h>
 
 namespace dtAnim
 {
+   class Animatable;
+   class AnimationSequence;
+
 
 class	DT_ANIM_EXPORT AnimationController: public osg::Referenced
 {
 
 public:
-   AnimationController();
+   AnimationController(AnimationSequence*);
 
-   virtual void Update(float dt, float parent_weight) = 0;
+   void SetParent(AnimationSequence*);
+
+   virtual void Update(float dt);
+   virtual void Recalculate();
 
 protected:
    virtual ~AnimationController();
 
+   void SetComputeWeight(Animatable* pAnim);
+   void SetComputeSpeed(Animatable* pAnim);
+
 
 private:
+   AnimationController(const AnimationController&);  //not implemented
+   AnimationController& operator=(const AnimationController&); //not implemented
 
-
+   dtCore::ObserverPtr<AnimationSequence> mParent;
 };
 
 }//namespace dtAnim

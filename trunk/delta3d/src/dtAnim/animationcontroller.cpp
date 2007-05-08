@@ -20,12 +20,40 @@
  */
 
 #include <dtAnim/animationcontroller.h>
-
+#include <dtAnim/animationsequence.h>
+#include <algorithm>
 
 namespace dtAnim
-{
+{ 
 
-AnimationController::AnimationController()
+   struct recalcFunctor
+   {
+      recalcFunctor(float pStart) : mStart(pStart), mEnd(0.0f) {}
+
+      float GetEnd()const
+      {
+         return mEnd;
+      }
+
+      template <typename T>
+      void operator()(T& pChild)
+      {
+         float delay = pChild->GetStartDelay();
+         pChild->SetStartTime(mStart + delay);
+         pChild->Recalculate();
+
+         //keep track of the maximum end time
+         float end = pChild->GetEndTime();
+         if(end > mEnd) mEnd = end;
+      }
+
+   private:
+      float mStart;
+      float mEnd;
+   };
+
+AnimationController::AnimationController(AnimationSequence* pParent)
+: mParent(pParent)
 {
 }
 
@@ -34,5 +62,60 @@ AnimationController::~AnimationController()
 {
 }
 
+void AnimationController::SetParent(AnimationSequence* pParent)
+{
+   mParent = pParent;
+}
+
+void AnimationController::Update(float dt)
+{
+   AnimationSequence::AnimationContainer& pCont = mParent->GetChildAnimations();
+   AnimationSequence::AnimationContainer::iterator iterEnd = pCont.end();
+
+   for(AnimationSequence::AnimationContainer::iterator iter = pCont.begin(); iter != iterEnd; ++iter)
+   {
+      Animatable* child = (*iter).get();
+
+      SetComputeWeight(child);
+      SetComputeSpeed(child);
+
+      child->SetElapsedTime(child->GetElapsedTime() + dt);
+
+      if(child->GetStartTime() > child->GetElapsedTime())
+      {
+         child->Update(dt);
+      }
+   }
+}
+
+void AnimationController::Recalculate()
+{
+   float start = mParent->GetStartTime();
+   AnimationSequence::AnimationContainer& pCont = mParent->GetChildAnimations();
+
+   recalcFunctor func(start);
+   std::for_each(pCont.begin(), pCont.end(), func);
+
+   mParent->SetEndTime(func.GetEnd());
+}
+
+//TODO
+void AnimationController::SetComputeWeight(Animatable* pAnim)
+{
+   //Compute Child Weight using fade in and out
+   float weight = mParent->GetCurrentWeight();
+  
+   //if(fade_in) weight * compute_fade_in_weight();
+   //else if(fade_out) weight * compute_fade_out_weight();
+
+   pAnim->SetCurrentWeight(weight * pAnim->GetBaseWeight());
+
+}
+
+//TODO
+void AnimationController::SetComputeSpeed(Animatable* pAnim)
+{
+
+}
 
 }//namespace dtAnim

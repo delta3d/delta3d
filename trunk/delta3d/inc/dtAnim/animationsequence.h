@@ -48,6 +48,8 @@ public:
 
 public:
    AnimationSequence();
+   AnimationSequence(AnimationController*);
+
 
    /**
    *  Add an animation as a child of this sequence.
@@ -57,7 +59,7 @@ public:
 
    /**
    * Fade out an animation by name.
-   * @param time in ms to fade out over
+   * @param time in seconds to fade out over
    */
    void ClearAnimation(const std::string& pAnimName, float fadeTime);
 
@@ -91,9 +93,24 @@ public:
    /**
    * Our virtual update function 
    * @param delta time
-   * @param the current weight of our parent
    */
-   /*virtual*/ void Update(float dt, float parent_weight);
+   /*virtual*/ void Update(float dt);
+
+   /**
+   * Prune is called before the animation is deleted.
+   */
+   /*virtual*/ void Prune();
+
+   /**
+   *  This function copies sequence and all child Animatables
+   */
+   virtual dtCore::RefPtr<Animatable> Clone() const;
+
+   /**
+   * Recalculate is called on PlayAnimation()
+   * it calculates the start and end times of our animation
+   */
+   /*virtual*/ void Recalculate();
 
    /**
    * Force fade out will make this animation and all child animations

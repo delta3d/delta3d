@@ -22,6 +22,7 @@
 #include <dtAnim/animationsequence.h>
 #include <dtAnim/animatable.h>
 #include <dtAnim/animationcontroller.h>
+#include <dtCore/refptr.h>
 #include <dtUtil/log.h>
 
 #include <algorithm>
@@ -57,18 +58,49 @@ private:
    float mTime;
 };
 
+struct CloneFunctor
+{
+   CloneFunctor(AnimationSequence* pSeq): mSequence(pSeq){}
+   template<typename T>
+   void operator()(T& pChild)
+   {
+      dtCore::RefPtr<Animatable> pAnim = pChild->Clone();
+      mSequence->AddAnimation(pAnim.get());
+   }
+
+private:
+   AnimationSequence* mSequence;
+};
+
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 AnimationSequence::AnimationSequence()
 : mName()
-, mController(0)
+, mController()
 , mActiveAnimations()
 {
+   //vs complains about using this in initializer list
+   mController = new AnimationController(this);
+}
+
+AnimationSequence::AnimationSequence(AnimationController* pController)
+: mName()
+, mController(pController)
+, mActiveAnimations()
+{
+   mController->SetParent(this);
 }
 
 
 AnimationSequence::~AnimationSequence()
 {
+}
+
+dtCore::RefPtr<Animatable> AnimationSequence::Clone() const
+{
+   dtCore::RefPtr<AnimationSequence> pAnim = new AnimationSequence();
+   std::for_each(mActiveAnimations.begin(), mActiveAnimations.end(), CloneFunctor(pAnim.get()));
+   return pAnim.get();
 }
 
 const AnimationController* AnimationSequence::GetController() const
@@ -84,12 +116,14 @@ AnimationController* AnimationSequence::GetController()
 void AnimationSequence::SetController(AnimationController* pController) 
 {
    mController = pController;
+   mController->SetParent(this);
 }
 
 
 void AnimationSequence::AddAnimation(Animatable* pAnimation)
 {
    Insert(pAnimation);
+   Recalculate();
 }
 
 void AnimationSequence::ClearAnimation(const std::string& pAnimName, float fadeTime)
@@ -132,19 +166,24 @@ const AnimationSequence::AnimationContainer& AnimationSequence::GetChildAnimatio
 }
 
 
-void AnimationSequence::Update(float dt, float parent_weight)
+void AnimationSequence::Update(float dt)
 {
-   PruneChildren();
-   CalculateBaseWeight();
-   SetCurrentWeight(GetBaseWeight() * parent_weight);
-
    if(mController.valid())
    {
-      mController->Update(dt, parent_weight);
+      mController->Update(dt);
    }
 
-   //update all children
-   std::for_each(mActiveAnimations.begin(), mActiveAnimations.end(), AnimSequenceUpdater(dt, GetCurrentWeight()));
+   PruneChildren();
+
+   if(mActiveAnimations.empty())
+   {
+      SetPrune(true);
+   }
+}
+
+void AnimationSequence::Recalculate()
+{
+   mController->Recalculate();
 }
 
 //TODO
@@ -170,6 +209,18 @@ void AnimationSequence::SetName(const std::string& pName)
    mName = pName;
 }
 
+void AnimationSequence::Prune()
+{
+   AnimationContainer::iterator iter = mActiveAnimations.begin();
+   AnimationContainer::iterator end = mActiveAnimations.end();
+
+   for(;iter != end; ++iter)
+   {
+      (*iter)->Prune();
+      iter = mActiveAnimations.erase(iter);      
+   }
+}
+
 void AnimationSequence::PruneChildren()
 {
    AnimationContainer::iterator iter = mActiveAnimations.begin();
@@ -177,8 +228,9 @@ void AnimationSequence::PruneChildren()
 
    for(;iter != end; ++iter)
    {
-      if((*iter)->Prune())
+      if((*iter)->ShouldPrune())
       {
+        (*iter)->Prune();
         iter = mActiveAnimations.erase(iter);
       }
    }

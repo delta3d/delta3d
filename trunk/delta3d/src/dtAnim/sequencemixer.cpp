@@ -40,12 +40,7 @@ SequenceMixer::~SequenceMixer()
 
 void SequenceMixer::Update(float dt)
 {
-   mRootSequence->Update(dt, 1.0f);
-}
-
-void SequenceMixer::PlayAnimation(Animatable* pAnim)
-{
-   mRootSequence->AddAnimation(pAnim);
+   mRootSequence->Update(dt);
 }
 
 void SequenceMixer::PlayAnimation(const std::string& pAnim)
@@ -53,7 +48,8 @@ void SequenceMixer::PlayAnimation(const std::string& pAnim)
    Animatable* anim = Lookup(pAnim);
    if(anim)
    {
-      PlayAnimation(anim);
+      dtCore::RefPtr<Animatable> pAnim = anim->Clone();
+      mRootSequence->AddAnimation(pAnim.get());
    }
    else
    {

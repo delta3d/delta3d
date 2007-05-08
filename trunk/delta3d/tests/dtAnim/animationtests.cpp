@@ -38,10 +38,13 @@ namespace dtAnim
       {
       public:
          std::string str;
-         void Update(float dt, float parent_weight){};
+         void Update(float dt){};
          void ForceFadeOut(float time){};
          const std::string& GetName() const{return str;}            
-         void SetName(const std::string& s){str = s;};         
+         void SetName(const std::string& s){str = s;};    
+         void Recalculate(){}
+         dtCore::RefPtr<Animatable> Clone()const{return new MyAnimatable();}
+         void Prune(){}
       };
 
 
@@ -62,7 +65,7 @@ namespace dtAnim
          void setUp();
          void tearDown();
 
-         void TestAnimWrapper();
+         void TestAnimWrapper(); 
          void TestAnimatable(); 
          void TestAnimChannel();
          void TestAnimSequence();         
@@ -76,7 +79,7 @@ namespace dtAnim
          float fadeIn1;
          float fadeOut1;
          float base1;
-         bool loop1;
+         float start_delay1;
          std::string name1;
          dtCore::RefPtr<MyAnimatable> mAnimatable1;
 
@@ -85,7 +88,7 @@ namespace dtAnim
          float fadeIn2;
          float fadeOut2;
          float base2;
-         bool loop2;
+         float start_delay2;
          std::string name2;
          dtCore::RefPtr<MyAnimatable> mAnimatable2;
 
@@ -101,9 +104,8 @@ namespace dtAnim
       fadeIn1 = 0.5f;
       fadeOut1 = 1.0f;
       base1 = 1.5f;
-      loop1 = false;
       name1 = "Anim001";
-
+      start_delay1 = 0.5f;
       mAnimatable1 = new MyAnimatable();
 
       mAnimatable1->SetStartTime(animStart1);
@@ -111,15 +113,15 @@ namespace dtAnim
       mAnimatable1->SetFadeIn(fadeIn1);
       mAnimatable1->SetFadeOut(fadeOut1);
       mAnimatable1->SetBaseWeight(base1);
-      mAnimatable1->SetLooping(loop1);
       mAnimatable1->SetName(name1);
+      mAnimatable1->SetStartDelay(start_delay1);
 
       animStart2 = 1.0f;
       animEnd2 = 2.0f;
       fadeIn2 = 0.5f;
       fadeOut2 = 1.0f;
       base2 = 1.5f;
-      loop2 = false;
+      start_delay2 = 3.0f;
       name2 = "Anim002";
 
       mAnimatable2 = new MyAnimatable();
@@ -129,8 +131,8 @@ namespace dtAnim
       mAnimatable2->SetFadeIn(fadeIn2);
       mAnimatable2->SetFadeOut(fadeOut2);
       mAnimatable2->SetBaseWeight(base2);
-      mAnimatable2->SetLooping(loop2);
       mAnimatable2->SetName(name2);
+      mAnimatable2->SetStartDelay(start_delay2);
 
    }
 
@@ -167,7 +169,6 @@ namespace dtAnim
       CPPUNIT_ASSERT_EQUAL(fadeIn1, mAnimatable1->GetFadeIn());
       CPPUNIT_ASSERT_EQUAL(fadeOut1, mAnimatable1->GetFadeOut());
       CPPUNIT_ASSERT_EQUAL(base1, mAnimatable1->GetBaseWeight());
-      CPPUNIT_ASSERT_EQUAL(loop1, mAnimatable1->IsLooping());
       CPPUNIT_ASSERT(!mAnimatable1->IsActive());
    }
 
