@@ -129,7 +129,7 @@
 				RelativePath="..\..\..\src\dtHLAGM\ddmcalculatorgeographic.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\src\dtHLAGM\ddmcamerageographiccalculator.cpp">
+				RelativePath="..\..\..\src\dtHLAGM\ddmcameracalculatorgeographic.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtHLAGM\ddmgeographicregiondata.cpp">
@@ -185,7 +185,7 @@
 				RelativePath="..\..\..\inc\dtHLAGM\ddmcalculatorgeographic.h">
 			</File>
 			<File
-				RelativePath="..\..\..\inc\dtHLAGM\ddmcamerageographiccalculator.h">
+				RelativePath="..\..\..\inc\dtHLAGM\ddmcameracalculatorgeographic.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtHLAGM\ddmgeographicregiondata.h">
