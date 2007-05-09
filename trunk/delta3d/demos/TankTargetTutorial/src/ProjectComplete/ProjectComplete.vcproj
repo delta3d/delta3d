@@ -84,7 +84,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtDAL.lib CEGUIBase.lib dtActors.lib Producer.lib OpenThreadsWin32.lib osg.lib osgDB.lib osgParticle.lib osgUtil.lib ode.lib dtCore.lib dtABC.lib dtChar.lib dtAudio.lib dtUtil.lib dtGame.lib xerces-c_2.lib"
+				AdditionalDependencies="dtDAL.lib CEGUIBase.lib dtActors.lib Producer.lib OpenThreadsWin32.lib osg.lib osgDB.lib osgParticle.lib osgUtil.lib ode.lib dtCore.lib dtABC.lib dtChar.lib dtAudio.lib dtUtil.lib dtGame.lib dtHLAGM.lib xerces-c_2.lib"
 				OutputFile="..\..\..\..\bin\TutorialLibrary.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(DELTA_LIB)"

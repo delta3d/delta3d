@@ -29,8 +29,7 @@
 #include <dtUtil/mathdefines.h>
 #include <dtCore/shadermanager.h>
 #include <dtCore/shaderparameter.h>
-//#include <dtCore/floatshaderparameter.h>
-#include <dtCore/shaderparameterfloatTimer.h>
+#include <dtCore/shaderparamoscillator.h>
 #include <dtCore/scene.h>
 #include <osg/Switch>
 
