@@ -60,6 +60,7 @@ namespace dtGame
 
       RegisterMessageType<NetServerRejectMessage>(MessageType::NETSERVER_REJECT_CONNECTION);
 
+      RegisterMessageType<CommandLoadMapMessage>(MessageType::COMMAND_LOAD_MAP);
       RegisterMessageType<Message>(MessageType::COMMAND_PAUSE);
       RegisterMessageType<Message>(MessageType::COMMAND_RESUME);
       RegisterMessageType<RestartMessage>(MessageType::COMMAND_RESTART);
@@ -74,6 +75,7 @@ namespace dtGame
 
       RegisterMessageType<Message>(MessageType::INFO_PLAYER_ENTERED_WORLD);
 
+      RegisterMessageType<RequestLoadMapMessage>(MessageType::REQUEST_LOAD_MAP);
       RegisterMessageType<Message>(MessageType::REQUEST_PAUSE);
       RegisterMessageType<Message>(MessageType::REQUEST_RESUME);
       RegisterMessageType<RestartMessage>(MessageType::REQUEST_RESTART);

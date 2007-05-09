@@ -54,6 +54,12 @@ namespace dtHLAGM
    class DT_HLAGM_EXPORT DDMRegionCalculator : public dtCore::Base
    {
       public:
+         static const std::string PROP_FIRST_DIMENSION_NAME;
+         static const std::string PROP_SECOND_DIMENSION_NAME;
+         static const std::string PROP_THIRD_DIMENSION_NAME;
+         
+         DDMRegionCalculator();
+         
          /**
           * Creates and returns a pointer to a region data object for this calculator.
           * This is basically a factory method.  The using code will be required to call delete on
@@ -88,10 +94,25 @@ namespace dtHLAGM
 
          void GetAllProperties(std::vector<dtDAL::ActorProperty*> toFill);
          
+         const std::string& GetFirstDimensionName() const { return mFirstDimensionName; }
+         void SetFirstDimensionName(const std::string& newName) { mFirstDimensionName = newName; }
+
+         const std::string& GetSecondDimensionName() const { return mSecondDimensionName; }
+         void SetSecondDimensionName(const std::string& newName) { mSecondDimensionName = newName; }
+         
+         const std::string& GetThirdDimensionName() const { return mThirdDimensionName; }
+         void SetThirdDimensionName(const std::string& newName) { mThirdDimensionName = newName; }
+
       protected:
+         std::string GetFirstDimensionNameByCopy() const { return mFirstDimensionName; }
+         std::string GetSecondDimensionNameByCopy() const { return mSecondDimensionName; }
+         std::string GetThirdDimensionNameByCopy() const { return mThirdDimensionName; }
          void AddProperty(dtDAL::ActorProperty& newProperty);
       private:
          std::map<std::string, dtCore::RefPtr<dtDAL::ActorProperty> > mProperties;
+         std::string mFirstDimensionName;
+         std::string mSecondDimensionName;
+         std::string mThirdDimensionName;
    };
 }
 

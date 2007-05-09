@@ -11,7 +11,6 @@
 #include <dtUtil/deprecationmgr.h>
 #include <dtUtil/mathdefines.h>
 
-
 namespace dtUtil
 {     
    IMPLEMENT_ENUM(IncomingCoordinateType)
@@ -180,7 +179,6 @@ namespace dtUtil
       mLocationOffset[2] = elevation;
       
       SetUTMZone(zone);
-      
    }
 
    void Coordinates::SetOriginLocation(double x, double y, double z)
@@ -379,7 +377,6 @@ namespace dtUtil
             position[0], position[1], position[2]);
       }
       return position; 
-      
    }
 
    const osg::Vec3d Coordinates::ConvertToRemoteTranslation(const osg::Vec3& translation)
@@ -619,7 +616,6 @@ namespace dtUtil
       dst(2,0) = - sin_theta;                                                 
       dst(2,1) = cos_theta * sin_phi;                                         
       dst(2,2) = cos_theta * cos_phi;                                         
-      
    }
   
    void Coordinates::MatrixToEulers(const osg::Matrix& src, float& psi, float& theta, float& phi)
@@ -658,7 +654,6 @@ namespace dtUtil
           else
             phi = osg::PI - (phi);
       }
-      
    }
   
    void Coordinates::GeocentricToGeodetic(double x, double y, double z,
@@ -732,7 +727,6 @@ namespace dtUtil
       SetTransverseMercatorParameters(Geocent_a, Geocent_f, Origin_Latitude,
                                       Central_Meridian, False_Easting, False_Northing, CentralMeridianScale);
       ConvertGeodeticToTransverseMercator(Latitude, Longitude, Easting, Northing);
-      
    } /* END OF Convert_Geodetic_To_UTM */
   
    void Coordinates::ConvertUTMToGeodetic (unsigned zone, double easting, double northing, double& latitude, double& longitude)
@@ -826,7 +820,6 @@ namespace dtUtil
 
       latitude = phai;
       longitude = lamda;
-      
    }
 
    void Coordinates::CalculateUTMZone(double latitude, double longitude, unsigned& ewZone, char& nsZone)
@@ -877,8 +870,7 @@ namespace dtUtil
             nsZone ++;
       }
       else /* 80 to 84 are also grid 'X' */
-         nsZone = 'X';
-            
+         nsZone = 'X';     
    }
   
    const std::string Coordinates::ConvertUTMToMGRS(double easting, double northing, unsigned eastWestZone,
@@ -1164,14 +1156,11 @@ namespace dtUtil
       easting -= (((zone - 1) % 3) * 8);
       easting *= 100000;
       easting += e_num;
-
    }
   
    void Coordinates::ConvertGeocentricToGeodetic (double x, double y, double z,
                                            double& phi, double& lambda, double& elevation)
-
    { /* BEGIN Convert_Geocentric_To_Geodetic */
-     
      double W;        /* distance from z axis */
      double W2;       /* square of distance from z axis */
      double T0;       /* initial estimate of vertical component */
@@ -1257,9 +1246,7 @@ namespace dtUtil
    void Coordinates::SetTransverseMercatorParameters(double a, double f, double Origin_Latitude,
                                                      double Central_Meridian, double False_Easting, 
                                                      double False_Northing, double Scale_Factor) 
-     
    { /* BEGIN Set_Tranverse_Mercator_Parameters */
-     
       double tn;        /* True Meridianal distance constant  */
       double tn2;
       double tn3;
@@ -1432,7 +1419,6 @@ namespace dtUtil
       
       Easting = TranMerc_False_Easting + dlam * t6 + pow(dlam,3.e0) * t7 
         + pow(dlam,5.e0) * t8 + pow(dlam,7.e0) * t9;
-      
    } /* END OF Convert_Geodetic_To_Transverse_Mercator */
   
   

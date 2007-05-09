@@ -34,19 +34,32 @@ namespace dtCore
    template<class T>
    class RefPtr : public osg::ref_ptr<T>
    {
+      public:
+         RefPtr(): osg::ref_ptr<T>()            {}
+         RefPtr(T* t): osg::ref_ptr<T>(t)       {}
+         RefPtr(const RefPtr& rp):osg::ref_ptr<T>(rp) {}     
 
-   public:
-      RefPtr(): osg::ref_ptr<T>()            {}
-      RefPtr(T* t): osg::ref_ptr<T>(t)       {}
-      RefPtr(const RefPtr& rp):osg::ref_ptr<T>(rp) {}     
- 
-      // added specifically for Delta3D
-      friend inline std::ostream &operator<<(std::ostream &os,
-         const RefPtr& rp)
-      {
-         os << rp.get();
-         return os;
-      }
+         // added specifically for Delta3D
+         friend inline std::ostream &operator<<(std::ostream &os, const RefPtr& rp)
+         {
+            os << rp.get();
+            return os;
+         }
+   };
+   
+   template <class T>
+   class ConvertToPointerUnary
+   {
+      public:         
+         T* operator()(dtCore::RefPtr<T>& ptr) const
+         {
+            return ptr.get();
+         }
+   
+         const T* operator()(const dtCore::RefPtr<T>& ptr) const
+         {
+            return ptr.get();
+         }
    };
 }
 

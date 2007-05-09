@@ -567,7 +567,21 @@ void MessageTests::TestMessageFactory()
       dtCore::RefPtr<dtGame::Message> serverMsg = factory.CreateMessage(dtGame::MessageType::SERVER_REQUEST_REJECTED);
       CPPUNIT_ASSERT_MESSAGE("The message factory should be able to create a server message rejected message", serverMsg != NULL);
       dtCore::RefPtr<dtGame::Message> playerMsg = factory.CreateMessage(dtGame::MessageType::INFO_PLAYER_ENTERED_WORLD);
-      CPPUNIT_ASSERT_MESSAGE("The message factory should be able to create a player entered world message", playerMsg != NULL);
+      CPPUNIT_ASSERT_MESSAGE("The message factory should be able to create a player entered world message", playerMsg.valid());
+
+      dtCore::RefPtr<dtGame::CommandLoadMapMessage> commandChangeMsg;
+      factory.CreateMessage(dtGame::MessageType::COMMAND_LOAD_MAP, commandChangeMsg);
+      CPPUNIT_ASSERT_MESSAGE("The message factory should be able to a COMMAND_LOAD_MAP message", commandChangeMsg.valid());
+
+      commandChangeMsg->SetMapName("jojo");
+      CPPUNIT_ASSERT_EQUAL(std::string("jojo"), commandChangeMsg->GetMapName());
+      
+      dtCore::RefPtr<dtGame::RequestLoadMapMessage> requestChangeMsg;
+      factory.CreateMessage(dtGame::MessageType::REQUEST_LOAD_MAP, requestChangeMsg);
+      CPPUNIT_ASSERT_MESSAGE("The message factory should be able to a REQUEST_LOAD_MAP message", requestChangeMsg.valid());
+
+      requestChangeMsg->SetRequestedMapName("jojo");
+      CPPUNIT_ASSERT_EQUAL(std::string("jojo"), requestChangeMsg->GetRequestedMapName());
 
       CPPUNIT_ASSERT_MESSAGE("Tick message's type should have been set correctly", tickMsg->GetMessageType() == dtGame::MessageType::TICK_REMOTE);
       CPPUNIT_ASSERT_MESSAGE("Timer elapsed message's type should have been set correctly", timerMsg->GetMessageType() == dtGame::MessageType::INFO_TIMER_ELAPSED);

@@ -2,8 +2,11 @@
 (Federation DVTE)
 (FEDversion v1.3)
  (spaces 
- (space HyperSpace
- )
+  (space HyperSpace
+    (dimension subspace)
+    (dimension one)
+    (dimension two)
+  )
  )
  (objects 
     (class ObjectRoot 

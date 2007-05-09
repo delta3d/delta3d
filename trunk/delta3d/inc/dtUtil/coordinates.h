@@ -219,14 +219,14 @@ namespace dtUtil
          
          const osg::Matrix& GetOriginRotationMatrixInverse() const;
 
-         const IncomingCoordinateType& GetIncomingCoordinateType() { return *mIncomingCoordinateType; }
+         const IncomingCoordinateType& GetIncomingCoordinateType() const { return *mIncomingCoordinateType; }
 
          void SetIncomingCoordinateType(const IncomingCoordinateType& incomingCoordType)
          {
             mIncomingCoordinateType = &incomingCoordType;  
          }
          
-         const LocalCoordinateType& GetLocalCoordinateType() { return *mLocalCoordinateType; }
+         const LocalCoordinateType& GetLocalCoordinateType() const { return *mLocalCoordinateType; }
 
          void SetLocalCoordinateType(const LocalCoordinateType& localCoordType)
          {

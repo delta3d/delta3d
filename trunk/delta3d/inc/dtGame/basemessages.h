@@ -363,39 +363,36 @@ namespace dtGame
    class DT_GAME_EXPORT CommandLoadMapMessage : public Message
    {
       public:
-
+         static const std::string PARAM_MAP_NAME;
+         
          /// Constructor
-         CommandLoadMapMessage() : Message()
-         {
-            AddParameter(new StringMessageParameter("RequestedMapName"));
-         }
+         CommandLoadMapMessage();
 
          /**
-         * Gets the name of the map that was loaded
-         */
+          * Gets the name of the map that was loaded
+          */
          const std::string& GetMapName() const;
 
          /**
-         * Sets the name of the map that was loaded
-         * @param The name of the map
-         */
+          * Sets the name of the map that was loaded
+          * @param The name of the map
+          */
          void SetMapName(const std::string &name);
 
       protected:
          /// Destructor
          virtual ~CommandLoadMapMessage() { }
+         dtCore::RefPtr<dtGame::StringMessageParameter> mMapName;
 
    };
 
    class DT_GAME_EXPORT RequestLoadMapMessage : public Message
    {
       public:
+         static const std::string PARAM_REQUESTED_MAP_NAME;
 
          /// Constructor
-         RequestLoadMapMessage() : Message()
-         {
-           AddParameter(new StringMessageParameter("RequestedMapName"));
-         }
+         RequestLoadMapMessage();
 
          /**
           * Gets the name of the map that was loaded
@@ -411,7 +408,7 @@ namespace dtGame
       protected:
          /// Destructor
          virtual ~RequestLoadMapMessage() { }
-
+         dtCore::RefPtr<dtGame::StringMessageParameter> mRequestedMapName;
    };
 }
 

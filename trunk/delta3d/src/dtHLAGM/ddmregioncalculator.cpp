@@ -1,8 +1,31 @@
 
 #include <dtHLAGM/ddmregioncalculator.h>
-
+#include <dtDAL/enginepropertytypes.h>
 namespace dtHLAGM
 {
+   const std::string DDMRegionCalculator::PROP_FIRST_DIMENSION_NAME("First Dimension Name");
+   const std::string DDMRegionCalculator::PROP_SECOND_DIMENSION_NAME("Second Dimension Name");
+   const std::string DDMRegionCalculator::PROP_THIRD_DIMENSION_NAME("Third Dimension Name");
+
+   DDMRegionCalculator::DDMRegionCalculator():
+      mFirstDimensionName("subspace"),
+      mSecondDimensionName("one"),
+      mThirdDimensionName("two")
+   {
+      AddProperty(*new dtDAL::StringActorProperty(PROP_FIRST_DIMENSION_NAME, PROP_FIRST_DIMENSION_NAME,
+            dtDAL::MakeFunctor(*this, &DDMRegionCalculator::SetFirstDimensionName),
+            dtDAL::MakeFunctorRet(*this, &DDMRegionCalculator::GetFirstDimensionNameByCopy)
+            ));
+      AddProperty(*new dtDAL::StringActorProperty(PROP_SECOND_DIMENSION_NAME, PROP_SECOND_DIMENSION_NAME,
+            dtDAL::MakeFunctor(*this, &DDMRegionCalculator::SetSecondDimensionName),
+            dtDAL::MakeFunctorRet(*this, &DDMRegionCalculator::GetSecondDimensionNameByCopy)
+            ));
+      AddProperty(*new dtDAL::StringActorProperty(PROP_THIRD_DIMENSION_NAME, PROP_THIRD_DIMENSION_NAME,
+            dtDAL::MakeFunctor(*this, &DDMRegionCalculator::SetThirdDimensionName),
+            dtDAL::MakeFunctorRet(*this, &DDMRegionCalculator::GetThirdDimensionNameByCopy)
+            ));
+   }
+   
    dtDAL::ActorProperty* DDMRegionCalculator::GetProperty(const std::string& name)
    {
       std::map<std::string, dtCore::RefPtr<dtDAL::ActorProperty> >::iterator i = mProperties.find(name);

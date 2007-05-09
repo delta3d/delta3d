@@ -22,11 +22,14 @@
     </libraries>
     
     <ddm>
+      <enabled>true</enabled>
       <space name="Geographic">
-         <property name="blueForceCalcType">Geographic</property>
-         <property name="redForceCalcType">Geographic</property>
-         <property name="yellowForceCalcType">AppSpace</property>
-         <property name="greenForceCalcType">AppSpace</property>
+         <property name="Friendly Ground Region Type">GEOGRAPHIC_SPACE</property>
+         <property name="Friendly Air Region Type">APP_SPACE_ONLY</property>
+         <property name="Friendly Ground App Space">74</property>
+         <property name="Neutral Lifeform App Space">11</property>
+         <property name="App Space Min">0</property>
+         <property name="App Space Min">199</property>
       </space>
       <space name="NoSuchSpace">
          <property name="hi">junk</property>

@@ -163,6 +163,47 @@ namespace dtGame
       mLoadedMapName->SetValue(name);
    }
 
+   
+   //////////////////////////////////////////////////////////////////////////////
+   const std::string CommandLoadMapMessage::PARAM_MAP_NAME("MapName");
+
+   /// Constructor
+   CommandLoadMapMessage::CommandLoadMapMessage() : Message()
+   {
+      mMapName = new StringMessageParameter(PARAM_MAP_NAME); 
+      AddParameter(mMapName.get());
+   }
+
+   const std::string& CommandLoadMapMessage::GetMapName() const
+   {
+      return mMapName->GetValue();
+   }
+
+   void CommandLoadMapMessage::SetMapName(const std::string &name)
+   {
+      mMapName->SetValue(name);
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+   const std::string RequestLoadMapMessage::PARAM_REQUESTED_MAP_NAME("RequestedMapName");
+
+   /// Constructor
+   RequestLoadMapMessage::RequestLoadMapMessage() : Message()
+   {
+      mRequestedMapName = new StringMessageParameter(PARAM_REQUESTED_MAP_NAME); 
+      AddParameter(mRequestedMapName.get());
+   }
+
+   const std::string& RequestLoadMapMessage::GetRequestedMapName() const
+   {
+      return mRequestedMapName->GetValue();
+   }
+
+   void RequestLoadMapMessage::SetRequestedMapName(const std::string& name)
+   {
+      mRequestedMapName->SetValue(name);
+   }
+
    //////////////////////////////////////////////////////////////////////////////
 
    void GameEventMessage::SetGameEvent(dtDAL::GameEvent &event)
