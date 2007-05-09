@@ -124,6 +124,9 @@
 				RelativePath="..\..\..\tests\dtHLAGM\ddmcalculatorgeographictests.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\tests\dtHLAGM\ddmcameracalculatorgeographictests.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\tests\dtHLAGM\ddmregioncalculatorgrouptests.cpp">
 			</File>
 			<File

@@ -15,7 +15,7 @@ namespace dtHLAGM
    /**
     * This calculator is intended for generating subscription regions based on the view of the camera.
     */
-   class DDMCameraGeographicCalculator : public dtHLAGM::DDMCalculatorGeographic
+   class DT_HLAGM_EXPORT DDMCameraGeographicCalculator : public dtHLAGM::DDMCalculatorGeographic
    {
       public:
          
