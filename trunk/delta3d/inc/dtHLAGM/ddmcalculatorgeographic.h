@@ -68,7 +68,7 @@ namespace dtHLAGM
          static const std::string PROP_APP_SPACE_MAX;
          static const std::string PROP_APP_SPACE_MIN;
          
-         class RegionCalculationType : public dtUtil::Enumeration
+         class DT_HLAGM_EXPORT RegionCalculationType : public dtUtil::Enumeration
          {
             DECLARE_ENUM(RegionCalculationType);
             public:
@@ -79,7 +79,7 @@ namespace dtHLAGM
 
          };
 
-         class DDMForce : public dtUtil::Enumeration
+         class DT_HLAGM_EXPORT DDMForce : public dtUtil::Enumeration
          {
             DECLARE_ENUM(DDMForce);
             public:
