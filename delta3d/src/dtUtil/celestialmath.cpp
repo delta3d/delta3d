@@ -50,9 +50,9 @@ void dtUtil::GetCelestialCoordinates(const osg::Vec3 &origin,
 
 
 void dtUtil::GetCelestialDirection(const float azimuth,
-                               const float elevation,
-                               const osg::Vec3& forward_reference,
-                               osg::Vec3 &outDirection)
+                                   const float elevation,
+                                   const osg::Vec3& forwardDirection,
+                                   osg::Vec3 &outDirection)
 {
    // Downward elevation is negative so
    // negate the right vector
@@ -65,7 +65,7 @@ void dtUtil::GetCelestialDirection(const float azimuth,
 
    // Rotations must be applied in the following order
    osg::Quat celestialRotation =  rotateX * rotateZ;   
-   outDirection = celestialRotation * forward_reference;   
+   outDirection = celestialRotation * forwardDirection;   
 }
 
 
