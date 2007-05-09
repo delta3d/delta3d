@@ -1,4 +1,4 @@
-#include <dtHLAGM/ddmcamerageographiccalculator.h>
+#include <dtHLAGM/ddmcameracalculatorgeographic.h>
 #include <dtHLAGM/ddmgeographicregiondata.h>
 #include <dtHLAGM/ddmregiondata.h>
 #include <dtHLAGM/ddmutil.h>
@@ -12,19 +12,17 @@
 namespace dtHLAGM
 {
    //////////////////////////////////////////////////////////////
-   DDMCameraGeographicCalculator::DDMCameraGeographicCalculator()
+   DDMCameraCalculatorGeographic::DDMCameraCalculatorGeographic()
    {
-      
    }
    
    //////////////////////////////////////////////////////////////
-   DDMCameraGeographicCalculator::~DDMCameraGeographicCalculator()
+   DDMCameraCalculatorGeographic::~DDMCameraCalculatorGeographic()
    {
-      
    }
    
    //////////////////////////////////////////////////////////////
-   bool DDMCameraGeographicCalculator::UpdateRegionData(DDMRegionData& ddmData) const
+   bool DDMCameraCalculatorGeographic::UpdateRegionData(DDMRegionData& ddmData) const
    {
       if (!BaseClass::UpdateRegionData(ddmData))
          return false;
@@ -76,13 +74,13 @@ namespace dtHLAGM
    }
 
    //////////////////////////////////////////////////////////////
-   void DDMCameraGeographicCalculator::SetCamera(dtCore::Camera* camera)
+   void DDMCameraCalculatorGeographic::SetCamera(dtCore::Camera* camera)
    {
       mCamera = camera;
    }
 
    //////////////////////////////////////////////////////////////
-   dtCore::Camera* DDMCameraGeographicCalculator::GetCamera()
+   dtCore::Camera* DDMCameraCalculatorGeographic::GetCamera()
    {
       return mCamera.get();
    }

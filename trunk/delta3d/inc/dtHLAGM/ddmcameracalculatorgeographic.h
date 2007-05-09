@@ -15,13 +15,13 @@ namespace dtHLAGM
    /**
     * This calculator is intended for generating subscription regions based on the view of the camera.
     */
-   class DT_HLAGM_EXPORT DDMCameraGeographicCalculator : public dtHLAGM::DDMCalculatorGeographic
+   class DT_HLAGM_EXPORT DDMCameraCalculatorGeographic : public dtHLAGM::DDMCalculatorGeographic
    {
       public:
          
          typedef dtHLAGM::DDMCalculatorGeographic BaseClass;
          
-         DDMCameraGeographicCalculator();
+         DDMCameraCalculatorGeographic();
          
          /// Sets the camera this calculator is using for generating the region.
          void SetCamera(dtCore::Camera* camera);
@@ -36,7 +36,7 @@ namespace dtHLAGM
          virtual bool UpdateRegionData(DDMRegionData& ddmData) const;
 
       protected:
-         virtual ~DDMCameraGeographicCalculator();
+         virtual ~DDMCameraCalculatorGeographic();
          
       private:
          dtCore::RefPtr<dtCore::Camera> mCamera;
