@@ -131,6 +131,15 @@ dtCore::RefPtr<Cal3DModelWrapper> Cal3DLoader::Load( const std::string &filename
 {
    std::string path;
    std::string::size_type stringIndex = filename.find_last_of("\\");
+   std::string::size_type lastIndex = filename.find_last_of("/");
+ 
+   //lets take the bigger of the two that isnt equal to npos
+   if(lastIndex != std::string::npos)
+   {
+      if(stringIndex != std::string::npos) stringIndex = (stringIndex > lastIndex) ? stringIndex : lastIndex;
+      else stringIndex = lastIndex;
+   }
+   
 
    if (stringIndex != std::string::npos)
    {
