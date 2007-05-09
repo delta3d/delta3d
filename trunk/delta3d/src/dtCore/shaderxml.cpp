@@ -306,8 +306,9 @@ namespace dtCore
          else if (toString == ShaderXML::OSCILLATOR_ELEMENT)
             newParam = ParseFloatTimerParameter(typeElement, paramName);
          else
-            throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Invalid element found while parsing "
-                  "shader parameter.", __FILE__, __LINE__);
+            throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,
+            "Invalid element found while parsing shader parameter: '"+toString+"'",
+            __FILE__, __LINE__);
 
          // Set shared
          if (!isShared.empty())

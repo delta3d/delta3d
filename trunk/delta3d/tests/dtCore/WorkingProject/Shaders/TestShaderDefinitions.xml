@@ -63,7 +63,7 @@
          </parameter>
 
          <parameter name="TimerFloatParam">
-            <floattimer offset="4.0" rangemin="3.0" rangemax="4.0" cycletimemin="2.0" cycletimemax="2.5" userealtime="false" oscillation="UpAndDown"/>
+            <oscillator offset="4.0" rangemin="3.0" rangemax="4.0" cycletimemin="2.0" cycletimemax="2.5" userealtime="false" oscillation="UpAndDown"/>
          </parameter>
  
          <parameter name="Texture2DParam">
