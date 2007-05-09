@@ -23,7 +23,7 @@
 
 #include <string>
 #include <dtCore/refptr.h>
-#include <dtHLAGM/ddmcamerageographiccalculator.h>
+#include <dtHLAGM/ddmcameracalculatorgeographic.h>
 #include <dtHLAGM/ddmgeographicregiondata.h>
 #include <dtHLAGM/ddmutil.h>
 #include <dtDAL/enginepropertytypes.h>
@@ -44,7 +44,7 @@ class DDMCameraCalculatorGeographicTests : public CPPUNIT_NS::TestFixture
    public:
       void setUp()
       {
-         mCamCalcGeo = new dtHLAGM::DDMCameraGeographicCalculator;
+         mCamCalcGeo = new dtHLAGM::DDMCameraCalculatorGeographic;
       }
       
       void tearDown()
@@ -106,7 +106,7 @@ class DDMCameraCalculatorGeographicTests : public CPPUNIT_NS::TestFixture
             
    private:
       
-      dtCore::RefPtr<dtHLAGM::DDMCameraGeographicCalculator> mCamCalcGeo; 
+      dtCore::RefPtr<dtHLAGM::DDMCameraCalculatorGeographic> mCamCalcGeo; 
 };
 
 // Registers the fixture into the 'registry'

@@ -31,7 +31,7 @@
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/resourcedescriptor.h>
 
-#include <dtHLAGM/ddmcamerageographiccalculator.h>
+#include <dtHLAGM/ddmcameracalculatorgeographic.h>
 #include <dtHLAGM/hlacomponent.h>
 #include <dtHLAGM/objecttoactor.h>
 #include <dtHLAGM/interactiontomessage.h>
@@ -269,7 +269,7 @@ void HLATests::setUp()
 
    try
    {
-      dtCore::RefPtr<dtHLAGM::DDMCameraGeographicCalculator> cameraCalculator = new dtHLAGM::DDMCameraGeographicCalculator;
+      dtCore::RefPtr<dtHLAGM::DDMCameraCalculatorGeographic> cameraCalculator = new dtHLAGM::DDMCameraCalculatorGeographic;
       cameraCalculator->SetCamera(new dtCore::Camera("DDM Test Camera"));
       
       mHLAComponent->GetDDMSubscriptionCalculators().AddCalculator(*cameraCalculator);
@@ -747,7 +747,7 @@ void HLATests::TestSubscription()
    CPPUNIT_ASSERT(!toFill.empty());
    CPPUNIT_ASSERT(toFill.size() == mHLAComponent->GetDDMSubscriptionCalculators().GetSize());
    
-   dtHLAGM::DDMCameraGeographicCalculator* camCalc = dynamic_cast<dtHLAGM::DDMCameraGeographicCalculator*>(mHLAComponent->GetDDMSubscriptionCalculators()[0]);
+   dtHLAGM::DDMCameraCalculatorGeographic* camCalc = dynamic_cast<dtHLAGM::DDMCameraCalculatorGeographic*>(mHLAComponent->GetDDMSubscriptionCalculators()[0]);
    CPPUNIT_ASSERT(camCalc != NULL);
    
    const dtHLAGM::DDMRegionData* data = toFill[0];
