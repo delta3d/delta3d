@@ -26,11 +26,12 @@
 #include <vector>
 #include <string>
 #include <osg/Endian>
-#include <dtUtil/coordinates.h>
 #include <dtDAL/datatype.h>
 #include <dtDAL/project.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/resourcedescriptor.h>
+
+#include <dtHLAGM/ddmcamerageographiccalculator.h>
 #include <dtHLAGM/hlacomponent.h>
 #include <dtHLAGM/objecttoactor.h>
 #include <dtHLAGM/interactiontomessage.h>
@@ -39,15 +40,21 @@
 #include <dtHLAGM/onetoonemapping.h>
 #include <dtHLAGM/distypes.h>
 #include <dtHLAGM/hlacomponentconfig.h>
+#include <dtHLAGM/ddmregiondata.h>
+
 #include <dtGame/gamemanager.h>
 #include <dtGame/gmcomponent.h>
 #include <dtGame/messagetype.h>
 #include <dtGame/defaultmessageprocessor.h>
 #include <dtGame/basemessages.h>
 #include <dtGame/actorupdatemessage.h>
+
+#include <dtCore/camera.h>
 #include <dtCore/system.h>
 #include <dtCore/globals.h>
 #include <dtCore/transform.h>
+
+#include <dtUtil/coordinates.h>
 
 class TestHLAComponent: public dtHLAGM::HLAComponent
 {
@@ -262,6 +269,10 @@ void HLATests::setUp()
 
    try
    {
+      dtCore::RefPtr<dtHLAGM::DDMCameraGeographicCalculator> cameraCalculator = new dtHLAGM::DDMCameraGeographicCalculator;
+      cameraCalculator->SetCamera(new dtCore::Camera("DDM Test Camera"));
+      
+      mHLAComponent->GetDDMSubscriptionCalculators().AddCalculator(*cameraCalculator);
       mGameManager->AddComponent(*mHLAComponent, dtGame::GameManager::ComponentPriority::NORMAL);
       dtHLAGM::HLAComponentConfig config;
       config.LoadConfiguration(*mHLAComponent, "Federations/HLAMappingExample.xml");
@@ -288,6 +299,10 @@ void HLATests::setUp()
       std::ostringstream ss;
       ss << ex;
       CPPUNIT_FAIL(std::string("Error joining federation : ") + ss.str());
+   }
+   catch (const dtUtil::Exception& ex)
+   {
+      CPPUNIT_FAIL(std::string("Error joining federation : ") + ex.ToString());
    }
    
 }
@@ -365,7 +380,7 @@ void HLATests::BetweenTestTearDown()
 void HLATests::RunAllTests()
 {
    try
-   {
+   {      
       //This is a quick, read-only test.
       TestSubscription();
    
@@ -657,36 +672,61 @@ void HLATests::TestRuntimeMappingInfo()
 
 void HLATests::TestSubscription()
 {
-   std::string message("No Handle should be 0 after connecting to the RTI.");
+   const std::string message("No Handle should be 0 after connecting to the RTI: ");
+
    {
-      std::vector<const dtHLAGM::ObjectToActor*> toFill;
-      mHLAComponent->GetAllObjectToActorMappings(toFill);
-      
-      for (std::vector<const dtHLAGM::ObjectToActor*>::iterator i = toFill.begin();
-         i != toFill.end(); ++i)
+      std::vector<const dtHLAGM::ObjectToActor*> toFillOta;
+      mHLAComponent->GetAllObjectToActorMappings(toFillOta);
+      unsigned sizeota = toFillOta.size();
+      CPPUNIT_ASSERT(sizeota > 0);
+
+      for (std::vector<const dtHLAGM::ObjectToActor*>::iterator i = toFillOta.begin();
+         i != toFillOta.end(); ++i)
       {
          const dtHLAGM::ObjectToActor& ota = **i;
-         
-         CPPUNIT_ASSERT_MESSAGE(message, ota.GetObjectClassHandle() != 0);
-         CPPUNIT_ASSERT_MESSAGE(message, ota.GetEntityIdAttributeHandle() != 0);
-         CPPUNIT_ASSERT_MESSAGE(message, ota.GetDisIDAttributeHandle() != 0);
-         
-         for (std::vector<dtHLAGM::AttributeToPropertyList>::const_iterator j = ota.GetOneToManyMappingVector().begin();
-            j != ota.GetOneToManyMappingVector().end(); ++j)
+
+         std::ostringstream ss;
+         ss << message << " \"" << ota.GetObjectClassName() << "\" \"" << ota.GetActorType().GetCategory() << "." << ota.GetActorType().GetName() << "\"";
+          
+         if (ota.GetObjectClassName() == "TryingToMapTheJetBidirectionallyAgain")
          {
-            const dtHLAGM::AttributeToPropertyList& atpl = *j;
-            CPPUNIT_ASSERT_MESSAGE(message, atpl.GetAttributeHandle() != 0);
+            CPPUNIT_ASSERT_MESSAGE("The class handle should be 0 if the class name is invalid.", ota.GetObjectClassHandle() == 0); 
          }
+         else
+         {
+            CPPUNIT_ASSERT_MESSAGE(ss.str(), ota.GetObjectClassHandle() != 0);             
          
+            if (!ota.GetEntityIdAttributeName().empty())
+               CPPUNIT_ASSERT_MESSAGE(ss.str(), ota.GetEntityIdAttributeHandle() != 0);
+            else
+               CPPUNIT_ASSERT_MESSAGE("The entity id attribute should be null if it is not being used.", 
+                     ota.GetEntityIdAttributeHandle() == 0);
+               
+            if (ota.GetDisID() != NULL)         
+               CPPUNIT_ASSERT_MESSAGE(ss.str(), ota.GetDisIDAttributeHandle() != 0);
+            else
+               CPPUNIT_ASSERT_MESSAGE("The DIS ID attribute should be null if it is not being used.", 
+                     ota.GetDisIDAttributeHandle() == 0);
+            
+            for (std::vector<dtHLAGM::AttributeToPropertyList>::const_iterator j = ota.GetOneToManyMappingVector().begin();
+               j != ota.GetOneToManyMappingVector().end(); ++j)
+            {
+               const dtHLAGM::AttributeToPropertyList& atpl = *j;
+               CPPUNIT_ASSERT_MESSAGE(ss.str(), atpl.GetAttributeHandle() != 0);
+            }
+         }
       }
    }
 
    {
-      std::vector<const dtHLAGM::InteractionToMessage*> toFill;
-      mHLAComponent->GetAllInteractionToMessageMappings(toFill);
+      std::vector<const dtHLAGM::InteractionToMessage*> toFillItm;
+      mHLAComponent->GetAllInteractionToMessageMappings(toFillItm);
       
-      for (std::vector<const dtHLAGM::InteractionToMessage*>::iterator i = toFill.begin();
-         i != toFill.end(); ++i)
+      unsigned sizeitm = toFillItm.size();
+      CPPUNIT_ASSERT(sizeitm > 0);
+      
+      for (std::vector<const dtHLAGM::InteractionToMessage*>::iterator i = toFillItm.begin();
+         i != toFillItm.end(); ++i)
       {
          const dtHLAGM::InteractionToMessage& itm = **i;
          
@@ -701,11 +741,33 @@ void HLATests::TestSubscription()
          
       }
    }
+   
+   std::vector<const dtHLAGM::DDMRegionData*> toFill;
+   mHLAComponent->GetDDMSubscriptionCalculatorRegions(toFill);
+   CPPUNIT_ASSERT(!toFill.empty());
+   CPPUNIT_ASSERT(toFill.size() == mHLAComponent->GetDDMSubscriptionCalculators().GetSize());
+   
+   dtHLAGM::DDMCameraGeographicCalculator* camCalc = dynamic_cast<dtHLAGM::DDMCameraGeographicCalculator*>(mHLAComponent->GetDDMSubscriptionCalculators()[0]);
+   CPPUNIT_ASSERT(camCalc != NULL);
+   
+   const dtHLAGM::DDMRegionData* data = toFill[0];
+   
+   CPPUNIT_ASSERT_EQUAL(3U, data->GetNumberOfExtents());
+
+   const dtHLAGM::DDMRegionData::DimensionValues* dv = data->GetDimensionValue(0);
+   CPPUNIT_ASSERT_EQUAL(camCalc->GetFirstDimensionName(), dv->mName);
+
+   dv = data->GetDimensionValue(1);
+   CPPUNIT_ASSERT_EQUAL(camCalc->GetSecondDimensionName(), dv->mName);
+   
+   dv = data->GetDimensionValue(2);
+   CPPUNIT_ASSERT_EQUAL(camCalc->GetThirdDimensionName(), dv->mName);
+   
 }
 
 void HLATests::TestConfigurationLocking()
 {
-   CPPUNIT_ASSERT_THROW_MESSAGE("One may not enable or disable DDM while connected.", mHLAComponent->SetDDMEnabled(true), dtUtil::Exception);
+   CPPUNIT_ASSERT_THROW_MESSAGE("One may not enable or disable DDM while connected.", mHLAComponent->SetDDMEnabled(!mHLAComponent->IsDDMEnabled()), dtUtil::Exception);
    CPPUNIT_ASSERT_THROW_MESSAGE("One may not clear the configuration which connected.", mHLAComponent->ClearConfiguration(), dtUtil::Exception);
    
    dtCore::RefPtr<dtDAL::ActorType> at = new dtDAL::ActorType("a", "b");
@@ -883,7 +945,6 @@ void HLATests::TestReflectAttributesEntityTypeMissing()
    {
       CPPUNIT_FAIL(ex.What());
    }
-
 }
 
 void HLATests::TestReflectAttributes()

@@ -201,10 +201,6 @@ void Environment::AddEffect(EnvEffect *effect)
 
       this->Repaint();
    }
-   else
-   {
-      return;
-   }
 }
 
 /** Remove an EnvEffect from this Environment.  This method checks to see if 

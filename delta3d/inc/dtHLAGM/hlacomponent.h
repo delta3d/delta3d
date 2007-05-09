@@ -260,16 +260,16 @@ namespace dtHLAGM
          ObjectToActor* GetObjectMapping(const std::string& objTypeName, const EntityType* thisDisID);
 
          ///Fills a vector with all object to actor mappings currently registered.
-         void GetAllObjectToActorMappings(std::vector<ObjectToActor*> toFill);
+         void GetAllObjectToActorMappings(std::vector<ObjectToActor*>& toFill);
 
          ///Fills a vector with all const object to actor mappings.
-         void GetAllObjectToActorMappings(std::vector<const ObjectToActor*> toFill) const;
+         void GetAllObjectToActorMappings(std::vector<const ObjectToActor*>& toFill) const;
 
          ///Fills a vector with all interaction to message mappings.
-         void GetAllInteractionToMessageMappings(std::vector<InteractionToMessage*> toFill);
+         void GetAllInteractionToMessageMappings(std::vector<InteractionToMessage*>& toFill);
 
          ///Fills a vector with all const interaction to message mappings.
-         void GetAllInteractionToMessageMappings(std::vector<const InteractionToMessage*> toFill) const;
+         void GetAllInteractionToMessageMappings(std::vector<const InteractionToMessage*>& toFill) const;
 
          /**
           * Called to Register an Object to Actor mapping.
@@ -380,6 +380,9 @@ namespace dtHLAGM
          DDMRegionCalculatorGroup& GetDDMSubscriptionCalculators();
          /// @return The DDMRegionCalculators used for subscription as const.
          const DDMRegionCalculatorGroup& GetDDMSubscriptionCalculators() const;
+
+         /// @return The region data object for each subscription calculator.
+         void GetDDMSubscriptionCalculatorRegions(std::vector<const DDMRegionData* >& toFill) const;
          
          ///@return the current RTIambassador instance.  This will return NULL if this component is not connected to the RTI.
          RTI::RTIambassador* GetRTIAmbassador() { return mRTIAmbassador; }
@@ -447,6 +450,8 @@ namespace dtHLAGM
          void DeleteActor(const dtCore::UniqueId& toDelete);
 
          ObjectRuntimeMappingInfo& GetRuntimeMappingInfo() { return mRuntimeMappings; }
+
+         void PublishSubscribe();
 
          virtual ~HLAComponent()
            throw (RTI::FederateInternalError);

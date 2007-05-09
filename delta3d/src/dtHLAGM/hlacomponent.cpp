@@ -53,6 +53,7 @@
 #include <osg/io_utils>
 
 #include <cstdlib>
+#include <algorithm>
 
 
 #if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
@@ -240,7 +241,21 @@ namespace dtHLAGM
             mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                                 "Subscribing to object class \"%s\" handle %u.", thisObjectClassString.c_str(), thisObjectClassHandle);
 
-         mRTIAmbassador->subscribeObjectClassAttributes(thisObjectClassHandle, *ahs);
+         if (mDDMEnabled)
+         {
+            for (unsigned i = 0; i < mDDMSubscriptionRegions.size(); ++i)
+            {
+               RTI::Region* r = mDDMSubscriptionRegions[i]->GetRegion();
+               if (r != NULL)
+               {
+                  mRTIAmbassador->subscribeObjectClassAttributesWithRegion(thisObjectClassHandle, *r, *ahs);               
+               }
+            }
+         }
+         else
+         {
+            mRTIAmbassador->subscribeObjectClassAttributes(thisObjectClassHandle, *ahs);            
+         }
          subscribed = true;
 
          if (!objectToActor.IsRemoteOnly())
@@ -249,6 +264,7 @@ namespace dtHLAGM
                mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                                    "Publishing object class \"%s\" handle %u.", thisObjectClassString.c_str(), thisObjectClassHandle);
 
+            //need to put regions on this.
             mRTIAmbassador->publishObjectClass(thisObjectClassHandle, *ahs);
          }
       }
@@ -324,14 +340,28 @@ namespace dtHLAGM
             mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                                 "Subscribing to Interaction class %s.", thisInteractionClassString.c_str());
 
-         mRTIAmbassador->subscribeInteractionClass(thisInteractionClassHandle);
+         if (mDDMEnabled)
+         {
+            for (unsigned i = 0; i < mDDMSubscriptionRegions.size(); ++i)
+            {
+               RTI::Region* r = mDDMSubscriptionRegions[i]->GetRegion();
+               if (r != NULL)
+               {
+                  mRTIAmbassador->subscribeInteractionClassWithRegion(thisInteractionClassHandle, *r);               
+               }
+            }
+         }
+         else
+         {
+            mRTIAmbassador->subscribeInteractionClass(thisInteractionClassHandle);            
+         }
 
          subscribed = true;
 
          if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
             mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                                 "Publishing to Interaction class %s.", thisInteractionClassString.c_str());
-
+         //Need to put regions on this.
          mRTIAmbassador->publishInteractionClass(thisInteractionClassHandle);
       }
       catch (const RTI::Exception&)
@@ -365,21 +395,29 @@ namespace dtHLAGM
                                               const std::string &federateName, 
                                               const std::string &ridFile)
    {
-      try
-      {
-         dtUtil::FileInfo fi = dtUtil::FileUtils::GetInstance().GetFileInfo(ridFile);
-         std::string path = fi.path;
-         if (path.empty())
-            path = "./";
-         
-         std::string absPath = dtUtil::FileUtils::GetInstance().GetAbsolutePath(path);
-         
-         dtCore::SetEnvironment("RTI_RID_FILE", absPath + dtUtil::FileUtils::PATH_SEPARATOR + fi.baseName);
-      }
-      catch(const dtUtil::Exception &e)
+      dtUtil::FileInfo fi = dtUtil::FileUtils::GetInstance().GetFileInfo(ridFile);
+      if (!ridFile.empty() && fi.fileType == dtUtil::FILE_NOT_FOUND)
       {
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-               "Failed to set the RID file name to \"%s\" for the following reason: %s", ridFile.c_str(), e.ToString().c_str());
+               "Failed to set the RID file name to \"%s\" because the file is not found.", ridFile.c_str());            
+      }
+      else
+      {
+         try
+         {
+            std::string path = fi.path;
+            if (path.empty())
+               path = "./";
+
+            std::string absPath = dtUtil::FileUtils::GetInstance().GetAbsolutePath(path);
+
+            dtCore::SetEnvironment("RTI_RID_FILE", absPath + dtUtil::FileUtils::PATH_SEPARATOR + fi.baseName);
+         }
+         catch(const dtUtil::Exception &e)
+         {
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                  "Failed to set the RID file name to \"%s\" for the following reason: %s", ridFile.c_str(), e.ToString().c_str());
+         }
       }
 
       SOCKET some_socket = socket(AF_INET, SOCK_DGRAM, 0);
@@ -436,16 +474,16 @@ namespace dtHLAGM
       }
       catch(RTI::FederationExecutionAlreadyExists&)
       {
-         //okay, this is fine, but it's odd that this would happen.
+         //That's fine.  This is normal.
       }
 
       mEntityIdentifierCounter = 1;
       mEventIdentifierCounter = 1;
+      
       try
       {
-
          mRTIAmbassador->joinFederationExecution(federateName.c_str(),
-                                              executionName.c_str(), this);
+                                                 executionName.c_str(), this);
       }
       catch(const RTI::Exception& ex)
       {
@@ -456,38 +494,21 @@ namespace dtHLAGM
 
       mExecutionName = executionName;
 
-      std::multimap<std::string, dtCore::RefPtr<ObjectToActor> >::iterator objectToActorIterator
-        = mObjectToActorMap.begin();
-
       if (mDDMEnabled)
       {
-         CreateDDMSubscriptionRegions();
+         try
+         {
+            CreateDDMSubscriptionRegions();            
+         }
+         catch (const dtUtil::Exception& ex)
+         {
+            LeaveFederationExecution();
+            throw;
+         }
       }
       
-      while (objectToActorIterator != mObjectToActorMap.end())
-      {
-         ObjectToActor& thisObjectToActor = *(objectToActorIterator->second);
-         const std::string& thisObjectClassString = thisObjectToActor.GetObjectClassName();
-
-         if (!thisObjectClassString.empty())
-            RegisterObjectToActorWithRTI(thisObjectToActor);
-
-         ++ objectToActorIterator;
-      }
-
-      std::map<const dtGame::MessageType*, dtCore::RefPtr<InteractionToMessage> >::iterator messageToInteractionIterator
-        = mMessageToInteractionMap.begin();
-
-      while (messageToInteractionIterator != mMessageToInteractionMap.end())
-      {
-         dtCore::RefPtr<InteractionToMessage> thisInteractionToMessage = messageToInteractionIterator->second;
-         const std::string& thisInteractionClassString = thisInteractionToMessage->GetInteractionName();
-
-         if (!thisInteractionClassString.empty())
-            RegisterInteractionToMessageWithRTI(*thisInteractionToMessage);
-
-         ++messageToInteractionIterator;
-      }
+      PublishSubscribe();
+   
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -536,10 +557,26 @@ namespace dtHLAGM
             std::ostringstream ss; 
             //workaround for a strange namespace issue
             ::operator<<(ss, ex);
-            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                                 "Could not delete the federation execution: ", ss.str().c_str());
+            mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
+                                 "Could not destroy the federation execution because other federates are still connected: ", ss.str().c_str());
          }
-
+         catch(RTI::FederationExecutionDoesNotExist& ex)
+         {
+            std::ostringstream ss; 
+            //workaround for a strange namespace issue
+            ::operator<<(ss, ex);
+            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                                 "Could not destroy the federation execution because it does not exist: ", ss.str().c_str());
+         }
+         catch(RTI::Exception& ex)
+         {
+            std::ostringstream ss; 
+            //workaround for a strange namespace issue
+            ::operator<<(ss, ex);
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                                 "Could not destroy federation execution because of an internal error: ", ss.str().c_str());            
+         }
+         
          mExecutionName.clear();
       }
       
@@ -548,6 +585,37 @@ namespace dtHLAGM
       mRTIAmbassador = NULL;
    }
 
+   void HLAComponent::PublishSubscribe()
+   {
+      std::multimap<std::string, dtCore::RefPtr<ObjectToActor> >::iterator objectToActorIterator
+        = mObjectToActorMap.begin();
+
+      while (objectToActorIterator != mObjectToActorMap.end())
+      {
+         ObjectToActor& thisObjectToActor = *(objectToActorIterator->second);
+         const std::string& thisObjectClassString = thisObjectToActor.GetObjectClassName();
+
+         if (!thisObjectClassString.empty())
+            RegisterObjectToActorWithRTI(thisObjectToActor);
+
+         ++ objectToActorIterator;
+      }
+
+      std::map<const dtGame::MessageType*, dtCore::RefPtr<InteractionToMessage> >::iterator messageToInteractionIterator
+        = mMessageToInteractionMap.begin();
+
+      while (messageToInteractionIterator != mMessageToInteractionMap.end())
+      {
+         dtCore::RefPtr<InteractionToMessage> thisInteractionToMessage = messageToInteractionIterator->second;
+         const std::string& thisInteractionClassString = thisInteractionToMessage->GetInteractionName();
+
+         if (!thisInteractionClassString.empty())
+            RegisterInteractionToMessageWithRTI(*thisInteractionToMessage);
+
+         ++messageToInteractionIterator;
+      }
+   }
+   
    /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::SetSiteIdentifier(unsigned short siteIdentifier)
    {
@@ -1011,7 +1079,7 @@ namespace dtHLAGM
 
    /////////////////////////////////////////////////////////////////////////////////
    template <typename MappingObject, typename mapType, typename mapTypeIterator>
-   void GetAllMappings(std::vector<MappingObject*> toFill, mapType& readFrom, mapTypeIterator beginIt)
+   void GetAllMappings(std::vector<MappingObject*>& toFill, mapType& readFrom, mapTypeIterator beginIt)
    {
       //Adding the beginIt parameter for the begin iterator makes the template able to figure out what type
       //it should be.
@@ -1020,6 +1088,8 @@ namespace dtHLAGM
 
       mapTypeIterator mappingIterator = beginIt;
 
+      std::cout << readFrom.size() << std::endl;
+      
       while (mappingIterator != readFrom.end())
       {
          MappingObject* thisMapping = (mappingIterator->second).get();
@@ -1029,25 +1099,25 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void HLAComponent::GetAllObjectToActorMappings(std::vector<ObjectToActor*> toFill)
+   void HLAComponent::GetAllObjectToActorMappings(std::vector<ObjectToActor*>& toFill)
    {
       GetAllMappings(toFill, mObjectToActorMap, mObjectToActorMap.begin());
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void HLAComponent::GetAllObjectToActorMappings(std::vector<const ObjectToActor*> toFill) const
+   void HLAComponent::GetAllObjectToActorMappings(std::vector<const ObjectToActor*>& toFill) const
    {
       GetAllMappings(toFill, mObjectToActorMap, mObjectToActorMap.begin());
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void HLAComponent::GetAllInteractionToMessageMappings(std::vector<InteractionToMessage*> toFill)
+   void HLAComponent::GetAllInteractionToMessageMappings(std::vector<InteractionToMessage*>& toFill)
    {
       GetAllMappings(toFill, mInteractionToMessageMap, mInteractionToMessageMap.begin());
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void HLAComponent::GetAllInteractionToMessageMappings(std::vector<const InteractionToMessage*> toFill) const
+   void HLAComponent::GetAllInteractionToMessageMappings(std::vector<const InteractionToMessage*>& toFill) const
    {
       GetAllMappings(toFill, mInteractionToMessageMap, mInteractionToMessageMap.begin());
    }
@@ -1176,7 +1246,8 @@ namespace dtHLAGM
                   // Test clean up.  This is not a complete solution as we don't want to return
                   // an error everytime we get a partial update
                   mRuntimeMappings.Remove(*currentActorId);
-                  mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+                  if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_INFO))
+                     mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
                                      "Unable to map in object, no object to actor found.");
 
                   mRuntimeMappings.Remove(theObject);
@@ -1432,9 +1503,12 @@ namespace dtHLAGM
          {
             std::ostringstream ss;
             ss << currentEntityType;
-            mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
-               "Ignoring entity update with DIS ID [%s] and object class \"%s\".",
-               ss.str().c_str(), classHandleString.c_str());
+            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_INFO))
+            {
+               mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
+                     "Ignoring entity update with DIS ID [%s] and object class \"%s\".",
+                     ss.str().c_str(), classHandleString.c_str());
+            }
          }
          else
          {
@@ -1457,8 +1531,8 @@ namespace dtHLAGM
             }
             
             //If we still don't have a mapping
-            if (bestObjectToActor == NULL)              
-               mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+            if (bestObjectToActor == NULL && mLogger->IsLevelEnabled(dtUtil::Log::LOG_INFO))            
+               mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
                   "Ignoring entity update with no entity type.");
          }
 
@@ -1807,9 +1881,7 @@ namespace dtHLAGM
 
       delete theAttributes;
       theAttributes = NULL;
-
    }
-
 
    /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::UpdateRegion(DDMRegionData& regionData)
@@ -1817,6 +1889,22 @@ namespace dtHLAGM
       static const char* const HYPERSPACE="HyperSpace";
       
       RTI::SpaceHandle spaceHandle = mRTIAmbassador->getRoutingSpaceHandle(HYPERSPACE);
+
+      RTI::Region* r = regionData.GetRegion();
+      
+      if (r != NULL && r->getNumberOfExtents() != regionData.GetNumberOfExtents())
+      {
+         mRTIAmbassador->deleteRegion(r);
+         //just to be safe.
+         regionData.SetRegion(NULL);
+         r = NULL;
+      }
+      
+      if (r == NULL)
+      {
+         r = mRTIAmbassador->createRegion(spaceHandle, regionData.GetNumberOfExtents());
+         regionData.SetRegion(r);
+      }
 
       for (unsigned i = 0; i < regionData.GetNumberOfExtents(); ++i)
       {
@@ -1831,24 +1919,9 @@ namespace dtHLAGM
          try
          {
             RTI::DimensionHandle dimHandle = mRTIAmbassador->getDimensionHandle(dimension->mName.c_str(), spaceHandle);
-            RTI::Region* r = regionData.GetRegion();
-            
-            if (r != NULL && r->getNumberOfExtents() != regionData.GetNumberOfExtents() )
-            {
-               mRTIAmbassador->deleteRegion(r);
-               //just to be safe.
-               regionData.SetRegion(NULL);
-               r = NULL;
-            }
-            
-            if (r == NULL)
-            {
-               r = mRTIAmbassador->createRegion(spaceHandle, regionData.GetNumberOfExtents());
-               regionData.SetRegion(r);
-            }
+
             r->setRangeUpperBound(i, dimHandle, dimension->mMax);
             r->setRangeLowerBound(i, dimHandle, dimension->mMin);
-            
          }
          catch (const RTI::Exception& ex)
          {
@@ -1858,31 +1931,40 @@ namespace dtHLAGM
             throw dtUtil::Exception("Error getting dimension handle \"" + dimension->mName + "\": " + ss.str(), __FILE__, __LINE__);
          }
       }
-      mRTIAmbassador->notifyAboutRegionModification(*regionData.GetRegion());
+      if (regionData.GetRegion() != NULL)
+         mRTIAmbassador->notifyAboutRegionModification(*regionData.GetRegion());
    }
    
-   /// @return The DDMRegionCalculators used for publishing.
+   /////////////////////////////////////////////////////////////////////////////////
    DDMRegionCalculatorGroup& HLAComponent::GetDDMPublishingCalculators()
    {
       return mDDMPublishingCalculators;
    }
    
-   /// @return The DDMRegionCalculators used for publishing as const.
+   /////////////////////////////////////////////////////////////////////////////////
    const DDMRegionCalculatorGroup& HLAComponent::GetDDMPublishingCalculators() const
    {
       return mDDMPublishingCalculators;
    }
 
-   /// @return The DDMRegionCalculators used for subscription.
+   /////////////////////////////////////////////////////////////////////////////////
    DDMRegionCalculatorGroup& HLAComponent::GetDDMSubscriptionCalculators()
    {
       return mDDMSubscriptionCalculators;
    }
    
-   /// @return The DDMRegionCalculators used for subscription as const.
+   /////////////////////////////////////////////////////////////////////////////////
    const DDMRegionCalculatorGroup& HLAComponent::GetDDMSubscriptionCalculators() const
    {
       return mDDMSubscriptionCalculators;      
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   void HLAComponent::GetDDMSubscriptionCalculatorRegions(std::vector<const DDMRegionData* >& toFill) const
+   {
+      toFill.clear();
+      toFill.resize(mDDMSubscriptionRegions.size());
+      std::transform(mDDMSubscriptionRegions.begin(), mDDMSubscriptionRegions.end(), toFill.begin(), dtCore::ConvertToPointerUnary<DDMRegionData>());
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -1918,6 +2000,7 @@ namespace dtHLAGM
          try
          {
             dtCore::RefPtr<DDMRegionData> regionData = mDDMSubscriptionCalculators[i]->CreateRegionData();
+            mDDMSubscriptionCalculators[i]->UpdateRegionData(*regionData);
             
             UpdateRegion(*regionData);
             
