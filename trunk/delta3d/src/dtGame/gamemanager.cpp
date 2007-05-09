@@ -1716,8 +1716,9 @@ namespace dtGame
          "  [RELEASE BUILD]  " << std::endl;
 #endif
 
-      ss << "GM Stats: SimTime[" << GetSimulationTime() << "], TimeInGM[" << gmPercentTime << 
-         "%], ReportTime[" << truncRealTime << "], Ticks[" << mStatsNumFrames << 
+      float fps = ((int)((mStatsNumFrames/truncRealTime) * 10.0)) / 10.0; // force data truncation to 1 place
+      ss << "GM Stats: CurSimTime[" << GetSimulationTime() << "], TimeInGM[" << gmPercentTime << 
+         "%], ReportTime[" << truncRealTime << "], Ticks[" << mStatsNumFrames << "], FPS[" << fps << 
          "], #Msgs[" << mStatsNumProcMessages << " P/" << mStatsNumSendNetworkMessages <<
          " N], #Actors[" << mActorProxyMap.size() << "/" << mGameActorProxyMap.size() << " Game]" << std::endl;
       // include templates?  mTemplateActors.size()?    
@@ -1739,8 +1740,8 @@ namespace dtGame
             {
                float percentTime = ComputeStatsPercent(truncRealTime, (*iter)->mTotalTime);
                float truncTotalTime = ((int)((*iter)->mTotalTime * 10000)) / 10000.0; // force data truncation to 4 places
-               ss << "* Name[" << (*iter)->mNameOfLogInfo.c_str() << "], Time[" << 
-                  percentTime << "% / " << truncTotalTime << " Total] " << std::endl;
+               ss << "* Time[" << percentTime << "% / " << truncTotalTime << " Total], Name[" << 
+                  (*iter)->mNameOfLogInfo.c_str() << "]" << std::endl;
                   // Used to print average.  Was removed to simplify readability of output
                   //float((*iter)->mTotalTime / (*iter)->mTimesThrough) << " TickAvg]" << std::endl;
                (*iter)->mTotalTime = 0;
@@ -1752,20 +1753,35 @@ namespace dtGame
       }
       if(mDoStatsOnTheActors)
       {
-         ss << "*************** STARTING LOGGING OF TIME IN ACTORS *****************" << std::endl;
+         int numIgnored = 0;
+         float ignoredCumulativeTime = 0.0;
+
+         ss << "********** STARTING LOGGING OF TIME IN ACTORS -- if (> 0.1%) ************" << std::endl;
          for(iter = mDebugLoggerInformation.begin(); iter != mDebugLoggerInformation.end(); ++iter)
          {
             if(!(*iter)->mIsComponent)
             {
                float percentTime = ComputeStatsPercent(truncRealTime, (*iter)->mTotalTime);
                float truncTotalTime = ((int)((*iter)->mTotalTime * 10000)) / 10000.0; // force data truncation to 4 places
-               ss << "* Name[" << (*iter)->mNameOfLogInfo.c_str() << "], Time[" << 
-                  percentTime << "% / " << truncTotalTime << " Total] " <<
-                  ", UniqueId[" << (*iter)->mUniqueID.c_str() << "]" << std::endl;
+               if (percentTime > 0.1)
+               {
+                  ss << "* Time[" << percentTime << "% / " << truncTotalTime << " Total], Name[" << 
+                     (*iter)->mNameOfLogInfo.c_str() << "]" << 
+                     ", UniqueId[" << (*iter)->mUniqueID.c_str() << "]" << std::endl;
+               }
+               else 
+               {
+                  numIgnored ++;
+                  ignoredCumulativeTime += truncTotalTime;
+               }
                (*iter)->mTotalTime = 0;
                (*iter)->mTimesThrough = 0;
                (*iter)->mTickLocalTime = 0;
             }
+         }
+         if (numIgnored > 0)
+         {
+            ss << "*** Ignored [" << numIgnored << "] actors for [" << ignoredCumulativeTime << "]" << std::endl;
          }
          ss << "************ ENDING LOGGING OF TIME IN ACTORS *********************" << std::endl;
       }
