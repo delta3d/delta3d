@@ -12,16 +12,16 @@
             </texture2D>
          </parameter>
          <parameter name="TimeDilation">
-            <floattimer cycletimemin="2.0" cycletimemax="4.0"/>
+            <oscillator cycletimemin="2.0" cycletimemax="4.0"/>
          </parameter>
          <parameter name="MoveXDilation">
-            <floattimer cycletimemin="5.0" cycletimemax="8.0"/>
+            <oscillator cycletimemin="5.0" cycletimemax="8.0"/>
          </parameter>
          <parameter name="MoveYDilation">
-            <floattimer cycletimemin="5.0" cycletimemax="8.0"/>
+            <oscillator cycletimemin="5.0" cycletimemax="8.0"/>
          </parameter>
          <parameter name="MoveZDilation">
-            <floattimer cycletimemin="5.0" cycletimemax="8.0"/>
+            <oscillator cycletimemin="5.0" cycletimemax="8.0"/>
          </parameter>
       </shader>
       <shader name="Green" default="no">
@@ -33,16 +33,16 @@
             </texture2D>
          </parameter>
          <parameter name="TimeDilation">
-            <floattimer cycletimemin="2.0" cycletimemax="4.0"/>
+            <oscillator cycletimemin="2.0" cycletimemax="4.0"/>
          </parameter>
          <parameter name="MoveXDilation">
-            <floattimer cycletimemin="5.0" cycletimemax="8.0"/>
+            <oscillator cycletimemin="5.0" cycletimemax="8.0"/>
          </parameter>
          <parameter name="MoveYDilation">
-            <floattimer cycletimemin="5.0" cycletimemax="8.0"/>
+            <oscillator cycletimemin="5.0" cycletimemax="8.0"/>
          </parameter>
          <parameter name="MoveZDilation">
-            <floattimer cycletimemin="5.0" cycletimemax="8.0"/>
+            <oscillator cycletimemin="5.0" cycletimemax="8.0"/>
          </parameter>
          <parameter name="secondaryTexture">
             <texture2D textureUnit="1">

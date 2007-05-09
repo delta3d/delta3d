@@ -26,7 +26,7 @@
 #include <dtCore/refptr.h>
 #include <dtActors/gamemeshactor.h>
 #include <dtCore/shader.h>
-#include <dtCore/floatshaderparameter.h>
+#include <dtCore/shaderparamfloat.h>
 #include <dtCore/particlesystem.h>
 #include <dtDAL/resourcedescriptor.h>
 

@@ -75,14 +75,14 @@ namespace dtCore
    const std::string ShaderXML::INT_ELEMENT("integer");
    const std::string ShaderXML::PARAM_ELEMENT_ATTRIBUTE_DEFAULTVALUE("defaultValue");
 
-   const std::string ShaderXML::FLOATTIMER_ELEMENT("floattimer");
-   const std::string ShaderXML::FLOATTIMER_ATTRIB_OFFSET("offset");
-   const std::string ShaderXML::FLOATTIMER_ATTRIB_RANGE_MIN("rangemin");
-   const std::string ShaderXML::FLOATTIMER_ATTRIB_RANGE_MAX("rangemax");
-   const std::string ShaderXML::FLOATTIMER_ATTRIB_CYCLETIME_MIN("cycletimemin");
-   const std::string ShaderXML::FLOATTIMER_ATTRIB_CYCLETIME_MAX("cycletimemax");
-   const std::string ShaderXML::FLOATTIMER_ATTRIB_USEREALTIME("userealtime");
-   const std::string ShaderXML::FLOATTIMER_ATTRIB_OSCILLATION_TYPE("oscillation");
+   const std::string ShaderXML::OSCILLATOR_ELEMENT("oscillator");
+   const std::string ShaderXML::OSCILLATOR_ATTRIB_OFFSET("offset");
+   const std::string ShaderXML::OSCILLATOR_ATTRIB_RANGE_MIN("rangemin");
+   const std::string ShaderXML::OSCILLATOR_ATTRIB_RANGE_MAX("rangemax");
+   const std::string ShaderXML::OSCILLATOR_ATTRIB_CYCLETIME_MIN("cycletimemin");
+   const std::string ShaderXML::OSCILLATOR_ATTRIB_CYCLETIME_MAX("cycletimemax");
+   const std::string ShaderXML::OSCILLATOR_ATTRIB_USEREALTIME("userealtime");
+   const std::string ShaderXML::OSCILLATOR_ATTRIB_OSCILLATION_TYPE("oscillation");
 
    ///////////////////////////////////////////////////////////////////////////////
    ShaderXML::ShaderXML()
@@ -303,7 +303,7 @@ namespace dtCore
             newParam = ParseFloatParameter(typeElement,paramName);
          else if (toString == ShaderXML::INT_ELEMENT)
             newParam = ParseIntParameter(typeElement,paramName);
-         else if (toString == ShaderXML::FLOATTIMER_ELEMENT)
+         else if (toString == ShaderXML::OSCILLATOR_ELEMENT)
             newParam = ParseFloatTimerParameter(typeElement, paramName);
          else
             throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Invalid element found while parsing "
@@ -449,7 +449,7 @@ namespace dtCore
       dtCore::RefPtr<ShaderParamOscillator> newParam = new ShaderParamOscillator(paramName);
 
       // OFFSET 
-      valueString = GetElementAttribute(*timerElem, ShaderXML::FLOATTIMER_ATTRIB_OFFSET);
+      valueString = GetElementAttribute(*timerElem, ShaderXML::OSCILLATOR_ATTRIB_OFFSET);
       if (!valueString.empty())
       {
          std::istringstream ss;
@@ -459,7 +459,7 @@ namespace dtCore
       }
 
       // RANGEMIN
-      valueString = GetElementAttribute(*timerElem, ShaderXML::FLOATTIMER_ATTRIB_RANGE_MIN);
+      valueString = GetElementAttribute(*timerElem, ShaderXML::OSCILLATOR_ATTRIB_RANGE_MIN);
       if (!valueString.empty())
       {
          std::istringstream ss;
@@ -469,7 +469,7 @@ namespace dtCore
       }
 
       // RANGEMAX
-      valueString = GetElementAttribute(*timerElem, ShaderXML::FLOATTIMER_ATTRIB_RANGE_MAX);
+      valueString = GetElementAttribute(*timerElem, ShaderXML::OSCILLATOR_ATTRIB_RANGE_MAX);
       if (!valueString.empty())
       {
          std::istringstream ss;
@@ -479,7 +479,7 @@ namespace dtCore
       }
 
       // CYCLE TIME MIN
-      valueString = GetElementAttribute(*timerElem, ShaderXML::FLOATTIMER_ATTRIB_CYCLETIME_MIN);
+      valueString = GetElementAttribute(*timerElem, ShaderXML::OSCILLATOR_ATTRIB_CYCLETIME_MIN);
       if (!valueString.empty())
       {
          std::istringstream ss;
@@ -489,7 +489,7 @@ namespace dtCore
       }
 
       // CYCLE TIME MAX
-      valueString = GetElementAttribute(*timerElem, ShaderXML::FLOATTIMER_ATTRIB_CYCLETIME_MAX);
+      valueString = GetElementAttribute(*timerElem, ShaderXML::OSCILLATOR_ATTRIB_CYCLETIME_MAX);
       if (!valueString.empty())
       {
          std::istringstream ss;
@@ -499,7 +499,7 @@ namespace dtCore
       }
 
       // USE REAL TIME
-      valueString = GetElementAttribute(*timerElem,ShaderXML::FLOATTIMER_ATTRIB_USEREALTIME);
+      valueString = GetElementAttribute(*timerElem,ShaderXML::OSCILLATOR_ATTRIB_USEREALTIME);
       if (!valueString.empty())
       {
          if (valueString == "true")
@@ -516,7 +516,7 @@ namespace dtCore
       }
 
       // OSCILLATION
-      valueString = GetElementAttribute(*timerElem,ShaderXML::FLOATTIMER_ATTRIB_OSCILLATION_TYPE);
+      valueString = GetElementAttribute(*timerElem,ShaderXML::OSCILLATOR_ATTRIB_OSCILLATION_TYPE);
       if (!valueString.empty())
       {
          if (valueString == ShaderParamOscillator::OscillationType::UP.GetName())
