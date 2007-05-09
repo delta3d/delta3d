@@ -130,6 +130,10 @@ namespace dtAnim
          /// @return the ID for the CoreBone.
          int GetCoreBoneID(const std::string& name) const;
 
+         /// Get all bone IDs within the CoreSkeleton.
+         /// @param toFill a vector to be filled with the bone IDs for the entire CoreSkeleton.
+         void GetCoreBoneNames(std::vector<std::string>& toFill) const;
+
          ///Get the name that equates to the supplied animation ID
          const std::string& GetCoreAnimationName(int animID) const;
 
@@ -141,7 +145,7 @@ namespace dtAnim
 
          /// Get the bone IDs of all children for a parent bone.
          /// @param parentCoreBoneID the bone ID for the parent bone.
-         /// @param toFill a vector to be filled with the bone IDS for all child bones.
+         /// @param toFill a vector to be filled with the bone IDs for all child bones.
          void GetCoreBoneChildrenIDs(int parentCoreBoneID, std::vector<int>& toFill) const;
 
          /// Get all the root bone IDs

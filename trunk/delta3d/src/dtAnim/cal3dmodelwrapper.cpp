@@ -4,6 +4,7 @@
 #include <cal3d/corekeyframe.h>
 
 #include <cassert>
+#include <algorithm>
 
 using namespace dtAnim;
 
@@ -198,6 +199,31 @@ int Cal3DModelWrapper::GetCoreBoneID(const std::string& name) const
    }
 
    return mCalModel->getCoreModel()->getCoreSkeleton()->getCoreBoneId(name);
+}
+
+namespace dtAnim
+{
+   namespace details
+   {
+      struct ReturnBoneName
+      {
+         std::string operator ()(CalCoreBone* bone) const
+         {
+            return bone->getName();
+         }
+      };
+   }
+}
+
+void Cal3DModelWrapper::GetCoreBoneNames(std::vector<std::string>& toFill) const
+{
+   CalCoreSkeleton *skel = mCalModel->getCoreModel()->getCoreSkeleton();
+   std::vector<CalCoreBone*> boneVec = skel->getVectorCoreBone();
+
+   if( boneVec.empty() ) return;
+
+   toFill.resize( boneVec.size() );
+   std::transform( boneVec.begin(), boneVec.end(), toFill.begin(), details::ReturnBoneName() );
 }
 
 bool Cal3DModelWrapper::HasTrackForBone(unsigned int animID, int boneID) const
