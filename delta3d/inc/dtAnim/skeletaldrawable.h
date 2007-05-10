@@ -31,9 +31,9 @@ namespace dtAnim
       {
          enum RenderModeBits
          {
-            RENDER_MODE_NONE=0,
-            RENDER_MODE_POINTS=1<<0,
-            RENDER_MODE_LINESEGMENTS=1<<1,
+            RENDER_MODE_NONE         = 0,
+            RENDER_MODE_POINTS       = 1 << 0,
+            RENDER_MODE_LINESEGMENTS = 1 << 1,
          };
 
          virtual void AddChild(const IPrimitiveRenderObject* prims)=0;
