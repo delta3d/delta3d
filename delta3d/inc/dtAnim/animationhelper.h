@@ -43,8 +43,10 @@ namespace dtDAL
 
 namespace dtAnim
 {
+   class Cal3DModelWrapper;
    class Cal3DAnimator;
    class AnimNodeBuilder;
+   class Cal3DLoader;
    class SequenceMixer;
    class SkeletalConfiguration;
 
@@ -120,6 +122,16 @@ public:
    const Cal3DAnimator* GetAnimator() const;
 
    /**
+   * @return The Cal3DModelWrapper held by the animator
+   */
+   Cal3DModelWrapper* GetModelWrapper();
+
+   /**
+   * @return The Cal3DModelWrapper held by the animator
+   */
+   const Cal3DModelWrapper* GetModelWrapper() const;
+
+   /**
    * @return The SequenceMixer used to play, clear, and register new animations
    */
    SequenceMixer* GetSequenceMixer();
@@ -161,6 +173,8 @@ private:
 
    dtCore::RefPtr<SequenceMixer> mSequenceMixer;
    dtCore::RefPtr<SkeletalConfiguration> mSkeleton;
+
+   static dtCore::RefPtr<Cal3DLoader> sModelLoader;
    
 };
 
