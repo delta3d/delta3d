@@ -4,8 +4,8 @@ TEMPLATE = app
 CONFIG += qt debug thread
 TARGET = Delta3DLevelEditor
 
-SRC_DIR = ../../../utilities/editor/src
-INC_DIR = ../../../utilities/editor/inc/dtEditQt
+SRC_DIR = ../../../utilities/STAGE/src
+INC_DIR = ../../../utilities/STAGE/inc/dtEditQt
 
 SRC_GLOB = $$system(python doglob.py $$quote('$$SRC_DIR/*.cpp'))
 INC_GLOB = $$system(python doglob.py $$quote('$$INC_DIR/*.h'))
@@ -19,6 +19,6 @@ HEADERS += $$INC_GLOB
 SOURCES += $$SRC_GLOB
 
 INCLUDEPATH = ../../../inc
-INCLUDEPATH += ../../../utilities/editor/inc
+INCLUDEPATH += ../../../utilities/STAGE/inc
 
 
