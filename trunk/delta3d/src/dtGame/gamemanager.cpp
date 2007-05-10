@@ -1704,9 +1704,12 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::DebugStatisticsPrintOut(const float realTimeElapsed)
    {
-      float gmPercentTime = ComputeStatsPercent(realTimeElapsed, (float) mStatsCumGMProcessTime);
-      // real time is milliseconds. Convert to seconds (*1 mil) and then trunc to 5 digits 
+      // real time is milliseconds. Convert to seconds (*1000) and then trunc to 4 digits 
       float truncRealTime = ((int)(realTimeElapsed / 10.0)) / 100000.0; 
+      float truncCumGMTime = ((int)((float) mStatsCumGMProcessTime / 10.0)) / 100000.0; 
+      float gmPercentTime = ComputeStatsPercent(truncRealTime, truncCumGMTime);
+      float cumulativeTime = 0.0;
+      int numComps = 0, numActors = 0;
 
       std::ostringstream ss;
       ss << "==========Printing Debug information===========" << 
@@ -1718,7 +1721,8 @@ namespace dtGame
 
       float fps = ((int)((mStatsNumFrames/truncRealTime) * 10.0)) / 10.0; // force data truncation to 1 place
       ss << "GM Stats: CurSimTime[" << GetSimulationTime() << "], TimeInGM[" << gmPercentTime << 
-         "%], ReportTime[" << truncRealTime << "], Ticks[" << mStatsNumFrames << "], FPS[" << fps << 
+         "%, " << truncCumGMTime << "], ReportTime[" << truncRealTime << 
+         "], Ticks[" << mStatsNumFrames << "], FPS[" << fps << 
          "], #Msgs[" << mStatsNumProcMessages << " P/" << mStatsNumSendNetworkMessages <<
          " N], #Actors[" << mActorProxyMap.size() << "/" << mGameActorProxyMap.size() << " Game]" << std::endl;
       // include templates?  mTemplateActors.size()?    
@@ -1742,11 +1746,11 @@ namespace dtGame
                float truncTotalTime = ((int)((*iter)->mTotalTime * 10000)) / 10000.0; // force data truncation to 4 places
                ss << "* Time[" << percentTime << "% / " << truncTotalTime << " Total], Name[" << 
                   (*iter)->mNameOfLogInfo.c_str() << "]" << std::endl;
-                  // Used to print average.  Was removed to simplify readability of output
-                  //float((*iter)->mTotalTime / (*iter)->mTimesThrough) << " TickAvg]" << std::endl;
                (*iter)->mTotalTime = 0;
                (*iter)->mTimesThrough = 0;
                (*iter)->mTickLocalTime = 0;
+               cumulativeTime += truncTotalTime;
+               numComps += 1;
             }
          }
          ss << "*************** ENDING LOGGING OF TIME IN COMPONENTS *****************" << std::endl;
@@ -1777,13 +1781,29 @@ namespace dtGame
                (*iter)->mTotalTime = 0;
                (*iter)->mTimesThrough = 0;
                (*iter)->mTickLocalTime = 0;
+               cumulativeTime += truncTotalTime;
+               numActors += 1;
             }
          }
+         // ignored actors -- too much data with 500+ actors for one actor per line
          if (numIgnored > 0)
          {
-            ss << "*** Ignored [" << numIgnored << "] actors for [" << ignoredCumulativeTime << "]" << std::endl;
+            float percentTime = ComputeStatsPercent(truncRealTime, ignoredCumulativeTime);
+            ss << "*** Ignored [" << numIgnored << "] actors for [" << ignoredCumulativeTime << 
+               ", " << percentTime << "%]." << std::endl;
          }
          ss << "************ ENDING LOGGING OF TIME IN ACTORS *********************" << std::endl;
+      }
+      // total stats
+      if (mDoStatsOnTheComponents || mDoStatsOnTheActors)
+      {
+         float percentTime = ComputeStatsPercent(truncRealTime, cumulativeTime);
+         ss << "* Cumulative Time [" << percentTime << "%, " << cumulativeTime << "s] for ";
+         if (mDoStatsOnTheActors)
+            ss << "[" << numActors << " actors]";
+         if (mDoStatsOnTheComponents)
+            ss << "[" << numComps << " comps]";
+         ss << std::endl;
       }
       ss << "============ Ending Debug information ==============" << std::endl;
 
