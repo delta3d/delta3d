@@ -241,6 +241,11 @@ const std::string& Cal3DModelWrapper::GetCoreAnimationName( int animID ) const
    return mCalModel->getCoreModel()->getCoreAnimation(animID)->getName();
 }
 
+int Cal3DModelWrapper::GetCoreAnimationIDByName(const std::string &name)
+{
+   return mCalModel->getCoreModel()->getCoreAnimationId(name);
+}
+
 unsigned int Cal3DModelWrapper::GetCoreAnimationTrackCount( int animID ) const
 {
    return mCalModel->getCoreModel()->getCoreAnimation(animID)->getTrackCount();
