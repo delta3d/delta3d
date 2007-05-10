@@ -28,6 +28,7 @@
 #include <vector>
 #include <osg/ref_ptr>
 #include <dtCore/refptr.h>
+#include <osg/Referenced>
 
 
 class CalCoreModel;
@@ -48,12 +49,11 @@ namespace dtAnim
     * instances of CalModels.  If you call Load() with the same filename twice,
     * it actually only loads once.
     */
-   class DT_ANIM_EXPORT Cal3DLoader
+   class DT_ANIM_EXPORT Cal3DLoader: public osg::Referenced
    {
       public:
    
          Cal3DLoader();
-         virtual ~Cal3DLoader();
          
          ///Load an animated entity definition file and return the Cal3DModelWrapper
          dtCore::RefPtr<Cal3DModelWrapper> Load( const std::string &filename );
@@ -61,6 +61,9 @@ namespace dtAnim
          ///empty all containers of CalCoreModels and the stored textures
          void PurgeAllCaches();
    
+      protected:      
+         virtual ~Cal3DLoader();
+
       private:
          CalCoreModel* GetCoreModel( const std::string &filename, const std::string &path );
 
