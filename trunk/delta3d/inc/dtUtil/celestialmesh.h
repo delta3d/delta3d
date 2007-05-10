@@ -36,8 +36,6 @@ namespace dtUtil
 {
    struct DT_UTIL_EXPORT CelestialMesh
    {
-	  typedef std::pair<unsigned short, unsigned short> MeshIndexPair;
-
       struct DT_UTIL_EXPORT Vertex
       {
          Vertex(const osg::Vec3& azel, unsigned int animID);
@@ -46,7 +44,7 @@ namespace dtUtil
          unsigned int mAnimID;
 
       private:
-         ///< not implemented by design
+         /// not implemented by design
          Vertex();  
       };
 
@@ -60,19 +58,28 @@ namespace dtUtil
          unsigned short mIndices[3]; 
 
       private:
-         ///< not implemented by design
+         /// not implemented by design
          Triangle();  
       };
 
-	  struct DT_UTIL_EXPORT TriangleEdge
-	  {
-        TriangleEdge(){}
-        TriangleEdge(const MeshIndexPair edge, const int triangleIndex)
-           : mEdge(edge), mTriangleID(triangleIndex){}
+      typedef std::pair<unsigned short, unsigned short> MeshIndexPair;
 
-		  MeshIndexPair mEdge;
-		  int mTriangleID;
-	  };
+      struct DT_UTIL_EXPORT TriangleEdge
+      {
+         TriangleEdge(){}
+         TriangleEdge(const MeshIndexPair edge, const int triangleIndex)
+            : mEdge(edge), mTriangleID(triangleIndex){}
+
+         MeshIndexPair mEdge;
+         int mTriangleID;
+      };
+
+      typedef std::vector<Triangle>     TriangleVector;
+      typedef std::vector<TriangleEdge> TriangleEdgeVector;
+      typedef std::vector<Vertex*> VertexVector;
+      typedef dtUtil::BarycentricSpace<osg::Vec3> Barycentric2D;
+      typedef std::vector<Barycentric2D*> Barycentric2DVector;
+
 
       CelestialMesh();
       ~CelestialMesh();
@@ -80,23 +87,15 @@ namespace dtUtil
       std::string mName;
       std::string mBoneName;
 
-      typedef std::vector<Triangle>     TriangleVector;
-      typedef std::vector<TriangleEdge> TriangleEdgeVector;
-
       TriangleVector       mTriangles;
       TriangleEdgeVector   mSilhouetteEdges;
 
-      typedef std::vector<Vertex*> VertexVector;
       VertexVector mVertices;
 
-      typedef dtUtil::BarycentricSpace<osg::Vec3> Barycentric2D;
-      typedef std::vector<Barycentric2D*> Barycentric2DVector;
-
-      // the number of spaces is equal to the number of "celestial" polygons.
+      /// the number of spaces is equal to the number of "celestial" Triangles.
       Barycentric2DVector mBarySpaces;  
 
       // Debug --------------------------------------------------
-      
       typedef std::map<MeshIndexPair, osg::ref_ptr<osg::Geometry> > EdgeLineMap;
 
       EdgeLineMap mEdgeLines;
