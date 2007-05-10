@@ -13,14 +13,14 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="..\..\..\utilities\editor\src\windows-msvc-debug"
-			IntermediateDirectory="..\..\..\utilities\editor\src\windows-msvc-debug"
+			OutputDirectory="..\..\..\utilities\STAGE\src\windows-msvc-debug"
+			IntermediateDirectory="..\..\..\utilities\STAGE\src\windows-msvc-debug"
 			ConfigurationType="1"
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\utilities\editor\inc;..\..\..\inc;..\..\..\ext\inc;$(QTDIR)\include"
+				AdditionalIncludeDirectories="..\..\..\utilities\STAGE\inc;..\..\..\inc;..\..\..\ext\inc;$(QTDIR)\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_NOAUTOLIBMSG"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -73,13 +73,13 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="..\..\..\utilities\editor\src\windows-msvc-release"
-			IntermediateDirectory="..\..\..\utilities\editor\src\windows-msvc-release"
+			OutputDirectory="..\..\..\utilities\STAGE\src\windows-msvc-release"
+			IntermediateDirectory="..\..\..\utilities\STAGE\src\windows-msvc-release"
 			ConfigurationType="1"
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\..\utilities\editor\inc;..\..\..\inc;..\..\..\ext\inc;&quot;$(QTDIR)\include&quot;"
+				AdditionalIncludeDirectories="..\..\..\utilities\STAGE\inc;..\..\..\inc;..\..\..\ext\inc;&quot;$(QTDIR)\include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_NOAUTOLIBMSG"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
@@ -136,241 +136,241 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\actorbrowser.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\actorbrowser.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\actorglobalbrowser.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\actorglobalbrowser.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\actorresultstable.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\actorresultstable.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\actorsearcher.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\actorsearcher.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\actortab.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\actortab.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\actortypetreewidget.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\actortypetreewidget.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\camera.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\camera.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\characterbrowser.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\characterbrowser.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\dialoglistselection.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\dialoglistselection.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\dialogmapproperties.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\dialogmapproperties.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\prefix\dtstageprefix-src.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\dynamicabstractcontrol.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\dynamicabstractcontrol.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\dynamicabstractparentcontrol.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\dynamicabstractparentcontrol.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\dynamicactorcontrol.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\dynamicactorcontrol.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\dynamicboolcontrol.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\dynamicboolcontrol.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\dynamiccolorelementcontrol.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\dynamiccolorelementcontrol.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\dynamiccolorrgbacontrol.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\dynamiccolorrgbacontrol.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\dynamicdoublecontrol.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\dynamicdoublecontrol.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\dynamicenumcontrol.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\dynamicenumcontrol.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\dynamicfloatcontrol.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\dynamicfloatcontrol.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\dynamicgameeventcontrol.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\dynamicgameeventcontrol.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\dynamicgroupcontrol.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\dynamicgroupcontrol.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\dynamicgrouppropertycontrol.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\dynamicgrouppropertycontrol.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\dynamicintcontrol.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\dynamicintcontrol.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\dynamiclabelcontrol.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\dynamiclabelcontrol.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\dynamiclongcontrol.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\dynamiclongcontrol.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\dynamicnamecontrol.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\dynamicnamecontrol.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\dynamicresourcecontrol.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\dynamicresourcecontrol.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\dynamicstringcontrol.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\dynamicstringcontrol.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\dynamicsubwidgets.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\dynamicsubwidgets.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\dynamicvec2control.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\dynamicvec2control.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\dynamicvec3control.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\dynamicvec3control.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\dynamicvec4control.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\dynamicvec4control.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\dynamicvectorelementcontrol.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\dynamicvectorelementcontrol.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\editoraboutbox.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\editoraboutbox.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\editoractions.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\editoractions.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\editordata.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\editordata.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\editorevents.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\editorevents.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\editorsettings.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\editorsettings.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\gameeventdialog.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\gameeventdialog.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\gameeventsdialog.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\gameeventsdialog.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\global.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\global.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\groupuiplugin.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\groupuiplugin.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\groupuiregistry.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\groupuiregistry.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\libraryeditor.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\libraryeditor.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\librarypathseditor.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\librarypathseditor.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\mainwindow.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\mainwindow.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\mapdialog.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\mapdialog.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\mapsaveasdialog.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\mapsaveasdialog.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\orthoviewport.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\orthoviewport.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\particlebrowser.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\particlebrowser.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\perspectiveviewport.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\perspectiveviewport.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\preferencesdialog.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\preferencesdialog.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\projectbrowser.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\projectbrowser.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\projectcontextdialog.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\projectcontextdialog.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\propertyeditor.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\propertyeditor.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\propertyeditordelegate.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\propertyeditordelegate.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\propertyeditormodel.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\propertyeditormodel.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\propertyeditortreeview.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\propertyeditortreeview.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\resourceabstractbrowser.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\resourceabstractbrowser.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\resourcebrowser.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\resourcebrowser.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\resourceimportdialog.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\resourceimportdialog.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\resourcetreewidget.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\resourcetreewidget.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\skeletalmeshbrowser.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\skeletalmeshbrowser.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\soundbrowser.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\soundbrowser.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\staticmeshbrowser.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\staticmeshbrowser.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\tabcontainer.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\tabcontainer.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\tabwrapper.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\tabwrapper.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\taskeditor.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\taskeditor.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\taskuiplugin.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\taskuiplugin.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\terrainbrowser.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\terrainbrowser.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\texturebrowser.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\texturebrowser.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\typedefs.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\typedefs.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\uiresources.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\uiresources.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\undomanager.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\undomanager.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\viewport.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\viewport.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\viewportcontainer.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\viewportcontainer.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\viewportmanager.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\viewportmanager.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\viewportoverlay.h">
+				RelativePath="..\..\..\utilities\STAGE\inc\dtEditQt\viewportoverlay.h">
 			</File>
 		</Filter>
 		<Filter
@@ -378,14 +378,14 @@
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}">
 			<File
-				RelativePath="..\..\..\utilities\editor\dtEditQt.rc">
+				RelativePath="..\..\..\utilities\STAGE\dtEditQt.rc">
 			</File>
 		</Filter>
 		<Filter
 			Name="MocFiles"
 			Filter="">
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_actorbrowser.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_actorbrowser.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -400,7 +400,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_actorglobalbrowser.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_actorglobalbrowser.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -415,7 +415,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_actorresultstable.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_actorresultstable.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -430,7 +430,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_actorsearcher.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_actorsearcher.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -445,7 +445,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_characterbrowser.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_characterbrowser.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -460,7 +460,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_dialoglistselection.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_dialoglistselection.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -475,7 +475,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_dialogmapproperties.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_dialogmapproperties.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -490,7 +490,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_dynamicabstractcontrol.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_dynamicabstractcontrol.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -505,7 +505,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_dynamicabstractparentcontrol.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_dynamicabstractparentcontrol.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -520,7 +520,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_dynamicactorcontrol.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_dynamicactorcontrol.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -535,7 +535,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_dynamicboolcontrol.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_dynamicboolcontrol.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -550,7 +550,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_dynamiccolorelementcontrol.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_dynamiccolorelementcontrol.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -565,7 +565,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_dynamiccolorrgbacontrol.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_dynamiccolorrgbacontrol.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -580,7 +580,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_dynamicdoublecontrol.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_dynamicdoublecontrol.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -595,7 +595,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_dynamicenumcontrol.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_dynamicenumcontrol.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -610,7 +610,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_dynamicfloatcontrol.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_dynamicfloatcontrol.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -625,7 +625,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_dynamicgameeventcontrol.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_dynamicgameeventcontrol.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -640,7 +640,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_dynamicgroupcontrol.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_dynamicgroupcontrol.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -655,7 +655,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_dynamicgrouppropertycontrol.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_dynamicgrouppropertycontrol.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -670,7 +670,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_dynamicintcontrol.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_dynamicintcontrol.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -685,7 +685,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_dynamiclabelcontrol.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_dynamiclabelcontrol.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -700,7 +700,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_dynamiclongcontrol.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_dynamiclongcontrol.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -715,7 +715,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_dynamicnamecontrol.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_dynamicnamecontrol.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -730,7 +730,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_dynamicresourcecontrol.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_dynamicresourcecontrol.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -745,7 +745,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_dynamicstringcontrol.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_dynamicstringcontrol.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -760,7 +760,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_dynamicsubwidgets.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_dynamicsubwidgets.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -775,7 +775,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_dynamicvec2control.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_dynamicvec2control.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -790,7 +790,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_dynamicvec3control.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_dynamicvec3control.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -805,7 +805,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_dynamicvec4control.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_dynamicvec4control.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -820,7 +820,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_dynamicvectorelementcontrol.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_dynamicvectorelementcontrol.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -835,7 +835,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_editoraboutbox.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_editoraboutbox.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -850,7 +850,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_editoractions.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_editoractions.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -865,7 +865,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_editorevents.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_editorevents.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -880,7 +880,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_gameeventdialog.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_gameeventdialog.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -895,7 +895,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_gameeventsdialog.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_gameeventsdialog.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -910,7 +910,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_libraryeditor.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_libraryeditor.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -925,7 +925,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_librarypathseditor.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_librarypathseditor.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -940,7 +940,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_mainwindow.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_mainwindow.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -955,7 +955,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_mapdialog.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_mapdialog.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -970,7 +970,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_mapsaveasdialog.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_mapsaveasdialog.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -985,7 +985,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_orthoviewport.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_orthoviewport.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -1000,7 +1000,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_particlebrowser.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_particlebrowser.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -1015,7 +1015,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_perspectiveviewport.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_perspectiveviewport.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -1030,7 +1030,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_preferencesdialog.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_preferencesdialog.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -1045,7 +1045,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_projectbrowser.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_projectbrowser.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -1060,7 +1060,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_projectcontextdialog.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_projectcontextdialog.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -1075,7 +1075,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_propertyeditor.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_propertyeditor.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -1090,7 +1090,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_propertyeditordelegate.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_propertyeditordelegate.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -1105,7 +1105,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_propertyeditormodel.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_propertyeditormodel.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -1120,7 +1120,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_propertyeditortreeview.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_propertyeditortreeview.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -1135,7 +1135,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_resourceabstractbrowser.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_resourceabstractbrowser.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -1150,7 +1150,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_resourcebrowser.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_resourcebrowser.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -1165,7 +1165,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_resourceimportdialog.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_resourceimportdialog.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -1180,7 +1180,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_skeletalmeshbrowser.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_skeletalmeshbrowser.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -1195,7 +1195,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_soundbrowser.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_soundbrowser.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -1210,7 +1210,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_staticmeshbrowser.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_staticmeshbrowser.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -1225,7 +1225,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_taskeditor.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_taskeditor.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -1240,7 +1240,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_taskuiplugin.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_taskuiplugin.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -1255,7 +1255,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_terrainbrowser.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_terrainbrowser.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -1270,7 +1270,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_texturebrowser.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_texturebrowser.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -1285,7 +1285,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_undomanager.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_undomanager.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -1300,7 +1300,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_viewport.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_viewport.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -1315,7 +1315,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_viewportcontainer.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_viewportcontainer.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -1330,7 +1330,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_viewportmanager.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_viewportmanager.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -1345,7 +1345,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_viewportoverlay.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_viewportoverlay.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -1364,28 +1364,28 @@
 			Name="Source Files"
 			Filter="">
 			<File
-				RelativePath="..\..\..\utilities\editor\src\actorbrowser.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\actorbrowser.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\actorglobalbrowser.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\actorglobalbrowser.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\actorresultstable.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\actorresultstable.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\actorsearcher.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\actorsearcher.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\actortab.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\actortab.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\actortypetreewidget.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\actortypetreewidget.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\camera.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\camera.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\characterbrowser.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\characterbrowser.cpp">
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
@@ -1394,130 +1394,130 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\dialoglistselection.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\dialoglistselection.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\dialogmapproperties.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\dialogmapproperties.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\dynamicabstractcontrol.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\dynamicabstractcontrol.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\dynamicabstractparentcontrol.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\dynamicabstractparentcontrol.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\dynamicactorcontrol.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\dynamicactorcontrol.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\dynamicboolcontrol.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\dynamicboolcontrol.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\dynamiccolorelementcontrol.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\dynamiccolorelementcontrol.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\dynamiccolorrgbacontrol.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\dynamiccolorrgbacontrol.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\dynamicdoublecontrol.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\dynamicdoublecontrol.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\dynamicenumcontrol.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\dynamicenumcontrol.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\dynamicfloatcontrol.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\dynamicfloatcontrol.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\dynamicgameeventcontrol.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\dynamicgameeventcontrol.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\dynamicgroupcontrol.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\dynamicgroupcontrol.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\dynamicgrouppropertycontrol.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\dynamicgrouppropertycontrol.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\dynamicintcontrol.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\dynamicintcontrol.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\dynamiclabelcontrol.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\dynamiclabelcontrol.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\dynamiclongcontrol.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\dynamiclongcontrol.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\dynamicnamecontrol.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\dynamicnamecontrol.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\dynamicresourcecontrol.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\dynamicresourcecontrol.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\dynamicstringcontrol.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\dynamicstringcontrol.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\dynamicvec2control.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\dynamicvec2control.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\dynamicvec3control.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\dynamicvec3control.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\dynamicvec4control.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\dynamicvec4control.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\dynamicvectorelementcontrol.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\dynamicvectorelementcontrol.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\editoraboutbox.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\editoraboutbox.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\editoractions.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\editoractions.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\editordata.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\editordata.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\editorevents.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\editorevents.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\editorsettings.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\editorsettings.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\gameeventdialog.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\gameeventdialog.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\gameeventsdialog.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\gameeventsdialog.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\groupuiregistry.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\groupuiregistry.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\libraryeditor.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\libraryeditor.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\librarypathseditor.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\librarypathseditor.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\main.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\main.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\mainwindow.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\mainwindow.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\mapdialog.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\mapdialog.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\mapsaveasdialog.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\mapsaveasdialog.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\orthoviewport.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\orthoviewport.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\particlebrowser.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\particlebrowser.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\perspectiveviewport.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\perspectiveviewport.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\precomp.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\precomp.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -1532,82 +1532,82 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\preferencesdialog.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\preferencesdialog.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\projectbrowser.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\projectbrowser.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\projectcontextdialog.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\projectcontextdialog.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\propertyeditor.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\propertyeditor.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\propertyeditordelegate.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\propertyeditordelegate.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\propertyeditormodel.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\propertyeditormodel.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\propertyeditortreeview.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\propertyeditortreeview.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\resourceabstractbrowser.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\resourceabstractbrowser.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\resourcebrowser.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\resourcebrowser.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\resourceimportdialog.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\resourceimportdialog.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\resourcetreewidget.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\resourcetreewidget.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\skeletalmeshbrowser.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\skeletalmeshbrowser.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\soundbrowser.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\soundbrowser.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\staticmeshbrowser.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\staticmeshbrowser.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\tabcontainer.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\tabcontainer.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\tabwrapper.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\tabwrapper.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\taskeditor.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\taskeditor.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\taskuiplugin.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\taskuiplugin.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\terrainbrowser.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\terrainbrowser.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\texturebrowser.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\texturebrowser.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\uiresources.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\uiresources.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\undomanager.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\undomanager.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\viewport.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\viewport.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\viewportcontainer.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\viewportcontainer.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\viewportmanager.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\viewportmanager.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\viewportoverlay.cpp">
+				RelativePath="..\..\..\utilities\STAGE\src\viewportoverlay.cpp">
 			</File>
 		</Filter>
 	</Files>
