@@ -116,7 +116,7 @@ namespace dtAnim
          osg::Quat GetCoreTrackKeyFrameQuat(unsigned int animid, unsigned int boneid, unsigned int keyframeindex) const;
 
          /// @param boneID the ID for the CalBone instance.
-         osg::Quat GetBoneAbsoluteRotation(unsigned int boneID) const;
+         osg::Quat GetBoneAbsoluteRotation(unsigned int boneID) const;         
 
          /// Get the current translation for the CalBone.
          /// @param boneID the ID for the CalBone of interest.
@@ -136,6 +136,8 @@ namespace dtAnim
 
          ///Get the name that equates to the supplied animation ID
          const std::string& GetCoreAnimationName(int animID) const;
+
+         int GetCoreAnimationIDByName(const std::string &name);
 
          ///Get the number of tracks this animation uses
          unsigned int GetCoreAnimationTrackCount(int animID) const;

@@ -27,6 +27,7 @@
 #include <osg/Geometry>
 #include <osg/ref_ptr>
 #include <map>
+#include <string>
 
 #include <dtUtil/export.h>
 #include <dtUtil/barycentric.h>
@@ -75,6 +76,9 @@ namespace dtUtil
 
       CelestialMesh();
       ~CelestialMesh();
+
+      std::string mName;
+      std::string mBoneName;
 
       typedef std::vector<Triangle>     TriangleVector;
       typedef std::vector<TriangleEdge> TriangleEdgeVector;
