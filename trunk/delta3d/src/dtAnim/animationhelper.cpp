@@ -43,6 +43,9 @@
 namespace dtAnim
 {
 
+dtCore::RefPtr<Cal3DLoader> AnimationHelper::sModelLoader = new Cal3DLoader();
+
+
 AnimationHelper::AnimationHelper(AnimNodeBuilder* pBuilder)
 : mGeode(0)
 , mAnimator(0)
@@ -79,14 +82,14 @@ void AnimationHelper::ClearAnimation(const std::string& pAnim, float fadeOutTime
 
 void AnimationHelper::LoadModel(const std::string& pFilename)
 {
-      dtAnim::Cal3DLoader pLoader;
-      dtCore::RefPtr<dtAnim::Cal3DModelWrapper> newModel = pLoader.Load(pFilename);
+      dtCore::RefPtr<dtAnim::Cal3DModelWrapper> newModel = sModelLoader->Load(pFilename);
 
       if (newModel.valid())
       {
          mAnimator = new dtAnim::Cal3DAnimator(newModel.get());   
 
-         mGeode = mNodeBuilder->CreateGeode(newModel.get());
+         //todo refactor this using the char drawable
+         //mGeode = mNodeBuilder->CreateGeode(newModel.get());
       }
       else
       {
@@ -114,6 +117,16 @@ const osg::Geode* AnimationHelper::GetGeode() const
 Cal3DAnimator* AnimationHelper::GetAnimator()
 {
    return mAnimator.get();
+}
+
+const Cal3DModelWrapper* AnimationHelper::GetModelWrapper() const
+{
+   return mAnimator->GetWrapper();
+}
+
+Cal3DModelWrapper* AnimationHelper::GetModelWrapper()
+{
+   return mAnimator->GetWrapper();
 }
 
 const Cal3DAnimator* AnimationHelper::GetAnimator() const
