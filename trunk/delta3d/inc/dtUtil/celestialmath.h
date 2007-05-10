@@ -29,6 +29,29 @@
 
 namespace dtUtil
 {
+   struct TargetTriangle
+   {
+      bool  mIsInside;
+      int   mTriangleID;
+      float mAzimuth;
+      float mElevation;
+   };
+
+   struct CelestialMesh;
+
+   /**  
+   *  GetTargetTriangleData - Finds the triangle in the mesh for the given azimuth elevation 
+   *                          if it exists, otherwise it returns the closest triangle and its coordinates
+   *  @param azimuth        - the horizontal angle between our forward and our target
+   *  @param elevation      - the vertical angle between our forward and our target
+   *  @param mesh           - the mesh of celestial vertices that holds the triangle of interest
+   *  @return outTriangle   - struct containing the nearest triangle and it's location
+   */
+   void DT_UTIL_EXPORT GetTargetTriangleData(const float azimuth,
+                                             const float elevation,
+                                             const CelestialMesh &mesh,                                 
+                                             TargetTriangle &outTriangle);
+
    /**  
    *  GetCelestialCoordinates - calculates the azimuth and elevation w.r.t. a forward vector
    *  @param origin      - the starting location
@@ -63,7 +86,7 @@ namespace dtUtil
    *  @param azimuth           - the horizontal angle of interest
    *  @param elevation         - the vertical angle of interest
    */
-   int DT_UTIL_EXPORT FindCelestialTriangleID(const struct CelestialMesh &mesh, float azimuth, float elevation); 
+   int DT_UTIL_EXPORT FindCelestialTriangleID(const CelestialMesh &mesh, float azimuth, float elevation); 
 
    /**
    *  GetClosestPointOnSegment - calculates the point on a segment that is closest to a reference point
@@ -104,6 +127,8 @@ namespace dtUtil
                                             float windowHeight,
                                             const osg::Vec2 &screenOrigin,
                                             osg::Vec2 &outScreenPos);
+
+  
 }
 
 #endif // _pd_celestial_math_h_

@@ -4,7 +4,61 @@
 #include <dtUtil/mathdefines.h>
 #include <osg/Quat>
 
+using namespace dtUtil;
+
 #define TRIANGLE_NOT_FOUND -1
+
+void dtUtil::GetTargetTriangleData(const float azimuth,
+                                   const float elevation,
+                                   const CelestialMesh &mesh,                                 
+                                   TargetTriangle &outTriangle)
+{
+   int triangleID = dtUtil::FindCelestialTriangleID( mesh, azimuth, elevation );
+
+   // At this point, we know if we're in or out
+   outTriangle.mIsInside = (triangleID != -1);
+
+   // Find the closest triangle point
+   if (triangleID == -1)
+   {         
+      osg::Vec3 closestPoint;
+      int closestTriangleID;
+
+      osg::Vec3 refPoint(azimuth, elevation, 0);
+      float minDistance = FLT_MAX;        
+
+      for (unsigned int edgeIndex = 0; edgeIndex < mesh.mSilhouetteEdges.size(); ++edgeIndex)
+      {
+         dtUtil::CelestialMesh::MeshIndexPair edge = mesh.mSilhouetteEdges[edgeIndex].mEdge;
+
+         osg::Vec3 startPoint = mesh.mVertices[edge.first]->mMaxAzMaxEl;
+         osg::Vec3 endPoint   = mesh.mVertices[edge.second]->mMaxAzMaxEl;
+
+         osg::Vec3 closestPointToCurrentEdge;
+
+         dtUtil::GetClosestPointOnSegment(startPoint, endPoint, refPoint, closestPointToCurrentEdge);
+
+         // We don't need exact distance, just a way too compare (this is faster)
+         float distance = (refPoint - closestPointToCurrentEdge).length2();
+
+         if (distance < minDistance)
+         {
+            minDistance       = distance;
+            closestPoint      = closestPointToCurrentEdge;
+            closestTriangleID = mesh.mSilhouetteEdges[edgeIndex].mTriangleID;
+         }
+      }
+
+      outTriangle.mTriangleID = closestTriangleID;
+      outTriangle.mAzimuth    = closestPoint.x();
+      outTriangle.mElevation  = closestPoint.y();
+      return;
+   }      
+
+   outTriangle.mTriangleID = triangleID;
+   outTriangle.mAzimuth    = azimuth;
+   outTriangle.mElevation  = elevation;		
+}
 
 void dtUtil::GetCelestialCoordinates(const osg::Vec3 &origin,
                                      const osg::Vec3 &target_point,
