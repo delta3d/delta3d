@@ -19,4 +19,4 @@ elif env['OS'] == 'linux' or env['OS'] == 'darwin' :
 for module in modules :
    SConscript( dirs=[module], build_dir = os.path.join( buildProductsDir, module, env['OS']+'-'+tool+'-'+mode ), duplicate = 0 )
 
-SConscript( dirs=['editor'] )
+SConscript( dirs=['STAGE'] )
