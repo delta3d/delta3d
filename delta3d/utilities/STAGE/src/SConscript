@@ -53,9 +53,9 @@ if env['ENV'].has_key('QTDIR'):
       cppDefines += ['_REENTRANT']
    
    if env['OS'] == 'darwin':
-      env.Append(CPPPATH = ['#/utilities/editor/inc'] )
+      env.Append(CPPPATH = ['#/utilities/STAGE/inc'] )
    else:
-      env.Append(CPPPATH = [qtdir + '/include','#/utilities/editor/inc'] )
+      env.Append(CPPPATH = [qtdir + '/include','#/utilities/STAGE/inc'] )
    
    libs = ['QtCore','QtGui','QtOpenGL','dtDAL','dtAI','dtCore','dtUtil','dtAudio','dtChar','dtABC','dtGame'] 
    
@@ -82,7 +82,7 @@ if env['ENV'].has_key('QTDIR'):
          
       target = parts[len(parts)-1][:-2]
          
-      env['QT4_MOCFROMHFLAGS'] =['-Iutilities/editor/inc']
+      env['QT4_MOCFROMHFLAGS'] =['-Iutilities/STAGE/inc']
       moc_targets.append(env.Moc4(target=target, source=currHeader))
 
    initialSources = env.SGlob('*.cpp')
@@ -109,7 +109,7 @@ if env['ENV'].has_key('QTDIR'):
          
    # Build the icon
    if env['OS'] == 'windows' :
-      sources += env.RES( '#utilities\editor\dtEditQt.rc' )
+      sources += env.RES( '#utilities\STAGE\dtEditQt.rc' )
 
    #appName = '#/bin/STAGE'
 	
@@ -134,6 +134,6 @@ if env['ENV'].has_key('QTDIR'):
       result = 'true'
    
    if (result == 'false') :
-      errorLog.write("Failed to build the level editor application.\n")
+      errorLog.write("Failed to build STAGE.\n")
    
    Return('result')
