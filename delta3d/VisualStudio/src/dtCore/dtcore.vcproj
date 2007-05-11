@@ -210,6 +210,9 @@
 				RelativePath="..\..\..\src\dtCore\globals.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtCore\hotspotattachment.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtCore\infinitelight.cpp">
 			</File>
 			<File
@@ -435,6 +438,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtCore\globals.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtCore\hotspotattachment.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtCore\infinitelight.h">
