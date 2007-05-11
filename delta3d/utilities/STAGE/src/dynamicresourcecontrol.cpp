@@ -257,7 +257,7 @@ namespace dtEditQt
         } 
         else if (myProperty->GetPropertyType() == dtDAL::DataType::SKELETAL_MESH) 
         {
-           return EditorData::GetInstance().getCurrentCharacterResource();
+           return EditorData::GetInstance().getCurrentSkeletalModelResource();
         } 
         else 
         {
