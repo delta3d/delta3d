@@ -46,38 +46,45 @@ namespace dtGame
          return;
       }
 
-      if(msg.GetMessageType() == MessageType::TICK_LOCAL)
+      if (msg.GetSource() == GetGameManager()->GetMachineInfo())
       {
-         ProcessTick(static_cast<const TickMessage&>(msg));
-      }
-      else if(msg.GetMessageType() == MessageType::TICK_REMOTE)
-      {
-         ProcessTick(static_cast<const TickMessage&>(msg));
-      }
-      else if(msg.GetMessageType() == MessageType::INFO_ACTOR_PUBLISHED)
-      {
-         GameActorProxy* ga = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
-         if(ga && ga->IsPublished())
-            ProcessPublishActor(static_cast<const ActorPublishedMessage&>(msg));
-      }
-      else if(msg.GetMessageType() == MessageType::INFO_ACTOR_DELETED)
-      {
-         GameActorProxy *ga = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
-         if(ga && ga->IsPublished())
-            ProcessDeleteActor(static_cast<const ActorDeletedMessage&>(msg));
-      }
-      else if(msg.GetMessageType() == MessageType::INFO_ACTOR_UPDATED)
-      {
-         GameActorProxy *ga = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
-         if(ga && ga->IsPublished())
-            ProcessUpdateActor(static_cast<const ActorUpdateMessage&>(msg));
+         if(msg.GetMessageType() == MessageType::TICK_LOCAL)
+         {
+            ProcessTick(static_cast<const TickMessage&>(msg));
+         }
+         else if(msg.GetMessageType() == MessageType::TICK_REMOTE)
+         {
+            ProcessTick(static_cast<const TickMessage&>(msg));
+         }
+         else if(msg.GetMessageType() == MessageType::INFO_ACTOR_PUBLISHED)
+         {
+            GameActorProxy* ga = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
+            if(ga && ga->IsPublished())
+               ProcessPublishActor(static_cast<const ActorPublishedMessage&>(msg));
+         }
+         else if(msg.GetMessageType() == MessageType::INFO_ACTOR_DELETED)
+         {
+            GameActorProxy *ga = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
+            if(ga && ga->IsPublished())
+               ProcessDeleteActor(static_cast<const ActorDeletedMessage&>(msg));
+         }
+         else if(msg.GetMessageType() == MessageType::INFO_ACTOR_UPDATED)
+         {
+            GameActorProxy *ga = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
+            if(ga && ga->IsPublished())
+               ProcessUpdateActor(static_cast<const ActorUpdateMessage&>(msg));
+         }
+         else
+         {
+            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                  "Received a message of unknown type: ",  msg.GetMessageType().GetName().c_str());
+            ProcessUnhandledLocalMessage(msg);
+         }
       }
       else
       {
-         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-               "Received a message of unknown type: ",  msg.GetMessageType().GetName().c_str());
-         ProcessUnhandledLocalMessage(msg);
+         ProcessUnhandledRemoteMessage(msg);  
       }
    }
 
@@ -143,7 +150,7 @@ namespace dtGame
 
    }
 
-   void DefaultNetworkPublishingComponent::ProcessUnhandleRemoteMessage(const Message &msg)
+   void DefaultNetworkPublishingComponent::ProcessUnhandledRemoteMessage(const Message &msg)
    {
 
    }
