@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
 
    dtCore::SetDataFilePathList(  ".;" +
                                  dtCore::GetDeltaDataPathList() + ";" +
-                                 dtCore::GetDeltaRootPath() + "/utilities/editor" ) ;
+                                 dtCore::GetDeltaRootPath() + "/utilities/STAGE" ) ;
 
     int result;
     QApplication app(argc, argv);
