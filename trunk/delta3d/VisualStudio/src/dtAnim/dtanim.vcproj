@@ -164,6 +164,9 @@
 				RelativePath="..\..\..\src\dtAnim\chardrawable.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtAnim\hotspotdriver.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtAnim\morphdriver.cpp">
 			</File>
 			<File
@@ -236,6 +239,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtAnim\export.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtAnim\hotspotdriver.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtAnim\ical3ddriver.h">

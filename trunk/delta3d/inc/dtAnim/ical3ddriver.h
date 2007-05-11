@@ -23,12 +23,13 @@
 #define __DELTA_ICAL3DDRIVER_H__
 
 #include <osg/Referenced>
+#include <dtAnim/export.h>
 
 namespace dtAnim
 {
    class Cal3DModelWrapper;
 
-class	ICal3DDriver: public osg::Referenced
+class	DT_ANIM_EXPORT ICal3DDriver: public osg::Referenced
 {
 
 public:
