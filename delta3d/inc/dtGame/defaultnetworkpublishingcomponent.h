@@ -95,7 +95,7 @@ namespace dtGame
           * Processes an unhandled remote message
           * @param The message
           */
-         virtual void ProcessUnhandleRemoteMessage(const Message &msg);
+         virtual void ProcessUnhandledRemoteMessage(const Message &msg);
 
          dtUtil::Log* mLogger;
       private:
