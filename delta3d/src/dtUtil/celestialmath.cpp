@@ -60,13 +60,11 @@ void dtUtil::GetTargetTriangleData(const float azimuth,
    outTriangle.mElevation  = elevation;		
 }
 
-void dtUtil::GetCelestialCoordinates(const osg::Vec3 &origin,
-                                     const osg::Vec3 &target_point,
+void dtUtil::GetCelestialCoordinates(osg::Vec3 target,
                                      const osg::Vec3 &lookForward,
                                      const osg::Vec3 &lookUp,
                                      float &azimuth, float &elevation )
 {  
-   osg::Vec3f target = (target_point - origin);
    target.normalize();
 
    // Project our target vector onto the xy plane 
