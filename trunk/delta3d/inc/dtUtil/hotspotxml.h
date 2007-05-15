@@ -27,6 +27,7 @@
 #include <stack>
 #include <dtUtil/hotspotdefinition.h>
 #include <dtUtil/export.h>
+#include <osg/Vec3>
 
 namespace dtUtil
 {
@@ -35,6 +36,10 @@ namespace dtUtil
    {
    public:
       typedef std::vector<HotSpotDefinition> HotSpotDefinitionVector;
+
+      static const osg::Vec3 HEADING_VEC;
+      static const osg::Vec3 PITCH_VEC;
+      static const osg::Vec3 ROLL_VEC;
 
       static const char HOT_SPOT_NODE_NAME[];
       static const char NAME_ATTRIBUTE_NAME[];
