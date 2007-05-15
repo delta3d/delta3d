@@ -20,10 +20,20 @@
  */
 
 #include <dtAnim/animnodebuilder.h>
+#include <dtAnim/cal3dmodelwrapper.h>
+#include <dtAnim/submesh.h>
+
+#include <dtUtil/log.h>
+
 #include <osg/Geode>
 
 namespace dtAnim
 {
+
+AnimNodeBuilder::AnimNodeBuilder()
+{
+   SetCreate(CreateFunc(this, AnimNodeBuilder::CreateGeode));
+}
 
 AnimNodeBuilder::AnimNodeBuilder(const CreateFunc& pCreate)
 : mCreateFunc(pCreate)
@@ -46,5 +56,38 @@ dtCore::RefPtr<osg::Geode> AnimNodeBuilder::CreateGeode(Cal3DModelWrapper* pWrap
    return mCreateFunc(pWrapper);
 }
 
+
+dtCore::RefPtr<osg::Geode> AnimNodeBuilder::DefaultCreate(Cal3DModelWrapper* pWrapper)
+{
+   if(!pWrapper)
+   {
+      LOG_ERROR("Invalid parameter to CreateGeode.");
+      return 0;
+   }
+
+   osg::Geode* geode = new osg::Geode();
+
+   if(pWrapper->BeginRenderingQuery()) 
+   {
+      int meshCount = pWrapper->GetMeshCount();
+
+      for(int meshId = 0; meshId < meshCount; meshId++) 
+      {
+         int submeshCount = pWrapper->GetSubmeshCount(meshId);
+
+         for(int submeshId = 0; submeshId < submeshCount; submeshId++) 
+         {
+            dtAnim::SubMeshDrawable *submesh = new dtAnim::SubMeshDrawable(pWrapper, meshId, submeshId);
+            geode->addDrawable(submesh);
+         }
+      }
+
+      pWrapper->EndRenderingQuery();
+   }
+
+   pWrapper->Update(0);
+
+   return geode;
+}
 
 }//namespace dtAnim

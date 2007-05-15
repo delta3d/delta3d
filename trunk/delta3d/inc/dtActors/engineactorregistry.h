@@ -31,7 +31,6 @@
  */
 namespace dtActors 
 {
-
     /**
      * This actor registry handles the actor proxies that are supported by the core
      * Delta3D engine.
@@ -68,7 +67,8 @@ namespace dtActors
        static dtCore::RefPtr<dtDAL::ActorType> PLAYER_START_ACTOR_TYPE;
        static dtCore::RefPtr<dtDAL::ActorType> GAME_MESH_ACTOR_TYPE;
        static dtCore::RefPtr<dtDAL::ActorType> WAYPOINT_ACTOR_TYPE;
-       static dtCore::RefPtr<dtDAL::ActorType> ANIMATION_ACTOR_TYPE;
+       static dtCore::RefPtr<dtDAL::ActorType> ANIMATION_ACTOR_TYPE;       
+       static dtCore::RefPtr<dtDAL::ActorType> ANIMATION_ACTOR_TYPE2;
         /**
          * Constructs the engine actor registry.
          */

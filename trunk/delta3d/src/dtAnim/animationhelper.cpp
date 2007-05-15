@@ -87,9 +87,7 @@ void AnimationHelper::LoadModel(const std::string& pFilename)
       if (newModel.valid())
       {
          mAnimator = new dtAnim::Cal3DAnimator(newModel.get());   
-
-         //todo refactor this using the char drawable
-         //mGeode = mNodeBuilder->CreateGeode(newModel.get());
+         mGeode = mNodeBuilder->CreateGeode(newModel.get());
       }
       else
       {
