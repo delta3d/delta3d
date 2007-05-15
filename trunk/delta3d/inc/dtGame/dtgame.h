@@ -5,6 +5,7 @@
 #include <dtGame/basemessages.h>
 #include <dtGame/binarylogstream.h>
 #include <dtGame/defaultmessageprocessor.h>
+#include <dtGame/defaultnetworkpublishingcomponent.h>
 #include <dtGame/exceptionenum.h>
 #include <dtGame/environmentactor.h>
 #include <dtGame/export.h>
@@ -27,7 +28,6 @@
 #include <dtGame/message.h>
 #include <dtGame/messageparameter.h>
 #include <dtGame/messagetype.h>
-#include <dtGame/rulescomponent.h>
 #include <dtGame/serverloggercomponent.h>
 
 #endif
