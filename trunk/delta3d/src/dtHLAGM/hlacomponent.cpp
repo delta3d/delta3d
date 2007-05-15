@@ -245,10 +245,17 @@ namespace dtHLAGM
          {
             for (unsigned i = 0; i < mDDMSubscriptionRegions.size(); ++i)
             {
-               RTI::Region* r = mDDMSubscriptionRegions[i]->GetRegion();
-               if (r != NULL)
+               if (mDDMSubscriptionCalculators[i]->GetName() != objectToActor.GetDDMCalculatorName())
+                  continue;
+               
+               std::vector<dtCore::RefPtr<DDMRegionData> >& regionVector = mDDMSubscriptionRegions[i];
+               for (unsigned j = 0; j < regionVector.size(); ++j)
                {
-                  mRTIAmbassador->subscribeObjectClassAttributesWithRegion(thisObjectClassHandle, *r, *ahs);               
+                  RTI::Region* r = regionVector[j]->GetRegion();
+                  if (r != NULL)
+                  {
+                     mRTIAmbassador->subscribeObjectClassAttributesWithRegion(thisObjectClassHandle, *r, *ahs);               
+                  }
                }
             }
          }
@@ -344,10 +351,14 @@ namespace dtHLAGM
          {
             for (unsigned i = 0; i < mDDMSubscriptionRegions.size(); ++i)
             {
-               RTI::Region* r = mDDMSubscriptionRegions[i]->GetRegion();
-               if (r != NULL)
+               std::vector<dtCore::RefPtr<DDMRegionData> >& regionVector = mDDMSubscriptionRegions[i];
+               for (unsigned j = 0; j < regionVector.size(); ++j)
                {
-                  mRTIAmbassador->subscribeInteractionClassWithRegion(thisInteractionClassHandle, *r);               
+                  RTI::Region* r = regionVector[j]->GetRegion();
+                  if (r != NULL)
+                  {
+                     mRTIAmbassador->subscribeInteractionClassWithRegion(thisInteractionClassHandle, *r);               
+                  }
                }
             }
          }
@@ -1888,6 +1899,22 @@ namespace dtHLAGM
    {
       static const char* const HYPERSPACE="HyperSpace";
       
+      if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+      {
+         std::ostringstream ss;
+         ss << "Updating Region: \n";
+         for (unsigned i = 0; i < regionData.GetNumberOfExtents(); ++i)
+         {
+            const DDMRegionData::DimensionValues* dv = regionData.GetDimensionValue(i);
+            if (dv == NULL)
+               continue;
+            
+            ss << "Extent: \"" << dv->mName << "\" " 
+               << " min " << dv->mMin << " max " << dv->mMax;            
+         }
+         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str());
+      }
+      
       RTI::SpaceHandle spaceHandle = mRTIAmbassador->getRoutingSpaceHandle(HYPERSPACE);
 
       RTI::Region* r = regionData.GetRegion();
@@ -1931,8 +1958,21 @@ namespace dtHLAGM
             throw dtUtil::Exception("Error getting dimension handle \"" + dimension->mName + "\": " + ss.str(), __FILE__, __LINE__);
          }
       }
+      
       if (regionData.GetRegion() != NULL)
-         mRTIAmbassador->notifyAboutRegionModification(*regionData.GetRegion());
+      {
+         try
+         {
+            mRTIAmbassador->notifyAboutRegionModification(*regionData.GetRegion());                     
+         }
+         catch (const RTI::Exception& ex)
+         {
+            std::ostringstream ss; 
+            //workaround for a strange namespace issue
+            ::operator<<(ss, ex);
+            throw dtUtil::Exception("Error updating region: " + ss.str(), __FILE__, __LINE__);            
+         }
+      }
    }
    
    /////////////////////////////////////////////////////////////////////////////////
@@ -1960,11 +2000,15 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void HLAComponent::GetDDMSubscriptionCalculatorRegions(std::vector<const DDMRegionData* >& toFill) const
+   void HLAComponent::GetDDMSubscriptionCalculatorRegions(std::vector<std::vector<const DDMRegionData* > >& toFill) const
    {
-      toFill.clear();
       toFill.resize(mDDMSubscriptionRegions.size());
-      std::transform(mDDMSubscriptionRegions.begin(), mDDMSubscriptionRegions.end(), toFill.begin(), dtCore::ConvertToPointerUnary<DDMRegionData>());
+      for (unsigned i = 0; i < mDDMSubscriptionRegions.size(); ++i)
+      {
+         const std::vector<dtCore::RefPtr<DDMRegionData> >& regionVector = mDDMSubscriptionRegions[i];
+         toFill[i].resize(regionVector.size());
+         std::transform(regionVector.begin(), regionVector.end(), toFill[i].begin(), dtCore::ConvertToPointerUnary<DDMRegionData>());
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -1972,14 +2016,21 @@ namespace dtHLAGM
    {
       for (unsigned i = 0; i < mDDMSubscriptionCalculators.GetSize(); ++i)
       {
+         DDMRegionCalculator& calc = *mDDMSubscriptionCalculators[i];
+         
          // if the region is actually changed.
-         if (mDDMSubscriptionCalculators[i]->UpdateRegionData(*mDDMSubscriptionRegions[i]))
+         std::vector<dtCore::RefPtr<DDMRegionData> >& regionVector = mDDMSubscriptionRegions[i];
+         for (unsigned j = 0; j < regionVector.size(); ++j)
          {
-            RTI::Region* r = mDDMSubscriptionRegions[i]->GetRegion();
-            UpdateRegion(*mDDMSubscriptionRegions[i]);
-            if (r != mDDMSubscriptionRegions[i]->GetRegion())
+            DDMRegionData& data = *regionVector[j];
+            if (calc.UpdateRegionData(data))
             {
-               // TODO subscribe with new region.
+               RTI::Region* r = data.GetRegion();
+               UpdateRegion(data);
+               if (r != data.GetRegion())
+               {
+                  // TODO subscribe with new region.
+               }
             }
          }
       }      
@@ -1994,17 +2045,24 @@ namespace dtHLAGM
                "DDM has been enabled, but no Subscription Region Calculators have been registered: ", 
                __FILE__, __LINE__);         
       }
-            
+      
+      mDDMSubscriptionRegions.resize(mDDMSubscriptionCalculators.GetSize());
+      
       for (unsigned i = 0; i < mDDMSubscriptionCalculators.GetSize(); ++i)
       {
          try
          {
-            dtCore::RefPtr<DDMRegionData> regionData = mDDMSubscriptionCalculators[i]->CreateRegionData();
-            mDDMSubscriptionCalculators[i]->UpdateRegionData(*regionData);
+            std::vector<dtCore::RefPtr<DDMRegionData> > regionVector;
+            mDDMSubscriptionCalculators[i]->CreateSubscriptionRegionData(regionVector);
+   
+            for (unsigned j = 0; j < regionVector.size(); ++j)
+            {
+               DDMRegionData& regionData = *regionVector[j];
+               mDDMSubscriptionCalculators[i]->UpdateRegionData(regionData);   
+               UpdateRegion(regionData);
+            }
             
-            UpdateRegion(*regionData);
-            
-            mDDMSubscriptionRegions.push_back(regionData);
+            mDDMSubscriptionRegions[i] = regionVector;
          }
          catch (const RTI::Exception& ex)
          {
@@ -2017,25 +2075,89 @@ namespace dtHLAGM
    }
    
    /////////////////////////////////////////////////////////////////////////////////
-   void HLAComponent::DestroyDDMSubscriptionRegions()
+   void HLAComponent::UnsubscribeRegion(const std::string& name, RTI::Region& region)
    {
-      for (unsigned i = 0; i < mDDMSubscriptionRegions.size(); ++i)
+      std::multimap<std::string, dtCore::RefPtr<ObjectToActor> >::iterator objectToActorIterator
+        = mObjectToActorMap.begin();
+
+      while (objectToActorIterator != mObjectToActorMap.end())
       {
-         if (mDDMSubscriptionRegions[i]->GetRegion() != NULL)
+         ObjectToActor& thisObjectToActor = *(objectToActorIterator->second);
+
+         if (thisObjectToActor.GetDDMCalculatorName() == name)
          {
-            try
+            try 
             {
-               mRTIAmbassador->deleteRegion(mDDMSubscriptionRegions[i]->GetRegion());            
+               mRTIAmbassador->unsubscribeObjectClassWithRegion(thisObjectToActor.GetObjectClassHandle(), region);
             }
-            catch (const RTI::Exception& ex)
+            catch(const RTI::Exception& ex)
             {
                std::ostringstream ss; 
                //workaround for a strange namespace issue
                ::operator<<(ss, ex);
-               mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                                    "Error deleting region, possible memory leak: %s", 
-                                    ss.str().c_str());
-            }            
+               throw dtUtil::Exception("Error unsubscribing to region for object class " 
+                     + thisObjectToActor.GetObjectClassName() + ": " + ss.str(), __FILE__, __LINE__);               
+            }
+         }
+         
+         ++ objectToActorIterator;
+      }
+
+      std::map<const dtGame::MessageType*, dtCore::RefPtr<InteractionToMessage> >::iterator messageToInteractionIterator
+        = mMessageToInteractionMap.begin();
+
+      while (messageToInteractionIterator != mMessageToInteractionMap.end())
+      {
+         InteractionToMessage& thisInteractionToMessage = *messageToInteractionIterator->second;
+         
+         if (thisInteractionToMessage.GetDDMCalculatorName() == name)
+         {
+            try 
+            {
+               mRTIAmbassador->unsubscribeInteractionClassWithRegion(thisInteractionToMessage.GetInteractionClassHandle(), region);
+            }
+            catch(const RTI::Exception& ex)
+            {
+               std::ostringstream ss; 
+               //workaround for a strange namespace issue
+               ::operator<<(ss, ex);
+               throw dtUtil::Exception("Error unsubscribing to region for object class " 
+                     + thisInteractionToMessage.GetInteractionName() + ": " + ss.str(), __FILE__, __LINE__);               
+            }
+         }
+         
+         ++messageToInteractionIterator;
+      }      
+   }
+   
+   /////////////////////////////////////////////////////////////////////////////////
+   void HLAComponent::DestroyDDMSubscriptionRegions()
+   {
+      for (unsigned i = 0; i < mDDMSubscriptionRegions.size(); ++i)
+      {
+         
+         std::vector<dtCore::RefPtr<DDMRegionData> >& regionVector = mDDMSubscriptionRegions[i];
+
+         for (unsigned j = 0; j < regionVector.size(); ++j)
+         {
+            if (regionVector[j]->GetRegion() != NULL)
+            {
+               
+               try
+               {
+                  UnsubscribeRegion(mDDMSubscriptionCalculators[i]->GetName(), *regionVector[j]->GetRegion());
+                  mRTIAmbassador->deleteRegion(regionVector[j]->GetRegion());            
+               }
+               catch (const RTI::Exception& ex)
+               {
+                  std::ostringstream ss; 
+                  //workaround for a strange namespace issue
+                  ::operator<<(ss, ex);
+                  mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                                       "Error deleting region, possible memory leak: %s", 
+                                       ss.str().c_str());
+               }            
+            }
          }
       }
       mDDMSubscriptionRegions.clear();
@@ -2426,14 +2548,15 @@ namespace dtHLAGM
    void HLAComponent::ProcessMessage(const dtGame::Message& message)
    {
       if (message.GetMessageType() == dtGame::MessageType::TICK_LOCAL)
-      {
-         if (IsDDMEnabled())
-         {
-            UpdateDDMSubscriptions();
-         }
-         
+      {         
          if (mRTIAmbassador != NULL)
+         {
+            if (IsDDMEnabled())
+            {
+               UpdateDDMSubscriptions();
+            }
             mRTIAmbassador->tick();
+         }
       }
       else if (message.GetMessageType() == dtGame::MessageType::INFO_MAP_UNLOADED)
       {

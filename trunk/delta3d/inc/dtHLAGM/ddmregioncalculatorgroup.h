@@ -16,12 +16,15 @@ namespace dtHLAGM
       	DDMRegionCalculatorGroup();
          ~DDMRegionCalculatorGroup();
       	
-         ///@return the list of DDM region publishing calculators used by this component.
+         /// @return the list of DDM region publishing calculators used by this component.
          const DDMRegionCalculator* GetCalculator(const std::string& name) const;
          DDMRegionCalculator* GetCalculator(const std::string& name);
 
-         ///@return the list of DDM calculators used by this component.
+         /// @return the list of DDM calculators used by this component.
          const std::vector<dtCore::RefPtr<DDMRegionCalculator> >& GetCalculators() const;
+
+         /// @param toFill a vector to fill with pointers to all the calculators in the group. 
+         void GetCalculators(std::vector<DDMRegionCalculator*>& toFill);
 
          /// Adds a new custom DDM region calculator to this group.
          bool AddCalculator(DDMRegionCalculator& newCalc);

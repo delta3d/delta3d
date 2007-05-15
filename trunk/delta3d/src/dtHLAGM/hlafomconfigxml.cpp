@@ -80,6 +80,7 @@ namespace dtHLAGM
    const std::string HLAFOMConfigContentHandler::OBJECT_KEYNAME_ATTRIBUTE("name");
    const std::string HLAFOMConfigContentHandler::OBJECT_EXTENDS_ATTRIBUTE("extends");
    const std::string HLAFOMConfigContentHandler::OBJECT_ABSTRACT_ELEMENT("abstract");
+   const std::string HLAFOMConfigContentHandler::OBJECT_DDM_SPACE_ELEMENT("ddmSpace");
    const std::string HLAFOMConfigContentHandler::OBJECT_CLASS_ELEMENT("objectClass");
    const std::string HLAFOMConfigContentHandler::OBJECT_ACTOR_TYPE_ELEMENT("actorType");
    const std::string HLAFOMConfigContentHandler::OBJECT_ENTITY_ID_ELEMENT("entityIdAttributeName");
@@ -101,6 +102,7 @@ namespace dtHLAGM
    const std::string HLAFOMConfigContentHandler::INTERACTION_KEYNAME_ATTRIBUTE("name");
    const std::string HLAFOMConfigContentHandler::INTERACTION_EXTENDS_ATTRIBUTE("extends");
    const std::string HLAFOMConfigContentHandler::INTERACTION_ABSTRACT_ELEMENT("abstract");
+   const std::string HLAFOMConfigContentHandler::INTERACTION_DDM_SPACE_ELEMENT("ddmSpace");
    const std::string HLAFOMConfigContentHandler::INTERACTION_CLASS_ELEMENT("interactionClass");
    const std::string HLAFOMConfigContentHandler::INTERACTION_MESSAGE_TYPE_ELEMENT("messageType");
    const std::string HLAFOMConfigContentHandler::INTERACTION_PARAM_TO_PARAM_ELEMENT("paramToParam");
@@ -248,6 +250,7 @@ namespace dtHLAGM
 
                      //Set Entity Id field name
                      mCurrentObjectToActor->SetEntityIdAttributeName(super->GetEntityIdAttributeName());
+                     mCurrentObjectToActor->SetDDMCalculatorName(super->GetDDMCalculatorName());
 
                      //copy all data from the one Attr to Prop vector to the other.
                      mCurrentObjectToActor->GetOneToManyMappingVector().insert(mCurrentObjectToActor->GetOneToManyMappingVector().end(),
@@ -330,10 +333,12 @@ namespace dtHLAGM
                   if (superItor != mNamedInteractionToMessages.end())
                   {
                      //copy all data from the one vector to the other.
-                     dtCore::RefPtr<InteractionToMessage> super = superItor->second;
+                     InteractionToMessage* super = superItor->second.get();
                      mCurrentInteractionToMessage->GetOneToManyMappingVector().insert(mCurrentInteractionToMessage->GetOneToManyMappingVector().end(),
                         super->GetOneToManyMappingVector().begin(), super->GetOneToManyMappingVector().end());
 
+                     mCurrentInteractionToMessage->SetDDMCalculatorName(super->GetDDMCalculatorName());
+                     
                      if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                            "Added parameter mappings from interaction mapping \"%s\" to the current mapping.",
@@ -345,7 +350,6 @@ namespace dtHLAGM
                      ss << "Unable to extend from mapping named " << extendsName << " because no such mapping has been found in the XML."; 
                      throw dtUtil::Exception(ExceptionEnum::XML_CONFIG_EXCEPTION, ss.str(), __FILE__, __LINE__);
                   }
-
                }
 
                //see if this interaction mapping has a key name so that others may inherit all attribute mappings.
@@ -386,7 +390,8 @@ namespace dtHLAGM
                   mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__,  __LINE__, 
                         "A DDM space name is empty or missing, this is invalid and will be ignored.");
                }
-               //mTargetTranslator->
+               mCurrentDDMSubscriptionCalculator = mTargetTranslator->GetDDMSubscriptionCalculators().GetCalculator(mCurrentDDMSpaceName);
+               mCurrentDDMPublishingCalculator = mTargetTranslator->GetDDMPublishingCalculators().GetCalculator(mCurrentDDMSpaceName);
             }
             else if (sLocalName == DDM_PROPERTY_ELEMENT)
             {
@@ -591,6 +596,10 @@ namespace dtHLAGM
       {
          mCurrentObjectToActor->SetObjectClassName(characters);
       }
+      else if (elementName == OBJECT_DDM_SPACE_ELEMENT)
+      {
+         mCurrentObjectToActor->SetDDMCalculatorName(characters);
+      }
       else if (elementName == OBJECT_ACTOR_TYPE_ELEMENT)
       {
          dtDAL::ActorType* type = FindActorType(characters);
@@ -652,6 +661,10 @@ namespace dtHLAGM
                "Interaction class is being set to %s.", characters.c_str());
 
          mCurrentInteractionToMessage->SetInteractionName(characters);
+      }
+      else if (elementName == INTERACTION_DDM_SPACE_ELEMENT)
+      {
+         mCurrentInteractionToMessage->SetDDMCalculatorName(characters);
       }
       else if (elementName == INTERACTION_MESSAGE_TYPE_ELEMENT)
       {

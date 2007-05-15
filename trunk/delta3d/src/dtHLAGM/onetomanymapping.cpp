@@ -23,7 +23,14 @@
 
 namespace dtHLAGM
 {
- 
+   bool OneToManyMapping::operator==(const OneToManyMapping& compareTo) const
+   {
+     return ((mHLAName == compareTo.mHLAName)
+             && (mHLAType == compareTo.mHLAType)
+             && (mRequiredForHLA == compareTo.mRequiredForHLA)
+             && (mGameParameters == compareTo.mGameParameters));
+   }
+
    void OneToManyMapping::ParameterDefinition::AddEnumerationMapping(const std::string& hlaValue, const std::string& gameValue)
    {
       mHLAEnumerationMapping.insert(std::make_pair(hlaValue, gameValue));
@@ -65,7 +72,6 @@ namespace dtHLAGM
        && (mHLAEnumerationMapping == compareTo.mHLAEnumerationMapping)
        && (mGameEnumerationMapping == compareTo.mGameEnumerationMapping);
    }
-
 
    std::ostream& operator << (std::ostream& os, const OneToManyMapping& otmm)
    {

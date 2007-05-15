@@ -266,7 +266,7 @@ namespace dtHLAGM
           */
          void SetHLAName(const std::string& thisHLATypeName)
          {
-           mHLAName = thisHLATypeName;
+            mHLAName = thisHLATypeName;
          }
 
          /**
@@ -321,16 +321,10 @@ namespace dtHLAGM
          ///@return a const reference to the vector of ParameterDefinitions that are used in this mapping.
          const std::vector<ParameterDefinition>& GetParameterDefinitions() const { return mGameParameters; };
 
-         virtual bool operator==(const OneToManyMapping& compareTo) const
-         {
-           return ((mHLAName == compareTo.mHLAName)
-                   && (mHLAType == compareTo.mHLAType)
-                   && (mRequiredForHLA == compareTo.mRequiredForHLA)
-                   && (mGameParameters == compareTo.mGameParameters));
-         }
+         virtual bool operator==(const OneToManyMapping& compareTo) const;
          
       protected:
-
+         
          ///The HLA field name.
          std::string mHLAName;
 

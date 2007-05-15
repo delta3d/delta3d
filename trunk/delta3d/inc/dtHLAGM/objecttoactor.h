@@ -100,6 +100,26 @@ namespace dtHLAGM
          }
 
          /**
+          * Gets the name of the DDMRegionCalculator to use for subscription and publishing.
+          *
+          * @return the calculator name.
+          */
+         const std::string& GetDDMCalculatorName() const
+         {
+            return mDDMCalculatorName;
+         }
+
+         /**
+          * Gets the name of the DDMRegionCalculator to use for subscription and publishing.
+          *
+          * @return the calculator name.
+          */
+         void SetDDMCalculatorName(const std::string& newName)
+         {
+            mDDMCalculatorName = newName;
+         }
+
+         /**
           * Gets the HLA Object Type Name from the Object to Actor mapping.
           *
           * @return HLA Object Type Name
@@ -285,6 +305,9 @@ namespace dtHLAGM
 
          /// true if this mapping should only be used for objects simulated remotely, i.e. in HLA.
          bool mRemoteOnly;
+
+         /// name of the calculator/calculators that will handle subscription and publishing for this  
+         std::string mDDMCalculatorName;
 
          /// The HLA Object Type Name for this Object to Actor mapping.
          std::string mObjectClassName;

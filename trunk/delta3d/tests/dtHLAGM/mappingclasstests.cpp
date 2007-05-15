@@ -117,9 +117,14 @@ class MappingClassTests : public CPPUNIT_NS::TestFixture
       }
 
       void TestObjectToActor()
-      {
+      {      
          dtCore::RefPtr<dtHLAGM::ObjectToActor> thisObjectToActor(new dtHLAGM::ObjectToActor);
 
+         CPPUNIT_ASSERT(thisObjectToActor->GetDDMCalculatorName().empty());
+         std::string testCalcName("jojoTest"); 
+         thisObjectToActor->SetDDMCalculatorName(testCalcName);
+         CPPUNIT_ASSERT_EQUAL(testCalcName, thisObjectToActor->GetDDMCalculatorName());
+      
          CPPUNIT_ASSERT_MESSAGE("The DIS ID should default to NULL", thisObjectToActor->GetDisID() == NULL);
 
          dtDAL::ActorType *thisActorType = new dtDAL::ActorType("Infinite Light",
@@ -199,6 +204,11 @@ class MappingClassTests : public CPPUNIT_NS::TestFixture
       void TestInteractionToMessage()
       {
          dtCore::RefPtr<dtHLAGM::InteractionToMessage> thisInteractionToMessage(new dtHLAGM::InteractionToMessage);
+
+         CPPUNIT_ASSERT(thisInteractionToMessage->GetDDMCalculatorName().empty());
+         std::string testCalcName("jojoTest"); 
+         thisInteractionToMessage->SetDDMCalculatorName(testCalcName);
+         CPPUNIT_ASSERT_EQUAL(testCalcName, thisInteractionToMessage->GetDDMCalculatorName());
 
          thisInteractionToMessage->SetMessageType(dtGame::MessageType::TICK_LOCAL);
          CPPUNIT_ASSERT_MESSAGE("Set Message Type should succeed.", thisInteractionToMessage->GetMessageType() == dtGame::MessageType::TICK_LOCAL);
