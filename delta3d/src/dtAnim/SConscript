@@ -2,7 +2,7 @@ Import('*')
 
 srcs = env.SGlob( '*.cpp' )
 
-deps = [ 'dtCore', 'cal3d', 'dtUtil', 'dtDAL', 'dtAI',
+deps = [ 'dtCore', 'dtGame', 'cal3d', 'dtUtil', 'dtDAL', 'dtAI',
          'OpenThreads', 'osg', 'osgDB', 'osgParticle',
          'osgText', 'osgUtil', 'osgSim', 'osgFX',
          'Producer' ] 
