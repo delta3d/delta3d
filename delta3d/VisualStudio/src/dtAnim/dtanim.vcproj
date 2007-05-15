@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtDALd.lib dtUtilD.lib dtCoreD.lib xerces-c_2D.lib osgD.lib osgDBD.lib cal3d_d.lib opengl32.lib"
+				AdditionalDependencies="dtDALd.lib dtGamed.lib dtUtilD.lib dtCoreD.lib xerces-c_2D.lib osgD.lib osgDBD.lib cal3d_d.lib opengl32.lib"
 				OutputFile="../../../bin/dtAnimD.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="../../../lib;..\..\..\ext\lib"
@@ -84,7 +84,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtDAL.lib dtUtil.lib dtCore.lib xerces-c_2.lib osg.lib osgDB.lib cal3d.lib opengl32.lib"
+				AdditionalDependencies="dtDAL.lib dtGame.lib dtUtil.lib dtCore.lib xerces-c_2.lib osg.lib osgDB.lib cal3d.lib opengl32.lib"
 				OutputFile="../../../bin/dtAnim.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../../lib;..\..\..\ext\lib"
@@ -129,6 +129,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtAnim\animationchannel.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtAnim\animationcomponent.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtAnim\animationcontroller.cpp">
@@ -200,6 +203,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtAnim\animationchannel.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtAnim\animationcomponent.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtAnim\animationcontroller.h">

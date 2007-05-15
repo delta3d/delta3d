@@ -139,6 +139,9 @@
 				RelativePath="..\..\..\src\dtActors\animationgameactor.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtActors\animationgameactor2.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtActors\autotriggeractorproxy.cpp">
 			</File>
 			<File
@@ -247,6 +250,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtActors\animationgameactor.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtActors\animationgameactor2.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtActors\autotriggeractorproxy.h">

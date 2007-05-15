@@ -40,11 +40,12 @@ namespace dtAnim
 class	DT_ANIM_EXPORT AnimNodeBuilder: public osg::Referenced
 {
 public:
-   typedef dtUtil::Functor<osg::Geode*, TYPELIST_1(Cal3DModelWrapper*)> CreateFunc;
+   typedef dtUtil::Functor<dtCore::RefPtr<osg::Geode>, TYPELIST_1(Cal3DModelWrapper*)> CreateFunc;
 
 public:
 
-   AnimNodeBuilder(const CreateFunc& pCreate);
+   AnimNodeBuilder(); //creates default builder
+   AnimNodeBuilder(const CreateFunc& pCreate); //uses custom builder
 
    void SetCreate(const CreateFunc& pCreate);
 
@@ -52,6 +53,8 @@ public:
 
 protected:
    virtual ~AnimNodeBuilder();
+
+   virtual dtCore::RefPtr<osg::Geode> DefaultCreate(Cal3DModelWrapper* pWrapper);
 
 private:
 
