@@ -65,10 +65,11 @@ class	DT_ANIM_EXPORT AnimationHelper: public osg::Referenced
 public:
 
    /**
-   * The constructor takes an AnimNodeBuilder which will create an osg::Geode given
-   * a Cal3DModelWrapper.  The builder will be used to create the geode on LoadModel().
+   * The constructor constructs a default AnimNodeBuilder, the Cal3DModelWrapper, and AnimationController
+   * are created on LoadModel()
    */
-   AnimationHelper(AnimNodeBuilder* pBuilder);
+   AnimationHelper();
+
 
    /**
    * The user should call Update() on a per frame basis

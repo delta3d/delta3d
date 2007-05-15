@@ -53,6 +53,8 @@ public:
 
 protected:
    virtual ~AnimNodeBuilder();
+   AnimNodeBuilder(const AnimNodeBuilder&);
+   AnimNodeBuilder& operator=(const AnimNodeBuilder&);
 
    virtual dtCore::RefPtr<osg::Geode> DefaultCreate(Cal3DModelWrapper* pWrapper);
 

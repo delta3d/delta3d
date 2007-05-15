@@ -46,10 +46,10 @@ namespace dtAnim
 dtCore::RefPtr<Cal3DLoader> AnimationHelper::sModelLoader = new Cal3DLoader();
 
 
-AnimationHelper::AnimationHelper(AnimNodeBuilder* pBuilder)
+AnimationHelper::AnimationHelper()
 : mGeode(0)
 , mAnimator(0)
-, mNodeBuilder(pBuilder)
+, mNodeBuilder(new AnimNodeBuilder())
 , mSequenceMixer(new SequenceMixer())
 , mSkeleton(new SkeletalConfiguration())
 {
