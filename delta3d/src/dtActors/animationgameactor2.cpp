@@ -38,7 +38,7 @@ namespace dtActors
 {
    AnimationGameActor2::AnimationGameActor2(dtGame::GameActorProxy &proxy)
       : dtGame::GameActor(proxy)
-      , mHelper(new dtAnim::AnimationHelper(new dtAnim::AnimNodeBuilder()))
+      , mHelper(new dtAnim::AnimationHelper())
    {
 
    }
@@ -68,7 +68,7 @@ namespace dtActors
 
    AnimationGameActorProxy2::AnimationGameActorProxy2()
    {
-      SetClassName("dtActors::AnimationGameActor");
+      SetClassName("dtActors::AnimationGameActor2");
    }
 
    AnimationGameActorProxy2::~AnimationGameActorProxy2()
@@ -82,15 +82,11 @@ namespace dtActors
       typedef std::vector<dtCore::RefPtr<dtDAL::ActorProperty> > APVector;
       APVector pFillVector;
 
-      AnimationGameActor2 &myActor = static_cast<AnimationGameActor2&>(GetGameActor());
+      AnimationGameActor2 &actor = static_cast<AnimationGameActor2&>(GetGameActor());
 
-      myActor.GetHelper()->GetActorProperties(*this, pFillVector);
-
-      APVector::iterator end = pFillVector.end();
-      for(APVector::iterator iter = pFillVector.begin(); iter != end; ++iter)
-      {
-         AddProperty((*iter).get());
-      }
+      AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::SKELETAL_MESH,
+         "Skeletal Mesh", "Skeletal Mesh", dtDAL::MakeFunctor(actor, &AnimationGameActor2::SetModel),
+         "The model resource that defines the skeletal mesh", "AnimationBase"));
 
    }
 

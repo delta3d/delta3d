@@ -83,7 +83,7 @@ namespace dtActors
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::PLAYER_START_ACTOR_TYPE(new dtDAL::ActorType("Player Start", "dtcore", "This can be dropped into a map and the player actor will spawn himself there on startup"));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::WAYPOINT_ACTOR_TYPE(new dtDAL::ActorType("Waypoint", "dtai.waypoint", "dtAI::Waypoint Actor"));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::ANIMATION_ACTOR_TYPE(new dtDAL::ActorType("Animation", "Animation", "AnimationGameActor"));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::ANIMATION_ACTOR_TYPE2(new dtDAL::ActorType("Animation2", "Animation2", "AnimationGameActor2"));
+   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::ANIMATION_ACTOR_TYPE2(new dtDAL::ActorType("SkeletalMesh", "dtanim", "AnimationGameActor2"));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::GAME_MESH_ACTOR_TYPE(
       new dtDAL::ActorType("Game Mesh Actor", "dtcore.Game.Actors", 
       "Simple base Game Actor that supports a Mesh - you should not typically use this directly"));

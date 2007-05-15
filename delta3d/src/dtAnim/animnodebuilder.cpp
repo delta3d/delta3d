@@ -32,7 +32,7 @@ namespace dtAnim
 
 AnimNodeBuilder::AnimNodeBuilder()
 {
-   SetCreate(CreateFunc(this, &AnimNodeBuilder::CreateGeode));
+   SetCreate(CreateFunc(this, &AnimNodeBuilder::DefaultCreate));
 }
 
 AnimNodeBuilder::AnimNodeBuilder(const CreateFunc& pCreate)
