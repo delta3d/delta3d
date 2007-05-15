@@ -114,7 +114,7 @@ namespace dtGame
          virtual ~GameManager();
       
          /// Used for statistics information, should never have to call yourself.
-         void FindLogDebugInformationAndChangeOrCreateInformation(const std::string& uniqueIDToFind, const std::string& nameOfObject, float realTimeElapsed,
+         void UpdateDebugStats(const dtCore::UniqueId& uniqueIDToFind, const std::string& nameOfObject, float realTimeElapsed,
             bool isComponent, bool ticklocal);
 
       public:
@@ -836,7 +836,7 @@ namespace dtGame
          class LogDebugInformation : public osg::Referenced
          {
             public:
-               LogDebugInformation(const std::string name, const std::string uniqueID, bool isComponent)
+               LogDebugInformation(const std::string &name, const dtCore::UniqueId &uniqueID, bool isComponent)
                {
                   mUniqueID      = uniqueID;
                   mNameOfLogInfo = name;
@@ -850,7 +850,7 @@ namespace dtGame
                float          mTickLocalTime;
                unsigned int   mTimesThrough;
                std::string    mNameOfLogInfo;
-               std::string    mUniqueID;
+               dtCore::UniqueId  mUniqueID;
                bool           mIsComponent;
 
             protected:
@@ -929,7 +929,8 @@ namespace dtGame
          bool                 mPrintFileToConsole;                                  /// if the information goes to console or file
          bool                 mDoStatsOnTheComponents;                              /// do we fill in the information for the components.
          bool                 mDoStatsOnTheActors;                                  /// Do we fill in information for the actors
-         std::vector<dtCore::RefPtr<LogDebugInformation> > mDebugLoggerInformation; /// hold onto all the information.
+         //std::vector<dtCore::RefPtr<LogDebugInformation> > mDebugLoggerInformation; /// hold onto all the information.
+         std::map<dtCore::UniqueId, dtCore::RefPtr<LogDebugInformation> > mDebugLoggerInformation; /// hold onto all the information.
          ////////////////////////////////////////////////
 
          /// application the gm has. the one and only.

@@ -296,6 +296,9 @@ namespace dtGame
       // stats information used to track statistics per fragment (usually about 1 second)
       Timer statsTickClock;
       Timer_t frameTickStart(0);
+      Timer_t frameTickStartCurrent(0);
+      bool logComponents = mStatisticsInterval > 0 && mDoStatsOnTheComponents;
+      bool logActors = mStatisticsInterval > 0 && mDoStatsOnTheActors;
 
       if (mStatisticsInterval > 0)
          frameTickStart = statsTickClock.Tick();
@@ -317,7 +320,21 @@ namespace dtGame
          try
          {
             for (std::vector<dtCore::RefPtr<GMComponent> >::iterator i = mComponentList.begin(); i != mComponentList.end(); ++i)
+            {
+               /////////////////////////
+               // Statistics information
+               if (logComponents)
+                  frameTickStartCurrent = statsTickClock.Tick();
+
                (*i)->DispatchNetworkMessage(*message);
+
+               // Statistics information
+               if(logComponents)
+               {
+                  double frameTickDelta = statsTickClock.DeltaSec(frameTickStartCurrent, statsTickClock.Tick());
+                  UpdateDebugStats((*i)->GetUniqueId(),(*i)->GetName(), frameTickDelta, true, false);
+               }
+            }
          }
          catch (const dtUtil::Exception& ex)
          {
@@ -378,21 +395,19 @@ namespace dtGame
             continue;
          }
          
-         bool  isATickLocalMessage  = false;
-         if(mDoStatsOnTheActors || mDoStatsOnTheComponents)
-         {
-            const TickMessage* tickType = dynamic_cast<const TickMessage*>(message.get());
-            if(tickType != NULL)    isATickLocalMessage = true;
-         }
+         bool isATickLocalMessage = (tick.get() == message.get());
+         //if(logComponents || logActors)
+         //{
+            //const TickMessage* tickType = dynamic_cast<const TickMessage*>(message.get());
+            //if(tickType != NULL)    isATickLocalMessage = true;
+         //}
 
+         // LOOP THROUGH COMPONENTS
          for (std::vector<dtCore::RefPtr<GMComponent> >::iterator i = mComponentList.begin(); i != mComponentList.end(); ++i)
          {
-            /////////////////////////
             // Statistics information
-            Timer statsTickClockComponent;
-            Timer_t frameTickStartComponent(0);
-            frameTickStartComponent = statsTickClockComponent.Tick();
-            /////////////////////////
+            if (logComponents)
+               frameTickStartCurrent = statsTickClock.Tick();
 
             try
             {
@@ -403,16 +418,12 @@ namespace dtGame
                ex.LogException(dtUtil::Log::LOG_ERROR, *mLogger);
             }
 
-            /////////////////////////
             // Statistics information
-            if(mDoStatsOnTheComponents)
+            if (logComponents)
             {
-               Timer_t frameTickStopComponent = statsTickClockComponent.Tick();
-               double fragmentDeltaComponent = statsTickClockComponent.DeltaSec(frameTickStartComponent, frameTickStopComponent);
-               FindLogDebugInformationAndChangeOrCreateInformation((*i)->GetUniqueId().ToString(),(*i)->GetName(), 
-                  fragmentDeltaComponent, true, isATickLocalMessage);
+               double frameTickDelta = statsTickClock.DeltaSec(frameTickStartCurrent, statsTickClock.Tick());
+               UpdateDebugStats((*i)->GetUniqueId(),(*i)->GetName(), frameTickDelta, true, isATickLocalMessage);
             }
-            /////////////////////////
          }
 
          // GLOBAL INVOKABLES - Process it on globally registered invokables
@@ -431,12 +442,9 @@ namespace dtGame
 
             if (invokable != NULL)
             {
-               /////////////////////////
                // Statistics information
-               Timer statsTickClockActor;
-               Timer_t frameTickStartActor(0);
-               frameTickStartActor = statsTickClockActor.Tick();
-               /////////////////////////
+               if (logActors)
+                  frameTickStartCurrent = statsTickClock.Tick();
 
                try
                {
@@ -447,16 +455,12 @@ namespace dtGame
                   ex.LogException(dtUtil::Log::LOG_ERROR, *mLogger);
                }
 
-               /////////////////////////
                // Statistics information
-               if(mDoStatsOnTheActors)
+               if (logActors)
                {
-                  Timer_t frameTickStopActor = statsTickClockActor.Tick();
-                  double fragmentDeltaActor = statsTickClockActor.DeltaSec(frameTickStartActor, frameTickStopActor);
-                  FindLogDebugInformationAndChangeOrCreateInformation(listenerActorProxy->GetId().ToString(), listenerActorProxy->GetName(), 
-                     fragmentDeltaActor, false, isATickLocalMessage);
+                  double frameTickDelta = statsTickClock.DeltaSec(frameTickStartCurrent, statsTickClock.Tick());
+                  UpdateDebugStats(listenerActorProxy->GetId(), listenerActorProxy->GetName(), frameTickDelta, false, isATickLocalMessage);
                }
-               /////////////////////////
             }
             else
             {
@@ -479,6 +483,10 @@ namespace dtGame
                aboutActor->GetMessageHandlers(message->GetMessageType(), aboutActorInvokables);
                for (unsigned i = 0; i < aboutActorInvokables.size(); ++i)
                {
+                  // Statistics information
+                  if (logActors)
+                     frameTickStartCurrent = statsTickClock.Tick();
+
                   try
                   {
                      aboutActorInvokables[i]->Invoke(*message);
@@ -486,6 +494,13 @@ namespace dtGame
                   catch (const dtUtil::Exception& ex)
                   {
                      ex.LogException(dtUtil::Log::LOG_ERROR, *mLogger);
+                  }
+
+                  // Statistics information
+                  if (logActors)
+                  {
+                     double frameTickDelta = statsTickClock.DeltaSec(frameTickStartCurrent, statsTickClock.Tick());
+                     UpdateDebugStats(aboutActor->GetId(), aboutActor->GetName(), frameTickDelta, false, false);
                   }
                }
             }
@@ -500,7 +515,10 @@ namespace dtGame
                Invokable* invokable = listener.first->GetInvokable(listener.second);
                if (invokable != NULL)
                {
-                 try
+                  // Statistics information
+                  if (logActors)
+                     frameTickStartCurrent = statsTickClock.Tick();
+                  try
                   {
                      invokable->Invoke(*message);
                   }
@@ -508,6 +526,12 @@ namespace dtGame
                   {
                      ex.LogException(dtUtil::Log::LOG_ERROR, *mLogger);
                   }                  
+
+                  if (logActors)
+                  {
+                     double frameTickDelta = statsTickClock.DeltaSec(frameTickStartCurrent, statsTickClock.Tick());
+                     UpdateDebugStats(listener.first->GetId(), listener.first->GetName(), frameTickDelta, false, false);
+                  }
                }
                else
                {
@@ -1639,35 +1663,30 @@ namespace dtGame
    ////////////////////////////////////////////////////////////////////////////////
 
    //////////////////////////////////////////////////////////////////////////////
-   void GameManager::FindLogDebugInformationAndChangeOrCreateInformation(const std::string& uniqueIDToFind, 
+   void GameManager::UpdateDebugStats(const dtCore::UniqueId &uniqueIDToFind, 
       const std::string& nameOfObject, float elapsedTime, bool isComponent, bool ticklocal)
    {
-      std::vector<dtCore::RefPtr<LogDebugInformation> >::iterator iter = mDebugLoggerInformation.begin();
-      bool foundWhatWeWereLookingFor = false;
-      for(; iter != mDebugLoggerInformation.end(); ++iter)
+      std::map<dtCore::UniqueId, dtCore::RefPtr<LogDebugInformation> >::iterator itor = 
+         mDebugLoggerInformation.find(uniqueIDToFind);
+      if (itor != mDebugLoggerInformation.end())
       {
-         if(uniqueIDToFind == (*iter)->mUniqueID)
+         LogDebugInformation& debugInfo = *itor->second;
+         if(ticklocal)
          {
-            if(ticklocal)
-            {
-               (*iter)->mTickLocalTime +=elapsedTime;
-               (*iter)->mTimesThrough += 1;
-               (*iter)->mTotalTime += elapsedTime; 
-            }
-            else
-            {
-               (*iter)->mTotalTime += elapsedTime;  
-            }
-            foundWhatWeWereLookingFor = true;
-            break;
+            debugInfo.mTickLocalTime +=elapsedTime;
+            debugInfo.mTimesThrough += 1;
+            debugInfo.mTotalTime += elapsedTime; 
+         }
+         else
+         {
+            debugInfo.mTotalTime += elapsedTime;  
          }
       }
-
-      if(foundWhatWeWereLookingFor == false)
+      else 
       {
          dtCore::RefPtr<LogDebugInformation> toPushDebugInfo = new LogDebugInformation(nameOfObject, uniqueIDToFind, isComponent);
-         toPushDebugInfo->mTotalTime     = elapsedTime;
-         mDebugLoggerInformation.push_back(toPushDebugInfo);
+         toPushDebugInfo->mTotalTime = elapsedTime;
+         mDebugLoggerInformation.insert(std::make_pair(uniqueIDToFind, toPushDebugInfo));
       }
    }
 
@@ -1710,6 +1729,7 @@ namespace dtGame
       float gmPercentTime = ComputeStatsPercent(truncRealTime, truncCumGMTime);
       float cumulativeTime = 0.0;
       int numComps = 0, numActors = 0;
+      std::vector<dtCore::RefPtr<LogDebugInformation> > debugDeleteList;
 
       std::ostringstream ss;
       ss << "==========Printing Debug information===========" << 
@@ -1725,7 +1745,6 @@ namespace dtGame
          "], Ticks[" << mStatsNumFrames << "], FPS[" << fps << 
          "], #Msgs[" << mStatsNumProcMessages << " P/" << mStatsNumSendNetworkMessages <<
          " N], #Actors[" << mActorProxyMap.size() << "/" << mGameActorProxyMap.size() << " Game]" << std::endl;
-      // include templates?  mTemplateActors.size()?    
       
       // reset values for next fragment
       mStatsNumFrames         = 0;
@@ -1734,27 +1753,33 @@ namespace dtGame
       mStatsNumSendNetworkMessages = 0;
 
       // Build up all the information in the stream
-      std::vector<dtCore::RefPtr<LogDebugInformation> >::iterator iter = mDebugLoggerInformation.begin();
+      std::map<dtCore::UniqueId, dtCore::RefPtr<LogDebugInformation> >::iterator iter = mDebugLoggerInformation.begin();
       if(mDoStatsOnTheComponents)
       {
          ss << "*************** STARTING LOGGING OF TIME IN COMPONENTS *****************" << std::endl;
          for(; iter != mDebugLoggerInformation.end(); ++iter)
          {
-            if((*iter)->mIsComponent)
+            LogDebugInformation& debugInfo = *iter->second;
+            if(debugInfo.mIsComponent)
             {
-               float percentTime = ComputeStatsPercent(truncRealTime, (*iter)->mTotalTime);
-               float truncTotalTime = ((int)((*iter)->mTotalTime * 10000)) / 10000.0; // force data truncation to 4 places
+               float percentTime = ComputeStatsPercent(truncRealTime, debugInfo.mTotalTime);
+               float truncTotalTime = ((int)(debugInfo.mTotalTime * 10000)) / 10000.0; // force data truncation to 4 places
                ss << "* Time[" << percentTime << "% / " << truncTotalTime << " Total], Name[" << 
-                  (*iter)->mNameOfLogInfo.c_str() << "]" << std::endl;
-               (*iter)->mTotalTime = 0;
-               (*iter)->mTimesThrough = 0;
-               (*iter)->mTickLocalTime = 0;
+                  debugInfo.mNameOfLogInfo.c_str() << "]" << std::endl;
+               debugInfo.mTotalTime = 0;
+               debugInfo.mTimesThrough = 0;
+               debugInfo.mTickLocalTime = 0;
                cumulativeTime += truncTotalTime;
                numComps += 1;
+
+               if (debugInfo.mTotalTime == 0.0)
+                  debugDeleteList.push_back(iter->second);
             }
          }
          ss << "*************** ENDING LOGGING OF TIME IN COMPONENTS *****************" << std::endl;
       }
+
+      // ACTORs
       if(mDoStatsOnTheActors)
       {
          int numIgnored = 0;
@@ -1763,24 +1788,27 @@ namespace dtGame
          ss << "********** STARTING LOGGING OF TIME IN ACTORS -- if (> 0.1%) ************" << std::endl;
          for(iter = mDebugLoggerInformation.begin(); iter != mDebugLoggerInformation.end(); ++iter)
          {
-            if(!(*iter)->mIsComponent)
+            LogDebugInformation& debugInfo = *iter->second;
+            if(!debugInfo.mIsComponent)
             {
-               float percentTime = ComputeStatsPercent(truncRealTime, (*iter)->mTotalTime);
-               float truncTotalTime = ((int)((*iter)->mTotalTime * 10000)) / 10000.0; // force data truncation to 4 places
+               float percentTime = ComputeStatsPercent(truncRealTime, debugInfo.mTotalTime);
+               float truncTotalTime = ((int)(debugInfo.mTotalTime * 10000)) / 10000.0; // force data truncation to 4 places
                if (percentTime > 0.1)
                {
                   ss << "* Time[" << percentTime << "% / " << truncTotalTime << " Total], Name[" << 
-                     (*iter)->mNameOfLogInfo.c_str() << "]" << 
-                     ", UniqueId[" << (*iter)->mUniqueID.c_str() << "]" << std::endl;
+                     debugInfo.mNameOfLogInfo.c_str() << "]" << 
+                     ", UniqueId[" << debugInfo.mUniqueID.ToString().c_str() << "]" << std::endl;
                }
+               else if (debugInfo.mTotalTime == 0.0)
+                  debugDeleteList.push_back(iter->second);
                else 
                {
                   numIgnored ++;
                   ignoredCumulativeTime += truncTotalTime;
                }
-               (*iter)->mTotalTime = 0;
-               (*iter)->mTimesThrough = 0;
-               (*iter)->mTickLocalTime = 0;
+               debugInfo.mTotalTime = 0;
+               debugInfo.mTimesThrough = 0;
+               debugInfo.mTickLocalTime = 0;
                cumulativeTime += truncTotalTime;
                numActors += 1;
             }
@@ -1817,6 +1845,16 @@ namespace dtGame
          FILE* temp = fopen(mFilePathToPrintDebugInformation.c_str(), "a");
          fprintf(temp, "%s", ss.str().c_str());
          fclose(temp);
+      }
+
+      // delete items that had no time this report. Easy way to clean up old components and actors
+      for (unsigned int i = 0; i < debugDeleteList.size(); ++i)
+      {
+         LogDebugInformation &debugInfo = *debugDeleteList[i];
+         std::map<dtCore::UniqueId, dtCore::RefPtr<LogDebugInformation> >::iterator deleteIter = 
+            mDebugLoggerInformation.find(debugInfo.mUniqueID);
+         if (deleteIter != mDebugLoggerInformation.end())
+            mDebugLoggerInformation.erase(deleteIter);
       }
    }
 
