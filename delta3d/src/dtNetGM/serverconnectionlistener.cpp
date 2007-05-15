@@ -20,6 +20,7 @@
 */
 
 #include <dtNetGM/serverconnectionlistener.h>
+#include <dtNetGM/clientconnectionlistener.h>
 #include <dtNetGM/networkbridge.h>
 #include <dtNetGM/networkcomponent.h>
 #include <dtNetGM/servernetworkcomponent.h>
@@ -61,6 +62,7 @@ namespace dtNetGM {
         params.setInRate(mInRate);
         params.setOutRate(mOutRate);
         params.setUnrel(!mReliable); 
-        params.setListener(NetworkBridge::Create(mServerNetworkcomponent.get()));
+//        params.setListener(NetworkBridge::Create(mServerNetworkcomponent.get()));
+        params.setListener( ClientConnectionListener::Create(new NetworkBridge(mServerNetworkcomponent.get())));
     }
 }

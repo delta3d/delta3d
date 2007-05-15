@@ -43,7 +43,7 @@ NetMgr::~NetMgr()
 void NetMgr::InitializeGame(const std::string &gameName, int gameVersion, const std::string &logFile )
 {
 
-   if (GNE::initGNE(NL_IP, atexit) )
+   if (GNE::initGNE(NL_LOOP_BACK, atexit) )
    {
       LOG_ERROR("Can't initialize network");
       return;

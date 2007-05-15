@@ -20,7 +20,7 @@
 */
 
 #include <dtNetGM/networkcomponent.h>
-#include <dtNetGM/messagepacket.h>
+#include <dtNetGM/datastreampacket.h>
 #include <dtNetGM/machineinfomessage.h>
 #include <dtNetGM/networkbridge.h>
 #include <dtGame/message.h>
@@ -34,21 +34,6 @@ namespace dtNetGM
 {
     // The release version will not compile with the following code ????????
     bool NetworkComponent::mGneInitialized = false;
-
-    IMPLEMENT_ENUM(NetworkComponent::NetworkComponentException);
-
-    const NetworkComponent::NetworkComponentException NetworkComponent::NetworkComponentException::UNABLE_TO_START_SERVER("Unable to start server");
-    const NetworkComponent::NetworkComponentException NetworkComponent::NetworkComponentException::UNABLE_TO_CONNECT_TO_SERVER("Unable to connect to server");
-    const NetworkComponent::NetworkComponentException NetworkComponent::NetworkComponentException::NETWORK_NOT_INITIALIZED("Network not initialized.");
-    const NetworkComponent::NetworkComponentException NetworkComponent::NetworkComponentException::NETWORK_UNAVAILABLE("Network connection unavailable.");
-    const NetworkComponent::NetworkComponentException NetworkComponent::NetworkComponentException::INVALID_HOSTNAME("Invalid hostname.");
-    const NetworkComponent::NetworkComponentException NetworkComponent::NetworkComponentException::INVALID_DESTINATION("Invalid destination.");
-    
-    const NetworkComponent::NetworkComponentException NetworkComponent::NetworkComponentException::NETWORK_ERROR("Network error.");
-    const NetworkComponent::NetworkComponentException NetworkComponent::NetworkComponentException::NETWORK_FAILURE("Network failure.");
-    const NetworkComponent::NetworkComponentException NetworkComponent::NetworkComponentException::NETWORK_LISTEN_FAILURE("Network listen failure.");
-    const NetworkComponent::NetworkComponentException NetworkComponent::NetworkComponentException::NETWORK_CONNECT_FAILURE("Network connect failure.");
-    const NetworkComponent::NetworkComponentException NetworkComponent::NetworkComponentException::NETWORK_TIMEOUT("Network timeout.");
 
     IMPLEMENT_ENUM(NetworkComponent::DestinationType);
 
@@ -152,11 +137,15 @@ namespace dtNetGM
             dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,     
                 "Using GNE protocol: %d.%d.%d", num.version, num.subVersion, num.build );
 
-            #ifdef _DEBUG
+#ifdef _DEBUG
+            if(dtUtil::Log::GetInstance().GetLogLevel() == dtUtil::Log::LOG_DEBUG && !logFile.empty()) 
+            {
                 GNE::initDebug(GNE::DLEVEL1 | GNE::DLEVEL2 | GNE::DLEVEL3 | GNE::DLEVEL4 | GNE::DLEVEL5, logFile.c_str());
-            #endif
-            // register our MessagePacket to send messages across the network
-            GNE::PacketParser::defaultRegisterPacket<MessagePacket>();
+            }
+#endif
+
+             // and of course register the new DataStreamPacket!!!!!!!!!
+            GNE::PacketParser::defaultRegisterPacket<DataStreamPacket>();
 
             mGneInitialized = true;
         }
@@ -196,7 +185,6 @@ namespace dtNetGM
                 return;
             }
         }
-
         LOG_ERROR("Connection not found! " + machineInfo.GetName() + " [" + machineInfo.GetHostName()+ "]");
         mMutex.release();
     }
@@ -205,6 +193,12 @@ namespace dtNetGM
     {
         mMutex.acquire();
 
+        if(uniqueId == GetGameManager()->GetMachineInfo().GetUniqueId()) 
+        {
+            mMutex.release();
+            return &(GetGameManager()->GetMachineInfo());
+        }
+
         for(std::vector<NetworkBridge*>::iterator iter = mConnections.begin(); iter != mConnections.end(); iter++)
         {
             if((*iter)->GetMachineInfo().GetUniqueId() == uniqueId)
@@ -212,12 +206,6 @@ namespace dtNetGM
                 mMutex.release();
                 return &((*iter)->GetMachineInfo());
             }
-        }
-
-        if(uniqueId == GetGameManager()->GetMachineInfo().GetUniqueId()) 
-        {
-            mMutex.release();
-            return &(GetGameManager()->GetMachineInfo());
         }
 
         mMutex.release();
@@ -273,74 +261,63 @@ namespace dtNetGM
         RemoveConnection(networkBridge.GetMachineInfo());
     }
 
-    void NetworkComponent::OnReceivedMessagePacket(NetworkBridge& networkBridge, const MessagePacket& msgPacket)
+	void NetworkComponent::OnReceivedDataStream(NetworkBridge& networkBridge, dtUtil::DataStream& dataStream)
+	{
+		dtCore::RefPtr<dtGame::Message> message;
+		if(!networkBridge.IsConnectedClient()) 
+		{
+			// Read MessageType::mId for special case
+			dataStream.Rewind();
+			unsigned short msgId = 0;
+            dataStream.Read(msgId);
+            dataStream.Rewind();
+
+			if(msgId == dtGame::MessageType::NETCLIENT_REQUEST_CONNECTION.GetId() 
+				|| msgId == dtGame::MessageType::NETSERVER_ACCEPT_CONNECTION.GetId()) 
+			{
+				message = CreateMessage(dataStream, networkBridge);
+				// Set the MachineInfo of the NetworkBridge
+				const MachineInfoMessage* machineMsg = static_cast<const MachineInfoMessage*> (message.get());
+                networkBridge.SetMachineInfo(*machineMsg->GetMachineInfo());
+
+                dataStream.Rewind();
+			}
+            else 
+            {
+                LOG_DEBUG("Received DataStream with MessageType " + dtUtil::ToString(msgId) + " while not being a client.");
+            }
+		}
+        // create message, again maybe but with proper Source!
+        dataStream.Rewind();
+		message = CreateMessage(dataStream, networkBridge);
+		OnReceivedNetworkMessage(*message, networkBridge);
+	}
+
+    void NetworkComponent::OnReceivedNetworkMessage(const dtGame::Message& message, NetworkBridge& networkBridge)
     {
         mMutex.acquire();
 
-        // is the message to our GameManager?
-        if(msgPacket.GetDestinatonId() != GetGameManager()->GetMachineInfo().GetUniqueId()) 
-        {
-            // If it is not a connection request, or connected client-info, do nothing......
-            if(msgPacket.GetMessageId() != dtGame::MessageType::INFO_CLIENT_CONNECTED.GetId() &&
-                msgPacket.GetMessageId() != dtGame::MessageType::NETCLIENT_NOTIFY_DISCONNECT.GetId()&&
-                msgPacket.GetMessageId() != dtGame::MessageType::NETCLIENT_REQUEST_CONNECTION.GetId()) 
-            {
-                return;
-            }
-        }
-
-        // Is the NetworkBridge a Client or connection info contained in message??
-        if(networkBridge.IsConnectedClient() 
-            || msgPacket.GetMessageId() == dtGame::MessageType::NETCLIENT_REQUEST_CONNECTION.GetId() 
-            || msgPacket.GetMessageId() == dtGame::MessageType::NETSERVER_ACCEPT_CONNECTION.GetId() 
-            || msgPacket.GetMessageId() == dtGame::MessageType::NETSERVER_REJECT_CONNECTION.GetId()
-            || msgPacket.GetMessageId() == dtGame::MessageType::INFO_CLIENT_CONNECTED.GetId()
-            || msgPacket.GetMessageId() != dtGame::MessageType::NETCLIENT_REQUEST_CONNECTION.GetId()) 
-        {
-            // Check if message is supported
-            if(!GetGameManager()->GetMessageFactory().IsMessageTypeSupported(GetGameManager()->GetMessageFactory().GetMessageTypeById(msgPacket.GetMessageId()))) {
-                LOG_ERROR("Received an unsupported message. MessageId = " + dtUtil::ToString(msgPacket.GetMessageId()) + "from " + networkBridge.GetHostDescription() + ".");
-
-                mMutex.release();
-                return;
-            }
-
-            // Create Message from MessagePacket 
-            dtCore::RefPtr<dtGame::Message> message = GetGameManager()->GetMessageFactory().CreateMessage(GetGameManager()->GetMessageFactory().GetMessageTypeById(msgPacket.GetMessageId()));
-            if(!message.valid()) {
-                LOG_ERROR("Error creating networkmessage.");
-            }
-            msgPacket.FillMessage(*message);
-
-            if(message->GetMessageType() == dtGame::MessageType::NETCLIENT_REQUEST_CONNECTION 
-                || message->GetMessageType() == dtGame::MessageType::NETSERVER_ACCEPT_CONNECTION) 
-            {
-                // store MachineInfo from Source in NetworkBridge
-                MachineInfoMessage* machineMsg = static_cast<MachineInfoMessage*> (message.get());
-                networkBridge.SetMachineInfo(*machineMsg->GetMachineInfo());
-
-                if(message->GetMessageType() == dtGame::MessageType::NETSERVER_ACCEPT_CONNECTION)
+		if(!networkBridge.IsConnectedClient()) 
+		{
+			if(message.GetMessageType() == dtGame::MessageType::NETCLIENT_REQUEST_CONNECTION
+				|| message.GetMessageType() == dtGame::MessageType::NETSERVER_ACCEPT_CONNECTION)
+			{
+				GetGameManager()->SendMessage(message);		
+                if(message.GetMessageType() == dtGame::MessageType::NETSERVER_ACCEPT_CONNECTION)
                 {
                     networkBridge.SetClientConnected(true);
                 }
+			}
+            else
+            {
+                LOG_ERROR("Received " + message.GetMessageType().GetName() + " while connection is not accepted.");
             }
-
-            message->SetSource(*GetMachineInfo(msgPacket.GetSourceId()));
-            message->SetDestination(GetMachineInfo(msgPacket.GetDestinatonId()));
-    
-            OnReceivedNetworkMessage(*message);
-        }
-
-        mMutex.release();
-    }
-
-
-    void NetworkComponent::OnReceivedNetworkMessage(const dtGame::Message& message)
-    {
-        mMutex.acquire();
-
+		}
+		else 
+		{
             // Send the Message to our GameManagerMessageProcessor
-        GetGameManager()->SendMessage(message);
+			GetGameManager()->SendMessage(message);
+		}
 
         mMutex.release();
     }
@@ -382,8 +359,8 @@ namespace dtNetGM
         if(IsShuttingDown())
             return;
 
-        // Create the MessagePakcet
-       MessagePacket msgPacket(message);
+        // Create the MessageDataStream
+		dtUtil::DataStream dataStream = CreateDataStream(message);
  
         if(destinationType == DestinationType::DESTINATION) 
         {
@@ -391,7 +368,7 @@ namespace dtNetGM
             {
                 if((*iter)->GetMachineInfo() == *(message.GetDestination()) )
                 {
-                    (*iter)->SendPacket(msgPacket);
+	                (*iter)->SendDataStream(dataStream);
                     mMutex.release();
                     return;
                 }
@@ -405,10 +382,9 @@ namespace dtNetGM
                 {
                     if((*iter)->IsConnectedClient())
                     {
-                       (*iter)->SendPacket(msgPacket);
+	                    (*iter)->SendDataStream(dataStream);
                     }
                 }
-
             } // DestinationType::ALL_CLIENTS
             else 
             { 
@@ -417,7 +393,7 @@ namespace dtNetGM
                 {
                     if(!(*iter)->IsConnectedClient())
                     {
-                       (*iter)->SendPacket(msgPacket);
+	                    (*iter)->SendDataStream(dataStream);
                     }
                 }
             } // DestinationType::ALL_NOT_CLIENTS
@@ -425,6 +401,86 @@ namespace dtNetGM
 
         mMutex.release();
     }
+
+	dtUtil::DataStream NetworkComponent::CreateDataStream(const dtGame::Message& message)
+	{
+		dtUtil::DataStream stream;
+
+		stream.Write(message.GetMessageType().GetId()); // MessageType.mId
+		stream.Write(message.GetSource().GetUniqueId().ToString()); // Source
+		if(message.GetDestination() != NULL) 
+		{
+			stream.Write(message.GetDestination()->GetUniqueId().ToString()); // Destination
+		}
+		else 
+		{
+			stream.Write(std::string(""));
+		}
+		stream.Write(message.GetSendingActorId().ToString()); // Sending Actor
+		stream.Write(message.GetAboutActorId().ToString()); // About Actor
+
+		message.ToDataStream(stream);
+
+        if(message.GetCausingMessage() != NULL) {
+            stream.AppendDataStream(CreateDataStream(*message.GetCausingMessage()));
+            // append causing message??
+        }
+
+		return stream;
+	}
+
+	dtCore::RefPtr<dtGame::Message> NetworkComponent::CreateMessage(dtUtil::DataStream& dataStream, const NetworkBridge& networkBridge)
+	{
+		dtCore::RefPtr<dtGame::Message> msg;
+      unsigned short msgId = 0;
+
+		// MessageType.mId
+		dataStream.Read(msgId);
+
+		// Check if message is supported
+		if(!GetGameManager()->GetMessageFactory().IsMessageTypeSupported(
+				GetGameManager()->GetMessageFactory().GetMessageTypeById(msgId))) 
+		{
+			LOG_ERROR("Received an unsupported message. MessageId = " + dtUtil::ToString(msgId));
+            return msg;
+		}
+				
+        // Create Message 
+		msg = GetGameManager()->GetMessageFactory().CreateMessage(GetGameManager()->GetMessageFactory().GetMessageTypeById(msgId));
+        if(!msg.valid()) {
+			LOG_ERROR("Error creating message from stream.");
+			return msg;
+       }
+		std::string szUniqueId;
+
+		// Source
+		dataStream.Read(szUniqueId);
+		msg->SetSource(*GetMachineInfo(dtCore::UniqueId(szUniqueId)));
+		
+		// Destination
+		dataStream.Read(szUniqueId);
+		if(szUniqueId.size() != 0) 
+		{
+			msg->SetDestination(GetMachineInfo(dtCore::UniqueId(szUniqueId)));
+		}
+
+		// Sending Actor
+		dataStream.Read(szUniqueId);
+		msg->SetSendingActorId(dtCore::UniqueId(szUniqueId));
+		
+		// About Actor
+		dataStream.Read(szUniqueId);
+		msg->SetAboutActorId(dtCore::UniqueId(szUniqueId));
+
+		msg->FromDataStream(dataStream);
+
+        if(dataStream.GetRemainingReadSize() != 0) 
+        {
+            // more information, there must be a causing message!
+            msg->SetCausingMessage((CreateMessage(dataStream, networkBridge)).get());
+        }
+		return msg;
+	}
 
     void NetworkComponent::OnFailure(NetworkBridge& networkBridge, const GNE::Error& error)
     {
@@ -449,23 +505,20 @@ namespace dtNetGM
     void NetworkComponent::ShutdownNetwork()
     {
         mMutex.acquire();
-
         LOG_INFO("Shutting down network...");
-        mShuttingDown = true;
 
-
-        // empty connections 
-        while(!mConnections.empty()) 
+        if(IsServer()) 
         {
-            mConnections.back()->Disconnect();
-            mConnections.pop_back();
+            GNE::shutdownGNE();
         }
-
-        // shutdown GNE
-        GNE::Connection::disconnectAll();
-        GNE::Timer::stopAll();
-        GNE::Thread::requestAllShutdown(GNE::Thread::USER); 
-
+        else 
+        {
+            // empty connections 
+            for(std::vector<NetworkBridge*>::iterator iter = mConnections.begin(); iter < mConnections.end(); iter++) {
+                (*iter)->Disconnect(-1);
+            }
+            mConnections.clear();
+        }
         mMutex.release();
     }
 }

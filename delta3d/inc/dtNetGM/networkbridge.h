@@ -31,6 +31,8 @@
 #include <gnelib/Error.h>
 #include <dtCore/refptr.h>
 #include <dtCore/uniqueid.h>
+#include <dtCore/base.h>
+#include <dtUtil/datastream.h>
 
 // Forward declaration
 namespace dtGame
@@ -42,14 +44,14 @@ namespace dtGame
 namespace dtNetGM 
 {
     class NetworkComponent;
-    class MessagePacket;
 
     /**
     * @class NetworkBridge
     * @brief contains GNE components for communication across a network
     * This class represents a single host on the other side of the network
     */
-    class  DT_NETGM_EXPORT NetworkBridge : public GNE::ConnectionListener
+    class  DT_NETGM_EXPORT NetworkBridge : public dtCore::Base
+
     {
     public:
         // Constructor
@@ -58,16 +60,16 @@ namespace dtNetGM
         // Deconstuctor
         virtual ~NetworkBridge(void);
 
-        // pointer used by GNE
-        typedef GNE::SmartPtr<NetworkBridge> sptr;
-        // pointer used by GNE
-        typedef GNE::WeakPtr<NetworkBridge> wptr;
+        //// pointer used by GNE
+        //typedef GNE::SmartPtr<NetworkBridge> sptr;
+        //// pointer used by GNE
+        //typedef GNE::WeakPtr<NetworkBridge> wptr;
 
-        ///static method used to create a new NetworkBridge
-        static sptr Create(NetworkComponent *networkComp)
-        {
-            return sptr(new NetworkBridge(networkComp));
-        };
+        /////static method used to create a new NetworkBridge
+        //static sptr Create(NetworkComponent *networkComp)
+        //{
+        //    return sptr(new NetworkBridge(networkComp));
+        //};
 
         /**
         * Sets the MachineInfo
@@ -100,72 +102,72 @@ namespace dtNetGM
         void SetClientConnected(bool client = true) { mConnectedClient = client; };
         
         /**
-        * Sends a MessagePacket across the network
+        * Sends a DataStream across the network
         * @param The messagepacket
         */
-        void SendPacket(const MessagePacket& msgPacket);
+		void SendDataStream(dtUtil::DataStream& dataStream);
 
         /**
         * Disconnects the current connection
         */
-        void Disconnect(int waitTime=5000);
+        void Disconnect(int waitTime= -1);
 
         /**
         * Callback function for GNE::ConnectionListener
         * @param The GNE::SyncConnection
         */
-        void onNewConn(GNE::SyncConnection& conn);
+        void OnNewConnection(GNE::SyncConnection& conn);
 
         /**
         * Callback function for GNE::ConnectionListener
         * @param The GNE::SyncConnection
         */
-        void onConnect(GNE::SyncConnection &conn);
+        void OnConnect(GNE::SyncConnection &conn);
 
         /**
         * Callback function for GNE::ConnectionListener
         * @param The GNE::Connection
         */
-        void onReceive(GNE::Connection& conn);
+        void OnReceive(GNE::Connection& conn);
 
         /**
         * Callback function for GNE::ConnectionListener
         * @param The GNE::Connection
         */
-        void onDisconnect(GNE::Connection& conn);
+        void OnDisconnect(GNE::Connection& conn);
 
         /**
         * Callback function for GNE::ConnectionListener
         * @param The GNE::Connection
         */
-        void onExit(GNE::Connection& conn);
+        void OnExit(GNE::Connection& conn);
 
         /**
         * Callback function for GNE::ConnectionListener
         * @param conn The GNE::Connection
         * @param error The GNE::Error description
         */
-        void onFailure(GNE::Connection& conn, const GNE::Error& error);
+        void OnFailure(GNE::Connection& conn, const GNE::Error& error);
 
         /**
         * Callback function for GNE::ConnectionListener
         * @param conn The GNE::Connection
         * @param error The GNE::Error description
         */
-        void onError(GNE::Connection& conn, const GNE::Error& error);
+        void OnError(GNE::Connection& conn, const GNE::Error& error);
 
         /**
         * Callback function for GNE::ConnectionListener
         * @param conn The GNE::Connection
         * @param error The GNE::Error description
         */
-        void onConnectFailure(GNE::Connection &conn, const GNE::Error &error);
+        void OnConnectFailure(GNE::Connection &conn, const GNE::Error &error);
 
         /**
         * Callback function for GNE::ConnectionListener
         * @param The GNE::Connection
         */
-        void onTimeout(GNE::Connection &conn);
+        void OnTimeout(GNE::Connection &conn);
 
         /**
         * Returns a string describing the host
@@ -180,6 +182,8 @@ namespace dtNetGM
         GNE::Connection* mGneConnection; // Our GNE network connection for sending Packets
         bool mConnectedClient; // bool containing accepted client status
 
+        unsigned int mLastStream;
+        dtUtil::DataStream mDataStream;
         /**
         * Sets the timestamp of the machineinfo to the current time
         */

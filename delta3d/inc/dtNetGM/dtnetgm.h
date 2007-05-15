@@ -1,6 +1,6 @@
 /* 
 * Delta3D Open Source Game and Simulation Engine 
-* Copyright (C) 2007 MOVES Institute 
+* Copyright (C) 2005 MOVES Institute 
 *
 * This library is free software; you can redistribute it and/or modify it under
 * the terms of the GNU Lesser General Public License as published by the Free 
@@ -21,16 +21,13 @@
 #ifndef DTNETGM_INCLUDE
 #define DTNETGM_INCLUDE
 
-#include <dtNetGM/clientnetworkcomponent.h>
 #include <dtNetGM/machineinfomessage.h>
-#include <dtNetGM/messagepacket.h>
 #include <dtNetGM/networkbridge.h>
 #include <dtNetGM/networkcomponent.h>
-#include <dtNetGM/serverconnectionlistener.h>
+#include <dtNetGM/clientnetworkcomponent.h>
 #include <dtNetGM/servernetworkcomponent.h>
 
-/** The dtNetGM namespace contains networking classes which use the dtGame::GameManager.
-* dtNetGM uses
+/** The dtNet namespace contains networking classes.  dtNet is uses
 *  the <A HREF="http://www.gillius.org/gne/">Game Network Engine</A> and 
 *  <A HREF="http://www.hawksoft.com/hawknl/">HawkNL</A> for backbone functionality.
 */
@@ -44,42 +41,47 @@ namespace dtNetGM
 #undef _AUTOLIBNAME1
 #undef _AUTOLIBNAME2
 #undef _AUTOLIBNAME3
+#undef _AUTOLIBNAME4
 
 #if defined(_DEBUG)
 
    #ifndef DT_NETGM_LIBRARY  
-      #define _AUTOLIBNAME1 "dtNetGMD.lib"
+      #define _AUTOLIBNAME1 "dtNetGMd.lib"
    #endif
 
    #define _AUTOLIBNAME2 "NLstaticD.lib"
-   #define _AUTOLIBNAME3 "gned.lib"
+    #define _AUTOLIBNAME3 "gned.lib"
+    #define _AUTOLIBNAME4 "Ws2_32.lib"
 #else 
 
    #ifndef DT_NETGM_LIBRARY  
       #define _AUTOLIBNAME1 "dtNetGM.lib"
    #endif
 
-   #define _AUTOLIBNAME2 "NLstatic.lib"
-   #define _AUTOLIBNAME3 "gne.lib"
+#define _AUTOLIBNAME2 "NLstatic.lib"
+#define _AUTOLIBNAME3 "gne.lib"
+#define _AUTOLIBNAME4 "Ws2_32.lib"
 #endif
 
 #ifndef _NOAUTOLIBMSG
 
-   #ifndef DT_NETGM_LIBRARY
+   #ifndef DT_NETGM_LIBRARY  
       #pragma message( "Will automatically link with " _AUTOLIBNAME1 )
    #endif
 
-   #pragma message( "Will automatically link with " _AUTOLIBNAME2 )
-   #pragma message( "Will automatically link with " _AUTOLIBNAME3 )
+    #pragma message( "Will automatically link with " _AUTOLIBNAME2 )
+    #pragma message( "Will automatically link with " _AUTOLIBNAME3 )
+    #pragma message( "Will automatically link with " _AUTOLIBNAME4 )
 #endif
 
-#ifndef DT_NETGM_LIBRARY
+#ifndef DT_NETGM_LIBRARY  
    #pragma  comment( lib, _AUTOLIBNAME1 )
 #endif
 
-#pragma  comment( lib, _AUTOLIBNAME2 )
-#pragma  comment( lib, _AUTOLIBNAME3 )
+#pragma comment( lib, _AUTOLIBNAME2 )
+#pragma comment( lib, _AUTOLIBNAME3 )
+#pragma comment( lib, _AUTOLIBNAME4 )
 
 #endif  // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
-#endif    //DTNETGM_INCLUDE
+#endif    DTNETGM_INCLUDE

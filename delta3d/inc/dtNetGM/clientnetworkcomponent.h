@@ -88,20 +88,10 @@ namespace dtNetGM
         virtual void ProcessNetServerRejectMessage(const dtGame::ServerMessageRejected &msg);
 
         /**
-        * Disconnect from the server(s)
-        */
-        void DisconnectFromServer(int waitTime = 2000);
-
-        /**
         * Function called by a NetworkBridge if a connection disconnects
         * @param The NetworkBridge
         */
         virtual void OnDisconnect(NetworkBridge& networkBridge);
-
-        /**
-        * Shutdown network communications and clear connections and stored client connections
-        */    
-        virtual void ShutdownNetwork();
 
         /**
         * Reveals if a server has accepted our connectionrequest
