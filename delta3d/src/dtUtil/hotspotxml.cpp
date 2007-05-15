@@ -7,6 +7,10 @@
 
 using namespace dtUtil;
 
+const osg::Vec3 HotSpotFileHandler::HEADING_VEC(0,0,1);
+const osg::Vec3 HotSpotFileHandler::PITCH_VEC(1,0,0);
+const osg::Vec3 HotSpotFileHandler::ROLL_VEC(0,1,0);
+
 const char HotSpotFileHandler::HOT_SPOT_NODE_NAME[] = { "HotSpot\0" };
 const char HotSpotFileHandler::NAME_ATTRIBUTE_NAME[] = { "name\0" };
 const char HotSpotFileHandler::DEFAULT_VALUE[] = { "default\0" };
@@ -98,10 +102,6 @@ void HotSpotFileHandler::characters(const XMLCh* const chars, const unsigned int
          iss.str( data.ToString() );
          float heading, pitch, roll;
          iss >> heading >> pitch >> roll;
-
-         osg::Vec3 HEADING_VEC(0,0,1);
-         osg::Vec3 PITCH_VEC(1,0,0);
-         osg::Vec3 ROLL_VEC(0,1,0);
 
          mCurrentData.mLocalRotation = osg::Quat(osg::DegreesToRadians(heading), HEADING_VEC,
                                                  osg::DegreesToRadians(pitch), PITCH_VEC,
