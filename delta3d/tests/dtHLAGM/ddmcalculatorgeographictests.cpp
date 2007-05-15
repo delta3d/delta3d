@@ -36,6 +36,7 @@ class DDMCalculatorGeographicTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestAppSpaceProperties);
       CPPUNIT_TEST(TestRegionTypeProperties);
       CPPUNIT_TEST(TestAppSpaceValueProperties);
+      CPPUNIT_TEST(TestAppSpaceValues);
 
    CPPUNIT_TEST_SUITE_END();
 
@@ -105,6 +106,17 @@ class DDMCalculatorGeographicTests : public CPPUNIT_NS::TestFixture
 
       void TestRegionTypeProperties()
       {
+
+         dtDAL::EnumActorProperty<dtHLAGM::DDMCalculatorGeographic::DDMEntityKind>* eap = NULL;
+         mCalcGeo->GetProperty(dtHLAGM::DDMCalculatorGeographic::PROP_CALCULATOR_ENTITY_KIND, eap);
+         CPPUNIT_ASSERT(eap != NULL);
+         
+         CPPUNIT_ASSERT(dtHLAGM::DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_GROUND == eap->GetValue());
+         eap->SetValue(dtHLAGM::DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_SEA);
+         CPPUNIT_ASSERT(dtHLAGM::DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_SEA == eap->GetValue());
+         CPPUNIT_ASSERT(dtHLAGM::DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_SEA == mCalcGeo->GetCalculatorEntityKind());
+         
+         
          TestRegionTypeEnumProp(dtHLAGM::DDMCalculatorGeographic::PROP_FRIENDLY_GROUND_REGION_TYPE);
          CPPUNIT_ASSERT(dtHLAGM::DDMCalculatorGeographic::RegionCalculationType::APP_SPACE_ONLY == mCalcGeo->GetFriendlyGroundRegionType());
          
@@ -168,7 +180,7 @@ class DDMCalculatorGeographicTests : public CPPUNIT_NS::TestFixture
          TestAppSpaceValueProp(dtHLAGM::DDMCalculatorGeographic::PROP_ENEMY_SEA_APPSPACE, 5);
          CPPUNIT_ASSERT_EQUAL(173, mCalcGeo->GetEnemySeaAppSpace());
 
-         TestAppSpaceValueProp(dtHLAGM::DDMCalculatorGeographic::PROP_ENEMY_LIFEFORM_APPSPACE, 10);
+         TestAppSpaceValueProp(dtHLAGM::DDMCalculatorGeographic::PROP_ENEMY_LIFEFORM_APPSPACE, 11);
          CPPUNIT_ASSERT_EQUAL(173, mCalcGeo->GetEnemyLifeformAppSpace());
 
          
@@ -181,10 +193,106 @@ class DDMCalculatorGeographicTests : public CPPUNIT_NS::TestFixture
          TestAppSpaceValueProp(dtHLAGM::DDMCalculatorGeographic::PROP_NEUTRAL_SEA_APPSPACE, 6);
          CPPUNIT_ASSERT_EQUAL(173, mCalcGeo->GetNeutralSeaAppSpace());
 
-         TestAppSpaceValueProp(dtHLAGM::DDMCalculatorGeographic::PROP_NEUTRAL_LIFEFORM_APPSPACE, 10);
+         TestAppSpaceValueProp(dtHLAGM::DDMCalculatorGeographic::PROP_NEUTRAL_LIFEFORM_APPSPACE, 12);
          CPPUNIT_ASSERT_EQUAL(173, mCalcGeo->GetNeutralLifeformAppSpace());
       }
       
+      void TestAppSpaceValues()
+      {
+         mCalcGeo->SetFriendlyGroundRegionType(dtHLAGM::DDMCalculatorGeographic::RegionCalculationType::APP_SPACE_ONLY);
+         mCalcGeo->SetEnemyGroundRegionType(dtHLAGM::DDMCalculatorGeographic::RegionCalculationType::APP_SPACE_ONLY);
+         mCalcGeo->SetNeutralGroundRegionType(dtHLAGM::DDMCalculatorGeographic::RegionCalculationType::APP_SPACE_ONLY);
+         
+         std::pair<dtHLAGM::DDMCalculatorGeographic::RegionCalculationType*, int> valuePair;
+         ///Ground
+         valuePair = mCalcGeo->GetAppSpaceValues(dtHLAGM::DDMCalculatorGeographic::DDMForce::FORCE_ENEMY, 
+               dtHLAGM::DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_GROUND);
+
+         CPPUNIT_ASSERT(valuePair.first != NULL);
+         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetEnemyGroundAppSpace(), valuePair.second);
+         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetEnemyGroundRegionType(), *valuePair.first);
+
+         valuePair = mCalcGeo->GetAppSpaceValues(dtHLAGM::DDMCalculatorGeographic::DDMForce::FORCE_FRIENDLY, 
+               dtHLAGM::DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_GROUND);
+
+         CPPUNIT_ASSERT(valuePair.first != NULL);
+         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetFriendlyGroundAppSpace(), valuePair.second);
+         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetFriendlyGroundRegionType(), *valuePair.first);
+
+         valuePair = mCalcGeo->GetAppSpaceValues(dtHLAGM::DDMCalculatorGeographic::DDMForce::FORCE_NEUTRAL, 
+               dtHLAGM::DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_GROUND);
+
+         CPPUNIT_ASSERT(valuePair.first != NULL);
+         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetNeutralGroundAppSpace(), valuePair.second);
+         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetNeutralGroundRegionType(), *valuePair.first);
+
+         ///Air
+         valuePair = mCalcGeo->GetAppSpaceValues(dtHLAGM::DDMCalculatorGeographic::DDMForce::FORCE_ENEMY, 
+               dtHLAGM::DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_AIR);
+
+         CPPUNIT_ASSERT(valuePair.first != NULL);
+         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetEnemyAirAppSpace(), valuePair.second);
+         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetEnemyAirRegionType(), *valuePair.first);
+
+         valuePair = mCalcGeo->GetAppSpaceValues(dtHLAGM::DDMCalculatorGeographic::DDMForce::FORCE_FRIENDLY, 
+               dtHLAGM::DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_AIR);
+
+         CPPUNIT_ASSERT(valuePair.first != NULL);
+         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetFriendlyAirAppSpace(), valuePair.second);
+         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetFriendlyAirRegionType(), *valuePair.first);
+
+         valuePair = mCalcGeo->GetAppSpaceValues(dtHLAGM::DDMCalculatorGeographic::DDMForce::FORCE_NEUTRAL, 
+               dtHLAGM::DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_AIR);
+
+         CPPUNIT_ASSERT(valuePair.first != NULL);
+         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetNeutralAirAppSpace(), valuePair.second);
+         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetNeutralAirRegionType(), *valuePair.first);
+
+         ///Sea
+         valuePair = mCalcGeo->GetAppSpaceValues(dtHLAGM::DDMCalculatorGeographic::DDMForce::FORCE_ENEMY, 
+               dtHLAGM::DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_SEA);
+
+         CPPUNIT_ASSERT(valuePair.first != NULL);
+         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetEnemySeaAppSpace(), valuePair.second);
+         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetEnemySeaRegionType(), *valuePair.first);
+
+         valuePair = mCalcGeo->GetAppSpaceValues(dtHLAGM::DDMCalculatorGeographic::DDMForce::FORCE_FRIENDLY, 
+               dtHLAGM::DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_SEA);
+
+         CPPUNIT_ASSERT(valuePair.first != NULL);
+         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetFriendlySeaAppSpace(), valuePair.second);
+         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetFriendlySeaRegionType(), *valuePair.first);
+
+         valuePair = mCalcGeo->GetAppSpaceValues(dtHLAGM::DDMCalculatorGeographic::DDMForce::FORCE_NEUTRAL, 
+               dtHLAGM::DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_SEA);
+
+         CPPUNIT_ASSERT(valuePair.first != NULL);
+         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetNeutralSeaAppSpace(), valuePair.second);
+         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetNeutralSeaRegionType(), *valuePair.first);
+
+         ///LifeForm
+         valuePair = mCalcGeo->GetAppSpaceValues(dtHLAGM::DDMCalculatorGeographic::DDMForce::FORCE_ENEMY, 
+               dtHLAGM::DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_LIFEFORM);
+
+         CPPUNIT_ASSERT(valuePair.first != NULL);
+         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetEnemyLifeformAppSpace(), valuePair.second);
+         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetEnemyLifeformRegionType(), *valuePair.first);
+
+         valuePair = mCalcGeo->GetAppSpaceValues(dtHLAGM::DDMCalculatorGeographic::DDMForce::FORCE_FRIENDLY, 
+               dtHLAGM::DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_LIFEFORM);
+
+         CPPUNIT_ASSERT(valuePair.first != NULL);
+         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetFriendlyLifeformAppSpace(), valuePair.second);
+         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetFriendlyLifeformRegionType(), *valuePair.first);
+
+         valuePair = mCalcGeo->GetAppSpaceValues(dtHLAGM::DDMCalculatorGeographic::DDMForce::FORCE_NEUTRAL, 
+               dtHLAGM::DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_LIFEFORM);
+
+         CPPUNIT_ASSERT(valuePair.first != NULL);
+         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetNeutralLifeformAppSpace(), valuePair.second);
+         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetNeutralLifeformRegionType(), *valuePair.first);
+         
+      }
    private:
 
       const std::string TestDimensionProperty(const std::string& name, const std::string& defaultValue)

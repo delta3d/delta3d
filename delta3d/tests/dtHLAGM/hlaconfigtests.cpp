@@ -46,6 +46,7 @@
 #include <dtHLAGM/exceptionenum.h>
 #include <dtHLAGM/attributetype.h>
 #include <dtHLAGM/rprparametertranslator.h>
+#include <dtHLAGM/ddmcameracalculatorgeographic.h>
 
 class HLAConfigTests : public CPPUNIT_NS::TestFixture
 {
@@ -63,18 +64,22 @@ class HLAConfigTests : public CPPUNIT_NS::TestFixture
       dtUtil::Log* logger;
       dtCore::RefPtr<dtHLAGM::HLAComponent> mTranslator;
       dtCore::RefPtr<dtGame::GameManager> mGameManager;
+      dtCore::RefPtr<dtHLAGM::DDMCameraCalculatorGeographic> mCalc;
+      
       static const char* const mHLAActorRegistry;
       void CheckObjectToActorMapping(
          const std::string& category,
          const std::string& name,
          const std::string& objectClassName,
          const std::string& entityIdAttrName,
+         const std::string& ddmSpace,
          const dtHLAGM::EntityType* entityType,
          bool remoteOnly,
          const std::vector<dtHLAGM::AttributeToPropertyList>& props);
       void CheckInteractionToMessageMapping(
          const dtGame::MessageType& messageType,
          const std::string& interactionName,
+         const std::string& ddmSpace,
          const std::vector<dtHLAGM::ParameterToParameterList>& params);
 };
 
@@ -95,6 +100,11 @@ void HLAConfigTests::setUp()
    //dtUtil::Log::GetInstance("hlafomconfigxml.cpp").SetLogLevel(dtUtil::Log::LOG_DEBUG);
    logger = &dtUtil::Log::GetInstance(logName);
    mTranslator = new dtHLAGM::HLAComponent();
+   mCalc = new dtHLAGM::DDMCameraCalculatorGeographic;
+   mCalc->SetName("Geographic");
+   mTranslator->GetDDMSubscriptionCalculators().AddCalculator(*mCalc);
+
+   
    dtCore::Scene* scene = new dtCore::Scene();
    mGameManager = new dtGame::GameManager(*scene);
 
@@ -119,6 +129,7 @@ void HLAConfigTests::CheckObjectToActorMapping(
    const std::string& name,
    const std::string& objectClassName,
    const std::string& entityIdAttrName,
+   const std::string& ddmSpace,
    const dtHLAGM::EntityType* entityType,
    bool remoteOnly,
    const std::vector<dtHLAGM::AttributeToPropertyList>& props)
@@ -182,6 +193,7 @@ void HLAConfigTests::CheckObjectToActorMapping(
 void HLAConfigTests::CheckInteractionToMessageMapping(
    const dtGame::MessageType& messageType,
    const std::string& interactionName,
+   const std::string& ddmSpace,
    const std::vector<dtHLAGM::ParameterToParameterList>& params)
 {
    //make absolutely sure we call the const version of the method.
@@ -235,10 +247,20 @@ void HLAConfigTests::TestConfigure()
       mGameManager->AddComponent(*mTranslator, dtGame::GameManager::ComponentPriority::NORMAL);
 
       config.LoadConfiguration(*mTranslator, "Federations/HLAMappingExample.xml");
-
+      
       CPPUNIT_ASSERT_MESSAGE(std::string("Library should be loaded:") + mHLAActorRegistry,
          mGameManager->GetRegistry(mHLAActorRegistry) != NULL);
 
+      CPPUNIT_ASSERT(mTranslator->IsDDMEnabled());
+
+      CPPUNIT_ASSERT(mCalc->GetFriendlyGroundRegionType() == dtHLAGM::DDMCalculatorGeographic::RegionCalculationType::GEOGRAPHIC_SPACE);
+      CPPUNIT_ASSERT(mCalc->GetFriendlyAirRegionType() == dtHLAGM::DDMCalculatorGeographic::RegionCalculationType::APP_SPACE_ONLY);
+      CPPUNIT_ASSERT_EQUAL(74, mCalc->GetFriendlyGroundAppSpace());
+      CPPUNIT_ASSERT_EQUAL(11, mCalc->GetNeutralLifeformAppSpace());
+      CPPUNIT_ASSERT_EQUAL(0L, mCalc->GetAppSpaceMinimum());
+      CPPUNIT_ASSERT_EQUAL(199L, mCalc->GetAppSpaceMaximum());
+
+      
       {
          dtHLAGM::EntityType type(1, 1, 222, 2, 4, 6, 0);
 
@@ -294,7 +316,7 @@ void HLAConfigTests::TestConfigure()
 
          CheckObjectToActorMapping("TestHLA", "Tank",
             "BaseEntity.PhysicalEntity.Platform.GroundVehicle",
-            "EntityIdentifier", &type, false, props);
+            "EntityIdentifier", "Geographic", &type, false, props);
       }
 
       {
@@ -353,11 +375,11 @@ void HLAConfigTests::TestConfigure()
 
          dtHLAGM::EntityType type1(1, 2, 225, 1, 9, 4, 0);
          CheckObjectToActorMapping("TestHLA", "Jet", "BaseEntity.PhysicalEntity.Platform.Aircraft",
-            "EntityIdentifier", &type1, false, props);
+            "EntityIdentifier", "Geographic", &type1, false, props);
 
          dtHLAGM::EntityType type2(1, 2, 222, 20, 2, 6, 0);
          CheckObjectToActorMapping("TestHLA", "Helicopter", "BaseEntity.PhysicalEntity.Platform.Aircraft",
-            "EntityIdentifier", &type2, true, props);
+            "EntityIdentifier", "Another Space", &type2, true, props);
       }
 
       {
@@ -370,7 +392,7 @@ void HLAConfigTests::TestConfigure()
             props.push_back(attrToProp);
          }
 
-         CheckObjectToActorMapping("TestHLA", "Jet", "BaseEntity.PhysicalEntity.Platform.Aircraft", "", &type, true, props);
+         CheckObjectToActorMapping("TestHLA", "Jet", "BaseEntity.PhysicalEntity.Platform.Aircraft", "", "", &type, true, props);
       }
       {
          dtHLAGM::EntityType type(1, 2, 225, 0, 0, 0, 0);
@@ -382,7 +404,7 @@ void HLAConfigTests::TestConfigure()
             attrToProp.GetParameterDefinitions().push_back(pd); 
             props.push_back(attrToProp);
          }
-         CheckObjectToActorMapping("TestHLA", "Jet", "TryingToMapTheJetBidirectionallyAgain", "",  &type, true, props);
+         CheckObjectToActorMapping("TestHLA", "Jet", "TryingToMapTheJetBidirectionallyAgain", "", "",  &type, true, props);
       }
       {
          std::vector<dtHLAGM::AttributeToPropertyList> props;
@@ -394,7 +416,21 @@ void HLAConfigTests::TestConfigure()
             props.push_back(attrToProp);
          }
          // Test a NULL dis id.
-         CheckObjectToActorMapping("TestHLA", "CulturalFeature", "BaseEntity.PhysicalEntity.CulturalFeature", "",  NULL, false, props);
+         CheckObjectToActorMapping("TestHLA", "CulturalFeature", "BaseEntity.PhysicalEntity.CulturalFeature", "", "", NULL, false, props);
+      }
+
+      // Test Non-Entity Types
+      {
+         std::vector<dtHLAGM::AttributeToPropertyList> props;
+         {
+            dtHLAGM::AttributeToPropertyList attrToProp("Orientation", dtHLAGM::RPRAttributeType::EULER_ANGLES_TYPE, true);
+
+            dtHLAGM::OneToManyMapping::ParameterDefinition pd("Rotation", dtDAL::DataType::VEC3, "", true);
+            attrToProp.GetParameterDefinitions().push_back(pd); 
+            props.push_back(attrToProp);
+         }
+         // Test a NULL dis id.
+         CheckObjectToActorMapping("TestHLA", "Sensor", "BaseEntity.PhysicalEntity.Sensor", "", "",  NULL, false, props);
       }
 
       {
@@ -406,7 +442,7 @@ void HLAConfigTests::TestConfigure()
             params.push_back(paramToParam);
          }
 
-         CheckInteractionToMessageMapping(dtGame::MessageType::INFO_RESTARTED, "MunitionDetonation", params);
+         CheckInteractionToMessageMapping(dtGame::MessageType::INFO_RESTARTED, "MunitionDetonation", "Geographic", params);
       }
 
       {
@@ -436,20 +472,7 @@ void HLAConfigTests::TestConfigure()
 
          }
 
-         CheckInteractionToMessageMapping(dtGame::MessageType::INFO_TIMER_ELAPSED, "WeaponFire", params);
-      }
-      // Test Non-Entity Types
-      {
-         std::vector<dtHLAGM::AttributeToPropertyList> props;
-         {
-            dtHLAGM::AttributeToPropertyList attrToProp("Orientation", dtHLAGM::RPRAttributeType::EULER_ANGLES_TYPE, true);
-
-            dtHLAGM::OneToManyMapping::ParameterDefinition pd("Rotation", dtDAL::DataType::VEC3, "", true);
-            attrToProp.GetParameterDefinitions().push_back(pd); 
-            props.push_back(attrToProp);
-         }
-         // Test a NULL dis id.
-         CheckObjectToActorMapping("TestHLA", "Sensor", "BaseEntity.PhysicalEntity.Sensor", "",  NULL, false, props);
+         CheckInteractionToMessageMapping(dtGame::MessageType::INFO_TIMER_ELAPSED, "WeaponFire", "Geographic", params);
       }
    }
    catch (const dtUtil::Exception& ex)

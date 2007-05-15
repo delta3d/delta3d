@@ -32,7 +32,10 @@ namespace dtHLAGM
    class DT_HLAGM_EXPORT DDMCalculatorGeographic : public dtHLAGM::DDMRegionCalculator
    {
       public:
-         
+         typedef dtHLAGM::DDMRegionCalculator BaseClass;
+
+         static const std::string PROP_CALCULATOR_ENTITY_KIND;
+         ;
          static const std::string PROP_FRIENDLY_GROUND_REGION_TYPE;
          static const std::string PROP_ENEMY_GROUND_REGION_TYPE;
          static const std::string PROP_NEUTRAL_GROUND_REGION_TYPE;
@@ -94,15 +97,23 @@ namespace dtHLAGM
                int mId;
          };
          
+         class DT_HLAGM_EXPORT DDMEntityKind : public dtUtil::Enumeration
+         {
+            DECLARE_ENUM(DDMEntityKind);
+            public:
+               static DDMEntityKind ENTITY_KIND_GROUND;
+               static DDMEntityKind ENTITY_KIND_AIR;
+               static DDMEntityKind ENTITY_KIND_SEA;
+               static DDMEntityKind ENTITY_KIND_LIFEFORM;
+            protected:
+               DDMEntityKind(const std::string& name);
+
+         };
+         
          DDMCalculatorGeographic();
 
-         /**
-          * Creates and returns a pointer to a region data object for this calculator.
-          * This is basically a factory method.  The using code will be required to call delete on
-          * the resulting object.
-          * @return the new region data object.
-          */
          virtual dtCore::RefPtr<DDMRegionData> CreateRegionData() const;
+         virtual void CreateSubscriptionRegionData(std::vector<dtCore::RefPtr<DDMRegionData> >& toFill) const;
          
          /**
           * Updates the subscription region 
@@ -114,6 +125,8 @@ namespace dtHLAGM
          dtUtil::Coordinates& GetCoordinateConverter() { return mCoordinates; }
          const dtUtil::Coordinates& GetCoordinateConverter() const { return mCoordinates; }
          
+         DDMEntityKind& GetCalculatorEntityKind() const { return *mCalculatorEntityKind; }
+         void SetCalculatorEntityKind(DDMEntityKind& newKind)   { mCalculatorEntityKind = &newKind; }
          
          RegionCalculationType& GetFriendlyGroundRegionType() const { return *mFriendlyGroundRegionType; }
          void SetFriendlyGroundRegionType(RegionCalculationType& newType)   { mFriendlyGroundRegionType = &newType; }
@@ -202,9 +215,11 @@ namespace dtHLAGM
          void SetAppSpaceMaximum(long newMax) { mAppSpaceMax = newMax; }
          
          unsigned long MapAppSpaceValue(unsigned spaceNumber) const;
-
+         std::pair<RegionCalculationType*, int> GetAppSpaceValues(DDMForce& force, DDMEntityKind& kind) const;
       protected:
          virtual ~DDMCalculatorGeographic();
+         
+         DDMEntityKind* mCalculatorEntityKind;
          
          RegionCalculationType* mFriendlyGroundRegionType;
          RegionCalculationType* mFriendlyAirRegionType;

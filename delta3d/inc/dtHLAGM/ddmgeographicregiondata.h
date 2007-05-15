@@ -33,10 +33,11 @@ namespace dtHLAGM
          DDMGeographicRegionData();
          virtual ~DDMGeographicRegionData();
          
-         const DDMCalculatorGeographic::DDMForce& GetForce() const { return *mForce; }
+         DDMCalculatorGeographic::DDMForce& GetForce() const { return *mForce; }
+         void SetForce(DDMCalculatorGeographic::DDMForce& newForce) { mForce = &newForce; }
          
       protected:         
-         const DDMCalculatorGeographic::DDMForce* mForce;
+         DDMCalculatorGeographic::DDMForce* mForce;
    };
 }
 

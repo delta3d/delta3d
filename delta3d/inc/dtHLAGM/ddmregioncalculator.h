@@ -62,11 +62,20 @@ namespace dtHLAGM
          
          /**
           * Creates and returns a pointer to a region data object for this calculator.
-          * This is basically a factory method.  The using code will be required to call delete on
-          * the resulting object.
+          * This is basically a factory method. 
+          * This will be called on the calculator when it is creating regions for published
+          * entities.
           * @return the new region data object.
           */
          virtual dtCore::RefPtr<DDMRegionData> CreateRegionData() const = 0;
+
+         /**
+          * Creates and returns a pointer to a region data object for this calculator.
+          * This is basically a factory method. This will be called on the calculator 
+          * when it is creating regions for subscription.  The calculator may handle multiple regions, so
+          * it will fill a vector.
+          */
+         virtual void CreateSubscriptionRegionData(std::vector<dtCore::RefPtr<DDMRegionData> >& toFill) const = 0;
          
          /**
           * Updates the subscription region 
@@ -104,6 +113,20 @@ namespace dtHLAGM
          void SetThirdDimensionName(const std::string& newName) { mThirdDimensionName = newName; }
 
       protected:
+         /**
+          * This helper method should be called by subclasses when update a region because it 
+          * will check to see if the dimension actually changed before creates a new one and assigns it, which
+          * requires some data copying.  Also it helps one check to see if any of the dimensions changed so that the 
+          * UpdateRegionData method can know what to return.
+          * @return true if the dimension was changed.
+          * @param ddmData the region data object to update.
+          * @param index the index of the dimension 
+          * @param name the name of the dimension
+          * @param min  the minimum extent value
+          * @param max the maximum extent value
+          */
+         static bool UpdateDimension(DDMRegionData& ddmData, unsigned index, const std::string& name, unsigned long min, unsigned long max);
+
          std::string GetFirstDimensionNameByCopy() const { return mFirstDimensionName; }
          std::string GetSecondDimensionNameByCopy() const { return mSecondDimensionName; }
          std::string GetThirdDimensionNameByCopy() const { return mThirdDimensionName; }

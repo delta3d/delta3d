@@ -270,7 +270,7 @@ void HLATests::setUp()
    try
    {
       dtCore::RefPtr<dtHLAGM::DDMCameraCalculatorGeographic> cameraCalculator = new dtHLAGM::DDMCameraCalculatorGeographic;
-      cameraCalculator->SetCamera(new dtCore::Camera("DDM Test Camera"));
+      cameraCalculator->SetCamera(new dtCore::Camera("Geographic"));
       
       mHLAComponent->GetDDMSubscriptionCalculators().AddCalculator(*cameraCalculator);
       mGameManager->AddComponent(*mHLAComponent, dtGame::GameManager::ComponentPriority::NORMAL);
@@ -742,7 +742,7 @@ void HLATests::TestSubscription()
       }
    }
    
-   std::vector<const dtHLAGM::DDMRegionData*> toFill;
+   std::vector<std::vector<const dtHLAGM::DDMRegionData*> > toFill;
    mHLAComponent->GetDDMSubscriptionCalculatorRegions(toFill);
    CPPUNIT_ASSERT(!toFill.empty());
    CPPUNIT_ASSERT(toFill.size() == mHLAComponent->GetDDMSubscriptionCalculators().GetSize());
@@ -750,7 +750,8 @@ void HLATests::TestSubscription()
    dtHLAGM::DDMCameraCalculatorGeographic* camCalc = dynamic_cast<dtHLAGM::DDMCameraCalculatorGeographic*>(mHLAComponent->GetDDMSubscriptionCalculators()[0]);
    CPPUNIT_ASSERT(camCalc != NULL);
    
-   const dtHLAGM::DDMRegionData* data = toFill[0];
+   
+   const dtHLAGM::DDMRegionData* data = toFill[0][0];
    
    CPPUNIT_ASSERT_EQUAL(3U, data->GetNumberOfExtents());
 

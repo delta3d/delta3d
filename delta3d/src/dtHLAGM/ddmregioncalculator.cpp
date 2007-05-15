@@ -1,12 +1,15 @@
 
 #include <dtHLAGM/ddmregioncalculator.h>
+#include <dtHLAGM/ddmregiondata.h>
 #include <dtDAL/enginepropertytypes.h>
+
 namespace dtHLAGM
 {
    const std::string DDMRegionCalculator::PROP_FIRST_DIMENSION_NAME("First Dimension Name");
    const std::string DDMRegionCalculator::PROP_SECOND_DIMENSION_NAME("Second Dimension Name");
    const std::string DDMRegionCalculator::PROP_THIRD_DIMENSION_NAME("Third Dimension Name");
 
+   //////////////////////////////////////////////////////////////
    DDMRegionCalculator::DDMRegionCalculator():
       mFirstDimensionName("subspace"),
       mSecondDimensionName("one"),
@@ -26,6 +29,7 @@ namespace dtHLAGM
             ));
    }
    
+   //////////////////////////////////////////////////////////////
    dtDAL::ActorProperty* DDMRegionCalculator::GetProperty(const std::string& name)
    {
       std::map<std::string, dtCore::RefPtr<dtDAL::ActorProperty> >::iterator i = mProperties.find(name);
@@ -35,6 +39,7 @@ namespace dtHLAGM
       return i->second.get();
    }
    
+   //////////////////////////////////////////////////////////////
    const dtDAL::ActorProperty* DDMRegionCalculator::GetProperty(const std::string& name) const
    {
       std::map<std::string, dtCore::RefPtr<dtDAL::ActorProperty> >::const_iterator i = mProperties.find(name);
@@ -44,6 +49,7 @@ namespace dtHLAGM
       return i->second.get();      
    }
 
+   //////////////////////////////////////////////////////////////
    void DDMRegionCalculator::GetAllProperties(std::vector<dtDAL::ActorProperty*> toFill)
    {
       toFill.clear();
@@ -56,9 +62,40 @@ namespace dtHLAGM
       }
    }
    
+   //////////////////////////////////////////////////////////////
    void DDMRegionCalculator::AddProperty(dtDAL::ActorProperty& newProperty)
    {
       mProperties.insert(std::make_pair(newProperty.GetName(), &newProperty));
+   }
+
+   //////////////////////////////////////////////////////////////
+   bool DDMRegionCalculator::UpdateDimension(DDMRegionData& ddmData, unsigned index, const std::string& name, unsigned long min, unsigned long max)
+   {
+      const DDMRegionData::DimensionValues* dv = ddmData.GetDimensionValue(index);
+      bool result = false;
+      if (dv != NULL)
+      {
+         if (name != dv->mName)
+            result = true;
+         if (min != dv->mMin)
+            result = true;
+         if (max != dv->mMax)
+            result = true;
+      }
+      else
+      {
+         result = true;
+      }
+      
+      if (result)
+      {
+         DDMRegionData::DimensionValues newDv;   
+         newDv.mName = name;
+         newDv.mMin = min;
+         newDv.mMax = max;
+         ddmData.SetDimensionValue(index, newDv);
+      }
+      return result;
    }
 
 }

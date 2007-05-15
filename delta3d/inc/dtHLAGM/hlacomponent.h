@@ -382,7 +382,7 @@ namespace dtHLAGM
          const DDMRegionCalculatorGroup& GetDDMSubscriptionCalculators() const;
 
          /// @return The region data object for each subscription calculator.
-         void GetDDMSubscriptionCalculatorRegions(std::vector<const DDMRegionData* >& toFill) const;
+         void GetDDMSubscriptionCalculatorRegions(std::vector<std::vector<const DDMRegionData*> >& toFill) const;
          
          ///@return the current RTIambassador instance.  This will return NULL if this component is not connected to the RTI.
          RTI::RTIambassador* GetRTIAmbassador() { return mRTIAmbassador; }
@@ -452,7 +452,8 @@ namespace dtHLAGM
          ObjectRuntimeMappingInfo& GetRuntimeMappingInfo() { return mRuntimeMappings; }
 
          void PublishSubscribe();
-
+         void UnsubscribeRegion(const std::string& name, RTI::Region& region);
+         
          virtual ~HLAComponent()
            throw (RTI::FederateInternalError);
 
@@ -536,7 +537,7 @@ namespace dtHLAGM
          DDMRegionCalculatorGroup mDDMSubscriptionCalculators;
          DDMRegionCalculatorGroup mDDMPublishingCalculators;
 
-         std::vector<dtCore::RefPtr<DDMRegionData> > mDDMSubscriptionRegions;
+         std::vector<std::vector<dtCore::RefPtr<DDMRegionData> > > mDDMSubscriptionRegions;
 
          std::vector<dtCore::RefPtr<ParameterTranslator> > mParameterTranslators;
 

@@ -27,6 +27,7 @@
 
 namespace dtHLAGM
 {   
+   const std::string DDMCalculatorGeographic::PROP_CALCULATOR_ENTITY_KIND("Entity Kind");
    
    const std::string DDMCalculatorGeographic::PROP_FRIENDLY_GROUND_REGION_TYPE("Friendly Ground Region Type");
    const std::string DDMCalculatorGeographic::PROP_ENEMY_GROUND_REGION_TYPE("Enemy Ground Region Type");
@@ -61,7 +62,7 @@ namespace dtHLAGM
    const std::string DDMCalculatorGeographic::PROP_NEUTRAL_LIFEFORM_APPSPACE("Neutral Lifeform App Space");
 
    const std::string DDMCalculatorGeographic::PROP_APP_SPACE_MIN("App Space Min");
-   const std::string DDMCalculatorGeographic::PROP_APP_SPACE_MAX("App Space Man");
+   const std::string DDMCalculatorGeographic::PROP_APP_SPACE_MAX("App Space Max");
    
    IMPLEMENT_ENUM(DDMCalculatorGeographic::RegionCalculationType);
    DDMCalculatorGeographic::RegionCalculationType DDMCalculatorGeographic::RegionCalculationType::GEOGRAPHIC_SPACE("GEOGRAPHIC_SPACE");
@@ -77,13 +78,26 @@ namespace dtHLAGM
    DDMCalculatorGeographic::DDMForce DDMCalculatorGeographic::DDMForce::FORCE_ENEMY("FORCE_ENEMY", 2);
    DDMCalculatorGeographic::DDMForce DDMCalculatorGeographic::DDMForce::FORCE_NEUTRAL("FORCE_NEUTRAL", 3);
 
-   DDMCalculatorGeographic::DDMForce::DDMForce(const std::string &name, int id) : dtUtil::Enumeration(name)
+   DDMCalculatorGeographic::DDMForce::DDMForce(const std::string& name, int id) : dtUtil::Enumeration(name)
    {
       AddInstance(this);
       mId = id;
    }
 
+   IMPLEMENT_ENUM(DDMCalculatorGeographic::DDMEntityKind);
+   DDMCalculatorGeographic::DDMEntityKind DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_GROUND("ENTITY_KIND_GROUND");
+   DDMCalculatorGeographic::DDMEntityKind DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_AIR("ENTITY_KIND_AIR");
+   DDMCalculatorGeographic::DDMEntityKind DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_SEA("ENTITY_KIND_SEA");
+   DDMCalculatorGeographic::DDMEntityKind DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_LIFEFORM("ENTITY_KIND_LIFEFORM");
+
+   DDMCalculatorGeographic::DDMEntityKind::DDMEntityKind(const std::string& name) : dtUtil::Enumeration(name)
+   {
+      AddInstance(this);
+   }
+
+
    DDMCalculatorGeographic::DDMCalculatorGeographic(): 
+      mCalculatorEntityKind(&DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_GROUND),
       mFriendlyGroundRegionType(&DDMCalculatorGeographic::RegionCalculationType::GEOGRAPHIC_SPACE),
       mFriendlyAirRegionType(&DDMCalculatorGeographic::RegionCalculationType::GEOGRAPHIC_SPACE),
       mFriendlySeaRegionType(&DDMCalculatorGeographic::RegionCalculationType::GEOGRAPHIC_SPACE),
@@ -104,16 +118,21 @@ namespace dtHLAGM
       mEnemyGroundAppSpace(8),
       mEnemyAirAppSpace(2),
       mEnemySeaAppSpace(5),
-      mEnemyLifeformAppSpace(10),
+      mEnemyLifeformAppSpace(11),
       mNeutralGroundAppSpace(9),
       mNeutralAirAppSpace(3),
       mNeutralSeaAppSpace(6),
-      mNeutralLifeformAppSpace(10),
+      mNeutralLifeformAppSpace(12),
 
       mAppSpaceMin(0), 
       mAppSpaceMax(99)
    {
       mCoordinates.SetIncomingCoordinateType(dtUtil::IncomingCoordinateType::GEODETIC);
+
+      AddProperty(*new dtDAL::EnumActorProperty<DDMCalculatorGeographic::DDMEntityKind>(PROP_CALCULATOR_ENTITY_KIND, PROP_CALCULATOR_ENTITY_KIND,
+            dtDAL::MakeFunctor(*this, &DDMCalculatorGeographic::SetCalculatorEntityKind),
+            dtDAL::MakeFunctorRet(*this, &DDMCalculatorGeographic::GetCalculatorEntityKind)
+            ));
 
       AddProperty(*new dtDAL::EnumActorProperty<DDMCalculatorGeographic::RegionCalculationType>(PROP_FRIENDLY_SEA_REGION_TYPE, PROP_FRIENDLY_SEA_REGION_TYPE,
             dtDAL::MakeFunctor(*this, &DDMCalculatorGeographic::SetFriendlySeaRegionType),
@@ -243,6 +262,25 @@ namespace dtHLAGM
    {
       return new DDMGeographicRegionData;
    }
+
+   void DDMCalculatorGeographic::CreateSubscriptionRegionData(std::vector<dtCore::RefPtr<DDMRegionData> >& toFill) const
+   {
+      toFill.resize(3);
+
+      DDMGeographicRegionData* newData;
+      
+      newData = new DDMGeographicRegionData;
+      toFill[0] = newData;
+      newData->SetForce(DDMCalculatorGeographic::DDMForce::FORCE_FRIENDLY);
+
+      newData = new DDMGeographicRegionData;
+      toFill[1] = newData;
+      newData->SetForce(DDMCalculatorGeographic::DDMForce::FORCE_ENEMY);
+
+      newData = new DDMGeographicRegionData;
+      toFill[2] = newData;
+      newData->SetForce(DDMCalculatorGeographic::DDMForce::FORCE_NEUTRAL);
+   }
    
    bool DDMCalculatorGeographic::UpdateRegionData(DDMRegionData& ddmData) const
    {
@@ -255,6 +293,68 @@ namespace dtHLAGM
       return true;
    }
    
+   std::pair<DDMCalculatorGeographic::RegionCalculationType*, int> DDMCalculatorGeographic::GetAppSpaceValues(DDMCalculatorGeographic::DDMForce& force, DDMCalculatorGeographic::DDMEntityKind& kind) const
+   {
+      if (force == DDMCalculatorGeographic::DDMForce::FORCE_ENEMY)
+      {
+         if (kind == DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_GROUND)
+         {
+            return std::make_pair(&GetEnemyGroundRegionType(), GetEnemyGroundAppSpace());
+         }
+         else if (kind == DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_AIR)
+         {
+            return std::make_pair(&GetEnemyAirRegionType(), GetEnemyAirAppSpace());
+         }
+         else if (kind == DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_SEA)
+         {
+            return std::make_pair(&GetEnemySeaRegionType(), GetEnemySeaAppSpace());
+         }
+         else if (kind == DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_LIFEFORM)
+         {
+            return std::make_pair(&GetEnemyLifeformRegionType(), GetEnemyLifeformAppSpace());
+         }         
+      }  
+      else if (force == DDMCalculatorGeographic::DDMForce::FORCE_FRIENDLY)
+      {
+         if (kind == DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_GROUND)
+         {
+            return std::make_pair(&GetFriendlyGroundRegionType(), GetFriendlyGroundAppSpace());
+         }
+         else if (kind == DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_AIR)
+         {
+            return std::make_pair(&GetFriendlyAirRegionType(), GetFriendlyAirAppSpace());
+         }
+         else if (kind == DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_SEA)
+         {
+            return std::make_pair(&GetFriendlySeaRegionType(), GetFriendlySeaAppSpace());
+         }
+         else if (kind == DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_LIFEFORM)
+         {
+            return std::make_pair(&GetFriendlyLifeformRegionType(), GetFriendlyLifeformAppSpace());
+         }         
+      }
+      else if (force == DDMCalculatorGeographic::DDMForce::FORCE_NEUTRAL)
+      {
+         if (kind == DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_GROUND)
+         {
+            return std::make_pair(&GetNeutralGroundRegionType(), GetNeutralGroundAppSpace());
+         }
+         else if (kind == DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_AIR)
+         {
+            return std::make_pair(&GetNeutralAirRegionType(), GetNeutralAirAppSpace());
+         }
+         else if (kind == DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_SEA)
+         {
+            return std::make_pair(&GetNeutralSeaRegionType(), GetNeutralSeaAppSpace());
+         }
+         else if (kind == DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_LIFEFORM)
+         {
+            return std::make_pair(&GetNeutralLifeformRegionType(), GetNeutralLifeformAppSpace());
+         }         
+      }
+      
+   }
+
    unsigned long DDMCalculatorGeographic::MapAppSpaceValue(unsigned spaceNumber) const
    {
       return DDMUtil::MapEnumerated(spaceNumber, mAppSpaceMin, mAppSpaceMax);

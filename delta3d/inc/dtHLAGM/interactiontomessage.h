@@ -48,6 +48,26 @@ namespace dtHLAGM
             mInteractionHandle(0)
          {}
 
+         /**
+          * Gets the name of the DDMRegionCalculator to use for subscription and publishing.
+          *
+          * @return the calculator name.
+          */
+         const std::string& GetDDMCalculatorName() const
+         {
+            return mDDMCalculatorName;
+         }
+
+         /**
+          * Gets the name of the DDMRegionCalculator to use for subscription and publishing.
+          *
+          * @return the calculator name.
+          */
+         void SetDDMCalculatorName(const std::string& newName)
+         {
+            mDDMCalculatorName = newName;
+         }
+
          const dtGame::MessageType& GetMessageType() const
          {
             return *mType;
@@ -118,6 +138,9 @@ namespace dtHLAGM
       private:
          ~InteractionToMessage()
          {}
+
+         /// name of the calculator/calculators that will handle subscription and publishing for this  
+         std::string mDDMCalculatorName;
 
          const dtGame::MessageType* mType;
          std::string mInteractionName;

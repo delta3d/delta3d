@@ -82,7 +82,6 @@
     <xsd:sequence>
       <xsd:element name="object" minOccurs="0" maxOccurs="unbounded">  
         <xsd:attribute name="name" type="xsd:normalizedString"/>
-        <xsd:attribute name="ddmSpaceName" type="xsd:normalizedString"/>
         <xsd:attribute name="extends" type="xsd:normalizedString"/>
         <xsd:complexType>
           <xsd:sequence>
@@ -97,6 +96,7 @@
               </xsd:complexType>               
               <xsd:element name="abstract" type="xsd:string"/>
             </xsd:choice>
+            <xsd:element name="ddmSpace" type="xsd:normalizedString" minOccurs="0" maxOccurs="1"/>
             <xsd:element name="entityIdAttributeName" type="xsd:normalizedString" minOccurs="0" maxOccurs="1" />
             <xsd:element name="attrToProp" minOccurs="0" maxOccurs="unbounded" type="OneToOneType"/>
           </xsd:sequence>
@@ -126,7 +126,6 @@
     <xsd:sequence>
       <xsd:element name="interaction" minOccurs="0" maxOccurs="unbounded">
         <xsd:attribute name="name" type="xsd:normalizedString"/>
-        <xsd:attribute name="ddmSpaceName" type="xsd:normalizedString"/>
         <xsd:attribute name="extends" type="xsd:normalizedString"/>
         <xsd:complexType>
           <xsd:sequence>
@@ -139,6 +138,7 @@
             </xsd:complexType>               
               <xsd:element name="abstract" type="xsd:string"/>
             </xsd:choice>
+            <xsd:element name="ddmSpace" type="xsd:normalizedString" minOccurs="0" maxOccurs="1"/>
             <xsd:element name="paramToParam" minOccurs="0" maxOccurs="unbounded" type="OneToOneType"/>
           </xsd:sequence>
         </xsd:complexType>

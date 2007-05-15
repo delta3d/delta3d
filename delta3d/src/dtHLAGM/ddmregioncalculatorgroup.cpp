@@ -22,6 +22,8 @@
 #include <dtHLAGM/ddmregioncalculator.h>
 
 #include <dtDAL/actorproperty.h>
+#include <algorithm>
+#include <vector>
 
 namespace dtHLAGM
 {
@@ -61,6 +63,13 @@ namespace dtHLAGM
    const std::vector<dtCore::RefPtr<DDMRegionCalculator> >& DDMRegionCalculatorGroup::GetCalculators() const 
    { 
       return mCalculators; 
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void DDMRegionCalculatorGroup::GetCalculators(std::vector<DDMRegionCalculator*>& toFill) 
+   {  
+      toFill.resize(mCalculators.size(), NULL);
+      std::transform(mCalculators.begin(), mCalculators.end(), toFill.begin(), dtCore::ConvertToPointerUnary<DDMRegionCalculator>());
    }
 
    ///////////////////////////////////////////////////////////////////////////////

@@ -210,6 +210,7 @@ namespace dtHLAGM
          static const std::string OBJECT_EXTENDS_ATTRIBUTE;
          static const std::string OBJECT_ABSTRACT_ELEMENT;
          static const std::string OBJECT_CLASS_ELEMENT;
+         static const std::string OBJECT_DDM_SPACE_ELEMENT;
          static const std::string OBJECT_ACTOR_TYPE_ELEMENT;
          static const std::string OBJECT_ENTITY_ID_ELEMENT;
          static const std::string OBJECT_DIS_ENTITY_ELEMENT;
@@ -230,6 +231,7 @@ namespace dtHLAGM
          static const std::string INTERACTION_KEYNAME_ATTRIBUTE;
          static const std::string INTERACTION_EXTENDS_ATTRIBUTE;
          static const std::string INTERACTION_ABSTRACT_ELEMENT;
+         static const std::string INTERACTION_DDM_SPACE_ELEMENT;
          static const std::string INTERACTION_CLASS_ELEMENT;
          static const std::string INTERACTION_MESSAGE_TYPE_ELEMENT;
          static const std::string INTERACTION_PARAM_TO_PARAM_ELEMENT;

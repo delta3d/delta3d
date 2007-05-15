@@ -29,7 +29,7 @@
          <property name="Friendly Ground App Space">74</property>
          <property name="Neutral Lifeform App Space">11</property>
          <property name="App Space Min">0</property>
-         <property name="App Space Min">199</property>
+         <property name="App Space Max">199</property>
       </space>
       <space name="NoSuchSpace">
          <property name="hi">junk</property>
@@ -40,6 +40,7 @@
     <objects>
         <object name="BaseEntity">
             <abstract/>
+            <ddmSpace>Geographic</ddmSpace>
             <entityIdAttributeName>EntityIdentifier</entityIdAttributeName>
             <attrToProp>
                 <hlaName>EntityType</hlaName>
@@ -138,6 +139,7 @@
             <objectClass>BaseEntity.PhysicalEntity.Platform.Aircraft</objectClass>
             <actorType>TestHLA.Helicopter</actorType>
             <remoteOnly>true</remoteOnly>
+            <ddmSpace>Another Space</ddmSpace>
             <disEntityEnum>
                 <kind>1</kind>
                 <domain>2</domain>
@@ -240,6 +242,7 @@
 
     	<interaction name="DetonationLoc" >
     	    <abstract/>
+          <ddmSpace>Geographic</ddmSpace>
     	    <paramToParam>
     	        <hlaName>DetonationLocation</hlaName>
     	        <hlaDataType>WORLD_COORDINATE_TYPE</hlaDataType>
@@ -258,6 +261,7 @@
         <interaction>
            <interactionClass>WeaponFire</interactionClass>
            <messageType>Timer Elapsed</messageType>
+           <ddmSpace>Geographic</ddmSpace>
            <paramToParam>
               <hlaName>FiringObjectIdentifier</hlaName>
               <hlaDataType>ENTITY_IDENTIFIER_TYPE</hlaDataType>

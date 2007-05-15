@@ -34,6 +34,11 @@ class TestDDMRegionCalculator : public dtHLAGM::DDMRegionCalculator
          return new dtHLAGM::DDMRegionData;
       }
       
+      virtual void CreateSubscriptionRegionData(std::vector<dtCore::RefPtr<dtHLAGM::DDMRegionData> >& toFill) const
+      {
+         toFill.clear();
+      }
+
       virtual bool UpdateRegionData(dtHLAGM::DDMRegionData& ddmData) const
       {
          return false;
@@ -60,6 +65,8 @@ class DDMRegionCalculatorGroupTests : public CPPUNIT_NS::TestFixture
       
       void TestMain()
       {
+         std::vector<dtHLAGM::DDMRegionCalculator*> calcVector;
+         
          std::string calc1Name = "testName";
          dtCore::RefPtr<dtHLAGM::DDMRegionCalculator> calc1 = new TestDDMRegionCalculator;
          calc1->SetName(calc1Name);
@@ -74,6 +81,8 @@ class DDMRegionCalculatorGroupTests : public CPPUNIT_NS::TestFixture
          CPPUNIT_ASSERT(!mCalcGroup.AddCalculator(*calc1));
          CPPUNIT_ASSERT_EQUAL_MESSAGE("Adding a duplicate should be a no-op.", 1U, mCalcGroup.GetSize());
          CPPUNIT_ASSERT(!mCalcGroup.IsEmpty());
+         mCalcGroup.GetCalculators(calcVector);
+         CPPUNIT_ASSERT(calcVector.size() == mCalcGroup.GetSize());
          
          
          mCalcGroup.RemoveCalculator(*calc1);
@@ -95,6 +104,14 @@ class DDMRegionCalculatorGroupTests : public CPPUNIT_NS::TestFixture
          calc2->SetName(calc2Name);
          CPPUNIT_ASSERT(mCalcGroup.AddCalculator(*calc2));
          CPPUNIT_ASSERT_EQUAL(2U, mCalcGroup.GetSize());
+         
+         mCalcGroup.GetCalculators(calcVector);
+         CPPUNIT_ASSERT(calcVector.size() == mCalcGroup.GetSize());
+         CPPUNIT_ASSERT_MESSAGE("The first item in a vector fetched with GetCalculators should be calc1", calc1 == calcVector[0]);
+         CPPUNIT_ASSERT_MESSAGE("The first item in a vector fetched with GetCalculators should be calc1", calc1 == mCalcGroup.GetCalculators()[0]);
+         CPPUNIT_ASSERT_MESSAGE("The second item in a vector fetched with GetCalculators should be calc2", calc2 == calcVector[1]);
+         CPPUNIT_ASSERT_MESSAGE("The second item in a vector fetched with GetCalculators should be calc2", calc2 == mCalcGroup.GetCalculators()[1]);
+         
          CPPUNIT_ASSERT(!mCalcGroup.IsEmpty());
          CPPUNIT_ASSERT_EQUAL(calc1.get(), mCalcGroup.GetCalculator(calc1Name));
          CPPUNIT_ASSERT_EQUAL(calc2.get(), mCalcGroup.GetCalculator(calc2Name));
