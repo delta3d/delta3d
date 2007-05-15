@@ -19,6 +19,7 @@
 * @author Pjotr van Amerongen
 */
 #include <dtNetGM/clientnetworkcomponent.h>
+#include <dtNetGM/clientconnectionlistener.h>
 #include <dtNetGM/networkbridge.h>
 #include <dtNetGM/machineinfomessage.h>
 #include <dtNetGM/networkcomponent.h>
@@ -66,7 +67,7 @@ namespace dtNetGM
             return false;
         }
 
-        GNE::ConnectionParams params( NetworkBridge::Create(this) );
+        GNE::ConnectionParams params( ClientConnectionListener::Create(new NetworkBridge(this)));
         params.setUnrel(!mReliable);
         params.setInRate(mRateOut);
         params.setOutRate(mRateIn);
@@ -112,8 +113,6 @@ namespace dtNetGM
     void ClientNetworkComponent::ProcessNetServerAcceptConnection(const MachineInfoMessage &msg)
     {
         mAcceptedClient = true;
-
-        AcceptClientConnection(*(msg.GetMachineInfo().get()));
 
         mMachineInfoServer = new dtGame::MachineInfo("Server");
         *mMachineInfoServer = *msg.GetMachineInfo();
@@ -174,57 +173,23 @@ namespace dtNetGM
     {
         mMutex.acquire();   
 
+        // check in direct connections (servers!)
         const dtGame::MachineInfo* machInfo = NetworkComponent::GetMachineInfo(uniqueId);
-        if(machInfo != NULL)
+        if(machInfo == NULL)
         {
-            mMutex.release();
-            return machInfo;
-        }
-
-        // find MachineInfo among other clientconnections
-        for(std::vector< dtCore::RefPtr<dtGame::MachineInfo> >::iterator iter = mConnectedClients.begin(); iter != mConnectedClients.end(); iter++)
-        {
-            if((*iter)->GetUniqueId() == uniqueId)
+            // find MachineInfo among other client-connections
+            for(std::vector< dtCore::RefPtr<dtGame::MachineInfo> >::iterator iter = mConnectedClients.begin(); iter != mConnectedClients.end(); iter++)
             {
-                mMutex.release();
-                machInfo = static_cast<const dtGame::MachineInfo*> ((*iter).get());
-                break;
+                if((*iter)->GetUniqueId() == uniqueId)
+                {
+                    machInfo = static_cast<const dtGame::MachineInfo*> ((*iter).get());
+                    break;
+                }
             }
         }
 
         mMutex.release();
         return machInfo;
-    }
 
-    void ClientNetworkComponent::DisconnectFromServer(int waitTime)
-    {
-        mMutex.acquire();         
-        // Retrieve all connections
-        std::vector<NetworkBridge*> connections;
-        GetConnectedClients(connections);
-
-        while(!connections.empty()) 
-        {
-            connections.back()->Disconnect(waitTime);
-            connections.pop_back();
-            Sleep(100);
-        }
-        mMutex.release();
-    }
-
-    void ClientNetworkComponent::ShutdownNetwork()
-    {
-        mMutex.acquire();
-
-        DisconnectFromServer();
-
-        Sleep(200);
-
-        NetworkComponent::ShutdownNetwork();
-
-        Sleep(200);
-
-        mMutex.release();
-        mConnectedClients.clear();
     }
 }

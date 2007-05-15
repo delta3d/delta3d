@@ -19,9 +19,11 @@
 * @author Pjotr van Amerongen
 */
 
+#include <queue>
+
 #include <dtNetGM/networkbridge.h>
 #include <dtNetGM/networkcomponent.h>
-#include <dtNetGM/messagepacket.h>
+#include <dtNetGM/datastreampacket.h>
 #include <dtGame/machineinfo.h>
 #include <dtNetGM/machineinfomessage.h>
 #include <gnelib.h>
@@ -30,10 +32,12 @@
 namespace dtNetGM 
 {
     NetworkBridge::NetworkBridge(NetworkComponent *networkComp)
-        : mNetworkComponent(networkComp)
+        : dtCore::Base("NetworkBridge")
+        , mNetworkComponent(networkComp)
         , mConnectedClient(false)
         , mMachineInfo(new dtGame::MachineInfo())
         , mGneConnection(NULL)
+        , mLastStream(0)
     {
         mMachineInfo->SetName("Not Connected");
         mMachineInfo->SetHostName("");
@@ -47,7 +51,7 @@ namespace dtNetGM
 
     NetworkBridge::~NetworkBridge(void)
     {
-        LOG_DEBUG("NetworkBridge destroyed.");
+        LOG_DEBUG("NetworkBridge destroyed [" + mMachineInfo->GetHostName() + "]");
     }
 
     void NetworkBridge::SetMachineInfo(const dtGame::MachineInfo& machineInfo)
@@ -73,37 +77,33 @@ namespace dtNetGM
         return mConnectedClient;
     }
 
-    void NetworkBridge::onDisconnect( GNE::Connection& conn )
+    void NetworkBridge::OnDisconnect( GNE::Connection& conn )
     {
+        mConnectedClient = false;
+
         // forward to NetworkComponent
         mNetworkComponent->OnDisconnect(*this);
-
-        // Connection is no longer available
-        mGneConnection = NULL;
     }
 
     void NetworkBridge::Disconnect(int waitTime)
     {
         if(mGneConnection != NULL) {
-            if(mGneConnection->getState() == GNE::Connection::State::Connected) 
-            {
-                mGneConnection->disconnectSendAll(waitTime);
+            if(waitTime <= 0) {
+                mGneConnection->disconnect();
             }
-
-            if(mGneConnection->getState() == GNE::Connection::State::Disconnected ||
-                mGneConnection->getState() == GNE::Connection::State::Disconnecting)
-            {
+            else {
+                mGneConnection->disconnectSendAll(waitTime);
             }
         }
     }
 
-    void NetworkBridge::onExit( GNE::Connection& conn )
+    void NetworkBridge::OnExit( GNE::Connection& conn )
     {
         // forward to NetworkComponent
         mNetworkComponent->OnExit(*this);
     }
 
-    void NetworkBridge::onNewConn( GNE::SyncConnection& conn)
+    void NetworkBridge::OnNewConnection( GNE::SyncConnection& conn)
     {
         mGneConnection = conn.getConnection().get();
 
@@ -114,7 +114,7 @@ namespace dtNetGM
         mNetworkComponent->OnNewConnection(*this);
     }
 
-    void NetworkBridge::onConnect( GNE::SyncConnection &conn )
+    void NetworkBridge::OnConnect( GNE::SyncConnection &conn )
     {
         mGneConnection = conn.getConnection().get();
 
@@ -125,7 +125,7 @@ namespace dtNetGM
         mNetworkComponent->OnConnect(*this);
     }
 
-    void NetworkBridge::onReceive( GNE::Connection& conn )
+    void NetworkBridge::OnReceive( GNE::Connection& conn )
     {
         // Set the timestamp to current time
         SetTimeStamp();        
@@ -154,57 +154,113 @@ namespace dtNetGM
                 }
             }
 
-            if(type == MessagePacket::ID) 
+			// receive next of datastream packets, we have a reliable connection so packets are received and in correct order
+            if(type == DataStreamPacket::ID) 
             {
-                MessagePacket *msgPacket = static_cast<MessagePacket*>(next);
-                
-                LOG_DEBUG("Received NetworkMessage(" + dtUtil::ToString(msgPacket->GetMessageId()) + ") from " + GetHostDescription() );
-
-                if(mNetworkComponent.valid())
+                DataStreamPacket *dataStreamPacket = static_cast<DataStreamPacket*>(next);
+                if(mLastStream != dataStreamPacket->GetDataStreamId())
                 {
-                    // forward MessagePacket to NetworkComponent
-                    mNetworkComponent->OnReceivedMessagePacket(*this, *msgPacket);
+                    mDataStream.SetBufferSize(dataStreamPacket->GetDataStreamSize());
+                    mDataStream.ClearBuffer();
+                    mLastStream = dataStreamPacket->GetDataStreamId();
+                }
+
+                // goto start point of this packet
+                mDataStream.Seekp((dataStreamPacket->GetIndex() * DataStreamPacket::MAX_PAYLOAD), dtUtil::DataStream::SeekTypeEnum::SET);
+                mDataStream.WriteBinary((char*)dataStreamPacket->GetPayloadBuffer(), dataStreamPacket->GetPayloadSize());			
+
+                LOG_DEBUG("Received " + dtUtil::ToString(dataStreamPacket->GetIndex() + 1) 
+                        + " of " +  dtUtil::ToString(dataStreamPacket->GetPacketCount()) + " packets.");
+
+                // We have a reliable stream, so packets arrive in order
+                if(dataStreamPacket->GetIndex() == (dataStreamPacket->GetPacketCount() - 1)) 
+                {   
+                    if(dtUtil::Log::GetInstance().GetLogLevel() == dtUtil::Log::LOG_DEBUG) 
+                    {
+                        // Read MessageType::mId for special case
+                        mDataStream.Rewind();
+                        unsigned short msgId = 0;
+                        mDataStream.Read(msgId);
+                        mDataStream.Rewind();
+
+                        LOG_DEBUG("Received stream[" + dtUtil::ToString(mLastStream)
+                            + "] msgType[" + dtUtil::ToString(msgId) + "] size: "+ dtUtil::ToString(mDataStream.GetBufferSize()) 
+                            + " packetcount: " + dtUtil::ToString(dataStreamPacket->GetPacketCount()) + ")");
+                    }
+                    mNetworkComponent->OnReceivedDataStream(*this, mDataStream);	
                 }
             }
             delete next;
-
-            // get next packet
             next = conn.stream().getNextPacket();
         }
     }
 
-    void NetworkBridge::SendPacket(const MessagePacket& msgPacket)
+	void NetworkBridge::SendDataStream(dtUtil::DataStream& dataStream)
     {
-        if(IsNetworkConnected()) {
-            LOG_DEBUG("Sending Networkmessage[" + dtUtil::ToString(msgPacket.GetMessageId()) 
-                + "] to " + GetMachineInfo().GetName() + "{" 
-                + GetMachineInfo().GetHostName() + "}"
-                );
+		static unsigned int streamId = 0;
+		// create packets
+		++streamId;
+		unsigned int dataStreamSize = dataStream.GetBufferSize();
+		std::queue<dtNetGM::DataStreamPacket> qPackets;
+		dataStream.Rewind();
 
-            // write packet to reliablestream            
-            mGneConnection->stream().writePacket(msgPacket, true);
+		int index = 0;
+
+		while(dataStream.GetRemainingReadSize() != 0)
+		{
+			if(dataStream.GetRemainingReadSize() >= dtNetGM::DataStreamPacket::MAX_PAYLOAD) 
+			{
+				dtNetGM::DataStreamPacket packet(streamId, dataStreamSize, index++);
+				int iBytes = dataStream.ReadBinary((char*) packet.GetPayloadBuffer(), dtNetGM::DataStreamPacket::MAX_PAYLOAD);
+				packet.SetPayloadSize(iBytes);
+				qPackets.push(packet);
+			}
+			else
+			{
+				dtNetGM::DataStreamPacket packet(streamId, dataStreamSize, index++);
+				int iBytes = dataStream.ReadBinary((char*) packet.GetPayloadBuffer(), dtNetGM::DataStreamPacket::MAX_PAYLOAD);
+				packet.SetPayloadSize(iBytes);
+				qPackets.push(packet);
+			}
+		}
+
+		unsigned int packetCount = qPackets.size();
+
+		// send packets
+        if(IsNetworkConnected()) {
+			while(!qPackets.empty())
+			{
+				dtNetGM::DataStreamPacket packet = qPackets.front();
+				qPackets.pop();
+
+				packet.SetPacketCount(packetCount);
+				
+				// write packet to reliablestream    
+                mGneConnection->stream().writePacket(packet, true);
+			}
+			LOG_DEBUG("Send DataStream[" + dtUtil::ToString(streamId) + "] in " + dtUtil::ToString(packetCount) + " packet(s) to " + GetHostDescription());
         }
     }
 
-    void NetworkBridge::onFailure(GNE::Connection& conn, const GNE::Error& error )
+    void NetworkBridge::OnFailure(GNE::Connection& conn, const GNE::Error& error )
     {
         // forward to NetworkComponent
         mNetworkComponent->OnFailure(*this, error);
     }
 
-    void NetworkBridge::onError(GNE::Connection& conn, const GNE::Error& error )
+    void NetworkBridge::OnError(GNE::Connection& conn, const GNE::Error& error )
     {
         // forward to NetworkComponent
         mNetworkComponent->OnError(*this, error);
     }
 
-    void NetworkBridge::onConnectFailure(GNE::Connection &conn, const GNE::Error &error)
+    void NetworkBridge::OnConnectFailure(GNE::Connection &conn, const GNE::Error &error)
     {
         // forward to NetworkComponent
         mNetworkComponent->OnConnectFailure(*this, error);
     }
 
-    void NetworkBridge::onTimeout(GNE::Connection &conn) 
+    void NetworkBridge::OnTimeout(GNE::Connection &conn) 
     {
         // forward to NetworkComponent
         mNetworkComponent->OnTimeOut(*this);

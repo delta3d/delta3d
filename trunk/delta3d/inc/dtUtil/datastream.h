@@ -203,9 +203,11 @@ namespace dtUtil
          
          void Read(osg::Vec4d& vector);
          void Write(const osg::Vec4d& vector);
+         
+		 unsigned int ReadBinary(char* pBuffer, const unsigned int isize);
+		 unsigned int WriteBinary(const char* pBuffer, const unsigned int isize);
 
-         unsigned int GetBufferCapacity() const { return mBufferCapacity; }
-        
+         unsigned int GetBufferCapacity() const { return mBufferCapacity; }        
          unsigned int GetBufferSize() const { return mBufferSize; }
 
          void Rewind() { mReadPos = mWritePos = 0; }
@@ -213,7 +215,7 @@ namespace dtUtil
          void Seekp(unsigned int offset, const SeekTypeEnum &type);
          void Seekg(unsigned int offset, const SeekTypeEnum &type);
          
-         const char *GetBuffer() { return mBuffer; }         
+         const char *GetBuffer() const { return mBuffer; }         
          
          /**
           * Gets the endian'ness of the current platform.
@@ -229,10 +231,16 @@ namespace dtUtil
           *    into the data stream and on big endian machines, byte swapping will occur
           *    automatically.
           */         
-         void SetForceLittleEndian(bool force) { mForceLittleEndian = force; }      
+         void SetForceLittleEndian(bool force) { mForceLittleEndian = force; }   
+
+		 unsigned int SetBufferSize(unsigned int size) { return ResizeBuffer(size); };
+         unsigned int IncreaseBufferSize(const unsigned int size = 0);   
+		 unsigned int GetRemainingReadSize();
+         unsigned int ClearBuffer();
+         unsigned int AppendDataStream(const DataStream& dataStream);
 
       private:
-         void ResizeBuffer();
+         unsigned int ResizeBuffer(unsigned int size = 0);
 
       private:
          char *mBuffer;

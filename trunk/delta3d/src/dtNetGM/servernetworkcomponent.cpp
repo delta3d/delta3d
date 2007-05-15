@@ -96,7 +96,7 @@ namespace dtNetGM
         {
             networkBridge.SetClientConnected(false);
 
-            // Here we should send an INFO_CLIENT_DISCONNECTED message to other connected clients and our GameManager
+            // send an INFO_CLIENT_DISCONNECTED message to other connected clients
             dtCore::RefPtr<dtGame::Message> message = GetGameManager()->GetMessageFactory().CreateMessage(dtGame::MessageType::NETCLIENT_NOTIFY_DISCONNECT);
             MachineInfoMessage* machineMsg = static_cast<MachineInfoMessage*> (message.get());
             machineMsg->SetMachineInfo(networkBridge.GetMachineInfo());
@@ -119,22 +119,20 @@ namespace dtNetGM
 
         if(acceptClient)
         {
+            // Inform connected clients of new client
+            SendInfoClientConnectedMessage(*msg.GetMachineInfo());
+
             // Generate a NETSERVER_ACCEPT_CONNECTION message
             // send the MachineInfo of our server to  the new client
             dtCore::RefPtr<dtGame::Message> message = GetGameManager()->GetMessageFactory().CreateMessage(dtGame::MessageType::NETSERVER_ACCEPT_CONNECTION);
             MachineInfoMessage* acceptMsg = static_cast<MachineInfoMessage*>(message.get());
             acceptMsg->SetDestination(&msg.GetSource());
             acceptMsg->SetMachineInfo(GetGameManager()->GetMachineInfo());
-            GetGameManager()->SendNetworkMessage(*acceptMsg); 
-
-            // Inform connected clients of new client
-            SendInfoClientConnectedMessage(*acceptMsg->GetDestination());
-
-            AcceptClientConnection(msg.GetSource());
-            GetConnection(*msg.GetMachineInfo())->SetClientConnected(true);
+            SendNetworkMessage(*acceptMsg); 
 
             // inform new client of connected clients
-            SendConnectedClientMessage(*acceptMsg->GetDestination());
+            SendConnectedClientMessage(*msg.GetMachineInfo());
+            GetConnection(*msg.GetMachineInfo())->SetClientConnected(true);
         }
         else 
         {
@@ -151,7 +149,15 @@ namespace dtNetGM
 
     void ServerNetworkComponent::ProcessNetClientNotifyDisconnect(const dtGame::Message &msg)
     {
-        LOG_ERROR("Received client notify disconnect message");
+        if(*msg.GetDestination() != GetGameManager()->GetMachineInfo()) 
+        {
+            LOG_ERROR("Received client notify disconnect message from " + msg.GetSource().GetHostName() + ".");
+        }
+        else 
+        {
+            
+        }
+
     }
 
     void ServerNetworkComponent::SendInfoClientConnectedMessage(const dtGame::MachineInfo& machineInfo)
@@ -167,7 +173,7 @@ namespace dtNetGM
     
     void ServerNetworkComponent::SendConnectedClientMessage(const dtGame::MachineInfo& machineInfo)
     {
-        // Retrieve All connected Clients
+        // Retrieve All Connected Clients
         std::vector<NetworkBridge*> connectedClients;
         GetConnectedClients(connectedClients);
 

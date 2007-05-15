@@ -44,7 +44,7 @@ namespace dtUtil
    ///////////////////////////////////////////////////////////////////////////////
    DataStream::DataStream(): mBufferSize(0), mBufferCapacity(16), mReadPos(0), mWritePos(0)
    {
-      mBuffer = new char[mBufferCapacity];
+      mBuffer = new char[this->mBufferCapacity];
       mIsLittleEndian = osg::getCpuByteOrder() == osg::LittleEndian;
       mAutoFreeBuffer = true;
       mForceLittleEndian = false;
@@ -53,11 +53,11 @@ namespace dtUtil
    ///////////////////////////////////////////////////////////////////////////////
    DataStream::DataStream(char *buffer, unsigned int bufferSize, bool autoFree)
    {
-      if(bufferSize == 0)
-         throw dtUtil::Exception(DataStreamException::BUFFER_INVALID,"Buffer size cannot be zero.", __FILE__, __LINE__);
+       if (bufferSize == 0)
+           throw dtUtil::Exception(DataStreamException::BUFFER_INVALID,"Buffer size cannot be zero.", __FILE__, __LINE__);
 
-      if (buffer == NULL)
-         throw dtUtil::Exception(DataStreamException::BUFFER_INVALID,"Source buffer is not valid.", __FILE__, __LINE__);
+       if (buffer == NULL)
+           throw dtUtil::Exception(DataStreamException::BUFFER_INVALID,"Source buffer is not valid.", __FILE__, __LINE__);
 
       mBufferSize = bufferSize;
       mBufferCapacity = bufferSize;
@@ -79,9 +79,8 @@ namespace dtUtil
    {
       if (this != &rhs)
       {
-         if (rhs.mBufferSize == 0)
-            throw dtUtil::Exception(DataStreamException::BUFFER_INVALID,
-               "Attempted to copy an invalid data stream.  BufferSize is zero.", __FILE__, __LINE__);
+          if (rhs.mBufferSize == 0) throw dtUtil::Exception(DataStreamException::BUFFER_INVALID,
+              "Attempted to copy an invalid data stream.  BufferSize is zero.", __FILE__, __LINE__);
 
          mBufferCapacity = rhs.mBufferCapacity;
          mBufferSize = rhs.mBufferSize;
@@ -93,7 +92,7 @@ namespace dtUtil
          mIsLittleEndian = rhs.mIsLittleEndian;
 
          if (mBufferSize > 0)
-            memcpy(&mBuffer[0], &rhs.mBuffer[0], mBufferSize);
+            memcpy(&mBuffer[0],&rhs.mBuffer[0],mBufferSize);
       }
 
       return *this;
@@ -125,9 +124,9 @@ namespace dtUtil
    ///////////////////////////////////////////////////////////////////////////////
    void DataStream::Read(unsigned char& c)
    {
-      if (mReadPos + sizeof(unsigned char) > mBufferSize)
-          throw dtUtil::Exception(DataStreamException::BUFFER_READ_ERROR,
-            "Buffer underflow detected.", __FILE__, __LINE__);
+       if (mReadPos + sizeof(unsigned char) > mBufferSize)
+           throw dtUtil::Exception(DataStreamException::BUFFER_READ_ERROR,
+           "Buffer underflow detected.", __FILE__, __LINE__);
 
       c = *((unsigned char *)(&mBuffer[mReadPos]));
       mReadPos += sizeof(unsigned char);
@@ -568,72 +567,144 @@ namespace dtUtil
       Read(vec[2]);
       Read(vec[3]);
    }
+   
+   ///////////////////////////////////////////////////////////////////////////////
+   unsigned int DataStream::WriteBinary(const char* pBuffer, const unsigned int size)
+   {
+	   if(mBufferCapacity - mWritePos < size)
+	   {
+		   IncreaseBufferSize(size - (mBufferCapacity - mWritePos));
+	   }
+	   memcpy(&mBuffer[mWritePos], pBuffer, size);
+	   mWritePos += size;
+	   mBufferSize = mWritePos;
+		return size;
+   }
 
+   ///////////////////////////////////////////////////////////////////////////////
+   unsigned int DataStream::ReadBinary(char* pBuffer, const unsigned int size)
+   {
+	   unsigned int readSize = 0;
+	   if( (mBufferSize - mReadPos) < size)
+	   {
+			readSize = mBufferSize - mReadPos;
+	   }
+       else 
+       {
+           readSize = size;
+       }
+	   memcpy(pBuffer, &mBuffer[mReadPos], readSize);
+	   mReadPos += readSize;
+		return readSize;
+   }
+   
    ///////////////////////////////////////////////////////////////////////////////
    void DataStream::Seekp(unsigned int offset, const SeekTypeEnum &type)
    {
-      //Position the write marker..
-      if (type == SeekTypeEnum::SET)
-      {
-         if (offset > mBufferSize)
-            throw dtUtil::Exception(DataStreamException::BUFFER_INVALID_POS,
+       //Position the write marker..
+       if (type == SeekTypeEnum::SET)
+       {
+           if (offset > mBufferSize)
+               throw dtUtil::Exception(DataStreamException::BUFFER_INVALID_POS,
                "Write position cannot be greater than the current data size.", __FILE__, __LINE__);
 
-         mWritePos = offset;
-      }
-      else if (type == SeekTypeEnum::CURRENT)
-      {
-         if (mWritePos + offset > mBufferSize)
-            throw dtUtil::Exception(DataStreamException::BUFFER_INVALID_POS,
+           mWritePos = offset;
+       }
+       else if (type == SeekTypeEnum::CURRENT)
+       {
+           if (mWritePos + offset > mBufferSize)
+               throw dtUtil::Exception(DataStreamException::BUFFER_INVALID_POS,
                "Write position cannot be greater than the current data size.", __FILE__, __LINE__);
 
-         mWritePos += offset;
-      }
-      else if (type == SeekTypeEnum::END)
-      {
-         if (offset > mBufferSize)
-            throw dtUtil::Exception(DataStreamException::BUFFER_INVALID_POS,
+           mWritePos += offset;
+       }
+       else if (type == SeekTypeEnum::END)
+       {
+           if (offset > mBufferSize)
+               throw dtUtil::Exception(DataStreamException::BUFFER_INVALID_POS,
                "Specified offset is greater than the current data size.", __FILE__, __LINE__);
-         mWritePos = mBufferSize - offset;
-      }
+           mWritePos = mBufferSize - offset;
+       }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void DataStream::Seekg(unsigned int offset, const SeekTypeEnum &type)
    {
-      //Position the read marker..
-      if (type == SeekTypeEnum::SET)
-      {
-         if (offset > mBufferSize)
-            throw dtUtil::Exception(DataStreamException::BUFFER_INVALID_POS,
+       //Position the read marker..
+       if (type == SeekTypeEnum::SET)
+       {
+           if (offset > mBufferSize)
+               throw dtUtil::Exception(DataStreamException::BUFFER_INVALID_POS,
                "Read position cannot be greater than the current data size.", __FILE__, __LINE__);
-         mReadPos = offset;
-      }
-      else if (type == SeekTypeEnum::CURRENT)
-      {
-         if (mReadPos + offset > mBufferSize)
-            throw dtUtil::Exception(DataStreamException::BUFFER_INVALID_POS,
+           mReadPos = offset;
+       }
+       else if (type == SeekTypeEnum::CURRENT)
+       {
+           if (mReadPos + offset > mBufferSize)
+               throw dtUtil::Exception(DataStreamException::BUFFER_INVALID_POS,
                "Read position cannot be greater than the current data size.", __FILE__, __LINE__);
-         mReadPos += offset;
-      }
-      else if (type == SeekTypeEnum::END)
-      {
-         if (offset > mBufferSize)
-            throw dtUtil::Exception(DataStreamException::BUFFER_INVALID_POS,
+           mReadPos += offset;
+       }
+       else if (type == SeekTypeEnum::END)
+       {
+           if (offset > mBufferSize)
+               throw dtUtil::Exception(DataStreamException::BUFFER_INVALID_POS,
                "Specified offset is greater than the current data size.", __FILE__, __LINE__);
-         mReadPos = mBufferSize - offset;
-      }
+           mReadPos = mBufferSize - offset;
+       }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void DataStream::ResizeBuffer()
+   unsigned int DataStream::ResizeBuffer(unsigned int size)
    {
-      unsigned int newSize = mBufferCapacity * 2;
-      char *newBuffer = new char[newSize];
-      memcpy(&newBuffer[0],&mBuffer[0],mBufferSize);
-      delete [] mBuffer;
-      mBuffer = newBuffer;
-      mBufferCapacity = newSize;
-   }
+	   unsigned int newSize = 0;
+	   if(size == 0)
+	   {
+	      newSize = mBufferCapacity * 2;
+	   }
+	   else
+	   {
+		   newSize = size;
+	   }
+       
+	   char *newBuffer = new char[newSize];
 
+	   // copy old buffercontents
+	   if(newSize < mBufferCapacity)
+	   {
+           memcpy(&newBuffer[0],&mBuffer[0],newSize);
+	   }
+	   else 
+	   {
+           memcpy(&newBuffer[0],&mBuffer[0],mBufferCapacity);
+	   }
+
+		delete [] mBuffer;
+		mBuffer = newBuffer;
+		mBufferCapacity = newSize;
+		return mBufferCapacity;
+   } 
+   
+   unsigned int DataStream::IncreaseBufferSize(const unsigned int size)
+	{
+		return ResizeBuffer(mBufferCapacity + size);
+	}
+
+	unsigned int DataStream::GetRemainingReadSize()
+	{ 
+		return mBufferSize - mReadPos; 
+    };
+
+    unsigned int DataStream::ClearBuffer()
+    {
+        memset(mBuffer, 0, mBufferCapacity);
+        Rewind();
+        return mBufferCapacity;
+    }
+
+    unsigned int DataStream::AppendDataStream(const DataStream& dataStream)
+    {
+        IncreaseBufferSize(dataStream.GetBufferSize());
+        return WriteBinary(dataStream.GetBuffer(), dataStream.GetBufferSize());
+    }
 }
