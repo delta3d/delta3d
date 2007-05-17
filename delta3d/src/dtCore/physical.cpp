@@ -5,7 +5,6 @@
 #include <dtCore/scene.h>
 #include <dtCore/physical.h>
 #include <dtUtil/log.h>
-#include <dtUtil/polardecomp.h>
 
 #include <ode/ode.h>
 
