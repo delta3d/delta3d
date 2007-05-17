@@ -126,6 +126,9 @@
 				RelativePath="..\..\..\src\dtHLAGM\attributetype.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtHLAGM\ddmappspacecalculator.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtHLAGM\ddmcalculatorgeographic.cpp">
 			</File>
 			<File
@@ -133,6 +136,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtHLAGM\ddmgeographicregiondata.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtHLAGM\ddmmultienumeratedcalculator.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtHLAGM\ddmregioncalculator.cpp">
@@ -182,6 +188,9 @@
 				RelativePath="..\..\..\inc\dtHLAGM\attributetype.h">
 			</File>
 			<File
+				RelativePath="..\..\..\inc\dtHLAGM\ddmappspacecalculator.h">
+			</File>
+			<File
 				RelativePath="..\..\..\inc\dtHLAGM\ddmcalculatorgeographic.h">
 			</File>
 			<File
@@ -189,6 +198,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtHLAGM\ddmgeographicregiondata.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtHLAGM\ddmmultienumeratedcalculator.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtHLAGM\ddmregioncalculator.h">
