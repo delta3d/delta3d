@@ -253,10 +253,10 @@ void HLAConfigTests::TestConfigure()
 
       CPPUNIT_ASSERT(mTranslator->IsDDMEnabled());
 
-      CPPUNIT_ASSERT(mCalc->GetFriendlyGroundRegionType() == dtHLAGM::DDMCalculatorGeographic::RegionCalculationType::GEOGRAPHIC_SPACE);
-      CPPUNIT_ASSERT(mCalc->GetFriendlyAirRegionType() == dtHLAGM::DDMCalculatorGeographic::RegionCalculationType::APP_SPACE_ONLY);
-      CPPUNIT_ASSERT_EQUAL(74, mCalc->GetFriendlyGroundAppSpace());
-      CPPUNIT_ASSERT_EQUAL(11, mCalc->GetNeutralLifeformAppSpace());
+      CPPUNIT_ASSERT(mCalc->GetFriendlyRegionType() == dtHLAGM::DDMCalculatorGeographic::RegionCalculationType::GEOGRAPHIC_SPACE);
+      CPPUNIT_ASSERT(mCalc->GetEnemyRegionType() == dtHLAGM::DDMCalculatorGeographic::RegionCalculationType::APP_SPACE_ONLY);
+      CPPUNIT_ASSERT_EQUAL(74L, mCalc->GetFriendlyAppSpace());
+      CPPUNIT_ASSERT_EQUAL(11L, mCalc->GetNeutralAppSpace());
       CPPUNIT_ASSERT_EQUAL(0L, mCalc->GetAppSpaceMinimum());
       CPPUNIT_ASSERT_EQUAL(199L, mCalc->GetAppSpaceMaximum());
 

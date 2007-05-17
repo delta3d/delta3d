@@ -85,22 +85,11 @@ namespace dtHLAGM
       DDMGeographicRegionData* ddmGeoData = dynamic_cast<DDMGeographicRegionData*>(&ddmData);
       if (ddmGeoData == NULL)
          return false;
-      
-      dtCore::Transform xform;
-      mCamera->GetTransform(xform, dtCore::Transformable::ABS_CS);
-      
-      const osg::Vec3& pos = xform.GetTranslation();
-      
-      osg::Vec3 lowerBound(pos.x() - mXRange/2.0, pos.y() - mYRange/2.0, pos.z());
-      osg::Vec3 upperBound(pos.x() + mXRange/2.0, pos.y() + mYRange/2.0, pos.z());
-      
-      const osg::Vec3d latLonElevLower = mCoordinates.ConvertToRemoteTranslation(lowerBound);
-      const osg::Vec3d latLonElevUpper = mCoordinates.ConvertToRemoteTranslation(upperBound);
-            
+                  
       DDMCalculatorGeographic::DDMForce& force = ddmGeoData->GetForce();
-      DDMCalculatorGeographic::DDMEntityKind& kind = GetCalculatorEntityKind();
+      DDMCalculatorGeographic::DDMObjectKind& kind = GetCalculatorObjectKind();
       
-      std::pair<DDMCalculatorGeographic::RegionCalculationType*, int> appSpacePair = GetAppSpaceValues(force, kind);
+      std::pair<DDMCalculatorGeographic::RegionCalculationType*, long> appSpacePair = GetAppSpaceValues(force, kind);
       unsigned long mappedValue = MapAppSpaceValue(appSpacePair.second);
 
       if (logger.IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
@@ -119,6 +108,17 @@ namespace dtHLAGM
 
       if (*appSpacePair.first == DDMCalculatorGeographic::RegionCalculationType::GEOGRAPHIC_SPACE)
       {
+         dtCore::Transform xform;
+         mCamera->GetTransform(xform, dtCore::Transformable::ABS_CS);
+         
+         const osg::Vec3& pos = xform.GetTranslation();
+         
+         osg::Vec3 lowerBound(pos.x() - mXRange/2.0, pos.y() - mYRange/2.0, pos.z());
+         osg::Vec3 upperBound(pos.x() + mXRange/2.0, pos.y() + mYRange/2.0, pos.z());
+         
+         const osg::Vec3d latLonElevLower = mCoordinates.ConvertToRemoteTranslation(lowerBound);
+         const osg::Vec3d latLonElevUpper = mCoordinates.ConvertToRemoteTranslation(upperBound);
+
          if (UpdateDimension(ddmData, 1, GetSecondDimensionName(),
                DDMUtil::MapLinear(latLonElevLower.x() , -75.0, 75.0),
                DDMUtil::MapLinear(latLonElevUpper.x() , -75.0, 75.0)))
@@ -135,12 +135,12 @@ namespace dtHLAGM
          {
             updated = true;
          }
-      }
-
-      if (updated && logger.IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-      {
-         logger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Lat lon range of camera calculator named %s is "
-               "%lf %lf to %lf %lf", GetName().c_str(), latLonElevLower.x(), latLonElevLower.y(), latLonElevUpper.x(), latLonElevUpper.y());
+         
+         if (updated && logger.IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         {
+            logger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Lat lon range of camera calculator named %s is "
+                  "%lf %lf to %lf %lf", GetName().c_str(), latLonElevLower.x(), latLonElevLower.y(), latLonElevUpper.x(), latLonElevUpper.y());
+         }
       }
       
       return updated;

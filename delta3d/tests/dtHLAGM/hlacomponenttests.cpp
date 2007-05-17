@@ -672,7 +672,7 @@ void HLATests::TestRuntimeMappingInfo()
 
 void HLATests::TestSubscription()
 {
-   const std::string message("No Handle should be 0 after connecting to the RTI: ");
+   const std::string message("No Correct Handles should be 0 after connecting to the RTI: ");
 
    {
       std::vector<const dtHLAGM::ObjectToActor*> toFillOta;
@@ -751,19 +751,34 @@ void HLATests::TestSubscription()
    CPPUNIT_ASSERT(camCalc != NULL);
    
    
-   const dtHLAGM::DDMRegionData* data = toFill[0][0];
+   ///Make sure that data gets update into the region object correctly.
+   for (unsigned i = 0; i < toFill[0].size(); ++i)
+   {
+      const dtHLAGM::DDMRegionData* data = toFill[0][i];
+      
+      CPPUNIT_ASSERT_EQUAL(3U, data->GetNumberOfExtents());
    
-   CPPUNIT_ASSERT_EQUAL(3U, data->GetNumberOfExtents());
+      const RTI::Region* r = data->GetRegion();
+      CPPUNIT_ASSERT(r != NULL);
+   
+      RTI::SpaceHandle spaceHandle = r->getSpaceHandle();
+      RTI::DimensionHandle dimHandle = 0;
 
-   const dtHLAGM::DDMRegionData::DimensionValues* dv = data->GetDimensionValue(0);
-   CPPUNIT_ASSERT_EQUAL(camCalc->GetFirstDimensionName(), dv->mName);
+      CPPUNIT_ASSERT_EQUAL(camCalc->GetFirstDimensionName(), data->GetDimensionValue(0)->mName);
+      CPPUNIT_ASSERT_EQUAL(camCalc->GetSecondDimensionName(), data->GetDimensionValue(1)->mName);
+      CPPUNIT_ASSERT_EQUAL(camCalc->GetThirdDimensionName(), data->GetDimensionValue(2)->mName);
 
-   dv = data->GetDimensionValue(1);
-   CPPUNIT_ASSERT_EQUAL(camCalc->GetSecondDimensionName(), dv->mName);
-   
-   dv = data->GetDimensionValue(2);
-   CPPUNIT_ASSERT_EQUAL(camCalc->GetThirdDimensionName(), dv->mName);
-   
+      for (unsigned j = 0; j < 3; ++j)
+      {
+         const dtHLAGM::DDMRegionData::DimensionValues* dv = data->GetDimensionValue(j);
+         dimHandle = mHLAComponent->GetRTIAmbassador()->getDimensionHandle(dv->mName.c_str(), spaceHandle);
+         CPPUNIT_ASSERT(dv->mMin != 0);
+         CPPUNIT_ASSERT(dv->mMax != 0);
+         
+         CPPUNIT_ASSERT_EQUAL(dv->mMin, r->getRangeLowerBound(j, dimHandle));
+         CPPUNIT_ASSERT_EQUAL(dv->mMax, r->getRangeUpperBound(j, dimHandle));
+      }
+   }   
 }
 
 void HLATests::TestConfigurationLocking()

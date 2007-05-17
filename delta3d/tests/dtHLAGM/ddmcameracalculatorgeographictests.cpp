@@ -38,6 +38,7 @@ class DDMCameraCalculatorGeographicTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST_SUITE(DDMCameraCalculatorGeographicTests);
    
       CPPUNIT_TEST(TestProperties);
+      CPPUNIT_TEST(TestOtherAppSpace);
       CPPUNIT_TEST(TestMoveCamera);
 
    CPPUNIT_TEST_SUITE_END();
@@ -63,6 +64,24 @@ class DDMCameraCalculatorGeographicTests : public CPPUNIT_NS::TestFixture
          CPPUNIT_ASSERT_DOUBLES_EQUAL(173.99f, mCamCalcGeo->GetMinTimeBetweenUpdates(), 0.01f);
       }
                
+      void TestOtherAppSpace()
+      {
+         dtCore::RefPtr<dtCore::Camera> cam = new dtCore::Camera("test");
+         dtCore::Transform xform;
+         cam->GetTransform(xform, dtCore::Transformable::REL_CS);
+         xform.SetTranslation(osg::Vec3(-500.0f, 500.4f, 7.4f));
+         cam->SetTransform(xform, dtCore::Transformable::REL_CS);
+         mCamCalcGeo->SetCamera(cam.get());
+
+         mCamCalcGeo->SetCalculatorObjectKind(dtHLAGM::DDMCalculatorGeographic::DDMObjectKind::OBJECT_KIND_OTHER);
+         mCamCalcGeo->SetDefaultRegionType(dtHLAGM::DDMCalculatorGeographic::RegionCalculationType::APP_SPACE_ONLY);
+         
+         std::vector<dtCore::RefPtr<dtHLAGM::DDMRegionData> > data;
+         mCamCalcGeo->CreateSubscriptionRegionData(data);
+
+         CPPUNIT_ASSERT_EQUAL(1U, unsigned(data.size()));
+      }
+      
       void TestMoveCamera()
       {
          dtCore::RefPtr<dtCore::Camera> cam = new dtCore::Camera("test");
@@ -83,11 +102,11 @@ class DDMCameraCalculatorGeographicTests : public CPPUNIT_NS::TestFixture
          std::vector<dtCore::RefPtr<dtHLAGM::DDMRegionData> > data;
          mCamCalcGeo->CreateSubscriptionRegionData(data);
 
-         mCamCalcGeo->SetFriendlyGroundRegionType(dtHLAGM::DDMCalculatorGeographic::RegionCalculationType::GEOGRAPHIC_SPACE);
-         mCamCalcGeo->SetEnemyGroundRegionType(dtHLAGM::DDMCalculatorGeographic::RegionCalculationType::APP_SPACE_ONLY);
-         mCamCalcGeo->SetNeutralGroundRegionType(dtHLAGM::DDMCalculatorGeographic::RegionCalculationType::GEOGRAPHIC_SPACE);
+         mCamCalcGeo->SetNeutralRegionType(dtHLAGM::DDMCalculatorGeographic::RegionCalculationType::GEOGRAPHIC_SPACE);
+         mCamCalcGeo->SetFriendlyRegionType(dtHLAGM::DDMCalculatorGeographic::RegionCalculationType::GEOGRAPHIC_SPACE);
+         mCamCalcGeo->SetEnemyRegionType(dtHLAGM::DDMCalculatorGeographic::RegionCalculationType::APP_SPACE_ONLY);
          
-         mCamCalcGeo->SetCalculatorEntityKind(dtHLAGM::DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_GROUND);
+         mCamCalcGeo->SetCalculatorObjectKind(dtHLAGM::DDMCalculatorGeographic::DDMObjectKind::OBJECT_KIND_ENTITY);
 
          CPPUNIT_ASSERT_EQUAL(3U, unsigned(data.size()));
 
@@ -95,7 +114,7 @@ class DDMCameraCalculatorGeographicTests : public CPPUNIT_NS::TestFixture
          {
             dtHLAGM::DDMRegionData& regionData = *data[i];
             CPPUNIT_ASSERT(mCamCalcGeo->UpdateRegionData(regionData));
-            if (i == 1)
+            if (i == 2)
                CPPUNIT_ASSERT_EQUAL(1U, regionData.GetNumberOfExtents());
             else
                CPPUNIT_ASSERT_EQUAL(3U, regionData.GetNumberOfExtents());
@@ -115,9 +134,9 @@ class DDMCameraCalculatorGeographicTests : public CPPUNIT_NS::TestFixture
             /// The two app space value, min and max, should always be the same and should match the
             /// ones set for the kind on the calculator and force on the region data.
             std::pair<dtHLAGM::DDMCalculatorGeographic::RegionCalculationType*, unsigned> valuePair;
-            valuePair = mCamCalcGeo->GetAppSpaceValues(grd->GetForce(), mCamCalcGeo->GetCalculatorEntityKind());
-            CPPUNIT_ASSERT_EQUAL(dtHLAGM::DDMUtil::MapEnumerated(valuePair.second, 0, 99), dv->mMin);
-            CPPUNIT_ASSERT_EQUAL(dtHLAGM::DDMUtil::MapEnumerated(valuePair.second, 0, 99), dv->mMax);
+            valuePair = mCamCalcGeo->GetAppSpaceValues(grd->GetForce(), mCamCalcGeo->GetCalculatorObjectKind());
+            CPPUNIT_ASSERT_EQUAL(dtHLAGM::DDMUtil::MapEnumerated(valuePair.second, 0, 30), dv->mMin);
+            CPPUNIT_ASSERT_EQUAL(dtHLAGM::DDMUtil::MapEnumerated(valuePair.second, 0, 30), dv->mMax);
                     
             /// we have 3 extents on geographic space regions
             if (regionData.GetNumberOfExtents() > 1)
@@ -171,10 +190,10 @@ class DDMCameraCalculatorGeographicTests : public CPPUNIT_NS::TestFixture
          xform.SetTranslation(osg::Vec3(500.0f, -500.0f, 7.4f));
          cam->SetTransform(xform, dtCore::Transformable::REL_CS);
 
-         ///Switch two around to make sure it works.
-         mCamCalcGeo->SetEnemyGroundRegionType(dtHLAGM::DDMCalculatorGeographic::RegionCalculationType::GEOGRAPHIC_SPACE);
          /// switching to app space requires cleaning up the dimensions.
-         mCamCalcGeo->SetNeutralGroundRegionType(dtHLAGM::DDMCalculatorGeographic::RegionCalculationType::APP_SPACE_ONLY);
+         mCamCalcGeo->SetNeutralRegionType(dtHLAGM::DDMCalculatorGeographic::RegionCalculationType::APP_SPACE_ONLY);
+         ///Switch two around to make sure it works.
+         mCamCalcGeo->SetEnemyRegionType(dtHLAGM::DDMCalculatorGeographic::RegionCalculationType::GEOGRAPHIC_SPACE);
 
          for (unsigned i = 0; i < data.size(); ++i)
          {
@@ -185,7 +204,7 @@ class DDMCameraCalculatorGeographicTests : public CPPUNIT_NS::TestFixture
             CPPUNIT_ASSERT(grd != NULL);
 
             // only the last one should be app space only
-            if (i == 2)
+            if (i == 1)
                CPPUNIT_ASSERT_EQUAL(1U, regionData.GetNumberOfExtents());
             else
                CPPUNIT_ASSERT_EQUAL(3U, regionData.GetNumberOfExtents());
@@ -198,9 +217,9 @@ class DDMCameraCalculatorGeographicTests : public CPPUNIT_NS::TestFixture
             /// The two app space value, min and max, should always be the same and should match the
             /// ones set for the kind on the calculator and force on the region data.
             std::pair<dtHLAGM::DDMCalculatorGeographic::RegionCalculationType*, unsigned> valuePair;
-            valuePair = mCamCalcGeo->GetAppSpaceValues(grd->GetForce(), mCamCalcGeo->GetCalculatorEntityKind());
-            CPPUNIT_ASSERT_EQUAL(dtHLAGM::DDMUtil::MapEnumerated(valuePair.second, 0, 99), dv->mMin);
-            CPPUNIT_ASSERT_EQUAL(dtHLAGM::DDMUtil::MapEnumerated(valuePair.second, 0, 99), dv->mMax);
+            valuePair = mCamCalcGeo->GetAppSpaceValues(grd->GetForce(), mCamCalcGeo->GetCalculatorObjectKind());
+            CPPUNIT_ASSERT_EQUAL(dtHLAGM::DDMUtil::MapEnumerated(valuePair.second, 0, 30), dv->mMin);
+            CPPUNIT_ASSERT_EQUAL(dtHLAGM::DDMUtil::MapEnumerated(valuePair.second, 0, 30), dv->mMax);
 
             /// we have 3 extents on geographic space regions
             if (regionData.GetNumberOfExtents() > 1)

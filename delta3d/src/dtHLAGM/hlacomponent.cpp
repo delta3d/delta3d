@@ -240,7 +240,6 @@ namespace dtHLAGM
          if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
             mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                                 "Subscribing to object class \"%s\" handle %u.", thisObjectClassString.c_str(), thisObjectClassHandle);
-
          if (mDDMEnabled)
          {
             for (unsigned i = 0; i < mDDMSubscriptionRegions.size(); ++i)
@@ -254,6 +253,12 @@ namespace dtHLAGM
                   RTI::Region* r = regionVector[j]->GetRegion();
                   if (r != NULL)
                   {
+                     if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                     {
+                        mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                                            "Subscribing to object class \"%s\" handle %u with region from calculator \"%s\"", 
+                                            thisObjectClassString.c_str(), thisObjectClassHandle, mDDMSubscriptionCalculators[i]->GetName().c_str());
+                     }
                      mRTIAmbassador->subscribeObjectClassAttributesWithRegion(thisObjectClassHandle, *r, *ahs);               
                   }
                }
@@ -351,12 +356,19 @@ namespace dtHLAGM
          {
             for (unsigned i = 0; i < mDDMSubscriptionRegions.size(); ++i)
             {
+               if (mDDMSubscriptionCalculators[i]->GetName() != interactionToMessage.GetDDMCalculatorName())
+                  continue;
+
                std::vector<dtCore::RefPtr<DDMRegionData> >& regionVector = mDDMSubscriptionRegions[i];
                for (unsigned j = 0; j < regionVector.size(); ++j)
                {
                   RTI::Region* r = regionVector[j]->GetRegion();
                   if (r != NULL)
                   {
+                     if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                        mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                                            "Subscribing to interaction class \"%s\" handle %u with region from calculator \"%s\"", 
+                                            thisInteractionClassString.c_str(), thisInteractionClassHandle, mDDMSubscriptionCalculators[i]->GetName().c_str());
                      mRTIAmbassador->subscribeInteractionClassWithRegion(thisInteractionClassHandle, *r);               
                   }
                }
