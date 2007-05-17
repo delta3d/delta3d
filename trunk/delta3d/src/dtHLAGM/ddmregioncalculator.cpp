@@ -88,7 +88,14 @@ namespace dtHLAGM
       }
       
       if (result)
-      {
+      {      
+         dtUtil::Log& logger = dtUtil::Log::GetInstance("ddmcameracalculatorgeographic.cpp");
+         if (logger.IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         {
+            logger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Updating dimension [%u] "
+                  "with name \"%s\" to min [%u] max [%u].", index, name.c_str(), min, max);
+         }
+
          DDMRegionData::DimensionValues newDv;   
          newDv.mName = name;
          newDv.mMin = min;

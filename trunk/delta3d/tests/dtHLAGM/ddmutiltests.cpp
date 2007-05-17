@@ -52,9 +52,15 @@ class DDMUtilTests : public CPPUNIT_NS::TestFixture
          
          result = dtHLAGM::DDMUtil::MapLinear(0.0, 0.0, 15.0);
          CPPUNIT_ASSERT_EQUAL(dtHLAGM::DDMUtil::HLAGM_MIN_EXTENT, result);
+
+         result = dtHLAGM::DDMUtil::MapLinear(5.0, 0.0, 15.0);
+         CPPUNIT_ASSERT_EQUAL(dtHLAGM::DDMUtil::HLAGM_MAX_EXTENT/3, result);
          
          result = dtHLAGM::DDMUtil::MapLinear(7.5, 0.0, 15.0);
          CPPUNIT_ASSERT_EQUAL(dtHLAGM::DDMUtil::HLAGM_MAX_EXTENT/2, result);
+
+         result = dtHLAGM::DDMUtil::MapLinear(10.0, 0.0, 15.0);
+         CPPUNIT_ASSERT_EQUAL(2 * (dtHLAGM::DDMUtil::HLAGM_MAX_EXTENT/3), result);
       }
       
       void TestEnumerated()

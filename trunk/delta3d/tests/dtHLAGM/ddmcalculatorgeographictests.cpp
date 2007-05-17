@@ -98,7 +98,7 @@ class DDMCalculatorGeographicTests : public CPPUNIT_NS::TestFixture
          mCalcGeo->GetProperty(dtHLAGM::DDMCalculatorGeographic::PROP_APP_SPACE_MAX, lap);
          CPPUNIT_ASSERT(lap != NULL);
 
-         CPPUNIT_ASSERT_EQUAL_MESSAGE("The maximum app space value should default to 99.", 99L, lap->GetValue());
+         CPPUNIT_ASSERT_EQUAL_MESSAGE("The maximum app space value should default to 30.", 30L, lap->GetValue());
          lap->SetValue(28);
          CPPUNIT_ASSERT_EQUAL(28L, lap->GetValue());
          CPPUNIT_ASSERT_EQUAL(28L, mCalcGeo->GetAppSpaceMaximum());
@@ -107,190 +107,74 @@ class DDMCalculatorGeographicTests : public CPPUNIT_NS::TestFixture
       void TestRegionTypeProperties()
       {
 
-         dtDAL::EnumActorProperty<dtHLAGM::DDMCalculatorGeographic::DDMEntityKind>* eap = NULL;
-         mCalcGeo->GetProperty(dtHLAGM::DDMCalculatorGeographic::PROP_CALCULATOR_ENTITY_KIND, eap);
+         dtDAL::EnumActorProperty<dtHLAGM::DDMCalculatorGeographic::DDMObjectKind>* eap = NULL;
+         mCalcGeo->GetProperty(dtHLAGM::DDMCalculatorGeographic::PROP_CALCULATOR_OBJECT_KIND, eap);
          CPPUNIT_ASSERT(eap != NULL);
          
-         CPPUNIT_ASSERT(dtHLAGM::DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_GROUND == eap->GetValue());
-         eap->SetValue(dtHLAGM::DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_SEA);
-         CPPUNIT_ASSERT(dtHLAGM::DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_SEA == eap->GetValue());
-         CPPUNIT_ASSERT(dtHLAGM::DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_SEA == mCalcGeo->GetCalculatorEntityKind());
+         CPPUNIT_ASSERT(dtHLAGM::DDMCalculatorGeographic::DDMObjectKind::OBJECT_KIND_ENTITY == eap->GetValue());
+         eap->SetValue(dtHLAGM::DDMCalculatorGeographic::DDMObjectKind::OBJECT_KIND_OTHER);
+         CPPUNIT_ASSERT(dtHLAGM::DDMCalculatorGeographic::DDMObjectKind::OBJECT_KIND_OTHER == eap->GetValue());
+         CPPUNIT_ASSERT(dtHLAGM::DDMCalculatorGeographic::DDMObjectKind::OBJECT_KIND_OTHER == mCalcGeo->GetCalculatorObjectKind());
          
-         
-         TestRegionTypeEnumProp(dtHLAGM::DDMCalculatorGeographic::PROP_FRIENDLY_GROUND_REGION_TYPE);
-         CPPUNIT_ASSERT(dtHLAGM::DDMCalculatorGeographic::RegionCalculationType::APP_SPACE_ONLY == mCalcGeo->GetFriendlyGroundRegionType());
-         
-         TestRegionTypeEnumProp(dtHLAGM::DDMCalculatorGeographic::PROP_FRIENDLY_AIR_REGION_TYPE);
-         CPPUNIT_ASSERT(dtHLAGM::DDMCalculatorGeographic::RegionCalculationType::APP_SPACE_ONLY == mCalcGeo->GetFriendlyAirRegionType());
+         TestRegionTypeEnumProp(dtHLAGM::DDMCalculatorGeographic::PROP_FRIENDLY_REGION_TYPE);
+         CPPUNIT_ASSERT(dtHLAGM::DDMCalculatorGeographic::RegionCalculationType::APP_SPACE_ONLY == mCalcGeo->GetFriendlyRegionType());
 
-         TestRegionTypeEnumProp(dtHLAGM::DDMCalculatorGeographic::PROP_FRIENDLY_SEA_REGION_TYPE);
-         CPPUNIT_ASSERT(dtHLAGM::DDMCalculatorGeographic::RegionCalculationType::APP_SPACE_ONLY == mCalcGeo->GetFriendlySeaRegionType());
+         TestRegionTypeEnumProp(dtHLAGM::DDMCalculatorGeographic::PROP_NEUTRAL_REGION_TYPE);
+         CPPUNIT_ASSERT(dtHLAGM::DDMCalculatorGeographic::RegionCalculationType::APP_SPACE_ONLY == mCalcGeo->GetNeutralRegionType());
 
-         TestRegionTypeEnumProp(dtHLAGM::DDMCalculatorGeographic::PROP_FRIENDLY_LIFEFORM_REGION_TYPE);
-         CPPUNIT_ASSERT(dtHLAGM::DDMCalculatorGeographic::RegionCalculationType::APP_SPACE_ONLY == mCalcGeo->GetFriendlyLifeformRegionType());
-
-
-         TestRegionTypeEnumProp(dtHLAGM::DDMCalculatorGeographic::PROP_NEUTRAL_GROUND_REGION_TYPE);
-         CPPUNIT_ASSERT(dtHLAGM::DDMCalculatorGeographic::RegionCalculationType::APP_SPACE_ONLY == mCalcGeo->GetNeutralGroundRegionType());
-         
-         TestRegionTypeEnumProp(dtHLAGM::DDMCalculatorGeographic::PROP_NEUTRAL_AIR_REGION_TYPE);
-         CPPUNIT_ASSERT(dtHLAGM::DDMCalculatorGeographic::RegionCalculationType::APP_SPACE_ONLY == mCalcGeo->GetNeutralAirRegionType());
-
-         TestRegionTypeEnumProp(dtHLAGM::DDMCalculatorGeographic::PROP_NEUTRAL_SEA_REGION_TYPE);
-         CPPUNIT_ASSERT(dtHLAGM::DDMCalculatorGeographic::RegionCalculationType::APP_SPACE_ONLY == mCalcGeo->GetNeutralSeaRegionType());
-
-         TestRegionTypeEnumProp(dtHLAGM::DDMCalculatorGeographic::PROP_NEUTRAL_LIFEFORM_REGION_TYPE);
-         CPPUNIT_ASSERT(dtHLAGM::DDMCalculatorGeographic::RegionCalculationType::APP_SPACE_ONLY == mCalcGeo->GetNeutralLifeformRegionType());
-
-         
-         TestRegionTypeEnumProp(dtHLAGM::DDMCalculatorGeographic::PROP_ENEMY_GROUND_REGION_TYPE);
-         CPPUNIT_ASSERT(dtHLAGM::DDMCalculatorGeographic::RegionCalculationType::APP_SPACE_ONLY == mCalcGeo->GetEnemyGroundRegionType());
-         
-         TestRegionTypeEnumProp(dtHLAGM::DDMCalculatorGeographic::PROP_ENEMY_AIR_REGION_TYPE);
-         CPPUNIT_ASSERT(dtHLAGM::DDMCalculatorGeographic::RegionCalculationType::APP_SPACE_ONLY == mCalcGeo->GetEnemyAirRegionType());
-
-         TestRegionTypeEnumProp(dtHLAGM::DDMCalculatorGeographic::PROP_ENEMY_SEA_REGION_TYPE);
-         CPPUNIT_ASSERT(dtHLAGM::DDMCalculatorGeographic::RegionCalculationType::APP_SPACE_ONLY == mCalcGeo->GetEnemySeaRegionType());
-
-         TestRegionTypeEnumProp(dtHLAGM::DDMCalculatorGeographic::PROP_ENEMY_LIFEFORM_REGION_TYPE);
-         CPPUNIT_ASSERT(dtHLAGM::DDMCalculatorGeographic::RegionCalculationType::APP_SPACE_ONLY == mCalcGeo->GetEnemyLifeformRegionType());
+         TestRegionTypeEnumProp(dtHLAGM::DDMCalculatorGeographic::PROP_ENEMY_REGION_TYPE);
+         CPPUNIT_ASSERT(dtHLAGM::DDMCalculatorGeographic::RegionCalculationType::APP_SPACE_ONLY == mCalcGeo->GetEnemyRegionType());
       }
       
       void TestAppSpaceValueProperties()
       {
-         TestAppSpaceValueProp(dtHLAGM::DDMCalculatorGeographic::PROP_FRIENDLY_GROUND_APPSPACE, 7);
-         CPPUNIT_ASSERT_EQUAL(173, mCalcGeo->GetFriendlyGroundAppSpace());
-         
-         TestAppSpaceValueProp(dtHLAGM::DDMCalculatorGeographic::PROP_FRIENDLY_AIR_APPSPACE, 1);
-         CPPUNIT_ASSERT_EQUAL(173, mCalcGeo->GetFriendlyAirAppSpace());
 
-         TestAppSpaceValueProp(dtHLAGM::DDMCalculatorGeographic::PROP_FRIENDLY_SEA_APPSPACE, 4);
-         CPPUNIT_ASSERT_EQUAL(173, mCalcGeo->GetFriendlySeaAppSpace());
+         TestAppSpaceValueProp(dtHLAGM::DDMCalculatorGeographic::PROP_FRIENDLY_APPSPACE, 1);
+         CPPUNIT_ASSERT_EQUAL(173L, mCalcGeo->GetFriendlyAppSpace());
 
-         TestAppSpaceValueProp(dtHLAGM::DDMCalculatorGeographic::PROP_FRIENDLY_LIFEFORM_APPSPACE, 10);
-         CPPUNIT_ASSERT_EQUAL(173, mCalcGeo->GetFriendlyLifeformAppSpace());
+         TestAppSpaceValueProp(dtHLAGM::DDMCalculatorGeographic::PROP_ENEMY_APPSPACE, 2);
+         CPPUNIT_ASSERT_EQUAL(173L, mCalcGeo->GetEnemyAppSpace());
 
-         
-         TestAppSpaceValueProp(dtHLAGM::DDMCalculatorGeographic::PROP_ENEMY_GROUND_APPSPACE, 8);
-         CPPUNIT_ASSERT_EQUAL(173, mCalcGeo->GetEnemyGroundAppSpace());
-         
-         TestAppSpaceValueProp(dtHLAGM::DDMCalculatorGeographic::PROP_ENEMY_AIR_APPSPACE, 2);
-         CPPUNIT_ASSERT_EQUAL(173, mCalcGeo->GetEnemyAirAppSpace());
-
-         TestAppSpaceValueProp(dtHLAGM::DDMCalculatorGeographic::PROP_ENEMY_SEA_APPSPACE, 5);
-         CPPUNIT_ASSERT_EQUAL(173, mCalcGeo->GetEnemySeaAppSpace());
-
-         TestAppSpaceValueProp(dtHLAGM::DDMCalculatorGeographic::PROP_ENEMY_LIFEFORM_APPSPACE, 11);
-         CPPUNIT_ASSERT_EQUAL(173, mCalcGeo->GetEnemyLifeformAppSpace());
-
-         
-         TestAppSpaceValueProp(dtHLAGM::DDMCalculatorGeographic::PROP_NEUTRAL_GROUND_APPSPACE, 9);
-         CPPUNIT_ASSERT_EQUAL(173, mCalcGeo->GetNeutralGroundAppSpace());
-         
-         TestAppSpaceValueProp(dtHLAGM::DDMCalculatorGeographic::PROP_NEUTRAL_AIR_APPSPACE, 3);
-         CPPUNIT_ASSERT_EQUAL(173, mCalcGeo->GetNeutralAirAppSpace());
-
-         TestAppSpaceValueProp(dtHLAGM::DDMCalculatorGeographic::PROP_NEUTRAL_SEA_APPSPACE, 6);
-         CPPUNIT_ASSERT_EQUAL(173, mCalcGeo->GetNeutralSeaAppSpace());
-
-         TestAppSpaceValueProp(dtHLAGM::DDMCalculatorGeographic::PROP_NEUTRAL_LIFEFORM_APPSPACE, 12);
-         CPPUNIT_ASSERT_EQUAL(173, mCalcGeo->GetNeutralLifeformAppSpace());
+         TestAppSpaceValueProp(dtHLAGM::DDMCalculatorGeographic::PROP_NEUTRAL_APPSPACE, 3);
+         CPPUNIT_ASSERT_EQUAL(173L, mCalcGeo->GetNeutralAppSpace());
       }
       
       void TestAppSpaceValues()
       {
-         mCalcGeo->SetFriendlyGroundRegionType(dtHLAGM::DDMCalculatorGeographic::RegionCalculationType::APP_SPACE_ONLY);
-         mCalcGeo->SetEnemyGroundRegionType(dtHLAGM::DDMCalculatorGeographic::RegionCalculationType::APP_SPACE_ONLY);
-         mCalcGeo->SetNeutralGroundRegionType(dtHLAGM::DDMCalculatorGeographic::RegionCalculationType::APP_SPACE_ONLY);
+         mCalcGeo->SetFriendlyRegionType(dtHLAGM::DDMCalculatorGeographic::RegionCalculationType::APP_SPACE_ONLY);
+         mCalcGeo->SetEnemyRegionType(dtHLAGM::DDMCalculatorGeographic::RegionCalculationType::APP_SPACE_ONLY);
+         mCalcGeo->SetNeutralRegionType(dtHLAGM::DDMCalculatorGeographic::RegionCalculationType::APP_SPACE_ONLY);
          
-         std::pair<dtHLAGM::DDMCalculatorGeographic::RegionCalculationType*, int> valuePair;
+         std::pair<dtHLAGM::DDMCalculatorGeographic::RegionCalculationType*, long> valuePair;
          ///Ground
          valuePair = mCalcGeo->GetAppSpaceValues(dtHLAGM::DDMCalculatorGeographic::DDMForce::FORCE_ENEMY, 
-               dtHLAGM::DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_GROUND);
+               dtHLAGM::DDMCalculatorGeographic::DDMObjectKind::OBJECT_KIND_ENTITY);
 
          CPPUNIT_ASSERT(valuePair.first != NULL);
-         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetEnemyGroundAppSpace(), valuePair.second);
-         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetEnemyGroundRegionType(), *valuePair.first);
+         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetEnemyAppSpace(), valuePair.second);
+         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetEnemyRegionType(), *valuePair.first);
 
          valuePair = mCalcGeo->GetAppSpaceValues(dtHLAGM::DDMCalculatorGeographic::DDMForce::FORCE_FRIENDLY, 
-               dtHLAGM::DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_GROUND);
+               dtHLAGM::DDMCalculatorGeographic::DDMObjectKind::OBJECT_KIND_ENTITY);
 
          CPPUNIT_ASSERT(valuePair.first != NULL);
-         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetFriendlyGroundAppSpace(), valuePair.second);
-         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetFriendlyGroundRegionType(), *valuePair.first);
+         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetFriendlyAppSpace(), valuePair.second);
+         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetFriendlyRegionType(), *valuePair.first);
 
          valuePair = mCalcGeo->GetAppSpaceValues(dtHLAGM::DDMCalculatorGeographic::DDMForce::FORCE_NEUTRAL, 
-               dtHLAGM::DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_GROUND);
+               dtHLAGM::DDMCalculatorGeographic::DDMObjectKind::OBJECT_KIND_ENTITY);
 
          CPPUNIT_ASSERT(valuePair.first != NULL);
-         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetNeutralGroundAppSpace(), valuePair.second);
-         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetNeutralGroundRegionType(), *valuePair.first);
+         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetNeutralAppSpace(), valuePair.second);
+         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetNeutralRegionType(), *valuePair.first);
 
-         ///Air
-         valuePair = mCalcGeo->GetAppSpaceValues(dtHLAGM::DDMCalculatorGeographic::DDMForce::FORCE_ENEMY, 
-               dtHLAGM::DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_AIR);
-
-         CPPUNIT_ASSERT(valuePair.first != NULL);
-         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetEnemyAirAppSpace(), valuePair.second);
-         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetEnemyAirRegionType(), *valuePair.first);
-
-         valuePair = mCalcGeo->GetAppSpaceValues(dtHLAGM::DDMCalculatorGeographic::DDMForce::FORCE_FRIENDLY, 
-               dtHLAGM::DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_AIR);
-
-         CPPUNIT_ASSERT(valuePair.first != NULL);
-         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetFriendlyAirAppSpace(), valuePair.second);
-         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetFriendlyAirRegionType(), *valuePair.first);
 
          valuePair = mCalcGeo->GetAppSpaceValues(dtHLAGM::DDMCalculatorGeographic::DDMForce::FORCE_NEUTRAL, 
-               dtHLAGM::DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_AIR);
+               dtHLAGM::DDMCalculatorGeographic::DDMObjectKind::OBJECT_KIND_OTHER);
 
          CPPUNIT_ASSERT(valuePair.first != NULL);
-         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetNeutralAirAppSpace(), valuePair.second);
-         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetNeutralAirRegionType(), *valuePair.first);
-
-         ///Sea
-         valuePair = mCalcGeo->GetAppSpaceValues(dtHLAGM::DDMCalculatorGeographic::DDMForce::FORCE_ENEMY, 
-               dtHLAGM::DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_SEA);
-
-         CPPUNIT_ASSERT(valuePair.first != NULL);
-         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetEnemySeaAppSpace(), valuePair.second);
-         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetEnemySeaRegionType(), *valuePair.first);
-
-         valuePair = mCalcGeo->GetAppSpaceValues(dtHLAGM::DDMCalculatorGeographic::DDMForce::FORCE_FRIENDLY, 
-               dtHLAGM::DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_SEA);
-
-         CPPUNIT_ASSERT(valuePair.first != NULL);
-         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetFriendlySeaAppSpace(), valuePair.second);
-         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetFriendlySeaRegionType(), *valuePair.first);
-
-         valuePair = mCalcGeo->GetAppSpaceValues(dtHLAGM::DDMCalculatorGeographic::DDMForce::FORCE_NEUTRAL, 
-               dtHLAGM::DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_SEA);
-
-         CPPUNIT_ASSERT(valuePair.first != NULL);
-         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetNeutralSeaAppSpace(), valuePair.second);
-         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetNeutralSeaRegionType(), *valuePair.first);
-
-         ///LifeForm
-         valuePair = mCalcGeo->GetAppSpaceValues(dtHLAGM::DDMCalculatorGeographic::DDMForce::FORCE_ENEMY, 
-               dtHLAGM::DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_LIFEFORM);
-
-         CPPUNIT_ASSERT(valuePair.first != NULL);
-         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetEnemyLifeformAppSpace(), valuePair.second);
-         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetEnemyLifeformRegionType(), *valuePair.first);
-
-         valuePair = mCalcGeo->GetAppSpaceValues(dtHLAGM::DDMCalculatorGeographic::DDMForce::FORCE_FRIENDLY, 
-               dtHLAGM::DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_LIFEFORM);
-
-         CPPUNIT_ASSERT(valuePair.first != NULL);
-         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetFriendlyLifeformAppSpace(), valuePair.second);
-         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetFriendlyLifeformRegionType(), *valuePair.first);
-
-         valuePair = mCalcGeo->GetAppSpaceValues(dtHLAGM::DDMCalculatorGeographic::DDMForce::FORCE_NEUTRAL, 
-               dtHLAGM::DDMCalculatorGeographic::DDMEntityKind::ENTITY_KIND_LIFEFORM);
-
-         CPPUNIT_ASSERT(valuePair.first != NULL);
-         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetNeutralLifeformAppSpace(), valuePair.second);
-         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetNeutralLifeformRegionType(), *valuePair.first);
+         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetDefaultAppSpace(), valuePair.second);
+         CPPUNIT_ASSERT_EQUAL(mCalcGeo->GetDefaultRegionType(), *valuePair.first);
          
       }
    private:
