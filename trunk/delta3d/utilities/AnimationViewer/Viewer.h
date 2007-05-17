@@ -86,7 +86,7 @@ private:
    std::vector<int> mMeshesToAttach;
    std::vector<int> mMeshesToDetach;
 
-   dtAnim::Cal3DLoader mLoader; ///<Need to keep this around since it holds our textures
+   dtCore::RefPtr<dtAnim::Cal3DLoader> mLoader; ///<Need to keep this around since it holds our textures
 };
 
 #endif // Viewer_h__
