@@ -185,13 +185,16 @@ namespace dtUtil
 
    void MathTests::TestMatrixEulerConversions()
    {
-	   osg::Matrix testMatrix; 
+      float test_magic_epsilon = 1e-4f;
+
+      osg::Matrix testMatrix; 
 	   osg::Vec3 hprResult;
 
 	   // Test special cases with 90 degree angles
 	   osg::Vec3 hprTest1(0.0f, 90.0f, -10.0f);
 	   osg::Vec3 hprTest2(90.0f, 45.0f, 90.0f);
 	   osg::Vec3 hprTest3(5.0f, 80.0f, -10.0f);
+	   osg::Vec3 hprTest4(15.0f, 90.0f, 0.0f);
 
       std::ostringstream ss;
 
@@ -200,7 +203,7 @@ namespace dtUtil
 
       ss << "Expected \"" << hprTest1 << "\" but got \"" << hprResult << "\"";
 
-	   CPPUNIT_ASSERT_MESSAGE(ss.str(), Equivalent(hprResult, hprTest1, 3, 1e-4f));
+	   CPPUNIT_ASSERT_MESSAGE(ss.str(), Equivalent(hprResult, hprTest1, 3, test_magic_epsilon));
 
 	   dtUtil::MatrixUtil::HprToMatrix(testMatrix, hprTest2);
 	   dtUtil::MatrixUtil::MatrixToHpr(hprResult, testMatrix);
@@ -208,7 +211,7 @@ namespace dtUtil
       ss.str("");
       ss << "Expected \"" << hprTest2 << "\" but got \"" << hprResult << "\"";
 
-	   CPPUNIT_ASSERT_MESSAGE(ss.str(), Equivalent(hprResult, hprTest2, 3, 1e-4f));
+	   CPPUNIT_ASSERT_MESSAGE(ss.str(), Equivalent(hprResult, hprTest2, 3, test_magic_epsilon));
 
 	   dtUtil::MatrixUtil::HprToMatrix(testMatrix, hprTest3);
 	   dtUtil::MatrixUtil::MatrixToHpr(hprResult, testMatrix);
@@ -216,6 +219,14 @@ namespace dtUtil
       ss.str("");
       ss << "Expected \"" << hprTest3 << "\" but got \"" << hprResult << "\"";
 
-	   CPPUNIT_ASSERT_MESSAGE(ss.str(), Equivalent(hprResult, hprTest3, 3, 1e-4f));
+	   CPPUNIT_ASSERT_MESSAGE(ss.str(), Equivalent(hprResult, hprTest3, 3, test_magic_epsilon));
+
+	   dtUtil::MatrixUtil::HprToMatrix(testMatrix, hprTest4);
+	   dtUtil::MatrixUtil::MatrixToHpr(hprResult, testMatrix);
+
+      ss.str("");
+      ss << "Expected \"" << hprTest4 << "\" but got \"" << hprResult << "\"";
+
+	   CPPUNIT_ASSERT_MESSAGE(ss.str(), Equivalent(hprResult, hprTest4, 4, test_magic_epsilon));
    }
 }
