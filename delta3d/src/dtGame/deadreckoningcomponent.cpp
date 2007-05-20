@@ -541,28 +541,28 @@ namespace dtGame
             {
                helper.SetLastTranslationUpdatedTime(tickMessage.GetSimulationTime() - tickMessage.GetDeltaSimTime());
                //helper.SetLastTranslationUpdatedTime(helper.mLastTimeTag);
-               helper.SetTranslationSmoothing( 0.0 );
+               helper.SetTranslationCurrentSmoothingTime( 0.0 );
             }
 
             if ( helper.IsRotationUpdated() )
             {
                helper.SetLastRotationUpdatedTime(tickMessage.GetSimulationTime() - tickMessage.GetDeltaSimTime());
                //helper.SetLastRotationUpdatedTime(helper.mLastTimeTag);
-               helper.SetRotationSmoothing( 0.0 );
+               helper.SetRotationCurrentSmoothingTime( 0.0 );
                helper.SetRotationResolved( false );
             }
          }
 
          //We want to do this every time.
-         helper.SetTranslationSmoothing( helper.GetTranslationSmoothing() + tickMessage.GetDeltaSimTime() );
-         helper.SetRotationSmoothing( helper.GetRotationSmoothing() + tickMessage.GetDeltaSimTime() );
+         helper.SetTranslationCurrentSmoothingTime( helper.GetTranslationCurrentSmoothingTime() + tickMessage.GetDeltaSimTime() );
+         helper.SetRotationCurrentSmoothingTime( helper.GetRotationCurrentSmoothingTime() + tickMessage.GetDeltaSimTime() );
 
 
          //make sure it's greater than 0 in case of time being set.
-         if (helper.GetTranslationSmoothing() < 0.0) 
-            helper.SetTranslationSmoothing( 0.0 );
-         if (helper.GetRotationSmoothing() < 0.0) 
-            helper.SetRotationSmoothing( 0.0 );
+         if (helper.GetTranslationCurrentSmoothingTime() < 0.0) 
+            helper.SetTranslationCurrentSmoothingTime( 0.0 );
+         if (helper.GetRotationCurrentSmoothingTime() < 0.0) 
+            helper.SetRotationCurrentSmoothingTime( 0.0 );
 
          //actual dead reckoning code moved into the helper..
          bool bShouldGroundClamp = false;
@@ -579,7 +579,7 @@ namespace dtGame
                //we could probably group these queries together...
                if (bShouldGroundClamp)
                {
-                  ClampToGround(helper.GetTranslationSmoothing(), xform, gameActor.GetGameActorProxy(), helper);
+                  ClampToGround(helper.GetTranslationCurrentSmoothingTime(), xform, gameActor.GetGameActorProxy(), helper);
                }
                else
                {
@@ -591,7 +591,7 @@ namespace dtGame
                   std::ostringstream ss;
                   ss << "Actor " << gameActor.GetUniqueId() << " - " << gameActor.GetName() << " has attitude "
                      << "\"" << helper.GetCurrentDeadReckonedRotation() << "\" and position \"" << helper.GetCurrentDeadReckonedTranslation() << "\" at time " 
-                     << helper.GetLastRotationUpdatedTime() +  helper.GetRotationSmoothing() << "";
+                     << helper.GetLastRotationUpdatedTime() +  helper.GetRotationCurrentSmoothingTime() << "";
                   mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, 
                         ss.str().c_str());               
                }

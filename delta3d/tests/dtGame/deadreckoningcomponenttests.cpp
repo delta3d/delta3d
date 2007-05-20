@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * David Guthrie
+ * David Guthrie, Curtiss Murphy
  */
 
 #include <prefix/dtgameprefix-src.h>
@@ -65,7 +65,7 @@ namespace dtGame
          
          void InternalCalcTotSmoothingSteps(DeadReckoningHelper& helper, const dtCore::Transform& xform)
          {
-            helper.CalculateTotalSmoothingSteps(xform);
+            helper.CalculateSmoothingTimes(xform);
          }      
    };
    
@@ -143,8 +143,8 @@ namespace dtGame
             CPPUNIT_ASSERT(helper->GetAccelerationVector() == vec);
             CPPUNIT_ASSERT(helper->GetAngularVelocityVector() == vec);
             CPPUNIT_ASSERT(helper->GetGroundOffset() == 0.0f);
-            CPPUNIT_ASSERT(helper->GetMaxRotationSmoothingSteps() == 2.0f);
-            CPPUNIT_ASSERT(helper->GetMaxTranslationSmoothingSteps() == 8.0f);
+            CPPUNIT_ASSERT(helper->GetMaxRotationSmoothingTime() == 2.0f);
+            CPPUNIT_ASSERT(helper->GetMaxTranslationSmoothingTime() == 8.0f);
             CPPUNIT_ASSERT(helper->GetTimeUntilForceClamp() == 0.0f);
 
             CPPUNIT_ASSERT(helper->GetNodeCollector() == NULL);
@@ -231,13 +231,13 @@ namespace dtGame
             helper->SetUseModelDimensions(false);
             CPPUNIT_ASSERT(!helper->UseModelDimensions());
 
-            helper->SetMaxRotationSmoothingSteps(5.3f);
+            helper->SetMaxRotationSmoothingTime(5.3f);
             CPPUNIT_ASSERT(!helper->IsUpdated());
-            CPPUNIT_ASSERT(helper->GetMaxRotationSmoothingSteps() == 5.3f);
+            CPPUNIT_ASSERT(helper->GetMaxRotationSmoothingTime() == 5.3f);
 
-            helper->SetMaxTranslationSmoothingSteps(4.8f);
+            helper->SetMaxTranslationSmoothingTime(4.8f);
             CPPUNIT_ASSERT(!helper->IsUpdated());
-            CPPUNIT_ASSERT(helper->GetMaxTranslationSmoothingSteps() == 4.8f);
+            CPPUNIT_ASSERT(helper->GetMaxTranslationSmoothingTime() == 4.8f);
             
             dtCore::RefPtr<dtCore::NodeCollector> nodeCollector = new dtCore::NodeCollector(new osg::Group()); 
             helper->SetNodeCollector(*nodeCollector);
@@ -517,23 +517,25 @@ namespace dtGame
             CPPUNIT_ASSERT_MESSAGE("The average time between updates is too low for the rest of the test to be valid", 
                helper->GetAverageTimeBetweenRotationUpdates() > 10.0);
 
+            helper->SetDeadReckoningAlgorithm(DeadReckoningAlgorithm::VELOCITY_AND_ACCELERATION);
             mDeadReckoningComponent->InternalCalcTotSmoothingSteps(*helper, xform);
             
             CPPUNIT_ASSERT_EQUAL_MESSAGE("The smoothing steps for translation should be 1.0 because it's too far for the velocity vector, so it should essentially warp.",
-               1.0f, helper->GetCurrentTotalTranslationSmoothingSteps());
+               1.0f, helper->GetTranslationEndSmoothingTime());
             
             CPPUNIT_ASSERT_EQUAL_MESSAGE("The smoothing steps for rotation should be 1.0 because the velocity vector is 0",
-               1.0f, helper->GetCurrentTotalRotationSmoothingSteps());
+               1.0f, helper->GetRotationEndSmoothingTime());
 
             helper->SetVelocityVector(osg::Vec3(100.0f, 100.0f, 100.0f));
+            helper->SetDeadReckoningAlgorithm(DeadReckoningAlgorithm::VELOCITY_ONLY);
 
             mDeadReckoningComponent->InternalCalcTotSmoothingSteps(*helper, xform);
             
             CPPUNIT_ASSERT_EQUAL_MESSAGE("The translation smoothing steps should be set to the maximum because the actor can reach the new update point quickly given its velocity.",
-               helper->GetCurrentTotalTranslationSmoothingSteps(), helper->GetCurrentTotalTranslationSmoothingSteps());
+               helper->GetTranslationEndSmoothingTime(), helper->GetMaxTranslationSmoothingTime());
 
             CPPUNIT_ASSERT_EQUAL_MESSAGE("The rotation smoothing steps should be set to the maximum because the actor is moving.",
-               helper->GetCurrentTotalRotationSmoothingSteps(), helper->GetCurrentTotalRotationSmoothingSteps());
+               helper->GetRotationEndSmoothingTime(), helper->GetMaxRotationSmoothingTime());
          }
    
       private:

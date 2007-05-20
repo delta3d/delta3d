@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * David Guthrie
+ * David Guthrie, Curtiss Murphy
  */
 #include <prefix/dtgameprefix-src.h>
 #include <dtGame/deadreckoninghelper.h>
@@ -66,12 +66,12 @@ namespace dtGame
 	   mTimeUntilForceClamp(0.0f),
       mAverageTimeBetweenTranslationUpdates(0.0f), 
 	   mAverageTimeBetweenRotationUpdates(0.0f), 
-      mMaxTranslationSmoothingSteps(8.0f),
-      mMaxRotationSmoothingSteps(2.0f),
-      mTranslationSmoothingSteps(0.0f), 
-	   mRotationSmoothingSteps(0.0f), 
-      mCurrentTotalTranslationSmoothingSteps(0.0f),
-      mCurrentTotalRotationSmoothingSteps(0.0f),
+      mMaxTranslationSmoothingTime(8.0f),
+      mMaxRotationSmoothingTime(2.0f),
+      mTranslationCurrentSmoothingTime(0.0f), 
+	   mRotationCurrentSmoothingTime(0.0f), 
+      mTranslationEndSmoothingTime(0.0f),
+      mRotationEndSmoothingTime(0.0f),
       mGroundOffset(0.0f),
       mMinDRAlgorithm(&DeadReckoningAlgorithm::NONE),
       mUpdateMode(&DeadReckoningHelper::UpdateMode::AUTO),
@@ -129,7 +129,7 @@ namespace dtGame
       {
    		mTransBeforeLastUpdate = mCurrentDeadReckonedTranslation;
    		mLastTranslation = vec;
-   		mTranslationSmoothingSteps = 0.0;
+   		mTranslationCurrentSmoothingTime = 0.0;
    		mTranslationUpdated = true;
    		mUpdated = true;
       }
@@ -138,7 +138,7 @@ namespace dtGame
    		mTranslationInitiated = true;
    		mTransBeforeLastUpdate = vec;
    		mLastTranslation = vec;
-   		mTranslationSmoothingSteps = 0.0;
+   		mTranslationCurrentSmoothingTime = 0.0;
    		mTranslationUpdated = true;
    		mUpdated = true;
       }
@@ -156,7 +156,7 @@ namespace dtGame
          mLastRotation = vec;
          mRotQuatBeforeLastUpdate = mCurrentDeadReckonedRotation;
          mLastRotationMatrix.get(mLastQuatRotation);
-         mRotationSmoothingSteps = 0.0;
+         mRotationCurrentSmoothingTime = 0.0;
          mRotationUpdated = true;
          mUpdated = true;
       }
@@ -169,7 +169,7 @@ namespace dtGame
    		mLastRotation = vec;
    		mLastRotationMatrix.get(mRotQuatBeforeLastUpdate);
    		mLastRotationMatrix.get(mLastQuatRotation);
-   		mRotationSmoothingSteps = 0.0;
+   		mRotationCurrentSmoothingTime = 0.0;
    		mRotationInitiated = true;
    		mRotationUpdated = true;
    		mUpdated = true;
@@ -197,13 +197,13 @@ namespace dtGame
       mUpdated = true;
    }
 
-    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::SetDeadReckoningMatrix(double deltaTime)
+   //////////////////////////////////////////////////////////////////////
+   void DeadReckoningHelper::ComputeRotationChangeWithAngularVelocity(double deltaTime, osg::Matrix& result)
    {
-	   //mDeadReckoningMatrix
+	   //mComputedAngularRotationMatrix
       if (mAngularVelocityVector.length2() < 1e-11)
       {
-         mDeadReckoningMatrix.makeIdentity();
+         result.makeIdentity();
       }
       else
       {
@@ -245,7 +245,7 @@ namespace dtGame
          double c2 = cos(w*deltaTime);
          double c3 = -sin(w*deltaTime)/w;
          
-         mDeadReckoningMatrix.set(
+         result.set(
          c1*ww00+c2*1+c3*omega00, c1*ww01+c2*0+c3*omega01, c1*ww02+c2*0+c3*omega02,c1*ww03+c2*0+c3*omega03,
          c1*ww10+c2*0+c3*omega10, c1*ww11+c2*1+c3*omega11, c1*ww12+c2*0+c3*omega12,c1*ww13+c2*0+c3*omega13,
          c1*ww20+c2*0+c3*omega20, c1*ww21+c2*0+c3*omega21, c1*ww22+c2*1+c3*omega22,c1*ww23+c2*0+c3*omega23,
@@ -508,145 +508,29 @@ namespace dtGame
             && mAngularVelocityVector.length2() > 1e-5f))
       {
          if (pLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-         {
-            std::ostringstream ss;
-            ss << "Actor passed optimization checks: fully dead-reckoning actor.\n" 
-               << "  IsFlying():                           " << IsFlying() << std::endl
-               << "  mLastTranslation:                     " << mLastTranslation << std::endl
-               << "  unclampedTranslation:                 " << unclampedTranslation << std::endl
-               << "  mVelocityVector.length2():     " << mVelocityVector.length2() << std::endl
-               << "  mAccelerationVector.length2(): " << mAccelerationVector.length2() << std::endl
-               << "  rot Matrix is: " << rot << std::endl
-               << "  mLastRotationMatrix is: " << mLastRotationMatrix << std::endl;
-            
-            if (!mRotationResolved)
-            {
-               ss << "rot Matrix is: " << rot << std::endl;
-               ss << "mLastRotationMatrix is: " << mLastRotationMatrix << std::endl;
-            }
-            
-            pLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
-         }
+            LogDeadReckonStarted(unclampedTranslation, rot, pLogger);
 
+         // if we got an update, then we need to recalculate our smoothing
          if (IsUpdated())
          {
-            CalculateTotalSmoothingSteps(xform);
-   			if (pLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            CalculateSmoothingTimes(xform);
+
+            if (pLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
    			{
                std::ostringstream ss;
-   			   osg::Vec3 temp;
-   			   temp[0] = mLastRotation[0];
-   			   temp[1] = mLastRotation[1];
-   			   temp[2] = mLastRotation[2];
-                  ss << "Actor " << gameActor.GetUniqueId() << " - " << gameActor.GetName() << " HLA update "
-                     << "Rotation \"" << temp << "Tag Time " << mLastTimeTag << "\"";
-   			   pLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, 
-                     ss.str().c_str());               
-   			}
-   			if (pLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-   			{
-                  std::ostringstream ss;
-   			   osg::Vec3 temp;
-   			   temp[0] = mLastTranslation[0];
-   			   temp[1] = mLastTranslation[1];
-   			   temp[2] = mLastTranslation[2];
-                  ss << "Actor " << gameActor.GetUniqueId() << " - " << gameActor.GetName() << " HLA update "
-                     << "\"" << temp << "Tag Time " << mLastTimeTag << "\"";
-   			   pLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, 
-                     ss.str().c_str());               
+               ss << "Actor " << gameActor.GetUniqueId() << " - " << gameActor.GetName() << " got an HLA update " << std::endl
+                  << "      ROTATE   [" << mLastRotation[0] << ", " << mLastRotation[1] << ", " << mLastRotation[2] << "] " << std::endl 
+                  << "      POSITION [" << mLastTranslation[0] << ", " << mLastTranslation[1] << ", " << mLastTranslation[2] << "] " << std::endl 
+                  << "Tag Time [" << mLastTimeTag << "]";
+   			   pLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());               
    			}
          }
 
          // RESOLVE ROTATION
-         osg::Quat newRot;
+         DeadReckonTheRotation(rot, xform);
 
-         if (!mRotationResolved) // mRotationResolved is never set when using Accel
-         {
-            osg::Quat drQuat = mLastQuatRotation; // velocity only just uses the last. 
-            bool isRotationChangedByAccel = false;
-            osg::Quat startRotation = mRotQuatBeforeLastUpdate;
-
-            // For vel and Accel, we use the angular velocity to compute a dead reckoning matrix to slerp to
-            if (GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::VELOCITY_AND_ACCELERATION)
-            {
-               // Compute Dead Reckoning matrix
-               SetDeadReckoningMatrix(mRotationSmoothingSteps);
-               // New hpr computation 
-               osg::Matrix drRot = mDeadReckoningMatrix*mLastRotationMatrix;
-               //dtUtil::MatrixUtil::Print(mDeadReckoningMatrix);
-               // Compute change in rotation as quaternion representation 
-               drRot.get(drQuat);
-               osg::Quat rotationChange = drQuat - mLastQuatRotation;
-               isRotationChangedByAccel = rotationChange.length2() > 1e-8;
-               startRotation = mRotQuatBeforeLastUpdate + rotationChange;
-            }
-
-            // If there is a difference in the rotations and we still have time to smooth, then 
-            // slerp between the two quats: 1) the old rotation plus the expected change using angular
-            //    velocity and 2) the desired new rotation
-      	   if (isRotationChangedByAccel || mRotationSmoothingSteps <  mCurrentTotalRotationSmoothingSteps)
-            {
-               float smoothingFactor = mRotationSmoothingSteps/mCurrentTotalRotationSmoothingSteps;
-               dtUtil::Clamp(smoothingFactor, 0.0f, 1.0f);
-               newRot.slerp(smoothingFactor, startRotation, drQuat);
-               rot.set(newRot);
-            }
-            else // Either smoothing time is done or the current rotation equals the desired rotation
-            {
-               newRot = drQuat;
-               mRotationResolved = true;
-            }
-
-            // we finished DR, so update the rotation values on the helper and transform
-            rot.set(newRot);
-            mCurrentDeadReckonedRotation = newRot;
-            xform.GetRotation(mCurrentAttitudeVector);
-         }
-
-		   /****************************************************************************/
          // POSITION SMOOTHING
-         osg::Vec3 positionChange;
-         if (GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::VELOCITY_ONLY)
-         {
-            positionChange = mVelocityVector * mTranslationSmoothingSteps;
-         }
-         else
-         {
-            positionChange = mVelocityVector * mTranslationSmoothingSteps +
-               ((mAccelerationVector * 0.5f) * (mTranslationSmoothingSteps * mTranslationSmoothingSteps));
-         }
-         osg::Vec3 drPos = mLastTranslation + positionChange;
-
-         if (positionChange.length2()>1e-3 && mTranslationSmoothingSteps < mCurrentTotalTranslationSmoothingSteps)
-         {
-            pos = mTransBeforeLastUpdate + positionChange;
-            float smoothingFactor = mTranslationSmoothingSteps/mCurrentTotalTranslationSmoothingSteps;
-            //a bit of smoothing.
-            pos = pos + (drPos - pos) * smoothingFactor;
-
-            if (pLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-            {
-               std::ostringstream ss;
-               ss << "Actor [" << gameActor.GetUniqueId() << " - " << gameActor.GetName() << "] has pos " << "[" << pos << "]";
-               pLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());               
-            }
-         }
-         else
-         {
-            pos = drPos;
-         }
-         mCurrentDeadReckonedTranslation = pos;
-
-         // DEBUG STUFF
-         if (pLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-         {
-            std::ostringstream ss;
-            ss << "Actor " << gameActor.GetUniqueId() << " - " << gameActor.GetName() << " target pos "
-               << "[" << drPos << "], temp[" << mLastTranslationUpdatedTime + mTranslationSmoothingSteps << "]\n";
-            ss << "Actor " << gameActor.GetUniqueId() << " - " << gameActor.GetName() << " current pos "
-               << "[" << pos << "], temp[" << mLastTranslationUpdatedTime + mTranslationSmoothingSteps << "]";
-            pLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, ss.str().c_str());               
-         }
+         DeadReckonThePosition(pos, pLogger, gameActor);
 
          returnValue = true;
       } 
@@ -659,24 +543,155 @@ namespace dtGame
       return returnValue;
    }
 
-      //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::CalculateTotalSmoothingSteps(const dtCore::Transform& xform)
+   //////////////////////////////////////////////////////////////////////
+   void DeadReckoningHelper::CalculateSmoothingTimes(const dtCore::Transform& xform)
    {
-      if (GetMaxRotationSmoothingSteps()<mAverageTimeBetweenRotationUpdates)
-			mCurrentTotalRotationSmoothingSteps = GetMaxRotationSmoothingSteps();
-	  else mCurrentTotalRotationSmoothingSteps = mAverageTimeBetweenRotationUpdates;       
+      // ROTATION
+      if (GetMaxRotationSmoothingTime() < mAverageTimeBetweenRotationUpdates)
+         mRotationEndSmoothingTime = GetMaxRotationSmoothingTime();
+      else 
+         mRotationEndSmoothingTime = mAverageTimeBetweenRotationUpdates;       
 
-	  if (mAngularVelocityVector.length2() * (mCurrentTotalRotationSmoothingSteps*mCurrentTotalRotationSmoothingSteps) < 0.1*((mLastQuatRotation-mCurrentDeadReckonedRotation).length2()))
-		mCurrentTotalRotationSmoothingSteps = 1.0;
-      
-	  if (GetMaxTranslationSmoothingSteps()<mAverageTimeBetweenTranslationUpdates)
-			mCurrentTotalTranslationSmoothingSteps = GetMaxTranslationSmoothingSteps();
-	  else mCurrentTotalTranslationSmoothingSteps = mAverageTimeBetweenTranslationUpdates;      
+      // For angular acceleration, do a similar compare
+      if (GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::VELOCITY_AND_ACCELERATION && 
+         (mAngularVelocityVector.length2() * (mRotationEndSmoothingTime * mRotationEndSmoothingTime)) < 
+            0.1 * ((mLastQuatRotation-mCurrentDeadReckonedRotation).length2()))
+      {
+         mRotationEndSmoothingTime = 1.0;
+      }
+
+      // TRANSLATION
+      if (GetMaxTranslationSmoothingTime() < mAverageTimeBetweenTranslationUpdates)
+         mTranslationEndSmoothingTime = GetMaxTranslationSmoothingTime();
+      else 
+         mTranslationEndSmoothingTime = mAverageTimeBetweenTranslationUpdates;      
+
       //If the player could not possible get to the new position in 10 seconds
       //based on the magnitude of it's velocity vector, then just warp the entity in 1 second.
-      if (mVelocityVector.length2() * (mCurrentTotalTranslationSmoothingSteps*mCurrentTotalTranslationSmoothingSteps) < (mLastTranslation - xform.GetTranslation()).length2() )
-         mCurrentTotalTranslationSmoothingSteps = 1.0;
-      
+      if (mVelocityVector.length2() * (mTranslationEndSmoothingTime*mTranslationEndSmoothingTime) < (mLastTranslation - xform.GetTranslation()).length2() )
+         mTranslationEndSmoothingTime = 1.0;
    }
 
+   //////////////////////////////////////////////////////////////////////
+   void DeadReckoningHelper::DeadReckonTheRotation(osg::Matrix &rot, dtCore::Transform &xform)
+   {
+      osg::Quat newRot;
+      osg::Quat drQuat = mLastQuatRotation; // velocity only just uses the last. 
+      bool isRotationChangedByAccel = false;
+      osg::Quat startRotation = mRotQuatBeforeLastUpdate;
+
+      if (!mRotationResolved) // mRotationResolved is never set when using Accel
+      {
+
+         // For vel and Accel, we use the angular velocity to compute a dead reckoning matrix to slerp to
+         if (GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::VELOCITY_AND_ACCELERATION)
+         {
+            // Compute The change in the rotation based Dead Reckoning matrix
+            // The Dead Reckoning Matrix
+            osg::Matrix angularRotation;
+            ComputeRotationChangeWithAngularVelocity(mRotationCurrentSmoothingTime, angularRotation);
+
+            // New hpr computation 
+            osg::Matrix drRot = angularRotation * mLastRotationMatrix;
+            //dtUtil::MatrixUtil::Print(mComputedAngularRotationMatrix);
+            // Compute change in rotation as quaternion representation 
+            drRot.get(drQuat);
+            osg::Quat rotationChange = drQuat - mLastQuatRotation;
+            isRotationChangedByAccel = rotationChange.length2() > 1e-6;
+            startRotation = mRotQuatBeforeLastUpdate + rotationChange;
+         }
+
+         // If there is a difference in the rotations and we still have time to smooth, then 
+         // slerp between the two quats: 1) the old rotation plus the expected change using angular
+         //    velocity and 2) the desired new rotation
+         if (isRotationChangedByAccel || mRotationCurrentSmoothingTime <  mRotationEndSmoothingTime)
+         {
+            float smoothingFactor = mRotationCurrentSmoothingTime/mRotationEndSmoothingTime;
+            dtUtil::Clamp(smoothingFactor, 0.0f, 1.0f);
+            newRot.slerp(smoothingFactor, startRotation, drQuat);
+            rot.set(newRot);
+         }
+         else // Either smoothing time is done or the current rotation equals the desired rotation
+         {
+            newRot = drQuat;
+            mRotationResolved = true;
+         }
+
+         // we finished DR, so update the rotation values on the helper and transform
+         rot.set(newRot);
+         mCurrentDeadReckonedRotation = newRot;
+         xform.GetRotation(mCurrentAttitudeVector);
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////
+   void DeadReckoningHelper::DeadReckonThePosition( osg::Vec3& pos, dtUtil::Log* pLogger, GameActor &gameActor )
+   {
+      osg::Vec3 positionChange;
+      if (GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::VELOCITY_ONLY)
+      {
+         positionChange = mVelocityVector * mTranslationCurrentSmoothingTime;
+      }
+      else
+      {
+         positionChange = mVelocityVector * mTranslationCurrentSmoothingTime +
+            ((mAccelerationVector * 0.5f) * (mTranslationCurrentSmoothingTime * mTranslationCurrentSmoothingTime));
+      }
+      osg::Vec3 drPos = mLastTranslation + positionChange;
+
+      // If the position has changed a little, and we still have time left in our smoothing, then
+      // blend the positions.
+      if (positionChange.length2()>1e-3 && mTranslationCurrentSmoothingTime < mTranslationEndSmoothingTime)
+      {
+         pos = mTransBeforeLastUpdate + positionChange;
+         float smoothingFactor = mTranslationCurrentSmoothingTime/mTranslationEndSmoothingTime;
+         //a bit of smoothing.
+         pos = pos + (drPos - pos) * smoothingFactor;
+
+         if (pLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         {
+            std::ostringstream ss;
+            ss << "Actor [" << gameActor.GetUniqueId() << " - " << gameActor.GetName() << "] has pos " << "[" << pos << "]";
+            pLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());               
+         }
+      }
+      else // Out of time or no move, so just set it.
+      {
+         pos = drPos;
+      }
+      mCurrentDeadReckonedTranslation = pos;
+
+      // DEBUG STUFF
+      if (pLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+      {
+         std::ostringstream ss;
+         ss << "Actor " << gameActor.GetUniqueId() << " - " << gameActor.GetName() << " target pos "
+            << "[" << drPos << "], temp[" << mLastTranslationUpdatedTime + mTranslationCurrentSmoothingTime << "]\n";
+         ss << "Actor " << gameActor.GetUniqueId() << " - " << gameActor.GetName() << " current pos "
+            << "[" << pos << "], temp[" << mLastTranslationUpdatedTime + mTranslationCurrentSmoothingTime << "]";
+         pLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, ss.str().c_str());               
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////
+   void DeadReckoningHelper::LogDeadReckonStarted(osg::Vec3 &unclampedTranslation, osg::Matrix& rot, dtUtil::Log* pLogger)
+   {
+      std::ostringstream ss;
+      ss << "Actor passed optimization checks: fully dead-reckoning actor.\n" 
+         << "  IsFlying():                           " << IsFlying() << std::endl
+         << "  mLastTranslation:                     " << mLastTranslation << std::endl
+         << "  unclampedTranslation:                 " << unclampedTranslation << std::endl
+         << "  mVelocityVector.length2():     " << mVelocityVector.length2() << std::endl
+         << "  mAccelerationVector.length2(): " << mAccelerationVector.length2() << std::endl
+         << "  rot Matrix is: " << rot << std::endl
+         << "  mLastRotationMatrix is: " << mLastRotationMatrix << std::endl;
+
+      if (!mRotationResolved)
+      {
+         ss << "rot Matrix is: " << rot << std::endl;
+         ss << "mLastRotationMatrix is: " << mLastRotationMatrix << std::endl;
+      }
+
+      pLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
+   }
 }

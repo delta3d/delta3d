@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * David Guthrie
+ * David Guthrie, Curtiss Murphy
  */
 #ifndef DELTA_DEAD_RECKONING_HELPER
 #define DELTA_DEAD_RECKONING_HELPER
@@ -149,7 +149,7 @@ namespace dtGame
           * @param helper the DR helper for the actor.
           * @param xform the actors current absolute transform.
           */
-         void CalculateTotalSmoothingSteps(const dtCore::Transform& xform);
+         void CalculateSmoothingTimes(const dtCore::Transform& xform);
 
  
          bool IsUpdated() const { return mUpdated; }
@@ -195,15 +195,15 @@ namespace dtGame
          float GetGroundOffset() const { return mGroundOffset; }
        
          ///Sets max amount of time to use when smoothing the translation.
-         void SetMaxTranslationSmoothingSteps(float newMax) { mMaxTranslationSmoothingSteps = newMax; }
+         void SetMaxTranslationSmoothingTime(float newMax) { mMaxTranslationSmoothingTime = newMax; }
 
          ///Sets max amount of time to use when smoothing the rotation.
-         void SetMaxRotationSmoothingSteps(float newMax) { mMaxRotationSmoothingSteps = newMax; }
+         void SetMaxRotationSmoothingTime(float newMax) { mMaxRotationSmoothingTime = newMax; }
        
          ///@return the max amount of time to use when smoothing the translation.
-         float GetMaxTranslationSmoothingSteps() const { return mMaxTranslationSmoothingSteps; }
+         float GetMaxTranslationSmoothingTime() const { return mMaxTranslationSmoothingTime; }
          ///@return the max amount of time to use when smoothing the rotation.
-         float GetMaxRotationSmoothingSteps() const { return mMaxRotationSmoothingSteps; }
+         float GetMaxRotationSmoothingTime() const { return mMaxRotationSmoothingTime; }
 
          /**
           * Sets this entity's last known translation.  This should
@@ -273,21 +273,16 @@ namespace dtGame
          osg::Vec3 GetAngularVelocityVectorByCopy() const { return mAngularVelocityVector; }
 
          /**
-          * Retrieves this entity's Dead Reckoning matrix.
-          * @return the Dead Reckoning matrix
-          */
-         const osg::Matrix& GetDeadReckoningMatrix() const { return mDeadReckoningMatrix; }
-         
-         /**
-          * Sets this entity's Dead Reckoning matrix.
+          * Computes the change in rotation based on the angular velocity. This is used by DeadReckonTheRotation().
           * @param deltaTime the time elapsed since the last measured attitude 
+          * @param result the resulting matrix.
           */
-         void SetDeadReckoningMatrix(double deltaTime);
+         void ComputeRotationChangeWithAngularVelocity(double deltaTime, osg::Matrix& result);
          
          ///@return the total amount of time to use when smoothing the translation for this last update.
-         float GetCurrentTotalTranslationSmoothingSteps() const { return mCurrentTotalTranslationSmoothingSteps; }
+         float GetTranslationEndSmoothingTime() const { return mTranslationEndSmoothingTime; }
          ///@return the total amount of time to use when smoothing the rotation for this last update.
-         float GetCurrentTotalRotationSmoothingSteps() const { return mCurrentTotalRotationSmoothingSteps; }
+         float GetRotationEndSmoothingTime() const { return mRotationEndSmoothingTime; }
 
          ///@return the last simulation time this helper was updated for translation.
          double GetLastTranslationUpdatedTime() const { return mLastTranslationUpdatedTime; };
@@ -335,11 +330,11 @@ namespace dtGame
          void SetRotationBeforeLastUpdate(const osg::Quat& rot) { mRotQuatBeforeLastUpdate = rot; }
          const osg::Quat& GetLastKnownRotationByQuaternion() const { return mLastQuatRotation; }
          bool IsTranslationUpdated() const { return mTranslationUpdated; }
-         void SetTranslationSmoothing(float smoothing) { mTranslationSmoothingSteps=smoothing; }
-         float GetTranslationSmoothing() const { return mTranslationSmoothingSteps; }
+         void SetTranslationCurrentSmoothingTime(float smoothing) { mTranslationCurrentSmoothingTime=smoothing; }
+         float GetTranslationCurrentSmoothingTime() const { return mTranslationCurrentSmoothingTime; }
          bool IsRotationUpdated() const { return mRotationUpdated; }
-         void SetRotationSmoothing(float smoothing) { mRotationSmoothingSteps=smoothing; }
-         float GetRotationSmoothing() const { return mRotationSmoothingSteps; }
+         void SetRotationCurrentSmoothingTime(float smoothing) { mRotationCurrentSmoothingTime=smoothing; }
+         float GetRotationCurrentSmoothingTime() const { return mRotationCurrentSmoothingTime; }
          void SetRotationResolved(bool resolved) { mRotationResolved=resolved; }
 
          /// Set this to true to tell the DR comp than the model dimensions are now valid. Defaults to false.
@@ -367,6 +362,24 @@ namespace dtGame
           */
          bool DRVelocityAcceleration(GameActor& gameActor, dtCore::Transform& xform, dtUtil::Log* pLogger); 
 
+         /* 
+          * Simple dumps out a log that we have started dead reckoning with lots of information.  Pulled out
+          * to help make DRVelocityAcceleration() a bit easier to read.
+          */
+         void LogDeadReckonStarted(osg::Vec3& unclampedTranslation, osg::Matrix& rot, dtUtil::Log* pLogger);
+
+         /**
+          * Computes the new rotation for the object.  This method handles VELOCITY_ONLY and 
+          * VELOCITY_AND_ACCELERATION, but not static. This is called DRVelocityAcceleration().
+          */
+         void DeadReckonTheRotation(osg::Matrix &rot, dtCore::Transform &xform);
+
+         /**
+          * Computes the new position for the object.  This method handles VELOCITY_ONLY and 
+          * VELOCITY_AND_ACCELERATION, but not static. This is called DRVelocityAcceleration()
+          */
+         void DeadReckonThePosition( osg::Vec3& pos, dtUtil::Log* pLogger, GameActor &gameActor );
+
       private:
          /// The list of DeadReckoningDOFs, might want to change to has table of list later.
          std::list<dtCore::RefPtr<DeadReckoningDOF> > mDeadReckonDOFS;
@@ -387,18 +400,18 @@ namespace dtGame
          float mAverageTimeBetweenRotationUpdates;
 
          ///The maximum amount of time to use when smoothing translation.
-         float mMaxTranslationSmoothingSteps;
-		 ///The maximum amount of time to use when smoothing rotation.
-         float mMaxRotationSmoothingSteps;
+         float mMaxTranslationSmoothingTime;
+         ///The maximum amount of time to use when smoothing rotation.
+         float mMaxRotationSmoothingTime;
                  
          ///the amount of time since this actor started smoothing.
-         float mTranslationSmoothingSteps;
-         float mRotationSmoothingSteps;
+         float mTranslationCurrentSmoothingTime;
+         float mRotationCurrentSmoothingTime;
          
-           ///the total number of smoothing steps to use when smoothing translation since the last update.
-         float mCurrentTotalTranslationSmoothingSteps;
-		 ///the total number of smoothing steps to use when smoothing rotation since the last update.
-         float mCurrentTotalRotationSmoothingSteps;
+         ///the end amount of time to use when smoothing the translation.  At this point, the blend should be finished. 
+         float mTranslationEndSmoothingTime;
+         ///the end amount of time to use when smoothing the rotation.  At this point, the blend should be finished. 
+         float mRotationEndSmoothingTime;
          
          ///The distance from the ground that the actor should be.
          float mGroundOffset;
