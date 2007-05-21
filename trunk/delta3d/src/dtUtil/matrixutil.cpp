@@ -1,5 +1,6 @@
 #include <prefix/dtutilprefix-src.h>
 #include <dtUtil/matrixutil.h>
+#include <iostream>
 
 using namespace dtUtil;
 
@@ -80,8 +81,11 @@ void MatrixUtil::HprToMatrix( osg::Matrix& rotation, const osg::Vec3& hpr )
 
    double ch, sh, cp, sp, cr, sr, srsp, crsp, srcp ;
 
+   // this can't be smart for both 32 and 64 bit types.
+   ///\todo find a preprocessor way to assign this constant different for the different precision types.
+   const osg::Vec3::value_type magic_epsilon = 0.00001;
 
-   if ( hpr[0] == 0.0f )
+   if ( osg::equivalent(hpr[0],(osg::Vec3::value_type)0.0,magic_epsilon) )
    {
       ch = 1.0 ;
       sh = 0.0 ;
@@ -92,7 +96,7 @@ void MatrixUtil::HprToMatrix( osg::Matrix& rotation, const osg::Vec3& hpr )
       ch = cosf(osg::DegreesToRadians(hpr[0]));
    }
 
-   if ( hpr[1] == 0.0f )
+   if ( osg::equivalent(hpr[1],(osg::Vec3::value_type)0.0,magic_epsilon) )
    {
       cp = 1.0 ;
       sp = 0.0 ;
@@ -103,7 +107,7 @@ void MatrixUtil::HprToMatrix( osg::Matrix& rotation, const osg::Vec3& hpr )
       cp = cosf(osg::DegreesToRadians(hpr[1]));
    }
 
-   if ( hpr[2] == 0.0f )
+   if ( osg::equivalent(hpr[2],(osg::Vec3::value_type)0.0,magic_epsilon) )
    {
       cr   = 1.0 ;
       sr   = 0.0 ; 
@@ -131,6 +135,10 @@ void MatrixUtil::HprToMatrix( osg::Matrix& rotation, const osg::Vec3& hpr )
    rotation(0, 2) = ( -srcp ) ;
    rotation(1, 2) = (  sp ) ;
    rotation(2, 2) = (  cr * cp ) ;
+
+   rotation(3, 0) =  0.0;  // x trans
+   rotation(3, 1) =  0.0;  // y trans
+   rotation(3, 2) =  0.0;  // z trans
 
    rotation(0, 3) =  0.0;
    rotation(1, 3) =  0.0;
@@ -161,7 +169,8 @@ void MatrixUtil::MatrixToHpr( osg::Vec3& hpr, const osg::Matrix& rotation )
    osg::Vec3 col1(rotation(0, 0), rotation(0, 1), rotation(0, 2));
    double s = col1.length();
 
-   if ( s <= 0.00001 )
+   const double magic_epsilon = 0.00001;
+   if ( s <= magic_epsilon )
    {
       hpr.set(0.0f, 0.0f, 0.0f);
       return ;
@@ -174,11 +183,13 @@ void MatrixUtil::MatrixToHpr( osg::Vec3& hpr, const osg::Matrix& rotation )
          mat(i, j) = rotation(i, j) * oneOverS;
 
 
-   hpr[1] = osg::RadiansToDegrees(asin(ClampUnity(mat(1, 2))));
+   double sin_pitch = ClampUnity(mat(1, 2));
+   double pitch = asin(sin_pitch);
+   hpr[1] = osg::RadiansToDegrees(pitch);
 
-   double cp = cos(osg::DegreesToRadians(hpr[1]));
+   double cp = cos(pitch);
 
-   if ( cp > -0.00001 && cp < 0.00001 )
+   if ( cp > -magic_epsilon && cp < magic_epsilon )
    {
       double cr = ClampUnity(-mat(2,1));
       double sr = ClampUnity(mat(0,1));
@@ -188,13 +199,14 @@ void MatrixUtil::MatrixToHpr( osg::Vec3& hpr, const osg::Matrix& rotation )
    }
    else
    {
-      cp = 1.0 / cp ;
-      double sr = ClampUnity(-mat(0,2) * cp);
-      double cr = ClampUnity(mat(2,2) * cp);
-      double sh = ClampUnity(-mat(1,0) * cp);
-      double ch = ClampUnity(mat(1,1) * cp);
+      double one_over_cp = 1.0 / cp ;
+      double sr = ClampUnity(-mat(0,2) * one_over_cp);
+      double cr = ClampUnity(mat(2,2) * one_over_cp);
+      double sh = ClampUnity(-mat(1,0) * one_over_cp);
+      double ch = ClampUnity(mat(1,1) * one_over_cp);
 
-      if ( (sh == 0.0f && ch == 0.0f) || (sr == 0.0f && cr == 0.0f) )
+      if ( ( osg::equivalent(sh,0.0,magic_epsilon) && osg::equivalent(ch,0.0,magic_epsilon) ) ||
+           ( osg::equivalent(sr,0.0,magic_epsilon) && osg::equivalent(cr,0.0,magic_epsilon) ) )
       {
          cr = ClampUnity(-mat(2,1));
          sr = ClampUnity(mat(0,1));;
