@@ -21,8 +21,6 @@
 #ifndef DELTA_MATRIX_UTIL
 #define DELTA_MATRIX_UTIL
 
-#include <iostream>
-
 #include <osg/Matrix>
 #include <osg/Vec3>
 #include <osg/Vec4>
