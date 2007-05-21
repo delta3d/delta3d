@@ -68,7 +68,7 @@ namespace dtCore
          virtual void SetParent( DeltaDrawable* parent ) { mParent = parent; }
 
          DeltaDrawable* GetParent() { return mParent; }
-         const DeltaDrawable* GetParent() const { return mParent; }
+         const DeltaDrawable* GetParent() const { return mParent; }         
          
          ///Get a pointer to the Scene this Drawable has been added to
          Scene* GetSceneParent() { return mParentScene; }
@@ -124,6 +124,10 @@ namespace dtCore
          osg::Node* GetProxyNode() { return mProxyNode.get(); }         
          const osg::Node* GetProxyNode() const { return mProxyNode.get(); }
          void SetProxyNode( osg::Node* proxyNode );
+
+         /// Callback which is called when this 
+         /// drawable's parent is removed
+         virtual void OnOrphaned();
 
       private:
 
