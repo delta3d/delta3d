@@ -28,9 +28,9 @@ GchShAction = SCons.Action.Action('$GCHSHCOM', '$GCHSHCOMSTR')
 def gen_suffix(env, sources):
     return sources[0].get_suffix() + env['GCHSUFFIX']
 
-# SCons 0.96.90 renamed C.CScan() as C.CScanner().
-# Here we check for the patch version to support both names.
-if int(SCons.__version__.split('.')[2]) >= 90:
+# SCons 0.97 renamed C.CScan() as C.CScanner().
+# Here we check for the patch version to support both 0.96 and 0.97.
+if int(SCons.__version__.split('.')[1]) >= 97:
     scanner = SCons.Scanner.C.CScanner()
 else:
     scanner = SCons.Scanner.C.CScan()
