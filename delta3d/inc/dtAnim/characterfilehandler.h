@@ -58,6 +58,18 @@ namespace dtAnim
      *      <mesh ...
      *      <material filename="mat1.crf" />
      *      <material ...
+     *	   <animationchannel>
+	  *         <name>Run</name>
+	  *	      <animationname>Run</animationname>
+	  *         <startdelay>0.0</startdelay>
+	  *         <fadein>0.0</fadein>
+	  *         <fadeout>0.0</fadeout>
+	  *         <speed>1.0</speed>
+     *         <baseweight>1.0</baseweight>
+	  *         <maxduration>0.0</maxduration>
+	  *	      <isaction>0</isaction>
+	  *         <islooping>1</islooping>
+	  *      </animationchannel>
      *   </character>
      * @endcode
      */
