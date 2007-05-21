@@ -20,6 +20,12 @@ DeltaDrawable::DeltaDrawable(const std::string& name)
 DeltaDrawable::~DeltaDrawable()
 {
    DeregisterInstance(this);
+
+   // Alert all children of this parent's demise
+   for(ChildList::iterator itr = mChildList.begin(); itr != mChildList.end(); ++itr)
+   {
+      (*itr)->OnOrphaned();
+   }
 }
 
 /** This virtual method can be overwritten
@@ -153,7 +159,7 @@ void DeltaDrawable::AddedToScene( Scene *scene )
   */
 void DeltaDrawable::Emancipate() 
 {
-   if( mParent )
+   if( mParent != NULL )
    {
       mParent->RemoveChild(this);
    }
@@ -163,6 +169,11 @@ void DeltaDrawable::Emancipate()
 void DeltaDrawable::SetProxyNode( osg::Node* proxyNode )
 {
    mProxyNode = proxyNode;
+}
+
+void DeltaDrawable::OnOrphaned()
+{
+   mParent = NULL; 
 }
 
 void DeltaDrawable::GetBoundingSphere( osg::Vec3 *center, float *radius )
