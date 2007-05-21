@@ -264,7 +264,7 @@ def TOOL_BUNDLE(env):
     
        return lib   
 
-   def CompilerConf(env, errorLog):
+   def CreateConf(env, errorLog):
       # append the outside env to ours
       for K in os.environ.keys():
          if K in env['ENV'].keys() and K in [ 'PATH', 'LD_LIBRARY_PATH', 'LIB', 'INCLUDE', 'QTDIR', 'CC', 'CXX', 'CPPPATH', 'LIBPATH' ]:
@@ -669,14 +669,25 @@ def TOOL_BUNDLE(env):
             }
       else :
          extLibs = {}
-
       
+      env['depsHash'] = depsHash
+      env['dtLibs'] = dtLibs
+      env['extLibs'] = extLibs
+
       conf = env.Configure(custom_tests = {
          'CheckFramework' : CheckFramework,
       })
-		
+      
+      return conf
+
+
+   def CompilerConf(env, conf, errorLog):		
       conf.env['LIBS'] = []
       conf.env['FRAMEWORKS'] = []
+
+      depsHash = env['depsHash']
+      dtLibs = env['dtLibs']
+      extLibs = env['extLibs']
 
       foundLibs = {}
       
@@ -748,6 +759,15 @@ def TOOL_BUNDLE(env):
       CheckLinkGroup(['DIS'], 'DIS', True)
       CheckLinkGroup([ 'CEGUIBase', 'CEGUIOpenGLRenderer' ], 'CEGUI', False, False)
       
+      additionalToCheck = [];
+      for libName in extLibs.keys():
+         if not foundLibs.has_key(extLibs[libName]):
+            additionalToCheck += [ extLibs[libName] ]
+
+      CheckLinkGroup(additionalToCheck, 'Additional', True, False)
+         
+
+      
       if not env.GetOption('clean') :
          foundGdalH = conf.CheckCXXHeader('gdal.h')
       
@@ -781,9 +801,6 @@ def TOOL_BUNDLE(env):
       for lib in env['rtiLibs'] :
          extLibs[lib] = lib
 
-      env['depsHash'] = depsHash
-      env['dtLibs'] = dtLibs
-      env['extLibs'] = extLibs
       env['foundLibs'] = foundLibs
 
 
@@ -808,6 +825,7 @@ def TOOL_BUNDLE(env):
    SConsEnvironment.SetupDepsAndPCH = SetupDepsAndPCH
    SConsEnvironment.CompilerConf = CompilerConf
    SConsEnvironment.SGlob = SGlob
+   SConsEnvironment.CreateConf = CreateConf
 
 ########################
 
