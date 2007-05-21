@@ -25,6 +25,7 @@
 #include <dtDAL/enginepropertytypes.h>
 #include <dtUtil/log.h>
 #include <dtUtil/matrixutil.h>
+#include <dtUtil/mathdefines.h>
 #include <dtGame/gameactor.h>
 #include <dtDAL/functor.h>
 
