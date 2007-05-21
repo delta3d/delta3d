@@ -149,7 +149,11 @@ env = Environment( options = opts, tools = tools, toolpath = "." )
 
 env['OS'] = OS
 
-env.CompilerConf(errorLog)
+conf = env.CreateConf(errorLog)
+
+# additional libraries should be added here
+
+env.CompilerConf(conf, errorLog)
 
 Help( opts.GenerateHelpText( env ) )
 opts.Save( 'delta3d.conf', env )
