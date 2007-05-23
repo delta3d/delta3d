@@ -115,7 +115,7 @@ public:
    *  of playback.  It defaults to 1.0, a speed of 2.0 would play twice as fast.
    */
    float GetSpeed() const;
-   void SetSpeed(bool b);
+   void SetSpeed(float speed);
 
    /**
    *  This flag specifies whether or not this animation has stopped playing
@@ -165,6 +165,7 @@ public:
    * @param the name to set this animation to
    */
    virtual void SetName(const std::string&) = 0;
+
 
 protected:
 

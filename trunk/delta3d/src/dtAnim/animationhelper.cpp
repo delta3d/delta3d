@@ -29,6 +29,8 @@
 #include <dtAnim/skeletalconfiguration.h>
 #include <dtAnim/animationsequence.h>
 #include <dtAnim/animationcontroller.h>
+#include <dtAnim/animationchannel.h>
+#include <dtAnim/animationwrapper.h>
 
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/enginepropertytypes.h>
@@ -71,7 +73,25 @@ void AnimationHelper::Update(float dt)
 
 void AnimationHelper::PlayAnimation(const std::string& pAnim)
 {
-   mSequenceMixer->PlayAnimation(pAnim);
+   const Animatable* anim = mSequenceMixer->GetRegisteredAnimation(pAnim);
+
+   if(anim)
+   {
+      dtCore::RefPtr<Animatable> clonedAnim = anim->Clone();
+
+      //ok we are going to have to refactor out this dynamic cast
+      AnimationChannel* channel = dynamic_cast<AnimationChannel*>(clonedAnim.get());
+      if(channel)
+      {
+         channel->SetModel(mAnimator->GetWrapper());
+      }
+
+      mSequenceMixer->PlayAnimation(clonedAnim.get());
+   }
+   else
+   {
+      LOG_ERROR("Cannot play animation '" + pAnim + "' because it has not been registered with the SequenceMixer.")
+   }
 }
 
 void AnimationHelper::ClearAnimation(const std::string& pAnim, float fadeOutTime)
@@ -88,6 +108,18 @@ void AnimationHelper::LoadModel(const std::string& pFilename)
       {
          mAnimator = new dtAnim::Cal3DAnimator(newModel.get());   
          mGeode = mNodeBuilder->CreateGeode(newModel.get());
+         
+         //TODO- Get animations and register them
+         const Cal3DLoader::AnimatableVector* animatables = sModelLoader->GetAnimatables(*newModel);
+
+         Cal3DLoader::AnimatableVector::const_iterator iter = animatables->begin();
+         Cal3DLoader::AnimatableVector::const_iterator end = animatables->end();
+
+         for(;iter != end; ++iter)
+         {
+            mSequenceMixer->RegisterAnimation((*iter).get());
+         }
+
       }
       else
       {

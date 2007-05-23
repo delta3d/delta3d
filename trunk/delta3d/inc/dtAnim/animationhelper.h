@@ -75,7 +75,7 @@ public:
    * The user should call Update() on a per frame basis
    * this function updates the sequence mixer and the Cal3DAnimator
    */
-   void Update(float dt);
+   virtual void Update(float dt);
 
    /**
    * This function loads a character XML file from string,

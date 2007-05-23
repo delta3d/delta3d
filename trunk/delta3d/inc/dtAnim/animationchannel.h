@@ -39,12 +39,32 @@ class	DT_ANIM_EXPORT AnimationChannel: public Animatable
 {
 
 public:
+    /**
+    * If you use the default constructor you must call SetAnimation, 
+    * and SetModel
+    */
+    AnimationChannel();
+
    /**
    * @param the model wrapper used to play animations with
    * @param the animation wrapper to specify which animation to play
    */
    AnimationChannel(Cal3DModelWrapper* pModelWrapper, AnimationWrapper* pAnimationWrapper);
    
+
+   /**
+   * This function associates this channel with the supplied animation wrapper
+   * @param the animation wrapper this channel will play
+   */
+   void SetAnimation(AnimationWrapper* pAnimation);
+
+
+   /**
+   * This function sets the model wrapper used to make the calls to play the animation.
+   * @param the associated model wrapper
+   */
+   void SetModel(Cal3DModelWrapper* pWrapper);
+
    /**
    *  This function copies the animation channel
    */

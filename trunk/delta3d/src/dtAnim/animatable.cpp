@@ -34,7 +34,7 @@ Animatable::Animatable()
 , mFadeOut(0.0f)
 , mElapsedTime(0.0f)
 , mBaseWeight(1.0f)
-, mCurrentWeight(0.0)
+, mCurrentWeight(1.0)
 , mActive(false)
 , mShouldPrune(false)
 {
@@ -133,9 +133,9 @@ float Animatable::GetSpeed() const
    return mSpeed;
 }
 
-void Animatable::SetSpeed(bool b)
+void Animatable::SetSpeed(float speed)
 {
-   mSpeed = b;
+   mSpeed = speed;
 }
 
 bool Animatable::ShouldPrune() const
