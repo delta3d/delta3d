@@ -708,9 +708,11 @@ namespace dtGame
          dtCore::RefPtr<dtDAL::ActorProxy> ap = dtDAL::LibraryManager::GetInstance().CreateActorProxy(actorType).get();
          if (ap->IsInstanceOf("dtGame::GameActor"))
          {
+
             dtGame::GameActorProxy* gap = dynamic_cast<dtGame::GameActorProxy*>(ap.get());
             if (gap != NULL)
             {
+               gap->SetGameManager(this);
                gap->BuildInvokables();
             }
             else
@@ -771,8 +773,7 @@ namespace dtGame
    void GameManager::AddActor(GameActorProxy& gameActorProxy, bool isRemote, bool publish)
    {
       gameActorProxy.SetRemote(isRemote);
-
-      gameActorProxy.SetGameManager(this);
+      gameActorProxy.SetIsInGM(true);
 
       if(mEnvironment != NULL)
       {
@@ -827,6 +828,7 @@ namespace dtGame
          dtGame::GameActorProxy* gap = dynamic_cast<dtGame::GameActorProxy*>(temp.get());
          if (gap != NULL)
          {
+            gap->SetGameManager(this);
             gap->BuildInvokables();
          }
          return temp;

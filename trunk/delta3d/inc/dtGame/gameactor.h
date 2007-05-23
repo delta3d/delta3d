@@ -428,6 +428,15 @@ namespace dtGame
           */
          void UnregisterForMessagesAboutSelf(const MessageType& type, 
             const std::string& invokableName = PROCESS_MSG_INVOKABLE);
+      
+         /// Returns if the actor has been added to the 
+         /// gms loops yet; its false upon creation
+         /// then is set to true upon being added to the gm
+         bool IsInGM() const {return mIsInGM;}
+
+         /// Moved to public, since map change state data needs to call this now as well.
+         /// for actors within the map.
+         void SetGameManager(GameManager* gm) { mParent = gm; }      
 
       protected:
          
@@ -480,17 +489,16 @@ namespace dtGame
           * isn't an issue
           */
          void SetIsGameActorProxy(bool b) {}  
-               
-         /**
-          * This is called by the GameManager since it is a friend class.
-          */      
-         void SetGameManager(GameManager* gm) { mParent = gm; }      
-               
+            
+         /// So the game manager is always valid, this was added
+         void SetIsInGM(bool value) {mIsInGM = value;}
+
          friend class GameManager;
          GameManager* mParent;
          Ownership *ownership;
          std::map<std::string, dtCore::RefPtr<Invokable> > mInvokables;
          std::multimap<const MessageType*, dtCore::RefPtr<Invokable> > mMessageHandlers;
+         bool mIsInGM;
 	};
 }
 

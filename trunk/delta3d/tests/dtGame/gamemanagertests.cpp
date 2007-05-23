@@ -809,7 +809,7 @@ void GameManagerTests::TestAddActor()
 
       if (x % 3 == 0)
       {
-         CPPUNIT_ASSERT_MESSAGE("The proxy should have the GameManager pointer set to NULL", proxy->GetGameManager() == NULL);
+         CPPUNIT_ASSERT_MESSAGE("The proxy should have the GameManager pointer set to valid", proxy->GetGameManager() != NULL);
          mManager->AddActor(*proxy, false, false);
          dtCore::RefPtr<dtDAL::ActorProxy> proxyFound = mManager->FindActorById(proxy->GetId());
          CPPUNIT_ASSERT(proxyFound != NULL);

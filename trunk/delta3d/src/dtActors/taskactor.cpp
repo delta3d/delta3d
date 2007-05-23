@@ -325,7 +325,7 @@ namespace dtActors
          if (toFill[i]->GetDataType() == dtDAL::DataType::ACTOR)
          {
             const dtCore::UniqueId& id = static_cast<const dtDAL::NamedActorParameter*>(toFill[i])->GetValue();
-            if (GetGameManager() != NULL)
+            if (IsInGM())
             {
                TaskActorProxy* taskActor = NULL;
                GetGameManager()->FindGameActorById(id, taskActor);

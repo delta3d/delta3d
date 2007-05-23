@@ -142,7 +142,7 @@ void TestPlayer::SetModel(const std::string &fileName)
       }
 
       //the game manager is not set when this property is first set at map load time.
-      if (!IsRemote() && GetGameActorProxy().GetGameManager() != NULL)
+      if (!IsRemote() && GetGameActorProxy().IsInGM())
       {
          dtCore::RefPtr<dtGame::Message> updateMsg = GetGameActorProxy().GetGameManager()->
             GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_UPDATED);
@@ -162,7 +162,7 @@ void TestPlayer::SetVelocity(float velocity)
       mVelocity = velocity;
       // if local, then we need to do an actor update - let the world know.
       //the game manager is not set when this property is first set at map load time.
-      if (!IsRemote() && GetGameActorProxy().GetGameManager() != NULL)
+      if (!IsRemote() && GetGameActorProxy().IsInGM())
       {
          dtCore::RefPtr<dtGame::Message> updateMsg = GetGameActorProxy().GetGameManager()->
             GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_UPDATED);
@@ -188,7 +188,7 @@ void TestPlayer::SetTurnRate(float rate)
       mTurnRate = rate;
 
       //the game manager is not set when this property is first set at map load time.
-      if (!IsRemote() && GetGameActorProxy().GetGameManager() != NULL)
+      if (!IsRemote() && GetGameActorProxy().IsInGM())
       {
          dtCore::RefPtr<dtGame::Message> updateMsg = GetGameActorProxy().GetGameManager()->
             GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_UPDATED);
