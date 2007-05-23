@@ -140,6 +140,9 @@ set DELTA_DATA=$(DELTA_DATA)
 				RelativePath="..\..\..\tests\dtAI\aiparticlemanagertests.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\tests\dtAnim\animationcomponenttests.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\tests\dtAnim\animationtests.cpp">
 			</File>
 			<File
