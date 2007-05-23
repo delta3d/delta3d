@@ -48,7 +48,7 @@ class	DT_ANIM_EXPORT SequenceMixer: public osg::Referenced
 {
 
 public:
-   typedef std::map<std::string, dtCore::RefPtr<Animatable> > AnimationTable;
+   typedef std::map<std::string, dtCore::RefPtr<const Animatable> > AnimationTable;
    typedef AnimationTable::allocator_type::value_type TableKey;
 
 public:
@@ -61,12 +61,11 @@ public:
    void Update(float dt);
 
    /**
-   *  PlayAnimation adds the given animation to active play list. Use this function
-   *  if the animation has been registered with the mixer.
+   *  PlayAnimation adds the given animation to active play list.
    *
    *  @param The name of the animation registered with the mixer
    */
-   void PlayAnimation(const std::string& pAnim);
+   void PlayAnimation(Animatable* pAnim);
 
    /**
    *  This function will clear all currently playing animations from the mixer
@@ -113,15 +112,6 @@ public:
    *  @return the active animation within the system, 0 if this animation does not exist
    */
    const Animatable* GetActiveAnimation(const std::string& pAnim) const;
-
-   /**
-   *  This function returns a pointer to the registered animation specified
-   *  by name.  
-   *
-   *  @param the name of the active animation 
-   *  @return the active animation within the system, 0 if this animation does not exist
-   */
-   Animatable* GetRegisteredAnimation(const std::string& pAnim);
    
    /**
    *  This function returns a pointer to the registered animation specified
@@ -141,7 +131,7 @@ public:
    *  @param the animation to register, the name this animation is registered with comes
    *         from calling GetName() on the animatable.
    */
-   void RegisterAnimation(Animatable* pAnimation);
+   void RegisterAnimation(const Animatable* pAnimation);
 
 
 protected:
@@ -150,7 +140,6 @@ protected:
 
 private:
 
-   Animatable* Lookup(const std::string& pAnimation);
    const Animatable* Lookup(const std::string& pAnimation) const;
 
    AnimationTable mAnimatables;

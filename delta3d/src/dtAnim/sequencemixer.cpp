@@ -28,51 +28,48 @@
 
 namespace dtAnim
 {
-
+/////////////////////////////////////////////////////////////////////////////////
 SequenceMixer::SequenceMixer()
+: mRootSequence(new AnimationSequence())
 {
 }
 
-
+/////////////////////////////////////////////////////////////////////////////////
 SequenceMixer::~SequenceMixer()
 {
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 void SequenceMixer::Update(float dt)
 {
    mRootSequence->Update(dt);
 }
 
-void SequenceMixer::PlayAnimation(const std::string& pAnim)
+/////////////////////////////////////////////////////////////////////////////////
+void SequenceMixer::PlayAnimation(Animatable* anim)
 {
-   Animatable* anim = Lookup(pAnim);
-   if(anim)
-   {
-      dtCore::RefPtr<Animatable> pAnim = anim->Clone();
-      mRootSequence->AddAnimation(pAnim.get());
-   }
-   else
-   {
-      LOG_ERROR("Cannot play animation '" + pAnim + "' because it has not been registered with the SequenceMixer.")
-   }
+   mRootSequence->AddAnimation(anim);
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 void SequenceMixer::ClearAnimation(const std::string& pAnim, float time)
 {
    mRootSequence->ClearAnimation(pAnim, time);
 }
 
-
+/////////////////////////////////////////////////////////////////////////////////
 void SequenceMixer::ClearActiveAnimations(float time)
 {
    mRootSequence->ForceFadeOut(time);
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 void SequenceMixer::ClearRegisteredAnimations()
 {
    mAnimatables.clear();
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 void SequenceMixer::RemoveRegisteredAnimation(const std::string& pAnim)
 {
    AnimationTable::iterator iter = mAnimatables.find(pAnim);
@@ -84,27 +81,26 @@ void SequenceMixer::RemoveRegisteredAnimation(const std::string& pAnim)
    mAnimatables.erase(iter);
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 Animatable* SequenceMixer::GetActiveAnimation(const std::string& pAnim)
 {
    return mRootSequence->GetAnimation(pAnim);
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 const Animatable* SequenceMixer::GetActiveAnimation(const std::string& pAnim) const
 {
    return mRootSequence->GetAnimation(pAnim);
 }
 
-Animatable* SequenceMixer::GetRegisteredAnimation(const std::string& pAnim)
-{
-   return Lookup(pAnim);
-}
-
+/////////////////////////////////////////////////////////////////////////////////
 const Animatable* SequenceMixer::GetRegisteredAnimation(const std::string& pAnim) const
 {
    return Lookup(pAnim);
 }
 
-void SequenceMixer::RegisterAnimation(Animatable* pAnimation)
+/////////////////////////////////////////////////////////////////////////////////
+void SequenceMixer::RegisterAnimation(const Animatable* pAnimation)
 {
    AnimationTable::iterator iter = mAnimatables.find(pAnimation->GetName());
    if(iter != mAnimatables.end())
@@ -117,20 +113,7 @@ void SequenceMixer::RegisterAnimation(Animatable* pAnimation)
    }
 }
 
-
-Animatable* SequenceMixer::Lookup(const std::string& pAnimation)
-{
-   AnimationTable::iterator iter = mAnimatables.find(pAnimation);
-   if(iter == mAnimatables.end())
-   {
-      return 0;
-   }
-   else
-   {
-      return (*iter).second.get();
-   }
-}
-
+/////////////////////////////////////////////////////////////////////////////////
 const Animatable* SequenceMixer::Lookup(const std::string& pAnimation) const
 {
    AnimationTable::const_iterator iter = mAnimatables.find(pAnimation);

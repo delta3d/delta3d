@@ -24,9 +24,22 @@
 
 #include <dtAnim/cal3dmodelwrapper.h>
 
+#include <dtUtil/log.h>
+
 namespace dtAnim
 {
 
+/////////////////////////////////////////////////////////////////////////////////
+AnimationChannel::AnimationChannel()
+: mIsAction(false)
+, mIsLooping(true)
+, mMaxDuration(0.0f)
+, mModelWrapper(0)
+, mAnimationWrapper(0)
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////////
 AnimationChannel::AnimationChannel(Cal3DModelWrapper* pModelWrapper, AnimationWrapper* pAnimationWrapper)
 : mIsAction(false)
 , mIsLooping(true)
@@ -36,7 +49,7 @@ AnimationChannel::AnimationChannel(Cal3DModelWrapper* pModelWrapper, AnimationWr
 {
 }
 
-
+/////////////////////////////////////////////////////////////////////////////////
 AnimationChannel::~AnimationChannel()
 {
 }
@@ -46,9 +59,27 @@ dtCore::RefPtr<Animatable> AnimationChannel::Clone() const
    return new AnimationChannel(*this);
 }
 
+/////////////////////////////////////////////////////////////////////////////////
+void AnimationChannel::SetAnimation(AnimationWrapper* pAnimation)
+{ 
+   mAnimationWrapper = pAnimation;
+}
 
+/////////////////////////////////////////////////////////////////////////////////
+void AnimationChannel::SetModel(Cal3DModelWrapper* pWrapper)
+{
+   mModelWrapper = pWrapper;
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////
 void AnimationChannel::Update(float dt)
 {
+   if(!mModelWrapper.valid())
+   {
+      LOG_ERROR("AnimationChannel '" + GetName() + "' does not have a valid Cal3DModelWrapper.");
+      return;
+   }
    
    if(mEndTime > 0.0f && mElapsedTime > mEndTime)
    {
@@ -77,7 +108,7 @@ void AnimationChannel::Update(float dt)
 
 }
 
-
+/////////////////////////////////////////////////////////////////////////////////
 void AnimationChannel::Recalculate()
 {
    if(GetEndTime() <= 0.0f)
@@ -94,6 +125,7 @@ void AnimationChannel::Recalculate()
 
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 void AnimationChannel::Prune()
 {  
    if(mActive)
@@ -112,6 +144,7 @@ void AnimationChannel::Prune()
 
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 void AnimationChannel::ForceFadeOut(float time)
 {
    SetPrune(true);
@@ -125,42 +158,49 @@ void AnimationChannel::ForceFadeOut(float time)
    }
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 const std::string& AnimationChannel::GetName() const
 {
    return mAnimationWrapper->GetName();
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 void AnimationChannel::SetName(const std::string& pName)
 {
    mAnimationWrapper->SetName(pName);
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 bool AnimationChannel::IsLooping() const
 {
    return mIsLooping;
 }
 
+ /////////////////////////////////////////////////////////////////////////////////
 void AnimationChannel::SetLooping(bool b)
 {
    mIsLooping = b;
 }
 
-
+/////////////////////////////////////////////////////////////////////////////////
 bool AnimationChannel::IsAction() const
 {
    return mIsAction;
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 void AnimationChannel::SetAction(bool b)
 {
    mIsAction = b;
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 float AnimationChannel::GetMaxDuration() const
 {
    return mMaxDuration;
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 void AnimationChannel::SetMaxDuration(float b)
 {
    mMaxDuration = b;

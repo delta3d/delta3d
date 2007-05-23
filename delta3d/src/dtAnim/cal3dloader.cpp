@@ -2,8 +2,13 @@
 #include <dtAnim/cal3dloader.h>
 #include <cal3d/model.h>
 #include <cal3d/coremodel.h>
+#include <cal3d/coreanimation.h>
 #include <dtAnim/characterfilehandler.h>
-#include <dtAnim/cal3dmodelwrapper.h>
+#include <dtAnim/cal3dmodelwrapper.h> 
+#include <dtAnim/animationwrapper.h>
+#include <dtAnim/animationchannel.h>
+#include <dtAnim/animationsequence.h>
+#include <dtAnim/animationcontroller.h>
 #include <dtUtil/xercesparser.h>
 #include <dtUtil/log.h>
 #include <dtCore/globals.h>
@@ -13,13 +18,43 @@
 using namespace dtAnim;
 using namespace dtUtil;
 
+/////////////////////////////////////////////////////////////////////////////////
+Cal3DLoader::ModelData::ModelData()
+: mAnimWrappers()
+, mAnimatables()
+{
+}
+
+Cal3DLoader::ModelData::~ModelData()
+{
+   mAnimWrappers.clear();
+   mAnimatables.clear();
+}
+
+/////////////////////////////////////////////////////////////////////////////////
 Cal3DLoader::Cal3DLoader()
 {
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 Cal3DLoader::~Cal3DLoader()
 {
    PurgeAllCaches();
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+const Cal3DLoader::AnimatableVector* Cal3DLoader::GetAnimatables(const Cal3DModelWrapper& wrapper) const
+{
+   ModelDataMap::const_iterator iter = mModelData.find(wrapper.GetCalModel()->getCoreModel());
+   if(iter != mModelData.end())
+   {
+      return &((*iter).second->mAnimatables);
+   }
+   else
+   {
+      LOG_ERROR("Unable to find animations associated with Cal3DModelWrapper.");
+      return 0;
+   }
 }
 
 /**
@@ -27,7 +62,7 @@ Cal3DLoader::~Cal3DLoader()
  * @throw SAXParseException if the file didn't parse correctly
  * @note Relies on the the "animationdefinition.xsd" schema file
  */
-CalCoreModel* Cal3DLoader::GetCoreModel( const std::string &filename, const std::string &path )
+CalCoreModel* Cal3DLoader::GetCoreModel(CharacterFileHandler& handler, const std::string &filename, const std::string &path )
 {
    using namespace dtCore;
 
@@ -43,11 +78,13 @@ CalCoreModel* Cal3DLoader::GetCoreModel( const std::string &filename, const std:
    {
       //gotta parse the file and create/store a new CalCoreModel
       dtUtil::XercesParser parser;
-      CharacterFileHandler handler;
       
       if (parser.Parse(filename, handler, "animationdefinition.xsd"))
       {
          coreModel = new CalCoreModel(handler.mName);      
+         ModelData* newModelData = new ModelData();
+
+         mModelData.insert(ModelDataMapping(coreModel, newModelData));
 
          //load skeleton
          std::string skelFile = FindFileInPathList(path + handler.mSkeletonFilename);
@@ -148,7 +185,20 @@ dtCore::RefPtr<Cal3DModelWrapper> Cal3DLoader::Load( const std::string &filename
    }
 
    dtCore::RefPtr<Cal3DModelWrapper> wrapper;
-   CalCoreModel *coreModel = GetCoreModel(filename, path);
+   CalCoreModel *coreModel = NULL;
+
+   //see if we have already created a CalCoreModel for this filename
+   FilenameCoreModelMap::iterator found = mFilenameCoreModelMap.find(filename);
+   if (found != mFilenameCoreModelMap.end())
+   {
+      coreModel = (*found).second;      
+   }
+   else
+   {
+      CharacterFileHandler handler;
+      coreModel = GetCoreModel(handler, filename, path);
+      LoadModelData(handler, coreModel);
+   }
 
    if (coreModel != NULL)
    {
@@ -160,7 +210,72 @@ dtCore::RefPtr<Cal3DModelWrapper> Cal3DLoader::Load( const std::string &filename
    return wrapper;
 }
 
+/////////////////////////////////////////////////////////////////////////////////
+void Cal3DLoader::LoadModelData(dtAnim::CharacterFileHandler& handler, CalCoreModel* model)
+{
+   dtCore::RefPtr<ModelData> modelData = new ModelData();
 
+   //create animation wrappers
+   int numAnims = model->getCoreAnimationCount();
+   modelData->mAnimWrappers.reserve(numAnims);
+   
+   for(int i = 0; i < numAnims; ++i)
+   {
+      CalCoreAnimation* anim = model->getCoreAnimation(i);
+      if(anim)
+      {
+         AnimationWrapper* pWrapper = new AnimationWrapper(anim->getName(), i);
+         modelData->mAnimWrappers.push_back(pWrapper);
+      }
+      else
+      {
+         LOG_ERROR("Cannot find CalCoreAnimation for animation '" + anim->getName() + "'");
+      }
+   }
+
+   //register animations
+   if(!handler.mAnimationChannels.empty())
+   {
+      AnimatableVector& vect = modelData->mAnimatables;
+      modelData->mAnimatables.reserve(vect.size());
+
+      std::vector<CharacterFileHandler::AnimationChannelStruct>::iterator channelIter = handler.mAnimationChannels.begin();
+      std::vector<CharacterFileHandler::AnimationChannelStruct>::iterator channelEnd = handler.mAnimationChannels.end();
+      for(;channelIter != channelEnd; ++channelIter)
+      {         
+         CharacterFileHandler::AnimationChannelStruct& pStruct = *channelIter;
+
+         int id = model->getCoreAnimationId(pStruct.animation_name);
+         if(id >= 0 && id < int(modelData->mAnimWrappers.size()))
+         {
+            AnimationChannel* pChannel = new AnimationChannel();
+            
+            pChannel->SetAnimation(modelData->mAnimWrappers[id].get());
+
+            pChannel->SetName(pStruct.channel_name);
+            pChannel->SetLooping(pStruct.is_looping);
+            pChannel->SetAction(pStruct.is_action);
+            pChannel->SetMaxDuration(pStruct.max_duration);
+            pChannel->SetStartDelay(pStruct.start_delay);
+            pChannel->SetFadeIn(pStruct.fade_in);
+            pChannel->SetFadeOut(pStruct.fade_out);
+            pChannel->SetSpeed(pStruct.speed);
+
+            modelData->mAnimatables.push_back(pChannel);
+         }
+         else
+         {
+            LOG_ERROR("Unable to find animation '" + pStruct.animation_name + "' within the CalCoreModel.");
+         }
+         
+      }
+   }
+
+   
+   mModelData[model] = modelData;
+}
+
+/////////////////////////////////////////////////////////////////////////////////
 void Cal3DLoader::LoadAllTextures(CalCoreModel *coreModel, const std::string &path)
 {
    int materialId;
@@ -221,7 +336,8 @@ void Cal3DLoader::LoadAllTextures(CalCoreModel *coreModel, const std::string &pa
   */
 void Cal3DLoader::PurgeAllCaches()
 {
-   mTextures.clear();
+   mTextures.clear(); 
+   mModelData.clear();
 
    FilenameCoreModelMap::iterator itr = mFilenameCoreModelMap.begin();
 
