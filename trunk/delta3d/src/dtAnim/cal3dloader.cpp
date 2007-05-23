@@ -198,11 +198,11 @@ dtCore::RefPtr<Cal3DModelWrapper> Cal3DLoader::Load( const std::string &filename
       CharacterFileHandler handler;
       coreModel = GetCoreModel(handler, filename, path);
       LoadModelData(handler, coreModel);
+      LoadAllTextures(coreModel, path); //this should be a user-level process.
    }
 
    if (coreModel != NULL)
    {
-      LoadAllTextures(coreModel, path); //this should be a user-level process.
       CalModel *model = new CalModel(coreModel);
       wrapper = new Cal3DModelWrapper(model);
    }
@@ -293,18 +293,32 @@ void Cal3DLoader::LoadAllTextures(CalCoreModel *coreModel, const std::string &pa
          std::string strFilename;
          strFilename = pCoreMaterial->getMapFilename(mapId);
 
-         // load the texture from the file
-         osg::Image *img = osgDB::readImageFile(path + strFilename);
-         assert(img);
+         TextureMap::iterator textureIterator = mTextures.find(strFilename);
 
-         osg::Texture2D *texture = new osg::Texture2D();
-         texture->setImage(img);
-         texture->setWrap(osg::Texture::WRAP_S, osg::Texture::REPEAT);
-         texture->setWrap(osg::Texture::WRAP_T, osg::Texture::REPEAT);
-         mTextures.push_back(texture);
+         if(textureIterator == mTextures.end())
+         {
+            // load the texture from the file
+            osg::Image *img = osgDB::readImageFile(path + strFilename);
+            
+            if(!img)
+            {
+               LOG_ERROR("Unable to load image file: " + strFilename);
+               continue;
+            }
 
-         // store the opengl texture id in the user data of the map
-         pCoreMaterial->setMapUserData(mapId, (Cal::UserData)texture);
+            osg::Texture2D *texture = new osg::Texture2D();
+            texture->setImage(img);
+            texture->setWrap(osg::Texture::WRAP_S, osg::Texture::REPEAT);
+            texture->setWrap(osg::Texture::WRAP_T, osg::Texture::REPEAT);
+            mTextures[strFilename] = texture;
+
+            // store the opengl texture id in the user data of the map
+            pCoreMaterial->setMapUserData(mapId, (Cal::UserData)texture);
+         }
+         else
+         {            
+            pCoreMaterial->setMapUserData(mapId, (Cal::UserData)((*textureIterator).second.get()));
+         }
       }
    }
 

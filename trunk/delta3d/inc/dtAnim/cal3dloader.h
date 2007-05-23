@@ -105,10 +105,11 @@ namespace dtAnim
 
          FilenameCoreModelMap mFilenameCoreModelMap;
 
-         /** List of textures loaded by this class, to destroy them when this class
-         * is destroyed. */
-         std::vector< osg::ref_ptr<osg::Texture2D> > mTextures;
+         typedef std::map< std::string, osg::ref_ptr<osg::Texture2D> > TextureMap;
+         typedef TextureMap::allocator_type::value_type TextureMapping;
 
+         TextureMap mTextures;
+ 
    };
 }//namespace dtAnim
 
