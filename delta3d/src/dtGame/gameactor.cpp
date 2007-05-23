@@ -54,7 +54,9 @@ namespace dtGame
 	///////////////////////////////////////////
 	// Actor Proxy code
 	///////////////////////////////////////////
-	GameActorProxy::GameActorProxy() : mParent(NULL), ownership(&GameActorProxy::Ownership::SERVER_LOCAL)
+	GameActorProxy::GameActorProxy() : mParent(NULL)
+      , ownership(&GameActorProxy::Ownership::SERVER_LOCAL)
+      , mIsInGM(false)
 	{
       SetClassName("dtGame::GameActor");
 	}
@@ -400,7 +402,7 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////////////
    void GameActorProxy::RegisterForMessages(const MessageType& type, const std::string& invokableName)
    {
-      if (GetGameManager() != NULL)
+      if (IsInGM())
       {
          GetGameManager()->RegisterForMessages(type,*this, invokableName);
       }
@@ -408,7 +410,7 @@ namespace dtGame
       {
          std::ostringstream oss;
          oss << "Could not register the messagetype: " << type.GetName() << " with the invokable: " <<
-                invokableName << " because the game manager is NULL.";
+                invokableName << " because the actor is not in the Game Manager yet.";
          LOGN_ERROR("gameactor.cpp", oss.str())
       }
    }
@@ -417,7 +419,7 @@ namespace dtGame
    void GameActorProxy::RegisterForMessagesAboutOtherActor(const MessageType& type, 
       const dtCore::UniqueId& targetActorId, const std::string& invokableName)
    {
-      if (GetGameManager() != NULL)
+      if (IsInGM())
       {
          GetGameManager()->RegisterForMessagesAboutActor(type,targetActorId, *this, invokableName);
       }
@@ -425,7 +427,7 @@ namespace dtGame
       {
          std::ostringstream oss;
          oss << "Could not register the messagetype: " << type.GetName() << " with the invokable: " <<
-            invokableName << " because the game manager is NULL.";
+            invokableName << " because the actor is not in the Game Manager yet.";
          LOGN_ERROR("gameactor.cpp", oss.str())
       }
    }
@@ -450,7 +452,7 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////////////
    void GameActorProxy::UnregisterForMessages(const MessageType& type, const std::string& invokableName)
    {
-      if (GetGameManager() != NULL)
+      if ( GetGameManager() != NULL)
       {
          GetGameManager()->UnregisterForMessages(type,*this, invokableName);
       }

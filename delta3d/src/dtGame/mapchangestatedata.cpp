@@ -186,6 +186,7 @@ namespace dtGame
                GameActorProxy* gameProxy = dynamic_cast<GameActorProxy*>(&aProxy);
                if (gameProxy != NULL)
                {
+                  gameProxy->SetGameManager(mGameManager.get());
                   gameProxy->BuildInvokables();
                   if(gameProxy->GetInitialOwnership() == GameActorProxy::Ownership::PROTOTYPE)
                   {

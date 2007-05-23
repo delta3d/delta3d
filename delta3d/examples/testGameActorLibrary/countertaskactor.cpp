@@ -79,7 +79,7 @@ void CounterTaskActorProxy::SetCounter(int value)
       task->SetComplete(true);
    }
    
-   if (!IsRemote() && GetGameManager() != NULL)
+   if (!IsRemote() && IsInGM())
    {
       dtCore::RefPtr<dtGame::Message> updateMsg = 
          GetGameManager()->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_UPDATED);
@@ -95,7 +95,7 @@ void CounterTaskActorProxy::SetTargetCount(int value)
 {
    mTarget = value;
     
-   if (!IsRemote() && GetGameManager() != NULL)
+   if (!IsRemote() && IsInGM())
    {
       dtCore::RefPtr<dtGame::Message> updateMsg = 
          GetGameManager()->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_UPDATED);

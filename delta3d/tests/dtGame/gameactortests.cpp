@@ -133,6 +133,7 @@ class GameActorTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestEnvironmentTimeConversions);
       CPPUNIT_TEST(TestDefaultProcessMessageRegistration);
       CPPUNIT_TEST(TestMessageProcessingPerformance);
+      CPPUNIT_TEST(TestActorIsOnGM);
 
    CPPUNIT_TEST_SUITE_END();
 
@@ -151,6 +152,7 @@ public:
    void TestStaticGameActorTypes();
    void TestEnvironmentTimeConversions();
    void TestMessageProcessingPerformance();
+   void TestActorIsOnGM();
 
 private:
    static const std::string mTestGameActorLibrary;
@@ -165,6 +167,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION(GameActorTests);
 const std::string GameActorTests::mTestGameActorLibrary = "testGameActorLibrary";
 const std::string GameActorTests::mTestActorLibrary     = "testActorLibrary";
 
+////////////////////////////////////////////////////////////////////////
 void GameActorTests::setUp()
 {
    try
@@ -187,6 +190,7 @@ void GameActorTests::setUp()
    }
 }
 
+////////////////////////////////////////////////////////////////////////
 void GameActorTests::tearDown()
 {
    dtCore::System::GetInstance().Stop();
@@ -198,7 +202,31 @@ void GameActorTests::tearDown()
    }
 }
 
+////////////////////////////////////////////////////////////////////////
+void GameActorTests::TestActorIsOnGM()
+{
+   try
+   {
+      dtCore::RefPtr<dtDAL::ActorType> actorType = mManager->FindActorType("ExampleActors", "Test1Actor");
+      dtCore::RefPtr<dtDAL::ActorProxy> proxy = mManager->CreateActor(*actorType);
+      dtCore::RefPtr<dtGame::GameActorProxy> gap = dynamic_cast<dtGame::GameActorProxy*>(proxy.get());
+      CPPUNIT_ASSERT_MESSAGE("ActorProxy should not be NULL", gap != NULL);
+      CPPUNIT_ASSERT_MESSAGE("ActorProxy Should not be in GM", gap->IsInGM() != true);
 
+      mManager->AddActor(*gap.get(), false, false);
+
+      CPPUNIT_ASSERT_MESSAGE("ActorProxy Should be in GM", gap->IsInGM() != false);
+   }
+   catch(const dtUtil::Exception &e)
+   {
+      CPPUNIT_FAIL(e.What());
+   }
+
+   int akljdsafa = 0;
+}
+
+
+////////////////////////////////////////////////////////////////////////
 void GameActorTests::TestGameActor()
 {
    try
