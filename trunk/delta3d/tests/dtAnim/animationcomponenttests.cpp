@@ -218,7 +218,7 @@ namespace dtAnim
 
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       
-      mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, "Testing performance of ForceFadeOut()");
+      mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, "Testing performance of ClearAnimation()");
 
       timerStart = timer.Tick();
       for(iter = proxies.begin(), end = proxies.end(); iter != end; ++iter)
@@ -236,7 +236,7 @@ namespace dtAnim
       }
       timerEnd = timer.Tick();
 
-      mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, "Time Results for Play Animation: " + dtUtil::ToString(timer.DeltaMil(timerStart, timerEnd)) + " ms");
+      mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, "Time Results for Clear Animation: " + dtUtil::ToString(timer.DeltaMil(timerStart, timerEnd)) + " ms");
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
       
