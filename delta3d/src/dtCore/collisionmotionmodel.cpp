@@ -495,10 +495,11 @@ void CollisionMotionModel::OnMessage(MessageData *data)
       
       GetTarget()->SetTransform(transform); 
 
-      if(mMouse->GetButtonState(Mouse::LeftButton)) 
+      //if are requiring mouse buttons and the left mouse button is pressed OR we aren't requiring mouse buttons
+      if((mUseMouseButtons && mMouse->GetButtonState(Mouse::LeftButton)) || !mUseMouseButtons) 
+      {
          mMouse->SetPosition(0.0f,0.0f);//keeps cursor at center of screen
-      else
-         mMouse->SetPosition(0.0f,0.0f);//keeps cursor at center of screen
+      }
    }
 }
 }
