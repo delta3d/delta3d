@@ -23,7 +23,7 @@
 #include <dtAnim/animationwrapper.h>
 
 #include <dtAnim/cal3dmodelwrapper.h>
-
+#include <osg/Math>
 #include <dtUtil/log.h>
 
 namespace dtAnim
@@ -34,6 +34,7 @@ AnimationChannel::AnimationChannel()
 : mIsAction(false)
 , mIsLooping(true)
 , mMaxDuration(0.0f)
+, mLastWeight(0.0f)
 , mModelWrapper(0)
 , mAnimationWrapper(0)
 {
@@ -94,15 +95,17 @@ void AnimationChannel::Update(float dt)
       else
       {
          mModelWrapper->BlendCycle(mAnimationWrapper->GetID(), mCurrentWeight, 0.0f);
+         mLastWeight = mCurrentWeight;
       }
 
       SetActive(true);
    }
    else
    {
-      if(!mIsAction)
+      if(!mIsAction && !osg::equivalent(mLastWeight, mCurrentWeight))
       {
          mModelWrapper->BlendCycle(mAnimationWrapper->GetID(), mCurrentWeight, 0.0f);
+         mLastWeight = mCurrentWeight;
       }         
    }
 

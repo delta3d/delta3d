@@ -495,10 +495,16 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtDIS", "src\dtDIS\dtDIS.vc
 		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testAnim", "examples\testAnim\testAnim.vcproj", "{34C4169A-C6DF-4A7F-8351-CCF75BB0D1DE}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
 		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectDependencies) = postSolution
 	EndGlobalSection
 	GlobalSection(ProjectConfiguration) = postSolution
 		{D1B34D72-1FCC-45E4-8CA7-BFF9C7D7689C}.Debug.ActiveCfg = Debug|Win32
@@ -784,6 +790,10 @@ Global
 		{A52F91E9-EF5D-48E9-A91C-062645CEEFE5}.Debug.Build.0 = Debug|Win32
 		{A52F91E9-EF5D-48E9-A91C-062645CEEFE5}.Release.ActiveCfg = Release|Win32
 		{A52F91E9-EF5D-48E9-A91C-062645CEEFE5}.Release.Build.0 = Release|Win32
+		{34C4169A-C6DF-4A7F-8351-CCF75BB0D1DE}.Debug.ActiveCfg = Debug|Win32
+		{34C4169A-C6DF-4A7F-8351-CCF75BB0D1DE}.Debug.Build.0 = Debug|Win32
+		{34C4169A-C6DF-4A7F-8351-CCF75BB0D1DE}.Release.ActiveCfg = Release|Win32
+		{34C4169A-C6DF-4A7F-8351-CCF75BB0D1DE}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection

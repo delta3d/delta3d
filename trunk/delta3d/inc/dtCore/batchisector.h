@@ -40,10 +40,10 @@ namespace dtCore
    \code
       BatchIsector *isect = new BatchIsector( mScene );
       osg::Vec3 queryPoint( 500.0f, 500.0f, 1000.0f );
-      isect->CreateOrGetISector(0)->SetSectorAsLineSegment(const osg::Vec3& startPos, const osg::Vec3& endPos);
+      isect->EnableAndGetISector(0).SetSectorAsLineSegment(const osg::Vec3& startPos, const osg::Vec3& endPos);
       isect->Update(queryPoint, true);
       osg::Vec3 hitPt;
-      isect->GetSingleISector(0)->GetHitPoint( hitPt );
+      isect->GetSingleISector(0).GetHitPoint( hitPt );
    \endcode
     */
 

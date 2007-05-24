@@ -113,7 +113,7 @@ protected:
    virtual ~AnimationComponent();
 
    virtual void TickLocal(float dt);
-
+   void GroundClamp();
 
 private:
    AnimationComponent(const AnimationComponent&);               //not implemented

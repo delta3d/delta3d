@@ -43,17 +43,21 @@ namespace dtAnim
 
 const std::string AnimationComponent::DEFAULT_NAME("Animation Component");
 
+/////////////////////////////////////////////////////////////////////////////////
 AnimationComponent::AnimationComponent(const std::string& name)
 : BaseClass(name)
+, mRegisteredActors()
+, mTerrainActor(0)
+, mIsector(0)
 {
 }
 
-
+/////////////////////////////////////////////////////////////////////////////////
 AnimationComponent::~AnimationComponent()
 {
 }
 
-
+/////////////////////////////////////////////////////////////////////////////////
 void AnimationComponent::ProcessMessage(const dtGame::Message &message)
 {
    if (message.GetMessageType() == dtGame::MessageType::TICK_LOCAL)
@@ -63,7 +67,7 @@ void AnimationComponent::ProcessMessage(const dtGame::Message &message)
    }
 }
 
-
+/////////////////////////////////////////////////////////////////////////////////
 void AnimationComponent::TickLocal(float dt)
 {
    AnimCompIter end = mRegisteredActors.end();
@@ -72,9 +76,11 @@ void AnimationComponent::TickLocal(float dt)
    {
       (*iter).second->Update(dt);
    }
+
+   GroundClamp();
 }
 
-
+/////////////////////////////////////////////////////////////////////////////////
 const dtAnim::AnimationHelper* AnimationComponent::GetHelperForProxy(dtGame::GameActorProxy &proxy) const
 {
    const AnimCompMap::const_iterator iter = mRegisteredActors.find(proxy.GetId());
@@ -90,6 +96,7 @@ const dtAnim::AnimationHelper* AnimationComponent::GetHelperForProxy(dtGame::Gam
 
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 void AnimationComponent::RegisterActor(dtGame::GameActorProxy& proxy, dtAnim::AnimationHelper& helper)
 {
    AnimCompIter iter = mRegisteredActors.find(proxy.GetId());
@@ -103,7 +110,7 @@ void AnimationComponent::RegisterActor(dtGame::GameActorProxy& proxy, dtAnim::An
    }
 }
 
-
+/////////////////////////////////////////////////////////////////////////////////
 void AnimationComponent::UnregisterActor(dtGame::GameActorProxy& proxy)
 {
    AnimCompIter iter = mRegisteredActors.find(proxy.GetId());
@@ -117,6 +124,7 @@ void AnimationComponent::UnregisterActor(dtGame::GameActorProxy& proxy)
    }
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 bool AnimationComponent::IsRegisteredActor(dtGame::GameActorProxy& proxy)
 {
    AnimCompIter iter = mRegisteredActors.find(proxy.GetId());
@@ -130,19 +138,72 @@ bool AnimationComponent::IsRegisteredActor(dtGame::GameActorProxy& proxy)
    }
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 dtCore::Transformable* AnimationComponent::GetTerrainActor()
 {
    return mTerrainActor.get();
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 const dtCore::Transformable* AnimationComponent::GetTerrainActor() const
 {
    return mTerrainActor.get();
 };
 
+/////////////////////////////////////////////////////////////////////////////////
 void AnimationComponent::SetTerrainActor(dtCore::Transformable* newTerrain)
 {
    mTerrainActor = newTerrain;
+
+   if(!mIsector.valid())
+   {
+      mIsector = new dtCore::BatchIsector();
+   }   
+
+   mIsector->SetQueryRoot(mTerrainActor.get());
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+void AnimationComponent::GroundClamp()
+{
+   if(mTerrainActor.valid() && mIsector.valid())
+   {
+      dtCore::Transform trans;
+      osg::Matrix mat;
+      osg::Vec3 pos, hitPt;
+      
+      dtGame::GameManager* gm = GetGameManager();
+        
+      AnimCompIter end = mRegisteredActors.end();
+
+      for(AnimCompIter iter = mRegisteredActors.begin(); iter != end; ++iter)
+      {
+         AnimationHelper* helper = (*iter).second.get();
+
+         if(helper->GetGroundClamp())
+         {
+            dtGame::GameActorProxy* pProxy = gm->FindGameActorById((*iter).first);   
+            if(pProxy)
+            {
+               dtGame::GameActor* pActor = &pProxy->GetGameActor();
+
+               pActor->GetTransform(trans);            
+               pos = trans.GetTranslation();      
+
+               mIsector->EnableAndGetISector(0).SetSectorAsLineSegment(osg::Vec3(pos[0], pos[1], pos[2] + 10.0f), osg::Vec3(pos[0], pos[1], pos[2] - 10.0f));
+               if(mIsector->Update(pos, true))
+               {
+                  mIsector->GetSingleISector(0).GetHitPoint(hitPt);
+                  pos[2] = hitPt[2];
+                  std::cout << pos[2] << std::endl;
+                  trans.SetTranslation(pos);
+                  pActor->SetTransform(trans);//, dtCore::Transformable::REL_CS);
+               }
+            }
+         }
+      }
+
+   }
 }
 
 }//namespace dtGame
