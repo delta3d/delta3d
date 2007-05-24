@@ -877,6 +877,7 @@ namespace dtGame
          }
 
          mEnvironment = envActor;
+         mEnvironment->SetGameManager(this);
          AddActor(*mEnvironment, false, false);
          if(wasPagingEnabled)
             mScene->EnablePaging();
