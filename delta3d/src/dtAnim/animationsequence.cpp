@@ -128,7 +128,15 @@ void AnimationSequence::AddAnimation(Animatable* pAnimation)
 
 void AnimationSequence::ClearAnimation(const std::string& pAnimName, float fadeTime)
 {
-   Remove(pAnimName);
+   Animatable* anim = GetAnimatable(pAnimName);
+   if(anim)
+   {
+      anim->ForceFadeOut(fadeTime);
+   }
+   else
+   {
+      LOG_ERROR("Unable to ClearAnimation '" + pAnimName + "'");
+   }
 }
 
 Animatable* AnimationSequence::GetAnimation(const std::string& pAnimName)
