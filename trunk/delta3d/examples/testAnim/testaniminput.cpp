@@ -105,6 +105,8 @@ bool TestAnimInput::HandleKeyPressed(const dtCore::Keyboard *keyBoard,
             }
             return false;
          }
+      default:
+         break;
    };
 
    if(!handled)
@@ -135,6 +137,8 @@ bool TestAnimInput::HandleKeyReleased(const dtCore::Keyboard* keyboard,
             mIsTurning = false;
             return false;
          }
+      default:
+         break;
    };
 
    if(!handled)
