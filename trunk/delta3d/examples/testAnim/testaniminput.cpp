@@ -19,7 +19,7 @@
  * Christopher DuBuc
  * William E. Johnson II
  */
-#include "TestAnimInput.h"
+#include "testaniminput.h"
 
 #include <dtUtil/macros.h>
 #include <dtABC/application.h>
