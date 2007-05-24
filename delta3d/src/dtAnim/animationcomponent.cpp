@@ -195,7 +195,6 @@ void AnimationComponent::GroundClamp()
                {
                   mIsector->GetSingleISector(0).GetHitPoint(hitPt);
                   pos[2] = hitPt[2];
-                  std::cout << pos[2] << std::endl;
                   trans.SetTranslation(pos);
                   pActor->SetTransform(trans);//, dtCore::Transformable::REL_CS);
                }
