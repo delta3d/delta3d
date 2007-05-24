@@ -153,8 +153,8 @@
             <property>
                 <name>Skeletal Mesh</name>
                 <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes::marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes::marine.xml</resource>
+                <resourceDisplayName>SkeletalMeshes:marine.xml</resourceDisplayName>
+                <resource>SkeletalMeshes:marine.xml</resource>
             </property>
         </actor>
         <actor>
@@ -237,7 +237,7 @@
                 <name>static mesh</name>
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>terrain_simple.ive</resourceDisplayName>
-                <resource>StaticMeshes::terrain_simple.ive</resource>
+                <resource>StaticMeshes:terrain_simple.ive</resource>
             </property>
         </actor>
     </actors>
