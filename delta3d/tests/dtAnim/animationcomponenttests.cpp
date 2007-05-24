@@ -49,7 +49,7 @@ namespace dtAnim
 
    class TestAnimHelper: public AnimationHelper
    {
-      bool mHasBeenUpdated;
+      bool mHasBeenUpdated; 
 
    public:
       TestAnimHelper():mHasBeenUpdated(false){}
@@ -142,6 +142,11 @@ namespace dtAnim
          std::string context = dtCore::GetDeltaRootPath() + "/tests/data/ProjectContext";
          dtDAL::Project::GetInstance().SetContext(context, true);
          mGM->ChangeMap("AnimationPerformance");
+
+         //step a few time to ensure the map loaded
+         dtCore::System::GetInstance().Step();
+         dtCore::System::GetInstance().Step();
+         dtCore::System::GetInstance().Step();
          
          dtDAL::Project::GetInstance().GetMap("AnimationPerformance").FindProxies(proxies, "CharacterEntity");      
       
@@ -202,6 +207,13 @@ namespace dtAnim
       int numUpdates = 60;
       float updateTime = 1.0f / 60.0f;
       dtCore::RefPtr<dtGame::Message> message = mGM->GetMessageFactory().CreateMessage(dtGame::MessageType::TICK_LOCAL);
+
+      dtGame::TickMessage* tick = dynamic_cast<dtGame::TickMessage*>(message.get());
+      if(!tick)
+      {
+         CPPUNIT_FAIL("Invalid message type");
+      }
+      tick->SetDeltaSimTime(updateTime);
 
       mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, "Testing performance of " + dtUtil::ToString(numUpdates) + " updates on AnimationComponent");
 
