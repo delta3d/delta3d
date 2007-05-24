@@ -134,7 +134,7 @@ protected:
 private:
 
    bool mIsAction, mIsLooping;
-   float mMaxDuration;
+   float mMaxDuration, mLastWeight;
 
    //todo, verify holding a refptr to the model wrapper is ok
    dtCore::RefPtr<Cal3DModelWrapper> mModelWrapper;

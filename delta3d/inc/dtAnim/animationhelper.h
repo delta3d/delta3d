@@ -103,6 +103,14 @@ public:
    void ClearAnimation(const std::string& pAnim, float fadeOutTime);
 
    /**
+   *  This function stops playing all currently active animations
+   *  over the time specified by fade out.
+   *
+   * @param The amount of time to fade out over
+   */
+   void ClearAll(float fadeOutTime);
+
+   /**
    * @return the osg::Geode() created by the builder on LoadModel
    */
    osg::Geode* GetGeode();
@@ -162,12 +170,23 @@ public:
    */
    virtual void GetActorProperties(dtDAL::ActorProxy& pProxy, std::vector<dtCore::RefPtr<dtDAL::ActorProperty> >& pFillVector);      
 
+   /**
+   * This flag is used by the AnimationComponent to determine
+   * if this entity should be ground clamped.
+   */
+   bool GetGroundClamp() const;
+
+   /**
+   * Set whether or not this entity should be ground clamped
+   */
+   void SetGroundClamp(bool b);   
 
 protected:
    virtual ~AnimationHelper();
 
 private:
 
+   bool mGroundClamp;
    dtCore::RefPtr<osg::Geode> mGeode;
    dtCore::RefPtr<Cal3DAnimator> mAnimator;
    dtCore::RefPtr<AnimNodeBuilder> mNodeBuilder;

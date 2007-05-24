@@ -47,9 +47,10 @@ namespace dtAnim
 
 dtCore::RefPtr<Cal3DLoader> AnimationHelper::sModelLoader = new Cal3DLoader();
 
-
+/////////////////////////////////////////////////////////////////////////////////
 AnimationHelper::AnimationHelper()
-: mGeode(0)
+: mGroundClamp(false)
+, mGeode(0)
 , mAnimator(0)
 , mNodeBuilder(new AnimNodeBuilder())
 , mSequenceMixer(new SequenceMixer())
@@ -57,11 +58,12 @@ AnimationHelper::AnimationHelper()
 {
 }
 
-
+/////////////////////////////////////////////////////////////////////////////////
 AnimationHelper::~AnimationHelper()
 {
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 void AnimationHelper::Update(float dt)
 {
    if(mAnimator.valid())
@@ -71,6 +73,7 @@ void AnimationHelper::Update(float dt)
    }
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 void AnimationHelper::PlayAnimation(const std::string& pAnim)
 {
    const Animatable* anim = mSequenceMixer->GetRegisteredAnimation(pAnim);
@@ -94,12 +97,19 @@ void AnimationHelper::PlayAnimation(const std::string& pAnim)
    }
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 void AnimationHelper::ClearAnimation(const std::string& pAnim, float fadeOutTime)
 {
    mSequenceMixer->ClearAnimation(pAnim, fadeOutTime);
 }
 
+/////////////////////////////////////////////////////////////////////////////////
+void AnimationHelper::ClearAll(float fadeOut)
+{
+   mSequenceMixer->ClearActiveAnimations(fadeOut);
+}
 
+/////////////////////////////////////////////////////////////////////////////////
 void AnimationHelper::LoadModel(const std::string& pFilename)
 {
       dtCore::RefPtr<dtAnim::Cal3DModelWrapper> newModel = sModelLoader->Load(pFilename);
@@ -127,6 +137,7 @@ void AnimationHelper::LoadModel(const std::string& pFilename)
       }
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 void AnimationHelper::GetActorProperties(dtDAL::ActorProxy& pProxy, std::vector<dtCore::RefPtr<dtDAL::ActorProperty> >& pFillVector)
 {
    pFillVector.push_back(new dtDAL::ResourceActorProperty(pProxy, dtDAL::DataType::SKELETAL_MESH,
@@ -134,55 +145,78 @@ void AnimationHelper::GetActorProperties(dtDAL::ActorProxy& pProxy, std::vector<
       "The model resource that defines the skeletal mesh", "AnimationModel"));     
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 osg::Geode* AnimationHelper::GetGeode()
 {
    return mGeode.get();
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 const osg::Geode* AnimationHelper::GetGeode() const
 {
    return mGeode.get();
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 Cal3DAnimator* AnimationHelper::GetAnimator()
 {
    return mAnimator.get();
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 const Cal3DModelWrapper* AnimationHelper::GetModelWrapper() const
 {
    return mAnimator->GetWrapper();
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 Cal3DModelWrapper* AnimationHelper::GetModelWrapper()
 {
    return mAnimator->GetWrapper();
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 const Cal3DAnimator* AnimationHelper::GetAnimator() const
 {
    return mAnimator.get();
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 SequenceMixer* AnimationHelper::GetSequenceMixer()
 {
    return mSequenceMixer.get();
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 const SequenceMixer* AnimationHelper::GetSequenceMixer() const
 {
    return mSequenceMixer.get();
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 SkeletalConfiguration* AnimationHelper::GetSkeletalConfiguration()
 {
    return mSkeleton.get();
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 const SkeletalConfiguration* AnimationHelper::GetSkeletalConfiguration() const
 {
    return mSkeleton.get();
 }
+
+/////////////////////////////////////////////////////////////////////////////////
+bool AnimationHelper::GetGroundClamp() const
+{
+   return mGroundClamp;
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+void AnimationHelper::SetGroundClamp(bool b)
+{
+   mGroundClamp = b;
+}
+
 
 
 }//namespace dtAnim
