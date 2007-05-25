@@ -780,7 +780,7 @@ void GameManagerTests::TestCreateRemoteActor()
    
    dtCore::RefPtr<dtGame::GameActorProxy> proxy; 
    CPPUNIT_ASSERT_NO_THROW(proxy = mManager->CreateRemoteGameActor(*gameActorType));
-   
+   CPPUNIT_ASSERT_MESSAGE("Proxy should have a valid GM on it", proxy->GetGameManager() != NULL);
    CPPUNIT_ASSERT_MESSAGE("The proxy created as remote should not be NULL.", proxy.valid());
    CPPUNIT_ASSERT_MESSAGE("The proxy created as remote should have a valid actor.", proxy->GetActor() != NULL);
    CPPUNIT_ASSERT_MESSAGE("The proxy should already be remote.", proxy->IsRemote());
@@ -799,6 +799,8 @@ void GameManagerTests::TestAddActor()
       CPPUNIT_ASSERT(type != NULL);
       dtCore::RefPtr<dtGame::GameActorProxy> proxy;
       mManager->CreateActor(*type, proxy);
+      CPPUNIT_ASSERT_MESSAGE("Proxy should not be in the gm yet", proxy->IsInGM() != true);
+      CPPUNIT_ASSERT_MESSAGE("Proxy should have a valid GM on it", proxy->GetGameManager() != NULL);
       CPPUNIT_ASSERT_MESSAGE("Proxy, the result of a dynamic_cast to dtGame::GameActorProxy, should not be NULL", proxy != NULL);
       CPPUNIT_ASSERT_MESSAGE("IsGameActorProxy should return true", proxy->IsGameActorProxy());
 
@@ -839,6 +841,10 @@ void GameManagerTests::TestAddActor()
          CPPUNIT_ASSERT_MESSAGE("Actor should be published.", proxy->IsPublished());
 
          mManager->DeleteActor(*proxy);
+
+         bool testIsInGM = proxy->IsInGM();
+
+         CPPUNIT_ASSERT_MESSAGE("The proxy should not be in the gm", testIsInGM != true);
 
          CPPUNIT_ASSERT_MESSAGE("The actor should still be in the scene.",
             mManager->GetScene().GetDrawableIndex(proxy->GetActor()) != mManager->GetScene().GetNumberOfAddedDrawable());

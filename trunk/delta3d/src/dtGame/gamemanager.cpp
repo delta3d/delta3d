@@ -989,6 +989,8 @@ namespace dtGame
          // Also, this doen't currently send messages when closing a map, so check here for that state.
          if (!gameActorProxy.IsRemote() && mMapChangeStateData->GetCurrentState() == MapChangeStateData::MapChangeState::IDLE)
          {
+            gameActorProxy.SetIsInGM(false);
+
             dtCore::RefPtr<Message> msg = mFactory.CreateMessage(MessageType::INFO_ACTOR_DELETED);
             msg->SetAboutActorId(id);
 
@@ -1014,6 +1016,7 @@ namespace dtGame
          dtDAL::ActorProxy* childProxy = FindActorById(child.GetUniqueId());
          if (childProxy != NULL)
          {
+
             childrenToMove.push_back(childProxy);
          }
       }

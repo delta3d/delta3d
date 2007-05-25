@@ -133,7 +133,7 @@ class GameActorTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestEnvironmentTimeConversions);
       CPPUNIT_TEST(TestDefaultProcessMessageRegistration);
       CPPUNIT_TEST(TestMessageProcessingPerformance);
-      CPPUNIT_TEST(TestActorIsOnGM);
+      CPPUNIT_TEST(TestActorIsInGM);
 
    CPPUNIT_TEST_SUITE_END();
 
@@ -152,7 +152,7 @@ public:
    void TestStaticGameActorTypes();
    void TestEnvironmentTimeConversions();
    void TestMessageProcessingPerformance();
-   void TestActorIsOnGM();
+   void TestActorIsInGM();
 
 private:
    static const std::string mTestGameActorLibrary;
@@ -203,7 +203,7 @@ void GameActorTests::tearDown()
 }
 
 ////////////////////////////////////////////////////////////////////////
-void GameActorTests::TestActorIsOnGM()
+void GameActorTests::TestActorIsInGM()
 {
    try
    {
