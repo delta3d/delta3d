@@ -197,8 +197,15 @@ dtCore::RefPtr<Cal3DModelWrapper> Cal3DLoader::Load( const std::string &filename
    {
       CharacterFileHandler handler;
       coreModel = GetCoreModel(handler, filename, path);
-      LoadModelData(handler, coreModel);
-      LoadAllTextures(coreModel, path); //this should be a user-level process.
+      if(coreModel)
+      {
+         LoadModelData(handler, coreModel);
+         LoadAllTextures(coreModel, path); //this should be a user-level process.
+      }  
+      else
+      {
+         LOG_ERROR("Unable to load character file: '" + filename + "'");
+      }
    }
 
    if (coreModel != NULL)
