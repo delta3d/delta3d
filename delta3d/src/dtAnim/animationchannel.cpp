@@ -114,16 +114,17 @@ void AnimationChannel::Update(float dt)
 /////////////////////////////////////////////////////////////////////////////////
 void AnimationChannel::Recalculate()
 {
-   if(GetEndTime() <= 0.0f)
+   if(mIsLooping && GetMaxDuration() > 0.0f)
    {
-      if(!mIsLooping)
-      {
-         SetEndTime(GetStartTime() + mAnimationWrapper->GetDuration());
-      }
+      SetEndTime(GetStartTime() + GetMaxDuration());
    }
+   else if(IsAction() && !mIsLooping)
+   {
+      SetEndTime(GetStartTime() + mAnimationWrapper->GetDuration());
+   }   
    else
    {
-      SetEndTime(GetStartTime() + GetEndTime());
+      SetEndTime(0.0f);
    }
 
 }

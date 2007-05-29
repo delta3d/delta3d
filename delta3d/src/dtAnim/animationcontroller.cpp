@@ -81,7 +81,7 @@ void AnimationController::Update(float dt)
 
       child->SetElapsedTime(child->GetElapsedTime() + dt);
 
-      if(child->GetElapsedTime() > child->GetStartTime())
+      if(child->GetElapsedTime() >= child->GetStartTime())
       {
          child->Update(dt);
       }

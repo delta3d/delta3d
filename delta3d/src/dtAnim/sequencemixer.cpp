@@ -129,4 +129,28 @@ const Animatable* SequenceMixer::Lookup(const std::string& pAnimation) const
 }
 
 
+/////////////////////////////////////////////////////////////////////////////////
+void SequenceMixer::ForceRecalculate()
+{
+   //somehow we only want to recalculate active animations
+   //this case does not account for a single animation channel who needs to get 
+   //its start time recomputed
+   //for now we will just update the entire root
+
+   //AnimationSequence::AnimationContainer::iterator iter = mRootSequence->GetChildAnimations().begin();
+   //AnimationSequence::AnimationContainer::iterator end = mRootSequence->GetChildAnimations().end();
+   //
+   //for(;iter != end; ++iter)
+   //{
+   //   Animatable* anim = (*iter).get(); 
+   //   if(!anim->IsActive())
+   //   {
+   //      anim->Recalculate();
+   //   }
+   //}
+
+   mRootSequence->Recalculate();
+
+}
+
 }//namespace dtAnim

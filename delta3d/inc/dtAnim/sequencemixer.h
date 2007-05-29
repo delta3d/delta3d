@@ -134,6 +134,11 @@ public:
    void RegisterAnimation(const Animatable* pAnimation);
 
 
+   /**
+   * This function forces all non-active animations to recalculate their start and end times
+   */
+   void ForceRecalculate();
+
 protected:
    virtual ~SequenceMixer();
 
