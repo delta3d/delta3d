@@ -188,7 +188,7 @@ namespace dtGame
                {
                   LogKeyframe autoKeyFrame;
                   autoKeyFrame.SetActiveMap(mLogStatus.GetActiveMap());
-                  autoKeyFrame.SetName("AutoKeyFrame");
+                  autoKeyFrame.SetName("AutoKeyFrame " + dtUtil::ToString(mLogStatus.GetCurrentSimTime()));
                   autoKeyFrame.SetDescription("Auto captured keyframe.");
                   autoKeyFrame.SetSimTimeStamp(mLogStatus.GetCurrentSimTime());
                   DumpKeyFrame(autoKeyFrame);

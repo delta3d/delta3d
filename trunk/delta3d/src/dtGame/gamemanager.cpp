@@ -481,7 +481,8 @@ namespace dtGame
                std::vector<dtGame::Invokable*> aboutActorInvokables;
 
                aboutActor->GetMessageHandlers(message->GetMessageType(), aboutActorInvokables);
-               for (unsigned i = 0; i < aboutActorInvokables.size(); ++i)
+               unsigned int aboutActorsSize = aboutActorInvokables.size(); // checking size on vector is slow :(
+               for (unsigned i = 0; i < aboutActorsSize; ++i)
                {
                   // Statistics information
                   if (logActors)
@@ -509,7 +510,8 @@ namespace dtGame
             // TODO - This should be refactored like we did for the Global Invokables a few lines up. It should work with the map directly instead of filling lists repeatedly
             std::vector<std::pair<GameActorProxy*, std::string > > toFill;
             GetRegistrantsForMessagesAboutActor(message->GetMessageType(), message->GetAboutActorId(), toFill);
-            for (unsigned i = 0; i < toFill.size(); ++i)
+            unsigned int toFillSize = toFill.size(); // checking size on vector is slow :(
+            for (unsigned i = 0; i < toFillSize; ++i)
             {
                std::pair<GameActorProxy*, std::string >& listener = toFill[i];
                Invokable* invokable = listener.first->GetInvokable(listener.second);
@@ -545,7 +547,8 @@ namespace dtGame
       }
 
       // DELETE ACTORS
-      for (unsigned int i = 0; i < mDeleteList.size(); ++i)
+      unsigned int deleteListSize = mDeleteList.size(); // checking size on vector is slow :(
+      for (unsigned int i = 0; i < deleteListSize; ++i)
       {
          GameActorProxy& gameActorProxy = *mDeleteList[i];
 
@@ -640,7 +643,8 @@ namespace dtGame
    void GameManager::GetAllComponents(std::vector<GMComponent*>& toFill)
    {
       toFill.clear();
-      for (unsigned i = 0; i < mComponentList.size(); ++i)
+      unsigned int componentListSize = mComponentList.size(); // checking size on vector is slow :(
+      for (unsigned i = 0; i < componentListSize; ++i)
       {
          toFill.push_back(mComponentList[i].get());
       }
@@ -650,7 +654,8 @@ namespace dtGame
    void GameManager::GetAllComponents(std::vector<const GMComponent*>& toFill) const
    {
       toFill.clear();
-      for (unsigned i = 0; i < mComponentList.size(); ++i)
+      unsigned int componentListSize = mComponentList.size(); // checking size on vector is slow :(
+      for (unsigned i = 0; i < componentListSize; ++i)
       {
          toFill.push_back(mComponentList[i].get());
       }
@@ -870,7 +875,8 @@ namespace dtGame
          GetAllActors(actors);
          mScene->RemoveAllDrawables();
          mScene->UseSceneLight(true);
-         for(unsigned int i = 0; i < actors.size(); i++)
+         unsigned int actorsSize = actors.size(); // checking size on vector is slow :(
+         for(unsigned int i = 0; i < actorsSize; i++)
          {
             if(actors[i].get() != oldProxy.get())
                ea->AddActor(*actors[i]->GetActor());
@@ -1747,10 +1753,11 @@ namespace dtGame
 
       float fps = ((int)((mStatsNumFrames/truncRealTime) * 10.0)) / 10.0; // force data truncation to 1 place
       ss << "GM Stats: CurSimTime[" << GetSimulationTime() << "], TimeInGM[" << gmPercentTime << 
-         "%, " << truncCumGMTime << "], ReportTime[" << truncRealTime << 
-         "], Ticks[" << mStatsNumFrames << "], FPS[" << fps << 
-         "], #Msgs[" << mStatsNumProcMessages << " P/" << mStatsNumSendNetworkMessages <<
-         " N], #Actors[" << mActorProxyMap.size() << "/" << mGameActorProxyMap.size() << " Game]" << std::endl;
+         "%, " << truncCumGMTime << "s], ReportTime[" << truncRealTime << 
+         "s], Ticks[" << mStatsNumFrames << "], FPS[" << fps << 
+         "], #Msgs[" << mStatsNumProcMessages << " Local/" << mStatsNumSendNetworkMessages <<
+         " Ntwrk], #Actors[" << mActorProxyMap.size() << "/" << mGameActorProxyMap.size() << 
+         " Game/" << mActorProxyMap.size() << "]" << std::endl;
       
       // reset values for next fragment
       mStatsNumFrames         = 0;
