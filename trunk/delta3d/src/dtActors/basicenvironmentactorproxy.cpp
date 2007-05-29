@@ -218,11 +218,10 @@ namespace dtActors
       if(timeAndDate.empty())
          return;
 
-      std::istringstream iss(timeAndDate);
       // The time is stored in the universal format of:
       // yyyy-mm-ddThh:min:ss-some number
       // So we need to use a delimeter to ensure that we don't choke on the seperators
-      if(!ValidateUTCString(iss, timeAndDate))
+      if(!ValidateUTCString(timeAndDate))
          LOG_ERROR("The input time and date string: " + timeAndDate + " was not formatted correctly. The correct format is: yyyy-mm-ddThh:mm:ss. Ignoring.");
    }
 
@@ -451,8 +450,9 @@ namespace dtActors
       return BasicEnvironmentActor::CloudCoverEnum::CLEAR;
    }
 
-   bool BasicEnvironmentActor::ValidateUTCString(std::istringstream &iss, const std::string &string)
+   bool BasicEnvironmentActor::ValidateUTCString(const std::string &str)
    {
+      std::istringstream iss(str);
       int year, month, day, hour, min, sec;
       char delimeter;
 
