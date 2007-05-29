@@ -26,7 +26,7 @@
 #include <dtAnim/animationsequence.h>
 #include <dtAnim/sequencemixer.h>
 #include <dtAnim/animationhelper.h>
-
+#include <dtCore/globals.h>
 #include <dtCore/refptr.h>
 
 #include <string>
@@ -92,6 +92,8 @@ namespace dtAnim
          std::string name2;
          dtCore::RefPtr<MyAnimatable> mAnimatable2;
 
+         dtCore::RefPtr<dtAnim::AnimationHelper> mHelper;
+
    };
 
    // Registers the fixture into the 'registry'
@@ -99,6 +101,9 @@ namespace dtAnim
 
    void AnimationTests::setUp()
    {
+
+      mHelper = new AnimationHelper();
+
       animStart1 = 1.0f;
       animEnd1 = 2.0f;
       fadeIn1 = 0.5f;
@@ -202,9 +207,63 @@ namespace dtAnim
    {
 
    }
-
+ 
    void AnimationTests::TestAnimHelper()
    {
+      std::string context = dtCore::GetDeltaRootPath() + "/examples/data/demoMap/SkeletalMeshes/";
+      std::string filename = "marine.xml";
+      std::string animName = "Walk";
+
+      mHelper->LoadModel(context + filename);
+ 
+      SequenceMixer* mixer = mHelper->GetSequenceMixer();
+      const Animatable* anim = mixer->GetRegisteredAnimation(animName);
+
+      mHelper->PlayAnimation(animName);
+
+      Animatable* activeAnim = mixer->GetActiveAnimation(animName);
+
+      CPPUNIT_ASSERT_EQUAL(animName, activeAnim->GetName());
+      
+      CPPUNIT_ASSERT_EQUAL(false, activeAnim->IsActive());
+       
+      activeAnim->SetStartDelay(3.0f);
+      mixer->ForceRecalculate();
+      CPPUNIT_ASSERT_EQUAL(false, activeAnim->IsActive());
+
+      mHelper->Update(1.0f);
+      CPPUNIT_ASSERT_EQUAL(false, activeAnim->IsActive());
+
+      mHelper->Update(1.0f);
+      CPPUNIT_ASSERT_EQUAL(false, activeAnim->IsActive());
+
+      mHelper->Update(1.0f);
+      CPPUNIT_ASSERT_EQUAL(true, activeAnim->IsActive());
+
+      CPPUNIT_ASSERT_EQUAL(3.0f, activeAnim->GetElapsedTime());
+
+      //dtCore::RefPtr<AnimationChannel> activeChannel = dynamic_cast<AnimationChannel*>(activeAnim);
+      //CPPUNIT_ASSERT(activeChannel.valid());
+
+      //activeChannel->SetMaxDuration(3.5f);
+      //mixer->ForceRecalculate();
+      //mHelper->Update(1.0f);
+      //
+      //CPPUNIT_ASSERT_EQUAL(false, activeChannel->IsActive());
+
+      //CPPUNIT_ASSERT(mixer->GetActiveAnimation(animName) != 0);
+
+      ////OK, so far so good, lets try testing looping vs non looping
+      //mHelper->PlayAnimation(animName);
+      //activeAnim = mixer->GetActiveAnimation(animName);
+      //CPPUNIT_ASSERT(activeAnim);
+      //activeChannel = dynamic_cast<AnimationChannel*>(activeAnim);
+      //CPPUNIT_ASSERT(activeChannel.valid());
+
+      //activeChannel->SetLooping(false);
+      ////TODO- More here
+
+
 
    }
 }
