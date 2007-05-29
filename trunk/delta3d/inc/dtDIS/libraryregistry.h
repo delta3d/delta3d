@@ -27,6 +27,7 @@
 
 namespace dtDIS
 {
+   ///@cond DOXYGEN_SHOULD_SKIP_THIS
    namespace details
    {
       /// a data structure for holding library symbols to create and destroy an object.
@@ -67,7 +68,8 @@ namespace dtDIS
          /// the object to be managed with the create and destroy library symbols
          CreatedType* mCreated;
       };
-   }
+   }  // end namespace details
+   ///@endcond
 }
 
 #endif  // __DELTA_DTDIS_LIBRARY_ENTRY_H__

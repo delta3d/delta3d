@@ -45,6 +45,7 @@ namespace dtDAL
 
 namespace dtDIS
 {
+   ///@cond DOXYGEN_SHOULD_SKIP_THIS
    namespace details
    {
       /// the model of how to compare DIS::EntityType instances.
@@ -61,7 +62,8 @@ namespace dtDIS
                  || lhs.getSubcategory()< rhs.getSubcategory() );
          }
       };
-   }
+   } // end namespace details
+   ///@endcond
 
    ///\brief provides a single point for associating known entities & actors.
    ///

@@ -34,10 +34,12 @@
 #include <dtDIS/plugins/default/dtdisdefaultpluginexport.h>      // for export symbols
 
 
+///@cond DOXYGEN_SHOULD_SKIP_THIS
 namespace DIS
 {
    class EntityStatePdu;
 }
+///@endcond
 
 namespace dtDAL
 {

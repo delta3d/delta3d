@@ -1,10 +1,12 @@
 #ifndef _plugin_initialize_pdu_h_
 #define _plugin_initialize_pdu_h_
 
+///@cond DOXYGEN_SHOULD_SKIP_THIS
 namespace DIS
 {
    class EntityStatePdu;
 }
+///@endcond
 
 namespace dtTest
 {

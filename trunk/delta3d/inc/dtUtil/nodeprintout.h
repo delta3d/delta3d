@@ -29,12 +29,14 @@
 #include <sstream>
 
 // Foward declarations
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
 {
    //class Node;
    class Geode;
    class PrimitiveSet;
 }
+/// @endcond
 
 namespace dtUtil
 {

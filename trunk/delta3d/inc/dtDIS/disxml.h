@@ -50,6 +50,7 @@ namespace dtDIS
       static const char XML_MAPPING_SCHEMA_FILE[];
    };
 
+   ///@cond DOXYGEN_SHOULD_SKIP_THIS
    namespace details
    {
 
@@ -65,6 +66,7 @@ namespace dtDIS
    };
 
    } // end namespace details
+   ///@endcond
 
    ///\brief Reads the connection info from a config file.
    class DT_DIS_EXPORT ConnectionXMLHandler : public XERCES_CPP_NAMESPACE_QUALIFIER ContentHandler
@@ -108,7 +110,7 @@ namespace dtDIS
    };
 
    // ----- EntityMap stuff ------ //
-
+   ///@cond DOXYGEN_SHOULD_SKIP_THIS
    namespace details
    {
 
@@ -142,6 +144,7 @@ namespace dtDIS
    };
 
    } // end namespace details
+   ///@endcond
 
    ///\brief Stores configuration data loaded from a file for the purposes of mapping DIS to Delta3D.
    ///

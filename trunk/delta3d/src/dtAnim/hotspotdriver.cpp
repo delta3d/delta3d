@@ -8,7 +8,7 @@
 
 namespace dtAnim
 {
-   ///\ignore
+   ///@cond DOXYGEN_SHOULD_SKIP_THIS
    namespace details
    {
       struct BoneOffsetApplicator
@@ -65,6 +65,8 @@ namespace dtAnim
       };
 
    }  // end namespace details
+   ///@endcond
+
 }  // end namespace PD
 
 using namespace dtAnim;

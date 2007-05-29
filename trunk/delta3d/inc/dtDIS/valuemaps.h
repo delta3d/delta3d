@@ -25,10 +25,12 @@
 #include <dtDIS/dtdisexport.h>      // for export symbols
 #include <string>                   // for parameter type
 
+///@cond DOXYGEN_SHOULD_SKIP_THIS
 namespace DIS
 {
    class EntityType;
 }
+///@endcond
 
 namespace dtDIS
 {

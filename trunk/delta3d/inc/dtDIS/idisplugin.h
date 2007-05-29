@@ -28,10 +28,12 @@
 
 #include <dtDIS/dtdisexport.h>          // for library export symbols
 
+///@cond DOXYGEN_SHOULD_SKIP_THIS
 namespace DIS
 {
    class IncomingMessage;
 }
+///@endcond
 
 namespace dtGame
 {

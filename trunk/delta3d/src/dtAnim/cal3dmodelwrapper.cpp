@@ -203,6 +203,7 @@ int Cal3DModelWrapper::GetCoreBoneID(const std::string& name) const
 
 namespace dtAnim
 {
+   ///@cond DOXYGEN_SHOULD_SKIP_THIS
    namespace details
    {
       struct ReturnBoneName
@@ -213,6 +214,7 @@ namespace dtAnim
          }
       };
    }
+   ///@endcond
 }
 
 void Cal3DModelWrapper::GetCoreBoneNames(std::vector<std::string>& toFill) const

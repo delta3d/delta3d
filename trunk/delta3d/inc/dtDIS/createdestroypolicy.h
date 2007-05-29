@@ -29,6 +29,7 @@
 
 namespace dtDIS
 {
+   ///@cond DOXYGEN_SHOULD_SKIP_THIS
    namespace details
    {
       /// responsible for obtaining the symbols to be used by client code.
@@ -49,6 +50,7 @@ namespace dtDIS
 #include <dtDIS/createdestroypolicy.inl>
 
    }
+   ///@endcond
 
 }
 

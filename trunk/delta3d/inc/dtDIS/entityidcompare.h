@@ -24,13 +24,16 @@
 
 #include <dtDIS/dtdisexport.h>    // for library export symbols
 
+///@cond DOXYGEN_SHOULD_SKIP_THIS
 namespace DIS
 {
    class EntityID;
 }
+///@endcond
 
 namespace dtDIS
 {
+   ///@cond DOXYGEN_SHOULD_SKIP_THIS
    namespace details
    {
       /// useful for sorting rather than using a '<' operator.
@@ -39,6 +42,7 @@ namespace dtDIS
          bool operator ()(const DIS::EntityID& lhs, const DIS::EntityID& rhs) const;
       };
    }
+   ///@endcond
 }
 
 #endif  // __DELTA_DTDIS_ENTITY_ID_COMPARE_H__

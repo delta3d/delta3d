@@ -25,12 +25,14 @@
 #include <string>                      // for parameter type
 #include <dtDIS/plugins/default/dtdisdefaultpluginexport.h>         // for export symbols
 
+///@cond DOXYGEN_SHOULD_SKIP_THIS
 namespace DIS
 {
    class EntityStatePdu;
    class EntityID;
    class ArticulationParameter;
 }
+///@endcond
 
 namespace dtDAL
 {
@@ -47,6 +49,7 @@ namespace dtDIS
    class SharedState;
    struct ActiveEntityControl;
 
+   ///@cond DOXYGEN_SHOULD_SKIP_THIS
    namespace details
    {
    /// The model of how to convert <i>all attributes</i> between an EntityStatePdu and an ActorUpdateMessage, and visa versa.
@@ -92,6 +95,7 @@ namespace dtDIS
    };
 
    } // end namespace details
+   ///@endcond
 }
 
 #endif  // __DELTA_PLUGIN_ESPDU_APPLICATOR_H__
