@@ -32,10 +32,12 @@ namespace dtGame
    class Message;
 }
 
+///@cond DOXYGEN_SHOULD_SKIP_THIS
 namespace DIS
 {
    class Pdu;
 }
+///@endcond
 
 namespace dtDIS
 {

@@ -28,6 +28,7 @@
 
 namespace dtDIS
 {
+   ///@cond DOXYGEN_SHOULD_SKIP_THIS
    namespace details
    {
       /// appends a container with file names if the extension matches
@@ -78,7 +79,8 @@ namespace dtDIS
             }
          }
       };
-   }
+   } // end namespace details
+   ///@endcond
 }
 
 #endif   // __DELTA_DTDIS_FILE_FINDER_H__

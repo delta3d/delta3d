@@ -30,11 +30,13 @@
 
 #include <dtUtil/breakoverride.h> // For BREAK_OVERRIDE macro
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
 {
    class MatrixTransform;
    class Geode;
 }
+/// @endcond
 
 namespace dtCore
 {

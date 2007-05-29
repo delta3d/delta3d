@@ -27,10 +27,12 @@
 
 class CalModel;
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
 {
    class Geode;
 }
+/// @endcond
 
 
 namespace dtAnim

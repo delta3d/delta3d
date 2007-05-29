@@ -30,6 +30,7 @@
 
 namespace dtDIS
 {
+   ///@cond DOXYGEN_SHOULD_SKIP_THIS
    namespace details
    {
 
@@ -56,7 +57,8 @@ namespace dtDIS
          std::string mPropName;
       };
 
-   }
+   }  // end namespace details
+   ///@endcond
 }
 
 #endif  // __DELTA_DTDIS_HAS_PROPERTY_H__

@@ -30,7 +30,10 @@
 namespace dtCore{ class Scene;         }
 namespace dtAnim{ class Cal3DLoader;   }
 namespace dtAnim{ class Cal3DAnimator; }
+
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg   { class Geode;         }
+/// @endcond
 
 
 namespace dtActors

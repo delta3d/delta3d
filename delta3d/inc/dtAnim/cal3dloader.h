@@ -33,10 +33,12 @@
 
 class CalCoreModel;
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
 {
    class Texture2D;
 }
+/// @endcond
 
 
 namespace dtAnim

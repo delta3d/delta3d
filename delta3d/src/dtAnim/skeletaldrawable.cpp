@@ -9,7 +9,7 @@
 
 namespace dtAnim
 {
-   ///\ignore
+   ///@cond DOXYGEN_SHOULD_SKIP_THIS
    namespace details
    {
       template<typename PtrT>
@@ -21,6 +21,7 @@ namespace dtAnim
          }
       };
    }
+   ///@endcond
 }
 
 using namespace dtAnim;
