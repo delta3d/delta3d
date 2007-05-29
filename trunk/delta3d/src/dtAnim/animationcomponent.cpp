@@ -167,42 +167,80 @@ void AnimationComponent::SetTerrainActor(dtCore::Transformable* newTerrain)
 void AnimationComponent::GroundClamp()
 {
    if(mTerrainActor.valid() && mIsector.valid())
-   {
-      dtCore::Transform trans;
-      osg::Matrix mat;
-      osg::Vec3 pos, hitPt;
-      
+   {      
       dtGame::GameManager* gm = GetGameManager();
         
       AnimCompIter end = mRegisteredActors.end();
+      AnimCompIter iter = mRegisteredActors.begin();
 
-      for(AnimCompIter iter = mRegisteredActors.begin(); iter != end; ++iter)
+      while(iter != end)
       {
-         AnimationHelper* helper = (*iter).second.get();
+         unsigned numActors = 0;
+         dtGame::GameActor* actor_array[32] = {0};
 
-         if(helper->GetGroundClamp())
+         for(; iter != end && numActors < 32; ++iter)
          {
+            AnimationHelper* helper = (*iter).second.get();
             dtGame::GameActorProxy* pProxy = gm->FindGameActorById((*iter).first);   
+
             if(pProxy)
             {
-               dtGame::GameActor* pActor = &pProxy->GetGameActor();
-
-               pActor->GetTransform(trans);            
-               pos = trans.GetTranslation();      
-
-               mIsector->EnableAndGetISector(0).SetSectorAsLineSegment(osg::Vec3(pos[0], pos[1], pos[2] + 10.0f), osg::Vec3(pos[0], pos[1], pos[2] - 10.0f));
-               if(mIsector->Update(pos, true))
+               if(helper->GetGroundClamp())
                {
-                  mIsector->GetSingleISector(0).GetHitPoint(hitPt);
-                  pos[2] = hitPt[2];
-                  trans.SetTranslation(pos);
-                  pActor->SetTransform(trans);//, dtCore::Transformable::REL_CS);
-               }
-            }
+                  actor_array[numActors++] = &pProxy->GetGameActor();
+               }//if
+            }//if
+         }//for
+
+         //submit our isector query to be batched
+         if(numActors) DoIsector(numActors, actor_array);
+      }//while
+   }//if
+}
+
+void AnimationComponent::DoIsector(unsigned numActors, dtGame::GameActor* actor_array[32])
+{
+   dtCore::Transform trans;
+   osg::Matrix mat;
+   osg::Vec3 pos, hitPt;
+   unsigned i = 0;
+
+   //setup all our isectors
+   for(; i < numActors; ++i)
+   {     
+      actor_array[i]->GetTransform(trans);            
+      pos = trans.GetTranslation();      
+
+      mIsector->EnableAndGetISector(i).SetSectorAsLineSegment(osg::Vec3(pos[0], pos[1], pos[2] + 10.0f), osg::Vec3(pos[0], pos[1], pos[2] - 10.0f));
+   }
+
+   //disable the ones we arent using
+   for(; i < 32; ++i)
+   {
+      mIsector->StopUsingSingleISector(i);
+   }
+
+   //do a full update... note: sending true to Update() is for LOD which we arent doing, so it ignores pos
+   if(mIsector->Update(pos, true))
+   {
+      for(i = 0; i < numActors; ++i)
+      {
+         //if the isector hits, then we'll update the position of our actor
+         if(mIsector->GetSingleISector(i).GetNumberOfHits())
+         {
+            actor_array[i]->GetTransform(trans);            
+            pos = trans.GetTranslation();   
+
+            mIsector->GetSingleISector(i).GetHitPoint(hitPt);
+            pos[2] = hitPt[2];
+            trans.SetTranslation(pos);
+            actor_array[i]->SetTransform(trans);//, dtCore::Transformable::REL_CS);
          }
       }
-
    }
+
+      
 }
+
 
 }//namespace dtGame

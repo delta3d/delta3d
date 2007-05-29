@@ -113,7 +113,10 @@ protected:
    virtual ~AnimationComponent();
 
    virtual void TickLocal(float dt);
+   //creates batches of isector querys
    void GroundClamp();
+   //does a batched isector query
+   void DoIsector(unsigned numActors, dtGame::GameActor* actor_array[32]);
 
 private:
    AnimationComponent(const AnimationComponent&);               //not implemented
