@@ -402,11 +402,10 @@ namespace dtActors
 
          /**
           * Helper method to validate a UTC string
-          * @param string The string to validate
-          * @param iss The istringstream to use to parse and validate
+          * @param str The string to use to parse and validate
           * @return true on success
           */
-         bool ValidateUTCString(std::istringstream &iss, const std::string &string);
+         bool ValidateUTCString(const std::string &str);
 
          bool mIsCloudPlaneEnabled;
          dtCore::RefPtr<dtABC::Weather> mWeather;
