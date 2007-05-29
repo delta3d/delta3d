@@ -16,8 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * Christopher DuBuc
- * William E. Johnson II
+ * Bradley Anderegg
  */
 #ifndef DELTA_TEST_ANIM_ENTRY_POINT
 #define DELTA_TEST_ANIM_ENTRY_POINT
@@ -48,14 +47,7 @@ class TEST_ANIM_EXPORT TestAnim : public dtGame::GameEntryPoint
 
    public:
 
-      /**
-       * Constructs TestAnimLms.
-       */
       TestAnim();
-
-      /**
-       * Destructs TestAnimLms, and disconnects from LMS if connected.
-       */
       virtual ~TestAnim();
 
       /**

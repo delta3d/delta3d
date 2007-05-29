@@ -34,7 +34,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtUtild.lib dtAnimd.lib dtGamed.lib dtDALd.lib dtActorsd.lib dtAId.lib dtCored.lib dtABCd.lib dtGUId.lib osgd.lib osgDBd.lib CEGUIBase_d.lib OpenGLGUIRenderer_d.lib"
+				AdditionalDependencies="dtUtild.lib dtAnimd.lib dtGamed.lib dtDALd.lib dtActorsd.lib dtAId.lib dtCored.lib dtABCd.lib osgd.lib osgDBd.lib CEGUIBase_d.lib OpenGLGUIRenderer_d.lib"
 				OutputFile="..\..\..\bin\testAnimd.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
@@ -85,7 +85,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtUtil.lib dtDAL.lib dtActors.lib dtGame.lib dtAnim.lib dtAI.lib dtCore.lib dtABC.lib dtGUI.lib osg.lib osgDB.lib CEGUIBase.lib OpenGLGUIRenderer.lib"
+				AdditionalDependencies="dtUtil.lib dtDAL.lib dtActors.lib dtGame.lib dtAnim.lib dtAI.lib dtCore.lib dtABC.lib osg.lib osgDB.lib CEGUIBase.lib OpenGLGUIRenderer.lib"
 				OutputFile="..\..\..\bin\testAnim.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
