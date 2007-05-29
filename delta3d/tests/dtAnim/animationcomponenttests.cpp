@@ -135,11 +135,13 @@ namespace dtAnim
    {      
       typedef std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > ProxyContainer;
       ProxyContainer proxies;
+      ProxyContainer groundActor;
 
       //load map
       try
       {
-         std::string context = dtCore::GetDeltaRootPath() + "/tests/data/ProjectContext";
+         //uses example data for now
+         std::string context = dtCore::GetDeltaRootPath() + "/examples/data/demoMap";//"/tests/data/ProjectContext";
          dtDAL::Project::GetInstance().SetContext(context, true);
          mGM->ChangeMap("AnimationPerformance");
 
@@ -148,7 +150,8 @@ namespace dtAnim
          dtCore::System::GetInstance().Step();
          dtCore::System::GetInstance().Step();
          
-         dtDAL::Project::GetInstance().GetMap("AnimationPerformance").FindProxies(proxies, "CharacterEntity");      
+         dtDAL::Project::GetInstance().GetMap("AnimationPerformance").FindProxies(proxies, "CharacterEntity");                 
+         dtDAL::Project::GetInstance().GetMap("AnimationPerformance").FindProxies(groundActor, "GroundActor"); 
       
       }
       catch (dtUtil::Exception &e)
@@ -169,12 +172,12 @@ namespace dtAnim
 
             if(actor)
             { 
-               mAnimComp->RegisterActor(*gameProxy, *actor->GetHelper());               
+               mAnimComp->RegisterActor(*gameProxy, *actor->GetHelper());      
+               actor->GetHelper()->SetGroundClamp(true);
             }
     
          }
       }
-   
 
       //lets do some performance testing
       mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, "Testing performance of PlayAnimation on AnimationHelper");
@@ -202,7 +205,6 @@ namespace dtAnim
       mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, "Time Results for Play Animation: " + dtUtil::ToString(timer.DeltaMil(timerStart, timerEnd)) + " ms");
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       int numUpdates = 60;
       float updateTime = 1.0f / 60.0f;
@@ -225,6 +227,38 @@ namespace dtAnim
       timerEnd = timer.Tick();
 
       mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, "Time Results for Update: " + dtUtil::ToString(timer.DeltaMil(timerStart, timerEnd)) + " ms");
+      ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+      
+      if(!groundActor.empty())
+      {
+         ProxyContainer::iterator iter = groundActor.begin();
+         dtDAL::ActorProxy* proxy = dynamic_cast<dtDAL::ActorProxy*>((*iter).get());
+         if(proxy)
+         {
+            dtCore::Transformable* transform = dynamic_cast<dtCore::Transformable*>(proxy->GetActor());
+            if(transform)
+            {
+               mAnimComp->SetTerrainActor(transform);
+            }
+         }
+      
+   
+         mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, "Testing performance of " + dtUtil::ToString(numUpdates) + " updates on AnimationComponent with ground clamping");
+
+         timerStart = timer.Tick();
+         for(int i = 0; i < numUpdates; ++i)
+         {
+            mAnimComp->ProcessMessage(*message.get());
+         }
+         timerEnd = timer.Tick();
+
+         mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, "Time Results for Update with Ground Clamp: " + dtUtil::ToString(timer.DeltaMil(timerStart, timerEnd)) + " ms");
+      }
+      else
+      {
+         LOG_ERROR("Cannot find ground");
+      }
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -258,7 +292,6 @@ namespace dtAnim
          if(!mGM->GetCurrentMap().empty())
          {
             dtDAL::Project::GetInstance().CloseMap(dtDAL::Project::GetInstance().GetMap(mGM->GetCurrentMap()), true);
-            dtDAL::Project::GetInstance().DeleteMap(dtDAL::Project::GetInstance().GetMap(mGM->GetCurrentMap()));
          }
       }
       catch(dtUtil::Exception& e)
