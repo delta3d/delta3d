@@ -177,10 +177,10 @@ namespace dtGame
           * @return the actor proxy with that ID
           */
          template <typename T>
-         T* FindPrototypeByID(const dtCore::UniqueId& uniqueID)
+         void FindPrototypeByID(const dtCore::UniqueId& uniqueID, dtCore::RefPtr<T> &proxy)
          {
-            dtDAL::ActorProxy *proxy = FindPrototypeByID(uniqueID);
-            return dynamic_cast<T*>(proxy);
+            dtDAL::ActorProxy *tempProxy = FindPrototypeByID(uniqueID);
+            proxy = dynamic_cast<T*>(proxy.get());
          }
 
          /// Clears the mPrototypeActors map.
@@ -191,14 +191,6 @@ namespace dtGame
 
          /// Makes a new GameActorProxy, and returns it to the user
          dtCore::RefPtr<dtDAL::ActorProxy> CreateActorFromPrototype(const dtCore::UniqueId& uniqueID);
-
-         /// Makes a new GameActorProxy, and returns it to the user
-         template <typename T>
-         dtCore::RefPtr<T> CreateActorFromPrototype(const dtCore::UniqueId& uniqueID)
-         {
-            dtCore::RefPtr<dtDAL::ActorProxy> proxy = CreateActorFromPrototype(uniqueID);
-            return dynamic_cast<T*>(proxy.get());
-         }
 
          template <typename T>
          void CreateActorFromPrototype(const dtCore::UniqueId& uniqueID, 
