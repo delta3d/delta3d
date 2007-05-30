@@ -199,7 +199,7 @@ void HatchActor::OnMapLoaded(const dtGame::Message &msg)
       {
          mGameMapLoaded = true;
          // Find the game level actor and search with its node
-         std::vector<RefPtr<dtDAL::ActorProxy> > proxies;
+         std::vector<dtDAL::ActorProxy*> proxies;
          GetGameActorProxy().GetGameManager()->FindActorsByType(*EntityActorRegistry::TYPE_GAME_LEVEL_ACTOR, proxies);
          GameLevelActor *gla = dynamic_cast<GameLevelActor*>(proxies[0]->GetActor());
          if(gla == NULL)

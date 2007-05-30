@@ -194,7 +194,7 @@ void InputComponent::OnIntro()
    osg::StateSet *globalState = camera.GetSceneHandler()->GetSceneView()->getGlobalStateSet();
    globalState->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
 
-   std::vector<RefPtr<dtGame::GameActorProxy> > proxies;
+   std::vector<dtGame::GameActorProxy*> proxies;
    GetGameManager()->GetAllGameActors(proxies);
    FlySequenceActor *fsa = NULL;
    IsActorInGameMap(fsa, false);
@@ -583,11 +583,11 @@ void InputComponent::StopSounds()
 void InputComponent::SetupTasks()
 {
    dtGame::GameManager &mgr = *GetGameManager();
-   std::vector<RefPtr<dtDAL::ActorProxy> > proxies;
+   std::vector<dtDAL::ActorProxy*> proxies;
 
    ///////////////////////// Mission Task /////////////////////////////////////
    mgr.FindActorsByName("TaskRootMission", proxies);
-   mMission = dynamic_cast<dtActors::TaskActorOrderedProxy*>(proxies[0].get());
+   mMission = dynamic_cast<dtActors::TaskActorOrderedProxy*>(proxies[0]);
    proxies.clear();
 
    mTasksSetup = true;
