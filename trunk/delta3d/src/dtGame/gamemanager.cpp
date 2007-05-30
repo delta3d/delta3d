@@ -825,13 +825,12 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    dtCore::RefPtr<dtDAL::ActorProxy> GameManager::CreateActorFromPrototype(const dtCore::UniqueId& uniqueID)
    {
-      dtCore::RefPtr<dtDAL::ActorProxy> ourObject;
-      FindPrototypeByID(uniqueID, ourObject);
+      dtDAL::ActorProxy *ourObject = FindPrototypeByID(uniqueID);
       if(ourObject != NULL)
       {
          dtCore::RefPtr<dtDAL::ActorProxy> temp = ourObject->Clone().get();
          dtGame::GameActorProxy* gap = dynamic_cast<dtGame::GameActorProxy*>(temp.get());
-         if (gap != NULL)
+         if(gap != NULL)
          {
             gap->SetGameManager(this);
             gap->BuildInvokables();
@@ -1286,11 +1285,13 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::FindPrototypeByID(const dtCore::UniqueId& uniqueID, dtCore::RefPtr<dtDAL::ActorProxy> &ourObject)
+   dtDAL::ActorProxy* GameManager::FindPrototypeByID(const dtCore::UniqueId& uniqueID)
    {
       std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> >::const_iterator itor = mPrototypeActors.find(uniqueID);
       if(itor != mPrototypeActors.end())
-         ourObject = itor->second.get();
+         return itor->second.get();
+
+      return NULL;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
