@@ -288,14 +288,14 @@ void GameManagerTests::TestTemplateActors()
 
    toFill.clear();
 
-   dtCore::RefPtr<dtDAL::ActorProxy> templateToFill;
-   mManager->FindPrototypeByID(toMakeAsATemplate->GetId(),templateToFill);
+   dtCore::RefPtr<dtDAL::ActorProxy> templateToFill = 
+      mManager->FindPrototypeByID(toMakeAsATemplate->GetId());
    CPPUNIT_ASSERT_MESSAGE("Tried finding a template that should be in the gm, but its not....",templateToFill != 0 );
 
    dtCore::RefPtr<dtDAL::ActorProxy> ourActualActor = mManager->CreateActorFromPrototype(toMakeAsATemplate->GetId());
    
-   CPPUNIT_ASSERT_MESSAGE("Tried cloning from a template, didn't work out to well...", ourActualActor != NULL);
-   CPPUNIT_ASSERT_MESSAGE("Tried cloning from a template, didn't work out to well...", ourActualActor->GetName() == toMakeAsATemplate->GetName());
+   CPPUNIT_ASSERT_MESSAGE("Tried cloning from a template, didn't work out too well...", ourActualActor != NULL);
+   CPPUNIT_ASSERT_MESSAGE("Tried cloning from a template, didn't work out too well...", ourActualActor->GetName() == toMakeAsATemplate->GetName());
 
 }
 /////////////////////////////////////////////////
