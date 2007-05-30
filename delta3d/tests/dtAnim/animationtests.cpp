@@ -276,16 +276,16 @@ namespace dtAnim
 
       CPPUNIT_ASSERT_EQUAL(3.0f, activeAnim->GetElapsedTime());
 
-      //dtCore::RefPtr<AnimationChannel> activeChannel = dynamic_cast<AnimationChannel*>(activeAnim);
-      //CPPUNIT_ASSERT(activeChannel.valid());
+      dtCore::RefPtr<AnimationChannel> activeChannel = dynamic_cast<AnimationChannel*>(activeAnim);
+      CPPUNIT_ASSERT(activeChannel.valid());
 
-      //activeChannel->SetMaxDuration(3.5f);
-      //mixer->ForceRecalculate();
-      //mHelper->Update(1.0f);
-      //
-      //CPPUNIT_ASSERT_EQUAL(false, activeChannel->IsActive());
+      activeChannel->SetMaxDuration(3.5f);
+      mixer->ForceRecalculate();
+      mHelper->Update(3.5f);
+      
+      CPPUNIT_ASSERT_EQUAL(false, activeChannel->IsActive());
 
-      //CPPUNIT_ASSERT(mixer->GetActiveAnimation(animName) != 0);
+      CPPUNIT_ASSERT(mixer->GetActiveAnimation(animName) == 0);
 
       ////OK, so far so good, lets try testing looping vs non looping
       //mHelper->PlayAnimation(animName);
@@ -295,9 +295,7 @@ namespace dtAnim
       //CPPUNIT_ASSERT(activeChannel.valid());
 
       //activeChannel->SetLooping(false);
-      ////TODO- More here
-
-
+   
 
    }
 }
