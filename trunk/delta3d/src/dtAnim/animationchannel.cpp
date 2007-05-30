@@ -110,7 +110,7 @@ void AnimationChannel::Update(float dt)
       return;
    }
    
-   if(mEndTime > 0.0f && mElapsedTime > mEndTime)
+   if(mEndTime > 0.0f && mElapsedTime >= mEndTime)
    {
       SetPrune(true);
    }
