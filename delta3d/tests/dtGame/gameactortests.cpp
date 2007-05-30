@@ -646,7 +646,7 @@ void GameActorTests::TestAddRemoveFromEnvActor()
       CPPUNIT_ASSERT_MESSAGE("The environment actor should have actor 2 as a child", ea->ContainsActor(*ap2->GetActor()) );
 
       std::vector<dtCore::DeltaDrawable*> actors;
-      std::vector<dtCore::RefPtr<dtCore::DeltaDrawable> > drawables;
+      std::vector<dtCore::DeltaDrawable*> drawables;
 
       // Ensure actor 2 is also returned in the list of actors returned by the environment.
       bool foundActor = false;
@@ -713,7 +713,7 @@ void GameActorTests::TestSetEnvironmentActor()
       CPPUNIT_ASSERT_MESSAGE("Should have been able to cast the environment proxy's actor to an environment actor", ea != NULL);
 
       std::vector<dtCore::DeltaDrawable*> actors;
-      std::vector<dtCore::RefPtr<dtCore::DeltaDrawable> > drawables;
+      std::vector<dtCore::DeltaDrawable*> drawables;
       ea->GetAllActors(actors);
       CPPUNIT_ASSERT(actors.empty());
 
@@ -936,8 +936,8 @@ void GameActorTests::TestMessageProcessingPerformance()
 
       dtCore::System::GetInstance().Step();
 
-      std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > testProxies;
-      mManager->FindActorsByType(*actor1Type.get(), testProxies);
+      std::vector<dtDAL::ActorProxy*> testProxies;
+      mManager->FindActorsByType(*actor1Type, testProxies);
 
       // loop multiple ticks. 
       for (int tickCounter = 0; tickCounter < numTicks; tickCounter ++)

@@ -129,8 +129,8 @@ namespace dtGame
       mTopLevelTaskList.clear();
       mTaskList.clear();
 
-      std::vector<dtCore::RefPtr<GameActorProxy> > toFill;
-      std::vector<dtCore::RefPtr<GameActorProxy> >::iterator itor;
+      std::vector<GameActorProxy*> toFill;
+      std::vector<GameActorProxy*>::iterator itor;
       GetGameManager()->GetAllGameActors(toFill);
       for (itor=toFill.begin(); itor!=toFill.end(); ++itor)
       {

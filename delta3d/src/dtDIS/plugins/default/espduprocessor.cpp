@@ -45,7 +45,7 @@ void ESPduProcessor::Process(const DIS::Pdu& packet)
       // association by controlling that actor rather than a newly created actor.
 
       // search all the proxies to know if any are posing as the Entity
-      typedef std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > ProxyVector;
+      typedef std::vector<dtDAL::ActorProxy*> ProxyVector;
       ProxyVector proxies;
       mGM->GetAllActors( proxies );
 

@@ -423,7 +423,10 @@ namespace dtActors
          /**
            * Creates the actor associated with this proxy
            */
-         virtual void CreateActor() { SetActor(*new BasicEnvironmentActor(*this)); }
+         virtual void CreateActor() 
+         { 
+            SetActor(*new BasicEnvironmentActor(*this)); 
+         }
 
          /**
            * Builds the properties of this environment actor proxy

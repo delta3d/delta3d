@@ -47,7 +47,7 @@ void DefaultPlugin::Start(DIS::IncomingMessage& imsg,
    omsg.AddAdaptor( &dtGame::MessageType::INFO_ACTOR_UPDATED , mSendingAdapter );
 
    // use the current state of the game.
-   typedef std::vector<dtCore::RefPtr<dtGame::GameActorProxy> > ProxyVector;
+   typedef std::vector<dtGame::GameActorProxy*> ProxyVector;
    ProxyVector actors;
    gm->GetAllGameActors( actors );
 
@@ -55,7 +55,7 @@ void DefaultPlugin::Start(DIS::IncomingMessage& imsg,
    ProxyVector::iterator enditer = actors.end();
    while( iter != enditer )
    {
-      this->OnActorAdded( iter->get() );
+      this->OnActorAdded((*iter));
       ++iter;
    }
 }

@@ -165,8 +165,8 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     void ActorSearcher::refreshAll()
     {
-        std::vector<dtCore::RefPtr<dtDAL::ActorType> > actorTypes;
-        std::vector<dtCore::RefPtr<dtDAL::ActorType> >::const_iterator actorTypesIter;
+        std::vector<dtDAL::ActorType*> actorTypes;
+        std::vector<dtDAL::ActorType*>::const_iterator actorTypesIter;
         std::set<std::string>::const_iterator setIter;
         dtDAL::Map *map = EditorData::GetInstance().getCurrentMap();
         QStringList categoryList;

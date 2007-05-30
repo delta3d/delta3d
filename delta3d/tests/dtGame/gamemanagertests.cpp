@@ -277,7 +277,7 @@ void GameManagerTests::TestTemplateActors()
    mManager->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, toMakeAsATemplate);
    toMakeAsATemplate->SetName("TemplateActorProxy");
 
-   std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > toFill;
+   std::vector<dtDAL::ActorProxy*> toFill;
    mManager->GetAllPrototypes(toFill);
    CPPUNIT_ASSERT_MESSAGE("GameManager shouldnt have had templates in it currently...", toFill.size() == 0);
 
@@ -529,7 +529,7 @@ void GameManagerTests::TestActorSearching()
       int numActorsSkipped = 0;
       dtGame::GameManager& gm = *mManager;
 
-      std::vector<dtCore::RefPtr<dtDAL::ActorType> > typeVec;
+      std::vector<dtDAL::ActorType*> typeVec;
 
       gm.GetActorTypes(typeVec);
 
@@ -561,7 +561,7 @@ void GameManagerTests::TestActorSearching()
          gm.AddActor(*proxies[i].get());
       }
 
-      std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > supportedProxies;
+      std::vector<dtDAL::ActorProxy*> supportedProxies;
 
       gm.FindActorsByType(**supportedTypes.begin(), supportedProxies);
 
@@ -574,7 +574,7 @@ void GameManagerTests::TestActorSearching()
       dtCore::RefPtr<dtGame::GameActorProxy> gap = NULL;
       for(unsigned int i = 0; i < typeVec.size(); i++)
       {
-         dtCore::RefPtr<dtDAL::ActorProxy> p = gm.CreateActor(*typeVec[i].get());
+         dtCore::RefPtr<dtDAL::ActorProxy> p = gm.CreateActor(*typeVec[i]);
          if (p->IsGameActorProxy())
          {
             gap = dynamic_cast<dtGame::GameActorProxy*> (p.get());

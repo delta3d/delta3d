@@ -60,8 +60,8 @@ class ProxyTest : public CPPUNIT_NS::TestFixture
       
    private:
       dtDAL::LibraryManager &libMgr;
-      std::vector<RefPtr<dtDAL::ActorType> > actors;
-      std::vector<RefPtr<dtDAL::ActorProxy> > proxies;
+      std::vector<dtDAL::ActorType*> actors;
+      std::vector<dtDAL::ActorProxy*> proxies;
       static const std::string mExampleLibraryName;
       
       void testProps(dtDAL::ActorProxy& proxy);
@@ -245,7 +245,7 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
          {
             if(proxies[i]->IsInstanceOf(actorClass))
             {
-               tempProxy = proxies[i].get();
+               tempProxy = proxies[i];
                break;
             }
          }
@@ -926,7 +926,7 @@ void ProxyTest::TestProxies()
          
          proxy = libMgr.CreateActorProxy(*actors[i]).get();
          CPPUNIT_ASSERT(proxy != NULL);
-         proxies.push_back(proxy);
+         proxies.push_back(proxy.get());
       }
       
       for(unsigned int i = 0; i < proxies.size(); i++)

@@ -206,8 +206,8 @@ void MapTests::tearDown()
 void MapTests::createActors(dtDAL::Map& map)
 {
    dtDAL::LibraryManager& libMgr = dtDAL::LibraryManager::GetInstance();
-   std::vector<dtCore::RefPtr<dtDAL::ActorType> > actorTypes;
-   std::vector<dtDAL::ActorProperty *> props;
+   std::vector<dtDAL::ActorType*> actorTypes;
+   std::vector<dtDAL::ActorProperty*> props;
    
    libMgr.GetActorTypes(actorTypes);
    

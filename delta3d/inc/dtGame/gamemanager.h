@@ -136,7 +136,7 @@ namespace dtGame
           * to create.
           * @param actorTypes A vector to fill
           */
-         void GetActorTypes(std::vector<dtCore::RefPtr<dtDAL::ActorType> > &actorTypes);
+         void GetActorTypes(std::vector<dtDAL::ActorType*> &actorTypes);
 
          /**
           * Gets a single actor type that matches the name and category specified.
@@ -151,20 +151,20 @@ namespace dtGame
          * @param The name to search for
          * @param The vector to fill
          */
-         void FindPrototypesByActorType(const dtDAL::ActorType &type, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill) const;
+         void FindPrototypesByActorType(const dtDAL::ActorType &type, std::vector<dtDAL::ActorProxy*> &toFill) const;
 
          /**
          * Fills a vector with the game proxys whose names match the name parameter
          * @param The name to search for
          * @param The vector to fill
          */
-         void FindPrototypesByName(const std::string &name, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill) const;
+         void FindPrototypesByName(const std::string &name, std::vector<dtDAL::ActorProxy*> &toFill) const;
          
          /**
          * Fills a vector with all the templates.
          * @param The vector to fill
          */
-         void GetAllPrototypes(std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill) const;
+         void GetAllPrototypes(std::vector<dtDAL::ActorProxy*> &toFill) const;
 
          /**
          * @param The uniqueID to look for
@@ -422,53 +422,53 @@ namespace dtGame
           * Retrieves all the game actors added to the GM
           * @param toFill The vector to fill
           */
-         void GetAllGameActors(std::vector<dtCore::RefPtr<GameActorProxy> > &toFill) const;
+         void GetAllGameActors(std::vector<GameActorProxy*> &toFill) const;
 
          /**
           * Retrieves all the non game actors added to the GM
           * @param toFill The vector to fill
           */
-         void GetAllNonGameActors(std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill) const;
+         void GetAllNonGameActors(std::vector<dtDAL::ActorProxy*> &toFill) const;
 
          /**
           * Retrieves all the actors added to the GM
           * @param toFill The vector to fill
           */
-         void GetAllActors(std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill) const;
+         void GetAllActors(std::vector<dtDAL::ActorProxy*> &toFill) const;
 
          /**
           * Fills a vector with actors that are currently in the scene
           * @param vec The vector to fill
           */
-         void GetActorsInScene(std::vector<dtCore::RefPtr<dtCore::DeltaDrawable> > &vec) const;
+         void GetActorsInScene(std::vector<dtCore::DeltaDrawable*> &vec) const;
 
          /**
           * Fills a vector with the game proxys whose names match the name parameter
           * @param The name to search for
           * @param The vector to fill
           */
-         void FindActorsByName(const std::string &name, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill) const;
+         void FindActorsByName(const std::string &name, std::vector<dtDAL::ActorProxy*> &toFill) const;
 
          /**
           * Fills a vector with the game proxys whose types match the type parameter
           * @param The type to search for
           * @param The vector to fill
           */
-         void FindActorsByType(const dtDAL::ActorType &type, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill) const;
+         void FindActorsByType(const dtDAL::ActorType &type, std::vector<dtDAL::ActorProxy*> &toFill) const;
 
          /**
           * Fills out a vector of actors with the specified class name
           * @param className the classname
           * @param toFill The vector to fill
           */
-         void FindActorsByClassName(const std::string &className, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill) const;
+         void FindActorsByClassName(const std::string &className, std::vector<dtDAL::ActorProxy*> &toFill) const;
          
          /**
           * Fills a vector with the game proxys whose position is within the radius parameter
           * @param radius The radius to search in 
           * @param toFill The vector to fill
           */
-         void FindActorsWithinRadius(const float radius, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill) const;
+         void FindActorsWithinRadius(const float radius, std::vector<dtDAL::ActorProxy*> &toFill) const;
 
          /**
           * Returns the game actor proxy whose is matches the parameter
