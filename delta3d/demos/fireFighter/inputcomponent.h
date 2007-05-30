@@ -202,7 +202,7 @@ class FIRE_FIGHTER_EXPORT InputComponent : public dtGame::BaseInputComponent
 template<class T>
 void InputComponent::IsActorInGameMap(T *&actor, bool throwException) 
 {
-   std::vector<dtCore::RefPtr<dtGame::GameActorProxy> > proxies;
+   std::vector<dtGame::GameActorProxy*> proxies;
    GetGameManager()->GetAllGameActors(proxies);
 
    for(unsigned int i = 0; i < proxies.size(); i++)
