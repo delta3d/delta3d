@@ -75,44 +75,70 @@ private:
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 AnimationSequence::AnimationSequence()
-: mName()
-, mController()
+: mController()
 , mActiveAnimations()
 {
    //vs complains about using this in initializer list
    mController = new AnimationController(this);
 }
 
+
+/////////////////////////////////////////////////////////////////////////////////
 AnimationSequence::AnimationSequence(AnimationController* pController)
-: mName()
-, mController(pController)
+: mController(pController)
 , mActiveAnimations()
 {
    mController->SetParent(this);
 }
 
 
+/////////////////////////////////////////////////////////////////////////////////
 AnimationSequence::~AnimationSequence()
 {
 }
 
-dtCore::RefPtr<Animatable> AnimationSequence::Clone() const
+
+/////////////////////////////////////////////////////////////////////////////////
+AnimationSequence::AnimationSequence(const AnimationSequence& pSeq)
+: Animatable(pSeq)
+, mController(pSeq.GetController()->Clone())
+, mActiveAnimations()
 {
-   dtCore::RefPtr<AnimationSequence> pAnim = new AnimationSequence();
-   std::for_each(mActiveAnimations.begin(), mActiveAnimations.end(), CloneFunctor(pAnim.get()));
-   return pAnim.get();
+   std::for_each(mActiveAnimations.begin(), mActiveAnimations.end(), CloneFunctor(this));
 }
 
+
+/////////////////////////////////////////////////////////////////////////////////
+AnimationSequence& AnimationSequence::operator=(const AnimationSequence& pSeq)
+{
+   Animatable::operator =(pSeq);
+
+   mController = pSeq.GetController()->Clone();
+   mActiveAnimations.clear();
+
+   std::for_each(mActiveAnimations.begin(), mActiveAnimations.end(), CloneFunctor(this));
+   return *this;
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+dtCore::RefPtr<Animatable> AnimationSequence::Clone() const
+{
+   return new AnimationSequence(*this);
+}
+
+/////////////////////////////////////////////////////////////////////////////////
 const AnimationController* AnimationSequence::GetController() const
 {
    return mController.get();
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 AnimationController* AnimationSequence::GetController()
 {
    return mController.get();
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 void AnimationSequence::SetController(AnimationController* pController) 
 {
    mController = pController;
@@ -120,12 +146,14 @@ void AnimationSequence::SetController(AnimationController* pController)
 }
 
 
+/////////////////////////////////////////////////////////////////////////////////
 void AnimationSequence::AddAnimation(Animatable* pAnimation)
 {
    Insert(pAnimation);
    Recalculate();
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 void AnimationSequence::ClearAnimation(const std::string& pAnimName, float fadeTime)
 {
    Animatable* anim = GetAnimatable(pAnimName);
@@ -139,6 +167,7 @@ void AnimationSequence::ClearAnimation(const std::string& pAnimName, float fadeT
    }
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 Animatable* AnimationSequence::GetAnimation(const std::string& pAnimName)
 {
    Animatable* anim = GetAnimatable(pAnimName);
@@ -151,6 +180,7 @@ Animatable* AnimationSequence::GetAnimation(const std::string& pAnimName)
    return anim;
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 const Animatable* AnimationSequence::GetAnimation(const std::string& pAnimName) const
 {
    const Animatable* anim = GetAnimatable(pAnimName);
@@ -163,17 +193,20 @@ const Animatable* AnimationSequence::GetAnimation(const std::string& pAnimName) 
    return anim;
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 AnimationSequence::AnimationContainer& AnimationSequence::GetChildAnimations()
 {
    return mActiveAnimations;
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 const AnimationSequence::AnimationContainer& AnimationSequence::GetChildAnimations() const
 {
    return mActiveAnimations;
 }
 
 
+/////////////////////////////////////////////////////////////////////////////////
 void AnimationSequence::Update(float dt)
 {
    if(mController.valid())
@@ -189,17 +222,21 @@ void AnimationSequence::Update(float dt)
    }
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 void AnimationSequence::Recalculate()
 {
    mController->Recalculate();
 }
 
+
+/////////////////////////////////////////////////////////////////////////////////
 //TODO
 void AnimationSequence::CalculateBaseWeight()
 {
    //calculate weight based on fade in's and out's
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 void AnimationSequence::ForceFadeOut(float time)
 {
    std::for_each(mActiveAnimations.begin(), mActiveAnimations.end(), AnimSeqForceFade(time));
@@ -207,16 +244,7 @@ void AnimationSequence::ForceFadeOut(float time)
    SetPrune(true);
 }
 
-const std::string& AnimationSequence::GetName() const
-{
-   return mName;
-}
-
-void AnimationSequence::SetName(const std::string& pName)
-{
-   mName = pName;
-}
-
+/////////////////////////////////////////////////////////////////////////////////
 void AnimationSequence::Prune()
 {
    AnimationContainer::iterator iter = mActiveAnimations.begin();
@@ -229,6 +257,7 @@ void AnimationSequence::Prune()
    }
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 void AnimationSequence::PruneChildren()
 {
    AnimationContainer::iterator iter = mActiveAnimations.begin();
@@ -244,6 +273,7 @@ void AnimationSequence::PruneChildren()
    }
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 void AnimationSequence::Insert(Animatable* pAnimation)
 {
    if(GetAnimatable(pAnimation->GetName()) != 0)
@@ -256,6 +286,7 @@ void AnimationSequence::Insert(Animatable* pAnimation)
    }
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 Animatable* AnimationSequence::GetAnimatable(const std::string& pAnim)
 {
    AnimationContainer::iterator iter = mActiveAnimations.begin();
@@ -271,6 +302,7 @@ Animatable* AnimationSequence::GetAnimatable(const std::string& pAnim)
    return 0;
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 const Animatable* AnimationSequence::GetAnimatable(const std::string& pAnim) const
 {
    AnimationContainer::const_iterator iter = mActiveAnimations.begin();
@@ -286,6 +318,7 @@ const Animatable* AnimationSequence::GetAnimatable(const std::string& pAnim) con
    return 0;
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 void AnimationSequence::Remove(const std::string& pAnim)
 {
    AnimationContainer::iterator iter = mActiveAnimations.begin();

@@ -54,7 +54,35 @@ AnimationChannel::AnimationChannel(Cal3DModelWrapper* pModelWrapper, AnimationWr
 AnimationChannel::~AnimationChannel()
 {
 }
-//TODO should probably make a copy constructor for this
+
+/////////////////////////////////////////////////////////////////////////////////
+AnimationChannel::AnimationChannel(const AnimationChannel& pChannel)
+: Animatable(pChannel)
+, mIsAction(pChannel.IsAction())
+, mIsLooping(pChannel.IsLooping())
+, mMaxDuration(pChannel.GetMaxDuration())
+, mLastWeight(0.0f)
+, mModelWrapper(pChannel.mModelWrapper)
+, mAnimationWrapper(pChannel.mAnimationWrapper)
+{
+
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+AnimationChannel& AnimationChannel::operator=(const AnimationChannel& pChannel)
+{
+   Animatable::operator=(pChannel);
+
+   mIsAction= pChannel.IsAction();
+   mIsLooping = pChannel.IsLooping();
+   mMaxDuration = pChannel.GetMaxDuration();
+   mLastWeight = 0.0f;
+   mModelWrapper = pChannel.mModelWrapper;
+   mAnimationWrapper = pChannel.mAnimationWrapper;
+   return *this;
+}
+
+/////////////////////////////////////////////////////////////////////////////////
 dtCore::RefPtr<Animatable> AnimationChannel::Clone() const
 {
    return new AnimationChannel(*this);
@@ -160,18 +188,6 @@ void AnimationChannel::ForceFadeOut(float time)
       mModelWrapper->ClearCycle(mAnimationWrapper->GetID(), time);
       SetActive(false);
    }
-}
-
-/////////////////////////////////////////////////////////////////////////////////
-const std::string& AnimationChannel::GetName() const
-{
-   return mAnimationWrapper->GetName();
-}
-
-/////////////////////////////////////////////////////////////////////////////////
-void AnimationChannel::SetName(const std::string& pName)
-{
-   mAnimationWrapper->SetName(pName);
 }
 
 /////////////////////////////////////////////////////////////////////////////////

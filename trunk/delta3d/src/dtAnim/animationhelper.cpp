@@ -134,6 +134,7 @@ void AnimationHelper::LoadModel(const std::string& pFilename)
       else
       {
          LOG_ERROR("Unable to load skeletal resource: " + pFilename);
+         //TODO throw exception here
       }
 }
 

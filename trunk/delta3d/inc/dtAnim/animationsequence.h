@@ -49,6 +49,8 @@ public:
 public:
    AnimationSequence();
    AnimationSequence(AnimationController*);
+   AnimationSequence(const AnimationSequence&);
+   AnimationSequence& operator=(const AnimationSequence&);
 
 
    /**
@@ -119,11 +121,6 @@ public:
    */
    /*virtual*/ void ForceFadeOut(float time);
 
-   /**
-   * Getters and setters for the name
-   */
-   /*virtual*/ const std::string& GetName() const;
-   /*virtual*/ void SetName(const std::string& pName);
 
 protected:
    /*virtual*/ ~AnimationSequence();
@@ -138,7 +135,6 @@ private:
    void CalculateBaseWeight();
    void PruneChildren();
 
-   std::string mName;
    dtCore::RefPtr<AnimationController> mController;
    AnimationContainer mActiveAnimations;
 

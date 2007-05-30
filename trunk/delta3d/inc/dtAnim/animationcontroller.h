@@ -25,6 +25,7 @@
 #include <dtAnim/export.h>
 #include <osg/Referenced>
 #include <dtCore/observerptr.h>
+#include <dtCore/refptr.h>
 
 namespace dtAnim
 {
@@ -36,23 +37,57 @@ class	DT_ANIM_EXPORT AnimationController: public osg::Referenced
 {
 
 public:
+   /**
+   * Constructor
+   * @param the parent AnimatationSequence
+   */
    AnimationController(AnimationSequence*);
 
+   ///copy constructor
+   AnimationController(const AnimationController&);
+   ///operator equal
+   AnimationController& operator=(const AnimationController&);
+
+   ///classes derived from this should implement a custom Clone()
+   virtual dtCore::RefPtr<AnimationController> Clone() const;
+
+   ///Sets the parent AnimationSequence
    void SetParent(AnimationSequence*);
 
+   /**
+   * The Update function is responsible for updating all the parent
+   * sequences children.  This update consists of incrementing their 
+   * elapsed time, calculating their current weight, and call update
+   * on them if they are active.
+   *
+   * @param delta time
+   */
    virtual void Update(float dt);
+
+   /**
+   * The Recalculate function is responsible for calculating the start times
+   * of all the parent sequences children and then calling Recalculate() on 
+   * them so they can calculate their end times.
+   */
    virtual void Recalculate();
 
 protected:
    virtual ~AnimationController();
 
+   /**
+   * Helper function to compute the weight of a child animatable
+   * using the parents weight.
+   */
    void SetComputeWeight(Animatable* pAnim);
+
+   /**
+   * Helper function to compute the speed of a child animatable
+   * using the parents speed.
+   */
    void SetComputeSpeed(Animatable* pAnim);
 
 
 private:
-   AnimationController(const AnimationController&);  //not implemented
-   AnimationController& operator=(const AnimationController&); //not implemented
 
    dtCore::ObserverPtr<AnimationSequence> mParent;
 };

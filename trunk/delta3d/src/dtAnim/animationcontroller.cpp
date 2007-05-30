@@ -52,21 +52,43 @@ namespace dtAnim
       float mEnd;
    };
 
+/////////////////////////////////////////////////////////////////////////////////
 AnimationController::AnimationController(AnimationSequence* pParent)
 : mParent(pParent)
 {
 }
 
-
+/////////////////////////////////////////////////////////////////////////////////
 AnimationController::~AnimationController()
 {
 }
 
+/////////////////////////////////////////////////////////////////////////////////
+AnimationController::AnimationController(const AnimationController& pCont)
+: mParent(pCont.mParent)
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+AnimationController& AnimationController::operator=(const AnimationController& pCont)
+{
+   mParent = pCont.mParent;
+   return *this;
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+dtCore::RefPtr<AnimationController> AnimationController::Clone() const
+{
+   return new AnimationController(*this);
+}
+
+/////////////////////////////////////////////////////////////////////////////////
 void AnimationController::SetParent(AnimationSequence* pParent)
 {
    mParent = pParent;
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 void AnimationController::Update(float dt)
 {
    AnimationSequence::AnimationContainer& pCont = mParent->GetChildAnimations();
@@ -88,6 +110,7 @@ void AnimationController::Update(float dt)
    }
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 void AnimationController::Recalculate()
 {
    float start = mParent->GetStartTime();
@@ -99,6 +122,7 @@ void AnimationController::Recalculate()
    mParent->SetEndTime(func.GetEnd());
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 //TODO
 void AnimationController::SetComputeWeight(Animatable* pAnim)
 {
@@ -112,6 +136,7 @@ void AnimationController::SetComputeWeight(Animatable* pAnim)
 
 }
 
+/////////////////////////////////////////////////////////////////////////////////
 //TODO
 void AnimationController::SetComputeSpeed(Animatable* pAnim)
 {

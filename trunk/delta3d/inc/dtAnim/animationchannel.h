@@ -45,6 +45,16 @@ public:
     */
     AnimationChannel();
 
+    /**
+    * Copy Constructor
+    */
+    AnimationChannel(const AnimationChannel&);
+
+    /**
+    * Operator Equal
+    */
+    AnimationChannel& operator=(const AnimationChannel&);
+
    /**
    * @param the model wrapper used to play animations with
    * @param the animation wrapper to specify which animation to play
@@ -115,16 +125,6 @@ public:
    * @param the time to fade out over
    */
    /*virtual*/ void ForceFadeOut(float time);
-
-   /**
-   * @return the name of this animation
-   */
-   /*virtual*/ const std::string& GetName() const;
-   
-   /**
-   * @param the name to set this animation to
-   */
-   /*virtual*/ void SetName(const std::string& pName);
 
 
 protected:
