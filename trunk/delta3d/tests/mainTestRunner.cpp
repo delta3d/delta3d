@@ -29,14 +29,15 @@
 #include <cppunit/TestListener.h>
 #include <cppunit/Test.h>
 #include <cppunit/TestFailure.h>
-#include <ctime>   
 #include <dtCore/timer.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/log.h>
 #include <dtUtil/exception.h>
 
+#include <stdexcept>
 #include <sstream>
 #include <cmath>
+#include <ctime>   
 
 static std::ostringstream mSlowTests;
 
