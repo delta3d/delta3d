@@ -277,8 +277,8 @@ void MessageTests::tearDown()
 
 void MessageTests::createActors(dtDAL::Map& map)
 {
-   std::vector<dtCore::RefPtr<dtDAL::ActorType> > actorTypes;
-   std::vector<dtDAL::ActorProperty *> props;
+   std::vector<dtDAL::ActorType*> actorTypes;
+   std::vector<dtDAL::ActorProperty*> props;
 
    mGameManager->GetActorTypes(actorTypes);
 
@@ -1202,7 +1202,7 @@ void MessageTests::TestChangeMap()
 
       mGameManager->ChangeMap(mapName, false, false);
 
-      std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > toFill;
+      std::vector<dtDAL::ActorProxy*> toFill;
       mGameManager->GetAllActors(toFill);
 
       CPPUNIT_ASSERT_MESSAGE("The number of actors in the GM should be 0.", toFill.size() == 0);
@@ -1246,7 +1246,7 @@ void MessageTests::TestChangeMap()
       {
          if (toFill[i]->IsGameActorProxy())
          {
-            dtCore::RefPtr<dtGame::GameActorProxy> gap = dynamic_cast<dtGame::GameActorProxy*>(toFill[i].get());
+            dtCore::RefPtr<dtGame::GameActorProxy> gap = dynamic_cast<dtGame::GameActorProxy*>(toFill[i]);
             CPPUNIT_ASSERT(gap != NULL);
             CPPUNIT_ASSERT_MESSAGE("The game actor proxy should be assigned to the game actor.", &gap->GetGameActor().GetGameActorProxy() == gap.get());
             std::vector<const dtGame::Invokable*> invokables;

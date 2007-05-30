@@ -129,14 +129,14 @@ namespace dtEditQt
         {
             if (actorTypes[i] != NULL)
             {
-                QString fullCategory(tr(actorTypes[i].get()->GetCategory().c_str()));
+                QString fullCategory(tr(actorTypes[i]->GetCategory().c_str()));
 
                 if (!fullCategory.isNull())
                 {
                     QStringList subCategories = fullCategory.split(tr(ActorTypeTreeWidget::CATEGORY_SEPARATOR.c_str()),
                         QString::SkipEmptyParts);
                     QMutableStringListIterator *listIterator = new QMutableStringListIterator(subCategories);
-                    rootActorType->recursivelyAddCategoryAndActorTypeAsChildren(listIterator, actorTypes[i].get());
+                    rootActorType->recursivelyAddCategoryAndActorTypeAsChildren(listIterator, actorTypes[i]);
 
                 }
             }

@@ -119,7 +119,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::GetActorTypes(std::vector<dtCore::RefPtr<dtDAL::ActorType> > &actorTypes)
+   void GameManager::GetActorTypes(std::vector<dtDAL::ActorType*> &actorTypes)
    {
       mLibMgr->GetActorTypes(actorTypes);
    }
@@ -871,14 +871,14 @@ namespace dtGame
          // Internal pointer is not valid, we are setting a new environment
          // We need to remove all the drawables from the scene and add them
          // to the new environment
-         std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > actors;
+         std::vector<dtDAL::ActorProxy*> actors;
          GetAllActors(actors);
          mScene->RemoveAllDrawables();
          mScene->UseSceneLight(true);
          unsigned int actorsSize = actors.size(); // checking size on vector is slow :(
          for(unsigned int i = 0; i < actorsSize; i++)
          {
-            if(actors[i].get() != oldProxy.get())
+            if(actors[i] != oldProxy.get())
                ea->AddActor(*actors[i]->GetActor());
          }
 
@@ -1127,29 +1127,29 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::GetAllGameActors(std::vector<dtCore::RefPtr<GameActorProxy> > &toFill) const
+   void GameManager::GetAllGameActors(std::vector<GameActorProxy*> &toFill) const
    {
       toFill.clear();
       toFill.reserve(mGameActorProxyMap.size());
 
       std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> >::const_iterator itor;
       for(itor = mGameActorProxyMap.begin(); itor != mGameActorProxyMap.end(); ++itor)
-         toFill.push_back(itor->second);
+         toFill.push_back(itor->second.get());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::GetAllNonGameActors(std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill) const
+   void GameManager::GetAllNonGameActors(std::vector<dtDAL::ActorProxy*> &toFill) const
    {
       toFill.clear();
       toFill.reserve(mActorProxyMap.size());
 
       std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> >::const_iterator itor;
       for(itor = mActorProxyMap.begin(); itor != mActorProxyMap.end(); ++itor)
-         toFill.push_back(itor->second);
+         toFill.push_back(itor->second.get());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::GetAllActors(std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill) const
+   void GameManager::GetAllActors(std::vector<dtDAL::ActorProxy*> &toFill) const
    {
       toFill.clear();
       toFill.reserve(mGameActorProxyMap.size() + mActorProxyMap.size() + mPrototypeActors.size());
@@ -1160,14 +1160,14 @@ namespace dtGame
 
       std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> >::const_iterator iter;
       for(iter = mActorProxyMap.begin(); iter != mActorProxyMap.end(); ++iter)
-         toFill.push_back(iter->second);
+         toFill.push_back(iter->second.get());
 
       for(itor = mPrototypeActors.begin(); itor != mPrototypeActors.end(); ++itor)
          toFill.push_back(itor->second.get());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::GetAllPrototypes(std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill) const
+   void GameManager::GetAllPrototypes(std::vector<dtDAL::ActorProxy*> &toFill) const
    {  
       toFill.clear();
       toFill.reserve(mPrototypeActors.size());
@@ -1178,7 +1178,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::GetActorsInScene(std::vector<dtCore::RefPtr<dtCore::DeltaDrawable> > &vec) const
+   void GameManager::GetActorsInScene(std::vector<dtCore::DeltaDrawable*> &vec) const
    {
       vec.clear();
       vec.reserve(mScene->GetNumberOfAddedDrawable());
@@ -1188,7 +1188,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::FindActorsByName(const std::string &name, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill) const
+   void GameManager::FindActorsByName(const std::string &name, std::vector<dtDAL::ActorProxy*> &toFill) const
    {
       toFill.clear();
       toFill.reserve(mGameActorProxyMap.size() + mActorProxyMap.size());
@@ -1204,12 +1204,12 @@ namespace dtGame
           itor != mActorProxyMap.end(); ++itor)
       {
           if (dtUtil::Match(const_cast<char*>(name.c_str()), const_cast<char*>(itor->second->GetName().c_str())))
-             toFill.push_back(itor->second);
+             toFill.push_back(itor->second.get());
       }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::FindActorsByType(const dtDAL::ActorType &type, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill) const
+   void GameManager::FindActorsByType(const dtDAL::ActorType &type, std::vector<dtDAL::ActorProxy*> &toFill) const
    {
       toFill.clear();
       toFill.reserve(mGameActorProxyMap.size() + mActorProxyMap.size());
@@ -1225,14 +1225,14 @@ namespace dtGame
          itor != mActorProxyMap.end(); ++itor)
       {
          if (itor->second->GetActorType() == type)
-            toFill.push_back(itor->second);
+            toFill.push_back(itor->second.get());
       }
 
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::FindActorsByClassName(const std::string &className, 
-      std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill) const
+      std::vector<dtDAL::ActorProxy*> &toFill) const
    {
       toFill.clear();
       toFill.reserve(mActorProxyMap.size() + mGameActorProxyMap.size());
@@ -1258,7 +1258,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::FindPrototypesByActorType(const dtDAL::ActorType &type, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill) const
+   void GameManager::FindPrototypesByActorType(const dtDAL::ActorType &type, std::vector<dtDAL::ActorProxy*> &toFill) const
    {
       toFill.clear();
       toFill.reserve(mPrototypeActors.size());
@@ -1272,7 +1272,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::FindPrototypesByName(const std::string &name, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill) const
+   void GameManager::FindPrototypesByName(const std::string &name, std::vector<dtDAL::ActorProxy*> &toFill) const
    {
       toFill.clear();
       toFill.reserve(mPrototypeActors.size());
@@ -1294,7 +1294,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::FindActorsWithinRadius(const float radius, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill) const
+   void GameManager::FindActorsWithinRadius(const float radius, std::vector<dtDAL::ActorProxy*> &toFill) const
    {
       toFill.clear();
    }

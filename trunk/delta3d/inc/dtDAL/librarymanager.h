@@ -112,7 +112,7 @@ namespace dtDAL
           * Returns a list of all the actor types the library manager knows how 
           * to create.
           */
-         void GetActorTypes(std::vector<dtCore::RefPtr<ActorType> > &actorTypes);
+         void GetActorTypes(std::vector<ActorType*> &actorTypes);
    		
          /**
           * Gets a single actor type that matches the name and category specified.

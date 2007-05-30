@@ -19,7 +19,7 @@ HasProperty::HasProperty(const HasProperty& hp)
 {
 }
 
-void HasProperty::operator ()(dtCore::RefPtr<dtDAL::ActorProxy>& proxy)
+void HasProperty::operator ()(dtDAL::ActorProxy *&proxy)
 {
    const dtDAL::ActorProperty* ap = proxy->GetProperty( mPropName );
    if( ap == NULL )

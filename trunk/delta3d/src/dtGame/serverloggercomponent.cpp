@@ -781,8 +781,8 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////////
    void ServerLoggerComponent::DumpKeyFrame(LogKeyframe &kf)
    {
-      std::vector<dtCore::RefPtr<GameActorProxy> > actors;
-      std::vector<dtCore::RefPtr<GameActorProxy> >::iterator actorItor;
+      std::vector<GameActorProxy*> actors;
+      std::vector<GameActorProxy*>::iterator actorItor;
 
       //Inserting a keyframe into the log stream effectively marks the beginning
       //of a new keyframe.  So mark it, and start writing messages.
@@ -804,7 +804,7 @@ namespace dtGame
       GetGameManager()->GetAllGameActors(actors);
       for (actorItor = actors.begin(); actorItor != actors.end(); ++actorItor)
       {
-         if( !IsActorIdInList( actorItor->get()->GetId(), mRecordIgnoreList ) )
+         if( !IsActorIdInList( (*actorItor)->GetId(), mRecordIgnoreList ) )
          {
             //For each game actor we need to build an actor update message, ask the
             //actor to fill the message with its current property state, and then
@@ -859,14 +859,14 @@ namespace dtGame
          kfMsg = mLogStream->ReadMessage(simTime);
       }
 
-      std::vector<dtCore::RefPtr<GameActorProxy> > gameProxies;
-      std::vector<dtCore::RefPtr<GameActorProxy> >::iterator proxyItor;
+      std::vector<GameActorProxy*> gameProxies;
+      std::vector<GameActorProxy*>::iterator proxyItor;
       GetGameManager()->GetAllGameActors(gameProxies);
       for (proxyItor=gameProxies.begin(); proxyItor!=gameProxies.end(); ++proxyItor)
       {
          std::map<dtCore::UniqueId,dtCore::RefPtr<Message> >::iterator kfActorItor;
 
-         GameActorProxy *proxy = static_cast<GameActorProxy *>(proxyItor->get());
+         GameActorProxy *proxy = static_cast<GameActorProxy*>((*proxyItor));
          kfActorItor = updateMap.find(proxy->GetId());
 
          if (kfActorItor == updateMap.end() 

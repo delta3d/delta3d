@@ -400,7 +400,7 @@ void TestAARMessageProcessor::Reset()
    }
 
    //SetupTasks();
-   std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > toFill;
+   std::vector<dtDAL::ActorProxy*> toFill;
    GetGameManager()->FindActorsByName("Move Camera", toFill);
 
    if (toFill.size() == 0)
@@ -409,7 +409,7 @@ void TestAARMessageProcessor::Reset()
       return;      
    }
 
-   mTaskMoveCameraProxy = dynamic_cast<dtActors::TaskActorProxy *>(toFill[0].get());
+   mTaskMoveCameraProxy = dynamic_cast<dtActors::TaskActorProxy *>(toFill[0]);
    if (mTaskMoveCameraProxy == NULL)
    {
       LOG_ERROR("The \"Move Camera\" actor was found but it is not a task.  The application will likely fail.");

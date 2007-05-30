@@ -89,7 +89,7 @@ namespace dtEditQt
     
     private:
         // known list of actor types
-        std::vector<dtCore::RefPtr<dtDAL::ActorType> > actorTypes;
+        std::vector<dtDAL::ActorType*> actorTypes;
 
         /**
         * Creates the main User Interface for the Actor Browser

@@ -186,14 +186,14 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void LibraryManager::GetActorTypes(std::vector<dtCore::RefPtr<ActorType> > &actorTypes)
+   void LibraryManager::GetActorTypes(std::vector<ActorType*> &actorTypes)
    {
       actorTypes.clear();
       actorTypes.reserve(mActors.size());
       ActorTypeMapItor itor = mActors.begin();
       while (itor != mActors.end())
       {
-         actorTypes.push_back(itor->first);
+         actorTypes.push_back(itor->first.get());
          ++itor;
       }
    }
