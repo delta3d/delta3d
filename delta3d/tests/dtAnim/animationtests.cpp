@@ -37,13 +37,14 @@ namespace dtAnim
       class MyAnimatable: public Animatable
       {
       public:
-         std::string str;
+         MyAnimatable(){}
+         MyAnimatable(const MyAnimatable& anim):Animatable(anim){}
+         MyAnimatable& operator=(const MyAnimatable& anim){Animatable::operator=(anim); return *this;}
+
          void Update(float dt){};
-         void ForceFadeOut(float time){};
-         const std::string& GetName() const{return str;}            
-         void SetName(const std::string& s){str = s;};    
+         void ForceFadeOut(float time){}; 
          void Recalculate(){}
-         dtCore::RefPtr<Animatable> Clone()const{return new MyAnimatable();}
+         dtCore::RefPtr<Animatable> Clone()const{return new MyAnimatable(*this);}
          void Prune(){}
       };
 
@@ -158,7 +159,7 @@ namespace dtAnim
 
       wrapper->SetDuration(duration);
       wrapper->SetSpeed(speed);
-      
+       
       CPPUNIT_ASSERT_EQUAL(wrapperName, wrapper->GetName());
       CPPUNIT_ASSERT_EQUAL(wrapperID, wrapper->GetID());
       CPPUNIT_ASSERT_EQUAL(duration, wrapper->GetDuration());
@@ -168,13 +169,47 @@ namespace dtAnim
    
    void AnimationTests::TestAnimatable()
    {
-
+      CPPUNIT_ASSERT_EQUAL(name1, mAnimatable1->GetName());
       CPPUNIT_ASSERT_EQUAL(animStart1, mAnimatable1->GetStartTime());
       CPPUNIT_ASSERT_EQUAL(animEnd1, mAnimatable1->GetEndTime());
       CPPUNIT_ASSERT_EQUAL(fadeIn1, mAnimatable1->GetFadeIn());
       CPPUNIT_ASSERT_EQUAL(fadeOut1, mAnimatable1->GetFadeOut());
       CPPUNIT_ASSERT_EQUAL(base1, mAnimatable1->GetBaseWeight());
       CPPUNIT_ASSERT(!mAnimatable1->IsActive());
+
+      //test operator =
+      dtCore::RefPtr<MyAnimatable> pOpEqual = new MyAnimatable();
+      pOpEqual = mAnimatable1;
+
+      CPPUNIT_ASSERT_EQUAL(name1, pOpEqual->GetName());
+      CPPUNIT_ASSERT_EQUAL(animStart1, pOpEqual->GetStartTime());
+      CPPUNIT_ASSERT_EQUAL(animEnd1, pOpEqual->GetEndTime());
+      CPPUNIT_ASSERT_EQUAL(fadeIn1, pOpEqual->GetFadeIn());
+      CPPUNIT_ASSERT_EQUAL(fadeOut1, pOpEqual->GetFadeOut());
+      CPPUNIT_ASSERT_EQUAL(base1, pOpEqual->GetBaseWeight());
+      CPPUNIT_ASSERT(!pOpEqual->IsActive());
+
+      //test copy operator
+      dtCore::RefPtr<MyAnimatable> pCopyOp(mAnimatable1.get());
+
+      CPPUNIT_ASSERT_EQUAL(name1, pCopyOp->GetName());
+      CPPUNIT_ASSERT_EQUAL(animStart1, pCopyOp->GetStartTime());
+      CPPUNIT_ASSERT_EQUAL(animEnd1, pCopyOp->GetEndTime());
+      CPPUNIT_ASSERT_EQUAL(fadeIn1, pCopyOp->GetFadeIn());
+      CPPUNIT_ASSERT_EQUAL(fadeOut1, pCopyOp->GetFadeOut());
+      CPPUNIT_ASSERT_EQUAL(base1, pCopyOp->GetBaseWeight());
+      CPPUNIT_ASSERT(!pCopyOp->IsActive());
+
+      //test clone
+      dtCore::RefPtr<Animatable> pClone = mAnimatable1->Clone();
+
+      CPPUNIT_ASSERT_EQUAL(name1, pClone->GetName());
+      CPPUNIT_ASSERT_EQUAL(animStart1, pClone->GetStartTime());
+      CPPUNIT_ASSERT_EQUAL(animEnd1, pClone->GetEndTime());
+      CPPUNIT_ASSERT_EQUAL(fadeIn1, pClone->GetFadeIn());
+      CPPUNIT_ASSERT_EQUAL(fadeOut1, pClone->GetFadeOut());
+      CPPUNIT_ASSERT_EQUAL(base1, pClone->GetBaseWeight());
+      CPPUNIT_ASSERT(!pClone->IsActive());
    }
 
    
@@ -200,7 +235,6 @@ namespace dtAnim
 
       CPPUNIT_ASSERT_EQUAL(pSeq->GetAnimation(name1), (Animatable*) mAnimatable1.get());
       CPPUNIT_ASSERT_EQUAL(pSeq->GetAnimation(name2), (Animatable*) mAnimatable2.get());
-
    }
 
    void AnimationTests::TestSequenceMixer()

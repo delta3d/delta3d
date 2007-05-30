@@ -42,6 +42,9 @@ class	DT_ANIM_EXPORT Animatable: public osg::Referenced
 public:
    Animatable();
 
+   Animatable(const Animatable& pAnim);
+   Animatable& operator=(const Animatable& pAnim);
+
 protected:
    virtual ~Animatable();
 
@@ -159,12 +162,12 @@ public:
    /**
    * @return the name of this animation
    */
-   virtual const std::string& GetName() const = 0;
+   const std::string& GetName() const;
    
    /**
    * @param the name to set this animation to
    */
-   virtual void SetName(const std::string&) = 0;
+   void SetName(const std::string&);
 
 
 protected:
@@ -178,10 +181,12 @@ protected:
    float mStartTime, mStartDelay, mEndTime;
    float mFadeIn, mFadeOut;
    float mElapsedTime;
-
    float mBaseWeight, mCurrentWeight;
 
+   std::string mName;
+
    bool mActive, mShouldPrune;
+
 
 };
 
