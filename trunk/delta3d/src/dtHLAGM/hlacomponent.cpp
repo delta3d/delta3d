@@ -523,9 +523,10 @@ namespace dtHLAGM
          {
             CreateDDMSubscriptionRegions();            
          }
-         catch (const dtUtil::Exception& ex)
+         catch (const dtUtil::Exception&)
          {
             LeaveFederationExecution();
+            //rethrow the exception.
             throw;
          }
       }

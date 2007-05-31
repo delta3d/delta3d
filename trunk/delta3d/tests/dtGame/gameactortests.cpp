@@ -221,8 +221,6 @@ void GameActorTests::TestActorIsInGM()
    {
       CPPUNIT_FAIL(e.What());
    }
-
-   int akljdsafa = 0;
 }
 
 
