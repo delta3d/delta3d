@@ -46,6 +46,14 @@ namespace dtAnim
          void Recalculate(){}
          dtCore::RefPtr<Animatable> Clone()const{return new MyAnimatable(*this);}
          void Prune(){}
+
+         void SetStartTime2(float animStart1){ SetStartTime(animStart1);}
+         void SetEndTime2(float animEnd1){ SetEndTime(animEnd1);}
+         void SetFadeIn2(float fadeIn1){ SetFadeIn(fadeIn1);}
+         void SetFadeOut2(float fadeOut1){ SetFadeOut(fadeOut1);}
+         void SetBaseWeight2(float base1){ SetBaseWeight(base1);}
+         void SetName2(const std::string& name1){ SetName(name1);}
+         void SetStartDelay2(float start_delay1){ SetStartDelay(start_delay1);}
       };
 
 
@@ -114,13 +122,13 @@ namespace dtAnim
       start_delay1 = 0.5f;
       mAnimatable1 = new MyAnimatable();
 
-      mAnimatable1->SetStartTime(animStart1);
-      mAnimatable1->SetEndTime(animEnd1);
-      mAnimatable1->SetFadeIn(fadeIn1);
-      mAnimatable1->SetFadeOut(fadeOut1);
-      mAnimatable1->SetBaseWeight(base1);
-      mAnimatable1->SetName(name1);
-      mAnimatable1->SetStartDelay(start_delay1);
+      mAnimatable1->SetStartTime2(animStart1);
+      mAnimatable1->SetEndTime2(animEnd1);
+      mAnimatable1->SetFadeIn2(fadeIn1);
+      mAnimatable1->SetFadeOut2(fadeOut1);
+      mAnimatable1->SetBaseWeight2(base1);
+      mAnimatable1->SetName2(name1);
+      mAnimatable1->SetStartDelay2(start_delay1);
 
       animStart2 = 1.0f;
       animEnd2 = 2.0f;
@@ -132,13 +140,13 @@ namespace dtAnim
 
       mAnimatable2 = new MyAnimatable();
 
-      mAnimatable2->SetStartTime(animStart2);
-      mAnimatable2->SetEndTime(animEnd2);
-      mAnimatable2->SetFadeIn(fadeIn2);
-      mAnimatable2->SetFadeOut(fadeOut2);
-      mAnimatable2->SetBaseWeight(base2);
-      mAnimatable2->SetName(name2);
-      mAnimatable2->SetStartDelay(start_delay2);
+      mAnimatable2->SetStartTime2(animStart2);
+      mAnimatable2->SetEndTime2(animEnd2);
+      mAnimatable2->SetFadeIn2(fadeIn2);
+      mAnimatable2->SetFadeOut2(fadeOut2);
+      mAnimatable2->SetBaseWeight2(base2);
+      mAnimatable2->SetName2(name2);
+      mAnimatable2->SetStartDelay2(start_delay2);
 
    }
 
@@ -275,7 +283,7 @@ namespace dtAnim
       CPPUNIT_ASSERT_EQUAL(true, activeAnim->IsActive());
 
       CPPUNIT_ASSERT_EQUAL(3.0f, activeAnim->GetElapsedTime());
-
+ 
       dtCore::RefPtr<AnimationChannel> activeChannel = dynamic_cast<AnimationChannel*>(activeAnim);
       CPPUNIT_ASSERT(activeChannel.valid());
 

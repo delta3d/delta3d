@@ -21,6 +21,7 @@
 
 #include <dtAnim/animationchannel.h>
 #include <dtAnim/animationwrapper.h>
+#include <dtAnim/animationsequence.h>
 
 #include <dtAnim/cal3dmodelwrapper.h>
 #include <osg/Math>
@@ -110,30 +111,30 @@ void AnimationChannel::Update(float dt)
       return;
    }
    
-   if(mEndTime > 0.0f && mElapsedTime >= mEndTime)
+   if(GetEndTime() > 0.0f && GetElapsedTime() >= GetEndTime())
    {
       SetPrune(true);
    }
    else if(!IsActive())
    {
-      if(mIsAction)
+      if(IsAction())
       {
-         mModelWrapper->ExecuteAction(mAnimationWrapper->GetID(), mFadeIn, mFadeOut);         
+         mModelWrapper->ExecuteAction(mAnimationWrapper->GetID(), GetFadeIn(), GetFadeOut());         
       }
       else
       {
-         mModelWrapper->BlendCycle(mAnimationWrapper->GetID(), mCurrentWeight, 0.0f);
-         mLastWeight = mCurrentWeight;
+         mModelWrapper->BlendCycle(mAnimationWrapper->GetID(), GetCurrentWeight(), 0.0f);
+         mLastWeight = GetCurrentWeight();
       }
 
       SetActive(true);
    }
    else
    {
-      if(!mIsAction && !osg::equivalent(mLastWeight, mCurrentWeight))
+      if(!IsAction() && !osg::equivalent(mLastWeight, GetCurrentWeight()))
       {
-         mModelWrapper->BlendCycle(mAnimationWrapper->GetID(), mCurrentWeight, 0.0f);
-         mLastWeight = mCurrentWeight;
+         mModelWrapper->BlendCycle(mAnimationWrapper->GetID(), GetCurrentWeight(), 0.0f);
+         mLastWeight = GetCurrentWeight();
       }         
    }
 
@@ -160,9 +161,9 @@ void AnimationChannel::Recalculate()
 /////////////////////////////////////////////////////////////////////////////////
 void AnimationChannel::Prune()
 {  
-   if(mActive)
+   if(IsActive())
    {
-      if(mIsAction)
+      if(IsAction())
       {
          mModelWrapper->RemoveAction(mAnimationWrapper->GetID());
       }
@@ -171,7 +172,7 @@ void AnimationChannel::Prune()
          mModelWrapper->ClearCycle(mAnimationWrapper->GetID(), 0.0f);
       }
 
-      mActive = false;
+      SetActive(false);
    }   
 
 }
