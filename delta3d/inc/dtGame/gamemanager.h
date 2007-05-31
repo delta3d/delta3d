@@ -180,7 +180,7 @@ namespace dtGame
          void FindPrototypeByID(const dtCore::UniqueId& uniqueID, dtCore::RefPtr<T> &proxy)
          {
             dtDAL::ActorProxy *tempProxy = FindPrototypeByID(uniqueID);
-            proxy = dynamic_cast<T*>(proxy.get());
+            proxy = dynamic_cast<T*>(tempProxy);
          }
 
          /// Clears the mPrototypeActors map.

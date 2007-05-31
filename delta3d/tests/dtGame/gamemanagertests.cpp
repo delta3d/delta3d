@@ -281,15 +281,14 @@ void GameManagerTests::TestTemplateActors()
    mManager->GetAllPrototypes(toFill);
    CPPUNIT_ASSERT_MESSAGE("GameManager shouldnt have had templates in it currently...", toFill.size() == 0);
 
-   mManager->AddActorAsAPrototype(*toMakeAsATemplate.get());
+   mManager->AddActorAsAPrototype(*toMakeAsATemplate);
 
    mManager->GetAllPrototypes(toFill);
    CPPUNIT_ASSERT_MESSAGE("Tried adding a template into the game manager, but it surely didnt want to stay around.", toFill.size() != 0);
 
    toFill.clear();
 
-   dtCore::RefPtr<dtDAL::ActorProxy> templateToFill = 
-      mManager->FindPrototypeByID(toMakeAsATemplate->GetId());
+   dtDAL::ActorProxy *templateToFill = mManager->FindPrototypeByID(toMakeAsATemplate->GetId());
    CPPUNIT_ASSERT_MESSAGE("Tried finding a template that should be in the gm, but its not....",templateToFill != 0 );
 
    dtCore::RefPtr<dtDAL::ActorProxy> ourActualActor = mManager->CreateActorFromPrototype(toMakeAsATemplate->GetId());
@@ -297,6 +296,15 @@ void GameManagerTests::TestTemplateActors()
    CPPUNIT_ASSERT_MESSAGE("Tried cloning from a template, didn't work out too well...", ourActualActor != NULL);
    CPPUNIT_ASSERT_MESSAGE("Tried cloning from a template, didn't work out too well...", ourActualActor->GetName() == toMakeAsATemplate->GetName());
 
+   dtCore::RefPtr<dtActors::GameMeshActorProxy> testFindPrototype;
+   mManager->FindPrototypeByID(toMakeAsATemplate->GetId(), testFindPrototype);
+   CPPUNIT_ASSERT_MESSAGE("The templated method should have been able to find the prototype", 
+      testFindPrototype.valid());
+
+   dtCore::RefPtr<dtActors::GameMeshActorProxy> testCreatePrototype;
+   mManager->CreateActorFromPrototype(toMakeAsATemplate->GetId(), testCreatePrototype);
+   CPPUNIT_ASSERT_MESSAGE("The templated method should have been able to create the prototype",
+      testCreatePrototype.valid());
 }
 /////////////////////////////////////////////////
 void GameManagerTests::TestApplicationMember()
