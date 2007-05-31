@@ -20,7 +20,7 @@
  */
 
 #include <dtAnim/animatable.h>
-
+#include <dtAnim/animationsequence.h>
 
 namespace dtAnim
 {

@@ -23,6 +23,8 @@
 #define __DELTA_ANIMATABLE_H__
 
 #include <dtAnim/export.h>
+#include <dtAnim/animationcontroller.h>
+
 #include <osg/Referenced>
 #include <dtCore/refptr.h>
 
@@ -31,13 +33,15 @@
 namespace dtAnim
 {
 
-
 /**
 *  This class is used to specify the base class of an object which has semantics for 
 *  animating.  
 */
 class	DT_ANIM_EXPORT Animatable: public osg::Referenced
 {
+   
+   friend class AnimationController;
+   friend class AnimationController::RecalcFunctor;
 
 public:
    Animatable();
@@ -54,7 +58,6 @@ public:
    * The start time is the time in seconds this animation will start playing 
    * after it was added to an AnimationSequence.
    */
-   void SetStartTime(float t);
    float GetStartTime() const;
 
    /**
@@ -69,14 +72,12 @@ public:
    * fading out relative to when it was added to an AnimationSequence.
    */
    float GetEndTime() const;
-   void SetEndTime(float t);
 
    /**
    * The elapsed time is the time in seconds since this animation has been
    * added to the play list.
    */
    float GetElapsedTime() const;
-   void SetElapsedTime(float t);
 
    /**
    *  The FadeIn time, is the amount of time takes for an animation to blend
@@ -105,13 +106,11 @@ public:
    * this is calculated from the BaseWeight, linear blending from fades, and the parent weight
    */
    float GetCurrentWeight() const;
-   void SetCurrentWeight(float weight);
 
    /**
    *  An animation is active if it is currently playing.
    */
    bool IsActive() const;
-   void SetActive(bool b);
 
    /**
    *  The speed of an animation is the percentage relative to the actual speed
@@ -146,12 +145,6 @@ public:
    virtual void Update(float dt) = 0;
 
    /**
-   * Recalculate is called on PlayAnimation()
-   * it calculates the start and end times of our animation
-   */
-   virtual void Recalculate() = 0;
-
-   /**
    * ForceFadeOut will ignore the EndTime and automatically fade out
    * this animation over the time specified.
    * 
@@ -172,7 +165,27 @@ public:
 
 protected:
 
+   /**
+   * When this flag is set the parent sequence will call Prune() at the end of its update
+   * and then delete this animation.  
+   */
    void SetPrune(bool b);
+
+   ///setters matching the getters above, the AnimationController is a friend
+   ///to access these
+   void SetStartTime(float t);
+   void SetEndTime(float t);
+   void SetActive(bool b);
+   void SetCurrentWeight(float weight);
+   void SetElapsedTime(float t);
+
+   /**
+   * Recalculate is called on PlayAnimation()
+   * it calculates the start and end times of our animation
+   */
+   virtual void Recalculate() = 0;
+
+private:
 
 
    //user editable fields are: fade in, fade out, base weight, and speed

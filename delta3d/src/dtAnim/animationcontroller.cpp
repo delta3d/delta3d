@@ -26,32 +26,6 @@
 namespace dtAnim
 { 
 
-   struct recalcFunctor
-   {
-      recalcFunctor(float pStart) : mStart(pStart), mEnd(0.0f) {}
-
-      float GetEnd()const
-      {
-         return mEnd;
-      }
-
-      template <typename T>
-      void operator()(T& pChild)
-      {
-         float delay = pChild->GetStartDelay();
-         pChild->SetStartTime(mStart + delay);
-         pChild->Recalculate();
-
-         //keep track of the maximum end time
-         float end = pChild->GetEndTime();
-         if(end > mEnd) mEnd = end;
-      }
-
-   private:
-      float mStart;
-      float mEnd;
-   };
-
 /////////////////////////////////////////////////////////////////////////////////
 AnimationController::AnimationController(AnimationSequence* pParent)
 : mParent(pParent)
@@ -116,7 +90,7 @@ void AnimationController::Recalculate()
    float start = mParent->GetStartTime();
    AnimationSequence::AnimationContainer& pCont = mParent->GetChildAnimations();
 
-   recalcFunctor func(start);
+   RecalcFunctor func(start);
    std::for_each(pCont.begin(), pCont.end(), func);
 
    mParent->SetEndTime(func.GetEnd());
