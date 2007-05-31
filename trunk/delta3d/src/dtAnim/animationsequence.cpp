@@ -72,8 +72,136 @@ private:
    AnimationSequence* mSequence;
 };
 
-////////////////////////////////////////////////////////////////////////////////////////////
 
+class RecalcFunctor
+{
+public:
+
+   RecalcFunctor(float pStart) : mStart(pStart), mEnd(0.0f) {}
+
+   float GetEnd()const
+   {
+      return mEnd;
+   }
+
+   template <typename T>
+   void operator()(T& pChild)
+   {
+      float delay = pChild->GetStartDelay();
+      pChild->SetStartTime(mStart + delay);
+      pChild->Recalculate();
+
+      //keep track of the maximum end time
+      float end = pChild->GetEndTime();
+      if(end > mEnd) mEnd = end;
+   }
+
+private:
+   float mStart;
+   float mEnd;
+};
+///////////////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////////
+//Animation Controller
+/////////////////////////////////////////////////////////////////////////////////
+AnimationSequence::AnimationController::AnimationController(AnimationSequence* pParent)
+: mParent(pParent)
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+AnimationSequence::AnimationController::~AnimationController()
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+AnimationSequence::AnimationController::AnimationController(const AnimationController& pCont)
+: mParent(pCont.mParent)
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+AnimationSequence::AnimationController& AnimationSequence::AnimationController::operator=(const AnimationController& pCont)
+{
+   mParent = pCont.mParent;
+   return *this;
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+dtCore::RefPtr<AnimationSequence::AnimationController> AnimationSequence::AnimationController::Clone() const
+{
+   return new AnimationController(*this);
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+void AnimationSequence::AnimationController::SetParent(AnimationSequence* pParent)
+{
+   mParent = pParent;
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+void AnimationSequence::AnimationController::Update(float dt)
+{
+   AnimationSequence::AnimationContainer& pCont = mParent->GetChildAnimations();
+   AnimationSequence::AnimationContainer::iterator iterEnd = pCont.end();
+
+   for(AnimationSequence::AnimationContainer::iterator iter = pCont.begin(); iter != iterEnd; ++iter)
+   {
+      Animatable* child = (*iter).get();
+
+      SetComputeWeight(child);
+      SetComputeSpeed(child);
+
+      child->SetElapsedTime(child->GetElapsedTime() + dt);
+
+      if(child->GetElapsedTime() >= child->GetStartTime())
+      {
+         child->Update(dt);
+      }
+   }
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+void AnimationSequence::AnimationController::Recalculate()
+{
+   float start = mParent->GetStartTime();
+   AnimationSequence::AnimationContainer& pCont = mParent->GetChildAnimations();
+
+   RecalcFunctor func(start);
+   std::for_each(pCont.begin(), pCont.end(), func);
+
+   mParent->SetEndTime(func.GetEnd());
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+//TODO
+void AnimationSequence::AnimationController::SetComputeWeight(Animatable* pAnim)
+{
+   //Compute Child Weight using fade in and out
+   float weight = mParent->GetCurrentWeight();
+  
+   //if(fade_in) weight * compute_fade_in_weight();
+   //else if(fade_out) weight * compute_fade_out_weight();
+
+   pAnim->SetCurrentWeight(weight * pAnim->GetBaseWeight());
+
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+//TODO
+void AnimationSequence::AnimationController::SetComputeSpeed(Animatable* pAnim)
+{
+
+}
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////
+//Animation Sequence
+////////////////////////////////////////////////////////////////////////////////////////////
 AnimationSequence::AnimationSequence()
 : mController()
 , mActiveAnimations()
@@ -127,13 +255,13 @@ dtCore::RefPtr<Animatable> AnimationSequence::Clone() const
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-const AnimationController* AnimationSequence::GetController() const
+const AnimationSequence::AnimationController* AnimationSequence::GetController() const
 {
    return mController.get();
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-AnimationController* AnimationSequence::GetController()
+AnimationSequence::AnimationController* AnimationSequence::GetController()
 {
    return mController.get();
 }

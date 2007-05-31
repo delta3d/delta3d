@@ -21,7 +21,6 @@
 
 #include <dtAnim/animationchannel.h>
 #include <dtAnim/animationwrapper.h>
-#include <dtAnim/animationsequence.h>
 
 #include <dtAnim/cal3dmodelwrapper.h>
 #include <osg/Math>
