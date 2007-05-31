@@ -23,7 +23,6 @@
 #define __DELTA_ANIMATABLE_H__
 
 #include <dtAnim/export.h>
-#include <dtAnim/animationcontroller.h>
 
 #include <osg/Referenced>
 #include <dtCore/refptr.h>
@@ -39,10 +38,7 @@ namespace dtAnim
 */
 class	DT_ANIM_EXPORT Animatable: public osg::Referenced
 {
-   
-   friend class AnimationController;
-   friend class AnimationController::RecalcFunctor;
-
+ 
 public:
    Animatable();
 
@@ -163,6 +159,15 @@ public:
    void SetName(const std::string&);
 
 
+   /**
+   * These functions are only to be used by AnimationController
+   * on Update() and Recalculate
+   */
+   void SetStartTime(float t);
+   void SetCurrentWeight(float weight);
+   void SetElapsedTime(float t);
+   virtual void Recalculate() = 0;
+
 protected:
 
    /**
@@ -171,19 +176,8 @@ protected:
    */
    void SetPrune(bool b);
 
-   ///setters matching the getters above, the AnimationController is a friend
-   ///to access these
-   void SetStartTime(float t);
    void SetEndTime(float t);
    void SetActive(bool b);
-   void SetCurrentWeight(float weight);
-   void SetElapsedTime(float t);
-
-   /**
-   * Recalculate is called on PlayAnimation()
-   * it calculates the start and end times of our animation
-   */
-   virtual void Recalculate() = 0;
 
 private:
 

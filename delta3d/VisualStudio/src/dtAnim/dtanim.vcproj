@@ -134,9 +134,6 @@
 				RelativePath="..\..\..\src\dtAnim\animationcomponent.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\src\dtAnim\animationcontroller.cpp">
-			</File>
-			<File
 				RelativePath="..\..\..\src\dtAnim\animationhelper.cpp">
 			</File>
 			<File
@@ -206,9 +203,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtAnim\animationcomponent.h">
-			</File>
-			<File
-				RelativePath="..\..\..\inc\dtAnim\animationcontroller.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtAnim\animationhelper.h">
