@@ -8,7 +8,6 @@
 #include <dtAnim/animationwrapper.h>
 #include <dtAnim/animationchannel.h>
 #include <dtAnim/animationsequence.h>
-#include <dtAnim/animationcontroller.h>
 #include <dtUtil/xercesparser.h>
 #include <dtUtil/log.h>
 #include <dtCore/globals.h>

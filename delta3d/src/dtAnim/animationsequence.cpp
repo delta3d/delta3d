@@ -21,7 +21,6 @@
 
 #include <dtAnim/animationsequence.h>
 #include <dtAnim/animatable.h>
-#include <dtAnim/animationcontroller.h>
 #include <dtCore/refptr.h>
 #include <dtUtil/log.h>
 
