@@ -192,13 +192,13 @@ int main(int argc, char* argv[])
       else 
          std::cerr << " <<< SLOW TEST RESULTS ::: ALL TESTS RAN FAST!!! WOOT! ::: TotalTime[" << timeDelta << "] >>> " << std::endl;
    }
-   catch (std::invalid_argument &ie)
+   catch (const std::invalid_argument &ie)
    {
       std::cerr << " <<< Invalid argument occurred. Likely, the suite name or test name are invalid or not found. " << 
          " For tests, be sure to include the class name like [MyClass::TestStuff]. Or, see cppunit.sourceforge.net for more info.  Error: [" <<
          ie.what() << "]. >>> " << std::endl;
    }
-   catch (std::exception &e)
+   catch (const std::exception &e)
    {
       std::cerr << " <<< Exception occurred. Error: [" << e.what() << "]. >>> " << std::endl;
    }
