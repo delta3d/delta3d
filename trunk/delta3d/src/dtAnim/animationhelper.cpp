@@ -28,7 +28,6 @@
 #include <dtAnim/sequencemixer.h>
 #include <dtAnim/skeletalconfiguration.h>
 #include <dtAnim/animationsequence.h>
-#include <dtAnim/animationcontroller.h>
 #include <dtAnim/animationchannel.h>
 #include <dtAnim/animationwrapper.h>
 

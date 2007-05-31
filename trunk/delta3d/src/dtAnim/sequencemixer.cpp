@@ -22,7 +22,6 @@
 #include <dtAnim/sequencemixer.h>
 #include <dtAnim/animationsequence.h>
 #include <dtAnim/animatable.h>
-#include <dtAnim/animationcontroller.h>
 #include <dtUtil/log.h>
 
 
