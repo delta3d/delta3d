@@ -53,7 +53,7 @@ public:
       *  Animatables.  To change the update behavoir, subclass AnimationController
       *  and add it to your AnimationSequence.
       */
-      class	AnimationController: public osg::Referenced
+      class	DT_ANIM_EXPORT AnimationController: public osg::Referenced
       {
 
       public:
