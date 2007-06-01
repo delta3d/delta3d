@@ -6,14 +6,15 @@
 		<xs:complexType>
 			<xs:choice maxOccurs="unbounded">
 				<xs:element ref="skeleton" />
-				<xs:element ref="animation" maxOccurs="unbounded" />
-				<xs:element ref="mesh" maxOccurs="unbounded" />
-				<xs:element ref="material" maxOccurs="unbounded" />
-				<xs:element ref="animationchannel" maxOccurs="unbounded" />
+				<xs:element ref="animation" minOccurs="0" maxOccurs="unbounded" />
+				<xs:element ref="mesh" minOccurs="0" maxOccurs="unbounded" />
+				<xs:element ref="material" minOccurs="0" maxOccurs="unbounded" />
+				<xs:element ref="animationchannel" minOccurs="0" maxOccurs="unbounded" />
+				<xs:element ref="animationsequence" minOccurs="0" maxOccurs="unbounded" />
 			</xs:choice>
 			<xs:attribute name="name" use="optional">
 				<xs:simpleType>
-					<xs:restriction base="xs:string" />
+					<xs:restriction base="xs:normalizedString" />
 				</xs:simpleType>
 			</xs:attribute>
 		</xs:complexType>
@@ -22,58 +23,66 @@
 		<xs:complexType>
 			<xs:attribute name="filename" use="required">
 				<xs:simpleType>
-					<xs:restriction base="xs:string" />
+					<xs:restriction base="xs:normalizedString" />
 				</xs:simpleType>
 			</xs:attribute>
 			<xs:attribute name="name" use="optional">
 				<xs:simpleType>
-					<xs:restriction base="xs:string" />
+					<xs:restriction base="xs:normalizedString" />
 				</xs:simpleType>
 			</xs:attribute>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="material">
 		<xs:complexType>
-			<xs:attribute name="name" type="xs:string" use="optional" />
-			<xs:attribute name="filename" use="required">
-				<xs:simpleType>
-					<xs:restriction base="xs:string" />
-				</xs:simpleType>
-			</xs:attribute>
+			<xs:attribute name="name" type="xs:normalizedString" use="optional" />
+			<xs:attribute name="filename" use="required" type="xs:normalizedString"/>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="mesh">
 		<xs:complexType>
-			<xs:attribute name="filename" use="required">
-				<xs:simpleType>
-					<xs:restriction base="xs:string" />
-				</xs:simpleType>
-			</xs:attribute>
-			<xs:attribute name="name" type="xs:string" use="optional" />
+			<xs:attribute name="name" type="xs:normalizedString" use="optional" />
+			<xs:attribute name="filename" use="required" type="xs:normalizedString" />
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="skeleton">
 		<xs:complexType>
-			<xs:attribute name="filename" use="required">
-				<xs:simpleType>
-					<xs:restriction base="xs:string" />
-				</xs:simpleType>
-			</xs:attribute>
+			<xs:attribute name="name" type="xs:normalizedString" use="optional" />
+			<xs:attribute name="filename" use="required" type="xs:normalizedString"/>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="animationchannel">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="name" type="xs:string" />
-				<xs:element name="animationname" type="xs:string" />
-				<xs:element name="startdelay" type="xs:string" />
-				<xs:element name="fadein" type="xs:string" />
-				<xs:element name="fadeout" type="xs:string" />
-				<xs:element name="speed" type="xs:string" />
-				<xs:element name="baseweight" type="xs:string" />
-				<xs:element name="maxduration" type="xs:string" />
-				<xs:element name="isaction" type="xs:string" />
-				<xs:element name="islooping" type="xs:string" />
+				<xs:element name="name" type="xs:normalizedString" />
+				<xs:element name="animationname" type="xs:normalizedString" />
+				<xs:element name="startdelay" type="xs:float" />
+				<xs:element name="fadein" type="xs:float" />
+				<xs:element name="fadeout" type="xs:float" />
+				<xs:element name="speed" type="xs:float" />
+				<xs:element name="baseweight" type="xs:float" />
+				<xs:element name="maxduration" type="xs:float" />
+				<xs:element name="isaction" type="xs:boolean" />
+				<xs:element name="islooping" type="xs:boolean" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="animationsequence">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="name" type="xs:normalizedString" />
+				<xs:element name="startdelay" type="xs:float" />
+				<xs:element name="fadein" type="xs:float" />
+				<xs:element name="fadeout" type="xs:float" />
+				<xs:element name="speed" type="xs:float" />
+				<xs:element name="baseweight" type="xs:float" />
+            <xs:element name="children">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="child" type="xs:normalizedString" minOccurs="1" maxOccurs="unbounded" />
+			       </xs:sequence>
+		        </xs:complexType>
+				</xs:element>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>

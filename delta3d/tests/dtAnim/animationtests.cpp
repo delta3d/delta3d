@@ -109,8 +109,7 @@ namespace dtAnim
    CPPUNIT_TEST_SUITE_REGISTRATION( AnimationTests );
 
    void AnimationTests::setUp()
-   {
-
+   {      
       mHelper = new AnimationHelper();
 
       animStart1 = 1.0f;
@@ -152,7 +151,9 @@ namespace dtAnim
 
    void AnimationTests::tearDown()
    {
-      mAnimatable1 = 0;
+      mAnimatable1 = NULL;
+      mAnimatable2 = NULL;
+      mHelper = NULL;
    }
 
 
@@ -260,7 +261,8 @@ namespace dtAnim
  
       SequenceMixer* mixer = mHelper->GetSequenceMixer();
       const Animatable* anim = mixer->GetRegisteredAnimation(animName);
-
+      CPPUNIT_ASSERT(anim != NULL);
+      
       mHelper->PlayAnimation(animName);
 
       Animatable* activeAnim = mixer->GetActiveAnimation(animName);

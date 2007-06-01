@@ -30,6 +30,7 @@
 #include <cppunit/Test.h>
 #include <cppunit/TestFailure.h>
 #include <dtCore/timer.h>
+#include <dtCore/globals.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/log.h>
 #include <dtUtil/exception.h>
@@ -113,6 +114,9 @@ int main(int argc, char* argv[])
          ex.LogException(dtUtil::Log::LOG_ERROR);
       }
    }
+   
+   //Set delta data.
+   dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
 
    CPPUNIT_NS::TestResultCollector collectedResults;
 
