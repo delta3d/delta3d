@@ -32,170 +32,170 @@
 namespace dtAnim
 {
 
-/**
-*  This class is used to specify the base class of an object which has semantics for 
-*  animating.  
-*/
-class	DT_ANIM_EXPORT Animatable: public osg::Referenced
-{
- 
-public:
-   Animatable();
-
-   Animatable(const Animatable& pAnim);
-   Animatable& operator=(const Animatable& pAnim);
-
-protected:
-   virtual ~Animatable();
-
-public:
-   
    /**
-   * The start time is the time in seconds this animation will start playing 
-   * after it was added to an AnimationSequence.
-   */
-   float GetStartTime() const;
+    *  This class is used to specify the base class of an object which has semantics for 
+    *  animating.  
+    */
+   class	DT_ANIM_EXPORT Animatable: public osg::Referenced
+   {
 
-   /**
-   * The start delay specifies how long in seconds this animation will delay once
-   * its parent has started playing.
-   */
-   void SetStartDelay(float t);
-   float GetStartDelay() const;
+      public:
+         Animatable();
 
-   /**
-   * The end time is the time in seconds that this animation will start
-   * fading out relative to when it was added to an AnimationSequence.
-   */
-   float GetEndTime() const;
+         Animatable(const Animatable& pAnim);
+         Animatable& operator=(const Animatable& pAnim);
 
-   /**
-   * The elapsed time is the time in seconds since this animation has been
-   * added to the play list.
-   */
-   float GetElapsedTime() const;
+      protected:
+         virtual ~Animatable();
 
-   /**
-   *  The FadeIn time, is the amount of time takes for an animation to blend
-   *  linearally from a weight of 0 to the weight specified by BaseWeight
-   *  after the animation starts playing specified by StartTime.
-   */
-   float GetFadeIn() const; 
-   void SetFadeIn(float f);
+      public:
 
-   /**
-   *  The FadeOut time is the amount of time it will take for an animation to
-   *  blend linearly from its BaseWeight to 0 after the EndTime.
-   */
-   float GetFadeOut() const;
-   void SetFadeOut(float f);
+         /**
+          * The start time is the time in seconds this animation will start playing 
+          * after it was added to an AnimationSequence.
+          */
+         float GetStartTime() const;
 
-   /**
-   *  The BaseWeight specifies the weight of this animation without
-   *  being affected by blending.
-   */
-   float GetBaseWeight() const;
-   void SetBaseWeight(float f);
+         /**
+          * The start delay specifies how long in seconds this animation will delay once
+          * its parent has started playing.
+          */
+         void SetStartDelay(float t);
+         float GetStartDelay() const;
 
-   /**
-   * The CurrentWeight is the weight of this animation in the current frame
-   * this is calculated from the BaseWeight, linear blending from fades, and the parent weight
-   */
-   float GetCurrentWeight() const;
+         /**
+          * The end time is the time in seconds that this animation will start
+          * fading out relative to when it was added to an AnimationSequence.
+          */
+         float GetEndTime() const;
 
-   /**
-   *  An animation is active if it is currently playing.
-   */
-   bool IsActive() const;
+         /**
+          * The elapsed time is the time in seconds since this animation has been
+          * added to the play list.
+          */
+         float GetElapsedTime() const;
 
-   /**
-   *  The speed of an animation is the percentage relative to the actual speed
-   *  of playback.  It defaults to 1.0, a speed of 2.0 would play twice as fast.
-   */
-   float GetSpeed() const;
-   void SetSpeed(float speed);
+         /**
+          *  The FadeIn time, is the amount of time takes for an animation to blend
+          *  linearally from a weight of 0 to the weight specified by BaseWeight
+          *  after the animation starts playing specified by StartTime.
+          */
+         float GetFadeIn() const; 
+         void SetFadeIn(float f);
 
-   /**
-   *  This flag specifies whether or not this animation has stopped playing
-   */
-   bool ShouldPrune() const;
+         /**
+          *  The FadeOut time is the amount of time it will take for an animation to
+          *  blend linearly from its BaseWeight to 0 after the EndTime.
+          */
+         float GetFadeOut() const;
+         void SetFadeOut(float f);
 
+         /**
+          *  The BaseWeight specifies the weight of this animation without
+          *  being affected by blending.
+          */
+         float GetBaseWeight() const;
+         void SetBaseWeight(float f);
 
-   /**
-   * This virtual function is called before this animation is removed from
-   * the system
-   */
-   virtual void Prune() = 0;
+         /**
+          * The CurrentWeight is the weight of this animation in the current frame
+          * this is calculated from the BaseWeight, linear blending from fades, and the parent weight
+          */
+         float GetCurrentWeight() const;
 
-   /**
-   *  This function is used to copy Animatables
-   */
-   virtual dtCore::RefPtr<Animatable> Clone() const = 0;
+         /**
+          *  An animation is active if it is currently playing.
+          */
+         bool IsActive() const;
 
+         /**
+          *  The speed of an animation is the percentage relative to the actual speed
+          *  of playback.  It defaults to 1.0, a speed of 2.0 would play twice as fast.
+          */
+         float GetSpeed() const;
+         void SetSpeed(float speed);
 
-   /**
-   *  The virtual update, should be called every frame
-   *
-   *  @param delta time
-   */
-   virtual void Update(float dt) = 0;
-
-   /**
-   * ForceFadeOut will ignore the EndTime and automatically fade out
-   * this animation over the time specified.
-   * 
-   * @param the time to fade out over
-   */
-   virtual void ForceFadeOut(float time) = 0;
-
-   /**
-   * @return the name of this animation
-   */
-   const std::string& GetName() const;
-   
-   /**
-   * @param the name to set this animation to
-   */
-   void SetName(const std::string&);
+         /**
+          *  This flag specifies whether or not this animation has stopped playing
+          */
+         bool ShouldPrune() const;
 
 
-   /**
-   * These functions are only to be used by AnimationController
-   * on Update() and Recalculate
-   */
-   void SetStartTime(float t);
-   void SetCurrentWeight(float weight);
-   void SetElapsedTime(float t);
-   virtual void Recalculate() = 0;
+         /**
+          * This virtual function is called before this animation is removed from
+          * the system
+          */
+         virtual void Prune() = 0;
 
-protected:
-
-   /**
-   * When this flag is set the parent sequence will call Prune() at the end of its update
-   * and then delete this animation.  
-   */
-   void SetPrune(bool b);
-
-   void SetEndTime(float t);
-   void SetActive(bool b);
-
-private:
+         /**
+          *  This function is used to copy Animatables
+          */
+         virtual dtCore::RefPtr<Animatable> Clone() const = 0;
 
 
-   //user editable fields are: fade in, fade out, base weight, and speed
+         /**
+          *  The virtual update, should be called every frame
+          *
+          *  @param delta time
+          */
+         virtual void Update(float dt) = 0;
 
-   float mSpeed;
-   float mStartTime, mStartDelay, mEndTime;
-   float mFadeIn, mFadeOut;
-   float mElapsedTime;
-   float mBaseWeight, mCurrentWeight;
+         /**
+          * ForceFadeOut will ignore the EndTime and automatically fade out
+          * this animation over the time specified.
+          * 
+          * @param the time to fade out over
+          */
+         virtual void ForceFadeOut(float time) = 0;
 
-   std::string mName;
+         /**
+          * @return the name of this animation
+          */
+         const std::string& GetName() const;
 
-   bool mActive, mShouldPrune;
+         /**
+          * @param the name to set this animation to
+          */
+         void SetName(const std::string&);
 
 
-};
+         /**
+          * These functions are only to be used by AnimationController
+          * on Update() and Recalculate
+          */
+         void SetStartTime(float t);
+         void SetCurrentWeight(float weight);
+         void SetElapsedTime(float t);
+         virtual void Recalculate() = 0;
+
+      protected:
+
+         /**
+          * When this flag is set the parent sequence will call Prune() at the end of its update
+          * and then delete this animation.  
+          */
+         void SetPrune(bool b);
+
+         void SetEndTime(float t);
+         void SetActive(bool b);
+
+      private:
+
+
+         //user editable fields are: fade in, fade out, base weight, and speed
+
+         float mSpeed;
+         float mStartTime, mStartDelay, mEndTime;
+         float mFadeIn, mFadeOut;
+         float mElapsedTime;
+         float mBaseWeight, mCurrentWeight;
+
+         std::string mName;
+
+         bool mActive, mShouldPrune;
+
+
+   };
 
 }//namespace dtAnim
 

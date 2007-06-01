@@ -87,6 +87,7 @@ namespace dtAnim
       static const std::string MESH_ELEMENT;
       static const std::string MATERIAL_ELEMENT;
       static const std::string CHANNEL_ELEMENT;                      
+      static const std::string SEQUENCE_ELEMENT;                      
       static const std::string NAME_ELEMENT;
       static const std::string FILENAME_ELEMENT;      
       static const std::string ANIMATION_NAME_ELEMENT;
@@ -98,6 +99,7 @@ namespace dtAnim
       static const std::string MAX_DURATION_ELEMENT;
       static const std::string IS_LOOPING_ELEMENT;
       static const std::string IS_ACTION_ELEMENT;
+      static const std::string CHILD_ELEMENT;
 
    public:
    	CharacterFileHandler();
@@ -121,8 +123,6 @@ namespace dtAnim
       virtual void endPrefixMapping(const XMLCh* const prefix) {};
       virtual void skippedEntity(const XMLCh* const name) {};
 
-      void AnimChannelCharacters(const XMLCh* const chars);
-
 
 #ifdef DELTA_WIN32
       //need these definitions to properly export a std::vector<std::string>
@@ -133,32 +133,46 @@ namespace dtAnim
       ///structure to contain all info related to an animation
       struct AnimationStruct 
       {
-         std::string filename; ///<The filename of the cal3D animation
-         std::string name;     ///<The user friendly name of this animation
+         std::string mFileName; ///<The filename of the cal3D animation
+         std::string mName;     ///<The user friendly name of this animation
       };
 
       ///structure to contain all info related to a mesh
       struct MeshStruct
       {
-         std::string filename; ///<The filename of the Cal3D mesh
-         std::string name;     ///<The user friendly name of this mesh
+         std::string mFileName; ///<The filename of the Cal3D mesh
+         std::string mName;     ///<The user friendly name of this mesh
       };
 
       struct MaterialStruct
       {
-         std::string filename; ///<The filename of the Cal3D material
-         std::string name;     ///<The user friendly name of this material
+         std::string mFileName; ///<The filename of the Cal3D material
+         std::string mName;     ///<The user friendly name of this material
       };
 
-      struct AnimationChannelStruct 
+      struct AnimatableStruct
       {
-         std::string animation_name;     ///<The name of the animation this references
-         std::string channel_name;     ///<The name of this animation channel
-         float start_delay, fade_in, fade_out, speed, base_weight, max_duration;
-         bool is_looping, is_action;
+         AnimatableStruct();
 
+         std::string mName;     ///<The name of this animation channel
+         float mStartDelay, mFadeIn, mFadeOut, mSpeed, mBaseWeight;
       };
 
+      struct AnimationChannelStruct : public AnimatableStruct
+      {
+         AnimationChannelStruct();
+
+         std::string mAnimationName;     ///<The name of the animation this references
+         float mMaxDuration;
+         bool mIsLooping, mIsAction;
+      };
+
+      struct AnimationSequenceStruct : public AnimatableStruct 
+      {
+         AnimationSequenceStruct();
+
+         std::vector<std::string> mChildNames;
+      };
 
       ///Character Data
       std::string mName;                            ///<The name of this animated entity
@@ -166,14 +180,20 @@ namespace dtAnim
       std::vector<MaterialStruct> mMaterials;       ///<Container of material structs
       std::vector<MeshStruct> mMeshes;              ///<Container of mesh structs
       std::vector<AnimationChannelStruct> mAnimationChannels; ///<The preconfigured playbable animations
+      std::vector<AnimationSequenceStruct> mAnimationSequences; ///<The preconfigured playbable animations
       std::string mSkeletonFilename;                ///<The one skeleton filename      
 
+   private:
+      bool AnimatableCharacters(const XMLCh* const chars, AnimatableStruct& animatable);
+      void AnimChannelCharacters(const XMLCh* const chars);
+      void AnimSequenceCharacters(const XMLCh* const chars);
 
       typedef std::stack<std::string> ElementStack;
       ElementStack mElements;
       
       bool mInChannel;
-      dtCore::RefPtr<dtUtil::Log> mLogger;
+      bool mInSequence;
+      dtUtil::Log* mLogger;
    };
 }
 #endif // DELTA_CHARACTER_FILE_HANDLER

@@ -40,13 +40,25 @@
 	<animationchannel>
 		<name>Idle</name>
 		<animationname>Idle</animationname>
-		<startdelay>0.0</startdelay>
-		<fadein>0.0</fadein>
-		<fadeout>0.0</fadeout>
-		<speed>1.0</speed>
-		<baseweight>1.0</baseweight>
-		<maxduration>0.0</maxduration>
+		<startdelay>0.1</startdelay>
+		<fadein>0.2</fadein>
+		<fadeout>0.3</fadeout>
+		<speed>1.1</speed>
+		<baseweight>0.9</baseweight>
+		<maxduration>4.0</maxduration>
 		<isaction>0</isaction>
 		<islooping>1</islooping>
 	</animationchannel>
+	<animationsequence>
+		<name>RunWalk</name>
+		<startdelay>1.0</startdelay>
+		<fadein>2.0</fadein>
+		<fadeout>2.3</fadeout>
+		<speed>1.0</speed>
+		<baseweight>1.0</baseweight>
+		<children>
+		   <child>Run</child>
+		   <child>Walk</child>
+		</children>
+	</animationsequence>
 </character>

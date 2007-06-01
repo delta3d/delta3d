@@ -83,7 +83,6 @@ ProxyTest::~ProxyTest()
 void ProxyTest::setUp()
 {
    //dtUtil::Log::GetInstance("librarymanager.cpp").SetLogLevel(dtUtil::Log::LOG_DEBUG);
-   dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
    libMgr.LoadActorRegistry(mExampleLibraryName);
    libMgr.GetActorTypes(actors);
    CPPUNIT_ASSERT(actors.size() > 0);

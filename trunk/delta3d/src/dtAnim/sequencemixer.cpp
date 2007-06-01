@@ -74,7 +74,7 @@ void SequenceMixer::RemoveRegisteredAnimation(const std::string& pAnim)
    AnimationTable::iterator iter = mAnimatables.find(pAnim);
    if(iter == mAnimatables.end())
    {
-      LOG_WARNING("Cannot find registered animation '" + pAnim+ "' in SequenceMixer." )
+      LOG_WARNING("Cannot find registered animation '" + pAnim+ "' in SequenceMixer." );
    }
 
    mAnimatables.erase(iter);
@@ -99,12 +99,26 @@ const Animatable* SequenceMixer::GetRegisteredAnimation(const std::string& pAnim
 }
 
 /////////////////////////////////////////////////////////////////////////////////
+void SequenceMixer::GetRegisteredAnimations(std::vector<const Animatable*>& toFill) const
+{
+   toFill.clear();
+   toFill.reserve(mAnimatables.size());
+   
+   AnimationTable::const_iterator i = mAnimatables.begin();
+   AnimationTable::const_iterator end = mAnimatables.end();
+   for (; i != end; ++i)
+   {
+      toFill.push_back(i->second.get());
+   }
+}
+
+/////////////////////////////////////////////////////////////////////////////////
 void SequenceMixer::RegisterAnimation(const Animatable* pAnimation)
 {
    AnimationTable::iterator iter = mAnimatables.find(pAnimation->GetName());
    if(iter != mAnimatables.end())
    {
-      LOG_WARNING("Animation '" + pAnimation->GetName() + "' already added to SequenceMixer." )
+      LOG_WARNING("Animation '" + pAnimation->GetName() + "' already added to SequenceMixer." );
    }
    else
    {   
