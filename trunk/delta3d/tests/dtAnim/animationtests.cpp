@@ -29,22 +29,25 @@
 #include <dtCore/globals.h>
 #include <dtCore/refptr.h>
 
+#include <osg/Math>
+#include <strstream>
+
 #include <string>
 
 namespace dtAnim
 {
 
-      class MyAnimatable: public Animatable
+      class TestAnimatable: public Animatable
       {
       public:
-         MyAnimatable(){}
-         MyAnimatable(const MyAnimatable& anim):Animatable(anim){}
-         MyAnimatable& operator=(const MyAnimatable& anim){Animatable::operator=(anim); return *this;}
+         TestAnimatable(){}
+         TestAnimatable(const TestAnimatable& anim):Animatable(anim){}
+         TestAnimatable& operator=(const TestAnimatable& anim){Animatable::operator=(anim); return *this;}
 
          void Update(float dt){};
          void ForceFadeOut(float time){}; 
          void Recalculate(){}
-         dtCore::RefPtr<Animatable> Clone()const{return new MyAnimatable(*this);}
+         dtCore::RefPtr<Animatable> Clone()const{return new TestAnimatable(*this);}
          void Prune(){}
 
          void SetStartTime2(float animStart1){ SetStartTime(animStart1);}
@@ -54,8 +57,25 @@ namespace dtAnim
          void SetBaseWeight2(float base1){ SetBaseWeight(base1);}
          void SetName2(const std::string& name1){ SetName(name1);}
          void SetStartDelay2(float start_delay1){ SetStartDelay(start_delay1);}
+         
+         void SetElapsedTime2(float time){ SetElapsedTime(time);}
       };
 
+      class TestSequence: public AnimationSequence
+      {
+      };
+
+
+      class TestController: public AnimationSequence::AnimationController
+      {
+         public:
+            TestController(AnimationSequence* pSeq): AnimationController(pSeq) {}
+            float TestComputeWeight(dtCore::RefPtr<TestAnimatable> anim)
+            {
+               SetComputeWeight(anim.get());
+               return anim->GetCurrentWeight();
+            }
+      };
 
 
 
@@ -63,11 +83,12 @@ namespace dtAnim
    {
       CPPUNIT_TEST_SUITE( AnimationTests );
          CPPUNIT_TEST( TestAnimWrapper );
-         CPPUNIT_TEST( TestAnimatable );
+         CPPUNIT_TEST( UnitTestAnimatable );
          CPPUNIT_TEST( TestAnimChannel );
          CPPUNIT_TEST( TestAnimSequence );
          CPPUNIT_TEST( TestSequenceMixer );
          CPPUNIT_TEST( TestAnimHelper );
+         CPPUNIT_TEST( TestAnimController );
       CPPUNIT_TEST_SUITE_END();
 
       public:
@@ -75,13 +96,21 @@ namespace dtAnim
          void tearDown();
 
          void TestAnimWrapper(); 
-         void TestAnimatable(); 
+         void UnitTestAnimatable(); 
          void TestAnimChannel();
          void TestAnimSequence();         
          void TestSequenceMixer();
+         void TestAnimController();
          void TestAnimHelper();
 
       private:
+
+         template <typename T>
+         void SetExpectedString(std::ostringstream& strstream, T expected, T result)
+         {
+            strstream.str("");
+            strstream << "Expected \"" << expected << "\" but got \"" << result << "\"";
+         }
 
          float animStart1;
          float animEnd1;
@@ -90,7 +119,7 @@ namespace dtAnim
          float base1;
          float start_delay1;
          std::string name1;
-         dtCore::RefPtr<MyAnimatable> mAnimatable1;
+         dtCore::RefPtr<TestAnimatable> mAnimatable1;
 
          float animStart2;
          float animEnd2;
@@ -99,7 +128,7 @@ namespace dtAnim
          float base2;
          float start_delay2;
          std::string name2;
-         dtCore::RefPtr<MyAnimatable> mAnimatable2;
+         dtCore::RefPtr<TestAnimatable> mAnimatable2;
 
          dtCore::RefPtr<dtAnim::AnimationHelper> mHelper;
 
@@ -119,7 +148,7 @@ namespace dtAnim
       base1 = 1.5f;
       name1 = "Anim001";
       start_delay1 = 0.5f;
-      mAnimatable1 = new MyAnimatable();
+      mAnimatable1 = new TestAnimatable();
 
       mAnimatable1->SetStartTime2(animStart1);
       mAnimatable1->SetEndTime2(animEnd1);
@@ -137,7 +166,7 @@ namespace dtAnim
       start_delay2 = 3.0f;
       name2 = "Anim002";
 
-      mAnimatable2 = new MyAnimatable();
+      mAnimatable2 = new TestAnimatable();
 
       mAnimatable2->SetStartTime2(animStart2);
       mAnimatable2->SetEndTime2(animEnd2);
@@ -176,7 +205,7 @@ namespace dtAnim
    }
 
    
-   void AnimationTests::TestAnimatable()
+   void AnimationTests::UnitTestAnimatable()
    {
       CPPUNIT_ASSERT_EQUAL(name1, mAnimatable1->GetName());
       CPPUNIT_ASSERT_EQUAL(animStart1, mAnimatable1->GetStartTime());
@@ -187,7 +216,7 @@ namespace dtAnim
       CPPUNIT_ASSERT(!mAnimatable1->IsActive());
 
       //test operator =
-      dtCore::RefPtr<MyAnimatable> pOpEqual = new MyAnimatable();
+      dtCore::RefPtr<TestAnimatable> pOpEqual = new TestAnimatable();
       pOpEqual = mAnimatable1;
 
       CPPUNIT_ASSERT_EQUAL(name1, pOpEqual->GetName());
@@ -199,7 +228,7 @@ namespace dtAnim
       CPPUNIT_ASSERT(!pOpEqual->IsActive());
 
       //test copy operator
-      dtCore::RefPtr<MyAnimatable> pCopyOp(mAnimatable1.get());
+      dtCore::RefPtr<TestAnimatable> pCopyOp(mAnimatable1.get());
 
       CPPUNIT_ASSERT_EQUAL(name1, pCopyOp->GetName());
       CPPUNIT_ASSERT_EQUAL(animStart1, pCopyOp->GetStartTime());
@@ -250,6 +279,102 @@ namespace dtAnim
    {
 
    }
+
+   void AnimationTests::TestAnimController()
+   {      
+      std::ostringstream ss;
+
+      //test fade in and out
+      dtCore::RefPtr<TestSequence> seq = new TestSequence();
+      dtCore::RefPtr<TestController> cont = new TestController(seq.get());
+      dtCore::RefPtr<TestAnimatable> anim = new TestAnimatable();
+
+      //first pass, this one will be the easy base case
+      seq->SetCurrentWeight(1.0f);
+
+      anim->SetStartTime2(0.0f);
+      anim->SetEndTime2(5.0f);
+      anim->SetFadeIn2(1.0f);
+      anim->SetFadeOut2(1.0f);
+      anim->SetBaseWeight2(1.0f);
+           
+      //if we arent playing it should be 0.0
+      anim->SetElapsedTime2(0.0f);
+      float expected = 0.0f;
+      float result = cont->TestComputeWeight(anim);
+
+      SetExpectedString(ss, expected, result);
+      CPPUNIT_ASSERT_MESSAGE(ss.str(), osg::equivalent(expected, result));
+
+      //with a one second fade in, the weight should be one half at 0.5 seconds
+      anim->SetElapsedTime2(0.5f);
+      result = cont->TestComputeWeight(anim);
+      expected = 0.5f;
+
+      SetExpectedString(ss, expected, result);
+      CPPUNIT_ASSERT_MESSAGE(ss.str(), osg::equivalent(expected, result));
+
+
+      anim->SetElapsedTime2(0.75f);
+      result = cont->TestComputeWeight(anim);
+      expected = 0.75f;
+
+      SetExpectedString(ss, expected, result);
+      CPPUNIT_ASSERT_MESSAGE(ss.str(), osg::equivalent(expected, result));
+
+      //we should have completely faded in by now
+      anim->SetElapsedTime2(2.0f);
+      result = cont->TestComputeWeight(anim);
+      expected = 1.0f;
+
+      SetExpectedString(ss, expected, result);
+      CPPUNIT_ASSERT_MESSAGE(ss.str(), osg::equivalent(expected, result));
+
+      anim->SetElapsedTime2(3.0);
+      result = cont->TestComputeWeight(anim);
+      expected = 1.0f;
+
+      SetExpectedString(ss, expected, result);
+      CPPUNIT_ASSERT_MESSAGE(ss.str(), osg::equivalent(expected, result));
+
+      //we should now start fading out
+      anim->SetElapsedTime2(4.1f);
+      result = cont->TestComputeWeight(anim);
+      expected = 0.9f;
+
+      SetExpectedString(ss, expected, result);
+      CPPUNIT_ASSERT_MESSAGE(ss.str(), osg::equivalent(expected, result));
+
+      anim->SetElapsedTime2(4.5f);
+      result = cont->TestComputeWeight(anim);
+      expected = 0.5f;
+
+      SetExpectedString(ss, expected, result);
+      CPPUNIT_ASSERT_MESSAGE(ss.str(), osg::equivalent(expected, result));
+
+      //we should have just finished fading out by now
+      anim->SetElapsedTime2(5.0f);
+      result = cont->TestComputeWeight(anim);
+      expected = 0.0f;
+
+      SetExpectedString(ss, expected, result);
+      CPPUNIT_ASSERT_MESSAGE(ss.str(), osg::equivalent(expected, result));
+
+      //lets try some bogus values
+      anim->SetElapsedTime2(15.0f);
+      result = cont->TestComputeWeight(anim);
+      expected = 0.0f;
+
+      SetExpectedString(ss, expected, result);
+      CPPUNIT_ASSERT_MESSAGE(ss.str(), osg::equivalent(expected, result));
+
+      anim->SetElapsedTime2(-15.0f);
+      result = cont->TestComputeWeight(anim);
+      expected = 0.0f;
+
+      SetExpectedString(ss, expected, result);
+      CPPUNIT_ASSERT_MESSAGE(ss.str(), osg::equivalent(expected, result));
+   }
  
    void AnimationTests::TestAnimHelper()
    {
@@ -257,7 +382,7 @@ namespace dtAnim
       std::string filename = "marine.xml";
       std::string animName = "Walk";
 
-      mHelper->LoadModel(context + filename);
+      mHelper->LoadModel(context + filename); 
  
       SequenceMixer* mixer = mHelper->GetSequenceMixer();
       const Animatable* anim = mixer->GetRegisteredAnimation(animName);
@@ -295,7 +420,7 @@ namespace dtAnim
       
       CPPUNIT_ASSERT_EQUAL(false, activeChannel->IsActive());
 
-      CPPUNIT_ASSERT(mixer->GetActiveAnimation(animName) == 0);
+      CPPUNIT_ASSERT(mixer->GetActiveAnimation(animName) == 0); 
 
       ////OK, so far so good, lets try testing looping vs non looping
       //mHelper->PlayAnimation(animName);

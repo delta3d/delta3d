@@ -23,6 +23,7 @@
 #include <dtAnim/animatable.h>
 #include <dtCore/refptr.h>
 #include <dtUtil/log.h>
+#include <dtUtil/mathdefines.h>
 
 #include <algorithm>
 
@@ -175,26 +176,39 @@ void AnimationSequence::AnimationController::Recalculate()
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-//TODO
 void AnimationSequence::AnimationController::SetComputeWeight(Animatable* pAnim)
 {
    //Compute Child Weight using fade in and out
    float weight = mParent->GetCurrentWeight();
+
+   float fade = 1.0f;
+
+   if(pAnim->GetElapsedTime() < pAnim->GetStartTime() + pAnim->GetFadeIn())
+   {
+      //compute fade in- we linearly interpolate from weight 0 to weight base weight
+      //over time specified by FadeIn
+      float percent = (pAnim->GetElapsedTime() - pAnim->GetStartTime()) / pAnim->GetFadeIn();
+      fade = percent * pAnim->GetBaseWeight();
+
+   }
+   else if(pAnim->GetEndTime() > 0.0f && (pAnim->GetElapsedTime() > (pAnim->GetEndTime() - pAnim->GetFadeOut())))
+   {
+      //compute fade out- we linearly interpolate from base weight to 0
+      //over time specified by FadeOut
+      float percent = (pAnim->GetEndTime() - pAnim->GetElapsedTime()) / pAnim->GetFadeOut();
+      fade = percent * pAnim->GetBaseWeight();         
+   }
+
+   dtUtil::Clamp(fade, 0.0f, 1.0f);
   
-   //if(fade_in) weight * compute_fade_in_weight();
-   //else if(fade_out) weight * compute_fade_out_weight();
-
-   pAnim->SetCurrentWeight(weight * pAnim->GetBaseWeight());
-
+   pAnim->SetCurrentWeight(fade * weight * pAnim->GetBaseWeight());
 }
 
-/////////////////////////////////////////////////////////////////////////////////
-//TODO
 void AnimationSequence::AnimationController::SetComputeSpeed(Animatable* pAnim)
 {
-
+   float speed = mParent->GetSpeed();
+   pAnim->SetSpeed(speed * pAnim->GetSpeed());
 }
-
 
 
 
