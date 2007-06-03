@@ -354,7 +354,11 @@ void TankActorProxy::BuildPropertyMap()
 ///////////////////////////////////////////////////////////////////////////////
 void TankActorProxy::CreateActor()
 {
-   mActor = new TankActor(*this);
+   TankActor *actor = new TankActor(*this);
+
+   // We give the actor to the proxy and it holds a ref ptr to it - it gets
+   // cleaned up nicely when the proxy gets removed.
+   SetActor(*actor);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -24,6 +24,7 @@
 #include <dtGame/messagetype.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtABC/application.h>
+#include <dtCore/camera.h>
 
 ////////////////////////////////////////////////////////////////////
 InputComponent::InputComponent(const std::string &name, bool inPlaybackMode) :
@@ -82,6 +83,10 @@ bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard,
       case Producer::Key_R:
          if (!mInPlaybackMode)
             FireGameEvent(*mReset);
+         break;
+
+      case Producer::Key_Insert:
+         GetGameManager()->GetApplication().GetCamera()->SetNextStatisticsType();
          break;
 
       case Producer::Key_1:

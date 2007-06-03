@@ -27,21 +27,29 @@
 IMPLEMENT_ENUM(TutorialMessageType);
 
 // TUTORIAL - ADD STATIC INSTANCE OF TANK_TARGET_CHANGED MESSAGE TYPE HERE
+//const TutorialMessageType TutorialMessageType::TANK_TARGET_CHANGED("Target Changed", "Info",
+//                                                                   "Tank Switched Target", USER_DEFINED_MESSAGE_TYPE + 1);
 
+///////////////////////////////////////////////////////////////////////////////
 void TutorialMessageType::RegisterMessageTypes(dtGame::MessageFactory& factory)
 {
    // TUTORIAL - REGISTER STATIC MESSAGE TYPE WITH THE FACTORY HERE
+   //factory.RegisterMessageType<TargetChangedMessage>(TANK_TARGET_CHANGED);
 }
 
+///////////////////////////////////////////////////////////////////////////////
 TargetChangedMessage::TargetChangedMessage()
 {
    // TUTORIAL - ADD YOUR dtGame::ActorMessageParameter HERE
+   //AddParameter( new dtGame::ActorMessageParameter( "NewTargetUniqueId" ) );
 }
 
+///////////////////////////////////////////////////////////////////////////////
 TargetChangedMessage::~TargetChangedMessage()
 {
 }
 
+///////////////////////////////////////////////////////////////////////////////
 void TargetChangedMessage::SetNewTargetUniqueId( const dtCore::UniqueId& uniqueId )
 {
    dtGame::ActorMessageParameter* uniqueIdParam =
@@ -49,6 +57,7 @@ void TargetChangedMessage::SetNewTargetUniqueId( const dtCore::UniqueId& uniqueI
    uniqueIdParam->SetValue( uniqueId );
 }
 
+///////////////////////////////////////////////////////////////////////////////
 const dtCore::UniqueId& TargetChangedMessage::GetNewTargetUniqueId() const
 {
    const dtGame::ActorMessageParameter* uniqueIdParam =
