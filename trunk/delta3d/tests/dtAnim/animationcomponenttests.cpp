@@ -33,6 +33,7 @@
 #include <dtCore/timer.h>
 
 #include <dtGame/gamemanager.h>
+#include <dtGame/basemessages.h>
 
 #include <dtDAL/map.h>
 #include <dtDAL/project.h>
