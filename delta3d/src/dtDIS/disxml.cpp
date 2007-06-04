@@ -316,7 +316,8 @@ void EntityMapXMLHandler::endElement(const XMLCh* const uri,const XMLCh* const l
          }
 
          mCurrentResourceIdentifier.clear();
-      } break;
+      } 
+      break;
 
    case MAPPING:
       {
@@ -342,7 +343,11 @@ void EntityMapXMLHandler::endElement(const XMLCh* const uri,const XMLCh* const l
          mCurrentEntityType = DIS::EntityType();
          mCurrentActorTypeCategory.clear();
          mCurrentActorTypeName.clear();
-      } break;
+      } 
+      break;
+
+   default:
+      break;
    }
 
    mNodeStack.pop();
