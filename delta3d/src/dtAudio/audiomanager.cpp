@@ -1473,9 +1473,9 @@ AudioManager::PlaySound( SoundObj* snd )
       if( ! GetSource( snd ) )
       {
          // no source available
-         Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__, 
+         Log::GetInstance().LogMessage( Log::LOG_ERROR, __FUNCTION__, 
             "AudioManager: play attempt w/o available sources" );
-         Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
+         Log::GetInstance().LogMessage( Log::LOG_ERROR, __FUNCTION__,
             "AudioManager: try increasing the number of sources at config time" );
          return;
       }
