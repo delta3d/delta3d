@@ -46,10 +46,12 @@ namespace dtLMS
    {
       public:
 
+         static const std::string &DEFAULT_NAME;
+
          /**
           * Constructs the LmsComponent
           */
-         LmsComponent(const std::string &name);
+         LmsComponent(const std::string &name = DEFAULT_NAME);
 
          /**
           * Constructs the LmsComponent
