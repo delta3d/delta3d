@@ -1503,7 +1503,7 @@ namespace dtHLAGM
                   l++;
                }
                
-               float value = (float)(*paramsIter).GetParameterValue().GetArticulatedParts().GetValue();
+               float value = (float)curParamValue->GetArticulatedParts().GetValue();
 
                switch((unsigned int)curParamValue->GetArticulatedParts().GetTypeMetric())
                {
@@ -1590,16 +1590,18 @@ namespace dtHLAGM
                   //(Enumeration (Enumerator "Azimuth")          (Representation 11))
                   case 11:
                   {
+                     float tempValue = -value;
                      newGroupParam->AddParameter(
-                        *new dtGame::FloatMessageParameter( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_AZIMUTH, value) );
+                        *new dtGame::FloatMessageParameter( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_AZIMUTH, tempValue) );
                   }
                   break;
 
                   //(Enumeration (Enumerator "AzimuthRate")      (Representation 12))
                   case 12:
                   {
+                     float tempValue = -value;
                      newGroupParam->AddParameter(
-                        *new dtGame::FloatMessageParameter( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_AZIMUTHRATE, value) );
+                        *new dtGame::FloatMessageParameter( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_AZIMUTHRATE, tempValue) );
                   }
                   break;
 
