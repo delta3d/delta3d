@@ -28,6 +28,8 @@
 
 namespace dtLMS
 {
+   const std::string &LmsComponent::DEFAULT_NAME = "LmsComponent";
+
    LmsComponent::LmsComponent(const std::string &name) : 
       dtGame::TaskComponent(name),
       mClientSocket(NULL), 
@@ -41,6 +43,7 @@ namespace dtLMS
 
    ///////////////////////////////////////////////////////////////////////
    LmsComponent::LmsComponent(const std::string &host, int port, bool reverseBytes) : 
+      dtGame::TaskComponent(LmsComponent::DEFAULT_NAME), 
       mClientSocket(NULL), 
       mHost(host), 
       mPort(port),
@@ -62,7 +65,7 @@ namespace dtLMS
       }
 
       //get the GameActorProxy that the message refers to
-      const dtCore::UniqueId &id = message.GetAboutActorId();;
+      const dtCore::UniqueId &id = message.GetAboutActorId();
       dtGame::GameActorProxy *proxy = GetGameManager()->FindGameActorById(id);
       if (proxy == NULL)
       {
