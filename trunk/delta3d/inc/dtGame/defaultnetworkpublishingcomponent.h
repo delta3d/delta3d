@@ -40,8 +40,10 @@ namespace dtGame
    {
       public:
 
+         static const std::string &DEFAULT_NAME;
+
          /// Constructor
-         DefaultNetworkPublishingComponent(const std::string& name = "rules");
+         DefaultNetworkPublishingComponent(const std::string& name = DEFAULT_NAME);
 
          /**
           * Processes messages sent from the Game Manager
