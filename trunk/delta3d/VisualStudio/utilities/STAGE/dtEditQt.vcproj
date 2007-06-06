@@ -55,7 +55,7 @@
 			<Tool
 				Name="VCPreBuildEventTool"
 				Description="Builds the QT MOC files (qmake, nmake...)"
-				CommandLine="setupQT.bat"/>
+				CommandLine="setupQT.bat debug"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
@@ -111,7 +111,7 @@
 			<Tool
 				Name="VCPreBuildEventTool"
 				Description="Builds the QT MOC files (qmake, nmake...)"
-				CommandLine="setupqt.bat"/>
+				CommandLine="setupqt.bat release"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
