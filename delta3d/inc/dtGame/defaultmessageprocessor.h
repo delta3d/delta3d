@@ -37,8 +37,10 @@ namespace dtGame
    {
       public:
 
+         static const std::string &DEFAULT_NAME;
+
          /// Constructor
-         DefaultMessageProcessor(const std::string& name = "default");
+         DefaultMessageProcessor(const std::string& name = DEFAULT_NAME);
 
          /**
           * Called publicily from other classes to process a message and 

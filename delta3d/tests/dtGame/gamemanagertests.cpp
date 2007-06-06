@@ -614,8 +614,8 @@ void GameManagerTests::TestAddRemoveComponents()
    dtCore::RefPtr<dtGame::DefaultMessageProcessor> dmc = new dtGame::DefaultMessageProcessor();
 
    //check default names.
-   CPPUNIT_ASSERT(rc->GetName() == "rules");
-   CPPUNIT_ASSERT(dmc->GetName() == "default");
+   CPPUNIT_ASSERT(rc->GetName() == dtGame::DefaultNetworkPublishingComponent::DEFAULT_NAME);
+   CPPUNIT_ASSERT(dmc->GetName() == dtGame::DefaultMessageProcessor::DEFAULT_NAME);
 
    rc->SetName("rulesComp");
    dmc->SetName("defaultComp");
