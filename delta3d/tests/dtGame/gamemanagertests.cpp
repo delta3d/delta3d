@@ -80,6 +80,7 @@ class GameManagerTests : public CPPUNIT_NS::TestFixture
         CPPUNIT_TEST(TestFindActorById);
         CPPUNIT_TEST(TestFindGameActorById);
         CPPUNIT_TEST(TestTemplateActors);
+        CPPUNIT_TEST(TestGMShutdown);
 
         CPPUNIT_TEST(TestTimers);
         CPPUNIT_TEST(TestOnAddedToGM);
@@ -105,6 +106,7 @@ public:
    void TestFindActorById();
    void TestFindGameActorById();
    void TestTemplateActors();
+   void TestGMShutdown();
 
    void TestTimers();
 
@@ -123,7 +125,8 @@ class TestGMComponent: public dtGame::GMComponent
    public:
       TestGMComponent(const std::string& name = "TestComponent"): 
          dtGame::GMComponent(name),
-         mWasOnAddedToGMCalled(false)
+         mWasOnAddedToGMCalled(false), 
+         mWasOnRemovedFromGMCalled(false)
       {}
 
       std::vector<dtCore::RefPtr<const dtGame::Message> >& GetReceivedProcessMessages()
@@ -134,6 +137,11 @@ class TestGMComponent: public dtGame::GMComponent
       virtual void OnAddedToGM()
       {
          mWasOnAddedToGMCalled = true;
+      }
+
+      virtual void OnRemovedFromGM()
+      {
+         mWasOnRemovedFromGMCalled = true;
       }
 
       virtual void ProcessMessage(const dtGame::Message& msg)
@@ -171,6 +179,7 @@ class TestGMComponent: public dtGame::GMComponent
       }
 
       bool mWasOnAddedToGMCalled;
+      bool mWasOnRemovedFromGMCalled;
 
    private:
       std::vector<dtCore::RefPtr<const dtGame::Message> > mReceivedProcessMessages;
@@ -1273,4 +1282,37 @@ void GameManagerTests::TestSetProjectContext()
    CPPUNIT_ASSERT_MESSAGE("The context should have been set", gmPC == absPath);
    CPPUNIT_ASSERT_MESSAGE("The dtDAL::ProjectContext should be correct", dtDAL::Project::GetInstance().GetContext() == absPath);
    CPPUNIT_ASSERT(mManager->GetProjectContext() == dtDAL::Project::GetInstance().GetContext());
+}
+
+//////////////////////////////////////////////////
+void GameManagerTests::TestGMShutdown()
+{
+   CPPUNIT_ASSERT(mManager.valid());
+
+   dtCore::RefPtr<TestGMComponent> tc = new TestGMComponent;
+   mManager->AddComponent(*tc, dtGame::GameManager::ComponentPriority::NORMAL);
+
+   const unsigned int numActors = 20;
+   for(unsigned int i = 0; i < numActors; i++)
+   {
+      dtCore::RefPtr<dtDAL::ActorProxy> proxy = 
+         mManager->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE);
+
+      CPPUNIT_ASSERT(proxy.valid());
+
+      mManager->AddActor(*proxy);
+   }
+
+   mManager->Shutdown();
+
+   CPPUNIT_ASSERT_MESSAGE("Shutdown of the game manager should have flipped the removed from GM flag on the component", 
+      tc->mWasOnRemovedFromGMCalled);
+
+   CPPUNIT_ASSERT_MESSAGE("Shutdown of the game manager should have removed the test component", 
+      mManager->GetComponentByName(tc->GetName()) == NULL);
+
+   std::vector<dtDAL::ActorProxy*> proxies;
+   mManager->GetAllActors(proxies);
+   CPPUNIT_ASSERT_MESSAGE("Shut down of the game manager should have deleted the actors", 
+      proxies.empty());
 }

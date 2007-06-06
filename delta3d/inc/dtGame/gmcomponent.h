@@ -83,6 +83,11 @@ namespace dtGame
           */
          virtual void OnAddedToGM() { }
 
+         /**
+          * Called immediately after a component is removed from the GM. 
+          */
+         virtual void OnRemovedFromGM() { }
+
       private:
          friend class GameManager;
          /**

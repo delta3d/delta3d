@@ -628,10 +628,11 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::RemoveComponent(GMComponent& component)
    {
-      for (std::vector<dtCore::RefPtr<GMComponent> >::iterator i = mComponentList.begin(); i != mComponentList.end(); ++i)
+      for(std::vector<dtCore::RefPtr<GMComponent> >::iterator i = mComponentList.begin(); i != mComponentList.end(); ++i)
       {
-         if (i->get() == &component)
+         if(i->get() == &component)
          {
+            component.OnRemovedFromGM();
             component.SetGameManager(NULL);
             mComponentList.erase(i);
             return;
@@ -643,7 +644,9 @@ namespace dtGame
    void GameManager::GetAllComponents(std::vector<GMComponent*>& toFill)
    {
       toFill.clear();
-      unsigned int componentListSize = mComponentList.size(); // checking size on vector is slow :(
+      unsigned int componentListSize = mComponentList.size(); 
+      toFill.reserve(componentListSize);
+
       for (unsigned i = 0; i < componentListSize; ++i)
       {
          toFill.push_back(mComponentList[i].get());
@@ -654,7 +657,9 @@ namespace dtGame
    void GameManager::GetAllComponents(std::vector<const GMComponent*>& toFill) const
    {
       toFill.clear();
-      unsigned int componentListSize = mComponentList.size(); // checking size on vector is slow :(
+      unsigned int componentListSize = mComponentList.size();
+      toFill.reserve(componentListSize);
+
       for (unsigned i = 0; i < componentListSize; ++i)
       {
          toFill.push_back(mComponentList[i].get());
@@ -1731,6 +1736,37 @@ namespace dtGame
       {
          mDebugLoggerInformation.clear();
       }
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void GameManager::Shutdown()
+   {
+      std::vector<GMComponent*> components;
+      GetAllComponents(components);
+      for(size_t i = 0; i < components.size(); i++)
+      {
+         RemoveComponent(*components[i]);
+      }
+      
+      mDebugLoggerInformation.clear();
+     
+      while(!mSendNetworkMessageQueue.empty())
+      {    
+         mSendNetworkMessageQueue.pop();
+      }
+      
+      while(!mSendMessageQueue.empty())
+      {
+         mSendMessageQueue.pop();
+      }
+
+      DeleteAllActors(true);
+
+      mMapChangeStateData = NULL;
+      mApplication        = NULL;
+      mMachineInfo        = NULL;
+      mLibMgr = NULL;
+      mScene  = NULL;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
