@@ -820,6 +820,14 @@ namespace dtGame
           */
          const std::string& GetProjectContext() const;
 
+         /**
+          * Shuts down the Game Manager. 
+          * This method will clear out all internals of the game manager
+          * so that it can be user controlled instead of implicit from 
+          * the destructor
+          */
+         void Shutdown();
+
       protected:
 
          struct TimerInfo 
