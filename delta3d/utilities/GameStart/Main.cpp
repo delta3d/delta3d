@@ -22,6 +22,7 @@
 #include <dtCore/refptr.h>
 #include <dtGame/gameapplication.h>
 #include <dtGame/exceptionenum.h>
+#include <dtGame/gamemanager.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/exception.h>
 #include <dtUtil/log.h>
@@ -46,12 +47,14 @@ int main(int argc, char** argv)
       app->SetGameLibraryName(std::string(appToLoad));
       app->Config();
       app->Run();
+      app->GetGameManager()->Shutdown();
       app = NULL;
    }
    catch (const dtUtil::Exception &ex)
    {
       LOG_ERROR("GameStart caught exception: ");
       ex.LogException(dtUtil::Log::LOG_ERROR);
+      return -1;
    }
    return 0;
 }
