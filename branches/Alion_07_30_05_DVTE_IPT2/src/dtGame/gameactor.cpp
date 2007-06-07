@@ -536,19 +536,19 @@ namespace dtGame
 
    void GameActor::OnShaderGroupChanged()
    {
+      // Unassign any old setting on this, if any - works regardless if there's a node or not
+      dtCore::ShaderManager::GetInstance().UnassignShaderFromNode(*GetOSGNode());
+
+      if (mShaderGroup == "")
+         return; // Do nothing, since we have nothing to load
+
+      //First get the shader group assigned to this actor.
       const dtCore::ShaderGroup *shaderGroup =
          dtCore::ShaderManager::GetInstance().FindShaderGroupTemplate(mShaderGroup);
 
-      /*if (GetOSGNode() == NULL)
-      {
-         mShaderGroup = groupName;
-         return;
-      }*/
-
-      //First get the shader group assigned to this actor.
       if (shaderGroup == NULL)
       {
-         LOG_INFO("Could not find shader group: " + mShaderGroup);
+         LOG_INFO("Could not find shader group [" + mShaderGroup + "] for actor [" + GetName());
          return;
       }
 
