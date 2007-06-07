@@ -118,6 +118,38 @@ namespace dtUtil
    }
 
    /**
+    * This does a relative comparison of floats.  This is a SAFE comparison 
+    * that doesn't use cheesy 0.0001 type epsilon values.  The epsilon is scaled
+    * based on the precision of the numbers passed in.  This was taken from
+    * Christer Ericson's GDC '07 presentation: 
+    * http://realtimecollisiondetection.net/pubs/GDC06_Ericson_Physics_Tutorial_Numerical_Robustness.ppt
+    * Note - This should be used when comparing very large and/or very small numbers.
+    * @param float1 The first float
+    * @param float2 The second float
+    * @return True if the values are equal within the relative precision of their values.
+    */
+   inline bool Equivalent(float float1, float float2)
+   {
+      return (Abs(float1 - float2) <= FLT_EPSILON * Max(1.0f, Max(float1, float2)));
+   }
+
+   /**
+   * This does a relative comparison of doubles.  This is a SAFE comparison 
+   * that doesn't use cheesy 0.0001 type epsilon values.  The epsilon is scaled
+   * based on the precision of the numbers passed in.  This was taken from
+   * Christer Ericson's GDC '07 presentation: 
+   * http://realtimecollisiondetection.net/pubs/GDC06_Ericson_Physics_Tutorial_Numerical_Robustness.ppt
+   * Note - This should be used when comparing very large and/or very small numbers.
+   * @param double1 The first value
+   * @param double2 The second value
+   * @return True if the values are equal within the relative precision of their values.
+   */
+   inline bool Equivalent(double double1, double double2)
+   {
+      return (Abs(double1 - double2) <= DBL_EPSILON * Max(1.0, Max(double1, double2)));
+   }
+
+   /**
     * Does an epsilon equals on an any osg::Vec# 
     * @param lhs The first vector.
     * @param rhs The second vector.
