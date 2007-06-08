@@ -404,12 +404,18 @@ void AnimationSequence::PruneChildren()
    AnimationContainer::iterator iter = mActiveAnimations.begin();
    AnimationContainer::iterator end = mActiveAnimations.end();
 
-   for(;iter != end; ++iter)
+   for(;iter != end;)
    {
       if((*iter)->ShouldPrune())
       {
         (*iter)->Prune();
-        iter = mActiveAnimations.erase(iter);
+        AnimationContainer::iterator toDelete = iter;
+        ++iter;
+        mActiveAnimations.erase(toDelete);
+      }
+      else
+      {
+         ++iter;
       }
    }
 }
