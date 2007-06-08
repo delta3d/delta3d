@@ -39,11 +39,22 @@ class DeltaDrawableTests : public CPPUNIT_NS::TestFixture
 public:
    
    void TestOrphanedDrawables();
+   void TestParentChildRelationships();
 
 private:
 
    bool HasChild( dtCore::DeltaDrawable* parent, dtCore::DeltaDrawable* child );
-  
+};
+
+class TestTransformable : public dtCore::Transformable
+{
+   ~TestTransformable()
+   {
+      if (GetParent())
+      {
+         GetParent()->RemoveChild(this);
+      }
+   };
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(DeltaDrawableTests);
@@ -105,5 +116,15 @@ void DeltaDrawableTests::TestOrphanedDrawables()
 
    // Next test emancipating children who are already orphaned or parentless
    childOne->Emancipate();
-   childTwo->Emancipate();      
+   childTwo->Emancipate();    
+
+   // Without the OnOrphaned call, this will make the 
+   // transformable's destructor get called twice.
+   // http://www.delta3d.org/forum/viewtopic.php?forum=13&showtopic=9055
+   {
+      dtCore::RefPtr<dtCore::Transformable> parent = new dtCore::Transformable;
+
+      parent->AddChild(new TestTransformable());    
+
+   }   // parent goes out of scope here
 }
