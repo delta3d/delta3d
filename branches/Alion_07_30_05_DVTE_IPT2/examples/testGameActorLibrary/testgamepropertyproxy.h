@@ -464,13 +464,20 @@ class DT_EXAMPLE_EXPORT TestGamePropertyProxy : public GameActorProxy
       void SetRegisterListeners(bool registerListeners) { mRegisterListeners = registerListeners; }
       bool IsRegisterListeners() { return mRegisterListeners; }
 
+      void SetRemovedFromWorld(bool removedFromWorld) { mWasRemovedFromWorld = removedFromWorld; }
+      bool IsRemovedFromWorld() { return mWasRemovedFromWorld; }
+
    protected:
       virtual ~TestGamePropertyProxy() { }
+
+      // Sets mWasRemovedFromWorld to true so we can test OnRemovedFromWorld
+      virtual void OnRemovedFromWorld();
 
    private:
       static const std::string GROUPNAME;
 
       bool mRegisterListeners;
+      bool mWasRemovedFromWorld;
 
 };
 
