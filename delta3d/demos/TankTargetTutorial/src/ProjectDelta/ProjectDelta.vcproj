@@ -133,6 +133,9 @@
 				RelativePath=".\InputComponent.cpp">
 			</File>
 			<File
+				RelativePath=".\KillableTargetActor.cpp">
+			</File>
+			<File
 				RelativePath=".\MyGameEntryPoint.cpp">
 			</File>
 			<File
@@ -157,6 +160,9 @@
 			</File>
 			<File
 				RelativePath=".\InputComponent.h">
+			</File>
+			<File
+				RelativePath=".\KillableTargetActor.h">
 			</File>
 			<File
 				RelativePath=".\MyGameEntryPoint.h">

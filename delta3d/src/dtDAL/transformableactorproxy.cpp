@@ -32,7 +32,7 @@ namespace dtDAL
    void TransformableActorProxy::BuildPropertyMap()
    {
       const std::string GROUPNAME = "Transformable";
-      const std::string COLLISION_GROUP = "Collision";
+      const std::string COLLISION_GROUP = "ODE Collision";
 
       dtCore::Transformable *trans = static_cast<dtCore::Transformable*>(GetActor());
       
@@ -60,39 +60,39 @@ namespace dtDAL
                                            GROUPNAME));
 
       //COLLISION PROPS...
-      AddProperty(new BooleanActorProperty("Show Collision Geometry", "Show Collision Geometry",
+      AddProperty(new BooleanActorProperty("Show Collision Geometry", "ODE Show Collision Geometry",
                                            MakeFunctor(*this, &TransformableActorProxy::SetRenderCollisionGeometry),
                                            MakeFunctorRet(*this, &TransformableActorProxy::GetRenderCollisionGeometry),
-                                           "Enables/Disables the rendering of collision geometry assigned to this actor.",
+                                           "Enables/Disables the rendering of collision geometry assigned to this actor (using ODE).",
                                            COLLISION_GROUP));
 
       AddProperty(new EnumActorProperty<dtCore::Transformable::CollisionGeomType>(
-                     "Collision Type","Collision Type",
+                     "Collision Type","ODE Collision Type",
                      MakeFunctor(*this,&TransformableActorProxy::SetCollisionType),
                      MakeFunctorRet(*this,&TransformableActorProxy::GetCollisionType),
-                     "Sets the type of geometry to use for collision detection",
+                     "Sets the type of geometry to use for collision detection (using ODE)",
                      COLLISION_GROUP));
 
-      AddProperty(new FloatActorProperty("Collision Radius","Collision Radius",
+      AddProperty(new FloatActorProperty("Collision Radius","ODE Collision Radius",
                                          MakeFunctor(*this,&TransformableActorProxy::SetCollisionRadius),
                                          MakeFunctorRet(*this,&TransformableActorProxy::GetCollisionRadius),
-                                         "Sets the radius for collision calculations. This value is used differently "
+                                         "Sets the radius for collision calculations (using ODE). This value is used differently "
                                          "depending on the type of collision assigned to this actor.  For example, "
                                          "if the collision type is set to SPHERE, this will be the sphere's radius.",
                                          COLLISION_GROUP));
 
-      AddProperty(new FloatActorProperty("Collision Length","Collision Length",
+      AddProperty(new FloatActorProperty("Collision Length","ODE Collision Length",
                                          MakeFunctor(*this,&TransformableActorProxy::SetCollisionLength),
                                          MakeFunctorRet(*this,&TransformableActorProxy::GetCollisionLength),
-                                         "Sets the length of the collision geometry. This value is used differently "
+                                         "Sets the length of the collision geometry (using ODE). This value is used differently "
                                          "depending on the type of collision assigned to this actor.  For example, "
                                          "if the collision type is set to CYLINDER, this will be the cylinder's length.",
                                          COLLISION_GROUP));
 
-      AddProperty(new Vec3ActorProperty("Collision Box","Collision Box",
+      AddProperty(new Vec3ActorProperty("Collision Box","ODE Collision Box",
                                         MakeFunctor(*this, &TransformableActorProxy::SetCollisionBoxDims),
                                         MakeFunctorRet(*this, &TransformableActorProxy::GetCollisionBoxDims),
-                                        "Sets the size of the bounding box used for collision detection.  This property "
+                                        "Sets the size of the bounding box used for collision detection (using ODE).  This property "
                                         "is used if the collision type is set to BOX.",
                                         COLLISION_GROUP));
 

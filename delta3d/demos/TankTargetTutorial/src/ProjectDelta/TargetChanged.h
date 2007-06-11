@@ -28,6 +28,8 @@
 #include <dtGame/messagetype.h>
 #include <dtCore/uniqueid.h>
 
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 class TUTORIAL_TANK_EXPORT TutorialMessageType : public dtGame::MessageType
 {
    DECLARE_ENUM(TutorialMessageType);
@@ -35,6 +37,7 @@ class TUTORIAL_TANK_EXPORT TutorialMessageType : public dtGame::MessageType
    public:
 
       // TUTORIAL - ADD STATIC INSTANCE OF TANK_TARGET_CHANGED MESSAGE TYPE HERE
+      //static const TutorialMessageType TANK_TARGET_CHANGED;
 
       static void RegisterMessageTypes(dtGame::MessageFactory& factory);
 
@@ -52,6 +55,8 @@ class TUTORIAL_TANK_EXPORT TutorialMessageType : public dtGame::MessageType
       virtual ~TutorialMessageType() { }
 };
 
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 class TargetChangedMessage : public dtGame::Message
 {
    public:

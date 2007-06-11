@@ -2373,7 +2373,8 @@ namespace dtHLAGM
             try
             {
                MapFromMessageParameters(buffer, bufferSize, messageParameters, *vectorIterator);
-               updateParams.add(vectorIterator->GetAttributeHandle(), buffer, bufferSize);
+               if (bufferSize > 0) // A parameter may decide not to send anything without throwing an exception
+                  updateParams.add(vectorIterator->GetAttributeHandle(), buffer, bufferSize);
    
                ParameterTranslator::DeallocateBuffer(buffer);
             }

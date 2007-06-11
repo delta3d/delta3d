@@ -552,6 +552,10 @@ namespace dtGame
       {
          GameActorProxy& gameActorProxy = *mDeleteList[i];
 
+         // Notify the Game Actor that it was removed from the world.
+         // It could listen for the ACTOR_DELETE_MESSAGE instead. 
+         gameActorProxy.OnRemovedFromWorld();
+
          std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> >::iterator itor = mGameActorProxyMap.find(gameActorProxy.GetId());
 
          dtCore::UniqueId id;

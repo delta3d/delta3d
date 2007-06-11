@@ -30,6 +30,8 @@
 #include <dtCore/particlesystem.h>
 #include <dtDAL/resourcedescriptor.h>
 
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 class TUTORIAL_TANK_EXPORT KillableTargetActor : public dtActors::GameMeshActor
 {
    class SwitchVisitor : public osg::NodeVisitor
@@ -108,6 +110,8 @@ class TUTORIAL_TANK_EXPORT KillableTargetActor : public dtActors::GameMeshActor
       dtCore::Transform mOriginalPosition;
 };
 
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 class TUTORIAL_TANK_EXPORT KillableTargetActorProxy : public dtActors::GameMeshActorProxy
 {
    public:

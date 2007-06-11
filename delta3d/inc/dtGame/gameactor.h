@@ -143,7 +143,7 @@ namespace dtGame
            * Called when an actor is first placed in the "world"
            */
          virtual void OnEnteredWorld() { }
-      
+
       private:
    		
          static const std::string NULL_PROXY_ERROR;
@@ -451,6 +451,16 @@ namespace dtGame
           */
          virtual void OnEnteredWorld() { }	
          
+         /**
+          * Called when the GM deletes the actor in a NORMAL way, such as DeleteActor(). 
+          * This may not get called from every possible path that an actor can be removed 
+          * or deleted. For instance, calling DeleteAllActors(true) on the GM would bypass
+          * the 'normal' actor delete process. Note, this is sent at the end of the tick and 
+          * at the end of a 'normal' map change. If you want to find out immediately that you
+          * are being deleted, register for the INFO_ACTOR_DELETED with RegisterForMessagesAboutSelf().
+          */
+         virtual void OnRemovedFromWorld() { }
+
          //void RegisterMessageHandler(const MessageType& type, const std::string& invokableName);	
          //void UnregisterMessageHandler(const MessageType& type, const std::string& invokableName);   
 		
