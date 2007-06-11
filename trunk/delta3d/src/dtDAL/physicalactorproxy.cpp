@@ -29,27 +29,27 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////
    void PhysicalActorProxy::BuildPropertyMap()
    {
-      const std::string GROUPNAME = "Physics";
+      const std::string GROUPNAME = "ODE Physics";
         
       TransformableActorProxy::BuildPropertyMap();
 
       dtCore::Physical *phys = static_cast<dtCore::Physical*>(GetActor());
 
       //PHYSICS PROPS...
-      AddProperty(new BooleanActorProperty("Enable Dynamics", "Enable Dynamics",
+      AddProperty(new BooleanActorProperty("Enable Dynamics", "ODE Enable Dynamics",
                                            MakeFunctor(*phys, &dtCore::Physical::EnableDynamics),
                                            MakeFunctorRet(*phys, &dtCore::Physical::DynamicsEnabled),
-                                           "Enables physics calculations on this actor.", GROUPNAME));
+                                           "Enables physics calculations on this actor (using ODE).", GROUPNAME));
 
-      AddProperty(new FloatActorProperty("Mass", "Mass",
+      AddProperty(new FloatActorProperty("Mass", "ODE Mass",
                                          MakeFunctor(*this, &PhysicalActorProxy::SetMass),
                                          MakeFunctorRet(*this, &PhysicalActorProxy::GetMass),
-                                         "Sets the mass of this actor.",GROUPNAME));
+                                         "Sets the mass of this actor (using ODE).",GROUPNAME));
 
-      AddProperty(new Vec3ActorProperty("Center of Gravity", "Center of Gravity",
+      AddProperty(new Vec3ActorProperty("Center of Gravity", "ODE Center of Gravity",
                                         MakeFunctor(*this, &PhysicalActorProxy::SetCenterOfGravity),
                                         MakeFunctorRet(*this, &PhysicalActorProxy::GetCenterOfGravity),
-                                        "Sets the center of gravity for this actor.", GROUPNAME));
+                                        "Sets the center of gravity for this actor (using ODE).", GROUPNAME));
    }
 
    ///////////////////////////////////////////////////////////////////////////////

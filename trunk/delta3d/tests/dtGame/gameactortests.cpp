@@ -134,6 +134,7 @@ class GameActorTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestDefaultProcessMessageRegistration);
       CPPUNIT_TEST(TestMessageProcessingPerformance);
       CPPUNIT_TEST(TestActorIsInGM);
+      CPPUNIT_TEST(TestOnRemovedActor);
 
    CPPUNIT_TEST_SUITE_END();
 
@@ -153,6 +154,7 @@ public:
    void TestEnvironmentTimeConversions();
    void TestMessageProcessingPerformance();
    void TestActorIsInGM();
+   void TestOnRemovedActor();
 
 private:
    static const std::string mTestGameActorLibrary;
@@ -976,5 +978,26 @@ void GameActorTests::TestMessageProcessingPerformance()
    {
       CPPUNIT_FAIL(e.What());
    }
+}
+
+//////////////////////////////////////////////////////
+void GameActorTests::TestOnRemovedActor()
+{
+   // This only tests that the new OnRemovedFromWorld method is called
+   // Normal delete actor tests are done elsewhere.
+
+   dtCore::RefPtr<TestGamePropertyProxy> proxy1;
+   dtCore::RefPtr<dtDAL::ActorType> actor1Type = mManager->FindActorType("ExampleActors", "TestGamePropertyProxy");
+   mManager->CreateActor(*actor1Type, proxy1);
+   mManager->AddActor(*proxy1, true, false);
+
+   dtCore::System::GetInstance().Step();
+
+   CPPUNIT_ASSERT_MESSAGE("Proxy should NOT be marked as 'RemovedFromWorld'", !proxy1->IsRemovedFromWorld());
+
+   mManager->DeleteActor(*proxy1);
+   dtCore::System::GetInstance().Step();
+
+   CPPUNIT_ASSERT_MESSAGE("Proxy should BE marked as 'RemovedFromWorld'", proxy1->IsRemovedFromWorld());
 }
 

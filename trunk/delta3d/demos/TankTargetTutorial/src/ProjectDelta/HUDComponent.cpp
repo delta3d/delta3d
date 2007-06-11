@@ -119,8 +119,8 @@ void HUDComponent::SetupGUI(dtCore::DeltaWin *win)
       std::string path = dtCore::FindFileInPathList(scheme);
       if(path.empty())
       {
-         EXCEPT(dtGame::ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION,
-            "Failed to find the scheme file.");
+         throw dtUtil::Exception(dtGame::ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION,
+            "Failed to find the scheme file.", __FILE__, __LINE__);
       }
 
       std::string dir = path.substr(0, path.length() - (scheme.length() - 3));
@@ -169,7 +169,8 @@ void HUDComponent::SetupGUI(dtCore::DeltaWin *win)
    {
       std::ostringstream oss;
       oss << "CEGUI while setting up GUI: " << e.getMessage().c_str();
-      EXCEPT(dtGame::ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION, oss.str());
+      throw dtUtil::Exception(dtGame::ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION,
+         oss.str(), __FILE__, __LINE__);
    }
 
 }

@@ -96,7 +96,8 @@ void TestGamePropertyActor::ProcessMessage(const dtGame::Message &tickMessage)
 //////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 TestGamePropertyProxy::TestGamePropertyProxy() :
-   mRegisterListeners(false)
+   mRegisterListeners(false),
+   mWasRemovedFromWorld(false)
 {
    //static int count = 0;
    //std::ostringstream ss;
@@ -252,4 +253,10 @@ void TestGamePropertyProxy::OnEnteredWorld()
    }
 
    dtGame::GameActorProxy::OnEnteredWorld();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void TestGamePropertyProxy::OnRemovedFromWorld()
+{
+   mWasRemovedFromWorld = true;
 }

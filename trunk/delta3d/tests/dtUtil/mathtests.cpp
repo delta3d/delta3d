@@ -39,12 +39,13 @@ namespace dtUtil
    /// Math unit tests for dtUtil
    class MathTests : public CPPUNIT_NS::TestFixture
    {
-      CPPUNIT_TEST_SUITE( MathTests );
+      CPPUNIT_TEST_SUITE(MathTests);
          CPPUNIT_TEST( TestNormalizer );
          CPPUNIT_TEST( TestEquivalentVec2 );
          CPPUNIT_TEST( TestEquivalentVec3);
          CPPUNIT_TEST( TestEquivalentVec4 );
 		 CPPUNIT_TEST( TestMatrixEulerConversions );
+       CPPUNIT_TEST( TestEquivalentReals );
       CPPUNIT_TEST_SUITE_END();
 
       public:
@@ -55,6 +56,7 @@ namespace dtUtil
          void TestEquivalentVec2();
          void TestEquivalentVec3();
          void TestEquivalentVec4();
+         void TestEquivalentReals();
 		 void TestMatrixEulerConversions();
 
       private:
@@ -228,5 +230,32 @@ namespace dtUtil
       ss << "Expected \"" << hprTest4 << "\" but got \"" << hprResult << "\"";
 
 	   CPPUNIT_ASSERT_MESSAGE(ss.str(), Equivalent(hprResult, hprTest4, 4, test_magic_epsilon));
+   }
+
+   void MathTests::TestEquivalentReals()
+   {
+      float float1, float2;
+
+      // It seems wierd, but if you are doing lots of math, and your values are in the 10 Million range,
+      // Then the next representable number is actually in increments of 1.  So, if you compare this, using 
+      // the normal checks, it will say they are not equal, but in fact, because of hte level of precision 
+      // at that point, they are equal. So, to be most accurate, the Equivalent() method allows
+      // for a scaling epsilon value.  It's hard to explain, but you can see the article mentioned in the
+      // Equivalent method description.
+      float1 = 10000000.0f;
+      float2 = 10000001.0f;
+
+      bool wasEqual; 
+      wasEqual = (float1 == float2);
+      CPPUNIT_ASSERT_MESSAGE("Using regular epsilon type check, they should not be equal.", !wasEqual);
+
+      wasEqual = Equivalent(float1, float2);
+      CPPUNIT_ASSERT_MESSAGE("Floats should be the same using the new Equivalent test", wasEqual);
+
+      float2 += 1.0;
+      wasEqual = Equivalent(float1, float2);
+      CPPUNIT_ASSERT_MESSAGE("They differ by the relative scaled epsilon, so they should not be equiv", !wasEqual);
+
+      // Note, this should check doubles also, but I don't know the limit values for this.
    }
 }

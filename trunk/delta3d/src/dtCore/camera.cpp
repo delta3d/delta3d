@@ -347,14 +347,14 @@ namespace dtCore
       }
 
       //choose Z as the up vector
-      osg::Vec3 eye(-absMat(3,0), -absMat(3,1), -absMat(3,2));
-      osg::Vec3 UP(absMat(2,0), absMat(2,1), absMat(2,2));
-      osg::Vec3 F = UP ^ osg::Vec3(absMat(0,0), absMat(0,1), absMat(0,2));
+      osg::Vec3d eye(-absMat(3,0), -absMat(3,1), -absMat(3,2));
+      osg::Vec3d UP(absMat(2,0), absMat(2,1), absMat(2,2));
+      osg::Vec3d F = UP ^ osg::Vec3d(absMat(0,0), absMat(0,1), absMat(0,2));
       F.normalize();
       UP.normalize();
 
-      osg::Vec3 s = F ^ UP;
-      osg::Vec3 u = s ^ F;
+      osg::Vec3d s = F ^ UP;
+      osg::Vec3d u = s ^ F;
       F = -F;
 
       Producer::Matrix m(s[0], u[0], F[0], 0.0,

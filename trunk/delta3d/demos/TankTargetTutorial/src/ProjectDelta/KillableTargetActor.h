@@ -26,101 +26,111 @@
 #include <dtCore/refptr.h>
 #include <dtActors/gamemeshactor.h>
 #include <dtCore/shader.h>
+#include <dtCore/shaderparamfloat.h>
 #include <dtCore/particlesystem.h>
 #include <dtDAL/resourcedescriptor.h>
 
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 class TUTORIAL_TANK_EXPORT KillableTargetActor : public dtActors::GameMeshActor
 {
    class SwitchVisitor : public osg::NodeVisitor
    {
-      public:
-         SwitchVisitor( const std::string& state );
-         void apply( osg::Switch& switchNode );
-         void SetSwitchState( const std::string& state );
-         const std::string& GetSwitchState() const;
-
-      private:
-
-         std::string mSwitchState;
-   };
-
    public:
-
-      // Constructs the tank actor.
-      KillableTargetActor(dtGame::GameActorProxy &proxy);
-
-      /**
-       * This method is an invokable called when an object is local and
-       * receives a tick.
-       * @param tickMessage A message containing tick related information.
-       */
-      virtual void TickLocal(const dtGame::Message &tickMessage);
-
-      /**
-       * This method is an invokable called when an object is remote and
-       * receives a tick.
-       * @param tickMessage A message containing tick related information.
-       */
-      virtual void TickRemote(const dtGame::Message &tickMessage);
-      
-      /**
-       * Generic handler (Invokable) for messages. Overridden from base class.
-       * This is the default invokable on GameActorProxy.
-       */
-      virtual void ProcessMessage(const dtGame::Message &message);
-
-      void SetShaderEffect(const std::string& shaderEffect);
-      const std::string& GetShaderEffect() const { return mShaderEffect; }
-
-      void SetMaxHealth(int maxHealth);
-      int GetMaxHealth() const { return mMaxHealth; }
-
-      // Called when the actor has been added to the game manager.
-      // You can respond to OnEnteredWorld on either the proxy or actor or both.
-      virtual void OnEnteredWorld();
-
-   protected:
-      virtual ~KillableTargetActor() { };
+      SwitchVisitor( const std::string& state );
+      void apply( osg::Switch& switchNode );
+      void SetSwitchState( const std::string& state );
+      const std::string& GetSwitchState() const;
 
    private:
-      void ApplyMyShader();
-      void ResetState();
 
-      // Exposed Properties
-      std::string mShaderEffect;
-      int mMaxHealth;
+      std::string mSwitchState;
+   };
 
-      // Private State
-      int mCurrentHealth;
-      bool mIsTargeted;
+public:
 
-      dtCore::RefPtr<dtCore::Shader> mCurrentShader;
-      std::string mCurrentShaderName;
+   // Constructs the tank actor.
+   KillableTargetActor(dtGame::GameActorProxy &proxy);
 
-      dtCore::RefPtr<dtCore::ParticleSystem> mSmallExplosion;
-      dtCore::RefPtr<dtCore::ParticleSystem> mLargeExplosion;
-      dtCore::Transform mOriginalPosition;
+   /**
+   * This method is an invokable called when an object is local and
+   * receives a tick.
+   * @param tickMessage A message containing tick related information.
+   */
+   virtual void TickLocal(const dtGame::Message &tickMessage);
+
+   /**
+   * This method is an invokable called when an object is remote and
+   * receives a tick.
+   * @param tickMessage A message containing tick related information.
+   */
+   virtual void TickRemote(const dtGame::Message &tickMessage);
+
+   /**
+   * Generic handler (Invokable) for messages. Overridden from base class.
+   * This is the default invokable on GameActorProxy.
+   */
+   virtual void ProcessMessage(const dtGame::Message &message);
+
+   void SetShaderEffect(const std::string& shaderEffect);
+   const std::string& GetShaderEffect() const { return mShaderEffect; }
+
+   void SetMaxHealth(int maxHealth);
+   int GetMaxHealth() const { return mMaxHealth; }
+
+   void SetCurrentHealth(int currentHealth);
+   int GetCurrentHealth() const { return mCurrentHealth; }
+
+   // Called when the actor has been added to the game manager.
+   // You can respond to OnEnteredWorld on either the proxy or actor or both.
+   virtual void OnEnteredWorld();
+
+   //void UpdateShaderParams();
+
+protected:
+   virtual ~KillableTargetActor() { };
+
+private:
+   void ApplyMyShader();
+   void ResetState();
+
+   // Exposed Properties
+   std::string mShaderEffect;
+   int mMaxHealth;
+
+   // Private State
+   int mCurrentHealth;
+   bool mIsTargeted;
+
+   dtCore::RefPtr<dtCore::Shader> mCurrentShader;
+   std::string mCurrentShaderName;
+
+   dtCore::RefPtr<dtCore::ParticleSystem> mSmallExplosion;
+   dtCore::RefPtr<dtCore::ParticleSystem> mLargeExplosion;
+   dtCore::Transform mOriginalPosition;
 };
 
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 class TUTORIAL_TANK_EXPORT KillableTargetActorProxy : public dtActors::GameMeshActorProxy
 {
-   public:
+public:
 
-      // Constructs the proxy.
-      KillableTargetActorProxy();
-      
-      // Creates the properties that are custom to the hover tank proxy.
-      virtual void BuildPropertyMap();
-      
-   protected:
-      virtual ~KillableTargetActorProxy() { };
+   // Constructs the proxy.
+   KillableTargetActorProxy();
 
-      // Creates an instance of our hover tank actor 
-      virtual void CreateActor();
+   // Creates the properties that are custom to the hover tank proxy.
+   virtual void BuildPropertyMap();
 
-      // Called when this proxy is added to the game manager (ie, the "world")
-      // You can respond to OnEnteredWorld on either the proxy or actor or both.
-      virtual void OnEnteredWorld();
+protected:
+   virtual ~KillableTargetActorProxy() { };
+
+   // Creates an instance of our hover tank actor 
+   virtual void CreateActor();
+
+   // Called when this proxy is added to the game manager (ie, the "world")
+   // You can respond to OnEnteredWorld on either the proxy or actor or both.
+   virtual void OnEnteredWorld();
 };
 
 #endif //KILLABLE_TARGET_ACTOR

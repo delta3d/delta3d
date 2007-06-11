@@ -39,10 +39,18 @@ class TUTORIAL_TANK_EXPORT InputComponent : public dtGame::BaseInputComponent
       // Constructor
       InputComponent(const std::string &name);
 
+      // Find our GameEvents after the map is loaded
+      void SetupEvents();
+
       // We're going to handle key presses!
       /*virtual*/ bool HandleKeyPressed(  const dtCore::Keyboard* keyboard,
                                           Producer::KeyboardKey key,
                                           Producer::KeyCharacter character );
+
+      /**
+       * Handle messages if we want to
+       */                                          
+      void ProcessMessage(const dtGame::Message &message);
 
    protected:
 

@@ -32,7 +32,12 @@ InputComponent::InputComponent(const std::string &name) :
    mSpeedBoost(0),
    mTankFired(0)
 {
-   // TUTORIAL - CREATE AND ADD YOUR GAME EVENTS HERE 
+}
+
+////////////////////////////////////////////////////////////////////
+void InputComponent::SetupEvents()
+{
+   // TUTORIAL - FIND THE GAME EVENTS HERE 
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -57,7 +62,25 @@ bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard,
 }
 
 //////////////////////////////////////////////////////////////////////////
+void InputComponent::ProcessMessage(const dtGame::Message& message)
+{
+   // After the map is finished loading, we will get this.  At which point, our events
+   // have been loaded from the map and we can now find them
+   if (message.GetMessageType() == dtGame::MessageType::INFO_MAP_LOADED)
+   {
+      SetupEvents();
+   }
+   // Once the system is started, we find the log controller so we can manipulate it later
+   else if (message.GetMessageType() == dtGame::MessageType::INFO_RESTARTED)
+   {
+      mLogController = dynamic_cast<dtGame::LogController *> (GetGameManager()->
+         GetComponentByName("LogController")); 
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////
 void InputComponent::FireGameEvent(dtDAL::GameEvent &event)
 {
    // TUTORIAL - CREATE AND SEND YOUR GAMEEVENTMESSAGE HERE 
 }
+

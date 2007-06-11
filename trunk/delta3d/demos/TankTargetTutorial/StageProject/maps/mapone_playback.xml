@@ -17,6 +17,33 @@
             <version></version>
         </library>
     </libraries>
+    <events>
+        <event>
+            <id>0e2800fa-be9f-4275-ab58-89bed75af2ad</id>
+            <name>SpeedBoost</name>
+            <description>Give the tank a small speed boost (+5) - this boost can exceed the speed cap.</description>
+        </event>
+        <event>
+            <id>253320d0-841f-4c71-ab09-4546e0632269</id>
+            <name>TestShaders</name>
+            <description>A test message to allow us to reset our shaders. Just example code for how to manipulate shaders.</description>
+        </event>
+        <event>
+            <id>541d83a1-748a-4957-93e1-048a157ae9f5</id>
+            <name>ToggleEngine</name>
+            <description>Toggles the tank engine on and off.</description>
+        </event>
+        <event>
+            <id>675b8c02-a753-4aaa-8274-9a7847a66fa5</id>
+            <name>TankFired</name>
+            <description>The tank fired a shot.  The blimps listen for this and check to see if they are the current target.  If so, they take damage, else they ignore.</description>
+        </event>
+        <event>
+            <id>e4082496-0afe-4398-a554-aa469e3c84ac</id>
+            <name>ResetStuff</name>
+            <description>Sort of restarts the level. Blimps come back alive, the tank goes back to home position, and you can blow em all up again!</description>
+        </event>
+    </events>
     <actors>
         <actor>
             <type>dtcore.Static Mesh</type>

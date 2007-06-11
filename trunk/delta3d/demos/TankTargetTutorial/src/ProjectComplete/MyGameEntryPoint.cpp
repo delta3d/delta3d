@@ -136,10 +136,6 @@ void MyGameEntryPoint::OnStartup(dtGame::GameManager &gameManager)
    // Register our messages with the Game Manager message factory - part 5
    TutorialMessageType::RegisterMessageTypes( gameManager.GetMessageFactory() );
 
-   // Add Component - Rules Component
-   //dtCore::RefPtr<dtGame::RulesComponent> rc = new dtGame::RulesComponent("Rules");
-   //gameManager.AddComponent(*rc, dtGame::GameManager::ComponentPriority::NORMAL);
-
    // Add Component - Input Component
    dtCore::RefPtr<InputComponent> inputComp = new InputComponent("InputComponent", mInPlaybackMode);
    gameManager.AddComponent(*inputComp, dtGame::GameManager::ComponentPriority::NORMAL);
@@ -203,7 +199,7 @@ void MyGameEntryPoint::OnStartup(dtGame::GameManager &gameManager)
    fmm->SetMaximumFlySpeed(15);
    fmm->SetTarget(app.GetCamera());
 
-   app.GetWindow()->SetWindowTitle("Tutorial");
+   app.GetWindow()->SetWindowTitle("Delta3D Tank Tutorial");
 
    // Add the AAR behaviors.
    dtGame::BinaryLogStream *logStream = new dtGame::BinaryLogStream(gameManager.GetMessageFactory());
@@ -223,5 +219,5 @@ void MyGameEntryPoint::OnStartup(dtGame::GameManager &gameManager)
    // ServerLoggerComponent state changes; such as transitions from PLAYBACK to IDLE states.
    //mLogController->RequestAddIgnoredActor(mInputComp->GetTerrainActor().GetId());
 
-   gameManager.DebugStatisticsTurnOn(true, false, 10, true);
+   gameManager.DebugStatisticsTurnOn(true, true, 10, true);
 }

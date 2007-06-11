@@ -78,10 +78,12 @@ KillableTargetActor::KillableTargetActor(dtGame::GameActorProxy &proxy) :
 ///////////////////////////////////////////////////////////////////////////////
 void KillableTargetActor::TickLocal(const dtGame::Message &tickMessage)
 {
-   //static const int CYCLETIME = 3;
    const dtGame::TickMessage &tick = static_cast<const dtGame::TickMessage&>(tickMessage);
+   //float deltaSimTime = tick.GetDeltaSimTime();
 
-   //UpdateShaderParams();
+   // Do something here locally if you want to. Note - if you don't need to do anything 
+   // here then you should NOT call RegisterForMessages(dtGame::MessageType::TICK_LOCAL, ...)
+   // in OnEnteredWorld().
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -90,7 +92,9 @@ void KillableTargetActor::TickRemote(const dtGame::Message &tickMessage)
    const dtGame::TickMessage &tick = static_cast<const dtGame::TickMessage&>(tickMessage);
    //float deltaSimTime = tick.GetDeltaSimTime();
 
-   //UpdateShaderParams();
+   // Do something here locally if you want to. Note - if you don't need to do anything 
+   // here then you should NOT call RegisterForMessages(dtGame::MessageType::TICK_REMOTE, ...)
+   // in OnEnteredWorld().
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -338,22 +342,22 @@ void KillableTargetActorProxy::BuildPropertyMap()
 ///////////////////////////////////////////////////////////////////////////////
 void KillableTargetActorProxy::CreateActor()
 {
-   SetActor(*new KillableTargetActor(*this));
+   KillableTargetActor *actor = new KillableTargetActor(*this);
+   SetActor(*actor);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 void KillableTargetActorProxy::OnEnteredWorld()
 {
-
-   // Register an invokable for tick messages. Local or Remote only, not both!
-   if (IsRemote())
-      RegisterForMessages(dtGame::MessageType::TICK_REMOTE,
-         dtGame::GameActorProxy::TICK_REMOTE_INVOKABLE);
-   else
-   {
-      RegisterForMessages(dtGame::MessageType::TICK_LOCAL,
-         dtGame::GameActorProxy::TICK_LOCAL_INVOKABLE);
-   }
+   // Register for invokables - NEVER register for both Local & Remote ticks!
+   // ONLY register for messages you need. With lots of actors, the overhead
+   // can hit your performance.
+   //if (IsRemote())
+      // We don't need a remote tick, so don't register for it! But here is how...
+      //RegisterForMessages(dtGame::MessageType::TICK_REMOTE, dtGame::GameActorProxy::TICK_REMOTE_INVOKABLE);
+   //else
+      // We don't need a local tick, so don't register for it! But here is how...
+      //RegisterForMessages(dtGame::MessageType::TICK_LOCAL, dtGame::GameActorProxy::TICK_LOCAL_INVOKABLE);
 
    // Register for the messages using the default Invokable - ProcessMessage()
    RegisterForMessages(dtGame::MessageType::INFO_GAME_EVENT);
