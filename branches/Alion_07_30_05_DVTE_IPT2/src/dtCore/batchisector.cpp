@@ -19,11 +19,14 @@
  * Allen 'Morgas' Danklefsen
  */
 #include <prefix/dtcoreprefix-src.h>
-#include <dtCore/batchisector.h>
 
+#include <dtCore/exceptionenum.h>
+#include <dtCore/batchisector.h>
 #include <dtCore/deltadrawable.h>
 #include <dtCore/scene.h>
+
 #include <dtUtil/log.h>
+#include <dtUtil/exception.h>
 
 #include <osg/Group>
 #include <osg/Version>
@@ -35,8 +38,9 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    BatchIsector::BatchIsector(dtCore::Scene *scene) :
       mScene(scene)
+         ,mFixedArraySize(32)
    {
-      for(int i = 0 ; i < 32; ++i)
+      for(int i = 0 ; i < mFixedArraySize; ++i)
       {
          mISectors[i] = new SingleISector(i);
       }
@@ -45,7 +49,7 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    BatchIsector::~BatchIsector()
    {
-      for(int i = 0 ; i < 32; ++i)
+      for(int i = 0 ; i < mFixedArraySize; ++i)
       {
          mISectors[i] = NULL;
       }
@@ -67,7 +71,7 @@ namespace dtCore
       else
          intersectVisitor.setLODSelectionMode(osgUtil::IntersectVisitor::USE_SEGMENT_START_POINT_AS_EYE_POINT_FOR_LOD_LEVEL_SELECTION);
 
-      for(int i = 0 ; i < 32; ++i)
+      for(int i = 0 ; i < mFixedArraySize; ++i)
       {
          if(mISectors[i]->GetIsOn())
          {
@@ -88,7 +92,7 @@ namespace dtCore
 
       if(intersectVisitor.hits())
       {
-         for(int i = 0 ; i < 32; ++i)
+         for(int i = 0 ; i < mFixedArraySize; ++i)
          {
             if(mISectors[i]->GetIsOn())
             {
@@ -178,7 +182,11 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    BatchIsector::SingleISector& BatchIsector::EnableAndGetISector(int nIndexID)
    {
-      CheckBoundsOnArray(nIndexID);
+      if(CheckBoundsOnArray(nIndexID) == false)
+      {
+         throw dtUtil::Exception(dtCore::ExceptionEnum::INVALID_PARAMETER,
+            "EnableAndGetISector sent in bad index", __FILE__, __LINE__);
+      }
       mISectors[nIndexID]->ToggleIsOn(true);
       return *mISectors[nIndexID];
    }
@@ -186,7 +194,11 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    const BatchIsector::SingleISector& BatchIsector::GetSingleISector(int nIndexID)
    {
-      CheckBoundsOnArray(nIndexID);
+      if(CheckBoundsOnArray(nIndexID) == false)
+      {
+         throw dtUtil::Exception(dtCore::ExceptionEnum::INVALID_PARAMETER,
+            "EnableAndGetISector sent in bad index", __FILE__, __LINE__);
+      }
       return *mISectors[nIndexID].get();
    }
 
@@ -206,14 +218,14 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    void BatchIsector::StopUsingAllISectors()
    {
-      for(int i = 0 ; i < 32; ++i)
+      for(int i = 0 ; i < mFixedArraySize; ++i)
          StopUsingSingleISector(i);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    bool BatchIsector::CheckBoundsOnArray(int index)
    {
-      if(index < 0 || index > 31)
+      if(index < 0 || index > mFixedArraySize - 1)
       {
          LOG_ERROR("You sent in a bad index to the batchISector");
          return false;

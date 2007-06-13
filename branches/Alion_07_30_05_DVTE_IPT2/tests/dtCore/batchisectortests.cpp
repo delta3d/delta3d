@@ -27,6 +27,7 @@
 #include <dtCore/batchisector.h>
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
+#include <dtCore/exceptionenum.h>
 
 #include <osg/io_utils>
 //#include <dtABC/application.h>
@@ -130,6 +131,26 @@ class BatchISectorTests : public CPPUNIT_NS::TestFixture
          CPPUNIT_ASSERT(!mBatchIsector->Update(osg::Vec3(500000.0f, 938380.5f, 9.4f), false));
          CPPUNIT_ASSERT(iSector.GetNumberOfHits() == 0);
          CPPUNIT_ASSERT(iSector.GetClosestDrawable() == NULL);
+
+         try 
+         {
+            mBatchIsector->EnableAndGetISector(33);
+         }
+         catch (const dtUtil::Exception& ex)
+         {
+            //  correct
+            CPPUNIT_ASSERT_MESSAGE(ex.ToString().c_str(), ex.TypeEnum() == dtCore::ExceptionEnum::INVALID_PARAMETER);
+         }
+
+         try 
+         {
+            mBatchIsector->EnableAndGetISector(-1);
+         }
+         catch (const dtUtil::Exception& ex)
+         {
+            //  correct
+            CPPUNIT_ASSERT_MESSAGE(ex.ToString().c_str(), ex.TypeEnum() == dtCore::ExceptionEnum::INVALID_PARAMETER);
+         }
       }
 
 
