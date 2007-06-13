@@ -2480,7 +2480,8 @@ namespace dtHLAGM
                //Supporting mapping multiple message parameters to a single interaction parameter
                //is in the works.  This vector always only has one item in it for now.
                MapFromMessageParameters(buffer, bufferSize, messageParameters, *paramMappingItor);
-               interactionParams.add(paramMappingItor->GetParameterHandle(), buffer, bufferSize);
+               if(bufferSize > 0)
+                  interactionParams.add(paramMappingItor->GetParameterHandle(), buffer, bufferSize);
 
                ParameterTranslator::DeallocateBuffer(buffer);
             }
