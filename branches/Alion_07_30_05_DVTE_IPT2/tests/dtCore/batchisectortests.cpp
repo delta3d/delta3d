@@ -29,6 +29,8 @@
 #include <dtCore/system.h>
 #include <dtCore/exceptionenum.h>
 
+#include <dtUtil/exception.h>
+
 #include <osg/io_utils>
 //#include <dtABC/application.h>
 
