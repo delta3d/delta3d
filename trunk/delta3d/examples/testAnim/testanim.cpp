@@ -38,6 +38,7 @@
 #include <dtAnim/animationcomponent.h>
 #include <dtAnim/animationhelper.h>
 #include <dtDAL/map.h>
+#include <dtCore/scene.h>
 #include <dtDAL/actorproxy.h>
 
 
@@ -71,13 +72,13 @@ void TestAnim::Initialize(dtGame::GameApplication& app, int argc, char **argv)
 }
 
 //////////////////////////////////////////////////////////////////////////
-dtCore::RefPtr<dtGame::GameManager> TestAnim::CreateGameManager(dtCore::Scene& scene)
-{
-   return new dtGame::GameManager(scene);
+dtCore::ObserverPtr<dtGame::GameManager> TestAnim::CreateGameManager(dtCore::Scene& scene)
+{ 
+   return dtGame::GameEntryPoint::CreateGameManager(scene);
 }
 
 //////////////////////////////////////////////////////////////////////////
-void TestAnim::OnStartup(dtGame::GameManager &gameManager)
+void TestAnim::OnStartup()
 {
    std::string dataPath = dtCore::GetDeltaDataPathList();
    dtCore::SetDataFilePathList(dataPath + ";" + 
@@ -88,6 +89,8 @@ void TestAnim::OnStartup(dtGame::GameManager &gameManager)
    typedef std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > ProxyContainer;
    ProxyContainer proxies;
    ProxyContainer groundActor;
+
+   dtGame::GameManager &gameManager = *GetGameManager();
 
    try
    {

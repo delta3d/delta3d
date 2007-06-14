@@ -23,6 +23,7 @@
 
 #include <dtCore/refptr.h>
 #include <dtUtil/exception.h>
+#include <dtUtil/breakoverride.h>
 #include <dtGame/gamemanager.h>
 
 namespace dtCore 
@@ -43,8 +44,14 @@ namespace dtGame
    class GameEntryPoint
    {
       public:
-      	GameEntryPoint() {}
-      	virtual ~GameEntryPoint() {}
+      	
+         GameEntryPoint() {}
+      	
+         virtual ~GameEntryPoint() 
+         {
+            mGameManager->Shutdown();
+            mGameManager = NULL;
+         }
          
          /**
           * Called to initialize the game application.
@@ -58,19 +65,36 @@ namespace dtGame
          /**
           * Override the method to create the game manager.
           */
-         virtual dtCore::RefPtr<GameManager> CreateGameManager(dtCore::Scene& scene) { return new GameManager(scene); }
+         virtual dtCore::ObserverPtr<GameManager> CreateGameManager(dtCore::Scene& scene) 
+         { 
+            mGameManager = new GameManager(scene);
+            return mGameManager.get();
+         }
          
          /**
           * Called after all startup related code is run.
           * @param gameManager The game manager to init
           */
-         virtual void OnStartup(dtGame::GameManager &gameManager) = 0;
+         virtual void OnStartup() = 0;
 
          /**
           * Called when the app is shut down
           * @param gameManager The game manager to destroy
           */
-         virtual void OnShutdown(dtGame::GameManager &gameManager) { }
+         virtual void OnShutdown() { }
+
+         /**
+          * returns mGameManager
+          */
+         dtGame::GameManager* GetGameManager() { return mGameManager.get(); }
+
+      private:
+
+         dtCore::RefPtr<dtGame::GameManager> mGameManager;
+
+         // Deprecated in version 1.5
+         BREAK_OVERRIDE(OnStartup(dtGame::GameManager&));
+         BREAK_OVERRIDE(OnShutdown(dtGame::GameManager&));
    };
 
 }

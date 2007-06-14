@@ -55,7 +55,7 @@ namespace dtGame
    {
       try
       {
-         mEntryPoint->OnShutdown(*mGameManager);
+         mEntryPoint->OnShutdown();
       }
       catch(const dtUtil::Exception &e)
       {
@@ -70,8 +70,10 @@ namespace dtGame
 
       GetScene()->RemoveAllDrawables();
 
-      if (mGameManager.valid())
+      if(mGameManager.valid())
+      {
          mGameManager = NULL;
+      }
 
       if (mDestroyFunction != NULL)
       {
@@ -156,7 +158,7 @@ namespace dtGame
          }
          
          mGameManager->SetApplication(*this);
-         mEntryPoint->OnStartup(*mGameManager);
+         mEntryPoint->OnStartup();
       }
       catch(const dtUtil::Exception& ex)
       {
