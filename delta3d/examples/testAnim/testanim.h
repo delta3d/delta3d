@@ -23,6 +23,7 @@
 
 #include <dtGame/gameentrypoint.h>
 #include <dtCore/refptr.h>
+#include <dtCore/observerptr.h>
 #include "export.h"
 
 // Foward declarations
@@ -58,13 +59,13 @@ class TEST_ANIM_EXPORT TestAnim : public dtGame::GameEntryPoint
       /**
        * Create your game manager.
        */
-      virtual dtCore::RefPtr<dtGame::GameManager> CreateGameManager(dtCore::Scene& scene);
+      virtual dtCore::ObserverPtr<dtGame::GameManager> CreateGameManager(dtCore::Scene& scene);
 
       /**
        * Called just before your application's game loop starts.  This is your main 
        * opportunity to create components, load maps, create unique actors, etc...
        */
-      virtual void OnStartup(dtGame::GameManager &gameManager);
+      virtual void OnStartup();
 
    private:
 

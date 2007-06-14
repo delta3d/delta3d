@@ -24,10 +24,11 @@
 #include <dtABC/application.h>
 #include <dtUtil/librarysharingmanager.h>
 #include <dtGame/export.h>
+#include <dtGame/gamemanager.h>
+#include <dtCore/observerptr.h>
 
 namespace dtGame
 {
-   class GameManager;
    class GameEntryPoint;
    
    /**
@@ -87,7 +88,7 @@ namespace dtGame
          int mArgc;
          char** mArgv;
          
-         dtCore::RefPtr<GameManager> mGameManager;
+         osg::observer_ptr<dtGame::GameManager> mGameManager;
          dtCore::RefPtr<dtUtil::LibrarySharingManager::LibraryHandle> mEntryPointLib;
          dtGame::GameEntryPoint* mEntryPoint;
          CreateEntryPointFn mCreateFunction;

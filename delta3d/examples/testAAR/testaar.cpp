@@ -87,13 +87,13 @@ void TestAAR::Initialize(dtGame::GameApplication& app, int argc, char **argv)
 }
 
 //////////////////////////////////////////////////////////////////////////
-dtCore::RefPtr<dtGame::GameManager> TestAAR::CreateGameManager(dtCore::Scene& scene)
+dtCore::ObserverPtr<dtGame::GameManager> TestAAR::CreateGameManager(dtCore::Scene& scene)
 {
-   return new dtGame::GameManager(scene);
+   return dtGame::GameEntryPoint::CreateGameManager(scene);
 }
 
 //////////////////////////////////////////////////////////////////////////
-void TestAAR::OnStartup(dtGame::GameManager &gameManager)
+void TestAAR::OnStartup()
 {
    std::string dataPath = dtCore::GetDeltaDataPathList();
    dtCore::SetDataFilePathList(dataPath + ";" + 
@@ -110,6 +110,7 @@ void TestAAR::OnStartup(dtGame::GameManager &gameManager)
       LOG_ERROR("Can't find the project context: " + e.What());
    }
    
+   dtGame::GameManager &gameManager = *GetGameManager();
    dtCore::DeltaWin *win = gameManager.GetApplication().GetWindow();
 
    // Add Component - Input Component

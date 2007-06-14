@@ -56,7 +56,7 @@ class TEST_AAR_EXPORT TestAAR : public dtGame::GameEntryPoint
        */
       virtual ~TestAAR();
 
-      /**
+      /** 
        * Called to initialize the game application.  You can pull any command line params here.
        */
       virtual void Initialize(dtGame::GameApplication& app, int argc, char **argv);
@@ -64,13 +64,13 @@ class TEST_AAR_EXPORT TestAAR : public dtGame::GameEntryPoint
       /**
        * Create your game manager.
        */
-      virtual dtCore::RefPtr<dtGame::GameManager> CreateGameManager(dtCore::Scene& scene);
+      virtual dtCore::ObserverPtr<dtGame::GameManager> CreateGameManager(dtCore::Scene& scene);
 
       /**
        * Called just before your application's game loop starts.  This is your main 
        * opportunity to create components, load maps, create unique actors, etc...
        */
-      virtual void OnStartup(dtGame::GameManager &gameManager);
+      virtual void OnStartup();
 
    private:
 
