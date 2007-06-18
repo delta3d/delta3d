@@ -89,18 +89,6 @@ Boost - Needed for Python bindings only.
 Python - Needed for Python script support.
 RTI 1.3 - Needed for HLA libraries, utilities, & examples.
 
-################
-# Example Data #
-################
-
-In order to run our examples, you also need our sample data package. It can
-also be found on SourceForge download site:
-http://sourceforge.net/project/showfiles.php?group_id=113203&package_id=125206
-
-Note! As of version 1.3.0, the example data is required to run the unit tests.
-This is especially important for Visual Studio users since the unit tests will
-automatically be triggered upon building them. See the platform-specific build
-instructions for more details.
 
 #########################
 # Environment Variables #
@@ -143,31 +131,29 @@ LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$DELTA_LIB
 Windows w/ Visual Studio .NET 7.1
 -------------------------------
 
-1. Make sure you have your depedencies setup (see above). The current example data
-   must also be unzipped in your delta3d folder in order to get a clean build (the
-   unit tests use the data and will be run automatically after they are built).
+1. Make sure you have your depedencies setup (see above).
 
 2. Open VisualStudio/delta.sln, build! This will generate the essential Delta3D
    libraries that can be built with our distributed dependencies.
 
-3. The rest of the components can be build with their own solutions
+3. The rest of the components can be build with project files of
+   the individual componets.
    (dependencies that we do not distribute are listed in parentheses):
    
    VisualStudio/src/dtHLA/dthla.sln          : HLA library (RTI)
+   VisualStudio/src/dtHLAGM/dthlagm.sln      : HLA library (RTI)
    VisualStudio/src/dtScript/dtscript.sln    : library to run python scripts (Python)
    VisualStudio/src/python/dtpython.sln      : python bindings (Python, Boost.Python)
    VisualStudio/src/python/dthlabindings.sln : python HLA bindings (Python, Boost.Python, RTI)
-   VisualStudio/examples/*/*.sln             : individual examples
-   VisualStudio/utilities/*/*.sln            : individual utilities
  
    Or just build EVERYTHING (make sure you have Python, BoostPython, RTI):
    VisualStudio/delta_all.sln  
 
-   dtHLA
+   dtHLA/dtHLAGM
    -----
    Requries RTI package to be installed! We cannot distribute RTI with
    Delta3D, so you are on your own. The dtHLA module is compiled and tested
-   against RTI-S 1.3_D11A although any RTI supporting spec 1.3 should work.
+   against RTI-S 1.3_D18 although any RTI supporting spec 1.3 should work.
 
    To build the module dtHLA, example testHLA, and utility hlaStealthViewer, 
    you must add your RTI include and lib paths to the project settings or to
