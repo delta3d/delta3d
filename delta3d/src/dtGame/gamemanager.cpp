@@ -1744,11 +1744,9 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::Shutdown()
    {
-      std::vector<GMComponent*> components;
-      GetAllComponents(components);
-      for(size_t i = 0; i < components.size(); i++)
+      while(!mComponentList.empty())
       {
-         RemoveComponent(*components[i]);
+         RemoveComponent(*mComponentList.back());
       }
       
       mDebugLoggerInformation.clear();
