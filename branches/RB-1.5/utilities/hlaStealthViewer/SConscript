@@ -1,0 +1,13 @@
+Import('*')
+
+if env.get('rti') :
+
+   srcs = env.SGlob( '*.cpp' )
+
+   # Build the icon
+   if env['OS'] == 'windows' :
+      srcs += env.RES( 'hlaStealthViewer.rc' )
+
+   deps = [ 'dtCore', 'dtABC', 'dtHLA', 'dtUtil'  ]
+
+   env.BuildProgram( 'hlaStealthViewer', srcs, deps )
