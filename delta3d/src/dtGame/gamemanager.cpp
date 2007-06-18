@@ -103,7 +103,6 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    GameManager::~GameManager()
    {
-      //RemoveSender(&dtCore::System::GetInstance());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -1765,7 +1764,7 @@ namespace dtGame
       }
 
       DeleteAllActors(true);
-
+      
       mMapChangeStateData = NULL;
       mApplication        = NULL;
       mMachineInfo        = NULL;

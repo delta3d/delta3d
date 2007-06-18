@@ -244,7 +244,7 @@ void GameManagerTests::setUp()
       logger = &dtUtil::Log::GetInstance("MessageParameter");
       //logger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
 
-      dtCore::Scene* scene = new dtCore::Scene();
+      dtCore::RefPtr<dtCore::Scene> scene = new dtCore::Scene();
       mManager = new dtGame::GameManager(*scene);
       mManager->LoadActorRegistry(mTestGameActorLibrary);
       mManager->LoadActorRegistry(mTestActorLibrary);
@@ -255,7 +255,6 @@ void GameManagerTests::setUp()
    {
       CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
    }
-
 }
 
 /////////////////////////////////////////////////
@@ -1305,14 +1304,26 @@ void GameManagerTests::TestGMShutdown()
 
    mManager->Shutdown();
 
-   CPPUNIT_ASSERT_MESSAGE("Shutdown of the game manager should have flipped the removed from GM flag on the component", 
-      tc->mWasOnRemovedFromGMCalled);
-
-   CPPUNIT_ASSERT_MESSAGE("Shutdown of the game manager should have removed the test component", 
-      mManager->GetComponentByName(tc->GetName()) == NULL);
-
-   std::vector<dtDAL::ActorProxy*> proxies;
-   mManager->GetAllActors(proxies);
-   CPPUNIT_ASSERT_MESSAGE("Shut down of the game manager should have deleted the actors", 
-      proxies.empty());
+   try
+   {
+      CPPUNIT_ASSERT_MESSAGE("Shutdown of the game manager should have flipped the removed from GM flag on the component", 
+         tc->mWasOnRemovedFromGMCalled);
+   
+      CPPUNIT_ASSERT_MESSAGE("Shutdown of the game manager should have removed the test component", 
+         mManager->GetComponentByName(tc->GetName()) == NULL);
+   
+      std::vector<dtDAL::ActorProxy*> proxies;
+      mManager->GetAllActors(proxies);
+      CPPUNIT_ASSERT_MESSAGE("Shut down of the game manager should have deleted the actors", 
+         proxies.empty());
+      
+      //Short circuit teardown      
+      mManager = NULL;
+   }
+   catch (...)
+   {
+      //Short circuit teardown      
+      mManager = NULL;
+      throw;
+   }
 }
