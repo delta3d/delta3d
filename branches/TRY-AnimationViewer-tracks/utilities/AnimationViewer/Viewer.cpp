@@ -159,7 +159,7 @@ void Viewer::OnLoadCharFile( const QString &filename )
       unsigned int trackCount = wrapper->GetCoreAnimationTrackCount(animID);
       unsigned int keyframes = wrapper->GetCoreAnimationKeyframeCount(animID);
       float dur = wrapper->GetCoreAnimationDuration(animID);
-      emit AnimationLoaded(animID, nameToSend, trackCount, keyframes, dur );
+      emit AnimationLoaded(animID, nameToSend, trackCount, keyframes, dur, wrapper->GetCalModel()->getCoreModel()->getCoreAnimation(animID) );
    }
 
    //get all data for the meshes and emit

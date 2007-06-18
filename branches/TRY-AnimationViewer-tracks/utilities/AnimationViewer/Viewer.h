@@ -10,6 +10,8 @@
 
 class QColor;
 
+class CalCoreAnimation;
+
 namespace dtCore
 {
    class OrbitMotionModel;
@@ -55,7 +57,7 @@ public slots:
 
 signals:
    void AnimationLoaded( unsigned int, const QString &, unsigned int trackCount,
-                           unsigned int keyframes, float duration);
+                           unsigned int keyframes, float duration, CalCoreAnimation *coreAnimation);
 
    void MeshLoaded(int meshID, const QString &meshName);
 

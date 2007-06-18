@@ -2,6 +2,7 @@
 #define MainWindow_h__
 
 #include <QMainWindow>
+#include <QMap>
 
 class QAction;
 class QTableWidgetItem;
@@ -14,9 +15,14 @@ class QGraphicsScene;
 class QTabWidget;
 class QGridLayout;
 class QStandardItemModel;
+class QAbstractItemModel;
 class QTableView;
+class QTreeView;
 class TrackView;
 class TrackScene;
+class QGroupBox;
+
+class CalCoreAnimation;
 
 class MainWindow : public QMainWindow
 {
@@ -37,7 +43,7 @@ signals:
 
 public slots:
    void OnNewAnimation(unsigned int id, const QString &animationName, unsigned int trackCount,
-                       unsigned int keyframes, float duration);
+                       unsigned int keyframes, float duration, CalCoreAnimation *anim);
    
    void OnNewMesh(int meshID, const QString &meshName);
 
@@ -79,6 +85,7 @@ private:
    QToolBar *mTempToolbar;
 
    QTabWidget  *mTabs;
+   QGroupBox   *mAnimationGroup;
 
    AnimationTableWidget *mAnimListWidget;
    QListWidget          *mMeshListWidget;
@@ -86,12 +93,20 @@ private:
    TrackScene           *mTrackScene;
    QStandardItemModel   *mMaterialModel; ///<Model for the character's materials
    QTableView           *mMaterialView;  ///<View for the character's materials
+   QTableView           *mAnimationTableView;
+   QStandardItemModel   *mAnimationModel;
+   QMap<int, QStandardItemModel*> mTrackMap;
+   QMap<int, QStandardItemModel*> mKeyframeMap;
 
+   int                  mAnimationViewMode;
+   QAbstractItemModel   *mParentModel;
 
 private slots:
    void OnOpenCharFile();
    void OpenRecentFile();
    void OnItemChanged( QTableWidgetItem *item );
    void OnItemDoubleClicked(QTableWidgetItem *item);
+   void OnNextLevel();
+   void OnPrevLevel();
 };
 #endif // MainWindow_h__

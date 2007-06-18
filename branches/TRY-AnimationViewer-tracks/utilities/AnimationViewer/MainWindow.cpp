@@ -22,10 +22,20 @@
 
 #include <QStandardItemModel>
 #include <QStandardItem>
+#include <QTreeView>
+#include <QGroupBox>
+#include <QHBoxLayout>
+#include <QToolButton>
+#include <QItemSelectionModel>
 
 #include <QGraphicsEllipseItem>
 
+#include <cal3d/coreanimation.h>
+#include <cal3d/coretrack.h>
+#include <cal3d/corekeyframe.h>
+
 #include <cassert>
+#include <Qdebug>
 
 MainWindow::MainWindow():
 mExitAct(NULL),
@@ -33,7 +43,10 @@ mLoadCharAct(NULL),
 mAnimListWidget(NULL),
 mMeshListWidget(NULL),
 mMaterialModel(NULL),
-mMaterialView(NULL)
+mMaterialView(NULL),
+mAnimationTableView(NULL),
+mAnimationViewMode(0),
+mParentModel(NULL)
 {
    resize(640, 300);   
 
@@ -62,6 +75,36 @@ mMaterialView(NULL)
       mMaterialModel->setHorizontalHeaderLabels(headers);
    }
 
+   mAnimationModel = new QStandardItemModel(0,4,this);
+   mParentModel = mAnimationModel;
+   mAnimationTableView = new QTableView(this);
+   mAnimationTableView->setModel(mAnimationModel);
+   mAnimationTableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+   {
+      QStringList headers;
+      headers << "AnimID" << "AnimName" << "Duration";
+      mAnimationModel->setHorizontalHeaderLabels(headers);
+   }
+
+   mAnimationGroup = new QGroupBox(this);
+   mAnimationGroup->setTitle("Animation");
+
+   QHBoxLayout *layout = new QHBoxLayout;
+
+   QToolButton *nextLevel = new QToolButton(this);
+   nextLevel->setArrowType(Qt::RightArrow);
+   connect(nextLevel, SIGNAL(clicked()), this, SLOT(OnNextLevel()));
+
+   QToolButton *prevLevel = new QToolButton(this);
+   prevLevel->setArrowType(Qt::LeftArrow);
+   connect(prevLevel, SIGNAL(clicked()), this, SLOT(OnPrevLevel()));
+
+   layout->addWidget(mAnimationTableView);
+   layout->addWidget(prevLevel);
+   layout->addWidget(nextLevel);
+
+   mAnimationGroup->setLayout(layout);
+
    CreateActions();
    CreateMenus();
    (void)statusBar();
@@ -72,6 +115,7 @@ mMaterialView(NULL)
    mTabs->addTab(mAnimListWidget, tr("Animations"));
    mTabs->addTab(mMeshListWidget, tr("Meshes"));
    mTabs->addTab(mMaterialView, tr("Materials"));
+   mTabs->addTab(mAnimationGroup, tr("Animation Tree"));
    //mTabs->addTab(mTrackViewer, tr("Tracks"));   
 
    setCentralWidget(mTabs);
@@ -219,6 +263,11 @@ void MainWindow::LoadCharFile( const QString &filename )
          mMaterialModel->removeRow(0);
       }
 
+      while (mAnimationModel->rowCount() > 0)
+      {
+         mAnimationModel->removeRow(0);
+      }
+
       emit FileToLoad( filename );
 
       SetCurrentFile( filename );     
@@ -235,7 +284,7 @@ void MainWindow::LoadCharFile( const QString &filename )
 
 void MainWindow::OnNewAnimation(unsigned int id, const QString &animationName, 
                                 unsigned int trackCount, unsigned int keyframes,
-                                float duration)
+                                float duration, CalCoreAnimation *anim)
 {
    mAnimListWidget->insertRow( mAnimListWidget->rowCount() );
 
@@ -275,6 +324,65 @@ void MainWindow::OnNewAnimation(unsigned int id, const QString &animationName,
    }
 
    mAnimListWidget->resizeColumnToContents(0);
+
+   //////////////////////////////////////////////////////////////////////////
+
+
+   QStandardItem *rootItem = new QStandardItem( QString::number(id) );
+   QStandardItem *nameItem = new QStandardItem(animationName);
+   QStandardItem *durItem = new QStandardItem( QString::number(duration) );
+
+   QList<QStandardItem*> items;
+   items << rootItem << nameItem << durItem;
+
+   mAnimationModel->appendRow(items);
+
+   QStandardItemModel *trackModel = new QStandardItemModel(this);
+   {
+      QStringList headers;
+      headers << "BoneID";
+      trackModel->setHorizontalHeaderLabels(headers);
+   }
+
+   mTrackMap[id] = trackModel;
+
+   std::list<CalCoreTrack*>::iterator trackItr = anim->getListCoreTrack().begin();
+
+   unsigned int trackIdx = 0;
+   while (trackItr!= anim->getListCoreTrack().end())
+   {
+      CalCoreTrack *calTrack = *trackItr;
+
+      QStandardItem *trackItem = new QStandardItem( QString::number(calTrack->getCoreBoneId()) );
+      trackModel->appendRow(trackItem);
+
+      QStandardItemModel *keyFrameModel = new QStandardItemModel(this);
+      {
+         QStringList headers;
+         headers << "Time" << "X" << "Y" << "Z";
+         keyFrameModel->setHorizontalHeaderLabels(headers);
+      }
+      mKeyframeMap[trackIdx] = keyFrameModel;
+
+
+      for (int keyFrameIdx=0; keyFrameIdx<calTrack->getCoreKeyframeCount(); keyFrameIdx++)
+      {
+         CalCoreKeyframe *keyFrame = calTrack->getCoreKeyframe(keyFrameIdx);
+         QStandardItem *keyFrameItem = new QStandardItem( QString::number(keyFrame->getTime()));
+         QStandardItem *xItem = new QStandardItem( QString::number(keyFrame->getTranslation().x));
+         QStandardItem *yItem = new QStandardItem( QString::number(keyFrame->getTranslation().y));
+         QStandardItem *zItem = new QStandardItem( QString::number(keyFrame->getTranslation().z));
+
+         QList<QStandardItem*> items;
+         items<<keyFrameItem<<xItem<<yItem<<zItem;
+         
+         keyFrameModel->appendRow(items);
+      }
+
+
+      ++trackIdx;
+      ++trackItr;
+   }
 
 }
 
@@ -535,5 +643,58 @@ void MainWindow::OnDisplayError( const QString &msg )
    QMessageBox::warning(this, "AnimationViewer", msg );
 }
 
+void MainWindow::OnNextLevel()
+{
+   //get the currently selected row from the view
+   QItemSelectionModel *selectModel = mAnimationTableView->selectionModel();
+   QModelIndexList indexList = selectModel->selectedRows(0);
+   
+   if (indexList.isEmpty()) return;
+
+   QModelIndex index = indexList.first();
+
+   if (mAnimationViewMode == 0)
+   {
+      mParentModel = mAnimationTableView->model();
+
+      mAnimationTableView->setModel( mTrackMap.value( index.row() ) );
+      mAnimationGroup->setTitle(tr("Animation %1 - Tracks").arg(index.row()+1));
+      mAnimationViewMode = 1;
+      mAnimationTableView->resizeColumnsToContents();
+
+   }
+   else if (mAnimationViewMode == 1)
+   {
+      mParentModel = mAnimationTableView->model();
+
+      mAnimationTableView->setModel( mKeyframeMap.value( index.row() ) );
+      QString title = mAnimationGroup->title();
+      title += QString(" %1 - Keyframes").arg(index.row()+1);
+      mAnimationGroup->setTitle(title);
+      mAnimationViewMode = 2;
+      mAnimationTableView->resizeColumnsToContents();
+
+      qDebug() << mKeyframeMap.value(index.row())->rowCount();
+   }
+}
 
 
+void MainWindow::OnPrevLevel()
+{
+   if (mAnimationViewMode == 2)
+   {
+      mAnimationTableView->setModel(mParentModel);
+      mAnimationViewMode = 1;
+      mAnimationGroup->setTitle("Tracks");
+      mAnimationTableView->resizeColumnsToContents();
+   }
+   else if (mAnimationViewMode == 1)
+   {
+      mParentModel = mAnimationModel;
+
+      mAnimationTableView->setModel( mParentModel);
+      mAnimationViewMode = 0;
+      mAnimationGroup->setTitle("Animation");
+      mAnimationTableView->resizeColumnsToContents();
+   }
+}
