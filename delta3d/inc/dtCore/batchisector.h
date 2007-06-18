@@ -235,6 +235,8 @@ namespace dtCore
             Scene*                              mScene;           // the scene in which we start at
             dtCore::ObserverPtr<DeltaDrawable>  mQueryRoot;
             dtCore::RefPtr<SingleISector>       mISectors[32];    // all the isectors to be sent down in one batch call.
+            const int                           mFixedArraySize;
+
    };
 } // namespace
 
