@@ -26,7 +26,7 @@
 
 #include <DIS/EntityID.h>
 #include <map>
-#include <dtCore/refptr.h>          // for member
+#include <dtCore/observerptr.h>          // for member
 
 #include <dtDIS/entityidcompare.h>
 #include <dtGame/messagefactory.h>        // for usage
@@ -73,7 +73,8 @@ namespace dtDIS
    private:
       ESPduProcessor();  ///< not implemented by design
 
-      dtCore::RefPtr<dtGame::GameManager> mGM;
+      //using an refptr results in a circular reference.
+      dtCore::ObserverPtr<dtGame::GameManager> mGM;
       SharedState* mConfig;
    };
 }

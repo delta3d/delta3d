@@ -46,6 +46,5 @@ void MasterComponentTests::Test()
 
    // remove the component for testing
    gm->RemoveComponent( *mc );
-   mc->OnRemovedFromGM();   // not done by the GM
    //////CPPUNIT_ASSERT_EQUAL( mc->GetPluginManager().GetRegistry().size() , size_t(0) );
 }
