@@ -44,21 +44,16 @@ class FIRE_FIGHTER_EXPORT FireFighterGameEntryPoint : public dtGame::GameEntryPo
       virtual void Initialize(dtGame::GameApplication& app, int argc, char **argv);
 
       /**
-       * Override the method to create the game manager.
-       */
-      virtual dtCore::RefPtr<dtGame::GameManager> CreateGameManager(dtCore::Scene& scene);
-
-      /**
        * Called after all startup related code is run.
        * @param app the current application
        */
-      virtual void OnStartup(dtGame::GameManager &gameManager);
+      virtual void OnStartup();
 
       /**
        * Called when it is time to shut'r down
        * @param The gm to shut down
        */
-      virtual void OnShutdown(dtGame::GameManager &gameManager);
+      virtual void OnShutdown();
 
    protected:
 

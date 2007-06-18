@@ -97,13 +97,9 @@ void FireFighterGameEntryPoint::Initialize(dtGame::GameApplication& app, int arg
       dtDAL::Project::GetInstance().GetContext() + "/CEGUI");
 }
 
-dtCore::RefPtr<dtGame::GameManager> FireFighterGameEntryPoint::CreateGameManager(dtCore::Scene& scene)
+void FireFighterGameEntryPoint::OnStartup()
 {
-   return new dtGame::GameManager(scene);
-}
-
-void FireFighterGameEntryPoint::OnStartup(dtGame::GameManager &gameManager)
-{
+   dtGame::GameManager& gameManager = *GetGameManager();
    // Make sure we can hear audio
    gameManager.GetApplication().GetCamera()->AddChild(dtAudio::AudioManager::GetListener());
 
@@ -153,8 +149,10 @@ void FireFighterGameEntryPoint::OnStartup(dtGame::GameManager &gameManager)
    gameManager.SendMessage(gscm);
 }
 
-void FireFighterGameEntryPoint::OnShutdown(dtGame::GameManager &gameManager)
+void FireFighterGameEntryPoint::OnShutdown()
 {  
+   dtGame::GameManager& gameManager = *GetGameManager();
+
    if(mUseLMS && mLmsComponent.valid())
       mLmsComponent->DisconnectFromLms();
 
