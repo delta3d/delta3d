@@ -55,7 +55,7 @@ namespace dtAnim
       else
       {
          LOG_ERROR("Unable to find animations associated with Cal3DModelWrapper.");
-         return 0;
+         return NULL;
       }
    }
 
@@ -257,7 +257,7 @@ namespace dtAnim
             int id = model->getCoreAnimationId(pStruct.mAnimationName);
             if(id >= 0 && id < int(modelData->mAnimWrappers.size()))
             {
-               AnimationChannel* pChannel = new AnimationChannel();
+               dtCore::RefPtr<AnimationChannel> pChannel = new AnimationChannel();
 
                pChannel->SetAnimation(modelData->mAnimWrappers[id].get());
 
@@ -271,7 +271,7 @@ namespace dtAnim
                pChannel->SetFadeOut(pStruct.mFadeOut);
                pChannel->SetSpeed(pStruct.mSpeed);
 
-               modelData->mAnimatables.push_back(pChannel);
+               modelData->mAnimatables.push_back(pChannel.get());
             }
             else
             {
@@ -286,7 +286,7 @@ namespace dtAnim
          {         
             CharacterFileHandler::AnimationSequenceStruct& pStruct = *sequenceIter;
 
-            AnimationSequence* pSequence = new AnimationSequence();
+            dtCore::RefPtr<AnimationSequence> pSequence = new AnimationSequence();
 
             pSequence->SetName(pStruct.mName);
             pSequence->SetStartDelay(pStruct.mStartDelay);
@@ -296,8 +296,23 @@ namespace dtAnim
             pSequence->SetBaseWeight(pStruct.mBaseWeight);
 
             //find children
-
-            modelData->mAnimatables.push_back(pSequence);
+            std::vector<std::string>::const_iterator i = pStruct.mChildNames.begin();
+            std::vector<std::string>::const_iterator end = pStruct.mChildNames.end();
+            for (; i != end; ++i)
+            {
+               const std::string& nameToFind = *i;
+               AnimatableVector::iterator animIter = modelData->mAnimatables.begin();
+               for (; animIter != modelData->mAnimatables.end(); ++animIter)
+               {
+                  Animatable* animatable = animIter->get();
+                  if (animatable->GetName() == nameToFind)
+                  {
+                     pSequence->GetChildAnimations().push_back(animatable);
+                  }
+               }
+            }
+            
+            modelData->mAnimatables.push_back(pSequence.get());
 
          }
       }

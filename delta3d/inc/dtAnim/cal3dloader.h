@@ -19,8 +19,8 @@
  * Erik Johnson 03/20/2007
  */
 
-#ifndef __DELTA_CAL3DLOADER_H__
-#define __DELTA_CAL3DLOADER_H__
+#ifndef DELTA_CAL3DLOADER
+#define DELTA_CAL3DLOADER
 
 #include <dtAnim/export.h>
 #include <string>
@@ -61,7 +61,7 @@ namespace dtAnim
          //we will hold all the animation wrappers for each CalCoreModel
          typedef std::vector< dtCore::RefPtr<AnimationWrapper> > AnimWrapperVector;
          //we will hold a vector of animatables for each CalCoreModel
-         typedef std::vector< dtCore::RefPtr<Animatable> > AnimatableVector;
+         typedef std::vector<dtCore::RefPtr<Animatable> > AnimatableVector;
 
       public:
    
