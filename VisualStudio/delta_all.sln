@@ -484,6 +484,7 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtAnim", "src\dtAnim\dtanim.vcproj", "{1E2C3DB5-00E0-45B9-AA4B-F54BD5A9C60B}"
 	ProjectSection(ProjectDependencies) = postProject
 		{5F516A22-15B8-4160-B032-BDFD78707350} = {5F516A22-15B8-4160-B032-BDFD78707350}
+		{A768B050-B0CF-454C-BE75-9F31E1ECF85F} = {A768B050-B0CF-454C-BE75-9F31E1ECF85F}
 		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
 	EndProjectSection
 EndProject
@@ -503,8 +504,6 @@ Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
 		Release = Release
-	EndGlobalSection
-	GlobalSection(ProjectDependencies) = postSolution
 	EndGlobalSection
 	GlobalSection(ProjectConfiguration) = postSolution
 		{D1B34D72-1FCC-45E4-8CA7-BFF9C7D7689C}.Debug.ActiveCfg = Debug|Win32
