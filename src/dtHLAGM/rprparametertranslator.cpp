@@ -555,7 +555,7 @@ namespace dtHLAGM
             const dtCore::UniqueId& value = static_cast<const dtGame::ActorMessageParameter&>(parameter).GetValue();
 
             const std::string* rtiId = mRuntimeMappings.GetRTIId(value);
-            if( rtiId == NULL )
+            if( rtiId == NULL || rtiId->empty())
             {
                maxSize = 0;
                return;
