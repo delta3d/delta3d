@@ -150,6 +150,15 @@ Section "MainSection" SEC01
   !insertmacro MUI_STARTMENU_WRITE_END
 SectionEnd
 
+Section "Install OpenAL Drivers"
+  SetOutPath $INSTDIR
+  MessageBox MB_YESNO "Install the OpenAL Drivers?" /SD IDYES IDNO endOpenAL
+    File /nonfatal "oalinst.exe"
+    ExecWait "$INSTDIR\oalinst.exe"
+    Goto endOpenAL
+  endOpenAL:
+SectionEnd
+
 ; Environment Variables
 Section "Add Env Var"
 !define DELTA_ROOT "$INSTDIR"
@@ -221,6 +230,7 @@ Section Uninstall
   Delete "$INSTDIR\readme.txt"
   Delete "$INSTDIR\scons_template"
   Delete "$INSTDIR\SConstruct"
+  Delete "$INSTDIR\oalinst.exe"
 
   ;bin
   RMDir /r $INSTDIR\bin
