@@ -84,9 +84,17 @@ namespace dtGame
          virtual void OnShutdown() { }
 
          /**
-          * returns mGameManager
+          * A accessor method to the game manager
+          * If custom behavior is desired, this can be overridden
+          * @return mGameManager
           */
-         dtGame::GameManager* GetGameManager() { return mGameManager.get(); }
+         virtual dtGame::GameManager* GetGameManager() { return mGameManager.get(); }
+
+         /**
+          * Sets the game manager in case custom behavior is desired
+          * @param gm The new game manager to use
+          */
+         virtual SetGameManager(dtGame::GameManager &gm) { mGameManager = &gm; }
 
       private:
 

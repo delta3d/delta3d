@@ -635,8 +635,8 @@ namespace dtGame
       {
          if(i->get() == &component)
          {
-            component.OnRemovedFromGM();
             component.SetGameManager(NULL);
+            component.OnRemovedFromGM();
             mComponentList.erase(i);
             return;
          }
@@ -1767,6 +1767,11 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::DebugStatisticsPrintOut(const float realTimeElapsed)
    {
+      // Lots of divides and unnecessary stuff in here to do if we don't need to
+      // Just return. 
+      if(!mDoStatsOnTheComponents && !mDoStatsOnTheActors)
+         return;
+
       // real time is milliseconds. Convert to seconds (*1000) and then trunc to 4 digits 
       float truncRealTime = ((int)(realTimeElapsed / 10.0)) / 100000.0; 
       float truncCumGMTime = ((int)((float) mStatsCumGMProcessTime / 10.0)) / 100000.0; 
