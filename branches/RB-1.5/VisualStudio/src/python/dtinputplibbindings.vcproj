@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="boost_python-vc71-mt.lib python24.lib dtCoreD.lib osgD.lib"
+				AdditionalDependencies="boost_python-vc71-mt.lib python25.lib dtCoreD.lib osgD.lib"
 				OutputFile="../../../bin\PyDtInputPLIBD.pyd"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib;$(PYTHON_LIB_PATH)"
@@ -83,7 +83,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="boost_python-vc71-mt.lib python24.lib dtCore.lib osg.lib"
+				AdditionalDependencies="boost_python-vc71-mt.lib python25.lib dtCore.lib osg.lib"
 				OutputFile="../../../bin\PyDtInputPLIB.pyd"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib;$(PYTHON_LIB_PATH)"
