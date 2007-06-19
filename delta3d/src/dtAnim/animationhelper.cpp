@@ -77,16 +77,9 @@ void AnimationHelper::PlayAnimation(const std::string& pAnim)
 {
    const Animatable* anim = mSequenceMixer->GetRegisteredAnimation(pAnim);
 
-   if(anim)
+   if(anim != NULL)
    {
-      dtCore::RefPtr<Animatable> clonedAnim = anim->Clone();
-
-      //ok we are going to have to refactor out this dynamic cast
-      AnimationChannel* channel = dynamic_cast<AnimationChannel*>(clonedAnim.get());
-      if(channel)
-      {
-         channel->SetModel(mAnimator->GetWrapper());
-      }
+      dtCore::RefPtr<Animatable> clonedAnim = anim->Clone(mAnimator->GetWrapper());
 
       mSequenceMixer->PlayAnimation(clonedAnim.get());
    }

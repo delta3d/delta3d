@@ -39,21 +39,11 @@ class	DT_ANIM_EXPORT AnimationChannel: public Animatable
 {
 
 public:
-    /**
+   /**
     * If you use the default constructor you must call SetAnimation, 
     * and SetModel
     */
-    AnimationChannel();
-
-    /**
-    * Copy Constructor
-    */
-    AnimationChannel(const AnimationChannel&);
-
-    /**
-    * Operator Equal
-    */
-    AnimationChannel& operator=(const AnimationChannel&);
+   AnimationChannel();
 
    /**
    * @param the model wrapper used to play animations with
@@ -68,6 +58,11 @@ public:
    */
    void SetAnimation(AnimationWrapper* pAnimation);
 
+   /// @return the model wrapper assigned to this channel.
+   Cal3DModelWrapper* GetModel();
+
+   /// @return the const model wrapper assigned to this channel.
+   const Cal3DModelWrapper* GetModel() const;
 
    /**
    * This function sets the model wrapper used to make the calls to play the animation.
@@ -76,9 +71,10 @@ public:
    void SetModel(Cal3DModelWrapper* pWrapper);
 
    /**
-   *  This function copies the animation channel
+   * This function copies the animation channel
+   * @param
    */
-   virtual dtCore::RefPtr<Animatable> Clone() const;
+   virtual dtCore::RefPtr<Animatable> Clone(Cal3DModelWrapper* wrapper) const;
 
    /**
    *  If an animation is not looping then it will be considered an action
@@ -129,6 +125,18 @@ public:
 
 protected:
    /*virtual*/ ~AnimationChannel();
+
+   /**
+   * Copy Constructor
+   * Only clone should call this.
+   */
+   AnimationChannel(const AnimationChannel&);
+
+   /**
+   * Operator Equal
+   * Hide this to prevent assigning
+   */
+   AnimationChannel& operator=(const AnimationChannel&);
 
 
 private:
