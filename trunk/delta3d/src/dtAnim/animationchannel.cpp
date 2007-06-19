@@ -83,9 +83,11 @@ AnimationChannel& AnimationChannel::operator=(const AnimationChannel& pChannel)
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-dtCore::RefPtr<Animatable> AnimationChannel::Clone() const
+dtCore::RefPtr<Animatable> AnimationChannel::Clone(Cal3DModelWrapper* wrapper) const
 {
-   return new AnimationChannel(*this);
+   dtCore::RefPtr<AnimationChannel> channel = new AnimationChannel(*this);
+   channel->SetModel(wrapper);
+   return channel.get();
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -93,6 +95,12 @@ void AnimationChannel::SetAnimation(AnimationWrapper* pAnimation)
 { 
    mAnimationWrapper = pAnimation;
 }
+
+/////////////////////////////////////////////////////////////////////////////////
+Cal3DModelWrapper* AnimationChannel::GetModel() { return mModelWrapper.get(); }
+
+/////////////////////////////////////////////////////////////////////////////////
+const Cal3DModelWrapper* AnimationChannel::GetModel() const { return mModelWrapper.get(); }
 
 /////////////////////////////////////////////////////////////////////////////////
 void AnimationChannel::SetModel(Cal3DModelWrapper* pWrapper)

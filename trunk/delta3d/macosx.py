@@ -154,7 +154,7 @@ def TOOL_BUNDLE(env):
                             '%TYPE%': typecode,
                             '%BUNDLE_KEY%': key}
             inst = env.Install(bundledir+'/Contents/MacOS', app)
-            env.AddPostAction (inst, env.Action ('strip ' + inst[0].get_abspath()))
+            #env.AddPostAction (inst, env.Action ('strip ' + inst[0].get_abspath()))
             f=env.SubstInFile(bundledir+'/Contents/Info.plist', info_plist,
                             SUBST_DICT=subst_dict)
             env.Depends(f, SCons.Node.Python.Value(key+creator+typecode+env['VERSION_NUM']+env['VERSION_NAME']))

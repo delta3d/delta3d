@@ -1762,12 +1762,6 @@ namespace dtGame
       }
 
       DeleteAllActors(true);
-      
-      mMapChangeStateData = NULL;
-      mApplication        = NULL;
-      mMachineInfo        = NULL;
-      mLibMgr = NULL;
-      mScene  = NULL;
    }
 
    ///////////////////////////////////////////////////////////////////////////////

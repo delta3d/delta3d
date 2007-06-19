@@ -1304,26 +1304,15 @@ void GameManagerTests::TestGMShutdown()
 
    mManager->Shutdown();
 
-   try
-   {
-      CPPUNIT_ASSERT_MESSAGE("Shutdown of the game manager should have flipped the removed from GM flag on the component", 
-         tc->mWasOnRemovedFromGMCalled);
-   
-      CPPUNIT_ASSERT_MESSAGE("Shutdown of the game manager should have removed the test component", 
-         mManager->GetComponentByName(tc->GetName()) == NULL);
-   
-      std::vector<dtDAL::ActorProxy*> proxies;
-      mManager->GetAllActors(proxies);
-      CPPUNIT_ASSERT_MESSAGE("Shut down of the game manager should have deleted the actors", 
-         proxies.empty());
+   CPPUNIT_ASSERT_MESSAGE("Shutdown of the game manager should have flipped the removed from GM flag on the component", 
+      tc->mWasOnRemovedFromGMCalled);
+
+   CPPUNIT_ASSERT_MESSAGE("Shutdown of the game manager should have removed the test component", 
+      mManager->GetComponentByName(tc->GetName()) == NULL);
+
+   std::vector<dtDAL::ActorProxy*> proxies;
+   mManager->GetAllActors(proxies);
+   CPPUNIT_ASSERT_MESSAGE("Shut down of the game manager should have deleted the actors", 
+      proxies.empty());
       
-      //Short circuit teardown      
-      mManager = NULL;
-   }
-   catch (...)
-   {
-      //Short circuit teardown      
-      mManager = NULL;
-      throw;
-   }
 }

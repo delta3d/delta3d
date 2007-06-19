@@ -338,7 +338,9 @@ def TOOL_BUNDLE(env):
        # RTI 
       rtiLibs = []
       if env.get('rti') not in [ 0, 1 ] and os.path.exists( env.get('rti') ) and os.path.isdir( env.get('rti') ) :
-
+         
+         env['rti'] = os.path.abspath(env['rti'])
+         
          rtiHeader = find_file( 'RTI.hh', [ env.get('rti') + '/include' ] )
          env.Append( CPPPATH = [ os.path.dirname( rtiHeader ) ] )
          
@@ -456,7 +458,7 @@ def TOOL_BUNDLE(env):
         env.Append(FRAMEWORKPATH=['ext/Frameworks' ])
         env['FRAMEWORKS'] = []
         env.Append(LIBPATH=['/usr/lib','/usr/local/lib'])
-        env['SHLINKFLAGS'] = '$LINKFLAGS -Wl,-single_module -dynamiclib -compatibility_version 1 -current_version 4 -install_name "' + env.get('prefix') + '/lib/$SHLIBPREFIX$LIBNAME$SHLIBSUFFIX"'
+        env['SHLINKFLAGS'] = '$LINKFLAGS -Wl,-single_module -dynamiclib -compatibility_version 1 -current_version 4 -install_name "' + os.path.abspath(env.get('prefix')) + '/lib/$SHLIBPREFIX$LIBNAME$SHLIBSUFFIX"'
       
       #############################################
       # Configure: Testing for dependencies 

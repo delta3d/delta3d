@@ -21,6 +21,7 @@
 
 #include <dtAnim/animationsequence.h>
 #include <dtAnim/animatable.h>
+#include <dtAnim/cal3dmodelwrapper.h>
 #include <dtCore/refptr.h>
 #include <dtUtil/log.h>
 #include <dtUtil/mathdefines.h>
@@ -34,6 +35,7 @@ namespace dtAnim
 //functors
 struct AnimSequenceUpdater
 {
+public:
    AnimSequenceUpdater(float dt, float parent_weight): mDT(dt), mParentWeight(parent_weight){}
    template<typename T>
    void operator()(T& pChild)
@@ -45,8 +47,9 @@ private:
    float mDT, mParentWeight;
 };
 
-struct AnimSeqForceFade
+class AnimSeqForceFade
 {
+public:
    AnimSeqForceFade(float time): mTime(time){}
    template<typename T>
    void operator()(T& pChild)
@@ -58,18 +61,20 @@ private:
    float mTime;
 };
 
-struct CloneFunctor
+class CloneFunctor
 {
-   CloneFunctor(AnimationSequence* pSeq): mSequence(pSeq){}
+public:
+   CloneFunctor(AnimationSequence* pSeq, Cal3DModelWrapper* pWrapper): mSequence(pSeq), mWrapper(pWrapper) {}
    template<typename T>
    void operator()(T& pChild)
    {
-      dtCore::RefPtr<Animatable> pAnim = pChild->Clone();
+      dtCore::RefPtr<Animatable> pAnim = pChild->Clone(mWrapper);
       mSequence->AddAnimation(pAnim.get());
    }
 
 private:
    AnimationSequence* mSequence;
+   Cal3DModelWrapper* mWrapper;
 };
 
 
@@ -211,7 +216,6 @@ void AnimationSequence::AnimationController::SetComputeSpeed(Animatable* pAnim)
 }
 
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////
 //Animation Sequence
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -219,10 +223,9 @@ AnimationSequence::AnimationSequence()
 : mController()
 , mActiveAnimations()
 {
-   //vs complains about using this in initializer list
+   // vs complains about using this in initializer list
    mController = new AnimationController(this);
 }
-
 
 /////////////////////////////////////////////////////////////////////////////////
 AnimationSequence::AnimationSequence(AnimationController* pController)
@@ -232,39 +235,27 @@ AnimationSequence::AnimationSequence(AnimationController* pController)
    mController->SetParent(this);
 }
 
-
 /////////////////////////////////////////////////////////////////////////////////
 AnimationSequence::~AnimationSequence()
 {
 }
 
-
 /////////////////////////////////////////////////////////////////////////////////
-AnimationSequence::AnimationSequence(const AnimationSequence& pSeq)
+AnimationSequence::AnimationSequence(const AnimationSequence& pSeq, Cal3DModelWrapper* wrapper)
 : Animatable(pSeq)
-, mController(pSeq.GetController()->Clone())
+, mController()
 , mActiveAnimations()
 {
-   std::for_each(mActiveAnimations.begin(), mActiveAnimations.end(), CloneFunctor(this));
-}
-
-
-/////////////////////////////////////////////////////////////////////////////////
-AnimationSequence& AnimationSequence::operator=(const AnimationSequence& pSeq)
-{
-   Animatable::operator =(pSeq);
-
-   mController = pSeq.GetController()->Clone();
-   mActiveAnimations.clear();
-
-   std::for_each(mActiveAnimations.begin(), mActiveAnimations.end(), CloneFunctor(this));
-   return *this;
+   if (pSeq.GetController() != NULL)
+      mController = pSeq.GetController()->Clone();
+      
+   std::for_each(pSeq.mActiveAnimations.begin(), pSeq.mActiveAnimations.end(), CloneFunctor(this, wrapper));
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-dtCore::RefPtr<Animatable> AnimationSequence::Clone() const
+dtCore::RefPtr<Animatable> AnimationSequence::Clone(Cal3DModelWrapper* wrapper) const
 {
-   return new AnimationSequence(*this);
+   return new AnimationSequence(*this, wrapper); 
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -345,7 +336,6 @@ const AnimationSequence::AnimationContainer& AnimationSequence::GetChildAnimatio
 {
    return mActiveAnimations;
 }
-
 
 /////////////////////////////////////////////////////////////////////////////////
 void AnimationSequence::Update(float dt)
