@@ -44,8 +44,11 @@ var ICONS_GROUP
 !insertmacro MUI_PAGE_STARTMENU Application $ICONS_GROUP
 ; Instfiles page
 !insertmacro MUI_PAGE_INSTFILES
+
 ; Finish page
 ;!define MUI_FINISHPAGE_RUN "$INSTDIR\AppMainExe.exe"
+!define MUI_FINISHPAGE_LINK "Visit Delta3D.org for the latest news and support"
+!define MUI_FINISHPAGE_LINK_LOCATION "http://www.delta3d.org"
 !insertmacro MUI_PAGE_FINISH
 
 ; Uninstaller pages
@@ -77,22 +80,41 @@ Section "MainSection" SEC01
   File "scons_template"
   File "SConstruct"
 
+  ;bin
   SetOutPath "$INSTDIR\bin"
   File /x *d.dll .\bin\*.dll
   File /x *d.exe .\bin\*.exe
   
+  ;data
+  SetOutPath "$INSTDIR\data"
+  File /r /x .svn .\data\*
+  
+  ;demos
+  SetOutPath "$INSTDIR\demos"
+  File /r /x .svn .\demos\*
+  
+  ;doc
+  SetOutPath "$INSTDIR\doc"
+  File "doc\doxyfile.cfg"
+  File "doc\footer.html"
+  File "doc\SConscript"
+  File /r /x .svn .\doc\html
+
 ; Shortcuts
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
   CreateDirectory "$SMPROGRAMS\$ICONS_GROUP"
-  CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\Delta3D.lnk" "$INSTDIR\AppMainExe.exe"
-  CreateShortCut "$DESKTOP\Delta3D.lnk" "$INSTDIR\AppMainExe.exe"
+  ;CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\Delta3D.lnk" "$INSTDIR\AppMainExe.exe"
+  ;CreateShortCut "$DESKTOP\Delta3D.lnk" "$INSTDIR\AppMainExe.exe"
+  CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\API Documentation.lnk" "$INSTDIR\doc\html\index.html"
+  CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\Delta3D Directory.lnk" "$INSTDIR"
+
   !insertmacro MUI_STARTMENU_WRITE_END
 SectionEnd
 
 Section -AdditionalIcons
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
   WriteIniStr "$INSTDIR\${PRODUCT_NAME}.url" "InternetShortcut" "URL" "${PRODUCT_WEB_SITE}"
-  CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\Website.lnk" "$INSTDIR\${PRODUCT_NAME}.url"
+  CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\Delta3D.org.lnk" "$INSTDIR\${PRODUCT_NAME}.url"
   CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\Uninstall.lnk" "$INSTDIR\uninst.exe"
   !insertmacro MUI_STARTMENU_WRITE_END
 SectionEnd
@@ -139,10 +161,21 @@ Section Uninstall
   ;bin
   RMDir /r $INSTDIR\bin
   
+  ;data
+  RMDIR /r $INSTDIR\data
+  
+  ;demos
+  RMDIR /r $INSTDIR\demos
+  
+  ;doc
+  RMDIR /r $INSTDIR\doc
+  
   Delete "$SMPROGRAMS\$ICONS_GROUP\Uninstall.lnk"
-  Delete "$SMPROGRAMS\$ICONS_GROUP\Website.lnk"
-  Delete "$DESKTOP\Delta3D.lnk"
-  Delete "$SMPROGRAMS\$ICONS_GROUP\Delta3D.lnk"
+  Delete "$SMPROGRAMS\$ICONS_GROUP\Delta3D.org.lnk"
+  ;Delete "$DESKTOP\Delta3D.lnk"
+  ;Delete "$SMPROGRAMS\$ICONS_GROUP\Delta3D.lnk"
+  Delete "$SMPROGRAMS\$ICONS_GROUP\API Documentation.lnk"
+  Delete "$SMPROGRAMS\$ICONS_GROUP\Delta3D Directory.lnk"
 
   RMDir "$SMPROGRAMS\$ICONS_GROUP"
   RMDir "$INSTDIR"
