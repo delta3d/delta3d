@@ -82,7 +82,7 @@ Section "MainSection" SEC01
 
   ;bin
   SetOutPath "$INSTDIR\bin"
-  File /x *d.dll .\bin\*.dll
+  File .\bin\*.dll
   File /x *d.exe .\bin\*.exe
   
   ;data
@@ -99,6 +99,42 @@ Section "MainSection" SEC01
   File "doc\footer.html"
   File "doc\SConscript"
   File /r /x .svn .\doc\html
+  
+  ;examples
+  SetOutPath "$INSTDIR\examples"
+  File /r /x .svn /x *.obj /x *.pch /x *.pdb /x *.idb /x *.ilk /x *.htm /x windows-msvc* .\examples\*
+  
+  ;ext
+  SetOutPath "$INSTDIR\ext"
+  File /r .\ext\*
+
+  ;inc
+  SetOutPath "$INSTDIR\inc"
+  File /r /x .svn .\inc\*
+  
+  ;lib
+  SetOutPath "$INSTDIR\lib"
+  File /x *.exp .\lib\*
+  
+  ;macosx
+  SetOutPath "$INSTDIR\macosx"
+  File /r /x .svn .\macosx\*
+  
+  ;src
+  SetOutPath "$INSTDIR\src"
+  File /r /x .svn /x *.obj /x *.pch /x *.pdb /x *.ilk /x *.idb /x *.htm /x windows-msvc* .\src\*
+
+  ;tests
+  SetOutPath "$INSTDIR\tests"
+  File /r /x .svn /x *.obj /x *.pch /x *.pdb /x *.ilk /x *.idb /x *.htm /x windows-msvc* .\tests\*
+
+  ;utilities
+  SetOutPath "$INSTDIR\utilities"
+  File /r /x .svn /x *.obj /x *.pch /x *.pdb /x *.idb /x *.htm /x windows-msvc* .\utilities\*
+
+  ;VisualStudio
+  SetOutPath "$INSTDIR\VisualStudio"
+  File /r /x .svn /x *.suo /x *.ncb /x Debug /x Release /x Makefile* .\VisualStudio\*
 
 ; Shortcuts
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
@@ -170,6 +206,33 @@ Section Uninstall
   ;doc
   RMDIR /r $INSTDIR\doc
   
+  ;examples
+  RMDIR /r $INSTDIR\examples
+  
+  ;ext
+  RMDIR /r $INSTDIR\ext
+  
+  ;inc
+  RMDIR /r $INSTDIR\inc
+  
+  ;lib
+  RMDIR /r $INSTDIR\lib
+  
+  ;macosx
+  RMDIR /r $INSTDIR\macosx
+  
+  ;src
+  RMDIR /r $INSTDIR\src
+
+  ;tests
+  RMDIR /r $INSTDIR\tests
+  
+  ;utilities
+  RMDIR /r $INSTDIR\utilities
+
+  ;VisualStudio
+  RMDIR /r $INSTDIR\VisualStudio
+
   Delete "$SMPROGRAMS\$ICONS_GROUP\Uninstall.lnk"
   Delete "$SMPROGRAMS\$ICONS_GROUP\Delta3D.org.lnk"
   ;Delete "$DESKTOP\Delta3D.lnk"
