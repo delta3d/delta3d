@@ -191,7 +191,7 @@ Windows w/ Visual Studio .NET 7.1
       Obtain the Boost library from SourceForge (package 'boost'):
       http://sourceforge.net/projects/boost/
       
-   3. Unzip Boost. The directory will look something like "boost_1_33_1"
+   3. Unzip Boost. The directory will look something like "boost_1_34_0"
    
    4. Obtain the Boost-Jam executable from SourceForge (package 'boost-jam')
    
@@ -201,7 +201,7 @@ Windows w/ Visual Studio .NET 7.1
    6. Open a cmd shell and navigate to your Boost directory.
    
    7. Run 'bjam stage'. This will build the entire set of Boost libraries to
-      a directory called 'boost_1_33_1\stage\lib'. Make sure to add this directory 
+      a directory called 'boost_1_34_0\stage\lib'. Make sure to add this directory 
       to your PATH environment variable so Windows can find the Boost.Python DLLs 
       at runtime.
    
