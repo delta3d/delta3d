@@ -54,14 +54,34 @@ namespace dtDAL
    class DT_DAL_EXPORT ActorProperty : public AbstractParameter
    {
       public:
+
          /**
-          * @return Returns an enumeration of the data type that this property
-          * represents.
+          * Gets the unique name assigned to this property.
           */
-         DataType &GetPropertyType() const { return mDataType; };
+         virtual const std::string &GetName() const { return mName; }
 
          ///@return the type of this property.
-         const DataType &GetDataType() const { return mDataType; };
+         virtual const DataType &GetDataType() const { return mDataType; };
+
+         /**
+         * This is an alias to GetStringValue.
+         * @see #GetStringValue
+         * @return the value of the property as a string.
+         */
+         virtual const std::string ToString() const { return GetStringValue(); };
+
+         /**
+         * This is an alias to SetStringValue.
+         * @see #SetStringValue
+         * @return true if the property could be set via the string.
+         */
+         virtual bool FromString(const std::string &value) { return SetStringValue(value); }
+
+         /**
+         * @return Returns an enumeration of the data type that this property
+         * represents.
+         */
+         DataType &GetPropertyType() const { return mDataType; };
 
          /**
           * Assigns the value of this property the value contained in the
@@ -80,10 +100,6 @@ namespace dtDAL
           */
          virtual void CopyFrom(const ActorProperty& otherProp) = 0;
 
-         /**
-          * Gets the unique name assigned to this property.
-          */
-         const std::string &GetName() const { return mName; }
 
          /**
           * Gets the label assigned to this property.
@@ -106,20 +122,6 @@ namespace dtDAL
          void SetReadOnly(bool readOnly) { mReadOnly = readOnly; }
 
          /**
-          * This is an alias to GetStringValue.
-          * @see #GetStringValue
-          * @return the value of the property as a string.
-          */
-         const std::string ToString() const { return GetStringValue(); };
-
-         /**
-          * This is an alias to SetStringValue.
-          * @see #SetStringValue
-          * @return true if the property could be set via the string.
-          */
-         bool FromString(const std::string &value) { return SetStringValue(value); }
-
-         /**
           * Sets the value of the property based on a string.
           * @note This method will attempt to use the data to set the value, but it may return false if the data
           * could not be used.
@@ -128,13 +130,11 @@ namespace dtDAL
           */
          virtual bool SetStringValue(const std::string& value) = 0;
 
-
          /**
           * @return a string version of the data.  This value can be used when calling SetStringValue.
           * @see #SetStringValue
           */
          virtual const std::string GetStringValue() const = 0;
-
 
          /**
           * Set the group name
