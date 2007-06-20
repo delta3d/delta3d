@@ -61,7 +61,7 @@ public:
          * Constructor
          * @param the parent AnimatationSequence
          */
-         AnimationController(AnimationSequence*);
+         AnimationController(AnimationSequence&);
 
          ///copy constructor
          AnimationController(const AnimationController&);
@@ -71,8 +71,14 @@ public:
          ///classes derived from this should implement a custom Clone()
          virtual dtCore::RefPtr<AnimationController> Clone() const;
 
+         /// @return the parent AnimationSequence
+         AnimationSequence& GetParent();
+
+         /// @return the parent AnimationSequence
+         const AnimationSequence& GetParent() const;
+
          ///Sets the parent AnimationSequence
-         void SetParent(AnimationSequence*);
+         void SetParent(AnimationSequence&);
 
          /**
          * The Update function is responsible for updating all the parent

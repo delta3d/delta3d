@@ -35,8 +35,8 @@ AnimationChannel::AnimationChannel()
 , mIsLooping(true)
 , mMaxDuration(0.0f)
 , mLastWeight(0.0f)
-, mModelWrapper(0)
-, mAnimationWrapper(0)
+, mModelWrapper(NULL)
+, mAnimationWrapper(NULL)
 {
 }
 
@@ -65,7 +65,6 @@ AnimationChannel::AnimationChannel(const AnimationChannel& pChannel)
 , mModelWrapper(pChannel.mModelWrapper)
 , mAnimationWrapper(pChannel.mAnimationWrapper)
 {
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -87,7 +86,7 @@ dtCore::RefPtr<Animatable> AnimationChannel::Clone(Cal3DModelWrapper* wrapper) c
 {
    dtCore::RefPtr<AnimationChannel> channel = new AnimationChannel(*this);
    channel->SetModel(wrapper);
-   return channel.get();
+   return dtCore::RefPtr<Animatable>(channel.get());
 }
 
 /////////////////////////////////////////////////////////////////////////////////

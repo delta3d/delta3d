@@ -79,8 +79,7 @@ void AnimationHelper::PlayAnimation(const std::string& pAnim)
 
    if(anim != NULL)
    {
-      dtCore::RefPtr<Animatable> clonedAnim = anim->Clone(mAnimator->GetWrapper());
-
+      dtCore::RefPtr<Animatable> clonedAnim = anim->Clone(mAnimator->GetWrapper());      
       mSequenceMixer->PlayAnimation(clonedAnim.get());
    }
    else

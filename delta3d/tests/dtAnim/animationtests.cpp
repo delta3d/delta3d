@@ -70,7 +70,7 @@ namespace dtAnim
    class TestController: public AnimationSequence::AnimationController
    {
       public:
-         TestController(AnimationSequence* pSeq): AnimationController(pSeq) {}
+         TestController(AnimationSequence& pSeq): AnimationController(pSeq) {}
          float TestComputeWeight(dtCore::RefPtr<TestAnimatable> anim)
          {
             SetComputeWeight(anim.get());
@@ -143,7 +143,7 @@ namespace dtAnim
    {      
       mHelper = new AnimationHelper();
       std::string context = dtCore::GetDeltaRootPath() + "/examples/data/demoMap/SkeletalMeshes/";
-      std::string filename = "marine.xml";
+      std::string filename = "marine_test.xml";
 
       mHelper->LoadModel(context + filename); 
 
@@ -274,6 +274,7 @@ namespace dtAnim
       CPPUNIT_ASSERT(anim != NULL);
       
       dtCore::RefPtr<AnimationSequence> pChildSeq = new AnimationSequence();
+      CPPUNIT_ASSERT(pChildSeq.get() == &pChildSeq->GetController()->GetParent());
       std::string childSeqName("childSequence");
       pChildSeq->SetName(childSeqName);
       pChildSeq->AddAnimation(anim->Clone(NULL).get());
@@ -296,7 +297,8 @@ namespace dtAnim
       dtCore::RefPtr<AnimationSequence> clonedSeq = static_cast<AnimationSequence*>(pSeq->Clone(mHelper->GetModelWrapper()).get());
       
       CPPUNIT_ASSERT_EQUAL(pSeq->GetChildAnimations().size(), clonedSeq->GetChildAnimations().size());
-
+      CPPUNIT_ASSERT(clonedSeq.get() == &clonedSeq->GetController()->GetParent());
+      
       AnimationChannel* clonedAnim1 = dynamic_cast<AnimationChannel*>(clonedSeq->GetAnimation(animName));
       Animatable* clonedAnim2 = clonedSeq->GetAnimation(name2);
       AnimationSequence* clonedChildSeq = dynamic_cast<AnimationSequence*>(clonedSeq->GetAnimation(childSeqName));
@@ -306,6 +308,9 @@ namespace dtAnim
       CPPUNIT_ASSERT(clonedChildSeq != NULL);
 
       CPPUNIT_ASSERT_EQUAL(clonedAnim1->GetModel(), mHelper->GetModelWrapper());
+
+      /// The parent of the controller should be the sequence that owns it.
+      CPPUNIT_ASSERT(clonedChildSeq == &clonedChildSeq->GetController()->GetParent());
 
       /// Test the child sequence to see if it was cloned correctly.
       CPPUNIT_ASSERT_EQUAL(pChildSeq->GetChildAnimations().size(), clonedChildSeq->GetChildAnimations().size());
@@ -325,7 +330,8 @@ namespace dtAnim
 
       //test fade in and out
       dtCore::RefPtr<TestSequence> seq = new TestSequence();
-      dtCore::RefPtr<TestController> cont = new TestController(seq.get());
+      dtCore::RefPtr<TestController> cont = new TestController(*seq);
+      CPPUNIT_ASSERT(&cont->GetParent() == seq.get());
       dtCore::RefPtr<TestAnimatable> anim = new TestAnimatable();
 
       //first pass, this one will be the easy base case

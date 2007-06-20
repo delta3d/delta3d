@@ -94,7 +94,7 @@ namespace dtGame
           * Sets the game manager in case custom behavior is desired
           * @param gm The new game manager to use
           */
-         virtual SetGameManager(dtGame::GameManager &gm) { mGameManager = &gm; }
+         virtual void SetGameManager(dtGame::GameManager &gm) { mGameManager = &gm; }
 
       private:
 
