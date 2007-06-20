@@ -111,8 +111,8 @@ private:
 /////////////////////////////////////////////////////////////////////////////////
 //Animation Controller
 /////////////////////////////////////////////////////////////////////////////////
-AnimationSequence::AnimationController::AnimationController(AnimationSequence* pParent)
-: mParent(pParent)
+AnimationSequence::AnimationController::AnimationController(AnimationSequence& pParent)
+: mParent(&pParent)
 {
 }
 
@@ -141,9 +141,21 @@ dtCore::RefPtr<AnimationSequence::AnimationController> AnimationSequence::Animat
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-void AnimationSequence::AnimationController::SetParent(AnimationSequence* pParent)
+AnimationSequence& AnimationSequence::AnimationController::GetParent()
 {
-   mParent = pParent;
+   return *mParent;
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+const AnimationSequence& AnimationSequence::AnimationController::GetParent() const
+{
+   return *mParent;
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+void AnimationSequence::AnimationController::SetParent(AnimationSequence& pParent)
+{
+   mParent = &pParent;
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -220,19 +232,17 @@ void AnimationSequence::AnimationController::SetComputeSpeed(Animatable* pAnim)
 //Animation Sequence
 ////////////////////////////////////////////////////////////////////////////////////////////
 AnimationSequence::AnimationSequence()
-: mController()
-, mActiveAnimations()
+: mActiveAnimations()
 {
    // vs complains about using this in initializer list
-   mController = new AnimationController(this);
+   SetController(new AnimationController(*this));
 }
 
 /////////////////////////////////////////////////////////////////////////////////
 AnimationSequence::AnimationSequence(AnimationController* pController)
-: mController(pController)
-, mActiveAnimations()
+: mActiveAnimations()
 {
-   mController->SetParent(this);
+   SetController(pController);
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -243,11 +253,12 @@ AnimationSequence::~AnimationSequence()
 /////////////////////////////////////////////////////////////////////////////////
 AnimationSequence::AnimationSequence(const AnimationSequence& pSeq, Cal3DModelWrapper* wrapper)
 : Animatable(pSeq)
-, mController()
 , mActiveAnimations()
 {
    if (pSeq.GetController() != NULL)
-      mController = pSeq.GetController()->Clone();
+   {
+      SetController(pSeq.GetController()->Clone().get());
+   }
       
    std::for_each(pSeq.mActiveAnimations.begin(), pSeq.mActiveAnimations.end(), CloneFunctor(this, wrapper));
 }
@@ -274,7 +285,7 @@ AnimationSequence::AnimationController* AnimationSequence::GetController()
 void AnimationSequence::SetController(AnimationController* pController) 
 {
    mController = pController;
-   mController->SetParent(this);
+   mController->SetParent(*this);
 }
 
 
@@ -303,10 +314,10 @@ void AnimationSequence::ClearAnimation(const std::string& pAnimName, float fadeT
 Animatable* AnimationSequence::GetAnimation(const std::string& pAnimName)
 {
    Animatable* anim = GetAnimatable(pAnimName);
-   if(anim == 0)
+   if(anim == NULL)
    {
       LOG_WARNING("Unable to find animation '" + pAnimName + "' in AnimationSequence '" + GetName() + "'." )
-      return 0;
+      return NULL;
    }
 
    return anim;
@@ -316,10 +327,10 @@ Animatable* AnimationSequence::GetAnimation(const std::string& pAnimName)
 const Animatable* AnimationSequence::GetAnimation(const std::string& pAnimName) const
 {
    const Animatable* anim = GetAnimatable(pAnimName);
-   if(anim == 0)
+   if(anim == NULL)
    {
       LOG_WARNING("Unable to find animation '" + pAnimName + "' in AnimationSequence '" + GetName() + "'." )
-      return 0;
+      return NULL;
    }
 
    return anim;
@@ -413,7 +424,7 @@ void AnimationSequence::PruneChildren()
 /////////////////////////////////////////////////////////////////////////////////
 void AnimationSequence::Insert(Animatable* pAnimation)
 {
-   if(GetAnimatable(pAnimation->GetName()) != 0)
+   if(GetAnimatable(pAnimation->GetName()) != NULL)
    {
       LOG_WARNING("Trying to add already existing animation '" + pAnimation->GetName() + "' to AnimationSequence '" + GetName() + "'." )
    }
@@ -436,7 +447,7 @@ Animatable* AnimationSequence::GetAnimatable(const std::string& pAnim)
         return (*iter).get();
       }
    }
-   return 0;
+   return NULL;
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -452,7 +463,7 @@ const Animatable* AnimationSequence::GetAnimatable(const std::string& pAnim) con
         return (*iter).get();
       }
    }
-   return 0;
+   return NULL;
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -465,8 +476,8 @@ void AnimationSequence::Remove(const std::string& pAnim)
    {
       if((*iter)->GetName() == pAnim)
       {
-        iter = mActiveAnimations.erase(iter);
-        return;
+         iter = mActiveAnimations.erase(iter);
+         return;
       }
    }
 

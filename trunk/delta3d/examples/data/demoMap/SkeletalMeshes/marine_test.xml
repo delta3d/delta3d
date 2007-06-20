@@ -61,40 +61,16 @@
       <isaction>1</isaction>
       <islooping>0</islooping>
    </animationchannel>
-   <animationchannel>
-      <name>RunDelayed</name>
-      <animationname>Run</animationname>
-      <startdelay>0.5</startdelay>
-      <fadein>0.75</fadein>
-      <fadeout>0.0</fadeout>
-      <speed>1.0</speed>
-      <baseweight>1.0</baseweight>
-      <maxduration>0.0</maxduration>
-      <isaction>0</isaction>
-      <islooping>1</islooping>
-   </animationchannel>
-   <animationchannel>
-      <name>WalkStart</name>
-      <animationname>Walk</animationname>
-      <startdelay>0.0</startdelay>
-      <fadein>0.1</fadein>
-      <fadeout>0.75</fadeout>
-      <speed>1.0</speed>
-      <baseweight>1.0</baseweight>
-      <maxduration>2.0</maxduration>
-      <isaction>0</isaction>
-      <islooping>1</islooping>
-   </animationchannel>
    <animationsequence>
       <name>RunWalk</name>
-      <startdelay>0.0</startdelay>
+      <startdelay>0.1</startdelay>
       <fadein>0.2</fadein>
       <fadeout>0.2</fadeout>
       <speed>1.0</speed>
       <baseweight>1.0</baseweight>
       <children>
-         <child>RunDelayed</child>
-         <child>WalkStart</child>
+         <child>Run</child>
+         <child>Walk</child>
       </children>
    </animationsequence>
 </character>
