@@ -786,7 +786,6 @@ namespace dtGame
    void GameManager::AddActor(GameActorProxy& gameActorProxy, bool isRemote, bool publish)
    {
       gameActorProxy.SetRemote(isRemote);
-      gameActorProxy.SetIsInGM(true);
 
       if(mEnvironment != NULL)
       {
@@ -820,6 +819,7 @@ namespace dtGame
       if (publish)
          PublishActor(gameActorProxy);
 
+      gameActorProxy.SetIsInGM(true);
       gameActorProxy.InvokeEnteredWorld();
    }
 
@@ -968,7 +968,7 @@ namespace dtGame
 
          // Now that all the old actors are removed add them back to the scene
          // Also invalidate the delete environment parent by calling Emancipate
-         for(unsigned int i = 0; i < actors.size(); ++i)
+         for(size_t i = 0; i < actors.size(); ++i)
          {
             mScene->AddDrawable(actors[i]);
          }
