@@ -200,15 +200,12 @@ Windows w/ Visual Studio .NET 7.1
   
    6. Open a cmd shell and navigate to your Boost directory.
    
-   7. Run 'bjam stage'. This will build the entire set of Boost libraries to
-      a directory called 'boost_1_34_0\stage\lib'. Make sure to add this directory 
+   7. Run 'bjam stage --with-python'. This will build the Boost.Python set of 
+      Boost libraries to a directory that begins with "bin.v2" and is about 6 levels
+      below that. Make sure to add this directory 
       to your PATH environment variable so Windows can find the Boost.Python DLLs 
       at runtime.
-   
-      Unfortunately, doing a specific Boost.Python build ends up with wrong
-      filenames (probably a bug in their build system), so you must do a full
-      build :(
-      
+         
    8. If you are using the Windows installer or have the dependency package unzipped
       make sure to remove the Boost.Python DLLs contained in delta3d\ext\bin before
       going any further. Otherwise, they will conflict with the DLL you just built.
