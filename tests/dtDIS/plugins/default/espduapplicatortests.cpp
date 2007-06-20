@@ -66,7 +66,7 @@ void ESPduApplicatorTests::TestApplyToPdu()
    initmsg( *msg );
 
    DIS::EntityStatePdu pdu;
-   dtDIS::details::FullApplicator apply;
+   //dtDIS::details::FullApplicator apply;
    ////apply( *msg , pdu );
 
    DIS::EntityStatePdu should_be;
