@@ -785,6 +785,7 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::AddActor(GameActorProxy& gameActorProxy, bool isRemote, bool publish)
    {
+      gameActorProxy.SetGameManager(this);
       gameActorProxy.SetRemote(isRemote);
 
       if(mEnvironment != NULL)
@@ -820,7 +821,16 @@ namespace dtGame
          PublishActor(gameActorProxy);
 
       gameActorProxy.SetIsInGM(true);
-      gameActorProxy.InvokeEnteredWorld();
+      try
+      {
+         gameActorProxy.InvokeEnteredWorld();         
+      }
+      catch (const dtUtil::Exception& ex)
+      {
+         ex.LogException(dtUtil::Log::LOG_ERROR, *mLogger);
+         DeleteActor(gameActorProxy);
+         throw ex;
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
