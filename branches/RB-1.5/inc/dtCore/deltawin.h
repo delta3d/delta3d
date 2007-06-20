@@ -29,6 +29,7 @@
 #include <dtCore/refptr.h>
 #include <vector>                   // for member
 #include <osg/Vec2>
+#include <Producer/VisualChooser>
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace Producer
@@ -161,7 +162,9 @@ namespace dtCore
       ///Get a handle to the underlying RenderSurface
       Producer::RenderSurface* GetRenderSurface() { return mRenderSurface.get(); }
       const Producer::RenderSurface* GetRenderSurface() const { return mRenderSurface.get(); }
-      
+
+      void SetRenderSurface( Producer::RenderSurface* renderSurface );
+
       ///Get a handle to the Keyboard associated with the DeltaWin
       Keyboard* GetKeyboard() { return mKeyboard.get(); }
       const Keyboard* GetKeyboard() const { return mKeyboard.get(); }
@@ -205,6 +208,7 @@ namespace dtCore
       static int CalcRefreshRate( int width, int height, int dotclock );
       
       dtCore::RefPtr<Producer::RenderSurface> mRenderSurface; //changed from straight-up RS
+      dtCore::RefPtr<Producer::VisualChooser> mVisualChooser; //changed from straight-up RS
       dtCore::RefPtr<Producer::KeyboardMouse> mKeyboardMouse;
 
       RefPtr<Keyboard> mKeyboard;
