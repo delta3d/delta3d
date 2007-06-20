@@ -302,6 +302,25 @@ DeltaWin::PositionSize DeltaWin::GetPosition()
    return positionSize;
 }
 
+/**
+ * Supply an instance of a Producer::RenderSurface to be used instead of
+ * the default, internal Producer::RenderSurface, or the one supplied in the
+ * constructor. This could be used for, e.g., Stencil Buffering.
+ * @param renderSurface : instance of a valid Producer::RenderSurface to use
+ * @pre renderSurface != 0
+ * @exception dtCore::ExceptionEnum::INVALID_PARAMETER The supplied instance
+ * is NULL.  The original Producer::RenderSurface will still be used.
+ */
+void DeltaWin::SetRenderSurface( Producer::RenderSurface* renderSurface )
+{
+   if( renderSurface == 0 )
+   {
+      throw dtUtil::Exception(dtCore::ExceptionEnum::INVALID_PARAMETER,
+         "Supplied Producer::RenderSurface is invalid", __FILE__, __LINE__);
+   }
+   mRenderSurface = renderSurface;
+}
+
 /** 
  * Supply an instance of a Keyboard to be used instead of the default, 
  * internal Keyboard, or the one supplied in the constructor.
