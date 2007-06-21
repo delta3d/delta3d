@@ -501,102 +501,102 @@ namespace dtEditQt
     {
         if (whichType == VEC2) 
         {
-            std::string oldValue = vec2Prop->GetStringValue();
+            std::string oldValue = vec2Prop->ToString();
             osg::Vec2 vectorValue = vec2Prop->GetValue();
             vectorValue[mElementIndex] = value;
             vec2Prop->SetValue(vectorValue);
 
             // give undo manager the ability to create undo/redo events
             EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, vec2Prop, 
-                oldValue, vec2Prop->GetStringValue());
+                oldValue, vec2Prop->ToString());
         }
         else if (whichType == VEC2F) 
         {
-            std::string oldValue = vec2fProp->GetStringValue();
+            std::string oldValue = vec2fProp->ToString();
             osg::Vec2f vectorValue = vec2fProp->GetValue();
             vectorValue[mElementIndex] = value;
             vec2fProp->SetValue(vectorValue);
 
             // give undo manager the ability to create undo/redo events
             EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, vec2fProp, 
-                oldValue, vec2fProp->GetStringValue());
+                oldValue, vec2fProp->ToString());
         }
         else if (whichType == VEC2D) 
         {
-            std::string oldValue = vec2dProp->GetStringValue();
+            std::string oldValue = vec2dProp->ToString();
             osg::Vec2d vectorValue = vec2dProp->GetValue();
             vectorValue[mElementIndex] = value;
             vec2dProp->SetValue(vectorValue);
 
             // give undo manager the ability to create undo/redo events
             EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, vec2dProp, 
-                oldValue, vec2dProp->GetStringValue());
+                oldValue, vec2dProp->ToString());
         }
         else if (whichType == VEC3) 
         {
-            std::string oldValue = vec3Prop->GetStringValue();
+            std::string oldValue = vec3Prop->ToString();
             osg::Vec3 vectorValue = vec3Prop->GetValue();
             vectorValue[mElementIndex] = value;
             vec3Prop->SetValue(vectorValue);
 
             // give undo manager the ability to create undo/redo events
             EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, vec3Prop, 
-                oldValue, vec3Prop->GetStringValue());
+                oldValue, vec3Prop->ToString());
         } 
         else if (whichType == VEC3F) 
         {
-            std::string oldValue = vec3fProp->GetStringValue();
+            std::string oldValue = vec3fProp->ToString();
             osg::Vec3f vectorValue = vec3fProp->GetValue();
             vectorValue[mElementIndex] = value;
             vec3fProp->SetValue(vectorValue);
 
             // give undo manager the ability to create undo/redo events
             EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, vec3fProp, 
-                oldValue, vec3fProp->GetStringValue());
+                oldValue, vec3fProp->ToString());
         } 
         else if (whichType == VEC3D) 
         {
-            std::string oldValue = vec3dProp->GetStringValue();
+            std::string oldValue = vec3dProp->ToString();
             osg::Vec3d vectorValue = vec3dProp->GetValue();
             vectorValue[mElementIndex] = value;
             vec3dProp->SetValue(vectorValue);
 
             // give undo manager the ability to create undo/redo events
             EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, vec3dProp, 
-                oldValue, vec3dProp->GetStringValue());
+                oldValue, vec3dProp->ToString());
         } 
         else if (whichType == VEC4) 
         {
-            std::string oldValue = vec4Prop->GetStringValue();
+            std::string oldValue = vec4Prop->ToString();
             osg::Vec4 vectorValue = vec4Prop->GetValue();
             vectorValue[mElementIndex] = value;
             vec4Prop->SetValue(vectorValue);
 
             // give undo manager the ability to create undo/redo events
             EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, vec4Prop, 
-                oldValue, vec4Prop->GetStringValue());
+                oldValue, vec4Prop->ToString());
         } 
         else if (whichType == VEC4F) 
         {
-            std::string oldValue = vec4fProp->GetStringValue();
+            std::string oldValue = vec4fProp->ToString();
             osg::Vec4f vectorValue = vec4fProp->GetValue();
             vectorValue[mElementIndex] = value;
             vec4fProp->SetValue(vectorValue);
 
             // give undo manager the ability to create undo/redo events
             EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, vec4fProp, 
-                oldValue, vec4fProp->GetStringValue());
+                oldValue, vec4fProp->ToString());
         } 
         else if (whichType == VEC4D)
         {
-            std::string oldValue = vec4dProp->GetStringValue();
+            std::string oldValue = vec4dProp->ToString();
             osg::Vec4d vectorValue = vec4dProp->GetValue();
             vectorValue[mElementIndex] = value;
             vec4dProp->SetValue(vectorValue);
 
             // give undo manager the ability to create undo/redo events
             EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, vec4dProp, 
-                oldValue, vec4dProp->GetStringValue());
+                oldValue, vec4dProp->ToString());
         }
     }
 

@@ -47,7 +47,7 @@ namespace dtDAL
    GroupActorProperty::~GroupActorProperty() {}
 
    ////////////////////////////////////////////////////////////////////////////
-   bool GroupActorProperty::SetStringValue(const std::string& value)
+   bool GroupActorProperty::FromString(const std::string& value)
    {
       NamedGroupParameter param(GetName());
       bool result = param.FromString(value);
@@ -58,7 +58,7 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   const std::string GroupActorProperty::GetStringValue() const
+   const std::string GroupActorProperty::ToString() const
    {
       dtCore::RefPtr<NamedGroupParameter> param = GetValue();
       return param->ToString();

@@ -1165,7 +1165,7 @@ void MapTests::TestMapSaveAndLoad()
         //aap is used above in the method
         aap = static_cast<dtDAL::ActorActorProperty*> (ap);
 
-        const std::string& id = aap->GetStringValue();
+        const std::string& id = aap->ToString();
         dtDAL::ActorProxy* p  = aap->GetValue();
 
         CPPUNIT_ASSERT_MESSAGE("The proxy should not be NULL", p != NULL);
@@ -1174,7 +1174,7 @@ void MapTests::TestMapSaveAndLoad()
 
         CPPUNIT_ASSERT_MESSAGE("GetValue should return NULL", aap->GetValue() == NULL);
 
-        aap->SetStringValue(id);
+        aap->FromString(id);
 
         CPPUNIT_ASSERT_MESSAGE("The value should not be equal to the proxy", aap->GetValue() == p);
 

@@ -1382,7 +1382,7 @@ void NamedParameterTests::TestNamedActorParameter()
 
       CPPUNIT_ASSERT_MESSAGE("The actor actor property should not be NULL", aap != NULL);
 
-      std::string value = aap->GetStringValue();
+      std::string value = aap->ToString();
 
       dtCore::RefPtr<dtGame::MessageParameter> amp = NULL;
 
