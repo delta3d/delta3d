@@ -147,6 +147,7 @@ namespace dtGame
       try
       {
          mEntryPoint->Initialize(*this, mArgc, mArgv);
+         Application::Config();
          mGameManager = mEntryPoint->CreateGameManager(*GetScene());
 
          if(mGameManager == NULL)
@@ -173,7 +174,6 @@ namespace dtGame
          }
       }
 
-      Application::Config();
    }
 
 }
