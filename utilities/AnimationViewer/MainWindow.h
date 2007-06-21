@@ -49,8 +49,8 @@ public slots:
    void OnMeshActivated( QListWidgetItem *item );
    void OnLOD_Changed(double newValue);
    void OnToggleShadingToolbar();
-   void OnToggleTempToolbar();
-   void OnToggleLightingToolbar();
+   void OnToggleLODToolbar();
+   void OnToggleLightingToolbar(); 
    void OnDisplayError( const QString &msg );
 	
 private:
@@ -76,7 +76,7 @@ private:
 
    QToolBar *mShadingToolbar;
    QToolBar *mLightingToolbar;
-   QToolBar *mTempToolbar;
+   QToolBar *mLODToolbar;
 
    QTabWidget  *mTabs;
 
