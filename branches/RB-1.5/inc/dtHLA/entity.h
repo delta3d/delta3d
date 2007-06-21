@@ -1,20 +1,20 @@
-/* 
- * Delta3D Open Source Game and Simulation Engine 
- * Copyright (C) 2004-2005 MOVES Institute 
+/*
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2004-2005 MOVES Institute
  *
  * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free 
- * Software Foundation; either version 2.1 of the License, or (at your option) 
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
  *
  * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  *
- * You should have received a copy of the GNU Lesser General Public License 
- * along with this library; if not, write to the Free Software Foundation, Inc., 
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
 */
 
@@ -50,7 +50,7 @@ namespace dtHLA
          Entity(const std::string& name = "Entity");
 
       protected:
-         
+
          /**
           * Destructor.
           */
@@ -58,7 +58,7 @@ namespace dtHLA
 
       public:
 
-         /**
+          /**
           * Sets this entity's DIS/RPR-FOM entity identifier.
           *
           * @param entityIdentifier the entity identifier to copy
@@ -85,7 +85,7 @@ namespace dtHLA
           * @return the entity type
           */
          const EntityType& GetEntityType();
-         
+
          /**
           * Sets this entity's DIS/RPR-FOM world location.
           *
@@ -99,7 +99,7 @@ namespace dtHLA
           * @return the world location
           */
          const WorldCoordinate& GetWorldLocation();
-         
+
          /**
           * Sets this entity's DIS/RPR-FOM orientation.
           *
@@ -113,7 +113,7 @@ namespace dtHLA
           * @return the orientation
           */
          const EulerAngles& GetOrientation();
-         
+
          /**
           * Sets this entity's DIS/RPR-FOM velocity vector.
           *
@@ -127,7 +127,7 @@ namespace dtHLA
           * @return the velocity vector
           */
          const VelocityVector& GetVelocityVector();
-         
+
          /**
           * Sets this entity's DIS/RPR-FOM acceleration vector.
           *
@@ -141,7 +141,7 @@ namespace dtHLA
           * @return the acceleration vector
           */
          const VelocityVector& GetAccelerationVector();
-         
+
          /**
           * Sets this entity's DIS/RPR-FOM angular velocity vector.
           *
@@ -162,21 +162,21 @@ namespace dtHLA
           * @param array the articulated parameter array to copy
           */
          void SetArticulatedParametersArray(const std::vector<ArticulatedParameter>& array);
-         
+
          /**
           * Retrieves this entity's DIS/RPR-FOM articulated parameters array.
           *
           * @return the articulated parameter array
           */
          const std::vector<ArticulatedParameter>& GetArticulatedParametersArray();
-         
+
          /**
           * Sets this entity's DIS/RPR-FOM damage state.
           *
           * @param damageState the damage state
           */
          void SetDamageState(DamageState damageState);
-         
+
          /**
           * Returns this entity's DIS/RPR-FOM damage state.
           *
@@ -184,6 +184,19 @@ namespace dtHLA
           */
          DamageState GetDamageState();
 
+         /**
+          * Sets this entity's DIS/RPR-FOM marking.
+          *
+          * @param marking the marking
+          */
+         void SetMarking(const std::string& marking);
+
+         /**
+          * Returns this entity's DIS/RPR-FOM marking.
+          *
+          * @return the marking
+          */
+         const std::string& GetMarking() const;
 
       private:
 
@@ -196,41 +209,46 @@ namespace dtHLA
           * The entity's DIS/RPR-FOM entity type.
           */
          EntityType mEntityType;
-         
+
          /**
           * The entity's DIS/RPR-FOM world location.
           */
          WorldCoordinate mWorldLocation;
-         
+
          /**
           * The entity's DIS/RPR-FOM orientation.
           */
          EulerAngles mOrientation;
-         
+
          /**
           * The entity's DIS/RPR-FOM velocity vector.
           */
          VelocityVector mVelocityVector;
-         
+
          /**
           * The entity's DIS/RPR-FOM acceleration vector.
           */
          VelocityVector mAccelerationVector;
-         
+
          /**
           * The entity's DIS/RPR-FOM angular velocity vector.
           */
          VelocityVector mAngularVelocityVector;
-         
+
          /**
           * The entity's DIS/RPR-FOM articulated parameter array.
           */
          std::vector<ArticulatedParameter> mArticulatedParametersArray;
-         
+
          /**
           * The entity's DIS/RPR-FOM damage state.
           */
          DamageState mDamageState;
+
+         /**
+          * The entity's DIS/RPR-FOM marking.
+          */
+         std::string mMarking;
    };
 }
 
