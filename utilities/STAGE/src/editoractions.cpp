@@ -301,6 +301,7 @@ namespace dtEditQt
    {
       actionEditSkeletalMesh = new QAction(QIcon(UIResources::ICON_EDITOR_SKELETAL_MESH.c_str()),tr("&Launch Skeletal Mesh Editor"), modeToolsGroup);           
       actionEditSkeletalMesh->setStatusTip(tr("Launches the skeletal mesh editor."));
+      //actionEditSkeletalMesh->setDisabled(true);
       connect(actionEditSkeletalMesh, SIGNAL(triggered()), this, SLOT(slotLaunchSkeletalMeshEditor()));
 
       actionEditParticleSystem = new QAction(QIcon(UIResources::ICON_EDITOR_PARTICLE_SYSTEM.c_str()),tr("&Launch Particle System Editor"), modeToolsGroup);       
@@ -933,7 +934,19 @@ namespace dtEditQt
           QStringList arguments;
 
           mSkeletalEditorProcess->start(program, arguments);     
+
+          QProcess::ProcessState state = mSkeletalEditorProcess->state();
+
+          // Our process should have started
+          if (state == QProcess::ProcessState::NotRunning)
+          {
+             QMessageBox::information(NULL, tr("Process Error"), 
+                tr("Unable to launch AnimationViewerD.exe.  Make sure application exists."),
+                QMessageBox::Ok);
+
+          }
        }
+      
     }
 
     //////////////////////////////////////////////////////////////////////////////
@@ -951,7 +964,18 @@ namespace dtEditQt
           QString program = "psEditor";
           QStringList arguments;
 
-          mParticleEditorProcess->start(program, arguments);     
+          mParticleEditorProcess->start(program, arguments);    
+
+          QProcess::ProcessState state = mParticleEditorProcess->state();
+
+          // Our process should have started
+          if (state == QProcess::ProcessState::NotRunning)
+          {
+             QMessageBox::information(NULL, tr("Process Error"), 
+                tr("Unable to launch psEditor.exe.  Make sure application exists."),
+                QMessageBox::Ok);
+
+          }
        }
     }
 
@@ -970,9 +994,20 @@ namespace dtEditQt
           QString program = "viewer";
           QStringList arguments;
 
-          mViewerProcess->start(program, arguments);     
+          mViewerProcess->start(program, arguments); 
+
+          QProcess::ProcessState state = mViewerProcess->state();
+
+          // Our process should have started
+          if (state == QProcess::ProcessState::NotRunning)
+          {
+             QMessageBox::information(NULL, tr("Process Error"), 
+                tr("Unable to launch Viewer.exe.  Make sure application exists."),
+                QMessageBox::Ok);
+           
+          }
        }
-    }
+    }    
 
    //////////////////////////////////////////////////////////////////////////////
    void EditorActions::slotEditUndo()
