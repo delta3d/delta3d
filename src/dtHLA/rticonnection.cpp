@@ -1858,6 +1858,8 @@ void RTIConnection::OnMessage(MessageData *data)
 
       osg::Matrix mat;
 
+      const int kMarkingLength = 12;
+
 
       char encodedEntityIdentifier[6],
            encodedEntityType[8],
@@ -1867,7 +1869,7 @@ void RTIConnection::OnMessage(MessageData *data)
            encodedDeadReckoningAlgorithm[1],
            encodedDamageState[4],
            encodedForceIdentifier[1],
-           encodedMarking[12],
+           encodedMarking[kMarkingLength],
            encodedFirePowerDisabled[1],
            encodedImmobilized[1],
            encodedCamouflageType[4],
@@ -1942,7 +1944,8 @@ void RTIConnection::OnMessage(MessageData *data)
 
             encodedMarking[0] = 1; // ASCII
 
-            memset(encodedMarking + 1, 0, 11);
+            strncpy(encodedMarking + 1,master->GetMarking().c_str(), sizeof(char) * kMarkingLength - 2);
+            encodedMarking[kMarkingLength - 1] = '\0';
 
             theAttributes->add(
                mMarkingAttributeHandle,
@@ -2374,10 +2377,15 @@ void RTIConnection::OnMessage(MessageData *data)
       // Request types of newly discovered objects
 
       RTI::AttributeHandleSet* requiredAttributes =
-         RTI::AttributeHandleSetFactory::create(2);
+         RTI::AttributeHandleSetFactory::create(7);
 
       requiredAttributes->add(mEntityIdentifierAttributeHandle);
       requiredAttributes->add(mEntityTypeAttributeHandle);
+      requiredAttributes->add(mMarkingAttributeHandle);
+      requiredAttributes->add(mWorldLocationAttributeHandle);
+      requiredAttributes->add(mVelocityVectorAttributeHandle);
+      requiredAttributes->add(mOrientationAttributeHandle);
+      requiredAttributes->add(mDamageStateAttributeHandle);
 
       for(std::set<RTI::ObjectHandle>::iterator objs =
             mNewlyDiscoveredObjects.begin();
@@ -2620,6 +2628,19 @@ void RTIConnection::reflectAttributeValues(
             entityIdentifier.Decode(buf);
 
             ghost->SetEntityIdentifier(entityIdentifier);
+         }
+      }
+      else if(handle == mMarkingAttributeHandle)
+      {
+         unsigned long length;
+
+         char* buf = theAttributes.getValuePointer(i, length);
+
+         if(length == 12)
+         {
+            std::string marking(buf+1);
+
+            ghost->SetMarking(marking);
          }
       }
       else if(handle == mEntityTypeAttributeHandle)
@@ -2952,6 +2973,11 @@ void RTIConnection::reflectAttributeValues(
          mNewEntities.erase(iter);
       }
    }
+   else
+   {
+      SendMessage( "entity_updated", ghost );
+   }
+
 }
 
 /**
@@ -2998,6 +3024,7 @@ throw (
    {
       mScene->RemoveDrawable( entity );
    }
+
 
    SendMessage( "entity_removed", entity );
 
