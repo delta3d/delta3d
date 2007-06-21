@@ -73,14 +73,14 @@ namespace dtDAL
           * @param value the value to set.
           * @return true if the string was usable to set the value, false if not.
           */
-         virtual bool SetStringValue(const std::string& value);
+         virtual bool FromString(const std::string& value);
 
 
          /**
           * @return a string version of the data.  This value can be used when calling SetStringValue.
           * @see #SetStringValue
           */
-         virtual const std::string GetStringValue() const;
+         virtual const std::string ToString() const;
 
          /**
           * This is overridden to make handle the fact that the get method returns a refptr.

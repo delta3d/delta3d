@@ -430,7 +430,7 @@ void TaskActorTests::TestGameEventTaskActor()
       //Set the game event property on the task.
       CPPUNIT_ASSERT_MESSAGE("Game event task actors should have a GameEvent property.",
                              eventTaskProxy->GetProperty("GameEvent") != NULL);
-      eventTaskProxy->GetProperty("GameEvent")->SetStringValue(gameEvent->GetUniqueId().ToString());
+      eventTaskProxy->GetProperty("GameEvent")->FromString(gameEvent->GetUniqueId().ToString());
 
       dtDAL::GameEventActorProperty *prop =
             static_cast<dtDAL::GameEventActorProperty*>(eventTaskProxy->GetProperty("GameEvent"));
@@ -456,7 +456,7 @@ void TaskActorTests::TestGameEventTaskActor()
 
       //Should be incomplete since the task should have only gotten the event once.
       CPPUNIT_ASSERT_MESSAGE("Task should not yet be complete.",
-                             eventTaskProxy->GetProperty("Complete")->GetStringValue() == "false");
+                             eventTaskProxy->GetProperty("Complete")->ToString() == "false");
 
       double currSimTime;
       for (int i=0; i<4; i++)
@@ -468,7 +468,7 @@ void TaskActorTests::TestGameEventTaskActor()
 
       //Now the task should have been marked complete.
       CPPUNIT_ASSERT_MESSAGE("Task should have been completed.",
-                             eventTaskProxy->GetProperty("Complete")->GetStringValue() == "true");
+                             eventTaskProxy->GetProperty("Complete")->ToString() == "true");
 
       //Make sure the complete time got marked properly...
       dtDAL::DoubleActorProperty *time = static_cast<dtDAL::DoubleActorProperty*>(eventTaskProxy->GetProperty("CompleteTime"));
@@ -514,8 +514,8 @@ void TaskActorTests::TestRollupTaskActor()
          mGameManager->CreateActor(*gameEventType, eventTaskProxy);
          CPPUNIT_ASSERT_MESSAGE("Could not create game event task actor proxy.",eventTaskProxy.valid());
 
-         eventTaskProxy->GetProperty("GameEvent")->SetStringValue(gameEvent->GetUniqueId().ToString());
-         eventTaskProxy->GetProperty("Weight")->SetStringValue("0.2f");
+         eventTaskProxy->GetProperty("GameEvent")->FromString(gameEvent->GetUniqueId().ToString());
+         eventTaskProxy->GetProperty("Weight")->FromString("0.2f");
 
          rollupTaskProxy->AddSubTask(*eventTaskProxy);
          mGameManager->AddActor(*eventTaskProxy,false,false);
@@ -544,7 +544,7 @@ void TaskActorTests::TestRollupTaskActor()
       }
 
       CPPUNIT_ASSERT_MESSAGE("Rollup task should have been marked complete.",
-                             rollupTaskProxy->GetProperty("Complete")->GetStringValue() == "true");
+                             rollupTaskProxy->GetProperty("Complete")->ToString() == "true");
 
       //Reset the event and rollup tasks..
       dtActors::TaskActor *actor = dynamic_cast<dtActors::TaskActor*>(rollupTaskProxy->GetActor());
@@ -571,7 +571,7 @@ void TaskActorTests::TestRollupTaskActor()
       }
 
       CPPUNIT_ASSERT_MESSAGE("Rollup task should not have been marked complete.",
-                             rollupTaskProxy->GetProperty("Complete")->GetStringValue() == "false");
+                             rollupTaskProxy->GetProperty("Complete")->ToString() == "false");
    }
    catch (const dtUtil::Exception& e)
    {
@@ -621,7 +621,7 @@ void TaskActorTests::TestOrderedTaskActor()
 
       mGameManager->CreateActor(*gameEventType, primaryEventProxy);
       CPPUNIT_ASSERT_MESSAGE("Could not create primary game event task actor proxy.",primaryEventProxy.valid());
-      primaryEventProxy->GetProperty("GameEvent")->SetStringValue(primaryEvent->GetUniqueId().ToString());
+      primaryEventProxy->GetProperty("GameEvent")->FromString(primaryEvent->GetUniqueId().ToString());
       mGameManager->AddActor(*primaryEventProxy,false,false);
 
       //Add an event task which must be completed before the rollup task can be completed.
@@ -638,8 +638,8 @@ void TaskActorTests::TestOrderedTaskActor()
          mGameManager->CreateActor(*gameEventType, eventTaskProxy);
          CPPUNIT_ASSERT_MESSAGE("Could not create game event task actor proxy.",eventTaskProxy.valid());
 
-         eventTaskProxy->GetProperty("GameEvent")->SetStringValue(gameEvent->GetUniqueId().ToString());
-         eventTaskProxy->GetProperty("Weight")->SetStringValue("0.2f");
+         eventTaskProxy->GetProperty("GameEvent")->FromString(gameEvent->GetUniqueId().ToString());
+         eventTaskProxy->GetProperty("Weight")->FromString("0.2f");
 
          rollupTaskProxy->AddSubTask(*eventTaskProxy);
          mGameManager->AddActor(*eventTaskProxy,false,false);
@@ -664,7 +664,7 @@ void TaskActorTests::TestOrderedTaskActor()
          dtCore::System::GetInstance().Step();
 
          CPPUNIT_ASSERT_MESSAGE("Event Task: " + dtUtil::ToString(i) + " should not have been complete.",
-            eventProxyList[i]->GetProperty("Complete")->GetStringValue() == "false");
+            eventProxyList[i]->GetProperty("Complete")->ToString() == "false");
 
          CPPUNIT_ASSERT_MESSAGE("Rollup task score was not calculated correctly.  The score was: " +
                dtUtil::ToString(prop->GetValue()),osg::equivalent(prop->GetValue(),0.0f,0.001f));
@@ -680,7 +680,7 @@ void TaskActorTests::TestOrderedTaskActor()
       dtCore::System::GetInstance().Step();
 
       CPPUNIT_ASSERT_MESSAGE("Primary Event Task should have been complete.",
-                             primaryEventProxy->GetProperty("Complete")->GetStringValue() == "true");
+                             primaryEventProxy->GetProperty("Complete")->ToString() == "true");
 
       //Now the rollup task and its subtasks should be "completable".
       for (i=0; i<5; i++)
@@ -693,16 +693,16 @@ void TaskActorTests::TestOrderedTaskActor()
          dtCore::System::GetInstance().Step();
 
          CPPUNIT_ASSERT_MESSAGE("Event Task: " + dtUtil::ToString(i) + " should have been complete.",
-                                eventProxyList[i]->GetProperty("Complete")->GetStringValue() == "true");
+                                eventProxyList[i]->GetProperty("Complete")->ToString() == "true");
 
          CPPUNIT_ASSERT_MESSAGE("Rollup task score was not calculated correctly.  The score was: " +
                dtUtil::ToString(prop->GetValue()),osg::equivalent(prop->GetValue(),((float)i+1.0f) * 0.2f,0.001f));
       }
 
       CPPUNIT_ASSERT_MESSAGE("Rollup task should have been marked complete.",
-                              rollupTaskProxy->GetProperty("Complete")->GetStringValue() == "true");
+                              rollupTaskProxy->GetProperty("Complete")->ToString() == "true");
       CPPUNIT_ASSERT_MESSAGE("Ordered task should have been marked complete.",
-                             orderedTaskProxy->GetProperty("Complete")->GetStringValue() == "true");
+                             orderedTaskProxy->GetProperty("Complete")->ToString() == "true");
    }
    catch (const dtUtil::Exception& e)
    {

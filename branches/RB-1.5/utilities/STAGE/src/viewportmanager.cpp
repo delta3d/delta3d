@@ -438,14 +438,14 @@ namespace dtEditQt
             //the camera is the object's bounding volume so it appears
             //just in front of the camera.  If the object is very large, it is
             //just created at the origin.
-            std::string oldValue = prop->GetStringValue();
+            std::string oldValue = prop->ToString();
 
             float offset = (bs.radius() < 1000.0f) ? bs.radius() : 1.0f;
             if (offset <= 0.0f)
                 offset = 10.0f;
             tProxy->SetTranslation(pos+(viewDir*offset*2));
 
-            std::string newValue = prop->GetStringValue();
+            std::string newValue = prop->ToString();
             EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, prop, oldValue, newValue);
             EditorEvents::GetInstance().emitActorPropertyChanged(proxy,prop);
         }

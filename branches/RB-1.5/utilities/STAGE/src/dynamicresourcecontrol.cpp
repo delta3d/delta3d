@@ -317,14 +317,14 @@ namespace dtEditQt
         if (isCurEmpty != isNewEmpty || (curResource != NULL && !((*curResource) == newResource)))
         {
 
-            std::string oldValue = myProperty->GetStringValue();
+            std::string oldValue = myProperty->ToString();
             myProperty->SetValue(&newResource);
 
             // give undo manager the ability to create undo/redo events
             // technically, we're sending the about to change event AFTER we already 
             // changed it, but it doesn't matter.  It's the easiest way to get the string value.
             EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, myProperty, 
-                oldValue, myProperty->GetStringValue());
+                oldValue, myProperty->ToString());
 
             // update our label
             if (mTemporaryEditOnlyTextLabel !=  NULL) 
@@ -345,14 +345,14 @@ namespace dtEditQt
 
         if (!isCurEmpty) 
         {
-            std::string oldValue = myProperty->GetStringValue();
+            std::string oldValue = myProperty->ToString();
             myProperty->SetValue(NULL);
 
             // give undo manager the ability to create undo/redo events
             // technically, we're sending the about to change event AFTER we already 
             // changed it, but it doesn't matter.  It's the easiest way to get the string value.
             EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, myProperty, 
-                oldValue, myProperty->GetStringValue());
+                oldValue, myProperty->ToString());
 
             // update our label
             if (mTemporaryEditOnlyTextLabel !=  NULL) 

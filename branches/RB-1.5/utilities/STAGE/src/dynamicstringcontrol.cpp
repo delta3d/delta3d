@@ -96,7 +96,7 @@ namespace dtEditQt
             {
                 // give undo manager the ability to create undo/redo events
                 EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, myProperty, 
-                    myProperty->GetStringValue(), result);
+                    myProperty->ToString(), result);
 
                 myProperty->SetValue(result);
                 dataChanged = true;

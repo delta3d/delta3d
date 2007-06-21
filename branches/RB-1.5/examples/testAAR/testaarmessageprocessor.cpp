@@ -433,7 +433,7 @@ void TestAARMessageProcessor::PrintTasks()
    for (itor=tasks.begin(); itor!=tasks.end(); ++itor)
    {
       printer << "\tTask Name: " << (*itor)->GetName() <<
-         " Complete: " << (*itor)->GetProperty("Complete")->GetStringValue() << std::endl;
+         " Complete: " << (*itor)->GetProperty("Complete")->ToString() << std::endl;
    }
 
    std::cout << printer.str() << std::endl;

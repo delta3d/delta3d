@@ -116,8 +116,8 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
       {
          // Test and make sure you can't set the property
          dtDAL::ActorProperty *p = props[i];
-         const std::string &str = p->GetStringValue();
-         bool shouldBeFalse = p->SetStringValue(str);
+         const std::string &str = p->ToString();
+         bool shouldBeFalse = p->FromString(str);
          CPPUNIT_ASSERT_MESSAGE("Should not have been able to set the string value on an read only property", !shouldBeFalse);
          continue;
       }
@@ -129,17 +129,17 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
          float value1 = 0.3323233f;
          prop1->SetValue(value1);
          CPPUNIT_ASSERT_MESSAGE(name + " property on " + proxyTypeName
-                                + " should have value 0.3323233f, but it is: " + props[i]->GetStringValue(),
+                                + " should have value 0.3323233f, but it is: " + props[i]->ToString(),
                                 osg::equivalent(prop1->GetValue(), value1, float(epsilon)));
          
-         std::string stringValue = prop1->GetStringValue();
+         std::string stringValue = prop1->ToString();
          //set some other value so we can test the string can set it back.
          float value2 = 17.3238392f;
          prop1->SetValue(value2);
-         CPPUNIT_ASSERT(prop1->SetStringValue(stringValue));
+         CPPUNIT_ASSERT(prop1->FromString(stringValue));
          
          CPPUNIT_ASSERT_MESSAGE(name + " property on " + proxyTypeName
-                                + " should have value 1.3323233f, but it is: " + props[i]->GetStringValue(),
+                                + " should have value 1.3323233f, but it is: " + props[i]->ToString(),
                                 osg::equivalent(prop1->GetValue(), value1, float(epsilon)));
       }
       else if (props[i]->GetPropertyType() == DataType::DOUBLE)
@@ -149,31 +149,31 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
          double value1 = 1.3323233;
          prop1->SetValue(value1);
          CPPUNIT_ASSERT_MESSAGE(name + " property on " + proxyTypeName
-                                + " should have value 1.3323233, but it is: " + props[i]->GetStringValue(),
+                                + " should have value 1.3323233, but it is: " + props[i]->ToString(),
                                 osg::equivalent(prop1->GetValue(), value1, double(epsilon)));
          
-         std::string stringValue = prop1->GetStringValue();
+         std::string stringValue = prop1->ToString();
          //set some other value so we can test the string can set it back.
          double value2 = 17.3238392;
          prop1->SetValue(value2);
-         CPPUNIT_ASSERT(prop1->SetStringValue(stringValue));
+         CPPUNIT_ASSERT(prop1->FromString(stringValue));
          
          CPPUNIT_ASSERT_MESSAGE(name + " property on " + proxyTypeName
-                                + " should have value 1.3323233, but it is: " + props[i]->GetStringValue(),
+                                + " should have value 1.3323233, but it is: " + props[i]->ToString(),
                                 osg::equivalent(prop1->GetValue(), value1, double(epsilon)));
       }
       else if (props[i]->GetPropertyType() == DataType::INT)
       {
          static_cast<dtDAL::IntActorProperty*>(props[i])->SetValue(3);
          CPPUNIT_ASSERT_MESSAGE(name + " property on " + proxyTypeName
-                                + " should have value 3, but it is: " + props[i]->GetStringValue(),
+                                + " should have value 3, but it is: " + props[i]->ToString(),
                                 static_cast<dtDAL::IntActorProperty*>(props[i])->GetValue() == 3);
       }
       else if (props[i]->GetPropertyType() == DataType::LONGINT)
       {
          static_cast<dtDAL::LongActorProperty*>(props[i])->SetValue(4);
          CPPUNIT_ASSERT_MESSAGE(name + " property on " + proxyTypeName
-                                + " should have value 4, but it is: " + props[i]->GetStringValue(),
+                                + " should have value 4, but it is: " + props[i]->ToString(),
                                 static_cast<dtDAL::LongActorProperty*>(props[i])->GetValue() == 4);
       }
       else if (props[i]->GetPropertyType() == DataType::STRING)
@@ -189,7 +189,7 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
          }
          static_cast<dtDAL::StringActorProperty*>(props[i])->SetValue("cache");
          CPPUNIT_ASSERT_MESSAGE(name + " property on " + proxyTypeName
-                                + " should have value \"cache\", but it is: " + props[i]->GetStringValue(),
+                                + " should have value \"cache\", but it is: " + props[i]->ToString(),
                                 static_cast<dtDAL::StringActorProperty*>(props[i])->GetValue() == "cache");
       }
       else if (props[i]->GetPropertyType() == DataType::BOOLEAN)
@@ -292,10 +292,10 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
                                    osg::equivalent(result[x], test[x], epsilon));
          }
          osg::Vec3 test2(7.0f, 3.0f, -9.25f);
-         std::string stringValue = prop1->GetStringValue();
+         std::string stringValue = prop1->ToString();
          //change the value so we can change it back.
          prop1->SetValue(test2);
-         CPPUNIT_ASSERT(prop1->SetStringValue(stringValue));
+         CPPUNIT_ASSERT(prop1->FromString(stringValue));
          
          result = prop1->GetValue();
          
@@ -332,10 +332,10 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
                                    osg::equivalent(result[x], test[x], epsilon));
          }
          osg::Vec3f test2(7.0667f, 3.08595f, -9.2555950f);
-         std::string stringValue = prop1->GetStringValue();
+         std::string stringValue = prop1->ToString();
          //change the value so we can change it back.
          prop1->SetValue(test2);
-         CPPUNIT_ASSERT(prop1->SetStringValue(stringValue));
+         CPPUNIT_ASSERT(prop1->FromString(stringValue));
          
          result = prop1->GetValue();
          
@@ -372,10 +372,10 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
                                    osg::equivalent(double(result[x]), double(test[x]), double(epsilon)));
          }
          osg::Vec3d test2(7.0, 3.0, -9.25);
-         std::string stringValue = prop1->GetStringValue();
+         std::string stringValue = prop1->ToString();
          //change the value so we can change it back.
          prop1->SetValue(test2);
-         CPPUNIT_ASSERT(prop1->SetStringValue(stringValue));
+         CPPUNIT_ASSERT(prop1->FromString(stringValue));
          
          result = prop1->GetValue();
          
@@ -406,10 +406,10 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
                                    osg::equivalent(result[x], test[x], epsilon));
          }
          osg::Vec4 test2(7.0f, 3.0f, 8.0f, 2.1f);
-         std::string stringValue = prop1->GetStringValue();
+         std::string stringValue = prop1->ToString();
          //change the value so we can change it back.
          prop1->SetValue(test2);
-         CPPUNIT_ASSERT(prop1->SetStringValue(stringValue));
+         CPPUNIT_ASSERT(prop1->FromString(stringValue));
          
          result = prop1->GetValue();
          
@@ -438,10 +438,10 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
                                    osg::equivalent(result[x], test[x], epsilon));
          }
          osg::Vec4f test2(7.0f, 3.0f, 8.0f, 2.1f);
-         std::string stringValue = prop1->GetStringValue();
+         std::string stringValue = prop1->ToString();
          //change the value so we can change it back.
          prop1->SetValue(test2);
-         CPPUNIT_ASSERT(prop1->SetStringValue(stringValue));
+         CPPUNIT_ASSERT(prop1->FromString(stringValue));
          
          result = prop1->GetValue();
          
@@ -471,10 +471,10 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
                                    osg::equivalent(double(result[x]), double(test[x]), double(epsilon)));
          }
          osg::Vec4d test2(7.0, 3.0, 8.0, 2.1);
-         std::string stringValue = prop1->GetStringValue();
+         std::string stringValue = prop1->ToString();
          //change the value so we can change it back.
          prop1->SetValue(test2);
-         CPPUNIT_ASSERT(prop1->SetStringValue(stringValue));
+         CPPUNIT_ASSERT(prop1->FromString(stringValue));
          
          result = prop1->GetValue();
          
@@ -504,10 +504,10 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
                                    osg::equivalent(result[x], test[x], epsilon));
          }
          osg::Vec2 test2(7.0f, 3.0f);
-         std::string stringValue = prop1->GetStringValue();
+         std::string stringValue = prop1->ToString();
          //change the value so we can change it back.
          prop1->SetValue(test2);
-         CPPUNIT_ASSERT(prop1->SetStringValue(stringValue));
+         CPPUNIT_ASSERT(prop1->FromString(stringValue));
          
          result = prop1->GetValue();
          
@@ -536,10 +536,10 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
                                    osg::equivalent(result[x], test[x], epsilon));
          }
          osg::Vec2f test2(7.0f, 3.0f);
-         std::string stringValue = prop1->GetStringValue();
+         std::string stringValue = prop1->ToString();
          //change the value so we can change it back.
          prop1->SetValue(test2);
-         CPPUNIT_ASSERT(prop1->SetStringValue(stringValue));
+         CPPUNIT_ASSERT(prop1->FromString(stringValue));
          
          result = prop1->GetValue();
          
@@ -568,10 +568,10 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
                                    osg::equivalent(double(result[x]), double(test[x]), double(epsilon)));
          }
          osg::Vec2d test2(7.0, 3.0);
-         std::string stringValue = prop1->GetStringValue();
+         std::string stringValue = prop1->ToString();
          //change the value so we can change it back.
          prop1->SetValue(test2);
-         CPPUNIT_ASSERT(prop1->SetStringValue(stringValue));
+         CPPUNIT_ASSERT(prop1->FromString(stringValue));
          
          result = prop1->GetValue();
          
@@ -600,10 +600,10 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
                                    osg::equivalent(result[x], test[x], epsilon));
          }
          osg::Vec4 test2(7.0f, 3.0f, 8.0f, 2.1f);
-         std::string stringValue = prop1->GetStringValue();
+         std::string stringValue = prop1->ToString();
          //change the value so we can change it back.
          prop1->SetValue(test2);
-         CPPUNIT_ASSERT(prop1->SetStringValue(stringValue));
+         CPPUNIT_ASSERT(prop1->FromString(stringValue));
          
          result = prop1->GetValue();
          
@@ -631,12 +631,12 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
          CPPUNIT_ASSERT_MESSAGE("Game Event ids were not equal.",
                                 eventToCheck->GetUniqueId() == event->GetUniqueId());
          
-         std::string stringValue = prop->GetStringValue();
+         std::string stringValue = prop->ToString();
          CPPUNIT_ASSERT_MESSAGE("Resulting string value was not correct on the GAME_EVENT property.",
                                 stringValue == event->GetUniqueId().ToString());
          
          CPPUNIT_ASSERT_MESSAGE("Should be able to set the string value of a game event.",
-                                prop->SetStringValue(event->GetUniqueId().ToString()));
+                                prop->FromString(event->GetUniqueId().ToString()));
          
          eventToCheck = prop->GetValue();
          CPPUNIT_ASSERT_MESSAGE("Game Event name was equal.",
@@ -676,10 +676,10 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
             CPPUNIT_ASSERT(stringParam != NULL);
             CPPUNIT_ASSERT_EQUAL(std::string("hello"), stringParam->GetValue());
             
-            std::string stringValue = prop->GetStringValue();
+            std::string stringValue = prop->ToString();
             
             CPPUNIT_ASSERT_MESSAGE("Should be able to set the string value of a group property.",
-                                   prop->SetStringValue(stringValue));
+                                   prop->FromString(stringValue));
          }
       }
    }
@@ -712,35 +712,35 @@ void ProxyTest::compareProxies(dtDAL::ActorProxy& ap1, dtDAL::ActorProxy& ap2)
       {
          CPPUNIT_ASSERT(((dtDAL::IntActorProperty*)props[i])->GetValue() ==
                         ((dtDAL::IntActorProperty*)prop2)->GetValue());
-         CPPUNIT_ASSERT(props[i]->GetStringValue() == prop2->GetStringValue());
+         CPPUNIT_ASSERT(props[i]->ToString() == prop2->ToString());
       }
       else if(props[i]->GetPropertyType() == DataType::LONGINT)
       {
          CPPUNIT_ASSERT(((dtDAL::LongActorProperty*)props[i])->GetValue() ==
                         ((dtDAL::LongActorProperty*)prop2)->GetValue());
-         CPPUNIT_ASSERT(props[i]->GetStringValue() == prop2->GetStringValue());
+         CPPUNIT_ASSERT(props[i]->ToString() == prop2->ToString());
       }
       else if(props[i]->GetPropertyType() == DataType::STRING)
       {
          CPPUNIT_ASSERT(((dtDAL::StringActorProperty*)props[i])->GetValue() ==
                         ((dtDAL::StringActorProperty*)prop2)->GetValue());
-         CPPUNIT_ASSERT(props[i]->GetStringValue() == prop2->GetStringValue());
+         CPPUNIT_ASSERT(props[i]->ToString() == prop2->ToString());
       }
       else if(props[i]->GetPropertyType() == DataType::BOOLEAN)
       {
          CPPUNIT_ASSERT(((dtDAL::BooleanActorProperty*)props[i])->GetValue() ==
                         ((dtDAL::BooleanActorProperty*)prop2)->GetValue());
-         CPPUNIT_ASSERT(props[i]->GetStringValue() == prop2->GetStringValue());
+         CPPUNIT_ASSERT(props[i]->ToString() == prop2->ToString());
       }
       else if(props[i]->GetPropertyType() == DataType::ENUMERATION)
       {
-         CPPUNIT_ASSERT(props[i]->GetStringValue() == prop2->GetStringValue());
+         CPPUNIT_ASSERT(props[i]->ToString() == prop2->ToString());
       }
       else if(props[i]->GetPropertyType() == DataType::ACTOR)
       {
          CPPUNIT_ASSERT(((dtDAL::ActorActorProperty*)props[i])->GetValue() ==
                         ((dtDAL::ActorActorProperty*)prop2)->GetValue());
-         CPPUNIT_ASSERT(props[i]->GetStringValue() == prop2->GetStringValue());
+         CPPUNIT_ASSERT(props[i]->ToString() == prop2->ToString());
       }
       else if(props[i]->GetPropertyType() == DataType::VEC3)
       {

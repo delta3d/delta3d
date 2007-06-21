@@ -383,7 +383,7 @@ namespace dtEditQt
                     // put our value back
                     if (actorProp != NULL)
                     {
-                        actorProp->SetStringValue(undoProp->oldValue);
+                        actorProp->FromString(undoProp->oldValue);
                     }
                 }
 
@@ -429,8 +429,8 @@ namespace dtEditQt
             dtDAL::ActorProperty *property = proxy->GetProperty(propData->propertyName);
             if (property != NULL)
             {
-                std::string currentValue = property->GetStringValue();
-                property->SetStringValue(propData->oldValue);
+                std::string currentValue = property->ToString();
+                property->FromString(propData->oldValue);
 
                 // notify the world of our change to the data.
                 dtCore::RefPtr<dtDAL::ActorProxy> ActorProxyRefPtr = proxy;
