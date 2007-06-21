@@ -54,7 +54,10 @@ namespace dtGame
          }
          
          /**
-          * Called to initialize the game application.
+          * Called to initialize the game application.  This gets called from the
+          * dtGame::GameApplication::Config() method, but before
+          * dtABC::Application::Config().  This allows some defining of the 
+          * default Camera and Window, such as setting up stencil buffers.
           * @param app the current application
           * @param argc number of startup arguments.
           * @param argv array of string pointers to the arguments.
@@ -72,7 +75,8 @@ namespace dtGame
          }
          
          /**
-          * Called after all startup related code is run.
+          * Called after all startup related code is run.  At this point, the
+          * dtGame::GameApplication has been configured and ready to be used.
           * @param gameManager The game manager to init
           */
          virtual void OnStartup() = 0;
