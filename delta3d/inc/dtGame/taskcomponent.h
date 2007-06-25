@@ -37,10 +37,12 @@ namespace dtGame
    {
       public:
 
+         static const std::string &DEFAULT_NAME;
+
          /**
           * Constructs the task component.
           */
-         TaskComponent(const std::string &name = "TaskComponent");
+         TaskComponent(const std::string &name = DEFAULT_NAME);
 
          /**
           * Called when a message arrives at the Game Manager.  These messages are trapped

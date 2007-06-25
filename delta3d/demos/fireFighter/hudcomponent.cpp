@@ -36,6 +36,7 @@
 #include <dtGUI/ceuidrawable.h>
 #include <dtGame/taskcomponent.h>
 #include <dtDAL/gameevent.h>
+#include <dtLMS/lmscomponent.h>
 
 #ifdef None
 #undef None
@@ -731,7 +732,7 @@ void HUDComponent::UpdateMediumDetailData(CEGUI::Window *parent)
       unsigned int numAdded = 0;
       unsigned int numComplete = 0;
 
-      dtGame::GMComponent *comp = GetGameManager()->GetComponentByName("LMSComponent");
+      dtGame::GMComponent *comp = GetGameManager()->GetComponentByName();
       dtGame::TaskComponent *mTaskComponent = static_cast<dtGame::TaskComponent*>(comp);
       
       mTaskComponent->GetTopLevelTasks(tasks);
@@ -739,7 +740,7 @@ void HUDComponent::UpdateMediumDetailData(CEGUI::Window *parent)
       // start our recursive method on each top level task
       for(unsigned int i = 0; i < tasks.size(); i++)
       {
-         dtActors::TaskActorProxy *taskProxy = dynamic_cast<dtActors::TaskActorProxy*>(tasks[i].get());
+         dtActors::TaskActorProxy *taskProxy = static_cast<dtActors::TaskActorProxy*>(tasks[i].get());
          numAdded += RecursivelyAddTasks("", numAdded, taskProxy, numComplete, parent);
       }
 
@@ -778,7 +779,7 @@ unsigned int HUDComponent::RecursivelyAddTasks(const std::string &indent,
    if(curIndex < mTaskTextList.size())
    {
       // update the text for this task
-      const dtActors::TaskActor *task = dynamic_cast<const dtActors::TaskActor*>(taskProxy->GetActor());
+      const dtActors::TaskActor *task = static_cast<const dtActors::TaskActor*>(taskProxy->GetActor());
       if(task->IsComplete())
       {
          numCompleted++;
@@ -832,7 +833,7 @@ unsigned int HUDComponent::RecursivelyAddTasks(const std::string &indent,
       {
          for(unsigned int i = 0; i < children.size(); i++)
          {
-            const dtActors::TaskActorProxy *childProxy = dynamic_cast<const dtActors::TaskActorProxy*>(children[i].get());
+            const dtActors::TaskActorProxy *childProxy = static_cast<const dtActors::TaskActorProxy*>(children[i].get());
             totalNumAdded += RecursivelyAddTasks(indent + "     ", curIndex + totalNumAdded, childProxy, numCompleted, parent);
          }
       }
