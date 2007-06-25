@@ -15,7 +15,7 @@ CONFIG(debug, debug|release) {
 DEFINES -= UNICODE
 DESTDIR = ../../../bin
 
-LIBS += -L"$$(DELTA_LIB)"
+LIBS += -L"../../../lib;../../../ext/lib"
 
 SOURCES = Delta3DThread.cpp \
 	    main.cpp \
@@ -35,7 +35,7 @@ HEADERS = Delta3DThread.h \
           TrackScene.h \
           TrackItem.h
 
-INCLUDEPATH +=  "$$(DELTA_INC)"
+INCLUDEPATH +=  "../../../inc" "../../../ext/inc"
 
 VPATH = ../../../utilities/AnimationViewer/
 
