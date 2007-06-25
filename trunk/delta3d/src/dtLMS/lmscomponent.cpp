@@ -24,7 +24,6 @@
 #include <dtLMS/lmsmessagetype.h>
 #include <dtGame/message.h>
 #include <dtDAL/enginepropertytypes.h>
-#include <iostream>
 
 namespace dtLMS
 {
