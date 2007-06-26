@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="org.eclipse.ui.views.problem">
+		<section name="filter">
+			<item key="selectBySeverity" value="false"/>
+			<item key="contains" value="true"/>
+			<item key="selectionStatus" value="org.eclipse.core.resources.problemmarker:true:org.eclipse.pde.validation-marker:true:org.eclipse.jdt.core.buildpath_problem:true:org.eclipse.ant.ui.buildFileProblem:true:org.eclipse.jdt.core.problem:true:"/>
+			<item key="enabled" value="true"/>
+			<item key="severity" value="0"/>
+			<item key="filterOnMarkerLimit" value="true"/>
+			<item key="description" value=""/>
+			<item key="markerLimit" value="100"/>
+			<item key="onResource" value="0"/>
+		</section>
+		<section name="sorter">
+			<item key="defaultDirection2" value="1"/>
+			<item key="priority6" value="6"/>
+			<item key="defaultDirection1" value="1"/>
+			<item key="direction5" value="1"/>
+			<item key="defaultPriority3" value="4"/>
+			<item key="priority4" value="1"/>
+			<item key="direction4" value="1"/>
+			<item key="direction1" value="1"/>
+			<item key="defaultDirection4" value="1"/>
+			<item key="priority0" value="0"/>
+			<item key="defaultPriority1" value="3"/>
+			<item key="priority2" value="2"/>
+			<item key="direction6" value="1"/>
+			<item key="priority3" value="4"/>
+			<item key="defaultPriority0" value="0"/>
+			<item key="direction3" value="1"/>
+			<item key="defaultDirection6" value="1"/>
+			<item key="priority1" value="3"/>
+			<item key="priority5" value="5"/>
+			<item key="defaultDirection5" value="1"/>
+			<item key="direction2" value="1"/>
+			<item key="defaultPriority2" value="2"/>
+			<item key="defaultPriority5" value="5"/>
+			<item key="defaultPriority6" value="6"/>
+			<item key="defaultPriority4" value="1"/>
+			<item key="direction0" value="-1"/>
+			<item key="defaultDirection3" value="1"/>
+			<item key="defaultDirection0" value="-1"/>
+		</section>
+	</section>
+</section>
