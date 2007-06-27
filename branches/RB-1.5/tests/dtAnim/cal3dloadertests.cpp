@@ -54,7 +54,7 @@ namespace dtAnim
          void TestLoadFile()
          {
             std::string context = dtCore::GetDeltaRootPath() + "/examples/data/demoMap/SkeletalMeshes/";
-            std::string filename = "marine.xml";
+            std::string filename = "marine_test.xml";
             std::string animName = "Walk";
 
             mHelper->LoadModel(context + filename);
@@ -92,7 +92,7 @@ namespace dtAnim
             TestLoadedAnimationChannel(idleActionChannel, 4.5f, true, false);
 
             const Animatable* runWalkAnim = mixer->GetRegisteredAnimation("RunWalk");
-            TestLoadedAnimatable(runWalkAnim, "RunWalk", 1.0f, 2.0f, 2.3f, 1.0f, 1.0f);
+            TestLoadedAnimatable(runWalkAnim, "RunWalk", 0.1f, 0.2f, 0.2f, 1.0f, 1.0f);
 
             const AnimationSequence* runWalkSequence = dynamic_cast<const AnimationSequence*>(runWalkAnim);
             

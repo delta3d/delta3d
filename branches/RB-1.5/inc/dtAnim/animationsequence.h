@@ -34,7 +34,7 @@
 namespace dtAnim
 {
    class AnimationController;
-
+   class Cal3DModelWrapper;
 /**
 *  AnimationSequence derives from Animatable and contains a child list of 
 *  animations to play. The animations can be AnimationChannels or other 
@@ -61,7 +61,7 @@ public:
          * Constructor
          * @param the parent AnimatationSequence
          */
-         AnimationController(AnimationSequence*);
+         AnimationController(AnimationSequence&);
 
          ///copy constructor
          AnimationController(const AnimationController&);
@@ -71,8 +71,14 @@ public:
          ///classes derived from this should implement a custom Clone()
          virtual dtCore::RefPtr<AnimationController> Clone() const;
 
+         /// @return the parent AnimationSequence
+         AnimationSequence& GetParent();
+
+         /// @return the parent AnimationSequence
+         const AnimationSequence& GetParent() const;
+
          ///Sets the parent AnimationSequence
-         void SetParent(AnimationSequence*);
+         void SetParent(AnimationSequence&);
 
          /**
          * The Update function is responsible for updating all the parent
@@ -116,9 +122,6 @@ public:
 public:
    AnimationSequence();
    AnimationSequence(AnimationController*);
-   AnimationSequence(const AnimationSequence&);
-   AnimationSequence& operator=(const AnimationSequence&);
-
 
    /**
    *  Add an animation as a child of this sequence.
@@ -173,7 +176,7 @@ public:
    /**
    *  This function copies sequence and all child Animatables
    */
-   virtual dtCore::RefPtr<Animatable> Clone() const;
+   virtual dtCore::RefPtr<Animatable> Clone(Cal3DModelWrapper* modelWrapper) const;
 
    /**
    * Recalculate is called on PlayAnimation()
@@ -192,6 +195,11 @@ public:
 protected:
    /*virtual*/ ~AnimationSequence();
 
+   /// No one should be calling the copy canstructor except the clone method.
+   AnimationSequence(const AnimationSequence&, Cal3DModelWrapper* wrapper);
+
+   /// Hide this to prevent assigning
+   AnimationSequence& operator=(const AnimationSequence&);
 
 private:
 
