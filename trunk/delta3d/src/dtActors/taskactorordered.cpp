@@ -99,7 +99,9 @@ namespace dtActors
 
          //If we encounter a task before the task in question that has not yet been
          //completed, we cannot continue.
-         if (!static_cast<const TaskActor*>(task.GetActor())->IsComplete() && task.GetId() != childTask.GetId())
+         bool completed = static_cast<const TaskActor*>(task.GetActor())->IsComplete();
+         bool idsMatch  = task.GetId() != childTask.GetId();
+         if (!completed && idsMatch)
          {
             //Set the task that got rejected so a user can query for this a report
             //additional information.
