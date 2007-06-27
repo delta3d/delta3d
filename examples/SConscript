@@ -11,6 +11,7 @@ if env.get("buildExamples"):
             'testAI',
             'testAAR', 
             'testAudio',
+            'testAnim',
             'testBumpMap',
             'testCharacters',
             'testClouds',

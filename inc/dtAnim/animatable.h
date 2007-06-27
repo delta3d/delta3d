@@ -31,6 +31,7 @@
 
 namespace dtAnim
 {
+   class Cal3DModelWrapper;
 
    /**
     *  This class is used to specify the base class of an object which has semantics for 
@@ -130,7 +131,7 @@ namespace dtAnim
          /**
           *  This function is used to copy Animatables
           */
-         virtual dtCore::RefPtr<Animatable> Clone() const = 0;
+         virtual dtCore::RefPtr<Animatable> Clone(Cal3DModelWrapper* modelWrapper) const = 0;
 
 
          /**

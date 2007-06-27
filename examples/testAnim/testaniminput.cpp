@@ -99,7 +99,7 @@ bool TestAnimInput::HandleKeyPressed(const dtCore::Keyboard *keyBoard,
             if(!mIsWalking)
             {
                mAnimationHelper->ClearAll(0.25f);
-               mAnimationHelper->PlayAnimation("Walk");
+               mAnimationHelper->PlayAnimation("RunWalk");
                mIsWalking = true;
             }
             return false;

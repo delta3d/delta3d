@@ -26,19 +26,20 @@
 #include <dtAnim/animationsequence.h>
 #include <dtAnim/sequencemixer.h>
 #include <dtAnim/animationhelper.h>
+#include <dtAnim/cal3dmodelwrapper.h>
 #include <dtCore/globals.h>
 #include <dtCore/refptr.h>
 
 #include <osg/Math>
-#include <strstream>
+#include <sstream>
 
 #include <string>
 
 namespace dtAnim
 {
 
-      class TestAnimatable: public Animatable
-      {
+   class TestAnimatable: public Animatable
+   {
       public:
          TestAnimatable(){}
          TestAnimatable(const TestAnimatable& anim):Animatable(anim){}
@@ -47,7 +48,7 @@ namespace dtAnim
          void Update(float dt){};
          void ForceFadeOut(float time){}; 
          void Recalculate(){}
-         dtCore::RefPtr<Animatable> Clone()const{return new TestAnimatable(*this);}
+         dtCore::RefPtr<Animatable> Clone(Cal3DModelWrapper* pWrapper)const{return new TestAnimatable(*this);}
          void Prune(){}
 
          void SetStartTime2(float animStart1){ SetStartTime(animStart1);}
@@ -57,40 +58,41 @@ namespace dtAnim
          void SetBaseWeight2(float base1){ SetBaseWeight(base1);}
          void SetName2(const std::string& name1){ SetName(name1);}
          void SetStartDelay2(float start_delay1){ SetStartDelay(start_delay1);}
-         
+
          void SetElapsedTime2(float time){ SetElapsedTime(time);}
-      };
+   };
 
-      class TestSequence: public AnimationSequence
-      {
-      };
+   class TestSequence: public AnimationSequence
+   {
+   };
 
 
-      class TestController: public AnimationSequence::AnimationController
-      {
-         public:
-            TestController(AnimationSequence* pSeq): AnimationController(pSeq) {}
-            float TestComputeWeight(dtCore::RefPtr<TestAnimatable> anim)
-            {
-               SetComputeWeight(anim.get());
-               return anim->GetCurrentWeight();
-            }
-      };
+   class TestController: public AnimationSequence::AnimationController
+   {
+      public:
+         TestController(AnimationSequence& pSeq): AnimationController(pSeq) {}
+         float TestComputeWeight(dtCore::RefPtr<TestAnimatable> anim)
+         {
+            SetComputeWeight(anim.get());
+            return anim->GetCurrentWeight();
+         }
+   };
 
 
 
    class AnimationTests : public CPPUNIT_NS::TestFixture
    {
+      
       CPPUNIT_TEST_SUITE( AnimationTests );
-         CPPUNIT_TEST( TestAnimWrapper );
-         CPPUNIT_TEST( UnitTestAnimatable );
-         CPPUNIT_TEST( TestAnimChannel );
-         CPPUNIT_TEST( TestAnimSequence );
-         CPPUNIT_TEST( TestSequenceMixer );
-         CPPUNIT_TEST( TestAnimHelper );
-         CPPUNIT_TEST( TestAnimController );
+      CPPUNIT_TEST( TestAnimWrapper );
+      CPPUNIT_TEST( UnitTestAnimatable );
+      CPPUNIT_TEST( TestAnimChannel );
+      CPPUNIT_TEST( TestAnimSequence );
+      CPPUNIT_TEST( TestSequenceMixer );
+      CPPUNIT_TEST( TestAnimHelper );
+      CPPUNIT_TEST( TestAnimController );
       CPPUNIT_TEST_SUITE_END();
-
+      
       public:
          void setUp();
          void tearDown();
@@ -140,6 +142,10 @@ namespace dtAnim
    void AnimationTests::setUp()
    {      
       mHelper = new AnimationHelper();
+      std::string context = dtCore::GetDeltaRootPath() + "/examples/data/demoMap/SkeletalMeshes/";
+      std::string filename = "marine_test.xml";
+
+      mHelper->LoadModel(context + filename); 
 
       animStart1 = 1.0f;
       animEnd1 = 2.0f;
@@ -192,19 +198,19 @@ namespace dtAnim
       int wrapperID = 101;
       float duration = 1000.0f;
       float speed = 2.0f;
-      
+
       dtCore::RefPtr<AnimationWrapper> wrapper = new AnimationWrapper(wrapperName, wrapperID);
 
       wrapper->SetDuration(duration);
       wrapper->SetSpeed(speed);
-       
+
       CPPUNIT_ASSERT_EQUAL(wrapperName, wrapper->GetName());
       CPPUNIT_ASSERT_EQUAL(wrapperID, wrapper->GetID());
       CPPUNIT_ASSERT_EQUAL(duration, wrapper->GetDuration());
       CPPUNIT_ASSERT_EQUAL(speed, wrapper->GetSpeed());
    }
 
-   
+
    void AnimationTests::UnitTestAnimatable()
    {
       CPPUNIT_ASSERT_EQUAL(name1, mAnimatable1->GetName());
@@ -239,7 +245,7 @@ namespace dtAnim
       CPPUNIT_ASSERT(!pCopyOp->IsActive());
 
       //test clone
-      dtCore::RefPtr<Animatable> pClone = mAnimatable1->Clone();
+      dtCore::RefPtr<Animatable> pClone = mAnimatable1->Clone(mHelper->GetModelWrapper());
 
       CPPUNIT_ASSERT_EQUAL(name1, pClone->GetName());
       CPPUNIT_ASSERT_EQUAL(animStart1, pClone->GetStartTime());
@@ -250,31 +256,69 @@ namespace dtAnim
       CPPUNIT_ASSERT(!pClone->IsActive());
    }
 
-   
+
    void AnimationTests::TestAnimChannel()
    {
 
-      
+
    }
 
-   
    void AnimationTests::TestAnimSequence()
    {
-
       dtCore::RefPtr<AnimationSequence> pSeq = new AnimationSequence();
+
+      std::string animName = "Walk";
+
+      SequenceMixer* mixer = mHelper->GetSequenceMixer();
+      const Animatable* anim = mixer->GetRegisteredAnimation(animName);
+      CPPUNIT_ASSERT(anim != NULL);
+      
+      dtCore::RefPtr<AnimationSequence> pChildSeq = new AnimationSequence();
+      CPPUNIT_ASSERT(pChildSeq.get() == &pChildSeq->GetController()->GetParent());
+      std::string childSeqName("childSequence");
+      pChildSeq->SetName(childSeqName);
+      pChildSeq->AddAnimation(anim->Clone(NULL).get());
       
       CPPUNIT_ASSERT_EQUAL(size_t(0), pSeq->GetChildAnimations().size());
-      
-      pSeq->AddAnimation(mAnimatable1.get());
+
+      pSeq->AddAnimation(anim->Clone(NULL).get());
       CPPUNIT_ASSERT_EQUAL(size_t(1), pSeq->GetChildAnimations().size());
 
       pSeq->AddAnimation(mAnimatable2.get());
       CPPUNIT_ASSERT_EQUAL(size_t(2), pSeq->GetChildAnimations().size());
 
-      CPPUNIT_ASSERT_EQUAL(pSeq->GetAnimation(name1), (Animatable*) mAnimatable1.get());
-      CPPUNIT_ASSERT_EQUAL(pSeq->GetAnimation(name2), (Animatable*) mAnimatable2.get());
-   }
+      pSeq->AddAnimation(pChildSeq.get());
+      CPPUNIT_ASSERT_EQUAL(size_t(3), pSeq->GetChildAnimations().size());
+      
+      // Had to cast the first parameter to const to make the underlying template work. 
+      CPPUNIT_ASSERT(pSeq->GetAnimation(animName) != NULL);
+      CPPUNIT_ASSERT_EQUAL(pSeq->GetAnimation(name2), static_cast<Animatable*>(mAnimatable2.get()));
 
+      dtCore::RefPtr<AnimationSequence> clonedSeq = static_cast<AnimationSequence*>(pSeq->Clone(mHelper->GetModelWrapper()).get());
+      
+      CPPUNIT_ASSERT_EQUAL(pSeq->GetChildAnimations().size(), clonedSeq->GetChildAnimations().size());
+      CPPUNIT_ASSERT(clonedSeq.get() == &clonedSeq->GetController()->GetParent());
+      
+      AnimationChannel* clonedAnim1 = dynamic_cast<AnimationChannel*>(clonedSeq->GetAnimation(animName));
+      Animatable* clonedAnim2 = clonedSeq->GetAnimation(name2);
+      AnimationSequence* clonedChildSeq = dynamic_cast<AnimationSequence*>(clonedSeq->GetAnimation(childSeqName));
+
+      CPPUNIT_ASSERT(clonedAnim1 != NULL);
+      CPPUNIT_ASSERT(clonedAnim2 != NULL);
+      CPPUNIT_ASSERT(clonedChildSeq != NULL);
+
+      CPPUNIT_ASSERT_EQUAL(clonedAnim1->GetModel(), mHelper->GetModelWrapper());
+
+      /// The parent of the controller should be the sequence that owns it.
+      CPPUNIT_ASSERT(clonedChildSeq == &clonedChildSeq->GetController()->GetParent());
+
+      /// Test the child sequence to see if it was cloned correctly.
+      CPPUNIT_ASSERT_EQUAL(pChildSeq->GetChildAnimations().size(), clonedChildSeq->GetChildAnimations().size());
+      clonedAnim1 = dynamic_cast<AnimationChannel*>(clonedChildSeq->GetAnimation(animName));
+      CPPUNIT_ASSERT(clonedAnim1 != NULL);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The Model wrapper should cascade throughout the cloned animation sequence.", clonedAnim1->GetModel(), mHelper->GetModelWrapper());
+   }
+   
    void AnimationTests::TestSequenceMixer()
    {
 
@@ -286,7 +330,8 @@ namespace dtAnim
 
       //test fade in and out
       dtCore::RefPtr<TestSequence> seq = new TestSequence();
-      dtCore::RefPtr<TestController> cont = new TestController(seq.get());
+      dtCore::RefPtr<TestController> cont = new TestController(*seq);
+      CPPUNIT_ASSERT(&cont->GetParent() == seq.get());
       dtCore::RefPtr<TestAnimatable> anim = new TestAnimatable();
 
       //first pass, this one will be the easy base case
@@ -297,7 +342,7 @@ namespace dtAnim
       anim->SetFadeIn2(1.0f);
       anim->SetFadeOut2(1.0f);
       anim->SetBaseWeight2(1.0f);
-           
+
       //if we arent playing it should be 0.0
       anim->SetElapsedTime2(0.0f);
       float expected = 0.0f;
@@ -375,27 +420,23 @@ namespace dtAnim
       SetExpectedString(ss, expected, result);
       CPPUNIT_ASSERT_MESSAGE(ss.str(), osg::equivalent(expected, result));
    }
- 
+
    void AnimationTests::TestAnimHelper()
    {
-      std::string context = dtCore::GetDeltaRootPath() + "/examples/data/demoMap/SkeletalMeshes/";
-      std::string filename = "marine.xml";
       std::string animName = "Walk";
 
-      mHelper->LoadModel(context + filename); 
- 
       SequenceMixer* mixer = mHelper->GetSequenceMixer();
       const Animatable* anim = mixer->GetRegisteredAnimation(animName);
       CPPUNIT_ASSERT(anim != NULL);
-      
+
       mHelper->PlayAnimation(animName);
 
       Animatable* activeAnim = mixer->GetActiveAnimation(animName);
 
       CPPUNIT_ASSERT_EQUAL(animName, activeAnim->GetName());
-      
+
       CPPUNIT_ASSERT_EQUAL(false, activeAnim->IsActive());
-       
+
       activeAnim->SetStartDelay(3.0f);
       mixer->ForceRecalculate();
       CPPUNIT_ASSERT_EQUAL(false, activeAnim->IsActive());
@@ -410,14 +451,14 @@ namespace dtAnim
       CPPUNIT_ASSERT_EQUAL(true, activeAnim->IsActive());
 
       CPPUNIT_ASSERT_EQUAL(3.0f, activeAnim->GetElapsedTime());
- 
+
       dtCore::RefPtr<AnimationChannel> activeChannel = dynamic_cast<AnimationChannel*>(activeAnim);
       CPPUNIT_ASSERT(activeChannel.valid());
 
       activeChannel->SetMaxDuration(3.5f);
       mixer->ForceRecalculate();
       mHelper->Update(3.5f);
-      
+
       CPPUNIT_ASSERT_EQUAL(false, activeChannel->IsActive());
 
       CPPUNIT_ASSERT(mixer->GetActiveAnimation(animName) == 0); 
@@ -430,7 +471,7 @@ namespace dtAnim
       //CPPUNIT_ASSERT(activeChannel.valid());
 
       //activeChannel->SetLooping(false);
-   
+
 
    }
 }

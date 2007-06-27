@@ -35,8 +35,8 @@ AnimationChannel::AnimationChannel()
 , mIsLooping(true)
 , mMaxDuration(0.0f)
 , mLastWeight(0.0f)
-, mModelWrapper(0)
-, mAnimationWrapper(0)
+, mModelWrapper(NULL)
+, mAnimationWrapper(NULL)
 {
 }
 
@@ -65,7 +65,6 @@ AnimationChannel::AnimationChannel(const AnimationChannel& pChannel)
 , mModelWrapper(pChannel.mModelWrapper)
 , mAnimationWrapper(pChannel.mAnimationWrapper)
 {
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -83,9 +82,11 @@ AnimationChannel& AnimationChannel::operator=(const AnimationChannel& pChannel)
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-dtCore::RefPtr<Animatable> AnimationChannel::Clone() const
+dtCore::RefPtr<Animatable> AnimationChannel::Clone(Cal3DModelWrapper* wrapper) const
 {
-   return new AnimationChannel(*this);
+   dtCore::RefPtr<AnimationChannel> channel = new AnimationChannel(*this);
+   channel->SetModel(wrapper);
+   return dtCore::RefPtr<Animatable>(channel.get());
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -93,6 +94,12 @@ void AnimationChannel::SetAnimation(AnimationWrapper* pAnimation)
 { 
    mAnimationWrapper = pAnimation;
 }
+
+/////////////////////////////////////////////////////////////////////////////////
+Cal3DModelWrapper* AnimationChannel::GetModel() { return mModelWrapper.get(); }
+
+/////////////////////////////////////////////////////////////////////////////////
+const Cal3DModelWrapper* AnimationChannel::GetModel() const { return mModelWrapper.get(); }
 
 /////////////////////////////////////////////////////////////////////////////////
 void AnimationChannel::SetModel(Cal3DModelWrapper* pWrapper)

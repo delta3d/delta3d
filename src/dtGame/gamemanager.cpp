@@ -635,8 +635,8 @@ namespace dtGame
       {
          if(i->get() == &component)
          {
-            component.OnRemovedFromGM();
             component.SetGameManager(NULL);
+            component.OnRemovedFromGM();
             mComponentList.erase(i);
             return;
          }
@@ -785,8 +785,8 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::AddActor(GameActorProxy& gameActorProxy, bool isRemote, bool publish)
    {
+      gameActorProxy.SetGameManager(this);
       gameActorProxy.SetRemote(isRemote);
-      gameActorProxy.SetIsInGM(true);
 
       if(mEnvironment != NULL)
       {
@@ -820,7 +820,17 @@ namespace dtGame
       if (publish)
          PublishActor(gameActorProxy);
 
-      gameActorProxy.InvokeEnteredWorld();
+      gameActorProxy.SetIsInGM(true);
+      try
+      {
+         gameActorProxy.InvokeEnteredWorld();         
+      }
+      catch (const dtUtil::Exception& ex)
+      {
+         ex.LogException(dtUtil::Log::LOG_ERROR, *mLogger);
+         DeleteActor(gameActorProxy);
+         throw ex;
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -968,7 +978,7 @@ namespace dtGame
 
          // Now that all the old actors are removed add them back to the scene
          // Also invalidate the delete environment parent by calling Emancipate
-         for(unsigned int i = 0; i < actors.size(); ++i)
+         for(size_t i = 0; i < actors.size(); ++i)
          {
             mScene->AddDrawable(actors[i]);
          }
@@ -1744,11 +1754,9 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::Shutdown()
    {
-      std::vector<GMComponent*> components;
-      GetAllComponents(components);
-      for(size_t i = 0; i < components.size(); i++)
+      while(!mComponentList.empty())
       {
-         RemoveComponent(*components[i]);
+         RemoveComponent(*mComponentList.back());
       }
       
       mDebugLoggerInformation.clear();
@@ -1764,17 +1772,16 @@ namespace dtGame
       }
 
       DeleteAllActors(true);
-      
-      mMapChangeStateData = NULL;
-      mApplication        = NULL;
-      mMachineInfo        = NULL;
-      mLibMgr = NULL;
-      mScene  = NULL;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::DebugStatisticsPrintOut(const float realTimeElapsed)
    {
+      // Lots of divides and unnecessary stuff in here to do if we don't need to
+      // Just return. 
+      if(!mDoStatsOnTheComponents && !mDoStatsOnTheActors)
+         return;
+
       // real time is milliseconds. Convert to seconds (*1000) and then trunc to 4 digits 
       float truncRealTime = ((int)(realTimeElapsed / 10.0)) / 100000.0; 
       float truncCumGMTime = ((int)((float) mStatsCumGMProcessTime / 10.0)) / 100000.0; 
