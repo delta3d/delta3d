@@ -31,7 +31,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="boost_python-vc71-mt-1_34.lib python25.lib dtAI.lib osg.lib dtCore.lib"
+				AdditionalDependencies="boost_python-vc71-mt.lib python25.lib dtAI.lib osg.lib dtCore.lib"
 				OutputFile="../../../bin\PyDtAI.pyd"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
