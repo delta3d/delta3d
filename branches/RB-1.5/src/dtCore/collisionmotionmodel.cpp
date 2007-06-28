@@ -427,7 +427,13 @@ void CollisionMotionModel::OnMessage(MessageData *data)
       IsEnabled() && 
       data->message == "preframe")
    {
-      const double deltaFrameTime = static_cast<const double*>(data->userData)[1];
+      double deltaFrameTime = static_cast<double*>(data->userData)[1];
+
+      //clamp the frame time in case we get a frame hiccup
+      if(deltaFrameTime > 0.1f)
+      {
+         deltaFrameTime = 0.1f;
+      }
 
       Transform transform;
       GetTarget()->GetTransform(transform);
