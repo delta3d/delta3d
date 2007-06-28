@@ -76,16 +76,6 @@ InputComponent::InputComponent(const std::string &name) :
 
 InputComponent::~InputComponent()
 {
-   if(mBellSound != NULL && dtAudio::AudioManager::GetManager() != NULL)
-      dtAudio::AudioManager::GetInstance().FreeSound(mBellSound);
-   if(mDebriefSound != NULL && dtAudio::AudioManager::GetManager() != NULL)
-      dtAudio::AudioManager::GetInstance().FreeSound(mDebriefSound);
-   if(mWalkSound != NULL && dtAudio::AudioManager::GetManager() != NULL)
-      dtAudio::AudioManager::GetInstance().FreeSound(mWalkSound);
-   if(mRunSound != NULL && dtAudio::AudioManager::GetManager() != NULL)
-      dtAudio::AudioManager::GetInstance().FreeSound(mRunSound);
-   if(mCrouchSound != NULL && dtAudio::AudioManager::GetManager() != NULL)
-      dtAudio::AudioManager::GetInstance().FreeSound(mCrouchSound);
 }
 
 void InputComponent::ProcessMessage(const dtGame::Message &message)
@@ -646,4 +636,16 @@ void InputComponent::ProcessTasks()
          }
       }
    }
+}
+
+void InputComponent::OnRemovedFromGM()
+{
+   //assuming this is our cue to clean up after ourself
+   dtAudio::AudioManager &mgr = dtAudio::AudioManager::GetInstance();
+
+   if(mBellSound != NULL)    mgr.FreeSound(mBellSound);
+   if(mDebriefSound != NULL) mgr.FreeSound(mDebriefSound);
+   if(mWalkSound != NULL)    mgr.FreeSound(mWalkSound);
+   if(mRunSound != NULL)     mgr.FreeSound(mRunSound);
+   if(mCrouchSound != NULL)  mgr.FreeSound(mCrouchSound);
 }
