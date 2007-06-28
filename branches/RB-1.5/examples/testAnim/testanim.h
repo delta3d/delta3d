@@ -67,9 +67,11 @@ class TEST_ANIM_EXPORT TestAnim : public dtGame::GameEntryPoint
        */
       virtual void OnStartup();
 
+      virtual void OnShutdown();
+
    private:
 
-      dtCore::RefPtr<dtAnim::AnimationHelper> mAnimationHelper;
+      dtCore::RefPtr<dtAnim::AnimationHelper> mAnimationHelper;     
       dtCore::RefPtr<dtCore::CollisionMotionModel> mCMM;
 };
 
