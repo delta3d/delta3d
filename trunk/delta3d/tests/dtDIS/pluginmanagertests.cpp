@@ -61,30 +61,34 @@ CPPUNIT_TEST_SUITE_REGISTRATION( PluginManagerTests );
 
 void PluginManagerTests::TestLoadUnload()
 {
-   dtDIS::PluginManager plug_mgr;
+   dtDIS::PluginManager plugMgr;
 
-   std::string plug_name("plugins/Plugin_EntityStatePdu.dll");
+   std::string pluginBaseName("Plugin_EntityStatePdu");
+   
+   std::string pluginPlatformDependentName(dtUtil::LibrarySharingManager::GetPlatformSpecificLibraryName(pluginBaseName));
+   
+   std::string plugName("plugins/" + pluginPlatformDependentName);
 
    // test observability
    dtCore::RefPtr<dtTest::LibRegObserver> lrObs = new dtTest::LibRegObserver();
-   plug_mgr.GetLoadedSignal().connect_slot( lrObs.get() , &dtTest::LibRegObserver::OnLoaded );
-   plug_mgr.GetUnloadedSignal().connect_slot( lrObs.get() , &dtTest::LibRegObserver::OnUnloaded );
+   plugMgr.GetLoadedSignal().connect_slot( lrObs.get() , &dtTest::LibRegObserver::OnLoaded );
+   plugMgr.GetUnloadedSignal().connect_slot( lrObs.get() , &dtTest::LibRegObserver::OnUnloaded );
 
-   CPPUNIT_ASSERT( plug_mgr.LoadPlugin( plug_name ) );
+   CPPUNIT_ASSERT( plugMgr.LoadPlugin( plugName ) );
    CPPUNIT_ASSERT( lrObs->mLoadedHit );
 
-   CPPUNIT_ASSERT( plug_mgr.UnloadPlugin( plug_name ) );
+   CPPUNIT_ASSERT( plugMgr.UnloadPlugin( plugName ) );
    CPPUNIT_ASSERT( lrObs->mUnloadedHit );
 
    // try it again to use the UnloadAllPlugins function
    lrObs->mLoadedHit = true;
    lrObs->mUnloadedHit = true;
-   CPPUNIT_ASSERT( plug_mgr.LoadPlugin( plug_name ) );
+   CPPUNIT_ASSERT( plugMgr.LoadPlugin( plugName ) );
    CPPUNIT_ASSERT( lrObs->mLoadedHit );
 
-   plug_mgr.UnloadAllPlugins();
+   plugMgr.UnloadAllPlugins();
    CPPUNIT_ASSERT( lrObs->mUnloadedHit );
 
-   CPPUNIT_ASSERT_EQUAL( plug_mgr.GetRegistry().size() , size_t(0) );
+   CPPUNIT_ASSERT_EQUAL( plugMgr.GetRegistry().size() , size_t(0) );
 }
 

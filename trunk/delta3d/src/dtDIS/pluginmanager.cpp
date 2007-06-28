@@ -10,8 +10,12 @@ bool PluginManager::LoadPlugin(const std::string& path)
 {
    // load the library
    dtUtil::LibrarySharingManager& lsm = dtUtil::LibrarySharingManager::GetInstance();
-   std::string candidate = osgDB::getNameLessExtension(path);
+   std::string fileName = osgDB::getSimpleFileName(path);
+   std::string dir = osgDB::getFilePath(path);
+   lsm.AddToSearchPath(dir);
 
+   std::string candidate = lsm.GetPlatformIndependentLibraryName(fileName);
+   
    // ugly correction for library loading tool.
 #ifdef _DEBUG
    if( *(candidate.rbegin()) == 'd' )   // if last letter == 'd'
