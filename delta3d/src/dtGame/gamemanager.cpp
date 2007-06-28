@@ -509,7 +509,7 @@ namespace dtGame
             // TODO - This should be refactored like we did for the Global Invokables a few lines up. It should work with the map directly instead of filling lists repeatedly
             std::vector<std::pair<GameActorProxy*, std::string > > toFill;
             GetRegistrantsForMessagesAboutActor(message->GetMessageType(), message->GetAboutActorId(), toFill);
-            unsigned int toFillSize = toFill.size(); // checking size on vector is slow :(
+            unsigned int toFillSize = toFill.size(); 
             for (unsigned i = 0; i < toFillSize; ++i)
             {
                std::pair<GameActorProxy*, std::string >& listener = toFill[i];
@@ -546,7 +546,7 @@ namespace dtGame
       }
 
       // DELETE ACTORS
-      unsigned int deleteListSize = mDeleteList.size(); // checking size on vector is slow :(
+      unsigned int deleteListSize = mDeleteList.size();
       for (unsigned int i = 0; i < deleteListSize; ++i)
       {
          GameActorProxy& gameActorProxy = *mDeleteList[i];
@@ -785,6 +785,11 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::AddActor(GameActorProxy& gameActorProxy, bool isRemote, bool publish)
    {
+      //Fail early here so that it doesn't fail is PublishActor and need to wait a tick to
+      //clean up the actor.
+      if (publish && isRemote)
+         throw dtUtil::Exception(ExceptionEnum::ACTOR_IS_REMOTE, "A remote game actor may not be published", __FILE__, __LINE__);
+
       gameActorProxy.SetGameManager(this);
       gameActorProxy.SetRemote(isRemote);
 
@@ -817,12 +822,14 @@ namespace dtGame
          gameActorProxy.PopulateActorUpdate(static_cast<ActorUpdateMessage&>(*msg));
          SendMessage(*msg);
       }
-      if (publish)
-         PublishActor(gameActorProxy);
 
       gameActorProxy.SetIsInGM(true);
       try
       {
+         //If publishing fails. we need to delete the actor as well.
+         if (publish)
+            PublishActor(gameActorProxy);
+
          gameActorProxy.InvokeEnteredWorld();         
       }
       catch (const dtUtil::Exception& ex)
@@ -1008,12 +1015,12 @@ namespace dtGame
          id = itor->first;
          GameActorProxy& gameActorProxy = *itor->second;
          mDeleteList.push_back(itor->second);
+         gameActorProxy.SetIsInGM(false);
+
          // Remote actors are deleted in response to a delete message, so sending another is silly.
          // Also, this doen't currently send messages when closing a map, so check here for that state.
          if (!gameActorProxy.IsRemote() && mMapChangeStateData->GetCurrentState() == MapChangeStateData::MapChangeState::IDLE)
          {
-            gameActorProxy.SetIsInGM(false);
-
             dtCore::RefPtr<Message> msg = mFactory.CreateMessage(MessageType::INFO_ACTOR_DELETED);
             msg->SetAboutActorId(id);
 
@@ -1400,61 +1407,35 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   void GameManager::ClearTimerSingleSet(std::set<TimerInfo>& timerSet, 
+         const std::string& name, const GameActorProxy *proxy)
+   {
+      std::set<TimerInfo>::iterator i = timerSet.begin();
+      while (i != timerSet.end())
+      {
+         std::set<TimerInfo>::iterator toDelete;
+         const TimerInfo& timer = *i;
+         if (timer.name == name &&  (proxy == NULL || timer.aboutActor == proxy->GetId()))
+         {
+            toDelete = i;
+            ++i;
+            timerSet.erase(toDelete);
+         }
+         else
+            ++i;
+      }      
+   }
+   
+   ///////////////////////////////////////////////////////////////////////////////
    void GameManager::ClearTimer(const std::string& name, const GameActorProxy *proxy)
    {
-      std::set<TimerInfo>::iterator i = mRealTimeTimers.begin();
-      while (i != mRealTimeTimers.end())
-      {
-         std::set<TimerInfo>::iterator toDelete;
-         if (proxy == NULL)
-         {
-            if (i->name == name)
-            {
-               toDelete = i;
-               ++i;
-               mRealTimeTimers.erase(toDelete);
-            }
-            else
-               ++i; // avoid infinite loop
-         }
-         else if(i->aboutActor == proxy->GetId() && i->name == name)
-         {
-            toDelete = i;
-            ++i;
-            mRealTimeTimers.erase(toDelete);
-         }
-         else
-            ++i;
-      }
-
-      i = mSimulationTimers.begin();
-      while (i != mSimulationTimers.end())
-      {
-         std::set<TimerInfo>::iterator toDelete;
-         if (proxy == NULL)
-         {
-            if (i->name == name)
-            {
-               toDelete = i;
-               ++i;
-               mSimulationTimers.erase(toDelete);
-            }
-            else
-               ++i; // avoid infinite loop
-         }
-         else if(i->aboutActor == proxy->GetId() && i->name == name)
-         {
-            toDelete = i;
-            ++i;
-            mSimulationTimers.erase(toDelete);
-         }
-         else
-            ++i;
-      }
-   }
+      ClearTimerSingleSet(mRealTimeTimers, name, proxy);
+      ClearTimerSingleSet(mSimulationTimers, name, proxy);
+    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::GetRegistrantsForMessages(const MessageType& type, std::vector<std::pair<GameActorProxy*, std::string > >& toFill) const
+   void GameManager::GetRegistrantsForMessages(const MessageType& type, 
+         std::vector<std::pair<GameActorProxy*, std::string > >& toFill) const
    {
       toFill.clear();
       toFill.reserve(mGlobalMessageListeners.size());
@@ -1516,7 +1497,6 @@ namespace dtGame
          {
             ++itor;
          }
-
       }
    }
 

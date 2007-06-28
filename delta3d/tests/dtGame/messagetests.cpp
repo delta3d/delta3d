@@ -1230,7 +1230,7 @@ void MessageTests::TestChangeMap()
       SLEEP(10);
       dtCore::System::GetInstance().Step();
       mGameManager->GetAllActors(toFill);
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of actors in the GM should match the map.", numActors, toFill.size());
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of actors in the GM should match the map minus one for the Crash Actor.", numActors - 1, toFill.size());
 
       processMapLoadedMsg = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_LOADED);
       CPPUNIT_ASSERT_MESSAGE("A map loaded message should have been processed.", processMapLoadedMsg.valid());
@@ -1265,26 +1265,34 @@ void MessageTests::TestChangeMap()
       dtCore::System::GetInstance().Step();
 
       processMapUnloadedMsg = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_UNLOAD_BEGIN);
-      CPPUNIT_ASSERT_MESSAGE("An INFO_MAP_UNLOAD_BEGIN message should have been processed.", processMapUnloadedMsg.valid());
+      CPPUNIT_ASSERT_MESSAGE("An INFO_MAP_UNLOAD_BEGIN message should have been processed.", 
+            processMapUnloadedMsg.valid());
       mapLoadedMsg = static_cast<const dtGame::MapLoadedMessage*>(processMapUnloadedMsg.get());
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("The unloaded Map name in the message should be " + mapName,  mapName, mapLoadedMsg->GetLoadedMapName());
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The unloaded Map name in the message should be " + mapName,
+            mapName, mapLoadedMsg->GetLoadedMapName());
 
       processMapUnloadedMsg = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_UNLOADED);
-      CPPUNIT_ASSERT_MESSAGE("An INFO_MAP_UNLOADED message should have been processed.", processMapUnloadedMsg.valid());
+      CPPUNIT_ASSERT_MESSAGE("An INFO_MAP_UNLOADED message should have been processed.", 
+            processMapUnloadedMsg.valid());
       mapLoadedMsg = static_cast<const dtGame::MapLoadedMessage*>(processMapUnloadedMsg.get());
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("The unloaded Map name in the message should be " + mapName,  mapName, mapLoadedMsg->GetLoadedMapName());
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The unloaded Map name in the message should be " + mapName,  
+            mapName, mapLoadedMsg->GetLoadedMapName());
 
       processMapChange = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_CHANGE_BEGIN);
-      CPPUNIT_ASSERT_MESSAGE("An INFO_MAP_CHANGE_BEGIN message should have been processed.", processMapChange.valid());
+      CPPUNIT_ASSERT_MESSAGE("An INFO_MAP_CHANGE_BEGIN message should have been processed.", 
+            processMapChange.valid());
 
       processMapLoadedMsg = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_LOAD_BEGIN);
-      CPPUNIT_ASSERT_MESSAGE("An INFO_MAP_LOAD_BEGIN message should have been processed.", processMapLoadedMsg.valid());
+      CPPUNIT_ASSERT_MESSAGE("An INFO_MAP_LOAD_BEGIN message should have been processed.", 
+            processMapLoadedMsg.valid());
 
       processMapLoadedMsg = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_LOADED);
-      CPPUNIT_ASSERT_MESSAGE("An INFO_MAP_LOADED message should NOT have been processed.", !processMapLoadedMsg.valid());
+      CPPUNIT_ASSERT_MESSAGE("An INFO_MAP_LOADED message should NOT have been processed.", 
+            !processMapLoadedMsg.valid());
 
       processMapChange = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_CHANGED);
-      CPPUNIT_ASSERT_MESSAGE("A INFO_MAP_CHANGED message should NOT have been processed.", !processMapChange.valid());
+      CPPUNIT_ASSERT_MESSAGE("A INFO_MAP_CHANGED message should NOT have been processed.", 
+            !processMapChange.valid());
 
       mGameManager->GetAllActors(toFill);
 
@@ -1295,7 +1303,8 @@ void MessageTests::TestChangeMap()
 
       mGameManager->GetAllActors(toFill);
 
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of actors in the GM should match the second map.", numActors2, toFill.size());
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of actors in the GM should match the second map minus one for the Crash Actor.", 
+            numActors2 - 1, toFill.size());
 
       processMapLoadedMsg = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_LOADED);
       CPPUNIT_ASSERT_MESSAGE("A map loaded message should have been processed.", processMapLoadedMsg.valid());
