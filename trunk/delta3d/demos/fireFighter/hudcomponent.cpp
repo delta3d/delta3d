@@ -732,36 +732,43 @@ void HUDComponent::UpdateMediumDetailData(CEGUI::Window *parent)
       unsigned int numAdded = 0;
       unsigned int numComplete = 0;
 
-      dtGame::GMComponent *comp = GetGameManager()->GetComponentByName();
+      dtGame::GMComponent *comp = GetGameManager()->GetComponentByName("LMSComponent");
       dtGame::TaskComponent *mTaskComponent = static_cast<dtGame::TaskComponent*>(comp);
       
-      mTaskComponent->GetTopLevelTasks(tasks);
-
-      // start our recursive method on each top level task
-      for(unsigned int i = 0; i < tasks.size(); i++)
+      if(mTaskComponent)
       {
-         dtActors::TaskActorProxy *taskProxy = static_cast<dtActors::TaskActorProxy*>(tasks[i].get());
-         numAdded += RecursivelyAddTasks("", numAdded, taskProxy, numComplete, parent);
-      }
+         mTaskComponent->GetTopLevelTasks(tasks);
 
-      // blank out any of our placeholder task text controls that were left over
-      if(parent == mHUDBackground)
-      {
-         for(unsigned int i = numAdded; i < mTaskTextList.size(); i++)
-            UpdateStaticText(mTaskTextList[i], "");
+         // start our recursive method on each top level task
+         for(unsigned int i = 0; i < tasks.size(); i++)
+         {
+            dtActors::TaskActorProxy *taskProxy = static_cast<dtActors::TaskActorProxy*>(tasks[i].get());
+            numAdded += RecursivelyAddTasks("", numAdded, taskProxy, numComplete, parent);
+         }
+
+         // blank out any of our placeholder task text controls that were left over
+         if(parent == mHUDBackground)
+         {
+            for(unsigned int i = numAdded; i < mTaskTextList.size(); i++)
+               UpdateStaticText(mTaskTextList[i], "");
+         }
+         else
+         {
+            for(unsigned int i = numAdded; i < mDebriefList.size(); i++)
+               UpdateStaticText(mDebriefList[i], "");
+         }
+
+         // update our task header
+         oss << "Tasks (" << numComplete << " of " << numAdded << ")";
+         if(numComplete < numAdded)
+            UpdateStaticText(mTasksHeaderText, oss.str(), 1.0f, 1.0f, 1.0f);
+         else
+            UpdateStaticText(mTasksHeaderText, oss.str(), 0.0f, 1.0f, 0.0f);
       }
       else
       {
-         for(unsigned int i = numAdded; i < mDebriefList.size(); i++)
-            UpdateStaticText(mDebriefList[i], "");
+         throw dtUtil::Exception(dtGame::ExceptionEnum::INVALID_PARAMETER, "Unable to find LMSComponent", __FILE__, __LINE__);
       }
-
-      // update our task header
-      oss << "Tasks (" << numComplete << " of " << numAdded << ")";
-      if(numComplete < numAdded)
-         UpdateStaticText(mTasksHeaderText, oss.str(), 1.0f, 1.0f, 1.0f);
-      else
-         UpdateStaticText(mTasksHeaderText, oss.str(), 0.0f, 1.0f, 0.0f);
    }
 }
 
