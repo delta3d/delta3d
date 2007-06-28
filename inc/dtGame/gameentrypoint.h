@@ -77,13 +77,11 @@ namespace dtGame
          /**
           * Called after all startup related code is run.  At this point, the
           * dtGame::GameApplication has been configured and ready to be used.
-          * @param gameManager The game manager to init
           */
          virtual void OnStartup() = 0;
 
          /**
           * Called when the app is shut down
-          * @param gameManager The game manager to destroy
           */
          virtual void OnShutdown() { }
 
