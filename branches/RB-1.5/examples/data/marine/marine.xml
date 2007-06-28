@@ -21,8 +21,8 @@
 		<fadeout>0.0</fadeout>
 		<speed>1.0</speed>
 		<baseweight>1.0</baseweight>
+		<maxduration>0.0</maxduration>
 		<isaction>0</isaction>
 		<islooping>1</islooping>
-		<maxduration>0.0</maxduration>
 	</animationchannel>
 </character>
