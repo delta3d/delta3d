@@ -125,8 +125,9 @@ void MasterComponent::ProcessMessage(const dtGame::Message& msg)
       // read the incoming packets
       const unsigned int MTU = 1500;
       char buffer[MTU];
-      size_t recvd( 0 );
-      if( recvd = mConnection.Receive( buffer , MTU ) )
+      size_t recvd(0);
+      recvd = mConnection.Receive(buffer , MTU);
+      if (recvd != 0)
       {
          mIncomingMessage.Process( buffer , recvd , DIS::BIG );
       }
