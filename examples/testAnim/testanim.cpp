@@ -110,13 +110,13 @@ void TestAnim::OnStartup()
    dtGame::DefaultMessageProcessor *dmp = new dtGame::DefaultMessageProcessor("DefaultMessageProcessor");
    TestAnimInput* inputComp = new TestAnimInput("TestInputComponent"); 
    
-   dtAnim::AnimationComponent* animComp = new dtAnim::AnimationComponent();
+   dtAnim::AnimationComponent *animComp = new dtAnim::AnimationComponent();
 
    gameManager.AddComponent(*dmp,dtGame::GameManager::ComponentPriority::HIGHEST);
    gameManager.AddComponent(*inputComp, dtGame::GameManager::ComponentPriority::NORMAL);
    gameManager.AddComponent(*animComp, dtGame::GameManager::ComponentPriority::NORMAL);
 
-   //register helper 
+     //register helper 
    if(!proxies.empty())
    {
       ProxyContainer::iterator iter = proxies.begin();
@@ -170,5 +170,10 @@ void TestAnim::OnStartup()
 
    gameManager.DebugStatisticsTurnOn(false, false, 5);
 
+}
+
+void TestAnim::OnShutdown()
+{ 
+   dtDAL::Project::GetInstance().GetMap("TestAnim").ClearProxies();
 }
 
