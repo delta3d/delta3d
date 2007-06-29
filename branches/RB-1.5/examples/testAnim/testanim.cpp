@@ -40,6 +40,7 @@
 #include <dtDAL/map.h>
 #include <dtCore/scene.h>
 #include <dtDAL/actorproxy.h>
+#include <dtDAL/map.h>
 
 
 extern "C" TEST_ANIM_EXPORT dtGame::GameEntryPoint* CreateGameEntryPoint()
@@ -173,7 +174,10 @@ void TestAnim::OnStartup()
 }
 
 void TestAnim::OnShutdown()
-{ 
-   dtDAL::Project::GetInstance().GetMap("TestAnim").ClearProxies();
+{    
+   const std::string mapName = GetGameManager()->GetCurrentMap();
+
+   dtDAL::Map& map = dtDAL::Project::GetInstance().GetMap(mapName);
+   dtDAL::Project::GetInstance().CloseMap(map, true);
 }
 
