@@ -37,79 +37,86 @@ using namespace dtDAL;
 
 namespace dtActors
 {
-   
+
    class TestCullCallback: public osg::NodeCallback
    {
       public:
-         
+
          /** Callback method called by the NodeVisitor when visiting a node.*/
          virtual void operator()(osg::Node* node, osg::NodeVisitor* nv)
          { 
-               std::cout << "traversing node " << node->className() << std::endl;
-               
-               std::cout << nv->getEyePoint() << std::endl;
-               
-               traverse(node,nv);
+            std::cout << "traversing node " << node->className() << std::endl;
+
+            std::cout << nv->getEyePoint() << std::endl;
+
+            traverse(node,nv);
          }
    };
 
    class TestNodeVisitor: public osg::NodeVisitor
    {
       public:
-         
+
          TestNodeVisitor(): osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_ALL_CHILDREN)
          {}
-         
+
          virtual void apply(osg::PagedLOD& node)
          {
             std::cout << "Traversing node " << node.className() << std::endl;            
             std::cout << " Database path " << node.getDatabasePath() << std::endl; 
-            
+
             for (unsigned i = 0; i < node.getNumPriorityOffsets(); ++i)
             {
                std::cout << " Priority Offset " << i << " " << node.getPriorityOffset(i) << std::endl;
             }
-            
+
             traverse(node);               
          }
    };
 
 
+   ///////////////////////////////////////////////////////////////////////////////
    MeshTerrainActorProxy::MeshTerrainActorProxy()
    {
       SetClassName("dtCore::Object");
    }
 
+   ///////////////////////////////////////////////////////////////////////////////
    void MeshTerrainActorProxy::BuildPropertyMap()
    {
       const std::string &GROUPNAME = "Terrain";
       DeltaObjectActorProxy::BuildPropertyMap();
-      
+
       //Object *obj = static_cast<Object*>(GetActor());
-      
+
       AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::TERRAIN,
-                                                   "terrain mesh", "Terrain Mesh", MakeFunctor(*this, &MeshTerrainActorProxy::LoadFile),
-                                                   "The mesh that defines the geometry of the terrain.", GROUPNAME));
+            "terrain mesh", "Terrain Mesh", MakeFunctor(*this, &MeshTerrainActorProxy::LoadFile),
+            "The mesh that defines the geometry of the terrain.", GROUPNAME));
    }
 
+   ///////////////////////////////////////////////////////////////////////////////
+   void MeshTerrainActorProxy::CreateActor()
+   {
+      SetActor(*new MeshTerrainActor);
+   }
 
    ///////////////////////////////////////////////////////////////////////////////
    void MeshTerrainActorProxy::LoadFile(const std::string &fileName)
    {
       dtCore::Object *obj = static_cast<dtCore::Object*>(GetActor());
-      
+
       if (obj->LoadFile(fileName, false) == NULL)
       {
          if (!fileName.empty())
             LOG_ERROR("Error loading terrain mesh file: " + fileName);
-         
+
          return;
       }
-      
+
       //GetActor()->GetOSGNode()->setCullCallback(new TestCullCallback());
       //dtCore::RefPtr<TestNodeVisitor> visitor = new TestNodeVisitor();
       //GetActor()->GetOSGNode()->accept(*visitor);
-      
+
       //We need this little hack to ensure that when a mesh is loaded, the collision
       //properties get updated properly.
       SetCollisionType(GetCollisionType());
@@ -137,21 +144,21 @@ namespace dtActors
       {
          mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IconType::MESHTERRAIN);
       }
-      
+
       return mBillBoardIcon.get();
    }
 
    //////////////////////////////////////////////////////////////////////////
    MeshTerrainActor::MeshTerrainActor()
    {
-
    }
 
+   //////////////////////////////////////////////////////////////////////////
    MeshTerrainActor::~MeshTerrainActor()
    {
-
    }
 
+   //////////////////////////////////////////////////////////////////////////
    void MeshTerrainActor::AddedToScene(dtCore::Scene* scene)
    {
       dtCore::Object::AddedToScene(scene);
