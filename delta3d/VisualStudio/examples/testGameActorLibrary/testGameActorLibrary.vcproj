@@ -140,6 +140,9 @@
 				RelativePath="..\..\..\examples\testGameActorLibrary\testgameactor2.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\examples\testGameActorLibrary\testgameactorcrash.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\examples\testGameActorLibrary\testgameactorlibrary.cpp">
 			</File>
 			<File
@@ -170,6 +173,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\examples\testGameActorLibrary\testgameactor2.h">
+			</File>
+			<File
+				RelativePath="..\..\..\examples\testGameActorLibrary\testgameactorcrash.h">
 			</File>
 			<File
 				RelativePath="..\..\..\examples\testGameActorLibrary\testgameactorlibrary.h">
