@@ -21,6 +21,7 @@
 
 #include <cstdlib>
 #include <cmath>
+#include <cfloat>
 #include <osg/Math>
 
 #include <dtUtil/deprecationmgr.h>
