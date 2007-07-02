@@ -32,19 +32,19 @@ namespace dtUtil
    class DT_UTIL_EXPORT BaseExceptionType : public dtUtil::Enumeration
    {
       DECLARE_ENUM(BaseExceptionType);
-      
+
       public:
-         
+
          static BaseExceptionType GENERAL_EXCEPTION;
 
       protected:
-         
+
          BaseExceptionType(const std::string &name) : dtUtil::Enumeration(name)
          {
             AddInstance(this);
          }
    };
-   
+
    /*
     * This is the exception class used throughout the dtDAL module.
     * In most cases the DAL module gracefully handles exceptions and
@@ -54,7 +54,7 @@ namespace dtUtil
    class DT_UTIL_EXPORT Exception 
    {
       public:
-         
+
          /**
           * Constructor - Initializes the exception and logs it.
           *  @param type - the type of exception being thrown.
@@ -64,7 +64,7 @@ namespace dtUtil
           *  exception was thrown.
           */
          Exception(Enumeration &type, const std::string &message, const std::string &filename,
-                   unsigned int linenum);
+               unsigned int linenum);
 
          /**
           * Constructor - Initializes the exception and logs it.
@@ -74,71 +74,71 @@ namespace dtUtil
           *  exception was thrown.
           */
          Exception(const std::string &message, const std::string &filename,
-            unsigned int linenum);
-         
+               unsigned int linenum);
+
          /*
           * Destructor - Empty
           */
          virtual ~Exception() { }
-         
+
          /*
           * @return the message to be displayed when this exception is thrown.
           */
          const std::string &What() const { return mMessage; }
-         
+
          /*
           * @return the filename associated with this exception.
           */
          const std::string &File() const { return mFileName; }
-         
+
          /**
-            * @return the line number associated with this exception.
+          * @return the line number associated with this exception.
           */
          unsigned int Line() const { return mLineNum; }
-         
+
          /**
-            * @return the enumerated type of the exception.
+          * @return the enumerated type of the exception.
           */
          const Enumeration& TypeEnum() const { return mType; }
-         
+
          /**
           * Converts this exception to a string.  The string contains the reason,
           * line number and file the exception was thrown from.
           * @return The string version of this exception.
           */
          std::string ToString() const;
-         
+
          /**
-            * Prints the exception to the console.
+          * Prints the exception to the console.
           */
          void Print();
-         
+
          /**
-            * logs the exception to the default logger.
+          * logs the exception to the default logger.
           * @param level  The level/type of logging
           */
          void LogException(dtUtil::Log::LogMessageType level) const;
-         
+
          /**
-            * logs the exception to the following log level using the logger.
+          * logs the exception to the following log level using the logger.
           * @param level  The level/type of logging
           * @param loggerName the name passed to "getInstance" of the Logger.
           */
          void LogException(dtUtil::Log::LogMessageType level, const std::string& loggerName) const;
-         
+
          /**
-            * logs the exception to the following log level using the given logger.
+          * logs the exception to the following log level using the given logger.
           * @param level  The level/type of logging
           * @param logger the actual log instance used to log.
           */
          void LogException(dtUtil::Log::LogMessageType level, dtUtil::Log& logger) const;
-         
+
       protected:
          Enumeration &mType;
          std::string mMessage, mFileName;
          unsigned int mLineNum;
    };
-   
+
    inline std::ostream& operator << (std::ostream& o, const Exception& ex)
    {
       o << ex.ToString();

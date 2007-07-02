@@ -21,6 +21,7 @@
 #include "testgameactorlibrary.h"
 #include "testgameactor.h"
 #include "testgameactor2.h"
+#include "testgameactorcrash.h"
 #include "testhlaobject.h"
 #include "testplayer.h"
 #include "countertaskactor.h"
@@ -31,18 +32,45 @@
 #include <dtGame/messageparameter.h>
 #include <dtGame/messagetype.h>
 
-dtCore::RefPtr<dtDAL::ActorType> TestGameActorLibrary::TEST1_GAME_ACTOR_PROXY_TYPE(new dtDAL::ActorType("Test1Actor", "ExampleActors", "These are example actors"));
-dtCore::RefPtr<dtDAL::ActorType> TestGameActorLibrary::TEST2_GAME_ACTOR_PROXY_TYPE(new dtDAL::ActorType("Test2Actor", "ExampleActors", "These are example actors"));
-dtCore::RefPtr<dtDAL::ActorType> TestGameActorLibrary::TEST_PLAYER_GAME_ACTOR_PROXY_TYPE(new dtDAL::ActorType("TestPlayer","ExampleActors", "Simple player actor."));
-dtCore::RefPtr<dtDAL::ActorType> TestGameActorLibrary::TEST_TASK_GAME_ACTOR_PROXY_TYPE(new dtDAL::ActorType("Task Actor","dtcore.Tasks"));
-dtCore::RefPtr<dtDAL::ActorType> TestGameActorLibrary::TEST_COUNTER_TASK_GAME_ACTOR_PROXY_TYPE(new dtDAL::ActorType("Counter Task","ExampleActors", "task actor that provides a simple counter of something happening.", TEST_TASK_GAME_ACTOR_PROXY_TYPE.get()));
-dtCore::RefPtr<dtDAL::ActorType> TestGameActorLibrary::TEST_TANK_GAME_ACTOR_PROXY_TYPE(new dtDAL::ActorType("Tank", "TestHLA", "These are test HLA mapping actors"));
-dtCore::RefPtr<dtDAL::ActorType> TestGameActorLibrary::TEST_JET_GAME_ACTOR_PROXY_TYPE(new dtDAL::ActorType("Jet", "TestHLA", "These are test HLA mapping actors"));
-dtCore::RefPtr<dtDAL::ActorType> TestGameActorLibrary::TEST_CULTURAL_FEATURE_GAME_ACTOR_PROXY_TYPE(new dtDAL::ActorType("CulturalFeature", "TestHLA", "These are test HLA mapping actors"));
-dtCore::RefPtr<dtDAL::ActorType> TestGameActorLibrary::TEST_SENSOR_GAME_ACTOR_PROXY_TYPE(new dtDAL::ActorType("Sensor", "TestHLA", "These are test HLA mapping actors"));
-dtCore::RefPtr<dtDAL::ActorType> TestGameActorLibrary::TEST_HELICOPTER_GAME_ACTOR_PROXY_TYPE(new dtDAL::ActorType("Helicopter", "TestHLA", "These are test HLA mapping actors"));
-dtCore::RefPtr<dtDAL::ActorType> TestGameActorLibrary::TEST_ENVIRONMENT_GAME_ACTOR_PROXY_TYPE(new dtDAL::ActorType("TestEnvironmentActor", "ExampleActors", "These are example actors"));
-dtCore::RefPtr<dtDAL::ActorType> TestGameActorLibrary::TEST_GAME_PROPERTY_PROXY_TYPE(new dtDAL::ActorType("TestGamePropertyProxy", "ExampleActors", "Has an example of most property types"));
+dtCore::RefPtr<dtDAL::ActorType> TestGameActorLibrary::TEST1_GAME_ACTOR_PROXY_TYPE(
+      new dtDAL::ActorType("Test1Actor", "ExampleActors", "These are example actors"));
+
+dtCore::RefPtr<dtDAL::ActorType> TestGameActorLibrary::TEST2_GAME_ACTOR_PROXY_TYPE(
+      new dtDAL::ActorType("Test2Actor", "ExampleActors", "These are example actors"));
+
+dtCore::RefPtr<dtDAL::ActorType> TestGameActorLibrary::TEST_GAME_ACTOR_CRASH_PROXY_TYPE(
+      new dtDAL::ActorType("TestCrash","ExampleActors", "An actor that throws an exception as it enters the world."));
+
+dtCore::RefPtr<dtDAL::ActorType> TestGameActorLibrary::TEST_PLAYER_GAME_ACTOR_PROXY_TYPE(
+      new dtDAL::ActorType("TestPlayer","ExampleActors", "Simple player actor."));
+
+dtCore::RefPtr<dtDAL::ActorType> TestGameActorLibrary::TEST_TASK_GAME_ACTOR_PROXY_TYPE(
+      new dtDAL::ActorType("Task Actor","dtcore.Tasks"));
+
+dtCore::RefPtr<dtDAL::ActorType> TestGameActorLibrary::TEST_COUNTER_TASK_GAME_ACTOR_PROXY_TYPE(
+      new dtDAL::ActorType("Counter Task","ExampleActors", ""
+            "task actor that provides a simple counter of something happening.", TEST_TASK_GAME_ACTOR_PROXY_TYPE.get()));
+
+dtCore::RefPtr<dtDAL::ActorType> TestGameActorLibrary::TEST_TANK_GAME_ACTOR_PROXY_TYPE(
+      new dtDAL::ActorType("Tank", "TestHLA", "These are test HLA mapping actors"));
+
+dtCore::RefPtr<dtDAL::ActorType> TestGameActorLibrary::TEST_JET_GAME_ACTOR_PROXY_TYPE(
+      new dtDAL::ActorType("Jet", "TestHLA", "These are test HLA mapping actors"));
+
+dtCore::RefPtr<dtDAL::ActorType> TestGameActorLibrary::TEST_CULTURAL_FEATURE_GAME_ACTOR_PROXY_TYPE(
+      new dtDAL::ActorType("CulturalFeature", "TestHLA", "These are test HLA mapping actors"));
+
+dtCore::RefPtr<dtDAL::ActorType> TestGameActorLibrary::TEST_SENSOR_GAME_ACTOR_PROXY_TYPE(
+      new dtDAL::ActorType("Sensor", "TestHLA", "These are test HLA mapping actors"));
+
+dtCore::RefPtr<dtDAL::ActorType> TestGameActorLibrary::TEST_HELICOPTER_GAME_ACTOR_PROXY_TYPE(
+      new dtDAL::ActorType("Helicopter", "TestHLA", "These are test HLA mapping actors"));
+
+dtCore::RefPtr<dtDAL::ActorType> TestGameActorLibrary::TEST_ENVIRONMENT_GAME_ACTOR_PROXY_TYPE(
+      new dtDAL::ActorType("TestEnvironmentActor", "ExampleActors", "These are example actors"));
+
+dtCore::RefPtr<dtDAL::ActorType> TestGameActorLibrary::TEST_GAME_PROPERTY_PROXY_TYPE(
+      new dtDAL::ActorType("TestGamePropertyProxy", "ExampleActors", "Has an example of most property types"));
 
 
 extern "C" DT_EXAMPLE_EXPORT dtDAL::ActorPluginRegistry* CreatePluginRegistry()
@@ -65,6 +93,7 @@ void TestGameActorLibrary::RegisterActorTypes()
 {
    mActorFactory->RegisterType<TestGameActorProxy1> (TEST1_GAME_ACTOR_PROXY_TYPE.get());
    mActorFactory->RegisterType<TestGameActorProxy2> (TEST2_GAME_ACTOR_PROXY_TYPE.get());      
+   mActorFactory->RegisterType<TestGameActorCrashProxy> (TEST_GAME_ACTOR_CRASH_PROXY_TYPE.get());      
    mActorFactory->RegisterType<TestPlayerProxy>(TEST_PLAYER_GAME_ACTOR_PROXY_TYPE.get());
    
    //This is the actor type for the task actor located in dtActors.  All custom

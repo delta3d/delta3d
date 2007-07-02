@@ -196,15 +196,28 @@ namespace dtGame
                   {
                      bool shouldPublish = gameProxy->GetInitialOwnership() == GameActorProxy::Ownership::SERVER_PUBLISHED;
                      //neither sends create messages nor adds to the scene when
-                     //this object is not in IDLE state :-) 
-                     mGameManager->AddActor(*gameProxy, false, shouldPublish);
+                     //this object is not in IDLE state :-)
+                     try
+                     {
+                        mGameManager->AddActor(*gameProxy, false, shouldPublish);                        
+                     }
+                     catch (const dtUtil::Exception& ex)
+                     {
+                        dtUtil::Log::GetInstance("mapchangestatedata.cpp").LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                              "An error occurred adding actor \"%s\" of type \"%s.%s\".  The exception will follow.", 
+                              gameProxy->GetName().c_str(), gameProxy->GetActorType().GetCategory().c_str(),
+                              gameProxy->GetActorType().GetName().c_str());
+                        ex.LogException(dtUtil::Log::LOG_ERROR, dtUtil::Log::GetInstance("mapchangestatedata.cpp"));
+                     }
                   }
                }
                else
                {
                   dtUtil::Log::GetInstance("mapchangestatedata.cpp").LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                     "Actor has the type of a GameActor, but casting it to a GameActorProxy failed.  Actor %s of type %s.%s will not be added to the scene.",
-                     gameProxy->GetName().c_str(), gameProxy->GetActorType().GetCategory().c_str(), gameProxy->GetActorType().GetName().c_str());
+                     "Actor has the type of a GameActor, but casting it to a GameActorProxy failed.  "
+                     "Actor %s of type %s.%s will not be added to the scene.",
+                     gameProxy->GetName().c_str(), gameProxy->GetActorType().GetCategory().c_str(), 
+                     gameProxy->GetActorType().GetName().c_str());
                }
             }
             else
