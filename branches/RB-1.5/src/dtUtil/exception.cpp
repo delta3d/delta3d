@@ -17,7 +17,7 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  * Matthew W. Campbell
-*/
+ */
 #include <prefix/dtutilprefix-src.h>
 #include <sstream>
 #include <dtUtil/exception.h>
@@ -29,59 +29,59 @@ namespace dtUtil
    IMPLEMENT_ENUM(BaseExceptionType);
    BaseExceptionType BaseExceptionType::GENERAL_EXCEPTION("GENERAL_EXCEPTION");
 
-    //////////////////////////////////////////////////////////////////////////
-    Exception::Exception(Enumeration &type, const std::string &message, const std::string &filename,
-        unsigned int lineNum) : mType(type),mMessage(message),mFileName(filename),mLineNum(lineNum) 
-    {
-        LogException(dtUtil::Log::LOG_DEBUG, dtUtil::Log::GetInstance());
-    }
+   //////////////////////////////////////////////////////////////////////////
+   Exception::Exception(Enumeration &type, const std::string &message, const std::string &filename,
+         unsigned int lineNum) : mType(type),mMessage(message),mFileName(filename),mLineNum(lineNum) 
+   {
+      LogException(dtUtil::Log::LOG_DEBUG, dtUtil::Log::GetInstance());
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    Exception::Exception(const std::string &message, const std::string &filename,
-       unsigned int lineNum) : mType(BaseExceptionType::GENERAL_EXCEPTION),mMessage(message),mFileName(filename),mLineNum(lineNum) 
-    {
-       LogException(dtUtil::Log::LOG_DEBUG, dtUtil::Log::GetInstance());
-    }
+   //////////////////////////////////////////////////////////////////////////
+   Exception::Exception(const std::string &message, const std::string &filename,
+         unsigned int lineNum) : mType(BaseExceptionType::GENERAL_EXCEPTION),mMessage(message),mFileName(filename),mLineNum(lineNum) 
+   {
+      LogException(dtUtil::Log::LOG_DEBUG, dtUtil::Log::GetInstance());
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    void Exception::Print()
-    {
-        std::cerr << "Exception: " << mMessage << std::endl <<
-            "\tFile: " << mFileName << std::endl <<
-            "\tLine: " << mLineNum << std::endl;
-    }
+   //////////////////////////////////////////////////////////////////////////
+   void Exception::Print()
+   {
+      std::cerr << "Exception: " << mMessage << std::endl <<
+      "\tFile: " << mFileName << std::endl <<
+      "\tLine: " << mLineNum << std::endl;
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    std::string Exception::ToString() const
-    {
-       std::ostringstream ss;
-       ss << "Reason: " << mMessage << " | File: " << mFileName << " | Line: " << mLineNum;
-       return ss.str();
-    }
+   //////////////////////////////////////////////////////////////////////////
+   std::string Exception::ToString() const
+   {
+      std::ostringstream ss;
+      ss << "Reason: " << mMessage << " | File: " << mFileName << " | Line: " << mLineNum;
+      return ss.str();
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    void Exception::LogException(dtUtil::Log::LogMessageType level) const
-    {
-        LogException(level,dtUtil::Log::GetInstance());
-    }
+   //////////////////////////////////////////////////////////////////////////
+   void Exception::LogException(dtUtil::Log::LogMessageType level) const
+   {
+      LogException(level,dtUtil::Log::GetInstance());
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    void Exception::LogException(dtUtil::Log::LogMessageType level, const std::string& loggerName) const
-    {
-        LogException(level,dtUtil::Log::GetInstance(loggerName));
-    }
+   //////////////////////////////////////////////////////////////////////////
+   void Exception::LogException(dtUtil::Log::LogMessageType level, const std::string& loggerName) const
+   {
+      LogException(level,dtUtil::Log::GetInstance(loggerName));
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    void Exception::LogException(dtUtil::Log::LogMessageType level, dtUtil::Log& logger) const
-    {
-        if (logger.IsLevelEnabled(level)) 
-        {
-            logger.LogMessage(level,__FUNCTION__, __LINE__,
-                    "Exception Thrown: %s File: %s  Line: %d  Type: %s",
-                    mMessage.c_str(), mFileName.c_str(), mLineNum,
-                    mType.GetName().c_str());
-        }
+   //////////////////////////////////////////////////////////////////////////
+   void Exception::LogException(dtUtil::Log::LogMessageType level, dtUtil::Log& logger) const
+   {
+      if (logger.IsLevelEnabled(level)) 
+      {
+         logger.LogMessage(level,__FUNCTION__, __LINE__,
+               "Exception Thrown: %s File: %s  Line: %d  Type: %s",
+               mMessage.c_str(), mFileName.c_str(), mLineNum,
+               mType.GetName().c_str());
+      }
 
-    }
+   }
 
 }

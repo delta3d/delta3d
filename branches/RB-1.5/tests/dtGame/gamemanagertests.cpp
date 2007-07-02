@@ -73,6 +73,8 @@ class GameManagerTests : public CPPUNIT_NS::TestFixture
 
         CPPUNIT_TEST(TestActorSearching);
         CPPUNIT_TEST(TestAddActor);
+        CPPUNIT_TEST(TestAddActorCrash);
+        
         CPPUNIT_TEST(TestCreateRemoteActor);
         CPPUNIT_TEST(TestComplexScene);
         CPPUNIT_TEST(TestAddRemoveComponents);
@@ -99,6 +101,8 @@ public:
 
    void TestActorSearching();
    void TestAddActor();
+   void TestAddActorCrash();
+
    void TestCreateRemoteActor();
    void TestComplexScene();
    void TestAddRemoveComponents();
@@ -802,45 +806,69 @@ void GameManagerTests::TestCreateRemoteActor()
    CPPUNIT_ASSERT_MESSAGE("The proxy should already be remote.", proxy->IsRemote());
 }
 
-/////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+void GameManagerTests::TestAddActorCrash()
+{
+   dtCore::RefPtr<dtDAL::ActorType> type = mManager->FindActorType("ExampleActors", "TestCrash");   
+   CPPUNIT_ASSERT(type != NULL);
+   dtCore::RefPtr<dtGame::GameActorProxy> proxy;
+   mManager->CreateActor(*type, proxy);
+   CPPUNIT_ASSERT_THROW_MESSAGE("Adding an actor as both remote and published should throw and exception.", 
+         mManager->AddActor(*proxy, true, true), dtUtil::Exception);
+   
+   CPPUNIT_ASSERT(!proxy->IsInGM());
+
+   dtCore::System::GetInstance().Step();
+   CPPUNIT_ASSERT(mManager->FindGameActorById(proxy->GetId()) == NULL);
+}
+
+//////////////////////////////////////////////////////////////////////////
 void GameManagerTests::TestAddActor()
 {
 
-   dtCore::RefPtr<dtDAL::ActorType> type = mManager->FindActorType("ExampleActors","Test1Actor");
+   dtCore::RefPtr<dtDAL::ActorType> type = mManager->FindActorType("ExampleActors", "Test1Actor");
    for (int x = 0; x < 21; ++x)
    {
       if (x == 10)
-         type = mManager->FindActorType("ExampleActors","Test2Actor");
+         type = mManager->FindActorType("ExampleActors", "Test2Actor");
 
       CPPUNIT_ASSERT(type != NULL);
       dtCore::RefPtr<dtGame::GameActorProxy> proxy;
       mManager->CreateActor(*type, proxy);
       CPPUNIT_ASSERT_MESSAGE("Proxy should not be in the gm yet", proxy->IsInGM() != true);
       CPPUNIT_ASSERT_MESSAGE("Proxy should have a valid GM on it", proxy->GetGameManager() != NULL);
-      CPPUNIT_ASSERT_MESSAGE("Proxy, the result of a dynamic_cast to dtGame::GameActorProxy, should not be NULL", proxy != NULL);
+      CPPUNIT_ASSERT_MESSAGE("Proxy, the result of a dynamic_cast to dtGame::GameActorProxy, should not be NULL", 
+            proxy != NULL);
       CPPUNIT_ASSERT_MESSAGE("IsGameActorProxy should return true", proxy->IsGameActorProxy());
-
+      
       mManager->CreateActor(type->GetCategory(), type->GetName(), proxy);
-      CPPUNIT_ASSERT_MESSAGE("Proxy, the result of a dynamic_cast to dtGame::GameActorProxy, should not be NULL", proxy != NULL);
+      CPPUNIT_ASSERT_MESSAGE("Proxy, the result of a dynamic_cast to dtGame::GameActorProxy, should not be NULL",
+            proxy != NULL);
       CPPUNIT_ASSERT_MESSAGE("IsGameActorProxy should return true", proxy->IsGameActorProxy());
-
 
       if (x % 3 == 0)
       {
-         CPPUNIT_ASSERT_MESSAGE("The proxy should have the GameManager pointer set to valid", proxy->GetGameManager() != NULL);
+         CPPUNIT_ASSERT_MESSAGE("The proxy should have the GameManager pointer set to valid", 
+               proxy->GetGameManager() != NULL);
+         
          mManager->AddActor(*proxy, false, false);
+         
          dtCore::RefPtr<dtDAL::ActorProxy> proxyFound = mManager->FindActorById(proxy->GetId());
          CPPUNIT_ASSERT(proxyFound != NULL);
          CPPUNIT_ASSERT(proxyFound.get() == proxy.get());
-         CPPUNIT_ASSERT_MESSAGE("The proxy should have the GameManager pointer set", proxy->GetGameManager() == mManager.get());
-         dtCore::RefPtr<dtGame::GameActorProxy> gameProxyFound = mManager->FindGameActorById(proxy->GetId());
+         CPPUNIT_ASSERT_MESSAGE("The proxy should have the GameManager pointer set", 
+               proxy->GetGameManager() == mManager.get());
+         dtCore::RefPtr<dtGame::GameActorProxy> gameProxyFound = 
+            mManager->FindGameActorById(proxy->GetId());
+            
          CPPUNIT_ASSERT(gameProxyFound != NULL);
          CPPUNIT_ASSERT(gameProxyFound.get() == proxy.get());
          CPPUNIT_ASSERT_MESSAGE("Actor should not be remote.", !proxy->IsRemote());
          CPPUNIT_ASSERT_MESSAGE("Actor should not be published.", !proxy->IsPublished());
 
          CPPUNIT_ASSERT_MESSAGE("The actor should have been added to the scene.",
-            mManager->GetScene().GetDrawableIndex(proxy->GetActor()) != mManager->GetScene().GetNumberOfAddedDrawable());
+            mManager->GetScene().GetDrawableIndex(proxy->GetActor()) 
+            != mManager->GetScene().GetNumberOfAddedDrawable());
 
          try
          {
@@ -879,29 +907,19 @@ void GameManagerTests::TestAddActor()
       }
       else if (x % 3 == 1)
       {
-         try
-         {
-            mManager->AddActor(*proxy, true, true);
-            CPPUNIT_FAIL("An actor may not be both remote and published.");
-         }
-         catch (const dtUtil::Exception& ex)
-         {
-            if (ex.TypeEnum() != dtGame::ExceptionEnum::ACTOR_IS_REMOTE)
-               CPPUNIT_FAIL(std::string("Unknown Exception thrown publishing an actor: ") + ex.TypeEnum().GetName() + " " + ex.What());
-            //Ok
-         }
+         CPPUNIT_ASSERT_THROW_MESSAGE(
+               "Adding an actor as both remote and published should throw and exception.", 
+               mManager->AddActor(*proxy, true, true), dtUtil::Exception);
 
-         try
-         {
-            mManager->AddActor(*proxy, true, false);
-         }
-         catch (const dtUtil::Exception& ex)
-         {
-            if (ex.TypeEnum() != dtGame::ExceptionEnum::ACTOR_IS_REMOTE)
-               CPPUNIT_FAIL(std::string("Unknown Exception thrown publishing an actor: ") + ex.TypeEnum().GetName() + " " + ex.What());
-            else
-               CPPUNIT_FAIL("Exception thrown saying the actor is remote, but it should allowed for the actor to be remote.");
-         }
+         
+         CPPUNIT_ASSERT_MESSAGE("An actor should not be added to the GM if it's both remote and published.", mManager->FindGameActorById(proxy->GetId()) == NULL);
+
+         // Setting the game manager to NULL to verify that add actor makes sure it's set.
+         proxy->SetGameManager(NULL);
+         CPPUNIT_ASSERT_NO_THROW_MESSAGE("Adding an actor as ", mManager->AddActor(*proxy, true, false));
+ 
+         CPPUNIT_ASSERT(proxy->GetGameManager() == mManager.get());
+         
          dtCore::RefPtr<dtDAL::ActorProxy> proxyFound = mManager->FindActorById(proxy->GetId());
          CPPUNIT_ASSERT(proxyFound != NULL);
          CPPUNIT_ASSERT(proxyFound.get() == proxy.get());
@@ -925,6 +943,11 @@ void GameManagerTests::TestAddActor()
             //OK
          }
          mManager->DeleteActor(*proxy);
+
+         bool testIsInGM = proxy->IsInGM();
+
+         CPPUNIT_ASSERT_MESSAGE("The proxy should not be in the gm", testIsInGM != true);
+         
          CPPUNIT_ASSERT_MESSAGE("The proxy should still be in the game manager", mManager->FindGameActorById(proxy->GetId()) != NULL);
          CPPUNIT_ASSERT_MESSAGE("The proxy should not have the GameManager pointer set to NULL", proxy->GetGameManager() != NULL);
          CPPUNIT_ASSERT_MESSAGE("The actor should still be in the scene.",
