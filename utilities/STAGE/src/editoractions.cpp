@@ -938,7 +938,7 @@ namespace dtEditQt
           QProcess::ProcessState state = mSkeletalEditorProcess->state();
 
           // Our process should have started
-          if (state == QProcess::ProcessState::NotRunning)
+          if (state == QProcess::NotRunning)
           {
              QMessageBox::information(NULL, tr("Process Error"), 
                 tr("Unable to launch AnimationViewerD.exe.  Make sure application exists."),
@@ -969,7 +969,7 @@ namespace dtEditQt
           QProcess::ProcessState state = mParticleEditorProcess->state();
 
           // Our process should have started
-          if (state == QProcess::ProcessState::NotRunning)
+          if (state == QProcess::NotRunning)
           {
              QMessageBox::information(NULL, tr("Process Error"), 
                 tr("Unable to launch psEditor.exe.  Make sure application exists."),
@@ -999,7 +999,7 @@ namespace dtEditQt
           QProcess::ProcessState state = mViewerProcess->state();
 
           // Our process should have started
-          if (state == QProcess::ProcessState::NotRunning)
+          if (state == QProcess::NotRunning)
           {
              QMessageBox::information(NULL, tr("Process Error"), 
                 tr("Unable to launch Viewer.exe.  Make sure application exists."),
