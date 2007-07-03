@@ -58,6 +58,13 @@ namespace dtCore
    {
 
    public:
+      /**
+      * The SimMode effects how the system runs.
+      *
+      * eNORMAL will simulate, cull, and then draw.  
+      * eSIMULATE_ONLY will just call preframe and postframe.
+      */
+      enum SimMode{eNORMAL = 0, eSIMULATE_ONLY};
 
       DECLARE_MANAGEMENT_LAYER(System)
 
@@ -82,6 +89,24 @@ namespace dtCore
       static System& GetInstance();
 
       static void Destroy();
+
+      /**
+      * Changing the simulation mode will change how the system runs.
+      * 
+      * eNORMAL will simulate, cull, and then draw.  
+      * eSIMULATE_ONLY will just call preframe and postframe.
+      *
+      * @param the new SimMode
+      */
+      void SetSimMode(SimMode newMode);
+
+      /**
+      * Gets the current SimMode, this value is eNORMAL by default.
+      * @return the current SimMode.
+      */
+      SimMode GetSimMode() const;
+
+      
 
       ///Toggles the running flag to true
       void Start();
@@ -222,6 +247,8 @@ namespace dtCore
       bool mRunning; ///<Are we currently running?      
       bool mShutdownOnWindowClose;
       bool mPaused;
+      
+      SimMode mMode;
       
       typedef std::map< Producer::RenderSurface*, Camera* > RenderSurfaceCameraMap;
       RenderSurfaceCameraMap mRenderSurfaceCameraMap;
