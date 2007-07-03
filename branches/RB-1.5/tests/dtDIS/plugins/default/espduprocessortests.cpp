@@ -78,9 +78,9 @@ void ESPduProcessorTests::TestApplyToLocalActor()
 {
    dtCore::RefPtr<dtCore::Scene> scene = new dtCore::Scene();
    dtCore::RefPtr<dtGame::GameManager> gm = new dtGame::GameManager( *scene );
-   dtCore::System::Instance()->Start();
-   dtCore::System::Instance()->Step();
-   dtCore::System::Instance()->Step();
+   dtCore::System::GetInstance().Start();
+   dtCore::System::GetInstance().Step();
+   dtCore::System::GetInstance().Step();
 
    // locally, add a GameActorProxy
    dtCore::RefPtr<dtTest::SampleGameActorProxy> sap = new dtTest::SampleGameActorProxy();
@@ -94,8 +94,8 @@ void ESPduProcessorTests::TestApplyToLocalActor()
    gm->AddActor( *sap , true , false );
 
    ///\todo need to tick the system so that proxy is really added?
-   dtCore::System::Instance()->Step();
-   dtCore::System::Instance()->Step();
+   dtCore::System::GetInstance().Step();
+   dtCore::System::GetInstance().Step();
 
    DIS::EntityStatePdu pdu;
    InitializePdu initpdu;
@@ -109,7 +109,7 @@ void ESPduProcessorTests::TestApplyToLocalActor()
    processor.Process( pdu );
 
    ///\todo need to tick the system so that message is really applied?
-   dtCore::System::Instance()->Step();
+   dtCore::System::GetInstance().Step();
 
    CPPUNIT_ASSERT( cc->mCaught );
 
