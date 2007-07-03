@@ -3,27 +3,27 @@
 #include "TrackView.h"
 #include "TrackScene.h"
 #include <dtUtil/fileutils.h>
-#include <QMenuBar>
-#include <QAction>
-#include <QFileDialog>
-#include <QTableWidget>
-#include <QSettings>
-#include <QStatusBar>
-#include <QToolBar>
-#include <QPushButton>
-#include <QRadioButton>
-#include <QDockWidget>
-#include <QMessageBox>
-#include <QDoubleSpinBox>
-#include <QTabWidget>
-#include <QListWidget>
-#include <QGraphicsScene>
-#include <QGridLayout>
+#include <QtGui/QMenuBar>
+#include <QtGui/QAction>
+#include <QtGui/QFileDialog>
+#include <QtGui/QTableWidget>
+#include <QtCore/QSettings>
+#include <QtGui/QStatusBar>
+#include <QtGui/QToolBar>
+#include <QtGui/QPushButton>
+#include <QtGui/QRadioButton>
+#include <QtGui/QDockWidget>
+#include <QtGui/QMessageBox>
+#include <QtGui/QDoubleSpinBox>
+#include <QtGui/QTabWidget>
+#include <QtGui/QListWidget>
+#include <QtGui/QGraphicsScene>
+#include <QtGui/QGridLayout>
 
-#include <QStandardItemModel>
-#include <QStandardItem>
+#include <QtGui/QStandardItemModel>
+#include <QtGui/QStandardItem>
 
-#include <QGraphicsEllipseItem>
+#include <QtGui/QGraphicsEllipseItem>
 
 #include <cassert>
 
