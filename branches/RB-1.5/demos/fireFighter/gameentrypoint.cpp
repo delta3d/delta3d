@@ -154,7 +154,12 @@ void FireFighterGameEntryPoint::OnShutdown()
    dtGame::GameManager& gameManager = *GetGameManager();
 
    if(mUseLMS && mLmsComponent.valid())
+   {
       mLmsComponent->DisconnectFromLms();
+   }
+   
+   dtDAL::Map &map = dtDAL::Project::GetInstance().GetMap("GameMap");
+   dtDAL::Project::GetInstance().CloseMap(map, true);
 
    gameManager.CloseCurrentMap();
    gameManager.Shutdown();
