@@ -20,12 +20,13 @@ IMPLEMENT_MANAGEMENT_LAYER(System)
 bool System::mInstanceFlag = false;
 System* System::mSystem = 0;
 
-System::System():
-   mSimulationTime(0.0),
-   mTimeScale(1.0f),
-   mRunning(false),
-   mShutdownOnWindowClose(true),
-   mPaused(false)
+System::System()
+: mSimulationTime(0.0)
+, mTimeScale(1.0f)
+, mRunning(false)
+, mShutdownOnWindowClose(true)
+, mPaused(false)
+, mMode(eNORMAL)
 {
    mTickClockTime = mClock.Tick();
    mDt = 0.0;
@@ -79,12 +80,23 @@ bool System::GetPause() const
    return mPaused;
 }
 
+
+void System::SetSimMode(SimMode newMode)
+{
+   mMode = newMode;
+}
+
+System::SimMode System::GetSimMode() const
+{
+   return mMode;
+}
+
 void System::Frame(const double deltaSimTime, const double deltaRealTime)
 {
    double userData[2] = { deltaSimTime, deltaRealTime };
    SendMessage( "frame", userData );
 
-   CameraFrame();
+   if(mMode != eSIMULATE_ONLY) CameraFrame();
 }
 
 void System::Pause( const double deltaRealTime )
@@ -114,7 +126,7 @@ void System::SystemStep()
       mSimulationClockTime += Timer_t(mSimDt * 1000000); 
 
       PreFrame(mSimDt, mDt);
-      Frame(mSimDt, mDt);
+      if(mMode != eSIMULATE_ONLY) Frame(mSimDt, mDt);
       PostFrame(mSimDt, mDt);
    }
 
