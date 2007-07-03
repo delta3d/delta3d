@@ -824,6 +824,7 @@ namespace dtGame
       }
 
       gameActorProxy.SetIsInGM(true);
+      
       try
       {
          //If publishing fails. we need to delete the actor as well.
@@ -1668,6 +1669,29 @@ namespace dtGame
       msg->SetSource(*mMachineInfo);
       SendMessage(*msg);
    }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void GameManager::Shutdown()
+   {
+      while(!mComponentList.empty())
+      {
+         RemoveComponent(*mComponentList.back());
+      }
+      
+      mDebugLoggerInformation.clear();
+     
+      while(!mSendNetworkMessageQueue.empty())
+      {    
+         mSendNetworkMessageQueue.pop();
+      }
+      
+      while(!mSendMessageQueue.empty())
+      {
+         mSendMessageQueue.pop();
+      }
+
+      DeleteAllActors(true);
+   }
    
    ////////////////////////////////////////////////////////////////////////////////
    /*                            Statistics Information                          */
@@ -1729,29 +1753,6 @@ namespace dtGame
       {
          mDebugLoggerInformation.clear();
       }
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::Shutdown()
-   {
-      while(!mComponentList.empty())
-      {
-         RemoveComponent(*mComponentList.back());
-      }
-      
-      mDebugLoggerInformation.clear();
-     
-      while(!mSendNetworkMessageQueue.empty())
-      {    
-         mSendNetworkMessageQueue.pop();
-      }
-      
-      while(!mSendMessageQueue.empty())
-      {
-         mSendMessageQueue.pop();
-      }
-
-      DeleteAllActors(true);
    }
 
    ///////////////////////////////////////////////////////////////////////////////

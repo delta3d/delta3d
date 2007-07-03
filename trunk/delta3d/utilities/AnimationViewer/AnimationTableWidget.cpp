@@ -1,8 +1,8 @@
 #include "AnimationTableWidget.h"
-#include <QAction>
-#include <QMenu>
-#include <QContextMenuEvent>
-#include <QMessageBox>
+#include <QtGui/QAction>
+#include <QtGui/QMenu>
+#include <QtGui/QContextMenuEvent>
+#include <QtGui/QMessageBox>
 
 AnimationTableWidget::AnimationTableWidget( QWidget *parent /*= NULL*/ ):
 QTableWidget(parent)

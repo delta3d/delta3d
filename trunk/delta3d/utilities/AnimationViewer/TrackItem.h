@@ -1,7 +1,7 @@
 #ifndef _TRACKITEM_H_
 #define _TRACKITEM_H_
 
-#include <QGraphicsRectItem>
+#include <QtGui/QGraphicsRectItem>
 
 class QGraphicsItem;
 class QGraphicsScene;

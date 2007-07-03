@@ -1,4 +1,4 @@
-# Build script for actual level editor application.
+# Build script for Animation Viewer application.
 import glob
 import sys
 import re
@@ -36,7 +36,7 @@ if env['ENV'].has_key('QTDIR'):
          f.close()
    
       return passed
-   
+
    # Environment settings for Qt
    qtdir = env['ENV']['QTDIR']
    
@@ -48,72 +48,58 @@ if env['ENV'].has_key('QTDIR'):
                    'QT_CORE_LIB',
                    'QT_GUI_LIB',
                    'QT_SHARED']
-   
+
    if env['OS'] == 'linux' or env['OS'] == 'darwin':
       cppDefines += ['_REENTRANT']
-   
-   if env['OS'] == 'darwin':
-      env.Append(CPPPATH = ['#/utilities/STAGE/inc'] )
-   else:
-      env.Append(CPPPATH = [qtdir + '/include','#/utilities/STAGE/inc'] )
-   
-   libs = ['QtCore','QtGui','QtOpenGL','dtDAL','dtAI','dtCore','dtUtil','dtAudio','dtChar','dtABC','dtGame'] 
-   
-   # First, glob the header directory to obtain a list of potential files to run
-   # the moc builder on.
-   if env['OS'] == 'windows':
-      moc_headers = env.SGlob('..\inc\dtEditQt\*.h')
-   else:
-      moc_headers = env.SGlob('../inc/dtEditQt/*.h')
 
-   # Next, grep each header file for the Q_OBJECT macro to determine if moc should be run on 
-   # it.
-   moc_headers = getQObjectHeaders(moc_headers)
-   
-   moc_targets = []
-   for currHeader in moc_headers :
-      if env['OS'] == 'windows':
-         parts = currHeader.split("\\")
-      else:
-         parts = currHeader.split("/")
-         
-      target = parts[len(parts)-1][:-2]
-         
-      env['QT4_MOCFROMHFLAGS'] =['-Iutilities/STAGE/inc']
-      moc_targets.append(env.Moc4(target=target, source=currHeader))
+
+   libs = ['QtCore','QtGui','QtOpenGL','dtDAL','dtAI','dtAnim','dtCore','dtUtil','dtAudio','dtChar','dtABC','dtGame'] 
 
    initialSources = env.SGlob('*.cpp')
 
    if "precomp.cpp" in initialSources:
       initialSources.remove("precomp.cpp")
 
+   # First, glob the header directory to obtain a list of potential files to run
+   # the moc builder on.
+   mocHeaderCandidates = env.SGlob('*.h')
+
+   # Next, grep each header file for the Q_OBJECT macro to determine if moc should be run on 
+   # it.
+   moc_headers = getQObjectHeaders(mocHeaderCandidates)
+
+   moc_targets = []
+
+   for currHeader in moc_headers :
+      if env['OS'] == 'windows':
+         parts = currHeader.split("\\")
+      else:
+         parts = currHeader.split("/")
+
+      target = parts[len(parts)-1][:-2]
+
+      env['QT4_MOCFROMHFLAGS'] =['-I.']
+      moc_targets.append(env.Moc4(target=target, source=currHeader))
+
    if env.get('fastBuild'):
-      if "taskuiplugin.cpp" in initalSources:
-         initialSources.remove("taskuiplugin.cpp")
-      
       path = string.replace(env.GetBuildPath('SConscript'),  'SConscript', '')
-      cxxFileName = "STAGE.cxx"
+      cxxFileName = "AnimationViewer.cxx"
       cxxFile = open(path + cxxFileName, "w")
       for srcFile in initalSources :
-         cxxFile.write("#include \"" + srcFile + "\"\n")   
-      
-      sources = [cxxFileName, "taskuiplugin.cpp"] + moc_targets
+         cxxFile.write("#include \"" + srcFile + "\"\n")
+
+      sources = [cxxFileName] + moc_targets
    else:
       sources = initialSources + moc_targets
 
-         
-   # Build the icon
-   if env['OS'] == 'windows' :
-      sources += env.RES( '#utilities\STAGE\dtEditQt.rc' )
-
-   app = env.BuildProgram('STAGE', sources, libs, cppDefines, prefixHeader = "inc/prefix/dtstageprefix.h")
+   app = env.BuildProgram('AnimationViewer', sources, libs, cppDefines)
       
    if (app == '[]') :
       result = 'false'
    else :
       result = 'true'
-   
+
    if (result == 'false') :
-      errorLog.write("Failed to build STAGE.\n")
-   
+      errorLog.write("Failed to build AnimationViewer.\n")
+
    Return('result')
