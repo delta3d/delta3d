@@ -10,5 +10,10 @@ void dtTest::CompareParams(const std::string& name,
 {
    const dtGame::MessageParameter* mpsb = should_be.GetUpdateParameter(name);
    const dtGame::MessageParameter* mpis = truth.GetUpdateParameter(name);
+
+   std::string msg = "ActorUpdateMessage doesn't contain the parameter '" + name + "'";
+
+   CPPUNIT_ASSERT_MESSAGE(msg, mpsb != NULL);
+   CPPUNIT_ASSERT_MESSAGE(msg, mpis != NULL);
    CPPUNIT_ASSERT_EQUAL( mpsb->ToString() , mpis->ToString() );
 }
