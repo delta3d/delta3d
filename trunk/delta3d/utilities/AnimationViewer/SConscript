@@ -92,6 +92,8 @@ if env['ENV'].has_key('QTDIR'):
    else:
       sources = initialSources + moc_targets
 
+   sources += env.Qrc('AnimationViewerResources.qrc');
+
    app = env.BuildProgram('AnimationViewer', sources, libs, cppDefines)
       
    if (app == '[]') :
