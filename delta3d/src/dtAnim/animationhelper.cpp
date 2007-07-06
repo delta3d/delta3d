@@ -26,14 +26,16 @@
 #include <dtAnim/cal3danimator.h>
 #include <dtAnim/ical3ddriver.h>
 #include <dtAnim/sequencemixer.h>
-#include <dtAnim/skeletalconfiguration.h>
 #include <dtAnim/animationsequence.h>
 #include <dtAnim/animationchannel.h>
 #include <dtAnim/animationwrapper.h>
+#include <dtAnim/attachmentcontroller.h>
 
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/actorproxy.h>
+
+#include <dtCore/hotspotattachment.h>
 
 #include <dtUtil/log.h>
 
@@ -49,11 +51,11 @@ dtCore::RefPtr<Cal3DLoader> AnimationHelper::sModelLoader = new Cal3DLoader();
 /////////////////////////////////////////////////////////////////////////////////
 AnimationHelper::AnimationHelper()
 : mGroundClamp(false)
-, mGeode(0)
-, mAnimator(0)
+, mGeode(NULL)
+, mAnimator(NULL)
 , mNodeBuilder(new AnimNodeBuilder())
 , mSequenceMixer(new SequenceMixer())
-, mSkeleton(new SkeletalConfiguration())
+, mAttachmentController(new AttachmentController())
 {
 }
 
@@ -69,6 +71,7 @@ void AnimationHelper::Update(float dt)
    {
       mSequenceMixer->Update(dt);
       mAnimator->Update(dt);
+      mAttachmentController->Update(*GetModelWrapper());
    }
 }
 
@@ -84,7 +87,8 @@ void AnimationHelper::PlayAnimation(const std::string& pAnim)
    }
    else
    {
-      LOG_ERROR("Cannot play animation '" + pAnim + "' because it has not been registered with the SequenceMixer.")
+      LOG_ERROR("Cannot play animation '" + pAnim + 
+            "' because it has not been registered with the SequenceMixer.")
    }
 }
 
@@ -103,34 +107,35 @@ void AnimationHelper::ClearAll(float fadeOut)
 /////////////////////////////////////////////////////////////////////////////////
 void AnimationHelper::LoadModel(const std::string& pFilename)
 {
-      dtCore::RefPtr<dtAnim::Cal3DModelWrapper> newModel = sModelLoader->Load(pFilename);
+   dtCore::RefPtr<dtAnim::Cal3DModelWrapper> newModel = sModelLoader->Load(pFilename);
 
-      if (newModel.valid())
+   if (newModel.valid())
+   {
+      mAnimator = new dtAnim::Cal3DAnimator(newModel.get());   
+      mGeode = mNodeBuilder->CreateGeode(newModel.get());
+      
+      //TODO- Get animations and register them
+      const Cal3DLoader::AnimatableVector* animatables = sModelLoader->GetAnimatables(*newModel);
+
+      Cal3DLoader::AnimatableVector::const_iterator iter = animatables->begin();
+      Cal3DLoader::AnimatableVector::const_iterator end = animatables->end();
+
+      for(;iter != end; ++iter)
       {
-         mAnimator = new dtAnim::Cal3DAnimator(newModel.get());   
-         mGeode = mNodeBuilder->CreateGeode(newModel.get());
-         
-         //TODO- Get animations and register them
-         const Cal3DLoader::AnimatableVector* animatables = sModelLoader->GetAnimatables(*newModel);
-
-         Cal3DLoader::AnimatableVector::const_iterator iter = animatables->begin();
-         Cal3DLoader::AnimatableVector::const_iterator end = animatables->end();
-
-         for(;iter != end; ++iter)
-         {
-            mSequenceMixer->RegisterAnimation((*iter).get());
-         }
-
+         mSequenceMixer->RegisterAnimation((*iter).get());
       }
-      else
-      {
-         LOG_ERROR("Unable to load skeletal resource: " + pFilename);
-         //TODO throw exception here
-      }
+
+   }
+   else
+   {
+      LOG_ERROR("Unable to load skeletal resource: " + pFilename);
+      //TODO throw exception here
+   }
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-void AnimationHelper::GetActorProperties(dtDAL::ActorProxy& pProxy, std::vector<dtCore::RefPtr<dtDAL::ActorProperty> >& pFillVector)
+void AnimationHelper::GetActorProperties(dtDAL::ActorProxy& pProxy, 
+      std::vector<dtCore::RefPtr<dtDAL::ActorProperty> >& pFillVector)
 {
    pFillVector.push_back(new dtDAL::ResourceActorProperty(pProxy, dtDAL::DataType::SKELETAL_MESH,
       "Skeletal Mesh", "Skeletal Mesh", dtDAL::MakeFunctor(*this, &AnimationHelper::LoadModel),
@@ -174,27 +179,15 @@ const Cal3DAnimator* AnimationHelper::GetAnimator() const
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-SequenceMixer* AnimationHelper::GetSequenceMixer()
+SequenceMixer& AnimationHelper::GetSequenceMixer()
 {
-   return mSequenceMixer.get();
+   return *mSequenceMixer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-const SequenceMixer* AnimationHelper::GetSequenceMixer() const
+const SequenceMixer& AnimationHelper::GetSequenceMixer() const
 {
-   return mSequenceMixer.get();
-}
-
-/////////////////////////////////////////////////////////////////////////////////
-SkeletalConfiguration* AnimationHelper::GetSkeletalConfiguration()
-{
-   return mSkeleton.get();
-}
-
-/////////////////////////////////////////////////////////////////////////////////
-const SkeletalConfiguration* AnimationHelper::GetSkeletalConfiguration() const
-{
-   return mSkeleton.get();
+   return *mSequenceMixer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -209,6 +202,17 @@ void AnimationHelper::SetGroundClamp(bool b)
    mGroundClamp = b;
 }
 
+/////////////////////////////////////////////////////////////////////////////////
+AttachmentController& AnimationHelper::GetAttachmentController()
+{
+   return *mAttachmentController;
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+void AnimationHelper::SetAttachmentController(AttachmentController& newController)
+{
+   mAttachmentController = &newController;
+}
 
 
 }//namespace dtAnim

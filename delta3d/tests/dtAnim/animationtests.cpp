@@ -269,8 +269,8 @@ namespace dtAnim
 
       std::string animName = "Walk";
 
-      SequenceMixer* mixer = mHelper->GetSequenceMixer();
-      const Animatable* anim = mixer->GetRegisteredAnimation(animName);
+      SequenceMixer& mixer = mHelper->GetSequenceMixer();
+      const Animatable* anim = mixer.GetRegisteredAnimation(animName);
       CPPUNIT_ASSERT(anim != NULL);
       
       dtCore::RefPtr<AnimationSequence> pChildSeq = new AnimationSequence();
@@ -425,20 +425,20 @@ namespace dtAnim
    {
       std::string animName = "Walk";
 
-      SequenceMixer* mixer = mHelper->GetSequenceMixer();
-      const Animatable* anim = mixer->GetRegisteredAnimation(animName);
+      SequenceMixer& mixer = mHelper->GetSequenceMixer();
+      const Animatable* anim = mixer.GetRegisteredAnimation(animName);
       CPPUNIT_ASSERT(anim != NULL);
 
       mHelper->PlayAnimation(animName);
 
-      Animatable* activeAnim = mixer->GetActiveAnimation(animName);
+      Animatable* activeAnim = mixer.GetActiveAnimation(animName);
 
       CPPUNIT_ASSERT_EQUAL(animName, activeAnim->GetName());
 
       CPPUNIT_ASSERT_EQUAL(false, activeAnim->IsActive());
 
       activeAnim->SetStartDelay(3.0f);
-      mixer->ForceRecalculate();
+      mixer.ForceRecalculate();
       CPPUNIT_ASSERT_EQUAL(false, activeAnim->IsActive());
 
       mHelper->Update(1.0f);
@@ -456,16 +456,16 @@ namespace dtAnim
       CPPUNIT_ASSERT(activeChannel.valid());
 
       activeChannel->SetMaxDuration(3.5f);
-      mixer->ForceRecalculate();
+      mixer.ForceRecalculate();
       mHelper->Update(3.5f);
 
       CPPUNIT_ASSERT_EQUAL(false, activeChannel->IsActive());
 
-      CPPUNIT_ASSERT(mixer->GetActiveAnimation(animName) == 0); 
+      CPPUNIT_ASSERT(mixer.GetActiveAnimation(animName) == 0); 
 
       ////OK, so far so good, lets try testing looping vs non looping
       //mHelper->PlayAnimation(animName);
-      //activeAnim = mixer->GetActiveAnimation(animName);
+      //activeAnim = mixer.GetActiveAnimation(animName);
       //CPPUNIT_ASSERT(activeAnim);
       //activeChannel = dynamic_cast<AnimationChannel*>(activeAnim);
       //CPPUNIT_ASSERT(activeChannel.valid());

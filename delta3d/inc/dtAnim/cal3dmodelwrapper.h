@@ -116,8 +116,7 @@ namespace dtAnim
          osg::Quat GetCoreTrackKeyFrameQuat(unsigned int animid, unsigned int boneid, unsigned int keyframeindex) const;
 
          /// @param boneID the ID for the CalBone instance.
-         osg::Quat GetBoneAbsoluteRotation(unsigned int boneID) const;         
-
+         osg::Quat GetBoneAbsoluteRotation(unsigned int boneID) const;
          /// Get the current translation for the CalBone.
          /// @param boneID the ID for the CalBone of interest.
          /// @return the translation vector in a right-hand coordinate system.

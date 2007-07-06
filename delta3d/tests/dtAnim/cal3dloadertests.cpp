@@ -59,39 +59,39 @@ namespace dtAnim
 
             mHelper->LoadModel(context + filename);
 
-            SequenceMixer* mixer = mHelper->GetSequenceMixer();
-            CPPUNIT_ASSERT(mixer != NULL);
+            SequenceMixer& mixer = mHelper->GetSequenceMixer();
             
             std::vector<const Animatable*> toFill;
-            mixer->GetRegisteredAnimations(toFill);
+            mixer.GetRegisteredAnimations(toFill);
 
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of animatables loaded from the file is incorrect.", size_t(5U), toFill.size());
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of animatables loaded from the file is incorrect.", 
+                  size_t(5U), toFill.size());
 
-            const Animatable* runAnim = mixer->GetRegisteredAnimation("Run");
+            const Animatable* runAnim = mixer.GetRegisteredAnimation("Run");
             TestLoadedAnimatable(runAnim, "Run", 0.0f, 0.0f, 0.0f, 1.0f, 1.0f);
 
             const AnimationChannel* runChannel = dynamic_cast<const AnimationChannel*>(runAnim);
             TestLoadedAnimationChannel(runChannel, 0.0f, false, true);
             
-            const Animatable* walkAnim = mixer->GetRegisteredAnimation("Walk");
+            const Animatable* walkAnim = mixer.GetRegisteredAnimation("Walk");
             TestLoadedAnimatable(walkAnim, "Walk", 0.0f, 0.0f, 0.0f, 1.0f, 1.0f);
 
             const AnimationChannel* walkChannel = dynamic_cast<const AnimationChannel*>(walkAnim);
             TestLoadedAnimationChannel(walkChannel, 0.0f, false, true);
             
-            const Animatable* idleAnim = mixer->GetRegisteredAnimation("Idle");
+            const Animatable* idleAnim = mixer.GetRegisteredAnimation("Idle");
             TestLoadedAnimatable(idleAnim, "Idle", 0.0f, 0.0f, 0.0f, 1.0f, 1.0f);
 
             const AnimationChannel* idleChannel = dynamic_cast<const AnimationChannel*>(idleAnim);
             TestLoadedAnimationChannel(idleChannel, 0.0f, false, true);
 
-            const Animatable* idleActionAnim = mixer->GetRegisteredAnimation("IdleAction");
+            const Animatable* idleActionAnim = mixer.GetRegisteredAnimation("IdleAction");
             TestLoadedAnimatable(idleActionAnim, "IdleAction", 0.1f, 0.2f, 0.3f, 1.1f, 0.9f);
 
             const AnimationChannel* idleActionChannel = dynamic_cast<const AnimationChannel*>(idleActionAnim);
             TestLoadedAnimationChannel(idleActionChannel, 4.5f, true, false);
 
-            const Animatable* runWalkAnim = mixer->GetRegisteredAnimation("RunWalk");
+            const Animatable* runWalkAnim = mixer.GetRegisteredAnimation("RunWalk");
             TestLoadedAnimatable(runWalkAnim, "RunWalk", 0.1f, 0.2f, 0.2f, 1.0f, 1.0f);
 
             const AnimationSequence* runWalkSequence = dynamic_cast<const AnimationSequence*>(runWalkAnim);

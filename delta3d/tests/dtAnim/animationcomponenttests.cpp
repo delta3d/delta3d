@@ -52,22 +52,22 @@ namespace dtAnim
    {
       bool mHasBeenUpdated; 
 
-   public:
-      TestAnimHelper():mHasBeenUpdated(false){}
+      public:
+         TestAnimHelper():mHasBeenUpdated(false){}
 
-      bool HasBeenUpdated(){return mHasBeenUpdated;}
+         bool HasBeenUpdated(){return mHasBeenUpdated;}
 
-      void Update(float dt)
-      {
-         mHasBeenUpdated = true;
-      }
+         void Update(float dt)
+         {
+            mHasBeenUpdated = true;
+         }
    };
 
    class AnimationComponentTests : public CPPUNIT_NS::TestFixture
    {
       CPPUNIT_TEST_SUITE( AnimationComponentTests );
-         CPPUNIT_TEST( TestAnimationComponent );
-         CPPUNIT_TEST( TestAnimationPerformance );
+      CPPUNIT_TEST( TestAnimationComponent );
+      CPPUNIT_TEST( TestAnimationPerformance );
       CPPUNIT_TEST_SUITE_END();
 
       public:
@@ -79,7 +79,7 @@ namespace dtAnim
 
       private:
 
-         dtCore::RefPtr<dtUtil::Log> mLogger;
+         dtUtil::Log* mLogger;
          dtCore::RefPtr<GameManager> mGM;
          dtCore::RefPtr<AnimationComponent> mAnimComp;
          dtCore::RefPtr<GameActorProxy> mTestGameActor;
@@ -142,7 +142,7 @@ namespace dtAnim
       try
       {
          //uses example data for now
-         std::string context = dtCore::GetDeltaRootPath() + "/examples/data/demoMap";//"/tests/data/ProjectContext";
+         std::string context = dtCore::GetDeltaRootPath() + "/examples/data/demoMap";
          dtDAL::Project::GetInstance().SetContext(context, true);
          mGM->ChangeMap("AnimationPerformance");
 
@@ -150,18 +150,20 @@ namespace dtAnim
          dtCore::System::GetInstance().Step();
          dtCore::System::GetInstance().Step();
          dtCore::System::GetInstance().Step();
-         
+
          dtDAL::Project::GetInstance().GetMap("AnimationPerformance").FindProxies(proxies, "CharacterEntity");                 
          dtDAL::Project::GetInstance().GetMap("AnimationPerformance").FindProxies(groundActor, "GroundActor"); 
-      
+
       }
       catch (dtUtil::Exception &e)
       {
          CPPUNIT_FAIL(e.ToString());
       }
 
-      mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, "Performance testing AnimationComponent with " + dtUtil::ToString(proxies.size()) + " animated entities.");
-      
+      mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, 
+            "Performance testing AnimationComponent with " + 
+            dtUtil::ToString(proxies.size()) + " animated entities.");
+
       //register animation actors
       ProxyContainer::iterator iter, end;
       for(iter = proxies.begin(), end = proxies.end(); iter != end; ++iter)
@@ -169,21 +171,23 @@ namespace dtAnim
          dtGame::GameActorProxy* gameProxy = dynamic_cast<dtGame::GameActorProxy*>((*iter).get());
          if(gameProxy)
          {
-            dtActors::AnimationGameActor2* actor = dynamic_cast<dtActors::AnimationGameActor2*>(&gameProxy->GetGameActor());
+            dtActors::AnimationGameActor2* actor = 
+               dynamic_cast<dtActors::AnimationGameActor2*>(&gameProxy->GetGameActor());
 
-            if(actor)
-            { 
-               mAnimComp->RegisterActor(*gameProxy, *actor->GetHelper());      
-               actor->GetHelper()->SetGroundClamp(true);
-            }
-    
+               if(actor)
+               { 
+                  mAnimComp->RegisterActor(*gameProxy, *actor->GetHelper());      
+                  actor->GetHelper()->SetGroundClamp(true);
+               }
+
          }
       }
 
       //lets do some performance testing
-      mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, "Testing performance of PlayAnimation on AnimationHelper");
+      mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, 
+      "Testing performance of PlayAnimation on AnimationHelper");
 
-      ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      //////////////////////////////////////////////////////////////////////////
       dtCore::Timer timer;
       dtCore::Timer_t timerStart, timerEnd;
 
@@ -193,7 +197,8 @@ namespace dtAnim
          dtGame::GameActorProxy* gameProxy = dynamic_cast<dtGame::GameActorProxy*>((*iter).get());
          if(gameProxy)
          {
-            dtActors::AnimationGameActor2* actor = dynamic_cast<dtActors::AnimationGameActor2*>(&gameProxy->GetGameActor());
+            dtActors::AnimationGameActor2* actor = 
+               dynamic_cast<dtActors::AnimationGameActor2*>(&gameProxy->GetGameActor());
 
             if(actor)
             { 
@@ -203,13 +208,16 @@ namespace dtAnim
       }
       timerEnd = timer.Tick();
 
-      mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, "Time Results for Play Animation: " + dtUtil::ToString(timer.DeltaMil(timerStart, timerEnd)) + " ms");
-      ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, 
+            "Time Results for Play Animation: " 
+            + dtUtil::ToString(timer.DeltaMil(timerStart, timerEnd)) + " ms");
+      //////////////////////////////////////////////////////////////////////////
 
-      ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      //////////////////////////////////////////////////////////////////////////
       int numUpdates = 60;
       float updateTime = 1.0f / 60.0f;
-      dtCore::RefPtr<dtGame::Message> message = mGM->GetMessageFactory().CreateMessage(dtGame::MessageType::TICK_LOCAL);
+      dtCore::RefPtr<dtGame::Message> message =
+         mGM->GetMessageFactory().CreateMessage(dtGame::MessageType::TICK_LOCAL);
 
       dtGame::TickMessage* tick = dynamic_cast<dtGame::TickMessage*>(message.get());
       if(!tick)
@@ -218,7 +226,9 @@ namespace dtAnim
       }
       tick->SetDeltaSimTime(updateTime);
 
-      mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, "Testing performance of " + dtUtil::ToString(numUpdates) + " updates on AnimationComponent");
+      mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, 
+            "Testing performance of " + dtUtil::ToString(numUpdates) +
+            " updates on AnimationComponent");
 
       timerStart = timer.Tick();
       for(int i = 0; i < numUpdates; ++i)
@@ -227,25 +237,30 @@ namespace dtAnim
       }
       timerEnd = timer.Tick();
 
-      mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, "Time Results for Update: " + dtUtil::ToString(timer.DeltaMil(timerStart, timerEnd)) + " ms");
-      ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, 
+            "Time Results for Update: " 
+            + dtUtil::ToString(timer.DeltaMil(timerStart, timerEnd)) + " ms");
+      //////////////////////////////////////////////////////////////////////////
 
-      
+
       if(!groundActor.empty())
       {
          ProxyContainer::iterator iter = groundActor.begin();
          dtDAL::ActorProxy* proxy = dynamic_cast<dtDAL::ActorProxy*>((*iter).get());
          if(proxy)
          {
-            dtCore::Transformable* transform = dynamic_cast<dtCore::Transformable*>(proxy->GetActor());
+            dtCore::Transformable* transform 
+               = dynamic_cast<dtCore::Transformable*>(proxy->GetActor());
             if(transform)
             {
                mAnimComp->SetTerrainActor(transform);
             }
          }
-      
-   
-         mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, "Testing performance of " + dtUtil::ToString(numUpdates) + " updates on AnimationComponent with ground clamping");
+
+
+         mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, 
+               "Testing performance of " + dtUtil::ToString(numUpdates) + 
+               " updates on AnimationComponent with ground clamping");
 
          timerStart = timer.Tick();
          for(int i = 0; i < numUpdates; ++i)
@@ -254,18 +269,21 @@ namespace dtAnim
          }
          timerEnd = timer.Tick();
 
-         mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, "Time Results for Update with Ground Clamp: " + dtUtil::ToString(timer.DeltaMil(timerStart, timerEnd)) + " ms");
+         mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, 
+               "Time Results for Update with Ground Clamp: " 
+               + dtUtil::ToString(timer.DeltaMil(timerStart, timerEnd)) + " ms");
       }
       else
       {
          LOG_ERROR("Cannot find ground");
       }
-      ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      //////////////////////////////////////////////////////////////////////////
 
 
-      ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      
-      mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, "Testing performance of ClearAnimation()");
+      //////////////////////////////////////////////////////////////////////////
+
+      mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__,
+            "Testing performance of ClearAnimation()");
 
       timerStart = timer.Tick();
       for(iter = proxies.begin(), end = proxies.end(); iter != end; ++iter)
@@ -273,7 +291,8 @@ namespace dtAnim
          dtGame::GameActorProxy* gameProxy = dynamic_cast<dtGame::GameActorProxy*>((*iter).get());
          if(gameProxy)
          {
-            dtActors::AnimationGameActor2* actor = dynamic_cast<dtActors::AnimationGameActor2*>(&gameProxy->GetGameActor());
+            dtActors::AnimationGameActor2* actor 
+               = dynamic_cast<dtActors::AnimationGameActor2*>(&gameProxy->GetGameActor());
 
             if(actor)
             { 
@@ -283,23 +302,26 @@ namespace dtAnim
       }
       timerEnd = timer.Tick();
 
-      mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, "Time Results for Clear Animation: " + dtUtil::ToString(timer.DeltaMil(timerStart, timerEnd)) + " ms");
-      ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, 
+            "Time Results for Clear Animation: " + 
+            dtUtil::ToString(timer.DeltaMil(timerStart, timerEnd)) + " ms");
+      //////////////////////////////////////////////////////////////////////////
 
-      
+
       //close map
       try
       {
          if(!mGM->GetCurrentMap().empty())
          {
-            dtDAL::Project::GetInstance().CloseMap(dtDAL::Project::GetInstance().GetMap(mGM->GetCurrentMap()), true);
+            dtDAL::Project::GetInstance().CloseMap(
+                  dtDAL::Project::GetInstance().GetMap(mGM->GetCurrentMap()), true);
          }
       }
       catch(dtUtil::Exception& e)
       {
          CPPUNIT_FAIL(e.ToString());
       }
-    
-}
+
+   }
 
 }//namespace dtAnim
