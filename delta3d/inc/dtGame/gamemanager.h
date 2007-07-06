@@ -886,7 +886,7 @@ namespace dtGame
          std::set<TimerInfo>& GetSimulationTimerList() { return mSimulationTimers; }
 
          /// Does the work of ClearTimer for each of the timer info sets.
-         void GameManager::ClearTimerSingleSet(std::set<TimerInfo>& timerSet, 
+         void ClearTimerSingleSet(std::set<TimerInfo>& timerSet, 
                const std::string& name, const GameActorProxy *proxy);
 
          /**
