@@ -22,7 +22,6 @@
 #include <dtAnim/cal3danimator.h>
 #include <dtAnim/animnodebuilder.h>
 #include <dtAnim/sequencemixer.h>
-#include <dtAnim/skeletalconfiguration.h>
 #include <dtAnim/cal3dmodelwrapper.h>
 #include <dtAnim/animdriver.h>
 #include <dtAnim/animationsequence.h>
@@ -46,8 +45,8 @@ const std::string AnimationComponent::DEFAULT_NAME("Animation Component");
 AnimationComponent::AnimationComponent(const std::string& name)
 : BaseClass(name)
 , mRegisteredActors()
-, mTerrainActor(0)
-, mIsector(0)
+, mTerrainActor(NULL)
+, mIsector(NULL)
 {
 }
 
@@ -147,7 +146,7 @@ dtCore::Transformable* AnimationComponent::GetTerrainActor()
 const dtCore::Transformable* AnimationComponent::GetTerrainActor() const
 {
    return mTerrainActor.get();
-};
+}
 
 /////////////////////////////////////////////////////////////////////////////////
 void AnimationComponent::SetTerrainActor(dtCore::Transformable* newTerrain)
@@ -237,8 +236,6 @@ void AnimationComponent::DoIsector(unsigned numActors, dtGame::GameActor* actor_
          }
       }
    }
-
-      
 }
 
 

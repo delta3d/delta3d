@@ -255,7 +255,7 @@ void TrackView::contextMenuEvent( QContextMenuEvent *event )
 
    QMenu menu;
    
-   const QGraphicsItem *item = itemAt(event->pos()); 
+   //const QGraphicsItem *item = itemAt(event->pos()); 
 
    menu.exec(event->globalPos());
 }

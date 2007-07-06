@@ -22,9 +22,6 @@ namespace dtAnim
       };
    }
    ///@endcond
-}
-
-using namespace dtAnim;
 
 SkeletalDrawable::IPrimitiveRenderObject::~IPrimitiveRenderObject()
 {
@@ -194,3 +191,4 @@ void SkeletalDrawable::PopulatePrimitive(const Cal3DModelWrapper& model,
    }
 }
 
+}

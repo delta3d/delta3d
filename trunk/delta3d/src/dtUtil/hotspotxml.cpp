@@ -5,7 +5,8 @@
 #include <cstddef>
 #include <sstream>
 
-using namespace dtUtil;
+namespace dtUtil
+{
 
 const osg::Vec3 HotSpotFileHandler::HEADING_VEC(0,0,1);
 const osg::Vec3 HotSpotFileHandler::PITCH_VEC(1,0,0);
@@ -129,5 +130,7 @@ HotSpotFileHandler::~HotSpotFileHandler()
 HotSpotFileHandler::HotSpotDefinitionVector& HotSpotFileHandler::GetData()
 {
    return mHotSpots;
+}
+
 }
 

@@ -36,8 +36,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 *
 */
 
-#ifndef __dtAnim__SUBMESH_H__
-#define __dtAnim__SUBMESH_H__
+#ifndef DELTA_SUBMESH_H__
+#define DELTA_SUBMESH_H__
 
 #include <osg/Drawable>
 #include <cal3d/cal3d.h>
