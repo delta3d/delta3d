@@ -25,6 +25,7 @@
 #include <dtAnim/cal3dmodelwrapper.h>
 #include <dtAnim/animdriver.h>
 #include <dtAnim/animationsequence.h>
+#include <dtAnim/attachmentcontroller.h>
 
 #include <dtCore/batchisector.h>
 
