@@ -30,7 +30,7 @@
 
 namespace dtUtil
 {
-   class HotSpotDefinition;
+   struct HotSpotDefinition;
 }
 
 namespace dtCore
