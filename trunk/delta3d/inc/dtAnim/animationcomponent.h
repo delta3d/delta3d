@@ -64,39 +64,39 @@ public:
    AnimationComponent(const std::string& name = DEFAULT_NAME);
 
    /**
-   * handles a processed a message
-   * @see dtGame::GMComponent#ProcessMessage
-   * @param The message
-   */
+    * handles a processed a message
+    * @see dtGame::GMComponent#ProcessMessage
+    * @param The message
+    */
    /*virtual*/ void ProcessMessage(const dtGame::Message &message);
 
    /**
-   * Gets the helper registered for an actor
-   * @param proxy The proxy to get the helper for
-   * @return A pointer to the helper, or NULL if the proxy is not registered
-   */
+    * Gets the helper registered for an actor
+    * @param proxy The proxy to get the helper for
+    * @return A pointer to the helper, or NULL if the proxy is not registered
+    */
    const dtAnim::AnimationHelper* GetHelperForProxy(dtGame::GameActorProxy &proxy) const;
 
    /**
-   * Registers an actor with this component.  To simplify coding in the actor, specifically when it comes
-   * to setting properties on the helper, the actor should create it's own helper and pass it in when registering.
-   * @param toRegister the actor to register.
-   * @param helper the preconfigured helper object to use.
-   * @throws dtUtil::Exception if this actor is already registered with the component.
-   */
+    * Registers an actor with this component.  To simplify coding in the actor, specifically when it comes
+    * to setting properties on the helper, the actor should create it's own helper and pass it in when registering.
+    * @param toRegister the actor to register.
+    * @param helper the preconfigured helper object to use.
+    * @throws dtUtil::Exception if this actor is already registered with the component.
+    */
    void RegisterActor(dtGame::GameActorProxy& toRegister, dtAnim::AnimationHelper& helper);
 
    /**
-   * Registers an actor with this component.  To simplify coding in the actor, specifically when it comes
-   * to setting properties on the helper, the actor should create it's own helper and pass it in when registering.
-   * @param toRegister the actor to register.
-   * @param helper the preconfigured helper object to use.
-   */
+    * Registers an actor with this component.  To simplify coding in the actor, specifically when it comes
+    * to setting properties on the helper, the actor should create it's own helper and pass it in when registering.
+    * @param toRegister the actor to register.
+    * @param helper the preconfigured helper object to use.
+    */
    void UnregisterActor(dtGame::GameActorProxy& toRegister);
 
    /**
-   * @return true if the given actor is registered with this component.
-   */
+    * @return true if the given actor is registered with this component.
+    */
    bool IsRegisteredActor(dtGame::GameActorProxy& gameActorProxy);
 
    ///@return the terrain actor using the given name.  If it has not yet been queried, the query will run when this is called.
@@ -113,10 +113,10 @@ protected:
    virtual ~AnimationComponent();
 
    virtual void TickLocal(float dt);
-   //creates batches of isector querys
+   //creates batches of isector queries
    void GroundClamp();
    //does a batched isector query
-   void DoIsector(unsigned numActors, dtGame::GameActor* actor_array[32]);
+   void DoIsector(unsigned int numActors, dtGame::GameActor* actor_array[32]);
 
 private:
    AnimationComponent(const AnimationComponent&);               //not implemented
