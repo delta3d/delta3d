@@ -31,6 +31,8 @@
 #include <osg/Vec3>
 #include <osg/Matrix>
 
+#include <algorithm>
+
 namespace dtAnim
 {
 
