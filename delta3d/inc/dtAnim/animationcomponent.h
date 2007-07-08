@@ -59,7 +59,7 @@ public:
 
 public:
    ///The default component name, used when looking it up on the GM.   
-   static const std::string DEFAULT_NAME;
+   static const std::string &DEFAULT_NAME;
 
    AnimationComponent(const std::string& name = DEFAULT_NAME);
 
