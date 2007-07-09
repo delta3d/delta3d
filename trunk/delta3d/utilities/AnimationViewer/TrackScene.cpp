@@ -95,4 +95,3 @@ void TrackScene::CreateTestTracks()
       addRect(test)->setPen(trackPen); 
    }
 }
-

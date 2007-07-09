@@ -1,5 +1,12 @@
+/// Included above Viewer.h to avoid a compile error in linux
+#include <QtCore/QDir>
+#include <QtCore/QDebug>
+#include <QtCore/QString>
+#include <QtGui/QColor>
 
 #include "Viewer.h"
+
+
 #include <dtUtil/log.h>
 #include <dtCore/transform.h>
 #include <dtCore/scene.h>
@@ -25,11 +32,6 @@
 #include <osg/PolygonMode>
 #include <osg/PolygonOffset>
 #include <osg/Material>
-
-#include <QtCore/QDir>
-#include <QtCore/QDebug>
-#include <QtCore/QString>
-#include <QtGui/QColor>
 
 using namespace dtUtil;
 using namespace dtCore;
@@ -329,4 +331,3 @@ void Viewer::PostFrame( const double deltaFrameTime )
    }
 
 }
-

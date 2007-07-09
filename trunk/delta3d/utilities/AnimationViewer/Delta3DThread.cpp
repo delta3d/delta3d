@@ -1,7 +1,7 @@
-#include <dtCore/system.h>
 #include "Delta3DThread.h"
-#include "Viewer.h"
 #include "MainWindow.h"
+#include "Viewer.h"
+#include <dtCore/system.h>
 
 Delta3DThread::Delta3DThread(QObject *parent):
 QThread(parent)
