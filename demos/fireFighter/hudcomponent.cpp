@@ -569,6 +569,13 @@ bool HUDComponent::OnStartWithObjectives(const CEGUI::EventArgs &e)
 {
    mShowObjectives = true;
    SendGameStateChangedMessage(GameState::STATE_MENU, GameState::STATE_RUNNING);
+   
+   //Disable these widgets for the remainder of the application since we can't
+   //restart the game.  The only option left to the user is to quit and
+   //restart the whole application.
+   mStart->setEnabled(false);
+   mStartWithObjectives->setEnabled(false);
+
    return true;
 }
 
@@ -576,6 +583,13 @@ bool HUDComponent::OnStart(const CEGUI::EventArgs &e)
 {
    mShowObjectives = false;
    SendGameStateChangedMessage(GameState::STATE_MENU, GameState::STATE_RUNNING);
+
+   //Disable these widgets for the remainder of the application since we can't
+   //restart the game.  The only option left to the user is to quit and
+   //restart the whole application.
+   mStart->setEnabled(false);
+   mStartWithObjectives->setEnabled(false);
+
    return true;
 }
 
