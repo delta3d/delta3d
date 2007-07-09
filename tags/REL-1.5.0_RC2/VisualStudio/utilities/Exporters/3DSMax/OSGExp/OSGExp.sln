@@ -1,0 +1,52 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OSGExp", "OSGExp.vcproj", "{109C4708-1B61-44DC-81BB-3636B39E9FDC}"
+	ProjectSection(ProjectDependencies) = postProject
+		{70DAC647-2186-4612-A4DD-A32254E7DDBC} = {70DAC647-2186-4612-A4DD-A32254E7DDBC}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OSGHelper", "Helpers\OSGHelper.vcproj", "{BB0C4F38-BB73-4737-8149-8F70630F2864}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Previewer", "..\Previewer\Previewer.vcproj", "{70DAC647-2186-4612-A4DD-A32254E7DDBC}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Debug Static = Debug Static
+		Release = Release
+		Release Static = Release Static
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{109C4708-1B61-44DC-81BB-3636B39E9FDC}.Debug.ActiveCfg = Debug|Win32
+		{109C4708-1B61-44DC-81BB-3636B39E9FDC}.Debug.Build.0 = Debug|Win32
+		{109C4708-1B61-44DC-81BB-3636B39E9FDC}.Debug Static.ActiveCfg = Debug Static|Win32
+		{109C4708-1B61-44DC-81BB-3636B39E9FDC}.Debug Static.Build.0 = Debug Static|Win32
+		{109C4708-1B61-44DC-81BB-3636B39E9FDC}.Release.ActiveCfg = Release|Win32
+		{109C4708-1B61-44DC-81BB-3636B39E9FDC}.Release.Build.0 = Release|Win32
+		{109C4708-1B61-44DC-81BB-3636B39E9FDC}.Release Static.ActiveCfg = Release Static|Win32
+		{109C4708-1B61-44DC-81BB-3636B39E9FDC}.Release Static.Build.0 = Release Static|Win32
+		{BB0C4F38-BB73-4737-8149-8F70630F2864}.Debug.ActiveCfg = Debug|Win32
+		{BB0C4F38-BB73-4737-8149-8F70630F2864}.Debug.Build.0 = Debug|Win32
+		{BB0C4F38-BB73-4737-8149-8F70630F2864}.Debug Static.ActiveCfg = Debug|Win32
+		{BB0C4F38-BB73-4737-8149-8F70630F2864}.Debug Static.Build.0 = Debug|Win32
+		{BB0C4F38-BB73-4737-8149-8F70630F2864}.Release.ActiveCfg = Release|Win32
+		{BB0C4F38-BB73-4737-8149-8F70630F2864}.Release.Build.0 = Release|Win32
+		{BB0C4F38-BB73-4737-8149-8F70630F2864}.Release Static.ActiveCfg = Release|Win32
+		{BB0C4F38-BB73-4737-8149-8F70630F2864}.Release Static.Build.0 = Release|Win32
+		{70DAC647-2186-4612-A4DD-A32254E7DDBC}.Debug.ActiveCfg = Debug|Win32
+		{70DAC647-2186-4612-A4DD-A32254E7DDBC}.Debug.Build.0 = Debug|Win32
+		{70DAC647-2186-4612-A4DD-A32254E7DDBC}.Debug Static.ActiveCfg = Debug Static|Win32
+		{70DAC647-2186-4612-A4DD-A32254E7DDBC}.Debug Static.Build.0 = Debug Static|Win32
+		{70DAC647-2186-4612-A4DD-A32254E7DDBC}.Release.ActiveCfg = Release|Win32
+		{70DAC647-2186-4612-A4DD-A32254E7DDBC}.Release.Build.0 = Release|Win32
+		{70DAC647-2186-4612-A4DD-A32254E7DDBC}.Release Static.ActiveCfg = Release Static|Win32
+		{70DAC647-2186-4612-A4DD-A32254E7DDBC}.Release Static.Build.0 = Release Static|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

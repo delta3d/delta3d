@@ -1,0 +1,30 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fireFighter", "fireFighter.vcproj", "{14F96193-7D76-4EC5-B21C-4E3AE9E128F8}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTests", "..\..\tests\demos\fireFighter\UnitTests.vcproj", "{FD9EA62D-02EF-46C2-8302-924B75F96BEA}"
+	ProjectSection(ProjectDependencies) = postProject
+		{14F96193-7D76-4EC5-B21C-4E3AE9E128F8} = {14F96193-7D76-4EC5-B21C-4E3AE9E128F8}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{14F96193-7D76-4EC5-B21C-4E3AE9E128F8}.Debug.ActiveCfg = Debug|Win32
+		{14F96193-7D76-4EC5-B21C-4E3AE9E128F8}.Debug.Build.0 = Debug|Win32
+		{14F96193-7D76-4EC5-B21C-4E3AE9E128F8}.Release.ActiveCfg = Release|Win32
+		{14F96193-7D76-4EC5-B21C-4E3AE9E128F8}.Release.Build.0 = Release|Win32
+		{FD9EA62D-02EF-46C2-8302-924B75F96BEA}.Debug.ActiveCfg = Debug|Win32
+		{FD9EA62D-02EF-46C2-8302-924B75F96BEA}.Debug.Build.0 = Debug|Win32
+		{FD9EA62D-02EF-46C2-8302-924B75F96BEA}.Release.ActiveCfg = Release|Win32
+		{FD9EA62D-02EF-46C2-8302-924B75F96BEA}.Release.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
