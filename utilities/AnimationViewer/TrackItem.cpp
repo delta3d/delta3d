@@ -1,12 +1,12 @@
 #include "TrackItem.h"
-#include <QGraphicsScene>
-#include <QGraphicsSceneEvent>
-#include <QMimeData>
-#include <QDrag>
-#include <QPainter>
-#include <QPixmap>
-#include <QFont>
-#include <QImage>
+#include <QtGui/QGraphicsScene>
+#include <QtGui/QGraphicsSceneEvent>
+#include <QtCore/QMimeData>
+#include <QtGui/QDrag>
+#include <QtGui/QPainter>
+#include <QtGui/QPixmap>
+#include <QtGui/QFont>
+#include <QtGui/QImage>
 
 
 TrackItem::TrackItem(QGraphicsItem *parent, QGraphicsScene *scene)

@@ -1,7 +1,7 @@
 #include "TrackScene.h"
 #include "TrackItem.h"
-#include <QRectF>
-#include <QGraphicsRectItem>
+#include <QtCore/QRectF>
+#include <QtGui/QGraphicsRectItem>
 
 
 TrackScene::TrackScene(QObject *parent)

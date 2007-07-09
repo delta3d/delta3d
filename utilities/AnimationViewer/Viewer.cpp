@@ -26,18 +26,18 @@
 #include <osg/PolygonOffset>
 #include <osg/Material>
 
-#include <QDir>
-#include <QDebug>
-#include <QString>
-#include <QColor>
+#include <QtCore/QDir>
+#include <QtCore/QDebug>
+#include <QtCore/QString>
+#include <QtGui/QColor>
 
 using namespace dtUtil;
 using namespace dtCore;
 using namespace dtAnim;
 
 Viewer::Viewer():
-mMotion(NULL),
 mCharacter(NULL),
+mMotion(NULL),
 mLoader(new dtAnim::Cal3DLoader())
 {
 

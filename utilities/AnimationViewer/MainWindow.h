@@ -1,7 +1,7 @@
 #ifndef MainWindow_h__
 #define MainWindow_h__
 
-#include <QMainWindow>
+#include <QtGui/QMainWindow>
 
 class QAction;
 class QTableWidgetItem;

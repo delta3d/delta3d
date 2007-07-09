@@ -1,9 +1,9 @@
 #ifndef _TRACKSCENE_H_
 #define _TRACKSCENE_H_
 
-#include <QGraphicsScene>
-#include <QTimer>
-#include <QRectF>
+#include <QtGui/QGraphicsScene>
+#include <QtCore/QTimer>
+#include <QtCore/QRectF>
 
 #include <vector>
 #include <string>

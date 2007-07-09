@@ -1,11 +1,11 @@
 #include "TrackView.h"
 #include "TrackScene.h"
 
-#include <QWheelEvent>
-#include <QGraphicsScene>
-#include <QAction>
-#include <QMenu>
-#include <QGraphicsItem>
+#include <QtGui/QWheelEvent>
+#include <QtGui/QGraphicsScene>
+#include <QtGui/QAction>
+#include <QtGui/QMenu>
+#include <QtGui/QGraphicsItem>
 
 #include <cassert>
 #include <iostream>
