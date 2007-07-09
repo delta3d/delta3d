@@ -82,6 +82,7 @@ void HelpWindow::InitGui(CEGUI::Window *mainWindow)
       mMainWindow = mainWindow;
       CEGUI::WindowManager *wm = CEGUI::WindowManager::getSingletonPtr();
       mOverlay = static_cast<CEGUI::FrameWindow*>(wm->createWindow("WindowsLook/FrameWindow", "help_window"));
+      mOverlay->setProperty("AlwaysOnTop", "True");
      
       if(mMainWindow != NULL)
       {
