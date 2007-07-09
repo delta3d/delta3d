@@ -1,13 +1,14 @@
 #ifndef DELTA_ANIMVIEW_VIEWER
 #define DELTA_ANIMVIEW_VIEWER
 
+#include <QtCore/QObject>
+#include <QtCore/QBasicTimer>
+
 #include <dtCore/refptr.h>
 #include <dtABC/application.h>
 #include <dtCore/system.h>
 #include <dtAnim/cal3dloader.h>
 
-#include <QtCore/QObject>
-#include <QtCore/QBasicTimer>
 #include <vector>
 
 class QColor;

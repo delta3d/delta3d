@@ -17,11 +17,11 @@ const float kDefaultMinScale = 0.2f;
 
 TrackView::TrackView(TrackScene *scene, QWidget *parent)
 :QGraphicsView(scene, parent) 
-, mMaxScale(kDefaultMaxScale)
-, mMinScale(kDefaultMinScale)
-, mCurrentScale(1.0f)
 , mScene(scene)
 , mDragItem(NULL)
+, mMinScale(kDefaultMinScale)
+, mMaxScale(kDefaultMaxScale)
+, mCurrentScale(1.0f)
 {   
    centerOn(scene->sceneRect().center());     
    Zoom(10);   

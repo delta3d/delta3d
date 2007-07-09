@@ -534,6 +534,3 @@ void MainWindow::OnDisplayError( const QString &msg )
 {
    QMessageBox::warning(this, "AnimationViewer", msg );
 }
-
-
-
