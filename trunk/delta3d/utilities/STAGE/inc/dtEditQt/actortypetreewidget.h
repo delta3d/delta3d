@@ -36,7 +36,7 @@ namespace dtEditQt
     class ActorTypeTreeWidget : public QTreeWidgetItem 
     {
       public:
-            static const std::string &CATEGORY_SEPARATOR;
+            static const std::string CATEGORY_SEPARATOR;
 
         /**
          * Constructor - Use this for leaf nodes.  These should be actor type and can 

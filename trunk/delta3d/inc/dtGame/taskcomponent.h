@@ -37,7 +37,7 @@ namespace dtGame
    {
       public:
 
-         static const std::string &DEFAULT_NAME;
+         static const std::string DEFAULT_NAME;
 
          /**
           * Constructs the task component.

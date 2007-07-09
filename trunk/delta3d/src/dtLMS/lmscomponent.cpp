@@ -27,7 +27,7 @@
 
 namespace dtLMS
 {
-   const std::string &LmsComponent::DEFAULT_NAME = "LmsComponent";
+   const std::string LmsComponent::DEFAULT_NAME = "LmsComponent";
 
    LmsComponent::LmsComponent(const std::string &name) : 
       dtGame::TaskComponent(name),
