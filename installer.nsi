@@ -7,7 +7,7 @@
 !ifdef OUTFILE
   OutFile "${OUTFILE}"
 !else
-  OutFile dt-${VERSION}-setup.exe
+  OutFile dt_win32_${VERSION}_setup.exe
 !endif
 
 ; HM NIS Edit Wizard helper defines
