@@ -569,14 +569,14 @@ void HUDComponent::BuildIntroMenu()
 bool HUDComponent::OnStartWithObjectives(const CEGUI::EventArgs &e)
 {
    mShowObjectives = true;
-   SendGameStateChangedMessage(GameState::STATE_MENU, GameState::STATE_RUNNING);
+   SendGameStateChangedMessage(GameState::STATE_MENU, GameState::STATE_INTRO);
    return true;
 }
 
 bool HUDComponent::OnStart(const CEGUI::EventArgs &e)
 {
    mShowObjectives = false;
-   SendGameStateChangedMessage(GameState::STATE_MENU, GameState::STATE_RUNNING);
+   SendGameStateChangedMessage(GameState::STATE_MENU, GameState::STATE_INTRO);
    return true;
 }
 

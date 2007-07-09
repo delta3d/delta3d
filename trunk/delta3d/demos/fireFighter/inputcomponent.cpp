@@ -103,36 +103,7 @@ void InputComponent::ProcessMessage(const dtGame::Message &message)
       }
       else if(*mCurrentState == GameState::STATE_RUNNING)
       {
-         GetGameManager()->DeleteAllActors(true);
-
-         dtDAL::Map &map = dtDAL::Project::GetInstance().GetMap("GameMap");
-         std::vector<RefPtr<dtDAL::ActorProxy> > proxies;
-         map.GetAllProxies(proxies);
-         for(size_t i = 0; i < proxies.size(); i++)
-         {
-            dtGame::GameActorProxy *gap = dynamic_cast<dtGame::GameActorProxy*>(proxies[i].get());
-            if(gap != NULL)
-            {
-               gap->BuildInvokables();
-               GetGameManager()->AddActor(*gap, false, false);
-            }
-            else
-            {
-               GetGameManager()->AddActor(*proxies[i]);
-            }
-         }
-         dtDAL::Project::GetInstance().LoadMapIntoScene(map, GetGameManager()->GetScene(), false, false);
-         RefPtr<dtGame::Message> msg = 
-            GetGameManager()->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_MAP_LOADED);
-
-         std::vector<dtDAL::GameEvent*> events;
-         map.GetEventManager().GetAllEvents(events);
-         for(size_t i = 0; i < events.size(); i++)
-            dtDAL::GameEventManager::GetInstance().AddEvent(*events[i]);
-         
-         static_cast<dtGame::MapLoadedMessage&>(*msg).SetLoadedMapName("GameMap");
-         GetGameManager()->SendMessage(*msg);
-         //GetGameManager()->ChangeMap("GameMap");
+         GetGameManager()->ChangeMap("GameMap");
       }
       else if(*mCurrentState == GameState::STATE_DEBRIEF)
       {
