@@ -40,7 +40,7 @@ namespace dtGame
    {
       public:
 
-         static const std::string &DEFAULT_NAME;
+         static const std::string DEFAULT_NAME;
 
          /// Constructor
          DefaultNetworkPublishingComponent(const std::string& name = DEFAULT_NAME);

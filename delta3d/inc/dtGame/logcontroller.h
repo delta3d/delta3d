@@ -40,7 +40,7 @@ namespace dtGame
    {
       public:
       
-         static const std::string &DEFAULT_NAME;
+         static const std::string DEFAULT_NAME;
          LogController(const std::string &name = DEFAULT_NAME);
          
          virtual void ProcessMessage(const Message& message);

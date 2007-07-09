@@ -29,7 +29,7 @@
 
 namespace dtGame 
 {
-   const std::string &LogController::DEFAULT_NAME = "LogController";
+   const std::string LogController::DEFAULT_NAME = "LogController";
    
    //////////////////////////////////////////////////////////////////////////
    LogController::LogController(const std::string &name) : GMComponent(name)

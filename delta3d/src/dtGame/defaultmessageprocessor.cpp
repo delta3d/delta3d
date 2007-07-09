@@ -37,7 +37,7 @@ using namespace dtCore;
 
 namespace dtGame
 {
-   const std::string &DefaultMessageProcessor::DEFAULT_NAME = "DefaultMessageProcessor";
+   const std::string DefaultMessageProcessor::DEFAULT_NAME = "DefaultMessageProcessor";
 
    DefaultMessageProcessor::DefaultMessageProcessor(const std::string& name) : GMComponent(name)
    {

@@ -40,7 +40,7 @@
 namespace dtAnim
 {
 
-const std::string &AnimationComponent::DEFAULT_NAME("Animation Component");
+const std::string AnimationComponent::DEFAULT_NAME("Animation Component");
 
 /////////////////////////////////////////////////////////////////////////////////
 AnimationComponent::AnimationComponent(const std::string& name)

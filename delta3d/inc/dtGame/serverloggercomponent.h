@@ -51,7 +51,7 @@ namespace dtGame
       public:
       
          static const std::string AUTO_KEYFRAME_TIMER_NAME;
-         static const std::string &DEFAULT_NAME;
+         static const std::string DEFAULT_NAME;
          
          /**
           * Constructs the logger component.

@@ -28,7 +28,7 @@
 
 namespace dtGame
 {
-   const std::string &DefaultNetworkPublishingComponent::DEFAULT_NAME = "DefaultNetworkPublishingComponent";
+   const std::string DefaultNetworkPublishingComponent::DEFAULT_NAME = "DefaultNetworkPublishingComponent";
 
    DefaultNetworkPublishingComponent::DefaultNetworkPublishingComponent(const std::string& name) : GMComponent(name)
    {
