@@ -5,7 +5,9 @@ Import('*')
 modules = [ 'hlaStealthViewer', 
             'psEditor',
             'Viewer',
-            'GameStart' ]
+            'GameStart',
+            'AnimationViewer',
+            'STAGE']
 
 # TODO: this should defintely be using the env['TOOLS'] list and extracting the 'default' cxx tool,
 #       problem is that on win32 the c_compiler and cxx_compiler are the same, so there's one
@@ -18,5 +20,3 @@ elif env['OS'] == 'linux' or env['OS'] == 'darwin' :
 
 for module in modules :
    SConscript( dirs=[module], build_dir = os.path.join( buildProductsDir, module, env['OS']+'-'+tool+'-'+mode ), duplicate = 0 )
-
-SConscript( dirs=['STAGE'] )

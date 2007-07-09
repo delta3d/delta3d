@@ -1,8 +1,8 @@
 #ifndef _TRACKVIEW_H_
 #define _TRACKVIEW_H_
 
-#include <QGraphicsView.h>
-#include <QTimer>
+#include <QtGui/QGraphicsView>
+#include <QtCore/QTimer>
 #include "TrackScene.h"
 
 class TrackScene;

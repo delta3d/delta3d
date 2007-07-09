@@ -1,11 +1,17 @@
-#include <stdio.h>
-#include <QApplication>
+#include <cstdio>
+#include <QtGui/QApplication>
 
 #include "MainWindow.h"
 #include "Delta3DThread.h"
+#include <dtUtil/macros.h>
 
-#include <Windows.h>
-#include <WinBase.h>
+#ifdef DELTA_WIN32
+   #include <Windows.h>
+   #define SLEEP(milliseconds) Sleep((milliseconds))
+#else
+   #include <unistd.h>
+   #define SLEEP(milliseconds) usleep(((milliseconds) * 1000))
+#endif
 
 int main(int argc, char *argv[]) 
 {
@@ -30,7 +36,7 @@ int main(int argc, char *argv[])
 
    while (thread->isRunning())
    {
-      Sleep(100);
+      SLEEP(100);
    }
 
    delete thread;

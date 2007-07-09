@@ -1,19 +1,20 @@
-#ifndef Viewer_h__
-#define Viewer_h__
+#ifndef DELTA_ANIMVIEW_VIEWER
+#define DELTA_ANIMVIEW_VIEWER
 
+#include <dtCore/refptr.h>
 #include <dtABC/application.h>
-#include <QObject>
 #include <dtCore/system.h>
+#include <dtAnim/cal3dloader.h>
+
+#include <QtCore/QObject>
 #include <QtCore/QBasicTimer>
 #include <vector>
-#include <dtAnim/cal3dloader.h>
 
 class QColor;
 
 namespace dtCore
 {
    class OrbitMotionModel;
-   class RefPtr;
 }
 
 namespace osg
