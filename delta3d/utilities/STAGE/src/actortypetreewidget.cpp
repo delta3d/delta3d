@@ -31,7 +31,7 @@ namespace dtEditQt
 {
 
     // constant 
-    const std::string &ActorTypeTreeWidget::CATEGORY_SEPARATOR = ".";
+    const std::string ActorTypeTreeWidget::CATEGORY_SEPARATOR = ".";
 
     ///////////////////////////////////////////////////////////////////////////////
     ActorTypeTreeWidget::ActorTypeTreeWidget(ActorTypeTreeWidget* parent, dtCore::RefPtr<dtDAL::ActorType> actorType) 
