@@ -149,6 +149,9 @@
 				RelativePath="..\..\..\src\dtAnim\animnodebuilder.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtAnim\attachmentcontroller.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtAnim\cal3danimator.cpp">
 			</File>
 			<File
@@ -174,9 +177,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtAnim\sequencemixer.cpp">
-			</File>
-			<File
-				RelativePath="..\..\..\src\dtAnim\skeletalconfiguration.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtAnim\skeletaldrawable.cpp">
@@ -220,6 +220,9 @@
 				RelativePath="..\..\..\inc\dtAnim\animnodebuilder.h">
 			</File>
 			<File
+				RelativePath="..\..\..\inc\dtAnim\attachmentcontroller.h">
+			</File>
+			<File
 				RelativePath="..\..\..\inc\dtAnim\cal3danimator.h">
 			</File>
 			<File
@@ -254,9 +257,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtAnim\sequencemixer.h">
-			</File>
-			<File
-				RelativePath="..\..\..\inc\dtAnim\skeletalconfiguration.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtAnim\skeletaldrawable.h">
