@@ -1,18 +1,18 @@
 <character name="marine">
    <skeleton filename="Skeleton.csf" />
-   <animation filename="LowWalk.CAF" name="LowWalk" />
-   <animation filename="LowWalk_Wpn.CAF" name="LowWalk with weapon" />
-   <animation filename="Breath.CAF" name="Idle" />
-   <animation filename="Run.CAF" name="Run" />
-   <animation filename="Walk.CAF" name="Walk" />
-   <mesh filename="HEAD.CMF" name="Head" />
-   <mesh filename="BODY.CMF" name="Body" />
-   <mesh filename="Helmet.CMF" name="Helmet" />
-   <mesh filename="M16m80.CMF" name="M16" />
-   <material filename="HEAD.CRF" name="Head Material" />
-   <material filename="BODY.CRF" name="Body Material" />
-   <material filename="Helmet.CRF" name="Helmet Material" />
-   <material filename="M16m80.CRF" name="M16 Material" />
+   <animation filename="LowWalk.caf" name="LowWalk" />
+   <animation filename="LowWalk_Wpn.caf" name="LowWalk with weapon" />
+   <animation filename="Breath.caf" name="Idle" />
+   <animation filename="Run.caf" name="Run" />
+   <animation filename="Walk.caf" name="Walk" />
+   <mesh filename="HEAD.cmf" name="Head" />
+   <mesh filename="BODY.cmf" name="Body" />
+   <mesh filename="Helmet.cmf" name="Helmet" />
+   <mesh filename="M16m80.cmf" name="M16" />
+   <material filename="HEAD.crf" name="Head Material" />
+   <material filename="BODY.crf" name="Body Material" />
+   <material filename="Helmet.crf" name="Helmet Material" />
+   <material filename="M16m80.crf" name="M16 Material" />
    <animationchannel>
       <name>Run</name>
       <animationname>Run</animationname>
