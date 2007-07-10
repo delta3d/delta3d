@@ -42,7 +42,7 @@ class DT_ANIM_EXPORT HardwareSubMeshDrawable: public osg::Drawable
 {
 public:
 
-   HardwareSubMeshDrawable(Cal3DModelWrapper *wrapper, CalHardwareModel* model, osg::Program* shader, osg::Uniform* boneTrans, unsigned mesh, unsigned vertexVBO, unsigned indexVBO);
+   HardwareSubMeshDrawable(Cal3DModelWrapper *wrapper, CalHardwareModel* model, osg::Program* shader, const std::string& boneUniformName, unsigned numBones, unsigned mesh, unsigned vertexVBO, unsigned indexVBO);
 
     virtual void drawImplementation(osg::State& state) const;
 
@@ -59,7 +59,8 @@ private:
     CalHardwareModel* mHardwareModel;
     dtCore::RefPtr<osg::Program> mProgram;
     dtCore::RefPtr<osg::Uniform> mBoneTransforms;
-    unsigned mMeshID, mVertexVBO, mIndexVBO;
+    std::string mBoneUniformName;
+    unsigned mNumBones, mMeshID, mVertexVBO, mIndexVBO;
 };
 
 }; //namespace dtAnim

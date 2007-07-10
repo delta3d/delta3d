@@ -45,6 +45,7 @@
 #include <dtAnim/animationhelper.h>
 #include <dtAnim/attachmentcontroller.h>
 #include <dtAnim/cal3dmodelwrapper.h>
+#include <dtAnim/cal3danimator.h>
 
 #include <dtActors/animationgameactor2.h>
 
@@ -166,7 +167,16 @@ void TestAnim::OnStartup()
             
             mAnimationHelper->GetAttachmentController().AddAttachment(*attachment, hotspotDef);
             actor->AddChild(attachment.get());
-            animComp->RegisterActor(*gameProxy, *mAnimationHelper);
+            
+
+            //since we are doing hardware skinning there is no need for 
+            //the physique driver
+            //TODO: this should be refactored out of here and into the place that decides 
+            //      whether or not we are doing hardware skinning
+            mAnimationHelper->GetAnimator()->SetPhysiqueDriver(0);
+
+            //we must register the helper with the animation component
+            animComp->RegisterActor(*gameProxy, *mAnimationHelper);   
 
             //set camera offset
             dtCore::Transform trans;
