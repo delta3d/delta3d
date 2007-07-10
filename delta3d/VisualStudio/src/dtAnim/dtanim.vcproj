@@ -167,6 +167,9 @@
 				RelativePath="..\..\..\src\dtAnim\chardrawable.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtAnim\hardwaresubmesh.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtAnim\hotspotdriver.cpp">
 			</File>
 			<File
@@ -242,6 +245,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtAnim\export.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtAnim\hardwaresubmesh.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtAnim\hotspotdriver.h">
