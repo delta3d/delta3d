@@ -21,25 +21,36 @@
 #include "testanim.h"
 #include "testaniminput.h"
 
+#include <dtUtil/hotspotdefinition.h>
+
 #include <dtCore/globals.h>
 #include <dtCore/collisionmotionmodel.h>
 #include <dtCore/camera.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/scene.h>
+#include <dtCore/system.h>
+
+#include <dtDAL/map.h>
+#include <dtDAL/actorproxy.h>
+#include <dtDAL/actorproxy.h>
 #include <dtDAL/project.h>
+
 #include <dtGame/gamemanager.h>
 #include <dtGame/gameapplication.h>
 #include <dtGame/logcontroller.h> 
-#include <dtDAL/actorproxy.h>
 #include <dtGame/gameactor.h>
-#include <dtActors/animationgameactor2.h>
 #include <dtGame/defaultmessageprocessor.h>
-#include <dtActors/animationgameactor2.h>
+
 #include <dtAnim/animationcomponent.h>
 #include <dtAnim/animationhelper.h>
-#include <dtDAL/map.h>
-#include <dtCore/scene.h>
-#include <dtDAL/actorproxy.h>
+#include <dtAnim/attachmentcontroller.h>
+#include <dtAnim/cal3dmodelwrapper.h>
+
+#include <dtActors/animationgameactor2.h>
+
+#include <osg/Geode>
+#include <osg/ShapeDrawable>
+#include <osg/Shape>
 
 
 extern "C" TEST_ANIM_EXPORT dtGame::GameEntryPoint* CreateGameEntryPoint()
@@ -86,29 +97,33 @@ void TestAnim::OnStartup()
 
    std::string context = dtCore::GetDeltaRootPath() + "/examples/data/demoMap";
 
-   typedef std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > ProxyContainer;
+   typedef std::vector<dtDAL::ActorProxy* > ProxyContainer;
    ProxyContainer proxies;
    ProxyContainer groundActor;
 
-   dtGame::GameManager &gameManager = *GetGameManager();
+   dtGame::GameManager& gameManager = *GetGameManager();
 
    try
    {
       dtDAL::Project::GetInstance().SetContext(context, true);
       gameManager.ChangeMap("TestAnim");
-      dtDAL::Project::GetInstance().GetMap("TestAnim").FindProxies(proxies, "CharacterEntity");      
-      dtDAL::Project::GetInstance().GetMap("TestAnim").FindProxies(groundActor, "GroundActor");      
+      dtCore::System::GetInstance().Start();
+      dtCore::System::GetInstance().Step();
+      dtCore::System::GetInstance().Step();
+      gameManager.FindActorsByName("CharacterEntity", proxies);
+      gameManager.FindActorsByName("GroundActor", groundActor);
    }
-   catch (dtUtil::Exception &e)
+   catch (dtUtil::Exception& e)
    {
-      LOG_ERROR("Can't find the project context: " + e.What());
+      LOG_ERROR("Can't find the project context or load the map. Exception follows.");
+      e.LogException(dtUtil::Log::LOG_ERROR);
    }
 
    
    dtCore::DeltaWin *win = gameManager.GetApplication().GetWindow();
 
-   dtGame::DefaultMessageProcessor *dmp = new dtGame::DefaultMessageProcessor("DefaultMessageProcessor");
-   TestAnimInput* inputComp = new TestAnimInput("TestInputComponent"); 
+   dtGame::DefaultMessageProcessor *dmp = new dtGame::DefaultMessageProcessor();
+   TestAnimInput* inputComp = new TestAnimInput("TestAnimInput"); 
    
    dtAnim::AnimationComponent* animComp = new dtAnim::AnimationComponent();
 
@@ -116,33 +131,54 @@ void TestAnim::OnStartup()
    gameManager.AddComponent(*inputComp, dtGame::GameManager::ComponentPriority::NORMAL);
    gameManager.AddComponent(*animComp, dtGame::GameManager::ComponentPriority::NORMAL);
 
+   dtCore::RefPtr<osg::ShapeDrawable> drawable = new osg::ShapeDrawable(new osg::Cylinder(osg::Vec3(), 0.02f, 0.3));
+   dtCore::RefPtr<osg::Geode> geode = new osg::Geode;
+   geode->addDrawable(drawable.get());
+   
+   dtCore::RefPtr<dtCore::Transformable> attachment = new dtCore::Transformable;
+   attachment->GetOSGNode()->asGroup()->addChild(geode.get());
+   
+   dtUtil::HotSpotDefinition hotspotDef;
+   hotspotDef.mName = "jojo";
+   hotspotDef.mParentName = "Bip02 Head";
+   hotspotDef.mLocalTranslation = osg::Vec3(0.1f, 0.0f, 0.0f);
+   
    //register helper 
    if(!proxies.empty())
    {
-      ProxyContainer::iterator iter = proxies.begin();
-      dtGame::GameActorProxy* gameProxy = dynamic_cast<dtGame::GameActorProxy*>((*iter).get());
-      if(gameProxy)
+      dtGame::GameActorProxy* gameProxy = dynamic_cast<dtGame::GameActorProxy*>(proxies.front());
+
+      if(gameProxy != NULL)
       {
          dtActors::AnimationGameActor2* actor = dynamic_cast<dtActors::AnimationGameActor2*>(&gameProxy->GetGameActor());
 
-         if(actor)
-         { 
+         if(actor != NULL)
+         {
             mAnimationHelper = actor->GetHelper();
             mAnimationHelper->SetGroundClamp(true);
-            animComp->RegisterActor(*gameProxy, *mAnimationHelper);            
+            
+//            std::vector<std::string> bones;
+//            mAnimationHelper->GetModelWrapper()->GetCoreBoneNames(bones);
+//            if (bones.size() > 0)
+//            {
+//               hotspotDef.mParentName = bones.front();
+//            }
+            
+            mAnimationHelper->GetAttachmentController().AddAttachment(*attachment, hotspotDef);
+            actor->AddChild(attachment.get());
+            animComp->RegisterActor(*gameProxy, *mAnimationHelper);
 
             //set camera offset
             dtCore::Transform trans;
             trans.SetTranslation(-1.0f, 5.5f, 1.5f);
             trans.SetRotation(180.0f, -2.0f, 0.0f); 
-            gameManager.GetApplication().GetCamera()->SetTransform(trans);
 
             actor->AddChild(gameManager.GetApplication().GetCamera());
+            gameManager.GetApplication().GetCamera()->SetTransform(trans, dtCore::Transformable::REL_CS);
 
             inputComp->SetAnimationHelper(*mAnimationHelper);
             inputComp->SetPlayerActor(*gameProxy);
          }
- 
       }
    }
    else
@@ -152,8 +188,7 @@ void TestAnim::OnStartup()
 
    if(!groundActor.empty())
    {
-      ProxyContainer::iterator iter = groundActor.begin();
-      dtDAL::ActorProxy* proxy = dynamic_cast<dtDAL::ActorProxy*>((*iter).get());
+      dtDAL::ActorProxy* proxy = dynamic_cast<dtDAL::ActorProxy*>(groundActor.front());
       if(proxy)
       {
          dtCore::Transformable* transform = dynamic_cast<dtCore::Transformable*>(proxy->GetActor());
