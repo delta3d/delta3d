@@ -27,6 +27,8 @@
 #include <dtAnim/animationsequence.h>
 #include <dtAnim/attachmentcontroller.h>
 
+#include <dtUtil/hotspotdefinition.h>
+
 #include <dtCore/batchisector.h>
 
 #include <dtDAL/actortype.h>

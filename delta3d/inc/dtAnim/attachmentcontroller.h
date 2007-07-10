@@ -26,6 +26,8 @@
 
 #include <dtCore/refptr.h>
 
+#include <dtAnim/export.h>
+
 #include <vector>
 
 namespace dtUtil
@@ -52,7 +54,7 @@ namespace dtAnim
     * 
     * It may be subclassed to add additional features.
     */
-   class AttachmentController: public osg::Referenced
+   class DT_ANIM_EXPORT AttachmentController : public osg::Referenced
    {
       public:
          typedef std::vector<AttachmentPair> AttachmentContainer;
