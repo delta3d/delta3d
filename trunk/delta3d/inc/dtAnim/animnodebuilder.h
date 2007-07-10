@@ -32,6 +32,7 @@
 namespace osg
 {
    class Geode;
+   class Program;
 }
 /// @endcond
 
@@ -53,12 +54,15 @@ public:
 
    dtCore::RefPtr<osg::Geode> CreateGeode(Cal3DModelWrapper* pWrapper);
 
+   virtual dtCore::RefPtr<osg::Geode> CreateSoftware(Cal3DModelWrapper* pWrapper);
+   virtual dtCore::RefPtr<osg::Geode> CreateHardware(Cal3DModelWrapper* pWrapper);
+
 protected:
    virtual ~AnimNodeBuilder();
    AnimNodeBuilder(const AnimNodeBuilder&);
    AnimNodeBuilder& operator=(const AnimNodeBuilder&);
-
-   virtual dtCore::RefPtr<osg::Geode> DefaultCreate(Cal3DModelWrapper* pWrapper);
+   
+   osg::Program* LoadShaders(const std::string& shaderFile) const;
 
 private:
 
@@ -69,4 +73,3 @@ private:
 }//namespace dtAnim
 
 #endif // __DELTA_ANIMNODEBUILDER_H__
-
