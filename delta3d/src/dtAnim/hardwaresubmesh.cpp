@@ -28,14 +28,20 @@
 #include <dtUtil/matrixutil.h>
 #include <cal3d/hardwaremodel.h>
 
+#include <dtCore/globals.h>
+#include <dtUtil/log.h>
+
+
 namespace dtAnim
 {
 
-HardwareSubMeshDrawable::HardwareSubMeshDrawable(Cal3DModelWrapper *wrapper, CalHardwareModel* model, osg::Program* shader, osg::Uniform* boneTrans, unsigned mesh, unsigned vertexVBO, unsigned indexVBO)
+HardwareSubMeshDrawable::HardwareSubMeshDrawable(Cal3DModelWrapper *wrapper, CalHardwareModel* model, osg::Program* shader, const std::string& boneUniformName, unsigned numBones, unsigned mesh, unsigned vertexVBO, unsigned indexVBO)
 : mWrapper(wrapper)
 , mHardwareModel(model)
 , mProgram(shader)
-, mBoneTransforms(boneTrans)
+, mBoneTransforms(new osg::Uniform(osg::Uniform::FLOAT_VEC4, boneUniformName, numBones))
+, mBoneUniformName(boneUniformName)
+, mNumBones(numBones)
 , mMeshID(mesh)
 , mVertexVBO(vertexVBO)
 , mIndexVBO(indexVBO)
@@ -44,15 +50,16 @@ HardwareSubMeshDrawable::HardwareSubMeshDrawable(Cal3DModelWrapper *wrapper, Cal
    setUseVertexBufferObjects(true);
 
    osg::StateSet* ss = getOrCreateStateSet();
+
    ss->setAttributeAndModes(mProgram.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
    ss->addUniform(mBoneTransforms.get());
 
-   if (mWrapper->GetMapCount() > 0)
+   for(int i = 0; i < mWrapper->GetMapCount(); ++i)
    {
-      osg::Texture2D *texture = (osg::Texture2D*)mWrapper->GetMapUserData(0);
-      if (texture != 0) 
+      osg::Texture2D *texture = (osg::Texture2D*)mWrapper->GetMapUserData(i);
+      if(texture != NULL) 
       {
-         ss->setTextureAttributeAndModes(0, texture, osg::StateAttribute::ON);
+         ss->setTextureAttributeAndModes(i, texture, osg::StateAttribute::ON);
       }
    }	
 }
@@ -91,7 +98,7 @@ void HardwareSubMeshDrawable::drawImplementation(osg::State& state) const
       mBoneTransforms->setElement(bone * 3 + 1, rotY);
       mBoneTransforms->setElement(bone * 3 + 2, rotZ);
    }
-   
+
    //bind the textures if we are using a fragment shader
 
    //bind the VBO's
@@ -125,12 +132,12 @@ void HardwareSubMeshDrawable::drawImplementation(osg::State& state) const
 
 osg::Object* HardwareSubMeshDrawable::clone(const osg::CopyOp&) const 
 {
-	return new HardwareSubMeshDrawable(mWrapper.get(), mHardwareModel, mProgram.get(), mBoneTransforms.get(), mMeshID, mVertexVBO, mIndexVBO );
+	return new HardwareSubMeshDrawable(mWrapper.get(), mHardwareModel, mProgram.get(), mBoneUniformName, mNumBones, mMeshID, mVertexVBO, mIndexVBO );
 }
 
 osg::Object* HardwareSubMeshDrawable::cloneType() const
 {
-	return new HardwareSubMeshDrawable(mWrapper.get(), mHardwareModel, mProgram.get(), mBoneTransforms.get(), mMeshID, mVertexVBO, mIndexVBO );
+	return new HardwareSubMeshDrawable(mWrapper.get(), mHardwareModel, mProgram.get(), mBoneUniformName, mNumBones, mMeshID, mVertexVBO, mIndexVBO );
 }
 
 

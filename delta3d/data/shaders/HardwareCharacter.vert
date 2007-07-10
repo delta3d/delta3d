@@ -10,8 +10,8 @@ uniform vec4 boneTransforms[MAX_BONES * 3];
 void main(void)
 {
 	//initialize our data
-	vec4 transformedPosition = gl_Vertex;
-	vec4 transformedNormal = vec4(gl_Normal.xyz, 1.0);	
+	vec4 transformedPosition = vec4(0.0, 0.0, 0.0, 1.0);
+	vec4 transformedNormal = vec4(0.0, 0.0, 0.0, 1.0);	
 	float boneWeights[4];//float[](gl_MultiTexCoord2.x, gl_MultiTexCoord2.y, gl_MultiTexCoord2.z, gl_MultiTexCoord2.w);
 	float boneIndices[4];//int[](gl_MultiTexCoord3.x, gl_MultiTexCoord3.y, gl_MultiTexCoord3.z, gl_MultiTexCoord3.w);	
 	
@@ -21,22 +21,20 @@ void main(void)
 	//multiply each bone and weight to get the offset matrix
 	for(int i = 0; i < 4; ++i)
 	{
-      vec4 offset;
-      if(boneWeights[i] > 0.0)
-      {
+		vec4 offset;
 		offset.x = boneWeights[i] * dot(gl_Vertex, boneTransforms[int(boneIndices[i]) * 3 + 0]);
 		offset.y = boneWeights[i] * dot(gl_Vertex, boneTransforms[int(boneIndices[i]) * 3 + 1]);
 		offset.z = boneWeights[i] * dot(gl_Vertex, boneTransforms[int(boneIndices[i]) * 3 + 2]);
 		offset.w = 0.0; 
 		
 		transformedPosition += offset;
-		transformedNormal += offset;	  
-	  }
+		transformedNormal += offset;	  	
 	}
 
-	//set proper varyings		
-	gl_FrontColor = gl_Color;
+	//calculate lighting			
 	
+	//set proper varyings
+	gl_FrontColor = gl_Color;	
 	gl_TexCoord[0] = gl_MultiTexCoord0;
 	gl_TexCoord[1] = gl_MultiTexCoord1;
 	gl_TexCoord[2] = transformedNormal;

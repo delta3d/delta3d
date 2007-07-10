@@ -35,7 +35,7 @@ namespace dtAnim
 
 AnimNodeBuilder::AnimNodeBuilder()
 {
-   SetCreate(CreateFunc(this, &AnimNodeBuilder::CreateSoftware));
+   SetCreate(CreateFunc(this, &AnimNodeBuilder::CreateHardware));
 }
 
 AnimNodeBuilder::AnimNodeBuilder(const CreateFunc& pCreate)
@@ -112,7 +112,6 @@ dtCore::RefPtr<osg::Geode> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pW
 
    if(pWrapper && pWrapper->BeginRenderingQuery()) 
    {
-
       CalCoreModel* model = pWrapper->GetCalModel()->getCoreModel();
       
       unsigned numVerts = 0;
@@ -134,7 +133,6 @@ dtCore::RefPtr<osg::Geode> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pW
          }
       }
       
-
       float* vertArray = new float[numVerts * 3];
       float* normArray = new float[numVerts * 3];
       float* tex1Array = new float[numVerts * 2];
@@ -176,10 +174,10 @@ dtCore::RefPtr<osg::Geode> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pW
             vboVertexAttr[count + 5] = normArray[(i * 3) + 2];
 
             vboVertexAttr[count + 6] = tex1Array[(i * 2) + 0];
-            vboVertexAttr[count + 7] = tex1Array[(i * 2) + 1];
+            vboVertexAttr[count + 7] = 1.0f - tex1Array[(i * 2) + 1]; //the odd texture coordinates in cal3d are flipped, not sure why
 
             vboVertexAttr[count + 8] = tex2Array[(i * 2) + 0];
-            vboVertexAttr[count + 9] = tex2Array[(i * 2) + 1];
+            vboVertexAttr[count + 9] = 1.0f - tex2Array[(i * 2) + 1]; //the odd texture coordinates in cal3d are flipped, not sure why
 
             vboVertexAttr[count + 10] = boneWeightArray[(i * 4) + 0];
             vboVertexAttr[count + 11] = boneWeightArray[(i * 4) + 1];
@@ -213,11 +211,11 @@ dtCore::RefPtr<osg::Geode> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pW
 
          //todo- pull shader name out of character xml
          osg::Program* shader = LoadShaders("shaders/HardwareCharacter.vert");
-         osg::Uniform* boneTrans = new osg::Uniform(osg::Uniform::FLOAT_VEC4, "boneTransforms", MAX_BONES);
 
-         for(int meshCount = 0; meshCount < hardwareModel->getHardwareMeshCount(); ++meshCount)
+         int numMeshes = hardwareModel->getHardwareMeshCount();
+         for(int meshCount = 0; meshCount < numMeshes; ++meshCount)
          {
-            HardwareSubMeshDrawable* drawable = new HardwareSubMeshDrawable(pWrapper, hardwareModel, shader, boneTrans, meshCount, vbo[0], vbo[1]);
+            HardwareSubMeshDrawable* drawable = new HardwareSubMeshDrawable(pWrapper, hardwareModel, shader, "boneTransforms", MAX_BONES, meshCount, vbo[0], vbo[1]);
             geode->addDrawable(drawable);
          }
       } 
@@ -225,8 +223,6 @@ dtCore::RefPtr<osg::Geode> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pW
       {
          LOG_ERROR("Unable to create a hardware mesh.");
       }
-
-
 
 
       pWrapper->EndRenderingQuery();
