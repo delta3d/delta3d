@@ -118,8 +118,8 @@ void HardwareSubMeshDrawable::drawImplementation(osg::State& state) const
    state.setTexCoordPointer(0, 2, GL_FLOAT, stride, BUFFER_OFFSET(6));
    state.setTexCoordPointer(1, 2, GL_FLOAT, stride, BUFFER_OFFSET(8));
 
-	state.setTexCoordPointer(2, 4 , GL_FLOAT, stride, BUFFER_OFFSET(10));
-   state.setTexCoordPointer(3, 4 , GL_FLOAT, stride, BUFFER_OFFSET(14));
+	state.setTexCoordPointer(2, 4, GL_FLOAT, stride, BUFFER_OFFSET(10));
+   state.setTexCoordPointer(3, 4, GL_FLOAT, stride, BUFFER_OFFSET(14));
 
    //make the call to render
    glExt->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, mIndexVBO);

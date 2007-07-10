@@ -104,6 +104,7 @@ dtCore::RefPtr<osg::Geode> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pW
 
    //TODO: query for the maximum number of bones through opengl
    static const int MAX_BONES = 72;
+   static const std::string BONE_TRANSFORM_UNIFORM("boneTransforms");
 
    osg::Geode* geode = new osg::Geode();
 
@@ -215,7 +216,7 @@ dtCore::RefPtr<osg::Geode> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pW
          int numMeshes = hardwareModel->getHardwareMeshCount();
          for(int meshCount = 0; meshCount < numMeshes; ++meshCount)
          {
-            HardwareSubMeshDrawable* drawable = new HardwareSubMeshDrawable(pWrapper, hardwareModel, shader, "boneTransforms", MAX_BONES, meshCount, vbo[0], vbo[1]);
+            HardwareSubMeshDrawable* drawable = new HardwareSubMeshDrawable(pWrapper, hardwareModel, shader, BONE_TRANSFORM_UNIFORM, MAX_BONES, meshCount, vbo[0], vbo[1]);
             geode->addDrawable(drawable);
          }
       } 
