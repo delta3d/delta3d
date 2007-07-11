@@ -16,27 +16,32 @@ using namespace dtUtil;
 
 IMPLEMENT_MANAGEMENT_LAYER(DeltaWin)
 
-
-// --- InputCallback's implementation --- //
+///////////////////////////////////////////////////
+// --- InputCallback's implementation --- /////////
+///////////////////////////////////////////////////
 InputCallback::InputCallback(Keyboard* keyboard, Mouse* mouse) : mKeyboard(keyboard), mMouse(mouse)
 {
 }
 
+///////////////////////////////////////////////////
 void InputCallback::mouseScroll(Producer::KeyboardMouseCallback::ScrollingMotion sm)
 {
    mMouse->MouseScroll(sm);
 }
 
+///////////////////////////////////////////////////
 void InputCallback::mouseMotion(float x, float y)
 {
    mMouse->MouseMotion( x, y );
 }
 
+///////////////////////////////////////////////////
 void InputCallback::passiveMouseMotion(float x, float y)
 {
    mMouse->PassiveMouseMotion( x, y );
 }
 
+///////////////////////////////////////////////////
 void InputCallback::buttonPress(float x, float y, unsigned int button)
 {
    // an unknown button number defaults to LeftButton.
@@ -63,6 +68,7 @@ void InputCallback::buttonPress(float x, float y, unsigned int button)
    mMouse->ButtonDown(x, y, mb);
 }
 
+///////////////////////////////////////////////////
 void InputCallback::doubleButtonPress(float x, float y, unsigned int button)
 {
    // an unknown button number defaults to LeftButton.
@@ -90,6 +96,7 @@ void InputCallback::doubleButtonPress(float x, float y, unsigned int button)
    mMouse->DoubleButtonDown(x, y, mb);
 }
 
+///////////////////////////////////////////////////
 void InputCallback::buttonRelease(float x, float y, unsigned int button)
 {
    // an unknown button number defaults to LeftButton.
@@ -117,38 +124,48 @@ void InputCallback::buttonRelease(float x, float y, unsigned int button)
    mMouse->ButtonUp(x, y, mb);
 }
 
+///////////////////////////////////////////////////
 void InputCallback::keyPress(Producer::KeyCharacter kc)
 {
    mKeyboard->KeyDown(kc);
 }
 
+///////////////////////////////////////////////////
 void InputCallback::keyRelease(Producer::KeyCharacter kc)
 {
    mKeyboard->KeyUp(kc);
 }
 
+///////////////////////////////////////////////////
 void InputCallback::specialKeyPress(Producer::KeyCharacter kc)
 {
    mKeyboard->KeyDown(kc);
 }
 
+///////////////////////////////////////////////////
 void InputCallback::specialKeyRelease(Producer::KeyCharacter kc)
 {
    mKeyboard->KeyUp(kc);
 }
 
+///////////////////////////////////////////////////
 void InputCallback::SetKeyboard(Keyboard* kb)
 {
    mKeyboard = kb;
 }
 
+///////////////////////////////////////////////////
 void InputCallback::SetMouse(Mouse* m)
 {
    mMouse = m;
 }
+///////////////////////////////////////////////////
 // --- end of InputCallback's implementation --- //
+///////////////////////////////////////////////////
 
-// --- DeltaWin's implementation --- //
+/////////////////////////////////////////////////
+// --- DeltaWin's implementation --- ////////////
+/////////////////////////////////////////////////
 DeltaWin::DeltaWin(  const std::string& name, 
                      int x, int y, 
                      int width, int height, 
@@ -174,6 +191,7 @@ DeltaWin::DeltaWin(  const std::string& name,
    ShowCursor(cursor);
 }
 
+/////////////////////////////////////////////////
 DeltaWin::DeltaWin(  const std::string& name, 
                      Producer::RenderSurface* rs, 
                      Producer::InputArea* ia ) :
@@ -212,6 +230,7 @@ DeltaWin::DeltaWin(  const std::string& name,
    ShowCursor();
 }
 
+/////////////////////////////////////////////////
 DeltaWin::DeltaWin(  const std::string& name, 
                      dtCore::Keyboard* keyboard, 
                      dtCore::Mouse* mouse ) :
@@ -236,6 +255,7 @@ DeltaWin::DeltaWin(  const std::string& name,
    ShowCursor();
 }
 
+/////////////////////////////////////////////////
 DeltaWin::~DeltaWin()
 {
    mKeyboardMouse->cancel();
@@ -247,38 +267,37 @@ DeltaWin::~DeltaWin()
    DeregisterInstance(this);
 }
 
+/////////////////////////////////////////////////
 InputCallback* DeltaWin::GetInputCallback() 
 { 
    return mInputCallback.get(); 
 }
 
+/////////////////////////////////////////////////
 const InputCallback* DeltaWin::GetInputCallback() const 
 { 
    return mInputCallback.get(); 
 }
 
-///Is the window currently in fullscreen mode?
+///////////////////////////////////////////////////
 bool DeltaWin::GetFullScreenMode() const
 { 
    return mRenderSurface->isFullScreen();
 }
 
-/** Set the position and size of the DeltaWin in screen coordinates
-* @param x The left edge of the window in screen coordinates
-* @param y The bottom edge of the window in screen coordinates
-* @param width The width of the window
-* @param height The height of the window
-*/
+///////////////////////////////////////////////////
 void DeltaWin::SetPosition( int x, int y, int width, int height )
 {
    mRenderSurface->setWindowRectangle(x, y, width, height);
 }
 
+///////////////////////////////////////////////////
 void DeltaWin::SetPosition( const DeltaWin::PositionSize& positionSize )
 {
    SetPosition(positionSize.mX, positionSize.mY, positionSize.mWidth, positionSize.mHeight);
 }
 
+///////////////////////////////////////////////////
 void DeltaWin::GetPosition( int *x, int *y,int *width, int *height )
 {
    DEPRECATE(  "void GetPosition( int *x, int *y,int *width, int *height )",
@@ -286,6 +305,7 @@ void DeltaWin::GetPosition( int *x, int *y,int *width, int *height )
    GetPosition( *x, *y, *width, *height );
 }
 
+///////////////////////////////////////////////////
 void DeltaWin::GetPosition( int& x, int& y, int& width, int& height )
 {
    unsigned int w, h;
@@ -295,6 +315,7 @@ void DeltaWin::GetPosition( int& x, int& y, int& width, int& height )
    height = h;
 }
 
+///////////////////////////////////////////////////
 DeltaWin::PositionSize DeltaWin::GetPosition()
 {
    PositionSize positionSize;
@@ -302,14 +323,7 @@ DeltaWin::PositionSize DeltaWin::GetPosition()
    return positionSize;
 }
 
-/** 
- * Supply an instance of a Keyboard to be used instead of the default, 
- * internal Keyboard, or the one supplied in the constructor.
- * @param keyboard : instance of a valid Keyboard to use
- * @pre keyboard != 0
- * @exception dtCore::ExceptionEnum::INVALID_PARAMETER The supplied instance
- * is NULL.  The original Keyboard will still be used.
- */
+///////////////////////////////////////////////////
 void DeltaWin::SetKeyboard( Keyboard* keyboard )
 {
    if( keyboard == 0 )
@@ -320,14 +334,19 @@ void DeltaWin::SetKeyboard( Keyboard* keyboard )
    mKeyboard = keyboard;
    mInputCallback->SetKeyboard( mKeyboard.get() );
 }
+//////////////////////////////////////////////////
+void DeltaWin::SetKeyRepeat(bool on)
+{
+   mKeyboardMouse->setAutoRepeatMode(on);
+}
 
-/** Supply an instance of a Mouse to be used instead of the default internal
- *  Mouse, or the one supplied in the constructor.
- *  @param mouse : Instance of a valid Mouse
- *  @pre mouse != 0
- *  @exception dtCore::ExceptionEnum::INVALID_PARAMETER The supplied instance
- *  is NULL.  The original Mouse will still be used.
- */
+/////////////////////////////////////////////////
+bool DeltaWin::GetKeyRepeat() const
+{
+   return mKeyboardMouse->getAutoRepeatMode();   
+}
+
+/////////////////////////////////////////////////
 void DeltaWin::SetMouse( Mouse* mouse )
 {
    if( mouse == 0 )
@@ -339,11 +358,13 @@ void DeltaWin::SetMouse( Mouse* mouse )
    mInputCallback->SetMouse( mMouse.get() );
 }
 
+/////////////////////////////////////////////////
 const std::string& DeltaWin::GetWindowTitle() const
 {
    return mRenderSurface->getWindowName();
 }
 
+/////////////////////////////////////////////////
 void DeltaWin::Update()
 {
    if( mKeyboardMouse.valid() && !mKeyboardMouse->isRunning() )
@@ -352,18 +373,7 @@ void DeltaWin::Update()
    }
 }
 
-
-/*!
- * Calculate the screen coordinates given a window coordinate. Screen
- * coordinate (0,0) is located in the lower left of the display.
- *
- * @param x : window x coordinate [-1, 1]
- * @param y : window y coordinate [-1, 1]
- * @param &pixel_x : The screen X pixel equivelent [out]
- * @param &pixel_y : The screen Y pixel equivelent [out]
- *
- * @return bool  : Returns true if the (x,y) is a valid window coordinate
- */
+/////////////////////////////////////////////////
 bool DeltaWin::CalcPixelCoords( float x, float y, float &pixel_x, float &pixel_y )
 {
    if ( x < -1.0f || x > 1.0f ) return false;
@@ -379,11 +389,13 @@ bool DeltaWin::CalcPixelCoords( float x, float y, float &pixel_x, float &pixel_y
    return true;
 }
 
+/////////////////////////////////////////////////
 bool DeltaWin::CalcPixelCoords( osg::Vec2 window_xy, osg::Vec2& pixel_xy )
 {
    return CalcPixelCoords( window_xy.x(), window_xy.y(), pixel_xy.x(), pixel_xy.y() );
 }
 
+/////////////////////////////////////////////////
 bool DeltaWin::CalcWindowCoords( float pixel_x, float pixel_y, float &x, float &y )
 {
    int wx, wy;
@@ -407,16 +419,19 @@ bool DeltaWin::CalcWindowCoords( float pixel_x, float pixel_y, float &x, float &
    }
 }
 
+/////////////////////////////////////////////////
 bool DeltaWin::CalcWindowCoords( osg::Vec2 pixel_xy, osg::Vec2& window_xy )
 {
    return CalcWindowCoords( pixel_xy.x(), pixel_xy.y(), window_xy.x(), window_xy.y() );
 }
 
+/////////////////////////////////////////////////
 bool DeltaWin::ChangeScreenResolution( Resolution res ) 
 {
    return ChangeScreenResolution( res.width, res.height, res.bitDepth, res.refresh );
 }
 
+/////////////////////////////////////////////////
 int DeltaWin::IsValidResolution( const ResolutionVec &rv, int width, int height, int refreshRate, int colorDepth )
 {
    for( unsigned int i = 0; i < rv.size(); i++ )
@@ -464,6 +479,7 @@ int DeltaWin::IsValidResolution( const ResolutionVec &rv, int width, int height,
    return -1;
 }
 
+/////////////////////////////////////////////////
 bool DeltaWin::IsValidResolution(const DeltaWin::Resolution& candidate)
 {
    ResolutionVec vec = DeltaWin::GetResolutions();
@@ -486,6 +502,7 @@ bool DeltaWin::IsValidResolution(const DeltaWin::Resolution& candidate)
    return false;
 }
 
+/////////////////////////////////////////////////
 int DeltaWin::CalcRefreshRate( int horzTotal, int vertTotal, int dotclock )
 {
    return static_cast<int>( 0.5f + ( ( 1000.0f * dotclock ) / ( horzTotal * vertTotal ) ) );

@@ -80,7 +80,6 @@ TestAnim::~TestAnim()
 //////////////////////////////////////////////////////////////////////////
 void TestAnim::Initialize(dtGame::GameApplication& app, int argc, char **argv)
 {
-  app.GetWindow()->SetWindowTitle("TestAnim");
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -92,6 +91,8 @@ dtCore::ObserverPtr<dtGame::GameManager> TestAnim::CreateGameManager(dtCore::Sce
 //////////////////////////////////////////////////////////////////////////
 void TestAnim::OnStartup()
 {
+   GetGameManager()->GetApplication().GetWindow()->SetWindowTitle("TestAnim");
+
    std::string dataPath = dtCore::GetDeltaDataPathList();
    dtCore::SetDataFilePathList(dataPath + ";" + 
                                dtCore::GetDeltaRootPath() + "/examples/data" + ";");
@@ -119,9 +120,6 @@ void TestAnim::OnStartup()
       LOG_ERROR("Can't find the project context or load the map. Exception follows.");
       e.LogException(dtUtil::Log::LOG_ERROR);
    }
-
-   
-   dtCore::DeltaWin *win = gameManager.GetApplication().GetWindow();
 
    dtGame::DefaultMessageProcessor *dmp = new dtGame::DefaultMessageProcessor();
    TestAnimInput* inputComp = new TestAnimInput("TestAnimInput"); 
@@ -173,7 +171,7 @@ void TestAnim::OnStartup()
             //the physique driver
             //TODO: this should be refactored out of here and into the place that decides 
             //      whether or not we are doing hardware skinning
-            mAnimationHelper->GetAnimator()->SetPhysiqueDriver(0);
+            mAnimationHelper->GetAnimator()->SetPhysiqueDriver(NULL);
 
             //we must register the helper with the animation component
             animComp->RegisterActor(*gameProxy, *mAnimationHelper);   
@@ -215,5 +213,6 @@ void TestAnim::OnStartup()
 
    gameManager.DebugStatisticsTurnOn(false, false, 5);
 
+   gameManager.GetApplication().GetWindow()->SetKeyRepeat(false);
 }
 
