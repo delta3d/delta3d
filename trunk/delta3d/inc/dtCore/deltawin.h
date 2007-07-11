@@ -112,7 +112,17 @@ namespace dtCore
 
    public:
 
-      ///Calculate the screen pixel coords ([0,w],[0,h]) given the window coords (x,y) ([-1,1],[-1,1])
+      /*!
+       * Calculate the screen coordinates given a window coordinate. Screen
+       * coordinate (0,0) is located in the lower left of the display.
+       *
+       * @param x : window x coordinate [-1, 1]
+       * @param y : window y coordinate [-1, 1]
+       * @param &pixel_x : The screen X pixel equivelent [out]
+       * @param &pixel_y : The screen Y pixel equivelent [out]
+       *
+       * @return bool  : Returns true if the (x,y) is a valid window coordinate
+       */
       bool CalcPixelCoords( float x, float y, float &pixel_x, float &pixel_y );
       bool CalcPixelCoords( osg::Vec2 window_xy, osg::Vec2& pixel_xy );
 
@@ -150,6 +160,13 @@ namespace dtCore
          int mHeight;
       };
 
+      /** 
+       * Set the position and size of the DeltaWin in screen coordinates
+       * @param x The left edge of the window in screen coordinates
+       * @param y The bottom edge of the window in screen coordinates
+       * @param width The width of the window
+       * @param height The height of the window
+       */
       void SetPosition( int x, int y, int width, int height );
       void SetPosition( const PositionSize& positionSize );
 
@@ -166,10 +183,28 @@ namespace dtCore
       Keyboard* GetKeyboard() { return mKeyboard.get(); }
       const Keyboard* GetKeyboard() const { return mKeyboard.get(); }
 
-      ///Supply an instance of a Keyboard to be used instead of the internal one
+      /** 
+       * Supply an instance of a Keyboard to be used instead of the default, 
+       * internal Keyboard, or the one supplied in the constructor.
+       * @param keyboard : instance of a valid Keyboard to use
+       * @pre keyboard != 0
+       * @exception dtCore::ExceptionEnum::INVALID_PARAMETER The supplied instance
+       * is NULL.  The original Keyboard will still be used.
+       */
       void SetKeyboard( Keyboard* keyboard );
 
-      ///Supply an instance of a Mouse to be used instead of the internal one
+      /// Turns off/on key repeat. It only allows turning it off for X11.
+      void SetKeyRepeat(bool on);
+      /// @return true if key repeat is on.  On windows and mac this just returns true.
+      bool GetKeyRepeat() const;
+      
+      /** Supply an instance of a Mouse to be used instead of the default internal
+       *  Mouse, or the one supplied in the constructor.
+       *  @param mouse : Instance of a valid Mouse
+       *  @pre mouse != 0
+       *  @exception dtCore::ExceptionEnum::INVALID_PARAMETER The supplied instance
+       *  is NULL.  The original Mouse will still be used.
+       */
       void SetMouse( Mouse* mouse );
 
       ///Get a handle to the Mouse associated with the DeltaWin
