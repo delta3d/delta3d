@@ -370,9 +370,9 @@ namespace dtDAL
    /////////////////////////////////////////////////////////////////
 
    template <typename VecType>
-   void MapWriter::WriteVec(const VecType& vec, size_t vecSize, char* numberConversionBuffer, const size_t bufferMax)
+   void MapWriter::WriteVec(const VecType& vec, char* numberConversionBuffer, const size_t bufferMax)
    {
-      switch (vecSize) {
+      switch (VecType::num_components) {
       case 2:
          BeginElement(MapXMLConstants::ACTOR_PROPERTY_VEC2_ELEMENT);
          break;
@@ -397,7 +397,7 @@ namespace dtDAL
       AddCharacters(numberConversionBuffer);
       EndElement();
       
-      if (vecSize > 2)
+      if (VecType::num_components > 2)
       {
          BeginElement(MapXMLConstants::ACTOR_VEC_3_ELEMENT);
          snprintf(numberConversionBuffer, bufferMax, "%lf", vec[2]);
@@ -405,7 +405,7 @@ namespace dtDAL
          EndElement();
       }
       
-      if (vecSize > 3)
+      if (VecType::num_components > 3)
       {
          BeginElement(MapXMLConstants::ACTOR_VEC_4_ELEMENT);
          snprintf(numberConversionBuffer, bufferMax, "%lf", vec[3]);
@@ -634,31 +634,31 @@ namespace dtDAL
             WriteSimple(parameter);
             break;
          case DataType::VEC2_ID:
-            WriteVec(static_cast<const NamedVec2Parameter&>(parameter).GetValue(), 2, numberConversionBuffer, bufferMax);
+            WriteVec(static_cast<const NamedVec2Parameter&>(parameter).GetValue(), numberConversionBuffer, bufferMax);
             break;
          case DataType::VEC2F_ID:
-            WriteVec(static_cast<const NamedVec2fParameter&>(parameter).GetValue(), 2, numberConversionBuffer, bufferMax);
+            WriteVec(static_cast<const NamedVec2fParameter&>(parameter).GetValue(), numberConversionBuffer, bufferMax);
             break;
          case DataType::VEC2D_ID:
-            WriteVec(static_cast<const NamedVec2dParameter&>(parameter).GetValue(), 2, numberConversionBuffer, bufferMax);
+            WriteVec(static_cast<const NamedVec2dParameter&>(parameter).GetValue(), numberConversionBuffer, bufferMax);
             break;
          case DataType::VEC3_ID:
-            WriteVec(static_cast<const NamedVec3Parameter&>(parameter).GetValue(), 3, numberConversionBuffer, bufferMax);
+            WriteVec(static_cast<const NamedVec3Parameter&>(parameter).GetValue(), numberConversionBuffer, bufferMax);
             break;
          case DataType::VEC3F_ID:
-            WriteVec(static_cast<const NamedVec3fParameter&>(parameter).GetValue(), 3, numberConversionBuffer, bufferMax);
+            WriteVec(static_cast<const NamedVec3fParameter&>(parameter).GetValue(), numberConversionBuffer, bufferMax);
             break;
          case DataType::VEC3D_ID:
-            WriteVec(static_cast<const NamedVec3dParameter&>(parameter).GetValue(), 3, numberConversionBuffer, bufferMax);
+            WriteVec(static_cast<const NamedVec3dParameter&>(parameter).GetValue(), numberConversionBuffer, bufferMax);
             break;
          case DataType::VEC4_ID:
-            WriteVec(static_cast<const NamedVec4Parameter&>(parameter).GetValue(), 4, numberConversionBuffer, bufferMax);
+            WriteVec(static_cast<const NamedVec4Parameter&>(parameter).GetValue(), numberConversionBuffer, bufferMax);
             break;
          case DataType::VEC4F_ID:
-            WriteVec(static_cast<const NamedVec4fParameter&>(parameter).GetValue(), 4, numberConversionBuffer, bufferMax);
+            WriteVec(static_cast<const NamedVec4fParameter&>(parameter).GetValue(), numberConversionBuffer, bufferMax);
             break;
          case DataType::VEC4D_ID:
-            WriteVec(static_cast<const NamedVec4dParameter&>(parameter).GetValue(), 4, numberConversionBuffer, bufferMax);
+            WriteVec(static_cast<const NamedVec4dParameter&>(parameter).GetValue(), numberConversionBuffer, bufferMax);
             break;
          case DataType::RGBACOLOR_ID:
             WriteColorRGBA(static_cast<const NamedRGBAColorParameter&>(parameter), numberConversionBuffer, bufferMax);
@@ -815,31 +815,31 @@ namespace dtDAL
             WriteSimple(property);
             break;
          case DataType::VEC2_ID:
-            WriteVec(static_cast<const Vec2ActorProperty&>(property).GetValue(), 2, numberConversionBuffer, bufferMax);
+            WriteVec(static_cast<const Vec2ActorProperty&>(property).GetValue(), numberConversionBuffer, bufferMax);
             break;
          case DataType::VEC2F_ID:
-            WriteVec(static_cast<const Vec2fActorProperty&>(property).GetValue(), 2, numberConversionBuffer, bufferMax);
+            WriteVec(static_cast<const Vec2fActorProperty&>(property).GetValue(), numberConversionBuffer, bufferMax);
             break;
          case DataType::VEC2D_ID:
-            WriteVec(static_cast<const Vec2dActorProperty&>(property).GetValue(), 2, numberConversionBuffer, bufferMax);
+            WriteVec(static_cast<const Vec2dActorProperty&>(property).GetValue(), numberConversionBuffer, bufferMax);
             break;
          case DataType::VEC3_ID:
-            WriteVec(static_cast<const Vec3ActorProperty&>(property).GetValue(), 3, numberConversionBuffer, bufferMax);
+            WriteVec(static_cast<const Vec3ActorProperty&>(property).GetValue(), numberConversionBuffer, bufferMax);
             break;
          case DataType::VEC3F_ID:
-            WriteVec(static_cast<const Vec3fActorProperty&>(property).GetValue(), 3, numberConversionBuffer, bufferMax);
+            WriteVec(static_cast<const Vec3fActorProperty&>(property).GetValue(), numberConversionBuffer, bufferMax);
             break;
          case DataType::VEC3D_ID:
-            WriteVec(static_cast<const Vec3dActorProperty&>(property).GetValue(), 3, numberConversionBuffer, bufferMax);
+            WriteVec(static_cast<const Vec3dActorProperty&>(property).GetValue(), numberConversionBuffer, bufferMax);
             break;
          case DataType::VEC4_ID:
-            WriteVec(static_cast<const Vec4ActorProperty&>(property).GetValue(), 4, numberConversionBuffer, bufferMax);
+            WriteVec(static_cast<const Vec4ActorProperty&>(property).GetValue(), numberConversionBuffer, bufferMax);
             break;
          case DataType::VEC4F_ID:
-            WriteVec(static_cast<const Vec4fActorProperty&>(property).GetValue(), 4, numberConversionBuffer, bufferMax);
+            WriteVec(static_cast<const Vec4fActorProperty&>(property).GetValue(), numberConversionBuffer, bufferMax);
             break;
          case DataType::VEC4D_ID:
-            WriteVec(static_cast<const Vec4dActorProperty&>(property).GetValue(), 4, numberConversionBuffer, bufferMax);
+            WriteVec(static_cast<const Vec4dActorProperty&>(property).GetValue(), numberConversionBuffer, bufferMax);
             break;
          case DataType::RGBACOLOR_ID:
             WriteColorRGBA(static_cast<const ColorRgbaActorProperty&>(property), numberConversionBuffer, bufferMax);
@@ -852,12 +852,12 @@ namespace dtDAL
             {
                std::vector<const NamedParameter*> parameters;
                gp->GetParameters(parameters);
-               for (size_t i = 0; i < parameters.size(); ++i) 
+               for (size_t i = 0; i < parameters.size(); ++i)
                {
                   WriteParameter(*parameters[i]);
                }
             }
-            EndElement();                     
+            EndElement();
             break;
          }
          default:

@@ -60,13 +60,13 @@ namespace dtUtil
    }
 
    template <typename Real>
-   Real Abs(Real x)
+   inline Real Abs(Real x)
    {
       return (( x < 0) ? ((Real)(-1.0) * x) : x);
    }
 
    template <typename Real>
-   void Clamp(Real& x, const Real low, const Real high)
+   inline void Clamp(Real& x, const Real low, const Real high)
    {
       if (x < low) x = low;
       if (x > high) x = high;
@@ -81,7 +81,7 @@ namespace dtUtil
      * @return the interpolated value for the coefficient of the range.
      */
    template <typename Real>
-   Real Lerp(Real x, Real y, Real t)
+   inline Real Lerp(Real x, Real y, Real t)
    {
       return x + t * (y - x);
    }
@@ -167,7 +167,7 @@ namespace dtUtil
    }
 
    /**
-    * Does an epsilon equals on an any osg::Vec# 
+    * Does an epsilon equals on an any osg::Vec# or array
     * @param lhs The first vector.
     * @param rhs The second vector.
     * @param size The size or the vec.
@@ -179,6 +179,34 @@ namespace dtUtil
       for (size_t i = 0; i < size; i++)
       {
          if (!osg::equivalent(lhs[i], rhs[i], epsilon))
+            return false;
+      }
+      return true;
+   }
+
+   /**
+    * Does an epsilon equals on an any osg::Vec# 
+    * @param lhs The first vector.
+    * @param rhs The second vector.
+    * @param epsilon the epsilon to use in the compare.
+    */
+   template <typename TVec, typename Real>
+   inline bool Equivalent(const TVec& lhs, const TVec& rhs, Real epsilon)
+   {
+      return Equivalent(lhs, rhs, TVec::num_components, epsilon);
+   }
+
+   /**
+    * Does an epsilon equals on an any osg::Vec#, but auto calculates the epsilon per comparison
+    * @param lhs The first vector.
+    * @param rhs The second vector.
+    */
+   template <typename TVec, typename Real>
+   inline bool Equivalent(const TVec& lhs, const TVec& rhs)
+   {
+      for (size_t i = 0; i < TVec::num_components; i++)
+      {
+         if (Equivalent(lhs[i], rhs[i]))
             return false;
       }
       return true;

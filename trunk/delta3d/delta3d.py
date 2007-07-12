@@ -761,6 +761,15 @@ def TOOL_BUNDLE(env):
       CheckLinkGroup(['DIS'], 'DIS', True)
       CheckLinkGroup([ 'CEGUIBase', 'CEGUIOpenGLRenderer' ], 'CEGUI', False, False)
       
+      if env.has_key('additionalLibsOrder'):
+         additionalLibsOrder = env['additionalLibsOrder']
+         additionalOrderedToCheck = []
+         for libName in additionalLibsOrder:
+            if not foundLibs.has_key(extLibs[libName]):
+               additionalOrderedToCheck += [ extLibs[libName] ]
+      
+         CheckLinkGroup(additionalOrderedToCheck, 'AdditionalOrdered', True, False)
+         
       additionalToCheck = [];
       for libName in extLibs.keys():
          if not foundLibs.has_key(extLibs[libName]):
