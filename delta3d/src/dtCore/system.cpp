@@ -5,6 +5,7 @@
 #include <prefix/dtcoreprefix-src.h>
 #include <dtCore/system.h>
 #include <dtUtil/log.h>
+#include <dtUtil/bits.h>
 #include <dtCore/camera.h>
 #include <dtCore/cameragroup.h>
 #include <dtCore/deltawin.h>
@@ -26,7 +27,7 @@ System::System()
 , mRunning(false)
 , mShutdownOnWindowClose(true)
 , mPaused(false)
-, mMode(eNORMAL)
+, mSystemStages(STAGES_DEFAULT)
 {
    mTickClockTime = mClock.Tick();
    mDt = 0.0;
@@ -81,28 +82,31 @@ bool System::GetPause() const
 }
 
 
-void System::SetSimMode(SimMode newMode)
+void System::SetSystemStages( SystemStageFlags stages )
 {
-   mMode = newMode;
+   mSystemStages = stages;
 }
 
-System::SimMode System::GetSimMode() const
+System::SystemStageFlags System::GetSystemStages() const
 {
-   return mMode;
+   return mSystemStages;
 }
 
 void System::Frame(const double deltaSimTime, const double deltaRealTime)
 {
-   double userData[2] = { deltaSimTime, deltaRealTime };
-   SendMessage( "frame", userData );
+   if (dtUtil::Bits::Has(mSystemStages, System::STAGE_FRAME))
+   {
+      double userData[2] = { deltaSimTime, deltaRealTime };
+      SendMessage( "frame", userData );
+      CameraFrame();
+   }
 
-   if(mMode != eSIMULATE_ONLY) CameraFrame();
 }
 
 void System::Pause( const double deltaRealTime )
 {
    SendMessage( "pause", const_cast<double*>(&deltaRealTime) );      
-   
+
    CameraFrame();
 }
 
@@ -126,7 +130,7 @@ void System::SystemStep()
       mSimulationClockTime += Timer_t(mSimDt * 1000000); 
 
       PreFrame(mSimDt, mDt);
-      if(mMode != eSIMULATE_ONLY) Frame(mSimDt, mDt);
+      Frame(mSimDt, mDt);
       PostFrame(mSimDt, mDt);
    }
 
@@ -225,21 +229,30 @@ void System::Stop()
 
 void System::PreFrame( const double deltaSimTime, const double deltaRealTime )
 {
-   double userData[2] = { deltaSimTime, deltaRealTime };
-   SendMessage("preframe", userData);
+   if (dtUtil::Bits::Has(mSystemStages, System::STAGE_PREFRAME))
+   {
+      double userData[2] = { deltaSimTime, deltaRealTime };
+      SendMessage("preframe", userData);
+   }
 }
 
 void System::PostFrame( const double deltaSimTime, const double deltaRealTime )
 {
-   double userData[2] = { deltaSimTime, deltaRealTime };
-   SendMessage("postframe", userData);
+   if (dtUtil::Bits::Has(mSystemStages, System::STAGE_POSTFRAME))
+   {
+      double userData[2] = { deltaSimTime, deltaRealTime };
+      SendMessage("postframe", userData);
+   }
 }
 
 void System::Config()
 {
-   CameraFrame();
+   if (dtUtil::Bits::Has(mSystemStages, System::STAGE_CONFIG))
+   {
+      CameraFrame();
 
-   SendMessage("configure");
+      SendMessage("configure");
+   }
 }
 
 void System::CameraFrame()

@@ -32,6 +32,7 @@
 #include <osg/ShapeDrawable>
 #include <dtCore/transform.h>
 #include <dtCore/camera.h>
+#include <dtUtil/bits.h>
 
 using namespace dtCore;
 
@@ -218,6 +219,10 @@ void SystemTests::TestSimMode()
    app->GetScene()->GetSceneNode()->addChild(mDummyNode->GetOSGNode());
    mDummyNode->GetOSGNode()->setCullCallback(mDummyCallback.get());
 
+
+   CPPUNIT_ASSERT_MESSAGE("System should be using default stages",
+      dtUtil::Bits::Has(System::STAGES_DEFAULT, System::GetInstance().GetSystemStages()) );
+
    CPPUNIT_ASSERT(!mDummyCallback->mCallbackCalled);
    CPPUNIT_ASSERT(!mDummyNode->mDrawCalled);
    CPPUNIT_ASSERT(!mDummyDrawable->mPreframeCalled);
@@ -231,7 +236,10 @@ void SystemTests::TestSimMode()
 
    /////////////////////////////////////////////////////////////
 
-   System::GetInstance().SetSimMode(System::eSIMULATE_ONLY);
+   System::SystemStageFlags currentStages = System::GetInstance().GetSystemStages();
+
+   //turn off the STAGE_FRAME
+   System::GetInstance().SetSystemStages( dtUtil::Bits::Remove(currentStages, System::STAGE_FRAME) );
 
    mDummyCallback->mCallbackCalled = false;
    mDummyNode->ResetState();
@@ -251,7 +259,7 @@ void SystemTests::TestSimMode()
    mDummyNode->ResetState();
    mDummyDrawable->ResetState();
 
-   System::GetInstance().SetSimMode(System::eNORMAL);
+   System::GetInstance().SetSystemStages(System::STAGES_DEFAULT);
 
    dtCore::System::GetInstance().Step();
 
