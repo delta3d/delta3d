@@ -118,23 +118,23 @@ namespace dtUtil
       osg::Vec2 v2a(3.31f, 3.32f);
       osg::Vec2 v2b(3.32f, 3.33f);
       
-      CPPUNIT_ASSERT(!Equivalent(v2a, v2b, 2, 1e-6f));
-      CPPUNIT_ASSERT(!Equivalent(v2a, v2b, 2, 0.001f));
-      CPPUNIT_ASSERT(Equivalent(v2a, v2b, 2, 0.1f));
+      CPPUNIT_ASSERT(!Equivalent(v2a, v2b, 1e-6f));
+      CPPUNIT_ASSERT(!Equivalent(v2a, v2b, 0.001f));
+      CPPUNIT_ASSERT(Equivalent(v2a, v2b, 0.1f));
 
       osg::Vec2f v2fa(3.31f, 3.32f);
       osg::Vec2f v2fb(3.32f, 3.33f);
       
-      CPPUNIT_ASSERT(!Equivalent(v2fa, v2fb, 2, 1e-6f));
-      CPPUNIT_ASSERT(!Equivalent(v2fa, v2fb, 2, 0.001f));
-      CPPUNIT_ASSERT(Equivalent(v2fa, v2fb, 2, 0.1f));
+      CPPUNIT_ASSERT(!Equivalent(v2fa, v2fb, 1e-6f));
+      CPPUNIT_ASSERT(!Equivalent(v2fa, v2fb, 0.001f));
+      CPPUNIT_ASSERT(Equivalent(v2fa, v2fb, 0.1f));
 
       osg::Vec2d v2da(3.31, 3.32);
       osg::Vec2d v2db(3.32, 3.33);
       
-      CPPUNIT_ASSERT(!Equivalent(v2da, v2db, 2, 1e-6));
-      CPPUNIT_ASSERT(!Equivalent(v2da, v2db, 2, 0.001));
-      CPPUNIT_ASSERT(Equivalent(v2da, v2db, 2, 0.1));
+      CPPUNIT_ASSERT(!Equivalent(v2da, v2db, 1e-6));
+      CPPUNIT_ASSERT(!Equivalent(v2da, v2db, 0.001));
+      CPPUNIT_ASSERT(Equivalent(v2da, v2db, 0.1));
    }
 
    void MathTests::TestEquivalentVec3()
@@ -142,23 +142,23 @@ namespace dtUtil
       osg::Vec3 v3a(3.31f, 3.32f, 3.33f);
       osg::Vec3 v3b(3.32f, 3.33f, 3.34f);
       
-      CPPUNIT_ASSERT(!Equivalent(v3a, v3b, 3, 1e-6f));
-      CPPUNIT_ASSERT(!Equivalent(v3a, v3b, 3, 0.001f));
-      CPPUNIT_ASSERT(Equivalent(v3a, v3b, 3, 0.1f));
+      CPPUNIT_ASSERT(!Equivalent(v3a, v3b, 1e-6f));
+      CPPUNIT_ASSERT(!Equivalent(v3a, v3b, 0.001f));
+      CPPUNIT_ASSERT(Equivalent(v3a, v3b, 0.1f));
 
       osg::Vec3f v3fa(3.31f, 3.32f, 3.33f);
       osg::Vec3f v3fb(3.32f, 3.33f, 3.34f);
       
-      CPPUNIT_ASSERT(!Equivalent(v3fa, v3fb, 3, 1e-6f));
-      CPPUNIT_ASSERT(!Equivalent(v3fa, v3fb, 3, 0.001f));
-      CPPUNIT_ASSERT(Equivalent(v3fa, v3fb, 3, 0.1f));
+      CPPUNIT_ASSERT(!Equivalent(v3fa, v3fb, 1e-6f));
+      CPPUNIT_ASSERT(!Equivalent(v3fa, v3fb, 0.001f));
+      CPPUNIT_ASSERT(Equivalent(v3fa, v3fb, 0.1f));
 
       osg::Vec3d v3da(3.31, 3.32, 3.33);
       osg::Vec3d v3db(3.32, 3.33, 3.34);
       
-      CPPUNIT_ASSERT(!Equivalent(v3da, v3db, 3, 1e-6));
-      CPPUNIT_ASSERT(!Equivalent(v3da, v3db, 3, 0.001));
-      CPPUNIT_ASSERT(Equivalent(v3da, v3db, 3, 0.1));
+      CPPUNIT_ASSERT(!Equivalent(v3da, v3db, 1e-6));
+      CPPUNIT_ASSERT(!Equivalent(v3da, v3db, 0.001));
+      CPPUNIT_ASSERT(Equivalent(v3da, v3db, 0.1));
    }
 
    void MathTests::TestEquivalentVec4()
@@ -166,23 +166,23 @@ namespace dtUtil
       osg::Vec4 v4a(3.31f, 3.32f, 3.33f, 3.34f);
       osg::Vec4 v4b(3.32f, 3.33f, 3.34f, 3.33f);
       
-      CPPUNIT_ASSERT(!Equivalent(v4a, v4b, 4, 1e-6f));
-      CPPUNIT_ASSERT(!Equivalent(v4a, v4b, 4, 0.001f));
-      CPPUNIT_ASSERT(Equivalent(v4a, v4b, 4, 0.1f));
+      CPPUNIT_ASSERT(!Equivalent(v4a, v4b, 1e-6f));
+      CPPUNIT_ASSERT(!Equivalent(v4a, v4b, 0.001f));
+      CPPUNIT_ASSERT(Equivalent(v4a, v4b, 0.1f));
 
       osg::Vec4f v4fa(3.31f, 3.32f, 3.33f, 3.34f);
       osg::Vec4f v4fb(3.32f, 3.33f, 3.34f, 3.33f);
       
-      CPPUNIT_ASSERT(!Equivalent(v4fa, v4fb, 4, 1e-6f));
-      CPPUNIT_ASSERT(!Equivalent(v4fa, v4fb, 4, 0.001f));
-      CPPUNIT_ASSERT(Equivalent(v4fa, v4fb, 4, 0.1f));
+      CPPUNIT_ASSERT(!Equivalent(v4fa, v4fb, 1e-6f));
+      CPPUNIT_ASSERT(!Equivalent(v4fa, v4fb, 0.001f));
+      CPPUNIT_ASSERT(Equivalent(v4fa, v4fb, 0.1f));
 
       osg::Vec4d v4da(3.31, 3.32, 3.33, 3.34);
       osg::Vec4d v4db(3.32, 3.33, 3.34, 3.33);
       
-      CPPUNIT_ASSERT(!Equivalent(v4da, v4db, 4, 1e-6));
-      CPPUNIT_ASSERT(!Equivalent(v4da, v4db, 4, 0.001));
-      CPPUNIT_ASSERT(Equivalent(v4da, v4db, 4, 0.1));
+      CPPUNIT_ASSERT(!Equivalent(v4da, v4db, 1e-6));
+      CPPUNIT_ASSERT(!Equivalent(v4da, v4db, 0.001));
+      CPPUNIT_ASSERT(Equivalent(v4da, v4db, 0.1));
    }
 
    void MathTests::TestMatrixEulerConversions()
@@ -205,7 +205,7 @@ namespace dtUtil
 
       ss << "Expected \"" << hprTest1 << "\" but got \"" << hprResult << "\"";
 
-	   CPPUNIT_ASSERT_MESSAGE(ss.str(), Equivalent(hprResult, hprTest1, 3, test_magic_epsilon));
+	   CPPUNIT_ASSERT_MESSAGE(ss.str(), Equivalent(hprResult, hprTest1, test_magic_epsilon));
 
 	   dtUtil::MatrixUtil::HprToMatrix(testMatrix, hprTest2);
 	   dtUtil::MatrixUtil::MatrixToHpr(hprResult, testMatrix);
@@ -213,7 +213,7 @@ namespace dtUtil
       ss.str("");
       ss << "Expected \"" << hprTest2 << "\" but got \"" << hprResult << "\"";
 
-	   CPPUNIT_ASSERT_MESSAGE(ss.str(), Equivalent(hprResult, hprTest2, 3, test_magic_epsilon));
+	   CPPUNIT_ASSERT_MESSAGE(ss.str(), Equivalent(hprResult, hprTest2, test_magic_epsilon));
 
 	   dtUtil::MatrixUtil::HprToMatrix(testMatrix, hprTest3);
 	   dtUtil::MatrixUtil::MatrixToHpr(hprResult, testMatrix);
@@ -221,7 +221,7 @@ namespace dtUtil
       ss.str("");
       ss << "Expected \"" << hprTest3 << "\" but got \"" << hprResult << "\"";
 
-	   CPPUNIT_ASSERT_MESSAGE(ss.str(), Equivalent(hprResult, hprTest3, 3, test_magic_epsilon));
+	   CPPUNIT_ASSERT_MESSAGE(ss.str(), Equivalent(hprResult, hprTest3, test_magic_epsilon));
 
 	   dtUtil::MatrixUtil::HprToMatrix(testMatrix, hprTest4);
 	   dtUtil::MatrixUtil::MatrixToHpr(hprResult, testMatrix);
@@ -229,7 +229,7 @@ namespace dtUtil
       ss.str("");
       ss << "Expected \"" << hprTest4 << "\" but got \"" << hprResult << "\"";
 
-	   CPPUNIT_ASSERT_MESSAGE(ss.str(), Equivalent(hprResult, hprTest4, 4, test_magic_epsilon));
+	   CPPUNIT_ASSERT_MESSAGE(ss.str(), Equivalent(hprResult, hprTest4, test_magic_epsilon));
    }
 
    void MathTests::TestEquivalentReals()

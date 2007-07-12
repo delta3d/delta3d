@@ -174,9 +174,9 @@ namespace dtUtil
     * @param epsilon the epsilon to use in the compare.
     */
    template <typename TVec, typename Real>
-   inline bool Equivalent(const TVec& lhs, const TVec& rhs, size_t size, Real epsilon)
+   inline bool Equivalent(const TVec& lhs, const TVec& rhs, Real epsilon)
    {
-      for (size_t i = 0; i < size; i++)
+      for (size_t i = 0; i < TVec::num_components; i++)
       {
          if (!osg::equivalent(lhs[i], rhs[i], epsilon))
             return false;
