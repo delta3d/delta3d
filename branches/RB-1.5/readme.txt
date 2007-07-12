@@ -201,8 +201,7 @@ Windows w/ Visual Studio .NET 7.1
    6. Open a cmd shell and navigate to your Boost directory.
    
    7. Run 'bjam stage --with-python'. This will build the Boost.Python set of 
-      Boost libraries to a directory that begins with "bin.v2" and is about 6 levels
-      below that. Make sure to add this directory 
+      Boost libraries to a directory something like "boost*/stage/lib". Make sure to add this directory 
       to your PATH environment variable so Windows can find the Boost.Python DLLs 
       at runtime.
          
@@ -222,7 +221,7 @@ Windows w/ Visual Studio .NET 7.1
       -Change 'Show directories for:' to Include files
       -Add your Boost directory to the list
       -Change 'Show directories for:' to Library files
-      -Add 'boost_1_33_1\stage\lib' (or whatever your proper path is)to the list
+      -Add 'boost_*\stage\lib' (or whatever your proper path is)to the list
    
    11. Build!
    
@@ -281,7 +280,8 @@ Windows w/ Visual Studio .NET 7.1
       Select the Projects folder
       Select VC++ Directories
       Change 'Show directories for:' to Executable files
-      Add 'C:\Python24' to the list of directories (or whatever you proper path is)
+      Add the root Python folder (e.g., 'C:\Python24') to the list of directories 
+          (or whatever you proper path is)
    
    4. Build the entire solution.
 
@@ -358,7 +358,7 @@ Windows w/ SCons & Linux
    -----
    Requries RTI package to be installed! We cannot distribute RTI with
    Delta3D, so you are on your own. The dtHLA module is compiled and tested
-   against RTI-S 1.3_D11A although any RTI should work.
+   against RTI-S although any RTI should work.
 
    Once your have an RTI installed, run:
 
