@@ -33,6 +33,8 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 
+#include <string>
+
 #if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
    #include <Windows.h>
    #define SLEEP(milliseconds) Sleep((milliseconds))
@@ -40,6 +42,9 @@
    #include <unistd.h>
    #define SLEEP(milliseconds) usleep(((milliseconds) * 1000))
 #endif
+
+
+
 
 class CameraTests : public CPPUNIT_NS::TestFixture
 {
@@ -50,6 +55,7 @@ class CameraTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST_SUITE_END();
    
    public:
+
       void setUp()
       {
          try
@@ -135,8 +141,49 @@ class CameraTests : public CPPUNIT_NS::TestFixture
       dtCore::RefPtr<dtCore::DeltaWin> mWin;
 };
 
+const std::string CameraTests::SCREEN_SHOT_DIR("TestScreenShot");
 
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(CameraTests);
 
-const std::string CameraTests::SCREEN_SHOT_DIR("TestScreenShot");
+
+
+class CameraTests2 : public CPPUNIT_NS::TestFixture
+{
+   CPPUNIT_TEST_SUITE(CameraTests2);
+      CPPUNIT_TEST(TestEnabled);
+   CPPUNIT_TEST_SUITE_END();
+public:
+   void setup() {}
+   void tearDown() {}
+   void TestEnabled();
+
+};
+
+// Registers the fixture into the 'registry'
+CPPUNIT_TEST_SUITE_REGISTRATION(CameraTests2);
+
+
+void CameraTests2::TestEnabled()
+{
+   using namespace dtCore;
+   RefPtr<Camera> cam = new Camera();
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Camera should be enabled", true, cam->GetEnabled());
+   
+   cam->SetEnabled(false);
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Camera should be disabled", false, cam->GetEnabled());
+
+   RefPtr<DeltaWin> win = new DeltaWin();
+   cam->SetWindow(win.get());
+
+   RefPtr<Scene> scene = new Scene();
+   cam->SetScene(scene.get());
+
+   System::GetInstance().Config();
+   System::GetInstance().Start();
+   System::GetInstance().Step();
+
+}
+
+
+
