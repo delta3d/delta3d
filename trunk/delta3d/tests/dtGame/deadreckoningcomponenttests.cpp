@@ -433,10 +433,10 @@ namespace dtGame
             osg::Vec3 vec;
             xform.GetTranslation(vec);
             CPPUNIT_ASSERT_MESSAGE("The translation should be 0,0,0 because nothing has changed yet.", 
-               dtUtil::Equivalent(vec, osg::Vec3(0.0f,0.0f,0.0f), 3, 1e-2f));
+               dtUtil::Equivalent(vec, osg::Vec3(0.0f,0.0f,0.0f), 1e-2f));
             xform.GetRotation(vec);
             CPPUNIT_ASSERT_MESSAGE("The rotation should be 0,0,0 because nothing has changed yet.", 
-               dtUtil::Equivalent(vec, osg::Vec3(0.0f,0.0f,0.0f), 3, 1e-2f));
+               dtUtil::Equivalent(vec, osg::Vec3(0.0f,0.0f,0.0f), 1e-2f));
                                  
             osg::Vec3 setVec = osg::Vec3(1.0, 1.2, 1.3);
             
@@ -451,12 +451,12 @@ namespace dtGame
             vec = helper->GetCurrentDeadReckonedTranslation();
             ss.str("");
             ss << "The position should be 0,0,0 but it is " << vec;
-            CPPUNIT_ASSERT_MESSAGE(ss.str(), dtUtil::Equivalent(vec, osg::Vec3(0.0f, 0.0f, 0.0f), 3, 1e-2f));
+            CPPUNIT_ASSERT_MESSAGE(ss.str(), dtUtil::Equivalent(vec, osg::Vec3(0.0f, 0.0f, 0.0f), 1e-2f));
    
             vec = helper->GetCurrentDeadReckonedRotation();
             ss.str("");
             ss << "The position should be 0,0,0 but it is " << vec;
-            CPPUNIT_ASSERT_MESSAGE(ss.str(), dtUtil::Equivalent(vec, osg::Vec3(0.0f, 0.0f, 0.0f), 3, 1e-2f));
+            CPPUNIT_ASSERT_MESSAGE(ss.str(), dtUtil::Equivalent(vec, osg::Vec3(0.0f, 0.0f, 0.0f), 1e-2f));
          
             helper->SetDeadReckoningAlgorithm(DeadReckoningAlgorithm::STATIC);
             dtCore::System::GetInstance().Step();
@@ -464,30 +464,30 @@ namespace dtGame
             const osg::Vec3& currentPos = helper->GetCurrentDeadReckonedTranslation();
             ss.str("");
             ss << "The position should be " << setVec << " but it is " << currentPos;
-            CPPUNIT_ASSERT_MESSAGE(ss.str(), dtUtil::Equivalent(setVec, currentPos, 3, 1e-2f));
+            CPPUNIT_ASSERT_MESSAGE(ss.str(), dtUtil::Equivalent(setVec, currentPos, 1e-2f));
 
             const osg::Vec3& currentHPR = helper->GetCurrentDeadReckonedRotation();
             ss.str("");
             ss << "The position should be " << setVec << " but it is " << currentHPR;
-            CPPUNIT_ASSERT_MESSAGE(ss.str(), dtUtil::Equivalent(setVec, currentHPR, 3, 1e-2f));
+            CPPUNIT_ASSERT_MESSAGE(ss.str(), dtUtil::Equivalent(setVec, currentHPR, 1e-2f));
                         
             mTestGameActor->GetGameActor().GetTransform(xform);
 
             if (updateActor)
             {
                xform.GetTranslation(vec);
-               CPPUNIT_ASSERT(dtUtil::Equivalent(vec, currentPos, 3, 1e-2f));
+               CPPUNIT_ASSERT(dtUtil::Equivalent(vec, currentPos, 1e-2f));
    
                xform.GetRotation(vec);
-               CPPUNIT_ASSERT(dtUtil::Equivalent(vec, currentHPR, 3, 1e-2f));
+               CPPUNIT_ASSERT(dtUtil::Equivalent(vec, currentHPR, 1e-2f));
             }
             else
             {
                xform.GetTranslation(vec);
-               CPPUNIT_ASSERT(dtUtil::Equivalent(vec, osg::Vec3(0.0f, 0.0f, 0.0f), 3, 1e-2f));
+               CPPUNIT_ASSERT(dtUtil::Equivalent(vec, osg::Vec3(0.0f, 0.0f, 0.0f), 1e-2f));
    
                xform.GetRotation(vec);
-               CPPUNIT_ASSERT(dtUtil::Equivalent(vec, osg::Vec3(0.0f, 0.0f, 0.0f), 3, 1e-2f));
+               CPPUNIT_ASSERT(dtUtil::Equivalent(vec, osg::Vec3(0.0f, 0.0f, 0.0f), 1e-2f));
             }
             
             mDeadReckoningComponent->UnregisterActor(*mTestGameActor);
@@ -579,7 +579,7 @@ namespace dtGame
             ss << "The position should be " << helper->GetLastKnownTranslation() << " but it is " << xform.GetTranslation();
 
             CPPUNIT_ASSERT_MESSAGE(ss.str(), 
-                  dtUtil::Equivalent(helper->GetLastKnownTranslation(), xform.GetTranslation(), 3, 1e-2f));
+                  dtUtil::Equivalent(helper->GetLastKnownTranslation(), xform.GetTranslation(), 1e-2f));
 
             ss.str("");
             osg::Vec3 hpr;
@@ -587,7 +587,7 @@ namespace dtGame
             ss << "The rotation should be " << helper->GetLastKnownRotation() << " but it is " << hpr;
 
             CPPUNIT_ASSERT_MESSAGE(ss.str(), 
-                  dtUtil::Equivalent(helper->GetLastKnownRotation(), hpr, 3, 1e-2f));
+                  dtUtil::Equivalent(helper->GetLastKnownRotation(), hpr, 1e-2f));
          }
 
          dtCore::RefPtr<GameManager> mGM;
