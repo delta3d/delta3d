@@ -58,15 +58,22 @@ namespace dtCore
    {
 
    public:
-      /**
-      * The SimMode effects how the system runs.
-      *
-      * eNORMAL will simulate, cull, and then draw.  
-      * eSIMULATE_ONLY will just call preframe and postframe.
-      */
-      enum SimMode{eNORMAL = 0, eSIMULATE_ONLY};
-
       DECLARE_MANAGEMENT_LAYER(System)
+
+      /** Enumeration of the different stages the System goes through during
+        * the update loop.
+        */
+      enum SystemStages
+      {
+         STAGE_NONE     = 0x00000000, ///<No update loop stages are performed
+         STAGE_PREFRAME = 0x00000001, ///<"preframe" message
+         STAGE_FRAME    = 0x00000002, ///<"frame" message, plus camera rendering
+         STAGE_POSTFRAME= 0x00000004, ///<"postframe" message
+         STAGE_CONFIG   = 0X00000008, ///<"config" message, plus render a camera frame
+         STAGES_DEFAULT  = STAGE_PREFRAME|STAGE_FRAME|STAGE_POSTFRAME|STAGE_CONFIG
+      };
+   
+      typedef unsigned int SystemStageFlags;
 
    protected:
 
@@ -90,21 +97,23 @@ namespace dtCore
 
       static void Destroy();
 
-      /**
-      * Changing the simulation mode will change how the system runs.
-      * 
-      * eNORMAL will simulate, cull, and then draw.  
-      * eSIMULATE_ONLY will just call preframe and postframe.
-      *
-      * @param the new SimMode
-      */
-      void SetSimMode(SimMode newMode);
+      /** Set which stages the system will process during an update loop.  This
+       * can be used to turn off a particular stage for optimization e.g., if no
+       * operations are required in post frame.  To use, supply a bitwise combination
+       * of the stage required.
+       * @code
+       * dtCore::System::GetInstance().SetSystemStages( System::STAGE_PREFRAME|System::STAGE_FRAME );
+       * @endcode
+       * This is an advanced operation and can render an application incapacitated.
+       * Defaults to STAGES_DEFAULT.
+       * @param stages The bitwise combination of SystemStages the System should process.
+       */
+      void SetSystemStages( SystemStageFlags stages );
 
-      /**
-      * Gets the current SimMode, this value is eNORMAL by default.
-      * @return the current SimMode.
-      */
-      SimMode GetSimMode() const;
+      /** Get the SystemStages the System is currently operating on.
+       * @return The bitwise combination of stages
+       */
+      SystemStageFlags GetSystemStages() const;
 
       
 
@@ -116,6 +125,7 @@ namespace dtCore
        *  GUI package (QT, FLTK, etc.)
        *  Emits the "preframe", "frame", and "postframe" messages.  Requires the
        *  Start() method is called first.
+       *  @see SetSystemStages()
        */
       void Step();
 
@@ -248,11 +258,10 @@ namespace dtCore
       bool mShutdownOnWindowClose;
       bool mPaused;
       
-      SimMode mMode;
+      SystemStageFlags mSystemStages;
       
       typedef std::map< Producer::RenderSurface*, Camera* > RenderSurfaceCameraMap;
       RenderSurfaceCameraMap mRenderSurfaceCameraMap;
-
    };
 }
 
