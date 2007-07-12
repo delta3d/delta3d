@@ -70,6 +70,14 @@ dtDAL::ActorProxyIcon* PlayerActorProxy::GetBillBoardIcon()
    return mBillBoardIcon.get();
 }
 
+void PlayerActorProxy::OnRemovedFromWorld()
+{
+   PlayerActor &pa = static_cast<PlayerActor&>(GetGameActor());
+
+   if(dtAudio::AudioManager::GetInstance().IsInitialized() && pa.mFireHoseSound != NULL)
+      dtAudio::AudioManager::GetInstance().FreeSound(pa.mFireHoseSound);
+}
+
 //////////////////////////////////////////////////////////////
 PlayerActor::PlayerActor(dtGame::GameActorProxy &proxy) :
    dtGame::GameActor(proxy),
@@ -88,8 +96,7 @@ PlayerActor::PlayerActor(dtGame::GameActorProxy &proxy) :
 
 PlayerActor::~PlayerActor()
 {
-   //if(mFireHoseSound != NULL && dtAudio::AudioManager::GetManager() != NULL)
-   //   dtAudio::AudioManager::GetInstance().FreeSound(mFireHoseSound);
+   
 }
 
 void PlayerActor::OnEnteredWorld()

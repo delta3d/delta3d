@@ -134,6 +134,7 @@ class FIRE_FIGHTER_EXPORT PlayerActor : public dtGame::GameActor
        */
       void SendItemIntersectedMessage(const dtCore::UniqueId &id);
 
+      friend class PlayerActorProxy;
       dtCore::RefPtr<dtCore::Isector> mIsector;
       std::map<int, dtCore::RefPtr<GameItemActor> > mInventory;
       std::map<int, dtCore::RefPtr<GameItemActor> >::iterator mSelectedItem;
@@ -166,6 +167,8 @@ class FIRE_FIGHTER_EXPORT PlayerActorProxy : public dtGame::GameActorProxy
       {
          return dtDAL::ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON;
       }
+
+      virtual void OnRemovedFromWorld();
 
    protected:
 
