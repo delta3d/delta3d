@@ -34,125 +34,125 @@
 #include <dtCore/camera.h>
 
 using namespace dtCore;
- 
+
 
 class DummyCallback: public osg::NodeCallback
 {
-public:
-   DummyCallback():mCallbackCalled(false){}
+   public:
+      DummyCallback():mCallbackCalled(false){}
 
-   void operator()(osg::Node*, osg::NodeVisitor* nv)
-   {				
-      mCallbackCalled = true;
-   }
+      void operator()(osg::Node*, osg::NodeVisitor* nv)
+      {
+         mCallbackCalled = true;
+      }
 
-   bool mCallbackCalled;
+      bool mCallbackCalled;
 };
 
 class DummyDrawable: public dtCore::DeltaDrawable
 {
-public:
-   bool mPreframeCalled;
-   bool mPostFrameCalled;
-   bool mFrameCalled;
+   public:
+      bool mPreframeCalled;
+      bool mPostFrameCalled;
+      bool mFrameCalled;
 
 
-   DummyDrawable()
-   {      
-      ResetState();
-      AddSender(&System::GetInstance());
-   }
-
-   ~DummyDrawable()
-   {
-      RemoveSender(&System::GetInstance());
-   }
-
-   const osg::Node* GetOSGNode() const
-   {
-      return 0;
-   }
-
-   osg::Node* GetOSGNode()
-   {
-      return 0;
-   }
-
-   void ResetState()
-   {
-      mPreframeCalled = false;
-      mPostFrameCalled = false;
-      mFrameCalled = false;
-   }
-
-   void OnMessage(dtCore::Base::MessageData* data)
-   {
-      if(data->message == "preframe")
-      {
-         mPreframeCalled = true;
+      DummyDrawable()
+      {      
+         ResetState();
+         AddSender(&System::GetInstance());
       }
-      else if(data->message == "frame")
+
+      ~DummyDrawable()
       {
-         mFrameCalled = true;
+         RemoveSender(&System::GetInstance());
       }
-      else if(data->message == "postframe")
+
+      const osg::Node* GetOSGNode() const
       {
-         mPostFrameCalled = true;
+         return 0;
       }
-   }
+
+      osg::Node* GetOSGNode()
+      {
+         return 0;
+      }
+
+      void ResetState()
+      {
+         mPreframeCalled = false;
+         mPostFrameCalled = false;
+         mFrameCalled = false;
+      }
+
+      void OnMessage(dtCore::Base::MessageData* data)
+      {
+         if(data->message == "preframe")
+         {
+            mPreframeCalled = true;
+         }
+         else if(data->message == "frame")
+         {
+            mFrameCalled = true;
+         }
+         else if(data->message == "postframe")
+         {
+            mPostFrameCalled = true;
+         }
+      }
 
 };
 
 
 class DummyNode: public osg::ShapeDrawable
 {
-public:
+   public:
 
-   META_Object(osg::Drawable, DummyNode);
+      META_Object(osg::Drawable, DummyNode);
 
-   DummyNode()
-   : ShapeDrawable(new osg::Sphere(osg::Vec3(0.0f, 10.0f, 0.0f), 10.0f))
-   , mDrawCalled(false)
-   , mGeode(new osg::Geode())
-   {
-      setUseDisplayList(false);
-      ResetState();
-      mGeode->addDrawable(this);
-   }
+      DummyNode()
+      : ShapeDrawable(new osg::Sphere(osg::Vec3(0.0f, 10.0f, 0.0f), 10.0f))
+      , mGeode(new osg::Geode())
+      , mDrawCalled(false)
+      {
+         setUseDisplayList(false);
+         ResetState();
+         mGeode->addDrawable(this);
+      }
 
-   ~DummyNode()
-   {
-   }
+      ~DummyNode()
+      {
+      }
 
-   DummyNode(const DummyNode& dn, const osg::CopyOp& copyop=osg::CopyOp::SHALLOW_COPY)
-   {
-      ResetState();
-   }
+      DummyNode(const DummyNode& dn, const osg::CopyOp& copyop=osg::CopyOp::SHALLOW_COPY)
+      {
+         ResetState();
+      }
 
-   void drawImplementation(osg::State& state) const
-   {
-      osg::ShapeDrawable::drawImplementation(state);
-      mDrawCalled = true;
-   }
+      void drawImplementation(osg::State& state) const
+      {
+         osg::ShapeDrawable::drawImplementation(state);
+         mDrawCalled = true;
+      }
 
-   const osg::Node* GetOSGNode() const
-   {
-      return mGeode.get();
-   }
+      const osg::Node* GetOSGNode() const
+      {
+         return mGeode.get();
+      }
 
-   osg::Node* GetOSGNode()
-   {
-      return mGeode.get();
-   }
+      osg::Node* GetOSGNode()
+      {
+         return mGeode.get();
+      }
 
-   void ResetState()
-   {
-      mDrawCalled = false;
-   }
+      void ResetState()
+      {
+         mDrawCalled = false;
+      }
 
-   dtCore::RefPtr<osg::Geode> mGeode;
+      dtCore::RefPtr<osg::Geode> mGeode;
 
-   mutable bool mDrawCalled;
+      mutable bool mDrawCalled;
 
 };
 
@@ -162,7 +162,7 @@ class SystemTests : public CPPUNIT_NS::TestFixture
 {
    CPPUNIT_TEST_SUITE(SystemTests);
 
-      CPPUNIT_TEST(TestSimMode);
+   CPPUNIT_TEST(TestSimMode);
 
    CPPUNIT_TEST_SUITE_END();
 
@@ -172,12 +172,12 @@ class SystemTests : public CPPUNIT_NS::TestFixture
       void tearDown();
       void TestSimMode();
 
-private:
+   private:
 
-   
-dtCore::RefPtr<DummyNode> mDummyNode;
-dtCore::RefPtr<DummyCallback> mDummyCallback;
-dtCore::RefPtr<DummyDrawable> mDummyDrawable;
+
+      dtCore::RefPtr<DummyNode> mDummyNode;
+      dtCore::RefPtr<DummyCallback> mDummyCallback;
+      dtCore::RefPtr<DummyDrawable> mDummyDrawable;
 
 
 
@@ -192,16 +192,16 @@ void SystemTests::setUp()
 
 void SystemTests::tearDown()
 {
-   
+
 }
 
 
 void SystemTests::TestSimMode()
 {                        
- 
+
    dtCore::RefPtr<dtABC::Application> app = new dtABC::Application( "config.xml" );
 
-   
+
    //adjust the Camera position
    dtCore::Transform camPos;
    osg::Vec3 camXYZ(0.0f, -50.0f, 20.0f);
@@ -217,7 +217,7 @@ void SystemTests::TestSimMode()
    app->GetScene()->AddDrawable(mDummyDrawable.get());       
    app->GetScene()->GetSceneNode()->addChild(mDummyNode->GetOSGNode());
    mDummyNode->GetOSGNode()->setCullCallback(mDummyCallback.get());
-  
+
    CPPUNIT_ASSERT(!mDummyCallback->mCallbackCalled);
    CPPUNIT_ASSERT(!mDummyNode->mDrawCalled);
    CPPUNIT_ASSERT(!mDummyDrawable->mPreframeCalled);
@@ -230,7 +230,7 @@ void SystemTests::TestSimMode()
    System::GetInstance().Start();
 
    /////////////////////////////////////////////////////////////
-   
+
    System::GetInstance().SetSimMode(System::eSIMULATE_ONLY);
 
    mDummyCallback->mCallbackCalled = false;
