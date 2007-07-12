@@ -208,7 +208,7 @@ namespace dtAnim
             xform.GetRotation().get(actualRot);
 
             CPPUNIT_ASSERT(dtUtil::Equivalent(expectedRot, actualRot, 4, osg::Quat::value_type(0.0003)));
-            CPPUNIT_ASSERT(dtUtil::Equivalent(expectedPos, xform.GetTranslation(), 3, osg::Vec3::value_type(0.0003)));
+            CPPUNIT_ASSERT(dtUtil::Equivalent(expectedPos, xform.GetTranslation(), osg::Vec3::value_type(0.0003)));
          }
 
       private:

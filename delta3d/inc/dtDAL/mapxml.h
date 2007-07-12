@@ -187,7 +187,7 @@ namespace dtDAL
          void AddIndent();
 
          template <typename VecType>
-         void WriteVec(const VecType& vec, size_t vecSize, char* numberConversionBuffer, const size_t bufferMax);
+         void WriteVec(const VecType& vec, char* numberConversionBuffer, const size_t bufferMax);
             
          template <typename Type>
          void WriteColorRGBA(const Type& holder, char* numberConversionBuffer, size_t bufferMax);
