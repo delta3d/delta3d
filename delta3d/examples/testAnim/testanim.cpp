@@ -175,9 +175,9 @@ void TestAnim::OnStartup()
    {
       osg::Vec3 startPos(0.0f, 0.0f, 10.0f);
 
-      for(int i = 0; i < 25; ++i, startPos[0] += 2.0f)
+      for(int i = 0; i < 10; ++i, startPos[0] += 2.0f)
       {
-         for(int j = 0; j < 25; ++j, startPos[1] += 2.0f)
+         for(int j = 0; j < 10; ++j, startPos[1] += 2.0f)
          {
             dtCore::RefPtr<dtActors::AnimationGameActorProxy2> proxy;
             GetGameManager()->CreateActor(*dtActors::EngineActorRegistry::ANIMATION_ACTOR_TYPE2, proxy);

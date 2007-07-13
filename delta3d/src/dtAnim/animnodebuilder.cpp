@@ -104,8 +104,12 @@ dtCore::RefPtr<osg::Geode> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pW
 
    //TODO: query for the maximum number of bones through opengl
    static const int MAX_BONES = 72;
+// Apple OpenGL reports the names of the array uniforms differently
+#ifdef __APPLE__
+   static const std::string BONE_TRANSFORM_UNIFORM("boneTransforms[0]");
+#else
    static const std::string BONE_TRANSFORM_UNIFORM("boneTransforms");
-
+#endif
    osg::Geode* geode = new osg::Geode();
 
    pWrapper->SetLODLevel(1);

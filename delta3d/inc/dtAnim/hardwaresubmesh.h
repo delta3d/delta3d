@@ -36,32 +36,33 @@ namespace osg
 
 namespace dtAnim 
 {
-   class Cal3DModelWrapper;      
+   class Cal3DModelWrapper;
 
-class DT_ANIM_EXPORT HardwareSubMeshDrawable: public osg::Drawable
-{
-public:
+   class DT_ANIM_EXPORT HardwareSubMeshDrawable: public osg::Drawable
+   {
+      public:
 
-   HardwareSubMeshDrawable(Cal3DModelWrapper *wrapper, CalHardwareModel* model, osg::Program* shader, const std::string& boneUniformName, unsigned numBones, unsigned mesh, unsigned vertexVBO, unsigned indexVBO);
+         HardwareSubMeshDrawable(Cal3DModelWrapper *wrapper, CalHardwareModel* model, osg::Program* shader, 
+               const std::string& boneUniformName, unsigned numBones, unsigned mesh, unsigned vertexVBO, unsigned indexVBO);
 
-    virtual void drawImplementation(osg::State& state) const;
+         virtual void drawImplementation(osg::State& state) const;
 
-    virtual osg::Object* cloneType() const;
-    virtual osg::Object* clone(const osg::CopyOp&) const;
+         virtual osg::Object* cloneType() const;
+         virtual osg::Object* clone(const osg::CopyOp&) const;
 
-protected:
-    ~HardwareSubMeshDrawable();
+      protected:
+         ~HardwareSubMeshDrawable();
 
-private:
-    HardwareSubMeshDrawable();   ///< not implemented by design
-    
-    dtCore::RefPtr<Cal3DModelWrapper> mWrapper;
-    CalHardwareModel* mHardwareModel;
-    dtCore::RefPtr<osg::Program> mProgram;
-    dtCore::RefPtr<osg::Uniform> mBoneTransforms;
-    std::string mBoneUniformName;
-    unsigned mNumBones, mMeshID, mVertexVBO, mIndexVBO;
-};
+      private:
+         HardwareSubMeshDrawable();   ///< not implemented by design
+
+         dtCore::RefPtr<Cal3DModelWrapper> mWrapper;
+         CalHardwareModel* mHardwareModel;
+         dtCore::RefPtr<osg::Program> mProgram;
+         dtCore::RefPtr<osg::Uniform> mBoneTransforms;
+         std::string mBoneUniformName;
+         unsigned mNumBones, mMeshID, mVertexVBO, mIndexVBO;
+   };
 
 }; //namespace dtAnim
 
