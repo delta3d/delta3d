@@ -73,8 +73,8 @@ extern "C" TEST_ANIM_EXPORT void DestroyGameEntryPoint(dtGame::GameEntryPoint* e
 //////////////////////////////////////////////////////////////////////////
 TestAnim::TestAnim()
 : dtGame::GameEntryPoint()
-, mAnimationHelper(0)
-, mFMM(0)
+, mAnimationHelper(NULL)
+, mFMM(NULL)
 , mPerformanceTest(false)
 {
    
@@ -194,6 +194,7 @@ void TestAnim::OnStartup()
          }
          startPos[1] = 0.0f;
       }
+      GetGameManager()->GetApplication().GetCamera()->SetNextStatisticsType();
 
    }
 
