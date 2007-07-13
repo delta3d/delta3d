@@ -25,58 +25,60 @@
 #include <osg/PolygonMode>
 #include <dtAnim/cal3dmodelwrapper.h>
 #include <osg/Geometry>
+#include <osg/Uniform>
 #include <dtUtil/matrixutil.h>
 #include <cal3d/hardwaremodel.h>
 
 namespace dtAnim
 {
 
-   struct HardwareSubmeshCallback : public osg::Drawable::UpdateCallback
+   class HardwareSubmeshCallback : public osg::Drawable::UpdateCallback
    {
-      HardwareSubmeshCallback(Cal3DModelWrapper *wrapper, CalHardwareModel* model, osg::Uniform* boneTrans, unsigned mesh)             
-         : mWrapper(wrapper)
-         , mHardwareModel(model)
-         , mBoneTransforms(boneTrans)
-         , mMeshID(mesh)
-      {
-      }
-
-      //HardwareSubmeshCallback(const HardwareSubmeshCallback&, const CopyOp&) {}
-
-      //META_Object(UpdateCallback, HardwareSubmeshCallback);
-
-      /** do customized update code.*/
-      virtual void update(osg::NodeVisitor*, osg::Drawable*)
-      {
-         //select the proper hardware mesh
-         mHardwareModel->selectHardwareMesh(mMeshID);
-
-         //spin through the bones in the hardware mesh
-         int numBones = mHardwareModel->getBoneCount();
-         for(int bone = 0; bone < numBones; ++bone)
+      public:
+         HardwareSubmeshCallback(Cal3DModelWrapper *wrapper, CalHardwareModel* model, osg::Uniform* boneTrans, unsigned mesh)             
+            : mWrapper(wrapper)
+            , mHardwareModel(model)
+            , mBoneTransforms(boneTrans)
+            , mMeshID(mesh)
          {
-            CalSkeleton* skel = mWrapper->GetCalModel()->getSkeleton();
-            const CalQuaternion& quat = mHardwareModel->getRotationBoneSpace(bone, skel);
-            const CalVector& vec = mHardwareModel->getTranslationBoneSpace(bone, skel);
-
-            //compute matrices
-            osg::Matrix matRot(osg::Quat(quat.x, quat.y, quat.z, quat.w));
-
-            osg::Vec4 rotX, rotY, rotZ;
-            rotX = dtUtil::MatrixUtil::GetRow4(matRot, 0);
-            rotY = dtUtil::MatrixUtil::GetRow4(matRot, 1);
-            rotZ = dtUtil::MatrixUtil::GetRow4(matRot, 2);
-
-            rotX[3] = vec.x;
-            rotY[3] = vec.y;
-            rotZ[3] = vec.z;
-
-            //set data on uniform
-            mBoneTransforms->setElement(bone * 3 + 0, rotX);
-            mBoneTransforms->setElement(bone * 3 + 1, rotY);
-            mBoneTransforms->setElement(bone * 3 + 2, rotZ);
          }
-      }
+
+         //HardwareSubmeshCallback(const HardwareSubmeshCallback&, const CopyOp&) {}
+
+         //META_Object(UpdateCallback, HardwareSubmeshCallback);
+ 
+         /** do customized update code.*/
+         virtual void update(osg::NodeVisitor*, osg::Drawable*)
+         {
+            //select the proper hardware mesh
+            mHardwareModel->selectHardwareMesh(mMeshID);
+
+            //spin through the bones in the hardware mesh
+            int numBones = mHardwareModel->getBoneCount();
+            for(int bone = 0; bone < numBones; ++bone)
+            {
+               CalSkeleton* skel = mWrapper->GetCalModel()->getSkeleton();
+               const CalQuaternion& quat = mHardwareModel->getRotationBoneSpace(bone, skel);
+               const CalVector& vec = mHardwareModel->getTranslationBoneSpace(bone, skel);
+
+               //compute matrices
+               osg::Matrix matRot(osg::Quat(quat.x, quat.y, quat.z, quat.w));
+
+               osg::Vec4 rotX, rotY, rotZ;
+               rotX = dtUtil::MatrixUtil::GetRow4(matRot, 0);
+               rotY = dtUtil::MatrixUtil::GetRow4(matRot, 1);
+               rotZ = dtUtil::MatrixUtil::GetRow4(matRot, 2);
+
+               rotX[3] = vec.x;
+               rotY[3] = vec.y;
+               rotZ[3] = vec.z;
+
+               //set data on uniform
+               mBoneTransforms->setElement(bone * 3 + 0, rotX);
+               mBoneTransforms->setElement(bone * 3 + 1, rotY);
+               mBoneTransforms->setElement(bone * 3 + 2, rotZ);
+            }
+         }
 
       private:
          dtCore::RefPtr<Cal3DModelWrapper> mWrapper;
@@ -118,10 +120,10 @@ HardwareSubMeshDrawable::HardwareSubMeshDrawable(Cal3DModelWrapper *wrapper, Cal
       {
          ss->setTextureAttributeAndModes(i, texture, osg::StateAttribute::ON);
       }
-   }	
+   }
 
    //set our update callback which will update the bone transforms
-   setUpdateCallback(new HardwareSubmeshCallback(mWrapper.get(), mHardwareModel, mBoneTransforms.get(), mMeshID));  
+   setUpdateCallback(new HardwareSubmeshCallback(mWrapper.get(), mHardwareModel, mBoneTransforms.get(), mMeshID));
 }
 
 HardwareSubMeshDrawable::~HardwareSubMeshDrawable(void)
