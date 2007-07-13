@@ -280,7 +280,7 @@ void TestAnim::InitializeAnimationActor(dtActors::AnimationGameActorProxy2* game
             else
             {
                helper->PlayAnimation("Walk");
-               helper->GetSequenceMixer().GetActiveAnimation("Walk")->SetStartDelay(dtUtil::RandFloat(0.0f, 30.0f));
+               helper->GetSequenceMixer().GetActiveAnimation("Walk")->SetStartDelay(dtUtil::RandFloat(20.0f, 40.0f));
                helper->GetSequenceMixer().ForceRecalculate();
             }
          }
