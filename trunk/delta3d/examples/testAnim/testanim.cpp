@@ -22,13 +22,15 @@
 #include "testaniminput.h"
 
 #include <dtUtil/hotspotdefinition.h>
+#include <dtUtil/mathdefines.h>
 
 #include <dtCore/globals.h>
-#include <dtCore/collisionmotionmodel.h>
+#include <dtCore/flymotionmodel.h>
 #include <dtCore/camera.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
+#include <dtCore/object.h>
 
 #include <dtDAL/map.h>
 #include <dtDAL/actorproxy.h>
@@ -46,8 +48,11 @@
 #include <dtAnim/attachmentcontroller.h>
 #include <dtAnim/cal3dmodelwrapper.h>
 #include <dtAnim/cal3danimator.h>
+#include <dtAnim/sequencemixer.h>
+#include <dtAnim/animatable.h>
 
 #include <dtActors/animationgameactor2.h>
+#include <dtActors/engineactorregistry.h>
 
 #include <osg/Geode>
 #include <osg/ShapeDrawable>
@@ -58,7 +63,7 @@ extern "C" TEST_ANIM_EXPORT dtGame::GameEntryPoint* CreateGameEntryPoint()
 {
    return new TestAnim;
 }
-
+ 
 //////////////////////////////////////////////////////////////////////////
 extern "C" TEST_ANIM_EXPORT void DestroyGameEntryPoint(dtGame::GameEntryPoint* entryPoint)
 {
@@ -67,6 +72,10 @@ extern "C" TEST_ANIM_EXPORT void DestroyGameEntryPoint(dtGame::GameEntryPoint* e
 
 //////////////////////////////////////////////////////////////////////////
 TestAnim::TestAnim()
+: dtGame::GameEntryPoint()
+, mAnimationHelper(0)
+, mFMM(0)
+, mPerformanceTest(false)
 {
    
 }
@@ -80,6 +89,11 @@ TestAnim::~TestAnim()
 //////////////////////////////////////////////////////////////////////////
 void TestAnim::Initialize(dtGame::GameApplication& app, int argc, char **argv)
 {
+   if(mPerformanceTest)
+   {
+      mFMM = new dtCore::FlyMotionModel(app.GetKeyboard(), app.GetMouse());
+      mFMM->SetTarget(app.GetCamera());
+   }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -87,6 +101,7 @@ dtCore::ObserverPtr<dtGame::GameManager> TestAnim::CreateGameManager(dtCore::Sce
 { 
    return dtGame::GameEntryPoint::CreateGameManager(scene);
 }
+
 
 //////////////////////////////////////////////////////////////////////////
 void TestAnim::OnStartup()
@@ -121,77 +136,65 @@ void TestAnim::OnStartup()
       e.LogException(dtUtil::Log::LOG_ERROR);
    }
 
-   dtGame::DefaultMessageProcessor *dmp = new dtGame::DefaultMessageProcessor();
-   TestAnimInput* inputComp = new TestAnimInput("TestAnimInput"); 
+   dtGame::DefaultMessageProcessor *dmp = new dtGame::DefaultMessageProcessor();   
    
    dtAnim::AnimationComponent* animComp = new dtAnim::AnimationComponent();
 
-   gameManager.AddComponent(*dmp,dtGame::GameManager::ComponentPriority::HIGHEST);
-   gameManager.AddComponent(*inputComp, dtGame::GameManager::ComponentPriority::NORMAL);
+   gameManager.AddComponent(*dmp,dtGame::GameManager::ComponentPriority::HIGHEST);   
    gameManager.AddComponent(*animComp, dtGame::GameManager::ComponentPriority::NORMAL);
-
-   dtCore::RefPtr<osg::ShapeDrawable> drawable = new osg::ShapeDrawable(new osg::Cylinder(osg::Vec3(), 0.02f, 0.3));
-   dtCore::RefPtr<osg::Geode> geode = new osg::Geode;
-   geode->addDrawable(drawable.get());
-   
-   dtCore::RefPtr<dtCore::Transformable> attachment = new dtCore::Transformable;
-   attachment->GetOSGNode()->asGroup()->addChild(geode.get());
-   
-   dtUtil::HotSpotDefinition hotspotDef;
-   hotspotDef.mName = "jojo";
-   hotspotDef.mParentName = "Bip02 Head";
-   hotspotDef.mLocalTranslation = osg::Vec3(0.1f, 0.0f, 0.0f);
-   
-   //register helper 
-   if(!proxies.empty())
+  
+   if(!mPerformanceTest)
    {
-      dtGame::GameActorProxy* gameProxy = dynamic_cast<dtGame::GameActorProxy*>(proxies.front());
+      TestAnimInput* inputComp = new TestAnimInput("TestAnimInput"); 
+      gameManager.AddComponent(*inputComp, dtGame::GameManager::ComponentPriority::NORMAL);
 
-      if(gameProxy != NULL)
+      ProxyContainer::iterator iter = proxies.begin();
+      ProxyContainer::iterator endIter = proxies.end();
+
+      for(;iter != endIter; ++iter)
       {
-         dtActors::AnimationGameActor2* actor = dynamic_cast<dtActors::AnimationGameActor2*>(&gameProxy->GetGameActor());
+         dtActors::AnimationGameActorProxy2* gameProxy = dynamic_cast<dtActors::AnimationGameActorProxy2*>(*iter);
 
-         if(actor != NULL)
-         {
-            mAnimationHelper = actor->GetHelper();
-            mAnimationHelper->SetGroundClamp(true);
-            
-//            std::vector<std::string> bones;
-//            mAnimationHelper->GetModelWrapper()->GetCoreBoneNames(bones);
-//            if (bones.size() > 0)
-//            {
-//               hotspotDef.mParentName = bones.front();
-//            }
-            
-            mAnimationHelper->GetAttachmentController().AddAttachment(*attachment, hotspotDef);
-            actor->AddChild(attachment.get());
-            
+         if(gameProxy != NULL)
+         {         
+            static bool first = true;
 
-            //since we are doing hardware skinning there is no need for 
-            //the physique driver
-            //TODO: this should be refactored out of here and into the place that decides 
-            //      whether or not we are doing hardware skinning
-            mAnimationHelper->GetAnimator()->SetPhysiqueDriver(NULL);
+            //the first one will be the player
+            InitializeAnimationActor(gameProxy, animComp, true);
 
-            //we must register the helper with the animation component
-            animComp->RegisterActor(*gameProxy, *mAnimationHelper);   
-
-            //set camera offset
-            dtCore::Transform trans;
-            trans.SetTranslation(-1.0f, 5.5f, 1.5f);
-            trans.SetRotation(180.0f, -2.0f, 0.0f); 
-
-            actor->AddChild(gameManager.GetApplication().GetCamera());
-            gameManager.GetApplication().GetCamera()->SetTransform(trans, dtCore::Transformable::REL_CS);
-
-            inputComp->SetAnimationHelper(*mAnimationHelper);
-            inputComp->SetPlayerActor(*gameProxy);
+            if(first)
+            {
+               inputComp->SetAnimationHelper(*mAnimationHelper);
+               inputComp->SetPlayerActor(*gameProxy);
+               first = false;
+            }         
          }
       }
    }
    else
    {
-      LOG_ERROR("Cannot find character.");
+      osg::Vec3 startPos(0.0f, 0.0f, 10.0f);
+
+      for(int i = 0; i < 25; ++i, startPos[0] += 2.0f)
+      {
+         for(int j = 0; j < 25; ++j, startPos[1] += 2.0f)
+         {
+            dtCore::RefPtr<dtActors::AnimationGameActorProxy2> proxy;
+            GetGameManager()->CreateActor(*dtActors::EngineActorRegistry::ANIMATION_ACTOR_TYPE2, proxy);
+            if(proxy.valid())
+            {
+               GetGameManager()->AddActor(*proxy);
+
+               dtActors::AnimationGameActor2* actor = dynamic_cast<dtActors::AnimationGameActor2*>(&proxy->GetGameActor());
+               actor->SetModel("SkeletalMeshes/marine.xml");
+               InitializeAnimationActor(proxy.get(), animComp, false);
+
+               proxy->SetTranslation(startPos);
+            }
+         }
+         startPos[1] = 0.0f;
+      }
+
    }
 
    if(!groundActor.empty())
@@ -214,5 +217,73 @@ void TestAnim::OnStartup()
    gameManager.DebugStatisticsTurnOn(false, false, 5);
 
    gameManager.GetApplication().GetWindow()->SetKeyRepeat(false);
+}
+
+void TestAnim::InitializeAnimationActor(dtActors::AnimationGameActorProxy2* gameProxy, dtAnim::AnimationComponent* animComp, bool isPlayer)
+{   
+      dtActors::AnimationGameActor2* actor = dynamic_cast<dtActors::AnimationGameActor2*>(&gameProxy->GetGameActor());
+
+      if(actor != NULL)
+      {
+         dtAnim::AnimationHelper* helper = actor->GetHelper();         
+
+         if(helper != NULL)
+         {
+            //we must register the helper with the animation component
+            animComp->RegisterActor(*gameProxy, *helper);                  
+
+
+            //since we are doing hardware skinning there is no need for 
+            //the physique driver
+            //TODO: this should be refactored out of here and into the place that decides 
+            //      whether or not we are doing hardware skinning
+            helper->GetAnimator()->SetPhysiqueDriver(NULL);
+
+            if(isPlayer)
+            {
+               //set camera offset
+               dtCore::Transform trans;
+               trans.SetTranslation(-1.0f, 5.5f, 1.5f);
+               trans.SetRotation(180.0f, -2.0f, 0.0f); 
+
+               mAnimationHelper = helper;
+               mAnimationHelper->SetGroundClamp(true);
+
+               actor->AddChild(GetGameManager()->GetApplication().GetCamera());
+               GetGameManager()->GetApplication().GetCamera()->SetTransform(trans, dtCore::Transformable::REL_CS);
+
+               dtCore::RefPtr<osg::ShapeDrawable> drawable = new osg::ShapeDrawable(new osg::Cylinder(osg::Vec3(), 0.02f, 0.3));
+               dtCore::RefPtr<osg::Geode> geode = new osg::Geode;
+               geode->addDrawable(drawable.get());
+
+               //std::vector<std::string> bones;
+               //mAnimationHelper->GetModelWrapper()->GetCoreBoneNames(bones);
+               //if (bones.size() > 0)
+               //{
+               //  hotspotDef.mParentName = bones.front();
+
+               dtCore::RefPtr<dtCore::Transformable> attachment = new dtCore::Transformable;
+               attachment->GetOSGNode()->asGroup()->addChild(geode.get());
+
+               //dtCore::RefPtr<dtCore::Object> attachment = new dtCore::Object("Arrow");
+               //attachment->LoadFile(dtCore::GetDeltaRootPath() + "/examples/data/models/arrow.ive");
+
+               dtUtil::HotSpotDefinition hotspotDef;
+               hotspotDef.mName = "jojo";
+               hotspotDef.mParentName = "Bip02 Head";
+               hotspotDef.mLocalTranslation = osg::Vec3(0.1f, 0.0f, 0.0f);
+
+               mAnimationHelper->GetAttachmentController().AddAttachment(*attachment, hotspotDef);
+               actor->AddChild(attachment.get());
+
+               }
+            else
+            {
+               helper->PlayAnimation("Walk");
+               helper->GetSequenceMixer().GetActiveAnimation("Walk")->SetStartDelay(dtUtil::RandFloat(0.0f, 30.0f));
+               helper->GetSequenceMixer().ForceRecalculate();
+            }
+         }
+      }
 }
 

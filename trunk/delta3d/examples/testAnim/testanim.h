@@ -29,7 +29,7 @@
 // Foward declarations
 namespace dtCore
 {
-   class CollisionMotionModel;
+   class FlyMotionModel;
 }
 
 namespace dtGame
@@ -40,8 +40,13 @@ namespace dtGame
 namespace dtAnim
 {
    class AnimationHelper;
+   class AnimationComponent;
 }
 
+namespace dtActors
+{
+   class AnimationGameActorProxy2;
+}
 
 class TEST_ANIM_EXPORT TestAnim : public dtGame::GameEntryPoint
 {
@@ -69,8 +74,11 @@ class TEST_ANIM_EXPORT TestAnim : public dtGame::GameEntryPoint
 
    private:
 
+      void InitializeAnimationActor(dtActors::AnimationGameActorProxy2* actor, dtAnim::AnimationComponent* animComp, bool isPlayer);
+
       dtCore::RefPtr<dtAnim::AnimationHelper> mAnimationHelper;
-      dtCore::RefPtr<dtCore::CollisionMotionModel> mCMM;
+      dtCore::RefPtr<dtCore::FlyMotionModel> mFMM;
+      bool mPerformanceTest;
 };
 
 #endif
