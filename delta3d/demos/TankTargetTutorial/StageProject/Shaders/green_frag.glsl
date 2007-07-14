@@ -2,39 +2,29 @@ uniform sampler2D diffuseTexture;
 uniform sampler2D secondaryTexture;
 uniform float TimeDilation;
 
-varying vec3 vNormal;
-varying vec3 vHalfVec;
-varying vec3 vLightDir;
-
-float alpha = 0.2;
-vec4 blendColor = vec4(0.0,1.0,0.0,1.0); // Green
-
+// FRAGMENT - Provides highlight by blending from a detail texture
 void main()
 {
-   vec4 diffuseColor = texture2D(diffuseTexture,gl_TexCoord[0].st);
-   //float NdotHV = max(dot(vNormal, vHalfVec),0.0);   
-   //float specular = pow( NdotHV, 10.0 );
-   //float normalDotLight = max(dot(vNormal, vLightDir),0.0);
-   //diffuseColor *= normalDotLight;
-   //diffuseColor = vec4(diffuseColor.xyz + (diffuseColor.xyz * specular),1.0);
-   //gl_FragColor = (alpha * diffuseColor) + (1.0-alpha)*blendColor;
+   float whackyOffset = sqrt(abs(TimeDilation - 0.5) + 1.0);
+   float x = gl_TexCoord[0].x;
+   float y = gl_TexCoord[0].y;
 
-   float normedTime = abs(TimeDilation - 0.5);
+   // lookup the 3 oscillating colors 
+   vec2 lookup1 = vec2(x + TimeDilation, y + TimeDilation+.25);
+   vec2 lookup2 = vec2(x - whackyOffset, y + whackyOffset);
+   vec2 lookup3 = vec2(x - (TimeDilation*2.0), y + TimeDilation);
+   vec4 color1 = texture2D(secondaryTexture, lookup1);
+   vec4 color2 = texture2D(secondaryTexture, lookup2);
+   vec4 color3 = texture2D(secondaryTexture, lookup3);
 
-   vec2 lookup1 = vec2(gl_TexCoord[0].x + TimeDilation, gl_TexCoord[0].y+TimeDilation+.25);
-   vec2 lookup2 = vec2(gl_TexCoord[0].x - sqrt(normedTime+float(1)), gl_TexCoord[0].y + sqrt(normedTime+float(1)));
-   vec2 lookup3 = vec2(gl_TexCoord[0].x - (TimeDilation*float(2)), gl_TexCoord[0].y + TimeDilation);
-   vec4 base = texture2D(diffuseTexture, gl_TexCoord[0].st);
-   vec4 offset1 = texture2D(secondaryTexture, lookup1);
-   vec4 offset2 = texture2D(secondaryTexture, lookup2);
-   vec4 offset3 = texture2D(secondaryTexture, lookup3);
-   vec4 color;
+   // Now blend the 3 colors together to make our highlight
+   vec4 highlightColor;
+   highlightColor.a = 1.0;
+   highlightColor.r = color1.r*0.6 + color2.r*0.3 + color3.r*0.3;
+   highlightColor.g = color1.g*0.2 + color2.g*0.7 + color3.g*0.2;
+   highlightColor.b = color1.b*0.2 + color2.b*0.2 + color3.b*0.8;
 
-   color.a = 1.0;
-   color.r = offset1.r*0.6 + offset2.r*0.3 + offset3.r*0.3;
-   color.g = offset1.g*0.2 + offset2.g*0.7 + offset3.g*0.2;
-   color.b = offset1.b*0.2 + offset2.b*0.2 + offset3.b*0.8;
-   gl_FragColor = (alpha * diffuseColor) + (1.0-alpha)*color;
-
- 
+   // Finally, blend the original color and highlight color
+   vec4 diffuseColor = texture2D(diffuseTexture, gl_TexCoord[0].st);
+   gl_FragColor = (0.2 * diffuseColor) + (0.8 * highlightColor);
 }
