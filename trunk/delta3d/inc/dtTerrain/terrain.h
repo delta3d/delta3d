@@ -26,11 +26,14 @@
 #include <string>
 #include <queue>
 #include <list>
-#include "dtCore/physical.h"
-#include "dtUtil/enumeration.h"
-#include "dtTerrain/geocoordinates.h"
-#include "dtTerrain/pagedterraintilefactory.h"
-#include "dtTerrain/terrain_export.h"
+
+#include <dtCore/physical.h>
+
+#include <dtUtil/enumeration.h>
+
+#include <dtTerrain/geocoordinates.h>
+#include <dtTerrain/pagedterraintilefactory.h>
+#include <dtTerrain/terrain_export.h>
 
 /** 
  * An extensible library for rendering terrain databases.

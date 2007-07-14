@@ -18,16 +18,17 @@
 *
 * Matthew W. Campbell
 */
+#include <dtTerrain/pagedterraintile.h>
+#include <dtTerrain/heightfield.h>
+#include <dtTerrain/terrain.h>
+#include <dtTerrain/terraindatareader.h>
+#include <dtTerrain/terraindatarenderer.h>
+#include <dtTerrain/terraindecorationlayer.h>
 
-#include "dtTerrain/pagedterraintile.h"
-#include "dtTerrain/heightfield.h"
-#include "dtTerrain/terrain.h"
-#include "dtUtil/fileutils.h"
-#include "dtUtil/exception.h"
-#include "dtCore/scene.h"
-#include "dtTerrain/terraindatareader.h"
-#include "dtTerrain/terraindatarenderer.h"
-#include "dtTerrain/terraindecorationlayer.h"
+#include <dtUtil/fileutils.h>
+#include <dtUtil/exception.h>
+
+#include <dtCore/scene.h>
 
 #include <iostream>
 #include <fstream>

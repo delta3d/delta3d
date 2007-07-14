@@ -18,8 +18,7 @@
 *
 * Teague Coonan
 */
-
-#include "dtTerrain/lcctype.h"
+#include <dtTerrain/lcctype.h>
 
 namespace dtTerrain
 {
