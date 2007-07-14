@@ -18,15 +18,16 @@
 *
 * Teague Coonan
 */
-
 #ifndef _LCCTYPE_H
 #define _LCCTYPE_H
 
 #include <map>
 #include <string>
+
 #include <osg/Node>
-#include "dtCore/refptr.h"
-#include "dtTerrain/terrain_export.h"
+
+#include <dtCore/refptr.h>
+#include <dtTerrain/terrain_export.h>
 
 namespace dtTerrain
 {
