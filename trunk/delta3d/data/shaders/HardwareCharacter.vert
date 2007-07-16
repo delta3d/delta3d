@@ -21,17 +21,14 @@ void main(void)
 	//multiply each bone and weight to get the offset matrix
 	for(int i = 0; i < 4; ++i)
 	{
-		vec4 offset;
-		offset.x = boneWeights[i] * dot(gl_Vertex, boneTransforms[int(boneIndices[i]) * 3 + 0]);
-		offset.y = boneWeights[i] * dot(gl_Vertex, boneTransforms[int(boneIndices[i]) * 3 + 1]);
-		offset.z = boneWeights[i] * dot(gl_Vertex, boneTransforms[int(boneIndices[i]) * 3 + 2]);
-		offset.w = 0.0; 
+		transformedPosition.x += boneWeights[i] * dot(gl_Vertex, boneTransforms[int(boneIndices[i]) * 3 + 0]);
+		transformedPosition.y += boneWeights[i] * dot(gl_Vertex, boneTransforms[int(boneIndices[i]) * 3 + 1]);
+		transformedPosition.z += boneWeights[i] * dot(gl_Vertex, boneTransforms[int(boneIndices[i]) * 3 + 2]);
 		
-		transformedPosition += offset;
-		transformedNormal += offset;	  	
+		transformedNormal.x += boneWeights[i] * dot(gl_Normal.xyz, boneTransforms[int(boneIndices[i]) * 3 + 0].xyz);
+		transformedNormal.y += boneWeights[i] * dot(gl_Normal.xyz, boneTransforms[int(boneIndices[i]) * 3 + 1].xyz);
+		transformedNormal.z += boneWeights[i] * dot(gl_Normal.xyz, boneTransforms[int(boneIndices[i]) * 3 + 2].xyz);	  	
 	}
-
-	//calculate lighting			
 	
 	//set proper varyings
 	gl_FrontColor = gl_Color;	
