@@ -272,6 +272,19 @@ namespace dtCore
          void LoadShaderDefinitions(const std::string &fileName, bool merge=true);
 
          /**
+          * This method is kind of wierd and should be used ONLY for testing. It 
+          * unassigns ALL currently assigned nodes, clears out all prototypes, 
+          * and then reloads the passed in XML definition file. It then, tries to 
+          * remap all of the previously assigned nodes using the new definitions. 
+          * The primary use of this method is to allow an artist to reload all the 
+          * shader definitions in the system to test out different effects.
+          * THIS IS INTENDED FOR TESTING PURPOSES. AN END USER SHOULD NEVER ACCESS 
+          * THIS METHOD DURING REAL GAME PLAY. 
+          * @param fileName The XML file containing the shader definitions. Merge is not supported
+          */
+         void ReloadAndReassignShaderDefinitions(const std::string &fileName);
+
+         /**
           * Called when a message is sent from one of this classes message signalers.
           * @param msgData Data pertaining to the particular message sent.
           */

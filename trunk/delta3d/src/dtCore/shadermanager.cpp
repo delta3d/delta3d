@@ -57,6 +57,27 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    void ShaderManager::Clear()
    {
+      std::vector<dtCore::RefPtr<ShaderParameter> > params;
+      std::vector<dtCore::RefPtr<ShaderParameter> >::iterator currParam;
+
+      // Loop through our active nodes and clear currently preassigned shaders. 
+      for (int i = mActiveNodeList.size() - 1; i >= 0; i--)
+      {
+         if (mActiveNodeList[i].nodeWeakReference.valid())
+         {
+            osg::Node *node = mActiveNodeList[i].nodeWeakReference.get();
+            dtCore::RefPtr<osg::StateSet> stateSet = node->getOrCreateStateSet();
+
+            // clean up the parameters effects to the stateset
+            mActiveNodeList[i].shaderInstance->GetParameterList(params);
+            for (currParam=params.begin(); currParam!=params.end(); ++currParam)
+               (*currParam)->DetachFromRenderState(*stateSet);
+
+            // remove the program
+            stateSet->setAttributeAndModes(new osg::Program(), osg::StateAttribute::ON);
+         }
+      }
+
       mShaderGroups.clear();
       mShaderProgramCache.clear();
       mTotalShaderCount = 0;
@@ -371,6 +392,73 @@ namespace dtCore
       newCacheEntry.shaderProgram = program;
       mShaderProgramCache.insert(std::make_pair(cacheKey,newCacheEntry));
    }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void ShaderManager::ReloadAndReassignShaderDefinitions(const std::string &fileName)
+   {
+      LOG_WARNING("Attempting to reload ALL Shaders using file[" + fileName + "]. This is a test behavior and may result in artifacts or changes in the scene.");
+
+      std::vector<ActiveNodeEntry> mCopiedNodeList;
+      std::map<std::string,dtCore::RefPtr<ShaderGroup> >::const_iterator groupItor;
+
+      // Loop through our active nodes and make a copy of each one. 
+      for (int i = mActiveNodeList.size() - 1; i >= 0; i--)
+      {
+         ActiveNodeEntry activeNode;
+         activeNode.shaderInstance = mActiveNodeList[i].shaderInstance;
+         activeNode.nodeWeakReference = mActiveNodeList[i].nodeWeakReference;
+         mCopiedNodeList.push_back(activeNode);
+      }
+
+      // Now, clear everything - all prototypes, all assignments, everything!!!
+      Clear();
+
+      // Reload our file
+      LoadShaderDefinitions(fileName, false);
+
+      // Now, the tricky part. Loop through all our previous nodes and try to 
+      // find a match to the new shader. If we find one, reassign it. 
+      for (int i = mCopiedNodeList.size() - 1; i >= 0; i--)
+      {
+         bool bFoundMatch = false;
+         std::string oldCacheKey = mCopiedNodeList[i].shaderInstance->GetVertexShaderSource() + ":" +
+            mCopiedNodeList[i].shaderInstance->GetFragmentShaderSource();
+         Shader *matchingShader = NULL;
+
+         // Loop to find a match
+         for (groupItor=mShaderGroups.begin(); !bFoundMatch && groupItor!=mShaderGroups.end(); ++groupItor)
+         {
+            matchingShader = groupItor->second->FindShader(mCopiedNodeList[i].shaderInstance->GetName());
+            if (matchingShader != NULL)
+            {
+               // build cache keys for loop one and pre-existing shader
+               std::string foundCacheKey = matchingShader->GetVertexShaderSource() + ":" +
+                  matchingShader->GetFragmentShaderSource();
+
+               // Is it a perfect match??
+               if (foundCacheKey == oldCacheKey)
+                  bFoundMatch = true;
+            }
+         }
+
+         // if we got a match, we rock!!!
+         if (bFoundMatch)
+         {
+            //LOG_ERROR("FOUND A MATCH FOR shader[" + mCopiedNodeList[i].shaderInstance->GetName() +  "]!!!");
+            AssignShaderFromTemplate(*matchingShader, *mCopiedNodeList[i].nodeWeakReference.get());
+         }
+         else
+         {
+            LOG_ERROR("Error reloading shader[" + mCopiedNodeList[i].shaderInstance->GetName() + 
+               "]. No exact match was found in the cache for the full key[" + oldCacheKey + 
+               "]. Cannot reapply shader so this node will have no shader!");
+         }
+      }
+
+      // Clear our our copy list since we're done. Not required, but safe.
+      mCopiedNodeList.clear();
+   }
+
 
    ///////////////////////////////////////////////////////////////////////////////
    void ShaderManager::LoadShaderDefinitions(const std::string &fileName, bool merge)

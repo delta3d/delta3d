@@ -212,8 +212,8 @@ namespace dtCore
       dtCore::Shader *newShader = new dtCore::Shader(GetName());
 
       // copy main values
-      newShader->mVertexShaderFileName = GetFragmentShaderSource();
-      newShader->mFragmentShaderFileName = GetVertexShaderSource();
+      newShader->mVertexShaderFileName = GetVertexShaderSource();
+      newShader->mFragmentShaderFileName = GetFragmentShaderSource();
       newShader->mVertexShader = mVertexShader;
       newShader->mFragmentShader = mFragmentShader;
       newShader->mGLSLProgram = mGLSLProgram;
