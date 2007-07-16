@@ -22,8 +22,13 @@
 #define DELTA_TASKACTOR
 
 #include <dtGame/gameactor.h>
+
+
 #include <dtUtil/mathdefines.h>
+
 #include <dtDAL/plugin_export.h>
+#include <dtDAL/actorproxyicon.h>
+
 #include <vector>
 
 namespace dtDAL 
@@ -354,6 +359,34 @@ namespace dtActors
           * Wrapper for the actor method
           */
          float GetScore() const { return static_cast<const TaskActor&>(GetGameActor()).GetScore(); }
+
+         /**
+          * Gets the billboard used to represent static mesh if this proxy's
+          * render mode is RenderMode::DRAW_BILLBOARD_ICON. Used by STAGE.
+          * @return billboard icon to use
+          */
+         virtual dtDAL::ActorProxyIcon* GetBillBoardIcon()
+         {
+            if(!mBillBoardIcon.valid())
+            {
+               mBillBoardIcon =
+                  new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IconType::GENERIC);
+            }
+
+            return mBillBoardIcon.get();
+         }
+
+         /**
+          * Gets the method by which this static mesh is rendered. This is used by STAGE.
+          * @return If there is no geometry currently assigned, this
+          *  method will return RenderMode::DRAW_BILLBOARD_ICON.  If
+          *  there is geometry assigned to this static mesh, RenderMode::DRAW_ACTOR
+          *  is returned.
+          */
+         virtual const ActorProxy::RenderMode& GetRenderMode()
+         {
+            return ActorProxy::RenderMode::DRAW_BILLBOARD_ICON;
+         }
 
       protected:
 
