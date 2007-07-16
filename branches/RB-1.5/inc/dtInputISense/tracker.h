@@ -37,6 +37,9 @@
 #include <dtCore/inputdevice.h>
 #include <dtInputISense/export.h>
 
+/** The dtInputIsense namespace contains classes that allow for reading of 
+  * Intersense (http://www.isense.com/) tracker devices.
+  */
 namespace dtInputISense
 {
    /**
