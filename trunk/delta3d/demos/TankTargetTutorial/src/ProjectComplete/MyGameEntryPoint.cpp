@@ -115,9 +115,9 @@ void MyGameEntryPoint::Initialize(dtGame::GameApplication& app, int argc, char *
 }
 
 //////////////////////////////////////////////////////////////////////////
-void MyGameEntryPoint::OnStartup(dtGame::GameManager &gameManager)
+void MyGameEntryPoint::OnStartup()
 {
-   dtABC::Application& app = gameManager.GetApplication();
+   dtABC::Application& app = GetGameManager()->GetApplication();
 
    // init our file path so it can find GUI Scheme
    // add extra data paths here if you need them
@@ -127,23 +127,23 @@ void MyGameEntryPoint::OnStartup(dtGame::GameManager &gameManager)
    dtDAL::Project::GetInstance().SetContext("StageProject");
 
    // Load the map we created in STAGE.
-   gameManager.ChangeMap(mMapName);
+   GetGameManager()->ChangeMap(mMapName);
 
    // Add Component - DefaultMessageProcessor 
    dtGame::DefaultMessageProcessor *dmp = new dtGame::DefaultMessageProcessor("DefaultMessageProcessor");
-   gameManager.AddComponent(*dmp,dtGame::GameManager::ComponentPriority::HIGHEST);
+   GetGameManager()->AddComponent(*dmp,dtGame::GameManager::ComponentPriority::HIGHEST);
 
    // Register our messages with the Game Manager message factory - part 5
-   TutorialMessageType::RegisterMessageTypes( gameManager.GetMessageFactory() );
+   TutorialMessageType::RegisterMessageTypes( GetGameManager()->GetMessageFactory() );
 
    // Add Component - Input Component
    dtCore::RefPtr<InputComponent> inputComp = new InputComponent("InputComponent", mInPlaybackMode);
-   gameManager.AddComponent(*inputComp, dtGame::GameManager::ComponentPriority::NORMAL);
+   GetGameManager()->AddComponent(*inputComp, dtGame::GameManager::ComponentPriority::NORMAL);
  
 #ifdef HLA
    // Add Component - HLAComponent 
    dtCore::RefPtr<dtHLAGM::HLAComponent> hlaComp = new dtHLAGM::HLAComponent("HLAComponent");
-   gameManager.AddComponent(*hlaComp, dtGame::GameManager::ComponentPriority::NORMAL);
+   GetGameManager()->AddComponent(*hlaComp, dtGame::GameManager::ComponentPriority::NORMAL);
 
    //Load HLA Configuration
    dtHLAGM::HLAComponentConfig hlaCC;
@@ -177,18 +177,18 @@ void MyGameEntryPoint::OnStartup(dtGame::GameManager &gameManager)
 
    // Add Component - HUD Component
    dtCore::RefPtr<HUDComponent> hudComp = new HUDComponent(app.GetWindow(), "HUDComponent");
-   gameManager.AddComponent(*hudComp, dtGame::GameManager::ComponentPriority::NORMAL);
+   GetGameManager()->AddComponent(*hudComp, dtGame::GameManager::ComponentPriority::NORMAL);
 
    // offset our camera a little back and above the tank.
    //dtCore::Transform tx(0.0f, 0.7f, 2.2f, 0.0f, 0.0f, 0.0f);
    //app.GetCamera()->SetTransform(tx); 
 
-   gameManager.GetScene().UseSceneLight(true);
+   GetGameManager()->GetScene().UseSceneLight(true);
 
    // Attach our camera to the tank from the map
-   std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > tanks;
-   gameManager.FindActorsByName("HoverTank", tanks);
-   if (tanks.size() > 0 && tanks[0].valid())
+   std::vector<dtDAL::ActorProxy*> tanks;
+   GetGameManager()->FindActorsByName("HoverTank", tanks);
+   if (tanks.size() > 0 && tanks[0] != NULL)
    {
       if (mInPlaybackMode)
          LOG_ALWAYS("Error: The tank actor is already loaded into the world during playback.  This will prevent the tank from receiving Playback messages.  Try loading a different map using --mapName <map>");
@@ -202,11 +202,11 @@ void MyGameEntryPoint::OnStartup(dtGame::GameManager &gameManager)
    app.GetWindow()->SetWindowTitle("Delta3D Tank Tutorial");
 
    // Add the AAR behaviors.
-   dtGame::BinaryLogStream *logStream = new dtGame::BinaryLogStream(gameManager.GetMessageFactory());
+   dtGame::BinaryLogStream *logStream = new dtGame::BinaryLogStream(GetGameManager()->GetMessageFactory());
    mServerLogger = new dtGame::ServerLoggerComponent(*logStream, "ServerLoggerComponent");
    mLogController = new dtGame::LogController("LogController");
-   gameManager.AddComponent(*mServerLogger.get(), dtGame::GameManager::ComponentPriority::NORMAL);
-   gameManager.AddComponent(*mLogController.get(), dtGame::GameManager::ComponentPriority::NORMAL);
+   GetGameManager()->AddComponent(*mServerLogger.get(), dtGame::GameManager::ComponentPriority::NORMAL);
+   GetGameManager()->AddComponent(*mLogController.get(), dtGame::GameManager::ComponentPriority::NORMAL);
    if (mInPlaybackMode)
    {
       mLogController->RequestChangeStateToPlayback();
@@ -219,5 +219,5 @@ void MyGameEntryPoint::OnStartup(dtGame::GameManager &gameManager)
    // ServerLoggerComponent state changes; such as transitions from PLAYBACK to IDLE states.
    //mLogController->RequestAddIgnoredActor(mInputComp->GetTerrainActor().GetId());
 
-   gameManager.DebugStatisticsTurnOn(true, true, 10, true);
+   GetGameManager()->DebugStatisticsTurnOn(true, true, 10, true);
 }

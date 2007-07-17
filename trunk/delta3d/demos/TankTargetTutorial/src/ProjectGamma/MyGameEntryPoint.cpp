@@ -88,9 +88,9 @@ void MyGameEntryPoint::Initialize(dtGame::GameApplication& app, int argc, char *
 }
 
 //////////////////////////////////////////////////////////////////////////
-void MyGameEntryPoint::OnStartup(dtGame::GameManager &gameManager)
+void MyGameEntryPoint::OnStartup()
 {
-   dtABC::Application& app = gameManager.GetApplication();
+   dtABC::Application& app = GetGameManager()->GetApplication();
 
    // init our file path so it can find GUI Scheme
    // add extra data paths here if you need them
@@ -98,22 +98,22 @@ void MyGameEntryPoint::OnStartup(dtGame::GameManager &gameManager)
 
    // Add Component - DefaultMessageProcessor 
    dtGame::DefaultMessageProcessor *dmp = new dtGame::DefaultMessageProcessor("DefaultMessageProcessor");
-   gameManager.AddComponent(*dmp,dtGame::GameManager::ComponentPriority::HIGHEST);
+   GetGameManager()->AddComponent(*dmp,dtGame::GameManager::ComponentPriority::HIGHEST);
 
    // Load the map we created in STAGE.
    dtDAL::Project::GetInstance().SetContext("StageProject");
-   gameManager.ChangeMap("mapone");
+   GetGameManager()->ChangeMap("mapone");
 
    // TUTORIAL - ADD YOUR HUD COMPONENT HERE
    
    // offset our camera a little back and above the tank.
    dtCore::Transform tx(0.0f, 0.7f, 2.2f, 0.0f, 0.0f, 0.0f);
    app.GetCamera()->SetTransform(tx); 
-   gameManager.GetScene().UseSceneLight(true);
+   GetGameManager()->GetScene().UseSceneLight(true);
 
    // Attach our camera to the tank from the map
-   std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > tanks;
-   gameManager.FindActorsByName("HoverTank", tanks);
+   std::vector<dtDAL::ActorProxy*> tanks;
+   GetGameManager()->FindActorsByName("HoverTank", tanks);
    if (tanks.size() > 0)
    {
       tanks[0]->GetActor()->AddChild(app.GetCamera());

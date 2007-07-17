@@ -60,9 +60,9 @@ MyGameEntryPoint::~MyGameEntryPoint()
 }
 
 //////////////////////////////////////////////////////////////////////////
-void MyGameEntryPoint::OnStartup(dtGame::GameManager &gameManager)
+void MyGameEntryPoint::OnStartup()
 {
-   dtABC::Application& app = gameManager.GetApplication();
+   dtABC::Application& app = GetGameManager()->GetApplication();
 
    // init our file path so it can find GUI Scheme
    // add extra data paths here if you need them
@@ -73,7 +73,7 @@ void MyGameEntryPoint::OnStartup(dtGame::GameManager &gameManager)
    // offset our camera a little back and above the tank.
    dtCore::Transform tx(0.0f, 0.7f, 2.2f, 0.0f, 0.0f, 0.0f);
    app.GetCamera()->SetTransform(tx); 
-   gameManager.GetScene().UseSceneLight(true);
+   GetGameManager()->GetScene().UseSceneLight(true);
 
    // TUTORIAL - FIND YOUR HOVER TANK AND ADD CAMERA AS A CHILD HERE 
 
