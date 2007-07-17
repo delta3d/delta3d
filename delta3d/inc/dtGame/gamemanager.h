@@ -822,9 +822,10 @@ namespace dtGame
 
          /**
           * Shuts down the Game Manager. 
-          * This method will clear out all internals of the game manager
-          * so that it can be user controlled instead of implicit from 
-          * the destructor
+          * This method will clear out all internals of the GameManager including
+          * removing dtGame::GMComponent and Actors, as well as sending any queued up
+          * messages.  This gets called automatically when a dtGame::GameEntryPoint gets
+          * destroyed, but can be called manually at the appropriate time as well.
           */
          void Shutdown();
 

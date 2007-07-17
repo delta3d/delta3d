@@ -47,6 +47,10 @@ namespace dtGame
       	
          GameEntryPoint() {}
       	
+         /** 
+          * The destructor of the GameEntryPoint.
+          * @note This method will automatically call GameManager::Shutdown() for you.
+          */
          virtual ~GameEntryPoint() 
          {
             mGameManager->Shutdown();
@@ -61,12 +65,13 @@ namespace dtGame
           * @param app the current application
           * @param argc number of startup arguments.
           * @param argv array of string pointers to the arguments.
-          * @throwns dtUtil::Exception if initialization fails.
+          * @throws dtUtil::Exception if initialization fails.
           */
          virtual void Initialize(GameApplication& app, int argc, char **argv) { }
          
          /**
-          * Override the method to create the game manager.
+          * Override this method to create your own custom GameManager, otherwise
+          * leave it as is and it will return back the default GameManager for you.
           */
          virtual dtCore::ObserverPtr<GameManager> CreateGameManager(dtCore::Scene& scene) 
          { 
@@ -77,11 +82,16 @@ namespace dtGame
          /**
           * Called after all startup related code is run.  At this point, the
           * dtGame::GameApplication has been configured and ready to be used.
+          * Override this method to perform any specific start up functionality that
+          * the GameEntryPoint needs to do.
           */
          virtual void OnStartup() = 0;
 
          /**
-          * Called when the app is shut down
+          * This is the notice to the GameEntryPoint that the application is
+          * quitting.  Perform any cleanup that needs to be done here.  
+          * @note This is called from the GameApplication destructor and is followed
+          * by the GameEntryPoint destructor.
           */
          virtual void OnShutdown() { }
 
