@@ -26,6 +26,8 @@ ESPduProcessor::~ESPduProcessor()
 
 void ESPduProcessor::Process(const DIS::Pdu& packet)
 {
+   if (mConfig == NULL) return;
+
    const DIS::EntityStatePdu& pdu = static_cast<const DIS::EntityStatePdu&>( packet );
 
    // find out if there is an actor for this ID

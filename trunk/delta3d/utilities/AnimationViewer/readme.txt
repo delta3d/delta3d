@@ -3,7 +3,7 @@ Animation Viewer
 Simple utility used to load a definition of an animated character and display some
 user interface controls to manipulate the character.
 
-Requires that QT4.2.x is installed.
+Requires that QT4.3.x is installed.
 
 ----------
 To Build
@@ -13,6 +13,8 @@ MSVC: Double-click the VisualStudio/utilities/AnimationViewer/BuildProject.bat f
 generate the .vcproj file.  Then load the AnimationViewer.sln into MSVC and build as
 either Debug or Release.
 
+GCC: No project fils are currently created for Linux machines.  See 
+VisualStudio/utilities/AnimationViewer/AnimationViewer.pro for an example.
 
 ---------
 To Run

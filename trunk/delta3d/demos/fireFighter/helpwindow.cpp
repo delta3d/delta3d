@@ -52,8 +52,11 @@ HelpWindow::~HelpWindow()
    mOverlay->removeChildWindow(mGPSText);
    mOverlay->removeChildWindow(mToggleFullScreen);
    mOverlay->removeChildWindow(mMagnifyModels);
+
    if(mMainWindow != NULL)
+   {
       mMainWindow->removeChildWindow(mOverlay);
+   }
 
    mHeaderText->destroy();
    mBinocsText->destroy();
@@ -79,8 +82,12 @@ void HelpWindow::InitGui(CEGUI::Window *mainWindow)
       mMainWindow = mainWindow;
       CEGUI::WindowManager *wm = CEGUI::WindowManager::getSingletonPtr();
       mOverlay = static_cast<CEGUI::FrameWindow*>(wm->createWindow("WindowsLook/FrameWindow", "help_window"));
+      mOverlay->setProperty("AlwaysOnTop", "True");
+     
       if(mMainWindow != NULL)
+      {
          mMainWindow->addChildWindow(mOverlay);
+      }
 
       mHeaderText       = wm->createWindow("WindowsLook/StaticText", "header_helptext");
       mBinocsText       = wm->createWindow("WindowsLook/StaticText", "binocs_helptext");
