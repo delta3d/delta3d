@@ -105,6 +105,13 @@ class FIRE_FIGHTER_EXPORT InputComponent : public dtGame::BaseInputComponent
        */
       virtual void OnAddedToGM();
 
+
+      /**
+      * Called immediately after a component is removed from the GM. 
+      */
+      virtual void OnRemovedFromGM();
+
+
       /**
        * Accessor to the player actor
        * @return mPlayer
