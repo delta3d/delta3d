@@ -162,7 +162,7 @@ namespace dtGame
       itor = mTopLevelTaskList.begin();
       while (itor != mTopLevelTaskList.end())
       {         
-         if (itor->second->GetProperty("IsTopLevel")->GetStringValue() == "false")
+         if (itor->second->GetProperty("IsTopLevel")->ToString() == "false")
             mTopLevelTaskList.erase(itor++);
          else
             ++itor;

@@ -92,6 +92,11 @@ namespace dtEditQt
       buttonLayout->addWidget(deletePath);
       buttonLayout->addWidget(close);
       buttonLayout->addStretch(1);
+
+      // Hide functionality that does not yet exist
+      upPath->hide();
+      downPath->hide();
+      deletePath->hide();
       
       // make the connections
       connect(deletePath, SIGNAL(clicked()),   this, SLOT(spawnDeleteConfirmation()));

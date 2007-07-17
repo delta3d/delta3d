@@ -801,7 +801,7 @@ namespace dtDAL
    {
       ValidatePropertyType(property);
 
-      SetValue(property.GetStringValue());
+      SetValue(property.ToString());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -809,7 +809,7 @@ namespace dtDAL
    {
       ValidatePropertyType(property);
 
-      if (!property.SetStringValue(GetValue()))
+      if (!property.FromString(GetValue()))
          LOG_ERROR(("Failed to set the enum value on property \"" + GetName() + "\".").c_str());
    }
 
@@ -917,7 +917,7 @@ namespace dtDAL
    {
       ValidatePropertyType(property);
 
-      FromString(property.GetStringValue());
+      FromString(property.ToString());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -925,7 +925,7 @@ namespace dtDAL
    {
       ValidatePropertyType(property);
 
-      property.SetStringValue(ToString());
+      property.FromString(ToString());
    }
 
    ///////////////////////////////////////////////////////////////////////////////

@@ -188,7 +188,7 @@ const std::vector<ArticulatedParameter>& Entity::GetArticulatedParametersArray()
 {
    return mArticulatedParametersArray;
 }
-         
+
 /**
  * Sets this entity's DIS/RPR-FOM damage state.
  *
@@ -207,4 +207,24 @@ void Entity::SetDamageState(DamageState damageState)
 DamageState Entity::GetDamageState()
 {
    return mDamageState;
+}
+
+/**
+ * Sets this entity's DIS/RPR-FOM marking.
+ *
+ * @param marking the marking
+ */
+void Entity::SetMarking(const std::string& marking)
+{
+   mMarking = marking;
+}
+
+/**
+ * Returns this entity's DIS/RPR-FOM marking.
+ *
+ * @return the marking
+ */
+ const std::string& Entity::GetMarking() const
+{
+   return mMarking;
 }

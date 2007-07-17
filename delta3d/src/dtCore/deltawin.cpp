@@ -324,6 +324,18 @@ DeltaWin::PositionSize DeltaWin::GetPosition()
 }
 
 ///////////////////////////////////////////////////
+void DeltaWin::SetRenderSurface( Producer::RenderSurface* renderSurface )
+{
+   if( renderSurface == 0 )
+   {
+      throw dtUtil::Exception(dtCore::ExceptionEnum::INVALID_PARAMETER,
+         "Supplied Producer::RenderSurface is invalid", __FILE__, __LINE__);
+   }
+   mRenderSurface = renderSurface;
+}
+
+
+///////////////////////////////////////////////////
 void DeltaWin::SetKeyboard( Keyboard* keyboard )
 {
    if( keyboard == 0 )

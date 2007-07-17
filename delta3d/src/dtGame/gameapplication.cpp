@@ -70,7 +70,7 @@ namespace dtGame
 
       GetScene()->RemoveAllDrawables();
 
-      if(mGameManager.valid())
+      if (mGameManager.valid())
       {
          mGameManager = NULL;
       }
@@ -83,8 +83,7 @@ namespace dtGame
    }
 
    void GameApplication::Config()
-   {
-      Application::Config();
+   {     
       dtUtil::LibrarySharingManager& lsm = dtUtil::LibrarySharingManager::GetInstance();
       std::string libName = GetGameLibraryName();
 
@@ -148,6 +147,7 @@ namespace dtGame
       try
       {
          mEntryPoint->Initialize(*this, mArgc, mArgv);
+         Application::Config();
          mGameManager = mEntryPoint->CreateGameManager(*GetScene());
 
          if(mGameManager == NULL)
@@ -165,10 +165,15 @@ namespace dtGame
          ex.LogException(dtUtil::Log::LOG_ERROR);
 
          if(ex.TypeEnum() == dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR)
+         {
             exit(-1);
+         }
          else
+         {
             throw ex;
+         }
       }
+
    }
 
 }

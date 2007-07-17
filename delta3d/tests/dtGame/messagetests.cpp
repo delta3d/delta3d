@@ -1443,9 +1443,9 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(bool
    dtCore::RefPtr<dtGame::ActorUpdateMessage> actorUpdateMsg =
       static_cast<dtGame::ActorUpdateMessage*>(mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_UPDATED).get());
 
-   CPPUNIT_ASSERT_MESSAGE("Has Fired should be false.", gap->GetProperty("Has Fired")->GetStringValue() == "false");
-   CPPUNIT_ASSERT_MESSAGE("Local Tick Count should be 0.", gap->GetProperty("Local Tick Count")->GetStringValue() == "0");
-   CPPUNIT_ASSERT_MESSAGE("Remote Tick Count should be 0.", gap->GetProperty("Remote Tick Count")->GetStringValue() == "0");
+   CPPUNIT_ASSERT_MESSAGE("Has Fired should be false.", gap->GetProperty("Has Fired")->ToString() == "false");
+   CPPUNIT_ASSERT_MESSAGE("Local Tick Count should be 0.", gap->GetProperty("Local Tick Count")->ToString() == "0");
+   CPPUNIT_ASSERT_MESSAGE("Remote Tick Count should be 0.", gap->GetProperty("Remote Tick Count")->ToString() == "0");
 
    if (partial)
    {
@@ -1498,30 +1498,30 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(bool
    if (remote)
    {
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Has Fired should be changed to true.", 
-                             gap->GetProperty("Has Fired")->GetStringValue(), std::string("true"));
+                             gap->GetProperty("Has Fired")->ToString(), std::string("true"));
       if (partial)
       {
          CPPUNIT_ASSERT_EQUAL_MESSAGE("Local Tick Count should still be 0.", 
-                                gap->GetProperty("Local Tick Count")->GetStringValue(), std::string("0"));
+                                gap->GetProperty("Local Tick Count")->ToString(), std::string("0"));
          CPPUNIT_ASSERT_EQUAL_MESSAGE("Remote Tick Count should still be 0.", 
-                                gap->GetProperty("Remote Tick Count")->GetStringValue(), std::string("0"));
+                                gap->GetProperty("Remote Tick Count")->ToString(), std::string("0"));
       }
       else
       {
          CPPUNIT_ASSERT_EQUAL_MESSAGE("Local Tick Count should be changed to 96.", 
-                                gap->GetProperty("Local Tick Count")->GetStringValue(), std::string("96"));
+                                gap->GetProperty("Local Tick Count")->ToString(), std::string("96"));
          CPPUNIT_ASSERT_EQUAL_MESSAGE("Remote Tick Count should be changed to 107.", 
-                                gap->GetProperty("Remote Tick Count")->GetStringValue(), std::string("107"));
+                                gap->GetProperty("Remote Tick Count")->ToString(), std::string("107"));
       }
    }
    else
    {
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Has Fired should still be false.", 
-                                    gap->GetProperty("Has Fired")->GetStringValue(), std::string("false"));
+                                    gap->GetProperty("Has Fired")->ToString(), std::string("false"));
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Local Tick Count should still be 0.", 
-                                    gap->GetProperty("Local Tick Count")->GetStringValue(), std::string("0"));
+                                    gap->GetProperty("Local Tick Count")->ToString(), std::string("0"));
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Remote Tick Count should still be 0.", 
-                                    gap->GetProperty("Remote Tick Count")->GetStringValue(), std::string("0"));
+                                    gap->GetProperty("Remote Tick Count")->ToString(), std::string("0"));
    }
 
 }
@@ -1605,9 +1605,9 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorCreates(bool
    dtCore::RefPtr<dtGame::ActorUpdateMessage> actorCreateMsg =
       static_cast<dtGame::ActorUpdateMessage*>(mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_CREATED).get());
 
-   CPPUNIT_ASSERT_MESSAGE("Has Fired should be false.", gap->GetProperty("Has Fired")->GetStringValue() == "false");
-   CPPUNIT_ASSERT_MESSAGE("Local Tick Count should be 0.", gap->GetProperty("Local Tick Count")->GetStringValue() == "0");
-   CPPUNIT_ASSERT_MESSAGE("Remote Tick Count should be 0.", gap->GetProperty("Remote Tick Count")->GetStringValue() == "0");
+   CPPUNIT_ASSERT_MESSAGE("Has Fired should be false.", gap->GetProperty("Has Fired")->ToString() == "false");
+   CPPUNIT_ASSERT_MESSAGE("Local Tick Count should be 0.", gap->GetProperty("Local Tick Count")->ToString() == "0");
+   CPPUNIT_ASSERT_MESSAGE("Remote Tick Count should be 0.", gap->GetProperty("Remote Tick Count")->ToString() == "0");
 
    gap->PopulateActorUpdate(*actorCreateMsg);
    if (remote)
@@ -1652,9 +1652,9 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorCreates(bool
       CPPUNIT_ASSERT_MESSAGE("The remote actor should have the same actor type as the real actor.", gapRemote->GetActorType() == gap->GetActorType());
       CPPUNIT_ASSERT_MESSAGE("The remote actor should have the same name as the real actor.", gapRemote->GetName() == gap->GetName());
 
-      CPPUNIT_ASSERT_MESSAGE("Has Fired should be changed to true.", gapRemote->GetProperty("Has Fired")->GetStringValue() == "true");
-      CPPUNIT_ASSERT_MESSAGE("Local Tick Count should be changed to 96.", gapRemote->GetProperty("Local Tick Count")->GetStringValue() == "96");
-      CPPUNIT_ASSERT_MESSAGE("Remote Tick Count should be changed to 107.", gapRemote->GetProperty("Remote Tick Count")->GetStringValue() == "107");
+      CPPUNIT_ASSERT_MESSAGE("Has Fired should be changed to true.", gapRemote->GetProperty("Has Fired")->ToString() == "true");
+      CPPUNIT_ASSERT_MESSAGE("Local Tick Count should be changed to 96.", gapRemote->GetProperty("Local Tick Count")->ToString() == "96");
+      CPPUNIT_ASSERT_MESSAGE("Remote Tick Count should be changed to 107.", gapRemote->GetProperty("Remote Tick Count")->ToString() == "107");
 
       CPPUNIT_ASSERT_MESSAGE("The created actor should be remote.", gapRemote->IsRemote());
       CPPUNIT_ASSERT_MESSAGE("The created actor should not be published.", !gapRemote->IsPublished());

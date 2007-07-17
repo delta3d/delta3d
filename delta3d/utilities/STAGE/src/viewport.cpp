@@ -612,7 +612,7 @@ namespace dtEditQt
 
          if (prop != NULL)
          {
-            std::string oldValue = prop->GetStringValue();
+            std::string oldValue = prop->ToString();
             savedValues.push_back(oldValue);
          }
       }
@@ -642,7 +642,7 @@ namespace dtEditQt
          {
             // emit the old value before the change so undo/redo can recover.
             std::string oldValue = saveEntry->second[oldValueIndex];
-            std::string newValue = prop->GetStringValue();
+            std::string newValue = prop->ToString();
             EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, prop, oldValue, newValue);
             oldValueIndex++;
 
