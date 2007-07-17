@@ -55,7 +55,7 @@ class TUTORIAL_TANK_EXPORT MyGameEntryPoint: public dtGame::GameEntryPoint
 
       // Called just before your application's game loop starts.  This is your main 
       // opportunity to create components, load maps, create unique actors, etc...
-      virtual void OnStartup(dtGame::GameManager &gameManager);
+      virtual void OnStartup();
    private:
       std::string mMapName;
       dtCore::RefPtr<dtGame::LogController> mLogController;
