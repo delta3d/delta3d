@@ -244,6 +244,9 @@
 				RelativePath="..\..\..\inc\dtAnim\coremodel.h">
 			</File>
 			<File
+				RelativePath="..\..\..\inc\dtAnim\dtanim.h">
+			</File>
+			<File
 				RelativePath="..\..\..\inc\dtAnim\export.h">
 			</File>
 			<File

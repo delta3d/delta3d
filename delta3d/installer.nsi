@@ -7,7 +7,7 @@
 !ifdef OUTFILE
   OutFile "${OUTFILE}"
 !else
-  OutFile dt-${VERSION}-setup.exe
+  OutFile dt_win32_${VERSION}_setup.exe
 !endif
 
 ; HM NIS Edit Wizard helper defines
@@ -80,10 +80,11 @@ Section "MainSection" SEC01
   File "scons_template"
   File "SConstruct"
 
-  ;bin
+  ;bin : both debug/release .dlls, all release .exe's, and the python bindings
   SetOutPath "$INSTDIR\bin"
   File .\bin\*.dll
   File /x *d.exe .\bin\*.exe
+  File .\bin\*.pyd
   
   ;data
   SetOutPath "$INSTDIR\data"
@@ -134,7 +135,7 @@ Section "MainSection" SEC01
 
   ;VisualStudio
   SetOutPath "$INSTDIR\VisualStudio"
-  File /r /x .svn /x *.suo /x *.ncb /x Debug /x Release /x Makefile* .\VisualStudio\*
+  File /r /x .svn /x *.suo /x *.ncb /x *.pdb /x *.idb /x Debug /x Release /x Makefile* .\VisualStudio\*
 
 ; Shortcuts
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application

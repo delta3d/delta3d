@@ -30,6 +30,9 @@
 #include <dtInputPLIB/export.h>
 #include <dtCore/inputdevice.h>
 
+/** The dtInputPLIB namespace contains classes used to read input devices
+  * using the PLIB library (http://plib.sourceforge.net/)
+  */
 namespace dtInputPLIB
 {
    /**
