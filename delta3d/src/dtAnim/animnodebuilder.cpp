@@ -173,7 +173,7 @@ dtCore::RefPtr<osg::Geode> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pW
 
       glExt->glBindBuffer(GL_ARRAY_BUFFER_ARB, vbo[0]);
       glExt->glBufferData(GL_ARRAY_BUFFER_ARB, strideBytes * numVerts, NULL, GL_STATIC_DRAW_ARB);
-      float* vboVertexAttr = (float *)glExt->glMapBuffer(GL_ARRAY_BUFFER_ARB, GL_WRITE_ONLY);
+      float* vboVertexAttr = (float *)glExt->glMapBuffer(GL_ARRAY_BUFFER_ARB, GL_WRITE_ONLY_ARB);
 
       CalHardwareModel* hardwareModel = new CalHardwareModel(model);
       hardwareModel->setIndexBuffer(indexArray.mArray);
