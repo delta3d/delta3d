@@ -281,6 +281,9 @@
 				RelativePath="..\..\..\inc\dtDAL\gameeventmanager.h">
 			</File>
 			<File
+				RelativePath="..\..\..\inc\dtDAL\genericactorproperty.h">
+			</File>
+			<File
 				RelativePath="..\..\..\inc\dtDAL\groupactorproperty.h">
 			</File>
 			<File

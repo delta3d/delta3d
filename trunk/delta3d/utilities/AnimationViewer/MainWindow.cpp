@@ -98,17 +98,18 @@ void MainWindow::CreateMenus()
    windowMenu->addAction(mLoadCharAct);
 
    QAction *toggleShadeToolbarAction = toolBarMenu->addAction("Shading toolbar");
-   QAction *toggleTempToolbarAction  = toolBarMenu->addAction("Temp toolbar");
-   QAction *toggleLightToolBarAction = toolBarMenu->addAction("Lighting toolbar");
+   QAction *toggleLODToolbarAction  = toolBarMenu->addAction("LOD toolbar");
+   //QAction *toggleLightToolBarAction = toolBarMenu->addAction("Lighting toolbar");
 
    toggleShadeToolbarAction->setCheckable(true);
    toggleShadeToolbarAction->setChecked(true);
-   toggleTempToolbarAction->setCheckable(true);
-   toggleTempToolbarAction->setChecked(true);
-   toggleLightToolBarAction->setCheckable(true);
-   toggleLightToolBarAction->setChecked(true);   
+   toggleLODToolbarAction->setCheckable(true);
+   toggleLODToolbarAction->setChecked(true);
+   //toggleLightToolBarAction->setCheckable(true);
+   //toggleLightToolBarAction->setChecked(true);   
 
    connect(toggleShadeToolbarAction, SIGNAL(triggered()), this, SLOT(OnToggleShadingToolbar()));
+   connect(toggleLODToolbarAction, SIGNAL(triggered()), this, SLOT(OnToggleLODToolbar()));
 
    for (int i=0; i<5; ++i)
    {
@@ -168,22 +169,22 @@ void MainWindow::CreateToolbars()
    lodSpinner->setSingleStep(0.01);  
    lodSpinner->setValue(1);
 
-   mShadingToolbar  = addToolBar("Shading toolbar"); 
-   mTempToolbar     = addToolBar("Temp toolbar");
-   mLightingToolbar = addToolBar("Lighting toolbar");
+   mShadingToolbar = addToolBar("Shading toolbar"); 
+   mLODToolbar     = addToolBar("LOD toolbar");
+   //mLightingToolbar = addToolBar("Lighting toolbar");
 
 
    mShadingToolbar->addAction(mWireframeAction);
    mShadingToolbar->addAction(mShadedAction);
    mShadingToolbar->addAction(mShadedWireAction);    
 
-   mTempToolbar->addWidget(lodSpinner);   
+   mLODToolbar->addWidget(lodSpinner);   
 
-   QIcon diffuseIcon(":/images/diffuseLight.png");
-   QIcon pointLightIcon(":/images/pointLight.png");
+   //QIcon diffuseIcon(":/images/diffuseLight.png");
+   //QIcon pointLightIcon(":/images/pointLight.png");
 
-   mLightingToolbar->addAction(diffuseIcon, "Diffuse Light");
-   mLightingToolbar->addAction(pointLightIcon, "Point Light");
+   //mLightingToolbar->addAction(diffuseIcon, "Diffuse Light");
+   //mLightingToolbar->addAction(pointLightIcon, "Point Light");
 
    connect(lodSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnLOD_Changed(double)));      
 }
@@ -384,9 +385,16 @@ void MainWindow::OnToggleShadingToolbar()
    }   
 }
 
-void MainWindow::OnToggleTempToolbar()
+void MainWindow::OnToggleLODToolbar()
 {
-
+   if (mLODToolbar->isHidden())
+   {
+      mLODToolbar->show();
+   }
+   else
+   {
+      mLODToolbar->hide();
+   }   
 }
 
 void MainWindow::OnToggleLightingToolbar()

@@ -36,7 +36,9 @@ namespace dtDAL
 namespace dtGame
 {
    /**
-    * Class the represents messages that are related to actors
+    * Class the represents messages that are related to actors.  Additional 
+    * dtDAL::NamedParameter can be added to this Message by using the AddUpdateParameter()
+    * method.
     */
    class DT_GAME_EXPORT ActorUpdateMessage : public Message
    {
@@ -84,48 +86,64 @@ namespace dtGame
          void SetActorTypeCategory(const std::string& newTypeCategory);
 
          /**
-          * Adds an update parameter to an actor message
+          * Adds an dtDAL::NamedParameter to an ActorUpdateMessage
           * @param name The name of the parameter to add
           * @param type The type of parameter it is, corresponding with dtDAL::DataType
-          * @return A pointer to the parameter
+          * @return A pointer to the dtDAL::NamedParameter that was added to the internal GroupMessageParameter
           * @see dtDAL::DataType
           * @throws dtUtil::Exception if the name specified is already used.
+          * @note The returned dtDAL::NamedParameter will not show up when calling 
+          * ActorUpdateMessage::GetParameter() since the parameter was actually added
+          * to an internal GroupMessageParameter, not the Message itself.
           */
-         MessageParameter* AddUpdateParameter(const std::string &name, const dtDAL::DataType &type);
+         dtDAL::NamedParameter* AddUpdateParameter(const std::string &name, const dtDAL::DataType &type);
          
          /**
-          * Adds an update parameter to an actor message
-          * @param paramToAdd The parameter to add.
+          * Adds a dtDAL::NamedParameter to an ActorUpdateMessage's internal GroupMessageParameter.
+          * @param paramToAdd The parameter to add to the GroupMessageParameter.
           * @throws dtUtil::Exception if a parameter with same name already exists.
+          * @note The returned dtDAL::NamedParameter will not show up when calling 
+          * ActorUpdateMessage::GetParameter() since the parameter was actually added
+          * to an internal GroupMessageParameter, not the Message itself.
           */
-         void AddUpdateParameter(MessageParameter& paramToAdd)
+         void AddUpdateParameter(dtDAL::NamedParameter& paramToAdd)
          {
             mUpdateParameters->AddParameter(paramToAdd);
          }
 
          /**
-          * Retrieves the update parameter for this actor update message for the given name.
-          * @param name The name of the parameters to retrieve
-          * @return A pointer to the update parameters or NULL if no such parameter exists
+          * Retrieves the dtDAL::NamedParameter for this actor update message for the given name.
+          * @param name The name of the parameter to retrieve
+          * @return A pointer to the dtDAL::NamedParameter or NULL if no such parameter exists
+          * @note The "update parameters" are stored in an internal GroupMessageParameter and
+          * will not be returned when calling ActorUpdateMessage::GetParameter().
           */
-         MessageParameter* GetUpdateParameter(const std::string &name);
+         dtDAL::NamedParameter* GetUpdateParameter(const std::string &name);
 
          /**
-          * Retrieves the update parameter for this actor update message for the given name.
+          * Retrieves the dtDAL::NamedParameter for this actor update message for the given name.
           * @param name The name of the parameters to retrieve
-          * @return A pointer to the update parameters or NULL if no such parameter exists
+          * @return A const pointer to the dtDAL::NamedParameter or NULL if no such parameter exists
+          * @note The "update parameters" are stored in an internal GroupMessageParameter and
+          * will not be returned when calling ActorUpdateMessage::GetParameter().
           */
-         const MessageParameter* GetUpdateParameter(const std::string &name) const;
+         const dtDAL::NamedParameter* GetUpdateParameter(const std::string &name) const;
 
          /** 
-          * Retrieves the update parameters for this actor update message
-          * @param toFill The vector to fill with the parameters
+          * Retrieves the dtDAL::NamedParameters that have been previously added to this
+          * ActorUpdateMessage internal GroupMessageParameter.
+          * @param toFill The vector to fill with the dtDAL::NamedParameters
+          * @note The "update parameters" are stored in an internal GroupMessageParameter and
+          * will not be returned when calling ActorUpdateMessage::GetParameter().
           */
-         void GetUpdateParameters(std::vector<MessageParameter*> &toFill);
+         void GetUpdateParameters(std::vector<dtDAL::NamedParameter*> &toFill);
 
          /** 
-          * Retrieves the const update parameters for this actor update message
-          * @param toFill The vector to fill with the parameters
+          * Retrieves the dtDAL::NamedParameters that have been previously added to this
+          * ActorUpdateMessage internal GroupMessageParameter.
+          * @param toFill The vector to fill with the const dtDAL::NamedParameters
+          * @note The "update parameters" are stored in an internal GroupMessageParameter and
+          * will not be returned when calling ActorUpdateMessage::GetParameter().
           */
          void GetUpdateParameters(std::vector<const MessageParameter*> &toFill) const;
 

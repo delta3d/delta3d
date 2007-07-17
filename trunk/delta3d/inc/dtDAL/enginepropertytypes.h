@@ -32,6 +32,7 @@
 #include <dtCore/deltadrawable.h>
 #include <dtDAL/resourcedescriptor.h>
 #include <dtDAL/actorproperty.h>
+#include <dtDAL/genericactorproperty.h>
 #include <dtDAL/datatype.h>
 #include <dtDAL/gameevent.h>
 #include <dtDAL/export.h>
@@ -119,13 +120,13 @@ namespace dtDAL
           * @param value the value to set.
           * @return false if the value does not reference an existing proxy or the proxy is of the wrong class.
           */
-         virtual bool SetStringValue(const std::string& value);
+         virtual bool FromString(const std::string& value);
 
          /**
-          * @return a string version of the data.  This value can be used when calling SetStringValue.
-          * @see #SetStringValue
+          * @return a string version of the data.  This value can be used when calling FromString.
+          * @see #FromString
           */
-         virtual const std::string GetStringValue() const;
+         virtual const std::string ToString() const;
 
          /**
           * @return the class of proxy this expects so that the UI can filter the list.
@@ -168,14 +169,14 @@ namespace dtDAL
           *   which then gets referenced by this property.
           * @return True if the value could be parsed and the specified event was found, false otherwise.
           */
-         virtual bool SetStringValue(const std::string& value);
+         virtual bool FromString(const std::string& value);
 
          /**
           * Gets a string version of the game event data.
           * @return A string containing the unique id of the game event.
-          * @see #SetStringValue
+          * @see #FromString
          */
-         virtual const std::string GetStringValue() const;
+         virtual const std::string ToString() const;
 
       protected:
          virtual ~GameEventActorProperty() { }
@@ -247,13 +248,13 @@ namespace dtDAL
           * @param value the value to set.
           * @return false of the value is not valid.
           */
-         virtual bool SetStringValue(const std::string& value);
+         virtual bool FromString(const std::string& value);
 
          /**
-          * @return a string version of the data.  This value can be used when calling SetStringValue.
-          * @see #SetStringValue
+          * @return a string version of the data.  This value can be used when calling FromString.
+          * @see #FromString
           */
-         virtual const std::string GetStringValue() const;
+         virtual const std::string ToString() const;
 
       private:
          ActorProxy *mProxy;
@@ -285,13 +286,13 @@ namespace dtDAL
           * @param value the value to set.
           * @return true
           */
-         virtual bool SetStringValue(const std::string& value);
+         virtual bool FromString(const std::string& value);
 
          /**
-          * @return a string version of the data.  This value can be used when calling SetStringValue.
-          * @see #SetStringValue
+          * @return a string version of the data.  This value can be used when calling FromString.
+          * @see #FromString
           */
-         virtual const std::string GetStringValue() const;
+         virtual const std::string ToString() const;
 
       protected:
          virtual ~FloatActorProperty() { }
@@ -317,13 +318,13 @@ namespace dtDAL
           * @param value the value to set.
           * @return true
           */
-         virtual bool SetStringValue(const std::string& value);
+         virtual bool FromString(const std::string& value);
 
          /**
-          * @return a string version of the data.  This value can be used when calling SetStringValue.
-          * @see #SetStringValue
+          * @return a string version of the data.  This value can be used when calling FromString.
+          * @see #FromString
           */
-         virtual const std::string GetStringValue() const ;
+         virtual const std::string ToString() const ;
 
       protected:
          virtual ~DoubleActorProperty() { }
@@ -349,13 +350,13 @@ namespace dtDAL
           * @param value the value to set.
           * @return true
           */
-         virtual bool SetStringValue(const std::string& value);
+         virtual bool FromString(const std::string& value);
 
          /**
-          * @return a string version of the data.  This value can be used when calling SetStringValue.
-          * @see #SetStringValue
+          * @return a string version of the data.  This value can be used when calling FromString.
+          * @see #FromString
           */
-         virtual const std::string GetStringValue() const;
+         virtual const std::string ToString() const;
       protected:
          virtual ~IntActorProperty() { }
    };
@@ -380,13 +381,13 @@ namespace dtDAL
           * @param value the value to set.
           * @return true
           */
-         virtual bool SetStringValue(const std::string& value);
+         virtual bool FromString(const std::string& value);
 
          /**
-          * @return a string version of the data.  This value can be used when calling SetStringValue.
-          * @see #SetStringValue
+          * @return a string version of the data.  This value can be used when calling FromString.
+          * @see #FromString
           */
-         virtual const std::string GetStringValue() const;
+         virtual const std::string ToString() const;
       protected:
          virtual ~LongActorProperty() { }
    };
@@ -446,12 +447,12 @@ namespace dtDAL
           * @param value the value to set.
           * @return true
           */
-         virtual bool SetStringValue(const std::string& value) { SetValue(value); return true; }
+         virtual bool FromString(const std::string& value) { SetValue(value); return true; }
 
          /**
           * @return the same as GetValue.
           */
-         virtual const std::string GetStringValue() const { return GenericActorProperty<const std::string&,std::string>::GetValue(); }
+         virtual const std::string ToString() const { return GenericActorProperty<const std::string&,std::string>::GetValue(); }
 
       protected:
          virtual ~StringActorProperty() { }
@@ -480,13 +481,13 @@ namespace dtDAL
           * @param value the value to set.
           * @return true if the value could be parsed.
           */
-         virtual bool SetStringValue(const std::string& value);
+         virtual bool FromString(const std::string& value);
 
          /**
-          * @return a string version of the data.  This value can be used when calling SetStringValue.
-          * @see #SetStringValue
+          * @return a string version of the data.  This value can be used when calling FromString.
+          * @see #FromString
           */
-         virtual const std::string GetStringValue() const;
+         virtual const std::string ToString() const;
 
       protected:
          virtual ~BooleanActorProperty() { }
@@ -610,13 +611,13 @@ namespace dtDAL
           * @param value the value to set.
           * @return true if the value could be parsed.
           */
-         virtual bool SetStringValue(const std::string& value) { return SetValueFromString(value); }
+         virtual bool FromString(const std::string& value) { return SetValueFromString(value); }
 
          /**
-          * @return a string version of the data.  This value can be used when calling SetStringValue.
-          * @see #SetStringValue
+          * @return a string version of the data.  This value can be used when calling FromString.
+          * @see #FromString
           */
-         virtual const std::string GetStringValue() const { return GetEnumValue().GetName(); };
+         virtual const std::string ToString() const { return GetEnumValue().GetName(); };
 
       protected:
          virtual ~EnumActorProperty() { }
@@ -647,14 +648,14 @@ namespace dtDAL
           * @param value the value to set.
           * @return true
           */
-         virtual bool SetStringValue(const std::string& value);
+         virtual bool FromString(const std::string& value);
 
 
          /**
-          * @return a string version of the data.  This value can be used when calling SetStringValue.
-          * @see #SetStringValue
+          * @return a string version of the data.  This value can be used when calling FromString.
+          * @see #FromString
           */
-         virtual const std::string GetStringValue() const;
+         virtual const std::string ToString() const;
 
       protected:
          virtual ~Vec2ActorProperty() { }
@@ -685,14 +686,14 @@ namespace dtDAL
           * @param value the value to set.
           * @return true
           */
-         virtual bool SetStringValue(const std::string& value);
+         virtual bool FromString(const std::string& value);
 
 
          /**
-          * @return a string version of the data.  This value can be used when calling SetStringValue.
-          * @see #SetStringValue
+          * @return a string version of the data.  This value can be used when calling FromString.
+          * @see #FromString
           */
-         virtual const std::string GetStringValue() const;
+         virtual const std::string ToString() const;
 
       protected:
          virtual ~Vec2fActorProperty() { }
@@ -723,14 +724,14 @@ namespace dtDAL
           * @param value the value to set.
           * @return true
           */
-         virtual bool SetStringValue(const std::string& value);
+         virtual bool FromString(const std::string& value);
 
 
          /**
-          * @return a string version of the data.  This value can be used when calling SetStringValue.
-          * @see #SetStringValue
+          * @return a string version of the data.  This value can be used when calling FromString.
+          * @see #FromString
           */
-         virtual const std::string GetStringValue() const;
+         virtual const std::string ToString() const;
 
       protected:
          virtual ~Vec2dActorProperty() { }
@@ -761,14 +762,14 @@ namespace dtDAL
           * @param value the value to set.
           * @return true
           */
-         virtual bool SetStringValue(const std::string& value);
+         virtual bool FromString(const std::string& value);
 
 
          /**
-          * @return a string version of the data.  This value can be used when calling SetStringValue.
-          * @see #SetStringValue
+          * @return a string version of the data.  This value can be used when calling FromString.
+          * @see #FromString
           */
-         virtual const std::string GetStringValue() const;
+         virtual const std::string ToString() const;
       protected:
          virtual ~Vec3ActorProperty() { }
    };
@@ -798,14 +799,14 @@ namespace dtDAL
           * @param value the value to set.
           * @return true
           */
-         virtual bool SetStringValue(const std::string& value);
+         virtual bool FromString(const std::string& value);
 
 
          /**
-          * @return a string version of the data.  This value can be used when calling SetStringValue.
-          * @see #SetStringValue
+          * @return a string version of the data.  This value can be used when calling FromString.
+          * @see #FromString
           */
-         virtual const std::string GetStringValue() const;
+         virtual const std::string ToString() const;
       protected:
          virtual ~Vec3fActorProperty() { }
    };
@@ -835,14 +836,14 @@ namespace dtDAL
           * @param value the value to set.
           * @return true
           */
-         virtual bool SetStringValue(const std::string& value);
+         virtual bool FromString(const std::string& value);
 
 
          /**
-          * @return a string version of the data.  This value can be used when calling SetStringValue.
-          * @see #SetStringValue
+          * @return a string version of the data.  This value can be used when calling FromString.
+          * @see #FromString
           */
-         virtual const std::string GetStringValue() const;
+         virtual const std::string ToString() const;
       protected:
          virtual ~Vec3dActorProperty() { }
    };
@@ -873,14 +874,14 @@ namespace dtDAL
           * @param value the value to set.
           * @return true
           */
-         virtual bool SetStringValue(const std::string& value);
+         virtual bool FromString(const std::string& value);
 
 
          /**
-          * @return a string version of the data.  This value can be used when calling SetStringValue.
-          * @see #SetStringValue
+          * @return a string version of the data.  This value can be used when calling FromString.
+          * @see #FromString
           */
-         virtual const std::string GetStringValue() const;
+         virtual const std::string ToString() const;
 
       protected:
 
@@ -912,14 +913,14 @@ namespace dtDAL
           * @param value the value to set.
           * @return true
           */
-         virtual bool SetStringValue(const std::string& value);
+         virtual bool FromString(const std::string& value);
 
 
          /**
-          * @return a string version of the data.  This value can be used when calling SetStringValue.
-          * @see #SetStringValue
+          * @return a string version of the data.  This value can be used when calling FromString.
+          * @see #FromString
           */
-         virtual const std::string GetStringValue() const;
+         virtual const std::string ToString() const;
 
       protected:
          virtual ~Vec4fActorProperty() { }
@@ -950,14 +951,14 @@ namespace dtDAL
           * @param value the value to set.
           * @return true
           */
-         virtual bool SetStringValue(const std::string& value);
+         virtual bool FromString(const std::string& value);
 
 
          /**
-          * @return a string version of the data.  This value can be used when calling SetStringValue.
-          * @see #SetStringValue
+          * @return a string version of the data.  This value can be used when calling FromString.
+          * @see #FromString
           */
-         virtual const std::string GetStringValue() const;
+         virtual const std::string ToString() const;
 
       protected:
          virtual ~Vec4dActorProperty() { }
@@ -978,8 +979,8 @@ namespace dtDAL
 
          // This is a work around a bug in Visual Studio where the Unit Tests would fail at runtime because
          // it couldn't find these functions in this class, even though they are inherited.
-         virtual bool SetStringValue(const std::string& value) { return Vec4ActorProperty::SetStringValue(value); }
-         virtual const std::string GetStringValue() const      { return Vec4ActorProperty::GetStringValue(); }
+         virtual bool FromString(const std::string& value) { return Vec4ActorProperty::FromString(value); }
+         virtual const std::string ToString() const      { return Vec4ActorProperty::ToString(); }
 
       protected:
          virtual ~ColorRgbaActorProperty() { }

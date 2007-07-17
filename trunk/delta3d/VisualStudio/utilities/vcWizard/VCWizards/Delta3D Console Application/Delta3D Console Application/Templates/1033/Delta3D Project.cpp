@@ -1,6 +1,7 @@
 // [!output PROJECT_NAME].cpp : defines the implementation of the application
 
 #include "[!output PROJECT_NAME].h"
+#include <osgDB/FileUtils>
 
 using namespace dtCore;
 using namespace dtABC;

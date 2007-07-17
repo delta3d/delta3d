@@ -1,4 +1,4 @@
-/*
+/* 
 * Delta3D Open Source Game and Simulation Engine
 * Copyright (C) 2005, BMH Associates, Inc.
 *
@@ -204,7 +204,7 @@ namespace dtGame
           *    myController->SignalReceivedStatus().connect_slot(this, &MyClass::MySlotMethod)
           * @return the signal
           */
-         sigslot::signal1<const LogStatus &> &SignalReceivedStatus() { return _receivedStatus; }
+         sigslot::signal1<const LogStatus &> &SignalReceivedStatus() { return mReceivedStatus; }
 
          /**
           * Delta3D signal/slot - sent when a tag list message is received by 
@@ -212,7 +212,7 @@ namespace dtGame
           *    myController->SignalReceivedTags().connect_slot(this, &MyClass::MySlotMethod)
           * @return the signal
           */
-         sigslot::signal1<const std::vector<LogTag> &> &SignalReceivedTags() { return _receivedTags; }
+         sigslot::signal1<const std::vector<LogTag> &> &SignalReceivedTags() { return mReceivedTags; }
 
          /**
           * Delta3D signal/slot - sent when a keyframe list message is received by 
@@ -220,7 +220,7 @@ namespace dtGame
           *    myController->SignalReceivedKeyframes().connect_slot(this, &MyClass::MySlotMethod)
           * @return the signal
           */
-         sigslot::signal1<const std::vector<LogKeyframe> &> &SignalReceivedKeyframes() { return _receivedKeyframes; }
+         sigslot::signal1<const std::vector<LogKeyframe> &> &SignalReceivedKeyframes() { return mReceivedKeyframes; }
 
          /**
           * Delta3D signal/slot - sent when a logger rejection message is received by 
@@ -228,7 +228,7 @@ namespace dtGame
           *    myController->SignalReceivedRejection().connect_slot(this, &MyClass::MySlotMethod)
           * @return the signal
           */
-         sigslot::signal1<const Message &> &SignalReceivedRejection() { return _receivedRejection; }
+         sigslot::signal1<const Message &> &SignalReceivedRejection() { return mReceivedRejection; }
 
       protected:
       
@@ -247,13 +247,13 @@ namespace dtGame
          std::vector<std::string> mLastKnownLogList;
 
          // The signal that gets triggered when processMessage receives a LOG_INFO_STATUS message
-         sigslot::signal1<const LogStatus &> _receivedStatus;
+         sigslot::signal1<const LogStatus &> mReceivedStatus;
          // The signal that gets triggered when processMessage receives a LOG_INFO_TAGS message
-         sigslot::signal1<const std::vector<LogTag> &> _receivedTags;
+         sigslot::signal1<const std::vector<LogTag> &> mReceivedTags;
          // The signal that gets triggered when processMessage receives a LOG_INFO_KEYFRAMES message
-         sigslot::signal1<const std::vector<LogKeyframe> &> _receivedKeyframes;
+         sigslot::signal1<const std::vector<LogKeyframe> &> mReceivedKeyframes;
          // The signal that gets triggered when processMessage receives a rejection message
-         sigslot::signal1<const Message &> _receivedRejection;
+         sigslot::signal1<const Message &> mReceivedRejection;
          
 
    };

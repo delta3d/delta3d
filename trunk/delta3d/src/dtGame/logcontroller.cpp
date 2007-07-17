@@ -48,7 +48,7 @@ namespace dtGame
       {
          const LogStatusMessage &statusMsg = static_cast<const LogStatusMessage&>(message);
          mLastKnownStatus = statusMsg.GetStatus();
-         _receivedStatus(mLastKnownStatus);
+         mReceivedStatus(mLastKnownStatus);
       }
       else if (message.GetMessageType() == MessageType::LOG_INFO_LOGFILES)
       {
@@ -59,13 +59,13 @@ namespace dtGame
       {
          const LogGetKeyframeListMessage &kfListMsg = static_cast<const LogGetKeyframeListMessage&>(message);
          mLastKnownKeyframeList = kfListMsg.GetKeyframeList();
-         _receivedKeyframes(mLastKnownKeyframeList);
+         mReceivedKeyframes(mLastKnownKeyframeList);
       }
       else if (message.GetMessageType() == MessageType::LOG_INFO_TAGS)
       {
          const LogGetTagListMessage &tagListMsg = static_cast<const LogGetTagListMessage&>(message);
          mLastKnownTagList = tagListMsg.GetTagList();
-         _receivedTags(mLastKnownTagList);
+         mReceivedTags(mLastKnownTagList);
       }
       else if (message.GetMessageType() == MessageType::SERVER_REQUEST_REJECTED)
       {
@@ -87,7 +87,7 @@ namespace dtGame
                type == MessageType::LOG_COMMAND_END_LOADKEYFRAME_TRANS || type == MessageType::LOG_REQ_JUMP_TO_KEYFRAME)
             {
                // send the status out to anyone that was listening for the signal
-               _receivedRejection(message);
+               mReceivedRejection(message);
             }
          }
       }

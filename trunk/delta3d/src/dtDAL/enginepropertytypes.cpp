@@ -34,7 +34,7 @@ namespace dtDAL
 {
 
    ////////////////////////////////////////////////////////////////////////////
-   bool ActorActorProperty::SetStringValue(const std::string& value)
+   bool ActorActorProperty::FromString(const std::string& value)
    {
       if (IsReadOnly())
          return false;
@@ -91,7 +91,7 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   const std::string ActorActorProperty::GetStringValue() const
+   const std::string ActorActorProperty::ToString() const
    {
       return GetValue() == NULL ? "" : GetValue()->GetId().ToString();
    }
@@ -127,7 +127,7 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   bool GameEventActorProperty::SetStringValue(const std::string& value)
+   bool GameEventActorProperty::FromString(const std::string& value)
    {
       GameEvent *event = GameEventManager::GetInstance().FindEvent(dtCore::UniqueId(value));
       if(event == NULL)
@@ -142,7 +142,7 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   const std::string GameEventActorProperty::GetStringValue() const
+   const std::string GameEventActorProperty::ToString() const
    {
       return GetValue() == NULL ? "" : GetValue()->GetUniqueId().ToString();
    }
@@ -189,11 +189,11 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   bool ResourceActorProperty::SetStringValue(const std::string& value)
+   bool ResourceActorProperty::FromString(const std::string& value)
    {
       if (IsReadOnly())
       {
-         LOG_WARNING("SetStringValue has been called on a property that is read only.");
+         LOG_WARNING("FromString has been called on a property that is read only.");
          return false;
       }
 
@@ -241,7 +241,7 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   const std::string ResourceActorProperty::GetStringValue() const
+   const std::string ResourceActorProperty::ToString() const
    {
       ResourceDescriptor* r = GetValue();
       if (r == NULL)
@@ -251,11 +251,11 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   bool IntActorProperty::SetStringValue(const std::string& value)
+   bool IntActorProperty::FromString(const std::string& value)
    {
       if (IsReadOnly())
       {
-         LOG_WARNING("SetStringValue has been called on a property that is read only.");
+         LOG_WARNING("FromString has been called on a property that is read only.");
          return false;
       }
 
@@ -268,7 +268,7 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   const std::string IntActorProperty::GetStringValue() const
+   const std::string IntActorProperty::ToString() const
    {
       std::ostringstream stream;
       stream << GetValue();
@@ -276,11 +276,11 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   bool BooleanActorProperty::SetStringValue(const std::string& value)
+   bool BooleanActorProperty::FromString(const std::string& value)
    {
       if (IsReadOnly())
       {
-         LOG_WARNING("SetStringValue has been called on a property that is read only.");
+         LOG_WARNING("FromString has been called on a property that is read only.");
          return false;
       }
 
@@ -297,18 +297,18 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   const std::string BooleanActorProperty::GetStringValue() const
+   const std::string BooleanActorProperty::ToString() const
    {
       const char* result = GetValue() ? "true" : "false";
       return result;
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   bool FloatActorProperty::SetStringValue(const std::string& value)
+   bool FloatActorProperty::FromString(const std::string& value)
    {
       if (IsReadOnly())
       {
-         LOG_WARNING("SetStringValue has been called on a property that is read only.");
+         LOG_WARNING("FromString has been called on a property that is read only.");
          return false;
       }
 
@@ -322,7 +322,7 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   const std::string FloatActorProperty::GetStringValue() const
+   const std::string FloatActorProperty::ToString() const
    {
       std::ostringstream stream;
       stream.precision(GetNumberPrecision());
@@ -331,11 +331,11 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   bool DoubleActorProperty::SetStringValue(const std::string& value)
+   bool DoubleActorProperty::FromString(const std::string& value)
    {
       if (IsReadOnly())
       {
-         LOG_WARNING("SetStringValue has been called on a property that is read only.");
+         LOG_WARNING("FromString has been called on a property that is read only.");
          return false;
       }
 
@@ -349,7 +349,7 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   const std::string DoubleActorProperty::GetStringValue() const
+   const std::string DoubleActorProperty::ToString() const
    {
       std::ostringstream stream;
       stream.precision(GetNumberPrecision());
@@ -358,11 +358,11 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   bool LongActorProperty::SetStringValue(const std::string& value)
+   bool LongActorProperty::FromString(const std::string& value)
    {
       if (IsReadOnly())
       {
-         LOG_WARNING("SetStringValue has been called on a property that is read only.");
+         LOG_WARNING("FromString has been called on a property that is read only.");
          return false;
       }
 
@@ -376,7 +376,7 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   const std::string LongActorProperty::GetStringValue() const
+   const std::string LongActorProperty::ToString() const
    {
       std::ostringstream stream;
       stream.precision(GetNumberPrecision());
@@ -385,11 +385,11 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   bool Vec2ActorProperty::SetStringValue(const std::string& value)
+   bool Vec2ActorProperty::FromString(const std::string& value)
    {
       if (IsReadOnly())
       {
-         LOG_WARNING("SetStringValue has been called on a property that is read only.");
+         LOG_WARNING("FromString has been called on a property that is read only.");
          return false;
       }
 
@@ -405,7 +405,7 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   const std::string Vec2ActorProperty::GetStringValue() const
+   const std::string Vec2ActorProperty::ToString() const
    {
       std::ostringstream stream;
       stream.precision(GetNumberPrecision());
@@ -414,11 +414,11 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   bool Vec2fActorProperty::SetStringValue(const std::string& value)
+   bool Vec2fActorProperty::FromString(const std::string& value)
    {
       if (IsReadOnly())
       {
-         LOG_WARNING("SetStringValue has been called on a property that is read only.");
+         LOG_WARNING("FromString has been called on a property that is read only.");
          return false;
       }
 
@@ -434,7 +434,7 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   const std::string Vec2fActorProperty::GetStringValue() const
+   const std::string Vec2fActorProperty::ToString() const
    {
       std::ostringstream stream;
       stream.precision(GetNumberPrecision());
@@ -443,11 +443,11 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   bool Vec2dActorProperty::SetStringValue(const std::string& value)
+   bool Vec2dActorProperty::FromString(const std::string& value)
    {
       if (IsReadOnly())
       {
-         LOG_WARNING("SetStringValue has been called on a property that is read only.");
+         LOG_WARNING("FromString has been called on a property that is read only.");
          return false;
       }
 
@@ -463,7 +463,7 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   const std::string Vec2dActorProperty::GetStringValue() const
+   const std::string Vec2dActorProperty::ToString() const
    {
       std::ostringstream stream;
       stream.precision(GetNumberPrecision());
@@ -472,11 +472,11 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   bool Vec3ActorProperty::SetStringValue(const std::string& value)
+   bool Vec3ActorProperty::FromString(const std::string& value)
    {
       if (IsReadOnly())
       {
-         LOG_WARNING("SetStringValue has been called on a property that is read only.");
+         LOG_WARNING("FromString has been called on a property that is read only.");
          return false;
       }
 
@@ -491,7 +491,7 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   const std::string Vec3ActorProperty::GetStringValue() const
+   const std::string Vec3ActorProperty::ToString() const
    {
       std::ostringstream stream;
       stream.precision(GetNumberPrecision());
@@ -500,11 +500,11 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   bool Vec3fActorProperty::SetStringValue(const std::string& value)
+   bool Vec3fActorProperty::FromString(const std::string& value)
    {
       if (IsReadOnly())
       {
-         LOG_WARNING("SetStringValue has been called on a property that is read only.");
+         LOG_WARNING("FromString has been called on a property that is read only.");
          return false;
       }
 
@@ -519,7 +519,7 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   const std::string Vec3fActorProperty::GetStringValue() const
+   const std::string Vec3fActorProperty::ToString() const
    {
       std::ostringstream stream;
       stream.precision(GetNumberPrecision());
@@ -528,11 +528,11 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   bool Vec3dActorProperty::SetStringValue(const std::string& value)
+   bool Vec3dActorProperty::FromString(const std::string& value)
    {
       if (IsReadOnly())
       {
-         LOG_WARNING("SetStringValue has been called on a property that is read only.");
+         LOG_WARNING("FromString has been called on a property that is read only.");
          return false;
       }
 
@@ -547,7 +547,7 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   const std::string Vec3dActorProperty::GetStringValue() const
+   const std::string Vec3dActorProperty::ToString() const
    {
       std::ostringstream stream;
       stream.precision(GetNumberPrecision());
@@ -556,11 +556,11 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   bool Vec4ActorProperty::SetStringValue(const std::string& value)
+   bool Vec4ActorProperty::FromString(const std::string& value)
    {
       if (IsReadOnly())
       {
-         LOG_WARNING("SetStringValue has been called on a property that is read only.");
+         LOG_WARNING("FromString has been called on a property that is read only.");
          return false;
       }
 
@@ -575,7 +575,7 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   const std::string Vec4ActorProperty::GetStringValue() const
+   const std::string Vec4ActorProperty::ToString() const
    {
       std::ostringstream stream;
       stream.precision(GetNumberPrecision());
@@ -584,11 +584,11 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   bool Vec4fActorProperty::SetStringValue(const std::string& value)
+   bool Vec4fActorProperty::FromString(const std::string& value)
    {
       if (IsReadOnly())
       {
-         LOG_WARNING("SetStringValue has been called on a property that is read only.");
+         LOG_WARNING("FromString has been called on a property that is read only.");
          return false;
       }
 
@@ -603,7 +603,7 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   const std::string Vec4fActorProperty::GetStringValue() const
+   const std::string Vec4fActorProperty::ToString() const
    {
       std::ostringstream stream;
       stream.precision(GetNumberPrecision());
@@ -612,11 +612,11 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   bool Vec4dActorProperty::SetStringValue(const std::string& value)
+   bool Vec4dActorProperty::FromString(const std::string& value)
    {
       if (IsReadOnly())
       {
-         LOG_WARNING("SetStringValue has been called on a property that is read only.");
+         LOG_WARNING("FromString has been called on a property that is read only.");
          return false;
       }
 
@@ -631,7 +631,7 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   const std::string Vec4dActorProperty::GetStringValue() const
+   const std::string Vec4dActorProperty::ToString() const
    {
       std::ostringstream stream;
       stream.precision(GetNumberPrecision());

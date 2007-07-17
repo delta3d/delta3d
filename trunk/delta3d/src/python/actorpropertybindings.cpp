@@ -46,21 +46,12 @@ class ActorPropertyWrap : public ActorProperty, public wrapper<ActorProperty>
          #endif
       }
    	
-      bool SetStringValue( const std::string& value )
+      const std::string ToString()
       {
          #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
-         return call<bool>( this->get_override("SetStringValue").ptr(), value );         
+         return call<const std::string&>( this->get_override("ToString").ptr() );
          #else
-		   return this->get_override( "SetStringValue" )(value);
-         #endif
-      }
-
-      const std::string GetStringValue()
-      {
-         #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
-         return call<const std::string&>( this->get_override("GetStringValue").ptr() );
-         #else
-		   return this->get_override("GetStringValue")();
+		   return this->get_override("ToString")();
          #endif
       }
 };
@@ -76,8 +67,6 @@ void initActorPropertyBindings()
       .def( "GetGroupName", &ActorProperty::GetGroupName, return_value_policy<copy_const_reference>() )
       .def( "IsReadOnly", &ActorProperty::IsReadOnly )
       .def( "ToString", &ActorProperty::ToString )
-      .def( "SetStringValue", pure_virtual( &ActorProperty::SetStringValue ) )
-      .def( "GetStringValue", pure_virtual( &ActorProperty::GetStringValue ) )
       .def( "SetNumberPrecision", &ActorProperty::SetNumberPrecision )
       .def( "GetNumberPrecision", &ActorProperty::GetNumberPrecision )
 		;

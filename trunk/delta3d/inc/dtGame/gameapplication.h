@@ -28,7 +28,7 @@
 #include <dtCore/observerptr.h>
 
 namespace dtGame
-{
+{  
    class GameEntryPoint;
    
    /**

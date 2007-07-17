@@ -76,18 +76,18 @@ namespace dtGame
       static_cast<StringMessageParameter*>(GetParameter(ACTOR_TYPE_CATEGORY_PARAMETER))->SetValue(newTypeCategory);
    }
 
-   MessageParameter* ActorUpdateMessage::AddUpdateParameter(const std::string &name, 
+   dtDAL::NamedParameter* ActorUpdateMessage::AddUpdateParameter(const std::string &name, 
                                                             const dtDAL::DataType &type)
    {
       return mUpdateParameters->AddParameter(name, type);
    }
 
-   MessageParameter* ActorUpdateMessage::GetUpdateParameter(const std::string &name)  
+   dtDAL::NamedParameter* ActorUpdateMessage::GetUpdateParameter( const std::string &name )
    {
       return mUpdateParameters->GetParameter(name);
    }
 
-   const MessageParameter* ActorUpdateMessage::GetUpdateParameter(const std::string &name) const
+   const dtDAL::NamedParameter* ActorUpdateMessage::GetUpdateParameter(const std::string &name) const
    {
       return mUpdateParameters->GetParameter(name);
    }
