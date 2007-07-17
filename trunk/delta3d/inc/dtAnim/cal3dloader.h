@@ -89,14 +89,14 @@ namespace dtAnim
 
          class ModelData: public osg::Referenced
          {
-           public:
+            public:
               ModelData();
             protected:
               ~ModelData();
             public:
 
              AnimWrapperVector mAnimWrappers;
-             AnimatableVector mAnimatables;           
+             AnimatableVector mAnimatables;
          };
 
          typedef std::map<CalCoreModel*, dtCore::RefPtr<ModelData> > ModelDataMap;

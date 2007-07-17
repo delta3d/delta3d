@@ -27,6 +27,9 @@
 #include <dtAnim/sequencemixer.h>
 #include <dtAnim/animationhelper.h>
 #include <dtAnim/cal3dmodelwrapper.h>
+
+#include <dtDAL/project.h>
+
 #include <dtCore/globals.h>
 #include <dtCore/refptr.h>
 
@@ -142,10 +145,12 @@ namespace dtAnim
    void AnimationTests::setUp()
    {      
       mHelper = new AnimationHelper();
-      std::string context = dtCore::GetDeltaRootPath() + "/examples/data/demoMap/SkeletalMeshes/";
-      std::string filename = "marine_test.xml";
-
-      mHelper->LoadModel(context + filename); 
+      dtDAL::Project::GetInstance().SetContext(dtCore::GetDeltaRootPath() + "/examples/data/demoMap");
+      
+      std::string modelPath = dtCore::FindFileInPathList("SkeletalMeshes/marine_test.xml");
+      CPPUNIT_ASSERT(!modelPath.empty());
+      
+      mHelper->LoadModel(modelPath);
 
       animStart1 = 1.0f;
       animEnd1 = 2.0f;
