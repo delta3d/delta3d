@@ -96,7 +96,6 @@ PlayerActor::PlayerActor(dtGame::GameActorProxy &proxy) :
 
 PlayerActor::~PlayerActor()
 {
-   
 }
 
 void PlayerActor::OnEnteredWorld()

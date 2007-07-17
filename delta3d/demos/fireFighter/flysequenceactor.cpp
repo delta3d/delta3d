@@ -125,7 +125,7 @@ void FlySequenceActor::OnEnteredWorld()
       input.close();
    }
 
-   snd = dtAudio::AudioManager::GetManager()->NewSound();
+   snd = dtAudio::AudioManager::GetInstance().NewSound();
    snd->LoadFile("Sounds/spokenIntro.wav");
    snd->SetLooping(false);
 }

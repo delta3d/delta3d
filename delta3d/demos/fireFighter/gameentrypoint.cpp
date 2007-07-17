@@ -157,4 +157,5 @@ void FireFighterGameEntryPoint::OnShutdown()
       mLmsComponent->DisconnectFromLms();
 
    gameManager.CloseCurrentMap();
+   gameManager.Shutdown();
 }
