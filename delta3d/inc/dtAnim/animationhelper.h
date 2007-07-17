@@ -52,7 +52,7 @@ namespace dtAnim
    class SequenceMixer;
    class AttachmentController;
    
-   /***
+   /**
     *  The AnimationHelper class is a utility class to simplify adding animation
     *  to an articulated entity, it provides support for loading, rendering and
     *  animating.  

@@ -29,6 +29,7 @@
 #include <dtAnim/animationhelper.h>
 #include <dtCore/refptr.h>
 #include <dtCore/globals.h>
+#include <dtDAL/project.h>
 
 #include <string>
 
@@ -53,11 +54,13 @@ namespace dtAnim
 
          void TestLoadFile()
          {
-            std::string context = dtCore::GetDeltaRootPath() + "/examples/data/demoMap/SkeletalMeshes/";
-            std::string filename = "marine_test.xml";
             std::string animName = "Walk";
-
-            mHelper->LoadModel(context + filename);
+            dtDAL::Project::GetInstance().SetContext(dtCore::GetDeltaRootPath() + "/examples/data/demoMap");
+            
+            std::string modelPath = dtCore::FindFileInPathList("SkeletalMeshes/marine_test.xml");
+            CPPUNIT_ASSERT(!modelPath.empty());
+            
+            mHelper->LoadModel(modelPath);
 
             SequenceMixer& mixer = mHelper->GetSequenceMixer();
             

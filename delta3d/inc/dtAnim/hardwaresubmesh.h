@@ -23,7 +23,7 @@
 #define DELTA_HARDWARE_SUBMESH
 
 #include <osg/Drawable>
-#include "dtAnim/export.h"
+#include <dtAnim/export.h>
 #include <dtCore/refptr.h>
 
 
@@ -32,6 +32,7 @@ class CalHardwareModel;
 namespace osg
 {
    class Program;
+   class PrimitiveFunctor;
 }
 
 namespace dtAnim 
@@ -42,8 +43,9 @@ namespace dtAnim
    {
       public:
 
-         HardwareSubMeshDrawable(Cal3DModelWrapper *wrapper, CalHardwareModel* model, osg::Program* shader, 
-               const std::string& boneUniformName, unsigned numBones, unsigned mesh, unsigned vertexVBO, unsigned indexVBO);
+         HardwareSubMeshDrawable(Cal3DModelWrapper *wrapper, CalHardwareModel* model,
+               osg::Program* shader, const std::string& boneUniformName, unsigned numBones,
+               unsigned mesh, unsigned vertexVBO, unsigned indexVBO);
 
          virtual void drawImplementation(osg::State& state) const;
 

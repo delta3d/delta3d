@@ -24,43 +24,58 @@
 #include <osg/Texture2D>
 #include <osg/PolygonMode>
 #include <dtAnim/cal3dmodelwrapper.h>
-#include <osg/Geometry>
 #include <osg/Uniform>
+#include <osg/PrimitiveSet>
+#include <osg/Vec3>
+#include <osg/BoundingBox>
 #include <dtUtil/matrixutil.h>
 #include <cal3d/hardwaremodel.h>
+//For CalBoundingBox, who knew.
+#include <cal3d/vector.h>
 
 namespace dtAnim
 {
+   class HardwareSubmeshComputeBound : public osg::Drawable::ComputeBoundingBoxCallback
+   {
+      public:
+         HardwareSubmeshComputeBound()
+         {
+         }
+         
+         /*virtual*/ osg::BoundingBox computeBound(const osg::Drawable& drawable) const  
+         {
+            return drawable.getInitialBound();
+         }
+         
+   };
 
    class HardwareSubmeshCallback : public osg::Drawable::UpdateCallback
    {
       public:
-         HardwareSubmeshCallback(Cal3DModelWrapper *wrapper, CalHardwareModel* model, osg::Uniform* boneTrans, unsigned mesh)             
-            : mWrapper(wrapper)
-            , mHardwareModel(model)
-            , mBoneTransforms(boneTrans)
+         HardwareSubmeshCallback(Cal3DModelWrapper& wrapper, CalHardwareModel& model, 
+               osg::Uniform& boneTrans, unsigned mesh)
+            : mWrapper(&wrapper)
+            , mHardwareModel(&model)
+            , mBoneTransforms(&boneTrans)
             , mMeshID(mesh)
          {
          }
 
-         //HardwareSubmeshCallback(const HardwareSubmeshCallback&, const CopyOp&) {}
-
-         //META_Object(UpdateCallback, HardwareSubmeshCallback);
- 
          /** do customized update code.*/
-         virtual void update(osg::NodeVisitor*, osg::Drawable*)
+         virtual void update(osg::NodeVisitor*, osg::Drawable* drawable)
          {
             //select the proper hardware mesh
             mHardwareModel->selectHardwareMesh(mMeshID);
-
+            
             //spin through the bones in the hardware mesh
             int numBones = mHardwareModel->getBoneCount();
             for(int bone = 0; bone < numBones; ++bone)
             {
+               
                CalSkeleton* skel = mWrapper->GetCalModel()->getSkeleton();
                const CalQuaternion& quat = mHardwareModel->getRotationBoneSpace(bone, skel);
                const CalVector& vec = mHardwareModel->getTranslationBoneSpace(bone, skel);
-
+                              
                //compute matrices
                osg::Matrix matRot(osg::Quat(quat.x, quat.y, quat.z, quat.w));
 
@@ -88,7 +103,9 @@ namespace dtAnim
    };
 
 
-HardwareSubMeshDrawable::HardwareSubMeshDrawable(Cal3DModelWrapper *wrapper, CalHardwareModel* model, osg::Program* shader, const std::string& boneUniformName, unsigned numBones, unsigned mesh, unsigned vertexVBO, unsigned indexVBO)
+HardwareSubMeshDrawable::HardwareSubMeshDrawable(Cal3DModelWrapper *wrapper, CalHardwareModel* model, 
+      osg::Program* shader, const std::string& boneUniformName, unsigned numBones, unsigned mesh, 
+      unsigned vertexVBO, unsigned indexVBO)
 : mWrapper(wrapper)
 , mHardwareModel(model)
 , mProgram(shader)
@@ -123,7 +140,8 @@ HardwareSubMeshDrawable::HardwareSubMeshDrawable(Cal3DModelWrapper *wrapper, Cal
    }
 
    //set our update callback which will update the bone transforms
-   setUpdateCallback(new HardwareSubmeshCallback(mWrapper.get(), mHardwareModel, mBoneTransforms.get(), mMeshID));
+   setUpdateCallback(new HardwareSubmeshCallback(*mWrapper, *mHardwareModel, *mBoneTransforms, mMeshID));
+   setComputeBoundingBoxCallback(new HardwareSubmeshComputeBound());
 }
 
 HardwareSubMeshDrawable::~HardwareSubMeshDrawable(void)
@@ -158,22 +176,24 @@ void HardwareSubMeshDrawable::drawImplementation(osg::State& state) const
    //make the call to render
    glExt->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, mIndexVBO);
 
-   glDrawElements(GL_TRIANGLES,  mHardwareModel->getFaceCount() * 3, (sizeof(CalIndex) < 4) ? GL_UNSIGNED_SHORT: GL_UNSIGNED_INT, (void*)(sizeof(CalIndex) * mHardwareModel->getStartIndex()));
+   glDrawElements(GL_TRIANGLES,  mHardwareModel->getFaceCount() * 3, (sizeof(CalIndex) < 4) ? 
+         GL_UNSIGNED_SHORT: GL_UNSIGNED_INT, (void*)(sizeof(CalIndex) * mHardwareModel->getStartIndex()));
 
-   glExt->glBindBuffer(GL_ARRAY_BUFFER_ARB,0);
-   glExt->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB,0);
+   glExt->glBindBuffer(GL_ARRAY_BUFFER_ARB, NULL);
+   glExt->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, NULL);
 }
 
 osg::Object* HardwareSubMeshDrawable::clone(const osg::CopyOp&) const 
 {
-	return new HardwareSubMeshDrawable(mWrapper.get(), mHardwareModel, mProgram.get(), mBoneUniformName, mNumBones, mMeshID, mVertexVBO, mIndexVBO );
+   return new HardwareSubMeshDrawable(mWrapper.get(), mHardwareModel, mProgram.get(), mBoneUniformName, 
+         mNumBones, mMeshID, mVertexVBO, mIndexVBO);
 }
 
 osg::Object* HardwareSubMeshDrawable::cloneType() const
 {
-	return new HardwareSubMeshDrawable(mWrapper.get(), mHardwareModel, mProgram.get(), mBoneUniformName, mNumBones, mMeshID, mVertexVBO, mIndexVBO );
+   return new HardwareSubMeshDrawable(mWrapper.get(), mHardwareModel, mProgram.get(), 
+         mBoneUniformName, mNumBones, mMeshID, mVertexVBO, mIndexVBO);
 }
-
 
 } //namespace dtAnim
 
