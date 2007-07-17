@@ -84,7 +84,12 @@ namespace dtGame
          virtual void OnAddedToGM() { }
 
          /**
-          * Called immediately after a component is removed from the GM. 
+          * Called immediately after a component is removed from the GM. This is 
+          * where any previously allocated memory should be deallocated, files unloaded,
+          * resources free'd, etc.  This gets called when the GMComponent gets removed
+          * from the GameManager and when the GameManager gets shut down.
+          * @see GameManager::RemoveComponent()
+          * @see GameManager::Shutdown()
           */
          virtual void OnRemovedFromGM() { }
 

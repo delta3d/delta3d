@@ -220,6 +220,14 @@ void TestAnim::OnStartup()
    gameManager.GetApplication().GetWindow()->SetKeyRepeat(false);
 }
 
+void TestAnim::OnShutdown()
+{    
+   const std::string mapName = GetGameManager()->GetCurrentMap();
+
+   dtDAL::Map& map = dtDAL::Project::GetInstance().GetMap(mapName);
+   dtDAL::Project::GetInstance().CloseMap(map, true);
+}
+
 void TestAnim::InitializeAnimationActor(dtActors::AnimationGameActorProxy2* gameProxy, dtAnim::AnimationComponent* animComp, bool isPlayer)
 {   
       dtActors::AnimationGameActor2* actor = dynamic_cast<dtActors::AnimationGameActor2*>(&gameProxy->GetGameActor());

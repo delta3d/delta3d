@@ -72,6 +72,8 @@ class TEST_ANIM_EXPORT TestAnim : public dtGame::GameEntryPoint
        */
       virtual void OnStartup();
 
+      virtual void OnShutdown();
+
    private:
 
       void InitializeAnimationActor(dtActors::AnimationGameActorProxy2* actor, dtAnim::AnimationComponent* animComp, bool isPlayer);
