@@ -57,7 +57,7 @@ namespace dtTest
 }
 
 using namespace dtTest;
-CPPUNIT_TEST_SUITE_REGISTRATION( PluginManagerTests );
+//CPPUNIT_TEST_SUITE_REGISTRATION( PluginManagerTests );
 
 void PluginManagerTests::TestLoadUnload()
 {

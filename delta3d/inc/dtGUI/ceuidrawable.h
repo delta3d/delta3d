@@ -20,11 +20,6 @@
 #ifndef DELTA_CEUIDRAWABLE
 #define DELTA_CEUIDRAWABLE
 
-#if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
-#pragma comment(lib, "glu32.lib")
-#pragma once
-#endif // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
-
 #include <dtCore/deltadrawable.h>           // for base class
 #include <dtCore/refptr.h>                  // for members
 #include <dtGUI/export.h>                   // for export symbols

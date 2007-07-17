@@ -35,13 +35,16 @@ void FullApplicator::operator ()(const DIS::EntityStatePdu& source,
    mp = dest.AddUpdateParameter( dtDIS::EnginePropertyName::RESOURCE_DAMAGE_OFF , dtDAL::DataType::STATIC_MESH );
    if( mp != NULL )
    {
-      const ResourceMapConfig& resources = config->GetResourceMap();
-      const dtDAL::ResourceDescriptor* rdPtr;
-      bool found = resources.GetMappedResource( source.getEntityType(), rdPtr ) ;
-      if( found )
+      if (config != NULL)
       {
-         dtDAL::NamedResourceParameter* nrp = static_cast<dtDAL::NamedResourceParameter*>( mp );
-         nrp->SetValue( rdPtr );
+         const ResourceMapConfig& resources = config->GetResourceMap();
+         const dtDAL::ResourceDescriptor* rdPtr;
+         bool found = resources.GetMappedResource( source.getEntityType(), rdPtr ) ;
+         if( found )
+         {
+            dtDAL::NamedResourceParameter* nrp = static_cast<dtDAL::NamedResourceParameter*>( mp );
+            nrp->SetValue( rdPtr );
+         }
       }
    }
 
