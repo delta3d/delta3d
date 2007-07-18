@@ -37,7 +37,7 @@
 #include <dtDAL/actortype.h>
 #include <dtActors/engineactorregistry.h>
 
-#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
+#ifdef DELTA_WIN32
    #include <Windows.h>
    #define SLEEP(milliseconds) Sleep((milliseconds))
 #else

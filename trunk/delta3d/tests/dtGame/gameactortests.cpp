@@ -53,6 +53,8 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 
+#include "testcomponent.h"
+
 #if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
    #include <Windows.h>
    #define SLEEP(milliseconds) Sleep((milliseconds))
@@ -60,62 +62,6 @@
    #include <unistd.h>
    #define SLEEP(milliseconds) usleep(((milliseconds) * 1000))
 #endif
-
-class TestComponent: public dtGame::GMComponent
-{
-   public:
-      TestComponent(const std::string& name): dtGame::GMComponent(name)
-      {
-      }
-
-      std::vector<dtCore::RefPtr<const dtGame::Message> >& GetReceivedProcessMessages()
-      { return mReceivedProcessMessages; }
-      std::vector<dtCore::RefPtr<const dtGame::Message> >& GetReceivedDispatchNetworkMessages()
-      { return mReceivedDispatchNetworkMessages; }
-
-      virtual void ProcessMessage(const dtGame::Message& msg)
-      {
-         mReceivedProcessMessages.push_back(&msg);
-      }
-      virtual void DispatchNetworkMessage(const dtGame::Message& msg)
-      {
-         mReceivedDispatchNetworkMessages.push_back(&msg);
-      }
-
-      void reset()
-      {
-         mReceivedDispatchNetworkMessages.clear();
-         mReceivedProcessMessages.clear();
-      }
-
-      dtCore::RefPtr<const dtGame::Message> FindProcessMessageOfType(const dtGame::MessageType& type)
-      {
-         for (unsigned i = 0; i < mReceivedProcessMessages.size(); ++i)
-         {
-            if (mReceivedProcessMessages[i]->GetMessageType() == type)
-               return mReceivedProcessMessages[i];
-         }
-         return NULL;
-      }
-      dtCore::RefPtr<const dtGame::Message> FindDispatchNetworkMessageOfType(const dtGame::MessageType& type)
-      {
-         for (unsigned i = 0; i < mReceivedDispatchNetworkMessages.size(); ++i)
-         {
-            if (mReceivedDispatchNetworkMessages[i]->GetMessageType() == type)
-               return mReceivedDispatchNetworkMessages[i];
-         }
-         return NULL;
-      }
-
-protected:
-   ~TestComponent()
-   {
-   }
-
-   private:
-      std::vector<dtCore::RefPtr<const dtGame::Message> > mReceivedProcessMessages;
-      std::vector<dtCore::RefPtr<const dtGame::Message> > mReceivedDispatchNetworkMessages;
-};
 
 class GameActorTests : public CPPUNIT_NS::TestFixture
 {
