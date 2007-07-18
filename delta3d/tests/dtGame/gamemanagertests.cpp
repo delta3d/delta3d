@@ -54,6 +54,8 @@
 #include <dtActors/gamemeshactor.h>
 #include <dtActors/engineactorregistry.h>
 
+#include "testcomponent.h"
+
 #if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
    #include <Windows.h>
    #define SLEEP(milliseconds) Sleep((milliseconds))
@@ -124,71 +126,6 @@ private:
    dtCore::RefPtr<dtGame::GameManager> mManager;
 };
 
-class TestGMComponent: public dtGame::GMComponent
-{
-   public:
-      TestGMComponent(const std::string& name = "TestComponent"): 
-         dtGame::GMComponent(name),
-         mWasOnAddedToGMCalled(false), 
-         mWasOnRemovedFromGMCalled(false)
-      {}
-
-      std::vector<dtCore::RefPtr<const dtGame::Message> >& GetReceivedProcessMessages()
-      { return mReceivedProcessMessages; }
-      std::vector<dtCore::RefPtr<const dtGame::Message> >& GetReceivedDispatchNetworkMessages()
-      { return mReceivedDispatchNetworkMessages; }
-
-      virtual void OnAddedToGM()
-      {
-         mWasOnAddedToGMCalled = true;
-      }
-
-      virtual void OnRemovedFromGM()
-      {
-         mWasOnRemovedFromGMCalled = true;
-      }
-
-      virtual void ProcessMessage(const dtGame::Message& msg)
-      {
-         mReceivedProcessMessages.push_back(&msg);
-      }
-      virtual void DispatchNetworkMessage(const dtGame::Message& msg)
-      {
-         mReceivedDispatchNetworkMessages.push_back(&msg);
-      }
-
-      void reset()
-      {
-         mReceivedDispatchNetworkMessages.clear();
-         mReceivedProcessMessages.clear();
-      }
-
-      dtCore::RefPtr<const dtGame::Message> FindProcessMessageOfType(const dtGame::MessageType& type)
-      {
-         for (unsigned i = 0; i < mReceivedProcessMessages.size(); ++i)
-         {
-            if (mReceivedProcessMessages[i]->GetMessageType() == type)
-               return mReceivedProcessMessages[i];
-         }
-         return NULL;
-      }
-      dtCore::RefPtr<const dtGame::Message> FindDispatchNetworkMessageOfType(const dtGame::MessageType& type)
-      {
-         for (unsigned i = 0; i < mReceivedDispatchNetworkMessages.size(); ++i)
-         {
-            if (mReceivedDispatchNetworkMessages[i]->GetMessageType() == type)
-               return mReceivedDispatchNetworkMessages[i];
-         }
-         return NULL;
-      }
-
-      bool mWasOnAddedToGMCalled;
-      bool mWasOnRemovedFromGMCalled;
-
-   private:
-      std::vector<dtCore::RefPtr<const dtGame::Message> > mReceivedProcessMessages;
-      std::vector<dtCore::RefPtr<const dtGame::Message> > mReceivedDispatchNetworkMessages;
-};
 
 class TestOrderComponent: public dtGame::GMComponent
 {
@@ -1110,7 +1047,7 @@ void GameManagerTests::TestComplexScene()
 /////////////////////////////////////////////////
 void GameManagerTests::TestOnAddedToGM()
 {
-   dtCore::RefPtr<TestGMComponent> tc = new TestGMComponent;
+   dtCore::RefPtr<TestComponent> tc = new TestComponent;
    CPPUNIT_ASSERT_MESSAGE("OnAddedToGM should not be called until added to the GM.", 
       !(tc->mWasOnAddedToGMCalled));
 
@@ -1138,7 +1075,7 @@ void GameManagerTests::TestTimers()
    CPPUNIT_ASSERT_MESSAGE("Proxy, the result of a dynamic_cast to dtGame::GameActorProxy, should not be NULL", proxy != NULL);
    CPPUNIT_ASSERT_MESSAGE("IsGameActorProxy should return true", proxy->IsGameActorProxy());
 
-   dtCore::RefPtr<TestGMComponent> tc = new TestGMComponent;
+   dtCore::RefPtr<TestComponent> tc = new TestComponent;
    mManager->AddComponent(*tc.get(), dtGame::GameManager::ComponentPriority::NORMAL);
 
    mManager->SetTimer("SimTimer1", proxy.get(), 0.001f);
@@ -1311,7 +1248,7 @@ void GameManagerTests::TestGMShutdown()
 {
    CPPUNIT_ASSERT(mManager.valid());
 
-   dtCore::RefPtr<TestGMComponent> tc = new TestGMComponent;
+   dtCore::RefPtr<TestComponent> tc = new TestComponent;
    mManager->AddComponent(*tc, dtGame::GameManager::ComponentPriority::NORMAL);
 
    const unsigned int numActors = 20;

@@ -64,16 +64,10 @@ namespace dtGame
          virtual ~DefaultNetworkPublishingComponent();
 
          /**
-          * Processes an incoming tick message
-          * @param The message
-          */
-         virtual void ProcessTick(const TickMessage &msg);
-
-         /**
           * Processes an incoming actor published message
           * @param The message
           */
-         virtual void ProcessPublishActor(const ActorPublishedMessage &msg);
+         virtual void ProcessPublishActor(const ActorPublishedMessage &msg, GameActorProxy& gap);
 
          /**
           * Processes an incoming actor deleted message

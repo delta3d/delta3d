@@ -37,7 +37,6 @@ namespace dtGame
 
    DefaultNetworkPublishingComponent::~DefaultNetworkPublishingComponent()
    {
-
    }
 
    void DefaultNetworkPublishingComponent::ProcessMessage(const Message &msg)
@@ -50,30 +49,22 @@ namespace dtGame
 
       if (msg.GetSource() == GetGameManager()->GetMachineInfo())
       {
-         if(msg.GetMessageType() == MessageType::TICK_LOCAL)
-         {
-            ProcessTick(static_cast<const TickMessage&>(msg));
-         }
-         else if(msg.GetMessageType() == MessageType::TICK_REMOTE)
-         {
-            ProcessTick(static_cast<const TickMessage&>(msg));
-         }
-         else if(msg.GetMessageType() == MessageType::INFO_ACTOR_PUBLISHED)
+         if(msg.GetMessageType() == MessageType::INFO_ACTOR_PUBLISHED)
          {
             GameActorProxy* ga = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
-            if(ga && ga->IsPublished())
-               ProcessPublishActor(static_cast<const ActorPublishedMessage&>(msg));
+            if (ga != NULL && ga->IsPublished())
+               ProcessPublishActor(static_cast<const ActorPublishedMessage&>(msg), *ga);
          }
          else if(msg.GetMessageType() == MessageType::INFO_ACTOR_DELETED)
          {
             GameActorProxy *ga = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
-            if(ga && ga->IsPublished())
+            if (ga != NULL && ga->IsPublished())
                ProcessDeleteActor(static_cast<const ActorDeletedMessage&>(msg));
          }
          else if(msg.GetMessageType() == MessageType::INFO_ACTOR_UPDATED)
          {
             GameActorProxy *ga = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
-            if(ga && ga->IsPublished())
+            if (ga != NULL && ga->IsPublished())
                ProcessUpdateActor(static_cast<const ActorUpdateMessage&>(msg));
          }
          else
@@ -99,52 +90,29 @@ namespace dtGame
       }
    }
 
-   void DefaultNetworkPublishingComponent::ProcessTick(const TickMessage &msg)
+   void DefaultNetworkPublishingComponent::ProcessPublishActor(const ActorPublishedMessage &msg, GameActorProxy& gap)
    {
-   }
-
-   void DefaultNetworkPublishingComponent::ProcessPublishActor(const ActorPublishedMessage &msg)
-   {
-      GameActorProxy *gap = GetGameManager()->FindGameActorById(msg.GetSendingActorId());
-      if(gap != NULL)
-      {
-         dtCore::RefPtr<Message> newMsg = GetGameManager()->GetMessageFactory().CreateMessage(MessageType::INFO_ACTOR_CREATED);
-         gap->PopulateActorUpdate(static_cast<ActorUpdateMessage&>(*newMsg));
-         GetGameManager()->SendNetworkMessage(*newMsg);
-      }
-      else
-         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Received a publish message from an actor that isn't part of the GameManager");
+      dtCore::RefPtr<Message> newMsg = GetGameManager()->GetMessageFactory().CreateMessage(MessageType::INFO_ACTOR_CREATED);
+      gap.PopulateActorUpdate(static_cast<ActorUpdateMessage&>(*newMsg));
+      GetGameManager()->SendNetworkMessage(*newMsg);
    }
 
    void DefaultNetworkPublishingComponent::ProcessDeleteActor(const ActorDeletedMessage &msg)
    {
-      GameActorProxy *gap = GetGameManager()->FindGameActorById(msg.GetSendingActorId());
-      if(gap != NULL)
+      try
       {
-         try
-         {
-            GetGameManager()->SendNetworkMessage(msg);
-         }
-         catch (const dtUtil::Exception& ex)
-         {
-            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-               "Exception trying to clone a delete message: ", ex.What().c_str());
-         }
+         GetGameManager()->SendNetworkMessage(msg);
       }
-      else
+      catch (const dtUtil::Exception& ex)
+      {
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-            "Received a delete actor message from an actor that isn't part of the GameManager");
+            "Exception trying to clone a delete message: ", ex.What().c_str());
+      }
    }
 
    void DefaultNetworkPublishingComponent::ProcessUpdateActor(const ActorUpdateMessage &msg)
    {
-      GameActorProxy *gap = GetGameManager()->FindGameActorById(msg.GetSendingActorId());
-      if(gap != NULL)
-      {
-         GetGameManager()->SendNetworkMessage(msg);
-      }
-      else
-         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Received a update actor message from an actor that isn't part of the GameManager");
+      GetGameManager()->SendNetworkMessage(msg);
    }
 
    void DefaultNetworkPublishingComponent::ProcessUnhandledLocalMessage(const Message &msg)
