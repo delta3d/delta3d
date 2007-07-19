@@ -208,32 +208,3 @@ osg::Object* SubMeshDrawable::cloneType() const
 {
    return new SubMeshDrawable(mWrapper.get(), mMeshID, mSubmeshID);
 }
-
-osg::BoundingBox SubMeshDrawable::computeBound() const 
-{
-   osg::BoundingBox bbox;
-    bbox.init();
-
-   // We have to traverse all vertices to recalculate bounds
-   
-   if(mWrapper->BeginRenderingQuery()) 
-    {
-      if(mWrapper->SelectMeshSubmesh(mMeshID, mSubmeshID)) 
-        {
-         // get the transformed vertices of the submesh
-         int vertexCount = mWrapper->GetVertexCount();
-         float *meshVertices = new float[vertexCount*3];
-         vertexCount = mWrapper->GetVertices(meshVertices);
-
-         for (int vertex=0;vertex<vertexCount;vertex++) 
-            {
-            float* v=meshVertices+vertex*3;
-            bbox.expandBy(v[0],v[1],v[2]);
-         }
-
-         delete []meshVertices;
-      }
-      mWrapper->EndRenderingQuery();
-   }
-   return bbox;
-}

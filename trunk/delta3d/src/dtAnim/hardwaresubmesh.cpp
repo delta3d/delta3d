@@ -30,8 +30,6 @@
 #include <osg/BoundingBox>
 #include <dtUtil/matrixutil.h>
 #include <cal3d/hardwaremodel.h>
-//For CalBoundingBox, who knew.
-#include <cal3d/vector.h>
 
 namespace dtAnim
 {
