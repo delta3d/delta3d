@@ -115,6 +115,8 @@ void PlayerActor::OnEnteredWorld()
    GetGameActorProxy().AddInvokable(*listenInvoke);
 
    GetGameActorProxy().RegisterForMessages(MessageType::GAME_STATE_CHANGED, "ListenForTickMessages");
+   GetGameActorProxy().RegisterForMessages(dtGame::MessageType::TICK_LOCAL, 
+      dtGame::GameActorProxy::TICK_LOCAL_INVOKABLE);
 }
 
 void PlayerActor::TickLocal(const dtGame::Message &tickMessage)
@@ -338,8 +340,8 @@ void PlayerActor::ListenForTickMessages(const dtGame::Message &msg)
    
    if(gscm.GetNewState() == GameState::STATE_RUNNING)
    { 
-      GetGameActorProxy().RegisterForMessages(dtGame::MessageType::TICK_LOCAL, 
-         dtGame::GameActorProxy::TICK_LOCAL_INVOKABLE);
+      //GetGameActorProxy().RegisterForMessages(dtGame::MessageType::TICK_LOCAL, 
+      //   dtGame::GameActorProxy::TICK_LOCAL_INVOKABLE);
    }
    else if(gscm.GetNewState() == GameState::STATE_DEBRIEF || 
            gscm.GetNewState() == GameState::STATE_MENU)
