@@ -216,12 +216,12 @@ namespace dtGame
       dtCore::System::GetInstance().Step();
       dtCore::System::GetInstance().Step();
       
-      CPPUNIT_ASSERT_EQUAL(0UL, mTestComp->GetReceivedDispatchNetworkMessages().size());
+      CPPUNIT_ASSERT_EQUAL(0U, unsigned(mTestComp->GetReceivedDispatchNetworkMessages().size()));
 
       mGameManager->DeleteActor(*mGameActorProxy);
       dtCore::System::GetInstance().Step();
       dtCore::System::GetInstance().Step();
 
-      CPPUNIT_ASSERT_EQUAL(0UL, mTestComp->GetReceivedDispatchNetworkMessages().size());
+      CPPUNIT_ASSERT_EQUAL(0U, unsigned(mTestComp->GetReceivedDispatchNetworkMessages().size()));
    }
 }
