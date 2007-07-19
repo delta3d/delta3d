@@ -162,7 +162,7 @@ namespace dtGame
       dtCore::System::GetInstance().Step();
       dtCore::System::GetInstance().Step();
 
-      CPPUNIT_ASSERT_EQUAL(1UL, mTestComp->GetReceivedDispatchNetworkMessages().size());
+      CPPUNIT_ASSERT_EQUAL(1U, unsigned(mTestComp->GetReceivedDispatchNetworkMessages().size()));
       const ActorUpdateMessage* createMessage = dynamic_cast<const ActorUpdateMessage*>(mTestComp->GetReceivedDispatchNetworkMessages()[0].get());
       CPPUNIT_ASSERT(createMessage != NULL);
       CPPUNIT_ASSERT(createMessage->GetMessageType() == MessageType::INFO_ACTOR_CREATED);
@@ -182,7 +182,7 @@ namespace dtGame
       dtCore::System::GetInstance().Step();
       dtCore::System::GetInstance().Step();
 
-      CPPUNIT_ASSERT_EQUAL(1UL, mTestComp->GetReceivedDispatchNetworkMessages().size());
+      CPPUNIT_ASSERT_EQUAL(1U, unsigned(mTestComp->GetReceivedDispatchNetworkMessages().size()));
       const Message* deleteMessage = mTestComp->GetReceivedDispatchNetworkMessages()[0].get();
       CPPUNIT_ASSERT(deleteMessage != NULL);
       CPPUNIT_ASSERT(deleteMessage->GetMessageType() == MessageType::INFO_ACTOR_DELETED);
@@ -202,7 +202,7 @@ namespace dtGame
       dtCore::System::GetInstance().Step();
       dtCore::System::GetInstance().Step();
       
-      CPPUNIT_ASSERT_EQUAL(1UL, mTestComp->GetReceivedDispatchNetworkMessages().size());
+      CPPUNIT_ASSERT_EQUAL(1U, unsigned(mTestComp->GetReceivedDispatchNetworkMessages().size()));
       const ActorUpdateMessage* updateMessage = dynamic_cast<const ActorUpdateMessage*>(mTestComp->GetReceivedDispatchNetworkMessages()[0].get());
       CPPUNIT_ASSERT(updateMessage != NULL);
       CPPUNIT_ASSERT(updateMessage->GetMessageType() == MessageType::INFO_ACTOR_UPDATED);
