@@ -27,6 +27,7 @@
 #include <dtUtil/functor.h>
 
 #include <osg/Referenced>
+#include <osg/Node> //needed for the bounding sphere callback
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
@@ -45,7 +46,15 @@ class	DT_ANIM_EXPORT AnimNodeBuilder: public osg::Referenced
 public:
    typedef dtUtil::Functor<dtCore::RefPtr<osg::Geode>, TYPELIST_1(Cal3DModelWrapper*)> CreateFunc;
 
-public:
+   class Cal3DBoundingSphereCalculator : public osg::Node::ComputeBoundingSphereCallback
+   {
+      public:
+         Cal3DBoundingSphereCalculator(Cal3DModelWrapper& wrapper);
+         
+         /*virtual*/ osg::BoundingSphere computeBound(const osg::Node&) const;
+      private:
+         dtCore::RefPtr<Cal3DModelWrapper> mWrapper;
+   };
 
    AnimNodeBuilder(); //creates default builder
    AnimNodeBuilder(const CreateFunc& pCreate); //uses custom builder

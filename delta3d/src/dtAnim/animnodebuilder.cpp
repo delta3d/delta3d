@@ -27,8 +27,12 @@
 #include <dtUtil/log.h>
 
 #include <osg/Geode>
+#include <osg/BoundingSphere>
+#include <osg/BoundingBox>
 
 #include <cal3d/hardwaremodel.h>
+//For the bounding box class, who knew.
+#include <cal3d/vector.h>
 
 namespace dtAnim
 {
@@ -87,13 +91,14 @@ dtCore::RefPtr<osg::Geode> AnimNodeBuilder::CreateGeode(Cal3DModelWrapper* pWrap
 
 dtCore::RefPtr<osg::Geode> AnimNodeBuilder::CreateSoftware(Cal3DModelWrapper* pWrapper)
 {
-   if(!pWrapper)
+   if(pWrapper == NULL)
    {
       LOG_ERROR("Invalid parameter to CreateGeode.");
-      return 0;
+      return NULL;
    }
 
    osg::Geode* geode = new osg::Geode();
+   geode->setComputeBoundingSphereCallback(new Cal3DBoundingSphereCalculator(*pWrapper));
 
    if(pWrapper->BeginRenderingQuery()) 
    {
@@ -118,13 +123,12 @@ dtCore::RefPtr<osg::Geode> AnimNodeBuilder::CreateSoftware(Cal3DModelWrapper* pW
    return geode;
 }
 
-
 dtCore::RefPtr<osg::Geode> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWrapper)
 {
-   if(!pWrapper)
+   if(pWrapper == NULL)
    {
       LOG_ERROR("Invalid parameter to CreateGeode.");
-      return 0;
+      return NULL;
    }
 
    //TODO: query for the maximum number of bones through opengl
@@ -135,7 +139,7 @@ dtCore::RefPtr<osg::Geode> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pW
 #else
    static const std::string BONE_TRANSFORM_UNIFORM("boneTransforms");
 #endif
-   osg::Geode* geode = new osg::Geode();
+   dtCore::RefPtr<osg::Geode> geode = new osg::Geode();
 
    pWrapper->SetLODLevel(1);
    pWrapper->Update(0);
@@ -226,6 +230,8 @@ dtCore::RefPtr<osg::Geode> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pW
             HardwareSubMeshDrawable* drawable = new HardwareSubMeshDrawable(pWrapper, hardwareModel, shader, BONE_TRANSFORM_UNIFORM, MAX_BONES, meshCount, vbo[0], vbo[1]);
             geode->addDrawable(drawable);
          }
+         
+         geode->setComputeBoundingSphereCallback(new Cal3DBoundingSphereCalculator(*pWrapper));
       } 
       else
       {
@@ -270,6 +276,20 @@ osg::Program* AnimNodeBuilder::LoadShaders(const std::string& shaderFile) const
    return prog;
 }
 
+AnimNodeBuilder::Cal3DBoundingSphereCalculator::Cal3DBoundingSphereCalculator(Cal3DModelWrapper& wrapper)
+   : mWrapper(&wrapper)
+{
+}
+
+osg::BoundingSphere AnimNodeBuilder::Cal3DBoundingSphereCalculator::computeBound(const osg::Node&) const
+{ 
+   CalBoundingBox& calBBox = mWrapper->GetCalModel()->getBoundingBox(false);
+   osg::BoundingBox bBox(-calBBox.plane[0].d, -calBBox.plane[2].d, -calBBox.plane[4].d,
+         calBBox.plane[1].d, calBBox.plane[3].d, calBBox.plane[5].d);
+   
+   osg::BoundingSphere bSphere(bBox);
+   return bSphere;
+}
 
 
 }//namespace dtAnim

@@ -86,7 +86,6 @@ public:
 
     virtual osg::Object* cloneType() const;
     virtual osg::Object* clone(const osg::CopyOp&) const;
-	osg::BoundingBox computeBound() const;
 
 protected:
     ~SubMeshDrawable();
