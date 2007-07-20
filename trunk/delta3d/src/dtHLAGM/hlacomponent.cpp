@@ -136,7 +136,7 @@ namespace dtHLAGM
       }
 
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,              
+         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                "Object class handle of object class %s is %u.",
                thisObjectClassString.c_str(), thisObjectClassHandle);
 
@@ -1802,30 +1802,32 @@ namespace dtHLAGM
          return;
       }
 
+      //Create AttributeHandleValuePairSet to hold the attributes.
+      RTI::AttributeHandleValuePairSet* theAttributes =
+            RTI::AttributeSetFactory::create(thisObjectToActor->GetOneToManyMappingVector().size() + 2);
+
       //Get ClassHandle from ObjectToActor
       RTI::ObjectClassHandle classHandle = thisObjectToActor->GetObjectClassHandle();
 
       const RTI::ObjectHandle* tmpObjectHandle = mRuntimeMappings.GetHandle(actorID);
+
+      bool newObject = tmpObjectHandle == NULL;
+
+      PrepareUpdate(aum, *theAttributes, *thisObjectToActor, newObject);
+      
       RTI::ObjectHandle objectHandle;
 
-      bool newObject = false;
-
-      if (tmpObjectHandle == NULL)
+      if (newObject)
       {
          try
          {
             const std::string* rtiID = mRuntimeMappings.GetRTIId(actorID);
             if (rtiID == NULL)
-            { 
-               mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                     "PrepareUpdate should have set the RTI Object ID string for this actor \"%s\".",
-                     thisObjectToActor->GetObjectClassName().c_str());
-               
+            {
                rtiID = &actorName;
             }
             //Pass ClassHandle to registerObjectInstance
             objectHandle = mRTIAmbassador->registerObjectInstance(classHandle, rtiID->c_str());
-            newObject = true;
          }
          catch (RTI::ObjectClassNotDefined&)
          {
@@ -1873,12 +1875,6 @@ namespace dtHLAGM
          objectHandle = *tmpObjectHandle;
       }
 
-      //Create AttributeHandleValuePairSet to hold the attributes.
-      RTI::AttributeHandleValuePairSet* theAttributes =
-            RTI::AttributeSetFactory::create(thisObjectToActor->GetOneToManyMappingVector().size() + 2);
-
-      PrepareUpdate(aum, *theAttributes, *thisObjectToActor, newObject);
-
       if (theAttributes->size() > 0)
       {
          if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
@@ -1897,7 +1893,7 @@ namespace dtHLAGM
          catch (const RTI::Exception& ex)
          {
             std::ostringstream ss;
-         	::operator<<(ss, ex);
+            ::operator<<(ss, ex);
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, ss.str().c_str());
 
          }
@@ -1927,7 +1923,7 @@ namespace dtHLAGM
          }
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str());
       }
-      
+
       RTI::SpaceHandle spaceHandle = mRTIAmbassador->getRoutingSpaceHandle(HYPERSPACE);
 
       RTI::Region* r = regionData.GetRegion();
