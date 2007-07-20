@@ -41,7 +41,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <osg/Drawable>
 #include <cal3d/cal3d.h>
-#include "dtAnim/export.h"
+#include <dtAnim/export.h>
 #include <dtCore/refptr.h>
 
 namespace dtAnim {
