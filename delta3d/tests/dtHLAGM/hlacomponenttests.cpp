@@ -50,6 +50,9 @@
 #include <dtGame/basemessages.h>
 #include <dtGame/actorupdatemessage.h>
 
+//Defined in the dtgame unit tests.
+#include "../dtGame/testcomponent.h"
+
 #include <dtCore/camera.h>
 #include <dtCore/system.h>
 #include <dtCore/globals.h>
@@ -86,66 +89,9 @@ class TestHLAComponent: public dtHLAGM::HLAComponent
       }
 };
 
-class TestComponent: public dtGame::GMComponent
+class HLAComponentTests : public CPPUNIT_NS::TestFixture
 {
-   public:
-      TestComponent(const std::string& name): dtGame::GMComponent(name)
-      {
-      }
-
-      std::vector<dtCore::RefPtr<const dtGame::Message> >& GetReceivedProcessMessages()
-      { return mReceivedProcessMessages; }
-      std::vector<dtCore::RefPtr<const dtGame::Message> >& GetReceivedDispatchNetworkMessages()
-      { return mReceivedDispatchNetworkMessages; }
-
-      virtual void ProcessMessage(const dtGame::Message& msg)
-      {
-         mReceivedProcessMessages.push_back(&msg);
-      }
-      virtual void DispatchNetworkMessage(const dtGame::Message& msg)
-      {
-         mReceivedDispatchNetworkMessages.push_back(&msg);
-      }
-
-      void reset()
-      {
-         mReceivedDispatchNetworkMessages.clear();
-         mReceivedProcessMessages.clear();
-      }
-
-      dtCore::RefPtr<const dtGame::Message> FindProcessMessageOfType(const dtGame::MessageType& type)
-      {
-         for (unsigned i = 0; i < mReceivedProcessMessages.size(); ++i)
-         {
-            if (mReceivedProcessMessages[i]->GetMessageType() == type)
-               return mReceivedProcessMessages[i];
-         }
-         return NULL;
-      }
-      dtCore::RefPtr<const dtGame::Message> FindDispatchNetworkMessageOfType(const dtGame::MessageType& type)
-      {
-         for (unsigned i = 0; i < mReceivedDispatchNetworkMessages.size(); ++i)
-         {
-            if (mReceivedDispatchNetworkMessages[i]->GetMessageType() == type)
-               return mReceivedDispatchNetworkMessages[i];
-         }
-         return NULL;
-      }
-
-protected:
-   ~TestComponent()
-   {
-   }
-
-   private:
-      std::vector<dtCore::RefPtr<const dtGame::Message> > mReceivedProcessMessages;
-      std::vector<dtCore::RefPtr<const dtGame::Message> > mReceivedDispatchNetworkMessages;
-};
-
-
-class HLATests : public CPPUNIT_NS::TestFixture
-{
-   CPPUNIT_TEST_SUITE(HLATests);
+   CPPUNIT_TEST_SUITE(HLAComponentTests);
 
       //All the tests are run in one method
       //they all use the RTI, which takes a long time 
@@ -163,6 +109,7 @@ class HLATests : public CPPUNIT_NS::TestFixture
       void TestReflectAttributes();
       void TestReflectAttributesEntityTypeMissing();
       void TestReflectAttributesNoEntityType();
+      void TestDispatchUpdate();
       void TestPrepareUpdate();
       void TestPrepareInteraction();
       void TestReceiveInteraction();
@@ -222,6 +169,18 @@ class HLATests : public CPPUNIT_NS::TestFixture
          }
       }
 
+      void PopulateTestActorUpdate(dtGame::ActorUpdateMessage& testMsg)
+      {
+         dtCore::UniqueId fakeActorId;
+         testMsg.SetSendingActorId(fakeActorId);
+         testMsg.SetAboutActorId(fakeActorId);
+         testMsg.SetName("Rubber Chicken");
+         testMsg.SetActorTypeCategory("TestHLA");
+         testMsg.SetActorTypeName("Tank");
+         
+         testMsg.AddUpdateParameter("Rotation", dtDAL::DataType::VEC3);
+      }
+
       dtCore::RefPtr<dtGame::GameManager> mGameManager;
       dtCore::RefPtr<TestHLAComponent> mHLAComponent;
       dtCore::RefPtr<TestComponent> mTestComponent;
@@ -235,19 +194,19 @@ class HLATests : public CPPUNIT_NS::TestFixture
 };
 
 // Registers the fixture into the 'registry'
-CPPUNIT_TEST_SUITE_REGISTRATION(HLATests);
+CPPUNIT_TEST_SUITE_REGISTRATION(HLAComponentTests);
 
-const std::string HLATests::mTestGameActorLibrary = "testGameActorLibrary";
+const std::string HLAComponentTests::mTestGameActorLibrary = "testGameActorLibrary";
 
 // Called implicitly by CPPUNIT when the app starts
-void HLATests::setUp()
+void HLAComponentTests::setUp()
 {
    try
    {
       dtDAL::Project::GetInstance().CreateContext("data/ProjectContext");
       dtDAL::Project::GetInstance().SetContext("data/ProjectContext");
       dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList() + ":" + dtCore::GetDeltaRootPath() + "/tests/data");
-      std::string logName("HLATests");
+      std::string logName("HLAComponentTests");
       logger = &dtUtil::Log::GetInstance(logName);
       dtUtil::Log::GetInstance("hlacomponent.cpp").SetLogLevel(dtUtil::Log::LOG_DEBUG);
       dtCore::RefPtr<dtCore::Scene> scene = new dtCore::Scene();
@@ -309,7 +268,7 @@ void HLATests::setUp()
 }
 
 // Called implicitly by CPPUNIT when the app terminates
-void HLATests::tearDown()
+void HLAComponentTests::tearDown()
 {
    if(mHLAComponent.valid())
    {
@@ -327,7 +286,7 @@ void HLATests::tearDown()
    }
 }
 
-void HLATests::BetweenTestSetUp()
+void HLAComponentTests::BetweenTestSetUp()
 {
    RTI::RTIambassador* rtiamb = mHLAComponent->GetRTIAmbassador();
    CPPUNIT_ASSERT(rtiamb != NULL);
@@ -358,7 +317,7 @@ void HLATests::BetweenTestSetUp()
    mTestComponent->reset();
 }
 
-void HLATests::BetweenTestTearDown()
+void HLAComponentTests::BetweenTestTearDown()
 {
    mHLAComponent->GetRuntimeMappings().Clear();
    RTI::RTIambassador* rtiamb = mHLAComponent->GetRTIAmbassador();
@@ -378,13 +337,13 @@ void HLATests::BetweenTestTearDown()
    }
 }
 
-void HLATests::RunAllTests()
+void HLAComponentTests::RunAllTests()
 {
    try
-   {      
+   {
       //This is a quick, read-only test.
       TestSubscription();
-   
+
       BetweenTestSetUp();
       TestConfigurationLocking();
       BetweenTestTearDown();
@@ -396,23 +355,26 @@ void HLATests::RunAllTests()
       BetweenTestSetUp();
       TestReflectAttributesNoEntityType();
       BetweenTestTearDown();
-   
+
       BetweenTestSetUp();
       TestReflectAttributesEntityTypeMissing();
       BetweenTestTearDown();
-   
+
+      BetweenTestSetUp();
+      TestDispatchUpdate();
+      BetweenTestTearDown();
+
       BetweenTestSetUp();
       TestPrepareUpdate();
       BetweenTestTearDown();
-   
+
       BetweenTestSetUp();
       TestPrepareInteraction();
       BetweenTestTearDown();
-   
+
       BetweenTestSetUp();
       TestReceiveInteraction();
       BetweenTestTearDown();
-   
       BetweenTestSetUp();
       TestRuntimeMappingInfo();
       BetweenTestTearDown();
@@ -435,13 +397,13 @@ void HLATests::RunAllTests()
       std::vector<dtCore::UniqueId> actorIdList;
       mappings.GetAllActorIds(actorIdList);
       CPPUNIT_ASSERT_EQUAL_MESSAGE("3 mappings should be in the mapping list.", unsigned(3), unsigned(actorIdList.size()));
-      
+
       mHLAComponent->LeaveFederationExecution();
-      
+
       mTestComponent->reset();
-      
+
       dtCore::System::GetInstance().Step();
-      
+
       std::vector<dtCore::RefPtr<const dtGame::Message> >& messages = mTestComponent->GetReceivedProcessMessages();
 
       unsigned deleteCount = 0;
@@ -473,7 +435,7 @@ void HLATests::RunAllTests()
    }
 }
 
-void HLATests::TestRuntimeMappingInfo()
+void HLAComponentTests::TestRuntimeMappingInfo()
 {
    dtHLAGM::ObjectRuntimeMappingInfo mappingInfo;
    try
@@ -671,7 +633,7 @@ void HLATests::TestRuntimeMappingInfo()
    }
 }
 
-void HLATests::TestSubscription()
+void HLAComponentTests::TestSubscription()
 {
    const std::string message("No Handle should be 0 after connecting to the RTI: ");
 
@@ -767,7 +729,7 @@ void HLATests::TestSubscription()
    
 }
 
-void HLATests::TestConfigurationLocking()
+void HLAComponentTests::TestConfigurationLocking()
 {
    CPPUNIT_ASSERT_THROW_MESSAGE("One may not enable or disable DDM while connected.", mHLAComponent->SetDDMEnabled(!mHLAComponent->IsDDMEnabled()), dtUtil::Exception);
    CPPUNIT_ASSERT_THROW_MESSAGE("One may not clear the configuration which connected.", mHLAComponent->ClearConfiguration(), dtUtil::Exception);
@@ -813,7 +775,7 @@ void HLATests::TestConfigurationLocking()
          mHLAComponent->UnregisterInteractionMapping(interactionTypeName), dtUtil::Exception);
 }
 
-void HLATests::TestReflectAttributesNoEntityType()
+void HLAComponentTests::TestReflectAttributesNoEntityType()
 {
    try
    {
@@ -859,7 +821,7 @@ void HLATests::TestReflectAttributesNoEntityType()
    }
 }
 
-void HLATests::TestReflectAttributesEntityTypeMissing()
+void HLAComponentTests::TestReflectAttributesEntityTypeMissing()
 {
    try
    {
@@ -949,7 +911,7 @@ void HLATests::TestReflectAttributesEntityTypeMissing()
    }
 }
 
-void HLATests::TestReflectAttributes()
+void HLAComponentTests::TestReflectAttributes()
 {
    try
    {
@@ -1116,7 +1078,57 @@ void HLATests::TestReflectAttributes()
    }
 }
 
-void HLATests::TestPrepareUpdate()
+void HLAComponentTests::TestDispatchUpdate()
+{
+   try
+   {
+      dtCore::RefPtr<dtGame::ActorUpdateMessage> testMsg;
+      mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_UPDATED, testMsg);
+      
+      PopulateTestActorUpdate(*testMsg);
+      
+      const dtCore::UniqueId& fakeActorId = testMsg->GetAboutActorId();
+
+      dtHLAGM::EntityIdentifier entityId(3,3,2);
+
+      //insert a bogus mapping to see if the object maps properly.
+      mHLAComponent->GetRuntimeMappings().Put(entityId, fakeActorId);
+      
+      dtCore::RefPtr<dtDAL::ActorType> testTankType = mGameManager->FindActorType(testMsg->GetActorTypeCategory(), testMsg->GetActorTypeName());
+
+      CPPUNIT_ASSERT(testTankType.valid());
+      
+      mHLAComponent->DispatchNetworkMessage(*testMsg);
+      const std::string* rtiID = mHLAComponent->GetRuntimeMappings().GetRTIId(fakeActorId);
+      const RTI::ObjectHandle* ptrHandle = mHLAComponent->GetRuntimeMappings().GetHandle(fakeActorId);
+      CPPUNIT_ASSERT_MESSAGE("The RTI Object ID  string should be set when an object is first sent out via HLA",
+            rtiID != NULL);
+      CPPUNIT_ASSERT_MESSAGE("The RTI Object handle string should be set when an object is first sent out via HLA",
+            ptrHandle != NULL);
+      //save off a copy
+      //const RTI::ObjectHandle handle = *ptrHandle;
+      
+      dtCore::RefPtr<dtGame::ActorDeletedMessage> deletedMsg;
+      mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_DELETED, deletedMsg);
+      
+      deletedMsg->SetAboutActorId(fakeActorId);
+      mHLAComponent->DispatchNetworkMessage(*deletedMsg);
+      
+      rtiID = mHLAComponent->GetRuntimeMappings().GetRTIId(fakeActorId);
+      ptrHandle = mHLAComponent->GetRuntimeMappings().GetHandle(fakeActorId);
+      CPPUNIT_ASSERT_MESSAGE("The RTI Object ID  should be NULL",
+            rtiID == NULL);
+      CPPUNIT_ASSERT_MESSAGE("The RTI Object handle should be NULL",
+            ptrHandle == NULL);
+
+   }
+   catch (const dtUtil::Exception& ex)
+   {
+      CPPUNIT_FAIL(ex.What());
+   }
+}
+
+void HLAComponentTests::TestPrepareUpdate()
 {
    try
    {
@@ -1125,20 +1137,16 @@ void HLATests::TestPrepareUpdate()
       
       dtCore::RefPtr<dtGame::ActorUpdateMessage> testMsg;
       mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_UPDATED, testMsg);
+
+      PopulateTestActorUpdate(*testMsg);
+      
+      const dtCore::UniqueId& fakeActorId = testMsg->GetAboutActorId();
       
       dtHLAGM::EntityIdentifier entityId(3,3,2);
-      dtCore::UniqueId fakeActorId;
 
-      //insert a bogus mapping to see if the interaction maps properly.
+      //insert a bogus mapping to see if the object maps properly.
       mHLAComponent->GetRuntimeMappings().Put(entityId, fakeActorId);
 
-      testMsg->SetSendingActorId(fakeActorId);
-      testMsg->SetAboutActorId(fakeActorId);
-      testMsg->SetName("Rubber Chicken");
-      testMsg->SetActorTypeCategory("TestHLA");
-      testMsg->SetActorTypeName("Tank");
-      
-      testMsg->AddUpdateParameter("Rotation", dtDAL::DataType::VEC3);
       
       dtCore::RefPtr<dtDAL::ActorType> testTankType = mGameManager->FindActorType(testMsg->GetActorTypeCategory(), testMsg->GetActorTypeName());
       
@@ -1220,13 +1228,13 @@ void HLATests::TestPrepareUpdate()
                         unsigned actual = *((unsigned*)buffer);
                         if (osg::getCpuByteOrder() == osg::LittleEndian)
                            osg::swapBytes((char*)&actual, sizeof(unsigned));
-   
+
                         CPPUNIT_ASSERT_EQUAL_MESSAGE("The damage state value should be 3 (Destroyed)", unsigned(3), actual);
                         
                      }
                      else if (aToPList.GetParameterDefinitions()[0].GetGameName() == "Rotation")
                      {
-                        foundOrientationAttr = true;                        
+                        foundOrientationAttr = true;
                         unsigned long length;
                         //I just want the length.
                         ahs->getValuePointer(i, length);
@@ -1270,7 +1278,7 @@ void HLATests::TestPrepareUpdate()
 }
 
 
-void HLATests::TestPrepareInteraction()
+void HLAComponentTests::TestPrepareInteraction()
 {
    try
    {
@@ -1361,7 +1369,7 @@ void HLATests::TestPrepareInteraction()
    
 }
 
-void HLATests::TestReceiveInteraction()
+void HLAComponentTests::TestReceiveInteraction()
 {
    try
    {
@@ -1423,7 +1431,7 @@ void HLATests::TestReceiveInteraction()
    }
 }
 
-void HLATests::TestGMLookup()
+void HLAComponentTests::TestGMLookup()
 {
    try
    {
@@ -1445,7 +1453,7 @@ void HLATests::TestGMLookup()
    }
 }
 
-void HLATests::TestMessageProcessing()
+void HLAComponentTests::TestMessageProcessing()
 {
    dtHLAGM::ObjectRuntimeMappingInfo& mappingInfo = mHLAComponent->GetRuntimeMappings();
 
