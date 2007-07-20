@@ -34,7 +34,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="dtDALd.lib dtGamed.lib dtUtilD.lib dtCoreD.lib xerces-c_2D.lib osgD.lib osgDBD.lib cal3d_d.lib opengl32.lib"
-				OutputFile="../../../bin/dtAnimD.dll"
+				OutputFile="../../../bin/dtAnimd.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="../../../lib;..\..\..\ext\lib"
 				GenerateDebugInformation="TRUE"
@@ -155,6 +155,9 @@
 				RelativePath="..\..\..\src\dtAnim\cal3danimator.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtAnim\cal3ddatabase.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtAnim\cal3dloader.cpp">
 			</File>
 			<File
@@ -227,6 +230,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtAnim\cal3danimator.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtAnim\cal3ddatabase.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtAnim\cal3dloader.h">
