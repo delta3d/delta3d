@@ -24,6 +24,7 @@
 #include <dtCore/transformable.h>
 #include <osg/Matrix>
 #include <osg/MatrixTransform>
+#include <dtUtil/mathdefines.h>
 
 namespace dtAI
 {
@@ -40,7 +41,7 @@ namespace dtAI
       Set(pActor);
    }
 
-   Waypoint::Waypoint(const osg::Vec3 pPos)
+   Waypoint::Waypoint(const osg::Vec3& pPos)
    : mRenderFlag(Waypoint::RENDER_DEFUALT)
    , mID(0)
    , mGradient(1.0f)
@@ -52,6 +53,15 @@ namespace dtAI
    {
    }
 
+   bool Waypoint::operator==(const Waypoint& pWay) const
+   {
+      return dtUtil::Equivalent(mPosition[0], pWay.mPosition[0]) && dtUtil::Equivalent(mPosition[1], pWay.mPosition[1]) && dtUtil::Equivalent(mPosition[2], pWay.mPosition[2]);
+   }
+
+   bool Waypoint::operator!=(const Waypoint& pWay) const
+   {
+      return !(operator==(pWay));
+   }
 
    void Waypoint::Set(const WaypointActor* pActor)
    {
