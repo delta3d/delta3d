@@ -64,7 +64,7 @@ class Array
 
 AnimNodeBuilder::AnimNodeBuilder()
 {
-   SetCreate(CreateFunc(this, &AnimNodeBuilder::CreateHardware));
+   SetCreate(CreateFunc(this, &AnimNodeBuilder::CreateSoftware));
 }
 
 AnimNodeBuilder::AnimNodeBuilder(const CreateFunc& pCreate)
