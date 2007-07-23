@@ -26,7 +26,7 @@
 #include <dtDAL/actorproxyicon.h>
 #include <dtAnim/submesh.h>
 #include <dtAnim/skeletaldrawable.h>
-#include <dtAnim/cal3dloader.h>
+#include <dtAnim/cal3ddatabase.h>
 #include <dtAnim/cal3dmodelwrapper.h>
 #include <dtAnim/cal3danimator.h>
 #include <dtCore/scene.h>
@@ -64,7 +64,7 @@ namespace dtActors
       : dtGame::GameActor(proxy)
       , mModelGeode(new osg::Geode)
       , mSkeletalGeode(new osg::Geode)
-      , mModelLoader(new dtAnim::Cal3DLoader)
+      , mModelLoader(new dtAnim::Cal3DDatabase())
       , mAnimator( NULL )
       , mRenderModeBits( RENDER_MODE_SKIN )
    {

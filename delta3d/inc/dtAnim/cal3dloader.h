@@ -25,7 +25,6 @@
 #include <dtAnim/export.h>
 #include <string>
 #include <map>
-#include <vector>
 #include <osg/ref_ptr>
 #include <dtCore/refptr.h>
 #include <osg/Referenced>
@@ -47,6 +46,8 @@ namespace dtAnim
    class AnimationWrapper;
    class Animatable;
    class CharacterFileHandler;
+   class Cal3DModelData;
+  
 
    /**
     * Loads a animation definition file and returns a valid CalModel.  Caches
@@ -57,21 +58,11 @@ namespace dtAnim
    class DT_ANIM_EXPORT Cal3DLoader: public osg::Referenced
    {
       public:
-
-         //we will hold all the animation wrappers for each CalCoreModel
-         typedef std::vector< dtCore::RefPtr<AnimationWrapper> > AnimWrapperVector;
-         //we will hold a vector of animatables for each CalCoreModel
-         typedef std::vector<dtCore::RefPtr<Animatable> > AnimatableVector;
-
-      public:
    
          Cal3DLoader();
          
          ///Load an animated entity definition file and return the Cal3DModelWrapper
-         dtCore::RefPtr<Cal3DModelWrapper> Load( const std::string &filename );
-         
-         ///Get the animatables associated with this model wrapper
-         const AnimatableVector* GetAnimatables(const Cal3DModelWrapper& wrapper) const;
+         bool Load(const std::string &filename, Cal3DModelData*& data_in);        
 
          ///empty all containers of CalCoreModels and the stored textures
          void PurgeAllCaches();
@@ -85,31 +76,10 @@ namespace dtAnim
          //damned unpleasant place to load texture files.  Needs to be handled some other way
          void LoadAllTextures(CalCoreModel *model, const std::string &path);
 
-         void LoadModelData(CharacterFileHandler& handler, CalCoreModel* model);
-
-         class ModelData: public osg::Referenced
-         {
-            public:
-              ModelData();
-            protected:
-              ~ModelData();
-            public:
-
-             AnimWrapperVector mAnimWrappers;
-             AnimatableVector mAnimatables;
-         };
-
-         typedef std::map<CalCoreModel*, dtCore::RefPtr<ModelData> > ModelDataMap;
-         typedef ModelDataMap::allocator_type::value_type ModelDataMapping;
-         ModelDataMap mModelData;
-
-         typedef std::map<std::string,CalCoreModel*>  FilenameCoreModelMap;
-
-         FilenameCoreModelMap mFilenameCoreModelMap;
+         void LoadModelData(CharacterFileHandler& handler, CalCoreModel* model, Cal3DModelData* modelData);
 
          typedef std::map< std::string, osg::ref_ptr<osg::Texture2D> > TextureMap;
          typedef TextureMap::allocator_type::value_type TextureMapping;
-
          TextureMap mTextures;
  
    };

@@ -21,7 +21,8 @@
 
 #include <dtAnim/animationhelper.h>
 #include <dtAnim/animnodebuilder.h>
-#include <dtAnim/cal3dloader.h>
+#include <dtAnim/cal3ddatabase.h>
+#include <dtAnim/cal3dmodeldata.h>
 #include <dtAnim/cal3dmodelwrapper.h>
 #include <dtAnim/cal3danimator.h>
 #include <dtAnim/ical3ddriver.h>
@@ -46,7 +47,7 @@
 namespace dtAnim
 {
 
-dtCore::RefPtr<Cal3DLoader> AnimationHelper::sModelLoader = new Cal3DLoader();
+dtCore::RefPtr<Cal3DDatabase> AnimationHelper::sModelDatabase = new Cal3DDatabase();
 
 /////////////////////////////////////////////////////////////////////////////////
 AnimationHelper::AnimationHelper()
@@ -105,20 +106,26 @@ void AnimationHelper::ClearAll(float fadeOut)
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-void AnimationHelper::LoadModel(const std::string& pFilename)
+bool AnimationHelper::LoadModel(const std::string& pFilename)
 {
-   dtCore::RefPtr<dtAnim::Cal3DModelWrapper> newModel = sModelLoader->Load(pFilename);
+   dtCore::RefPtr<dtAnim::Cal3DModelWrapper> newModel = sModelDatabase->Load(pFilename);
 
    if (newModel.valid())
    {
       mAnimator = new dtAnim::Cal3DAnimator(newModel.get());   
       mGeode = mNodeBuilder->CreateGeode(newModel.get());
       
-      //TODO- Get animations and register them
-      const Cal3DLoader::AnimatableVector* animatables = sModelLoader->GetAnimatables(*newModel);
+      const Cal3DModelData*  modelData = sModelDatabase->GetModelData(*newModel);
+      if(modelData == NULL)
+      {
+         LOG_ERROR("ModelData not found for Character XML '" + pFilename + "'");
+         return false;
+      }
 
-      Cal3DLoader::AnimatableVector::const_iterator iter = animatables->begin();
-      Cal3DLoader::AnimatableVector::const_iterator end = animatables->end();
+      const Cal3DModelData::AnimatableArray& animatables = modelData->GetAnimatables();
+
+      Cal3DModelData::AnimatableArray::const_iterator iter = animatables.begin();
+      Cal3DModelData::AnimatableArray::const_iterator end = animatables.end();
 
       for(;iter != end; ++iter)
       {
@@ -129,8 +136,9 @@ void AnimationHelper::LoadModel(const std::string& pFilename)
    else
    {
       LOG_ERROR("Unable to load skeletal resource: " + pFilename);
-      //TODO throw exception here
+      return false;
    }
+   return true;
 }
 
 /////////////////////////////////////////////////////////////////////////////////

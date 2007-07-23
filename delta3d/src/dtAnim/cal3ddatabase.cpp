@@ -16,20 +16,131 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * David Guthrie
+ * David Guthrie and Bradley Anderegg
  */
 
 #include <dtAnim/cal3ddatabase.h>
+#include <dtAnim/cal3dmodeldata.h>
+#include <dtAnim/cal3dmodelwrapper.h>
+#include <dtUtil/log.h>
+
+#include <osgDB/FileNameUtils>
+#include <osg/Texture2D>
+
+#include <cal3d/model.h>
 
 namespace dtAnim
 {
+   /////////////////////////////////////////////////////////////////////////////////////////
+   //a custom find function that uses a functor
+   template<class T, class Array>
+   const typename Array::value_type::element_type* FindWithFunctor(Array a, T functor)
+   {
+      Array::const_iterator iter = a.begin();
+      Array::const_iterator end = a.end();
 
+      for(;iter != end; ++iter)
+      {
+         if(functor((*iter).get()))
+         {
+            return (*iter).get();
+         }
+      }
+
+      return 0;
+   };
+
+   struct findWithFilename
+   {
+      findWithFilename(const std::string& filename): mFilename(filename){}         
+
+      bool operator()(Cal3DModelData* data)
+      {
+         return data->GetFilename() == mFilename;
+      }
+
+      const std::string& mFilename;
+   };
+
+   struct findWithCoreModel
+   {
+      findWithCoreModel(const CalCoreModel* model): mModel(model){}
+
+      bool operator()(Cal3DModelData* data)
+      {
+         return data->GetCoreModel() == mModel;
+      }
+
+      const CalCoreModel* mModel;
+   };
+
+   /////////////////////////////////////////////////////////////////////////////////////////
+
+   /////////////////////////////////////////////////////////////////////////////////////////
    Cal3DDatabase::Cal3DDatabase()
+   : mModelData()
+   , mFileLoader(new Cal3DLoader())
    {
    }
 
+   /////////////////////////////////////////////////////////////////////////////////////////
    Cal3DDatabase::~Cal3DDatabase()
    {
    }
 
+   ///Load an animated entity definition file and return the Cal3DModelWrapper
+   dtCore::RefPtr<Cal3DModelWrapper> Cal3DDatabase::Load( const std::string& file )
+   {
+      std::string filename = osgDB::convertFileNameToNativeStyle(file);
+      Cal3DModelData* data = Find(filename);
+      if(!data)
+      {
+         if(mFileLoader->Load(filename, data))
+         {
+            mModelData.push_back(data);
+         }
+         else
+         {
+            LOG_ERROR("Unable to load Character XML file '" + filename + "'.");
+            return NULL;
+         }
+      }
+      
+      CalModel *model = new CalModel(data->GetCoreModel());
+      dtCore::RefPtr<Cal3DModelWrapper> wrapper = new Cal3DModelWrapper(model);   
+      return wrapper;
+   }
+
+   
+   /////////////////////////////////////////////////////////////////////////////////////////
+   const Cal3DModelData* Cal3DDatabase::GetModelData(const Cal3DModelWrapper& wrapper) const
+   {
+      return Find(wrapper.GetCalModel()->getCoreModel());
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////////////
+   Cal3DModelData* Cal3DDatabase::Find(const std::string& filename)
+   {
+      //todo- this is ugly, get rid of it
+      return const_cast<Cal3DModelData*>(FindWithFunctor(mModelData, findWithFilename(filename)));
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////////////
+   const Cal3DModelData* Cal3DDatabase::Find(const std::string& filename) const
+   {
+      return FindWithFunctor(mModelData, findWithFilename(filename));
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////////////
+   Cal3DModelData* Cal3DDatabase::Find(const CalCoreModel* coreModel)
+   {
+      //todo- this is ugly, get rid of it
+      return const_cast<Cal3DModelData*>(FindWithFunctor(mModelData, findWithCoreModel(coreModel)));
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////////////
+   const Cal3DModelData* Cal3DDatabase::Find(const CalCoreModel* coreModel) const
+   {
+      return FindWithFunctor(mModelData, findWithCoreModel(coreModel));
+   }
 }

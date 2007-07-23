@@ -64,7 +64,7 @@ class Array
 
 AnimNodeBuilder::AnimNodeBuilder()
 {
-   SetCreate(CreateFunc(this, &AnimNodeBuilder::CreateSoftware));
+   SetCreate(CreateFunc(this, &AnimNodeBuilder::CreateHardware));
 }
 
 AnimNodeBuilder::AnimNodeBuilder(const CreateFunc& pCreate)
@@ -222,7 +222,7 @@ dtCore::RefPtr<osg::Geode> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pW
          glExt->glBufferData(GL_ELEMENT_ARRAY_BUFFER_ARB, numIndices * sizeof(CalIndex), (const void*) indexArray.mArray, GL_STATIC_DRAW_ARB);
 
          //todo- pull shader name out of character xml
-         osg::Program* shader = LoadShaders("shaders/HardwareCharacter.vert");
+         static osg::Program* shader = LoadShaders("shaders/HardwareCharacter.vert");
 
          int numMeshes = hardwareModel->getHardwareMeshCount();
          for(int meshCount = 0; meshCount < numMeshes; ++meshCount)
