@@ -16,20 +16,59 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * David Guthrie
+ * David Guthrie and Bradley Anderegg 07/17/2007
  */
 
 #ifndef DELTA_CAL3D_DATABASE
 #define DELTA_CAL3D_DATABASE
 
+#include <dtAnim/export.h>
+#include <dtAnim/cal3dloader.h>
+#include <dtCore/refptr.h>
+
+#include <osg/Referenced>
+
+#include <string>
+#include <vector>
+
+class CalCoreModel;
+
 namespace dtAnim
 {
+   class Cal3DModelData;
+   class Cal3DModelWrapper; 
+   
 
-   class Cal3DDatabase
+   class DT_ANIM_EXPORT Cal3DDatabase: public osg::Referenced
    {
+      public:        
+         typedef std::vector<dtCore::RefPtr<Cal3DModelData> >  ModelDataArray;
+
       public:
          Cal3DDatabase();
+
+         ///Load an animated entity definition file and return the Cal3DModelWrapper
+         dtCore::RefPtr<Cal3DModelWrapper> Load(const std::string &filename);
+
+         ///Get the animatables associated with this model wrapper
+         const Cal3DModelData* GetModelData(const Cal3DModelWrapper& wrapper) const;
+
+
+      protected:
          virtual ~Cal3DDatabase();
+
+      private:        
+
+         Cal3DModelData* Find(const std::string& filename);
+         Cal3DModelData* Find(const CalCoreModel* coreModel);
+
+         const Cal3DModelData* Find(const std::string& filename) const;
+         const Cal3DModelData* Find(const CalCoreModel* coreModel) const;
+
+         ModelDataArray mModelData;       
+
+         dtCore::RefPtr<Cal3DLoader> mFileLoader;
+
    };
 
 }

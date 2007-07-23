@@ -48,7 +48,7 @@ namespace dtAnim
    class Cal3DModelWrapper;
    class Cal3DAnimator;
    class AnimNodeBuilder;
-   class Cal3DLoader;
+   class Cal3DDatabase;
    class SequenceMixer;
    class AttachmentController;
    
@@ -85,8 +85,9 @@ namespace dtAnim
           * and then calls CreateGeode() on the AnimNodeBuilder
           *
           * @param the name of the file to load
+          * @return whether or not we successfully loaded the file
           */
-         void LoadModel(const std::string& pFilename);
+         bool LoadModel(const std::string& pFilename);
 
          /**
           * This function plays the specified animation defined within the character XML
@@ -202,7 +203,7 @@ namespace dtAnim
          dtCore::RefPtr<SequenceMixer> mSequenceMixer;
          dtCore::RefPtr<AttachmentController> mAttachmentController;
          
-         static dtCore::RefPtr<Cal3DLoader> sModelLoader;
+         static dtCore::RefPtr<Cal3DDatabase> sModelDatabase;
 
    };
 

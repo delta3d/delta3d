@@ -28,7 +28,7 @@
 
 // namespace specific forward declarations
 namespace dtCore{ class Scene;         }
-namespace dtAnim{ class Cal3DLoader;   }
+namespace dtAnim{ class Cal3DDatabase;   }
 namespace dtAnim{ class Cal3DAnimator; }
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
@@ -102,7 +102,7 @@ namespace dtActors
 
          dtCore::RefPtr<osg::Geode>            mModelGeode;
          dtCore::RefPtr<osg::Geode>            mSkeletalGeode;   ///< support to visualize the skeletal.
-         dtAnim::Cal3DLoader                  *mModelLoader;
+         dtCore::RefPtr<dtAnim::Cal3DDatabase> mModelLoader;
          dtCore::RefPtr<dtAnim::Cal3DAnimator> mAnimator;      
 
          typedef unsigned char RenderModeBitContainer;

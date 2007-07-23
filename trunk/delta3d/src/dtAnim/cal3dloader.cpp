@@ -8,6 +8,7 @@
 #include <dtAnim/animationwrapper.h>
 #include <dtAnim/animationchannel.h>
 #include <dtAnim/animationsequence.h>
+#include <dtAnim/cal3dmodeldata.h>
 #include <dtUtil/xercesparser.h>
 #include <dtUtil/log.h>
 #include <dtCore/globals.h>
@@ -20,21 +21,8 @@ namespace dtAnim
 {
 
    /////////////////////////////////////////////////////////////////////////////////
-   Cal3DLoader::ModelData::ModelData()
-   : mAnimWrappers()
-   , mAnimatables()
-   {
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////
-   Cal3DLoader::ModelData::~ModelData()
-   {
-      mAnimWrappers.clear();
-      mAnimatables.clear();
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////
    Cal3DLoader::Cal3DLoader()
+   : mTextures()
    {
    }
 
@@ -42,21 +30,6 @@ namespace dtAnim
    Cal3DLoader::~Cal3DLoader()
    {
       PurgeAllCaches();
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////
-   const Cal3DLoader::AnimatableVector* Cal3DLoader::GetAnimatables(const Cal3DModelWrapper& wrapper) const
-   {
-      ModelDataMap::const_iterator iter = mModelData.find(wrapper.GetCalModel()->getCoreModel());
-      if(iter != mModelData.end())
-      {
-         return &((*iter).second->mAnimatables);
-      }
-      else
-      {
-         LOG_ERROR("Unable to find animations associated with Cal3DModelWrapper.");
-         return NULL;
-      }
    }
 
    /**
@@ -70,88 +43,74 @@ namespace dtAnim
 
       CalCoreModel *coreModel = NULL;
 
-      //see if we have already created a CalCoreModel for this filename
-      FilenameCoreModelMap::iterator found = mFilenameCoreModelMap.find(filename);
-      if (found != mFilenameCoreModelMap.end())
-      {
-         coreModel = (*found).second;
-      }
-      else
-      {
-         //gotta parse the file and create/store a new CalCoreModel
-         dtUtil::XercesParser parser;
+      //gotta parse the file and create/store a new CalCoreModel
+      dtUtil::XercesParser parser;
 
-         if (parser.Parse(filename, handler, "animationdefinition.xsd"))
+      if (parser.Parse(filename, handler, "animationdefinition.xsd"))
+      {
+         coreModel = new CalCoreModel(handler.mName);      
+
+         //load skeleton
+         std::string skelFile = FindFileInPathList(path + handler.mSkeletonFilename);
+         if (!skelFile.empty())
          {
-            coreModel = new CalCoreModel(handler.mName);      
-            ModelData* newModelData = new ModelData();
+            coreModel->loadCoreSkeleton(FindFileInPathList(path + handler.mSkeletonFilename));
+         }
+         else
+         {
+            LOG_ERROR("Can't find the skeleton file named:'" + path + handler.mSkeletonFilename + "'.");
+         }
 
-            mModelData.insert(ModelDataMapping(coreModel, newModelData));
+         //load animations
+         std::vector<CharacterFileHandler::AnimationStruct>::iterator animItr = handler.mAnimations.begin();
+         while (animItr != handler.mAnimations.end())
+         {
+            std::string filename = FindFileInPathList(path + (*animItr).mFileName);
 
-            //load skeleton
-            std::string skelFile = FindFileInPathList(path + handler.mSkeletonFilename);
-            if (!skelFile.empty())
+            if (!filename.empty()) 
             {
-               coreModel->loadCoreSkeleton(FindFileInPathList(path + handler.mSkeletonFilename));
+               coreModel->loadCoreAnimation( filename, (*animItr).mName );
             }
             else
             {
-               LOG_ERROR("Can't find the skeleton file named:'" + path + handler.mSkeletonFilename + "'.");
+               LOG_ERROR("Can't find animation file named:'" + path + (*animItr).mFileName + "'.");
             }
+            ++animItr;
+         }
 
-            //load animations
-            std::vector<CharacterFileHandler::AnimationStruct>::iterator animItr = handler.mAnimations.begin();
-            while (animItr != handler.mAnimations.end())
+         //load meshes
+         std::vector<CharacterFileHandler::MeshStruct>::iterator meshItr = handler.mMeshes.begin();
+         while (meshItr != handler.mMeshes.end())
+         {
+            std::string filename = FindFileInPathList(path + (*meshItr).mFileName);
+            if (!filename.empty())
             {
-               std::string filename = FindFileInPathList(path + (*animItr).mFileName);
-
-               if (!filename.empty()) 
-               {
-                  coreModel->loadCoreAnimation( filename, (*animItr).mName );
-               }
-               else
-               {
-                  LOG_ERROR("Can't find animation file named:'" + path + (*animItr).mFileName + "'.");
-               }
-               ++animItr;
+               coreModel->loadCoreMesh( filename, (*meshItr).mName );
             }
-
-            //load meshes
-            std::vector<CharacterFileHandler::MeshStruct>::iterator meshItr = handler.mMeshes.begin();
-            while (meshItr != handler.mMeshes.end())
+            else
             {
-               std::string filename = FindFileInPathList(path + (*meshItr).mFileName);
-               if (!filename.empty())
-               {
-                  coreModel->loadCoreMesh( filename, (*meshItr).mName );
-               }
-               else
-               {
-                  LOG_ERROR("Can't find mesh file named:'" + path + (*meshItr).mFileName + "'.");
-               }
-               ++meshItr;
+               LOG_ERROR("Can't find mesh file named:'" + path + (*meshItr).mFileName + "'.");
             }
+            ++meshItr;
+         }
 
-            //load materials
-            std::vector<CharacterFileHandler::MaterialStruct>::iterator matItr = handler.mMaterials.begin();
-            while (matItr != handler.mMaterials.end())
+         //load materials
+         std::vector<CharacterFileHandler::MaterialStruct>::iterator matItr = handler.mMaterials.begin();
+         while (matItr != handler.mMaterials.end())
+         {
+            std::string filename = FindFileInPathList(path + (*matItr).mFileName);
+
+            if (!filename.empty())  
             {
-               std::string filename = FindFileInPathList(path + (*matItr).mFileName);
-
-               if (!filename.empty())  
-               {
-                  coreModel->loadCoreMaterial( filename, (*matItr).mName);
-               }
-               else
-               {
-                  LOG_ERROR("Can't find material file named:'" + path + (*matItr).mFileName + "'.");
-               }
-               ++matItr;
+               coreModel->loadCoreMaterial( filename, (*matItr).mName);
             }
-
-            mFilenameCoreModelMap[filename] = coreModel; //store it for later
-         }      
-      }
+            else
+            {
+               LOG_ERROR("Can't find material file named:'" + path + (*matItr).mFileName + "'.");
+            }
+            ++matItr;
+         }
+      }            
 
       return coreModel;
    }
@@ -165,8 +124,8 @@ namespace dtAnim
     *         be not valid (wrapper->valid()==false) if the file didn't load correctly.
     * @see SetDataFilePathList()
     * @throw SAXParseException If the file wasn't formatted correctly
-    */
-   dtCore::RefPtr<Cal3DModelWrapper> Cal3DLoader::Load( const std::string &filename )
+    */   
+   bool Cal3DLoader::Load(const std::string &filename, Cal3DModelData*& data_in)
    {
       std::string path;
       std::string::size_type stringIndex = filename.find_last_of("\\");
@@ -186,47 +145,33 @@ namespace dtAnim
          path = filename.substr(0, stringIndex + 1);
       }
 
-      dtCore::RefPtr<Cal3DModelWrapper> wrapper;
       CalCoreModel *coreModel = NULL;
 
-      //see if we have already created a CalCoreModel for this filename
-      FilenameCoreModelMap::iterator found = mFilenameCoreModelMap.find(filename);
-      if (found != mFilenameCoreModelMap.end())
+      CharacterFileHandler handler;
+      coreModel = GetCoreModel(handler, filename, path);
+      if(coreModel)
       {
-         coreModel = (*found).second;      
-      }
+         data_in = new Cal3DModelData(coreModel, filename);
+         LoadModelData(handler, coreModel, data_in);
+         LoadAllTextures(coreModel, path); //this should be a user-level process.
+         
+         return true;
+      }  
       else
       {
-         CharacterFileHandler handler;
-         coreModel = GetCoreModel(handler, filename, path);
-         if(coreModel)
-         {
-            LoadModelData(handler, coreModel);
-            LoadAllTextures(coreModel, path); //this should be a user-level process.
-         }  
-         else
-         {
-            LOG_ERROR("Unable to load character file: '" + filename + "'");
-         }
+         LOG_ERROR("Unable to load character file: '" + filename + "'");
       }
+   
 
-      if (coreModel != NULL)
-      {
-         CalModel *model = new CalModel(coreModel);
-         wrapper = new Cal3DModelWrapper(model);
-      }
-
-      return wrapper;
+      return false;
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void Cal3DLoader::LoadModelData(dtAnim::CharacterFileHandler& handler, CalCoreModel* model)
+   void Cal3DLoader::LoadModelData(dtAnim::CharacterFileHandler& handler, CalCoreModel* model, Cal3DModelData* modelData)
    {
-      dtCore::RefPtr<ModelData> modelData = new ModelData();
-
       //create animation wrappers
       int numAnims = model->getCoreAnimationCount();
-      modelData->mAnimWrappers.reserve(numAnims);
+      modelData->GetAnimationWrappers().reserve(numAnims);
 
       for(int i = 0; i < numAnims; ++i)
       {
@@ -234,7 +179,7 @@ namespace dtAnim
          if(anim)
          {
             AnimationWrapper* pWrapper = new AnimationWrapper(anim->getName(), i);
-            modelData->mAnimWrappers.push_back(pWrapper);
+            modelData->Add(pWrapper);
          }
          else
          {
@@ -245,8 +190,8 @@ namespace dtAnim
       //register animations
       if(!handler.mAnimationChannels.empty())
       {
-         AnimatableVector& vect = modelData->mAnimatables;
-         modelData->mAnimatables.reserve(vect.size());
+         int numAnimatables = handler.mAnimationChannels.size() + handler.mAnimationSequences.size();
+         modelData->GetAnimatables().reserve(numAnimatables);
 
          std::vector<CharacterFileHandler::AnimationChannelStruct>::iterator channelIter = handler.mAnimationChannels.begin();
          std::vector<CharacterFileHandler::AnimationChannelStruct>::iterator channelEnd = handler.mAnimationChannels.end();
@@ -255,11 +200,11 @@ namespace dtAnim
             CharacterFileHandler::AnimationChannelStruct& pStruct = *channelIter;
 
             int id = model->getCoreAnimationId(pStruct.mAnimationName);
-            if(id >= 0 && id < int(modelData->mAnimWrappers.size()))
+            if(id >= 0 && id < numAnims)
             {
                dtCore::RefPtr<AnimationChannel> pChannel = new AnimationChannel();
 
-               pChannel->SetAnimation(modelData->mAnimWrappers[id].get());
+               pChannel->SetAnimation(modelData->GetAnimationWrappers()[id].get());
 
                pChannel->SetName(pStruct.mName);
                pChannel->SetLooping(pStruct.mIsLooping);
@@ -271,7 +216,7 @@ namespace dtAnim
                pChannel->SetFadeOut(pStruct.mFadeOut);
                pChannel->SetSpeed(pStruct.mSpeed);
 
-               modelData->mAnimatables.push_back(pChannel.get());
+               modelData->Add(pChannel.get());
             }
             else
             {
@@ -301,8 +246,10 @@ namespace dtAnim
             for (; i != end; ++i)
             {
                const std::string& nameToFind = *i;
-               AnimatableVector::iterator animIter = modelData->mAnimatables.begin();
-               for (; animIter != modelData->mAnimatables.end(); ++animIter)
+               Cal3DModelData::AnimatableArray::iterator animIter = modelData->GetAnimatables().begin();
+               Cal3DModelData::AnimatableArray::iterator animIterEnd = modelData->GetAnimatables().end();
+
+               for (; animIter != animIterEnd; ++animIter)
                {
                   Animatable* animatable = animIter->get();
                   if (animatable->GetName() == nameToFind)
@@ -312,13 +259,11 @@ namespace dtAnim
                }
             }
             
-            modelData->mAnimatables.push_back(pSequence.get());
+            modelData->Add(pSequence.get());
 
          }
       }
 
-
-      mModelData[model] = modelData;
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -397,17 +342,5 @@ namespace dtAnim
    void Cal3DLoader::PurgeAllCaches()
    {
       mTextures.clear(); 
-      mModelData.clear();
-
-      FilenameCoreModelMap::iterator itr = mFilenameCoreModelMap.begin();
-
-      while (itr != mFilenameCoreModelMap.end())
-      {
-         delete itr->second;
-         itr->second = NULL;
-         ++itr;
-      }
-
-      mFilenameCoreModelMap.clear();
    }
 }

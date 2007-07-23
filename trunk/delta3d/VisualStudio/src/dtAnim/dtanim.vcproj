@@ -161,6 +161,9 @@
 				RelativePath="..\..\..\src\dtAnim\cal3dloader.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtAnim\cal3dmodeldata.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtAnim\cal3dmodelwrapper.cpp">
 			</File>
 			<File
@@ -238,6 +241,9 @@
 				RelativePath="..\..\..\inc\dtAnim\cal3dloader.h">
 			</File>
 			<File
+				RelativePath="..\..\..\inc\dtAnim\cal3dmodeldata.h">
+			</File>
+			<File
 				RelativePath="..\..\..\inc\dtAnim\cal3dmodelwrapper.h">
 			</File>
 			<File
@@ -248,9 +254,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtAnim\coremodel.h">
-			</File>
-			<File
-				RelativePath="..\..\..\inc\dtAnim\dtanim.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtAnim\export.h">
