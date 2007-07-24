@@ -39,7 +39,7 @@ namespace dtAI
       public:
 
          //render flags will determine how we draw our waypoints
-         enum RenderFlag{RENDER_DEFUALT = 0, RENDER_RED, RENDER_GREEN, RENDER_BLUE};
+         enum RenderFlag{RENDER_DEFAULT = 0, RENDER_RED, RENDER_GREEN, RENDER_BLUE};
 
       public:
    
