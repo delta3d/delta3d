@@ -48,7 +48,7 @@ namespace dtGame
          ///Logger major version number.  Equals 1
          static const unsigned char LOGGER_MAJOR_VERSION;
 
-         ///Logger minor version number.  Equals 0
+         ///Logger minor version number.  Equals 1
          static const unsigned char LOGGER_MINOR_VERSION;
 
          /**
@@ -372,6 +372,8 @@ namespace dtGame
          ///List of keyframes that were added during recording.
          ///These are inserted into the file if it flushed or closed.
          std::vector<LogKeyframe> mNewKeyFrames;
+         
+         int mCurrentMinorVersion;
    };
 
 }

@@ -37,7 +37,7 @@ namespace dtGame
    const std::string BinaryLogStream::LOGGER_MSGDB_MAGIC_NUMBER("GMLOGMSGDB");
    const std::string BinaryLogStream::LOGGER_INDEX_MAGIC_NUMBER("GMLOGINDEXTAB");
    const unsigned char BinaryLogStream::LOGGER_MAJOR_VERSION = 1;
-   const unsigned char BinaryLogStream::LOGGER_MINOR_VERSION = 0;
+   const unsigned char BinaryLogStream::LOGGER_MINOR_VERSION = 1;
 
    const std::string BinaryLogStream::MESSAGE_DB_EXT(".dlm");
    const std::string BinaryLogStream::INDEX_EXT(".dli");
@@ -48,10 +48,9 @@ namespace dtGame
    const unsigned char BinaryLogStream::END_SECTION_DEID = 255;
 
    //////////////////////////////////////////////////////////////////////////
-   BinaryLogStream::BinaryLogStream(MessageFactory &msgFactory) :
-      LogStream(msgFactory)
+   BinaryLogStream::BinaryLogStream(MessageFactory &msgFactory) : LogStream(msgFactory),
+      mMessagesFile(NULL), mIndexTablesFile(NULL),  mCurrentMinorVersion(0)
    {
-      mMessagesFile = mIndexTablesFile = NULL;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -186,6 +185,7 @@ namespace dtGame
       //contained in it.
       IndexTableHeader indexHeader;
       ReadIndexTableHeader(indexHeader);
+      mCurrentMinorVersion = indexHeader.minorVersion;
       ReadIndexTables();
 
       //Close the index file stream.. When we flush the newly created tags and keyframes,
@@ -722,8 +722,22 @@ namespace dtGame
       unsigned int bufferSize;
 
       stream << keyFrame.GetName() << keyFrame.GetDescription() << keyFrame.GetSimTimeStamp() <<
-         keyFrame.GetUniqueId() << keyFrame.GetTagUniqueId() <<
-         keyFrame.GetActiveMap() << keyFrame.GetLogFileOffset();
+         keyFrame.GetUniqueId() << keyFrame.GetTagUniqueId();
+
+      const LogKeyframe::NameVector& mapNames = keyFrame.GetActiveMaps();
+      
+      unsigned short mapCount = mapNames.size();
+      stream << mapCount;
+      
+      LogKeyframe::NameVector::const_iterator i = mapNames.begin();
+      LogKeyframe::NameVector::const_iterator end = mapNames.end();
+      
+      for (; i != end; ++i)
+      {
+         stream << *i;
+      }
+         
+      stream << keyFrame.GetLogFileOffset();
       bufferSize = stream.GetBufferSize();
 
       WriteToLog((char *)&BinaryLogStream::KEYFRAME_DEID,1,1,mIndexTablesFile);
@@ -746,18 +760,42 @@ namespace dtGame
       CheckFileStatus(mIndexTablesFile);
 
       DataStream stream(tempBuffer,bufferSize);
-      std::string name,desc,activeMap;
+      std::string name,desc;
+      LogKeyframe::NameVector activeMaps;
       double simTime;
       long offset;
       dtCore::UniqueId uuid,taguuid;
-      stream >> name >> desc >> simTime >> uuid >> taguuid >>activeMap >> offset;
+      stream >> name >> desc >> simTime >> uuid >> taguuid;
+      
+      //version 1.0 has one map
+      if (mCurrentMinorVersion == 0)
+      {
+         std::string map;
+         stream >> map;
+         activeMaps.push_back(map);
+      }
+      else
+      {
+         //version 1.1 and greater have many maps. 
+         unsigned short mapCount;
+         stream >> mapCount;
+         activeMaps.reserve(mapCount);
+         for (unsigned i = 0; i < mapCount; ++i)
+         {
+            std::string map;
+            stream >> map;
+            activeMaps.push_back(map);
+         }
+      }
 
+      stream >> offset;
+      
       keyFrame.SetName(name);
       keyFrame.SetDescription(desc);
       keyFrame.SetSimTimeStamp(simTime);
       keyFrame.SetUniqueId(uuid);
       keyFrame.SetTagUniqueId(taguuid);
-      keyFrame.SetActiveMap(activeMap);
+      keyFrame.SetActiveMaps(activeMaps);
       keyFrame.SetLogFileOffset(offset);
       return keyFrame;
    }

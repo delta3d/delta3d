@@ -2158,7 +2158,7 @@ namespace dtHLAGM
          }
          
          ++messageToInteractionIterator;
-      }      
+      }
    }
    
    /////////////////////////////////////////////////////////////////////////////////
@@ -2401,6 +2401,8 @@ namespace dtHLAGM
                //be sure the buffer is deleted.
                if (buffer != NULL)
                   ParameterTranslator::DeallocateBuffer(buffer);
+               
+               throw;
             }
          }      
       }
@@ -2509,6 +2511,7 @@ namespace dtHLAGM
                //be sure the buffer is deleted.
                if (buffer != NULL)
                   ParameterTranslator::DeallocateBuffer(buffer);
+               throw;
             }
 
          }

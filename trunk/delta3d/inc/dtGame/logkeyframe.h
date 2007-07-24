@@ -21,9 +21,10 @@
 #ifndef DELTA_LOGKEYFRAME
 #define DELTA_LOGKEYFRAME
 
-#include "dtGame/export.h"
+#include <dtGame/export.h>
 #include <dtCore/uniqueid.h>
 #include <string>
+#include <vector>
 
 namespace dtGame
 {
@@ -35,12 +36,11 @@ namespace dtGame
    class DT_GAME_EXPORT LogKeyframe
    {
       public:
-
+         typedef std::vector<std::string> NameVector;
+         
          // Constructor
-         LogKeyframe() : mSimTimeStamp(0), mLogFileOffset(0) 
-         { 
-            mTagId = dtCore::UniqueId(""); 
-         }
+         LogKeyframe() : mTagId(""), mSimTimeStamp(0), mLogFileOffset(0) 
+         {}
          
          virtual ~LogKeyframe() {}
 
@@ -109,15 +109,18 @@ namespace dtGame
 
          /**
           * Gets the map name that was active when this keyframe was generated
-          * @return The map name
+          * @return The map vector
           */
-         const std::string& GetActiveMap() const { return mActiveMap; }
+         const NameVector& GetActiveMaps() const { return mActiveMaps; }
 
          /**
           * Sets the map name that was active when this keyframe was generated
           * @param The map name
           */
-         void SetActiveMap(const std::string &newActiveMap) { mActiveMap = newActiveMap; }
+         void SetActiveMaps(const NameVector& newActiveMaps) 
+         { 
+            mActiveMaps = newActiveMaps; 
+         }
 
          /**
           * Gets the file offset used by the server.  Note that this value is 
@@ -136,7 +139,6 @@ namespace dtGame
           */
          void SetLogFileOffset(long newLogFileOffset) { mLogFileOffset = newLogFileOffset; }
          
-
 
          bool operator==(const LogKeyframe& compareTo) const
          {
@@ -165,7 +167,7 @@ namespace dtGame
          dtCore::UniqueId mUniqueId;
          dtCore::UniqueId mTagId;
          double mSimTimeStamp;
-         std::string mActiveMap;
+         NameVector mActiveMaps;
          long mLogFileOffset;
 
    };

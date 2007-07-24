@@ -180,6 +180,21 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   const std::string& GameManager::GetCurrentMap() const
+   { 
+      static std::string emptyString;
+      if (mLoadedMaps.empty())
+         return emptyString;
+      return mLoadedMaps[0]; 
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   const GameManager::NameVector& GameManager::GetCurrentMapSet() const
+   { 
+      return mLoadedMaps; 
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    dtCore::Scene& GameManager::GetScene() { return *mScene; }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -368,7 +383,7 @@ namespace dtGame
          mMapChangeStateData->ContinueMapChange();
          if (mMapChangeStateData->GetCurrentState() == MapChangeStateData::MapChangeState::IDLE)
          {
-            mLoadedMap = mMapChangeStateData->GetNewMapName();
+            mLoadedMaps = mMapChangeStateData->GetNewMapNames();
          }
       }
 
@@ -1366,25 +1381,42 @@ namespace dtGame
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, changeMessage.c_str());
          throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION, changeMessage, __FILE__, __LINE__);
       }
-      mMapChangeStateData->BeginMapChange(mLoadedMap, "", false, false);
+      std::vector<std::string> emptyVec;
+      mMapChangeStateData->BeginMapChange(mLoadedMaps, emptyVec, false, false);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::ChangeMap(const std::string &mapName, bool addBillboards, bool enableDatabasePaging) 
    {
+      std::vector<std::string> names;
+      names.push_back(mapName);
+      ChangeMapSet(names, addBillboards, enableDatabasePaging);
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void GameManager::ChangeMapSet(const GameManager::NameVector& mapNames, bool addBillboards, bool enableDatabasePaging)
+   {
+      if (mapNames.empty())
+         throw dtUtil::Exception(ExceptionEnum::INVALID_PARAMETER, "At least one map must be passed to ChangeMapSet.", __FILE__, __LINE__);
+      
+      std::vector<std::string>::const_iterator i = mapNames.begin();
+      std::vector<std::string>::const_iterator end = mapNames.end();
+      for (; i != end; ++i)
+      {
+         if (i->empty())
+            throw dtUtil::Exception(ExceptionEnum::INVALID_PARAMETER, "Empty string is not a valid map name.", __FILE__, __LINE__);
+      }
+      
       if (mMapChangeStateData->GetCurrentState() != MapChangeStateData::MapChangeState::IDLE)
       {
-         static std::string changeMessage("You may not change the map while a map change is already in progress.");
+         static std::string changeMessage("You may not change the map set while a map change is already in progress.");
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, changeMessage.c_str());
          throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION, changeMessage, __FILE__, __LINE__);
       }
 
-      if (mapName.empty())
-         throw dtUtil::Exception(ExceptionEnum::INVALID_PARAMETER, "Empty string is not a valid map name.", __FILE__, __LINE__);
-
-      mMapChangeStateData->BeginMapChange(mLoadedMap, mapName, addBillboards, enableDatabasePaging);
+      mMapChangeStateData->BeginMapChange(mLoadedMaps, mapNames, addBillboards, enableDatabasePaging);
    }
-
+   
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::SetTimer(const std::string& name, const GameActorProxy* aboutActor,
       float time, bool repeat, bool realTime)
@@ -1673,11 +1705,21 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::Shutdown()
    {
-      if(!mLoadedMap.empty())
+      if(!mLoadedMaps.empty())
       {
-         dtDAL::Map& map = dtDAL::Project::GetInstance().GetMap(mLoadedMap);
-         dtDAL::Project::GetInstance().CloseMap(map, true);
-         mLoadedMap.clear();
+         dtDAL::Project& project = dtDAL::Project::GetInstance();
+
+         GameManager::NameVector::const_iterator i = mLoadedMaps.begin();
+         GameManager::NameVector::const_iterator end = mLoadedMaps.end();
+         for (; i != end; ++i)
+         {
+            
+            dtDAL::Map& map = project.GetMap(*i);
+            project.CloseMap(map, true);
+         }
+         //clear the maps vector because if someone happens to call shutdown again, 
+         //it will reopen all the maps.
+         mLoadedMaps.clear();
       }
 
       while(!mComponentList.empty())

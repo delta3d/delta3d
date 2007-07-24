@@ -270,7 +270,12 @@ void GMLoggerTests::setUp()
    keyframe.SetName("myName");
    keyframe.SetDescription("myDescription");
    keyframe.SetSimTimeStamp(d1);
-   keyframe.SetActiveMap("myMap");
+   
+   dtGame::LogStatus::NameVector mapNames;
+   mapNames.push_back("myMap");
+   mapNames.push_back("myMap2");
+   
+   keyframe.SetActiveMaps(mapNames);
    keyframe.SetLogFileOffset(long2);
    keyframe.SetTagUniqueId(dtCore::UniqueId("taguniqueid"));
 
@@ -285,7 +290,7 @@ void GMLoggerTests::setUp()
    status.SetAutoRecordKeyframeInterval(d2);
    status.SetCurrentRecordDuration(d4);
    status.SetNumMessages(long1);
-   status.SetActiveMap("myMap");
+   status.SetActiveMaps(mapNames);
    status.SetLogFile("myLogFile");
 
    try
@@ -671,7 +676,11 @@ void GMLoggerTests::TestBinaryLogStreamKeyFrames()
       newFrame.SetName("bob");
       newFrame.SetDescription("bob_desc");
       newFrame.SetSimTimeStamp(10.001);
-      newFrame.SetActiveMap("testmap.xml");
+      
+      dtGame::LogStatus::NameVector mapNames;
+      mapNames.push_back("testmap");
+
+      newFrame.SetActiveMaps(mapNames);
       newFrame.SetTagUniqueId(dtCore::UniqueId("tag"));
       stream->InsertKeyFrame(newFrame);
       stream->GetKeyFrameIndex(kfList);
@@ -683,7 +692,7 @@ void GMLoggerTests::TestBinaryLogStreamKeyFrames()
       CPPUNIT_ASSERT_MESSAGE("Keyframe names should be equal.",frame2.GetName() == newFrame.GetName());
       CPPUNIT_ASSERT_MESSAGE("Keyframe descriptions should be equal.",frame2.GetDescription() == newFrame.GetDescription());
       CPPUNIT_ASSERT_MESSAGE("Keyframe simulation times should be equal.",frame2.GetSimTimeStamp() == newFrame.GetSimTimeStamp());
-      CPPUNIT_ASSERT_MESSAGE("Keyframe active map names should be equal.",frame2.GetActiveMap() == newFrame.GetActiveMap());
+      CPPUNIT_ASSERT_MESSAGE("Keyframe active map names should be equal.",frame2.GetActiveMaps() == newFrame.GetActiveMaps());
       stream->Close();
 
       //Now we need to make sure the key frames got saved and loaded from the index tables file properly.
@@ -697,7 +706,7 @@ void GMLoggerTests::TestBinaryLogStreamKeyFrames()
       CPPUNIT_ASSERT_MESSAGE("Keyframe names should be equal.",frame2.GetName() == newFrame.GetName());
       CPPUNIT_ASSERT_MESSAGE("Keyframe descriptions should be equal.",frame2.GetDescription() == newFrame.GetDescription());
       CPPUNIT_ASSERT_MESSAGE("Keyframe simulation times should be equal.",frame2.GetSimTimeStamp() == newFrame.GetSimTimeStamp());
-      CPPUNIT_ASSERT_MESSAGE("Keyframe active map names should be equal.",frame2.GetActiveMap() == newFrame.GetActiveMap());
+      CPPUNIT_ASSERT_MESSAGE("Keyframe active map names should be equal.",frame2.GetActiveMaps() == newFrame.GetActiveMaps());
       stream->Close();
 
       //Now make sure we can read and write many many key frames.
@@ -705,7 +714,11 @@ void GMLoggerTests::TestBinaryLogStreamKeyFrames()
       std::vector<dtGame::LogKeyframe> framesToCompare;
       newFrame.SetName("bob");
       newFrame.SetDescription("bob_desc");
-      newFrame.SetActiveMap("activemap.xml");
+      
+      mapNames.clear();
+      mapNames.push_back("activemap");
+
+      newFrame.SetActiveMaps(mapNames);
       stream->Create(TESTS_DIR,LOGFILE);
       for (i=0; i<100; i++)
       {
@@ -729,7 +742,7 @@ void GMLoggerTests::TestBinaryLogStreamKeyFrames()
          CPPUNIT_ASSERT_MESSAGE("Keyframe names should be equal.",kfList[i].GetName() == framesToCompare[i].GetName());
          CPPUNIT_ASSERT_MESSAGE("Keyframe descriptions should be equal.",kfList[i].GetDescription() == framesToCompare[i].GetDescription());
          CPPUNIT_ASSERT_MESSAGE("Keyframe simulation times should be equal.",kfList[i].GetSimTimeStamp() == framesToCompare[i].GetSimTimeStamp());
-         CPPUNIT_ASSERT_MESSAGE("Keyframe active map names should be equal.",kfList[i].GetActiveMap() == framesToCompare[i].GetActiveMap());
+         CPPUNIT_ASSERT_MESSAGE("Keyframe active map names should be equal.",kfList[i].GetActiveMaps() == framesToCompare[i].GetActiveMaps());
       }
    }
    catch (const dtUtil::Exception &e)
@@ -772,7 +785,11 @@ void GMLoggerTests::TestBinaryLogStreamTagsAndKeyFrames()
             kf.SetUniqueId(dtCore::UniqueId());
             kf.SetName("bobkf");
             kf.SetDescription("bobkf_desc");
-            kf.SetActiveMap("bobtestmap.xml");
+            
+            dtGame::LogStatus::NameVector mapNames;
+            mapNames.push_back("bobtestmap");
+
+            kf.SetActiveMaps(mapNames);
             kf.SetTagUniqueId(dtCore::UniqueId("tagunique" + dtUtil::ToString(i)));
             kf.SetSimTimeStamp(i*10);
             kf.SetLogFileOffset(i);
@@ -798,7 +815,7 @@ void GMLoggerTests::TestBinaryLogStreamTagsAndKeyFrames()
          CPPUNIT_ASSERT_MESSAGE("Keyframe names should be equal.",kfList[i].GetName() == kfCompareList[i].GetName());
          CPPUNIT_ASSERT_MESSAGE("Keyframe descriptions should be equal.",kfList[i].GetDescription() == kfCompareList[i].GetDescription());
          CPPUNIT_ASSERT_MESSAGE("Keyframe simulation times should be equal.",kfList[i].GetSimTimeStamp() == kfCompareList[i].GetSimTimeStamp());
-         CPPUNIT_ASSERT_MESSAGE("Keyframe active map names should be equal.",kfList[i].GetActiveMap() == kfCompareList[i].GetActiveMap());
+         CPPUNIT_ASSERT_MESSAGE("Keyframe active map names should be equal.",kfList[i].GetActiveMaps() == kfCompareList[i].GetActiveMaps());
       }
       for (i=0; i<tagList.size(); i++)
       {
@@ -1177,7 +1194,11 @@ void GMLoggerTests::TestLoggerGetKeyframes()
       dtGame::LogKeyframe keyFrame;
       keyFrame.SetName("bob_keyframe");
       keyFrame.SetDescription("bob_description");
-      keyFrame.SetActiveMap("bob_map");
+
+      dtGame::LogStatus::NameVector mapNames;
+      mapNames.push_back("bob_map");
+
+      keyFrame.SetActiveMaps(mapNames);
       logController->RequestCaptureKeyframe(keyFrame);
       dtCore::System::GetInstance().Step();
       SLEEP(10);
@@ -1214,14 +1235,19 @@ void GMLoggerTests::TestLoggerGetKeyframes()
       SLEEP(10);
 
       //Now go through a loop adding keyframe after keyframe...
-      int i;
+      unsigned i;
       std::string loopCount;
       for (i=0; i<100; i++)
       {
          loopCount = dtUtil::ToString(i);
          keyFrame.SetName("bob_keyframe" + loopCount);
          keyFrame.SetDescription("bob_description" + loopCount);
-         keyFrame.SetActiveMap("bob_map" + loopCount);
+         
+         mapNames = keyFrame.GetActiveMaps();
+         mapNames.push_back("bob_map" + loopCount);
+
+         keyFrame.SetActiveMaps(mapNames);
+
          logController->RequestCaptureKeyframe(keyFrame);
          dtCore::System::GetInstance().Step();
          SLEEP(10);
@@ -1251,12 +1277,15 @@ void GMLoggerTests::TestLoggerGetKeyframes()
       {
          loopCount = dtUtil::ToString(i-1);
          dtGame::LogKeyframe &k = kfList[i];
-         CPPUNIT_ASSERT_MESSAGE("Names were not equal on keyframe " + loopCount,
-            k.GetName() == std::string("bob_keyframe" + loopCount));
-         CPPUNIT_ASSERT_MESSAGE("Descriptions were not equal on keyframe " + loopCount,
-            k.GetDescription() == std::string("bob_description" + loopCount));
-         CPPUNIT_ASSERT_MESSAGE("Active map names were not equal on keyframe " + loopCount,
-            k.GetActiveMap() == std::string("bob_map" + loopCount));
+         CPPUNIT_ASSERT_EQUAL_MESSAGE("Names were not equal on keyframe " + loopCount,
+            std::string("bob_keyframe" + loopCount), k.GetName());
+         CPPUNIT_ASSERT_EQUAL_MESSAGE("Descriptions were not equal on keyframe " + loopCount,
+            std::string("bob_description" + loopCount), k.GetDescription());
+         CPPUNIT_ASSERT_EQUAL_MESSAGE("There should be loopCount + 1 maps where loopCount == " + loopCount,
+            size_t(i + 1), k.GetActiveMaps().size());
+                  
+         CPPUNIT_ASSERT_EQUAL_MESSAGE("Active map names were not equal on keyframe " + loopCount,
+            std::string("bob_map" + loopCount), k.GetActiveMaps()[i]);
       }
 
       stream->Close();
@@ -1286,8 +1315,11 @@ void GMLoggerTests::CompareKeyframeLists(const std::vector<dtGame::LogKeyframe> 
       CPPUNIT_ASSERT_MESSAGE("Keyframe descriptions were not equal.  Should be: " +
          first.GetDescription() + " but was " + second.GetDescription(),
          first.GetDescription() == second.GetDescription());
-      CPPUNIT_ASSERT_MESSAGE("Keyframe active maps were not equal.  Should be: " +
-         first.GetActiveMap() + " but was " + second.GetActiveMap(),first.GetActiveMap() == second.GetActiveMap());
+      
+      CPPUNIT_ASSERT_EQUAL(first.GetActiveMaps().size(), second.GetActiveMaps().size());
+
+      CPPUNIT_ASSERT_MESSAGE("Keyframe active maps were not equal. First map should be: " +
+         first.GetActiveMaps()[0] + " but was " + second.GetActiveMaps()[0], first.GetActiveMaps() == second.GetActiveMaps());
       CPPUNIT_ASSERT_MESSAGE("Keyframe unique id's were not equal.  Should be: " +
          first.GetUniqueId().ToString() + " but was " + second.GetUniqueId().ToString(),
          first.GetUniqueId() == second.GetUniqueId());
@@ -1319,7 +1351,11 @@ void GMLoggerTests::TestLoggerKeyframeListMessage()
          kf.SetDescription("Description One" + num);
          kf.SetSimTimeStamp(i*10.0f);
          kf.SetUniqueId("UniqueID" + num);
-         kf.SetActiveMap("ActiveMap" + num);
+
+         dtGame::LogKeyframe::NameVector mapNames;
+         mapNames.push_back("ActiveMap" + num);
+         kf.SetActiveMaps(mapNames);
+         
          kf.SetTagUniqueId("TagUniqueID" + num);
          testList.push_back(kf);
       }
@@ -1349,11 +1385,13 @@ void GMLoggerTests::TestLoggerKeyframeListMessage()
    }
    catch (const dtUtil::Exception &e)
    {
-      CPPUNIT_FAIL(e.What());
+      
+      CPPUNIT_FAIL(e.ToString());
    }
    catch (const std::exception &e)
    {
       CPPUNIT_FAIL(std::string("Caught exception of type: ") + typeid(e).name() + " " + e.what());
+      throw;
    }
 }
 
@@ -1732,7 +1770,9 @@ void GMLoggerTests::TestLoggerKeyframeMessage()
       CPPUNIT_ASSERT_EQUAL(std::string("myName"),keyframe.GetName());
       CPPUNIT_ASSERT_EQUAL(std::string("myDescription"),keyframe.GetDescription());
       CPPUNIT_ASSERT(osg::equivalent(d1, keyframe.GetSimTimeStamp(), 1e-2));
-      CPPUNIT_ASSERT_EQUAL(std::string("myMap"),keyframe.GetActiveMap());
+      CPPUNIT_ASSERT_EQUAL(2U, unsigned(keyframe.GetActiveMaps().size()));
+      CPPUNIT_ASSERT_EQUAL(std::string("myMap"), keyframe.GetActiveMaps()[0]);
+      CPPUNIT_ASSERT_EQUAL(std::string("myMap2"), keyframe.GetActiveMaps()[1]);
       CPPUNIT_ASSERT_EQUAL(long2,keyframe.GetLogFileOffset());
 
       // test equality ---  <, >, !=, ==
@@ -1755,7 +1795,7 @@ void GMLoggerTests::TestLoggerKeyframeMessage()
       CPPUNIT_ASSERT_MESSAGE("Get/Set LogKeyframe on LogCaptureKeyframeMessage should have correct time stamp",
          osg::equivalent(keyframe.GetSimTimeStamp(), keyframe5.GetSimTimeStamp(), 1e-2));
       CPPUNIT_ASSERT_MESSAGE("Get/Set LogKeyframe on LogCaptureKeyframeMessage should have correct map",
-         keyframe.GetActiveMap() == keyframe5.GetActiveMap());
+         keyframe.GetActiveMaps() == keyframe5.GetActiveMaps());
       CPPUNIT_ASSERT_MESSAGE("Get/Set LogKeyframe on LogCaptureKeyframeMessage should have correct tag "
          "uniqueid.",keyframe.GetTagUniqueId() == keyframe5.GetTagUniqueId());
    }
@@ -1788,7 +1828,8 @@ void GMLoggerTests::TestLoggerStatusMessage()
       CPPUNIT_ASSERT_MESSAGE("Status should be able to set/get keyframe interval", osg::equivalent(d2, status.GetAutoRecordKeyframeInterval(), 1e-2));
       CPPUNIT_ASSERT_MESSAGE("Status should be able to set/get record duration", osg::equivalent(d4, status.GetCurrentRecordDuration(), 1e-2));
       CPPUNIT_ASSERT_MESSAGE("Status should be able to set/get num recorded messages", status.GetNumMessages() == long1);
-      CPPUNIT_ASSERT_MESSAGE("Status should be able to set/get active map", status.GetActiveMap() == "myMap");
+      CPPUNIT_ASSERT_MESSAGE("Status should be able to set/get active map", status.GetActiveMaps()[0] == "myMap");
+      CPPUNIT_ASSERT_MESSAGE("Status should be able to set/get active map", status.GetActiveMaps()[1] == "myMap2");
       CPPUNIT_ASSERT_MESSAGE("Status should be able to set/get log file", status.GetLogFile() == "myLogFile");
 
       // test copy constructor of status
@@ -1799,7 +1840,8 @@ void GMLoggerTests::TestLoggerStatusMessage()
       CPPUNIT_ASSERT_MESSAGE("LogStatus Copy Constructor should be able to set keyframe interval", osg::equivalent(d2, status2.GetAutoRecordKeyframeInterval(), 1e-2));
       CPPUNIT_ASSERT_MESSAGE("LogStatus Copy Constructor should be able to set record duration", osg::equivalent(d4, status2.GetCurrentRecordDuration(), 1e-2));
       CPPUNIT_ASSERT_MESSAGE("LogStatus Copy Constructor should be able to set num recorded messages", status2.GetNumMessages() == long1);
-      CPPUNIT_ASSERT_MESSAGE("LogStatus Copy Constructor should be able to set active map", status2.GetActiveMap() == "myMap");
+      CPPUNIT_ASSERT_MESSAGE("LogStatus Copy Constructor should be able to set active maps", status2.GetActiveMaps()[0] == "myMap");
+      CPPUNIT_ASSERT_MESSAGE("LogStatus Copy Constructor should be able to set active maps", status2.GetActiveMaps()[1] == "myMap2");
       CPPUNIT_ASSERT_MESSAGE("LogStatus Copy Constructor should be able to set log file", status2.GetLogFile() == "myLogFile");
 
       // test assignment of status
@@ -1811,7 +1853,8 @@ void GMLoggerTests::TestLoggerStatusMessage()
       CPPUNIT_ASSERT_MESSAGE("LogStatus Assignment(=) should be able to set keyframe interval", osg::equivalent(d2, status3.GetAutoRecordKeyframeInterval(), 1e-2));
       CPPUNIT_ASSERT_MESSAGE("LogStatus Assignment(=) should be able to set record duration", osg::equivalent(d4, status3.GetCurrentRecordDuration(), 1e-2));
       CPPUNIT_ASSERT_MESSAGE("LogStatus Assignment(=) should be able to set num recorded messages", status3.GetNumMessages() == long1);
-      CPPUNIT_ASSERT_MESSAGE("LogStatus Assignment(=) should be able to set active map", status3.GetActiveMap() == "myMap");
+      CPPUNIT_ASSERT_MESSAGE("LogStatus Assignment(=) should be able to set active maps", status3.GetActiveMaps()[0] == "myMap");
+      CPPUNIT_ASSERT_MESSAGE("LogStatus Assignment(=) should be able to set active maps", status3.GetActiveMaps()[1] == "myMap2");
       CPPUNIT_ASSERT_MESSAGE("LogStatus Assignment(=) should be able to set log file", status3.GetLogFile() == "myLogFile");
 
       // set the status on the message.  Get it back. should be same as what we set.
@@ -1828,8 +1871,8 @@ void GMLoggerTests::TestLoggerStatusMessage()
          osg::equivalent(status.GetCurrentRecordDuration(), status4.GetCurrentRecordDuration(), 1e-2));
       CPPUNIT_ASSERT_MESSAGE("Get/Set LogStatus on LogStatusMessage should have correct num recorded messages",
          status.GetNumMessages() == status4.GetNumMessages());
-      CPPUNIT_ASSERT_MESSAGE("Get/Set LogStatus on LogStatusMessage should have correct active map",
-         status.GetActiveMap() == status4.GetActiveMap());
+      CPPUNIT_ASSERT_MESSAGE("Get/Set LogStatus on LogStatusMessage should have correct active maps",
+         status.GetActiveMaps() == status4.GetActiveMaps());
       CPPUNIT_ASSERT_MESSAGE("Get/Set LogStatus on LogStatusMessage should have correct log file",
          status.GetLogFile() == status4.GetLogFile());
    }
@@ -2299,14 +2342,14 @@ void GMLoggerTests::TestControllerSignals()
          testSignal->mStatusSignalReceived);
       dtGame::LogStatus resultStatus = testSignal->mStatus;
       CPPUNIT_ASSERT_MESSAGE("Log Controller should have status data from the signal for message LOG_INFO_STATUS.",
-         (status.GetActiveMap() == resultStatus.GetActiveMap()) && (status.GetCurrentRecordDuration() == resultStatus.GetCurrentRecordDuration()));
+         (status.GetActiveMaps() == resultStatus.GetActiveMaps()) && (status.GetCurrentRecordDuration() == resultStatus.GetCurrentRecordDuration()));
 
       // add tests for the log_info keyframes, tags, and logs
 
       // test the status message getting to the controller
       dtGame::LogStatus contStatus = logController->GetLastKnownStatus();
       CPPUNIT_ASSERT_MESSAGE("Log Controller should have a copy of the last known status from the last LOG_INFO_STATUS message.",
-         (status.GetActiveMap() == contStatus.GetActiveMap()) && (status.GetCurrentRecordDuration() == contStatus.GetCurrentRecordDuration()));
+         (status.GetActiveMaps() == contStatus.GetActiveMaps()) && (status.GetCurrentRecordDuration() == contStatus.GetCurrentRecordDuration()));
 
    }
    catch (const dtUtil::Exception &e)
@@ -2532,14 +2575,20 @@ void GMLoggerTests::TestServerLogger2()
       // Try changing map, then request a status, see if status has correct map
 
       testSignal->Reset();
-      message = mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_MAP_LOADED);
-      dtGame::MapLoadedMessage *mapLoadedMsg = (dtGame::MapLoadedMessage *) message.get();
-      mapLoadedMsg->SetLoadedMapName("MyBogusMapName");
+      dtCore::RefPtr<dtGame::MapMessage> mapLoadedMsg;
+      msgFactory.CreateMessage(dtGame::MessageType::INFO_MAP_LOADED, mapLoadedMsg);
+      dtGame::GameManager::NameVector mapNames;
+      mapNames.push_back("myBogusMapName");
+      mapNames.push_back("myBogusMapName2");
+      mapNames.push_back("myBogusMapName3");
+      
+      mapLoadedMsg->SetMapNames(mapNames);
+
       mGameManager->SendMessage(*mapLoadedMsg);
       logController->RequestServerGetStatus();
       SLEEP(10); // tick the GM so it can send the messages
       dtCore::System::GetInstance().Step();
-      CPPUNIT_ASSERT_MESSAGE("Change map msg should change map on logstatus", testSignal->mStatus.GetActiveMap() == "MyBogusMapName");
+      CPPUNIT_ASSERT_MESSAGE("Change map msg should change map on logstatus", testSignal->mStatus.GetActiveMaps() == mapNames);
 
    }
    catch (const dtUtil::Exception &e)

@@ -19,7 +19,7 @@
  * Curtiss Murphy
  */
 #include <prefix/dtgameprefix-src.h>
-#include "dtGame/logstatus.h"
+#include <dtGame/logstatus.h>
 
 namespace dtGame
 {
@@ -30,5 +30,25 @@ namespace dtGame
    const LogStateEnumeration LogStateEnumeration::LOGGER_STATE_RECORD("LOGGER_STATE_RECORD");
    const LogStateEnumeration LogStateEnumeration::LOGGER_STATE_IDLE("LOGGER_STATE_IDLE");
 
+   /////////////////////////////////////////////////////////////
+   LogStatus::LogStatus() : 
+      mStateEnum(&LogStateEnumeration::LOGGER_STATE_IDLE), 
+      mCurrentSimTime(0), mAutoRecordKeyframeInterval(0),
+      mCurrentRecordDuration(0), mNumMessages(0)
+   {
+   }
+   /////////////////////////////////////////////////////////////
+   void LogStatus::SetActiveMaps(const NameVector& newActiveMaps) 
+   { 
+      mActiveMaps = newActiveMaps; 
+   }
 
+   /////////////////////////////////////////////////////////////
+   std::ostream& operator<<(std::ostream &stream,const LogStatus &me)
+   {
+      stream << "LogStatus: State[" << me.mStateEnum->GetName() <<
+         "], SimTime[" << me.mCurrentSimTime << "], Map[" << me.mActiveMaps[0] <<
+            "], LogFile[" << me.mLogFile << "], #Messagse[" << me.mNumMessages << "]";
+      return stream;
+   }
 }

@@ -23,6 +23,7 @@
 
 #include <dtGame/message.h>
 #include <dtGame/messageparameter.h>
+#include <dtGame/basemessages.h>
 
 namespace dtUtil
 {
@@ -44,14 +45,14 @@ namespace dtGame
     * @par
     *    Related Message Types: LOG_INFO_STATUS\n
     *    Parameter: CurrentSimTime: The server's current sim time (always set, any state, double).\n
-    *    Parameter: ActiveMap: The current loaded map (may be empty, any state, string).\n
+    *    Parameter: ActiveMaps: The current loaded set (may be empty, any state, string).\n
     *    Parameter: LogFile: The current log file (may be empty, any state, string).\n
     *    Parameter: AutoRecordKeyframeInterval: Interval between automatic keyframes. Zero means no auto keyframes. (record only, double).\n
     *    Parameter: EstPlaybackTimeRemaining: Estimated time remaining for playback of cur file (playback only, double).\n
     *    Parameter: CurrentRecordDuration: Current length of the active recoring (record only, double).\n
     *    Parameter: NumRecordedMessages: Number of messages logged in current recording (record only, unsigned long).\n
     */
-   class DT_GAME_EXPORT LogStatusMessage : public Message
+   class DT_GAME_EXPORT LogStatusMessage : public MapMessage
    {      
       public:          
          /*
@@ -186,17 +187,13 @@ namespace dtGame
           * Gets the list of keyframes this message contains.
           * @return A list of keyframe objects.
           */
-         const std::vector<LogKeyframe> &GetKeyframeList() const { return mKeyframeList; }         
+         const std::vector<LogKeyframe>& GetKeyframeList() const;
          
          /**
           * Overloaded to update the internal cached keyframe list.
           * @param source The string to deserialized into a message.
           */
-         virtual void FromString(const std::string &source)
-         {
-            Message::FromString(source);
-            UpdateInternalKeyframeList();
-         }
+         virtual void FromString(const std::string &source);
          
          /**
           * Overloaded to update the internal cached keyframe list.
@@ -240,20 +237,13 @@ namespace dtGame
           * Gets the list of tags this message contains.
           * @return A list of strings corresponding to keyframes.
           */
-         const std::vector<LogTag> &GetTagList() const
-         {
-            return mTagList;
-         }
+         const std::vector<LogTag> &GetTagList() const;
          
          /**
           * Overloaded to update the internal cached tags list.
           * @param source The string to deserialized into a message.
           */
-         virtual void FromString(const std::string &source)
-         {
-            Message::FromString(source);
-            UpdateInternalTagList();
-         }
+         virtual void FromString(const std::string &source);
          
          /**
           * Overloaded to update the internal cached tags list.
@@ -372,9 +362,9 @@ namespace dtGame
     *    Parameter: KeyframeDescription: Longer Description of the keyframe (may be blank).\n
     *    Parameter: UniqueId: Unique ID for the Keyframe object (required).\n
     *    Parameter: SimTime: The simulation time that the Keyframe was created (required - double).\n
-    *    Parameter: ActiveMap: The map name that was current when the keyframe was snapshotted (required).\n
+    *    Parameter: MapNames: The map name set that was current when the keyframe was snapshotted (required).\n
     */
-   class DT_GAME_EXPORT LogCaptureKeyframeMessage : public Message
+   class DT_GAME_EXPORT LogCaptureKeyframeMessage : public MapMessage
    {      
       public:          
          /*
@@ -413,25 +403,13 @@ namespace dtGame
     *    Parameter: SimTime: The simulation time that the Keyframe was created (required - double).\n
     *    Parameter: ActiveMap: The map name that was current when the keyframe was snapshotted (required).\n
     */
-   class DT_GAME_EXPORT LogJumpToKeyframeMessage : public Message
+   class DT_GAME_EXPORT LogJumpToKeyframeMessage : public LogCaptureKeyframeMessage
    {      
       public:          
          /*
           * Construct - Adds this messages parameters to its parameter list.
           */            
          LogJumpToKeyframeMessage();
-         
-         /**
-          * Creates a LogKeyframe and populates it with the keyframe values from the message
-          * @return A LogKeyframe object with the message's keyframe parameter values.
-          */
-         LogKeyframe GetKeyframe() const;
-         
-         /**
-          * Sets the messages Keyframe parameters from the passed in log keyframe
-          * @param keyframe The keyframe object - the attributes will be set on the message
-          */
-         void SetKeyframe(const LogKeyframe &keyframe);
 
       protected:      
          virtual ~LogJumpToKeyframeMessage() { }

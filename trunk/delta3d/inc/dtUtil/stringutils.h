@@ -271,6 +271,10 @@ namespace dtUtil
    }
 
    bool DT_UTIL_EXPORT Match(char* wildCards, char* str);
+   
+   /// @return a string with text as an int value padded to the size specified.
+   void DT_UTIL_EXPORT MakeIndexString(unsigned index, std::string& toFill, unsigned paddedLength = 4);
+
 }
 
 #endif // DELTA_STRING_UTILS_INC

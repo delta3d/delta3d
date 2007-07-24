@@ -55,6 +55,8 @@
 #include <dtGame/defaultnetworkpublishingcomponent.h>
 #include <dtGame/defaultmessageprocessor.h>
 
+#include <testGameActorLibrary/testgameactorlibrary.h>
+
 #include "testcomponent.h"
 
 #include <cppunit/extensions/HelperMacros.h>
@@ -128,9 +130,13 @@ private:
    static char* mTestActorLibrary;
 
    void createActors(dtDAL::Map& map);
+   void RemoveOneProxy(dtDAL::Map& map);
+
    void TestDefaultMessageProcessorWithLocalOrRemoteActorCreates(bool remote);
    void TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(bool remote, bool partial);
    void TestDefaultMessageProcessorWithLocalOrRemoteActorDeletes(bool remote);
+   void CheckMapNames(const dtGame::MapMessage& mapLoadedMsg, 
+         const dtGame::GameManager::NameVector& mapNames);
    dtUtil::Log* mLogger;
 
    dtCore::RefPtr<dtGame::GameManager> mGameManager;
@@ -337,7 +343,7 @@ void MessageTests::TestBaseMessages()
       dtCore::RefPtr<dtGame::TickMessage> tickMsg = new dtGame::TickMessage();
       dtCore::RefPtr<dtGame::TimeChangeMessage> timeChangeMessage = new dtGame::TimeChangeMessage();
       dtCore::RefPtr<dtGame::TimerElapsedMessage> timerMsg = new dtGame::TimerElapsedMessage();
-      dtCore::RefPtr<dtGame::MapLoadedMessage> mapMsg = new dtGame::MapLoadedMessage();
+      dtCore::RefPtr<dtGame::MapMessage> mapMsg = new dtGame::MapMessage();
       dtCore::RefPtr<dtGame::NetServerRejectMessage> netRejectMsg = new dtGame::NetServerRejectMessage();
       dtCore::RefPtr<dtGame::RestartMessage> restartMsg = new dtGame::RestartMessage();
       dtCore::RefPtr<dtGame::ServerMessageRejected> serverMsgRejected = new dtGame::ServerMessageRejected();
@@ -384,8 +390,19 @@ void MessageTests::TestBaseMessages()
       CPPUNIT_ASSERT(mapMsg->GetAboutActorId().ToString().empty());
       CPPUNIT_ASSERT(mapMsg->GetSendingActorId().ToString().empty());
 
-      mapMsg->SetLoadedMapName("Some whack map");
-      CPPUNIT_ASSERT_MESSAGE("Loaded map message should be able to set the loaded map name", mapMsg->GetLoadedMapName() == "Some whack map");
+      dtGame::GameManager::NameVector mapNames;
+      std::ostringstream ss;
+      for (unsigned i = 0; i < 20; ++i)
+      {
+         ss.str("");
+         ss << "Some whack map " << i;
+         mapNames.push_back(ss.str());
+      }
+
+      mapMsg->SetMapNames(mapNames);
+      dtGame::GameManager::NameVector mapNamesGet;
+      mapMsg->GetMapNames(mapNamesGet);
+      CPPUNIT_ASSERT_MESSAGE("Map message should be able to set/get the map names", mapNames == mapNamesGet);
 
       CPPUNIT_ASSERT(netRejectMsg->GetDestination() == NULL);
       CPPUNIT_ASSERT(netRejectMsg->GetAboutActorId().ToString().empty());
@@ -509,19 +526,13 @@ void MessageTests::TestMessageFactory()
       dtCore::RefPtr<dtGame::Message> playerMsg = factory.CreateMessage(dtGame::MessageType::INFO_PLAYER_ENTERED_WORLD);
       CPPUNIT_ASSERT_MESSAGE("The message factory should be able to create a player entered world message", playerMsg.valid());
 
-      dtCore::RefPtr<dtGame::CommandLoadMapMessage> commandChangeMsg;
+      dtCore::RefPtr<dtGame::MapMessage> commandChangeMsg;
       factory.CreateMessage(dtGame::MessageType::COMMAND_LOAD_MAP, commandChangeMsg);
       CPPUNIT_ASSERT_MESSAGE("The message factory should be able to a COMMAND_LOAD_MAP message", commandChangeMsg.valid());
-
-      commandChangeMsg->SetMapName("jojo");
-      CPPUNIT_ASSERT_EQUAL(std::string("jojo"), commandChangeMsg->GetMapName());
       
-      dtCore::RefPtr<dtGame::RequestLoadMapMessage> requestChangeMsg;
+      dtCore::RefPtr<dtGame::MapMessage> requestChangeMsg;
       factory.CreateMessage(dtGame::MessageType::REQUEST_LOAD_MAP, requestChangeMsg);
       CPPUNIT_ASSERT_MESSAGE("The message factory should be able to a REQUEST_LOAD_MAP message", requestChangeMsg.valid());
-
-      requestChangeMsg->SetRequestedMapName("jojo");
-      CPPUNIT_ASSERT_EQUAL(std::string("jojo"), requestChangeMsg->GetRequestedMapName());
 
       CPPUNIT_ASSERT_MESSAGE("Tick message's type should have been set correctly", tickMsg->GetMessageType() == dtGame::MessageType::TICK_REMOTE);
       CPPUNIT_ASSERT_MESSAGE("Timer elapsed message's type should have been set correctly", timerMsg->GetMessageType() == dtGame::MessageType::INFO_TIMER_ELAPSED);
@@ -1103,56 +1114,115 @@ void MessageTests::TestChangeMapGameEvents()
    }
 }
 
+void MessageTests::CheckMapNames(const dtGame::MapMessage& mapLoadedMsg, 
+      const dtGame::GameManager::NameVector& mapNames)
+{
+   static dtGame::GameManager::NameVector mapNamesGet;
+   mapLoadedMsg.GetMapNames(mapNamesGet);
+   CPPUNIT_ASSERT_EQUAL(mapNames.size(), mapNamesGet.size());
+   CPPUNIT_ASSERT_MESSAGE(
+         "The Map name in the \"" + mapLoadedMsg.GetMessageType().GetName() + "\" message should be " + mapNames[0],
+         mapNames == mapNamesGet);
+}
+
+void MessageTests::RemoveOneProxy(dtDAL::Map& map)
+{
+   std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > toFill;
+   map.FindProxies(toFill, "", TestGameActorLibrary::TEST_TANK_GAME_ACTOR_PROXY_TYPE->GetCategory(), 
+         TestGameActorLibrary::TEST_TANK_GAME_ACTOR_PROXY_TYPE->GetName());
+   
+   CPPUNIT_ASSERT(!toFill.empty());
+   map.RemoveProxy(*toFill[0]);
+}
+
 void MessageTests::TestChangeMap()
 {
    try
    {
       dtDAL::Project& project = dtDAL::Project::GetInstance();
-      std::string mapName = "Many Game Actors";
-      dtDAL::Map* map = &project.CreateMap(mapName, "mga");
+      std::string mapNameA = "Many Game Actors";
+      std::string mapNameB = "Many Game Actors the second";
+      dtDAL::Map* mapA = &project.CreateMap(mapNameA, "mga");
+      dtDAL::Map* mapB = &project.CreateMap(mapNameB, "mgb");
 
-      std::string mapName2 = "Many More Game Actors";
-      dtDAL::Map* map2 = &project.CreateMap(mapName2, "mga2");
+      std::string mapName2A = "Many More Game Actors";
+      std::string mapName2B = "Many More Game Actors the second";
+      dtDAL::Map* map2A = &project.CreateMap(mapName2A, "mg2");
+      dtDAL::Map* map2B = &project.CreateMap(mapName2B, "mg2b");
 
-      createActors(*map);
-      createActors(*map2);
+      dtGame::GameManager::NameVector mapNamesExpected;
+      mapNamesExpected.push_back(mapNameA);
+      mapNamesExpected.push_back(mapNameB);
+      dtGame::GameManager::NameVector mapNames2Expected;
+      mapNames2Expected.push_back(mapName2A);
+      mapNames2Expected.push_back(mapName2B);
 
-      map->AddLibrary(mTestGameActorLibrary, "1.0");
-      map->AddLibrary(mTestActorLibrary, "1.0");
+      createActors(*mapA);
+      createActors(*mapB);
+      createActors(*map2A);
+      createActors(*map2B);
 
-      map2->AddLibrary(mTestGameActorLibrary, "1.0");
-      map2->AddLibrary(mTestActorLibrary, "1.0");
+      dtCore::RefPtr<dtDAL::GameEvent> reusedEvent = new dtDAL::GameEvent("eventX", "Event");
+      mapA->GetEventManager().AddEvent(*new dtDAL::GameEvent("event1", "Event"));
+      mapA->GetEventManager().AddEvent(*new dtDAL::GameEvent("event2", "Event"));
+      mapA->GetEventManager().AddEvent(*reusedEvent);
+      mapB->GetEventManager().AddEvent(*new dtDAL::GameEvent("event3", "Event"));
+      mapB->GetEventManager().AddEvent(*new dtDAL::GameEvent("event4", "Event"));
+      mapB->GetEventManager().AddEvent(*reusedEvent);
+      
+      mapA->AddLibrary(mTestGameActorLibrary, "1.0");
+      mapB->AddLibrary(mTestActorLibrary, "1.0");
+      mapA->AddLibrary(mTestGameActorLibrary, "1.0");
+      mapB->AddLibrary(mTestActorLibrary, "1.0");
+
+      map2A->GetEventManager().AddEvent(*new dtDAL::GameEvent("event5", "Event"));
+      map2A->GetEventManager().AddEvent(*new dtDAL::GameEvent("event6", "Event"));
+      map2B->GetEventManager().AddEvent(*new dtDAL::GameEvent("event7", "Event"));
+      map2B->GetEventManager().AddEvent(*new dtDAL::GameEvent("event8", "Event"));
+
+      map2A->AddLibrary(mTestGameActorLibrary, "1.0");
+      map2A->AddLibrary(mTestActorLibrary, "1.0");
+      map2B->AddLibrary(mTestGameActorLibrary, "1.0");
+      map2B->AddLibrary(mTestActorLibrary, "1.0");
       
       //remove one proxy to make the maps have different sizes.
-      map2->RemoveProxy(*map2->GetAllProxies().begin()->second);
+      RemoveOneProxy(*map2A);
+      RemoveOneProxy(*map2B);
       
-      size_t numActors = map->GetAllProxies().size();
-      size_t numActors2 = map2->GetAllProxies().size();
+      size_t numActors = mapA->GetAllProxies().size() * 2 ;
+      size_t numActors2 = map2A->GetAllProxies().size() * 2;
 
       CPPUNIT_ASSERT(numActors != numActors2);
 
-      project.SaveMap(*map);
-      project.CloseMap(*map);
+      project.SaveMap(*mapA);
+      project.CloseMap(*mapA);
 
-      project.SaveMap(*map2);
-      project.CloseMap(*map2);
+      project.SaveMap(*mapB);
+      project.CloseMap(*mapB);
+
+      project.SaveMap(*map2A);
+      project.CloseMap(*map2A);
+
+      project.SaveMap(*map2B);
+      project.CloseMap(*map2B);
 
       TestComponent& tc = *new TestComponent("name");
       mGameManager->AddComponent(tc, dtGame::GameManager::ComponentPriority::NORMAL);
 
-      mGameManager->ChangeMap(mapName, false, false);
+      mGameManager->ChangeMapSet(mapNamesExpected, false, false);
 
       std::vector<dtDAL::ActorProxy*> toFill;
       mGameManager->GetAllActors(toFill);
 
-      CPPUNIT_ASSERT_MESSAGE("The number of actors in the GM should be 0.", toFill.size() == 0);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of actors in the GM should be 0.", 0U, unsigned(toFill.size()));
       SLEEP(10);
       dtCore::System::GetInstance().Step();
       dtCore::RefPtr<const dtGame::Message> processMapChange = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_CHANGE_BEGIN);
       CPPUNIT_ASSERT_MESSAGE("An INFO_MAP_CHANGE_BEGIN message should have been processed.", processMapChange.valid());
-      const dtGame::MapLoadedMessage* mapLoadedMsg = static_cast<const dtGame::MapLoadedMessage*>(processMapChange.get());
-      CPPUNIT_ASSERT_MESSAGE("The Map name in the INFO_MAP_CHANGE_BEGIN message should be " + mapName,  mapLoadedMsg->GetLoadedMapName() == mapName);
-
+      const dtGame::MapMessage* mapLoadedMsg = static_cast<const dtGame::MapMessage*>(processMapChange.get());
+      
+      CheckMapNames(*mapLoadedMsg, mapNamesExpected);
+      
       dtCore::RefPtr<const dtGame::Message> processMapUnloadedMsg = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_UNLOADED);
       CPPUNIT_ASSERT_MESSAGE("A map unloaded message should NOT have been processed.", !processMapUnloadedMsg.valid());
       processMapUnloadedMsg = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_UNLOAD_BEGIN);
@@ -1162,25 +1232,34 @@ void MessageTests::TestChangeMap()
 
       processMapLoadedMsg = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_LOAD_BEGIN);
       CPPUNIT_ASSERT_MESSAGE("An INFO_MAP_LOAD_BEGIN message should have been processed.", processMapLoadedMsg.valid());
-      mapLoadedMsg = static_cast<const dtGame::MapLoadedMessage*>(processMapLoadedMsg.get());
-      CPPUNIT_ASSERT_MESSAGE("The Map name in the INFO_MAP_LOAD_BEGIN message should be " + mapName,  mapLoadedMsg->GetLoadedMapName() == mapName);
+      mapLoadedMsg = static_cast<const dtGame::MapMessage*>(processMapLoadedMsg.get());
+      CheckMapNames(*mapLoadedMsg, mapNamesExpected);
 
       CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of actors in the GM should be 0.", size_t(0),  toFill.size());
 
       SLEEP(10);
       dtCore::System::GetInstance().Step();
       mGameManager->GetAllActors(toFill);
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of actors in the GM should match the map minus one for the Crash Actor.", numActors - 1, toFill.size());
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of actors in the GM should match the map minus two for the Crash Actors.", numActors - 2, toFill.size());
 
+      dtDAL::GameEventManager& mainGEM = dtDAL::GameEventManager::GetInstance();
+      //2 from each map, and one that is shared with the same unique id.
+      CPPUNIT_ASSERT_EQUAL(5U, mainGEM.GetNumEvents());
+      CPPUNIT_ASSERT(mainGEM.FindEvent("event1") != NULL);
+      CPPUNIT_ASSERT(mainGEM.FindEvent("event2") != NULL);
+      CPPUNIT_ASSERT(mainGEM.FindEvent("event3") != NULL);
+      CPPUNIT_ASSERT(mainGEM.FindEvent("event4") != NULL);
+      CPPUNIT_ASSERT(mainGEM.FindEvent("eventX") != NULL);
+      
       processMapLoadedMsg = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_LOADED);
       CPPUNIT_ASSERT_MESSAGE("A map loaded message should have been processed.", processMapLoadedMsg.valid());
-      mapLoadedMsg = static_cast<const dtGame::MapLoadedMessage*>(processMapLoadedMsg.get());
-      CPPUNIT_ASSERT_MESSAGE("The Map name in the INFO_MAP_LOADED message should be " + mapName,  mapLoadedMsg->GetLoadedMapName() == mapName);
+      mapLoadedMsg = static_cast<const dtGame::MapMessage*>(processMapLoadedMsg.get());
+      CheckMapNames(*mapLoadedMsg, mapNamesExpected);
 
       processMapChange = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_CHANGED);
       CPPUNIT_ASSERT_MESSAGE("A INFO_MAP_CHANGED message should have been processed.", processMapChange.valid());
-      mapLoadedMsg = static_cast<const dtGame::MapLoadedMessage*>(processMapChange.get());
-      CPPUNIT_ASSERT_MESSAGE("The Map name in the INFO_MAP_CHANGED message should be " + mapName,  mapLoadedMsg->GetLoadedMapName() == mapName);
+      mapLoadedMsg = static_cast<const dtGame::MapMessage*>(processMapChange.get());
+      CheckMapNames(*mapLoadedMsg, mapNamesExpected);
 
       for (unsigned i = 0; i < toFill.size(); ++i)
       {
@@ -1199,7 +1278,7 @@ void MessageTests::TestChangeMap()
       
       tc.reset();
       
-      mGameManager->ChangeMap(mapName2, false, false);
+      mGameManager->ChangeMapSet(mapNames2Expected, false, false);
 
       SLEEP(10);
       dtCore::System::GetInstance().Step();
@@ -1207,16 +1286,14 @@ void MessageTests::TestChangeMap()
       processMapUnloadedMsg = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_UNLOAD_BEGIN);
       CPPUNIT_ASSERT_MESSAGE("An INFO_MAP_UNLOAD_BEGIN message should have been processed.", 
             processMapUnloadedMsg.valid());
-      mapLoadedMsg = static_cast<const dtGame::MapLoadedMessage*>(processMapUnloadedMsg.get());
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("The unloaded Map name in the message should be " + mapName,
-            mapName, mapLoadedMsg->GetLoadedMapName());
+      mapLoadedMsg = static_cast<const dtGame::MapMessage*>(processMapUnloadedMsg.get());
+      CheckMapNames(*mapLoadedMsg, mapNamesExpected);
 
       processMapUnloadedMsg = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_UNLOADED);
       CPPUNIT_ASSERT_MESSAGE("An INFO_MAP_UNLOADED message should have been processed.", 
             processMapUnloadedMsg.valid());
-      mapLoadedMsg = static_cast<const dtGame::MapLoadedMessage*>(processMapUnloadedMsg.get());
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("The unloaded Map name in the message should be " + mapName,  
-            mapName, mapLoadedMsg->GetLoadedMapName());
+      mapLoadedMsg = static_cast<const dtGame::MapMessage*>(processMapUnloadedMsg.get());
+      CheckMapNames(*mapLoadedMsg, mapNamesExpected);
 
       processMapChange = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_CHANGE_BEGIN);
       CPPUNIT_ASSERT_MESSAGE("An INFO_MAP_CHANGE_BEGIN message should have been processed.", 
@@ -1243,13 +1320,20 @@ void MessageTests::TestChangeMap()
 
       mGameManager->GetAllActors(toFill);
 
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of actors in the GM should match the second map minus one for the Crash Actor.", 
-            numActors2 - 1, toFill.size());
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of actors in the GM should match the second map minus two for the Crash Actors.", 
+            numActors2 - 2, toFill.size());
+
+      // make sure that the events from both maps are in the gem.
+      CPPUNIT_ASSERT_EQUAL(4U, mainGEM.GetNumEvents());
+      CPPUNIT_ASSERT(mainGEM.FindEvent("event5") != NULL);
+      CPPUNIT_ASSERT(mainGEM.FindEvent("event6") != NULL);
+      CPPUNIT_ASSERT(mainGEM.FindEvent("event7") != NULL);
+      CPPUNIT_ASSERT(mainGEM.FindEvent("event8") != NULL);
 
       processMapLoadedMsg = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_LOADED);
       CPPUNIT_ASSERT_MESSAGE("A map loaded message should have been processed.", processMapLoadedMsg.valid());
-      mapLoadedMsg = static_cast<const dtGame::MapLoadedMessage*>(processMapLoadedMsg.get());
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("The Map name in the message should be " + mapName2,  mapName2, mapLoadedMsg->GetLoadedMapName());
+      mapLoadedMsg = static_cast<const dtGame::MapMessage*>(processMapLoadedMsg.get());
+      CheckMapNames(*mapLoadedMsg, mapNames2Expected);
 
       processMapChange = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_CHANGED);
       CPPUNIT_ASSERT_MESSAGE("A INFO_MAP_CHANGED message should have been processed.", processMapChange.valid());
@@ -1259,11 +1343,11 @@ void MessageTests::TestChangeMap()
    {
       CPPUNIT_FAIL(e.ToString());
    }
-   catch(const std::exception &e)
-   {
-      CPPUNIT_FAIL(std::string("Exception: ") + typeid(e).name() + 
-                   std::string(" Message: ")  + e.what());
-   }
+//   catch(const std::exception &e)
+//   {
+//      CPPUNIT_FAIL(std::string("Exception: ") + typeid(e).name() + 
+//                   std::string(" Message: ")  + e.what());
+//   }
 }
 
 void MessageTests::TestGameEventMessage()

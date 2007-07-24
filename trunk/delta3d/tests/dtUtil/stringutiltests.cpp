@@ -39,6 +39,7 @@ class StringUtilTests : public CPPUNIT_NS::TestFixture {
    CPPUNIT_TEST( TestTokenizer );
    CPPUNIT_TEST( TestParseVec );
    CPPUNIT_TEST( TestToPrimitives );
+   CPPUNIT_TEST( TestMakeIndexString );
    CPPUNIT_TEST_SUITE_END();
 
    public:
@@ -74,9 +75,11 @@ class StringUtilTests : public CPPUNIT_NS::TestFixture {
        * Tests ToFloat, ToUnsignedInt, ToDouble 
        */
       void TestToPrimitives();
-   
+
+      void TestMakeIndexString();
+      
    private:
-      dtUtil::Log* mLogger;         
+      dtUtil::Log* mLogger;
 };
 
 // Registers the fixture into the 'registry'
@@ -480,3 +483,32 @@ void StringUtilTests::TestToPrimitives()
    CPPUNIT_ASSERT( threePointFourDouble == doubleValue );
    // -- ---------------------------------------------- -- //
 }
+
+void StringUtilTests::TestMakeIndexString()
+{
+   std::string toFill;
+   dtUtil::MakeIndexString(35U, toFill, 4);
+   CPPUNIT_ASSERT_EQUAL(std::string("0035"), toFill);
+
+   dtUtil::MakeIndexString(3550U, toFill, 4);
+   CPPUNIT_ASSERT_EQUAL(std::string("3550"), toFill);
+
+   dtUtil::MakeIndexString(3550U, toFill, 1);
+   CPPUNIT_ASSERT_EQUAL(std::string("3550"), toFill);
+
+   dtUtil::MakeIndexString(3550U, toFill, 3);
+   CPPUNIT_ASSERT_EQUAL(std::string("3550"), toFill);
+
+   dtUtil::MakeIndexString(0U, toFill, 3);
+   CPPUNIT_ASSERT_EQUAL(std::string("000"), toFill);
+
+   dtUtil::MakeIndexString(0U, toFill, 0);
+   CPPUNIT_ASSERT_EQUAL(std::string("0"), toFill);
+
+   dtUtil::MakeIndexString(700U, toFill, 0);
+   CPPUNIT_ASSERT_EQUAL(std::string("700"), toFill);
+
+   dtUtil::MakeIndexString(700U, toFill, 10);
+   CPPUNIT_ASSERT_EQUAL(std::string("0000000700"), toFill);
+}
+
