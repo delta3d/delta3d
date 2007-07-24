@@ -194,61 +194,62 @@ namespace dtAI
 
       Clear();
 
+      bool read_file_ok = false;
       std::ifstream infile;
 
-      infile.open(pFileToRead.c_str(), std::ifstream::in);     
-      if(infile.fail()) return false;
-
-      try
-      {      
-
-         //read the file id
-         int id = 0;
-         infile >> id;
-         if(id != WAYPOINT_HELPER_FILE_ID) return false;
-
-         //read in the file version number
-         int version = 0;
-         infile >> version;
-         if(version != WAYPOINT_FILE_VERSION) return false;
-
-         //read the number of verts to read
-         unsigned size = 0;
-         infile >> size;
-
-         for(unsigned i = 0; i < size; ++i)
-         {
-            osg::Vec3 pPos;
-            infile >> pPos[0] >> pPos[1] >> pPos[2];
-            
-            Waypoint* pNewWaypoint = new Waypoint(pPos);
-            pNewWaypoint->SetRenderFlag(Waypoint::RENDER_DEFAULT);
-            pNewWaypoint->SetID(i);
-
-            mWaypoints.insert(std::pair<unsigned, Waypoint*>(i, pNewWaypoint));      
-         }
-
-         //read in the nav mesh
-         unsigned navMeshSize = 0;
-         infile >> navMeshSize;
-
-         for(unsigned i = 0; i < navMeshSize; ++i)
-         {
-            unsigned indexFrom, indexTo;
-            infile >> indexFrom >> indexTo;            
-            mNavMesh.AddPathSegment(mWaypoints[indexFrom], mWaypoints[indexTo]);
-         }
-
-      }
-      catch(...)
+      infile.open(pFileToRead.c_str());     
+      if(infile.is_open()) 
       {
-         LOG_ERROR("Exception thrown reading Waypoint file, invalid file format.");
+         try
+         {      
+            //read the file id
+            int id = 0;
+            infile >> id;
+            if(id != WAYPOINT_HELPER_FILE_ID) return false;
+
+            //read in the file version number
+            int version = 0;
+            infile >> version;
+            if(version != WAYPOINT_FILE_VERSION) return false;
+
+            //read the number of verts to read
+            unsigned size = 0;
+            infile >> size;
+
+            for(unsigned i = 0; i < size; ++i)
+            {
+               osg::Vec3 pPos;
+               infile >> pPos[0] >> pPos[1] >> pPos[2];
+               
+               Waypoint* pNewWaypoint = new Waypoint(pPos);
+               pNewWaypoint->SetRenderFlag(Waypoint::RENDER_DEFAULT);
+               pNewWaypoint->SetID(i);
+
+               mWaypoints.insert(std::pair<unsigned, Waypoint*>(i, pNewWaypoint));      
+            }
+
+            //read in the nav mesh
+            unsigned navMeshSize = 0;
+            infile >> navMeshSize;
+
+            for(unsigned i = 0; i < navMeshSize; ++i)
+            {
+               unsigned indexFrom, indexTo;
+               infile >> indexFrom >> indexTo;            
+               mNavMesh.AddPathSegment(mWaypoints[indexFrom], mWaypoints[indexTo]);
+            }
+
+            read_file_ok = true;
+         }
+         catch(std::exception&)
+         {
+            LOG_ERROR("Exception thrown reading Waypoint file, invalid file format.");
+         }
       }
 
-      infile.close();
-      
+      infile.close();      
       mReadingFile = false;
-      return true;
+      return read_file_ok;
    }
 
 
