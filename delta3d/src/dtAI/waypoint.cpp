@@ -29,7 +29,7 @@
 namespace dtAI
 {
    Waypoint::Waypoint()
-   : mRenderFlag(Waypoint::RENDER_DEFUALT)
+   : mRenderFlag(Waypoint::RENDER_DEFAULT)
    , mID(0)
    , mGradient(1.0f)
    , mPosition()
@@ -42,7 +42,7 @@ namespace dtAI
    }
 
    Waypoint::Waypoint(const osg::Vec3& pPos)
-   : mRenderFlag(Waypoint::RENDER_DEFUALT)
+   : mRenderFlag(Waypoint::RENDER_DEFAULT)
    , mID(0)
    , mGradient(1.0f)
    {

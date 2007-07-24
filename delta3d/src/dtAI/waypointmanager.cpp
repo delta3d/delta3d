@@ -222,7 +222,7 @@ namespace dtAI
             infile >> pPos[0] >> pPos[1] >> pPos[2];
             
             Waypoint* pNewWaypoint = new Waypoint(pPos);
-            pNewWaypoint->SetRenderFlag(Waypoint::RENDER_DEFUALT);
+            pNewWaypoint->SetRenderFlag(Waypoint::RENDER_DEFAULT);
             pNewWaypoint->SetID(i);
 
             mWaypoints.insert(std::pair<unsigned, Waypoint*>(i, pNewWaypoint));      
