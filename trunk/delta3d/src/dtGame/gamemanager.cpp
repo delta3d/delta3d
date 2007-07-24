@@ -1673,11 +1673,11 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::Shutdown()
    {
-      
       if(!mLoadedMap.empty())
       {
          dtDAL::Map& map = dtDAL::Project::GetInstance().GetMap(mLoadedMap);
          dtDAL::Project::GetInstance().CloseMap(map, true);
+         mLoadedMap.clear();
       }
 
       while(!mComponentList.empty())
