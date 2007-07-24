@@ -1493,7 +1493,7 @@ void HLAComponentTests::TestMessageProcessing()
    CPPUNIT_ASSERT(mappingInfo.GetRTIId(id1)  != NULL);
 
    // Send a map loaded message
-   dtCore::RefPtr<dtGame::MapLoadedMessage> msg;
+   dtCore::RefPtr<dtGame::MapMessage> msg;
    mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_MAP_LOADED, msg);
    mGameManager->SendMessage(*msg);
    dtCore::System::GetInstance().Step();

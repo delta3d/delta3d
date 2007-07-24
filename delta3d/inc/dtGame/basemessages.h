@@ -195,29 +195,32 @@ namespace dtGame
 
    };
 
-   class DT_GAME_EXPORT MapLoadedMessage : public Message
+   /**
+    * Message used for all of the map change, close, load, etc messages.  It 
+    * has a list of map names.
+    */
+   class DT_GAME_EXPORT MapMessage : public Message
    {
       public:
-
-         static const std::string PARAM_LOADED_MAP_NAME;
+         static const std::string PARAM_MAP_NAMES;
 
          /// Constructor
-         MapLoadedMessage();
+         MapMessage();
 
          /**
-          * Gets the name of the map that was loaded
+          * Gets the names of the map associated with this message
           */
-         const std::string& GetLoadedMapName() const;
+         void GetMapNames(std::vector<std::string>& toFill) const;
 
          /**
           * Sets the name of the map that was loaded
           * @param The name of the map
           */
-         void SetLoadedMapName(const std::string &name);
+         void SetMapNames(const std::vector<std::string>& nameVec);
       protected:
          /// Destructor
-         virtual ~MapLoadedMessage() { }
-         dtCore::RefPtr<StringMessageParameter> mLoadedMapName;
+         virtual ~MapMessage() { }
+         dtCore::RefPtr<GroupMessageParameter> mMapNames;
 
    };
 
@@ -360,56 +363,6 @@ namespace dtGame
          virtual ~ServerMessageRejected() {}
    };
 
-   class DT_GAME_EXPORT CommandLoadMapMessage : public Message
-   {
-      public:
-         static const std::string PARAM_MAP_NAME;
-         
-         /// Constructor
-         CommandLoadMapMessage();
-
-         /**
-          * Gets the name of the map that was loaded
-          */
-         const std::string& GetMapName() const;
-
-         /**
-          * Sets the name of the map that was loaded
-          * @param The name of the map
-          */
-         void SetMapName(const std::string &name);
-
-      protected:
-         /// Destructor
-         virtual ~CommandLoadMapMessage() { }
-         dtCore::RefPtr<dtGame::StringMessageParameter> mMapName;
-
-   };
-
-   class DT_GAME_EXPORT RequestLoadMapMessage : public Message
-   {
-      public:
-         static const std::string PARAM_REQUESTED_MAP_NAME;
-
-         /// Constructor
-         RequestLoadMapMessage();
-
-         /**
-          * Gets the name of the map that was loaded
-          */
-         const std::string& GetRequestedMapName() const;
-
-         /**
-          * Sets the name of the map that was loaded
-          * @param The name of the map
-          */
-         void SetRequestedMapName(const std::string &name);
-
-      protected:
-         /// Destructor
-         virtual ~RequestLoadMapMessage() { }
-         dtCore::RefPtr<dtGame::StringMessageParameter> mRequestedMapName;
-   };
 }
 
 #endif

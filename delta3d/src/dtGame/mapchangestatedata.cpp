@@ -53,7 +53,7 @@ namespace dtGame
    }
    
    ///////////////////////////////////////////////////////////////////////////////
-   void MapChangeStateData::BeginMapChange(const std::string& oldMapName, const std::string& newMapName, bool addBillboards, bool enableDatabasePaging)
+   void MapChangeStateData::BeginMapChange(const MapChangeStateData::NameVector& oldMapNames, const MapChangeStateData::NameVector& newMapNames, bool addBillboards, bool enableDatabasePaging)
    {
       if (!mGameManager.valid())
       {
@@ -62,37 +62,190 @@ namespace dtGame
          throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION, msg, __FUNCTION__, __LINE__);
       }
 
-      mOldMapName = oldMapName;
-      mNewMapName = newMapName;
+      mOldMapNames = oldMapNames;
+      mNewMapNames = newMapNames;
       mAddBillboards = addBillboards;
       mEnableDatabasePaging = enableDatabasePaging;
 
       mCurrentState = &MapChangeState::UNLOAD;
 
-      //We are only changing maps if the new map name is not empty
-      if (!mNewMapName.empty())
+      //We are only changing maps if the new map list is not empty
+      if (!mNewMapNames.empty())
       {
          const std::set<std::string>& names = dtDAL::Project::GetInstance().GetMapNames();
-         if (names.find(mNewMapName) == names.end())
+         MapChangeStateData::NameVector::const_iterator i = mNewMapNames.begin();
+         MapChangeStateData::NameVector::const_iterator end = mNewMapNames.end();
+         for (; i != end; ++i)
          {
-            mCurrentState = &MapChangeState::IDLE;
-            std::string msg = mNewMapName + " is not a valid map.";
-            throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION, msg, __FUNCTION__, __LINE__);
+            if (names.find(*i) == names.end())
+            {
+               mCurrentState = &MapChangeState::IDLE;
+               std::string msg = *i + " is not a valid map.";
+               throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION, msg, __FUNCTION__, __LINE__);
+            }
          }
          
-         SendMapMessage(MessageType::INFO_MAP_CHANGE_BEGIN, mNewMapName);
+         SendMapMessage(MessageType::INFO_MAP_CHANGE_BEGIN, mNewMapNames);
       }
       
       //mark all actors for deletion.
       //Does not send create messages when this object is not in IDLE state. 
       mGameManager->DeleteAllActors(false);
 
-      if (!mOldMapName.empty())
+      if (!mOldMapNames.empty())
       {
-         SendMapMessage(MessageType::INFO_MAP_UNLOAD_BEGIN, mOldMapName);
+         SendMapMessage(MessageType::INFO_MAP_UNLOAD_BEGIN, mOldMapNames);
       }
    }
+   
+   ///////////////////////////////////////////////////////////////////////////////
+   void MapChangeStateData::CloseOldMaps()
+   {
+      if (!mOldMapNames.empty())
+      {
+         MapChangeStateData::NameVector::const_iterator i = mOldMapNames.begin();
+         MapChangeStateData::NameVector::const_iterator end = mOldMapNames.end();
+   
+         for (; i != end; ++i)
+         {
+            dtDAL::Map& oldMap = dtDAL::Project::GetInstance().GetMap(*i);
+            // Clear out all the game events that came from the old map
+            if (mGameManager->GetRemoveGameEventsOnMapChange())
+            {
+               std::vector<dtDAL::GameEvent*> events;
+               oldMap.GetEventManager().GetAllEvents(events);
+               dtDAL::GameEventManager& mainGEM = dtDAL::GameEventManager::GetInstance();
 
+               std::vector<dtDAL::GameEvent*>::const_iterator j = events.begin();
+               std::vector<dtDAL::GameEvent*>::const_iterator jend = events.end();
+               for (; j != jend; ++j)
+                  mainGEM.RemoveEvent((*j)->GetUniqueId());
+            }
+            dtDAL::Project::GetInstance().CloseMap(oldMap, true);
+         }
+         
+         SendMapMessage(MessageType::INFO_MAP_UNLOADED, mOldMapNames);
+      }
+   }
+   
+   ///////////////////////////////////////////////////////////////////////////////
+   bool MapChangeStateData::OpenNewMaps()
+   {
+      bool success = true;
+      if (!mNewMapNames.empty())
+      {
+         MapChangeStateData::NameVector::const_iterator i = mNewMapNames.begin();
+         MapChangeStateData::NameVector::const_iterator end = mNewMapNames.end();
+   
+         for (; i != end; ++i)
+         {
+            //Make the map load.
+            try 
+            {
+               dtDAL::Project::GetInstance().GetMap(*i);
+            }
+            catch (const dtUtil::Exception&)
+            {
+               //if we can't load a map, we go back to idle and send and
+               //empty string map change ended message
+               mCurrentState = &MapChangeState::IDLE;               
+               SendMapMessage(MessageType::INFO_MAP_CHANGED, MapChangeStateData::NameVector());
+               mNewMapNames.clear();
+               success = false;
+               break;
+            }
+         }
+         if (success)
+            SendMapMessage(MessageType::INFO_MAP_LOAD_BEGIN, mNewMapNames);
+      }
+      else
+      {
+         success = false;
+      }
+      return success;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void MapChangeStateData::LoadSingleMapIntoGM(const std::string& mapName)
+   {
+      dtDAL::Map &map = dtDAL::Project::GetInstance().GetMap(mapName);
+      //add all the events in the map to the game manager.
+      std::vector<dtDAL::GameEvent* > events;
+      map.GetEventManager().GetAllEvents(events);
+      dtDAL::GameEventManager& mainGEM = dtDAL::GameEventManager::GetInstance();
+      
+      std::vector<dtDAL::GameEvent*>::const_iterator i = events.begin();
+      std::vector<dtDAL::GameEvent*>::const_iterator iend = events.end();
+      for (; i != iend; ++i)
+      {
+         if (mainGEM.FindEvent((*i)->GetUniqueId()) == NULL)
+            mainGEM.AddEvent(**i);
+      }
+
+      if (map.GetEnvironmentActor() != NULL)
+      {
+         dtGame::EnvironmentActorProxy *eap = 
+            static_cast<dtGame::EnvironmentActorProxy*>(map.GetEnvironmentActor());
+         
+         mGameManager->SetEnvironmentActor(eap);
+      }
+
+      std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > proxies;
+      map.GetAllProxies(proxies);
+
+      for (unsigned int i = 0; i < proxies.size(); i++)
+      {
+         dtDAL::ActorProxy& aProxy = *proxies[i];
+         // Ensure that we don't try and add the environment actor
+         if(map.GetEnvironmentActor() == &aProxy)
+            continue;
+
+         if (aProxy.IsGameActorProxy())
+         {
+            GameActorProxy* gameProxy = dynamic_cast<GameActorProxy*>(&aProxy);
+            if (gameProxy != NULL)
+            {
+               gameProxy->SetGameManager(mGameManager.get());
+               gameProxy->BuildInvokables();
+               if(gameProxy->GetInitialOwnership() == GameActorProxy::Ownership::PROTOTYPE)
+               {
+                  mGameManager->AddActorAsAPrototype(*gameProxy);
+               }
+               else
+               {
+                  bool shouldPublish = gameProxy->GetInitialOwnership() == GameActorProxy::Ownership::SERVER_PUBLISHED;
+                  //neither sends create messages nor adds to the scene when
+                  //this object is not in IDLE state :-)
+                  try
+                  {
+                     mGameManager->AddActor(*gameProxy, false, shouldPublish);                        
+                  }
+                  catch (const dtUtil::Exception& ex)
+                  {
+                     dtUtil::Log::GetInstance("mapchangestatedata.cpp").LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                           "An error occurred adding actor \"%s\" of type \"%s.%s\".  The exception will follow.", 
+                           gameProxy->GetName().c_str(), gameProxy->GetActorType().GetCategory().c_str(),
+                           gameProxy->GetActorType().GetName().c_str());
+                     ex.LogException(dtUtil::Log::LOG_ERROR, dtUtil::Log::GetInstance("mapchangestatedata.cpp"));
+                  }
+               }
+            }
+            else
+            {
+               dtUtil::Log::GetInstance("mapchangestatedata.cpp").LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                  "Actor has the type of a GameActor, but casting it to a GameActorProxy failed.  "
+                  "Actor %s of type %s.%s will not be added to the scene.",
+                  gameProxy->GetName().c_str(), gameProxy->GetActorType().GetCategory().c_str(), 
+                  gameProxy->GetActorType().GetName().c_str());
+            }
+         }
+         else
+         {
+            mGameManager->AddActor(aProxy);
+         }
+      }
+   }
+   
    ///////////////////////////////////////////////////////////////////////////////
    void MapChangeStateData::ContinueMapChange()
    {
@@ -109,40 +262,10 @@ namespace dtGame
       
       if (*mCurrentState == MapChangeState::UNLOAD)
       {
-         if (!mOldMapName.empty())
-         {
-            dtDAL::Map &oldMap = dtDAL::Project::GetInstance().GetMap(mOldMapName);
-            // Clear out all the game events that came from the old map
-            if (mGameManager->GetRemoveGameEventsOnMapChange())
-            {
-               std::vector<dtDAL::GameEvent* > events;
-               oldMap.GetEventManager().GetAllEvents(events);
-               for (unsigned int i = 0; i < events.size(); i ++)
-                  dtDAL::GameEventManager::GetInstance().RemoveEvent(events[i]->GetUniqueId());
-            }
-            dtDAL::Project::GetInstance().CloseMap(oldMap, true);
-            
-            SendMapMessage(MessageType::INFO_MAP_UNLOADED, mOldMapName);
-         }
+         CloseOldMaps();
          
-         if (!mNewMapName.empty())
+         if (OpenNewMaps())
          {
-            //Make the map load.
-            try 
-            {
-               dtDAL::Project::GetInstance().GetMap(mNewMapName);
-            }
-            catch (const dtUtil::Exception&)
-            {
-               //if we can't load the map, we go back to idle and send and
-               //empty string map change ended message
-               mCurrentState = &MapChangeState::IDLE;               
-               SendMapMessage(MessageType::INFO_MAP_CHANGED, "");
-               mNewMapName.clear();
-               return;
-            }            
-
-            SendMapMessage(MessageType::INFO_MAP_LOAD_BEGIN, mNewMapName);
             mCurrentState = &MapChangeState::LOAD;
          }
          else
@@ -152,95 +275,32 @@ namespace dtGame
       } 
       else if (mCurrentState == &MapChangeState::LOAD)
       {
-         dtDAL::Map &map = dtDAL::Project::GetInstance().GetMap(mNewMapName);
-         //add all the events in the map to the game manager.
-         std::vector<dtDAL::GameEvent* > events;
-         map.GetEventManager().GetAllEvents(events);
-         dtDAL::GameEventManager& mainGEM = dtDAL::GameEventManager::GetInstance();
-         for (unsigned int i = 0; i < events.size(); i ++)
+         MapChangeStateData::NameVector::const_iterator i = mNewMapNames.begin();
+         MapChangeStateData::NameVector::const_iterator end = mNewMapNames.end();
+   
+         for (; i != end; ++i)
          {
-            if (mainGEM.FindEvent(events[i]->GetUniqueId()) == NULL)
-               mainGEM.AddEvent(*events[i]);
+            LoadSingleMapIntoGM(*i);
          }
 
-         if (map.GetEnvironmentActor() != NULL)
-         {
-            dtGame::EnvironmentActorProxy *eap = 
-               static_cast<dtGame::EnvironmentActorProxy*>(map.GetEnvironmentActor());
-            
-            mGameManager->SetEnvironmentActor(eap);
-         }
+         if (mGameManager->GetScene().IsPagingEnabled())
+            mGameManager->GetScene().DisablePaging();
 
-         std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > proxies;
-         map.GetAllProxies(proxies);
-
-         for (unsigned int i = 0; i < proxies.size(); i++)
-         {
-            dtDAL::ActorProxy& aProxy = *proxies[i];
-            // Ensure that we don't try and add the environment actor
-            if(map.GetEnvironmentActor() == &aProxy)
-               continue;
-            
-            if (aProxy.IsGameActorProxy())
-            {
-               GameActorProxy* gameProxy = dynamic_cast<GameActorProxy*>(&aProxy);
-               if (gameProxy != NULL)
-               {
-                  gameProxy->SetGameManager(mGameManager.get());
-                  gameProxy->BuildInvokables();
-                  if(gameProxy->GetInitialOwnership() == GameActorProxy::Ownership::PROTOTYPE)
-                  {
-                     mGameManager->AddActorAsAPrototype(*gameProxy);
-                  }
-                  else
-                  {
-                     bool shouldPublish = gameProxy->GetInitialOwnership() == GameActorProxy::Ownership::SERVER_PUBLISHED;
-                     //neither sends create messages nor adds to the scene when
-                     //this object is not in IDLE state :-)
-                     try
-                     {
-                        mGameManager->AddActor(*gameProxy, false, shouldPublish);                        
-                     }
-                     catch (const dtUtil::Exception& ex)
-                     {
-                        dtUtil::Log::GetInstance("mapchangestatedata.cpp").LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                              "An error occurred adding actor \"%s\" of type \"%s.%s\".  The exception will follow.", 
-                              gameProxy->GetName().c_str(), gameProxy->GetActorType().GetCategory().c_str(),
-                              gameProxy->GetActorType().GetName().c_str());
-                        ex.LogException(dtUtil::Log::LOG_ERROR, dtUtil::Log::GetInstance("mapchangestatedata.cpp"));
-                     }
-                  }
-               }
-               else
-               {
-                  dtUtil::Log::GetInstance("mapchangestatedata.cpp").LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                     "Actor has the type of a GameActor, but casting it to a GameActorProxy failed.  "
-                     "Actor %s of type %s.%s will not be added to the scene.",
-                     gameProxy->GetName().c_str(), gameProxy->GetActorType().GetCategory().c_str(), 
-                     gameProxy->GetActorType().GetName().c_str());
-               }
-            }
-            else
-            {
-               mGameManager->AddActor(aProxy);
-            }
-         }
-         
-         mGameManager->GetScene().DisablePaging();
          if (mEnableDatabasePaging)
             mGameManager->GetScene().EnablePaging();
             
-         SendMapMessage(MessageType::INFO_MAP_LOADED, mNewMapName);            
-         SendMapMessage(MessageType::INFO_MAP_CHANGED, mNewMapName);            
+         SendMapMessage(MessageType::INFO_MAP_LOADED, mNewMapNames);
+         SendMapMessage(MessageType::INFO_MAP_CHANGED, mNewMapNames);
          mCurrentState = &MapChangeState::IDLE;
       }
    }
    
-   void MapChangeStateData::SendMapMessage(const MessageType& type, const std::string& name)
+   ///////////////////////////////////////////////////////////////////////////////
+   void MapChangeStateData::SendMapMessage(const MessageType& type, const MapChangeStateData::NameVector& names)
    {
-      dtCore::RefPtr<MapLoadedMessage> closeMessage;
+      dtCore::RefPtr<MapMessage> closeMessage;
       mGameManager->GetMessageFactory().CreateMessage(type, closeMessage);
-      closeMessage->SetLoadedMapName(name);
+      closeMessage->SetMapNames(names);
 
       mGameManager->SendMessage(*closeMessage);
    }

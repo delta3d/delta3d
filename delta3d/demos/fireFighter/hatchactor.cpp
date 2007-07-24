@@ -194,8 +194,10 @@ void HatchActor::OnMapLoaded(const dtGame::Message &msg)
 {
    if(msg.GetMessageType() == dtGame::MessageType::INFO_MAP_LOADED)
    {
-      const dtGame::MapLoadedMessage &mlm = static_cast<const dtGame::MapLoadedMessage&>(msg);
-      if(mlm.GetLoadedMapName() == "GameMap")
+      const dtGame::MapMessage &mlm = static_cast<const dtGame::MapMessage&>(msg);
+      std::vector<std::string> mapNames;
+      mlm.GetMapNames(mapNames);
+      if(!mapNames.empty() && mapNames[0] == "GameMap")
       {
          mGameMapLoaded = true;
          // Find the game level actor and search with its node
@@ -219,8 +221,10 @@ void HatchActor::OnMapLoaded(const dtGame::Message &msg)
    }
    else if(msg.GetMessageType() == dtGame::MessageType::INFO_MAP_UNLOADED)
    {
-      const dtGame::MapLoadedMessage &mlm = static_cast<const dtGame::MapLoadedMessage&>(msg);
-      if(mlm.GetLoadedMapName() == "GameMap")
+      const dtGame::MapMessage &mlm = static_cast<const dtGame::MapMessage&>(msg);
+      std::vector<std::string> mapNames;
+      mlm.GetMapNames(mapNames);
+      if(!mapNames.empty() && mapNames[0] == "GameMap")
          mGameMapLoaded = false;
    }
    else

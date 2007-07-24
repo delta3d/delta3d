@@ -1413,7 +1413,6 @@ void NamedParameterTests::TestNamedActorParameter()
 //   }
 }
 
-
 dtCore::RefPtr<dtDAL::NamedGroupParameter> NamedParameterTests::CreateNamedGroupParameter()
 {
    dtCore::RefPtr<dtDAL::NamedGroupParameter> groupParam = new dtDAL::NamedGroupParameter("test");
@@ -1435,7 +1434,6 @@ dtCore::RefPtr<dtDAL::NamedGroupParameter> NamedParameterTests::CreateNamedGroup
 
 void NamedParameterTests::TestNamedGroupParameter(dtDAL::NamedGroupParameter& groupParam)
 {
-   
    CPPUNIT_ASSERT(groupParam.GetParameter("test1") != NULL);
    CPPUNIT_ASSERT(groupParam.GetParameter("test1")->GetDataType() == dtDAL::DataType::STRING);
 

@@ -187,7 +187,7 @@ namespace dtGame
                else
                {
                   LogKeyframe autoKeyFrame;
-                  autoKeyFrame.SetActiveMap(mLogStatus.GetActiveMap());
+                  autoKeyFrame.SetActiveMaps(mLogStatus.GetActiveMaps());
                   autoKeyFrame.SetName("AutoKeyFrame " + dtUtil::ToString(mLogStatus.GetCurrentSimTime()));
                   autoKeyFrame.SetDescription("Auto captured keyframe.");
                   autoKeyFrame.SetSimTimeStamp(mLogStatus.GetCurrentSimTime());
@@ -284,7 +284,7 @@ namespace dtGame
 
             // insert first keyframe
             LogKeyframe firstKeyframe;
-            firstKeyframe.SetActiveMap(mLogStatus.GetActiveMap());
+            firstKeyframe.SetActiveMaps(mLogStatus.GetActiveMaps());
             firstKeyframe.SetName("Default First Keyframe");
             firstKeyframe.SetDescription("Default first keyframe created when a new record is started");
             firstKeyframe.SetSimTimeStamp(mLogStatus.GetCurrentSimTime());
@@ -536,7 +536,7 @@ namespace dtGame
                LogKeyframe kf;
                kf.SetName(tag.GetName() + "keyframecapture");
                kf.SetDescription(tag.GetDescription());
-               kf.SetActiveMap(mLogStatus.GetActiveMap());
+               kf.SetActiveMaps(mLogStatus.GetActiveMaps());
                kf.SetSimTimeStamp(mLogStatus.GetCurrentSimTime());
                kf.SetTagUniqueId(tag.GetUniqueId());
                DumpKeyFrame(kf);
@@ -919,8 +919,10 @@ namespace dtGame
       // we ignore it (could be one of many client messages).
       if (message.GetSource() == GetGameManager()->GetMachineInfo())
       {
-         const MapLoadedMessage *loadedMsg = (const MapLoadedMessage *) &message;
-         mLogStatus.SetActiveMap(loadedMsg->GetLoadedMapName());
+         const MapMessage& loadedMsg = static_cast<const MapMessage&>(message);
+         LogStatus::NameVector mapNames;
+         loadedMsg.GetMapNames(mapNames);
+         mLogStatus.SetActiveMaps(mapNames);
       }
    }
 

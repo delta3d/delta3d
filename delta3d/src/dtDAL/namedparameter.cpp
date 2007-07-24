@@ -182,9 +182,10 @@ namespace dtDAL
    {
       // Write out the size of the list so we know how many times to loop in FromDataStream
       stream << (unsigned int)mParameterList.size();
-
-      for(std::map<std::string,dtCore::RefPtr<NamedParameter> >::const_iterator i = mParameterList.begin(); 
-         i != mParameterList.end(); ++i)
+      
+      NamedGroupParameter::ParameterList::const_iterator i = mParameterList.begin();
+      NamedGroupParameter::ParameterList::const_iterator end = mParameterList.end();
+      for(; i != end; ++i)
       {
          stream << i->second->GetDataType().GetTypeId();
          stream << i->second->GetName();
@@ -253,8 +254,9 @@ namespace dtDAL
    const std::string NamedGroupParameter::ToString() const 
    {
       std::string toFill;
-      for(std::map<std::string,dtCore::RefPtr<NamedParameter> >::const_iterator i = mParameterList.begin(); 
-         i != mParameterList.end(); ++i)
+      NamedGroupParameter::ParameterList::const_iterator i = mParameterList.begin();
+      NamedGroupParameter::ParameterList::const_iterator end = mParameterList.end();
+      for(; i!= end; ++i)
       {
          toFill.append(i->first);
          toFill.append(" ");
@@ -309,22 +311,23 @@ namespace dtDAL
       mParameterList.clear(); 
       
       //copy parameters
-      for (std::map<std::string, dtCore::RefPtr<NamedParameter> >::const_iterator i = gpm.mParameterList.begin();
-            i != gpm.mParameterList.end(); ++i)
+      NamedGroupParameter::ParameterList::const_iterator i = gpm.mParameterList.begin();
+      NamedGroupParameter::ParameterList::const_iterator end = gpm.mParameterList.end();
+      for (; i != end; ++i)
       {
          NamedParameter* newParameter = AddParameter(i->first, i->second->GetDataType());
          if (newParameter == NULL)
             //This case should not happen, the method above should throw an exception if it doesn't work, but
             //this is a case of paranoid programming.
             throw dtUtil::Exception(ExceptionEnum::BaseException, 
-               "Unable to create parameter of type " + i->second->GetDataType().GetName(), __FILE__, __LINE__);
+               "Unable to create parameter of type " + i->second->GetDataType().GetName(),
+               __FILE__, __LINE__);
          
          newParameter->CopyFrom(*i->second);
       }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-
    NamedParameter* NamedGroupParameter::AddParameter(const std::string& name, 
                                                          const dtDAL::DataType& type) 
    {
@@ -338,10 +341,9 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-
    dtCore::RefPtr<NamedParameter> NamedGroupParameter::RemoveParameter(const std::string &name)
    {
-      std::map<std::string, dtCore::RefPtr<NamedParameter> >::iterator itor = mParameterList.find(name);
+      NamedGroupParameter::ParameterList::iterator itor = mParameterList.find(name);
       if (itor != mParameterList.end())
       {
          dtCore::RefPtr<NamedParameter> param = itor->second;
@@ -352,54 +354,51 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-
    void NamedGroupParameter::AddParameter(NamedParameter& newParam) 
    {
       if (!mParameterList.insert(std::make_pair(newParam.GetName(), &newParam)).second)
-         throw dtUtil::Exception(ExceptionEnum::InvalidParameter, "Could not add new parameter: " + newParam.GetName() + 
-            ". A parameter with that name already exists.", __FILE__, __LINE__);
+         throw dtUtil::Exception(ExceptionEnum::InvalidParameter,
+               "Could not add new parameter: "+ newParam.GetName() +
+               ". A parameter with that name already exists.", __FILE__, __LINE__);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-
    NamedParameter* NamedGroupParameter::GetParameter(const std::string& name) 
    {
-      std::map<std::string, dtCore::RefPtr<NamedParameter> >::iterator itor = mParameterList.find(name);
+      NamedGroupParameter::ParameterList::iterator itor = mParameterList.find(name);
       return itor == mParameterList.end() ? NULL : itor->second.get();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-
    const NamedParameter* NamedGroupParameter::GetParameter(const std::string& name) const 
    {
-      std::map<std::string, dtCore::RefPtr<NamedParameter> >::const_iterator itor = mParameterList.find(name);
+      NamedGroupParameter::ParameterList::const_iterator itor = mParameterList.find(name);
       return itor == mParameterList.end() ? NULL : itor->second.get();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-
    void NamedGroupParameter::GetParameters(std::vector<NamedParameter*>& toFill) 
    {
       toFill.clear();
       toFill.reserve(mParameterList.size());
-      for(std::map<std::string, dtCore::RefPtr<NamedParameter> >::iterator itor = mParameterList.begin();
-          itor != mParameterList.end(); ++itor)
-          toFill.push_back(itor->second.get());
+      NamedGroupParameter::ParameterList::iterator i = mParameterList.begin();
+      NamedGroupParameter::ParameterList::iterator end = mParameterList.end();
+      for(;i != end; ++i)
+          toFill.push_back(i->second.get());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-
    void NamedGroupParameter::GetParameters(std::vector<const NamedParameter*>& toFill) const 
    {
       toFill.clear();
       toFill.reserve(mParameterList.size());
-      for(std::map<std::string, dtCore::RefPtr<NamedParameter> >::const_iterator itor = mParameterList.begin();
-          itor != mParameterList.end(); ++itor)
-          toFill.push_back(itor->second.get());
+      NamedGroupParameter::ParameterList::const_iterator i = mParameterList.begin();
+      NamedGroupParameter::ParameterList::const_iterator end = mParameterList.end();
+      for(;i != end; ++i)
+          toFill.push_back(i->second.get());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-
    bool NamedGroupParameter::operator==(const NamedParameter& toCompare) const
    {
       if (GetDataType() == toCompare.GetDataType())
@@ -409,10 +408,10 @@ namespace dtDAL
          //if the size doesn't match. it's not equal.
          if (mParameterList.size() != groupToCompare.mParameterList.size())
             return false;
-            
-         std::map<std::string, dtCore::RefPtr<NamedParameter> >::const_iterator itorComp = groupToCompare.mParameterList.begin();
-         for(std::map<std::string, dtCore::RefPtr<NamedParameter> >::const_iterator itor = mParameterList.begin();
-             itor != mParameterList.end(); ++itor)
+         NamedGroupParameter::ParameterList::const_iterator itor = mParameterList.begin();
+         NamedGroupParameter::ParameterList::const_iterator itorComp = groupToCompare.mParameterList.begin();
+         NamedGroupParameter::ParameterList::const_iterator end = mParameterList.end();
+         for(; itor != end; ++itor)
          {
             //spin through the props and return false if one is not equal.
             if (*itor->second != *itorComp->second)

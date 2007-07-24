@@ -34,7 +34,6 @@ namespace dtGame
    {
       AddParameter(new EnumMessageParameter("StateEnum"));
       AddParameter(new DoubleMessageParameter("CurrentSimTime"));
-      AddParameter(new StringMessageParameter("ActiveMap"));
       AddParameter(new StringMessageParameter("LogFile"));
       AddParameter(new DoubleMessageParameter("AutoRecordKeyframeInterval"));
       AddParameter(new DoubleMessageParameter("CurrentRecordDuration"));
@@ -55,9 +54,9 @@ namespace dtGame
          static_cast<const DoubleMessageParameter*>(GetParameter("CurrentSimTime"));
       result.SetCurrentSimTime(simTime->GetValue());
 
-      const StringMessageParameter *map =
-         static_cast<const StringMessageParameter*>(GetParameter("ActiveMap"));
-      result.SetActiveMap(map->GetValue());
+      std::vector<std::string> maps;
+      GetMapNames(maps);
+      result.SetActiveMaps(maps);
 
       const StringMessageParameter *logfile =
          static_cast<const StringMessageParameter*>(GetParameter("LogFile"));
@@ -90,9 +89,7 @@ namespace dtGame
          static_cast< DoubleMessageParameter*>(GetParameter("CurrentSimTime"));
       simTime->SetValue(status.GetCurrentSimTime());
 
-      StringMessageParameter *map =
-         static_cast< StringMessageParameter*>(GetParameter("ActiveMap"));
-      map->SetValue(status.GetActiveMap());
+      SetMapNames(status.GetActiveMaps());
 
       StringMessageParameter *logFile =
          static_cast< StringMessageParameter*>(GetParameter("LogFile"));
@@ -214,7 +211,6 @@ namespace dtGame
       AddParameter(new StringMessageParameter("Description"));
       AddParameter(new ActorMessageParameter("UniqueId"));
       AddParameter(new DoubleMessageParameter("SimTime"));
-      AddParameter(new StringMessageParameter("ActiveMap"));
       AddParameter(new ActorMessageParameter("TagUniqueId"));
       AddParameter(new LongIntMessageParameter("LogFileOffset"));
    }
@@ -240,10 +236,10 @@ namespace dtGame
          static_cast<const DoubleMessageParameter*>(GetParameter("SimTime"));
       result.SetSimTimeStamp(simTime->GetValue());
 
-      const StringMessageParameter *activeMap =
-         static_cast<const StringMessageParameter*>(GetParameter("ActiveMap"));
-      result.SetActiveMap(activeMap->GetValue());
-
+      std::vector<std::string> maps;
+      GetMapNames(maps);
+      result.SetActiveMaps(maps);
+ 
       const ActorMessageParameter *tagUniqueId =
          static_cast<const ActorMessageParameter*>(GetParameter("TagUniqueId"));
       result.SetTagUniqueId(tagUniqueId->GetValue());
@@ -274,9 +270,7 @@ namespace dtGame
          static_cast< DoubleMessageParameter*>(GetParameter("SimTime"));
       simTime->SetValue(keyframe.GetSimTimeStamp());
 
-      StringMessageParameter *activeMap =
-         static_cast< StringMessageParameter*>(GetParameter("ActiveMap"));
-      activeMap->SetValue(keyframe.GetActiveMap());
+      SetMapNames(keyframe.GetActiveMaps());
 
       ActorMessageParameter *tagUniqueId =
          static_cast<ActorMessageParameter*>(GetParameter("TagUniqueId"));
@@ -291,84 +285,7 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////////
    LogJumpToKeyframeMessage::LogJumpToKeyframeMessage()
    {
-      AddParameter(new StringMessageParameter("Name"));
-      AddParameter(new StringMessageParameter("Description"));
-      AddParameter(new ActorMessageParameter("UniqueId"));
-      AddParameter(new DoubleMessageParameter("SimTime"));
-      AddParameter(new StringMessageParameter("ActiveMap"));
-      AddParameter(new ActorMessageParameter("TagUniqueId"));
-      AddParameter(new LongIntMessageParameter("LogFileOffset"));
    }
-
-   //////////////////////////////////////////////////////////////////////////
-   LogKeyframe LogJumpToKeyframeMessage::GetKeyframe() const
-   {
-      LogKeyframe result;
-
-      const StringMessageParameter *name =
-         static_cast<const StringMessageParameter*>(GetParameter("Name"));
-      result.SetName(name->GetValue());
-
-      const StringMessageParameter *description =
-         static_cast<const StringMessageParameter*>(GetParameter("Description"));
-      result.SetDescription(description->GetValue());
-
-      const ActorMessageParameter *uniqueId =
-         static_cast<const ActorMessageParameter*>(GetParameter("UniqueId"));
-      result.SetUniqueId(uniqueId->GetValue());
-
-      const DoubleMessageParameter *simTime =
-         static_cast<const DoubleMessageParameter*>(GetParameter("SimTime"));
-      result.SetSimTimeStamp(simTime->GetValue());
-
-      const StringMessageParameter *activeMap =
-         static_cast<const StringMessageParameter*>(GetParameter("ActiveMap"));
-      result.SetActiveMap(activeMap->GetValue());
-
-      const ActorMessageParameter *tagUniqueId =
-         static_cast<const ActorMessageParameter*>(GetParameter("TagUniqueId"));
-      result.SetTagUniqueId(tagUniqueId->GetValue());
-
-      const LongIntMessageParameter *logFileOffset =
-         static_cast<const LongIntMessageParameter*>(GetParameter("LogFileOffset"));
-      result.SetLogFileOffset(logFileOffset->GetValue());
-
-      return result;
-   }
-
-   //////////////////////////////////////////////////////////////////////////
-   void LogJumpToKeyframeMessage::SetKeyframe(const LogKeyframe &keyframe)
-   {
-      StringMessageParameter *name =
-         static_cast< StringMessageParameter*>(GetParameter("Name"));
-      name->SetValue(keyframe.GetName());
-
-      StringMessageParameter *description =
-         static_cast< StringMessageParameter*>(GetParameter("Description"));
-      description->SetValue(keyframe.GetDescription());
-
-      ActorMessageParameter *uniqueId =
-         static_cast< ActorMessageParameter*>(GetParameter("UniqueId"));
-      uniqueId->SetValue(keyframe.GetUniqueId());
-
-      DoubleMessageParameter *simTime =
-         static_cast< DoubleMessageParameter*>(GetParameter("SimTime"));
-      simTime->SetValue(keyframe.GetSimTimeStamp());
-
-      StringMessageParameter *activeMap =
-         static_cast< StringMessageParameter*>(GetParameter("ActiveMap"));
-      activeMap->SetValue(keyframe.GetActiveMap());
-
-      ActorMessageParameter *tagUniqueId =
-         static_cast<ActorMessageParameter*>(GetParameter("TagUniqueId"));
-      tagUniqueId->SetValue(keyframe.GetTagUniqueId());
-
-      LongIntMessageParameter *logFileOffset =
-         static_cast<LongIntMessageParameter*>(GetParameter("LogFileOffset"));
-      logFileOffset->SetValue(keyframe.GetLogFileOffset());
-   }
-
-
    //////////////////////////////////////////////////////////////////////////
    //////////////////////////////////////////////////////////////////////////
    LogGetKeyframeListMessage::LogGetKeyframeListMessage()
@@ -430,7 +347,12 @@ namespace dtGame
          //First build the parallel arrays.
          nameList.push_back(itor->GetName());
          descList.push_back(itor->GetDescription());
-         mapList.push_back(itor->GetActiveMap());
+         // TODO fix this to send the whole list.
+         if (itor->GetActiveMaps().empty())
+            mapList.push_back("");
+         else
+            mapList.push_back(itor->GetActiveMaps()[0]);
+         
          simTimeList.push_back(itor->GetSimTimeStamp());
          idList.push_back(itor->GetUniqueId());
          tagIdList.push_back(itor->GetTagUniqueId());
@@ -443,6 +365,19 @@ namespace dtGame
       }
    }
 
+   //////////////////////////////////////////////////////////////////////////
+   const std::vector<LogKeyframe>& LogGetKeyframeListMessage::GetKeyframeList() const 
+   {
+      return mKeyframeList;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void LogGetKeyframeListMessage::FromString(const std::string &source)
+   {
+      Message::FromString(source);
+      UpdateInternalKeyframeList();
+   }
+   
    //////////////////////////////////////////////////////////////////////////
    void LogGetKeyframeListMessage::UpdateInternalKeyframeList()
    {
@@ -489,7 +424,11 @@ namespace dtGame
          kf.SetName(nameList[i]);
          kf.SetDescription(descList[i]);
          kf.SetUniqueId(idList[i]);
-         kf.SetActiveMap(mapList[i]);
+         
+         LogKeyframe::NameVector mapNames;
+         mapNames.push_back(mapList[i]);
+         kf.SetActiveMaps(mapNames);
+         
          kf.SetSimTimeStamp(simTimeList[i]);
          kf.SetTagUniqueId(tagIdList[i]);
          kf.SetLogFileOffset(logFileOffsetList[i]);
@@ -512,6 +451,19 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////////
    LogGetTagListMessage::~LogGetTagListMessage()
    {
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   const std::vector<LogTag>& LogGetTagListMessage::GetTagList() const
+   {
+      return mTagList;
+   }
+   
+   //////////////////////////////////////////////////////////////////////////
+   void LogGetTagListMessage::FromString(const std::string &source)
+   {
+      Message::FromString(source);
+      UpdateInternalTagList();
    }
 
    //////////////////////////////////////////////////////////////////////////

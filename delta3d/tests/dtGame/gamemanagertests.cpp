@@ -26,6 +26,7 @@
 #include <osg/Endian>
 #include <dtUtil/log.h>
 #include <dtCore/refptr.h>
+#include <dtCore/observerptr.h>
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
 #include <dtCore/globals.h>
@@ -34,6 +35,7 @@
 #include <dtDAL/actortype.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/project.h>
+#include <dtDAL/map.h>
 #include <dtABC/application.h>
 #include <dtUtil/datastream.h>
 #include <dtGame/messageparameter.h>
@@ -1225,7 +1227,7 @@ void GameManagerTests::TestFindGameActorById()
 /////////////////////////////////////////////////
 void GameManagerTests::TestSetProjectContext()
 {
-   std::string context = "data/ProjectContext";
+   const std::string context = "data/ProjectContext";
    try
    {
       mManager->SetProjectContext(context);
@@ -1250,29 +1252,65 @@ void GameManagerTests::TestGMShutdown()
 
    dtCore::RefPtr<TestComponent> tc = new TestComponent;
    mManager->AddComponent(*tc, dtGame::GameManager::ComponentPriority::NORMAL);
-
-   const unsigned int numActors = 20;
-   for(unsigned int i = 0; i < numActors; i++)
+   dtDAL::Project& project = dtDAL::Project::GetInstance();
+   try 
    {
-      dtCore::RefPtr<dtDAL::ActorProxy> proxy = 
-         mManager->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE);
-
-      CPPUNIT_ASSERT(proxy.valid());
-
-      mManager->AddActor(*proxy);
-   }
-
-   mManager->Shutdown();
-
-   CPPUNIT_ASSERT_MESSAGE("Shutdown of the game manager should have flipped the removed from GM flag on the component", 
-      tc->mWasOnRemovedFromGMCalled);
-
-   CPPUNIT_ASSERT_MESSAGE("Shutdown of the game manager should have removed the test component", 
-      mManager->GetComponentByName(tc->GetName()) == NULL);
-
-   std::vector<dtDAL::ActorProxy*> proxies;
-   mManager->GetAllActors(proxies);
-   CPPUNIT_ASSERT_MESSAGE("Shut down of the game manager should have deleted the actors", 
-      proxies.empty());
+      const std::string context = "data/ProjectContext";
+      project.SetContext(context);
       
+      dtDAL::Map& m = project.CreateMap("testMap", "aa");      
+      
+      const unsigned int numActors = 20;
+      for(unsigned int i = 0; i < numActors; i++)
+      {
+         dtCore::RefPtr<dtDAL::ActorProxy> proxy = 
+            mManager->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE);
+   
+         CPPUNIT_ASSERT(proxy.valid());
+   
+         m.AddProxy(*proxy);
+      }
+   
+      project.SaveMap(m);
+      
+      mManager->ChangeMap(m.GetName(), false, false);
+      
+      //Make sure the map change completes.
+      dtCore::System::GetInstance().Step();
+      dtCore::System::GetInstance().Step();
+      dtCore::System::GetInstance().Step();
+
+      CPPUNIT_ASSERT_EQUAL(1U, unsigned(mManager->GetCurrentMapSet().size()));
+
+      dtCore::ObserverPtr<dtDAL::Map> mapPtr = &m;
+   
+      mManager->Shutdown();
+   
+      CPPUNIT_ASSERT_MESSAGE("The map should have been closed on shutdown.", !mapPtr.valid());
+      
+      CPPUNIT_ASSERT_MESSAGE("Shutdown of the game manager should have flipped the removed from GM flag on the component", 
+         tc->mWasOnRemovedFromGMCalled);
+   
+      CPPUNIT_ASSERT_MESSAGE("Shutdown of the game manager should have removed the test component", 
+         mManager->GetComponentByName(tc->GetName()) == NULL);
+   
+      CPPUNIT_ASSERT(mManager->GetCurrentMapSet().empty());
+   
+      std::vector<dtDAL::ActorProxy*> proxies;
+      mManager->GetAllActors(proxies);
+      CPPUNIT_ASSERT_MESSAGE("Shut down of the game manager should have deleted the actors", 
+         proxies.empty());
+         
+      //calling it twice should be ok.
+      //mManager->Shutdown();
+      dtDAL::Project::GetInstance().DeleteMap("testMap");
+   }
+   catch (...)
+   {
+      if (project.GetMapNames().find("testMap") != project.GetMapNames().end())
+      {
+         project.DeleteMap("testMap");
+      }
+      throw;
+   }
 }

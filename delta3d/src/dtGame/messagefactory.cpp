@@ -46,12 +46,12 @@ namespace dtGame
       RegisterMessageType<TickMessage>(MessageType::TICK_REMOTE);
       RegisterMessageType<TimerElapsedMessage>(MessageType::INFO_TIMER_ELAPSED);
 
-      RegisterMessageType<MapLoadedMessage>(MessageType::INFO_MAP_LOADED);
-      RegisterMessageType<MapLoadedMessage>(MessageType::INFO_MAP_UNLOADED);
-      RegisterMessageType<MapLoadedMessage>(MessageType::INFO_MAP_LOAD_BEGIN);
-      RegisterMessageType<MapLoadedMessage>(MessageType::INFO_MAP_UNLOAD_BEGIN);
-      RegisterMessageType<MapLoadedMessage>(MessageType::INFO_MAP_CHANGE_BEGIN);
-      RegisterMessageType<MapLoadedMessage>(MessageType::INFO_MAP_CHANGED);
+      RegisterMessageType<MapMessage>(MessageType::INFO_MAP_LOADED);
+      RegisterMessageType<MapMessage>(MessageType::INFO_MAP_UNLOADED);
+      RegisterMessageType<MapMessage>(MessageType::INFO_MAP_LOAD_BEGIN);
+      RegisterMessageType<MapMessage>(MessageType::INFO_MAP_UNLOAD_BEGIN);
+      RegisterMessageType<MapMessage>(MessageType::INFO_MAP_CHANGE_BEGIN);
+      RegisterMessageType<MapMessage>(MessageType::INFO_MAP_CHANGED);
 
       RegisterMessageType<Message>(MessageType::INFO_PAUSED);
       RegisterMessageType<Message>(MessageType::INFO_RESUMED);
@@ -60,7 +60,7 @@ namespace dtGame
 
       RegisterMessageType<NetServerRejectMessage>(MessageType::NETSERVER_REJECT_CONNECTION);
 
-      RegisterMessageType<CommandLoadMapMessage>(MessageType::COMMAND_LOAD_MAP);
+      RegisterMessageType<MapMessage>(MessageType::COMMAND_LOAD_MAP);
       RegisterMessageType<Message>(MessageType::COMMAND_PAUSE);
       RegisterMessageType<Message>(MessageType::COMMAND_RESUME);
       RegisterMessageType<RestartMessage>(MessageType::COMMAND_RESTART);
@@ -75,7 +75,7 @@ namespace dtGame
 
       RegisterMessageType<Message>(MessageType::INFO_PLAYER_ENTERED_WORLD);
 
-      RegisterMessageType<RequestLoadMapMessage>(MessageType::REQUEST_LOAD_MAP);
+      RegisterMessageType<MapMessage>(MessageType::REQUEST_LOAD_MAP);
       RegisterMessageType<Message>(MessageType::REQUEST_PAUSE);
       RegisterMessageType<Message>(MessageType::REQUEST_RESUME);
       RegisterMessageType<RestartMessage>(MessageType::REQUEST_RESTART);

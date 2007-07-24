@@ -74,7 +74,8 @@ namespace dtGame
       DECLARE_MANAGEMENT_LAYER(GameManager)
 
       public:
-      
+         typedef std::vector<std::string> NameVector;
+         
          class DT_GAME_EXPORT ComponentPriority : public dtUtil::Enumeration
          {
             DECLARE_ENUM(ComponentPriority);
@@ -552,7 +553,20 @@ namespace dtGame
          void ChangeMap(const std::string &mapName, bool addBillboards = false, bool enableDatabasePaging = true);
 
          /**
-          * Closes the map, if any, being used by the Game Manager.  All actors will be deleted whether map is closed on not.
+          * Changes the maps being used by the Game Manager.  All actors, Game events, and associated data will be deleted.
+          * It will send INFO_MAP_LOADED.  If another map group of maps is currently open, they will be closed via calling CloseCurrentMap()
+          * @see #CloseCurrentMap()
+          * @param mapNames      The list of names of maps to load.
+          * @param addBillboards optional parameter that defaults to false that says whether or not proxy billboards should be 
+          *                      added to the scene.  This should only be true for debugging purposes.
+          * @param enableDatabasePaging optional parameter to enable database paging for paged LODs usually used in
+          *                             large terrain databases.  Passing false will not disable paging if it is already enabled.
+          * @throws ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION if an actor is flagged as a game actor, but is not a GameActorProxy.
+          */
+         void ChangeMapSet(const NameVector& mapNames, bool addBillboards = false, bool enableDatabasePaging = true);
+
+         /**
+          * Closes the open maps, if any, being used by the Game Manager.  All actors will be deleted whether maps are closed or not.
           * It will send an INFO_MAP_UNLOADED message if a map is actually closed.
           */
          void CloseCurrentMap();
@@ -683,10 +697,17 @@ namespace dtGame
          MachineInfo& GetMachineInfo() { return *mMachineInfo; }
          
          /**
-          * Gets the name of the currently loaded map
+          * Gets the name of the first currently loaded map.  This is support apps that
+          * only use one map at a time
+          * @return the current map or empty string if no map is loaded.
+          */
+         const std::string& GetCurrentMap() const;
+
+         /**
+          * Gets the set of names of the currently loaded map.
           * @return mLoadedMap
           */
-         const std::string& GetCurrentMap() const { return mLoadedMap; }
+         const NameVector& GetCurrentMapSet() const;
          
          /**
           * @return The scale of realtime the GameManager is running at.
@@ -945,7 +966,7 @@ namespace dtGame
          MessageFactory mFactory;
          
          bool mPaused;
-         std::string mLoadedMap;
+         NameVector mLoadedMaps;
          dtCore::RefPtr<MapChangeStateData> mMapChangeStateData;
 
          ////////////////////////////////////////////////

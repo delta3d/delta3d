@@ -487,7 +487,7 @@ void TestAARHUD::UpdateHighDetailData(int baseWidth, float &curYPos)
       UpdateStaticText(mCurLogText, clin, -1.0f, -1.0f, -1.0f, baseWidth, curYPos);
 
       // Current Map
-      snprintf(clin, HUDCONTROLMAXTEXTSIZE, "CurMap: %s", mLogController->GetLastKnownStatus().GetActiveMap().c_str());
+      snprintf(clin, HUDCONTROLMAXTEXTSIZE, "CurMap: %s", mLogController->GetLastKnownStatus().GetActiveMaps()[0].c_str());
       curYPos += mTextHeight + 2;
       UpdateStaticText(mCurMapText, clin, -1.0f, -1.0f, -1.0f, baseWidth, curYPos);
    }

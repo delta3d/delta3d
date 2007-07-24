@@ -21,7 +21,7 @@
 #ifndef DELTA_LOGSTATUS
 #define DELTA_LOGSTATUS
 
-#include "dtGame/export.h"
+#include <dtGame/export.h>
 #include <dtCore/uniqueid.h>
 #include <dtUtil/enumeration.h>
 #include <string>
@@ -58,13 +58,10 @@ namespace dtGame
    class DT_GAME_EXPORT LogStatus
    {
       public:
+         typedef std::vector<std::string> NameVector;
 
          // Constructor
-         LogStatus() : mCurrentSimTime(0), mAutoRecordKeyframeInterval(0),
-            mCurrentRecordDuration(0), mNumMessages(0)
-         {
-            mStateEnum = &LogStateEnumeration::LOGGER_STATE_IDLE;
-         }
+         LogStatus();
 
          virtual ~LogStatus() {}
 
@@ -94,16 +91,16 @@ namespace dtGame
          void SetCurrentSimTime(double newCurrentSimTime) { mCurrentSimTime = newCurrentSimTime; }
 
          /**
-          * Gets the map name that was active when this keyframe was generated
-          * @return The map name
+          * Gets the map name list that was active when this status was created
+          * @return The map vector
           */
-         const std::string& GetActiveMap() const { return mActiveMap; }
+         const NameVector& GetActiveMaps() const { return mActiveMaps; }
 
          /**
-          * Sets the map name that was active when this keyframe was generated
+          * Sets the active map names
           * @param The map name
           */
-         void SetActiveMap(const std::string &newActiveMap) { mActiveMap = newActiveMap; }
+         void SetActiveMaps(const NameVector& newActiveMap);
 
          /**
           * Gets the log file
@@ -168,19 +165,13 @@ namespace dtGame
           * @param stream Standard stream
           * @param me The log status object to print.
           */
-         friend std::ostream &operator<<(std::ostream &stream,const LogStatus &me)
-         {
-            stream << "LogStatus: State[" << me.mStateEnum->GetName() <<
-               "], SimTime[" << me.mCurrentSimTime << "], Map[" << me.mActiveMap <<
-                  "], LogFile[" << me.mLogFile << "], #Messagse[" << me.mNumMessages << "]";
-            return stream;
-         }
+         friend std::ostream &operator<<(std::ostream &stream,const LogStatus &me);
 
       private:
 
          const LogStateEnumeration *mStateEnum;
          double mCurrentSimTime;
-         std::string mActiveMap;
+         NameVector mActiveMaps;
          std::string mLogFile;
          double mAutoRecordKeyframeInterval;
          double mCurrentRecordDuration;

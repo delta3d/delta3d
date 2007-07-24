@@ -25,6 +25,8 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <algorithm>
+#include <functional>
 #include <osg/Referenced>
 #include <osg/Vec2>
 #include <osg/Vec3>
@@ -156,10 +158,12 @@ namespace dtDAL
    class DT_DAL_EXPORT NamedGroupParameter : public NamedParameter
    {
       public:
+         typedef std::map<std::string, dtCore::RefPtr<NamedParameter> > ParameterList;
+         
          NamedGroupParameter(const std::string &name) :
             NamedParameter(name, false)
          {}
-
+         
          virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::GROUP; }
 
          virtual void ToDataStream(dtUtil::DataStream &stream) const;
@@ -224,6 +228,20 @@ namespace dtDAL
           */
          void GetParameters(std::vector<const NamedParameter*> &toFill) const;
 
+         template <class UnaryFunction>
+         void ForEachParameter(UnaryFunction function) const
+         {
+            /*std::for_each(mParameterList.begin(), mParameterList.end(), 
+                  std::compose1(std::select2nd<std::pair<std::string, dtCore::RefPtr<NamedParameter> > >(),
+                        function));*/
+            ParameterList::const_iterator i = mParameterList.begin();
+            ParameterList::const_iterator end = mParameterList.end();
+            for (; i != end; ++i)
+            {
+               function(i->second);
+            }
+         }
+
          /**
           * Return the amount of iters in the group list
           * @return the size of the internal messageparam map size
@@ -243,7 +261,7 @@ namespace dtDAL
          virtual bool operator==(const NamedParameter& toCompare) const;
 
       private:
-         std::map<std::string, dtCore::RefPtr<NamedParameter> > mParameterList;
+         ParameterList mParameterList;
    };
 
    template <class ParamType>

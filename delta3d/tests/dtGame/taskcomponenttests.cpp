@@ -232,8 +232,8 @@ void GMTaskComponentTests::TestChangeMap()
       //Still tests the task component logic though.
       mGameManager->DeleteAllActors(true);
       dtGame::MessageFactory &msgFactory = mGameManager->GetMessageFactory();
-      dtCore::RefPtr<dtGame::MapLoadedMessage> mapLoadMessage =
-         (dtGame::MapLoadedMessage *)(msgFactory.CreateMessage(dtGame::MessageType::INFO_MAP_LOADED)).get();
+      dtCore::RefPtr<dtGame::MapMessage> mapLoadMessage;
+      msgFactory.CreateMessage(dtGame::MessageType::INFO_MAP_LOADED, mapLoadMessage);
       mGameManager->SendMessage(*mapLoadMessage);
       dtCore::System::GetInstance().Step();
 

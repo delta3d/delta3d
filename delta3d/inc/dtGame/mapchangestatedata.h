@@ -22,6 +22,7 @@
 #define DELTA_MAPCHANGESTATEDATA
 
 #include <string>
+#include <vector>
 #include <osg/Referenced>
 
 #include <dtUtil/enumeration.h>
@@ -38,7 +39,8 @@ namespace dtGame
    class DT_GAME_EXPORT MapChangeStateData: public osg::Referenced
    {
       public:
-      
+         typedef std::vector<std::string> NameVector;
+         
          class DT_GAME_EXPORT MapChangeState : public dtUtil::Enumeration
          {
             DECLARE_ENUM(MapChangeState);
@@ -62,8 +64,8 @@ namespace dtGame
       
          MapChangeStateData(dtGame::GameManager& gm);
                   
-         const std::string& GetOldMapName() const { return mOldMapName; }        
-         const std::string& GetNewMapName() const { return mNewMapName; }        
+         const NameVector& GetOldMapNames() const { return mOldMapNames; }        
+         const NameVector& GetNewMapNames() const { return mNewMapNames; }        
       
          const MapChangeState& GetCurrentState() const { return *mCurrentState; }    
          void ChangeState(const MapChangeState& newState) { mCurrentState = &newState; }
@@ -71,27 +73,36 @@ namespace dtGame
          /**
           * @throws dtUtil::Exception with ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION if the GameManager has been deleted.
           */
-         void BeginMapChange(const std::string& oldMapName, const std::string& newMapName, bool addBillboards, bool enableDatabasePaging);
+         void BeginMapChange(const NameVector& oldMapNames, const NameVector& newMapNames, bool addBillboards, bool enableDatabasePaging);
          
           /**
           * @throws dtUtil::Exception with ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION if the GameManager has been deleted.
           */
          void ContinueMapChange();
-             
+      protected:
+
+         //Takes an open map name and loads all the actors into the GM
+         void LoadSingleMapIntoGM(const std::string& mapName);
+
+         // Opens all of the new maps in the new map vector. Returns true if successful
+         bool OpenNewMaps();
+
+         // Closes all of the old maps in the old map vector.
+         void CloseOldMaps();
+
       private:
          dtCore::ObserverPtr<GameManager> mGameManager;
-         
-         std::string mOldMapName;
-         std::string mNewMapName;
-      
+
+         NameVector mOldMapNames;
+         NameVector mNewMapNames;
+
          const MapChangeState* mCurrentState;
          bool mAddBillboards, mEnableDatabasePaging;
-         
-         
+
          //disable copy constructor and operator = 
          MapChangeStateData(const MapChangeStateData& toCopy) {}
          MapChangeStateData& operator = (const MapChangeStateData& toAssign) { return *this; }
-         void SendMapMessage(const MessageType& type, const std::string& name);
+         void SendMapMessage(const MessageType& type, const NameVector& names);
    };
 }
 
