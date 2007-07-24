@@ -36,8 +36,8 @@ namespace dtAnim
    template<class T, class Array>
    const typename Array::value_type::element_type* FindWithFunctor(Array a, T functor)
    {
-      Array::const_iterator iter = a.begin();
-      Array::const_iterator end = a.end();
+      typename Array::const_iterator iter = a.begin();
+      typename Array::const_iterator end = a.end();
 
       for(;iter != end; ++iter)
       {

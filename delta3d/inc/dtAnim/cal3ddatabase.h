@@ -52,7 +52,8 @@ namespace dtAnim
 
          ///Get the animatables associated with this model wrapper
          const Cal3DModelData* GetModelData(const Cal3DModelWrapper& wrapper) const;
-
+         
+         void PurgeLoaderCaches() { mFileLoader->PurgeAllCaches(); }
 
       protected:
          virtual ~Cal3DDatabase();
