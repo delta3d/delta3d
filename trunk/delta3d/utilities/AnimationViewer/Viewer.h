@@ -7,7 +7,6 @@
 #include <dtCore/refptr.h>
 #include <dtABC/application.h>
 #include <dtCore/system.h>
-#include <dtAnim/cal3dloader.h>
 
 #include <vector>
 
@@ -27,6 +26,7 @@ namespace osg
 namespace dtAnim
 {
    class CharDrawable;
+   class Cal3DDatabase;
 }
 
 class Viewer : public QObject, public dtABC::Application
@@ -88,7 +88,7 @@ private:
    std::vector<int> mMeshesToAttach;
    std::vector<int> mMeshesToDetach;
 
-   dtCore::RefPtr<dtAnim::Cal3DLoader> mLoader; ///<Need to keep this around since it holds our textures
+   dtCore::RefPtr<dtAnim::Cal3DDatabase> mDatabase; ///<Need to keep this around since it holds our textures
 };
 
 #endif // Viewer_h__

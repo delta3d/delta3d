@@ -14,11 +14,14 @@
 #include <dtCore/orbitmotionmodel.h>
 #include <dtCore/globals.h>
 #include <dtCore/light.h>
+
 #include <dtAnim/characterfilehandler.h>
 #include <dtAnim/chardrawable.h>
 #include <dtAnim/characterfilehandler.h>
 #include <dtAnim/cal3dmodelwrapper.h>
 #include <dtAnim/chardrawable.h>
+#include <dtAnim/cal3ddatabase.h>
+
 #include <dtUtil/xercesparser.h>
 #include <dtUtil/stringutils.h>
 #include <dtUtil/fileutils.h>
@@ -40,7 +43,7 @@ using namespace dtAnim;
 Viewer::Viewer():
 mCharacter(NULL),
 mMotion(NULL),
-mLoader(new dtAnim::Cal3DLoader())
+mDatabase(new dtAnim::Cal3DDatabase())
 {
 
 }
@@ -117,14 +120,14 @@ void Viewer::OnLoadCharFile( const QString &filename )
 
    //wipe out any previously loaded characters. This will ensure we can 
    //reload the same file (which might have been modified).
-   mLoader->PurgeAllCaches();
+   mDatabase->PurgeLoaderCaches();
 
    //create an instance from the character definition file
    try
    {
       // Create a new Cal3DWrapper
-      dtCore::RefPtr<Cal3DModelWrapper> wrapper = mLoader->Load(filename.toStdString());  
-
+      dtCore::RefPtr<Cal3DModelWrapper> wrapper = mDatabase->Load(filename.toStdString());
+       
       if( mCharacter.valid() )
       {
          mCharacter->SetCal3DWrapper( wrapper.get() );
