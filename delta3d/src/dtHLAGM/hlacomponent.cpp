@@ -1755,8 +1755,30 @@ namespace dtHLAGM
 
       if (thisObjectHandle != NULL)
       {
+         // Capture the handle value prior to removing the object mappings.
+         // Removing the mappings will cause the handle pointer to no
+         // longer point to a valid value; the pointer is returned
+         // from the Actor-to-HLA mapping and will no longer be a
+         // valid pointer when the remove operation is performed.
+         unsigned handleValue = *thisObjectHandle;
+
+         // Removal of mappings should happen first just in case an exception
+         // is thrown by the RTI ambassador.
          mRuntimeMappings.Remove(actorId);
-         mRTIAmbassador->deleteObjectInstance(*thisObjectHandle, "");
+
+         try
+         {
+            mRTIAmbassador->deleteObjectInstance(handleValue, "");
+         }
+         // This should not happen unless RTI is broken some how.
+         catch( RTI::Exception& e )
+         {
+            std::ostringstream ss;
+            ss << "RTI::Exception (" << e._name << "):\n\t"
+               << "Attempted delete on actor: \"" << actorId 
+               << "\"\n\tHandle: " << handleValue;
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, ss.str().c_str());
+         }
       }
       else
       {
