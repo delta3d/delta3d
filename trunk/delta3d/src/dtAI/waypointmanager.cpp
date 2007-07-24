@@ -35,10 +35,27 @@
 
 #include <cassert>
 #include <fstream>
+#include <exception>
 #include <algorithm>
 
 namespace dtAI
 {
+
+   class InvalidWaypointFileID: public std::exception
+   {
+      virtual const char* what() const throw()
+      {
+         return "The Waypoint file ID was invalid";
+      }
+   };
+
+   class InvalidHelperFileID: public std::exception
+   {
+      virtual const char* what() const throw()
+      {
+         return "The Waypoint Helper file ID was invalid";
+      }
+   };
    
    osg::ref_ptr<WaypointManager> WaypointManager::mSingleton = 0;
 
@@ -205,12 +222,12 @@ namespace dtAI
             //read the file id
             int id = 0;
             infile >> id;
-            if(id != WAYPOINT_HELPER_FILE_ID) return false;
+            if(id != WAYPOINT_HELPER_FILE_ID) throw InvalidHelperFileID();
 
             //read in the file version number
             int version = 0;
             infile >> version;
-            if(version != WAYPOINT_FILE_VERSION) return false;
+            if(version != WAYPOINT_FILE_VERSION) throw InvalidWaypointFileID();
 
             //read the number of verts to read
             unsigned size = 0;
@@ -241,9 +258,9 @@ namespace dtAI
 
             read_file_ok = true;
          }
-         catch(std::exception&)
+         catch(const std::exception& e)
          {
-            LOG_ERROR("Exception thrown reading Waypoint file, invalid file format.");
+            LOG_ERROR("Exception thrown reading Waypoint file: " + std::string(e.what()));
          }
       }
 
