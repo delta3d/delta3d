@@ -1760,7 +1760,7 @@ namespace dtHLAGM
          // longer point to a valid value; the pointer is returned
          // from the Actor-to-HLA mapping and will no longer be a
          // valid pointer when the remove operation is performed.
-         unsigned handleValue = *thisObjectHandle;
+         RTI::ObjectHandle handleValue = *thisObjectHandle;
 
          // Removal of mappings should happen first just in case an exception
          // is thrown by the RTI ambassador.
