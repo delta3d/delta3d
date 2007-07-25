@@ -30,18 +30,18 @@ public:
 	}
 	Functor(Functor const& src) 
 	{
-		vptr_ = src.vptr_ ? src.vptr_->clone_(src, *this) : 0;
+		vptr_ = src.vptr_ ? src.vptr_->clone_(src, *this) : NULL;
 	}
 	Functor& operator=(Functor const& src)
 	{
 		if (this != &src) {
 			if (vptr_) vptr_->destroy_(*this); 
-			vptr_ = src.vptr_ ? src.vptr_->clone_(src, *this) : 0;
+			vptr_ = src.vptr_ ? src.vptr_->clone_(src, *this) : NULL;
 		}
 		return *this;
 	}
 	// is-empty selector
-	bool operator!() const { return vptr_ == 0; }
+	bool operator!() const { return vptr_ == NULL; }
 	// ctor for static fns and arbitrary functors 
 	template <typename F> explicit Functor(F const& fun) 
 	{ 

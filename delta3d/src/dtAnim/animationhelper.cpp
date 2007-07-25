@@ -46,15 +46,11 @@
 
 namespace dtAnim
 {
-
-dtCore::RefPtr<Cal3DDatabase> AnimationHelper::sModelDatabase = new Cal3DDatabase();
-
 /////////////////////////////////////////////////////////////////////////////////
 AnimationHelper::AnimationHelper()
 : mGroundClamp(false)
 , mGeode(NULL)
 , mAnimator(NULL)
-, mNodeBuilder(new AnimNodeBuilder())
 , mSequenceMixer(new SequenceMixer())
 , mAttachmentController(new AttachmentController())
 {
@@ -108,14 +104,15 @@ void AnimationHelper::ClearAll(float fadeOut)
 /////////////////////////////////////////////////////////////////////////////////
 bool AnimationHelper::LoadModel(const std::string& pFilename)
 {
-   dtCore::RefPtr<dtAnim::Cal3DModelWrapper> newModel = sModelDatabase->Load(pFilename);
+   Cal3DDatabase& database = Cal3DDatabase::GetInstance();
+   dtCore::RefPtr<Cal3DModelWrapper> newModel = database.Load(pFilename);
 
    if (newModel.valid())
    {
-      mAnimator = new dtAnim::Cal3DAnimator(newModel.get());   
-      mGeode = mNodeBuilder->CreateGeode(newModel.get());
+      mAnimator = new Cal3DAnimator(newModel.get());
+      mGeode = database.GetNodeBuilder().CreateGeode(newModel.get());
       
-      const Cal3DModelData*  modelData = sModelDatabase->GetModelData(*newModel);
+      const Cal3DModelData*  modelData = database.GetModelData(*newModel);
       if(modelData == NULL)
       {
          LOG_ERROR("ModelData not found for Character XML '" + pFilename + "'");

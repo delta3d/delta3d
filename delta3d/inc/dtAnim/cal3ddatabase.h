@@ -37,16 +37,17 @@ namespace dtAnim
 {
    class Cal3DModelData;
    class Cal3DModelWrapper; 
-   
+   class AnimNodeBuilder;
 
    class DT_ANIM_EXPORT Cal3DDatabase: public osg::Referenced
    {
-      public:        
+      public:
          typedef std::vector<dtCore::RefPtr<Cal3DModelData> >  ModelDataArray;
 
       public:
-         Cal3DDatabase();
-
+         /// Sigh, yes it's a singleton
+         static Cal3DDatabase& GetInstance();
+         
          ///Load an animated entity definition file and return the Cal3DModelWrapper
          dtCore::RefPtr<Cal3DModelWrapper> Load(const std::string &filename);
 
@@ -55,10 +56,12 @@ namespace dtAnim
          
          void PurgeLoaderCaches() { mFileLoader->PurgeAllCaches(); }
 
+         /// @return the node builder for this database.
+         AnimNodeBuilder& GetNodeBuilder();
+         
       protected:
+         Cal3DDatabase();
          virtual ~Cal3DDatabase();
-
-      private:        
 
          Cal3DModelData* Find(const std::string& filename);
          Cal3DModelData* Find(const CalCoreModel* coreModel);
@@ -66,10 +69,12 @@ namespace dtAnim
          const Cal3DModelData* Find(const std::string& filename) const;
          const Cal3DModelData* Find(const CalCoreModel* coreModel) const;
 
-         ModelDataArray mModelData;       
+         ModelDataArray mModelData;
 
          dtCore::RefPtr<Cal3DLoader> mFileLoader;
+         dtCore::RefPtr<AnimNodeBuilder> mNodeBuilder;
 
+         static dtCore::RefPtr<Cal3DDatabase> mInstance;
    };
 
 }
