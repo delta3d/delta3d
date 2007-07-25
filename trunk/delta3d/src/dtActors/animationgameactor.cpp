@@ -64,7 +64,6 @@ namespace dtActors
       : dtGame::GameActor(proxy)
       , mModelGeode(new osg::Geode)
       , mSkeletalGeode(new osg::Geode)
-      , mModelLoader(new dtAnim::Cal3DDatabase())
       , mAnimator( NULL )
       , mRenderModeBits( RENDER_MODE_SKIN )
    {
@@ -79,7 +78,7 @@ namespace dtActors
 
    void AnimationGameActor::SetModel(const std::string &modelFile)
    {
-      dtCore::RefPtr<dtAnim::Cal3DModelWrapper> newModel = mModelLoader->Load(modelFile);    
+      dtCore::RefPtr<dtAnim::Cal3DModelWrapper> newModel = dtAnim::Cal3DDatabase::GetInstance().Load(modelFile);    
 
       // If we successfully loaded the model, give it to the animator
       if (newModel.valid())

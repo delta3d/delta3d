@@ -22,6 +22,7 @@
 #include <dtAnim/cal3ddatabase.h>
 #include <dtAnim/cal3dmodeldata.h>
 #include <dtAnim/cal3dmodelwrapper.h>
+#include <dtAnim/animnodebuilder.h>
 #include <dtUtil/log.h>
 
 #include <osgDB/FileNameUtils>
@@ -52,7 +53,7 @@ namespace dtAnim
 
    struct findWithFilename
    {
-      findWithFilename(const std::string& filename): mFilename(filename){}         
+      findWithFilename(const std::string& filename): mFilename(filename){}
 
       bool operator()(Cal3DModelData* data)
       {
@@ -80,6 +81,7 @@ namespace dtAnim
    Cal3DDatabase::Cal3DDatabase()
    : mModelData()
    , mFileLoader(new Cal3DLoader())
+   , mNodeBuilder(new AnimNodeBuilder())
    {
    }
 
@@ -88,6 +90,23 @@ namespace dtAnim
    {
    }
 
+   /////////////////////////////////////////////////////////////////////////////////////////
+   dtCore::RefPtr<Cal3DDatabase> Cal3DDatabase::mInstance;
+   /////////////////////////////////////////////////////////////////////////////////////////
+   Cal3DDatabase& Cal3DDatabase::GetInstance()
+   {
+      if (!mInstance.valid())
+      {
+         mInstance = new Cal3DDatabase();
+      }
+      return *mInstance;
+   }
+
+   /// @return the node builder for this database.
+   AnimNodeBuilder& Cal3DDatabase::GetNodeBuilder()
+   {
+      return *mNodeBuilder;
+   }
    ///Load an animated entity definition file and return the Cal3DModelWrapper
    dtCore::RefPtr<Cal3DModelWrapper> Cal3DDatabase::Load( const std::string& file )
    {

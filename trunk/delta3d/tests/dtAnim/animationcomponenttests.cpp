@@ -25,6 +25,8 @@
 
 #include <dtAnim/animationcomponent.h>
 #include <dtAnim/animationhelper.h>
+#include <dtAnim/animnodebuilder.h>
+#include <dtAnim/cal3ddatabase.h>
 
 #include <dtCore/refptr.h>
 #include <dtCore/system.h>
@@ -41,9 +43,9 @@
 #include <dtActors/animationgameactor2.h>
 #include <dtActors/engineactorregistry.h>
 
-#include <string>
+#include <osg/Geode>
 
-using namespace dtGame;
+#include <string>
 
 namespace dtAnim
 {
@@ -80,9 +82,9 @@ namespace dtAnim
       private:
 
          dtUtil::Log* mLogger;
-         dtCore::RefPtr<GameManager> mGM;
+         dtCore::RefPtr<dtGame::GameManager> mGM;
          dtCore::RefPtr<AnimationComponent> mAnimComp;
-         dtCore::RefPtr<GameActorProxy> mTestGameActor;
+         dtCore::RefPtr<dtGame::GameActorProxy> mTestGameActor;
 
    };
 
@@ -92,12 +94,13 @@ namespace dtAnim
    void AnimationComponentTests::setUp()
    {
       mLogger = &dtUtil::Log::GetInstance("animationcomponenttests.cpp");
-
+      AnimNodeBuilder& nodeBuilder = Cal3DDatabase::GetInstance().GetNodeBuilder();
+      nodeBuilder.SetCreate(AnimNodeBuilder::CreateFunc(&nodeBuilder, &AnimNodeBuilder::CreateSoftware));
       dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
       dtCore::System::GetInstance().Start();
-      mGM = new GameManager(*new dtCore::Scene());
+      mGM = new dtGame::GameManager(*new dtCore::Scene());
       mAnimComp = new AnimationComponent();
-      mGM->AddComponent(*mAnimComp, GameManager::ComponentPriority::NORMAL);
+      mGM->AddComponent(*mAnimComp, dtGame::GameManager::ComponentPriority::NORMAL);
 
       mGM->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, mTestGameActor);
       CPPUNIT_ASSERT(mTestGameActor.valid());
@@ -127,13 +130,13 @@ namespace dtAnim
 
       CPPUNIT_ASSERT(mAnimComp->GetHelperForProxy(*mTestGameActor) == helper.get());
 
-      dtCore::System::GetInstance().Step();  
+      dtCore::System::GetInstance().Step();
 
       CPPUNIT_ASSERT(helper->HasBeenUpdated());
    }
 
    void AnimationComponentTests::TestAnimationPerformance()
-   {      
+   {
       typedef std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > ProxyContainer;
       ProxyContainer proxies;
       ProxyContainer groundActor;
@@ -146,7 +149,7 @@ namespace dtAnim
          dtDAL::Project::GetInstance().SetContext(context, true);
          mGM->ChangeMap("AnimationPerformance");
 
-         //step a few time to ensure the map loaded
+         //step a few times to ensure the map loaded
          dtCore::System::GetInstance().Step();
          dtCore::System::GetInstance().Step();
          dtCore::System::GetInstance().Step();

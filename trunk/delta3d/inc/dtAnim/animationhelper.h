@@ -175,7 +175,7 @@ namespace dtAnim
          /**
           * Set whether or not this entity should be ground clamped
           */
-         void SetGroundClamp(bool b);     
+         void SetGroundClamp(bool b);
 
          /**
           * The animation helper has an attachment controller that moves the 
@@ -189,7 +189,7 @@ namespace dtAnim
           * this is provided to allow a developer to subclass the controller and
           * assign the new one to the helper.
           */
-         void SetAttachmentController(AttachmentController& newController);    
+         void SetAttachmentController(AttachmentController& newController);
          
       protected:
          virtual ~AnimationHelper();
@@ -199,11 +199,8 @@ namespace dtAnim
          bool mGroundClamp;
          dtCore::RefPtr<osg::Geode> mGeode;
          dtCore::RefPtr<Cal3DAnimator> mAnimator;
-         dtCore::RefPtr<AnimNodeBuilder> mNodeBuilder;
          dtCore::RefPtr<SequenceMixer> mSequenceMixer;
          dtCore::RefPtr<AttachmentController> mAttachmentController;
-         
-         static dtCore::RefPtr<Cal3DDatabase> sModelDatabase;
 
    };
 

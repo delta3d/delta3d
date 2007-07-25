@@ -55,7 +55,7 @@ public:
       private:
          dtCore::RefPtr<Cal3DModelWrapper> mWrapper;
    };
-
+   
    AnimNodeBuilder(); //creates default builder
    AnimNodeBuilder(const CreateFunc& pCreate); //uses custom builder
 
@@ -72,7 +72,7 @@ protected:
    AnimNodeBuilder& operator=(const AnimNodeBuilder&);
    
    osg::Program* LoadShaders(const std::string& shaderFile) const;
-
+   
 private:
 
    CreateFunc mCreateFunc;

@@ -75,7 +75,7 @@ TestAnim::TestAnim()
 : dtGame::GameEntryPoint()
 , mAnimationHelper(NULL)
 , mFMM(NULL)
-, mPerformanceTest(false)
+, mPerformanceTest(true)
 {
    
 }
