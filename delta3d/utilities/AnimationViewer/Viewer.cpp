@@ -43,7 +43,7 @@ using namespace dtAnim;
 Viewer::Viewer():
 mCharacter(NULL),
 mMotion(NULL),
-mDatabase(new dtAnim::Cal3DDatabase())
+mDatabase(&Cal3DDatabase::GetInstance())
 {
 
 }
