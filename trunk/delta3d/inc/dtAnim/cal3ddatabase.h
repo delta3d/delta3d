@@ -58,9 +58,10 @@ namespace dtAnim
 
          /// @return the node builder for this database.
          AnimNodeBuilder& GetNodeBuilder();
-         
+
+         Cal3DDatabase();	 
       protected:
-         Cal3DDatabase();
+
          virtual ~Cal3DDatabase();
 
          Cal3DModelData* Find(const std::string& filename);
