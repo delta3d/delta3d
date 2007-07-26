@@ -318,6 +318,8 @@ namespace dtGame
          /// Remove a drDOF from the list at this spot
          void RemoveDRDOF(std::list<dtCore::RefPtr<DeadReckoningDOF> >::iterator &iter);
 
+         void RemoveAllDRDOFByName(const std::string& removeName);
+
          /// Remove a drdof by checking against values compared to everything else.
          void RemoveDRDOF(DeadReckoningDOF &obj);
 
