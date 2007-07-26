@@ -1119,6 +1119,7 @@ void MessageTests::CheckMapNames(const dtGame::MapMessage& mapLoadedMsg,
 {
    static dtGame::GameManager::NameVector mapNamesGet;
    mapLoadedMsg.GetMapNames(mapNamesGet);
+   CPPUNIT_ASSERT(mapNamesGet.size() > 0);
    CPPUNIT_ASSERT_EQUAL(mapNames.size(), mapNamesGet.size());
    CPPUNIT_ASSERT_MESSAGE(
          "The Map name in the \"" + mapLoadedMsg.GetMessageType().GetName() + "\" message should be " + mapNames[0],
@@ -1337,6 +1338,8 @@ void MessageTests::TestChangeMap()
 
       processMapChange = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_CHANGED);
       CPPUNIT_ASSERT_MESSAGE("A INFO_MAP_CHANGED message should have been processed.", processMapChange.valid());
+      mapLoadedMsg = static_cast<const dtGame::MapMessage*>(processMapChange.get());
+      CheckMapNames(*mapLoadedMsg, mapNames2Expected);
 
    }
    catch(const dtUtil::Exception &e) 
