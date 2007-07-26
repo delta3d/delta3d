@@ -51,9 +51,11 @@ namespace dtAnim
          ///Load an animated entity definition file and return the Cal3DModelWrapper
          dtCore::RefPtr<Cal3DModelWrapper> Load(const std::string &filename);
 
-         ///Get the animatables associated with this model wrapper
+         ///Get the model data associated with this model wrapper
          const Cal3DModelData* GetModelData(const Cal3DModelWrapper& wrapper) const;
-         
+
+         ///Get the model data associated with this model wrapper
+         Cal3DModelData* GetModelData(const Cal3DModelWrapper& wrapper);
          void PurgeLoaderCaches() { mFileLoader->PurgeAllCaches(); }
 
          /// @return the node builder for this database.

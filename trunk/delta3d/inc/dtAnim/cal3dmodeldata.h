@@ -63,11 +63,42 @@ namespace dtAnim
          AnimatableArray& GetAnimatables();
          const AnimatableArray& GetAnimatables() const;
 
+         /**
+          * @return the id of the of the Vertex Buffer Object being used with this 
+          *    character core model, or 0 for none.
+          */
          unsigned GetVertexVBO() const;
+         
+         /// Sets the id of the of the Vertex Buffer Object being used with this character core model
          void SetVertexVBO(unsigned);
 
+         /**
+          * @return the id of the of the Index Vertex Buffer Object being used with this 
+          *    character core model, or 0 for none
+          */
          unsigned GetIndexVBO() const;
+         
+         /// Sets the id of the of the Index Vertex Buffer Object being used with this character core model
          void SetIndexVBO(unsigned);
+         
+         /**
+          * @see dtCore::ShaderManager
+          * @return the shader group used to lookup the shader for this character model.
+          */
+         const std::string& GetShaderGroupName() const;
+
+         /// Sets the shader group name
+         void SetShaderGroupName(const std::string& groupName);
+
+         /**
+          * @see dtCore::ShaderManager
+          * @see #GetShaderGroupName
+          * @return the name of the shader within the shader group to use.
+          */
+         const std::string& GetShaderName() const;
+
+         /// Sets the shader group name
+         void SetShaderName(const std::string& name);
 
       protected:
          virtual ~Cal3DModelData();
@@ -75,9 +106,9 @@ namespace dtAnim
          Cal3DModelData(const Cal3DModelData&); //not implemented
          Cal3DModelData& operator=(const Cal3DModelData&); //not implemented
 
-      private:        
-         
+      private:
          std::string mFilename;
+         std::string mShaderName, mShaderGroupName;
          CalCoreModel* mCoreModel;
          AnimationWrapperArray mAnimWrappers;
          AnimatableArray mAnimatables;

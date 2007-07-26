@@ -138,6 +138,12 @@ namespace dtAnim
    }
 
    /////////////////////////////////////////////////////////////////////////////////////////
+   Cal3DModelData* Cal3DDatabase::GetModelData(const Cal3DModelWrapper& wrapper)
+   {
+      return Find(wrapper.GetCalModel()->getCoreModel());
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////////////
    Cal3DModelData* Cal3DDatabase::Find(const std::string& filename)
    {
       //todo- this is ugly, get rid of it

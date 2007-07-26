@@ -23,6 +23,9 @@
 #include <dtAnim/cal3dmodelwrapper.h>
 #include <dtAnim/submesh.h>
 #include <dtAnim/hardwaresubmesh.h>
+#include <dtAnim/cal3ddatabase.h>
+#include <dtAnim/cal3dmodeldata.h>
+
 #include <dtCore/globals.h>
 #include <dtUtil/log.h>
 
@@ -31,6 +34,7 @@
 #include <osg/BoundingBox>
 
 #include <cal3d/hardwaremodel.h>
+
 //For the bounding box class, who knew.
 #include <cal3d/vector.h>
 
@@ -42,13 +46,13 @@ class Array
 {
    public:
       typedef T value_type;
-      
+
       Array(size_t size = 0): mArray(NULL)
       {
          if (size > 0)
             mArray = new T[size];
       }
-      
+
       ~Array()
       {
          delete[] mArray;
@@ -58,7 +62,7 @@ class Array
       {
          return mArray[index];
       }
-                      
+
       T* mArray;
 };
 
@@ -131,6 +135,14 @@ dtCore::RefPtr<osg::Geode> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pW
       return NULL;
    }
 
+   Cal3DModelData* modelData = Cal3DDatabase::GetInstance().GetModelData(*pWrapper);
+   
+   if (modelData == NULL)
+   {
+      LOG_ERROR("Model does not have model data.  Unable to create hardware submesh.");
+      return NULL;
+   }
+   
    //TODO: query for the maximum number of bones through opengl
    static const int MAX_BONES = 72;
 // Apple OpenGL reports the names of the array uniforms differently
@@ -158,7 +170,7 @@ dtCore::RefPtr<osg::Geode> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pW
       {
          CalCoreMesh* calMesh = model->getCoreMesh(meshId);
          int submeshCount = calMesh->getCoreSubmeshCount();
-               
+
          for(int submeshId = 0; submeshId < submeshCount; submeshId++) 
          {
             CalCoreSubmesh* subMesh = calMesh->getCoreSubmesh(submeshId);
@@ -168,35 +180,58 @@ dtCore::RefPtr<osg::Geode> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pW
       }
       const size_t stride = 18;
       const size_t strideBytes = stride * sizeof(float);
-      
+
       Array<CalIndex> indexArray(numIndices);
+
+      CalHardwareModel* hardwareModel = new CalHardwareModel(model);
+
 
       osg::Drawable::Extensions* glExt = osg::Drawable::getExtensions(0, true);
       GLuint vbo[2];
-      glExt->glGenBuffers(2, vbo);
+      if (modelData->GetVertexVBO() == 0)
+      {
+         glExt->glGenBuffers(1, &vbo[0]);
+         glExt->glBindBuffer(GL_ARRAY_BUFFER_ARB, vbo[0]);
+         glExt->glBufferData(GL_ARRAY_BUFFER_ARB, strideBytes * numVerts, NULL, GL_STATIC_DRAW_ARB);
+         modelData->SetVertexVBO(vbo[0]);
+      }
+      else
+      {
+         vbo[0] = modelData->GetVertexVBO();
+         glExt->glBindBuffer(GL_ARRAY_BUFFER_ARB, vbo[0]);
+      }
 
-      glExt->glBindBuffer(GL_ARRAY_BUFFER_ARB, vbo[0]);
-      glExt->glBufferData(GL_ARRAY_BUFFER_ARB, strideBytes * numVerts, NULL, GL_STATIC_DRAW_ARB);
-      float* vboVertexAttr = (float *)glExt->glMapBuffer(GL_ARRAY_BUFFER_ARB, GL_WRITE_ONLY_ARB);
+      bool newIndexBuffer = false;
+      if (modelData->GetIndexVBO() == 0)
+      {
+         glExt->glGenBuffers(1, &vbo[1]);
+         modelData->SetIndexVBO(vbo[1]);
+         newIndexBuffer = true;
+      }
+      else
+      {
+         vbo[1] = modelData->GetIndexVBO();
+      }
 
-      CalHardwareModel* hardwareModel = new CalHardwareModel(model);
       hardwareModel->setIndexBuffer(indexArray.mArray);
 
-      hardwareModel->setVertexBuffer((char*) vboVertexAttr, strideBytes);
-      hardwareModel->setNormalBuffer((char*) (vboVertexAttr + 3), strideBytes);
-      
-      hardwareModel->setTextureCoordNum(2);
-      hardwareModel->setTextureCoordBuffer(0, (char*) (vboVertexAttr + 6), strideBytes);
-      hardwareModel->setTextureCoordBuffer(1, (char*) (vboVertexAttr + 8), strideBytes);
+      float* vboVertexAttr = static_cast<float*>(glExt->glMapBuffer(GL_ARRAY_BUFFER_ARB, GL_READ_WRITE_ARB));
 
-      hardwareModel->setWeightBuffer((char*) (vboVertexAttr + 10), strideBytes);
-      hardwareModel->setMatrixIndexBuffer((char*) (vboVertexAttr + 14), strideBytes);
+      hardwareModel->setVertexBuffer(reinterpret_cast<char*>(vboVertexAttr), strideBytes);
+      hardwareModel->setNormalBuffer(reinterpret_cast<char*>(vboVertexAttr + 3), strideBytes);
+
+      hardwareModel->setTextureCoordNum(2);
+      hardwareModel->setTextureCoordBuffer(0, reinterpret_cast<char*>(vboVertexAttr + 6), strideBytes);
+      hardwareModel->setTextureCoordBuffer(1, reinterpret_cast<char*>(vboVertexAttr + 8), strideBytes);
+
+      hardwareModel->setWeightBuffer(reinterpret_cast<char*>(vboVertexAttr + 10), strideBytes);
+      hardwareModel->setMatrixIndexBuffer(reinterpret_cast<char*>(vboVertexAttr + 14), strideBytes);
 
       if(hardwareModel->load(0, 0, MAX_BONES))
       {
          numVerts = hardwareModel->getTotalVertexCount();
          numIndices = 3 * hardwareModel->getTotalFaceCount();
-      
+
          //invert texture coordinates.
          for(unsigned i = 0; i < numVerts * stride; i += stride)
          {
@@ -206,23 +241,26 @@ dtCore::RefPtr<osg::Geode> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pW
 
          for(int meshCount = 0; meshCount < hardwareModel->getHardwareMeshCount(); ++meshCount)
          {
-		      hardwareModel->selectHardwareMesh(meshCount);
+            hardwareModel->selectHardwareMesh(meshCount);
 
-	         for(int face = 0; face < hardwareModel->getFaceCount(); ++face) 
+            for(int face = 0; face < hardwareModel->getFaceCount(); ++face) 
             {
                for(int index = 0; index < 3; ++index)
                {
-		            indexArray[face * 3 + index + hardwareModel->getStartIndex()] += hardwareModel->getBaseVertexIndex();
+                  indexArray[face * 3 + index + hardwareModel->getStartIndex()] += hardwareModel->getBaseVertexIndex();
                }
-	         }
+            }
          }
 
          glExt->glUnmapBuffer(GL_ARRAY_BUFFER_ARB);
-         glExt->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, vbo[1]);
-         glExt->glBufferData(GL_ELEMENT_ARRAY_BUFFER_ARB, numIndices * sizeof(CalIndex), (const void*) indexArray.mArray, GL_STATIC_DRAW_ARB);
-
+         if (newIndexBuffer)
+         {
+            glExt->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, vbo[1]);
+            glExt->glBufferData(GL_ELEMENT_ARRAY_BUFFER_ARB, numIndices * sizeof(CalIndex), (const void*) indexArray.mArray, GL_STATIC_DRAW_ARB);
+         }
+         
          //todo- pull shader name out of character xml
-         static osg::Program* shader = LoadShaders("shaders/HardwareCharacter.vert");
+         osg::Program* shader = LoadShaders("shaders/HardwareCharacter.vert");
 
          int numMeshes = hardwareModel->getHardwareMeshCount();
          for(int meshCount = 0; meshCount < numMeshes; ++meshCount)
@@ -230,21 +268,20 @@ dtCore::RefPtr<osg::Geode> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pW
             HardwareSubMeshDrawable* drawable = new HardwareSubMeshDrawable(pWrapper, hardwareModel, shader, BONE_TRANSFORM_UNIFORM, MAX_BONES, meshCount, vbo[0], vbo[1]);
             geode->addDrawable(drawable);
          }
-         
+
          geode->setComputeBoundingSphereCallback(new Cal3DBoundingSphereCalculator(*pWrapper));
       } 
       else
       {
          glExt->glUnmapBuffer(GL_ARRAY_BUFFER_ARB);
-         glExt->glDeleteBuffers(2, vbo);
          LOG_ERROR("Unable to create a hardware mesh.");
       }
 
       glExt->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
-      
+
       pWrapper->EndRenderingQuery();
    }
-   
+
 
    return geode;
 }
@@ -262,11 +299,10 @@ osg::Program* AnimNodeBuilder::LoadShaders(const std::string& shaderFile) const
    {
       prog = new osg::Program;
 
-	   dtCore::RefPtr<osg::Shader> vertShader = new osg::Shader(osg::Shader::VERTEX);
+      dtCore::RefPtr<osg::Shader> vertShader = new osg::Shader(osg::Shader::VERTEX);
       vertShader->loadShaderSourceFromFile(vertFile);
 
-	   prog->addShader(vertShader.get());
-
+      prog->addShader(vertShader.get());
    }
    else
    {
@@ -286,7 +322,7 @@ osg::BoundingSphere AnimNodeBuilder::Cal3DBoundingSphereCalculator::computeBound
    CalBoundingBox& calBBox = mWrapper->GetCalModel()->getBoundingBox(false);
    osg::BoundingBox bBox(-calBBox.plane[0].d, -calBBox.plane[2].d, -calBBox.plane[4].d,
          calBBox.plane[1].d, calBBox.plane[3].d, calBBox.plane[5].d);
-   
+
    osg::BoundingSphere bSphere(bBox);
    return bSphere;
 }

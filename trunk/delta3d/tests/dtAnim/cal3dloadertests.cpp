@@ -27,23 +27,35 @@
 #include <dtAnim/animationsequence.h>
 #include <dtAnim/sequencemixer.h>
 #include <dtAnim/animationhelper.h>
+#include <dtAnim/animnodebuilder.h>
+#include <dtAnim/cal3ddatabase.h>
+#include <dtAnim/cal3dmodeldata.h>
+#include <dtAnim/cal3dmodelwrapper.h>
+
 #include <dtCore/refptr.h>
 #include <dtCore/globals.h>
+
 #include <dtDAL/project.h>
+
+#include <osg/Geode>
 
 #include <string>
 
 namespace dtAnim
 {
-   class Cal3dLoaderTests : public CPPUNIT_NS::TestFixture
+   class Cal3DLoaderTests : public CPPUNIT_NS::TestFixture
    {
-      CPPUNIT_TEST_SUITE( Cal3dLoaderTests );
+      CPPUNIT_TEST_SUITE( Cal3DLoaderTests );
          CPPUNIT_TEST( TestLoadFile );
+         CPPUNIT_TEST( TestModelData );
       CPPUNIT_TEST_SUITE_END();
 
       public:
          void setUp()
          {
+            dtDAL::Project::GetInstance().SetContext(dtCore::GetDeltaRootPath() + "/examples/data/demoMap");
+            AnimNodeBuilder& nodeBuilder = Cal3DDatabase::GetInstance().GetNodeBuilder();
+            nodeBuilder.SetCreate(AnimNodeBuilder::CreateFunc(&nodeBuilder, &AnimNodeBuilder::CreateSoftware));
             mHelper = new dtAnim::AnimationHelper;
          }
 
@@ -54,11 +66,10 @@ namespace dtAnim
 
          void TestLoadFile()
          {
-            std::string animName = "Walk";
-            dtDAL::Project::GetInstance().SetContext(dtCore::GetDeltaRootPath() + "/examples/data/demoMap");
-            
             std::string modelPath = dtCore::FindFileInPathList("SkeletalMeshes/marine_test.xml");
             CPPUNIT_ASSERT(!modelPath.empty());
+
+            std::string animName = "Walk";
             
             mHelper->LoadModel(modelPath);
 
@@ -106,6 +117,44 @@ namespace dtAnim
             TestLoadedAnimationSequence(runWalkSequence, childNames);
          }
 
+         void TestModelData()
+         {
+            std::string modelPath = dtCore::FindFileInPathList("SkeletalMeshes/marine_test.xml");
+            CPPUNIT_ASSERT(!modelPath.empty());
+
+            mHelper->LoadModel(modelPath);
+
+            dtAnim::Cal3DDatabase& database = dtAnim::Cal3DDatabase::GetInstance();
+            
+            dtAnim::Cal3DModelWrapper* wrapper = mHelper->GetModelWrapper();
+            CPPUNIT_ASSERT(wrapper != NULL);
+            Cal3DModelData* modelData = database.GetModelData(*wrapper);
+            CPPUNIT_ASSERT(modelData != NULL);
+            
+            CPPUNIT_ASSERT_EQUAL(modelData->GetFilename(), modelPath);
+            
+            CPPUNIT_ASSERT_EQUAL(0U, modelData->GetVertexVBO());
+            modelData->SetVertexVBO(4U);
+            CPPUNIT_ASSERT_EQUAL(4U, modelData->GetVertexVBO());
+            
+            CPPUNIT_ASSERT_EQUAL(0U, modelData->GetIndexVBO());
+            modelData->SetIndexVBO(4U);
+            CPPUNIT_ASSERT_EQUAL(4U, modelData->GetIndexVBO());
+            
+            CPPUNIT_ASSERT(modelData->GetCoreModel() == wrapper->GetCalModel()->getCoreModel());
+            
+            std::string testString("abc");
+            CPPUNIT_ASSERT_EQUAL(std::string(), modelData->GetShaderName());
+            modelData->SetShaderName(testString);
+            CPPUNIT_ASSERT_EQUAL(testString, modelData->GetShaderName());
+
+            CPPUNIT_ASSERT_EQUAL(std::string(), modelData->GetShaderGroupName());
+            modelData->SetShaderGroupName(testString);
+            CPPUNIT_ASSERT_EQUAL(testString, modelData->GetShaderGroupName());
+            
+            //CPPUNIT_ASSERT
+         }
+         
       private:
 
          void TestLoadedAnimatable(const Animatable* anim, 
@@ -118,8 +167,8 @@ namespace dtAnim
             CPPUNIT_ASSERT_DOUBLES_EQUAL(startDelay, anim->GetStartDelay(), 0.001f);
             CPPUNIT_ASSERT_DOUBLES_EQUAL(fadeIn, anim->GetFadeIn(), 0.001f);
             CPPUNIT_ASSERT_DOUBLES_EQUAL(fadeOut, anim->GetFadeOut(), 0.001f);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(speed, anim->GetSpeed(), 0.001f);            
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(baseWeight, anim->GetBaseWeight(), 0.001f);            
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(speed, anim->GetSpeed(), 0.001f);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(baseWeight, anim->GetBaseWeight(), 0.001f);
          }
 
          void TestLoadedAnimationChannel(const AnimationChannel* channel, 
@@ -151,5 +200,5 @@ namespace dtAnim
    };
 
    // Registers the fixture into the 'registry'
-   CPPUNIT_TEST_SUITE_REGISTRATION( Cal3dLoaderTests ); 
+   CPPUNIT_TEST_SUITE_REGISTRATION( Cal3DLoaderTests ); 
 }
