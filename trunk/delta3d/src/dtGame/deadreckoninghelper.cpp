@@ -288,7 +288,7 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////
    void DeadReckoningHelper::AddToDeadReckonDOF(const std::string &DofName, osg::Vec3& position, osg::Vec3& rateOverTime)
    {
-      DeadReckoningDOF *toAdd = new DeadReckoningDOF;
+      dtCore::RefPtr<DeadReckoningDOF> toAdd = new DeadReckoningDOF();
       toAdd->mNext = NULL;
       toAdd->mPrev = NULL;
       toAdd->mName = DofName;
@@ -299,11 +299,14 @@ namespace dtGame
       std::list<dtCore::RefPtr<DeadReckoningDOF> >::iterator iter;
       for(iter = mDeadReckonDOFS.begin(); iter != mDeadReckonDOFS.end(); ++iter)
       {
+         // does the linking of the object to ADD, so we add the next pointer and validate it
+         // no matter what the dead reckon dof gets pushed onto the list at the end
+         // of the function.
          if((*iter)->mName == DofName)
          {
             bool HadToIter = false;
-            dtCore::RefPtr<DeadReckoningDOF> GetDOFBeforeNULL = (*iter).get();
-            
+            DeadReckoningDOF* GetDOFBeforeNULL = (*iter).get();
+             
             while(GetDOFBeforeNULL != NULL)
             {
                if(GetDOFBeforeNULL->mNext == NULL)
@@ -312,11 +315,11 @@ namespace dtGame
                HadToIter = true;
             }
             
-            toAdd->mPrev = GetDOFBeforeNULL.get();
+            toAdd->mPrev = GetDOFBeforeNULL;
             toAdd->mNext = NULL;
 
             GetDOFBeforeNULL->mCurrentTime = 0;
-            GetDOFBeforeNULL->mNext = toAdd;
+            GetDOFBeforeNULL->mNext = toAdd.get();
             GetDOFBeforeNULL->mStartLocation = mDOFDeadReckoning->GetDOFByName(GetDOFBeforeNULL->mName)->getCurrentHPR();
             
             break;
@@ -327,20 +330,45 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
+   // Used for removing area by name.
+   struct RemoveByName
+   {
+   public:
+      RemoveByName(const std::string & name) : mName(name)
+      {
+
+      }
+
+      bool operator()(dtCore::RefPtr<DeadReckoningHelper::DeadReckoningDOF>& toCheck)
+      {
+         return (mName == toCheck->mName);
+      }
+
+   private:
+      const std::string& mName;
+   };   
+
+   //////////////////////////////////////////////////////////////////////
+   void DeadReckoningHelper::RemoveAllDRDOFByName(const std::string& removeName)
+   {
+      mDeadReckonDOFS.remove_if(RemoveByName(removeName));
+   }
+
+   //////////////////////////////////////////////////////////////////////
    void DeadReckoningHelper::RemoveDRDOF(DeadReckoningDOF &obj)
    {
       std::list<dtCore::RefPtr<DeadReckoningDOF> >::iterator iterDOF;
-       for(iterDOF = mDeadReckonDOFS.begin();iterDOF != mDeadReckonDOFS.end(); ++iterDOF)
-       {
-          if(  (obj.mCurrentTime   == (*iterDOF)->mCurrentTime)
-             && (obj.mName          == (*iterDOF)->mName)
-             && (obj.mRateOverTime  == (*iterDOF)->mRateOverTime)
-             && (obj.mStartLocation == (*iterDOF)->mStartLocation))
-          {
-               RemoveDRDOF(iterDOF);
-               return;
-          }
-       }
+      for(iterDOF = mDeadReckonDOFS.begin();iterDOF != mDeadReckonDOFS.end(); ++iterDOF)
+      {
+         if(  (obj.mCurrentTime   == (*iterDOF)->mCurrentTime)
+            && (obj.mName          == (*iterDOF)->mName)
+            && (obj.mRateOverTime  == (*iterDOF)->mRateOverTime)
+            && (obj.mStartLocation == (*iterDOF)->mStartLocation))
+         {
+            RemoveDRDOF(iterDOF);
+            return;
+         }
+      }
    }
 
    //////////////////////////////////////////////////////////////////////
@@ -376,7 +404,6 @@ namespace dtGame
       mDeadReckonDOFS.erase(iter);
       return;
    }
-
    
    /////////////////////////////////////////////////////////////////////////////////
    void DeadReckoningHelper::GetActorProperties(std::vector<dtCore::RefPtr<dtDAL::ActorProperty> >& pFillVector)
