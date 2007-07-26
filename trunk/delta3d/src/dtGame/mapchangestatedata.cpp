@@ -276,9 +276,9 @@ namespace dtGame
       else if (mCurrentState == &MapChangeState::LOAD)
       {
          MapChangeStateData::NameVector::const_iterator i = mNewMapNames.begin();
-         MapChangeStateData::NameVector::const_iterator end = mNewMapNames.end();
+         MapChangeStateData::NameVector::const_iterator iend = mNewMapNames.end();
    
-         for (; i != end; ++i)
+         for (; i != iend; ++i)
          {
             LoadSingleMapIntoGM(*i);
          }
@@ -298,11 +298,11 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void MapChangeStateData::SendMapMessage(const MessageType& type, const MapChangeStateData::NameVector& names)
    {
-      dtCore::RefPtr<MapMessage> closeMessage;
-      mGameManager->GetMessageFactory().CreateMessage(type, closeMessage);
-      closeMessage->SetMapNames(names);
+      dtCore::RefPtr<MapMessage> mapMessage;
+      mGameManager->GetMessageFactory().CreateMessage(type, mapMessage);
+      mapMessage->SetMapNames(names);
 
-      mGameManager->SendMessage(*closeMessage);
+      mGameManager->SendMessage(*mapMessage);
    }
    
 }
