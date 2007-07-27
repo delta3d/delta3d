@@ -161,11 +161,19 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    void Shader::SetVertexShaderSource(const std::string &fileName)
    {
-      std::string path = dtCore::FindFileInPathList(fileName);
-      if (path.empty())
+      // Vertex source is now allowed to be empty - but, if a filename is set, the file needs to exist.
+      if (!fileName.empty())
       {
-         throw dtUtil::Exception(ShaderException::SHADER_SOURCE_ERROR,"Could not find shader source: " +
-            fileName + " in path list.", __FILE__, __LINE__);
+         std::string path = dtCore::FindFileInPathList(fileName);
+         if (path.empty())
+         {
+            throw dtUtil::Exception(ShaderException::SHADER_SOURCE_ERROR,"Could not find shader source: " +
+               fileName + " in path list.", __FILE__, __LINE__);
+         }
+      }
+      else
+      {
+         mVertexShader = NULL;
       }
 
       mVertexShaderFileName = fileName;
@@ -174,11 +182,19 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    void Shader::SetFragmentShaderSource(const std::string &fileName)
    {
-      std::string path = dtCore::FindFileInPathList(fileName);
-      if (path.empty())
+      // Fragment source is now allowed to be empty - but, if a filename is set, the file needs to exist.
+      if (!fileName.empty())
       {
-         throw dtUtil::Exception(ShaderException::SHADER_SOURCE_ERROR,"Could not find shader source: " +
-            fileName + " in path list.", __FILE__, __LINE__);
+         std::string path = dtCore::FindFileInPathList(fileName);
+         if (path.empty())
+         {
+            throw dtUtil::Exception(ShaderException::SHADER_SOURCE_ERROR,"Could not find shader source: " +
+               fileName + " in path list.", __FILE__, __LINE__);
+         }
+      }
+      else
+      {
+         mFragmentShader = NULL;
       }
 
       mFragmentShaderFileName = fileName;
