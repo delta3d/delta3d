@@ -239,7 +239,7 @@ namespace dtGame
             CPPUNIT_ASSERT(!helper->IsUpdated());
             CPPUNIT_ASSERT(helper->GetMaxTranslationSmoothingTime() == 4.8f);
             
-            dtCore::RefPtr<dtCore::NodeCollector> nodeCollector = new dtCore::NodeCollector(new osg::Group()); 
+            dtCore::RefPtr<dtCore::NodeCollector> nodeCollector = new dtCore::NodeCollector(new osg::Group(), dtCore::NodeCollector::GroupFlag); 
             helper->SetNodeCollector(*nodeCollector);
             
             CPPUNIT_ASSERT(helper->GetNodeCollector() == nodeCollector.get());

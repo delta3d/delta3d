@@ -445,6 +445,21 @@ void dtCore::Environment::SetFogEnable(bool enable)
    Repaint();
 }
 
+
+
+
+void dtCore::Environment::SetFogDensity( float density )
+{
+   mFog->setDensity(density);
+}
+
+float dtCore::Environment::GetFogDensity()
+{
+   return mFog->getDensity();
+}
+
+
+
 /** Set the starting date and time.  Any value of -1 resets the date/time
 *  to be the system time.
 * @param yr Year (1900-xxxx)
@@ -640,6 +655,7 @@ void dtCore::Environment::UpdateFogColor()
    //now apply the fog's color
    mFog->setColor(osg::Vec4(mModFogColor[0], mModFogColor[1], mModFogColor[2], 1.f) );
 }
+
 
 /** Update the color of the sun light based on it's angle.
 */

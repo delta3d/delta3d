@@ -124,6 +124,10 @@ namespace dtCore
       void SetFogEnable( bool enable );
       bool GetFogEnable() const {return mFogEnabled;}
 
+      //Set fog Density
+      void SetFogDensity( float density );
+      float GetFogDensity();
+
       ///Set the visibility distance in meters
       void SetVisibility( float distance );
       float GetVisibility() const {return mVisibility;}
@@ -151,6 +155,10 @@ namespace dtCore
       }
 
       void Repaint();
+
+      //use this only to force an update
+      //otherwise it will update every second
+      void Update(const double deltaFrameTime);
 
       ///Set the environment's date and time
       void SetDateTime( int yr, int mo, int da,
@@ -224,8 +232,7 @@ namespace dtCore
       EnvEffectList mToBeRemoved;///<temp list of effects to remove
       RefPtr<osg::Group> mEnvEffectNode; ///<Contains the env effects
       RefPtr<osg::Group> mDrawableNode; ///<Contains the actual model
-      virtual void OnMessage(MessageData *data);
-      void Update(const double deltaFrameTime);
+      virtual void OnMessage(MessageData *data);      
       void RemoveEffectCache();///<actually remove EnvEffects from the Env
 
       RefPtr<Light> mSkyLight; ///< The sky light

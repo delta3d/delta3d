@@ -34,6 +34,8 @@
 #include <dtGame/basemessages.h>
 #include <dtGame/exceptionenum.h>
 
+#include <osgSim/DOFTransform>
+
 namespace dtGame
 {
    //////////////////////////////////////////////////////////////////////
@@ -644,7 +646,7 @@ namespace dtGame
             // there is something in the chain
             if(currentDOF->mNext != NULL)
             {
-               osgSim::DOFTransform* dofTransform = helper.GetNodeCollector()->GetDOFByName(currentDOF->mName);
+               osgSim::DOFTransform* dofTransform = helper.GetNodeCollector()->GetDOFTransform(currentDOF->mName);
                if( dofTransform != NULL )
                {
                   DoArticulationSmooth(*dofTransform, currentDOF->mStartLocation, currentDOF->mNext->mStartLocation, currentDOF->mCurrentTime);
@@ -652,7 +654,7 @@ namespace dtGame
             }
             else
             {
-               osgSim::DOFTransform* dofTransform = helper.GetNodeCollector()->GetDOFByName(currentDOF->mName);
+               osgSim::DOFTransform* dofTransform = helper.GetNodeCollector()->GetDOFTransform(currentDOF->mName);
                if (dofTransform != NULL)
                {
                   DoArticulationPrediction(*dofTransform, currentDOF->mStartLocation, currentDOF->mRateOverTime, currentDOF->mCurrentTime);
@@ -678,7 +680,7 @@ namespace dtGame
             // One second has passed, and this has more in its chain
             if(currentDOF->mNext != NULL && currentDOF->mCurrentTime >= 1)
             {
-               osgSim::DOFTransform* ptr = helper.GetNodeCollector()->GetDOFByName(currentDOF->mName);
+               osgSim::DOFTransform* ptr = helper.GetNodeCollector()->GetDOFTransform(currentDOF->mName);
                if( ptr )
                {
                   currentDOF->mNext->mStartLocation = ptr->getCurrentHPR();

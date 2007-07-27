@@ -27,6 +27,7 @@
 #include <dtDAL/actorproxyicon.h>
 #include <dtCore/loadable.h>
 #include <dtCore/isector.h>
+#include <dtCore/nodecollector.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/actorupdatemessage.h>
 #include <dtGame/basemessages.h>
@@ -37,6 +38,8 @@
 #include <dtUtil/matrixutil.h>
 #include <dtUtil/mathdefines.h>
 #include <osg/MatrixTransform>
+#include <osgSim/DOFTransform>
+
 
 ///////////////////////////////////////////////////////////////////////////////
 const std::string TankActor::EVENT_HANDLER_NAME("HandleGameEvent");
@@ -46,6 +49,7 @@ const float MAXTANKVELOCITY = 15.0f;
 TankActor::TankActor(dtGame::GameActorProxy &proxy) : 
    dtActors::GameMeshActor(proxy), 
    mDust(NULL), 
+   mCannonShot(NULL),
    mVelocity(0.0f), 
    mAddOnVelocity(0),
    mTurnRate(0.0f),
@@ -57,6 +61,7 @@ TankActor::TankActor(dtGame::GameActorProxy &proxy) :
    mPropertiesUpdated(false)
 {
    SetName("HoverTank");
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -132,6 +137,8 @@ void TankActor::ProcessMessage(const dtGame::Message &message)
 ///////////////////////////////////////////////////////////////////////////////
 void TankActor::ComputeVelocityAndTurn(float deltaSimTime)
 {
+   osg::Vec3 turnTurret;
+
    // calculate current velocity
    float decelDirection = (mVelocity >= 0.0) ? -1.0f : 1.0f;
    float accelDirection = 0.0f;
@@ -139,7 +146,7 @@ void TankActor::ComputeVelocityAndTurn(float deltaSimTime)
 
    dtCore::Keyboard *keyboard = GetGameActorProxy().GetGameManager()->GetApplication().GetKeyboard();
 
-   // which way is hte user trying to go? 
+   // which way is the user trying to go? 
    if (keyboard->GetKeyState(Producer::Key_I))
       accelDirection = -1.0f;
    else if (keyboard->GetKeyState(Producer::Key_K))
@@ -169,11 +176,33 @@ void TankActor::ComputeVelocityAndTurn(float deltaSimTime)
    SetVelocity(mVelocity + acceleration);
 
    if (mIsEngineRunning && keyboard->GetKeyState(Producer::Key_L))
+   {
       SetTurnRate(-0.1f);
+   }
    else if (mIsEngineRunning && keyboard->GetKeyState(Producer::Key_J))
-      SetTurnRate(0.1f);
+   {
+       SetTurnRate(0.1f);
+   }
    else 
       SetTurnRate(0.0f);
+
+   if(keyboard->GetKeyState(Producer::Key_O))
+   {
+       turnTurret.set(-0.008, 0.0, 0.0);
+      turnTurret = mDOFTran->getCurrentHPR() + turnTurret;
+      mDOFTran->setCurrentHPR(turnTurret);
+   }
+   else if(keyboard->GetKeyState(Producer::Key_U))
+   {
+      turnTurret.set(0.008, 0.0, 0.0);
+      turnTurret = mDOFTran->getCurrentHPR() + turnTurret;
+      mDOFTran->setCurrentHPR(turnTurret);
+   }
+
+   if(keyboard->GetKeyState(Producer::Key_F))
+   {
+      mCannonShot->SetEnabled(true);
+   }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -204,7 +233,7 @@ void TankActor::MoveTheTank(float deltaSimTime)
       osgParticle::Particle& defaultParticle = pLayerToSet.GetParticleSystem().getDefaultParticleTemplate();
 
       // do our funky changes
-      float lifetime = dtUtil::Max(2.0f, abs(mVelocity+1) * .4f);
+      float lifetime = dtUtil::Max(2.0f, abs(mVelocity+1) * 0.4f);
       defaultParticle.setLifeTime(lifetime);
    }
 
@@ -231,6 +260,9 @@ void TankActor::MoveTheTank(float deltaSimTime)
    tx.SetTranslation(pos);
    SetTransform(tx);
    GetGameActorProxy().SetRotation(xyz);
+   
+
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -248,12 +280,19 @@ void TankActor::CheckForNewTarget()
    // body vertically). And then, to see if we have hit our target, we are just going
    // to check if the distance the target to the plane is less than the radius of the 
    // bounding sphere of the target (imagine the bounding sphere intersecting the plane).
+  
+   
+   osg::Matrix absMat;
+   osg::NodePathList nodePathList = mDOFTran->getParentalNodePaths();
 
+   if( !nodePathList.empty() )
+   {
+      absMat.set( osg::computeLocalToWorld(nodePathList[0]) );
+   } 
    // Find out some info from our current matrix
-   osg::Matrix matrix( GetMatrixNode()->getMatrix() );
-   osg::Vec3 rightVector( dtUtil::MatrixUtil::GetRow3( matrix, 0 ) );
-   osg::Vec3 forwardVector( dtUtil::MatrixUtil::GetRow3( matrix, 1 ) );
-   osg::Vec3 tankPosition( dtUtil::MatrixUtil::GetRow3( matrix, 3 ) );
+   osg::Vec3 rightVector( dtUtil::MatrixUtil::GetRow3( absMat, 0) );  
+   osg::Vec3 forwardVector( dtUtil::MatrixUtil::GetRow3( absMat, 1) );
+   osg::Vec3 tankPosition( dtUtil::MatrixUtil::GetRow3( absMat, 3 ) );
 
    // Next, calculate the plane.
    osg::Plane plane( rightVector, tankPosition );
@@ -274,7 +313,7 @@ void TankActor::CheckForNewTarget()
       dtCore::RefPtr<dtDAL::Vec3ActorProperty> vec3prop( static_cast<dtDAL::Vec3ActorProperty*>( translationProp.get() ) );
       osg::Vec3 targetPosition( vec3prop->GetValue() );
 
-      // Find the absolute distance from the center of the taget to the plane.
+      // Find the absolute distance from the center of the target to the plane.
       float distance( fabs( plane.distance( targetPosition ) ) );
       // Find the radius of the target's bounding sphere.
       float radius( (*iter)->GetActor()->GetOSGNode()->getBound().radius() );
@@ -376,6 +415,10 @@ void TankActor::OnEnteredWorld()
 	mDust->SetEnabled(false);
 	AddChild(mDust.get());
 
+   mCannonShot = new dtCore::ParticleSystem();
+   mCannonShot->LoadFile("Particles/smoke.osg",true);
+   mCannonShot->SetEnabled(false);
+
    GetTransform(mOriginalPosition);
 
    // put our camera - first to tank's position, and then offset it.
@@ -386,6 +429,20 @@ void TankActor::OnEnteredWorld()
 
 
    mIsector->SetScene(&(GetGameActorProxy().GetGameManager()->GetScene()));
+
+   //Collect all of the Transform Nodes off of the Model
+   dtCore::RefPtr<dtCore::NodeCollector> mOSGCollector = new dtCore::NodeCollector ( GetGameActorProxy().GetGameActor().GetOSGNode(), dtCore::NodeCollector::DOFTransformFlag );
+   
+   mDOFTran = mOSGCollector->GetDOFTransform("dof_turret_01");
+   mDOFTran->addChild(mCannonShot.get()->GetOSGNode());
+
+
+   if(mDOFTran == NULL)
+   {
+      LOG_ERROR ("DOF TURRET WAS NOT FOUND");
+      throw dtUtil::Exception(dtUtil::BaseExceptionType::GENERAL_EXCEPTION, "Could Not Find Turret", __FILE__, __LINE__);
+   }
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////
