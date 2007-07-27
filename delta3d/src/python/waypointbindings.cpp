@@ -19,7 +19,7 @@ void init_WaypointBindings()
    
 
    enum_<Waypoint::RenderFlag>("RenderFlag")
-      .value("RENDER_DEFAULT", Waypoint::RENDER_DEFUALT)
+      .value("RENDER_DEFAULT", Waypoint::RENDER_DEFAULT)
       .value("RENDER_RED", Waypoint::RENDER_RED)
       .value("RENDER_GREEN", Waypoint::RENDER_GREEN)
       .value("RENDER_BLUE", Waypoint::RENDER_BLUE)
