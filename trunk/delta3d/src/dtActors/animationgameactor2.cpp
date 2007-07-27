@@ -57,13 +57,15 @@ namespace dtActors
       return mHelper.get();
    }
 
-
    void AnimationGameActor2::SetModel(const std::string &modelFile)
    {
+      GetMatrixNode()->removeChildren(0, GetMatrixNode()->getNumChildren());
       mHelper->LoadModel(modelFile);
-      
-      dtCore::RefPtr<osg::Geode> geode = mHelper->GetGeode();
-      GetMatrixNode()->addChild(geode.get());
+      if (!modelFile.empty())
+      {
+         dtCore::RefPtr<osg::Geode> geode = mHelper->GetGeode();
+         GetMatrixNode()->addChild(geode.get());
+      }
    }
 
    AnimationGameActorProxy2::AnimationGameActorProxy2()

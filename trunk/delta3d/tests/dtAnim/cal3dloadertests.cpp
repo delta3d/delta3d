@@ -70,7 +70,9 @@ namespace dtAnim
             CPPUNIT_ASSERT(!modelPath.empty());
 
             std::string animName = "Walk";
-            
+
+            TestEmptyHelper();
+
             mHelper->LoadModel(modelPath);
 
             SequenceMixer& mixer = mHelper->GetSequenceMixer();
@@ -115,6 +117,10 @@ namespace dtAnim
             childNames.push_back("Walk");
             
             TestLoadedAnimationSequence(runWalkSequence, childNames);
+            
+            //Test unloading.
+            CPPUNIT_ASSERT_NO_THROW(mHelper->LoadModel(""));
+            TestEmptyHelper();
          }
 
          void TestModelData()
@@ -156,6 +162,16 @@ namespace dtAnim
          }
          
       private:
+         
+         void TestEmptyHelper()
+         {
+            CPPUNIT_ASSERT(mHelper->GetGeode() == NULL);
+            CPPUNIT_ASSERT(mHelper->GetAnimator() == NULL);
+            CPPUNIT_ASSERT(mHelper->GetModelWrapper() == NULL);
+            std::vector<const Animatable*> toFill;
+            mHelper->GetSequenceMixer().GetRegisteredAnimations(toFill);
+            CPPUNIT_ASSERT_EQUAL(0U, unsigned(toFill.size()));
+         }
 
          void TestLoadedAnimatable(const Animatable* anim, 
                const std::string& name, float startDelay, 

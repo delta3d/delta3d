@@ -104,36 +104,44 @@ void AnimationHelper::ClearAll(float fadeOut)
 /////////////////////////////////////////////////////////////////////////////////
 bool AnimationHelper::LoadModel(const std::string& pFilename)
 {
-   Cal3DDatabase& database = Cal3DDatabase::GetInstance();
-   dtCore::RefPtr<Cal3DModelWrapper> newModel = database.Load(pFilename);
-
-   if (newModel.valid())
+   if (!pFilename.empty())
    {
-      mAnimator = new Cal3DAnimator(newModel.get());
-      mGeode = database.GetNodeBuilder().CreateGeode(newModel.get());
-      
-      const Cal3DModelData*  modelData = database.GetModelData(*newModel);
-      if(modelData == NULL)
+      Cal3DDatabase& database = Cal3DDatabase::GetInstance();
+      dtCore::RefPtr<Cal3DModelWrapper> newModel = database.Load(pFilename);
+   
+      if (newModel.valid())
       {
-         LOG_ERROR("ModelData not found for Character XML '" + pFilename + "'");
+         mAnimator = new Cal3DAnimator(newModel.get());
+         mGeode = database.GetNodeBuilder().CreateGeode(newModel.get());
+         
+         const Cal3DModelData*  modelData = database.GetModelData(*newModel);
+         if(modelData == NULL)
+         {
+            LOG_ERROR("ModelData not found for Character XML '" + pFilename + "'");
+            return false;
+         }
+   
+         const Cal3DModelData::AnimatableArray& animatables = modelData->GetAnimatables();
+   
+         Cal3DModelData::AnimatableArray::const_iterator iter = animatables.begin();
+         Cal3DModelData::AnimatableArray::const_iterator end = animatables.end();
+   
+         for(;iter != end; ++iter)
+         {
+            mSequenceMixer->RegisterAnimation((*iter).get());
+         }
+      }
+      else
+      {
+         LOG_ERROR("Unable to load skeletal resource: " + pFilename);
          return false;
       }
-
-      const Cal3DModelData::AnimatableArray& animatables = modelData->GetAnimatables();
-
-      Cal3DModelData::AnimatableArray::const_iterator iter = animatables.begin();
-      Cal3DModelData::AnimatableArray::const_iterator end = animatables.end();
-
-      for(;iter != end; ++iter)
-      {
-         mSequenceMixer->RegisterAnimation((*iter).get());
-      }
-
    }
    else
    {
-      LOG_ERROR("Unable to load skeletal resource: " + pFilename);
-      return false;
+      mAnimator = NULL;
+      mGeode = NULL;
+      mSequenceMixer->ClearRegisteredAnimations();
    }
    return true;
 }
@@ -168,12 +176,16 @@ Cal3DAnimator* AnimationHelper::GetAnimator()
 /////////////////////////////////////////////////////////////////////////////////
 const Cal3DModelWrapper* AnimationHelper::GetModelWrapper() const
 {
+   if (!mAnimator.valid())
+      return NULL;
    return mAnimator->GetWrapper();
 }
 
 /////////////////////////////////////////////////////////////////////////////////
 Cal3DModelWrapper* AnimationHelper::GetModelWrapper()
 {
+   if (!mAnimator.valid())
+      return NULL;
    return mAnimator->GetWrapper();
 }
 
