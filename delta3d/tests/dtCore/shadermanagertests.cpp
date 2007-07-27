@@ -50,6 +50,7 @@ class ShaderManagerTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestShader);
       CPPUNIT_TEST(TestShaderManager);
       CPPUNIT_TEST(TestAssignShader);
+      CPPUNIT_TEST(TestPartialShaders);
       CPPUNIT_TEST(TestShaderInstancesAreUnique);
       CPPUNIT_TEST(TestXMLParsing);
       CPPUNIT_TEST(TestTexture2DXMLParam);
@@ -67,6 +68,7 @@ class ShaderManagerTests : public CPPUNIT_NS::TestFixture
       void TestShader();
       void TestShaderManager();
       void TestAssignShader();
+      void TestPartialShaders();
       void TestShaderInstancesAreUnique();
       void TestXMLParsing();
       void TestTexture2DXMLParam();
@@ -362,6 +364,96 @@ void ShaderManagerTests::TestAssignShader()
       //Try assigning the shader to a scene graph node.
       dtCore::RefPtr<osg::Geode> geode = new osg::Geode();
       mShaderMgr->AssignShaderFromTemplate(*shader,*geode);
+   }
+   catch (const dtUtil::Exception &e)
+   {
+      CPPUNIT_FAIL(e.ToString());
+   }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void ShaderManagerTests::TestPartialShaders()
+{
+   // This method tests for shaders that may or may not have a vertex or fragment shader.
+   try
+   {
+      dtCore::ShaderGroup *group = new dtCore::ShaderGroup("TestGroup");
+
+      // CREATE THE SHADER WITHOUT A FRAGMENT SHADER 
+
+      dtCore::RefPtr<dtCore::Shader> shader1 = new dtCore::Shader("TestShader1");
+      shader1->SetVertexShaderSource("Shaders/perpixel_lighting_detailmap_vert.glsl");
+
+      //This code creates a shader parameter of each type and assigns the shader
+      //to a node.  The shader parameter tests ensures that each parameter type
+      //actually got properly bound to the node's render state.
+      dtCore::RefPtr<dtCore::ShaderParamTexture2D> tex1Param =
+         new dtCore::ShaderParamTexture2D("baseTexture");
+      tex1Param->SetTexture("Textures/smoke.rgb");
+      tex1Param->SetTextureUnit(0);
+      shader1->AddParameter(*tex1Param);
+      //Add our test shader to a shader group
+      group->AddShader(*shader1);
+
+      // CREATE THE SHADER WITHOUT A VERTEX SHADER
+
+      dtCore::RefPtr<dtCore::Shader> shader2 = new dtCore::Shader("TestShader2");
+      //shader->SetVertexShaderSource("Shaders/perpixel_lighting_detailmap_vert.glsl");
+      shader2->SetFragmentShaderSource("Shaders/perpixel_lighting_detailmap_frag.glsl");
+
+      //This code creates a shader parameter of each type and assigns the shader
+      //to a node.  The shader parameter tests ensures that each parameter type
+      //actually got properly bound to the node's render state.
+      dtCore::RefPtr<dtCore::ShaderParamTexture2D> tex2Param =
+         new dtCore::ShaderParamTexture2D("baseTexture");
+      tex2Param->SetTexture("Textures/smoke.rgb");
+      tex2Param->SetTextureUnit(0);
+      shader2->AddParameter(*tex2Param);
+      //Add our test shader to a shader group
+      group->AddShader(*shader2);
+
+      // CREATE THE SHADER WITHOUT EITHER SHADER
+
+      dtCore::RefPtr<dtCore::Shader> shader3 = new dtCore::Shader("TestShader3");
+      //shader3->SetVertexShaderSource("Shaders/perpixel_lighting_detailmap_vert.glsl");
+
+      //This code creates a shader parameter of each type and assigns the shader
+      //to a node.  The shader parameter tests ensures that each parameter type
+      //actually got properly bound to the node's render state.
+      dtCore::RefPtr<dtCore::ShaderParamTexture2D> tex3Param =
+         new dtCore::ShaderParamTexture2D("baseTexture");
+      tex3Param->SetTexture("Textures/smoke.rgb");
+      tex3Param->SetTextureUnit(0);
+      shader3->AddParameter(*tex3Param);
+      //Add our test shader to a shader group
+      group->AddShader(*shader3);
+
+      // NOW TEST ALL 3. 
+
+      // Everything is setup, so add the group to the shader manager
+      // This will cause the shader to get loaded.
+      mShaderMgr->AddShaderGroupTemplate(*group);
+
+      // TEST without the fragment by assigning the shader to a scene graph node.
+      dtCore::RefPtr<osg::Geode> geode1 = new osg::Geode();
+      mShaderMgr->AssignShaderFromTemplate(*shader1,*geode1);
+
+      // TEST without the vertex by assigning the shader to a scene graph node.
+      dtCore::RefPtr<osg::Geode> geode2 = new osg::Geode();
+      mShaderMgr->AssignShaderFromTemplate(*shader2,*geode2);
+
+      // TEST without EITHER by assigning the shader to a scene graph node.
+      dtCore::RefPtr<osg::Geode> geode3 = new osg::Geode();
+      mShaderMgr->AssignShaderFromTemplate(*shader3,*geode3);
+
+      // Test that the programs are unique.
+      CPPUNIT_ASSERT_MESSAGE("1With Vertex and without Vertex should be unique programs.",
+         shader1->GetShaderProgram() != shader2->GetShaderProgram());
+      CPPUNIT_ASSERT_MESSAGE("2With Vertex and without Vertex should be unique programs.",
+         shader2->GetShaderProgram() != shader3->GetShaderProgram());
+      CPPUNIT_ASSERT_MESSAGE("3With Vertex and without Vertex should be unique programs.",
+         shader3->GetShaderProgram() != shader1->GetShaderProgram());
+
    }
    catch (const dtUtil::Exception &e)
    {

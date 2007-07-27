@@ -312,10 +312,10 @@ namespace dtCore
       dtCore::RefPtr<osg::StateSet> stateSet = node.getOrCreateStateSet();
 
       //First assign the vertex,fragment,and shader program to the render state.
-      if (newShader->GetVertexShader() == NULL)
-         LOG_WARNING("Error assigning shader: " + newShader->GetName() + "  Vertex shader was invalid.");
-      if (newShader->GetFragmentShader() == NULL)
-         LOG_WARNING("Error assigning shader: " + newShader->GetName() + "  Fragment shader was invalid.");
+      //if (newShader->GetVertexShader() == NULL)
+      //   LOG_WARNING("Error assigning shader: " + newShader->GetName() + "  Vertex shader was invalid.");
+      //if (newShader->GetFragmentShader() == NULL)
+      //   LOG_WARNING("Error assigning shader: " + newShader->GetName() + "  Fragment shader was invalid.");
       if (newShader->GetShaderProgram() == NULL)
          LOG_WARNING("Error assigning shader: " + newShader->GetName() + "  Shader program was invalid.");
 
@@ -356,39 +356,50 @@ namespace dtCore
       //them in the cache.
       if (itor != mShaderProgramCache.end())
       {
-         shader.SetVertexShader(*(itor->second.vertexShader));
-         shader.SetFragmentShader(*(itor->second.fragmentShader));
-         shader.SetGLSLProgram(*(itor->second.shaderProgram));
+         if (itor->second.vertexShader.valid()) // vertex shader is not required
+            shader.SetVertexShader(*(itor->second.vertexShader));
+         if (itor->second.fragmentShader.valid()) // fragment shader is not required
+            shader.SetFragmentShader(*(itor->second.fragmentShader));
+         shader.SetGLSLProgram(*(itor->second.shaderProgram)); // program is required
          return;
       }
 
       //Load, compile, and link the shaders...
       std::string path;
-      dtCore::RefPtr<osg::Shader> vertexShader = new osg::Shader(osg::Shader::VERTEX);
-
-      path = dtCore::FindFileInPathList(shader.GetVertexShaderSource());
-      if (path.empty() || !vertexShader->loadShaderSourceFromFile(path))
-         throw dtUtil::Exception(ShaderException::SHADER_SOURCE_ERROR,"Error loading vertex shader file: " +
-            shader.GetVertexShaderSource() + " from shader: " + shader.GetName(), __FILE__, __LINE__);
-
-      dtCore::RefPtr<osg::Shader> fragmentShader = new osg::Shader(osg::Shader::FRAGMENT);
-      path = dtCore::FindFileInPathList(shader.GetFragmentShaderSource());
-      if (path.empty() || !fragmentShader->loadShaderSourceFromFile(path))
-         throw dtUtil::Exception(ShaderException::SHADER_SOURCE_ERROR,"Error loading fragment shader file: " +
-            shader.GetFragmentShaderSource() + " from shader: " + shader.GetName(), __FILE__, __LINE__);
-
+      dtCore::RefPtr<osg::Shader> vertexShader;
+      dtCore::RefPtr<osg::Shader> fragmentShader;
       dtCore::RefPtr<osg::Program> program = new osg::Program();
-      program->addShader(vertexShader.get());
-      program->addShader(fragmentShader.get());
 
-      shader.SetVertexShader(*vertexShader);
-      shader.SetFragmentShader(*fragmentShader);
+      // Load and set the vertex shader - note, this is not required
+      path = dtCore::FindFileInPathList(shader.GetVertexShaderSource());
+      if (!path.empty()) 
+      {
+         vertexShader = new osg::Shader(osg::Shader::VERTEX);
+         if (!vertexShader->loadShaderSourceFromFile(path))
+            throw dtUtil::Exception(ShaderException::SHADER_SOURCE_ERROR,"Error loading vertex shader file: " +
+               shader.GetVertexShaderSource() + " from shader: " + shader.GetName(), __FILE__, __LINE__);
+         program->addShader(vertexShader.get());
+         shader.SetVertexShader(*vertexShader);
+      }
+
+      // Load and set the fragment shader - note, this is not required
+      path = dtCore::FindFileInPathList(shader.GetFragmentShaderSource());
+      if (!path.empty()) 
+      {
+         fragmentShader = new osg::Shader(osg::Shader::FRAGMENT);
+         if (path.empty() || !fragmentShader->loadShaderSourceFromFile(path))
+            throw dtUtil::Exception(ShaderException::SHADER_SOURCE_ERROR,"Error loading fragment shader file: " +
+               shader.GetFragmentShaderSource() + " from shader: " + shader.GetName(), __FILE__, __LINE__);
+         program->addShader(fragmentShader.get());
+         shader.SetFragmentShader(*fragmentShader);
+      }
+
       shader.SetGLSLProgram(*program);
 
       //Put a new entry in the cache...
       ShaderCacheEntry newCacheEntry;
-      newCacheEntry.vertexShader = vertexShader;
-      newCacheEntry.fragmentShader = fragmentShader;
+      newCacheEntry.vertexShader = vertexShader; // may be null
+      newCacheEntry.fragmentShader = fragmentShader; // may be null
       newCacheEntry.shaderProgram = program;
       mShaderProgramCache.insert(std::make_pair(cacheKey,newCacheEntry));
    }
