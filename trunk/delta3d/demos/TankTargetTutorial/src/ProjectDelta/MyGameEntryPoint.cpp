@@ -90,8 +90,9 @@ void MyGameEntryPoint::Initialize(dtGame::GameApplication& app, int argc, char *
 }
 
 //////////////////////////////////////////////////////////////////////////
-void MyGameEntryPoint::OnStartup(dtGame::GameManager &gameManager)
+void MyGameEntryPoint::OnStartup()
 {
+   dtGame::GameManager& gameManager = *GetGameManager();
    dtABC::Application& app = gameManager.GetApplication();
 
    // init our file path so it can find GUI Scheme
@@ -122,7 +123,7 @@ void MyGameEntryPoint::OnStartup(dtGame::GameManager &gameManager)
    gameManager.GetScene().UseSceneLight(true);
 
    // Attach our camera to the tank from the map
-   std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > tanks;
+   std::vector<dtDAL::ActorProxy*> tanks;
    gameManager.FindActorsByName("HoverTank", tanks);
    if (tanks.size() > 0)
    {

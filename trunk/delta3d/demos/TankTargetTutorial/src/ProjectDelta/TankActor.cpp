@@ -211,7 +211,7 @@ void TankActor::CheckForNewTarget()
    dtCore::UniqueId closestId( mNoTargetId );
 
    // Find all the KillableActors and iterator over them, looking for a target...
-   typedef std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > ActorProxyVector;
+   typedef std::vector<dtDAL::ActorProxy*> ActorProxyVector;
    ActorProxyVector killableActorProxies;
    GetGameActorProxy().GetGameManager()->FindActorsByType( *ActorsRegistry::KILLABLE_ACTOR_TYPE, killableActorProxies );
    for(  ActorProxyVector::iterator iter = killableActorProxies.begin();
@@ -220,7 +220,7 @@ void TankActor::CheckForNewTarget()
    {      
       // Find the position of the target we are querying.
       dtCore::RefPtr<dtDAL::ActorProperty> translationProp( (*iter)->GetProperty("Translation") );
-      dtCore::RefPtr<dtDAL::Vec3ActorProperty> vec3prop( static_cast<dtDAL::Vec3ActorProperty*>( translationProp.get() ) );
+      dtCore::RefPtr<dtDAL::Vec3ActorProperty> vec3prop( static_cast<dtDAL::Vec3ActorProperty*>( translationProp.get()) );
       osg::Vec3 targetPosition( vec3prop->GetValue() );
 
       // Find the absolute distance from the center of the taget to the plane.

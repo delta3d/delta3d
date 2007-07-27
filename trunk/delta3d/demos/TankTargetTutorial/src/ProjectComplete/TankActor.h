@@ -26,7 +26,7 @@
 #include <dtActors/gamemeshactor.h>
 #include <dtCore/particlesystem.h>
 #include <dtCore/isector.h>
-
+#include <osgSim/DOFTransform>
 /**
  * This class is the actor that represents a hover tank of sorts.  It knows how to 
  * respond to keyboard presses (I, J, K, L to steer). It also listens for 
@@ -111,17 +111,22 @@ class TUTORIAL_TANK_EXPORT TankActor : public dtActors::GameMeshActor
 
       // private vars
       dtCore::RefPtr<dtCore::ParticleSystem> mDust;
+      dtCore::RefPtr<dtCore::ParticleSystem> mCannonShot;
+
       float mVelocity;
 	   float mAddOnVelocity;
       float mTurnRate;
-      bool mIsEngineRunning;
+      bool  mIsEngineRunning;
       float mLastReportedVelocity;
       dtCore::RefPtr<dtCore::Isector> mIsector;
       dtCore::UniqueId mNoTargetId;
       dtCore::UniqueId mCurrentTargetId;
-      dtCore::Transform mOriginalPosition;   
+      dtCore::Transform mOriginalPosition;  
 
       bool mPropertiesUpdated;
+ 
+      dtCore::RefPtr<osgSim::DOFTransform> mDOFTran;
+      
 };
 
 /**

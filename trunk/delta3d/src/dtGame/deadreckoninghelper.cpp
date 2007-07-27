@@ -29,6 +29,8 @@
 #include <dtGame/gameactor.h>
 #include <dtDAL/functor.h>
 
+#include <osgSim/DOFTransform>
+
 namespace dtGame
 {
    IMPLEMENT_ENUM(DeadReckoningAlgorithm);
@@ -320,7 +322,7 @@ namespace dtGame
 
             GetDOFBeforeNULL->mCurrentTime = 0;
             GetDOFBeforeNULL->mNext = toAdd.get();
-            GetDOFBeforeNULL->mStartLocation = mDOFDeadReckoning->GetDOFByName(GetDOFBeforeNULL->mName)->getCurrentHPR();
+            GetDOFBeforeNULL->mStartLocation = mDOFDeadReckoning->GetDOFTransform(GetDOFBeforeNULL->mName)->getCurrentHPR();
             
             break;
          }

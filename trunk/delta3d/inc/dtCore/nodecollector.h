@@ -16,269 +16,300 @@
  * along with this library; if not, write to the Free Software Foundation, Inc., 
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
  *
- * Allen Danklefsen -Morgas on forums.
+ * Matthew "w00by" Stokes
  */
-#ifndef DELTA_DOF_CONTAINER
-#define DELTA_DOF_CONTAINER
 
-#include <osg/Node>
-#include <osg/MatrixTransform>
-#include <osgSim/DOFTransform>
-#include <osgSim/MultiSwitch>
-#include <dtUtil/enumeration.h>
+#ifndef DELTA_NODE_COLLECTOR
+#define DELTA_NODE_COLLECTOR
 
 #include <dtCore/refptr.h>
 #include <dtCore/export.h>
+#include <osg/referenced>
+#include <map>
+#include <string>
 
-#include <list>
-
-namespace dtUtil
+//Forward Declare the necessary osg classes that will be used by the NodeCollector class
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
+namespace osg
 {
-   class Log;
+   class Group;
+   class MatrixTransform;
+   class Switch;
+   class Node;
+   class Geode;
 }
+//Forward Declare the necessary osgSim classes that will be used by the NodeCollector class
+namespace osgSim
+{
+   class DOFTransform;
+}
+/// @endcond
+
 
 namespace dtCore
 {
-      class DT_CORE_EXPORT NodeCollectorTypes : public dtUtil::Enumeration
-      {
-         DECLARE_ENUM(NodeCollectorTypes);
-
-         public:
-
-            // DOFS For movement of articulation parts
-            static const NodeCollectorTypes DOF_LOAD_NODE_COLLECTOR_TYPE;
-            
-            // HOT SPOTS for offsets / placement helpers
-            static const NodeCollectorTypes HOT_SPOT_LOAD_NODE_COLLECTOR_TYPE;
-
-            // MultiSwitches for selecting different model states
-            static const NodeCollectorTypes MULTISWITCH_NODE_COLLECTOR_TYPE;
-
-            // LOAD both DOFS and HOT SPOTS
-            static const NodeCollectorTypes LOAD_ALL_NODE_TYPES;
-
-         protected:
-            NodeCollectorTypes(const std::string &name) : dtUtil::Enumeration(name)
-            {
-               AddInstance(this);
-            }
-      };
-
-
-   /** The NodeCollector is used to store particular nodes given a piece of scene
-     * graph.  Once the graph is searched, you can retrieve the particular node
-     * types by name or by index.
-     * To use:
-     * @code
-     * myObj->LoadFile("myTank.ive");
-     * RefPtr<NodeCollector> coll = new NodeCollector( myObj->GetOSGNode() );
-     * osgSim::DOFTransform *turret = coll->GetDOFByName("turretDOF");
-     * @endcode
-     *
-     * You can also do a more manual approach, like this:
-     * @code
-     * RefPtr<NodeCollector> coll = new NodeCollector(NULL);
-     * coll->AddHotSpotsFromModelNode( myObj->GetOSGNode(), 'x' );
-     * const osg::MatrixTransform* xform = coll->GetHotSpotByName("x_marks_the_spot");
-     * @endcode
-     *
-     * @note Destructor will empty all containers.
-     */
+   //Create the NodeCollector Class for dtCore.  It is used to gather osg Group nodes, DOFTransform nodes, MatrixTransform nodes, Switch Nodes
+   //and Geode nodes (which have Drawable objects and Material objects).  It stores the different nodes into corresponding maps which may than
+   //be retrieved by the user.  In the case of Geode nodes it creates maps for Drawable objects and Material Objects which can be retrieved.
    class DT_CORE_EXPORT NodeCollector : public osg::Referenced
    {
-      public:
-         /// Constructor
-         NodeCollector(osg::Node* NodeToLoad, const NodeCollectorTypes& type = NodeCollectorTypes::LOAD_ALL_NODE_TYPES, bool LogErroneus = false);
-
-         /**
-         * Function : AddDOFSFromModelNode
-         * Purpose  : Fill in the std::list full of all the models dofs
-         * @param   : osg::Node *nodepath - called from a dtCore::Object->GetOSGNode 
-         *            after loaded in
-         * Outs     : member variable std::list filled in
-         * @return  : NONE
-         */
-         void AddDOFSFromModelNode(osg::Node *nodepath);
-         
-         /**
-         * Function : GetDOFAtPosition
-         * Purpose  : To get a dof for use
-         * @param   : loc - where in array of dof you want
-         * Outs     : NONE
-         * @return  : osgSim::DOFTransform* that you will modify
-         */
-         osgSim::DOFTransform* GetDOFAtPosition(const unsigned int loc);
+   public:
       
-         /**
-         * Function : GetDOFByName
-         * Purpose  : Get a dof for use
-         * @param   : std::string &DofName - name of dof to get
-         * Outs     : NONE
-         * @return  : osgSim::DOFTransform* that you will modify
-         */
-         osgSim::DOFTransform* GetDOFByName(const std::string &DofName);
-       
-         /**
-         * Function : GetDOFListSize
-         * Purpose  : Get the amounts of dof active
-         * @param   : NONE
-         * Outs     : NONE
-         * @return  : Size of the std::list
-         */
-         const unsigned int GetDOFListSize();
-        
-         /**
-         * Function : CleanDofTransformList
-         * Purpose  : Clears the list out
-         * @param   : NONE
-         * Outs     : list cleared called
-         * @return  : N/A
-         */
-         void CleanDofTransformList();
+      //Type Definitions for the four different node maps
+      typedef std::map<std::string, dtCore::RefPtr <osg::Group> >             GroupNodeMap;
+      typedef std::map<std::string, dtCore::RefPtr <osgSim::DOFTransform> >   TransformNodeMap;
+      typedef std::map<std::string, dtCore::RefPtr <osg::MatrixTransform> >   MatrixTransformNodeMap;
+      typedef std::map<std::string, dtCore::RefPtr<osg::Switch> >             SwitchNodeMap;
 
-         /**
-         * Collects all osg::MatrixTransform nodes that have names beginning with 
-         * the supplied character.
-         * @param osg::Node *nodepath : usually retrieved from a dtCore::Object::GetOSGNode()
-         *            after a file is loaded in
-         * @param TestLetter : The letter to check MatrixTransform node names with.
-         */
-         void AddHotSpotsFromModelNode(osg::Node *nodepath, char TestLetter = 'h');
-         
-         /**
-         * Function : GetHotSpotAtPosition
-         * Purpose  : To get a hot spot for use
-         * @param   : loc - where in array of dof you want
-         * Outs     : NONE
-         * @return  : osg::MatrixTransform* that you will modify
-         */
-         const osg::MatrixTransform* GetHotSpotAtPosition(const unsigned int loc);
+      //Type Definitions for the two different geode node maps
+      typedef std::map<std::string, dtCore::RefPtr<osg::Geode> >     GeodeNodeMap;
+
+      //Type Definition that is used to declare flags that allow the user to request searches for different types of nodes or geode nodes.
+      typedef unsigned NodeFlag;
+     
+      //NodeFlags that represent the four different types of nodes that can be searched for
+      static const NodeFlag GroupFlag;
+      static const NodeFlag DOFTransformFlag;
+      static const NodeFlag MatrixTransformFlag;
+      static const NodeFlag SwitchFlag;
+      static const NodeFlag GeodeFlag;
+
+      //NodeFlag that when defined will represent all kinds of nodes and Geode nodes
+      static const NodeFlag AllNodeTypes;
+
+      /**
+       * Blank Constructor that is defined to do nothing.  
+       * @note If this is used then you must call use the CollectNodes function in order to generate any maps with this class.
+       */
+      NodeCollector();
       
-         /**
-         * Function : GetHotSpotByName
-         * Purpose  : Get a hot spot for use
-         * @param   : std::string &HotSpotName - name of hot spot to get
-         * Outs     : NONE
-         * @return  :osg::MatrixTransform that you will modify
-         */
-          const osg::MatrixTransform* GetHotSpotByName(const std::string &HotSpotName);
+      /**
+       * Constructor that when called will automatically generate the node maps or geode maps that you request
+       * @param nodeToLoad The starting node who's children you wish to traverse.
+       * @param mask The different types of nodes you want to collect off of the loaded node.
+       * @param nodeNameIgnored The name of a node that you do not want to collect.
+       */
+      NodeCollector(osg::Node* nodeToLoad, NodeCollector::NodeFlag mask, const std::string & nodeNameIgnored = "");
+   
+      /**
+       * Function that when called will automatically generate the node maps or geode maps that you request
+       * @param nodeToLoad The starting node who's children you wish to traverse.
+       * @param mask The different types of nodes you want to collect off of the loaded node.
+       * @param nodeNameIgnored The name of a node that you do not want to collect.
+       * @note This function was originally intended to be used in conjunction with the blank constructor or after a call of the ClearAllNodes function
+       */
+      void CollectNodes(osg::Node* NodeToLoad, NodeCollector::NodeFlag mask, const std::string & nodeNamesIgnored = "");
 
-         /**
-         * Function : GetHotSpotListSize
-         * Purpose  : Get the amounts of hot spots active
-         * @param   : NONE
-         * Outs     : NONE
-         * @return  : Size of the std::list
-         */
-         const unsigned int GetHotSpotListSize();
-         
-         /**
-         * Function : CleanHotSpotList
-         * Purpose  : Clears the list out
-         * @param   : NONE
-         * Outs     : list cleared called
-         * @return  : N/A
-         */
-         void CleanHotSpotList();
-
-         /**
-         * Function : AddMultiSwitchesFromModelNode
-         * Purpose  : Fill in the std::list full of all the models MultiSwitches
-         * @param   : osg::Node *nodepath - called from a dtCore::Object->GetOSGNode 
-         *            after loaded in
-         * Outs     : member variable std::list filled in
-         * @return  : NONE
-         */
-         void AddMultiSwitchesFromModelNode(osg::Node *nodepath);
-         
-         /**
-         * Function : GetMultiSwitchAtPosition
-         * Purpose  : To get a MultiSwitch for use
-         * @param   : loc - where in array of MultiSwitch you want
-         * Outs     : NONE
-         * @return  : osgSim::MultiSwitch* that you will modify
-         */
-         osgSim::MultiSwitch* GetMultiSwitchAtPosition(const unsigned int loc);
+      /**
+       * Function that is defined to clear all the maps of their contents.
+       */
+      void ClearAll();
       
-         /**
-         * Function : GetMultiSwitchByName
-         * Purpose  : Get a MultiSwitch for use
-         * @param   : std::string &MultiSwitchName - name of dof to get
-         * Outs     : NONE
-         * @return  : osgSim::MultiSwitch* that you will modify
-         */
-         osgSim::MultiSwitch* GetMultiSwitchByName(const std::string &MultiSwitchName);
-       
-         /**
-         * Function : GetMultiSwitchListSize
-         * Purpose  : Get the amounts of dof active
-         * @param   : NONE
-         * Outs     : NONE
-         * @return  : Size of the std::list
-         */
-         const unsigned int GetMultiSwitchListSize();
-        
-         /**
-         * Function : CleanMultiSwitchList
-         * Purpose  : Clears the list out
-         * @param   : NONE
-         * Outs     : list cleared called
-         * @return  : N/A
-         */
-         void CleanMultiSwitchList();
+      //////////////////////////////////////////////////////////////////////////////////////////
+      //The Following Five Methods are all used to return constant pointers to requested nodes//
+      //////////////////////////////////////////////////////////////////////////////////////////
 
-         /**
-         * Function  : SetNodeCollectorFlag
-         * @param    : The type you want it to be.
-         * @return  : N/A
-         */
-         void SetNodeCollectorFlag(const NodeCollectorTypes& type) {NodeCollectorFlag = &type;}
+      /**
+       * Function that is used to request a CONST pointer to a Group Node
+       * @param name A String that represents the name of the node you are looking for
+       * @return A CONST pointer to the node you were looking for or NULL if the node was not found
+       */
+      const osg::Group* GetGroup(const std::string& name) const;
 
-         /**
-         * Function  : GetNodeCollectorFlag
-         * @return  :  Return the node flag as an int
-         */
-         const NodeCollectorTypes& GetNodeCollectorFlag() {return *NodeCollectorFlag;}
+      /**
+      * Function that is used to request a CONST pointer to a DOFTransform Node
+      * @param name A String that represents the name of the node you are looking for
+      * @return A CONST pointer to the node you were looking for or NULL if the node was not found
+      */
+      const osgSim::DOFTransform* GetDOFTransform(const std::string& name) const;
 
-      protected:
-         /// Destructor
-         virtual ~NodeCollector();
+      /**
+      * Function that is used to request a CONST pointer to a MatrixTransform Node
+      * @param name A String that represents the name of the node you are looking for
+      * @return A CONST pointer to the node you were looking for or NULL if the node was not found
+      */
+      const osg::MatrixTransform* GetMatrixTransform(const std::string& name) const;
 
-         dtUtil::Log* mLogger;
+      /**
+      * Function that is used to request a CONST pointer to a Switch Node
+      * @param name A String that represents the name of the node you are looking for
+      * @return A CONST pointer to the node you were looking for or NULL if the node was not found
+      */
+      const osg::Switch* GetSwitch(const std::string& name) const;
 
-      private:
-         /**
-         * Var Name  : mDOFTransforms
-         * Type      : std::list<osgSim::DOFTransform>
-         * Purpose   : Holds onto our dofs loaded in
-         */
-         std::list<dtCore::RefPtr<osgSim::DOFTransform> > mDOFTransforms;
+      /**
+      * Function that is used to request a CONST pointer to a Geode Node
+      * @param name A String that represents the name of the node you are looking for
+      * @return A CONST pointer to the node you were looking for or NULL if the node was not found
+      */
+      const osg::Geode* GetGeode(const std::string& name) const;
 
-         /**
-         * Var Name  : mHotSpots
-         * Type      : std::list<osgSim::MatrixTransform>
-         * Purpose   : Holds onto our hot spot data
-         */
-         std::list<dtCore::RefPtr<osg::MatrixTransform> > mHotSpots;
+      /////////////////////////////////////////////////////////////////////////////////
+      //The Following Five Methods are all used to return pointers to requested nodes//
+      /////////////////////////////////////////////////////////////////////////////////
 
-         /**
-         * Var Name  : mMultiSwitches
-         * Type      : std::list<osgSim::MultiSwitch>
-         * Purpose   : Holds onto our multiSwitch data
-         */
-         std::list<dtCore::RefPtr<osgSim::MultiSwitch> > mMultiSwitches;
+      /**
+      * Function that is used to request a pointer to a Group Node
+      * @param name A String that represents the name of the node you are looking for
+      * @return A pointer to the node you were looking for or NULL if the node was not found
+      */
+      osg::Group* GetGroup(const std::string& name);
 
-         /**
-         * /brief   : Purpose - Logs a message once if enabled throws onto this list
-         */
-         std::list<std::string> mLoggedMessages;
+      /**
+      * Function that is used to request a pointer to a DOFTransform Node
+      * @param name A String that represents the name of the node you are looking for
+      * @return A pointer to the node you were looking for or NULL if the node was not found
+      */
+      osgSim::DOFTransform* GetDOFTransform(const std::string& name);
 
-         /// Set once at class constructor
-         bool mIsLoggingEnabled;
+      /**
+      * Function that is used to request a pointer to a MatrixTransform Node
+      * @param name A String that represents the name of the node you are looking for
+      * @return A pointer to the node you were looking for or NULL if the node was not found
+      */
+      osg::MatrixTransform* GetMatrixTransform(const std::string& name);
 
-         /// Classes Util Flag
-         const NodeCollectorTypes* NodeCollectorFlag;
+      /**
+      * Function that is used to request a pointer to a Switch Node
+      * @param name A String that represents the name of the node you are looking for
+      * @return A pointer to the node you were looking for or NULL if the node was not found
+      */
+      osg::Switch* GetSwitch(const std::string& name);
+
+      /**
+      * Function that is used to request a CONST pointer to a Geode Node
+      * @param name A String that represents the name of the node you are looking for
+      * @return A CONST pointer to the node you were looking for or NULL if the node was not found
+      */
+      osg::Geode* GetGeode(const std::string& name);
+
+
+      /////////////////////////////////////////////////////////////////////////////////
+      //The Following Five Methods are all used to add nodes to their respective maps//
+      /////////////////////////////////////////////////////////////////////////////////
+
+      /**
+       * Function that is used to add a Group Node to the Group Node map
+       * @param name A String that represents the name of the Node
+       * @param node The Group Node that you wish to add to the map
+       */
+      void AddGroup(const std::string& name, osg::Group& node);
+
+      /**
+      * Function that is used to add a DOFTransform Node to the DOFTransform Node map
+      * @param name A String that represents the name of the Node
+      * @param node The DOFTransform Node that you wish to add to the map
+      */
+      void AddDOFTransform(const std::string& name, osgSim::DOFTransform& node);
+
+      /**
+      * Function that is used to add a MatrixTransform Node to the MatrixTransform Node map
+      * @param name A String that represents the name of the Node
+      * @param node The MatrixTransform Node that you wish to add to the map
+      */
+      void AddMatrixTransform(const std::string& name, osg::MatrixTransform& node);
+
+      /**
+      * Function that is used to add a Switch Node to the Switch Node map
+      * @param name A String that represents the name of the Node
+      * @param node The Switch Node that you wish to add to the map
+      */
+      void AddSwitch(const std::string& name, osg::Switch& node);
+
+      /**
+      * Function that is used to add a Geode Node to the Geode Node map
+      * @param name A String that represents the name of the Node
+      * @param node The Geode Node that you wish to add to the map
+      */
+      void AddGeode(const std::string& name, osg::Geode& node);
+
+
+      ////////////////////////////////////////////////////////////////////////////////
+      //The Following Methods are all used to return CONST maps populated with nodes//
+      ////////////////////////////////////////////////////////////////////////////////
+
+      /**
+      * Function that returns a CONST Group map 
+      * @return A map with the names of Group Nodes and osg Group Nodes
+      */
+      const NodeCollector::GroupNodeMap& GetGroupNodeMap() const;
+
+      /**
+      * Function that returns a CONST Transform map 
+      * @return A map with the names of Transform Nodes and osg Transform Nodes
+      */
+      const NodeCollector::TransformNodeMap& GetTransformNodeMap() const;
+      
+      /**
+      * Function that returns CONST a MatrixTransform map 
+      * @return A map with the names of MatrixTransform Nodes and osg MatrixTransform Nodes
+      */
+      const NodeCollector::MatrixTransformNodeMap& GetMatrixTransformNodeMap() const;
+      
+      /**
+      * Function that returns a CONST Switch map 
+      * @return A map with the names of Switch Nodes and osg Switch Nodes
+      */
+      const NodeCollector::SwitchNodeMap& GetSwitchNodeMap() const;
+      
+      /**
+      * Function that returns CONST a Geode map 
+      * @return A map with the names of Geode Nodes and osg Geode Nodes
+      */
+      const NodeCollector::GeodeNodeMap& GetGeodeNodeMap() const;
+
+      //////////////////////////////////////////////////////////////////////////
+      //The Following Methods are all used to return maps populated with nodes//
+      //////////////////////////////////////////////////////////////////////////
+
+      /**
+      * Function that returns a Group map 
+      * @return A map with the names of Group Nodes and osg Group Nodes
+      */
+      NodeCollector::GroupNodeMap& GetGroupNodeMap() ;
+      
+      /**
+      * Function that returns a Transform map 
+      * @return A map with the names of Transform Nodes and osg Transform Nodesa
+      */
+      NodeCollector::TransformNodeMap& GetTransformNodeMap() ;
+      
+      /**
+      * Function that returns a MatrixTransform map 
+      * @return A map with the names of MatrixTransform Nodes and osg MatrixTransform Nodes
+      */
+      NodeCollector::MatrixTransformNodeMap& GetMatrixTransformNodeMap() ;
+
+      /**
+      * Function that returns a Switch map 
+      * @return A map with the names of Switch Nodes and osg Switch Nodes
+      */
+      NodeCollector::SwitchNodeMap& GetSwitchNodeMap() ;
+      
+      /**
+      * Function that returns a Geode map 
+      * @return A map with the names of Geode Nodes and osg Geode Nodes
+      */
+      NodeCollector::GeodeNodeMap& GetGeodeNodeMap();
+      
+   protected:
+
+      /**
+       * Destructor 
+       */
+      virtual ~NodeCollector();
+   
+   private:
+      /**
+       * The following five member variables each represent maps for the different nodes that can be searched for
+       */
+      NodeCollector::GroupNodeMap mGroupNodeMap;
+      NodeCollector::TransformNodeMap mTranformNodeMap;
+      NodeCollector::MatrixTransformNodeMap mMatrixTransformNodeMap;
+      NodeCollector::SwitchNodeMap mSwitchNodeMap;
+      NodeCollector::GeodeNodeMap    mGeodeNodeMap;
+
    };
 } // namespace
 
-#endif
+#endif //DELTA_NODE_COLLECTOR

@@ -334,6 +334,9 @@
 				RelativePath="..\..\..\src\dtCore\spotlight.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtCore\stateattributecollector.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtCore\stats.cpp">
 			</File>
 			<File
@@ -384,6 +387,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtCore\cloudplane.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtCore\collectorutil.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtCore\collisionmotionmodel.h">
@@ -564,6 +570,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtCore\spotlight.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtCore\stateattributecollector.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtCore\stats.h">

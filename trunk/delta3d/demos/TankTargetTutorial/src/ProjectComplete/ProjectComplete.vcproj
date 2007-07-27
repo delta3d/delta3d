@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtDALd.lib CEGUIBase_d.lib dtActorsd.lib Producerd.lib OpenThreadsWin32d.lib osgd.lib osgDBd.lib osgUtild.lib oded.lib dtCored.lib dtABCd.lib dtChard.lib dtAudiod.lib dtUtild.lib dtGamed.lib xerces-c_2D.lib osgParticled.lib"
+				AdditionalDependencies="dtDALd.lib CEGUIBase_d.lib dtActorsd.lib Producerd.lib OpenThreadsWin32d.lib osgd.lib osgDBd.lib osgUtild.lib oded.lib dtCored.lib dtABCd.lib dtChard.lib dtAudiod.lib dtUtild.lib dtGamed.lib xerces-c_2D.lib osgParticled.lib osgSimd.lib"
 				OutputFile="..\..\..\..\bin\TutorialLibraryd.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(DELTA_LIB)"
@@ -84,7 +84,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtDAL.lib CEGUIBase.lib dtActors.lib Producer.lib OpenThreadsWin32.lib osg.lib osgDB.lib osgParticle.lib osgUtil.lib ode.lib dtCore.lib dtABC.lib dtChar.lib dtAudio.lib dtUtil.lib dtGame.lib dtHLAGM.lib xerces-c_2.lib"
+				AdditionalDependencies="dtDAL.lib CEGUIBase.lib dtActors.lib Producer.lib OpenThreadsWin32.lib osg.lib osgDB.lib osgParticle.lib osgUtil.lib ode.lib dtCore.lib dtABC.lib dtChar.lib dtAudio.lib dtUtil.lib dtGame.lib dtHLAGM.lib xerces-c_2.lib osgSim.lib"
 				OutputFile="..\..\..\..\bin\TutorialLibrary.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(DELTA_LIB)"
