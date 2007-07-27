@@ -738,19 +738,35 @@ namespace dtDAL
    }
 
    //////////////////////////////////////////////////////////
-   void Project::CloseMap(Map& map, bool unloadLibraries)
+   void Project::InternalCloseMap(Map& map, bool unloadLibraries)
    {
-      if (!mValidContext)
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext, 
-         std::string("The context is not valid."), __FILE__, __LINE__);
-
       //added support for waypoint files- banderegg 7/10/06
       if(!map.GetPathNodeFileName().empty())
       {
          dtAI::WaypointManager::GetInstance()->OnMapClose();
       }
 
-      //bool
+      if (unloadLibraries)
+      {
+         UnloadUnusedLibraries(map);
+      }
+      try
+      {
+         ClearBackup(map.GetSavedName());
+      }
+      catch (const dtUtil::Exception& ex)
+      {
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Error clearing map backups when saving: %s", ex.What().c_str());
+      }
+   }
+   
+   //////////////////////////////////////////////////////////
+   void Project::CloseMap(Map& map, bool unloadLibraries)
+   {
+      if (!mValidContext)
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext, 
+         std::string("The context is not valid."), __FILE__, __LINE__);
+
       std::map<std::string, dtCore::RefPtr<Map> >::iterator j = mOpenMaps.find(map.GetSavedName());
       if (j == mOpenMaps.end() || (j->second.get() != &map))
       {
@@ -759,19 +775,23 @@ namespace dtDAL
       }
       else
       {
-         if (unloadLibraries)
-         {
-            UnloadUnusedLibraries(map);
-         }
-         try
-         {
-            ClearBackup(map.GetSavedName());
-         }
-         catch (const dtUtil::Exception& ex)
-         {
-            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Error clearing map backups when saving: %s", ex.What().c_str());
-         }
+         InternalCloseMap(map, unloadLibraries);
          mOpenMaps.erase(j);
+      }
+   }
+
+   //////////////////////////////////////////////////////////
+   void Project::CloseAllMaps(bool unloadLibraries)
+   {
+      std::map<std::string, dtCore::RefPtr<Map> >::iterator i = mOpenMaps.begin();
+      std::map<std::string, dtCore::RefPtr<Map> >::iterator iend = mOpenMaps.end();
+      while (i != iend)
+      {
+         std::map<std::string, dtCore::RefPtr<Map> >::iterator inext = i;
+         ++inext;
+         InternalCloseMap(*i->second, unloadLibraries);
+         mOpenMaps.erase(i);
+         i = inext;
       }
    }
 
