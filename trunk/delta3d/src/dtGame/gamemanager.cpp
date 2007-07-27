@@ -1709,14 +1709,7 @@ namespace dtGame
       {
          dtDAL::Project& project = dtDAL::Project::GetInstance();
 
-         GameManager::NameVector::const_iterator i = mLoadedMaps.begin();
-         GameManager::NameVector::const_iterator end = mLoadedMaps.end();
-         for (; i != end; ++i)
-         {
-            
-            dtDAL::Map& map = project.GetMap(*i);
-            project.CloseMap(map, true);
-         }
+         project.CloseAllMaps(true);
          //clear the maps vector because if someone happens to call shutdown again, 
          //it will reopen all the maps.
          mLoadedMaps.clear();

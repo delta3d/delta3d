@@ -111,6 +111,9 @@ namespace dtDAL
          //internal handling for loading a map.
          Map& InternalLoadMap(const std::string& name,const std::string& fullPath, bool clearModified);
 
+         //internal handling of closing a sincle map.
+         void InternalCloseMap(Map& map, bool unloadLibraries);
+
          void UnloadUnusedLibraries(Map& mapToClose);
 
          //internal method to get the pointer to the subtree for a given datatype.
@@ -271,15 +274,25 @@ namespace dtDAL
 
 
          /**
-          * Closes the map passed in.  The map will likely be freeded when this method exits.
+          * Closes the map passed in.  The map will likely be freed when this method exits.
           * @note if you tell this call to unloadLibraries, be certain you have cleared all of the proxies in this map
-          *       from your scene and deleted any memory that may may have been allocated by the map or you can
+          *       from your scene and deleted any memory that may have been allocated by the map or you can
           *       end up in a bad state.
           * @param map the map the close.
           * @param unloadLibraries unload all libraries not used by other open maps. This is dangerous.
           * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
           */
          void CloseMap(Map& map, bool unloadLibraries = false);
+
+         /**
+          * Closes all open maps
+          * @note if you tell this call to unloadLibraries, be certain you have cleared all of the proxies in these maps
+          *       from your scene and deleted any memory that may have been allocated by the maps or you can
+          *       end up in a bad state.
+          * @param unloadLibraries unload all libraries not used by other open maps. This is dangerous.
+          * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
+          */
+         void CloseAllMaps(bool unloadLibraries = false);
 
          /**
           * Deletes the given map.
