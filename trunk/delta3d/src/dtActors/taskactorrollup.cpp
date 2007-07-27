@@ -56,7 +56,7 @@ namespace dtActors
       //need to factor that in to the score of this task.
       const std::vector<dtCore::RefPtr<TaskActorProxy> > &subTasks = GetAllSubTasks();
       std::vector<dtCore::RefPtr<TaskActorProxy> >::const_iterator itor;
-      TaskActor *taskActor;
+      TaskActor *taskActor = NULL;
       float totalWeightedScore = 0.0f;
       float totalWeight = 0.0f;
 
