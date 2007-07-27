@@ -18,7 +18,6 @@
  *
  * Bradley Anderegg 03/28/2007
  */
-
 #include <dtAnim/animnodebuilder.h>
 #include <dtAnim/cal3dmodelwrapper.h>
 #include <dtAnim/submesh.h>
@@ -32,6 +31,7 @@
 #include <osg/Geode>
 #include <osg/BoundingSphere>
 #include <osg/BoundingBox>
+#include <osg/Texture2D>
 
 #include <cal3d/hardwaremodel.h>
 
