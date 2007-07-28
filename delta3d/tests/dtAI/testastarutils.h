@@ -38,14 +38,14 @@ namespace dtAI
    {
    public:
 
-      AStarTest_PathData(unsigned pNumPaths): mPathData(pNumPaths) {}
+      AStarTest_PathData(float pNumPaths): mPathData(pNumPaths) {}
 
-      void AddPath(unsigned pPathNum, const std::list<unsigned>& pPath)
+      void AddPath(float pPathNum, const std::list<float>& pPath)
       {
          mPathData[pPathNum] = pPath;
       }
 
-      std::list<unsigned>& GetPath(unsigned pPathNum)
+      std::list<float>& GetPath(float pPathNum)
       {
          return mPathData[pPathNum];
       }
@@ -55,14 +55,14 @@ namespace dtAI
 
    private:                 
 
-      std::vector< std::list<unsigned> > mPathData;
+      std::vector< std::list<float> > mPathData;
    };
 
 
-   class TestNode: public AStarNode<TestNode, unsigned, std::list<unsigned>::iterator, unsigned>
+   class TestNode: public AStarNode<TestNode, float, std::list<float>::iterator, float>
    {
    public:      
-      TestNode(node_type* pParent, unsigned pData, cost_type pGn, cost_type pHn): BaseType(pParent, pData, pGn, pHn){}
+      TestNode(node_type* pParent, float pData, cost_type pGn, cost_type pHn): BaseType(pParent, pData, pGn, pHn){}
 
       /*virtual*/ iterator begin() const 
       {
@@ -82,15 +82,15 @@ namespace dtAI
    public:
       struct PathCost
       {
-         PathCost(unsigned pCost, unsigned pWay1, unsigned pWay2): mCost(pCost), mWaypoints(pWay1, pWay2){}
-         unsigned mCost;
-         std::pair<unsigned, unsigned> mWaypoints;
+         PathCost(float pCost, float pWay1, float pWay2): mCost(pCost), mWaypoints(pWay1, pWay2){}
+         float mCost;
+         std::pair<float, float> mWaypoints;
       };
 
    public:
 
 
-      unsigned GetCost(unsigned pFrom, unsigned pTo)
+      float GetCost(float pFrom, float pTo)
       {
          if(pFrom == pTo)
          {
@@ -111,7 +111,7 @@ namespace dtAI
          return 100;
       }
 
-      void SetCost(unsigned pathCost, unsigned pFrom, unsigned pTo)
+      void SetCost(float pathCost, float pFrom, float pTo)
       {
          //check if the path cost has already been assigned
          std::vector<PathCost>::iterator iter = mCostData.begin();
@@ -139,17 +139,17 @@ namespace dtAI
 
 
 
-   class TestCostFunc: public AStarCostFunc<unsigned, unsigned>
+   class TestCostFunc: public AStarCostFunc<float, float>
    {
    public:
-      unsigned operator()(unsigned pIn1, unsigned pIn2) const
+      float operator()(float pIn1, float pIn2) const
       {         
          return PathCostData::sCostData->GetCost(pIn1, pIn2);
       }
    };
 
 
-   typedef std::list<unsigned> TestContainer;
+   typedef std::list<float> TestContainer;
 
    typedef AStar<TestNode, TestCostFunc, TestContainer, AStarTimer > TestAStar;
 
