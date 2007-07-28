@@ -24,9 +24,7 @@
 
 #include <dtAI/astarconfig.h>
 
-#include <cassert>
 #include <algorithm>
-#include <list>
 #include <vector>
 
 namespace dtAI
@@ -87,7 +85,7 @@ namespace dtAI
       typedef _NodeType node_type;
       typedef typename _NodeType::cost_type cost_type;
       typedef typename _NodeType::data_type data_type;
-      typedef std::list<node_type*> AStarContainer;
+      typedef std::vector<node_type*> AStarContainer;
       typedef typename AStarContainer::iterator AStarIterator;      
       typedef _CostFunc cost_function;
       typedef _Container container_type;
@@ -167,10 +165,10 @@ namespace dtAI
          * at a later date
          */
          void AddNodeLink(node_type* pParent, data_type pData);
-         bool Contains(const AStarContainer& pCont, data_type pNode);
-         node_type* Remove(AStarContainer& pCont, data_type pNode);
-         node_type* FindLowestCost(const AStarContainer& pCont);
-
+         typename AStarContainer::iterator Contains(AStarContainer& pCont, data_type pNode);
+         void Remove(AStarContainer& pCont, typename AStarContainer::iterator iterToErase);
+         node_type* FindLowestCost(AStarContainer& pCont);
+         void Insert(AStarContainer& pCont, node_type* pNode);
          
          config_type mConfig;
          AStarContainer mOpen;

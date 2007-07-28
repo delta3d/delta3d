@@ -31,7 +31,7 @@ dtAI::AStarTest_PathData* dtAI::AStarTest_PathData::sPathData = NULL;
 
 dtAI::PathCostData* dtAI::PathCostData::sCostData = NULL;
 
-typedef std::list<unsigned> PATH;
+typedef std::list<float> PATH;
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -59,7 +59,7 @@ namespace dtTest
 
       TestAStar mAStar;
 
-      unsigned mCorrectPaths[4][6];
+      float mCorrectPaths[4][6];
    };
 
 
@@ -213,11 +213,11 @@ void AStarTests::TestCreatePathVector()
    AStarTest_PathData::sPathData->AddPath(6, pSix);
    
 
-   std::vector<unsigned> pFrom;
+   std::vector<float> pFrom;
    pFrom.push_back(0);
    pFrom.push_back(1);
 
-   std::vector<unsigned> pTo;
+   std::vector<float> pTo;
    pTo.push_back(7);
    pTo.push_back(6);
 
@@ -230,7 +230,7 @@ void AStarTests::TestCreatePathVector()
 
 void AStarTests::TestPathForCorrectness(int pathNum, TestAStar::AStarResult pResult, const TestContainer& pPathList)
 {
-   std::vector<unsigned> pPath(pPathList.begin(), pPathList.end());   
+   std::vector<float> pPath(pPathList.begin(), pPathList.end());   
 
    if(pathNum == 0)
    {

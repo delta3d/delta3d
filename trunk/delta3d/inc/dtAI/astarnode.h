@@ -22,6 +22,7 @@
 #ifndef __DELTA_ASTARNODE_H__
 #define __DELTA_ASTARNODE_H__
 
+#include <dtUtil/mathdefines.h>
 
 namespace dtAI
 {
@@ -59,6 +60,7 @@ namespace dtAI
          {
             return mData == pNode.GetData();
          }
+
          bool operator!=(const AStarNode& pNode)
          {
             return mData != pNode.GetData();
@@ -69,7 +71,11 @@ namespace dtAI
          */
          bool operator<(const AStarNode& pType) const
          {
-            return (mCostToNode + mCostToGoal) < (pType.GetCostToNode() + pType.GetCostToGoal());
+            cost_type myCost = mCostToNode + mCostToGoal;
+            cost_type otherCost = pType.GetCostToNode() + pType.GetCostToGoal();
+            //check if they are equivalent first
+            if(dtUtil::Equivalent(myCost, otherCost)) return false;
+            else return  myCost < otherCost;
          }
 
          node_type* GetParent(){return mParent;}
