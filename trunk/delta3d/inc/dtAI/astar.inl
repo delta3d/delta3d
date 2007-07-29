@@ -149,7 +149,7 @@ void AStar<_NodeType, _CostFunc, _Container, _Timer>::Insert(AStarContainer& pCo
 
 //This needs to be optimized once we have a more suitable container implementation
 template<class _NodeType, class _CostFunc, class _Container, class _Timer>
-typename AStar<_NodeType, _CostFunc, _Container, _Timer>::AStarContainer::iterator AStar<_NodeType, _CostFunc, _Container, _Timer>::Contains(AStarContainer& pCont, data_type pNode)
+typename std::vector<_NodeType*>::iterator AStar<_NodeType, _CostFunc, _Container, _Timer>::Contains(AStarContainer& pCont, data_type pNode)
 {
    return std::find_if(pCont.begin(), pCont.end(), node_type_comp_func<data_type, node_type>(pNode));
 }
