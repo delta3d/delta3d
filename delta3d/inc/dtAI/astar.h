@@ -165,7 +165,7 @@ namespace dtAI
          * at a later date
          */
          void AddNodeLink(node_type* pParent, data_type pData);
-         typename AStarContainer::iterator Contains(AStarContainer& pCont, data_type pNode);
+         typename std::vector<_NodeType*>::iterator Contains(AStarContainer& pCont, data_type pNode);
          void Remove(AStarContainer& pCont, typename AStarContainer::iterator iterToErase);
          node_type* FindLowestCost(AStarContainer& pCont);
          void Insert(AStarContainer& pCont, node_type* pNode);
