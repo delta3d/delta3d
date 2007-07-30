@@ -884,14 +884,18 @@ namespace dtGame
          class LogDebugInformation : public osg::Referenced
          {
             public:
-               LogDebugInformation(const std::string &name, const dtCore::UniqueId &uniqueID, bool isComponent)
+
+               LogDebugInformation(const std::string &name, 
+                                   const dtCore::UniqueId &uniqueID, 
+                                   bool isComponent) : 
+                  mTotalTime(0.0f),
+                  mTickLocalTime(0.0f),
+                  mTimesThrough(1), 
+                  mNameOfLogInfo(name), 
+                  mUniqueID(uniqueID), 
+                  mIsComponent(isComponent)
                {
-                  mUniqueID      = uniqueID;
-                  mNameOfLogInfo = name;
-                  mTotalTime     = 0.0f;
-                  mTickLocalTime = 0.0f;
-                  mTimesThrough  = 1;
-                  mIsComponent   = isComponent;
+       
                }
 
                float          mTotalTime;
@@ -902,7 +906,8 @@ namespace dtGame
                bool           mIsComponent;
 
             protected:
-               virtual ~LogDebugInformation(){}
+
+               virtual ~LogDebugInformation() { }
          };
 
          std::set<TimerInfo>& GetSimulationTimerList() { return mSimulationTimers; }
