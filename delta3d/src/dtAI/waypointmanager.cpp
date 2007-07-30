@@ -261,6 +261,7 @@ namespace dtAI
          catch(const std::exception& e)
          {
             LOG_ERROR("Exception thrown reading Waypoint file: " + std::string(e.what()));
+            read_file_ok = false;
          }
       }
 
