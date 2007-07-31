@@ -561,8 +561,8 @@ namespace dtGame
       }
 
       // DELETE ACTORS
-      size_t deleteListSize = mDeleteList.size();
-      for (size_t i = 0; i < deleteListSize; ++i)
+      unsigned int deleteListSize = mDeleteList.size();
+      for (unsigned int i = 0; i < deleteListSize; ++i)
       {
          GameActorProxy& gameActorProxy = *mDeleteList[i];
 
@@ -625,9 +625,9 @@ namespace dtGame
       component.SetComponentPriority(priority);
       //we sort the items by priority so that components of higher priority get messages first.
       bool inserted = false;
-      for(size_t i = 0; i < mComponentList.size(); ++i)
+      for (unsigned i = 0; i < mComponentList.size(); ++i)
       {
-         if(mComponentList[i]->GetComponentPriority().GetOrderId() > priority.GetOrderId())
+         if (mComponentList[i]->GetComponentPriority().GetOrderId() > priority.GetOrderId())
          {
            mComponentList.insert(mComponentList.begin() + i, dtCore::RefPtr<GMComponent>(&component));
            inserted = true;
@@ -1056,24 +1056,24 @@ namespace dtGame
       //find all of the children that have actor proxies associated with them to move them up
       //one level in the scene.
       std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > childrenToMove;
-      for(size_t i = 0; i < dd.GetNumChildren(); ++i)
+      for (unsigned i = 0; i < dd.GetNumChildren(); ++i)
       {
          dtCore::DeltaDrawable& child = *dd.GetChild(i);
          dtDAL::ActorProxy* childProxy = FindActorById(child.GetUniqueId());
-         if(childProxy != NULL)
+         if (childProxy != NULL)
          {
 
             childrenToMove.push_back(childProxy);
          }
       }
 
-      if(dd.GetParent() == NULL)
+      if (dd.GetParent() == NULL)
       {
          //remove the proxy drawable
          mScene->RemoveDrawable(&dd);
 
          //put all the children in the base scene.
-         for(size_t i = 0; i < childrenToMove.size(); ++i)
+         for (unsigned i = 0; i < childrenToMove.size(); ++i)
          {
             mScene->AddDrawable(childrenToMove[i]->GetActor());
          }
@@ -1081,7 +1081,7 @@ namespace dtGame
       else
       {
          //add all the children to the parent drawable.
-         for(size_t i = 0; i < childrenToMove.size(); ++i)
+         for (unsigned i = 0; i < childrenToMove.size(); ++i)
          {
             dtCore::DeltaDrawable* child = childrenToMove[i]->GetActor();
             child->Emancipate();
