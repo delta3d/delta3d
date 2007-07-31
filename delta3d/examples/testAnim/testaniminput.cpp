@@ -93,7 +93,12 @@ bool TestAnimInput::HandleKeyPressed(const dtCore::Keyboard *keyBoard,
             mTurnDirection = 1.0f;
             return false;
          }
-
+      case Producer::Key_backslash:
+      case Producer::Key_Insert:
+         {
+            GetGameManager()->GetApplication().GetCamera()->SetNextStatisticsType();
+            break;
+         }
       case Producer::Key_Up:
          {            
             if(!mIsWalking)
