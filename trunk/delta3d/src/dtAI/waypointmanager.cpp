@@ -96,48 +96,46 @@ namespace dtAI
       }      
    }
 
-   WaypointManager* WaypointManager::GetInstance()  
+   WaypointManager& WaypointManager::GetInstance()  
    {
-      if(!mSingleton)
-      {
-         CreateInstance();
-      }
-      return mSingleton.get();
+      CreateInstance();
+      return *mSingleton;
    }
 
-   void WaypointManager::AddWaypoint(WaypointActor* pWaypointActor)
+   void WaypointManager::AddWaypoint(WaypointActor &pWaypointActor)
    {
-      if(mLoadActors) return;
+      if(mLoadActors) 
+         return;
 
       unsigned pIndex = mWaypoints.size();
-      pWaypointActor->SetIndex(pIndex);
-      mWaypoints.insert(std::pair<unsigned, Waypoint*>(pIndex, new Waypoint(pWaypointActor)));      
+      pWaypointActor.SetIndex(pIndex);
+      mWaypoints.insert(std::pair<unsigned, Waypoint*>(pIndex, new Waypoint(&pWaypointActor)));      
    }
 
    int WaypointManager::AddWaypoint(const osg::Vec3& pWaypoint)
    {
       unsigned pIndex = mWaypoints.size();
       Waypoint* pWay = new Waypoint(pWaypoint);
-	  pWay->SetID( pIndex );
+	   pWay->SetID(pIndex);
       mWaypoints.insert(std::pair<unsigned, Waypoint*>(pIndex, pWay));   
       return pIndex;
    }
 
-   void WaypointManager::RemoveWaypoint(const WaypointActor* pWaypoint)
+   void WaypointManager::RemoveWaypoint(const WaypointActor &pWaypoint)
    {
       //we are indexing into map with a key generated on AddWaypoint
-       mWaypoints.erase(pWaypoint->GetIndex());
+      RemoveWaypoint(pWaypoint.GetIndex());
    }
 
    void WaypointManager::RemoveWaypoint(unsigned pIndex)
    {
       //we are indexing into map with a key generated on AddWaypoint
-       mWaypoints.erase(pIndex);
+      mWaypoints.erase(pIndex);
    }
 
    Waypoint* WaypointManager::GetWaypoint(unsigned pIndex)
    {
-	   return mWaypoints[pIndex];
+      return pIndex > mWaypoints.size() ? NULL : mWaypoints[pIndex];
    }
 
    void WaypointManager::MoveWaypoint(unsigned pIndex, const osg::Vec3& pPos)

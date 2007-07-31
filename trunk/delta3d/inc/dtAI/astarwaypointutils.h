@@ -94,12 +94,12 @@ namespace dtAI
 
       /*virtual*/ iterator begin() const 
       {
-         return iterator(WaypointManager::GetInstance()->GetNavMesh().begin(mData));
+         return iterator(WaypointManager::GetInstance().GetNavMesh().begin(mData));
       }
 
       /*virtual*/ iterator end() const
       {
-         return iterator(WaypointManager::GetInstance()->GetNavMesh().end(mData));
+         return iterator(WaypointManager::GetInstance().GetNavMesh().end(mData));
       }
       
    };
