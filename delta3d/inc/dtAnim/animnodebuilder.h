@@ -39,7 +39,7 @@ namespace osg
 
 namespace dtCore
 {
-   class Shader;
+   class ShaderProgram;
 }
 
 namespace dtAnim
@@ -79,7 +79,7 @@ protected:
    AnimNodeBuilder(const AnimNodeBuilder&);
    AnimNodeBuilder& operator=(const AnimNodeBuilder&);
    
-   dtCore::Shader* LoadShaders(Cal3DModelData& modelData, osg::Geode& geode) const;
+   dtCore::ShaderProgram* LoadShaders(Cal3DModelData& modelData, osg::Geode& geode) const;
    
 private:
 

@@ -26,7 +26,7 @@
 #include <dtAnim/cal3dmodeldata.h>
 
 #include <dtCore/globals.h>
-#include <dtCore/shader.h>
+#include <dtCore/shaderprogram.h>
 #include <dtCore/shadermanager.h>
 #include <dtCore/shadergroup.h>
 #include <dtUtil/log.h>
@@ -294,13 +294,13 @@ dtCore::RefPtr<osg::Geode> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pW
 }
 
 
-dtCore::Shader* AnimNodeBuilder::LoadShaders(Cal3DModelData& modelData, osg::Geode& geode) const
+dtCore::ShaderProgram* AnimNodeBuilder::LoadShaders(Cal3DModelData& modelData, osg::Geode& geode) const
 {
    dtCore::ShaderManager& shaderManager = dtCore::ShaderManager::GetInstance();
-   dtCore::Shader* shaderProgram = NULL;
+   dtCore::ShaderProgram* shaderProgram = NULL;
    if (!modelData.GetShaderGroupName().empty())
    {
-      dtCore::ShaderGroup* spGroup = shaderManager.FindShaderGroupTemplate(modelData.GetShaderGroupName());
+      dtCore::ShaderGroup* spGroup = shaderManager.FindShaderGroupPrototype(modelData.GetShaderGroupName());
       if (!modelData.GetShaderName().empty())
       {
          shaderProgram = spGroup->FindShader(modelData.GetShaderName());
@@ -333,14 +333,14 @@ dtCore::Shader* AnimNodeBuilder::LoadShaders(Cal3DModelData& modelData, osg::Geo
    if (shaderProgram == NULL)
    {
       static const std::string hardwareSkinningSPGroup = "HardwareSkinning";
-      dtCore::ShaderGroup* defSPGroup = shaderManager.FindShaderGroupTemplate(hardwareSkinningSPGroup);
+      dtCore::ShaderGroup* defSPGroup = shaderManager.FindShaderGroupPrototype(hardwareSkinningSPGroup);
       if (defSPGroup == NULL)
       {
          defSPGroup = new dtCore::ShaderGroup(hardwareSkinningSPGroup);
-         shaderProgram = new dtCore::Shader("Default");
+         shaderProgram = new dtCore::ShaderProgram("Default");
          shaderProgram->SetVertexShaderSource("shaders/HardwareCharacter.vert");
          defSPGroup->AddShader(*shaderProgram, true);
-         shaderManager.AddShaderGroupTemplate(*defSPGroup);
+         shaderManager.AddShaderGroupPrototype(*defSPGroup);
       }
       else
       {
@@ -349,7 +349,7 @@ dtCore::Shader* AnimNodeBuilder::LoadShaders(Cal3DModelData& modelData, osg::Geo
       modelData.SetShaderGroupName(hardwareSkinningSPGroup);
    }
    
-   return shaderManager.AssignShaderFromTemplate(*shaderProgram, geode);
+   return shaderManager.AssignShaderFromPrototype(*shaderProgram, geode);
 }
 
 AnimNodeBuilder::Cal3DBoundingSphereCalculator::Cal3DBoundingSphereCalculator(Cal3DModelWrapper& wrapper)
