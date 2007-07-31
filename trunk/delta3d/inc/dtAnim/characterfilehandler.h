@@ -86,8 +86,8 @@ namespace dtAnim
       static const std::string SKELETON_ELEMENT;
       static const std::string MESH_ELEMENT;
       static const std::string MATERIAL_ELEMENT;
-      static const std::string CHANNEL_ELEMENT;                      
-      static const std::string SEQUENCE_ELEMENT;                      
+      static const std::string CHANNEL_ELEMENT;
+      static const std::string SEQUENCE_ELEMENT;
       static const std::string NAME_ELEMENT;
       static const std::string FILENAME_ELEMENT;      
       static const std::string ANIMATION_NAME_ELEMENT;
@@ -100,6 +100,10 @@ namespace dtAnim
       static const std::string IS_LOOPING_ELEMENT;
       static const std::string IS_ACTION_ELEMENT;
       static const std::string CHILD_ELEMENT;
+      
+      static const std::string SKINNING_SHADER_ELEMENT;
+      static const std::string SHADER_GROUP_ELEMENT;
+      static const std::string SHADER_NAME_ELEMENT;
 
    public:
    	CharacterFileHandler();
