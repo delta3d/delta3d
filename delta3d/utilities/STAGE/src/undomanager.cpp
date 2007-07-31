@@ -361,7 +361,7 @@ namespace dtEditQt
         dtCore::RefPtr<dtDAL::Map> currMap = EditorData::GetInstance().getCurrentMap();
 
         // figure out the actor type
-        dtCore::RefPtr<dtDAL::ActorType> actorType = dtDAL::LibraryManager::GetInstance().
+        dtCore::RefPtr<const dtDAL::ActorType> actorType = dtDAL::LibraryManager::GetInstance().
             FindActorType(event->actorTypeCategory, event->actorTypeName);
 
         if (currMap.valid() && actorType.valid())

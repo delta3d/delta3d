@@ -155,7 +155,7 @@ void GameActorTests::TestActorIsInGM()
 {
    try
    {
-      dtCore::RefPtr<dtDAL::ActorType> actorType = mManager->FindActorType("ExampleActors", "Test1Actor");
+      dtCore::RefPtr<const dtDAL::ActorType> actorType = mManager->FindActorType("ExampleActors", "Test1Actor");
       dtCore::RefPtr<dtDAL::ActorProxy> proxy = mManager->CreateActor(*actorType);
       dtCore::RefPtr<dtGame::GameActorProxy> gap = dynamic_cast<dtGame::GameActorProxy*>(proxy.get());
       CPPUNIT_ASSERT_MESSAGE("ActorProxy should not be NULL", gap != NULL);
@@ -193,7 +193,7 @@ void GameActorTests::TestGameActorProxy()
 {
    try
    {
-      dtCore::RefPtr<dtDAL::ActorType> actorType = mManager->FindActorType("ExampleActors", "Test1Actor");
+      dtCore::RefPtr<const dtDAL::ActorType> actorType = mManager->FindActorType("ExampleActors", "Test1Actor");
 
       CPPUNIT_ASSERT(actorType != NULL);
 
@@ -231,7 +231,7 @@ void GameActorTests::TestGameActorProxyDeleteError()
    // an observer_ptr to the parent.
    try
    {
-      dtCore::RefPtr<dtDAL::ActorType> actorType = mManager->FindActorType("ExampleActors", "Test1Actor");
+      dtCore::RefPtr<const dtDAL::ActorType> actorType = mManager->FindActorType("ExampleActors", "Test1Actor");
 
       CPPUNIT_ASSERT(actorType != NULL);
 
@@ -264,7 +264,7 @@ void GameActorTests::TestInvokables()
 {
    try
    {
-      dtCore::RefPtr<dtDAL::ActorType> actorType = mManager->FindActorType("ExampleActors", "Test1Actor");
+      dtCore::RefPtr<const dtDAL::ActorType> actorType = mManager->FindActorType("ExampleActors", "Test1Actor");
 
       dtCore::RefPtr<dtDAL::ActorProxy> proxy = mManager->CreateActor(*actorType);
       dtCore::RefPtr<dtGame::GameActorProxy> gap = dynamic_cast<dtGame::GameActorProxy*>(proxy.get());
@@ -307,7 +307,7 @@ void GameActorTests::TestInvokableMessageRegistration()
 {
    try
    {
-      dtCore::RefPtr<dtDAL::ActorType> actorType = mManager->FindActorType("ExampleActors", "Test1Actor");
+      dtCore::RefPtr<const dtDAL::ActorType> actorType = mManager->FindActorType("ExampleActors", "Test1Actor");
 
       dtCore::RefPtr<dtDAL::ActorProxy> proxy = mManager->CreateActor(*actorType);
       dtCore::RefPtr<dtGame::GameActorProxy> gap = dynamic_cast<dtGame::GameActorProxy*>(proxy.get());
@@ -371,8 +371,8 @@ void GameActorTests::TestDefaultProcessMessageRegistration()
 {
    try 
    {
-      dtCore::RefPtr<dtDAL::ActorType> actor1Type = mManager->FindActorType("ExampleActors", "Test1Actor");
-      dtCore::RefPtr<dtDAL::ActorType> actor2Type = mManager->FindActorType("ExampleActors", "Test2Actor");
+      dtCore::RefPtr<const dtDAL::ActorType> actor1Type = mManager->FindActorType("ExampleActors", "Test1Actor");
+      dtCore::RefPtr<const dtDAL::ActorType> actor2Type = mManager->FindActorType("ExampleActors", "Test2Actor");
 
       dtCore::RefPtr<dtDAL::ActorProxy> proxy1 = mManager->CreateActor(*actor1Type);
       dtCore::RefPtr<dtGame::GameActorProxy> gap1 = dynamic_cast<dtGame::GameActorProxy*>(proxy1.get());
@@ -431,8 +431,8 @@ void GameActorTests::TestGlobalInvokableMessageRegistration()
 {
    try
    {
-      dtCore::RefPtr<dtDAL::ActorType> actor1Type = mManager->FindActorType("ExampleActors", "Test1Actor");
-      dtCore::RefPtr<dtDAL::ActorType> actor2Type = mManager->FindActorType("ExampleActors", "Test2Actor");
+      dtCore::RefPtr<const dtDAL::ActorType> actor1Type = mManager->FindActorType("ExampleActors", "Test1Actor");
+      dtCore::RefPtr<const dtDAL::ActorType> actor2Type = mManager->FindActorType("ExampleActors", "Test2Actor");
 
       dtCore::RefPtr<dtDAL::ActorProxy> proxy1 = mManager->CreateActor(*actor1Type);
       dtCore::RefPtr<dtGame::GameActorProxy> gap1 = dynamic_cast<dtGame::GameActorProxy*>(proxy1.get());
@@ -543,7 +543,7 @@ void GameActorTests::TestAddRemoveFromEnvActor()
 {
    try
    {
-      dtCore::RefPtr<dtDAL::ActorType> type = mManager->FindActorType("ExampleActors", "TestEnvironmentActor");
+      dtCore::RefPtr<const dtDAL::ActorType> type = mManager->FindActorType("ExampleActors", "TestEnvironmentActor");
       CPPUNIT_ASSERT_MESSAGE("Should have been able to find the test environment actor in the test game library", type.valid());
       dtCore::RefPtr<dtDAL::ActorProxy> ap = mManager->CreateActor(*type);
       CPPUNIT_ASSERT_MESSAGE("The game manager should have been able to create the test environment actor", ap.valid());
@@ -648,7 +648,7 @@ void GameActorTests::TestSetEnvironmentActor()
       dtCore::RefPtr<TestComponent> tc = new TestComponent("name");
       CPPUNIT_ASSERT(tc.valid());
       mManager->AddComponent(*tc, dtGame::GameManager::ComponentPriority::NORMAL);
-      dtCore::RefPtr<dtDAL::ActorType> type = mManager->FindActorType("ExampleActors", "TestEnvironmentActor");
+      dtCore::RefPtr<const dtDAL::ActorType> type = mManager->FindActorType("ExampleActors", "TestEnvironmentActor");
       CPPUNIT_ASSERT_MESSAGE("Should have been able to find the test environment actor in the test game library", type.valid());
       dtCore::RefPtr<dtDAL::ActorProxy> ap = mManager->CreateActor(*type);
       CPPUNIT_ASSERT_MESSAGE("The game manager should have been able to create the test environment actor", ap.valid());
@@ -857,7 +857,7 @@ void GameActorTests::TestMessageProcessingPerformance()
       dtCore::RefPtr<dtGame::DefaultMessageProcessor> dmc = new dtGame::DefaultMessageProcessor();
       mManager->AddComponent(*dmc, dtGame::GameManager::ComponentPriority::HIGHEST);
 
-      dtCore::RefPtr<dtDAL::ActorType> actor1Type = mManager->FindActorType("ExampleActors", "TestGamePropertyProxy");
+      dtCore::RefPtr<const dtDAL::ActorType> actor1Type = mManager->FindActorType("ExampleActors", "TestGamePropertyProxy");
 
       // Start time in microseconds
       dtCore::Timer_t startTime(0);// = mManager->GetRealClockTime();
@@ -933,7 +933,7 @@ void GameActorTests::TestOnRemovedActor()
    // Normal delete actor tests are done elsewhere.
 
    dtCore::RefPtr<TestGamePropertyProxy> proxy1;
-   dtCore::RefPtr<dtDAL::ActorType> actor1Type = mManager->FindActorType("ExampleActors", "TestGamePropertyProxy");
+   dtCore::RefPtr<const dtDAL::ActorType> actor1Type = mManager->FindActorType("ExampleActors", "TestGamePropertyProxy");
    mManager->CreateActor(*actor1Type, proxy1);
    mManager->AddActor(*proxy1, true, false);
 

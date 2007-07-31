@@ -104,7 +104,7 @@ namespace dtGame
       const std::string &catName = msg.GetActorTypeCategory();
 
       dtCore::RefPtr<dtGame::GameActorProxy> gap;
-      dtCore::RefPtr<dtDAL::ActorType> type = GetGameManager()->FindActorType(catName, typeName);
+      dtCore::RefPtr<const dtDAL::ActorType> type = GetGameManager()->FindActorType(catName, typeName);
 
       if (!type.valid())
       {

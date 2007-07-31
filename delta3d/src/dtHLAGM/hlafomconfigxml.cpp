@@ -602,7 +602,7 @@ namespace dtHLAGM
       }
       else if (elementName == OBJECT_ACTOR_TYPE_ELEMENT)
       {
-         dtDAL::ActorType* type = FindActorType(characters);
+         const dtDAL::ActorType* type = FindActorType(characters);
          if (type == NULL)
          {
             mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__,  __LINE__,
@@ -838,7 +838,7 @@ namespace dtHLAGM
          entityType.SetExtra((unsigned char)value);
    }
 
-   dtDAL::ActorType* HLAFOMConfigContentHandler::FindActorType(const std::string& actorTypeFullName)
+   const dtDAL::ActorType* HLAFOMConfigContentHandler::FindActorType(const std::string& actorTypeFullName)
    {
       size_t index = actorTypeFullName.find_last_of('.');
 
@@ -859,7 +859,7 @@ namespace dtHLAGM
       //Make sure we have not tried to load this actor type already and failed.
       if (mMissingActorTypes.find(actorTypeFullName) == mMissingActorTypes.end())
       {
-         dtCore::RefPtr<dtDAL::ActorType> actorType =
+         dtCore::RefPtr<const dtDAL::ActorType> actorType =
             mTargetTranslator->GetGameManager()->FindActorType(actorTypeCategory, actorTypeName);
          if (actorType == NULL)
          {

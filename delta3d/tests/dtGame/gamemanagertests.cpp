@@ -488,7 +488,7 @@ void GameManagerTests::TestActorSearching()
       int numActorsSkipped = 0;
       dtGame::GameManager& gm = *mManager;
 
-      std::vector<dtDAL::ActorType*> typeVec;
+      std::vector<const dtDAL::ActorType*> typeVec;
 
       gm.GetActorTypes(typeVec);
 
@@ -728,8 +728,8 @@ void GameManagerTests::TestComponentPriority()
 /////////////////////////////////////////////////
 void GameManagerTests::TestCreateRemoteActor()
 {
-   dtCore::RefPtr<dtDAL::ActorType> type = mManager->FindActorType("dtcore.examples", "Test All Properties");
-   dtCore::RefPtr<dtDAL::ActorType> gameActorType = mManager->FindActorType("ExampleActors","Test1Actor");
+   dtCore::RefPtr<const dtDAL::ActorType> type = mManager->FindActorType("dtcore.examples", "Test All Properties");
+   dtCore::RefPtr<const dtDAL::ActorType> gameActorType = mManager->FindActorType("ExampleActors","Test1Actor");
 
    //sanity check.
    CPPUNIT_ASSERT(type.valid());
@@ -748,7 +748,7 @@ void GameManagerTests::TestCreateRemoteActor()
 //////////////////////////////////////////////////////////////////////////
 void GameManagerTests::TestAddActorCrash()
 {
-   dtCore::RefPtr<dtDAL::ActorType> type = mManager->FindActorType("ExampleActors", "TestCrash");   
+   dtCore::RefPtr<const dtDAL::ActorType> type = mManager->FindActorType("ExampleActors", "TestCrash");   
    CPPUNIT_ASSERT(type != NULL);
    dtCore::RefPtr<dtGame::GameActorProxy> proxy;
    mManager->CreateActor(*type, proxy);
@@ -765,7 +765,7 @@ void GameManagerTests::TestAddActorCrash()
 void GameManagerTests::TestAddActor()
 {
 
-   dtCore::RefPtr<dtDAL::ActorType> type = mManager->FindActorType("ExampleActors", "Test1Actor");
+   dtCore::RefPtr<const dtDAL::ActorType> type = mManager->FindActorType("ExampleActors", "Test1Actor");
    for (int x = 0; x < 21; ++x)
    {
       if (x == 10)
@@ -941,7 +941,7 @@ void GameManagerTests::TestAddActor()
 /////////////////////////////////////////////////
 void GameManagerTests::TestComplexScene()
 {
-   dtCore::RefPtr<dtDAL::ActorType> type = mManager->FindActorType("ExampleActors","Test1Actor");
+   dtCore::RefPtr<const dtDAL::ActorType> type = mManager->FindActorType("ExampleActors","Test1Actor");
 
    CPPUNIT_ASSERT(type != NULL);
 
@@ -1069,7 +1069,7 @@ void GameManagerTests::TestOnAddedToGM()
 /////////////////////////////////////////////////
 void GameManagerTests::TestTimers()
 {
-   dtCore::RefPtr<dtDAL::ActorType> type = mManager->FindActorType("ExampleActors","Test2Actor");
+   dtCore::RefPtr<const dtDAL::ActorType> type = mManager->FindActorType("ExampleActors","Test2Actor");
    CPPUNIT_ASSERT(type != NULL);
 
    dtCore::RefPtr<dtGame::GameActorProxy> proxy;

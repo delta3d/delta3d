@@ -253,8 +253,8 @@ namespace dtHLAGM
                    RTI::InteractionParameterNotKnown,
                    RTI::FederateInternalError);
 
-         const ObjectToActor* GetActorMapping(dtDAL::ActorType &type) const;
-         ObjectToActor* GetActorMapping(dtDAL::ActorType &type);
+         const ObjectToActor* GetActorMapping(const dtDAL::ActorType &type) const;
+         ObjectToActor* GetActorMapping(const dtDAL::ActorType &type);
 
          const ObjectToActor* GetObjectMapping(const std::string& objTypeName, const EntityType* thisDisID) const;
          ObjectToActor* GetObjectMapping(const std::string& objTypeName, const EntityType* thisDisID);
@@ -517,14 +517,14 @@ namespace dtHLAGM
 
          ObjectRuntimeMappingInfo mRuntimeMappings;
 
-         std::map<dtCore::RefPtr<dtDAL::ActorType>, dtCore::RefPtr<ObjectToActor> > mActorToObjectMap;
+         std::map<dtCore::RefPtr<const dtDAL::ActorType>, dtCore::RefPtr<ObjectToActor> > mActorToObjectMap;
          std::multimap<std::string, dtCore::RefPtr<ObjectToActor> > mObjectToActorMap;
 
          std::map<const dtGame::MessageType*, dtCore::RefPtr<InteractionToMessage> > mMessageToInteractionMap;
          std::map<std::string, dtCore::RefPtr<InteractionToMessage> > mInteractionToMessageMap;
 
          ///Does the work of unregistering, see UnregisterActorMapping
-         dtCore::RefPtr<ObjectToActor> InternalUnregisterActorMapping(dtDAL::ActorType &type);
+         dtCore::RefPtr<ObjectToActor> InternalUnregisterActorMapping(const dtDAL::ActorType &type);
          ///Does the work of unregistering, see UnregisterObjectMapping
          dtCore::RefPtr<ObjectToActor> InternalUnregisterObjectMapping(const std::string& objTypeName, const EntityType* thisDisID);
          ///Does the work of unregistering, see UnregisterMessageMapping

@@ -142,7 +142,7 @@ TestAARMessageProcessor::CreateNewMovingActor(const std::string &meshName,
    dtCore::RefPtr<dtGame::GameActorProxy> object;
    dtCore::Transform position;
 
-   dtCore::RefPtr<dtDAL::ActorType> playerType = GetGameManager()->FindActorType("ExampleActors", "TestPlayer");
+   dtCore::RefPtr<const dtDAL::ActorType> playerType = GetGameManager()->FindActorType("ExampleActors", "TestPlayer");
    object = dynamic_cast<dtGame::GameActorProxy *>(GetGameManager()->CreateActor(*playerType).get());
 
    if (bSetLocation)
@@ -377,7 +377,7 @@ void TestAARMessageProcessor::Reset()
       GetGameManager()->GetScene().AddDrawable(terrain.get());
    }
 
-   dtCore::RefPtr<dtDAL::ActorType> playerType = GetGameManager()->FindActorType("ExampleActors", "TestPlayer");
+   dtCore::RefPtr<const dtDAL::ActorType> playerType = GetGameManager()->FindActorType("ExampleActors", "TestPlayer");
    dtCore::RefPtr<dtDAL::ActorProxy> player = GetGameManager()->CreateActor(*playerType);
    mPlayer = dynamic_cast<dtGame::GameActorProxy*>(player.get());
    GetGameManager()->AddActor(*mPlayer, false, false);

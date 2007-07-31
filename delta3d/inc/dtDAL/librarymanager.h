@@ -70,7 +70,7 @@ namespace dtDAL
          };		
 
      
-         typedef std::map<dtCore::RefPtr<ActorType>, ActorPluginRegistry*, ActorType::RefPtrComp> ActorTypeMap;
+         typedef std::map<dtCore::RefPtr<const ActorType>, ActorPluginRegistry*, ActorType::RefPtrComp> ActorTypeMap;
          typedef ActorTypeMap::iterator ActorTypeMapItor;
 
          typedef std::map<std::string, RegistryEntry> RegistryMap;			
@@ -112,7 +112,7 @@ namespace dtDAL
           * Returns a list of all the actor types the library manager knows how 
           * to create.
           */
-         void GetActorTypes(std::vector<ActorType*> &actorTypes);
+         void GetActorTypes(std::vector<const ActorType*> &actorTypes);
    		
          /**
           * Gets a single actor type that matches the name and category specified.
@@ -120,7 +120,7 @@ namespace dtDAL
           * @param name Name of the actor type.
           * @return A pointer if the actor type was found or NULL if not.
           */
-         ActorType* FindActorType(const std::string &category,
+         const ActorType* FindActorType(const std::string &category,
                                   const std::string &name);
 
          /**
@@ -131,7 +131,7 @@ namespace dtDAL
           * @throws Throws a ObjectFactoryUnknownType exception if the type
           * is unknown.
           */
-         dtCore::RefPtr<ActorProxy> CreateActorProxy(ActorType& actorType);
+         dtCore::RefPtr<ActorProxy> CreateActorProxy(const ActorType& actorType);
 
          /**
           * Creates a new actor proxy.  The actor type is used by the library
@@ -156,7 +156,7 @@ namespace dtDAL
          /**
           * @param actorType the actor type to get the registry for.
           */
-         ActorPluginRegistry *GetRegistryForType(ActorType& actorType);
+         ActorPluginRegistry *GetRegistryForType(const ActorType& actorType);
 
          /**
           * Determines which platform we are running on and returns a

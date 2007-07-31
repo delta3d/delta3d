@@ -223,7 +223,7 @@ void MessageTests::tearDown()
 
 void MessageTests::createActors(dtDAL::Map& map)
 {
-   std::vector<dtDAL::ActorType*> actorTypes;
+   std::vector<const dtDAL::ActorType*> actorTypes;
    std::vector<dtDAL::ActorProperty*> props;
 
    mGameManager->GetActorTypes(actorTypes);
@@ -475,9 +475,9 @@ void MessageTests::TestBaseMessages()
       dtCore::RefPtr<dtGame::ActorUpdateMessage> actorMsg = new dtGame::ActorUpdateMessage;
       actorMsg->SetActorTypeName("Tripod");
       actorMsg->SetActorTypeCategory("dtcore");
-      dtCore::RefPtr<dtDAL::ActorType> type = actorMsg->GetActorType();
+      dtCore::RefPtr<const dtDAL::ActorType> type = actorMsg->GetActorType();
       CPPUNIT_ASSERT(type.valid());
-      CPPUNIT_ASSERT_MESSAGE("The message type should be correct", type == dtActors::EngineActorRegistry::TRIPOD_ACTOR_TYPE);
+      CPPUNIT_ASSERT_MESSAGE("The message type should be correct", type.get() == dtActors::EngineActorRegistry::TRIPOD_ACTOR_TYPE);
    }
    catch (const dtUtil::Exception &e)
    {
@@ -608,7 +608,7 @@ void MessageTests::TestMessageDelivery()
 
       CPPUNIT_ASSERT_MESSAGE("The message created should not be NULL", msg != NULL);
 
-      dtCore::RefPtr<dtDAL::ActorType> type = mGameManager->FindActorType("ExampleActors","Test1Actor");
+      dtCore::RefPtr<const dtDAL::ActorType> type = mGameManager->FindActorType("ExampleActors","Test1Actor");
 
       CPPUNIT_ASSERT(type != NULL);
       dtCore::RefPtr<dtGame::GameActorProxy> gap;
@@ -672,7 +672,7 @@ void MessageTests::TestActorPublish()
       CPPUNIT_ASSERT(tc->GetGameManager() != NULL);
       CPPUNIT_ASSERT(rc->GetGameManager() != NULL);
 
-      dtCore::RefPtr<dtDAL::ActorType> type = mGameManager->FindActorType("ExampleActors","Test1Actor");
+      dtCore::RefPtr<const dtDAL::ActorType> type = mGameManager->FindActorType("ExampleActors","Test1Actor");
 
       CPPUNIT_ASSERT(type != NULL);
       dtCore::RefPtr<dtDAL::ActorProxy> ap = mGameManager->CreateActor(*type);
@@ -1449,7 +1449,7 @@ void MessageTests::TestDefaultMessageProcessorWithLocalActorUpdates()
 void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(bool remote, bool partial)
 {
 
-   dtCore::RefPtr<dtDAL::ActorType> type = mGameManager->FindActorType("ExampleActors","Test1Actor");
+   dtCore::RefPtr<const dtDAL::ActorType> type = mGameManager->FindActorType("ExampleActors","Test1Actor");
 
    CPPUNIT_ASSERT(type != NULL);
    dtCore::RefPtr<dtDAL::ActorProxy> ap = mGameManager->CreateActor(*type);
@@ -1568,7 +1568,7 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorDeletes(bool
    dtGame::DefaultMessageProcessor& defMsgProcessor = *new dtGame::DefaultMessageProcessor();
    mGameManager->AddComponent(defMsgProcessor, dtGame::GameManager::ComponentPriority::NORMAL);
 
-   dtCore::RefPtr<dtDAL::ActorType> type = mGameManager->FindActorType("ExampleActors","Test1Actor");
+   dtCore::RefPtr<const dtDAL::ActorType> type = mGameManager->FindActorType("ExampleActors","Test1Actor");
 
    CPPUNIT_ASSERT(type != NULL);
    dtCore::RefPtr<dtDAL::ActorProxy> ap = mGameManager->CreateActor(*type);
@@ -1620,7 +1620,7 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorCreates(bool
    dtGame::DefaultMessageProcessor& defMsgProcessor = *new dtGame::DefaultMessageProcessor();
    mGameManager->AddComponent(defMsgProcessor, dtGame::GameManager::ComponentPriority::NORMAL);
 
-   dtCore::RefPtr<dtDAL::ActorType> type = mGameManager->FindActorType("ExampleActors","Test1Actor");
+   dtCore::RefPtr<const dtDAL::ActorType> type = mGameManager->FindActorType("ExampleActors","Test1Actor");
 
    CPPUNIT_ASSERT(type != NULL);
    dtCore::RefPtr<dtDAL::ActorProxy> ap = mGameManager->CreateActor(*type);

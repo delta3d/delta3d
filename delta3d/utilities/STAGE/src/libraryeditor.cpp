@@ -230,7 +230,7 @@ void LibraryEditor::spawnDeleteConfirmation()
                std::cout << "Proxy: " << proxies[j]->GetName() << " RefCount: " <<
                proxies[j]->referenceCount() << std::endl;
                
-               dtCore::RefPtr<ActorType> type = &proxies[j]->GetActorType();
+               dtCore::RefPtr<const ActorType> type = &proxies[j]->GetActorType();
                if(reg->IsActorTypeSupported(type))
                   ++numActorsInScene;
             }

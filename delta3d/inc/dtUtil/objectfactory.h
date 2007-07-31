@@ -131,7 +131,7 @@ namespace dtUtil
       * @throw Exception is thrown if the factory does not know how to create
       *  the requested type.
       */
-      BaseType *CreateObject(UniqueIdType id)
+      BaseType *CreateObject(const UniqueIdType id)
       {
          ObjTypeItor itor(this->objectTypeMap.find(id));
 

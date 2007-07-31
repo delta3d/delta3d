@@ -206,7 +206,7 @@ void MapTests::tearDown()
 void MapTests::createActors(dtDAL::Map& map)
 {
    dtDAL::LibraryManager& libMgr = dtDAL::LibraryManager::GetInstance();
-   std::vector<dtDAL::ActorType*> actorTypes;
+   std::vector<const dtDAL::ActorType*> actorTypes;
    std::vector<dtDAL::ActorProperty*> props;
    
    libMgr.GetActorTypes(actorTypes);
@@ -314,7 +314,7 @@ void MapTests::TestMapAddRemoveProxies()
         map.AddLibrary(mExampleLibraryName, "1.0");
         dtDAL::LibraryManager::GetInstance().LoadActorRegistry(mExampleLibraryName);
 
-        dtCore::RefPtr<dtDAL::ActorType> exampleType = dtDAL::LibraryManager::GetInstance().FindActorType("dtcore.examples", "Test All Properties");
+        dtCore::RefPtr<const dtDAL::ActorType> exampleType = dtDAL::LibraryManager::GetInstance().FindActorType("dtcore.examples", "Test All Properties");
         CPPUNIT_ASSERT_MESSAGE("The example type is NULL", exampleType.valid());
 
         dtCore::RefPtr<dtDAL::ActorProxy> proxy1 = dtDAL::LibraryManager::GetInstance().CreateActorProxy(*exampleType);
@@ -1342,7 +1342,7 @@ void MapTests::TestMapSaveAndLoadGroup()
       map->AddLibrary(mExampleLibraryName, "1.0");
       dtDAL::LibraryManager::GetInstance().LoadActorRegistry(mExampleLibraryName);
 
-      dtDAL::ActorType* at = dtDAL::LibraryManager::GetInstance().FindActorType("dtcore.examples", "Test All Properties");
+      const dtDAL::ActorType* at = dtDAL::LibraryManager::GetInstance().FindActorType("dtcore.examples", "Test All Properties");
       CPPUNIT_ASSERT(at != NULL);
       
       dtCore::RefPtr<dtDAL::ActorProxy> proxy = dtDAL::LibraryManager::GetInstance().CreateActorProxy(*at);
@@ -1506,7 +1506,7 @@ void MapTests::TestMapSaveAndLoadActorGroups()
 
       dtDAL::LibraryManager& libraryManager = dtDAL::LibraryManager::GetInstance();
 
-      dtDAL::ActorType* at = libraryManager.FindActorType("dtcore.Tasks", "Task Actor");
+      const dtDAL::ActorType* at = libraryManager.FindActorType("dtcore.Tasks", "Task Actor");
       CPPUNIT_ASSERT(at != NULL);
       
       dtCore::RefPtr<dtDAL::ActorProxy> proxy = libraryManager.CreateActorProxy(*at);

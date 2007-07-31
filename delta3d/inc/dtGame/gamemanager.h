@@ -137,7 +137,7 @@ namespace dtGame
           * to create.
           * @param actorTypes A vector to fill
           */
-         void GetActorTypes(std::vector<dtDAL::ActorType*> &actorTypes);
+         void GetActorTypes(std::vector<const dtDAL::ActorType*> &actorTypes);
 
          /**
           * Gets a single actor type that matches the name and category specified.
@@ -145,7 +145,7 @@ namespace dtGame
           * @param name Name of the actor type.
           * @return A pointer to the actor type if the actor type was found or NULL otherwise.
           */
-         dtDAL::ActorType* FindActorType(const std::string &category, const std::string &name);
+         const dtDAL::ActorType* FindActorType(const std::string &category, const std::string &name);
          
          /**
          * Fills a vector with the game proxys whose types match the name parameter
@@ -312,14 +312,14 @@ namespace dtGame
           * @throws dtDAL::ExceptionEnum::ObjectFactoryUnknownType
           * @throws dtGame::ExceptionEnum::INVALID_PARAMETER if actortype is NOT a game actor
           */
-         dtCore::RefPtr<dtGame::GameActorProxy> CreateRemoteGameActor(dtDAL::ActorType& actorType);
+         dtCore::RefPtr<dtGame::GameActorProxy> CreateRemoteGameActor(const dtDAL::ActorType& actorType);
 
          /**
           * Creates an actor based on the actor type.
           * @param The actor type to create.
           * @throws dtDAL::ExceptionEnum::ObjectFactoryUnknownType
           */
-         dtCore::RefPtr<dtDAL::ActorProxy> CreateActor(dtDAL::ActorType& actorType);
+         dtCore::RefPtr<dtDAL::ActorProxy> CreateActor(const dtDAL::ActorType& actorType);
 
          /**
           * Creates an actor based on the actor type and store it in a ref pointer.
@@ -330,7 +330,7 @@ namespace dtGame
           * @throws dtDAL::ExceptionEnum::ObjectFactoryUnknownType
           */
          template <typename ProxyType>
-         void CreateActor(dtDAL::ActorType& actorType, dtCore::RefPtr<ProxyType>& proxy)
+         void CreateActor(const dtDAL::ActorType& actorType, dtCore::RefPtr<ProxyType>& proxy)
          {
             dtCore::RefPtr<dtDAL::ActorProxy> tmpProxy = CreateActor(actorType);
             proxy = dynamic_cast<ProxyType*>(tmpProxy.get());

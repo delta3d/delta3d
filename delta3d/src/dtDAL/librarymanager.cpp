@@ -155,13 +155,13 @@ namespace dtDAL
       std::ostringstream msg;
 
       //Second we map actor type to the registry that owns it.
-      std::vector<dtCore::RefPtr<ActorType> > actorTypes;
+      std::vector<dtCore::RefPtr<const ActorType> > actorTypes;
       entry.registry->RegisterActorTypes();
       entry.registry->GetSupportedActorTypes(actorTypes);
       int numUniqueActors = 0;
       for (unsigned int i=0; i<actorTypes.size(); i++)
       {
-         ActorTypeMapItor itor = mActors.find(dtCore::RefPtr<ActorType>(actorTypes[i].get()));
+         ActorTypeMapItor itor = mActors.find(dtCore::RefPtr<const ActorType>(actorTypes[i].get()));
          if (itor != mActors.end())
          {
             msg.clear();
@@ -171,7 +171,7 @@ namespace dtDAL
          }
          else
          {
-            mActors.insert(std::make_pair(dtCore::RefPtr<ActorType>(actorTypes[i].get()),entry.registry));
+            mActors.insert(std::make_pair(dtCore::RefPtr<const ActorType>(actorTypes[i].get()),entry.registry));
             ++numUniqueActors;
          }
       }
@@ -186,7 +186,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void LibraryManager::GetActorTypes(std::vector<ActorType*> &actorTypes)
+   void LibraryManager::GetActorTypes(std::vector<const ActorType*> &actorTypes)
    {
       actorTypes.clear();
       actorTypes.reserve(mActors.size());
@@ -199,10 +199,10 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   ActorType* LibraryManager::FindActorType(const std::string &category,
+   const ActorType* LibraryManager::FindActorType(const std::string &category,
                                                            const std::string &name)
    {
-      dtCore::RefPtr<ActorType> typeToFind = new ActorType(name,category);
+      dtCore::RefPtr<const ActorType> typeToFind = new ActorType(name,category);
       ActorTypeMapItor itor = mActors.find(typeToFind);
       if (itor != mActors.end())
       {
@@ -214,7 +214,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<ActorProxy> LibraryManager::CreateActorProxy(ActorType& actorType)
+   dtCore::RefPtr<ActorProxy> LibraryManager::CreateActorProxy(const ActorType& actorType)
    {
       ActorPluginRegistry* apr = GetRegistryForType(actorType); 
 
@@ -234,7 +234,7 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////
    dtCore::RefPtr<ActorProxy> LibraryManager::CreateActorProxy(const std::string &category, const std::string &name)
    {
-      dtCore::RefPtr<ActorType> type = FindActorType(category, name);
+      dtCore::RefPtr<const ActorType> type = FindActorType(category, name);
       if(!type.valid())
          throw dtUtil::Exception(dtDAL::ExceptionEnum::ObjectFactoryUnknownType, 
          "No actor exists of the specified name and category", __FILE__, __LINE__);
@@ -264,14 +264,14 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   ActorPluginRegistry *LibraryManager::GetRegistryForType(ActorType& actorType) 
+   ActorPluginRegistry *LibraryManager::GetRegistryForType(const ActorType& actorType) 
    {
       std::ostringstream error;
 
       //To create an new actor proxy, first we search our map of actor types
       //to locate the actor registry that knows how to create a proxy of the
       //requested type.
-      dtCore::RefPtr<ActorType> actorTypePtr(&actorType);
+      dtCore::RefPtr<const ActorType> actorTypePtr(&actorType);
         
       ActorTypeMapItor found = mActors.find(actorTypePtr);
       if (found == mActors.end())
@@ -305,12 +305,14 @@ namespace dtDAL
 
       //First remove all the actor types this registry supports.
       RegistryEntry regEntry = regItor->second;
-      std::vector<dtCore::RefPtr<ActorType> > actorTypes;
-      std::vector<dtCore::RefPtr<ActorType> >::iterator actorItor;
+      std::vector<dtCore::RefPtr<const ActorType> > actorTypes;
+      std::vector<dtCore::RefPtr<const ActorType> >::iterator actorItor;
 
       regEntry.registry->GetSupportedActorTypes(actorTypes);
       for (actorItor=actorTypes.begin(); actorItor!=actorTypes.end(); ++actorItor)
-         mActors.erase(dtCore::RefPtr<ActorType>(actorItor->get()));
+      {
+         mActors.erase(dtCore::RefPtr<const ActorType>(actorItor->get()));
+      }
 
       mRegistries.erase(regItor);
 

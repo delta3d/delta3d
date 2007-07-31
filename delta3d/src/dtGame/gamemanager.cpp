@@ -118,13 +118,13 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::GetActorTypes(std::vector<dtDAL::ActorType*> &actorTypes)
+   void GameManager::GetActorTypes(std::vector<const dtDAL::ActorType*> &actorTypes)
    {
       mLibMgr->GetActorTypes(actorTypes);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorType* GameManager::FindActorType(const std::string &category, const std::string &name)
+   const dtDAL::ActorType* GameManager::FindActorType(const std::string &category, const std::string &name)
    {
       return mLibMgr->FindActorType(category, name);
    }
@@ -709,7 +709,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<dtGame::GameActorProxy> GameManager::CreateRemoteGameActor(dtDAL::ActorType& actorType)
+   dtCore::RefPtr<dtGame::GameActorProxy> GameManager::CreateRemoteGameActor(const dtDAL::ActorType& actorType)
    {
       dtCore::RefPtr<dtGame::GameActorProxy> result;
       CreateActor(actorType, result);
@@ -729,7 +729,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<dtDAL::ActorProxy> GameManager::CreateActor(dtDAL::ActorType& actorType) 
+   dtCore::RefPtr<dtDAL::ActorProxy> GameManager::CreateActor(const dtDAL::ActorType& actorType) 
    {
       try
       {
@@ -760,7 +760,7 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    dtCore::RefPtr<dtDAL::ActorProxy> GameManager::CreateActor(const std::string &category, const std::string &name) 
    {
-      dtCore::RefPtr<dtDAL::ActorType> type = FindActorType(category, name);
+      dtCore::RefPtr<const dtDAL::ActorType> type = FindActorType(category, name);
       if(!type.valid())
          throw dtUtil::Exception(ExceptionEnum::UNKNOWN_ACTOR_TYPE, 
          "No actor exists of the specified name and category", __FILE__, __LINE__);

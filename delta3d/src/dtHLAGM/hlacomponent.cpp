@@ -754,10 +754,10 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   const ObjectToActor* HLAComponent::GetActorMapping(dtDAL::ActorType &type) const
+   const ObjectToActor* HLAComponent::GetActorMapping(const dtDAL::ActorType &type) const
    {
-      std::map<dtCore::RefPtr<dtDAL::ActorType>, dtCore::RefPtr<ObjectToActor> >::const_iterator actorToObjectIterator;
-      dtCore::RefPtr<dtDAL::ActorType> refActorType = &type;
+      std::map<dtCore::RefPtr<const dtDAL::ActorType>, dtCore::RefPtr<ObjectToActor> >::const_iterator actorToObjectIterator;
+      dtCore::RefPtr<const dtDAL::ActorType> refActorType = &type;
       const ObjectToActor* thisObjectToActor = NULL;
 
       actorToObjectIterator = mActorToObjectMap.find(refActorType);
@@ -769,10 +769,10 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   ObjectToActor* HLAComponent::GetActorMapping(dtDAL::ActorType &type)
+   ObjectToActor* HLAComponent::GetActorMapping(const dtDAL::ActorType &type)
    {
-      std::map<dtCore::RefPtr<dtDAL::ActorType>, dtCore::RefPtr<ObjectToActor> >::iterator actorToObjectIterator;
-      dtCore::RefPtr<dtDAL::ActorType> refActorType = &type;
+      std::map<dtCore::RefPtr<const dtDAL::ActorType>, dtCore::RefPtr<ObjectToActor> >::iterator actorToObjectIterator;
+      dtCore::RefPtr<const dtDAL::ActorType> refActorType = &type;
       ObjectToActor* thisObjectToActor = NULL;
 
       actorToObjectIterator = mActorToObjectMap.find(refActorType);
@@ -906,9 +906,9 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<ObjectToActor> HLAComponent::InternalUnregisterActorMapping(dtDAL::ActorType &type)
+   dtCore::RefPtr<ObjectToActor> HLAComponent::InternalUnregisterActorMapping(const dtDAL::ActorType &type)
    {
-      std::map<dtCore::RefPtr<dtDAL::ActorType>, dtCore::RefPtr<ObjectToActor> >::iterator actorToObjectIterator;
+      std::map<dtCore::RefPtr<const dtDAL::ActorType>, dtCore::RefPtr<ObjectToActor> >::iterator actorToObjectIterator;
       dtCore::RefPtr<ObjectToActor> thisObjectToActor;
 
       actorToObjectIterator = mActorToObjectMap.find(&type);
@@ -1796,7 +1796,7 @@ namespace dtHLAGM
       const std::string actorName = actorID.ToString();
 
       // Get Actor Type
-      dtCore::RefPtr<dtDAL::ActorType> actorType = GetGameManager()->FindActorType(aum.GetActorTypeCategory(), aum.GetActorTypeName());
+      dtCore::RefPtr<const dtDAL::ActorType> actorType = GetGameManager()->FindActorType(aum.GetActorTypeCategory(), aum.GetActorTypeName());
       if (!actorType.valid())
       {
          if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_INFO))

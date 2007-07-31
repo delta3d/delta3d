@@ -102,7 +102,7 @@ namespace dtGame
       mUpdateParameters->GetParameters(toFill);
    }
 
-   dtDAL::ActorType* ActorUpdateMessage::GetActorType() const
+   const dtDAL::ActorType* ActorUpdateMessage::GetActorType() const
    {
       return dtDAL::LibraryManager::GetInstance().FindActorType(GetActorTypeCategory(), GetActorTypeName());
    }

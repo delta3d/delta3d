@@ -133,10 +133,10 @@ void GMTaskComponentTests::TestTaskComponentTaskTracking()
       mGameManager->AddComponent(*taskComponent,dtGame::GameManager::ComponentPriority::NORMAL);
       mGameManager->AddComponent(*(new dtGame::DefaultMessageProcessor()), dtGame::GameManager::ComponentPriority::HIGHEST);
 
-      dtCore::RefPtr<dtDAL::ActorType> playerType = mGameManager->FindActorType("ExampleActors", "Test1Actor");
+      dtCore::RefPtr<const dtDAL::ActorType> playerType = mGameManager->FindActorType("ExampleActors", "Test1Actor");
       CPPUNIT_ASSERT_MESSAGE("Could not find test player actor type.",playerType != NULL);
 
-      dtCore::RefPtr<dtDAL::ActorType> taskType = mGameManager->FindActorType("dtcore.Tasks","Task Actor");
+      dtCore::RefPtr<const dtDAL::ActorType> taskType = mGameManager->FindActorType("dtcore.Tasks","Task Actor");
       CPPUNIT_ASSERT_MESSAGE("Could not find task actor type.",taskType != NULL);
 
       //Add and remove a few task actors...
@@ -205,7 +205,7 @@ void GMTaskComponentTests::TestChangeMap()
       mGameManager->AddComponent(*(new dtGame::DefaultMessageProcessor()), dtGame::GameManager::ComponentPriority::HIGHEST);
 
       //Create some actors...
-      dtCore::RefPtr<dtDAL::ActorType> taskType = mGameManager->FindActorType("dtcore.Tasks","Task Actor");
+      dtCore::RefPtr<const dtDAL::ActorType> taskType = mGameManager->FindActorType("dtcore.Tasks","Task Actor");
       CPPUNIT_ASSERT_MESSAGE("Could not find task actor type.",taskType != NULL);
 
       for (unsigned int i=0; i<20; i++)
@@ -261,7 +261,7 @@ void GMTaskComponentTests::TestGetTasks()
       mGameManager->AddComponent(*(new dtGame::DefaultMessageProcessor()), dtGame::GameManager::ComponentPriority::HIGHEST);
 
       //Create some actors...
-      dtCore::RefPtr<dtDAL::ActorType> taskType = mGameManager->FindActorType("dtcore.Tasks","Task Actor");
+      dtCore::RefPtr<const dtDAL::ActorType> taskType = mGameManager->FindActorType("dtcore.Tasks","Task Actor");
       CPPUNIT_ASSERT_MESSAGE("Could not find task actor type.",taskType != NULL);
 
       for (i=0; i<20; i++)
