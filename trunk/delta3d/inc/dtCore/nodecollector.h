@@ -24,7 +24,7 @@
 
 #include <dtCore/refptr.h>
 #include <dtCore/export.h>
-#include <osg/referenced>
+#include <osg/Referenced>
 #include <map>
 #include <string>
 

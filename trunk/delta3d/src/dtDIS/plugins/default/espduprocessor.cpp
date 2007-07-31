@@ -63,7 +63,7 @@ void ESPduProcessor::Process(const DIS::Pdu& packet)
          // if no, then make & add an actor, and remember it for removal.
          //ActorTypeMap::iterator iter = mTypes.find( pdu.getEntityID().getEntity() );
          //if( iter != mTypes.end() )
-         dtDAL::ActorType* actortype( NULL );
+         const dtDAL::ActorType* actortype( NULL );
          dtDIS::ActorMapConfig& emapper = mConfig->GetActorMap();
          const DIS::EntityType& etype = pdu.getEntityType();
          if( emapper.GetMappedActor(etype, actortype) )

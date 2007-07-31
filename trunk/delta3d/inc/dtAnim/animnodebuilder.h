@@ -79,7 +79,7 @@ protected:
    AnimNodeBuilder(const AnimNodeBuilder&);
    AnimNodeBuilder& operator=(const AnimNodeBuilder&);
    
-   dtCore::Shader* AnimNodeBuilder::LoadShaders(Cal3DModelData& modelData, osg::Geode& geode) const;
+   dtCore::Shader* LoadShaders(Cal3DModelData& modelData, osg::Geode& geode) const;
    
 private:
 

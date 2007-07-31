@@ -27,7 +27,7 @@
 #include <osg/ref_ptr>
 #include <dtCore/globals.h>
 
-#include <osg/group>
+#include <osg/Group>
 #include <osgSim/DOFTransform>
 #include <osg/MatrixTransform>
 #include <osg/Switch>

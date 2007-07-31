@@ -207,11 +207,10 @@ void PartialApplicator::operator ()(const DIS::EntityStatePdu& source, dtGame::A
    }
 
    // articulation support
-   char art_param_count=source.getArticulationParameterCount();
+   unsigned char art_param_count=source.getArticulationParameterCount();
    if( art_param_count > 0 )
    {
       mp = dest.AddUpdateParameter( dtDIS::EnginePropertyName::ARTICULATION, dtDAL::DataType::GROUP );
-      dtDAL::NamedGroupParameter* ngp = NULL;
       if( mp != NULL )
       {
          dtDAL::NamedGroupParameter* articulation_group = static_cast<dtDAL::NamedGroupParameter*>( mp );
