@@ -189,6 +189,7 @@ namespace dtDAL
       {
          stream << i->second->GetDataType().GetTypeId();
          stream << i->second->GetName();
+         stream << i->second->IsList();
          i->second->ToDataStream(stream);
       }
    }
@@ -222,9 +223,22 @@ namespace dtDAL
          std::string name;
          stream >> name;
          
+         bool  isList;
+         stream >> isList;
+
          dtCore::RefPtr<NamedParameter> param = GetParameter(name);
          if (param == NULL)
-            param = AddParameter(name, *type);
+         {
+            if (isList)
+            {
+               param = CreateFromType(*type, name, true);
+               AddParameter(*param);
+            }
+            else
+            {
+               param = AddParameter(name, *type);
+            }
+         }
 
          param->FromDataStream(stream);
       }      
@@ -258,11 +272,20 @@ namespace dtDAL
       NamedGroupParameter::ParameterList::const_iterator end = mParameterList.end();
       for(; i!= end; ++i)
       {
-         toFill.append(i->first);
+         NamedParameter& param = *i->second;
+         toFill.append(param.GetName());
          toFill.append(" ");
-         toFill.append(dtUtil::ToString(i->second->GetDataType().GetName()));
+         toFill.append(dtUtil::ToString(param.GetDataType().GetName()));
          toFill.append(" ");
-         toFill.append(i->second->ToString());
+         // output this boolean as "true" or "false" in the string
+         bool isList = param.IsList();
+         if (isList)
+            toFill.append("true");
+         else
+            toFill.append("false");
+         
+         toFill.append(" ");
+         toFill.append(param.ToString());
          toFill.append(1, '\n');
       }
       return toFill;
@@ -272,26 +295,41 @@ namespace dtDAL
    bool NamedGroupParameter::FromString(const std::string& value) 
    {
       std::istringstream iss(value);
-      
+
       std::string paramName;
       std::string typeString;
+      std::string isListString;
       std::string paramValue;
       
       // get values
       std::getline(iss, paramName, ' ');
       std::getline(iss, typeString, ' ');
+      std::getline(iss, isListString, ' ');
       std::getline(iss, paramValue);
       
       dtDAL::DataType *type = dtDAL::DataType::GetValueForName(typeString);
       
       if(type == NULL)
          return false;
-      
+
+      // isList
+      bool isList = isListString == "true";
+
       // try and retrieve the parameter
       dtCore::RefPtr<NamedParameter> param = GetParameter(paramName);
       
-      if (param == NULL) // add it if it does not exist
-         param = AddParameter(paramName, *type);
+      if (param == NULL) 
+      { // add it if it does not exist
+         if (isList)
+         {
+            param = CreateFromType(*type, paramName, true);
+            AddParameter(*param);
+         }
+         else
+         {
+            param = AddParameter(paramName, *type);
+         }
+      }
       
       param->FromString(paramValue);
       return true; 
