@@ -38,7 +38,7 @@ namespace osg
 
 namespace dtCore
 {
-   class Shader;
+   class ShaderProgram;
 
    /**
     * Exceptions a shader parameter may throw.
@@ -211,13 +211,13 @@ namespace dtCore
           * Sets the shader owning this shader parameter.
           * @param shader The shader owning this parameter.
           */
-        void SetParentShader(Shader *shader);
+        void SetParentShader(ShaderProgram *shader);
 
          /**
           * Gets the shader currently managing this shader parameter.
           * @return The parent shader.
           */
-         Shader *GetParentShader() const { return mParentShader; }
+         ShaderProgram *GetParentShader() const { return mParentShader; }
 
          /**
           * Sets the shader uniform parameter for this shader parameter.  Uniform parameters
@@ -241,10 +241,10 @@ namespace dtCore
          bool mIsDirty;
          bool mIsShared; // Default is true. Indicates that when Cloning, it should simply return a copy of this param, not a new instance
          std::string mVarName;
-         Shader *mParentShader;
+         ShaderProgram *mParentShader;
          dtCore::RefPtr<osg::Uniform> mUniform;
 
-         friend class Shader;
+         friend class ShaderProgram;
 
          // Disallowed to prevent compile errors on VS2003. It apparently
          // creates this functions even if they are not used, and if

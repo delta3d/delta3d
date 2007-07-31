@@ -40,9 +40,9 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ShaderGroup::AddShader(Shader &shader, bool isDefault)
+   void ShaderGroup::AddShader(ShaderProgram &shader, bool isDefault)
    {
-      std::map<std::string,dtCore::RefPtr<Shader> >::iterator itor =
+      std::map<std::string,dtCore::RefPtr<ShaderProgram> >::iterator itor =
          mShaders.find(shader.GetName());
 
       if (itor != mShaders.end())
@@ -55,9 +55,9 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ShaderGroup::RemoveShader(Shader &shader)
+   void ShaderGroup::RemoveShader(ShaderProgram &shader)
    {
-      std::map<std::string,dtCore::RefPtr<Shader> >::iterator itor =
+      std::map<std::string,dtCore::RefPtr<ShaderProgram> >::iterator itor =
          mShaders.find(shader.GetName());
 
       if (itor == mShaders.end())
@@ -69,7 +69,7 @@ namespace dtCore
       {
          //Hang on to a reference for a second.
          //itor->second->SetParentGroup(NULL);
-         dtCore::RefPtr<Shader> tempRef = &shader;
+         dtCore::RefPtr<ShaderProgram> tempRef = &shader;
          mShaders.erase(itor);
          if (tempRef == mDefaultShader)
          {
@@ -84,15 +84,15 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    void ShaderGroup::RemoveShader(const std::string &shaderName)
    {
-      std::map<std::string,dtCore::RefPtr<Shader> >::iterator itor =
+      std::map<std::string,dtCore::RefPtr<ShaderProgram> >::iterator itor =
          mShaders.find(shaderName);
       RemoveShader(*(itor->second));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   Shader *ShaderGroup::FindShader(const std::string &name)
+   ShaderProgram *ShaderGroup::FindShader(const std::string &name)
    {
-      std::map<std::string,dtCore::RefPtr<Shader> >::iterator itor =
+      std::map<std::string,dtCore::RefPtr<ShaderProgram> >::iterator itor =
          mShaders.find(name);
 
       if (itor != mShaders.end())
@@ -102,9 +102,9 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   const Shader *ShaderGroup::FindShader(const std::string &name) const
+   const ShaderProgram *ShaderGroup::FindShader(const std::string &name) const
    {
-      std::map<std::string,dtCore::RefPtr<Shader> >::const_iterator itor =
+      std::map<std::string,dtCore::RefPtr<ShaderProgram> >::const_iterator itor =
          mShaders.find(name);
 
       if (itor != mShaders.end())
@@ -114,14 +114,14 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ShaderGroup::GetAllShaders(std::vector<dtCore::RefPtr<Shader> > &toFill)
+   void ShaderGroup::GetAllShaders(std::vector<dtCore::RefPtr<ShaderProgram> > &toFill)
    {
       toFill.clear();
 
       if (mShaders.empty())
          return;
 
-      std::map<std::string,dtCore::RefPtr<Shader> >::iterator itor;
+      std::map<std::string,dtCore::RefPtr<ShaderProgram> >::iterator itor;
       toFill.reserve(mShaders.size());
       for (itor=mShaders.begin(); itor!=mShaders.end(); ++itor)
          toFill.push_back(itor->second);
@@ -130,7 +130,7 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    void ShaderGroup::Update()
    {
-      std::map<std::string,dtCore::RefPtr<Shader> >::iterator itor;
+      std::map<std::string,dtCore::RefPtr<ShaderProgram> >::iterator itor;
       for (itor=mShaders.begin(); itor!= mShaders.end(); ++itor)
       {
          if (itor->second->IsDirty())

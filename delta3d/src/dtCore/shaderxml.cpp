@@ -21,7 +21,7 @@
 #include <prefix/dtcoreprefix-src.h>
 #include "dtCore/shaderxml.h"
 #include "dtCore/shadermanager.h"
-#include "dtCore/shader.h"
+#include "dtCore/shaderprogram.h"
 #include "dtCore/shadergroup.h"
 #include "dtCore/shaderparamtexture2d.h"
 #include "dtCore/shaderparamfloat.h"
@@ -214,7 +214,7 @@ namespace dtCore
             throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Foreign element found in shader XML source.", __FILE__, __LINE__);
       }
 
-      ShaderManager::GetInstance().AddShaderGroupTemplate(*newGroup);
+      ShaderManager::GetInstance().AddShaderGroupPrototype(*newGroup);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -224,7 +224,7 @@ namespace dtCore
       //shader group that this shader is the default.
       std::string shaderName = GetElementAttribute(*shaderElem,ShaderXML::SHADER_ATTRIBUTE_NAME);
       std::string isDefault = GetElementAttribute(*shaderElem,ShaderXML::SHADER_ATTRIBUTE_DEFAULT);
-      dtCore::RefPtr<Shader> newShader = new Shader(shaderName);
+      dtCore::RefPtr<ShaderProgram> newShader = new ShaderProgram(shaderName);
 
       //Children of a shader element are either shader sources or parameters...
       xercesc::DOMNodeList *children = shaderElem->getChildNodes();
@@ -256,7 +256,7 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ShaderXML::ParseShaderSourceElement(xercesc::DOMElement *sourceElem, Shader &shader)
+   void ShaderXML::ParseShaderSourceElement(xercesc::DOMElement *sourceElem, ShaderProgram &shader)
    {
       std::string type = GetElementAttribute(*sourceElem,ShaderXML::SHADER_SOURCE_ATTRIBUTE_TYPE);
 
@@ -276,7 +276,7 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ShaderXML::ParseParameterElement(xercesc::DOMElement *paramElement, Shader &shader)
+   void ShaderXML::ParseParameterElement(xercesc::DOMElement *paramElement, ShaderProgram &shader)
    {
       std::string paramName = GetElementAttribute(*paramElement,ShaderXML::PARAMETER_ATTRIBUTE_NAME);
       std::string isShared = GetElementAttribute(*paramElement,ShaderXML::PARAMETER_ATTRIBUTE_SHARED);

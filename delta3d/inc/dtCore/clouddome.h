@@ -34,7 +34,7 @@ namespace osg
    class Geometry;
    class Image;
    class Program;
-   class Shader;
+   class ShaderProgram;
    class Texture3D;
 }
 /// @endcond

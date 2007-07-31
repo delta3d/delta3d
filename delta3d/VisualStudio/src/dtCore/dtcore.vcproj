@@ -292,7 +292,7 @@
 				RelativePath="..\..\..\src\dtCore\scene.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\src\dtCore\shader.cpp">
+				RelativePath="..\..\..\src\dtCore\shaderprogram.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtCore\shadergroup.cpp">
@@ -527,7 +527,7 @@
 				RelativePath="..\..\..\inc\dtCore\scene.h">
 			</File>
 			<File
-				RelativePath="..\..\..\inc\dtCore\shader.h">
+				RelativePath="..\..\..\inc\dtCore\shaderprogram.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtCore\shadergroup.h">

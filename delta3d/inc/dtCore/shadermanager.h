@@ -116,7 +116,7 @@ namespace dtCore
          struct ActiveNodeEntry
          {
             dtCore::ObserverPtr<osg::Node> nodeWeakReference;
-            dtCore::RefPtr<dtCore::Shader> shaderInstance;
+            dtCore::RefPtr<dtCore::ShaderProgram> shaderInstance;
          };
 
       public:
@@ -140,60 +140,60 @@ namespace dtCore
          void Clear();
 
          /**
-          * Adds a shader group template to the manager's list of known shader group templates.  
-          * Each template shader in the shader group is assigned the resulting compiled and 
-          * linked shader program.  Templates are cloned when you call AssignShaderFromTemplate()
-          * @param shaderGroup The new shader group template to add.
+          * Adds a shader group prototype to the manager's list of known shader group prototypes.  
+          * Each prototype shader in the shader group is assigned the resulting compiled and 
+          * linked shader program.  prototypes are cloned when you call AssignShaderFromPrototype()
+          * @param shaderGroup The new shader group prototype to add.
           * @note An exception is thrown if the specified shader group does not have a unique
           *    name.
           */
-         void AddShaderGroupTemplate(ShaderGroup &shaderGroup);
+         void AddShaderGroupPrototype(ShaderGroup &shaderGroup);
 
          /**
-          * Removes the shader group template with the specified name from the manager.
-          * @param name The name of the shader group template to remove.  If the shader group 
-          *    template cannot be found in the manager's list this method is a no-op.
+          * Removes the shader group prototype with the specified name from the manager.
+          * @param name The name of the shader group prototype to remove.  If the shader group 
+          *    prototype cannot be found in the manager's list this method is a no-op.
           */
-         void RemoveShaderGroupTemplate(const std::string &name);
+         void RemoveShaderGroupPrototype(const std::string &name);
 
          /**
-          * Removes the specified shader group template from the manager.
-          * @param shaderGroup The shader group template to remove.  If this shader group is not 
+          * Removes the specified shader group prototype from the manager.
+          * @param shaderGroup The shader group prototype to remove.  If this shader group is not 
           *    currently being managed, this method is a no-op.
           */
-         void RemoveShaderGroupTemplate(const ShaderGroup &shaderGroup);
+         void RemoveShaderGroupPrototype(const ShaderGroup &shaderGroup);
 
          /**
-          * Searches the shader manager for the specified shader group template. The returned value
-          * is a template for a shader group. You can look for a specific shader template and then 
-          * assign it to your node using AssignShaderFromTemplate().
-          * @param name Name of the shader group template to find.
-          * @return A const pointer to the shader group template or NULL if it could not be found.
+          * Searches the shader manager for the specified shader group prototype. The returned value
+          * is a prototype for a shader group. You can look for a specific shader prototype and then 
+          * assign it to your node using AssignShaderFromPrototype().
+          * @param name Name of the shader group prototype to find.
+          * @return A const pointer to the shader group prototype or NULL if it could not be found.
           */
-         const ShaderGroup *FindShaderGroupTemplate(const std::string &name) const;
+         const ShaderGroup *FindShaderGroupPrototype(const std::string &name) const;
 
          /**
-          * Searches the shader manager for the specified shader group template. The returned value
-          * is a template for a shader group. You can look for a specific shader template and then 
-          * assign it to your node using AssignShaderFromTemplate().  
+          * Searches the shader manager for the specified shader group prototype. The returned value
+          * is a prototype for a shader group. You can look for a specific shader prototype and then 
+          * assign it to your node using AssignShaderFromPrototype().  
           * @Note This version returns a non-const pointer which will let you modify the group. 
-          *    Changes will only affect the template itself, not any cloned instances. 
-          * @param name Name of the shader group template to find.
-          * @return A pointer to the shader group template or NULL if it could not be found.
+          *    Changes will only affect the prototype itself, not any cloned instances. 
+          * @param name Name of the shader group prototype to find.
+          * @return A pointer to the shader group prototype or NULL if it could not be found.
           */
-         ShaderGroup *FindShaderGroupTemplate(const std::string &name);
+         ShaderGroup *FindShaderGroupPrototype(const std::string &name);
 
          /**
-          * Fills the specified vector with all the shader group templates currently in the
+          * Fills the specified vector with all the shader group prototypes currently in the
           * shader manager. 
           * @param toFill The vector with which to fill with shader groups.  Note, the
           *   vector is cleared before it is filled.
           */
-         void GetAllShaderGroupTemplates(std::vector<dtCore::RefPtr<ShaderGroup> > &toFill);
+         void GetAllShaderGroupPrototypes(std::vector<dtCore::RefPtr<ShaderGroup> > &toFill);
 
          /**
-          * Gets the specified shader template from the manager.
-          * @param name The name of the shader template to find.
+          * Gets the specified shader prototype from the manager.
+          * @param name The name of the shader prototype to find.
           * @param groupName The group containing the shader.  If this name is empty,
           *    the shader manager will traverse all the shader groups and return the
           *    first shader matching the specified shader name.
@@ -201,13 +201,13 @@ namespace dtCore
           * @note For performance reasons, this method should be called with a shader
           *    group specified.
           */
-         const Shader *FindShaderTemplate(const std::string &name, const std::string &groupName="") const;
+         const ShaderProgram *FindShaderPrototype(const std::string &name, const std::string &groupName="") const;
 
          /**
-          * Gets the specified shader template from the manager. Changing the returned template will 
-          * have no effect on nodes that were assigned to this shader with AssignShaderFromTemplate(). 
+          * Gets the specified shader prototype from the manager. Changing the returned prototype will 
+          * have no effect on nodes that were assigned to this shader with AssignShaderFromPrototype(). 
           * To modify the parameters of a node's shader instance, call GetShaderInstanceForNode().
-          * @param name The name of the shader template to find.
+          * @param name The name of the shader prototype to find.
           * @param groupName The group containing the shader.  If this name is empty,
           *    the shader manager will traverse all the shader groups and return the
           *    first shader matching the specified shader name.
@@ -215,45 +215,45 @@ namespace dtCore
           * @note For performance reasons, this method should be called with a shader
           *    group specified.
           */
-         Shader *FindShaderTemplate(const std::string &name, const std::string &groupName="");
+         ShaderProgram *FindShaderPrototype(const std::string &name, const std::string &groupName="");
 
          /**
-          * Clones a new instance of the passed in shader template and its parameters. It then assigns 
+          * Clones a new instance of the passed in shader prototype and its parameters. It then assigns 
           * the shader's associated parameters to the specified node. It returns the new shader instance.
           * If you plan to modify parameter values on the shader, you should hold onto it. You can find 
           * this shader later by calling GetShaderInstanceForNode().
-          * @param name The shader template to clone.
+          * @param name The shader prototype to clone.
           * @param node The node that will get the new shader instance.
           * @throws An exception is thrown if the shader does not have a valid
           *    vertex or fragment program bound to it.
           * @return the unique instance of this shader for this node.  If you plan
           * to modify any parameters of the shader, then you should hold onto this.
           */
-         dtCore::Shader *AssignShaderFromTemplate(const dtCore::Shader &shader, osg::Node &node);
+         dtCore::ShaderProgram *AssignShaderFromPrototype(const dtCore::ShaderProgram &shader, osg::Node &node);
 
          /**
           * Use this if you no longer want the shader assigned to the node. It will attempt to
           * put the stateset back to the way it was before.  Note, this method does not guarantee
           * that the stateset will be completely returned to its original state. This will also 
           * remove the node from the active node list. You can only use this method if you have
-          * previously called AssignShaderFromTemplate(). If the node is unassigned, it is a NO-OP.
-          * @param node The node you previously called AssignShaderFromTemplate() on.
+          * previously called AssignShaderFromPrototype(). If the node is unassigned, it is a NO-OP.
+          * @param node The node you previously called AssignShaderFromPrototype() on.
           */
          void UnassignShaderFromNode(osg::Node &node); 
 
          /**
-          * Gets the number of shader templates currently managed by the shader manager.  This 
-          * number reflects the total number of shader templates contained in all the shader 
-          * group templates currently in the shader manager.
+          * Gets the number of shader prototypes currently managed by the shader manager.  This 
+          * number reflects the total number of shader prototypes contained in all the shader 
+          * group prototypes currently in the shader manager.
           * @return The shader count.
           */
-         unsigned int GetNumShaderTemplates() const { return mTotalShaderCount; }
+         unsigned int GetNumShaderPrototypes() const { return mTotalShaderCount; }
 
          /**
-          * Gets the number of shader group templates currently owned by the shader manager.
-          * @return The number of shader group templates contained in the shader manager.
+          * Gets the number of shader group prototypes currently owned by the shader manager.
+          * @return The number of shader group prototypes contained in the shader manager.
           */
-         unsigned int GetNumShaderGroupTemplates() const { return mShaderGroups.size(); }
+         unsigned int GetNumShaderGroupPrototypes() const { return mShaderGroups.size(); }
 
          /**
           * Gets the size of the shader program cache.  This cache contains compiled shaders
@@ -263,7 +263,7 @@ namespace dtCore
          unsigned int GetShaderCacheSize() const { return mShaderProgramCache.size(); }
 
          /**
-          * Loads a list of shader templates defined in an external XML file.
+          * Loads a list of shader prototypes defined in an external XML file.
           * @param fileName The XML file containing the shader definitions.
           * @param merge If false, this method will first clear the current list of shaders
           *    in the manager.  If true, the shaders loaded from the shader file will
@@ -292,13 +292,13 @@ namespace dtCore
 
          /**
           * Attempts to find an active shader instance for this node. Active shaders are 
-          * created by calling AssignShaderFromTemplate() for a node. The returned shader
+          * created by calling AssignShaderFromPrototype() for a node. The returned shader
           * is a unique instance for this node. To change the behavior of your shader, simply access
           * the parameters of your instance and set their value directly.
-          * @param node The node that was previously used with AssignShaderFromTemplate()
+          * @param node The node that was previously used with AssignShaderFromPrototype()
           * @return The unique shader instance for this node. NULL if none found for this node.
           */
-         dtCore::Shader *GetShaderInstanceForNode(osg::Node *node);
+         dtCore::ShaderProgram *GetShaderInstanceForNode(osg::Node *node);
 
       protected:
 
@@ -315,17 +315,17 @@ namespace dtCore
           * shader.  If none are found, a new cache entry is created.
           * @param shader The shader to resolve.
           */
-         void ResolveShaderPrograms(Shader &shader);
+         void ResolveShaderPrograms(ShaderProgram &shader);
 
          /**
-          * Internal helper method which searches for a shader template in the shader manager.
+          * Internal helper method which searches for a shader prototype in the shader manager.
           * This is used by the const and non-const versions of FindShaderTeemplate in the
           * public interface.
           * @param shaderName Name of the shader to search for.
           * @param groupName Name of the group containing the shader.  If this is empty
           *    the first shader with the specified name is returned.
           */
-         const Shader *InternalFindShader(const std::string &shaderName, const std::string &groupName) const;
+         const ShaderProgram *InternalFindShader(const std::string &shaderName, const std::string &groupName) const;
 
          /**
           * Finds and removes any entries in the active shader list that are assigned to this node. 
