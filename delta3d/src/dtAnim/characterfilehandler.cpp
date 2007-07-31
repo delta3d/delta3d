@@ -38,21 +38,25 @@ const std::string CharacterFileHandler::ANIMATION_ELEMENT("animation");
 const std::string CharacterFileHandler::SKELETON_ELEMENT("skeleton");
 const std::string CharacterFileHandler::MESH_ELEMENT("mesh");
 const std::string CharacterFileHandler::MATERIAL_ELEMENT("material");
-const std::string CharacterFileHandler::CHANNEL_ELEMENT("animationchannel");
-const std::string CharacterFileHandler::SEQUENCE_ELEMENT("animationsequence");
+const std::string CharacterFileHandler::CHANNEL_ELEMENT("animationChannel");
+const std::string CharacterFileHandler::SEQUENCE_ELEMENT("animationSequence");
 const std::string CharacterFileHandler::NAME_ELEMENT("name");
-const std::string CharacterFileHandler::FILENAME_ELEMENT("filename");
-const std::string CharacterFileHandler::ANIMATION_NAME_ELEMENT("animationname");
+const std::string CharacterFileHandler::FILENAME_ELEMENT("fileName");
+const std::string CharacterFileHandler::ANIMATION_NAME_ELEMENT("animationName");
 
-const std::string CharacterFileHandler::START_DELAY_ELEMENT("startdelay");
-const std::string CharacterFileHandler::FADE_IN_ELEMENT("fadein");
-const std::string CharacterFileHandler::FADE_OUT_ELEMENT("fadeout");
+const std::string CharacterFileHandler::START_DELAY_ELEMENT("startDelay");
+const std::string CharacterFileHandler::FADE_IN_ELEMENT("fadeIn");
+const std::string CharacterFileHandler::FADE_OUT_ELEMENT("fadeOut");
 const std::string CharacterFileHandler::SPEED_ELEMENT("speed");
-const std::string CharacterFileHandler::BASE_WEIGHT_ELEMENT("baseweight");
-const std::string CharacterFileHandler::MAX_DURATION_ELEMENT("maxduration");
-const std::string CharacterFileHandler::IS_LOOPING_ELEMENT("islooping");
-const std::string CharacterFileHandler::IS_ACTION_ELEMENT("isaction");
+const std::string CharacterFileHandler::BASE_WEIGHT_ELEMENT("baseWeight");
+const std::string CharacterFileHandler::MAX_DURATION_ELEMENT("maxDuration");
+const std::string CharacterFileHandler::IS_LOOPING_ELEMENT("isLooping");
+const std::string CharacterFileHandler::IS_ACTION_ELEMENT("isAction");
 const std::string CharacterFileHandler::CHILD_ELEMENT("child");
+
+const std::string CharacterFileHandler::SKINNING_SHADER_ELEMENT("skinningShader");
+const std::string CharacterFileHandler::SHADER_GROUP_ELEMENT("shaderGroup");
+const std::string CharacterFileHandler::SHADER_NAME_ELEMENT("shaderName");
 
 CharacterFileHandler::AnimatableStruct::AnimatableStruct():
    mStartDelay(0.0f), 
