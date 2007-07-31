@@ -72,16 +72,13 @@ namespace dtCore
       template <class mapType>
       const typename GetElementType<mapType>::value_type* FindNodePointer(const std::string & nodeName, const mapType & nodeMap)
       {
-         mapType::const_iterator iter = nodeMap.find(nodeName);
+         typename mapType::const_iterator iter = nodeMap.find(nodeName);
 
          if(iter != nodeMap.end())
          {
             return (*iter).second.get();
          }
-         else
-         {
-            return NULL;
-         }
+         return NULL;
       }
 
       /**
@@ -93,16 +90,13 @@ namespace dtCore
       template <class mapType>
       typename GetElementType<mapType>::value_type* FindNodePointer(const std::string & nodeName, mapType & nodeMap)
       {
-         mapType::iterator iter = nodeMap.find(nodeName);
+         typename mapType::iterator iter = nodeMap.find(nodeName);
 
          if(iter != nodeMap.end())
          {
             return (*iter).second.get();
          }
-         else
-         {
-            return NULL;
-         }
+         return NULL;
       }
    
    

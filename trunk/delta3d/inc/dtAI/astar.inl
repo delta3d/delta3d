@@ -257,7 +257,7 @@ typename AStar<_NodeType, _CostFunc, _Container, _Timer>::AStarResult AStar<_Nod
             if(Contains(mClosed, pNode) == mClosed.end())
             {
                //if it isnt in the open list
-               AStarContainer::iterator pNodeLinkIter = Contains(mOpen, pNode);
+               typename AStarContainer::iterator pNodeLinkIter = Contains(mOpen, pNode);
                if(pNodeLinkIter == mOpen.end())
                {
                   //create a new path in the open list
@@ -273,7 +273,7 @@ typename AStar<_NodeType, _CostFunc, _Container, _Timer>::AStarResult AStar<_Nod
                   if(pNewCost < (*pNodeLinkIter)->GetCostToNode())
                   {
                      Remove(mOpen, pNodeLinkIter);
-                     AddNodeLink(pStart, pNode);                     
+                     AddNodeLink(pStart, pNode);
                   }
 
                }

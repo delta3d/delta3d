@@ -16,4 +16,4 @@ if env['foundLibs'][env['extLibs']['DIS']] != 'notFound':
    env.BuildLib( 'dtDIS', srcs, deps, defines )
 
 else:
-   env['dtLibs'].remove('dtDIS')
+   del env[ 'dtLibs' ][ 'dtDIS' ]

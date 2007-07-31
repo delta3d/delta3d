@@ -44,7 +44,7 @@ namespace dtAnim
       public:
 
          HardwareSubMeshDrawable(Cal3DModelWrapper *wrapper, CalHardwareModel* model,
-               osg::Program* shader, const std::string& boneUniformName, unsigned numBones,
+               const std::string& boneUniformName, unsigned numBones,
                unsigned mesh, unsigned vertexVBO, unsigned indexVBO);
 
          virtual void drawImplementation(osg::State& state) const;
@@ -60,7 +60,6 @@ namespace dtAnim
 
          dtCore::RefPtr<Cal3DModelWrapper> mWrapper;
          CalHardwareModel* mHardwareModel;
-         dtCore::RefPtr<osg::Program> mProgram;
          dtCore::RefPtr<osg::Uniform> mBoneTransforms;
          std::string mBoneUniformName;
          unsigned mNumBones, mMeshID, mVertexVBO, mIndexVBO;

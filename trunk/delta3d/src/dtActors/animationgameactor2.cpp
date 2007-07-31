@@ -60,6 +60,7 @@ namespace dtActors
    void AnimationGameActor2::SetModel(const std::string &modelFile)
    {
       GetMatrixNode()->removeChildren(0, GetMatrixNode()->getNumChildren());
+      //the helper handles an empty model file name.
       mHelper->LoadModel(modelFile);
       if (!modelFile.empty())
       {
@@ -116,7 +117,7 @@ namespace dtActors
    {
       if(!mBillBoardIcon.valid())
       {
-         mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IconType::STATICMESH);   
+         mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IconType::STATICMESH);
       }
 
       return mBillBoardIcon.get();
@@ -124,7 +125,7 @@ namespace dtActors
 
    void AnimationGameActorProxy2::CreateActor()
    {
-      SetActor(*new AnimationGameActor2(*this));   
+      SetActor(*new AnimationGameActor2(*this));
    }
 
 }

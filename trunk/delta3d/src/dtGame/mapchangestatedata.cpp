@@ -148,7 +148,7 @@ namespace dtGame
             {
                //if we can't load a map, we go back to idle and send and
                //empty string map change ended message
-               mCurrentState = &MapChangeState::IDLE;               
+               mCurrentState = &MapChangeState::IDLE;
                SendMapMessage(MessageType::INFO_MAP_CHANGED, MapChangeStateData::NameVector());
                mNewMapNames.clear();
                success = false;

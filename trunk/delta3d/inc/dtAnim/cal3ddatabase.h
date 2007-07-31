@@ -56,7 +56,9 @@ namespace dtAnim
 
          ///Get the model data associated with this model wrapper
          Cal3DModelData* GetModelData(const Cal3DModelWrapper& wrapper);
-         void PurgeLoaderCaches() { mFileLoader->PurgeAllCaches(); }
+         
+         void PurgeLoaderCaches();
+         void TruncateDatabase();
 
          /// @return the node builder for this database.
          AnimNodeBuilder& GetNodeBuilder();

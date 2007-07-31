@@ -51,6 +51,10 @@ namespace dtAnim
       CPPUNIT_TEST_SUITE_END();
 
       public:
+         Cal3DLoaderTests()
+         {
+         }
+         
          void setUp()
          {
             dtDAL::Project::GetInstance().SetContext(dtCore::GetDeltaRootPath() + "/examples/data/demoMap");
@@ -61,6 +65,7 @@ namespace dtAnim
 
          void tearDown()
          {
+            Cal3DDatabase::GetInstance().TruncateDatabase();
             mHelper = NULL;
          }
 
@@ -128,9 +133,8 @@ namespace dtAnim
             std::string modelPath = dtCore::FindFileInPathList("SkeletalMeshes/marine_test.xml");
             CPPUNIT_ASSERT(!modelPath.empty());
 
-            mHelper->LoadModel(modelPath);
-
             dtAnim::Cal3DDatabase& database = dtAnim::Cal3DDatabase::GetInstance();
+            mHelper->LoadModel(modelPath);
             
             dtAnim::Cal3DModelWrapper* wrapper = mHelper->GetModelWrapper();
             CPPUNIT_ASSERT(wrapper != NULL);
