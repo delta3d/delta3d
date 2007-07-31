@@ -31,6 +31,7 @@
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
 #include <dtCore/object.h>
+#include <dtCore/shadermanager.h>
 
 #include <dtDAL/map.h>
 #include <dtDAL/actorproxy.h>
@@ -96,12 +97,6 @@ void TestAnim::Initialize(dtGame::GameApplication& app, int argc, char **argv)
    }
 }
 
-//////////////////////////////////////////////////////////////////////////
-dtCore::ObserverPtr<dtGame::GameManager> TestAnim::CreateGameManager(dtCore::Scene& scene)
-{ 
-   return dtGame::GameEntryPoint::CreateGameManager(scene);
-}
-
 
 //////////////////////////////////////////////////////////////////////////
 void TestAnim::OnStartup()
@@ -136,11 +131,14 @@ void TestAnim::OnStartup()
       e.LogException(dtUtil::Log::LOG_ERROR);
    }
 
-   dtGame::DefaultMessageProcessor *dmp = new dtGame::DefaultMessageProcessor();   
+   //dtDAL::Project::GetInstance().GetResourcePath(dtDAL::ResourceDescriptor(""));
+   //dtCore::ShaderManager::GetInstance().LoadShaderDefinitions();
+   
+   dtGame::DefaultMessageProcessor* dmp = new dtGame::DefaultMessageProcessor();
    
    dtAnim::AnimationComponent* animComp = new dtAnim::AnimationComponent();
 
-   gameManager.AddComponent(*dmp,dtGame::GameManager::ComponentPriority::HIGHEST);   
+   gameManager.AddComponent(*dmp,dtGame::GameManager::ComponentPriority::HIGHEST);
    gameManager.AddComponent(*animComp, dtGame::GameManager::ComponentPriority::NORMAL);
   
    if(!mPerformanceTest)

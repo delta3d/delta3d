@@ -262,6 +262,7 @@ DeltaWin::~DeltaWin()
    mKeyboardMouse = 0;
 
    KillGLWindow();
+   mRenderSurface->cancel();
    mRenderSurface = 0;
 
    DeregisterInstance(this);

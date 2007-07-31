@@ -37,9 +37,15 @@ namespace osg
 }
 /// @endcond
 
+namespace dtCore
+{
+   class Shader;
+}
+
 namespace dtAnim
 {
    class Cal3DModelWrapper;
+   class Cal3DModelData;
 
 class	DT_ANIM_EXPORT AnimNodeBuilder: public osg::Referenced
 {
@@ -59,6 +65,8 @@ public:
    AnimNodeBuilder(); //creates default builder
    AnimNodeBuilder(const CreateFunc& pCreate); //uses custom builder
 
+   /// @return the create function
+   CreateFunc& GetCreate();
    void SetCreate(const CreateFunc& pCreate);
 
    dtCore::RefPtr<osg::Geode> CreateGeode(Cal3DModelWrapper* pWrapper);
@@ -71,7 +79,7 @@ protected:
    AnimNodeBuilder(const AnimNodeBuilder&);
    AnimNodeBuilder& operator=(const AnimNodeBuilder&);
    
-   osg::Program* LoadShaders(const std::string& shaderFile) const;
+   dtCore::Shader* AnimNodeBuilder::LoadShaders(Cal3DModelData& modelData, osg::Geode& geode) const;
    
 private:
 

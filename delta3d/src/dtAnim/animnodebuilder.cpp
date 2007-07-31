@@ -26,6 +26,9 @@
 #include <dtAnim/cal3dmodeldata.h>
 
 #include <dtCore/globals.h>
+#include <dtCore/shader.h>
+#include <dtCore/shadermanager.h>
+#include <dtCore/shadergroup.h>
 #include <dtUtil/log.h>
 
 #include <osg/Geode>
@@ -79,6 +82,11 @@ AnimNodeBuilder::AnimNodeBuilder(const CreateFunc& pCreate)
 
 AnimNodeBuilder::~AnimNodeBuilder()
 {
+}
+
+AnimNodeBuilder::CreateFunc& AnimNodeBuilder::GetCreate()
+{
+   return mCreateFunc;
 }
 
 void AnimNodeBuilder::SetCreate(const CreateFunc& pCreate)
@@ -162,7 +170,6 @@ dtCore::RefPtr<osg::Geode> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pW
       
       unsigned numVerts = 0;
       unsigned numIndices = 0;
-      //unsigned numTextureUnits = 2;
 
       int meshCount = model->getCoreMeshCount();
 
@@ -260,17 +267,17 @@ dtCore::RefPtr<osg::Geode> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pW
          }
          
          //todo- pull shader name out of character xml
-         osg::Program* shader = LoadShaders("shaders/HardwareCharacter.vert");
+         LoadShaders(*modelData, *geode);
 
          int numMeshes = hardwareModel->getHardwareMeshCount();
          for(int meshCount = 0; meshCount < numMeshes; ++meshCount)
          {
-            HardwareSubMeshDrawable* drawable = new HardwareSubMeshDrawable(pWrapper, hardwareModel, shader, BONE_TRANSFORM_UNIFORM, MAX_BONES, meshCount, vbo[0], vbo[1]);
+            HardwareSubMeshDrawable* drawable = new HardwareSubMeshDrawable(pWrapper, hardwareModel, BONE_TRANSFORM_UNIFORM, MAX_BONES, meshCount, vbo[0], vbo[1]);
             geode->addDrawable(drawable);
          }
 
          geode->setComputeBoundingSphereCallback(new Cal3DBoundingSphereCalculator(*pWrapper));
-      } 
+      }
       else
       {
          glExt->glUnmapBuffer(GL_ARRAY_BUFFER_ARB);
@@ -287,29 +294,62 @@ dtCore::RefPtr<osg::Geode> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pW
 }
 
 
-osg::Program* AnimNodeBuilder::LoadShaders(const std::string& shaderFile) const
+dtCore::Shader* AnimNodeBuilder::LoadShaders(Cal3DModelData& modelData, osg::Geode& geode) const
 {
-   //we should allow the user to specify this in the character xml
-   std::string vertFile = dtCore::FindFileInPathList(shaderFile);
-   //std::string fragShader = dtCore::FindFileInPathList("shaders/HardwareCharacter.frag");
-
-   osg::Program* prog = 0;
-    
-   if(!vertFile.empty())// || fragShader.empty())
+   dtCore::ShaderManager& shaderManager = dtCore::ShaderManager::GetInstance();
+   dtCore::Shader* shaderProgram = NULL;
+   if (!modelData.GetShaderGroupName().empty())
    {
-      prog = new osg::Program;
-
-      dtCore::RefPtr<osg::Shader> vertShader = new osg::Shader(osg::Shader::VERTEX);
-      vertShader->loadShaderSourceFromFile(vertFile);
-
-      prog->addShader(vertShader.get());
+      dtCore::ShaderGroup* spGroup = shaderManager.FindShaderGroupTemplate(modelData.GetShaderGroupName());
+      if (!modelData.GetShaderName().empty())
+      {
+         shaderProgram = spGroup->FindShader(modelData.GetShaderName());
+         if (shaderProgram == NULL)
+         {
+            LOG_ERROR("Shader program \"" + modelData.GetShaderName() + "\" from group \"" 
+                  + modelData.GetShaderGroupName() + "\" was not found, using the default from the group.");
+            shaderProgram = spGroup->GetDefaultShader();
+            
+            if (shaderProgram == NULL)
+            {
+               LOG_ERROR("Shader Group \""  + modelData.GetShaderGroupName() 
+                     + "\" was not found, overriding to use the default group.");
+            }
+         }
+      }
+      else
+      {
+         shaderProgram = spGroup->GetDefaultShader();
+         if (shaderProgram == NULL)
+         {
+            LOG_ERROR("Shader Group \""  + modelData.GetShaderGroupName() 
+                  + "\" was not found, overriding to use the default group.");
+         }
+      }
+      
    }
-   else
+   
+   //If no shader group is setup, create one.
+   if (shaderProgram == NULL)
    {
-      LOG_ERROR("Unable to load vertex shader '" + shaderFile + "'.");
+      static const std::string hardwareSkinningSPGroup = "HardwareSkinning";
+      dtCore::ShaderGroup* defSPGroup = shaderManager.FindShaderGroupTemplate(hardwareSkinningSPGroup);
+      if (defSPGroup == NULL)
+      {
+         defSPGroup = new dtCore::ShaderGroup(hardwareSkinningSPGroup);
+         shaderProgram = new dtCore::Shader("Default");
+         shaderProgram->SetVertexShaderSource("shaders/HardwareCharacter.vert");
+         defSPGroup->AddShader(*shaderProgram, true);
+         shaderManager.AddShaderGroupTemplate(*defSPGroup);
+      }
+      else
+      {
+         shaderProgram = defSPGroup->GetDefaultShader();
+      }
+      modelData.SetShaderGroupName(hardwareSkinningSPGroup);
    }
-
-   return prog;
+   
+   return shaderManager.AssignShaderFromTemplate(*shaderProgram, geode);
 }
 
 AnimNodeBuilder::Cal3DBoundingSphereCalculator::Cal3DBoundingSphereCalculator(Cal3DModelWrapper& wrapper)

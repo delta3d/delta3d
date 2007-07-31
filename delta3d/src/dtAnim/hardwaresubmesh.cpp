@@ -102,11 +102,10 @@ namespace dtAnim
 
 
 HardwareSubMeshDrawable::HardwareSubMeshDrawable(Cal3DModelWrapper *wrapper, CalHardwareModel* model, 
-      osg::Program* shader, const std::string& boneUniformName, unsigned numBones, unsigned mesh, 
+      const std::string& boneUniformName, unsigned numBones, unsigned mesh, 
       unsigned vertexVBO, unsigned indexVBO)
 : mWrapper(wrapper)
 , mHardwareModel(model)
-, mProgram(shader)
 , mBoneTransforms(new osg::Uniform(osg::Uniform::FLOAT_VEC4, boneUniformName, numBones))
 , mBoneUniformName(boneUniformName)
 , mNumBones(numBones)
@@ -119,7 +118,6 @@ HardwareSubMeshDrawable::HardwareSubMeshDrawable(Cal3DModelWrapper *wrapper, Cal
 
    osg::StateSet* ss = getOrCreateStateSet();
 
-   ss->setAttributeAndModes(mProgram.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
    ss->addUniform(mBoneTransforms.get());
 
    //get selected textures
@@ -183,13 +181,13 @@ void HardwareSubMeshDrawable::drawImplementation(osg::State& state) const
 
 osg::Object* HardwareSubMeshDrawable::clone(const osg::CopyOp&) const 
 {
-   return new HardwareSubMeshDrawable(mWrapper.get(), mHardwareModel, mProgram.get(), mBoneUniformName, 
+   return new HardwareSubMeshDrawable(mWrapper.get(), mHardwareModel, mBoneUniformName, 
          mNumBones, mMeshID, mVertexVBO, mIndexVBO);
 }
 
 osg::Object* HardwareSubMeshDrawable::cloneType() const
 {
-   return new HardwareSubMeshDrawable(mWrapper.get(), mHardwareModel, mProgram.get(), 
+   return new HardwareSubMeshDrawable(mWrapper.get(), mHardwareModel, 
          mBoneUniformName, mNumBones, mMeshID, mVertexVBO, mIndexVBO);
 }
 

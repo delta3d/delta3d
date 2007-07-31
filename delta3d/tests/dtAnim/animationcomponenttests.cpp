@@ -73,6 +73,10 @@ namespace dtAnim
       CPPUNIT_TEST_SUITE_END();
 
       public:
+         AnimationComponentTests()
+         {
+         }
+
          void setUp();
          void tearDown();
 
@@ -117,6 +121,7 @@ namespace dtAnim
          mGM = NULL;
       }
       mAnimComp = NULL;
+      Cal3DDatabase::GetInstance().TruncateDatabase();
    }
 
 
