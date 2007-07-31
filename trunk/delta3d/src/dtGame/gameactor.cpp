@@ -31,7 +31,7 @@
 #include <dtGame/invokable.h>
 
 #include <dtCore/shadergroup.h>
-#include <dtCore/shader.h>
+#include <dtCore/shaderprogram.h>
 #include <dtCore/shadermanager.h>
 #include <dtDAL/actortype.h>
 #include <dtDAL/exceptionenum.h>
@@ -544,7 +544,7 @@ namespace dtGame
 
       //First get the shader group assigned to this actor.
       const dtCore::ShaderGroup *shaderGroup =
-         dtCore::ShaderManager::GetInstance().FindShaderGroupTemplate(mShaderGroup);
+         dtCore::ShaderManager::GetInstance().FindShaderGroupPrototype(mShaderGroup);
 
       if (shaderGroup == NULL)
       {
@@ -552,13 +552,13 @@ namespace dtGame
          return;
       }
 
-      const dtCore::Shader *defaultShader = shaderGroup->GetDefaultShader();
+      const dtCore::ShaderProgram *defaultShader = shaderGroup->GetDefaultShader();
 
       try
       {
          if (defaultShader != NULL)
          {
-            dtCore::ShaderManager::GetInstance().AssignShaderFromTemplate(*defaultShader, *GetOSGNode());
+            dtCore::ShaderManager::GetInstance().AssignShaderFromPrototype(*defaultShader, *GetOSGNode());
          }
          else
          {

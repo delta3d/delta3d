@@ -21,7 +21,7 @@
 #ifndef DELTA_SHADERGROUP
 #define DELTA_SHADERGROUP
 
-#include "dtCore/shader.h"
+#include "dtCore/shaderprogram.h"
 #include "dtCore/export.h"
 
 #include <dtCore/refptr.h>
@@ -62,13 +62,13 @@ namespace dtCore
           * @param isDefault If true, this shader is set as the default shader.
           * @see GetDefaultShader()
           */
-         void AddShader(Shader &shader, bool isDefault = false);
+         void AddShader(ShaderProgram &shader, bool isDefault = false);
 
          /**
           * Removes the specified shader from this shader group.
           * @param shader The shader to remove.
           */
-         void RemoveShader(Shader &shader);
+         void RemoveShader(ShaderProgram &shader);
 
          /**
           * Removes the shader with the specified name from this shader group.
@@ -87,13 +87,13 @@ namespace dtCore
           * Searches the group for a shader with the specified name.
           * @return The shader if found, or NULL if the shader could not be located.
           */
-         Shader *FindShader(const std::string &name);
+         ShaderProgram *FindShader(const std::string &name);
 
          /**
           * Searches the group for a shader with the specified name. (const-version).
           * @return A const pointer to the shader or NULL if the shader could not be found.
           */
-         const Shader *FindShader(const std::string &name) const;
+         const ShaderProgram *FindShader(const std::string &name) const;
 
          /**
           * Gets the number of shaders currently owned by this shader group.
@@ -106,7 +106,7 @@ namespace dtCore
           * @param toFill A list to be filled with the shaders in this group.
           * @note The specified vector parameter is cleared before filling.
           */
-         void GetAllShaders(std::vector<dtCore::RefPtr<Shader> > &toFill);
+         void GetAllShaders(std::vector<dtCore::RefPtr<ShaderProgram> > &toFill);
 
          /**
           * Gets the default shader assigned to this group.
@@ -115,12 +115,12 @@ namespace dtCore
           *    list, or the shader specified as default when it was added,
           *    or NULL if there are no shaders in this group.
           */
-         const Shader *GetDefaultShader() const { return mDefaultShader.get(); }
+         const ShaderProgram *GetDefaultShader() const { return mDefaultShader.get(); }
 
          /**
           * Non const verstion of GetDefaultShader().
           */
-         Shader *GetDefaultShader() { return mDefaultShader.get(); }
+         ShaderProgram *GetDefaultShader() { return mDefaultShader.get(); }
 
          /**
           * Updates this shader group's state by calling update on each shader it is
@@ -153,8 +153,8 @@ namespace dtCore
       private:
          std::string mName;
          bool mIsDirty;
-         std::map<std::string,dtCore::RefPtr<Shader> > mShaders;
-         dtCore::RefPtr<Shader> mDefaultShader;
+         std::map<std::string,dtCore::RefPtr<ShaderProgram> > mShaders;
+         dtCore::RefPtr<ShaderProgram> mDefaultShader;
    };
 }
 

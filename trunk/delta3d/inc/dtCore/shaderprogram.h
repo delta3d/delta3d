@@ -51,7 +51,7 @@ namespace dtCore
     *    Each shader has a list of parameters associated with it.  These may be used
     *    by the shader and or the objects using the shader in any way they see fit.
     */
-   class DT_CORE_EXPORT Shader : public osg::Referenced
+   class DT_CORE_EXPORT ShaderProgram : public osg::Referenced
    {
       public:
 
@@ -59,7 +59,7 @@ namespace dtCore
           * Construct an empty shader.
           * @param name Name to assign the new shader.  Shader names must be unique.
           */
-         Shader(const std::string &name);
+         ShaderProgram(const std::string &name);
 
          /**
           * Gets the name currently assigned to this shader.
@@ -209,18 +209,18 @@ namespace dtCore
           * a shader to a node using ShaderManager::AssignShaderFromTempalte.
           * @return the cloned shader instance with cloned parameters.
           */
-         dtCore::Shader *Clone() const;
+         dtCore::ShaderProgram *Clone() const;
 
       protected:
 
          /**
           * Destroys this shader object.
           */
-         virtual ~Shader();
+         virtual ~ShaderProgram();
 
          ///Hidden copy constructor and assignment operator.
-         Shader &operator=(const Shader &rhs);
-         Shader(const Shader &rhs);
+         ShaderProgram &operator=(const ShaderProgram &rhs);
+         ShaderProgram(const ShaderProgram &rhs);
 
          //void SetParentGroup(ShaderGroup *parent) { mParentGroup = parent; }
          //ShaderGroup *GetParentGroup() const { return mParentGroup; }

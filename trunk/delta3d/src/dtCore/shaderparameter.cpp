@@ -20,7 +20,7 @@
  */
 #include <prefix/dtcoreprefix-src.h>
 #include <dtCore/shaderparameter.h>
-#include <dtCore/shader.h>
+#include <dtCore/shaderprogram.h>
 
 #include <osg/Uniform>
 #include <osg/StateSet>
@@ -88,7 +88,7 @@ namespace dtCore
    }
    
    ///////////////////////////////////////////////////////////////////////////////
-   void ShaderParameter::SetParentShader(Shader *shader)
+   void ShaderParameter::SetParentShader(ShaderProgram *shader)
    {
       mParentShader = shader;
    }

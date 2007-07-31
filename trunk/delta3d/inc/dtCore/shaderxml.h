@@ -30,7 +30,7 @@
 
 namespace dtCore
 {
-   class Shader;
+   class ShaderProgram;
    class ShaderGroup;
 
    class DT_CORE_EXPORT ShaderXML
@@ -76,14 +76,14 @@ namespace dtCore
           * @param sourceElem The DOM element for the shader source.
           * @param shader The shader to append the source to.
           */
-         void ParseShaderSourceElement(xercesc::DOMElement *sourceElem, Shader &shader);
+         void ParseShaderSourceElement(xercesc::DOMElement *sourceElem, ShaderProgram &shader);
 
          /**
           * Parses a shader parameter from the definitions file.
           * @param paramElement DOM element containing the shader parameter.
           * @param shader The shader to add the newly parsed parameter to.
           */
-         void ParseParameterElement(xercesc::DOMElement *paramElement, Shader &shader);
+         void ParseParameterElement(xercesc::DOMElement *paramElement, ShaderProgram &shader);
 
          /**
           * Parses a shader parameter which represents a two dimensional texture.

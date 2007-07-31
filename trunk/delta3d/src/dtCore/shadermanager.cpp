@@ -114,7 +114,7 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ShaderManager::AddShaderGroupTemplate(ShaderGroup &shaderGroup)
+   void ShaderManager::AddShaderGroupPrototype(ShaderGroup &shaderGroup)
    {
       std::map<std::string,dtCore::RefPtr<ShaderGroup> >::iterator itor =
          mShaderGroups.find(shaderGroup.GetName());
@@ -127,8 +127,8 @@ namespace dtCore
 
       //Before we insert the group, we need to check our program cache and update it
       //if necessary for each shader in the group.  Also update our total shader count.
-      std::vector<dtCore::RefPtr<Shader> > shaderList;
-      std::vector<dtCore::RefPtr<Shader> >::iterator shaderItor;
+      std::vector<dtCore::RefPtr<ShaderProgram> > shaderList;
+      std::vector<dtCore::RefPtr<ShaderProgram> >::iterator shaderItor;
 
       shaderGroup.GetAllShaders(shaderList);
       for (shaderItor=shaderList.begin(); shaderItor!=shaderList.end(); ++shaderItor)
@@ -141,7 +141,7 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ShaderManager::RemoveShaderGroupTemplate(const std::string &name)
+   void ShaderManager::RemoveShaderGroupPrototype(const std::string &name)
    {
       std::map<std::string,dtCore::RefPtr<ShaderGroup> >::iterator itor =
          mShaderGroups.find(name);
@@ -151,13 +151,13 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ShaderManager::RemoveShaderGroupTemplate(const ShaderGroup &shaderGroup)
+   void ShaderManager::RemoveShaderGroupPrototype(const ShaderGroup &shaderGroup)
    {
-      RemoveShaderGroupTemplate(shaderGroup.GetName());
+      RemoveShaderGroupPrototype(shaderGroup.GetName());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   const ShaderGroup *ShaderManager::FindShaderGroupTemplate(const std::string &name) const
+   const ShaderGroup *ShaderManager::FindShaderGroupPrototype(const std::string &name) const
    {
       std::map<std::string,dtCore::RefPtr<ShaderGroup> >::const_iterator itor =
             mShaderGroups.find(name);
@@ -169,7 +169,7 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   ShaderGroup *ShaderManager::FindShaderGroupTemplate(const std::string &name)
+   ShaderGroup *ShaderManager::FindShaderGroupPrototype(const std::string &name)
    {
       std::map<std::string,dtCore::RefPtr<ShaderGroup> >::iterator itor =
             mShaderGroups.find(name);
@@ -181,7 +181,7 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ShaderManager::GetAllShaderGroupTemplates(std::vector<dtCore::RefPtr<ShaderGroup> > &toFill)
+   void ShaderManager::GetAllShaderGroupPrototypes(std::vector<dtCore::RefPtr<ShaderGroup> > &toFill)
    {
       std::map<std::string,dtCore::RefPtr<ShaderGroup> >::iterator itor;
 
@@ -192,19 +192,19 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   const Shader *ShaderManager::FindShaderTemplate(const std::string &name, const std::string &groupName) const
+   const ShaderProgram *ShaderManager::FindShaderPrototype(const std::string &name, const std::string &groupName) const
    {
       return InternalFindShader(name,groupName);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   Shader *ShaderManager::FindShaderTemplate(const std::string &name, const std::string &groupName)
+   ShaderProgram *ShaderManager::FindShaderPrototype(const std::string &name, const std::string &groupName)
    {
-      return const_cast<Shader *>(InternalFindShader(name,groupName));
+      return const_cast<ShaderProgram *>(InternalFindShader(name,groupName));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   const Shader *ShaderManager::InternalFindShader(const std::string &shaderName,
+   const ShaderProgram *ShaderManager::InternalFindShader(const std::string &shaderName,
          const std::string &groupName) const
    {
       std::map<std::string,dtCore::RefPtr<ShaderGroup> >::const_iterator itor;
@@ -226,7 +226,7 @@ namespace dtCore
       {
          for (itor=mShaderGroups.begin(); itor!=mShaderGroups.end(); ++itor)
          {
-            const Shader *shader = itor->second->FindShader(shaderName);
+            const ShaderProgram *shader = itor->second->FindShader(shaderName);
             if (shader != NULL)
                return shader;
          }
@@ -237,7 +237,7 @@ namespace dtCore
 
    ///////////////////////////////////////////////////////////////////////////////
    // Curt - Add a method to get an active shader for a given node
-   dtCore::Shader *ShaderManager::GetShaderInstanceForNode(osg::Node *node)
+   dtCore::ShaderProgram *ShaderManager::GetShaderInstanceForNode(osg::Node *node)
    {
       // Try to find the node in the active node list.
       for (int i = mActiveNodeList.size() - 1; i >= 0 && node != NULL; i--)
@@ -298,14 +298,14 @@ namespace dtCore
 
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtCore::Shader *ShaderManager::AssignShaderFromTemplate(const dtCore::Shader &templateShader, osg::Node &node)
+   dtCore::ShaderProgram *ShaderManager::AssignShaderFromPrototype(const dtCore::ShaderProgram &templateShader, osg::Node &node)
    {
       // If this node is already assigned to a shader, remove it from our active list. 
       RemoveShaderFromActiveNodeList(&node);
 
-      // create a duplicate of the shader template.  The group and shaders that you use to find
-      // are simply templates that we use to create unique instances for each node. 
-      dtCore::RefPtr<dtCore::Shader> newShader = templateShader.Clone();
+      // create a duplicate of the shader prototype.  The group and shaders that you use to find
+      // are simply prototypes that we use to create unique instances for each node. 
+      dtCore::RefPtr<dtCore::ShaderProgram> newShader = templateShader.Clone();
 
       std::vector<dtCore::RefPtr<ShaderParameter> > params;
       std::vector<dtCore::RefPtr<ShaderParameter> >::iterator currParam;
@@ -340,7 +340,7 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ShaderManager::ResolveShaderPrograms(Shader &shader)
+   void ShaderManager::ResolveShaderPrograms(ShaderProgram &shader)
    {
       //Shader cache entries are keyed by a combination of the source to the
       //vertex shader and the source to the fragment shader.
@@ -434,7 +434,7 @@ namespace dtCore
          bool bFoundMatch = false;
          std::string oldCacheKey = mCopiedNodeList[i].shaderInstance->GetVertexShaderSource() + ":" +
             mCopiedNodeList[i].shaderInstance->GetFragmentShaderSource();
-         Shader *matchingShader = NULL;
+         ShaderProgram *matchingShader = NULL;
 
          // Loop to find a match
          for (groupItor=mShaderGroups.begin(); !bFoundMatch && groupItor!=mShaderGroups.end(); ++groupItor)
@@ -456,7 +456,7 @@ namespace dtCore
          if (bFoundMatch)
          {
             //LOG_ERROR("FOUND A MATCH FOR shader[" + mCopiedNodeList[i].shaderInstance->GetName() +  "]!!!");
-            AssignShaderFromTemplate(*matchingShader, *mCopiedNodeList[i].nodeWeakReference.get());
+            AssignShaderFromPrototype(*matchingShader, *mCopiedNodeList[i].nodeWeakReference.get());
          }
          else
          {
