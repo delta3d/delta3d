@@ -417,7 +417,7 @@ namespace dtDAL
          //added support for waypoint files- banderegg 7-10-06
          if(!map->GetPathNodeFileName().empty())
          {
-            dtAI::WaypointManager::GetInstance()->OnMapLoad(map->GetPathNodeFileName());
+            dtAI::WaypointManager::GetInstance().OnMapLoad(map->GetPathNodeFileName());
             
             //if we are running within stage we need to make proxies as well
             if(mEditMode) CreateWaypointActors(*map);
@@ -743,7 +743,7 @@ namespace dtDAL
       //added support for waypoint files- banderegg 7/10/06
       if(!map.GetPathNodeFileName().empty())
       {
-         dtAI::WaypointManager::GetInstance()->OnMapClose();
+         dtAI::WaypointManager::GetInstance().OnMapClose();
       }
 
       if (unloadLibraries)
@@ -1039,7 +1039,7 @@ namespace dtDAL
          //if there is no filename given, we arent going to save any waypoints
          //lets check to see if there are waypoints in the scene and if so create 
          //a default waypoints filename for the user
-         if(map.GetPathNodeFileName().empty() && (!dtAI::WaypointManager::GetInstance()->GetWaypoints().empty()))         
+         if(map.GetPathNodeFileName().empty() && (!dtAI::WaypointManager::GetInstance().GetWaypoints().empty()))         
          {
             std::string mapName("Waypoints_");            
             mapName += map.GetName();
@@ -1050,7 +1050,7 @@ namespace dtDAL
          //alert the waypoint manager to save the waypoint file
          if(pScene && !map.GetPathNodeFileName().empty())
          {
-            dtAI::WaypointManager::GetInstance()->OnMapSave(map.GetPathNodeFileName(), map.GetCreateNavMesh(), pScene);
+            dtAI::WaypointManager::GetInstance().OnMapSave(map.GetPathNodeFileName(), map.GetCreateNavMesh(), pScene);
          }
 
          //save the file to a separate name first so that
@@ -1627,9 +1627,9 @@ namespace dtDAL
    //////////////////////////////////////////////////////////////////////////
    void Project::CreateWaypointActors(Map& pMap)
    {
-      if(dtAI::WaypointManager::GetInstance()->ObtainLock())
+      if(dtAI::WaypointManager::GetInstance().ObtainLock())
       {
-         dtAI::WaypointManager::WaypointMap pWaypoints = dtAI::WaypointManager::GetInstance()->GetWaypoints();
+         dtAI::WaypointManager::WaypointMap pWaypoints = dtAI::WaypointManager::GetInstance().GetWaypoints();
          dtAI::WaypointManager::WaypointIterator iter = pWaypoints.begin();
          dtAI::WaypointManager::WaypointIterator endOfVector = pWaypoints.end();
 
@@ -1663,6 +1663,6 @@ namespace dtDAL
          }
       }
 
-      dtAI::WaypointManager::GetInstance()->ReleaseLock();
+      dtAI::WaypointManager::GetInstance().ReleaseLock();
    }
 }

@@ -56,16 +56,16 @@ void TestAI::Config()
 
    //initialize the Waypoint Helper
    WaypointManager::GetInstance();   
-   GetScene()->AddDrawable(WaypointManager::GetInstance());
+   GetScene()->AddDrawable(&WaypointManager::GetInstance());
 
    LoadDemoMap(mMapFilename);
 
    //turn on viewing of waypoints
-   WaypointManager::GetInstance()->SetDrawWaypoints(true);
+   WaypointManager::GetInstance().SetDrawWaypoints(true);
 
    //by default we wont draw the navmesh
    mDrawNavMesh = false;
-   WaypointManager::GetInstance()->SetDrawNavMesh(mDrawNavMesh, true);         
+   WaypointManager::GetInstance().SetDrawNavMesh(mDrawNavMesh, true);         
 
    //set camera offset
    dtCore::Transform trans;
@@ -87,7 +87,7 @@ void TestAI::Config()
 
 
    //get the first waypoint to spawn the character at
-   const WaypointManager::WaypointMap& pContainer = WaypointManager::GetInstance()->GetWaypoints();
+   const WaypointManager::WaypointMap& pContainer = WaypointManager::GetInstance().GetWaypoints();
    WaypointManager::WaypointMap::const_iterator iter = pContainer.begin();
    const Waypoint* pWaypoint = (*iter).second;
 
@@ -123,7 +123,7 @@ bool TestAI::KeyPressed(const dtCore::Keyboard* keyboard, Producer::KeyboardKey 
       case Producer::Key_N:
          {            
             mDrawNavMesh = !mDrawNavMesh;
-            WaypointManager::GetInstance()->SetDrawNavMesh(mDrawNavMesh, true);            
+            WaypointManager::GetInstance().SetDrawNavMesh(mDrawNavMesh, true);            
             return true;
          }
 
@@ -168,7 +168,7 @@ void TestAI::PreFrame( const double deltaFrameTime )
    if(mCharacter->GetCurrentWaypoint() == mCurrentWaypoint)
    {
       //send the character to a random waypoint
-      WaypointManager::WaypointMap::size_type pNumWaypoints = WaypointManager::GetInstance()->GetWaypoints().size() - 1;
+      WaypointManager::WaypointMap::size_type pNumWaypoints = WaypointManager::GetInstance().GetWaypoints().size() - 1;
       unsigned pWaypointNum = dtUtil::RandRange(0U, unsigned(pNumWaypoints));      
       GoToWaypoint(pWaypointNum);           
    }
@@ -199,7 +199,7 @@ bool TestAI::GoToWaypoint(int pWaypointNum)
 {
    //loop through the waypoints and send our character to the one
    //whose index is pWaypointNum in the WaypointMap contained within WaypointManager
-   const WaypointManager::WaypointMap& pWaypoints = WaypointManager::GetInstance()->GetWaypoints(); 
+   const WaypointManager::WaypointMap& pWaypoints = WaypointManager::GetInstance().GetWaypoints(); 
    WaypointManager::WaypointMap::const_iterator iter = pWaypoints.begin();
    WaypointManager::WaypointMap::const_iterator endOfMap = pWaypoints.end();
 

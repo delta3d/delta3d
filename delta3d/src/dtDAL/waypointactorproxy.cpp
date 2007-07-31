@@ -48,7 +48,7 @@ namespace dtDAL
    void WaypointActorProxy::CreateActor()
    {
       SetActor(*new WaypointActor);      
-      WaypointManager::GetInstance()->AddWaypoint(static_cast<WaypointActor*>(GetActor()));    
+      WaypointManager::GetInstance().AddWaypoint(static_cast<WaypointActor&>(*GetActor()));    
 
       std::ostringstream ss;
       ss << "Waypoint" << mNumWaypoints++;
@@ -86,7 +86,7 @@ namespace dtDAL
    void WaypointActorProxy::OnTranslation(const osg::Vec3 &oldValue, const osg::Vec3 &newValue)
    {
       WaypointActor *pWaypointActor = static_cast<WaypointActor*> (GetActor());
-      WaypointManager::GetInstance()->MoveWaypoint(pWaypointActor->GetIndex(), newValue);
+      WaypointManager::GetInstance().MoveWaypoint(pWaypointActor->GetIndex(), newValue);
    }
 
    bool WaypointActorProxy::IsPlaceable() const
@@ -106,7 +106,7 @@ namespace dtDAL
 
    void WaypointActorProxy::RemoveFromWaypointManager() const
    {
-      WaypointManager::GetInstance()->RemoveWaypoint(static_cast<const WaypointActor*> (GetActor()));
+      WaypointManager::GetInstance().RemoveWaypoint(static_cast<const WaypointActor&>(*GetActor()));
    }
 
 
