@@ -69,7 +69,15 @@ namespace dtAI
         /**
          * Returns an instance to our static member
          */
-        static WaypointManager& GetInstance();           
+        static WaypointManager& GetInstance();   
+
+        /**
+         * Copies waypoints into a vector and returns it by value
+         * definitely not efficient to say the least, but is being
+         * used as a helper function for the Python bindings
+         * this function may be removed once the waypoint map is exported
+         */
+        std::vector<Waypoint*> CopyWaypointsIntoVector() const;
  
         /**
          * returns an internal const reference to the waypoint mapping
@@ -183,14 +191,6 @@ namespace dtAI
          * Explicitly instantiates our static member
          */
         static void CreateInstance(); 
-
-        /**
-         * Copies waypoints into a vector and returns it by value
-         * definitely not efficient to say the least, but is being
-         * used as a helper function for the Python bindings
-         * this function may be removed once the waypoint map is exported
-         */
-        std::vector<Waypoint*> CopyWaypointsIntoVector() const;
 
          //setting a bool for notification that we read in new waypoints
          //we cannot call LoadActors() unless this flag is true
