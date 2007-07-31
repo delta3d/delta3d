@@ -279,7 +279,7 @@ namespace dtEditQt
             * implemented as a quick and dirty solution to assigning particles to an
             * actor of this type.
             */
-            dtCore::RefPtr<dtDAL::ActorType> particleActor =
+            dtCore::RefPtr<const dtDAL::ActorType> particleActor =
                 dtDAL::LibraryManager::GetInstance().FindActorType("dtcore","Particle System");
 
             // create our new actor proxy from the mesh actor type that was

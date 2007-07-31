@@ -120,7 +120,7 @@ public:
    void TestLibrarySharing()
    {
       dtDAL::LibraryManager& libMgr = dtDAL::LibraryManager::GetInstance();
-      std::vector<dtDAL::ActorType*> actors;
+      std::vector<const dtDAL::ActorType*> actors;
       std::vector<dtDAL::ActorProperty*> props;
    
       CPPUNIT_ASSERT(libMgr.GetRegistry(mActorLibraryName) != NULL);

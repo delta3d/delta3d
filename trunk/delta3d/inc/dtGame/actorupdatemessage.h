@@ -151,7 +151,7 @@ namespace dtGame
           * Gets the actor type that this message is about
           * @return The actor type or NULL if the current name and category do not exist
           */
-         dtDAL::ActorType* GetActorType() const;
+         const dtDAL::ActorType* GetActorType() const;
 
          /**
           * Sets the actor type on this message.

@@ -221,7 +221,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void TaskEditor::AddItemToList(dtDAL::ActorProxy& proxy)
    {
-      dtDAL::ActorType& at = proxy.GetActorType();
+      const dtDAL::ActorType& at = proxy.GetActorType();
       QTableWidgetItem *nm = new QTableWidgetItem;
       QTableWidgetItem *type = new QTableWidgetItem;
    

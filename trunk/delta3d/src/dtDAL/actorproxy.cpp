@@ -337,9 +337,9 @@ namespace dtDAL
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ActorProxy::SetActorType(ActorType *type)
+   void ActorProxy::SetActorType(const ActorType &type)
    {
-      mActorType = type;
+      mActorType = &type;
    }
 
    //////////////////////////////////////////////////////////////////////////

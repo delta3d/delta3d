@@ -359,8 +359,9 @@ namespace  dtDAL
          //Make sure we have not tried to load this actor type already and failed.
          if (mMissingActorTypes.find(actorTypeFullName) == mMissingActorTypes.end())
          {
-            dtCore::RefPtr<ActorType> actorType =
+            dtCore::RefPtr<const ActorType> actorType =
                LibraryManager::GetInstance().FindActorType(actorTypeCategory, actorTypeName);
+
             if (actorType == NULL)
             {
                mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__,  __LINE__,

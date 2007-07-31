@@ -130,7 +130,7 @@ void TaskActorTests::TestTaskActorDefaultValues()
 {
    try
    {
-      dtCore::RefPtr<dtDAL::ActorType> taskActorType =
+      dtCore::RefPtr<const dtDAL::ActorType> taskActorType =
          mGameManager->FindActorType("dtcore.Tasks","Task Actor");
       CPPUNIT_ASSERT_MESSAGE("Could not find actor type.",taskActorType.valid());
 
@@ -174,7 +174,7 @@ void TaskActorTests::TestTaskSubTasks()
 {
    try
    {
-      dtCore::RefPtr<dtDAL::ActorType> taskActorType =
+      dtCore::RefPtr<const dtDAL::ActorType> taskActorType =
          mGameManager->FindActorType("dtcore.Tasks","Task Actor");
       CPPUNIT_ASSERT_MESSAGE("Could not find actor type.", taskActorType.valid());
 
@@ -283,7 +283,7 @@ void TaskActorTests::TestTaskSubTasks()
 ///////////////////////////////////////////////////////////////////////////////
 void TaskActorTests::CreateParentChildProxies()
 {
-   dtCore::RefPtr<dtDAL::ActorType> taskActorType =
+   dtCore::RefPtr<const dtDAL::ActorType> taskActorType =
          mGameManager->FindActorType("dtcore.Tasks","Task Actor");
    CPPUNIT_ASSERT_MESSAGE("Could not find actor type.",taskActorType.valid());
 
@@ -413,7 +413,7 @@ void TaskActorTests::TestGameEventTaskActor()
    {
       mGameManager->AddComponent(*(new dtGame::DefaultMessageProcessor()),
                                    dtGame::GameManager::ComponentPriority::HIGHEST);
-      dtCore::RefPtr<dtDAL::ActorType> actorType =
+      dtCore::RefPtr<const dtDAL::ActorType> actorType =
             mGameManager->FindActorType("dtcore.Tasks","GameEvent Task Actor");
       CPPUNIT_ASSERT_MESSAGE("Could not find actor type.",actorType.valid());
 
@@ -492,10 +492,10 @@ void TaskActorTests::TestRollupTaskActor()
       mGameManager->AddComponent(*(new dtGame::DefaultMessageProcessor()),
                                    dtGame::GameManager::ComponentPriority::HIGHEST);
 
-      dtCore::RefPtr<dtDAL::ActorType> gameEventType = mGameManager->FindActorType("dtcore.Tasks","GameEvent Task Actor");
+      dtCore::RefPtr<const dtDAL::ActorType> gameEventType = mGameManager->FindActorType("dtcore.Tasks","GameEvent Task Actor");
       CPPUNIT_ASSERT_MESSAGE("Could not find actor type for game event task.",gameEventType.valid());
 
-      dtCore::RefPtr<dtDAL::ActorType> rollupActorType = mGameManager->FindActorType("dtcore.Tasks","Rollup Task Actor");
+      dtCore::RefPtr<const dtDAL::ActorType> rollupActorType = mGameManager->FindActorType("dtcore.Tasks","Rollup Task Actor");
       CPPUNIT_ASSERT_MESSAGE("Could not find actor type for rollup task.",rollupActorType.valid());
 
       //Create our test rollup task...
@@ -594,13 +594,13 @@ void TaskActorTests::TestOrderedTaskActor()
       mGameManager->AddComponent(*(new dtGame::DefaultMessageProcessor()),
                                    dtGame::GameManager::ComponentPriority::HIGHEST);
 
-      dtCore::RefPtr<dtDAL::ActorType> gameEventType = mGameManager->FindActorType("dtcore.Tasks","GameEvent Task Actor");
+      dtCore::RefPtr<const dtDAL::ActorType> gameEventType = mGameManager->FindActorType("dtcore.Tasks","GameEvent Task Actor");
       CPPUNIT_ASSERT_MESSAGE("Could not find actor type for game event task.",gameEventType.valid());
 
-      dtCore::RefPtr<dtDAL::ActorType> rollupActorType = mGameManager->FindActorType("dtcore.Tasks","Rollup Task Actor");
+      dtCore::RefPtr<const dtDAL::ActorType> rollupActorType = mGameManager->FindActorType("dtcore.Tasks","Rollup Task Actor");
       CPPUNIT_ASSERT_MESSAGE("Could not find actor type for rollup task.",rollupActorType.valid());
 
-      dtCore::RefPtr<dtDAL::ActorType> orderedActorType = mGameManager->FindActorType("dtcore.Tasks","Ordered Task Actor");
+      dtCore::RefPtr<const dtDAL::ActorType> orderedActorType = mGameManager->FindActorType("dtcore.Tasks","Ordered Task Actor");
       CPPUNIT_ASSERT_MESSAGE("Could not find actor type for ordered task.",orderedActorType.valid());
 
       //Create our test rollup task...

@@ -324,7 +324,7 @@ void EntityMapXMLHandler::endElement(const XMLCh* const uri,const XMLCh* const l
          // modify the actor mapping
 
          // find the actortype
-         dtDAL::ActorType* actortype = mGM->FindActorType( mCurrentActorTypeCategory, mCurrentActorTypeName );
+         const dtDAL::ActorType* actortype = mGM->FindActorType( mCurrentActorTypeCategory, mCurrentActorTypeName );
 
          if( actortype != NULL )
          {

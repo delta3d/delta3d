@@ -330,7 +330,7 @@ namespace dtHLAGM
          void StartElementEnumMapping(const std::string& elementName, const xercesc_dt::Attributes& attrs);
 
          void ObjectToActorCharacters(const std::string& elementName, const std::string& characters);
-         dtDAL::ActorType* FindActorType(const std::string& actorTypeFullName);
+         const dtDAL::ActorType* FindActorType(const std::string& actorTypeFullName);
          void DISIDCharacters(EntityType& entityType, const std::string& elementName, const std::string& characters);
          void DDMCharacters(const std::string& elementName, const std::string& characters);
          

@@ -73,10 +73,10 @@ namespace dtHLAGM
           *
           * @return the Game Actor Type
           */
-         dtDAL::ActorType& GetActorType()
-         {
-            return *mActorType;
-         }
+         //dtDAL::ActorType& GetActorType()
+         //{
+         //   return *mActorType;
+         //}
 
          /**
           * @return true if this mapping should only be used for objects simulation remotely in HLA.
@@ -194,7 +194,7 @@ namespace dtHLAGM
           *
           * @param type the Game Actor Type
           */
-         void SetActorType(dtDAL::ActorType& type)
+         void SetActorType(const dtDAL::ActorType& type)
          {
             mActorType = &type;
          }
@@ -301,7 +301,7 @@ namespace dtHLAGM
 
          /// The Actor Type for this Object to Actor mapping.
 
-         dtCore::RefPtr <dtDAL::ActorType> mActorType;
+         dtCore::RefPtr <const dtDAL::ActorType> mActorType;
 
          /// true if this mapping should only be used for objects simulated remotely, i.e. in HLA.
          bool mRemoteOnly;

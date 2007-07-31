@@ -61,7 +61,7 @@ void ActiveEntityControl::ClearAll()
 }
 
 
-bool ActorMapConfig::AddActorMapping(const DIS::EntityType& eid, dtDAL::ActorType* at)
+bool ActorMapConfig::AddActorMapping(const DIS::EntityType& eid, const dtDAL::ActorType* at)
 {
    return( mMap.insert( ActorMap::value_type(eid,at) ).second );
 }
@@ -71,7 +71,7 @@ bool ActorMapConfig::RemoveActorMapping(const DIS::EntityType& eid)
    return( mMap.erase( eid )>0 );
 }
 
-bool ActorMapConfig::GetMappedActor(const DIS::EntityType& eid, dtDAL::ActorType*& toWrite)
+bool ActorMapConfig::GetMappedActor(const DIS::EntityType& eid, const dtDAL::ActorType*& toWrite)
 {
    ActorMap::iterator iter = mMap.find( eid );
    if( iter != mMap.end() )

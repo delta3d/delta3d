@@ -134,7 +134,7 @@ void HLAConfigTests::CheckObjectToActorMapping(
    bool remoteOnly,
    const std::vector<dtHLAGM::AttributeToPropertyList>& props)
 {
-   dtCore::RefPtr<dtDAL::ActorType> type = mGameManager->FindActorType(category, name);
+   dtCore::RefPtr<const dtDAL::ActorType> type = mGameManager->FindActorType(category, name);
    CPPUNIT_ASSERT(type.valid());
 
    //make absolutely sure we call the const version of the method.

@@ -60,7 +60,7 @@ class ProxyTest : public CPPUNIT_NS::TestFixture
       
    private:
       dtDAL::LibraryManager &libMgr;
-      std::vector<dtDAL::ActorType*> actors;
+      std::vector<const dtDAL::ActorType*> actors;
       std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > proxies;
       static const std::string mExampleLibraryName;
       
@@ -958,7 +958,7 @@ void ProxyTest::TestBezierProxies()
    try
    {
       dtDAL::LibraryManager &libMgr = dtDAL::LibraryManager::GetInstance();
-      RefPtr<dtDAL::ActorType>  at    = libMgr.FindActorType("dtcore.Curve", "Bezier Node");
+      RefPtr<const dtDAL::ActorType>  at    = libMgr.FindActorType("dtcore.Curve", "Bezier Node");
       CPPUNIT_ASSERT(at != NULL);
       
       RefPtr<dtDAL::ActorProxy> one   = libMgr.CreateActorProxy(*at);

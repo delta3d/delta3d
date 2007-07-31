@@ -258,7 +258,7 @@ namespace dtDAL
           *      The actor type is assigned to the proxy when it is created
           *      by the actor registry.
           */
-         ActorType& GetActorType() { return *mActorType.get(); }
+         //ActorType& GetActorType() { return *mActorType.get(); }
 
          /**
           * Gets the actor who's properties are modeled by this proxy.
@@ -421,13 +421,13 @@ namespace dtDAL
          std::set<std::string> mClassNameSet;
 
          ///ActorType corresponding to this proxy.
-         dtCore::RefPtr<ActorType> mActorType;
+         dtCore::RefPtr<const ActorType> mActorType;
 
          /// The current class name
          std::string mClassName;
 
          ///Simple method for setting the actor type.
-         void SetActorType(ActorType *type);
+         void SetActorType(const ActorType &type);
 
          ///Hidden copy constructor.
          ActorProxy(const ActorProxy&);

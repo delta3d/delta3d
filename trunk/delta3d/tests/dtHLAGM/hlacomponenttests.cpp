@@ -1094,7 +1094,7 @@ void HLAComponentTests::TestDispatchUpdate()
       //insert a bogus mapping to see if the object maps properly.
       mHLAComponent->GetRuntimeMappings().Put(entityId, fakeActorId);
       
-      dtCore::RefPtr<dtDAL::ActorType> testTankType = mGameManager->FindActorType(testMsg->GetActorTypeCategory(), testMsg->GetActorTypeName());
+      dtCore::RefPtr<const dtDAL::ActorType> testTankType = mGameManager->FindActorType(testMsg->GetActorTypeCategory(), testMsg->GetActorTypeName());
 
       CPPUNIT_ASSERT(testTankType.valid());
       
@@ -1148,7 +1148,7 @@ void HLAComponentTests::TestPrepareUpdate()
       mHLAComponent->GetRuntimeMappings().Put(entityId, fakeActorId);
 
       
-      dtCore::RefPtr<dtDAL::ActorType> testTankType = mGameManager->FindActorType(testMsg->GetActorTypeCategory(), testMsg->GetActorTypeName());
+      dtCore::RefPtr<const dtDAL::ActorType> testTankType = mGameManager->FindActorType(testMsg->GetActorTypeCategory(), testMsg->GetActorTypeName());
       
       CPPUNIT_ASSERT(testTankType.valid());
       

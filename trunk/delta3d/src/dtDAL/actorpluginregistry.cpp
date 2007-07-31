@@ -26,22 +26,22 @@ namespace dtDAL
 {
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ActorPluginRegistry::GetSupportedActorTypes(std::vector<dtCore::RefPtr<ActorType> > &actors)
+   void ActorPluginRegistry::GetSupportedActorTypes(std::vector<dtCore::RefPtr<const ActorType> > &actors)
    {
       mActorFactory->GetSupportedTypes(actors);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   bool ActorPluginRegistry::IsActorTypeSupported(dtCore::RefPtr<ActorType> type)
+   bool ActorPluginRegistry::IsActorTypeSupported(dtCore::RefPtr<const ActorType> type)
    {
       return mActorFactory->IsTypeSupported(type);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<ActorProxy> ActorPluginRegistry::CreateActorProxy(ActorType& type)
+   dtCore::RefPtr<ActorProxy> ActorPluginRegistry::CreateActorProxy(const ActorType& type)
    {
-      dtCore::RefPtr<ActorProxy> proxy = mActorFactory->CreateObject(dtCore::RefPtr<ActorType>(&type));
-      proxy->SetActorType(&type);
+      dtCore::RefPtr<ActorProxy> proxy = mActorFactory->CreateObject(dtCore::RefPtr<const ActorType>(&type));
+      proxy->SetActorType(type);
       proxy->CreateActor();
       proxy->BuildPropertyMap();
       return proxy;

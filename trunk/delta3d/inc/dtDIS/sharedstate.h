@@ -106,7 +106,7 @@ namespace dtDIS
    {
       /// Adds a mapping from the DIS::EntityID to the dtDAL::ActorType if no mapping exists.
       /// @return true if no previous mapping existed.  false if a mapping existed already.
-      bool AddActorMapping(const DIS::EntityType& eid, dtDAL::ActorType* at);
+      bool AddActorMapping(const DIS::EntityType& eid, const dtDAL::ActorType* at);
 
       /// Takes the one to one mapping from the container for the supplied key.
       /// @param eid the key to the mapping.
@@ -117,11 +117,11 @@ namespace dtDIS
       /// @param toWrite Overwritten with the instance of the mapped ActorType.
       /// @param eid The key being stored.
       /// @return true if eid was found in the map.  false if it was not found.
-      bool GetMappedActor(const DIS::EntityType& eid, dtDAL::ActorType*& toWrite);
+      bool GetMappedActor(const DIS::EntityType& eid, const dtDAL::ActorType*& toWrite);
 
    private:
       /// a convenience typedef
-      typedef dtCore::RefPtr<dtDAL::ActorType> RefActorType;
+      typedef dtCore::RefPtr<const dtDAL::ActorType> RefActorType;
 
       /// a convenience typedef
       typedef std::map<DIS::EntityType,RefActorType,details::EntityTypeCompare> ActorMap;

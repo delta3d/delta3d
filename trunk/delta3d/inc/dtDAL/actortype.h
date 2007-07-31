@@ -60,7 +60,7 @@ namespace dtDAL
           */
          struct RefPtrComp 
          {
-            bool operator()(const dtCore::RefPtr<ActorType> &id1,const dtCore::RefPtr<ActorType> &id2) const
+            bool operator()(const dtCore::RefPtr<const ActorType> &id1,const dtCore::RefPtr<const ActorType> &id2) const
             {
                return (*id1) < (*id2);
             }
