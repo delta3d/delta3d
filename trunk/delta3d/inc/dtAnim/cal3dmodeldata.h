@@ -18,9 +18,10 @@
  *
  * Bradley Anderegg 07/17/2007
  */
-
 #ifndef DELTA_CAL3D_MODEL_DATA
 #define DELTA_CAL3D_MODEL_DATA
+
+#include <dtAnim/export.h>
 
 #include <dtCore/refptr.h>
 
@@ -35,7 +36,7 @@ namespace dtAnim
    class AnimationWrapper;
    class Animatable;
 
-   class Cal3DModelData: public osg::Referenced
+   class DT_ANIM_EXPORT Cal3DModelData : public osg::Referenced
    {
       public:
          //we will hold all the animation wrappers for each CalCoreModel
