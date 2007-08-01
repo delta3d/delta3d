@@ -36,6 +36,11 @@ namespace dtDAL
     class ActorProperty;
 }
 
+namespace dtUtil
+{
+   class Log;
+}
+
 namespace dtGame
 {
    class DeadReckoningComponent;
