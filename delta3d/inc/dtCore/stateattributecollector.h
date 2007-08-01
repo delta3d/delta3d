@@ -21,6 +21,8 @@
 #ifndef DELTA_STATE_ATTRIB_COLLECTOR
 #define DELTA_STATE_ATTRIB_COLLECTOR
 
+#include <osg/Referenced>
+
 #include <dtCore/refptr.h>
 #include <dtCore/export.h>
 
@@ -35,6 +37,7 @@ namespace osg
    class Material;
    class Texture;
    class Program;
+   class Node;
 }
 /// @endcond
 
