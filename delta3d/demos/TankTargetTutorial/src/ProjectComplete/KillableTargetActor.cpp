@@ -118,9 +118,10 @@ void KillableTargetActor::ProcessMessage(const dtGame::Message &message)
       // test our shaders 
       else if(eventMsg.GetGameEvent() != 0 && eventMsg.GetGameEvent()->GetName() == "TestShaders")
       {
-         dtCore::ShaderManager::GetInstance().Clear();
-         dtCore::ShaderManager::GetInstance().LoadShaderDefinitions("Shaders/TutorialShaderDefs.xml", false);
-         ApplyMyShader();
+         // Note, this behavior is now done in the InputComponent.cpp using the new Shader method.
+         //dtCore::ShaderManager::GetInstance().Clear();
+         //dtCore::ShaderManager::GetInstance().LoadShaderDefinitions("Shaders/TutorialShaderDefs.xml", false);
+         //ApplyMyShader();
       }
       // reset me!
       else if (eventMsg.GetGameEvent() != 0 && eventMsg.GetGameEvent()->GetName() == "ResetStuff")
@@ -191,12 +192,12 @@ void KillableTargetActor::ApplyMyShader()
    // clean up any previous shaders, if any
    dtCore::ShaderManager::GetInstance().UnassignShaderFromNode(*GetOSGNode());
 
-   dtCore::Shader *templateShader = dtCore::ShaderManager::GetInstance().
-      FindShaderTemplate(mCurrentShaderName,"TargetShaders");
+   dtCore::ShaderProgram *templateShader = dtCore::ShaderManager::GetInstance().
+      FindShaderPrototype(mCurrentShaderName,"TargetShaders");
    if (templateShader != NULL)
    {
       mCurrentShader = dtCore::ShaderManager::GetInstance().
-         AssignShaderFromTemplate( *templateShader, *GetOSGNode() );
+         AssignShaderFromPrototype( *templateShader, *GetOSGNode() );
 
       // Put the shader values back (again, to avoid jumping since we are moving XYZ in our shader)
       // TIME DILATION

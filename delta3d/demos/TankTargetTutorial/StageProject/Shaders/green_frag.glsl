@@ -24,7 +24,27 @@ void main()
    highlightColor.g = color1.g*0.2 + color2.g*0.7 + color3.g*0.2;
    highlightColor.b = color1.b*0.2 + color2.b*0.2 + color3.b*0.8;
 
+   //highlightColor.r = 0.1;// -.5 + color1.r*0.6 + color2.r*0.3 + color3.r*0.3;
+   //highlightColor.g = 0.5 + color1.g*0.2 + color2.g*0.7 + color3.g*0.2;
+   //highlightColor.b = 0.1; // + color1.b*0.2 + color2.b*0.2 + color3.b*0.8;
+
+   //float x2 = x * 8.0;
+   //float y2 = y * 16.0;
+   //x2 = mod(x2,1.0);
+   //y2 = mod(y2, 1.0);
+   //if (((x2 > 0.5) && (y2 < 0.5)) || ((x2 < 0.5) && (y2 > 0.5)))
+   //{
+   //   gl_FragColor = (0.8 * vec4(0.8, 0.2, 0.2, 1.0));// + (0.4 * highlightColor);
+   //}
+   //else {
+   //   gl_FragColor = 0.8 * vec4(0.1, 0.3, 0.9, 1.0);// + (0.4 * highlightColor); 
+   //}
+   
+
+   //color1 = (color1 + color2 + color3 - .5) * 30.0;
+   //highlightColor += color1;
    // Finally, blend the original color and highlight color
    vec4 diffuseColor = texture2D(diffuseTexture, gl_TexCoord[0].st);
-   gl_FragColor = (0.2 * diffuseColor) + (0.8 * highlightColor);
+   gl_FragColor = (0.4 * diffuseColor) + (0.7 * highlightColor);
+   //gl_FragColor = (highlightColor);
 }

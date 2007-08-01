@@ -23,6 +23,13 @@
          <parameter name="MoveZDilation">
             <oscillator cycletimemin="5.0" cycletimemax="8.0"/>
          </parameter>
+         <parameter name="secondaryTexture">
+            <texture2D textureUnit="1">
+               <source type="Image">Textures/green_detail.png</source>
+               <wrap axis="S" mode="Repeat"/>
+               <wrap axis="T" mode="Repeat"/>
+            </texture2D>
+         </parameter>
       </shader>
       <shader name="Green" default="no">
          <source type="Vertex">Shaders/green_vert.glsl</source>
@@ -53,5 +60,25 @@
          </parameter>
       </shader>
    </shadergroup>
+   <shadergroup name="TerrainShaders">
+      <shader name="Normal" default="yes">
+         <source type="Vertex">Shaders/terrain_vert.glsl</source>
+         <source type="Fragment">Shaders/terrain_frag.glsl</source>
+         <parameter name="diffuseTexture">
+            <texture2D textureUnit="0">
+               <source type="Auto"/>
+            </texture2D>
+         </parameter>
+         <parameter name="TimeDilation">
+            <oscillator cycletimemin="18.0" cycletimemax="20.0"/>
+         </parameter>
+         <parameter name="secondaryTexture">
+            <texture2D textureUnit="1">
+               <source type="Image">Textures/green_detail.png</source>
+               <wrap axis="S" mode="Repeat"/>
+               <wrap axis="T" mode="Repeat"/>
+            </texture2D>
+         </parameter>
+      </shader>
 
 </shaderlist>

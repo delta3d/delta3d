@@ -1190,7 +1190,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Static Mesh</type>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>7c47d096-403b-4d72-8c97-666818541b25</id>
             <name>Terrain</name>
             <property>
@@ -1216,6 +1216,10 @@
                     <value2>3.000000</value2>
                     <value3>1.000000</value3>
                 </vec3>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string>TerrainShaders</string>
             </property>
             <property>
                 <name>Normal Rescaling</name>
