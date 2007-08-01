@@ -25,7 +25,7 @@
 #include "export.h"
 #include <dtCore/refptr.h>
 #include <dtActors/gamemeshactor.h>
-#include <dtCore/shader.h>
+#include <dtCore/shaderprogram.h>
 #include <dtCore/shaderparamfloat.h>
 #include <dtCore/particlesystem.h>
 #include <dtDAL/resourcedescriptor.h>
@@ -102,7 +102,7 @@ private:
    int mCurrentHealth;
    bool mIsTargeted;
 
-   dtCore::RefPtr<dtCore::Shader> mCurrentShader;
+   dtCore::RefPtr<dtCore::ShaderProgram> mCurrentShader;
    std::string mCurrentShaderName;
 
    dtCore::RefPtr<dtCore::ParticleSystem> mSmallExplosion;

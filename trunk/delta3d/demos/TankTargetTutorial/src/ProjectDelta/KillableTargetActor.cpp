@@ -118,8 +118,8 @@ void KillableTargetActor::ProcessMessage(const dtGame::Message &message)
       // test our shaders 
       else if(eventMsg.GetGameEvent() != 0 && eventMsg.GetGameEvent()->GetName() == "TestShaders")
       {
-         dtCore::ShaderManager::GetInstance().Clear();
-         dtCore::ShaderManager::GetInstance().LoadShaderDefinitions("Shaders/TutorialShaderDefs.xml", false);
+         //dtCore::ShaderManager::GetInstance().Clear();
+         dtCore::ShaderManager::GetInstance().ReloadAndReassignShaderDefinitions("Shaders/TutorialShaderDefs.xml", false);
          ApplyMyShader();
       }
       // reset me!
@@ -189,7 +189,7 @@ void KillableTargetActor::ApplyMyShader()
    // clean up any previous shaders, if any
    dtCore::ShaderManager::GetInstance().UnassignShaderFromNode(*GetOSGNode());
 
-   dtCore::Shader *templateShader = dtCore::ShaderManager::GetInstance().
+   dtCore::ShaderProgram *templateShader = dtCore::ShaderManager::GetInstance().
       FindShaderTemplate(mCurrentShaderName,"TargetShaders");
    if (templateShader != NULL)
    {

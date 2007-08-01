@@ -25,6 +25,7 @@
 #include <dtDAL/enginepropertytypes.h>
 #include <dtABC/application.h>
 #include <dtCore/camera.h>
+#include <dtCore/shadermanager.h>
 
 ////////////////////////////////////////////////////////////////////
 InputComponent::InputComponent(const std::string &name, bool inPlaybackMode) :
@@ -88,8 +89,10 @@ bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard,
             FireGameEvent(*mTankFired);
          break;
       case Producer::Key_P:
-         if (!mInPlaybackMode && mTestShaders != NULL)
-            FireGameEvent(*mTestShaders);
+         //dtCore::ShaderManager::GetInstance().Clear();
+         dtCore::ShaderManager::GetInstance().ReloadAndReassignShaderDefinitions("Shaders/TutorialShaderDefs.xml");
+         //if (!mInPlaybackMode && mTestShaders != NULL)
+         //   FireGameEvent(*mTestShaders);
          break;
       case Producer::Key_R:
          if (!mInPlaybackMode && mReset != NULL)
