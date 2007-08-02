@@ -235,6 +235,7 @@ void CoordinateTests::TestGeoOrigin()
    converter->SetUTMZone(3);
    zone = converter->GetUTMZone();
    CPPUNIT_ASSERT_EQUAL(unsigned(3), zone);
+   converter->SetGeoOriginRotation(origin.x(), origin.y());
    zone = converter->GetUTMZone();
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Setting the Geo Origin rotation should NOT set the UTM zone.", unsigned(3), zone);
    
