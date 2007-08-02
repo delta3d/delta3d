@@ -45,7 +45,8 @@ class CoordinateTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestMGRSToUTM);   
       CPPUNIT_TEST(TestMilConversions);
       CPPUNIT_TEST(TestOperators);
-   CPPUNIT_TEST( TestConvertGeodeticToUTM );  
+      CPPUNIT_TEST(TestMGRSvsXYZ);
+      CPPUNIT_TEST(TestConvertGeodeticToUTM );  
    CPPUNIT_TEST_SUITE_END();
 
    public:
@@ -63,6 +64,7 @@ class CoordinateTests : public CPPUNIT_NS::TestFixture
       void TestMilConversions();
       void TestOperators();
       void TestConvertGeodeticToUTM();
+      void TestMGRSvsXYZ();
 
    private:
       
@@ -162,6 +164,7 @@ void CoordinateTests::tearDown()
    mLogger = NULL;
 }
 
+//////////////////////////////////////////////////////////////////////////////
 void CoordinateTests::TestConfigure()
 {
    //check defaults
@@ -203,6 +206,28 @@ void CoordinateTests::TestConfigure()
       
 }
 
+//////////////////////////////////////////////////////////////////////////////
+void CoordinateTests::TestMGRSvsXYZ()
+{
+   osg::Vec3d tempVector, returnVector;
+   tempVector.set(1.0f, 1000.0f, 0);
+   
+   std::string tempString, returnString;
+
+   converter->SetGeoOrigin(0,0,0);
+   converter->SetGeoOriginRotation(0,0);
+   converter->SetOriginLocation(0,0,0);
+   converter->SetMagneticNorthOffset(0);
+
+   tempString = converter->XYZToMGRS(tempVector);
+   returnVector = converter->ConvertMGRSToXYZ(tempString);
+   
+   CPPUNIT_ASSERT(tempVector == returnVector);
+   returnString = converter->XYZToMGRS(returnVector);
+   CPPUNIT_ASSERT(tempString == returnString);
+}
+
+//////////////////////////////////////////////////////////////////////////////
 void CoordinateTests::TestGeoOrigin()
 {
    osg::Vec3d origin(33.62, 117.77, 0.0);
@@ -210,9 +235,6 @@ void CoordinateTests::TestGeoOrigin()
    converter->SetUTMZone(3);
    zone = converter->GetUTMZone();
    CPPUNIT_ASSERT_EQUAL(unsigned(3), zone);
-   
-   converter->SetGeoOriginRotation(origin.x(), origin.y());
-
    zone = converter->GetUTMZone();
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Setting the Geo Origin rotation should NOT set the UTM zone.", unsigned(3), zone);
    
@@ -238,6 +260,7 @@ void CoordinateTests::TestGeoOrigin()
 
 }
 
+//////////////////////////////////////////////////////////////////////////////
 void CoordinateTests::TestGeocentricToCartesianConversions()
 {
    //This just tests some known values from a project.  This basically will catch if
@@ -319,6 +342,7 @@ void CoordinateTests::TestGeocentricToCartesianConversions()
    
 }
 
+//////////////////////////////////////////////////////////////////////////////
 void CoordinateTests::TestUTMZoneCalculations()
 {
    unsigned ewZone;
@@ -393,7 +417,7 @@ void CoordinateTests::TestUTMZoneCalculations()
    CPPUNIT_ASSERT(ewZone == 37);
    CPPUNIT_ASSERT(nsZone == 'X');
 }
-   
+//////////////////////////////////////////////////////////////////////////////
 void CoordinateTests::TestUTMToMGRS()
 {
    std::string result;
@@ -443,6 +467,7 @@ void CoordinateTests::TestUTMToMGRS()
 
 }
 
+//////////////////////////////////////////////////////////////////////////////
 void CoordinateTests::TestMGRSToUTM()
 {
    unsigned int zone;
@@ -481,6 +506,7 @@ void CoordinateTests::TestMGRSToUTM()
 }
 
 
+//////////////////////////////////////////////////////////////////////////////
 void CoordinateTests::TestUTMToCartesianConversions()
 {
    converter->SetIncomingCoordinateType(dtUtil::IncomingCoordinateType::UTM);
@@ -536,6 +562,7 @@ void CoordinateTests::TestUTMToCartesianConversions()
 
 }
 
+//////////////////////////////////////////////////////////////////////////////
 void CoordinateTests::CheckMilsConversion(float degrees, unsigned expectedMils, float expectedReverseDegrees)
 {
    unsigned mils;
@@ -555,6 +582,7 @@ void CoordinateTests::CheckMilsConversion(float degrees, unsigned expectedMils, 
    CPPUNIT_ASSERT_MESSAGE(ss.str(), osg::equivalent( expectedReverseDegrees, reverseDegrees, 0.00001f ) );   
 }
 
+//////////////////////////////////////////////////////////////////////////////
 void CoordinateTests::TestMilConversions()
 {
    CheckMilsConversion(360.0f, 0, 360.0f);
@@ -565,6 +593,7 @@ void CoordinateTests::TestMilConversions()
    CheckMilsConversion(0.0f, 6400, 0.0f);
 }
 
+//////////////////////////////////////////////////////////////////////////////
 void CoordinateTests::TestOperators()
 {
    dtUtil::Coordinates coords1;
@@ -594,6 +623,7 @@ void CoordinateTests::TestOperators()
    CPPUNIT_ASSERT_MESSAGE("The assignment operator should have set the values correctly", coords4 == coords2);
 
 }
+//////////////////////////////////////////////////////////////////////////////
 void CoordinateTests::TestConvertGeodeticToUTM()
 {
    // Data converted with "Geographic/UTM Coordinate Converter"

@@ -25,6 +25,7 @@ namespace dtUtil
    IMPLEMENT_ENUM(CoordinateConversionExceptionEnum)
    CoordinateConversionExceptionEnum CoordinateConversionExceptionEnum::INVALID_INPUT("Illegal argument");
 
+   /////////////////////////////////////////////////////////////////////////////
    Coordinates::Coordinates(): mLocalCoordinateType(&LocalCoordinateType::CARTESIAN), 
       mIncomingCoordinateType(&IncomingCoordinateType::UTM), 
       mZone(1), mGlobeRadius(0.0)
@@ -66,10 +67,12 @@ namespace dtUtil
       mMagneticNorthOffset = 0.0f;
    }
    
+   /////////////////////////////////////////////////////////////////////////////
    Coordinates::~Coordinates()
    {  
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    Coordinates& Coordinates::operator = (const Coordinates &rhs) 
    {
       if(this == &rhs)
@@ -106,6 +109,7 @@ namespace dtUtil
       return *this;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    bool Coordinates::operator == (const Coordinates &rhs)
    {
       if (this == &rhs)
@@ -169,18 +173,21 @@ namespace dtUtil
       return true;
    }
   
+   /////////////////////////////////////////////////////////////////////////////
    void Coordinates::SetGeoOrigin(double latitude, double longitude, double elevation)
    {
       unsigned zone;
       char hemisphere;
       
-      ConvertGeodeticToUTM(osg::DegreesToRadians(latitude), osg::DegreesToRadians(longitude), zone, hemisphere, mLocationOffset[0], mLocationOffset[1]);
+      ConvertGeodeticToUTM(osg::DegreesToRadians(latitude), 
+                           osg::DegreesToRadians(longitude), zone, hemisphere, mLocationOffset[0], mLocationOffset[1]);
          
       mLocationOffset[2] = elevation;
       
       SetUTMZone(zone);
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void Coordinates::SetOriginLocation(double x, double y, double z)
    {
       mLocationOffset[0] = x;
@@ -188,6 +195,7 @@ namespace dtUtil
       mLocationOffset[2] = z;
    }
   
+   /////////////////////////////////////////////////////////////////////////////
    void Coordinates::GetOriginLocation(double& x, double& y, double& z) const
    {
       x = mLocationOffset[0];
@@ -195,6 +203,7 @@ namespace dtUtil
       z = mLocationOffset[2];
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void Coordinates::SetGeoOriginRotation(double latitude, double longitude)
    {
       unsigned zone;
@@ -232,6 +241,7 @@ namespace dtUtil
       mRotationOffsetInverse.invert(mRotationOffset);
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void Coordinates::SetOriginRotation(float h, float p, float r)
    {
      dtUtil::MatrixUtil::HprToMatrix(mRotationOffset, osg::Vec3(h, p, r)); 
@@ -239,6 +249,7 @@ namespace dtUtil
      mRotationOffsetInverse.invert(mRotationOffset);
    }
   
+   /////////////////////////////////////////////////////////////////////////////
    void Coordinates::GetOriginRotation(float& h, float& p, float& r) const
    {
       osg::Vec3 tmp;
@@ -248,26 +259,31 @@ namespace dtUtil
       r = tmp[2];
    }
    
+   /////////////////////////////////////////////////////////////////////////////
    const osg::Matrix& Coordinates::GetOriginRotationMatrix() const
    {
       return mRotationOffset;
    }
    
+   /////////////////////////////////////////////////////////////////////////////
    const osg::Matrix& Coordinates::GetOriginRotationMatrixInverse() const
    {
       return mRotationOffsetInverse;
    }
   
+   /////////////////////////////////////////////////////////////////////////////
    void Coordinates::SetGlobeRadius(float radius)
    {
       mGlobeRadius = radius;
    }
   
+   /////////////////////////////////////////////////////////////////////////////
    float Coordinates::GetGlobeRadius() const
    {
       return mGlobeRadius;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    const osg::Vec3 Coordinates::ConvertToLocalTranslation(const osg::Vec3d& loc)
    {
       if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
@@ -379,6 +395,7 @@ namespace dtUtil
       return position; 
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    const osg::Vec3d Coordinates::ConvertToRemoteTranslation(const osg::Vec3& translation)
    {
       if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
@@ -473,6 +490,7 @@ namespace dtUtil
       return remoteLoc; 
    }
   
+   /////////////////////////////////////////////////////////////////////////////
    const osg::Vec3 Coordinates::ConvertToLocalRotation(double psi, double theta, double phi) const
    {
       osg::Matrix rotMat;
@@ -537,6 +555,7 @@ namespace dtUtil
       return rotation;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    const osg::Vec3d Coordinates::ConvertToRemoteRotation(const osg::Vec3& hpr) const
    {
       osg::Matrix rotMat;
@@ -589,6 +608,7 @@ namespace dtUtil
       return rotation;
    }
   
+   /////////////////////////////////////////////////////////////////////////////
    void Coordinates::ZFlop(osg::Matrix& toFlop)
    {
       toFlop.set(toFlop(1,0), toFlop(1,1), toFlop(1,2), toFlop(1,3), 
@@ -597,6 +617,7 @@ namespace dtUtil
                  toFlop(3,0), toFlop(3,1), toFlop(3,2), toFlop(3,3));
    }
   
+   /////////////////////////////////////////////////////////////////////////////
    void Coordinates::EulersToMatrix(osg::Matrix& dst, float psi, float theta, float phi)
    {
       float cos_psi    = cosf(psi);                                              
@@ -618,6 +639,7 @@ namespace dtUtil
       dst(2,2) = cos_theta * cos_phi;                                         
    }
   
+   /////////////////////////////////////////////////////////////////////////////
    void Coordinates::MatrixToEulers(const osg::Matrix& src, float& psi, float& theta, float& phi)
    {
       osg::Vec3 coord;
@@ -656,6 +678,7 @@ namespace dtUtil
       }
    }
   
+   /////////////////////////////////////////////////////////////////////////////
    void Coordinates::GeocentricToGeodetic(double x, double y, double z,
                                           double& latitude, double& longitude, 
                                           double& elevation)
@@ -680,6 +703,7 @@ namespace dtUtil
       longitude = osg::RadiansToDegrees(longitude);
    }
   
+   /////////////////////////////////////////////////////////////////////////////
    void Coordinates::ConvertGeodeticToUTM (double Latitude, double Longitude,
                                            long& Zone, char& Hemisphere, 
                                            double& Easting, double& Northing)
@@ -696,6 +720,7 @@ namespace dtUtil
       Zone = tempZone;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void Coordinates::ConvertGeodeticToUTM (double Latitude, double Longitude,
                                            unsigned& Zone, char& Hemisphere, double& Easting, double& Northing)
    {
@@ -729,6 +754,7 @@ namespace dtUtil
       ConvertGeodeticToTransverseMercator(Latitude, Longitude, Easting, Northing);
    } /* END OF Convert_Geodetic_To_UTM */
   
+   /////////////////////////////////////////////////////////////////////////////
    void Coordinates::ConvertUTMToGeodetic (unsigned zone, double easting, double northing, double& latitude, double& longitude)
    {
       double phai;               /* resulting latitude in radians           */
@@ -822,6 +848,7 @@ namespace dtUtil
       longitude = lamda;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void Coordinates::CalculateUTMZone(double latitude, double longitude, unsigned& ewZone, char& nsZone)
    {
       Clamp(latitude, -80.0, 84.0);
@@ -873,6 +900,7 @@ namespace dtUtil
          nsZone = 'X';     
    }
   
+   /////////////////////////////////////////////////////////////////////////////
    const std::string Coordinates::ConvertUTMToMGRS(double easting, double northing, unsigned eastWestZone,
                                                    char northSouthZone, unsigned resolution) throw(dtUtil::Exception)
    {
@@ -928,6 +956,7 @@ namespace dtUtil
        return result;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void Coordinates::ConvertMGRSToUTM(unsigned defaultZone, char defaultZoneLetter,      
                                       const std::string& mgrs,
                                       unsigned& zone, double& easting, double& northing )
@@ -1158,6 +1187,7 @@ namespace dtUtil
       easting += e_num;
    }
   
+   /////////////////////////////////////////////////////////////////////////////
    void Coordinates::ConvertGeocentricToGeodetic (double x, double y, double z,
                                            double& phi, double& lambda, double& elevation)
    { /* BEGIN Convert_Geocentric_To_Geodetic */
@@ -1243,6 +1273,7 @@ namespace dtUtil
      }
    } /* END OF Convert_Geocentric_To_Geodetic */
   
+   /////////////////////////////////////////////////////////////////////////////
    void Coordinates::SetTransverseMercatorParameters(double a, double f, double Origin_Latitude,
                                                      double Central_Meridian, double False_Easting, 
                                                      double False_Northing, double Scale_Factor) 
@@ -1300,6 +1331,7 @@ namespace dtUtil
       TranMerc_Scale_Factor = Scale_Factor;
    }  /* END of Set_Transverse_Mercator_Parameters  */
   
+   /////////////////////////////////////////////////////////////////////////////
    void Coordinates::ConvertGeodeticToTransverseMercator (double Latitude,
                                                           double Longitude,
                                                           double& Easting,
@@ -1422,6 +1454,7 @@ namespace dtUtil
    } /* END OF Convert_Geodetic_To_Transverse_Mercator */
   
   
+   /////////////////////////////////////////////////////////////////////////////
    void Coordinates::GeodeticToGeocentric(double phi, double lambda, double elevation,
                                           double& x, double& y, double& z)
    {
@@ -1435,6 +1468,7 @@ namespace dtUtil
       z = (n*(1.0-esqu) + elevation)*sin(phi);
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    unsigned int Coordinates::DegreesToMils(const float degrees)
    {
       float positiveDegrees = degrees < 0 ? degrees + 360.0f : degrees;
@@ -1443,6 +1477,7 @@ namespace dtUtil
       return mils;// < 0 ? (6400 + mils) : mils;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    float Coordinates::MilsToDegrees(const unsigned int mils)
    {
       float positiveMils = mils > 6400 ? 6400.0f : float(mils);
@@ -1450,6 +1485,7 @@ namespace dtUtil
       return 360.0f - degrees;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    float Coordinates::CalculateMagneticNorthOffset(const float latitude, const float longitude)
    {
       float phi      = osg::DegreesToRadians(latitude);
@@ -1464,6 +1500,7 @@ namespace dtUtil
          (cosf(phi) * sinf(phiMN) - sinf(phi) * cosPhiMN * cosf(ldiff))));
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    std::string Coordinates::XYZToMGRS(const osg::Vec3 &pos)
    {
       // preserve the old value
@@ -1486,5 +1523,22 @@ namespace dtUtil
       SetIncomingCoordinateType(oldType);
 
       return milgrid;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   osg::Vec3 Coordinates::ConvertMGRSToXYZ(const std::string& mgrs)
+   {
+      const dtUtil::IncomingCoordinateType &oldType = GetIncomingCoordinateType();
+      unsigned int zone = 0;
+      double easting =0, northing =0;
+      
+      ConvertMGRSToUTM(0,0, mgrs, zone, easting, northing);
+      SetIncomingCoordinateType(dtUtil::IncomingCoordinateType::UTM);
+      osg::Vec3 tempVec3;
+      tempVec3 = ConvertToLocalTranslation(osg::Vec3d(easting, northing, 0));
+
+      SetIncomingCoordinateType(oldType);
+
+      return tempVec3;
    }
 }
