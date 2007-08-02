@@ -154,11 +154,11 @@ namespace dtAnim
             CPPUNIT_ASSERT(modelData->GetCoreModel() == wrapper->GetCalModel()->getCoreModel());
             
             std::string testString("abc");
-            CPPUNIT_ASSERT_EQUAL(std::string(), modelData->GetShaderName());
+            CPPUNIT_ASSERT_EQUAL(std::string("Default"), modelData->GetShaderName());
             modelData->SetShaderName(testString);
             CPPUNIT_ASSERT_EQUAL(testString, modelData->GetShaderName());
 
-            CPPUNIT_ASSERT_EQUAL(std::string(), modelData->GetShaderGroupName());
+            CPPUNIT_ASSERT_EQUAL(std::string("HardwareSkinning"), modelData->GetShaderGroupName());
             modelData->SetShaderGroupName(testString);
             CPPUNIT_ASSERT_EQUAL(testString, modelData->GetShaderGroupName());
             

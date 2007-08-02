@@ -86,8 +86,10 @@ CharacterFileHandler::CharacterFileHandler()
 , mMeshes()
 , mAnimationChannels()
 , mSkeletonFilename()
+, mInSkinningShader(false)
 , mInChannel(false)
-, mLogger(0)
+, mInSequence(false)
+, mLogger(NULL)
 {
    mLogger = &dtUtil::Log::GetInstance(CHARACTER_XML_LOGGER);
 }
@@ -107,10 +109,13 @@ void CharacterFileHandler::startDocument()
    mAnimations.clear();
    mMaterials.clear();
    mMeshes.clear();
+   mShaderGroup.clear();
+   mShaderName.clear();
    mAnimationChannels.clear();
    mAnimationSequences.clear();
    mSkeletonFilename.clear();
 
+   mInSkinningShader = false;
    mInChannel = false;
    mInSequence = false;
 }
@@ -246,6 +251,10 @@ void CharacterFileHandler::startElement( const XMLCh* const uri,const XMLCh* con
          errorString = std::string("Invalid XML format: <material> missing <filename> child");
       }     
    }
+   else if (elementStr == SKINNING_SHADER_ELEMENT)
+   {
+      mInSkinningShader = true;
+   }
    else if (elementStr == CHANNEL_ELEMENT)
    {      
       mInChannel = true;
@@ -288,12 +297,16 @@ void CharacterFileHandler::endElement(
       mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__,
                            "Ending element: \"%s\"", lname);
    }
- 
-   if(dtUtil::XMLStringConverter(localname).ToString() == CHANNEL_ELEMENT)
+   std::string elementStr = dtUtil::XMLStringConverter(localname).ToString();
+   if (elementStr == SKINNING_SHADER_ELEMENT)
+   {
+      mInSkinningShader = false;
+   }
+   else if(elementStr == CHANNEL_ELEMENT)
    { 
       mInChannel = false;
    }
-   else if(dtUtil::XMLStringConverter(localname).ToString() == SEQUENCE_ELEMENT)
+   else if(elementStr == SEQUENCE_ELEMENT)
    { 
       mInSequence = false;
    }
@@ -315,13 +328,30 @@ void CharacterFileHandler::characters(const XMLCh* const chars,
       return;
    }
 
-   if (mInChannel)
+   if (mInSkinningShader)
+   {
+      SkinningShaderCharacters(chars);
+   }
+   else if (mInChannel)
    {
       AnimChannelCharacters(chars);
    }
    else if (mInSequence)
    {
       AnimSequenceCharacters(chars);
+   }
+}
+
+void CharacterFileHandler::SkinningShaderCharacters(const XMLCh* const chars)
+{
+   std::string& topEl = mElements.top();
+   if (topEl == SHADER_GROUP_ELEMENT)
+   {
+      mShaderGroup = dtUtil::XMLStringConverter(chars).ToString();
+   }
+   else if (topEl == SHADER_NAME_ELEMENT)
+   {
+      mShaderName = dtUtil::XMLStringConverter(chars).ToString();
    }
 }
 
@@ -333,31 +363,31 @@ bool CharacterFileHandler::AnimatableCharacters(const XMLCh* const chars, Animat
    
    if(topEl == NAME_ELEMENT)
    {
-      animatable.mName = dtUtil::XMLStringConverter(chars).ToString();              
+      animatable.mName = dtUtil::XMLStringConverter(chars).ToString();
    }
    else if(topEl == START_DELAY_ELEMENT)
    {
-      std::string delay = dtUtil::XMLStringConverter(chars).ToString();                    
+      std::string delay = dtUtil::XMLStringConverter(chars).ToString();
       animatable.mStartDelay = dtUtil::ToType<float>(delay);
    }
    else if(topEl == FADE_IN_ELEMENT)
    {
-      std::string fade_in = dtUtil::XMLStringConverter(chars).ToString();                    
+      std::string fade_in = dtUtil::XMLStringConverter(chars).ToString();
       animatable.mFadeIn = dtUtil::ToType<float>(fade_in);
    }
    else if(topEl == FADE_OUT_ELEMENT)
    {
-      std::string fade_out = dtUtil::XMLStringConverter(chars).ToString();                    
+      std::string fade_out = dtUtil::XMLStringConverter(chars).ToString();
       animatable.mFadeOut = dtUtil::ToType<float>(fade_out);
    }
    else if(topEl == SPEED_ELEMENT)
    {
-      std::string speed = dtUtil::XMLStringConverter(chars).ToString();                    
+      std::string speed = dtUtil::XMLStringConverter(chars).ToString();
       animatable.mSpeed = dtUtil::ToType<float>(speed);
    }
    else if(topEl == BASE_WEIGHT_ELEMENT)
    {
-      std::string base_weight = dtUtil::XMLStringConverter(chars).ToString();                    
+      std::string base_weight = dtUtil::XMLStringConverter(chars).ToString();
       animatable.mBaseWeight = dtUtil::ToType<float>(base_weight);
    }
    else
@@ -387,28 +417,28 @@ void CharacterFileHandler::AnimChannelCharacters(const XMLCh* const chars)
    }
    else if(topEl == ANIMATION_NAME_ELEMENT)
    {
-      pChannel.mAnimationName = dtUtil::XMLStringConverter(chars).ToString();              
+      pChannel.mAnimationName = dtUtil::XMLStringConverter(chars).ToString();
    }
    else if(topEl == MAX_DURATION_ELEMENT)
    {
-      std::string max_duration = dtUtil::XMLStringConverter(chars).ToString();                    
+      std::string max_duration = dtUtil::XMLStringConverter(chars).ToString();
       pChannel.mMaxDuration = dtUtil::ToType<float>(max_duration);
    }
    else if(topEl == IS_LOOPING_ELEMENT)
    {
-      std::string is_looping = dtUtil::XMLStringConverter(chars).ToString();                    
+      std::string is_looping = dtUtil::XMLStringConverter(chars).ToString();
       pChannel.mIsLooping = dtUtil::ToType<bool>(is_looping);
    }
    else if(topEl == IS_ACTION_ELEMENT)
    {
-      std::string is_action = dtUtil::XMLStringConverter(chars).ToString();                    
+      std::string is_action = dtUtil::XMLStringConverter(chars).ToString();
       pChannel.mIsAction = dtUtil::ToType<bool>(is_action);
    }
    else
    {
       mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
                            "Found characters for unknown element \"%s\" \"%s\"", 
-                           topEl.c_str(), dtUtil::XMLStringConverter(chars).c_str());      
+                           topEl.c_str(), dtUtil::XMLStringConverter(chars).c_str());
    }
 
 

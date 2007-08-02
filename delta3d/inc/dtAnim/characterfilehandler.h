@@ -51,25 +51,25 @@ namespace dtAnim
      * @endcode
      * @code
      *   <character>
-     *      <skeleton filename="skel.csf" />
-     *      <animation filename="anim1.xaf" />
+     *      <skeleton fileName="skel.csf" />
+     *      <animation fileName="anim1.xaf" />
      *      <animation ...
-     *      <mesh filename="mesh1.cmf" />
+     *      <mesh fileName="mesh1.cmf" />
      *      <mesh ...
-     *      <material filename="mat1.crf" />
+     *      <material fileName="mat1.crf" />
      *      <material ...
-     *	   <animationchannel>
+     *	   <animationChannel>
 	  *         <name>Run</name>
-	  *	      <animationname>Run</animationname>
-	  *         <startdelay>0.0</startdelay>
-	  *         <fadein>0.0</fadein>
-	  *         <fadeout>0.0</fadeout>
+	  *	      <animationName>Run</animationName>
+	  *         <startDelay>0.0</startDelay>
+	  *         <fadeIn>0.0</fadeIn>
+	  *         <fadeOut>0.0</fadeOut>
 	  *         <speed>1.0</speed>
-     *         <baseweight>1.0</baseweight>
-	  *         <maxduration>0.0</maxduration>
-	  *	      <isaction>0</isaction>
-	  *         <islooping>1</islooping>
-	  *      </animationchannel>
+     *         <baseWeight>1.0</baseWeight>
+	  *         <maxDuration>0.0</maxDuration>
+	  *	      <isAction>0</isAction>
+	  *         <isLooping>1</isLooping>
+	  *      </animationChannel>
      *   </character>
      * @endcode
      */
@@ -183,18 +183,22 @@ namespace dtAnim
       std::vector<AnimationStruct> mAnimations;     ///<Container of animation structs
       std::vector<MaterialStruct> mMaterials;       ///<Container of material structs
       std::vector<MeshStruct> mMeshes;              ///<Container of mesh structs
+      ///Shader information for hardware skinning. these value work with the shader manager.
+      std::string mShaderGroup, mShaderName;
       std::vector<AnimationChannelStruct> mAnimationChannels; ///<The preconfigured playbable animations
       std::vector<AnimationSequenceStruct> mAnimationSequences; ///<The preconfigured playbable animations
       std::string mSkeletonFilename;                ///<The one skeleton filename      
 
    private:
       bool AnimatableCharacters(const XMLCh* const chars, AnimatableStruct& animatable);
+      void SkinningShaderCharacters(const XMLCh* const chars);
       void AnimChannelCharacters(const XMLCh* const chars);
       void AnimSequenceCharacters(const XMLCh* const chars);
 
       typedef std::stack<std::string> ElementStack;
       ElementStack mElements;
       
+      bool mInSkinningShader;
       bool mInChannel;
       bool mInSequence;
       dtUtil::Log* mLogger;
