@@ -124,7 +124,7 @@ namespace dtAnim
     *         be not valid (wrapper->valid()==false) if the file didn't load correctly.
     * @see SetDataFilePathList()
     * @throw SAXParseException If the file wasn't formatted correctly
-    */   
+    */
    bool Cal3DLoader::Load(const std::string &filename, Cal3DModelData*& data_in)
    {
       std::string path;
@@ -149,11 +149,11 @@ namespace dtAnim
 
       CharacterFileHandler handler;
       coreModel = GetCoreModel(handler, filename, path);
-      if(coreModel)
+      if(coreModel != NULL)
       {
          data_in = new Cal3DModelData(coreModel, filename);
-         LoadModelData(handler, coreModel, data_in);
-         LoadAllTextures(coreModel, path); //this should be a user-level process.
+         LoadModelData(handler, *coreModel, *data_in);
+         LoadAllTextures(*coreModel, path); //this should be a user-level process.
          
          return true;
       }  
@@ -167,19 +167,19 @@ namespace dtAnim
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void Cal3DLoader::LoadModelData(dtAnim::CharacterFileHandler& handler, CalCoreModel* model, Cal3DModelData* modelData)
+   void Cal3DLoader::LoadModelData(dtAnim::CharacterFileHandler& handler, CalCoreModel& model, Cal3DModelData& modelData)
    {
       //create animation wrappers
-      int numAnims = model->getCoreAnimationCount();
-      modelData->GetAnimationWrappers().reserve(numAnims);
+      int numAnims = model.getCoreAnimationCount();
+      modelData.GetAnimationWrappers().reserve(numAnims);
 
       for(int i = 0; i < numAnims; ++i)
       {
-         CalCoreAnimation* anim = model->getCoreAnimation(i);
+         CalCoreAnimation* anim = model.getCoreAnimation(i);
          if(anim)
          {
             AnimationWrapper* pWrapper = new AnimationWrapper(anim->getName(), i);
-            modelData->Add(pWrapper);
+            modelData.Add(pWrapper);
          }
          else
          {
@@ -187,11 +187,14 @@ namespace dtAnim
          }
       }
 
+      modelData.SetShaderGroupName(handler.mShaderGroup);
+      modelData.SetShaderName(handler.mShaderName);
+      
       //register animations
       if(!handler.mAnimationChannels.empty())
       {
          int numAnimatables = handler.mAnimationChannels.size() + handler.mAnimationSequences.size();
-         modelData->GetAnimatables().reserve(numAnimatables);
+         modelData.GetAnimatables().reserve(numAnimatables);
 
          std::vector<CharacterFileHandler::AnimationChannelStruct>::iterator channelIter = handler.mAnimationChannels.begin();
          std::vector<CharacterFileHandler::AnimationChannelStruct>::iterator channelEnd = handler.mAnimationChannels.end();
@@ -199,12 +202,12 @@ namespace dtAnim
          {         
             CharacterFileHandler::AnimationChannelStruct& pStruct = *channelIter;
 
-            int id = model->getCoreAnimationId(pStruct.mAnimationName);
+            int id = model.getCoreAnimationId(pStruct.mAnimationName);
             if(id >= 0 && id < numAnims)
             {
                dtCore::RefPtr<AnimationChannel> pChannel = new AnimationChannel();
 
-               pChannel->SetAnimation(modelData->GetAnimationWrappers()[id].get());
+               pChannel->SetAnimation(modelData.GetAnimationWrappers()[id].get());
 
                pChannel->SetName(pStruct.mName);
                pChannel->SetLooping(pStruct.mIsLooping);
@@ -216,7 +219,7 @@ namespace dtAnim
                pChannel->SetFadeOut(pStruct.mFadeOut);
                pChannel->SetSpeed(pStruct.mSpeed);
 
-               modelData->Add(pChannel.get());
+               modelData.Add(pChannel.get());
             }
             else
             {
@@ -246,8 +249,8 @@ namespace dtAnim
             for (; i != end; ++i)
             {
                const std::string& nameToFind = *i;
-               Cal3DModelData::AnimatableArray::iterator animIter = modelData->GetAnimatables().begin();
-               Cal3DModelData::AnimatableArray::iterator animIterEnd = modelData->GetAnimatables().end();
+               Cal3DModelData::AnimatableArray::iterator animIter = modelData.GetAnimatables().begin();
+               Cal3DModelData::AnimatableArray::iterator animIterEnd = modelData.GetAnimatables().end();
 
                for (; animIter != animIterEnd; ++animIter)
                {
@@ -259,7 +262,7 @@ namespace dtAnim
                }
             }
             
-            modelData->Add(pSequence.get());
+            modelData.Add(pSequence.get());
 
          }
       }
@@ -267,14 +270,14 @@ namespace dtAnim
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void Cal3DLoader::LoadAllTextures(CalCoreModel *coreModel, const std::string &path)
+   void Cal3DLoader::LoadAllTextures(CalCoreModel& coreModel, const std::string &path)
    {
       int materialId;
-      for(materialId = 0; materialId < coreModel->getCoreMaterialCount(); materialId++)
+      for(materialId = 0; materialId < coreModel.getCoreMaterialCount(); materialId++)
       {
          // get the core material
          CalCoreMaterial *pCoreMaterial;
-         pCoreMaterial = coreModel->getCoreMaterial(materialId);
+         pCoreMaterial = coreModel.getCoreMaterial(materialId);
 
          // loop through all maps of the core material
          int mapId;
@@ -323,13 +326,13 @@ namespace dtAnim
       // by simply select a new current material set for its parts. The Cal3D library 
       // is now able to look up the material in the material grid with the given new 
       // material set and the material thread stored in the core model parts.
-      for(materialId = 0; materialId < coreModel->getCoreMaterialCount(); materialId++)
+      for(materialId = 0; materialId < coreModel.getCoreMaterialCount(); materialId++)
       {
          // create the a material thread
-         coreModel->createCoreMaterialThread(materialId);
+         coreModel.createCoreMaterialThread(materialId);
 
          // initialize the material thread
-         coreModel->setCoreMaterialId(materialId, 0, materialId);
+         coreModel.setCoreMaterialId(materialId, 0, materialId);
       }
    }
 

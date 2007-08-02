@@ -74,9 +74,9 @@ namespace dtAnim
          CalCoreModel* GetCoreModel(CharacterFileHandler& handler, const std::string &filename, const std::string &path );
 
          //damned unpleasant place to load texture files.  Needs to be handled some other way
-         void LoadAllTextures(CalCoreModel *model, const std::string &path);
+         void LoadAllTextures(CalCoreModel& model, const std::string &path);
 
-         void LoadModelData(CharacterFileHandler& handler, CalCoreModel* model, Cal3DModelData* modelData);
+         void LoadModelData(CharacterFileHandler& handler, CalCoreModel& model, Cal3DModelData& modelData);
 
          typedef std::map< std::string, osg::ref_ptr<osg::Texture2D> > TextureMap;
          typedef TextureMap::allocator_type::value_type TextureMapping;

@@ -296,20 +296,33 @@ dtCore::RefPtr<osg::Geode> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pW
 
 dtCore::ShaderProgram* AnimNodeBuilder::LoadShaders(Cal3DModelData& modelData, osg::Geode& geode) const
 {
+   static const std::string hardwareSkinningSPGroup = "HardwareSkinning";
    dtCore::ShaderManager& shaderManager = dtCore::ShaderManager::GetInstance();
    dtCore::ShaderProgram* shaderProgram = NULL;
    if (!modelData.GetShaderGroupName().empty())
    {
       dtCore::ShaderGroup* spGroup = shaderManager.FindShaderGroupPrototype(modelData.GetShaderGroupName());
-      if (!modelData.GetShaderName().empty())
+      if (spGroup != NULL)
       {
-         shaderProgram = spGroup->FindShader(modelData.GetShaderName());
-         if (shaderProgram == NULL)
+         if (!modelData.GetShaderName().empty())
          {
-            LOG_ERROR("Shader program \"" + modelData.GetShaderName() + "\" from group \"" 
-                  + modelData.GetShaderGroupName() + "\" was not found, using the default from the group.");
+            shaderProgram = spGroup->FindShader(modelData.GetShaderName());
+            if (shaderProgram == NULL)
+            {
+               LOG_ERROR("Shader program \"" + modelData.GetShaderName() + "\" from group \"" 
+                     + modelData.GetShaderGroupName() + "\" was not found, using the default from the group.");
+               shaderProgram = spGroup->GetDefaultShader();
+               
+               if (shaderProgram == NULL)
+               {
+                  LOG_ERROR("Shader Group \""  + modelData.GetShaderGroupName() 
+                        + "\" was not found, overriding to use the default group.");
+               }
+            }
+         }
+         else
+         {
             shaderProgram = spGroup->GetDefaultShader();
-            
             if (shaderProgram == NULL)
             {
                LOG_ERROR("Shader Group \""  + modelData.GetShaderGroupName() 
@@ -317,22 +330,11 @@ dtCore::ShaderProgram* AnimNodeBuilder::LoadShaders(Cal3DModelData& modelData, o
             }
          }
       }
-      else
-      {
-         shaderProgram = spGroup->GetDefaultShader();
-         if (shaderProgram == NULL)
-         {
-            LOG_ERROR("Shader Group \""  + modelData.GetShaderGroupName() 
-                  + "\" was not found, overriding to use the default group.");
-         }
-      }
-      
    }
    
    //If no shader group is setup, create one.
    if (shaderProgram == NULL)
    {
-      static const std::string hardwareSkinningSPGroup = "HardwareSkinning";
       dtCore::ShaderGroup* defSPGroup = shaderManager.FindShaderGroupPrototype(hardwareSkinningSPGroup);
       if (defSPGroup == NULL)
       {

@@ -13,6 +13,10 @@
    <material fileName="BODY.crf" name="Body Material" />
    <material fileName="Helmet.crf" name="Helmet Material" />
    <material fileName="M16m80.crf" name="M16 Material" />
+   <skinningShader>
+      <shaderGroup>HardwareSkinning</shaderGroup>
+      <shaderName>Default</shaderName>
+   </skinningShader>
    <animationChannel>
       <name>Run</name>
       <animationName>Run</animationName>
