@@ -500,6 +500,7 @@ namespace dtUtil
          
          std::string XYZToMGRS(const osg::Vec3 &pos);
 
+         osg::Vec3 ConvertMGRSToXYZ(const std::string& mgrs);
       private:
          
          Log* mLogger;
