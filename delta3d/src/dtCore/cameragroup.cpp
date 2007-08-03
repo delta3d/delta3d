@@ -1,6 +1,7 @@
 #include <prefix/dtcoreprefix-src.h>
 #include <dtCore/cameragroup.h>
 #include <dtCore/camera.h>
+#include <dtCore/scene.h>
 #include <cassert>
 
 using namespace dtCore;
@@ -31,6 +32,30 @@ bool CameraGroup::RemoveCamera( Camera* camera )
    // Attempt to remove the camera from its FrameBin. This will
    // fail if the Camera has never bee added.
    return mFrameBinMap[ camera->GetFrameBin() ].erase(camera) != 0;
+}
+
+void CameraGroup::ResetCameraScenes(dtCore::Scene* sceneRootChanged)
+{
+   // Loop all over map entries
+   for(  IntCameraSetMap::iterator frameKeyIter = mFrameBinMap.begin();
+      frameKeyIter != mFrameBinMap.end();
+      ++frameKeyIter )
+   {
+      CameraSet& currentCameraSet = frameKeyIter->second;
+
+      // For each bin number, loop over all cameras in the bin
+      for(  CameraSet::iterator cameraIter = currentCameraSet.begin();
+         cameraIter != currentCameraSet.end();
+         ++cameraIter )
+      {
+         if((*cameraIter)->GetScene() == sceneRootChanged)
+         {
+            (*cameraIter)->SetScene(sceneRootChanged);
+         }
+      }
+
+   }
+
 }
 
 void CameraGroup::Frame()

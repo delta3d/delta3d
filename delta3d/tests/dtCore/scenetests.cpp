@@ -23,8 +23,12 @@
 #include <dtCore/scene.h>
 #include <dtCore/camera.h>
 #include <dtCore/light.h>
+#include <dtCore/pointaxis.h>
+#include <dtCore/environment.h>
 #include <dtUtil/stringutils.h>
 
+#include <osg/Group>
+#include <osg/Geode>
 #include <osgDB/DatabasePager>
 #include <osgDB/Registry>
 
@@ -58,6 +62,26 @@ void CoreTests::tearDown()
 void CoreTests::TestScene()
 {
    dtCore::RefPtr<dtCore::Scene> scene = new dtCore::Scene; 
+
+   //test setting scene node
+   dtCore::RefPtr<osg::Group> grp = new osg::Group();
+   grp->addChild(new osg::Group());
+   grp->addChild(new osg::Geode());
+
+   scene->AddDrawable(new dtCore::PointAxis());
+   scene->AddDrawable(new dtCore::Environment());
+
+   int numSceneChildBefore = scene->GetNumberOfAddedDrawable();
+   int numGrpChildBefore = grp->getNumChildren();
+   osg::Group* sceneNode = scene->GetSceneNode();
+   int numSceneNodeChildBefore = sceneNode->getNumChildren();
+
+   scene->SetSceneNode(grp.get());
+
+   CPPUNIT_ASSERT_MESSAGE("After replacing the scene node, we should maintain the same number of drawables", scene->GetNumberOfAddedDrawable() == numSceneChildBefore);
+   CPPUNIT_ASSERT_MESSAGE("After replacing the scene node, we should have the same number of osg nodes", grp->getNumChildren() == (numGrpChildBefore + numSceneNodeChildBefore));
+   CPPUNIT_ASSERT_MESSAGE("After replacing the scene node, our old scene node should not have any children", sceneNode->getNumChildren() == 0);
+
 
    // The 0 light is the InfiniteLight
    const dtCore::Light* light0 = scene->GetLight(0);
