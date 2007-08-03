@@ -31,6 +31,10 @@
 
 #include <osg/Matrix>
 #include <osg/Math>
+#include <osg/Vec3>
+#include <osg/Vec3d>
+#include <osg/Vec3f>
+#include <osg/Matrix>
 
 #include <dtUtil/export.h>
 #include <dtUtil/enumeration.h>
