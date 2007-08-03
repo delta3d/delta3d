@@ -1534,7 +1534,7 @@ namespace dtUtil
       
       ConvertMGRSToUTM(0,0, mgrs, zone, easting, northing);
       SetIncomingCoordinateType(dtUtil::IncomingCoordinateType::UTM);
-      osg::Vec3 tempVec3;
+      osg::Vec3d tempVec3;
       tempVec3 = ConvertToLocalTranslation(osg::Vec3d(easting, northing, 0));
 
       SetIncomingCoordinateType(oldType);
