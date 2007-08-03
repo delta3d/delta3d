@@ -36,6 +36,7 @@ namespace Producer
 namespace dtCore
 {
    class Camera;
+   class Scene;
 
    class DT_CORE_EXPORT CameraGroup : osg::Referenced
    {
@@ -44,6 +45,13 @@ namespace dtCore
    public:
 
       CameraGroup();
+
+      /*
+      *  This function is used by dtCore::Scene to take all the 
+      *  existing cameras that reference that scene and reset its scene root.
+      *  This is done only when the scene's 'SceneNode' has changed.
+      */
+      void ResetCameraScenes(Scene* sceneRootChanged);
 
    protected:
 

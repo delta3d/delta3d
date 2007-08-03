@@ -18,6 +18,7 @@
 #include <dtCore/light.h>
 #include <dtCore/physical.h>
 #include <dtCore/system.h>
+#include <dtCore/cameragroup.h>
 
 #include <dtUtil/deprecationmgr.h>
 #include <dtUtil/log.h>
@@ -183,6 +184,38 @@ Scene::~Scene()
    }
 
    RemoveSender( &System::GetInstance() );
+}
+
+void Scene::SetSceneNode(osg::Group* newSceneNode)
+{
+   //remove all children from our current scene node
+   //and add them to the new scene node
+   unsigned numChildren = mSceneNode->getNumChildren();
+
+   for(unsigned i = 0; i < numChildren; ++i)
+   {
+      osg::Node* child = mSceneNode->getChild(i);
+      newSceneNode->addChild(child);
+   }
+
+   mSceneNode->removeChildren(0, numChildren);
+
+   mSceneNode = newSceneNode;
+
+   //now notify the camera's who reference this scene to reset their handle
+   //to the scene node
+   Camera::GetCameraGroup()->ResetCameraScenes(this);
+
+   //now we need to remove and re-add all the drawables
+   DrawableList dl = mAddedDrawables;
+   RemoveAllDrawables();
+
+   DrawableList::iterator iterEnd = dl.end();
+   for(DrawableList::iterator iter = dl.begin(); iter != iterEnd; ++iter)
+   {
+      AddDrawable((*iter).get());
+   }
+
 }
 
 void Scene::AddDrawable( DeltaDrawable *drawable )
@@ -763,3 +796,4 @@ void Scene::DisablePaging()
 }
 
 }
+

@@ -106,6 +106,15 @@ namespace dtCore
 
       ///Get a pointer to the internal scene node
       osg::Group *GetSceneNode() { return mSceneNode.get(); }
+
+      /*
+      *  This function will remove all children of the current scene node,
+      *  and add them to this new node, and then set the current scene node to 
+      *  be this one.  It then notifies the camera group to change all scene nodes applicable.
+      *  And finally must remove all drawables and re-add then in case they are holding onto the 
+      *  scene root.
+      */
+      void SetSceneNode(osg::Group* newSceneNode);
       
       ///Add a DeltaDrawable to the Scene to be viewed.
       void AddDrawable( DeltaDrawable* drawable );
