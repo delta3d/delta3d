@@ -29,7 +29,6 @@
 #include <set>
 #include <string>
 
-#include <osgSim/DOFTransform>
 #include <osg/Matrix>
 #include <osg/Math>
 
