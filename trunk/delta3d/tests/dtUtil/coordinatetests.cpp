@@ -214,13 +214,16 @@ void CoordinateTests::TestMGRSvsXYZ()
    
    std::string tempString, returnString;
 
-   converter->SetGeoOrigin(0,0,0);
-   converter->SetGeoOriginRotation(0,0);
-   converter->SetOriginLocation(0,0,0);
-   converter->SetMagneticNorthOffset(0);
+   converter->SetGeoOrigin(257,17,35);
+   converter->SetGeoOriginRotation(105,105);
+   converter->SetOriginLocation(2305,8035,10315);
+   converter->SetMagneticNorthOffset(15);
 
    tempString = converter->XYZToMGRS(tempVector);
    returnVector = converter->ConvertMGRSToXYZ(tempString);
+
+   // u have to do your own z coordinate finding, use an isector
+   returnVector[2] = 0;
    
    CPPUNIT_ASSERT(tempVector == returnVector);
    returnString = converter->XYZToMGRS(returnVector);
