@@ -510,6 +510,10 @@ namespace dtHLAGM
       }
       catch(const RTI::Exception& ex)
       {
+         /// clean up the ambassador because we're busted now.
+         delete mRTIAmbassador;
+         mRTIAmbassador = NULL;
+
          std::ostringstream ss;
          ::operator<<(ss, ex);
          throw dtUtil::Exception(ss.str(), __FILE__, __LINE__);
