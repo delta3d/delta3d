@@ -709,8 +709,9 @@ namespace dtEditQt
 
         if(settings.contains(EditorSettings::RIGID_CAMERA))
         {
-            bool rigidCamera = settings.value(EditorSettings::RIGID_CAMERA, QVariant(true)).toBool();
+            bool rigidCamera = settings.value(EditorSettings::RIGID_CAMERA).toBool();
             EditorData::GetInstance().setRigidCamera(rigidCamera);
+            perspView->onEditorPreferencesChanged();
         }
 
         if(settings.contains(EditorSettings::SAVE_MILLISECONDS))
