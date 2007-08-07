@@ -43,8 +43,6 @@
 #include <dtUtil/stringutils.h>
 #include <dtUtil/log.h>
 
-using namespace dtCore;
-
 namespace dtGame
 {
    IMPLEMENT_MANAGEMENT_LAYER(GameManager);
@@ -260,19 +258,19 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   Timer_t GameManager::GetSimulationClockTime() const
+   dtCore::Timer_t GameManager::GetSimulationClockTime() const
    {
       return dtCore::System::GetInstance().GetSimulationClockTime();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   Timer_t GameManager::GetRealClockTime() const
+   dtCore::Timer_t GameManager::GetRealClockTime() const
    {
       return dtCore::System::GetInstance().GetRealClockTime();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::ChangeTimeSettings(double newTime, float newTimeScale, const Timer_t &newClockTime)
+   void GameManager::ChangeTimeSettings(double newTime, float newTimeScale, const dtCore::Timer_t &newClockTime)
    {
       dtCore::System::GetInstance().SetSimulationClockTime(newClockTime);
       dtCore::System::GetInstance().SetSimulationTime(newTime);
@@ -305,18 +303,118 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   void GameManager::PopulateTickMessage(TickMessage& tickMessage,
+         double deltaSimTime, double deltaRealTime, double simulationTime)
+   {
+      tickMessage.SetDeltaSimTime(float(deltaSimTime));
+      tickMessage.SetDeltaRealTime(float(deltaRealTime));
+      tickMessage.SetSimTimeScale(GetTimeScale());
+      tickMessage.SetDestination(&GetMachineInfo());
+      tickMessage.SetSimulationTime(simulationTime);
+   }
+   
+   ///////////////////////////////////////////////////////////////////////////////
    void GameManager::PreFrame(double deltaSimTime, double deltaRealTime)
    {
+      //statistics stuff.
       // stats information used to track statistics per fragment (usually about 1 second)
-      Timer statsTickClock;
-      Timer_t frameTickStart(0);
-      Timer_t frameTickStartCurrent(0);
-      bool logComponents = mStatisticsInterval > 0 && mDoStatsOnTheComponents;
+      dtCore::Timer_t frameTickStart(0);
       bool logActors = mStatisticsInterval > 0 && mDoStatsOnTheActors;
 
       if (mStatisticsInterval > 0)
-         frameTickStart = statsTickClock.Tick();
+         frameTickStart = mStatsTickClock.Tick();
 
+      DoSendNetworkMessages();
+      
+      if (mMapChangeStateData.valid())
+      {
+         mMapChangeStateData->ContinueMapChange();
+         if (mMapChangeStateData->GetCurrentState() == MapChangeStateData::MapChangeState::IDLE)
+         {
+            mLoadedMaps = mMapChangeStateData->GetNewMapNames();
+         }
+      }
+
+      double simulationTime = dtCore::System::GetInstance().GetSimulationTime();
+
+      dtCore::RefPtr<TickMessage> tick;
+      GetMessageFactory().CreateMessage(MessageType::TICK_LOCAL, tick);
+      PopulateTickMessage(*tick, deltaSimTime, deltaRealTime, simulationTime);
+      
+      dtCore::RefPtr<TickMessage> tickRemote;
+      GetMessageFactory().CreateMessage(MessageType::TICK_REMOTE, tickRemote);
+      PopulateTickMessage(*tickRemote, deltaSimTime, deltaRealTime, simulationTime);
+
+      SendMessage(*tick);
+      SendMessage(*tickRemote);
+
+      ProcessTimers(mRealTimeTimers, GetRealClockTime());
+      ProcessTimers(mSimulationTimers, GetSimulationClockTime());
+
+      DoSendMessages();
+
+      RemoveDeletedActors();
+
+      // STATISTICS - If fragment time occured, dump out the GM statistics
+      if (mStatisticsInterval > 0)
+      {
+         mStatsNumFrames++;
+         // Compute GM process time.  Note - You can't use GetRealClockTime() for GM work time
+         // because mClock on system is only updated at the start of the whole tick.
+         dtCore::Timer_t frameTickStop = mStatsTickClock.Tick();
+         double fragmentDelta = mStatsTickClock.DeltaMicro(mStatsLastFragmentDump, frameTickStop);
+         mStatsCumGMProcessTime += dtCore::Timer_t(mStatsTickClock.DeltaMicro(frameTickStart, frameTickStop));
+
+         if (fragmentDelta < 0) // handle wierd case of wrap around (just to be safe)
+            mStatsLastFragmentDump = frameTickStop;
+
+         else if (fragmentDelta >= (mStatisticsInterval * 1000000))
+         {
+            dtCore::Timer_t realTimeElapsed = dtCore::Timer_t(mStatsTickClock.DeltaMicro(mStatsLastFragmentDump, frameTickStop));
+            DebugStatisticsPrintOut(realTimeElapsed);
+            mStatsLastFragmentDump  = frameTickStop;
+         }
+      }
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void GameManager::RemoveDeletedActors()
+   {
+      // DELETE ACTORS
+      unsigned int deleteListSize = mDeleteList.size();
+      for (unsigned int i = 0; i < deleteListSize; ++i)
+      {
+         GameActorProxy& gameActorProxy = *mDeleteList[i];
+
+         // Notify the Game Actor that it was removed from the world.
+         // It could listen for the ACTOR_DELETE_MESSAGE instead. 
+         gameActorProxy.OnRemovedFromWorld();
+
+         std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> >::iterator itor 
+            = mGameActorProxyMap.find(gameActorProxy.GetId());
+
+         dtCore::UniqueId id;
+         if (itor != mGameActorProxyMap.end())
+         {
+            id = itor->first;
+            UnregisterAllMessageListenersForActor(*itor->second);
+            mGameActorProxyMap.erase(itor);
+            RemoveActorFromScene(gameActorProxy);
+         }
+
+         gameActorProxy.SetGameManager(NULL);
+
+      }
+
+      mDeleteList.clear();
+   }
+   
+   ///////////////////////////////////////////////////////////////////////////////
+   void GameManager::DoSendNetworkMessages()
+   {
+      //statistics stuff.
+      bool logComponents = mStatisticsInterval > 0 && mDoStatsOnTheComponents;
+      dtCore::Timer_t frameTickStartCurrent(0);
       // SEND MESSAGES - Forward Send Messages to all components (no actors)
       while (!mSendNetworkMessageQueue.empty())
       {
@@ -333,20 +431,25 @@ namespace dtGame
 
          try
          {
-            for (std::vector<dtCore::RefPtr<GMComponent> >::iterator i = mComponentList.begin(); i != mComponentList.end(); ++i)
+            std::vector<dtCore::RefPtr<GMComponent> >::iterator i, iend;
+            i = mComponentList.begin();
+            iend = mComponentList.end();
+            for (;i != iend; ++i)
             {
                /////////////////////////
                // Statistics information
                if (logComponents)
-                  frameTickStartCurrent = statsTickClock.Tick();
+                  frameTickStartCurrent = mStatsTickClock.Tick();
 
-               (*i)->DispatchNetworkMessage(*message);
+               GMComponent& component = **i;
+
+               component.DispatchNetworkMessage(*message);
 
                // Statistics information
                if(logComponents)
                {
-                  double frameTickDelta = statsTickClock.DeltaSec(frameTickStartCurrent, statsTickClock.Tick());
-                  UpdateDebugStats((*i)->GetUniqueId(),(*i)->GetName(), frameTickDelta, true, false);
+                  double frameTickDelta = mStatsTickClock.DeltaSec(frameTickStartCurrent, mStatsTickClock.Tick());
+                  UpdateDebugStats(component.GetUniqueId(),component.GetName(), frameTickDelta, true, false);
                }
             }
          }
@@ -354,78 +457,127 @@ namespace dtGame
          {
             ex.LogException(dtUtil::Log::LOG_ERROR, *mLogger);
          }
-      }
+      }      
+   }
 
-      double simulationTime = dtCore::System::GetInstance().GetSimulationTime();
-
-      dtCore::RefPtr<Message> tick = GetMessageFactory().CreateMessage(MessageType::TICK_LOCAL);
-
-      // Force Tick Local message
-      TickMessage& tickMessage = static_cast<TickMessage&>(*tick);
-      tickMessage.SetDeltaRealTime((float)deltaRealTime);
-      tickMessage.SetDeltaSimTime((float)deltaSimTime);
-      tickMessage.SetSimTimeScale(GetTimeScale());
-      tickMessage.SetDestination(&GetMachineInfo());
-      tickMessage.SetSimulationTime(simulationTime);
-
-      dtCore::RefPtr<Message> tickRemote = GetMessageFactory().CreateMessage(MessageType::TICK_REMOTE);
-
-      // Force Tick Remote Message
-      TickMessage& tickRemoteMessage = static_cast<TickMessage&>(*tickRemote);
-      tickRemoteMessage.SetDeltaRealTime((float)deltaRealTime);
-      tickRemoteMessage.SetDeltaSimTime((float)deltaSimTime);
-      tickRemoteMessage.SetSimTimeScale(GetTimeScale());
-      tickRemoteMessage.SetDestination(&GetMachineInfo());
-      tickRemoteMessage.SetSimulationTime(simulationTime);
-
-      if (mMapChangeStateData.valid())
+   ///////////////////////////////////////////////////////////////////////////////
+   void GameManager::DoSendMessageToComponents(const Message& message)
+   {
+      //statistics stuff.
+      bool logComponents = mStatisticsInterval > 0 && mDoStatsOnTheComponents;
+      dtCore::Timer_t frameTickStartCurrent(0);
+      bool isATickLocalMessage = (message.GetMessageType() == MessageType::TICK_LOCAL);
+      
+      // Components get messages first
+      std::vector<dtCore::RefPtr<GMComponent> >::iterator i, iend;
+      i = mComponentList.begin();
+      iend = mComponentList.end();
+      for (;i != iend; ++i)
       {
-         mMapChangeStateData->ContinueMapChange();
-         if (mMapChangeStateData->GetCurrentState() == MapChangeStateData::MapChangeState::IDLE)
+         // Statistics information
+         if (logComponents)
+            frameTickStartCurrent = mStatsTickClock.Tick();
+
+         GMComponent& component = **i;
+
+         try
          {
-            mLoadedMaps = mMapChangeStateData->GetNewMapNames();
+            component.ProcessMessage(message);
+         }
+         catch (const dtUtil::Exception& ex)
+         {
+            ex.LogException(dtUtil::Log::LOG_ERROR, *mLogger);
+         }
+
+         // Statistics information
+         if (logComponents)
+         {
+            double frameTickDelta = mStatsTickClock.DeltaSec(frameTickStartCurrent, mStatsTickClock.Tick());
+            UpdateDebugStats(component.GetUniqueId(), component.GetName(), frameTickDelta, true, isATickLocalMessage);
          }
       }
-
-      SendMessage(*tick);
-      SendMessage(*tickRemote);
-
-      ProcessTimers(mRealTimeTimers, GetRealClockTime());
-      ProcessTimers(mSimulationTimers, GetSimulationClockTime());
-
+   }
+   
+   ///////////////////////////////////////////////////////////////////////////////
+   void GameManager::DoSendMessages()
+   {
+      //statistics stuff.
+      bool logActors = mStatisticsInterval > 0 && mDoStatsOnTheActors;
+      dtCore::Timer_t frameTickStartCurrent(0);
       // PROCESS MESSAGES - Send all Process messages to components and interested actors
       while (!mSendMessageQueue.empty())
       {
          mStatsNumProcMessages += 1;
 
          // Forward to Components first
-         dtCore::RefPtr<const Message> message = mSendMessageQueue.front();
+         dtCore::RefPtr<const Message> messageRef = mSendMessageQueue.front();
          mSendMessageQueue.pop();
          
-         if (!message.valid())
+         if (!messageRef.valid())
          {
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, 
                "Message in send queue is NULL.  Something is majorly wrong with the GameManager.");
             continue;
          }
          
-         bool isATickLocalMessage = (tick.get() == message.get());
-         //if(logComponents || logActors)
-         //{
-            //const TickMessage* tickType = dynamic_cast<const TickMessage*>(message.get());
-            //if(tickType != NULL)    isATickLocalMessage = true;
-         //}
+         const Message& message = *messageRef;
+         
+         DoSendMessageToComponents(message);
+         
+         InvokeGlobalInvokables(message);
+         
+         // ABOUT ACTOR - The actor itself and others registered against a particular actor
+         if (!message.GetAboutActorId().ToString().empty())
+         {
+            //if we have an about actor, first try to send it to the actor itself
+            GameActorProxy* aboutActor = FindGameActorById(message.GetAboutActorId());
+            if (aboutActor != NULL && aboutActor->IsInGM())
+            {
+               InvokeForActorInvokables(message, *aboutActor);
+            }
+            
+            InvokeOtherActorInvokables(message);
+         }
+      }
+   }
 
-         // LOOP THROUGH COMPONENTS
-         for (std::vector<dtCore::RefPtr<GMComponent> >::iterator i = mComponentList.begin(); i != mComponentList.end(); ++i)
+   ///////////////////////////////////////////////////////////////////////////////
+   void GameManager::InvokeGlobalInvokables(const Message& message)
+   {
+      //statistics stuff.
+      bool logActors = mStatisticsInterval > 0 && mDoStatsOnTheActors;
+      dtCore::Timer_t frameTickStartCurrent(0);
+      bool isATickLocalMessage = (message.GetMessageType() == MessageType::TICK_LOCAL);
+      
+      // GLOBAL INVOKABLES - Process it on globally registered invokables
+      const MessageType &msgType = message.GetMessageType();
+      std::multimap<const MessageType*, std::pair<dtCore::RefPtr<GameActorProxy>, std::string> >::iterator itor
+         = mGlobalMessageListeners.find(&msgType);
+
+      while (itor != mGlobalMessageListeners.end() && itor->first == &msgType)
+      {
+         std::pair<dtCore::RefPtr<GameActorProxy>, std::string >& listener = itor->second;
+         ++itor;
+
+         // hold onto the actor in a refptr so that the stats code
+         // won't crash if the actor unregisters for the message. 
+         dtCore::RefPtr<GameActorProxy> listenerActorProxy = listener.first;
+         
+         Invokable* invokable = NULL;
+            
+         if (listenerActorProxy->IsInGM())
+            invokable = listenerActorProxy->GetInvokable(listener.second);
+         
+
+         if (invokable != NULL)
          {
             // Statistics information
-            if (logComponents)
-               frameTickStartCurrent = statsTickClock.Tick();
+            if (logActors)
+               frameTickStartCurrent = mStatsTickClock.Tick();
 
             try
             {
-               (*i)->ProcessMessage(*message);
+               invokable->Invoke(message);
             }
             catch (const dtUtil::Exception& ex)
             {
@@ -433,182 +585,152 @@ namespace dtGame
             }
 
             // Statistics information
-            if (logComponents)
+            if (logActors)
             {
-               double frameTickDelta = statsTickClock.DeltaSec(frameTickStartCurrent, statsTickClock.Tick());
-               UpdateDebugStats((*i)->GetUniqueId(),(*i)->GetName(), frameTickDelta, true, isATickLocalMessage);
+               double frameTickDelta 
+               = mStatsTickClock.DeltaSec(frameTickStartCurrent, mStatsTickClock.Tick());
+               UpdateDebugStats(listenerActorProxy->GetId(), 
+                     listenerActorProxy->GetName(), frameTickDelta, 
+                     false, isATickLocalMessage);
             }
          }
-
-         // GLOBAL INVOKABLES - Process it on globally registered invokables
-         const MessageType &msgType = message->GetMessageType();
-         std::multimap<const MessageType*, std::pair<dtCore::RefPtr<GameActorProxy>, std::string> >::iterator  itor
-            = mGlobalMessageListeners.find(&msgType);
-
-         while (itor != mGlobalMessageListeners.end() && itor->first == &msgType)
+         else
          {
-            std::pair<dtCore::RefPtr<GameActorProxy>, std::string >& listener = itor->second;
-            // hold onto the actor in a refptr so that the stats code
-            // won't crash if the actor unregisters for the message. 
-            dtCore::RefPtr<GameActorProxy> listenerActorProxy = listener.first;
-            Invokable* invokable = listener.first->GetInvokable(listener.second);
-            ++itor;
-
-            if (invokable != NULL)
-            {
-               // Statistics information
-               if (logActors)
-                  frameTickStartCurrent = statsTickClock.Tick();
-
-               try
-               {
-                  invokable->Invoke(*message);
-               }
-               catch (const dtUtil::Exception& ex)
-               {
-                  ex.LogException(dtUtil::Log::LOG_ERROR, *mLogger);
-               }
-
-               // Statistics information
-               if (logActors)
-               {
-                  double frameTickDelta = statsTickClock.DeltaSec(frameTickStartCurrent, statsTickClock.Tick());
-                  UpdateDebugStats(listenerActorProxy->GetId(), listenerActorProxy->GetName(), frameTickDelta, false, isATickLocalMessage);
-               }
-            }
-            else
+            if (listenerActorProxy->IsInGM())
             {
                if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_WARNING))
                   mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
-                                      "Invokable named %s is registered as a listener, but Proxy %s does not have an invokable by that name.",
-                                      listener.second.c_str(), listener.first->GetActorType().GetName().c_str());
+                                      "Invokable named %s is registered as a listener, but "
+                                      "Proxy %s does not have an invokable by that name.",
+                                      listener.second.c_str(), 
+                                      listener.first->GetActorType().GetName().c_str());
             }
-         }
-
-         // ABOUT ACTOR - The actor itself and others registered against a particular actor
-         if (!message->GetAboutActorId().ToString().empty())
-         {
-            //if we have an about actor, first try to send it to the actor itself
-            GameActorProxy* aboutActor = FindGameActorById(message->GetAboutActorId());
-            if (aboutActor != NULL)
+            else
             {
-               std::vector<dtGame::Invokable*> aboutActorInvokables;
-
-               aboutActor->GetMessageHandlers(message->GetMessageType(), aboutActorInvokables);
-               unsigned int aboutActorsSize = aboutActorInvokables.size(); // checking size on vector is slow :(
-               for (unsigned i = 0; i < aboutActorsSize; ++i)
+               if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                {
-                  // Statistics information
-                  if (logActors)
-                     frameTickStartCurrent = statsTickClock.Tick();
-
-                  try
-                  {
-                     aboutActorInvokables[i]->Invoke(*message);
-                  }
-                  catch (const dtUtil::Exception& ex)
-                  {
-                     ex.LogException(dtUtil::Log::LOG_ERROR, *mLogger);
-                  }
-
-                  // Statistics information
-                  if (logActors)
-                  {
-                     double frameTickDelta = statsTickClock.DeltaSec(frameTickStartCurrent, statsTickClock.Tick());
-                     UpdateDebugStats(aboutActor->GetId(), aboutActor->GetName(), frameTickDelta, false, false);
-                  }
+                  mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                                      "Invokable named %s is registered as a listener, "
+                                      "but Proxy %s is no longer in the GM and is probably "
+                                      "being deleted.",
+                                      listener.second.c_str(), 
+                                      listenerActorProxy->GetActorType().GetName().c_str());
                }
             }
-
-            //next, sent it to all actors listening to that actor for that message type.
-            // TODO - This should be refactored like we did for the Global Invokables a few lines up. It should work with the map directly instead of filling lists repeatedly
-            std::vector<std::pair<GameActorProxy*, std::string > > toFill;
-            GetRegistrantsForMessagesAboutActor(message->GetMessageType(), message->GetAboutActorId(), toFill);
-            unsigned int toFillSize = toFill.size(); 
-            for (unsigned i = 0; i < toFillSize; ++i)
-            {
-               std::pair<GameActorProxy*, std::string >& listener = toFill[i];
-               Invokable* invokable = listener.first->GetInvokable(listener.second);
-               if (invokable != NULL)
-               {
-                  // Statistics information
-                  if (logActors)
-                     frameTickStartCurrent = statsTickClock.Tick();
-                  try
-                  {
-                     invokable->Invoke(*message);
-                  }
-                  catch (const dtUtil::Exception& ex)
-                  {
-                     ex.LogException(dtUtil::Log::LOG_ERROR, *mLogger);
-                  }                  
-
-                  if (logActors)
-                  {
-                     double frameTickDelta = statsTickClock.DeltaSec(frameTickStartCurrent, statsTickClock.Tick());
-                     UpdateDebugStats(listener.first->GetId(), listener.first->GetName(), frameTickDelta, false, false);
-                  }
-               }
-               else
-               {
-                  if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_WARNING))
-                     mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
-                                         "Invokable named %s is registered as a listener, but Proxy %s does not have an invokable by that name.",
-                                         listener.second.c_str(), listener.first->GetActorType().GetName().c_str());
-               }
-            }
-         }
-      }
-
-      // DELETE ACTORS
-      unsigned int deleteListSize = mDeleteList.size();
-      for (unsigned int i = 0; i < deleteListSize; ++i)
-      {
-         GameActorProxy& gameActorProxy = *mDeleteList[i];
-
-         // Notify the Game Actor that it was removed from the world.
-         // It could listen for the ACTOR_DELETE_MESSAGE instead. 
-         gameActorProxy.OnRemovedFromWorld();
-
-         std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> >::iterator itor = mGameActorProxyMap.find(gameActorProxy.GetId());
-
-         dtCore::UniqueId id;
-         if (itor != mGameActorProxyMap.end())
-         {
-            id = itor->first;
-            UnregisterAllMessageListenersForActor(*itor->second);
-            mGameActorProxyMap.erase(itor);
-            RemoveActorFromScene(gameActorProxy);
-         }
-
-         gameActorProxy.SetGameManager(NULL);
-
-      }
-
-      mDeleteList.clear();
-
-      // STATISTICS - If fragment time occured, dump out the GM statistics
-      if (mStatisticsInterval > 0)
-      {
-         mStatsNumFrames++;
-         // Compute GM process time.  Note - You can't use GetRealClockTime() for GM work time
-         // because mClock on system is only updated at the start of the whole tick.
-         Timer_t frameTickStop = statsTickClock.Tick();
-         double fragmentDelta = statsTickClock.DeltaMicro(mStatsLastFragmentDump, frameTickStop);
-         mStatsCumGMProcessTime += dtCore::Timer_t(statsTickClock.DeltaMicro(frameTickStart, frameTickStop));
-
-         if (fragmentDelta < 0) // handle wierd case of wrap around (just to be safe)
-            mStatsLastFragmentDump = frameTickStop;
-
-         else if (fragmentDelta >= (mStatisticsInterval * 1000000))
-         {
-            Timer_t realTimeElapsed = dtCore::Timer_t(statsTickClock.DeltaMicro(mStatsLastFragmentDump, frameTickStop));
-            DebugStatisticsPrintOut(realTimeElapsed);
-            mStatsLastFragmentDump  = frameTickStop;
          }
       }
    }
+   
+   ///////////////////////////////////////////////////////////////////////////////
+   void GameManager::InvokeForActorInvokables(const Message& message, GameActorProxy& aboutActor)
+   {
+      //statistics stuff.
+      bool logActors = mStatisticsInterval > 0 && mDoStatsOnTheActors;
+      dtCore::Timer_t frameTickStartCurrent(0);
+      
+      std::vector<dtGame::Invokable*> aboutActorInvokables;
 
+      aboutActor.GetMessageHandlers(message.GetMessageType(), aboutActorInvokables);
+      
+      std::vector<dtGame::Invokable*>::iterator i, iend;
+      i = aboutActorInvokables.begin();
+      iend = aboutActorInvokables.end();
+      
+      for (;i != iend; ++i)
+      {
+         // Statistics information
+         if (logActors)
+            frameTickStartCurrent = mStatsTickClock.Tick();
+
+         try
+         {
+            (*i)->Invoke(message);
+         }
+         catch (const dtUtil::Exception& ex)
+         {
+            ex.LogException(dtUtil::Log::LOG_ERROR, *mLogger);
+         }
+
+         // Statistics information
+         if (logActors)
+         {
+            double frameTickDelta = mStatsTickClock.DeltaSec(frameTickStartCurrent, 
+                  mStatsTickClock.Tick());
+            UpdateDebugStats(aboutActor.GetId(), aboutActor.GetName(), 
+                  frameTickDelta, false, false);
+         }
+      }
+   }
+   
+   ///////////////////////////////////////////////////////////////////////////////
+   void GameManager::InvokeOtherActorInvokables(const Message& message)
+   {
+      //statistics stuff.
+      bool logActors = mStatisticsInterval > 0 && mDoStatsOnTheActors;
+      dtCore::Timer_t frameTickStartCurrent(0);
+
+      //next, sent it to all actors listening to that actor for that message type.
+      // TODO - This should be refactored like we did for the Global 
+      // Invokables a few lines up. It should work with the map directly instead of filling lists repeatedly
+      std::vector<std::pair<GameActorProxy*, std::string > > toFill;
+      GetRegistrantsForMessagesAboutActor(message.GetMessageType(), message.GetAboutActorId(), toFill);
+
+      std::vector<std::pair<GameActorProxy*, std::string > >::iterator i, iend;
+      i = toFill.begin();
+      iend = toFill.end();
+      for (;i != iend; ++i)
+      {
+         std::pair<GameActorProxy*, std::string >& listener = *i;
+         GameActorProxy& currentProxy = *listener.first;
+         Invokable* invokable = NULL;
+
+         /// Don't want to invoke
+         if (currentProxy.IsInGM()) 
+            invokable = currentProxy.GetInvokable(listener.second);
+         
+         if (invokable != NULL)
+         {
+            // Statistics information
+            if (logActors)
+               frameTickStartCurrent = mStatsTickClock.Tick();
+            
+            try
+            {
+               invokable->Invoke(message);
+            }
+            catch (const dtUtil::Exception& ex)
+            {
+               ex.LogException(dtUtil::Log::LOG_ERROR, *mLogger);
+            }                  
+
+            if (logActors)
+            {
+               double frameTickDelta = mStatsTickClock.DeltaSec(frameTickStartCurrent, mStatsTickClock.Tick());
+               UpdateDebugStats(currentProxy.GetId(), currentProxy.GetName(), frameTickDelta, false, false);
+            }
+         }
+         else if (currentProxy.IsInGM())
+         {
+            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_WARNING))
+            {
+               mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+                                   "Invokable named %s is registered as a listener, but Proxy %s does not have an invokable by that name.",
+                                   listener.second.c_str(), currentProxy.GetActorType().GetName().c_str());
+            }
+         }
+         else
+         {
+            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            {
+               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                                   "Invokable named %s is registered as a listener, but Proxy %s is no longer in the GM and is probably being deleted.",
+                                   listener.second.c_str(), currentProxy.GetActorType().GetName().c_str());
+            }
+         }
+      }
+
+   }
+   
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::PostFrame()
    {
@@ -846,7 +968,7 @@ namespace dtGame
          if (publish)
             PublishActor(gameActorProxy);
 
-         gameActorProxy.InvokeEnteredWorld();         
+         gameActorProxy.InvokeEnteredWorld();
       }
       catch (const dtUtil::Exception& ex)
       {
@@ -1429,7 +1551,7 @@ namespace dtGame
       else
          t.aboutActor = aboutActor->GetId();
 
-      t.interval = (Timer_t)(time * 1e6);
+      t.interval = dtCore::Timer_t(time * 1e6);
       if(realTime)
          t.time = GetRealClockTime() + t.interval;
       else
@@ -1485,7 +1607,9 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::GetRegistrantsForMessagesAboutActor(const MessageType& type, const dtCore::UniqueId& targetActorId, std::vector<std::pair<GameActorProxy*, std::string > >& toFill) const
+   void GameManager::GetRegistrantsForMessagesAboutActor(const MessageType& type, 
+         const dtCore::UniqueId& targetActorId, std::vector<std::pair<GameActorProxy*, 
+         std::string > >& toFill) const
    {
       toFill.clear();
       toFill.reserve(mActorMessageListeners.size());
@@ -1508,13 +1632,17 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::RegisterForMessages(const MessageType& type, GameActorProxy& proxy, const std::string& invokableName)
+   void GameManager::RegisterForMessages(const MessageType& type, GameActorProxy& proxy, 
+         const std::string& invokableName)
    {
-      mGlobalMessageListeners.insert(std::make_pair(&type, std::make_pair(dtCore::RefPtr<GameActorProxy>(&proxy), invokableName)));
+      mGlobalMessageListeners.insert(
+            std::make_pair(&type, 
+                  std::make_pair(dtCore::RefPtr<GameActorProxy>(&proxy), invokableName)));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::UnregisterForMessages(const MessageType& type, GameActorProxy& proxy, const std::string& invokableName)
+   void GameManager::UnregisterForMessages(const MessageType& type, GameActorProxy& proxy, 
+         const std::string& invokableName)
    {
       std::multimap<const MessageType*, std::pair<dtCore::RefPtr<GameActorProxy>, std::string> >::iterator itor
          = mGlobalMessageListeners.find(&type);
@@ -1534,7 +1662,9 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::RegisterForMessagesAboutActor(const MessageType& type, const dtCore::UniqueId& targetActorId, GameActorProxy& proxy, const std::string& invokableName)
+   void GameManager::RegisterForMessagesAboutActor(const MessageType& type, 
+         const dtCore::UniqueId& targetActorId, GameActorProxy& proxy, 
+         const std::string& invokableName)
    {
       std::map<const MessageType*, std::multimap<dtCore::UniqueId, std::pair<dtCore::RefPtr<GameActorProxy>, std::string> > >::iterator itor
          = mActorMessageListeners.find(&type);
@@ -1557,7 +1687,9 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::UnregisterForMessagesAboutActor(const MessageType& type, const dtCore::UniqueId& targetActorId, GameActorProxy& proxy, const std::string& invokableName)
+   void GameManager::UnregisterForMessagesAboutActor(const MessageType& type, 
+         const dtCore::UniqueId& targetActorId, GameActorProxy& proxy, 
+         const std::string& invokableName)
    {
       std::map<const MessageType*, std::multimap<dtCore::UniqueId, std::pair<dtCore::RefPtr<GameActorProxy>, std::string> > >::iterator itor
          = mActorMessageListeners.find(&type);
@@ -1656,7 +1788,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::ProcessTimers(std::set<TimerInfo> &listToProcess, Timer_t clockTime)
+   void GameManager::ProcessTimers(std::set<TimerInfo> &listToProcess, dtCore::Timer_t clockTime)
    {
       std::set<TimerInfo>::iterator itor;
       std::set<TimerInfo> repeatingTimers;
