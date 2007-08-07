@@ -58,12 +58,21 @@ namespace dtGame
       mKeyboardListener = new InputComponentKeyboardListener(*this);
    }
 
+   ////////////////////////////////////////////////////////////////////
    void BaseInputComponent::OnAddedToGM() 
    { 
       //enable the keyboard input.
       dtCore::DeltaWin* win = GetGameManager()->GetApplication().GetWindow();
       win->GetMouse()->AddMouseListener(mMouseListener.get());
       win->GetKeyboard()->AddKeyboardListener(mKeyboardListener.get());
+   }
+
+   ////////////////////////////////////////////////////////////////////
+   void BaseInputComponent::OnRemovedFromGM()
+   {
+      dtCore::DeltaWin* win = GetGameManager()->GetApplication().GetWindow();
+      win->GetMouse()->RemoveMouseListener(mMouseListener.get());
+      win->GetKeyboard()->RemoveKeyboardListener(mKeyboardListener.get());
    }
 
    ////////////////////////////////////////////////////////////////////

@@ -55,6 +55,11 @@ namespace dtGame
          virtual void OnAddedToGM();
 
          /**
+          * Called when this component is removed from the GM
+          */
+         virtual void OnRemovedFromGM();
+
+         /**
           * Gets the mouse listener of this input component. Not typically useful externally.
           * @return mMouseListener
           */
