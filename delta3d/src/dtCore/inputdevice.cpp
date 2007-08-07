@@ -132,7 +132,7 @@ namespace dtCore
    {
       for(std::vector< RefPtr<InputDeviceFeature> >::iterator it = mFeatures.begin();
           it != mFeatures.end();
-          it++)
+          ++it)
       {
          if((*it).get() == feature)
          {
@@ -142,7 +142,7 @@ namespace dtCore
             {
                for(std::vector< RefPtr<Button> >::iterator bit = mButtons.begin();
                    bit != mButtons.end();
-                   bit++)
+                   ++bit)
                {
                   if((*bit).get() == feature)
                   {
@@ -156,7 +156,7 @@ namespace dtCore
             {
                for(std::vector< RefPtr<Axis> >::iterator ait = mAxes.begin();
                    ait != mAxes.end();
-                   ait++)
+                   ++ait)
                {
                   if((*ait).get() == feature)
                   {
@@ -220,7 +220,7 @@ namespace dtCore
          ///\todo Grasp why this is here
          for(it = GetOwner()->mButtonListeners.begin();
              it != GetOwner()->mButtonListeners.end();
-             it++)
+             ++it)
          {
             (*it)->ButtonStateChanged(this, !mState, mState);
          }
@@ -278,7 +278,7 @@ namespace dtCore
          AxisListenerList::iterator it;
          for(it = GetOwner()->mAxisListeners.begin();
              it != GetOwner()->mAxisListeners.end();
-             it++)
+             ++it)
          {
             (*it)->AxisStateChanged(this, oldState, mState, delta);
          }

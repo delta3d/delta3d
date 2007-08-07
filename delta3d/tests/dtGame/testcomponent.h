@@ -21,6 +21,8 @@
 #ifndef DELTA_TESTCOMPONENT
 #define DELTA_TESTCOMPONENT
 
+#include <cppunit/extensions/HelperMacros.h>
+
 #include <dtGame/gmcomponent.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/message.h>
@@ -50,6 +52,7 @@ class TestComponent: public dtGame::GMComponent
 
       virtual void OnRemovedFromGM()
       {
+         CPPUNIT_ASSERT(GetGameManager() != NULL);
          mWasOnRemovedFromGMCalled = true;
       }
 
