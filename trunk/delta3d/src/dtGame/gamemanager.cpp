@@ -650,8 +650,8 @@ namespace dtGame
       {
          if(i->get() == &component)
          {
-            component.SetGameManager(NULL);
             component.OnRemovedFromGM();
+            component.SetGameManager(NULL);
             mComponentList.erase(i);
             return;
          }
