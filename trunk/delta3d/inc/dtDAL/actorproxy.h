@@ -177,6 +177,16 @@ namespace dtDAL
           * is not found.
           */
          ActorProperty* GetProperty(const std::string &name);
+         
+         /**
+          * Templated version of GetProperty (non-const) that auto casts the property to the desired type.
+          * Warning: this uses a static cast, so you are able to shoot yourself in the foot.
+          */
+         template<class PropertyType>
+         void GetProperty(const std::string &name, PropertyType*& property)
+         {
+            property = static_cast<PropertyType*>(GetProperty(name));
+         }
            
          /**
           * Gets a property of the requested name. (const version)
@@ -185,6 +195,16 @@ namespace dtDAL
           * is not found.
           */
          const ActorProperty* GetProperty(const std::string &name) const;
+
+         /**
+          * Templated version of GetProperty (const) that auto casts the property to the desired type.
+          * Warning: this uses a static cast, so you are able to shoot yourself in the foot.
+          */
+         template<class PropertyType>
+         void GetProperty(const std::string &name, const PropertyType*& property) const
+         {
+            property = static_cast<const PropertyType*>(GetProperty(name));
+         }
 
          /**
           * Gets a ResourceDescriptor of the requested property name.

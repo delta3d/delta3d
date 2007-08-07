@@ -68,6 +68,7 @@ namespace dtGame
    //class Message;
    class GMComponent;
    class MapChangeStateData;
+   class TickMessage;
 
    class DT_GAME_EXPORT GameManager : public dtCore::Base 
    {
@@ -878,8 +879,18 @@ namespace dtGame
          virtual void PreFrame(double deltaSimTime, double deltaRealTime);
 
          /// Implements the functionality that will happen on the PostFrame event
-         virtual void PostFrame();        
-      
+         virtual void PostFrame();
+
+         void PopulateTickMessage(TickMessage& tickMessage,
+               double deltaSimTime, double deltaRealTime, double simulationTime);
+         void DoSendNetworkMessages();
+         void DoSendMessages();
+         void DoSendMessageToComponents(const Message& message);
+         void InvokeGlobalInvokables(const Message& message);
+         void InvokeForActorInvokables(const Message& message, GameActorProxy& aboutActor);
+         void InvokeOtherActorInvokables(const Message& message);
+         void RemoveDeletedActors();
+
       private:
          class LogDebugInformation : public osg::Referenced
          {
@@ -976,18 +987,19 @@ namespace dtGame
 
          ////////////////////////////////////////////////
          // statistics data
+         dtCore::Timer        mStatsTickClock;
          dtCore::Timer_t      mStatsLastFragmentDump;
          long                 mStatsNumProcMessages;
          long                 mStatsNumSendNetworkMessages;
          long                 mStatsNumFrames;
          dtCore::Timer_t      mStatsCumGMProcessTime;
-         int                  mStatisticsInterval;                                  /// how often we print the information out.
-         std::string          mFilePathToPrintDebugInformation;                     /// where the file is located at that we print out to
-         bool                 mPrintFileToConsole;                                  /// if the information goes to console or file
-         bool                 mDoStatsOnTheComponents;                              /// do we fill in the information for the components.
-         bool                 mDoStatsOnTheActors;                                  /// Do we fill in information for the actors
-         //std::vector<dtCore::RefPtr<LogDebugInformation> > mDebugLoggerInformation; /// hold onto all the information.
-         std::map<dtCore::UniqueId, dtCore::RefPtr<LogDebugInformation> > mDebugLoggerInformation; /// hold onto all the information.
+         int                  mStatisticsInterval;                                  ///< how often we print the information out.
+         std::string          mFilePathToPrintDebugInformation;                     ///< where the file is located at that we print out to
+         bool                 mPrintFileToConsole;                                  ///< if the information goes to console or file
+         bool                 mDoStatsOnTheComponents;                              ///< do we fill in the information for the components.
+         bool                 mDoStatsOnTheActors;                                  ///< Do we fill in information for the actors
+         //std::vector<dtCore::RefPtr<LogDebugInformation> > mDebugLoggerInformation; ///< hold onto all the information.
+         std::map<dtCore::UniqueId, dtCore::RefPtr<LogDebugInformation> > mDebugLoggerInformation; ///< hold onto all the information.
          ////////////////////////////////////////////////
 
          /// application the gm has. the one and only.
