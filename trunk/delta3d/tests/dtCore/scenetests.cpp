@@ -73,7 +73,7 @@ void CoreTests::TestScene()
 
    int numSceneChildBefore = scene->GetNumberOfAddedDrawable();
    int numGrpChildBefore = grp->getNumChildren();
-   osg::Group* sceneNode = scene->GetSceneNode();
+   dtCore::RefPtr<osg::Group> sceneNode = scene->GetSceneNode();
    int numSceneNodeChildBefore = sceneNode->getNumChildren();
 
    scene->SetSceneNode(grp.get());
@@ -81,7 +81,7 @@ void CoreTests::TestScene()
    CPPUNIT_ASSERT_MESSAGE("After replacing the scene node, we should maintain the same number of drawables", scene->GetNumberOfAddedDrawable() == numSceneChildBefore);
    CPPUNIT_ASSERT_MESSAGE("After replacing the scene node, we should have the same number of osg nodes", grp->getNumChildren() == (numGrpChildBefore + numSceneNodeChildBefore));
    CPPUNIT_ASSERT_EQUAL_MESSAGE("After replacing the scene node, our old scene node should not have any children",
-                                 unsigned int(0), sceneNode->getNumChildren());
+                                 0U, unsigned(sceneNode->getNumChildren()));
 
 
    // The 0 light is the InfiniteLight
