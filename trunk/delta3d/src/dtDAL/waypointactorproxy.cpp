@@ -91,7 +91,7 @@ namespace dtDAL
 
    bool WaypointActorProxy::IsPlaceable() const
    {
-      return false;
+      return true;
    }
    
    bool WaypointActorProxy::IsGhostProxy() const
