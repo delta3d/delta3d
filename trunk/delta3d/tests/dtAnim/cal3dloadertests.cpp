@@ -161,8 +161,6 @@ namespace dtAnim
             CPPUNIT_ASSERT_EQUAL(std::string("HardwareSkinning"), modelData->GetShaderGroupName());
             modelData->SetShaderGroupName(testString);
             CPPUNIT_ASSERT_EQUAL(testString, modelData->GetShaderGroupName());
-            
-            //CPPUNIT_ASSERT
          }
          
       private:

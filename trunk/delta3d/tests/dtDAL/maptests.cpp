@@ -820,15 +820,15 @@ void MapTests::TestMapSaveAndLoad()
         osg::Vec3 testVec3_2(-34.75f, 96.03125f, 8.0f);
         osg::Vec3 testVec3_3(3.125f, 90.25f, 87.0625f);
 
-        ap = getActorProperty(*map, "Rotation", dtDAL::DataType::VEC3, 1);
+        ap = getActorProperty(*map, dtDAL::TransformableActorProxy::PROPERTY_ROTATION, dtDAL::DataType::VEC3, 1);
         static_cast<dtDAL::Vec3ActorProperty*>(ap)->SetValue(testVec3_1);
         testVec3_1 = static_cast<dtDAL::Vec3ActorProperty*>(ap)->GetValue();
 
-        ap = getActorProperty(*map, "Translation", dtDAL::DataType::VEC3, 1);
+        ap = getActorProperty(*map, dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION, dtDAL::DataType::VEC3, 1);
         static_cast<dtDAL::Vec3ActorProperty*>(ap)->SetValue(testVec3_2);
         testVec3_2 = static_cast<dtDAL::Vec3ActorProperty*>(ap)->GetValue();
 
-        ap = getActorProperty(*map, "Scale", dtDAL::DataType::VEC3, 1);
+        ap = getActorProperty(*map, dtDAL::TransformableActorProxy::PROPERTY_SCALE, dtDAL::DataType::VEC3, 1);
         static_cast<dtDAL::Vec3ActorProperty*>(ap)->SetValue(testVec3_3);
         testVec3_3 = static_cast<dtDAL::Vec3ActorProperty*>(ap)->GetValue();
 
@@ -974,7 +974,7 @@ void MapTests::TestMapSaveAndLoad()
         CPPUNIT_ASSERT_MESSAGE(ap->GetName() + " value should be 39.70.",
             fabs(((dtDAL::DoubleActorProperty*)ap)->GetValue() - 39.70) < 0.0001);
 
-        ap = getActorProperty(*map, "Rotation", dtDAL::DataType::VEC3,1);
+        ap = getActorProperty(*map, dtDAL::TransformableActorProxy::PROPERTY_ROTATION, dtDAL::DataType::VEC3,1);
 
         dtDAL::Vec3ActorProperty* v3ap = static_cast<dtDAL::Vec3ActorProperty*>(ap);
         ss.str("");
@@ -985,7 +985,7 @@ void MapTests::TestMapSaveAndLoad()
             && osg::equivalent(v3ap->GetValue()[2], testVec3_1[2], 1e-2f )
             );
 
-        ap = getActorProperty(*map, "Translation", dtDAL::DataType::VEC3, 1);
+        ap = getActorProperty(*map, dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION, dtDAL::DataType::VEC3, 1);
 
         v3ap = static_cast<dtDAL::Vec3ActorProperty*>(ap);
         ss.str("");
@@ -1032,7 +1032,7 @@ void MapTests::TestMapSaveAndLoad()
             && osg::equivalent(v3d[2], double(testVec3_3[2]), 1e-2)
             );
             
-        ap = getActorProperty(*map, "Scale", dtDAL::DataType::VEC3, 1);
+        ap = getActorProperty(*map, dtDAL::TransformableActorProxy::PROPERTY_SCALE, dtDAL::DataType::VEC3, 1);
 
         if (logger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
         {
@@ -1769,7 +1769,7 @@ protected:
 void MapTests::TestActorProxyRemoveProperties()
 {
    dtCore::RefPtr<OverriddenActorProxy> actorProxy = new OverriddenActorProxy; 
-   std::string NameToRemove = "Rotation";
+   std::string NameToRemove = dtDAL::TransformableActorProxy::PROPERTY_ROTATION;
    std::string DoesntExist = "TeagueHasAHawtMom";
    CPPUNIT_ASSERT_MESSAGE("Tried to remove a property before initialized should have returned false", actorProxy->RemoveTheProperty(NameToRemove) == false );
    actorProxy->CreateActor();

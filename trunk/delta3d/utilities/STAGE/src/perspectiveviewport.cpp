@@ -189,8 +189,8 @@ namespace dtEditQt
             this->currentMode == &InteractionModeExt::NOTHING)
         {
             attachCurrentSelectionToCamera();
-            saveSelectedActorOrigValues("Translation");
-            saveSelectedActorOrigValues("Rotation");
+            saveSelectedActorOrigValues(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
+            saveSelectedActorOrigValues(dtDAL::TransformableActorProxy::PROPERTY_ROTATION);
         }
 
         if (e->buttons() == bothButtons || e->buttons() == Qt::MidButton)
@@ -229,8 +229,8 @@ namespace dtEditQt
                 // we surround it in a change transaction
                 EditorEvents::GetInstance().emitBeginChangeTransaction();
 
-                updateActorSelectionProperty("Translation");
-                updateActorSelectionProperty("Rotation");
+                updateActorSelectionProperty(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
+                updateActorSelectionProperty(dtDAL::TransformableActorProxy::PROPERTY_ROTATION);
 
                 EditorEvents::GetInstance().emitEndChangeTransaction();
 
@@ -260,9 +260,9 @@ namespace dtEditQt
 
         // Save the original values of trans/rotate so undo/redo can track it.
         if (getInteractionMode() == Viewport::InteractionMode::TRANSLATE_ACTOR)
-            saveSelectedActorOrigValues("Translation");
+            saveSelectedActorOrigValues(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
         else if (getInteractionMode() == Viewport::InteractionMode::ROTATE_ACTOR)
-            saveSelectedActorOrigValues("Rotation");
+            saveSelectedActorOrigValues(dtDAL::TransformableActorProxy::PROPERTY_ROTATION);
 
         trapMouseCursor();
     }
@@ -286,9 +286,9 @@ namespace dtEditQt
 
             //Update the selected actor proxies with their new values.
             if (getInteractionMode() == Viewport::InteractionMode::TRANSLATE_ACTOR)
-                updateActorSelectionProperty("Translation");
+                updateActorSelectionProperty(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
             else if (getInteractionMode() == Viewport::InteractionMode::ROTATE_ACTOR)
-                updateActorSelectionProperty("Rotation");
+                updateActorSelectionProperty(dtDAL::TransformableActorProxy::PROPERTY_ROTATION);
 
             EditorEvents::GetInstance().emitEndChangeTransaction();
 

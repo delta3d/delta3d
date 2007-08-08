@@ -34,6 +34,10 @@ namespace dtDAL
    {
       public:
 
+         static const std::string PROPERTY_ENABLE_DYNAMICS;
+         static const std::string PROPERTY_MASS;
+         static const std::string PROPERTY_CENTER_OF_GRAVITY;
+         
          /**
           * Constructor
           */

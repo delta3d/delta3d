@@ -295,14 +295,14 @@ void HLAConfigTests::TestConfigure()
          {
             dtHLAGM::AttributeToPropertyList attrToProp("Orientation", dtHLAGM::RPRAttributeType::EULER_ANGLES_TYPE, true);
 
-            dtHLAGM::OneToManyMapping::ParameterDefinition pd("Rotation", dtDAL::DataType::VEC3, "", true);
+            dtHLAGM::OneToManyMapping::ParameterDefinition pd(dtDAL::TransformableActorProxy::PROPERTY_ROTATION, dtDAL::DataType::VEC3, "", true);
             attrToProp.GetParameterDefinitions().push_back(pd); 
             props.push_back(attrToProp);
          }
 
          {
             dtHLAGM::AttributeToPropertyList attrToProp("WorldLocation", dtHLAGM::RPRAttributeType::WORLD_COORDINATE_TYPE, true);
-            dtHLAGM::OneToManyMapping::ParameterDefinition pd("Translation", dtDAL::DataType::VEC3, "", true);
+            dtHLAGM::OneToManyMapping::ParameterDefinition pd(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION, dtDAL::DataType::VEC3, "", true);
             attrToProp.GetParameterDefinitions().push_back(pd); 
             props.push_back(attrToProp);
          }
@@ -354,14 +354,14 @@ void HLAConfigTests::TestConfigure()
          {
             dtHLAGM::AttributeToPropertyList attrToProp("Orientation", dtHLAGM::RPRAttributeType::EULER_ANGLES_TYPE, true);
 
-            dtHLAGM::OneToManyMapping::ParameterDefinition pd("Rotation", dtDAL::DataType::VEC3, "", true);
+            dtHLAGM::OneToManyMapping::ParameterDefinition pd(dtDAL::TransformableActorProxy::PROPERTY_ROTATION, dtDAL::DataType::VEC3, "", true);
             attrToProp.GetParameterDefinitions().push_back(pd); 
             props.push_back(attrToProp);
          }
 
          {
             dtHLAGM::AttributeToPropertyList attrToProp("WorldLocation", dtHLAGM::RPRAttributeType::WORLD_COORDINATE_TYPE, true);
-            dtHLAGM::OneToManyMapping::ParameterDefinition pd("Translation", dtDAL::DataType::VEC3, "", true);
+            dtHLAGM::OneToManyMapping::ParameterDefinition pd(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION, dtDAL::DataType::VEC3, "", true);
             attrToProp.GetParameterDefinitions().push_back(pd); 
             props.push_back(attrToProp);
          }
@@ -411,7 +411,7 @@ void HLAConfigTests::TestConfigure()
          {
             dtHLAGM::AttributeToPropertyList attrToProp("Orientation", dtHLAGM::RPRAttributeType::EULER_ANGLES_TYPE, true);
 
-            dtHLAGM::OneToManyMapping::ParameterDefinition pd("Rotation", dtDAL::DataType::VEC3, "", true);
+            dtHLAGM::OneToManyMapping::ParameterDefinition pd(dtDAL::TransformableActorProxy::PROPERTY_ROTATION, dtDAL::DataType::VEC3, "", true);
             attrToProp.GetParameterDefinitions().push_back(pd); 
             props.push_back(attrToProp);
          }
@@ -425,7 +425,7 @@ void HLAConfigTests::TestConfigure()
          {
             dtHLAGM::AttributeToPropertyList attrToProp("Orientation", dtHLAGM::RPRAttributeType::EULER_ANGLES_TYPE, true);
 
-            dtHLAGM::OneToManyMapping::ParameterDefinition pd("Rotation", dtDAL::DataType::VEC3, "", true);
+            dtHLAGM::OneToManyMapping::ParameterDefinition pd(dtDAL::TransformableActorProxy::PROPERTY_ROTATION, dtDAL::DataType::VEC3, "", true);
             attrToProp.GetParameterDefinitions().push_back(pd); 
             props.push_back(attrToProp);
          }

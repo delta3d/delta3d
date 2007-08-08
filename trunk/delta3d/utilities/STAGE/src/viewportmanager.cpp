@@ -428,7 +428,7 @@ namespace dtEditQt
         //add it to the scene in front of the camera.
         dtDAL::TransformableActorProxy *tProxy =
                 dynamic_cast<dtDAL::TransformableActorProxy *>(proxy);
-        dtDAL::ActorProperty *prop = proxy->GetProperty("Translation");
+        dtDAL::ActorProperty *prop = proxy->GetProperty(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
 
         if (tProxy != NULL && prop != NULL)
         {

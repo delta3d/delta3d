@@ -219,7 +219,7 @@ void TankActor::CheckForNewTarget()
          ++iter )
    {      
       // Find the position of the target we are querying.
-      dtCore::RefPtr<dtDAL::ActorProperty> translationProp( (*iter)->GetProperty("Translation") );
+      dtCore::RefPtr<dtDAL::ActorProperty> translationProp( (*iter)->GetProperty(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION  ) );
       dtCore::RefPtr<dtDAL::Vec3ActorProperty> vec3prop( static_cast<dtDAL::Vec3ActorProperty*>( translationProp.get()) );
       osg::Vec3 targetPosition( vec3prop->GetValue() );
 
