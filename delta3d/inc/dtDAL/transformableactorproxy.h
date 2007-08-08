@@ -38,6 +38,12 @@ namespace dtDAL
    {
       public:
 
+         static const std::string PROPERTY_ROTATION;
+         static const std::string PROPERTY_TRANSLATION;
+         static const std::string PROPERTY_SCALE;
+         static const std::string PROPERTY_NORMAL_RESCALING;
+         static const std::string PROPERTY_RENDER_PROXY_NODE;
+         
          /**
           * Constructor
           */

@@ -26,27 +26,32 @@
 
 namespace dtDAL
 {
+   const std::string PhysicalActorProxy::PROPERTY_ENABLE_DYNAMICS("Enable Dynamics");
+   const std::string PhysicalActorProxy::PROPERTY_MASS("Mass");
+   const std::string PhysicalActorProxy::PROPERTY_CENTER_OF_GRAVITY("Center of Gravity");
+
    ///////////////////////////////////////////////////////////////////////////////
    void PhysicalActorProxy::BuildPropertyMap()
    {
-      const std::string GROUPNAME = "ODE Physics";
+      static const std::string GROUPNAME = "ODE Physics";
         
       TransformableActorProxy::BuildPropertyMap();
 
       dtCore::Physical *phys = static_cast<dtCore::Physical*>(GetActor());
 
+      static const std::string ODE_PREFIX("ODE ");
       //PHYSICS PROPS...
-      AddProperty(new BooleanActorProperty("Enable Dynamics", "ODE Enable Dynamics",
+      AddProperty(new BooleanActorProperty(PROPERTY_ENABLE_DYNAMICS, ODE_PREFIX + PROPERTY_ENABLE_DYNAMICS,
                                            MakeFunctor(*phys, &dtCore::Physical::EnableDynamics),
                                            MakeFunctorRet(*phys, &dtCore::Physical::DynamicsEnabled),
                                            "Enables physics calculations on this actor (using ODE).", GROUPNAME));
 
-      AddProperty(new FloatActorProperty("Mass", "ODE Mass",
+      AddProperty(new FloatActorProperty(PROPERTY_MASS, ODE_PREFIX + PROPERTY_MASS,
                                          MakeFunctor(*this, &PhysicalActorProxy::SetMass),
                                          MakeFunctorRet(*this, &PhysicalActorProxy::GetMass),
                                          "Sets the mass of this actor (using ODE).",GROUPNAME));
 
-      AddProperty(new Vec3ActorProperty("Center of Gravity", "ODE Center of Gravity",
+      AddProperty(new Vec3ActorProperty(PROPERTY_CENTER_OF_GRAVITY, ODE_PREFIX + PROPERTY_CENTER_OF_GRAVITY,
                                         MakeFunctor(*this, &PhysicalActorProxy::SetCenterOfGravity),
                                         MakeFunctorRet(*this, &PhysicalActorProxy::GetCenterOfGravity),
                                         "Sets the center of gravity for this actor (using ODE).", GROUPNAME));

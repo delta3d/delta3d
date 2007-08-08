@@ -67,13 +67,13 @@ class GameActorTests : public CPPUNIT_NS::TestFixture
 {
    CPPUNIT_TEST_SUITE(GameActorTests);
 
+      CPPUNIT_TEST(TestGameActor);
       CPPUNIT_TEST(TestGameActorProxy);
       CPPUNIT_TEST(TestGameActorProxyDeleteError);
       CPPUNIT_TEST(TestSetEnvironmentActor);
       CPPUNIT_TEST(TestAddRemoveFromEnvActor);
       CPPUNIT_TEST(TestInvokables);
       CPPUNIT_TEST(TestInvokableMessageRegistration);
-      CPPUNIT_TEST(TestDeletedActorsDontGetMessages);
       CPPUNIT_TEST(TestGlobalInvokableMessageRegistration);
       CPPUNIT_TEST(TestStaticGameActorTypes);
       CPPUNIT_TEST(TestEnvironmentTimeConversions);
@@ -87,13 +87,13 @@ class GameActorTests : public CPPUNIT_NS::TestFixture
 public:
    void setUp();
    void tearDown();
+   void TestGameActor();
    void TestGameActorProxy();
    void TestGameActorProxyDeleteError();
    void TestSetEnvironmentActor();
    void TestAddRemoveFromEnvActor();
    void TestInvokables();
    void TestInvokableMessageRegistration();
-   void TestDeletedActorsDontGetMessages();
    void TestDefaultProcessMessageRegistration();
    void TestGlobalInvokableMessageRegistration();
    void TestStaticGameActorTypes();
@@ -106,7 +106,6 @@ private:
    static const std::string mTestGameActorLibrary;
    static const std::string mTestActorLibrary;
    dtCore::RefPtr<dtGame::GameManager> mManager;
-   dtCore::RefPtr<dtGame::GameActorProxy> mGAP1, mGAP2;
 };
 
 
@@ -128,16 +127,6 @@ void GameActorTests::setUp()
       dtCore::RefPtr<dtCore::Scene> scene = new dtCore::Scene;
       mManager = new dtGame::GameManager(*scene);
       mManager->LoadActorRegistry(mTestGameActorLibrary);
-   
-      dtCore::RefPtr<const dtDAL::ActorType> actor1Type = mManager->FindActorType("ExampleActors", "Test1Actor");
-      dtCore::RefPtr<const dtDAL::ActorType> actor2Type = mManager->FindActorType("ExampleActors", "Test2Actor");
-
-      mManager->CreateActor(*actor1Type, mGAP1);
-      mManager->CreateActor(*actor2Type, mGAP2);
-
-      CPPUNIT_ASSERT_MESSAGE("ActorProxy should not be NULL", mGAP1.valid());
-      CPPUNIT_ASSERT_MESSAGE("ActorProxy should not be NULL", mGAP2.valid());
-
    }
    catch (const dtUtil::Exception& e)
    {
@@ -155,8 +144,6 @@ void GameActorTests::tearDown()
    dtCore::System::GetInstance().Stop();
    if (mManager.valid())
    {
-      mGAP1 = NULL;
-      mGAP2 = NULL;
       mManager->DeleteAllActors(true);
       mManager->UnloadActorRegistry(mTestGameActorLibrary);
       mManager = NULL;
@@ -186,24 +173,46 @@ void GameActorTests::TestActorIsInGM()
 
 
 ////////////////////////////////////////////////////////////////////////
+void GameActorTests::TestGameActor()
+{
+   try
+   {
+
+   }
+   catch (const dtUtil::Exception &e)
+   {
+      CPPUNIT_FAIL(e.What());
+   }
+   catch (const std::exception &e)
+   {
+      CPPUNIT_FAIL(std::string("Caught exception of type: ") + typeid(e).name() + " " + e.what());
+   }
+}
+
 void GameActorTests::TestGameActorProxy()
 {
    try
    {
-      CPPUNIT_ASSERT_MESSAGE("GameActorProxy should not be NULL", mGAP1.valid());
-      CPPUNIT_ASSERT_MESSAGE("GameActor should have a reference to the proxy", &mGAP1->GetGameActor().GetGameActorProxy() == mGAP1.get());
+      dtCore::RefPtr<const dtDAL::ActorType> actorType = mManager->FindActorType("ExampleActors", "Test1Actor");
 
-      dtGame::GameActor *p = &mGAP1->GetGameActor();
+      CPPUNIT_ASSERT(actorType != NULL);
+
+      dtCore::RefPtr<dtDAL::ActorProxy> proxy = mManager->CreateActor(*actorType);
+      dtCore::RefPtr<dtGame::GameActorProxy> gap = dynamic_cast<dtGame::GameActorProxy*>(proxy.get());
+
+      CPPUNIT_ASSERT_MESSAGE("GameActorProxy should not be NULL", gap != NULL);
+      CPPUNIT_ASSERT_MESSAGE("GameActor should have a reference to the proxy", &gap->GetGameActor().GetGameActorProxy() == gap.get());
+
+      dtGame::GameActor *p = &gap->GetGameActor();
 
       CPPUNIT_ASSERT_MESSAGE("Actor should not be NULL", p != NULL);
-      CPPUNIT_ASSERT_MESSAGE("IsGameActor should always return true", mGAP1->IsGameActorProxy());
-      CPPUNIT_ASSERT_MESSAGE("Game Actor should not initially be published", !mGAP1->IsPublished());
-      CPPUNIT_ASSERT_MESSAGE("Game Actor should not initially be remote", !mGAP1->IsRemote());
+      CPPUNIT_ASSERT_MESSAGE("IsGameActor should always return true", gap->IsGameActorProxy());
+      CPPUNIT_ASSERT_MESSAGE("Game Actor should not initially be published", !gap->IsPublished());
+      CPPUNIT_ASSERT_MESSAGE("Game Actor should not initially be remote", !gap->IsRemote());
 
-      mGAP1->SetInitialOwnership(dtGame::GameActorProxy::Ownership::SERVER_LOCAL);
+      gap->SetInitialOwnership(dtGame::GameActorProxy::Ownership::SERVER_LOCAL);
 
-      CPPUNIT_ASSERT_MESSAGE("GameActorProxy's ownership should have been set", 
-            mGAP1->GetInitialOwnership() == dtGame::GameActorProxy::Ownership::SERVER_LOCAL);
+      CPPUNIT_ASSERT_MESSAGE("GameActorProxy's ownership should have been set", gap->GetInitialOwnership() == dtGame::GameActorProxy::Ownership::SERVER_LOCAL);
    }
    catch (const dtUtil::Exception &e)
    {
@@ -222,12 +231,20 @@ void GameActorTests::TestGameActorProxyDeleteError()
    // an observer_ptr to the parent.
    try
    {
-      CPPUNIT_ASSERT_MESSAGE("GameActor should have a reference to the proxy", &mGAP1->GetGameActor().GetGameActorProxy() == mGAP1.get());
+      dtCore::RefPtr<const dtDAL::ActorType> actorType = mManager->FindActorType("ExampleActors", "Test1Actor");
 
-      dtCore::RefPtr<dtGame::GameActor> actor = &mGAP1->GetGameActor();
-      dtCore::ObserverPtr<dtGame::GameActorProxy> gapObserver(mGAP1.get());
+      CPPUNIT_ASSERT(actorType != NULL);
+
+      dtCore::RefPtr<dtGame::GameActorProxy> gap;
+      mManager->CreateActor(*actorType, gap);
+
+      CPPUNIT_ASSERT_MESSAGE("GameActorProxy should not be NULL", gap != NULL);
+      CPPUNIT_ASSERT_MESSAGE("GameActor should have a reference to the proxy", &gap->GetGameActor().GetGameActorProxy() == gap.get());
+
+      dtCore::RefPtr<dtGame::GameActor> actor = &gap->GetGameActor();
+      dtCore::ObserverPtr<dtGame::GameActorProxy> gapObserver(gap.get());
       dtCore::ObserverPtr<dtGame::GameActorProxy> gapOb2(gapObserver);
-      mGAP1 = NULL;
+      gap = NULL;
       
       CPPUNIT_ASSERT_MESSAGE("Nothing should be holding onto the proxy, so the observer should be NULL", !gapObserver.valid());
       ///This should throw an exception because the proxy should have been cleaned up.
@@ -247,15 +264,22 @@ void GameActorTests::TestInvokables()
 {
    try
    {
+      dtCore::RefPtr<const dtDAL::ActorType> actorType = mManager->FindActorType("ExampleActors", "Test1Actor");
+
+      dtCore::RefPtr<dtDAL::ActorProxy> proxy = mManager->CreateActor(*actorType);
+      dtCore::RefPtr<dtGame::GameActorProxy> gap = dynamic_cast<dtGame::GameActorProxy*>(proxy.get());
+
+      CPPUNIT_ASSERT_MESSAGE("ActorProxy should not be NULL", gap != NULL);
+
       std::vector<dtGame::Invokable*> toFill;
-      mGAP1->GetInvokables(toFill);
+      gap->GetInvokables(toFill);
       CPPUNIT_ASSERT_MESSAGE("The actor should have at least 2 invokables",toFill.size() >= 5);
-      dtGame::Invokable* iF = mGAP1->GetInvokable("Fire One");
-      dtGame::Invokable* iR = mGAP1->GetInvokable("Reset");
+      dtGame::Invokable* iF = gap->GetInvokable("Fire One");
+      dtGame::Invokable* iR = gap->GetInvokable("Reset");
       CPPUNIT_ASSERT_MESSAGE("The actor should have an invokable named Fire One ",iF != NULL);
       CPPUNIT_ASSERT_MESSAGE("The actor should have an invokable named Reset ",iR != NULL);
 
-      dtDAL::BooleanActorProperty* prop = static_cast<dtDAL::BooleanActorProperty*>(mGAP1->GetProperty("Has Fired"));
+      dtDAL::BooleanActorProperty* prop = static_cast<dtDAL::BooleanActorProperty*>(gap->GetProperty("Has Fired"));
 
       CPPUNIT_ASSERT_MESSAGE("The actor should have a property named \"Has Fired\"", prop != NULL);
 
@@ -283,14 +307,21 @@ void GameActorTests::TestInvokableMessageRegistration()
 {
    try
    {
-      dtGame::Invokable* iToggle = mGAP1->GetInvokable("Toggle Ticks");
+      dtCore::RefPtr<const dtDAL::ActorType> actorType = mManager->FindActorType("ExampleActors", "Test1Actor");
+
+      dtCore::RefPtr<dtDAL::ActorProxy> proxy = mManager->CreateActor(*actorType);
+      dtCore::RefPtr<dtGame::GameActorProxy> gap = dynamic_cast<dtGame::GameActorProxy*>(proxy.get());
+
+      CPPUNIT_ASSERT_MESSAGE("ActorProxy should not be NULL", gap != NULL);
+
+      dtGame::Invokable* iToggle = gap->GetInvokable("Toggle Ticks");
 
       CPPUNIT_ASSERT_MESSAGE("The actor should have an invokable named Toggle Ticks ",iToggle != NULL);
 
       std::vector<dtGame::Invokable*> toFill1, toFill2;
 
-      mGAP1->GetMessageHandlers(dtGame::MessageType::TICK_LOCAL, toFill1);
-      mGAP1->GetMessageHandlers(dtGame::MessageType::TICK_REMOTE, toFill2);
+      gap->GetMessageHandlers(dtGame::MessageType::TICK_LOCAL, toFill1);
+      gap->GetMessageHandlers(dtGame::MessageType::TICK_REMOTE, toFill2);
 
       CPPUNIT_ASSERT_MESSAGE("There should be one handler for tick local", toFill1.size() == 1);
       CPPUNIT_ASSERT_MESSAGE("The one handler should be Tick Local", toFill1[0]->GetName() == "Tick Local");
@@ -303,8 +334,8 @@ void GameActorTests::TestInvokableMessageRegistration()
       //this will remove the invokables registration.
       iToggle->Invoke(*message);
 
-      mGAP1->GetMessageHandlers(dtGame::MessageType::TICK_LOCAL, toFill1);
-      mGAP1->GetMessageHandlers(dtGame::MessageType::TICK_REMOTE, toFill2);
+      gap->GetMessageHandlers(dtGame::MessageType::TICK_LOCAL, toFill1);
+      gap->GetMessageHandlers(dtGame::MessageType::TICK_REMOTE, toFill2);
 
       CPPUNIT_ASSERT_MESSAGE("There should be one handler for tick local", toFill1.size() == 0);
       CPPUNIT_ASSERT_MESSAGE("There should be one handler for tick remote", toFill2.size() == 0);
@@ -315,19 +346,19 @@ void GameActorTests::TestInvokableMessageRegistration()
       //need a dummy message
       message = mManager->GetMessageFactory().CreateMessage(dtGame::MessageType::TICK_LOCAL);
       //so it will reach the actor
-      message->SetAboutActorId(mGAP1->GetId());
+      message->SetAboutActorId(gap->GetId());
       //this will remove the invokables registration.
-      mManager->AddActor(*mGAP1, false, false);
+      mManager->AddActor(*gap, false, false);
       mManager->SendMessage(*message);
 
-      CPPUNIT_ASSERT_MESSAGE("Zero local ticks should have been received.", static_cast<dtDAL::IntActorProperty*>(mGAP1->GetProperty("Local Tick Count"))->GetValue() == 0);
-      CPPUNIT_ASSERT_MESSAGE("Zero remote ticks should have been received.", static_cast<dtDAL::IntActorProperty*>(mGAP1->GetProperty("Remote Tick Count"))->GetValue() == 0);
+      CPPUNIT_ASSERT_MESSAGE("Zero local ticks should have been received.", static_cast<dtDAL::IntActorProperty*>(gap->GetProperty("Local Tick Count"))->GetValue() == 0);
+      CPPUNIT_ASSERT_MESSAGE("Zero remote ticks should have been received.", static_cast<dtDAL::IntActorProperty*>(gap->GetProperty("Remote Tick Count"))->GetValue() == 0);
 
       SLEEP(10);
       dtCore::System::GetInstance().Step();
 
-      CPPUNIT_ASSERT_MESSAGE("One local tick should have been received.", static_cast<dtDAL::IntActorProperty*>(mGAP1->GetProperty("Local Tick Count"))->GetValue() == 1);
-      CPPUNIT_ASSERT_MESSAGE("Zero remote ticks should have been received.", static_cast<dtDAL::IntActorProperty*>(mGAP1->GetProperty("Remote Tick Count"))->GetValue() == 0);
+      CPPUNIT_ASSERT_MESSAGE("One local tick should have been received.", static_cast<dtDAL::IntActorProperty*>(gap->GetProperty("Local Tick Count"))->GetValue() == 1);
+      CPPUNIT_ASSERT_MESSAGE("Zero remote ticks should have been received.", static_cast<dtDAL::IntActorProperty*>(gap->GetProperty("Remote Tick Count"))->GetValue() == 0);
 
    }
    catch (const dtUtil::Exception &e)
@@ -338,101 +369,57 @@ void GameActorTests::TestInvokableMessageRegistration()
 
 void GameActorTests::TestDefaultProcessMessageRegistration()
 {
-   try
+   try 
    {
+      dtCore::RefPtr<const dtDAL::ActorType> actor1Type = mManager->FindActorType("ExampleActors", "Test1Actor");
+      dtCore::RefPtr<const dtDAL::ActorType> actor2Type = mManager->FindActorType("ExampleActors", "Test2Actor");
+
+      dtCore::RefPtr<dtDAL::ActorProxy> proxy1 = mManager->CreateActor(*actor1Type);
+      dtCore::RefPtr<dtGame::GameActorProxy> gap1 = dynamic_cast<dtGame::GameActorProxy*>(proxy1.get());
+
+      dtCore::RefPtr<dtDAL::ActorProxy> proxy2 = mManager->CreateActor(*actor2Type);
+      dtCore::RefPtr<dtGame::GameActorProxy> gap2 = dynamic_cast<dtGame::GameActorProxy*>(proxy2.get());
+
+      CPPUNIT_ASSERT_MESSAGE("ActorProxy should not be NULL", gap1 != NULL);
+      CPPUNIT_ASSERT_MESSAGE("ActorProxy should not be NULL", gap2 != NULL);
+
       // Make sure the invokable was created
-      dtGame::Invokable* iTestListener = mGAP2->GetInvokable(dtGame::GameActorProxy::PROCESS_MSG_INVOKABLE);
+      dtGame::Invokable* iTestListener = gap2->GetInvokable(dtGame::GameActorProxy::PROCESS_MSG_INVOKABLE);
       CPPUNIT_ASSERT_MESSAGE("The actor should have an invokable named \"Process Message\"",iTestListener != NULL);
 
-      mManager->AddActor(*mGAP1, false, false);
-      mManager->AddActor(*mGAP2, false, false);
+      mManager->AddActor(*gap1, false, false);
+      mManager->AddActor(*gap2, false, false);
 
       // Make sure we can use proxy method to register for messages
-      mGAP2->RegisterForMessages(dtGame::MessageType::INFO_ACTOR_PUBLISHED, 
-            dtGame::GameActorProxy::PROCESS_MSG_INVOKABLE);
+      gap2->RegisterForMessages(dtGame::MessageType::INFO_ACTOR_PUBLISHED, dtGame::GameActorProxy::PROCESS_MSG_INVOKABLE);
       std::vector<std::pair<dtGame::GameActorProxy*, std::string > > toFill;
       mManager->GetRegistrantsForMessages(dtGame::MessageType::INFO_ACTOR_PUBLISHED, toFill);
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("There should be one registered game actor "
-            "listener for the actor published message", 
-            1U, unsigned(toFill.size()));
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("There should be one registered game actor listener for the actor published message", 
+         (unsigned int) 1, (unsigned int) toFill.size());
 
       // And unregister them too
-      mGAP2->UnregisterForMessages(dtGame::MessageType::INFO_ACTOR_PUBLISHED, 
-            dtGame::GameActorProxy::PROCESS_MSG_INVOKABLE);
+      gap2->UnregisterForMessages(dtGame::MessageType::INFO_ACTOR_PUBLISHED, dtGame::GameActorProxy::PROCESS_MSG_INVOKABLE);
       mManager->GetRegistrantsForMessages(dtGame::MessageType::INFO_ACTOR_PUBLISHED, toFill);
-      CPPUNIT_ASSERT_MESSAGE("There should be zero registered game actor listener "
-            "for the actor published message", toFill.size() == 0);
+      CPPUNIT_ASSERT_MESSAGE("There should be zero registered game actor listener for the actor published message", toFill.size() == 0);
 
       // now use the Register For Self behavior - they only go on the actor itself
-      mGAP2->RegisterForMessagesAboutSelf(dtGame::MessageType::INFO_ACTOR_PUBLISHED, 
+      gap2->RegisterForMessagesAboutSelf(dtGame::MessageType::INFO_ACTOR_PUBLISHED, 
          dtGame::GameActorProxy::PROCESS_MSG_INVOKABLE);
 
       // There shouldnt be any listeners on the GM 
-      mManager->GetRegistrantsForMessagesAboutActor(dtGame::MessageType::INFO_ACTOR_PUBLISHED, 
-            mGAP2->GetId(), toFill);
-      CPPUNIT_ASSERT_MESSAGE("There should not be any listeners for the actor "
-            "published message this time", toFill.size() == 0);
+      mManager->GetRegistrantsForMessagesAboutActor(dtGame::MessageType::INFO_ACTOR_PUBLISHED, gap2->GetId(), toFill);
+      CPPUNIT_ASSERT_MESSAGE("There should not be any listeners for the actor published message this time", toFill.size() == 0);
       mManager->GetRegistrantsForMessages(dtGame::MessageType::INFO_ACTOR_PUBLISHED, toFill);
-      CPPUNIT_ASSERT_MESSAGE("There should not be any listeners for the actor "
-            "published message this time", toFill.size() == 0);
+      CPPUNIT_ASSERT_MESSAGE("There should not be any listeners for the actor published message this time", toFill.size() == 0);
 
-      mManager->PublishActor(*mGAP1);
-      mManager->PublishActor(*mGAP2);
+      mManager->PublishActor(*gap1);
+      mManager->PublishActor(*gap2);
 
       dtCore::System::GetInstance().Step();
 
       // One publish message should have been received. So, count should be 2
       CPPUNIT_ASSERT_EQUAL_MESSAGE("We should only have gotten 1 publish, so count shoudl be 2.",
-         2, static_cast<dtDAL::IntActorProperty*>(mGAP2->GetProperty("Actor Published Count"))->GetValue());
-   }
-   catch (const dtUtil::Exception& e)
-   {
-      CPPUNIT_FAIL(e.What());
-   }
-}
-
-void GameActorTests::TestDeletedActorsDontGetMessages()
-{
-   try
-   {
-
-      dtGame::Invokable* iTestListener = mGAP2->GetInvokable("Test Message Listener");
-
-      CPPUNIT_ASSERT_MESSAGE("The actor should have an invokable named \"Test Message Listener\"",iTestListener != NULL);
-
-      mManager->AddActor(*mGAP1, false, false);
-      mManager->AddActor(*mGAP2, false, false);
-
-      mGAP2->RegisterForMessagesAboutSelf(dtGame::MessageType::INFO_ACTOR_DELETED, iTestListener->GetName());
-      mManager->RegisterForMessages(dtGame::MessageType::INFO_MAP_LOADED, *mGAP2, iTestListener->GetName());
-      mManager->RegisterForMessagesAboutActor(dtGame::MessageType::INFO_ACTOR_PUBLISHED, 
-            mGAP1->GetId(), *mGAP2, iTestListener->GetName());
-
-      mManager->DeleteActor(*mGAP2);
-
-      dtCore::RefPtr<dtGame::MapMessage> mapMessage;
-      dtCore::RefPtr<dtGame::ActorPublishedMessage> publishedMessage;
-      
-      mManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_MAP_LOADED, mapMessage);
-      mManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_PUBLISHED, publishedMessage);
-
-      publishedMessage->SetAboutActorId(mGAP1->GetId());
-      
-      mManager->SendMessage(*mapMessage);
-      mManager->SendMessage(*publishedMessage);
-      
-      dtCore::System::GetInstance().Step();
-      
-      dtDAL::IntActorProperty* intProp;
-      mGAP2->GetProperty("Actor Deleted Count", intProp);
-      //A publish and map loaded message should have been received, but no listener was added for delete.
-      CPPUNIT_ASSERT_EQUAL(0, intProp->GetValue());
-      
-      mGAP2->GetProperty("Actor Published Count", intProp);
-      CPPUNIT_ASSERT_EQUAL(0, intProp->GetValue());
-      
-      mGAP2->GetProperty("Map Loaded Count", intProp);
-      CPPUNIT_ASSERT_EQUAL(0, intProp->GetValue());
+         (unsigned int) 2, (unsigned int) static_cast<dtDAL::IntActorProperty*>(gap2->GetProperty("Actor Published Count"))->GetValue());
    }
    catch (const dtUtil::Exception &e)
    {
@@ -444,16 +431,28 @@ void GameActorTests::TestGlobalInvokableMessageRegistration()
 {
    try
    {
-      dtGame::Invokable* iTestListener = mGAP2->GetInvokable("Test Message Listener");
+      dtCore::RefPtr<const dtDAL::ActorType> actor1Type = mManager->FindActorType("ExampleActors", "Test1Actor");
+      dtCore::RefPtr<const dtDAL::ActorType> actor2Type = mManager->FindActorType("ExampleActors", "Test2Actor");
+
+      dtCore::RefPtr<dtDAL::ActorProxy> proxy1 = mManager->CreateActor(*actor1Type);
+      dtCore::RefPtr<dtGame::GameActorProxy> gap1 = dynamic_cast<dtGame::GameActorProxy*>(proxy1.get());
+
+      dtCore::RefPtr<dtDAL::ActorProxy> proxy2 = mManager->CreateActor(*actor2Type);
+      dtCore::RefPtr<dtGame::GameActorProxy> gap2 = dynamic_cast<dtGame::GameActorProxy*>(proxy2.get());
+
+      CPPUNIT_ASSERT_MESSAGE("ActorProxy should not be NULL", gap1 != NULL);
+      CPPUNIT_ASSERT_MESSAGE("ActorProxy should not be NULL", gap2 != NULL);
+
+      dtGame::Invokable* iTestListener = gap2->GetInvokable("Test Message Listener");
 
       CPPUNIT_ASSERT_MESSAGE("The actor should have an invokable named \"Test Message Listener\"",iTestListener != NULL);
 
-      mManager->AddActor(*mGAP1, false, false);
-      mManager->AddActor(*mGAP2, false, false);
+      mManager->AddActor(*gap1, false, false);
+      mManager->AddActor(*gap2, false, false);
 
-      mManager->RegisterForMessages(dtGame::MessageType::INFO_MAP_LOADED, *mGAP2, iTestListener->GetName());
+      mManager->RegisterForMessages(dtGame::MessageType::INFO_MAP_LOADED, *gap2, iTestListener->GetName());
       mManager->RegisterForMessagesAboutActor(dtGame::MessageType::INFO_ACTOR_PUBLISHED, 
-            mGAP1->GetId(), *mGAP2, iTestListener->GetName());
+            gap1->GetId(), *gap2, iTestListener->GetName());
 
       std::vector<std::pair<dtGame::GameActorProxy*, std::string > > toFill;
 
@@ -462,73 +461,65 @@ void GameActorTests::TestGlobalInvokableMessageRegistration()
             toFill.size() == 1);
 
       mManager->GetRegistrantsForMessagesAboutActor(dtGame::MessageType::INFO_ACTOR_PUBLISHED, 
-            mGAP1->GetId(), toFill);
+            gap1->GetId(), toFill);
       CPPUNIT_ASSERT_MESSAGE("There should be one registered game actor listener for the actor published message", 
             toFill.size() == 1);
 
       mManager->UnregisterForMessages(dtGame::MessageType::INFO_MAP_LOADED, 
-            *mGAP2, iTestListener->GetName());
+            *gap2, iTestListener->GetName());
       mManager->UnregisterForMessagesAboutActor(dtGame::MessageType::INFO_ACTOR_PUBLISHED, 
-            mGAP1->GetId(), *mGAP2, iTestListener->GetName());
+            gap1->GetId(), *gap2, iTestListener->GetName());
 
       mManager->GetRegistrantsForMessages(dtGame::MessageType::INFO_MAP_LOADED, toFill);
       CPPUNIT_ASSERT_MESSAGE("There should be zero registered global listener for the Map Loaded message", 
             toFill.size() == 0);
 
-      mManager->GetRegistrantsForMessagesAboutActor(dtGame::MessageType::INFO_ACTOR_PUBLISHED, mGAP1->GetId(), toFill);
+      mManager->GetRegistrantsForMessagesAboutActor(dtGame::MessageType::INFO_ACTOR_PUBLISHED, gap1->GetId(), toFill);
       CPPUNIT_ASSERT_MESSAGE("There should be zero registered game actor listener for the actor published message", 
             toFill.size() == 0);
 
-      mManager->RegisterForMessages(dtGame::MessageType::INFO_MAP_LOADED, *mGAP2, iTestListener->GetName());
+      mManager->RegisterForMessages(dtGame::MessageType::INFO_MAP_LOADED, *gap2, iTestListener->GetName());
       mManager->RegisterForMessagesAboutActor(dtGame::MessageType::INFO_ACTOR_PUBLISHED, 
-            mGAP1->GetId(), *mGAP2, iTestListener->GetName());
+            gap1->GetId(), *gap2, iTestListener->GetName());
 
-      //std::cout << mGAP1->GetId() << std::endl;
+      //std::cout << gap1->GetId() << std::endl;
 
       mManager->GetRegistrantsForMessages(dtGame::MessageType::INFO_MAP_LOADED, toFill);
       CPPUNIT_ASSERT_MESSAGE("There should be one registered global listener for the Map Loaded message", 
             toFill.size() == 1);
 
       mManager->GetRegistrantsForMessagesAboutActor(dtGame::MessageType::INFO_ACTOR_PUBLISHED, 
-            mGAP1->GetId(), toFill);
+            gap1->GetId(), toFill);
       CPPUNIT_ASSERT_MESSAGE("There should be one registered game actor listener for the actor published message", 
             toFill.size() == 1);
 
-      mManager->PublishActor(*mGAP1);
+      mManager->PublishActor(*gap1);
       mManager->SendMessage(*mManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_MAP_LOADED));
-      mManager->DeleteActor(*mGAP1);
+      mManager->DeleteActor(*gap1);
 
       //actors are not removed immediately
-      CPPUNIT_ASSERT(mManager->FindGameActorById(mGAP1->GetId()) != NULL);
+      CPPUNIT_ASSERT(mManager->FindGameActorById(gap1->GetId()) != NULL);
 
       SLEEP(10);
       dtCore::System::GetInstance().Step();
 
       //Actor should be removed by now.
-      CPPUNIT_ASSERT(mManager->FindGameActorById(mGAP1->GetId()) == NULL);
+      CPPUNIT_ASSERT(mManager->FindGameActorById(gap1->GetId()) == NULL);
 
-      dtDAL::IntActorProperty* intProp;
-      mGAP2->GetProperty("Actor Deleted Count", intProp);
       //A publish and map loaded message should have been received, but no listener was added for delete.
-      CPPUNIT_ASSERT_EQUAL(0, intProp->GetValue());
-      
-      mGAP2->GetProperty("Actor Published Count", intProp);
-      CPPUNIT_ASSERT_EQUAL(1, intProp->GetValue());
-      
-      mGAP2->GetProperty("Map Loaded Count", intProp);
-      CPPUNIT_ASSERT_EQUAL(1, intProp->GetValue());
+      CPPUNIT_ASSERT_EQUAL(0, static_cast<dtDAL::IntActorProperty*>(gap2->GetProperty("Actor Deleted Count"))->GetValue());
+      CPPUNIT_ASSERT_EQUAL(1, static_cast<dtDAL::IntActorProperty*>(gap2->GetProperty("Actor Published Count"))->GetValue());
+      CPPUNIT_ASSERT_EQUAL(1, static_cast<dtDAL::IntActorProperty*>(gap2->GetProperty("Map Loaded Count"))->GetValue());
 
-      dtCore::RefPtr<const dtDAL::ActorType> actor1Type = 
-         mManager->FindActorType("ExampleActors", "Test1Actor");
       dtCore::RefPtr<dtGame::GameActorProxy> gap3;
       mManager->CreateActor(*actor1Type, gap3);
       
       //add global and actor-specific delete listeners
       mManager->RegisterForMessagesAboutActor(dtGame::MessageType::INFO_ACTOR_DELETED, 
-            gap3->GetId(), *mGAP2, iTestListener->GetName());
-      mManager->RegisterForMessages(dtGame::MessageType::INFO_ACTOR_DELETED, *mGAP2, iTestListener->GetName());
+            gap3->GetId(), *gap2, iTestListener->GetName());
+      mManager->RegisterForMessages(dtGame::MessageType::INFO_ACTOR_DELETED, *gap2, iTestListener->GetName());
       //take off the publish listener so that when the message shows up, it will not be passed on.
-      mManager->UnregisterForMessagesAboutActor(dtGame::MessageType::INFO_ACTOR_PUBLISHED, mGAP1->GetId(), *mGAP2, iTestListener->GetName());
+      mManager->UnregisterForMessagesAboutActor(dtGame::MessageType::INFO_ACTOR_PUBLISHED, gap1->GetId(), *gap2, iTestListener->GetName());
 
       //add and publish the actor.
       mManager->AddActor(*gap3, false, true);
@@ -540,32 +531,20 @@ void GameActorTests::TestGlobalInvokableMessageRegistration()
       SLEEP(10);
       dtCore::System::GetInstance().Step();
 
-      mGAP2->GetProperty("Actor Deleted Count", intProp);
-      //A publish and map loaded message should have been received, but no listener was added for delete.
-      CPPUNIT_ASSERT_EQUAL(2, intProp->GetValue());
-      
-      mGAP2->GetProperty("Actor Published Count", intProp);
-      CPPUNIT_ASSERT_EQUAL(1, intProp->GetValue());
-      
-      mGAP2->GetProperty("Map Loaded Count", intProp);
-      CPPUNIT_ASSERT_EQUAL(2, intProp->GetValue());
+      CPPUNIT_ASSERT(static_cast<dtDAL::IntActorProperty*>(gap2->GetProperty("Actor Deleted Count"))->GetValue() == 2);
+      CPPUNIT_ASSERT(static_cast<dtDAL::IntActorProperty*>(gap2->GetProperty("Actor Published Count"))->GetValue() == 1);
+      CPPUNIT_ASSERT(static_cast<dtDAL::IntActorProperty*>(gap2->GetProperty("Map Loaded Count"))->GetValue() == 2);
 
       //test removing the map loaded message and then send one
       mManager->UnregisterForMessages(
-         dtGame::MessageType::INFO_MAP_LOADED, *mGAP2, iTestListener->GetName());
+         dtGame::MessageType::INFO_MAP_LOADED, *gap2, iTestListener->GetName());
       mManager->SendMessage(*mManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_MAP_LOADED));
       SLEEP(10);
       dtCore::System::GetInstance().Step();
 
-      mGAP2->GetProperty("Actor Deleted Count", intProp);
-      //A publish and map loaded message should have been received, but no listener was added for delete.
-      CPPUNIT_ASSERT_EQUAL(2, intProp->GetValue());
-      
-      mGAP2->GetProperty("Actor Published Count", intProp);
-      CPPUNIT_ASSERT_EQUAL(1, intProp->GetValue());
-      
-      mGAP2->GetProperty("Map Loaded Count", intProp);
-      CPPUNIT_ASSERT_EQUAL(2, intProp->GetValue());
+      CPPUNIT_ASSERT(static_cast<dtDAL::IntActorProperty*>(gap2->GetProperty("Actor Deleted Count"))->GetValue() == 2);
+      CPPUNIT_ASSERT(static_cast<dtDAL::IntActorProperty*>(gap2->GetProperty("Actor Published Count"))->GetValue() == 1);
+      CPPUNIT_ASSERT(static_cast<dtDAL::IntActorProperty*>(gap2->GetProperty("Map Loaded Count"))->GetValue() == 2);
    }
    catch (const dtUtil::Exception &e)
    {
@@ -903,12 +882,12 @@ void GameActorTests::TestMessageProcessingPerformance()
       {
          dtCore::RefPtr<TestGamePropertyProxy> proxy1;
          mManager->CreateActor(*actor1Type, proxy1);
-         //dtCore::RefPtr<dtGame::TestGamePropertyProxy> mGAP1 = dynamic_cast<dtGame::TestGamePropertyProxy*>(proxy1.get());
+         //dtCore::RefPtr<dtGame::TestGamePropertyProxy> gap1 = dynamic_cast<dtGame::TestGamePropertyProxy*>(proxy1.get());
          CPPUNIT_ASSERT_MESSAGE("ActorProxy should not be NULL", proxy1 != NULL);
 
-         //proxy1->GetProperty("Rotation")->SetReadOnly(true);
-         //proxy1->GetProperty("Translation")->SetReadOnly(true);
-         //proxy1->GetProperty("Scale")->SetReadOnly(true);
+         //proxy1->GetProperty(dtDAL::TransformableActorProxy::PROPERTY_ROTATION)->SetReadOnly(true);
+         //proxy1->GetProperty(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION)->SetReadOnly(true);
+         //proxy1->GetProperty(dtDAL::TransformableActorProxy::PROPERTY_SCALE)->SetReadOnly(true);
          proxy1->SetRegisterListeners(false);
          // add it as a remote actor 
          mManager->AddActor(*proxy1, true, false);

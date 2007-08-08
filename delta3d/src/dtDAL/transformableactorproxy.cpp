@@ -29,31 +29,37 @@
 
 namespace dtDAL
 {
+   const std::string TransformableActorProxy::PROPERTY_ROTATION("Rotation");
+   const std::string TransformableActorProxy::PROPERTY_TRANSLATION("Translation");
+   const std::string TransformableActorProxy::PROPERTY_SCALE("Scale");
+   const std::string TransformableActorProxy::PROPERTY_NORMAL_RESCALING("Normal Rescaling");
+   const std::string TransformableActorProxy::PROPERTY_RENDER_PROXY_NODE("Render Proxy Node");
+
    void TransformableActorProxy::BuildPropertyMap()
    {
-      const std::string GROUPNAME = "Transformable";
-      const std::string COLLISION_GROUP = "ODE Collision";
+      static const std::string GROUPNAME = "Transformable";
+      static const std::string COLLISION_GROUP = "ODE Collision";
 
       dtCore::Transformable *trans = static_cast<dtCore::Transformable*>(GetActor());
       
-      AddProperty(new Vec3ActorProperty("Rotation", "Rotation",
+      AddProperty(new Vec3ActorProperty(PROPERTY_ROTATION, PROPERTY_ROTATION,
                                         MakeFunctor(*this, &TransformableActorProxy::SetRotation),
                                         MakeFunctorRet(*this, &TransformableActorProxy::GetRotation),
                                         "Sets the amount of rotation on a transformable. Represented with pitch, yaw, and roll.",
                                         GROUPNAME));
 
-      AddProperty(new Vec3ActorProperty("Translation", "Translation",
+      AddProperty(new Vec3ActorProperty(PROPERTY_TRANSLATION, PROPERTY_TRANSLATION,
                                         MakeFunctor(*this, &TransformableActorProxy::SetTranslation),
                                         MakeFunctorRet(*this, &TransformableActorProxy::GetTranslation),
                                         "Sets the location of a transformable in 3D space.",
                                         GROUPNAME));
 
-      AddProperty(new Vec3ActorProperty("Scale", "Scale",
+      AddProperty(new Vec3ActorProperty(PROPERTY_SCALE, PROPERTY_SCALE,
                                         MakeFunctor(*this, &TransformableActorProxy::SetScale),
                                         MakeFunctorRet(*this, &TransformableActorProxy::GetScale),
                                         "Sets the scale of a transformable.",GROUPNAME));
 
-      AddProperty(new BooleanActorProperty("Normal Rescaling", "Normal Rescaling",
+      AddProperty(new BooleanActorProperty(PROPERTY_NORMAL_RESCALING, PROPERTY_NORMAL_RESCALING,
                                            MakeFunctor(*trans, &dtCore::Transformable::SetNormalRescaling),
                                            MakeFunctorRet(*trans, &dtCore::Transformable::GetNormalRescaling),
                                            "Enables the automatic scaling of normals when a Transformable is scaled",
@@ -96,10 +102,11 @@ namespace dtDAL
                                         "is used if the collision type is set to BOX.",
                                         COLLISION_GROUP));
 
-      AddProperty(new BooleanActorProperty("Render Proxy Node", "Render Proxy Node",
+      static const std::string RENDER_PROXY_NODE_DESC("Enables the rendering of the proxy node for this Transformable");
+      AddProperty(new BooleanActorProperty(PROPERTY_RENDER_PROXY_NODE, PROPERTY_RENDER_PROXY_NODE,
          MakeFunctor(*trans, &dtCore::Transformable::RenderProxyNode),
          MakeFunctorRet(*trans, &dtCore::Transformable::GetIsRenderingProxyNode),
-         "Enables the rendering of the proxy node for this Transformable",
+         RENDER_PROXY_NODE_DESC,
          GROUPNAME));
    }
 

@@ -178,7 +178,7 @@ class HLAComponentTests : public CPPUNIT_NS::TestFixture
          testMsg.SetActorTypeCategory("TestHLA");
          testMsg.SetActorTypeName("Tank");
          
-         testMsg.AddUpdateParameter("Rotation", dtDAL::DataType::VEC3);
+         testMsg.AddUpdateParameter(dtDAL::TransformableActorProxy::PROPERTY_ROTATION, dtDAL::DataType::VEC3);
       }
 
       dtCore::RefPtr<dtGame::GameManager> mGameManager;
@@ -1232,7 +1232,7 @@ void HLAComponentTests::TestPrepareUpdate()
                         CPPUNIT_ASSERT_EQUAL_MESSAGE("The damage state value should be 3 (Destroyed)", unsigned(3), actual);
                         
                      }
-                     else if (aToPList.GetParameterDefinitions()[0].GetGameName() == "Rotation")
+                     else if (aToPList.GetParameterDefinitions()[0].GetGameName() == dtDAL::TransformableActorProxy::PROPERTY_ROTATION)
                      {
                         foundOrientationAttr = true;
                         unsigned long length;
@@ -1242,7 +1242,7 @@ void HLAComponentTests::TestPrepareUpdate()
                            length == aToPList.GetHLAType().GetEncodedLength() && length == 3 * sizeof(float));                        
                         //There are other tests that check the converter for rotation.
                      }                     
-                     else if (aToPList.GetParameterDefinitions()[0].GetGameName() == "Translation")
+                     else if (aToPList.GetParameterDefinitions()[0].GetGameName() == dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION)
                      {
                         CPPUNIT_FAIL("The world coordinate should not have ended up in the output.  It doesn't have a default value.");
                      }
