@@ -288,12 +288,38 @@ namespace dtGame
           * @return A pointer to the requested component, or NULL
           */
          GMComponent* GetComponentByName(const std::string &name);
+         
+         /**
+          * Templated version of GetComponentByName that calls the normal one and dynamic casts
+          * it to the type of the pointer passed in.  The pointer will be null if the name is not
+          * found or the component is not the right type.
+          * 
+          * Unlike the actor find, this uses a dynamic cast because it is expected to be called
+          * much less often, so safety was preferred.
+          * 
+          * @param name the name of the component to find
+          * @param component the pointer to assign with the component found.
+          */
+         template <typename ComponentType>
+         void GetComponentByName(const std::string &name, ComponentType*& component)
+         {
+            component = dynamic_cast<ComponentType*>(GetComponentByName(name));
+         }
 
          /**
           * Returns a const component of the requested name or NULL if none exists
           * @return A pointer to the requested component, or NULL
           */
          const GMComponent* GetComponentByName(const std::string &name) const;
+
+         /**
+          * Const version of the other templated GetComponentByName method
+          */
+         template <typename ComponentType>
+         void GetComponentByName(const std::string &name, const ComponentType* component) const
+         {
+            component = dynamic_cast<const ComponentType*>(GetComponentByName(name));
+         }
 
          /**
           * Sets an environment actor on the game manager
