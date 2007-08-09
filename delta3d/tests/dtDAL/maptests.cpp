@@ -1429,7 +1429,7 @@ void MapTests::TestMapSaveAndLoadGroup()
       CPPUNIT_ASSERT_MESSAGE("The loaded vec2 parameter should match the one saved: \n" + valueString,
          dtUtil::Equivalent(
             static_cast<dtDAL::NamedVec2Parameter*>(secondInternalGroup->GetParameter("CuteVec2"))->GetValue(),
-            static_cast<dtDAL::NamedVec2Parameter*>(actualFloatGroup->GetParameter("CuteVec2"))->GetValue(), 2, 1e-3f));
+            static_cast<dtDAL::NamedVec2Parameter*>(actualFloatGroup->GetParameter("CuteVec2"))->GetValue(), 1e-3f));
 //      CPPUNIT_ASSERT_MESSAGE("The loaded vec2f parameter should match the one saved: \n" + valueString,
 //         dtUtil::Equivalent(
 //            static_cast<dtDAL::NamedVec2fParameter*>(secondInternalGroup->GetParameter("CuteVec2f"))->GetValue(),
@@ -1442,7 +1442,7 @@ void MapTests::TestMapSaveAndLoadGroup()
       CPPUNIT_ASSERT_MESSAGE("The loaded vec3 parameter should match the one saved: \n" + valueString,
          dtUtil::Equivalent(
             static_cast<dtDAL::NamedVec3Parameter*>(secondInternalGroup->GetParameter("CuteVec3"))->GetValue(),
-            static_cast<dtDAL::NamedVec3Parameter*>(actualFloatGroup->GetParameter("CuteVec3"))->GetValue(), 3, 1e-3f));
+            static_cast<dtDAL::NamedVec3Parameter*>(actualFloatGroup->GetParameter("CuteVec3"))->GetValue(), 1e-3f));
 //      CPPUNIT_ASSERT_MESSAGE("The loaded vec3f parameter should match the one saved: \n" + valueString,
 //         dtUtil::Equivalent(
 //            static_cast<dtDAL::NamedVec3fParameter*>(secondInternalGroup->GetParameter("CuteVec3f"))->GetValue(),
@@ -1455,7 +1455,7 @@ void MapTests::TestMapSaveAndLoadGroup()
       CPPUNIT_ASSERT_MESSAGE("The loaded vec4 parameter should match the one saved: \n" + valueString,
          dtUtil::Equivalent(
             static_cast<dtDAL::NamedVec4Parameter*>(secondInternalGroup->GetParameter("CuteVec4"))->GetValue(),
-            static_cast<dtDAL::NamedVec4Parameter*>(actualFloatGroup->GetParameter("CuteVec4"))->GetValue(), 4, 1e-3f));
+            static_cast<dtDAL::NamedVec4Parameter*>(actualFloatGroup->GetParameter("CuteVec4"))->GetValue(), 1e-3f));
 //      CPPUNIT_ASSERT_MESSAGE("The loaded vec4f parameter should match the one saved: \n" + valueString,
 //         dtUtil::Equivalent(
 //            static_cast<dtDAL::NamedVec4fParameter*>(secondInternalGroup->GetParameter("CuteVec4f"))->GetValue(),
@@ -1468,7 +1468,7 @@ void MapTests::TestMapSaveAndLoadGroup()
       CPPUNIT_ASSERT_MESSAGE("The loaded color parameter should match the one saved: \n" + valueString,
          dtUtil::Equivalent(
             static_cast<dtDAL::NamedRGBAColorParameter*>(secondInternalGroup->GetParameter("CuteColor"))->GetValue(),
-            static_cast<dtDAL::NamedRGBAColorParameter*>(actualFloatGroup->GetParameter("CuteColor"))->GetValue(), 4, 1e-3f));
+            static_cast<dtDAL::NamedRGBAColorParameter*>(actualFloatGroup->GetParameter("CuteColor"))->GetValue(), 1e-3f));
             
       CPPUNIT_ASSERT_MESSAGE("The loaded float parameter should match the one saved: \n" + valueString,
          osg::equivalent(
