@@ -55,7 +55,7 @@ namespace dtAI
 
    bool Waypoint::operator==(const Waypoint& pWay) const
    {
-      return dtUtil::Equivalent(mPosition[0], pWay.mPosition[0]) && dtUtil::Equivalent(mPosition[1], pWay.mPosition[1]) && dtUtil::Equivalent(mPosition[2], pWay.mPosition[2]);
+      return dtUtil::Equivalent(mPosition, pWay.mPosition);
    }
 
    bool Waypoint::operator!=(const Waypoint& pWay) const
