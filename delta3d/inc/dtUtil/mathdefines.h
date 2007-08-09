@@ -202,7 +202,7 @@ namespace dtUtil
     * @param lhs The first vector.
     * @param rhs The second vector.
     */
-   template <typename TVec, typename Real>
+   template <typename TVec>
    inline bool Equivalent(const TVec& lhs, const TVec& rhs)
    {
       for (size_t i = 0; i < TVec::num_components; i++)
