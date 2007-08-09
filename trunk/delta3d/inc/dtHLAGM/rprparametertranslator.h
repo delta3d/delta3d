@@ -229,6 +229,13 @@ namespace dtHLAGM
             dtGame::StringMessageParameter& parameter,
             const OneToManyMapping::ParameterDefinition& paramDef) const;
 
+         void MapFromArticulationsToMessageParam(
+            const char* buffer, 
+            const size_t size,
+            dtGame::MessageParameter& parameter,
+            const dtDAL::DataType& parameterDataType,
+            const OneToManyMapping::ParameterDefinition& paramDef) const;
+
    };
 
 }
