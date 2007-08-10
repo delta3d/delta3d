@@ -316,6 +316,34 @@ namespace dtUtil
          static void ZFlop(osg::Matrix& toFlop);
 
          /**
+          * Non static method to set the magnetic north offset variable on this class
+          * @param magNorth The new offset to set
+          */
+         void SetMagneticNorthOffset(float magNorth) { mMagneticNorthOffset = magNorth; }
+
+         /**
+          * Non static accessor to the magentic north offset variable of this class.
+          * This is in degrees and should be ADDED to the heading angle.  This is just a point
+          * of storage.  None of the methods in this class use this angle.
+          * @return mMagneticNorthOffset
+          */
+         float GetMagneticNorthOffset() const { return mMagneticNorthOffset; }
+
+         /**
+          * Converts degrees to mils
+          * @param degrees The degrees to convert
+          */
+         static unsigned int DegreesToMils(const float degrees);
+
+         /**
+          * Converts mils to degrees
+          * @param mils The mils to convert
+          * @note If mils is greater than 6400 then it will be clamped
+          * to 6400 implicitly
+          */
+         static float MilsToDegrees(const unsigned int mils);
+
+         /**
           * Converts a set of geocentric coordinates to the equivalent geodetic
           * coordinates.  Uses the formula given at
           * <A HREF="http://www.colorado.edu/geography/gcraft/notes/datum/datum_f.html">
@@ -449,19 +477,6 @@ namespace dtUtil
          void ConvertGeodeticToTransverseMercator (double Latitude, double Longitude,
                                                    double& Easting, double& Northing) const;
          
-         /**
-          * Non static method to set the magnetic north offset variable on this class
-          * @param magNorth The new offset to set
-          */
-         void SetMagneticNorthOffset(float magNorth) { mMagneticNorthOffset = magNorth; }
-
-         /**
-          * Non static accessor to the magentic north offset variable of this class.
-          * This is in degrees and should be ADDED to the heading angle.  This is just a point
-          * of storage.  None of the methods in this class use this angle.
-          * @return mMagneticNorthOffset
-          */
-         float GetMagneticNorthOffset() const { return mMagneticNorthOffset; }
 
          /**
           * Converts a set of geodetic coordinates to the equivalent geocentric
@@ -478,20 +493,6 @@ namespace dtUtil
           */
          static void GeodeticToGeocentric(double phi, double lambda, double elevation,
                                           double& x, double& y, double& z);
-
-         /**
-          * Converts degrees to mils
-          * @param degrees The degrees to convert
-          */
-         static unsigned int DegreesToMils(const float degrees);
-
-         /**
-          * Converts mils to degrees
-          * @param mils The mils to convert
-          * @note If mils is greater than 6400 then it will be clamped
-          * to 6400 implicitly
-          */
-         static float MilsToDegrees(const unsigned int mils);
 
          /**
           * Adjusts for magnetic north of the earth
