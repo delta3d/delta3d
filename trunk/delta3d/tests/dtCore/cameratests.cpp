@@ -43,9 +43,6 @@
    #define SLEEP(milliseconds) usleep(((milliseconds) * 1000))
 #endif
 
-
-
-
 class CameraTests : public CPPUNIT_NS::TestFixture
 {
       CPPUNIT_TEST_SUITE(CameraTests);
