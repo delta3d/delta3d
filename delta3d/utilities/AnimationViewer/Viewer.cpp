@@ -6,7 +6,6 @@
 
 #include "Viewer.h"
 
-
 #include <dtUtil/log.h>
 #include <dtCore/transform.h>
 #include <dtCore/scene.h>
