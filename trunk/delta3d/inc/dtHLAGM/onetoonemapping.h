@@ -84,7 +84,7 @@ namespace dtHLAGM
          /**
           * Destructor.
           */
-         ~OneToOneMapping()
+         virtual ~OneToOneMapping()
          {
          }
 
