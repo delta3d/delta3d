@@ -246,7 +246,7 @@ namespace dtHLAGM
          /**
           * Destructor.
           */
-         ~OneToManyMapping()
+         virtual ~OneToManyMapping()
          {}
 
          /**
