@@ -227,9 +227,6 @@ void HUDComponent::ShowMainMenu()
 
 void HUDComponent::ShowHUD()
 {
-   if(mGUI->GetActiveTextureUnit() != 1)
-      mGUI->SetActiveTextureUnit(1);
-    
    HideMenus();
    ShowMouse(false);
    
@@ -250,9 +247,6 @@ void HUDComponent::ShowEndMenu()
 
 void HUDComponent::ShowIntroMenu()
 {
-   if(mGUI->GetActiveTextureUnit() != 0)
-      mGUI->SetActiveTextureUnit(0);
-
    HideMenus();
    mIntroBackground->show();
 }
