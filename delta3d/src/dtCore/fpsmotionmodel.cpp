@@ -471,23 +471,14 @@ void FPSMotionModel::OnMessage(MessageData *data)
       //see dtCore::System for the difference.
       const double deltaFrameTime = static_cast<const double*>(data->userData)[1];
 
+      UpdateMouse(deltaFrameTime);
+
       Transform transform;
       GetTarget()->GetTransform(transform);
 
-      osg::Vec3 xyz, hpr;
-      float newH = 0.f, newP = 0.f;
-      osg::Vec3 newXYZ;
+      osg::Vec3 xyz, newXYZ;
 
-      transform.GetRotation(hpr);
       transform.GetTranslation(xyz);
-
-      //calculate our new heading
-      newH = hpr[0] - mLookLeftRightCtrl * mMaximumTurnSpeed * deltaFrameTime;
-
-      //calculate our new pitch
-      newP = hpr[1] + mLookUpDownCtrl * mMaximumTurnSpeed * deltaFrameTime;
-      dtUtil::Clamp(newP, -89.9f, 89.9f); //stay away from 90.0 as it causes funky gimbal lock
-      mLookUpDownAxis->SetState(0.0f);//necessary to stop camera drifting down
 
       //calculate x/y delta
       osg::Vec3 translation;
@@ -496,7 +487,7 @@ void FPSMotionModel::OnMessage(MessageData *data)
       
       //transform our x/y delta by our new heading
       osg::Matrix mat;
-      mat.makeRotate(osg::DegreesToRadians(newH), osg::Vec3(0.f, 0.f, 1.f) );
+      mat.makeRotate(osg::DegreesToRadians(mHeading), osg::Vec3(0.0f, 0.0f, 1.0f));
       translation = translation * mat;
 
       newXYZ = xyz + translation;
@@ -509,11 +500,33 @@ void FPSMotionModel::OnMessage(MessageData *data)
 
       //set our new position/rotation
       transform.SetTranslation(newXYZ);
-      transform.SetRotation(newH, newP, 0.f);
-      GetTarget()->SetTransform(transform); 
-
-      mMouse->SetPosition(0.0f,0.0f);//keeps cursor at center of screen
+      GetTarget()->SetTransform(transform);
    }
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void FPSMotionModel::UpdateMouse(const double deltaTime)
+{
+   Transform transform;
+   GetTarget()->GetTransform(transform);
+
+   osg::Vec3 hpr;
+   float newP = 0.0f;
+
+   transform.GetRotation(hpr);
+
+   //calculate our new heading
+   mHeading = hpr[0] - mLookLeftRightCtrl * mMaximumTurnSpeed * deltaTime;
+
+   //calculate our new pitch
+   newP = hpr[1] + mLookUpDownCtrl * mMaximumTurnSpeed * deltaTime;
+   dtUtil::Clamp(newP, -89.9f, 89.9f); //stay away from 90.0 as it causes funky gimbal lock
+   mLookUpDownAxis->SetState(0.0f);//necessary to stop camera drifting down
+
+   transform.SetRotation(mHeading, newP, 0.f);
+   GetTarget()->SetTransform(transform); 
+
+   mMouse->SetPosition(0.0f,0.0f);//keeps cursor at center of screen
 }
 
 ///Update the MotionModel's elevation by either ground clamping, or "falling"
