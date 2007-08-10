@@ -5,6 +5,7 @@
 #ifndef DELTA_TANGENTSPACEVISITOR
 #define DELTA_TANGENTSPACEVISITOR
 
+#include <dtCore/export.h>
 #include <osg/NodeVisitor>
 
 namespace dtCore
@@ -24,7 +25,7 @@ namespace dtCore
     *       mMyCoolNode->accept(*visitor.get());
     * This visitor was based on osgFx::BumpMapping.cpp 
     */
-   class TangentSpaceVisitor: public osg::NodeVisitor 
+   class DT_CORE_EXPORT TangentSpaceVisitor: public osg::NodeVisitor 
    {
    public:
       // constructor
