@@ -78,6 +78,12 @@ namespace dtCore
           */
          virtual ~FPSMotionModel();
 
+         /**
+          * This method can be overriden in subclasses to produce
+          * desired mouse behavior
+          * @param deltaTime The time change
+          */
+         virtual void UpdateMouse(const double deltaTime);
 
          ///internal class, used by FPSMotionModel for InputDevice listening
          /** Helper class used to call the supplied functor when an axis value
@@ -424,6 +430,7 @@ namespace dtCore
          float mSidestepCtrl;    ///<control value for sidestep movement (-1.0, 1.0)
          float mLookLeftRightCtrl;///<control value for Left/Right rotation (-1.0, 1.0)
          float mLookUpDownCtrl;   ///<control value for up/down rotation (-1.0, 1.0)
+         float mHeading; /// used to store the current heading
    
          ///private method used to ground clamp or adjust the falling velocity/position
          void AdjustElevation(osg::Vec3 &xyz, double deltaFrameTime);
