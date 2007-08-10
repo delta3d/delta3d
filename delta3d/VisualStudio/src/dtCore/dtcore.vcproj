@@ -292,9 +292,6 @@
 				RelativePath="..\..\..\src\dtCore\scene.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\src\dtCore\shaderprogram.cpp">
-			</File>
-			<File
 				RelativePath="..\..\..\src\dtCore\shadergroup.cpp">
 			</File>
 			<File
@@ -317,6 +314,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtCore\shaderparamtexture2d.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtCore\shaderprogram.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtCore\shaderxml.cpp">
@@ -344,6 +344,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtCore\system.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtCore\tangentspacevisitor.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtCore\timer.cpp">
@@ -527,9 +530,6 @@
 				RelativePath="..\..\..\inc\dtCore\scene.h">
 			</File>
 			<File
-				RelativePath="..\..\..\inc\dtCore\shaderprogram.h">
-			</File>
-			<File
 				RelativePath="..\..\..\inc\dtCore\shadergroup.h">
 			</File>
 			<File
@@ -552,6 +552,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtCore\shaderparamtexture2d.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtCore\shaderprogram.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtCore\shaderxml.h">
@@ -582,6 +585,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtCore\system.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtCore\tangentspacevisitor.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtCore\timer.h">
