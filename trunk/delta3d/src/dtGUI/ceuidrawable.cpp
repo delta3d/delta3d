@@ -39,14 +39,14 @@
 #include <osg/Geode>
 #include <osg/Projection>
 #include <osg/MatrixTransform>
+#include <osg/State>
+
 
 using namespace dtCore;
 using namespace dtGUI;
 using namespace dtUtil;
 
 IMPLEMENT_MANAGEMENT_LAYER(CEUIDrawable)
-
-int CEUIDrawable::mActiveTextureUnit(0);
 
 
 /** The supplied DeltaWin will automatically be monitored for size change and pass the new
@@ -300,8 +300,14 @@ void CEUIDrawable::osgCEUIDrawable::drawImplementation(osg::State& state) const
    //tell the UI to update and to render
    if(!mUI) 
       return;       
-   unsigned int oldActiveUnit = state.getActiveTextureUnit();
-   state.setActiveTextureUnit(CEUIDrawable::mActiveTextureUnit);
+ 
+   //we must disable the client active texture unit because it may have been used and not disabled
+   //this will cause our GUI to disappear
+   state.setClientActiveTextureUnit(0);
+   glDisable(GL_TEXTURE_2D);
+
+   state.setActiveTextureUnit(0);
+   glEnable(GL_TEXTURE_2D);
+
    mUI->getSingletonPtr()->renderGUI();
-   state.setActiveTextureUnit(oldActiveUnit);      
 }

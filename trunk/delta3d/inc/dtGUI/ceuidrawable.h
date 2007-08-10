@@ -129,12 +129,6 @@ namespace dtGUI
 
       void SetOSGNode(osg::Node* pNode){mNode = pNode;}
 
-      /**
-       * This is a hack due to the fact that some models with multiple textures or shaders
-       * will render improperly 
-       */
-      void SetActiveTextureUnit(int texUnit) { mActiveTextureUnit = texUnit; }
-      int  GetActiveTextureUnit() const      { return mActiveTextureUnit;    }
 
    protected: 
 
@@ -190,7 +184,6 @@ namespace dtGUI
 
       dtCore::RefPtr<CEGUIKeyboardListener> mKeyboardListener;
       dtCore::RefPtr<CEGUIMouseListener> mMouseListener;
-      static int mActiveTextureUnit;
    };
 }//namespace dtGUI
 
