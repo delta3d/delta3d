@@ -155,6 +155,9 @@ namespace dtAI
          config_type& GetConfig(){return mConfig;}         
          
 
+         cost_function& GetCostFunction() {return mCostFunc;}
+         const cost_function& GetCostFunction() const{return mCostFunc;}
+
       protected:
          AStar(const AStar&); //not implemented by design
          AStar& operator=(const AStar&); //not implemented by design
