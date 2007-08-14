@@ -48,6 +48,7 @@ public slots:
    void OnAnimationClicked( QTableWidgetItem *item);
    void OnMeshActivated( QListWidgetItem *item );
    void OnLOD_Changed(double newValue);
+   void OnToggleHardwareSkinning();
    void OnToggleShadingToolbar();
    void OnToggleLODToolbar();
    void OnToggleLightingToolbar(); 
@@ -86,7 +87,6 @@ private:
    TrackScene           *mTrackScene;
    QStandardItemModel   *mMaterialModel; ///<Model for the character's materials
    QTableView           *mMaterialView;  ///<View for the character's materials
-
 
 private slots:
    void OnOpenCharFile();

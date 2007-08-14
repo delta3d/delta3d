@@ -40,9 +40,7 @@ using namespace dtCore;
 using namespace dtAnim;
 
 Viewer::Viewer():
-mCharacter(NULL),
-mMotion(NULL),
-mDatabase(&Cal3DDatabase::GetInstance())
+   mDatabase(&Cal3DDatabase::GetInstance())
 {
 
 }
@@ -83,7 +81,7 @@ void Viewer::Config()
    l->SetAmbient(0.7f, 0.7f, 0.7f, 1.f);  
    l->SetDiffuse(1.0f, 1.0f, 1.0f, 1.0f);  
   
-   GetScene()->GetSceneNode()->addChild( MakePlane() );   
+   GetScene()->GetSceneNode()->addChild( MakePlane() );
 
    mWireDecorator  = new osg::Group;
    mShadeDecorator = new osg::Group;
@@ -94,9 +92,8 @@ void Viewer::Config()
    OnSetShaded();
 
    Log::GetInstance().SetLogLevel(Log::LOG_DEBUG);
-   
-   mTimer.start(10, this);
 
+   mTimer.start(10, this);
 }
 
 void Viewer::OnLoadCharFile( const QString &filename )
@@ -106,11 +103,11 @@ void Viewer::OnLoadCharFile( const QString &filename )
    QDir dir(filename);
    dir.cdUp();
 
-   SetDataFilePathList( GetDeltaDataPathList() + ";" +
-                        dir.path().toStdString() + ";" );
+   SetDataFilePathList( GetDeltaDataPathList() + ":" +
+                        dir.path().toStdString() + ":" );
 
    // try to clean up the scene graph
-   if (mCharacter.get())
+   if (mCharacter.valid())
    {        
       mShadeDecorator->removeChild(mCharacter->GetGeode());
       mWireDecorator->removeChild(mCharacter->GetGeode());
@@ -119,6 +116,7 @@ void Viewer::OnLoadCharFile( const QString &filename )
 
    //wipe out any previously loaded characters. This will ensure we can 
    //reload the same file (which might have been modified).
+   mDatabase->TruncateDatabase();
    mDatabase->PurgeLoaderCaches();
 
    //create an instance from the character definition file

@@ -7,9 +7,12 @@
 #include <dtAnim/chardrawable.h>
 #include <dtAnim/cal3dmodelwrapper.h>
 #include <dtAnim/cal3danimator.h>
+#include <dtAnim/cal3ddatabase.h>
+#include <dtAnim/animnodebuilder.h>
 #include <dtCore/system.h>
 #include <dtUtil/log.h>
 #include <cassert>
+
 
 #include <cal3d/corematerial.h>
 
@@ -48,7 +51,7 @@ void CharDrawable::OnMessage(dtCore::Base::MessageData *data)
    // tick the animation
    if( data->message == "preframe" )
    {
-      double dt = *static_cast<double*>(data->userData);      
+      double dt = *static_cast<double*>(data->userData);
       mAnimator->Update(dt);
 
       Cal3DModelWrapper* wrapper = mAnimator->GetWrapper();
@@ -68,28 +71,10 @@ void CharDrawable::OnMessage(dtCore::Base::MessageData *data)
   */
 void CharDrawable::RebuildSubmeshes(Cal3DModelWrapper* wrapper, osg::Geode* geode)
 {
-   while (geode->getNumDrawables() > 0)
-   {
-      geode->removeDrawable( geode->getDrawable(0) );
-   }
-
-   if(wrapper->BeginRenderingQuery())
-   {
-      int meshCount = wrapper->GetMeshCount();
-
-      for(int meshId = 0; meshId < meshCount; meshId++) 
-      {
-         int submeshCount = wrapper->GetSubmeshCount(meshId);
-
-         for(int submeshId = 0; submeshId < submeshCount; submeshId++) 
-         {
-            SubMeshDrawable *submesh = new SubMeshDrawable(wrapper, meshId, submeshId);
-            geode->addDrawable(submesh);
-         }
-      }
-      wrapper->EndRenderingQuery();
-   }
-
+   GetMatrixNode()->removeChild(geode);
+   dtCore::RefPtr<osg::Geode> newGeode = Cal3DDatabase::GetInstance().GetNodeBuilder().CreateGeode(wrapper);
+   GetMatrixNode()->addChild(newGeode.get());
+   mGeode = newGeode;
 }
 
 void CharDrawable::SetCal3DWrapper(Cal3DModelWrapper* wrapper)
