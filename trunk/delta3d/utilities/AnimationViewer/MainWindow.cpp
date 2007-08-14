@@ -2,7 +2,13 @@
 #include "AnimationTableWidget.h"
 #include "TrackView.h"
 #include "TrackScene.h"
+
+#include <osg/Geode> ///needed for the node builder
+#include <dtAnim/cal3ddatabase.h>
+#include <dtAnim/animnodebuilder.h>
+
 #include <dtUtil/fileutils.h>
+
 #include <QtGui/QMenuBar>
 #include <QtGui/QAction>
 #include <QtGui/QFileDialog>
@@ -95,6 +101,11 @@ void MainWindow::CreateMenus()
    QMenu *viewMenu   = menuBar()->addMenu("&View");
    QMenu *toolBarMenu = viewMenu->addMenu("&Toolbars");
 
+   QAction* toggleHardwareSkinning = viewMenu->addAction("Use Hardware Skinning");
+   toggleHardwareSkinning->setCheckable(true);
+   toggleHardwareSkinning->setChecked(true);
+   connect(toggleHardwareSkinning, SIGNAL(triggered()), this, SLOT(OnToggleHardwareSkinning()));
+   
    windowMenu->addAction(mLoadCharAct);
 
    QAction *toggleShadeToolbarAction = toolBarMenu->addAction("Shading toolbar");
@@ -129,7 +140,6 @@ void MainWindow::CreateActions()
    mExitAct->setShortcut(tr("Ctrl+Q"));
    mExitAct->setStatusTip(tr("Exit the application"));
    connect(mExitAct, SIGNAL(triggered()), this, SLOT(close()));
-
 
    mLoadCharAct = new QAction(tr("&Open..."), this);
    mLoadCharAct->setShortcut(tr("Ctrl+O"));
@@ -371,6 +381,25 @@ void MainWindow::OnMeshActivated( QListWidgetItem *item )
 void MainWindow::OnLOD_Changed(double newValue)
 {   
    emit LOD_Changed(newValue);
+}
+
+void MainWindow::OnToggleHardwareSkinning()
+{
+   dtAnim::AnimNodeBuilder& nodeBuilder = dtAnim::Cal3DDatabase::GetInstance().GetNodeBuilder();
+   QAction *action = qobject_cast<QAction*>(sender());
+   bool usingHardwareSkinning = action->isChecked();
+
+   if (usingHardwareSkinning)
+   {
+      nodeBuilder.SetCreate(dtAnim::AnimNodeBuilder::CreateFunc(&nodeBuilder, &dtAnim::AnimNodeBuilder::CreateHardware));
+   }
+   else
+   {
+      nodeBuilder.SetCreate(dtAnim::AnimNodeBuilder::CreateFunc(&nodeBuilder, &dtAnim::AnimNodeBuilder::CreateSoftware));
+   }
+   QSettings settings("MOVES", "Animation Viewer");
+   QStringList files = settings.value("recentFileList").toStringList();
+   LoadCharFile(files.first());
 }
 
 void MainWindow::OnToggleShadingToolbar()
