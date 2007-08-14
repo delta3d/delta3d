@@ -1,0 +1,6 @@
+Import('*')
+
+env.Command( 'html/index.html',
+             'doxyfile.cfg',
+             'cd doc && doxygen doxyfile.cfg',
+             )
