@@ -16,6 +16,7 @@
    <skinningShader>
       <shaderGroup>HardwareSkinning</shaderGroup>
       <shaderName>Default</shaderName>
+      <maxBones>71</maxBones>
    </skinningShader>
    <animationChannel>
       <name>Run</name>

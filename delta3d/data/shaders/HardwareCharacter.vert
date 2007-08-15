@@ -4,7 +4,7 @@
  *  Bradley Anderegg
  */
 
-const int MAX_BONES = 72;
+const int MAX_BONES = 82;
 uniform vec4 boneTransforms[MAX_BONES * 3];
 
 void main(void)

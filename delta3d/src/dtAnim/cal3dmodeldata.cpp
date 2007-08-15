@@ -36,9 +36,10 @@
    , mAnimatables()
    , mVertexVBO(0)
    , mIndexVBO(0)
+   , mShaderMaxBones(72)
    {
    }
-         
+
    /////////////////////////////////////////////////////////////////////////////////////////
    Cal3DModelData::~Cal3DModelData()
    {
@@ -155,11 +156,21 @@
       return mShaderName;
    }
 
-
    /////////////////////////////////////////////////////////////////////////////////////////
    void Cal3DModelData::SetShaderName(const std::string& name)
    {
       mShaderName = name;
    }
+ 
+   /////////////////////////////////////////////////////////////////////////////////////////
+   unsigned Cal3DModelData::GetShaderMaxBones() const
+   {
+      return mShaderMaxBones;
+   }
 
+   /////////////////////////////////////////////////////////////////////////////////////////
+   void Cal3DModelData::SetShaderMaxBones(unsigned maxBones)
+   {
+      mShaderMaxBones = maxBones;
+   }
  } //namespace dtAnim

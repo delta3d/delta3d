@@ -57,6 +57,7 @@ const std::string CharacterFileHandler::CHILD_ELEMENT("child");
 const std::string CharacterFileHandler::SKINNING_SHADER_ELEMENT("skinningShader");
 const std::string CharacterFileHandler::SHADER_GROUP_ELEMENT("shaderGroup");
 const std::string CharacterFileHandler::SHADER_NAME_ELEMENT("shaderName");
+const std::string CharacterFileHandler::SHADER_MAX_BONES_ELEMENT("maxBones");
 
 CharacterFileHandler::AnimatableStruct::AnimatableStruct():
    mStartDelay(0.0f), 
@@ -78,12 +79,12 @@ CharacterFileHandler::AnimationSequenceStruct::AnimationSequenceStruct()
 {
 }
 
-
 CharacterFileHandler::CharacterFileHandler() 
 : mName()
 , mAnimations()
 , mMaterials()
 , mMeshes()
+, mShaderMaxBones(72)
 , mAnimationChannels()
 , mSkeletonFilename()
 , mInSkinningShader(false)
@@ -352,6 +353,10 @@ void CharacterFileHandler::SkinningShaderCharacters(const XMLCh* const chars)
    else if (topEl == SHADER_NAME_ELEMENT)
    {
       mShaderName = dtUtil::XMLStringConverter(chars).ToString();
+   }
+   else if (topEl == SHADER_MAX_BONES_ELEMENT)
+   {
+      mShaderMaxBones = dtUtil::ToUnsignedInt(dtUtil::XMLStringConverter(chars).ToString());
    }
 }
 

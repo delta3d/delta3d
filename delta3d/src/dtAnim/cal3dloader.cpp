@@ -189,6 +189,7 @@ namespace dtAnim
 
       modelData.SetShaderGroupName(handler.mShaderGroup);
       modelData.SetShaderName(handler.mShaderName);
+      modelData.SetShaderMaxBones(handler.mShaderMaxBones);
       
       //register animations
       if(!handler.mAnimationChannels.empty())

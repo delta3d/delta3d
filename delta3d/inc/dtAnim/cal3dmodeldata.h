@@ -101,6 +101,14 @@ namespace dtAnim
          /// Sets the shader group name
          void SetShaderName(const std::string& name);
 
+         /**
+          * @return the maximum number of bones the skinning shader supports.
+          */
+         unsigned GetShaderMaxBones() const;
+
+         /// Sets the maximum number of bones the shader supports
+         void SetShaderMaxBones(unsigned maxBones);
+
       protected:
          virtual ~Cal3DModelData();
 
@@ -114,6 +122,7 @@ namespace dtAnim
          AnimationWrapperArray mAnimWrappers;
          AnimatableArray mAnimatables;
          unsigned mVertexVBO, mIndexVBO;
+         unsigned mShaderMaxBones;
 
    };
 

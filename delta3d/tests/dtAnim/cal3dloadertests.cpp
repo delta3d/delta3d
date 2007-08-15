@@ -151,6 +151,7 @@ namespace dtAnim
             modelData->SetIndexVBO(4U);
             CPPUNIT_ASSERT_EQUAL(4U, modelData->GetIndexVBO());
             
+            
             CPPUNIT_ASSERT(modelData->GetCoreModel() == wrapper->GetCalModel()->getCoreModel());
             
             std::string testString("abc");
@@ -161,6 +162,11 @@ namespace dtAnim
             CPPUNIT_ASSERT_EQUAL(std::string("HardwareSkinning"), modelData->GetShaderGroupName());
             modelData->SetShaderGroupName(testString);
             CPPUNIT_ASSERT_EQUAL(testString, modelData->GetShaderGroupName());
+
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("71 should have been loaded from the test xml file", 
+                  71U, modelData->GetShaderMaxBones());
+            modelData->SetShaderMaxBones(72);
+            CPPUNIT_ASSERT_EQUAL(72U, modelData->GetShaderMaxBones());
          }
          
       private:

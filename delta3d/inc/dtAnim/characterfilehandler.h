@@ -104,6 +104,7 @@ namespace dtAnim
       static const std::string SKINNING_SHADER_ELEMENT;
       static const std::string SHADER_GROUP_ELEMENT;
       static const std::string SHADER_NAME_ELEMENT;
+      static const std::string SHADER_MAX_BONES_ELEMENT;
 
    public:
    	CharacterFileHandler();
@@ -185,6 +186,7 @@ namespace dtAnim
       std::vector<MeshStruct> mMeshes;              ///<Container of mesh structs
       ///Shader information for hardware skinning. these value work with the shader manager.
       std::string mShaderGroup, mShaderName;
+      unsigned mShaderMaxBones;
       std::vector<AnimationChannelStruct> mAnimationChannels; ///<The preconfigured playbable animations
       std::vector<AnimationSequenceStruct> mAnimationSequences; ///<The preconfigured playbable animations
       std::string mSkeletonFilename;                ///<The one skeleton filename      
