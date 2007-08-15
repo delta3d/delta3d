@@ -349,6 +349,13 @@ void Viewer::LoadFile( ViewState* vs )
    if (ext == "xml")
    {
       std::string path = osgDB::getFilePath(filename);
+      std::string::size_type loc = path.find("/maps");
+      if (loc == std::string::npos)
+      {
+        DisplayError("Map file doesn't appear to be in a valid Project context.\n Expecting file to be in 'maps' folder");
+        return;
+      }
+
       path.erase( path.find("/maps"), path.size() );
       std::string name = osgDB::getStrippedName(filename);
       dtDAL::Map *theMap = NULL;
@@ -365,6 +372,7 @@ void Viewer::LoadFile( ViewState* vs )
          std::string msg;
          msg = "Problem loading map: " + e.What();
          DisplayError(msg);
+         return;
       }
 
       filenode = new osg::Group();
