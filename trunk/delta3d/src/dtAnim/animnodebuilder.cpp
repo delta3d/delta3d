@@ -32,6 +32,7 @@
 #include <dtUtil/log.h>
 
 #include <osg/Geode>
+#include <osg/State>
 #include <osg/BoundingSphere>
 #include <osg/BoundingBox>
 #include <osg/Texture2D>
@@ -151,14 +152,10 @@ dtCore::RefPtr<osg::Geode> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pW
       return NULL;
    }
    
-   //TODO: query for the maximum number of bones through opengl
-   static const int MAX_BONES = 72;
-// Apple OpenGL reports the names of the array uniforms differently
-#ifdef __APPLE__
-   static const std::string BONE_TRANSFORM_UNIFORM("boneTransforms[0]");
-#else
+
+   const int maxBones = modelData->GetShaderMaxBones();
    static const std::string BONE_TRANSFORM_UNIFORM("boneTransforms");
-#endif
+
    dtCore::RefPtr<osg::Geode> geode = new osg::Geode();
 
    pWrapper->SetLODLevel(1);
@@ -191,7 +188,6 @@ dtCore::RefPtr<osg::Geode> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pW
       Array<CalIndex> indexArray(numIndices);
 
       CalHardwareModel* hardwareModel = new CalHardwareModel(model);
-
 
       osg::Drawable::Extensions* glExt = osg::Drawable::getExtensions(0, true);
       GLuint vbo[2];
@@ -234,7 +230,7 @@ dtCore::RefPtr<osg::Geode> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pW
       hardwareModel->setWeightBuffer(reinterpret_cast<char*>(vboVertexAttr + 10), strideBytes);
       hardwareModel->setMatrixIndexBuffer(reinterpret_cast<char*>(vboVertexAttr + 14), strideBytes);
 
-      if(hardwareModel->load(0, 0, MAX_BONES))
+      if(hardwareModel->load(0, 0, maxBones))
       {
          numVerts = hardwareModel->getTotalVertexCount();
          numIndices = 3 * hardwareModel->getTotalFaceCount();
@@ -266,13 +262,38 @@ dtCore::RefPtr<osg::Geode> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pW
             glExt->glBufferData(GL_ELEMENT_ARRAY_BUFFER_ARB, numIndices * sizeof(CalIndex), (const void*) indexArray.mArray, GL_STATIC_DRAW_ARB);
          }
          
-         //todo- pull shader name out of character xml
-         LoadShaders(*modelData, *geode);
+         dtCore::ShaderProgram* shadProg = LoadShaders(*modelData, *geode);
 
+         /* Begin figure out if this open gl implementation uses [0] on array uniforms 
+          * This seems to be an ATI/NVIDIA thing.  
+          * This requires me to force the shader to compile.
+          */
+         osg::Program* prog = shadProg->GetShaderProgram();
+         dtCore::RefPtr<osg::State> tmpState = new osg::State;
+         tmpState->setContextID(0);
+         prog->compileGLObjects(*tmpState);
+         const osg::Program::ActiveVarInfoMap& uniformMap = prog->getActiveUniforms(0);
+
+         std::string boneTransformUniform = BONE_TRANSFORM_UNIFORM;
+         if (uniformMap.find(boneTransformUniform) == uniformMap.end())
+         {
+            if (uniformMap.find(boneTransformUniform + "[0]") == uniformMap.end())
+            {
+               LOG_ERROR("Can't find uniform named \"" + boneTransformUniform 
+                     + "\" which is required for skinning.");
+            }
+            else
+            {
+               boneTransformUniform.append("[0]");
+            }
+         }
+         // End check.
+         
          int numMeshes = hardwareModel->getHardwareMeshCount();
          for(int meshCount = 0; meshCount < numMeshes; ++meshCount)
          {
-            HardwareSubMeshDrawable* drawable = new HardwareSubMeshDrawable(pWrapper, hardwareModel, BONE_TRANSFORM_UNIFORM, MAX_BONES, meshCount, vbo[0], vbo[1]);
+            HardwareSubMeshDrawable* drawable = new HardwareSubMeshDrawable(pWrapper, hardwareModel, 
+                  boneTransformUniform, maxBones, meshCount, vbo[0], vbo[1]);
             geode->addDrawable(drawable);
          }
 
@@ -350,7 +371,6 @@ dtCore::ShaderProgram* AnimNodeBuilder::LoadShaders(Cal3DModelData& modelData, o
       }
       modelData.SetShaderGroupName(hardwareSkinningSPGroup);
    }
-   
    return shaderManager.AssignShaderFromPrototype(*shaderProgram, geode);
 }
 

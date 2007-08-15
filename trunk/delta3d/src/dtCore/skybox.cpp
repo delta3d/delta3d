@@ -71,77 +71,77 @@ void SkyBox::Config()
 {
    GetOSGNode()->setCullCallback(0);
 
-	SetRenderProfile(mRenderProfilePreference);
+   SetRenderProfile(mRenderProfilePreference);
 
-	if(mInitializedTextures)
-	{
-		for(int i = 0; i < 6; ++i)
-		{
-			if(mTexPreSetList[i])
-			{
-				SetTexture(SkyBoxSideEnum(i), mTexList[i]);
-			}
-		}
-	}
+   if(mInitializedTextures)
+   {
+      for(int i = 0; i < 6; ++i)
+      {
+         if(mTexPreSetList[i])
+         {
+            SetTexture(SkyBoxSideEnum(i), mTexList[i]);
+         }
+      }
+   }
 
-	mRenderProfile->Config(GetOSGNode()->asGroup()); 	
+   mRenderProfile->Config(GetOSGNode()->asGroup());    
 }
 
 
 void SkyBox::SetRenderProfile(RenderProfileEnum pRenderProfile)
 {
-	CheckHardware();
+   CheckHardware();
 
-	switch(pRenderProfile)
-	{
-		case RP_CUBE_MAP:
-			{
-				if(mSupportedProfiles[RP_CUBE_MAP])
-				{
-					mRenderProfile = new SkyBox::CubeMapProfile();	
-					return;
-				}
-				else
-				{
-					Log::GetInstance().LogMessage(Log::LOG_ERROR,__FUNCTION__, 
-						"The SkyBox RenderProfile selected is not available for your hardware" );	
-				}
-			}
+   switch(pRenderProfile)
+   {
+      case RP_CUBE_MAP:
+         {
+            if(mSupportedProfiles[RP_CUBE_MAP])
+            {
+               mRenderProfile = new SkyBox::CubeMapProfile();   
+               return;
+            }
+            else
+            {
+               Log::GetInstance().LogMessage(Log::LOG_ERROR,__FUNCTION__, 
+                  "The SkyBox RenderProfile selected is not available for your hardware" );   
+            }
+         }
 
-		case RP_ANGULAR_MAP:
-			{
-				if(mSupportedProfiles[RP_ANGULAR_MAP])
-				{
-					mRenderProfile = new SkyBox::AngularMapProfile();	
-					return;
-				}
-				else
-				{
-					Log::GetInstance().LogMessage(Log::LOG_ERROR,__FUNCTION__, 
-						"The SkyBox RenderProfile selected is not available for your hardware" );	
-				}
-			}
+      case RP_ANGULAR_MAP:
+         {
+            if(mSupportedProfiles[RP_ANGULAR_MAP])
+            {
+               mRenderProfile = new SkyBox::AngularMapProfile();   
+               return;
+            }
+            else
+            {
+               Log::GetInstance().LogMessage(Log::LOG_ERROR,__FUNCTION__, 
+                  "The SkyBox RenderProfile selected is not available for your hardware" );   
+            }
+         }
 
-		case RP_DEFAULT:
-			{
-				if(mSupportedProfiles[RP_CUBE_MAP])
-				{
-					mRenderProfile = new SkyBox::CubeMapProfile();	
-					return;
-				}
-				else
-				{
-					mRenderProfile = new SkyBox::FixedFunctionProfile();	
-				}
+      case RP_DEFAULT:
+         {
+            if(mSupportedProfiles[RP_CUBE_MAP])
+            {
+               mRenderProfile = new SkyBox::CubeMapProfile();   
+               return;
+            }
+            else
+            {
+               mRenderProfile = new SkyBox::FixedFunctionProfile();   
+            }
 
-			} 
+         } 
 
-		default:
-			{
-				mRenderProfile = new SkyBox::FixedFunctionProfile();	
-				return;	
-			}
-	}
+      default:
+         {
+            mRenderProfile = new SkyBox::FixedFunctionProfile();   
+            return;   
+         }
+   }
 
 }
 
@@ -149,42 +149,42 @@ void SkyBox::SetRenderProfile(RenderProfileEnum pRenderProfile)
 void SkyBox::CheckHardware()
 {
 
-	//this should always be supported
-	mSupportedProfiles[RP_FIXED_FUNCTION] = true;
-	
-	if(osg::isGLExtensionSupported(0, "GL_ARB_texture_cube_map") && osg::isGLExtensionSupported(0, "GL_ARB_fragment_shader") && osg::isGLExtensionSupported(0, "GL_ARB_vertex_shader"))
-	{
-		mSupportedProfiles[RP_CUBE_MAP] = true;
-	}
-	else
-	{
-		mSupportedProfiles[RP_CUBE_MAP] = false;
-	}
-	
-	if (osg::isGLExtensionSupported(0, "GL_ARB_fragment_shader") && osg::isGLExtensionSupported(0, "GL_ARB_vertex_shader"))
-	{
+   //this should always be supported
+   mSupportedProfiles[RP_FIXED_FUNCTION] = true;
+   
+   if(osg::isGLExtensionSupported(0, "GL_ARB_texture_cube_map") && osg::isGLExtensionSupported(0, "GL_ARB_fragment_shader") && osg::isGLExtensionSupported(0, "GL_ARB_vertex_shader"))
+   {
+      mSupportedProfiles[RP_CUBE_MAP] = true;
+   }
+   else
+   {
+      mSupportedProfiles[RP_CUBE_MAP] = false;
+   }
+   
+   if (osg::isGLExtensionSupported(0, "GL_ARB_fragment_shader") && osg::isGLExtensionSupported(0, "GL_ARB_vertex_shader"))
+   {
         mSupportedProfiles[RP_ANGULAR_MAP] = true;
-	}
-	else
-	{
-		mSupportedProfiles[RP_ANGULAR_MAP] = false;
-	}
+   }
+   else
+   {
+      mSupportedProfiles[RP_ANGULAR_MAP] = false;
+   }
 
 }
 
 
 void SkyBox::SetTexture(SkyBoxSideEnum side, const std::string& filename)
 {
-	if(mRenderProfile.valid())
-	{
-		mRenderProfile->SetTexture(side, filename);
-	}
-	else
-	{
-		mTexList[side] = filename;
-		mTexPreSetList[side] = true;
-		mInitializedTextures = true;
-	}
+   if(mRenderProfile.valid())
+   {
+      mRenderProfile->SetTexture(side, filename);
+   }
+   else
+   {
+      mTexList[side] = filename;
+      mTexPreSetList[side] = true;
+      mInitializedTextures = true;
+   }
 }
 
 void SkyBox::Repaint(   const osg::Vec3& skyColor, 
@@ -193,65 +193,65 @@ void SkyBox::Repaint(   const osg::Vec3& skyColor,
                         double sunAzimuth,
                         double visibility )
 {
-	//need to recolor anything?
+   //need to recolor anything?
 }
 
 //////////////////////////////////////////////////////////////////////////
-//Now for the implementation of the different render profiles			//
+//Now for the implementation of the different render profiles         //
 //////////////////////////////////////////////////////////////////////////
 
 SkyBox::AngularMapProfile::AngularMapProfile()
 {
-	mGeode = new osg::Geode();
-	mAngularMap = new osg::Texture2D();	
-	mGeode->addDrawable(new SkyBox::SkyBoxDrawable());
+   mGeode = new osg::Geode();
+   mAngularMap = new osg::Texture2D();   
+   mGeode->addDrawable(new SkyBox::SkyBoxDrawable());
 }
 
 
 void SkyBox::AngularMapProfile::Config(osg::Group* pGroup)
 {
-	osg::StateSet* ss = mGeode->getOrCreateStateSet();
+   osg::StateSet* ss = mGeode->getOrCreateStateSet();
 
-	osg::Depth* depth = new osg::Depth;
-	depth->setFunction(osg::Depth::ALWAYS);
-	depth->setRange(1.0,1.0);   
-	ss->setAttributeAndModes(depth, osg::StateAttribute::ON );
-
-
-	ss->setMode(GL_LIGHTING,osg::StateAttribute::OFF);
-	ss->setMode(GL_FOG,osg::StateAttribute::OFF);
-	ss->setMode(GL_CULL_FACE, osg::StateAttribute::OFF );
-
-	ss->setRenderBinDetails(-2,"RenderBin");
+   osg::Depth* depth = new osg::Depth;
+   depth->setFunction(osg::Depth::ALWAYS);
+   depth->setRange(1.0,1.0);   
+   ss->setAttributeAndModes(depth, osg::StateAttribute::ON );
 
 
-	osg::MatrixTransform* modelview_abs = new osg::MatrixTransform;
-	modelview_abs->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
-	modelview_abs->setMatrix(osg::Matrix::identity());
-	modelview_abs->addChild(mGeode.get());
+   ss->setMode(GL_LIGHTING,osg::StateAttribute::OFF);
+   ss->setMode(GL_FOG,osg::StateAttribute::OFF);
+   ss->setMode(GL_CULL_FACE, osg::StateAttribute::OFF );
 
-	osg::Projection* projection = new osg::Projection;
-	projection->setMatrix(osg::Matrix::ortho2D(0,1,0,1));
-	projection->addChild(modelview_abs);
+   ss->setRenderBinDetails(-2,"RenderBin");
 
 
-	pGroup->addChild(projection);
+   osg::MatrixTransform* modelview_abs = new osg::MatrixTransform;
+   modelview_abs->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
+   modelview_abs->setMatrix(osg::Matrix::identity());
+   modelview_abs->addChild(mGeode.get());
+
+   osg::Projection* projection = new osg::Projection;
+   projection->setMatrix(osg::Matrix::ortho2D(0,1,0,1));
+   projection->addChild(modelview_abs);
+
+
+   pGroup->addChild(projection);
 
 
 
-	//load texture
-	mAngularMap->setWrap(osg::Texture::WRAP_S, osg::Texture::REPEAT);
-	mAngularMap->setWrap(osg::Texture::WRAP_T, osg::Texture::REPEAT);
-	mAngularMap->setUnRefImageDataAfterApply(true);
-	ss->setTextureAttributeAndModes(0,mAngularMap.get(),osg::StateAttribute::ON);
-	ss->setTextureMode(0, GL_TEXTURE_2D, GL_TRUE);
+   //load texture
+   mAngularMap->setWrap(osg::Texture::WRAP_S, osg::Texture::REPEAT);
+   mAngularMap->setWrap(osg::Texture::WRAP_T, osg::Texture::REPEAT);
+   mAngularMap->setUnRefImageDataAfterApply(true);
+   ss->setTextureAttributeAndModes(0,mAngularMap.get(),osg::StateAttribute::ON);
+   ss->setTextureMode(0, GL_TEXTURE_2D, GL_TRUE);
 
 
-	//setup shaders
+   //setup shaders
 
-	mProgram = new osg::Program;
-	dtCore::RefPtr<osg::Shader> vertShader = new osg::Shader(osg::Shader::VERTEX);
-	dtCore::RefPtr<osg::Shader> fragShader = new osg::Shader(osg::Shader::FRAGMENT);
+   mProgram = new osg::Program;
+   dtCore::RefPtr<osg::Shader> vertShader = new osg::Shader(osg::Shader::VERTEX);
+   dtCore::RefPtr<osg::Shader> fragShader = new osg::Shader(osg::Shader::FRAGMENT);
 
    std::string vertFile = dtCore::FindFileInPathList("/shaders/AngularMapSkyBox.vert");
    std::string fragFile = dtCore::FindFileInPathList("/shaders/AngularMapSkyBox.frag");
@@ -260,209 +260,209 @@ void SkyBox::AngularMapProfile::Config(osg::Group* pGroup)
    fragShader->loadShaderSourceFromFile(fragFile);
 
 
-	mProgram->addShader(vertShader.get());
-	mProgram->addShader(fragShader.get());
+   mProgram->addShader(vertShader.get());
+   mProgram->addShader(fragShader.get());
 
-	dtCore::RefPtr<osg::Uniform> tex = new osg::Uniform(osg::Uniform::SAMPLER_2D, "angularMap");
-	tex->set(0);
-	ss->addUniform(tex.get());
+   dtCore::RefPtr<osg::Uniform> tex = new osg::Uniform(osg::Uniform::SAMPLER_2D, "angularMap");
+   tex->set(0);
+   ss->addUniform(tex.get());
 
-	mInverseModelViewProjMatrix = new osg::Uniform(osg::Uniform::FLOAT_MAT4, "inverseModelViewProjMatrix");
-	ss->addUniform(mInverseModelViewProjMatrix.get());
+   mInverseModelViewProjMatrix = new osg::Uniform(osg::Uniform::FLOAT_MAT4, "inverseModelViewProjMatrix");
+   ss->addUniform(mInverseModelViewProjMatrix.get());
 
-	ss->setAttributeAndModes(mProgram.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE | osg::StateAttribute::PROTECTED);
+   ss->setAttributeAndModes(mProgram.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE | osg::StateAttribute::PROTECTED);
 
-	mGeode->setUpdateCallback(new AngularMapProfile::UpdateViewCallback(this));	
+   mGeode->setUpdateCallback(new AngularMapProfile::UpdateViewCallback(this));   
 
 }
 
 //note that the side doesnt matter because an angular map is just one texture
 void SkyBox::AngularMapProfile::SetTexture(SkyBoxSideEnum side, const std::string& filename)
 {
-	osg::Image *newImage = osgDB::readImageFile(filename);
-	if (newImage == 0)
-	{
-		Log::GetInstance().LogMessage(Log::LOG_ERROR,__FUNCTION__, 
-			"Can't load texture file '%s'.",filename.c_str() );
-	}
-	mAngularMap->setImage(newImage);
-	mAngularMap->dirtyTextureObject();
+   osg::Image *newImage = osgDB::readImageFile(filename);
+   if (newImage == 0)
+   {
+      Log::GetInstance().LogMessage(Log::LOG_ERROR,__FUNCTION__, 
+         "Can't load texture file '%s'.",filename.c_str() );
+   }
+   mAngularMap->setImage(newImage);
+   mAngularMap->dirtyTextureObject();
 }
 
 void SkyBox::AngularMapProfile::UpdateViewMatrix(const osg::Matrix& viewMat, const osg::Matrix& projMat)
 {
 
-	osg::Matrix proj;
-	proj.invert(projMat);
+   osg::Matrix proj;
+   proj.invert(projMat);
 
-	osg::Matrix view;
-	view.invert(viewMat);
+   osg::Matrix view;
+   view.invert(viewMat);
 
-	mInverseModelViewProjMatrix->set(proj * view);
+   mInverseModelViewProjMatrix->set(proj * view);
 }
 
 
 
 SkyBox::CubeMapProfile::CubeMapProfile()
 {
-	mGeode = new osg::Geode();
-	mCubeMap = new osg::TextureCubeMap();
-	mGeode->addDrawable(new dtCore::SkyBox::SkyBoxDrawable());
+   mGeode = new osg::Geode();
+   mCubeMap = new osg::TextureCubeMap();
+   mGeode->addDrawable(new dtCore::SkyBox::SkyBoxDrawable());
 
 }
 
 
 void SkyBox::CubeMapProfile::Config(osg::Group* pGroup)
-{	
+{   
 
-	mCubeMap->setWrap(osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
-	mCubeMap->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
-	mCubeMap->setWrap(osg::Texture::WRAP_R, osg::Texture::CLAMP_TO_EDGE);
-	mCubeMap->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR_MIPMAP_LINEAR);
-	mCubeMap->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR);   
-	mCubeMap->setUnRefImageDataAfterApply(true);
+   mCubeMap->setWrap(osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
+   mCubeMap->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
+   mCubeMap->setWrap(osg::Texture::WRAP_R, osg::Texture::CLAMP_TO_EDGE);
+   mCubeMap->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR_MIPMAP_LINEAR);
+   mCubeMap->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR);   
+   mCubeMap->setUnRefImageDataAfterApply(true);
 
-	osg::StateSet* ss = mGeode->getOrCreateStateSet();
+   osg::StateSet* ss = mGeode->getOrCreateStateSet();
 
-	ss->setTextureAttributeAndModes(0, mCubeMap.get(), osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON); 
-
-
-	osg::Depth* depth = new osg::Depth;
-	depth->setFunction(osg::Depth::ALWAYS);
-	depth->setRange(1.0,1.0);   
-	ss->setAttributeAndModes(depth, osg::StateAttribute::ON );
+   ss->setTextureAttributeAndModes(0, mCubeMap.get(), osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON); 
 
 
-	ss->setMode(GL_LIGHTING,osg::StateAttribute::OFF);
-	ss->setMode(GL_FOG,osg::StateAttribute::OFF);
-	ss->setMode(GL_CULL_FACE, osg::StateAttribute::OFF );
-
-	ss->setRenderBinDetails(-2,"RenderBin");
-
-
-	dtCore::RefPtr<osg::MatrixTransform> modelview_abs = new osg::MatrixTransform;
-	modelview_abs->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
-	modelview_abs->setMatrix(osg::Matrix::identity());
-	modelview_abs->addChild(mGeode.get());
-
-	dtCore::RefPtr<osg::Projection> projection = new osg::Projection;
-	projection->setMatrix(osg::Matrix::ortho2D(0,1,0,1));
-	projection->addChild(modelview_abs.get());
+   osg::Depth* depth = new osg::Depth;
+   depth->setFunction(osg::Depth::ALWAYS);
+   depth->setRange(1.0,1.0);   
+   ss->setAttributeAndModes(depth, osg::StateAttribute::ON );
 
 
-	pGroup->addChild(projection.get());
+   ss->setMode(GL_LIGHTING,osg::StateAttribute::OFF);
+   ss->setMode(GL_FOG,osg::StateAttribute::OFF);
+   ss->setMode(GL_CULL_FACE, osg::StateAttribute::OFF );
+
+   ss->setRenderBinDetails(-2,"RenderBin");
 
 
-	//setup shaders
+   dtCore::RefPtr<osg::MatrixTransform> modelview_abs = new osg::MatrixTransform;
+   modelview_abs->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
+   modelview_abs->setMatrix(osg::Matrix::identity());
+   modelview_abs->addChild(mGeode.get());
 
-	mProgram = new osg::Program;
-	dtCore::RefPtr<osg::Shader> vertShader = new osg::Shader(osg::Shader::VERTEX);
-	dtCore::RefPtr<osg::Shader> fragShader = new osg::Shader(osg::Shader::FRAGMENT);
+   dtCore::RefPtr<osg::Projection> projection = new osg::Projection;
+   projection->setMatrix(osg::Matrix::ortho2D(0,1,0,1));
+   projection->addChild(modelview_abs.get());
 
-	mProgram->addShader(vertShader.get());
-	mProgram->addShader(fragShader.get());
+
+   pGroup->addChild(projection.get());
+
+
+   //setup shaders
+
+   mProgram = new osg::Program;
+   dtCore::RefPtr<osg::Shader> vertShader = new osg::Shader(osg::Shader::VERTEX);
+   dtCore::RefPtr<osg::Shader> fragShader = new osg::Shader(osg::Shader::FRAGMENT);
+
+   mProgram->addShader(vertShader.get());
+   mProgram->addShader(fragShader.get());
 
    std::string vertFile = dtCore::FindFileInPathList("/shaders/CubeMapSkyBox.vert");
    std::string fragFile = dtCore::FindFileInPathList("/shaders/CubeMapSkyBox.frag");
 
-	vertShader->loadShaderSourceFromFile(vertFile);
-	fragShader->loadShaderSourceFromFile(fragFile);
+   vertShader->loadShaderSourceFromFile(vertFile);
+   fragShader->loadShaderSourceFromFile(fragFile);
 
-	dtCore::RefPtr<osg::Uniform> tex = new osg::Uniform(osg::Uniform::SAMPLER_CUBE, "cubeMap");
-	tex->set(0);
-	ss->addUniform(tex.get());
+   dtCore::RefPtr<osg::Uniform> tex = new osg::Uniform(osg::Uniform::SAMPLER_CUBE, "cubeMap");
+   tex->set(0);
+   ss->addUniform(tex.get());
 
-	mInverseModelViewProjMatrix = new osg::Uniform(osg::Uniform::FLOAT_MAT4, "inverseModelViewProjMatrix");
-	ss->addUniform(mInverseModelViewProjMatrix.get());
+   mInverseModelViewProjMatrix = new osg::Uniform(osg::Uniform::FLOAT_MAT4, "inverseModelViewProjMatrix");
+   ss->addUniform(mInverseModelViewProjMatrix.get());
 
-	ss->setAttributeAndModes(mProgram.get(), osg::StateAttribute::ON);
+   ss->setAttributeAndModes(mProgram.get(), osg::StateAttribute::ON);
 
-	mGeode->setUpdateCallback(new CubeMapProfile::UpdateViewCallback(this));
+   mGeode->setUpdateCallback(new CubeMapProfile::UpdateViewCallback(this));
 
 }
 
 
 void SkyBox::CubeMapProfile::SetTexture(SkyBoxSideEnum side, const std::string& filename)
 {
-	osg::Image *newImage = osgDB::readImageFile(filename);
-	if (newImage == 0)
-	{
-		Log::GetInstance().LogMessage(Log::LOG_ERROR,__FUNCTION__, 
-			"Can't load texture file '%s'.",filename.c_str() );
-	}
+   osg::Image *newImage = osgDB::readImageFile(filename);
+   if (newImage == 0)
+   {
+      Log::GetInstance().LogMessage(Log::LOG_ERROR,__FUNCTION__, 
+         "Can't load texture file '%s'.",filename.c_str() );
+   }
 
-	//the cube map expects different values for texture faces
-	//so this will switch the side with the side enum expected for osg
-	int newSide = side;
-	switch(newSide)
-	{
-		case SkyBox::SKYBOX_FRONT:
-			{
-				newSide = SkyBox::SKYBOX_TOP;
-				break;
-			}
-		case SkyBox::SKYBOX_BACK:
-			{
-				newSide = SkyBox::SKYBOX_BOTTOM;
-				break;
-			}
-		case SkyBox::SKYBOX_RIGHT:
-			{
-				newSide = SkyBox::SKYBOX_FRONT;
-				break;
-			}
-		case SkyBox::SKYBOX_LEFT:
-			{
-				newSide = SkyBox::SKYBOX_RIGHT;
-				break;
-			}
-		case SkyBox::SKYBOX_TOP:
-			{
-				newSide = SkyBox::SKYBOX_LEFT;
-				break;
-			}
-		case SkyBox::SKYBOX_BOTTOM:
-			{
-				newSide = SkyBox::SKYBOX_BACK;
-				break;
-			}
-		default:
-			{
-				break;
-			}
-	
-	}
+   //the cube map expects different values for texture faces
+   //so this will switch the side with the side enum expected for osg
+   int newSide = side;
+   switch(newSide)
+   {
+      case SkyBox::SKYBOX_FRONT:
+         {
+            newSide = SkyBox::SKYBOX_TOP;
+            break;
+         }
+      case SkyBox::SKYBOX_BACK:
+         {
+            newSide = SkyBox::SKYBOX_BOTTOM;
+            break;
+         }
+      case SkyBox::SKYBOX_RIGHT:
+         {
+            newSide = SkyBox::SKYBOX_FRONT;
+            break;
+         }
+      case SkyBox::SKYBOX_LEFT:
+         {
+            newSide = SkyBox::SKYBOX_RIGHT;
+            break;
+         }
+      case SkyBox::SKYBOX_TOP:
+         {
+            newSide = SkyBox::SKYBOX_LEFT;
+            break;
+         }
+      case SkyBox::SKYBOX_BOTTOM:
+         {
+            newSide = SkyBox::SKYBOX_BACK;
+            break;
+         }
+      default:
+         {
+            break;
+         }
+   
+   }
 
-	mCubeMap->setImage(newSide, newImage);
-	mCubeMap->dirtyTextureObject();
+   mCubeMap->setImage(newSide, newImage);
+   mCubeMap->dirtyTextureObject();
 }
 
 
 void SkyBox::CubeMapProfile::UpdateViewMatrix(const osg::Matrix& viewMat, const osg::Matrix& projMat)
 {
 
-	osg::Matrix proj = projMat;       
+   osg::Matrix proj = projMat;       
 
-	proj.invert(proj);     
+   proj.invert(proj);     
 
    //these should be opposite but aren't always
    //do to precision issues
    proj(3,3) = -proj(2,3);
 
-	osg::Matrix view;
-	view.invert(viewMat);
+   osg::Matrix view;
+   view.invert(viewMat);
 
-	mInverseModelViewProjMatrix->set(proj * view);
+   mInverseModelViewProjMatrix->set(proj * view);
 }
 
 
 SkyBox::FixedFunctionProfile::FixedFunctionProfile()
 {
-	mGeode = new osg::Geode();
-	for(int i = 0; i < 6; ++i)
-	{
-		mTextureList[i] = new osg::Texture2D();
-	}
+   mGeode = new osg::Geode();
+   for(int i = 0; i < 6; ++i)
+   {
+      mTextureList[i] = new osg::Texture2D();
+   }
 }
 
 
@@ -487,7 +487,7 @@ void dtCore::SkyBox::FixedFunctionProfile::Config(osg::Group* pNode)
 /** Make the box and load the textures */
 osg::Node* dtCore::SkyBox::FixedFunctionProfile::MakeBox()
 {
-	
+   
    float mX = 100.0f;
    float mY = 100.0f;
    float mZ = 100.0f;
@@ -621,13 +621,13 @@ void SkyBox::SkyBoxDrawable::drawImplementation(osg::State& state) const
 
    glOrtho(0, 1, 0, 1, 0, 1);
 
-	glBegin(GL_QUADS);
+   glBegin(GL_QUADS);
 
-	glVertex2i(1, 1);
-	glVertex2i(0, 1);
-	glVertex2i(0, 0);
-	glVertex2i(1, 0);
+   glVertex2i(1, 1);
+   glVertex2i(0, 1);
+   glVertex2i(0, 0);
+   glVertex2i(1, 0);
 
-	glEnd();
+   glEnd();
 
 }

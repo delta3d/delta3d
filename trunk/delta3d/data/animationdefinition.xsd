@@ -57,6 +57,7 @@
          <xs:sequence>
             <xs:element name="shaderGroup" type="xs:normalizedString" />
             <xs:element name="shaderName" type="xs:normalizedString" minOccurs="0" />
+            <xs:element name="maxBones" type="xs:unsignedInt" minOccurs="0"/>
          </xs:sequence>
       </xs:complexType>
    </xs:element>
