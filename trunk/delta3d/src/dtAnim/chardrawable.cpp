@@ -7,6 +7,7 @@
 #include <dtAnim/chardrawable.h>
 #include <dtAnim/cal3dmodelwrapper.h>
 #include <dtAnim/cal3danimator.h>
+#include <dtAnim/cal3dmodeldata.h>
 #include <dtAnim/cal3ddatabase.h>
 #include <dtAnim/animnodebuilder.h>
 #include <dtCore/system.h>
