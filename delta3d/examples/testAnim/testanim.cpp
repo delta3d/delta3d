@@ -23,6 +23,7 @@
 
 #include <dtUtil/hotspotdefinition.h>
 #include <dtUtil/mathdefines.h>
+#include <dtUtil/exception.h>
 
 #include <dtCore/globals.h>
 #include <dtCore/flymotionmodel.h>
@@ -43,6 +44,7 @@
 #include <dtGame/logcontroller.h> 
 #include <dtGame/gameactor.h>
 #include <dtGame/defaultmessageprocessor.h>
+#include <dtGame/exceptionenum.h>
 
 #include <dtAnim/animationcomponent.h>
 #include <dtAnim/animationhelper.h>
@@ -76,7 +78,7 @@ TestAnim::TestAnim()
 : dtGame::GameEntryPoint()
 , mAnimationHelper(NULL)
 , mFMM(NULL)
-, mPerformanceTest(true)
+, mPerformanceTest(false)
 {
    
 }
@@ -90,6 +92,20 @@ TestAnim::~TestAnim()
 //////////////////////////////////////////////////////////////////////////
 void TestAnim::Initialize(dtGame::GameApplication& app, int argc, char **argv)
 {
+   if (argc > 1)
+   {
+      std::string arg1(argv[1]);
+      if (arg1 == "--performanceTest")
+      {
+         mPerformanceTest = true;
+      }
+      else
+      {
+         std::cout << std::endl<< "Usage: " << argv[0] << " testAnim [--performanceTest]" << std::endl;
+         throw dtUtil::Exception(dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR,"Usage error", __FILE__, __LINE__);
+      }
+   }
+   
    if(mPerformanceTest)
    {
       mFMM = new dtCore::FlyMotionModel(app.GetKeyboard(), app.GetMouse());
@@ -219,11 +235,7 @@ void TestAnim::OnStartup()
 }
 
 void TestAnim::OnShutdown()
-{    
-   const std::string mapName = GetGameManager()->GetCurrentMap();
-
-   dtDAL::Map& map = dtDAL::Project::GetInstance().GetMap(mapName);
-   dtDAL::Project::GetInstance().CloseMap(map, true);
+{
 }
 
 void TestAnim::InitializeAnimationActor(dtActors::AnimationGameActorProxy2* gameProxy, dtAnim::AnimationComponent* animComp, bool isPlayer)
