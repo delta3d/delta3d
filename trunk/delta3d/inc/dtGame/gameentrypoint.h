@@ -53,8 +53,11 @@ namespace dtGame
           */
          virtual ~GameEntryPoint() 
          {
-            mGameManager->Shutdown();
-            mGameManager = NULL;
+            if (mGameManager.valid())
+            {
+               mGameManager->Shutdown();
+               mGameManager = NULL;
+            }
          }
          
          /**
