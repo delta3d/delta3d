@@ -23,6 +23,7 @@
 #include <dtUtil/log.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/exception.h>
+#include <dtUtil/macros.h>
 
 #include <dtCore/refptr.h>
 #include <dtCore/scene.h>
@@ -35,7 +36,7 @@
 
 #include <string>
 
-#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
+#ifdef DELTA_WIN32
    #include <Windows.h>
    #define SLEEP(milliseconds) Sleep((milliseconds))
 #else
