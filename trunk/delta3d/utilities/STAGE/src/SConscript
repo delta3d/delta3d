@@ -103,8 +103,9 @@ if env['ENV'].has_key('QTDIR'):
 
          
    # Build the icon
-   if env['OS'] == 'windows' :
-      sources += env.RES( '#utilities\STAGE\dtEditQt.rc' )
+   if env['OS'] == 'windows' and env.has_key('MSVS') :
+      if env['MSVS']['VERSION'] < 8.0 :
+         sources += env.RES( '#utilities\STAGE\dtEditQt.rc' )
 
    app = env.BuildProgram('STAGE', sources, libs, cppDefines, prefixHeader = "inc/prefix/dtstageprefix.h")
       

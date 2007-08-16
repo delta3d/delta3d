@@ -3,8 +3,9 @@ Import('*')
 viewerSrcs = env.SGlob( '*.cpp' ) + env.SGlob( '*.cxx' )
 
 # Build the icon
-if env['OS'] == 'windows' :
-   viewerSrcs += env.RES( 'Viewer.rc' )
+if env['OS'] == 'windows' and env.has_key('MSVS') :
+   if env['MSVS']['VERSION'] < 8.0 :
+      viewerSrcs += env.RES( 'Viewer.rc' )
 
 viewerDeps = [ 'dtDAL', 'dtCore', 'dtABC', 'dtUtil', 'dtChar',
                'User32', 'Gdi32', 'shell32', 'Advapi32', 'ole32' ]
