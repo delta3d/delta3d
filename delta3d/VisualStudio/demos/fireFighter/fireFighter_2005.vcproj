@@ -125,6 +125,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				Optimization="3"
 				AdditionalIncludeDirectories="../../../inc;../../../ext/inc;../../../ext/inc/CEGUI;../../../demos;"
 				PreprocessorDefinitions="WIN32;_NDEBUG;DELTA_FIRE_FIGHTER_LIBRARY;NOMINMAX"
 				RuntimeLibrary="2"
