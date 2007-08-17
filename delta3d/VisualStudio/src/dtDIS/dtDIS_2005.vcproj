@@ -122,6 +122,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				Optimization="3"
 				AdditionalIncludeDirectories="..\..\..\inc; ..\..\..\ext\inc"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;DT_DIS_LIBRARY;DT_DIS_DEFAULT_PLUGIN"
 				RuntimeLibrary="2"

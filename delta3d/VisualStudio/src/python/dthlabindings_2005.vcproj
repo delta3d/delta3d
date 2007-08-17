@@ -39,6 +39,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				Optimization="3"
 				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc;$(PYTHON_ROOT)\include;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;_NOAUTOLIBMSG"
 				StringPooling="true"
