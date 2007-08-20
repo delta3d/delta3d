@@ -280,7 +280,8 @@ void CEUIDrawable::ShutdownGUI()
 }
 
 // implementation details for private class
-CEUIDrawable::osgCEUIDrawable::osgCEUIDrawable(const CEUIDrawable::osgCEUIDrawable& drawable,const osg::CopyOp& copyop)
+CEUIDrawable::osgCEUIDrawable::osgCEUIDrawable(const CEUIDrawable::osgCEUIDrawable& drawable,
+                                               const osg::CopyOp& copyop) : mUI(NULL)
 {
 }
 
