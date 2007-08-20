@@ -59,13 +59,23 @@ namespace dtCore
    void ShaderProgram::Reset()
    {
       mGLSLProgram = NULL;
-      mVertexShader = NULL;
-      mFragmentShader = NULL;
-      mFragmentShaderFileName = "";
-      mVertexShaderFileName = "";
+      mVertexCacheKey = "";
+      mFragmentCacheKey = "";
+      mFragmentShaderFileName.clear();
+      mVertexShaderFileName.clear();
       mParameters.clear();
-      //mParentGroup = NULL;
       mIsDirty = false;
+   }
+   ///////////////////////////////////////////////////////////////////////////////
+   const std::string& ShaderProgram::GetVertexCacheKey()
+   { 
+      return mVertexCacheKey;
+   }
+   
+   ///////////////////////////////////////////////////////////////////////////////
+   const std::string& ShaderProgram::GetFragmentCacheKey()
+   { 
+      return mFragmentCacheKey;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -159,7 +169,7 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ShaderProgram::SetVertexShaderSource(const std::string &fileName)
+   void ShaderProgram::AddVertexShader(const std::string &fileName)
    {
       // Vertex source is now allowed to be empty - but, if a filename is set, the file needs to exist.
       if (!fileName.empty())
@@ -170,17 +180,17 @@ namespace dtCore
             throw dtUtil::Exception(ShaderException::SHADER_SOURCE_ERROR,"Could not find shader source: " +
                fileName + " in path list.", __FILE__, __LINE__);
          }
+         else
+         {
+            mVertexShaderFileName.push_back(fileName);
+            mVertexCacheKey += fileName;
+         }
       }
-      else
-      {
-         mVertexShader = NULL;
-      }
-
-      mVertexShaderFileName = fileName;
    }
 
+
    ///////////////////////////////////////////////////////////////////////////////
-   void ShaderProgram::SetFragmentShaderSource(const std::string &fileName)
+   void ShaderProgram::AddFragmentShader(const std::string &fileName)
    {
       // Fragment source is now allowed to be empty - but, if a filename is set, the file needs to exist.
       if (!fileName.empty())
@@ -191,13 +201,12 @@ namespace dtCore
             throw dtUtil::Exception(ShaderException::SHADER_SOURCE_ERROR,"Could not find shader source: " +
                fileName + " in path list.", __FILE__, __LINE__);
          }
+         else
+         {
+            mFragmentShaderFileName.push_back(fileName);
+            mFragmentCacheKey += fileName;
+         }
       }
-      else
-      {
-         mFragmentShader = NULL;
-      }
-
-      mFragmentShaderFileName = fileName;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -228,11 +237,11 @@ namespace dtCore
       dtCore::ShaderProgram *newShader = new dtCore::ShaderProgram(GetName());
 
       // copy main values
-      newShader->mVertexShaderFileName = GetVertexShaderSource();
-      newShader->mFragmentShaderFileName = GetFragmentShaderSource();
-      newShader->mVertexShader = mVertexShader;
-      newShader->mFragmentShader = mFragmentShader;
+      newShader->mVertexShaderFileName = GetVertexShaders();
+      newShader->mFragmentShaderFileName = GetFragmentShaders();
       newShader->mGLSLProgram = mGLSLProgram;
+      newShader->mVertexCacheKey = mVertexCacheKey;
+      newShader->mFragmentCacheKey = mFragmentCacheKey;
 
       // copy all of the parameters. 
       std::map<std::string,dtCore::RefPtr<ShaderParameter> >::const_iterator paramItor;

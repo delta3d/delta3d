@@ -68,32 +68,45 @@ namespace dtCore
          const std::string &GetName() const { return mName; }
 
          /**
-          * This method loads the shader source meant for vertex processing from the
+          * This method adds a shader source meant for vertex processing from the
           * specified file name.
           * @param fileName The path of the shader file source.  This must be either the
           *    full path or a path relative to the Delta3d path list.
           */
-         void SetVertexShaderSource(const std::string &fileName);
+         void AddVertexShader(const std::string &fileName);
 
          /**
-          * Gets the vertex shader file name.
-          * @return The vertex shader file name and path currently in use by this shader.
+          * Gets the vertex shaders file names.
+          * @return A Vector that contains a set of strings that represent the different vertex file names 
           */
-         const std::string &GetVertexShaderSource() const { return mVertexShaderFileName; }
+         const std::vector<std::string> &GetVertexShaders() const { return mVertexShaderFileName; }
+
 
          /**
-          * This method loads the shader source meant for fragment processing from the
+         * Gets the vertex cache key
+         * @return The vertex cache key used to identify a certain shader group
+         */
+         const std::string& GetVertexCacheKey();
+         
+         /**
+         * Gets the fragment cache key
+         * @return The fragment cache key used to identify a certain shader group
+         */
+         const std::string& GetFragmentCacheKey();
+
+         /**
+          * This method adds a shader source meant for fragment processing from the
           * specified file name.
           * @param fileName The path of the shader file source.  This must be either the
           *    full path or a path relative to the Delta3d path list.
           */
-         void SetFragmentShaderSource(const std::string &fileName);
+         void AddFragmentShader(const std::string &fileName);
 
          /**
-          * Gets the fragment shader file name.
-          * @return The fragment shader file name and path currently in use by this shader.
-          */
-         const std::string &GetFragmentShaderSource() const { return mFragmentShaderFileName; }
+         * Gets the fragment shaders file names.
+         * @return A Vector that contains a set of strings that represent the different fragment file names 
+         */
+         const std::vector<std::string> &GetFragmentShaders() const { return mFragmentShaderFileName; }
 
          /**
           * Binds a shader parameter to this shader.
@@ -159,20 +172,6 @@ namespace dtCore
          virtual void Update();
 
          /**
-          * Gets a pointer to the actual shader object used for vertex processing.
-          * @return A reference counted pointer to the shader object or NULL if one is currently
-          *    not assigned.
-          */
-         const osg::Shader *GetVertexShader() const { return mVertexShader.get(); }
-
-         /**
-          * Gets a pointer to the actual shader object used for fragment processing.
-          * @return A reference counted pointer to the shader object or NULL in one is
-          *    currently not assigned.
-          */
-         const osg::Shader *GetFragmentShader() const { return mFragmentShader.get(); }
-
-         /**
           * Gets a pointer to the actual shader program constructed by the shader source code
           * @return A pointer to the shader program.  This may be shared
           *    amoungst many renderable objects.
@@ -222,17 +221,18 @@ namespace dtCore
          ShaderProgram &operator=(const ShaderProgram &rhs);
          ShaderProgram(const ShaderProgram &rhs);
 
-         //void SetParentGroup(ShaderGroup *parent) { mParentGroup = parent; }
-         //ShaderGroup *GetParentGroup() const { return mParentGroup; }
-
       private:
-         void SetVertexShader(osg::Shader &shader) { mVertexShader = &shader; }
-         void SetFragmentShader(osg::Shader &shader) { mFragmentShader = &shader; }
          void SetGLSLProgram(osg::Program &program) { mGLSLProgram = &program; }
 
          std::string mName;
-         std::string mVertexShaderFileName;
-         std::string mFragmentShaderFileName;
+
+         //Cache Keys which are used as unique identifiers for identifying vertex and fragment shader groups
+         //which are stored in map
+         std::string mVertexCacheKey;
+         std::string mFragmentCacheKey;
+
+         std::vector<std::string> mVertexShaderFileName;
+         std::vector<std::string> mFragmentShaderFileName;
 
          //List of parameters attached to this shader.  Parameters could be texture handles,
          //floats, ints, or special parameters like simulation time, or simulation delta time.
@@ -248,8 +248,6 @@ namespace dtCore
          //These are set by the shader manager when this shader is added since these
          //the actual shader programs could be shared amounst different logical shaders.
          dtCore::RefPtr<osg::Program> mGLSLProgram;
-         dtCore::RefPtr<osg::Shader> mVertexShader;
-         dtCore::RefPtr<osg::Shader> mFragmentShader;
 
          friend class ShaderManager;
          friend class ShaderGroup;
