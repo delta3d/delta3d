@@ -270,9 +270,9 @@ namespace dtCore
       dtUtil::XMLStringConverter fileConverter(file->getNodeValue());
 
       if (type == ShaderXML::SHADER_SOURCE_TYPE_VERTEX)
-         shader.SetVertexShaderSource(fileConverter.ToString());
+         shader.AddVertexShader(fileConverter.ToString());
       else if (type == ShaderXML::SHADER_SOURCE_TYPE_FRAGMENT)
-         shader.SetFragmentShaderSource(fileConverter.ToString());
+         shader.AddFragmentShader(fileConverter.ToString());
    }
 
    ///////////////////////////////////////////////////////////////////////////////

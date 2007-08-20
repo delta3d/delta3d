@@ -344,8 +344,8 @@ namespace dtCore
    {
       //Shader cache entries are keyed by a combination of the source to the
       //vertex shader and the source to the fragment shader.
-      std::string cacheKey = shader.GetVertexShaderSource() + ":" +
-         shader.GetFragmentShaderSource();
+      
+      std::string cacheKey = shader.GetVertexCacheKey() + ":" + shader.GetFragmentCacheKey();
 
       std::map<std::string,ShaderCacheEntry>::iterator itor =
          mShaderProgramCache.find(cacheKey);
@@ -356,10 +356,6 @@ namespace dtCore
       //them in the cache.
       if (itor != mShaderProgramCache.end())
       {
-         if (itor->second.vertexShader.valid()) // vertex shader is not required
-            shader.SetVertexShader(*(itor->second.vertexShader));
-         if (itor->second.fragmentShader.valid()) // fragment shader is not required
-            shader.SetFragmentShader(*(itor->second.fragmentShader));
          shader.SetGLSLProgram(*(itor->second.shaderProgram)); // program is required
          return;
       }
@@ -370,28 +366,40 @@ namespace dtCore
       dtCore::RefPtr<osg::Shader> fragmentShader;
       dtCore::RefPtr<osg::Program> program = new osg::Program();
 
-      // Load and set the vertex shader - note, this is not required
-      path = dtCore::FindFileInPathList(shader.GetVertexShaderSource());
-      if (!path.empty()) 
+      std::vector<std::string>::const_iterator vertexShaderIterator = shader.GetVertexShaders().begin();
+
+      while(vertexShaderIterator != shader.GetVertexShaders().end())
       {
-         vertexShader = new osg::Shader(osg::Shader::VERTEX);
-         if (!vertexShader->loadShaderSourceFromFile(path))
-            throw dtUtil::Exception(ShaderException::SHADER_SOURCE_ERROR,"Error loading vertex shader file: " +
-               shader.GetVertexShaderSource() + " from shader: " + shader.GetName(), __FILE__, __LINE__);
-         program->addShader(vertexShader.get());
-         shader.SetVertexShader(*vertexShader);
+         // Load and set the vertex shader - note, this is not required
+         //path = dtCore::FindFileInPathList(shader.GetVertexShaders());
+         path = dtCore::FindFileInPathList(*vertexShaderIterator);
+         if (!path.empty()) 
+         {
+            vertexShader = new osg::Shader(osg::Shader::VERTEX);
+            if (!vertexShader->loadShaderSourceFromFile(path))
+               throw dtUtil::Exception(ShaderException::SHADER_SOURCE_ERROR,"Error loading vertex shader file: " +
+                  *vertexShaderIterator + " from shader: " + shader.GetName(), __FILE__, __LINE__);
+            program->addShader(vertexShader.get());
+         }
+         vertexShaderIterator++;
       }
 
-      // Load and set the fragment shader - note, this is not required
-      path = dtCore::FindFileInPathList(shader.GetFragmentShaderSource());
-      if (!path.empty()) 
+      std::vector<std::string>::const_iterator fragmentShaderIterator = shader.GetFragmentShaders().begin();
+
+      while(fragmentShaderIterator != shader.GetFragmentShaders().end())
       {
-         fragmentShader = new osg::Shader(osg::Shader::FRAGMENT);
-         if (path.empty() || !fragmentShader->loadShaderSourceFromFile(path))
-            throw dtUtil::Exception(ShaderException::SHADER_SOURCE_ERROR,"Error loading fragment shader file: " +
-               shader.GetFragmentShaderSource() + " from shader: " + shader.GetName(), __FILE__, __LINE__);
-         program->addShader(fragmentShader.get());
-         shader.SetFragmentShader(*fragmentShader);
+         // Load and set the fragment shader - note, this is not required
+         //path = dtCore::FindFileInPathList(shader.GetFragmentShaders());
+         path = dtCore::FindFileInPathList(*fragmentShaderIterator);
+         if (!path.empty()) 
+         {
+            fragmentShader = new osg::Shader(osg::Shader::FRAGMENT);
+            if (path.empty() || !fragmentShader->loadShaderSourceFromFile(path))
+               throw dtUtil::Exception(ShaderException::SHADER_SOURCE_ERROR,"Error loading fragment shader file: " +
+                  *fragmentShaderIterator + " from shader: " + shader.GetName(), __FILE__, __LINE__);
+            program->addShader(fragmentShader.get());
+         }
+         fragmentShaderIterator++;
       }
 
       shader.SetGLSLProgram(*program);
@@ -432,8 +440,9 @@ namespace dtCore
       for (int i = mCopiedNodeList.size() - 1; i >= 0; i--)
       {
          bool bFoundMatch = false;
-         std::string oldCacheKey = mCopiedNodeList[i].shaderInstance->GetVertexShaderSource() + ":" +
-            mCopiedNodeList[i].shaderInstance->GetFragmentShaderSource();
+         std::string oldCacheKey = mCopiedNodeList[i].shaderInstance->GetVertexCacheKey() + ":" +
+            mCopiedNodeList[i].shaderInstance->GetFragmentCacheKey();
+
          ShaderProgram *matchingShader = NULL;
 
          // Loop to find a match
@@ -443,8 +452,8 @@ namespace dtCore
             if (matchingShader != NULL)
             {
                // build cache keys for loop one and pre-existing shader
-               std::string foundCacheKey = matchingShader->GetVertexShaderSource() + ":" +
-                  matchingShader->GetFragmentShaderSource();
+               std::string foundCacheKey = matchingShader->GetVertexCacheKey() + ":" +
+                  matchingShader->GetFragmentCacheKey();
 
                // Is it a perfect match??
                if (foundCacheKey == oldCacheKey)

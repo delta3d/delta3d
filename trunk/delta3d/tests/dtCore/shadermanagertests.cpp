@@ -175,15 +175,15 @@ void ShaderManagerTests::TestShader()
    {
       dtCore::RefPtr<dtCore::ShaderProgram> newShader = new dtCore::ShaderProgram("shaderone");
       CPPUNIT_ASSERT_MESSAGE("Shader name should have been shaderone.", newShader->GetName() == "shaderone");
-      CPPUNIT_ASSERT_MESSAGE("Shader fragment program should be NULL.",newShader->GetFragmentShader() == NULL);
-      CPPUNIT_ASSERT_MESSAGE("Shader vertex program should be NULL.",newShader->GetVertexShader() == NULL);
+//      CPPUNIT_ASSERT_MESSAGE("Shader fragment program should be NULL.",newShader->GetFragmentShader() == NULL);
+//      CPPUNIT_ASSERT_MESSAGE("Shader vertex program should be NULL.",newShader->GetVertexShader() == NULL);
       CPPUNIT_ASSERT_MESSAGE("Shader program should be NULL.",newShader->GetShaderProgram() == NULL);
 
-      newShader->SetVertexShaderSource("Shaders/perpixel_lighting_detailmap_vert.glsl");
-      CPPUNIT_ASSERT_EQUAL(std::string("Shaders/perpixel_lighting_detailmap_vert.glsl"),newShader->GetVertexShaderSource());
+      newShader->AddVertexShader("Shaders/perpixel_lighting_detailmap_vert.glsl");
+      CPPUNIT_ASSERT_EQUAL(std::string("Shaders/perpixel_lighting_detailmap_vert.glsl"),*(newShader->GetVertexShaders().begin()));
 
-      newShader->SetFragmentShaderSource("Shaders/perpixel_lighting_detailmap_frag.glsl");
-      CPPUNIT_ASSERT_EQUAL(std::string("Shaders/perpixel_lighting_detailmap_frag.glsl"),newShader->GetFragmentShaderSource());
+      newShader->AddFragmentShader("Shaders/perpixel_lighting_detailmap_frag.glsl");
+      CPPUNIT_ASSERT_EQUAL(std::string("Shaders/perpixel_lighting_detailmap_frag.glsl"),*(newShader->GetFragmentShaders().begin()));
 
       int i;
       dtCore::RefPtr<dtCore::ShaderParameter> shaderParam = NULL;
@@ -216,11 +216,11 @@ void ShaderManagerTests::TestShader()
 
       newShader->Reset();
       CPPUNIT_ASSERT_MESSAGE("Should have no parameters after a reset.",newShader->GetNumParameters() == 0);
-      CPPUNIT_ASSERT_MESSAGE("Should have no vertex source after a reset.",newShader->GetVertexShaderSource().empty());
-      CPPUNIT_ASSERT_MESSAGE("Should have no fragment source after a reset.",newShader->GetFragmentShaderSource().empty());
+      CPPUNIT_ASSERT_MESSAGE("Should have no vertex source after a reset.",newShader->GetVertexShaders().empty());
+      CPPUNIT_ASSERT_MESSAGE("Should have no fragment source after a reset.",newShader->GetFragmentShaders().empty());
       CPPUNIT_ASSERT_MESSAGE("Shader name should have been shaderone after reset.", newShader->GetName() == "shaderone");
-      CPPUNIT_ASSERT_MESSAGE("Shader fragment program should be NULL after reset.",newShader->GetFragmentShader() == NULL);
-      CPPUNIT_ASSERT_MESSAGE("Shader vertex program should be NULL after reset.",newShader->GetVertexShader() == NULL);
+//      CPPUNIT_ASSERT_MESSAGE("Shader fragment program should be NULL after reset.",newShader->GetFragmentShader() == NULL);
+//      CPPUNIT_ASSERT_MESSAGE("Shader vertex program should be NULL after reset.",newShader->GetVertexShader() == NULL);
       CPPUNIT_ASSERT_MESSAGE("Shader program should be NULL after reset.",newShader->GetShaderProgram() == NULL);
    }
    catch (const dtUtil::Exception &e)
@@ -247,8 +247,8 @@ void ShaderManagerTests::TestShaderManager()
          for (j=0; j<3; j++)
          {
             shader = new dtCore::ShaderProgram("Shader" + dtUtil::ToString(j));
-            shader->SetVertexShaderSource("Shaders/perpixel_lighting_detailmap_vert.glsl");
-            shader->SetFragmentShaderSource("Shaders/perpixel_lighting_detailmap_frag.glsl");
+            shader->AddVertexShader("Shaders/perpixel_lighting_detailmap_vert.glsl");
+            shader->AddFragmentShader("Shaders/perpixel_lighting_detailmap_frag.glsl");
             shader->AddParameter(*(new dtCore::ShaderParamTexture2D("Param0")));
             shader->AddParameter(*(new dtCore::ShaderParamTexture2D("Param1")));
             shader->AddParameter(*(new dtCore::ShaderParamTexture2D("Param2")));
@@ -268,8 +268,8 @@ void ShaderManagerTests::TestShaderManager()
       const dtCore::ShaderProgram *cShader = mShaderMgr->FindShaderPrototype("Shader0","Group0");
       CPPUNIT_ASSERT_MESSAGE("Could not find shader 0 on group 0.",cShader != NULL);
 
-      const osg::Shader *vertexShader = cShader->GetVertexShader();
-      const osg::Shader *fragmentShader = cShader->GetFragmentShader();
+//      const osg::Shader *vertexShader = cShader->GetVertexShader();
+//      const osg::Shader *fragmentShader = cShader->GetFragmentShader();
       const osg::Program *program = cShader->GetShaderProgram();
       for (i=0; i<20; i++)
       {
@@ -283,8 +283,8 @@ void ShaderManagerTests::TestShaderManager()
             const dtCore::ShaderProgram *cShader = mShaderMgr->FindShaderPrototype(shaderName,name);
             CPPUNIT_ASSERT_MESSAGE("Could not find shader: " + shaderName + " in group: " + name,cShader != NULL);
 
-            CPPUNIT_ASSERT_MESSAGE("Vertex program should be shared.",cShader->GetVertexShader() == vertexShader);
-            CPPUNIT_ASSERT_MESSAGE("Fragment program should be shared.",cShader->GetFragmentShader() == fragmentShader);
+//            CPPUNIT_ASSERT_MESSAGE("Vertex program should be shared.",cShader->GetVertexShader() == vertexShader);
+//            CPPUNIT_ASSERT_MESSAGE("Fragment program should be shared.",cShader->GetFragmentShader() == fragmentShader);
             CPPUNIT_ASSERT_MESSAGE("GLSL program should be shared.",cShader->GetShaderProgram() == program);
          }
       }
@@ -308,8 +308,8 @@ void ShaderManagerTests::TestShaderManager()
       //Add another shader here that does not use the same shader source files.  This should increate
       //shader compiled shader cache by 1.
       shader = new dtCore::ShaderProgram("TestShader");
-      shader->SetVertexShaderSource("Shaders/perpixel_lighting_one_directional_vert.glsl");
-      shader->SetFragmentShaderSource("Shaders/perpixel_lighting_one_directional_frag.glsl");
+      shader->AddVertexShader("Shaders/perpixel_lighting_one_directional_vert.glsl");
+      shader->AddFragmentShader("Shaders/perpixel_lighting_one_directional_frag.glsl");
 
       group = new dtCore::ShaderGroup("TestShaderGroup");
       group->AddShader(*shader);
@@ -337,8 +337,8 @@ void ShaderManagerTests::TestAssignShader()
    try
    {
       dtCore::RefPtr<dtCore::ShaderProgram> shader = new dtCore::ShaderProgram("TestShader");
-      shader->SetVertexShaderSource("Shaders/perpixel_lighting_detailmap_vert.glsl");
-      shader->SetFragmentShaderSource("Shaders/perpixel_lighting_detailmap_frag.glsl");
+      shader->AddVertexShader("Shaders/perpixel_lighting_detailmap_vert.glsl");
+      shader->AddFragmentShader("Shaders/perpixel_lighting_detailmap_frag.glsl");
 
       //This code creates a shader parameter of each type and assigns the shader
       //to a node.  The shader parameter tests ensures that each parameter type
@@ -382,7 +382,7 @@ void ShaderManagerTests::TestPartialShaders()
       // CREATE THE SHADER WITHOUT A FRAGMENT SHADER 
 
       dtCore::RefPtr<dtCore::ShaderProgram> shader1 = new dtCore::ShaderProgram("TestShader1");
-      shader1->SetVertexShaderSource("Shaders/perpixel_lighting_detailmap_vert.glsl");
+      shader1->AddVertexShader("Shaders/perpixel_lighting_detailmap_vert.glsl");
 
       //This code creates a shader parameter of each type and assigns the shader
       //to a node.  The shader parameter tests ensures that each parameter type
@@ -398,8 +398,8 @@ void ShaderManagerTests::TestPartialShaders()
       // CREATE THE SHADER WITHOUT A VERTEX SHADER
 
       dtCore::RefPtr<dtCore::ShaderProgram> shader2 = new dtCore::ShaderProgram("TestShader2");
-      //shader->SetVertexShaderSource("Shaders/perpixel_lighting_detailmap_vert.glsl");
-      shader2->SetFragmentShaderSource("Shaders/perpixel_lighting_detailmap_frag.glsl");
+      //shader->AddVertexShader("Shaders/perpixel_lighting_detailmap_vert.glsl");
+      shader2->AddFragmentShader("Shaders/perpixel_lighting_detailmap_frag.glsl");
 
       //This code creates a shader parameter of each type and assigns the shader
       //to a node.  The shader parameter tests ensures that each parameter type
@@ -415,7 +415,7 @@ void ShaderManagerTests::TestPartialShaders()
       // CREATE THE SHADER WITHOUT EITHER SHADER
 
       dtCore::RefPtr<dtCore::ShaderProgram> shader3 = new dtCore::ShaderProgram("TestShader3");
-      //shader3->SetVertexShaderSource("Shaders/perpixel_lighting_detailmap_vert.glsl");
+      //shader3->AddVertexShader("Shaders/perpixel_lighting_detailmap_vert.glsl");
 
       //This code creates a shader parameter of each type and assigns the shader
       //to a node.  The shader parameter tests ensures that each parameter type
@@ -471,8 +471,8 @@ void ShaderManagerTests::TestShaderInstancesAreUnique()
       // so that it can assign different parameter values to separate nodes
 
       dtCore::RefPtr<dtCore::ShaderProgram> shader = new dtCore::ShaderProgram("TestShader");
-      shader->SetVertexShaderSource("Shaders/perpixel_lighting_detailmap_vert.glsl");
-      shader->SetFragmentShaderSource("Shaders/perpixel_lighting_detailmap_frag.glsl");
+      shader->AddVertexShader("Shaders/perpixel_lighting_detailmap_vert.glsl");
+      shader->AddFragmentShader("Shaders/perpixel_lighting_detailmap_frag.glsl");
 
       // We just use an int param for this test.  We aren't testing params in general, just that they
       // get their own copy.
@@ -561,17 +561,17 @@ void ShaderManagerTests::TestXMLParsing()
       CPPUNIT_ASSERT(group1->GetDefaultShader() != NULL);
       CPPUNIT_ASSERT_EQUAL(std::string("Default"),shader1->GetName());
       CPPUNIT_ASSERT_EQUAL((unsigned int)1,shader1->GetNumParameters());
-      CPPUNIT_ASSERT_EQUAL(std::string("Shaders/perpixel_lighting_detailmap_vert.glsl"),shader1->GetVertexShaderSource());
-      CPPUNIT_ASSERT_EQUAL(std::string("Shaders/perpixel_lighting_detailmap_frag.glsl"),shader1->GetFragmentShaderSource());
+      CPPUNIT_ASSERT_EQUAL(std::string("Shaders/perpixel_lighting_detailmap_vert.glsl"),*(shader1->GetVertexShaders().begin()));
+      CPPUNIT_ASSERT_EQUAL(std::string("Shaders/perpixel_lighting_detailmap_frag.glsl"),*(shader1->GetFragmentShaders().begin()));
 
       //SHADER TWO...
       CPPUNIT_ASSERT_MESSAGE("Shader 2 in Group 1 should be named ShaderTwo.",shader2->GetName() == "ShaderTwo");
       CPPUNIT_ASSERT_MESSAGE("Shader 2 in Group 1 should have one parameter.",
                              shader2->GetNumParameters() == 1);
       CPPUNIT_ASSERT_MESSAGE("Shader 2 in Group 1 had wrong vertex shader source.",
-                             shader2->GetVertexShaderSource() == "Shaders/perpixel_lighting_detailmap_vert.glsl");
+                             *(shader2->GetVertexShaders().begin()) == "Shaders/perpixel_lighting_detailmap_vert.glsl");
       CPPUNIT_ASSERT_MESSAGE("Shader 2 in Group 1 had wrong fragment shader source.",
-                             shader2->GetFragmentShaderSource() == "Shaders/perpixel_lighting_detailmap_frag.glsl");
+                             *(shader2->GetFragmentShaders().begin()) == "Shaders/perpixel_lighting_detailmap_frag.glsl");
 
       dtCore::ShaderParameter *param;
       dtCore::ShaderParamTexture2D *texParam;
@@ -609,9 +609,9 @@ void ShaderManagerTests::TestXMLParsing()
       CPPUNIT_ASSERT_MESSAGE("Shader 1 in Group 2 should have one parameter.",
                              shader1->GetNumParameters() == 1);
       CPPUNIT_ASSERT_MESSAGE("Shader 1 in Group 2 had wrong vertex shader source.",
-                             shader1->GetVertexShaderSource() == "Shaders/perpixel_lighting_detailmap_vert.glsl");
+                             *(shader1->GetVertexShaders().begin()) == "Shaders/perpixel_lighting_detailmap_vert.glsl");
       CPPUNIT_ASSERT_MESSAGE("Shader 1 in Group 2 had wrong fragment shader source.",
-                             shader1->GetFragmentShaderSource() == "Shaders/perpixel_lighting_detailmap_frag.glsl");
+                             *(shader1->GetFragmentShaders().begin()) == "Shaders/perpixel_lighting_detailmap_frag.glsl");
 
       param = shader1->FindParameter("baseTexture");
       CPPUNIT_ASSERT_MESSAGE("Shader 1 in Group 2 should have had a parameter named baseTexture.",
@@ -638,9 +638,9 @@ void ShaderManagerTests::TestXMLParsing()
       CPPUNIT_ASSERT_MESSAGE("Shader 2 in Group 2 should have one parameter.",
                              shader2->GetNumParameters() == 1);
       CPPUNIT_ASSERT_MESSAGE("Shader 2 in Group 2 had wrong vertex shader source.",
-                             shader2->GetVertexShaderSource() == "Shaders/perpixel_lighting_detailmap_vert.glsl");
+                             *(shader2->GetVertexShaders().begin()) == "Shaders/perpixel_lighting_detailmap_vert.glsl");
       CPPUNIT_ASSERT_MESSAGE("Shader 2 in Group 2 had wrong fragment shader source.",
-                             shader2->GetFragmentShaderSource() == "Shaders/perpixel_lighting_detailmap_frag.glsl");
+                             *(shader2->GetFragmentShaders().begin()) == "Shaders/perpixel_lighting_detailmap_frag.glsl");
 
       param = shader2->FindParameter("baseTexture");
       CPPUNIT_ASSERT_MESSAGE("Shader 2 in Group 2 should have had a parameter named baseTexture.",

@@ -361,7 +361,7 @@ dtCore::ShaderProgram* AnimNodeBuilder::LoadShaders(Cal3DModelData& modelData, o
       {
          defSPGroup = new dtCore::ShaderGroup(hardwareSkinningSPGroup);
          shaderProgram = new dtCore::ShaderProgram("Default");
-         shaderProgram->SetVertexShaderSource("shaders/HardwareCharacter.vert");
+         shaderProgram->AddVertexShader("shaders/HardwareCharacter.vert");
          defSPGroup->AddShader(*shaderProgram, true);
          shaderManager.AddShaderGroupPrototype(*defSPGroup);
       }
