@@ -93,6 +93,13 @@ namespace dtCore
       ///@return success of load
       bool LoadTexture( const std::string& textureFilePath );
 
+      ///Sets the color of the Cloud Plane
+      void SetColor( osg::Vec4 );
+      
+      ///Returns the color of the clouds
+      ///@return current cloud color
+      const osg::Vec4 GetColor();
+
    private:
 
        void Create(const std::string& textureFilePath = "");

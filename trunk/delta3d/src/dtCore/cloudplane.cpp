@@ -66,6 +66,19 @@ CloudPlane::~CloudPlane()
    RemoveSender(&System::GetInstance());
 }
 
+///Sets the color of the Cloud Plane
+void CloudPlane::SetColor( osg::Vec4 newColor)
+{
+   mFog->setColor( newColor );
+}
+
+///Returns the color of the clouds
+///@return current cloud color
+const osg::Vec4 CloudPlane::GetColor()
+{
+   return mFog->getColor();
+}
+
 ///Save generated texture to file
 ///@return success of save
 bool CloudPlane::SaveTexture(const std::string &textureFilePath)
@@ -220,7 +233,7 @@ void CloudPlane::Repaint(  const osg::Vec3& skyColor,
                            double visibility)
 {
 	mFog->setColor( osg::Vec4(fogColor[0], fogColor[1], fogColor[2], 1.0f) );
-	mFog->setEnd( visibility );
+   mFog->setEnd( visibility );
 	
 	int pm( 500 );
 	if( sunAngle < 13 )
