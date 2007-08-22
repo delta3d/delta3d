@@ -137,6 +137,13 @@ namespace dtGame
          
          /// @return the interval at which entities will be re-clamped.
          float GetForceClampInterval() const { return mForceClampInterval; }
+
+         /**
+          * Set the time over which this component should smooth articulations between two DR DOF targets.
+          */
+         void SetArticulationSmoothTime( float smoothTime );
+
+         float GetArticulationSmoothTime() const { return mArticSmoothTime; }
          
       protected:
          virtual ~DeadReckoningComponent();
@@ -189,6 +196,8 @@ namespace dtGame
          
          float mHighResClampRange, mHighResClampRange2;
          float mForceClampInterval;
+
+         float mArticSmoothTime;
          
          void TickRemote(const dtGame::TickMessage& tickMessage);
                        

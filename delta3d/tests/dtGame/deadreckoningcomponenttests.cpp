@@ -24,6 +24,8 @@
 #include <osg/Vec3>
 #include <osg/Math>
 #include <osg/Group>
+#include <osg/Node>
+#include <osgSim/DOFTransform>
 #include <dtUtil/mathdefines.h>
 #include <dtCore/system.h>
 #include <dtCore/transform.h>
@@ -31,7 +33,9 @@
 #include <dtCore/isector.h>
 #include <dtCore/scene.h>
 #include <dtCore/nodecollector.h>
+#include <dtGame/basemessages.h>
 #include <dtGame/gamemanager.h> 
+#include <dtGame/messagefactory.h>
 #include <dtGame/exceptionenum.h>
 #include <dtGame/deadreckoningcomponent.h>
 #include <dtDAL/actortype.h>
@@ -47,7 +51,7 @@
 
 namespace dtGame
 {
-   
+   /////////////////////////////////////////////////////////////////////////////
    class TestDeadReckoningComponent : public DeadReckoningComponent
    {
       public:
@@ -66,9 +70,46 @@ namespace dtGame
          void InternalCalcTotSmoothingSteps(DeadReckoningHelper& helper, const dtCore::Transform& xform)
          {
             helper.CalculateSmoothingTimes(xform);
-         }      
+         }   
+
+         void DoArticulationPublic(dtGame::DeadReckoningHelper& helper, 
+            const dtGame::GameActor& gameActor, const dtGame::TickMessage& tickMessage);
+
+         void DoArticulationSmoothPublic(osgSim::DOFTransform& dofxform, const osg::Vec3& currLocation,
+            const osg::Vec3& nextLocation, float currentTimeStep) const;
+
+         void DoArticulationPredictionPublic(osgSim::DOFTransform& dofxform, const osg::Vec3& currLocation,
+            const osg::Vec3& currentRate, float currentTimeStep) const;
    };
-   
+
+   void TestDeadReckoningComponent::DoArticulationPublic(
+      dtGame::DeadReckoningHelper& helper, const dtGame::GameActor& gameActor,
+      const dtGame::TickMessage& tickMessage)
+   {
+      // The following inherited function was not virtual, so this
+      // function allows the programmer to call the inherited
+      // function publicly for testing purposes.
+      DeadReckoningComponent::DoArticulation( helper, gameActor, tickMessage );
+   }
+
+   void TestDeadReckoningComponent::DoArticulationSmoothPublic(osgSim::DOFTransform& dofxform,
+      const osg::Vec3& currLocation, const osg::Vec3& nextLocation, float currentTimeStep) const
+   {
+      // The following inherited function was not virtual, so this
+      // function allows the programmer to call the inherited
+      // function publicly for testing purposes.
+      DeadReckoningComponent::DoArticulationSmooth(dofxform,currLocation,nextLocation,currentTimeStep);
+   }
+
+   void TestDeadReckoningComponent::DoArticulationPredictionPublic(osgSim::DOFTransform& dofxform,
+      const osg::Vec3& currLocation, const osg::Vec3& currentRate, float currentTimeStep) const
+   {
+      // The following inherited function was not virtual, so this
+      // function allows the programmer to call the inherited
+      // function publicly for testing purposes.
+      DeadReckoningComponent::DoArticulationPrediction(dofxform,currLocation,currentRate,currentTimeStep);
+   }
+
    class DeadReckoningComponentTests : public CPPUNIT_NS::TestFixture 
    {
       CPPUNIT_TEST_SUITE(DeadReckoningComponentTests);
@@ -82,6 +123,8 @@ namespace dtGame
          CPPUNIT_TEST(TestSimpleBehaviorRemote);
          CPPUNIT_TEST(TestHighResClampProperty);
          CPPUNIT_TEST(TestSmoothingStepsCalc);
+         CPPUNIT_TEST(TestDRArticulationStopCounts);
+         CPPUNIT_TEST(TestDoDRArticulations);
          CPPUNIT_TEST(TestDoDRVelocityAccel);
          CPPUNIT_TEST(TestDoDRVelocityAccelNoMotion);
          CPPUNIT_TEST(TestDoDRStatic);
@@ -353,7 +396,288 @@ namespace dtGame
             helper.SetLastTranslationUpdatedTime(dtCore::System::GetInstance().GetSimulationTime());
             helper.SetLastRotationUpdatedTime(dtCore::System::GetInstance().GetSimulationTime());
          }
-         
+
+         osg::Vec3 CalcPredictedRotations( const osg::Vec3& rotationStart, const osg::Vec3& rotationEndOrRate, float deltaTime, bool smoothing )
+         {
+            dtCore::RefPtr<osgSim::DOFTransform> dof = new osgSim::DOFTransform;
+
+            if( smoothing )
+            {
+               mDeadReckoningComponent->DoArticulationSmoothPublic(*dof,rotationStart,rotationEndOrRate,deltaTime);
+            }
+            else
+            {
+               mDeadReckoningComponent->DoArticulationPredictionPublic(*dof,rotationStart,rotationEndOrRate,deltaTime);
+            }
+
+            return dof->getCurrentHPR();
+         }
+
+
+         void CalcPredictedRotationsArray( std::vector<osg::Vec3>& outRotations, 
+            const osg::Vec3& rotationStart, const osg::Vec3& rotationRate,
+            float timePeriod, float timeStep )
+         {
+            // Avoid division by zero.
+            if( timeStep == 0.0f )
+            {
+               return;
+            }
+
+            // Determine the total predictions to be made.
+            float totalTimeSteps = timePeriod / timeStep;
+            unsigned limit = unsigned(totalTimeSteps) + 1;
+
+            // Calculate all predictions
+            osg::Vec3 rotationEndOrRate = rotationStart + rotationRate * timePeriod;
+            osg::Vec3 newRotationStart(rotationStart);
+            float runningTime = 0.0f;
+            float smoothTime = mDeadReckoningComponent->GetArticulationSmoothTime();
+            float timeAdvance = 0.0f;
+            bool smoothingDisabled = false;
+            for( unsigned i = 0; i < limit; ++i )
+            {
+               float smoothTimeReciprical = 1.0f;
+               bool smoothingPerformed = runningTime+timeStep < smoothTime;
+               if( !smoothingDisabled )
+               {
+                  if( smoothingPerformed ) // DoDRArticulationSmooth will be called at this point
+                  {
+                     smoothTimeReciprical = 1.0f/(smoothTime * timePeriod);
+                  }
+                  else // DoDRArticulationPrediction will be called at this point
+                  {
+                     smoothingDisabled = true;
+                  }
+               }
+
+               if( smoothingDisabled )
+               {
+                  // The next DR stop is assigned.
+                  if( outRotations.size() > 0 )
+                  {
+                     newRotationStart = outRotations[i-1];
+                  }
+
+                  // Advance the final rotation forward for another full time period.
+                  rotationEndOrRate = rotationRate;
+
+                  // No smoothing should occur so no time should be accumulated
+                  runningTime = 0.0f;
+               }
+
+               // Advance time forward as normal.
+               runningTime += timeStep;
+               // Keep track of what time amount was last sent to CalcPredictedRotations.
+               timeAdvance = runningTime*smoothTimeReciprical;
+               outRotations.push_back( CalcPredictedRotations( newRotationStart, rotationEndOrRate, timeAdvance, !smoothingDisabled ) );
+            }
+         }
+
+         void TickArticulations(DeadReckoningHelper& helper, const dtGame::GameActor& actor, float timeDelta )
+         {
+            // Setup a reusable tick message
+            // The following message object will be used to test articulation updates
+            // directly to avoid any complication caused by true circulation of messages
+            // through higher level objects (which may compromise this test).
+            dtCore::RefPtr<dtGame::TickMessage> tickMessage;
+            mDeadReckoningComponent->GetGameManager()->GetMessageFactory()
+               .CreateMessage(dtGame::MessageType::TICK_LOCAL,tickMessage);
+            tickMessage->SetDeltaSimTime(timeDelta);
+
+            mDeadReckoningComponent->DoArticulationPublic(helper,actor,*tickMessage);
+         }
+
+         void SubTestArticulationOrientation( osgSim::DOFTransform& dof, 
+            const osg::Vec3& expectedRotation, float errorTolerance )
+         {
+            osg::Vec3 dofRotation( dof.getCurrentHPR() );
+            osg::Vec3 differences( dofRotation - expectedRotation );
+
+            CPPUNIT_ASSERT_DOUBLES_EQUAL( expectedRotation.x(), dofRotation.x(), errorTolerance );
+            CPPUNIT_ASSERT_DOUBLES_EQUAL( expectedRotation.y(), dofRotation.y(), errorTolerance );
+            CPPUNIT_ASSERT_DOUBLES_EQUAL( expectedRotation.z(), dofRotation.z(), errorTolerance );
+         }
+
+         void TestDoDRArticulations()
+         {
+            // Setup game actor
+            // The actor must be remote in order to apply dead reckoning
+            // to its dofs.
+            dtCore::RefPtr<dtGame::GameActorProxy> mRemoteProxy;
+            mGM->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, mRemoteProxy);
+            dtGame::GameActor& remoteActor = mRemoteProxy->GetGameActor();
+            mGM->AddActor( *mRemoteProxy, true, false );
+
+            // Setup the DOFs
+            const std::string dofName1("TestDOF1");
+            dtCore::RefPtr<osgSim::DOFTransform> dof1 = new osgSim::DOFTransform;
+            dof1->setName( dofName1 );
+
+            const std::string dofName2("TestDOF2");
+            dtCore::RefPtr<osgSim::DOFTransform> dof2 = new osgSim::DOFTransform;
+            dof1->setName( dofName2 );
+
+            // Setup a node collector to reference the DOF
+            dtCore::RefPtr<dtCore::NodeCollector> nodeCollector = new dtCore::NodeCollector;
+            nodeCollector->AddDOFTransform( dofName1, *dof1 );
+            nodeCollector->AddDOFTransform( dofName2, *dof2 );
+
+            // Setup the helper
+            dtCore::RefPtr<DeadReckoningHelper> helper = new DeadReckoningHelper;
+            helper->SetLastKnownTranslation(osg::Vec3(0.0f,0.0f,0.0f));
+            helper->SetLastKnownRotation(osg::Vec3(0.0f,0.0f,0.0f));
+            helper->SetLastTranslationUpdatedTime(0.0);
+            helper->SetLastRotationUpdatedTime(0.0);
+            helper->SetNodeCollector( *nodeCollector );
+
+            // Test dead reckoning
+            float errorTolerance = 0.1f;
+            float timeStep = 0.125f;
+            float timePeriod = 1.0f;
+            mDeadReckoningComponent->SetArticulationSmoothTime( 1.0f );
+            osg::Vec3 rotation;
+            osg::Vec3 rotationRate1(
+               osg::DegreesToRadians(90.0f),
+               osg::DegreesToRadians(15.0f), 0.0f);
+            osg::Vec3 rotationRate2(
+               osg::DegreesToRadians(-30.0f),
+               osg::DegreesToRadians(-45.0f), 0.0f);
+
+            std::vector<osg::Vec3> predictedRotations1;
+            std::vector<osg::Vec3> predictedRotations2;
+
+            CalcPredictedRotationsArray( predictedRotations1, rotation, rotationRate1, timePeriod, timeStep );
+            CalcPredictedRotationsArray( predictedRotations2, rotation, rotationRate2, timePeriod, timeStep );
+            
+            helper->AddToDeadReckonDOF( dofName1, rotation, rotationRate1 );
+            helper->AddToDeadReckonDOF( dofName1, osg::Vec3(rotation + rotationRate1), rotationRate1 );
+
+            helper->AddToDeadReckonDOF( dofName2, rotation, rotationRate2 );
+            helper->AddToDeadReckonDOF( dofName2, osg::Vec3(rotation + rotationRate2), rotationRate2 );
+
+            // Ensure both prediction arrays are the same size before proceeding.
+            CPPUNIT_ASSERT( predictedRotations1.size() == predictedRotations2.size() );
+
+            // Tick articulations and ensure that the DOFs rotate as expected.
+            unsigned limit = predictedRotations1.size();
+            for( unsigned i = 0; i < limit; ++i )
+            {
+               TickArticulations( *helper, remoteActor, timeStep );
+               SubTestArticulationOrientation( *dof1, predictedRotations1[i], errorTolerance );
+               SubTestArticulationOrientation( *dof2, predictedRotations2[i], errorTolerance );
+            }
+         }
+
+         void TestDRArticulationStopCounts()
+         {
+            // Setup game actor
+            // The actor must be remote in order to apply dead reckoning
+            // to its dofs.
+            dtCore::RefPtr<dtGame::GameActorProxy> mRemoteProxy;
+            mGM->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, mRemoteProxy);
+            dtGame::GameActor& remoteActor = mRemoteProxy->GetGameActor();
+            mGM->AddActor( *mRemoteProxy, true, false );
+
+            // Setup the DOFs
+            const std::string dofName("TestDOF");
+            dtCore::RefPtr<osgSim::DOFTransform> dof = new osgSim::DOFTransform;
+            dof->setName( dofName );
+
+            // Setup a node collector to reference the DOF
+            dtCore::RefPtr<dtCore::NodeCollector> nodeCollector = new dtCore::NodeCollector;
+            nodeCollector->AddDOFTransform( dofName, *dof );
+
+            // Setup the helper
+            dtCore::RefPtr<DeadReckoningHelper> helper = new DeadReckoningHelper;
+            helper->SetLastKnownTranslation(osg::Vec3(0.0f,0.0f,0.0f));
+            helper->SetLastKnownRotation(osg::Vec3(0.0f,0.0f,0.0f));
+            helper->SetLastTranslationUpdatedTime(0.0);
+            helper->SetLastRotationUpdatedTime(0.0);
+            helper->SetNodeCollector( *nodeCollector );
+
+            // Declare other test variables
+            float timeStep = 0.125f;
+            osg::Vec3 rotation;
+            osg::Vec3 rotationRate(
+               osg::DegreesToRadians(90.0f),
+               osg::DegreesToRadians(15.0f), 0.0f);
+
+            // Test removing dead reckoning stops.
+            // Stops are like key frames but the actual term comes from gradients (color stops);
+            // this term used only for the sake of comments in this test.
+            typedef std::list<dtCore::RefPtr<DeadReckoningHelper::DeadReckoningDOF> > DOFStopList;
+            const DOFStopList& dofStops = helper->GetDeadReckoningDOFs();
+
+            // --- Zero stops exist until a DOF is passed into the helper for DR.
+            CPPUNIT_ASSERT( dofStops.size() == 0 );
+
+            // --- Add a couple DR stops and ensure they have been added to the helper.
+            helper->AddToDeadReckonDOF( dofName, rotation, rotationRate );
+            CPPUNIT_ASSERT( dofStops.size() == 1 );
+            helper->AddToDeadReckonDOF( dofName, rotation, rotationRate );
+            CPPUNIT_ASSERT( dofStops.size() == 2 );
+
+            // --- Ensure it still exists after several ticks that would certainly
+            //     cause the first stop to be removed under normal circumstances.
+            TickArticulations( *helper, remoteActor, timeStep ); // 0.0   to 0.125
+            TickArticulations( *helper, remoteActor, timeStep ); // 0.125 to 0.25
+            TickArticulations( *helper, remoteActor, timeStep ); // 0.25  to 0.375
+            CPPUNIT_ASSERT( dofStops.size() == 2 );
+            TickArticulations( *helper, remoteActor, timeStep ); // remove first DR DOF on 0.5 -> 0.0 to 0.125
+            CPPUNIT_ASSERT( dofStops.size() == 1 );
+
+            DOFStopList::const_iterator iter = dofStops.begin();
+            CPPUNIT_ASSERT( (*iter)->mCurrentTime > 0.0f );
+
+            // --- Tick articulation a few more time and make sure the DR DOF has updated properly.
+            TickArticulations( *helper, remoteActor, timeStep ); // 0.0   to 0.125
+            TickArticulations( *helper, remoteActor, timeStep ); // 0.125 to 0.25
+            TickArticulations( *helper, remoteActor, timeStep ); // 0.25  to 0.375
+            TickArticulations( *helper, remoteActor, timeStep ); // remove first DR DOF on 0.5 -> 0.0 to 0.125
+            CPPUNIT_ASSERT( (*iter)->mCurrentTime > 0.5f );
+
+            // --- Add another stop to prove that stops can truly be added.
+            helper->AddToDeadReckonDOF( dofName, rotation, rotationRate );
+            // --- NEW add and causes both stops to have their times set back to zero
+            CPPUNIT_ASSERT( dofStops.size() == 2 );
+            iter = dofStops.begin();
+            CPPUNIT_ASSERT( (*iter)->mCurrentTime == 0.0f );
+            ++iter;
+            CPPUNIT_ASSERT( (*iter)->mCurrentTime == 0.0f );
+
+            // --- The first stop was from the prior test and should now be over a half second old.
+            //     The first stop should be removed here and the new one should remain.
+            TickArticulations( *helper, remoteActor, timeStep );
+            CPPUNIT_ASSERT( dofStops.size() == 2 ); // 2 stops are one step older (0.125)
+
+            helper->AddToDeadReckonDOF( dofName, rotation, rotationRate );
+            helper->AddToDeadReckonDOF( dofName, rotation, rotationRate );
+            helper->AddToDeadReckonDOF( dofName, rotation, rotationRate );
+            helper->AddToDeadReckonDOF( dofName, rotation, rotationRate );
+            CPPUNIT_ASSERT( dofStops.size() == 6 );
+
+            // --- The component should only transition between 2 stops,
+            //     thus all stops before the last two should be removed
+            TickArticulations( *helper, remoteActor, timeStep );
+            CPPUNIT_ASSERT( dofStops.size() == 2 ); // stops are one step older (0.125)
+            iter = dofStops.begin();
+            // --- The new first stop will have been set to 0 and then immediately
+            //     ticked by one type step.
+            CPPUNIT_ASSERT( (*iter)->mCurrentTime == timeStep );
+
+            TickArticulations( *helper, remoteActor, timeStep );
+            CPPUNIT_ASSERT( dofStops.size() == 2 ); // stops are one step older (0.25)
+            iter = dofStops.begin();
+            CPPUNIT_ASSERT( (*iter)->mCurrentTime == timeStep * 2.0f );
+
+            TickArticulations( *helper, remoteActor, timeStep );
+            TickArticulations( *helper, remoteActor, timeStep );
+            // --- The first stop should have been removed since it was 1 second old on the tick.
+            //     The last stop now becomes the first stop.
+            CPPUNIT_ASSERT( dofStops.size() == 1 ); // stops are one step older (1.0)
+         }
+
          void TestDoDRNoDR()
          {
             dtCore::RefPtr<DeadReckoningHelper> helper = new DeadReckoningHelper;
