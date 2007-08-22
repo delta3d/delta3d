@@ -19,8 +19,8 @@
 * Michael Guerrero 4/01/2007
 */
 
-#ifndef _pd_celestial_math_h_
-#define _pd_celestial_math_h_
+#ifndef _PD_CELESTIAL_MATH_H_
+#define _PD_CELESTIAL_MATH_H_
 
 #include <osg/Vec3>
 #include <osg/Vec2>
@@ -29,15 +29,16 @@
 
 namespace dtUtil
 {
+   struct CelestialMesh;
+
    struct TargetTriangle
    {
-      bool  mIsInside;
-      int   mTriangleID;
-      float mAzimuth;
-      float mElevation;
-   };
-
-   struct CelestialMesh;
+      bool          mIsInside;
+      int           mTriangleID;
+      float         mAzimuth;
+      float         mElevation;
+      CelestialMesh *mMesh;
+   };   
 
    /**  
    *  GetTargetTriangleData - Finds the triangle in the mesh for the given azimuth elevation 
@@ -76,8 +77,7 @@ namespace dtUtil
                                              const float elevation,
                                              const osg::Vec3& forwardDirection,
                                              osg::Vec3 &outDirection);
-
-   /// 
+  
    /**
    *  FindCelestialTriangleID  - Looks up a celestial triangle from a mesh using azimuth and elevation
    *  @param mesh              - the celestial mesh used to find the triangle
@@ -129,4 +129,4 @@ namespace dtUtil
   
 }
 
-#endif // _pd_celestial_math_h_
+#endif // _PD_CELESTIAL_MATH_H_
