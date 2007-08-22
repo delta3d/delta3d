@@ -1090,8 +1090,13 @@ void GameManagerTests::TestTimers()
    dtCore::Timer_t currentSimTime  = mManager->GetSimulationClockTime();
    dtCore::Timer_t currentRealTime = mManager->GetRealClockTime();
 
-   CPPUNIT_ASSERT(currentSimTime  > expectedSimTime);
-   CPPUNIT_ASSERT(currentRealTime > expectedRealTime);
+   std::ostringstream msg1;
+   msg1 << "(" << currentSimTime << ") should be > than (" <<expectedSimTime << ")";
+   CPPUNIT_ASSERT_MESSAGE(msg1.str(), currentSimTime  > expectedSimTime);
+
+   std::ostringstream msg2;
+   msg2 << "(" << currentRealTime << ") should be > than (" <<expectedRealTime << ")";
+   CPPUNIT_ASSERT_MESSAGE(msg2.str(), currentRealTime > expectedRealTime);
 
    dtCore::Timer_t lateSimTime  = currentSimTime  - expectedSimTime;
    dtCore::Timer_t lateRealTime = currentRealTime - expectedRealTime;
