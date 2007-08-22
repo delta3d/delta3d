@@ -68,7 +68,12 @@ namespace dtGame
          class DT_GAME_EXPORT DeadReckoningDOF : public osg::Referenced
          {
             public:
-               DeadReckoningDOF(){}
+               DeadReckoningDOF()
+                  : mCurrentTime(0.0f),
+                  mUpdate(false),
+                  mNext(NULL),
+                  mPrev(NULL)
+               {}
           
                static const std::string REPRESENATION_POSITION;
                static const std::string REPRESENATION_POSITIONRATE;

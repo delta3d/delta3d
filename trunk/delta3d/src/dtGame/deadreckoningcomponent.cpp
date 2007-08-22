@@ -43,7 +43,7 @@ namespace dtGame
 
    //////////////////////////////////////////////////////////////////////
    DeadReckoningComponent::DeadReckoningComponent(const std::string& name): dtGame::GMComponent(name),
-      mHighResClampRange(0.0f), mHighResClampRange2(0.0f), mForceClampInterval(3.0f)
+      mHighResClampRange(0.0f), mHighResClampRange2(0.0f), mForceClampInterval(3.0f), mArticSmoothTime(0.5f)
    {
       mLogger = &dtUtil::Log::GetInstance("deadreckoningcomponent.cpp");
    }
@@ -625,7 +625,7 @@ namespace dtGame
          return;
       }
 
-      const std::list<dtCore::RefPtr<DeadReckoningHelper::DeadReckoningDOF> > containerDOFs = helper.GetDeadReckoningDOFs();
+      const std::list<dtCore::RefPtr<DeadReckoningHelper::DeadReckoningDOF> >& containerDOFs = helper.GetDeadReckoningDOFs();
       std::list<dtCore::RefPtr<DeadReckoningHelper::DeadReckoningDOF> >::const_iterator endDOF = containerDOFs.end();
 
       std::list<dtCore::RefPtr<DeadReckoningHelper::DeadReckoningDOF> >::const_iterator iterDOF = containerDOFs.begin();
@@ -634,51 +634,46 @@ namespace dtGame
          (*iterDOF)->mUpdate = false;
       }
 
+      // Loop through all the DR stops and remove all those that precede the
+      // second to last stop; smoothing should only occur between 2 stops,
+      // so the latest stops should be used because they contain the latest data.
+      std::vector<DeadReckoningHelper::DeadReckoningDOF*> deletableDRDOFs;
       iterDOF = containerDOFs.begin();
       while(iterDOF != endDOF)
       {
+         // an element is a middle man if there are 3 in the chain (ie current->next->next != NULL).
+         if((*iterDOF)->mNext != NULL && (*iterDOF)->mNext->mNext != NULL)
+         {
+            // delete the current
+            deletableDRDOFs.push_back(iterDOF->get());
+         }
+         ++iterDOF; // goto next element
+      }
+
+      // Now delete all stops that are unneeded.
+      unsigned limit = deletableDRDOFs.size();
+      for( unsigned i = 0; i < limit; ++i )
+      {
+         helper.RemoveDRDOF(*deletableDRDOFs[i]);
+      }
+      deletableDRDOFs.clear();
+
+
+      iterDOF = containerDOFs.begin();
+      bool continuedAgain = false;
+      while(iterDOF != endDOF)
+      {
          DeadReckoningHelper::DeadReckoningDOF *currentDOF = (*iterDOF).get();
+
+         // Only process the first DR stop in the chain so that subsequent 
+         // stops will be used as blending targets.
          if(currentDOF->mPrev == NULL && !currentDOF->mUpdate)
          {
             currentDOF->mCurrentTime += tickMessage.GetDeltaSimTime();
             currentDOF->mUpdate = true;
 
-            // there is something in the chain
-            if(currentDOF->mNext != NULL)
-            {
-               osgSim::DOFTransform* dofTransform = helper.GetNodeCollector()->GetDOFTransform(currentDOF->mName);
-               if( dofTransform != NULL )
-               {
-                  DoArticulationSmooth(*dofTransform, currentDOF->mStartLocation, currentDOF->mNext->mStartLocation, currentDOF->mCurrentTime);
-               }
-            }
-            else
-            {
-               osgSim::DOFTransform* dofTransform = helper.GetNodeCollector()->GetDOFTransform(currentDOF->mName);
-               if (dofTransform != NULL)
-               {
-                  DoArticulationPrediction(*dofTransform, currentDOF->mStartLocation, currentDOF->mRateOverTime, currentDOF->mCurrentTime);
-               }
-            }
-
-            // Get rid of middle man, would take out if u want full movement
-            // between multiple steps
-            if(currentDOF->mNext != NULL)
-            {
-               bool changedList = false;
-               while((*iterDOF)->mNext->mNext != NULL)
-               {
-                  helper.RemoveDRDOF(*(*iterDOF)->mNext);
-                  // start over at the beginning of the DOF list.  Hence the use of the Update flag.
-                  iterDOF = containerDOFs.begin();
-                  changedList = true;
-               }
-               if (changedList)
-                  continue;
-            }
-
-            // One second has passed, and this has more in its chain
-            if(currentDOF->mNext != NULL && currentDOF->mCurrentTime >= 1)
+            // Smooth time has completed, and this has more in its chain
+            if( currentDOF->mNext != NULL && currentDOF->mCurrentTime >= mArticSmoothTime )
             {
                osgSim::DOFTransform* ptr = helper.GetNodeCollector()->GetDOFTransform(currentDOF->mName);
                if( ptr )
@@ -692,7 +687,44 @@ namespace dtGame
                // start over at the beginning of the DOF list.  Hence the use of the Update flag.
                iterDOF = containerDOFs.begin();
                continue;
-            }                  
+            } 
+
+
+            // there is something in the chain
+            if(currentDOF->mNext != NULL)
+            {
+               osgSim::DOFTransform* dofTransform = helper.GetNodeCollector()->GetDOFTransform(currentDOF->mName);
+               if( dofTransform != NULL )
+               {
+                  DoArticulationSmooth(*dofTransform, currentDOF->mStartLocation,
+                     currentDOF->mNext->mStartLocation, currentDOF->mCurrentTime/mArticSmoothTime);
+                  // NOTE: The division by mArticSmoothTime counter balances the mArticSmoothTime check
+                  // in the previous code block that attempts to remove the first DR stop. If the time
+                  // was not magnified by the reciprocal of mArticSmoothTime, then the smoothing would
+                  // never have a full transition over the time set for smoothing because it would stop
+                  // prematurely at mArticSmoothTime (which could be less or more than 1.0).
+                  //
+                  // In other words, the reciprocal counter-scales the smoothing time down to 1.0.
+                  // 0.0 to 1.0 is the range of transition between any two stops, no matter what the
+                  // specified smooth time is.
+                  //
+                  // Essentially, the time step is scaled in relation to the smooth time to find its
+                  // ratio of transition.
+                  //
+                  // IE. smoothTime = 2, timeStep = 0.5.
+                  // timeStep/smoothTime = 0.25.
+                  // 0.5 is 25% of 2, thus timeStep causes a 25% transition from the first stop to the end stop.
+               }
+            }
+            else
+            {
+               osgSim::DOFTransform* dofTransform = helper.GetNodeCollector()->GetDOFTransform(currentDOF->mName);
+               if (dofTransform != NULL)
+               {
+                  DoArticulationPrediction(*dofTransform, currentDOF->mStartLocation,
+                     currentDOF->mRateOverTime, currentDOF->mCurrentTime);
+               }
+            }                 
          }
          ++iterDOF;
       }
@@ -703,7 +735,7 @@ namespace dtGame
                                                      const osg::Vec3& nextLocation,
                                                      float currentTimeStep) const
    {
-      osg::Vec3 NewDistance = (nextLocation  - currLocation);
+      osg::Vec3 NewDistance = (nextLocation - currLocation);
 
       for (int i = 0; i < 3; ++i)
       {
@@ -739,5 +771,10 @@ namespace dtGame
 
       dofxform.updateCurrentHPR(result);
    } // end function DoArticulationPrediction
+
+   void DeadReckoningComponent::SetArticulationSmoothTime( float smoothTime )
+   {
+      mArticSmoothTime = smoothTime <= 0.0f ? 1.0f : smoothTime;
+   }
 
 } // end namespace dtGame

@@ -362,7 +362,9 @@ namespace dtGame
       std::list<dtCore::RefPtr<DeadReckoningDOF> >::iterator iterDOF;
       for(iterDOF = mDeadReckonDOFS.begin();iterDOF != mDeadReckonDOFS.end(); ++iterDOF)
       {
-         if(  (obj.mCurrentTime   == (*iterDOF)->mCurrentTime)
+         // If the same pointer or the values match, then remove this object from the list.
+         if( &obj == *iterDOF 
+            || (obj.mCurrentTime   == (*iterDOF)->mCurrentTime)
             && (obj.mName          == (*iterDOF)->mName)
             && (obj.mRateOverTime  == (*iterDOF)->mRateOverTime)
             && (obj.mStartLocation == (*iterDOF)->mStartLocation))
@@ -402,7 +404,6 @@ namespace dtGame
       {
          // dont need to link objects
       }
-      
       mDeadReckonDOFS.erase(iter);
       return;
    }
