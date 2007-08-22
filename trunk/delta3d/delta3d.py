@@ -431,7 +431,7 @@ def TOOL_BUNDLE(env):
       if env['OS'] == 'windows':
          env.Append(CXXFLAGS=['/W3'])
       elif env['OS'] == 'linux' or env['OS'] == 'darwin':
-         if env['CC'][:3] == 'gcc' or env['CXX'][:3] == 'g++':
+         if env['CC'].find('gcc') >= 0 or env['CXX'].find('g++') >= 0:
             env.Append(CXXFLAGS=['-Wall'])
             if env.has_key('CCVERSION') :
                if int( env['CCVERSION'][:1] ) >= 4 :
@@ -439,7 +439,7 @@ def TOOL_BUNDLE(env):
             if env.has_key('CXXVERSION') :
                if int( env['CXXVERSION'][:1] ) >= 4 :
                   env.Append(CXXFLAGS=['-ftree-vectorize'])
-         if env['CXX'][:3] == 'g++':
+         if env['CXX'].find('g++') >= 0:
             env.Append(CXXFLAGS=['-Wno-non-virtual-dtor'])
 
       if env['OS'] == 'linux' :
