@@ -288,7 +288,8 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::AddToDeadReckonDOF(const std::string &DofName, osg::Vec3& position, osg::Vec3& rateOverTime)
+   void DeadReckoningHelper::AddToDeadReckonDOF(const std::string &DofName, const osg::Vec3& position, 
+         const osg::Vec3& rateOverTime)
    {
       dtCore::RefPtr<DeadReckoningDOF> toAdd = new DeadReckoningDOF();
       toAdd->mNext = NULL;

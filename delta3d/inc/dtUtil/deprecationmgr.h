@@ -36,8 +36,9 @@
 #include <map>
 #include <set>
 
+#include <dtUtil/macros.h>
 
-#if defined( _DEBUG) && (defined(_WIN32) || defined(WIN32) || defined(__WIN32__))
+#if defined( _DEBUG) && defined (DELTA_WIN32)
    #define DEPRECATE(a,b) { \
       void * fptr;	\
       _asm { mov fptr, ebp }                                       \
@@ -61,7 +62,7 @@ class DeprecationMgr
    {
       if ( !m_Functions.empty() )
       {
-			#if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
+			#if defined (DELTA_WIN32)
          OutputDebugString( "*************************************************************\n" );
          OutputDebugString( "WARNING. You are using the following deprecated functions:\n" );
 			#else
@@ -79,7 +80,7 @@ class DeprecationMgr
                pFunction->OldFunctionName, 
                (unsigned)pFunction->CalledFrom.size() );
 
-            #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
+            #if defined (DELTA_WIN32)
             OutputDebugString (txt);         
 		      #else
 			   std::cout << txt;
@@ -89,7 +90,7 @@ class DeprecationMgr
             sprintf ( txt, "  Instead use %s.\n", 
                pFunction->NewFunctionName );
 
-            #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
+            #if defined (DELTA_WIN32)
             OutputDebugString (txt);         
 		      #else
 			   std::cout << txt;
@@ -98,7 +99,7 @@ class DeprecationMgr
          }
 
 
-         #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
+         #if defined (DELTA_WIN32)
 			OutputDebugString( "*************************************************************\n" );
 		   #else
 			std::cout << "*************************************************************" << std::endl;
@@ -116,7 +117,7 @@ class DeprecationMgr
 
       int *pReturn = (int*)FramePtr+1; // usual return address @ [ebp+4]
 
-      #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
+      #if defined (DELTA_WIN32)
       int CalledFrom = IsBadReadPtr( pReturn,4 ) ? 0 : *pReturn;
       #else
 

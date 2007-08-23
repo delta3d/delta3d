@@ -321,7 +321,7 @@ namespace dtGame
          ///@return the rough average amount of time between translation updates.  This is based on values sent to SetLastTranslationUpdatedTime.
          double GetAverageTimeBetweenTranslationUpdates() const { return mAverageTimeBetweenTranslationUpdates; };
          /// Add onto the dof dead reckoning list where the dof should move 
-         void AddToDeadReckonDOF(const std::string &DofName, osg::Vec3& position, osg::Vec3& rateOverTime);
+         void AddToDeadReckonDOF(const std::string &DofName, const osg::Vec3& position, const osg::Vec3& rateOverTime);
 
          ///@return the rough average amount of time between rotation updates.  This is based on values sent to SetLastRotationUpdatedTime.
          double GetAverageTimeBetweenRotationUpdates() const { return mAverageTimeBetweenRotationUpdates; };
