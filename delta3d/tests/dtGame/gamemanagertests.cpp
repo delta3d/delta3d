@@ -25,6 +25,7 @@
 #include <osg/io_utils>
 #include <osg/Endian>
 #include <dtUtil/log.h>
+#include <dtUtil/macros.h>
 #include <dtCore/refptr.h>
 #include <dtCore/observerptr.h>
 #include <dtCore/scene.h>
@@ -58,7 +59,7 @@
 
 #include "testcomponent.h"
 
-#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
+#ifdef DELTA_WIN32
    #include <Windows.h>
    #define SLEEP(milliseconds) Sleep((milliseconds))
 #else
@@ -1085,11 +1086,19 @@ void GameManagerTests::TestTimers()
 
    dtCore::Timer_t expectedSimTime  = mManager->GetSimulationClockTime() + 1000;
    dtCore::Timer_t expectedRealTime = mManager->GetRealClockTime()       + 1000;
-   SLEEP(2);
-   dtCore::System::GetInstance().Step();
    dtCore::Timer_t currentSimTime  = mManager->GetSimulationClockTime();
    dtCore::Timer_t currentRealTime = mManager->GetRealClockTime();
 
+   //this shouldn't ever need to run more than once, but sometimes windows doesn't sleep as long as it's supposed to.
+   while (currentSimTime < expectedSimTime)
+   {
+      SLEEP(2);
+      dtCore::System::GetInstance().Step();
+
+      currentSimTime  = mManager->GetSimulationClockTime();
+      currentRealTime = mManager->GetRealClockTime();
+   }
+   
    std::ostringstream msg1;
    msg1 << "(" << currentSimTime << ") should be > than (" <<expectedSimTime << ")";
    CPPUNIT_ASSERT_MESSAGE(msg1.str(), currentSimTime  > expectedSimTime);
