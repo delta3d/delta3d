@@ -17,12 +17,12 @@
 //      Noel Llopis  --  11/20/2000
 */
 //-----------------------------------------------------------------------------
-
-
 #ifndef _DEPRECATIONMGR_H_
 #define _DEPRECATIONMGR_H_
 
-#if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
+#include <dtUtil/macros.h>
+
+#if defined(DELTA_WIN32)
 // Identifier was truncated to '255' characters in the debug information
 #pragma warning( disable:4786 )  
 #include <windows.h>
@@ -35,10 +35,9 @@
 #include <string>
 #include <map>
 #include <set>
+#include <sstream>
 
-#include <dtUtil/macros.h>
-
-#if defined( _DEBUG) && defined (DELTA_WIN32)
+#if defined( _DEBUG) && (defined DELTA_WIN32)
    #define DEPRECATE(a,b) { \
       void * fptr;	\
       _asm { mov fptr, ebp }                                       \
@@ -62,44 +61,49 @@ class DeprecationMgr
    {
       if ( !m_Functions.empty() )
       {
-			#if defined (DELTA_WIN32)
+			#if defined(DELTA_WIN32)
          OutputDebugString( "*************************************************************\n" );
          OutputDebugString( "WARNING. You are using the following deprecated functions:\n" );
 			#else
 			std::cout << "*************************************************************" << std::endl;
 			std::cout << "WARNING. You are using the following deprecated functions:" << std::endl;
-         #endif // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
+         #endif // defined(DELTA_WIN32)
 
-         char txt[255];
+         //char txt[255];
          std::map<const char *, DeprecatedFunction>::iterator i;
          for ( i=m_Functions.begin(); i!=m_Functions.end(); ++i )
          {
             DeprecatedFunction * pFunction = &((*i).second);
 
-            sprintf ( txt, "- Function %s called from %u different places.\n",
+            std::ostringstream oss;
+            oss << "- Function " << pFunction->OldFunctionName << " called from " << 
+               (unsigned)pFunction->CalledFrom.size() << " different places.\n";
+
+            /* sprintf ( txt, "- Function %s called from %u different places.\n",
                pFunction->OldFunctionName, 
-               (unsigned)pFunction->CalledFrom.size() );
+               (unsigned)pFunction->CalledFrom.size() ); */
 
-            #if defined (DELTA_WIN32)
-            OutputDebugString (txt);         
+            #if defined(DELTA_WIN32)
+            OutputDebugString(oss.str().c_str());         
 		      #else
-			   std::cout << txt;
-            #endif // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
+			   std::cout << oss.str();
+            #endif // defined(DELTA_WIN32)
 				
+            oss.str("");
+            oss << "  Instead use " << pFunction->NewFunctionName << ".\n",
+            /* sprintf ( txt, "  Instead use %s.\n", 
+               pFunction->NewFunctionName ); */
 
-            sprintf ( txt, "  Instead use %s.\n", 
-               pFunction->NewFunctionName );
-
-            #if defined (DELTA_WIN32)
-            OutputDebugString (txt);         
+            #if defined(DELTA_WIN32)
+            OutputDebugString(oss.str().c_str());         
 		      #else
-			   std::cout << txt;
-            #endif // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
+			   std::cout << oss.str();
+            #endif // defined(DELTA_WIN32)
         
          }
 
 
-         #if defined (DELTA_WIN32)
+         #if defined(DELTA_WIN32)
 			OutputDebugString( "*************************************************************\n" );
 		   #else
 			std::cout << "*************************************************************" << std::endl;
@@ -117,7 +121,7 @@ class DeprecationMgr
 
       int *pReturn = (int*)FramePtr+1; // usual return address @ [ebp+4]
 
-      #if defined (DELTA_WIN32)
+      #if defined(DELTA_WIN32)
       int CalledFrom = IsBadReadPtr( pReturn,4 ) ? 0 : *pReturn;
       #else
 
@@ -128,7 +132,7 @@ class DeprecationMgr
       if( pReturn )
          CalledFrom = *pReturn;
       
-      #endif //defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
+      #endif //defined(DELTA_WIN32)
 
       // Check if this function was already listed as deprecated
       std::map<const char *, DeprecatedFunction>::iterator ExistingFunc;
