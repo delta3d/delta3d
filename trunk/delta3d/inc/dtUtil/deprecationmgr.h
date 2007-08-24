@@ -77,7 +77,7 @@ class DeprecationMgr
 
             std::ostringstream oss;
             oss << "- Function " << pFunction->OldFunctionName << " called from " << 
-               (unsigned)pFunction->CalledFrom.size() << " different places.\n";
+                   pFunction->CalledFrom.size() << " different places.\n";
 
             /* sprintf ( txt, "- Function %s called from %u different places.\n",
                pFunction->OldFunctionName, 
