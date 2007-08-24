@@ -21,7 +21,7 @@
 #ifndef DELTA_TASKACTORGAMEEVENT
 #define DELTA_TASKACTORGAMEEVENT
 
-#include "dtActors/taskactor.h"
+#include <dtActors/taskactor.h>
 #include <dtDAL/gameevent.h>
 #include <dtGame/message.h>
 
@@ -60,7 +60,14 @@ namespace dtActors
           * @return The game event or NULL if this task is not currenlty responsible
           *   for an event.
           */
-         dtDAL::GameEvent *GetGameEvent() const { return mGameEvent; }
+         dtDAL::GameEvent *GetGameEvent() { return mGameEvent.get(); }
+
+         /**
+          * Gets the game event currently tracked by this task.
+          * @return The game event or NULL if this task is not currenlty responsible
+          *   for an event.
+          */
+         const dtDAL::GameEvent *GetGameEvent() const { return mGameEvent.get(); }
 
          /**
           * Sets the number of times the game event tracked by this task must be
@@ -96,7 +103,7 @@ namespace dtActors
          virtual ~TaskActorGameEvent();
 
       private:
-         dtDAL::GameEvent *mGameEvent;
+         dtCore::ObserverPtr<dtDAL::GameEvent> mGameEvent;
          int mMinOccurances;
          int mNumTimesEventFired;
    };
