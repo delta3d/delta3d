@@ -48,7 +48,7 @@ namespace dtUtil
       */
       const std::string &GetName() const 
       {
-         return this->name;
+         return this->mName;
       }
 
       /**
@@ -82,25 +82,25 @@ namespace dtUtil
       */
       bool operator==(const std::string &rhs) const 
       {
-         return this->name == rhs;
+         return this->mName == rhs;
       }
 
       ///Overloaded inequality test for this enumeration's string value.
       bool operator!=(const std::string &rhs) const 
       {
-         return this->name != rhs;
+         return this->mName != rhs;
       }
 
       ///Overloaded less than test for this enumeration's string value.
       bool operator<(const std::string &rhs) const 
       {
-         return this->name < rhs;
+         return this->mName < rhs;
       }
 
       ///Overloaded greater than test for this enumeration's string value.
       bool operator>(const std::string &rhs) const 
       {
-         return this->name > rhs;
+         return this->mName > rhs;
       }
 
       /**
@@ -131,7 +131,7 @@ namespace dtUtil
       *      enumerated.
       */
       Enumeration(const std::string &name) {
-         this->name = name;
+         this->mName = name;
       }
 
    private:
@@ -139,7 +139,7 @@ namespace dtUtil
       Enumeration &operator=(const Enumeration &rhs) { return *this; }
 
       ///String representation of the enumeration.
-      std::string name;
+      std::string mName;
       ///Private copy constructor to enforce enumeration storage by reference.
       Enumeration(const Enumeration &rhs) { }
 
@@ -160,7 +160,7 @@ namespace dtUtil
 #define DECLARE_ENUM(EnumType)                          \
 private:                                                \
    static std::vector<EnumType*> mInstances;           \
-   static std::vector<dtUtil::Enumeration*> mGenericInstances;           \
+   static std::vector<dtUtil::Enumeration*> mGenericInstances; \
    static void AddInstance(EnumType* instance) \
    {                                                  \
       EnumType::mInstances.push_back(instance);        \
