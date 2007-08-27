@@ -46,7 +46,10 @@
 
 namespace dtAnim
 {
-/////////////////////////////////////////////////////////////////////////////////
+
+const std::string AnimationHelper::PROPERTY_SKELETAL_MESH("Skeletal Mesh");
+
+   /////////////////////////////////////////////////////////////////////////////////
 AnimationHelper::AnimationHelper()
 : mGroundClamp(false)
 , mGeode(NULL)
@@ -150,9 +153,13 @@ bool AnimationHelper::LoadModel(const std::string& pFilename)
 void AnimationHelper::GetActorProperties(dtDAL::ActorProxy& pProxy, 
       std::vector<dtCore::RefPtr<dtDAL::ActorProperty> >& pFillVector)
 {
+   static const std::string ANIMATION_MODEL_GROUP("AnimationModel");
+
+   static const std::string PROPERTY_SKELETAL_MESH_DESC
+      ("The model resource that defines the skeletal mesh");
    pFillVector.push_back(new dtDAL::ResourceActorProperty(pProxy, dtDAL::DataType::SKELETAL_MESH,
-      "Skeletal Mesh", "Skeletal Mesh", dtDAL::MakeFunctor(*this, &AnimationHelper::LoadModel),
-      "The model resource that defines the skeletal mesh", "AnimationModel"));     
+      PROPERTY_SKELETAL_MESH, PROPERTY_SKELETAL_MESH, dtDAL::MakeFunctor(*this, &AnimationHelper::LoadModel),
+      PROPERTY_SKELETAL_MESH_DESC, ANIMATION_MODEL_GROUP));
 }
 
 /////////////////////////////////////////////////////////////////////////////////
