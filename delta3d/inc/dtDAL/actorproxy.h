@@ -291,6 +291,13 @@ namespace dtDAL
           */
          dtCore::DeltaDrawable* GetActor();
 
+         /// Templated version of GetActor() that static casts the actor to the type passed in.
+         template <typename TActorPtr>
+         void GetActor(TActorPtr& actorType)
+         {
+            actorType = static_cast<TActorPtr>(GetActor());
+         }
+         
          /**
           * Gets the actor who's properties are modeled by this proxy.
           * @note
@@ -301,6 +308,13 @@ namespace dtDAL
           *      in its inheritance tree.
           */
          const dtCore::DeltaDrawable* GetActor() const;
+
+         /// Templated version of GetActor() const that static casts the actor to the type passed in.
+         template <typename TActorPtr>
+         void GetActor(TActorPtr& actorType) const
+         {
+            actorType = static_cast<TActorPtr>(GetActor());
+         }
 
          /**
           * Sets the billboard icon used to represent this actor proxy.
