@@ -61,14 +61,15 @@ ShipActor::ThrottlePosition ShipActor::ThrottlePosition::AHEAD_FLANK("AHEAD_FLAN
 ShipActor::ShipActor(dtGame::GameActorProxy &proxy) :
    VehicleActor(proxy), 
    shaftEngaged(true),
-   heading(0.0f),
+   position(0.0f, 0.0f, 100.0f),
    course(0.0f),
+   heading(0.0f),
    maxAheadSpeed(30.0f),
    maxAsternSpeed(-20.0f),
    speed(0.0f),
+   desiredThrottle(0.0f),
    throttle(0.0f),
    throttleRate(3.0f),
-   desiredThrottle(0.0f),
    maxRudderAngle(37.0f),
    effRudderAngle(.0f),
    rudderAngle(0.0f),
@@ -78,8 +79,7 @@ ShipActor::ShipActor(dtGame::GameActorProxy &proxy) :
    heel(0.0f),
    displacement(8300.0f),
    shaftHP(100000.0f),
-   heelFactor(0.5f), 
-   position(0.0f, 0.0f, 100.0f)
+   heelFactor(0.5f)
 {
 
 }

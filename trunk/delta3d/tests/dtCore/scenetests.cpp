@@ -71,10 +71,10 @@ void CoreTests::TestScene()
    scene->AddDrawable(new dtCore::PointAxis());
    scene->AddDrawable(new dtCore::Environment());
 
-   int numSceneChildBefore = scene->GetNumberOfAddedDrawable();
-   int numGrpChildBefore = grp->getNumChildren();
+   unsigned numSceneChildBefore = scene->GetNumberOfAddedDrawable();
+   unsigned numGrpChildBefore = grp->getNumChildren();
    dtCore::RefPtr<osg::Group> sceneNode = scene->GetSceneNode();
-   int numSceneNodeChildBefore = sceneNode->getNumChildren();
+   unsigned numSceneNodeChildBefore = sceneNode->getNumChildren();
 
    scene->SetSceneNode(grp.get());
 
