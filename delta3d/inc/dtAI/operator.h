@@ -27,6 +27,7 @@
 #include <dtAI/worldstate.h>
 
 #include <dtUtil/functor.h>
+#include <dtCore/refptr.h>
 
 #include <list>
 #include <string>
@@ -39,8 +40,8 @@ namespace dtAI
    class DT_AI_EXPORT Operator
    {
       public:
-         typedef std::list<IConditional*> ConditionalList;
-         typedef dtUtil::Functor<bool, TYPELIST_2(const WorldState*, WorldState*)> ApplyOperatorFunctor;
+         typedef std::list<dtCore::RefPtr<IConditional> > ConditionalList;
+         typedef dtUtil::Functor<bool, TYPELIST_2(const Operator*, WorldState*)> ApplyOperatorFunctor;
 
       public:
          Operator(const std::string& pName, const ApplyOperatorFunctor& pEvalFunc);
@@ -50,7 +51,7 @@ namespace dtAI
 
          const std::string& GetName() const;
 
-         bool Apply(const WorldState* pCurrent, WorldState* pWSIn) const;
+         bool Apply(WorldState* pWSIn) const;
    
          void AddPreCondition(IConditional* pCondIn);
    

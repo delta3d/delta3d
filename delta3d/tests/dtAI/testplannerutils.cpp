@@ -19,12 +19,14 @@
  */
 #include <prefix/dtgameprefix-src.h>
 #include "testplannerutils.h"
+#include <dtUtil/macros.h>
 #include <dtAI/planner.h>
+
 #include <cassert>
 #include <iostream>
 #include <algorithm>
 
-#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
+#ifdef DELTA_WIN32
    #pragma warning(disable : 4355) // 'this' used in initializer list
 #endif
 
@@ -80,27 +82,27 @@ namespace dtAI
 
    float MyNPC::RemainingCost(const WorldState* pWS) const
    {
-      static HasPizzaRecipe pHPR;
-      static HasPizzaGroceries pHPG;
-      static HasFood pHF;
-      static AmHungry pAH;
+      static dtCore::RefPtr<HasPizzaRecipe> pHPR = new HasPizzaRecipe;
+      static dtCore::RefPtr<HasPizzaGroceries> pHPG = new HasPizzaGroceries;
+      static dtCore::RefPtr<HasFood> pHF = new HasFood;
+      static dtCore::RefPtr<AmHungry> pAH = new AmHungry;
       
-      if(!pAH.Evaluate(pWS))
+      if(!pAH->Evaluate(pWS))
       {
          return 0;
       }
 
-      if(pHF.Evaluate(pWS))
+      if(pHF->Evaluate(pWS))
       {
          return 1;
       }
 
-      if(pHPG.Evaluate(pWS))
+      if(pHPG->Evaluate(pWS))
       {
          return 2;
       }
 
-      if(pHPR.Evaluate(pWS))
+      if(pHPR->Evaluate(pWS))
       {
          return 3;
       }         
@@ -131,28 +133,28 @@ namespace dtAI
 
    bool MyNPC::ActionCallGrandma(double dt, WorldState* pWS)
    {
-      mHelper.GetOperator("CallGrandma")->Apply(pWS, pWS);
+      mHelper.GetOperator("CallGrandma")->Apply(pWS);
       //std::cout << "Action Call Grandma" << std::endl;
       return true;
    }
 
    bool MyNPC::ActionGoToStore(double dt, WorldState* pWS)
    {
-      mHelper.GetOperator("GoToStore")->Apply(pWS, pWS);
+      mHelper.GetOperator("GoToStore")->Apply(pWS);
       //std::cout << "Action Go To Store" << std::endl;
       return true;
    }
 
    bool MyNPC::ActionCook(double dt, WorldState* pWS)
    {
-      mHelper.GetOperator("Cook")->Apply(pWS, pWS);
+      mHelper.GetOperator("Cook")->Apply(pWS);
       //std::cout << "Action Cook" << std::endl;
       return true;
    }
 
    bool MyNPC::ActionEat(double dt, WorldState* pWS)
    {
-      mHelper.GetOperator("Eat")->Apply(pWS, pWS);
+      mHelper.GetOperator("Eat")->Apply(pWS);
       //std::cout << "Action Eat" << std::endl;
       return true;
    }
@@ -478,7 +480,7 @@ namespace dtAI
    {      
    }
 
-   bool CallGrandma::FuncCallGrandma(const WorldState* pCurrent, WorldState* pWSIn) const
+   bool CallGrandma::FuncCallGrandma(const Operator*, WorldState* pWSIn) const
    { 
       IStateVariable* pStateRecipe = pWSIn->GetState("Recipe");
       assert(pStateRecipe);
@@ -497,7 +499,7 @@ namespace dtAI
       AddPreCondition(new HasPizzaRecipe());
    }
 
-   bool GoToStore::FuncGoToStore(const WorldState* pCurrent, WorldState* pWSIn) const
+   bool GoToStore::FuncGoToStore(const Operator*, WorldState* pWSIn) const
    {
       IStateVariable* pStateGroc = pWSIn->GetState("Groceries");
       assert(pStateGroc);
@@ -523,7 +525,7 @@ namespace dtAI
       AddPreCondition(new HasPizzaGroceries());
    }
 
-   bool Cook::FuncCook(const WorldState* pCurrent, WorldState* pWSIn) const
+   bool Cook::FuncCook(const Operator*, WorldState* pWSIn) const
    {
       IStateVariable* pStateGrco = pWSIn->GetState("Groceries");
       IStateVariable* pStatePFood = pWSIn->GetState("PreparedFood");
@@ -558,10 +560,10 @@ namespace dtAI
       AddPreCondition(new HasFood());
    }
 
-   bool Eat::FuncEat(const WorldState* pCurrent, WorldState* pWSIn) const
+   bool Eat::FuncEat(const Operator*, WorldState* pWSIn) const
    {
       IStateVariable* pState = pWSIn->GetState("PreparedFood");
-      IStateVariable* pHungerState = pWSIn->GetState("HungerMeter");      
+      IStateVariable* pHungerState = pWSIn->GetState("HungerMeter");
 
       assert(pState && pHungerState);
 
@@ -578,7 +580,7 @@ namespace dtAI
       }
       else
       {
-         pf->SetHaveFood(false);            
+         pf->SetHaveFood(false);
          hm->SetHungerLevel(1.0f);
          pWSIn->AddCost(1.0f);
          return true;
@@ -591,7 +593,7 @@ namespace dtAI
 //////////////////////////////////////////////////////////////////////////
 //Utility Functions
 //////////////////////////////////////////////////////////////////////////
-   bool StringInList(const std::string& ing, const std::list<std::string>& pList) 
+   bool StringInList(const std::string& ing, const std::list<std::string>& pList)
    {
       return std::find(pList.begin(), pList.end(), ing) != pList.end();
    }

@@ -61,11 +61,11 @@ class HasPizzaRecipe: public IConditional
 {
   public:
      HasPizzaRecipe();
-     ~HasPizzaRecipe();
 
      const std::string& GetName() const;
      bool Evaluate(const WorldState* pWS);
-
+  protected:
+     ~HasPizzaRecipe();
 };
 
 
@@ -73,11 +73,11 @@ class HasPizzaGroceries: public IConditional
 {
 public:
    HasPizzaGroceries();
-   ~HasPizzaGroceries();
 
    const std::string& GetName() const;
    bool Evaluate(const WorldState* pWS);
-
+protected:
+   ~HasPizzaGroceries();
 };
 
 
@@ -85,22 +85,24 @@ class HasFood: public IConditional
 {
 public:
    HasFood();
-   ~HasFood();
 
    const std::string& GetName() const;
    bool Evaluate(const WorldState* pWS);
 
+protected:
+   ~HasFood();
 };
 
 class AmHungry: public IConditional
 {
 public:
    AmHungry();
-   ~AmHungry();
 
    const std::string& GetName() const;
    bool Evaluate(const WorldState* pWS);
 
+protected:
+   ~AmHungry();
 };
 
 class Recipe: public IStateVariable
@@ -194,7 +196,7 @@ public:
 
    CallGrandma();
 
-   bool FuncCallGrandma(const WorldState* pCurrent, WorldState* pWSIn) const;
+   bool FuncCallGrandma(const Operator*, WorldState* pWSIn) const;
 
 };
 
@@ -204,7 +206,7 @@ public:
 
    GoToStore();
 
-   bool FuncGoToStore(const WorldState* pCurrent, WorldState* pWSIn) const;
+   bool FuncGoToStore(const Operator*, WorldState* pWSIn) const;
 
 };
 
@@ -215,7 +217,7 @@ public:
 
    Cook();
 
-   bool FuncCook(const WorldState* pCurrent, WorldState* pWSIn) const;
+   bool FuncCook(const Operator*, WorldState* pWSIn) const;
 
 };
 
@@ -226,7 +228,7 @@ public:
 
    Eat();
 
-   bool FuncEat(const WorldState* pCurrent, WorldState* pWSIn) const;
+   bool FuncEat(const Operator*, WorldState* pWSIn) const;
 
 };
 

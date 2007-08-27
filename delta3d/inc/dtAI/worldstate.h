@@ -41,21 +41,35 @@ namespace dtAI
 
       public:
          WorldState();
-         WorldState(const WorldState& pWS);         
+         WorldState(const WorldState& pWS);
+
          WorldState& operator=(const WorldState& pWS);
 
          virtual ~WorldState();
-   
+
          float GetCost() const;
-         void AddCost(float pCost);         
-                  
+         void AddCost(float pCost);
+
          void AddState(const std::string& pName, IStateVariable* pStateVar);
-         IStateVariable* GetState(const std::string& pState);         
-         const IStateVariable* GetState(const std::string& pState) const;         
+         IStateVariable* GetState(const std::string& pState);
+         
+         template <typename T>
+         void GetState(const std::string& pState, T*& pStateVar)
+         {
+            pStateVar = dynamic_cast<T*>(GetState(pState));
+         }
+
+         const IStateVariable* GetState(const std::string& pState) const;
+
+         template <typename T>
+         void GetState(const std::string& pState, const T*& pStateVar) const
+         {
+            pStateVar = dynamic_cast<const T*>(GetState(pState));
+         }
 
       private:
          void FreeMem();
-   
+
          float mCost;
          StateVarMapping mStateVariables;
 
