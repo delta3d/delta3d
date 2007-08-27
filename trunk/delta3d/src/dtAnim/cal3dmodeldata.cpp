@@ -173,4 +173,4 @@
    {
       mShaderMaxBones = maxBones;
    }
- } //namespace dtAnim
+} //namespace dtAnim
