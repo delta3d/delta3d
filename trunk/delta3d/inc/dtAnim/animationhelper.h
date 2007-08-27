@@ -65,6 +65,7 @@ namespace dtAnim
    class	DT_ANIM_EXPORT AnimationHelper: public osg::Referenced
    {
       public:
+         static const std::string PROPERTY_SKELETAL_MESH;
          
          /**
           * The constructor constructs a default AnimNodeBuilder, the Cal3DModelWrapper,
@@ -164,7 +165,7 @@ namespace dtAnim
           * @param an empty vector to fill of actor properties
           */
          virtual void GetActorProperties(dtDAL::ActorProxy& pProxy, 
-               std::vector<dtCore::RefPtr<dtDAL::ActorProperty> >& pFillVector);      
+               std::vector<dtCore::RefPtr<dtDAL::ActorProperty> >& pFillVector);
 
          /**
           * This flag is used by the AnimationComponent to determine
