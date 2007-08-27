@@ -58,6 +58,9 @@ public:
    */
    void SetAnimation(AnimationWrapper* pAnimation);
 
+   AnimationWrapper* GetAnimation();
+   const AnimationWrapper* GetAnimation() const;
+
    /// @return the model wrapper assigned to this channel.
    Cal3DModelWrapper* GetModel();
 
@@ -121,7 +124,6 @@ public:
    * @param the time to fade out over
    */
    /*virtual*/ void ForceFadeOut(float time);
-
 
 protected:
    /*virtual*/ ~AnimationChannel();
