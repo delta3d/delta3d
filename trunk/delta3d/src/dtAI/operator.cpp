@@ -30,19 +30,9 @@ namespace dtAI
       , mApplyFunctor(pEvalFunc)
    {
    }
-
-   struct OperatorDeleteFunc 
-   {
-      template<class _Type>
-         void operator()(_Type p1)
-      {
-         delete p1; 
-      }
-   };
    
    Operator::~Operator()
    {
-      std::for_each(mPreConditionals.begin(), mPreConditionals.end(), OperatorDeleteFunc());
       mPreConditionals.clear();
    }
 
@@ -57,9 +47,9 @@ namespace dtAI
       return mName;
    }
 
-   bool Operator::Apply(const WorldState* pCurrent, WorldState* pWSIn) const
+   bool Operator::Apply(WorldState* pWSIn) const
    {
-      return mApplyFunctor(pCurrent, pWSIn);
+      return mApplyFunctor(this, pWSIn);
    }
 
    void Operator::AddPreCondition(IConditional* pCondIn)

@@ -29,6 +29,8 @@
 
 #include <dtUtil/functor.h>
 
+#include <dtCore/refptr.h>
+
 #include <list>
 #include <vector>
 #include <string>
@@ -91,7 +93,6 @@ namespace dtAI
    {
    public:
       Conditional(const std::string& pName, const _Type& pData): mName(pName), mData(pData){}
-      ~Conditional(){}
 
       /*virtual*/ const std::string& GetName() const
       {
@@ -107,17 +108,19 @@ namespace dtAI
          }
          return false;
       }
-
+      
+   protected:
+      ~Conditional(){}
 
    private:
       std::string mName;
       _Type mData;
    };
 
-   class IEffect
+   class IEffect: public osg::Referenced
    {
    public:
-      virtual bool Apply(const WorldState* pCurrent, WorldState* pWSIn) const = 0;
+      virtual bool Apply(const Operator*, WorldState* pWSIn) const = 0;
 
    };
 
@@ -129,7 +132,7 @@ namespace dtAI
       Eff(const std::string& pName, const _Type& pData): mName(pName), mData(pData){}
       ~Eff(){}
 
-      bool Apply(const WorldState* pCurrent, WorldState* pWSIn) const
+      bool Apply(const Operator*, WorldState* pWSIn) const
       {
          StateVar<_Type>* pState = GetWorldStateVariable<_Type>(pWSIn, mName);
          pState->Set(mData);
@@ -166,21 +169,24 @@ namespace dtAI
    class TOperator: public Operator
    {
       public:
-         typedef std::list<IEffect*> EffectList;
-         typedef std::list<Interrupt*> InterruptList;
+         typedef Eff<_Type> EffectType;
+         typedef Conditional<_Type> InterruptType;
+         typedef std::vector<dtCore::RefPtr<EffectType> > EffectList;
+         typedef std::vector<dtCore::RefPtr<InterruptType> > InterruptList;
 
       public:
-         TOperator(const std::string& pName): Operator(pName, Operator::ApplyOperatorFunctor(this, &TOperator<_Type>::Apply)){}
+         TOperator(const std::string& pName): 
+            Operator(pName, Operator::ApplyOperatorFunctor(this, &TOperator<_Type>::Apply)){}
 
          void SetCost(float pcost){mCost = pcost;}
 
-         void AddEffect(Effect* pEffect){mEffects.push_back(pEffect);}
-         void AddInterrupt(Interrupt* pInterrupt){mInterrupts.push_back(pInterrupt);}
+         void AddEffect(EffectType* pEffect){mEffects.push_back(pEffect);}
+         void AddInterrupt(InterruptType* pInterrupt){mInterrupts.push_back(pInterrupt);}
 
          bool CheckInterrupts(const WorldState* pCurrent) const
          {
-            InterruptList::const_iterator iter = mInterrupts.begin();
-            InterruptList::const_iterator endOfList = mInterrupts.end();
+            typename InterruptList::const_iterator iter = mInterrupts.begin();
+            typename InterruptList::const_iterator endOfList = mInterrupts.end();
             while(iter != endOfList)
             {
                if((*iter)->Evaluate(pCurrent))
@@ -192,13 +198,13 @@ namespace dtAI
             return true;
          }
 
-         bool Apply(const WorldState* pCurrent, WorldState* pWSIn) const
+         bool Apply(const Operator* oper, WorldState* pWSIn) const
          {
-            EffectList::const_iterator iter = mEffects.begin();
-            EffectList::const_iterator endOfList = mEffects.end();
+            typename EffectList::const_iterator iter = mEffects.begin();
+            typename EffectList::const_iterator endOfList = mEffects.end();
             while(iter != endOfList)
             {
-               (*iter)->Apply(pCurrent, pWSIn);
+               (*iter)->Apply(oper, pWSIn);
                ++iter;
             }
 

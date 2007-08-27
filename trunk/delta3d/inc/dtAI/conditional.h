@@ -23,6 +23,7 @@
 #define __DELTA_CONDITIONAL_H__
 
 #include <string>
+#include <osg/Referenced>
 
 namespace dtAI
 {
@@ -32,24 +33,22 @@ namespace dtAI
    /**
     * An expression that evaluates to true of false
     */
-   class IConditional
+   class IConditional: public osg::Referenced
    {
       public:
          IConditional(){}
-         
-         //IConditional(const IConditional&);
-
-         virtual ~IConditional() {};                  
 
          bool operator==(const IConditional& pCond) const
          {
             return GetName() == pCond.GetName();
-         };
+         }
 
          virtual const std::string& GetName() const = 0;
 
          virtual bool Evaluate(const WorldState*) = 0;
 
+      protected:
+         virtual ~IConditional() {};
    };
 }//namespace dtAI
 

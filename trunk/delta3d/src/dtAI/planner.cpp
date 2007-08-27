@@ -205,7 +205,7 @@ namespace dtAI
                WorldState* pWS = new WorldState(*(pCurrent->mState));
                PlannerNodeLink* pnl = new PlannerNodeLink();
 
-               (*iter)->Apply(pCurrent->mState, pWS);
+               (*iter)->Apply(pWS);
 
                pnl->mOperator = *iter;
                pnl->mState = pWS;

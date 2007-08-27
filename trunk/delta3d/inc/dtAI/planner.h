@@ -58,7 +58,7 @@ namespace dtAI
          OperatorList GetPlan() const;
 
          PlannerConfig& GetConfig();
-         const PlannerConfig& GetConfig() const;         
+         const PlannerConfig& GetConfig() const;
          
          OperatorVector GetPlanAsVector() const;
 
