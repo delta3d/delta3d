@@ -96,10 +96,28 @@ void AnimationChannel::SetAnimation(AnimationWrapper* pAnimation)
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-Cal3DModelWrapper* AnimationChannel::GetModel() { return mModelWrapper.get(); }
+AnimationWrapper* AnimationChannel::GetAnimation()
+{
+   return mAnimationWrapper.get();
+}
 
 /////////////////////////////////////////////////////////////////////////////////
-const Cal3DModelWrapper* AnimationChannel::GetModel() const { return mModelWrapper.get(); }
+const AnimationWrapper* AnimationChannel::GetAnimation() const
+{
+   return mAnimationWrapper.get();
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+Cal3DModelWrapper* AnimationChannel::GetModel() 
+{ 
+   return mModelWrapper.get();
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+const Cal3DModelWrapper* AnimationChannel::GetModel() const
+{
+   return mModelWrapper.get();
+}
 
 /////////////////////////////////////////////////////////////////////////////////
 void AnimationChannel::SetModel(Cal3DModelWrapper* pWrapper)

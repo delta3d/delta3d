@@ -168,7 +168,7 @@ namespace dtAnim
       mAnimatable1->SetBaseWeight2(base1);
       mAnimatable1->SetName2(name1);
       mAnimatable1->SetStartDelay2(start_delay1);
-
+      
       animStart2 = 1.0f;
       animEnd2 = 2.0f;
       fadeIn2 = 0.5f;
@@ -264,8 +264,22 @@ namespace dtAnim
 
    void AnimationTests::TestAnimChannel()
    {
+      dtCore::RefPtr<AnimationChannel> channel = new AnimationChannel();
 
+      dtCore::RefPtr<AnimationWrapper> wrapper1 = new AnimationWrapper("ChickenWalk", 1);
+      wrapper1->SetDuration(39.6f);
 
+      CPPUNIT_ASSERT_MESSAGE("The animation wrapper should default to NULL", channel->GetAnimation() == NULL);
+      channel->SetAnimation(wrapper1.get());
+      CPPUNIT_ASSERT_MESSAGE("The Getter should work after it's set.", channel->GetAnimation() == wrapper1.get());
+
+      const AnimationChannel* channelConst = channel.get();
+      CPPUNIT_ASSERT_MESSAGE("The const Getter should work after it's set.", 
+            channelConst->GetAnimation() == wrapper1.get());
+
+      channel = new AnimationChannel(NULL, wrapper1.get());
+      CPPUNIT_ASSERT_MESSAGE("It should work to set the animation via the constructor.", 
+            channel->GetAnimation() == wrapper1.get());
    }
 
    void AnimationTests::TestAnimSequence()
