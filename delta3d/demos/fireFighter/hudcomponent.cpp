@@ -790,7 +790,7 @@ unsigned int HUDComponent::RecursivelyAddTasks(const std::string &indent,
          const dtActors::TaskActorGameEvent *tage = dynamic_cast<const dtActors::TaskActorGameEvent*>(task);
          if(tage != NULL)
          {
-            dtDAL::GameEvent *event = tage->GetGameEvent();
+            const dtDAL::GameEvent *event = tage->GetGameEvent();
             oss << indent << event->GetDescription();
          }
          else
@@ -806,7 +806,7 @@ unsigned int HUDComponent::RecursivelyAddTasks(const std::string &indent,
          const dtActors::TaskActorGameEvent *tage = dynamic_cast<const dtActors::TaskActorGameEvent*>(task);
          if(tage != NULL)
          {
-            dtDAL::GameEvent *event = tage->GetGameEvent();
+            const dtDAL::GameEvent *event = tage->GetGameEvent();
             oss << indent << event->GetDescription();
          }
          else
