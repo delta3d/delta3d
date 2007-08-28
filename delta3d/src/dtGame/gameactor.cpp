@@ -36,6 +36,7 @@
 #include <dtDAL/actortype.h>
 #include <dtDAL/exceptionenum.h>
 
+#include <dtUtil/log.h>
 
 namespace dtGame
 {
@@ -56,6 +57,7 @@ namespace dtGame
 	///////////////////////////////////////////
 	GameActorProxy::GameActorProxy() : mParent(NULL)
       , ownership(&GameActorProxy::Ownership::SERVER_LOCAL)
+      , mLogger(dtUtil::Log::GetInstance("gameactor.cpp"))
       , mIsInGM(false)
 	{
       SetClassName("dtGame::GameActor");
@@ -108,13 +110,35 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////////////
    GameActor& GameActorProxy::GetGameActor() 
    {
-      return static_cast<GameActor&>(*GetActor());
+      GameActor* ga;
+      GetActor(ga);
+      return *ga;
    }
 
    //////////////////////////////////////////////////////////////////////////////
    const GameActor& GameActorProxy::GetGameActor() const
    {
-      return static_cast<const GameActor&>(*GetActor());
+      const GameActor* ga;
+      GetActor(ga);
+      return *ga;
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+   bool GameActorProxy::IsInGM() const 
+   {
+      return mIsInGM;
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+   void GameActorProxy::SetIsInGM(bool value) 
+   {
+      mIsInGM = value;
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+   void GameActorProxy::SetGameManager(GameManager* gm) 
+   {
+      mParent = gm; 
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -126,7 +150,7 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////////////
    void GameActorProxy::NotifyFullActorUpdate()
    {
-      if (GetGameManager() == NULL || GetGameActor().IsRemote())
+      if (GetGameManager() == NULL || IsRemote())
          return;
 
       dtCore::RefPtr<dtGame::Message> updateMsg =
@@ -139,7 +163,7 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////////////
    void GameActorProxy::NotifyPartialActorUpdate(const std::vector<std::string> &propNames)
    {
-      if (GetGameManager() == NULL || GetGameActor().IsRemote())
+      if (GetGameManager() == NULL || IsRemote())
          return;
 
       dtCore::RefPtr<dtGame::Message> updateMsg =
@@ -148,17 +172,19 @@ namespace dtGame
       PopulateActorUpdate(*message, propNames, true);
       GetGameManager()->SendMessage(*updateMsg);
    }
-
+   ////////////////////////////////////////////////////////////////////////////////
    void GameActorProxy::PopulateActorUpdate(ActorUpdateMessage& update, const std::vector<std::string> &propNames) 
    {
       PopulateActorUpdate(update, propNames, true);
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    void GameActorProxy::PopulateActorUpdate(ActorUpdateMessage& update) 
    {
       PopulateActorUpdate(update, std::vector<std::string>(), false);
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    void GameActorProxy::PopulateActorUpdate(ActorUpdateMessage& update, const std::vector<std::string> &propNames, bool limitProperties) 
    {
       StringMessageParameter* nameParam = static_cast<StringMessageParameter*>(update.GetParameter("Name"));
@@ -227,14 +253,15 @@ namespace dtGame
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    void GameActorProxy::ApplyActorUpdate(const ActorUpdateMessage& msg)
    {
       const StringMessageParameter* nameParam = static_cast<const StringMessageParameter*>(msg.GetParameter("Name"));
       if (nameParam != NULL)
       {
-         if (dtUtil::Log::GetInstance().IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         if (mLogger.IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
          {
-            dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+            mLogger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                "Setting name on actor type \"%s.%s\" to value \"%s\"",
                GetActorType().GetCategory().c_str(),
                GetActorType().GetName().c_str(), nameParam->ToString().c_str()
@@ -267,9 +294,9 @@ namespace dtGame
          //can't set a read-only property.
          if (property->IsReadOnly())
          {
-            if (dtUtil::Log::GetInstance().IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            if (mLogger.IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
             {
-               dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+               mLogger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                   "Not setting property \"%s\" on actor type \"%s.%s\" to value \"%s\" because the property is read only.",
                   params[i]->GetName().c_str(), GetActorType().GetCategory().c_str(),
                   GetActorType().GetName().c_str(), params[i]->ToString().c_str()
@@ -278,9 +305,9 @@ namespace dtGame
             continue;
          }
 
-         if (dtUtil::Log::GetInstance().IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         if (mLogger.IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
          {
-            dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+            mLogger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                "Setting property \"%s\" on actor type \"%s.%s\" to value \"%s\"",
                params[i]->GetName().c_str(), GetActorType().GetCategory().c_str(),
                GetActorType().GetName().c_str(), params[i]->ToString().c_str()
@@ -303,7 +330,7 @@ namespace dtGame
                ss << GetActorType().GetName().c_str() << "." << GetClassName().c_str() 
                   << " GameActorProxy (" << GetId().ToString().c_str() 
                   << ") could not access the GameManager." << std::endl;
-               LOG_ERROR( ss.str() );
+               mLogger.LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, ss.str() );
             }
          }
          else
@@ -314,7 +341,7 @@ namespace dtGame
             } 
             catch (const dtUtil::Exception& ex)
             {
-               ex.LogException(dtUtil::Log::LOG_ERROR);
+               ex.LogException(dtUtil::Log::LOG_ERROR, mLogger);
             }
          }
 
@@ -322,7 +349,31 @@ namespace dtGame
 
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   bool GameActorProxy::IsRemote() const
+   { 
+      return GetGameActor().IsRemote();
+   }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   bool GameActorProxy::IsPublished() const 
+   { 
+      return GetGameActor().IsPublished();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   GameActorProxy::Ownership& GameActorProxy::GetInitialOwnership() 
+   { 
+      return *ownership; 
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void GameActorProxy::SetInitialOwnership(GameActorProxy::Ownership &newOwnership)
+   {
+      ownership = &newOwnership; 
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void GameActorProxy::AddInvokable(Invokable& newInvokable)
    {
       std::map<std::string,dtCore::RefPtr<Invokable> >::iterator itor =
@@ -411,7 +462,7 @@ namespace dtGame
          std::ostringstream oss;
          oss << "Could not register the messagetype: " << type.GetName() << " with the invokable: " <<
                 invokableName << " because the actor is not in the Game Manager yet.";
-         LOGN_ERROR("gameactor.cpp", oss.str())
+         mLogger.LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, oss.str());
       }
    }
 
@@ -428,7 +479,7 @@ namespace dtGame
          std::ostringstream oss;
          oss << "Could not register the messagetype: " << type.GetName() << " with the invokable: " <<
             invokableName << " because the actor is not in the Game Manager yet.";
-         LOGN_ERROR("gameactor.cpp", oss.str())
+         mLogger.LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, oss.str());
       }
    }
 
@@ -440,11 +491,11 @@ namespace dtGame
          mMessageHandlers.insert(std::make_pair(&type, invokable));
       else
       {
-         std::ostringstream ss;
-         ss << "Could not register invokable " << invokableName << " as a handler because "
+         std::ostringstream oss;
+         oss << "Could not register invokable " << invokableName << " as a handler because "
              << "no invokable with that name exists.";
 
-         LOGN_ERROR("gameactor.cpp", ss.str());
+         mLogger.LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, oss.str());
       }
 
    }
@@ -482,18 +533,21 @@ namespace dtGame
       }
    }
 
+   //////////////////////////////////////////////////////////////////////////////
    void GameActorProxy::SetRemote(bool remote)
    {
       GameActor& ga = GetGameActor();
       ga.SetRemote(remote);
    }
 
+   //////////////////////////////////////////////////////////////////////////////
    void GameActorProxy::SetPublished(bool published)
    {
       GameActor& ga = GetGameActor();
       ga.SetPublished(published);
    }
 
+   //////////////////////////////////////////////////////////////////////////////
    void GameActorProxy::InvokeEnteredWorld()
    {
       GameActor& ga = GetGameActor();
@@ -507,39 +561,61 @@ namespace dtGame
    // Actor code
    ///////////////////////////////////////////
    const std::string GameActor::NULL_PROXY_ERROR("The actor proxy for a game actor is NULL.  This usually happens if the actor is held in RefPtr, but not the proxy.");
-   
-   GameActor::GameActor(GameActorProxy& proxy) : mProxy(&proxy), mPublished(false), mRemote(false)
+
+   //////////////////////////////////////////////////////////////////////////////
+   GameActor::GameActor(GameActorProxy& proxy) : mProxy(&proxy),
+      mPublished(false),
+      mRemote(false),
+      mLogger(dtUtil::Log::GetInstance("gameactor.cpp"))
    {
    }
 
+   //////////////////////////////////////////////////////////////////////////////
    GameActor::~GameActor()
    {
    }
       
+   //////////////////////////////////////////////////////////////////////////////
    void GameActor::TickLocal(const Message& tickMessage)
    {
    }
 
+   //////////////////////////////////////////////////////////////////////////////
    void GameActor::TickRemote(const Message& tickMessage)
    {
    }
 
+   //////////////////////////////////////////////////////////////////////////////
    void GameActor::ProcessMessage(const Message& message)
    {
    }
 
+   //////////////////////////////////////////////////////////////////////////////
    void GameActor::SetShaderGroup(const std::string &groupName)
    {
       mShaderGroup = groupName;
       OnShaderGroupChanged();
    }
 
+   //////////////////////////////////////////////////////////////////////////////
+   void GameActor::SetRemote(bool remote)
+   {
+      mRemote = remote;
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+   void GameActor::SetPublished(bool published)
+   {
+      mPublished = published;
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
    void GameActor::OnShaderGroupChanged()
    {
       // Unassign any old setting on this, if any - works regardless if there's a node or not
       dtCore::ShaderManager::GetInstance().UnassignShaderFromNode(*GetOSGNode());
 
-      if (mShaderGroup == "")
+      if (mShaderGroup.empty())
          return; // Do nothing, since we have nothing to load
 
       //First get the shader group assigned to this actor.
@@ -548,7 +624,8 @@ namespace dtGame
 
       if (shaderGroup == NULL)
       {
-         LOG_INFO("Could not find shader group [" + mShaderGroup + "] for actor [" + GetName());
+         mLogger.LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, 
+               "Could not find shader group [" + mShaderGroup + "] for actor [" + GetName());
          return;
       }
 
@@ -562,13 +639,15 @@ namespace dtGame
          }
          else
          {
-            LOG_WARNING("Could not find a default shader in shader group: " + mShaderGroup);
+            mLogger.LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, 
+                  "Could not find a default shader in shader group: " + mShaderGroup);
             return;
          }
       }
       catch (const dtUtil::Exception &e)
       {
-         LOG_WARNING("Caught Exception while assigning shader: " + e.ToString());
+         mLogger.LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, 
+               "Caught Exception while assigning shader: " + e.ToString());
          return;
       }
    }
