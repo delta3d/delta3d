@@ -1,0 +1,52 @@
+# Build script for the unit tests.
+import glob
+import sys
+
+# Import the variables defined in the global SConstruct build script.
+Import ('*')
+
+#there will be one program per test dir here plus an all tests.
+#To add a new one, add a new one, simply put the directory 
+#in this list, put your test cpp files in with the names "*tests.cpp"
+#and the files will be added to both allTests and to a test just
+#for the new set of files.
+suites = ['dtCore', 'dtDAL', 'dtGame', 'dtAnim', 'dtAI', 'dtUtil', 'dtABC', 'dtActors', 'dtGUI', 'dtLMS', 'dtAudio']
+
+if env.get('rti') != 0 :
+	suites += [ 'dtHLAGM' ]
+
+wantDIS = False;
+if env['foundLibs'][env['extLibs']['DIS']] != 'notFound' :
+	suites += [ 'dtDIS' ]
+	wantDIS = True;
+	
+sources = {}
+mainSources = env.SGlob( '*.cpp' )
+sources['all'] = mainSources + []
+
+for suite in suites:
+   #get the sources for each program
+   sources[suite] = env.SGlob(suite + '/*.cpp')
+   #add the sources to the allTests program
+   sources['all'] += sources[suite]
+   #add the "main" source files.
+   sources[suite] += mainSources
+
+sources['dtLMS'] += ['#utilities/LMS/WebPackager/package_utils.cpp']
+sources['all'] += ['#utilities/LMS/WebPackager/package_utils.cpp']
+
+mainlibs = suites + [ 'dtAudio', 'dtABC', 'dtChar', 'dtActors', 'cppunit', 'testGameActorLibrary']
+
+mainlibs += ['cppunit']
+if env.get('rti') != 0:
+	mainlibs += env['rtiLibs']
+
+if wantDIS:
+	mainlibs += ["DIS"]
+
+#Add this so we can include files from testActorLib.h
+env.Append(CPPPATH = ['#examples', '#utilities'])
+
+app = env.BuildProgram('allTests', sources['all'], mainlibs, prefixHeader='inc/prefix/dtcoreprefix.h', targetPath = 'tests')
+result = 'true'
+Return('result')

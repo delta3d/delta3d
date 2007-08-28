@@ -1,0 +1,6 @@
+Import('*')
+
+srcs = env.SGlob( '*.cpp' )
+deps = [ 'dtCore', 'dtABC', 'dtUtil' ]
+
+env.BuildProgram( 'testLights', srcs, deps )
