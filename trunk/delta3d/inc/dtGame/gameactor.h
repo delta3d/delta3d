@@ -29,6 +29,11 @@
 #include <dtGame/export.h>
 #include <dtGame/exceptionenum.h>
 
+namespace dtUtil
+{
+   class Log;
+}
+
 namespace dtGame
 {
    class Message;
@@ -145,25 +150,26 @@ namespace dtGame
          virtual void OnEnteredWorld() { }
 
       private:
-   		
+
          static const std::string NULL_PROXY_ERROR;
          /** 
           * Sets is an actor is remote
           * @param remote Should be true is the actor is remote, false if not
           */
-         void SetRemote(bool remote) { mRemote = remote; }
-      		
+         void SetRemote(bool remote);
+
          /** 
           * Sets is an actor is published
           * @param remote Should be true is the actor is published, false if not
           */
-         void SetPublished(bool published) { mPublished = published; }
+         void SetPublished(bool published);
             
          friend class GameActorProxy;
-         dtCore::ObserverPtr<GameActorProxy> mProxy;         
+         dtCore::ObserverPtr<GameActorProxy> mProxy;
          bool mPublished;
          bool mRemote;
          std::string mShaderGroup;
+         dtUtil::Log& mLogger;
    };
 		
    /**
@@ -198,11 +204,12 @@ namespace dtGame
          };
 
          /// Constructor
-			GameActorProxy();
+         GameActorProxy();
 
          /// Destructor
-			virtual ~GameActorProxy();
-		   /**
+         virtual ~GameActorProxy();
+
+         /**
           * This is a shortcut to avoid having to dynamic cast to a GameActorProxy.  
           * @return true always
           */
@@ -329,34 +336,28 @@ namespace dtGame
           * @see dtGame::GameActor
           * @return True if the actor is remote, false if not
           */
-         bool IsRemote() const
-         { 
-            return GetGameActor().IsRemote();
-         }
+         bool IsRemote() const;
 
          /** 
           * Returns if this proxy is published, calls the private actor definition
           * @see dtGame::GameActor
           * @return True if the actor is published, false if not
           */
-			bool IsPublished() const 
-			{ 
-				return GetGameActor().IsPublished();
-			}
+         bool IsPublished() const;
 
          /** 
           * Returns the ownership of the actor proxy
           * @return The ownership, corresponding with the ownership class
           * @see dtGame::GameActorProxy::Ownership
           */
-         inline Ownership& GetInitialOwnership() { return *ownership; }
+         Ownership& GetInitialOwnership();
           
          /** 
           * Sets the ownership of the actor proxy
           * @return The ownership, corresponding with the ownership class
           * @see dtGame::GameActorProxy::Ownership
           */
-         inline void SetInitialOwnership(Ownership &newOwnership) { ownership = &newOwnership; }
+         void SetInitialOwnership(Ownership &newOwnership);
          
          /**
           * Registers to receive a specific tyep of message from the GM.  You will receive 
@@ -429,14 +430,18 @@ namespace dtGame
          void UnregisterForMessagesAboutSelf(const MessageType& type, 
             const std::string& invokableName = PROCESS_MSG_INVOKABLE);
       
-         /// Returns if the actor has been added to the 
-         /// gms loops yet; its false upon creation
-         /// then is set to true upon being added to the gm
-         bool IsInGM() const {return mIsInGM;}
+         /** 
+          * Returns true if the actor has been added to the 
+          * GM yet or if not.
+          * then is set to true upon being added to the gm
+          */
+         bool IsInGM() const;
 
-         /// Moved to public, since map change state data needs to call this now as well.
-         /// for actors within the map.
-         void SetGameManager(GameManager* gm) { mParent = gm; }      
+         /** 
+          * Moved to public, since map change state data needs to call this now as well.
+          * for actors within the map.
+          */
+         void SetGameManager(GameManager* gm);
 
       protected:
          
@@ -449,7 +454,7 @@ namespace dtGame
          /**
           * Called when an actor is first placed in the "world"
           */
-         virtual void OnEnteredWorld() { }	
+         virtual void OnEnteredWorld() { }
          
          /**
           * Called when the GM deletes the actor in a NORMAL way, such as DeleteActor(). 
@@ -500,12 +505,13 @@ namespace dtGame
           */
          void SetIsGameActorProxy(bool b) {}  
             
-         /// So the game manager is always valid, this was added
-         void SetIsInGM(bool value) {mIsInGM = value;}
+         /// This was added so the GameManager can be set on creation.
+         void SetIsInGM(bool value);
 
          friend class GameManager;
          GameManager* mParent;
          Ownership *ownership;
+         dtUtil::Log& mLogger;
          std::map<std::string, dtCore::RefPtr<Invokable> > mInvokables;
          std::multimap<const MessageType*, dtCore::RefPtr<Invokable> > mMessageHandlers;
          bool mIsInGM;
