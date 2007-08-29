@@ -44,6 +44,7 @@ namespace dtGame
    dtABC::Application("config.xml"),
       mArgc(argc),
       mArgv(argv),
+      mEntryPoint(NULL),
       mCreateFunction(NULL),
       mDestroyFunction(NULL)
    {
@@ -53,19 +54,22 @@ namespace dtGame
 
    GameApplication::~GameApplication()
    {
-      try
+      if (mEntryPoint != NULL)
       {
-         mEntryPoint->OnShutdown();
+         try
+         {
+            mEntryPoint->OnShutdown();
+         }
+         catch(const dtUtil::Exception &e)
+         {
+            e.LogException(dtUtil::Log::LOG_ALWAYS);
+         }
+         catch(...)
+         {
+            LOG_ALWAYS("Unknown exception caught in the destructor of GameApplication");
+         }
       }
-      catch(const dtUtil::Exception &e)
-      {
-         e.LogException(dtUtil::Log::LOG_ALWAYS);
-      }
-      catch(...)
-      {
-         LOG_ALWAYS("Unknown exception caught in the destructor of GameApplication");
-      }
-
+      
       DeregisterInstance(this);
 
       GetScene()->RemoveAllDrawables();
