@@ -1224,7 +1224,7 @@ namespace dtHLAGM
             osg::swapBytes((char*)(&value), sizeof(unsigned int));
          }
 
-         SetIntegerValue((long)value, parameter, mapping, 0);
+         SetIntegerValue((long long)value, parameter, mapping, 0);
       }
       else if (hlaType == RPRAttributeType::UNSIGNED_SHORT_TYPE)
       {
@@ -1233,12 +1233,12 @@ namespace dtHLAGM
          if (osg::getCpuByteOrder() == osg::LittleEndian)
            osg::swapBytes((char*)(&value), sizeof(unsigned short));
 
-         SetIntegerValue((long)value, parameter, mapping, 0);
+         SetIntegerValue((long long)value, parameter, mapping, 0);
       }
       else if (hlaType == RPRAttributeType::UNSIGNED_CHAR_TYPE)
       {
          unsigned char value = *(unsigned char*)(&buffer[0]);
-         SetIntegerValue((long)value, parameter, mapping, 0);
+         SetIntegerValue((long long)value, parameter, mapping, 0);
       }
       else if (hlaType == RPRAttributeType::EVENT_IDENTIFIER_TYPE)
       {
@@ -1395,13 +1395,11 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////////////////////////////////////
-   void RPRParameterTranslator::SetIntegerValue(long value, dtGame::MessageParameter& parameter, 
+   void RPRParameterTranslator::SetIntegerValue(long long value, dtGame::MessageParameter& parameter, 
       const OneToManyMapping& mapping, unsigned parameterDefIndex) const
    {
       const dtDAL::DataType& parameterDataType = parameter.GetDataType();
       const OneToManyMapping::ParameterDefinition& paramDef = mapping.GetParameterDefinitions()[parameterDefIndex];
-
-      //std::cout << mapping.GetHLAName() << " " << value << std::endl;
 
       parameter.WriteToLog(*mLogger);
       if (parameterDataType == dtDAL::DataType::UINT)
@@ -1436,70 +1434,72 @@ namespace dtHLAGM
       {
          static_cast<dtGame::BooleanMessageParameter&>(parameter).SetValue(value != 0);
       }
-      else if (parameterDataType == dtDAL::DataType::ENUMERATION)
+      else if (parameterDataType == dtDAL::DataType::ENUMERATION
+         || parameterDataType == dtDAL::DataType::STRING
+         || parameterDataType.IsResource() )
       {
          std::string mappedValue;
          std::ostringstream stringValue;
          
-         stringValue << int(value);
+         stringValue << (long long)(value);
          
          mappedValue = GetEnumValue(stringValue.str(), paramDef, true);
-         
-         static_cast<dtGame::EnumMessageParameter&>(parameter).SetValue(mappedValue);
+
+         parameter.FromString(mappedValue);
          parameter.WriteToLog(*mLogger);
       }
    }
 
    /////////////////////////////////////////////////////////////////////////////////////////
-   long RPRParameterTranslator::GetIntegerValue(const dtGame::MessageParameter& parameter, 
+   long long RPRParameterTranslator::GetIntegerValue(const dtGame::MessageParameter& parameter, 
       const OneToManyMapping& mapping, unsigned parameterDefIndex) const
    {
       const dtDAL::DataType& parameterDataType = parameter.GetDataType();
       const OneToManyMapping::ParameterDefinition& paramDef = mapping.GetParameterDefinitions()[parameterDefIndex];
 
-      //std::cout << mapping.GetHLAName() << " " << value << std::endl;
       parameter.WriteToLog(*mLogger);
 
       if (parameterDataType == dtDAL::DataType::UINT)
       {
-         return long(static_cast<const dtGame::UnsignedIntMessageParameter&>(parameter).GetValue());
+         return (long long)(static_cast<const dtGame::UnsignedIntMessageParameter&>(parameter).GetValue());
       }
       else if (parameterDataType == dtDAL::DataType::ULONGINT)
       {
-         return long(static_cast<const dtGame::UnsignedLongIntMessageParameter&>(parameter).GetValue());
+         return (long long)(static_cast<const dtGame::UnsignedLongIntMessageParameter&>(parameter).GetValue());
       }
       else if (parameterDataType == dtDAL::DataType::USHORTINT)
       {
-         return long(static_cast<const dtGame::UnsignedShortIntMessageParameter&>(parameter).GetValue());
+         return (long long)(static_cast<const dtGame::UnsignedShortIntMessageParameter&>(parameter).GetValue());
       }
       else if (parameterDataType == dtDAL::DataType::UCHAR)
       {
-         return long(static_cast<const dtGame::UnsignedCharMessageParameter&>(parameter).GetValue());
+         return (long long)(static_cast<const dtGame::UnsignedCharMessageParameter&>(parameter).GetValue());
       }
       else if (parameterDataType == dtDAL::DataType::INT)
       {
-         return long(static_cast<const dtGame::IntMessageParameter&>(parameter).GetValue());
+         return (long long)(static_cast<const dtGame::IntMessageParameter&>(parameter).GetValue());
       }
       else if (parameterDataType == dtDAL::DataType::LONGINT)
       {
-         return static_cast<const dtGame::LongIntMessageParameter&>(parameter).GetValue();
+         return (long long)(static_cast<const dtGame::LongIntMessageParameter&>(parameter).GetValue());
       }
       else if (parameterDataType == dtDAL::DataType::SHORTINT)
       {
-         return long(static_cast<const dtGame::ShortIntMessageParameter&>(parameter).GetValue());
+         return (long long)(static_cast<const dtGame::ShortIntMessageParameter&>(parameter).GetValue());
       }
       else if (parameterDataType == dtDAL::DataType::BOOLEAN)
       {
-         return long(static_cast<const dtGame::BooleanMessageParameter&>(parameter).GetValue());
+         return (long long)(static_cast<const dtGame::BooleanMessageParameter&>(parameter).GetValue());
       }
-      else if (parameterDataType == dtDAL::DataType::ENUMERATION)
+      else if (parameterDataType == dtDAL::DataType::ENUMERATION
+         || parameterDataType == dtDAL::DataType::STRING
+         || parameterDataType.IsResource() )
       {
-         const std::string& msgParamValue = static_cast<const dtGame::EnumMessageParameter&>(parameter).GetValue();
-         long value = 0L;
          std::string valueAsString;
-         
+         const std::string& msgParamValue = parameter.ToString();
          valueAsString = GetEnumValue(msgParamValue, paramDef, false);
-         
+
+         long long value = 0;
          std::istringstream iss;
          iss.str(valueAsString);
          iss >> value;
