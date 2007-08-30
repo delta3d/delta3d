@@ -152,8 +152,8 @@ namespace dtHLAGM
             const OneToManyMapping::ParameterDefinition& paramDef, 
             bool returnGameValue) const;
 
-         void SetIntegerValue(long value, dtGame::MessageParameter& parameter, const OneToManyMapping& mapping, unsigned parameterDefIndex) const;
-         long GetIntegerValue(const dtGame::MessageParameter& parameter, const OneToManyMapping& mapping, unsigned parameterDefIndex) const;
+         void SetIntegerValue(long long value, dtGame::MessageParameter& parameter, const OneToManyMapping& mapping, unsigned parameterDefIndex) const;
+         long long GetIntegerValue(const dtGame::MessageParameter& parameter, const OneToManyMapping& mapping, unsigned parameterDefIndex) const;
 
          void MapFromParamToWorldCoord(
             char* buffer, 

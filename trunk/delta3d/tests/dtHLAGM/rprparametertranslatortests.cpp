@@ -48,6 +48,55 @@
 #include <dtHLAGM/distypes.h>
 #include <dtHLAGM/rprparametertranslator.h>
 
+namespace dtHLAGM
+{
+   /////////////////////////////////////////////////////////////////////////////
+   // TEST RPR PARAMETER TRANSLATOR
+   /////////////////////////////////////////////////////////////////////////////
+   class TestRPRParamTranslator : public RPRParameterTranslator
+   {
+      public:
+         TestRPRParamTranslator(dtUtil::Coordinates& coordinates, ObjectRuntimeMappingInfo& runtimeMappings)
+            : RPRParameterTranslator(coordinates,runtimeMappings)
+         {
+         }
+
+         void SetIntegerValuePublic(long value, dtGame::MessageParameter& parameter,
+            const OneToManyMapping& mapping, unsigned parameterDefIndex) const;
+
+         long GetIntegerValuePublic(const dtGame::MessageParameter& parameter, 
+            const OneToManyMapping& mapping, unsigned parameterDefIndex) const;
+
+      protected:
+         virtual ~TestRPRParamTranslator()
+         {
+         }
+   };
+
+   /////////////////////////////////////////////////////////////////////////////
+   void TestRPRParamTranslator::SetIntegerValuePublic(
+      long value, dtGame::MessageParameter& parameter,
+      const OneToManyMapping& mapping, unsigned parameterDefIndex) const
+   {
+      // This function needs to be exposed for testing
+      SetIntegerValue( value, parameter, mapping, parameterDefIndex );
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   long TestRPRParamTranslator::GetIntegerValuePublic(
+      const dtGame::MessageParameter& parameter, const OneToManyMapping& mapping,
+      unsigned parameterDefIndex) const
+   {
+      // This function needs to be exposed for testing
+      return GetIntegerValue( parameter, mapping, parameterDefIndex );
+   }
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+// TEST OBJECT CODE
+////////////////////////////////////////////////////////////////////////////////
 class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
 {
    CPPUNIT_TEST_SUITE(ParameterTranslatorTests);
@@ -75,6 +124,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestFindTypeByName);
       CPPUNIT_TEST(TestAttributeSupportedQuery);
       CPPUNIT_TEST(TestIncomingArticulation);
+      CPPUNIT_TEST(TestGetAndSetInteger);
 
    CPPUNIT_TEST_SUITE_END();
 
@@ -83,7 +133,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
       {
          mBuffer = NULL;
          mLogger = &dtUtil::Log::GetInstance("parametertranslatortests.cpp");
-         mParameterTranslator = new dtHLAGM::RPRParameterTranslator(mCoordinates, mRuntimeMappings);
+         mParameterTranslator = new dtHLAGM::TestRPRParamTranslator(mCoordinates, mRuntimeMappings);
          mBuffer = new char[512];
          mEndian = osg::getCpuByteOrder();
 
@@ -869,7 +919,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
 
    private:
       dtUtil::Log* mLogger;
-      dtCore::RefPtr<dtHLAGM::ParameterTranslator> mParameterTranslator;
+      dtCore::RefPtr<dtHLAGM::TestRPRParamTranslator> mParameterTranslator;
       dtUtil::Coordinates mCoordinates;
       dtHLAGM::ObjectRuntimeMappingInfo mRuntimeMappings;
       osg::Endian mEndian;
@@ -1305,6 +1355,170 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          ss.str("");
          ss << "Actual value is \"" << actualValue << "\" but the expected value is \"" << expectedResult << "\"" << std::endl;
          CPPUNIT_ASSERT_MESSAGE(ss.str(), osg::equivalent(actualValue, expectedResult, ValueType(1e-4)));
+      }
+
+      void TestGetAndSetInteger()
+      {
+         // Setup all non-integer parameter types to be translated to a number.
+         // NOTE: The resource parameter can be any resource type. The particle
+         //       system data type is used arbitrarily for a simple test on
+         //       resource parameter mapping.
+         dtCore::RefPtr<dtGame::ResourceMessageParameter> resParam 
+            = new dtGame::ResourceMessageParameter(dtDAL::DataType::PARTICLE_SYSTEM,"testResourceParam");
+         dtCore::RefPtr<dtGame::StringMessageParameter> strParam 
+            = new dtGame::StringMessageParameter("testStringParam");
+         dtCore::RefPtr<dtGame::EnumMessageParameter> enumParam 
+            = new dtGame::EnumMessageParameter("testEnumParam");
+
+         // --- Use a vector to allow looping through the parameters.
+         std::vector<dtGame::MessageParameter*> params;
+         params.push_back(resParam.get());
+         params.push_back(strParam.get());
+         params.push_back(enumParam.get());
+
+         // Declare base values. These values will be used and expanded only by
+         // resource parameters.
+         std::vector<const std::string> baseValues;
+         baseValues.push_back("Apple");
+         baseValues.push_back("Orange");
+         baseValues.push_back("Banana");
+         baseValues.push_back("Kiwi");
+         baseValues.push_back("Grapes");
+         baseValues.push_back("Tomato"); // default value, tested last
+
+         // Setup the parameter definitions object
+         // --- Prepare the mapping values
+         //
+         //     NOTE:
+         //     Resource parameters format strings a certain way, thus making
+         //     the "set" value not equal to the "get" value; this is undesired
+         //     for tests. Rather than fighting the formatting, use mapping
+         //     values that the resource parameter creates.
+         std::vector<const std::string> mappingValues;
+
+         resParam->FromString(baseValues[0]);
+         mappingValues.push_back(resParam->ToString());
+
+         resParam->FromString(baseValues[1]);
+         mappingValues.push_back(resParam->ToString());
+
+         resParam->FromString(baseValues[2]);
+         mappingValues.push_back(resParam->ToString());
+
+         resParam->FromString(baseValues[3]);
+         mappingValues.push_back(resParam->ToString());
+
+         resParam->FromString(baseValues[4]);
+         mappingValues.push_back(resParam->ToString());
+
+         // --- Prepare mapping keys
+         std::vector<const std::string> mappingKeys;
+         mappingKeys.push_back("1");
+         mappingKeys.push_back("2");
+         mappingKeys.push_back("3");
+         mappingKeys.push_back("4");
+         mappingKeys.push_back("5");
+
+         // --- Assign the values to the parameter definitions object
+         dtHLAGM::OneToManyMapping::ParameterDefinition& pd = mMapping.GetParameterDefinitions()[0];
+         resParam->FromString(baseValues[5]);
+         pd.SetDefaultValue(resParam->ToString());
+         pd.AddEnumerationMapping(mappingKeys[0], mappingValues[0] );
+         pd.AddEnumerationMapping(mappingKeys[1], mappingValues[1] );
+         pd.AddEnumerationMapping(mappingKeys[2], mappingValues[2] );
+         pd.AddEnumerationMapping(mappingKeys[3], mappingValues[3] );
+         pd.AddEnumerationMapping(mappingKeys[4], mappingValues[4] );
+
+         std::stringstream assertMessage;
+         dtGame::MessageParameter* curParam = NULL;
+         bool useBogusValue = false;
+         long long resultKey = 0.0;
+         unsigned mappingsCount = mappingValues.size() + 1; // # mappings + default mapping
+         unsigned limit = params.size();
+         for( unsigned i = 0; i < limit; ++i )
+         {
+            // Access the current parameter.
+            curParam = params[i];
+
+            mMapping.GetParameterDefinitions()[0].SetGameType( curParam->GetDataType() );
+            mMapping.SetHLAType(dtHLAGM::RPRAttributeType::UNSIGNED_INT_TYPE);
+
+            // Determine if the current parameter is a resource parameter.
+            dtGame::ResourceMessageParameter* tmpResParam
+               = dynamic_cast<dtGame::ResourceMessageParameter*>(curParam);
+
+            for( unsigned curMapping = 0; curMapping < mappingsCount; ++curMapping )
+            {
+               // Determine whether to use a bogus value or a valid value.
+               useBogusValue = curMapping >= mappingsCount-1;
+               const std::string& curValue = useBogusValue ? "bogus value" : mappingValues[curMapping];
+
+               // Ready the parameter for translation.
+               if( NULL != tmpResParam )
+               {
+                  // This is a resource property that format a new value internally.
+                  // So, use a base value so it can be formatted like the pre-formatted
+                  // mapping values.
+                  // Example: "Apple" (base value) -> "Apple/Apple" (internal formatted value like pre-formatted mapping values)
+                  curParam->FromString( baseValues[curMapping] );
+               }
+               else
+               {
+                  // This is an enum or string parameter, so use pre-formatted mapping value.
+                  curParam->FromString( curValue );
+               }
+
+               // Run the GET function that is to be tested.
+               resultKey = mParameterTranslator->GetIntegerValuePublic( *curParam, mMapping, 0);
+
+               long long curKey = 0L;
+
+               // Test the function's results
+               assertMessage.clear();
+               if( useBogusValue )
+               {
+                  assertMessage << "HLA Type " << mMapping.GetHLAType().GetName()
+                     << " mapping to Unknown Game Type " << curParam->GetDataType()
+                     << " should map to HLA Type default value 0, but it is: " << resultKey;
+                  CPPUNIT_ASSERT_MESSAGE( assertMessage.str(), 0.0 == resultKey );
+
+                  // Run the SET function that is to be tested.
+                  mParameterTranslator->SetIntegerValuePublic( curKey, *curParam, mMapping, 0 );
+
+                  assertMessage.clear();
+                  assertMessage << "Unknown HLA Type " << mMapping.GetHLAType().GetName()
+                     << " mapping to Game Type " << curParam->GetDataType()
+                     << " should map to default Game Type value \""
+                     << pd.GetDefaultValue() << "\", but it is: \""
+                     << curParam->ToString() << "\"";
+                  CPPUNIT_ASSERT_MESSAGE( assertMessage.str(),
+                     curParam->ToString() == pd.GetDefaultValue() );
+               }
+               else // This should be a valid mapping that is about to be tested.
+               {
+                  // Convert the expected key string to a number value.
+                  std::istringstream iss;
+                  iss.str(mappingKeys[curMapping]);
+                  iss >> curKey;
+
+                  assertMessage << "HLA Type " << mMapping.GetHLAType().GetName()
+                     << " mapping to Game Type " << curParam->GetDataType()
+                     << " should map to HLA Type value \"" << curKey << "\", but it is: " << resultKey;
+                  CPPUNIT_ASSERT_MESSAGE( assertMessage.str(), curKey == resultKey );
+
+                  // Run the SET function that is to be tested.
+                  mParameterTranslator->SetIntegerValuePublic( curKey, *curParam, mMapping, 0 );
+
+                  assertMessage.clear();
+                  assertMessage << "HLA Type " << mMapping.GetHLAType().GetName()
+                     << " mapping to Game Type " << curParam->GetDataType()
+                     << " should map to Game Type value \"" << curValue << "\", but it is: \""
+                     << curParam->ToString() << "\"";
+                  CPPUNIT_ASSERT_MESSAGE( assertMessage.str(), curParam->ToString() == curValue );
+               }
+
+            }
+         }
       }
 
 };
