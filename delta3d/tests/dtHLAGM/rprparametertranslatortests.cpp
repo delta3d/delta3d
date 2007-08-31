@@ -1378,7 +1378,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
 
          // Declare base values. These values will be used and expanded only by
          // resource parameters.
-         std::vector<const std::string> baseValues;
+         std::vector<std::string> baseValues;
          baseValues.push_back("Apple");
          baseValues.push_back("Orange");
          baseValues.push_back("Banana");
@@ -1394,7 +1394,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          //     the "set" value not equal to the "get" value; this is undesired
          //     for tests. Rather than fighting the formatting, use mapping
          //     values that the resource parameter creates.
-         std::vector<const std::string> mappingValues;
+         std::vector<std::string> mappingValues;
 
          resParam->FromString(baseValues[0]);
          mappingValues.push_back(resParam->ToString());
@@ -1412,7 +1412,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          mappingValues.push_back(resParam->ToString());
 
          // --- Prepare mapping keys
-         std::vector<const std::string> mappingKeys;
+         std::vector<std::string> mappingKeys;
          mappingKeys.push_back("1");
          mappingKeys.push_back("2");
          mappingKeys.push_back("3");
