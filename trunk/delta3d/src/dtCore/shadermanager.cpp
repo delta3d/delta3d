@@ -483,19 +483,19 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    void ShaderManager::LoadShaderDefinitions(const std::string &fileName, bool merge)
    {
+      ShaderXML parser;
+      std::string path = dtCore::FindFileInPathList(fileName);
+      if (path.empty())
+      {
+         LOG_WARNING("Could not find shader definitions file: " + fileName);
+         return;
+      }
+
+      if (!merge)
+         Clear();
+      
       try
       {
-         ShaderXML parser;
-         std::string path = dtCore::FindFileInPathList(fileName);
-         if (path.empty())
-         {
-            LOG_WARNING("Could not find shader definitions file: " + fileName);
-            return;
-         }
-
-         if (!merge)
-            Clear();
-
          parser.ParseXML(path);
       }
       catch (const dtUtil::Exception &e)
