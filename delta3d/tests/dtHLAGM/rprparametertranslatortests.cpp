@@ -61,10 +61,10 @@ namespace dtHLAGM
          {
          }
 
-         void SetIntegerValuePublic(long value, dtGame::MessageParameter& parameter,
+         void SetIntegerValuePublic(unsigned value, dtGame::MessageParameter& parameter,
             const OneToManyMapping& mapping, unsigned parameterDefIndex) const;
 
-         long GetIntegerValuePublic(const dtGame::MessageParameter& parameter, 
+         unsigned GetIntegerValuePublic(const dtGame::MessageParameter& parameter, 
             const OneToManyMapping& mapping, unsigned parameterDefIndex) const;
 
       protected:
@@ -75,7 +75,7 @@ namespace dtHLAGM
 
    /////////////////////////////////////////////////////////////////////////////
    void TestRPRParamTranslator::SetIntegerValuePublic(
-      long value, dtGame::MessageParameter& parameter,
+      unsigned value, dtGame::MessageParameter& parameter,
       const OneToManyMapping& mapping, unsigned parameterDefIndex) const
    {
       // This function needs to be exposed for testing
@@ -83,7 +83,7 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   long TestRPRParamTranslator::GetIntegerValuePublic(
+   unsigned TestRPRParamTranslator::GetIntegerValuePublic(
       const dtGame::MessageParameter& parameter, const OneToManyMapping& mapping,
       unsigned parameterDefIndex) const
    {
@@ -1432,7 +1432,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          std::stringstream assertMessage;
          dtGame::MessageParameter* curParam = NULL;
          bool useBogusValue = false;
-         long long resultKey = 0.0;
+         unsigned resultKey = 0.0;
          unsigned mappingsCount = mappingValues.size() + 1; // # mappings + default mapping
          unsigned limit = params.size();
          for( unsigned i = 0; i < limit; ++i )
@@ -1471,7 +1471,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
                // Run the GET function that is to be tested.
                resultKey = mParameterTranslator->GetIntegerValuePublic( *curParam, mMapping, 0);
 
-               long long curKey = 0L;
+               unsigned curKey = 0L;
 
                // Test the function's results
                assertMessage.clear();
