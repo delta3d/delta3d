@@ -490,6 +490,8 @@ namespace dtCore
          LOG_WARNING("Could not find shader definitions file: " + fileName);
          return;
       }
+      
+      LOG_INFO("Loading Shader Definitions file: " + fileName);
 
       if (!merge)
          Clear();
