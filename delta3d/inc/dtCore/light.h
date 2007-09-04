@@ -71,6 +71,9 @@ namespace dtCore
 
       virtual ~Light() = 0;
 
+      ///Called from the constructor to setup any default Light attributes
+      virtual void ApplyDefaults();
+
    public:
 
       ///Get the const internal osg::LightSource
