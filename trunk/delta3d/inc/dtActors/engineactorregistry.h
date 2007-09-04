@@ -57,6 +57,7 @@ namespace dtActors
        static dtCore::RefPtr<dtDAL::ActorType> BEZIER_CONTROL_POINT_ACTOR_TYPE;
        static dtCore::RefPtr<dtDAL::ActorType> BEZIER_CONTROLLER_ACTOR_TYPE;
        static dtCore::RefPtr<dtDAL::ActorType> CLOUD_PLANE_ACTOR_TYPE;
+       static dtCore::RefPtr<dtDAL::ActorType> CLOUD_DOME_ACTOR_TYPE;
        static dtCore::RefPtr<dtDAL::ActorType> TRIGGER_ACTOR_TYPE;
        static dtCore::RefPtr<dtDAL::ActorType> PROXIMITY_TRIGGER_ACTOR_TYPE;
        static dtCore::RefPtr<dtDAL::ActorType> AUTOTRIGGER_ACTOR_TYPE;

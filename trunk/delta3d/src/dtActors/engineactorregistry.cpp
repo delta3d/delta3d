@@ -73,6 +73,7 @@ namespace dtActors
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::BEZIER_CONTROL_POINT_ACTOR_TYPE(new dtDAL::ActorType("Bezier Control Point", "dtcore.Curve", "dtABC::BezierControlPoint Actor"));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::BEZIER_CONTROLLER_ACTOR_TYPE(new dtDAL::ActorType("Bezier Controller", "dtcore.Action", "dtABC::BezierController Actor"));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::CLOUD_PLANE_ACTOR_TYPE(new dtDAL::ActorType("Cloud Plane", "dtcore.Environment", "dtCore::CloudPlane Actor."));
+   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::CLOUD_DOME_ACTOR_TYPE(new dtDAL::ActorType("Cloud Dome", "dtcore.Environment", "dtCore::CloudDome Actor."));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::TRIGGER_ACTOR_TYPE(new dtDAL::ActorType("Trigger", "dtcore.Triggers", "dtABC::Trigger Actor."));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::PROXIMITY_TRIGGER_ACTOR_TYPE(new dtDAL::ActorType("Proximity Trigger","dtcore.Triggers", "dtABC::ProximityTrigger Actor."));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::AUTOTRIGGER_ACTOR_TYPE(new dtDAL::ActorType("AutoTrigger", "dtcore.Triggers", "dtABC::AutoTrigger Actor."));
@@ -153,6 +154,8 @@ namespace dtActors
       mActorFactory->RegisterType<BezierControllerActorProxy>(BEZIER_CONTROLLER_ACTOR_TYPE.get());
       //CloudPlane actor...
       mActorFactory->RegisterType<CloudPlaneActorProxy>(CLOUD_PLANE_ACTOR_TYPE.get());
+      //CloudDome Actor
+      mActorFactory->RegisterType<CloudDomeActorProxy>(CLOUD_DOME_ACTOR_TYPE.get());
       mActorFactory->RegisterType<TriggerActorProxy>(TRIGGER_ACTOR_TYPE.get());
       mActorFactory->RegisterType<ProximityTriggerActorProxy>(PROXIMITY_TRIGGER_ACTOR_TYPE.get());
       mActorFactory->RegisterType<AutoTriggerActorProxy>(AUTOTRIGGER_ACTOR_TYPE.get());
