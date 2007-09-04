@@ -239,6 +239,8 @@ def TOOL_BUNDLE(env):
                       'dtAnim'      : 'dtAnim',
                       'dtChar'      : 'dtChar',
                       'dtCore'      : 'dtCore',
+                      'dtInputPLIB'  : 'dtInputPLIB',
+                      'dtInputISense' : 'dtInputISense',
                       'dtDAL'       : 'dtDAL',
                       'dtDIS'       : 'dtDIS',
                       'dtHLA'       : 'dtHLA',
