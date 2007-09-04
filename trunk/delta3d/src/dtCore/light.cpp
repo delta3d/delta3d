@@ -32,6 +32,8 @@ Light::Light( int number, const std::string& name, LightingMode mode )
    mLightSource->setLight( light );
 
    GetMatrixNode()->addChild( mLightSource.get() );
+
+   ApplyDefaults();
 }
 
 Light::Light( const osg::LightSource& lightSource, const std::string& name, LightingMode mode )
@@ -223,4 +225,11 @@ void Light::RemoveChild( DeltaDrawable *child )
    mLightSource->removeChild( child->GetOSGNode() );
 
    DeltaDrawable::RemoveChild(child);
+}
+
+void Light::ApplyDefaults()
+{
+   SetDiffuse( osg::Vec4(0.9f, 0.9f, 0.9f, 1.f) );
+   SetAmbient( osg::Vec4(0.5f, 0.5f, 0.5f, 1.f) );
+   SetSpecular( osg::Vec4(1.f, 1.f, 1.f, 1.f) );
 }
