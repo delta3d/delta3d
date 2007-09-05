@@ -246,12 +246,34 @@ namespace dtCore
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+   // Function that is used to remove a Geode Node from the Geode Node map
+   void NodeCollector::RemoveGeode( const std::string& key )
+   {
+      if( !CollectorUtil::RemoveNode(key, mGeodeNodeMap) )
+      {
+         LOG_DEBUG("Cannot remove geode node \"" + key + "\" because it does not exist");
+      }
+   }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
    //Function that is used to add a Group Node to the Group Node map
    void NodeCollector::AddGroup(const std::string & key, osg::Group & data)
    {      
       if( !CollectorUtil::AddNode(key, & data, mGroupNodeMap) )
       {
          LOG_WARNING("Can Not Add Node With Duplicate Key: " + key);
+      }
+   }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+   // Function that is used to remove a Group Node from the Group Node map
+   void NodeCollector::RemoveGroup( const std::string& key )
+   {
+      if( !CollectorUtil::RemoveNode(key, mGroupNodeMap) )
+      {
+         LOG_DEBUG("Cannot remove group node \"" + key + "\" because it does not exist");
       }
    }
 
@@ -267,6 +289,17 @@ namespace dtCore
    }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+   // Function that is used to remove a DOFTransform Node from the DOFTransform Node map
+   void NodeCollector::RemoveDOFTransform( const std::string& key )
+   {
+      if( !CollectorUtil::RemoveNode(key, mTranformNodeMap) )
+      {
+         LOG_DEBUG("Cannot remove DOF transform node \"" + key + "\" because it does not exist");
+      }
+   }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   
    //Function that is used to add a MatrixTransform Node to the MatrixTransform Node map
    void NodeCollector::AddMatrixTransform(const std::string & key, osg::MatrixTransform & data)
@@ -278,6 +311,17 @@ namespace dtCore
    }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+   // Function that is used to remove a MatrixTransform Node from the MatrixTransform Node map
+   void NodeCollector::RemoveMatrixTransform( const std::string& key )
+   {
+      if( !CollectorUtil::RemoveNode(key, mMatrixTransformNodeMap) )
+      {
+         LOG_DEBUG("Cannot remove matrix transform node \"" + key + "\" because it does not exist");
+      }
+   }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    
    //Function that is used to add a Switch Node to the Switch Node map
    void NodeCollector::AddSwitch(const std::string & key, osg::Switch & data)
@@ -285,6 +329,17 @@ namespace dtCore
       if( !CollectorUtil::AddNode(key, & data, mSwitchNodeMap) )
       {
          LOG_WARNING("Can Not Add Node With Duplicate Key: " + key);
+      }
+   }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+   // Function that is used to remove a Switch Node from the Switch Node map
+   void NodeCollector::RemoveSwitch( const std::string& key )
+   {
+      if( !CollectorUtil::RemoveNode(key, mSwitchNodeMap) )
+      {
+         LOG_DEBUG("Cannot remove switch node \"" + key + "\" because it does not exist");
       }
    }
 
