@@ -61,6 +61,23 @@ namespace dtCore
          return false;
       }
 
+      /**
+      * Template function that is used to Remove a unique node or object from its respective map.
+      * @param nodeName The name of the Node or Object that is being removed from its map
+      * @param nodeMap The map that you want to remove the node or object from
+      * @return Will return true if the node / object was found AND removed; otherwise false will be returned
+      */
+      template <class mapType>
+      bool RemoveNode(const std::string & nodeName, mapType & nodeMap )
+      {
+         mapType::iterator foundIter = nodeMap.find(nodeName);
+         if( foundIter != nodeMap.end() )
+         {
+            nodeMap.erase(foundIter);
+            return true;
+         }
+         return false;
+      }
 
 
       /**

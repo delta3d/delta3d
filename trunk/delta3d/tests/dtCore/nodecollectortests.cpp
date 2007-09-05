@@ -41,6 +41,7 @@ class  NodeCollectorTests : public CPPUNIT_NS::TestFixture
 {
    CPPUNIT_TEST_SUITE(NodeCollectorTests);
    CPPUNIT_TEST(TestModel);
+   CPPUNIT_TEST(TestNodeRemoval);
    CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -48,6 +49,7 @@ public:
    void setUp();
    void tearDown();
    void TestModel();
+   void TestNodeRemoval();
 
 private:
    dtCore::RefPtr<dtCore::NodeCollector>  mNodeCollector;
@@ -274,4 +276,57 @@ void NodeCollectorTests::TestModel()
      CPPUNIT_ASSERT_MESSAGE("This is a Geode Problem", mNodeCollector5->GetGeode("geo_02") != NULL);
      CPPUNIT_ASSERT_MESSAGE("This is a Geode MAP Problem", mNodeCollector5->GetGeodeNodeMap().empty() == false);
      
+}
+
+void NodeCollectorTests::TestNodeRemoval()
+{
+   // Try removing nodes from unrelated mappings to ensure no other mappings are compromised.
+   std::string curNodeName("group_02");
+   mNodeCollector2->RemoveDOFTransform(curNodeName);
+   CPPUNIT_ASSERT( mNodeCollector2->GetGroup(curNodeName) != NULL );
+   mNodeCollector2->RemoveMatrixTransform(curNodeName);
+   CPPUNIT_ASSERT( mNodeCollector2->GetGroup(curNodeName) != NULL );
+   mNodeCollector2->RemoveSwitch(curNodeName);
+   CPPUNIT_ASSERT( mNodeCollector2->GetGroup(curNodeName) != NULL );
+   mNodeCollector2->RemoveGeode(curNodeName);
+   CPPUNIT_ASSERT( mNodeCollector2->GetGroup(curNodeName) != NULL );
+   mNodeCollector2->RemoveGroup(curNodeName);
+   CPPUNIT_ASSERT( mNodeCollector2->GetGroup(curNodeName) == NULL );
+
+   // Ensure all other nodes still exist
+   CPPUNIT_ASSERT_MESSAGE("This is a Group Problem", mNodeCollector2->GetGroup("group_01") != NULL);
+   CPPUNIT_ASSERT_MESSAGE("This is a DOF Problem", mNodeCollector2->GetDOFTransform("trans_01") != NULL);
+   CPPUNIT_ASSERT_MESSAGE("This is a DOF Problem", mNodeCollector2->GetDOFTransform("trans_02") != NULL);
+   CPPUNIT_ASSERT_MESSAGE("This is a Matrix Problem", mNodeCollector2->GetMatrixTransform("matrix_01") != NULL);
+   CPPUNIT_ASSERT_MESSAGE("This is a Matrix Problem", mNodeCollector2->GetMatrixTransform("matrix_02") != NULL);
+   CPPUNIT_ASSERT_MESSAGE("This is a Matrix Problem", mNodeCollector2->GetMatrixTransform("matrix_03") != NULL);
+   CPPUNIT_ASSERT_MESSAGE("This is a Switch Problem", mNodeCollector2->GetSwitch("switch_01") != NULL);
+   CPPUNIT_ASSERT_MESSAGE("This is a Switch Problem", mNodeCollector2->GetSwitch("switch_02") != NULL);
+   CPPUNIT_ASSERT_MESSAGE("This is a Geode Problem", mNodeCollector2->GetGeode("geo_01") != NULL);
+   CPPUNIT_ASSERT_MESSAGE("This is a Geode Problem", mNodeCollector2->GetGeode("geo_02") != NULL);
+
+   // Test removal of other types of nodes
+   curNodeName = "trans_02";
+   mNodeCollector2->RemoveDOFTransform(curNodeName);
+   CPPUNIT_ASSERT( mNodeCollector2->GetDOFTransform(curNodeName) == NULL );
+
+   curNodeName = "matrix_02";
+   mNodeCollector2->RemoveMatrixTransform(curNodeName);
+   CPPUNIT_ASSERT( mNodeCollector2->GetMatrixTransform(curNodeName) == NULL );
+
+   curNodeName = "switch_02";
+   mNodeCollector2->RemoveSwitch(curNodeName);
+   CPPUNIT_ASSERT( mNodeCollector2->GetSwitch(curNodeName) == NULL );
+
+   curNodeName = "geo_02";
+   mNodeCollector2->RemoveGeode(curNodeName);
+   CPPUNIT_ASSERT( mNodeCollector2->GetGeode(curNodeName) == NULL );
+
+   // Again, ensure all other nodes still exist
+   CPPUNIT_ASSERT_MESSAGE("This is a Group Problem", mNodeCollector2->GetGroup("group_01") != NULL);
+   CPPUNIT_ASSERT_MESSAGE("This is a DOF Problem", mNodeCollector2->GetDOFTransform("trans_01") != NULL);
+   CPPUNIT_ASSERT_MESSAGE("This is a Matrix Problem", mNodeCollector2->GetMatrixTransform("matrix_01") != NULL);
+   CPPUNIT_ASSERT_MESSAGE("This is a Matrix Problem", mNodeCollector2->GetMatrixTransform("matrix_03") != NULL);
+   CPPUNIT_ASSERT_MESSAGE("This is a Switch Problem", mNodeCollector2->GetSwitch("switch_01") != NULL);
+   CPPUNIT_ASSERT_MESSAGE("This is a Geode Problem", mNodeCollector2->GetGeode("geo_01") != NULL);
 }

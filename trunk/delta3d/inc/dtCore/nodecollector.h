@@ -189,11 +189,17 @@ namespace dtCore
       /////////////////////////////////////////////////////////////////////////////////
 
       /**
-       * Function that is used to add a Group Node to the Group Node map
-       * @param name A String that represents the name of the Node
-       * @param node The Group Node that you wish to add to the map
-       */
+      * Function that is used to add a Group Node to the Group Node map
+      * @param name A String that represents the name of the Node
+      * @param node The Group Node that you wish to add to the map
+      */
       void AddGroup(const std::string& name, osg::Group& node);
+
+      /**
+      * Function that is used to remove a Group Node to the Group Node map
+      * @param name A String that represents the name of the Node
+      */
+      void RemoveGroup(const std::string& name);
 
       /**
       * Function that is used to add a DOFTransform Node to the DOFTransform Node map
@@ -203,11 +209,23 @@ namespace dtCore
       void AddDOFTransform(const std::string& name, osgSim::DOFTransform& node);
 
       /**
+      * Function that is used to remove a DOF Transform Node to the DOF Transform Node map
+      * @param name A String that represents the name of the Node
+      */
+      void RemoveDOFTransform(const std::string& name);
+
+      /**
       * Function that is used to add a MatrixTransform Node to the MatrixTransform Node map
       * @param name A String that represents the name of the Node
       * @param node The MatrixTransform Node that you wish to add to the map
       */
       void AddMatrixTransform(const std::string& name, osg::MatrixTransform& node);
+
+      /**
+      * Function that is used to remove a Matrix Transform Node to the Matrix Transform Node map
+      * @param name A String that represents the name of the Node
+      */
+      void RemoveMatrixTransform(const std::string& name);
 
       /**
       * Function that is used to add a Switch Node to the Switch Node map
@@ -217,11 +235,23 @@ namespace dtCore
       void AddSwitch(const std::string& name, osg::Switch& node);
 
       /**
+      * Function that is used to remove a Switch Node to the Switch Node map
+      * @param name A String that represents the name of the Node
+      */
+      void RemoveSwitch(const std::string& name);
+
+      /**
       * Function that is used to add a Geode Node to the Geode Node map
       * @param name A String that represents the name of the Node
       * @param node The Geode Node that you wish to add to the map
       */
       void AddGeode(const std::string& name, osg::Geode& node);
+
+      /**
+      * Function that is used to remove a Geode Node to the Geode Node map
+      * @param name A String that represents the name of the Node
+      */
+      void RemoveGeode(const std::string& name);
 
 
       ////////////////////////////////////////////////////////////////////////////////
