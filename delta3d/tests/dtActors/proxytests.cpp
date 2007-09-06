@@ -919,7 +919,9 @@ void ProxyTest::TestProxies()
       for(unsigned int i = 0; i < actors.size(); i++)
       {
          // In order to keep the tests fasts, we skip the nasty slow ones.
-         if (actors[i]->GetName() == "Cloud Plane" || actors[i]->GetName() == "Environment" || 
+         if (actors[i]->GetName() == "Cloud Plane" ||
+             actors[i]->GetName() == "Cloud Dome"  ||
+             actors[i]->GetName() == "Environment" || 
              actors[i]->GetName() == "Test Environment Actor") 
             continue;
          
