@@ -222,6 +222,7 @@ void MapTests::createActors(dtDAL::Map& map)
    {
       // In order to keep the tests fasts, we skip the nasty slow ones.
       if (actorTypes[i]->GetName() == "Cloud Plane" || 
+          actorTypes[i]->GetName() == "Cloud Dome" ||
           actorTypes[i]->GetName() == "Environment" || 
           actorTypes[i]->GetName() == "Test Environment Actor" ||
           actorTypes[i]->GetName() == "Waypoint") 
