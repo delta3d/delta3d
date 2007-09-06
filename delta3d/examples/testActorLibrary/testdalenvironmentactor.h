@@ -26,7 +26,7 @@
 #include <dtABC/weather.h>
 #include <dtCore/cloudplane.h>
 
-class DT_PLUGIN_EXPORT TestDALEnvironmentActor : public dtDAL::EnvironmentActor, public dtCore::DeltaDrawable
+class DT_PLUGIN_EXPORT TestDALEnvironmentActor : public dtDAL::IEnvironmentActor, public dtCore::DeltaDrawable
 {
    public:
 

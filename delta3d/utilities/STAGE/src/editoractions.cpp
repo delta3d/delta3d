@@ -817,8 +817,8 @@ namespace dtEditQt
       {
          if (envProxy == proxy)
          {
-            dtDAL::EnvironmentActor
-                  *envActor = dynamic_cast<dtDAL::EnvironmentActor*>(envProxy->GetActor());
+            dtDAL::IEnvironmentActor
+                  *envActor = dynamic_cast<dtDAL::IEnvironmentActor*>(envProxy->GetActor());
             std::vector<dtCore::DeltaDrawable*> drawables;
             envActor->GetAllActors(drawables);
             envActor->RemoveAllActors();
@@ -868,8 +868,8 @@ namespace dtEditQt
    void EditorActions::slotOnActorCreated(ActorProxyRefPtr actor,
          bool forceNoAdjustments)
    {
-      dtDAL::EnvironmentActor
-            *envActor = dynamic_cast<dtDAL::EnvironmentActor*>(actor->GetActor());
+      dtDAL::IEnvironmentActor
+            *envActor = dynamic_cast<dtDAL::IEnvironmentActor*>(actor->GetActor());
       if (envActor == NULL)
          return;
 
@@ -891,8 +891,8 @@ namespace dtEditQt
          if (button == QMessageBox::Yes)
          {
             dtCore::Scene *scene = ViewportManager::GetInstance().getMasterScene();
-            dtDAL::EnvironmentActor
-                  *env = dynamic_cast<dtDAL::EnvironmentActor*>(envProxy->GetActor());
+            dtDAL::IEnvironmentActor
+                  *env = dynamic_cast<dtDAL::IEnvironmentActor*>(envProxy->GetActor());
             if (env != NULL)
                env->RemoveAllActors();
             map->SetEnvironmentActor(actor.get());
