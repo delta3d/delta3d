@@ -598,7 +598,7 @@ namespace dtDAL
                //the proxy. (Currently defaults to DRAW_ACTOR.
                if(map.GetEnvironmentActor() != NULL)
                {
-                  EnvironmentActor *ea = dynamic_cast<EnvironmentActor*>(map.GetEnvironmentActor()->GetActor());
+                  IEnvironmentActor *ea = dynamic_cast<IEnvironmentActor*>(map.GetEnvironmentActor()->GetActor());
                   if(ea == NULL)
                      throw dtUtil::Exception(ExceptionEnum::InvalidActorException, 
                      "Actor should be of type dtDAL::EnvironmentActor", __FILE__, __LINE__);
@@ -614,7 +614,7 @@ namespace dtDAL
             //if we aren't drawing billboards, then the actors should always be in the scene.
             if(map.GetEnvironmentActor() != NULL)
             {
-               EnvironmentActor *ea = dynamic_cast<EnvironmentActor*>(map.GetEnvironmentActor()->GetActor());
+               IEnvironmentActor *ea = dynamic_cast<IEnvironmentActor*>(map.GetEnvironmentActor()->GetActor());
                if(ea == NULL)
                   throw dtUtil::Exception(ExceptionEnum::InvalidActorException, 
                   "Actor should be of type dtDAL::EnvironmentActor", __FILE__, __LINE__);

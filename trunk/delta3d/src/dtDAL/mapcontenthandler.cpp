@@ -1308,7 +1308,7 @@ namespace  dtDAL
                   "An environment actor was located in the map.");
             }
 
-            EnvironmentActor *ea = dynamic_cast<EnvironmentActor*>(proxy->GetActor());
+            IEnvironmentActor *ea = dynamic_cast<IEnvironmentActor*>(proxy->GetActor());
             if(ea == NULL)
             {
                throw dtUtil::Exception(ExceptionEnum::InvalidActorException, 

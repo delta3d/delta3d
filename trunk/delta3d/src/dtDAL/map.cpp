@@ -399,7 +399,7 @@ namespace dtDAL
          return;
       }
 
-      EnvironmentActor *ea = dynamic_cast<EnvironmentActor*>(envActor->GetActor());
+      IEnvironmentActor *ea = dynamic_cast<IEnvironmentActor*>(envActor->GetActor());
       if(ea == NULL)
       {
          LOG_ERROR("The actor specified is not an EnvironmentActor. Ignoring.");

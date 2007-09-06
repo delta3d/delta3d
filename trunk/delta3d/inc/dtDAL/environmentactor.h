@@ -25,15 +25,17 @@
 
 namespace dtDAL
 {
-   class DT_DAL_EXPORT EnvironmentActor
+   /** Interface class to an "environment actor".
+   */
+   class DT_DAL_EXPORT IEnvironmentActor
    {
       public:
 
          /// Constructor
-         EnvironmentActor();
+         IEnvironmentActor();
 
          /// Destructor
-         virtual ~EnvironmentActor();
+         virtual ~IEnvironmentActor();
 
          /**
           * Adds an actor proxy to the internal hierarchy of the environment

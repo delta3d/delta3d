@@ -22,12 +22,12 @@
 
 namespace dtDAL
 {
-   EnvironmentActor::EnvironmentActor()
+   IEnvironmentActor::IEnvironmentActor()
    {
 
    }
 
-   EnvironmentActor::~EnvironmentActor()
+   IEnvironmentActor::~IEnvironmentActor()
    {
 
    }

@@ -28,7 +28,7 @@
 
 namespace dtGame
 {
-   class DT_GAME_EXPORT EnvironmentActor : public GameActor, public dtDAL::EnvironmentActor
+   class DT_GAME_EXPORT EnvironmentActor : public GameActor, public dtDAL::IEnvironmentActor
    {
       public:
 

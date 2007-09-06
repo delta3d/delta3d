@@ -1732,7 +1732,7 @@ void MapTests::TestLoadEnvironmentMapIntoScene()
    scene->RemoveAllDrawables();
    CPPUNIT_ASSERT(scene->GetNumberOfAddedDrawable() == 0);
 
-   dtDAL::EnvironmentActor *tea = dynamic_cast<dtDAL::EnvironmentActor*>(envProxy->GetActor());
+   dtDAL::IEnvironmentActor *tea = dynamic_cast<dtDAL::IEnvironmentActor*>(envProxy->GetActor());
    CPPUNIT_ASSERT(tea != NULL);
    unsigned int numChildren = tea->GetNumEnvironmentChildren();
    CPPUNIT_ASSERT(numChildren == 0);
