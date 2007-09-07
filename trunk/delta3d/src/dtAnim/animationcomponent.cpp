@@ -212,7 +212,7 @@ void AnimationComponent::DoIsector(unsigned numActors, dtGame::GameActor* actor_
       actor_array[i]->GetTransform(trans);            
       pos = trans.GetTranslation();      
 
-      mIsector->EnableAndGetISector(i).SetSectorAsLineSegment(osg::Vec3(pos[0], pos[1], pos[2] + 10.0f), osg::Vec3(pos[0], pos[1], pos[2] - 10.0f));
+      mIsector->EnableAndGetISector(i).SetSectorAsLineSegment(osg::Vec3(pos[0], pos[1], pos[2] + 100.0f), osg::Vec3(pos[0], pos[1], pos[2] - 100.0f));
    }
 
    //disable the ones we arent using

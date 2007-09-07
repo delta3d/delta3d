@@ -43,6 +43,8 @@ namespace dtABC
       
       std::map<std::string, std::string> LOG_LEVELS;
       std::vector<std::string> LIBRARY_PATHS;
+      
+      std::map<std::string, std::string> mProperties;
    };
 }
 

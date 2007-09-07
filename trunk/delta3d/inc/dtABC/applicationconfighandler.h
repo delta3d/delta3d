@@ -53,8 +53,9 @@ namespace dtABC
    
          ApplicationConfigData mConfigData;
       private:
-         std::string mCurrentElement;      
-   };
+         std::string mCurrentElement;
+         std::string mPropertyName;
+    };
 }
 
 #endif  // DELTA_APP_XML_CONTENT_HANDLER

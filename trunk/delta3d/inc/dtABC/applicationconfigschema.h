@@ -52,8 +52,10 @@ namespace dtABC
       static const std::string WINDOWINSTANCE;
       static const std::string SCENEINSTANCE;
       
-      static const std::string LOG_NAME;
       static const std::string LOG_LEVEL;
+
+      static const std::string APP_PROPERTIES;
+      static const std::string APP_PROPERTY;
    };
 }
 
