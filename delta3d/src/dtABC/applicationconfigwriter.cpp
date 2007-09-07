@@ -139,6 +139,22 @@ namespace dtABC
          app->appendChild( log );
       }
 
+      DOMElement* properties = doc->createElement(sch.APP_PROPERTIES);
+      app->appendChild( properties );
+
+      for (std::map<std::string, std::string>::const_iterator i = data.mProperties.begin();
+         i != data.mProperties.end(); ++i)
+      {
+         DOMElement* property = doc->createElement(sch.APP_PROPERTY);
+
+         property->setAttribute( sch.NAME , dtUtil::StringToXMLConverter(i->first).ToXmlString() );
+
+         DOMText* propValue = doc->createTextNode(dtUtil::StringToXMLConverter(i->second).ToXmlString());
+         
+         property->appendChild(propValue);
+         properties->appendChild( property );
+      }
+
       writer->WriteFile( filename );
    }
 
@@ -166,6 +182,9 @@ namespace dtABC
       SCENEINSTANCE = XMLString::transcode( ApplicationConfigSchema::SCENEINSTANCE.c_str() );
 
       LOG_LEVEL = XMLString::transcode( ApplicationConfigSchema::LOG_LEVEL.c_str() );
+
+      APP_PROPERTIES = XMLString::transcode( ApplicationConfigSchema::APP_PROPERTIES.c_str() );
+      APP_PROPERTY = XMLString::transcode( ApplicationConfigSchema::APP_PROPERTY.c_str() );
    }
 
    ApplicationConfigWriter::SchemaModel::~SchemaModel()
@@ -191,7 +210,9 @@ namespace dtABC
       XMLString::release( &WINDOWINSTANCE );
       XMLString::release( &SCENEINSTANCE );
 
-      XMLString::release( &LOG_LEVEL);
+      XMLString::release( &LOG_LEVEL );
+      XMLString::release( &APP_PROPERTIES );
+      XMLString::release( &APP_PROPERTY );
    }
 
 }

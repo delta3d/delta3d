@@ -39,6 +39,7 @@ namespace dtTest
    {
       CPPUNIT_TEST_SUITE( ApplicationTests );
       CPPUNIT_TEST( TestInput );
+      CPPUNIT_TEST( TestConfigProperties );
       CPPUNIT_TEST( TestConfigSupport );
       CPPUNIT_TEST( TestConfigSaveLoad );
       CPPUNIT_TEST_SUITE_END();
@@ -47,6 +48,7 @@ namespace dtTest
          void setUp();
          void tearDown();
          void TestInput();
+         void TestConfigProperties();
          void TestConfigSupport();
          void TestConfigSaveLoad();
 
@@ -86,6 +88,8 @@ namespace dtTest
             CPPUNIT_ASSERT_MESSAGE(ss.str(), truth.LOG_LEVELS == actual.LOG_LEVELS );
 
             CPPUNIT_ASSERT_MESSAGE("Library path lists should match.", truth.LIBRARY_PATHS == actual.LIBRARY_PATHS );
+
+            CPPUNIT_ASSERT_MESSAGE("Property sets should match", truth.mProperties == actual.mProperties );
          }
    };
 
@@ -201,6 +205,28 @@ namespace dtTest
       CPPUNIT_ASSERT( kb->KeyUp(app->GetCharacter()) );  // better handle it
    }
 
+   void ApplicationTests::TestConfigProperties()
+   {
+      dtCore::RefPtr<dtTest::TestApp> app(new dtTest::TestApp(Producer::Key_N,Producer::KeyChar_n));
+      
+      const std::string testDefault("abcd");
+      const std::string testValue1("qqq");
+      const std::string testValue2("qqv");
+      const std::string testName("xyz");
+      
+      CPPUNIT_ASSERT_EQUAL(std::string(), app->GetConfigPropertyValue(testName));
+      CPPUNIT_ASSERT_EQUAL(testDefault, app->GetConfigPropertyValue(testName, testDefault));
+      
+      app->SetConfigPropertyValue(testName, testValue1);
+      CPPUNIT_ASSERT_EQUAL(testValue1, app->GetConfigPropertyValue(testName, testDefault));
+
+      app->SetConfigPropertyValue(testName, testValue2);
+      CPPUNIT_ASSERT_EQUAL(testValue2, app->GetConfigPropertyValue(testName, testDefault));
+
+      app->RemoveConfigPropertyValue(testName);
+      CPPUNIT_ASSERT_EQUAL(testDefault, app->GetConfigPropertyValue(testName, testDefault));
+   }
+
    void ApplicationTests::TestConfigSupport()
    {
       //make sure the file doesn't already exist.
@@ -278,6 +304,10 @@ namespace dtTest
       truth.LIBRARY_PATHS.push_back("mypath2");
       truth.LIBRARY_PATHS.push_back("mypath3");
       
+      truth.mProperties.insert(std::make_pair("Name1", "TestVal1"));
+      truth.mProperties.insert(std::make_pair("Name2", "TestVal2"));
+      truth.mProperties.insert(std::make_pair("Name3", "TestVal3"));
+
       dtABC::ApplicationConfigWriter acw;
       acw(mConfigName, truth);
 
@@ -309,6 +339,10 @@ namespace dtTest
       CPPUNIT_ASSERT_EQUAL(std::string("mypath2"), libPath[1]);
       CPPUNIT_ASSERT_EQUAL(std::string("mypath3"), libPath[2]);
 
+      CPPUNIT_ASSERT_EQUAL(std::string("Value1"), app->GetConfigPropertyValue("Name1"));
+      CPPUNIT_ASSERT_EQUAL(std::string("Value2"), app->GetConfigPropertyValue("Name2"));
+      CPPUNIT_ASSERT_EQUAL(std::string("Value3"), app->GetConfigPropertyValue("Name3"));
+
       app = NULL;
       
       // delete the file
@@ -316,6 +350,6 @@ namespace dtTest
 
       // make sure it does not exist
       CPPUNIT_ASSERT( !dtUtil::FileUtils::GetInstance().FileExists( mConfigName ) );
-
+      
    }
 }

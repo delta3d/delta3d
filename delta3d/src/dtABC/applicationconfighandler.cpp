@@ -57,10 +57,18 @@ namespace dtABC
          std::string path(dtUtil::XMLStringConverter(chars).ToString());
          mConfigData.LIBRARY_PATHS.push_back(path);
       }
+      else if (mCurrentElement == ApplicationConfigSchema::APP_PROPERTY)
+      {
+         mConfigData.mProperties.insert(std::make_pair(mPropertyName, dtUtil::XMLStringConverter(chars).ToString()));
+      }
    }
    
    void ApplicationConfigHandler::endDocument() {}
-   void ApplicationConfigHandler::endElement(const XMLCh* const uri,const XMLCh* const localname,const XMLCh* const qname) {}
+   void ApplicationConfigHandler::endElement(const XMLCh* const uri,const XMLCh* const localname,const XMLCh* const qname) 
+   {
+      mPropertyName.clear();
+   }
+   
    void ApplicationConfigHandler::ignorableWhitespace(const XMLCh* const chars, const unsigned int length) {}
    void ApplicationConfigHandler::processingInstruction(const XMLCh* const target, const XMLCh* const data) {}
    void ApplicationConfigHandler::setDocumentLocator(const XERCES_CPP_NAMESPACE_QUALIFIER Locator* const locator) {}
@@ -234,5 +242,20 @@ namespace dtABC
             LOG_WARNING("No level defined for log named \"" + name + "\", the default value will be used.");
          }  
       }     
+      else if ( mCurrentElement == ApplicationConfigSchema::APP_PROPERTY )
+      {
+         // push some keys
+         dtUtil::AttributeSearch propAttrs;
+
+         // do the attribute search, catch the results
+         dtUtil::AttributeSearch::ResultMap results = propAttrs( attrs );
+   
+         dtUtil::AttributeSearch::ResultMap::iterator iter = results.find(ApplicationConfigSchema::NAME);
+         if( iter != results.end() )
+         {
+            mPropertyName = iter->second;
+         }
+         
+      }
    }
 }

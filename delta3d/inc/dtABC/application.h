@@ -25,6 +25,9 @@
 #include <dtABC/baseabc.h>
 #include <dtABC/export.h>
 
+#include <string>
+#include <map>
+
 namespace dtCore
 {
    class GenericKeyboardListener;
@@ -59,9 +62,6 @@ namespace dtABC
    public:
       Application( const std::string& configFilename = "" );
 
-   protected:
-      virtual ~Application();
-
    public:
       ///Start the Application
       virtual void Run();
@@ -85,7 +85,20 @@ namespace dtABC
       /// @return the instance of the listener used for callbacks
       dtCore::GenericKeyboardListener* GetKeyboardListener() { return mKeyboardListener.get(); }
 
+      /// the publicized default settings for a generated config file.
+      static ApplicationConfigData GetDefaultConfigData();
+
+      /// @return a string value that is paired with the given name.  The default is returned if the property is not set.
+      const std::string& GetConfigPropertyValue(const std::string& name, const std::string& defaultValue = "") const;
+      /// Sets the value of a given config property.
+      void SetConfigPropertyValue(const std::string& name, const std::string& value);
+
+      /// Removes a property with the given name
+      void RemoveConfigPropertyValue(const std::string& name);
+      
    protected:
+
+      virtual ~Application();
       ///override for preframe 
       virtual  void  PreFrame( const double deltaFrameTime );
 
@@ -98,17 +111,14 @@ namespace dtABC
       ///Create basic instances and set up system hooks
       virtual void CreateInstances(const std::string& name="defaultWin", int x=100, int y=100, int width=640, int height=480, bool cursor=true, bool fullScreen=false );
 
-   public:
-      /// the publicized default settings for a generated config file.
-      static ApplicationConfigData GetDefaultConfigData();
-
-   private:
       /// Read the supplied config file, called from the constructor
       /// Read an existing data file and setup the internal class
       /// members with attributes from the data file.
       /// @param file the name of the data file to be parsed.
       /// @return true, if both parsing and applying went well.
       bool ParseConfigFile(const std::string& file);
+
+   private:
 
       /// A utility to apply the parsed data to the Application instance
       class AppXMLApplicator
@@ -122,6 +132,8 @@ namespace dtABC
       };
 
       dtCore::RefPtr<dtCore::GenericKeyboardListener> mKeyboardListener;
+      typedef std::map<std::string, std::string> AppConfigPropertyMap;
+      AppConfigPropertyMap mConfigProperties;
    };
 
 }

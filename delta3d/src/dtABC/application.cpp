@@ -45,6 +45,7 @@ XERCES_CPP_NAMESPACE_USE
 
 IMPLEMENT_MANAGEMENT_LAYER(Application)
 
+///////////////////////////////////////////////////////////////////////////////
 Application::Application(const std::string& configFilename) : BaseABC("Application"),
    mKeyboardListener(new dtCore::GenericKeyboardListener())
 {
@@ -68,28 +69,34 @@ Application::Application(const std::string& configFilename) : BaseABC("Applicati
    }
 }
 
+///////////////////////////////////////////////////////////////////////////////
 Application::~Application()
 {  
    DeregisterInstance(this);   
 }
 
+///////////////////////////////////////////////////////////////////////////////
 void Application::Run()
 {
    dtCore::System::GetInstance().Run();
 }
 
+///////////////////////////////////////////////////////////////////////////////
 void Application::PreFrame( const double deltaFrameTime )
 {
 }
 
+///////////////////////////////////////////////////////////////////////////////
 void Application::Frame( const double deltaFrameTime )
 {
 }
 
+///////////////////////////////////////////////////////////////////////////////
 void Application::PostFrame( const double deltaFrameTime )
 {
 }
 
+///////////////////////////////////////////////////////////////////////////////
 bool Application::KeyPressed(const dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character)
 {
    switch (key)
@@ -109,6 +116,7 @@ bool Application::KeyPressed(const dtCore::Keyboard* keyboard, Producer::Keyboar
 }
 
 
+///////////////////////////////////////////////////////////////////////////////
 void Application::CreateInstances(const std::string& name, int x, int y, int width, int height, bool cursor, bool fullScreen )
 {
    //create the instances and hook-up the default
@@ -131,6 +139,38 @@ void Application::CreateInstances(const std::string& name, int x, int y, int wid
    mKeyboard->AddKeyboardListener( mKeyboardListener.get() );
 }
 
+///////////////////////////////////////////////////////////////////////////////
+const std::string& Application::GetConfigPropertyValue(
+         const std::string& name, const std::string& defaultValue) const
+{
+   AppConfigPropertyMap::const_iterator i = mConfigProperties.find(name);
+   if (i == mConfigProperties.end())
+   {
+      return defaultValue;
+   }
+   else
+   {
+      return i->second;
+   }
+}
+///////////////////////////////////////////////////////////////////////////////
+void Application::SetConfigPropertyValue(const std::string& name, const std::string& value)
+{
+   if (!mConfigProperties.insert(std::make_pair(name, value)).second)
+   {
+      AppConfigPropertyMap::iterator i = mConfigProperties.find(name);
+      /// "i" can't be the "end()" because the insert returned false, meaning it does have that key.
+      i->second = value;
+   }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void Application::RemoveConfigPropertyValue(const std::string& name)
+{
+   mConfigProperties.erase(name);
+}
+
+///////////////////////////////////////////////////////////////////////////////
 bool Application::ParseConfigFile(const std::string& file)
 {
    ApplicationConfigHandler handler;
@@ -145,6 +185,7 @@ bool Application::ParseConfigFile(const std::string& file)
    return( applied_well || parsed_well );
 }
 
+///////////////////////////////////////////////////////////////////////////////
 std::string dtABC::Application::GenerateDefaultConfigFile(const std::string& filename)
 {
    std::string existingfile = dtCore::FindFileInPathList( filename );
@@ -163,6 +204,7 @@ std::string dtABC::Application::GenerateDefaultConfigFile(const std::string& fil
    return dtCore::FindFileInPathList( filename );
 }
 
+///////////////////////////////////////////////////////////////////////////////
 ApplicationConfigData Application::GetDefaultConfigData()
 {
    ApplicationConfigData data;
@@ -192,6 +234,8 @@ ApplicationConfigData Application::GetDefaultConfigData()
    return data;
 }
 
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 // --- applicator's implementation --- //
 bool Application::AppXMLApplicator::operator ()(const ApplicationConfigData& data, dtABC::Application* app)
 {
@@ -211,6 +255,12 @@ bool Application::AppXMLApplicator::operator ()(const ApplicationConfigData& dat
       i != data.LIBRARY_PATHS.end(); ++i)
    {
       lsm.AddToSearchPath(*i);
+   }
+
+   for (std::map<std::string, std::string>::const_iterator i = data.mProperties.begin();
+      i != data.mProperties.end(); ++i)
+   {
+      app->SetConfigPropertyValue(i->first, i->second);
    }
 
    // John's unwittingly caught a confusing aspect of the Applications's config file here.
@@ -235,7 +285,6 @@ bool Application::AppXMLApplicator::operator ()(const ApplicationConfigData& dat
          dwin->ChangeScreenResolution( data.RESOLUTION );
       }
    }
-
    // set up the scene
    dtCore::Scene* scene = app->GetScene();
    ///\todo should this only override when the string is not empty?

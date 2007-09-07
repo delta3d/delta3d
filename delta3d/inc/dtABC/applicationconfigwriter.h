@@ -69,6 +69,9 @@ namespace dtABC
          XMLCh* SCENEINSTANCE;
 
          XMLCh* LOG_LEVEL;
+
+         XMLCh* APP_PROPERTIES;
+         XMLCh* APP_PROPERTY;
       };
    };
 }
