@@ -82,9 +82,9 @@ class TimingListener : public CppUnit::TestListener
 
 int main(int argc, char* argv[])
 {
-   const std::string &executable = argv[0];
-   std::string singleSuiteName = "";
-   std::string singleTestName = "";
+   const std::string executable = argv[0];
+   std::string singleSuiteName;
+   std::string singleTestName;
 
    // Get the test name from args.
    if (argc > 1)
