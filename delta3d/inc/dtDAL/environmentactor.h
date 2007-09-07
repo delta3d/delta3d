@@ -38,14 +38,14 @@ namespace dtDAL
          virtual ~IEnvironmentActor();
 
          /**
-          * Adds an actor proxy to the internal hierarchy of the environment
-          * @param proxy The proxy to add
+          * Adds a DeltaDrawable to the internal hierarchy of the environment
+          * @param dd The DeltaDrawable to add as a child
           */
          virtual void AddActor(dtCore::DeltaDrawable &dd) = 0;
 
          /**
-          * Removes an actor proxy from the internal hierarchy
-          * @param proxy The proxy to remove
+          * Removes a DeltaDrawable from the internal hierarchy
+          * @param dd The DeltaDrawable to remove
           */
          virtual void RemoveActor(dtCore::DeltaDrawable &dd) = 0;
 
@@ -62,7 +62,6 @@ namespace dtDAL
          virtual bool ContainsActor(dtCore::DeltaDrawable &dd) const = 0;
 
          /**
-          * const version of the above function
           * Gets all the actors associated with this environment
           * @param vec The vector to fill
           */
