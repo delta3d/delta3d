@@ -64,6 +64,7 @@ namespace dtActors
        static dtCore::RefPtr<dtDAL::ActorType> CAMERA_ACTOR_TYPE;
        static dtCore::RefPtr<dtDAL::ActorType> TRIPOD_ACTOR_TYPE;
        static dtCore::RefPtr<dtDAL::ActorType> ENVIRONMENT_ACTOR_TYPE;
+       static dtCore::RefPtr<dtDAL::ActorType> ENV_ACTOR_TYPE;
        static dtCore::RefPtr<dtDAL::ActorType> COORDINATE_CONFIG_ACTOR_TYPE;
        static dtCore::RefPtr<dtDAL::ActorType> PLAYER_START_ACTOR_TYPE;
        static dtCore::RefPtr<dtDAL::ActorType> GAME_MESH_ACTOR_TYPE;
