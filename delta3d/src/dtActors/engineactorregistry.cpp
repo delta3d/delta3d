@@ -46,6 +46,7 @@
 #include <dtActors/taskactorrollup.h>
 #include <dtActors/taskactorordered.h>
 #include <dtActors/basicenvironmentactorproxy.h>
+#include <dtActors/envactor.h>
 #include <dtActors/coordinateconfigactor.h>
 #include <dtActors/playerstartactorproxy.h>
 #include <dtActors/animationgameactor2.h>
@@ -80,6 +81,7 @@ namespace dtActors
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::CAMERA_ACTOR_TYPE(new dtDAL::ActorType("Camera", "dtcore", "dtCore::Camera Actor."));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::TRIPOD_ACTOR_TYPE(new dtDAL::ActorType("Tripod", "dtcore", "dtCore::Tripod Actor."));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::ENVIRONMENT_ACTOR_TYPE(new dtDAL::ActorType("Environment", "dtcore.Environment", "dtCore::BasicEnvironment Actor."));
+   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::ENV_ACTOR_TYPE(new dtDAL::ActorType("Env", "dtcore.Environment", "dtCore::Environment Actor."));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::COORDINATE_CONFIG_ACTOR_TYPE(new dtDAL::ActorType("Coordinate Config", "dtutil", "dtUtil::Coordinates Actor"));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::PLAYER_START_ACTOR_TYPE(new dtDAL::ActorType("Player Start", "dtcore", "This can be dropped into a map and the player actor will spawn himself there on startup"));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::WAYPOINT_ACTOR_TYPE(new dtDAL::ActorType("Waypoint", "dtai.waypoint", "dtAI::Waypoint Actor"));
@@ -162,6 +164,7 @@ namespace dtActors
       mActorFactory->RegisterType<CameraActorProxy>(CAMERA_ACTOR_TYPE.get());
       mActorFactory->RegisterType<TripodActorProxy>(TRIPOD_ACTOR_TYPE.get());
       mActorFactory->RegisterType<BasicEnvironmentActorProxy>(ENVIRONMENT_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<EnvActorProxy>(ENV_ACTOR_TYPE.get());
       mActorFactory->RegisterType<CoordinateConfigActorProxy>(COORDINATE_CONFIG_ACTOR_TYPE.get());
       mActorFactory->RegisterType<PlayerStartActorProxy>(PLAYER_START_ACTOR_TYPE.get());
       mActorFactory->RegisterType<dtDAL::WaypointActorProxy>(WAYPOINT_ACTOR_TYPE.get());
