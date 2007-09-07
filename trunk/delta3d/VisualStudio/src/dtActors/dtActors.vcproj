@@ -181,6 +181,9 @@
 				RelativePath="..\..\..\src\dtActors\engineactorregistry.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtActors\envactor.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtActors\enveffectactorproxy.cpp">
 			</File>
 			<File
@@ -292,6 +295,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtActors\engineactorregistry.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtActors\envactor.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtActors\enveffectactorproxy.h">
