@@ -13,7 +13,7 @@ class TestMap(Application):
       # 1. Set the project context, just like in the editor
       # 2. Get a reference to the map
       # 3. Load the map into the scene through the project class
-      contextName = GetDeltaDataPathList() + "/demoMap"
+      contextName = GetDeltaRootPath() + "/examples/data/demoMap"
       
       Project.GetInstance().SetContext(contextName)
       myMap = Project.GetInstance().GetMap("MyCoolMap")
