@@ -4,7 +4,7 @@
 
 using namespace dtActors;
 
-dtActors::EnvActor::EnvActor( dtGame::GameActorProxy &proxy ):
+EnvActor::EnvActor( dtGame::GameActorProxy &proxy ):
 dtGame::IEnvGameActor(proxy),
 mEnv(new dtCore::Environment())
 {
@@ -17,25 +17,18 @@ EnvActor::~EnvActor()
 
 }
 
-void EnvActor::SetFogEnable( bool enabled )
-{
-   mEnv->SetFogEnable(enabled);
-}
-
-bool EnvActor::GetFogEnable() const
-{
-  return mEnv->GetFogEnable();
-}
 
 void EnvActor::AddActor( dtCore::DeltaDrawable &dd )
 {
    mEnv->AddChild(&dd);
 }
 
+
 void EnvActor::RemoveActor( dtCore::DeltaDrawable &dd )
 {
    mEnv->RemoveChild(&dd);
 }
+
 
 void EnvActor::RemoveAllActors()
 {
@@ -44,6 +37,7 @@ void EnvActor::RemoveAllActors()
       mEnv->RemoveChild( mEnv->GetChild(0) );
    }
 }
+
 
 bool EnvActor::ContainsActor( dtCore::DeltaDrawable &dd ) const
 {
@@ -57,6 +51,7 @@ bool EnvActor::ContainsActor( dtCore::DeltaDrawable &dd ) const
    }
 }
 
+
 void EnvActor::GetAllActors( std::vector<dtCore::DeltaDrawable*> &vec )
 {
    vec.clear();
@@ -65,15 +60,6 @@ void EnvActor::GetAllActors( std::vector<dtCore::DeltaDrawable*> &vec )
       vec.push_back(mEnv->GetChild(i));
 }
 
-void EnvActor::SetTimeAndDate( const int year, const int month, const int day, const int hour, const int min, const int sec )
-{
-   mEnv->SetDateTime(year, month, day, hour, min, sec);
-}
-
-void EnvActor::GetTimeAndDate( int &year, int &month, int &day, int &hour, int &min, int &sec ) const
-{
-   mEnv->GetDateTime(year, month, day, hour, min, sec);
-}
 
 unsigned int EnvActor::GetNumEnvironmentChildren() const
 {
@@ -81,8 +67,45 @@ unsigned int EnvActor::GetNumEnvironmentChildren() const
 }
 
 
+void EnvActor::SetFogEnable( bool enabled )
+{
+   mEnv->SetFogEnable(enabled);
+}
 
 
+bool EnvActor::GetFogEnable() const
+{
+   return mEnv->GetFogEnable();
+}
+
+
+void EnvActor::SetTimeAndDate( const int year, const int month, const int day, const int hour, const int min, const int sec )
+{
+   mEnv->SetDateTime(year, month, day, hour, min, sec);
+}
+
+
+void EnvActor::GetTimeAndDate( int &year, int &month, int &day, int &hour, int &min, int &sec ) const
+{
+   mEnv->GetDateTime(year, month, day, hour, min, sec);
+}
+
+
+void EnvActor::SetVisibility( float distance )
+{
+   mEnv->SetVisibility(distance);
+}
+
+
+float EnvActor::GetVisbility() const
+{
+   return mEnv->GetVisibility();
+}
+
+
+/************************************************************************/
+/*                                                                      */
+/************************************************************************/
 EnvActorProxy::EnvActorProxy()
 {
 }
@@ -109,9 +132,4 @@ void EnvActorProxy::CreateActor()
 {
    dtActors::EnvActor *env = new dtActors::EnvActor( *this );
    SetActor( *env );
-}
-
-void EnvActorProxy::BuildInvokables()
-{
-   dtGame::GameActorProxy::BuildInvokables();
 }

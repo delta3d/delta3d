@@ -1055,18 +1055,6 @@ namespace dtGame
             LOG_ERROR("The environment actor proxy parameter has an invalid actor");
             return;
          }
-
-         time_t timer = time_t(GetSimulationClockTime() / long(1e6));
-         tm *time = localtime(&timer);
-
-         if (time == NULL)
-         {
-            LOG_WARNING("The sim clock time is set to a time before January 1, 1970. Unsupported time");
-         }
-         else
-         {
-            ea->SetTimeAndDate(time->tm_year + 1900, time->tm_mon + 1, time->tm_mday, time->tm_hour, time->tm_min, time->tm_sec);
-         }
       }
       else
       {

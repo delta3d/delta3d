@@ -28,24 +28,16 @@
 
 namespace dtGame
 {
+  /** Interface to the Environment Game Actor.  The dtGame::GameManager uses this
+    * class as the Environment Actor.  It is expected users will derive and 
+    * supply their own implementation of a concrete Environment Actor.
+    */
    class DT_GAME_EXPORT IEnvGameActor : public GameActor, public dtDAL::IEnvironmentActor
    {
       public:
 
          /// Constructor
          IEnvGameActor(GameActorProxy &proxy);
-
-         /**
-          * Enables a cloud plane in this environment
-          * @todo Refactor this to not use hardcoded numbers
-          * @param enable True to turn on, false to turn off
-          */
-         virtual void EnableCloudPlane(bool enable) { }
-
-         /**
-          * Returns if a cloud plane is enabled
-          */
-         virtual bool IsCloudPlaneEnabled() const { return false; }
 
       protected:
 
@@ -54,6 +46,10 @@ namespace dtGame
 
    };
 
+   /** Interface to the proxy of the Environment Game Actor.  Users should derive
+     * a concrete version and supply that to the GameManager.
+     * @see dtGame::GameManager::SetEnvironmentActor()
+     */
    class DT_GAME_EXPORT IEnvGameActorProxy : public GameActorProxy
    {
       public:
@@ -61,22 +57,10 @@ namespace dtGame
          /// Constructor
          IEnvGameActorProxy();
 
-         /// Creates the actor this proxy encapsulates
-         virtual void CreateActor() = 0;
-
-         /// Called when a proxy is added to the game manager
-         virtual void OnEnteredWorld() = 0;
-
-         /// Called to build the properties associated with a proxy
-         virtual void BuildPropertyMap() = 0;
-
-         /// Called to build the invokables associated with a proxy
-         virtual void BuildInvokables() = 0;
-
       protected:
 
          /// Destructor
-         virtual ~IEnvGameActorProxy();
+         virtual ~IEnvGameActorProxy() = 0;
 
       private:
    };
