@@ -153,7 +153,7 @@ namespace dtActors
    BasicEnvironmentActor::WindTypeEnum BasicEnvironmentActor::WindTypeEnum::WIND_HEAVY("Wind Heavy", dtABC::Weather::WIND_HEAVY);
 
    BasicEnvironmentActor::BasicEnvironmentActor(dtGame::GameActorProxy &proxy) :
-      dtGame::EnvironmentActor(proxy),
+      dtGame::IEnvGameActor(proxy),
       mIsCloudPlaneEnabled(false),
       mWeather(new dtABC::Weather),
       mCloudPlane(new dtCore::CloudPlane(6, 0.5f, 6, 1, 0.3f, 0.96f, 512, 1400.0f)),

@@ -39,13 +39,13 @@ namespace dtGame
    //////////////////////////////////////////////////////////////
    // Actor code
    //////////////////////////////////////////////////////////////
-   EnvironmentActor::EnvironmentActor(GameActorProxy &proxy) :
+   IEnvGameActor::IEnvGameActor(GameActorProxy &proxy) :
       GameActor(proxy)
    {
 
    }
 
-   EnvironmentActor::~EnvironmentActor()
+   IEnvGameActor::~IEnvGameActor()
    {
 
    }

@@ -749,7 +749,7 @@ void GameActorTests::TestSetEnvironmentActor()
       CPPUNIT_ASSERT(ap.valid());
       dtCore::RefPtr<dtGame::EnvironmentActorProxy> eap2 = dynamic_cast<dtGame::EnvironmentActorProxy*>(ap.get());
       CPPUNIT_ASSERT(eap2 != NULL);
-      dtCore::RefPtr<dtGame::EnvironmentActor>      ea2  = dynamic_cast<dtGame::EnvironmentActor*>(eap2->GetActor());
+      dtCore::RefPtr<dtGame::IEnvGameActor>      ea2  = dynamic_cast<dtGame::IEnvGameActor*>(eap2->GetActor());
       CPPUNIT_ASSERT(ea2 != NULL);
       mManager->SetEnvironmentActor(eap.get());
       //One cannot enable paging without a window.

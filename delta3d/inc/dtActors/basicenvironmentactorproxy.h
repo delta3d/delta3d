@@ -28,7 +28,7 @@
 
 namespace dtActors
 {
-   class DT_PLUGIN_EXPORT BasicEnvironmentActor : public dtGame::EnvironmentActor
+   class DT_PLUGIN_EXPORT BasicEnvironmentActor : public dtGame::IEnvGameActor
    {
       public:
 
