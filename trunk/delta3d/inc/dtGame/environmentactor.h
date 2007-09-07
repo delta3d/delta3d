@@ -28,12 +28,12 @@
 
 namespace dtGame
 {
-   class DT_GAME_EXPORT EnvironmentActor : public GameActor, public dtDAL::IEnvironmentActor
+   class DT_GAME_EXPORT IEnvGameActor : public GameActor, public dtDAL::IEnvironmentActor
    {
       public:
 
          /// Constructor
-         EnvironmentActor(GameActorProxy &proxy);
+         IEnvGameActor(GameActorProxy &proxy);
 
          /**
           * Enables a cloud plane in this environment
@@ -50,7 +50,7 @@ namespace dtGame
       protected:
 
          /// Destructor
-         virtual ~EnvironmentActor();
+         virtual ~IEnvGameActor();
 
    };
 

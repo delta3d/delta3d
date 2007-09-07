@@ -12,7 +12,7 @@ namespace dtCore
 
 namespace dtActors
 {
-   class DT_PLUGIN_EXPORT EnvActor : public dtGame::EnvironmentActor
+   class DT_PLUGIN_EXPORT EnvActor : public dtGame::IEnvGameActor
    {
    public:
       EnvActor( dtGame::GameActorProxy &proxy );

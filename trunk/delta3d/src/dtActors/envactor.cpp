@@ -5,7 +5,7 @@
 using namespace dtActors;
 
 dtActors::EnvActor::EnvActor( dtGame::GameActorProxy &proxy ):
-dtGame::EnvironmentActor(proxy),
+dtGame::IEnvGameActor(proxy),
 mEnv(new dtCore::Environment())
 {
    SetName("EnvActor");

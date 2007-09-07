@@ -24,12 +24,12 @@
 #include "export.h"
 #include <dtGame/environmentactor.h>
 
-class DT_EXAMPLE_EXPORT TestGameEnvironmentActor : public dtGame::EnvironmentActor
+class DT_EXAMPLE_EXPORT TestGameEnvironmentActor : public dtGame::IEnvGameActor
 {
    public:
 
       TestGameEnvironmentActor(dtGame::GameActorProxy &proxy) :
-         dtGame::EnvironmentActor(proxy), mYear(0), mMonth(0), mDay(0), mHour(0), mMin(0), mSec(0) { }
+         dtGame::IEnvGameActor(proxy), mYear(0), mMonth(0), mDay(0), mHour(0), mMin(0), mSec(0) { }
 
       virtual void AddActor(dtCore::DeltaDrawable &dd);
 

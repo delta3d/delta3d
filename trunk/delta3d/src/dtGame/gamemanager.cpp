@@ -897,7 +897,7 @@ namespace dtGame
       {
          if(mEnvironment.get() != &actorProxy)
          {
-            EnvironmentActor *ea = dynamic_cast<EnvironmentActor*>(mEnvironment->GetActor());
+            IEnvGameActor *ea = dynamic_cast<IEnvGameActor*>(mEnvironment->GetActor());
             if(ea == NULL)
             {
                LOG_ERROR("An environment actor proxy has an invalid actor");
@@ -934,7 +934,7 @@ namespace dtGame
       {
          if(mEnvironment.get() != &gameActorProxy)
          {
-            EnvironmentActor *ea = static_cast<EnvironmentActor*>(mEnvironment->GetActor());
+            IEnvGameActor *ea = static_cast<IEnvGameActor*>(mEnvironment->GetActor());
             ea->AddActor(*gameActorProxy.GetActor());
             mGameActorProxyMap.insert(std::make_pair(gameActorProxy.GetId(), &gameActorProxy));
          }
@@ -1015,7 +1015,7 @@ namespace dtGame
             return;
          }
 
-         EnvironmentActor *ea = static_cast<EnvironmentActor*>(envActor->GetActor());
+         IEnvGameActor *ea = static_cast<IEnvGameActor*>(envActor->GetActor());
 
          dtCore::RefPtr<EnvironmentActorProxy> oldProxy = mEnvironment;
          bool wasPagingEnabled = mScene->IsPagingEnabled();
@@ -1049,7 +1049,7 @@ namespace dtGame
          AddActor(*mEnvironment, false, false);
          if(wasPagingEnabled)
             mScene->EnablePaging();
-         ea = dynamic_cast<EnvironmentActor*>(mEnvironment->GetActor());
+         ea = dynamic_cast<IEnvGameActor*>(mEnvironment->GetActor());
          if(ea == NULL)
          {
             LOG_ERROR("The environment actor proxy parameter has an invalid actor");
@@ -1116,7 +1116,7 @@ namespace dtGame
       if(eap != NULL && mScene->GetDrawableIndex(eap->GetActor()) != mScene->GetNumberOfAddedDrawable())
       {
          // First we have to remove all of the actors from it
-         EnvironmentActor *e = dynamic_cast<EnvironmentActor*>(&eap->GetGameActor());
+         IEnvGameActor *e = dynamic_cast<IEnvGameActor*>(&eap->GetGameActor());
          std::vector<dtCore::DeltaDrawable*> actors;
          e->GetAllActors(actors);
          e->RemoveAllActors();
@@ -1224,7 +1224,7 @@ namespace dtGame
 
          if (mEnvironment.valid())
          {
-            static_cast<dtGame::EnvironmentActor&>(mEnvironment->GetGameActor()).RemoveAllActors();
+            static_cast<dtGame::IEnvGameActor&>(mEnvironment->GetGameActor()).RemoveAllActors();
             mEnvironment = NULL;
          }
 
