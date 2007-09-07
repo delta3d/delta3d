@@ -78,7 +78,7 @@ namespace dtDAL
       {
          msg.clear();
          msg.str("");
-         msg << "Registry for library with name " + libName <<
+         msg << "Registry for library with name " << libName <<
             " already exists.  Library must already be loaded.";
          LOG_ERROR(msg.str());
          return;
@@ -86,7 +86,7 @@ namespace dtDAL
 
       dtUtil::LibrarySharingManager& lsm = dtUtil::LibrarySharingManager::GetInstance();
         
-      RegistryEntry newEntry;        
+      RegistryEntry newEntry;
         
       try
       {
