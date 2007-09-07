@@ -264,10 +264,18 @@ void CEUIDrawable::OnMessage(dtCore::Base::MessageData *data)
 
 void CEUIDrawable::SetRenderingSize(int width, int height)
 {
-   mWidth = width;
-   mHeight = height;
-   mRenderer->setDisplaySize( CEGUI::Size(width, height) );
-   mMouseListener->SetWindowSize( width , height );
+   try 
+   {
+      mWidth = width;
+      mHeight = height;
+      mRenderer->setDisplaySize( CEGUI::Size(width, height) );
+      mMouseListener->SetWindowSize( width , height );
+   }
+   catch (const CEGUI::Exception& ex)
+   {
+      const std::string error = std::string("Problem setting the CEGUI Rendering size:") + ex.getMessage().c_str();
+      throw dtUtil::Exception(error, __FILE__, __LINE__);
+   }
 }
 
 void CEUIDrawable::ShutdownGUI()
@@ -300,7 +308,7 @@ void CEUIDrawable::osgCEUIDrawable::drawImplementation(osg::State& state) const
 {
    //tell the UI to update and to render
    if(!mUI) 
-      return;       
+      return;
  
    //we must disable the client active texture unit because it may have been used and not disabled
    //this will cause our GUI to disappear
