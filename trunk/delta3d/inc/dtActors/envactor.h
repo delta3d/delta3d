@@ -87,7 +87,7 @@ namespace dtActors
    };
 
 
-   class DT_PLUGIN_EXPORT EnvActorProxy : public dtGame::EnvironmentActorProxy
+   class DT_PLUGIN_EXPORT EnvActorProxy : public dtGame::IEnvGameActorProxy
    {
    public:
       EnvActorProxy();

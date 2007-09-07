@@ -413,7 +413,7 @@ namespace dtActors
          dtABC::Weather::WeatherTheme mWeatherTheme;
    };
 
-   class DT_PLUGIN_EXPORT BasicEnvironmentActorProxy : public dtGame::EnvironmentActorProxy
+   class DT_PLUGIN_EXPORT BasicEnvironmentActorProxy : public dtGame::IEnvGameActorProxy
    {
       public:
 

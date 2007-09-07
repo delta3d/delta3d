@@ -97,6 +97,7 @@ namespace dtHLAGM
       xercesc_dt::LocalFileInputSource inputSource(schemaFileNameXMLCh);
       //cache the schema
       mXercesParser->loadGrammar(inputSource, xercesc_dt::Grammar::SchemaGrammarType, true);
+ 
       xercesc_dt::XMLString::release(&schemaFileNameXMLCh);
    }
    

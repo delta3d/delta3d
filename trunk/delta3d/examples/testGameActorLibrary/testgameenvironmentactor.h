@@ -68,7 +68,7 @@ class DT_EXAMPLE_EXPORT TestGameEnvironmentActor : public dtGame::IEnvGameActor
       int mSec;
 };
 
-class DT_EXAMPLE_EXPORT TestGameEnvironmentActorProxy : public dtGame::EnvironmentActorProxy
+class DT_EXAMPLE_EXPORT TestGameEnvironmentActorProxy : public dtGame::IEnvGameActorProxy
 {
    public:
 

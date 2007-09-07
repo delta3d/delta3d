@@ -54,12 +54,12 @@ namespace dtGame
 
    };
 
-   class DT_GAME_EXPORT EnvironmentActorProxy : public GameActorProxy
+   class DT_GAME_EXPORT IEnvGameActorProxy : public GameActorProxy
    {
       public:
 
          /// Constructor
-         EnvironmentActorProxy();
+         IEnvGameActorProxy();
 
          /// Creates the actor this proxy encapsulates
          virtual void CreateActor() = 0;
@@ -76,7 +76,7 @@ namespace dtGame
       protected:
 
          /// Destructor
-         virtual ~EnvironmentActorProxy();
+         virtual ~IEnvGameActorProxy();
 
       private:
    };
