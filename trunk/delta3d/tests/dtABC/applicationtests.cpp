@@ -339,9 +339,9 @@ namespace dtTest
       CPPUNIT_ASSERT_EQUAL(std::string("mypath2"), libPath[1]);
       CPPUNIT_ASSERT_EQUAL(std::string("mypath3"), libPath[2]);
 
-      CPPUNIT_ASSERT_EQUAL(std::string("Value1"), app->GetConfigPropertyValue("Name1"));
-      CPPUNIT_ASSERT_EQUAL(std::string("Value2"), app->GetConfigPropertyValue("Name2"));
-      CPPUNIT_ASSERT_EQUAL(std::string("Value3"), app->GetConfigPropertyValue("Name3"));
+      CPPUNIT_ASSERT_EQUAL(std::string("TestVal1"), app->GetConfigPropertyValue("Name1"));
+      CPPUNIT_ASSERT_EQUAL(std::string("TestVal2"), app->GetConfigPropertyValue("Name2"));
+      CPPUNIT_ASSERT_EQUAL(std::string("TestVal3"), app->GetConfigPropertyValue("Name3"));
 
       app = NULL;
       
