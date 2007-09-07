@@ -291,7 +291,14 @@ namespace dtDAL
           */
          dtCore::DeltaDrawable* GetActor();
 
-         /// Templated version of GetActor() that static casts the actor to the type passed in.
+         /** Templated version of GetActor() that static casts the actor to the type passed in.
+          *  @note Make sure the supplied pointer is of the correct type which 
+          *  matches the proxy!
+          * @code
+          * dtCore::InfiniteLight *light;
+          * proxy->GetActor(light);
+          * @endcode
+          */
          template <typename TActorPtr>
          void GetActor(TActorPtr& actorType)
          {
