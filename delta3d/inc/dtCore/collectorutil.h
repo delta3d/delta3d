@@ -70,7 +70,7 @@ namespace dtCore
       template <class mapType>
       bool RemoveNode(const std::string & nodeName, mapType & nodeMap )
       {
-         mapType::iterator foundIter = nodeMap.find(nodeName);
+         typename mapType::iterator foundIter = nodeMap.find(nodeName);
          if( foundIter != nodeMap.end() )
          {
             nodeMap.erase(foundIter);

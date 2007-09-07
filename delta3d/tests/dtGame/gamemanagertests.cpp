@@ -1222,12 +1222,12 @@ void GameManagerTests::TestFindActorById()
 /////////////////////////////////////////////////
 void GameManagerTests::TestFindGameActorById()
 {
-   dtCore::RefPtr<dtGame::EnvironmentActorProxy> envActor;
+   dtCore::RefPtr<dtGame::IEnvGameActorProxy> envActor;
    mManager->CreateActor("ExampleActors", "TestEnvironmentActor", envActor);
    CPPUNIT_ASSERT(envActor.valid());
    mManager->AddActor(*envActor, false, false);
 
-   dtGame::EnvironmentActorProxy *value;
+   dtGame::IEnvGameActorProxy *value;
    mManager->FindGameActorById(envActor->GetId(), value);
 
    CPPUNIT_ASSERT_MESSAGE("The template version of FindGameActorById should not return NULL", envActor.valid());

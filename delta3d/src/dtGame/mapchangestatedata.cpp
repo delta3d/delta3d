@@ -184,8 +184,8 @@ namespace dtGame
 
       if (map.GetEnvironmentActor() != NULL)
       {
-         dtGame::EnvironmentActorProxy *eap = 
-            static_cast<dtGame::EnvironmentActorProxy*>(map.GetEnvironmentActor());
+         dtGame::IEnvGameActorProxy *eap = 
+            static_cast<dtGame::IEnvGameActorProxy*>(map.GetEnvironmentActor());
          
          mGameManager->SetEnvironmentActor(eap);
       }
@@ -218,7 +218,7 @@ namespace dtGame
                   //this object is not in IDLE state :-)
                   try
                   {
-                     mGameManager->AddActor(*gameProxy, false, shouldPublish);                        
+                     mGameManager->AddActor(*gameProxy, false, shouldPublish);
                   }
                   catch (const dtUtil::Exception& ex)
                   {

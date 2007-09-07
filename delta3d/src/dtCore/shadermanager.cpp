@@ -502,7 +502,7 @@ namespace dtCore
       }
       catch (const dtUtil::Exception &e)
       {
-         throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,e.ToString(), __FILE__, __LINE__);
+         throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR, e.ToString(), __FILE__, __LINE__);
       }
    }
 }

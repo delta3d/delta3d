@@ -325,13 +325,13 @@ namespace dtGame
           * Sets an environment actor on the game manager
           * @param envActor The environment actor to set
           */
-         void SetEnvironmentActor(EnvironmentActorProxy *envActor);
+         void SetEnvironmentActor(IEnvGameActorProxy *envActor);
 
          /**
           * Gets the environment actor on the game manager
           * @return mEnvProxy or NULL if no environment actor has been set
           */
-         EnvironmentActorProxy* GetEnvironmentActor() { return mEnvironment.get(); }
+         IEnvGameActorProxy* GetEnvironmentActor() { return mEnvironment.get(); }
 
          /**
           * Creates a game actor based on the actor type but sets the isRemote status to true (== remote).
@@ -980,10 +980,10 @@ namespace dtGame
           * Private helper method to send an environment changed message
           * @param envActor The about actor of the message
           */
-         void SendEnvironmentChangedMessage(EnvironmentActorProxy *envActor);
+         void SendEnvironmentChangedMessage(IEnvGameActorProxy *envActor);
       
          dtCore::RefPtr<MachineInfo>            mMachineInfo;
-         dtCore::RefPtr<EnvironmentActorProxy>  mEnvironment;
+         dtCore::RefPtr<IEnvGameActorProxy>  mEnvironment;
 
          std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> > mGameActorProxyMap;
          std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> > mActorProxyMap;

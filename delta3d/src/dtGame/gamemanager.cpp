@@ -1004,7 +1004,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::SetEnvironmentActor(EnvironmentActorProxy *envActor)
+   void GameManager::SetEnvironmentActor(IEnvGameActorProxy *envActor)
    {
       if(envActor != NULL)
       {
@@ -1017,7 +1017,7 @@ namespace dtGame
 
          IEnvGameActor *ea = static_cast<IEnvGameActor*>(envActor->GetActor());
 
-         dtCore::RefPtr<EnvironmentActorProxy> oldProxy = mEnvironment;
+         dtCore::RefPtr<IEnvGameActorProxy> oldProxy = mEnvironment;
          bool wasPagingEnabled = mScene->IsPagingEnabled();
          if(wasPagingEnabled)
             mScene->DisablePaging();
@@ -1112,7 +1112,7 @@ namespace dtGame
    void GameManager::DeleteActor(dtDAL::ActorProxy& actorProxy)
    {
       // Is it an environment actor proxy?
-      EnvironmentActorProxy *eap = dynamic_cast<EnvironmentActorProxy*>(&actorProxy);
+      IEnvGameActorProxy *eap = dynamic_cast<IEnvGameActorProxy*>(&actorProxy);
       if(eap != NULL && mScene->GetDrawableIndex(eap->GetActor()) != mScene->GetNumberOfAddedDrawable())
       {
          // First we have to remove all of the actors from it
@@ -1826,7 +1826,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::SendEnvironmentChangedMessage(EnvironmentActorProxy *envActor)
+   void GameManager::SendEnvironmentChangedMessage(IEnvGameActorProxy *envActor)
    {
       dtCore::RefPtr<Message> msg = mFactory.CreateMessage(MessageType::INFO_ENVIRONMENT_CHANGED);
       msg->SetAboutActorId(mEnvironment.valid() ? envActor->GetActor()->GetUniqueId() : dtCore::UniqueId(""));

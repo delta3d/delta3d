@@ -26,12 +26,12 @@ namespace dtGame
    //////////////////////////////////////////////////////////////
    // Actor proxy code
    //////////////////////////////////////////////////////////////
-   EnvironmentActorProxy::EnvironmentActorProxy()
+   IEnvGameActorProxy::IEnvGameActorProxy()
    {
 
    }
 
-   EnvironmentActorProxy::~EnvironmentActorProxy()
+   IEnvGameActorProxy::~IEnvGameActorProxy()
    {
 
    }

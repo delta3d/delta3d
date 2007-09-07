@@ -747,7 +747,7 @@ void GameActorTests::TestSetEnvironmentActor()
       CPPUNIT_ASSERT(type.valid());
       ap = mManager->CreateActor(*type);
       CPPUNIT_ASSERT(ap.valid());
-      dtCore::RefPtr<dtGame::EnvironmentActorProxy> eap2 = dynamic_cast<dtGame::EnvironmentActorProxy*>(ap.get());
+      dtCore::RefPtr<dtGame::IEnvGameActorProxy> eap2 = dynamic_cast<dtGame::IEnvGameActorProxy*>(ap.get());
       CPPUNIT_ASSERT(eap2 != NULL);
       dtCore::RefPtr<dtGame::IEnvGameActor>      ea2  = dynamic_cast<dtGame::IEnvGameActor*>(eap2->GetActor());
       CPPUNIT_ASSERT(ea2 != NULL);
