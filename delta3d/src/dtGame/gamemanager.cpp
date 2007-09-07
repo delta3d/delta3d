@@ -1324,8 +1324,8 @@ namespace dtGame
       for(iter = mActorProxyMap.begin(); iter != mActorProxyMap.end(); ++iter)
          toFill.push_back(iter->second.get());
 
-      for(itor = mPrototypeActors.begin(); itor != mPrototypeActors.end(); ++itor)
-         toFill.push_back(itor->second.get());
+      //for(itor = mPrototypeActors.begin(); itor != mPrototypeActors.end(); ++itor)
+      //   toFill.push_back(itor->second.get());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
