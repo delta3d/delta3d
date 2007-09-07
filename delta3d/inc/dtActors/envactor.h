@@ -16,10 +16,8 @@ namespace dtActors
    {
    public:
       EnvActor( dtGame::GameActorProxy &proxy );
-   	virtual ~EnvActor();
+   	  virtual ~EnvActor();
 
-      void SetFogEnable(bool enabled);
-      bool GetFogEnable() const;
 
       /**
       * Adds an actor to the internal hierarchy of the environment
@@ -52,6 +50,19 @@ namespace dtActors
       virtual void GetAllActors(std::vector<dtCore::DeltaDrawable*> &vec);
 
       /**
+      * Gets the number of children of this environment
+      */
+      virtual unsigned int GetNumEnvironmentChildren() const;
+
+
+      void SetFogEnable(bool enabled);
+      bool GetFogEnable() const;
+
+      void SetVisibility( float distance );
+      float GetVisbility() const;
+
+
+      /**
       * Sets the date and time on this environment
       * @param year The year to set
       * @param month The month to set
@@ -60,7 +71,7 @@ namespace dtActors
       * @param min The minute to set
       * @param sec The second to set
       */
-      virtual void SetTimeAndDate(const int year, const int month, const int day,
+      void SetTimeAndDate(const int year, const int month, const int day,
                                   const int hour, const int min,   const int sec);
 
 
@@ -73,12 +84,8 @@ namespace dtActors
       * @param min The minute to get
       * @param sec The second to get
       */
-      virtual void GetTimeAndDate(int &year, int &month, int &day, int &hour, int &min, int &sec) const;
+      void GetTimeAndDate(int &year, int &month, int &day, int &hour, int &min, int &sec) const;
 
-      /**
-      * Gets the number of children of this environment
-      */
-      virtual unsigned int GetNumEnvironmentChildren() const;
 
    protected:
    	
@@ -94,8 +101,6 @@ namespace dtActors
 
      virtual void BuildPropertyMap();
      virtual void CreateActor();
-     virtual void BuildInvokables();
-     virtual void OnEnteredWorld() {};
 
    protected:
       virtual ~EnvActorProxy();

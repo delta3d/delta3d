@@ -67,28 +67,6 @@ namespace dtDAL
           */
          virtual void GetAllActors(std::vector<dtCore::DeltaDrawable*> &vec) = 0;
 
-         /**
-          * Sets the date and time on this environment
-          * @param year The year to set
-          * @param month The month to set
-          * @param day The day to set
-          * @param hour The hour to set in military time
-          * @param min The minute to set
-          * @param sec The second to set
-          */
-         virtual void SetTimeAndDate(const int year, const int month, const int day,
-            const int hour, const int min,   const int sec) = 0;
-
-         /**
-          * Gets the time and date of the current environment
-          * @param year The year to get
-          * @param month The month to get
-          * @param day The day to get
-          * @param hour The hour to get
-          * @param min The minute to get
-          * @param sec The second to get
-          */
-         virtual void GetTimeAndDate(int &year, int &month, int &day, int &hour, int &min, int &sec) const = 0;
    
          /**
           * Gets the number of children of this environment
