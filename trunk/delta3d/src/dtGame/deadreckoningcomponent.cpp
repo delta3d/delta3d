@@ -660,7 +660,6 @@ namespace dtGame
 
 
       iterDOF = containerDOFs.begin();
-      bool continuedAgain = false;
       while(iterDOF != endDOF)
       {
          DeadReckoningHelper::DeadReckoningDOF *currentDOF = (*iterDOF).get();
