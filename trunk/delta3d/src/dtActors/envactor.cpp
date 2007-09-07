@@ -9,6 +9,10 @@ dtGame::IEnvGameActor(proxy),
 mEnv(new dtCore::Environment())
 {
    SetName("EnvActor");
+
+   //Add the Environment as a child to EnvActor, so when EnvActor
+   //gets added to the scene, so does the Environment
+   AddChild( mEnv.get() );
 }
 
 
