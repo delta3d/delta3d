@@ -619,12 +619,6 @@ namespace dtGame
          return;
       }
 
-      dtGame::DeadReckoningHelper::UpdateMode& um = helper.GetEffectiveUpdateMode(gameActor.IsRemote());
-      if((um != DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR) )
-      {
-         return;
-      }
-
       const std::list<dtCore::RefPtr<DeadReckoningHelper::DeadReckoningDOF> >& containerDOFs = helper.GetDeadReckoningDOFs();
       std::list<dtCore::RefPtr<DeadReckoningHelper::DeadReckoningDOF> >::const_iterator endDOF = containerDOFs.end();
 
