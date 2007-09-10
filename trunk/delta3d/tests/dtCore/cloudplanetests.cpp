@@ -54,60 +54,55 @@ using namespace dtTest;
 
 void CloudPlaneTests::setUp()
 {
-   mTextureDir = "Textures";
-   if(!dtUtil::FileUtils::GetInstance().DirExists(mTextureDir))
-   {
-      dtUtil::FileUtils::GetInstance().MakeDirectory(mTextureDir);
-   }
-   dtUtil::FileUtils::GetInstance().ChangeDirectory(mTextureDir);
-
    mAbsolutePath = dtUtil::FileUtils::GetInstance().GetAbsolutePath(
       dtUtil::FileUtils::GetInstance().CurrentDirectory());
 
    mPathDelimiter = dtUtil::FileUtils::PATH_SEPARATOR;
+
+   mTextureDir = mAbsolutePath+mPathDelimiter+"testClouds.dds";
+
 }
 
 void CloudPlaneTests::tearDown()
 {
-   dtUtil::FileUtils::GetInstance().ChangeDirectory("..");
-   dtUtil::FileUtils::GetInstance().FileDelete(mAbsolutePath+mPathDelimiter+"_testclouds.png");
-   CPPUNIT_ASSERT(!dtUtil::FileUtils::GetInstance().FileExists(mAbsolutePath+mPathDelimiter+"_testclouds.png"));
-   dtUtil::FileUtils::GetInstance().DirDelete(mTextureDir, true);
-   CPPUNIT_ASSERT(!dtUtil::FileUtils::GetInstance().DirExists(mTextureDir));
+   dtUtil::FileUtils::GetInstance().FileDelete(mTextureDir);
+   CPPUNIT_ASSERT(!dtUtil::FileUtils::GetInstance().FileExists(mTextureDir));
 }
 
 void CloudPlaneTests::TestSaveAndLoad()
 {
-
-   /*
-   dtCore::RefPtr<dtABC::Weather> weather = new dtABC::Weather();
-
-   // Test all weather cloud states (each call should generate a texture).
-   weather->SetBasicCloudType(dtABC::Weather::CloudType::CLOUD_FEW, textureDir);
-   weather->SetBasicCloudType(dtABC::Weather::CloudType::CLOUD_SCATTERED, textureDir);
-   weather->SetBasicCloudType(dtABC::Weather::CloudType::CLOUD_BROKEN, textureDir);
-   weather->SetBasicCloudType(dtABC::Weather::CloudType::CLOUD_OVERCAST, textureDir);
-
-   // Test weather saving
-   CPPUNIT_ASSERT( 
-      weather->SaveCloudTextures(asolutePath) == 4 );
-
-   // Test weather loading
-   CPPUNIT_ASSERT( weather->LoadCloudTextures(textureDir) == 4 );//*/
+   dtCore::RefPtr<dtCore::CloudPlane> fakeCloud = 
+      new dtCore::CloudPlane(6, 0.75f, 2, 1, .2, .96, 1, 1.f, 
+      "Fake Clouds", "ThisFileIsNotReal.Imaginary");
 
    dtCore::RefPtr<dtCore::CloudPlane> clouds = 
       new dtCore::CloudPlane(6, 0.75f, 2, 1, .2, .96, 1, 1.f, 
-      "Test Clouds", mTextureDir );
+      "Test Clouds", "");
 
-   bool result = clouds->SaveTexture(mAbsolutePath+mPathDelimiter+"_testclouds.png");
+   bool result = clouds->SaveTexture(mTextureDir);
    // Test Save
-   CPPUNIT_ASSERT(result);
+   CPPUNIT_ASSERT(result); 
 
-   result = clouds->LoadTexture(mTextureDir+mPathDelimiter+"_testclouds.png");
+   result = clouds->LoadTexture(mTextureDir);
    // Test Load
    CPPUNIT_ASSERT(result);
 
+   dtCore::RefPtr<dtCore::CloudPlane> clouds2 = 
+      new dtCore::CloudPlane(1000.0f, "Test Clouds2", mTextureDir);
 
+   clouds->SetColor(osg::Vec4(0.5,0.5,0.5,0.5));
+   clouds2->SetColor(osg::Vec4(1.0,1.0,1.0,1.0));
+
+   CPPUNIT_ASSERT( clouds2->GetColor() == osg::Vec4(1.0,1.0,1.0,1.0) );
+   CPPUNIT_ASSERT( clouds->GetColor() != clouds2->GetColor());
+
+   clouds->SetWind(3.0f, 3.0f); 
+   clouds2->SetWind(3.0f, 3.5f);
+
+   CPPUNIT_ASSERT( clouds->GetWind() == osg::Vec2(3.0,3.0) );
+   CPPUNIT_ASSERT( clouds->GetWind() != clouds2->GetWind());
+
+   fakeCloud = NULL;
    clouds = NULL;
-   //weather = NULL;
+   clouds2 = NULL;
 }

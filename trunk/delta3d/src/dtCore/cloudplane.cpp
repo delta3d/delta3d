@@ -25,6 +25,8 @@ const int MAX_HEIGHT = 2000;
 using namespace dtCore;
 IMPLEMENT_MANAGEMENT_LAYER(CloudPlane)
 
+
+
 CloudPlane::CloudPlane( int   octaves,
                         float cutoff,
                         int   frequency,
@@ -35,19 +37,21 @@ CloudPlane::CloudPlane( int   octaves,
                         float height,
                         const std::string& name,
                         const std::string& textureFilePath)
-   : EnvEffect(name),
-     mOctaves(octaves),
-     mCutoff(cutoff),
-     mFrequency(frequency),
-     mAmplitude(amp),
-     mPersistence(persistence),
-     mDensity(density),
-     mHeight(height),
-     mTexSize(texSize),
-     mWind(NULL),
-     mCloudColor(NULL),
-     mTexCoords(NULL),
-     mColors(NULL)
+   : EnvEffect(name)
+   , mOctaves(octaves)
+   , mCutoff(cutoff)
+   , mFrequency(frequency)
+   , mAmplitude(amp)
+   , mPersistence(persistence)
+   , mDensity(density)
+   , mHeight(height)
+   , mTexSize(texSize)
+   , mWind(osg::Vec2(0.0f,0.0f))
+   , mCloudColor(osg::Vec4(0.0f,0.0f,0.0f,0.0f))
+   , mSkyColor()
+   , mTexCoords(NULL)
+   , mColors(NULL)
+   , mCloudTexture(new osg::Texture2D())
 {
 	RegisterInstance(this);
 	if(mHeight > MAX_HEIGHT)
@@ -58,6 +62,35 @@ CloudPlane::CloudPlane( int   octaves,
 
 	Create(textureFilePath);
 	AddSender(&System::GetInstance());
+
+}
+
+CloudPlane::CloudPlane( float height, const std::string& name, const std::string &textureFilePath ) 
+   : EnvEffect(name)
+   , mOctaves(0)
+   , mCutoff(0)
+   , mFrequency(0)
+   , mAmplitude(0)
+   , mPersistence(0)
+   , mDensity(0)
+   , mHeight(height)
+   , mTexSize(0)
+   , mWind(osg::Vec2(0.0f,0.0f))
+   , mCloudColor(osg::Vec4(0.0f,0.0f,0.0f,0.0f))
+   , mSkyColor()
+   , mTexCoords(NULL)
+   , mColors(NULL)
+   , mCloudTexture(new osg::Texture2D())
+{
+   RegisterInstance(this);
+   if(mHeight > MAX_HEIGHT)
+      mHeight = MAX_HEIGHT;
+
+   SetOSGNode(new osg::Group);
+   GetOSGNode()->setNodeMask(0xf0000000);
+
+   Create(textureFilePath);
+   AddSender(&System::GetInstance());
 }
 
 CloudPlane::~CloudPlane()
@@ -66,15 +99,16 @@ CloudPlane::~CloudPlane()
    RemoveSender(&System::GetInstance());
 }
 
+
 ///Sets the color of the Cloud Plane
-void CloudPlane::SetColor( osg::Vec4 newColor)
+void CloudPlane::SetColor( const osg::Vec4& newColor)
 {
    mFog->setColor( newColor );
 }
 
 ///Returns the color of the clouds
 ///@return current cloud color
-const osg::Vec4 CloudPlane::GetColor()
+osg::Vec4 CloudPlane::GetColor() const
 {
    return mFog->getColor();
 }
@@ -83,12 +117,12 @@ const osg::Vec4 CloudPlane::GetColor()
 ///@return success of save
 bool CloudPlane::SaveTexture(const std::string &textureFilePath)
 {
-   if(!mImage.valid()) 
+   if(!(mCloudTexture->getImage())) 
    { 
       return false; 
    }
 
-   return osgDB::writeImageFile(*mImage, textureFilePath);
+   return osgDB::writeImageFile(*mCloudTexture->getImage(), textureFilePath);
 }
 
 ///Load generated texture from file
@@ -96,49 +130,57 @@ bool CloudPlane::SaveTexture(const std::string &textureFilePath)
 bool CloudPlane::LoadTexture(const std::string &textureFilePath)
 {
    osg::Image* image = osgDB::readImageFile(textureFilePath);
+
    if(image != NULL)
    {
-      mImage = image;
+      LOG_DEBUG("Loading Cloud Plane.");
+
+      image->setPixelFormat(GL_ALPHA);
+
+      mCloudTexture->setImage(image);
+
+      osg::StateSet *stateset = mPlane->getOrCreateStateSet();
+      stateset->setTextureAttributeAndModes(0, mCloudTexture.get());
+      FilterTexture();
+
       return true;
    }
    else
    {
+      LOG_ERROR("Failed to Load Cloud Plane." + textureFilePath);
+
       return false;
    }
 }
 
-osg::Texture2D* CloudPlane::CreateCloudTexture( const std::string& filename )
-{
-   osg::Texture2D* texture = NULL;
-   mImage = filename == "" ? NULL : osgDB::readImageFile(filename);
+void CloudPlane::CreateCloudTexture( const std::string& filename )
+{   
+   osg::Image* img = NULL;
 
-   if( ! mImage.valid() )
+   if(!filename.empty())
    {
-      LOG_DEBUG("Creating 2D cloud texture..." );	
-      texture = createPerlinTexture();
-      if( texture == NULL )
+      img = osgDB::readImageFile(filename);
+      if(img != NULL)
       {
-         LOG_ERROR("Could not write 2D cloud texture to file." + filename );	
+         mCloudTexture->setImage(img);
       }
    }
-   else
+    
+   if(img == NULL)
    {
-      texture = new osg::Texture2D(mImage.get());
+      LOG_DEBUG("Creating 2D cloud texture..." );	
+      createPerlinTexture();
    }
-   return texture;
 }
 
 
-osg::Texture2D* CloudPlane::createPerlinTexture()
+void CloudPlane::createPerlinTexture()
 {
-
-   //float bias = 1.5f;
-
    dtUtil::NoiseTexture noise2d(mOctaves, mFrequency, mAmplitude, mPersistence, mTexSize, mTexSize);
-	mImage = noise2d.MakeNoiseTexture(GL_ALPHA);
+   mCloudTexture->setImage(noise2d.MakeNoiseTexture(GL_ALPHA));
 
     // Exponentiation of the image
-    unsigned char *dataPtr = mImage->data();
+    unsigned char *dataPtr = mCloudTexture->getImage()->data();
     unsigned char data;
     
     for (int j = 0; j < mTexSize; ++j)
@@ -154,15 +196,15 @@ osg::Texture2D* CloudPlane::createPerlinTexture()
 
             data = 255 - (unsigned char) (pow(mDensity, data) * 255);
             
-            //if(data > 255) data = 255; //not needed?
-            
             *(dataPtr++) = data;
         }
     }
-
- 	return new osg::Texture2D(mImage.get());
 }
 
+void CloudPlane::SetWind(float x, float y)
+{
+   mWind.set(x, y);
+}
 
 void CloudPlane::Create(const std::string& textureFilePath) 
 {
@@ -172,24 +214,18 @@ void CloudPlane::Create(const std::string& textureFilePath)
 	mGeode = new osg::Geode();
 	mGeode->setName("CloudPlane");
 
-	mCloudColor = new osg::Vec4;
-
-	mWind = new osg::Vec2(.05f / mHeight, .05f/ mHeight);
+	mWind = osg::Vec2(.05f / mHeight, .05f/ mHeight);
 
 	int planeSize = 20000;
 
-	mPlane = createPlane(planeSize, mHeight);
+ 	mPlane = createPlane(planeSize, mHeight);
 	osg::StateSet *stateset = mPlane->getOrCreateStateSet();
 
-   mCloudTexture = CreateCloudTexture(textureFilePath);
+   CreateCloudTexture(textureFilePath);
    stateset->setTextureAttributeAndModes(0, mCloudTexture.get());
 
 	// Texture filtering
-	mCloudTexture->setUseHardwareMipMapGeneration(true);
-	mCloudTexture->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR);
-	mCloudTexture->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR_MIPMAP_LINEAR);
-	mCloudTexture->setWrap(osg::Texture2D::WRAP_S, osg::Texture2D::REPEAT);
-	mCloudTexture->setWrap(osg::Texture2D::WRAP_T, osg::Texture2D::REPEAT);
+   FilterTexture();
 
    mTexMat = new osg::TexMat();
    stateset->setTextureAttribute(0, mTexMat.get());
@@ -214,10 +250,10 @@ void CloudPlane::Create(const std::string& textureFilePath)
 	stateset->setAttributeAndModes(mFog.get());
 	stateset->setMode( GL_FOG, osg::StateAttribute::ON );
 
-
 	mGeode->addDrawable(mPlane.get());
 
 	mXform->addChild(mGeode.get());
+
    GetOSGNode()->asGroup()->addChild(mXform.get());
 
    //init the colors to something believable
@@ -238,20 +274,20 @@ void CloudPlane::Repaint(  const osg::Vec3& skyColor,
 	int pm( 500 );
 	if( sunAngle < 13 )
    {
-		mCloudColor->set( 0.3f, 0.3f, 0.3f, 1.0f );
+		mCloudColor.set( 0.3f, 0.3f, 0.3f, 1.0f );
    }
 	else if( sunAngle > 13 && sunAngle <= 18 )
 	{
 		float fr = (18 - sunAngle)  / 5.0f; 
-		mCloudColor->set( fr*(pm/mHeight), 0.9f *fr*(pm/mHeight), 0.76f *fr*(pm/mHeight), 1.0f );
+		mCloudColor.set( fr*(pm/mHeight), 0.9f *fr*(pm/mHeight), 0.76f *fr*(pm/mHeight), 1.0f );
 	}
 	else
    {
-		mCloudColor->set( 1.0f, 1.0f, 1.0f, 1.0f );
+		mCloudColor.set( 1.0f, 1.0f, 1.0f, 1.0f );
    }
 
 	(*mColors)[0].set( fogColor[0], fogColor[1], fogColor[2], 0.0f );
-	(*mColors)[1].set( (*mCloudColor)[0], (*mCloudColor)[1], (*mCloudColor)[2], 1 );
+	(*mColors)[1].set( (mCloudColor)[0], (mCloudColor)[1], (mCloudColor)[2], 1 );
 
 	mPlane->setColorArray( mColors );
 }
@@ -268,10 +304,9 @@ void CloudPlane::OnMessage(MessageData *data)
 void CloudPlane::Update(const double deltaFrameTime)
 {
 	// Change the texture coordinates of clouds
-
    osg::Matrix mat = mTexMat->getMatrix();
-   mat(3,0) += (*mWind)[0];
-   mat(3,1) += (*mWind)[1];
+   mat(3,0) += (mWind)[0];
+   mat(3,1) += (mWind)[1];
    mTexMat->setMatrix(mat);
 }
 
@@ -307,6 +342,7 @@ osg::Geometry* CloudPlane::createPlane(float size, float height)
 	for(int iy=0;iy<numTilesY;++iy)
 	{
 		for(int ix=0;ix<numTilesX;++ix)
+
 		{
 			// four vertices per quad.
 			coordIndices->push_back(ix     + (iy+1)	*numIndicesPerRow);
@@ -392,4 +428,13 @@ osg::Geometry* CloudPlane::createPlane(float size, float height)
 	geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, coordIndices->size()));
 
 	return geom;
+}
+
+void CloudPlane::FilterTexture()
+{
+   mCloudTexture->setUseHardwareMipMapGeneration(true);
+   mCloudTexture->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR);
+   mCloudTexture->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR_MIPMAP_LINEAR);
+   mCloudTexture->setWrap(osg::Texture2D::WRAP_S, osg::Texture2D::REPEAT);
+   mCloudTexture->setWrap(osg::Texture2D::WRAP_T, osg::Texture2D::REPEAT);
 }
