@@ -8,6 +8,7 @@
 namespace dtCore
 {
    class Environment;
+   class SkyDome;
 }
 
 namespace dtActors
@@ -87,10 +88,14 @@ namespace dtActors
       void GetTimeAndDate(int &year, int &month, int &day, int &hour, int &min, int &sec) const;
 
 
+      void SetSkyDomeEnable( bool enabled );
+      bool GetSkyDomeEnable() const;
+
    protected:
    	
    private:
       dtCore::RefPtr<dtCore::Environment> mEnv;
+      dtCore::RefPtr<dtCore::SkyDome> mSkyDome;
    };
 
 
