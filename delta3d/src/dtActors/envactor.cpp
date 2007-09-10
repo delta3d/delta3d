@@ -1,12 +1,14 @@
 #include <dtActors/envactor.h>
 #include <dtCore/environment.h>
+#include <dtCore/skydome.h>
 #include <dtDAL/enginepropertytypes.h>
 
 using namespace dtActors;
 
 EnvActor::EnvActor( dtGame::GameActorProxy &proxy ):
 dtGame::IEnvGameActor(proxy),
-mEnv(new dtCore::Environment())
+mEnv(new dtCore::Environment()),
+mSkyDome(NULL)
 {
    SetName("EnvActor");
 
@@ -106,6 +108,30 @@ float EnvActor::GetVisbility() const
    return mEnv->GetVisibility();
 }
 
+void EnvActor::SetSkyDomeEnable( bool enabled )
+{
+   //no change
+   if (enabled == mSkyDome.valid()) return;
+
+
+   if (enabled == true)
+   {
+      mSkyDome = new dtCore::SkyDome("sky dome");
+      mEnv->AddEffect( mSkyDome.get() );
+   }
+   else
+   {
+      mEnv->RemEffect( mSkyDome.get() );
+      mSkyDome = NULL;
+   }
+}
+
+
+bool EnvActor::GetSkyDomeEnable() const
+{
+   return mSkyDome.valid();
+}
+
 
 /************************************************************************/
 /*                                                                      */
@@ -130,6 +156,11 @@ void EnvActorProxy::BuildPropertyMap()
       MakeFunctor(*env, &EnvActor::SetFogEnable),
       MakeFunctorRet(*env, &EnvActor::GetFogEnable),
       "Enable or disable the fog"));
+
+   AddProperty( new BooleanActorProperty("Enable Sky Dome", "Enable Sky Dome",
+      MakeFunctor(*env, &EnvActor::SetSkyDomeEnable),
+      MakeFunctorRet(*env, &EnvActor::GetSkyDomeEnable),
+      "Enable or disable the rendering of the Sky Dome"));
 }
 
 void EnvActorProxy::CreateActor()
@@ -137,3 +168,4 @@ void EnvActorProxy::CreateActor()
    dtActors::EnvActor *env = new dtActors::EnvActor( *this );
    SetActor( *env );
 }
+
