@@ -69,6 +69,8 @@ namespace dtCore
                      float height,
                      const std::string& name = "CloudPlane",
                      const std::string& textureFilePath = "");
+       
+       CloudPlane(  float height, const std::string& name, const std::string& textureFilePath );
       
    protected:
 
@@ -94,41 +96,49 @@ namespace dtCore
       bool LoadTexture( const std::string& textureFilePath );
 
       ///Sets the color of the Cloud Plane
-      void SetColor( osg::Vec4 );
+      void SetColor( const osg::Vec4& );
       
       ///Returns the color of the clouds
       ///@return current cloud color
-      const osg::Vec4 GetColor();
+      osg::Vec4 GetColor() const;
+
+      //Sets the Wind Speed on the Cloud Plane
+      void SetWind(float x, float y);
+
+      osg::Vec2 GetWind() const {return mWind;}
 
    private:
 
-       void Create(const std::string& textureFilePath = "");
-       osg::Texture2D *CreateCloudTexture( const std::string& filename );
-       osg::Texture2D *createPerlinTexture();
-       virtual void OnMessage(MessageData *data);
-       void Update(const double deltaFrameTime);
-       osg::Geometry *createPlane(float, float);
+      void Create(const std::string& textureFilePath = "");
 
-       dtCore::RefPtr<osg::Geode> mGeode;
-       dtCore::RefPtr<osg::Geometry> mPlane;
-       dtCore::RefPtr<osg::Image> mImage;
-       dtCore::RefPtr<osg::Texture2D> mCloudTexture;
-       dtCore::RefPtr<osg::Fog> mFog; ///< The fog adjuster
-       int mOctaves;
-       float mCutoff;
-       int   mFrequency;
-       float mAmplitude;
-       float mPersistence;
-       float mDensity;
-       float mHeight;
-       int   mTexSize;
-       osg::Vec4 mSkyColor;
-       osg::Vec2 *mWind;
-       osg::Vec4 *mCloudColor;
-       osg::Vec2Array *mTexCoords;
-       osg::Vec4Array *mColors;
-       dtCore::RefPtr<MoveEarthySkyWithEyePointTransform> mXform;
-       dtCore::RefPtr<osg::TexMat> mTexMat;
+      void FilterTexture();
+
+      void CreateCloudTexture( const std::string& filename );
+      void createPerlinTexture();
+      virtual void OnMessage(MessageData *data);
+      void Update(const double deltaFrameTime);
+      osg::Geometry *createPlane(float, float);
+
+      int mOctaves;
+      float mCutoff;
+      int   mFrequency;
+      float mAmplitude;
+      float mPersistence;
+      float mDensity;
+      float mHeight;
+      int   mTexSize;
+      osg::Vec2 mWind;
+      osg::Vec4 mCloudColor;
+      osg::Vec4 mSkyColor;
+      osg::Vec2Array* mTexCoords;
+      osg::Vec4Array* mColors;
+      dtCore::RefPtr<osg::Texture2D> mCloudTexture;
+      dtCore::RefPtr<MoveEarthySkyWithEyePointTransform> mXform;
+      dtCore::RefPtr<osg::TexMat> mTexMat;
+      dtCore::RefPtr<osg::Geode> mGeode;
+      dtCore::RefPtr<osg::Geometry> mPlane;
+      dtCore::RefPtr<osg::Fog> mFog; ///< The fog adjuster
+
    };
 }
 
