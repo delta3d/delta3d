@@ -74,7 +74,7 @@
  (class SurfaceVessel
  )
  )
- (class LifeForm
+ (class Lifeform
      (attribute FlashLightsOn best_effort receive)
      (attribute StanceCode best_effort receive)
      (attribute PrimaryWeaponState best_effort receive)

@@ -236,10 +236,10 @@ void RTIConnection::JoinFederationExecution(std::string executionName,
       mRTIAmbassador.getObjectClassHandle("BaseEntity.PhysicalEntity.Platform.GroundVehicle");
 
    mLifeFormClassHandle =
-      mRTIAmbassador.getObjectClassHandle("BaseEntity.PhysicalEntity.LifeForm");
+      mRTIAmbassador.getObjectClassHandle("BaseEntity.PhysicalEntity.Lifeform");
 
    mHumanClassHandle =
-      mRTIAmbassador.getObjectClassHandle("BaseEntity.PhysicalEntity.LifeForm.Human");
+      mRTIAmbassador.getObjectClassHandle("BaseEntity.PhysicalEntity.Lifeform.Human");
 
    mAccelerationVectorAttributeHandle = mRTIAmbassador.getAttributeHandle(
       "AccelerationVector",
