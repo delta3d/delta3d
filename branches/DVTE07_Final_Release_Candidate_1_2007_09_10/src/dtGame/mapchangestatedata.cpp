@@ -22,6 +22,8 @@
 #include <dtUtil/log.h>
 #include <dtUtil/exception.h>
 
+#include <dtCore/scene.h>
+
 #include <dtDAL/project.h>
 #include <dtDAL/map.h>
 #include <dtDAL/actortype.h>

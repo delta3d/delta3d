@@ -27,6 +27,9 @@
 #include <vector>
 #include <string>
 #include <osg/Endian>
+
+#include <dtCore/scene.h>
+
 #include <dtDAL/datatype.h>
 #include <dtDAL/project.h>
 #include <dtDAL/enginepropertytypes.h>

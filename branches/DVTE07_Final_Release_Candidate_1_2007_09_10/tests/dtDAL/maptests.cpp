@@ -37,6 +37,7 @@
 
 #include <dtCore/globals.h>
 #include <dtCore/timer.h>
+#include <dtCore/scene.h>
 
 #include <dtABC/application.h>
 

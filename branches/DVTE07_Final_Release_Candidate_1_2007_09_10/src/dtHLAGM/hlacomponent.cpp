@@ -525,7 +525,7 @@ namespace dtHLAGM
       {
          try
          {
-            CreateDDMSubscriptionRegions();            
+            CreateDDMSubscriptionRegions();
          }
          catch (const dtUtil::Exception&)
          {

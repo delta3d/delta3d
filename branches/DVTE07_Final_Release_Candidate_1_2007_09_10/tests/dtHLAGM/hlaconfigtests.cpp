@@ -27,6 +27,7 @@
 
 #include <dtUtil/coordinates.h>
 #include <dtCore/globals.h>
+#include <dtCore/scene.h>
 #include <dtDAL/actortype.h>
 #include <dtDAL/actorpluginregistry.h>
 #include <dtDAL/datatype.h>
