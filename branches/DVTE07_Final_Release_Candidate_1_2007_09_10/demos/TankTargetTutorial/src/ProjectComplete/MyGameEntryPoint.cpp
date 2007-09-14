@@ -51,6 +51,7 @@
 #include <dtCore/keyboard.h>
 #include <dtCore/globals.h>
 #include <dtCore/deltawin.h>
+#include <dtCore/scene.h>
 
 #include <dtDAL/project.h>
 #include <dtDAL/resourcedescriptor.h>
