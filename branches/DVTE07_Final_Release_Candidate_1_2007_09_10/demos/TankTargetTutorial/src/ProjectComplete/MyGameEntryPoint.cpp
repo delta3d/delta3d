@@ -122,7 +122,8 @@ void MyGameEntryPoint::OnStartup()
    // init our file path so it can find GUI Scheme
    // add extra data paths here if you need them
    dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList() + 
-      ";" + dtCore::GetDeltaRootPath() + "/examples/data;");   
+      ";" + dtCore::GetDeltaRootPath() + "/examples/data;"); 
+   std::cout << "Path list is: " << dtCore::GetDataFilePathList() <<  std::endl;
 
    dtDAL::Project::GetInstance().SetContext("StageProject");
 
@@ -219,5 +220,5 @@ void MyGameEntryPoint::OnStartup()
    // ServerLoggerComponent state changes; such as transitions from PLAYBACK to IDLE states.
    //mLogController->RequestAddIgnoredActor(mInputComp->GetTerrainActor().GetId());
 
-   GetGameManager()->DebugStatisticsTurnOn(true, true, 10, true);
+   GetGameManager()->DebugStatisticsTurnOn(true, true, 30, true);
 }
