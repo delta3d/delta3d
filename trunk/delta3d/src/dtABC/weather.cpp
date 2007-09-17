@@ -4,6 +4,7 @@
 #include <dtCore/environment.h>
 #include <dtCore/skydome.h>
 #include <dtUtil/log.h>
+#include <dtUtil/mathDefines.h>
 
 using namespace dtUtil;
 
@@ -222,14 +223,7 @@ void Weather::SetBasicVisibilityType(const VisibilityType visType)
 void Weather::SetRateOfChange(const float rate)
 {
    mRateOfChange = rate;
-   if (mRateOfChange<-1.f)
-   {
-      mRateOfChange = -1.f;
-   }
-   else if (mRateOfChange > 1.f)
-   {
-      mRateOfChange = 1.f;
-   }
+   dtUtil::Clamp<float>(mRateOfChange, -1.0f, 1.0f);
 }
 
 /** Set the Weather's rough time period.  This doesn't affect the date.
