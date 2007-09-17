@@ -4,7 +4,7 @@
 #include <dtCore/environment.h>
 #include <dtCore/skydome.h>
 #include <dtUtil/log.h>
-#include <dtUtil/mathDefines.h>
+#include <dtUtil/mathdefines.h>
 
 using namespace dtUtil;
 
