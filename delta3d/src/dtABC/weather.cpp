@@ -170,30 +170,10 @@ void Weather::SetBasicWindType(const WindType windType)
 {
    mTheme = THEME_CUSTOM;
 
-   if (mWindType == windType)
+   if (mWindType != windType)
    {
-      return;
+      mWindType = windType;      
    }
-
-   mWindType = windType;
-
-   switch (mWindType)
-   {
-      case WIND_NONE:
-   	   break;
-      case WIND_BREEZE:
-   	   break;
-      case WIND_LIGHT:
-   	   break;
-      case WIND_MODERATE:
-   	   break;
-      case WIND_HEAVY:
-         break;
-      case WIND_SEVERE:
-         break;
-      default:
-         break;
-   }   
 }
 
 /**
