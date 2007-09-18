@@ -162,7 +162,15 @@ namespace dtActors
    void MeshTerrainActor::AddedToScene(dtCore::Scene* scene)
    {
       dtCore::Object::AddedToScene(scene);
-      if(!GetFilename().empty())
-         LoadFile(GetFilename());
+
+      // Don't load the file if we're not 
+      // really being added to the scene
+      if (scene != NULL)
+      {         
+         if(!GetFilename().empty())
+         {
+            LoadFile(GetFilename());
+         }
+      }      
    }
 }

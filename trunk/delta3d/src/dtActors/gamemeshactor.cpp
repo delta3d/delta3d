@@ -97,9 +97,17 @@ namespace dtActors
    {
       dtGame::GameActor::AddedToScene(scene);
       
-      mAlreadyInScene = true;
-      if (!mLoader.GetFilename().empty())
-         LoadMesh();
+      // Don't load the mesh if we're not 
+      // really being added to the scene
+      if (scene != NULL)
+      {
+         mAlreadyInScene = true;
+
+         if (!mLoader.GetFilename().empty())
+         {
+            LoadMesh();
+         }
+      }     
    }
 
    //////////////////////////////////////////////////////////////////////////////
