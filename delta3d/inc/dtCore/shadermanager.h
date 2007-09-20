@@ -60,7 +60,7 @@ namespace dtCore
          ///Thrown when a shader with the same name is added to the manager.
          static ShaderException DUPLICATE_SHADERGROUP_FOUND;
 
-         ///Thrown when an error is encounted while parsing an XML shader file.
+         ///Thrown when an error is encountered while parsing an XML shader file.
          static ShaderException XML_PARSER_ERROR;
 
          ///Thrown when there is a duplicate shader parameter added to a shader.
@@ -272,7 +272,7 @@ namespace dtCore
          void LoadShaderDefinitions(const std::string &fileName, bool merge=true);
 
          /**
-          * This method is kind of wierd and should be used ONLY for testing. It 
+          * This method is kind of weird and should be used ONLY for testing. It 
           * unassigns ALL currently assigned nodes, clears out all prototypes, 
           * and then reloads the passed in XML definition file. It then, tries to 
           * remap all of the previously assigned nodes using the new definitions. 
@@ -342,7 +342,7 @@ namespace dtCore
          std::map<std::string,dtCore::RefPtr<ShaderGroup> > mShaderGroups;
 
          ///Shader program cache which stores compiled shader programs that may
-         ///be shared amoungst the loaded shaders.
+         ///be shared amongst the loaded shaders.
          std::map<std::string,ShaderCacheEntry> mShaderProgramCache;
 
          // list of all the actively assigned nodes.  Each active entry has a ref to its instance 
