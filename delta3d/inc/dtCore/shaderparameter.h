@@ -175,7 +175,7 @@ namespace dtCore
           * Sets whether this parameter is shared or not. When a shader is assigned to node 
           * with ShaderManager::AssignShaderFromTemplate, the shared flag indicates if the 
           * templates parameter should be cloned or 'shared'.  A Shared parameter means that multiple
-          * nodes will a reference to exactly the same parameter.  It makes hte parameter global and 
+          * nodes will a reference to exactly the same parameter.  It makes the parameter global and 
           * prevents multiple memory allocations and facilitates State Sorting.  
           * @param shared Changes the template shared flag value - shared params are not cloned when assigning.
           * @note Each param type has it's own default for this. Most default to true (base class default). 
@@ -186,7 +186,7 @@ namespace dtCore
           * Indicates whether this parameter is shared or not. When a shader is assigned to node 
           * with ShaderManager::AssignShaderFromTemplate, the shared flag indicates if the 
           * templates parameter should be cloned or 'shared'.  A Shared parameter means that multiple
-          * nodes will a reference to exactly the same parameter.  It makes hte parameter global and 
+          * nodes will a reference to exactly the same parameter.  It makes the parameter global and 
           * prevents multiple memory allocations and facilitates State Sorting.  
           * @return Whether the param is 'shared' or not - shared params are not cloned when assigning.
           * @note Each param type has it's own default for this. Most default to true (base class default). 
