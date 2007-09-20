@@ -76,7 +76,7 @@ namespace dtCore
    /**
     * This class manages the currently loaded and/or active shaders in the
     * current game.  It provides a central location for storing the shaders
-    * thus allowing them to be shared amoungst many different actors or entities.
+    * thus allowing them to be shared amongst many different actors or entities.
     * The shader manager can also parse shader definition files which are xml
     * files consisting of a list of shader definitions which can then be referenced
     * through the manager.
@@ -86,7 +86,7 @@ namespace dtCore
     *    related shaders.  When shader groups are added to the ShaderManager, the
     *    manager the specified shader source code, links it, and generates shader programs.
     *    If two or more shaders are added and their resulting compiled shader program
-    *    is the same, then that program is shared amougst each shader containing the
+    *    is the same, then that program is shared amongst each shader containing the
     *    same code.  This means that users of this class need not worry about managing
     *    duplicate shaders as this is automatically resolved by the ShaderManager.
     */
