@@ -40,6 +40,7 @@
 #include <dtHLAGM/onetoonemapping.h>
 #include <dtHLAGM/distypes.h>
 #include <dtHLAGM/attributetoproperty.h>
+#include <dtUtil/enumeration.h>
 
 namespace dtHLAGM
 {
@@ -49,262 +50,170 @@ namespace dtHLAGM
    class DT_HLAGM_EXPORT ObjectToActor : public osg::Referenced
    {
       public:
-
+         
+         class LocalOrRemoteType : public dtUtil::Enumeration
+         {
+            DECLARE_ENUM(LocalOrRemoteType);
+            public:
+               static LocalOrRemoteType LOCAL_AND_REMOTE;
+               static LocalOrRemoteType LOCAL_ONLY;
+               static LocalOrRemoteType REMOTE_ONLY;
+            protected:
+               LocalOrRemoteType(const std::string& name);
+         };
+         
          /**
           * Constructor.
           */
-         ObjectToActor(): mRemoteOnly(false), mDISIDSet(false),
-            mObjectClassHandle(0), mEntityIdAttributeHandle(0), 
-            mDisIDAttributeHandle(0)
-         {}
+         ObjectToActor();
 
          /**
           * Gets the Game ActorType from the Object to Actor mapping.
           *
           * @return the Game Actor Type
           */
-         const dtDAL::ActorType& GetActorType() const
-         {
-            return *mActorType;
-         }
+         const dtDAL::ActorType& GetActorType() const;
 
          /**
-          * Gets the Game ActorType from the Object to Actor mapping.
-          *
-          * @return the Game Actor Type
+          * @return true if this mapping should only be used for objects simulated remotely in HLA.
           */
-         //dtDAL::ActorType& GetActorType()
-         //{
-         //   return *mActorType;
-         //}
+         bool IsRemoteOnly() const;
 
          /**
-          * @return true if this mapping should only be used for objects simulation remotely in HLA.
+          * @return true if this mapping should only be used for objects simulated locally.
           */
-         bool IsRemoteOnly() const
-         {
-         	return mRemoteOnly;
-         }
+         bool IsLocalOnly() const;
 
          /**
-          * True means this mapping should only apply to objects simulated remotely.  False if it
-          * may be used for mappings in either direction.
-          * This defaults to false.
+          * REMOTE_ONLY means this mapping should only apply to objects simulated remotely.  LOCAL_ONLY if it
+          * for locally simulated ones only.  LOCAL_AND_REMOTE for both.
+          * This defaults to LOCAL_AND_REMOTE.
           * @note if more than one object class/DIS ID intends to use the same actor type, only one
-          * may have this property set to false.
-          * @param newRemoteOnly the new value of the remote property
+          * may have this property set to anything other than REMOTE_ONLY.
+          * @note if more than one actor type intends to use the same DIS ID, only one
+          * may have this property set to anything other than LOCAL_ONLY.
+          * @param newType the new value of the property
           */
-         void SetRemoteOnly(bool newRemoteOnly)
-         {
-            mRemoteOnly = newRemoteOnly;
-         }
+         void SetLocalOrRemoteType(LocalOrRemoteType& newType);
 
          /**
           * Gets the name of the DDMRegionCalculator to use for subscription and publishing.
           *
           * @return the calculator name.
           */
-         const std::string& GetDDMCalculatorName() const
-         {
-            return mDDMCalculatorName;
-         }
+         const std::string& GetDDMCalculatorName() const;
 
          /**
           * Gets the name of the DDMRegionCalculator to use for subscription and publishing.
           *
           * @return the calculator name.
           */
-         void SetDDMCalculatorName(const std::string& newName)
-         {
-            mDDMCalculatorName = newName;
-         }
+         void SetDDMCalculatorName(const std::string& newName);
 
          /**
           * Gets the HLA Object Type Name from the Object to Actor mapping.
           *
           * @return HLA Object Type Name
           */
-         const std::string &GetObjectClassName() const
-         {
-            return mObjectClassName;
-         }
+         const std::string &GetObjectClassName() const;
 
          /**
           * Gets the HLA Object Class Handle from the Object to Actor mapping.
           *
           * @return HLA Object Class Handle
           */
-         const RTI::ObjectClassHandle GetObjectClassHandle() const
-         {
-            return mObjectClassHandle;
-         }
+         const RTI::ObjectClassHandle GetObjectClassHandle() const;
 
          /// @return The attribute handle storing the entity id attribute.
-         const RTI::AttributeHandle GetEntityIdAttributeHandle() const
-         {
-            return mEntityIdAttributeHandle;
-         }
+         const RTI::AttributeHandle GetEntityIdAttributeHandle() const;
 
          /// @return The attribute handle storing the dis id attribute.
-         const RTI::AttributeHandle GetDisIDAttributeHandle() const
-         {
-            return mDisIDAttributeHandle;
-         }
+         const RTI::AttributeHandle GetDisIDAttributeHandle() const;
 
          /**
           * Gets the Object DIS ID from the Object to Actor mapping
           *
           * @return DIS ID
           */
-         const EntityType* GetDisID() const
-         {
-            if (!mDISIDSet) return NULL;
-            return &mObjectDisID;
-         }
+         const EntityType* GetDisID() const;
 
          /**
           * Gets the Object DIS ID from the Object to Actor mapping
           *
           * @return DIS ID
           */
-         EntityType* GetDisID()
-         {
-            if (!mDISIDSet) return NULL;
-            return &mObjectDisID;
-         }
+         EntityType* GetDisID();
 
          ///@return the name of the attribute that hold the entity id or empty for not used.
-         const std::string& GetEntityIdAttributeName() const { return mEntityIdAttribute; }
+         const std::string& GetEntityIdAttributeName() const;
 
          ///Assigns the attribute name that holds the entity id so that it can be mapped to an actor id.  Set to empty string for unused.
-         void SetEntityIdAttributeName(const std::string& newName) { mEntityIdAttribute = newName; }
+         void SetEntityIdAttributeName(const std::string& newName);
 
-         const std::vector<AttributeToPropertyList> &GetOneToManyMappingVector() const
-         {
-            return mOneToMany;
-         }
+         const std::vector<AttributeToPropertyList> &GetOneToManyMappingVector() const;
 
-         std::vector<AttributeToPropertyList> &GetOneToManyMappingVector()
-         {
-            return mOneToMany;
-         }
+         std::vector<AttributeToPropertyList> &GetOneToManyMappingVector();
 
          /**
           * Sets the Game ActorType for this Object to Actor mapping.
           *
           * @param type the Game Actor Type
           */
-         void SetActorType(const dtDAL::ActorType& type)
-         {
-            mActorType = &type;
-         }
+         void SetActorType(const dtDAL::ActorType& type);
 
          /**
           * Sets the HLA Object Type Name for this Object to Actor mapping.
           *
           * @param objTypeName the HLA Object Type Name
           */
-         void SetObjectClassName(const std::string& objTypeName)
-         {
-            mObjectClassName = objTypeName;
-         }
+         void SetObjectClassName(const std::string& objTypeName);
 
          /**
           * Sets the HLA Object Class Handle for this Object to Actor mapping.
           *
           * @param objClassHandle the HLA Object Class Handle
           */
-         void SetObjectClassHandle(const RTI::ObjectClassHandle& objClassHandle)
-         {
-            mObjectClassHandle = objClassHandle;
-         }
+         void SetObjectClassHandle(const RTI::ObjectClassHandle& objClassHandle);
 
          /// Sets The attribute handle storing the entity id attribute.
-         void SetEntityIdAttributeHandle(const RTI::AttributeHandle newEntityIdAttributeHandle)
-         {
-            mEntityIdAttributeHandle = newEntityIdAttributeHandle;
-         }
+         void SetEntityIdAttributeHandle(const RTI::AttributeHandle newEntityIdAttributeHandle);
 
          /// Sets The attribute handle storing DIS Id attribute.
-         void SetDisIDAttributeHandle(const RTI::AttributeHandle newDisIDAttributeHandle)
-         {
-            mDisIDAttributeHandle = newDisIDAttributeHandle;
-         }
+         void SetDisIDAttributeHandle(const RTI::AttributeHandle newDisIDAttributeHandle);
 
          /**
           * Sets the Object DIS ID for this Object to Actor mapping.
           *
           * @param objectDisID the DIS ID
           */
-         void SetDisID(const EntityType* thisDisID)
-         {
-            if (thisDisID == NULL)
-            {
-               mDISIDSet = false;
-            }
-            else
-            {
-               mObjectDisID = *thisDisID;
-               mDISIDSet = true;
-            }
-         }
+         void SetDisID(const EntityType* thisDisID);
 
          /**
           * Sets the One to One Mapping vector for this Object to Actor Mapping.
           *
           * &param thisOneToManyMapping the OnetoOneMapping vector
           */
-         void SetOneToManyMappingVector(std::vector<AttributeToPropertyList> &thisOneToManyMapping)
-         {
-            mOneToMany = thisOneToManyMapping;
-         }
+         void SetOneToManyMappingVector(std::vector<AttributeToPropertyList> &thisOneToManyMapping);
 
-         ObjectToActor& operator=(const ObjectToActor& setTo)
-         {
-            mActorType = setTo.mActorType;
-            mObjectClassName = setTo.mObjectClassName;
-            mObjectClassHandle = setTo.mObjectClassHandle;
-            mObjectDisID = setTo.mObjectDisID;
-            mDISIDSet = setTo.mDISIDSet;
-            if (mDISIDSet)
-               mObjectDisID = setTo.mObjectDisID;
-            mEntityIdAttribute = setTo.mEntityIdAttribute;
-            mOneToMany = setTo.mOneToMany;
+         ObjectToActor& operator=(const ObjectToActor& setTo);
 
-            return *this;
-         }
+         bool operator==(const ObjectToActor& toCompare) const;
 
-         bool operator==(const ObjectToActor& toCompare) const
-         {
-            return mActorType == toCompare.mActorType &&
-            mObjectClassName == toCompare.mObjectClassName &&
-            mObjectDisID == toCompare.mObjectDisID &&
-            mDISIDSet == toCompare.mDISIDSet &&
-            mOneToMany == toCompare.mOneToMany &&
-            mEntityIdAttribute == toCompare.mEntityIdAttribute &&
-
-            (!mDISIDSet ||
-               mObjectDisID == toCompare.mObjectDisID);
-         }
-
-         bool operator!=(const ObjectToActor& toCompare) const
-         {
-            return !operator==(toCompare);
-         }
+         bool operator!=(const ObjectToActor& toCompare) const;
+         
       private:
 
          /**
           * Destructor.
           */
-         ~ObjectToActor()
-         {}
+         ~ObjectToActor();
 
          /// The Actor Type for this Object to Actor mapping.
 
          dtCore::RefPtr <const dtDAL::ActorType> mActorType;
 
-         /// true if this mapping should only be used for objects simulated remotely, i.e. in HLA.
-         bool mRemoteOnly;
+         /// true if this mapping should only be used for objects simulated remotely/locally or both.
+         LocalOrRemoteType* mLocalOrRemoteType;
 
          /// name of the calculator/calculators that will handle subscription and publishing for this  
          std::string mDDMCalculatorName;

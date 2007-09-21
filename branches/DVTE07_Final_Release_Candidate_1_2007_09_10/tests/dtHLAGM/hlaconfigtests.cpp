@@ -24,6 +24,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <algorithm>
 
 #include <dtUtil/coordinates.h>
 #include <dtCore/globals.h>
@@ -54,6 +55,9 @@ class HLAConfigTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST_SUITE(HLAConfigTests);
 
       CPPUNIT_TEST(TestConfigure);
+      CPPUNIT_TEST(TestBrokenHLAMappingNoActorType);
+      CPPUNIT_TEST(TestBrokenHLAMappingOverloadedLocalMapping);
+      CPPUNIT_TEST(TestBrokenHLAMappingOverloadedRemoteMapping);
 
    CPPUNIT_TEST_SUITE_END();
 
@@ -61,13 +65,24 @@ class HLAConfigTests : public CPPUNIT_NS::TestFixture
       void setUp();
       void tearDown();
       void TestConfigure();
+      void TestBrokenHLAMappingNoActorType();
+      void TestBrokenHLAMappingOverloadedLocalMapping();
+      void TestBrokenHLAMappingOverloadedRemoteMapping();
+      
    private:
       dtUtil::Log* logger;
       dtCore::RefPtr<dtHLAGM::HLAComponent> mTranslator;
       dtCore::RefPtr<dtGame::GameManager> mGameManager;
       dtCore::RefPtr<dtHLAGM::DDMCameraCalculatorGeographic> mCalc;
+      //to be filled with all mappings to make sure the GetAllObjectToActorMappings method works.
+      std::vector<const dtHLAGM::ObjectToActor*> mToFillOta;
+      //to be filled with all mappings to make sure the GetAllInteractionToMessageMappings method works.
+      std::vector<const dtHLAGM::InteractionToMessage*> mToFillItm;
       
       static const char* const mHLAActorRegistry;
+
+      void TestBroken(const std::string& brokenFile, const std::string& failMessage);
+      
       void CheckObjectToActorMapping(
          const std::string& category,
          const std::string& name,
@@ -76,7 +91,9 @@ class HLAConfigTests : public CPPUNIT_NS::TestFixture
          const std::string& ddmSpace,
          const dtHLAGM::EntityType* entityType,
          bool remoteOnly,
+         bool localOnly,
          const std::vector<dtHLAGM::AttributeToPropertyList>& props);
+      
       void CheckInteractionToMessageMapping(
          const dtGame::MessageType& messageType,
          const std::string& interactionName,
@@ -116,6 +133,9 @@ void HLAConfigTests::tearDown()
 {
    mTranslator = NULL;
 
+   mToFillOta.clear();
+   mToFillItm.clear();
+   
    if(mGameManager.valid())
    {
       if(mGameManager->GetRegistry(mHLAActorRegistry) != NULL)
@@ -133,28 +153,49 @@ void HLAConfigTests::CheckObjectToActorMapping(
    const std::string& ddmSpace,
    const dtHLAGM::EntityType* entityType,
    bool remoteOnly,
+   bool localOnly,
    const std::vector<dtHLAGM::AttributeToPropertyList>& props)
 {
    dtCore::RefPtr<const dtDAL::ActorType> type = mGameManager->FindActorType(category, name);
    CPPUNIT_ASSERT(type.valid());
 
-   //make absolutely sure we call the const version of the method.
-   dtCore::RefPtr<const dtHLAGM::ObjectToActor> otoa =
-         static_cast<const dtHLAGM::HLAComponent*>(mTranslator.get())->GetObjectMapping(objectClassName, entityType);
-   dtCore::RefPtr<dtHLAGM::ObjectToActor> otoaNonConst = mTranslator->GetObjectMapping(objectClassName, entityType);
-   CPPUNIT_ASSERT(otoa.get() == otoaNonConst.get());
+   dtCore::RefPtr<const dtHLAGM::ObjectToActor> otoa; 
+   if (localOnly)
+   {
+      otoa = static_cast<const dtHLAGM::HLAComponent*>(mTranslator.get())->GetActorMapping(*type);
 
-   CPPUNIT_ASSERT_MESSAGE("Object to actor mapping for type " + type->GetCategory() + "." + type->GetName() + " should exist.",
-      otoa != NULL);
+      //make absolutely sure we call the const version of the method.
+      dtCore::RefPtr<dtHLAGM::ObjectToActor> otoaNonConst = mTranslator->GetActorMapping(*type);
+      CPPUNIT_ASSERT(otoa.get() == otoaNonConst.get());
+   
+      CPPUNIT_ASSERT_MESSAGE("Object to actor mapping for type " + type->GetCategory() + "." + type->GetName() + " should exist.",
+         otoa != NULL);
+   }
+   else
+   {
+      otoa = static_cast<const dtHLAGM::HLAComponent*>(mTranslator.get())->GetObjectMapping(objectClassName, entityType);
 
-   if (remoteOnly)
+      //make absolutely sure we call the const version of the method.
+      dtCore::RefPtr<dtHLAGM::ObjectToActor> otoaNonConst = mTranslator->GetObjectMapping(objectClassName, entityType);
+      CPPUNIT_ASSERT(otoa.get() == otoaNonConst.get());
+   
+      CPPUNIT_ASSERT_MESSAGE("Object to actor mapping for type " + type->GetCategory() + "." + type->GetName() + " should exist.",
+         otoa != NULL);
+   }
+   
+   if (localOnly)
+   {
+      CPPUNIT_ASSERT_MESSAGE("If the mapping is local only, fetching by class name should not return the same mapping object.",
+         otoa != mTranslator->GetObjectMapping(objectClassName, entityType));
+   }
+   else if (remoteOnly)
    {
       CPPUNIT_ASSERT_MESSAGE("If the mapping is remote only, fetching by actor type should not return the same mapping object.",
          otoa != mTranslator->GetActorMapping(*type));
    }
    else
    {
-      CPPUNIT_ASSERT_MESSAGE("If the mapping is not remote only, fetching by actor type should return the same mapping object.",
+      CPPUNIT_ASSERT_MESSAGE("If the mapping is local and remote only, fetching by actor type should return the same mapping object.",
          otoa == mTranslator->GetActorMapping(*type));
    }
 
@@ -189,6 +230,11 @@ void HLAConfigTests::CheckObjectToActorMapping(
 
       CPPUNIT_ASSERT_MESSAGE(ss.str(),  props[i] == propsActual[i]);
    }
+
+   CPPUNIT_ASSERT_MESSAGE("Mapping of " + type->GetCategory() + "." + type->GetName() + " to object class " + 
+            objectClassName + 
+            " should have been returned by GetAllObjectToActorMappings", 
+            std::find(mToFillOta.begin(), mToFillOta.end(), otoa.get()) != mToFillOta.end());
 }
 
 void HLAConfigTests::CheckInteractionToMessageMapping(
@@ -208,7 +254,6 @@ void HLAConfigTests::CheckInteractionToMessageMapping(
    CPPUNIT_ASSERT_MESSAGE("Interation To Message mapping for type " + messageType.GetName() + " should exist.",
       itom != NULL);
 
-
    CPPUNIT_ASSERT_MESSAGE("The GetActorType method should return the same type as it was mapped to.",
       itom->GetMessageType() == messageType);
    CPPUNIT_ASSERT_MESSAGE("The GetInteractionName method should return " +  interactionName
@@ -223,8 +268,47 @@ void HLAConfigTests::CheckInteractionToMessageMapping(
       ss << "ParameterToParameter " << i << " with name " << params[i].GetHLAName() << " should match the one in the mapping with name " << paramsActual[i].GetHLAName() << ". " << paramsActual[i];
       CPPUNIT_ASSERT_MESSAGE(ss.str(),  params[i] == paramsActual[i]);
    }
+   
+   CPPUNIT_ASSERT_MESSAGE("Mapping of " + messageType.GetName() + " to interaction " + interactionName + 
+            " should have been returned by GetAllInteractionToMessageMappings", 
+            std::find(mToFillItm.begin(), mToFillItm.end(), itom.get()) != mToFillItm.end());
 }
 
+void HLAConfigTests::TestBroken(const std::string& brokenFile, const std::string& failMessage)
+{
+   dtHLAGM::HLAComponentConfig config;
+
+   mGameManager->AddComponent(*mTranslator, dtGame::GameManager::ComponentPriority::NORMAL);
+
+   try
+   {
+      config.LoadConfiguration(*mTranslator, brokenFile);
+      CPPUNIT_FAIL(failMessage);
+   }
+   catch (const dtUtil::Exception& ex)
+   {
+      CPPUNIT_ASSERT_MESSAGE("the exception should have been an XML_CONFIG_EXCEPTION",
+         ex.TypeEnum() == dtHLAGM::ExceptionEnum::XML_CONFIG_EXCEPTION);
+   }
+}
+
+void HLAConfigTests::TestBrokenHLAMappingNoActorType()
+{
+   TestBroken("BrokenHLAMappingNoActorType.xml", 
+            "It should fail to load the mapping file because an actor type in the file is invalid.");
+}
+
+void HLAConfigTests::TestBrokenHLAMappingOverloadedLocalMapping()
+{
+   TestBroken("BrokenHLAMappingOverloadingLocal.xml", 
+            "It should fail to load the mapping file because two local mappings share the same actor type.");
+}
+
+void HLAConfigTests::TestBrokenHLAMappingOverloadedRemoteMapping()
+{
+   TestBroken("BrokenHLAMappingOverloadingRemote.xml", 
+            "It should fail to load the mapping file because two remote mappings share the same dis id and object class.");
+}
 
 void HLAConfigTests::TestConfigure()
 {
@@ -244,11 +328,14 @@ void HLAConfigTests::TestConfigure()
          CPPUNIT_ASSERT_MESSAGE("the exception should have been an XML_CONFIG_EXCEPTION",
             ex.TypeEnum() == dtHLAGM::ExceptionEnum::XML_CONFIG_EXCEPTION);
       }
-
+      
       mGameManager->AddComponent(*mTranslator, dtGame::GameManager::ComponentPriority::NORMAL);
 
       config.LoadConfiguration(*mTranslator, "Federations/HLAMappingExample.xml");
       
+      mTranslator->GetAllObjectToActorMappings(mToFillOta);
+      mTranslator->GetAllInteractionToMessageMappings(mToFillItm);
+
       CPPUNIT_ASSERT_MESSAGE(std::string("Library should be loaded:") + mHLAActorRegistry,
          mGameManager->GetRegistry(mHLAActorRegistry) != NULL);
 
@@ -317,7 +404,7 @@ void HLAConfigTests::TestConfigure()
 
          CheckObjectToActorMapping("TestHLA", "Tank",
             "BaseEntity.PhysicalEntity.Platform.GroundVehicle",
-            "EntityIdentifier", "Geographic", &type, false, props);
+            "EntityIdentifier", "Geographic", &type, false, false, props);
       }
 
       {
@@ -376,11 +463,17 @@ void HLAConfigTests::TestConfigure()
 
          dtHLAGM::EntityType type1(1, 2, 225, 1, 9, 4, 0);
          CheckObjectToActorMapping("TestHLA", "Jet", "BaseEntity.PhysicalEntity.Platform.Aircraft",
-            "EntityIdentifier", "Geographic", &type1, false, props);
+            "EntityIdentifier", "Geographic", &type1, false, false, props);
 
          dtHLAGM::EntityType type2(1, 2, 222, 20, 2, 6, 0);
+
+         //There is a remote only mapping only for this.
          CheckObjectToActorMapping("TestHLA", "Helicopter", "BaseEntity.PhysicalEntity.Platform.Aircraft",
-            "EntityIdentifier", "Another Space", &type2, true, props);
+            "EntityIdentifier", "Another Space", &type2, true, false, props);
+
+         //There is a local only mapping for this that matches the remote one..
+         CheckObjectToActorMapping("TestHLA", "Helicopter", "BaseEntity.PhysicalEntity.Platform.Aircraft",
+            "EntityIdentifier", "Another Space", &type2, false, true, props);
       }
 
       {
@@ -393,19 +486,7 @@ void HLAConfigTests::TestConfigure()
             props.push_back(attrToProp);
          }
 
-         CheckObjectToActorMapping("TestHLA", "Jet", "BaseEntity.PhysicalEntity.Platform.Aircraft", "", "", &type, true, props);
-      }
-      {
-         dtHLAGM::EntityType type(1, 2, 225, 0, 0, 0, 0);
-         std::vector<dtHLAGM::AttributeToPropertyList> props;
-         //it should refuse to map it bidirectionally and spit out an error in the log, but it shouldn't blow up
-         {
-            dtHLAGM::AttributeToPropertyList attrToProp("VelocityVector", dtHLAGM::RPRAttributeType::VELOCITY_VECTOR_TYPE, false);
-            dtHLAGM::OneToManyMapping::ParameterDefinition pd("Velocity Vector", dtDAL::DataType::VEC3D, "", false);
-            attrToProp.GetParameterDefinitions().push_back(pd); 
-            props.push_back(attrToProp);
-         }
-         CheckObjectToActorMapping("TestHLA", "Jet", "TryingToMapTheJetBidirectionallyAgain", "", "",  &type, true, props);
+         CheckObjectToActorMapping("TestHLA", "Jet", "BaseEntity.PhysicalEntity.Platform.Aircraft", "", "", &type, true, false, props);
       }
       {
          std::vector<dtHLAGM::AttributeToPropertyList> props;
@@ -417,7 +498,7 @@ void HLAConfigTests::TestConfigure()
             props.push_back(attrToProp);
          }
          // Test a NULL dis id.
-         CheckObjectToActorMapping("TestHLA", "CulturalFeature", "BaseEntity.PhysicalEntity.CulturalFeature", "", "", NULL, false, props);
+         CheckObjectToActorMapping("TestHLA", "CulturalFeature", "BaseEntity.PhysicalEntity.CulturalFeature", "", "", NULL, false, false, props);
       }
 
       // Test Non-Entity Types
@@ -431,7 +512,7 @@ void HLAConfigTests::TestConfigure()
             props.push_back(attrToProp);
          }
          // Test a NULL dis id.
-         CheckObjectToActorMapping("TestHLA", "Sensor", "BaseEntity.PhysicalEntity.Sensor", "", "",  NULL, false, props);
+         CheckObjectToActorMapping("TestHLA", "Sensor", "BaseEntity.PhysicalEntity.Sensor", "", "",  NULL, false, false, props);
       }
 
       {

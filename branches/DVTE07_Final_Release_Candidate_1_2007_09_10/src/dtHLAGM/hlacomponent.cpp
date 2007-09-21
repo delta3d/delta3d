@@ -234,63 +234,73 @@ namespace dtHLAGM
          ++attributeToPropertyListIterator;
       }
 
-      bool subscribed = false;
-      try
+      bool failed = false;
+      if (!objectToActor.IsLocalOnly())
       {
-         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                                "Subscribing to object class \"%s\" handle %u.", thisObjectClassString.c_str(), thisObjectClassHandle);
-         if (mDDMEnabled)
-         {
-            for (unsigned i = 0; i < mDDMSubscriptionRegions.size(); ++i)
-            {
-               if (mDDMSubscriptionCalculators[i]->GetName() != objectToActor.GetDDMCalculatorName())
-                  continue;
-               
-               std::vector<dtCore::RefPtr<DDMRegionData> >& regionVector = mDDMSubscriptionRegions[i];
-               for (unsigned j = 0; j < regionVector.size(); ++j)
-               {
-                  RTI::Region* r = regionVector[j]->GetRegion();
-                  if (r != NULL)
-                  {
-                     if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-                     {
-                        mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                                            "Subscribing to object class \"%s\" handle %u with region from calculator \"%s\"", 
-                                            thisObjectClassString.c_str(), thisObjectClassHandle, mDDMSubscriptionCalculators[i]->GetName().c_str());
-                     }
-                     mRTIAmbassador->subscribeObjectClassAttributesWithRegion(thisObjectClassHandle, *r, *ahs);               
-                  }
-               }
-            }
-         }
-         else
-         {
-            mRTIAmbassador->subscribeObjectClassAttributes(thisObjectClassHandle, *ahs);            
-         }
-         subscribed = true;
-
-         if (!objectToActor.IsRemoteOnly())
+         try
          {
             if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                                   "Publishing object class \"%s\" handle %u.", thisObjectClassString.c_str(), thisObjectClassHandle);
+                                   "Subscribing to object class \"%s\" handle %u.", thisObjectClassString.c_str(), thisObjectClassHandle);
+            if (mDDMEnabled)
+            {
+               for (unsigned i = 0; i < mDDMSubscriptionRegions.size(); ++i)
+               {
+                  if (mDDMSubscriptionCalculators[i]->GetName() != objectToActor.GetDDMCalculatorName())
+                     continue;
+                  
+                  std::vector<dtCore::RefPtr<DDMRegionData> >& regionVector = mDDMSubscriptionRegions[i];
+                  for (unsigned j = 0; j < regionVector.size(); ++j)
+                  {
+                     RTI::Region* r = regionVector[j]->GetRegion();
+                     if (r != NULL)
+                     {
+                        if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                        {
+                           mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                                               "Subscribing to object class \"%s\" handle %u with region from calculator \"%s\"", 
+                                               thisObjectClassString.c_str(), thisObjectClassHandle, mDDMSubscriptionCalculators[i]->GetName().c_str());
+                        }
+                        mRTIAmbassador->subscribeObjectClassAttributesWithRegion(thisObjectClassHandle, *r, *ahs);
+                     }
+                  }
+               }
+            }
+            else
+            {
+               mRTIAmbassador->subscribeObjectClassAttributes(thisObjectClassHandle, *ahs);
+            }
+         }
+         catch (const RTI::Exception &ex)
+         {
+            failed = true;
+            std::ostringstream ss;
+            //workaround for a strange namespace issue
+            ::operator<<(ss, ex);
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                                 "Error subscribing to object class \"%s\": \"%s\"", thisObjectClassString.c_str(), ss.str().c_str());
+         }
+      }
+         
+      if (!failed && !objectToActor.IsRemoteOnly())
+      {
+         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                                "Publishing object class \"%s\" handle %u.", thisObjectClassString.c_str(), thisObjectClassHandle);
 
+         try
+         {
             //need to put regions on this.
             mRTIAmbassador->publishObjectClass(thisObjectClassHandle, *ahs);
          }
-      }
-      catch (const RTI::Exception &ex)
-      {
-         std::ostringstream ss;
-         //workaround for a strange namespace issue
-         ::operator<<(ss, ex);
-         if (!subscribed)
-            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                                 "Error subscribing to object class \"%s\": \"%s\"", thisObjectClassString.c_str(), ss.str().c_str());
-         else
+         catch (const RTI::Exception &ex)
+         {
+            std::ostringstream ss;
+            //workaround for a strange namespace issue
+            ::operator<<(ss, ex);
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                                  "Error publishing object class \"%s\": \"%s\"", thisObjectClassString.c_str(), ss.str().c_str());
+         }
       }
 
       delete ahs;
@@ -376,7 +386,7 @@ namespace dtHLAGM
          }
          else
          {
-            mRTIAmbassador->subscribeInteractionClass(thisInteractionClassHandle);            
+            mRTIAmbassador->subscribeInteractionClass(thisInteractionClassHandle);
          }
 
          subscribed = true;
@@ -422,7 +432,7 @@ namespace dtHLAGM
       if (!ridFile.empty() && fi.fileType == dtUtil::FILE_NOT_FOUND)
       {
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-               "Failed to set the RID file name to \"%s\" because the file is not found.", ridFile.c_str());            
+               "Failed to set the RID file name to \"%s\" because the file is not found.", ridFile.c_str());
       }
       else
       {
@@ -586,7 +596,8 @@ namespace dtHLAGM
             //workaround for a strange namespace issue
             ::operator<<(ss, ex);
             mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
-                                 "Could not destroy the federation execution because other federates are still connected: ", ss.str().c_str());
+                                 "Could not destroy the federation execution because other federates are still connected: ",
+                                 ss.str().c_str());
          }
          catch(RTI::FederationExecutionDoesNotExist& ex)
          {
@@ -602,7 +613,8 @@ namespace dtHLAGM
             //workaround for a strange namespace issue
             ::operator<<(ss, ex);
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                                 "Could not destroy federation execution because of an internal error: ", ss.str().c_str());            
+                                 "Could not destroy federation execution because of an internal error: ",
+                                 ss.str().c_str());
          }
          
          mExecutionName.clear();
@@ -615,12 +627,17 @@ namespace dtHLAGM
 
    void HLAComponent::PublishSubscribe()
    {
-      std::multimap<std::string, dtCore::RefPtr<ObjectToActor> >::iterator objectToActorIterator
-        = mObjectToActorMap.begin();
-
-      while (objectToActorIterator != mObjectToActorMap.end())
+      std::vector<ObjectToActor*> otaVec;
+      GetAllObjectToActorMappings(otaVec);
+      
+      std::vector<ObjectToActor*>::iterator objectToActorIterator, otaIterEnd;
+      
+      objectToActorIterator = otaVec.begin();
+      otaIterEnd = otaVec.end();
+      
+      while (objectToActorIterator != otaIterEnd)
       {
-         ObjectToActor& thisObjectToActor = *(objectToActorIterator->second);
+         ObjectToActor& thisObjectToActor = **objectToActorIterator;
          const std::string& thisObjectClassString = thisObjectToActor.GetObjectClassName();
 
          if (!thisObjectClassString.empty())
@@ -838,25 +855,25 @@ namespace dtHLAGM
                                                const std::string& objTypeName,
                                                const EntityType* thisDisID,
                                                std::vector<AttributeToPropertyList> &oneToOneActorVector,
-                                               bool remoteOnly)
+                                               ObjectToActor::LocalOrRemoteType& localOrRemote)
    {
       if (!mExecutionName.empty())
       {
          throw dtUtil::Exception("The HLAComponent may not register a mapping because it is connected to a federation.",
                __FILE__, __LINE__);
       }
+      
       dtCore::RefPtr<ObjectToActor> thisActorMapping = new ObjectToActor;
 
       thisActorMapping->SetActorType(type);
       thisActorMapping->SetObjectClassName(objTypeName);
       thisActorMapping->SetDisID(thisDisID);
       thisActorMapping->SetOneToManyMappingVector(oneToOneActorVector);
-      thisActorMapping->SetRemoteOnly(remoteOnly);
+      thisActorMapping->SetLocalOrRemoteType(localOrRemote);
 
       dtCore::RefPtr<dtDAL::ActorType> refActorType = &type;
 
       RegisterActorMapping(*thisActorMapping);
-
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -871,16 +888,35 @@ namespace dtHLAGM
       {
          if (!mActorToObjectMap.insert(std::make_pair(&objectToActor.GetActorType(), &objectToActor)).second)
          {
-            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-               "Unable to register mapping for actor type %s.%s and classname %s.  A mapping already exists.  Forcing mapping to be remote only.",
-               objectToActor.GetActorType().GetCategory().c_str(),
-               objectToActor.GetActorType().GetName().c_str(),
-               objectToActor.GetObjectClassName().c_str());
-            objectToActor.SetRemoteOnly(true);
-         }
+            if (!objectToActor.IsLocalOnly())
+            {
+               std::ostringstream ss; 
+               ss << "Unable to register local to remote mapping for actor type "
+                  << objectToActor.GetActorType().GetCategory() << "." 
+                  << objectToActor.GetActorType().GetName() << " and classname"
+                  << objectToActor.GetObjectClassName() <<  ".  " 
+                  << "A mapping already exists.  Set the mapping to remote only.";
 
+               throw dtUtil::Exception(ss.str(), __FILE__, __LINE__);
+            }
+            else
+            {
+               std::ostringstream ss; 
+               ss << "Unable to register local-only mapping for actor type "
+                  << objectToActor.GetActorType().GetCategory() << "." 
+                  << objectToActor.GetActorType().GetName() << " and classname"
+                  << objectToActor.GetObjectClassName() <<  ".  " 
+                  << "A mapping already exists.  Mapping will be ignored.";
+
+               throw dtUtil::Exception(ss.str(), __FILE__, __LINE__);
+            }
+         }
       }
-      mObjectToActorMap.insert(std::make_pair(objectToActor.GetObjectClassName(), &objectToActor));
+      
+      if (!objectToActor.IsLocalOnly())
+      {
+         mObjectToActorMap.insert(std::make_pair(objectToActor.GetObjectClassName(), &objectToActor));
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -892,7 +928,7 @@ namespace dtHLAGM
                __FILE__, __LINE__);
       }
       dtCore::RefPtr<ObjectToActor> otoa =  InternalUnregisterActorMapping(type);
-      if (otoa.valid())
+      if (otoa.valid() && !otoa->IsLocalOnly())
          InternalUnregisterObjectMapping(otoa->GetObjectClassName(), otoa->GetDisID());
    }
 
@@ -1104,15 +1140,14 @@ namespace dtHLAGM
       }
       return thisInteractionToMessage;
    }
-
+   
    /////////////////////////////////////////////////////////////////////////////////
    template <typename MappingObject, typename mapType, typename mapTypeIterator>
-   void GetAllMappings(std::vector<MappingObject*>& toFill, mapType& readFrom, mapTypeIterator beginIt)
+   void GetAllMappings(std::vector<MappingObject*>& toFill, mapType& readFrom, mapTypeIterator beginIt, 
+            bool (MappingObject::* acceptMethod)(void) const = NULL)
    {
       //Adding the beginIt parameter for the begin iterator makes the template able to figure out what type
       //it should be.
-
-      toFill.clear();
 
       mapTypeIterator mappingIterator = beginIt;
 
@@ -1121,7 +1156,10 @@ namespace dtHLAGM
       while (mappingIterator != readFrom.end())
       {
          MappingObject* thisMapping = (mappingIterator->second).get();
-         toFill.push_back(thisMapping);
+         if (acceptMethod == NULL || (thisMapping->*acceptMethod)())
+         {
+            toFill.push_back(thisMapping);
+         }
          ++mappingIterator;
       }
    }
@@ -1129,24 +1167,39 @@ namespace dtHLAGM
    /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::GetAllObjectToActorMappings(std::vector<ObjectToActor*>& toFill)
    {
+      toFill.clear();
+      //This will probably always be too big, but it is the max possible size
+      toFill.reserve(mObjectToActorMap.size() + mActorToObjectMap.size());
       GetAllMappings(toFill, mObjectToActorMap, mObjectToActorMap.begin());
+      GetAllMappings(toFill, mActorToObjectMap, mActorToObjectMap.begin(), &ObjectToActor::IsLocalOnly);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::GetAllObjectToActorMappings(std::vector<const ObjectToActor*>& toFill) const
    {
+      toFill.clear();
+      //This will probably always be too big, but it is the max possible size
+      toFill.reserve(mObjectToActorMap.size() + mActorToObjectMap.size());
       GetAllMappings(toFill, mObjectToActorMap, mObjectToActorMap.begin());
+      GetAllMappings<const ObjectToActor, 
+         const std::map<dtCore::RefPtr<const dtDAL::ActorType>, dtCore::RefPtr<ObjectToActor> >,
+         std::map<dtCore::RefPtr<const dtDAL::ActorType>, dtCore::RefPtr<ObjectToActor> >::const_iterator>
+         (toFill, mActorToObjectMap, mActorToObjectMap.begin(), &ObjectToActor::IsLocalOnly);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::GetAllInteractionToMessageMappings(std::vector<InteractionToMessage*>& toFill)
    {
+      toFill.clear();
+      toFill.reserve(mInteractionToMessageMap.size());
       GetAllMappings(toFill, mInteractionToMessageMap, mInteractionToMessageMap.begin());
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::GetAllInteractionToMessageMappings(std::vector<const InteractionToMessage*>& toFill) const
    {
+      toFill.clear();
+      toFill.reserve(mInteractionToMessageMap.size());
       GetAllMappings(toFill, mInteractionToMessageMap, mInteractionToMessageMap.begin());
    }
 

@@ -221,6 +221,7 @@ namespace dtHLAGM
          static const std::string OBJECT_HANDLER_DIS_ENTITY_ELEMENT;
          static const std::string OBJECT_HANDLER_HANDLER_NAME_ELEMENT;
          static const std::string OBJECT_REMOTE_ONLY_ELEMENT;
+         static const std::string OBJECT_LOCAL_ONLY_ELEMENT;
 
          static const std::string ACTORTYPE_HANDLER_ELEMENT;
          static const std::string ACTORTYPE_HANDLER_ACTOR_TYPE_ELEMENT;

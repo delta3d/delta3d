@@ -87,6 +87,7 @@ namespace dtHLAGM
    const std::string HLAFOMConfigContentHandler::OBJECT_DIS_ENTITY_ELEMENT("disEntityEnum");
    const std::string HLAFOMConfigContentHandler::OBJECT_ATTR_TO_PROP_ELEMENT("attrToProp");
    const std::string HLAFOMConfigContentHandler::OBJECT_REMOTE_ONLY_ELEMENT("remoteOnly");
+   const std::string HLAFOMConfigContentHandler::OBJECT_LOCAL_ONLY_ELEMENT("localOnly");
 
    const std::string HLAFOMConfigContentHandler::OBJECT_HANDLER_ELEMENT("objectHandler");
    const std::string HLAFOMConfigContentHandler::OBJECT_HANDLER_OBJECT_CLASS_ELEMENT("objectClass");
@@ -634,7 +635,20 @@ namespace dtHLAGM
                                "Setting Object To Actor with Object Class Type \"%s\" Remote Only value to \"%s\".",
                                mCurrentObjectToActor->GetObjectClassName().c_str(),
                                characters.c_str());
-         mCurrentObjectToActor->SetRemoteOnly(characters == "true" || characters == "1");
+         bool remoteOnly = characters == "true" || characters == "1";
+         if (remoteOnly)
+            mCurrentObjectToActor->SetLocalOrRemoteType(ObjectToActor::LocalOrRemoteType::REMOTE_ONLY);
+      }
+      else if (elementName == OBJECT_LOCAL_ONLY_ELEMENT)
+      {
+         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__,
+                               "Setting Object To Actor with Object Class Type \"%s\" Local Only value to \"%s\".",
+                               mCurrentObjectToActor->GetObjectClassName().c_str(),
+                               characters.c_str());
+         bool localOnly = characters == "true" || characters == "1";
+         if (localOnly)
+            mCurrentObjectToActor->SetLocalOrRemoteType(ObjectToActor::LocalOrRemoteType::LOCAL_ONLY);
       }
    }
 
