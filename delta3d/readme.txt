@@ -257,9 +257,11 @@ Windows w/ Visual Studio .NET 7.1
    3. Follow instructions for the patch with its readme.
       Make sure you set the environment variable QMAKESPEC to
       %QTDIR%\mkspecs\win32-msvc.net
+
+   4. To compile Qt, just use the Visual Studio Command prompt, change
+      directory to where Qt is, and type "nmake".  If you just want
+      to build the libraries (much faster), type "nmake sub-src".
    
-   4. After many many hours, it should be all compiled up and happy.
-      Qt is now built with MSVC!
    
    Building the Delta3D Editor with MSVC
    -------------------------------------
