@@ -51,7 +51,7 @@ namespace dtHLAGM
    {
       public:
          
-         class LocalOrRemoteType : public dtUtil::Enumeration
+         class DT_HLAGM_EXPORT LocalOrRemoteType : public dtUtil::Enumeration
          {
             DECLARE_ENUM(LocalOrRemoteType);
             public:
