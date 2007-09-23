@@ -10,6 +10,7 @@
 #include <osg/Node>
 #include <osg/PolygonMode>
 #include <osgDB/ReadFile>
+#include <cassert>
 
 namespace dtCore
 {
@@ -65,9 +66,10 @@ void dtCore::SkyDome::SetBaseColor(const osg::Vec3& color)
       mBaseColor.set(color);
 
       osg::Vec4Array *color = static_cast<osg::Vec4Array*>(array);
-      int limit = mEnableCap?38:19;
-      for (int i=0; i<limit; i++)
+      unsigned int limit = mEnableCap?38:19;
+      for (unsigned int i=0; i<limit; i++)
       {
+         assert(i<color->size());
          (*color)[i].set(mBaseColor[0], mBaseColor[1], mBaseColor[2], 1.f);
       }
       geom->dirtyDisplayList();
@@ -232,8 +234,9 @@ void dtCore::SkyDome::Repaint(   const osg::Vec3& skyColor,
       // Set cap color
       if( mEnableCap )
       {
-         for (i=0; i<19; i++)
+         for (unsigned int i=0; i<19; i++)
          {
+            assert(i<color->size());
             (*color)[i].set(bottom_color[i][0], bottom_color[i][1], bottom_color[i][2], 1.f);
          }
       }
@@ -241,6 +244,7 @@ void dtCore::SkyDome::Repaint(   const osg::Vec3& skyColor,
       int c;
       for(i=0, c=mEnableCap?19:0; i<19; i++, c++ )
       {
+         assert(c+19+19+19+19 < color->size());
          (*color)[c].set(bottom_color[i][0], bottom_color[i][1], bottom_color[i][2], 1.f);
          (*color)[c+19].set(lower_color[i][0], lower_color[i][1], lower_color[i][2], 1.f);
          (*color)[c+19+19].set(middle_color[i][0], middle_color[i][1], middle_color[i][2], 1.f);
