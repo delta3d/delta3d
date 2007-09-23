@@ -1,7 +1,7 @@
 #include <prefix/dtcoreprefix-src.h>
 #include <dtCore/skydome.h>
 #include <dtCore/moveearthtransform.h>
-
+#include <dtCore/makeskydome.h>
 #include <osg/Depth>
 #include <osg/Drawable>
 #include <osg/Geometry>
@@ -47,125 +47,14 @@ void dtCore::SkyDome::Config()
     // off as well. But don't worry, culling will be back on once underneath
     // this node or any other branch above this transform.
    mXform->setCullingActive(false);
-   
-   mXform->addChild(MakeDome());
+   mGeode = MakeSkyDome( *this ).Compute();
+   mXform->addChild( mGeode.get() );
    group->addChild(mXform.get());
    group->setNodeMask(0xf0000000);
 
    GetOSGNode()->asGroup()->addChild(group);
 }
 
-osg::Node* dtCore::SkyDome::MakeDome()
-{
-   //5 levels with 18 points each spaced 20 degrees apart
-
-   int i, j;
-   float lev[] = { -9.0, -9.0, 0.0, 7.2, 15.0, 90.0  };
-   float cc[][3] =
-   {
-      { 0.15, 0.25, 0.1 },
-      { 0.6, 0.6, 0.7 },
-      { 0.4, 0.4, 0.7 },
-      { 0.2, 0.2, 0.6 },
-      { 0.1, 0.1, 0.6 },
-   };
-   float x, y, z;
-   float alpha, theta;
-   float radius = 6000.0f;
-   int nlev = sizeof( lev )/sizeof(float) - (mEnableCap?0:1);
-
-   osg::Geometry *geom = new osg::Geometry;
-
-   osg::Vec3Array& coords = *(new osg::Vec3Array(19*nlev));
-
-   osg::Vec4Array& colors = *(new osg::Vec4Array(19*nlev));
-
-   int ci = mEnableCap?19:0;
-
-   // Set dome coordinates & colors
-   for( i = mEnableCap?1:0; i < nlev; i++ )
-   {
-      for( j = 0; j < 19; j++ )
-      {
-         alpha = osg::DegreesToRadians(lev[i+(mEnableCap?0:1)]);
-         theta = osg::DegreesToRadians((float)(j*20));
-
-         x = radius * cosf( alpha ) * cosf( theta );
-         y = radius * cosf( alpha ) * -sinf( theta );
-         z = radius * sinf( alpha );
-
-         coords[ci][0] = x;
-         coords[ci][1] = y;
-         coords[ci][2] = z;
-
-         colors[ci][0] = cc[i][0];
-         colors[ci][1] = cc[i][1];
-         colors[ci][2] = cc[i][2];
-         colors[ci][3] = 1.f;
-
-         ci++;
-      }
-   }
-
-   // Set cap coordinates & colors
-   if( mEnableCap )
-   {
-      int centerIndex = 0;
-      osg::Vec3 capCenter( 0.0, 0.0, radius * osg::DegreesToRadians(sinf(lev[0])) );
-      for( j = 0; j < 19; j++ )
-      {
-         coords[j] = capCenter;
-         centerIndex = j+19;
-         colors[j][0] = cc[centerIndex][0];
-         colors[j][1] = cc[centerIndex][1];
-         colors[j][2] = cc[centerIndex][2];
-         colors[j][3] = 1.f;
-      }
-   }
-
-   // Create the triangle strips
-   for( i = 0; i < nlev-1; i++ )
-   {
-      osg::DrawElementsUShort* drawElements = new osg::DrawElementsUShort(osg::PrimitiveSet::TRIANGLE_STRIP);
-      drawElements->reserve(38);
-
-      for( j = 0; j < 19; j++ )
-      {
-         drawElements->push_back((i+1)*19+j);
-         drawElements->push_back((i+0)*19+j);
-      }
-
-      geom->addPrimitiveSet(drawElements);
-   }
-
-   geom->setVertexArray( &coords );
-   geom->setColorArray( &colors );
-   geom->setColorBinding( osg::Geometry::BIND_PER_VERTEX );
-
-   osg::StateSet *dstate = new osg::StateSet;
-
-   dstate->setMode( GL_LIGHTING, osg::StateAttribute::OFF );
-   dstate->setMode( GL_CULL_FACE, osg::StateAttribute::ON );
-
-   // clear the depth to the far plane.
-   osg::Depth* depth = new osg::Depth;
-   depth->setFunction(osg::Depth::ALWAYS);
-   depth->setWriteMask(false);   
-   dstate->setAttributeAndModes(depth,osg::StateAttribute::ON );
-   dstate->setMode(GL_FOG, osg::StateAttribute::OFF );
-   dstate->setTextureMode(0, GL_TEXTURE_2D, osg::StateAttribute::OFF|osg::StateAttribute::PROTECTED);
-
-   dstate->setRenderBinDetails(-2,"RenderBin");
-
-   geom->setStateSet( dstate );
-
-   mGeode = new osg::Geode;
-   mGeode->addDrawable( geom );
-
-   mGeode->setName( "Sky" );
-
-   return mGeode.get();
-}
 
 void dtCore::SkyDome::SetBaseColor(const osg::Vec3& color)
 {
@@ -363,5 +252,10 @@ void dtCore::SkyDome::Repaint(   const osg::Vec3& skyColor,
 
    geom->dirtyDisplayList();
 }
+
+
+
+
+
 
 }
