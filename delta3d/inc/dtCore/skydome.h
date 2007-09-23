@@ -44,6 +44,7 @@ namespace dtCore
    public:
    
       SkyDome( const std::string& name = "SkyDome", bool createCapGeometry = true );
+
    
    protected:
       
@@ -55,6 +56,8 @@ namespace dtCore
            
       //gets the base color
       void GetBaseColor( osg::Vec3& color ) const { color.set(mBaseColor); }
+
+      bool GetCapEnabled() const {return mEnableCap;}
     
       ///the virtual paint function
       virtual void Repaint(   const osg::Vec3& skyColor, 
@@ -67,7 +70,6 @@ namespace dtCore
 
       /// Build the sky dome
       void Config();
-      osg::Node* MakeDome();
       
       osg::Vec3 mBaseColor;
       dtCore::RefPtr<osg::Geode> mGeode;

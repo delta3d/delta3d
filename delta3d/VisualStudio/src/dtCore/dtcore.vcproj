@@ -240,6 +240,9 @@
 				RelativePath="..\..\..\src\dtCore\logicalinputdevice.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtCore\makeskydome.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtCore\motionmodel.cpp">
 			</File>
 			<File
@@ -483,6 +486,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtCore\mainpage.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtCore\makeskydome.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtCore\motionmodel.h">
