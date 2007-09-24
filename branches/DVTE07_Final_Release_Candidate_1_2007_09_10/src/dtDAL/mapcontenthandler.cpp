@@ -371,7 +371,7 @@ namespace  dtDAL
             }
             else
             {
-               mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
+               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                                    "Creating actor proxy %s with category %s.",
                                    actorTypeName.c_str(), actorTypeCategory.c_str());
 
