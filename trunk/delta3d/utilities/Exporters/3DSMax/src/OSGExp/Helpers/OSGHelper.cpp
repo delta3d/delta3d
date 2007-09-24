@@ -84,7 +84,6 @@ void OSGHelper::EndEditParams(IObjParam *ip, ULONG flags,Animatable *next){
 
 OSGHelper::OSGHelper(TSTR name){	
 	this->name = name;
-	OSGHelperDesc.MakeAutoParamBlocks(this);
 	SetAFlag(A_OBJ_CREATING);
 }
 
