@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="dtHLAGM"
 	ProjectGUID="{C094C032-3742-43FA-92C8-BED2C0449DDB}"
+	RootNamespace="dtHLAGM"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -252,6 +253,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtHLAGM\objectruntimemappinginfo.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtHLAGM\objecttoactor.cpp"
 				>
 			</File>
 			<File
