@@ -70,12 +70,22 @@ namespace dtCore
 
       /// Build the sky dome
       void Config();
+      bool IsSunsetOrSunrise( double sunAngle ) const;
+      osg::Vec3 CalcCenterColors(double vis_factor,
+                                 const osg::Vec3& skyColor, 
+                                 const osg::Vec3& fogColor) const;
       
       osg::Vec3 mBaseColor;
       dtCore::RefPtr<osg::Geode> mGeode;
       dtCore::RefPtr<MoveEarthySkyWithEyePointTransformAzimuth> mXform;
       bool mEnableCap;
-   };
+      osg::Vec3 outer_param, outer_amt, outer_diff;
+      osg::Vec3 middle_param, middle_amt, middle_diff;
+      osg::Vec3 center_color;
+      osg::Vec3 upper_color[19];
+      osg::Vec3 middle_color[19];
+      osg::Vec3 lower_color[19];
+      osg::Vec3 bottom_color[19];
+  };
 }
-
 #endif // DELTA_SKYDOME
