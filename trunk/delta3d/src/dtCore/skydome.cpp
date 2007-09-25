@@ -33,6 +33,7 @@ SkyDome::~SkyDome()
    DeregisterInstance(this);
 }
 
+
 // Build the sky dome
 void dtCore::SkyDome::Config()
 {
@@ -81,21 +82,23 @@ void dtCore::SkyDome::SetBaseColor(const osg::Vec3& color)
  *  - degrees = below horizon
  */
 void dtCore::SkyDome::Repaint(   const osg::Vec3& skyColor, 
-                                 const osg::Vec3& fogColor,
+                              const osg::Vec3& fogColor,
                                  double sunAngle, 
                                  double sunAzimuth,
                                  double visibility )
 {
-   double diff;
-   osg::Vec3 outer_param, outer_amt, outer_diff;
-   osg::Vec3 middle_param, middle_amt, middle_diff;
-   int i, j;
 
    //rotate the dome to line up with the sun's azimuth.
    mXform->SetAzimuth( sunAzimuth );
 
+   outer_param.set( 0.0, 0.0, 0.0 );
+   middle_param.set( 0.0, 0.0, 0.0 );
+
+   outer_diff.set( 0.0, 0.0, 0.0 );
+   middle_diff.set( 0.0, 0.0, 0.0 );
+
    // Check for sunrise/sunset condition
-   if( sunAngle > -10.0 && sunAngle < 10.0 )
+   if( IsSunsetOrSunrise(sunAngle) )
    {
       // 0.0 - 0.4
       outer_param.set(
@@ -112,58 +115,33 @@ void dtCore::SkyDome::Repaint(   const osg::Vec3& skyColor,
 
       middle_diff = middle_param / 9.0;
    } 
-   else 
-   {
-      outer_param.set( 0.0, 0.0, 0.0 );
-      middle_param.set( 0.0, 0.0, 0.0 );
-
-      outer_diff.set( 0.0, 0.0, 0.0 );
-      middle_diff.set( 0.0, 0.0, 0.0 );
-   }
 
    outer_amt.set( outer_param );
    middle_amt.set( middle_param );
 
    // First, recaclulate the basic colors
 
-   static osg::Vec4 center_color;
-   static osg::Vec4 upper_color[19];
-   static osg::Vec4 middle_color[19];
-   static osg::Vec4 lower_color[19];
-   static osg::Vec4 bottom_color[19];
 
-   double vis_factor, cvf = visibility;
-   if (cvf > 20000.f)
-   {
-      cvf = 20000.f;
-   }
+   double cvf = visibility;
+
+   dtUtil::Clamp(cvf, 0.0, 20000.0);
+
+   double vis_factor = 1.0;
 
    if ( visibility < 3000.0 ) 
    {
       vis_factor = (visibility - 1000.0) / 2000.0;
-      if ( vis_factor < 0.0 ) 
-      {
-         vis_factor = 0.0;
-      }
+
+      dtUtil::Clamp(vis_factor, 0.0, 1.0);
    } 
-   else 
-   {
-      vis_factor = 1.0;
-   }
 
-   for ( j = 0; j < 3; j++ ) 
-   {
-      diff = skyColor[j] - fogColor[j];
-      center_color[j] = skyColor[j] - diff * ( 1.0 - vis_factor );
-   }
-   center_color[3] = 1.0;
+   center_color = CalcCenterColors(vis_factor, skyColor, fogColor);
 
-
-   for ( i = 0; i < 9; i++ ) 
+   for ( unsigned int i = 0; i < 9; i++ ) 
    {
-      for ( j = 0; j < 3; j++ ) 
+      for (  unsigned int j = 0; j < 3; j++ ) 
       {
-         diff = skyColor[j] - fogColor[j];
+         const osg::Vec3::value_type diff = skyColor[j] - fogColor[j];
 
          upper_color[i][j] = skyColor[j] - diff *
             ( 1.0 - vis_factor * (0.7 + 0.3 * cvf/20000.f) );
@@ -172,30 +150,23 @@ void dtCore::SkyDome::Repaint(   const osg::Vec3& skyColor,
             + middle_amt[j];
          lower_color[i][j] = fogColor[j] + outer_amt[j];
 
-         if ( upper_color[i][j] > 1.0 ) { upper_color[i][j] = 1.0; }
-         if ( upper_color[i][j] < 0.0 ) { upper_color[i][j] = 0.0; }
-         if ( middle_color[i][j] > 1.0 ) { middle_color[i][j] = 1.0; }
-         if ( middle_color[i][j] < 0.0 ) { middle_color[i][j] = 0.0; }
-         if ( lower_color[i][j] > 1.0 ) { lower_color[i][j] = 1.0; }
-         if ( lower_color[i][j] < 0.0 ) { lower_color[i][j] = 0.0; }
+         dtUtil::Clamp(upper_color[i][j], 0.f, 1.f);
+         dtUtil::Clamp(middle_color[i][j], 0.f, 1.f);
+         dtUtil::Clamp(lower_color[i][j], 0.f, 1.f);
       }
-      upper_color[i][3] = middle_color[i][3] = lower_color[i][3] = 1.0;
 
-      for ( j = 0; j < 3; j++ ) 
-      {
-         outer_amt[j] -= outer_diff[j];
-         middle_amt[j] -= middle_diff[j];
-      }
+      outer_amt -= outer_diff;
+      middle_amt -= middle_diff;
    }
 
    outer_amt.set( 0.0, 0.0, 0.0 );
    middle_amt.set( 0.0, 0.0, 0.0 );
 
-   for ( i = 9; i < 19; i++ ) 
+   for ( unsigned int i = 9; i < 19; i++ ) 
    {
-      for ( j = 0; j < 3; j++ ) 
+      for ( unsigned int j = 0; j < 3; j++ ) 
       {
-         diff = skyColor[j] - fogColor[j];
+         const osg::Vec3::value_type diff = skyColor[j] - fogColor[j];
 
          upper_color[i][j] = skyColor[j] - diff *
             ( 1.0 - vis_factor * (0.7 + 0.3 * cvf/20000.f) );
@@ -204,25 +175,18 @@ void dtCore::SkyDome::Repaint(   const osg::Vec3& skyColor,
             + middle_amt[j];
          lower_color[i][j] = fogColor[j] + outer_amt[j];
 
-         if ( upper_color[i][j] > 1.0 ) { upper_color[i][j] = 1.0; }
-         if ( upper_color[i][j] < 0.0 ) { upper_color[i][j] = 0.0; }
-         if ( middle_color[i][j] > 1.0 ) { middle_color[i][j] = 1.0; }
-         if ( middle_color[i][j] < 0.0 ) { middle_color[i][j] = 0.0; }
-         if ( lower_color[i][j] > 1.0 ) { lower_color[i][j] = 1.0; }
-         if ( lower_color[i][j] < 0.0 ) { lower_color[i][j] = 0.0; }
+         dtUtil::Clamp(upper_color[i][j], 0.f, 1.f);
+         dtUtil::Clamp(middle_color[i][j], 0.f, 1.f);
+         dtUtil::Clamp(lower_color[i][j], 0.f, 1.f);
       }
-      upper_color[i][3] = middle_color[i][3] = lower_color[i][3] = 1.0;
 
-      for ( j = 0; j < 3; j++ ) 
-      {
-         outer_amt[j] += outer_diff[j];
-         middle_amt[j] += middle_diff[j];
-      }
+      outer_amt += outer_diff;
+      middle_amt += middle_diff;
    }
 
-   for ( i = 0; i < 19; i++ ) 
+   for ( unsigned int i = 0; i < 19; i++ ) 
    {
-      bottom_color[i].set(fogColor[0], fogColor[1], fogColor[2], fogColor[3]);
+      bottom_color[i] = fogColor;
    }
 
    //repaint the lower ring
@@ -241,8 +205,8 @@ void dtCore::SkyDome::Repaint(   const osg::Vec3& skyColor,
          }
       }
       // Set dome colors
-      int c;
-      for(i=0, c=mEnableCap?19:0; i<19; i++, c++ )
+      unsigned int c = mEnableCap?19:0;
+      for( unsigned int i=0; i<19; i++)
       {
          assert(c+19+19+19+19 < color->size());
          (*color)[c].set(bottom_color[i][0], bottom_color[i][1], bottom_color[i][2], 1.f);
@@ -250,6 +214,7 @@ void dtCore::SkyDome::Repaint(   const osg::Vec3& skyColor,
          (*color)[c+19+19].set(middle_color[i][0], middle_color[i][1], middle_color[i][2], 1.f);
          (*color)[c+19+19+19].set(upper_color[i][0], upper_color[i][1], upper_color[i][2], 1.f);
          (*color)[c+19+19+19+19].set(center_color[0], center_color[1], center_color[2], 1.f);
+         c++;
       }
 
    }
@@ -259,7 +224,24 @@ void dtCore::SkyDome::Repaint(   const osg::Vec3& skyColor,
 
 
 
+bool SkyDome::IsSunsetOrSunrise( double sunAngle ) const
+{
+   return sunAngle > -10.0 && sunAngle < 10.0;
+}
 
+osg::Vec3 SkyDome::CalcCenterColors( double vis_factor,
+                                    const osg::Vec3& skyColor, 
+                                    const osg::Vec3& fogColor ) const
+{
+   osg::Vec3 center_color;
 
+   for ( unsigned int j = 0; j < 3; j++ ) 
+   {
+      const osg::Vec3::value_type diff = skyColor[j] - fogColor[j];
+      center_color[j] = skyColor[j] - diff * ( 1.0 - vis_factor );
+   }
+   return center_color;
+}
 
 }
+
