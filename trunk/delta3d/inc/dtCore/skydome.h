@@ -75,6 +75,13 @@ namespace dtCore
                                  const osg::Vec3& skyColor, 
                                  const osg::Vec3& fogColor) const;
       
+      void CalcNewColors(double visibility, const osg::Vec3& skyColor, 
+                         const osg::Vec3& fogColor);
+
+      void AssignColors() const;
+
+      double GetVisibilityFactor(double visibility) const;
+
       osg::Vec3 mBaseColor;
       dtCore::RefPtr<osg::Geode> mGeode;
       dtCore::RefPtr<MoveEarthySkyWithEyePointTransformAzimuth> mXform;

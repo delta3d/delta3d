@@ -121,19 +121,39 @@ void dtCore::SkyDome::Repaint(   const osg::Vec3& skyColor,
 
    // First, recaclulate the basic colors
 
+   CalcNewColors(visibility, skyColor, fogColor);
+
+   AssignColors();
+}
+
+
+
+bool SkyDome::IsSunsetOrSunrise( double sunAngle ) const
+{
+   return sunAngle > -10.0 && sunAngle < 10.0;
+}
+
+osg::Vec3 SkyDome::CalcCenterColors( double vis_factor,
+                                    const osg::Vec3& skyColor, 
+                                    const osg::Vec3& fogColor ) const
+{
+   osg::Vec3 center_color;
+
+   for ( unsigned int j = 0; j < 3; j++ ) 
+   {
+      const osg::Vec3::value_type diff = skyColor[j] - fogColor[j];
+      center_color[j] = skyColor[j] - diff * ( 1.0 - vis_factor );
+   }
+   return center_color;
+}
+
+void SkyDome::CalcNewColors( double visibility, const osg::Vec3& skyColor, 
+                            const osg::Vec3& fogColor )
+{
+   double vis_factor = GetVisibilityFactor(visibility);
 
    double cvf = visibility;
-
    dtUtil::Clamp(cvf, 0.0, 20000.0);
-
-   double vis_factor = 1.0;
-
-   if ( visibility < 3000.0 ) 
-   {
-      vis_factor = (visibility - 1000.0) / 2000.0;
-
-      dtUtil::Clamp(vis_factor, 0.0, 1.0);
-   } 
 
    center_color = CalcCenterColors(vis_factor, skyColor, fogColor);
 
@@ -188,8 +208,10 @@ void dtCore::SkyDome::Repaint(   const osg::Vec3& skyColor,
    {
       bottom_color[i] = fogColor;
    }
+}
 
-   //repaint the lower ring
+void SkyDome::AssignColors() const
+{
    osg::Geometry *geom = mGeode->getDrawable(0)->asGeometry();
    osg::Array *array = geom->getColorArray();
    if (array && array->getType()==osg::Array::Vec4ArrayType)
@@ -222,26 +244,20 @@ void dtCore::SkyDome::Repaint(   const osg::Vec3& skyColor,
    geom->dirtyDisplayList();
 }
 
-
-
-bool SkyDome::IsSunsetOrSunrise( double sunAngle ) const
+double SkyDome::GetVisibilityFactor( double visibility ) const
 {
-   return sunAngle > -10.0 && sunAngle < 10.0;
-}
-
-osg::Vec3 SkyDome::CalcCenterColors( double vis_factor,
-                                    const osg::Vec3& skyColor, 
-                                    const osg::Vec3& fogColor ) const
-{
-   osg::Vec3 center_color;
-
-   for ( unsigned int j = 0; j < 3; j++ ) 
+   if ( visibility < 3000.0 ) 
    {
-      const osg::Vec3::value_type diff = skyColor[j] - fogColor[j];
-      center_color[j] = skyColor[j] - diff * ( 1.0 - vis_factor );
+      double vis_factor = (visibility - 1000.0) / 2000.0;
+
+      dtUtil::Clamp(vis_factor, 0.0, 1.0);
+      return vis_factor;
    }
-   return center_color;
+
+   return 1.0;
+
 }
 
 }
+
 
