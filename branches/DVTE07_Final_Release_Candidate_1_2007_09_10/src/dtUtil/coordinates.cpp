@@ -782,10 +782,10 @@ namespace dtUtil
 
       // northing minus false northing
       double adj_northing;
-      if (northing > 5000000)
-         adj_northing = northing - 10000000.0;
+      if (northing > 10000000)
+        adj_northing = northing - 20000000.0;
       else
-         adj_northing = northing;
+        adj_northing = northing;
 
       /* Calculate longitude of the central meridian.  Zone is converted to an int in the calculation because 
        * it is valid for the calculation to go below zero.
@@ -802,7 +802,7 @@ namespace dtUtil
       M = adj_northing / CentralMeridianScale;
 
       /* calculate the footprint latitude, phai1 */
-      mu = M / (Geocent_a * P1);
+      mu = M / (semiMajorAxis * P1);
 
       cos_2mu = cos(2.0*mu);
       phai1 = mu + (sin(2.0*mu) *

@@ -28,6 +28,7 @@
 #include <cppunit/extensions/HelperMacros.h>
 #include <iostream>
 #include <osg/io_utils>
+#include <osg/Math>
 
 /**
  * @class CoordinateTests
@@ -46,7 +47,8 @@ class CoordinateTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestMilConversions);
       CPPUNIT_TEST(TestOperators);
       CPPUNIT_TEST(TestMGRSvsXYZ);
-      CPPUNIT_TEST(TestConvertGeodeticToUTM );  
+      CPPUNIT_TEST(TestConvertGeodeticToUTM );
+      CPPUNIT_TEST(TestConvertUTMToGeodetic);
    CPPUNIT_TEST_SUITE_END();
 
    public:
@@ -56,8 +58,8 @@ class CoordinateTests : public CPPUNIT_NS::TestFixture
 
       void TestConfigure(); 
       void TestGeoOrigin();
-      void TestGeocentricToCartesianConversions();   
-      void TestUTMToMGRS();   
+      void TestGeocentricToCartesianConversions();
+      void TestUTMToMGRS();
       void TestMGRSToUTM();
       void TestUTMToCartesianConversions();  
       void TestUTMZoneCalculations();
@@ -65,6 +67,7 @@ class CoordinateTests : public CPPUNIT_NS::TestFixture
       void TestOperators();
       void TestConvertGeodeticToUTM();
       void TestMGRSvsXYZ();
+      void TestConvertUTMToGeodetic();
 
    private:
       
@@ -214,9 +217,9 @@ void CoordinateTests::TestMGRSvsXYZ()
    
    std::string tempString, returnString;
 
-   converter->SetGeoOrigin(257,17,35);
-   converter->SetGeoOriginRotation(105,105);
-   converter->SetOriginLocation(2305,8035,10315);
+   converter->SetGeoOrigin(257.0, 17.0, 35.0);
+   converter->SetGeoOriginRotation(105.0, 105.0);
+   converter->SetOriginLocation(2305.0, 8035.0, 10315.0);
    converter->SetMagneticNorthOffset(15);
 
    tempString = converter->XYZToMGRS(tempVector);
@@ -685,4 +688,19 @@ void CoordinateTests::TestConvertGeodeticToUTM()
       CPPUNIT_ASSERT_DOUBLES_EQUAL( 595315.70, fatbackEasting, epsilon );
       CPPUNIT_ASSERT_DOUBLES_EQUAL( 3805195.52, fatbackNorthing, epsilon );
    }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void CoordinateTests::TestConvertUTMToGeodetic()
+{
+   const double epsilon = 0.001;
+
+   double lat;
+   double lon;
+
+   converter->ConvertUTMToGeodetic( 10, 500000, 5005000, lat, lon);
+
+   //CPPUNIT_ASSERT_EQUAL( '11S', dacoZone ) //How to convert to long?
+   CPPUNIT_ASSERT_DOUBLES_EQUAL( 45.0, osg::RadiansToDegrees(lat), epsilon );
+   CPPUNIT_ASSERT_DOUBLES_EQUAL( -123.0, osg::RadiansToDegrees(lon), epsilon );
 }
