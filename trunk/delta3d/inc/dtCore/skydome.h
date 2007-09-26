@@ -78,6 +78,10 @@ namespace dtCore
       void CalcNewColors(double visibility, const osg::Vec3& skyColor, 
                          const osg::Vec3& fogColor);
 
+      double CalcCVF( double visibility ) const;
+
+      void SetUpperMiddleLowerColors( const osg::Vec3& skyColor, const osg::Vec3& fogColor,
+                                      unsigned int i, double visibility );
       void AssignColors() const;
 
       double GetVisibilityFactor(double visibility) const;

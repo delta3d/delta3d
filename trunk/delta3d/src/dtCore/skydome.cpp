@@ -133,6 +133,7 @@ bool SkyDome::IsSunsetOrSunrise( double sunAngle ) const
    return sunAngle > -10.0 && sunAngle < 10.0;
 }
 
+
 osg::Vec3 SkyDome::CalcCenterColors( double vis_factor,
                                     const osg::Vec3& skyColor, 
                                     const osg::Vec3& fogColor ) const
@@ -150,30 +151,11 @@ osg::Vec3 SkyDome::CalcCenterColors( double vis_factor,
 void SkyDome::CalcNewColors( double visibility, const osg::Vec3& skyColor, 
                             const osg::Vec3& fogColor )
 {
-   double vis_factor = GetVisibilityFactor(visibility);
-
-   double cvf = visibility;
-   dtUtil::Clamp(cvf, 0.0, 20000.0);
-
-   center_color = CalcCenterColors(vis_factor, skyColor, fogColor);
+   center_color = CalcCenterColors(GetVisibilityFactor(visibility), skyColor, fogColor);
 
    for ( unsigned int i = 0; i < 9; i++ ) 
    {
-      for (  unsigned int j = 0; j < 3; j++ ) 
-      {
-         const osg::Vec3::value_type diff = skyColor[j] - fogColor[j];
-
-         upper_color[i][j] = skyColor[j] - diff *
-            ( 1.0 - vis_factor * (0.7 + 0.3 * cvf/20000.f) );
-         middle_color[i][j] = skyColor[j] - diff *
-            ( 1.0 - vis_factor * (0.1 + 0.85 * cvf/20000.f) )
-            + middle_amt[j];
-         lower_color[i][j] = fogColor[j] + outer_amt[j];
-
-         dtUtil::Clamp(upper_color[i][j], 0.f, 1.f);
-         dtUtil::Clamp(middle_color[i][j], 0.f, 1.f);
-         dtUtil::Clamp(lower_color[i][j], 0.f, 1.f);
-      }
+      SetUpperMiddleLowerColors(skyColor, fogColor, i, visibility);
 
       outer_amt -= outer_diff;
       middle_amt -= middle_diff;
@@ -184,21 +166,7 @@ void SkyDome::CalcNewColors( double visibility, const osg::Vec3& skyColor,
 
    for ( unsigned int i = 9; i < 19; i++ ) 
    {
-      for ( unsigned int j = 0; j < 3; j++ ) 
-      {
-         const osg::Vec3::value_type diff = skyColor[j] - fogColor[j];
-
-         upper_color[i][j] = skyColor[j] - diff *
-            ( 1.0 - vis_factor * (0.7 + 0.3 * cvf/20000.f) );
-         middle_color[i][j] = skyColor[j] - diff *
-            ( 1.0 - vis_factor * (0.1 + 0.85 * cvf/20000.f) )
-            + middle_amt[j];
-         lower_color[i][j] = fogColor[j] + outer_amt[j];
-
-         dtUtil::Clamp(upper_color[i][j], 0.f, 1.f);
-         dtUtil::Clamp(middle_color[i][j], 0.f, 1.f);
-         dtUtil::Clamp(lower_color[i][j], 0.f, 1.f);
-      }
+      SetUpperMiddleLowerColors(skyColor, fogColor, i, visibility);
 
       outer_amt += outer_diff;
       middle_amt += middle_diff;
@@ -257,6 +225,37 @@ double SkyDome::GetVisibilityFactor( double visibility ) const
    return 1.0;
 
 }
+
+void SkyDome::SetUpperMiddleLowerColors( const osg::Vec3& skyColor, const osg::Vec3& fogColor,
+                                         unsigned int i, double visibility )
+{
+   const double cvf = CalcCVF(visibility);
+
+   for ( unsigned int j = 0; j < 3; j++ ) 
+   {
+      const osg::Vec3::value_type diff = skyColor[j] - fogColor[j];
+
+      upper_color[i][j] = skyColor[j] - diff *
+                          ( 1.0 - GetVisibilityFactor(visibility) * (0.7 + 0.3 * cvf/20000.f) );
+
+      middle_color[i][j] = skyColor[j] - diff *
+                          ( 1.0 - GetVisibilityFactor(visibility) * (0.1 + 0.85 * cvf/20000.f) )
+                           + middle_amt[j];
+
+      lower_color[i][j] = fogColor[j] + outer_amt[j];
+
+      dtUtil::Clamp(upper_color[i][j], 0.f, 1.f);
+      dtUtil::Clamp(middle_color[i][j], 0.f, 1.f);
+      dtUtil::Clamp(lower_color[i][j], 0.f, 1.f);
+   }
+}
+
+double SkyDome::CalcCVF( double visibility ) const
+{
+   dtUtil::Clamp(visibility, 0.0, 20000.0);
+   return visibility;
+}
+
 
 }
 
