@@ -792,7 +792,7 @@ def TOOL_BUNDLE(env):
       
          if not foundGdalH: 
             print "gdal.h was not found, aborting."
-            Exit(1)
+            env.Exit(1)
          
       
       #this actually SEARCHES, not good
