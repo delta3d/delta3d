@@ -119,7 +119,7 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////
    void DeadReckoningHelper::SetDeadReckoningAlgorithm(DeadReckoningAlgorithm& newAlgorithm)
    {
-      if (*mMinDRAlgorithm == newAlgorithm)
+      if (mMinDRAlgorithm == &newAlgorithm)
          return;
       mMinDRAlgorithm = &newAlgorithm;
       mUpdated = true;
