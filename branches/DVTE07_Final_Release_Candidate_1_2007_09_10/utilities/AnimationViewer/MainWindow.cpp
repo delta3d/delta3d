@@ -41,7 +41,10 @@ mMeshListWidget(NULL),
 mMaterialModel(NULL),
 mMaterialView(NULL)
 {
-   resize(640, 300);   
+   resize(640, 300);
+
+   dtAnim::AnimNodeBuilder& nodeBuilder = dtAnim::Cal3DDatabase::GetInstance().GetNodeBuilder();
+   nodeBuilder.SetCreate(dtAnim::AnimNodeBuilder::CreateFunc(&nodeBuilder, &dtAnim::AnimNodeBuilder::CreateSoftware));
 
    mAnimListWidget = new AnimationTableWidget(this);
    mAnimListWidget->setColumnCount(5);
@@ -88,10 +91,10 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::CreateTrackEditor()
-{  
+{
    mTrackScene  = new TrackScene(this);
-   mTrackViewer = new TrackView(mTrackScene, this);     
-   
+   mTrackViewer = new TrackView(mTrackScene, this);
+
    mTrackViewer->setDragMode(QGraphicsView::ScrollHandDrag);
 }
 
@@ -103,9 +106,9 @@ void MainWindow::CreateMenus()
 
    QAction* toggleHardwareSkinning = viewMenu->addAction("Use Hardware Skinning");
    toggleHardwareSkinning->setCheckable(true);
-   toggleHardwareSkinning->setChecked(true);
+   toggleHardwareSkinning->setChecked(false);
    connect(toggleHardwareSkinning, SIGNAL(triggered()), this, SLOT(OnToggleHardwareSkinning()));
-   
+
    windowMenu->addAction(mLoadCharAct);
 
    QAction *toggleShadeToolbarAction = toolBarMenu->addAction("Shading toolbar");
@@ -117,7 +120,7 @@ void MainWindow::CreateMenus()
    toggleLODToolbarAction->setCheckable(true);
    toggleLODToolbarAction->setChecked(true);
    //toggleLightToolBarAction->setCheckable(true);
-   //toggleLightToolBarAction->setChecked(true);   
+   //toggleLightToolBarAction->setChecked(true);
 
    connect(toggleShadeToolbarAction, SIGNAL(triggered()), this, SLOT(OnToggleShadingToolbar()));
    connect(toggleLODToolbarAction, SIGNAL(triggered()), this, SLOT(OnToggleLODToolbar()));
@@ -131,7 +134,6 @@ void MainWindow::CreateMenus()
    windowMenu->addAction(mExitAct);
 
    UpdateRecentFileActions();
-
 }
 
 void MainWindow::CreateActions()
@@ -157,17 +159,17 @@ void MainWindow::CreateActions()
    QActionGroup *actionGroup = new QActionGroup(this);
    actionGroup->setExclusive(true); 
 
-   QIcon wireframeIcon(":/images/wireframe.png");  
+   QIcon wireframeIcon(":/images/wireframe.png");
    QIcon shadedIcon(":/images/shaded.png");
    QIcon shadedWireIcon(":/images/shadedwire.png");
 
    mWireframeAction  = actionGroup->addAction(wireframeIcon, "Wireframe");
    mShadedAction     = actionGroup->addAction(shadedIcon, "Shaded");
-   mShadedWireAction = actionGroup->addAction(shadedWireIcon, "Shaded Wireframe");     
+   mShadedWireAction = actionGroup->addAction(shadedWireIcon, "Shaded Wireframe");
 
    mWireframeAction->setCheckable(true);
    mShadedAction->setCheckable(true); 
-   mShadedWireAction->setCheckable(true);   
+   mShadedWireAction->setCheckable(true);
 
    mShadedAction->setChecked(true);
 }
@@ -176,27 +178,36 @@ void MainWindow::CreateToolbars()
 {
    QDoubleSpinBox *lodSpinner = new QDoubleSpinBox(this);
    lodSpinner->setRange(0, 1);
-   lodSpinner->setSingleStep(0.01);  
+   lodSpinner->setSingleStep(0.01);
    lodSpinner->setValue(1);
 
-   mShadingToolbar = addToolBar("Shading toolbar"); 
+   QDoubleSpinBox *speedSpinner = new QDoubleSpinBox(this);
+   speedSpinner->setRange(0.0, 100.0);
+   speedSpinner->setSingleStep(0.01);
+   speedSpinner->setValue(1.0);
+
+   mShadingToolbar = addToolBar("Shading toolbar");
    mLODToolbar     = addToolBar("LOD toolbar");
+   mSpeedToolbar   = addToolBar("Animation Speed toolbar");
    //mLightingToolbar = addToolBar("Lighting toolbar");
 
 
    mShadingToolbar->addAction(mWireframeAction);
    mShadingToolbar->addAction(mShadedAction);
-   mShadingToolbar->addAction(mShadedWireAction);    
+   mShadingToolbar->addAction(mShadedWireAction);
 
-   mLODToolbar->addWidget(lodSpinner);   
-
+   mLODToolbar->addWidget(lodSpinner);
+   
+   mSpeedToolbar->addWidget(speedSpinner);
+   
    //QIcon diffuseIcon(":/images/diffuseLight.png");
    //QIcon pointLightIcon(":/images/pointLight.png");
 
    //mLightingToolbar->addAction(diffuseIcon, "Diffuse Light");
    //mLightingToolbar->addAction(pointLightIcon, "Point Light");
 
-   connect(lodSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnLOD_Changed(double)));      
+   connect(lodSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnLOD_Changed(double)));
+   connect(speedSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnSpeedChanged(double)));
 }
 
 void MainWindow::OnOpenCharFile()
@@ -232,7 +243,7 @@ void MainWindow::LoadCharFile( const QString &filename )
 
       emit FileToLoad( filename );
 
-      SetCurrentFile( filename );     
+      SetCurrentFile( filename );
 
       statusBar()->showMessage(tr("File loaded"), 2000);
    }
@@ -240,7 +251,7 @@ void MainWindow::LoadCharFile( const QString &filename )
    {
       QString errorString = QString("File not found: %1").arg( filename );
       QMessageBox::warning( this, "Warning", errorString, "&Ok" );
-   }    
+   }
 }
 
 
@@ -380,7 +391,12 @@ void MainWindow::OnMeshActivated( QListWidgetItem *item )
 
 void MainWindow::OnLOD_Changed(double newValue)
 {   
-   emit LOD_Changed(newValue);
+   emit LOD_Changed(float(newValue));
+}
+
+void MainWindow::OnSpeedChanged(double newValue)
+{
+   emit SpeedChanged(float(newValue));
 }
 
 void MainWindow::OnToggleHardwareSkinning()
@@ -411,7 +427,7 @@ void MainWindow::OnToggleShadingToolbar()
    else
    {
       mShadingToolbar->hide();
-   }   
+   }
 }
 
 void MainWindow::OnToggleLODToolbar()

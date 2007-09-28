@@ -7,6 +7,7 @@
 #include "Viewer.h"
 
 #include <dtUtil/log.h>
+#include <dtCore/system.h>
 #include <dtCore/transform.h>
 #include <dtCore/scene.h>
 #include <dtCore/camera.h>
@@ -48,6 +49,11 @@ Viewer::Viewer():
 Viewer::~Viewer()
 {
    mTimer.stop();
+}
+
+void Viewer::timerEvent(QTimerEvent *event)
+{
+   dtCore::System::GetInstance().StepWindow();
 }
 
 osg::Geode* MakePlane()
@@ -235,6 +241,11 @@ void Viewer::OnLOD_Changed( float zeroToOneValue )
    }  
 }
 
+void Viewer::OnSpeedChanged( float speedFactor )
+{
+   dtCore::System::GetInstance().SetTimeScale(speedFactor);
+}
+
 void Viewer::OnSetShaded()
 {
    GetScene()->GetSceneNode()->removeChild(mWireDecorator.get());
@@ -246,7 +257,7 @@ void Viewer::OnSetShaded()
 void Viewer::OnSetWireframe()
 {
    GetScene()->GetSceneNode()->removeChild(mWireDecorator.get());
-   GetScene()->GetSceneNode()->removeChild(mShadeDecorator.get());  
+   GetScene()->GetSceneNode()->removeChild(mShadeDecorator.get());
 
    GetScene()->GetSceneNode()->addChild(mWireDecorator.get());
 }

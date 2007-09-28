@@ -1150,8 +1150,6 @@ namespace dtHLAGM
       //it should be.
 
       mapTypeIterator mappingIterator = beginIt;
-
-      std::cout << readFrom.size() << std::endl;
       
       while (mappingIterator != readFrom.end())
       {
