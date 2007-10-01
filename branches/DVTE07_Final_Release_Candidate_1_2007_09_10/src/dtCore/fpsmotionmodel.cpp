@@ -469,7 +469,14 @@ void FPSMotionModel::OnMessage(MessageData *data)
    {
       //use the real change in time, not the simulated time change
       //see dtCore::System for the difference.
-      const double deltaFrameTime = static_cast<const double*>(data->userData)[1];
+      double deltaFrameTime = static_cast<const double*>(data->userData)[1];
+
+      //clamp frame time to be no less then 20 fps
+      const double MAX_FRAME_TIME = 1.0 / 20.0;
+      if (deltaFrameTime > MAX_FRAME_TIME)
+      {
+         deltaFrameTime = MAX_FRAME_TIME;
+      }
 
       UpdateMouse(deltaFrameTime);
 
