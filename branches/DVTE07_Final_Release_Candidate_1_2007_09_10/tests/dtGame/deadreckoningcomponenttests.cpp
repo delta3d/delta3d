@@ -123,6 +123,7 @@ namespace dtGame
          CPPUNIT_TEST(TestSimpleBehaviorRemote);
          CPPUNIT_TEST(TestHighResClampProperty);
          CPPUNIT_TEST(TestSmoothingStepsCalc);
+         CPPUNIT_TEST(TestSmoothingStepsCalcFastUpdate);
          CPPUNIT_TEST(TestDRArticulationStopCounts);
          CPPUNIT_TEST(TestDoDRArticulations);
          CPPUNIT_TEST(TestDoDRVelocityAccel);
@@ -850,6 +851,9 @@ namespace dtGame
             CPPUNIT_ASSERT_EQUAL_MESSAGE("The smoothing steps for rotation should be 1.0 because the velocity vector is 0",
                1.0f, helper->GetRotationEndSmoothingTime());
 
+            CPPUNIT_ASSERT_MESSAGE("The average time between updates is too low for the rest of the test to be valid", 
+               helper->GetAverageTimeBetweenRotationUpdates() > 10.0);
+
             helper->SetVelocityVector(osg::Vec3(100.0f, 100.0f, 100.0f));
             helper->SetDeadReckoningAlgorithm(DeadReckoningAlgorithm::VELOCITY_ONLY);
 
@@ -862,6 +866,41 @@ namespace dtGame
                helper->GetRotationEndSmoothingTime(), helper->GetMaxRotationSmoothingTime());
          }
    
+         void TestSmoothingStepsCalcFastUpdate()
+         {
+            dtCore::RefPtr<DeadReckoningHelper> helper = new DeadReckoningHelper;
+            dtCore::Transform xform(300.0f, 200.0f, 100.0f, 30.0f, 32.2f, 93.0f);
+
+            helper->SetLastKnownTranslation(osg::Vec3(-0.4f, -0.3f, -2.7f));
+            helper->SetLastKnownRotation(osg::Vec3(-0.4f, -0.3f, -2.7f));
+            helper->SetVelocityVector(osg::Vec3(0.0f, 0.0f, 0.0f));
+
+            //make sure the average update time is very low.
+            helper->SetLastTranslationUpdatedTime(0.01);
+            helper->SetLastTranslationUpdatedTime(0.01);
+
+            helper->SetLastRotationUpdatedTime(0.01);
+            helper->SetLastRotationUpdatedTime(0.01);
+
+            CPPUNIT_ASSERT_MESSAGE("The average time between translation updates should be less than 1.0", 
+               helper->GetAverageTimeBetweenTranslationUpdates() < 1.0);
+
+            CPPUNIT_ASSERT_MESSAGE("The average time between rotation updates should be less than 1.0", 
+               helper->GetAverageTimeBetweenRotationUpdates() < 1.0);
+
+
+            helper->SetDeadReckoningAlgorithm(DeadReckoningAlgorithm::VELOCITY_AND_ACCELERATION);
+            mDeadReckoningComponent->InternalCalcTotSmoothingSteps(*helper, xform);
+
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("The smoothing steps for translation should be less than "
+                     "1.0 as it is essentially a warp, but with fast updates.",
+               float(helper->GetAverageTimeBetweenTranslationUpdates()), helper->GetTranslationEndSmoothingTime());
+
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("The smoothing steps for rotation should bel less that 1.0 because "
+                     "the velocity vector is 0 but with fast updates.",
+               float(helper->GetAverageTimeBetweenRotationUpdates()), helper->GetRotationEndSmoothingTime());
+         }
+      
       private:
    
          void TestDoDRVelocityAccel(bool flying)

@@ -230,7 +230,9 @@ namespace dtGame
       points[1].set(modelDimensions[0] / 2, -(modelDimensions[1] / 2), 0.0f);
       points[2].set(-(modelDimensions[0] / 2), -(modelDimensions[1] / 2), 0.0f);
 
-      const osg::Matrix& m = gameActorProxy.GetGameActor().GetMatrix();
+      //must use the updated matrix in xform for the ground-clamp start position.
+      osg::Matrix actorMatrix; 
+      xform.Get(actorMatrix);
 
       mTripleIsector->Reset();
       mTripleIsector->SetQueryRoot(mTerrainActor.get());
@@ -240,7 +242,7 @@ namespace dtGame
          dtCore::BatchIsector::SingleISector& single = mTripleIsector->EnableAndGetISector(i);
 
          //convert point to absolute space.
-         points[i] = points[i] * m;
+         points[i] = points[i] * actorMatrix;
          const osg::Vec3& singlePoint = points[i];
          
          if (osg::isNaN(singlePoint.x()) || osg::isNaN(singlePoint.y()) || osg::isNaN(singlePoint.z()))
