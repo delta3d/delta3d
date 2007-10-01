@@ -582,26 +582,26 @@ namespace dtGame
       if (GetMaxRotationSmoothingTime() < mAverageTimeBetweenRotationUpdates)
          mRotationEndSmoothingTime = GetMaxRotationSmoothingTime();
       else 
-         mRotationEndSmoothingTime = mAverageTimeBetweenRotationUpdates;       
+         mRotationEndSmoothingTime = mAverageTimeBetweenRotationUpdates;
 
       // For angular acceleration, do a similar compare
       if (GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::VELOCITY_AND_ACCELERATION && 
          (mAngularVelocityVector.length2() * (mRotationEndSmoothingTime * mRotationEndSmoothingTime)) < 
             0.1 * ((mLastQuatRotation-mCurrentDeadReckonedRotation).length2()))
       {
-         mRotationEndSmoothingTime = 1.0;
+         mRotationEndSmoothingTime = std::min(1.0f, mAverageTimeBetweenRotationUpdates);
       }
 
       // TRANSLATION
       if (GetMaxTranslationSmoothingTime() < mAverageTimeBetweenTranslationUpdates)
          mTranslationEndSmoothingTime = GetMaxTranslationSmoothingTime();
       else 
-         mTranslationEndSmoothingTime = mAverageTimeBetweenTranslationUpdates;      
+         mTranslationEndSmoothingTime = mAverageTimeBetweenTranslationUpdates;
 
       //If the player could not possible get to the new position in 10 seconds
       //based on the magnitude of it's velocity vector, then just warp the entity in 1 second.
       if (mVelocityVector.length2() * (mTranslationEndSmoothingTime*mTranslationEndSmoothingTime) < (mLastTranslation - xform.GetTranslation()).length2() )
-         mTranslationEndSmoothingTime = 1.0;
+         mTranslationEndSmoothingTime = std::min(1.0f, mAverageTimeBetweenTranslationUpdates);
    }
 
    //////////////////////////////////////////////////////////////////////
