@@ -39,7 +39,25 @@ namespace dtGame
    /**
     * @class GameEntryPoint
     * A class for specifying the entry point into a Game so that the entire game can be defined in a 
-    * Game library and loaded at runtime.
+    * Game library and loaded at runtime.  Typically, a derivative of this
+    * class is compiled into a dynamic library, which gets loaded by a
+    * dtGame::GameApplication instance.
+    *
+    * Note: If a dtGame::GameApplication is used to load this as a dynamic
+    * library, be sure to implement the two C functions as shown, typically
+    * in the .cpp file:
+    * @code 
+    * extern "C" API_EXPORT dtGame::GameEntryPoint* CreateGameEntryPoint()
+    * {
+    *   return new MyGameEntryPoint();
+    * }
+    *
+    * extern "C" API_EXPORT void DestroyGameEntryPoint(dtGame::GameEntryPoint *entryPoint)
+    * {
+    *   delete entryPoint;
+    * }
+    * @endcode
+    * @see dtGame::GameApplication::Config()
     */
    class GameEntryPoint
    {
