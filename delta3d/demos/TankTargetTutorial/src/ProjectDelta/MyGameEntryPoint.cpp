@@ -90,10 +90,9 @@ void MyGameEntryPoint::Initialize(dtGame::GameApplication& app, int argc, char *
 }
 
 //////////////////////////////////////////////////////////////////////////
-void MyGameEntryPoint::OnStartup()
+void MyGameEntryPoint::OnStartup(dtGame::GameApplication& app)
 {
-   dtGame::GameManager& gameManager = *GetGameManager();
-   dtABC::Application& app = gameManager.GetApplication();
+   dtGame::GameManager& gameManager = *app.GetGameManager();
 
    // init our file path so it can find GUI Scheme
    // add extra data paths here if you need them
@@ -120,7 +119,7 @@ void MyGameEntryPoint::OnStartup()
    // offset our camera a little back and above the tank.
    dtCore::Transform tx(0.0f, 0.7f, 2.2f, 0.0f, 0.0f, 0.0f);
    app.GetCamera()->SetTransform(tx); 
-   gameManager.GetScene().UseSceneLight(true);
+   app.GetScene()->UseSceneLight(true);
 
    // Attach our camera to the tank from the map
    std::vector<dtDAL::ActorProxy*> tanks;

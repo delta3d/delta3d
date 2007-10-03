@@ -30,6 +30,7 @@
 namespace dtCore
 {
    class FlyMotionModel;
+   class Camera;
 }
 
 namespace dtGame
@@ -65,13 +66,15 @@ class TEST_ANIM_EXPORT TestAnim : public dtGame::GameEntryPoint
        * Called just before your application's game loop starts.  This is your main 
        * opportunity to create components, load maps, create unique actors, etc...
        */
-      virtual void OnStartup();
+      virtual void OnStartup(dtGame::GameApplication& app);
 
-      virtual void OnShutdown();
+      virtual void OnShutdown(dtGame::GameApplication& app);
 
    private:
 
-      void InitializeAnimationActor(dtActors::AnimationGameActorProxy2* actor, dtAnim::AnimationComponent* animComp, bool isPlayer);
+      void InitializeAnimationActor(dtActors::AnimationGameActorProxy2* actor,
+                                    dtAnim::AnimationComponent* animComp, bool isPlayer,
+                                    dtCore::Camera *camera);
 
       dtCore::RefPtr<dtAnim::AnimationHelper> mAnimationHelper;
       dtCore::RefPtr<dtCore::FlyMotionModel> mFMM;

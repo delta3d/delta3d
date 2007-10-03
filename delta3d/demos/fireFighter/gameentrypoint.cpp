@@ -97,11 +97,11 @@ void FireFighterGameEntryPoint::Initialize(dtGame::GameApplication& app, int arg
       dtDAL::Project::GetInstance().GetContext() + "/CEGUI");
 }
 
-void FireFighterGameEntryPoint::OnStartup()
+void FireFighterGameEntryPoint::OnStartup(dtGame::GameApplication& app)
 {
-   dtGame::GameManager& gameManager = *GetGameManager();
+   dtGame::GameManager& gameManager = *app.GetGameManager();
    // Make sure we can hear audio
-   gameManager.GetApplication().GetCamera()->AddChild(dtAudio::AudioManager::GetListener());
+   app.GetCamera()->AddChild(dtAudio::AudioManager::GetListener());
 
    // Register the messages of the game with the game manager
    gameManager.GetMessageFactory().RegisterMessageType<GameStateChangedMessage>(MessageType::GAME_STATE_CHANGED);
@@ -116,7 +116,7 @@ void FireFighterGameEntryPoint::OnStartup()
    gameManager.GetMessageFactory().RegisterMessageType<dtGame::Message>(MessageType::HELP_WINDOW_CLOSED);
 
    // Create the components and add them to the game manager
-   RefPtr<HUDComponent>   hudComp   = new HUDComponent(*gameManager.GetApplication().GetWindow());
+   RefPtr<HUDComponent>   hudComp   = new HUDComponent(*app.GetWindow());
    RefPtr<InputComponent> inputComp = new InputComponent;
    RefPtr<dtGame::DefaultMessageProcessor> dmp = new dtGame::DefaultMessageProcessor("DefaultMessageProcessor");
    mLmsComponent = new dtLMS::LmsComponent("LMSComponent");
@@ -149,10 +149,8 @@ void FireFighterGameEntryPoint::OnStartup()
    gameManager.SendMessage(gscm);
 }
 
-void FireFighterGameEntryPoint::OnShutdown()
+void FireFighterGameEntryPoint::OnShutdown(dtGame::GameApplication& app)
 {  
-   dtGame::GameManager& gameManager = *GetGameManager();
-
    if(mUseLMS && mLmsComponent.valid())
    {
       mLmsComponent->DisconnectFromLms();
@@ -161,6 +159,6 @@ void FireFighterGameEntryPoint::OnShutdown()
    dtDAL::Map &map = dtDAL::Project::GetInstance().GetMap("GameMap");
    dtDAL::Project::GetInstance().CloseMap(map, true);
 
-   gameManager.CloseCurrentMap();
-   gameManager.Shutdown();
+   app.GetGameManager()->CloseCurrentMap();
+   app.GetGameManager()->Shutdown();
 }

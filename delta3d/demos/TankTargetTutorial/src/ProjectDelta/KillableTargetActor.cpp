@@ -119,7 +119,7 @@ void KillableTargetActor::ProcessMessage(const dtGame::Message &message)
       else if(eventMsg.GetGameEvent() != 0 && eventMsg.GetGameEvent()->GetName() == "TestShaders")
       {
          //dtCore::ShaderManager::GetInstance().Clear();
-         dtCore::ShaderManager::GetInstance().ReloadAndReassignShaderDefinitions("Shaders/TutorialShaderDefs.xml", false);
+         dtCore::ShaderManager::GetInstance().ReloadAndReassignShaderDefinitions("Shaders/TutorialShaderDefs.xml");
          ApplyMyShader();
       }
       // reset me!
