@@ -306,6 +306,7 @@ dtCore::RefPtr<osg::Geode> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pW
       }
 
       glExt->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
+      glExt->glBindBuffer(GL_ARRAY_BUFFER_ARB, 0);
 
       pWrapper->EndRenderingQuery();
    }
