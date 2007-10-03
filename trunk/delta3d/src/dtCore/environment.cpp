@@ -632,19 +632,26 @@ void dtCore::Environment::UpdateFogColor()
    // interpolate between the sunrise/sunset color and the color
    // at the opposite direction of this effect. Take in account
    // the current visibility.
-   float av = GetVisibility();
-   if (av > 20000.f)   av = 20000.f;
+   float vis = GetVisibility();
+
+   const float MAX_VISIBILITY = 20000;
+
+   // Clamp visibility
+   if (vis > MAX_VISIBILITY)   
+   {
+      vis = MAX_VISIBILITY;
+   }
 
    double sunRotation = osg::DegreesToRadians(-95.0);
    double heading = osg::DegreesToRadians(-95.0);
 
    double rotation = -(sunRotation+osg::PI) - heading;
 
-   float avf = 1.f - (20000.f - av) / 20000.f;
+   float inverseVis = 1.f - (MAX_VISIBILITY - vis) / MAX_VISIBILITY;
    float sif = 0.5f - cosf(osg::DegreesToRadians(mSunAltitude)*2.f)/2.f + 0.000001f;
 
    float rf1  = fabs((rotation-osg::PI)/osg::PI); //difference between eyepoint heading and sun heading (rad)
-   float rf2 = avf * pow(rf1*rf1, 1/sif);
+   float rf2 = inverseVis * pow(rf1*rf1, 1/sif);
 
    float rf3  = 1.f - rf2;
    
