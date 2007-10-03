@@ -115,10 +115,8 @@ void MyGameEntryPoint::Initialize(dtGame::GameApplication& app, int argc, char *
 }
 
 //////////////////////////////////////////////////////////////////////////
-void MyGameEntryPoint::OnStartup()
+void MyGameEntryPoint::OnStartup(dtGame::GameApplication& app)
 {
-   dtABC::Application& app = GetGameManager()->GetApplication();
-
    // init our file path so it can find GUI Scheme
    // add extra data paths here if you need them
    dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList() + 
@@ -127,18 +125,18 @@ void MyGameEntryPoint::OnStartup()
    dtDAL::Project::GetInstance().SetContext("StageProject");
 
    // Load the map we created in STAGE.
-   GetGameManager()->ChangeMap(mMapName);
+   app.GetGameManager()->ChangeMap(mMapName);
 
    // Add Component - DefaultMessageProcessor 
    dtGame::DefaultMessageProcessor *dmp = new dtGame::DefaultMessageProcessor("DefaultMessageProcessor");
-   GetGameManager()->AddComponent(*dmp,dtGame::GameManager::ComponentPriority::HIGHEST);
+   app.GetGameManager()->AddComponent(*dmp,dtGame::GameManager::ComponentPriority::HIGHEST);
 
    // Register our messages with the Game Manager message factory - part 5
-   TutorialMessageType::RegisterMessageTypes( GetGameManager()->GetMessageFactory() );
+   TutorialMessageType::RegisterMessageTypes( app.GetGameManager()->GetMessageFactory() );
 
    // Add Component - Input Component
    dtCore::RefPtr<InputComponent> inputComp = new InputComponent("InputComponent", mInPlaybackMode);
-   GetGameManager()->AddComponent(*inputComp, dtGame::GameManager::ComponentPriority::NORMAL);
+   app.GetGameManager()->AddComponent(*inputComp, dtGame::GameManager::ComponentPriority::NORMAL);
  
 #ifdef HLA
    // Add Component - HLAComponent 
@@ -177,17 +175,17 @@ void MyGameEntryPoint::OnStartup()
 
    // Add Component - HUD Component
    dtCore::RefPtr<HUDComponent> hudComp = new HUDComponent(app.GetWindow(), "HUDComponent");
-   GetGameManager()->AddComponent(*hudComp, dtGame::GameManager::ComponentPriority::NORMAL);
+   app.GetGameManager()->AddComponent(*hudComp, dtGame::GameManager::ComponentPriority::NORMAL);
 
    // offset our camera a little back and above the tank.
    //dtCore::Transform tx(0.0f, 0.7f, 2.2f, 0.0f, 0.0f, 0.0f);
    //app.GetCamera()->SetTransform(tx); 
 
-   GetGameManager()->GetScene().UseSceneLight(true);
+   app.GetScene()->UseSceneLight(true);
 
    // Attach our camera to the tank from the map
    std::vector<dtDAL::ActorProxy*> tanks;
-   GetGameManager()->FindActorsByName("HoverTank", tanks);
+   app.GetGameManager()->FindActorsByName("HoverTank", tanks);
    if (tanks.size() > 0 && tanks[0] != NULL)
    {
       if (mInPlaybackMode)
@@ -202,11 +200,11 @@ void MyGameEntryPoint::OnStartup()
    app.GetWindow()->SetWindowTitle("Delta3D Tank Tutorial");
 
    // Add the AAR behaviors.
-   dtGame::BinaryLogStream *logStream = new dtGame::BinaryLogStream(GetGameManager()->GetMessageFactory());
+   dtGame::BinaryLogStream *logStream = new dtGame::BinaryLogStream(app.GetGameManager()->GetMessageFactory());
    mServerLogger = new dtGame::ServerLoggerComponent(*logStream, "ServerLoggerComponent");
    mLogController = new dtGame::LogController("LogController");
-   GetGameManager()->AddComponent(*mServerLogger.get(), dtGame::GameManager::ComponentPriority::NORMAL);
-   GetGameManager()->AddComponent(*mLogController.get(), dtGame::GameManager::ComponentPriority::NORMAL);
+   app.GetGameManager()->AddComponent(*mServerLogger.get(), dtGame::GameManager::ComponentPriority::NORMAL);
+   app.GetGameManager()->AddComponent(*mLogController.get(), dtGame::GameManager::ComponentPriority::NORMAL);
    if (mInPlaybackMode)
    {
       mLogController->RequestChangeStateToPlayback();
@@ -219,5 +217,5 @@ void MyGameEntryPoint::OnStartup()
    // ServerLoggerComponent state changes; such as transitions from PLAYBACK to IDLE states.
    //mLogController->RequestAddIgnoredActor(mInputComp->GetTerrainActor().GetId());
 
-   GetGameManager()->DebugStatisticsTurnOn(true, true, 10, true);
+   app.GetGameManager()->DebugStatisticsTurnOn(true, true, 10, true);
 }

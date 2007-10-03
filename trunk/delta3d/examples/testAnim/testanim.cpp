@@ -115,9 +115,9 @@ void TestAnim::Initialize(dtGame::GameApplication& app, int argc, char **argv)
 
 
 //////////////////////////////////////////////////////////////////////////
-void TestAnim::OnStartup()
+void TestAnim::OnStartup(dtGame::GameApplication& app)
 {
-   GetGameManager()->GetApplication().GetWindow()->SetWindowTitle("TestAnim");
+   app.GetWindow()->SetWindowTitle("TestAnim");
 
    std::string dataPath = dtCore::GetDeltaDataPathList();
    dtCore::SetDataFilePathList(dataPath + ";" + 
@@ -129,7 +129,7 @@ void TestAnim::OnStartup()
    ProxyContainer proxies;
    ProxyContainer groundActor;
 
-   dtGame::GameManager& gameManager = *GetGameManager();
+   dtGame::GameManager& gameManager = *app.GetGameManager();
 
    try
    {
@@ -174,7 +174,7 @@ void TestAnim::OnStartup()
             static bool first = true;
 
             //the first one will be the player
-            InitializeAnimationActor(gameProxy, animComp, true);
+            InitializeAnimationActor(gameProxy, animComp, true, app.GetCamera());
 
             if(first)
             {
@@ -194,21 +194,21 @@ void TestAnim::OnStartup()
          for(int j = 0; j < 10; ++j, startPos[1] += 2.0f)
          {
             dtCore::RefPtr<dtActors::AnimationGameActorProxy2> proxy;
-            GetGameManager()->CreateActor(*dtActors::EngineActorRegistry::ANIMATION_ACTOR_TYPE2, proxy);
+            gameManager.CreateActor(*dtActors::EngineActorRegistry::ANIMATION_ACTOR_TYPE2, proxy);
             if(proxy.valid())
             {
-               GetGameManager()->AddActor(*proxy);
+               gameManager.AddActor(*proxy);
 
                dtActors::AnimationGameActor2* actor = dynamic_cast<dtActors::AnimationGameActor2*>(&proxy->GetGameActor());
                actor->SetModel("SkeletalMeshes/marine.xml");
-               InitializeAnimationActor(proxy.get(), animComp, false);
+               InitializeAnimationActor(proxy.get(), animComp, false, app.GetCamera());
 
                proxy->SetTranslation(startPos);
             }
          }
          startPos[1] = 0.0f;
       }
-      GetGameManager()->GetApplication().GetCamera()->SetNextStatisticsType();
+      app.GetCamera()->SetNextStatisticsType();
 
    }
 
@@ -231,14 +231,17 @@ void TestAnim::OnStartup()
 
    gameManager.DebugStatisticsTurnOn(false, false, 5);
 
-   gameManager.GetApplication().GetWindow()->SetKeyRepeat(false);
+   app.GetWindow()->SetKeyRepeat(false);
 }
 
-void TestAnim::OnShutdown()
+void TestAnim::OnShutdown(dtGame::GameApplication& app)
 {
 }
 
-void TestAnim::InitializeAnimationActor(dtActors::AnimationGameActorProxy2* gameProxy, dtAnim::AnimationComponent* animComp, bool isPlayer)
+void TestAnim::InitializeAnimationActor(dtActors::AnimationGameActorProxy2* gameProxy,
+                                        dtAnim::AnimationComponent* animComp,
+                                        bool isPlayer,
+                                        dtCore::Camera *camera)
 {   
       dtActors::AnimationGameActor2* actor = dynamic_cast<dtActors::AnimationGameActor2*>(&gameProxy->GetGameActor());
 
@@ -268,8 +271,8 @@ void TestAnim::InitializeAnimationActor(dtActors::AnimationGameActorProxy2* game
                mAnimationHelper = helper;
                mAnimationHelper->SetGroundClamp(true);
 
-               actor->AddChild(GetGameManager()->GetApplication().GetCamera());
-               GetGameManager()->GetApplication().GetCamera()->SetTransform(trans, dtCore::Transformable::REL_CS);
+               actor->AddChild( camera );
+               camera->SetTransform(trans, dtCore::Transformable::REL_CS);
 
                dtCore::RefPtr<osg::ShapeDrawable> drawable = new osg::ShapeDrawable(new osg::Cylinder(osg::Vec3(), 0.02f, 0.3));
                dtCore::RefPtr<osg::Geode> geode = new osg::Geode;

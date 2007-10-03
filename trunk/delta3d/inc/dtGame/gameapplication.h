@@ -75,6 +75,14 @@ namespace dtGame
          
          /// @return the game manager used by the application.
          dtGame::GameManager* GetGameManager() { return mGameManager.get(); }
+
+         /** 
+          * Override the default, internally created GameManager with the 
+          * supplied parameter.  Useful if you have a GameManager derivative
+          * this class should use instead of the default.
+          * @param gameManager : the GameManager this instance should use
+          */
+         void SetGameManager(dtGame::GameManager &gameManager);
          
       protected:
          
@@ -88,7 +96,7 @@ namespace dtGame
          int mArgc;
          char** mArgv;
          
-         osg::observer_ptr<dtGame::GameManager> mGameManager;
+         dtCore::RefPtr<dtGame::GameManager> mGameManager;
          dtCore::RefPtr<dtUtil::LibrarySharingManager::LibraryHandle> mEntryPointLib;
          dtGame::GameEntryPoint* mEntryPoint;
          CreateEntryPointFn mCreateFunction;

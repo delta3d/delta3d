@@ -86,14 +86,9 @@ void TestAAR::Initialize(dtGame::GameApplication& app, int argc, char **argv)
    mFMM->SetTarget(app.GetCamera());
 }
 
-//////////////////////////////////////////////////////////////////////////
-dtCore::ObserverPtr<dtGame::GameManager> TestAAR::CreateGameManager(dtCore::Scene& scene)
-{
-   return dtGame::GameEntryPoint::CreateGameManager(scene);
-}
 
 //////////////////////////////////////////////////////////////////////////
-void TestAAR::OnStartup()
+void TestAAR::OnStartup(dtGame::GameApplication& app)
 {
    std::string dataPath = dtCore::GetDeltaDataPathList();
    dtCore::SetDataFilePathList(dataPath + ";" + 
@@ -110,14 +105,13 @@ void TestAAR::OnStartup()
       LOG_ERROR("Can't find the project context: " + e.What());
    }
    
-   dtGame::GameManager &gameManager = *GetGameManager();
-   dtCore::DeltaWin *win = gameManager.GetApplication().GetWindow();
+   dtGame::GameManager &gameManager = *app.GetGameManager();
 
    // Add Component - Input Component
    dtCore::RefPtr<dtGame::LogController> logCtrl = new dtGame::LogController("LogController");
    dtCore::RefPtr<dtGame::BinaryLogStream> logStream = new dtGame::BinaryLogStream(gameManager.GetMessageFactory());
    dtCore::RefPtr<dtGame::ServerLoggerComponent> srvrLog = new dtGame::ServerLoggerComponent(*logStream, "ServerLogger");
-   dtCore::RefPtr<TestAARHUD> hudComp = new TestAARHUD(*win, *logCtrl, *mLmsComponent, *srvrLog);
+   dtCore::RefPtr<TestAARHUD> hudComp = new TestAARHUD(*app.GetWindow(), *logCtrl, *mLmsComponent, *srvrLog);
    dtCore::RefPtr<TestAARInput> inputComp = new TestAARInput("TestInputComponent", *logCtrl, *hudComp);
    dtCore::RefPtr<TestAARMessageProcessor> mp = new TestAARMessageProcessor(*mLmsComponent, *logCtrl, *srvrLog);
   

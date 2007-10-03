@@ -58,7 +58,7 @@ namespace dtGame
       {
          try
          {
-            mEntryPoint->OnShutdown();
+            mEntryPoint->OnShutdown(*this);
          }
          catch(const dtUtil::Exception &e)
          {
@@ -76,6 +76,7 @@ namespace dtGame
 
       if (mGameManager.valid())
       {
+         mGameManager->Shutdown();
          mGameManager = NULL;
       }
 
@@ -150,19 +151,20 @@ namespace dtGame
 
       try
       {
-         mEntryPoint->Initialize(*this, mArgc, mArgv);
-         Application::Config();
-         mGameManager = mEntryPoint->CreateGameManager(*GetScene());
-
+         mGameManager = new dtGame::GameManager( *GetScene() );
          if(mGameManager == NULL)
          {
             msg.str("");
             msg << " " << " \"GameEntryPoint failed to create Game Manager.\"";
             exit(-1);
          }
+
+         mEntryPoint->Initialize(*this, mArgc, mArgv);
+         Application::Config();
+
          
          mGameManager->SetApplication(*this);
-         mEntryPoint->OnStartup();
+         mEntryPoint->OnStartup(*this);
       }
       catch(const dtUtil::Exception& ex)
       {
@@ -180,4 +182,8 @@ namespace dtGame
 
    }
 
+   void GameApplication::SetGameManager( dtGame::GameManager &gameManager )
+   {
+      mGameManager = &gameManager;
+   }
 }
