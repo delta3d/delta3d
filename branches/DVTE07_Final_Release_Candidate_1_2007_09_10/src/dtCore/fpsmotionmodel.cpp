@@ -464,7 +464,7 @@ float FPSMotionModel::GetFallingHeight() const
 void FPSMotionModel::OnMessage(MessageData *data)
 {
    if(GetTarget() != 0 &&
-      IsEnabled() && 
+      IsEnabled() && mMouse->GetHasFocus() &&
       data->message == "preframe")
    {
       //use the real change in time, not the simulated time change
