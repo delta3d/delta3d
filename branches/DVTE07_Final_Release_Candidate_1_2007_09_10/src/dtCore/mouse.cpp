@@ -257,14 +257,20 @@ bool Mouse::ButtonUp(float x, float y, MouseButton button)
 
 bool Mouse::GetHasFocus()
 {
-
-#ifdef DELTA_WIN32
    if(mKeyboardMouse.valid())
    {
+#if defined(_OSX_AGL_IMPLEMENTATION)
+      return IsWindowActive(mKeyboardMouse->getRenderSurface()->getWindow());
+#elif defined(_X11_IMPLEMENTATION)
+      Producer::Display* display = mKeyboardMouse->getRenderSurface()->getDisplay();
+      Producer::Window windowId = 0;
+      int focusType = 0;
+      XGetInputFocus(display, &windowId, &focusType);
+      return mKeyboardMouse->getRenderSurface()->getWindow() == windowId;
+#elif defined(_WIN32_IMPLEMENTATION)
       return mKeyboardMouse->getRenderSurface()->getWindow() == GetForegroundWindow();
-   }
 #endif
-
+   }
   //todo- add implementation for linux and mac
   return true;
 }
