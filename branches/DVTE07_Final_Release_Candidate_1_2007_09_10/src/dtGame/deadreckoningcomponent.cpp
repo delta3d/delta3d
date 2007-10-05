@@ -20,6 +20,8 @@
  */
 #include <prefix/dtgameprefix-src.h>
 #include <algorithm>
+#include <cmath>
+#include <cfloat>
 
 #include <dtGame/deadreckoningcomponent.h>
 #include <dtGame/deadreckoninghelper.h>
@@ -196,9 +198,29 @@ namespace dtGame
       modelDimensions.x() = bbv.mBoundingBox.xMax() - bbv.mBoundingBox.xMin();
       modelDimensions.y() = bbv.mBoundingBox.yMax() - bbv.mBoundingBox.yMin();
       modelDimensions.z() = bbv.mBoundingBox.zMax() - bbv.mBoundingBox.zMin();
-      helper.SetModelDimensions(modelDimensions);      
+      helper.SetModelDimensions(modelDimensions);
    }
-   
+
+   bool DeadReckoningComponent::GetClosestHit(dtCore::BatchIsector::SingleISector& single, float pointz,
+            osg::Vec3& hit, osg::Vec3& normal)
+   {
+      bool found = false;
+      float diff = FLT_MAX;
+      osg::Vec3 tempHit;
+      for (int i = 0; i < single.GetNumberOfHits(); ++i)
+      {
+         single.GetHitPoint(tempHit, i);
+         float newDiff = fabs(tempHit.z() - pointz);
+         if (newDiff < diff)
+         {
+            hit = tempHit;
+            single.GetHitPointNormal(normal, i);
+            found = true;
+         }
+      }
+      return found;
+   }
+
    //////////////////////////////////////////////////////////////////////
    void DeadReckoningComponent::ClampToGroundThreePoint(float timeSinceUpdate, dtCore::Transform& xform,
       dtGame::GameActorProxy& gameActorProxy, DeadReckoningHelper& helper)
@@ -231,7 +253,7 @@ namespace dtGame
       points[2].set(-(modelDimensions[0] / 2), -(modelDimensions[1] / 2), 0.0f);
 
       //must use the updated matrix in xform for the ground-clamp start position.
-      osg::Matrix actorMatrix; 
+      osg::Matrix actorMatrix;
       xform.Get(actorMatrix);
 
       mTripleIsector->Reset();
@@ -270,12 +292,10 @@ namespace dtGame
          for (unsigned i = 0; i < 3; ++i)
          {
             dtCore::BatchIsector::SingleISector& single = mTripleIsector->EnableAndGetISector(i);
-            if (single.GetNumberOfHits() > 0)
-            {
-               osg::Vec3 hp;
-               //overwrite the point with the hit point.
-               single.GetHitPoint(hp, 0);
+            osg::Vec3 hp, normal;
 
+            if (GetClosestHit(single, points[i].z(), hp, normal))
+            {
                if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                {
                   std::ostringstream ss;
@@ -379,11 +399,8 @@ namespace dtGame
             osg::Vec3& singlePoint = xform.GetTranslation();
 
             dtCore::BatchIsector::SingleISector& single = mIsector->EnableAndGetISector(i);
-            if (single.GetNumberOfHits() > 0)
+            if (GetClosestHit(single, singlePoint.z(), hp, normal))
             {
-               single.GetHitPoint(hp, 0);
-               single.GetHitPointNormal(normal, 0);
-                  
                if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                {
                   std::ostringstream ss;
@@ -392,16 +409,21 @@ namespace dtGame
                }
                
                singlePoint = hp;
-   
-               normal.normalize();
-   
-               osg::Vec3 oldNormal(0, 0, 1);
-   
-               oldNormal = osg::Matrix::transform3x3(oldNormal, rotation);
-               osg::Matrix normalRot;
-               normalRot.makeRotate(oldNormal, normal);
-   
-               rotation = rotation * normalRot;
+
+               const DeadReckoningHelper* helper = GetHelperForProxy(*mGroundClampBatch[i].second);
+               
+               if (helper->GetAdjustRotationToGround())
+               {
+                  normal.normalize();
+
+                  osg::Vec3 oldNormal(0, 0, 1);
+
+                  oldNormal = osg::Matrix::transform3x3(oldNormal, rotation);
+                  osg::Matrix normalRot;
+                  normalRot.makeRotate(oldNormal, normal);
+
+                  rotation = rotation * normalRot;
+               }
 
                mGroundClampBatch[i].second->GetGameActor().SetTransform(xform, dtCore::Transformable::REL_CS);
             }
@@ -434,10 +456,11 @@ namespace dtGame
 
       osg::Vec3& position = xform.GetTranslation();
 
-      const osg::Vec3 vec = GetLastEyePoint();
-      if (GetEyePointActor() != NULL 
-            && GetHighResGroundClampingRange() > 0.0f
-            && (position - vec).length2() > mHighResClampRange2)
+      const osg::Vec3 eyePoint = GetLastEyePoint();
+      if (!helper.GetAdjustRotationToGround() || 
+            (GetEyePointActor() != NULL
+               && GetHighResGroundClampingRange() > 0.0f
+               && (position - eyePoint).length2() > mHighResClampRange2))
       {
          // this should be moved.
          mGroundClampBatch.reserve(32);

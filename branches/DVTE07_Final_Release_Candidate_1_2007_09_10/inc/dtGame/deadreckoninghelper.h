@@ -33,7 +33,7 @@
 
 namespace dtDAL
 {
-    class ActorProperty;
+   class ActorProperty;
 }
 
 namespace dtUtil
@@ -45,7 +45,7 @@ namespace dtGame
 {
    class DeadReckoningComponent;
    class GameActor;
-     
+
    class DT_GAME_EXPORT DeadReckoningAlgorithm : public dtUtil::Enumeration
    {
       DECLARE_ENUM(DeadReckoningAlgorithm);
@@ -60,8 +60,8 @@ namespace dtGame
             AddInstance(this);
          }
    };
-   
-      
+
+
    class DT_GAME_EXPORT DeadReckoningHelper : public dtCore::Base
    {
       public:
@@ -69,12 +69,12 @@ namespace dtGame
          {
             public:
                DeadReckoningDOF()
-                  : mCurrentTime(0.0f),
-                  mUpdate(false),
-                  mNext(NULL),
-                  mPrev(NULL)
+               : mCurrentTime(0.0f),
+               mUpdate(false),
+               mNext(NULL),
+               mPrev(NULL)
                {}
-          
+
                static const std::string REPRESENATION_POSITION;
                static const std::string REPRESENATION_POSITIONRATE;
                static const std::string REPRESENATION_EXTENSION;
@@ -94,7 +94,7 @@ namespace dtGame
 
             protected:
                virtual ~DeadReckoningDOF(){}
-            
+
             public:
                // dof has a name
                std::string mName;
@@ -128,32 +128,32 @@ namespace dtGame
                   AddInstance(this);
                }
          };
-   
+
          DeadReckoningHelper();
 
          /**
-         * This function is responsible for manipulating the internal data types to do the actual
-         * dead reckoning.  To implement another dead reckoning algorithm, overload this function.
-         * @param gameActor the actor to DR
-         * @param xform the resulting position of the actor after DR. 
-         * @param pLogger The Dead Reckoning Components instance of logger
-         * @param bShouldGroundClamp whether or not the component should ground clamp when you return - defaults to false if you don't change
-         * @return Return true if you think you changed the Transform, false if you did not.
-         */
+          * This function is responsible for manipulating the internal data types to do the actual
+          * dead reckoning.  To implement another dead reckoning algorithm, overload this function.
+          * @param gameActor the actor to DR
+          * @param xform the resulting position of the actor after DR. 
+          * @param pLogger The Dead Reckoning Components instance of logger
+          * @param bShouldGroundClamp whether or not the component should ground clamp when you return - defaults to false if you don't change
+          * @return Return true if you think you changed the Transform, false if you did not.
+          */
          virtual bool DoDR(GameActor& gameActor, dtCore::Transform& xform, 
-               dtUtil::Log* pLogger, bool& bShouldGroundClamp);
+                  dtUtil::Log* pLogger, bool& bShouldGroundClamp);
 
          /**
-         * This is a utility function to make it easier to have a dead reckoned actor.  The actor
-         * should then iterate through this vector and call AddActorProperty() with each element.
-         * If this class is derived and additional data members are added, this function should be 
-         * overloaded to add the additional properties to the actor.
-         *
-         * @param a vector of actor property ref ptrs to be filled 
-         */
+          * This is a utility function to make it easier to have a dead reckoned actor.  The actor
+          * should then iterate through this vector and call AddActorProperty() with each element.
+          * If this class is derived and additional data members are added, this function should be 
+          * overloaded to add the additional properties to the actor.
+          *
+          * @param a vector of actor property ref ptrs to be filled 
+          */
          virtual void GetActorProperties(std::vector<dtCore::RefPtr<dtDAL::ActorProperty> >& pFillVector);         
 
-          /**
+         /**
           * Calculates how long the associated actor's position and rotation should be smoothed into a updated value.
           * The values are assigned to the helper.
           * @param helper the DR helper for the actor.
@@ -161,34 +161,45 @@ namespace dtGame
           */
          void CalculateSmoothingTimes(const dtCore::Transform& xform);
 
- 
+
          bool IsUpdated() const { return mUpdated; }
          void ClearUpdated() { mUpdated = false; mTranslationUpdated= false; mRotationUpdated= false;}
- 
+
          UpdateMode& GetUpdateMode() const { return *mUpdateMode; }
          UpdateMode& GetEffectiveUpdateMode(bool isRemote) const;
          void SetUpdateMode(UpdateMode& newUpdateMode) { mUpdateMode = &newUpdateMode; }
- 
+
          /**
           * @return true if no ground following should be performed on this actor.
           */
          bool IsFlying() const { return mFlying; }
-   
+
          /**
           * True means no ground following should be performed on this actor.  False
           * it will follow the ground as it moves.
           * @param newFlying the new value to set.
           */
-          void SetFlying(bool newFlying);
-    
-    
+         void SetFlying(bool newFlying);
+
+         /**
+          * @return true if the rotation should be adjusted to match the terrain.
+          * @note this only matters if flying is set to false.
+          */
+         bool GetAdjustRotationToGround() const { return mAdjustRotationToGround; }
+
+         /**
+          * Sets if the rotation of the actor should be changed to match the terrain
+          * @param newFlying the new value to set.
+          */
+         void SetAdjustRotationToGround(bool newAdjust);
+
          /**
           * Sets the entity's minimum Dead Reckoning Algorithm.
           *
           * @param newAlgorithm the new algorithm enum value.
           */
          void SetDeadReckoningAlgorithm(DeadReckoningAlgorithm& newAlgorithm);
-   
+
          /**
           * @return the current minimum Dead Reckoning Algorithm.
           */
@@ -200,16 +211,16 @@ namespace dtGame
           * @param newOffset the new offset value. 
           */
          void SetGroundOffset(float newOffset);
-       
+
          ///@return The distance from the ground that the actor should be.
          float GetGroundOffset() const { return mGroundOffset; }
-       
+
          ///Sets max amount of time to use when smoothing the translation.
          void SetMaxTranslationSmoothingTime(float newMax) { mMaxTranslationSmoothingTime = newMax; }
 
          ///Sets max amount of time to use when smoothing the rotation.
          void SetMaxRotationSmoothingTime(float newMax) { mMaxRotationSmoothingTime = newMax; }
-       
+
          ///@return the max amount of time to use when smoothing the translation.
          float GetMaxTranslationSmoothingTime() const { return mMaxTranslationSmoothingTime; }
          ///@return the max amount of time to use when smoothing the rotation.
@@ -227,59 +238,59 @@ namespace dtGame
           * @return the last known position for this if it's a remote entity.
           */
          const osg::Vec3& GetLastKnownTranslation() const { return mLastTranslation; }
-        
+
          osg::Vec3 GetLastKnownTranslationByCopy() const { return mLastTranslation; }
-   
+
          /**
           * Sets this entity's last known rotation.  This should
           * only be set for remote actors.
           * @param vec the new last rotation as yaw, pitch, roll.
           */
          void SetLastKnownRotation(const osg::Vec3 &vec);
-   
+
          /**
           * @return the last known rotation for this if it's a remote entity as yaw, pitch, roll.
           */
          const osg::Vec3& GetLastKnownRotation() const { return mLastRotation; }
          osg::Vec3 GetLastKnownRotationByCopy() const { return mLastRotation; }
-   
+
          /**
           * Sets this entity's DIS/RPR-FOM velocity vector.
           * @param vec the velocity vector to copy
           */
          void SetVelocityVector(const osg::Vec3 &vec);
-   
+
          /**
           * Retrieves this entity's DIS/RPR-FOM velocity vector.
           * @return the velocity vector
           */
          const osg::Vec3& GetVelocityVector() const { return mVelocityVector; }         
          osg::Vec3 GetVelocityVectorByCopy() const { return mVelocityVector; }
-         
+
          /**
           * Sets this entity's DIS/RPR-FOM acceleration vector.
           * @param accelerationVector the acceleration vector to copy
           */
          void SetAccelerationVector(const osg::Vec3 &vec);
-   
+
          /**
           * Retrieves this entity's DIS/RPR-FOM acceleration vector.
           * @return the acceleration vector
           */
          const osg::Vec3& GetAccelerationVector() const { return mAccelerationVector; }
          osg::Vec3 GetAccelerationVectorByCopy() const { return mAccelerationVector; }
-         
+
          /**
-         * Sets this entity's DIS/RPR-FOM angular velocity vector.
-         * @param angularVelocityVector the angular velocity vector to copy
-         */
+          * Sets this entity's DIS/RPR-FOM angular velocity vector.
+          * @param angularVelocityVector the angular velocity vector to copy
+          */
          void SetAngularVelocityVector(const osg::Vec3 &vec);
-   
+
          /**
           * Retrieves this entity's DIS/RPR-FOM angular velocity vector.
           * @return the angular velocity vector
           */
-         const osg::Vec3& GetAngularVelocityVector() const { return mAngularVelocityVector; }         
+         const osg::Vec3& GetAngularVelocityVector() const { return mAngularVelocityVector; }
          osg::Vec3 GetAngularVelocityVectorByCopy() const { return mAngularVelocityVector; }
 
          /**
@@ -288,7 +299,7 @@ namespace dtGame
           * @param result the resulting matrix.
           */
          void ComputeRotationChangeWithAngularVelocity(double deltaTime, osg::Matrix& result);
-         
+
          ///@return the total amount of time to use when smoothing the translation for this last update.
          float GetTranslationEndSmoothingTime() const { return mTranslationEndSmoothingTime; }
          ///@return the total amount of time to use when smoothing the rotation for this last update.
@@ -308,7 +319,7 @@ namespace dtGame
 
          float GetTimeUntilForceClamp() const { return mTimeUntilForceClamp; }
          void SetTimeUntilForceClamp(float newTime) { mTimeUntilForceClamp = newTime; }
-         
+
          /// @return The node collector for this helper or NULL none has been set.
          dtCore::NodeCollector* GetNodeCollector() { return mDOFDeadReckoning.get(); }
 
@@ -353,137 +364,139 @@ namespace dtGame
          void SetUseModelDimensions(bool newUse) { mUseModelDimensions = newUse; }
          /// @return true if the model dimensions are now valid.
          bool UseModelDimensions() const { return mUseModelDimensions; }
-         
+
          /// Sets the model dimensions of this helper.  This will call SetUseModelDimensions(true) internally.
          void SetModelDimensions(const osg::Vec3& newDimensions);
-         
+
          /// @return the current assigned dimensions of the model for the actor being dead-reckoned
          const osg::Vec3& GetModelDimensions() { return mModelDimensions; }
          /// @return the current assigned dimensions of the model for the actor being dead-reckoned by copy.
          osg::Vec3 GetModelDimensionsByCopy() const { return mModelDimensions; }
-         
-      protected:
-         virtual ~DeadReckoningHelper() {}
 
-         ///perform static dead-reckoning, which means applying the new position directly and ground clamping.  xform will be updated.
-         void DRStatic(GameActor& gameActor, dtCore::Transform& xform, dtUtil::Log* pLogger);
+         protected:
+            virtual ~DeadReckoningHelper() {}
 
-         /**
-          * perform velocity + acceleration dead-reckoning.  Acceleration may be ignored.  xform will be updated.
-          * @return returns true if it thinks it made a change, false otherwise.
-          */
-         bool DRVelocityAcceleration(GameActor& gameActor, dtCore::Transform& xform, dtUtil::Log* pLogger); 
+            ///perform static dead-reckoning, which means applying the new position directly and ground clamping.  xform will be updated.
+            void DRStatic(GameActor& gameActor, dtCore::Transform& xform, dtUtil::Log* pLogger);
 
-         /* 
-          * Simple dumps out a log that we have started dead reckoning with lots of information.  Pulled out
-          * to help make DRVelocityAcceleration() a bit easier to read.
-          */
-         void LogDeadReckonStarted(osg::Vec3& unclampedTranslation, osg::Matrix& rot, dtUtil::Log* pLogger);
+            /**
+             * perform velocity + acceleration dead-reckoning.  Acceleration may be ignored.  xform will be updated.
+             * @return returns true if it thinks it made a change, false otherwise.
+             */
+            bool DRVelocityAcceleration(GameActor& gameActor, dtCore::Transform& xform, dtUtil::Log* pLogger);
 
-         /**
-          * Computes the new rotation for the object.  This method handles VELOCITY_ONLY and 
-          * VELOCITY_AND_ACCELERATION, but not static. This is called DRVelocityAcceleration().
-          */
-         void DeadReckonTheRotation(osg::Matrix &rot, dtCore::Transform &xform);
+            /* 
+             * Simple dumps out a log that we have started dead reckoning with lots of information.  Pulled out
+             * to help make DRVelocityAcceleration() a bit easier to read.
+             */
+            void LogDeadReckonStarted(osg::Vec3& unclampedTranslation, osg::Matrix& rot, dtUtil::Log* pLogger);
 
-         /**
-          * Computes the new position for the object.  This method handles VELOCITY_ONLY and 
-          * VELOCITY_AND_ACCELERATION, but not static. This is called DRVelocityAcceleration()
-          */
-         void DeadReckonThePosition( osg::Vec3& pos, dtUtil::Log* pLogger, GameActor &gameActor );
+            /**
+             * Computes the new rotation for the object.  This method handles VELOCITY_ONLY and 
+             * VELOCITY_AND_ACCELERATION, but not static. This is called DRVelocityAcceleration().
+             */
+            void DeadReckonTheRotation(osg::Matrix &rot, dtCore::Transform &xform);
 
-      private:
-         /// The list of DeadReckoningDOFs, might want to change to has table of list later.
-         std::list<dtCore::RefPtr<DeadReckoningDOF> > mDeadReckonDOFS;
+            /**
+             * Computes the new position for the object.  This method handles VELOCITY_ONLY and 
+             * VELOCITY_AND_ACCELERATION, but not static. This is called DRVelocityAcceleration()
+             */
+            void DeadReckonThePosition( osg::Vec3& pos, dtUtil::Log* pLogger, GameActor &gameActor );
 
-         /// The Dead reckoning DOF Container object
-         dtCore::RefPtr<dtCore::NodeCollector> mDOFDeadReckoning;
-        
-         double mLastTimeTag;
-         
-         ///the simulation time this was last updated.
-         double mLastTranslationUpdatedTime;
-         double mLastRotationUpdatedTime;
+         private:
+            /// The list of DeadReckoningDOFs, might want to change to has table of list later.
+            std::list<dtCore::RefPtr<DeadReckoningDOF> > mDeadReckonDOFS;
 
-         float mTimeUntilForceClamp;
-         
-         ///This should be fairly clear.
-         float mAverageTimeBetweenTranslationUpdates;
-         float mAverageTimeBetweenRotationUpdates;
+            /// The Dead reckoning DOF Container object
+            dtCore::RefPtr<dtCore::NodeCollector> mDOFDeadReckoning;
 
-         ///The maximum amount of time to use when smoothing translation.
-         float mMaxTranslationSmoothingTime;
-         ///The maximum amount of time to use when smoothing rotation.
-         float mMaxRotationSmoothingTime;
-                 
-         ///the amount of time since this actor started smoothing.
-         float mTranslationCurrentSmoothingTime;
-         float mRotationCurrentSmoothingTime;
-         
-         ///the end amount of time to use when smoothing the translation.  At this point, the blend should be finished. 
-         float mTranslationEndSmoothingTime;
-         ///the end amount of time to use when smoothing the rotation.  At this point, the blend should be finished. 
-         float mRotationEndSmoothingTime;
-         
-         ///The distance from the ground that the actor should be.
-         float mGroundOffset;
-         
-         ///Last known position of this actor.
-         osg::Vec3 mLastTranslation;
+            double mLastTimeTag;
 
-         ///The Dead-Reckoned position prior to the last update.
-         osg::Vec3 mTransBeforeLastUpdate;
-         // Current Dead Reckoned Position
-         osg::Vec3 mCurrentDeadReckonedTranslation;
-         
-         ///last known orientation (vector)
-         osg::Vec3 mLastRotation;
-         ///last known orientation (matrix)
-         osg::Matrix mLastRotationMatrix;
-         ///last known orientation (quaternion)
-         osg::Quat mLastQuatRotation;
-         ///dead reckoned attitude quaternion prior update
-         osg::Quat mRotQuatBeforeLastUpdate;
-         ///current dead reckoned attitude quaternion  
-         osg::Quat mCurrentDeadReckonedRotation;
-         osg::Vec3 mCurrentAttitudeVector;
-  
-         /// The velocity vector.
-         osg::Vec3 mVelocityVector;
-         
-         /// The acceleration vector.
-         osg::Vec3 mAccelerationVector;
-         
-         ///The angular velocity vector.
-         osg::Vec3 mAngularVelocityVector;
-         
-         /// The size of the actors model.  This is used for ground clamping.
-         osg::Vec3 mModelDimensions;
-         
-         // The Dead Reckoning Matrix
-         osg::Matrix mDeadReckoningMatrix;
-         
-         DeadReckoningAlgorithm* mMinDRAlgorithm;
-         
-         /// The update mode - whether to actually move the actor or to just calculate. 
-         UpdateMode* mUpdateMode;
-      
-         bool mTranslationInitiated;
-         bool mRotationInitiated;
-         bool mUpdated;
-         bool mTranslationUpdated;
-         bool mRotationUpdated;
-         bool mFlying;
-          //if the rotation has been resolved to the last updated version.
-         bool mRotationResolved;
-         bool mUseModelDimensions;
-         // -----------------------------------------------------------------------
-         //  Unimplemented constructors and operators
-         // -----------------------------------------------------------------------
-         DeadReckoningHelper(const DeadReckoningHelper&) {}
-         DeadReckoningHelper& operator=(const DeadReckoningHelper&) {return *this;}
+            ///the simulation time this was last updated.
+            double mLastTranslationUpdatedTime;
+            double mLastRotationUpdatedTime;
+
+            float mTimeUntilForceClamp;
+
+            ///This should be fairly clear.
+            float mAverageTimeBetweenTranslationUpdates;
+            float mAverageTimeBetweenRotationUpdates;
+
+            ///The maximum amount of time to use when smoothing translation.
+            float mMaxTranslationSmoothingTime;
+            ///The maximum amount of time to use when smoothing rotation.
+            float mMaxRotationSmoothingTime;
+
+            ///the amount of time since this actor started smoothing.
+            float mTranslationCurrentSmoothingTime;
+            float mRotationCurrentSmoothingTime;
+
+            ///the end amount of time to use when smoothing the translation.  At this point, the blend should be finished. 
+            float mTranslationEndSmoothingTime;
+            ///the end amount of time to use when smoothing the rotation.  At this point, the blend should be finished. 
+            float mRotationEndSmoothingTime;
+
+            ///The distance from the ground that the actor should be.
+            float mGroundOffset;
+
+            ///Last known position of this actor.
+            osg::Vec3 mLastTranslation;
+
+            ///The Dead-Reckoned position prior to the last update.
+            osg::Vec3 mTransBeforeLastUpdate;
+            // Current Dead Reckoned Position
+            osg::Vec3 mCurrentDeadReckonedTranslation;
+
+            ///last known orientation (vector)
+            osg::Vec3 mLastRotation;
+            ///last known orientation (matrix)
+            osg::Matrix mLastRotationMatrix;
+            ///last known orientation (quaternion)
+            osg::Quat mLastQuatRotation;
+            ///dead reckoned attitude quaternion prior update
+            osg::Quat mRotQuatBeforeLastUpdate;
+            ///current dead reckoned attitude quaternion
+            osg::Quat mCurrentDeadReckonedRotation;
+            osg::Vec3 mCurrentAttitudeVector;
+
+            /// The velocity vector.
+            osg::Vec3 mVelocityVector;
+
+            /// The acceleration vector.
+            osg::Vec3 mAccelerationVector;
+
+            ///The angular velocity vector.
+            osg::Vec3 mAngularVelocityVector;
+
+            /// The size of the actors model.  This is used for ground clamping.
+            osg::Vec3 mModelDimensions;
+
+            // The Dead Reckoning Matrix
+            osg::Matrix mDeadReckoningMatrix;
+
+            DeadReckoningAlgorithm* mMinDRAlgorithm;
+
+            /// The update mode - whether to actually move the actor or to just calculate. 
+            UpdateMode* mUpdateMode;
+
+            bool mTranslationInitiated;
+            bool mRotationInitiated;
+            bool mUpdated;
+            bool mTranslationUpdated;
+            bool mRotationUpdated;
+            bool mFlying;
+            // if the ground following code should match the rotation to the ground.
+            bool mAdjustRotationToGround;
+            // if the rotation has been resolved to the last updated version.
+            bool mRotationResolved;
+            bool mUseModelDimensions;
+            // -----------------------------------------------------------------------
+            //  Unimplemented constructors and operators
+            // -----------------------------------------------------------------------
+            DeadReckoningHelper(const DeadReckoningHelper&) {}
+            DeadReckoningHelper& operator=(const DeadReckoningHelper&) {return *this;}
    };
-   
+
 }
 
 #endif 

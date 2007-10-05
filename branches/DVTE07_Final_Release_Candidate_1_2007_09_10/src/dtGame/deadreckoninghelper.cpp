@@ -84,15 +84,11 @@ namespace dtGame
       mTranslationUpdated(false), 
       mRotationUpdated(false), 
       mFlying(false), 
+      mAdjustRotationToGround(true),
       mRotationResolved(true),
       mUseModelDimensions(false)
    {}
 
-
-//   //////////////////////////////////////////////////////////////////////
-//   void DeadReckoningHelper::CreateProperties(std::vector<dtCore::RefPtr<dtDAL::ActorProperty> >& toFill)
-//   {
-//   }
 
    //////////////////////////////////////////////////////////////////////
    DeadReckoningHelper::UpdateMode& DeadReckoningHelper::GetEffectiveUpdateMode(bool isRemote) const
@@ -113,6 +109,14 @@ namespace dtGame
       if (mFlying == newFlying)
          return;
       mFlying = newFlying;
+      mUpdated = true;
+   }
+
+   void DeadReckoningHelper::SetAdjustRotationToGround(bool newAdjust)
+   {
+      if (mAdjustRotationToGround == newAdjust)
+         return;
+      mAdjustRotationToGround = newAdjust;
       mUpdated = true;
    }
 

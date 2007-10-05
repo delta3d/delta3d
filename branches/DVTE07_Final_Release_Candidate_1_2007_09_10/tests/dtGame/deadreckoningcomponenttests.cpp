@@ -149,7 +149,7 @@ namespace dtGame
             mGM->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, mTestGameActor);
             CPPUNIT_ASSERT(mTestGameActor.valid());
          }
-         
+
          void tearDown()
          {
             dtCore::System::GetInstance().Stop();
@@ -162,15 +162,15 @@ namespace dtGame
             }
             mDeadReckoningComponent = NULL;
          }
-   
+
          void TestDeadReckoningHelperDefaults()
          {
             dtCore::RefPtr<DeadReckoningHelper> helper = new DeadReckoningHelper;
-   	      CPPUNIT_ASSERT_MESSAGE("Updated flag should default to false", !helper->IsUpdated());
             CPPUNIT_ASSERT_MESSAGE("Updated flag should default to false", !helper->IsUpdated());
             CPPUNIT_ASSERT_MESSAGE("Updated flag should default to false", !helper->IsUpdated());
-   	      CPPUNIT_ASSERT_MESSAGE("DeadReckoning algorithm should default to NONE.", 
-      	      helper->GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::NONE);
+            CPPUNIT_ASSERT_MESSAGE("Updated flag should default to false", !helper->IsUpdated());
+            CPPUNIT_ASSERT_MESSAGE("DeadReckoning algorithm should default to NONE.", 
+               helper->GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::NONE);
             CPPUNIT_ASSERT_MESSAGE("The Update Mode should default to AUTO.", 
                helper->GetUpdateMode() == DeadReckoningHelper::UpdateMode::AUTO);
             CPPUNIT_ASSERT_MESSAGE("The Effective Update Mode for a local actor should default to CALCULATE_ONLY.", 
@@ -178,9 +178,9 @@ namespace dtGame
             CPPUNIT_ASSERT_MESSAGE("The Effective Update Mode for a remote actor should default to CALCULATE_AND_MOVE_ACTOR.", 
                helper->GetEffectiveUpdateMode(true) == DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR);
             CPPUNIT_ASSERT_MESSAGE("Flying should default to false", !helper->IsFlying());
-            
-   	      osg::Vec3 vec(0.0f, 0.0f, 0.0f);
-   	 
+
+            osg::Vec3 vec(0.0f, 0.0f, 0.0f);
+
             CPPUNIT_ASSERT(helper->GetLastKnownTranslation() == vec);
             CPPUNIT_ASSERT(helper->GetLastKnownRotation() == vec);
             CPPUNIT_ASSERT(helper->GetVelocityVector() == vec);
@@ -190,17 +190,17 @@ namespace dtGame
             CPPUNIT_ASSERT(helper->GetMaxRotationSmoothingTime() == 2.0f);
             CPPUNIT_ASSERT(helper->GetMaxTranslationSmoothingTime() == 8.0f);
             CPPUNIT_ASSERT(helper->GetTimeUntilForceClamp() == 0.0f);
-
+            CPPUNIT_ASSERT(helper->GetAdjustRotationToGround());
             CPPUNIT_ASSERT(helper->GetNodeCollector() == NULL);
          }
    
          void TestDeadReckoningHelperProperties()
          {
             dtCore::RefPtr<DeadReckoningHelper> helper = new DeadReckoningHelper;
-         	helper->SetFlying(true);
+            helper->SetFlying(true);
             CPPUNIT_ASSERT(helper->IsUpdated());
             CPPUNIT_ASSERT(helper->IsFlying());
-   	 
+       
             helper->ClearUpdated();
    
             CPPUNIT_ASSERT(!helper->IsUpdated());
@@ -228,13 +228,13 @@ namespace dtGame
                helper->GetEffectiveUpdateMode(false) == DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR);
 
             osg::Vec3 vec(3.1f, 9900.032f, 493.738f);
-   	 
+
             helper->SetLastKnownTranslation(vec);
             CPPUNIT_ASSERT(helper->GetLastKnownTranslation() == vec);
             CPPUNIT_ASSERT(helper->GetLastKnownTranslationByCopy() == vec);
             CPPUNIT_ASSERT(helper->IsUpdated());
             helper->ClearUpdated();
-   
+
             helper->SetLastKnownRotation(vec);
             CPPUNIT_ASSERT(helper->GetLastKnownRotation() == vec);
             CPPUNIT_ASSERT(helper->GetLastKnownRotationByCopy() == vec);
@@ -290,6 +290,9 @@ namespace dtGame
 
             helper->SetTimeUntilForceClamp(6.7f);
             CPPUNIT_ASSERT_EQUAL(6.7f, helper->GetTimeUntilForceClamp());
+
+            helper->SetAdjustRotationToGround(false);
+            CPPUNIT_ASSERT(!helper->GetAdjustRotationToGround());
          }
    
          void TestTerrainProperty()
@@ -936,7 +939,7 @@ namespace dtGame
                   &dtUtil::Log::GetInstance(), shouldGroundClamp);
             
             CPPUNIT_ASSERT(shouldGroundClamp == !flying);
-            CPPUNIT_ASSERT(wasTransformed);            
+            CPPUNIT_ASSERT(wasTransformed);
 
             std::ostringstream ss;
             ss << "The position should be " << helper->GetLastKnownTranslation() << " but it is " << xform.GetTranslation();
