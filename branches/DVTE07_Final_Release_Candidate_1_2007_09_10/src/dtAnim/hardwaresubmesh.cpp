@@ -120,6 +120,8 @@ HardwareSubMeshDrawable::HardwareSubMeshDrawable(Cal3DModelWrapper *wrapper, Cal
 
    ss->addUniform(mBoneTransforms.get());
 
+   ss->setAttributeAndModes(new osg::CullFace);
+   
    //get selected textures
    std::vector<CalCoreMaterial::Map>& vectorMap = mHardwareModel->getVectorHardwareMesh()[mMeshID].pCoreMaterial->getVectorMap();
 
@@ -175,8 +177,8 @@ void HardwareSubMeshDrawable::drawImplementation(osg::State& state) const
    glDrawElements(GL_TRIANGLES,  mHardwareModel->getFaceCount() * 3, (sizeof(CalIndex) < 4) ? 
          GL_UNSIGNED_SHORT: GL_UNSIGNED_INT, (void*)(sizeof(CalIndex) * mHardwareModel->getStartIndex()));
 
-   glExt->glBindBuffer(GL_ARRAY_BUFFER_ARB, NULL);
-   glExt->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, NULL);
+   glExt->glBindBuffer(GL_ARRAY_BUFFER_ARB, 0);
+   glExt->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
 }
 
 osg::Object* HardwareSubMeshDrawable::clone(const osg::CopyOp&) const 
