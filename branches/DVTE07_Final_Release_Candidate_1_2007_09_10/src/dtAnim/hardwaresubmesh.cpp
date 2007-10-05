@@ -30,6 +30,7 @@
 #include <osg/BoundingBox>
 #include <dtUtil/matrixutil.h>
 #include <cal3d/hardwaremodel.h>
+#include <osg/CullFace>
 
 namespace dtAnim
 {
