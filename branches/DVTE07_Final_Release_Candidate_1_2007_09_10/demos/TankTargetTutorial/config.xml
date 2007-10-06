@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="iso-8859-1" standalone="no" ?>
+
+<Application xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="application.xsd">
+    <Window Name="Delta3D Tank Target Tutorial" X="100" Y="100" Width="1280" Height="800" PixelDepth="24" RefreshRate="60" ShowCursor="1" FullScreen="0" ChangeDisplayResolution="0" />
+    <Scene Name="defaultScene" />
+    <Camera Name="defaultCam" WindowInstance="Delta3D Tank Target Tutorial" SceneInstance="defaultScene" />
+    
+    <Log Level="Error" />
+    <Log Name="gameactor.cpp" Level="Warn" />
+
+    <Properties>
+      <Property Name="ProjectPath">.\StageProject</Property>
+    </Properties>
+
+</Application>
