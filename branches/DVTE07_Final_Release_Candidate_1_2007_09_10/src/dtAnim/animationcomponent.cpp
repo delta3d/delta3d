@@ -66,6 +66,19 @@ void AnimationComponent::ProcessMessage(const dtGame::Message &message)
       const dtGame::TickMessage& mess = static_cast<const dtGame::TickMessage&>(message);
       TickLocal(mess.GetDeltaSimTime());
    }
+   else if (message.GetMessageType() == dtGame::MessageType::INFO_ACTOR_DELETED)
+   {
+      // TODO Write unit tests for the delete message.
+      const AnimCompMap::const_iterator iter = mRegisteredActors.find(message.GetAboutActorId());
+      if (iter != mRegisteredActors.end())
+      {
+         mRegisteredActors.erase(message.GetAboutActorId());
+      }
+      else if (mTerrainActor.valid() && mTerrainActor->GetUniqueId() == message.GetAboutActorId())
+      {
+         SetTerrainActor(NULL);
+      }
+   }
 }
 
 /////////////////////////////////////////////////////////////////////////////////
