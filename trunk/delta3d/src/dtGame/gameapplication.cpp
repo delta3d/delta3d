@@ -103,10 +103,12 @@ namespace dtGame
       {
          mEntryPointLib = lsm.LoadSharedLibrary(libName);
       }
-      catch (dtUtil::Exception)
+      catch(const dtUtil::Exception &e)
       {
          msg.str("");
-         msg << "Unable to load game library " << libName;
+         msg << "Unable to load game library " << libName << " . Exception message to follow: " <<
+             e.What();
+
          throw dtUtil::Exception(dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR, 
             msg.str(), __FILE__, __LINE__);
       }
