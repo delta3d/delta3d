@@ -78,6 +78,10 @@ namespace dtGame
             mTerrainActor = NULL;
          }
       }
+      else if (message.GetMessageType()  == dtGame::MessageType::INFO_MAP_UNLOADED)
+      {
+         mRegisteredActors.clear();
+      }
    }
 
    //////////////////////////////////////////////////////////////////////
@@ -544,8 +548,11 @@ namespace dtGame
          i != mRegisteredActors.end(); ++i)
       {
 
-         dtGame::GameActorProxy& gameActorProxy = *GetGameManager()->FindGameActorById(i->first);
-         dtGame::GameActor& gameActor = gameActorProxy.GetGameActor();
+         dtGame::GameActorProxy* gameActorProxy = GetGameManager()->FindGameActorById(i->first);
+         if (gameActorProxy == NULL)
+            continue;
+
+         dtGame::GameActor& gameActor = gameActorProxy->GetGameActor();
          DeadReckoningHelper& helper = *i->second;
 
          if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
@@ -553,8 +560,8 @@ namespace dtGame
             mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                "Dead Reckoning actor named \"%s\" with ID \"%s\" and type \"%s.%s.\"",
                gameActor.GetName().c_str(), gameActor.GetUniqueId().ToString().c_str(),
-               gameActorProxy.GetActorType().GetCategory().c_str(),
-               gameActorProxy.GetActorType().GetName().c_str());
+               gameActorProxy->GetActorType().GetCategory().c_str(),
+               gameActorProxy->GetActorType().GetName().c_str());
          }
 
          dtCore::Transform xform;
