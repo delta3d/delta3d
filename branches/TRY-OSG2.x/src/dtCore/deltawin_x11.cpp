@@ -6,9 +6,10 @@
 
 #include <cassert>
 
-#include <Producer/KeyboardMouse>
 #include <dtCore/deltawin.h>
 #include <dtCore/notify.h>
+
+#include <osgViewer/GraphicsWindow>
 
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
@@ -21,40 +22,7 @@ void DeltaWin::KillGLWindow()
 {
 }
 
-// Producer::RenderSurface must realized for this to work
-void DeltaWin::SetWindowTitle( const std::string& title )
-{
-   mRenderSurface->setWindowName( title );
 
-   if( mRenderSurface->isRealized() )
-   {
-      Display* dpy = mRenderSurface->getDisplay();
-      Window win = mRenderSurface->getWindow();
-
-      XStoreName( dpy, win, title.c_str() );
-      XSetIconName( dpy, win, title.c_str() );
-      XFlush( dpy );
-   }
-}
-
-void DeltaWin::ShowCursor( bool show )
-{
-   mShowCursor = show;
-
-   //Then move the cursor to be on our window'
-   int x,y,w,h;
-   GetPosition(&x, &y, &w, &h); //winuser.h
-   mRenderSurface->positionPointer((x+w)/2, (y+h)/2);
-
-   //Tell Producer
-   mRenderSurface->useCursor(mShowCursor);
-}
-
-void DeltaWin::SetFullScreenMode( bool enable )
-{
-   mRenderSurface->fullScreen(enable);
-   mRenderSurface->useBorder(!enable);
-}
 
 DeltaWin::ResolutionVec DeltaWin::GetResolutions()
 {
@@ -105,11 +73,12 @@ bool DeltaWin::ChangeScreenResolution( int width, int height, int colorDepth, in
       //get "real" screen width and height
       unsigned int screenHeight;
       unsigned int screenWidth;
-      dw->GetRenderSurface()->getScreenSize( screenWidth, screenHeight );
+      osg::GraphicsContext::getWindowingSystemInterface()->getScreenResolution(0, screenWidth, screenHeight);
 
       //notify all render surfaces that resolution has changed,
       //we must pass screenHeight-height to properly place new window
-      dw->GetRenderSurface()->setCustomFullScreenRectangle( 0, screenHeight-height, width, height );
+      dw->GetOsgViewerGraphicsWindow()->setWindowRectangle( 0, screenHeight-height, width, height );
+      dw->GetOsgViewerGraphicsWindow()->setWindowDecoration(false);
    }
 
    Display* dpy = XOpenDisplay(NULL);

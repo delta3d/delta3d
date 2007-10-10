@@ -8,160 +8,19 @@
 #include <dtUtil/deprecationmgr.h>
 #include <dtUtil/log.h>
 #include <dtCore/exceptionenum.h>
-#include <dtCore/inputcallback.h>
+//#include <dtCore/inputcallback.h>
 #include <dtUtil/exception.h>
+#include <dtCore/scene.h>  //due to include of camera.h
+#include <dtCore/keyboardmousehandler.h> //due to include of scene.h
+#include <dtCore/keyboard.h> //due to include of scene.h
+#include <osgViewer/GraphicsWindow>
+
+#include <cassert>
 
 using namespace dtCore;
 using namespace dtUtil;
 
 IMPLEMENT_MANAGEMENT_LAYER(DeltaWin)
-
-///////////////////////////////////////////////////
-// --- InputCallback's implementation --- /////////
-///////////////////////////////////////////////////
-InputCallback::InputCallback(Keyboard* keyboard, Mouse* mouse) : mKeyboard(keyboard), mMouse(mouse)
-{
-}
-
-///////////////////////////////////////////////////
-void InputCallback::mouseScroll(Producer::KeyboardMouseCallback::ScrollingMotion sm)
-{
-   mMouse->MouseScroll(sm);
-}
-
-///////////////////////////////////////////////////
-void InputCallback::mouseMotion(float x, float y)
-{
-   mMouse->MouseMotion( x, y );
-}
-
-///////////////////////////////////////////////////
-void InputCallback::passiveMouseMotion(float x, float y)
-{
-   mMouse->PassiveMouseMotion( x, y );
-}
-
-///////////////////////////////////////////////////
-void InputCallback::buttonPress(float x, float y, unsigned int button)
-{
-   // an unknown button number defaults to LeftButton.
-   Mouse::MouseButton mb(Mouse::LeftButton);
-
-   // prepare the value from Producer to be what Delta3D is expecting.
-   if( button > 0 )
-   {
-      button -= 1;
-   }
-
-   switch( button )
-   {
-   case Mouse::RightButton:
-      {
-         mb = Mouse::RightButton;
-      } break;
-
-   case Mouse::MiddleButton:
-      {
-         mb = Mouse::MiddleButton;
-      } break;
-   }
-   mMouse->ButtonDown(x, y, mb);
-}
-
-///////////////////////////////////////////////////
-void InputCallback::doubleButtonPress(float x, float y, unsigned int button)
-{
-   // an unknown button number defaults to LeftButton.
-   Mouse::MouseButton mb(Mouse::LeftButton);
-
-   // prepare the value from Producer to be what Delta3D is expecting.
-   if( button > 0 )
-   {
-      button -= 1;
-   }
-
-   switch( button )
-   {
-   case Mouse::RightButton:
-      {
-         mb = Mouse::RightButton;
-      } break;
-
-   case Mouse::MiddleButton:
-      {
-         mb = Mouse::MiddleButton;
-      } break;
-   }
-
-   mMouse->DoubleButtonDown(x, y, mb);
-}
-
-///////////////////////////////////////////////////
-void InputCallback::buttonRelease(float x, float y, unsigned int button)
-{
-   // an unknown button number defaults to LeftButton.
-   Mouse::MouseButton mb(Mouse::LeftButton);
-
-   // prepare the value from Producer to be what Delta3D is expecting.
-   if( button > 0 )
-   {
-      button -= 1;
-   }
-
-   switch( button )
-   {
-   case Mouse::RightButton:
-      {
-         mb = Mouse::RightButton;
-      } break;
-
-   case Mouse::MiddleButton:
-      {
-         mb = Mouse::MiddleButton;
-      } break;
-   }
-
-   mMouse->ButtonUp(x, y, mb);
-}
-
-///////////////////////////////////////////////////
-void InputCallback::keyPress(Producer::KeyCharacter kc)
-{
-   mKeyboard->KeyDown(kc);
-}
-
-///////////////////////////////////////////////////
-void InputCallback::keyRelease(Producer::KeyCharacter kc)
-{
-   mKeyboard->KeyUp(kc);
-}
-
-///////////////////////////////////////////////////
-void InputCallback::specialKeyPress(Producer::KeyCharacter kc)
-{
-   mKeyboard->KeyDown(kc);
-}
-
-///////////////////////////////////////////////////
-void InputCallback::specialKeyRelease(Producer::KeyCharacter kc)
-{
-   mKeyboard->KeyUp(kc);
-}
-
-///////////////////////////////////////////////////
-void InputCallback::SetKeyboard(Keyboard* kb)
-{
-   mKeyboard = kb;
-}
-
-///////////////////////////////////////////////////
-void InputCallback::SetMouse(Mouse* m)
-{
-   mMouse = m;
-}
-///////////////////////////////////////////////////
-// --- end of InputCallback's implementation --- //
-///////////////////////////////////////////////////
 
 /////////////////////////////////////////////////
 // --- DeltaWin's implementation --- ////////////
@@ -169,127 +28,210 @@ void InputCallback::SetMouse(Mouse* m)
 DeltaWin::DeltaWin(  const std::string& name, 
                      int x, int y, 
                      int width, int height, 
-                     bool cursor, bool fullScreen ) :
+                     bool cursor, bool fullScreen,
+                     osg::Referenced * inheritedWindowData) :
    Base(name),
-   mRenderSurface( new Producer::RenderSurface ),
-   mKeyboardMouse( new Producer::KeyboardMouse( mRenderSurface.get() ) ),
-   mKeyboard( new Keyboard ),
-   mMouse( new Mouse(mKeyboardMouse.get(),"mouse") ),
-   mShowCursor(true),
-   mInputCallback(new InputCallback( mKeyboard.get(), mMouse.get() ))
+   mIsFullScreen(false),
+   mShowCursor(true) // force set fullscreen
 {
    RegisterInstance(this);
-
-   mKeyboardMouse->setCallback( mInputCallback.get() );
-
+   
+   CreateGraphicsWindow(name, x, y, width, height, 0, cursor, inheritedWindowData);
+   
    if(!fullScreen)
    {
       SetPosition( x, y, width, height );
    }
-
-   SetWindowTitle(name);
-   ShowCursor(cursor);
+   else
+   {
+      SetFullScreenMode(fullScreen);
+   }
 }
 
-/////////////////////////////////////////////////
-DeltaWin::DeltaWin(  const std::string& name, 
-                     Producer::RenderSurface* rs, 
-                     Producer::InputArea* ia ) :
-   Base(name), 
-   mRenderSurface(rs),
-   mKeyboardMouse(NULL),
-   mMouse(NULL),
-   mShowCursor(true),
-   mInputCallback(NULL)
-{
-   if( mRenderSurface == NULL )
-   {
-      throw dtUtil::Exception(dtCore::ExceptionEnum::INVALID_PARAMETER,
-         "Supplied Producer::RenderSurface is NULL", __FILE__, __LINE__);
-   }
 
+DeltaWin::DeltaWin(const std::string& name, Camera * camera) :
+   Base(name),
+   mIsFullScreen(false),
+   mShowCursor(true)
+{
    RegisterInstance(this);
 
-   mKeyboard = new Keyboard;
-
-   if(ia) // use the passed InputArea if not NULL
+   if( camera == NULL )
    {
-      mKeyboardMouse = new Producer::KeyboardMouse(ia);
-   }
-   else // otherwise use the passed RenderSurface
-   {
-      mKeyboardMouse = new Producer::KeyboardMouse(mRenderSurface.get());
+      DeregisterInstance(this);
+      throw dtUtil::Exception(dtCore::ExceptionEnum::INVALID_PARAMETER,
+         "Supplied dtCore::Camera is NULL", __FILE__, __LINE__);
    }
 
-   mMouse = new Mouse( mKeyboardMouse.get(), "mouse" );
-
-   mInputCallback = new InputCallback( mKeyboard.get(), mMouse.get() );
-   mKeyboardMouse->setCallback( new InputCallback( mKeyboard.get(), mMouse.get() ) );
-
+   osg::GraphicsContext * gc = camera->GetOsgCamera()->getGraphicsContext();
+   try
+   {
+      SetOsgViewerGraphicsWindow(dynamic_cast<osgViewer::GraphicsWindow*>(gc));
+   }
+   catch(dtUtil::Exception & ex)
+   {
+      DeregisterInstance(this);
+      throw ex;
+   }
+   mCamera = camera;
+   
    SetWindowTitle(name);
    ShowCursor();
 }
 
-/////////////////////////////////////////////////
-DeltaWin::DeltaWin(  const std::string& name, 
-                     dtCore::Keyboard* keyboard, 
-                     dtCore::Mouse* mouse ) :
-   Base(name),
-   mRenderSurface( new Producer::RenderSurface ),
-   mKeyboardMouse( new Producer::KeyboardMouse(mRenderSurface.get()) ),
-   mKeyboard(keyboard),
-   mMouse(mouse),
-   mShowCursor(true)
+osgViewer::GraphicsWindow * DeltaWin::CreateGraphicsWindow(const std::string& name, 
+                                                           int x, int y, 
+                                                           int width, int height, 
+                                                           unsigned int screenNum,
+                                                           bool cursor, osg::Referenced * inheritedWindowData)
 {
-   if( !mKeyboard.valid() || !mMouse.valid() )
+   osg::DisplaySettings* ds = osg::DisplaySettings::instance();
+
+   osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits;
+
+   traits->readDISPLAY();
+   if (traits->displayNum<0)
+      traits->displayNum = 0;
+
+   traits->windowName = name;
+   traits->screenNum = screenNum;
+   traits->x = x;
+   traits->y = y;
+   traits->width = width;
+   traits->height = height;
+   traits->alpha = ds->getMinimumNumAlphaBits();
+   traits->stencil = ds->getMinimumNumStencilBits();
+   traits->windowDecoration = true;
+   traits->doubleBuffer = true;
+   traits->sharedContext = 0;
+   traits->sampleBuffers = ds->getMultiSamples();
+   traits->samples = ds->getNumMultiSamples();
+   traits->inheritedWindowData = inheritedWindowData;
+   
+   if (ds->getStereo())
    {
-      throw dtUtil::Exception(dtCore::ExceptionEnum::INVALID_PARAMETER,
-         "Supplied dtCore::Keyboard or dtCore::Mouse is invalid", __FILE__, __LINE__);
+      switch (ds->getStereoMode())
+      {
+         case (osg::DisplaySettings::QUAD_BUFFER):
+            traits->quadBufferStereo = true;
+            break;
+         case (osg::DisplaySettings::VERTICAL_INTERLACE):
+         case (osg::DisplaySettings::CHECKERBOARD):
+         case (osg::DisplaySettings::HORIZONTAL_INTERLACE):
+            traits->stencil = 8;
+            break;
+         default:
+            break;
+      }
    }
 
+   osg::ref_ptr<osg::GraphicsContext> gc = osg::GraphicsContext::createGraphicsContext(traits.get());
+   assert(gc.get());
+   
+   osgViewer::GraphicsWindow* gw = dynamic_cast<osgViewer::GraphicsWindow*>(gc.get());
+   if (gw)
+   {
+      gw->getEventQueue()->getCurrentEventState()->setWindowRectangle(x, y, width, height );
+   }
+   
+   mOsgViewerGraphicsWindow = gw;
+   gw->realize();
+   gw->makeCurrent();
+   
+   return (mOsgViewerGraphicsWindow.get());
+}
+
+
+/////////////////////////////////////////////////
+DeltaWin::DeltaWin(const std::string& name, osgViewer::GraphicsWindow * gw) :
+   Base(name),
+   mIsFullScreen(false),
+   mShowCursor(true)
+{
    RegisterInstance(this);
-
-   mKeyboardMouse->setCallback( new InputCallback( mKeyboard.get(), mMouse.get() ) );
-
-   SetWindowTitle(name);
+ 
+   try
+   {
+      SetOsgViewerGraphicsWindow(gw);
+   }
+   catch(dtUtil::Exception & ex)
+   {
+      DeregisterInstance(this);
+      throw ex;
+   }
+   
+//   SetWindowTitle(name);
+   SetWindowTitle("toto");
    ShowCursor();
 }
 
 /////////////////////////////////////////////////
 DeltaWin::~DeltaWin()
 {
-   mKeyboardMouse->cancel();
-   mKeyboardMouse = 0;
-
    KillGLWindow();
-   mRenderSurface->cancel();
-   mRenderSurface = 0;
+//   mRenderSurface->cancel();
+   //mRenderSurface = 0;
 
    DeregisterInstance(this);
 }
-
 /////////////////////////////////////////////////
-InputCallback* DeltaWin::GetInputCallback() 
-{ 
-   return mInputCallback.get(); 
+void DeltaWin::SetWindowTitle( const std::string& title )
+{
+   mOsgViewerGraphicsWindow->setWindowName(title);
+}
+/////////////////////////////////////////////////
+const std::string DeltaWin::GetWindowTitle() const
+{
+   return mOsgViewerGraphicsWindow->getWindowName();
 }
 
-/////////////////////////////////////////////////
-const InputCallback* DeltaWin::GetInputCallback() const 
-{ 
-   return mInputCallback.get(); 
+void DeltaWin::ShowCursor( bool show )
+{
+   mOsgViewerGraphicsWindow->useCursor(show);
 }
 
-///////////////////////////////////////////////////
-bool DeltaWin::GetFullScreenMode() const
-{ 
-   return mRenderSurface->isFullScreen();
+void DeltaWin::SetFullScreenMode( bool enable )
+{
+   if (mIsFullScreen == enable) return;
+   
+   osg::GraphicsContext::WindowingSystemInterface    *wsi = osg::GraphicsContext::getWindowingSystemInterface();
+
+   if (wsi == NULL)
+   {
+      LOG_WARNING("Error, no WindowSystemInterface available, cannot toggle window fullscreen.");
+      return;
+   }
+
+   unsigned int screenWidth;
+   unsigned int screenHeight;
+
+   wsi->getScreenResolution(*(mOsgViewerGraphicsWindow->getTraits()), screenWidth, screenHeight);
+
+   if (mIsFullScreen)
+   {
+      osg::Vec2 resolution;
+
+      int rx = 640;
+      int ry = 480;
+      
+      mOsgViewerGraphicsWindow->setWindowDecoration(true);
+      mOsgViewerGraphicsWindow->setWindowRectangle((screenWidth - rx) / 2, (screenHeight - ry) / 2, rx, ry);
+   }
+   else
+   {
+      mOsgViewerGraphicsWindow->setWindowDecoration(false);
+      mOsgViewerGraphicsWindow->setWindowRectangle(0, 0, screenWidth, screenHeight);
+   }
+   
+   mIsFullScreen = enable;
+
+   mOsgViewerGraphicsWindow->grabFocusIfPointerInWindow();
 }
 
 ///////////////////////////////////////////////////
 void DeltaWin::SetPosition( int x, int y, int width, int height )
 {
-   mRenderSurface->setWindowRectangle(x, y, width, height);
+   mOsgViewerGraphicsWindow->setWindowRectangle(x, y, width, height);
 }
 
 ///////////////////////////////////////////////////
@@ -309,11 +251,7 @@ void DeltaWin::GetPosition( int *x, int *y,int *width, int *height )
 ///////////////////////////////////////////////////
 void DeltaWin::GetPosition( int& x, int& y, int& width, int& height )
 {
-   unsigned int w, h;
-
-   mRenderSurface->getWindowRectangle( x, y, w, h );
-   width = w;
-   height = h;
+   mOsgViewerGraphicsWindow->getWindowRectangle( x, y, width, height );
 }
 
 ///////////////////////////////////////////////////
@@ -325,64 +263,20 @@ DeltaWin::PositionSize DeltaWin::GetPosition()
 }
 
 ///////////////////////////////////////////////////
-void DeltaWin::SetRenderSurface( Producer::RenderSurface* renderSurface )
+void DeltaWin::SetOsgViewerGraphicsWindow(osgViewer::GraphicsWindow * graphicsWindow)
 {
-   if( renderSurface == 0 )
+   if( graphicsWindow == 0 )
    {
       throw dtUtil::Exception(dtCore::ExceptionEnum::INVALID_PARAMETER,
-         "Supplied Producer::RenderSurface is invalid", __FILE__, __LINE__);
+         "Supplied osgViewer::GraphicsWindow is invalid", __FILE__, __LINE__);
    }
-   mRenderSurface = renderSurface;
-}
-
-
-///////////////////////////////////////////////////
-void DeltaWin::SetKeyboard( Keyboard* keyboard )
-{
-   if( keyboard == 0 )
+   
+   mOsgViewerGraphicsWindow = graphicsWindow;
+//   mOsgViewerGraphicsWindow->realize();
+   
+   if (mCamera.valid())
    {
-      throw dtUtil::Exception(dtCore::ExceptionEnum::INVALID_PARAMETER,
-         "Supplied dtCore::Keyboard is invalid", __FILE__, __LINE__);
-   }
-   mKeyboard = keyboard;
-   mInputCallback->SetKeyboard( mKeyboard.get() );
-}
-//////////////////////////////////////////////////
-void DeltaWin::SetKeyRepeat(bool on)
-{
-   mKeyboardMouse->setAutoRepeatMode(on);
-}
-
-/////////////////////////////////////////////////
-bool DeltaWin::GetKeyRepeat() const
-{
-   return mKeyboardMouse->getAutoRepeatMode();   
-}
-
-/////////////////////////////////////////////////
-void DeltaWin::SetMouse( Mouse* mouse )
-{
-   if( mouse == 0 )
-   {
-      throw dtUtil::Exception(dtCore::ExceptionEnum::INVALID_PARAMETER,
-         "Supplied dtCore::Mouse is invalid", __FILE__, __LINE__);
-   }
-   mMouse = mouse;
-   mInputCallback->SetMouse( mMouse.get() );
-}
-
-/////////////////////////////////////////////////
-const std::string& DeltaWin::GetWindowTitle() const
-{
-   return mRenderSurface->getWindowName();
-}
-
-/////////////////////////////////////////////////
-void DeltaWin::Update()
-{
-   if( mKeyboardMouse.valid() && !mKeyboardMouse->isRunning() )
-   {
-      mKeyboardMouse->update( *mKeyboardMouse->getCallback() );
+      mCamera->UpdateFromWindow();
    }
 }
 
@@ -393,8 +287,8 @@ bool DeltaWin::CalcPixelCoords( float x, float y, float &pixel_x, float &pixel_y
    if ( y < -1.0f || y > 1.0f ) return false;
    
    int wx, wy;
-   unsigned int w, h;
-   GetRenderSurface()->getWindowRectangle( wx, wy, w, h );
+   int w, h;
+   mOsgViewerGraphicsWindow->getWindowRectangle( wx, wy, w, h );
 
    pixel_x = ( w/2 ) * (x + 1.0f);
    pixel_y = ( h/2 ) * (1.0f - y);
@@ -412,8 +306,8 @@ bool DeltaWin::CalcPixelCoords( osg::Vec2 window_xy, osg::Vec2& pixel_xy )
 bool DeltaWin::CalcWindowCoords( float pixel_x, float pixel_y, float &x, float &y )
 {
    int wx, wy;
-   unsigned int w, h;
-   GetRenderSurface()->getWindowRectangle( wx, wy, w, h );
+   int w, h;
+   mOsgViewerGraphicsWindow->getWindowRectangle( wx, wy, w, h );
 
    if (pixel_x < 0 || pixel_x > w ) return false;
    if (pixel_y < 0 || pixel_y > h ) return false;

@@ -6,9 +6,13 @@
 #include <dtCore/system.h>
 #include <dtUtil/log.h>
 #include <dtUtil/bits.h>
-#include <dtCore/camera.h>
-#include <dtCore/cameragroup.h>
+#include <dtCore/view.h>
 #include <dtCore/deltawin.h>
+#include <dtCore/scene.h>
+#include <dtCore/keyboardmousehandler.h> //due to include of scene.h
+#include <dtCore/keyboard.h>//due to include of scene.h
+
+#include <osgViewer/GraphicsWindow>
 #include <ctime>
 
 using namespace dtUtil;
@@ -98,7 +102,7 @@ void System::Frame(const double deltaSimTime, const double deltaRealTime)
    {
       double userData[2] = { deltaSimTime, deltaRealTime };
       SendMessage( "frame", userData );
-      CameraFrame();
+//      CameraFrame();
    }
 
 }
@@ -107,7 +111,7 @@ void System::Pause( const double deltaRealTime )
 {
    SendMessage( "pause", const_cast<double*>(&deltaRealTime) );      
 
-   CameraFrame();
+//   CameraFrame();
 }
 
 ///private
@@ -140,21 +144,22 @@ void System::StepWindow()
 {
    SystemStep();
 
-   if( mShutdownOnWindowClose )
+   if( mShutdownOnWindowClose ) // FIXME how to check if GraphicsWindow is always running ??
+                                // this implementation in really the good way
    {
-      bool renderSurfaceIsRunning = false;
-      for( int i = 0; i < DeltaWin::GetInstanceCount() && !renderSurfaceIsRunning; i++ )
+      bool areGraphicsWindow = false;
+      for( int i = 0; i < DeltaWin::GetInstanceCount() && !areGraphicsWindow; i++ )
       {
-         renderSurfaceIsRunning = renderSurfaceIsRunning || DeltaWin::GetInstance(i)->GetRenderSurface()->isRunning();
+          areGraphicsWindow = areGraphicsWindow || DeltaWin::GetInstance(i)->GetOsgViewerGraphicsWindow()->valid();
       }
 
-      mRunning = mRunning && renderSurfaceIsRunning;
+      mRunning = mRunning && areGraphicsWindow;
    }
 
-   for( int i = 0; i < DeltaWin::GetInstanceCount(); i++ )
-   {
-      DeltaWin::GetInstance(i)->Update();
-   }
+//   for( int i = 0; i < DeltaWin::GetInstanceCount(); i++ )
+//   {
+//      DeltaWin::GetInstance(i)->Update();
+//   }
 }
 
 
@@ -168,15 +173,15 @@ void System::Run()
    mSimulationClockTime = mRealClockTime;
 
    //This should have been ifdef'd, not commented out.
-   #ifdef __APPLE__   
+   #ifdef __APPLE__   // TODO
    for( int i = 0; i < DeltaWin::GetInstanceCount(); i++ )
    {
-      Producer::RenderSurface* rs = DeltaWin::GetInstance(i)->GetRenderSurface();
-      rs->useConfigEventThread(false);
-      rs->realize();
-      rs->waitForRealize();
-      rs->fullScreen(false);
-      rs->startThread();
+      osgViewer::GraphicsWindow* gw = DeltaWin::GetInstance(i)->GetOsgViewerGraphicsWindow();
+//      rs->useConfigEventThread(false);
+      gw->realize();
+//      rs->waitForRealize();
+//      rs->fullScreen(false);
+//      rs->startThread();
    }
    #endif
    
@@ -249,15 +254,11 @@ void System::Config()
 {
    if (dtUtil::Bits::Has(mSystemStages, System::STAGE_CONFIG))
    {
-      CameraFrame();
+//      CameraFrame();
 
       SendMessage("configure");
    }
 }
 
-void System::CameraFrame()
-{
-  Camera::GetCameraGroup()->Frame();
-}
 
 }

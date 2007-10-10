@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////
 #include <prefix/dtcoreprefix-src.h>
 #include <dtCore/flymotionmodel.h>
-#include <dtCore/scene.h>
 
 #include <osg/Vec3>
 #include <osg/Matrix>
@@ -12,8 +11,12 @@
 #include <dtCore/logicalinputdevice.h>
 #include <dtCore/mouse.h>
 #include <dtCore/keyboard.h>
-#include <dtCore/transform.h>
-#include <dtCore/transformable.h>
+//#include <dtCore/transform.h>
+//#include <dtCore/transformable.h>
+#include <dtCore/camera.h>
+#include <dtCore/scene.h>
+#include <dtCore/keyboardmousehandler.h>
+#include <dtCore/keyboard.h>
 
 using namespace dtCore;
 
@@ -123,32 +126,32 @@ void FlyMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
       Axis* arrowKeysUpAndDown = mDefaultInputDevice->AddAxis(
          "arrow keys up/down",
          mArrowKeysUpDownMapping = new ButtonsToAxis(
-            keyboard->GetButton(Producer::Key_Down),
-            keyboard->GetButton(Producer::Key_Up)
+            keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Down),
+            keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Up)
          )
       );
          
       Axis* arrowKeysLeftAndRight = mDefaultInputDevice->AddAxis(
          "arrow keys left/right",
          mArrowKeysLeftRightMapping = new ButtonsToAxis(
-            keyboard->GetButton(Producer::Key_Left),
-            keyboard->GetButton(Producer::Key_Right)
+            keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Left),
+            keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Right)
          )
       );
       
       Axis* wsKeysUpAndDown = mDefaultInputDevice->AddAxis(
          "w/s keys stafe forward/back",
          mWSKeysUpDownMapping = new ButtonsToAxis(
-            keyboard->GetButton(Producer::Key_S),
-            keyboard->GetButton(Producer::Key_W)
+            keyboard->GetButton('s'),
+            keyboard->GetButton('w')
          )
       );
       
       Axis* adKeysStrafeLeftAndRight = mDefaultInputDevice->AddAxis(
          "a/d keys strafe left/right",
          mADKeysLeftRightMapping = new ButtonsToAxis(
-            keyboard->GetButton(Producer::Key_A),
-            keyboard->GetButton(Producer::Key_D)
+            keyboard->GetButton('a'),
+            keyboard->GetButton('d')
          )
       );
       
@@ -187,23 +190,23 @@ void FlyMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
       mRightButtonLeftRightMapping->SetSourceAxis(mouse->GetAxis(0));
       
       mArrowKeysUpDownMapping->SetSourceButtons(
-         keyboard->GetButton(Producer::Key_Down),
-         keyboard->GetButton(Producer::Key_Up)
+         keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Down),
+         keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Up)
       );
       
       mArrowKeysLeftRightMapping->SetSourceButtons(
-         keyboard->GetButton(Producer::Key_Left),
-         keyboard->GetButton(Producer::Key_Right)
+         keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Left),
+         keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Right)
       );
       
       mWSKeysUpDownMapping->SetSourceButtons(
-         keyboard->GetButton(Producer::Key_S),
-         keyboard->GetButton(Producer::Key_W)
+         keyboard->GetButton('s'),
+         keyboard->GetButton('w')
       );
 
       mADKeysLeftRightMapping->SetSourceButtons(
-         keyboard->GetButton(Producer::Key_A),
-         keyboard->GetButton(Producer::Key_D)
+         keyboard->GetButton('a'),
+         keyboard->GetButton('d')
       );
    }
    

@@ -3,13 +3,16 @@
 //////////////////////////////////////////////////////////////////////
 #include <prefix/dtcoreprefix-src.h>
 #include <dtCore/scene.h>
+#include <dtCore/keyboardmousehandler.h> //due to include of scene.h
+#include <dtCore/keyboard.h>//due to include of scene.h
 
 #include <osg/FrameStamp>
 #include <osg/PolygonMode>
 #include <osgDB/DatabasePager>
-#include <osgDB/Registry>
 #include <osgParticle/ParticleSystemUpdater>
 #include <osgUtil/IntersectVisitor>
+#include <osg/Group>
+#include <osgViewer/View>
 
 #include <ode/ode.h>
 
@@ -18,7 +21,6 @@
 #include <dtCore/light.h>
 #include <dtCore/physical.h>
 #include <dtCore/system.h>
-#include <dtCore/cameragroup.h>
 
 #include <dtUtil/deprecationmgr.h>
 #include <dtUtil/log.h>
@@ -31,13 +33,13 @@ namespace dtCore
 {
 
 IMPLEMENT_MANAGEMENT_LAYER(Scene)
-
+/////////////////////////////////////////////
 // Replacement message handler for ODE
 extern "C" void ODEMessageHandler(int errnum, const char *msg, va_list ap)
 {
    Log::GetInstance().LogMessage(Log::LOG_INFO, __FILE__, msg, ap);
 }
-
+/////////////////////////////////////////////
 // Replacement debug handler for ODE
 extern "C" void ODEDebugHandler(int errnum, const char *msg, va_list ap)
 {
@@ -45,7 +47,7 @@ extern "C" void ODEDebugHandler(int errnum, const char *msg, va_list ap)
 
    assert(false);
 }
-
+/////////////////////////////////////////////
 // Replacement error handler for ODE
 extern "C" void ODEErrorHandler(int errnum, const char *msg, va_list ap)
 {
@@ -53,7 +55,7 @@ extern "C" void ODEErrorHandler(int errnum, const char *msg, va_list ap)
 
    assert(false);
 }
-
+/////////////////////////////////////////////
 Scene::ParticleSystemFreezer::ParticleSystemFreezer()
    : osg::NodeVisitor( TRAVERSE_ALL_CHILDREN ),
      mFreezing( true )
@@ -65,7 +67,7 @@ Scene::ParticleSystemFreezer::ParticleSystemFreezer()
       mPreviousFrozenState.clear();
    }
 }
-
+/////////////////////////////////////////////
 void Scene::ParticleSystemFreezer::apply( osg::Node& node )
 {
    if( osgParticle::ParticleSystemUpdater* psu = dynamic_cast< osgParticle::ParticleSystemUpdater* >( &node ) )
@@ -100,7 +102,7 @@ void Scene::ParticleSystemFreezer::apply( osg::Node& node )
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-Scene::Scene( const std::string& name, bool useSceneLight ) : Base(name),
+Scene::Scene( const std::string& name) : Base(name),
    mSceneNode(new osg::Group),
    mSpaceID(0),
    mWorldID(0),
@@ -115,13 +117,13 @@ Scene::Scene( const std::string& name, bool useSceneLight ) : Base(name),
    mPagingEnabled(false),
    mStartTick(0),
    mFrameNum(0),
-   mCleanupTime(0.0025),
-   mTargetFrameRate(30.0)
+   mCleanupTime(0.0025)
 {
    RegisterInstance(this);
    SetName(name);
 
    InfiniteLight* skyLight = new InfiniteLight( 0, "SkyLight" );
+      
    AddDrawable( skyLight );
    skyLight->SetEnabled( true );
 
@@ -149,6 +151,7 @@ Scene::Scene( const std::string& name, bool useSceneLight ) : Base(name),
    //TODO set default render face, mode
 }
 
+/////////////////////////////////////////////
 Scene::~Scene()
 {
    // Since we are going to destroy all the bodies in our world with dWorldDestroy,
@@ -178,34 +181,39 @@ Scene::~Scene()
 
    DeregisterInstance(this);
 
-   if(mPagingEnabled)
-   {
-      DisablePaging();
-   }
+//   if(mPagingEnabled)
+//   {
+//      DisablePaging();
+//   }
 
    RemoveSender( &System::GetInstance() );
 }
+//////////////////////////////////////////
+osg::Group * Scene::GetOrCreateSceneNode() 
+{ 
+	return (mSceneNode.valid() ? mSceneNode.get() : CreateSceneNode());
+}
 
+
+/////////////////////////////////////////////
 void Scene::SetSceneNode(osg::Group* newSceneNode)
 {
    //remove all children from our current scene node
    //and add them to the new scene node
-   unsigned numChildren = mSceneNode->getNumChildren();
 
-   for(unsigned i = 0; i < numChildren; ++i)
-   {
-      osg::Node* child = mSceneNode->getChild(i);
-      newSceneNode->addChild(child);
-   }
+//   osg::Group * sceneData = mOsgViewerScene->getSceneData()->asGroup();
+     unsigned numChildren = mSceneNode->getNumChildren();
 
-   mSceneNode->removeChildren(0, numChildren);
-
+      for(unsigned i = 0; i < numChildren; ++i)
+      {
+         osg::Node* child = mSceneNode->getChild(i);
+         newSceneNode->addChild(child);
+      }
+      mSceneNode->removeChildren(0, numChildren);
+   
    mSceneNode = newSceneNode;
-
-   //now notify the camera's who reference this scene to reset their handle
-   //to the scene node
-   Camera::GetCameraGroup()->ResetCameraScenes(this);
-
+   UpdateViewSet();
+   
    //now we need to remove and re-add all the drawables
    DrawableList dl = mAddedDrawables;
    RemoveAllDrawables();
@@ -215,9 +223,8 @@ void Scene::SetSceneNode(osg::Group* newSceneNode)
    {
       AddDrawable((*iter).get());
    }
-
 }
-
+/////////////////////////////////////////////
 void Scene::AddDrawable( DeltaDrawable *drawable )
 {
    // This is modified to put a RefPtr in the scene
@@ -226,19 +233,12 @@ void Scene::AddDrawable( DeltaDrawable *drawable )
    // I still pushback the original *drawable
    // so remove will still work
    RefPtr<DeltaDrawable> drawme = drawable;
-   mSceneNode->addChild( drawme->GetOSGNode() );
+   mSceneNode->addChild(drawme->GetOSGNode());
    drawable->AddedToScene(this);
 
    mAddedDrawables.push_back(drawable);
-
-   // this is the original code
-   //mSceneNode->addChild( drawable->GetOSGNode() );
-   //drawable->AddedToScene(this);
-
-   //mAddedDrawables.push_back(drawable);
-
 }
-
+/////////////////////////////////////////////
 void Scene::RemoveDrawable(DeltaDrawable *drawable)
 {
    mSceneNode->removeChild( drawable->GetOSGNode() );
@@ -250,7 +250,7 @@ void Scene::RemoveDrawable(DeltaDrawable *drawable)
       mAddedDrawables.erase( mAddedDrawables.begin()+pos );
    }
 }
-
+/////////////////////////////////////////////
 void Scene::RemoveAllDrawables()
 {
    while( !mAddedDrawables.empty() )
@@ -261,7 +261,7 @@ void Scene::RemoveAllDrawables()
       }
    }
 }
-
+/////////////////////////////////////////////
 void Scene::SetRenderState( Face face, Mode mode )
 {
    mRenderFace = face;
@@ -317,7 +317,7 @@ void Scene::SetRenderState( Face face, Mode mode )
    osg::ref_ptr<osg::PolygonMode> polymode = new osg::PolygonMode;
    polymode->setMode(myface, mymode);
 
-   osg::StateSet *stateSet = mSceneNode.get()->getOrCreateStateSet();
+   osg::StateSet *stateSet = mSceneNode->getOrCreateStateSet();
    stateSet->setAttributeAndModes(polymode.get(),osg::StateAttribute::OVERRIDE|osg::StateAttribute::ON);
 }
 
@@ -335,7 +335,7 @@ void Scene::RegisterPhysical( Physical *physical )
 
    RegisterCollidable( physical );
 }
-
+/////////////////////////////////////////////
 void Scene::RegisterCollidable( Transformable* collidable )
 {
    if( collidable == NULL )
@@ -358,7 +358,7 @@ void Scene::RegisterCollidable( Transformable* collidable )
 
    mCollidableContents.push_back( collidable );
 }
-
+/////////////////////////////////////////////
 void Scene::UnRegisterPhysical( Physical *physical )
 {
    DEPRECATE(  "void Scene::UnRegisterPhysical( Physical *physical )",
@@ -366,7 +366,7 @@ void Scene::UnRegisterPhysical( Physical *physical )
 
    UnRegisterCollidable( physical );
 }
-
+/////////////////////////////////////////////
 void Scene::UnRegisterCollidable( Transformable* collidable )
 {
    dSpaceRemove( mSpaceID, collidable->GetGeomID() );
@@ -421,79 +421,81 @@ float Scene::GetHeightOfTerrain( float x, float y )
    }
    return HOT;
 }
-
+/////////////////////////////////////////////
 void Scene::SetGravity( const osg::Vec3& gravity )
 {
    mGravity.set(gravity);
 
    dWorldSetGravity(mWorldID, mGravity[0], mGravity[1], mGravity[2]);
 }
-
+/////////////////////////////////////////////
 // Get the ODE space ID
 dSpaceID Scene::GetSpaceID() const
 {
    return mSpaceID;
 }
-
+/////////////////////////////////////////////
 // Get the ODE world ID
 dWorldID Scene::GetWorldID() const
 {
    return mWorldID;
 }
-
+/////////////////////////////////////////////
 // Get the ODE contact join group ID
 dJointGroupID Scene::GetContactJoinGroupID() const
 {
    return mContactJointGroupID;
 }
-
+/////////////////////////////////////////////
 // Performs collision detection and updates physics
 void Scene::OnMessage(MessageData *data)
 {
    if(data->message == "postframe")
    {
-      double cleanup = mCleanupTime;
-      if(mPagingEnabled)
-      {
-         if (osgDB::Registry::instance()->getDatabasePager())
-         {
-             osgDB::Registry::instance()->getDatabasePager()->signalEndFrame();
-
-            for (int camNum = 0; camNum < Camera::GetInstanceCount(); ++camNum )
-            {
-               Camera *cam = Camera::GetInstance(camNum);
-
-               osgDB::Registry::instance()->getDatabasePager()->compileGLObjects(*(cam->GetSceneHandler()->GetSceneView()->getState()), cleanup);
-
-               cam->GetSceneHandler()->GetSceneView()->flushDeletedGLObjects(cleanup);
-             }
-         }
-      }
+      // TODO database pager is managed by the viewer so this code is not require any else
+      //  but check if work well
+//      double cleanup = mCleanupTime;
+//      if(mPagingEnabled)
+//      {
+//         if (osgDB::Registry::instance()->getDatabasePager())
+//         {
+//             osgDB::Registry::instance()->getDatabasePager()->signalEndFrame();
+//
+//            for (int camNum = 0; camNum < Camera::GetInstanceCount(); ++camNum )
+//            {
+//               Camera *cam = Camera::GetInstance(camNum);
+//
+//               osgDB::Registry::instance()->getDatabasePager()->compileGLObjects(*(cam->GetSceneHandler()->GetSceneView()->getState()), cleanup);
+//
+//               cam->GetSceneHandler()->GetSceneView()->flushDeletedGLObjects(cleanup);
+//             }
+//         }
+//      }
    }
    else if(data->message == "preframe")
    {
       double dt = *static_cast<double*>(data->userData);
-
-      //if paging is enabled, update pager
-      if(mPagingEnabled)
-      {
-		  osg::ref_ptr<osg::FrameStamp> frameStamp = new osg::FrameStamp;
-         frameStamp->setReferenceTime(Timer::Instance()->DeltaSec(mStartTick, Timer::Instance()->Tick()));
-         frameStamp->setFrameNumber(mFrameNum++);
-
-         // Patch submitted by user to allow multiple camera to work with the database pager
-         for( int camNum = 0; camNum < Camera::GetInstanceCount(); ++camNum )
-         {
-            Camera::GetInstance( camNum )->GetSceneHandler()->GetSceneView()->setFrameStamp( frameStamp.get() );
-         }
-         //
-
-         if (osgDB::Registry::instance()->getDatabasePager())
-         {
-            osgDB::Registry::instance()->getDatabasePager()->signalBeginFrame(frameStamp.get());
-            osgDB::Registry::instance()->getDatabasePager()->updateSceneGraph(frameStamp->getReferenceTime());
-         }
-      }
+      //TODO idem as previous
+//      //if paging is enabled, update pager
+//      if(mPagingEnabled)
+//      {
+//		  osg::ref_ptr<osg::FrameStamp> frameStamp = new osg::FrameStamp;
+//         frameStamp->setReferenceTime(Timer::Instance()->DeltaSec(mStartTick, Timer::Instance()->Tick()));
+//         frameStamp->setFrameNumber(mFrameNum++);
+//
+//         // Patch submitted by user to allow multiple camera to work with the database pager
+//         for( int camNum = 0; camNum < Camera::GetInstanceCount(); ++camNum )
+//         {
+//            Camera::GetInstance( camNum )->GetSceneHandler()->GetSceneView()->setFrameStamp( frameStamp.get() );
+//         }
+//         //
+//
+//         if (osgDB::Registry::instance()->getDatabasePager())
+//         {
+//            osgDB::Registry::instance()->getDatabasePager()->signalBeginFrame(frameStamp.get());
+//            osgDB::Registry::instance()->getDatabasePager()->updateSceneGraph(frameStamp->getReferenceTime());
+//         }
+//      }
 
       bool usingDeltaStep = false;
 
@@ -576,7 +578,7 @@ void Scene::OnMessage(MessageData *data)
       RemoveAllDrawables();
    }
 }
-
+/////////////////////////////////////////////
 // ODE collision callback
 void Scene::NearCallback( void* data, dGeomID o1, dGeomID o2 )
 {
@@ -654,7 +656,7 @@ void Scene::NearCallback( void* data, dGeomID o1, dGeomID o2 )
    }
 }
 
-
+/////////////////////////////////////////////
 /** The supplied function will be used instead of the built-in collision
  *  callback.
  * @param func : The function to handle collision detection
@@ -665,7 +667,7 @@ void Scene::SetUserCollisionCallback(dNearCallback *func, void *data)
    mUserNearCallback = func;
    mUserNearCallbackData = data;
 }
-
+/////////////////////////////////////////////
 template< typename T >
 struct HasName : public std::binary_function< dtCore::RefPtr<T>, std::string, bool >
 {
@@ -681,7 +683,7 @@ struct HasName : public std::binary_function< dtCore::RefPtr<T>, std::string, bo
       }
    }
 };
-
+/////////////////////////////////////////////
 Light* Scene::GetLight( const std::string& name )
 {
    LightVector::iterator found = std::find_if(  mLights.begin(), 
@@ -697,7 +699,7 @@ Light* Scene::GetLight( const std::string& name )
       return NULL;
    }
 }
-
+/////////////////////////////////////////////
 const Light* Scene::GetLight( const std::string& name ) const
 {
    LightVector::const_iterator found = std::find_if(  mLights.begin(), 
@@ -714,7 +716,7 @@ const Light* Scene::GetLight( const std::string& name ) const
    }
 }
 
-
+/////////////////////////////////////////////
 ///Get the index number of the supplied drawable
 unsigned int Scene::GetDrawableIndex( const DeltaDrawable* drawable ) const
 {
@@ -728,20 +730,20 @@ unsigned int Scene::GetDrawableIndex( const DeltaDrawable* drawable ) const
 
    return mAddedDrawables.size(); // node not found.
 }
-
+/////////////////////////////////////////////
 ///registers a light using the light number
 void Scene::RegisterLight( Light* light )
 { 
    mLights[ light->GetNumber() ] = light; //add to internal array of lights
 }
-
+/////////////////////////////////////////////
 ///unreferences the current light, by number, Note: does not erase
 void Scene::UnRegisterLight( Light* light )
 { 
    mLights[ light->GetNumber() ] = NULL; 
 }
 
-
+/////////////////////////////////////////////
 void Scene::UseSceneLight( bool lightState )
 {
    if (mLights[0] == NULL && lightState)
@@ -758,40 +760,29 @@ void Scene::UseSceneLight( bool lightState )
    }
 }
 
-void Scene::EnablePaging()
+
+
+osg::Group * Scene::CreateSceneNode()
 {
-   if(Camera::GetInstanceCount() > 0)
-   {
-      osgDB::DatabasePager* databasePager = osgDB::Registry::instance()->getOrCreateDatabasePager();
-      databasePager->setTargetFrameRate(mTargetFrameRate);
-      databasePager->registerPagedLODs( mSceneNode.get() );
-      databasePager->setUseFrameBlock(false);
-
-      for (int camNum = 0; camNum < Camera::GetInstanceCount(); ++camNum )
-      {
-         Camera *cam = Camera::GetInstance(camNum);
-
-         cam->GetSceneHandler()->GetSceneView()->getCullVisitor()->setDatabaseRequestHandler(databasePager);
-
-         databasePager->setCompileGLObjectsForContextID(cam->GetSceneHandler()->GetSceneView()->getState()->getContextID(),true);
-      }
-
-      mStartTick = osg::Timer::instance()->tick();
-      mPagingEnabled = true;
-   }
+   mSceneNode = new osg::Group;
+   
+   UpdateViewSet();
+   
+   return mSceneNode.get();
 }
 
-void Scene::DisablePaging()
+void Scene::UpdateViewSet()
 {
-   if(mPagingEnabled && osgDB::Registry::instance()->getDatabasePager() != NULL)
+   if (mViewSet.empty() == false)
    {
-      osgDB::Registry::instance()->getDatabasePager()->clear();
-      osgDB::Registry::instance()->setDatabasePager(NULL);
-      mPagingEnabled = false;
-   }
-   else
-   {
-      LOG_ERROR("DisablePaging was called when paging wasn't enabled");
+      ViewSet::iterator it, end = mViewSet.end();
+      for (it = mViewSet.begin(); it != end; ++it)
+      {
+         if (it->valid())
+         {
+            (*it)->UpdateFromScene();
+         }
+      }  
    }
 }
 
