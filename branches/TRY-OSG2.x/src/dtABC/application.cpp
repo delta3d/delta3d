@@ -18,6 +18,8 @@
  *
  * John K. Grant
  */
+#include <osgViewer/CompositeViewer>
+
 #include <dtABC/application.h>
 #include <dtABC/applicationconfigwriter.h>
 #include <dtABC/applicationconfighandler.h>
@@ -26,6 +28,7 @@
 
 #include <dtCore/stats.h>
 #include <dtCore/system.h>
+#include <dtCore/view.h>
 #include <dtCore/camera.h>
 #include <dtCore/scene.h>
 #include <dtCore/globals.h>
@@ -46,14 +49,15 @@ XERCES_CPP_NAMESPACE_USE
 IMPLEMENT_MANAGEMENT_LAYER(Application)
 
 ///////////////////////////////////////////////////////////////////////////////
-Application::Application(const std::string& configFilename) : BaseABC("Application"),
+Application::Application(const std::string& configFilename) 
+:  BaseABC("Application"),
    mKeyboardListener(new dtCore::GenericKeyboardListener())
 {
    RegisterInstance(this);
 
    mKeyboardListener->SetPressedCallback(dtCore::GenericKeyboardListener::CallbackType(this,&Application::KeyPressed));
 
-   CreateInstances(); //create default window, camera, etc.
+   CreateInstances(); //create default Viewer View
 
    if( !configFilename.empty() )
    {
@@ -86,9 +90,20 @@ void Application::PreFrame( const double deltaFrameTime )
 {
 }
 
+#include <osgViewer/Viewer>
 ///////////////////////////////////////////////////////////////////////////////
+#include <osg/io_utils>
 void Application::Frame( const double deltaFrameTime )
 {
+   if(!dtCore::System::GetInstance().GetPause() )
+   {
+      mCompositeViewer->frame();
+   }
+   else
+   {
+      mCompositeViewer->eventTraversal();
+   }
+   
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -97,11 +112,11 @@ void Application::PostFrame( const double deltaFrameTime )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-bool Application::KeyPressed(const dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character)
+bool Application::KeyPressed(const dtCore::Keyboard* keyboard, int kc)
 {
-   switch (key)
+   switch (kc)
    {
-   case Producer::Key_Escape:
+   case osgGA::GUIEventAdapter::KEY_Escape:
       {
          Quit();
          return true;
@@ -114,8 +129,6 @@ bool Application::KeyPressed(const dtCore::Keyboard* keyboard, Producer::Keyboar
 
    return false;
 }
-
-
 ///////////////////////////////////////////////////////////////////////////////
 void Application::CreateInstances(const std::string& name, int x, int y, int width, int height, bool cursor, bool fullScreen )
 {
@@ -123,20 +136,12 @@ void Application::CreateInstances(const std::string& name, int x, int y, int wid
    //connections.  The instance attributes may be
    //overwritten using a config file
    BaseABC::CreateInstances();
-
-   mWindow = new dtCore::DeltaWin( name, x, y, width, height, cursor, fullScreen );
    
-   assert( mWindow.get() );
-
-   mCamera->SetWindow( mWindow.get() );
-
-   mKeyboard = mWindow->GetKeyboard();
-   assert( mKeyboard.get() );
-
-   mMouse = mWindow->GetMouse();
-   assert( mMouse.get() );
-
-   mKeyboard->AddKeyboardListener( mKeyboardListener.get() );
+   mCompositeViewer = new osgViewer::CompositeViewer;
+//   mCompositeViewer->setThreadingModel(osgViewer::CompositeViewer::SingleThreaded);
+   mCompositeViewer->addView(mViewList.front()->GetOsgViewerView());
+   
+   GetKeyboard()->AddKeyboardListener( mKeyboardListener.get() );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -219,9 +224,11 @@ ApplicationConfigData Application::GetDefaultConfigData()
    data.CAMERA_NAME = "defaultCam";
    data.SCENE_NAME = "defaultScene";
    data.WINDOW_NAME = "defaultWin";
-
+   data.VIEW_NAME = "defaultView";
+   
    data.SCENE_INSTANCE = "defaultScene";
    data.WINDOW_INSTANCE = "defaultWin";
+   data.CAMERA_INSTANCE = "defaultCam";
 
    data.RESOLUTION.width = 640;
    data.RESOLUTION.height = 480;
@@ -239,6 +246,25 @@ ApplicationConfigData Application::GetDefaultConfigData()
 // --- applicator's implementation --- //
 bool Application::AppXMLApplicator::operator ()(const ApplicationConfigData& data, dtABC::Application* app)
 {
+   // set up the View
+   dtCore::View* view = app->GetOrCreateView();
+   ///\todo should this only override when the string is not empty?
+   view->SetName( data.VIEW_NAME );
+
+   
+   // set up the scene
+   dtCore::Scene* scene = app->GetScene();
+   ///\todo should this only override when the string is not empty?
+   scene->SetName( data.SCENE_NAME );
+
+   
+   // set up the camera
+   dtCore::Camera* camera = app->GetCamera();
+   ///\todo should this only override when the string is not empty?
+   camera->SetName( data.CAMERA_NAME );
+
+   
+   
    // apply the window settings
    dtCore::DeltaWin* dwin = app->GetWindow();
 
@@ -285,16 +311,8 @@ bool Application::AppXMLApplicator::operator ()(const ApplicationConfigData& dat
          dwin->ChangeScreenResolution( data.RESOLUTION );
       }
    }
-   // set up the scene
-   dtCore::Scene* scene = app->GetScene();
-   ///\todo should this only override when the string is not empty?
-   scene->SetName( data.SCENE_NAME );
-
-   // set up the camera
-   dtCore::Camera* camera = app->GetCamera();
-   ///\todo should this only override when the string is not empty?
-   camera->SetName( data.CAMERA_NAME );
-
+   
+   
    // connect the camera, scene, and window
    // since they might not be the same as the app's instances, we will use the instance management layer
    dtCore::DeltaWin* dinst = dtCore::DeltaWin::GetInstance( data.WINDOW_INSTANCE );
@@ -307,10 +325,22 @@ bool Application::AppXMLApplicator::operator ()(const ApplicationConfigData& dat
       LOG_WARNING("Application:Can't find instance of DeltaWin, " + data.SCENE_INSTANCE )
    }
 
+   // connect the camera, scene, and window
+   // since they might not be the same as the app's instances, we will use the instance management layer
+   dtCore::Camera* cinst = dtCore::Camera::GetInstance( data.CAMERA_INSTANCE );
+   if( cinst != NULL )
+   {
+       view->SetCamera( cinst );
+   }
+   else
+   {
+       LOG_WARNING("Application:Can't find instance of Camera, " + data.CAMERA_INSTANCE )
+   }
+   
    dtCore::Scene* sinst = dtCore::Scene::GetInstance( data.SCENE_INSTANCE );
    if( sinst != NULL )
    {
-      camera->SetScene( sinst );
+      view->SetScene( sinst );
    }
    else
    {
@@ -320,4 +350,26 @@ bool Application::AppXMLApplicator::operator ()(const ApplicationConfigData& dat
    ///\todo Determine a way to know if something went wrong,
    /// maybe when instances were not found.
    return true;
+}
+////////////////////////////////////////////////////////
+void Application::addView(dtCore::View * view)
+{
+   if (mCompositeViewer.get() == NULL)
+   {
+      mCompositeViewer = new osgViewer::CompositeViewer;
+   }
+   
+   mCompositeViewer->addView(view->GetOsgViewerView());
+   mViewList.push_back(view);
+}
+
+////////////////////////////////////////////////////////
+void Application::removeView(dtCore::View * view)
+{
+   ViewList::iterator it = std::find(mViewList.begin(), mViewList.end(), view);
+   if (it != mViewList.end())
+   {
+      mViewList.erase(it);
+      mCompositeViewer->removeView(view->GetOsgViewerView());
+   }
 }

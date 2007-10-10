@@ -5,9 +5,12 @@
 #include <dtCore/mouse.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/camera.h>
+#include <dtCore/view.h>
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
 #include <dtDAL/project.h>
+
+#include <osgViewer/View>
 
 #include <cassert>
 
@@ -20,12 +23,8 @@ IMPLEMENT_MANAGEMENT_LAYER(BaseABC)
 /**
  * Constructors
  */
-BaseABC::BaseABC( const std::string& name /*= "BaseABC"*/ ) :  Base(name),
-   mWindow(0),
-   mCamera(0),
-   mScene(0),
-   mKeyboard(0),
-   mMouse(0)
+BaseABC::BaseABC( const std::string& name /*= "BaseABC"*/ ) :
+   Base(name)
 {
    RegisterInstance(this);
 
@@ -56,13 +55,13 @@ void BaseABC::Quit()
 void BaseABC::AddDrawable( DeltaDrawable* obj )
 {
    assert( obj );
-   mScene->AddDrawable( obj );
+   GetScene()->AddDrawable( obj );
 }
 
 void BaseABC::RemoveDrawable( DeltaDrawable* obj )
 {
    assert( obj );
-   mScene->RemoveDrawable( obj );
+   GetScene()->RemoveDrawable( obj );
 }
 
 void BaseABC::OnMessage( MessageData* data )
@@ -83,17 +82,22 @@ void BaseABC::OnMessage( MessageData* data )
 
 void BaseABC::CreateInstances()
 {
-   // create the scene
-   mScene   = new dtCore::Scene("defaultScene");
-   assert( mScene.get() );
+    // create the camera
+   CreateDefaultView();
+   assert( mViewList[0].get() );
+    
+   GetScene()->SetName("defaultScene");
+   GetCamera()->SetName("defaultCamera");
+   GetWindow()->SetName("defaultWindow");
+   
+   GetKeyboard()->SetName("defaultKeyboard");
+   GetMouse()->SetName("defaultMouse");
+}
 
-   // create the camera
-   mCamera  = new dtCore::Camera("defaultCam");
-   assert( mCamera.get() );
-
-
-   // attach camera to the scene
-   mCamera->SetScene( mScene.get() );
+dtCore::View * BaseABC::CreateDefaultView()
+{
+   mViewList.push_back(new dtCore::View("defaultView"));
+   return mViewList[0].get();
 }
 
 void BaseABC::LoadMap( dtDAL::Map& map, bool addBillBoards )
@@ -109,11 +113,20 @@ void BaseABC::LoadMap( dtDAL::Map& map, bool addBillBoards )
    {
       if( dtCore::Camera* camera = dynamic_cast< dtCore::Camera* >( (*iter)->GetActor() ) )
       {
-         camera->SetScene( GetScene() );
          camera->SetWindow( GetWindow() );
 
          atLeastOneEnabled = camera->GetEnabled() || atLeastOneEnabled;
-        
+      }
+   }
+   
+   map.FindProxies(proxies, "*", "dtcore", "View");
+   for(  ActorProxyVector::iterator iter = proxies.begin();
+         iter != proxies.end();
+         iter++ )
+   {
+      if( dtCore::View* view = dynamic_cast< dtCore::View* >( (*iter)->GetActor() ) )
+      {
+          view->SetScene( GetScene() );
       }
    }
 
@@ -121,7 +134,7 @@ void BaseABC::LoadMap( dtDAL::Map& map, bool addBillBoards )
    {
       //At least one Camera from the map is enabled,
       //therefore let's disable our default BaseABC Camera
-      mCamera->SetEnabled(false);
+      GetCamera()->SetEnabled(false);
 
       LOG_INFO( "At least one Camera is our map is enabled, so the default Camera in BaseABC has been disabled." )
    }

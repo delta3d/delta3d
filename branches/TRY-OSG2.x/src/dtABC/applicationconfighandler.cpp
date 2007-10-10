@@ -28,15 +28,6 @@
 
 #include <xercesc/sax2/XMLReaderFactory.hpp>
 
-// includes necessary to use dtABC::Application
-#include <dtABC/application.h>
-#include <dtCore/keyboard.h>
-#include <dtCore/generickeyboardlistener.h>
-#include <dtCore/mouse.h>
-
-#include <dtCore/camera.h>
-#include <dtCore/scene.h>
-
 XERCES_CPP_NAMESPACE_USE
 
 namespace dtABC
@@ -177,6 +168,37 @@ namespace dtABC
             mConfigData.SCENE_NAME = iter->second;
          }
       }
+      else if( mCurrentElement == ApplicationConfigSchema::VIEW )
+      {
+         dtUtil::AttributeSearch sceneattrs;
+         dtUtil::AttributeSearch::ResultMap results = sceneattrs( attrs );
+   
+         dtUtil::AttributeSearch::ResultMap::iterator iter = results.find(ApplicationConfigSchema::NAME);
+         if( iter != results.end() )
+         {
+            mConfigData.VIEW_NAME = iter->second;
+         }
+         
+         iter = results.find(ApplicationConfigSchema::CAMERAINSTANCE);
+         if( iter != results.end() )
+         {
+             mConfigData.CAMERA_INSTANCE = iter->second;
+         }
+         else
+         {
+             LOG_ERROR("No Camera Instance specified for View, " + mConfigData.VIEW_NAME)
+         }
+         
+         iter = results.find(ApplicationConfigSchema::SCENEINSTANCE);
+         if( iter != results.end() )
+         {
+             mConfigData.SCENE_INSTANCE = iter->second;
+         } 
+         else
+         {
+             LOG_ERROR("No Scene Instance specified for View, " + mConfigData.VIEW_NAME)
+         }
+      }
       else if( mCurrentElement == ApplicationConfigSchema::CAMERA )
       {
          // push some keys
@@ -204,12 +226,13 @@ namespace dtABC
          iter = results.find(ApplicationConfigSchema::SCENEINSTANCE);
          if( iter != results.end() )
          {
-            mConfigData.SCENE_INSTANCE = iter->second;
+//            mConfigData.SCENE_INSTANCE = iter->second;
+            LOG_ERROR("DEPRECIATED : Scene Instance specified for Camera " + mConfigData.CAMERA_NAME + "must be specified for View")
          }
-         else
-         {
-            LOG_ERROR("No Scene Instance specified for Camera, " + mConfigData.CAMERA_NAME)
-         }
+//         else
+//         {
+//            LOG_ERROR("No Scene Instance specified for Camera, " + mConfigData.CAMERA_NAME)
+//         }
       }
       else if ( mCurrentElement == ApplicationConfigSchema::LOG )
       {

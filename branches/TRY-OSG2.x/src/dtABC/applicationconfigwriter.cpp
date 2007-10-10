@@ -23,19 +23,11 @@
 #include <dtABC/applicationconfigschema.h>
 #include <dtABC/applicationconfigdata.h>
 
-// These are the classes that need to be included to use dtABC::Application.
-// we should only need the application.h file.
-#include <dtABC/application.h>
-#include <dtCore/keyboard.h>
-#include <dtCore/mouse.h>
-#include <dtCore/camera.h>
-#include <dtCore/scene.h>
-#include <dtCore/generickeyboardlistener.h>
+#include <osgViewer/CompositeViewer>
 
 #include <dtUtil/stringutils.h>
 #include <dtUtil/xerceswriter.h>
 #include <dtUtil/xercesutils.h>
-#include <dtUtil/log.h>
 
 #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOMElement.hpp>
@@ -115,9 +107,14 @@ namespace dtABC
       DOMElement* camera = doc->createElement(sch.CAMERA);
       camera->setAttribute( sch.NAME , dtUtil::StringToXMLConverter(data.CAMERA_NAME).ToXmlString());
       camera->setAttribute( sch.WINDOWINSTANCE , dtUtil::StringToXMLConverter(data.WINDOW_INSTANCE).ToXmlString() );
-      camera->setAttribute( sch.SCENEINSTANCE , dtUtil::StringToXMLConverter(data.SCENE_INSTANCE).ToXmlString() );
       app->appendChild( camera );
 
+      DOMElement* view = doc->createElement(sch.VIEW);
+      view->setAttribute( sch.NAME , dtUtil::StringToXMLConverter(data.VIEW_NAME).ToXmlString());
+      view->setAttribute( sch.CAMERAINSTANCE , dtUtil::StringToXMLConverter(data.CAMERA_INSTANCE).ToXmlString() );
+      view->setAttribute( sch.SCENEINSTANCE , dtUtil::StringToXMLConverter(data.SCENE_INSTANCE).ToXmlString() );
+      app->appendChild( view );
+      
       for (std::map<std::string, std::string>::const_iterator i = data.LOG_LEVELS.begin();
          i != data.LOG_LEVELS.end(); ++i)
       {
@@ -164,6 +161,7 @@ namespace dtABC
       NAME = XMLString::transcode( ApplicationConfigSchema::NAME.c_str() );
       SCENE = XMLString::transcode( ApplicationConfigSchema::SCENE.c_str() );
       CAMERA = XMLString::transcode( ApplicationConfigSchema::CAMERA.c_str() );
+      VIEW = XMLString::transcode( ApplicationConfigSchema::VIEW.c_str() );
       LOG = XMLString::transcode( ApplicationConfigSchema::LOG.c_str() );
       LIBRARY_PATH = XMLString::transcode( ApplicationConfigSchema::LIBRARY_PATH.c_str() );
 
@@ -180,6 +178,7 @@ namespace dtABC
 
       WINDOWINSTANCE = XMLString::transcode( ApplicationConfigSchema::WINDOWINSTANCE.c_str() );
       SCENEINSTANCE = XMLString::transcode( ApplicationConfigSchema::SCENEINSTANCE.c_str() );
+      CAMERAINSTANCE = XMLString::transcode( ApplicationConfigSchema::CAMERAINSTANCE.c_str() );
 
       LOG_LEVEL = XMLString::transcode( ApplicationConfigSchema::LOG_LEVEL.c_str() );
 
@@ -193,6 +192,7 @@ namespace dtABC
       XMLString::release( &NAME );
       XMLString::release( &SCENE );
       XMLString::release( &CAMERA );
+      XMLString::release( &VIEW );
       XMLString::release( &LOG );
       XMLString::release( &LIBRARY_PATH );
 
@@ -209,6 +209,7 @@ namespace dtABC
 
       XMLString::release( &WINDOWINSTANCE );
       XMLString::release( &SCENEINSTANCE );
+      XMLString::release( &CAMERAINSTANCE );
 
       XMLString::release( &LOG_LEVEL );
       XMLString::release( &APP_PROPERTIES );

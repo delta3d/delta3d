@@ -22,12 +22,32 @@
 #define DELTA_WIDGET
 
 #include <dtABC/baseabc.h>
-#include <Producer/Types>
+#include <osgViewer/GraphicsWindow>
+
+#if defined(WIN32) && !defined(__CYGWIN__)
+#include <osgViewer/api/Win32/GraphicsWindowWin32>
+typedef HWND WindowHandle;
+typedef osgViewer::GraphicsWindowWin32::WindowData WindowData;
+#elif defined(__APPLE__) && defined(APPLE_PRE_10_3)
+#include <osgViewer/api/Carbon/GraphicsWindowCarbon>
+typedef WindowRef WindowHandle;
+typedef osgViewer::GraphicsWindowCarbon::WindowData WindowData;
+#else // all other unix
+#include <osgViewer/api/X11/GraphicsWindowX11>
+typedef Window WindowHandle;
+typedef osgViewer::GraphicsWindowX11::WindowData WindowData;
+#endif
+
 
 #if   !  defined(BIT)
    ///BIT  helper definition for enumerated values and bit packing
    #define  BIT(a)   (1<<a)
 #endif
+
+namespace osgViewer
+{
+   class CompositeViewer;
+}
 
 namespace dtABC
 {
@@ -121,6 +141,8 @@ namespace dtABC
 
       ///Determin if special keyboard event.
       inline   bool           IsSpecialKeyboardEvent( const KeyboardEvent& ev );
+      
+      dtCore::RefPtr<osgViewer::CompositeViewer> mCompositeViewer;
    };
 
 
@@ -143,9 +165,9 @@ namespace dtABC
    ///WinData struct for passing window handle and dimensions
    struct DT_ABC_EXPORT WinData   :  public   WinRect
    {
-      Producer::Window  hwnd;                   ///window handle
+      WindowHandle  hwnd;  ///window handle 
 
-      WinData( Producer::Window hw = 0L, int x = 0L, int y = 0L, int w = 640L, int h = 480L );
+      WinData( WindowHandle hw = 0L, int x = 0L, int y = 0L, int w = 640L, int h = 480L ); //TODO
       WinData( const WinData& that );
       WinData( const WinRect& that );
       WinData& operator=( const WinData& that );

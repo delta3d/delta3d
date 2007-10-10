@@ -314,7 +314,7 @@ void BezierController::OnUnPause()
 
 
 //our drawable
-void BezierController::BezierPathDrawable::drawImplementation(osg::State& state) const 
+void BezierController::BezierPathDrawable::drawImplementation(osg::RenderInfo & /*renderInfo*/) const 
 {
    mController->CheckCreatePath();
 
