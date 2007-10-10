@@ -181,7 +181,7 @@ namespace dtTerrain
           * Draws the current view of the terrain dataset.
           * @param state The current OpenGL state.
           */
-         virtual void drawImplementation(osg::State &state) const;
+         virtual void drawImplementation(osg::RenderInfo & renderInfo) const;
       
          /**
           * 

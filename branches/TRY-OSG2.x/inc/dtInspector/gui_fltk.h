@@ -93,6 +93,15 @@ private:
   void cb_2_i(Fl_Button*, void*);
   static void cb_2(Fl_Button*, void*);
 public:
+  Fl_Group *ViewGroup;
+private:
+   Fl_Choice *ViewSceneChoice;
+   void cb_ViewSceneChoice_i(Fl_Choice*, void*);
+   static void cb_ViewSceneChoice(Fl_Choice*, void*);
+   Fl_Choice *ViewCameraChoice;
+   void cb_ViewCameraChoice_i(Fl_Choice*, void*);
+   static void cb_ViewCameraChoice(Fl_Choice*, void*);
+public:
   Fl_Group *CameraGroup;
 private:
   Fl_Value_Input *CameraClearRed;
@@ -107,19 +116,16 @@ private:
   Fl_Button *CameraClearLoadButton;
   void cb_CameraClearLoadButton_i(Fl_Button*, void*);
   static void cb_CameraClearLoadButton(Fl_Button*, void*);
-  Fl_Choice *CameraSceneChoice;
-  void cb_CameraSceneChoice_i(Fl_Choice*, void*);
-  static void cb_CameraSceneChoice(Fl_Choice*, void*);
   Fl_Choice *CameraWinChoice;
   void cb_CameraWinChoice_i(Fl_Choice*, void*);
   static void cb_CameraWinChoice(Fl_Choice*, void*);
   void cb_Next_i(Fl_Button*, void*);
   static void cb_Next(Fl_Button*, void*);
 public:
-  Fl_Value_Input *CamFrameBin;
+  Fl_Value_Input *ViewFrameBin;
 private:
-  void cb_CamFrameBin_i(Fl_Value_Input*, void*);
-  static void cb_CamFrameBin(Fl_Value_Input*, void*);
+  void cb_ViewFrameBin_i(Fl_Value_Input*, void*);
+  static void cb_ViewFrameBin(Fl_Value_Input*, void*);
 public:
   Fl_Group *WindowGroup;
 private:
@@ -498,7 +504,8 @@ private:
   void CameraClearColorBrowserCB(Fl_Button*);
   void CameraClearColorCB(Fl_Value_Input* );
   void CameraWinCB(Fl_Choice *);
-  void CameraSceneCB(Fl_Choice *);
+  void ViewCameraCB(Fl_Choice *);
+  void ViewSceneCB(Fl_Choice *);
   void WinPosCB( Fl_Value_Input * );
   void WinSizeCB( Fl_Menu_Button * );
   void WinCursorCB( Fl_Check_Button * );
@@ -552,7 +559,7 @@ private:
   void ParticleRelativeCB(Fl_Check_Button*);
   void ParticleEnabledCB(Fl_Check_Button*);
   void CamStatisticsCB(Fl_Button*);
-  void CameraFrameBinCB(Fl_Value_Input*);
+  void ViewFrameBinCB(Fl_Value_Input*);
 };
 #ifdef _MSC_VER
 #   pragma comment(lib, "fltk.lib")

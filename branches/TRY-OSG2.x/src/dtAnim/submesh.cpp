@@ -118,7 +118,7 @@ void SubMeshDrawable::setUpMaterial()
    }
 }
 
-void SubMeshDrawable::drawImplementation(osg::State& state) const 
+void SubMeshDrawable::drawImplementation(osg::RenderInfo & renderInfo) const 
 {
    // begin the rendering loop
    if(mWrapper->BeginRenderingQuery())
@@ -140,9 +140,11 @@ void SubMeshDrawable::drawImplementation(osg::State& state) const
 
          // flip vertical coordinates
          for (unsigned int i = 1; i < vertexCount * 2; i += 2)
-            {
+         {
             mMeshTextureCoordinates[i] = 1.0f - mMeshTextureCoordinates[i];
          }
+
+         osg::State & state = *renderInfo.getState();
 
          // set the vertex and normal buffers
          state.setVertexPointer(3, GL_FLOAT, 0, mMeshVertices);

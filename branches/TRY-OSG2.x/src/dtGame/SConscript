@@ -9,9 +9,9 @@ Import ('*')
 sources = env.SGlob('*.cpp')
 
 dtGameDeps =[ 'dtDAL','dtAI', 'dtUtil', 'dtCore', 'dtAudio', 'dtABC', 
-              'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgText', 'osgUtil', 
+              'OpenThreads', 'osg', 'osgDB', 'osgGA', 'osgParticle', 'osgText', 'osgUtil', 
               'osgSim', 'osgFX' ,'xerces-c', 'openal',
-              'Producer', 'tinyxml', 'opengl' ]
+              'tinyxml', 'opengl' ]
 defines = []
 
 if env['OS'] == 'windows' :

@@ -81,7 +81,6 @@ namespace dtCore
 #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
 // Automatic library inclusion macros that use the #pragma/lib feature
-#undef DT_H_PRODUCER_LIB
 #undef DT_H_OPENTHREADS_LIB
 #undef DT_H_DTCORE_LIB
 #undef DT_H_OSG_LIB
@@ -97,7 +96,6 @@ namespace dtCore
    #ifndef DT_CORE_LIBRARY  
       #define  DT_H_DTCORE_LIB "dtCored.lib"
    #endif
-   #define DT_H_PRODUCER_LIB   "Producerd.lib"
    #define DT_H_OPENTHREADS_LIB  "OpenThreadsWin32d.lib"  
    #define DT_H_OSG_LIB  "osgd.lib"
    #define DT_H_OSGDB_LIB  "osgDBd.lib"
@@ -109,7 +107,6 @@ namespace dtCore
    #ifndef DT_CORE_LIBRARY
       #define DT_H_DTCORE_LIB "dtCore.lib"
    #endif
-   #define DT_H_PRODUCER_LIB   "Producer.lib"
    #define DT_H_OPENTHREADS_LIB  "OpenThreadsWin32.lib"  
    #define DT_H_OSG_LIB  "osg.lib"
    #define DT_H_OSGDB_LIB  "osgDB.lib"
@@ -123,7 +120,6 @@ namespace dtCore
 
 // You may turn off this include message by defining _NOAUTOLIB 
 #ifndef _NOAUTOLIBMSG
-   #pragma message( "Will automatically link with " DT_H_PRODUCER_LIB )
    #pragma message( "Will automatically link with " DT_H_OPENTHREADS_LIB )
    #pragma message( "Will automatically link with " DT_H_OSG_LIB )
    #pragma message( "Will automatically link with " DT_H_OSGDB_LIB )
@@ -138,7 +134,6 @@ namespace dtCore
 #endif
 
 // Actually do the linking
-#pragma comment(lib, DT_H_PRODUCER_LIB)
 #pragma comment(lib, DT_H_OPENTHREADS_LIB)
 #pragma comment(lib, DT_H_OSG_LIB)
 #pragma comment(lib, DT_H_OSGDB_LIB)

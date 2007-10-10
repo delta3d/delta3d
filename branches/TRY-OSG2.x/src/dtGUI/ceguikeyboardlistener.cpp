@@ -1,6 +1,8 @@
 #include <dtGUI/ceguikeyboardlistener.h>
 #include <CEGUI/CEGUISystem.h>
 
+#include <osgGA/GUIEventAdapter>
+
 using namespace dtGUI;
 
 CEGUIKeyboardListener::CEGUIKeyboardListener()
@@ -11,17 +13,17 @@ CEGUIKeyboardListener::~CEGUIKeyboardListener()
 {
 }
 
-bool CEGUIKeyboardListener::HandleKeyPressed(const dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter kchar)
+bool CEGUIKeyboardListener::HandleKeyPressed(const dtCore::Keyboard* keyboard, int key)
 {
    if( CEGUI::Key::Scan scanKey = KeyboardKeyToKeyScan(key) )
    {
       CEGUI::System::getSingleton().injectKeyDown(scanKey);
    }
 
-   return CEGUI::System::getSingleton().injectChar( static_cast<CEGUI::utf32>(kchar) );   
+   return CEGUI::System::getSingleton().injectChar( static_cast<CEGUI::utf32>(key) );   
 }
 
-bool CEGUIKeyboardListener::HandleKeyReleased(const dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter kchar)
+bool CEGUIKeyboardListener::HandleKeyReleased(const dtCore::Keyboard* keyboard, int key)
 {
    bool handled(false);
    if( CEGUI::Key::Scan scanKey = KeyboardKeyToKeyScan(key) )
@@ -32,432 +34,432 @@ bool CEGUIKeyboardListener::HandleKeyReleased(const dtCore::Keyboard* keyboard, 
    return handled;
 }
 
-bool CEGUIKeyboardListener::HandleKeyTyped(const dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter kchar)
+bool CEGUIKeyboardListener::HandleKeyTyped(const dtCore::Keyboard* keyboard, int key)
 {
    return false;
 }
 
-CEGUI::Key::Scan CEGUIKeyboardListener::KeyboardKeyToKeyScan( Producer::KeyboardKey key )
+CEGUI::Key::Scan CEGUIKeyboardListener::KeyboardKeyToKeyScan( int key )
 {
    switch(key)
    {
-      case Producer::Key_Unknown:
-      {
-         return CEGUI::Key::Scan(0);//?
-      }
-      case Producer::Key_Escape:
+//      case Producer::Key_Unknown:
+//      {
+//         return CEGUI::Key::Scan(0);//?
+//      }
+      case osgGA::GUIEventAdapter::KEY_Escape:
       {
          return CEGUI::Key::Escape;
       }
-      case Producer::Key_F1:
+      case osgGA::GUIEventAdapter::KEY_F1:
       {
          return CEGUI::Key::F1;
       }
-      case Producer::Key_F2:
+      case osgGA::GUIEventAdapter::KEY_F2:
       {
          return CEGUI::Key::F2;
       }
-      case Producer::Key_F3:
+      case osgGA::GUIEventAdapter::KEY_F3:
       {
          return CEGUI::Key::F3;
       }
-      case Producer::Key_F4:
+      case osgGA::GUIEventAdapter::KEY_F4:
       {
          return CEGUI::Key::F4;
       }
-      case Producer::Key_F5:
+      case osgGA::GUIEventAdapter::KEY_F5:
       {
          return CEGUI::Key::F5;
       }
-      case Producer::Key_F6:
+      case osgGA::GUIEventAdapter::KEY_F6:
       {
          return CEGUI::Key::F6;
       }
-      case Producer::Key_F7:
+      case osgGA::GUIEventAdapter::KEY_F7:
       {
          return CEGUI::Key::F7;
       }
-      case Producer::Key_F8:
+      case osgGA::GUIEventAdapter::KEY_F8:
       {
          return CEGUI::Key::F8;
       }
-      case Producer::Key_F9:
+      case osgGA::GUIEventAdapter::KEY_F9:
       {
          return CEGUI::Key::F9;
       }
-      case Producer::Key_F10:
+      case osgGA::GUIEventAdapter::KEY_F10:
       {
          return CEGUI::Key::F10;
       }
-      case Producer::Key_F11:
+      case osgGA::GUIEventAdapter::KEY_F11:
       {
          return CEGUI::Key::F11;
       }
-      case Producer::Key_F12:
+      case osgGA::GUIEventAdapter::KEY_F12:
       {
          return CEGUI::Key::F12;
       }
-      case Producer::Key_quoteleft:
+      case '`':
       {
          return CEGUI::Key::Apostrophe;
       }
-      case Producer::Key_1:
+      case '1':
       {
          return CEGUI::Key::One;
       }
-      case Producer::Key_2:
+      case '2':
       {
          return CEGUI::Key::Two;
       }
-      case Producer::Key_3:
+      case '3':
       {
          return CEGUI::Key::Three;
       }
-      case Producer::Key_4:
+      case '4':
       {
          return CEGUI::Key::Four;
       }
-      case Producer::Key_5:
+      case '5':
       {
          return CEGUI::Key::Five;
       }
-      case Producer::Key_6:
+      case '6':
       {
          return CEGUI::Key::Six;
       }
-      case Producer::Key_7:
+      case '7':
       {
          return CEGUI::Key::Seven;
       }
-      case Producer::Key_8:
+      case '8':
       {
          return CEGUI::Key::Eight;
       }
-      case Producer::Key_9:
+      case '9':
       {
          return CEGUI::Key::Nine;
       }
-      case Producer::Key_0:
+      case '0':
       {
          return CEGUI::Key::Zero;
       }
-      case Producer::Key_minus:
+      case '-':
       {
          return CEGUI::Key::Minus;
       }
-      case Producer::Key_equal:
+      case '=':
       {
          return CEGUI::Key::Equals;
       }
-      case Producer::Key_BackSpace:
+      case osgGA::GUIEventAdapter::KEY_BackSpace:
       {
          return CEGUI::Key::Backspace;
       }
-      case Producer::Key_Tab:
+      case osgGA::GUIEventAdapter::KEY_Tab:
       {
          return CEGUI::Key::Tab;
       }
-      case Producer::Key_A:
+      case 'A':
       {
          return CEGUI::Key::A;
       }
-      case Producer::Key_B:
+      case 'B':
       {
          return CEGUI::Key::B;
       }
-      case Producer::Key_C:
+      case 'C':
       {
          return CEGUI::Key::C;
       }
-      case Producer::Key_D:
+      case 'D':
       {
          return CEGUI::Key::D;
       }
-      case Producer::Key_E:
+      case 'E':
       {
          return CEGUI::Key::E;
       }
-      case Producer::Key_F:
+      case 'F':
       {
          return CEGUI::Key::F;
       }
-      case Producer::Key_G:
+      case 'G':
       {
          return CEGUI::Key::G;
       }
-      case Producer::Key_H:
+      case 'H':
       {
          return CEGUI::Key::H;
       }
-      case Producer::Key_I:
+      case 'I':
       {
          return CEGUI::Key::I;
       }
-      case Producer::Key_J:
+      case 'J':
       {
          return CEGUI::Key::J;
       }
-      case Producer::Key_K:
+      case 'K':
       {
          return CEGUI::Key::K;
       }
-      case Producer::Key_L:
+      case 'L':
       {
          return CEGUI::Key::L;
       }
-      case Producer::Key_M:
+      case 'M':
       {
          return CEGUI::Key::M;
       }
-      case Producer::Key_N:
+      case 'N':
       {
          return CEGUI::Key::N;
       }
-      case Producer::Key_O:
+      case 'O':
       {
          return CEGUI::Key::O;
       }
-      case Producer::Key_P:
+      case 'P':
       {
          return CEGUI::Key::P;
       }
-      case Producer::Key_Q:
+      case 'Q':
       {
          return CEGUI::Key::Q;
       }
-      case Producer::Key_R:
+      case 'R':
       {
          return CEGUI::Key::R;
       }
-      case Producer::Key_S:
+      case 'S':
       {
          return CEGUI::Key::S;
       }
-      case Producer::Key_T:
+      case 'T':
       {
          return CEGUI::Key::T;
       }
-      case Producer::Key_U:
+      case 'U':
       {
          return CEGUI::Key::U;
       }
-      case Producer::Key_V:
+      case 'V':
       {
          return CEGUI::Key::V;
       }
-      case Producer::Key_W:
+      case 'W':
       {
          return CEGUI::Key::W;
       }
-      case Producer::Key_X:
+      case 'X':
       {
          return CEGUI::Key::X;
       }
-      case Producer::Key_Y:
+      case 'Y':
       {
          return CEGUI::Key::Y;
       }
-      case Producer::Key_Z:
+      case 'Z':
       {
          return CEGUI::Key::Z;
       }
-      case Producer::Key_bracketleft:
+      case '(':
       {
          return CEGUI::Key::LeftBracket;
       }
-      case Producer::Key_bracketright:
+      case ')':
       {
          return CEGUI::Key::RightBracket;
       }
-      case Producer::Key_backslash:
+      case '\\':
       {
          return CEGUI::Key::Backslash;
       }
-      case Producer::Key_Caps_Lock:
+      case osgGA::GUIEventAdapter::KEY_Shift_Lock:
       {
          return CEGUI::Key::Capital;
       }
-      case Producer::Key_semicolon:
+      case ';':
       {
          return CEGUI::Key::Semicolon;
       }
-      case Producer::Key_apostrophe:
+      case '\'':
       {
          return CEGUI::Key::Apostrophe;
       }
-      case Producer::Key_Return:
+      case osgGA::GUIEventAdapter::KEY_Return:
       {
          return CEGUI::Key::Return;
       }
-      case Producer::Key_Shift_L:
+      case osgGA::GUIEventAdapter::KEY_Shift_L:
       {
          return CEGUI::Key::LeftShift;
       }
-      case Producer::Key_comma:
+      case ',':
       {
          return CEGUI::Key::Comma;
       }
-      case Producer::Key_period:
+      case '.':
       {
          return CEGUI::Key::Period;
       }
-      case Producer::Key_slash:
+      case '/':
       {
          return CEGUI::Key::Slash;
       }
-      case Producer::Key_Shift_R:
+      case osgGA::GUIEventAdapter::KEY_Shift_R:
       {
          return CEGUI::Key::RightShift;
       }
-      case Producer::Key_Control_L:
+      case osgGA::GUIEventAdapter::KEY_Control_L:
       {
          return CEGUI::Key::LeftControl;
       }
-      case Producer::Key_Super_L:
+      case osgGA::GUIEventAdapter::KEY_Super_L:
       {
          return CEGUI::Key::Scan(0);//?
       }
-      case Producer::Key_space:
+      case ' ':
       {
          return CEGUI::Key::Space;
       }
-      case Producer::Key_Alt_L:
+      case osgGA::GUIEventAdapter::KEY_Alt_L:
       {
          return CEGUI::Key::LeftAlt;
       }
-      case Producer::Key_Alt_R:
+      case osgGA::GUIEventAdapter::KEY_Alt_R:
       {
          return CEGUI::Key::RightAlt;
       }
-      case Producer::Key_Super_R:
+      case osgGA::GUIEventAdapter::KEY_Super_R:
       {
          return CEGUI::Key::Scan(0);//?
       }
-      case Producer::Key_Menu:
+      case osgGA::GUIEventAdapter::KEY_Menu:
       {
          return CEGUI::Key::Scan(0);//?
       }
-      case Producer::Key_Control_R:
+      case osgGA::GUIEventAdapter::KEY_Control_R:
       {
          return CEGUI::Key::RightControl;
       }
-      case Producer::Key_Print:
+      case osgGA::GUIEventAdapter::KEY_Print:
       {
          return CEGUI::Key::SysRq;
       }
-      case Producer::Key_Scroll_Lock:
+      case osgGA::GUIEventAdapter::KEY_Scroll_Lock:
       {
          return CEGUI::Key::ScrollLock;
       }
-      case Producer::Key_Pause:
+      case osgGA::GUIEventAdapter::KEY_Pause:
       {
          return CEGUI::Key::Pause;
       }
-      case Producer::Key_Home:
+      case osgGA::GUIEventAdapter::KEY_Home:
       {
          return CEGUI::Key::Home;
       }
-      case Producer::Key_Page_Up:
+      case osgGA::GUIEventAdapter::KEY_Page_Up:
       {
          return CEGUI::Key::PageUp;
       }
-      case Producer::Key_End:
+      case osgGA::GUIEventAdapter::KEY_End:
       {
          return CEGUI::Key::End;
       }
-      case Producer::Key_Page_Down:
+      case osgGA::GUIEventAdapter::KEY_Page_Down:
       {
          return CEGUI::Key::PageDown;
       }
-      case Producer::Key_Delete:
+      case osgGA::GUIEventAdapter::KEY_Delete:
       {
          return CEGUI::Key::Delete;
       }
-      case Producer::Key_Insert:
+      case osgGA::GUIEventAdapter::KEY_Insert:
       {
          return CEGUI::Key::Insert;
       }
-      case Producer::Key_Left:
+      case osgGA::GUIEventAdapter::KEY_Left:
       {
          return CEGUI::Key::ArrowLeft;
       }
-      case Producer::Key_Up:
+      case osgGA::GUIEventAdapter::KEY_Up:
       {
          return CEGUI::Key::ArrowUp;
       }
-      case Producer::Key_Right:
+      case osgGA::GUIEventAdapter::KEY_Right:
       {
          return CEGUI::Key::ArrowRight;
       }
-      case Producer::Key_Down:
+      case osgGA::GUIEventAdapter::KEY_Down:
       {
          return CEGUI::Key::ArrowDown;
       }
-      case Producer::Key_Num_Lock:
+      case osgGA::GUIEventAdapter::KEY_Num_Lock:
       {
          return CEGUI::Key::NumLock;
       }
-      case Producer::Key_KP_Divide:
+      case osgGA::GUIEventAdapter::KEY_KP_Divide:
       {
          return CEGUI::Key::Divide;
       }
-      case Producer::Key_KP_Multiply:
+      case osgGA::GUIEventAdapter::KEY_KP_Multiply:
       {
          return CEGUI::Key::Multiply;
       }
-      case Producer::Key_KP_Subtract:
+      case osgGA::GUIEventAdapter::KEY_KP_Subtract:
       {
          return CEGUI::Key::Subtract;
       }
-      case Producer::Key_KP_Add:
+      case osgGA::GUIEventAdapter::KEY_KP_Add:
       {
          return CEGUI::Key::Add;
       }
-      case Producer::Key_KP_Home:
+      case osgGA::GUIEventAdapter::KEY_KP_Home:
       {
          return CEGUI::Key::Numpad7;
       }
-      case Producer::Key_KP_Up:
+      case osgGA::GUIEventAdapter::KEY_KP_Up:
       {
          return CEGUI::Key::Numpad8;
       }
-      case Producer::Key_KP_Page_Up:
+      case osgGA::GUIEventAdapter::KEY_KP_Page_Up:
       {
          return CEGUI::Key::Numpad9;
       }
-      case Producer::Key_KP_Left:
+      case osgGA::GUIEventAdapter::KEY_KP_Left:
       {
          return CEGUI::Key::Numpad4;
       }
-      case Producer::Key_KP_Begin:
+      case osgGA::GUIEventAdapter::KEY_KP_Begin:
       {
          return CEGUI::Key::Scan(0); //?
       }
-      case Producer::Key_KP_Right:
+      case osgGA::GUIEventAdapter::KEY_KP_Right:
       {
          return CEGUI::Key::Numpad6;
       }
-      case Producer::Key_KP_End:
+      case osgGA::GUIEventAdapter::KEY_KP_End:
       {
          return CEGUI::Key::Numpad1;
       }
-      case Producer::Key_KP_Down:
+      case osgGA::GUIEventAdapter::KEY_KP_Down:
       {
          return CEGUI::Key::Numpad2;
       }
-      case Producer::Key_KP_Page_Down:
+      case osgGA::GUIEventAdapter::KEY_KP_Page_Down:
       {
          return CEGUI::Key::Numpad3;
       }
-      case Producer::Key_KP_Insert:
+      case osgGA::GUIEventAdapter::KEY_KP_Insert:
       {
          return CEGUI::Key::Numpad0;
       }
-      case Producer::Key_KP_Delete:
+      case osgGA::GUIEventAdapter::KEY_KP_Delete:
       {
          return CEGUI::Key::Decimal;
       }
-      case Producer::Key_KP_Enter:
+      case osgGA::GUIEventAdapter::KEY_KP_Enter:
       {
          return CEGUI::Key::NumpadEnter;
       }

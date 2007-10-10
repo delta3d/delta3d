@@ -17,6 +17,7 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
  *
  */
+//#include <osg/GL>
 #include <CEGUI/CEGUIPropertySet.h>
 #include <CEGUI/CEGUISystem.h>
 #include <CEGUI/CEGUIWindow.h>
@@ -29,12 +30,15 @@
 #include <dtGUI/ceuidrawable.h>
 #include <dtGUI/ceguimouselistener.h>       // for member
 #include <dtGUI/ceguikeyboardlistener.h>    // for member
-#include <dtGUI/renderer.h>
 #include <dtGUI/basescriptmodule.h>
 #include <dtGUI/guiexceptionenum.h>
+#include <dtCore/exceptionenum.h>
+#include <dtUtil/exception.h>
 #include <dtCore/deltawin.h>
+#include <dtCore/view.h>
 #include <dtCore/system.h>
 #include <dtUtil/log.h>
+#include <dtGUI/renderer.h>
 
 #include <osg/Geode>
 #include <osg/Projection>
@@ -55,7 +59,7 @@ IMPLEMENT_MANAGEMENT_LAYER(CEUIDrawable)
   * @param sm : The ScriptModule to use for CEGUI script processing
   * @exception dtUtil::Exception Gets thrown if CEGUI cannot be initialized
   */
-CEUIDrawable::CEUIDrawable( dtCore::DeltaWin *win, dtGUI::BaseScriptModule *sm):
+CEUIDrawable::CEUIDrawable(dtCore::DeltaWin *win, dtGUI::BaseScriptModule *sm):
    DeltaDrawable("CEUIDrawable"),
    mUI(NULL),
    mRenderer(new dtGUI::Renderer()),
@@ -73,6 +77,25 @@ CEUIDrawable::CEUIDrawable( dtCore::DeltaWin *win, dtGUI::BaseScriptModule *sm):
 
    RegisterInstance(this);
 
+   if(mWindow.valid() == false)
+   {
+      throw dtUtil::Exception(dtCore::ExceptionEnum::INVALID_PARAMETER,
+         "Supplied dtCore::DeltaWin is NULL", __FILE__, __LINE__);
+   }
+   
+   if(mWindow->GetCamera() == NULL)
+   {
+      throw dtUtil::Exception(dtCore::ExceptionEnum::INVALID_PARAMETER,
+         "Supplied dtCore::DeltaWin have not valid dtCore::Camera", __FILE__, __LINE__);
+   }
+   
+   if(mWindow->GetCamera()->GetView() == NULL)
+   {
+      throw dtUtil::Exception(dtCore::ExceptionEnum::INVALID_PARAMETER,
+         "Supplied dtCore::DeltaWin have not valid dtCore::View", __FILE__, __LINE__);
+   }
+   mView = mWindow->GetCamera()->GetView();
+   
    mProjection->setName("CEUIDrawable_Projection");
    mTransform->setName("CEUIDrawable_MatrixTransform");
 
@@ -125,8 +148,11 @@ void CEUIDrawable::Config()
       }
    }
 
+    
    // make the listener the first in the list
-   dtCore::Mouse* ms = mWindow->GetMouse();
+   assert(mView.get()); // have to have a valid Window
+   
+   dtCore::Mouse* ms = mView->GetOrCreateMouse();
    if( ms->GetListeners().empty() )
    {
       ms->AddMouseListener( mMouseListener.get() );
@@ -136,7 +162,7 @@ void CEUIDrawable::Config()
       ms->InsertMouseListener( ms->GetListeners().front() , mMouseListener.get() );
    }  
 
-   dtCore::Keyboard* kb = mWindow->GetKeyboard();
+   dtCore::Keyboard* kb = mView->GetOrCreateKeyboard();
    if( kb->GetListeners().empty() )
    {
       kb->AddKeyboardListener( mKeyboardListener.get() );
@@ -280,9 +306,10 @@ void CEUIDrawable::SetRenderingSize(int width, int height)
 
 void CEUIDrawable::ShutdownGUI()
 {
-   mWindow->GetMouse()->RemoveMouseListener( mMouseListener.get() );
-   mWindow->GetKeyboard()->RemoveKeyboardListener( mKeyboardListener.get() );
-
+   assert(mView.get()); // have to have a valid Window
+   mView->GetOrCreateMouse()->RemoveMouseListener( mMouseListener.get() );
+   mView->GetOrCreateKeyboard()->RemoveKeyboardListener( mKeyboardListener.get() );
+   
    delete mUI;
    mUI = NULL;
 }
@@ -304,12 +331,13 @@ CEUIDrawable::osgCEUIDrawable::~osgCEUIDrawable() {}
 osg::Object* CEUIDrawable::osgCEUIDrawable::cloneType() const { return new osgCEUIDrawable(mUI); }
 osg::Object* CEUIDrawable::osgCEUIDrawable::clone(const osg::CopyOp& copyop) const { return new osgCEUIDrawable(*this,copyop); }        
 
-void CEUIDrawable::osgCEUIDrawable::drawImplementation(osg::State& state) const
+void CEUIDrawable::osgCEUIDrawable::drawImplementation(osg::RenderInfo & renderInfo) const
 {
    //tell the UI to update and to render
    if(!mUI) 
       return;
  
+   osg::State & state = *renderInfo.getState();
    //we must disable the client active texture unit because it may have been used and not disabled
    //this will cause our GUI to disappear
    state.setClientActiveTextureUnit(0);

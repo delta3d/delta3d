@@ -80,8 +80,7 @@ namespace dtGame
           * @param key the key pressed
           * @param character the corresponding character
           */
-         virtual bool HandleKeyPressed(const dtCore::Keyboard* keyboard,
-            Producer::KeyboardKey key,Producer::KeyCharacter character);
+         virtual bool HandleKeyPressed(const dtCore::Keyboard* keyboard, int key);
 
          /**
           * KeyboardListener call back - Called when a key is released.
@@ -95,8 +94,7 @@ namespace dtGame
           * Keyboard calling this function is responsbile for using this
           * return value or not.
           */
-         virtual bool HandleKeyReleased(const dtCore::Keyboard* keyboard, 
-            Producer::KeyboardKey key, Producer::KeyCharacter character ) 
+         virtual bool HandleKeyReleased(const dtCore::Keyboard* keyboard, int key) 
          { 
             return false; 
          }
@@ -113,8 +111,7 @@ namespace dtGame
           * Keyboard calling this function is responsbile for using this
           * return value or not.
           */
-         virtual bool HandleKeyTyped(const dtCore::Keyboard* keyboard, 
-            Producer::KeyboardKey key, Producer::KeyCharacter character ) 
+         virtual bool HandleKeyTyped(const dtCore::Keyboard* keyboard, int key) 
          { 
             return false; 
          }
@@ -305,22 +302,19 @@ namespace dtGame
          InputComponentKeyboardListener(dtGame::BaseInputComponent &inputComp);
 
          // keyboard event - passes to the BaseInputComponent
-         virtual bool HandleKeyPressed(const dtCore::Keyboard* keyboard,
-            Producer::KeyboardKey key, Producer::KeyCharacter character)
+         virtual bool HandleKeyPressed(const dtCore::Keyboard* keyboard, int key)
          {
-            return mInputComp->HandleKeyPressed(keyboard, key, character);
+            return mInputComp->HandleKeyPressed(keyboard, key);
          }
 
          // keyboard event - passes to the BaseInputComponent
-         virtual bool HandleKeyReleased(const dtCore::Keyboard* keyboard, 
-            Producer::KeyboardKey key, Producer::KeyCharacter character ) 
+         virtual bool HandleKeyReleased(const dtCore::Keyboard* keyboard, int key) 
          { 
-            return mInputComp->HandleKeyReleased(keyboard, key, character);
+            return mInputComp->HandleKeyReleased(keyboard, key);
          }
 
          // keyboard event - passes to the BaseInputComponent
-         virtual bool HandleKeyTyped(const dtCore::Keyboard* keyboard, 
-            Producer::KeyboardKey key, Producer::KeyCharacter character ) 
+         virtual bool HandleKeyTyped(const dtCore::Keyboard* keyboard, int key ) 
          { 
             return false;
          }

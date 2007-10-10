@@ -149,11 +149,18 @@ void UserInterface::cb_CameraClearLoadButton(Fl_Button* o, void* v) {
   ((UserInterface*)(o->parent()->parent()->parent()->user_data()))->cb_CameraClearLoadButton_i(o,v);
 }
 
-void UserInterface::cb_CameraSceneChoice_i(Fl_Choice* o, void* v) {
-  ((UserInterface*)v)->CameraSceneCB(o);
+void UserInterface::cb_ViewSceneChoice_i(Fl_Choice* o, void* v) {
+  ((UserInterface*)v)->ViewSceneCB(o);
 }
-void UserInterface::cb_CameraSceneChoice(Fl_Choice* o, void* v) {
-  ((UserInterface*)(o->parent()->parent()->user_data()))->cb_CameraSceneChoice_i(o,v);
+void UserInterface::cb_ViewSceneChoice(Fl_Choice* o, void* v) {
+  ((UserInterface*)(o->parent()->parent()->user_data()))->cb_ViewSceneChoice_i(o,v);
+}
+
+void UserInterface::cb_ViewCameraChoice_i(Fl_Choice* o, void* v) {
+  ((UserInterface*)v)->ViewCameraCB(o);
+}
+void UserInterface::cb_ViewCameraChoice(Fl_Choice* o, void* v) {
+  ((UserInterface*)(o->parent()->parent()->user_data()))->cb_ViewCameraChoice_i(o,v);
 }
 
 void UserInterface::cb_CameraWinChoice_i(Fl_Choice* o, void* v) {
@@ -170,11 +177,11 @@ void UserInterface::cb_Next(Fl_Button* o, void* v) {
   ((UserInterface*)(o->parent()->parent()->user_data()))->cb_Next_i(o,v);
 }
 
-void UserInterface::cb_CamFrameBin_i(Fl_Value_Input* o, void* v) {
-  ((UserInterface*)v)->CameraFrameBinCB(o);
+void UserInterface::cb_ViewFrameBin_i(Fl_Value_Input* o, void* v) {
+  ((UserInterface*)v)->ViewFrameBinCB(o);
 }
-void UserInterface::cb_CamFrameBin(Fl_Value_Input* o, void* v) {
-  ((UserInterface*)(o->parent()->parent()->user_data()))->cb_CamFrameBin_i(o,v);
+void UserInterface::cb_ViewFrameBin(Fl_Value_Input* o, void* v) {
+  ((UserInterface*)(o->parent()->parent()->user_data()))->cb_ViewFrameBin_i(o,v);
 }
 
 void UserInterface::cb_WinPosW_i(Fl_Value_Input* o, void* v) {
@@ -960,20 +967,12 @@ Fl_Double_Window* UserInterface::make_window() {
         }
         o->end();
       }
-      { Fl_Choice* o = CameraSceneChoice = new Fl_Choice(420, 280, 110, 25, "Scene:");
-        o->down_box(FL_BORDER_BOX);
-        o->callback((Fl_Callback*)cb_CameraSceneChoice, (void*)(this));
-      }
       { Fl_Choice* o = CameraWinChoice = new Fl_Choice(420, 315, 110, 25, "Window:");
         o->down_box(FL_BORDER_BOX);
         o->callback((Fl_Callback*)cb_CameraWinChoice, (void*)(this));
       }
       { Fl_Button* o = new Fl_Button(115, 290, 80, 25, "Next Stats");
         o->callback((Fl_Callback*)cb_Next, (void*)(this));
-      }
-      { Fl_Value_Input* o = CamFrameBin = new Fl_Value_Input(140, 335, 55, 25, "Frame Bin:");
-        o->callback((Fl_Callback*)cb_CamFrameBin, (void*)(this));
-        o->deactivate();
       }
       o->end();
     }
@@ -1038,7 +1037,28 @@ Fl_Double_Window* UserInterface::make_window() {
         o->align(FL_ALIGN_LEFT);
       }
       o->end();
+    } 
+    { Fl_Group* o = ViewGroup = new Fl_Group(175, 165, 320, 260);
+    o->box(FL_ENGRAVED_FRAME);
+    o->align(FL_ALIGN_TOP_LEFT);
+    o->hide();
+     {
+      { Fl_Choice* o = ViewSceneChoice = new Fl_Choice(420, 280, 110, 25, "Scene:");
+        o->down_box(FL_BORDER_BOX);
+        o->callback((Fl_Callback*)cb_ViewSceneChoice, (void*)(this));
+      }
+      { Fl_Choice* o = ViewCameraChoice = new Fl_Choice(420, 280, 110, 25, "Camera:");
+        o->down_box(FL_BORDER_BOX);
+        o->callback((Fl_Callback*)cb_ViewCameraChoice, (void*)(this));
+      }
+      { Fl_Value_Input* o = ViewFrameBin = new Fl_Value_Input(140, 335, 55, 25, "Frame Bin:");
+        o->callback((Fl_Callback*)cb_ViewFrameBin, (void*)(this));
+        o->deactivate();
+      }
+      o->end();
     }
+  }
+    
     { Fl_Group* o = SkyBoxGroup = new Fl_Group(60, 155, 430, 229);
       o->hide();
       { Fl_Group* o = new Fl_Group(205, 190, 130, 85, "Base Color");

@@ -48,6 +48,7 @@ namespace osg
 namespace dtCore
 {
    class DeltaWin;
+   class View;
 }
 
 namespace dtGUI
@@ -140,6 +141,7 @@ namespace dtGUI
       dtGUI::BaseScriptModule* mScriptModule;
       dtCore::RefPtr<osg::Projection> mProjection;
       dtCore::RefPtr<osg::MatrixTransform> mTransform;
+      dtCore::RefPtr<dtCore::View> mView;
       dtCore::RefPtr<dtCore::DeltaWin> mWindow; ///<The window this UI is being rendered in
       dtCore::RefPtr<osg::Node> mNode;
       int mWidth;
@@ -168,7 +170,7 @@ namespace dtGUI
 
          virtual osg::Object* cloneType() const;
          virtual osg::Object* clone(const osg::CopyOp& copyop) const;
-         virtual void drawImplementation(osg::State& state) const;
+         virtual void drawImplementation(osg::RenderInfo & renderInfo) const;
 
       protected:
          virtual ~osgCEUIDrawable();

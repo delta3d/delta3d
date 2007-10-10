@@ -144,10 +144,12 @@ HardwareSubMeshDrawable::~HardwareSubMeshDrawable(void)
 {
 }
 
-void HardwareSubMeshDrawable::drawImplementation(osg::State& state) const 
+void HardwareSubMeshDrawable::drawImplementation(osg::RenderInfo& renderInfo) const 
 {
    //select the appropriate mesh
    mHardwareModel->selectHardwareMesh(mMeshID);
+
+   osg::State & state = *renderInfo.getState();
 
    //bind the VBO's
    state.disableAllVertexArrays();
