@@ -27,6 +27,7 @@
 
 
 #include <list>
+#include <map>
 #include <string>
 #include <vector>
 
@@ -51,7 +52,7 @@ namespace dtCore
 
    public:
       typedef std::vector< dtCore::RefPtr<InputDeviceFeature> > FeatureVector;
-      typedef std::vector< dtCore::RefPtr<Button> > ButtonVector;
+      typedef std::map< int, dtCore::RefPtr<Button> > ButtonMap;
       typedef std::vector< dtCore::RefPtr<Axis> > AxisVector;
 
          /**
@@ -156,15 +157,16 @@ namespace dtCore
          /// @param feature a pointer to the feature to remove
          void RemoveFeature(InputDeviceFeature* feature);
 
-         const ButtonVector& GetButtons() const { return mButtons; }
-         ButtonVector& GetButtons() { return mButtons; }
+         const ButtonMap& GetButtons() const { return mButtons; }
+         ButtonMap& GetButtons() { return mButtons; }
 
          const AxisVector& GetAxes() const { return mAxes; }
          AxisVector& GetAxes() { return mAxes; }
 
       private:
          FeatureVector mFeatures;  ///< The list of features.
-         ButtonVector mButtons;  ///< The list of buttons.
+         ButtonMap mButtons;  ///< The list of buttons.
+         RefPtr<Button> mUnknowButton;  ///< The default buttons
          AxisVector mAxes;  ///< The list of axes.
 
          typedef std::list<ButtonListener*> ButtonListenerList; ///< A container of ButtonListeners.
@@ -241,6 +243,14 @@ namespace dtCore
           * @param description a description of this button
           */
          Button(InputDevice* owner, const std::string& description);
+         /**
+          * Constructor.
+          *
+          * @param owner the owner of this button
+          * @param symbole the symbole of this button
+          * @param description a description of this button
+          */
+         Button(InputDevice* owner, int symbole, const std::string& description);
 
       protected:
 
@@ -260,6 +270,11 @@ namespace dtCore
           */
          bool GetState() const;
 
+         /**
+          * Returns the symbole of this button.
+          */
+         int GetSymbol() const;
+         
          /**
           * Adds a button listener.
           *
@@ -281,6 +296,7 @@ namespace dtCore
 
       private:
          bool mState;  ///< The state of this button.
+         int mSymbol;  ///< The symbol of this button.
          ButtonListenerList mButtonListeners;  ///< Listeners to this button.
    };
 

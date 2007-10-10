@@ -27,33 +27,31 @@
 
 #include <dtCore/base.h>
 #include <dtCore/refptr.h>
-#include <vector>                   // for member
-#include <osg/Vec2>
-#include <Producer/VisualChooser>
+#include <dtCore/camera.h>
 
-/// @cond DOXYGEN_SHOULD_SKIP_THIS
-namespace Producer
+#include <vector>                   // for member
+
+#include <osg/observer_ptr>
+#include <osg/Vec2>
+
+
+namespace osgViewer
 {
-   class InputArea;
-   class RenderSurface;
-   class KeyboardMouse;
+    class GraphicsWindow;
 }
-/// @endcond
+
 
 namespace dtCore
 {
-   class Keyboard;
-   class Mouse;
-   class InputCallback;
-   
    /**
    * \brief The rendering area that a dtCore::Camera will render to
    *
    * The DeltaWin class is used as a canvas for the dtCore::Cameras to render upon.
    * The DeltaWin can be positioned and sized using SetPosition(), set to be fullscreen using
    * SetFullScreenMode(), and the cursor can be hidden using ShowCursor().
-   * A DeltaWin can be embedded inside an existing window by supplying the window handle
-   * to a Producer::RenderSurface, then passing the RenderSurface to the DeltaWin constructor.
+   * A DeltaWin can be embedded inside an existing window by derived from, or use, 
+   * an osgViewer::EmbeddedGraphicsWindow, then passing the EmbeddedGraphicsWindow 
+   * to the DeltaWin constructor, note you need to pass it to the dtCore::Camera too.
    * See dtABC::Widget for more information.
    *
    * Typical usage:
@@ -81,31 +79,29 @@ namespace dtCore
        * @param height the height of the window in pixels
        * @param cursor true if you wish to use the default cursor, false if not
        * @param fullScreen true if this window should be displayed fullscreen
+       * @param inheritedWindowData the inheritedWindowData use to embedded the window in GUI window  
        */
-      DeltaWin(const std::string& name = "window",
-               int x = 100, int y = 100,
-               int width = 640, int height = 480,
-               bool cursor = true, bool fullScreen = false );
-
+       DeltaWin(  const std::string& name = "defaulWindow", 
+                  int x = 0, int y = 0, 
+                  int width = 640, int height = 480, 
+                  bool cursor = true, bool fullScreen = false,
+                  osg::Referenced * inheritedWindowData = NULL);
+       
       /** 
       * Constructor
       *
       * @param name : the name of the class as well as the window title
-      * @param rs if you have created your own Producer::RenderSurface and wish to use it
-      * with this instance of DeltaWin, pass it in here.
-      * @param ia if you have your own Producer::InputArea, pass it here. If 0 is passed, then
-      * it will use the RenderSurface as the input area.
+      * @param gw : the GraphicsWindow use by this instance  
       */
-      DeltaWin( const std::string& name, Producer::RenderSurface* rs, Producer::InputArea* ia = 0 );
-
+      DeltaWin(const std::string& name, osgViewer::GraphicsWindow * gw);
+      
       /** 
       * Constructor
       *
       * @param name : the name of the class as well as the window title
-      * @param keyboard a custom keyboard
-      * @param mouse a custom mouse
-      */
-      DeltaWin( const std::string& name, Keyboard* keyboard, Mouse* mouse );
+      * @param camera the camera owned this instance os DeltaWin  
+      */      
+      DeltaWin(const std::string& name, Camera * camera);
 
    protected:
 
@@ -141,16 +137,14 @@ namespace dtCore
       void SetFullScreenMode( bool enable = true );
   
       ///Is the window currently in fullscreen mode?
-      bool GetFullScreenMode() const;
+      bool GetFullScreenMode() const { return mIsFullScreen; }
       
       void KillGLWindow();
       
-      void Update();
-
       ///The the title on the DeltaWin border
       void SetWindowTitle( const std::string& title );
 
-      const std::string& GetWindowTitle() const;
+      const std::string GetWindowTitle() const;
       
       ///Set the size and position of the DeltaWin
       struct PositionSize
@@ -176,52 +170,28 @@ namespace dtCore
       void GetPosition( int& x, int& y, int& width, int& height );
       PositionSize GetPosition();
 
-      ///Get a handle to the underlying RenderSurface
-      Producer::RenderSurface* GetRenderSurface() { return mRenderSurface.get(); }
-      const Producer::RenderSurface* GetRenderSurface() const { return mRenderSurface.get(); }
+      ///Get a handle to the underlying GraphicsWindow
+      osgViewer::GraphicsWindow* GetOsgViewerGraphicsWindow() { return mOsgViewerGraphicsWindow.get(); }
+      const osgViewer::GraphicsWindow* GetOsgViewerGraphicsWindow() const { return mOsgViewerGraphicsWindow.get(); }
 
-      /**
-      * Supply an instance of a Producer::RenderSurface to be used instead of
-      * the default, internal Producer::RenderSurface, or the one supplied in the
-      * constructor. This could be used for, e.g., Stencil Buffering.
-      * @param renderSurface : instance of a valid Producer::RenderSurface to use
-      * @pre renderSurface != 0
-      * @exception dtCore::ExceptionEnum::INVALID_PARAMETER The supplied instance
-      * is NULL.  The original Producer::RenderSurface will still be used.
-      */
-      void SetRenderSurface( Producer::RenderSurface* renderSurface );
-
-      ///Get a handle to the Keyboard associated with the DeltaWin
-      Keyboard* GetKeyboard() { return mKeyboard.get(); }
-      const Keyboard* GetKeyboard() const { return mKeyboard.get(); }
-
-      /** 
-       * Supply an instance of a Keyboard to be used instead of the default, 
-       * internal Keyboard, or the one supplied in the constructor.
-       * @param keyboard : instance of a valid Keyboard to use
-       * @pre keyboard != 0
-       * @exception dtCore::ExceptionEnum::INVALID_PARAMETER The supplied instance
-       * is NULL.  The original Keyboard will still be used.
-       */
-      void SetKeyboard( Keyboard* keyboard );
-
-      /// Turns off/on key repeat. It only allows turning it off for X11.
-      void SetKeyRepeat(bool on);
-      /// @return true if key repeat is on.  On windows and mac this just returns true.
-      bool GetKeyRepeat() const;
+      ///Conveniante method to create a GraphicsWindow
+      osgViewer::GraphicsWindow * CreateGraphicsWindow(const std::string& name = "defaulWindow", 
+                                                       int x = 500, int y = 500, 
+                                                       int width = 640, int height = 480, 
+                                                       unsigned int screenNum = 0,
+                                                       bool cursor = true, 
+                                                       osg::Referenced * inheritedWindowData = NULL);
       
-      /** Supply an instance of a Mouse to be used instead of the default internal
-       *  Mouse, or the one supplied in the constructor.
-       *  @param mouse : Instance of a valid Mouse
-       *  @pre mouse != 0
-       *  @exception dtCore::ExceptionEnum::INVALID_PARAMETER The supplied instance
-       *  is NULL.  The original Mouse will still be used.
-       */
-      void SetMouse( Mouse* mouse );
-
-      ///Get a handle to the Mouse associated with the DeltaWin
-      Mouse* GetMouse() { return mMouse.get(); }
-      const Mouse* GetMouse() const { return mMouse.get(); }
+      /**
+      * Supply an instance of a osgViewer::GraphicsWindow to be used instead 
+      * the internal osgViewer::GraphicsWindow. This could be used for
+      * e.g., Stencil Buffering.
+      * @param graphicsWindow : instance of a valid Producer::RenderSurface to use
+      * @pre graphicsWindow != 0
+      * @exception dtCore::ExceptionEnum::INVALID_PARAMETER The supplied instance
+      * is NULL.  The original osgViewer::GraphicsWindow will still be used.
+      */
+      void SetOsgViewerGraphicsWindow(osgViewer::GraphicsWindow * graphicsWindow);
 
       /// The data structure modeling monitor resolution
       struct Resolution
@@ -247,26 +217,27 @@ namespace dtCore
       /// @return 'true' when the Resolution is supported.
       bool IsValidResolution(const Resolution& candidate);
 
+      Camera * GetCamera() { return mCamera.get(); }
+      
+   protected:
+      
+      friend class Camera;
+      
+      /// define the camera owner of this instance
+      void SetCamera(Camera * camera) { mCamera = camera; }
+      
+      
+      
    private:
 
       static int CalcRefreshRate( int width, int height, int dotclock );
       
-      dtCore::RefPtr<Producer::RenderSurface> mRenderSurface; //changed from straight-up RS
-      dtCore::RefPtr<Producer::VisualChooser> mVisualChooser; //changed from straight-up RS
-      dtCore::RefPtr<Producer::KeyboardMouse> mKeyboardMouse;
+      osg::observer_ptr<dtCore::Camera> mCamera;
+      dtCore::RefPtr<osgViewer::GraphicsWindow> mOsgViewerGraphicsWindow;
 
-      RefPtr<Keyboard> mKeyboard;
-      RefPtr<Mouse> mMouse;
-
+      bool mIsFullScreen;
       bool mShowCursor;
 
-   public:
-
-      InputCallback* GetInputCallback();
-      const InputCallback* GetInputCallback() const;
-
-   private:
-      RefPtr<InputCallback> mInputCallback;
 
       // Disallowed to prevent compile errors on VS2003. It apparently
       // creates this functions even if they are not used, and if

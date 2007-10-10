@@ -29,17 +29,22 @@
 #include <list>                        // for typedef, member.
 #include <string>                      // for parameter
 
-#include <Producer/KeyboardMouse>      // for member giving cursor control
-#include <dtCore/inputdevice.h>        // for base class
 #include <osg/Referenced>              // for listener's base class
-#include <dtCore/refptr.h>             // for typedef, list member
+#include <osg/observer_ptr>
 #include <osg/Vec2>
+#include <osgGA/GUIEventAdapter>
+
+
+#include <dtCore/inputdevice.h>        // for base class
+#include <dtCore/refptr.h>             // for typedef, list member
+#include <dtCore/view.h>             // for observer_ptr<View>
+
 
 namespace dtCore
 {
    class DeltaWin;
    class MouseListener;
-
+   
    /// The model of the mouse used throughout Delta3D.
    class DT_CORE_EXPORT Mouse : public InputDevice
    {
@@ -53,7 +58,12 @@ namespace dtCore
    public:
       /// Constructor.
       /// @param name the instance name
-      Mouse(Producer::KeyboardMouse* km,const std::string& name = "mouse");
+      Mouse(const std::string& name = "mouse");
+      
+      /// Constructor.
+      /// @param view owner of this instance
+      /// @param name the instance name
+      Mouse(dtCore::View * view, const std::string& name = "mouse");
 
       /// Mouse buttons.
       enum MouseButton
@@ -96,7 +106,7 @@ namespace dtCore
 
       /// For injecting mouse scroll events.
       /// @param sm the scroll type
-      virtual bool MouseScroll( Producer::KeyboardMouseCallback::ScrollingMotion sm );
+      virtual bool MouseScroll(osgGA::GUIEventAdapter::ScrollingMotion sm);
 
       /// For injecting mouse drag events.
       /// @param x the x coordinate
@@ -129,12 +139,24 @@ namespace dtCore
       /// @return the container of MouseListener instances.
       const MouseListenerList& GetListeners() const { return mMouseListeners; }
 
+      /// @return the mOsgViewerView
+      dtCore::View * GetView() { return mView.get(); }
+      
+      /// @return the const mView
+      const dtCore::View * GetView() const { return mView.get(); }
+      
    protected:
+      
+      friend class KeyboardMouseHandler;
+      /// define the mOsgViewerView
+      void SetView(dtCore::View * view) { mView = view; }
+      
+      
       /// The container of observers.
       MouseListenerList mMouseListeners;
-
+      
       /// needed to control the cursor on the window.
-      dtCore::RefPtr<Producer::KeyboardMouse> mKeyboardMouse;
+      osg::observer_ptr<dtCore::View> mView;
    };
 
    /// An interface for objects interested in mouse events.

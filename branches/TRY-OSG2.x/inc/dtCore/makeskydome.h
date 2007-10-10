@@ -2,7 +2,9 @@
 #ifndef MAKESKYDOME_H__
 #define MAKESKYDOME_H__
 
-#include <osg/array>
+#include <dtCore/export.h>
+#include <osg/Array>
+#include <osg/Geode>
 
 namespace osg
 {

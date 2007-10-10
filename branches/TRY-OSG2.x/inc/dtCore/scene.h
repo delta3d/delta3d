@@ -28,6 +28,7 @@
 #include <dtCore/base.h>
 #include <dtCore/refptr.h>
 #include <dtCore/timer.h>
+#include <dtCore/view.h>
 #include <dtUtil/deprecationmgr.h>
 
 #include <ode/common.h>
@@ -35,6 +36,8 @@
 
 #include <osg/NodeVisitor>
 #include <osg/Vec3>
+#include <osg/observer_ptr>
+
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
@@ -96,8 +99,8 @@ namespace dtCore
          FRONT_AND_BACK
       };
 
-      Scene(const std::string& name = "scene", bool useSceneLight = true);
-   
+      Scene(const std::string& name = "scene");
+//      Scene(dtCore::View * view, const std::string& name = "scene", bool useSceneLight = true);
    protected:
 
       virtual ~Scene();
@@ -105,7 +108,10 @@ namespace dtCore
    public:
 
       ///Get a pointer to the internal scene node
-      osg::Group *GetSceneNode() { return mSceneNode.get(); }
+      osg::Group * GetOrCreateSceneNode();
+      
+      ///Get a pointer to the internal scene node
+      osg::Group * GetSceneNode() { return (mSceneNode.get()); }
 
       /*
       *  This function will remove all children of the current scene node,
@@ -233,13 +239,13 @@ namespace dtCore
        * node has been added to the scene
        * @note all settings must be made before this call
        */
-      void EnablePaging();
+      void EnablePaging() { mPagingEnabled = true; UpdateViewSet(); }
       
       /**
        *  Disables Paging, after enabled
        *  called on scene cleanup
        */
-      void DisablePaging();
+      void DisablePaging() { mPagingEnabled = false; UpdateViewSet(); }
 
       /// Returns if paging is enabled
       bool IsPagingEnabled() const { return mPagingEnabled; }
@@ -253,13 +259,20 @@ namespace dtCore
 
       /// Get the cleanup time for paging
       double GetPagingCleanup() { return mCleanupTime; }
-
-      /**
-       * Sets target frame rate for database pager, default 60
-       * @param target framerate for paging thread in Frames / Sec
-       */
-      void SetTargetFrameRate(double pTargetFR){mTargetFrameRate = pTargetFR;}
-
+      
+   protected:
+      
+      friend class View;
+      
+      /// define the owner mView of this instance
+      void RemoveView(dtCore::View * view) { mViewSet.remove(view); }
+      void AddView(dtCore::View * view) { mViewSet.push_back(view); }
+      
+      osg::Group * CreateSceneNode();
+      void UpdateViewSet();
+      
+      void Init();
+      
     private:
 
       // Disallowed to prevent compile errors on VS2003. It apparently
@@ -272,7 +285,7 @@ namespace dtCore
       ///ODE collision callback
       static void NearCallback(void *data, dGeomID o1, dGeomID o2);
       
-      RefPtr<osg::Group> mSceneNode; ///<This will be our root scene node
+      RefPtr<osg::Group> mSceneNode; ///<This will be our Scene
       dSpaceID mSpaceID;
       dWorldID mWorldID;
       osg::Vec3 mGravity;
@@ -294,6 +307,10 @@ namespace dtCore
       typedef std::vector< RefPtr<DeltaDrawable> > DrawableList;
       DrawableList mAddedDrawables; ///<The list of Drawable directly added
 
+      typedef std::list<osg::observer_ptr<View> > ViewSet;
+      ViewSet mViewSet;
+      
+      
       Mode mRenderMode;
       Face mRenderFace;
 
@@ -301,8 +318,7 @@ namespace dtCore
       Timer_t mStartTick;
       unsigned int mFrameNum;
       double mCleanupTime;
-      double mTargetFrameRate;
-
+ 
       ParticleSystemFreezer mFreezer;
    };   
 }

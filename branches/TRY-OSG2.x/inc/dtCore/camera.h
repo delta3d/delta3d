@@ -25,17 +25,18 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include <Producer/Camera>
+
 #include <dtCore/stats.h>
 #include <dtCore/timer.h>
 #include <dtCore/refptr.h>
 #include <dtCore/transformable.h>
+#include <dtCore/view.h>
 #include <osg/Vec4>
 #include <osg/Version>
 
-#include <osg/Image>
-#include <Producer/Camera>
-#include <osgDB/WriteFile>
+
+#include <osg/Camera>
+
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
@@ -43,15 +44,14 @@ namespace osg
    class FrameStamp;
 }
 
-namespace osgUtil
+namespace osgViewer
 {
-   class SceneView;
+   class View;
 }
 /// @endcond
 
 namespace dtCore
 {
-   class CameraGroup;
    class DeltaWin;
    class Scene;
    class ScreenShotCallback;
@@ -76,47 +76,11 @@ namespace dtCore
       DECLARE_MANAGEMENT_LAYER(Camera)
 
    public:
+      
+      
 
-      class DT_CORE_EXPORT _SceneHandler : public Producer::Camera::SceneHandler
-      {
-      public:
-         _SceneHandler(bool useSceneLight=true);
-      protected:
-         virtual ~_SceneHandler();
-      public:
-         osgUtil::SceneView* GetSceneView() { return mSceneView.get(); }
-
-         virtual void clear(Producer::Camera& cam);
-
-         void ClearImplementation( Producer::Camera& cam );
-
-         /** 
-         *  Prepare the scene by sorting, and
-         *  ordering for optimal rendering
-         */
-         virtual void cull( Producer::Camera &cam );
-
-         void CullImplementation( Producer::Camera &cam );
-
-         /** 
-         *  The draw() method must be implemented by
-         *  the derived class for rendering the scene
-         */
-         virtual void draw( Producer::Camera &cam );
-
-         void DrawImplementation( Producer::Camera &cam );
-
-         Stats *mStats; ///<The statistics display
-
-      protected:
-         RefPtr<osgUtil::SceneView> mSceneView;
-         dtCore::Timer mTimer;
-      private:
-         RefPtr<osg::FrameStamp> mFrameStamp;
-         dtCore::Timer_t mStartTime;
-      };
-
-      Camera( const std::string& name = "camera" );      
+      Camera(const std::string& name = "camera");
+      Camera(dtCore::View * view, const std::string& name = "camera");
 
    protected:
 
@@ -124,23 +88,26 @@ namespace dtCore
 
    public:
 
-      void SetFrameBin( unsigned int frameBin );
-      unsigned int GetFrameBin() const { return mFrameBin; }
+      ///get the dtCore::View owned this instance
+      dtCore::View * GetView() { return mView.get(); }
 
-      static CameraGroup* GetCameraGroup() { return mCameraGroup; }
-
-      ///Enabled or disable this Camera. Disabled Cameras will not render.
+      
+      //Enabled or disable this Camera. Disabled Cameras will not render.
       void SetEnabled( bool enabled );
 
       ///Is this Camera enabled?
       bool GetEnabled() const;
       
-      ///Use the supplied DeltaWin to draw into
-	   void SetWindow( DeltaWin *win );
 
       ///Get the supplied DeltaWin (could be NULL)
-      DeltaWin* GetWindow();
-
+      DeltaWin * GetOrCreateWindow() { return (mWindow.valid()) ? (mWindow.get()) : (CreateDeltaWin()); }
+      DeltaWin * GetWindow() { return (mWindow.get()); }
+      const DeltaWin * GetWindow() const { return (mWindow.get()); }
+      
+      ///Use the supplied DeltaWin to draw into
+      void SetWindow( DeltaWin *win );
+      
+      
       /**
        * Take a screen shot at end of next frame
        * @param namePrefix the prefix of the screenshot file to write
@@ -148,34 +115,6 @@ namespace dtCore
        */
       const std::string TakeScreenShot(const std::string& namePrefix);
 
-      /** 
-       *  Redraw the view.
-       *  @param lastCamera Pass true if this is the last camera
-       *  rendered this frame number, otherwise false.
-       */
-	   void Frame( bool lastCamera );
-
-      ///Supply the Scene this Camera should render
-      void SetScene( Scene *scene );
-
-      ///Get a non-const version of the supplied Scene
-      Scene* GetScene() { return mScene.get(); }
-
-      ///Get a const version of the supplied Scene
-      const Scene* GetScene() const { return mScene.get(); }
-
-      ///Set the color non-geometry in the Scene should be drawn (0.0 - 1.0)
-      void SetClearColor( float r, float g, float b, float a);
-
-      ///Set the color non-geometry in the Scene should be drawn (0.0 - 1.0)
-      void SetClearColor(const osg::Vec4& v);
-      
-      ///Get the color that non-geometry in the Scene should be rendered
-      void GetClearColor( float& r, float& g, float& b, float& a);
-      
-      ///Get the color that non-geometry in the Scene should be rendered
-      void GetClearColor(osg::Vec4& color) { color = mClearColor; }
-      
       ///Set Perspective of camera lens
       void SetPerspective( double hfov, double vfov, double nearClip, double farClip );
 
@@ -189,21 +128,22 @@ namespace dtCore
                         double bottom, double top,
                         double nearClip, double farClip );
 
-      ///enable orthographic mode
-      void ConvertToOrtho( float d );
+//      ///enable orthographic mode
+//      void ConvertToOrtho( float d );
+//
+//      ///enable perspective mode
+//      bool ConvertToPerspective( float d );
 
-      ///enable perspective mode
-      bool ConvertToPerspective( float d );
+//      ///@return HOV
+//      float GetHorizontalFov();
+//
+//      ///@return FOV
+//      float GetVerticalFov();
 
-      ///@return HOV
-      float GetHorizontalFov();
-
-      ///@return FOV
-      float GetVerticalFov();
-
-      void SetAutoAspect( bool ar );
-
-      bool GetAutoAspect();
+      void SetProjectionResizePolicy( osg::Camera::ProjectionResizePolicy prp )
+      { mOsgCamera->setProjectionResizePolicy(prp); }
+      osg::Camera::ProjectionResizePolicy GetProjection()
+      { return (mOsgCamera->getProjectionResizePolicy()); }
 
       ///takes a number from 0-1 to set as the aspect ratio
       void SetAspectRatio( double aspectRatio );
@@ -212,28 +152,34 @@ namespace dtCore
       double GetAspectRatio();
 
       ///Get a handle to the Producer Lens that this Camera uses
-      Producer::Camera::Lens *GetLens() { return mCamera->getLens(); }
+//      Producer::Camera::Lens *GetLens() { return mCamera->getLens(); }
 
+      
+      void SetClearColor(float r, float g, float b, float a);
+      void SetClearColor(const osg::Vec4& color);
+      void GetClearColor(float& r, float& g, float& b, float& a);
+      void GetClearColor(osg::Vec4& color);
+      
+      
       ///Get a non-const handle to the underlying Producer::Camera
-      Producer::Camera* GetCamera() { return mCamera.get(); }
+      osg::Camera* GetOrCreateOsgCamera() { return (mOsgCamera.valid() ? mOsgCamera.get() : CreateOsgCamera()); }
+            
+      ///Get a non-const handle to the underlying Producer::Camera
+      osg::Camera* GetOsgCamera() { return mOsgCamera.get(); }
       
       ///Get a const handle to the underlying Producer::Camera
-      const Producer::Camera* GetCamera() const { return mCamera.get(); }
+      const osg::Camera* GetOsgCamera() const { return mOsgCamera.get(); }
 
-      _SceneHandler *GetSceneHandler() { return mSceneHandler.get(); }
-
-      ///Display the next statistics mode
-      void SetNextStatisticsType() { mSceneHandler->mStats->SelectNextType(); }     
-
-      ///Display the supplied statistics type
-#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 1 && OSG_VERSION_MINOR >= 2
-      void SetStatisticsType(osgUtil::Statistics::StatsType type) 
-#else
-      void SetStatisticsType(osgUtil::Statistics::statsType type) 
-#endif
-      {
-        mSceneHandler->mStats->SelectType(type);
-      }
+      ///
+      void SetOsgCamera(osg::Camera * camera);
+      
+      
+//      ///Display the next statistics mode TODO
+//      void SetNextStatisticsType() { mSceneHandler->mStats->SelectNextType(); }     
+//
+//      ///Display the supplied statistics type
+//      void SetStatisticsType(osgUtil::Statistics::StatsType type) 
+//      { mSceneHandler->mStats->SelectType(type); }
 
       /** 
       * Supply the Scene this Camera has been added to. Normally this
@@ -244,7 +190,33 @@ namespace dtCore
       */
       virtual void AddedToScene( Scene* scene );
 
+      bool IsMaster() { return (mView.valid() && (mView->GetCamera() == this)); }
+      
+   protected:
+      
+      ///Override for preframe
+      virtual void PreFrame( const double deltaFrameTime );
 
+      /// Base override to receive messages.
+      /// This method should be called from derived classes
+      /// @param data the message to receive
+      virtual void OnMessage( MessageData *data );
+      
+      friend class View;
+      friend class DeltaWin;
+      
+      /// define the mOsgViewerView
+      void SetView(dtCore::View * view) { mView = view; }
+      
+      
+      /// common method to create Window with the MasterCamera of the owner view
+      dtCore::DeltaWin * CreateDeltaWin();
+      
+      /// common method to create Window with the MasterCamera of the owner view
+      osg::Camera * CreateOsgCamera();
+
+      void UpdateFromWindow();
+      
    private:
 
       // Disallowed to prevent compile errors on VS2003. It apparently
@@ -255,17 +227,15 @@ namespace dtCore
       Camera( const Camera& );
 
       unsigned int mFrameBin;
-      static CameraGroup* mCameraGroup;
+      
+      osg::observer_ptr<View> mView; // owner view of this instance
 
-      RefPtr<Producer::Camera> mCamera; // Handle to the Producer camera
+      RefPtr<osg::Camera> mOsgCamera; // Handle to the osg Camera
       RefPtr<DeltaWin> mWindow; // The currently assigned DeltaWin
-      RefPtr<Scene> mScene;
-      osg::Vec4 mClearColor; // The current clear color
+      
       bool mAddedToSceneGraph;
-
-      Producer::RenderSurface* mDefaultRenderSurface;
-      RefPtr<_SceneHandler> mSceneHandler;
-      RefPtr<ScreenShotCallback> ScreenShotTaker;
+      bool mEnable;
+      RefPtr<ScreenShotCallback> mScreenShotTaker;
    };
 }
 
