@@ -79,7 +79,7 @@ namespace dtAI
 
    };
 
-   std::ostream& operator << (std::ostream &o, const WorldState &worldState);
+   DT_AI_EXPORT std::ostream& operator << (std::ostream &o, const WorldState &worldState);
 
 }//namespace dtAI
 
