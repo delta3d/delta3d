@@ -118,6 +118,8 @@ class Recipe: public IStateVariable
      const std::list<std::string>& GetRecipes() const;
 
      void AddRecipe(const std::string& pRecipe);
+     
+     virtual const std::string ToString() const { return GetName(); }
 
 private:
 
@@ -140,6 +142,8 @@ public:
    void AddItem(const std::string& pGrocery);
    void RemoveItem(const std::string& pGrocery);
 
+   virtual const std::string ToString() const { return GetName(); }
+
 private:
 
    std::list<std::string> mGroceries;
@@ -161,6 +165,8 @@ public:
    
    void SetHaveFood(bool b);
 
+   virtual const std::string ToString() const { return GetName(); }
+
 private:
 
    bool mHaveFood;
@@ -181,6 +187,8 @@ public:
    
    float GetHungerLevel() const;
    void SetHungerLevel(float pHunger);
+
+   virtual const std::string ToString() const { return GetName(); }
 
 private:
 

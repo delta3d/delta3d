@@ -20,6 +20,7 @@
  */
 
 #include <dtAI/worldstate.h>
+#include <ostream>
 #include <algorithm>
 
 namespace dtAI
@@ -115,5 +116,28 @@ namespace dtAI
       else return (*iter).second;
    }
 
+   class WorldStatePrintFunc
+   {
+      public:
+         WorldStatePrintFunc(std::ostream& ostream)
+            : mOStream(ostream)
+         {}
+
+         template<class _Type>
+            void operator()(_Type p1)
+         {
+            mOStream << "   " << p1.first << " " << *p1.second << std::endl;
+         }
+
+      private:
+         std::ostream& mOStream;
+   };
+
+   std::ostream& operator << (std::ostream &o, const WorldState &worldState)
+   {
+      WorldStatePrintFunc printFunc(o);
+      std::for_each(worldState.GetStateVariables().begin(), worldState.GetStateVariables().end(), printFunc);
+      return o;
+   }
 
 }//namespace dtAI

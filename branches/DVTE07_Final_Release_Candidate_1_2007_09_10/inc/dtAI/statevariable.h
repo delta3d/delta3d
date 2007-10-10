@@ -23,6 +23,7 @@
 #define __DELTA_STATEVARIABLE_H__
 
 #include <dtAI/export.h>
+#include <string>
 
 namespace dtAI
 {
@@ -36,10 +37,18 @@ namespace dtAI
          virtual ~IStateVariable() {};
 
          virtual IStateVariable* Copy() const = 0;
-   
+
+         virtual const std::string ToString() const = 0;
+
       private:
    
    };
+
+   inline std::ostream& operator << (std::ostream &o, const IStateVariable& stateVar)
+   {
+      o << stateVar.ToString();
+      return o;
+   }
 }//namespace dtAI
 
 #endif // __DELTA_STATEVARIABLE_H__
