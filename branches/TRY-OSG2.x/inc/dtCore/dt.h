@@ -96,7 +96,7 @@ namespace dtCore
    #ifndef DT_CORE_LIBRARY  
       #define  DT_H_DTCORE_LIB "dtCored.lib"
    #endif
-   #define DT_H_OPENTHREADS_LIB  "OpenThreadsWin32d.lib"  
+   #define DT_H_OPENTHREADS_LIB  "OpenThreadsd.lib"  
    #define DT_H_OSG_LIB  "osgd.lib"
    #define DT_H_OSGDB_LIB  "osgDBd.lib"
    #define DT_H_OSGPARTICLE_LIB  "osgParticled.lib"
@@ -107,7 +107,7 @@ namespace dtCore
    #ifndef DT_CORE_LIBRARY
       #define DT_H_DTCORE_LIB "dtCore.lib"
    #endif
-   #define DT_H_OPENTHREADS_LIB  "OpenThreadsWin32.lib"  
+   #define DT_H_OPENTHREADS_LIB  "OpenThreads.lib"  
    #define DT_H_OSG_LIB  "osg.lib"
    #define DT_H_OSGDB_LIB  "osgDB.lib"
    #define DT_H_OSGPARTICLE_LIB  "osgParticle.lib"
