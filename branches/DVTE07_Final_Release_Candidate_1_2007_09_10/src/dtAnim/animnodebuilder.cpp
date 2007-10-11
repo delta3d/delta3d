@@ -182,12 +182,8 @@ dtCore::RefPtr<osg::Geode> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pW
             numIndices += 3 * subMesh->getFaceCount();
          }
       }
-      const size_t strideCal3D = 18;
-      const size_t strideBytesCal3D = strideCal3D * sizeof(float);
-
-      const size_t strideVBO = 12;
-      const size_t strideBytesVBO = strideVBO * sizeof(float);
-
+      const size_t stride = 18;
+      const size_t strideBytes = stride * sizeof(float);
 
       Array<CalIndex> indexArray(numIndices);
 
@@ -199,7 +195,7 @@ dtCore::RefPtr<osg::Geode> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pW
       {
          glExt->glGenBuffers(1, &vbo[0]);
          glExt->glBindBuffer(GL_ARRAY_BUFFER_ARB, vbo[0]);
-         glExt->glBufferData(GL_ARRAY_BUFFER_ARB, strideBytesVBO * numVerts, NULL, GL_STATIC_DRAW_ARB);
+         glExt->glBufferData(GL_ARRAY_BUFFER_ARB, strideBytes * numVerts, NULL, GL_STATIC_DRAW_ARB);
          modelData->SetVertexVBO(vbo[0]);
       }
       else
@@ -222,53 +218,36 @@ dtCore::RefPtr<osg::Geode> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pW
 
       hardwareModel->setIndexBuffer(indexArray.mArray);
 
-      float* vboArray = static_cast<float*>(glExt->glMapBuffer(GL_ARRAY_BUFFER_ARB, GL_READ_WRITE_ARB));
-      Array<float> vboVertexAttr(strideBytesCal3D * numVerts);
+      float* vboVertexAttr = static_cast<float*>(glExt->glMapBuffer(GL_ARRAY_BUFFER_ARB, GL_READ_WRITE_ARB));
 
-      hardwareModel->setVertexBuffer(reinterpret_cast<char*>(&vboVertexAttr.mArray[0]), strideBytesCal3D);
-      hardwareModel->setNormalBuffer(reinterpret_cast<char*>(&vboVertexAttr.mArray[3]), strideBytesCal3D);
+      hardwareModel->setVertexBuffer(reinterpret_cast<char*>(vboVertexAttr), strideBytes);
+      hardwareModel->setNormalBuffer(reinterpret_cast<char*>(vboVertexAttr + 3), strideBytes);
 
       hardwareModel->setTextureCoordNum(2);
-      //WARNING: do not check this code into delta on the trunk -bga
-      hardwareModel->setTextureCoordBuffer(0, reinterpret_cast<char*>(&vboVertexAttr.mArray[6]), strideBytesCal3D);
-      hardwareModel->setTextureCoordBuffer(1, reinterpret_cast<char*>(&vboVertexAttr.mArray[8]), strideBytesCal3D);
+      hardwareModel->setTextureCoordBuffer(0, reinterpret_cast<char*>(vboVertexAttr + 6), strideBytes);
+      hardwareModel->setTextureCoordBuffer(1, reinterpret_cast<char*>(vboVertexAttr + 8), strideBytes);
 
-      hardwareModel->setWeightBuffer(reinterpret_cast<char*>(&vboVertexAttr.mArray[10]), strideBytesCal3D);
-      hardwareModel->setMatrixIndexBuffer(reinterpret_cast<char*>(&vboVertexAttr.mArray[14]), strideBytesCal3D);
+      hardwareModel->setWeightBuffer(reinterpret_cast<char*>(vboVertexAttr + 10), strideBytes);
+      hardwareModel->setMatrixIndexBuffer(reinterpret_cast<char*>(vboVertexAttr + 14), strideBytes);
 
       if(hardwareModel->load(0, 0, maxBones))
       {
          numVerts = hardwareModel->getTotalVertexCount();
          numIndices = 3 * hardwareModel->getTotalFaceCount();
 
-         //invert texture coordinates, and compress data
-         unsigned int i = 0;
-         unsigned int j = 0;
-         for(; i < numVerts * strideCal3D; i += strideCal3D, j+= strideVBO)
+         //invert texture coordinates.
+         for(unsigned i = 0; i < numVerts * stride; i += stride)
          {
-            //WARNING: do not check this code into delta on the trunk -bga
-            //verts
-            vboArray[j + 0] = vboVertexAttr.mArray[i + 0];
-            vboArray[j + 1] = vboVertexAttr.mArray[i + 1];
-            vboArray[j + 2] = vboVertexAttr.mArray[i + 2];
-
-            //packing 3 indices into a single float
-            float packedIndices = (10000.0 * vboVertexAttr.mArray[i + 14]) + (100.0 * vboVertexAttr.mArray[i + 15]) + vboVertexAttr.mArray[i + 16];
-            vboArray[j + 3] = packedIndices;
-
-            //normals
-            vboArray[j + 4] = vboVertexAttr.mArray[i + 3];
-            vboArray[j + 5] = vboVertexAttr.mArray[i + 4];
-            vboArray[j + 6] = vboVertexAttr.mArray[i + 5];
-
-            //tx 1
-            vboArray[j + 7] = vboVertexAttr.mArray[i + 6];
-            vboArray[j + 8] = 1.0f - vboVertexAttr.mArray[i + 7];//invert the y tex coord
-
-            //weights
-            vboArray[j + 9] = vboVertexAttr.mArray[i + 10];
-            vboArray[j + 10] = vboVertexAttr.mArray[i + 11];
-            vboArray[j + 11] = vboVertexAttr.mArray[i + 12];
+            for (unsigned j = 15; j < 18; ++j)
+            {
+               if (vboVertexAttr[i + j] > maxBones)
+               {
+                  vboVertexAttr[i + j] = 0;
+               }
+            }
+            
+            vboVertexAttr[i + 7] = 1.0f - vboVertexAttr[i + 7]; //the odd texture coordinates in cal3d are flipped, not sure why
+            vboVertexAttr[i + 9] = 1.0f - vboVertexAttr[i + 7]; //the odd texture coordinates in cal3d are flipped, not sure why
          }
 
          for(int meshCount = 0; meshCount < hardwareModel->getHardwareMeshCount(); ++meshCount)

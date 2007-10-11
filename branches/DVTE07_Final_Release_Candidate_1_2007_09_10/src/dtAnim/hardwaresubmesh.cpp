@@ -159,20 +159,18 @@ void HardwareSubMeshDrawable::drawImplementation(osg::State& state) const
 
    glExt->glBindBuffer(GL_ARRAY_BUFFER_ARB, mVertexVBO);
 
-   unsigned stride = 12 * sizeof(float);
+   unsigned stride = 18 * sizeof(float);
 
    #define BUFFER_OFFSET(x)((GLvoid*) (0 + (x * sizeof(float))))
 
-   state.setVertexPointer(4, GL_FLOAT, stride, BUFFER_OFFSET(0));
+   state.setVertexPointer(3, GL_FLOAT, stride, BUFFER_OFFSET(0));
 
-   //state.setNormalPointer(GL_FLOAT, stride, BUFFER_OFFSET(3));
-   //WARNING: do not check this code into delta on the trunk -bga
-   //state.setTexCoordPointer(0, 2, GL_FLOAT, stride, BUFFER_OFFSET(6));
-   state.setTexCoordPointer(0, 4, GL_FLOAT, stride, BUFFER_OFFSET(4));
+   state.setNormalPointer(GL_FLOAT, stride, BUFFER_OFFSET(3));
+   state.setTexCoordPointer(0, 2, GL_FLOAT, stride, BUFFER_OFFSET(6));
+   state.setTexCoordPointer(1, 2, GL_FLOAT, stride, BUFFER_OFFSET(8));
 
-	//state.setTexCoordPointer(2, 4, GL_FLOAT, stride, BUFFER_OFFSET(10));
-   //state.setTexCoordPointer(3, 4, GL_FLOAT, stride, BUFFER_OFFSET(14));
-   state.setColorPointer(4, GL_FLOAT, stride, BUFFER_OFFSET(8));
+	state.setTexCoordPointer(2, 4, GL_FLOAT, stride, BUFFER_OFFSET(10));
+   state.setTexCoordPointer(3, 4, GL_FLOAT, stride, BUFFER_OFFSET(14));
 
    //make the call to render
    glExt->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, mIndexVBO);
