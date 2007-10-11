@@ -1,20 +1,18 @@
 <?xml version="1.0"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" id="Application">
 
-   <xs:simpleType name='nonEmptyString'>
-      <xs:restriction base='xs:normalizedString'>
-         <xs:minLength value='1'/>
-      </xs:restriction>
-   </xs:simpleType>
-
-   <xs:complexType name="PropertyType"  >
-      <xs:simpleContent>
-         <xs:extension base="xs:normalizedString">
-            <xs:attribute name="Name" use="required" type="nonEmptyString" />
-         </xs:extension>
-      </xs:simpleContent>  
-   </xs:complexType>
-   
+	<xs:simpleType name='nonEmptyString'>
+		<xs:restriction base='xs:normalizedString'>
+			<xs:minLength value='1'/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="PropertyType"  >
+		<xs:simpleContent>
+			<xs:extension base="xs:normalizedString">
+				<xs:attribute name="Name" use="required" type="nonEmptyString" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
 	<xs:element name="Application">
 		<xs:complexType>
 			<xs:sequence minOccurs="0">
@@ -40,8 +38,14 @@
 				<xs:element name="Camera">
 					<xs:complexType>
 						<xs:attribute name="Name" type="xs:string" use="required" form="unqualified"/>
-						<xs:attribute name="WindowInstance" type="xs:string" use="required" form="unqualified"/>
-						<xs:attribute name="SceneInstance" type="xs:string" use="required" form="unqualified"/>
+                        			<xs:attribute name="WindowInstance" type="xs:string" use="required" form="unqualified"/>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="View">
+					<xs:complexType>
+						<xs:attribute name="Name" type="xs:string" use="required" form="unqualified"/>
+                        			<xs:attribute name="CameraInstance" type="xs:string" use="required" form="unqualified"/>
+                        			<xs:attribute name="SceneInstance" type="xs:string" use="required" form="unqualified"/>
 					</xs:complexType>
 				</xs:element>
 				<xs:element name="Log" minOccurs="0" maxOccurs="unbounded">
@@ -51,16 +55,14 @@
 					</xs:complexType>
 				</xs:element>
 				<xs:element name="LibraryPath" minOccurs="0" maxOccurs="unbounded" type="xs:normalizedString" />
-
 				<xs:element name="Properties" minOccurs="0" maxOccurs="1">
-				   <xs:complexType>
-   				   <xs:sequence>
-   				     <xs:element name="Property" type="PropertyType" minOccurs="0" maxOccurs="unbounded"/>
-           			</xs:sequence>
-        			</xs:complexType>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Property" type="PropertyType" minOccurs="0" maxOccurs="unbounded"/>
+						</xs:sequence>
+        				</xs:complexType>
 				</xs:element>
-				
-		    </xs:sequence>
+			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
 </xs:schema>
