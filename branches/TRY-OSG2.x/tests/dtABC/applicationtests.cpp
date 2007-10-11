@@ -30,7 +30,6 @@
 #include <dtUtil/stringutils.h>                // for dtUtil::ToInt
 #include <dtUtil/xercesparser.h>               // for parsing
 #include <dtUtil/librarysharingmanager.h>      // make sure this gets configured properly.
-#include <Producer/KeyboardMouse>              // for keyboardkey and keyboard char
 
 namespace dtTest
 {
@@ -98,11 +97,10 @@ namespace dtTest
    public:
       typedef dtABC::Application BaseClass;
 
-      TestApp(Producer::KeyboardKey key, Producer::KeyCharacter kc): BaseClass(),
+      TestApp(int key): BaseClass(),
          mPressedHit(false),
          mReleasedHit(false),
-         mKey(key),
-         mChar(kc)
+         mKey(key)
       {
          GetKeyboardListener()->SetReleasedCallback(dtCore::GenericKeyboardListener::CallbackType(this,&TestApp::KeyReleased));
       }
@@ -118,38 +116,36 @@ namespace dtTest
          mReleasedHit = false;
       }
 
-      bool KeyPressed(const dtCore::Keyboard* kb, Producer::KeyboardKey key, Producer::KeyCharacter kc)
+      bool KeyPressed(const dtCore::Keyboard* kb, int key)
       {
          mPressedHit = true;
 
-         if( key==mKey && kc==mChar )
+         if( key==mKey )
          {
             return true;
          }
          return false;
       }
 
-      bool KeyReleased(const dtCore::Keyboard* kb, Producer::KeyboardKey key, Producer::KeyCharacter kc)
+      bool KeyReleased(const dtCore::Keyboard* kb, int key)
       {
          mReleasedHit = true;
 
-         if( key==mKey && kc==mChar )
+         if( key==mKey )
          {
             return true;
          }
          return false;
       }
 
-      Producer::KeyboardKey GetKey() const { return mKey; }
-      Producer::KeyCharacter GetCharacter() const { return mChar; }
+      int GetKey() const { return mKey; }
       bool GetPressedHit() const { return mPressedHit; }
       bool GetReleasedHit() const { return mReleasedHit; }
 
    private:
       bool mPressedHit;
       bool mReleasedHit;
-      Producer::KeyboardKey mKey;
-      Producer::KeyCharacter mChar;
+      int mKey;
    };
 
    // Registers the fixture into the 'registry'
@@ -175,7 +171,7 @@ namespace dtTest
 
    void ApplicationTests::TestInput()
    {
-      dtCore::RefPtr<dtTest::TestApp> app(new dtTest::TestApp(Producer::Key_N,Producer::KeyChar_n));
+      dtCore::RefPtr<dtTest::TestApp> app(new dtTest::TestApp('N'));
       app->GetWindow()->SetPosition(0, 0, 50, 50);
 
       app->Config();
@@ -189,25 +185,25 @@ namespace dtTest
       CPPUNIT_ASSERT( !app->GetReleasedHit() );  // better not be hit
 
       // test to see if the applicaiton's pressed callback is connected
-      CPPUNIT_ASSERT( !kb->KeyDown(Producer::KeyChar_M) );  // better NOT handle it
+      CPPUNIT_ASSERT( !kb->KeyDown('M') );  // better NOT handle it
       CPPUNIT_ASSERT( app->GetPressedHit() );  // better be hit
       CPPUNIT_ASSERT( !app->GetReleasedHit() );  // better NOT be hit
-      CPPUNIT_ASSERT( kb->KeyDown(app->GetCharacter()) );  // better handle it
+      CPPUNIT_ASSERT( kb->KeyDown(app->GetKey()) );  // better handle it
 
       app->ResetHits();
       CPPUNIT_ASSERT( !app->GetPressedHit() );  // better not be hit
       CPPUNIT_ASSERT( !app->GetReleasedHit() );  // better not be hit
 
       // test to see if the application's released callback is connected
-      CPPUNIT_ASSERT( !kb->KeyUp(Producer::KeyChar_M) );  // better NOT handle it
+      CPPUNIT_ASSERT( !kb->KeyUp('M') );  // better NOT handle it
       CPPUNIT_ASSERT( !app->GetPressedHit() );  // better be hit
       CPPUNIT_ASSERT( app->GetReleasedHit() );  // better be hit
-      CPPUNIT_ASSERT( kb->KeyUp(app->GetCharacter()) );  // better handle it
+      CPPUNIT_ASSERT( kb->KeyUp(app->GetKey()) );  // better handle it
    }
 
    void ApplicationTests::TestConfigProperties()
    {
-      dtCore::RefPtr<dtTest::TestApp> app(new dtTest::TestApp(Producer::Key_N,Producer::KeyChar_n));
+      dtCore::RefPtr<dtTest::TestApp> app(new dtTest::TestApp('N'));
       
       const std::string testDefault("abcd");
       const std::string testValue1("qqq");
@@ -289,9 +285,11 @@ namespace dtTest
       truth.WINDOW_X = 23;
       truth.WINDOW_Y = 97;
       truth.CAMERA_NAME = "SomeCam";
+      truth.VIEW_NAME = "SomeCam";
       
       truth.SCENE_INSTANCE = "SomeScene";
       truth.WINDOW_INSTANCE = "SomeWin";
+      truth.CAMERA_INSTANCE = "SomeCam";
       
       truth.LOG_LEVELS.insert(std::make_pair(dtUtil::Log::GetInstance().GetName(), "ERROR"));
       truth.LOG_LEVELS.insert(std::make_pair("SomeName", "Warn"));

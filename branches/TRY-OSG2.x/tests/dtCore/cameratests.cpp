@@ -26,11 +26,13 @@
 #include <dtUtil/macros.h>
 
 #include <dtCore/refptr.h>
+#include <dtCore/view.h>
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
 #include <dtCore/globals.h>
 #include <dtCore/camera.h>
 #include <dtCore/deltawin.h>
+#include <dtABC/application.h>
 
 #include <cppunit/extensions/HelperMacros.h>
 
@@ -59,13 +61,17 @@ class CameraTests : public CPPUNIT_NS::TestFixture
          try
          {
             dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
-      
-            mScene = new dtCore::Scene;
-            mWin = new dtCore::DeltaWin();
+
+            mApp = new dtABC::Application;
+            mView = mApp->GetOrCreateView();
+            mScene = mView->GetOrCreateScene();
+            mCamera = mView->GetOrCreateCamera();
+            mWin = mCamera->GetOrCreateWindow();
             mWin->SetPosition(0, 0, 50, 50);
-            mCamera = new dtCore::Camera;
-            mCamera->SetWindow(mWin.get());
-            mCamera->SetScene(mScene.get());
+            
+            mApp->Config();
+                        
+            
             dtCore::System::GetInstance().Config();
 
             dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
@@ -91,10 +97,13 @@ class CameraTests : public CPPUNIT_NS::TestFixture
       void tearDown()
       {
          dtCore::System::GetInstance().Stop();
+         mApp = NULL;
          mScene = NULL;
-         mCamera->SetScene(NULL);
          mCamera->SetWindow(NULL);
          mCamera = NULL;
+         mView->SetScene(NULL);
+         mView->SetCamera(NULL);
+         mView = NULL;
          mWin = NULL;
       
          dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
@@ -137,6 +146,8 @@ class CameraTests : public CPPUNIT_NS::TestFixture
       dtCore::RefPtr<dtCore::Scene> mScene;
       dtCore::RefPtr<dtCore::Camera> mCamera;
       dtCore::RefPtr<dtCore::DeltaWin> mWin;
+      dtCore::RefPtr<dtCore::View> mView;
+      dtCore::RefPtr<dtABC::Application> mApp;
 };
 
 const std::string CameraTests::SCREEN_SHOT_DIR("TestScreenShot");
@@ -174,9 +185,13 @@ void CameraTests2::TestEnabled()
    RefPtr<DeltaWin> win = new DeltaWin();
    cam->SetWindow(win.get());
 
+   RefPtr<View> view = new View();
+   view->SetCamera(cam.get());
+   
    RefPtr<Scene> scene = new Scene();
-   cam->SetScene(scene.get());
+   view->SetScene(scene.get());
 
+   
    System::GetInstance().Config();
    System::GetInstance().Start();
    System::GetInstance().Step();

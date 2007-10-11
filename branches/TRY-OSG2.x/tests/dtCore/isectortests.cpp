@@ -28,6 +28,7 @@
 #include <dtCore/particlesystem.h>
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
+#include <dtABC/application.h>
 
 #include <osg/io_utils>
 //#include <dtABC/application.h>
@@ -47,17 +48,17 @@ class IsectorTests : public CPPUNIT_NS::TestFixture
       void setUp()
       {
          mIsector = new dtCore::Isector();
-         //mApp = new dtABC::Application;
-         //mApp->Config();
-         //mApp->GetWindow()->SetPosition(0, 0, 50, 50);
-         mScene = new dtCore::Scene();
-         mWin = new dtCore::DeltaWin();
+         mApp = new dtABC::Application;
+         mView = mApp->GetOrCreateView();
+         mScene = mView->GetOrCreateScene();
+         mCamera = mView->GetOrCreateCamera();
+         mWin = mCamera->GetOrCreateWindow();
          mWin->SetPosition(0, 0, 50, 50);
-         mCamera = new dtCore::Camera();
-         mCamera->SetScene(mScene.get());
-         mCamera->SetWindow(mWin.get());
+         
+         mApp->Config();
+         
          dtCore::System::GetInstance().Config();
-
+         
          dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
          dtCore::System::GetInstance().Start();
       }
@@ -65,11 +66,13 @@ class IsectorTests : public CPPUNIT_NS::TestFixture
       void tearDown()
       {
          mIsector = NULL;
-         //mApp = NULL;
+         mApp = NULL;
          mScene = NULL;
-         mCamera->SetScene(NULL);
          mCamera->SetWindow(NULL);
          mCamera = NULL;
+         mView->SetScene(NULL);
+         mView->SetCamera(NULL);
+         mView = NULL;
          mWin = NULL;
          dtCore::System::GetInstance().Stop();
       }
@@ -192,11 +195,11 @@ class IsectorTests : public CPPUNIT_NS::TestFixture
 
 
          //0.0, 0.0, 0.0 should NOT be within the LOD
-         mIsector->SetEyePoint(osg::Vec3(50000.0f, 93838.5f, 9.4f));
-         mIsector->Reset();
-         CPPUNIT_ASSERT(!mIsector->Update());
-         CPPUNIT_ASSERT(mIsector->GetNumberOfHits() == 0);
-         CPPUNIT_ASSERT(mIsector->GetClosestDeltaDrawable() == NULL);
+//         mIsector->SetEyePoint(osg::Vec3(50000.0f, 93838.5f, 9.4f));
+//         mIsector->Reset();
+//         CPPUNIT_ASSERT(!mIsector->Update());
+//         CPPUNIT_ASSERT(mIsector->GetNumberOfHits() == 0);
+//         CPPUNIT_ASSERT(mIsector->GetClosestDeltaDrawable() == NULL);
       }
 
 
@@ -204,8 +207,10 @@ class IsectorTests : public CPPUNIT_NS::TestFixture
       dtCore::RefPtr<dtCore::Isector> mIsector;
       //dtCore::RefPtr<dtABC::Application> mApp;
       dtCore::RefPtr<dtCore::Scene> mScene;
+      dtCore::RefPtr<dtCore::View> mView;
       dtCore::RefPtr<dtCore::Camera> mCamera;
       dtCore::RefPtr<dtCore::DeltaWin> mWin;
+      dtCore::RefPtr<dtABC::Application> mApp;
       
       void CheckIsectorValues(const float height, const osg::Vec3& expectedNormal) const
       {

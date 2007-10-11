@@ -22,8 +22,8 @@
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtCore/deltawin.h>
 #include <dtUtil/exception.h>
-#include <Producer/RenderSurface>
 #include <osg/ref_ptr>
+#include <osgViewer/GraphicsWindow>
 
 ///used to test the DeltaWin functionality
 class  DeltaWinTests : public CPPUNIT_NS::TestFixture
@@ -37,6 +37,7 @@ public:
    void setUp();
    void tearDown();
    void TestWindow();
+   osgViewer::GraphicsWindow * CreateGraphicsWindow();
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(DeltaWinTests);
@@ -57,8 +58,8 @@ void DeltaWinTests::TestWindow()
       CPPUNIT_ASSERT_MESSAGE("Default constructor didn't work", win.valid());
 
       //make sure these guys throw an exception
-      CPPUNIT_ASSERT_THROW(win->SetKeyboard(0), dtUtil::Exception);
-      CPPUNIT_ASSERT_THROW(win->SetMouse(0), dtUtil::Exception);
+//      CPPUNIT_ASSERT_THROW(win->SetKeyboard(0), dtUtil::Exception);
+//      CPPUNIT_ASSERT_THROW(win->SetMouse(0), dtUtil::Exception);
 
       const int x = 111;
       const int y = 222;
@@ -83,14 +84,43 @@ void DeltaWinTests::TestWindow()
    }
    {
       //overloaded constructor test
-      osg::ref_ptr<Producer::RenderSurface> rs = 0; 
+      osg::ref_ptr<osgViewer::GraphicsWindow> gw = 0; 
       
       //should throw exception due to NULL param
-      CPPUNIT_ASSERT_THROW( new dtCore::DeltaWin("testWin", rs.get()),
+      CPPUNIT_ASSERT_THROW( new dtCore::DeltaWin("testWin", gw.get()),
                            dtUtil::Exception);
 
-      rs = new Producer::RenderSurface();
-      dtCore::RefPtr<dtCore::DeltaWin> win = new dtCore::DeltaWin("testWin", rs.get());
+      gw = CreateGraphicsWindow();
+      
+      dtCore::RefPtr<dtCore::DeltaWin> win = new dtCore::DeltaWin("testWin", gw.get());
       CPPUNIT_ASSERT_MESSAGE("Overloaded constructor failed", win.valid() );
    }
 }
+
+osgViewer::GraphicsWindow * DeltaWinTests::CreateGraphicsWindow()
+{
+   osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits;
+
+   traits->readDISPLAY();
+   if (traits->displayNum<0)
+      traits->displayNum = 0;
+
+   traits->windowName = "testWin";
+   traits->screenNum = 0;
+   traits->x = 0;
+   traits->y = 0;
+   traits->width = 640;
+   traits->height = 480;
+   traits->doubleBuffer = true;
+   
+   osg::GraphicsContext* gc = osg::GraphicsContext::createGraphicsContext(traits.get());
+   
+   osgViewer::GraphicsWindow* gw = dynamic_cast<osgViewer::GraphicsWindow*>(gc);
+   if (gw)
+   {
+      gw->getEventQueue()->getCurrentEventState()->setWindowRectangle(0, 0, 640, 480 );
+   }
+   
+   return (gw);
+}
+

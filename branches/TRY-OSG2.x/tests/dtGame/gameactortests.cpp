@@ -653,8 +653,8 @@ void GameActorTests::TestSetEnvironmentActor()
 {
    try
    {
-      dtCore::RefPtr<dtCore::Camera> camera = new dtCore::Camera;
-      camera->SetScene(&mManager->GetScene());
+      dtCore::RefPtr<dtCore::View> view = new dtCore::View;
+      view->SetScene(&mManager->GetScene());
       //One cannot enable paging without a window.
       //mManager->GetScene().EnablePaging();
       //CPPUNIT_ASSERT(mManager->GetScene().IsPagingEnabled());

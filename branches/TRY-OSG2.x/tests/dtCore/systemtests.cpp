@@ -130,9 +130,9 @@ class DummyNode: public osg::ShapeDrawable
          ResetState();
       }
 
-      void drawImplementation(osg::State& state) const
+      void drawImplementation(osg::RenderInfo& renderInfo) const
       {
-         osg::ShapeDrawable::drawImplementation(state);
+         osg::ShapeDrawable::drawImplementation(renderInfo);
          mDrawCalled = true;
       }
 

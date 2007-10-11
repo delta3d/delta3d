@@ -39,6 +39,7 @@
 
 #include <osg/Geode>
 #include <osg/Drawable>
+#include <osgViewer/Viewer>
 
 #include <sstream>
 
@@ -62,11 +63,17 @@ namespace dtAnim
          void setUp()
          {
             mScene = new dtCore::Scene();
+            
             mWin = new dtCore::DeltaWin();
             mWin->SetPosition(0, 0, 50, 50);
+            
             mCamera = new dtCore::Camera();
-            mCamera->SetScene(mScene.get());
             mCamera->SetWindow(mWin.get());
+            
+            mView = new dtCore::View(new osgViewer::Viewer);
+            mView->SetScene(mScene.get());
+            mView->SetCamera(mCamera.get());
+            
             dtCore::System::GetInstance().Config();
 
             dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
@@ -85,9 +92,11 @@ namespace dtAnim
             mModelPath.clear();
 
             mScene = NULL;
-            mCamera->SetScene(NULL);
             mCamera->SetWindow(NULL);
             mCamera = NULL;
+            mView->SetScene(NULL);
+            mView->SetCamera(NULL);
+            mView = NULL;
             mWin = NULL;
             dtCore::System::GetInstance().Stop();
          }
@@ -158,6 +167,7 @@ namespace dtAnim
          dtCore::RefPtr<dtCore::Scene>          mScene;
          dtCore::RefPtr<dtCore::Camera>         mCamera;
          dtCore::RefPtr<dtCore::DeltaWin>       mWin;
+         dtCore::RefPtr<dtCore::View>           mView;
    };
 
    // Registers the fixture into the 'registry'
