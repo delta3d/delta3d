@@ -58,16 +58,12 @@ class FIRE_FIGHTER_EXPORT InputComponent : public dtGame::BaseInputComponent
       /**
        * Handles key presses
        */
-      virtual bool HandleKeyPressed(const dtCore::Keyboard* keyboard, 
-                                    Producer::KeyboardKey key,
-                                    Producer::KeyCharacter character);
+      virtual bool HandleKeyPressed(const dtCore::Keyboard* keyboard, int key);
 
       /**
        * Handles key releases
        */
-      virtual bool HandleKeyReleased(const dtCore::Keyboard* keyboard, 
-                                     Producer::KeyboardKey key,
-                                     Producer::KeyCharacter character);
+      virtual bool HandleKeyReleased(const dtCore::Keyboard* keyboard, int key);
 
       /**
        * Handles button presses

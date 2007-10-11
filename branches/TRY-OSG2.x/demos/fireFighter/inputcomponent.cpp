@@ -51,6 +51,8 @@
 #include <dtActors/engineactorregistry.h>
 #include <dtActors/basicenvironmentactorproxy.h>
 
+#include <osgViewer/View>
+
 using dtCore::RefPtr;
 
 const std::string &InputComponent::NAME = "InputComponent";
@@ -151,8 +153,8 @@ void InputComponent::OnIntro()
 
    // Turn off the scene light and use the light maps/shadow maps
    dtCore::Camera &camera = *GetGameManager()->GetApplication().GetCamera();
-   camera.GetSceneHandler()->GetSceneView()->setLightingMode(osgUtil::SceneView::NO_SCENEVIEW_LIGHT);
-   osg::StateSet *globalState = camera.GetSceneHandler()->GetSceneView()->getGlobalStateSet();
+   camera.GetView()->GetOsgViewerView()->setLightingMode(osg::View::NO_LIGHT);
+   osg::StateSet *globalState = camera.GetOsgCamera()->getOrCreateStateSet();
    globalState->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
 
    std::vector<dtGame::GameActorProxy*> proxies;
@@ -196,10 +198,10 @@ void InputComponent::OnGame()
 
    // Turn off the scene light and use the light maps/shadow maps
    dtCore::Camera &camera = *GetGameManager()->GetApplication().GetCamera();
-   camera.GetSceneHandler()->GetSceneView()->setLightingMode(osgUtil::SceneView::NO_SCENEVIEW_LIGHT);
-   osg::StateSet *globalState = camera.GetSceneHandler()->GetSceneView()->getGlobalStateSet();
+   camera.GetView()->GetOsgViewerView()->setLightingMode(osg::View::NO_LIGHT);
+   osg::StateSet *globalState = camera.GetOsgCamera()->getOrCreateStateSet();
    globalState->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
-   
+      
    SetupTasks();
 
    if(mBellSound == NULL)
@@ -240,19 +242,17 @@ void InputComponent::OnMenu()
       mMotionModel->SetTarget(NULL);
 }
 
-bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard, 
-                                      Producer::KeyboardKey key, 
-                                      Producer::KeyCharacter character)
+bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard, int key)
 {
    bool handled = true;
    bool isGameRunning = (*mCurrentState == GameState::STATE_RUNNING);
 
    switch(key)
    {
-      case Producer::Key_W:
-      case Producer::Key_A:
-      case Producer::Key_S:
-      case Producer::Key_D:
+      case 'w':
+      case 'a':
+      case 's':
+      case 'd':
       {
          if(isGameRunning)
          {
@@ -271,7 +271,7 @@ bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard,
             {
                dtABC::Application& app = GetGameManager()->GetApplication();
                // Run 
-               if(app.GetKeyboard()->GetKeyState(Producer::Key_Shift_L))
+               if(app.GetKeyboard()->GetKeyState(osgGA::GUIEventAdapter::KEY_Shift_L))
                {
                   mMotionModel->SetMaximumWalkSpeed(6.0f);
                   mRunSound->Play();
@@ -291,7 +291,7 @@ bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard,
       }
       break;
       
-      case Producer::Key_F:
+      case 'f':
       {
          if(isGameRunning)
          {
@@ -316,35 +316,35 @@ bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard,
       }
       break;
 
-      case Producer::Key_M:
+      case 'm':
       {
          if(isGameRunning)
             SendGameStateChangedMessage(*mCurrentState, GameState::STATE_DEBRIEF);
       }
       break;
 
-      /*case Producer::Key_C:
+      /*case 'c':
       {
          if(isGameRunning)
             mPlayer->SetIsCrouched(!mPlayer->IsCrouched());
       }
       break;*/
 
-      case Producer::Key_bracketleft:
+      case '[':
       {
          if(isGameRunning)
             mPlayer->UpdateSelectedItem(true);
       }
       break;
 
-      case Producer::Key_bracketright:
+      case ']':
       {
          if(isGameRunning)
             mPlayer->UpdateSelectedItem(false);
       }
       break;
       
-      case Producer::Key_8:
+      case '8':
       {
          dtCore::Transform playerXform;
          mPlayer->GetTransform(playerXform);
@@ -352,7 +352,7 @@ bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard,
       }
       break;
 
-      case Producer::Key_9:
+      case '9':
       {
          dtCore::Transform playerXform;
          mPlayer->GetTransform(playerXform);
@@ -362,7 +362,7 @@ bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard,
       }
       break;
 
-      case Producer::Key_N:
+      case 'n':
       {
          if(*mCurrentState == GameState::STATE_INTRO)
          {
@@ -375,7 +375,7 @@ bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard,
       }
       break;
 
-      case Producer::Key_F1:
+      case osgGA::GUIEventAdapter::KEY_F1:
       {
          if(isGameRunning)
          {
@@ -385,7 +385,7 @@ bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard,
       }
       break;
 
-      case Producer::Key_Escape:
+      case osgGA::GUIEventAdapter::KEY_Escape:
       {
          if(isGameRunning)
          {
@@ -408,16 +408,16 @@ bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard,
    return handled;
 }
 
-bool InputComponent::HandleKeyReleased(const dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character)
+bool InputComponent::HandleKeyReleased(const dtCore::Keyboard* keyboard, int key)
 {
    bool handled = true;
 
    switch(key)
    {
-      case Producer::Key_W:
-      case Producer::Key_A:
-      case Producer::Key_S:
-      case Producer::Key_D:
+      case 'w':
+      case 'a':
+      case 's':
+      case 'd':
       {
          if(*mCurrentState == GameState::STATE_RUNNING)
          {
