@@ -66,40 +66,38 @@ void TestAnimInput::SetTurnRate(float turn)
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool TestAnimInput::HandleKeyPressed(const dtCore::Keyboard *keyBoard,
-                                    Producer::KeyboardKey key, 
-                                    Producer::KeyCharacter character)
+bool TestAnimInput::HandleKeyPressed(const dtCore::Keyboard *keyBoard, int key)
 {
    bool handled = true;
    
    switch(key)
    {
 
-      case Producer::Key_Escape:
+      case osgGA::GUIEventAdapter::KEY_Escape:
          {            
             GetGameManager()->GetApplication().Quit();
             return true;
          }
 
-      case Producer::Key_Right:
+      case osgGA::GUIEventAdapter::KEY_Right:
          {
             mIsTurning = true;
             mTurnDirection = -1.0f;
             return false;
          }
-      case Producer::Key_Left:
+      case osgGA::GUIEventAdapter::KEY_Left:
          {
             mIsTurning = true;
             mTurnDirection = 1.0f;
             return false;
          }
-      case Producer::Key_backslash:
-      case Producer::Key_Insert:
+      case '\\':
+      case osgGA::GUIEventAdapter::KEY_Insert:
          {
-            GetGameManager()->GetApplication().GetCamera()->SetNextStatisticsType();
+//            GetGameManager()->GetApplication().GetCamera()->SetNextStatisticsType();
             break;
          }
-      case Producer::Key_Up:
+      case osgGA::GUIEventAdapter::KEY_Up:
          {            
             if(!mIsWalking)
             {
@@ -114,29 +112,27 @@ bool TestAnimInput::HandleKeyPressed(const dtCore::Keyboard *keyBoard,
    };
 
    if(!handled)
-      return GetGameManager()->GetApplication().KeyPressed(keyBoard, key, character);
+      return GetGameManager()->GetApplication().KeyPressed(keyBoard, key);
 
    return handled;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool TestAnimInput::HandleKeyReleased(const dtCore::Keyboard* keyboard, 
-                                     Producer::KeyboardKey key,
-                                     Producer::KeyCharacter character)
+bool TestAnimInput::HandleKeyReleased(const dtCore::Keyboard* keyboard, int key)
 {
    bool handled = true;
    
    switch(key)
    {
-      case Producer::Key_Up:
+      case osgGA::GUIEventAdapter::KEY_Up:
          {                        
             mAnimationHelper->ClearAll(0.25f);
             mAnimationHelper->PlayAnimation("Idle");
             mIsWalking = false;
             return false;
          }
-      case Producer::Key_Right:
-      case Producer::Key_Left:
+      case osgGA::GUIEventAdapter::KEY_Right:
+      case osgGA::GUIEventAdapter::KEY_Left:
          {
             mIsTurning = false;
             return false;
@@ -146,7 +142,7 @@ bool TestAnimInput::HandleKeyReleased(const dtCore::Keyboard* keyboard,
    };
 
    if(!handled)
-      return GetGameManager()->GetApplication().KeyPressed(keyboard, key, character);
+      return GetGameManager()->GetApplication().KeyPressed(keyboard, key);
 
    return handled;
 }

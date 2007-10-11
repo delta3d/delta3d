@@ -75,7 +75,7 @@ void TestAI::Config()
 
    //create overhead camera and disable it by default   
    mOverheadCamera = new dtCore::Camera();
-   mOverheadCamera->SetScene(GetScene());
+//   mOverheadCamera->SetScene(GetScene());
    mOverheadCamera->SetWindow(GetWindow());
    mOverheadCamera->SetEnabled(false);
    //set overhead camera offset
@@ -100,12 +100,12 @@ void TestAI::Config()
    srand(4);
 }
 
-bool TestAI::KeyPressed(const dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character)
+bool TestAI::KeyPressed(const dtCore::Keyboard* keyboard, int key)
 {
   
    switch( key )
    {
-      case Producer::Key_space:
+      case ' ':
       {
          if(GetCamera()->GetEnabled())
          {
@@ -120,14 +120,14 @@ bool TestAI::KeyPressed(const dtCore::Keyboard* keyboard, Producer::KeyboardKey 
          return true;
       }
 
-      case Producer::Key_N:
+      case 'n':
          {            
             mDrawNavMesh = !mDrawNavMesh;
             WaypointManager::GetInstance().SetDrawNavMesh(mDrawNavMesh, true);            
             return true;
          }
 
-      case Producer::Key_A:
+      case 'a':
          {
             if(mOverheadCamera->GetEnabled())
             {
@@ -138,7 +138,7 @@ bool TestAI::KeyPressed(const dtCore::Keyboard* keyboard, Producer::KeyboardKey 
             return true;
          }
 
-      case Producer::Key_Z:
+      case 'z':
          {
             if(mOverheadCamera->GetEnabled())
             {
@@ -149,7 +149,7 @@ bool TestAI::KeyPressed(const dtCore::Keyboard* keyboard, Producer::KeyboardKey 
             return true;
          }
 
-      case Producer::Key_Escape:
+      case osgGA::GUIEventAdapter::KEY_Escape:
          {            
             Quit();
             return true;

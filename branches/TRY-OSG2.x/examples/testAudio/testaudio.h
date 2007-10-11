@@ -75,7 +75,7 @@ public:
    virtual void PreFrame( const double deltaFrameTime );
    virtual void Frame( const double deltaFrameTime );
    virtual void PostFrame( const double deltaFrameTime );
-   bool KeyPressed(const dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character);
+   bool KeyPressed(const dtCore::Keyboard* keyboard, int key);
 
 private:
    inline void LoadPlaySound( const char* fname, unsigned int box = 0L );

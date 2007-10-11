@@ -3,6 +3,9 @@
 #include <dtCore/camera.h>
 #include <dtCore/scene.h>
 
+#include <osgGA/GUIEventAdapter>
+
+
 using namespace dtABC;
 using namespace dtCore;
 
@@ -74,26 +77,24 @@ void TestLightsApp::Config()
    mOmm->SetDistance( distance );
 }
 
-bool TestLightsApp::KeyPressed(const Keyboard*           keyboard, 
-                                 Producer::KeyboardKey   key,
-                                 Producer::KeyCharacter  character )
+bool TestLightsApp::KeyPressed(const Keyboard* keyboard, int key)
 {
    bool verdict( false );
    switch( key )
    {
-   case Producer::Key_Escape:
+   case osgGA::GUIEventAdapter::KEY_Escape:
       Quit();
       verdict = true;
       break;
-   case Producer::Key_1: 
+   case '1': 
       mGlobalSpot->SetEnabled( !mGlobalSpot->GetEnabled() );
       verdict = true;
       break;
-   case Producer::Key_2:
+   case '2':
       mPositional->SetEnabled( !mPositional->GetEnabled() );
       verdict = true;
       break;
-   case Producer::Key_3:
+   case '3':
    {
       if( mPositional->GetLightingMode() == Light::GLOBAL )
          mPositional->SetLightingMode( Light::LOCAL );
@@ -103,7 +104,7 @@ bool TestLightsApp::KeyPressed(const Keyboard*           keyboard,
       verdict = true;
       break;
    }
-   case Producer::Key_4:
+   case '4':
       mGlobalInfinite->SetEnabled( !mGlobalInfinite->GetEnabled() );
       verdict = true;
       break;

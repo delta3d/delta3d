@@ -7,6 +7,8 @@
 #include <dtCore/camera.h>
 #include <dtCore/deltawin.h>
 
+#include <osgGA/GUIEventAdapter>
+
 using namespace dtABC;
 using namespace dtCore;
 
@@ -63,15 +65,15 @@ public:
       mEnabled = true;
    }
 
-   virtual bool KeyPressed(const dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character)
+   virtual bool KeyPressed(const dtCore::Keyboard* keyboard, int key)
    {
       bool verdict(false);
-      if (key == Producer::Key_Escape)
+      if (key == osgGA::GUIEventAdapter::KEY_Escape)
       {
          this->Quit();
          verdict = true;
       }
-      else if(key == Producer::Key_space)
+      else if(key == osgGA::GUIEventAdapter::KEY_Space)
       {
          osg::StateSet* ss = mObject->GetOSGNode()->getOrCreateStateSet(); 
 

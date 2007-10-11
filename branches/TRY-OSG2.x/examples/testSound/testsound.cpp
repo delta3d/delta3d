@@ -8,7 +8,6 @@ using namespace   dtAudio;
 using namespace   dtABC;
 using namespace   dtCore;
 using namespace   dtUtil;
-using namespace   Producer;
 
 
 
@@ -79,12 +78,10 @@ TestSoundApp::~TestSoundApp()
 * @param key the key pressed
 * @param character the corresponding character
 */
-bool TestSoundApp::KeyPressed(const dtCore::Keyboard*       keyboard,
-                         Producer::KeyboardKey   key,
-                         Producer::KeyCharacter  character )
+bool TestSoundApp::KeyPressed(const dtCore::Keyboard* keyboard, int key )
 {
    // pass the keyboard event to the overlords
-   bool handled = Application::KeyPressed(keyboard, key, character );
+   bool handled = Application::KeyPressed(keyboard, key);
    if( handled )  /// == true
    {
       return handled;
@@ -93,7 +90,7 @@ bool TestSoundApp::KeyPressed(const dtCore::Keyboard*       keyboard,
    // do something depending on which key was pressed
    switch( key )
    {
-   case Producer::Key_space:
+   case osgGA::GUIEventAdapter::KEY_Space:
       {
          // get a new sound from the manager
          Sound*   sound = AudioManager::GetInstance().NewSound();

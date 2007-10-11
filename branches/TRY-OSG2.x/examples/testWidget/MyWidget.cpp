@@ -27,13 +27,11 @@ MyWidget::EscapeListener::~EscapeListener()
 {
 }
    
-bool MyWidget::EscapeListener::HandleKeyPressed( const Keyboard* keyboard, 
-                                                 Producer::KeyboardKey key,
-                                                 Producer::KeyCharacter character )
+bool MyWidget::EscapeListener::HandleKeyPressed( const Keyboard* keyboard, int key )
 {
    switch(key)
    {
-      case Producer::Key_Escape:
+      case osgGA::GUIEventAdapter::KEY_Escape:
       {
          mQuitFunctor();
          return true;
@@ -46,16 +44,12 @@ bool MyWidget::EscapeListener::HandleKeyPressed( const Keyboard* keyboard,
    return false;
 }
 
-bool MyWidget::EscapeListener::HandleKeyReleased( const Keyboard* keyboard, 
-                                                  Producer::KeyboardKey key,
-                                                  Producer::KeyCharacter character )
+bool MyWidget::EscapeListener::HandleKeyReleased( const Keyboard* keyboard, int key)
 {
    return false;
 }
 
-bool MyWidget::EscapeListener::HandleKeyTyped( const Keyboard* keyboard, 
-                                               Producer::KeyboardKey key,
-                                               Producer::KeyCharacter character )
+bool MyWidget::EscapeListener::HandleKeyTyped( const Keyboard* keyboard, int key)
 {
    return false;
 }

@@ -2,6 +2,7 @@
 #include <dtCore/dt.h>
 #include <dtABC/dtabc.h>
 #include <iostream>
+#include <osgGA/GUIEventAdapter>
 
 #include <dtCore/keyboard.h>   // for base class
 
@@ -28,20 +29,20 @@ public:
          float rotation = mCharacter->GetRotation(),
             velocity = 0.0f;
 
-         if(mKeyboard->GetKeyState(Producer::Key_Left))
+         if(mKeyboard->GetKeyState(osgGA::GUIEventAdapter::KEY_Left))
          {
             rotation += float(delta*90.0);
          }
 
-         if(mKeyboard->GetKeyState(Producer::Key_Right))
+         if(mKeyboard->GetKeyState(osgGA::GUIEventAdapter::KEY_Right))
          {
             rotation -= float(delta*90.0);
          }
 
-         if(mKeyboard->GetKeyState(Producer::Key_Up))
+         if(mKeyboard->GetKeyState(osgGA::GUIEventAdapter::KEY_Up))
          {
-            if(mKeyboard->GetKeyState(Producer::Key_Shift_R) ||
-               mKeyboard->GetKeyState(Producer::Key_Shift_L))
+            if(mKeyboard->GetKeyState(osgGA::GUIEventAdapter::KEY_Shift_R) ||
+               mKeyboard->GetKeyState(osgGA::GUIEventAdapter::KEY_Shift_L))
             {
                velocity += 4.0f;
             }
@@ -201,24 +202,24 @@ public:
       AddDrawable( mMarine.get() );
 
       //move Bob with the keyboard
-      mKeyController = new KeyController( mOpFor.get(), GetWindow()->GetKeyboard() );
+      mKeyController = new KeyController( mOpFor.get(), GetKeyboard() );
 
       //have Dave follow Bob
       mFollowController = new FollowController( mMarine.get(), mOpFor.get() );
    }
 
-   bool KeyPressed(const dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character)
+   bool KeyPressed(const dtCore::Keyboard* keyboard, int key)
    {
       bool verdict(false);
       switch( key )
       {
-         case Producer::Key_P:
+         case 'P':
          {
             System::GetInstance().SetPause( !System::GetInstance().GetPause() );
             verdict = true;
             break;
          }
-         case Producer::Key_Escape:
+         case osgGA::GUIEventAdapter::KEY_Escape:
          {
             Quit();
             verdict = true;

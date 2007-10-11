@@ -46,16 +46,16 @@ public:
       mKeyboardAxisInputDevice->AddAxis(
          "w/s",
          new ButtonsToAxis(
-         GetKeyboard()->GetButton(Producer::Key_W),
-         GetKeyboard()->GetButton(Producer::Key_S)
+         GetKeyboard()->GetButton('w'),
+         GetKeyboard()->GetButton('s')
          )
          );
 
       mKeyboardAxisInputDevice->AddAxis(
          "a/d",
          new ButtonsToAxis(
-         GetKeyboard()->GetButton(Producer::Key_A),
-         GetKeyboard()->GetButton(Producer::Key_D)
+         GetKeyboard()->GetButton('a'),
+         GetKeyboard()->GetButton('d')
          )
          );
 
@@ -63,17 +63,17 @@ public:
 
       mApplicationInputDevice->AddButton(
          "action 1", 
-         GetKeyboard()->GetButton(Producer::Key_1)
+         GetKeyboard()->GetButton('1')
          );
 
       mApplicationInputDevice->AddButton(
          "action 2",
-         GetKeyboard()->GetButton(Producer::Key_2)
+         GetKeyboard()->GetButton('2')
          );
 
       mApplicationInputDevice->AddButton(
          "action 3",
-         GetKeyboard()->GetButton(Producer::Key_3)
+         GetKeyboard()->GetButton('3')
          );
 
       mApplicationInputDevice->AddAxis(
@@ -81,8 +81,8 @@ public:
          mKeyboardAxisInputDevice->AddAxis(
          "up/down",
          new ButtonsToAxis(
-         GetKeyboard()->GetButton(Producer::Key_Up),
-         GetKeyboard()->GetButton(Producer::Key_Down)
+         GetKeyboard()->GetButton(osgGA::GUIEventAdapter::KEY_Up),
+         GetKeyboard()->GetButton(osgGA::GUIEventAdapter::KEY_Down)
          )
          )
          );
@@ -92,8 +92,8 @@ public:
          mKeyboardAxisInputDevice->AddAxis(
          "left/right",
          new ButtonsToAxis(
-         GetKeyboard()->GetButton(Producer::Key_Left),
-         GetKeyboard()->GetButton(Producer::Key_Right)
+         GetKeyboard()->GetButton(osgGA::GUIEventAdapter::KEY_Left),
+         GetKeyboard()->GetButton(osgGA::GUIEventAdapter::KEY_Right)
          )
          )
          );
@@ -111,7 +111,7 @@ public:
          mInputMapper->AddDevice(dtInputPLIB::Joystick::GetInstance(i));
       }
 
-      mInputMapper->SetCancelButton(GetKeyboard()->GetButton(Producer::Key_Escape));
+      mInputMapper->SetCancelButton(GetKeyboard()->GetButton(osgGA::GUIEventAdapter::KEY_Escape));
    }
 
 protected:
