@@ -67,9 +67,10 @@ Mouse * KeyboardMouseHandler::CreateMouse()
 
 bool KeyboardMouseHandler::handle(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter &aa, osg::Object *, osg::NodeVisitor *)
 {
-   float x = (ea.getX() - (ea.getWindowWidth()/2)) / (ea.getWindowWidth() ? ea.getWindowWidth() : 1);
-   float y = (ea.getY() - (ea.getWindowHeight()/2)) / (ea.getWindowHeight() ? ea.getWindowHeight() : 1);
-   
+   //returned values in the range of (-1..1)
+   float x = ea.getXnormalized();
+   float y = ea.getYnormalized();
+
    switch (ea.getEventType() )
    {
       case osgGA::GUIEventAdapter::SCROLL :
