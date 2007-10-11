@@ -3015,7 +3015,7 @@ int main( int argc, char **argv )
 
    editorWindow->show();
 
-   sceneGroup = viewWidget->GetScene()->GetSceneNode();
+   sceneGroup = viewWidget->GetScene()->GetOrCreateSceneNode();
 
    viewWidget->Config();
    

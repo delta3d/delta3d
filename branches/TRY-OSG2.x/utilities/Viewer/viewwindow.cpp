@@ -485,7 +485,8 @@ ViewWindow::KeyboardEventHandler( const KeyboardEvent& ev )
             else  if( ( ev.key == ev.KEY_r ) || ( ev.key == ev.KEY_R ) || ( ev.key == ev.KEY_Space ) )
                mContainer->ResetCam();
             else  if( ev.key == ev.KEY_s )
-               GetCamera()->SetNextStatisticsType();
+               ;
+//               GetCamera()->SetNextStatisticsType();
          }
          break;
 

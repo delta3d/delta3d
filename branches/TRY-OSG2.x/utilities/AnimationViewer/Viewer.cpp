@@ -81,7 +81,7 @@ void Viewer::Config()
    l->SetAmbient(0.7f, 0.7f, 0.7f, 1.f);  
    l->SetDiffuse(1.0f, 1.0f, 1.0f, 1.0f);  
   
-   GetScene()->GetSceneNode()->addChild( MakePlane() );
+   GetScene()->GetOrCreateSceneNode()->addChild(MakePlane());
 
    mWireDecorator  = new osg::Group;
    mShadeDecorator = new osg::Group;
@@ -237,27 +237,27 @@ void Viewer::OnLOD_Changed( float zeroToOneValue )
 
 void Viewer::OnSetShaded()
 {
-   GetScene()->GetSceneNode()->removeChild(mWireDecorator.get());
-   GetScene()->GetSceneNode()->removeChild(mShadeDecorator.get());
+   GetScene()->GetOrCreateSceneNode()->removeChild(mWireDecorator.get());
+   GetScene()->GetOrCreateSceneNode()->removeChild(mShadeDecorator.get());
 
-   GetScene()->GetSceneNode()->addChild(mShadeDecorator.get());
+   GetScene()->GetOrCreateSceneNode()->addChild(mShadeDecorator.get());
 }
 
 void Viewer::OnSetWireframe()
 {
-   GetScene()->GetSceneNode()->removeChild(mWireDecorator.get());
-   GetScene()->GetSceneNode()->removeChild(mShadeDecorator.get());  
+   GetScene()->GetOrCreateSceneNode()->removeChild(mWireDecorator.get());
+   GetScene()->GetOrCreateSceneNode()->removeChild(mShadeDecorator.get());  
 
-   GetScene()->GetSceneNode()->addChild(mWireDecorator.get());
+   GetScene()->GetOrCreateSceneNode()->addChild(mWireDecorator.get());
 }
 
 void Viewer::OnSetShadedWireframe()
 {
-   GetScene()->GetSceneNode()->removeChild(mWireDecorator.get());
-   GetScene()->GetSceneNode()->removeChild(mShadeDecorator.get());
+   GetScene()->GetOrCreateSceneNode()->removeChild(mWireDecorator.get());
+   GetScene()->GetOrCreateSceneNode()->removeChild(mShadeDecorator.get());
 
-   GetScene()->GetSceneNode()->addChild(mWireDecorator.get());
-   GetScene()->GetSceneNode()->addChild(mShadeDecorator.get());   
+   GetScene()->GetOrCreateSceneNode()->addChild(mWireDecorator.get());
+   GetScene()->GetOrCreateSceneNode()->addChild(mShadeDecorator.get());   
 }
 
 void Viewer::InitShadeDecorator()
