@@ -74,7 +74,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib osgProducerd.lib opengl32.lib osgd.lib osgUtild.lib osgGAd.lib OpenThreadsWin32d.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib osgProducerd.lib opengl32.lib osgd.lib osgUtild.lib osgGAd.lib OpenThreadsd.lib"
 				OutputFile="../../../../../bin/Exporters/3DSMax/Previewerd.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -318,7 +318,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib osgProducer.lib opengl32.lib osg.lib osgUtil.lib osgGA.lib OpenThreadsWin32.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib osgProducer.lib opengl32.lib osg.lib osgUtil.lib osgGA.lib OpenThreads.lib"
 				OutputFile="../../../../../bin/Exporters/3DSMax/Previewer.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"

@@ -63,7 +63,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCored.lib js_d.lib ul_d.lib winmm.lib"
+				AdditionalDependencies="dtCored.lib js_d.lib ul_d.lib winmm.lib osgD.lib"
 				OutputFile="../../../bin/dtInputPLIBd.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -148,7 +148,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCore.lib js.lib ul.lib winmm.lib"
+				AdditionalDependencies="dtCore.lib js.lib ul.lib winmm.lib osg.lib"
 				OutputFile="../../../bin/dtInputPLIB.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"

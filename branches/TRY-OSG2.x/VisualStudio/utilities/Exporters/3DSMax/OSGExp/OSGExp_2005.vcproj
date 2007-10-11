@@ -74,7 +74,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib bmm.lib opengl32.lib glu32.lib osgd_s.lib osgDBd_s.lib osgUtild_s.lib osgGAd_s.lib osgSimd_s.lib osgParticled_s.lib osgFXd_s.lib osgTextd_s.lib Previewerd_s.lib OpenThreadsWin32d_s.lib osgdb_osgd_s.lib osgdb_ived_s.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib bmm.lib opengl32.lib glu32.lib osgd_s.lib osgDBd_s.lib osgUtild_s.lib osgGAd_s.lib osgSimd_s.lib osgParticled_s.lib osgFXd_s.lib osgTextd_s.lib Previewerd_s.lib OpenThreadsd_s.lib osgdb_osgd_s.lib osgdb_ived_s.lib"
 				OutputFile="..\..\..\..\..\bin\Exporters\3DSMax\OSGExpd.dle"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -176,7 +176,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib bmm.lib opengl32.lib glu32.lib osg_s.lib osgDB_s.lib osgUtil_s.lib osgGA_s.lib osgSim_s.lib osgParticle_s.lib osgFX_s.lib osgText_s.lib Previewer_s.lib OpenThreadsWin32_s.lib osgdb_osg_s.lib osgdb_ive_s.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib bmm.lib opengl32.lib glu32.lib osg_s.lib osgDB_s.lib osgUtil_s.lib osgGA_s.lib osgSim_s.lib osgParticle_s.lib osgFX_s.lib osgText_s.lib Previewer_s.lib OpenThreads_s.lib osgdb_osg_s.lib osgdb_ive_s.lib"
 				OutputFile="..\..\..\..\..\bin\Exporters\3DSMax\OSGExp.dle"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -278,7 +278,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib bmm.lib opengl32.lib osg.lib osgDB.lib osgUtil.lib osgSim.lib osgParticle.lib Previewer.lib OpenThreadsWin32.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib bmm.lib opengl32.lib osg.lib osgDB.lib osgUtil.lib osgSim.lib osgParticle.lib Previewer.lib OpenThreads.lib"
 				OutputFile="..\..\..\..\..\bin\Exporters\3DSMax\OSGExp.dle"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -377,7 +377,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib bmm.lib opengl32.lib osgd.lib osgDBd.lib osgUtild.lib osgSimd.lib osgParticled.lib Previewerd.lib OpenThreadsWin32d.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib bmm.lib opengl32.lib osgd.lib osgDBd.lib osgUtild.lib osgSimd.lib osgParticled.lib Previewerd.lib OpenThreadsd.lib"
 				OutputFile="..\..\..\..\..\bin\Exporters\3DSMax\OSGExpd.dle"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"

@@ -62,7 +62,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="python25.lib osgd.lib osgDBd.lib dtCored.lib dtUtilD.lib OpenThreadsWin32d.lib"
+				AdditionalDependencies="python25.lib osgd.lib osgDBd.lib dtCored.lib dtUtilD.lib OpenThreadsd.lib"
 				OutputFile="../../../bin/dtScriptd.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -146,7 +146,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="python25.lib osg.lib osgDB.lib dtCore.lib dtUtil.lib OpenThreadsWin32.lib"
+				AdditionalDependencies="python25.lib osg.lib osgDB.lib dtCore.lib dtUtil.lib OpenThreads.lib"
 				OutputFile="../../../bin/dtScript.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"

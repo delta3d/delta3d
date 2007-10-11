@@ -63,7 +63,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtUtild.lib dtCored.lib dtABCd.lib osgd.lib Producerd.lib osgUtild.lib"
+				AdditionalDependencies="dtUtild.lib dtCored.lib dtABCd.lib osgd.lib osgUtild.lib osgViewerD.lib"
 				OutputFile="../../../bin/testMultiWind.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -149,7 +149,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtUtil.lib dtCore.lib dtABC.lib osg.lib Producer.lib osgUtil.lib"
+				AdditionalDependencies="dtUtil.lib dtCore.lib dtABC.lib osg.lib osgUtil.lib osgViewer.lib"
 				OutputFile="../../../bin/testMultiWin.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"

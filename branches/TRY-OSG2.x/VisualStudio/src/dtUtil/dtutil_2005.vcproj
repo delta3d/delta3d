@@ -64,7 +64,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="openthreadswin32d.lib osgd.lib osgDBd.lib xerces-c_2D.lib"
+				AdditionalDependencies="OpenThreadsd.lib osgd.lib osgDBd.lib xerces-c_2D.lib"
 				OutputFile="../../../bin/dtUtild.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -150,7 +150,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="openthreadswin32.lib osg.lib osgDB.lib xerces-c_2.lib"
+				AdditionalDependencies="OpenThreads.lib osg.lib osgDB.lib xerces-c_2.lib"
 				OutputFile="../../../bin/dtUtil.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"

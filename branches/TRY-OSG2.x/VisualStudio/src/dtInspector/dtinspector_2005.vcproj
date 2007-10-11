@@ -66,7 +66,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtUtild.lib dtabcD.lib dtCored.lib producerd.lib openthreadswin32d.lib osgd.lib"
+				AdditionalDependencies="dtUtild.lib dtabcD.lib dtCored.lib OpenThreadsd.lib osgd.lib"
 				OutputFile="../../../bin/dtInspectord.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -149,7 +149,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtUtil.lib dtABC.lib dtCore.lib producer.lib openthreadswin32.lib osg.lib"
+				AdditionalDependencies="dtUtil.lib dtABC.lib dtCore.lib OpenThreads.lib osg.lib"
 				OutputFile="../../../bin/dtInspector.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
