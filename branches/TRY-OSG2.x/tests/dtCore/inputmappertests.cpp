@@ -22,6 +22,9 @@
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtCore/inputmapper.h>
 
+#include <dtCore/logicalinputdevice.h>
+#include <dtCore/keyboard.h>
+
 namespace dtTest
 {
    /// unit tests for dtCore::Axis
@@ -29,6 +32,7 @@ namespace dtTest
    {
       CPPUNIT_TEST_SUITE( InputMapperTests );
       CPPUNIT_TEST( TestObservers );
+      CPPUNIT_TEST( AddingNewFeatureValid );
       CPPUNIT_TEST_SUITE_END();
 
       public:
@@ -38,11 +42,16 @@ namespace dtTest
          ///\todo callback triggering and data flow to observers
          void TestObservers();
 
+         void AddingNewFeatureValid();
+
       private:
    };
+
 }
 
+
 using namespace dtTest;
+CPPUNIT_TEST_SUITE_REGISTRATION(InputMapperTests);
 
 void InputMapperTests::setUp()
 {
@@ -54,4 +63,32 @@ void InputMapperTests::tearDown()
 
 void InputMapperTests::TestObservers()
 {
+}
+
+
+void InputMapperTests::AddingNewFeatureValid()
+{
+   dtCore::RefPtr<dtCore::LogicalInputDevice> dev = new dtCore::LogicalInputDevice();
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("should have zero features", 0, dev->GetFeatureCount());
+
+   dtCore::RefPtr<dtCore::Keyboard> keyboard = new dtCore::Keyboard();
+
+   dev->AddButton(
+      "action 1", 
+      keyboard->GetButton('1')
+      );
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("should have one feature", 1, dev->GetFeatureCount());
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("should have one button", 1, dev->GetButtonCount());
+
+   dev->AddButton(
+      "action 2", 
+      keyboard->GetButton('2')
+      );
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("should have two features", 2, dev->GetFeatureCount());
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("should have two buttons", 2, dev->GetButtonCount());
+
+
 }
