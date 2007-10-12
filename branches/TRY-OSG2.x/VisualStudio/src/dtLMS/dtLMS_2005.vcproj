@@ -144,7 +144,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCore.lib dtUtil.lib dtDAL.lib dtABC.lib dtGame.lib wsock32.lib osg.lib osgDB.lib OpenThreadsWin32.lib xerces-c_2.lib"
+				AdditionalDependencies="dtCore.lib dtUtil.lib dtDAL.lib dtABC.lib dtGame.lib wsock32.lib osg.lib osgDB.lib xerces-c_2.lib"
 				OutputFile="..\..\..\bin\dtLMS.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
