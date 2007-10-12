@@ -151,7 +151,7 @@ namespace dtCore
 
          /// Adds a feature to this device.
          /// @param feature a pointer to the feature to add
-         void AddFeature(InputDeviceFeature* feature);
+         bool AddFeature(InputDeviceFeature* feature);
 
          /// Removes a feature from this device.
          /// @param feature a pointer to the feature to remove
@@ -166,7 +166,6 @@ namespace dtCore
       private:
          FeatureVector mFeatures;  ///< The list of features.
          ButtonMap mButtons;  ///< The list of buttons.
-         RefPtr<Button> mUnknowButton;  ///< The default buttons
          AxisVector mAxes;  ///< The list of axes.
 
          typedef std::list<ButtonListener*> ButtonListenerList; ///< A container of ButtonListeners.

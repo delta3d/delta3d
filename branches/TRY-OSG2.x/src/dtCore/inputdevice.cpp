@@ -13,7 +13,6 @@ namespace dtCore
     InputDevice::InputDevice(const std::string& name) : Base(name)
    {
       RegisterInstance(this);
-      mUnknowButton = new Button(this, -1, "Unknown");
    }
    
    InputDevice::~InputDevice()
@@ -41,7 +40,7 @@ namespace dtCore
       ButtonMap::iterator it = mButtons.find(index);
       if( it == mButtons.end() )
       {
-         return mUnknowButton.get();
+         return NULL;
       }
       else
       {
@@ -54,7 +53,7 @@ namespace dtCore
       ButtonMap::const_iterator it = mButtons.find(index);
       if( it == mButtons.end() )
       {
-         return mUnknowButton.get();
+         return NULL;
       }
       else
       {
@@ -116,12 +115,17 @@ namespace dtCore
     *
     * @param feature a pointer to the feature to add
     */
-   void InputDevice::AddFeature(InputDeviceFeature* feature)
+   bool InputDevice::AddFeature( InputDeviceFeature* feature )
    {
-      mFeatures.push_back(feature);
    
       if(Button* button = dynamic_cast<Button*>(feature))
       {
+         //see if a button with the same symbol already exists
+         if (GetButton(button->GetSymbol()) != NULL)
+         {
+            return false;
+         }
+
          mButtons[button->GetSymbol()] = button;
       }
       
@@ -129,6 +133,9 @@ namespace dtCore
       {
          mAxes.push_back(axis);
       }
+
+      mFeatures.push_back(feature);
+      return true;
    }
    
    void InputDevice::RemoveFeature(InputDeviceFeature* feature)

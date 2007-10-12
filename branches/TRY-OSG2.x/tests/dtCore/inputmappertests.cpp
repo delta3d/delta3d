@@ -32,7 +32,9 @@ namespace dtTest
    {
       CPPUNIT_TEST_SUITE( InputMapperTests );
       CPPUNIT_TEST( TestObservers );
-      CPPUNIT_TEST( AddingNewFeatureValid );
+      CPPUNIT_TEST( AddFeaturesToLogicalInputDevice );
+      CPPUNIT_TEST( InvalidButtonGet );
+
       CPPUNIT_TEST_SUITE_END();
 
       public:
@@ -42,7 +44,9 @@ namespace dtTest
          ///\todo callback triggering and data flow to observers
          void TestObservers();
 
-         void AddingNewFeatureValid();
+         void AddFeaturesToLogicalInputDevice();
+
+         void InvalidButtonGet();
 
       private:
    };
@@ -66,7 +70,7 @@ void InputMapperTests::TestObservers()
 }
 
 
-void InputMapperTests::AddingNewFeatureValid()
+void InputMapperTests::AddFeaturesToLogicalInputDevice()
 {
    dtCore::RefPtr<dtCore::LogicalInputDevice> dev = new dtCore::LogicalInputDevice();
 
@@ -74,21 +78,28 @@ void InputMapperTests::AddingNewFeatureValid()
 
    dtCore::RefPtr<dtCore::Keyboard> keyboard = new dtCore::Keyboard();
 
-   dev->AddButton(
-      "action 1", 
-      keyboard->GetButton('1')
-      );
+   dtCore::LogicalButton *butt1 = dev->AddButton(
+                                                "action 1", 
+                                                keyboard->GetButton('1')
+                                                );
 
+   CPPUNIT_ASSERT_MESSAGE("1st LogicalButton wasn't added to the LogicalInputDevice correctly", butt1 != NULL);
    CPPUNIT_ASSERT_EQUAL_MESSAGE("should have one feature", 1, dev->GetFeatureCount());
    CPPUNIT_ASSERT_EQUAL_MESSAGE("should have one button", 1, dev->GetButtonCount());
 
-   dev->AddButton(
-      "action 2", 
-      keyboard->GetButton('2')
-      );
+   dtCore::LogicalButton *butt2 = dev->AddButton(
+                                                "action 2", 
+                                                keyboard->GetButton('2')
+                                                );
 
+   CPPUNIT_ASSERT_MESSAGE("2nd LogicalButton wasn't added to the LogicalInputDevice correctly", butt2 != NULL);
    CPPUNIT_ASSERT_EQUAL_MESSAGE("should have two features", 2, dev->GetFeatureCount());
    CPPUNIT_ASSERT_EQUAL_MESSAGE("should have two buttons", 2, dev->GetButtonCount());
+}
 
 
+void InputMapperTests::InvalidButtonGet()
+{
+   dtCore::RefPtr<dtCore::InputDevice> dev = new dtCore::InputDevice();
+   CPPUNIT_ASSERT_MESSAGE("Should be NULL", NULL == dev->GetButton(123) );
 }

@@ -36,11 +36,17 @@ namespace dtCore
    LogicalButton* LogicalInputDevice::AddButton(const std::string& description,
                                                 ButtonMapping* mapping)
    {
-      LogicalButton* button = new LogicalButton(this, description, mapping);
+      osg::ref_ptr<LogicalButton> button = new LogicalButton(this, description, mapping);
    
-      AddFeature(button);
+      if (AddFeature( button.get() ))
+      {
+         return button.get();
+      }
+      else
+      {
+         return NULL;
+      }
    
-      return button;
    }
    
    /**
