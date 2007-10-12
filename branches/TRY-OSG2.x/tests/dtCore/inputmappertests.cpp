@@ -80,7 +80,8 @@ void InputMapperTests::AddFeaturesToLogicalInputDevice()
 
    dtCore::LogicalButton *butt1 = dev->AddButton(
                                                 "action 1", 
-                                                keyboard->GetButton('1')
+                                                keyboard->GetButton('1'),
+                                                0xAAAA
                                                 );
 
    CPPUNIT_ASSERT_MESSAGE("1st LogicalButton wasn't added to the LogicalInputDevice correctly", butt1 != NULL);
@@ -89,7 +90,8 @@ void InputMapperTests::AddFeaturesToLogicalInputDevice()
 
    dtCore::LogicalButton *butt2 = dev->AddButton(
                                                 "action 2", 
-                                                keyboard->GetButton('2')
+                                                keyboard->GetButton('2'),
+                                                0xAAAB
                                                 );
 
    CPPUNIT_ASSERT_MESSAGE("2nd LogicalButton wasn't added to the LogicalInputDevice correctly", butt2 != NULL);

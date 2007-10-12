@@ -49,23 +49,6 @@ namespace dtCore
           * @param name the instance name
           */
          LogicalInputDevice(const std::string& name = "LogicalInputDevice");
-   
-      protected:
-
-         /**
-          * Destructor.
-          */
-         virtual ~LogicalInputDevice();
-
-      public:
-
-         /**
-          * Adds a new logical button to this device.
-          *
-          * @param description a description of the button
-          * @param mapping the initial button mapping, or NULL for none
-          */
-         LogicalButton* AddButton(const std::string& description, ButtonMapping* mapping = NULL);
 
          /**
           * Adds a new logical button to this device.  Equivalent to AddButton(description,
@@ -73,8 +56,11 @@ namespace dtCore
           *
           * @param description a description of the button
           * @param sourceButton the source button
+          * @param buttonSymbol : a unique number representing the button to be added
           */
-         LogicalButton* AddButton(const std::string& description, Button* sourceButton);
+         LogicalButton* AddButton(const std::string& description,
+                                  Button* sourceButton,
+                                  int buttonSymbol);
          
          /**
           * Removes a logical button from this device.
@@ -105,7 +91,26 @@ namespace dtCore
           *
           * @param axis the axis to remove
           */
-         void RemoveAxis(LogicalAxis* axis);
+         void RemoveAxis(LogicalAxis* axis);   
+      
+      protected:
+
+         /**
+          * Destructor.
+          */
+         virtual ~LogicalInputDevice();
+
+      private:
+            /**
+            * Adds a new logical button to this device.
+            *
+            * @param description a description of the button
+            * @param mapping the initial button mapping, or NULL for none
+            */
+            LogicalButton* AddButton(const std::string& description,
+                                       int buttonSymbol,
+                                       ButtonMapping* mapping = NULL);
+
    };
    
    /**
@@ -120,10 +125,12 @@ namespace dtCore
           *
           * @param owner the owner of this button
           * @param description a description of this button
+          * @param buttonSymbol : A unique number representing this Button
           * @param mapping the initial button mapping
           */
          LogicalButton(LogicalInputDevice* owner,
                        const std::string& description, 
+                       int buttonSymbol,
                        ButtonMapping *mapping);
 
       protected:

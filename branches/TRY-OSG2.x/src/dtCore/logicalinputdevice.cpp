@@ -34,10 +34,11 @@ namespace dtCore
     * @param mapping the initial button mapping, or NULL for none
     */
    LogicalButton* LogicalInputDevice::AddButton(const std::string& description,
+                                                int buttonSymbol,
                                                 ButtonMapping* mapping)
    {
-      osg::ref_ptr<LogicalButton> button = new LogicalButton(this, description, mapping);
-   
+      osg::ref_ptr<LogicalButton> button = new LogicalButton(this, description, buttonSymbol, mapping);
+      
       if (AddFeature( button.get() ))
       {
          return button.get();
@@ -57,9 +58,10 @@ namespace dtCore
     * @param sourceButton the source button
     */
    LogicalButton* LogicalInputDevice::AddButton(const std::string& description,
-                                                Button* sourceButton)
+                                                Button* sourceButton,
+                                                int buttonSymbol)
    {
-      return AddButton(description, new ButtonToButton(sourceButton));
+      return AddButton(description, buttonSymbol, new ButtonToButton(sourceButton));
    }
    
    /**
@@ -120,8 +122,9 @@ namespace dtCore
     */
    LogicalButton::LogicalButton(LogicalInputDevice* owner,
                                 const std::string& description, 
+                                int buttonSymbol,
                                 ButtonMapping *mapping) :
-      Button(owner, description),
+      Button(owner, buttonSymbol, description),
       mMapping(mapping)
    {
       if(mMapping.valid())

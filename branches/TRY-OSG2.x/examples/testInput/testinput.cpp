@@ -23,6 +23,10 @@ using namespace dtUtil;
 CEGUI::colour kOff(0.f, 0.f, 0.f, 1.f);
 CEGUI::colour kOn(1.f, 0.f, 0.f, 1.f);
 
+static int KBUTTON1 = 0xAAAA;
+static int KBUTTON2 = 0xAAAB;
+static int KBUTTON3 = 0xAAAC;
+
 class TestInputApp* app;
 
 /**
@@ -63,17 +67,20 @@ public:
 
       mApplicationInputDevice->AddButton(
          "action 1", 
-         GetKeyboard()->GetButton('1')
+         GetKeyboard()->GetButton('1'),
+         KBUTTON1
          );
 
       mApplicationInputDevice->AddButton(
          "action 2",
-         GetKeyboard()->GetButton('2')
+         GetKeyboard()->GetButton('2'),
+         KBUTTON2
          );
 
       mApplicationInputDevice->AddButton(
          "action 3",
-         GetKeyboard()->GetButton('3')
+         GetKeyboard()->GetButton('3'),
+         KBUTTON3
          );
 
       mApplicationInputDevice->AddAxis(
@@ -233,7 +240,7 @@ protected:
 
       {
          CEGUI::Window *w = CEGUI::WindowManager::getSingleton().getWindow("Checkbox6");
-         if (mApplicationInputDevice->GetButton(0)->GetState())
+         if (mApplicationInputDevice->GetButton(KBUTTON1)->GetState())
          {
             w->setProperty("BackgroundColours", "tl:FFFF0000 tr:FFFF0000 bl:FFFF0000 br:FFFF0000" );
          }
@@ -245,7 +252,7 @@ protected:
 
       {
          CEGUI::Window *w = CEGUI::WindowManager::getSingleton().getWindow("Checkbox7");
-         if (mApplicationInputDevice->GetButton(1)->GetState())
+         if (mApplicationInputDevice->GetButton(KBUTTON2)->GetState())
          {
             w->setProperty("BackgroundColours", "tl:FFFF0000 tr:FFFF0000 bl:FFFF0000 br:FFFF0000" );
          }
@@ -257,7 +264,7 @@ protected:
 
       {
          CEGUI::Window *w = CEGUI::WindowManager::getSingleton().getWindow("Checkbox8");
-         if (mApplicationInputDevice->GetButton(2)->GetState())
+         if (mApplicationInputDevice->GetButton(KBUTTON3)->GetState())
          {
             w->setProperty("BackgroundColours", "tl:FFFF0000 tr:FFFF0000 bl:FFFF0000 br:FFFF0000" );
          }
@@ -291,7 +298,7 @@ protected:
          if(app->mInputMapper->AcquireButtonMapping(app))
          {
             w->setText("waiting for input");
-            app->mButtonIndex = 0;
+            app->mButtonIndex = KBUTTON1;
             app->mButtonName = w->getName().c_str();
          }
          break;
@@ -300,7 +307,7 @@ protected:
          if(app->mInputMapper->AcquireButtonMapping(app))
          {
             w->setText("waiting for input");
-            app->mButtonIndex = 1;
+            app->mButtonIndex = KBUTTON2;
             app->mButtonName = w->getName().c_str();
          }
          break;
@@ -309,7 +316,7 @@ protected:
          if(app->mInputMapper->AcquireButtonMapping(app))
          {
             w->setText("waiting for input");
-            app->mButtonIndex = 2;
+            app->mButtonIndex = KBUTTON3;
             app->mButtonName = w->getName().c_str();
          }
          break;
