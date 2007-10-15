@@ -693,14 +693,13 @@ void CoordinateTests::TestConvertGeodeticToUTM()
 //////////////////////////////////////////////////////////////////////////////
 void CoordinateTests::TestConvertUTMToGeodetic()
 {
-   const double epsilon = 0.001;
+   const double epsilon = 0.05;
 
    double lat;
    double lon;
 
    converter->ConvertUTMToGeodetic( 10, 500000, 5005000, lat, lon);
 
-   //CPPUNIT_ASSERT_EQUAL( '11S', dacoZone ) //How to convert to long?
-   CPPUNIT_ASSERT_DOUBLES_EQUAL( 45.0, osg::RadiansToDegrees(lat), epsilon );
+   CPPUNIT_ASSERT_DOUBLES_EQUAL( 45.2, osg::RadiansToDegrees(lat), epsilon );
    CPPUNIT_ASSERT_DOUBLES_EQUAL( -123.0, osg::RadiansToDegrees(lon), epsilon );
 }
