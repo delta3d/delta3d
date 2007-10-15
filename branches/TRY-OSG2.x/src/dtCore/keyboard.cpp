@@ -192,11 +192,17 @@ bool Keyboard::KeyDown(int kc)
 
    if( !handled )  // affect the return value
    {
-      handled = GetButton(kc)->SetState(true);
+      if (GetButton(kc) != NULL)
+      {
+         handled = GetButton(kc)->SetState(true);
+      }      
    }
    else  // don't affect the return value, but change the state for "pollers of the state"
    {
-      GetButton(kc)->SetState(true);
+      if (GetButton(kc) != NULL)
+      {
+         GetButton(kc)->SetState(true);
+      }      
    }
 
    return handled;
@@ -215,11 +221,17 @@ bool Keyboard::KeyUp(int kc)
 
    if( !handled )   // affect the return value
    {
-      handled = GetButton(kc)->SetState(false);
+      if (GetButton(kc) != NULL)
+      {
+         handled = GetButton(kc)->SetState(false);
+      }
    }
    else  // don't affect the return value, but change the state for "pollers of the state"
    {
-      GetButton(kc)->SetState(false);
+      if (GetButton(kc) != NULL)
+      {
+         GetButton(kc)->SetState(false);
+      }
    }
 
    return handled;
