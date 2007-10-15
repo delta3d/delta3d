@@ -254,9 +254,7 @@ namespace dtDAL
 
       if (!dtUtil::FileUtils::GetInstance().FileExists(schemaFileName))
       {
-         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
-                             "Error, unable to load required file \"map.xsd\".  Aborting.");
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectException, "Error, unable to load required file \"map.xsd\".  Aborting.", __FILE__, __LINE__);
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectException, "Unable to load required file \"map.xsd\", can not load map.", __FILE__, __LINE__);
       }
 
       XMLCh* value = XMLString::transcode(schemaFileName.c_str());
