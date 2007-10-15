@@ -51,7 +51,6 @@ namespace dtEditQt
         tabSound          = new TabWrapper();
         tabParticle       = new TabWrapper();
         tabTexture        = new TabWrapper();
-        //tabCharacter      = new TabWrapper();
         tabTerrain        = new TabWrapper();
 
         // widgets
@@ -60,7 +59,6 @@ namespace dtEditQt
         soundWidget       = new SoundBrowser(dtDAL::DataType::SOUND);
         particleWidget    = new ParticleBrowser(dtDAL::DataType::PARTICLE_SYSTEM);
         textureWidget     = new TextureBrowser(dtDAL::DataType::TEXTURE);
-        //characterWidget   = new CharacterBrowser(dtDAL::DataType::CHARACTER);
         terrainWidget     = new TerrainBrowser(dtDAL::DataType::TERRAIN);
 
         addTabs();

@@ -8,8 +8,14 @@ Import ('*')
 overrideShLink = ''
 overrideShSuffix = ''
 
+defines = []
+
 # Grab all the sources from the DAL source directory.
 srcs = env.SGlob( '*.cpp' )
+
+if env['foundLibs'][env['extLibs']['rbody']] == 'notFound':
+   srcs.remove('characteractorproxy.cpp')
+   defines += ['NO_DTCHAR']
 
 deps = [ 'dtAnim', 'dtDAL', 'dtUtil', 'dtCore', 'dtChar', 'dtABC', 'dtAudio', 'ode',
         'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgText',
@@ -17,9 +23,8 @@ deps = [ 'dtAnim', 'dtDAL', 'dtUtil', 'dtCore', 'dtChar', 'dtABC', 'dtAudio', 'o
         'Rpcrt4', 'Winmm', 'Gdi32', 'uuid', 'Xxf86vm', 'CoreFoundation', 'IOKit',
         'Carbon', 'dtGame']
 
-defines = []
 if env['OS'] == 'windows':
-   defines = ['DT_PLUGIN']
+   defines += ['DT_PLUGIN']
 
 dtActors = env.BuildLib( 'dtActors', srcs, deps, defines,
                      overrideShLinkFlags = overrideShLink, overrideShLibSuffix = overrideShSuffix, prefixHeader = 'inc/prefix/dtdalprefix.h' )

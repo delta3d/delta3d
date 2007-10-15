@@ -73,7 +73,6 @@ namespace dtEditQt
         TabWrapper   *tabSound;
         TabWrapper   *tabParticle;
         TabWrapper   *tabTexture;
-        //TabWrapper *tabCharacter;
         TabWrapper   *tabTerrain;
         TabContainer *tabC;
 
@@ -82,7 +81,6 @@ namespace dtEditQt
         SoundBrowser        *soundWidget;
         ParticleBrowser     *particleWidget;
         TextureBrowser      *textureWidget;
-        //CharacterBrowser  *characterWidget;
         TerrainBrowser      *terrainWidget;
 
         void closeEvent(QCloseEvent *e);

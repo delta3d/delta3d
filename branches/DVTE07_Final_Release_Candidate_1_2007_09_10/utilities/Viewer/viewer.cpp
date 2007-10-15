@@ -341,9 +341,11 @@ void Viewer::LoadFile( ViewState* vs )
    GetDefaultState( vs );
 
    bool fileLoaded = false;
-   osg::Node*  filenode = 0;
-   dtCore::RefPtr<dtChar::Character> pChar = 0;
-   dtCore::RefPtr<dtCore::Object> fileobj = 0;
+   osg::Node*  filenode = NULL;
+#ifndef NO_DTCHAR
+   dtCore::RefPtr<dtChar::Character> pChar;
+#endif
+   dtCore::RefPtr<dtCore::Object> fileobj;
 
    const std::string ext = osgDB::getLowerCaseFileExtension(filename);
    if (ext == "xml")
@@ -362,7 +364,7 @@ void Viewer::LoadFile( ViewState* vs )
       try
       {
          dtDAL::Project::GetInstance().SetContext(path, true);
-         //dtDAL::Project::GetInstance().LoadMapIntoScene(name, *GetScene());
+         ///This is completely WRONG.  the file name and the map name are NOT the same thing.
          theMap = &dtDAL::Project::GetInstance().GetMap(name);
          fileLoaded = true;
       }
@@ -388,6 +390,7 @@ void Viewer::LoadFile( ViewState* vs )
 
 
    }
+#ifndef NO_DTCHAR
    else if (ext == "rbody")
    {
       //see if it is a replicant body file
@@ -422,6 +425,7 @@ void Viewer::LoadFile( ViewState* vs )
          filenode = pChar->GetOSGNode();
       }
    }
+#endif
    else
    {
       fileobj  = new Object;

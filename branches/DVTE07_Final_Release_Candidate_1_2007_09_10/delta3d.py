@@ -30,6 +30,9 @@ def TOOL_BUNDLE(env):
       allLibs = {}
       for lib_name in env['dtLibs'].keys() :
          allLibs[lib_name] = env['dtLibs'][lib_name]
+         # all of the "dtLibs" are assumed to be shared libraries
+         env['foundLibs'][env['dtLibs'][lib_name]] = 'sharedLib'
+         
       for lib_name in env['extLibs'].keys() :
          allLibs[lib_name] = env['extLibs'][lib_name]
           
@@ -42,17 +45,12 @@ def TOOL_BUNDLE(env):
     
       addToLibs = []
       addToFrameworks = []
-      if env['OS'] == 'darwin':
-          for lib_name in deps:
-            if env['foundLibs'].has_key(lib_name):
-              if env['foundLibs'][lib_name] == 'framework':
-                addToFrameworks.append(lib_name)
-              else:
+      for lib_name in deps:
+         if env['foundLibs'].has_key(lib_name):
+            if env['foundLibs'][lib_name] == 'framework':
+               addToFrameworks.append(lib_name)
+            elif env['foundLibs'][lib_name] == 'sharedLib':
                 addToLibs.append(lib_name)
-            else:
-              addToLibs.append(lib_name);
-      else:
-          addToLibs = deps
    
       envCopy['FRAMEWORKS'] = addToFrameworks
  
@@ -364,7 +362,8 @@ def TOOL_BUNDLE(env):
                if match is not None :
                   rtiLibPath = root
                   if re.search( javaPattern, file) is None:
-                     rtiLibs.append( match.group(1) )
+                     newLib = match.group(1)
+                     rtiLibs.append( newLib )
             
          if rtiLibPath is not '' :
             env.Append( LIBPATH = [ rtiLibPath ] )
@@ -673,6 +672,10 @@ def TOOL_BUNDLE(env):
             }
       else :
          extLibs = {}
+
+      if env.has_key('rtiLibs'):
+         for lib in env['rtiLibs']:
+             extLibs[lib]=lib
       
       env['depsHash'] = depsHash
       env['dtLibs'] = dtLibs
