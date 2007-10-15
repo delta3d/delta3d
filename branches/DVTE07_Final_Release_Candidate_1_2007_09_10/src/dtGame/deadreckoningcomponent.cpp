@@ -81,6 +81,8 @@ namespace dtGame
       else if (message.GetMessageType()  == dtGame::MessageType::INFO_MAP_UNLOADED)
       {
          mRegisteredActors.clear();
+         mEyePointActor = NULL;
+         mTerrainActor = NULL;
       }
    }
 
@@ -626,8 +628,8 @@ namespace dtGame
                   ss << "Actor " << gameActor.GetUniqueId() << " - " << gameActor.GetName() << " has attitude "
                      << "\"" << helper.GetCurrentDeadReckonedRotation() << "\" and position \"" << helper.GetCurrentDeadReckonedTranslation() << "\" at time " 
                      << helper.GetLastRotationUpdatedTime() +  helper.GetRotationCurrentSmoothingTime() << "";
-                  mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, 
-                        ss.str().c_str());               
+                  mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                        ss.str().c_str());
                }
             }
          }
@@ -637,7 +639,7 @@ namespace dtGame
          //clear the updated flag.
          helper.ClearUpdated();
       }
-      
+
       //Make sure the last of them ran.
       RunClampBatch();
    }
@@ -749,7 +751,7 @@ namespace dtGame
                   DoArticulationPrediction(*dofTransform, currentDOF->mStartLocation,
                      currentDOF->mRateOverTime, currentDOF->mCurrentTime);
                }
-            }                 
+            }
          }
          ++iterDOF;
       }
