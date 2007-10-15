@@ -3,6 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 #include <prefix/dtcoreprefix-src.h>
 #include <dtCore/keyboard.h>
+#include <dtUtil/stringutils.h>
 #include <algorithm>
 
 using namespace dtCore;
@@ -159,6 +160,13 @@ Keyboard::~Keyboard()
 
 bool Keyboard::GetKeyState(int key) const
 {
+   const Button *b = GetButton(key);
+   if (b == NULL)
+   {
+      LOG_ERROR("Keyboard does not have a Button assigned to the key value of " + dtUtil::ToString(key) );
+      return false;
+   }
+
    return GetButton(key)->GetState();
 }
 
