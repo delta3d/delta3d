@@ -1,3 +1,4 @@
+#ifndef NO_DTCHAR
 /*
 * Delta3D Open Source Game and Simulation Engine
 * Copyright (C) 2005, BMH Associates, Inc.
@@ -110,3 +111,5 @@ namespace dtActors
     }
 
 }
+#endif
+
