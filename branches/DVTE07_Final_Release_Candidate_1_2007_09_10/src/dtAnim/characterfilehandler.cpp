@@ -194,7 +194,7 @@ void CharacterFileHandler::startElement( const XMLCh* const uri,const XMLCh* con
       else
       {
          errorString = std::string("Invalid XML format: <animation> missing <filename> child");
-      }     
+      }
    }
    else if (elementStr == MESH_ELEMENT)
    {     
@@ -457,7 +457,7 @@ void CharacterFileHandler::AnimSequenceCharacters(const XMLCh* const chars)
       return;
    }
 
-   if (AnimatableCharacters(chars, pSequence))
+   if (!AnimatableCharacters(chars, pSequence))
    {
       if(topEl == CHILD_ELEMENT)
       {
