@@ -131,7 +131,7 @@ HardwareSubMeshDrawable::HardwareSubMeshDrawable(Cal3DModelWrapper *wrapper, Cal
 
    for(int i = 0; iter != endIter; ++iter, ++i)
    {
-      osg::Texture2D *texture = (osg::Texture2D*)((*iter).userData);
+      osg::Texture2D *texture = reinterpret_cast<osg::Texture2D*>(iter->userData);
       if(texture != NULL) 
       {
          ss->setTextureAttributeAndModes(i, texture, osg::StateAttribute::ON);
