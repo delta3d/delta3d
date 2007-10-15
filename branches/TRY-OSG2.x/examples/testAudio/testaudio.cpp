@@ -590,11 +590,7 @@ TestAudioApp::LoadGfxFile( const char* fname )
    assert( fileobj.valid() );
 
 
-   // load the graphics file from disk
-   bool fileLoaded = false;
-   fileLoaded = fileobj->LoadFile( filename );
-
-   if( ! fileLoaded )
+   if( fileobj->LoadFile( filename ) == NULL )
    {
       Log::GetInstance().LogMessage( Log::LOG_WARNING,__FUNCTION__,
          "can't load gfx file '%s'", filename.c_str() );
