@@ -406,7 +406,7 @@ public:
          LOG_INFO(ss.str());
       }
       
-      if(GetKeyboard()->GetKeyState('}'))
+      if(GetKeyboard()->GetKeyState(']'))
       {
          mRenderer->SetDetailMultiplier(float(mRenderer->GetDetailMultiplier()) - deltaFrameTime*5.0f);
          ss.str("");
@@ -414,7 +414,7 @@ public:
          LOG_INFO(ss.str());
       }
       
-      if(GetKeyboard()->GetKeyState('{'))
+      if(GetKeyboard()->GetKeyState('['))
       {
          mRenderer->SetDetailMultiplier(float(mRenderer->GetDetailMultiplier()) + deltaFrameTime*5.0f);
          ss.str("");
