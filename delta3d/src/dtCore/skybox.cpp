@@ -256,6 +256,16 @@ void SkyBox::AngularMapProfile::Config(osg::Group* pGroup)
    std::string vertFile = dtCore::FindFileInPathList("/shaders/AngularMapSkyBox.vert");
    std::string fragFile = dtCore::FindFileInPathList("/shaders/AngularMapSkyBox.frag");
 
+   if (vertFile.empty())
+   {
+      LOG_ERROR("Can not find the SkyBox shader file: AngularMapSkyBox.vert");
+   }
+    
+   if (fragFile.empty())
+   {
+      LOG_ERROR("Can not find the SkyBox shader file: AngularMapSkyBox.frag");
+   }
+
    vertShader->loadShaderSourceFromFile(vertFile);
    fragShader->loadShaderSourceFromFile(fragFile);
 
@@ -364,6 +374,16 @@ void SkyBox::CubeMapProfile::Config(osg::Group* pGroup)
 
    std::string vertFile = dtCore::FindFileInPathList("/shaders/CubeMapSkyBox.vert");
    std::string fragFile = dtCore::FindFileInPathList("/shaders/CubeMapSkyBox.frag");
+
+   if (vertFile.empty())
+   {
+      LOG_ERROR("Can not find the SkyBox shader file: CubeMapSkyBox.vert");
+   }
+
+   if (fragFile.empty())
+   {
+      LOG_ERROR("Can not find the SkyBox shader file: CubeMapSkyBox.frag");
+   }
 
    vertShader->loadShaderSourceFromFile(vertFile);
    fragShader->loadShaderSourceFromFile(fragFile);
