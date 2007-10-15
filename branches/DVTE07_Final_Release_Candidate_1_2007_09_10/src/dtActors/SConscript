@@ -14,7 +14,6 @@ defines = []
 srcs = env.SGlob( '*.cpp' )
 
 if env['foundLibs'][env['extLibs']['rbody']] == 'notFound':
-   srcs.remove('characteractorproxy.cpp')
    defines += ['NO_DTCHAR']
 
 deps = [ 'dtAnim', 'dtDAL', 'dtUtil', 'dtCore', 'dtChar', 'dtABC', 'dtAudio', 'ode',
