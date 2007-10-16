@@ -94,40 +94,25 @@ void InitializeUpdateMessage::operator ()(dtGame::ActorUpdateMessage& msg) const
    //////mp = msg.AddUpdateParameter(dtDIS::PropertyName::ENTITYID_ENTITY, dtDAL::DataType::SHORTINT );
    //////mp->FromString( dtUtil::ToString(eid.getEntity()) );
 
-   //DIS::Vector3Float elv;
-   //elv.setX(26);
-   //elv.setY(27);
-   //elv.setZ(28);
-   ////pdu.setEntityLinearVelocity( elv );
-   ////mp = msg.AddUpdateParameter(dtDIS::PropertyName::ENTITY_LINEAR_VELOCITY, dtDAL::DataType::VEC3F );
-   ////mp->FromString( dtUtil::ToString(pdu.getEntityLinearVelocity()) );
-
-   DIS::Vector3Double el;
-   el.setX(29);
-   el.setY(30);
-   el.setZ(31);
-   //pdu.setEntityLocation( el );
-   mp = msg.AddUpdateParameter( dtDIS::EnginePropertyName::TRANSLATION , dtDAL::DataType::VEC3 );
-   // needs optimizaton badly
-   if( mp != NULL )
+   mp = msg.AddUpdateParameter(dtDIS::EnginePropertyName::VELOCITY, dtDAL::DataType::VEC3 );
+   if (mp != NULL)
    {
-      osg::Vec3 v3( el.getX() , el.getY() , el.getZ() );;
-      dtGame::Vec3MessageParameter* v3mp = static_cast<dtGame::Vec3MessageParameter*>( mp );
-      v3mp->SetValue( v3 );
+      dtGame::Vec3MessageParameter *v3mp = static_cast<dtGame::Vec3MessageParameter*>(mp);
+      v3mp->SetValue( osg::Vec3( 26, 27, 28 ) );
    }
 
-   DIS::Orientation eo;
-   eo.setPhi(34);
-   eo.setTheta(33);
-   eo.setPsi(32);
-   //pdu.setEntityOrientation( eo );
-   mp = msg.AddUpdateParameter( dtDIS::EnginePropertyName::ROTATION , dtDAL::DataType::VEC3 );
-   // needs optimizaton badly
+   mp = msg.AddUpdateParameter( dtDIS::EnginePropertyName::TRANSLATION , dtDAL::DataType::VEC3 );
    if( mp != NULL )
    {
-      osg::Vec3 hpr( eo.getPhi() , eo.getTheta() , eo.getPsi() );
       dtGame::Vec3MessageParameter* v3mp = static_cast<dtGame::Vec3MessageParameter*>( mp );
-      v3mp->SetValue( hpr );
+      v3mp->SetValue( osg::Vec3(29, 30, 31) );
+   }
+
+   mp = msg.AddUpdateParameter( dtDIS::EnginePropertyName::ROTATION , dtDAL::DataType::VEC3 );
+   if( mp != NULL )
+   {
+      dtGame::Vec3MessageParameter* v3mp = static_cast<dtGame::Vec3MessageParameter*>( mp );
+      v3mp->SetValue( osg::Vec3(34, 33, 32) );
    }
 
    //DIS::EntityType et;
