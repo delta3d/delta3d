@@ -158,9 +158,10 @@ namespace dtGame
                   mLogStream->SetRecordDuration(mLogStatus.GetCurrentRecordDuration());
                mLogStream->Close();
             }
-            catch(const dtUtil::Exception &)
+            catch(const dtUtil::Exception &e)
             {
                LOG_ERROR("FAILURE:changing state to IDLE from a map change event.");
+               e.LogException(dtUtil::Log::LOG_ERROR);
             }
 
             SetToIdleState();
@@ -313,7 +314,11 @@ namespace dtGame
             {
                mLogStream->Close();
             }
-            catch(const dtUtil::Exception&) { } // ignore it.  Already failed, nothing we can do }
+            catch(const dtUtil::Exception &e) 
+            { 
+               // LOG THE EXCEPTION
+               e.LogException(dtUtil::Log::LOG_ERROR);
+            } // ignore it.  Already failed, nothing we can do }
          }
 
          // notify the world of our new status - even after an error
@@ -369,7 +374,11 @@ namespace dtGame
             {
                mLogStream->Close();
             }
-            catch(const dtUtil::Exception&) { } // ignore it.  Already failed, nothing we can do }
+            catch(const dtUtil::Exception &e) 
+            {
+               // LOG THE EXCEPTION
+               e.LogException(dtUtil::Log::LOG_ERROR);
+            } // ignore it.  Already failed, nothing we can do }
          }
 
          // notify the world of our new status - even after an error
@@ -396,7 +405,8 @@ namespace dtGame
             logMsg->GetLogFileName() + "] while in non-Idle state [" + mLogStatus.GetStateEnum().GetName() + "]");
          return;
       }
-      else {
+      else 
+      {
          mLogStatus.SetLogFile(logMsg->GetLogFileName());
 
          // notify the world of our status change
@@ -420,10 +430,10 @@ namespace dtGame
 
          //Update our cache to reflect the most recent query.
          mLogCache.clear();
-         for (unsigned int i=0; i<logList.size(); i++)
+         for (size_t i = 0; i < logList.size(); i++)
             mLogCache.insert(logList[i]);
       }
-      catch (dtUtil::Exception &e)
+      catch(const dtUtil::Exception &e)
       {
          GetGameManager()->RejectMessage(message,
             "Server Logger Component - Could not retrieve log file list " + e.What());
@@ -481,14 +491,14 @@ namespace dtGame
          mLogStream->GetKeyFrameIndex(kfList);
          response->SetKeyframeList(kfList);
       }
-      catch (dtUtil::Exception &e)
+      catch(const dtUtil::Exception &e)
       {
          GetGameManager()->RejectMessage(message,
             "Server Logger Component - Could not retrieve key frame index: " + e.What());
       }
 
-      GetGameManager()->SendMessage(*response.get());
-      GetGameManager()->SendNetworkMessage(*response.get());
+      GetGameManager()->SendMessage(*response);
+      GetGameManager()->SendNetworkMessage(*response);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -505,7 +515,7 @@ namespace dtGame
          mLogStream->GetTagIndex(tagList);
          response->SetTagList(tagList);
       }
-      catch (dtUtil::Exception &e)
+      catch(const dtUtil::Exception &e)
       {
          GetGameManager()->RejectMessage(message,
             "Server Logger Component - Could not retrieve tags index: " + e.What());
@@ -545,7 +555,7 @@ namespace dtGame
 
             mLogStream->InsertTag(tag);
          }
-         catch (dtUtil::Exception &e)
+         catch(const dtUtil::Exception &e)
          {
             GetGameManager()->RejectMessage(message,
                "Server Logger Component - Could not retrieve tags index: " + e.What());
@@ -569,7 +579,7 @@ namespace dtGame
          std::set<std::string>::iterator itor = mLogCache.find(actual.GetLogFileName());
          mLogCache.erase(itor);
       }
-      catch (dtUtil::Exception &e)
+      catch(const dtUtil::Exception &e)
       {
          GetGameManager()->RejectMessage(message,
             "Server Logger Component - Could not delete log: " + e.What());
@@ -767,7 +777,7 @@ namespace dtGame
          {
             dtUtil::FileUtils::GetInstance().MakeDirectory(newPath);
          }
-         catch (dtUtil::Exception &ex)
+         catch(const dtUtil::Exception &ex)
          {
             ex.LogException(dtUtil::Log::LOG_ERROR);
             return false;
@@ -790,7 +800,7 @@ namespace dtGame
       {
          mLogStream->InsertKeyFrame(kf);
       }
-      catch (dtUtil::Exception &e)
+      catch(const dtUtil::Exception &e)
       {
          LOG_ERROR("Caught exception while inserting keyframe: " + e.ToString());
          return;
