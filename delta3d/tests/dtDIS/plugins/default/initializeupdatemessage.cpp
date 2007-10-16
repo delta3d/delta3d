@@ -117,9 +117,9 @@ void InitializeUpdateMessage::operator ()(dtGame::ActorUpdateMessage& msg) const
    }
 
    DIS::Orientation eo;
-   eo.setPsi(32);
-   eo.setTheta(33);
    eo.setPhi(34);
+   eo.setTheta(33);
+   eo.setPsi(32);
    //pdu.setEntityOrientation( eo );
    mp = msg.AddUpdateParameter( dtDIS::EnginePropertyName::ROTATION , dtDAL::DataType::VEC3 );
    // needs optimizaton badly

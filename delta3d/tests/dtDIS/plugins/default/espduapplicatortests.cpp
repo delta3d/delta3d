@@ -51,7 +51,7 @@ void ESPduApplicatorTests::TestApplyToMessage()
    InitializeUpdateMessage initmsg;
    initmsg( *should_be );
 
-   //CompareParams( dtDAL::EnginePropertyName::ROTATION, *should_be, *msg );
+   CompareParams( dtDIS::EnginePropertyName::ROTATION, *should_be, *msg );
    CompareParams( dtDIS::EnginePropertyName::TRANSLATION, *should_be, *msg );
    //CompareParams( dtDIS::EnginePropertyName::ENTITY_APPEARANCE, *should_be, *msg );
    //CompareParams( dtDIS::EnginePropertyName::ENTITYID_ENTITY, *should_be, *msg );
@@ -79,7 +79,10 @@ void ESPduApplicatorTests::TestApplyToPdu()
    initpdu( should_be );
 
    CPPUNIT_ASSERT( CompareVec3(should_be.getEntityLocation(), pdu.getEntityLocation()) );
-   CPPUNIT_ASSERT( CompareOrientation(should_be.getEntityOrientation(), pdu.getEntityOrientation()) );
+
+   CPPUNIT_ASSERT_MESSAGE( "Orientation doesn't match.",
+      CompareOrientation(should_be.getEntityOrientation(), pdu.getEntityOrientation()) );
+
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Appearance doesn't match", 
       should_be.getEntityAppearance(), pdu.getEntityAppearance() );
 

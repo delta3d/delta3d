@@ -68,9 +68,9 @@ void InitializePdu::operator ()(DIS::EntityStatePdu& pdu) const
    pdu.setEntityLocation( el );
 
    DIS::Orientation eo;
-   eo.setPsi(32);
-   eo.setTheta(33);
    eo.setPhi(34);
+   eo.setTheta(33);
+   eo.setPsi(32);
    pdu.setEntityOrientation( eo );
 
    DIS::EntityType et;
