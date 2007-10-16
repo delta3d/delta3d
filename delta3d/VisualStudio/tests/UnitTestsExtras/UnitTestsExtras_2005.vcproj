@@ -63,7 +63,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="cppunitd.lib osgd.lib librti13d.lib DIS_debug.lib dtUtild.lib dtCored.lib dtDALd.lib dtGamed.lib dtDISd.lib dtHLAGMd.lib"
+				AdditionalDependencies="cppunitd.lib osgd.lib librti13d.lib DIS_debug.lib dtActorsd.lib dtUtild.lib dtCored.lib dtDALd.lib dtGamed.lib dtDISd.lib dtHLAGMd.lib"
 				OutputFile="../../../tests/UnitTestsExtrasd.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib"
@@ -144,7 +144,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="cppunit.lib osg.lib librti13.lib DIS.lib dtUtil.lib dtDAL.lib dtHLAGM.lib dtDIS.lib"
+				AdditionalDependencies="cppunit.lib osg.lib librti13.lib DIS.lib dtActors.lib dtUtil.lib dtDAL.lib dtHLAGM.lib dtDIS.lib"
 				OutputFile="../../../tests/UnitTestsExtras.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib"

@@ -43,7 +43,8 @@ namespace DIS
 
 namespace dtDAL
 {
-   class ActorProxy;
+   class ActorProxy; 
+   class ActorType;
 }
 
 namespace dtGame
@@ -73,9 +74,12 @@ namespace dtDIS
    private:
       ESPduProcessor();  ///< not implemented by design
 
+      void CreateRemoteActor(const dtDAL::ActorType &actorType);
+
       //using an refptr results in a circular reference.
       dtCore::ObserverPtr<dtGame::GameManager> mGM;
       SharedState* mConfig;
+      dtCore::RefPtr<dtGame::MachineInfo> mMachineInfo; ///for creating remote actors
    };
 }
 

@@ -17,6 +17,7 @@ using namespace dtDIS;
 ESPduProcessor::ESPduProcessor(dtGame::GameManager* gm, SharedState* config)
    : mGM( gm )
    , mConfig(config)
+   , mMachineInfo( new dtGame::MachineInfo() )
 {
 }
 
@@ -68,8 +69,11 @@ void ESPduProcessor::Process(const DIS::Pdu& packet)
          const DIS::EntityType& etype = pdu.getEntityType();
          if( emapper.GetMappedActor(etype, actortype) )
          {
-            dtCore::RefPtr<dtDAL::ActorProxy> proxy = mGM->CreateActor( *(actortype) );
-            AddActor( pdu, proxy.get() );
+            //this isn't the correct way to add a new remote actor. 
+            //dtCore::RefPtr<dtDAL::ActorProxy> proxy = mGM->CreateActor( *(actortype) );
+            //AddActor( pdu, proxy.get() );
+
+            CreateRemoteActor( *actortype );
          }
          else
          {
@@ -141,4 +145,17 @@ void ESPduProcessor::AddActor(const DIS::EntityStatePdu& pdu, dtDAL::ActorProxy*
 
    // keep this actor in local memory for easy access
    mConfig->GetActiveEntityControl().AddEntity( pdu.getEntityID(), proxy );
+}
+
+void dtDIS::ESPduProcessor::CreateRemoteActor(const dtDAL::ActorType &actorType)
+{
+   dtCore::RefPtr<dtGame::ActorUpdateMessage> msg;
+   mGM->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_CREATED, msg);
+
+   msg->SetSource( *mMachineInfo );
+
+   msg->SetActorTypeCategory( actorType.GetCategory() );
+   msg->SetActorTypeName( actorType.GetName() );
+
+   mGM->SendMessage(*msg);
 }
