@@ -195,12 +195,21 @@ void PartialApplicator::operator ()(const DIS::EntityStatePdu& source, dtGame::A
       v3mp->SetValue( v3 );
    }
 
-   //mp = dest.AddUpdateParameter( dtDIS::EnginePropertyName::ROTATION , dtDAL::DataType::VEC3 );
+   mp = dest.AddUpdateParameter( dtDIS::EnginePropertyName::ROTATION , dtDAL::DataType::VEC3 );
+   if( mp != NULL )
+   {
+      const DIS::Orientation& orie = source.getEntityOrientation();
+      osg::Vec3 hpr( orie.getPhi() , orie.getTheta() , orie.getPsi() );
+      dtDAL::NamedVec3Parameter* v3mp = static_cast<dtDAL::NamedVec3Parameter*>( mp );
+      v3mp->SetValue( hpr );
+   }
+
+
    mp = dest.AddUpdateParameter( dtDIS::EnginePropertyName::LAST_KNOWN_ROTATION , dtDAL::DataType::VEC3 );
    if( mp != NULL )
    {
       const DIS::Orientation& orie = source.getEntityOrientation();
-      osg::Vec3 hpr( orie.getPsi() , orie.getTheta() , orie.getPhi() );
+      osg::Vec3 hpr( orie.getPhi() , orie.getTheta() ,  orie.getPsi());
       dtDAL::NamedVec3Parameter* v3mp = static_cast<dtDAL::NamedVec3Parameter*>( mp );
       v3mp->SetValue( hpr );
    }
