@@ -177,7 +177,15 @@ void PartialApplicator::operator ()(const DIS::EntityStatePdu& source, dtGame::A
 {
    dtDAL::NamedParameter* mp;
 
-   //mp = dest.AddUpdateParameter( dtDIS::EnginePropertyName::TRANSLATION , dtDAL::DataType::VEC3 );
+   mp = dest.AddUpdateParameter( dtDIS::EnginePropertyName::TRANSLATION , dtDAL::DataType::VEC3 );
+   if (mp != NULL)
+   {
+      const DIS::Vector3Double& pos = source.getEntityLocation();
+      osg::Vec3 v3( pos.getX() , pos.getY() , pos.getZ() );;
+      dtGame::Vec3MessageParameter* v3mp = static_cast<dtGame::Vec3MessageParameter*>( mp );
+      v3mp->SetValue( v3 );
+   }
+
    mp = dest.AddUpdateParameter( dtDIS::EnginePropertyName::LAST_KNOWN_TRANSLATION , dtDAL::DataType::VEC3 );
    if( mp != NULL )
    {

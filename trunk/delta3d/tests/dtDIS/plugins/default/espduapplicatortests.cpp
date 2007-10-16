@@ -66,8 +66,13 @@ void ESPduApplicatorTests::TestApplyToPdu()
    initmsg( *msg );
 
    DIS::EntityStatePdu pdu;
-   //dtDIS::details::FullApplicator apply;
-   ////apply( *msg , pdu );
+   dtDIS::details::FullApplicator apply;
+   DIS::EntityID eid;
+   eid.setSite(23);
+   eid.setApplication(24);
+   eid.setEntity(25);
+
+   apply( *msg , eid ,  pdu, NULL);
 
    DIS::EntityStatePdu should_be;
    InitializePdu initpdu;
@@ -75,8 +80,15 @@ void ESPduApplicatorTests::TestApplyToPdu()
 
    CPPUNIT_ASSERT( CompareVec3(should_be.getEntityLocation(), pdu.getEntityLocation()) );
    CPPUNIT_ASSERT( CompareOrientation(should_be.getEntityOrientation(), pdu.getEntityOrientation()) );
-   CPPUNIT_ASSERT_EQUAL( should_be.getEntityAppearance(), pdu.getEntityAppearance() );
-   CPPUNIT_ASSERT_EQUAL( should_be.getEntityID().getEntity(), pdu.getEntityID().getEntity() );
-   CPPUNIT_ASSERT_EQUAL( should_be.getEntityID().getSite(), pdu.getEntityID().getSite() );
-   CPPUNIT_ASSERT_EQUAL( should_be.getEntityID().getApplication(), pdu.getEntityID().getApplication() );
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Appearance doesn't match", 
+      should_be.getEntityAppearance(), pdu.getEntityAppearance() );
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE( "Entity doesn't match",
+      should_be.getEntityID().getEntity(), pdu.getEntityID().getEntity() );
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE( "Site doesn't match",
+      should_be.getEntityID().getSite(), pdu.getEntityID().getSite() );
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE( "Application doesn't match",
+      should_be.getEntityID().getApplication(), pdu.getEntityID().getApplication() );
 }
