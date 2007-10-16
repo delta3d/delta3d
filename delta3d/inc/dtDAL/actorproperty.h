@@ -44,7 +44,7 @@ namespace dtDAL
     * setter method on a particular class.  Therefore, when a property
     * is created, it knows how to set and get the data it represents.
     * @note
-    *      There are, by default, and set of classes that map to the
+    *      There are, by default, a set of classes that map to the
     *      data types listed in the Delta3D datatypes enumeration.  The
     *      most common/preferred method signatures for each property
     *      type is supported.  If, however, the need arises for completely

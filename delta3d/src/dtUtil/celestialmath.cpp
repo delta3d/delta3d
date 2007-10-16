@@ -137,8 +137,7 @@ int dtUtil::FindCelestialTriangleID( const CelestialMesh &mesh, float azimuth, f
       const osg::Vec3 &C = mesh.mTriangles[triIndex].mVertices[2]->mMaxAzMaxEl;
 
       if (!IsPointBetweenVectors(point, A, B, C)) { continue; }
-      if (!IsPointBetweenVectors(point, B, A, C)) { continue; }
-      if (!IsPointBetweenVectors(point, C, A, C)) { continue; }
+      if (!IsPointBetweenVectors(point, B, A, C)) { continue; }      
 
       animationIndex = triIndex;
       break;
