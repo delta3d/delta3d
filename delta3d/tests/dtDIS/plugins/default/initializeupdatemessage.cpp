@@ -80,8 +80,8 @@ void InitializeUpdateMessage::operator ()(dtGame::ActorUpdateMessage& msg) const
    ////mp->FromString( dtUtil::ToString(drp.getEntityAngularVelocity()) );
 
    //pdu.setEntityAppearance(22);
-   //mp = msg.AddUpdateParameter(dtDIS::PropertyName::ENTITY_APPEARANCE, dtDAL::DataType::INT );
-   //mp->FromString( dtUtil::ToString(22) );
+   mp = msg.AddUpdateParameter(dtDIS::EntityPropertyName::APPEARANCE, dtDAL::DataType::INT );
+   mp->FromString( dtUtil::ToString(22) );
 
    DIS::EntityID eid;
    eid.setSite(23);
@@ -121,17 +121,13 @@ void InitializeUpdateMessage::operator ()(dtGame::ActorUpdateMessage& msg) const
    eo.setTheta(33);
    eo.setPhi(34);
    //pdu.setEntityOrientation( eo );
-   mp = msg.AddUpdateParameter( dtDIS::EnginePropertyName::ROTATION , dtDAL::DataType::VEC4 );
+   mp = msg.AddUpdateParameter( dtDIS::EnginePropertyName::ROTATION , dtDAL::DataType::VEC3 );
    // needs optimizaton badly
    if( mp != NULL )
    {
       osg::Vec3 hpr( eo.getPhi() , eo.getTheta() , eo.getPsi() );
-      osg::Matrix mat;                                                   // to be filled, ouch.
-      dtUtil::MatrixUtil::HprToMatrix( mat , hpr );
-      osg::Quat quat;
-      mat.get( quat );
-      dtGame::Vec4MessageParameter* v4mp = static_cast<dtGame::Vec4MessageParameter*>( mp );
-      v4mp->SetValue( quat.asVec4() );
+      dtGame::Vec3MessageParameter* v3mp = static_cast<dtGame::Vec3MessageParameter*>( mp );
+      v3mp->SetValue( hpr );
    }
 
    //DIS::EntityType et;
