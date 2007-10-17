@@ -39,6 +39,14 @@ void MasterComponentTests::Test()
    // add the component for testing
    ///\todo supply real file handles
    dtDIS::SharedState config;
+   dtDIS::ConnectionData cd = { 62040,
+			 "239.1.2.3",
+			 "../../dtDIS_trunk/bin/plugins",
+			 1,
+			 1500 };
+   
+   config.SetConnectionData(cd);
+
    dtCore::RefPtr<dtDIS::MasterComponent> mc = new dtDIS::MasterComponent( &config );
    // needs to load at least one plugin for the following unit test to pass
    gm->AddComponent( *mc , dtGame::GameManager::ComponentPriority::NORMAL );
