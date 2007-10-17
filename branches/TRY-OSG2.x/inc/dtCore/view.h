@@ -160,8 +160,6 @@ namespace dtCore
 
       virtual ~View();
 
-      dtCore::Scene * CreateScene();
-      dtCore::Camera * CreateCamera();
       
       friend class Scene;
       void UpdateFromScene();
@@ -178,7 +176,8 @@ namespace dtCore
       { return (mKeyboardMouseHandler.valid()) ? (mKeyboardMouseHandler.get()) : CreateKeyboardMouseHandler(); }
       dtCore::KeyboardMouseHandler * CreateKeyboardMouseHandler();
       
-      
+      dtCore::Scene * CreateScene();
+      dtCore::Camera * CreateCamera();
       
       typedef std::set<dtCore::RefPtr<dtCore::Camera> > CameraSet;
       /// set of osg::Camera wrapping the mView camera slave list

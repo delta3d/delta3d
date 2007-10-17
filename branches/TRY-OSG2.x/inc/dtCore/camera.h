@@ -208,13 +208,6 @@ namespace dtCore
       /// define the mOsgViewerView
       void SetView(dtCore::View * view) { mView = view; }
       
-      
-      /// common method to create Window with the MasterCamera of the owner view
-      dtCore::DeltaWin * CreateDeltaWin();
-      
-      /// common method to create Window with the MasterCamera of the owner view
-      osg::Camera * CreateOsgCamera();
-
       void UpdateFromWindow();
       
    private:
@@ -225,6 +218,12 @@ namespace dtCore
       // cause compiler errors for missing calls to "ref".
       Camera& operator=( const Camera& ); 
       Camera( const Camera& );
+
+      /// common method to create Window with the MasterCamera of the owner view
+      dtCore::DeltaWin * CreateDeltaWin();
+      
+      /// common method to create Window with the MasterCamera of the owner view
+      osg::Camera * CreateOsgCamera();
 
       unsigned int mFrameBin;
       
