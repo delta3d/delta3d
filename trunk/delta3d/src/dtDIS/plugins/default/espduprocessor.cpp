@@ -12,6 +12,7 @@
 #include <dtDIS/propertyname.h>
 
 
+
 using namespace dtDIS;
 
 ESPduProcessor::ESPduProcessor(dtGame::GameManager* gm, SharedState* config)
@@ -73,7 +74,7 @@ void ESPduProcessor::Process(const DIS::Pdu& packet)
             //dtCore::RefPtr<dtDAL::ActorProxy> proxy = mGM->CreateActor( *(actortype) );
             //AddActor( pdu, proxy.get() );
 
-            CreateRemoteActor( *actortype );
+            CreateRemoteActor( *actortype, pdu);
          }
          else
          {
@@ -147,7 +148,8 @@ void ESPduProcessor::AddActor(const DIS::EntityStatePdu& pdu, dtDAL::ActorProxy*
    mConfig->GetActiveEntityControl().AddEntity( pdu.getEntityID(), proxy );
 }
 
-void dtDIS::ESPduProcessor::CreateRemoteActor(const dtDAL::ActorType &actorType)
+void dtDIS::ESPduProcessor::CreateRemoteActor(const dtDAL::ActorType &actorType,
+                                              const DIS::EntityStatePdu& pdu)
 {
    dtCore::RefPtr<dtGame::ActorUpdateMessage> msg;
    mGM->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_CREATED, msg);
@@ -156,6 +158,9 @@ void dtDIS::ESPduProcessor::CreateRemoteActor(const dtDAL::ActorType &actorType)
 
    msg->SetActorTypeCategory( actorType.GetCategory() );
    msg->SetActorTypeName( actorType.GetName() );
+
+   dtDIS::details::FullApplicator copyToMsg;
+   copyToMsg(pdu, *msg, mConfig);
 
    mGM->SendMessage(*msg);
 }

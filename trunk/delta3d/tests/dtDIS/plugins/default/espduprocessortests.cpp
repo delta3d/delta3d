@@ -8,11 +8,13 @@
 #include <dtDIS/plugins/default/initializeupdatemessage.h>  // for usage
 #include <dtDIS/plugins/default/samplegameactorproxy.h>     // for usage
 #include <dtDIS/sharedstate.h>
+#include <dtDIS/propertyname.h>
 
 #include <dtGame/gamemanager.h>
 #include <dtCore/scene.h>
 
 #include <dtActors/engineactorregistry.h>
+#include <dtDAL/enginepropertytypes.h>
 
 #include <cstddef>   // for NULL
 #include <dtGame/gmcomponent.h>
@@ -21,6 +23,7 @@
 #include <dtGame/actorupdatemessage.h>         // for usage
 #include <dtGame/defaultmessageprocessor.h>
 
+#include <dtUtil/mathdefines.h>
 
 namespace dtTest
 {
@@ -108,18 +111,28 @@ void ESPduProcessorTests::CreateRemoteActorFromEntityStatePDU()
    ///\todo need to tick the system so that message is really applied?
    dtCore::System::GetInstance().Step();
 
-
-   //CPPUNIT_ASSERT_EQUAL( pdu.getEntityAppearance() , sap->mAppearance );
-   //CPPUNIT_ASSERT_EQUAL( pdu.getEntityLocation() , sap->mLocation );
-   //CPPUNIT_ASSERT_EQUAL( pdu.getEntityOrientation() , sap->mOrientation );
-   //CPPUNIT_ASSERT_EQUAL( pdu.getEntityID().getEntity() , sap->mEntityIDEntity );
-   //CPPUNIT_ASSERT_EQUAL( pdu.getEntityID().getApplication() , sap->mEntityIDApplication );
-   //CPPUNIT_ASSERT_EQUAL( pdu.getEntityID().getSite() , sap->mEntityIDSite );
-
    //at this point, there should be a new Actor out there
    std::vector<dtDAL::ActorProxy*> proxies;
    gm->FindActorsByType(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, proxies );
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Should only be one actor created", size_t(1), proxies.size());
+
+   //we'll do a quick sanity check to make sure some of the Properties got
+   //applied correctly. This process is more thoroughly tested in
+   //espduapplicatortests.cpp
+   dtDAL::Vec3ActorProperty *v3Prop = NULL;
+   proxies[0]->GetProperty(dtDIS::EnginePropertyName::ROTATION,v3Prop);
+  
+   if (v3Prop != NULL)
+   {
+      DIS::Orientation orient = pdu.getEntityOrientation();
+      CPPUNIT_ASSERT_MESSAGE("Rotation doesn't match.",
+         dtUtil::Equivalent(osg::Vec3(orient.getPhi(), orient.getTheta(), orient.getPsi()),
+                           v3Prop->GetValue(),
+                           0.00001f));
+   } 
+
+   dtDAL::ActorProperty *velProp = proxies[0]->GetProperty(dtDIS::EnginePropertyName::VELOCITY);
+   CPPUNIT_ASSERT_MESSAGE("Doesn't have VELOCITY property", velProp != NULL);
 }
 
 void ESPduProcessorTests::TestNoActor()
