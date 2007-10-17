@@ -74,7 +74,8 @@ namespace dtDIS
    private:
       ESPduProcessor();  ///< not implemented by design
 
-      void CreateRemoteActor(const dtDAL::ActorType &actorType);
+      void CreateRemoteActor(const dtDAL::ActorType &actorType,
+                             const DIS::EntityStatePdu& pdu);
 
       //using an refptr results in a circular reference.
       dtCore::ObserverPtr<dtGame::GameManager> mGM;
