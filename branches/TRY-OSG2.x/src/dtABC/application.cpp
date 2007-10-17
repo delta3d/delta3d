@@ -352,24 +352,24 @@ bool Application::AppXMLApplicator::operator ()(const ApplicationConfigData& dat
    return true;
 }
 ////////////////////////////////////////////////////////
-void Application::addView(dtCore::View * view)
+void Application::AddView(dtCore::View &view)
 {
    if (mCompositeViewer.get() == NULL)
    {
       mCompositeViewer = new osgViewer::CompositeViewer;
    }
    
-   mCompositeViewer->addView(view->GetOsgViewerView());
-   mViewList.push_back(view);
+   mCompositeViewer->addView(view.GetOsgViewerView());
+   mViewList.push_back(&view);
 }
 
 ////////////////////////////////////////////////////////
-void Application::removeView(dtCore::View * view)
+void Application::RemoveView(dtCore::View &view)
 {
-   ViewList::iterator it = std::find(mViewList.begin(), mViewList.end(), view);
+   ViewList::iterator it = std::find(mViewList.begin(), mViewList.end(), &view);
    if (it != mViewList.end())
    {
       mViewList.erase(it);
-      mCompositeViewer->removeView(view->GetOsgViewerView());
+      mCompositeViewer->removeView(view.GetOsgViewerView());
    }
 }

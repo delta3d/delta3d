@@ -91,11 +91,6 @@ namespace dtABC
       /// @return the instance of the listener used for callbacks
       dtCore::GenericKeyboardListener* GetKeyboardListener() { return mKeyboardListener.get(); }
 
-      /// @return the instance of the osgViewer::CompositeViewer
-      const osgViewer::CompositeViewer* GetCompositeViewer() const { return mCompositeViewer.get(); }
-      /// @return the instance of the osgViewer::CompositeViewer
-      osgViewer::CompositeViewer* GetCompositeViewer() { return mCompositeViewer.get(); }
-      
       /// the publicized default settings for a generated config file.
       static ApplicationConfigData GetDefaultConfigData();
 
@@ -108,10 +103,10 @@ namespace dtABC
       void RemoveConfigPropertyValue(const std::string& name);
       
       /// Add a view to the Viewer
-      void addView(dtCore::View * view);
+      void AddView(dtCore::View &view);
       
       /// Remove a view to the Viewer
-      void removeView(dtCore::View * view);
+      void RemoveView(dtCore::View &view);
       
    protected:
 
@@ -134,6 +129,12 @@ namespace dtABC
       /// @param file the name of the data file to be parsed.
       /// @return true, if both parsing and applying went well.
       bool ParseConfigFile(const std::string& file);
+
+      /// @return the instance of the osgViewer::CompositeViewer
+      const osgViewer::CompositeViewer* GetCompositeViewer() const { return mCompositeViewer.get(); }
+
+      /// @return the instance of the osgViewer::CompositeViewer
+      osgViewer::CompositeViewer* GetCompositeViewer() { return mCompositeViewer.get(); }
 
    private:
 

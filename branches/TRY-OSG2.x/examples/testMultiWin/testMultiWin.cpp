@@ -41,11 +41,11 @@ void TestMultiWin::Config()
 
    mView2 = new View("View 2");
    mView2->SetScene( GetScene() ); //use the default, pre-built Scene
-   GetCompositeViewer()->addView(mView2->GetOsgViewerView());
+   this->AddView( *mView2 );
    
    mView3 = new View("View 3");
    mView3->SetScene( GetScene() ); //use the default, pre-built Scene
-   GetCompositeViewer()->addView(mView3->GetOsgViewerView());
+   this->AddView( *mView3 );
    
    
    //setup scene here
