@@ -126,7 +126,13 @@ osgViewer::GraphicsWindow * DeltaWin::CreateGraphicsWindow(const std::string& na
    }
 
    osg::ref_ptr<osg::GraphicsContext> gc = osg::GraphicsContext::createGraphicsContext(traits.get());
-   assert(gc.get());
+   
+   if (gc.valid() == false)
+   {
+      throw dtUtil::Exception(dtCore::ExceptionEnum::INVALID_CONTEXT,
+         "The graphics context could not be created.",
+         __FILE__, __LINE__ );
+   }
    
    osgViewer::GraphicsWindow* gw = dynamic_cast<osgViewer::GraphicsWindow*>(gc.get());
    if (gw)

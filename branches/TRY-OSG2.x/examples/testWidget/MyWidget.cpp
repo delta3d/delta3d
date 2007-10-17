@@ -3,6 +3,7 @@
 #include <dtCore/deltawin.h>
 #include <dtCore/object.h>
 #include <dtCore/orbitmotionmodel.h>
+#include <dtUtil/exception.h>
 
 #ifdef _MSC_VER
 #	pragma warning(push)
@@ -93,7 +94,18 @@ void MyWidget::OnMessage( MessageData* data )
 
 void MyWidget::Config( const WinData* d /*= NULL*/ )
 {
-   Widget::Config( d );
+   try
+   {
+      Widget::Config( d );
+   }
+   catch (const dtUtil::Exception &e)
+   {
+      LOG_ERROR("Problem with configuring the widget: " +
+                e.ToString() );
+      LOG_ERROR("Aborting...");
+      
+      exit(-1);
+   }
 
    InitInputDevices();
 }
