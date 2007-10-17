@@ -267,12 +267,7 @@ namespace dtCore
       /// define the owner mView of this instance
       void RemoveView(dtCore::View * view) { mViewSet.remove(view); }
       void AddView(dtCore::View * view) { mViewSet.push_back(view); }
-      
-      osg::Group * CreateSceneNode();
-      void UpdateViewSet();
-      
-      void Init();
-      
+            
     private:
 
       // Disallowed to prevent compile errors on VS2003. It apparently
@@ -284,6 +279,9 @@ namespace dtCore
       
       ///ODE collision callback
       static void NearCallback(void *data, dGeomID o1, dGeomID o2);
+
+      osg::Group * CreateSceneNode();
+      void UpdateViewSet();
       
       RefPtr<osg::Group> mSceneNode; ///<This will be our Scene
       dSpaceID mSpaceID;

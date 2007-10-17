@@ -174,13 +174,6 @@ namespace dtCore
       osgViewer::GraphicsWindow* GetOsgViewerGraphicsWindow() { return mOsgViewerGraphicsWindow.get(); }
       const osgViewer::GraphicsWindow* GetOsgViewerGraphicsWindow() const { return mOsgViewerGraphicsWindow.get(); }
 
-      ///Conveniante method to create a GraphicsWindow
-      osgViewer::GraphicsWindow * CreateGraphicsWindow(const std::string& name = "defaulWindow", 
-                                                       int x = 500, int y = 500, 
-                                                       int width = 640, int height = 480, 
-                                                       unsigned int screenNum = 0,
-                                                       bool cursor = true, 
-                                                       osg::Referenced * inheritedWindowData = NULL);
       
       /**
       * Supply an instance of a osgViewer::GraphicsWindow to be used instead 
@@ -229,6 +222,14 @@ namespace dtCore
       
       
    private:
+
+      ///Conveniante method to create a GraphicsWindow
+      osgViewer::GraphicsWindow * CreateGraphicsWindow(const std::string& name = "defaulWindow", 
+                                                      int x = 500, int y = 500, 
+                                                      int width = 640, int height = 480, 
+                                                      unsigned int screenNum = 0,
+                                                      bool cursor = true, 
+                                                      osg::Referenced * inheritedWindowData = NULL);
 
       static int CalcRefreshRate( int width, int height, int dotclock );
       
