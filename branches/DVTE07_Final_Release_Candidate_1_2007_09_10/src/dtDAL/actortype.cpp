@@ -31,6 +31,12 @@ namespace dtDAL
    }
    
    ///////////////////////////////////////////////////////////////////////////////
+   const std::string ActorType::ToString() const
+   {
+      return GetCategory() + "." + GetName();
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    bool ActorType::InstanceOf(const ActorType &rhs) const
    {
       if (rhs == *this)

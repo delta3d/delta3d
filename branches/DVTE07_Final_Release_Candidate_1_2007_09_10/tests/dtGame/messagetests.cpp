@@ -250,7 +250,7 @@ void MessageTests::createActors(dtDAL::Map& map)
       dtCore::RefPtr<dtDAL::ActorProxy> proxy;
 
       mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
-                         "Creating actor proxy %s with category %s.", actorTypes[i]->GetName().c_str(), actorTypes[i]->GetCategory().c_str());
+                         "Creating actor proxy with type \"%s\" with category %s.", actorTypes[i]->ToString().c_str());
 
       proxy = mGameManager->CreateActor(*actorTypes[i]);
       snprintf(nameAsString, 21, "%d", nameCounter);

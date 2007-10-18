@@ -227,7 +227,7 @@ namespace dtEditQt
    
       nm->setText(tr(proxy.GetName().c_str()));
       nm->setData(Qt::UserRole, QVariant::fromValue(dtCore::RefPtr<dtDAL::ActorProxy>(&proxy)));
-      type->setText(tr((at.GetCategory() + "." + at.GetName()).c_str()));
+      type->setText(tr((at.ToString()).c_str()));
 
       int row = mChildrenView->rowCount();
       mChildrenView->setRowCount(row + 1);

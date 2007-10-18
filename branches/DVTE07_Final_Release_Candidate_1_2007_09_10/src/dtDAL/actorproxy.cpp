@@ -192,7 +192,7 @@ namespace dtDAL
    {
       std::map<std::string,dtCore::RefPtr<ActorProperty> >::iterator itor =
          mPropertyMap.find(nameToRemove);
-      if(itor != mPropertyMap.end())
+      if (itor != mPropertyMap.end())
       {
          mPropertyMap.erase(itor);
          for (unsigned int i = 0; i < mProperties.size(); ++i)

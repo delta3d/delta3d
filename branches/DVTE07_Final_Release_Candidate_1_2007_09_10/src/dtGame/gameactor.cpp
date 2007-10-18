@@ -262,9 +262,9 @@ namespace dtGame
          if (mLogger.IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
          {
             mLogger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-               "Setting name on actor type \"%s.%s\" to value \"%s\"",
-               GetActorType().GetCategory().c_str(),
-               GetActorType().GetName().c_str(), nameParam->ToString().c_str()
+               "Setting name on actor type \"%s\" to value \"%s\"",
+               GetActorType().ToString().c_str(),
+               nameParam->ToString().c_str()
                );
          }
          // we prevent users from setting an empty name because there are many cases where a component will 
@@ -297,9 +297,9 @@ namespace dtGame
             if (mLogger.IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
             {
                mLogger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                  "Not setting property \"%s\" on actor type \"%s.%s\" to value \"%s\" because the property is read only.",
-                  params[i]->GetName().c_str(), GetActorType().GetCategory().c_str(),
-                  GetActorType().GetName().c_str(), params[i]->ToString().c_str()
+                  "Not setting property \"%s\" on actor type \"%s\" to value \"%s\" because the property is read only.",
+                  params[i]->GetName().c_str(), GetActorType().ToString().c_str(),
+                  params[i]->ToString().c_str()
                   );
             }
             continue;
@@ -308,9 +308,9 @@ namespace dtGame
          if (mLogger.IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
          {
             mLogger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-               "Setting property \"%s\" on actor type \"%s.%s\" to value \"%s\"",
-               params[i]->GetName().c_str(), GetActorType().GetCategory().c_str(),
-               GetActorType().GetName().c_str(), params[i]->ToString().c_str()
+               "Setting property \"%s\" on actor type \"%s\" to value \"%s\"",
+               params[i]->GetName().c_str(), GetActorType().ToString().c_str(),
+               params[i]->ToString().c_str()
                );
          }
 
