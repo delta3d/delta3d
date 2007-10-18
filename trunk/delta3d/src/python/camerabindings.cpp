@@ -23,7 +23,7 @@ void initCameraBindings()
    Scene* (Camera::*GetScene2)() = &Camera::GetScene;
    const Scene* (Camera::*GetScene1)() const = &Camera::GetScene;
    
-   class_<Camera, bases<Transformable>, dtCore::RefPtr<Camera>, boost::noncopyable >("Camera", init<optional<const std::string&> >())
+   scope in_camera = class_<Camera, bases<Transformable>, dtCore::RefPtr<Camera>, boost::noncopyable >("Camera", init<optional<const std::string&> >())
       .def("GetInstanceCount", &Camera::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", CameraGI1, return_internal_reference<>())
@@ -52,5 +52,12 @@ void initCameraBindings()
       .def("SetAspectRatio", &Camera::SetAspectRatio)
       .def("GetAspectRatio", &Camera::GetAspectRatio)
       .def("SetNextStatisticsType", &Camera::SetNextStatisticsType)
+      .def("SetNearFarCullingMode", &Camera::SetNearFarCullingMode)                                             
       ;
+
+   enum_<Camera::AutoNearFarCullingMode>("AutoNearFarCullingMode")
+      .value("NO_AUTO_NEAR_FAR", Camera::NO_AUTO_NEAR_FAR)
+      .value("BOUNDING_VOLUME_NEAR_FAR", Camera::BOUNDING_VOLUME_NEAR_FAR)
+      .value("PRIMITIVE_NEAR_FAR", Camera::PRIMITIVE_NEAR_FAR)
+      .export_values();
 }
