@@ -26,6 +26,7 @@
 #include <dtCore/keyboard.h>
 #include <dtCore/generickeyboardlistener.h>
 #include <dtCore/globals.h>
+#include <dtCore/scene.h>
 #include <dtUtil/fileutils.h>                  // for verification when writing the config file
 #include <dtUtil/stringutils.h>                // for dtUtil::ToInt
 #include <dtUtil/xercesparser.h>               // for parsing
@@ -350,4 +351,81 @@ namespace dtTest
       CPPUNIT_ASSERT( !dtUtil::FileUtils::GetInstance().FileExists( mConfigName ) );
       
    }
+
+
+
+   class ApplicationSetupTests : public CPPUNIT_NS::TestFixture
+   {
+
+      CPPUNIT_TEST_SUITE( ApplicationSetupTests );
+      CPPUNIT_TEST( TestInit );
+      CPPUNIT_TEST( TestReplaceScene );
+      CPPUNIT_TEST( TestReplaceCamera );
+      CPPUNIT_TEST_SUITE_END();
+
+   public:
+      ApplicationSetupTests() {};
+      ~ApplicationSetupTests() {};
+
+      void TestInit();
+      void TestReplaceScene();
+      void TestReplaceCamera();
+
+   protected:
+   	
+   private:
+   };
+
+   CPPUNIT_TEST_SUITE_REGISTRATION( ApplicationSetupTests );  
+
+
+   void ApplicationSetupTests::TestInit()
+   {
+      dtCore::RefPtr<dtABC::Application> app = new dtABC::Application();
+      CPPUNIT_ASSERT_MESSAGE("No valid Scene", app->GetScene() != NULL);
+      CPPUNIT_ASSERT_MESSAGE("No valid Camera", app->GetCamera() != NULL);
+      CPPUNIT_ASSERT_MESSAGE("No valid Window", app->GetWindow() != NULL);
+      CPPUNIT_ASSERT_MESSAGE("No valid View", app->GetView() != NULL);
+   }
+
+   void ApplicationSetupTests::TestReplaceScene()
+   {
+      dtCore::RefPtr<dtABC::Application> app = new dtABC::Application(); 
+      dtCore::RefPtr<dtCore::Scene> newScene = new dtCore::Scene();
+
+      app->SetScene( newScene.get() );
+
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("App didn't get the new Scene",
+         newScene.get(), app->GetScene());
+
+      //new scene should have ended up in the app's View
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("View didn't get the new Scene",
+         newScene.get(), app->GetView()->GetScene() );
+
+      //verify the osg node's are the same too
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Scene nodes don't match",
+         newScene->GetSceneNode(), app->GetView()->GetOsgViewerView()->getSceneData()->asGroup());
+   }
+
+   void ApplicationSetupTests::TestReplaceCamera()
+   {
+      dtCore::RefPtr<dtABC::Application> app = new dtABC::Application(); 
+      dtCore::RefPtr<dtCore::Camera> newCam = new dtCore::Camera();
+
+      app->SetCamera( newCam.get() );
+ 
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("App didn't get the new Camera",
+         newCam.get(), app->GetCamera() );
+
+      //the new Camera should have ended up in the app's View
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("View didn't get the new Camera",
+         newCam.get(), app->GetView()->GetCamera() );
+
+      //the new osgCamera should have ended up in the app's View
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("osgCamera's don't match",
+         newCam->GetOsgCamera(), app->GetView()->GetOsgViewerView()->getCamera() );
+
+
+   }
+
 }
