@@ -431,7 +431,6 @@ namespace dtCore
    dtCore::DeltaWin * Camera::CreateDeltaWin()
    {
        mWindow = new dtCore::DeltaWin("defaultWindow");
-       mWindow->SetCamera(this);
        
        UpdateFromWindow();
        
@@ -477,12 +476,7 @@ namespace dtCore
    void Camera::SetWindow( DeltaWin* win )
    {
       if (mWindow == win) return;
-      
-      if (mWindow.valid())
-      {
-         mWindow->SetCamera(NULL);
-      }
-      
+            
       mWindow = win;
 
       UpdateFromWindow();

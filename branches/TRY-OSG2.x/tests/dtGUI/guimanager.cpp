@@ -28,10 +28,13 @@ dtGUI::CEUIDrawable* GUIManager::GetGUIDrawable()
    return mDrawable.get();
 }
 
-void GUIManager::InitializeGUI(dtCore::DeltaWin* dwin, dtGUI::BaseScriptModule* sm)
+void GUIManager::InitializeGUI(dtCore::DeltaWin* dwin, 
+                               dtCore::Keyboard *keyboard,
+                               dtCore::Mouse *mouse,
+                               dtGUI::BaseScriptModule* sm)
 {
    // this code could start the system, but that code is in the drawable
-   mDrawable = new dtGUI::CEUIDrawable(dwin,sm);
+   mDrawable = new dtGUI::CEUIDrawable(dwin, keyboard, mouse, sm);
 }
 
 // These functions not actually used, so it's #ifdef'd out for now to avoid linker warnings. -osb

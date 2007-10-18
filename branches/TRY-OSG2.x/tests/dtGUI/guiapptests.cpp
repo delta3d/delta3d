@@ -32,7 +32,7 @@ void GUIApp::Config()
 {
    BaseClass::Config();
 
-   mGUIManager->InitializeGUI( GetWindow(), mScriptModule );
+   mGUIManager->InitializeGUI( GetWindow(), GetKeyboard(), GetMouse(), mScriptModule );
 }
 
 dtGUI::GUIManager* GUIApp::GetGUIManager()

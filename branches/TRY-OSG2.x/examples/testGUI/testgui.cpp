@@ -67,7 +67,10 @@ public:
       try
       {
          ///make a new drawable, supplying the DeltaWin and the ScriptModule
-         mGUI = new dtGUI::CEUIDrawable(GetWindow(), mScriptModule);
+         mGUI = new dtGUI::CEUIDrawable(GetWindow(),
+                                        GetKeyboard(),
+                                        GetMouse(),
+                                        mScriptModule);
       }
       catch (dtUtil::Exception &e)
       {

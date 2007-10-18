@@ -35,7 +35,6 @@
 #include <dtCore/exceptionenum.h>
 #include <dtUtil/exception.h>
 #include <dtCore/deltawin.h>
-#include <dtCore/view.h>
 #include <dtCore/system.h>
 #include <dtUtil/log.h>
 #include <dtGUI/renderer.h>
@@ -59,7 +58,10 @@ IMPLEMENT_MANAGEMENT_LAYER(CEUIDrawable)
   * @param sm : The ScriptModule to use for CEGUI script processing
   * @exception dtUtil::Exception Gets thrown if CEGUI cannot be initialized
   */
-CEUIDrawable::CEUIDrawable(dtCore::DeltaWin *win, dtGUI::BaseScriptModule *sm):
+CEUIDrawable::CEUIDrawable(dtCore::DeltaWin *win,
+                           dtCore::Keyboard *keyboard,
+                           dtCore::Mouse *mouse,
+                           dtGUI::BaseScriptModule *sm):
    DeltaDrawable("CEUIDrawable"),
    mUI(NULL),
    mRenderer(new dtGUI::Renderer()),
@@ -67,6 +69,8 @@ CEUIDrawable::CEUIDrawable(dtCore::DeltaWin *win, dtGUI::BaseScriptModule *sm):
    mProjection(new osg::Projection()),
    mTransform(new osg::MatrixTransform(osg::Matrix::identity())),
    mWindow(win),
+   mMouse(mouse),
+   mKeyboard(keyboard),
    mWidth(0),
    mHeight(0),
    mAutoResize(true),
@@ -76,25 +80,6 @@ CEUIDrawable::CEUIDrawable(dtCore::DeltaWin *win, dtGUI::BaseScriptModule *sm):
    AddSender( &dtCore::System::GetInstance() );
 
    RegisterInstance(this);
-
-   if(mWindow.valid() == false)
-   {
-      throw dtUtil::Exception(dtCore::ExceptionEnum::INVALID_PARAMETER,
-         "Supplied dtCore::DeltaWin is NULL", __FILE__, __LINE__);
-   }
-   
-   if(mWindow->GetCamera() == NULL)
-   {
-      throw dtUtil::Exception(dtCore::ExceptionEnum::INVALID_PARAMETER,
-         "Supplied dtCore::DeltaWin have not valid dtCore::Camera", __FILE__, __LINE__);
-   }
-   
-   if(mWindow->GetCamera()->GetView() == NULL)
-   {
-      throw dtUtil::Exception(dtCore::ExceptionEnum::INVALID_PARAMETER,
-         "Supplied dtCore::DeltaWin have not valid dtCore::View", __FILE__, __LINE__);
-   }
-   mView = mWindow->GetCamera()->GetView();
    
    mProjection->setName("CEUIDrawable_Projection");
    mTransform->setName("CEUIDrawable_MatrixTransform");
@@ -149,27 +134,28 @@ void CEUIDrawable::Config()
    }
 
     
-   // make the listener the first in the list
-   assert(mView.get()); // have to have a valid Window
-   
-   dtCore::Mouse* ms = mView->GetOrCreateMouse();
-   if( ms->GetListeners().empty() )
+   if (mMouse.valid())
    {
-      ms->AddMouseListener( mMouseListener.get() );
+      if( mMouse->GetListeners().empty() )
+      {
+         mMouse->AddMouseListener( mMouseListener.get() );
+      }
+      else
+      {
+         mMouse->InsertMouseListener( mMouse->GetListeners().front() , mMouseListener.get() );
+      }  
    }
-   else
-   {
-      ms->InsertMouseListener( ms->GetListeners().front() , mMouseListener.get() );
-   }  
 
-   dtCore::Keyboard* kb = mView->GetOrCreateKeyboard();
-   if( kb->GetListeners().empty() )
+   if (mKeyboard.valid())
    {
-      kb->AddKeyboardListener( mKeyboardListener.get() );
-   }
-   else
-   {
-      kb->InsertKeyboardListener( kb->GetListeners().front() , mKeyboardListener.get() );
+      if( mKeyboard->GetListeners().empty() )
+      {
+         mKeyboard->AddKeyboardListener( mKeyboardListener.get() );
+      }
+      else
+      {
+         mKeyboard->InsertKeyboardListener( mKeyboard->GetListeners().front() , mKeyboardListener.get() );
+      }
    }
 
 
@@ -306,9 +292,15 @@ void CEUIDrawable::SetRenderingSize(int width, int height)
 
 void CEUIDrawable::ShutdownGUI()
 {
-   assert(mView.get()); // have to have a valid Window
-   mView->GetOrCreateMouse()->RemoveMouseListener( mMouseListener.get() );
-   mView->GetOrCreateKeyboard()->RemoveKeyboardListener( mKeyboardListener.get() );
+   if (mMouse.valid())
+   {
+      mMouse->RemoveMouseListener( mMouseListener.get() );
+   }
+
+   if (mKeyboard.valid())
+   {
+      mKeyboard->RemoveKeyboardListener( mKeyboardListener.get() );
+   }
    
    delete mUI;
    mUI = NULL;

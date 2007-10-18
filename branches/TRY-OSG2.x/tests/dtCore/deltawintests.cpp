@@ -86,13 +86,9 @@ void DeltaWinTests::TestWindow()
       //overloaded constructor test
       osg::ref_ptr<osgViewer::GraphicsWindow> gw = 0; 
       
-      //should throw exception due to NULL param
-      CPPUNIT_ASSERT_THROW( new dtCore::DeltaWin("testWin", gw.get()),
-                           dtUtil::Exception);
-
       gw = CreateGraphicsWindow();
       
-      dtCore::RefPtr<dtCore::DeltaWin> win = new dtCore::DeltaWin("testWin", gw.get());
+      dtCore::RefPtr<dtCore::DeltaWin> win = new dtCore::DeltaWin("testWin", *gw);
       CPPUNIT_ASSERT_MESSAGE("Overloaded constructor failed", win.valid() );
    }
 }

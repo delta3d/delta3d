@@ -282,7 +282,7 @@ public:
       }
 
       // show a HUD
-      mGUIDrawable = new dtGUI::CEUIDrawable( GetWindow() );
+      mGUIDrawable = new dtGUI::CEUIDrawable( GetWindow(), GetKeyboard(), GetMouse() );
       AddDrawable( mGUIDrawable.get() );
       mMenuManager->BuildMenu();
       mMenuManager->SetSelected( dtExample::WALK );

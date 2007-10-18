@@ -27,7 +27,6 @@
 
 #include <dtCore/base.h>
 #include <dtCore/refptr.h>
-#include <dtCore/camera.h>
 
 #include <vector>                   // for member
 
@@ -81,7 +80,7 @@ namespace dtCore
        * @param fullScreen true if this window should be displayed fullscreen
        * @param inheritedWindowData the inheritedWindowData use to embedded the window in GUI window  
        */
-       DeltaWin(  const std::string& name = "defaulWindow", 
+       DeltaWin(  const std::string& name = "defaultWindow", 
                   int x = 0, int y = 0, 
                   int width = 640, int height = 480, 
                   bool cursor = true, bool fullScreen = false,
@@ -93,16 +92,8 @@ namespace dtCore
       * @param name : the name of the class as well as the window title
       * @param gw : the GraphicsWindow use by this instance  
       */
-      DeltaWin(const std::string& name, osgViewer::GraphicsWindow * gw);
+      DeltaWin(const std::string& name, osgViewer::GraphicsWindow &gw);
       
-      /** 
-      * Constructor
-      *
-      * @param name : the name of the class as well as the window title
-      * @param camera the camera owned this instance os DeltaWin  
-      */      
-      DeltaWin(const std::string& name, Camera * camera);
-
    protected:
 
       virtual ~DeltaWin();
@@ -115,8 +106,8 @@ namespace dtCore
        *
        * @param x : window x coordinate [-1, 1]
        * @param y : window y coordinate [-1, 1]
-       * @param &pixel_x : The screen X pixel equivelent [out]
-       * @param &pixel_y : The screen Y pixel equivelent [out]
+       * @param &pixel_x : The screen X pixel equivalent [out]
+       * @param &pixel_y : The screen Y pixel equivalent [out]
        *
        * @return bool  : Returns true if the (x,y) is a valid window coordinate
        */
@@ -175,16 +166,6 @@ namespace dtCore
       const osgViewer::GraphicsWindow* GetOsgViewerGraphicsWindow() const { return mOsgViewerGraphicsWindow.get(); }
 
       
-      /**
-      * Supply an instance of a osgViewer::GraphicsWindow to be used instead 
-      * the internal osgViewer::GraphicsWindow. This could be used for
-      * e.g., Stencil Buffering.
-      * @param graphicsWindow : instance of a valid Producer::RenderSurface to use
-      * @pre graphicsWindow != 0
-      * @exception dtCore::ExceptionEnum::INVALID_PARAMETER The supplied instance
-      * is NULL.  The original osgViewer::GraphicsWindow will still be used.
-      */
-      void SetOsgViewerGraphicsWindow(osgViewer::GraphicsWindow * graphicsWindow);
 
       /// The data structure modeling monitor resolution
       struct Resolution
@@ -208,22 +189,12 @@ namespace dtCore
       /// Tests to see if the system supports the desired resolution.
       /// @param candidate the Resolution to be tested.
       /// @return 'true' when the Resolution is supported.
-      bool IsValidResolution(const Resolution& candidate);
-
-      Camera * GetCamera() { return mCamera.get(); }
-      
-   protected:
-      
-      friend class Camera;
-      
-      /// define the camera owner of this instance
-      void SetCamera(Camera * camera) { mCamera = camera; }
-      
+      bool IsValidResolution(const Resolution& candidate);      
       
       
    private:
 
-      ///Conveniante method to create a GraphicsWindow
+      ///Convenient method to create a GraphicsWindow
       osgViewer::GraphicsWindow * CreateGraphicsWindow(const std::string& name = "defaulWindow", 
                                                       int x = 500, int y = 500, 
                                                       int width = 640, int height = 480, 
@@ -233,7 +204,6 @@ namespace dtCore
 
       static int CalcRefreshRate( int width, int height, int dotclock );
       
-      osg::observer_ptr<dtCore::Camera> mCamera;
       dtCore::RefPtr<osgViewer::GraphicsWindow> mOsgViewerGraphicsWindow;
 
       bool mIsFullScreen;

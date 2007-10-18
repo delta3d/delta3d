@@ -3,16 +3,10 @@
 //////////////////////////////////////////////////////////////////////
 #include <prefix/dtcoreprefix-src.h>
 #include <dtCore/deltawin.h>
-#include <dtCore/keyboard.h>
-#include <dtCore/mouse.h>
 #include <dtUtil/deprecationmgr.h>
 #include <dtUtil/log.h>
 #include <dtCore/exceptionenum.h>
-//#include <dtCore/inputcallback.h>
 #include <dtUtil/exception.h>
-#include <dtCore/scene.h>  //due to include of camera.h
-#include <dtCore/keyboardmousehandler.h> //due to include of scene.h
-#include <dtCore/keyboard.h> //due to include of scene.h
 #include <osgViewer/GraphicsWindow>
 
 #include <cassert>
@@ -48,36 +42,6 @@ DeltaWin::DeltaWin(  const std::string& name,
    }
 }
 
-
-DeltaWin::DeltaWin(const std::string& name, Camera * camera) :
-   Base(name),
-   mIsFullScreen(false),
-   mShowCursor(true)
-{
-   RegisterInstance(this);
-
-   if( camera == NULL )
-   {
-      DeregisterInstance(this);
-      throw dtUtil::Exception(dtCore::ExceptionEnum::INVALID_PARAMETER,
-         "Supplied dtCore::Camera is NULL", __FILE__, __LINE__);
-   }
-
-   osg::GraphicsContext * gc = camera->GetOsgCamera()->getGraphicsContext();
-   try
-   {
-      SetOsgViewerGraphicsWindow(dynamic_cast<osgViewer::GraphicsWindow*>(gc));
-   }
-   catch(dtUtil::Exception & ex)
-   {
-      DeregisterInstance(this);
-      throw ex;
-   }
-   mCamera = camera;
-   
-   SetWindowTitle(name);
-   ShowCursor();
-}
 
 osgViewer::GraphicsWindow * DeltaWin::CreateGraphicsWindow(const std::string& name, 
                                                            int x, int y, 
@@ -149,25 +113,16 @@ osgViewer::GraphicsWindow * DeltaWin::CreateGraphicsWindow(const std::string& na
 
 
 /////////////////////////////////////////////////
-DeltaWin::DeltaWin(const std::string& name, osgViewer::GraphicsWindow * gw) :
+DeltaWin::DeltaWin(const std::string& name, osgViewer::GraphicsWindow &gw) :
    Base(name),
    mIsFullScreen(false),
    mShowCursor(true)
 {
    RegisterInstance(this);
  
-   try
-   {
-      SetOsgViewerGraphicsWindow(gw);
-   }
-   catch(dtUtil::Exception & ex)
-   {
-      DeregisterInstance(this);
-      throw ex;
-   }
-   
-//   SetWindowTitle(name);
-   SetWindowTitle("toto");
+   mOsgViewerGraphicsWindow = &gw;
+
+   SetWindowTitle(name);
    ShowCursor();
 }
 
@@ -268,23 +223,6 @@ DeltaWin::PositionSize DeltaWin::GetPosition()
    return positionSize;
 }
 
-///////////////////////////////////////////////////
-void DeltaWin::SetOsgViewerGraphicsWindow(osgViewer::GraphicsWindow * graphicsWindow)
-{
-   if( graphicsWindow == 0 )
-   {
-      throw dtUtil::Exception(dtCore::ExceptionEnum::INVALID_PARAMETER,
-         "Supplied osgViewer::GraphicsWindow is invalid", __FILE__, __LINE__);
-   }
-   
-   mOsgViewerGraphicsWindow = graphicsWindow;
-//   mOsgViewerGraphicsWindow->realize();
-   
-   if (mCamera.valid())
-   {
-      mCamera->UpdateFromWindow();
-   }
-}
 
 /////////////////////////////////////////////////
 bool DeltaWin::CalcPixelCoords( float x, float y, float &pixel_x, float &pixel_y )

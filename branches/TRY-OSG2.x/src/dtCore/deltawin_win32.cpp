@@ -4,11 +4,7 @@
 #include <prefix/dtcoreprefix-src.h>
 #if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
 #include <dtCore/deltawin.h>
-#include <dtCore/scene.h> //due to including camera.h?
-#include <dtCore/keyboardmousehandler.h> //due to including scene.h
-#include <dtCore/keyboard.h> //due to including scene.h
 #include <dtUtil/log.h>
-//#include <Producer/RenderSurface>
 
 using namespace dtCore;
 using namespace dtUtil;

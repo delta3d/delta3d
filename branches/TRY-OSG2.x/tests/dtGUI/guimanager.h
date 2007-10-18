@@ -38,6 +38,8 @@ namespace CEGUI
 namespace dtCore
 {
    class DeltaWin;
+   class Keyboard;
+   class Mouse;
 }
 
 namespace dtGUI
@@ -59,7 +61,10 @@ namespace dtGUI
         * @param dwin The instance pointer of the DeltaWin being used by the application.
         * @param sm The (optional) ScriptModule to be used by the CEGUI::System.
         */
-      void InitializeGUI(dtCore::DeltaWin* dwin, dtGUI::BaseScriptModule* sm=0);
+      void InitializeGUI(dtCore::DeltaWin* dwin, 
+                        dtCore::Keyboard *keyboard,
+                        dtCore::Mouse *mouse,
+                        dtGUI::BaseScriptModule* sm=0);
 
       ///Returns the instance of the class responsible for drawing the GUI scene.
       dtGUI::CEUIDrawable* GetGUIDrawable();
