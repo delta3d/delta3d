@@ -137,7 +137,7 @@ public:
 
       GetWindow()->GetPosition(x, y, w, h);
 
-      mUIDrawable = new dtGUI::CEUIDrawable( GetWindow() );
+      mUIDrawable = new dtGUI::CEUIDrawable( GetWindow(),GetKeyboard(), GetMouse() );
 
       try
       {
