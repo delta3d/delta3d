@@ -51,10 +51,10 @@ class BatchISectorTests : public CPPUNIT_NS::TestFixture
          mBatchIsector = new dtCore::BatchIsector();
          
          mApp = new dtABC::Application;
-         mView = mApp->GetOrCreateView();
+         mView = mApp->GetView();
          mScene = mView->GetOrCreateScene();
          mCamera = mView->GetOrCreateCamera();
-         mWin = mCamera->GetOrCreateWindow();
+         mWin = mApp->GetWindow();
          mWin->SetPosition(0, 0, 50, 50);
          
          mApp->Config();

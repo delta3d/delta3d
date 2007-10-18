@@ -71,38 +71,37 @@ class DT_ABC_EXPORT BaseABC : public dtCore::Base
    
    
       ///Get the first view or create a default View
-      dtCore::View* GetOrCreateView()
-      { return mViewList[0].valid() ? mViewList[0].get() : CreateDefaultView(); }
+      dtCore::View* GetView() { return  mViewList[0].get(); }
       
       ///Set the first view
       void SetView(dtCore::View * view)
       { mViewList[0] = view; }
       
       ///Get the default Application Camera
-      dtCore::Camera* GetCamera() { return GetOrCreateView()->GetOrCreateCamera(); }
+      dtCore::Camera* GetCamera() { return GetView()->GetCamera(); }
       ///Get the default Application Camera
-      void SetCamera(dtCore::Camera * camera) { GetOrCreateView()->SetCamera(camera); }
+      void SetCamera(dtCore::Camera * camera) { GetView()->SetCamera(camera); }
    
       ///Get the default Application Window
-      dtCore::DeltaWin* GetWindow() {  return GetCamera()->GetOrCreateWindow();}
+      dtCore::DeltaWin* GetWindow() {  return mWindow.get();}
       ///Get the default Application Window
       void SetWindow(dtCore::DeltaWin * win) { GetCamera()->SetWindow(win); }
       
       ///Get the default Application Scene
-      dtCore::Scene* GetScene() { return GetOrCreateView()->GetOrCreateScene(); }
+      dtCore::Scene* GetScene() { return GetView()->GetOrCreateScene(); }
       ///Set the default Application Scene
-      void SetScene(dtCore::Scene* scene) { GetOrCreateView()->SetScene(scene); }
+      void SetScene(dtCore::Scene* scene) { GetView()->SetScene(scene); }
       
       
       ///Get the default Application Keyboard
-      dtCore::Keyboard* GetKeyboard() { return GetOrCreateView()->GetOrCreateKeyboard(); }
+      dtCore::Keyboard* GetKeyboard() { return GetView()->GetOrCreateKeyboard(); }
       ///Set the default Application Scene
-      void SetKeyboard(dtCore::Keyboard* keyboard) { GetOrCreateView()->SetKeyboard(keyboard); }
+      void SetKeyboard(dtCore::Keyboard* keyboard) { GetView()->SetKeyboard(keyboard); }
          
       ///Get the default Application Mouse
-      dtCore::Mouse* GetMouse() {  return GetOrCreateView()->GetOrCreateMouse();}
+      dtCore::Mouse* GetMouse() {  return GetView()->GetOrCreateMouse();}
       ///Set the default Application Scene
-      void SetMouse(dtCore::Mouse* mouse) { GetOrCreateView()->SetMouse(mouse); }
+      void SetMouse(dtCore::Mouse* mouse) { GetView()->SetMouse(mouse); }
          
    
       /// Loads a map by name into an application.  If the map is already opened, the currently
@@ -144,7 +143,7 @@ class DT_ABC_EXPORT BaseABC : public dtCore::Base
    
       virtual dtCore::View * CreateDefaultView();
 
-   
+      dtCore::RefPtr<dtCore::DeltaWin> mWindow;
 
       typedef std::vector<dtCore::RefPtr<dtCore::View> > ViewList;
       ViewList mViewList;

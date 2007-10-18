@@ -62,7 +62,7 @@ namespace dtGame
    void BaseInputComponent::OnAddedToGM() 
    { 
       //enable the keyboard input.
-      dtCore::View * view = GetGameManager()->GetApplication().GetOrCreateView();
+      dtCore::View * view = GetGameManager()->GetApplication().GetView();
       view->GetMouse()->AddMouseListener(mMouseListener.get());
       view->GetKeyboard()->AddKeyboardListener(mKeyboardListener.get());
    }
@@ -70,7 +70,7 @@ namespace dtGame
    ////////////////////////////////////////////////////////////////////
    void BaseInputComponent::OnRemovedFromGM()
    {
-      dtCore::View * view = GetGameManager()->GetApplication().GetOrCreateView();
+      dtCore::View * view = GetGameManager()->GetApplication().GetView();
       view->GetMouse()->RemoveMouseListener(mMouseListener.get());
       view->GetKeyboard()->RemoveKeyboardListener(mKeyboardListener.get());
    }

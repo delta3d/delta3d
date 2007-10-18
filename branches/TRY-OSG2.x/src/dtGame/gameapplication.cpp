@@ -23,6 +23,8 @@
 
 #include <dtGame/gamemanager.h>
 #include <dtGame/gameapplication.h>
+#include <dtCore/deltawin.h>
+
 #include <dtGame/gameentrypoint.h>
 #include <dtGame/exceptionenum.h>
 

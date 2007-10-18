@@ -137,6 +137,10 @@ void Application::CreateInstances(const std::string& name, int x, int y, int wid
    //overwritten using a config file
    BaseABC::CreateInstances();
    
+   mWindow = new dtCore::DeltaWin( name, x, y, width, height, cursor, fullScreen );
+
+   GetCamera()->SetWindow( mWindow.get() );
+
    mCompositeViewer = new osgViewer::CompositeViewer;
 //   mCompositeViewer->setThreadingModel(osgViewer::CompositeViewer::SingleThreaded);
    mCompositeViewer->addView(mViewList.front()->GetOsgViewerView());
@@ -247,7 +251,7 @@ ApplicationConfigData Application::GetDefaultConfigData()
 bool Application::AppXMLApplicator::operator ()(const ApplicationConfigData& data, dtABC::Application* app)
 {
    // set up the View
-   dtCore::View* view = app->GetOrCreateView();
+   dtCore::View* view = app->GetView();
    ///\todo should this only override when the string is not empty?
    view->SetName( data.VIEW_NAME );
 

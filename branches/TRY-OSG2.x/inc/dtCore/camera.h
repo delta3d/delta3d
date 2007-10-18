@@ -100,7 +100,6 @@ namespace dtCore
       
 
       ///Get the supplied DeltaWin (could be NULL)
-      DeltaWin * GetOrCreateWindow() { return (mWindow.valid()) ? (mWindow.get()) : (CreateDeltaWin()); }
       DeltaWin * GetWindow() { return (mWindow.get()); }
       const DeltaWin * GetWindow() const { return (mWindow.get()); }
       

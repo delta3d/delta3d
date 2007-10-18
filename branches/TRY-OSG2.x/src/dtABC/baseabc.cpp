@@ -86,10 +86,10 @@ void BaseABC::CreateInstances()
    CreateDefaultView();
    assert( mViewList[0].get() );
     
-   GetScene()->SetName("defaultScene");
-   GetCamera()->SetName("defaultCamera");
-   GetWindow()->SetName("defaultWindow");
-   
+   //Note: order dependent!
+   mViewList[0]->SetCamera( new dtCore::Camera("defaultCam") );
+   mViewList[0]->SetScene( new dtCore::Scene("defaultScene") );
+
    GetKeyboard()->SetName("defaultKeyboard");
    GetMouse()->SetName("defaultMouse");
 }
