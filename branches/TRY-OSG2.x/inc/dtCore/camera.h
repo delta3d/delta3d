@@ -203,7 +203,6 @@ namespace dtCore
       virtual void OnMessage( MessageData *data );
       
       friend class View;
-      friend class DeltaWin;
       
       /// define the mOsgViewerView
       void SetView(dtCore::View * view) { mView = view; }
