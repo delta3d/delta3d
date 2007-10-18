@@ -46,6 +46,8 @@
 #include <osg/PolygonOffset>
 #include <osgSim/DOFTransform>
 
+#include <crtdbg.h>
+
 /**
  * Method to handle nodes referenced by an OSG Helper NodeMask Object.
  * The method will apply a user defined nodemask value to an OSG::Node.
@@ -879,13 +881,13 @@ void OSGExp::createOccluderFromHelperObject(osg::Group* rootTransform, INode* no
 			if(geomNode){
 				// Assert this is a shape node
 				ObjectState os = geomNode->EvalWorldState(t); 
-				if(os.obj->SuperClassID() == SHAPE_CLASS_ID ){
+            if(os.obj->SuperClassID() == GEOMOBJECT_CLASS_ID){//SHAPE_CLASS_ID ){
 
 					// Get the absolute position of shape.
 					osg::Matrix mat = convertMat(geomNode->GetObjTMBeforeWSM(t));
 	
 					// Get shape geometry.
-					osg::ref_ptr<osg::Geode>  geode = createShapeGeometry(rootTransform, geomNode, os.obj, t);
+					osg::ref_ptr<osg::Geode>  geode = createMeshGeometry(rootTransform, geomNode, os.obj, t);
 
 					// Transform all vertices in shape geometry to absolute position
 					// and insert them into occluder.

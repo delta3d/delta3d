@@ -62,7 +62,7 @@ static ParamBlockDesc2 Occluder_param_blk ( Occluder_params, _T("Occluder_params
 	// Occluder nodes
 	occluder_planes,		_T("PLANES"),		TYPE_INODE_TAB,	0,	P_AUTO_UI|P_VARIABLE_SIZE,	IDS_OCCLUDER_NODES,
 		p_ui,			TYPE_NODELISTBOX, IDC_LIST,IDC_PICKNODE,0,IDC_OCCLUDER_REMNODE,
-		p_sclassID,		SHAPE_CLASS_ID, // Only allow shape nodes.
+      p_sclassID,		GEOMOBJECT_CLASS_ID,//SHAPE_CLASS_ID, // Only allow shape nodes.
 		p_prompt,		IDS_PICK_GEOM_OBJECT,
 		end,
 	end
