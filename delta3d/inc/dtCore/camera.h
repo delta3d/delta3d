@@ -124,6 +124,16 @@ namespace dtCore
 
    public:
 
+      enum AutoNearFarCullingMode
+      {
+         NO_AUTO_NEAR_FAR = 0,      ///<no auto calculation
+         BOUNDING_VOLUME_NEAR_FAR,  ///<use the scene graph bounding spheres
+         PRIMITIVE_NEAR_FAR         ///<use the scene graph primitives
+      };
+ 
+      ///Change how the near/far culling planes get automatically calculated
+      void SetNearFarCullingMode( AutoNearFarCullingMode mode );
+
       void SetFrameBin( unsigned int frameBin );
       unsigned int GetFrameBin() const { return mFrameBin; }
 

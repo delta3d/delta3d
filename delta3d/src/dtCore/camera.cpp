@@ -227,6 +227,22 @@ namespace dtCore
       DeregisterInstance(this);
    }
 
+   void Camera::SetNearFarCullingMode( AutoNearFarCullingMode mode )
+   {
+      osg::CullSettings::ComputeNearFarMode osgMode;
+
+      switch(mode)
+      {
+      case NO_AUTO_NEAR_FAR: osgMode = osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR;	break;
+      case BOUNDING_VOLUME_NEAR_FAR: osgMode = osg::CullSettings::COMPUTE_NEAR_FAR_USING_BOUNDING_VOLUMES; break;
+      case PRIMITIVE_NEAR_FAR: osgMode = osg::CullSettings::COMPUTE_NEAR_FAR_USING_PRIMITIVES; break;
+
+      default: osgMode = osg::CullSettings::COMPUTE_NEAR_FAR_USING_PRIMITIVES; break;
+      }
+
+      this->GetSceneHandler()->GetSceneView()->setComputeNearFarMode(osgMode);
+   }
+
    void Camera::SetFrameBin( unsigned int frameBin )
    {
       mCameraGroup->RemoveCamera(this);
