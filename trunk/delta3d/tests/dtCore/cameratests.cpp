@@ -150,11 +150,13 @@ class CameraTests2 : public CPPUNIT_NS::TestFixture
 {
    CPPUNIT_TEST_SUITE(CameraTests2);
       CPPUNIT_TEST(TestEnabled);
+      CPPUNIT_TEST(TestSettingTheCullingMode);
    CPPUNIT_TEST_SUITE_END();
 public:
    void setup() {}
    void tearDown() {}
    void TestEnabled();
+   void TestSettingTheCullingMode();
 
 };
 
@@ -183,5 +185,28 @@ void CameraTests2::TestEnabled()
 
 }
 
+void CameraTests2::TestSettingTheCullingMode()
+{
+   dtCore::RefPtr<dtCore::Camera> cam = new dtCore::Camera();
+   osgUtil::SceneView *sv = cam->GetSceneHandler()->GetSceneView();
+
+   cam->SetNearFarCullingMode(dtCore::Camera::NO_AUTO_NEAR_FAR);
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("should be DO_NOT_COMPUTE_NEAR_FAR", 
+                                 osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR, 
+                                 sv->getComputeNearFarMode() );
+
+   cam->SetNearFarCullingMode(dtCore::Camera::BOUNDING_VOLUME_NEAR_FAR);
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("should be COMPUTE_NEAR_FAR_USING_BOUNDING_VOLUMES", 
+                                 osg::CullSettings::COMPUTE_NEAR_FAR_USING_BOUNDING_VOLUMES, 
+                                 sv->getComputeNearFarMode() );
+
+   cam->SetNearFarCullingMode(dtCore::Camera::PRIMITIVE_NEAR_FAR);
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("should be COMPUTE_NEAR_FAR_USING_PRIMITIVES", 
+                                 osg::CullSettings::COMPUTE_NEAR_FAR_USING_PRIMITIVES, 
+                                 sv->getComputeNearFarMode() );
+}
 
 
