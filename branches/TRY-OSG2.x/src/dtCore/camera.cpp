@@ -432,7 +432,7 @@ namespace dtCore
    {
        mWindow = new dtCore::DeltaWin("defaultWindow");
        
-       UpdateFromWindow();
+       OnWindowChanged();
        
        return mWindow.get();
    }
@@ -470,7 +470,7 @@ namespace dtCore
          }
       }
       
-      UpdateFromWindow();
+      OnWindowChanged();
    }
    //////////////////////////////////////////
    void Camera::SetWindow( DeltaWin* win )
@@ -479,10 +479,10 @@ namespace dtCore
             
       mWindow = win;
 
-      UpdateFromWindow();
+      OnWindowChanged();
    }
    
-   void Camera::UpdateFromWindow()
+   void Camera::OnWindowChanged()
    {
       if (mWindow.valid())
       {

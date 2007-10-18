@@ -208,7 +208,6 @@ namespace dtCore
       /// define the mOsgViewerView
       void SetView(dtCore::View * view) { mView = view; }
       
-      void UpdateFromWindow();
       
    private:
 
@@ -224,6 +223,8 @@ namespace dtCore
       
       /// common method to create Window with the MasterCamera of the owner view
       osg::Camera * CreateOsgCamera();
+
+      void OnWindowChanged();
 
       unsigned int mFrameBin;
       
