@@ -21,24 +21,31 @@
 
 #include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
+
 #include <osg/Vec3>
 #include <osg/Math>
 #include <osg/Group>
 #include <osg/Node>
 #include <osgSim/DOFTransform>
+#include <osgUtil/IntersectVisitor>
+
 #include <dtUtil/mathdefines.h>
+
 #include <dtCore/system.h>
 #include <dtCore/transform.h>
 #include <dtCore/transformable.h>
-#include <dtCore/isector.h>
+#include <dtCore/batchisector.h>
 #include <dtCore/scene.h>
 #include <dtCore/nodecollector.h>
+
 #include <dtGame/basemessages.h>
 #include <dtGame/gamemanager.h> 
 #include <dtGame/messagefactory.h>
 #include <dtGame/exceptionenum.h>
 #include <dtGame/deadreckoningcomponent.h>
+
 #include <dtDAL/actortype.h>
+
 #include <dtActors/engineactorregistry.h>
 
 #ifdef DELTA_WIN32
@@ -55,6 +62,8 @@ namespace dtGame
    class TestDeadReckoningComponent : public DeadReckoningComponent
    {
       public:
+         typedef DeadReckoningComponent BaseClass;
+         
          TestDeadReckoningComponent(): DeadReckoningComponent("DeadReckoningComponent") {}
          
          const osg::Vec3& GetLastUsedEyePoint() const
@@ -64,13 +73,20 @@ namespace dtGame
 
          bool ShouldForceClamp(DeadReckoningHelper& helper, float deltaRealTime, bool bTransformChanged)
          {
-            return DeadReckoningComponent::ShouldForceClamp(helper, deltaRealTime, bTransformChanged);
+            return BaseClass::ShouldForceClamp(helper, deltaRealTime, bTransformChanged);
          }     
          
          void InternalCalcTotSmoothingSteps(DeadReckoningHelper& helper, const dtCore::Transform& xform)
          {
             helper.CalculateSmoothingTimes(xform);
          }   
+
+         /// Gets the ground clamping hit that is closest to the deadreckoned z value.
+         bool DoGetClosestHit(dtCore::BatchIsector::SingleISector& single, float pointz,
+                  osg::Vec3& hit, osg::Vec3& normal)
+         {
+            return BaseClass::GetClosestHit(single, pointz, hit, normal);
+         }
 
          void DoArticulationPublic(dtGame::DeadReckoningHelper& helper, 
             const dtGame::GameActor& gameActor, const dtGame::TickMessage& tickMessage);
@@ -89,7 +105,7 @@ namespace dtGame
       // The following inherited function was not virtual, so this
       // function allows the programmer to call the inherited
       // function publicly for testing purposes.
-      DeadReckoningComponent::DoArticulation( helper, gameActor, tickMessage );
+      BaseClass::DoArticulation( helper, gameActor, tickMessage );
    }
 
    void TestDeadReckoningComponent::DoArticulationSmoothPublic(osgSim::DOFTransform& dofxform,
@@ -98,7 +114,7 @@ namespace dtGame
       // The following inherited function was not virtual, so this
       // function allows the programmer to call the inherited
       // function publicly for testing purposes.
-      DeadReckoningComponent::DoArticulationSmooth(dofxform,currLocation,nextLocation,currentTimeStep);
+      BaseClass::DoArticulationSmooth(dofxform,currLocation,nextLocation,currentTimeStep);
    }
 
    void TestDeadReckoningComponent::DoArticulationPredictionPublic(osgSim::DOFTransform& dofxform,
@@ -107,7 +123,7 @@ namespace dtGame
       // The following inherited function was not virtual, so this
       // function allows the programmer to call the inherited
       // function publicly for testing purposes.
-      DeadReckoningComponent::DoArticulationPrediction(dofxform,currLocation,currentRate,currentTimeStep);
+      BaseClass::DoArticulationPrediction(dofxform,currLocation,currentRate,currentTimeStep);
    }
 
    class DeadReckoningComponentTests : public CPPUNIT_NS::TestFixture 
@@ -132,6 +148,7 @@ namespace dtGame
          CPPUNIT_TEST(TestDoDRNoDR);
          CPPUNIT_TEST(TestForceClampProperty);
          CPPUNIT_TEST(TestShouldForceClamp);
+         CPPUNIT_TEST(TestClampToNearest);
          
       CPPUNIT_TEST_SUITE_END();
    
@@ -757,6 +774,61 @@ namespace dtGame
             CPPUNIT_ASSERT_EQUAL_MESSAGE("The smoothing steps for rotation should bel less that 1.0 because "
                      "the velocity vector is 0 but with fast updates.",
                float(helper->GetAverageTimeBetweenRotationUpdates()), helper->GetRotationEndSmoothingTime());
+         }
+
+         void TestClampToNearest()
+         {
+            dtCore::RefPtr<dtCore::BatchIsector::SingleISector> single = new dtCore::BatchIsector::SingleISector(0);
+            osgUtil::IntersectVisitor::HitList hitList;
+
+            osg::Vec3 point, normal;
+
+            CPPUNIT_ASSERT_MESSAGE("No nearest hit should have been found if no hits exist.", 
+                     !mDeadReckoningComponent->DoGetClosestHit(*single, 0.03, point, normal));
+
+            osgUtil::Hit hit;
+            hit._intersectNormal = osg::Vec3(0.0f, 0.0f, 1.0f);
+            hit._intersectPoint = osg::Vec3(3.0f, 4.0f, 1.0f);
+            hitList.push_back(hit);
+
+            hit._intersectNormal = osg::Vec3(0.0f, 1.0f, 0.0f);
+            hit._intersectPoint = osg::Vec3(3.0f, 4.0f, 4.0f);
+            hitList.push_back(hit);
+
+            single->SetHitList(hitList);
+            
+            CPPUNIT_ASSERT_MESSAGE("A nearest hit should have been found.", 
+                     mDeadReckoningComponent->DoGetClosestHit(*single, 0.03, point, normal));
+
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(3.0f, point.x(), 0.001);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(4.0f, point.y(), 0.001);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0f, point.z(), 0.001);
+            
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0f, normal.x(), 0.001);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0f, normal.y(), 0.001);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0f, normal.z(), 0.001);
+            
+            CPPUNIT_ASSERT_MESSAGE("A nearest hit should have been found.", 
+                     mDeadReckoningComponent->DoGetClosestHit(*single, 3.4, point, normal));
+
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(3.0f, point.x(), 0.001);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(4.0f, point.y(), 0.001);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(4.0f, point.z(), 0.001);
+
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0f, normal.x(), 0.001);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0f, normal.y(), 0.001);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0f, normal.z(), 0.001);
+
+            CPPUNIT_ASSERT_MESSAGE("A nearest hit should have been found.", 
+                     mDeadReckoningComponent->DoGetClosestHit(*single, 5.0, point, normal));
+
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(3.0f, point.x(), 0.001);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(4.0f, point.y(), 0.001);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(4.0f, point.z(), 0.001);
+
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0f, normal.x(), 0.001);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0f, normal.y(), 0.001);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0f, normal.z(), 0.001);
          }
 
       private:

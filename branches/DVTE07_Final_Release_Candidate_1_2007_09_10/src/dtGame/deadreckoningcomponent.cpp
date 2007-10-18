@@ -219,6 +219,7 @@ namespace dtGame
          float newDiff = fabs(tempHit.z() - pointz);
          if (newDiff < diff)
          {
+            diff = newDiff;
             hit = tempHit;
             single.GetHitPointNormal(normal, i);
             found = true;
