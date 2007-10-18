@@ -167,8 +167,10 @@ namespace dtDAL
             return (mUniqueId != rhs.mUniqueId);
          }
 
+         /// returns a string representation of the actor type
+         const std::string ToString() const;
+
       protected:
-         
          //Object can only be deleted through the ref_ptr interface.
          virtual ~ActorType() { }
 
