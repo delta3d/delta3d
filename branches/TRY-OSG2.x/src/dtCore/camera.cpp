@@ -427,15 +427,6 @@ namespace dtCore
       Transformable::AddedToScene(scene);
    }
    
-   //////////////////////////////////////////
-   dtCore::DeltaWin * Camera::CreateDeltaWin()
-   {
-       mWindow = new dtCore::DeltaWin("defaultWindow");
-       
-       OnWindowChanged();
-       
-       return mWindow.get();
-   }
    
    //////////////////////////////////////////
    osg::Camera * Camera::CreateOsgCamera()

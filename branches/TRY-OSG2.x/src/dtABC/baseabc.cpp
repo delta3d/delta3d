@@ -86,7 +86,6 @@ void BaseABC::CreateInstances()
    CreateDefaultView();
    assert( mViewList[0].get() );
     
-   //Note: order dependent!
    mViewList[0]->SetCamera( new dtCore::Camera("defaultCam") );
    mViewList[0]->SetScene( new dtCore::Scene("defaultScene") );
 
