@@ -77,7 +77,6 @@ namespace dtCore
       bool RemoveSlave( Camera* camera );
       
       void SetCamera( Camera* camera );
-      Camera* GetOrCreateCamera() { return (mCamera.valid()) ? (mCamera.get()) : (CreateCamera()); }
       Camera* GetCamera() { return mCamera.get(); }
       const Camera* GetCamera() const { return mCamera.get(); }
       

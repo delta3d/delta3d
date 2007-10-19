@@ -102,6 +102,7 @@ void View::SetCamera( Camera* camera )
    {
       mCamera->SetView(this);
       mOsgViewerView->setCamera(camera->GetOrCreateOsgCamera());
+      mOsgViewerView->assignSceneDataToCameras();
    }
 }
 

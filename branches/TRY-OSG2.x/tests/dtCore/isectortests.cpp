@@ -51,7 +51,7 @@ class IsectorTests : public CPPUNIT_NS::TestFixture
          mApp = new dtABC::Application;
          mView = mApp->GetView();
          mScene = mView->GetOrCreateScene();
-         mCamera = mView->GetOrCreateCamera();
+         mCamera = mApp->GetCamera();
          mWin = mApp->GetWindow();
          mWin->SetPosition(0, 0, 50, 50);
          

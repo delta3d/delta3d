@@ -53,14 +53,13 @@ void TestMultiWin::Config()
    terr->LoadFile("models/terrain_simple.ive");
    GetScene()->AddDrawable( terr.get() );
    
-//   mCam2 = new Camera("Camera 2");
-   mCam2 = mView2->GetOrCreateCamera();
+   mCam2 = new Camera("Camera 2");
    mCam2->SetWindow( mWin2.get() );
    mCam2->GetOsgCamera()->setViewport( new osg::Viewport(0.0, 0.0, 640.0, 240.0));
    mCam2->SetTransform( transform );
    mView2->SetCamera( mCam2.get() );
    
-   mCam3 = mView3->GetOrCreateCamera();
+   mCam3 = new Camera("Camera 3");
    mView3->SetCamera( mCam3.get() );
    mCam3->SetWindow( mWin2.get() );
    mCam3->GetOsgCamera()->setViewport( new osg::Viewport(0.0, 240.0, 640.0, 480.0));

@@ -480,6 +480,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\tests\dtCore\viewtests.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\tests\dtUtil\xercestests.cpp"
 				>
 			</File>
