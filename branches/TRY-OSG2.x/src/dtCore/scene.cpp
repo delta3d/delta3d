@@ -188,11 +188,6 @@ Scene::~Scene()
 
    RemoveSender( &System::GetInstance() );
 }
-//////////////////////////////////////////
-osg::Group * Scene::GetOrCreateSceneNode() 
-{ 
-	return (mSceneNode.valid() ? mSceneNode.get() : CreateSceneNode());
-}
 
 
 /////////////////////////////////////////////
@@ -761,15 +756,6 @@ void Scene::UseSceneLight( bool lightState )
 }
 
 
-
-osg::Group * Scene::CreateSceneNode()
-{
-   mSceneNode = new osg::Group;
-   
-   UpdateViewSet();
-   
-   return mSceneNode.get();
-}
 
 void Scene::UpdateViewSet()
 {

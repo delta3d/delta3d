@@ -105,11 +105,7 @@ namespace dtCore
 
       virtual ~Scene();
 
-   public:
-
-      ///Get a pointer to the internal scene node
-      osg::Group * GetOrCreateSceneNode();
-      
+   public:      
       ///Get a pointer to the internal scene node
       osg::Group * GetSceneNode() { return (mSceneNode.get()); }
 
@@ -280,7 +276,6 @@ namespace dtCore
       ///ODE collision callback
       static void NearCallback(void *data, dGeomID o1, dGeomID o2);
 
-      osg::Group * CreateSceneNode();
       void UpdateViewSet();
       
       RefPtr<osg::Group> mSceneNode; ///<This will be our Scene

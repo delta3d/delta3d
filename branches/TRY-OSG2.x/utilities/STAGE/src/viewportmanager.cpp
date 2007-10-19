@@ -232,7 +232,7 @@ namespace dtEditQt
        {
           osgDB::DatabasePager *databasePager = osgDB::Registry::instance()->getOrCreateDatabasePager();
           databasePager->setTargetFrameRate(60);
-          databasePager->registerPagedLODs(masterScene->GetOrCreateSceneNode());
+          databasePager->registerPagedLODs(masterScene->GetSceneNode());
 
 
           for(std::map<std::string, Viewport*>::iterator i = viewportList.begin(); i != viewportList.end();

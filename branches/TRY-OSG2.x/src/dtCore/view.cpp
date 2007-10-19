@@ -122,7 +122,7 @@ void View::SetScene(Scene *scene)
    {
       mScene->AddView(this);
    
-      mOsgViewerView->setSceneData(mScene->GetOrCreateSceneNode());
+      mOsgViewerView->setSceneData(mScene->GetSceneNode());
    }
 }
 
@@ -181,7 +181,7 @@ dtCore::Scene * View::CreateScene()
 {
     mScene = new dtCore::Scene("defaultScene");
     mScene->AddView(this);
-    mOsgViewerView->setSceneData(mScene->GetOrCreateSceneNode());
+    mOsgViewerView->setSceneData(mScene->GetSceneNode());
     return mScene.get();
     
 }

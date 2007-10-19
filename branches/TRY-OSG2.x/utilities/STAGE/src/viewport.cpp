@@ -128,11 +128,11 @@ namespace dtEditQt
       {
          if (this->scene != NULL)
          {
-            this->rootNodeGroup->replaceChild(this->scene->GetOrCreateSceneNode(), scene->GetOrCreateSceneNode());
+            this->rootNodeGroup->replaceChild(this->scene->GetSceneNode(), scene->GetSceneNode());
          }
          else
          {
-            this->rootNodeGroup->addChild(scene->GetOrCreateSceneNode());
+            this->rootNodeGroup->addChild(scene->GetSceneNode());
          }
 
          this->scene = scene;

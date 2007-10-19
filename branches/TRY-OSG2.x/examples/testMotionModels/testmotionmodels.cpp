@@ -258,7 +258,7 @@ public:
       mTown->LoadFile("/demoMap/StaticMeshes/TestTownLt.ive");
       mTown->SetCollisionMesh();
       AddDrawable(mTown.get());
-      GetScene()->GetOrCreateSceneNode()->getOrCreateStateSet()->setMode( GL_LIGHTING, osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF );
+      GetScene()->GetSceneNode()->getOrCreateStateSet()->setMode( GL_LIGHTING, osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF );
 
       RefPtr<WalkMotionModel> wmm = new WalkMotionModel( GetKeyboard(), GetMouse() );
       wmm->SetScene( GetScene() );
