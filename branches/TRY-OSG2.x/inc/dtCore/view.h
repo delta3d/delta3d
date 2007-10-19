@@ -82,8 +82,8 @@ namespace dtCore
       
       ///Supply the Scene this Camera should render
       void SetScene( Scene *scene );
+
       ///Get a non-const version of the supplied Scene
-      Scene* GetOrCreateScene() { return (mScene.valid()) ? (mScene.get()) : (CreateScene()); }
       Scene* GetScene() { return (mScene.get()); }
       const Scene* GetScene() const { return (mScene.get()); }
       
@@ -175,7 +175,6 @@ namespace dtCore
       { return (mKeyboardMouseHandler.valid()) ? (mKeyboardMouseHandler.get()) : CreateKeyboardMouseHandler(); }
       dtCore::KeyboardMouseHandler * CreateKeyboardMouseHandler();
       
-      dtCore::Scene * CreateScene();
       dtCore::Camera * CreateCamera();
       
       typedef std::set<dtCore::RefPtr<dtCore::Camera> > CameraSet;

@@ -51,8 +51,7 @@ class BatchISectorTests : public CPPUNIT_NS::TestFixture
          mBatchIsector = new dtCore::BatchIsector();
          
          mApp = new dtABC::Application;
-         mView = mApp->GetView();
-         mScene = mView->GetOrCreateScene();
+         mScene = mApp->GetScene();
          mCamera = mApp->GetCamera();
          mWin = mApp->GetWindow();
          mWin->SetPosition(0, 0, 50, 50);
@@ -73,9 +72,6 @@ class BatchISectorTests : public CPPUNIT_NS::TestFixture
          mScene = NULL;
          mCamera->SetWindow(NULL);
          mCamera = NULL;
-         mView->SetScene(NULL);
-         mView->SetCamera(NULL);
-         mView = NULL;
          mWin = NULL;
          dtCore::System::GetInstance().Stop();
       }
@@ -169,7 +165,6 @@ class BatchISectorTests : public CPPUNIT_NS::TestFixture
       dtCore::RefPtr<dtCore::Scene>          mScene;
       dtCore::RefPtr<dtCore::Camera>         mCamera;
       dtCore::RefPtr<dtCore::DeltaWin>       mWin;
-      dtCore::RefPtr<dtCore::View>           mView;
       dtCore::RefPtr<dtABC::Application>     mApp;
       
       void CheckIsectorValues(const float height, const osg::Vec3& expectedNormal) const

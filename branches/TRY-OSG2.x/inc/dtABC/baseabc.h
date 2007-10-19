@@ -88,7 +88,7 @@ class DT_ABC_EXPORT BaseABC : public dtCore::Base
       void SetWindow(dtCore::DeltaWin * win) { GetCamera()->SetWindow(win); }
       
       ///Get the default Application Scene
-      dtCore::Scene* GetScene() { return GetView()->GetOrCreateScene(); }
+      dtCore::Scene* GetScene() { return GetView()->GetScene(); }
       ///Set the default Application Scene
       void SetScene(dtCore::Scene* scene) { GetView()->SetScene(scene); }
       

@@ -49,8 +49,7 @@ class IsectorTests : public CPPUNIT_NS::TestFixture
       {
          mIsector = new dtCore::Isector();
          mApp = new dtABC::Application;
-         mView = mApp->GetView();
-         mScene = mView->GetOrCreateScene();
+         mScene = mApp->GetScene();
          mCamera = mApp->GetCamera();
          mWin = mApp->GetWindow();
          mWin->SetPosition(0, 0, 50, 50);
@@ -70,9 +69,6 @@ class IsectorTests : public CPPUNIT_NS::TestFixture
          mScene = NULL;
          mCamera->SetWindow(NULL);
          mCamera = NULL;
-         mView->SetScene(NULL);
-         mView->SetCamera(NULL);
-         mView = NULL;
          mWin = NULL;
          dtCore::System::GetInstance().Stop();
       }
@@ -205,9 +201,7 @@ class IsectorTests : public CPPUNIT_NS::TestFixture
 
    private:
       dtCore::RefPtr<dtCore::Isector> mIsector;
-      //dtCore::RefPtr<dtABC::Application> mApp;
       dtCore::RefPtr<dtCore::Scene> mScene;
-      dtCore::RefPtr<dtCore::View> mView;
       dtCore::RefPtr<dtCore::Camera> mCamera;
       dtCore::RefPtr<dtCore::DeltaWin> mWin;
       dtCore::RefPtr<dtABC::Application> mApp;

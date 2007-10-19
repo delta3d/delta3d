@@ -177,15 +177,6 @@ const Mouse* View::GetMouse() const
 }
 
 ///////////////////// 
-dtCore::Scene * View::CreateScene()
-{
-    mScene = new dtCore::Scene("defaultScene");
-    mScene->AddView(this);
-    mOsgViewerView->setSceneData(mScene->GetSceneNode());
-    return mScene.get();
-    
-}
-
 dtCore::Camera * View::CreateCamera()
 {
     mCamera = new dtCore::Camera(this, "defaultCamera");
