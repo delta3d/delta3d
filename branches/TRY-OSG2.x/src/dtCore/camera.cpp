@@ -428,12 +428,6 @@ namespace dtCore
    }
    
    
-   //////////////////////////////////////////
-   osg::Camera * Camera::CreateOsgCamera()
-   {
-       mOsgCamera = new osg::Camera();
-       return mOsgCamera.get();
-   }
    
    //////////////////////////////////////////
    void Camera::SetOsgCamera(osg::Camera * camera) 

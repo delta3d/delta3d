@@ -159,10 +159,7 @@ namespace dtCore
       void GetClearColor(float& r, float& g, float& b, float& a);
       void GetClearColor(osg::Vec4& color);
       
-      
-      ///Get a non-const handle to the underlying Producer::Camera
-      osg::Camera* GetOrCreateOsgCamera() { return (mOsgCamera.valid() ? mOsgCamera.get() : CreateOsgCamera()); }
-            
+                 
       ///Get a non-const handle to the underlying Producer::Camera
       osg::Camera* GetOsgCamera() { return mOsgCamera.get(); }
       
@@ -216,9 +213,6 @@ namespace dtCore
       Camera& operator=( const Camera& ); 
       Camera( const Camera& );
       
-      /// common method to create Window with the MasterCamera of the owner view
-      osg::Camera * CreateOsgCamera();
-
       void OnWindowChanged();
 
       unsigned int mFrameBin;
