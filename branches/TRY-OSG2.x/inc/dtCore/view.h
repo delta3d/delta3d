@@ -170,9 +170,7 @@ namespace dtCore
       KeyboardMouseHandler * GetKeyboardMouseHandler() { return mKeyboardMouseHandler.get(); }
 
       dtCore::KeyboardMouseHandler * CreateKeyboardMouseHandler();
-      
-      dtCore::Camera * CreateCamera();
-      
+            
       typedef std::set<dtCore::RefPtr<dtCore::Camera> > CameraSet;
       /// set of osg::Camera wrapping the mView camera slave list
       CameraSet mCameraSlave;
