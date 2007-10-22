@@ -54,16 +54,6 @@ void KeyboardMouseHandler::SetView(dtCore::View * view)
    }
 }
 
-Keyboard * KeyboardMouseHandler::CreateKeyboard()
-{
-   mKeyboard =  new Keyboard;
-   return mKeyboard.get();
-}
-Mouse * KeyboardMouseHandler::CreateMouse()
-{
-   mMouse = new Mouse(mView.get());
-   return mMouse.get();
-}
 
 bool KeyboardMouseHandler::handle(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter &aa, osg::Object *, osg::NodeVisitor *)
 {

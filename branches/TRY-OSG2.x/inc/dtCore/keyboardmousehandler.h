@@ -45,16 +45,12 @@ namespace dtCore
          void SetKeyboard(Keyboard* kb) { mKeyboard = kb; }
          Keyboard* GetKeyboard() { return mKeyboard.get(); }
          const Keyboard* GetKeyboard() const { return mKeyboard.get(); }
-
-         Keyboard* GetOrCreateKeyboard() { return mKeyboard.valid() ? mKeyboard.get() : CreateKeyboard(); }
    
          void SetMouse(Mouse* m);
          
          Mouse* GetMouse() { return mMouse.get(); }
          const Mouse* GetMouse() const { return mMouse.get(); }
-         
-         Mouse* GetOrCreateMouse() { return ((mMouse.valid()) ? (mMouse.get()) : (CreateMouse())); }
-   
+            
       protected:
          virtual ~KeyboardMouseHandler();
    
@@ -62,10 +58,7 @@ namespace dtCore
    
          /// define the mView
          void SetView(dtCore::View * view);
-   
-         Keyboard *  CreateKeyboard();
-         Mouse *  CreateMouse();
-         
+           
       private:
    
          osg::observer_ptr<View> mView; // owner view of this instance

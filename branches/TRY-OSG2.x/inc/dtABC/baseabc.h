@@ -94,12 +94,12 @@ class DT_ABC_EXPORT BaseABC : public dtCore::Base
       
       
       ///Get the default Application Keyboard
-      dtCore::Keyboard* GetKeyboard() { return GetView()->GetOrCreateKeyboard(); }
+      dtCore::Keyboard* GetKeyboard() { return GetView()->GetKeyboard(); }
       ///Set the default Application Scene
       void SetKeyboard(dtCore::Keyboard* keyboard) { GetView()->SetKeyboard(keyboard); }
          
       ///Get the default Application Mouse
-      dtCore::Mouse* GetMouse() {  return GetView()->GetOrCreateMouse();}
+      dtCore::Mouse* GetMouse() {  return GetView()->GetMouse();}
       ///Set the default Application Scene
       void SetMouse(dtCore::Mouse* mouse) { GetView()->SetMouse(mouse); }
          

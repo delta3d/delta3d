@@ -103,7 +103,6 @@ namespace dtCore
       void SetKeyboard( Keyboard* keyboard );
       
       ///Get a handle to the Keyboard associated with the DeltaWin
-      Keyboard * GetOrCreateKeyboard();
       Keyboard* GetKeyboard();
       const Keyboard* GetKeyboard() const;      
       
@@ -124,8 +123,6 @@ namespace dtCore
       ///Get a handle to the Mouse associated with the DeltaWin
       Mouse* GetMouse();
       const Mouse* GetMouse() const;
-
-      Mouse * GetOrCreateMouse();  
       
       
       void Frame();
