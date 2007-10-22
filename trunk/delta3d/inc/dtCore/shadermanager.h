@@ -128,7 +128,10 @@ namespace dtCore
          static ShaderManager &GetInstance()
          {
             if (mInstance == NULL)
+            {
                mInstance = new ShaderManager();
+            }
+
             return *mInstance;
          }
 

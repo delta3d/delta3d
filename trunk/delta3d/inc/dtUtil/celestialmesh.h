@@ -74,11 +74,11 @@ namespace dtUtil
          int mTriangleID;
       };
 
-      typedef std::vector<Triangle>     TriangleVector;
-      typedef std::vector<TriangleEdge> TriangleEdgeVector;
-      typedef std::vector<Vertex*> VertexVector;
+      typedef std::vector<Triangle>               TriangleVector;
+      typedef std::vector<TriangleEdge>           TriangleEdgeVector;
+      typedef std::vector<Vertex*>                VertexVector;
       typedef dtUtil::BarycentricSpace<osg::Vec3> Barycentric2D;
-      typedef std::vector<Barycentric2D*> Barycentric2DVector;
+      typedef std::vector<Barycentric2D*>         Barycentric2DVector;
 
 
       CelestialMesh();
