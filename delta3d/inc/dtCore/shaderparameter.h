@@ -62,7 +62,7 @@ namespace dtCore
    /**
     * This class wraps parameters that may be passed on to Delta3D
     * shaders.  These are similar in concept to shader uniform's
-    * however, they can potential contain must more information about
+    * however, they can potentially contain much more information about
     * the actual render state.
     */
    class DT_CORE_EXPORT ShaderParameter : public Base //osg::Referenced
@@ -136,7 +136,7 @@ namespace dtCore
          const std::string &GetName() const { return mVarName; }
 
          /**
-          * Each shader parameter should add whatever attributes and properties
+          * Each shader parameter should add whatever attribjutes and properties
           * specific to that parameter to the specified render state.
           * @param stateSet The render state to attach the parameter to.
           */
