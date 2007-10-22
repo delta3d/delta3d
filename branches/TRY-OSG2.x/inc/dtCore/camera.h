@@ -30,7 +30,6 @@
 #include <dtCore/timer.h>
 #include <dtCore/refptr.h>
 #include <dtCore/transformable.h>
-#include <dtCore/view.h>
 #include <osg/Vec4>
 #include <osg/Version>
 
@@ -44,10 +43,11 @@ namespace osg
    class FrameStamp;
 }
 
-namespace osgViewer
+namespace dtCore
 {
    class View;
 }
+
 /// @endcond
 
 namespace dtCore
@@ -87,9 +87,6 @@ namespace dtCore
       virtual ~Camera();
 
    public:
-
-      ///get the dtCore::View owned this instance
-      dtCore::View * GetView() { return mView.get(); }
 
       
       //Enabled or disable this Camera. Disabled Cameras will not render.
@@ -165,9 +162,6 @@ namespace dtCore
       
       ///Get a const handle to the underlying Producer::Camera
       const osg::Camera* GetOsgCamera() const { return mOsgCamera.get(); }
-
-      ///
-      void SetOsgCamera(osg::Camera * camera);
       
       
 //      ///Display the next statistics mode TODO
@@ -186,7 +180,7 @@ namespace dtCore
       */
       virtual void AddedToScene( Scene* scene );
 
-      bool IsMaster() { return (mView.valid() && (mView->GetCamera() == this)); }
+      //bool IsMaster() { return (mView.valid() && (mView->GetCamera() == this)); }
       
    protected:
       
@@ -197,12 +191,7 @@ namespace dtCore
       /// This method should be called from derived classes
       /// @param data the message to receive
       virtual void OnMessage( MessageData *data );
-      
-      friend class View;
-      
-      /// define the mOsgViewerView
-      void SetView(dtCore::View * view) { mView = view; }
-      
+            
       
    private:
 
@@ -217,8 +206,6 @@ namespace dtCore
 
       unsigned int mFrameBin;
       
-      osg::observer_ptr<View> mView; // owner view of this instance
-
       RefPtr<osg::Camera> mOsgCamera; // Handle to the osg Camera
       RefPtr<DeltaWin> mWindow; // The currently assigned DeltaWin
       

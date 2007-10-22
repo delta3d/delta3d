@@ -69,7 +69,6 @@ bool View::AddSlave( Camera* camera )
          "Supplied dtCore::Camera::GetOsgCamera() is invalid", __FILE__, __LINE__);
    }
    
-   camera->SetView(this);
    mCameraSlave.insert(camera);
    
    return mOsgViewerView->addSlave(camera->GetOsgCamera()); 
@@ -81,7 +80,6 @@ bool View::RemoveSlave( Camera* camera )
    assert(camera->GetOsgCamera());
    
    mCameraSlave.erase(camera);
-   camera->SetView(NULL);
    
    return (false);
 }
@@ -91,16 +89,10 @@ void View::SetCamera( Camera* camera )
 {
    if (mCamera == camera) return;
    
-   if (mCamera.valid())
-   {
-      mCamera->SetView(NULL);
-   }
-   
    mCamera = camera;
    
    if (mCamera.valid())
    {
-      mCamera->SetView(this);
       mOsgViewerView->setCamera(camera->GetOsgCamera());
       mOsgViewerView->assignSceneDataToCameras();
    }
@@ -192,17 +184,7 @@ void View::UpdateFromScene()
       EnablePaging();      
    }
 }
-void View::UpdateFromCamera()
-{
-   mOsgViewerView->setCamera(mCamera->GetOsgCamera());
-}
 
-void View::UpdateFromSlave(Camera * camera, osg::Camera * oldOsgCam)
-{  
-   unsigned int i = mOsgViewerView->findSlaveIndexForCamera(oldOsgCam);
-   mOsgViewerView->removeSlave(i);
-   mOsgViewerView->addSlave(camera->GetOsgCamera());
-}
 
 dtCore::KeyboardMouseHandler * View::CreateKeyboardMouseHandler()
 {

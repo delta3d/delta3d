@@ -114,7 +114,6 @@ namespace dtCore
    Camera::Camera(dtCore::View * view, const std::string& name)
       :  Transformable(name),
          mFrameBin(0),
-         mView(view),
          mAddedToSceneGraph(false),
          mEnable(true)
    {
@@ -429,34 +428,6 @@ namespace dtCore
    
    
    
-   //////////////////////////////////////////
-   void Camera::SetOsgCamera(osg::Camera * camera) 
-   {
-      if (camera == mOsgCamera) return;
-      
-      if (camera == NULL)
-      {
-         throw dtUtil::Exception(dtCore::ExceptionEnum::INVALID_PARAMETER,
-            "Supplied osg::Camera is invalid", __FILE__, __LINE__);
-      }
-      
-      osg::Camera * oldCamera = mOsgCamera.get();
-      mOsgCamera = camera;
-      
-      if (mView.valid())
-      {
-         if (mView->GetCamera() == this)
-         {
-            mView->UpdateFromCamera();
-         }
-         else
-         {
-            mView->UpdateFromSlave(this, oldCamera);
-         }
-      }
-      
-      OnWindowChanged();
-   }
    //////////////////////////////////////////
    void Camera::SetWindow( DeltaWin* win )
    {

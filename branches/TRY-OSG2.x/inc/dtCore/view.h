@@ -162,11 +162,7 @@ namespace dtCore
       
       friend class Scene;
       void UpdateFromScene();
-      
-      friend class Camera;
-      void UpdateFromCamera();
-      void UpdateFromSlave(Camera * camera, osg::Camera * oldOsgCam);
-      
+           
       
    private:
 
