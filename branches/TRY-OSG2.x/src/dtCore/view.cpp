@@ -144,7 +144,7 @@ void View::SetKeyboard( Keyboard* keyboard )
 ///////////////////// 
 Keyboard * View::GetOrCreateKeyboard() 
 { 
-   return GetOrCreateKeyboardMouseHandler()->GetOrCreateKeyboard(); 
+   return GetKeyboardMouseHandler()->GetOrCreateKeyboard(); 
 }
 Keyboard* View::GetKeyboard() 
 { 
@@ -157,7 +157,7 @@ const Keyboard* View::GetKeyboard() const
 ///////////////////// 
 Mouse * View::GetOrCreateMouse() 
 { 
-   return GetOrCreateKeyboardMouseHandler()->GetOrCreateMouse(); 
+   return GetKeyboardMouseHandler()->GetOrCreateMouse(); 
 }
 Mouse* View::GetMouse() 
 { 

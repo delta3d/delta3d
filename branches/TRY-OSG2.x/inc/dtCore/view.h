@@ -167,8 +167,8 @@ namespace dtCore
    private:
 
 
-      KeyboardMouseHandler * GetOrCreateKeyboardMouseHandler() 
-      { return (mKeyboardMouseHandler.valid()) ? (mKeyboardMouseHandler.get()) : CreateKeyboardMouseHandler(); }
+      KeyboardMouseHandler * GetKeyboardMouseHandler() { return mKeyboardMouseHandler.get(); }
+
       dtCore::KeyboardMouseHandler * CreateKeyboardMouseHandler();
       
       dtCore::Camera * CreateCamera();
