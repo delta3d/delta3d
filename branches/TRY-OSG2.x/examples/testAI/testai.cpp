@@ -92,7 +92,15 @@ void TestAI::Config()
    const Waypoint* pWaypoint = (*iter).second;
 
    //spawn our character
-   mCharacter = new dtAI::AICharacter(GetScene(), GetCamera(), pWaypoint, "marine/marine.rbody", 10);    
+   try
+   {
+	   mCharacter = new dtAI::AICharacter(GetScene(), GetCamera(), pWaypoint, "marine/marine.rbody", 10);    
+   }
+   catch (rbody::config_error &e)
+   {
+      LOG_ERROR( std::string(e.what()) );
+      exit(-1);
+   }
    GoToWaypoint(1);
 
    //seed the random generator
