@@ -1,7 +1,11 @@
 #include <prefix/dtcoreprefix-src.h>
+
 #include <dtCore/skydome.h>
 #include <dtCore/moveearthtransform.h>
 #include <dtCore/makeskydome.h>
+
+#include <dtUtil/mathdefines.h>
+
 #include <osg/Depth>
 #include <osg/Drawable>
 #include <osg/Geometry>
@@ -9,7 +13,9 @@
 #include <osg/Group>
 #include <osg/Node>
 #include <osg/PolygonMode>
+
 #include <osgDB/ReadFile>
+
 #include <cassert>
 
 namespace dtCore

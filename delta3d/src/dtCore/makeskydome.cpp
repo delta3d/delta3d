@@ -3,7 +3,7 @@
 #include <dtCore/skydome.h>
 #include <osg/Geometry>
 #include <osg/Depth>
-#include <osg/Geode>
+//#include <osg/Geode>
 #include <cassert>
 
 using namespace dtCore;
