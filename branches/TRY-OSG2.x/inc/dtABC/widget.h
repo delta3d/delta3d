@@ -124,7 +124,9 @@ namespace dtABC
 
       ///BaseABC override to receive messages.
       ///This method should be called from derived classes
-      virtual  void           OnMessage( dtCore::Base::MessageData* data );
+      virtual  void           OnMessage( dtCore::Base::MessageData* data ); 
+
+      bool     mIsInitialized;  ///<have we been fully initialized yet
 
    private:
       ///Advance a single frame cycle.

@@ -71,6 +71,8 @@ osgViewer::GraphicsWindow * DeltaWin::CreateGraphicsWindow(const std::string& na
    traits->sampleBuffers = ds->getMultiSamples();
    traits->samples = ds->getNumMultiSamples();
    traits->inheritedWindowData = inheritedWindowData;
+   traits->setInheritedWindowPixelFormat = true;
+
    
    if (ds->getStereo())
    {

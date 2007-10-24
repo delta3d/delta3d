@@ -40,7 +40,8 @@ const char* Widget::msgQuit            = "quit";
 
 
 Widget::Widget( const std::string& name /*= "Widget"*/ )
-:  BaseABC(name)
+:  BaseABC(name),
+mIsInitialized(false)
 {
    RegisterInstance( this );
    CreateInstances();
@@ -64,13 +65,13 @@ void Widget::Config( const WinData* d /*= NULL*/ )
    {
       WindowData * inheritedWindowData = new WindowData(d->hwnd);
       
-      dtCore::RefPtr<dtCore::DeltaWin> window  = new dtCore::DeltaWin( "Widget",  
-                                                                       d->pos_x, d->pos_y, 
-                                                                       d->width, d->height, 
-                                                                       true, false, inheritedWindowData );
-      assert( window.get() );
+      mWindow  = new dtCore::DeltaWin( "Widget",  
+                                      d->pos_x, d->pos_y, 
+                                      d->width, d->height, 
+                                      true, false, inheritedWindowData );
+      assert( mWindow.valid() );
       
-      GetCamera()->SetWindow(window.get());
+      GetCamera()->SetWindow(mWindow.get());
       sys->Start();
    }
    
@@ -78,6 +79,8 @@ void Widget::Config( const WinData* d /*= NULL*/ )
    
    mCompositeViewer = new osgViewer::CompositeViewer;
    mCompositeViewer->addView(mViewList.front()->GetOsgViewerView());
+
+   mIsInitialized = true;
 }
 
 void Widget::Quit( void )
@@ -130,7 +133,10 @@ void Widget::OnMessage( Base::MessageData* data )
 
    if( data->message == msgResize )
    {
-      Resize( static_cast<WinRect*>(data->userData) );
+      if (mIsInitialized)
+      {
+         Resize( static_cast<WinRect*>(data->userData) );
+      }
       return;
    }
 
@@ -174,7 +180,8 @@ void Widget::Resize( const WinRect* r )
 {
    assert( r );
 
-   GetWindow()->SetPosition(r->pos_x, r->pos_y, r->width, r->height);
+   //tell OSG that the window has been resized.
+   GetWindow()->GetOsgViewerGraphicsWindow()->resized(r->pos_x, r->pos_y, r->width, r->height);
 }
 
 void Widget::HandleMouseEvent( const MouseEvent& ev )
