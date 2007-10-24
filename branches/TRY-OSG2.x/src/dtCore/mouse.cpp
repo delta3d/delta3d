@@ -62,14 +62,21 @@ osg::Vec2 Mouse::GetPosition() const
 
 void Mouse::SetPosition(float x, float y)
 {
-   if( mView.valid() && mView->GetOsgViewerView())
+   if( mView.valid() && 
+      mView->GetOsgViewerView() &&
+      mView->GetOsgViewerView()->getCamera() &&
+      mView->GetOsgViewerView()->getCamera()->getGraphicsContext() &&
+      mView->GetOsgViewerView()->getCamera()->getGraphicsContext()->getTraits())
    {
-      //oh man this is ugly.  How do we get the window size from here?
       const float w2 = mView->GetOsgViewerView()->getCamera()->getGraphicsContext()->getTraits()->width/2.f;
       const float h2 = mView->GetOsgViewerView()->getCamera()->getGraphicsContext()->getTraits()->height/2.f;
 
       //we're converting from (-1..1) to (0..width) and (0..height)
       mView->GetOsgViewerView()->requestWarpPointer((x*w2) + w2, (y*h2) + h2);
+   }
+   else
+   {
+      LOG_ERROR("Can not set the Mouse position: missing View, osg::View, osg::Camera, or graphics context");
    }
 }
 
