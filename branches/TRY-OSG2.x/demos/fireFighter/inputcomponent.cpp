@@ -153,7 +153,7 @@ void InputComponent::OnIntro()
 
    // Turn off the scene light and use the light maps/shadow maps
    dtCore::Camera &camera = *GetGameManager()->GetApplication().GetCamera();
-   camera.GetView()->GetOsgViewerView()->setLightingMode(osg::View::NO_LIGHT);
+   GetGameManager()->GetApplication().GetView()->GetOsgViewerView()->setLightingMode(osg::View::NO_LIGHT);
    osg::StateSet *globalState = camera.GetOsgCamera()->getOrCreateStateSet();
    globalState->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
 
@@ -198,7 +198,7 @@ void InputComponent::OnGame()
 
    // Turn off the scene light and use the light maps/shadow maps
    dtCore::Camera &camera = *GetGameManager()->GetApplication().GetCamera();
-   camera.GetView()->GetOsgViewerView()->setLightingMode(osg::View::NO_LIGHT);
+   GetGameManager()->GetApplication().GetView()->GetOsgViewerView()->setLightingMode(osg::View::NO_LIGHT);
    osg::StateSet *globalState = camera.GetOsgCamera()->getOrCreateStateSet();
    globalState->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
       

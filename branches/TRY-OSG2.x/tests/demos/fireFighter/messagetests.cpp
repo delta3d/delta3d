@@ -123,12 +123,12 @@ void FireFighterMessageTests::TestGameStateMessages()
       CPPUNIT_ASSERT_MESSAGE("The state should have changed to menu", 
          inputComp->GetCurrentGameState() == GameState::STATE_MENU);
 
-      bool returnValue = inputComp->HandleKeyPressed(NULL, Producer::Key_N, Producer::KeyChar_n);
+      bool returnValue = inputComp->HandleKeyPressed(NULL, 'n');
       CPPUNIT_ASSERT_MESSAGE("The current state was not one where the N keypress applied, the state should NOT have changed", 
          inputComp->GetCurrentGameState() == GameState::STATE_MENU);
       CPPUNIT_ASSERT(!returnValue);
 
-      returnValue = inputComp->HandleKeyPressed(NULL, Producer::Key_Escape, Producer::KeyChar_Escape);
+      returnValue = inputComp->HandleKeyPressed(NULL, osgGA::GUIEventAdapter::KEY_Escape);
       CPPUNIT_ASSERT(!returnValue);
       CPPUNIT_ASSERT_MESSAGE("The current state was not one where the Escape keypress applied, the state shoudl NOT have changed", 
          inputComp->GetCurrentGameState() == GameState::STATE_MENU);
@@ -143,7 +143,7 @@ void FireFighterMessageTests::TestGameStateMessages()
       SLEEP(10);
       dtCore::System::GetInstance().Step();
 
-      returnValue = inputComp->HandleKeyPressed(NULL, Producer::Key_N, Producer::KeyChar_n);
+      returnValue = inputComp->HandleKeyPressed(NULL, 'n');
 
       SLEEP(10);
       dtCore::System::GetInstance().Step();
@@ -152,7 +152,7 @@ void FireFighterMessageTests::TestGameStateMessages()
       CPPUNIT_ASSERT_MESSAGE("The state should have changed due to the keypress", 
          inputComp->GetCurrentGameState() == GameState::STATE_RUNNING);
 
-      returnValue = inputComp->HandleKeyPressed(NULL, Producer::Key_Escape, Producer::KeyChar_Escape);
+      returnValue = inputComp->HandleKeyPressed(NULL, osgGA::GUIEventAdapter::KEY_Escape);
       
       SLEEP(10);
       dtCore::System::GetInstance().Step();
