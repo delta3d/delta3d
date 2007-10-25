@@ -99,21 +99,24 @@ namespace dtUtil
             if (handle == NULL)
                LOG_ERROR("Unable to load library \"" + fullLibraryName + ".\"");
 
+            DWORD errorCode = GetLastError();
+
             LPVOID lpMsgBuf;
             FormatMessage( 
                FORMAT_MESSAGE_ALLOCATE_BUFFER | 
                FORMAT_MESSAGE_FROM_SYSTEM | 
                FORMAT_MESSAGE_IGNORE_INSERTS,
                NULL,
-               GetLastError(),
+               errorCode,
                0, // Default language
                (LPTSTR) &lpMsgBuf,
                0,
                NULL 
                );
       
+            std::string errorDisplay = std::string(reinterpret_cast<char*>(lpMsgBuf));
             // Display the string.
-            LOG_DEBUG(std::string(reinterpret_cast<char*>(lpMsgBuf)));
+            LOG_DEBUG(errorDisplay);
             // Free the buffer.
             LocalFree(lpMsgBuf);
 #else
