@@ -44,8 +44,10 @@ namespace dtGame
    {
       public:
 
+         static const std::string DEFAULT_NAME;
+
          /// Constructor
-         BaseInputComponent(const std::string &name = "BaseInputComponent");
+         BaseInputComponent(const std::string &name = DEFAULT_NAME);
 
          /**
           * Overridden from base class.  When this component is added to the GM, it 
