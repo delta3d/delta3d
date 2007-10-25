@@ -43,7 +43,12 @@ namespace dtDAL
          static const std::string PROPERTY_SCALE;
          static const std::string PROPERTY_NORMAL_RESCALING;
          static const std::string PROPERTY_RENDER_PROXY_NODE;
-         
+         static const std::string PROPERTY_ENABLE_COLLISION;
+         static const std::string PROPERTY_COLLISION_TYPE;
+         static const std::string PROPERTY_COLLISION_RADIUS;
+         static const std::string PROPERTY_COLLISION_LENGTH;
+         static const std::string PROPERTY_COLLISION_BOX;
+
          /**
           * Constructor
           */

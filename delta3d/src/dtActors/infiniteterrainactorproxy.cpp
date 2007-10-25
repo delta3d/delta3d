@@ -38,6 +38,11 @@ namespace dtActors
         const std::string &GROUPNAME = "InfiniteTerrain";
         TransformableActorProxy::BuildPropertyMap();
 
+        RemoveProperty(dtDAL::TransformableActorProxy::PROPERTY_COLLISION_TYPE);
+        RemoveProperty(dtDAL::TransformableActorProxy::PROPERTY_COLLISION_RADIUS);
+        RemoveProperty(dtDAL::TransformableActorProxy::PROPERTY_COLLISION_LENGTH);
+        RemoveProperty(dtDAL::TransformableActorProxy::PROPERTY_COLLISION_BOX);
+
         InfiniteTerrain *ter = static_cast<InfiniteTerrain*>(GetActor());
 
         // This property manipulates the segment size of an InfiniteTerrain.
