@@ -91,6 +91,9 @@ void initTransformableBindings()
    Transformable* (*TransformableGI1)(int) = &Transformable::GetInstance;
    Transformable* (*TransformableGI2)(std::string) = &Transformable::GetInstance;
 
+   osg::Node* (Transformable::*GetOSGNode1)() = &Transformable::GetOSGNode;
+   const osg::Node * (Transformable::*GetOSGNode2)() const = &Transformable::GetOSGNode;
+
    void (Transformable::*SetCollisionSphere1)(float) = &Transformable::SetCollisionSphere;
    void (Transformable::*SetCollisionSphere2)(osg::Node*) = &Transformable::SetCollisionSphere;
 
@@ -131,6 +134,8 @@ void initTransformableBindings()
       .def("PostPhysicsStepUpdate", &Transformable::PostPhysicsStepUpdate, &TransformableWrap::DefaultPostPhysicsStepUpdate)
       .def("RenderCollisionGeometry", &Transformable::RenderCollisionGeometry)
       .def("GetRenderCollisionGeometry", &Transformable::GetRenderCollisionGeometry)
+      .def("GetOSGNode", GetOSGNode1, return_internal_reference<>())
+      .def("GetOSGNode", GetOSGNode2, return_internal_reference<>())
       ;
 
    enum_<Transformable::CoordSysEnum>("CoordSysEnum")
