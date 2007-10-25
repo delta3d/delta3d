@@ -56,15 +56,14 @@ namespace dtUtil
    /**  
    *  GetCelestialCoordinates - calculates the azimuth and elevation w.r.t. a forward vector
    *  @param targetDirection - a direction vector pointing to the point of interest
-   *  @param lookForward - current forward vector
-   *  @param lookUp      - current up vector 
+   *  @param lookForward - current forward vector 
    *  @param azimuth     - the horizontal angle between our forward and our target
    *  @param elevation   - the vertical angle between our forward and our target
    */
    void DT_UTIL_EXPORT GetCelestialCoordinates(osg::Vec3 targetDirection,
-                                               const osg::Vec3 &lookForward,
-                                               const osg::Vec3 &lookUp,
-                                               float &azimuth, float &elevation );
+                                               const osg::Vec3 &lookForward,                                              
+                                               float &azimuth, 
+                                               float &elevation );
 
    /**
    *  GetCelestialDirection    - calculates the direction that a given azimuth and elevation points
