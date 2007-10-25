@@ -34,6 +34,11 @@ namespace dtDAL
    const std::string TransformableActorProxy::PROPERTY_SCALE("Scale");
    const std::string TransformableActorProxy::PROPERTY_NORMAL_RESCALING("Normal Rescaling");
    const std::string TransformableActorProxy::PROPERTY_RENDER_PROXY_NODE("Render Proxy Node");
+   const std::string TransformableActorProxy::PROPERTY_ENABLE_COLLISION("Enable Collision");
+   const std::string TransformableActorProxy::PROPERTY_COLLISION_TYPE("Collision Type");
+   const std::string TransformableActorProxy::PROPERTY_COLLISION_RADIUS("Collision Radius");
+   const std::string TransformableActorProxy::PROPERTY_COLLISION_LENGTH("Collision Length");
+   const std::string TransformableActorProxy::PROPERTY_COLLISION_BOX("Collision Box");
 
    void TransformableActorProxy::BuildPropertyMap()
    {
@@ -73,13 +78,13 @@ namespace dtDAL
                                            COLLISION_GROUP));
 
       AddProperty(new EnumActorProperty<dtCore::Transformable::CollisionGeomType>(
-                     "Collision Type","ODE Collision Type",
+                     PROPERTY_COLLISION_TYPE,"ODE Collision Type",
                      MakeFunctor(*this,&TransformableActorProxy::SetCollisionType),
                      MakeFunctorRet(*this,&TransformableActorProxy::GetCollisionType),
                      "Sets the type of geometry to use for collision detection (using ODE)",
                      COLLISION_GROUP));
 
-      AddProperty(new FloatActorProperty("Collision Radius","ODE Collision Radius",
+      AddProperty(new FloatActorProperty(PROPERTY_COLLISION_RADIUS,"ODE Collision Radius",
                                          MakeFunctor(*this,&TransformableActorProxy::SetCollisionRadius),
                                          MakeFunctorRet(*this,&TransformableActorProxy::GetCollisionRadius),
                                          "Sets the radius for collision calculations (using ODE). This value is used differently "
@@ -87,7 +92,7 @@ namespace dtDAL
                                          "if the collision type is set to SPHERE, this will be the sphere's radius.",
                                          COLLISION_GROUP));
 
-      AddProperty(new FloatActorProperty("Collision Length","ODE Collision Length",
+      AddProperty(new FloatActorProperty(PROPERTY_COLLISION_LENGTH,"ODE Collision Length",
                                          MakeFunctor(*this,&TransformableActorProxy::SetCollisionLength),
                                          MakeFunctorRet(*this,&TransformableActorProxy::GetCollisionLength),
                                          "Sets the length of the collision geometry (using ODE). This value is used differently "
@@ -95,12 +100,19 @@ namespace dtDAL
                                          "if the collision type is set to CYLINDER, this will be the cylinder's length.",
                                          COLLISION_GROUP));
 
-      AddProperty(new Vec3ActorProperty("Collision Box","ODE Collision Box",
+      AddProperty(new Vec3ActorProperty(PROPERTY_COLLISION_BOX,"ODE Collision Box",
                                         MakeFunctor(*this, &TransformableActorProxy::SetCollisionBoxDims),
                                         MakeFunctorRet(*this, &TransformableActorProxy::GetCollisionBoxDims),
                                         "Sets the size of the bounding box used for collision detection (using ODE).  This property "
                                         "is used if the collision type is set to BOX.",
                                         COLLISION_GROUP));
+
+      AddProperty(new BooleanActorProperty(PROPERTY_ENABLE_COLLISION, "ODE Collision Enable",
+                                          MakeFunctor(*trans, &dtCore::Transformable::SetCollisionDetection),
+                                          MakeFunctorRet(*trans, &dtCore::Transformable::GetCollisionDetection),
+                                          "Enables collision detection on this actor (using ODE).",
+                                          COLLISION_GROUP));
+
 
       static const std::string RENDER_PROXY_NODE_DESC("Enables the rendering of the proxy node for this Transformable");
       AddProperty(new BooleanActorProperty(PROPERTY_RENDER_PROXY_NODE, PROPERTY_RENDER_PROXY_NODE,
@@ -108,6 +120,7 @@ namespace dtDAL
          MakeFunctorRet(*trans, &dtCore::Transformable::GetIsRenderingProxyNode),
          RENDER_PROXY_NODE_DESC,
          GROUPNAME));
+
    }
 
    /** 
