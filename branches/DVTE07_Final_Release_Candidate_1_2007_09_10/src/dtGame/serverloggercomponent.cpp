@@ -765,6 +765,17 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////////
    bool ServerLoggerComponent::SetLogDirectory(const std::string &dir)
    {
+      if(dir.empty())
+      {
+         // This should throw an exception, but I'll log an error and return true or 
+         // false since the rest of the method looks like it is going out of it's way
+         // to do that
+         LOG_ERROR("The ServerLoggerComponent tried to set its log directory to an empty string.");
+         return false;
+
+         //throw dtUtil::Exception("Tried to set the log directory to an empty string.",
+         //   __FILE__, __LINE__);
+      }
       //Make sure we remove any trailing slashes from the path.
       std::string newPath = dir;
       if (newPath[newPath.length()-1] == '/' || newPath[newPath.length()-1] == '\\')
