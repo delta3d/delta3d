@@ -40,6 +40,7 @@
 #include <dtHLAGM/onetoonemapping.h>
 #include <dtHLAGM/distypes.h>
 #include <dtHLAGM/attributetoproperty.h>
+#include <dtHLAGM/export.h>
 
 namespace dtHLAGM
 {
