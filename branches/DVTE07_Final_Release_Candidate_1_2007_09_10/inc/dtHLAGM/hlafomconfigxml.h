@@ -245,6 +245,7 @@ namespace dtHLAGM
          static const std::string MESSAGE_HANDLER_MESSAGETYPE_ELEMENT;
          static const std::string MESSAGE_HANDLER_HANDLER_NAME_ELEMENT;
 
+         static const std::string ONE_TO_MANY_PARAMETER_ELEMENT;
          static const std::string ONE_TO_MANY_HLA_NAME_ELEMENT;
          static const std::string ONE_TO_MANY_GAME_NAME_ELEMENT;
          static const std::string ONE_TO_MANY_HLA_DATATYPE_ELEMENT;
@@ -290,6 +291,7 @@ namespace dtHLAGM
 
          AttributeToPropertyList* mCurrentAttrToProp;
          ParameterToParameterList* mCurrentParamToParam;
+         bool mInMultiParam;
 
          std::vector<dtCore::RefPtr<ObjectToActor> > mObjectToActors;
          std::vector<dtCore::RefPtr<InteractionToMessage> > mInteractionToMessages;

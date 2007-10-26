@@ -535,7 +535,7 @@ namespace dtHLAGM
       {
          try
          {
-            CreateDDMSubscriptionRegions();
+            CreateDDMSubscriptionRegions();            
          }
          catch (const dtUtil::Exception&)
          {
@@ -1404,93 +1404,109 @@ namespace dtHLAGM
          {
             if (vectorIterator->IsInvalid()) continue;
 
-            const std::string& propertyString = vectorIterator->GetParameterDefinitions()[0].GetGameName();
             const std::string& attributeString = vectorIterator->GetHLAName();
 
             bool matched = false;
-            for(unsigned i=0; i < theAttributes.size(); ++i)
+            if (!attributeString.empty() && !vectorIterator->GetParameterDefinitions().empty())
             {
-               RTI::AttributeHandle handle = theAttributes.getHandle(i);
-
-
-               if (handle == vectorIterator->GetAttributeHandle())
+               for(unsigned i=0; i < theAttributes.size(); ++i)
                {
-                  matched = true;
-                  unsigned long length;
-                  char* buf = theAttributes.getValuePointer(i, length);
+                  RTI::AttributeHandle handle = theAttributes.getHandle(i);
 
-                  if (!(propertyString.empty()) && !(attributeString.empty()))
+
+                  if (handle == vectorIterator->GetAttributeHandle())
                   {
-                     const dtDAL::DataType& propertyDataType = vectorIterator->GetParameterDefinitions()[0].GetGameType();
+                     matched = true;
+                     unsigned long length;
+                     char* buf = theAttributes.getValuePointer(i, length);
 
-                     dtCore::RefPtr<dtGame::MessageParameter> propertyParameter;
+                     std::vector<dtCore::RefPtr<dtGame::MessageParameter> > messageParameters;
+                     dtCore::RefPtr<dtGame::MessageParameter> aboutParameter;
+                     dtCore::RefPtr<dtGame::MessageParameter> sendingParameter;
 
-                     //The about actor id and source actor ID are special cases.
-                     //We create a dummy parameter to allow the mapper code to work, and
-                     //then set it back to the message after the fact.
-                     if (propertyDataType == dtDAL::DataType::ACTOR &&
-                        (propertyString == ABOUT_ACTOR_ID ||
-                         propertyString == SENDING_ACTOR_ID))
+                     for (unsigned int propnum = 0; propnum < vectorIterator->GetParameterDefinitions().size(); propnum++)
                      {
-                        propertyParameter =
-                              dtGame::MessageParameter::CreateFromType(dtDAL::DataType::ACTOR,
-                                                                      "propertyString");
-                     }
-                     else
-                     {
-                        propertyParameter =
-                           FindOrAddMessageParameter(propertyString, propertyDataType, *msg);
-                     }
+                        OneToManyMapping::ParameterDefinition& paramDef = vectorIterator->GetParameterDefinitions()[propnum];
+                        const std::string& propertyString = paramDef.GetGameName();
+                        if (!(propertyString.empty())) {
+                           const dtDAL::DataType& propertyDataType = paramDef.GetGameType();
 
-                     if (propertyParameter != NULL)
-                     {
-                        std::vector<dtCore::RefPtr<dtGame::MessageParameter> > messageParameters;
-                        messageParameters.push_back(propertyParameter);
+                           dtCore::RefPtr<dtGame::MessageParameter> propertyParameter;
 
-                        MapToMessageParameters(buf, length, messageParameters, *vectorIterator);
+                           //The about actor id and source actor ID are special cases.
+                           //We create a dummy parameter to allow the mapper code to work, and
+                           //then set it back to the message after the fact.
+                           if (propertyDataType == dtDAL::DataType::ACTOR &&
+                               (propertyString == ABOUT_ACTOR_ID ||
+                                propertyString == SENDING_ACTOR_ID))
+                           {
+                              propertyParameter =
+                                 dtGame::MessageParameter::CreateFromType(dtDAL::DataType::ACTOR,
+                                                                         propertyString);
+                              if (propertyString == ABOUT_ACTOR_ID)
+                                 aboutParameter = propertyParameter;
+                              else
+                                 sendingParameter = propertyParameter;
+                           }
+                           else
+                           {
+                              propertyParameter =
+                                 FindOrAddMessageParameter(propertyString, propertyDataType, *msg);
+                           }
 
-                        if (propertyDataType == dtDAL::DataType::ACTOR)
-                        {
-                           if (propertyString == ABOUT_ACTOR_ID)
-                              msg->SetAboutActorId(propertyParameter->ToString());
-                           else if (propertyString == SENDING_ACTOR_ID)
-                              msg->SetSendingActorId(propertyParameter->ToString());
+                           if (propertyParameter != NULL)
+                           {
+                              messageParameters.push_back(propertyParameter);
+                           }
+                           else
+                           {
+                              //this is logged in the call to find the parameter.
+                              vectorIterator->SetInvalid(true);
+                           }
                         }
                      }
-                     else
-                     {
-                        //this is logged in the call to find the parameter.
-                        vectorIterator->SetInvalid(true);
-                     }
+
+                     MapToMessageParameters(buf, length, messageParameters, *vectorIterator);
+
+                     if (aboutParameter!=NULL)
+                        msg->SetAboutActorId(aboutParameter->ToString());
+                     if (sendingParameter!=NULL)
+                        msg->SetSendingActorId(sendingParameter->ToString());
                   }
                }
             }
 
-            //if this mapping is not in the HLA message
+            //If this attribute mapping is not in the HLA message,
+            //use defaults for all parameters that need them.
             if (!matched)
             {
-               if (bNewObject || vectorIterator->GetParameterDefinitions()[0].IsRequiredForGame())
+               for (unsigned int propnum = 0; propnum < vectorIterator->GetParameterDefinitions().size(); propnum++)
                {
-                  const std::string& defaultValue = vectorIterator->GetParameterDefinitions()[0].GetDefaultValue();
-                  if (!defaultValue.empty() && !propertyString.empty())
+                  OneToManyMapping::ParameterDefinition& paramDef = vectorIterator->GetParameterDefinitions()[propnum];
+                  if (bNewObject || paramDef.IsRequiredForGame())
                   {
-                     const dtDAL::DataType& propertyDataType = vectorIterator->GetParameterDefinitions()[0].GetGameType();
-
-                     //The actor id special cases are not supported here because people can't hard
-                     //code actor id's with default values.
-                     dtCore::RefPtr<dtGame::MessageParameter> propertyParameter =
-                        FindOrAddMessageParameter(propertyString, propertyDataType, *msg);
-
-                     if (propertyParameter != NULL)
+                     const std::string& propertyString = paramDef.GetGameName();
+                     const std::string& defaultValue = paramDef.GetDefaultValue();
+                     if (!defaultValue.empty() && !propertyString.empty())
                      {
-                        propertyParameter->FromString(defaultValue);
-                     }
-                     else
-                     {
-                        //this is logged in the call to find the parameter.
-                        vectorIterator->SetInvalid(true);
-                     }
+                        const dtDAL::DataType& propertyDataType = paramDef.GetGameType();
 
+                        //The actor id special cases are not supported here because people can't hard
+                        //code actor id's with default values.
+                        dtCore::RefPtr<dtGame::MessageParameter> propertyParameter =
+                           FindOrAddMessageParameter(propertyString, propertyDataType, *msg);
+
+                        if (propertyParameter != NULL)
+                        {
+                           propertyParameter->FromString(defaultValue);
+                        }
+                        else
+                        {
+                           //this is logged in the call to find the parameter.
+                           vectorIterator->SetInvalid(true);
+                        }
+
+                     }
                   }
                }
             }
@@ -1721,68 +1737,74 @@ namespace dtHLAGM
             for (unsigned int i = 0; i < theParameters.size(); i++)
             {
                RTI::ParameterHandle handle = theParameters.getHandle(i);
-               if (handle == vectorIterator->GetParameterHandle())
+               if (handle == vectorIterator->GetParameterHandle() &&
+                     !vectorIterator->GetParameterDefinitions().empty())
                {
                   unsigned long length;
                   char* buf = theParameters.getValuePointer(i, length);
-                  const dtDAL::DataType& gameParameterDataType = vectorIterator->GetParameterDefinitions()[0].GetGameType();
 
-                  const std::string& gameParameterName = vectorIterator->GetParameterDefinitions()[0].GetGameName();
+                  std::vector<dtCore::RefPtr<dtGame::MessageParameter> > messageParameters;
+                  dtCore::RefPtr<dtGame::MessageParameter> aboutParameter;
+                  dtCore::RefPtr<dtGame::MessageParameter> sendingParameter;
 
-                  // The about actor id and source actor ID are special cases.
-                  // We create a dummy parameter to allow the mapper code to work, and
-                  // then set it back to the message after the fact.
-                  if (gameParameterDataType == dtDAL::DataType::ACTOR &&
-                     (gameParameterName == ABOUT_ACTOR_ID ||
-                     gameParameterName == SENDING_ACTOR_ID))
+                  for (unsigned int propnum = 0; propnum < vectorIterator->GetParameterDefinitions().size(); propnum++)
                   {
+                     const dtDAL::DataType& gameParameterDataType = vectorIterator->GetParameterDefinitions()[propnum].GetGameType();
 
-                     std::vector<dtCore::RefPtr<dtGame::MessageParameter> > messageParameters;
+                     const std::string& gameParameterName = vectorIterator->GetParameterDefinitions()[propnum].GetGameName();
 
-                     dtCore::RefPtr<dtGame::MessageParameter> messageParameter =
-                           dtGame::MessageParameter::CreateFromType(dtDAL::DataType::ACTOR,
-                              gameParameterName);
+                     // The about actor id and source actor ID are special cases.
+                     // We create a dummy parameter to allow the mapper code to work, and
+                     // then set it back to the message after the fact.
+                     if (gameParameterDataType == dtDAL::DataType::ACTOR &&
+                        (gameParameterName == ABOUT_ACTOR_ID ||
+                        gameParameterName == SENDING_ACTOR_ID))
+                     {
 
-                     messageParameters.push_back(messageParameter);
+                        dtCore::RefPtr<dtGame::MessageParameter> messageParameter =
+                              dtGame::MessageParameter::CreateFromType(dtDAL::DataType::ACTOR,
+                                 gameParameterName);
+                        if (gameParameterName == ABOUT_ACTOR_ID)
+                           aboutParameter = messageParameter;
+                        else
+                           sendingParameter = messageParameter;
 
-                     MapToMessageParameters(buf, length, messageParameters, *vectorIterator);
-
-                     if (gameParameterName == ABOUT_ACTOR_ID)
-                        message->SetAboutActorId(messageParameter->ToString());
+                        messageParameters.push_back(messageParameter);
+                     }
                      else
-                        message->SetSendingActorId(messageParameter->ToString());
-                  }
-                  else
-                  {
-                     dtCore::RefPtr<dtGame::MessageParameter> messageParameter =
-                           message->GetParameter(gameParameterName);
-
-                     if (messageParameter == NULL)
                      {
-                        mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
-                                            "No message parameter named %s found in messageType %s when trying to map from HLA interaction %s",
-                                            gameParameterName.c_str(),
-                                            messageType.GetName().c_str(),
-                                            classHandleString.c_str());
-                        continue;
-                     }
-                     else if (gameParameterDataType != messageParameter->GetDataType())
-                     {
-                        mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
-                                            "Message parameter named %s found in messageType %s has unexpected type %s.  %s was expected.  Attempting to set anyway.",
-                                            gameParameterName.c_str(),
-                                            messageType.GetName().c_str(),
-                                            messageParameter->GetDataType().GetName().c_str(),
-                                            gameParameterDataType.GetName().c_str());
-                        continue;
-                     }
+                        dtCore::RefPtr<dtGame::MessageParameter> messageParameter =
+                              message->GetParameter(gameParameterName);
 
-                     std::vector<dtCore::RefPtr<dtGame::MessageParameter> > messageParameters;
-                     messageParameters.push_back(messageParameter);
+                        if (messageParameter == NULL)
+                        {
+                           mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+                                               "No message parameter named %s found in messageType %s when trying to map from HLA interaction %s",
+                                               gameParameterName.c_str(),
+                                               messageType.GetName().c_str(),
+                                               classHandleString.c_str());
 
-                     MapToMessageParameters(buf, length, messageParameters, *vectorIterator);
+                        }
+                        else if (gameParameterDataType != messageParameter->GetDataType())
+                        {
+                           mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+                                               "Message parameter named %s found in messageType %s has unexpected type %s.  %s was expected.  Attempting to set anyway.",
+                                               gameParameterName.c_str(),
+                                               messageType.GetName().c_str(),
+                                               messageParameter->GetDataType().GetName().c_str(),
+                                               gameParameterDataType.GetName().c_str());
+                        }
+                        else
+                           messageParameters.push_back(messageParameter);
+                     }
+                     
                   }
+                  MapToMessageParameters(buf, length, messageParameters, *vectorIterator);
 
+                  if (aboutParameter != NULL)
+                     message->SetAboutActorId(aboutParameter->ToString());
+                  if (sendingParameter != NULL)
+                     message->SetSendingActorId(sendingParameter->ToString());
                }
             }
          }
