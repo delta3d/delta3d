@@ -30,6 +30,9 @@ def TOOL_BUNDLE(env):
       allLibs = {}
       for lib_name in env['dtLibs'].keys() :
          allLibs[lib_name] = env['dtLibs'][lib_name]
+         # all of the "dtLibs" are assumed to be shared libraries
+         env['foundLibs'][env['dtLibs'][lib_name]] = 'sharedLib'
+         
       for lib_name in env['extLibs'].keys() :
          allLibs[lib_name] = env['extLibs'][lib_name]
           
@@ -42,17 +45,12 @@ def TOOL_BUNDLE(env):
     
       addToLibs = []
       addToFrameworks = []
-      if env['OS'] == 'darwin':
-          for lib_name in deps:
-            if env['foundLibs'].has_key(lib_name):
-              if env['foundLibs'][lib_name] == 'framework':
-                addToFrameworks.append(lib_name)
-              else:
+      for lib_name in deps:
+         if env['foundLibs'].has_key(lib_name):
+            if env['foundLibs'][lib_name] == 'framework':
+               addToFrameworks.append(lib_name)
+            elif env['foundLibs'][lib_name] == 'sharedLib':
                 addToLibs.append(lib_name)
-            else:
-              addToLibs.append(lib_name);
-      else:
-          addToLibs = deps
    
       envCopy['FRAMEWORKS'] = addToFrameworks
  
@@ -303,7 +301,6 @@ def TOOL_BUNDLE(env):
          
       env.Append( CPPPATH = [os.path.join( os.getcwd(), 'inc' ) ] ) # Delta3D includes
       env.Append( CPPPATH = [os.path.join( os.getcwd(), 'ext', 'inc' ) ] ) # Dependencies includes
-      env.Append( CPPPATH = [os.path.join( os.getcwd(), 'ext', 'inc', 'CEGUI' ) ] ) # path for Crazy Eddie's GUI since they are too cool
 
       env.Append( CPPPATH = env.get('cpppath') )
       env.Append( LIBPATH = env.get('libpath') )
@@ -315,8 +312,6 @@ def TOOL_BUNDLE(env):
       #anyway.
       if env['OS'] == 'darwin':
          env.Append( CPPPATH = [os.path.join( '/Library', 'Frameworks', 'Xerces.framework', 'Headers' ) ] )
-         env.Append( CPPPATH = [os.path.join( '/Library', 'Frameworks', 'CEGUI.framework', 'Headers' ) ] ) # path for Crazy Eddie's GUI since they are too cool
-         env.Append( CPPPATH = [os.path.join( '/Library', 'Frameworks', 'gdal.framework', 'Headers' ) ] ) # gdal since the includes are not done as <gdal/...>
 
       env.Append( LIBPATH = [os.path.join( os.getcwd(), 'lib' ) ] ) # Delta3D libs
 
@@ -364,7 +359,8 @@ def TOOL_BUNDLE(env):
                if match is not None :
                   rtiLibPath = root
                   if re.search( javaPattern, file) is None:
-                     rtiLibs.append( match.group(1) )
+                     newLib = match.group(1)
+                     rtiLibs.append( newLib )
             
          if rtiLibPath is not '' :
             env.Append( LIBPATH = [ rtiLibPath ] )
@@ -400,7 +396,7 @@ def TOOL_BUNDLE(env):
          elif env['OS'] == 'linux':      
             env.Append( CXXFLAGS=['-g', '-O0', '-pipe'], #deubg info, no optimizations, pipe object data
                         #removed _DEBUG for now because of problem with GNE and DEBUG because of a python issue.
-              CPPDEFINES=['SIGSLOT_PURE_ISO'] )
+              CPPDEFINES=['SIGSLOT_PURE_ISO', "LINUX"] )
          elif env['OS'] == 'darwin':      
             env.Append(CXXFLAGS=['-gdwarf-2', '-O0', '-pipe', '-isysroot', '/Developer/SDKs/MacOSX10.4u.sdk'], 
               CPPDEFINES=['_DEBUG', '__USE_OSX_AGL_IMPLEMENTATION__', 'SIGSLOT_PURE_ISO', 'MAC_OS_X_VERSION_MIN_REQUIRED=1030' ],
@@ -411,7 +407,7 @@ def TOOL_BUNDLE(env):
          
          if env['OS'] == 'windows':
            env.Append( CPPDEFINES = ['WIN32', 'NDEBUG', '_NOAUTOLIBMSG'],
-                    CXXFLAGS = ['/EHsc', '/GR', '/MD' ], #synchronous exception handling (c-?), run-time type info, multi-threaded dll
+                    CXXFLAGS = ['/EHsc', '/GR', '/MD', '/Ox'], #synchronous exception handling (c-?), run-time type info, multi-threaded dll
                     LINKFLAGS = ['/NODEFAULTLIB:LIBCMT', '/NODEFAULTLIB:LIBC'] )  
          elif env['OS'] == 'linux':
            env.Append( CXXFLAGS=['-O2', '-pipe'], #optimizations, pipe object data
@@ -673,6 +669,10 @@ def TOOL_BUNDLE(env):
             }
       else :
          extLibs = {}
+
+      if env.has_key('rtiLibs'):
+         for lib in env['rtiLibs']:
+             extLibs[lib]=lib
       
       env['depsHash'] = depsHash
       env['dtLibs'] = dtLibs
@@ -725,6 +725,24 @@ def TOOL_BUNDLE(env):
                conf.env.Replace(FRAMEWORKS = oldFrameworks) 
                conf.env.Replace(LIBS = oldLibs) 
 
+      def CheckHeader(name, path):
+         foundH = conf.CheckCXXHeader(name)
+         
+         if foundH:
+            return True;
+          
+         for dir in path:
+            oldCPPPATH = conf.env['CPPPATH'] + []
+            conf.env.Append(CPPPATH = [dir])
+            foundH = conf.CheckCXXHeader(name)
+            if foundH:
+               break;
+            else:
+               conf.env['CPPPATH'] = oldCPPPATH
+
+         
+         return foundH;
+
       if env['OS'] == 'windows' :
          CheckLinkGroup([ 'opengl', 'User32', 'Advapi32', 'Rpcrt4',  'Winmm', 'Gdi32', 'opengl', 'winsock', 'shell32', 'ole32' ], 'OS', True)
       elif env['OS'] == 'darwin' :
@@ -763,36 +781,43 @@ def TOOL_BUNDLE(env):
       CheckLinkGroup(['cal3d','rvrutils','rcfgscript','rbody'], 'rbody', True)
       CheckLinkGroup(['DIS'], 'DIS', True)
       CheckLinkGroup([ 'CEGUIBase', 'CEGUIOpenGLRenderer' ], 'CEGUI', False, False)
+
+      if env.has_key('rtiLibs'):
+         for lib in env['rtiLibs'] :
+            extLibs[lib] = lib
+            foundLibs[lib] = 'sharedLib'
       
       if env.has_key('additionalLibsOrder'):
          additionalLibsOrder = env['additionalLibsOrder']
          additionalOrderedToCheck = []
          for libName in additionalLibsOrder:
-            if not foundLibs.has_key(extLibs[libName]):
-               additionalOrderedToCheck += [ extLibs[libName] ]
+            if not foundLibs.has_key(libName):
+               additionalOrderedToCheck += [ libName ]
       
          CheckLinkGroup(additionalOrderedToCheck, 'AdditionalOrdered', True, False)
          
       additionalToCheck = [];
       for libName in extLibs.keys():
-         if not foundLibs.has_key(extLibs[libName]):
-            additionalToCheck += [ extLibs[libName] ]
+         if not foundLibs.has_key(libName):
+            additionalToCheck += [ libName ]
 
       CheckLinkGroup(additionalToCheck, 'Additional', True, False)
          
 
       
       if not env.GetOption('clean') :
-         foundGdalH = conf.CheckCXXHeader('gdal.h')
-      
-         if not foundGdalH:
-            if env['OS'] != 'windows' :
-               conf.env.Append(CPPPATH = ["/usr/include/gdal"])
-               foundGdalH = conf.CheckCXXHeader('gdal.h')
-      
+         
+         foundGdalH = CheckHeader('gdal.h', ['/usr/include/gdal','ext/inc/gdal', '/Library/Frameworks/gdal.framework/Headers'])
+         
          if not foundGdalH: 
             print "gdal.h was not found, aborting."
-            Exit(1)
+            env.Exit(1)
+
+         foundCEGUIH = CheckHeader('CEGUIBase.h', ['/usr/include/CEGUI','ext/inc/CEGUI', '/Library/Frameworks/CEGUI.framework/Headers'])
+         
+         if not foundCEGUIH: 
+            print "CEGUIBase.h was not found, aborting."
+            env.Exit(1)
          
       
       #this actually SEARCHES, not good
@@ -802,18 +827,16 @@ def TOOL_BUNDLE(env):
 
       # check if we found all the libraries
       # TODO: it's ok if we are missing boost_python, but make this explicit!
-      if len( foundLibs.keys() ) < len( extLibs.keys() ) - 2  : 
-         print 'Build Failed: Missing required libraries'
-         errorLog.write('Build Failed: Missing required libraries\n\n')
-         errorLog.close()
+      #if len( foundLibs.keys() ) < len( extLibs.keys() ) - 2  : 
+      #   print 'Build Failed: Missing required libraries'
+      #   errorLog.write('Build Failed: Missing required libraries\n\n')
+      #   errorLog.close()
 
             
-         env.Exit(-1)
+      #   env.Exit(-1)
 
       # add the rti libs to the external library dictionary, but only
       # after the configure check is complete 
-      for lib in env['rtiLibs'] :
-         extLibs[lib] = lib
 
       env['foundLibs'] = foundLibs
 

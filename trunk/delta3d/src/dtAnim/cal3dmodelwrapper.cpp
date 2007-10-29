@@ -427,4 +427,15 @@ namespace dtAnim
          return 0.f;
       }
    }
+
+   void Cal3DModelWrapper::SetAnimationTime(float time)
+   {
+      mMixer->setAnimationTime(time);
+   }
+   
+   float Cal3DModelWrapper::GetAnimationTime()
+   {
+      return mMixer->getAnimationTime();
+   }
+
 }

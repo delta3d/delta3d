@@ -129,6 +129,9 @@ namespace dtCore
       /// @return the container of MouseListener instances.
       const MouseListenerList& GetListeners() const { return mMouseListeners; }
 
+      ///@return if the mouse has window focus, false otherwise
+      bool GetHasFocus();
+
    protected:
       /// The container of observers.
       MouseListenerList mMouseListeners;

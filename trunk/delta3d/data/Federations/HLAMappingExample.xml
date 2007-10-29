@@ -135,7 +135,31 @@
             </attrToProp>            
         </object>
 
-        <object extends="BaseEntity">
+        <object extends="BaseEntity" name="localHelo">
+            <objectClass>BaseEntity.PhysicalEntity.Platform.Aircraft</objectClass>
+            <actorType>TestHLA.Helicopter</actorType>
+            <localOnly>true</localOnly>
+            <ddmSpace>Another Space</ddmSpace>
+            <disEntityEnum>
+                <kind>1</kind>
+                <domain>2</domain>
+                <country>222</country>
+                <category>20</category>
+                <subcategory>2</subcategory>
+                <specific>6</specific>
+                <extra>0</extra>
+            </disEntityEnum>
+            <entityIdAttributeName>EntityIdentifier</entityIdAttributeName>
+            <attrToProp>
+                <hlaName>VelocityVector</hlaName>
+                <hlaDataType>VELOCITY_VECTOR_TYPE</hlaDataType>
+                <gameName>Velocity Vector</gameName>
+                <gameDataType>VEC3D</gameDataType>
+                <default></default>
+            </attrToProp>            
+        </object>
+
+        <object extends="BaseEntity" name="remoteHelo">
             <objectClass>BaseEntity.PhysicalEntity.Platform.Aircraft</objectClass>
             <actorType>TestHLA.Helicopter</actorType>
             <remoteOnly>true</remoteOnly>
@@ -163,28 +187,6 @@
             <objectClass>BaseEntity.PhysicalEntity.Platform.Aircraft</objectClass>
             <actorType>TestHLA.Jet</actorType>
             <remoteOnly>true</remoteOnly>
-            <disEntityEnum>
-                <kind>1</kind>
-                <domain>2</domain>
-                <country>225</country>
-                <category>0</category>
-                <subcategory>0</subcategory>
-                <specific>0</specific>
-                <extra>0</extra>
-            </disEntityEnum>
-            <attrToProp>
-                <hlaName>VelocityVector</hlaName>
-                <hlaDataType>VELOCITY_VECTOR_TYPE</hlaDataType>
-                <gameName>Velocity Vector</gameName>
-                <gameDataType>VEC3D</gameDataType>
-                <default></default>
-            </attrToProp>            
-        </object>
-
-        <object>
-            <objectClass>TryingToMapTheJetBidirectionallyAgain</objectClass>
-            <actorType>TestHLA.Jet</actorType>
-            <remoteOnly>false</remoteOnly>
             <disEntityEnum>
                 <kind>1</kind>
                 <domain>2</domain>

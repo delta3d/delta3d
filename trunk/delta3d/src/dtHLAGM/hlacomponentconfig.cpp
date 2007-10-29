@@ -50,7 +50,7 @@ namespace dtHLAGM
 {
    const std::string HLAComponentConfig::LOG_NAME("hlafomtranslatorconfig.cpp");
 
-   HLAComponentConfig::HLAComponentConfig() throw (dtUtil::Exception):
+   HLAComponentConfig::HLAComponentConfig():
       mHandler(new HLAFOMConfigContentHandler)
    {
       try
@@ -106,7 +106,7 @@ namespace dtHLAGM
       delete mXercesParser;
    }
    
-   void HLAComponentConfig::LoadConfiguration(HLAComponent& translator, const std::string& dataFilePath) throw (dtUtil::Exception)
+   void HLAComponentConfig::LoadConfiguration(HLAComponent& translator, const std::string& dataFilePath)
    {
         try
         {

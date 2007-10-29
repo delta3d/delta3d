@@ -12,7 +12,6 @@ import gch
 import platform
 from SCons.Script.SConscript import SConsEnvironment
 
-
 # TODO:
 # install headers, libs, to prefix
 # fix dtCore/dtUtil auto-install

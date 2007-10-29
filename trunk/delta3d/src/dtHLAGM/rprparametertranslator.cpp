@@ -362,18 +362,18 @@ namespace dtHLAGM
    {
       const AttributeType& hlaType = mapping.GetHLAType();
 
-      if (parameters.size() == 0)
+      if (parameters.empty())
       {
-         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+         mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
             "Unable to map from Game to HLA mapping %s because no message parameters were passed into the mapping method.",
             mapping.GetHLAName().c_str());
 
          return;
       }
 
-      if (mapping.GetParameterDefinitions().size() == 0)
+      if (mapping.GetParameterDefinitions().empty() == 0)
       {
-         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+         mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
             "Unable to map to HLA mapping %s because no parameter mappings are added to the mapping object.",
             mapping.GetHLAName().c_str());
          return;
@@ -1135,17 +1135,17 @@ namespace dtHLAGM
    {
       const AttributeType& hlaType = mapping.GetHLAType();
 
-      if (parameters.size() == 0)
+      if (parameters.empty())
       {
-         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+         mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
             "Unable to map from HLA mapping %s because no message parameters were passed into the mapping method.",
             mapping.GetHLAName().c_str());
          return;
       }
 
-      if (mapping.GetParameterDefinitions().size() == 0)
+      if (mapping.GetParameterDefinitions().empty())
       {
-         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+         mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
             "Unable to map from HLA mapping %s because no parameter mappings are added to the mapping object.",
             mapping.GetHLAName().c_str());
          return;

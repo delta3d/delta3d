@@ -262,7 +262,7 @@ namespace dtUtil
          void SetUTMZone(unsigned zone) { Clamp(zone, unsigned(1), unsigned(60)); mZone = zone; };
                   
          /**
-          * Converts XYZ coordinates to a local translation vector based on the current
+          * Converts 3 part remote coordinates to a local translation vector based on the current
           * configuration.
           * @param loc the location as 3 doubles.
           * @return the x y z location is local space.
@@ -278,7 +278,7 @@ namespace dtUtil
          const osg::Vec3d ConvertToRemoteTranslation(const osg::Vec3& translation);
 
          /**
-          * Converts php coordinates in radians to a local rotation heading, pitch, roll in degrees
+          * Converts psi theta phi coordinates in radians to a local rotation heading, pitch, roll in degrees
           * based on the current configuration.
           */
          const osg::Vec3 ConvertToLocalRotation(double psi, double theta, double phi) const;

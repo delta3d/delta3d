@@ -36,6 +36,7 @@
 #include <osgDB/FileNameUtils>
 
 #include <dtCore/globals.h>
+#include <dtCore/scene.h>
 
 #include <dtUtil/log.h>
 #include <dtUtil/stringutils.h>
@@ -51,6 +52,8 @@
 #include <dtDAL/actorproxyicon.h>
 #include <dtDAL/environmentactor.h>
 #include <dtDAL/gameevent.h>
+#include <dtDAL/actorproxy.h>
+#include <dtDAL/resourcedescriptor.h>
 
 #include <dtAI/waypointmanager.h>
 #include <dtDAL/waypointactorproxy.h>
@@ -542,6 +545,15 @@ namespace dtDAL
 
       return *map;
 
+   }
+
+   //////////////////////////////////////////////////////////
+   Map& Project::LoadMapIntoScene(const std::string& name, dtCore::Scene& scene, 
+            bool addBillBoards, bool enablePaging)
+   {
+      Map& m = GetMap(name);
+      LoadMapIntoScene(m, scene, addBillBoards, enablePaging);
+      return m;
    }
 
    //////////////////////////////////////////////////////////

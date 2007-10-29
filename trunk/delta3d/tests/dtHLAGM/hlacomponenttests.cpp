@@ -27,6 +27,9 @@
 #include <vector>
 #include <string>
 #include <osg/Endian>
+
+#include <dtCore/scene.h>
+
 #include <dtDAL/datatype.h>
 #include <dtDAL/project.h>
 #include <dtDAL/enginepropertytypes.h>
@@ -649,34 +652,29 @@ void HLAComponentTests::TestSubscription()
          const dtHLAGM::ObjectToActor& ota = **i;
 
          std::ostringstream ss;
-         ss << message << " \"" << ota.GetObjectClassName() << "\" \"" << ota.GetActorType().GetCategory() << "." << ota.GetActorType().GetName() << "\"";
-          
-         if (ota.GetObjectClassName() == "TryingToMapTheJetBidirectionallyAgain")
-         {
-            CPPUNIT_ASSERT_MESSAGE("The class handle should be 0 if the class name is invalid.", ota.GetObjectClassHandle() == 0); 
-         }
+         ss << message << " \"" << ota.GetObjectClassName() << "\" \"" << ota.GetActorType().GetCategory() << "." 
+            << ota.GetActorType().GetName()
+            << "  IsRemoteOnly " << ota.IsRemoteOnly() << " IsLocalOnly " << ota.IsLocalOnly() << "\"";
+
+         CPPUNIT_ASSERT_MESSAGE(ss.str(), ota.GetObjectClassHandle() != 0);
+
+         if (!ota.GetEntityIdAttributeName().empty())
+            CPPUNIT_ASSERT_MESSAGE(ss.str(), ota.GetEntityIdAttributeHandle() != 0);
          else
+            CPPUNIT_ASSERT_MESSAGE("The entity id attribute should be null if it is not being used.", 
+                  ota.GetEntityIdAttributeHandle() == 0);
+
+         if (ota.GetDisID() != NULL)         
+            CPPUNIT_ASSERT_MESSAGE(ss.str(), ota.GetDisIDAttributeHandle() != 0);
+         else
+            CPPUNIT_ASSERT_MESSAGE("The DIS ID attribute should be null if it is not being used.", 
+                  ota.GetDisIDAttributeHandle() == 0);
+
+         for (std::vector<dtHLAGM::AttributeToPropertyList>::const_iterator j = ota.GetOneToManyMappingVector().begin();
+            j != ota.GetOneToManyMappingVector().end(); ++j)
          {
-            CPPUNIT_ASSERT_MESSAGE(ss.str(), ota.GetObjectClassHandle() != 0);             
-         
-            if (!ota.GetEntityIdAttributeName().empty())
-               CPPUNIT_ASSERT_MESSAGE(ss.str(), ota.GetEntityIdAttributeHandle() != 0);
-            else
-               CPPUNIT_ASSERT_MESSAGE("The entity id attribute should be null if it is not being used.", 
-                     ota.GetEntityIdAttributeHandle() == 0);
-               
-            if (ota.GetDisID() != NULL)         
-               CPPUNIT_ASSERT_MESSAGE(ss.str(), ota.GetDisIDAttributeHandle() != 0);
-            else
-               CPPUNIT_ASSERT_MESSAGE("The DIS ID attribute should be null if it is not being used.", 
-                     ota.GetDisIDAttributeHandle() == 0);
-            
-            for (std::vector<dtHLAGM::AttributeToPropertyList>::const_iterator j = ota.GetOneToManyMappingVector().begin();
-               j != ota.GetOneToManyMappingVector().end(); ++j)
-            {
-               const dtHLAGM::AttributeToPropertyList& atpl = *j;
-               CPPUNIT_ASSERT_MESSAGE(ss.str(), atpl.GetAttributeHandle() != 0);
-            }
+            const dtHLAGM::AttributeToPropertyList& atpl = *j;
+            CPPUNIT_ASSERT_MESSAGE(ss.str(), atpl.GetAttributeHandle() != 0);
          }
       }
    }

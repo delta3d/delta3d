@@ -238,8 +238,16 @@ dtCore::RefPtr<osg::Geode> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pW
          //invert texture coordinates.
          for(unsigned i = 0; i < numVerts * stride; i += stride)
          {
+            for (unsigned j = 15; j < 18; ++j)
+            {
+               if (vboVertexAttr[i + j] > maxBones)
+               {
+                  vboVertexAttr[i + j] = 0;
+               }
+            }
+            
             vboVertexAttr[i + 7] = 1.0f - vboVertexAttr[i + 7]; //the odd texture coordinates in cal3d are flipped, not sure why
-            vboVertexAttr[i + 9] = 1.0f - vboVertexAttr[i + 7]; //the odd texture coordinates in cal3d are flipped, not sure why
+            vboVertexAttr[i + 9] = 1.0f - vboVertexAttr[i + 9]; //the odd texture coordinates in cal3d are flipped, not sure why
          }
 
          for(int meshCount = 0; meshCount < hardwareModel->getHardwareMeshCount(); ++meshCount)

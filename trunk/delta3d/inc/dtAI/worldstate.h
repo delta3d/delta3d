@@ -27,6 +27,7 @@
 
 #include <map>
 #include <string>
+#include <ostream>
 
 namespace dtAI
 {
@@ -67,6 +68,9 @@ namespace dtAI
             pStateVar = dynamic_cast<const T*>(GetState(pState));
          }
 
+         const StateVarMapping& GetStateVariables() const { return mStateVariables; }
+
+
       private:
          void FreeMem();
 
@@ -74,6 +78,9 @@ namespace dtAI
          StateVarMapping mStateVariables;
 
    };
+
+   DT_AI_EXPORT std::ostream& operator << (std::ostream &o, const WorldState &worldState);
+
 }//namespace dtAI
 
 #endif // __DELTA_WORLDSTATE_H__

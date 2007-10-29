@@ -133,10 +133,16 @@ class MappingClassTests : public CPPUNIT_NS::TestFixture
          CPPUNIT_ASSERT_MESSAGE("Set Actor Type should succeed.", &thisObjectToActor->GetActorType() == thisActorType);
 
          CPPUNIT_ASSERT_MESSAGE("Remote only should default to false.", !thisObjectToActor->IsRemoteOnly());
-         thisObjectToActor->SetRemoteOnly(true);
+         CPPUNIT_ASSERT_MESSAGE("Local only should default to false.", !thisObjectToActor->IsLocalOnly());
+         thisObjectToActor->SetLocalOrRemoteType(dtHLAGM::ObjectToActor::LocalOrRemoteType::REMOTE_ONLY);
          CPPUNIT_ASSERT_MESSAGE("Remote only should be true.", thisObjectToActor->IsRemoteOnly());
-         thisObjectToActor->SetRemoteOnly(false);
+         CPPUNIT_ASSERT_MESSAGE("Local only should be false.", !thisObjectToActor->IsLocalOnly());
+         thisObjectToActor->SetLocalOrRemoteType(dtHLAGM::ObjectToActor::LocalOrRemoteType::LOCAL_ONLY);
          CPPUNIT_ASSERT_MESSAGE("Remote only should be false.", !thisObjectToActor->IsRemoteOnly());
+         CPPUNIT_ASSERT_MESSAGE("Local only should be true.", thisObjectToActor->IsLocalOnly());
+         thisObjectToActor->SetLocalOrRemoteType(dtHLAGM::ObjectToActor::LocalOrRemoteType::LOCAL_AND_REMOTE);
+         CPPUNIT_ASSERT_MESSAGE("Remote only should be false.", !thisObjectToActor->IsRemoteOnly());
+         CPPUNIT_ASSERT_MESSAGE("Local only should be false.", !thisObjectToActor->IsLocalOnly());
 
          std::string thisObjectName = "ThisTank";
 

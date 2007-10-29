@@ -29,6 +29,8 @@
 #include <iostream>
 #include <set>
 
+#include <osgDB/FileNameUtils>
+
 using dtUtil::DataStream;
 
 namespace dtGame
@@ -320,9 +322,13 @@ namespace dtGame
       WriteToLog((char *)&header.majorVersion,1,1,mMessagesFile);
       WriteToLog((char *)&header.minorVersion,1,1,mMessagesFile);
       WriteToLog((char *)&header.recordLength,sizeof(double),1,mMessagesFile);
-      WriteToLog((char *)&header.indexTableFileNameLength,1,sizeof(unsigned short),mMessagesFile);
-      WriteToLog(header.indexTableFileName.c_str(),1,
-         header.indexTableFileName.length(),mMessagesFile);
+
+      std::string simpleName = osgDB::getSimpleFileName(header.indexTableFileName);
+
+      size_t length = simpleName.length();
+
+      WriteToLog((char*)&length, 1, sizeof(unsigned short), mMessagesFile);
+      WriteToLog(simpleName.c_str(),1,simpleName.length(),mMessagesFile);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -377,9 +383,12 @@ namespace dtGame
       WriteToLog(header.magicNumber.c_str(),1,header.magicNumber.length(),mIndexTablesFile);
       WriteToLog((char *)&header.majorVersion,1,1,mIndexTablesFile);
       WriteToLog((char *)&header.minorVersion,1,1,mIndexTablesFile);
-      WriteToLog((char *)&header.msgDBFileNameLength,1,sizeof(unsigned short),mIndexTablesFile);
-      WriteToLog(header.msgDBFileName.c_str(),1,
-         header.msgDBFileNameLength,mIndexTablesFile);
+
+      std::string simpleName = osgDB::getSimpleFileName(header.msgDBFileName);
+      size_t length = simpleName.length();
+
+      WriteToLog((char *)&length, 1, sizeof(unsigned short), mIndexTablesFile);
+      WriteToLog(simpleName.c_str(), 1, simpleName.length(), mIndexTablesFile);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -661,7 +670,7 @@ namespace dtGame
       msgHeader.minorVersion = BinaryLogStream::LOGGER_MINOR_VERSION;
       msgHeader.recordLength = GetRecordDuration();
       msgHeader.indexTableFileNameLength = mIndexTablesFileName.length();
-      msgHeader.indexTableFileName = mIndexTablesFileName;
+      msgHeader.indexTableFileName = osgDB::getSimpleFileName(mIndexTablesFileName);
       WriteMessageDataBaseHeader(msgHeader);
 
       //Close the messages file.

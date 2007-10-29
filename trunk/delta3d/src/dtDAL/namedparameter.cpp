@@ -847,7 +847,7 @@ namespace dtDAL
       ValidatePropertyType(property);
 
       if (!property.FromString(GetValue()))
-         LOG_ERROR(("Failed to set the enum value on property \"" + GetName() + "\".").c_str());
+         LOG_ERROR(("Failed to set the enum value \"" + GetValue() + "\" on property \"" + GetName() + "\".").c_str());
    }
 
    ///////////////////////////////////////////////////////////////////////////////

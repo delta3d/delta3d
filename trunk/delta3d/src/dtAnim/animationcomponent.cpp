@@ -66,6 +66,24 @@ void AnimationComponent::ProcessMessage(const dtGame::Message &message)
       const dtGame::TickMessage& mess = static_cast<const dtGame::TickMessage&>(message);
       TickLocal(mess.GetDeltaSimTime());
    }
+   else if (message.GetMessageType() == dtGame::MessageType::INFO_ACTOR_DELETED)
+   {
+      // TODO Write unit tests for the delete message.
+      const AnimCompMap::iterator iter = mRegisteredActors.find(message.GetAboutActorId());
+      if (iter != mRegisteredActors.end())
+      {
+         mRegisteredActors.erase(iter);
+      }
+      else if (mTerrainActor.valid() && mTerrainActor->GetUniqueId() == message.GetAboutActorId())
+      {
+         SetTerrainActor(NULL);
+      }
+   }
+   else if (message.GetMessageType() == dtGame::MessageType::INFO_MAP_UNLOADED)
+   {
+      SetTerrainActor(NULL);
+      mRegisteredActors.clear();
+   }
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -75,7 +93,8 @@ void AnimationComponent::TickLocal(float dt)
 
    for(AnimCompIter iter = mRegisteredActors.begin(); iter != end; ++iter)
    {
-      (*iter).second->Update(dt);
+      std::pair<const dtCore::UniqueId, dtCore::RefPtr<dtAnim::AnimationHelper> >& current = *iter;
+      current.second->Update(dt);
    }
 
    GroundClamp();
@@ -87,27 +106,19 @@ const dtAnim::AnimationHelper* AnimationComponent::GetHelperForProxy(dtGame::Gam
    const AnimCompMap::const_iterator iter = mRegisteredActors.find(proxy.GetId());
    if(iter == mRegisteredActors.end())
    {
-      LOG_ERROR("Unable to find dtAnim::AnimationHelper for GameActorProxy.");
-      return 0;
+      return NULL;
    }
-   else
-   {
-      return (*iter).second.get();
-   }
-
+   
+   return (*iter).second.get();
 }
 
 /////////////////////////////////////////////////////////////////////////////////
 void AnimationComponent::RegisterActor(dtGame::GameActorProxy& proxy, dtAnim::AnimationHelper& helper)
 {
-   AnimCompIter iter = mRegisteredActors.find(proxy.GetId());
-   if(iter != mRegisteredActors.end())
+   //if the insert fails, log a message.
+   if (!mRegisteredActors.insert(AnimCompMapping(proxy.GetId(), &helper)).second)
    {
       LOG_ERROR("GameActor already registered with Animation Component.");
-   }
-   else
-   {
-      mRegisteredActors.insert(AnimCompMapping(proxy.GetId(), &helper));
    }
 }
 
@@ -115,11 +126,7 @@ void AnimationComponent::RegisterActor(dtGame::GameActorProxy& proxy, dtAnim::An
 void AnimationComponent::UnregisterActor(dtGame::GameActorProxy& proxy)
 {
    AnimCompIter iter = mRegisteredActors.find(proxy.GetId());
-   if(iter == mRegisteredActors.end())
-   {
-      LOG_ERROR("Unable to find dtAnim::AnimationHelper for GameActorProxy.");
-   }
-   else
+   if(iter != mRegisteredActors.end())
    {
       mRegisteredActors.erase(iter);
    }
@@ -129,14 +136,7 @@ void AnimationComponent::UnregisterActor(dtGame::GameActorProxy& proxy)
 bool AnimationComponent::IsRegisteredActor(dtGame::GameActorProxy& proxy)
 {
    AnimCompIter iter = mRegisteredActors.find(proxy.GetId());
-   if(iter == mRegisteredActors.end())
-   {
-      return false;
-   }
-   else
-   {
-      return true;
-   }
+   return iter != mRegisteredActors.end();
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -208,9 +208,9 @@ void AnimationComponent::DoIsector(unsigned numActors, dtGame::GameActor* actor_
 
    //setup all our isectors
    for(; i < numActors; ++i)
-   {     
-      actor_array[i]->GetTransform(trans);            
-      pos = trans.GetTranslation();      
+   {
+      actor_array[i]->GetTransform(trans);
+      pos = trans.GetTranslation();
 
       mIsector->EnableAndGetISector(i).SetSectorAsLineSegment(osg::Vec3(pos[0], pos[1], pos[2] + 100.0f), osg::Vec3(pos[0], pos[1], pos[2] - 100.0f));
    }
@@ -229,8 +229,8 @@ void AnimationComponent::DoIsector(unsigned numActors, dtGame::GameActor* actor_
          //if the isector hits, then we'll update the position of our actor
          if(mIsector->GetSingleISector(i).GetNumberOfHits())
          {
-            actor_array[i]->GetTransform(trans);            
-            pos = trans.GetTranslation();   
+            actor_array[i]->GetTransform(trans);
+            pos = trans.GetTranslation();
 
             mIsector->GetSingleISector(i).GetHitPoint(hitPt);
             pos[2] = hitPt[2];

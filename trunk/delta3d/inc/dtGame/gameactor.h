@@ -468,9 +468,9 @@ namespace dtGame
 
          //void RegisterMessageHandler(const MessageType& type, const std::string& invokableName);	
          //void UnregisterMessageHandler(const MessageType& type, const std::string& invokableName);   
-		
+
       private:
-             
+
          /**
           * Populates an update message from the actor proxy.
           * @param update The message to populate.
@@ -478,7 +478,7 @@ namespace dtGame
           * @param limitProperties true if the propNames list should be respected or false if all properties should added.
           */
          void PopulateActorUpdate(ActorUpdateMessage& update, const std::vector<std::string> &propNames, bool limitProperties);
-	
+
          /** 
           * Sets if the actor is remote by invoking the actor implementation
           * @param True if the actor should be remote, false if not
@@ -489,12 +489,12 @@ namespace dtGame
            * Sets if the actor is published by invoking the actor implementation
            * @param True if the actor should be remote, false if not
            */
-      	void SetPublished(bool published);
+         void SetPublished(bool published);
    
           /**
            * Invokes the OnEnteredWorld function of the actor, and then the proxy
            */
-      	void InvokeEnteredWorld();
+         void InvokeEnteredWorld();
          
          /**
           * Sets whether or not this is a game actor

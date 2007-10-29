@@ -1,6 +1,7 @@
 Import('*')
 
-srcs = env.SGlob( '*.cpp' )
-deps = [ 'dtCore', 'dtABC', 'dtChar', 'dtUtil' ]
+if env['foundLibs'][env['extLibs']['rbody']] != 'notFound':
+   srcs = env.SGlob( '*.cpp' )
+   deps = [ 'dtCore', 'dtABC', 'dtChar', 'dtUtil' ]
 
-env.BuildProgram( 'testCharacters', srcs, deps )
+   env.BuildProgram( 'testCharacters', srcs, deps )

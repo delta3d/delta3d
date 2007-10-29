@@ -37,6 +37,7 @@
 
 #include <dtCore/globals.h>
 #include <dtCore/timer.h>
+#include <dtCore/scene.h>
 
 #include <dtABC/application.h>
 
@@ -237,7 +238,7 @@ void MapTests::createActors(dtDAL::Map& map)
       dtCore::Timer_t testClockStart = testClock.Tick();
       
       logger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
-                         "Creating actor proxy %s with category %s.", actorTypes[i]->GetName().c_str(), actorTypes[i]->GetCategory().c_str());
+                         "Creating actor proxy with type \"%s\".", actorTypes[i]->ToString().c_str());
       
       proxy = libMgr.CreateActorProxy(*actorTypes[i]);
       snprintf(nameAsString, 21, "%d", nameCounter);
@@ -454,7 +455,7 @@ void MapTests::TestMapProxySearch()
                const dtDAL::ActorType& at = results[j]->GetActorType();
                std::ostringstream ss;
                ss << "Each proxy in the results should have the type or be a subtype of \"" << cat << "." << typeName << 
-                  "\".  The result has type \"" << at.GetCategory() << "." << at.GetName() << "\"";
+                  "\".  The result has type \"" << at << "\"";
                CPPUNIT_ASSERT_MESSAGE(ss.str(), at.InstanceOf(proxy.GetActorType()));
             }
 

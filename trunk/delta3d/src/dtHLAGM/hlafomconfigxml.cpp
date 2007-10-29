@@ -87,6 +87,7 @@ namespace dtHLAGM
    const std::string HLAFOMConfigContentHandler::OBJECT_DIS_ENTITY_ELEMENT("disEntityEnum");
    const std::string HLAFOMConfigContentHandler::OBJECT_ATTR_TO_PROP_ELEMENT("attrToProp");
    const std::string HLAFOMConfigContentHandler::OBJECT_REMOTE_ONLY_ELEMENT("remoteOnly");
+   const std::string HLAFOMConfigContentHandler::OBJECT_LOCAL_ONLY_ELEMENT("localOnly");
 
    const std::string HLAFOMConfigContentHandler::OBJECT_HANDLER_ELEMENT("objectHandler");
    const std::string HLAFOMConfigContentHandler::OBJECT_HANDLER_OBJECT_CLASS_ELEMENT("objectClass");
@@ -115,6 +116,7 @@ namespace dtHLAGM
    const std::string HLAFOMConfigContentHandler::MESSAGE_HANDLER_MESSAGETYPE_ELEMENT("messageType");
    const std::string HLAFOMConfigContentHandler::MESSAGE_HANDLER_HANDLER_NAME_ELEMENT("handler");
 
+   const std::string HLAFOMConfigContentHandler::ONE_TO_MANY_PARAMETER_ELEMENT("parameter");
    const std::string HLAFOMConfigContentHandler::ONE_TO_MANY_HLA_NAME_ELEMENT("hlaName");
    const std::string HLAFOMConfigContentHandler::ONE_TO_MANY_GAME_NAME_ELEMENT("gameName");
    const std::string HLAFOMConfigContentHandler::ONE_TO_MANY_HLA_DATATYPE_ELEMENT("hlaDataType");
@@ -217,6 +219,24 @@ namespace dtHLAGM
                   mCurrentObjectToActor->GetOneToManyMappingVector().push_back(AttributeToPropertyList());
                   mCurrentAttrToProp = &mCurrentObjectToActor->GetOneToManyMappingVector().back();
                   mCurrentAttrToProp->GetParameterDefinitions().push_back(OneToManyMapping::ParameterDefinition());
+                  mInMultiParam = false;
+               }
+               else if (sLocalName == ONE_TO_MANY_PARAMETER_ELEMENT)
+               {
+                  if (!mCurrentAttrToProp)
+                     mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                        "Object parameter with no current mapping");
+
+                  if (mInMultiParam)
+                     mCurrentAttrToProp->GetParameterDefinitions().push_back(OneToManyMapping::ParameterDefinition());
+
+                  mInMultiParam = true;
+
+                  if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                  {
+                     mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                     "Starting Object Param #%d", mCurrentAttrToProp->GetParameterDefinitions().size()-1);
+                  }
                }
                else if (mCurrentAttrToProp != NULL)
                {
@@ -303,6 +323,24 @@ namespace dtHLAGM
                   mCurrentInteractionToMessage->GetOneToManyMappingVector().push_back(ParameterToParameterList());
                   mCurrentParamToParam = &mCurrentInteractionToMessage->GetOneToManyMappingVector().back();
                   mCurrentParamToParam->GetParameterDefinitions().push_back(OneToManyMapping::ParameterDefinition());
+                  mInMultiParam = false;
+               }
+               else if (sLocalName == ONE_TO_MANY_PARAMETER_ELEMENT)
+               {
+                  if (!mCurrentParamToParam)
+                     mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                        "Message parameter with no current mapping");
+
+                  if (mInMultiParam)
+                     mCurrentParamToParam->GetParameterDefinitions().push_back(OneToManyMapping::ParameterDefinition());
+
+                  mInMultiParam = true;
+
+                  if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                  {
+                     mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                        "Starting message Param #%d", mCurrentParamToParam->GetParameterDefinitions().size()-1);
+                  }
                }
                else if (mCurrentParamToParam != NULL)
                {
@@ -634,7 +672,20 @@ namespace dtHLAGM
                                "Setting Object To Actor with Object Class Type \"%s\" Remote Only value to \"%s\".",
                                mCurrentObjectToActor->GetObjectClassName().c_str(),
                                characters.c_str());
-         mCurrentObjectToActor->SetRemoteOnly(characters == "true" || characters == "1");
+         bool remoteOnly = characters == "true" || characters == "1";
+         if (remoteOnly)
+            mCurrentObjectToActor->SetLocalOrRemoteType(ObjectToActor::LocalOrRemoteType::REMOTE_ONLY);
+      }
+      else if (elementName == OBJECT_LOCAL_ONLY_ELEMENT)
+      {
+         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__,
+                               "Setting Object To Actor with Object Class Type \"%s\" Local Only value to \"%s\".",
+                               mCurrentObjectToActor->GetObjectClassName().c_str(),
+                               characters.c_str());
+         bool localOnly = characters == "true" || characters == "1";
+         if (localOnly)
+            mCurrentObjectToActor->SetLocalOrRemoteType(ObjectToActor::LocalOrRemoteType::LOCAL_ONLY);
       }
    }
 
@@ -699,15 +750,17 @@ namespace dtHLAGM
 
    void HLAFOMConfigContentHandler::OneToManyCharacters(const std::string& elementName, const std::string& characters, OneToManyMapping& mapping)
    {
+      int currentParam = mapping.GetParameterDefinitions().size()-1;
+
       if (mParsingEnumMapping)
       {
          if (elementName == ONE_TO_MANY_ENUM_VALUE_ELEMENT)
          {
             if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                  "Adding Enum mapping of \"%s\" to \"%s\" to parameter def 0.", 
-                  mCurrentEnumHLAID.c_str(), characters.c_str());
-            mapping.GetParameterDefinitions()[0].AddEnumerationMapping(mCurrentEnumHLAID, characters);
+                  "Adding Enum mapping of \"%s\" to \"%s\" to parameter def %d.", 
+                  mCurrentEnumHLAID.c_str(), characters.c_str(),currentParam);
+            mapping.GetParameterDefinitions().back().AddEnumerationMapping(mCurrentEnumHLAID, characters);
          }
       }
       else if (elementName == ONE_TO_MANY_HLA_NAME_ELEMENT)
@@ -764,10 +817,10 @@ namespace dtHLAGM
       {
          if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
             mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-               "Setting game parameter/property name to \"%s\" on parameter def 0.", 
-               characters.c_str());
-               
-         mapping.GetParameterDefinitions()[0].SetGameName(characters);
+               "Setting game parameter/property name to \"%s\" on parameter def %d.", 
+               characters.c_str(),currentParam);
+            
+         mapping.GetParameterDefinitions().back().SetGameName(characters);
       }
       else if (elementName == ONE_TO_MANY_GAME_DATATYPE_ELEMENT)
       {
@@ -776,9 +829,9 @@ namespace dtHLAGM
          {
             if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                  "Setting game datatype to \"%s\" on parameter def 0.", 
-                  dt->GetName().c_str());
-            mapping.GetParameterDefinitions()[0].SetGameType(*dt);
+                  "Setting game datatype to \"%s\" on parameter def %d.", 
+                  dt->GetName().c_str(),currentParam);
+            mapping.GetParameterDefinitions().back().SetGameType(*dt);
          }
          else
          {
@@ -795,20 +848,20 @@ namespace dtHLAGM
          {
             std::string sValue = value ? "true" : "false";
             mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-               "Setting required for game flag to \"%s\" on parameter def 0.", 
-               sValue.c_str());
+               "Setting required for game flag to \"%s\" on parameter def %d.", 
+               sValue.c_str(),currentParam);
          }
 
-         mapping.GetParameterDefinitions()[0].SetRequiredForGame(value);
+         mapping.GetParameterDefinitions().back().SetRequiredForGame(value);
       }
       else if (elementName == ONE_TO_MANY_DEFAULT_ELEMENT)
       {
          if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
             mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-               "The default value for parameter def 0 is %s", 
+               "The default value for parameter def %d is %s", currentParam,
                characters.c_str());
 
-         mapping.GetParameterDefinitions()[0].SetDefaultValue(characters);
+         mapping.GetParameterDefinitions().back().SetDefaultValue(characters);
       }
 
    }
@@ -1330,6 +1383,8 @@ namespace dtHLAGM
       ClearInteractionValues();
       mNamedInteractionToMessages.clear();
       mInteractionToMessages.clear();
+
+      mInMultiParam = false;
 
       resetErrors();
    }

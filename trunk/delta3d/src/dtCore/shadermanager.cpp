@@ -394,7 +394,7 @@ namespace dtCore
          if (!path.empty()) 
          {
             fragmentShader = new osg::Shader(osg::Shader::FRAGMENT);
-            if (path.empty() || !fragmentShader->loadShaderSourceFromFile(path))
+            if (!fragmentShader->loadShaderSourceFromFile(path))
                throw dtUtil::Exception(ShaderException::SHADER_SOURCE_ERROR,"Error loading fragment shader file: " +
                   *fragmentShaderIterator + " from shader: " + shader.GetName(), __FILE__, __LINE__);
             program->addShader(fragmentShader.get());

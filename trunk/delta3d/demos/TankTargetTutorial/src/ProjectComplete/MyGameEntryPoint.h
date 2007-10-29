@@ -46,8 +46,7 @@ class TUTORIAL_TANK_EXPORT MyGameEntryPoint: public dtGame::GameEntryPoint
 
       // Called to do early initializtion.  Grab your command line params here.
       // We just use the base implementation
-      virtual void Initialize(dtGame::GameApplication& app, int argc, char **argv)
-         throw(dtUtil::Exception);
+      virtual void Initialize(dtGame::GameApplication& app, int argc, char **argv);
 
       // Create your game manager.
       // We just use the base implementation
