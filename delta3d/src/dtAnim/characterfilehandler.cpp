@@ -155,7 +155,7 @@ void CharacterFileHandler::startElement( const XMLCh* const uri,const XMLCh* con
       else
       {
          errorString = std::string("Invalid XML format: <character> missing <name> child");
-      }     
+      }
    }
    else if (elementStr == SKELETON_ELEMENT)
    {     
@@ -194,7 +194,7 @@ void CharacterFileHandler::startElement( const XMLCh* const uri,const XMLCh* con
       else
       {
          errorString = std::string("Invalid XML format: <animation> missing <filename> child");
-      }     
+      }
    }
    else if (elementStr == MESH_ELEMENT)
    {     
@@ -323,8 +323,7 @@ void CharacterFileHandler::characters(const XMLCh* const chars,
    if (mElements.empty())
    {
       mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                           "Attempting to pop elements off of stack and the stack is empty."
-                           "it should at least contain element %s.",
+                           "Characters should not be found outside of an element: \"%s\"",
                            dtUtil::XMLStringConverter(chars).c_str());
       return;
    }
@@ -408,44 +407,34 @@ void CharacterFileHandler::AnimChannelCharacters(const XMLCh* const chars)
    std::string& topEl = mElements.top();
    AnimationChannelStruct& pChannel = mAnimationChannels.back();
 
-   if (mElements.empty())
+   if (!AnimatableCharacters(chars, pChannel))
    {
-      mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                           "Attempting to pop elements off of stack and the stack is empty."
-                           "it should at least contain element %s.",
-                           dtUtil::XMLStringConverter(chars).c_str());
-      return;
+      if(topEl == ANIMATION_NAME_ELEMENT)
+      {
+         pChannel.mAnimationName = dtUtil::XMLStringConverter(chars).ToString();
+      }
+      else if(topEl == MAX_DURATION_ELEMENT)
+      {
+         std::string max_duration = dtUtil::XMLStringConverter(chars).ToString();
+         pChannel.mMaxDuration = dtUtil::ToType<float>(max_duration);
+      }
+      else if(topEl == IS_LOOPING_ELEMENT)
+      {
+         std::string is_looping = dtUtil::XMLStringConverter(chars).ToString();
+         pChannel.mIsLooping = dtUtil::ToType<bool>(is_looping);
+      }
+      else if(topEl == IS_ACTION_ELEMENT)
+      {
+         std::string is_action = dtUtil::XMLStringConverter(chars).ToString();
+         pChannel.mIsAction = dtUtil::ToType<bool>(is_action);
+      }
+      else if (topEl != CHANNEL_ELEMENT)
+      {
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
+                              "Found characters for unknown element \"%s\" \"%s\"", 
+                              topEl.c_str(), dtUtil::XMLStringConverter(chars).c_str());
+      }
    }
-
-   if (AnimatableCharacters(chars, pChannel))
-   {
-   }
-   else if(topEl == ANIMATION_NAME_ELEMENT)
-   {
-      pChannel.mAnimationName = dtUtil::XMLStringConverter(chars).ToString();
-   }
-   else if(topEl == MAX_DURATION_ELEMENT)
-   {
-      std::string max_duration = dtUtil::XMLStringConverter(chars).ToString();
-      pChannel.mMaxDuration = dtUtil::ToType<float>(max_duration);
-   }
-   else if(topEl == IS_LOOPING_ELEMENT)
-   {
-      std::string is_looping = dtUtil::XMLStringConverter(chars).ToString();
-      pChannel.mIsLooping = dtUtil::ToType<bool>(is_looping);
-   }
-   else if(topEl == IS_ACTION_ELEMENT)
-   {
-      std::string is_action = dtUtil::XMLStringConverter(chars).ToString();
-      pChannel.mIsAction = dtUtil::ToType<bool>(is_action);
-   }
-   else
-   {
-      mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
-                           "Found characters for unknown element \"%s\" \"%s\"", 
-                           topEl.c_str(), dtUtil::XMLStringConverter(chars).c_str());
-   }
-
 
    if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
    {
@@ -468,21 +457,20 @@ void CharacterFileHandler::AnimSequenceCharacters(const XMLCh* const chars)
       return;
    }
 
-   if (AnimatableCharacters(chars, pSequence))
+   if (!AnimatableCharacters(chars, pSequence))
    {
+      if(topEl == CHILD_ELEMENT)
+      {
+         std::string childName = dtUtil::XMLStringConverter(chars).ToString();
+         pSequence.mChildNames.push_back(childName);
+      }
+      else if (topEl != SEQUENCE_ELEMENT)
+      {
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
+                              "Found characters for unknown element \"%s\" \"%s\"", 
+                              topEl.c_str(), dtUtil::XMLStringConverter(chars).c_str());
+      }
    }
-   else if(topEl == CHILD_ELEMENT)
-   {
-      std::string childName = dtUtil::XMLStringConverter(chars).ToString();                    
-      pSequence.mChildNames.push_back(childName);
-   }
-   else
-   {
-      mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
-                           "Found characters for unknown element \"%s\" \"%s\"", 
-                           topEl.c_str(), dtUtil::XMLStringConverter(chars).c_str());      
-   }
-
 
    if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
    {

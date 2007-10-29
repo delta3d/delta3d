@@ -51,6 +51,7 @@
 #include <dtCore/keyboard.h>
 #include <dtCore/globals.h>
 #include <dtCore/deltawin.h>
+#include <dtCore/scene.h>
 
 #include <dtDAL/project.h>
 #include <dtDAL/resourcedescriptor.h>
@@ -79,7 +80,6 @@ MyGameEntryPoint::~MyGameEntryPoint()
 
 //////////////////////////////////////////////////////////////////////////
 void MyGameEntryPoint::Initialize(dtGame::GameApplication& app, int argc, char **argv)
-         throw(dtUtil::Exception)
 {
    osg::ArgumentParser parser(&argc, argv);
 
@@ -117,10 +117,13 @@ void MyGameEntryPoint::Initialize(dtGame::GameApplication& app, int argc, char *
 //////////////////////////////////////////////////////////////////////////
 void MyGameEntryPoint::OnStartup(dtGame::GameApplication& app)
 {
+   //dtABC::Application& app = GetGameManager()->GetApplication();
+
    // init our file path so it can find GUI Scheme
    // add extra data paths here if you need them
    dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList() + 
-      ";" + dtCore::GetDeltaRootPath() + "/examples/data;");   
+      ";" + dtCore::GetDeltaRootPath() + "/examples/data;"); 
+   std::cout << "Path list is: " << dtCore::GetDataFilePathList() <<  std::endl;
 
    dtDAL::Project::GetInstance().SetContext("StageProject");
 
@@ -141,7 +144,7 @@ void MyGameEntryPoint::OnStartup(dtGame::GameApplication& app)
 #ifdef HLA
    // Add Component - HLAComponent 
    dtCore::RefPtr<dtHLAGM::HLAComponent> hlaComp = new dtHLAGM::HLAComponent("HLAComponent");
-   GetGameManager()->AddComponent(*hlaComp, dtGame::GameManager::ComponentPriority::NORMAL);
+   app.GetGameManager()->AddComponent(*hlaComp, dtGame::GameManager::ComponentPriority::NORMAL);
 
    //Load HLA Configuration
    dtHLAGM::HLAComponentConfig hlaCC;
@@ -181,7 +184,7 @@ void MyGameEntryPoint::OnStartup(dtGame::GameApplication& app)
    //dtCore::Transform tx(0.0f, 0.7f, 2.2f, 0.0f, 0.0f, 0.0f);
    //app.GetCamera()->SetTransform(tx); 
 
-   app.GetScene()->UseSceneLight(true);
+   app.GetGameManager()->GetScene().UseSceneLight(true);
 
    // Attach our camera to the tank from the map
    std::vector<dtDAL::ActorProxy*> tanks;
@@ -203,8 +206,8 @@ void MyGameEntryPoint::OnStartup(dtGame::GameApplication& app)
    dtGame::BinaryLogStream *logStream = new dtGame::BinaryLogStream(app.GetGameManager()->GetMessageFactory());
    mServerLogger = new dtGame::ServerLoggerComponent(*logStream, "ServerLoggerComponent");
    mLogController = new dtGame::LogController("LogController");
-   app.GetGameManager()->AddComponent(*mServerLogger.get(), dtGame::GameManager::ComponentPriority::NORMAL);
-   app.GetGameManager()->AddComponent(*mLogController.get(), dtGame::GameManager::ComponentPriority::NORMAL);
+   app.GetGameManager()->AddComponent(*mServerLogger, dtGame::GameManager::ComponentPriority::NORMAL);
+   app.GetGameManager()->AddComponent(*mLogController, dtGame::GameManager::ComponentPriority::NORMAL);
    if (mInPlaybackMode)
    {
       mLogController->RequestChangeStateToPlayback();
@@ -217,5 +220,5 @@ void MyGameEntryPoint::OnStartup(dtGame::GameApplication& app)
    // ServerLoggerComponent state changes; such as transitions from PLAYBACK to IDLE states.
    //mLogController->RequestAddIgnoredActor(mInputComp->GetTerrainActor().GetId());
 
-   app.GetGameManager()->DebugStatisticsTurnOn(true, true, 10, true);
+   app.GetGameManager()->DebugStatisticsTurnOn(true, true, 30, true);
 }

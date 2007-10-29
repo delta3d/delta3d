@@ -22,6 +22,8 @@
 #include <dtUtil/log.h>
 #include <dtUtil/exception.h>
 
+#include <dtCore/scene.h>
+
 #include <dtDAL/project.h>
 #include <dtDAL/map.h>
 #include <dtDAL/actortype.h>
@@ -223,9 +225,8 @@ namespace dtGame
                   catch (const dtUtil::Exception& ex)
                   {
                      dtUtil::Log::GetInstance("mapchangestatedata.cpp").LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                           "An error occurred adding actor \"%s\" of type \"%s.%s\".  The exception will follow.", 
-                           gameProxy->GetName().c_str(), gameProxy->GetActorType().GetCategory().c_str(),
-                           gameProxy->GetActorType().GetName().c_str());
+                           "An error occurred adding actor \"%s\" of type \"%s\".  The exception will follow.", 
+                           gameProxy->GetName().c_str(), gameProxy->GetActorType().ToString().c_str());
                      ex.LogException(dtUtil::Log::LOG_ERROR, dtUtil::Log::GetInstance("mapchangestatedata.cpp"));
                   }
                }
@@ -234,9 +235,8 @@ namespace dtGame
             {
                dtUtil::Log::GetInstance("mapchangestatedata.cpp").LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                   "Actor has the type of a GameActor, but casting it to a GameActorProxy failed.  "
-                  "Actor %s of type %s.%s will not be added to the scene.",
-                  gameProxy->GetName().c_str(), gameProxy->GetActorType().GetCategory().c_str(), 
-                  gameProxy->GetActorType().GetName().c_str());
+                  "Actor \"%s\" of type \"%s\" will not be added to the scene.",
+                  gameProxy->GetName().c_str(), gameProxy->GetActorType().ToString().c_str());
             }
          }
          else

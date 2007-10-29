@@ -116,13 +116,13 @@ namespace dtAnim
             TestLoadedAnimatable(runWalkAnim, "RunWalk", 0.1f, 0.2f, 0.2f, 1.0f, 1.0f);
 
             const AnimationSequence* runWalkSequence = dynamic_cast<const AnimationSequence*>(runWalkAnim);
-            
+
             std::vector<std::string> childNames;
             childNames.push_back("Run");
             childNames.push_back("Walk");
-            
+
             TestLoadedAnimationSequence(runWalkSequence, childNames);
-            
+
             //Test unloading.
             CPPUNIT_ASSERT_NO_THROW(mHelper->LoadModel(""));
             TestEmptyHelper();
@@ -135,25 +135,25 @@ namespace dtAnim
 
             dtAnim::Cal3DDatabase& database = dtAnim::Cal3DDatabase::GetInstance();
             mHelper->LoadModel(modelPath);
-            
+
             dtAnim::Cal3DModelWrapper* wrapper = mHelper->GetModelWrapper();
             CPPUNIT_ASSERT(wrapper != NULL);
             Cal3DModelData* modelData = database.GetModelData(*wrapper);
             CPPUNIT_ASSERT(modelData != NULL);
-            
+
             CPPUNIT_ASSERT_EQUAL(modelData->GetFilename(), modelPath);
-            
+
             CPPUNIT_ASSERT_EQUAL(0U, modelData->GetVertexVBO());
             modelData->SetVertexVBO(4U);
             CPPUNIT_ASSERT_EQUAL(4U, modelData->GetVertexVBO());
-            
+
             CPPUNIT_ASSERT_EQUAL(0U, modelData->GetIndexVBO());
             modelData->SetIndexVBO(4U);
             CPPUNIT_ASSERT_EQUAL(4U, modelData->GetIndexVBO());
-            
-            
-            CPPUNIT_ASSERT(modelData->GetCoreModel() == wrapper->GetCalModel()->getCoreModel());
-            
+
+
+            CPPUNIT_ASSERT(modelData->GetCoreModel() == wrapper->GetCalModel()->getCoreModel()); 
+
             std::string testString("abc");
             CPPUNIT_ASSERT_EQUAL(std::string("Default"), modelData->GetShaderName());
             modelData->SetShaderName(testString);

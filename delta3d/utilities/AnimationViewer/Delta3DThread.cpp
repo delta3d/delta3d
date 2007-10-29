@@ -43,6 +43,7 @@ void Delta3DThread::run()
    connect(mWin, SIGNAL(StopAnimation(unsigned int,float)), viewer.get(), SLOT(OnStopAnimation(unsigned int,float)));
    connect(mWin, SIGNAL(StartAction(unsigned int,float,float)), viewer.get(), SLOT(OnStartAction(unsigned int,float,float)));
    connect(mWin, SIGNAL(LOD_Changed(float)), viewer.get(), SLOT(OnLOD_Changed(float)));
+   connect(mWin, SIGNAL(SpeedChanged(float)), viewer.get(), SLOT(OnSpeedChanged(float)));
 
    connect((QObject*)mWin->mShadedAction, SIGNAL(triggered()), viewer.get(), SLOT(OnSetShaded()));
    connect((QObject*)mWin->mWireframeAction, SIGNAL(triggered()), viewer.get(), SLOT(OnSetWireframe()));

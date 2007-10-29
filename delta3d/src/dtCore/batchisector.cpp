@@ -96,10 +96,10 @@ namespace dtCore
          {
             if(mISectors[i]->GetIsOn())
             {
-               mISectors[i]->mHitList = intersectVisitor.getHitList(mISectors[i]->mLineSegment.get());
+               mISectors[i]->SetHitList(intersectVisitor.getHitList(mISectors[i]->mLineSegment.get()));
                if(mISectors[i]->mCheckClosestDrawables == true)
                {
-                  osg::NodePath &nodePath = mISectors[i]->mHitList[0].getNodePath();
+                  osg::NodePath &nodePath = mISectors[i]->GetHitList()[0].getNodePath();
                   mISectors[i]->mClosestDrawable = MapNodePathToDrawable(nodePath);
                }
             }
@@ -257,4 +257,33 @@ namespace dtCore
    {
       return mHitList.size();
    }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void BatchIsector::SingleISector::SetSectorAsRay(const osg::Vec3& startPos, osg::Vec3& direction, const float lineLength)
+   {
+      direction.normalize();
+      mLineSegment->set(startPos, startPos + (direction*lineLength));
+      ResetSingleISector();
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void BatchIsector::SingleISector::SetSectorAsLineSegment(const osg::Vec3& startPos, const osg::Vec3& endPos)
+   {
+      mLineSegment->set(startPos, endPos);
+      ResetSingleISector();
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void BatchIsector::SingleISector::ResetSingleISector()
+   {
+      mHitList.clear();
+      mClosestDrawable = NULL;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void BatchIsector::SingleISector::SetHitList(osgUtil::IntersectVisitor::HitList& newList)
+   {
+      mHitList = newList;
+   }
+
 } // end namespace

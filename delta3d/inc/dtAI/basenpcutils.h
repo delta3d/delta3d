@@ -34,6 +34,7 @@
 #include <list>
 #include <vector>
 #include <string>
+#include <sstream>
 
 namespace dtAI
 {
@@ -62,6 +63,13 @@ namespace dtAI
          mData = pData;
       }
 
+      virtual const std::string ToString() const
+      {
+         std::ostringstream ss;
+         ss << mData;
+         return ss.str();
+      }
+      
    private:
       _Type mData;
    };

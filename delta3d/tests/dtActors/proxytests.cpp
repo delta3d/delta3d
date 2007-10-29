@@ -934,7 +934,7 @@ void ProxyTest::TestProxies()
       {
          proxy = proxies[i];
          CPPUNIT_ASSERT(proxy != NULL);
-         LOGN_INFO("librarymanager.cpp", std::string("Testing proxy of type: ") + proxy->GetActorType().GetCategory() + "." + proxy->GetActorType().GetName());
+         LOGN_INFO("librarymanager.cpp", std::string("Testing proxy of type: ") + proxy->GetActorType().ToString());
          testProps(*proxy);
          
          compareProxies(*proxy, *proxy->Clone());

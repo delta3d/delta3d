@@ -23,6 +23,7 @@
 
 #include <dtUtil/macros.h>
 #include <dtCore/globals.h>
+#include <dtCore/scene.h>
 #include <dtUtil/exception.h>
 
 #include <dtGame/basemessages.h>

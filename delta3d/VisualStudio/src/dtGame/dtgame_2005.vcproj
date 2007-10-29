@@ -65,7 +65,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCored.lib dtUtild.lib dtDALd.lib dtABCd.lib osgd.lib osgSimd.lib"
+				AdditionalDependencies="dtCored.lib dtUtild.lib dtDALd.lib dtABCd.lib osgd.lib osgSimd.lib osgDBd.lib"
 				OutputFile="..\..\..\bin\dtGamed.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
@@ -151,7 +151,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCore.lib dtUtil.lib dtDAL.lib dtABC.lib osg.lib osgSim.lib"
+				AdditionalDependencies="dtCore.lib dtUtil.lib dtDAL.lib dtABC.lib osg.lib osgSim.lib osgDB.lib"
 				OutputFile="..\..\..\bin\dtGame.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"

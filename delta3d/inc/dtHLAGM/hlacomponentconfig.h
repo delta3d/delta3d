@@ -31,7 +31,6 @@ namespace xercesc_dt = XERCES_CPP_NAMESPACE;
 namespace dtUtil
 {
    class Log;
-   class Exception;
 }
 
 namespace dtHLAGM
@@ -46,7 +45,7 @@ namespace dtHLAGM
          /**
           * @throw dtUtil::Exception if creating or configuring the configurator fails.
           */
-         HLAComponentConfig() throw (dtUtil::Exception);
+         HLAComponentConfig();
       	~HLAComponentConfig();
          
          /**
@@ -54,7 +53,7 @@ namespace dtHLAGM
           * @param translator the translator to populate
           * @param dataFilePath the path to the configuration file inside the delta3d data path.
           */
-         void LoadConfiguration(HLAComponent& translator, const std::string& dataFilePath) throw (dtUtil::Exception);
+         void LoadConfiguration(HLAComponent& translator, const std::string& dataFilePath);
          
       private:
          dtCore::RefPtr<HLAFOMConfigContentHandler> mHandler;

@@ -95,26 +95,13 @@ namespace dtCore
             public:
 
                ///////////////////////////////////////////////////////////////////////////////
-               void SetSectorAsRay(const osg::Vec3& startPos, osg::Vec3& direction, const float lineLength)
-               {
-                  direction.normalize();
-                  mLineSegment->set(startPos, startPos + (direction*lineLength));
-                  ResetSingleISector();
-               }
+               void SetSectorAsRay(const osg::Vec3& startPos, osg::Vec3& direction, const float lineLength);
 
                ///////////////////////////////////////////////////////////////////////////////
-               void SetSectorAsLineSegment(const osg::Vec3& startPos, const osg::Vec3& endPos)
-               {
-                  mLineSegment->set(startPos, endPos);
-                  ResetSingleISector();
-               }
+               void SetSectorAsLineSegment(const osg::Vec3& startPos, const osg::Vec3& endPos);
 
                ///////////////////////////////////////////////////////////////////////////////
-               void ResetSingleISector()
-               {
-                  mHitList.clear();
-                  mClosestDrawable = NULL;
-               }
+               void ResetSingleISector();
 
                ///@return the intersected point
                void GetHitPoint( osg::Vec3& xyz, int pointNum = 0 ) const;
@@ -151,6 +138,11 @@ namespace dtCore
                // other sets are purposely not here, you should not touch them
                ////////////////////////////////////////////////////////////////////
 
+               /**
+                * Assigns the hitlist for this single isector.
+                */
+               void SetHitList(osgUtil::IntersectVisitor::HitList& newList);
+               
             protected:
 
                dtCore::RefPtr<osg::LineSegment>    mLineSegment;

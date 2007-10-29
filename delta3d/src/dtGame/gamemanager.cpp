@@ -319,8 +319,6 @@ namespace dtGame
       //statistics stuff.
       // stats information used to track statistics per fragment (usually about 1 second)
       dtCore::Timer_t frameTickStart(0);
-      bool logActors = mStatisticsInterval > 0 && mDoStatsOnTheActors;
-
       if (mStatisticsInterval > 0)
          frameTickStart = mStatsTickClock.Tick();
 
@@ -501,9 +499,6 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::DoSendMessages()
    {
-      //statistics stuff.
-      bool logActors = mStatisticsInterval > 0 && mDoStatsOnTheActors;
-      dtCore::Timer_t frameTickStartCurrent(0);
       // PROCESS MESSAGES - Send all Process messages to components and interested actors
       while (!mSendMessageQueue.empty())
       {
@@ -843,7 +838,7 @@ namespace dtGame
       else 
       {
          throw dtUtil::Exception(dtGame::ExceptionEnum::INVALID_PARAMETER, "The actor type \"" 
-            + actorType.GetCategory() + "." + actorType.GetName() + "\" is invalid because it is not a game actor type."
+            + actorType.ToString() + "\" is invalid because it is not a game actor type."
             , __FILE__, __LINE__);
       }
 
@@ -1619,13 +1614,37 @@ namespace dtGame
       }
    }
 
+   template <typename MapType, typename KeyType>
+   void GameManager::CheckForDuplicateRegistration(const KeyType& key, GameActorProxy& proxy, 
+            const std::string& invokableName, MapType& mapToCheck)
+   {
+      typedef typename MapType::iterator MapIterator;
+      MapIterator i = mapToCheck.find(key);
+      for (; (i != mapToCheck.end() && (i->first == key)); ++i)
+      {
+         ProxyInvokablePair& pip = i->second;
+         if (pip.first.get() == &proxy && pip.second == invokableName)
+         {
+            std::ostringstream ss;
+            ss << "Unable to register globally for MessageType \"" << key << " for Actor \"" 
+               << proxy.GetActorType() << "\" "
+               << " using invokable named \"" << invokableName << "\".  It is already registered.";
+
+            throw dtUtil::Exception(ss.str(), __FILE__, __LINE__);
+         }
+      }
+   }
+   
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::RegisterForMessages(const MessageType& type, GameActorProxy& proxy, 
          const std::string& invokableName)
    {
+      CheckForDuplicateRegistration(&type, proxy, invokableName, mGlobalMessageListeners);
+
       mGlobalMessageListeners.insert(
             std::make_pair(&type, 
                   std::make_pair(dtCore::RefPtr<GameActorProxy>(&proxy), invokableName)));
+
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -1654,12 +1673,13 @@ namespace dtGame
          const dtCore::UniqueId& targetActorId, GameActorProxy& proxy, 
          const std::string& invokableName)
    {
-      std::map<const MessageType*, std::multimap<dtCore::UniqueId, std::pair<dtCore::RefPtr<GameActorProxy>, std::string> > >::iterator itor
-         = mActorMessageListeners.find(&type);
-      std::multimap<dtCore::UniqueId, std::pair<dtCore::RefPtr<GameActorProxy>, std::string> >* mapForType = NULL;
+      ActorMessageListenerMap::iterator itor = mActorMessageListeners.find(&type);
+      
+      ProxyInvokableMap* mapForType = NULL;
+      
       if (itor == mActorMessageListeners.end())
       {
-         itor = mActorMessageListeners.insert(std::make_pair(&type, std::multimap<dtCore::UniqueId, std::pair<dtCore::RefPtr<GameActorProxy>, std::string> >() )).first;
+         itor = mActorMessageListeners.insert(std::make_pair(&type, ProxyInvokableMap() )).first;
          if (itor != mActorMessageListeners.end())
             mapForType = &itor->second;
          else
@@ -1671,6 +1691,9 @@ namespace dtGame
       {
          mapForType = &itor->second;
       }
+
+      CheckForDuplicateRegistration(targetActorId, proxy, invokableName, *mapForType);
+
       mapForType->insert(std::make_pair(targetActorId, std::make_pair(dtCore::RefPtr<GameActorProxy>(&proxy), invokableName)));
    }
 

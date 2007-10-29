@@ -279,8 +279,8 @@ namespace  dtDAL
                mActorProperty = mActorProxy->GetProperty(propName);
                if (mActorProperty == NULL)
                   mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
-                                      "In actor property section, actor property object for name \"%s\" was not found, proxy exists.",
-                                      propName.c_str());
+                                      "In actor property section, actor property for name \"%s\" was not found on actor proxy \"%s\".",
+                                      propName.c_str(), mActorProxy->GetName().c_str());
 
             }
             else if (mActorProperty != NULL)
@@ -371,7 +371,7 @@ namespace  dtDAL
             }
             else
             {
-               mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
+               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                                    "Creating actor proxy %s with category %s.",
                                    actorTypeName.c_str(), actorTypeCategory.c_str());
 
@@ -555,9 +555,8 @@ namespace  dtDAL
                {
                   geProp.SetValue(NULL);
                   mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, 
-                                      "Game Event referenced in actor property %s on proxy of type %s.%s was not found.", 
-                                      mActorProperty->GetName().c_str(), mActorProxy->GetActorType().GetCategory().c_str(), 
-                                      mActorProxy->GetActorType().GetName().c_str());
+                                      "Game Event referenced in actor property %s on proxy of type \"%s\" was not found.", 
+                                      mActorProperty->GetName().c_str(), mActorProxy->GetActorType().ToString().c_str());
                }
             }
             else
@@ -721,9 +720,10 @@ namespace  dtDAL
       if (mParameterStack.empty())
       {
          mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
-                             "Unable to set the value \"%s\" without a valid parameter for group actor property \"%s\" on actor \"%s\" with type \"%s.%s\".",
+                             "Unable to set the value \"%s\" without a valid parameter for group actor property \"%s\" "
+                             "on actor \"%s\" with type \"%s\".",
                              dataValue.c_str(), mActorProperty->GetName().c_str(), mActorProxy->GetName().c_str(),
-                             mActorProxy->GetActorType().GetCategory().c_str(), mActorProxy->GetActorType().GetName().c_str());
+                             mActorProxy->GetActorType().ToString().c_str());
          return;
       }
 
@@ -772,9 +772,10 @@ namespace  dtDAL
                {
                   geParam.SetValue(dtCore::UniqueId(""));
                   mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, 
-                                      "Game Event referenced in named parameter \"%s\" in property \"%s\" proxy of type \"%s.%s\" was not found.", 
-                                      np.GetName().c_str(), mActorProperty->GetName().c_str(), mActorProxy->GetActorType().GetCategory().c_str(), 
-                                      mActorProxy->GetActorType().GetName().c_str());
+                                      "Game Event referenced in named parameter \"%s\" in property \"%s\" "
+                                      "proxy of type \"%s\" was not found.", 
+                                      np.GetName().c_str(), mActorProperty->GetName().c_str(), 
+                                      mActorProxy->GetActorType().ToString().c_str());
                }
             }
             else

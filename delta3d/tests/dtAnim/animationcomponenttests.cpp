@@ -31,6 +31,8 @@
 #include <dtCore/refptr.h>
 #include <dtCore/system.h>
 #include <dtCore/scene.h>
+#include <dtCore/camera.h>
+#include <dtCore/deltawin.h>
 #include <dtCore/globals.h>
 #include <dtCore/timer.h>
 
@@ -52,10 +54,10 @@ namespace dtAnim
 
    class TestAnimHelper: public AnimationHelper
    {
-      bool mHasBeenUpdated; 
+      bool mHasBeenUpdated;
 
       public:
-         TestAnimHelper():mHasBeenUpdated(false){}
+         TestAnimHelper(): mHasBeenUpdated(false) {}
 
          bool HasBeenUpdated(){return mHasBeenUpdated;}
 
@@ -70,6 +72,8 @@ namespace dtAnim
       CPPUNIT_TEST_SUITE( AnimationComponentTests );
       CPPUNIT_TEST( TestAnimationComponent );
       CPPUNIT_TEST( TestAnimationPerformance );
+      CPPUNIT_TEST( TestRegisterUnregister );
+      CPPUNIT_TEST( TestRegisterMapUnload );
       CPPUNIT_TEST_SUITE_END();
 
       public:
@@ -80,15 +84,32 @@ namespace dtAnim
          void setUp();
          void tearDown();
 
-         void TestAnimationComponent(); 
+         void TestAnimationComponent();
          void TestAnimationPerformance();
+         void TestRegisterUnregister();
+         void TestRegisterMapUnload();
 
       private:
+
+         void SimulateMapUnloaded()
+         {
+            dtGame::MessageFactory& msgFac = mGM->GetMessageFactory();
+
+            dtCore::RefPtr<dtGame::MapMessage> mapMsg;
+            msgFac.CreateMessage(dtGame::MessageType::INFO_MAP_UNLOADED, mapMsg);
+            mGM->SendMessage(*mapMsg);
+            dtCore::System::GetInstance().Step();
+         }
 
          dtUtil::Log* mLogger;
          dtCore::RefPtr<dtGame::GameManager> mGM;
          dtCore::RefPtr<AnimationComponent> mAnimComp;
          dtCore::RefPtr<dtGame::GameActorProxy> mTestGameActor;
+         dtCore::RefPtr<AnimationHelper> mHelper;
+
+         dtCore::RefPtr<dtCore::Scene>          mScene;
+         dtCore::RefPtr<dtCore::Camera>         mCamera;
+         dtCore::RefPtr<dtCore::DeltaWin>       mWin;
 
    };
 
@@ -98,6 +119,17 @@ namespace dtAnim
    void AnimationComponentTests::setUp()
    {
       mLogger = &dtUtil::Log::GetInstance("animationcomponenttests.cpp");
+
+      mScene = new dtCore::Scene();
+      mWin = new dtCore::DeltaWin();
+      mWin->SetPosition(0, 0, 50, 50);
+      mCamera = new dtCore::Camera();
+      mCamera->SetScene(mScene.get());
+      mCamera->SetWindow(mWin.get());
+      dtCore::System::GetInstance().Config();
+      dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
+      dtCore::System::GetInstance().Start();
+
       AnimNodeBuilder& nodeBuilder = Cal3DDatabase::GetInstance().GetNodeBuilder();
       nodeBuilder.SetCreate(AnimNodeBuilder::CreateFunc(&nodeBuilder, &AnimNodeBuilder::CreateSoftware));
       dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
@@ -109,6 +141,7 @@ namespace dtAnim
       mGM->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, mTestGameActor);
       CPPUNIT_ASSERT(mTestGameActor.valid());
 
+      dtCore::RefPtr<TestAnimHelper> mHelper = new TestAnimHelper();
    }
 
    void AnimationComponentTests::tearDown()
@@ -116,28 +149,56 @@ namespace dtAnim
       dtCore::System::GetInstance().Stop();
       if(mGM.valid())
       {
+         mHelper = NULL;
          mTestGameActor = NULL;
          mGM->DeleteAllActors(true);
          mGM = NULL;
       }
       mAnimComp = NULL;
       Cal3DDatabase::GetInstance().TruncateDatabase();
+      mScene = NULL;
+      mCamera->SetScene(NULL);
+      mCamera->SetWindow(NULL);
+      mCamera = NULL;
+      mWin = NULL;
    }
 
+   void AnimationComponentTests::TestRegisterUnregister()
+   {
+      dtCore::RefPtr<TestAnimHelper> mHelper = new TestAnimHelper();
+      mAnimComp->RegisterActor(*mTestGameActor, *mHelper);
+      CPPUNIT_ASSERT(mAnimComp->IsRegisteredActor(*mTestGameActor));
+      mGM->AddActor(*mTestGameActor, false, false);
+      
+      mGM->DeleteActor(*mTestGameActor);
+      dtCore::System::GetInstance().Step();
+      CPPUNIT_ASSERT(!mAnimComp->IsRegisteredActor(*mTestGameActor));
+   }
+   
+   void AnimationComponentTests::TestRegisterMapUnload()
+   {
+      dtCore::RefPtr<TestAnimHelper> mHelper = new TestAnimHelper();
+      mAnimComp->RegisterActor(*mTestGameActor, *mHelper);
+      CPPUNIT_ASSERT(mAnimComp->IsRegisteredActor(*mTestGameActor));
+      mGM->AddActor(*mTestGameActor, false, false);
+
+      SimulateMapUnloaded();
+      CPPUNIT_ASSERT(!mAnimComp->IsRegisteredActor(*mTestGameActor));
+   }
 
    void AnimationComponentTests::TestAnimationComponent()
    {
-      dtCore::RefPtr<TestAnimHelper> helper = new TestAnimHelper();
+      dtCore::RefPtr<TestAnimHelper> mHelper = new TestAnimHelper();
 
-      mAnimComp->RegisterActor(*mTestGameActor, *helper);
+      mAnimComp->RegisterActor(*mTestGameActor, *mHelper);
 
       CPPUNIT_ASSERT(mAnimComp->IsRegisteredActor(*mTestGameActor));
 
-      CPPUNIT_ASSERT(mAnimComp->GetHelperForProxy(*mTestGameActor) == helper.get());
+      CPPUNIT_ASSERT(mAnimComp->GetHelperForProxy(*mTestGameActor) == mHelper.get());
 
       dtCore::System::GetInstance().Step();
 
-      CPPUNIT_ASSERT(helper->HasBeenUpdated());
+      CPPUNIT_ASSERT(mHelper->HasBeenUpdated());
    }
 
    void AnimationComponentTests::TestAnimationPerformance()
@@ -159,8 +220,8 @@ namespace dtAnim
          dtCore::System::GetInstance().Step();
          dtCore::System::GetInstance().Step();
 
-         dtDAL::Project::GetInstance().GetMap("AnimationPerformance").FindProxies(proxies, "CharacterEntity");                 
-         dtDAL::Project::GetInstance().GetMap("AnimationPerformance").FindProxies(groundActor, "GroundActor"); 
+         dtDAL::Project::GetInstance().GetMap("AnimationPerformance").FindProxies(proxies, "CharacterEntity");
+         dtDAL::Project::GetInstance().GetMap("AnimationPerformance").FindProxies(groundActor, "GroundActor");
 
       }
       catch (dtUtil::Exception &e)
@@ -184,7 +245,7 @@ namespace dtAnim
 
                if(actor)
                { 
-                  mAnimComp->RegisterActor(*gameProxy, *actor->GetHelper());      
+                  mAnimComp->RegisterActor(*gameProxy, *actor->GetHelper());
                   actor->GetHelper()->SetGroundClamp(true);
                }
 
@@ -192,7 +253,7 @@ namespace dtAnim
       }
 
       //lets do some performance testing
-      mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, 
+      mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__,
       "Testing performance of PlayAnimation on AnimationHelper");
 
       //////////////////////////////////////////////////////////////////////////
@@ -216,8 +277,8 @@ namespace dtAnim
       }
       timerEnd = timer.Tick();
 
-      mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, 
-            "Time Results for Play Animation: " 
+      mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__,
+            "Time Results for Play Animation: "
             + dtUtil::ToString(timer.DeltaMil(timerStart, timerEnd)) + " ms");
       //////////////////////////////////////////////////////////////////////////
 
@@ -234,7 +295,7 @@ namespace dtAnim
       }
       tick->SetDeltaSimTime(updateTime);
 
-      mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, 
+      mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__,
             "Testing performance of " + dtUtil::ToString(numUpdates) +
             " updates on AnimationComponent");
 
@@ -245,7 +306,7 @@ namespace dtAnim
       }
       timerEnd = timer.Tick();
 
-      mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, 
+      mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__,
             "Time Results for Update: " 
             + dtUtil::ToString(timer.DeltaMil(timerStart, timerEnd)) + " ms");
       //////////////////////////////////////////////////////////////////////////
@@ -266,8 +327,8 @@ namespace dtAnim
          }
 
 
-         mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, 
-               "Testing performance of " + dtUtil::ToString(numUpdates) + 
+         mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__,
+               "Testing performance of " + dtUtil::ToString(numUpdates) +
                " updates on AnimationComponent with ground clamping");
 
          timerStart = timer.Tick();
@@ -277,8 +338,8 @@ namespace dtAnim
          }
          timerEnd = timer.Tick();
 
-         mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, 
-               "Time Results for Update with Ground Clamp: " 
+         mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__,
+               "Time Results for Update with Ground Clamp: "
                + dtUtil::ToString(timer.DeltaMil(timerStart, timerEnd)) + " ms");
       }
       else

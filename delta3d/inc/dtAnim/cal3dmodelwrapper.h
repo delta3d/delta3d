@@ -202,7 +202,7 @@ namespace dtAnim
          void* GetMapUserData(int mapID) { return mRenderer->getMapUserData(mapID); }
 
 
-         /************************************************************************/     
+         /************************************************************************/
 
          bool HasTrackForBone(unsigned int animID, int boneID) const;
 
@@ -216,15 +216,20 @@ namespace dtAnim
 
          /// Perform a one-time animation from the mixer
          bool ExecuteAction(int id, float delayIn, float delayOut,
-                            float weightTgt=1.f, bool autoLock=false);
+                            float weightTgt=1.0f, bool autoLock=false);
 
          /// Remove an existing one-time animation from the mixer
          bool RemoveAction(int id);
 
+         /// sets the offset time used in synchronized looping animations.
+         void SetAnimationTime(float time);
+         /// @return the offset time used when playing looping animations.
+         float GetAnimationTime();
+
    protected:
       virtual ~Cal3DModelWrapper();
 
-   
+
       private:
          CalModel    *mCalModel;
          CalRenderer *mRenderer;

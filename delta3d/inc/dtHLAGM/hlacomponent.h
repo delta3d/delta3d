@@ -278,14 +278,14 @@ namespace dtHLAGM
           * @param objTypeName the name of the object
           * @param thisDisID the DIS ID of the object
           * @param oneToOneActorVector a vector of Attribute to Property mappings for this Object to Actor mapping
-          * @param remoteOnly true if this mapping should only apply to remotely simulate objects.  Otherwise
-          *        it will apply to mappings in both directions.  Only one mapping per actor type may be non-remote.
+          * @param localOrRemote If this mapping should only apply to remotely or locally simulated objects, or both.
+          *                      It defaults to both.
           */
          void RegisterActorMapping(dtDAL::ActorType &type,
                                    const std::string& objTypeName,
                                    const EntityType* thisDisID,
                                    std::vector<AttributeToPropertyList> &oneToOneActorVector,
-                                   bool remoteOnly = false);
+                                   ObjectToActor::LocalOrRemoteType& localOrRemote = ObjectToActor::LocalOrRemoteType::LOCAL_AND_REMOTE);
 
          /**
           * Called to Register an Object to Actor mapping.

@@ -45,7 +45,7 @@ class QIcon;
 
 namespace dtCore
 {
-   class Transfomable;
+   class Transformable;
 }
 
 namespace dtDAL

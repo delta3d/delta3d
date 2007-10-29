@@ -21,24 +21,31 @@
 
 #include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
+
 #include <osg/Vec3>
 #include <osg/Math>
 #include <osg/Group>
 #include <osg/Node>
 #include <osgSim/DOFTransform>
+#include <osgUtil/IntersectVisitor>
+
 #include <dtUtil/mathdefines.h>
+
 #include <dtCore/system.h>
 #include <dtCore/transform.h>
 #include <dtCore/transformable.h>
-#include <dtCore/isector.h>
+#include <dtCore/batchisector.h>
 #include <dtCore/scene.h>
 #include <dtCore/nodecollector.h>
+
 #include <dtGame/basemessages.h>
 #include <dtGame/gamemanager.h> 
 #include <dtGame/messagefactory.h>
 #include <dtGame/exceptionenum.h>
 #include <dtGame/deadreckoningcomponent.h>
+
 #include <dtDAL/actortype.h>
+
 #include <dtActors/engineactorregistry.h>
 
 #ifdef DELTA_WIN32
@@ -55,6 +62,8 @@ namespace dtGame
    class TestDeadReckoningComponent : public DeadReckoningComponent
    {
       public:
+         typedef DeadReckoningComponent BaseClass;
+         
          TestDeadReckoningComponent(): DeadReckoningComponent("DeadReckoningComponent") {}
          
          const osg::Vec3& GetLastUsedEyePoint() const
@@ -64,13 +73,20 @@ namespace dtGame
 
          bool ShouldForceClamp(DeadReckoningHelper& helper, float deltaRealTime, bool bTransformChanged)
          {
-            return DeadReckoningComponent::ShouldForceClamp(helper, deltaRealTime, bTransformChanged);
+            return BaseClass::ShouldForceClamp(helper, deltaRealTime, bTransformChanged);
          }     
          
          void InternalCalcTotSmoothingSteps(DeadReckoningHelper& helper, const dtCore::Transform& xform)
          {
             helper.CalculateSmoothingTimes(xform);
          }   
+
+         /// Gets the ground clamping hit that is closest to the deadreckoned z value.
+         bool DoGetClosestHit(dtCore::BatchIsector::SingleISector& single, float pointz,
+                  osg::Vec3& hit, osg::Vec3& normal)
+         {
+            return BaseClass::GetClosestHit(single, pointz, hit, normal);
+         }
 
          void DoArticulationPublic(dtGame::DeadReckoningHelper& helper, 
             const dtGame::GameActor& gameActor, const dtGame::TickMessage& tickMessage);
@@ -89,7 +105,7 @@ namespace dtGame
       // The following inherited function was not virtual, so this
       // function allows the programmer to call the inherited
       // function publicly for testing purposes.
-      DeadReckoningComponent::DoArticulation( helper, gameActor, tickMessage );
+      BaseClass::DoArticulation( helper, gameActor, tickMessage );
    }
 
    void TestDeadReckoningComponent::DoArticulationSmoothPublic(osgSim::DOFTransform& dofxform,
@@ -98,7 +114,7 @@ namespace dtGame
       // The following inherited function was not virtual, so this
       // function allows the programmer to call the inherited
       // function publicly for testing purposes.
-      DeadReckoningComponent::DoArticulationSmooth(dofxform,currLocation,nextLocation,currentTimeStep);
+      BaseClass::DoArticulationSmooth(dofxform,currLocation,nextLocation,currentTimeStep);
    }
 
    void TestDeadReckoningComponent::DoArticulationPredictionPublic(osgSim::DOFTransform& dofxform,
@@ -107,7 +123,7 @@ namespace dtGame
       // The following inherited function was not virtual, so this
       // function allows the programmer to call the inherited
       // function publicly for testing purposes.
-      DeadReckoningComponent::DoArticulationPrediction(dofxform,currLocation,currentRate,currentTimeStep);
+      BaseClass::DoArticulationPrediction(dofxform,currLocation,currentRate,currentTimeStep);
    }
 
    class DeadReckoningComponentTests : public CPPUNIT_NS::TestFixture 
@@ -123,6 +139,7 @@ namespace dtGame
          CPPUNIT_TEST(TestSimpleBehaviorRemote);
          CPPUNIT_TEST(TestHighResClampProperty);
          CPPUNIT_TEST(TestSmoothingStepsCalc);
+         CPPUNIT_TEST(TestSmoothingStepsCalcFastUpdate);
          CPPUNIT_TEST(TestDRArticulationStopCounts);
          CPPUNIT_TEST(TestDoDRArticulations);
          CPPUNIT_TEST(TestDoDRVelocityAccel);
@@ -131,6 +148,7 @@ namespace dtGame
          CPPUNIT_TEST(TestDoDRNoDR);
          CPPUNIT_TEST(TestForceClampProperty);
          CPPUNIT_TEST(TestShouldForceClamp);
+         CPPUNIT_TEST(TestClampToNearest);
          
       CPPUNIT_TEST_SUITE_END();
    
@@ -148,7 +166,7 @@ namespace dtGame
             mGM->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, mTestGameActor);
             CPPUNIT_ASSERT(mTestGameActor.valid());
          }
-         
+
          void tearDown()
          {
             dtCore::System::GetInstance().Stop();
@@ -161,15 +179,15 @@ namespace dtGame
             }
             mDeadReckoningComponent = NULL;
          }
-   
+
          void TestDeadReckoningHelperDefaults()
          {
             dtCore::RefPtr<DeadReckoningHelper> helper = new DeadReckoningHelper;
-   	      CPPUNIT_ASSERT_MESSAGE("Updated flag should default to false", !helper->IsUpdated());
             CPPUNIT_ASSERT_MESSAGE("Updated flag should default to false", !helper->IsUpdated());
             CPPUNIT_ASSERT_MESSAGE("Updated flag should default to false", !helper->IsUpdated());
-   	      CPPUNIT_ASSERT_MESSAGE("DeadReckoning algorithm should default to NONE.", 
-      	      helper->GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::NONE);
+            CPPUNIT_ASSERT_MESSAGE("Updated flag should default to false", !helper->IsUpdated());
+            CPPUNIT_ASSERT_MESSAGE("DeadReckoning algorithm should default to NONE.", 
+               helper->GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::NONE);
             CPPUNIT_ASSERT_MESSAGE("The Update Mode should default to AUTO.", 
                helper->GetUpdateMode() == DeadReckoningHelper::UpdateMode::AUTO);
             CPPUNIT_ASSERT_MESSAGE("The Effective Update Mode for a local actor should default to CALCULATE_ONLY.", 
@@ -177,9 +195,9 @@ namespace dtGame
             CPPUNIT_ASSERT_MESSAGE("The Effective Update Mode for a remote actor should default to CALCULATE_AND_MOVE_ACTOR.", 
                helper->GetEffectiveUpdateMode(true) == DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR);
             CPPUNIT_ASSERT_MESSAGE("Flying should default to false", !helper->IsFlying());
-            
-   	      osg::Vec3 vec(0.0f, 0.0f, 0.0f);
-   	 
+
+            osg::Vec3 vec(0.0f, 0.0f, 0.0f);
+
             CPPUNIT_ASSERT(helper->GetLastKnownTranslation() == vec);
             CPPUNIT_ASSERT(helper->GetLastKnownRotation() == vec);
             CPPUNIT_ASSERT(helper->GetVelocityVector() == vec);
@@ -189,17 +207,17 @@ namespace dtGame
             CPPUNIT_ASSERT(helper->GetMaxRotationSmoothingTime() == 2.0f);
             CPPUNIT_ASSERT(helper->GetMaxTranslationSmoothingTime() == 8.0f);
             CPPUNIT_ASSERT(helper->GetTimeUntilForceClamp() == 0.0f);
-
+            CPPUNIT_ASSERT(helper->GetAdjustRotationToGround());
             CPPUNIT_ASSERT(helper->GetNodeCollector() == NULL);
          }
    
          void TestDeadReckoningHelperProperties()
          {
             dtCore::RefPtr<DeadReckoningHelper> helper = new DeadReckoningHelper;
-         	helper->SetFlying(true);
+            helper->SetFlying(true);
             CPPUNIT_ASSERT(helper->IsUpdated());
             CPPUNIT_ASSERT(helper->IsFlying());
-   	 
+       
             helper->ClearUpdated();
    
             CPPUNIT_ASSERT(!helper->IsUpdated());
@@ -227,13 +245,13 @@ namespace dtGame
                helper->GetEffectiveUpdateMode(false) == DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR);
 
             osg::Vec3 vec(3.1f, 9900.032f, 493.738f);
-   	 
+
             helper->SetLastKnownTranslation(vec);
             CPPUNIT_ASSERT(helper->GetLastKnownTranslation() == vec);
             CPPUNIT_ASSERT(helper->GetLastKnownTranslationByCopy() == vec);
             CPPUNIT_ASSERT(helper->IsUpdated());
             helper->ClearUpdated();
-   
+
             helper->SetLastKnownRotation(vec);
             CPPUNIT_ASSERT(helper->GetLastKnownRotation() == vec);
             CPPUNIT_ASSERT(helper->GetLastKnownRotationByCopy() == vec);
@@ -289,56 +307,75 @@ namespace dtGame
 
             helper->SetTimeUntilForceClamp(6.7f);
             CPPUNIT_ASSERT_EQUAL(6.7f, helper->GetTimeUntilForceClamp());
+
+            helper->SetAdjustRotationToGround(false);
+            CPPUNIT_ASSERT(!helper->GetAdjustRotationToGround());
          }
-   
+
          void TestTerrainProperty()
          {
             CPPUNIT_ASSERT(mDeadReckoningComponent->GetTerrainActor() == NULL);
             
             mGM->AddActor(*mTestGameActor, false, false);
             dtCore::Transformable* terrain = &mTestGameActor->GetGameActor();
-   
+
             mDeadReckoningComponent->SetTerrainActor(terrain);
-          
+
             CPPUNIT_ASSERT_MESSAGE("The terrain should be set.", 
                mDeadReckoningComponent->GetTerrainActor() == terrain);
-   
+
             mGM->DeleteActor(*mTestGameActor);
                               
             dtCore::System::GetInstance().Step();
-   
+
             CPPUNIT_ASSERT_MESSAGE("The terrain should have been deleted.", 
                mDeadReckoningComponent->GetTerrainActor() == NULL);
+
+            mDeadReckoningComponent->SetTerrainActor(terrain);
+
+            SimulateMapUnloaded();
+
+            CPPUNIT_ASSERT_MESSAGE("The terrain should have been deleted on the map unload.", 
+               mDeadReckoningComponent->GetTerrainActor() == NULL);
+
          }
-   
+
          void TestEyePointProperty()
          {
             CPPUNIT_ASSERT(mDeadReckoningComponent->GetEyePointActor() == NULL);
-            
+
             mGM->AddActor(*mTestGameActor, false, false);
-            
+
             dtCore::Transformable* eyePointActor = &mTestGameActor->GetGameActor();
-            
+
             osg::Vec3 expectedEyePoint(3.3f, 3.2f, 97.2233f);
             dtCore::Transform xform;
             xform.SetTranslation(expectedEyePoint);
             eyePointActor->SetTransform(xform);
-   
+
             mDeadReckoningComponent->SetEyePointActor(eyePointActor);
-          
+
             CPPUNIT_ASSERT_MESSAGE("The eye point actor should be set.", 
                mDeadReckoningComponent->GetEyePointActor() == eyePointActor);
 
             dtCore::System::GetInstance().Step();
             CPPUNIT_ASSERT_EQUAL(expectedEyePoint, 
                mDeadReckoningComponent->GetLastUsedEyePoint());
-   
+
             mGM->DeleteActor(*mTestGameActor);
-                              
+
             dtCore::System::GetInstance().Step();
-   
+
             CPPUNIT_ASSERT_MESSAGE("The eye point actor should have been deleted.",
                mDeadReckoningComponent->GetEyePointActor() == NULL);
+
+            mDeadReckoningComponent->SetEyePointActor(eyePointActor);
+
+            SimulateMapUnloaded();
+
+            CPPUNIT_ASSERT_MESSAGE("The eye point actor should have been deleted on the map unload.",
+               mDeadReckoningComponent->GetEyePointActor() == NULL);
+
          }
 
          void TestShouldForceClamp()
@@ -354,7 +391,7 @@ namespace dtGame
             CPPUNIT_ASSERT(!mDeadReckoningComponent->ShouldForceClamp(*helper, 3.0f, true));
             CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("If the actor hase been translated, the force clamp time should reset and no force should happe", 
                   mDeadReckoningComponent->GetForceClampInterval(), helper->GetTimeUntilForceClamp(), 0.001f);
-            
+
             //Force the time to expire by just over the force clamp time so it will be guaranteed to return true.
             CPPUNIT_ASSERT(mDeadReckoningComponent->ShouldForceClamp(*helper, mDeadReckoningComponent->GetForceClampInterval() + 0.1, false));
             CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The time should reset on a force clamp.", 
@@ -368,7 +405,7 @@ namespace dtGame
             mDeadReckoningComponent->SetForceClampInterval(value);
             CPPUNIT_ASSERT_EQUAL(value, mDeadReckoningComponent->GetForceClampInterval());
          }
-   
+
          void TestHighResClampProperty()
          {
             CPPUNIT_ASSERT_EQUAL(0.0f, mDeadReckoningComponent->GetHighResGroundClampingRange());
@@ -376,7 +413,7 @@ namespace dtGame
             mDeadReckoningComponent->SetHighResGroundClampingRange(value);
             CPPUNIT_ASSERT_EQUAL(value, mDeadReckoningComponent->GetHighResGroundClampingRange());
          }
-   
+
          void TestActorRegistration()
          {
             dtCore::RefPtr<DeadReckoningHelper> helper = new DeadReckoningHelper;
@@ -384,94 +421,12 @@ namespace dtGame
             CPPUNIT_ASSERT(mDeadReckoningComponent->IsRegisteredActor(*mTestGameActor));
             mDeadReckoningComponent->UnregisterActor(*mTestGameActor);
             CPPUNIT_ASSERT(!mDeadReckoningComponent->IsRegisteredActor(*mTestGameActor));
-         }
-         
-         void InitDoDRTestHelper(dtGame::DeadReckoningHelper& helper)
-         {
-            osg::Vec3 trans(1.1, 2.2, 3.3);
-            osg::Vec3 rot(1.2, 2.3, 3.4);
 
-            helper.SetLastKnownTranslation(trans);
-            helper.SetLastKnownRotation(rot);
-            helper.SetLastTranslationUpdatedTime(dtCore::System::GetInstance().GetSimulationTime());
-            helper.SetLastRotationUpdatedTime(dtCore::System::GetInstance().GetSimulationTime());
-         }
-
-         osg::Vec3 CalcPredictedRotations( const osg::Vec3& rotationStart, const osg::Vec3& rotationEndOrRate, float deltaTime, bool smoothing )
-         {
-            dtCore::RefPtr<osgSim::DOFTransform> dof = new osgSim::DOFTransform;
-
-            if( smoothing )
-            {
-               mDeadReckoningComponent->DoArticulationSmoothPublic(*dof,rotationStart,rotationEndOrRate,deltaTime);
-            }
-            else
-            {
-               mDeadReckoningComponent->DoArticulationPredictionPublic(*dof,rotationStart,rotationEndOrRate,deltaTime);
-            }
-
-            return dof->getCurrentHPR();
-         }
-
-
-         void CalcPredictedRotationsArray( std::vector<osg::Vec3>& outRotations, 
-            const osg::Vec3& rotationStart, const osg::Vec3& rotationRate,
-            float timePeriod, float timeStep )
-         {
-            // Avoid division by zero.
-            if( timeStep == 0.0f )
-            {
-               return;
-            }
-
-            // Determine the total predictions to be made.
-            float totalTimeSteps = timePeriod / timeStep;
-            unsigned limit = unsigned(totalTimeSteps) + 1;
-
-            // Calculate all predictions
-            osg::Vec3 rotationEndOrRate = rotationStart + rotationRate * timePeriod;
-            osg::Vec3 newRotationStart(rotationStart);
-            float runningTime = 0.0f;
-            float smoothTime = mDeadReckoningComponent->GetArticulationSmoothTime();
-            float timeAdvance = 0.0f;
-            bool smoothingDisabled = false;
-            for( unsigned i = 0; i < limit; ++i )
-            {
-               float smoothTimeReciprical = 1.0f;
-               bool smoothingPerformed = runningTime+timeStep < smoothTime;
-               if( !smoothingDisabled )
-               {
-                  if( smoothingPerformed ) // DoDRArticulationSmooth will be called at this point
-                  {
-                     smoothTimeReciprical = 1.0f/(smoothTime * timePeriod);
-                  }
-                  else // DoDRArticulationPrediction will be called at this point
-                  {
-                     smoothingDisabled = true;
-                  }
-               }
-
-               if( smoothingDisabled )
-               {
-                  // The next DR stop is assigned.
-                  if( outRotations.size() > 0 )
-                  {
-                     newRotationStart = outRotations[i-1];
-                  }
-
-                  // Advance the final rotation forward for another full time period.
-                  rotationEndOrRate = rotationRate;
-
-                  // No smoothing should occur so no time should be accumulated
-                  runningTime = 0.0f;
-               }
-
-               // Advance time forward as normal.
-               runningTime += timeStep;
-               // Keep track of what time amount was last sent to CalcPredictedRotations.
-               timeAdvance = runningTime*smoothTimeReciprical;
-               outRotations.push_back( CalcPredictedRotations( newRotationStart, rotationEndOrRate, timeAdvance, !smoothingDisabled ) );
-            }
+            mDeadReckoningComponent->RegisterActor(*mTestGameActor, *helper);
+            CPPUNIT_ASSERT(mDeadReckoningComponent->IsRegisteredActor(*mTestGameActor));
+            SimulateMapUnloaded();
+            CPPUNIT_ASSERT_MESSAGE("Actor should be unregistered on map unloaded",
+                     !mDeadReckoningComponent->IsRegisteredActor(*mTestGameActor));
          }
 
          void TickArticulations(DeadReckoningHelper& helper, const dtGame::GameActor& actor, float timeDelta )
@@ -549,7 +504,7 @@ namespace dtGame
 
             CalcPredictedRotationsArray( predictedRotations1, rotation, rotationRate1, timePeriod, timeStep );
             CalcPredictedRotationsArray( predictedRotations2, rotation, rotationRate2, timePeriod, timeStep );
-            
+
             helper->AddToDeadReckonDOF( dofName1, rotation, rotationRate1 );
             helper->AddToDeadReckonDOF( dofName1, osg::Vec3(rotation + rotationRate1), rotationRate1 );
 
@@ -687,20 +642,20 @@ namespace dtGame
             helper->SetDeadReckoningAlgorithm(DeadReckoningAlgorithm::NONE);
 
             dtCore::Transform xform;
-                        
+
             bool shouldGroundClamp = false;
-            bool wasTransformed = helper->DoDR(mTestGameActor->GetGameActor(), xform, 
+            bool wasTransformed = helper->DoDR(mTestGameActor->GetGameActor(), xform,
                   &dtUtil::Log::GetInstance(), shouldGroundClamp);
-            
+
             CPPUNIT_ASSERT(!wasTransformed);
          }
 
          void TestDoDRVelocityAccel()
          {
-            TestDoDRVelocityAccel(true); 
-            TestDoDRVelocityAccel(false); 
+            TestDoDRVelocityAccel(true);
+            TestDoDRVelocityAccel(false);
          }
-         
+
          void TestDoDRVelocityAccelNoMotion()
          {
             dtCore::RefPtr<DeadReckoningHelper> helper = new DeadReckoningHelper;
@@ -710,25 +665,25 @@ namespace dtGame
             helper->SetDeadReckoningAlgorithm(DeadReckoningAlgorithm::VELOCITY_AND_ACCELERATION);
 
             dtCore::Transform xform;
-            
+
             // we don't want this to update.
             xform.SetTranslation(helper->GetLastKnownTranslation());
             xform.SetRotation(helper->GetLastKnownRotation());
             helper->ClearUpdated();
-            
+
             bool shouldGroundClamp = false;
-            bool wasTransformed = helper->DoDR(mTestGameActor->GetGameActor(), xform, 
+            bool wasTransformed = helper->DoDR(mTestGameActor->GetGameActor(), xform,
                   &dtUtil::Log::GetInstance(), shouldGroundClamp);
-            
+
             CPPUNIT_ASSERT(!wasTransformed);
          }
-         
+
          void TestDoDRStatic()
          {
             TestDoDRStatic(true);
             TestDoDRStatic(false);
          }
-         
+
          void TestSimpleBehaviorLocal()
          {
             TestSimpleBehavior(false);
@@ -737,6 +692,243 @@ namespace dtGame
          void TestSimpleBehaviorRemote()
          {
             TestSimpleBehavior(true);
+         }
+
+         void TestSmoothingStepsCalc()
+         {
+            dtCore::RefPtr<DeadReckoningHelper> helper = new DeadReckoningHelper;
+            dtCore::Transform xform(300.0f, 200.0f, 100.0f, 30.0f, 32.2f, 93.0f);
+
+            helper->SetLastKnownTranslation(osg::Vec3(-0.4f, -0.3f, -2.7f));
+            helper->SetLastKnownRotation(osg::Vec3(-0.4f, -0.3f, -2.7f));
+            helper->SetVelocityVector(osg::Vec3(0.0f, 0.0f, 0.0f));
+
+            //make sure the average update time is high.
+            helper->SetLastTranslationUpdatedTime(20.0);
+            helper->SetLastTranslationUpdatedTime(40.0);
+
+            CPPUNIT_ASSERT_MESSAGE("The average time between updates is too low for the rest of the test to be valid", 
+               helper->GetAverageTimeBetweenTranslationUpdates() > 10.0);
+
+            //make sure the average update time is high.
+            helper->SetLastRotationUpdatedTime(20.0);
+            helper->SetLastRotationUpdatedTime(40.0);
+
+            CPPUNIT_ASSERT_MESSAGE("The average time between updates is too low for the rest of the test to be valid", 
+               helper->GetAverageTimeBetweenRotationUpdates() > 10.0);
+
+            helper->SetDeadReckoningAlgorithm(DeadReckoningAlgorithm::VELOCITY_AND_ACCELERATION);
+            mDeadReckoningComponent->InternalCalcTotSmoothingSteps(*helper, xform);
+            
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("The smoothing steps for translation should be 1.0 because it's too far for the velocity vector, so it should essentially warp.",
+               1.0f, helper->GetTranslationEndSmoothingTime());
+            
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("The smoothing steps for rotation should be 1.0 because the velocity vector is 0",
+               1.0f, helper->GetRotationEndSmoothingTime());
+
+            CPPUNIT_ASSERT_MESSAGE("The average time between updates is too low for the rest of the test to be valid", 
+               helper->GetAverageTimeBetweenRotationUpdates() > 10.0);
+
+            helper->SetVelocityVector(osg::Vec3(100.0f, 100.0f, 100.0f));
+            helper->SetDeadReckoningAlgorithm(DeadReckoningAlgorithm::VELOCITY_ONLY);
+
+            mDeadReckoningComponent->InternalCalcTotSmoothingSteps(*helper, xform);
+            
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("The translation smoothing steps should be set to the maximum because the actor can reach the new update point quickly given its velocity.",
+               helper->GetTranslationEndSmoothingTime(), helper->GetMaxTranslationSmoothingTime());
+
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("The rotation smoothing steps should be set to the maximum because the actor is moving.",
+               helper->GetRotationEndSmoothingTime(), helper->GetMaxRotationSmoothingTime());
+         }
+   
+         void TestSmoothingStepsCalcFastUpdate()
+         {
+            dtCore::RefPtr<DeadReckoningHelper> helper = new DeadReckoningHelper;
+            dtCore::Transform xform(300.0f, 200.0f, 100.0f, 30.0f, 32.2f, 93.0f);
+
+            helper->SetLastKnownTranslation(osg::Vec3(-0.4f, -0.3f, -2.7f));
+            helper->SetLastKnownRotation(osg::Vec3(-0.4f, -0.3f, -2.7f));
+            helper->SetVelocityVector(osg::Vec3(0.0f, 0.0f, 0.0f));
+
+            //make sure the average update time is very low.
+            helper->SetLastTranslationUpdatedTime(0.01);
+            helper->SetLastTranslationUpdatedTime(0.01);
+
+            helper->SetLastRotationUpdatedTime(0.01);
+            helper->SetLastRotationUpdatedTime(0.01);
+
+            CPPUNIT_ASSERT_MESSAGE("The average time between translation updates should be less than 1.0", 
+               helper->GetAverageTimeBetweenTranslationUpdates() < 1.0);
+
+            CPPUNIT_ASSERT_MESSAGE("The average time between rotation updates should be less than 1.0", 
+               helper->GetAverageTimeBetweenRotationUpdates() < 1.0);
+
+
+            helper->SetDeadReckoningAlgorithm(DeadReckoningAlgorithm::VELOCITY_AND_ACCELERATION);
+            mDeadReckoningComponent->InternalCalcTotSmoothingSteps(*helper, xform);
+
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("The smoothing steps for translation should be less than "
+                     "1.0 as it is essentially a warp, but with fast updates.",
+               float(helper->GetAverageTimeBetweenTranslationUpdates()), helper->GetTranslationEndSmoothingTime());
+
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("The smoothing steps for rotation should bel less that 1.0 because "
+                     "the velocity vector is 0 but with fast updates.",
+               float(helper->GetAverageTimeBetweenRotationUpdates()), helper->GetRotationEndSmoothingTime());
+         }
+
+         void TestClampToNearest()
+         {
+            dtCore::RefPtr<dtCore::BatchIsector::SingleISector> single = new dtCore::BatchIsector::SingleISector(0);
+            osgUtil::IntersectVisitor::HitList hitList;
+
+            osg::Vec3 point, normal;
+
+            CPPUNIT_ASSERT_MESSAGE("No nearest hit should have been found if no hits exist.", 
+                     !mDeadReckoningComponent->DoGetClosestHit(*single, 0.03, point, normal));
+
+            osgUtil::Hit hit;
+            hit._intersectNormal = osg::Vec3(0.0f, 0.0f, 1.0f);
+            hit._intersectPoint = osg::Vec3(3.0f, 4.0f, 1.0f);
+            hitList.push_back(hit);
+
+            hit._intersectNormal = osg::Vec3(0.0f, 1.0f, 0.0f);
+            hit._intersectPoint = osg::Vec3(3.0f, 4.0f, 4.0f);
+            hitList.push_back(hit);
+
+            single->SetHitList(hitList);
+            
+            CPPUNIT_ASSERT_MESSAGE("A nearest hit should have been found.", 
+                     mDeadReckoningComponent->DoGetClosestHit(*single, 0.03, point, normal));
+
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(3.0f, point.x(), 0.001);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(4.0f, point.y(), 0.001);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0f, point.z(), 0.001);
+            
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0f, normal.x(), 0.001);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0f, normal.y(), 0.001);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0f, normal.z(), 0.001);
+            
+            CPPUNIT_ASSERT_MESSAGE("A nearest hit should have been found.", 
+                     mDeadReckoningComponent->DoGetClosestHit(*single, 3.4, point, normal));
+
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(3.0f, point.x(), 0.001);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(4.0f, point.y(), 0.001);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(4.0f, point.z(), 0.001);
+
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0f, normal.x(), 0.001);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0f, normal.y(), 0.001);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0f, normal.z(), 0.001);
+
+            CPPUNIT_ASSERT_MESSAGE("A nearest hit should have been found.", 
+                     mDeadReckoningComponent->DoGetClosestHit(*single, 5.0, point, normal));
+
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(3.0f, point.x(), 0.001);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(4.0f, point.y(), 0.001);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(4.0f, point.z(), 0.001);
+
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0f, normal.x(), 0.001);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0f, normal.y(), 0.001);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0f, normal.z(), 0.001);
+         }
+
+      private:
+
+         void SimulateMapUnloaded()
+         {
+            dtGame::MessageFactory& msgFac = mGM->GetMessageFactory();
+
+            dtCore::RefPtr<dtGame::MapMessage> mapMsg;
+            msgFac.CreateMessage(dtGame::MessageType::INFO_MAP_UNLOADED, mapMsg);
+            mGM->SendMessage(*mapMsg);
+            dtCore::System::GetInstance().Step();
+         }
+
+         void InitDoDRTestHelper(dtGame::DeadReckoningHelper& helper)
+         {
+            osg::Vec3 trans(1.1, 2.2, 3.3);
+            osg::Vec3 rot(1.2, 2.3, 3.4);
+
+            helper.SetLastKnownTranslation(trans);
+            helper.SetLastKnownRotation(rot);
+            helper.SetLastTranslationUpdatedTime(dtCore::System::GetInstance().GetSimulationTime());
+            helper.SetLastRotationUpdatedTime(dtCore::System::GetInstance().GetSimulationTime());
+         }
+
+         osg::Vec3 CalcPredictedRotations( const osg::Vec3& rotationStart, const osg::Vec3& rotationEndOrRate, float deltaTime, bool smoothing )
+         {
+            dtCore::RefPtr<osgSim::DOFTransform> dof = new osgSim::DOFTransform;
+
+            if( smoothing )
+            {
+               mDeadReckoningComponent->DoArticulationSmoothPublic(*dof,rotationStart,rotationEndOrRate,deltaTime);
+            }
+            else
+            {
+               mDeadReckoningComponent->DoArticulationPredictionPublic(*dof,rotationStart,rotationEndOrRate,deltaTime);
+            }
+
+            return dof->getCurrentHPR();
+         }
+
+
+         void CalcPredictedRotationsArray( std::vector<osg::Vec3>& outRotations, 
+            const osg::Vec3& rotationStart, const osg::Vec3& rotationRate,
+            float timePeriod, float timeStep )
+         {
+            // Avoid division by zero.
+            if( timeStep == 0.0f )
+            {
+               return;
+            }
+
+            // Determine the total predictions to be made.
+            float totalTimeSteps = timePeriod / timeStep;
+            unsigned limit = unsigned(totalTimeSteps) + 1;
+
+            // Calculate all predictions
+            osg::Vec3 rotationEndOrRate = rotationStart + rotationRate * timePeriod;
+            osg::Vec3 newRotationStart(rotationStart);
+            float runningTime = 0.0f;
+            float smoothTime = mDeadReckoningComponent->GetArticulationSmoothTime();
+            float timeAdvance = 0.0f;
+            bool smoothingDisabled = false;
+            for( unsigned i = 0; i < limit; ++i )
+            {
+               float smoothTimeReciprical = 1.0f;
+               bool smoothingPerformed = runningTime+timeStep < smoothTime;
+               if( !smoothingDisabled )
+               {
+                  if( smoothingPerformed ) // DoDRArticulationSmooth will be called at this point
+                  {
+                     smoothTimeReciprical = 1.0f/(smoothTime * timePeriod);
+                  }
+                  else // DoDRArticulationPrediction will be called at this point
+                  {
+                     smoothingDisabled = true;
+                  }
+               }
+
+               if( smoothingDisabled )
+               {
+                  // The next DR stop is assigned.
+                  if( outRotations.size() > 0 )
+                  {
+                     newRotationStart = outRotations[i-1];
+                  }
+
+                  // Advance the final rotation forward for another full time period.
+                  rotationEndOrRate = rotationRate;
+
+                  // No smoothing should occur so no time should be accumulated
+                  runningTime = 0.0f;
+               }
+
+               // Advance time forward as normal.
+               runningTime += timeStep;
+               // Keep track of what time amount was last sent to CalcPredictedRotations.
+               timeAdvance = runningTime*smoothTimeReciprical;
+               outRotations.push_back( CalcPredictedRotations( newRotationStart, rotationEndOrRate, timeAdvance, !smoothingDisabled ) );
+            }
          }
 
          void TestSimpleBehavior(bool updateActor)
@@ -817,53 +1009,7 @@ namespace dtGame
             mDeadReckoningComponent->UnregisterActor(*mTestGameActor);
             CPPUNIT_ASSERT(!mDeadReckoningComponent->IsRegisteredActor(*mTestGameActor));
          }
-   
-         void TestSmoothingStepsCalc()
-         {
-            dtCore::RefPtr<DeadReckoningHelper> helper = new DeadReckoningHelper;            
-            dtCore::Transform xform(300.0f, 200.0f, 100.0f, 30.0f, 32.2f, 93.0f);
 
-            helper->SetLastKnownTranslation(osg::Vec3(-0.4f, -0.3f, -2.7f));
-            helper->SetLastKnownRotation(osg::Vec3(-0.4f, -0.3f, -2.7f));
-            helper->SetVelocityVector(osg::Vec3(0.0f, 0.0f, 0.0f));
-
-            //make sure the average update time is high.
-            helper->SetLastTranslationUpdatedTime(20.0);
-            helper->SetLastTranslationUpdatedTime(40.0);
-
-            CPPUNIT_ASSERT_MESSAGE("The average time between updates is too low for the rest of the test to be valid", 
-               helper->GetAverageTimeBetweenTranslationUpdates() > 10.0);
-
-            //make sure the average update time is high.
-            helper->SetLastRotationUpdatedTime(20.0);
-            helper->SetLastRotationUpdatedTime(40.0);
-
-            CPPUNIT_ASSERT_MESSAGE("The average time between updates is too low for the rest of the test to be valid", 
-               helper->GetAverageTimeBetweenRotationUpdates() > 10.0);
-
-            helper->SetDeadReckoningAlgorithm(DeadReckoningAlgorithm::VELOCITY_AND_ACCELERATION);
-            mDeadReckoningComponent->InternalCalcTotSmoothingSteps(*helper, xform);
-            
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("The smoothing steps for translation should be 1.0 because it's too far for the velocity vector, so it should essentially warp.",
-               1.0f, helper->GetTranslationEndSmoothingTime());
-            
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("The smoothing steps for rotation should be 1.0 because the velocity vector is 0",
-               1.0f, helper->GetRotationEndSmoothingTime());
-
-            helper->SetVelocityVector(osg::Vec3(100.0f, 100.0f, 100.0f));
-            helper->SetDeadReckoningAlgorithm(DeadReckoningAlgorithm::VELOCITY_ONLY);
-
-            mDeadReckoningComponent->InternalCalcTotSmoothingSteps(*helper, xform);
-            
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("The translation smoothing steps should be set to the maximum because the actor can reach the new update point quickly given its velocity.",
-               helper->GetTranslationEndSmoothingTime(), helper->GetMaxTranslationSmoothingTime());
-
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("The rotation smoothing steps should be set to the maximum because the actor is moving.",
-               helper->GetRotationEndSmoothingTime(), helper->GetMaxRotationSmoothingTime());
-         }
-   
-      private:
-   
          void TestDoDRVelocityAccel(bool flying)
          {
             dtCore::RefPtr<DeadReckoningHelper> helper = new DeadReckoningHelper;
@@ -897,7 +1043,7 @@ namespace dtGame
                   &dtUtil::Log::GetInstance(), shouldGroundClamp);
             
             CPPUNIT_ASSERT(shouldGroundClamp == !flying);
-            CPPUNIT_ASSERT(wasTransformed);            
+            CPPUNIT_ASSERT(wasTransformed);
 
             std::ostringstream ss;
             ss << "The position should be " << helper->GetLastKnownTranslation() << " but it is " << xform.GetTranslation();

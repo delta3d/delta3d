@@ -25,21 +25,24 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <set>
 
 #include <osg/Referenced>
-#include <dtCore/scene.h>
 
 #include <dtUtil/tree.h>
-#include <dtUtil/fileutils.h>
-#include <dtDAL/resourcedescriptor.h>
 #include <dtDAL/resourcetreenode.h>
 #include <dtDAL/resourcehelper.h>
-#include <dtDAL/actorproxy.h>
 #include <dtDAL/export.h>
 
 namespace dtUtil
 {
    class Log;
+   class FileUtils;
+}
+
+namespace dtCore
+{
+   class Scene;
 }
 
 namespace dtDAL
@@ -50,6 +53,8 @@ namespace dtDAL
    class MapWriter;
    class DataType;
    class LibraryManager;
+   class ActorProxy;
+   class ResourceDescriptor;
 
    /**
     * @class Project
@@ -243,12 +248,7 @@ namespace dtDAL
           * @throws FileExceptionEnum::FileNotFound if the map does not exist.
           * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
           */
-         Map& LoadMapIntoScene(const std::string& name, dtCore::Scene& scene, bool addBillBoards = false, bool enablePaging = true)
-         {
-            Map& m = GetMap(name);
-            LoadMapIntoScene(m, scene, addBillBoards, enablePaging);
-            return m;
-         }
+         Map& LoadMapIntoScene(const std::string& name, dtCore::Scene& scene, bool addBillBoards = false, bool enablePaging = true);
 
          /**
           * Loads a map into a scene.

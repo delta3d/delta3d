@@ -126,6 +126,8 @@ void SubMeshDrawable::drawImplementation(osg::State& state) const
       // select mesh and submesh for further data access
       if(mWrapper->SelectMeshSubmesh(mMeshID, mSubmeshID))
       {
+         state.disableAllVertexArrays();
+
          // get the transformed vertices of the submesh
          vertexCount = mWrapper->GetVertexCount();
          vertexCount = mWrapper->GetVertices(mMeshVertices);

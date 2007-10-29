@@ -30,6 +30,7 @@
 #include <osg/BoundingBox>
 #include <dtUtil/matrixutil.h>
 #include <cal3d/hardwaremodel.h>
+#include <osg/CullFace>
 
 namespace dtAnim
 {
@@ -120,6 +121,8 @@ HardwareSubMeshDrawable::HardwareSubMeshDrawable(Cal3DModelWrapper *wrapper, Cal
 
    ss->addUniform(mBoneTransforms.get());
 
+   ss->setAttributeAndModes(new osg::CullFace);
+   
    //get selected textures
    std::vector<CalCoreMaterial::Map>& vectorMap = mHardwareModel->getVectorHardwareMesh()[mMeshID].pCoreMaterial->getVectorMap();
 
@@ -128,7 +131,7 @@ HardwareSubMeshDrawable::HardwareSubMeshDrawable(Cal3DModelWrapper *wrapper, Cal
 
    for(int i = 0; iter != endIter; ++iter, ++i)
    {
-      osg::Texture2D *texture = (osg::Texture2D*)((*iter).userData);
+      osg::Texture2D *texture = reinterpret_cast<osg::Texture2D*>(iter->userData);
       if(texture != NULL) 
       {
          ss->setTextureAttributeAndModes(i, texture, osg::StateAttribute::ON);
@@ -175,8 +178,8 @@ void HardwareSubMeshDrawable::drawImplementation(osg::State& state) const
    glDrawElements(GL_TRIANGLES,  mHardwareModel->getFaceCount() * 3, (sizeof(CalIndex) < 4) ? 
          GL_UNSIGNED_SHORT: GL_UNSIGNED_INT, (void*)(sizeof(CalIndex) * mHardwareModel->getStartIndex()));
 
-   glExt->glBindBuffer(GL_ARRAY_BUFFER_ARB, NULL);
-   glExt->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, NULL);
+   glExt->glBindBuffer(GL_ARRAY_BUFFER_ARB, 0);
+   glExt->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
 }
 
 osg::Object* HardwareSubMeshDrawable::clone(const osg::CopyOp&) const 

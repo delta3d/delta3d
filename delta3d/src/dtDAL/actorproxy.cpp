@@ -192,10 +192,10 @@ namespace dtDAL
    {
       std::map<std::string,dtCore::RefPtr<ActorProperty> >::iterator itor =
          mPropertyMap.find(nameToRemove);
-      if(itor != mPropertyMap.end())
+      if (itor != mPropertyMap.end())
       {
          mPropertyMap.erase(itor);
-         for (unsigned int i = 0; i < mProperties.size(); ++i)
+         for (size_t i = 0; i < mProperties.size(); ++i)
          {
             if (mProperties[i]->GetName() == nameToRemove)
             {
@@ -242,7 +242,7 @@ namespace dtDAL
       propList.clear();
       propList.reserve(mProperties.size());
 
-      for (unsigned i = 0; i < mProperties.size(); ++i)
+      for (size_t i = 0; i < mProperties.size(); ++i)
       {
          propList.push_back(mProperties[i].get());
       }
@@ -255,7 +255,7 @@ namespace dtDAL
       propList.clear();
       propList.reserve(mProperties.size());
 
-      for (unsigned i = 0; i < mProperties.size(); ++i)
+      for (size_t i = 0; i < mProperties.size(); ++i)
       {
          propList.push_back(mProperties[i].get());
       }
@@ -327,7 +327,7 @@ namespace dtDAL
       copy->SetName(GetName());
 
       //Now copy all of the properties from this proxy to the clone.
-      for (unsigned i = 0; i < mProperties.size(); ++i)
+      for (size_t i = 0; i < mProperties.size(); ++i)
       {
          if (!mProperties[i]->IsReadOnly())
             copy->mProperties[i]->CopyFrom(*mProperties[i]);

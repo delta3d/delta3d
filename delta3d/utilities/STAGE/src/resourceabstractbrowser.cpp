@@ -32,6 +32,7 @@
 #include <QtGui/QPixmap>
 #include <QtGui/QIcon>
 
+
 #include <dtEditQt/resourceabstractbrowser.h>
 #include <dtDAL/resourcedescriptor.h>
 #include <dtEditQt/resourcetreewidget.h>
@@ -39,6 +40,9 @@
 #include <dtEditQt/camera.h>
 
 #include <dtCore/transformable.h>
+
+#include <osg/BoundingSphere>
+#include <osg/Node>
 
 namespace dtEditQt 
 {

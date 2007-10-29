@@ -981,6 +981,10 @@ namespace dtGame
           * @param envActor The about actor of the message
           */
          void SendEnvironmentChangedMessage(IEnvGameActorProxy *envActor);
+
+         template <typename MapType, typename KeyType>
+         void CheckForDuplicateRegistration(const KeyType& type, GameActorProxy& proxy, 
+                  const std::string& invokableName, MapType& mapToCheck);
       
          dtCore::RefPtr<MachineInfo>            mMachineInfo;
          dtCore::RefPtr<IEnvGameActorProxy>  mEnvironment;
@@ -997,8 +1001,13 @@ namespace dtGame
 
          std::set<TimerInfo> mSimulationTimers, mRealTimeTimers;
 
-         std::multimap<const MessageType*, std::pair<dtCore::RefPtr<GameActorProxy>, std::string> > mGlobalMessageListeners;
-         std::map<const MessageType*, std::multimap<dtCore::UniqueId, std::pair<dtCore::RefPtr<GameActorProxy>, std::string> > > mActorMessageListeners;
+         typedef std::pair<dtCore::RefPtr<GameActorProxy>, std::string> ProxyInvokablePair;
+         typedef std::multimap<const MessageType*, ProxyInvokablePair > GlobalMessageListenerMap;
+         GlobalMessageListenerMap mGlobalMessageListeners;
+
+         typedef std::multimap<dtCore::UniqueId, ProxyInvokablePair > ProxyInvokableMap;
+         typedef std::map<const MessageType*,  ProxyInvokableMap> ActorMessageListenerMap;
+         ActorMessageListenerMap mActorMessageListeners;
 
          std::vector<dtCore::RefPtr<GMComponent> > mComponentList; 
          std::queue<dtCore::RefPtr<const Message> > mSendNetworkMessageQueue;
