@@ -115,6 +115,27 @@ void InitializeUpdateMessage::operator ()(dtGame::ActorUpdateMessage& msg) const
       v3mp->SetValue( osg::Vec3(34, 33, 32) );
    }
 
+   mp = msg.AddUpdateParameter(  dtDIS::HLABaseEntityPropertyName::PROPERTY_LAST_KNOWN_ROTATION , dtDAL::DataType::VEC3 );
+   if( mp != NULL )
+   {
+      dtGame::Vec3MessageParameter* v3mp = static_cast<dtGame::Vec3MessageParameter*>( mp );
+      v3mp->SetValue( osg::Vec3(34, 33, 32) );
+   }
+
+   mp = msg.AddUpdateParameter( dtDIS::HLABaseEntityPropertyName::PROPERTY_VELOCITY_VECTOR , dtDAL::DataType::VEC3 ) ;
+   if ( mp != NULL )
+   {
+      dtGame::Vec3MessageParameter *v3mp = static_cast<dtGame::Vec3MessageParameter*>(mp);
+      v3mp->SetValue( osg::Vec3( 26, 27, 28 ) );
+   }
+
+   mp = msg.AddUpdateParameter( dtDIS::HLABaseEntityPropertyName::PROPERTY_LAST_KNOWN_TRANSLATION , dtDAL::DataType::VEC3 );
+   if( mp != NULL )
+   {
+      dtGame::Vec3MessageParameter* v3mp = static_cast<dtGame::Vec3MessageParameter*>( mp );
+      v3mp->SetValue( osg::Vec3(29, 30, 31) );
+   }
+
    //DIS::EntityType et;
    //et.setCategory(35);
    //mp = msg.AddUpdateParameter("dis_entitytype_category", dtDAL::DataType::CHAR );
