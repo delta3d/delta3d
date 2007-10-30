@@ -23,6 +23,7 @@
 #define __DELTA_DTDIS_PROPERTY_NAME_H__
 
 #include <dtDIS/dtdisexport.h>      // for export symbols
+#include <string>
 
 namespace dtDIS
 {
@@ -71,23 +72,22 @@ namespace dtDIS
       // supported engine components respond to, namely that actor library.
       // Additionally, these are the base entity class properties only.
 
-      static const char PROPERTY_LAST_KNOWN_TRANSLATION     [] ;
-      static const char PROPERTY_LAST_KNOWN_ROTATION        [] ;
-      static const char PROPERTY_VELOCITY_VECTOR            [] ;
-      static const char PROPERTY_ACCELERATION_VECTOR        [] ;
-
-      static const char PROPERTY_ANGULAR_VELOCITY_VECTOR    [] ;
-      static const char PROPERTY_ENGINE_SMOKE_POSITION      [] ;
-      static const char PROPERTY_ENGINE_SMOKE_ON            [] ;
-      static const char PROPERTY_FLAMES_PRESENT             [] ;
-      static const char PROPERTY_SMOKE_PLUME_PRESENT        [] ;
-      static const char PROPERTY_ENGINE_POSITION            [] ;
-      static const char PROPERTY_FLYING                     [] ;
-      static const char PROPERTY_DAMAGE_STATE               [] ;
-      static const char PROPERTY_DEFAULT_SCALE              [] ;
-      static const char PROPERTY_SCALE_MAGNIFICATION_FACTOR [] ;
-      static const char PROPERTY_MODEL_SCALE                [] ;
-      static const char PROPERTY_MODEL_ROTATION             [] ;
+      static const std::string PROPERTY_LAST_KNOWN_TRANSLATION     ;
+      static const std::string PROPERTY_LAST_KNOWN_ROTATION        ;
+      static const std::string PROPERTY_VELOCITY_VECTOR            ;
+      static const std::string PROPERTY_ACCELERATION_VECTOR        ;
+      static const std::string PROPERTY_ANGULAR_VELOCITY_VECTOR    ;
+      static const std::string PROPERTY_ENGINE_SMOKE_POSITION      ;
+      static const std::string PROPERTY_ENGINE_SMOKE_ON            ;
+      static const std::string PROPERTY_FLAMES_PRESENT             ;
+      static const std::string PROPERTY_SMOKE_PLUME_PRESENT        ;
+      static const std::string PROPERTY_ENGINE_POSITION            ;
+      static const std::string PROPERTY_FLYING                     ;
+      static const std::string PROPERTY_DAMAGE_STATE               ;
+      static const std::string PROPERTY_DEFAULT_SCALE              ;
+      static const std::string PROPERTY_SCALE_MAGNIFICATION_FACTOR ;
+      static const std::string PROPERTY_MODEL_SCALE                ;
+      static const std::string PROPERTY_MODEL_ROTATION             ;
    } ;
 }
 
