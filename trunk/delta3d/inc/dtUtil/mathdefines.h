@@ -213,6 +213,12 @@ namespace dtUtil
       return true;
    }
 
+
+   template <typename Real>
+   inline bool WithinRange(Real lhs, Real rhs, Real epsilon)
+   {
+      return (Abs(lhs - rhs) <= epsilon);
+   }
 }
 
 
