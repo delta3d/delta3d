@@ -445,21 +445,6 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_characterbrowser.cpp">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath="..\..\..\utilities\STAGE\src\moc\moc_dialoglistselection.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -1383,15 +1368,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\utilities\STAGE\src\camera.cpp">
-			</File>
-			<File
-				RelativePath="..\..\..\utilities\STAGE\src\characterbrowser.cpp">
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="3"/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\..\utilities\STAGE\src\dialoglistselection.cpp">

@@ -173,6 +173,9 @@
 				RelativePath="..\..\..\src\dtHLAGM\objectruntimemappinginfo.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtHLAGM\objecttoactor.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtHLAGM\onetomanymapping.cpp">
 			</File>
 			<File
