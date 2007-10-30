@@ -24,6 +24,7 @@
 
 #include <string>                      // for parameter type
 #include <dtDIS/plugins/default/dtdisdefaultpluginexport.h>         // for export symbols
+#include <osg/vec3>
 
 ///@cond DOXYGEN_SHOULD_SKIP_THIS
 namespace DIS
@@ -77,7 +78,16 @@ namespace dtDIS
    {
    public:
       /// converts an incoming Pdu into a Message
-      void operator ()(const DIS::EntityStatePdu& source, dtGame::ActorUpdateMessage& dest) const;
+      void operator ()( const DIS::EntityStatePdu& source, dtGame::ActorUpdateMessage& dest ) ;
+
+#if 0
+      osg::Vec3 mAcceleration ;
+      osg::Vec3 mLastVelocity ;
+
+      // system time of last EntityState pdu received
+      float mTimePDU ;
+
+#endif
 
    private:
       /// builds the dtDAL::NamedGroupParameter by adding dtDAL::NamedParameters
@@ -87,11 +97,11 @@ namespace dtDIS
       void AddArticulationMessageParameters(const DIS::ArticulationParameter& source,
                                             dtDAL::NamedGroupParameter* topgroup,
                                             unsigned int param_index) const;
-
       void AddPartParameter(unsigned int partclass, dtDAL::NamedGroupParameter* parent) const;
       void AddMotionParameter(unsigned int motionclass, double motionvalue, dtDAL::NamedGroupParameter* parent) const;
       void AddFloatParam(const std::string& name, float value, dtDAL::NamedGroupParameter* parent) const;
       void AddStringParam(const std::string& name, const std::string& value, dtDAL::NamedGroupParameter* parent) const;
+//      void UpdateAcceleration( osg::Vec3& currentVelocity ) ;
    };
 
    } // end namespace details
