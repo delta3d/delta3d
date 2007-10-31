@@ -24,7 +24,7 @@
 
 #include <string>                      // for parameter type
 #include <dtDIS/plugins/default/dtdisdefaultpluginexport.h>         // for export symbols
-#include <osg/vec3>
+#include <osg/Vec3>
 
 ///@cond DOXYGEN_SHOULD_SKIP_THIS
 namespace DIS
