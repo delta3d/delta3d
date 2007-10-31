@@ -219,20 +219,20 @@ void PartialApplicator::operator ()( const DIS::EntityStatePdu& source , dtGame:
    osg::Vec3 v3( pos.getX() , pos.getY() , pos.getZ() ) ;
 
    // dtDIS Actor Property Name 
-   if ( mp = dest.AddUpdateParameter( dtDIS::EnginePropertyName::TRANSLATION , dtDAL::DataType::VEC3 ) )
+   if ( (mp = dest.AddUpdateParameter( dtDIS::EnginePropertyName::TRANSLATION , dtDAL::DataType::VEC3 )) )
    {
       dtGame::Vec3MessageParameter* v3mp = static_cast< dtGame::Vec3MessageParameter* > ( mp ) ;
       v3mp->SetValue( v3 ) ;
    }
 
-   if (  mp = dest.AddUpdateParameter( dtDIS::EnginePropertyName::LAST_KNOWN_TRANSLATION , dtDAL::DataType::VEC3 ) )
+   if (  (mp = dest.AddUpdateParameter( dtDIS::EnginePropertyName::LAST_KNOWN_TRANSLATION , dtDAL::DataType::VEC3 )) )
    {
       dtGame::Vec3MessageParameter* v3mp = static_cast< dtGame::Vec3MessageParameter* > ( mp ) ;
       v3mp->SetValue( v3 ) ;
    }
 
    // HLA-DVTE Actor Property Name
-   if ( mp = dest.AddUpdateParameter( dtDIS::HLABaseEntityPropertyName::PROPERTY_LAST_KNOWN_TRANSLATION , dtDAL::DataType::VEC3 ) )
+   if ( (mp = dest.AddUpdateParameter( dtDIS::HLABaseEntityPropertyName::PROPERTY_LAST_KNOWN_TRANSLATION , dtDAL::DataType::VEC3 )) )
    {
       dtGame::Vec3MessageParameter* v3mp = static_cast< dtGame::Vec3MessageParameter* > ( mp );
       v3mp->SetValue( v3 );
@@ -243,20 +243,20 @@ void PartialApplicator::operator ()( const DIS::EntityStatePdu& source , dtGame:
    osg::Vec3 hpr( orie.getPhi() , orie.getTheta() , orie.getPsi() ) ;
 
    // dtDIS Actor Property Name
-   if ( mp = dest.AddUpdateParameter( dtDIS::EnginePropertyName::ROTATION , dtDAL::DataType::VEC3 ) )
+   if ( (mp = dest.AddUpdateParameter( dtDIS::EnginePropertyName::ROTATION , dtDAL::DataType::VEC3 )) )
    {
       dtDAL::NamedVec3Parameter* v3mp = static_cast< dtDAL::NamedVec3Parameter* > ( mp ) ;
       v3mp->SetValue( hpr ) ;
    }
 
-   if ( mp = dest.AddUpdateParameter( dtDIS::EnginePropertyName::LAST_KNOWN_ROTATION , dtDAL::DataType::VEC3 ) )
+   if ( (mp = dest.AddUpdateParameter( dtDIS::EnginePropertyName::LAST_KNOWN_ROTATION , dtDAL::DataType::VEC3 )) )
    {
       dtDAL::NamedVec3Parameter* v3mp = static_cast< dtDAL::NamedVec3Parameter* > ( mp ) ;
       v3mp->SetValue( hpr ) ;
    }
 
    // HLA-DVTE Actor Property Name
-   if ( mp = dest.AddUpdateParameter( dtDIS::HLABaseEntityPropertyName::PROPERTY_LAST_KNOWN_ROTATION , dtDAL::DataType::VEC3 ) )
+   if ( (mp = dest.AddUpdateParameter( dtDIS::HLABaseEntityPropertyName::PROPERTY_LAST_KNOWN_ROTATION , dtDAL::DataType::VEC3 )) )
    {
       dtDAL::NamedVec3Parameter* v3mp = static_cast< dtDAL::NamedVec3Parameter* > ( mp ) ;
       v3mp->SetValue( hpr ) ;
@@ -267,14 +267,14 @@ void PartialApplicator::operator ()( const DIS::EntityStatePdu& source , dtGame:
    osg::Vec3 vel( lv.getX() , lv.getY() , lv.getZ() ) ;
 
    // dtDIS Actor Property Name
-   if ( mp = dest.AddUpdateParameter( dtDIS::EnginePropertyName::VELOCITY , dtDAL::DataType::VEC3 ) )
+   if ( (mp = dest.AddUpdateParameter( dtDIS::EnginePropertyName::VELOCITY , dtDAL::DataType::VEC3 )) )
    {
       dtDAL::NamedVec3Parameter* v3mp = static_cast< dtDAL::NamedVec3Parameter* > ( mp ) ;
       v3mp->SetValue( vel ) ;
    }
 
    // HLA-DVTE Actor Property Name
-   if( mp = dest.AddUpdateParameter( dtDIS::HLABaseEntityPropertyName::PROPERTY_VELOCITY_VECTOR , dtDAL::DataType::VEC3 ) )
+   if( (mp = dest.AddUpdateParameter( dtDIS::HLABaseEntityPropertyName::PROPERTY_VELOCITY_VECTOR , dtDAL::DataType::VEC3 )) )
    {
       dtDAL::NamedVec3Parameter* v3mp = static_cast< dtDAL::NamedVec3Parameter* > ( mp ) ;
       v3mp->SetValue( vel ) ;
