@@ -46,6 +46,13 @@ namespace dtHLAGM
       DECLARE_ENUM(RPRAttributeType);
 
       public:
+
+         /** 
+          * The RPR 2.0 spatial structure which provides the position, rotation, and all pertinent
+          *  motion information to allow for deadreckoning.
+          */
+         static const RPRAttributeType SPATIAL_TYPE;
+         
          /**
           * A vector of three floats.  This is a world location and will be converted
           * with the coordinate converter.

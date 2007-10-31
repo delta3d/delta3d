@@ -1,8 +1,8 @@
 
-#ifndef MAKESKYDOME_H__
-#define MAKESKYDOME_H__
+#ifndef DELTA_MAKESKYDOME
+#define DELTA_MAKESKYDOME
 
-#include <osg/array>
+#include <osg/Array>
 #include <osg/Geode>
 
 #include <dtCore/export.h>
@@ -46,4 +46,4 @@ namespace dtCore
       static const unsigned int VERTS_IN_CIRCUM;
    };
 }
-#endif // MAKESKYDOME_H__
+#endif // DELTA_MAKESKYDOME

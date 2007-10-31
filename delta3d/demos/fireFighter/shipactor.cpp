@@ -541,19 +541,19 @@ void ShipActor::UpdateEffRudderAndHeel(float elapsedTime)
    //update effective rudder angle
    if (rudderAngle > effRudderAngle)
    {
-      effRudderAngle += (abs(rudderAngle - effRudderAngle)) 
+      effRudderAngle += (fabs(rudderAngle - effRudderAngle)) 
          / log(displacement) * elapsedTime;
    }
    else if (rudderAngle < effRudderAngle)
    {
-      effRudderAngle -= (abs(rudderAngle - effRudderAngle)) 
+      effRudderAngle -= (fabs(rudderAngle - effRudderAngle)) 
          / log(displacement) * elapsedTime;
    }
 
    //update heel
    if (speed > 0.0f)
    {
-      heel = abs(effRudderAngle) * (speed / maxAheadSpeed) * heelFactor;
+      heel = fabs(effRudderAngle) * (speed / maxAheadSpeed) * heelFactor;
 
       //heel to side opposite the turn
       if (effRudderAngle < 0.0f)

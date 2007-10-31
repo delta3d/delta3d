@@ -38,16 +38,16 @@ namespace dtAI
    {
    public:
 
-      AStarTest_PathData(float pNumPaths): mPathData(pNumPaths) {}
+      AStarTest_PathData(float pNumPaths): mPathData(unsigned(pNumPaths)) {}
 
       void AddPath(float pPathNum, const std::list<float>& pPath)
       {
-         mPathData[pPathNum] = pPath;
+         mPathData[unsigned(pPathNum)] = pPath;
       }
 
       std::list<float>& GetPath(float pPathNum)
       {
-         return mPathData[pPathNum];
+         return mPathData[unsigned(pPathNum)];
       }
 
 
