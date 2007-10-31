@@ -34,6 +34,7 @@
 namespace dtHLAGM
 {
    IMPLEMENT_ENUM(RPRAttributeType);
+   const RPRAttributeType RPRAttributeType::SPATIAL_TYPE("SPATIAL_TYPE", 6, 84);
    const RPRAttributeType RPRAttributeType::WORLD_COORDINATE_TYPE("WORLD_COORDINATE_TYPE", 1, 24);
    const RPRAttributeType RPRAttributeType::EULER_ANGLES_TYPE("EULER_ANGLES_TYPE", 1, 12);
    const RPRAttributeType RPRAttributeType::VELOCITY_VECTOR_TYPE("VELOCITY_VECTOR_TYPE", 1, 12);
@@ -371,7 +372,7 @@ namespace dtHLAGM
          return;
       }
 
-      if (mapping.GetParameterDefinitions().empty() == 0)
+      if (mapping.GetParameterDefinitions().empty())
       {
          mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
             "Unable to map to HLA mapping %s because no parameter mappings are added to the mapping object.",

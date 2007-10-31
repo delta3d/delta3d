@@ -24,7 +24,7 @@
 
 #include <osgDB/FileUtils>
 #include <dtUtil/fileutils.h>
-#include <osgDB/FileNameUtils>             // for file extension code
+#include <osgDB/FileNameUtils>             // for file extension code
 
 namespace dtDIS
 {

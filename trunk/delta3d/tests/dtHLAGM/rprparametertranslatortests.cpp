@@ -1432,7 +1432,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          std::stringstream assertMessage;
          dtGame::MessageParameter* curParam = NULL;
          bool useBogusValue = false;
-         unsigned resultKey = 0.0;
+         unsigned resultKey = 0;
          unsigned mappingsCount = mappingValues.size() + 1; // # mappings + default mapping
          unsigned limit = params.size();
          for( unsigned i = 0; i < limit; ++i )
