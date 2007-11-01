@@ -463,7 +463,10 @@ namespace dtCore
        * If we're rendering the proxy node
        */
       bool mRenderProxyNode; 
-      
+
+      ///little util to remove any of the rendered collision geometry
+      void RemoveRenderedCollisionGeometry();
+
       // These functions are are deprecated. The dummy BreakOverride struct
       // forces subclasses that override these functions to have a compile
       // error. Use the Transform& versions instead.
