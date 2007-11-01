@@ -47,11 +47,9 @@
 #include <osg/Vec3>
 
 // forward references
-struct   AudioConfigData;
+struct AudioConfigData;
 
-
-
-namespace   dtAudio
+namespace dtAudio
 {
 
    /** dtAudio::AudioManager 
@@ -328,11 +326,21 @@ namespace   dtAudio
          virtual                    ~AudioManager();
 
       public:
+
+         static const std::string ERROR_CLEARING_STRING;
+         /// This was added to help check for error messages all the time, and have them
+         /// feed through here
+         ///
+         /// Returns true on error, false if no error
+         static   bool  CheckForError( const std::string& userMessage, 
+                                       const std::string& msgFunction,
+                                       int lineNumber);
+
          /// create the singleton and initialize OpenAL
-         static   void              Instantiate( void );
+         static   void  Instantiate( void );
 
          /// destroy the singleton and shutdown OpenAL
-         static   void              Destroy( void );
+         static   void  Destroy( void );
 
          /// access the AudioManager
          static   AudioManager*     GetManager( void ) 
@@ -363,23 +371,23 @@ namespace   dtAudio
          virtual  void              OnMessage( MessageData* data );
 
          /// create or recycle a new sound for the user
-                  Sound*            NewSound( void );
+         Sound*            NewSound( void );
 
          /// free a sound (recycle it) that the user is finish with
-                  void              FreeSound( Sound*& sound );
+         void              FreeSound( Sound*& sound );
 
          /// Deprecated for LoadFile.
-                  bool              LoadWaveFile( const char* file );
+         bool              LoadWaveFile( const char* file );
 
          /// Deprecated for UnloadFile.
-                  bool              UnloadWaveFile( const char* file );
+         bool              UnloadWaveFile( const char* file );
 
          ///Pre-load a sound file into a buffer. We still only support .wav's
          ///but .ogg support is coming soon!
-                  bool              LoadFile( const std::string& file );
+         bool              LoadFile( const std::string& file );
 
          /// un-load a sound file from a buffer (if use-count is zero)
-                  bool              UnloadFile( const std::string& file );
+         bool              UnloadFile( const std::string& file );
 
       private:
          /// process commands of all sounds in the command queue
@@ -475,28 +483,28 @@ namespace   dtAudio
          inline   void              FreeSource( SoundObj* snd );
 
       private:
-                  ALvoid*             mEAXSet;
-                  ALvoid*             mEAXGet;
+         ALvoid*             mEAXSet;
+         ALvoid*             mEAXGet;
 
-                  ALsizei             mNumSources;
-                  ALuint*             mSource;
+         ALsizei             mNumSources;
+         ALuint*             mSource;
 
-                  SRC_MAP             mSourceMap;
-                  SRC_QUE             mAvailable;
-                  SRC_QUE             mPlayQueue;
-                  SRC_QUE             mPauseQueue;
-                  SRC_QUE             mStopQueue;
-                  SRC_QUE             mRewindQueue;
-                  SRC_LST             mActiveList;
+         SRC_MAP             mSourceMap;
+         SRC_QUE             mAvailable;
+         SRC_QUE             mPlayQueue;
+         SRC_QUE             mPauseQueue;
+         SRC_QUE             mStopQueue;
+         SRC_QUE             mRewindQueue;
+         SRC_LST             mActiveList;
 
-                  BUF_MAP             mBufferMap;
+         BUF_MAP             mBufferMap;
 
-                  SND_QUE             mSoundCommand;
-                  SND_QUE             mSoundRecycle;
-                  SND_LST             mSoundList;
+         SND_QUE             mSoundCommand;
+         SND_QUE             mSoundRecycle;
+         SND_LST             mSoundList;
 
-                  SoundObjectStateMap mSoundStateMap; ///Maintains state of each SoundObject
-                                                      ///prior to a system-wide pause message
+         SoundObjectStateMap mSoundStateMap; ///Maintains state of each SoundObject
+                                             ///prior to a system-wide pause message
    };
 };
 
