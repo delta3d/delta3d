@@ -1394,6 +1394,13 @@ void Transformable::RenderCollisionGeometry( bool enable )
 
    if(enable)
    {
+      //If there is already an existing rendering of the collision geometry,
+      //remove it before adding a new one.
+      if (mGeomGeod.valid())
+      {
+         RemoveRenderedCollisionGeometry();
+      }
+
       mGeomGeod = new osg::Geode();
       mGeomGeod->setName(Transformable::COLLISION_GEODE_ID);
       osg::TessellationHints* hints = new osg::TessellationHints;
@@ -1514,11 +1521,7 @@ void Transformable::RenderCollisionGeometry( bool enable )
    } //end if enabled==true
    else
    {
-      if( mGeomGeod.valid() )
-      {
-         xform->removeChild(mGeomGeod.get());
-         mGeomGeod = 0;
-      }
+      this->RemoveRenderedCollisionGeometry();
    }
 }
 
@@ -1557,5 +1560,14 @@ void Transformable::AddedToScene( Scene* scene )
          GetSceneParent()->UnRegisterCollidable( this );
       }
       DeltaDrawable::AddedToScene( NULL );
+   }
+}
+
+void Transformable::RemoveRenderedCollisionGeometry( )
+{
+   if( mGeomGeod.valid() )
+   {
+      GetMatrixNode()->removeChild(mGeomGeod.get());
+      mGeomGeod = 0;
    }
 }
