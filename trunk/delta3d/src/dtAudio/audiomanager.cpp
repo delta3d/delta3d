@@ -31,7 +31,6 @@
 using namespace   dtAudio;
 using namespace   dtUtil;
 
-
 AudioManager::MOB_ptr   AudioManager::_Mgr(NULL);
 AudioManager::LOB_PTR   AudioManager::_Mic(NULL);
 const char*             AudioManager::_EaxVer   = "EAX2.0";
@@ -39,12 +38,15 @@ const char*             AudioManager::_EaxSet   = "EAXSet";
 const char*             AudioManager::_EaxGet   = "EAXGet";
 const AudioConfigData   AudioManager::_DefCfg;
 
-
+const std::string AudioManager::ERROR_CLEARING_STRING = "Clearing Error code "
+"system at start of method, if this appears then an error occurred before this "
+"method was called.";
 
 IMPLEMENT_MANAGEMENT_LAYER(AudioManager::SoundObj)
 IMPLEMENT_MANAGEMENT_LAYER(AudioManager::ListenerObj)
 IMPLEMENT_MANAGEMENT_LAYER(AudioManager)
 
+////////////////////////////////////////////////////////////////////////////////
 // public member functions
 // default consructor
 AudioManager::AudioManager( const std::string& name /*= "audiomanager"*/ )
@@ -84,14 +86,16 @@ AudioManager::AudioManager( const std::string& name /*= "audiomanager"*/ )
 
    AddSender( &dtCore::System::GetInstance() );
 
+   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
    alutInit( 0L, NULL );
+   CheckForError("alutInit( 0L, NULL )", __FUNCTION__, __LINE__);
 }
 
-
-
+////////////////////////////////////////////////////////////////////////////////
 // destructor
 AudioManager::~AudioManager()
 {
+   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
    DeregisterInstance( this );
 
    try
@@ -114,10 +118,12 @@ AudioManager::~AudioManager()
                }
             }
          }
-         
+         CheckForError("Source stopping and changing buffer to 0", __FUNCTION__, __LINE__);
+
          // delete the sources
          alDeleteSources( mNumSources, mSource );
          delete   mSource;
+         CheckForError("alDeleteSources( mNumSources, mSource );", __FUNCTION__, __LINE__);
       }
 
       mSourceMap.clear();
@@ -148,6 +154,7 @@ AudioManager::~AudioManager()
          iter->second   = NULL;
          alDeleteBuffers( 1L, &bd->buf );
          delete   bd;
+         CheckForError("alDeleteBuffers( 1L, &bd->buf )", __FUNCTION__, __LINE__);
       }
       mBufferMap.clear();
       mSoundList.clear();
@@ -159,6 +166,7 @@ AudioManager::~AudioManager()
          mSoundRecycle.pop();
 
       alutExit();
+      CheckForError("alutExit()", __FUNCTION__, __LINE__);
 
       RemoveSender( &dtCore::System::GetInstance() );
    }
@@ -168,11 +176,9 @@ AudioManager::~AudioManager()
    }
 }
 
-
-
+////////////////////////////////////////////////////////////////////////////////
 // create the singleton manager
-void
-AudioManager::Instantiate( void )
+void AudioManager::Instantiate( void )
 {
    if( _Mgr.get() )
       return;
@@ -184,33 +190,49 @@ AudioManager::Instantiate( void )
    assert( _Mic.get() );
 }
 
-
-
+////////////////////////////////////////////////////////////////////////////////
 // destroy the singleton manager
-void
-AudioManager::Destroy( void )
+void AudioManager::Destroy( void )
 {
    _Mic  = NULL;
    _Mgr  = NULL;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 // static instance accessor
 AudioManager& AudioManager::GetInstance( void )
 {
    return   *_Mgr;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+bool  AudioManager::CheckForError( const std::string& userMessage, 
+                                  const std::string& msgFunction,
+                                  int lineNumber)
+{
+   ALint error = 0; 
+   if((error = alGetError()) != AL_NO_ERROR)
+   {
+      std::ostringstream finalStream;
+      finalStream << "User Message [" << userMessage << "] " << "OpenALMessage [" << alGetString(error) << "] Line " << lineNumber;
+      dtUtil::Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__, finalStream.str().c_str());
+      return AL_TRUE;
+   }
+   return AL_FALSE;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // static listener accessor
-Listener*
-AudioManager::GetListener( void )
+Listener* AudioManager::GetListener( void )
 {
    return   static_cast<Listener*>(_Mic.get());
 }
 
+////////////////////////////////////////////////////////////////////////////////
 // manager configuration
-void
-AudioManager::Config( const AudioConfigData& data /*= _DefCfg*/ )
+void AudioManager::Config( const AudioConfigData& data /*= _DefCfg*/ )
 {
+   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
    if( mSource )
    {
       // already configured
@@ -234,22 +256,25 @@ AudioManager::Config( const AudioConfigData& data /*= _DefCfg*/ )
          break;
    }
 
+   CheckForError("alDistanceModel Changes", __FUNCTION__, __LINE__);
 
    // set up the sources
    if( ! ConfigSources( data.numSources ) )
       return;
 
+   CheckForError("ConfigSources( data.numSources )", __FUNCTION__, __LINE__);
 
    // set up EAX
    ConfigEAX( data.eax );
+   CheckForError("ConfigEAX( data.eax )", __FUNCTION__, __LINE__);
 }
 
 
-
+////////////////////////////////////////////////////////////////////////////////
 // message receiver
-void
-AudioManager::OnMessage( MessageData* data )
+void AudioManager::OnMessage( MessageData* data )
 {
+   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
    assert( data );
 
    if( data->sender == &dtCore::System::GetInstance() )
@@ -527,13 +552,14 @@ AudioManager::OnMessage( MessageData* data )
          return;
       }
    }
+   CheckForError("Something went wrong in the OnMessage Method", __FUNCTION__, __LINE__);
 }
 
 
-
-Sound*
-AudioManager::NewSound( void )
+////////////////////////////////////////////////////////////////////////////////
+Sound* AudioManager::NewSound( void )
 {
+   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
    SOB_PTR  snd(NULL);
 
    // first look if we can recycle a sound
@@ -559,15 +585,16 @@ AudioManager::NewSound( void )
    // save the sound
    mSoundList.push_back( snd );
 
+   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
+
    // hand out the interface to the sound
    return   static_cast<Sound*>(snd.get());
 }
 
-
-
-void
-AudioManager::FreeSound( Sound*& sound )
+////////////////////////////////////////////////////////////////////////////////
+void AudioManager::FreeSound( Sound*& sound )
 {
+   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
    SOB_PTR  snd   = static_cast<SoundObj*>(sound);
 
    // remove user's copy of pointer
@@ -601,9 +628,10 @@ AudioManager::FreeSound( Sound*& sound )
    mSoundRecycle.push( snd );
 }
 
-bool
-AudioManager::LoadFile( const std::string& file )
+////////////////////////////////////////////////////////////////////////////////
+bool AudioManager::LoadFile( const std::string& file )
 {
+   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
    if( file.empty() )
    {
       // no file name, bail...
@@ -628,15 +656,12 @@ AudioManager::LoadFile( const std::string& file )
    bd = new BufferData;
 
    // Clear the errors
-   ALenum err( alGetError() );
+   //ALenum err( alGetError() );
 
    // create buffer for the wave file
    alGenBuffers( 1L, &bd->buf );
-   if( ( err = alGetError() ) != AL_NO_ERROR )
+   if(CheckForError("AudioManager: alGenBuffers error", __FUNCTION__, __LINE__))
    {
-      // somethings wrong with buffers, bail...
-      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
-                                     "AudioManager: alGenBuffers error %X", err );
       delete   bd;
       return   false;
    }
@@ -672,6 +697,7 @@ AudioManager::LoadFile( const std::string& file )
    // NON-DEPRECATED version for ALUT >= 1.0.0
    ALfloat freq(0);
    data = alutLoadMemoryFromFile( filename.c_str(), &format, &size, &freq );
+   CheckForError("data = alutLoadMemoryFromFile", __FUNCTION__, __LINE__);
 
    #endif // ALUT_API_MAJOR_VERSION 
 
@@ -681,26 +707,21 @@ AudioManager::LoadFile( const std::string& file )
       Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
          "AudioManager: alutLoadWAVFile error on %s", file.c_str() );
       #else
-      err = alutGetError(); // This function ain't in OSX's OpenAL yet.
-      // Can't load the wave file, bail...
-      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
-         "AudioManager: alutLoadMemoryFromFile error %X on %s", err, file.c_str() );
+         CheckForError("AudioManager: alutLoadMemoryFromFile error", __FUNCTION__, __LINE__);
       #endif // ALUT_API_MAJOR_VERSION 
 
       alDeleteBuffers( 1L, &bd->buf );
       delete bd;
+      CheckForError("alDeleteBuffers error", __FUNCTION__, __LINE__);
       return false;
    }
 
    alBufferData( bd->buf, format, data, size, ALsizei(freq) );
-   if( ( err = alGetError() ) != AL_NO_ERROR )
+   if(CheckForError("AudioManager: alBufferData error ", __FUNCTION__, __LINE__))
    {
-      // can't copy the data??? bail like you've never bailed before...
-      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
-         "AudioManager: alBufferData error 0x%X on %s", err, file.c_str() );
       alDeleteBuffers( 1L, &bd->buf );
       free(data);
-      
+
       delete bd;
       return false;
    }
@@ -723,9 +744,10 @@ AudioManager::LoadFile( const std::string& file )
    return true;
 }
 
-bool
-AudioManager::UnloadFile( const std::string& file )
+////////////////////////////////////////////////////////////////////////////////
+bool AudioManager::UnloadFile( const std::string& file )
 {
+   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
    if( file.empty() )
    {
       // no file name, bail...
@@ -756,23 +778,22 @@ AudioManager::UnloadFile( const std::string& file )
 
    alDeleteBuffers( 1L, &bd->buf );
    delete bd;
+   CheckForError("alDeleteBuffers( 1L, &bd->buf );", __FUNCTION__, __LINE__);
 
    mBufferMap.erase(iter);
    return true;
 }
 
-bool
-AudioManager::LoadWaveFile( const char* file )
+////////////////////////////////////////////////////////////////////////////////
+bool AudioManager::LoadWaveFile( const char* file )
 {
    DEPRECATE( "bool AudioManager::LoadWaveFile( const char* file )",
               "bool AudioManager::LoadFile( const std::string& file )" )
    return LoadFile(file);
 }
 
-
-
-bool
-AudioManager::UnloadWaveFile( const char* file )
+////////////////////////////////////////////////////////////////////////////////
+bool AudioManager::UnloadWaveFile( const char* file )
 {
    DEPRECATE( "bool AudioManager::UnloadWaveFile( const char* file )",
               "bool AudioManager::UnloadFile( const std::string& file )" )
@@ -780,12 +801,11 @@ AudioManager::UnloadWaveFile( const char* file )
    return UnloadFile(file);
 }
 
-
-
+////////////////////////////////////////////////////////////////////////////////
 // private member functions
-void
-AudioManager::PreFrame( const double deltaFrameTime )
+void AudioManager::PreFrame( const double deltaFrameTime )
 {
+   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
    SOB_PTR     snd(NULL);
    const char* cmd(NULL);
 
@@ -950,20 +970,19 @@ AudioManager::PreFrame( const double deltaFrameTime )
          continue;
       }
    }
+   CheckForError("PreFrame Error checking", __FUNCTION__, __LINE__);
 }
 
-
-
-void
-AudioManager::Frame( const double deltaFrameTime )
+////////////////////////////////////////////////////////////////////////////////
+void AudioManager::Frame( const double deltaFrameTime )
 {
+   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
    SRC_LST::iterator             iter;
    std::stack<SRC_LST::iterator> stk;
    ALuint                        src(0L);
    ALint                         state(AL_STOPPED);
    ALenum                        err(alGetError());
    SOB_PTR                       snd(NULL);
-
 
    // signal any sources commanded to stop
    while( mStopQueue.size() )
@@ -976,6 +995,7 @@ AudioManager::Frame( const double deltaFrameTime )
       alSourceStop( src );
    }
 
+   CheckForError("Processing stop queue error", __FUNCTION__, __LINE__);
 
    // push the new sources onto the active list
    while( mPlayQueue.size() )
@@ -987,7 +1007,7 @@ AudioManager::Frame( const double deltaFrameTime )
 
       mActiveList.push_back( src );
    }
-
+   CheckForError("alIsSource error", __FUNCTION__, __LINE__);
 
    // start any new sounds and
    // remove any sounds that have stopped
@@ -997,13 +1017,9 @@ AudioManager::Frame( const double deltaFrameTime )
       assert( alIsSource( src ) == AL_TRUE );
 
       alGetSourcei( src, AL_SOURCE_STATE, &state );
-      if( ( err = alGetError() ) != AL_NO_ERROR )
-      {
-         Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
-            "AudioManager: alGetSourcei(AL_SOURCE_STATE) error %X", err );
+      if(CheckForError("AudioManager: alGetSourcei(AL_SOURCE_STATE) error", __FUNCTION__, __LINE__))
          continue;
-      }
-
+      
       switch( state )
       {
          case  AL_PLAYING:
@@ -1054,19 +1070,15 @@ AudioManager::Frame( const double deltaFrameTime )
       assert( alIsSource( src ) );
 
       alGetSourcei( src, AL_SOURCE_STATE, &state );
-      if( ( err = alGetError() ) != AL_NO_ERROR )
-      {
-         Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
-            "AudioManager: alGetSourcei(AL_SOURCE_STATE) error %X", err );
+      if(CheckForError("AudioManager: alGetSourcei(AL_SOURCE_STATE) error", __FUNCTION__, __LINE__))
          continue;
-      }
 
       switch( state )
       {
          case  AL_PLAYING:
             {
                alSourcePause( src );
-
+               
                // send pause message
                snd   = mSourceMap[src];
                if( snd.get() )
@@ -1113,6 +1125,7 @@ AudioManager::Frame( const double deltaFrameTime )
       }
    }
 
+   CheckForError("alSourceRewind", __FUNCTION__, __LINE__);
 
    // remove stopped sounds from the active list
    while( stk.size() )
@@ -1126,11 +1139,10 @@ AudioManager::Frame( const double deltaFrameTime )
    }
 }
 
-
-
-void
-AudioManager::PostFrame( const double deltaFrameTime )
+////////////////////////////////////////////////////////////////////////////////
+void AudioManager::PostFrame( const double deltaFrameTime )
 {
+   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
    SOB_PTR     snd(NULL);
    ALuint      src(0L);
    //ALenum      err(alGetError());
@@ -1151,11 +1163,13 @@ AudioManager::PostFrame( const double deltaFrameTime )
          FreeSource( snd.get() );
       }
    }
+   CheckForError("Post Frame Error", __FUNCTION__, __LINE__);
 }
 
-void
-AudioManager::Pause( const double deltaFrameTime )
+////////////////////////////////////////////////////////////////////////////////
+void AudioManager::Pause( const double deltaFrameTime )
 {
+   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
    SRC_LST::iterator             iter;
    std::stack<SRC_LST::iterator> stk;
    ALuint                        src(0L);
@@ -1174,6 +1188,8 @@ AudioManager::Pause( const double deltaFrameTime )
       alSourceStop( src );
    }
 
+   CheckForError("Source stop error", __FUNCTION__, __LINE__);
+
    // start any new sounds and
    // remove any sounds that have stopped
    for( iter = mActiveList.begin(); iter != mActiveList.end(); iter++ )
@@ -1182,12 +1198,9 @@ AudioManager::Pause( const double deltaFrameTime )
       assert( alIsSource( src ) == AL_TRUE );
 
       alGetSourcei( src, AL_SOURCE_STATE, &state );
-      if( ( err = alGetError() ) != AL_NO_ERROR )
-      {
-         Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
-            "AudioManager: alGetSourcei(AL_SOURCE_STATE) error %X", err );
+      
+      if(CheckForError("AudioManager: alGetSourcei(AL_SOURCE_STATE) error", __FUNCTION__, __LINE__))
          continue;
-      }
 
       switch( state )
       {
@@ -1223,12 +1236,8 @@ AudioManager::Pause( const double deltaFrameTime )
       assert( alIsSource( src ) );
 
       alGetSourcei( src, AL_SOURCE_STATE, &state );
-      if( ( err = alGetError() ) != AL_NO_ERROR )
-      {
-         Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
-            "AudioManager: alGetSourcei(AL_SOURCE_STATE) error %X", err );
+      if(CheckForError("AudioManager: alGetSourcei(AL_SOURCE_STATE) error", __FUNCTION__, __LINE__))
          continue;
-      }
 
       switch( state )
       {
@@ -1281,7 +1290,8 @@ AudioManager::Pause( const double deltaFrameTime )
       }
    }
 
-
+   CheckForError("alSourceRewind error", __FUNCTION__, __LINE__);
+      
    LOGN_ALWAYS("audiomanager.cpp", "paused5");
    // remove stopped sounds from the active list
    while( stk.size() )
@@ -1295,17 +1305,16 @@ AudioManager::Pause( const double deltaFrameTime )
    }
 }
 
-bool
-AudioManager::Configured( void ) const
+////////////////////////////////////////////////////////////////////////////////
+bool AudioManager::Configured( void ) const
 {
    return   mSource != NULL;
 }
 
-
-
-bool
-AudioManager::ConfigSources( unsigned int num )
+////////////////////////////////////////////////////////////////////////////////
+bool AudioManager::ConfigSources( unsigned int num )
 {
+   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
    if( num == 0L )
       return   false;
 
@@ -1316,10 +1325,8 @@ AudioManager::ConfigSources( unsigned int num )
 
    ALenum   error(alGetError());
    alGenSources( mNumSources, mSource );
-   if( ( error = alGetError() ) != AL_NO_ERROR )
+   if(CheckForError("AudioManager: alGenSources Error", __FUNCTION__, __LINE__))
    {
-      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
-         "AudioManager: alGenSources Error %X", error );
       if( mSource )
       {
          delete   mSource;
@@ -1327,7 +1334,6 @@ AudioManager::ConfigSources( unsigned int num )
       }
       return   false;
    }
-
 
    for( ALsizei ii(0); ii < mNumSources; ii++ )
    {
@@ -1340,9 +1346,10 @@ AudioManager::ConfigSources( unsigned int num )
 
 
 
-bool
-AudioManager::ConfigEAX( bool eax )
+////////////////////////////////////////////////////////////////////////////////
+bool AudioManager::ConfigEAX( bool eax )
 {
+   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
    if( !eax )
    {
       return false;
@@ -1397,14 +1404,17 @@ AudioManager::ConfigEAX( bool eax )
       return false;
    }
 
+   CheckForError("Config eax issue", __FUNCTION__, __LINE__);
+
    return true;
 }
 
 
 
-void
-AudioManager::LoadSound( SoundObj* snd )
+////////////////////////////////////////////////////////////////////////////////
+void AudioManager::LoadSound( SoundObj* snd )
 {
+   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
    assert( snd );
 
    const char* file(static_cast<Sound*>(snd)->GetFilename());
@@ -1421,13 +1431,13 @@ AudioManager::LoadSound( SoundObj* snd )
 
    bd->use++;
    snd->Buffer( bd->buf );
+   CheckForError("LoadSound Error", __FUNCTION__, __LINE__);
 }
 
-
-
-void
-AudioManager::UnloadSound( SoundObj* snd )
+////////////////////////////////////////////////////////////////////////////////
+void AudioManager::UnloadSound( SoundObj* snd )
 {
+   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
    assert( snd );
 
    const char* file(static_cast<Sound*>(snd)->GetFilename());
@@ -1445,13 +1455,15 @@ AudioManager::UnloadSound( SoundObj* snd )
    bd->use--;
 
    UnloadFile( file );
+   CheckForError("Unload Sound Error", __FUNCTION__, __LINE__);
 }
 
 
 
-void
-AudioManager::PlaySound( SoundObj* snd )
+////////////////////////////////////////////////////////////////////////////////
+void AudioManager::PlaySound( SoundObj* snd )
 {
+   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
    ALuint   buf(0);
    ALuint   src(0);
    ALenum   err(alGetError());
@@ -1462,8 +1474,11 @@ AudioManager::PlaySound( SoundObj* snd )
    // first check if sound has a buffer
    buf   = snd->Buffer();
    if( alIsBuffer( buf ) == AL_FALSE )
+   {
+      CheckForError("alIsBuffer error", __FUNCTION__, __LINE__);
       // no buffer, bail
       return;
+   }
 
    // then check if sound has a source
    src = snd->Source();
@@ -1481,7 +1496,7 @@ AudioManager::PlaySound( SoundObj* snd )
       }
 
       src   = snd->Source();
-	  source_is_new = true; 
+	   source_is_new = true; 
    }
    else
    {
@@ -1489,12 +1504,9 @@ AudioManager::PlaySound( SoundObj* snd )
       // could be paused (or playing)
       ALint state(AL_STOPPED);
       alGetSourcei( src, AL_SOURCE_STATE, &state );
-      if( ( err = alGetError() ) != AL_NO_ERROR )
-      {
-         Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
-            "AudioManager: alGetSourcei(AL_SOURCE_STATE) error %X", err );
+      
+      if(CheckForError("AudioManager: alGetSourcei(AL_SOURCE_STATE) error", __FUNCTION__, __LINE__))
          return;
-      }
 
       switch( state )
       {
@@ -1515,31 +1527,19 @@ AudioManager::PlaySound( SoundObj* snd )
 
    // bind the buffer to the source
    alSourcei( src, AL_BUFFER, buf );
-   if( ( err = alGetError() ) != AL_NO_ERROR )
-   {
-      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
-         "AudioManager: alSourcei(AL_BUFFER) error %X", err );
+   if(CheckForError("AudioManager: alSourcei(AL_BUFFER) error", __FUNCTION__, __LINE__))
       return;
-   }
 
    // set looping flag
    alSourcei( src, AL_LOOPING, (snd->IsLooping())? AL_TRUE: AL_FALSE );
-   if( ( err = alGetError() ) != AL_NO_ERROR )
-   {
-      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
-         "AudioManager: alSourcei(AL_LOOPING) error %X", err );
-   }
+   CheckForError("AudioManager: alSourcei(AL_LOOPING) error", __FUNCTION__, __LINE__);
 
    // set source relative flag
    if( snd->IsListenerRelative() )
    {
       // is listener relative
       alSourcei( src, AL_SOURCE_RELATIVE, AL_FALSE );
-      if( ( err = alGetError() ) != AL_NO_ERROR )
-      {
-         Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
-            "AudioManager: alSourcei(AL_SOURCE_RELATIVE) error %X", err );
-      }
+      CheckForError("AudioManager: alSourcei(AL_SOURCE_RELATIVE) error", __FUNCTION__, __LINE__);
 
       // set initial position and direction
       osg::Vec3   pos;
@@ -1554,60 +1554,36 @@ AudioManager::PlaySound( SoundObj* snd )
                   static_cast<ALfloat>(pos[1]),
                   static_cast<ALfloat>(pos[2]) );
 
-      if( ( err = alGetError() ) != AL_NO_ERROR )
-      {
-         Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__, 
-            "AudioManager: alSource3f(AL_POSITION) error %X", err );
-      }
+      CheckForError("AudioManager: alSource3f(AL_POSITION) error", __FUNCTION__, __LINE__);
 
       alSource3f( src,
          AL_DIRECTION,
          static_cast<ALfloat>(dir[0]),
          static_cast<ALfloat>(dir[1]),
          static_cast<ALfloat>(dir[2]) );
-      if( ( err = alGetError() ) != AL_NO_ERROR )
-      {
-         Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
-            "AudioManager: alSource3f(AL_DIRECTION) error %X", err );
-      }
+      CheckForError("AudioManager: alSource3f(AL_DIRECTION) error", __FUNCTION__, __LINE__);
    }
    else
    {
       // not listener relative
       alSourcei( src, AL_SOURCE_RELATIVE, AL_FALSE );
-      if( ( err = alGetError() ) != AL_NO_ERROR )
-      {
-         Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
-            "AudioManager: alSourcei(AL_SOURCE_RELATIVE) error %X", err );
-      }
+      CheckForError("AudioManager: alSourcei(AL_SOURCE_RELATIVE) error", __FUNCTION__, __LINE__);
    }
 
    // set gain
    alSourcef( src, AL_GAIN, static_cast<ALfloat>(snd->GetGain()) );
-   if( ( err = alGetError() ) != AL_NO_ERROR )
-   {
-      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
-         "AudioManager: alSourcef(AL_GAIN) error %X", err );
-   }
+   CheckForError("AudioManager: alSourcef(AL_GAIN) error", __FUNCTION__, __LINE__);
 
    // set pitch
    alSourcef( src, AL_PITCH, static_cast<ALfloat>(snd->GetPitch()) );
-   if( ( err = alGetError() ) != AL_NO_ERROR )
-   {
-      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
-         "AudioManager: alSourcef(AL_PITCH) error %X", err );
-   }
+   CheckForError("AudioManager: alSourcef(AL_PITCH) error", __FUNCTION__, __LINE__);
 
    // set reference distance
    if( snd->GetState( Sound::MIN_DIST ) || source_is_new)
    {
       snd->ResetState( Sound::MIN_DIST );
       alSourcef( src, AL_REFERENCE_DISTANCE, static_cast<ALfloat>(snd->GetMinDistance()) );
-      if( ( err = alGetError() ) != AL_NO_ERROR )
-      {
-         Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
-            "AudioManager: alSourcef(AL_REFERENCE_DISTANCE) error %X", err );
-      }
+      CheckForError("AudioManager: alSourcef(AL_REFERENCE_DISTANCE) error", __FUNCTION__, __LINE__);
    }
 
    // set maximum distance
@@ -1615,11 +1591,7 @@ AudioManager::PlaySound( SoundObj* snd )
    {
       snd->ResetState( Sound::MAX_DIST );
       alSourcef( src, AL_MAX_DISTANCE, static_cast<ALfloat>(snd->GetMaxDistance()) );
-      if( ( err = alGetError() ) != AL_NO_ERROR )
-      {
-         Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__, 
-            "AudioManager: alSourcef(AL_MAX_DISTANCE) error %X", err );
-      }
+      CheckForError("AudioManager: alSourcef(AL_MAX_DISTANCE) error", __FUNCTION__, __LINE__);
    }
 
    // set rolloff factor
@@ -1627,11 +1599,7 @@ AudioManager::PlaySound( SoundObj* snd )
    {
       snd->ResetState( Sound::ROL_FACT );
       alSourcef( src, AL_ROLLOFF_FACTOR, static_cast<ALfloat>(snd->GetRolloffFactor()) );
-      if( ( err = alGetError() ) != AL_NO_ERROR )
-      {
-         Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
-            "AudioManager: alSourcef(AL_ROLLOFF_FACTOR) error %X", err );
-      }
+      CheckForError("AudioManager: alSourcef(AL_ROLLOFF_FACTOR) error", __FUNCTION__, __LINE__);
    }
 
    // set minimum gain
@@ -1639,11 +1607,7 @@ AudioManager::PlaySound( SoundObj* snd )
    {
       snd->ResetState( Sound::MIN_GAIN );
       alSourcef( src, AL_MIN_GAIN, static_cast<ALfloat>(snd->GetMinGain()) );
-      if( ( err = alGetError() ) != AL_NO_ERROR )
-      {
-         Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
-            "AudioManager: alSourcef(AL_MIN_GAIN) error %X", err );
-      }
+      CheckForError("AudioManager: alSourcef(AL_MIN_GAIN) error", __FUNCTION__, __LINE__);
    }
 
    // set maximum gain
@@ -1651,11 +1615,7 @@ AudioManager::PlaySound( SoundObj* snd )
    {
       snd->ResetState( Sound::MAX_GAIN );
       alSourcef( src, AL_MAX_GAIN, static_cast<ALfloat>(snd->GetMaxGain()) );
-      if( ( err = alGetError() ) != AL_NO_ERROR )
-      {
-         Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
-            "AudioManager: alSourcef(AL_MAX_GAIN) error %X", err );
-      }
+      CheckForError("AudioManager: alSourcef(AL_MAX_GAIN) error", __FUNCTION__, __LINE__);
    }
 
    if (source_is_new)
@@ -1668,8 +1628,8 @@ AudioManager::PlaySound( SoundObj* snd )
 
 
 
-void
-AudioManager::PauseSound( SoundObj* snd )
+////////////////////////////////////////////////////////////////////////////////
+void AudioManager::PauseSound( SoundObj* snd )
 {
    assert( snd );
 
@@ -1684,8 +1644,8 @@ AudioManager::PauseSound( SoundObj* snd )
 
 
 
-void
-AudioManager::StopSound( SoundObj* snd )
+////////////////////////////////////////////////////////////////////////////////
+void AudioManager::StopSound( SoundObj* snd )
 {
    assert( snd );
 
@@ -1701,8 +1661,8 @@ AudioManager::StopSound( SoundObj* snd )
 
 
 
-void
-AudioManager::RewindSound( SoundObj* snd )
+////////////////////////////////////////////////////////////////////////////////
+void AudioManager::RewindSound( SoundObj* snd )
 {
    assert( snd );
 
@@ -1718,9 +1678,10 @@ AudioManager::RewindSound( SoundObj* snd )
 
 
 
-void
-AudioManager::SetLoop( SoundObj* snd )
+////////////////////////////////////////////////////////////////////////////////
+void AudioManager::SetLoop( SoundObj* snd )
 {
+   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
    assert( snd );
 
    ALuint   src   = snd->Source();
@@ -1734,21 +1695,18 @@ AudioManager::SetLoop( SoundObj* snd )
 
    ALenum   err(alGetError());
    alSourcei( src, AL_LOOPING, AL_TRUE );
-   if( ( err = alGetError() ) != AL_NO_ERROR )
-   {
-      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
-         "AudioManager: alSourcei(AL_LOOP) error %X", err );
+   if(CheckForError("AudioManager: alSourcei(AL_LOOP) error", __FUNCTION__, __LINE__))
       return;
-   }
 
    SendMessage( Sound::kCommand[Sound::LOOP], snd );
 }
 
 
 
-void
-AudioManager::ResetLoop( SoundObj* snd )
+////////////////////////////////////////////////////////////////////////////////
+void AudioManager::ResetLoop( SoundObj* snd )
 {
+   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
    assert( snd );
 
    ALuint   src   = snd->Source();
@@ -1762,21 +1720,16 @@ AudioManager::ResetLoop( SoundObj* snd )
 
    ALenum   err(alGetError());
    alSourcei( src, AL_LOOPING, AL_FALSE );
-   if( ( err = alGetError() ) != AL_NO_ERROR )
-   {
-      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__, 
-         "AudioManager: alSourcei(AL_LOOP) error %X", err );
+   if(CheckForError("AudioManager: alSourcei(AL_LOOP) error %X", __FUNCTION__, __LINE__))
       return;
-   }
 
    SendMessage( Sound::kCommand[Sound::UNLOOP], snd );
 }
 
-
-
-void
-AudioManager::SetRelative( SoundObj* snd )
+////////////////////////////////////////////////////////////////////////////////
+void AudioManager::SetRelative( SoundObj* snd )
 {
+   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
    assert( snd );
 
    if( snd->IsListenerRelative() )
@@ -1817,23 +1770,20 @@ AudioManager::SetRelative( SoundObj* snd )
       return;
    }
 
-   ALenum   err(alGetError());
+   CheckForError("alGetBufferi && alIsSource calls check", __FUNCTION__, __LINE__);
    alSourcei( src, AL_SOURCE_RELATIVE, AL_FALSE );
-   if( ( err = alGetError() ) != AL_NO_ERROR )
-   {
-      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__, 
-         "AudioManager: alSourcei(AL_SOURCE_RELATIVE) error %X", err );
+   if(CheckForError("AudioManager: alSourcei(AL_SOURCE_RELATIVE) error", __FUNCTION__, __LINE__))
       return;
-   }
 
    SendMessage( Sound::kCommand[Sound::REL], snd );
 }
 
 
 
-void
-AudioManager::SetAbsolute( SoundObj* snd )
+////////////////////////////////////////////////////////////////////////////////
+void AudioManager::SetAbsolute( SoundObj* snd )
 {
+   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
    assert( snd );
 
    ALuint   src   = snd->Source();
@@ -1847,21 +1797,16 @@ AudioManager::SetAbsolute( SoundObj* snd )
 
    ALenum   err(alGetError());
    alSourcei( src, AL_SOURCE_RELATIVE, AL_FALSE );
-   if( ( err = alGetError() ) != AL_NO_ERROR )
-   {
-      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
-         "AudioManager: alSourcei(AL_SOURCE_RELATIVE) error %X", err );
+   if(CheckForError("AudioManager: alSourcei(AL_SOURCE_RELATIVE) error", __FUNCTION__, __LINE__))
       return;
-   }
 
    SendMessage( Sound::kCommand[Sound::ABS], snd );
 }
 
-
-
-void
-AudioManager::SetGain( SoundObj* snd )
+////////////////////////////////////////////////////////////////////////////////
+void AudioManager::SetGain( SoundObj* snd )
 {
+   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
    assert( snd );
 
    ALuint   src   = snd->Source();
@@ -1873,21 +1818,16 @@ AudioManager::SetGain( SoundObj* snd )
 
    ALenum   err(alGetError());
    alSourcef( src, AL_GAIN, static_cast<ALfloat>(snd->GetGain()) );
-   if( ( err = alGetError() ) != AL_NO_ERROR )
-   {
-      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
-         "AudioManager: alSourcef(AL_GAIN) error %X", err );
+   if(CheckForError("AudioManager: alSourcef(AL_GAIN) error", __FUNCTION__, __LINE__))
       return;
-   }
 
    SendMessage( Sound::kCommand[Sound::GAIN], snd );
 }
 
-
-
-void
-AudioManager::SetPitch( SoundObj* snd )
+////////////////////////////////////////////////////////////////////////////////
+void AudioManager::SetPitch( SoundObj* snd )
 {
+   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
    assert( snd );
 
    ALuint   src   = snd->Source();
@@ -1899,21 +1839,18 @@ AudioManager::SetPitch( SoundObj* snd )
 
    ALenum   err(alGetError());
    alSourcef( src, AL_PITCH, static_cast<ALfloat>(snd->GetPitch()) );
-   if( ( err = alGetError() ) != AL_NO_ERROR )
-   {
-      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
-         "AudioManager: alSourcef(AL_PITCH) error %X", err );
+   if(CheckForError("AudioManager: alSourcef(AL_PITCH) error", __FUNCTION__, __LINE__))
       return;
-   }
 
    SendMessage( Sound::kCommand[Sound::PITCH], snd );
 }
 
 
 
-void
-AudioManager::SetPosition( SoundObj* snd )
+////////////////////////////////////////////////////////////////////////////////
+void AudioManager::SetPosition( SoundObj* snd )
 {
+   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
    assert( snd );
 
    ALuint   src   = snd->Source();
@@ -1928,21 +1865,18 @@ AudioManager::SetPosition( SoundObj* snd )
 
    ALenum   err(alGetError());
    alSource3f( src, AL_POSITION, static_cast<ALfloat>(pos[0]), static_cast<ALfloat>(pos[1]), static_cast<ALfloat>(pos[2]) );
-   if( ( err = alGetError() ) != AL_NO_ERROR )
-   {
-      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
-         "AudioManager: alSource3f(AL_POSITION) error %X", err );
+   if(CheckForError("AudioManager: alSource3f(AL_POSITION) error", __FUNCTION__, __LINE__))
       return;
-   }
 
    SendMessage( Sound::kCommand[Sound::POSITION], snd );
 }
 
 
 
-void
-AudioManager::SetDirection( SoundObj* snd )
+////////////////////////////////////////////////////////////////////////////////
+void AudioManager::SetDirection( SoundObj* snd )
 {
+   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
    assert( snd );
 
    ALuint   src   = snd->Source();
@@ -1957,21 +1891,18 @@ AudioManager::SetDirection( SoundObj* snd )
 
    ALenum   err(alGetError());
    alSource3f( src, AL_DIRECTION, static_cast<ALfloat>(dir[0]), static_cast<ALfloat>(dir[1]), static_cast<ALfloat>(dir[2]) );
-   if( ( err = alGetError() ) != AL_NO_ERROR )
-   {
-      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
-         "AudioManager: alSource3f(AL_DIRECTION) error %X", err );
+   if(CheckForError("AudioManager: alSource3f(AL_DIRECTION) error", __FUNCTION__, __LINE__))
       return;
-   }
 
    SendMessage( Sound::kCommand[Sound::DIRECTION], snd );
 }
 
 
 
-void
-AudioManager::SetVelocity( SoundObj* snd )
+////////////////////////////////////////////////////////////////////////////////
+void AudioManager::SetVelocity( SoundObj* snd )
 {
+   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
    assert( snd );
 
    ALuint   src   = snd->Source();
@@ -1986,21 +1917,18 @@ AudioManager::SetVelocity( SoundObj* snd )
 
    ALenum   err(alGetError());
    alSource3f( src, AL_VELOCITY, static_cast<ALfloat>(velo[0]), static_cast<ALfloat>(velo[1]), static_cast<ALfloat>(velo[2]) );
-   if( ( err = alGetError() ) != AL_NO_ERROR )
-   {
-      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
-         "AudioManager: alSource3f(AL_VELOCITY) error %X", err );
+   if(CheckForError("AudioManager: alSource3f(AL_VELOCITY) error", __FUNCTION__, __LINE__))
       return;
-   }
 
    SendMessage( Sound::kCommand[Sound::VELOCITY], snd );
 }
 
 
 
-void
-AudioManager::SetReferenceDistance( SoundObj* snd )
+////////////////////////////////////////////////////////////////////////////////
+void AudioManager::SetReferenceDistance( SoundObj* snd )
 {
+   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
    assert( snd );
 
    ALuint   src   = snd->Source();
@@ -2019,19 +1947,16 @@ AudioManager::SetReferenceDistance( SoundObj* snd )
 
    ALenum   err(alGetError());
    alSourcef( src, AL_REFERENCE_DISTANCE, min_dist );
-   if( ( err = alGetError() ) != AL_NO_ERROR )
-   {
-      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
-         "AudioManager: alSourcef(AL_REFERENCE_DISTANCE) error %X", err );
+   if(CheckForError("AudioManager: alSourcef(AL_REFERENCE_DISTANCE) error", __FUNCTION__, __LINE__))
       return;
-   }
 }
 
 
 
-void
-AudioManager::SetMaximumDistance( SoundObj* snd )
+////////////////////////////////////////////////////////////////////////////////
+void AudioManager::SetMaximumDistance( SoundObj* snd )
 {
+   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
    assert( snd );
 
    ALuint   src   = snd->Source();
@@ -2050,19 +1975,14 @@ AudioManager::SetMaximumDistance( SoundObj* snd )
 
    ALenum   err(alGetError());
    alSourcef( src, AL_MAX_DISTANCE, max_dist );
-   if( ( err = alGetError() ) != AL_NO_ERROR )
-   {
-      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
-         "AudioManager: alSourcef(AL_MAX_DISTANCE) error %X", err );
+   if(CheckForError("AudioManager: alSourcef(AL_MAX_DISTANCE) error", __FUNCTION__, __LINE__))
       return;
-   }
 }
 
-
-
-void
-AudioManager::SetRolloff( SoundObj* snd )
+////////////////////////////////////////////////////////////////////////////////
+void AudioManager::SetRolloff( SoundObj* snd )
 {
+   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
    assert( snd );
 
    ALuint   src   = snd->Source();
@@ -2075,19 +1995,14 @@ AudioManager::SetRolloff( SoundObj* snd )
 
    ALenum   err(alGetError());
    alSourcef( src, AL_ROLLOFF_FACTOR, static_cast<ALfloat>(snd->GetRolloffFactor()) );
-   if( ( err = alGetError() ) != AL_NO_ERROR )
-   {
-      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
-         "AudioManager: alSourcef(AL_ROLLOFF_FACTOR) error %X", err );
+   if(CheckForError("AudioManager: alSourcef(AL_ROLLOFF_FACTOR) error", __FUNCTION__, __LINE__))
       return;
-   }
 }
 
-
-
-void
-AudioManager::SetMinimumGain( SoundObj* snd )
+////////////////////////////////////////////////////////////////////////////////
+void AudioManager::SetMinimumGain( SoundObj* snd )
 {
+   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
    assert( snd );
 
    ALuint   src   = snd->Source();
@@ -2104,21 +2019,15 @@ AudioManager::SetMinimumGain( SoundObj* snd )
    {
       ALenum   err(alGetError());
       alSourcef( src, AL_MIN_GAIN, min_gain );
-      if( ( err = alGetError() ) != AL_NO_ERROR )
-      {
-         Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
-            "AudioManager: alSourcef(AL_MIN_GAIN) error %X", err );
+      if(CheckForError("AudioManager: alSourcef(AL_MIN_GAIN) error", __FUNCTION__, __LINE__))
          return;
-      }
    }
-
 }
 
-
-
-void
-AudioManager::SetMaximumGain( SoundObj* snd )
+////////////////////////////////////////////////////////////////////////////////
+void AudioManager::SetMaximumGain( SoundObj* snd )
 {
+   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
    assert( snd );
 
    ALuint   src   = snd->Source();
@@ -2135,19 +2044,15 @@ AudioManager::SetMaximumGain( SoundObj* snd )
    {
       ALenum   err(alGetError());
       alSourcef( src, AL_MAX_GAIN, max_gain );
-      if( ( err = alGetError() ) != AL_NO_ERROR )
-      {
-         Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
-            "AudioManager: alSourcef(AL_MAX_GAIN) error %X", err );
+      if(CheckForError("AudioManager: alSourcef(AL_MAX_GAIN) error ", __FUNCTION__, __LINE__))
          return;
-      }
    }
 }
 
 
 
-bool
-AudioManager::GetSource( SoundObj* snd )
+////////////////////////////////////////////////////////////////////////////////
+bool AudioManager::GetSource( SoundObj* snd )
 {
    ALuint   src(0L);
 
@@ -2171,9 +2076,10 @@ AudioManager::GetSource( SoundObj* snd )
 
 
 
-void
-AudioManager::FreeSource( SoundObj* snd )
+////////////////////////////////////////////////////////////////////////////////
+void AudioManager::FreeSource( SoundObj* snd )
 {
+   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
    if( snd == NULL )
       return;
 
@@ -2194,10 +2100,12 @@ AudioManager::FreeSource( SoundObj* snd )
    alSourcei( src, AL_BUFFER, AL_NONE );
    mSourceMap[src]   = NULL;
    mAvailable.push( src );
+   CheckForError("FreeSource", __FUNCTION__, __LINE__);
 }
 
 
 
+////////////////////////////////////////////////////////////////////////////////
 // public member functions
 // default consructor
 AudioManager::SoundObj::SoundObj()
@@ -2209,6 +2117,7 @@ AudioManager::SoundObj::SoundObj()
    RegisterInstance( this );
 }
 
+////////////////////////////////////////////////////////////////////////////////
 // desructor
 AudioManager::SoundObj::~SoundObj()
 {
@@ -2217,9 +2126,10 @@ AudioManager::SoundObj::~SoundObj()
    Clear();
 }
 
-void
-AudioManager::SoundObj::OnMessage( MessageData* data )
+////////////////////////////////////////////////////////////////////////////////
+void AudioManager::SoundObj::OnMessage( MessageData* data )
 {
+   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
    assert( data );
 
    Sound::OnMessage( data );
@@ -2310,10 +2220,10 @@ AudioManager::SoundObj::OnMessage( MessageData* data )
       ResetState( Sound::POSITION );
       return;
    }
+   CheckForError("End of OnMessage", __FUNCTION__, __LINE__);
 }
 
-
-
+////////////////////////////////////////////////////////////////////////////////
 void AudioManager::SoundObj::SetParent( dtCore::DeltaDrawable* parent )
 {
    ListenerRelative( parent != NULL );
@@ -2328,48 +2238,38 @@ void AudioManager::SoundObj::SetParent( dtCore::DeltaDrawable* parent )
 
 
 
-bool
-AudioManager::SoundObj::IsPlaying( void ) const
+////////////////////////////////////////////////////////////////////////////////
+bool AudioManager::SoundObj::IsPlaying( void ) const
 {
    return   GetState( PLAY );
 }
 
-
-
-bool
-AudioManager::SoundObj::IsPaused( void ) const
+////////////////////////////////////////////////////////////////////////////////
+bool AudioManager::SoundObj::IsPaused( void ) const
 {
    return    GetState( PAUSE );
 }
 
-
-
-bool
-AudioManager::SoundObj::IsStopped( void ) const
+////////////////////////////////////////////////////////////////////////////////
+bool AudioManager::SoundObj::IsStopped( void ) const
 {
    return    GetState( STOP );
 }
 
-
-
-bool
-AudioManager::SoundObj::IsLooping( void ) const
+////////////////////////////////////////////////////////////////////////////////
+bool AudioManager::SoundObj::IsLooping( void ) const
 {
    return    GetState( LOOP );
 }
 
-
-
-bool
-AudioManager::SoundObj::IsListenerRelative( void ) const
+////////////////////////////////////////////////////////////////////////////////
+bool AudioManager::SoundObj::IsListenerRelative( void ) const
 {
    return    GetState( Sound::POSITION );
 }
 
-
-
-void
-AudioManager::SoundObj::Command( const char* cmd )
+////////////////////////////////////////////////////////////////////////////////
+void AudioManager::SoundObj::Command( const char* cmd )
 {
    if( cmd == NULL )
       return;
@@ -2377,10 +2277,8 @@ AudioManager::SoundObj::Command( const char* cmd )
    mCommand.push( cmd );
 }
 
-
-
-const char*
-AudioManager::SoundObj::Command( void )
+////////////////////////////////////////////////////////////////////////////////
+const char* AudioManager::SoundObj::Command( void )
 {
    if( mCommand.empty() )
       return   NULL;
@@ -2391,82 +2289,62 @@ AudioManager::SoundObj::Command( void )
    return   cmd;
 }
 
-
-
-void
-AudioManager::SoundObj::Buffer( ALuint buffer )
+////////////////////////////////////////////////////////////////////////////////
+void AudioManager::SoundObj::Buffer( ALuint buffer )
 {
    mBuffer  = buffer;
 }
 
-
-
-ALuint
-AudioManager::SoundObj::Buffer( void )
+////////////////////////////////////////////////////////////////////////////////
+ALuint AudioManager::SoundObj::Buffer( void )
 {
    return   mBuffer;
 }
 
-
-
-void
-AudioManager::SoundObj::Source( ALuint source )
+////////////////////////////////////////////////////////////////////////////////
+void AudioManager::SoundObj::Source( ALuint source )
 {
    mSource.mSource = source;
 }
 
-
-
-ALuint
-AudioManager::SoundObj::Source( void )
+////////////////////////////////////////////////////////////////////////////////
+ALuint AudioManager::SoundObj::Source( void )
 {
    return mSource.mSource;
 }
 
-
-
-bool
-AudioManager::SoundObj::IsInitialized() const
+////////////////////////////////////////////////////////////////////////////////
+bool AudioManager::SoundObj::IsInitialized() const
 {
    return mSource.mInitialized;
 }
 
-
-
-void
-AudioManager::SoundObj::SetInitialized( bool isInitialized )
+////////////////////////////////////////////////////////////////////////////////
+void AudioManager::SoundObj::SetInitialized( bool isInitialized )
 {
    mSource.mInitialized = isInitialized;
 }
 
-
-
-void
-AudioManager::SoundObj::SetState( unsigned int flag )
+////////////////////////////////////////////////////////////////////////////////
+void AudioManager::SoundObj::SetState( unsigned int flag )
 {
    mState   |= BIT( flag );
 }
 
-
-
-void
-AudioManager::SoundObj::ResetState( unsigned int flag )
+////////////////////////////////////////////////////////////////////////////////
+void AudioManager::SoundObj::ResetState( unsigned int flag )
 {
    mState   &= ~BIT( flag );
 }
 
-
-
-bool
-AudioManager::SoundObj::GetState( unsigned int flag ) const
+////////////////////////////////////////////////////////////////////////////////
+bool AudioManager::SoundObj::GetState( unsigned int flag ) const
 {
    return   static_cast<bool>(mState & BIT( flag ));
 }
 
-
-
-void
-AudioManager::SoundObj::Clear( void )
+////////////////////////////////////////////////////////////////////////////////
+void AudioManager::SoundObj::Clear( void )
 {
    mFilename   = "";
    mBuffer     = 0L;
@@ -2489,8 +2367,7 @@ AudioManager::SoundObj::Clear( void )
    }
 }
 
-
-
+////////////////////////////////////////////////////////////////////////////////
 // public member functions
 // default consructor
 AudioManager::ListenerObj::ListenerObj()
@@ -2504,6 +2381,7 @@ AudioManager::ListenerObj::ListenerObj()
 
 
 
+////////////////////////////////////////////////////////////////////////////////
 AudioManager::ListenerObj::~ListenerObj()
 {
    DeregisterInstance( this );
@@ -2512,7 +2390,7 @@ AudioManager::ListenerObj::~ListenerObj()
    Clear();
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
 void AudioManager::ListenerObj::SetVelocity( const osg::Vec3& velocity )
 {
    mVelo[0L]   = static_cast<ALfloat>(velocity[0L]);
@@ -2520,8 +2398,7 @@ void AudioManager::ListenerObj::SetVelocity( const osg::Vec3& velocity )
    mVelo[2L]   = static_cast<ALfloat>(velocity[2L]);
 }
 
-
-
+////////////////////////////////////////////////////////////////////////////////
 void AudioManager::ListenerObj::GetVelocity( osg::Vec3& velocity )  const
 {
    velocity[0]   = static_cast<double>(mVelo[0]);
@@ -2529,7 +2406,7 @@ void AudioManager::ListenerObj::GetVelocity( osg::Vec3& velocity )  const
    velocity[2]   = static_cast<double>(mVelo[2]);
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
 void AudioManager::ListenerObj::SetGain( float gain )
 {
    // force gain to range from zero to one
@@ -2537,13 +2414,16 @@ void AudioManager::ListenerObj::SetGain( float gain )
    mGain = static_cast<ALfloat>(gain);
 }
 
+////////////////////////////////////////////////////////////////////////////////
 float AudioManager::ListenerObj::GetGain( void )   const
 {
    return   static_cast<float>(mGain);
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void AudioManager::ListenerObj::OnMessage( MessageData* data )
 {
+   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
    assert( data );
 
    if( data->message == "frame" )
@@ -2584,10 +2464,12 @@ void AudioManager::ListenerObj::OnMessage( MessageData* data )
 
       alListenerfv( AL_VELOCITY, mVelo );
       alListenerf( AL_GAIN, mGain );
+      CheckForError("AL Listener value changing", __FUNCTION__, __LINE__);
    }
 }
 
 
+////////////////////////////////////////////////////////////////////////////////
 void AudioManager::ListenerObj::Clear( void )
 {
    //dtCore::Transformable* parent(GetParent());
@@ -2595,6 +2477,7 @@ void AudioManager::ListenerObj::Clear( void )
    //{
    //   parent->RemoveChild( this );
    //}
+   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
 
    union
    {
@@ -2623,4 +2506,5 @@ void AudioManager::ListenerObj::Clear( void )
    alListenerfv( AL_VELOCITY, mVelo );
    alListenerfv( AL_POSITION, pos );
    alListenerfv( AL_ORIENTATION, orient.ort );
+   CheckForError("AL Listener value changing", __FUNCTION__, __LINE__);
 }
