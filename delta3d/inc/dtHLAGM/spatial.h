@@ -12,8 +12,8 @@ namespace dtHLAGM
          Spatial();
          virtual ~Spatial();
 
-         int GetDeadReckoningAlgorithm() const { return mDeadReckoningAlgorithm; }
-         void SetDeadReckoningAlgorithm(int newAlgorithm) 
+         char GetDeadReckoningAlgorithm() const { return mDeadReckoningAlgorithm; }
+         void SetDeadReckoningAlgorithm(char newAlgorithm) 
             { mDeadReckoningAlgorithm = newAlgorithm; }
          
          bool IsFrozen() const { return mIsFrozen; }
@@ -57,7 +57,7 @@ namespace dtHLAGM
          VelocityVector  mAcceleration;
          VelocityVector  mAngularVelocity;
          
-         int             mDeadReckoningAlgorithm;
+         char             mDeadReckoningAlgorithm;
          bool            mIsFrozen;
    };
 
