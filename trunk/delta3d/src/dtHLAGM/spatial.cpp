@@ -63,9 +63,74 @@ namespace dtHLAGM
       return mAngularVelocity;
    }
 
+   static void WriteVec(const VelocityVector& vec, dtUtil::DataStream& writeStream)
+   {
+      writeStream << vec.GetX();
+      writeStream << vec.GetY();
+      writeStream << vec.GetZ();
+   }
+
    size_t Spatial::Encode(char * buffer, size_t maxSize)
    {
-      return 0;
+      size_t result = 0;
+      
+      //this needs a way to prevent resizing.
+      dtUtil::DataStream ds(buffer, maxSize, false);
+      ds << mDeadReckoningAlgorithm;
+      ds.Seekp(7U, dtUtil::DataStream::SeekTypeEnum::CURRENT);
+
+      ds << mWorldCoordinate.GetX();
+      ds << mWorldCoordinate.GetY();
+      ds << mWorldCoordinate.GetZ();
+
+      ds << mIsFrozen;
+      ds.Seekp(3U, dtUtil::DataStream::SeekTypeEnum::CURRENT);
+
+      ds << mOrientation.GetPsi();
+      ds << mOrientation.GetTheta();
+      ds << mOrientation.GetPhi();
+
+      switch (mDeadReckoningAlgorithm)
+      {
+         case 2:
+         case 6:
+            WriteVec(mVelocity, ds);
+            result = ds.GetBufferSize();
+            break;
+            
+         case 5:
+         case 9:
+            WriteVec(mVelocity, ds);
+            WriteVec(mAcceleration, ds);
+            result = ds.GetBufferSize();
+            break;
+
+         case 3:
+         case 7:
+            WriteVec(mVelocity, ds);
+            WriteVec(mAngularVelocity, ds);
+            result = ds.GetBufferSize();
+            break;
+            
+         case 4:
+         case 8:
+            WriteVec(mVelocity, ds);
+            WriteVec(mAcceleration, ds);
+            WriteVec(mAngularVelocity, ds);
+            result = ds.GetBufferSize();
+            break;
+            
+         default:
+            result = 0;
+            break;
+      }
+      if (result > maxSize)
+      {
+         result = 0;
+         delete[] ds.GetBuffer();
+      }
+         
+      return result;
    }
 
    static void ReadVec(VelocityVector& vec, dtUtil::DataStream& readStream)
@@ -84,9 +149,7 @@ namespace dtHLAGM
       bool result = true;
       ///ewww, const cast, but the data stream won't use a non-const pointer.
       dtUtil::DataStream ds(const_cast<char *>(buffer), size, false);
-      char drAlgoTemp;
-      ds << drAlgoTemp;
-      mDeadReckoningAlgorithm = int(drAlgoTemp);
+      ds >> mDeadReckoningAlgorithm;
       ds.Seekg(7U, dtUtil::DataStream::SeekTypeEnum::CURRENT);
 
       double doubleTemp;

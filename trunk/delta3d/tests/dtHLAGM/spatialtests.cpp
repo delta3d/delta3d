@@ -60,6 +60,15 @@ void SpatialTests::tearDown()
 
 void SpatialTests::TestGetSet()
 {
+   CPPUNIT_ASSERT(mSpatial.GetDeadReckoningAlgorithm() == 0);
+   mSpatial.SetDeadReckoningAlgorithm(3);
+   CPPUNIT_ASSERT(mSpatial.GetDeadReckoningAlgorithm() == 3);
+   
+   CPPUNIT_ASSERT(!mSpatial.IsFrozen());
+   mSpatial.SetFrozen(true);
+   CPPUNIT_ASSERT(mSpatial.IsFrozen());
+   
+   CPPUNIT_ASSERT(mSpatial.GetWorldCoordinate().GetX() == 0.0);
 }
 
 void SpatialTests::TestAssign()
