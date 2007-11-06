@@ -60,7 +60,7 @@ class DT_ABC_EXPORT Action: public dtCore::DeltaDrawable
 
    protected:
       /*virtual*/ ~Action();
-      Action(const Action&); //not implemented by design
+      Action(const Action&) { } //not implemented by design
 
       /***
       * @brief overload this function to make changes based 
