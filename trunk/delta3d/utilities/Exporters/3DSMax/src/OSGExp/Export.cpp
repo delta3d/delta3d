@@ -592,6 +592,25 @@ osg::ref_ptr<osg::Geode> OSGExp::createMeshGeometry(osg::Group* rootTransform, I
 				// If mapChan is zero this texture unit has a texture generator - do nothing.
 				if(mapChan==0)
 					continue;
+
+            //we have to get the texture tiling values off of the material
+            float uWrap = 1.0f;
+            float vWrap = 1.0f;
+              
+            Texmap* tmap = maxMtl->GetSubTexmap(ID_DI);
+            if (tmap && tmap->ClassID() == Class_ID(BMTEX_CLASS_ID, 0)) 
+            {
+               // Cast the texmap to a bitmap texture. 
+               BitmapTex *bmt = (BitmapTex*) tmap;
+               StdUVGen *uv = bmt->GetUVGen();
+
+               if(uv != NULL)
+               {
+                  uWrap = uv->GetUScl(t);
+                  vWrap = uv->GetVScl(t);
+               }
+            }
+
 				// If there exist texture coords for this mapping channel then add them to array.
 				if(mapChan>0 && mapChan<mesh->numMaps && mesh->maps[mapChan].vnum){
 					BOOL wrap_s = FALSE;
@@ -600,10 +619,12 @@ osg::ref_ptr<osg::Geode> OSGExp::createMeshGeometry(osg::Group* rootTransform, I
 						// The uv pair for the v'th vertex.
 						UVVert uv = mesh->maps[mapChan].tv[tv];
 						// uv1.x = u, uv1.y = v
-						tcoords[unit]->push_back(osg::Vec2(uv.x, uv.y));
-						if(uv.x >1 || uv.x <0)
+                  float texCoordU = uv.x * uWrap;
+                  float texCoordV = uv.y * vWrap;
+						tcoords[unit]->push_back(osg::Vec2(texCoordU, texCoordV));
+						if(texCoordU >1 || texCoordU <0)
 							wrap_s=TRUE;
-						if(uv.y >1 || uv.y <0)
+						if(texCoordV >1 || texCoordV <0)
 							wrap_t=TRUE;
 					}
 					// If uv.x is bigger than 1 or lower than 0 then set WRAP_S mode on texture to REPEAT.
@@ -950,12 +971,33 @@ osg::ref_ptr<osg::Geode> OSGExp::createMeshGeometry(osg::Group* rootTransform, I
 		
 			// Set texture coordinates.
 			if(_options->getExportTextureCoords()){
+
+
+
 				// For every texture unit in the stateset.
 				for(int unit=0; unit<numTexUnits[i]; unit++){
 					int mapChan = mapChannels[i][unit];
 					// If mapChan is zero this texture unit has a texture generator - do nothing.
 					if(mapChan==0)
 						continue;
+
+               //get texture tiling 
+               float uWrap = 1.0f;
+               float vWrap = 1.0f;
+               Texmap* tmap = maxMtl->GetSubTexmap(ID_DI);
+               if (tmap && tmap->ClassID() == Class_ID(BMTEX_CLASS_ID, 0)) 
+               {
+                  // Cast the texmap to a bitmap texture. 
+                  BitmapTex *bmt = (BitmapTex*) tmap;
+                  StdUVGen *uv = bmt->GetUVGen();
+
+                  if(uv != NULL)
+                  {
+                     uWrap = uv->GetUScl(t);
+                     vWrap = uv->GetVScl(t);
+                  }
+               }
+
 					if(mapChan>0 && mapChan < mesh->numMaps && mesh->maps[mapChan].vnum && mesh->maps[mapChan].tf){
 						BOOL wrap_s = FALSE;
 						BOOL wrap_t = FALSE;
@@ -966,15 +1008,15 @@ osg::ref_ptr<osg::Geode> OSGExp::createMeshGeometry(osg::Group* rootTransform, I
 						UVVert uv3 = mesh->maps[mapChan].tv[ mesh->maps[mapChan].tf[j].t[vx3] ];
 
 						// uv1.x = u, uv1.y = v
-						(*tcoords[i][unit])[f[i]*3  ].set(uv1.x, uv1.y);
-						(*tcoords[i][unit])[f[i]*3+1].set(uv2.x, uv2.y);
-						(*tcoords[i][unit])[f[i]*3+2].set(uv3.x, uv3.y);
+						(*tcoords[i][unit])[f[i]*3  ].set(uv1.x * uWrap, uv1.y * vWrap);
+						(*tcoords[i][unit])[f[i]*3+1].set(uv2.x * uWrap, uv2.y * vWrap);
+						(*tcoords[i][unit])[f[i]*3+2].set(uv3.x * uWrap, uv3.y * vWrap);
 
 						// If uv.x is bigger than 1 or lower than 0 then set WRAP_S mode on texture to REPEAT.
-						if(uv1.x >1 || uv1.x <0 || uv2.x >1 || uv2.x <0 || uv3.x >1 || uv3.x <0)
+						if(uv1.x * uWrap >1 || uv1.x  * uWrap <0 || uv2.x * uWrap >1 || uv2.x * uWrap <0 || uv3.x * uWrap >1 || uv3.x * uWrap <0)
 							_mtlList->setTextureWrap(state[i].get(), unit, osg::Texture::WRAP_S, osg::Texture::REPEAT);
 						// If uv.y is bigger than 1 or lower than 0 then set WRAP_T mode on texture to REPEAT.
-						if(uv1.y >1 || uv1.y <0 || uv2.y >1 || uv2.y <0 || uv3.y >1 || uv3.y <0)
+						if(uv1.y * vWrap >1 || uv1.y * vWrap <0 || uv2.y * vWrap >1 || uv2.y * vWrap <0 || uv3.y * vWrap >1 || uv3.y * vWrap <0)
 							_mtlList->setTextureWrap(state[i].get(), unit, osg::Texture::WRAP_T, osg::Texture::REPEAT);
 					}
 					// No texture coords exist - assign a standard texture generator.
