@@ -108,6 +108,7 @@ BOOL CALLBACK OptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam, LPARAM lParam
             CheckDlgButton(hWnd, IDC_AUTO2SIDEDLIGHTING,    options->getAutoTwoSidedLighting());
             CheckDlgButton(hWnd, IDC_EXPORTSELFILLUMMAPS,   options->getExportSelfIllumMaps());
             CheckDlgButton(hWnd, IDC_POINTHELPERS,          options->getExportPointHelpers());
+            CheckDlgButton(hWnd, IDC_USEREFERENCES,          options->getReferencedGeometry());
 
 			for(i=0;i < options->getNumTexFormat();i++)
 				SendDlgItemMessage(hWnd,IDC_TEXFORMAT,CB_ADDSTRING, 0,
@@ -172,6 +173,7 @@ BOOL CALLBACK OptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam, LPARAM lParam
                 options->setAutoTwoSidedLighting    (IsDlgButtonChecked(hWnd, IDC_AUTO2SIDEDLIGHTING));
                 options->setExportSelfIllumMaps     (IsDlgButtonChecked(hWnd, IDC_EXPORTSELFILLUMMAPS));
                 options->setExportPointHelpers      (IsDlgButtonChecked(hWnd, IDC_POINTHELPERS));
+                options->setReferencedGeometry      (IsDlgButtonChecked(hWnd, IDC_USEREFERENCES));
 
 				EndDialog(hWnd, 1);
 				break;

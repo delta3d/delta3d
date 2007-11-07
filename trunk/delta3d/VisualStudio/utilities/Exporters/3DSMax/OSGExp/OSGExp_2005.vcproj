@@ -486,6 +486,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\resource.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\..\..\utilities\Exporters\3DSMax\include\OSGExp\Toolbar.h"
 				>
 			</File>

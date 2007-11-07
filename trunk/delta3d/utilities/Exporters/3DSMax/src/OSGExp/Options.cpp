@@ -105,7 +105,7 @@ Options::Options(){
 Options::~Options(){}
 
 // NOTE: Update anytime the CFG file changes
-#define CFG_VERSION 0x0A
+#define CFG_VERSION 0x0B
 
 /**
  * Write the properties of the options class to disk.
@@ -181,6 +181,8 @@ BOOL Options::write( TSTR filename){
     fputc(getAutoTwoSidedLighting(),    cfgStream);
     fputc(getExportSelfIllumMaps(),     cfgStream);
     fputc(getExportPointHelpers(),      cfgStream);
+
+    fputc(getReferencedGeometry(),      cfgStream);
 
 	fclose(cfgStream);
 
@@ -280,6 +282,11 @@ BOOL Options::load(TSTR filename){
         setAutoTwoSidedLighting(fgetc(cfgStream));
         setExportSelfIllumMaps(fgetc(cfgStream));
         setExportPointHelpers(fgetc(cfgStream));
+    }
+
+    if (fileVersion > 0x0A) 
+    {
+       setReferencedGeometry(fgetc(cfgStream));
     }
 
 	fclose(cfgStream);
