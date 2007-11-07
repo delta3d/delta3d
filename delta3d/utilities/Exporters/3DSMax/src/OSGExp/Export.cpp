@@ -274,7 +274,14 @@ osg::ref_ptr<osg::MatrixTransform> OSGExp::createLightObject(osg::Group* rootTra
 	}
 	else if(ls.type == OMNI_LIGHT ){
 		// The omni light has no direction.
+      //we remove the intensity from the rgb and store it in the spot exponent
+      float osgR = ls.color.r;
+      float osgG = ls.color.g;
+      float osgB = ls.color.b;
+      light->setDiffuse(osg::Vec4(osgR, osgG, osgB, 1.0f));
+      light->setSpecular(osg::Vec4(osgR, osgG, osgB, 1.0f));
 		light->setDirection(osg::Vec3(0.0f, 0.0f, 0.0f));
+      light->setSpotExponent(ls.intens);//we will use the intensity as the ambient multiplier
 	}
 	if (ls.type != DIR_LIGHT && ls.useAtten) {
 		// From MAX we have:
