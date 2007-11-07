@@ -705,14 +705,17 @@ osg::ref_ptr<osg::Geode> OSGExp::createMeshGeometry(osg::Group* rootTransform, I
  * For every sub materials the given node have, we will make an osg::geometry
  * object, and assign the i'th sub material to it.
  */
- osg::ref_ptr<osg::Geode> OSGExp::createMultiMeshGeometry(osg::Group* rootTransform, INode* node, Object* obj, TimeValue t){
-
+ osg::ref_ptr<osg::Geode> OSGExp::createMultiMeshGeometry(osg::Group* rootTransform, INode* node, Object* obj, TimeValue t)
+ {
 
 	// If an instance of the same object has already been converted then simply
 	// return the already converted instance.
-	for(OSGExp::GeomList::iterator itr=_geomList.begin(); itr!=_geomList.end(); ++itr)
-		if(itr->first == obj && itr->second.first==t)
-			return itr->second.second;
+    if(_options->getReferencedGeometry())
+    {
+       for(OSGExp::GeomList::iterator itr=_geomList.begin(); itr!=_geomList.end(); ++itr)
+		   if(itr->first == obj && itr->second.first==t)
+			   return itr->second.second;
+    }
 
  
 	BOOL isMultiMesh = FALSE;

@@ -88,6 +88,7 @@ public:
     BOOL getAutoTwoSidedLighting()          {return _autoTwoSidedLighting;}
     BOOL getExportSelfIllumMaps()           {return _exportSelfIllumMaps;}
     BOOL getExportPointHelpers()            {return _exportPointHelpers;}
+    BOOL getReferencedGeometry()            {return _referenceGeometry;}
 
 
 	// Methods to set options.
@@ -132,6 +133,7 @@ public:
     void setAutoTwoSidedLighting(BOOL b)    {_autoTwoSidedLighting = b;}
     void setExportSelfIllumMaps(BOOL b)     {_exportSelfIllumMaps = b;}
     void setExportPointHelpers(BOOL b)      {_exportPointHelpers = b;}
+   void setReferencedGeometry(BOOL b)      {_referenceGeometry = b;}
 
 	// Methods to write and load options from disk.
 	BOOL write(TSTR filename);
@@ -186,6 +188,7 @@ private:
     BOOL            _autoTwoSidedLighting;
     BOOL            _exportSelfIllumMaps;
     BOOL            _exportPointHelpers;
+    BOOL            _referenceGeometry;
 };
 
 #endif // __OPTIONS__H
