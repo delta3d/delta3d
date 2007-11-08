@@ -286,6 +286,13 @@ namespace dtAnim
       return( mCalModel->getSkeleton()->getBone(boneID) != NULL );
    }
 
+   //////////////////////////////////////////////////////
+   bool Cal3DModelWrapper::HasAnimation(int animID) const
+   {
+      std::vector<CalAnimation *> &animationList = mCalModel->getMixer()->getAnimationVector();
+      return (animID < (int)animationList.size() && animationList[animID]);
+   }
+
    ///////////////////////////////////////////////////////////////////////////////
    const std::string& Cal3DModelWrapper::GetCoreAnimationName( int animID ) const
    {
