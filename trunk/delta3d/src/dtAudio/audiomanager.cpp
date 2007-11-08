@@ -211,13 +211,13 @@ bool  AudioManager::CheckForError( const std::string& userMessage,
                                   int lineNumber)
 {
    ALint error = 0; 
-   if((error = alGetError()) != AL_NO_ERROR)
-   {
-      std::ostringstream finalStream;
-      finalStream << "User Message [" << userMessage << "] " << "OpenALMessage [" << alGetString(error) << "] Line " << lineNumber;
-      dtUtil::Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__, finalStream.str().c_str());
-      return AL_TRUE;
-   }
+   //if((error = alGetError()) != AL_NO_ERROR)
+   //{
+   //   std::ostringstream finalStream;
+   //   finalStream << "User Message [" << userMessage << "] " << "OpenALMessage [" << alGetString(error) << "] Line " << lineNumber;
+   //   dtUtil::Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__, finalStream.str().c_str());
+   //   return AL_TRUE;
+   //}
    return AL_FALSE;
 }
 
