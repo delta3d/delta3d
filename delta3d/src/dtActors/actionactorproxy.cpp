@@ -15,5 +15,10 @@ namespace dtActors
          dtDAL::MakeFunctor(*a,&dtABC::Action::SetTimeStep),
          dtDAL::MakeFunctorRet(*a,&dtABC::Action::GetTimeStep),
          "Sets the time step which will be the increment in seconds to update this Action by.", GROUPNAME));
+
+      AddProperty(new dtDAL::BooleanActorProperty("Tick Once Per Frame","Tick Once Per Frame",
+         dtDAL::MakeFunctor(*a,&dtABC::Action::SetTickOncePerFrame),
+         dtDAL::MakeFunctorRet(*a,&dtABC::Action::GetTickOncePerFrame),
+         "Sets whether OnNextStep should be called once per frame or stepped multiple times over a time period", GROUPNAME));
    } 
 }

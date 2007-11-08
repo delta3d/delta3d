@@ -7,14 +7,13 @@ namespace dtABC
 {
 
 Action::Action()
+   : mTimeStep(0.0f),
+   mTotalTime(0.0f),
+   mAccumTime(0.0f),
+   mIsRunning(false),
+   mTickOncePerFrame(false)
 {
-   mTimeStep = 0.0f;
-   mTotalTime = 0.0f;
-   mAccumTime = 0.0f;
-   mIsRunning = false;
-
    AddSender(&dtCore::System::GetInstance());
-
 }
 
 Action::~Action()
@@ -60,19 +59,27 @@ void Action::Update(double dt)
 {
    if(mIsRunning)
    {
-      mTotalTime += dt;
-      mAccumTime += dt;
-
-      while(mAccumTime >= mTimeStep && mIsRunning)
+      if( mTickOncePerFrame )
       {
-         bool lastEvent = !(OnNextStep());
-
-         if(lastEvent)
+         if( ! OnNextStep() )
          {
             mIsRunning = false;
          }
+      }
+      else
+      {
+         mTotalTime += dt;
+         mAccumTime += dt;
 
-         mAccumTime -= mTimeStep;
+         while(mAccumTime >= mTimeStep && mIsRunning)
+         {
+            if( ! OnNextStep() )
+            {
+               mIsRunning = false;
+            }
+
+            mAccumTime -= mTimeStep;
+         }
       }
    }
 
