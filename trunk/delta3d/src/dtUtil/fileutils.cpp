@@ -41,10 +41,6 @@ _CRTIMP extern int errno;
 #   include <errno.h>
 #endif
 
-//this define take from fileutils in osg.
-#if defined( __APPLE__ ) || defined(__CYGWIN__) || defined(__FreeBSD__)
-#define stat64 stat
-#endif
 
 #include <osg/Notify>
 #include <stack>
@@ -63,6 +59,12 @@ _CRTIMP extern int errno;
 
 #include <osgDB/FileUtils>
 #include <osgDB/FileNameUtils>
+
+//we only want to NOT use stat64, if it's not defined.
+#ifndef stat64
+#define stat64 stat
+#endif
+
 
 #ifndef S_ISREG
 #define S_ISREG(x) (((x) & S_IFMT) == S_IFREG)
