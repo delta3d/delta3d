@@ -73,7 +73,7 @@ class CameraTests : public CPPUNIT_NS::TestFixture
              
             dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
             std::string currentDir = fileUtils.CurrentDirectory();
-            std::string projectDir("dtCore");
+            std::string projectDir("data");
             if (currentDir.substr(currentDir.size() - projectDir.size()) != projectDir)
                fileUtils.PushDirectory(projectDir);
             
@@ -103,7 +103,7 @@ class CameraTests : public CPPUNIT_NS::TestFixture
             fileUtils.DirDelete(SCREEN_SHOT_DIR, true);
          
          std::string currentDir = fileUtils.CurrentDirectory();
-         std::string projectDir("dtCore");
+         std::string projectDir("data");
          if (currentDir.substr(currentDir.size() - projectDir.size()) == projectDir)
             fileUtils.PopDirectory();
       }
@@ -123,7 +123,7 @@ class CameraTests : public CPPUNIT_NS::TestFixture
          CPPUNIT_ASSERT_MESSAGE(result + " should not exist yet.", !fileUtils.FileExists(result));
          
          dtCore::System::GetInstance().Step();      
-         CPPUNIT_ASSERT_MESSAGE(result + " should exist.", fileUtils.FileExists(result));
+         CPPUNIT_ASSERT_MESSAGE(result + " should exist.  Check for the jpeg osg plugin.", fileUtils.FileExists(result));
    
          fileUtils.DirDelete(SCREEN_SHOT_DIR, true);
 
