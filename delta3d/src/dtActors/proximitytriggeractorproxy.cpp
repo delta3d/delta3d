@@ -34,39 +34,46 @@ using namespace dtDAL;
 
 namespace dtActors 
 {
+   ///////////////////////////////////////////////////////////////////////////////
    void ProximityTriggerActorProxy::CreateActor()
    {
       ProximityTrigger* trigger = new ProximityTrigger;
       SetActor(*trigger);
 
+      InitializeTrigger( *trigger );
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void ProximityTriggerActorProxy::InitializeTrigger( ProximityTrigger& trigger )
+   {
       static int mNumTriggers = 0;
       std::ostringstream ss;
       ss << "ProximityTrigger" << mNumTriggers++;
       SetName(ss.str());
 
       // Find & set default collision shape and dimensions.
-      Transformable::CollisionGeomType* type = trigger->GetCollisionGeomType();
+      Transformable::CollisionGeomType* type = trigger.GetCollisionGeomType();
 
       std::vector<float> dimensions;
-      trigger->GetCollisionGeomDimensions( dimensions );
+      trigger.GetCollisionGeomDimensions( dimensions );
 
-      if(         type == &Transformable::CollisionGeomType::SPHERE && 
-                  dimensions.size() == 1 )
+      if( type == &Transformable::CollisionGeomType::SPHERE && 
+         dimensions.size() == 1 )
       {
-            SetCollisionRadius( dimensions[0] );  
+         SetCollisionRadius( dimensions[0] );  
       }
-      else if(    type == &Transformable::CollisionGeomType::CYLINDER && 
-                  dimensions.size() == 2  )
+      else if( type == &Transformable::CollisionGeomType::CYLINDER && 
+         dimensions.size() == 2  )
       {
          SetCollisionRadius( dimensions[0] );
          SetCollisionLength( dimensions[1] );
       }
-      else if(    type == &Transformable::CollisionGeomType::CUBE && 
-                  dimensions.size() == 3  )
+      else if( type == &Transformable::CollisionGeomType::CUBE && 
+         dimensions.size() == 3  )
       {
-         if(   (dimensions[0] == dimensions[1]) &&
-               (dimensions[0] == dimensions[2]) &&
-               (dimensions[1] == dimensions[2]) )
+         if( (dimensions[0] == dimensions[1]) &&
+            (dimensions[0] == dimensions[2]) &&
+            (dimensions[1] == dimensions[2]) )
          {
             SetCollisionLength( dimensions[0] );
          }
