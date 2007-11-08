@@ -55,6 +55,13 @@ class DT_ABC_EXPORT Action: public dtCore::DeltaDrawable
       void SetTimeStep(float dt){mTimeStep = dt;}
       float GetTimeStep(){return mTimeStep;}
 
+      /***
+      *  Determines if OnNextStep should be called only once per frame or
+      *  possibly called multiple times with a time step over accumulated time.
+      */
+      void SetTickOncePerFrame( bool tickOncePerFrame ) { mTickOncePerFrame = tickOncePerFrame; }
+      bool GetTickOncePerFrame() const { return mTickOncePerFrame; }
+
       osg::Node* GetOSGNode(){return mNode.get();}
       const osg::Node* GetOSGNode()const{return mNode.get();}
 
@@ -92,6 +99,7 @@ protected:
    float mTotalTime;
    float mAccumTime;
    bool mIsRunning;
+   bool mTickOncePerFrame;
 
    dtCore::RefPtr<osg::Node> mNode;
 
