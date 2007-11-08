@@ -29,6 +29,7 @@
 namespace dtABC
 {
    class Action;
+   class ProximityTrigger;
 }
 
 namespace dtActors 
@@ -84,6 +85,14 @@ namespace dtActors
          * Creates a new trigger actor.
          */
         virtual void CreateActor();
+
+        /**
+         * Performs specific setup for the created ProximityTrigger instance.
+         * Override this function if a sub-class of ProximityTrigger is created
+         * by a sub-class of ProximityTriggerActorProxy.
+         * @param trigger The new trigger created in CreateActor that needs special initializations performed.
+         */
+        virtual void InitializeTrigger( dtABC::ProximityTrigger& trigger );
 
         /**
          * Destructor
