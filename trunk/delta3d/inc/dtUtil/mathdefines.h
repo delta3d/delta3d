@@ -69,8 +69,20 @@ namespace dtUtil
    template <typename Real>
    inline void Clamp(Real& x, const Real low, const Real high)
    {
-      if (x < low) x = low;
-      if (x > high) x = high;
+      ClampMin( x, low );
+      ClampMax( x, high );      
+   }
+
+   template <typename Real>
+   inline void ClampMax(Real& x, const Real high)
+   {      
+      if (x > high) { x = high; }
+   }
+
+   template <typename Real>
+   inline void ClampMin(Real& x, const Real low)
+   {      
+      if (x < low) { x = low; }
    }
 
    /** Apply a linear interpolation between the two supplied numbers using a
