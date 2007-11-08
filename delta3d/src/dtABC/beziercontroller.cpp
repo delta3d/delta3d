@@ -316,6 +316,11 @@ void BezierController::OnUnPause()
 //our drawable
 void BezierController::BezierPathDrawable::drawImplementation(osg::State& state) const 
 {
+   if(mPath.empty())
+   {
+      return;
+   }
+
    mController->CheckCreatePath();
 
    //we must maintain a copy of the path
