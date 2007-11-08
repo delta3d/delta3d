@@ -316,10 +316,6 @@ void BezierController::OnUnPause()
 //our drawable
 void BezierController::BezierPathDrawable::drawImplementation(osg::State& state) const 
 {
-   if(mPath.empty())
-   {
-      return;
-   }
 
    mController->CheckCreatePath();
 
@@ -329,6 +325,11 @@ void BezierController::BezierPathDrawable::drawImplementation(osg::State& state)
    {
       mController->GetCopyPath(mPath);
       mController->SetPathChanged(false);
+   }
+
+   if(mPath.empty())
+   {
+      return;
    }
 
    std::list<PathData>::const_iterator iter = mPath.begin();
