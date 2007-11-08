@@ -208,6 +208,8 @@ namespace dtAnim
 
          bool HasBone(int boneID) const;
 
+         bool HasAnimation(int animID) const;
+
          /// Add a new looping animation to blend in using the mixer
          bool BlendCycle(int id, float weight, float delay);
 
