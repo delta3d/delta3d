@@ -86,7 +86,7 @@ AudioManager::AudioManager( const std::string& name /*= "audiomanager"*/ )
 
    AddSender( &dtCore::System::GetInstance() );
 
-   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
+   //CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
    alutInit( 0L, NULL );
    CheckForError("alutInit( 0L, NULL )", __FUNCTION__, __LINE__);
 }
@@ -166,7 +166,7 @@ AudioManager::~AudioManager()
          mSoundRecycle.pop();
 
       alutExit();
-      CheckForError("alutExit()", __FUNCTION__, __LINE__);
+      //CheckForError("alutExit()", __FUNCTION__, __LINE__);
 
       RemoveSender( &dtCore::System::GetInstance() );
    }
@@ -211,13 +211,13 @@ bool  AudioManager::CheckForError( const std::string& userMessage,
                                   int lineNumber)
 {
    ALint error = 0; 
-   //if((error = alGetError()) != AL_NO_ERROR)
-   //{
-   //   std::ostringstream finalStream;
-   //   finalStream << "User Message [" << userMessage << "] " << "OpenALMessage [" << alGetString(error) << "] Line " << lineNumber;
-   //   dtUtil::Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__, finalStream.str().c_str());
-   //   return AL_TRUE;
-   //}
+   if((error = alGetError()) != AL_NO_ERROR)
+   {
+      std::ostringstream finalStream;
+      finalStream << "User Message [" << userMessage << "] " << "OpenALMessage [" << alGetString(error) << "] Line " << lineNumber;
+      dtUtil::Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__, finalStream.str().c_str());
+      return AL_TRUE;
+   }
    return AL_FALSE;
 }
 
