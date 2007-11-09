@@ -529,6 +529,7 @@ void FPSMotionModel::UpdateMouse(const double deltaTime)
    newP = hpr[1] + mLookUpDownCtrl * mMaximumTurnSpeed * deltaTime;
    dtUtil::Clamp(newP, -89.9f, 89.9f); //stay away from 90.0 as it causes funky gimbal lock
    mLookUpDownAxis->SetState(0.0f);//necessary to stop camera drifting down
+   mTurnLeftRightAxis->SetState(0.0f); //necessary to stop camera drifting left
 
    transform.SetRotation(mHeading, newP, 0.f);
    GetTarget()->SetTransform(transform); 
