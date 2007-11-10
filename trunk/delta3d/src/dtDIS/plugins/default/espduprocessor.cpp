@@ -54,10 +54,9 @@ void ESPduProcessor::Process(const DIS::Pdu& packet)
       mGM->GetAllActors( proxies );
 
       ///\todo add support for this when delta3d allows observation of the DIS properties
-      dtDIS::details::HasProperty hasprop( dtDIS::EntityPropertyName::ENTITYID );
-      std::for_each( proxies.begin() , proxies.end() , hasprop );
-
-      size_t matches = hasprop.GetPassedActors().size();
+      dtDIS::details::HasProperty hasprop( dtDIS::EntityPropertyName::ENTITYID ) ;
+      hasprop = std::for_each( proxies.begin() , proxies.end() , hasprop ) ;
+      size_t matches = hasprop.GetPassedActors().size() ;
 
       // didn't have an actor that was posing as this Entity
       if( matches < 1 )  // need to create a new actor
