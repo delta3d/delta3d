@@ -50,7 +50,7 @@ namespace dtDIS
          const ActorVector& GetPassedActors() const;
 
       private:
-         HasProperty& operator =(const HasProperty& hp);  // not implemented by design
+ //        HasProperty& operator =(const HasProperty& hp);  // not implemented by design
 
          ActorVector mActors;
 
