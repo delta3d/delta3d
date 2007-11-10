@@ -1,5 +1,5 @@
 #include <osg/MatrixTransform>
-#include <osg/Geode>
+#include <osg/Node>
 #include <osg/Timer>
 #include <osg/Texture2D> //Cal3DLoader needs this
 
@@ -23,13 +23,13 @@ using namespace dtAnim;
 
 CharDrawable::CharDrawable(Cal3DModelWrapper* wrapper)
    : dtCore::Transformable()
-   , mGeode(new osg::Geode())
+   , mNode(new osg::Node())
    , mAnimator(new Cal3DAnimator(wrapper))
    , mLastMeshCount(0)
 {
    AddSender(&dtCore::System::GetInstance());
 
-   GetMatrixNode()->addChild(mGeode.get());
+   GetMatrixNode()->addChild(mNode.get());
 
    SetCal3DWrapper( wrapper );
 }
@@ -59,7 +59,7 @@ void CharDrawable::OnMessage(dtCore::Base::MessageData *data)
       if (mLastMeshCount != wrapper->GetMeshCount())
       {
          //there are a different number of meshes, better rebuild our drawables
-         RebuildSubmeshes(wrapper, mGeode.get());
+         RebuildSubmeshes(wrapper, mNode.get());
          mLastMeshCount = wrapper->GetMeshCount();
       }
 
@@ -70,18 +70,18 @@ void CharDrawable::OnMessage(dtCore::Base::MessageData *data)
 /** Will delete all existing drawables added to the geode, then add in a whole
   * new set.
   */
-void CharDrawable::RebuildSubmeshes(Cal3DModelWrapper* wrapper, osg::Geode* geode)
+void CharDrawable::RebuildSubmeshes(Cal3DModelWrapper* wrapper, osg::Node* geode)
 {
    GetMatrixNode()->removeChild(geode);
-   dtCore::RefPtr<osg::Geode> newGeode = Cal3DDatabase::GetInstance().GetNodeBuilder().CreateGeode(wrapper);
-   GetMatrixNode()->addChild(newGeode.get());
-   mGeode = newGeode;
+   dtCore::RefPtr<osg::Node> newNode = Cal3DDatabase::GetInstance().GetNodeBuilder().CreateNode(wrapper);
+   GetMatrixNode()->addChild(newNode.get());
+   mNode = newNode;
 }
 
 void CharDrawable::SetCal3DWrapper(Cal3DModelWrapper* wrapper)
 {
    mAnimator->SetWrapper(wrapper);
-   RebuildSubmeshes(wrapper, mGeode.get());
+   RebuildSubmeshes(wrapper, mNode.get());
    mLastMeshCount = wrapper->GetMeshCount();
 }
 

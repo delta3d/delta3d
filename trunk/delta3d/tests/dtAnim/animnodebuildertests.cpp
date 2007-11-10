@@ -98,8 +98,8 @@ namespace dtAnim
             nodeBuilder.SetCreate(AnimNodeBuilder::CreateFunc(&nodeBuilder, &AnimNodeBuilder::CreateHardware));
             mHelper->LoadModel(mModelPath);
 
-            osg::Geode* geode = mHelper->GetGeode();
-            CheckGeode(geode, true);
+            osg::Node* node = mHelper->GetNode();
+            CheckGeode(dynamic_cast<osg::Geode*>(node), true);
             Cal3DModelData* modelData = Cal3DDatabase::GetInstance().GetModelData(*mHelper->GetModelWrapper());
             CPPUNIT_ASSERT(modelData->GetVertexVBO() != 0);
             CPPUNIT_ASSERT(modelData->GetIndexVBO() != 0);
@@ -121,7 +121,7 @@ namespace dtAnim
             nodeBuilder.SetCreate(AnimNodeBuilder::CreateFunc(&nodeBuilder, &AnimNodeBuilder::CreateSoftware));
             mHelper->LoadModel(mModelPath);
 
-            CheckGeode(mHelper->GetGeode(), false);
+            CheckGeode(dynamic_cast<osg::Geode*>(mHelper->GetNode()), false);
             
          }
          

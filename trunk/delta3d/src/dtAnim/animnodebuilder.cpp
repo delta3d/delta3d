@@ -96,13 +96,13 @@ void AnimNodeBuilder::SetCreate(const CreateFunc& pCreate)
 }
 
 
-dtCore::RefPtr<osg::Geode> AnimNodeBuilder::CreateGeode(Cal3DModelWrapper* pWrapper)
+dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateNode(Cal3DModelWrapper* pWrapper)
 {
    return mCreateFunc(pWrapper);
 }
 
 
-dtCore::RefPtr<osg::Geode> AnimNodeBuilder::CreateSoftware(Cal3DModelWrapper* pWrapper)
+dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateSoftware(Cal3DModelWrapper* pWrapper)
 {
    if(pWrapper == NULL)
    {
@@ -136,7 +136,7 @@ dtCore::RefPtr<osg::Geode> AnimNodeBuilder::CreateSoftware(Cal3DModelWrapper* pW
    return geode;
 }
 
-dtCore::RefPtr<osg::Geode> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWrapper)
+dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWrapper)
 {
    if(pWrapper == NULL)
    {
@@ -320,7 +320,7 @@ dtCore::RefPtr<osg::Geode> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pW
    }
 
 
-   return geode;
+   return geode.get();
 }
 
 

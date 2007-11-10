@@ -115,8 +115,8 @@ void Viewer::OnLoadCharFile( const QString &filename )
    // try to clean up the scene graph
    if (mCharacter.valid())
    {        
-      mShadeDecorator->removeChild(mCharacter->GetGeode());
-      mWireDecorator->removeChild(mCharacter->GetGeode());
+      mShadeDecorator->removeChild(mCharacter->GetNode());
+      mWireDecorator->removeChild(mCharacter->GetNode());
       mCharacter = NULL;
    }
 
@@ -156,8 +156,8 @@ void Viewer::OnLoadCharFile( const QString &filename )
    }
 
    // set up the viewer's scene graph
-   mShadeDecorator->addChild(mCharacter->GetGeode());
-   mWireDecorator->addChild(mCharacter->GetGeode());
+   mShadeDecorator->addChild(mCharacter->GetNode());
+   mWireDecorator->addChild(mCharacter->GetNode());
    dtCore::RefPtr<Cal3DModelWrapper> wrapper = mCharacter->GetCal3DWrapper();
 
    //get all the data for animations and tell the world

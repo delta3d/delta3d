@@ -173,7 +173,7 @@ namespace dtAnim
          
          void TestEmptyHelper()
          {
-            CPPUNIT_ASSERT(mHelper->GetGeode() == NULL);
+            CPPUNIT_ASSERT(mHelper->GetNode() == NULL);
             CPPUNIT_ASSERT(mHelper->GetAnimator() == NULL);
             CPPUNIT_ASSERT(mHelper->GetModelWrapper() == NULL);
             std::vector<const Animatable*> toFill;
