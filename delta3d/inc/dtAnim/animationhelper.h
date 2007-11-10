@@ -33,7 +33,7 @@
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
 {
-   class Geode;
+   class Node;
 }
 /// @endcond
 
@@ -117,12 +117,12 @@ namespace dtAnim
          /**
           * @return the osg::Geode() created by the builder on LoadModel
           */
-         osg::Geode* GetGeode();
+         osg::Node* GetNode();
 
          /**
           * @return the osg::Geode() created by the builder on LoadModel
           */
-         const osg::Geode* GetGeode() const;
+         const osg::Node* GetNode() const;
 
          /**
           * @return The Cal3DAnimator created on LoadModel
@@ -198,7 +198,7 @@ namespace dtAnim
       private:
 
          bool mGroundClamp;
-         dtCore::RefPtr<osg::Geode> mGeode;
+         dtCore::RefPtr<osg::Node> mNode;
          dtCore::RefPtr<Cal3DAnimator> mAnimator;
          dtCore::RefPtr<SequenceMixer> mSequenceMixer;
          dtCore::RefPtr<AttachmentController> mAttachmentController;

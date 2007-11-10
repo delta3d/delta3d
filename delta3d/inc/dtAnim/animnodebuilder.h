@@ -50,7 +50,7 @@ namespace dtAnim
 class	DT_ANIM_EXPORT AnimNodeBuilder: public osg::Referenced
 {
 public:
-   typedef dtUtil::Functor<dtCore::RefPtr<osg::Geode>, TYPELIST_1(Cal3DModelWrapper*)> CreateFunc;
+   typedef dtUtil::Functor<dtCore::RefPtr<osg::Node>, TYPELIST_1(Cal3DModelWrapper*)> CreateFunc;
 
    class Cal3DBoundingSphereCalculator : public osg::Node::ComputeBoundingSphereCallback
    {
@@ -69,10 +69,10 @@ public:
    CreateFunc& GetCreate();
    void SetCreate(const CreateFunc& pCreate);
 
-   dtCore::RefPtr<osg::Geode> CreateGeode(Cal3DModelWrapper* pWrapper);
+   dtCore::RefPtr<osg::Node> CreateNode(Cal3DModelWrapper* pWrapper);
 
-   virtual dtCore::RefPtr<osg::Geode> CreateSoftware(Cal3DModelWrapper* pWrapper);
-   virtual dtCore::RefPtr<osg::Geode> CreateHardware(Cal3DModelWrapper* pWrapper);
+   virtual dtCore::RefPtr<osg::Node> CreateSoftware(Cal3DModelWrapper* pWrapper);
+   virtual dtCore::RefPtr<osg::Node> CreateHardware(Cal3DModelWrapper* pWrapper);
 
 protected:
    virtual ~AnimNodeBuilder();

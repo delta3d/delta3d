@@ -40,7 +40,7 @@
 
 #include <dtUtil/log.h>
 
-#include <osg/Geode>
+#include <osg/Node>
 #include <osg/Texture2D>
 
 
@@ -52,7 +52,7 @@ const std::string AnimationHelper::PROPERTY_SKELETAL_MESH("Skeletal Mesh");
    /////////////////////////////////////////////////////////////////////////////////
 AnimationHelper::AnimationHelper()
 : mGroundClamp(false)
-, mGeode(NULL)
+, mNode(NULL)
 , mAnimator(NULL)
 , mSequenceMixer(new SequenceMixer())
 , mAttachmentController(new AttachmentController())
@@ -115,7 +115,7 @@ bool AnimationHelper::LoadModel(const std::string& pFilename)
       if (newModel.valid())
       {
          mAnimator = new Cal3DAnimator(newModel.get());
-         mGeode = database.GetNodeBuilder().CreateGeode(newModel.get());
+         mNode = database.GetNodeBuilder().CreateNode(newModel.get());
          
          const Cal3DModelData*  modelData = database.GetModelData(*newModel);
          if(modelData == NULL)
@@ -143,7 +143,7 @@ bool AnimationHelper::LoadModel(const std::string& pFilename)
    else
    {
       mAnimator = NULL;
-      mGeode = NULL;
+      mNode = NULL;
       mSequenceMixer->ClearRegisteredAnimations();
    }
    return true;
@@ -163,15 +163,15 @@ void AnimationHelper::GetActorProperties(dtDAL::ActorProxy& pProxy,
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-osg::Geode* AnimationHelper::GetGeode()
+osg::Node* AnimationHelper::GetNode()
 {
-   return mGeode.get();
+   return mNode.get();
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-const osg::Geode* AnimationHelper::GetGeode() const
+const osg::Node* AnimationHelper::GetNode() const
 {
-   return mGeode.get();
+   return mNode.get();
 }
 
 /////////////////////////////////////////////////////////////////////////////////

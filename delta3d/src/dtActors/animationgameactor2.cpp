@@ -64,8 +64,8 @@ namespace dtActors
       mHelper->LoadModel(modelFile);
       if (!modelFile.empty())
       {
-         dtCore::RefPtr<osg::Geode> geode = mHelper->GetGeode();
-         GetMatrixNode()->addChild(geode.get());
+         osg::Node* node = mHelper->GetNode();
+         GetMatrixNode()->addChild(node);
       }
    }
 

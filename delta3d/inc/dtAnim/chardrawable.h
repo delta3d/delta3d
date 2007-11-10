@@ -22,15 +22,15 @@
 #ifndef chardrawable_h__
 #define chardrawable_h__
 
-#include "dtCore/transformable.h"
-#include "dtAnim/export.h"
+#include <dtCore/transformable.h>
+#include <dtAnim/export.h>
 
 class CalModel;
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
 {
-   class Geode;
+   class Node;
 }
 /// @endcond
 
@@ -65,7 +65,7 @@ namespace dtAnim
       void OnMessage(dtCore::Base::MessageData *data);
 
       Cal3DModelWrapper* GetCal3DWrapper();
-      osg::Geode* GetGeode() { return mGeode.get(); }
+      osg::Node* GetNode() { return mNode.get(); }
 
       /// change the data this class is viewing.
       void SetCal3DWrapper(Cal3DModelWrapper* wrapper);
@@ -73,13 +73,13 @@ namespace dtAnim
    private:
       CharDrawable();
 
-      dtCore::RefPtr<osg::Geode>    mGeode;
+      dtCore::RefPtr<osg::Node>    mNode;
       dtCore::RefPtr<Cal3DAnimator> mAnimator;
 
       int mLastMeshCount;
 
       ///Delete and rebuild all the SubMeshDrawables required, based on the CalRenderer
-      void RebuildSubmeshes(Cal3DModelWrapper* wrapper, osg::Geode* geode);
+      void RebuildSubmeshes(Cal3DModelWrapper* wrapper, osg::Node* geode);
    };
 }
 #endif // chardrawable_h__
