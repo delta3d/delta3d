@@ -54,10 +54,13 @@ namespace dtActors
    ///////////////////////////////////////////////////////////////////////////////
     SoundActorProxy::~SoundActorProxy()
     {
-        dtAudio::Sound *snd = static_cast<dtAudio::Sound*>(GetActor());
+         dtAudio::Sound *snd = static_cast<dtAudio::Sound*>(GetActor());
 
-        if(snd->GetFilename())
-            snd->UnloadFile();
+         if(snd != NULL)
+         {
+            if(snd->GetFilename())
+               snd->UnloadFile();
+         }
     }
 
     ///////////////////////////////////////////////////////////////////////////////

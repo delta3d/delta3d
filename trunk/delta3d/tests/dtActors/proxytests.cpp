@@ -922,7 +922,8 @@ void ProxyTest::TestProxies()
          if (actors[i]->GetName() == "Cloud Plane" ||
              actors[i]->GetName() == "Cloud Dome"  ||
              actors[i]->GetName() == "Environment" || 
-             actors[i]->GetName() == "Test Environment Actor") 
+             actors[i]->GetName() == "Test Environment Actor" ||
+             actors[i]->GetName() == "Sound Actor") 
             continue;
          
          proxy = libMgr.CreateActorProxy(*actors[i]).get();
