@@ -23,12 +23,35 @@
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/actorproxyicon.h>
 #include <dtAudio/dtaudio.h>
+#include <dtGame/gamemanager.h>
+#include <dtGame/invokable.h>
+#include <dtUtil/mathdefines.h>
 
 using namespace dtAudio;
 using namespace dtDAL;
 
 namespace dtActors
 {
+   ///////////////////////////////////////////////////////////////////////////////
+   SoundActorProxy::SoundActorProxy()
+      : mRandomSoundEffect(false)
+      , mMinRandomTime(5)
+      , mMaxRandomTime(30)
+      , mOffsetTime(0)
+   {
+      /**
+      * @note You must instantiate, configure, and shutdown the
+      * audiomanager in your application
+      * ex.
+      * \code
+      dtAudio::AudioManager::Instantiate();
+      dtAudio::AudioManager::GetManager()->Config(AudioConfigData&)
+      * \endcode
+      */
+      SetClassName("dtAudio::Sound");
+   }
+   
+   ///////////////////////////////////////////////////////////////////////////////
     SoundActorProxy::~SoundActorProxy()
     {
         dtAudio::Sound *snd = static_cast<dtAudio::Sound*>(GetActor());
@@ -40,7 +63,42 @@ namespace dtActors
     ///////////////////////////////////////////////////////////////////////////////
     void SoundActorProxy::CreateActor()
     {
-        SetActor(*dtAudio::AudioManager::GetInstance().NewSound());
+         SetActor(*dtAudio::AudioManager::GetInstance().NewSound());
+    }
+
+    ///////////////////////////////////////////////////////////////////////
+    void SoundActorProxy::OnEnteredWorld()
+    {
+      if(mRandomSoundEffect)
+      {
+         int time = dtUtil::RandRange(mMinRandomTime, mMaxRandomTime) + mOffsetTime;
+         GetGameManager()->SetTimer("PlaySoundTimer", this, time);
+      }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void SoundActorProxy::BuildInvokables()
+    {
+       dtGame::GameActorProxy::BuildInvokables();
+
+       AddInvokable(*new dtGame::Invokable("HandleActorTimers",
+          dtDAL::MakeFunctor(*this, &SoundActorProxy::HandleActorTimers)));
+
+       RegisterForMessagesAboutSelf(dtGame::MessageType::INFO_TIMER_ELAPSED, "HandleActorTimers");
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void SoundActorProxy::HandleActorTimers(const dtGame::Message& msg)
+    {
+       if(msg.GetMessageType() == dtGame::MessageType::INFO_TIMER_ELAPSED)
+       {
+          if(mRandomSoundEffect)
+          {
+             Play();
+             int time = dtUtil::RandRange(mMinRandomTime, mMaxRandomTime);
+             GetGameManager()->SetTimer("PlaySoundTimer", this, time);
+          }
+       }
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -140,6 +198,31 @@ namespace dtActors
             MakeFunctor(*this, &SoundActorProxy::SetVelocity),
             MakeFunctorRet(*this, &SoundActorProxy::GetVelocity),
             "Sets the velocity of a sound.", GROUPNAME));
+
+        // new properties
+        AddProperty(new IntActorProperty("Max Random Time", "Max Random Time",
+           MakeFunctor(*this, &SoundActorProxy::SetMaxRandomTime),
+           MakeFunctorRet(*this, &SoundActorProxy::GetMaxRandomTime),
+           "Coincides with Play As Random SFX flag", GROUPNAME));
+
+        AddProperty(new IntActorProperty("Min Random Time", "Min Random Time",
+           MakeFunctor(*this, &SoundActorProxy::SetMinRandomTime),
+           MakeFunctorRet(*this, &SoundActorProxy::GetMinRandomTime),
+           "Coincides with Play As Random SFX flag", GROUPNAME));
+
+        AddProperty(new IntActorProperty("Initial offset Time", "Initial offset Time",
+           MakeFunctor(*this, &SoundActorProxy::SetOffsetTime),
+           MakeFunctorRet(*this, &SoundActorProxy::GetOffsetTime),
+           "Used initially so all sounds that are random are not playing at the start.", GROUPNAME));
+
+        AddProperty(new BooleanActorProperty("Play As Random SFX", "Play As Random SFX",
+           MakeFunctor(*this, &SoundActorProxy::SetToHaveRandomSoundEffect),
+           MakeFunctorRet(*this, &SoundActorProxy::IsARandomSoundEffect),
+           "Will have a timer go off and play sound so often", GROUPNAME));
+
+        AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::SOUND, 
+           "The Sound Effect", "The Sound Effect", dtDAL::MakeFunctor(*this, &SoundActorProxy::LoadFile), 
+           "Loads the sound for this to use"));
     }
 
     ///////////////////////////////////////////////////////////////////////////////

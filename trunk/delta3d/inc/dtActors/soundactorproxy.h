@@ -16,7 +16,7 @@
 * along with this library; if not, write to the Free Software Foundation, Inc.,
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
-* William E. Johnson II
+* William E. Johnson II, Allen Danklefsen
 */
 #ifndef DELTA_SOUND_ACTOR_PROXY
 #define DELTA_SOUND_ACTOR_PROXY
@@ -24,6 +24,7 @@
 #include "dtDAL/plugin_export.h"
 #include "dtDAL/transformableactorproxy.h"
 #include <dtDAL/exceptionenum.h>
+#include <dtGame/gameactor.h>
 
 namespace dtActors 
 {
@@ -31,85 +32,95 @@ namespace dtActors
      * @class SoundActorProxy
      * @brief This proxy wraps the Sound Delta3D object.
      */
-    class DT_PLUGIN_EXPORT SoundActorProxy : public dtDAL::TransformableActorProxy 
+    class DT_PLUGIN_EXPORT SoundActorProxy : public dtGame::GameActorProxy 
     {
-    public:
+       public:
 
-        /**
-         * Constructor
-         */
-        SoundActorProxy()
-        {
-            /**
-             * @note You must instantiate, configure, and shutdown the
-             * audiomanager in your application
-             * ex.
-             * \code
-             dtAudio::AudioManager::Instantiate();
-             dtAudio::AudioManager::GetManager()->Config(AudioConfigData&)
-             * \endcode
-             */
-            SetClassName("dtAudio::Sound");
-        }
+           /**
+            * Constructor
+            */
+           SoundActorProxy();
+         
+           /**
+            * Adds the properties that are common to all Delta3D physical objects.
+            */
+           virtual void BuildPropertyMap();
 
-        /**
-         * Adds the properties that are common to all Delta3D physical objects.
-         */
-        virtual void BuildPropertyMap();
+           /**
+            * Loads in a sound file
+            * @param fileName The file to load
+            */
+           void LoadFile(const std::string &fileName);
 
-        /**
-         * Loads in a sound file
-         * @param fileName The file to load
-         */
-        void LoadFile(const std::string &fileName);
+           /**
+            * Sets the direction
+            * @param dir The direction to Set
+            */
+           void SetDirection(const osg::Vec3 &dir);
 
-        /**
-         * Sets the direction
-         * @param dir The direction to Set
-         */
-        void SetDirection(const osg::Vec3 &dir);
+           /**
+            * Gets the direction
+            * @return The current direction
+            */
+           osg::Vec3 GetDirection();
 
-        /**
-         * Gets the direction
-         * @return The current direction
-         */
-        osg::Vec3 GetDirection();
+           /**
+            * Sets the velocity
+            * @param vel The velocity to Set
+            */
+           void SetVelocity(const osg::Vec3 &vel);
 
-        /**
-         * Sets the velocity
-         * @param vel The velocity to Set
-         */
-        void SetVelocity(const osg::Vec3 &vel);
+           /**
+            * Gets the velocity
+            * @return The current velocity
+            */
+           osg::Vec3 GetVelocity();
 
-        /**
-         * Gets the velocity
-         * @return The current velocity
-         */
-        osg::Vec3 GetVelocity();
+           /**
+            * Plays the sound
+            */
+           void Play();
 
-        /**
-         * Plays the sound
-         */
-        void Play();
+           /**
+            * Gets the render mode of sound actor proxies.
+            * @return RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON.  Although this may seem a little
+            *  strange considering you cannot actually draw a sound, however, this informs the
+            *  world that this proxy's actor and billboard should be represented in the scene.
+            */
+           virtual const ActorProxy::RenderMode& GetRenderMode() 
+           {
+               return ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON;
+           }
 
-        /**
-         * Gets the render mode of sound actor proxies.
-         * @return RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON.  Although this may seem a little
-         *  strange considering you cannot actually draw a sound, however, this informs the
-         *  world that this proxy's actor and billboard should be represented in the scene.
-         */
-        virtual const ActorProxy::RenderMode& GetRenderMode() 
-        {
-            return ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON;
-        }
+           /**
+            * Gets the billboard icon associated with sound actor proxies.
+            * @return
+            */
+           virtual dtDAL::ActorProxyIcon* GetBillBoardIcon();
 
-        /**
-         * Gets the billboard icon associated with sound actor proxies.
-         * @return
-         */
-        virtual dtDAL::ActorProxyIcon* GetBillBoardIcon();
+           /// Builds the invokables of this actor
+           void BuildInvokables();
 
-    protected:
+           // timers for the actor
+           void HandleActorTimers(const dtGame::Message& msg);
+
+           // makes initial timer start off
+           void OnEnteredWorld();
+
+           // properties for variables in this class
+           bool IsARandomSoundEffect() const {return mRandomSoundEffect;}
+           void SetToHaveRandomSoundEffect(bool value) {mRandomSoundEffect = value;}
+           
+           void SetMinRandomTime(int value) {mMinRandomTime = value;}
+           int GetMinRandomTime() const {return mMinRandomTime;}
+           
+           void SetMaxRandomTime(int value) {mMaxRandomTime = value;}
+           int GetMaxRandomTime() const {return mMaxRandomTime;}
+           
+           int GetOffsetTime() const {return mOffsetTime;}
+           void SetOffsetTime(int value) {mOffsetTime = value;}
+
+      protected:
 
         /**
          * Creates a new positional sound.
@@ -120,7 +131,20 @@ namespace dtActors
          * Destructor
          */
         virtual ~SoundActorProxy();
+      
+      private:
 
+         /// Does the sound effect play at a random time
+         bool mRandomSoundEffect;
+
+         /// What is the minimum amount for rand to calculate
+         int mMinRandomTime;
+
+         /// What is the maximum amount for rand to calculate
+         int mMaxRandomTime;
+
+         /// In case you have many objects all playing at random, this is so they wont overlap
+         int mOffsetTime;
     };
 }
 
