@@ -52,6 +52,7 @@
 #include <dtDAL/environmentactor.h>
 #include <dtDAL/gameeventmanager.h>
 #include <dtDAL/gameevent.h>
+#include <dtAudio/audiomanager.h>
 
 #include <dtDAL/physicalactorproxy.h>
 
@@ -141,6 +142,8 @@ void MapTests::setUp()
         else if (fileUtils.FileExists(rbodyToDelete))
             fileUtils.FileDelete(rbodyToDelete);
 
+        dtAudio::AudioManager::Instantiate();
+        dtAudio::AudioManager::GetInstance().Config(AudioConfigData(32));
 
         dtDAL::Project::GetInstance().CreateContext("WorkingMapProject");
         dtDAL::Project::GetInstance().SetContext("WorkingMapProject");
@@ -162,6 +165,8 @@ void MapTests::setUp()
 ///////////////////////////////////////////////////////////////////////////////////////
 void MapTests::tearDown()
 {
+   dtAudio::AudioManager::Destroy();
+
    dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
    bool shouldPopDir;
    

@@ -241,7 +241,8 @@ void MessageTests::createActors(dtDAL::Map& map)
           actorTypes[i]->GetName() == "Cloud Dome"  ||
           actorTypes[i]->GetName() == "Environment" || 
           actorTypes[i]->GetName() == "Test Environment Actor" ||
-          actorTypes[i]->GetName() == "Waypoint") 
+          actorTypes[i]->GetName() == "Waypoint" ||
+          actorTypes[i]->GetName() == "Sound Actor") 
       {
          skippedActors ++;
          continue; // go to next actor
