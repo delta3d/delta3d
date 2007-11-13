@@ -22,7 +22,8 @@
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtCore/mouse.h>
 #include <dtCore/genericmouselistener.h>
-
+#include <dtABC/application.h>
+#include <dtCore/system.h>
 
 namespace dtTest
 {
@@ -33,6 +34,7 @@ namespace dtTest
       CPPUNIT_TEST( TestObservers );
       CPPUNIT_TEST( TestGenericObserver );
       CPPUNIT_TEST( TestAxes );
+      //CPPUNIT_TEST( TestMousePosition );
       CPPUNIT_TEST_SUITE_END();
 
       public:
@@ -48,8 +50,12 @@ namespace dtTest
          // Test change of state on the default mouse axes
          void TestAxes();
 
+         // test setting and getting the mouse position
+         void TestMousePosition();
+
       private:
    };
+
 
    /// mouse test validator
    class MouseObserver : public dtCore::MouseListener
@@ -444,4 +450,27 @@ void MouseTests::TestAxes()
    ms->MouseScroll(osgGA::GUIEventAdapter::SCROLL_UP);
 
    CPPUNIT_ASSERT_DOUBLES_EQUAL( 4.0, ms->GetAxis(2)->GetState(), 0.001 );
+}
+
+void MouseTests::TestMousePosition()
+{
+   using namespace dtCore; 
+
+   //Had to use an Application, something to do with the osg Event queue
+   //needing to be tickled.  Kind of a wacky test since it will actual
+   //move the mouse pointer.  This test could fail if someone is moving
+   //the mouse while the test is running.
+
+   RefPtr<dtABC::Application> app = new dtABC::Application();
+   app->Config();
+   System::GetInstance().Start();
+   System::GetInstance().Step();
+
+   const osg::Vec2 newPos(0.5f, 0.6f);
+   app->GetMouse()->SetPosition(newPos);
+   System::GetInstance().Step(); //required to get the event processed back to Delta3D
+
+   //The Mouse position should be the same as what we just set
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Mouse was not set correctly",
+      newPos, app->GetMouse()->GetPosition());
 }
