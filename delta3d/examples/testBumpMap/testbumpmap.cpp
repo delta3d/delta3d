@@ -4,6 +4,7 @@
 #include <dtCore/object.h>
 #include <dtCore/camera.h>
 #include <dtCore/deltawin.h>
+#include <osgGA/GUIEventAdapter>
 
 #include "bumpmapdrawable.h"
 
@@ -61,17 +62,15 @@ public:
 
    }
 
-   bool KeyPressed(const dtCore::Keyboard* keyboard, 
-      Producer::KeyboardKey key,
-      Producer::KeyCharacter character)
+   bool KeyPressed(const dtCore::Keyboard* keyboard, int key)
    {
       bool verdict(false);
-      if (key == Producer::Key_Escape)
+      if (key == osgGA::GUIEventAdapter::KEY_Escape)
       {
          this->Quit();
          verdict = true;
       }
-      else if(key == Producer::Key_space)
+      else if(key == ' ')
       {  
          mWireframe = !mWireframe;
          mBumpMapDrawable->SetWireframe(mWireframe);

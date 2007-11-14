@@ -19,6 +19,9 @@ class TestMultiWin : public dtABC::Application
       dtCore::RefPtr<dtCore::DeltaWin> mWin2;
       dtCore::RefPtr<dtCore::Camera> mCam2;
       dtCore::RefPtr<dtCore::Camera> mCam3;
+      
+      dtCore::RefPtr<dtCore::View> mView2;
+      dtCore::RefPtr<dtCore::View> mView3;
 };
 
 #endif // DELTA_testMultiWin

@@ -34,7 +34,10 @@ void TestWinApp::Config()
    GetWindow()->GetPosition(x, y, w, h);
    GetWindow()->ShowCursor(false);
 
-   mGUI = new dtGUI::CEUIDrawable( GetWindow(), mScriptModule);
+   mGUI = new dtGUI::CEUIDrawable( GetWindow(),
+                                   GetKeyboard(),
+                                   GetMouse(),
+                                   mScriptModule);
 
    dtGUI::ScriptModule::HandlerFunctor handler0( dtUtil::MakeFunctor( &TestWinApp::FullScreenToggleCB, this ) );
    mScriptModule->AddCallback("FullScreenToggleCB", handler0 );

@@ -63,7 +63,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtUtild.lib dtCored.lib dtDALd.lib dtAId.lib dtGamed.lib dtABCd.lib dtLMSd.lib dtGUId.lib dtActorsd.lib dtAudiod.lib dtAnimd.lib testGameActorLibraryd.lib CEGUIBase_d.lib cppunitd.lib xerces-c_2D.lib osgSimd.lib"
+				AdditionalDependencies="dtUtild.lib dtCored.lib dtDALd.lib dtAId.lib dtGamed.lib dtABCd.lib dtLMSd.lib dtGUId.lib dtActorsd.lib dtAudiod.lib dtAnimd.lib testGameActorLibraryd.lib CEGUIBase_d.lib cppunitd.lib xerces-c_2D.lib odeD.lib osgSimd.lib osgD.lib osgDBD.lib osgGAD.lib osgViewerD.lib osgParticleD.lib osgUtilD.lib"
 				OutputFile="../../../tests/UnitTestsMaind.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib"
@@ -146,7 +146,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtUtil.lib dtCore.lib dtDAL.lib dtAI.lib dtGame.lib dtABC.lib dtLMS.lib dtGUI.lib dtActors.lib dtAudio.lib dtAnim.lib testGameActorLibrary.lib CEGUIBase.lib cppunit.lib xerces-c_2.lib osgSim.lib"
+				AdditionalDependencies="dtUtil.lib dtCore.lib dtDAL.lib dtAI.lib dtGame.lib dtABC.lib dtLMS.lib dtGUI.lib dtActors.lib dtAudio.lib dtAnim.lib testGameActorLibrary.lib CEGUIBase.lib cppunit.lib xerces-c_2.lib ode.lib osgSim.lib osg.lib osgGA.lib osgDB.lib osgViewer.lib osgParticle.lib osgUtil.lib"
 				OutputFile="../../../tests/UnitTestsMain.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib"
@@ -477,6 +477,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\tests\dtUtil\versiontests.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\tests\dtCore\viewtests.cpp"
 				>
 			</File>
 			<File

@@ -63,7 +63,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtDALd.lib dtUtild.lib dtCored.lib OpenThreadsWin32d.lib OpenGL32.lib osgd.lib osgdbd.lib producerd.lib xerces-c_2D.lib"
+				AdditionalDependencies="dtDALd.lib dtUtild.lib dtCored.lib OpenThreadsd.lib OpenGL32.lib osgd.lib osgdbd.lib osgViewerD.lib xerces-c_2D.lib"
 				OutputFile="../../../bin/dtABCd.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -145,7 +145,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtDAL.lib dtUtil.lib dtCore.lib OpenThreadsWin32.lib OpenGL32.lib osg.lib osgdb.lib producer.lib xerces-c_2.lib"
+				AdditionalDependencies="dtDAL.lib dtUtil.lib dtCore.lib OpenThreads.lib OpenGL32.lib osg.lib osgdb.lib osgViewer.lib xerces-c_2.lib"
 				OutputFile="../../../bin/dtABC.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"

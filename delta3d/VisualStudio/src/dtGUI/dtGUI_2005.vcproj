@@ -62,7 +62,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCored.lib dtUtild.lib osgd.lib osgDBd.lib openthreadswin32d.lib producerd.lib CEGUIBase_d.lib OpenGLGUIRenderer_d.lib opengl32.lib"
+				AdditionalDependencies="dtCored.lib dtUtild.lib osgd.lib osgDBd.lib OpenThreadsd.lib CEGUIBase_d.lib OpenGLGUIRenderer_d.lib opengl32.lib"
 				OutputFile="../../../bin/dtGUId.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -146,7 +146,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCore.lib dtUtil.lib osg.lib osgDB.lib openthreadswin32.lib producer.lib CEGUIBase.lib OpenGLGUIRenderer.lib opengl32.lib"
+				AdditionalDependencies="dtCore.lib dtUtil.lib osg.lib osgDB.lib OpenThreads.lib CEGUIBase.lib OpenGLGUIRenderer.lib opengl32.lib"
 				OutputFile="../../../bin/dtGUI.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"

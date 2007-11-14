@@ -21,7 +21,7 @@ class TestAI : public dtABC::Application
 
       virtual void Config();
 
-      virtual bool KeyPressed(const dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character);
+      virtual bool KeyPressed(const dtCore::Keyboard* keyboard, int key);
 
       virtual void PreFrame( const double deltaFrameTime );
      

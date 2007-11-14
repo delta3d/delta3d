@@ -22,14 +22,12 @@ TestRecorder::~TestRecorder()
 }
 
 // inherited functions
-bool TestRecorder::KeyPressed(const dtCore::Keyboard* keyboard,
-                              Producer::KeyboardKey key,
-                              Producer::KeyCharacter character)
+bool TestRecorder::KeyPressed(const dtCore::Keyboard* keyboard, int key)
 {
    bool verdict(false);
    switch( key )
    {
-   case Producer::Key_R:  // start recording
+   case 'r':  // start recording
       {
          if( mRecorder->GetState() == CameraRecorder::Recording )
          {
@@ -45,7 +43,7 @@ bool TestRecorder::KeyPressed(const dtCore::Keyboard* keyboard,
          verdict = true;
       } break;
 
-   case Producer::Key_F:  // save to file
+   case 'f':  // save to file
       {
          LOG_ALWAYS("Saving file " + mFileHandle )
          mRecorder->SaveFile( mFileHandle );
@@ -53,7 +51,7 @@ bool TestRecorder::KeyPressed(const dtCore::Keyboard* keyboard,
          verdict = true;
       } break;
 
-   case Producer::Key_L:  // load from file
+   case 'l':  // load from file
       {
          LOG_ALWAYS("Loading file: " + mFileHandle)
          mRecorder->LoadFile( mFileHandle );
@@ -61,7 +59,7 @@ bool TestRecorder::KeyPressed(const dtCore::Keyboard* keyboard,
          verdict = true;
       } break;
 
-   case Producer::Key_P:  // play loaded file
+   case 'p':  // play loaded file
       {
          LOG_ALWAYS("Playing loaded data.")
          mRecorder->Play();
@@ -70,7 +68,7 @@ bool TestRecorder::KeyPressed(const dtCore::Keyboard* keyboard,
 
    default:   // don't care about the key
       {
-         verdict = BaseClass::KeyPressed(keyboard,key,character);
+         verdict = BaseClass::KeyPressed(keyboard,key);
       } break;
    }
 

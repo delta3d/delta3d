@@ -127,15 +127,15 @@ namespace dtCore
             DeviceVector::iterator devend = mDevices.end();
             while( deviter != devend && !button_found )
             {
-               InputDevice::ButtonVector& idbv = (*deviter)->GetButtons();
-               InputDevice::ButtonVector::iterator butiter = idbv.begin();
-               InputDevice::ButtonVector::iterator butend = idbv.end();
+               InputDevice::ButtonMap& idbv = (*deviter)->GetButtons();
+               InputDevice::ButtonMap::iterator butiter = idbv.begin();
+               InputDevice::ButtonMap::iterator butend = idbv.end();
                while( butiter != butend && !button_found )
                {
-                  if(button == (*butiter).get() )
+                  if(button == (*butiter).second.get() )
                   {
                      button_found = true;
-                     mCallback->ButtonMappingAcquired(new ButtonToButton( butiter->get() ));
+                     mCallback->ButtonMappingAcquired(new ButtonToButton( butiter->second.get() ));
                   }
 
                   butiter++;

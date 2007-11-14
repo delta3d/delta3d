@@ -116,7 +116,7 @@ void SendWindowDataMessage(Base* base, std::string message, WinData* userData)
 #ifdef WIN32
 void SetWinDataHWND(WinData* winData, long hwnd)
 {
-   winData->hwnd = Producer::Window(hwnd);
+   winData->hwnd = HWND(hwnd);
 }
 
 long GetWinDataHWND(WinData* winData)

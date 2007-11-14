@@ -63,7 +63,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCored.lib dtUtild.lib openthreadswin32d.lib osgd.lib osgDBd.lib OpenGL32.lib"
+				AdditionalDependencies="dtCored.lib dtUtild.lib openthreadsd.lib osgd.lib osgDBd.lib OpenGL32.lib"
 				OutputFile="../../../bin/dtAId.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -148,7 +148,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCore.lib dtUtil.lib openthreadswin32.lib osg.lib osgDB.lib OpenGL32.lib"
+				AdditionalDependencies="dtCore.lib dtUtil.lib openthreads.lib osg.lib osgDB.lib OpenGL32.lib"
 				OutputFile="../../../bin/dtAI.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"

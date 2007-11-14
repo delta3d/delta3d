@@ -65,7 +65,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="true"
-				AdditionalDependencies="dtDALd.lib Producerd.lib OpenThreadsWin32d.lib osgd.lib osgDBd.lib osgUtild.lib oded.lib dtCored.lib dtABCd.lib dtChard.lib dtAudiod.lib dtUtild.lib dtGamed.lib dtAId.lib dtAnimd.lib xerces-c_2D.lib"
+				AdditionalDependencies="dtDALd.lib OpenThreadsd.lib osgd.lib osgDBd.lib osgUtild.lib oded.lib dtCored.lib dtABCd.lib dtChard.lib dtAudiod.lib dtUtild.lib dtGamed.lib dtAId.lib dtAnimd.lib xerces-c_2D.lib"
 				OutputFile="..\..\..\bin\dtActorsd.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
@@ -151,7 +151,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="true"
-				AdditionalDependencies="dtDAL.lib Producer.lib OpenThreadsWin32.lib osg.lib osgDB.lib osgParticle.lib osgUtil.lib ode.lib dtCore.lib dtABC.lib dtChar.lib dtAudio.lib dtUtil.lib dtGame.lib dtAI.lib dtAnim.lib xerces-c_2.lib"
+				AdditionalDependencies="dtDAL.lib OpenThreads.lib osg.lib osgDB.lib osgParticle.lib osgUtil.lib ode.lib dtCore.lib dtABC.lib dtChar.lib dtAudio.lib dtUtil.lib dtGame.lib dtAI.lib dtAnim.lib xerces-c_2.lib"
 				OutputFile="..\..\..\bin\dtActors.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"

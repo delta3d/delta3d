@@ -4,8 +4,7 @@ srcs = env.SGlob( '*.cpp' )
 
 deps = [ 'dtCore', 'dtGame', 'dtABC', 'cal3d', 'dtUtil', 'dtDAL', 'dtAI',
          'OpenThreads', 'osg', 'osgDB', 'osgParticle',
-         'osgText', 'osgUtil', 'osgSim', 'osgFX',
-         'Producer' ] 
+         'osgText', 'osgUtil', 'osgSim', 'osgFX' ] 
 
 defines = []
 if env['OS'] == 'windows':

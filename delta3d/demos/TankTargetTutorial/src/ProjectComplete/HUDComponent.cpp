@@ -36,11 +36,14 @@
 
 
 //////////////////////////////////////////////////////////////////////////
-HUDComponent::HUDComponent(dtCore::DeltaWin *win, const std::string &name) :
+HUDComponent::HUDComponent(dtCore::DeltaWin *win, 
+                           dtCore::Keyboard *keyboard, 
+                           dtCore::Mouse *mouse,
+                           const std::string &name) :
    dtGame::GMComponent(name),
    mUnHandledMessages(0)
 {
-   SetupGUI(win);
+   SetupGUI(win, keyboard, mouse);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -122,12 +125,14 @@ void HUDComponent::OnAddedToGM()
 }
 
 //////////////////////////////////////////////////////////////////////////
-void HUDComponent::SetupGUI(dtCore::DeltaWin *win)
+void HUDComponent::SetupGUI(dtCore::DeltaWin *win, 
+                            dtCore::Keyboard *keyboard,
+                            dtCore::Mouse *mouse)
 {
    try
    {
       // Initialize CEGUI
-      mGUI = new dtGUI::CEUIDrawable(win);
+      mGUI = new dtGUI::CEUIDrawable(win, keyboard, mouse);
 
       // BEGIN - MAKE THIS PART OF BaseHUDComponent ???
       // probably have params for the scheme, the default font, and main win name

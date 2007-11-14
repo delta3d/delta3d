@@ -22,6 +22,9 @@
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtCore/inputmapper.h>
 
+#include <dtCore/logicalinputdevice.h>
+#include <dtCore/keyboard.h>
+
 namespace dtTest
 {
    /// unit tests for dtCore::Axis
@@ -29,6 +32,9 @@ namespace dtTest
    {
       CPPUNIT_TEST_SUITE( InputMapperTests );
       CPPUNIT_TEST( TestObservers );
+      CPPUNIT_TEST( AddFeaturesToLogicalInputDevice );
+      CPPUNIT_TEST( InvalidButtonGet );
+
       CPPUNIT_TEST_SUITE_END();
 
       public:
@@ -38,11 +44,18 @@ namespace dtTest
          ///\todo callback triggering and data flow to observers
          void TestObservers();
 
+         void AddFeaturesToLogicalInputDevice();
+
+         void InvalidButtonGet();
+
       private:
    };
+
 }
 
+
 using namespace dtTest;
+CPPUNIT_TEST_SUITE_REGISTRATION(InputMapperTests);
 
 void InputMapperTests::setUp()
 {
@@ -54,4 +67,41 @@ void InputMapperTests::tearDown()
 
 void InputMapperTests::TestObservers()
 {
+}
+
+
+void InputMapperTests::AddFeaturesToLogicalInputDevice()
+{
+   dtCore::RefPtr<dtCore::LogicalInputDevice> dev = new dtCore::LogicalInputDevice();
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("should have zero features", 0, dev->GetFeatureCount());
+
+   dtCore::RefPtr<dtCore::Keyboard> keyboard = new dtCore::Keyboard();
+
+   dtCore::LogicalButton *butt1 = dev->AddButton(
+                                                "action 1", 
+                                                keyboard->GetButton('1'),
+                                                0xAAAA
+                                                );
+
+   CPPUNIT_ASSERT_MESSAGE("1st LogicalButton wasn't added to the LogicalInputDevice correctly", butt1 != NULL);
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("should have one feature", 1, dev->GetFeatureCount());
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("should have one button", 1, dev->GetButtonCount());
+
+   dtCore::LogicalButton *butt2 = dev->AddButton(
+                                                "action 2", 
+                                                keyboard->GetButton('2'),
+                                                0xAAAB
+                                                );
+
+   CPPUNIT_ASSERT_MESSAGE("2nd LogicalButton wasn't added to the LogicalInputDevice correctly", butt2 != NULL);
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("should have two features", 2, dev->GetFeatureCount());
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("should have two buttons", 2, dev->GetButtonCount());
+}
+
+
+void InputMapperTests::InvalidButtonGet()
+{
+   dtCore::RefPtr<dtCore::InputDevice> dev = new dtCore::InputDevice();
+   CPPUNIT_ASSERT_MESSAGE("Should be NULL", NULL == dev->GetButton(123) );
 }

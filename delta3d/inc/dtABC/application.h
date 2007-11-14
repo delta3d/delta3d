@@ -28,6 +28,12 @@
 #include <string>
 #include <map>
 
+namespace osgViewer
+{
+   class CompositeViewer;
+   class Viewer;
+}
+
 namespace dtCore
 {
    class GenericKeyboardListener;
@@ -78,7 +84,7 @@ namespace dtABC
       /// @param keyboard the source of the event
       /// @param key the key pressed
       /// @param character the corresponding character
-      virtual bool KeyPressed(const dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character);
+      virtual bool KeyPressed(const dtCore::Keyboard* keyboard, int kc);
 
       /// @return the instance of the listener used for callbacks
       const dtCore::GenericKeyboardListener* GetKeyboardListener() const { return mKeyboardListener.get(); }
@@ -95,6 +101,12 @@ namespace dtABC
 
       /// Removes a property with the given name
       void RemoveConfigPropertyValue(const std::string& name);
+      
+      /// Add a view to the Viewer
+      void AddView(dtCore::View &view);
+      
+      /// Remove a view to the Viewer
+      void RemoveView(dtCore::View &view);
       
    protected:
 
@@ -118,6 +130,12 @@ namespace dtABC
       /// @return true, if both parsing and applying went well.
       bool ParseConfigFile(const std::string& file);
 
+      /// @return the instance of the osgViewer::CompositeViewer
+      const osgViewer::CompositeViewer* GetCompositeViewer() const { return mCompositeViewer.get(); }
+
+      /// @return the instance of the osgViewer::CompositeViewer
+      osgViewer::CompositeViewer* GetCompositeViewer() { return mCompositeViewer.get(); }
+
    private:
 
       /// A utility to apply the parsed data to the Application instance
@@ -131,7 +149,12 @@ namespace dtABC
          bool operator ()(const ApplicationConfigData& data, Application* app);
       };
 
+      
+      dtCore::RefPtr<osgViewer::CompositeViewer> mCompositeViewer;
+
+      
       dtCore::RefPtr<dtCore::GenericKeyboardListener> mKeyboardListener;
+      
       typedef std::map<std::string, std::string> AppConfigPropertyMap;
       AppConfigPropertyMap mConfigProperties;
    };

@@ -208,7 +208,8 @@ void TestAnim::OnStartup(dtGame::GameApplication& app)
          }
          startPos[1] = 0.0f;
       }
-      app.GetCamera()->SetNextStatisticsType();
+
+//      app.GetCamera()->SetNextStatisticsType();
 
    }
 
@@ -231,7 +232,7 @@ void TestAnim::OnStartup(dtGame::GameApplication& app)
 
    gameManager.DebugStatisticsTurnOn(false, false, 5);
 
-   app.GetWindow()->SetKeyRepeat(false);
+//   app.GetWindow()->SetKeyRepeat(false);
 }
 
 void TestAnim::OnShutdown(dtGame::GameApplication& app)

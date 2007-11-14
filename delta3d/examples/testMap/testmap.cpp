@@ -138,12 +138,14 @@ class TestMap : public Application
       }
       
       // Reset the scene
-      if(GetKeyboard()->GetKeyState(Producer::Key_R))
+      if(GetKeyboard()->GetKeyState('R'))
       {
          Reset();
       }
       
       mStep -= 0.05f;
+      
+      Application::OnMessage(data);
    }
    
    // Re-initialize to default conditions

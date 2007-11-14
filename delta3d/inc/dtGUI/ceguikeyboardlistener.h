@@ -24,7 +24,6 @@
 #include <dtCore/keyboard.h>   // for base class
 #include <CEGUI/CEGUIInputEvent.h>  // for internal type, CEGUI::Key::Scan
 #include <dtGUI/export.h>                   // for export symbols
-#include <Producer/Keyboard>                // for parameter
 
 namespace dtGUI
 {
@@ -33,12 +32,12 @@ namespace dtGUI
    public:
       CEGUIKeyboardListener();
 
-      bool HandleKeyPressed(const dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter kchar);
-      bool HandleKeyReleased(const dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter kchar);
+      bool HandleKeyPressed(const dtCore::Keyboard* keyboard, int key);
+      bool HandleKeyReleased(const dtCore::Keyboard* keyboard, int key);
 
       ///\todo what is this supposed to do?  inject both keypressed and keyreleased to CEGUI::System?
       /// Haven't those already been injected with the other calls?
-      bool HandleKeyTyped(const dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter kchar);
+      bool HandleKeyTyped(const dtCore::Keyboard* keyboard, int key);
 
       /**
        * Determines the CEGUI scancode that corresponds to the specified Producer::KeyboardKey.
@@ -46,7 +45,7 @@ namespace dtGUI
        * @param key the key to map
        * @return the corresponding CEGUI key scancode
        */
-      static CEGUI::Key::Scan KeyboardKeyToKeyScan( Producer::KeyboardKey key );
+      static CEGUI::Key::Scan KeyboardKeyToKeyScan( int key );
 
    protected:
       virtual ~CEGUIKeyboardListener();

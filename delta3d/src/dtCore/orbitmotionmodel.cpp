@@ -2,11 +2,14 @@
 //
 //////////////////////////////////////////////////////////////////////
 #include <prefix/dtcoreprefix-src.h>
-#include <dtCore/keyboard.h>
 #include <dtCore/mouse.h>
 #include <dtCore/logicalinputdevice.h>
 #include <dtCore/orbitmotionmodel.h>
 #include <dtCore/scene.h>
+#include <dtCore/camera.h>//due to include of scene.h
+#include <dtCore/keyboardmousehandler.h> //due to include of scene.h
+#include <dtCore/keyboard.h>//due to include of scene.h
+
 #include <dtCore/motionmodel.h>
 #include <dtCore/transformable.h>
 #include <dtUtil/matrixutil.h>

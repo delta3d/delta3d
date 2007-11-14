@@ -497,7 +497,7 @@ namespace dtAI
 //////////////////////////////////////////////////////////////////////////
 
 
-   void WaypointManager::WaypointManagerDrawable::drawImplementation(osg::State& state) const 
+   void WaypointManager::WaypointManagerDrawable::drawImplementation(osg::RenderInfo & /*renderInfo*/) const 
    {     
       //this will keep us from drawing when we are loading
       if(mHelper->mReadingFile) return;

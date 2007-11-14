@@ -62,7 +62,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCored.lib dtUtild.lib dtGamed.lib dtDALd.lib wsock32.lib"
+				AdditionalDependencies="dtCored.lib dtUtild.lib dtGamed.lib dtDALd.lib osgD.lib wsock32.lib"
 				OutputFile="..\..\..\bin\dtLMSd.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
@@ -144,7 +144,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCore.lib dtUtil.lib dtDAL.lib dtABC.lib dtGame.lib wsock32.lib osg.lib osgDB.lib OpenThreadsWin32.lib Producer.lib xerces-c_2.lib"
+				AdditionalDependencies="dtCore.lib dtUtil.lib dtDAL.lib dtABC.lib dtGame.lib wsock32.lib osg.lib osgDB.lib xerces-c_2.lib"
 				OutputFile="..\..\..\bin\dtLMS.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"

@@ -9,6 +9,7 @@
 #include <ode/ode.h>
 #include <cassert>
 #include <queue>
+#include <osgGA/GUIEventAdapter>
 
 using namespace dtCore;
 using namespace dtABC;
@@ -174,9 +175,7 @@ protected:
       }
    }
 
-   virtual bool KeyPressed(const dtCore::Keyboard* keyboard, 
-                              Producer::KeyboardKey key,
-                              Producer::KeyCharacter character)
+   virtual bool KeyPressed(const dtCore::Keyboard* keyboard, int key)
    {
 	  // SetCollision____ must be called before setTransform so
 	  // that a dGeomID will exist before a prePhysicsUpdate, otherwise
@@ -184,13 +183,13 @@ protected:
       bool verdict(false);
       switch( key )
       {
-         case Producer::Key_P:
+         case 'p':
          {
             System::GetInstance().SetPause( !System::GetInstance().GetPause() );
             verdict = true;
             break;
          }
-         case Producer::Key_Escape :
+         case osgGA::GUIEventAdapter::KEY_Escape :
          {
             while( !mToAdd.empty() )
             {
@@ -211,7 +210,7 @@ protected:
             verdict = true;
             break;
          }
-         case Producer::Key_B :
+         case 'b' :
          {
             if( mObjects.size() < mLimit )
             {
@@ -250,7 +249,7 @@ protected:
             verdict = true;
             break;
          }
-         case Producer::Key_S :
+         case 's' :
          {
             if( mObjects.size() < mLimit )
             {
@@ -286,7 +285,7 @@ protected:
             verdict = true;
             break;
          }
-         case Producer::Key_C :
+         case 'c' :
          {
             if( mObjects.size() < mLimit )
             {

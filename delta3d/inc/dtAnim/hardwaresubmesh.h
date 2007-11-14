@@ -47,7 +47,7 @@ namespace dtAnim
                const std::string& boneUniformName, unsigned numBones,
                unsigned mesh, unsigned vertexVBO, unsigned indexVBO);
 
-         virtual void drawImplementation(osg::State& state) const;
+         virtual void drawImplementation(osg::RenderInfo & renderInfo) const;
 
          virtual osg::Object* cloneType() const;
          virtual osg::Object* clone(const osg::CopyOp&) const;

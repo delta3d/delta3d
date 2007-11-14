@@ -51,6 +51,7 @@ namespace dtABC
          XMLCh* NAME;
          XMLCh* SCENE;
          XMLCh* CAMERA;
+         XMLCh* VIEW;
          XMLCh* LOG;
          XMLCh* LIBRARY_PATH;
 
@@ -67,6 +68,7 @@ namespace dtABC
 
          XMLCh* WINDOWINSTANCE;
          XMLCh* SCENEINSTANCE;
+         XMLCh* CAMERAINSTANCE;
 
          XMLCh* LOG_LEVEL;
 

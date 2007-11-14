@@ -177,7 +177,10 @@ void MyGameEntryPoint::OnStartup(dtGame::GameApplication& app)
 #endif
 
    // Add Component - HUD Component
-   dtCore::RefPtr<HUDComponent> hudComp = new HUDComponent(app.GetWindow(), "HUDComponent");
+   dtCore::RefPtr<HUDComponent> hudComp = new HUDComponent(app.GetWindow(),
+                                                           app.GetKeyboard(),
+                                                           app.GetMouse(),
+                                                           "HUDComponent");
    app.GetGameManager()->AddComponent(*hudComp, dtGame::GameManager::ComponentPriority::NORMAL);
 
    // offset our camera a little back and above the tank.

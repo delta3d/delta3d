@@ -1,6 +1,7 @@
 #include <dtCore/dt.h>
 #include <dtABC/dtabc.h>
 #include <dtInspector/inspector.h>
+#include <osgGA/GUIEventAdapter>
 
 using namespace dtABC;
 using namespace dtCore;
@@ -46,28 +47,28 @@ public:
    }
 
 protected:
-   virtual bool KeyPressed(const dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character)
+   virtual bool KeyPressed(const dtCore::Keyboard* keyboard, int key)
    {
       bool verdict(false);
       switch(key)
       {
-      case Producer::Key_Escape:
+      case osgGA::GUIEventAdapter::KEY_Escape:
          {
             this->Quit();
             verdict = true;
          } break;
-      case Producer::Key_H:
+      case 'h':
          {
             dtInspector::Inspector *ui = new dtInspector::Inspector();
             ui->Show(); //to prevent unused variable warnings
             verdict = true;
          } break;
-      case Producer::Key_F1: verdict=true; weather->SetBasicVisibilityType(Weather::VIS_UNLIMITED); break;
-      case Producer::Key_F2: verdict=true; weather->SetBasicVisibilityType(Weather::VIS_FAR);       break;
-      case Producer::Key_F3: verdict=true; weather->SetBasicVisibilityType(Weather::VIS_MODERATE);  break;
-      case Producer::Key_F4: verdict=true; weather->SetBasicVisibilityType(Weather::VIS_LIMITED);   break;
-      case Producer::Key_F5: verdict=true; weather->SetBasicVisibilityType(Weather::VIS_CLOSE);     break;
-      case Producer::Key_P:
+      case osgGA::GUIEventAdapter::KEY_F1: verdict=true; weather->SetBasicVisibilityType(Weather::VIS_UNLIMITED); break;
+      case osgGA::GUIEventAdapter::KEY_F2: verdict=true; weather->SetBasicVisibilityType(Weather::VIS_FAR);       break;
+      case osgGA::GUIEventAdapter::KEY_F3: verdict=true; weather->SetBasicVisibilityType(Weather::VIS_MODERATE);  break;
+      case osgGA::GUIEventAdapter::KEY_F4: verdict=true; weather->SetBasicVisibilityType(Weather::VIS_LIMITED);   break;
+      case osgGA::GUIEventAdapter::KEY_F5: verdict=true; weather->SetBasicVisibilityType(Weather::VIS_CLOSE);     break;
+      case 'p':
          {
             if(isDomeEnabled)
             {
@@ -79,7 +80,7 @@ protected:
             }
             verdict = true;
          } break;
-      case Producer::Key_D:
+      case 'd':
          if(!isDomeEnabled)
          {
             weather->GetEnvironment()->AddEffect(cd.get());
@@ -88,16 +89,16 @@ protected:
                weather->GetEnvironment()->RemEffect(cp[i].get());
             verdict = true;
          } break;
-      case Producer::Key_KP_Add:
-      case Producer::Key_equal:
+      case osgGA::GUIEventAdapter::KEY_KP_Add:
+      case '=':
          if (!isDomeEnabled && cloudLayers >= 0 && cloudLayers < 3)
          {	
             weather->GetEnvironment()->AddEffect(cp[cloudLayers].get());
             ++cloudLayers;
             verdict = true;
          } break;
-      case Producer::Key_KP_Subtract:
-      case Producer::Key_minus:
+      case osgGA::GUIEventAdapter::KEY_KP_Subtract:
+      case '-':
          if (!isDomeEnabled && cloudLayers > 0)
          {
             --cloudLayers;

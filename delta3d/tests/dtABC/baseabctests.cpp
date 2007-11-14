@@ -24,7 +24,6 @@
 #include <dtABC/application.h>
 #include <dtCore/refptr.h>
 #include <dtCore/deltawin.h>
-#include <Producer/KeyboardMouse>
 
 namespace dtTest
 {
@@ -50,11 +49,10 @@ namespace dtTest
    public:
       typedef dtABC::Application BaseClass;
 
-      TestApp2(Producer::KeyboardKey key, Producer::KeyCharacter kc): BaseClass(),
+      TestApp2(int key): BaseClass(),
          mPressedHit(false),
          mReleasedHit(false),
-         mKey(key),
-         mChar(kc)
+         mKey(key)
       {
       }
 
@@ -73,38 +71,36 @@ namespace dtTest
          mReleasedHit = false;
       }
 
-      bool KeyPressed(const dtCore::Keyboard* kb, Producer::KeyboardKey key, Producer::KeyCharacter kc)
+      bool KeyPressed(const dtCore::Keyboard* kb, int key)
       {
          mPressedHit = true;
 
-         if( key==mKey && kc==mChar )
+         if( key==mKey)
          {
             return true;
          }
          return false;
       }
 
-      bool KeyReleased(const dtCore::Keyboard* kb, Producer::KeyboardKey key, Producer::KeyCharacter kc)
+      bool KeyReleased(const dtCore::Keyboard* kb, int key)
       {
          mReleasedHit = true;
 
-         if( key==mKey && kc==mChar )
+         if( key==mKey)
          {
             return true;
          }
          return false;
       }
 
-      Producer::KeyboardKey GetKey() const { return mKey; }
-      Producer::KeyCharacter GetCharacter() const { return mChar; }
+      int GetKey() const { return mKey; }
       bool GetPressedHit() const { return mPressedHit; }
       bool GetReleasedHit() const { return mReleasedHit; }
 
    private:
       bool mPressedHit;
       bool mReleasedHit;
-      Producer::KeyboardKey mKey;
-      Producer::KeyCharacter mChar;
+      int mKey;
    };
 }
 
@@ -116,7 +112,7 @@ void BaseABCTests::TestInput()
 {
    // it is really weird that an app must be used to test the BaseABC function,
    // but this is how it must be when Application allocates BaseABC's members, like mDeltaWin.
-   dtCore::RefPtr<TestApp2> app(new TestApp2(Producer::Key_0,Producer::KeyChar_0));
+   dtCore::RefPtr<TestApp2> app(new TestApp2('0'));
    app->GetWindow()->SetPosition(0, 0, 50, 50);
    CPPUNIT_ASSERT( app->GetKeyboardListener() != NULL );
 }

@@ -64,7 +64,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="gdal_i.lib dtUtild.lib dtDALd.lib dtCored.lib dtABCd.lib oded.lib opengl32.lib OpenThreadsWin32d.lib osgd.lib osgDBd.lib osgParticled.lib osgTextd.lib osgUtild.lib producerd.lib Rpcrt4.lib ul_d.lib winmm.lib dtTerraind.lib"
+				AdditionalDependencies="gdal_i.lib dtUtild.lib dtDALd.lib dtCored.lib dtABCd.lib oded.lib opengl32.lib OpenThreadsd.lib osgd.lib osgDBd.lib osgParticled.lib osgTextd.lib osgUtild.lib Rpcrt4.lib ul_d.lib winmm.lib dtTerraind.lib"
 				OutputFile="../../../bin/testTerraind.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -151,7 +151,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtUtil.lib dtCore.lib dtDAL.lib dtABC.lib dtTerrain.lib gdal_i.lib osg.lib osgUtil.lib osgDB.lib ode.lib opengl32.lib Producer.lib"
+				AdditionalDependencies="dtUtil.lib dtCore.lib dtDAL.lib dtABC.lib dtTerrain.lib gdal_i.lib osg.lib osgUtil.lib osgDB.lib ode.lib opengl32.lib"
 				OutputFile="../../../bin/testTerrain.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"

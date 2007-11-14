@@ -42,14 +42,12 @@ protected:
 
 public:
    
-   virtual bool KeyPressed(const dtCore::Keyboard* keyboard, 
-                              Producer::KeyboardKey key, 
-                              Producer::KeyCharacter character )
+   virtual bool KeyPressed(const dtCore::Keyboard* keyboard, int kc )
    {
       bool verdict(false);
-      switch( key )
+      switch( kc )
       {
-         case Producer::Key_Escape:
+      case osgGA::GUIEventAdapter::KEY_Escape:
          {
             // Make sure to stop the thread before exiting
             mScriptManager->Stop();
@@ -57,7 +55,7 @@ public:
             verdict = true;
             break;
          }
-         case Producer::Key_S:
+         case 's':
          {
             // Kick off a Python script in its own thread
             mScriptManager->Run();

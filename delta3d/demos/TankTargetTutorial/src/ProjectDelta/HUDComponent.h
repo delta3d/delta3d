@@ -44,7 +44,10 @@ class TUTORIAL_TANK_EXPORT HUDComponent : public dtGame::GMComponent
 {
    public:
       // Constructor
-      HUDComponent(dtCore::DeltaWin *win, const std::string &name);
+      HUDComponent(dtCore::DeltaWin *win, 
+         dtCore::Keyboard *keyboard, 
+         dtCore::Mouse *mouse,
+         const std::string &name);
 
    protected:
       // Destructor
@@ -53,9 +56,6 @@ class TUTORIAL_TANK_EXPORT HUDComponent : public dtGame::GMComponent
    public:
       // Get messages from the Game Manager 
       virtual void ProcessMessage(const dtGame::Message& message);
-
-      // Sets up the GUI during construction
-      void SetupGUI(dtCore::DeltaWin *win);
 
       // returns the main GUI to be added to the scene.
       dtCore::RefPtr<dtGUI::CEUIDrawable> GetGUIDrawable() { return mGUI; }
@@ -80,6 +80,11 @@ class TUTORIAL_TANK_EXPORT HUDComponent : public dtGame::GMComponent
       void UpdateSimTime(double newTime);
       void UpdateNumMessages(int messageCount);
       void UpdateLastMessageName(const std::string &messageName);
+
+      // Sets up the GUI during construction
+      void SetupGUI(dtCore::DeltaWin *win, 
+                    dtCore::Keyboard *keyboard,
+                    dtCore::Mouse *mouse);
 
       dtCore::RefPtr<dtGUI::CEUIDrawable> mGUI;
       CEGUI::Window *mMainWindow;

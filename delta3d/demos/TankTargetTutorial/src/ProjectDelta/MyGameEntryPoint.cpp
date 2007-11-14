@@ -38,6 +38,7 @@
 #include <dtCore/keyboard.h>
 #include <dtCore/globals.h>
 #include <dtCore/deltawin.h>
+#include <dtCore/scene.h>
 
 #include <dtDAL/project.h>
 #include <dtDAL/resourcedescriptor.h>
@@ -113,7 +114,10 @@ void MyGameEntryPoint::OnStartup(dtGame::GameApplication& app)
 
 
    // Add Component - HUD Component
-   dtCore::RefPtr<HUDComponent> hudComp = new HUDComponent(app.GetWindow(), "HUDComponent");
+   dtCore::RefPtr<HUDComponent> hudComp = new HUDComponent(app.GetWindow(),
+                                                           app.GetKeyboard(), 
+                                                           app.GetMouse(),
+                                                           "HUDComponent");
    gameManager.AddComponent(*hudComp, dtGame::GameManager::ComponentPriority::NORMAL);
 
    // offset our camera a little back and above the tank.

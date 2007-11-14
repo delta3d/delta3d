@@ -110,6 +110,7 @@ namespace dtAnim
          dtCore::RefPtr<dtCore::Scene>          mScene;
          dtCore::RefPtr<dtCore::Camera>         mCamera;
          dtCore::RefPtr<dtCore::DeltaWin>       mWin;
+         dtCore::RefPtr<dtCore::View>           mView;
 
    };
 
@@ -124,8 +125,11 @@ namespace dtAnim
       mWin = new dtCore::DeltaWin();
       mWin->SetPosition(0, 0, 50, 50);
       mCamera = new dtCore::Camera();
-      mCamera->SetScene(mScene.get());
       mCamera->SetWindow(mWin.get());
+      mView = new dtCore::View();
+      mView->SetCamera(mCamera.get());
+      mView->SetScene(mScene.get());
+
       dtCore::System::GetInstance().Config();
       dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
       dtCore::System::GetInstance().Start();
@@ -157,10 +161,12 @@ namespace dtAnim
       mAnimComp = NULL;
       Cal3DDatabase::GetInstance().TruncateDatabase();
       mScene = NULL;
-      mCamera->SetScene(NULL);
       mCamera->SetWindow(NULL);
       mCamera = NULL;
       mWin = NULL;
+      mView->SetScene(NULL);
+      mView->SetCamera(NULL);
+      mView = NULL;
    }
 
    void AnimationComponentTests::TestRegisterUnregister()

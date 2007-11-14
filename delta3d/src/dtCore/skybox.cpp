@@ -636,7 +636,7 @@ void dtCore::SkyBox::FixedFunctionProfile::SetTexture(SkyBox::SkyBoxSideEnum sid
 
 
 //our drawable
-void SkyBox::SkyBoxDrawable::drawImplementation(osg::State& state) const
+void SkyBox::SkyBoxDrawable::drawImplementation(osg::RenderInfo & /*renderInfo*/) const
 {
 
    glOrtho(0, 1, 0, 1, 0, 1);

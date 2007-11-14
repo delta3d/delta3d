@@ -32,13 +32,6 @@
 
 #include <map>
 
-/// @cond DOXYGEN_SHOULD_SKIP_THIS
-namespace Producer
-{
-   class RenderSurface;
-}
-/// @endcond
-
 namespace dtCore
 {
    class Camera;
@@ -259,9 +252,6 @@ namespace dtCore
       bool mPaused;
       
       SystemStageFlags mSystemStages;
-      
-      typedef std::map< Producer::RenderSurface*, Camera* > RenderSurfaceCameraMap;
-      RenderSurfaceCameraMap mRenderSurfaceCameraMap;
    };
 }
 

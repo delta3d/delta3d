@@ -3,6 +3,7 @@
 #include <dtCore/deltawin.h>
 #include <dtCore/object.h>
 #include <dtCore/orbitmotionmodel.h>
+#include <dtUtil/exception.h>
 
 #ifdef _MSC_VER
 #	pragma warning(push)
@@ -27,13 +28,11 @@ MyWidget::EscapeListener::~EscapeListener()
 {
 }
    
-bool MyWidget::EscapeListener::HandleKeyPressed( const Keyboard* keyboard, 
-                                                 Producer::KeyboardKey key,
-                                                 Producer::KeyCharacter character )
+bool MyWidget::EscapeListener::HandleKeyPressed( const Keyboard* keyboard, int key )
 {
    switch(key)
    {
-      case Producer::Key_Escape:
+      case osgGA::GUIEventAdapter::KEY_Escape:
       {
          mQuitFunctor();
          return true;
@@ -46,16 +45,12 @@ bool MyWidget::EscapeListener::HandleKeyPressed( const Keyboard* keyboard,
    return false;
 }
 
-bool MyWidget::EscapeListener::HandleKeyReleased( const Keyboard* keyboard, 
-                                                  Producer::KeyboardKey key,
-                                                  Producer::KeyCharacter character )
+bool MyWidget::EscapeListener::HandleKeyReleased( const Keyboard* keyboard, int key)
 {
    return false;
 }
 
-bool MyWidget::EscapeListener::HandleKeyTyped( const Keyboard* keyboard, 
-                                               Producer::KeyboardKey key,
-                                               Producer::KeyCharacter character )
+bool MyWidget::EscapeListener::HandleKeyTyped( const Keyboard* keyboard, int key)
 {
    return false;
 }
@@ -99,7 +94,18 @@ void MyWidget::OnMessage( MessageData* data )
 
 void MyWidget::Config( const WinData* d /*= NULL*/ )
 {
-   Widget::Config( d );
+   try
+   {
+      Widget::Config( d );
+   }
+   catch (const dtUtil::Exception &e)
+   {
+      LOG_ERROR("Problem with configuring the widget: " +
+                e.ToString() );
+      LOG_ERROR("Aborting...");
+      
+      exit(-1);
+   }
 
    InitInputDevices();
 }

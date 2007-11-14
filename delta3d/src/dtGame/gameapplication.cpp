@@ -23,18 +23,16 @@
 
 #include <dtGame/gamemanager.h>
 #include <dtGame/gameapplication.h>
+#include <dtCore/deltawin.h>
+
 #include <dtGame/gameentrypoint.h>
 #include <dtGame/exceptionenum.h>
 
 #include <dtUtil/exception.h>
-//#include <dtAudio/audiomanager.h>
-#include <dtCore/camera.h>
-#include <dtCore/deltawin.h>
 #include <dtCore/scene.h>
+#include <osgViewer/CompositeViewer>
 #include <dtCore/keyboard.h>
-#include <dtCore/mouse.h>
 #include <dtCore/generickeyboardlistener.h>
-#include <dtABC/application.h>
 
 namespace dtGame
 {
@@ -49,7 +47,7 @@ namespace dtGame
       mDestroyFunction(NULL)
    {
       RegisterInstance(this);
-      mKeyboard->RemoveKeyboardListener(GetKeyboardListener());
+      GetKeyboard()->RemoveKeyboardListener(GetKeyboardListener());
    }
 
    GameApplication::~GameApplication()
@@ -103,12 +101,10 @@ namespace dtGame
       {
          mEntryPointLib = lsm.LoadSharedLibrary(libName);
       }
-      catch(const dtUtil::Exception &e)
+      catch (dtUtil::Exception)
       {
          msg.str("");
-         msg << "Unable to load game library " << libName << " . Exception message to follow: " <<
-             e.What();
-
+         msg << "Unable to load game library " << libName;
          throw dtUtil::Exception(dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR, 
             msg.str(), __FILE__, __LINE__);
       }

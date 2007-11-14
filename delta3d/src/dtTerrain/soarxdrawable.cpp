@@ -220,17 +220,17 @@ namespace dtTerrain
    }
    
    //////////////////////////////////////////////////////////////////////////          
-   void SoarXDrawable::drawImplementation(osg::State& state) const
+   void SoarXDrawable::drawImplementation(osg::RenderInfo & renderInfo) const
    {
       //This is a terrible hack to get around the fact that we need to 
       //modify the drawable data before actually drawing it even though
       //this method should not be modifying data, only displaying it.   
       
-      (const_cast<SoarXDrawable *>(this))->Render(state);      
+      (const_cast<SoarXDrawable *>(this))->Render(*renderInfo.getState());      
       
       //Use the base class's drawing code to actually push the vertex and index
       //buffers to the graphics card.
-      osg::Geometry::drawImplementation(state);      
+      osg::Geometry::drawImplementation(renderInfo);      
    }
    
    //////////////////////////////////////////////////////////////////////////       

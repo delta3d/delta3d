@@ -243,17 +243,13 @@ void initOSGMatrix()
 
 	.def("invert", &Matrix::invert)
 
-   #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 1 && OSG_VERSION_MINOR >= 2
-   .def("invert_4x3", &Matrix::invert_4x3)
-   .def("invert_4x4", &Matrix::invert_4x4)
-   #else
-   .def("invert_4x4_orig", &Matrix::invert_4x4_orig)
-	.def("invert_4x4_new", &Matrix::invert_4x4_new)
-   #endif
+
+	.def("invert_4x3", &Matrix::invert_4x3)
+	.def("invert_4x4", &Matrix::invert_4x4)
 
 	.def("identity",  &Matrix::identity)
 
-   .def("scale", (Matrix (*)(const osg::Vec3&)) &Matrix::scale )
+	.def("scale", (Matrix (*)(const osg::Vec3&)) &Matrix::scale )
 	.def("scale", (Matrix (*)(double, double, double)) &Matrix::scale)
 	.def("translate", (Matrix (*)(const osg::Vec3&)) &Matrix::translate)
 	.def("translate",	(Matrix (*)(double, double, double)) &Matrix::translate)

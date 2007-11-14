@@ -26,6 +26,7 @@
 #include <dtGame/baseinputcomponent.h>
 #include <dtDAL/gameevent.h>
 #include <dtDAL/gameeventmanager.h>
+#include <dtGame/logcontroller.h>
 
 /**
  * This is an example use of the base input component for our tutorial. We will put 
@@ -43,9 +44,7 @@ class TUTORIAL_TANK_EXPORT InputComponent : public dtGame::BaseInputComponent
       void SetupEvents();
 
       // We're going to handle key presses!
-      /*virtual*/ bool HandleKeyPressed(  const dtCore::Keyboard* keyboard,
-                                          Producer::KeyboardKey key,
-                                          Producer::KeyCharacter character );
+      virtual bool HandleKeyPressed(  const dtCore::Keyboard* keyboard, int key );
 
       /**
        * Handle messages if we want to
@@ -70,6 +69,9 @@ class TUTORIAL_TANK_EXPORT InputComponent : public dtGame::BaseInputComponent
       dtCore::RefPtr<dtDAL::GameEvent> mTankFired;
       dtCore::RefPtr<dtDAL::GameEvent> mTestShaders;
       dtCore::RefPtr<dtDAL::GameEvent> mReset;
+
+      dtCore::RefPtr<dtGame::LogController> mLogController;
+
    };
 
 #endif

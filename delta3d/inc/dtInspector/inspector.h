@@ -136,12 +136,12 @@ namespace dtInspector
          #define _AUTOLIBNAME0  "dtInspectord.lib"
       #endif
 
-      #define _AUTOLIBNAME1  "OpenThreadsWin32d.lib"
+      #define _AUTOLIBNAME1  "OpenThreadsd.lib"
    #else
       #ifndef DT_INSPECTOR_LIBRARY
          #define _AUTOLIBNAME0  "dtInspector.lib"
       #endif
-      #define _AUTOLIBNAME1  "OpenThreadsWin32.lib"
+      #define _AUTOLIBNAME1  "OpenThreads.lib"
    #endif
 
    #ifndef _NOAUTOLIBMSG

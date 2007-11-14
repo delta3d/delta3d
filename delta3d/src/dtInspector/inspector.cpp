@@ -143,30 +143,6 @@ void UserInterface::SelectInstance()
       
       CameraClearLoadButton->color(fc);      
       
-
-      //rebuild the CameraSceneChoice menu here in case
-      //we have new Scene's or they changed their names
-      CameraSceneChoice->clear();
-
-      CameraSceneChoice->add( "None", 0, NULL);
-      for (int i=0; i<Scene::GetInstanceCount(); i++)
-      {
-         Scene *s = Scene::GetInstance(i);
-         CameraSceneChoice->add( s->GetName().c_str(), 0, NULL, s, 0);
-      }
-
-      const Fl_Menu_Item *menu = CameraSceneChoice->menu();
-      for ( int i=0; i<CameraSceneChoice->size(); i++)
-      {
-         Scene *menuItemScene = (Scene*)menu[i].user_data();
-         
-         if (menuItemScene == c->GetScene())
-         {
-            CameraSceneChoice->value(i);
-            break;
-         }
-      }
-
       
       //rebuild the CameraWinChoice menu here in case
       //we have new Windows's or they changed their names
@@ -178,7 +154,7 @@ void UserInterface::SelectInstance()
                                DeltaWin::GetInstance(i), 0);
       }
 
-      menu = CameraWinChoice->menu();
+      const Fl_Menu_Item *menu = CameraWinChoice->menu();
       
       for ( int i=0; i<CameraWinChoice->size(); i++)
       {
@@ -191,9 +167,6 @@ void UserInterface::SelectInstance()
          }
       }
       
-      unsigned int num = c->GetFrameBin();
-      CamFrameBin->value(num);
-
       CameraGroup->show();
    }
    else CameraGroup->hide();
@@ -241,6 +214,62 @@ void UserInterface::SelectInstance()
    }
    else WindowGroup->hide();
 
+   
+   /** View **/
+   if (View *v = dynamic_cast<View*>(b))
+   {
+      //rebuild the ViewSceneChoice menu here in case
+      //we have new Scene's or they changed their names
+      ViewSceneChoice->clear();
+
+      ViewSceneChoice->add( "None", 0, NULL);
+      for (int i=0; i<Scene::GetInstanceCount(); i++)
+      {
+         Scene *s = Scene::GetInstance(i);
+         ViewSceneChoice->add( s->GetName().c_str(), 0, NULL, s, 0);
+      }
+
+      const Fl_Menu_Item *menu = ViewSceneChoice->menu();
+      for ( int i=0; i<ViewSceneChoice->size(); i++)
+      {
+         Scene *menuItemScene = (Scene*)menu[i].user_data();
+      
+         if (menuItemScene == v->GetScene())
+         {
+            ViewSceneChoice->value(i);
+            break;
+         }
+      }
+      
+      //rebuild the ViewCameraChoice menu here in case
+      //we have new Scene's or they changed their names
+      ViewCameraChoice->clear();
+
+      ViewCameraChoice->add( "None", 0, NULL);
+      for (int i=0; i<Camera::GetInstanceCount(); i++)
+      {
+         Camera *c = Camera::GetInstance(i);
+         ViewCameraChoice->add( c->GetName().c_str(), 0, NULL, c, 0);
+      }
+
+      menu = ViewCameraChoice->menu();
+      for ( int i=0; i<ViewCameraChoice->size(); i++)
+      {
+         Camera * menuItemCamera = (Camera*)menu[i].user_data();
+      
+         if (menuItemCamera == v->GetCamera())
+         {
+            ViewCameraChoice->value(i);
+            break;
+         }
+      }
+      
+      unsigned int num = v->GetFrameBin();
+      ViewFrameBin->value(num);
+      
+   }
+   else ViewGroup->hide();
+   
    /** Environment **/
    if (Environment *e = dynamic_cast<Environment*>(b))
    {
@@ -771,13 +800,21 @@ void UserInterface::CameraClearColorCB(Fl_Value_Input* )
 }
 
 
-void UserInterface::CameraSceneCB( Fl_Choice *o )
+void UserInterface::ViewSceneCB( Fl_Choice *o )
 {
-   Camera *cam = dynamic_cast<Camera*>(GetSelectedInstance(this));
+   View *view = dynamic_cast<View*>(GetSelectedInstance(this));
    const Fl_Menu *menu = o->menu();   
 
    Scene *scene = (Scene*)menu[o->value()].user_data();
-   cam->SetScene( scene );
+   view->SetScene( scene );
+}
+void UserInterface::ViewCameraCB( Fl_Choice *o )
+{
+   View * view = dynamic_cast<View*>(GetSelectedInstance(this));
+   const Fl_Menu *menu = o->menu();   
+
+   Camera * camera = (Camera*)menu[o->value()].user_data();
+   view->SetCamera( camera );
 }
 
 void UserInterface::CameraWinCB( Fl_Choice *o )
@@ -791,16 +828,16 @@ void UserInterface::CameraWinCB( Fl_Choice *o )
 }
 
 void UserInterface::CamStatisticsCB( Fl_Button *o)
-{
-   Camera *cam = dynamic_cast<Camera*>(GetSelectedInstance(this));
-   cam->SetNextStatisticsType();
+{// TODO
+//   Camera *cam = dynamic_cast<Camera*>(GetSelectedInstance(this));
+//   cam->SetNextStatisticsType();
 }
 
-void UserInterface::CameraFrameBinCB(Fl_Value_Input *o)
+void UserInterface::ViewFrameBinCB(Fl_Value_Input *o)
 {
-   Camera *cam = dynamic_cast<Camera*>(GetSelectedInstance(this));
+   View *view = dynamic_cast<View*>(GetSelectedInstance(this));
    unsigned int num = (unsigned int)o->value();
-   cam->SetFrameBin(num);
+   view->SetFrameBin(num);
 }
 
 void UserInterface::WinPosCB( Fl_Value_Input *o)

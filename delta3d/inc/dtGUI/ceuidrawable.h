@@ -48,6 +48,8 @@ namespace osg
 namespace dtCore
 {
    class DeltaWin;
+   class Keyboard;
+   class Mouse;
 }
 
 namespace dtGUI
@@ -77,7 +79,10 @@ namespace dtGUI
       DECLARE_MANAGEMENT_LAYER(CEUIDrawable)
 
       ///Overloaded constructor, will automatically update CEGUI when the supplied Window is resized
-      CEUIDrawable(dtCore::DeltaWin *win, dtGUI::BaseScriptModule *sm=0);
+      CEUIDrawable(dtCore::DeltaWin *win,
+                  dtCore::Keyboard *keyboard,
+                  dtCore::Mouse *mouse,
+                  dtGUI::BaseScriptModule *sm=0);
 
    protected:
       virtual ~CEUIDrawable();
@@ -141,6 +146,8 @@ namespace dtGUI
       dtCore::RefPtr<osg::Projection> mProjection;
       dtCore::RefPtr<osg::MatrixTransform> mTransform;
       dtCore::RefPtr<dtCore::DeltaWin> mWindow; ///<The window this UI is being rendered in
+      dtCore::RefPtr<dtCore::Mouse> mMouse;
+      dtCore::RefPtr<dtCore::Keyboard> mKeyboard;
       dtCore::RefPtr<osg::Node> mNode;
       int mWidth;
       int mHeight;
@@ -168,7 +175,7 @@ namespace dtGUI
 
          virtual osg::Object* cloneType() const;
          virtual osg::Object* clone(const osg::CopyOp& copyop) const;
-         virtual void drawImplementation(osg::State& state) const;
+         virtual void drawImplementation(osg::RenderInfo & renderInfo) const;
 
       protected:
          virtual ~osgCEUIDrawable();

@@ -72,7 +72,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtUtild.lib oded.lib opengl32.lib openthreadswin32d.lib osgd.lib osgdbd.lib osgparticled.lib osgtextd.lib osgutild.lib producerd.lib Rpcrt4.lib xerces-c_2D.lib"
+				AdditionalDependencies="dtUtild.lib oded.lib opengl32.lib openthreadsd.lib osgd.lib osgdbd.lib osgGAD.lib osgViewerD.lib osgparticled.lib osgtextd.lib osgutild.lib Rpcrt4.lib xerces-c_2D.lib"
 				OutputFile="../../../bin/dtCored.dll"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
@@ -165,7 +165,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtUtil.lib ode.lib opengl32.lib openthreadswin32.lib osg.lib osgdb.lib osgparticle.lib osgtext.lib osgutil.lib producer.lib Rpcrt4.lib winmm.lib xerces-c_2.lib"
+				AdditionalDependencies="dtUtil.lib ode.lib opengl32.lib openthreads.lib osg.lib osgdb.lib osgGA.lib osgViewer.lib osgparticle.lib osgtext.lib osgutil.lib Rpcrt4.lib winmm.lib xerces-c_2.lib"
 				OutputFile="../../../bin/dtCore.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -216,10 +216,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtCore\camera.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\dtCore\cameragroup.cpp"
 				>
 			</File>
 			<File
@@ -320,6 +316,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtCore\keyboard.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtCore\keyboardmousehandler.cpp"
 				>
 			</File>
 			<File
@@ -508,6 +508,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtCore\view.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtCore\walkmotionmodel.cpp"
 				>
 			</File>
@@ -526,10 +530,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtCore\camera.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\inc\dtCore\cameragroup.h"
 				>
 			</File>
 			<File
@@ -646,6 +646,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtCore\keyboard.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtCore\keyboardmousehandler.h"
 				>
 			</File>
 			<File
@@ -830,6 +834,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtCore\uniqueid.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtCore\view.h"
 				>
 			</File>
 			<File

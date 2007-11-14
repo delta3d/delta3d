@@ -1,20 +1,15 @@
 Import('*')
 
+srcs = env.SGlob( '*.cpp' )
 
-if env['foundLibs'][env['extLibs']['rbody']] != 'notFound':
-   srcs = env.SGlob( '*.cpp' )
-
-   deps = [ 'dtCore', 'cal3d', 'dtUtil',
+deps = [ 'dtCore', 'cal3d', 'dtUtil',
          'OpenThreads', 'osg', 'osgDB', 'osgParticle',
          'osgText', 'osgUtil', 'osgSim', 'osgFX',
-         'Producer', 'opengl', 'rbody', 'rvrutils', 'rcfgscript' ] 
+         'opengl', 'rbody', 'rvrutils', 'rcfgscript' ] 
 
-   defines = []
-   if env['OS'] == 'windows':
-      defines = ['DT_CHAR_LIBRARY']
+defines = []
+if env['OS'] == 'windows':
+   defines = ['DT_CHAR_LIBRARY']
 
     
-   env.BuildLib( 'dtChar', srcs, deps, defines )
-else:
-   del env[ 'dtLibs' ][ 'dtChar' ]
-   
+env.BuildLib( 'dtChar', srcs, deps, defines )

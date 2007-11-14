@@ -96,11 +96,8 @@ Timer_t Stats::UpdateFrameTick()
 void Stats::SelectNextType()
 {
    
-#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 1 && OSG_VERSION_MINOR >= 2
+
    osgUtil::Statistics::StatsType type = osgUtil::Statistics::STAT_NONE;
-#else
-   osgUtil::Statistics::statsType type = osgUtil::Statistics::STAT_NONE;
-#endif
 
    switch( mPrintStats ) 
    {
@@ -121,11 +118,7 @@ void Stats::SelectNextType()
 //------------------------------------------------------------------
 // Stats::selectType
 //------------------------------------------------------------------
-#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 1 && OSG_VERSION_MINOR >= 2
 void Stats::SelectType(osgUtil::Statistics::StatsType type)
-#else
-void Stats::SelectType(osgUtil::Statistics::statsType type)
-#endif
 {
 
    if (!mProjection.valid()) InitTexts();
@@ -196,10 +189,9 @@ void Stats::ShowStats()
 
   if (mPrintStats >= osgUtil::Statistics::STAT_RESTART) return;
 
-  int x,y,width,height;
-  mSV->getViewport(x,y, width, height);
-
-  glViewport(0,0,width,height);
+  osg::ref_ptr<osg::Viewport> vp = mSV->getViewport();
+  double height = vp->height();
+  glViewport(0,0, static_cast<GLsizei>(vp->width()), static_cast<GLsizei>(vp->height()));
 
   glMatrixMode( GL_PROJECTION );
   glPushMatrix();

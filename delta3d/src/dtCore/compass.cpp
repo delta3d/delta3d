@@ -15,6 +15,9 @@
 #include <dtCore/transform.h>
 #include <dtCore/pointaxis.h>
 #include <dtCore/camera.h>
+#include <dtCore/scene.h> //due to including camera.h
+#include <dtCore/keyboardmousehandler.h> //due to including scene.h
+#include <dtCore/keyboard.h> //due to including scene.h
 
 using namespace dtCore;
 IMPLEMENT_MANAGEMENT_LAYER(Compass)
