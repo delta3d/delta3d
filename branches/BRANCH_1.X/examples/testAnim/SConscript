@@ -1,0 +1,26 @@
+# Build script for the testAnim
+import glob
+import sys
+
+# Import the variables defined in the global SConstruct build script.
+Import ('*')
+
+overrideShLink = ''
+overrideShSuffix = ''
+
+# Grab all the sources from the DAL source directory.
+sources = env.SGlob('*.cpp')
+
+testAnimDeps =[ 'dtAnim', 'dtGame', 'dtDAL', 'dtUtil', 'dtCore', 'dtGUI', 'ode', 'OpenThreads', 'osg',
+                            'osgDB', 'osgUtil', 'Producer', 'opengl', 'User32', 'CEGUIBase', 'CEGUIOpenGLRenderer',
+                            'Advapi32', 'Rpcrt4', 'Winmm', 'Gdi32', 'uuid', 'Xxf86vm',
+                            'CoreFoundation', 'IOKit', 'Carbon', 'dtActors', 'dtAnim' ]
+
+#if env['OS'] == 'windows':
+#   testGameActorLibraryDeps += ['dtActors']
+
+testAnim = env.BuildLib( 'testAnim', sources, testAnimDeps, ['TEST_ANIM_LIBRARY'], 
+                             overrideShLinkFlags = overrideShLink,
+                             overrideShLibSuffix = overrideShSuffix )
+
+Export('testAnim')
