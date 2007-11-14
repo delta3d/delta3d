@@ -36,6 +36,12 @@
 
 #define HUDCONTROLMAXTEXTSIZE 100
 
+namespace dtCore
+{
+   class Keyboard;
+   class Mouse;
+}
+
 namespace dtActors
 {
    class TaskActorProxy;
@@ -80,6 +86,8 @@ class TEST_AAR_EXPORT TestAARHUD : public dtGame::GMComponent
        * Constructs the test application.
        */
       TestAARHUD(dtCore::DeltaWin &win, 
+                 dtCore::Keyboard &keyboard,
+                 dtCore::Mouse &mouse,
                  dtGame::LogController &logController, 
                  dtGame::TaskComponent &taskComponent,
                  dtGame::ServerLoggerComponent &serverLogger);
@@ -100,7 +108,9 @@ class TEST_AAR_EXPORT TestAARHUD : public dtGame::GMComponent
       /**
        * Sets up the basic GUI.
        */
-      void SetupGUI(dtCore::DeltaWin &win);
+      void SetupGUI(dtCore::DeltaWin &win,
+                    dtCore::Keyboard &keyboard,
+                    dtCore::Mouse &mouse);
 
       /**
        * Cycles HUD state to the next most data.  From minimal, to moderate, to max,

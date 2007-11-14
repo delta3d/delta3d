@@ -36,7 +36,7 @@ public:
    {
       if( data->message == "preframe" )
       {
-         if( mKeyboard->GetKeyState(Producer::Key_Escape) )
+         if( mKeyboard->GetKeyState(osgGA::GUIEventAdapter::KEY_Escape) )
          {
             System::GetInstance().Stop();
          }
@@ -70,19 +70,19 @@ public:
 
          mEntity->SetTransform(mPosition);
 
-         if( mKeyboard->GetKeyState(Producer::Key_Up) )
+         if( mKeyboard->GetKeyState(osgGA::GUIEventAdapter::KEY_Up) )
          {
             mCameraPitch += delta*45.0;
          }
-         if( mKeyboard->GetKeyState(Producer::Key_Down) )
+         if( mKeyboard->GetKeyState(osgGA::GUIEventAdapter::KEY_Down) )
          {
             mCameraPitch -= delta*45.0;
          }
-         if( mKeyboard->GetKeyState(Producer::Key_Left) )
+         if( mKeyboard->GetKeyState(osgGA::GUIEventAdapter::KEY_Left) )
          {
             mCameraHeading += delta*45.0;
          }
-         if( mKeyboard->GetKeyState(Producer::Key_Right) )
+         if( mKeyboard->GetKeyState(osgGA::GUIEventAdapter::KEY_Right) )
          {
             mCameraHeading -= delta*45.0;
          }

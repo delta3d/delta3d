@@ -24,7 +24,9 @@
 #include <dtCore/batchisector.h>
 #include <dtCore/deltadrawable.h>
 #include <dtCore/scene.h>
-
+#include <dtCore/camera.h> //due to including scene.h
+#include <dtCore/keyboardmousehandler.h>//due to including scene.h
+#include <dtCore/keyboard.h>//due to including scene.h
 #include <dtUtil/log.h>
 #include <dtUtil/exception.h>
 

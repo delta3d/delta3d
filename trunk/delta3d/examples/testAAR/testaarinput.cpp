@@ -57,31 +57,29 @@ TestAARInput::~TestAARInput()
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool TestAARInput::HandleKeyPressed(const dtCore::Keyboard *keyBoard,
-                                    Producer::KeyboardKey key, 
-                                    Producer::KeyCharacter character)
+bool TestAARInput::HandleKeyPressed(const dtCore::Keyboard *keyBoard, int key)
 {
    std::ostringstream ss;
    bool handled = true;
    
    switch(key)
    {
-      case Producer::Key_space:
+      case ' ':
       {
          GetGameManager()->SendMessage(*GetGameManager()->GetMessageFactory().CreateMessage(TestAARMessageType::REQUEST_ALL_CONTROLLER_UPDATES));
       }
       break;
 
-      case Producer::Key_W:
-      case Producer::Key_A:
-      case Producer::Key_S:
-      case Producer::Key_D:
+      case 'w':
+      case 'a':
+      case 's':
+      case 'd':
       {
          GetGameManager()->SendMessage(*GetGameManager()->GetMessageFactory().CreateMessage(TestAARMessageType::UPDATE_TASK_CAMERA));
       }
       break;
 
-      case Producer::Key_0:
+      case '0':
       {
          mSimSpeedFactor = 1.0f;
          ss << "Resetting Game Manager Speed to [" << mSimSpeedFactor << "] == Realtime.";
@@ -91,7 +89,7 @@ bool TestAARInput::HandleKeyPressed(const dtCore::Keyboard *keyBoard,
       }
       break;
 
-      case Producer::Key_1:
+      case '1':
       {
          if(mLogController->GetLastKnownStatus().GetStateEnum() == dtGame::LogStateEnumeration::LOGGER_STATE_PLAYBACK)
          {
@@ -103,7 +101,7 @@ bool TestAARInput::HandleKeyPressed(const dtCore::Keyboard *keyBoard,
       }
       break;
 
-      case Producer::Key_2:
+      case '2':
       {
          mLogController->RequestChangeStateToRecord();
          
@@ -111,7 +109,7 @@ bool TestAARInput::HandleKeyPressed(const dtCore::Keyboard *keyBoard,
       }
       break;
 
-      case Producer::Key_3:
+      case '3':
       {
          //Going from idle mode to playback mode so we need to remove the player..
          if(mLogController->GetLastKnownStatus().GetStateEnum() == dtGame::LogStateEnumeration::LOGGER_STATE_IDLE)
@@ -126,8 +124,8 @@ bool TestAARInput::HandleKeyPressed(const dtCore::Keyboard *keyBoard,
       }
       break;
 
-      case Producer::Key_minus:
-      case Producer::Key_KP_Subtract:
+      case '-':
+      case osgGA::GUIEventAdapter::KEY_KP_Subtract:
       {
          mSimSpeedFactor = mSimSpeedFactor * 0.9f;
          if(mSimSpeedFactor < 0.10f)
@@ -143,9 +141,9 @@ bool TestAARInput::HandleKeyPressed(const dtCore::Keyboard *keyBoard,
       }
       break;
 
-      case Producer::Key_KP_Add:
-      case Producer::Key_equal:
-      case Producer::KeyChar_plus:
+      case osgGA::GUIEventAdapter::KEY_KP_Add:
+      case '=':
+      case '+':
       {
          mSimSpeedFactor = mSimSpeedFactor * 1.20f;
          if(mSimSpeedFactor > 10.0f)
@@ -161,13 +159,13 @@ bool TestAARInput::HandleKeyPressed(const dtCore::Keyboard *keyBoard,
       }
       break;
 
-      case Producer::Key_P:
+      case 'p':
       {
          GetGameManager()->SetPaused(!GetGameManager()->IsPaused());
       }
       break;
 
-      case Producer::Key_B:
+      case 'b':
       {
          if(mLogController->GetLastKnownStatus().GetStateEnum() != dtGame::LogStateEnumeration::LOGGER_STATE_PLAYBACK)
          {
@@ -177,7 +175,7 @@ bool TestAARInput::HandleKeyPressed(const dtCore::Keyboard *keyBoard,
       }
       break;
 
-      case Producer::Key_G:
+      case 'g':
       {
          if(mLogController->GetLastKnownStatus().GetStateEnum() != dtGame::LogStateEnumeration::LOGGER_STATE_PLAYBACK)
          {
@@ -187,47 +185,47 @@ bool TestAARInput::HandleKeyPressed(const dtCore::Keyboard *keyBoard,
       }
       break;
 
-      case Producer::Key_T:
+      case 't':
       {
          InsertTag();
       }
       break;
 
-      case Producer::Key_F:
+      case 'f':
       {
          InsertKeyFrame();
       }
       break;
 
-      case Producer::Key_I:
+      case 'i':
       {
          SendPlayerUpdateMsg("Velocity", 10.0f);
          FireEvent(*TestAARGameEvent::EVENT_PLAYER_FORWARD);
       }
       break;
 
-      case Producer::Key_K:
+      case 'k':
       {
          SendPlayerUpdateMsg("Velocity", -10.0f);
          FireEvent(*TestAARGameEvent::EVENT_PLAYER_BACKWARD);
       }
       break;
 
-      case Producer::Key_J:
+      case 'j':
       {
          SendPlayerUpdateMsg("Turn Rate", 0.25f);
          FireEvent(*TestAARGameEvent::EVENT_PLAYER_LEFT);
       }
       break;
 
-      case Producer::Key_L:
+      case 'l':
       {
          SendPlayerUpdateMsg("Turn Rate", -0.25f);
          FireEvent(*TestAARGameEvent::EVENT_PLAYER_RIGHT);
       }
       break;
 
-      case Producer::Key_F1:
+      case osgGA::GUIEventAdapter::KEY_F1:
       {
          if(mHudGUI->GetHUDState() == HUDState::HELP)
             mHudGUI->CycleToNextHUDState(); // already in help, so toggle it off
@@ -236,31 +234,31 @@ bool TestAARInput::HandleKeyPressed(const dtCore::Keyboard *keyBoard,
       }
       break;
 
-      case Producer::Key_F2:
+      case osgGA::GUIEventAdapter::KEY_F2:
       {
          mHudGUI->CycleToNextHUDState();
       }
       break;
 
-      case Producer::Key_Return:
+      case osgGA::GUIEventAdapter::KEY_Return:
       {
-         GetGameManager()->GetApplication().GetCamera()->SetNextStatisticsType();
+//         GetGameManager()->GetApplication().GetCamera()->SetNextStatisticsType(); TODO
       }
       break;
 
-      case Producer::Key_M:
+      case 'm':
       {
          GetGameManager()->SendMessage(*GetGameManager()->GetMessageFactory().CreateMessage(TestAARMessageType::PRINT_TASKS));
       }
       break;
 
-      case Producer::Key_comma:
+      case ',':
       {
          GotoPreviousKeyframe();
       }
       break;
 
-      case Producer::Key_period:
+      case '.':
       {
          GotoNextKeyframe();
       }
@@ -274,29 +272,27 @@ bool TestAARInput::HandleKeyPressed(const dtCore::Keyboard *keyBoard,
    };
 
    if(!handled)
-      return GetGameManager()->GetApplication().KeyPressed(keyBoard, key, character);
+      return GetGameManager()->GetApplication().KeyPressed(keyBoard, key);
 
    return handled;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool TestAARInput::HandleKeyReleased(const dtCore::Keyboard* keyboard, 
-                                     Producer::KeyboardKey key,
-                                     Producer::KeyCharacter character)
+bool TestAARInput::HandleKeyReleased(const dtCore::Keyboard* keyboard, int key)
 {
    bool handled = true;
 
    switch(key)
    {
-      case Producer::Key_I:
-      case Producer::Key_K:
+      case 'i':
+      case 'k':
       {
          SendPlayerUpdateMsg("Velocity", 0.0f);
       }
       break;
 
-      case Producer::Key_J:
-      case Producer::Key_L:
+      case 'j':
+      case 'l':
       {   
          SendPlayerUpdateMsg("Turn Rate", 0.0f);
       }
@@ -309,7 +305,7 @@ bool TestAARInput::HandleKeyReleased(const dtCore::Keyboard* keyboard,
       break;
    }
 
-   return handled ? handled : dtGame::BaseInputComponent::HandleKeyReleased(keyboard, key, character); 
+   return handled ? handled : dtGame::BaseInputComponent::HandleKeyReleased(keyboard, key); 
 }
 
 //////////////////////////////////////////////////////////////////////////

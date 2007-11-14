@@ -3,30 +3,49 @@
 //////////////////////////////////////////////////////////////////////
 #include <prefix/dtcoreprefix-src.h>
 #include <dtCore/mouse.h>
+#include <dtCore/scene.h>
+#include <dtCore/camera.h>//due to include of scene.h
+#include <dtCore/keyboardmousehandler.h> //due to include of scene.h
+#include <dtCore/keyboard.h>//due to include of scene.h
+
 #include <dtCore/deltawin.h>
 #include <osg/Version>
+#include <osgViewer/View>
 #include <algorithm>
 
 using namespace dtCore;
 
 IMPLEMENT_MANAGEMENT_LAYER(Mouse)
 
-Mouse::Mouse(Producer::KeyboardMouse* km, const std::string& name) : InputDevice(name), mKeyboardMouse(km)
+Mouse::Mouse(const std::string& name) : InputDevice(name)
 {
    RegisterInstance(this);
 
    AddFeature(new Axis(this, "mouse x axis"));
    AddFeature(new Axis(this, "mouse y axis"));
    AddFeature(new Axis(this, "mouse scroll axis"));
-   AddFeature(new Button(this, "left mouse button"));
-   AddFeature(new Button(this, "middle mouse button"));
-   AddFeature(new Button(this, "right mouse button"));
+   AddFeature(new Button(this, LeftButton, "left mouse button"));
+   AddFeature(new Button(this, MiddleButton, "middle mouse button"));
+   AddFeature(new Button(this, RightButton, "right mouse button"));
+}
+
+Mouse::Mouse(dtCore::View * view, const std::string& name) : InputDevice(name), mView(view)
+{
+   RegisterInstance(this);
+
+   AddFeature(new Axis(this, "mouse x axis"));
+   AddFeature(new Axis(this, "mouse y axis"));
+   AddFeature(new Axis(this, "mouse scroll axis"));
+   AddFeature(new Button(this, LeftButton, "left mouse button"));
+   AddFeature(new Button(this, MiddleButton, "middle mouse button"));
+   AddFeature(new Button(this, RightButton, "right mouse button"));
 }
 
 Mouse::~Mouse()
 {
    DeregisterInstance(this);
 }
+
 
 void Mouse::GetPosition(float& x, float& y) const
 {
@@ -43,9 +62,21 @@ osg::Vec2 Mouse::GetPosition() const
 
 void Mouse::SetPosition(float x, float y)
 {
-   if( mKeyboardMouse.valid() )
+   if( mView.valid() && 
+      mView->GetOsgViewerView() &&
+      mView->GetOsgViewerView()->getCamera() &&
+      mView->GetOsgViewerView()->getCamera()->getGraphicsContext() &&
+      mView->GetOsgViewerView()->getCamera()->getGraphicsContext()->getTraits())
    {
-      mKeyboardMouse->positionPointer(x,y);
+      const float w2 = mView->GetOsgViewerView()->getCamera()->getGraphicsContext()->getTraits()->width/2.f;
+      const float h2 = mView->GetOsgViewerView()->getCamera()->getGraphicsContext()->getTraits()->height/2.f;
+
+      //we're converting from (-1..1) to (0..width) and (0..height)
+      mView->GetOsgViewerView()->requestWarpPointer((x*w2) + w2, (y*h2) + h2);
+   }
+   else
+   {
+      LOG_ERROR("Can not set the Mouse position: missing View, osg::View, osg::Camera, or graphics context");
    }
 }
 
@@ -75,27 +106,25 @@ void Mouse::RemoveMouseListener(MouseListener* mouseListener)
    mMouseListeners.remove(mouseListener);
 }
 
-bool Mouse::MouseScroll(Producer::KeyboardMouseCallback::ScrollingMotion sm)
+bool Mouse::MouseScroll( osgGA::GUIEventAdapter::ScrollingMotion sm )
 {
    int delta(0);
 
    switch(sm)
    {
-      case Producer::KeyboardMouseCallback::ScrollUp:
-         delta = +1;
-         break;
-      case Producer::KeyboardMouseCallback::ScrollDown:
-         delta = -1;
-         break;
-      case Producer::KeyboardMouseCallback::ScrollNone:
-#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 1 && OSG_VERSION_MINOR >= 1
-      case Producer::KeyboardMouseCallback::ScrollLeft:
-      case Producer::KeyboardMouseCallback::ScrollRight:
-      case Producer::KeyboardMouseCallback::Scroll2D:
-#endif
+      case osgGA::GUIEventAdapter::SCROLL_UP:
+          delta = +1;
+          break;
+      case osgGA::GUIEventAdapter::SCROLL_DOWN:
+          delta = -1;
+          break;
+      case osgGA::GUIEventAdapter::SCROLL_NONE:
+      case osgGA::GUIEventAdapter::SCROLL_LEFT:
+      case osgGA::GUIEventAdapter::SCROLL_RIGHT:
+      case osgGA::GUIEventAdapter::SCROLL_2D:
       default:
-         delta = 0;
-         break;
+          delta = 0;
+          break;
    }
 
    bool handled(false);
@@ -257,20 +286,22 @@ bool Mouse::ButtonUp(float x, float y, MouseButton button)
 
 bool Mouse::GetHasFocus()
 {
-   if(mKeyboardMouse.valid())
-   {
-#if defined(_OSX_AGL_IMPLEMENTATION)
-      return IsWindowActive(mKeyboardMouse->getRenderSurface()->getWindow());
-#elif defined(_X11_IMPLEMENTATION)
-      Producer::Display* display = mKeyboardMouse->getRenderSurface()->getDisplay();
-      Producer::Window windowId = 0;
-      int focusType = 0;
-      XGetInputFocus(display, &windowId, &focusType);
-      return mKeyboardMouse->getRenderSurface()->getWindow() == windowId;
-#elif defined(_WIN32_IMPLEMENTATION)
-      return mKeyboardMouse->getRenderSurface()->getWindow() == GetForegroundWindow();
-#endif
-   }
-  //todo- add implementation for linux and mac
-  return true;
+//   if(mKeyboardMouse.valid())
+//   {
+//#if defined(_OSX_AGL_IMPLEMENTATION)
+//      return IsWindowActive(mKeyboardMouse->getRenderSurface()->getWindow());
+//#elif defined(_X11_IMPLEMENTATION)
+//      Producer::Display* display = mKeyboardMouse->getRenderSurface()->getDisplay();
+//      Producer::Window windowId = 0;
+//      int focusType = 0;
+//      XGetInputFocus(display, &windowId, &focusType);
+//      return mKeyboardMouse->getRenderSurface()->getWindow() == windowId;
+//#elif defined(_WIN32_IMPLEMENTATION)
+//      return mKeyboardMouse->getRenderSurface()->getWindow() == GetForegroundWindow();
+//#endif
+//   }
+//  //todo- add implementation for linux and mac
+//  return true;
+
+   return false;
 }

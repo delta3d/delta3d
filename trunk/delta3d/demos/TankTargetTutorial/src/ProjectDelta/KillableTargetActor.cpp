@@ -190,11 +190,12 @@ void KillableTargetActor::ApplyMyShader()
    dtCore::ShaderManager::GetInstance().UnassignShaderFromNode(*GetOSGNode());
 
    dtCore::ShaderProgram *templateShader = dtCore::ShaderManager::GetInstance().
-      FindShaderTemplate(mCurrentShaderName,"TargetShaders");
+      FindShaderPrototype(mCurrentShaderName,"TargetShaders");
+
    if (templateShader != NULL)
    {
       mCurrentShader = dtCore::ShaderManager::GetInstance().
-         AssignShaderFromTemplate( *templateShader, *GetOSGNode() );
+         AssignShaderFromPrototype( *templateShader, *GetOSGNode() );
 
       // Put the shader values back (again, to avoid jumping since we are moving XYZ in our shader)
       // TIME DILATION

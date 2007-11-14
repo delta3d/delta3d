@@ -118,7 +118,7 @@ void SubMeshDrawable::setUpMaterial()
    }
 }
 
-void SubMeshDrawable::drawImplementation(osg::State& state) const 
+void SubMeshDrawable::drawImplementation(osg::RenderInfo & renderInfo) const 
 {
    // begin the rendering loop
    if(mWrapper->BeginRenderingQuery())
@@ -126,7 +126,8 @@ void SubMeshDrawable::drawImplementation(osg::State& state) const
       // select mesh and submesh for further data access
       if(mWrapper->SelectMeshSubmesh(mMeshID, mSubmeshID))
       {
-         state.disableAllVertexArrays();
+         osg::State *state = renderInfo.getState();
+         state->disableAllVertexArrays();
 
          // get the transformed vertices of the submesh
          vertexCount = mWrapper->GetVertexCount();
@@ -142,19 +143,20 @@ void SubMeshDrawable::drawImplementation(osg::State& state) const
 
          // flip vertical coordinates
          for (unsigned int i = 1; i < vertexCount * 2; i += 2)
-            {
+         {
             mMeshTextureCoordinates[i] = 1.0f - mMeshTextureCoordinates[i];
          }
 
+
          // set the vertex and normal buffers
-         state.setVertexPointer(3, GL_FLOAT, 0, mMeshVertices);
-         state.setNormalPointer(GL_FLOAT, 0, mMeshNormals);
+         state->setVertexPointer(3, GL_FLOAT, 0, mMeshVertices);
+         state->setNormalPointer(GL_FLOAT, 0, mMeshNormals);
 
          // set the texture coordinate buffer and state if necessary
          if((mWrapper->GetMapCount() > 0) && (tcount > 0))
          {
             // set the texture coordinate buffer
-            state.setTexCoordPointer(0, 2, GL_FLOAT, 0, mMeshTextureCoordinates);
+            state->setTexCoordPointer(0, 2, GL_FLOAT, 0, mMeshTextureCoordinates);
          }
 
             // White 

@@ -28,17 +28,11 @@ class MyWidget : public dtABC::Widget
          virtual ~EscapeListener();
          
          public:
-         virtual bool HandleKeyPressed( const dtCore::Keyboard* keyboard, 
-                                        Producer::KeyboardKey key,
-                                        Producer::KeyCharacter character );
+         virtual bool HandleKeyPressed( const dtCore::Keyboard* keyboard, int key );
 
-         virtual bool HandleKeyReleased( const dtCore::Keyboard* keyboard, 
-                                         Producer::KeyboardKey key,
-                                         Producer::KeyCharacter character );
+         virtual bool HandleKeyReleased( const dtCore::Keyboard* keyboard, int key );
 
-         virtual bool HandleKeyTyped( const dtCore::Keyboard* keyboard, 
-                                      Producer::KeyboardKey key,
-                                      Producer::KeyCharacter character );
+         virtual bool HandleKeyTyped( const dtCore::Keyboard* keyboard, int key );
          private:
 
          QuitFunctor mQuitFunctor;

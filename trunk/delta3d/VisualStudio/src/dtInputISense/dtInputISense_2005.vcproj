@@ -63,7 +63,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCored.lib isensed.lib"
+				AdditionalDependencies="dtCored.lib isensed.lib osgD.lib"
 				OutputFile="../../../bin/dtInputISensed.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -148,7 +148,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCore.lib isense.lib"
+				AdditionalDependencies="dtCore.lib isense.lib osg.lib"
 				OutputFile="../../../bin/dtInputISense.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"

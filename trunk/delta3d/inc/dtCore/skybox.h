@@ -172,7 +172,7 @@ protected:
 
 		SkyBoxDrawable(){setUseDisplayList(false);}
 
-		/*virtual*/ void drawImplementation(osg::State& state) const;
+		/*virtual*/ void drawImplementation(osg::RenderInfo & renderInfo) const;
 	};
 
 	///a base class to allow the user to choose different ways

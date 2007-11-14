@@ -135,11 +135,9 @@ public:
       mMotionModel->SetMaximumFlySpeed(1200.0f);
       mMotionModel->SetTarget(GetCamera());         
 
-      GetCamera()->GetSceneHandler()->GetSceneView()->setComputeNearFarMode(
-         osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR);
-         
-      GetCamera()->GetLens()->setPerspective(60.0f,60.0f,1,120000.0f);
-      GetCamera()->SetAutoAspect(true);         
+      GetCamera()->GetOSGCamera()->setComputeNearFarMode(osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR);
+      GetCamera()->SetPerspective(60.0f,60.0f,1,120000.0f);
+      GetCamera()->SetProjectionResizePolicy(osg::Camera::HORIZONTAL);         
 
       //Create our terrain and add a reader and renderer to it.
       mTerrain = new dtTerrain::Terrain();
@@ -313,19 +311,18 @@ public:
    }
 
    ////////////////////////////////////////////////////////////////////////// 
-   virtual bool KeyPressed(const dtCore::Keyboard *keyBoard, Producer::KeyboardKey key,
-      Producer::KeyCharacter character)
+   virtual bool KeyPressed(const dtCore::Keyboard *keyBoard, int key)
    {
       bool verdict(false);
       static bool wireFrame = false;
       switch (key)
       {
-      case Producer::Key_Return:
+      case osgGA::GUIEventAdapter::KEY_Return:
          ShowStatistics();
          verdict = true;
          break;
 
-      case Producer::Key_space:
+      case osgGA::GUIEventAdapter::KEY_Space:
          wireFrame = !wireFrame;
          if (wireFrame)
             GetScene()->SetRenderState(dtCore::Scene::FRONT_AND_BACK, dtCore::Scene::LINE);
@@ -335,7 +332,7 @@ public:
          verdict = true;
          break;
 
-      case Producer::Key_G:
+      case 'g':
          mTerrainClamp = !mTerrainClamp;
          if (!mTerrainClamp)
          {
@@ -352,14 +349,14 @@ public:
          verdict = true;
          break;
                
-      case Producer::Key_F:
+      case 'f':
          mFlyFast = true;
          mMotionModel->SetMaximumFlySpeed(2500);
 
          verdict = true;
          break;     
       default:
-         verdict = dtABC::Application::KeyPressed(keyBoard,key,character);
+         verdict = dtABC::Application::KeyPressed(keyBoard,key);
          break;
       }
 
@@ -367,12 +364,12 @@ public:
    }
 
    //////////////////////////////////////////////////////////////////////////
-   virtual bool KeyReleased(const dtCore::Keyboard *keyBoard, Producer::KeyboardKey key, Producer::KeyCharacter character)
+   virtual bool KeyReleased(const dtCore::Keyboard *keyBoard, int key)
    {
       bool handled(false);
       switch (key)
       {
-      case Producer::Key_F:
+      case 'f':
          mFlyFast = false;
          mMotionModel->SetMaximumFlySpeed(1200);
          handled = true;
@@ -393,7 +390,7 @@ public:
       
       //Check for some keys and adjust the terrain rendering parameters as 
       //neccessary.
-      if(GetKeyboard()->GetKeyState(Producer::Key_minus))
+      if(GetKeyboard()->GetKeyState('-'))
       {
          mRenderer->SetThreshold(float(mRenderer->GetThreshold()) - deltaFrameTime*5.0f);
          ss.str("");
@@ -401,7 +398,7 @@ public:
          LOG_INFO(ss.str());
       }
       
-      if(GetKeyboard()->GetKeyState(Producer::Key_equal))
+      if(GetKeyboard()->GetKeyState('='))
       {
          mRenderer->SetThreshold(float(mRenderer->GetThreshold()) + deltaFrameTime*5.0f);
          ss.str("");
@@ -409,7 +406,7 @@ public:
          LOG_INFO(ss.str());
       }
       
-      if(GetKeyboard()->GetKeyState(Producer::Key_bracketright))
+      if(GetKeyboard()->GetKeyState(']'))
       {
          mRenderer->SetDetailMultiplier(float(mRenderer->GetDetailMultiplier()) - deltaFrameTime*5.0f);
          ss.str("");
@@ -417,7 +414,7 @@ public:
          LOG_INFO(ss.str());
       }
       
-      if(GetKeyboard()->GetKeyState(Producer::Key_bracketleft))
+      if(GetKeyboard()->GetKeyState('['))
       {
          mRenderer->SetDetailMultiplier(float(mRenderer->GetDetailMultiplier()) + deltaFrameTime*5.0f);
          ss.str("");
@@ -435,14 +432,14 @@ public:
          tx.GetTranslation(trans);         
          trans.z() = mTerrain->GetHeight(trans.x(),trans.y()) + PLAYER_HEIGHT;         
          tx.SetTranslation(trans);
-         GetCamera()->SetTransform(tx);
+//         GetCamera()->SetTransform(tx);
       }
    }
 
    //////////////////////////////////////////////////////////////////////////
    void ShowStatistics()
    {
-#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 1 && OSG_VERSION_MINOR >= 2
+#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && ((OSG_VERSION_MAJOR == 1 && OSG_VERSION_MINOR >= 2) || (OSG_VERSION_MAJOR >= 2))
       osgUtil::Statistics::StatsType currStats = osgUtil::Statistics::STAT_NONE;
 #else
       osgUtil::Statistics::statsType currStats = osgUtil::Statistics::STAT_NONE;
@@ -466,7 +463,7 @@ public:
          break;
       }
 
-      GetCamera()->SetStatisticsType(currStats);
+//      GetCamera()->SetStatisticsType(currStats); TODO
    }
 
    //////////////////////////////////////////////////////////////////////////

@@ -23,6 +23,7 @@
 
 #include <dtUtil/macros.h>
 #include <dtCore/globals.h>
+#include <dtCore/scene.h>
 #include <dtUtil/exception.h>
 
 #include <dtGame/basemessages.h>
@@ -33,13 +34,15 @@
 
 
 //////////////////////////////////////////////////////////////////////////
-HUDComponent::HUDComponent(dtCore::DeltaWin *win, const std::string &name) :
-   dtGame::GMComponent(name),
-   mUnHandledMessages(0)
+HUDComponent::HUDComponent(dtCore::DeltaWin *win, 
+                           dtCore::Keyboard *keyboard, 
+                           dtCore::Mouse *mouse,
+                           const std::string &name) :
+dtGame::GMComponent(name),
+mUnHandledMessages(0)
 {
-   SetupGUI(win);
+   SetupGUI(win, keyboard, mouse);
 }
-
 //////////////////////////////////////////////////////////////////////////
 HUDComponent::~HUDComponent()
 {
@@ -89,12 +92,14 @@ void HUDComponent::OnAddedToGM()
 }
 
 //////////////////////////////////////////////////////////////////////////
-void HUDComponent::SetupGUI(dtCore::DeltaWin *win)
+void HUDComponent::SetupGUI(dtCore::DeltaWin *win, 
+                            dtCore::Keyboard *keyboard,
+                            dtCore::Mouse *mouse)
 {
    try
    {
       // Initialize CEGUI
-      mGUI = new dtGUI::CEUIDrawable(win);
+      mGUI = new dtGUI::CEUIDrawable(win, keyboard, mouse);
 
       // get our scheme path
       std::string scheme = "gui/schemes/WindowsLook.scheme";

@@ -28,6 +28,7 @@ namespace dtABC
    const std::string ApplicationConfigSchema::NAME="Name";
    const std::string ApplicationConfigSchema::SCENE="Scene";
    const std::string ApplicationConfigSchema::CAMERA="Camera";
+   const std::string ApplicationConfigSchema::VIEW="View";
    const std::string ApplicationConfigSchema::LOG="Log";
    const std::string ApplicationConfigSchema::LIBRARY_PATH="LibraryPath";
    
@@ -44,6 +45,7 @@ namespace dtABC
    
    const std::string ApplicationConfigSchema::WINDOWINSTANCE="WindowInstance";
    const std::string ApplicationConfigSchema::SCENEINSTANCE="SceneInstance";
+   const std::string ApplicationConfigSchema::CAMERAINSTANCE="CameraInstance";
    
    const std::string ApplicationConfigSchema::LOG_LEVEL="Level";
 

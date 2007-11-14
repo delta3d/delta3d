@@ -27,6 +27,8 @@
 #include <dtCore/inputdevice.h>
 #include <dtCore/logicalinputdevice.h>
 #include <dtCore/scene.h>
+#include <dtCore/camera.h>  //due to including scene.h
+#include <dtCore/keyboardmousehandler.h>  //due to including scene.h
 #include <dtCore/system.h>
 #include <dtCore/transformable.h>
 #include <dtCore/isector.h>
@@ -187,15 +189,15 @@ void CollisionMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
       Axis* arrowKeysUpAndDown = mDefaultInputDevice->AddAxis(
          "arrow keys up/down",
          mArrowKeysUpDownMapping = new ButtonsToAxis(
-         keyboard->GetButton(Producer::Key_S),
-         keyboard->GetButton(Producer::Key_W)
+         keyboard->GetButton('s'),
+         keyboard->GetButton('w')
          )
          );
       Axis* arrowKeysLeftAndRight = mDefaultInputDevice->AddAxis(
          "arrow keys left/right",
          mArrowKeysLeftRightMapping = new ButtonsToAxis(
-         keyboard->GetButton(Producer::Key_A),
-         keyboard->GetButton(Producer::Key_D)
+         keyboard->GetButton('a'),
+         keyboard->GetButton('d')
          )
          );
 
@@ -486,7 +488,7 @@ void CollisionMotionModel::OnMessage(MessageData *data)
          translation.set(translation[0] * mMaximumWalkSpeed, translation[1] * mMaximumWalkSpeed, translation[2] * mMaximumWalkSpeed);
       }
 
-      newXYZ = mCollider.Update(xyz, translation, deltaFrameTime, mCanJump ? mKeyboard->GetKeyState(Producer::Key_space) : false);
+      newXYZ = mCollider.Update(xyz, translation, deltaFrameTime, mCanJump ? mKeyboard->GetKeyState(' ') : false);
 
       transform.SetTranslation(newXYZ);
       if(mUseMouseButtons)

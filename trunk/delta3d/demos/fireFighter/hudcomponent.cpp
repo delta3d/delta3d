@@ -47,7 +47,10 @@ using dtCore::RefPtr;
 
 const std::string &HUDComponent::NAME = "HUDComponent";
 
-HUDComponent::HUDComponent(dtCore::DeltaWin &win, const std::string &name) : 
+HUDComponent::HUDComponent(dtCore::DeltaWin &win,
+                           dtCore::Keyboard &keyboard,
+                           dtCore::Mouse &mouse,
+                           const std::string &name) : 
    dtGame::GMComponent(name), 
    mStartWithObjectives(NULL), 
    mStart(NULL), 
@@ -86,7 +89,7 @@ HUDComponent::HUDComponent(dtCore::DeltaWin &win, const std::string &name) :
    mFailReason(NULL), 
    mHUDOverlay(NULL)
 {
-   SetupGUI(win);
+   SetupGUI(win, keyboard, mouse);
 }
 
 HUDComponent::~HUDComponent()
@@ -94,10 +97,12 @@ HUDComponent::~HUDComponent()
   
 }
 
-void HUDComponent::SetupGUI(dtCore::DeltaWin &win)
+void HUDComponent::SetupGUI(dtCore::DeltaWin &win,
+                            dtCore::Keyboard &keyboard,
+                            dtCore::Mouse &mouse)
 {
-   mGUI = new dtGUI::CEUIDrawable(&win);
-
+   mGUI = new dtGUI::CEUIDrawable(&win, &keyboard, &mouse);
+ 
    try 
    {
       std::string scheme = "CEGUI/schemes/WindowsLook.scheme";

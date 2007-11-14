@@ -228,7 +228,7 @@ namespace dtAI
                setUseDisplayList(false);
             }
 
-            /*virtual*/ void drawImplementation(osg::State& state) const;
+            /*virtual*/ void drawImplementation(osg::RenderInfo & renderInfo) const;
 
          private:
             WaypointManager*                       mHelper;

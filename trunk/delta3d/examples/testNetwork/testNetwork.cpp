@@ -54,18 +54,18 @@ void TestNetwork::Config()
    Application::Config();
 }
 
-bool TestNetwork::KeyPressed(const dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character)
+bool TestNetwork::KeyPressed(const dtCore::Keyboard* keyboard, int key)
 {
    bool verdict(false);
    switch( key )
    {
-   case Producer::Key_Escape:
+   case osgGA::GUIEventAdapter::KEY_Escape:
       {
          Quit();
          verdict = true;
       } break;
 
-   case Producer::Key_P:
+   case 'P':
       {
          //send a "ping" packet for latency info
          GNE::PingPacket ping;
@@ -90,6 +90,7 @@ void TestNetwork::PreFrame( const double deltaFrameTime )
 void TestNetwork::Frame( const double deltaFrameTime )
 {
    //send a packet to tell the network where we're at
+   Application::Frame(deltaFrameTime);
    SendPosition();
 }
 

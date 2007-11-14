@@ -29,6 +29,7 @@
 #include <dtActors/basicenvironmentactorproxy.h>
 #include <dtUtil/exception.h>
 #include <dtGame/gamemanager.h>
+#include <osgGA/GUIEventAdapter>
 
 class TestGameEnvironmentApp : public dtABC::Application
 {
@@ -76,39 +77,37 @@ class TestGameEnvironmentApp : public dtABC::Application
          dtABC::Application::Config();
       }
 
-      virtual bool KeyPressed(const dtCore::Keyboard* keyboard, 
-                              Producer::KeyboardKey key, 
-                              Producer::KeyCharacter character)
+      virtual bool KeyPressed(const dtCore::Keyboard* keyboard,int key)
       {
          bool handled = true;
          switch(key)
          {
-            case Producer::Key_1:
+            case '1':
             {
                mEnvironmentActor->EnableCloudPlane(!mEnvironmentActor->IsCloudPlaneEnabled());
                break;
             }
-            case Producer::Key_2:
+            case '2':
             {
                mEnvironmentActor->EnableFog(!mEnvironmentActor->IsFogEnabled());
                break;
             }
-            case Producer::Key_3:
+            case '3':
             {
                mEnvironmentActor->SetWeatherVisibility(dtActors::BasicEnvironmentActor::VisibilityTypeEnum::VISIBILITY_CLOSE);
                break;
             }
-            case Producer::Key_4:
+            case '4':
             {
                mEnvironmentActor->SetWeatherVisibility(dtActors::BasicEnvironmentActor::VisibilityTypeEnum::VISIBILITY_MODERATE);
                break;
             }
-            case Producer::Key_5:
+            case '5':
             {
                mEnvironmentActor->SetWeatherVisibility(dtActors::BasicEnvironmentActor::VisibilityTypeEnum::VISIBILITY_UNLIMITED);
                break;
             }
-            case Producer::Key_6:
+            case '6':
             {
                static bool enable = true;
                if(enable)
@@ -119,7 +118,7 @@ class TestGameEnvironmentApp : public dtABC::Application
                enable = !enable;
                break;
             }
-            case Producer::Key_7:
+            case '7':
             {
                static bool enable = true;
                if(enable)
@@ -130,7 +129,7 @@ class TestGameEnvironmentApp : public dtABC::Application
                enable = !enable;
                break;
             }
-            case Producer::Key_8:
+            case '8':
             {
                static bool enable = true;
                if(enable)
@@ -139,7 +138,7 @@ class TestGameEnvironmentApp : public dtABC::Application
                   mEnvironmentActor->SetWindType(dtActors::BasicEnvironmentActor::WindTypeEnum::WIND_NONE);
                break;
             }
-            case Producer::Key_space:
+            case ' ':
             {
                dtActors::BasicEnvironmentActorProxy *proxy = 
                   mGM->GetEnvironmentActor() == NULL ?
@@ -150,7 +149,7 @@ class TestGameEnvironmentApp : public dtABC::Application
                GetScene()->UseSceneLight(true);
                break;
             }
-            case Producer::Key_Escape:
+            case osgGA::GUIEventAdapter::KEY_Escape:
             {
                Quit();
                break;

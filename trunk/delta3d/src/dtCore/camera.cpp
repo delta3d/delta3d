@@ -4,33 +4,40 @@
 #include <prefix/dtcoreprefix-src.h>
 #include <dtCore/camera.h>
 
-#include <Producer/RenderSurface>
 
-#include <dtCore/cameragroup.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/scene.h>
+#include <dtCore/keyboardmousehandler.h> //due to including scene.h
+#include <dtCore/keyboard.h> //due to including scene.h
 #include <dtCore/system.h>
 #include <dtUtil/stringutils.h>
 #include <dtUtil/log.h>
+#include <dtCore/exceptionenum.h>
+#include <dtUtil/exception.h>
 
 #include <osg/FrameStamp>
 #include <osg/Matrix>
 #include <osg/MatrixTransform>
 #include <osgUtil/SceneView>
+#include <osgDB/WriteFile>
 
 #include <ctime>
 #include <osg/Version>
+#include <osgViewer/View>
+#include <osgViewer/GraphicsWindow>
+
+#include <cassert>
 
 using namespace dtUtil;
 
 namespace dtCore
 {
 
-   class ScreenShotCallback : public Producer::Camera::Callback
+   class ScreenShotCallback : public osg::Camera::DrawCallback
    {
       public :
          ScreenShotCallback() : mTakeScreenShotNextFrame(false){}
-
+         
          void SetNameToOutput(const std::string& name)
          {
             mTakeScreenShotNextFrame  = true;
@@ -39,15 +46,18 @@ namespace dtCore
 
          const std::string GetNameToOutput() const { return mNameOfScreenShotToOutput; };
 
-         virtual void operator()(const Producer::Camera &camera)
+         virtual void operator()(const osg::Camera &camera) const
          {
             if(mTakeScreenShotNextFrame)
             {
                mTakeScreenShotNextFrame = false;
                osg::ref_ptr<osg::Image> image = new osg::Image;
-               int x,y;
-               unsigned int width, height;
-               camera.getProjectionRectangle( x,y,width, height);
+               
+               int x = static_cast<int>(camera.getViewport()->x());
+               int y = static_cast<int>(camera.getViewport()->y());
+               unsigned int width = static_cast<unsigned int>(camera.getViewport()->width());
+               unsigned int height = static_cast<unsigned int>(camera.getViewport()->height());
+               
                image->allocateImage(width, height, 1, GL_RGB, GL_UNSIGNED_BYTE);
                image->readPixels(x, y, width, height, GL_RGB, GL_UNSIGNED_BYTE);
                bool status = osgDB::writeImageFile( *image.get(), mNameOfScreenShotToOutput.c_str() ); // jpg, rgb, png, bmp
@@ -60,7 +70,7 @@ namespace dtCore
          }
 
       private:
-         bool  mTakeScreenShotNextFrame;
+         mutable bool  mTakeScreenShotNextFrame;
          std::string mNameOfScreenShotToOutput;
    };
 
@@ -71,58 +81,90 @@ namespace dtCore
    // Construction/Destruction
    //////////////////////////////////////////////////////////////////////
 
-   Camera::_SceneHandler::_SceneHandler(bool useSceneLight):
-   mSceneView(new osgUtil::SceneView()),
-   mFrameStamp(new osg::FrameStamp())
+   Camera::Camera(const std::string& name)
+   :  Transformable(name),
+      mFrameBin(0),
+      mAddedToSceneGraph(false),
+      mEnable(true)
    {
-      mSceneView->init();
-      mSceneView->setDefaults(); //osg::SceneView
+      RegisterInstance(this);
 
-      if(useSceneLight)
+      System*  sys   = &dtCore::System::GetInstance();
+      assert( sys );
+      AddSender( sys );
+   
+      mOsgCamera = new osg::Camera;
+
+      double height = osg::DisplaySettings::instance()->getScreenHeight();
+      double width = osg::DisplaySettings::instance()->getScreenWidth();
+      double distance = osg::DisplaySettings::instance()->getScreenDistance();
+      double vfov = osg::RadiansToDegrees(atan2(height/2.0f,distance)*2.0);
+      mOsgCamera->setProjectionMatrixAsPerspective( vfov, width/height, 1.0f,10000.0f);
+      
+      SetClearColor( 0.2f, 0.2f, 0.6f, 1.f);
+   
+      // Default collision category = 1
+      SetCollisionCategoryBits( UNSIGNED_BIT(1));
+   
+      mScreenShotTaker = new ScreenShotCallback;
+      mOsgCamera->setPostDrawCallback(mScreenShotTaker.get());
+   }
+   
+   
+   Camera::Camera(dtCore::View * view, const std::string& name)
+      :  Transformable(name),
+         mFrameBin(0),
+         mAddedToSceneGraph(false),
+         mEnable(true)
+   {
+      RegisterInstance(this);
+      
+      System*  sys   = &dtCore::System::GetInstance();
+      assert( sys );
+      AddSender( sys );
+      
+      if(view == NULL)
       {
-         mSceneView->setLightingMode(osgUtil::SceneView::SKY_LIGHT);
+         throw dtUtil::Exception(dtCore::ExceptionEnum::INVALID_PARAMETER,
+            "Supplied dtCore::View is NULL", __FILE__, __LINE__);
       }
-      else
+      
+      if(view->GetOsgViewerView() == NULL)
       {
-         mSceneView->setLightingMode(osgUtil::SceneView::NO_SCENEVIEW_LIGHT);
+         throw dtUtil::Exception(dtCore::ExceptionEnum::INVALID_PARAMETER,
+            "Supplied dtCore::View::GetOsgViewerView() is NULL", __FILE__, __LINE__);
       }
-
-      mSceneView->setFrameStamp(mFrameStamp.get());
-
-      mStats = new Stats( mSceneView.get() );
-      mStats->Init( mSceneView.get()->getRenderStage() );
-
-      mStartTime = mTimer.Tick();
-   }
-
-   Camera::_SceneHandler::~_SceneHandler()
-   {
-      if (mSceneView->getState()->getContextID() != 0)
+         
+      if(view->GetOsgViewerView()->getCamera() == NULL)
       {
-         GetSceneView()->releaseAllGLObjects();
-         GetSceneView()->flushAllDeletedGLObjects();
+         throw dtUtil::Exception(dtCore::ExceptionEnum::INVALID_PARAMETER,
+            "Supplied dtCore::View::GetOsgViewerView()->getCamera() is NULL", __FILE__, __LINE__);
       }
-      LOG_DEBUG("Destroying _SceneHandler");
+      mOsgCamera = view->GetOsgViewerView()->getCamera();
+      
+      SetClearColor( 0.2f, 0.2f, 0.6f, 1.f);
+      
+      // Default collision category = 1
+      SetCollisionCategoryBits( UNSIGNED_BIT(1) );
+
+      mScreenShotTaker = new ScreenShotCallback;
+      mOsgCamera->setPostDrawCallback(mScreenShotTaker.get());
    }
 
-   void Camera::_SceneHandler::clear(Producer::Camera& cam)
+   Camera::~Camera()
    {
-      ClearImplementation( cam );
+      DeregisterInstance(this);
+      RemoveSender( &dtCore::System::GetInstance() );
    }
 
-   void Camera::_SceneHandler::ClearImplementation( Producer::Camera &cam )
-   {
-      //Override the Producer::Camera::clear() because the
-      //  OSGUtil::SceneView::draw() does it for us.
-
-      //So lets not do anything clearing here, ok?
-   }
-
-   void Camera::_SceneHandler::cull( Producer::Camera &cam )
-   {
-      //call osg cull here
-      CullImplementation( cam );
-   }
+//   void Camera::SetFrameBin( unsigned int frameBin )
+//   {
+//      mCameraGroup->RemoveCamera(this);
+//
+//      mFrameBin = frameBin;
+//
+//      mCameraGroup->AddCamera(this);
+//   }
 
    const std::string Camera::TakeScreenShot(const std::string& namePrefix)
    {
@@ -141,93 +183,32 @@ namespace dtCore
          }
       }
       const std::string outputName = namePrefix + "_" + timeString + ".jpg";
-      ScreenShotTaker->SetNameToOutput(outputName);
+      mScreenShotTaker->SetNameToOutput(outputName);
       return outputName;
    }
-
-   void Camera::_SceneHandler::CullImplementation(Producer::Camera &cam)
+   
+   void Camera::SetEnabled( bool enabled )
    {
-      mStats->SetTime(Stats::TIME_BEFORE_CULL);
-
-      mFrameStamp->setFrameNumber(mFrameStamp->getFrameNumber()+1);
-      mFrameStamp->setReferenceTime( mTimer.DeltaSec( mStartTime, mTimer.Tick() ) );
-
-      //copy the Producer Camera's position to osg::SceneView
-      mSceneView->getProjectionMatrix().set(cam.getProjectionMatrix());
-      mSceneView->getViewMatrix().set(cam.getPositionAndAttitudeMatrix());
-
-      //Copy the Producer Camera's viewport info to osg::SceneView
-      int x, y;
-      unsigned int w, h;
-      cam.getProjectionRectangle( x, y, w, h );
-
-      mSceneView->setViewport( x, y, w, h );
-
-      //Now tell SceneView to cull
-      mSceneView->cull();
-
-      mStats->SetTime(Stats::TIME_AFTER_CULL);
+      mEnable = enabled;      
    }
 
-   void Camera::_SceneHandler::draw( Producer::Camera &cam )
+   bool Camera::GetEnabled() const
    {
-      //call osg draw here
-      DrawImplementation( cam );
+       return (mEnable);
+//       return mCamera->isEnabled(); 
+//       TODO manage the enable disable of Camera or push this in View
    }
 
-   void Camera::_SceneHandler::DrawImplementation( Producer::Camera &cam )
+   void Camera::OnMessage( MessageData* data )
    {
-      mStats->SetTime(Stats::TIME_BEFORE_DRAW);
 
-      mSceneView->draw();
-      mStats->SetTime(Stats::TIME_AFTER_DRAW);
-      mStats->Draw();
+      if( data->message == "preframe" )
+      {
+         PreFrame( *static_cast<const double*>(data->userData) );
+      }
    }
-
-   CameraGroup* Camera::mCameraGroup = new CameraGroup;
-
-   Camera::Camera( const std::string& name )
-      :  Transformable(name),
-         mFrameBin(0),
-         mWindow(0),
-         mScene(0),
-         mAddedToSceneGraph(false),
-         mDefaultRenderSurface(0),
-         mSceneHandler(0)
-   {
-      RegisterInstance(this);
-
-      mCamera = new Producer::Camera();
-
-      mSceneHandler = new _SceneHandler(false);
-      mCamera->setSceneHandler( mSceneHandler.get() );
-
-      //A Producer Camera has a default RenderSurface (a "window") so lets
-      //set its "default" values in case the user doesn't supply their own
-      //later on with SetWindow().
-      mDefaultRenderSurface = new Producer::RenderSurface;
-
-      mDefaultRenderSurface->setWindowRectangle( 100, 100, 640, 480 );
-      mDefaultRenderSurface->setWindowName("defaultWin");
-
-      SetClearColor( 0.2f, 0.2f, 0.6f, 1.f );
-
-      // Default collision category = 1
-      SetCollisionCategoryBits( UNSIGNED_BIT(1) );
-
-      mCameraGroup->AddCamera(this);
-
-      ScreenShotTaker = new ScreenShotCallback;
-      GetCamera()->addPostDrawCallback(ScreenShotTaker.get());
-   }
-
-   Camera::~Camera()
-   {
-      mCameraGroup->RemoveCamera(this);
-      DeregisterInstance(this);
-   }
-
-   void Camera::SetNearFarCullingMode( AutoNearFarCullingMode mode )
+   
+    void Camera::SetNearFarCullingMode( AutoNearFarCullingMode mode )
    {
       osg::CullSettings::ComputeNearFarMode osgMode;
 
@@ -240,82 +221,55 @@ namespace dtCore
       default: osgMode = osg::CullSettings::COMPUTE_NEAR_FAR_USING_PRIMITIVES; break;
       }
 
-      this->GetSceneHandler()->GetSceneView()->setComputeNearFarMode(osgMode);
+      GetOSGCamera()->setComputeNearFarMode(osgMode);
    }
-
-   void Camera::SetFrameBin( unsigned int frameBin )
-   {
-      mCameraGroup->RemoveCamera(this);
-
-      mFrameBin = frameBin;
-
-      mCameraGroup->AddCamera(this);
-   }
-
-   void Camera::SetEnabled( bool enabled )
-   {
-      if( enabled )
-      {
-         mCamera->enable();
-      }
-      else
-      {
-         mCamera->disable();
-      }
-   }
-
-   bool Camera::GetEnabled() const
-   {
-      return mCamera->isEnabled();
-   }
-
    /*!
     * Render the next frame.  This will update the scene graph, cull then geometry,
     * then draw the geometry.
     * @param lastCamera Pass true if this is the last camera drawn this frame,
     * otherwise false.
     */
-   void Camera::Frame( bool lastCamera )
+   void Camera::PreFrame( const double /*deltaFrameTime*/ )
    {
-      // Only do our normal Camera stuff if it is enabled.
-      // If Producer::Camera::frame is never called, our cull callback
-      // will never be called either.
-      if( !GetEnabled() )
-      {
-         return;
-      }
-
-      // We also do not want to perform frame if we do not have a valid
-      // window.
-      if( !mWindow.valid() )
-      {
-         // This is a special case for dtABC::Widget. Normally a Window will
-         // be set via SetWindow (wow). But when a Widget is configured it
-         // creates a DeltaWin, but does not directly call SetWindow. Instead
-         // it creates its own Producer::RenderSurface and never tells poor
-         // ol' Camera. However it does set the Producer::Window handle on
-         // the RenderSurface we are using. So if SetWindow is never called
-         // (i.e. !mWindow.valid()) let's check if we have a valid
-         // Producer::Window.
-         Producer::Window pWindow(0);
-
-         if( Producer::RenderSurface* rs = mCamera->getRenderSurface() )
-         {
-            pWindow = rs->getWindow();
-         }
-
-         if( pWindow == 0 )
-         {
-            return;
-         }
-      }
-
-      if( mScene.valid() && !System::GetInstance().GetPause() )
-      {
-         // TODO: Investigate double updates when we have multiple camera.
-         // Anything with an update callback may be called twice!
-         GetSceneHandler()->GetSceneView()->update(); //osgUtil::SceneView update
-      }
+//      // Only do our normal Camera stuff if it is enabled.
+//      // If Producer::Camera::frame is never called, our cull callback
+//      // will never be called either.
+//      if( !GetEnabled() )
+//      {
+//         return;
+//      }
+//
+//      // We also do not want to perform frame if we do not have a valid
+//      // window.
+//      if( !mWindow.valid() )
+//      {
+//         // This is a special case for dtABC::Widget. Normally a Window will
+//         // be set via SetWindow (wow). But when a Widget is configured it
+//         // creates a DeltaWin, but does not directly call SetWindow. Instead
+//         // it creates its own Producer::RenderSurface and never tells poor
+//         // ol' Camera. However it does set the Producer::Window handle on
+//         // the RenderSurface we are using. So if SetWindow is never called
+//         // (i.e. !mWindow.valid()) let's check if we have a valid
+//         // Producer::Window.
+//         Producer::Window pWindow(0);
+//
+//         if( Producer::RenderSurface* rs = mCamera->getRenderSurface() )
+//         {
+//            pWindow = rs->getWindow();
+//         }
+//
+//         if( pWindow == 0 )
+//         {
+//            return;
+//         }
+//      }
+//
+//      if( mScene.valid() && !System::GetInstance().GetPause() )
+//      {
+//         // TODO: Investigate double updates when we have multiple camera.
+//         // Anything with an update callback may be called twice!
+//         GetSceneHandler()->GetSceneView()->update(); //osgUtil::SceneView update
+//      }
 
       //Get our Camera's position, up vector, and look-at vector and pass them
       //to the Producer Camera
@@ -373,149 +327,159 @@ namespace dtCore
       osg::Vec3d u = s ^ F;
       F = -F;
 
-      Producer::Matrix m(s[0], u[0], F[0], 0.0,
-                         s[1], u[1], F[1], 0.0,
-                         s[2], u[2], F[2], 0.0,
-                         s*eye, u*eye, F*eye, 1.0);
-      mCamera->setViewByMatrix(m);
-
-      mCamera->frame(lastCamera);
+      osg::Matrix m(s[0], u[0], F[0], 0.0,
+                    s[1], u[1], F[1], 0.0,
+                    s[2], u[2], F[2], 0.0,
+                    s*eye, u*eye, F*eye, 1.0);
+      mOsgCamera->setViewMatrix(m);
    }
 
-   void Camera::SetWindow( DeltaWin* win )
-   {
-      mWindow = win;
-
-      if( mWindow == NULL )
-      {
-         mCamera->setRenderSurface( mDefaultRenderSurface );
-      }
-      else
-      {
-         mCamera->setRenderSurface( mWindow->GetRenderSurface() );
-      }
-   }
-
-   DeltaWin* Camera::GetWindow()
-   {
-      return mWindow.get();
-   }
-
-   void Camera::SetScene(Scene *scene)
-   {
-      mScene = scene;
-
-      if(mScene == NULL)
-      {
-         mCamera->setSceneHandler(0);
-      }
-      else
-      {
-         //Copy our camera's clear color into the scene handler cause thats where
-         //  the screen actually gets cleared.
-         GetSceneHandler()->GetSceneView()->setClearColor( mClearColor );
-
-         //assign the supplied scene to the SceneView
-         GetSceneHandler()->GetSceneView()->setSceneData( scene->GetSceneNode() );
-      }
-   }
-
-   void Camera::SetClearColor(float r, float g, float b, float a)
-   {
-      mClearColor.set(r, g, b, a);
-
-      //tell the scene handler about the change
-      GetSceneHandler()->GetSceneView()->setClearColor(mClearColor);
-   }
-
-   void Camera::SetClearColor(const osg::Vec4& color)
-   {
-      mClearColor = color;
-
-      //tell the scene handler about the change
-      GetSceneHandler()->GetSceneView()->setClearColor(mClearColor);
-   }
-
-   void Camera::GetClearColor( float& r, float& g, float& b, float& a )
-   {
-      r = mClearColor[0];
-      g = mClearColor[1];
-      b = mClearColor[2];
-      a = mClearColor[3];
-   }
 
    void Camera::SetPerspective(double hfov, double vfov, double nearClip, double farClip)
    {
-   	mCamera->getLens()->setPerspective(hfov, vfov, nearClip, farClip);
-
+      double ratio = 0;
+      
+      if (!mWindow.valid() || !mWindow->GetOsgViewerGraphicsWindow())
+      {
+         double height = osg::DisplaySettings::instance()->getScreenHeight();
+         double width = osg::DisplaySettings::instance()->getScreenWidth();
+         ratio = width / height;
+      }
+      else
+      {
+         const osg::GraphicsContext::Traits * traits = mWindow->GetOsgViewerGraphicsWindow()->getTraits();
+         ratio = traits->width / traits->height;
+      }
+      
+      mOsgCamera->setProjectionMatrixAsPerspective(hfov, ratio , nearClip, farClip);
    }
 
    void Camera::SetFrustum(double left, double right, double bottom, double top, double nearClip, double farClip)
    {
-      mCamera->getLens()->setFrustum(left, right, bottom, top, nearClip, farClip);
-
+      mOsgCamera->setProjectionMatrixAsFrustum(left, right, bottom, top, nearClip, farClip);
    }
 
    void Camera::SetOrtho( double left, double right, double bottom, double top, double nearClip, double farClip )
    {
-      mCamera->getLens()->setOrtho(left, right, bottom, top, nearClip, farClip);
+      mOsgCamera->setProjectionMatrixAsOrtho(left, right, bottom, top, nearClip, farClip);
    }
 
-   void Camera::ConvertToOrtho( float d )
+   void Camera::SetClearColor(float r, float g, float b, float a)
    {
-      mCamera->getLens()->convertToOrtho(d);
+      osg::Vec4 color(r, g, b, a);
+
+      SetClearColor(color);
    }
 
-   bool Camera::ConvertToPerspective( float d )
+   void Camera::SetClearColor(const osg::Vec4& color)
    {
-      bool t;
-      t = mCamera->getLens()->convertToPerspective(d);
-      return t;
+       mOsgCamera->setClearColor(color);
    }
 
-   float Camera::GetHorizontalFov()
+   void Camera::GetClearColor( float& r, float& g, float& b, float& a )
    {
-      float hfov = 0.0f;
-      hfov = mCamera->getLens()->getHorizontalFov();
-      return hfov;
+      osg::Vec4 color = mOsgCamera->getClearColor();
+       
+      r = color[0];
+      g = color[1];
+      b = color[2];
+      a = color[3];
    }
-
-   float Camera::GetVerticalFov()
+   
+   void Camera::GetClearColor(osg::Vec4& color)
    {
-      float vfov = 0.0f;
-      vfov = mCamera->getLens()->getVerticalFov();
-      return vfov;
+      color = mOsgCamera->getClearColor();
    }
 
-   void Camera::SetAutoAspect( bool ar )
-   {
-      mCamera->getLens()->setAutoAspect(ar);
-   }
+//   void Camera::ConvertToOrtho( float d )
+//   {
+//      mCamera->getLens()->convertToOrtho(d);
+//   }
+//
+//   bool Camera::ConvertToPerspective( float d )
+//   {
+//      bool t;
+//      t = mCamera->getLens()->convertToPerspective(d);
+//      return t;
+//   }
+//
+//   float Camera::GetHorizontalFov()
+//   {
+//      float hfov = 0.0f;
+//      hfov = mCamera->getLens()->getHorizontalFov();
+//      return hfov;
+//   }
+//
+//   float Camera::GetVerticalFov()
+//   {
+//      float vfov = 0.0f;
+//      vfov = mCamera->getLens()->getVerticalFov();
+//      return vfov;
+//   }
 
-   bool Camera::GetAutoAspect()
-   {
-      bool ar;
-      ar = mCamera->getLens()->getAutoAspect();
-      return ar;
-   }
 
-   void Camera::SetAspectRatio( double aspectRatio )
-   {
-   	mCamera->getLens()->setAspectRatio(aspectRatio);
-   }
-
-   double Camera::GetAspectRatio()
-   {
-   	double aspectRatio;
-   	aspectRatio = mCamera->getLens()->getAspectRatio();
-   	return aspectRatio;
-   }
-
+//   bool Camera::GetAutoAspect()
+//   {
+//      bool ar;
+//      ar = mCamera->getLens()->getAutoAspect();
+//      return ar;
+//   }
+//
+//   void Camera::SetAspectRatio( double aspectRatio )
+//   {
+//   	mCamera->getLens()->setAspectRatio(aspectRatio);
+//   }
+//
+//   double Camera::GetAspectRatio()
+//   {
+//       return mViewer->getLens()->getAspectRatio();
+//   }
+   //////////////////////////////////////////
    void Camera::AddedToScene( Scene* scene )
    {
       mAddedToSceneGraph = bool(scene != NULL);
 
       Transformable::AddedToScene(scene);
    }
+   
+   
+   
+   //////////////////////////////////////////
+   void Camera::SetWindow( DeltaWin* win )
+   {
+      if (mWindow == win) return;
+            
+      mWindow = win;
 
+      OnWindowChanged();
+   }
+   
+   void Camera::OnWindowChanged()
+   {
+      if (mWindow.valid())
+      {
+         osgViewer::GraphicsWindow * gw = mWindow->GetOsgViewerGraphicsWindow();
+         mOsgCamera->setGraphicsContext(gw);
+
+         const osg::GraphicsContext::Traits * traits = gw->getTraits();
+         
+         double fovy, aspectRatio, zNear, zFar;
+         mOsgCamera->getProjectionMatrixAsPerspective(fovy, aspectRatio, zNear, zFar);
+
+         double newAspectRatio = double(traits->width) / double(traits->height);
+         double aspectRatioChange = newAspectRatio / aspectRatio;
+         if (aspectRatioChange != 1.0)
+         {
+            mOsgCamera->getProjectionMatrix() *= osg::Matrix::scale(1.0/aspectRatioChange, 1.0, 1.0);
+         }
+
+         mOsgCamera->setViewport(new osg::Viewport(0, 0, traits->width, traits->height));
+
+         GLenum buffer = traits->doubleBuffer ? GL_BACK : GL_FRONT;
+
+         mOsgCamera->setDrawBuffer(buffer);
+         mOsgCamera->setReadBuffer(buffer);
+      }
+   }
 }
+

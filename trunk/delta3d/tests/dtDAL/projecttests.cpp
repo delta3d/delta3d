@@ -26,10 +26,7 @@
 #include <cstdio>
 #include <ctime>
 
-#include <dtCore/dt.h>
-#include <dtCore/scene.h>
 #include <dtCore/globals.h>
-#include <dtABC/application.h>
 
 #include <dtUtil/stringutils.h>
 

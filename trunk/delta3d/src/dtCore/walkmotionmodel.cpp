@@ -9,6 +9,10 @@
 #include <dtCore/logicalinputdevice.h>
 #include <dtCore/mouse.h>
 #include <dtCore/scene.h>
+#include <dtCore/camera.h>//due to include of scene.h
+#include <dtCore/keyboardmousehandler.h> //due to include of scene.h
+#include <dtCore/keyboard.h>//due to include of scene.h
+
 #include <dtCore/system.h>
 #include <dtCore/transformable.h>
 
@@ -121,24 +125,24 @@ void WalkMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
       Axis* arrowKeysUpAndDown = mDefaultInputDevice->AddAxis(
          "arrow keys up/down",
          mArrowKeysUpDownMapping = new ButtonsToAxis(
-            keyboard->GetButton(Producer::Key_Down),
-            keyboard->GetButton(Producer::Key_Up)
+            keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Down),
+            keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Up)
          )
       );
          
       Axis* arrowKeysLeftAndRight = mDefaultInputDevice->AddAxis(
          "arrow keys left/right",
          mArrowKeysLeftRightMapping = new ButtonsToAxis(
-            keyboard->GetButton(Producer::Key_Left),
-            keyboard->GetButton(Producer::Key_Right)
+            keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Left),
+            keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Right)
          )
       );
       
       Axis* adKeysLeftAndRight = mDefaultInputDevice->AddAxis(
          "a/d keys left/right",
          mADKeysLeftRightMapping = new ButtonsToAxis(
-            keyboard->GetButton(Producer::Key_A),
-            keyboard->GetButton(Producer::Key_D)
+            keyboard->GetButton('a'),
+            keyboard->GetButton('d')
          )
       );
             
@@ -169,18 +173,18 @@ void WalkMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
       mRightButtonLeftRightMapping->SetSourceAxis(mouse->GetAxis(0));
       
       mArrowKeysUpDownMapping->SetSourceButtons(
-         keyboard->GetButton(Producer::Key_Down),
-         keyboard->GetButton(Producer::Key_Up)
+         keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Down),
+         keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Up)
       );
       
       mArrowKeysLeftRightMapping->SetSourceButtons(
-         keyboard->GetButton(Producer::Key_Left),
-         keyboard->GetButton(Producer::Key_Right)
+         keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Left),
+         keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Right)
       );
       
       mADKeysLeftRightMapping->SetSourceButtons(
-         keyboard->GetButton(Producer::Key_A),
-         keyboard->GetButton(Producer::Key_D)
+         keyboard->GetButton('a'),
+         keyboard->GetButton('d')
       );
    }
    

@@ -37,25 +37,27 @@ namespace dtCore
    
    Button* InputDevice::GetButton(int index)
    {
-      if( mButtons.empty() || unsigned(index) > mButtons.size()-1U )
+      ButtonMap::iterator it = mButtons.find(index);
+      if( it == mButtons.end() )
       {
-         return 0;
+         return NULL;
       }
       else
       {
-         return mButtons[index].get();
+         return it->second.get();
       }
    }
    
    const Button* InputDevice::GetButton(int index) const
    {
-      if( mButtons.empty() || unsigned(index) > mButtons.size()-1U )
+      ButtonMap::const_iterator it = mButtons.find(index);
+      if( it == mButtons.end() )
       {
-         return 0;
+         return NULL;
       }
       else
       {
-         return mButtons[index].get();
+         return it->second.get();
       }
    }
 
@@ -113,24 +115,32 @@ namespace dtCore
     *
     * @param feature a pointer to the feature to add
     */
-   void InputDevice::AddFeature(InputDeviceFeature* feature)
+   bool InputDevice::AddFeature( InputDeviceFeature* feature )
    {
-      mFeatures.push_back(feature);
    
       if(Button* button = dynamic_cast<Button*>(feature))
       {
-         mButtons.push_back(button);
+         //see if a button with the same symbol already exists
+         if (GetButton(button->GetSymbol()) != NULL)
+         {
+            return false;
+         }
+
+         mButtons[button->GetSymbol()] = button;
       }
       
       if(Axis* axis = dynamic_cast<Axis*>(feature))
       {
          mAxes.push_back(axis);
       }
+
+      mFeatures.push_back(feature);
+      return true;
    }
    
    void InputDevice::RemoveFeature(InputDeviceFeature* feature)
    {
-      for(std::vector< RefPtr<InputDeviceFeature> >::iterator it = mFeatures.begin();
+      for(FeatureVector::iterator it = mFeatures.begin();
           it != mFeatures.end();
           ++it)
       {
@@ -140,11 +150,11 @@ namespace dtCore
    
             if(IS_A(feature, Button*))
             {
-               for(std::vector< RefPtr<Button> >::iterator bit = mButtons.begin();
+               for(ButtonMap::iterator bit = mButtons.begin();
                    bit != mButtons.end();
                    ++bit)
                {
-                  if((*bit).get() == feature)
+                  if((*bit).second.get() == feature)
                   {
                      mButtons.erase(bit);
                      break;
@@ -154,7 +164,7 @@ namespace dtCore
    
             if(IS_A(feature, Axis*))
             {
-               for(std::vector< RefPtr<Axis> >::iterator ait = mAxes.begin();
+               for(AxisVector::iterator ait = mAxes.begin();
                    ait != mAxes.end();
                    ++ait)
                {
@@ -195,8 +205,15 @@ namespace dtCore
    }
    
    Button::Button(InputDevice* owner, const std::string& description) :
+     InputDeviceFeature(owner, description),
+     mState(false),
+     mSymbol(-1)
+  {}
+   
+   Button::Button(InputDevice* owner, int symbol, const std::string& description) :
       InputDeviceFeature(owner, description),
-      mState(false)
+      mState(false),
+      mSymbol(symbol)
    {}
    
    bool Button::SetState(bool state)
@@ -232,6 +249,11 @@ namespace dtCore
    bool Button::GetState() const
    {
       return mState;
+   }
+
+   int Button::GetSymbol() const
+   {
+      return mSymbol;      
    }
    
    void Button::AddButtonListener(ButtonListener* buttonListener)

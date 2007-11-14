@@ -22,8 +22,8 @@
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtCore/mouse.h>
 #include <dtCore/genericmouselistener.h>
-
-#include <Producer/KeyboardMouse>
+#include <dtABC/application.h>
+#include <dtCore/system.h>
 
 namespace dtTest
 {
@@ -34,6 +34,7 @@ namespace dtTest
       CPPUNIT_TEST( TestObservers );
       CPPUNIT_TEST( TestGenericObserver );
       CPPUNIT_TEST( TestAxes );
+      //CPPUNIT_TEST( TestMousePosition );
       CPPUNIT_TEST_SUITE_END();
 
       public:
@@ -49,8 +50,12 @@ namespace dtTest
          // Test change of state on the default mouse axes
          void TestAxes();
 
+         // test setting and getting the mouse position
+         void TestMousePosition();
+
       private:
    };
+
 
    /// mouse test validator
    class MouseObserver : public dtCore::MouseListener
@@ -241,7 +246,7 @@ void MouseTests::TestObservers()
    float x(1.0f), y(1.0f);
 
    // -- test observation -- //
-   CPPUNIT_ASSERT( !ms->MouseScroll(Producer::KeyboardMouseCallback::ScrollDown) ); // scroll: lefty should NOT handle it
+   CPPUNIT_ASSERT( !ms->MouseScroll(osgGA::GUIEventAdapter::SCROLL_DOWN) ); // scroll: lefty should NOT handle it
    CPPUNIT_ASSERT( !ms->MouseMotion(x,y) );                                         // motion: lefty should NOT handle it
    CPPUNIT_ASSERT( !ms->PassiveMouseMotion(x,y) );                                  // passive: lefty should NOT handle it
    CPPUNIT_ASSERT( ms->ButtonDown(x,y,lefty->GetButton()) );                     // press: lefty should handle it
@@ -281,7 +286,7 @@ void MouseTests::TestObservers()
    CPPUNIT_ASSERT( ms->DoubleButtonDown(x,y,lefty->GetButton()) );                 // double: lefty should handle it
    CPPUNIT_ASSERT( !movesy->GetHit() );  // better NOT be hit
 
-   CPPUNIT_ASSERT( !ms->MouseScroll(Producer::KeyboardMouseCallback::ScrollDown) ); // scroll: movesy should NOT handle it
+   CPPUNIT_ASSERT( !ms->MouseScroll(osgGA::GUIEventAdapter::SCROLL_DOWN) ); // scroll: movesy should NOT handle it
    CPPUNIT_ASSERT( movesy->GetHit() );  // better be hit
 
    CPPUNIT_ASSERT( !ms->MouseMotion(x,y) );                                         // motion: movesy should NOT handle it
@@ -346,7 +351,7 @@ void MouseTests::TestGenericObserver()
    CPPUNIT_ASSERT( hcb.WasDraggedHit() );  // better be hit
 
    CPPUNIT_ASSERT( !hcb.WasScrolledHit() );  // better not be hit
-   CPPUNIT_ASSERT( ms->MouseScroll(Producer::KeyboardMouseCallback::ScrollUp) );  // hcb is coded to handle it.
+   CPPUNIT_ASSERT( ms->MouseScroll(osgGA::GUIEventAdapter::SCROLL_UP) );  // hcb is coded to handle it.
    CPPUNIT_ASSERT( hcb.WasScrolledHit() );  // better be hit
 
    // disable the callbacks
@@ -386,7 +391,7 @@ void MouseTests::TestGenericObserver()
    CPPUNIT_ASSERT( !hcb.WasDraggedHit() );  // better be hit
 
    CPPUNIT_ASSERT( !hcb.WasScrolledHit() );  // better not be hit
-   CPPUNIT_ASSERT( !ms->MouseScroll(Producer::KeyboardMouseCallback::ScrollUp) );  // mgen is coded not to handle it when disabled.
+   CPPUNIT_ASSERT( !ms->MouseScroll(osgGA::GUIEventAdapter::SCROLL_UP) );  // mgen is coded not to handle it when disabled.
    CPPUNIT_ASSERT( !hcb.WasScrolledHit() );  // better be hit
 }
 
@@ -423,26 +428,49 @@ void MouseTests::TestAxes()
    CPPUNIT_ASSERT_DOUBLES_EQUAL( double(y), ms->GetAxis(1)->GetState(), 0.001 );
    CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0, ms->GetAxis(2)->GetState(), 0.001 );
 
-   ms->MouseScroll(Producer::KeyboardMouseCallback::ScrollUp);
+   ms->MouseScroll(osgGA::GUIEventAdapter::SCROLL_UP);
 
    // Verify the other axes are left untouched
    CPPUNIT_ASSERT_DOUBLES_EQUAL( double(x), ms->GetAxis(0)->GetState(), 0.001 );
    CPPUNIT_ASSERT_DOUBLES_EQUAL( double(y), ms->GetAxis(1)->GetState(), 0.001 );
    CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.0, ms->GetAxis(2)->GetState(), 0.001 );
 
-   ms->MouseScroll(Producer::KeyboardMouseCallback::ScrollDown);
+   ms->MouseScroll(osgGA::GUIEventAdapter::SCROLL_DOWN);
    CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0, ms->GetAxis(2)->GetState(), 0.001 );
 
-   ms->MouseScroll(Producer::KeyboardMouseCallback::ScrollNone);
+   ms->MouseScroll(osgGA::GUIEventAdapter::SCROLL_NONE);
 
    CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0, ms->GetAxis(2)->GetState(), 0.001 );
 
-   ms->MouseScroll(Producer::KeyboardMouseCallback::ScrollUp);
-   ms->MouseScroll(Producer::KeyboardMouseCallback::ScrollUp);
-   ms->MouseScroll(Producer::KeyboardMouseCallback::ScrollUp);
-   ms->MouseScroll(Producer::KeyboardMouseCallback::ScrollDown);
-   ms->MouseScroll(Producer::KeyboardMouseCallback::ScrollUp);
-   ms->MouseScroll(Producer::KeyboardMouseCallback::ScrollUp);
+   ms->MouseScroll(osgGA::GUIEventAdapter::SCROLL_UP);
+   ms->MouseScroll(osgGA::GUIEventAdapter::SCROLL_UP);
+   ms->MouseScroll(osgGA::GUIEventAdapter::SCROLL_UP);
+   ms->MouseScroll(osgGA::GUIEventAdapter::SCROLL_DOWN);
+   ms->MouseScroll(osgGA::GUIEventAdapter::SCROLL_UP);
+   ms->MouseScroll(osgGA::GUIEventAdapter::SCROLL_UP);
 
    CPPUNIT_ASSERT_DOUBLES_EQUAL( 4.0, ms->GetAxis(2)->GetState(), 0.001 );
+}
+
+void MouseTests::TestMousePosition()
+{
+   using namespace dtCore; 
+
+   //Had to use an Application, something to do with the osg Event queue
+   //needing to be tickled.  Kind of a wacky test since it will actual
+   //move the mouse pointer.  This test could fail if someone is moving
+   //the mouse while the test is running.
+
+   RefPtr<dtABC::Application> app = new dtABC::Application();
+   app->Config();
+   System::GetInstance().Start();
+   System::GetInstance().Step();
+
+   const osg::Vec2 newPos(0.5f, 0.6f);
+   app->GetMouse()->SetPosition(newPos);
+   System::GetInstance().Step(); //required to get the event processed back to Delta3D
+
+   //The Mouse position should be the same as what we just set
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Mouse was not set correctly",
+      newPos, app->GetMouse()->GetPosition());
 }

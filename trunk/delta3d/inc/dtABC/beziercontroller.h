@@ -59,8 +59,9 @@ private:
       }
 
       BezierPathDrawable(){setUseDisplayList(false);}
-   
-      /*virtual*/ void drawImplementation(osg::State& state) const;
+      
+
+      /*virtual*/ void drawImplementation(osg::RenderInfo &renderInfo) const;
       void SetPath(BezierController* pPath){mController = pPath;}
       BezierController* GetController()const{return mController;}
    

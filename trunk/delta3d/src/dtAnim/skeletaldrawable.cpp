@@ -110,7 +110,7 @@ SkeletalDrawable::~SkeletalDrawable()
                   details::DeletePointer<VectorPrimitives::value_type>() );
 }
 
-void SkeletalDrawable::drawImplementation(osg::State& state) const
+void SkeletalDrawable::drawImplementation(osg::RenderInfo & /*renderInfo*/) const
 {
    glPointSize( 4.f );
 

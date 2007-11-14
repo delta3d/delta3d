@@ -70,7 +70,7 @@ public:
     /**
      * Draws the geometry.
      */
-    virtual void drawImplementation(osg::State& state) const;
+    virtual void drawImplementation(osg::RenderInfo& renderInfo) const;
 
     /**
      * Accept PrimitiveVisitor, in this case a TriangleVisitor

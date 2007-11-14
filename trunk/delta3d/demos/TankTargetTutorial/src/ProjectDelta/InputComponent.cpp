@@ -41,8 +41,7 @@ void InputComponent::SetupEvents()
 }
 
 ////////////////////////////////////////////////////////////////////
-bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard,
-   Producer::KeyboardKey key, Producer::KeyCharacter character)
+bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard, int key)
 {
    bool handled = true;
    switch(key)
@@ -56,7 +55,7 @@ bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard,
 
    // the default case handles the escape key to quit.
    if (!handled)
-      return BaseInputComponent::HandleKeyPressed(keyboard, key, character);
+      return BaseInputComponent::HandleKeyPressed(keyboard, key);
 
    return handled;
 }

@@ -11,6 +11,7 @@
 #include <dtCore/object.h>
 #include <dtCore/orbitmotionmodel.h>
 #include <dtCore/particlesystem.h>
+#include <osgGA/GUIEventAdapter>
 
 // name spaces
 using namespace   dtCore;
@@ -149,9 +150,9 @@ TestAudioApp::PostFrame( const double deltaFrameTime )
 }
 
 
-bool TestAudioApp::KeyPressed(const Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character)
+bool TestAudioApp::KeyPressed(const Keyboard* keyboard, int key)
 {
-   bool verdict = dtABC::Application::KeyPressed( keyboard, key, character );
+   bool verdict = dtABC::Application::KeyPressed( keyboard, key);
    if( verdict == true )
    {
       return verdict;
@@ -160,119 +161,120 @@ bool TestAudioApp::KeyPressed(const Keyboard* keyboard, Producer::KeyboardKey ke
 
    switch( key )
    {
-      case  Producer::Key_A:
+      case  'a':
          LoadPlaySound( kSoundFile[0L] );
          verdict = true;
          break;
 
-      case  Producer::Key_S:
+      case  's':
          mFXMgr->AddDetonation( pos, kFxDetonationType[EXPLODE] );
          verdict = true;
          break;
 
-      case  Producer::Key_D:
+      case  'd':
          LoadPlaySound( kSoundFile[2L], TRUCK );
          verdict = true;
          break;
 
-      case  Producer::Key_F:
+      case  'f':
          LoadPlaySound( kSoundFile[3L], HELO );
+         verdict = true;
          break;
 
-      case  Producer::Key_0:
-      case  Producer::Key_KP_Insert:
+      case  '0':
+      case  osgGA::GUIEventAdapter::KEY_KP_Insert:
          ChangeSoundGain( 0.0f / 9.0f );
          verdict = true;
          break;
 
-      case  Producer::Key_1:
-      case  Producer::Key_KP_End:
+      case  '1':
+      case  osgGA::GUIEventAdapter::KEY_KP_End:
          ChangeSoundGain( 1.0f / 9.0f );
          verdict = true;
          break;
 
-      case  Producer::Key_2:
-      case  Producer::Key_KP_Down:
+      case  '2':
+      case  osgGA::GUIEventAdapter::KEY_KP_Down:
          ChangeSoundGain( 2.0f / 9.0f );
          verdict = true;
          break;
 
-      case  Producer::Key_3:
-      case  Producer::Key_KP_Page_Down:
+      case  '3':
+      case  osgGA::GUIEventAdapter::KEY_KP_Page_Down:
          ChangeSoundGain( 3.0f / 9.0f );
          verdict = true;
          break;
 
-      case  Producer::Key_4:
-      case  Producer::Key_KP_Left:
+      case  '4':
+      case  osgGA::GUIEventAdapter::KEY_KP_Left:
          ChangeSoundGain( 4.0f / 9.0f );
          verdict = true;
          break;
 
-      case  Producer::Key_5:
-      case  Producer::Key_KP_Begin:
+      case  '5':
+      case  osgGA::GUIEventAdapter::KEY_KP_Begin:
          ChangeSoundGain( 5.0f / 9.0f );
          verdict = true;
          break;
 
-      case  Producer::Key_6:
-      case  Producer::Key_KP_Right:
+      case  '6':
+      case  osgGA::GUIEventAdapter::KEY_KP_Right:
          ChangeSoundGain( 6.0f / 9.0f );
          verdict = true;
          break;
 
-      case  Producer::Key_7:
-      case  Producer::Key_KP_Home:
+      case  '7':
+      case  osgGA::GUIEventAdapter::KEY_KP_Home:
          ChangeSoundGain( 7.0f / 9.0f );
          verdict = true;
          break;
 
-      case  Producer::Key_8:
-      case  Producer::Key_KP_Up:
+      case  '8':
+      case  osgGA::GUIEventAdapter::KEY_KP_Up:
          ChangeSoundGain( 8.0f / 9.0f );
          verdict = true;
          break;
 
-      case  Producer::Key_9:
-      case  Producer::Key_KP_Page_Up:
+      case  '9':
+      case  osgGA::GUIEventAdapter::KEY_KP_Page_Up:
          ChangeSoundGain( 9.0f / 9.0f );
          verdict = true;
          break;
 
-      case  Producer::Key_minus:
-      case  Producer::Key_KP_Subtract:
+      case  '-':
+      case  osgGA::GUIEventAdapter::KEY_KP_Subtract:
          ChangeSoundPitch( 0.9f );
          verdict = true;
          break;
 
-      case  Producer::Key_equal:
-      case  Producer::Key_KP_Add:
+      case  '=':
+      case  osgGA::GUIEventAdapter::KEY_KP_Add:
          ChangeSoundPitch( 1.1f );
          verdict = true;
          break;
 
-      case  Producer::Key_L:
+      case  'l':
          ToggleSoundLooping();
          verdict = true;
          break;
 
-      case  Producer::Key_Pause:
+      case  osgGA::GUIEventAdapter::KEY_Pause:
          PauseAllSounds();
          verdict = true;
          break;
 
-      case  Producer::Key_Return:
-      case  Producer::Key_KP_Enter:
+      case  osgGA::GUIEventAdapter::KEY_Return:
+      case  osgGA::GUIEventAdapter::KEY_KP_Enter:
          RewindAllSounds();
          verdict = true;
          break;
 
-      case  Producer::Key_space:
+      case  ' ':
          StopAllSounds();
          verdict = true;
          break;
 
-      case Producer::Key_R:
+      case 'r':
          {
             if( mRecorder->GetState() == SoundRecorder::Recording )
             {
@@ -285,7 +287,7 @@ bool TestAudioApp::KeyPressed(const Keyboard* keyboard, Producer::KeyboardKey ke
          verdict = true;
          } break;
 
-      case Producer::Key_Y:
+      case 'y':
          {
             std::string sfile("soundrecord.xml");
             LOG_INFO("Saving to file: "+ sfile )
@@ -588,11 +590,7 @@ TestAudioApp::LoadGfxFile( const char* fname )
    assert( fileobj.valid() );
 
 
-   // load the graphics file from disk
-   bool fileLoaded = false;
-   fileLoaded = fileobj->LoadFile( filename );
-
-   if( ! fileLoaded )
+   if( fileobj->LoadFile( filename ) == NULL )
    {
       Log::GetInstance().LogMessage( Log::LOG_WARNING,__FUNCTION__,
          "can't load gfx file '%s'", filename.c_str() );

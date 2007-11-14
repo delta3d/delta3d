@@ -48,10 +48,10 @@ class TEST_AAR_EXPORT TestAARInput : public dtGame::BaseInputComponent
       TestAARInput(const std::string &name, dtGame::LogController &logCtrl, TestAARHUD &hudComp);
 
       // We're going to handle key presses!
-      virtual bool HandleKeyPressed(const dtCore::Keyboard* keyboard, Producer::KeyboardKey key,Producer::KeyCharacter character);
+      virtual bool HandleKeyPressed(const dtCore::Keyboard* keyboard, int key);
 
       // We're going to handle key releases!
-      virtual bool HandleKeyReleased(const dtCore::Keyboard* keyboard, Producer::KeyboardKey key,Producer::KeyCharacter character);
+      virtual bool HandleKeyReleased(const dtCore::Keyboard* keyboard, int key);
 
       // Handle messages from the GM
       virtual void ProcessMessage(const dtGame::Message &message);

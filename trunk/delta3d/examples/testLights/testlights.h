@@ -24,7 +24,7 @@ public:
 
    void Config();
 
-   bool KeyPressed(const dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character);
+   bool KeyPressed(const dtCore::Keyboard* keyboard, int key);
 
    void PreFrame( const double deltaFrameTime );
 

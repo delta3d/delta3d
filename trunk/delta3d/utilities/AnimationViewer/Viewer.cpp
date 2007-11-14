@@ -87,7 +87,7 @@ void Viewer::Config()
    l->SetAmbient(0.7f, 0.7f, 0.7f, 1.f);  
    l->SetDiffuse(1.0f, 1.0f, 1.0f, 1.0f);  
   
-   GetScene()->GetSceneNode()->addChild( MakePlane() );
+   GetScene()->GetSceneNode()->addChild(MakePlane());
 
    mWireDecorator  = new osg::Group;
    mShadeDecorator = new osg::Group;

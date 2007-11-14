@@ -1,7 +1,7 @@
 Import('*')
 
 srcs = env.SGlob( '*.cpp' )
-deps = [ 'dtCore', 'dtABC', 'fltk', 'Producer', 'OpenThreads', 'osg', 'osgDB',
+deps = [ 'dtCore', 'dtABC', 'fltk', 'OpenThreads', 'osg', 'osgDB',
          'osgUtil', 'osgText', 'osgGL2', 'osgParticle', 'osgSim',
          'osgFX', 'Carbon',
          'User32', 'Gdi32', 'shell32', 'Advapi32', 'ole32' ]

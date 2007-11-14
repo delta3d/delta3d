@@ -15,7 +15,7 @@ namespace dtAnim
    public:
       SkeletalDrawable(const Cal3DModelWrapper* model);
 
-      void drawImplementation(osg::State& state) const;
+      void drawImplementation(osg::RenderInfo& RenderInfo) const;
 
       osg::Object* cloneType() const;
       osg::Object* clone(const osg::CopyOp& copyop) const;

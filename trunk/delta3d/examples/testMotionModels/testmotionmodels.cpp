@@ -282,7 +282,7 @@ public:
       }
 
       // show a HUD
-      mGUIDrawable = new dtGUI::CEUIDrawable( GetWindow() );
+      mGUIDrawable = new dtGUI::CEUIDrawable( GetWindow(), GetKeyboard(), GetMouse() );
       AddDrawable( mGUIDrawable.get() );
       mMenuManager->BuildMenu();
       mMenuManager->SetSelected( dtExample::WALK );
@@ -295,9 +295,9 @@ public:
    * @param key the key pressed
    * @param character the corresponding character
    */
-   virtual bool KeyPressed(const dtCore::Keyboard* kb, Producer::KeyboardKey key, Producer::KeyCharacter kc)
+   virtual bool KeyPressed(const dtCore::Keyboard* kb, int key)
    {
-      bool verdict = Application::KeyPressed(kb, key, kc);
+      bool verdict = Application::KeyPressed(kb, key);
       if(verdict)
       {
          return verdict;
@@ -305,27 +305,27 @@ public:
 
       switch(key)
       {
-      case Producer::Key_1:
+      case '1':
          mMenuManager->SetSelected(dtExample::WALK);
          verdict = true;
          break;
-      case Producer::Key_2:
+      case '2':
          mMenuManager->SetSelected(dtExample::FLY);
          verdict = true;
          break;
-      case Producer::Key_3:
+      case '3':
          mMenuManager->SetSelected(dtExample::UFO);
          verdict = true;
          break;
-      case Producer::Key_4:
+      case '4':
          mMenuManager->SetSelected(dtExample::ORBIT);
          verdict = true;
          break;
-      case Producer::Key_5:
+      case '5':
          mMenuManager->SetSelected(dtExample::FPS);
          verdict = true;
          break;
-      case Producer::Key_6:
+      case '6':
          mMenuManager->SetSelected(dtExample::COLLISION);
          verdict = true;
          break;

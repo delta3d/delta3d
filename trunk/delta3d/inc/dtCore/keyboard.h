@@ -29,11 +29,14 @@
 #include <string>
 #include <list>
 
-#include <Producer/Keyboard>
+#include <osg/Referenced>               // for listener's base class
+#include <osgGA/GUIEventAdapter>
+
 #include <dtCore/inputdevice.h>
 #include <dtUtil/deprecationmgr.h>
-#include <osg/Referenced>               // for listener's base class
 #include <dtCore/refptr.h>             // for typedef, list member
+
+
 
 namespace dtCore
 {
@@ -62,7 +65,7 @@ namespace dtCore
       /// Checks the state of the specified key.
       /// @param key the key to check
       /// @return true if the key is being held down, false otherwise
-      bool GetKeyState(Producer::KeyboardKey key) const;
+      bool GetKeyState(int key) const;
 
       /// Pushes a listener for keyboard events to the back of the container.
       /// @param keyboardListener the listener to add
@@ -77,16 +80,11 @@ namespace dtCore
 
       // Producer callback methods. These are KeyDown and KeyUp instead of
       // KeyPress and KeyRelease to avoid a define clash with X11's X.h.
-      virtual bool KeyDown( Producer::KeyCharacter );
-      virtual bool KeyUp( Producer::KeyCharacter );
+      virtual bool KeyDown(int key);
+      virtual bool KeyUp(int key);
 
       /// @return The container of listeners.
       const KeyboardListenerList& GetListeners() const { return mKeyboardListeners; }
-
-      /// Determines the key that corresponds to the specified character.
-      /// @param kc the character to map
-      /// @return the corresponding key
-      static Producer::KeyboardKey KeyCharacterToKeyboardKey(Producer::KeyCharacter kc);
 
    protected:
 
@@ -96,11 +94,11 @@ namespace dtCore
    private:
       // the following are not implemented by design,
       // to cause compile errors for users that need to use the new interface.
-      bool KeyPressed(Producer::KeyCharacter);
-      void keyPressed(Producer::KeyCharacter);
+      bool KeyPressed(int);
+      void keyPressed(int);
 
-      bool KeyReleased(Producer::KeyCharacter);
-      void keyReleased(Producer::KeyCharacter);
+      bool KeyReleased(int);
+      void keyReleased(int);
 
       // Disallowed to prevent compile errors on VS2003. It apparently
       // creates this functions even if they are not used, and if
@@ -126,30 +124,24 @@ namespace dtCore
          /// @return true if this KeyboardListener handled the event. The
          /// Keyboard calling this function is responsbile for using this
          /// return value or not.
-         virtual bool HandleKeyPressed(const Keyboard* keyboard, 
-                                        Producer::KeyboardKey key,
-                                        Producer::KeyCharacter character )=0;
+         virtual bool HandleKeyPressed(const Keyboard* keyboard, int kc )=0;
+         
+         
          /// Called when a key is released.
          /// @param keyboard the source of the event
          /// @param key the key released
-         /// @param character the corresponding character
          /// @return true if this KeyboardListener handled the event. The
          /// Keyboard calling this function is responsbile for using this
          /// return value or not.
-         virtual bool HandleKeyReleased(const Keyboard* keyboard, 
-                                         Producer::KeyboardKey key,
-                                         Producer::KeyCharacter character )=0;
+         virtual bool HandleKeyReleased(const Keyboard* keyboard, int kc )=0;
 
          /// Called when a key is typed.
          /// @param keyboard the source of the event
          /// @param key the key typed
-         /// @param character the corresponding character
          /// @return true if this KeyboardListener handled the event. The
          /// Keyboard calling this function is responsbile for using this
          /// return value or not.
-         virtual bool HandleKeyTyped(const Keyboard* keyboard, 
-                                      Producer::KeyboardKey key,
-                                      Producer::KeyCharacter character )=0;
+         virtual bool HandleKeyTyped(const Keyboard* keyboard, int kc )=0;
    };
 }
 

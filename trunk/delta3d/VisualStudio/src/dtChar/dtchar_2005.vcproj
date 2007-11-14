@@ -62,7 +62,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtUtild.lib dtCored.lib Producerd.lib osgd.lib osgDBd.lib osgUtild.lib replicantbodyd.lib rvrutilsd.lib cal3d_d.lib opengl32.lib"
+				AdditionalDependencies="dtUtild.lib dtCored.lib osgd.lib osgDBd.lib osgUtild.lib replicantbodyd.lib rvrutilsd.lib cal3d_d.lib opengl32.lib"
 				OutputFile="../../../bin/dtChard.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -146,7 +146,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtUtil.lib dtCore.lib Producer.lib osg.lib osgDB.lib osgUtil.lib replicantbody.lib OpenThreadsWin32.lib rvrutils.lib cal3d.lib"
+				AdditionalDependencies="dtUtil.lib dtCore.lib osg.lib osgDB.lib osgUtil.lib replicantbody.lib OpenThreads.lib rvrutils.lib cal3d.lib"
 				OutputFile="../../../bin/dtChar.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"

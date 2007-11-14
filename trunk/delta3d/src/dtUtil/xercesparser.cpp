@@ -9,6 +9,7 @@
 #include <xercesc/util/XMLUni.hpp>
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/sax2/XMLReaderFactory.hpp>
+#include <xercesc/validators/common/Grammar.hpp>
 
 using namespace dtUtil;
 

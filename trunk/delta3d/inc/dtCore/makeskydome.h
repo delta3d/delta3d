@@ -2,10 +2,9 @@
 #ifndef DELTA_MAKESKYDOME
 #define DELTA_MAKESKYDOME
 
+#include <dtCore/export.h>
 #include <osg/Array>
 #include <osg/Geode>
-
-#include <dtCore/export.h>
 
 namespace osg
 {

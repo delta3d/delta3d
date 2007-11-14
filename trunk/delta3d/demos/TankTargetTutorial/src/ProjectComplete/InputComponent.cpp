@@ -70,40 +70,39 @@ void InputComponent::SetupEvents()
 }
 
 ////////////////////////////////////////////////////////////////////
-bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard,
-   Producer::KeyboardKey key, Producer::KeyCharacter character)
+bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard, int key)
 {
    bool handled = true;
    switch(key)
    {
-      case Producer::Key_space:
+      case ' ':
          if (!mInPlaybackMode && mToggleEngineEvent != NULL)
             FireGameEvent(*mToggleEngineEvent);
          break;
-      case Producer::Key_Return:
+      case osgGA::GUIEventAdapter::KEY_Return:
          if (!mInPlaybackMode && mSpeedBoost != NULL)
             FireGameEvent(*mSpeedBoost);
          break;
-      case Producer::Key_F:
+      case 'f':
          if (!mInPlaybackMode && mTankFired != NULL)
             FireGameEvent(*mTankFired);
          break;
-      case Producer::Key_P:
+      case 'p':
          //dtCore::ShaderManager::GetInstance().Clear();
          dtCore::ShaderManager::GetInstance().ReloadAndReassignShaderDefinitions("Shaders/TutorialShaderDefs.xml");
          //if (!mInPlaybackMode && mTestShaders != NULL)
          //   FireGameEvent(*mTestShaders);
          break;
-      case Producer::Key_R:
+      case 'r':
          if (!mInPlaybackMode && mReset != NULL)
             FireGameEvent(*mReset);
          break;
 
-      case Producer::Key_Insert:
-         GetGameManager()->GetApplication().GetCamera()->SetNextStatisticsType();
+      case osgGA::GUIEventAdapter::KEY_Insert:
+         //GetGameManager()->GetApplication().GetCamera()->SetNextStatisticsType();
          break;
 
-      case Producer::Key_1:
+      case '1':
          if (mLogController.valid())
          {
             mLogController->RequestChangeStateToIdle();
@@ -112,7 +111,7 @@ bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard,
 
          break;
 
-      case Producer::Key_2:
+      case '2':
          if (mLogController.valid() && !mInPlaybackMode && 
             mLogController->GetLastKnownStatus().GetStateEnum() 
             == dtGame::LogStateEnumeration::LOGGER_STATE_IDLE)
@@ -122,7 +121,7 @@ bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard,
 
          break;
 
-      case Producer::Key_3:
+      case '3':
          if (mLogController.valid() && mInPlaybackMode)
          {
             // start playback
@@ -149,12 +148,12 @@ bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard,
 
          break;
 
-      case Producer::Key_6:
+      case '6':
          GetGameManager()->SetPaused(!GetGameManager()->IsPaused());
          break;
 
       // SLOWER
-      case Producer::Key_7:
+      case '7':
          {
             float speedFactor = GetGameManager()->GetTimeScale() * 0.8f;
             if (speedFactor >= 0.10f)
@@ -164,7 +163,7 @@ bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard,
          break;
 
       // FASTER
-      case Producer::Key_8:
+      case '8':
          {
             float speedFactor = GetGameManager()->GetTimeScale() * 1.20f;
             if (speedFactor <= 10.0f)
@@ -180,7 +179,7 @@ bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard,
 
    // the default case handles the escape key to quit.
    if (!handled)
-      return BaseInputComponent::HandleKeyPressed(keyboard, key, character);
+      return BaseInputComponent::HandleKeyPressed(keyboard, key);
 
    return handled;
 }

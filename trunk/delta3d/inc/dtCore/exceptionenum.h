@@ -36,6 +36,7 @@ namespace dtCore
       public:
 
          static ExceptionEnum INVALID_PARAMETER;
+         static ExceptionEnum INVALID_CONTEXT;
    
    protected:
       ExceptionEnum(const std::string &name):Enumeration(name)

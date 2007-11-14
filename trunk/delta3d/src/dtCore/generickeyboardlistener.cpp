@@ -17,31 +17,31 @@ GenericKeyboardListener::~GenericKeyboardListener()
 {
 }
 
-bool GenericKeyboardListener::HandleKeyPressed(const dtCore::Keyboard* kb, Producer::KeyboardKey key, Producer::KeyCharacter kc)
+bool GenericKeyboardListener::HandleKeyPressed(const dtCore::Keyboard* kb, int kc)
 {
    if( mPressedEnabled )
    {
-      return mPressedCB(kb,key,kc);
+      return mPressedCB(kb,kc);
    }
 
    return false;
 }
 
-bool GenericKeyboardListener::HandleKeyReleased(const dtCore::Keyboard* kb, Producer::KeyboardKey key, Producer::KeyCharacter kc)
+bool GenericKeyboardListener::HandleKeyReleased(const dtCore::Keyboard* kb, int kc)
 {
    if( mReleasedEnabled )
    {
-      return mReleasedCB(kb,key,kc);
+      return mReleasedCB(kb,kc);
    }
 
    return false;
 }
 
-bool GenericKeyboardListener::HandleKeyTyped(const dtCore::Keyboard* kb, Producer::KeyboardKey key, Producer::KeyCharacter kc)
+bool GenericKeyboardListener::HandleKeyTyped(const dtCore::Keyboard* kb, int kc)
 {
    if( mTypedEnabled )
    {
-      return mTypedCB(kb,key,kc);
+      return mTypedCB(kb,kc);
    }
 
    return false;

@@ -67,7 +67,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="gdal_i.lib dtUtild.lib dtCored.lib dtDALd.lib oded.lib opengl32.lib OpenThreadsWin32d.lib osgd.lib osgDBd.lib osgParticled.lib osgTextd.lib osgUtild.lib producerd.lib Rpcrt4.lib"
+				AdditionalDependencies="gdal_i.lib dtUtild.lib dtCored.lib dtDALd.lib oded.lib opengl32.lib OpenThreadsd.lib osgd.lib osgDBd.lib osgParticled.lib osgTextd.lib osgUtild.lib Rpcrt4.lib"
 				OutputFile="../../../bin/dtTerraind.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"

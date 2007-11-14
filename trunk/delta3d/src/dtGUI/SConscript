@@ -1,7 +1,7 @@
 Import('*')
 
 srcs = env.SGlob( '*.cpp' )
-deps = [ 'dtCore', 'CEGUIBase', 'CEGUIOpenGLRenderer', 'xerces-c' ] 
+deps = [ 'dtCore', 'osgGA', 'CEGUIBase', 'CEGUIOpenGLRenderer', 'xerces-c' ] 
 
 defines = []
 if env['OS'] == 'windows':

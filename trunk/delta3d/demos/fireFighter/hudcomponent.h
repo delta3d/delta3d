@@ -43,6 +43,8 @@ namespace dtGUI
 namespace dtCore
 {
    class DeltaWin;
+   class Keyboard;
+   class Mouse;
 }
 
 namespace dtActors
@@ -61,7 +63,10 @@ class FIRE_FIGHTER_EXPORT HUDComponent : public dtGame::GMComponent
       static const std::string &NAME;
 
       /// Constructor
-      HUDComponent(dtCore::DeltaWin &win, const std::string &name = NAME);
+      HUDComponent(dtCore::DeltaWin &win,
+                  dtCore::Keyboard &keyboard,
+                  dtCore::Mouse &mouse,
+                  const std::string &name = NAME);
 
       /// Processes incoming messages
       virtual void ProcessMessage(const dtGame::Message &msg);
@@ -114,7 +119,9 @@ class FIRE_FIGHTER_EXPORT HUDComponent : public dtGame::GMComponent
       /**
        * Private helper method to init the GUI
        */
-      void SetupGUI(dtCore::DeltaWin &win);
+      void SetupGUI(dtCore::DeltaWin &win,
+                    dtCore::Keyboard &keyboard,
+                    dtCore::Mouse &mouse);
 
       /**
        * Callback for when the start button is clicked

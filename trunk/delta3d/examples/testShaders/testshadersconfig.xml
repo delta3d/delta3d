@@ -5,6 +5,8 @@
 
   <Scene Name="defaultScene"/>
 
-  <Camera Name="defaultCam" SceneInstance="defaultScene" WindowInstance="testShaders"/>
-
+  <Camera Name="defaultCam" WindowInstance="testShaders"/>
+  
+  <View Name="defaultView" CameraInstance="defaultCam" SceneInstance="defaultScene"/>
+  
 </Application>

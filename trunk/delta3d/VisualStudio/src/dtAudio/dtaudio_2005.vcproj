@@ -62,7 +62,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtUtild.lib alut.lib dtCored.lib openal32.lib openthreadswin32d.lib osgd.lib osgdbd.lib producerd.lib xerces-c_2D.lib"
+				AdditionalDependencies="dtUtild.lib alut.lib dtCored.lib openal32.lib OpenThreadsd.lib osgd.lib osgdbd.lib xerces-c_2D.lib"
 				OutputFile="../../../bin/dtAudiod.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -144,7 +144,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtUtil.lib alut.lib dtCore.lib openal32.lib openthreadswin32.lib osg.lib osgdb.lib producer.lib xerces-c_2.lib"
+				AdditionalDependencies="dtUtil.lib alut.lib dtCore.lib openal32.lib OpenThreads.lib osg.lib osgdb.lib xerces-c_2.lib"
 				OutputFile="../../../bin/dtAudio.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"

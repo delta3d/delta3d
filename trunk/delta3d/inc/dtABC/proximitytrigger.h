@@ -57,9 +57,8 @@ namespace dtABC
          * @param nv the active node visitor
          */
          virtual void operator()(osg::Node* node, osg::NodeVisitor* nv)
-         {
-            // Use FrameStamp instead? 
-            mTrigger->SetTraversalNumber( nv->getTraversalNumber() );
+         {            
+            mTrigger->SetTraversalNumber( nv->getFrameStamp()->getFrameNumber() );
          
             traverse(node, nv);
          }

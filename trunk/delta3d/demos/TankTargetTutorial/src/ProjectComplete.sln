@@ -1,51 +1,39 @@
-Microsoft Visual Studio Solution File, Format Version 8.00
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ProjectComplete", "ProjectComplete\ProjectComplete.vcproj", "{F38B1019-662C-4C92-8BFC-60B9128EEC5C}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ProjectAlpha", "ProjectAlpha\ProjectAlpha.vcproj", "{311A0E82-2D37-4910-A7F2-FF058425B2E9}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ProjectBeta", "ProjectBeta\ProjectBeta.vcproj", "{8B26519C-8811-408F-9AF0-5634C95AA45C}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ProjectGamma", "ProjectGamma\ProjectGamma.vcproj", "{49C21B10-5B00-40B3-BB96-AFFC5DA9EA56}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ProjectDelta", "ProjectDelta\ProjectDelta.vcproj", "{6B30B948-9942-45D6-987B-7C488AC1907C}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ProjectCompleteWithHLA", "ProjectComplete\ProjectCompleteWithHLA.vcproj", "{F38B1019-662C-4C92-8BFC-60B9128EEC5C}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ProjectCompleteWithHLA", "ProjectComplete\ProjectCompleteWithHLA.vcproj", "{CFC51BD8-98FA-4C8F-8B76-FCB58E1F2783}"
 EndProject
 Global
-	GlobalSection(SolutionConfiguration) = preSolution
-		Debug = Debug
-		Release = Release
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
 	EndGlobalSection
-	GlobalSection(ProjectConfiguration) = postSolution
-		{F38B1019-662C-4C92-8BFC-60B9128EEC5C}.Debug.ActiveCfg = Debug|Win32
-		{F38B1019-662C-4C92-8BFC-60B9128EEC5C}.Debug.Build.0 = Debug|Win32
-		{F38B1019-662C-4C92-8BFC-60B9128EEC5C}.Release.ActiveCfg = Release|Win32
-		{F38B1019-662C-4C92-8BFC-60B9128EEC5C}.Release.Build.0 = Release|Win32
-		{311A0E82-2D37-4910-A7F2-FF058425B2E9}.Debug.ActiveCfg = Debug|Win32
-		{311A0E82-2D37-4910-A7F2-FF058425B2E9}.Release.ActiveCfg = Release|Win32
-		{8B26519C-8811-408F-9AF0-5634C95AA45C}.Debug.ActiveCfg = Debug|Win32
-		{8B26519C-8811-408F-9AF0-5634C95AA45C}.Release.ActiveCfg = Release|Win32
-		{49C21B10-5B00-40B3-BB96-AFFC5DA9EA56}.Debug.ActiveCfg = Debug|Win32
-		{49C21B10-5B00-40B3-BB96-AFFC5DA9EA56}.Release.ActiveCfg = Release|Win32
-		{6B30B948-9942-45D6-987B-7C488AC1907C}.Debug.ActiveCfg = Debug|Win32
-		{6B30B948-9942-45D6-987B-7C488AC1907C}.Release.ActiveCfg = Release|Win32
-		{F38B1019-662C-4C92-8BFC-60B9128EEC5C}.Debug.ActiveCfg = Debug|Win32
-		{F38B1019-662C-4C92-8BFC-60B9128EEC5C}.Release.ActiveCfg = Release|Win32
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F38B1019-662C-4C92-8BFC-60B9128EEC5C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F38B1019-662C-4C92-8BFC-60B9128EEC5C}.Debug|Win32.Build.0 = Debug|Win32
+		{F38B1019-662C-4C92-8BFC-60B9128EEC5C}.Release|Win32.ActiveCfg = Release|Win32
+		{F38B1019-662C-4C92-8BFC-60B9128EEC5C}.Release|Win32.Build.0 = Release|Win32
+		{311A0E82-2D37-4910-A7F2-FF058425B2E9}.Debug|Win32.ActiveCfg = Debug|Win32
+		{311A0E82-2D37-4910-A7F2-FF058425B2E9}.Release|Win32.ActiveCfg = Release|Win32
+		{8B26519C-8811-408F-9AF0-5634C95AA45C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8B26519C-8811-408F-9AF0-5634C95AA45C}.Release|Win32.ActiveCfg = Release|Win32
+		{49C21B10-5B00-40B3-BB96-AFFC5DA9EA56}.Debug|Win32.ActiveCfg = Debug|Win32
+		{49C21B10-5B00-40B3-BB96-AFFC5DA9EA56}.Release|Win32.ActiveCfg = Release|Win32
+		{6B30B948-9942-45D6-987B-7C488AC1907C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6B30B948-9942-45D6-987B-7C488AC1907C}.Release|Win32.ActiveCfg = Release|Win32
+		{CFC51BD8-98FA-4C8F-8B76-FCB58E1F2783}.Debug|Win32.ActiveCfg = Debug|Win32
+		{CFC51BD8-98FA-4C8F-8B76-FCB58E1F2783}.Release|Win32.ActiveCfg = Release|Win32
 	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-	EndGlobalSection
-	GlobalSection(ExtensibilityAddIns) = postSolution
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal

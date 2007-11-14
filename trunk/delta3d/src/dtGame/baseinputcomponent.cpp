@@ -64,28 +64,27 @@ namespace dtGame
    void BaseInputComponent::OnAddedToGM() 
    { 
       //enable the keyboard input.
-      dtCore::DeltaWin* win = GetGameManager()->GetApplication().GetWindow();
-      win->GetMouse()->AddMouseListener(mMouseListener.get());
-      win->GetKeyboard()->AddKeyboardListener(mKeyboardListener.get());
+      dtCore::View * view = GetGameManager()->GetApplication().GetView();
+      view->GetMouse()->AddMouseListener(mMouseListener.get());
+      view->GetKeyboard()->AddKeyboardListener(mKeyboardListener.get());
    }
 
    ////////////////////////////////////////////////////////////////////
    void BaseInputComponent::OnRemovedFromGM()
    {
-      dtCore::DeltaWin* win = GetGameManager()->GetApplication().GetWindow();
-      win->GetMouse()->RemoveMouseListener(mMouseListener.get());
-      win->GetKeyboard()->RemoveKeyboardListener(mKeyboardListener.get());
+      dtCore::View * view = GetGameManager()->GetApplication().GetView();
+      view->GetMouse()->RemoveMouseListener(mMouseListener.get());
+      view->GetKeyboard()->RemoveKeyboardListener(mKeyboardListener.get());
    }
 
    ////////////////////////////////////////////////////////////////////
-   bool BaseInputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard,
-      Producer::KeyboardKey key, Producer::KeyCharacter character)
+   bool BaseInputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard, int key)
    {
       // the default case handles the escape key to quit.  Override this to abort this behavior
       bool handled = true;
       switch(key)
       {
-         case Producer::Key_Escape:
+         case osgGA::GUIEventAdapter::KEY_Escape:
          {
             dtABC::Application& app = GetGameManager()->GetApplication();
             app.Quit();

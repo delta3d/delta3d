@@ -147,9 +147,9 @@ void TankActor::ComputeVelocityAndTurn(float deltaSimTime)
    dtCore::Keyboard *keyboard = GetGameActorProxy().GetGameManager()->GetApplication().GetKeyboard();
 
    // which way is the user trying to go? 
-   if (keyboard->GetKeyState(Producer::Key_I))
+   if (keyboard->GetKeyState('i'))
       accelDirection = -1.0f;
-   else if (keyboard->GetKeyState(Producer::Key_K))
+   else if (keyboard->GetKeyState('k'))
       accelDirection = 1.0f;
 
    // speed up based on user and current speed (ie, too fast)
@@ -175,31 +175,31 @@ void TankActor::ComputeVelocityAndTurn(float deltaSimTime)
 
    SetVelocity(mVelocity + acceleration);
 
-   if (mIsEngineRunning && keyboard->GetKeyState(Producer::Key_L))
+   if (mIsEngineRunning && keyboard->GetKeyState('l'))
    {
       SetTurnRate(-0.1f);
    }
-   else if (mIsEngineRunning && keyboard->GetKeyState(Producer::Key_J))
+   else if (mIsEngineRunning && keyboard->GetKeyState('j'))
    {
        SetTurnRate(0.1f);
    }
    else 
       SetTurnRate(0.0f);
 
-   if(keyboard->GetKeyState(Producer::Key_O))
+   if(keyboard->GetKeyState('o'))
    {
        turnTurret.set(-0.008, 0.0, 0.0);
       turnTurret = mDOFTran->getCurrentHPR() + turnTurret;
       mDOFTran->setCurrentHPR(turnTurret);
    }
-   else if(keyboard->GetKeyState(Producer::Key_U))
+   else if(keyboard->GetKeyState('u'))
    {
       turnTurret.set(0.008, 0.0, 0.0);
       turnTurret = mDOFTran->getCurrentHPR() + turnTurret;
       mDOFTran->setCurrentHPR(turnTurret);
    }
 
-   if(keyboard->GetKeyState(Producer::Key_F))
+   if(keyboard->GetKeyState('f'))
    {
       mCannonShot->SetEnabled(true);
    }

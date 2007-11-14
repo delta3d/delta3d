@@ -62,7 +62,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="boost_python-vc71-mt.lib python25.lib"
+				AdditionalDependencies="boost_python-vc80-mt.lib python25.lib"
 				OutputFile="../../../bin\PyDtCore.pyd"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"

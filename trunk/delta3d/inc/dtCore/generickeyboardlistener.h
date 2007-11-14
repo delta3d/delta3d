@@ -21,6 +21,8 @@
 #ifndef DELTA_GENERIC_KEYBOARD_LISTENER
 #define DELTA_GENERIC_KEYBOARD_LISTENER
 
+#include <osgGA/GUIEventAdapter>
+
 #include <dtCore/keyboard.h>   // for base class
 #include <dtCore/export.h>     // for export symbols
 #include <dtUtil/functor.h>    // for generic callback adapter members
@@ -32,14 +34,14 @@ namespace dtCore
    {
    public:
       typedef KeyboardListener BaseClass;
-      typedef dtUtil::Functor<bool,TYPELIST_3(const Keyboard*,Producer::KeyboardKey,Producer::KeyCharacter)> CallbackType;
+      typedef dtUtil::Functor<bool,TYPELIST_2(const Keyboard*,int)> CallbackType;
 
       GenericKeyboardListener();
 
       // -- inherited methods -- //
-      bool HandleKeyPressed(const Keyboard* kb, Producer::KeyboardKey key, Producer::KeyCharacter kc);
-      bool HandleKeyReleased(const Keyboard* kb, Producer::KeyboardKey key, Producer::KeyCharacter kc);
-      bool HandleKeyTyped(const Keyboard* kb, Producer::KeyboardKey key, Producer::KeyCharacter kc);
+      bool HandleKeyPressed(const Keyboard* kb, int kc);
+      bool HandleKeyReleased(const Keyboard* kb, int kc);
+      bool HandleKeyTyped(const Keyboard* kb, int kc);
 
       // -- generic members -- //
 

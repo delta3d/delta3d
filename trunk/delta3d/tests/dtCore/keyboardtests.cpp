@@ -50,35 +50,35 @@ namespace dtTest
    class KeyCharObserver : public dtCore::KeyboardListener
    {
    public:
-      KeyCharObserver(Producer::KeyCharacter key): mKey(key), mHit(false) {}
+      KeyCharObserver(int key): mKey(key), mHit(false) {}
 
       void ResetHit() { mHit = false; }
       bool GetHit() const { return mHit; }
-      Producer::KeyCharacter GetKeyChar() const { return mKey; }
+      int GetKeyChar() const { return mKey; }
 
-      bool HandleKeyPressed(const dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character)
+      bool HandleKeyPressed(const dtCore::Keyboard* keyboard, int key)
       {
          mHit = true;
-         return( mKey == character );
+         return( mKey == key );
       }
 
-      bool HandleKeyReleased(const dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character)
+      bool HandleKeyReleased(const dtCore::Keyboard* keyboard, int key)
       {
          mHit = true;
-         return( mKey == character );
+         return( mKey == key );
       }
 
-      bool HandleKeyTyped(const dtCore::Keyboard* keyboard, Producer::KeyboardKey key,Producer::KeyCharacter character)
+      bool HandleKeyTyped(const dtCore::Keyboard* keyboard, int key)
       {
          mHit = true;
-         return( mKey == character );
+         return( mKey == key );
       }
 
    protected:
       virtual ~KeyCharObserver() {}
 
    private:
-      Producer::KeyCharacter mKey;
+      int mKey;
       bool mHit;
    };
 
@@ -89,19 +89,19 @@ namespace dtTest
       HasKeyboardCallbacks(): mPressedHit(false), mReleasedHit(false), mTypedHit(false) {}
       ~HasKeyboardCallbacks() {}
 
-      bool HitPressed(const dtCore::Keyboard* kb, Producer::KeyboardKey key, Producer::KeyCharacter kc)
+      bool HitPressed(const dtCore::Keyboard* kb, int key)
       {
          mPressedHit=true;
          return true;
       }
 
-      bool HitReleased(const dtCore::Keyboard* kb, Producer::KeyboardKey key, Producer::KeyCharacter kc)
+      bool HitReleased(const dtCore::Keyboard* kb, int key)
       {
          mReleasedHit=true;
          return true;
       }
 
-      bool HitTyped(const dtCore::Keyboard* kb, Producer::KeyboardKey key, Producer::KeyCharacter kc)
+      bool HitTyped(const dtCore::Keyboard* kb, int key)
       {
          mTypedHit=true;
          return true;
@@ -136,8 +136,8 @@ void KeyboardTests::TestObservers()
    dtCore::RefPtr<dtCore::Keyboard> kb(new dtCore::Keyboard());
    CPPUNIT_ASSERT( kb->GetListeners().empty() );  // better be empty
 
-   dtCore::RefPtr<KeyCharObserver> obs(new KeyCharObserver(Producer::KeyChar_H));
-   CPPUNIT_ASSERT_EQUAL( Producer::KeyChar_H , obs->GetKeyChar() );  // better be H
+   dtCore::RefPtr<KeyCharObserver> obs(new KeyCharObserver('H'));
+   CPPUNIT_ASSERT_EQUAL( (int)'H' , obs->GetKeyChar() );  // better be H
    kb->AddKeyboardListener( obs.get() );
 
    CPPUNIT_ASSERT_EQUAL( 1 , (int)kb->GetListeners().size() );  // better be 1
@@ -145,26 +145,26 @@ void KeyboardTests::TestObservers()
    // ------------------------------------- //
    // test press
    CPPUNIT_ASSERT( kb->KeyDown( obs->GetKeyChar() ) );   // obs should handle it
-   CPPUNIT_ASSERT( !kb->KeyDown(Producer::KeyChar_K) );  // obs should not handle it
+   CPPUNIT_ASSERT( !kb->KeyDown('K') );  // obs should not handle it
 
    // test release
    CPPUNIT_ASSERT( kb->KeyUp( obs->GetKeyChar() ) );   // obs should handle it
-   CPPUNIT_ASSERT( !kb->KeyUp(Producer::KeyChar_K) );  // obs should not handle it
+   CPPUNIT_ASSERT( !kb->KeyUp('K') );  // obs should not handle it
 
    // ------------------------------------- //
    // test extra listener
-   dtCore::RefPtr<KeyCharObserver> obs2(new KeyCharObserver(Producer::KeyChar_K));
-   CPPUNIT_ASSERT_EQUAL( Producer::KeyChar_K , obs2->GetKeyChar() );  // better be K
+   dtCore::RefPtr<KeyCharObserver> obs2(new KeyCharObserver('K'));
+   CPPUNIT_ASSERT_EQUAL( (int)'K' , obs2->GetKeyChar() );  // better be K
    kb->AddKeyboardListener( obs2.get() );
    CPPUNIT_ASSERT_EQUAL( 2 , (int)kb->GetListeners().size() );  // better be 2
 
    // test press
-   CPPUNIT_ASSERT( !kb->KeyDown(Producer::KeyChar_A) );  // none should handle it
+   CPPUNIT_ASSERT( !kb->KeyDown('A') );  // none should handle it
    CPPUNIT_ASSERT( kb->KeyDown( obs2->GetKeyChar() ) );  // obs2 should handle it
    CPPUNIT_ASSERT( kb->KeyUp( obs->GetKeyChar() ) );  // obs should handle it
 
    // test release
-   CPPUNIT_ASSERT( !kb->KeyUp(Producer::KeyChar_A) );  // none should handle it
+   CPPUNIT_ASSERT( !kb->KeyUp('A') );  // none should handle it
    CPPUNIT_ASSERT( kb->KeyUp( obs2->GetKeyChar() ) );  // obs2 should handle it
    CPPUNIT_ASSERT( kb->KeyUp( obs->GetKeyChar() ) );  // obs should handle it
 
@@ -192,13 +192,13 @@ void KeyboardTests::TestObservers()
 
    // ------------------------------------- //
    // test "special" keys
-   dtCore::RefPtr<KeyCharObserver> obsEsc(new KeyCharObserver(Producer::KeyChar_Escape));
-   CPPUNIT_ASSERT_EQUAL( Producer::KeyChar_Escape , obsEsc->GetKeyChar() );  // better be Escape
+   dtCore::RefPtr<KeyCharObserver> obsEsc(new KeyCharObserver(osgGA::GUIEventAdapter::KEY_Escape));
+   CPPUNIT_ASSERT_EQUAL( (int)osgGA::GUIEventAdapter::KEY_Escape , obsEsc->GetKeyChar() );  // better be Escape
    kb->AddKeyboardListener( obsEsc.get() );
    CPPUNIT_ASSERT_EQUAL( 3 , (int)kb->GetListeners().size() );  // better be 3
 
-   dtCore::RefPtr<KeyCharObserver> obsSL(new KeyCharObserver(Producer::KeyChar_Scroll_Lock));
-   CPPUNIT_ASSERT_EQUAL( Producer::KeyChar_Scroll_Lock, obsSL->GetKeyChar() );  // better be Scroll Lock
+   dtCore::RefPtr<KeyCharObserver> obsSL(new KeyCharObserver(osgGA::GUIEventAdapter::KEY_Scroll_Lock ));
+   CPPUNIT_ASSERT_EQUAL( (int)osgGA::GUIEventAdapter::KEY_Scroll_Lock, obsSL->GetKeyChar() );  // better be Scroll Lock
    kb->AddKeyboardListener( obsSL.get() );
    CPPUNIT_ASSERT_EQUAL( 4 , (int)kb->GetListeners().size() );  // better be 4
 
@@ -251,11 +251,11 @@ void KeyboardTests::TestGenericObserver()
    dtCore::RefPtr<dtCore::Keyboard> kb(new dtCore::Keyboard());
    kb->AddKeyboardListener( kgen.get() );
    CPPUNIT_ASSERT( !hcb.WasPressedHit() );  // better not be hit
-   CPPUNIT_ASSERT( kb->KeyDown( Producer::KeyChar_0 ) );  // hcb is coded to handle it.
+   CPPUNIT_ASSERT( kb->KeyDown( '0' ) );  // hcb is coded to handle it.
    CPPUNIT_ASSERT( hcb.WasPressedHit() );  // better be hit
 
    CPPUNIT_ASSERT( !hcb.WasReleasedHit() );  // better not be hit
-   CPPUNIT_ASSERT( kb->KeyUp( Producer::KeyChar_0 ) );  // hcb is coded to handle it.
+   CPPUNIT_ASSERT( kb->KeyUp( '0' ) );  // hcb is coded to handle it.
    CPPUNIT_ASSERT( hcb.WasReleasedHit() );  // better be hit
 
    ///\todo WHY DO WE HAVE A CALLBACK WHEN WE DON'T SUPPORT IT?  take off the '!'
@@ -274,11 +274,11 @@ void KeyboardTests::TestGenericObserver()
    // check to see if the callbacks get hit when callbacks are disabled
    hcb.ResetAllHits();
    CPPUNIT_ASSERT( !hcb.WasPressedHit() );  // better not be hit
-   CPPUNIT_ASSERT( !kb->KeyDown( Producer::KeyChar_0 ) );  // kgen is coded to handle it when disabled.
+   CPPUNIT_ASSERT( !kb->KeyDown( '0' ) );  // kgen is coded to handle it when disabled.
    CPPUNIT_ASSERT( !hcb.WasPressedHit() );  // better not be hit
 
    CPPUNIT_ASSERT( !hcb.WasReleasedHit() );  // better not be hit
-   CPPUNIT_ASSERT( !kb->KeyUp( Producer::KeyChar_0 ) );  // kgen is coded to not handle it when disabled.
+   CPPUNIT_ASSERT( !kb->KeyUp( '0' ) );  // kgen is coded to not handle it when disabled.
    CPPUNIT_ASSERT( !hcb.WasReleasedHit() );  // better not be hit
 
    CPPUNIT_ASSERT( !hcb.WasTypedHit() );  // better not be hit
