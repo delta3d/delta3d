@@ -1,0 +1,8 @@
+Import('*')
+
+if env.get('rti') != 0 :
+
+   srcs =  env.SGlob( '*.cpp' )
+   deps = [ 'dtCore', 'dtABC', 'dtHLA', 'dtUtil' ]
+
+   env.BuildProgram( 'testHLA', srcs, deps )

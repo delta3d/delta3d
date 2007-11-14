@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<Imageset Name="HUD_FirehoseImage" Imagefile="imagesets/hud_firehose.tga" NativeHorzRes="1024" NativeVertRes="550" AutoScaled="true">
+   <Image Name="HUD_FirehoseImage" XPos="0" YPos="0" Width="1024" Height="1024" />
+</Imageset>
