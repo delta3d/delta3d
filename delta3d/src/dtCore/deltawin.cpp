@@ -53,12 +53,21 @@ osgViewer::GraphicsWindow * DeltaWin::CreateGraphicsWindow(const std::string& na
 
    osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits;
 
+   //will use the value of the environment variable "DISPLAY" to set the 
+   //diplayNum and the screenNum.  Format is "host:displayNum.screenNum".
    traits->readDISPLAY();
+
    if (traits->displayNum<0)
+   {
       traits->displayNum = 0;
+   }
+
+   if (traits->screenNum < 0)
+   {
+      traits->screenNum = screenNum;
+   }
 
    traits->windowName = name;
-   traits->screenNum = screenNum;
    traits->x = x;
    traits->y = y;
    traits->width = width;
