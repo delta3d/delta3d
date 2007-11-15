@@ -20,36 +20,30 @@ class KeyboardListenerWrap : public KeyboardListener, public wrapper<KeyboardLis
    {
    }
    public:
-   virtual bool HandleKeyPressed(const Keyboard* keyboard, 
-                                 Producer::KeyboardKey key,
-                                 Producer::KeyCharacter character )
+   virtual bool HandleKeyPressed(const Keyboard* keyboard, int kc  )
    {
       #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
-      return call<bool>( this->get_override( "HandleKeyPressed" ).ptr(), boost::ref(keyboard), key, character );
+      return call<bool>( this->get_override( "HandleKeyPressed" ).ptr(), boost::ref(keyboard), kc );
       #else
-      return this->get_override( "HandleKeyPressed" )( boost::ref(keyboard), key, character );
+      return this->get_override( "HandleKeyPressed" )( boost::ref(keyboard), kc );
       #endif
    }
    
-   virtual bool HandleKeyReleased(const Keyboard* keyboard, 
-                                  Producer::KeyboardKey key,
-                                  Producer::KeyCharacter character )
+   virtual bool HandleKeyReleased(const Keyboard* keyboard, int kc )
    {
       #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
-      return call<bool>( this->get_override( "HandleKeyReleased" ).ptr(), boost::ref(keyboard), key, character );
+      return call<bool>( this->get_override( "HandleKeyReleased" ).ptr(), boost::ref(keyboard), kc );
       #else
-      return this->get_override( "HandleKeyReleased" )( boost::ref(keyboard), key, character );
+      return this->get_override( "HandleKeyReleased" )( boost::ref(keyboard), kc );
       #endif
    }
    
-   virtual bool HandleKeyTyped(const Keyboard* keyboard, 
-                               Producer::KeyboardKey key,
-                               Producer::KeyCharacter character )
+   virtual bool HandleKeyTyped(const Keyboard* keyboard, int kc )
    {
       #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
-      return call<bool>( this->get_override( "HandleKeyTyped" ).ptr(), boost::ref(keyboard), key, character );
+      return call<bool>( this->get_override( "HandleKeyTyped" ).ptr(), boost::ref(keyboard), kc );
       #else
-      return this->get_override( "HandleKeyTyped" )( boost::ref(keyboard), key, character );
+      return this->get_override( "HandleKeyTyped" )( boost::ref(keyboard), kc );
       #endif
    }
 };
