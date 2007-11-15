@@ -140,22 +140,20 @@ Windows w/ Visual Studio .NET 7.1
    the individual componets.
    (dependencies that we do not distribute are listed in parentheses):
    
-   VisualStudio/src/dtHLA/dthla.sln          : HLA library (RTI)
    VisualStudio/src/dtHLAGM/dthlagm.sln      : HLA library (RTI)
    VisualStudio/src/dtScript/dtscript.sln    : library to run python scripts (Python)
    VisualStudio/src/python/dtpython.sln      : python bindings (Python, Boost.Python)
-   VisualStudio/src/python/dthlabindings.sln : python HLA bindings (Python, Boost.Python, RTI)
  
    Or just build EVERYTHING (make sure you have Python, BoostPython, RTI):
    VisualStudio/delta_all.sln  
 
-   dtHLA/dtHLAGM
+   dtHLAGM
    -----
    Requries RTI package to be installed! We cannot distribute RTI with
-   Delta3D, so you are on your own. The dtHLA module is compiled and tested
+   Delta3D, so you are on your own. The dtHLAGM module is compiled and tested
    against RTI-S 1.3_D18 although any RTI supporting spec 1.3 should work.
 
-   To build the module dtHLA, example testHLA, and utility hlaStealthViewer, 
+   To build the module dtHLAGM, 
    you must add your RTI include and lib paths to the project settings or to
    your global search directories using :
 
@@ -164,13 +162,7 @@ Windows w/ Visual Studio .NET 7.1
    Also, in order to run the unit tests, you must add the directory containing
    your RTI DLLs to the VC++ directory for executable files.
 
-   VS solutions are provided for these apps as:
-
-   src/dtHLA/dthla.sln
-   examples/testHLA/testHLA.sln
-   utilities/hlaStealthViewer/hlaStealthViewer.sln
-   
-   ...or just use delta_all.sln.
+   VS solutions are provided for these apps in the delta_all.sln.
 
    The Python Bindings
    -------------------
@@ -304,8 +296,8 @@ Windows w/ SCons & Linux
    By default, this will build everything possible, including all
    Delta3D libraries, examples, utilities, and Python bindings. If SCons
    cannot find Boost.Python (or buildPythonBindings=0 is passed to scons)
-   the bindings will be skipped. Likewise, if RTI cannot be found, the HLA
-   libraries, examples, and utilities will be skipped.
+   the bindings will be skipped. Likewise, if RTI cannot be found, the dtHLAGM
+   library will be skipped.
     
    To install the shared libraries in the lib folder under the prefix
    you specified:
@@ -356,10 +348,10 @@ Windows w/ SCons & Linux
     
    Set the PYTHONPATH environement variable to contain the var DELTA_LIB.
 
-   dtHLA
+   dtHLAGM
    -----
    Requries RTI package to be installed! We cannot distribute RTI with
-   Delta3D, so you are on your own. The dtHLA module is compiled and tested
+   Delta3D, so you are on your own. The dtHLAGM module is compiled and tested
    against RTI-S although any RTI should work.
 
    Once your have an RTI installed, run:

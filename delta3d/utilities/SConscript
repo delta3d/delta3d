@@ -2,8 +2,7 @@ import os
 
 Import('*')
 
-modules = [ 'hlaStealthViewer', 
-            'psEditor',
+modules = [ 'psEditor',
             'Viewer',
             'GameStart',
             'AnimationViewer',

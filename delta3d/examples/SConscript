@@ -18,7 +18,6 @@ if env.get("buildExamples"):
             'testEffects',
             'testGameEnvironment',
             'testGUI',
-            'testHLA',
             'testInput',
             'testLights',
             'testMap',
