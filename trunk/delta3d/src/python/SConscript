@@ -95,11 +95,6 @@ if CheckForBoost() :
    'dtInspector' : [ 'dtinspectorbindings.cpp' ],
    
     
-   'dtHLA' : [      'distypebindings.cpp', 
-                    'dthlabindings.cpp', 
-                    'entitybindings.cpp', 
-                    'rticonnectionbindings.cpp' ],
-
    'dtTerrain' : [  'dtTerrainBindings.cpp',
                     'geocoordinateBindings.cpp',
                     'terrainBindings.cpp' ],
@@ -154,7 +149,6 @@ if CheckForBoost() :
       dtAIBindingsTarget = 'dtAIBindingsd'
       dtInputPLIBBindingsTarget = 'dtInputPLIBBindingsd'
       dtInspectorBindingsTarget = 'dtInspectorBindingsd'
-      dtHlaBindingsTarget = 'dtHLABindingsd'
       dtTerrainBindingsTarget = 'dtTerrainBindingsd'
       dtUtilBindingsTarget = 'dtUtilBindingsd'
    else :
@@ -166,7 +160,6 @@ if CheckForBoost() :
       dtAIBindingsTarget = 'dtAIBindings'
       dtInputPLIBBindingsTarget = 'dtInputPLIBBindings'
       dtInspectorBindingsTarget = 'dtInspectorBindings'
-      dtHlaBindingsTarget = 'dtHLABindings'
       dtTerrainBindingsTarget = 'dtTerrainBindings'
       dtUtilBindingsTarget = 'dtUtilBindings'
     
@@ -187,11 +180,6 @@ if CheckForBoost() :
    
    env.Precious( pythonDtCoreLib, pythonDtAbcLib, pythonDtAudioLib, pythonDtCharLib, pythonDtDALLib, pythonDtAILib, pythonDtInputPLIBLib, pythonDtInspectorLib, pythonDtTerrainLib, pythonDtUtilLib )
    
-   if env.get('rti') != 0 :
-      pythonDtHlaLib = env.SharedLibrary( dtHlaBindingsTarget, pythonSrcs['dtHLA'], LIBS = addToLibs + [env['dtLibs'][ 'dtHLA' ]], CPPFLAGS=pythonCPPFlags )
-      env.Precious( pythonDtHlaLib )
-   else :
-      pythonDtHlaLib = None
 
    ################
    # Install libs #
@@ -213,7 +201,6 @@ if CheckForBoost() :
       dtAIPydTarget = '#'+dir+'/PyDtAId.'+suffix
       dtInputPLIBPydTarget = '#'+dir+'/PyDtInputPLIBd.'+suffix
       dtInspectorPydTarget = '#'+dir+'/PyDtInspectord.'+suffix
-      dtHlaPydTarget = '#'+dir+'/PyDtHLAd.'+suffix
       dtTerrainPydTarget = '#'+dir+'/PyDtTerraind.'+suffix
       dtUtilPydTarget = '#'+dir+'/PyDtUtild.'+suffix
    else :
@@ -225,7 +212,6 @@ if CheckForBoost() :
       dtAIPydTarget = '#'+dir+'/PyDtAI.'+suffix
       dtInputPLIBPydTarget = '#'+dir+'/PyDtInputPLIB.'+suffix
       dtInspectorPydTarget = '#'+dir+'/PyDtInspector.'+suffix
-      dtHlaPydTarget = '#'+dir+'/PyDtHLA.'+suffix
       dtTerrainPydTarget = '#'+dir+'/PyDtTerrain.'+suffix
       dtUtilPydTarget = '#'+dir+'/PyDtUtil.'+suffix
   
@@ -250,8 +236,6 @@ if CheckForBoost() :
                      pythonDtTerrainLib[0], \
                      pythonDtUtilLib[0] ] )
 
-   if pythonDtHlaLib is not None:
-         env.InstallAs( dtHlaPydTarget, pythonDtHlaLib[0] )
 
    if env['OS'] == 'windows' :
       
@@ -266,5 +250,3 @@ if CheckForBoost() :
                               pythonDtTerrainLib[1:], \
                               pythonDtUtilLib[1:] ] )
 
-      if pythonDtHlaLib is not None:
-         env.Install( '#/lib', pythonDtHlaLib[1:] )
