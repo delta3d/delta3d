@@ -18,6 +18,7 @@
  *
  * David Guthrie
  */
+#include <prefix/dtgameprefix-src.h>
 #include <dtCore/batchisector.h>
 #include <dtGame/groundclamper.h>
 #include <dtGame/gameactor.h>

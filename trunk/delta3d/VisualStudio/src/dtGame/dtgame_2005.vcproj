@@ -256,6 +256,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtGame\groundclamper.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtGame\invokable.cpp"
 				>
 			</File>
@@ -403,6 +407,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtGame\gmcomponent.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtGame\groundclamper.h"
 				>
 			</File>
 			<File
