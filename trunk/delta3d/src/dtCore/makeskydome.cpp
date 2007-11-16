@@ -117,7 +117,7 @@ void MakeSkyDome::CreateTriangleStrips()
       osg::DrawElementsUShort* drawElements = new osg::DrawElementsUShort(osg::PrimitiveSet::TRIANGLE_STRIP);
       drawElements->reserve(38);
 
-      for( int j = 0; j < VERTS_IN_CIRCUM; j++ )
+      for( unsigned j = 0; j < VERTS_IN_CIRCUM; j++ )
       {
          drawElements->push_back((i+1)*VERTS_IN_CIRCUM+j);
          drawElements->push_back((i+0)*VERTS_IN_CIRCUM+j);

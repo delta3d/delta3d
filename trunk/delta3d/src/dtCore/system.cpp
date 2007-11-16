@@ -173,22 +173,9 @@ void System::Run()
    mRealClockTime = realTime * 1000000;
    mSimulationClockTime = mRealClockTime;
 
-   //This should have been ifdef'd, not commented out.
-   #ifdef __APPLE__   // TODO
-   for( int i = 0; i < DeltaWin::GetInstanceCount(); i++ )
-   {
-      osgViewer::GraphicsWindow* gw = DeltaWin::GetInstance(i)->GetOsgViewerGraphicsWindow();
-//      rs->useConfigEventThread(false);
-      gw->realize();
-//      rs->waitForRealize();
-//      rs->fullScreen(false);
-//      rs->startThread();
-   }
-   #endif
-   
    while( mRunning )
    {	  
-      StepWindow();     
+      StepWindow();
    }
 
    LOG_DEBUG("System: Exiting...");

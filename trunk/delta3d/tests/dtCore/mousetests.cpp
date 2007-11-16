@@ -25,6 +25,8 @@
 #include <dtABC/application.h>
 #include <dtCore/system.h>
 
+#include <osg/io_utils>
+
 namespace dtTest
 {
    /// unit tests for dtCore::Keyboard

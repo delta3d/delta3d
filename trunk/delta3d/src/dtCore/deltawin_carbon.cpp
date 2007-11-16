@@ -6,7 +6,6 @@
 
 #include <cassert>
 
-#include <Producer/KeyboardMouse>
 #include <Carbon/Carbon.h>
 #include <dtCore/deltawin.h>
 #include <dtUtil/log.h>
@@ -46,7 +45,7 @@ namespace dtCore
    {
       int w,h;
    
-      static Producer::Display *displays = NULL;
+      static CGDirectDisplayID *displays = NULL;
       static CGDisplayCount numDisplays = 0;
       
       DeltaWin::Resolution r = { 0,0,0,0 };
@@ -63,7 +62,7 @@ namespace dtCore
          return r;
       }
       
-      displays = new Producer::Display[numDisplays];
+      displays = new CGDirectDisplayID[numDisplays];
       if( CGGetActiveDisplayList( numDisplays, displays, &numDisplays ) != CGDisplayNoErr )
       {
          LOG_ERROR("CGGetActiveDisplayList() falied\n");
@@ -71,7 +70,7 @@ namespace dtCore
          return r;
       }
       
-      Producer::Display* dpy = &displays[0];
+      CGDirectDisplayID* dpy = &displays[0];
    
       w = CGDisplayPixelsWide(*dpy);
       h = CGDisplayPixelsHigh(*dpy);
