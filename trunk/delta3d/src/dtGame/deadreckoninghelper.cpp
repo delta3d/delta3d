@@ -59,34 +59,32 @@ namespace dtGame
    IMPLEMENT_ENUM(DeadReckoningHelper::UpdateMode);
    DeadReckoningHelper::UpdateMode DeadReckoningHelper::UpdateMode::AUTO("AUTO");
    DeadReckoningHelper::UpdateMode DeadReckoningHelper::UpdateMode::CALCULATE_ONLY("CALCULATE_ONLY");
-   DeadReckoningHelper::UpdateMode DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR("CALCULATE_AND_MOVE_ACTOR");
+   DeadReckoningHelper::UpdateMode 
+      DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR("CALCULATE_AND_MOVE_ACTOR");
 
    //////////////////////////////////////////////////////////////////////
    DeadReckoningHelper::DeadReckoningHelper() :
       mLastTimeTag(0.0),
-      mLastTranslationUpdatedTime(0.0), 
-      mLastRotationUpdatedTime(0.0), 
+      mLastTranslationUpdatedTime(0.0),
+      mLastRotationUpdatedTime(0.0),
       mTimeUntilForceClamp(0.0f),
-      mAverageTimeBetweenTranslationUpdates(0.0f), 
+      mAverageTimeBetweenTranslationUpdates(0.0f),
       mAverageTimeBetweenRotationUpdates(0.0f), 
       mMaxTranslationSmoothingTime(8.0f),
       mMaxRotationSmoothingTime(2.0f),
-      mTranslationCurrentSmoothingTime(0.0f), 
+      mTranslationCurrentSmoothingTime(0.0f),
       mRotationCurrentSmoothingTime(0.0f), 
       mTranslationEndSmoothingTime(0.0f),
       mRotationEndSmoothingTime(0.0f),
-      mGroundOffset(0.0f),
       mMinDRAlgorithm(&DeadReckoningAlgorithm::NONE),
       mUpdateMode(&DeadReckoningHelper::UpdateMode::AUTO),
       mTranslationInitiated(false),
       mRotationInitiated(false),
-      mUpdated(false), 
-      mTranslationUpdated(false), 
-      mRotationUpdated(false), 
-      mFlying(false), 
-      mAdjustRotationToGround(true),
-      mRotationResolved(true),
-      mUseModelDimensions(false)
+      mUpdated(false),
+      mTranslationUpdated(false),
+      mRotationUpdated(false),
+      mFlying(false),
+      mRotationResolved(true)
    {}
 
 
@@ -97,12 +95,12 @@ namespace dtGame
       {
          if (isRemote)
             return DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR;
-         else        
+         else
             return DeadReckoningHelper::UpdateMode::CALCULATE_ONLY;
       }
       return *mUpdateMode;
    }
-   
+
    //////////////////////////////////////////////////////////////////////
    void DeadReckoningHelper::SetFlying(bool newFlying)
    {
@@ -114,9 +112,9 @@ namespace dtGame
 
    void DeadReckoningHelper::SetAdjustRotationToGround(bool newAdjust)
    {
-      if (mAdjustRotationToGround == newAdjust)
+      if (mGroundClampingData.GetAdjustRotationToGround() == newAdjust)
          return;
-      mAdjustRotationToGround = newAdjust;
+      mGroundClampingData.SetAdjustRotationToGround(newAdjust);
       mUpdated = true;
    }
 
@@ -217,41 +215,41 @@ namespace dtGame
          double w = sqrt (mAngularVelocityVector[0]*mAngularVelocityVector[0]+
                        mAngularVelocityVector[1]*mAngularVelocityVector[1]+
                        mAngularVelocityVector[2]*mAngularVelocityVector[2]); 
-         
+
          double omega00 = 0;
          double omega01 = -mAngularVelocityVector[2];
          double omega02 = mAngularVelocityVector[1];
          double omega03 = 0;
-         
+
          double omega10 = mAngularVelocityVector[2];
          double omega11 = 0;
          double omega12 = -mAngularVelocityVector[0];
          double omega13 = 0;
-         
+
          double omega20 = -mAngularVelocityVector[1];
          double omega21 = mAngularVelocityVector[0];
          double omega22 = 0;
          double omega23 = 0;
-         
+
          double ww00 = mAngularVelocityVector[0]*mAngularVelocityVector[0];
          double ww01 = mAngularVelocityVector[0]*mAngularVelocityVector[1];
          double ww02 = mAngularVelocityVector[0]*mAngularVelocityVector[2];
          double ww03 = 0;
-         
+
          double ww10 = mAngularVelocityVector[1]*mAngularVelocityVector[0];  
          double ww11 = mAngularVelocityVector[1]*mAngularVelocityVector[1];
          double ww12 = mAngularVelocityVector[1]*mAngularVelocityVector[2];
          double ww13 = 0;
-         
+
          double ww20 = mAngularVelocityVector[2]*mAngularVelocityVector[0];
          double ww21 = mAngularVelocityVector[2]*mAngularVelocityVector[1];
          double ww22 = mAngularVelocityVector[2]*mAngularVelocityVector[2];
          double ww23 = 0;
-         
+
          double c1 = (1-cos(w*deltaTime))/(w*w);
          double c2 = cos(w*deltaTime);
          double c3 = -sin(w*deltaTime)/w;
-         
+
          result.set(
          c1*ww00+c2*1+c3*omega00, c1*ww01+c2*0+c3*omega01, c1*ww02+c2*0+c3*omega02,c1*ww03+c2*0+c3*omega03,
          c1*ww10+c2*0+c3*omega10, c1*ww11+c2*1+c3*omega11, c1*ww12+c2*0+c3*omega12,c1*ww13+c2*0+c3*omega13,
@@ -264,7 +262,7 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////
    void DeadReckoningHelper::SetGroundOffset(float newOffset)
    {
-      mGroundOffset = newOffset;
+      mGroundClampingData.SetGroundOffset(newOffset);
       mUpdated = true;
    }
 
@@ -286,9 +284,9 @@ namespace dtGame
 
    //////////////////////////////////////////////////////////////////////
    void DeadReckoningHelper::SetModelDimensions(const osg::Vec3& newDimensions) 
-   { 
-      mModelDimensions = newDimensions; 
-      SetUseModelDimensions(true); 
+   {
+      mGroundClampingData.SetModelDimensions(newDimensions);
+      SetUseModelDimensions(true);
    }
 
    //////////////////////////////////////////////////////////////////////
@@ -313,7 +311,7 @@ namespace dtGame
          {
             bool HadToIter = false;
             DeadReckoningDOF* GetDOFBeforeNULL = (*iter).get();
-             
+
             while(GetDOFBeforeNULL != NULL)
             {
                if(GetDOFBeforeNULL->mNext == NULL)
@@ -321,14 +319,14 @@ namespace dtGame
                GetDOFBeforeNULL = GetDOFBeforeNULL->mNext;
                HadToIter = true;
             }
-            
+
             toAdd->mPrev = GetDOFBeforeNULL;
             toAdd->mNext = NULL;
 
             GetDOFBeforeNULL->mCurrentTime = 0;
             GetDOFBeforeNULL->mNext = toAdd.get();
             GetDOFBeforeNULL->mStartLocation = mDOFDeadReckoning->GetDOFTransform(GetDOFBeforeNULL->mName)->getCurrentHPR();
-            
+
             break;
          }
       }
@@ -469,10 +467,15 @@ namespace dtGame
 
    /////////////////////////////////////////////////////////////////////////////////
    bool DeadReckoningHelper::DoDR(GameActor& gameActor, dtCore::Transform& xform, 
-         dtUtil::Log* pLogger, bool& bShouldGroundClamp)
+         dtUtil::Log* pLogger, GroundClamper::GroundClampingType*& gcType)
    {         
       bool returnValue = false; // indicates we changed the transform
-      bShouldGroundClamp = !IsFlying();
+      if (IsFlying())
+         gcType = &GroundClamper::GroundClampingType::NONE;
+      else if (GetGroundClampingData().GetAdjustRotationToGround())
+         gcType = &GroundClamper::GroundClampingType::RANGED;
+      else
+         gcType = &GroundClamper::GroundClampingType::INTERMITTENT_SAVE_OFFSET;
 
       if (GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::NONE)
       {

@@ -26,7 +26,6 @@
 
 #include <dtCore/refptr.h>
 #include <dtCore/nodecollector.h>
-#include <dtCore/batchisector.h>
 
 #include <dtGame/export.h>
 #include <dtGame/gmcomponent.h>
@@ -43,6 +42,7 @@ namespace dtGame
    class Message;
    class TickMessage;
    class GameActorProxy;
+   class GroundClamper;
 
    class DT_GAME_EXPORT DeadReckoningComponent : public dtGame::GMComponent
    {
@@ -89,39 +89,22 @@ namespace dtGame
          bool IsRegisteredActor(dtGame::GameActorProxy& gameActorProxy);
 
          ///@return the terrain actor using the given name.  If it has not yet been queried, the query will run when this is called.
-         dtCore::Transformable* GetTerrainActor() { return mTerrainActor.get(); }
+         dtCore::Transformable* GetTerrainActor();
 
          ///@return the terrain actor using the given name.  If it has not yet been queried, the query will run when this is called.
-         const dtCore::Transformable* GetTerrainActor() const { return mTerrainActor.get(); };
+         const dtCore::Transformable* GetTerrainActor() const;
 
          ///changes the actor to use for the terrain.
          void SetTerrainActor(dtCore::Transformable* newTerrain);
 
          ///@return the actor to use as an eye point for ground clamping.  This determines which LOD to clamp to. 
-         dtCore::Transformable* GetEyePointActor() { return mEyePointActor.get(); };
+         dtCore::Transformable* GetEyePointActor();
 
          ///@return the actor to use as an eye point for ground clamping.  This determines which LOD to clamp to. 
-         const dtCore::Transformable* GetEyePointActor() const { return mEyePointActor.get(); };
+         const dtCore::Transformable* GetEyePointActor() const;
 
          ///changes the actor to use for the terrain.
          void SetEyePointActor(dtCore::Transformable* newEyePointActor);
-
-         const osg::Vec3& GetLastEyePoint() const { return mCurrentEyePointABSPos; }
-
-         /**
-          * Sets the maximum distance from the player that three intersection point clamping will be used.  
-          * After this, one intersection will be used.
-          */
-         void SetHighResGroundClampingRange(float range)
-         {
-            mHighResClampRange = range;
-            mHighResClampRange2 = range * range;
-         }
-
-         /**
-          * @return the maximum distance from the player that three intersection point clamping will be used.  
-          */
-         float GetHighResGroundClampingRange() const { return mHighResClampRange; }
 
          /**
           * Typically actors are only ground clamped when their positions are updated
@@ -142,6 +125,12 @@ namespace dtGame
 
          float GetArticulationSmoothTime() const { return mArticSmoothTime; }
          
+         /// @return the ground clamping utility class
+         const GroundClamper& GetGroundClamper() const;
+
+         /// @return the ground clamping utility class
+         GroundClamper& GetGroundClamper();
+         
       protected:
          virtual ~DeadReckoningComponent();
 
@@ -157,45 +146,14 @@ namespace dtGame
          /// modifies the scene graph node by predicting the articulation data.
          void DoArticulationPrediction(osgSim::DOFTransform& dofxform, const osg::Vec3& currLocation, const osg::Vec3& currentRate, float currentTimeStep) const;
 
-         /// Calculates the bounding box for the given proxy, stores it in the helper, and populates the Vec3.
-         void CalculateAndSetBoundingBox(osg::Vec3& modelDimensions,
-               dtGame::GameActorProxy& gameActorProxy, DeadReckoningHelper& helper);
-         
-         /// Gets the ground clamping hit that is closest to the deadreckoned z value.
-         bool GetClosestHit(dtCore::BatchIsector::SingleISector& single, float pointz,
-                  osg::Vec3& hit, osg::Vec3& normal);
-
-         /**
-          * Clamps an actor to the ground.  This doesn't actually move an actor, it just outputs the position and rotation.
-          * @param timeSinceUpdate the amount of time since the last actor update.
-          * @param xform the current absolute transform of the actor.
-          * @param gameActorProxy the actual actor.  This is passed case collision geometry is needed.
-          * @param helper the deadreckoning helper for the actor
-          */
-         void ClampToGround(float timeSinceUpdate, dtCore::Transform& xform, 
-            dtGame::GameActorProxy& gameActorProxy, DeadReckoningHelper& helper);
-         
-         ///Version of clamping that uses three intersection points to calculate the height and the rotation.
-         void ClampToGroundThreePoint(float timeSinceUpdate, dtCore::Transform& xform,
-            dtGame::GameActorProxy& gameActorProxy, DeadReckoningHelper& helper);
-         
-         void RunClampBatch();
-
          /// @return true if the entity should be force clamped based on saved values.
          bool ShouldForceClamp(DeadReckoningHelper& helper, float deltaRealTime, bool bTransformChanged);
-         
-         dtCore::BatchIsector& GetGroundClampIsector();
 
          std::map<dtCore::UniqueId, dtCore::RefPtr<DeadReckoningHelper> > mRegisteredActors;
-         std::vector<std::pair<dtCore::Transform, dtGame::GameActorProxy*> > mGroundClampBatch;
-         osg::Vec3 mCurrentEyePointABSPos;
+         dtCore::RefPtr<dtGame::GroundClamper> mGroundClamper;
+         
          dtUtil::Log* mLogger;
-         dtCore::RefPtr<dtCore::Transformable> mEyePointActor;
-         dtCore::RefPtr<dtCore::Transformable> mTerrainActor;
 
-         dtCore::RefPtr<dtCore::BatchIsector> mTripleIsector, mIsector;
-
-         float mHighResClampRange, mHighResClampRange2;
          float mForceClampInterval;
 
          float mArticSmoothTime;

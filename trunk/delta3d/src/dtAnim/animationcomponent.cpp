@@ -29,13 +29,12 @@
 
 #include <dtUtil/hotspotdefinition.h>
 
-#include <dtCore/batchisector.h>
-
 #include <dtDAL/actortype.h>
 
 #include <dtGame/gameactor.h>
 #include <dtGame/messagetype.h>
 #include <dtGame/basemessages.h>
+#include <dtGame/groundclamper.h>
 
 #include <dtUtil/log.h>
 
@@ -48,9 +47,10 @@ const std::string AnimationComponent::DEFAULT_NAME("Animation Component");
 AnimationComponent::AnimationComponent(const std::string& name)
 : BaseClass(name)
 , mRegisteredActors()
-, mTerrainActor(NULL)
-, mIsector(NULL)
+, mGroundClamper(new dtGame::GroundClamper)
 {
+   mGroundClamper->SetHighResGroundClampingRange(0.01);
+   mGroundClamper->SetLowResGroundClampingRange(0.1);
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -74,7 +74,7 @@ void AnimationComponent::ProcessMessage(const dtGame::Message &message)
       {
          mRegisteredActors.erase(iter);
       }
-      else if (mTerrainActor.valid() && mTerrainActor->GetUniqueId() == message.GetAboutActorId())
+      else if (GetTerrainActor() != NULL && GetTerrainActor()->GetUniqueId() == message.GetAboutActorId())
       {
          SetTerrainActor(NULL);
       }
@@ -142,103 +142,71 @@ bool AnimationComponent::IsRegisteredActor(dtGame::GameActorProxy& proxy)
 /////////////////////////////////////////////////////////////////////////////////
 dtCore::Transformable* AnimationComponent::GetTerrainActor()
 {
-   return mTerrainActor.get();
+   return mGroundClamper->GetTerrainActor();
 }
 
 /////////////////////////////////////////////////////////////////////////////////
 const dtCore::Transformable* AnimationComponent::GetTerrainActor() const
 {
-   return mTerrainActor.get();
+   return mGroundClamper->GetTerrainActor();
 }
 
 /////////////////////////////////////////////////////////////////////////////////
 void AnimationComponent::SetTerrainActor(dtCore::Transformable* newTerrain)
 {
-   mTerrainActor = newTerrain;
+   mGroundClamper->SetTerrainActor(newTerrain);
+}
 
-   if(!mIsector.valid())
-   {
-      mIsector = new dtCore::BatchIsector();
-   }   
+//////////////////////////////////////////////////////////////////////
+dtCore::Transformable* AnimationComponent::GetEyePointActor()
+{
+   return mGroundClamper->GetEyePointActor();
+}
 
-   mIsector->SetQueryRoot(mTerrainActor.get());
+//////////////////////////////////////////////////////////////////////
+const dtCore::Transformable* AnimationComponent::GetEyePointActor() const
+{
+   return mGroundClamper->GetEyePointActor();
+}
+
+//////////////////////////////////////////////////////////////////////
+void AnimationComponent::SetEyePointActor(dtCore::Transformable* newEyePointActor)
+{
+   mGroundClamper->SetEyePointActor(newEyePointActor);
 }
 
 /////////////////////////////////////////////////////////////////////////////////
 void AnimationComponent::GroundClamp()
 {
-   if(mTerrainActor.valid() && mIsector.valid())
-   {      
+   if (mGroundClamper->GetTerrainActor() != NULL)
+   {
       dtGame::GameManager* gm = GetGameManager();
-        
+
       AnimCompIter end = mRegisteredActors.end();
       AnimCompIter iter = mRegisteredActors.begin();
 
       while(iter != end)
       {
-         unsigned numActors = 0;
-         dtGame::GameActor* actor_array[32] = {0};
+         dtGame::GroundClampingData gcData;
+         gcData.SetAdjustRotationToGround(false);
+         gcData.SetUseModelDimensions(false);
 
-         for(; iter != end && numActors < 32; ++iter)
+         for(; iter != end; ++iter)
          {
-            AnimationHelper* helper = (*iter).second.get();
-            dtGame::GameActorProxy* pProxy = gm->FindGameActorById((*iter).first);   
-
-            if(pProxy)
+            dtGame::GameActorProxy* pProxy = gm->FindGameActorById((*iter).first);
+            if(pProxy != NULL)
             {
-               if(helper->GetGroundClamp())
-               {
-                  actor_array[numActors++] = &pProxy->GetGameActor();
-               }//if
+               dtCore::Transform xform;
+               pProxy->GetGameActor().GetTransform(xform, dtCore::Transformable::REL_CS);
+
+               mGroundClamper->ClampToGround(dtGame::GroundClamper::GroundClampingType::RANGED,
+                        0.0, xform, *pProxy, gcData);
             }//if
          }//for
 
-         //submit our isector query to be batched
-         if(numActors) DoIsector(numActors, actor_array);
+         mGroundClamper->RunClampBatch();
       }//while
    }//if
-}
-
-void AnimationComponent::DoIsector(unsigned numActors, dtGame::GameActor* actor_array[32])
-{
-   dtCore::Transform trans;
-   osg::Matrix mat;
-   osg::Vec3 pos, hitPt;
-   unsigned i = 0;
-
-   //setup all our isectors
-   for(; i < numActors; ++i)
-   {
-      actor_array[i]->GetTransform(trans);
-      pos = trans.GetTranslation();
-
-      mIsector->EnableAndGetISector(i).SetSectorAsLineSegment(osg::Vec3(pos[0], pos[1], pos[2] + 100.0f), osg::Vec3(pos[0], pos[1], pos[2] - 100.0f));
-   }
-
-   //disable the ones we arent using
-   for(; i < 32; ++i)
-   {
-      mIsector->StopUsingSingleISector(i);
-   }
-
-   //do a full update... note: sending true to Update() is for LOD which we arent doing, so it ignores pos
-   if(mIsector->Update(pos, true))
-   {
-      for(i = 0; i < numActors; ++i)
-      {
-         //if the isector hits, then we'll update the position of our actor
-         if(mIsector->GetSingleISector(i).GetNumberOfHits())
-         {
-            actor_array[i]->GetTransform(trans);
-            pos = trans.GetTranslation();
-
-            mIsector->GetSingleISector(i).GetHitPoint(hitPt);
-            pos[2] = hitPt[2];
-            trans.SetTranslation(pos);
-            actor_array[i]->SetTransform(trans);//, dtCore::Transformable::REL_CS);
-         }
-      }
-   }
 }
 
 

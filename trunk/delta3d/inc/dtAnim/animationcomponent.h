@@ -35,15 +35,12 @@
 #include <dtAnim/animationhelper.h>
 
 
-namespace dtCore
-{
-   class BatchIsector;
-}
 namespace dtGame
 {
    class Message;
    class TickMessage;
    class GameActorProxy;
+   class GroundClamper;
 }
 
 namespace dtAnim
@@ -107,6 +104,15 @@ public:
 
    ///changes the actor to use for the terrain.
    void SetTerrainActor(dtCore::Transformable* newTerrain);
+
+   ///@return the actor to use as an eye point for ground clamping.  This determines which LOD to clamp to. 
+   dtCore::Transformable* GetEyePointActor();
+
+   ///@return the actor to use as an eye point for ground clamping.  This determines which LOD to clamp to. 
+   const dtCore::Transformable* GetEyePointActor() const;
+
+   ///changes the actor to use for the terrain.
+   void SetEyePointActor(dtCore::Transformable* newEyePointActor);
  
 
 protected:
@@ -115,17 +121,14 @@ protected:
    virtual void TickLocal(float dt);
    //creates batches of isector queries
    void GroundClamp();
-   //does a batched isector query
-   void DoIsector(unsigned int numActors, dtGame::GameActor* actor_array[32]);
 
 private:
    AnimationComponent(const AnimationComponent&);               //not implemented
    AnimationComponent& operator=(const AnimationComponent&);    //not implemented
 
    AnimCompMap mRegisteredActors;
-   dtCore::RefPtr<dtCore::Transformable> mTerrainActor;
-   dtCore::RefPtr<dtCore::BatchIsector> mIsector;
 
+   dtCore::RefPtr<dtGame::GroundClamper> mGroundClamper;
 };
 
 }//namespace dtGame

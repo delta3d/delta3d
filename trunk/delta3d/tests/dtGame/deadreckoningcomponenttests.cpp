@@ -27,14 +27,12 @@
 #include <osg/Group>
 #include <osg/Node>
 #include <osgSim/DOFTransform>
-#include <osgUtil/IntersectVisitor>
 
 #include <dtUtil/mathdefines.h>
 
 #include <dtCore/system.h>
 #include <dtCore/transform.h>
 #include <dtCore/transformable.h>
-#include <dtCore/batchisector.h>
 #include <dtCore/scene.h>
 #include <dtCore/nodecollector.h>
 
@@ -68,7 +66,7 @@ namespace dtGame
          
          const osg::Vec3& GetLastUsedEyePoint() const
          {
-            return GetLastEyePoint();
+            return GetGroundClamper().GetLastEyePoint();
          }     
 
          bool ShouldForceClamp(DeadReckoningHelper& helper, float deltaRealTime, bool bTransformChanged)
@@ -85,7 +83,7 @@ namespace dtGame
          bool DoGetClosestHit(dtCore::BatchIsector::SingleISector& single, float pointz,
                   osg::Vec3& hit, osg::Vec3& normal)
          {
-            return BaseClass::GetClosestHit(single, pointz, hit, normal);
+            return GetGroundClamper().GetClosestHit(single, pointz, hit, normal);
          }
 
          void DoArticulationPublic(dtGame::DeadReckoningHelper& helper, 
@@ -137,7 +135,6 @@ namespace dtGame
          CPPUNIT_TEST(TestActorRegistration);
          CPPUNIT_TEST(TestSimpleBehaviorLocal);
          CPPUNIT_TEST(TestSimpleBehaviorRemote);
-         CPPUNIT_TEST(TestHighResClampProperty);
          CPPUNIT_TEST(TestSmoothingStepsCalc);
          CPPUNIT_TEST(TestSmoothingStepsCalcFastUpdate);
          CPPUNIT_TEST(TestDRArticulationStopCounts);
@@ -148,7 +145,6 @@ namespace dtGame
          CPPUNIT_TEST(TestDoDRNoDR);
          CPPUNIT_TEST(TestForceClampProperty);
          CPPUNIT_TEST(TestShouldForceClamp);
-         CPPUNIT_TEST(TestClampToNearest);
          
       CPPUNIT_TEST_SUITE_END();
    
@@ -406,14 +402,6 @@ namespace dtGame
             CPPUNIT_ASSERT_EQUAL(value, mDeadReckoningComponent->GetForceClampInterval());
          }
 
-         void TestHighResClampProperty()
-         {
-            CPPUNIT_ASSERT_EQUAL(0.0f, mDeadReckoningComponent->GetHighResGroundClampingRange());
-            float value = 10.0f;
-            mDeadReckoningComponent->SetHighResGroundClampingRange(value);
-            CPPUNIT_ASSERT_EQUAL(value, mDeadReckoningComponent->GetHighResGroundClampingRange());
-         }
-
          void TestActorRegistration()
          {
             dtCore::RefPtr<DeadReckoningHelper> helper = new DeadReckoningHelper;
@@ -643,9 +631,9 @@ namespace dtGame
 
             dtCore::Transform xform;
 
-            bool shouldGroundClamp = false;
+            GroundClamper::GroundClampingType* groundClampingType = &GroundClamper::GroundClampingType::NONE;
             bool wasTransformed = helper->DoDR(mTestGameActor->GetGameActor(), xform,
-                  &dtUtil::Log::GetInstance(), shouldGroundClamp);
+                  &dtUtil::Log::GetInstance(), groundClampingType);
 
             CPPUNIT_ASSERT(!wasTransformed);
          }
@@ -671,9 +659,9 @@ namespace dtGame
             xform.SetRotation(helper->GetLastKnownRotation());
             helper->ClearUpdated();
 
-            bool shouldGroundClamp = false;
+            GroundClamper::GroundClampingType* groundClampingType = &GroundClamper::GroundClampingType::NONE;
             bool wasTransformed = helper->DoDR(mTestGameActor->GetGameActor(), xform,
-                  &dtUtil::Log::GetInstance(), shouldGroundClamp);
+                  &dtUtil::Log::GetInstance(), groundClampingType);
 
             CPPUNIT_ASSERT(!wasTransformed);
          }
@@ -774,61 +762,6 @@ namespace dtGame
             CPPUNIT_ASSERT_EQUAL_MESSAGE("The smoothing steps for rotation should bel less that 1.0 because "
                      "the velocity vector is 0 but with fast updates.",
                float(helper->GetAverageTimeBetweenRotationUpdates()), helper->GetRotationEndSmoothingTime());
-         }
-
-         void TestClampToNearest()
-         {
-            dtCore::RefPtr<dtCore::BatchIsector::SingleISector> single = new dtCore::BatchIsector::SingleISector(0);
-            osgUtil::IntersectVisitor::HitList hitList;
-
-            osg::Vec3 point, normal;
-
-            CPPUNIT_ASSERT_MESSAGE("No nearest hit should have been found if no hits exist.", 
-                     !mDeadReckoningComponent->DoGetClosestHit(*single, 0.03, point, normal));
-
-            osgUtil::Hit hit;
-            hit._intersectNormal = osg::Vec3(0.0f, 0.0f, 1.0f);
-            hit._intersectPoint = osg::Vec3(3.0f, 4.0f, 1.0f);
-            hitList.push_back(hit);
-
-            hit._intersectNormal = osg::Vec3(0.0f, 1.0f, 0.0f);
-            hit._intersectPoint = osg::Vec3(3.0f, 4.0f, 4.0f);
-            hitList.push_back(hit);
-
-            single->SetHitList(hitList);
-            
-            CPPUNIT_ASSERT_MESSAGE("A nearest hit should have been found.", 
-                     mDeadReckoningComponent->DoGetClosestHit(*single, 0.03, point, normal));
-
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(3.0f, point.x(), 0.001);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(4.0f, point.y(), 0.001);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0f, point.z(), 0.001);
-            
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0f, normal.x(), 0.001);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0f, normal.y(), 0.001);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0f, normal.z(), 0.001);
-            
-            CPPUNIT_ASSERT_MESSAGE("A nearest hit should have been found.", 
-                     mDeadReckoningComponent->DoGetClosestHit(*single, 3.4, point, normal));
-
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(3.0f, point.x(), 0.001);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(4.0f, point.y(), 0.001);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(4.0f, point.z(), 0.001);
-
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0f, normal.x(), 0.001);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0f, normal.y(), 0.001);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0f, normal.z(), 0.001);
-
-            CPPUNIT_ASSERT_MESSAGE("A nearest hit should have been found.", 
-                     mDeadReckoningComponent->DoGetClosestHit(*single, 5.0, point, normal));
-
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(3.0f, point.x(), 0.001);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(4.0f, point.y(), 0.001);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(4.0f, point.z(), 0.001);
-
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0f, normal.x(), 0.001);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0f, normal.y(), 0.001);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0f, normal.z(), 0.001);
          }
 
       private:
@@ -1020,11 +953,11 @@ namespace dtGame
             helper->SetFlying(flying);
 
             dtCore::Transform xform;
-            bool shouldGroundClamp = false;
+            GroundClamper::GroundClampingType* groundClampingType = &GroundClamper::GroundClampingType::NONE;
             bool wasTransformed = helper->DoDR(mTestGameActor->GetGameActor(), xform, 
-                  &dtUtil::Log::GetInstance(), shouldGroundClamp);
+                  &dtUtil::Log::GetInstance(), groundClampingType);
             
-            CPPUNIT_ASSERT(shouldGroundClamp == !flying);
+            CPPUNIT_ASSERT((*groundClampingType == GroundClamper::GroundClampingType::NONE) == flying);
             CPPUNIT_ASSERT(wasTransformed);
          }
 
@@ -1038,11 +971,11 @@ namespace dtGame
             helper->SetFlying(flying);
 
             dtCore::Transform xform;
-            bool shouldGroundClamp = false;
+            GroundClamper::GroundClampingType* groundClampingType = &GroundClamper::GroundClampingType::NONE;
             bool wasTransformed = helper->DoDR(mTestGameActor->GetGameActor(), xform, 
-                  &dtUtil::Log::GetInstance(), shouldGroundClamp);
+                  &dtUtil::Log::GetInstance(), groundClampingType);
             
-            CPPUNIT_ASSERT(shouldGroundClamp == !flying);
+            CPPUNIT_ASSERT((*groundClampingType == GroundClamper::GroundClampingType::NONE) == flying);
             CPPUNIT_ASSERT(wasTransformed);
 
             std::ostringstream ss;
