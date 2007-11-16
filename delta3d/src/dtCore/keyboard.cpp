@@ -4,6 +4,7 @@
 #include <prefix/dtcoreprefix-src.h>
 #include <dtCore/keyboard.h>
 #include <dtUtil/stringutils.h>
+#include <dtUtil/log.h>
 #include <algorithm>
 
 using namespace dtCore;

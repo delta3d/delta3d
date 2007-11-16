@@ -28,7 +28,7 @@
 #include <osgViewer/api/Win32/GraphicsWindowWin32>
 typedef HWND WindowHandle;
 typedef osgViewer::GraphicsWindowWin32::WindowData WindowData;
-#elif defined(__APPLE__) && defined(APPLE_PRE_10_3)
+#elif defined(__APPLE__)
 #include <osgViewer/api/Carbon/GraphicsWindowCarbon>
 typedef WindowRef WindowHandle;
 typedef osgViewer::GraphicsWindowCarbon::WindowData WindowData;

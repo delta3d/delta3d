@@ -43,6 +43,9 @@
 #include <dtUtil/xercesutils.h>
 #include <xercesc/util/XMLString.hpp>
 
+#include <osgViewer/Viewer>
+#include <osg/io_utils>
+
 using namespace dtABC;
 XERCES_CPP_NAMESPACE_USE
 
@@ -90,9 +93,7 @@ void Application::PreFrame( const double deltaFrameTime )
 {
 }
 
-#include <osgViewer/Viewer>
 ///////////////////////////////////////////////////////////////////////////////
-#include <osg/io_utils>
 void Application::Frame( const double deltaFrameTime )
 {
    if(!dtCore::System::GetInstance().GetPause() )

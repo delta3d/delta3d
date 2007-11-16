@@ -398,7 +398,7 @@ def TOOL_BUNDLE(env):
               CPPDEFINES=['SIGSLOT_PURE_ISO', "LINUX"] )
          elif env['OS'] == 'darwin':      
             env.Append(CXXFLAGS=['-gdwarf-2', '-O0', '-pipe', '-mmacosx-version-min=10.4', '-isysroot', '/Developer/SDKs/MacOSX10.4u.sdk'], 
-              CPPDEFINES=['_DEBUG', '__USE_OSX_AGL_IMPLEMENTATION__', 'SIGSLOT_PURE_ISO'])#,
+              CPPDEFINES=['_DEBUG', 'SIGSLOT_PURE_ISO'])#,
             #LINKFLAGS=['-Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk'] )
       else:
          print 'Build Configuration: Release'
@@ -677,12 +677,14 @@ def TOOL_BUNDLE(env):
             'CEGUIOpenGLRenderer' : 'CEGUIOpenGLRenderer',
             'osg'            : 'osg',
             'osgDB'          : 'osgDB',
+            'osgGA'          : 'osgGA', 
             'osgUtil'        : 'osgUtil',
             'osgText'        : 'osgText',
             'osgSim'         : 'osgSim',
             'osgFX'          : 'osgFX',
             'osgParticle'    : 'osgParticle',
-            'Producer'       : 'Producer',
+            'osgViewer'       : 'osgViewer',
+      #      'Producer'       : 'Producer',
       #      'python'         : python_version,
       #Default to the system level framework in OS X
             'python'         : 'Python',
@@ -809,7 +811,6 @@ def TOOL_BUNDLE(env):
    
       CheckLinkGroup([
          'OpenThreads',
-         'Producer',
          'opengl',
          'xerces-c',
          'gdal',
@@ -821,7 +822,9 @@ def TOOL_BUNDLE(env):
          'osgText',
          'osgSim',
          'osgFX',
-         'osgParticle'], 'osg', True)
+         'osgParticle',
+         'osgGA',
+         'osgViewer'], 'osg', True)
                
       CheckLinkGroup(['cal3d','rvrutils','rcfgscript','rbody'], 'rbody', True)
       CheckLinkGroup(['DIS'], 'DIS', True)

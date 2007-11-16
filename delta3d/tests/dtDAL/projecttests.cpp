@@ -749,7 +749,7 @@ void ProjectTests::testProject()
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
       std::string originalPathList = dtCore::GetDataFilePathList();
 
-      std::string crapPath("/usr/:**/../^^jojo/funky/\\\\/,/,.uchor");
+      std::string crapPath("/usr/:%**/../^^jojo/funky/\\\\/,/,.uchor");
       
       CPPUNIT_ASSERT_THROW(p.CreateContext(crapPath), dtUtil::Exception);
       CPPUNIT_ASSERT_THROW(p.SetContext(crapPath), dtUtil::Exception);
