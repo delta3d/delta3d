@@ -73,6 +73,7 @@ class BatchISectorTests : public CPPUNIT_NS::TestFixture
          mCamera->SetWindow(NULL);
          mCamera = NULL;
          mWin = NULL;
+         mApp = NULL;
          dtCore::System::GetInstance().Stop();
       }
 
