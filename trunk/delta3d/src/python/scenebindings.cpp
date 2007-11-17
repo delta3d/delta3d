@@ -28,7 +28,7 @@ void initSceneBindings()
    Light* (Scene::*GetLight3)(const std::string&) = &Scene::GetLight;
    const Light* (Scene::*GetLight4)(const std::string&) const = &Scene::GetLight;
    
-   scope sceneScope = class_<Scene, bases<Base>, dtCore::RefPtr<Scene>, boost::noncopyable >("Scene", init<optional<const std::string&,bool> >())
+   scope sceneScope = class_<Scene, bases<Base>, dtCore::RefPtr<Scene>, boost::noncopyable >("Scene", init<optional<const std::string&> >())
       .def("GetInstanceCount", &Scene::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", SceneGI1, return_internal_reference<>())

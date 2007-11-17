@@ -32,13 +32,13 @@ void initDeltaWinBindings()
    void (DeltaWin::*SetPosition1)(const DeltaWin::PositionSize&) = &DeltaWin::SetPosition;
    void (DeltaWin::*SetPosition2)(int, int, int, int) = &DeltaWin::SetPosition;
    DeltaWin::PositionSize (DeltaWin::*GetPosition1)() = &DeltaWin::GetPosition;
+
+   osgViewer::GraphicsWindow* (DeltaWin::*GetOsgViewerGraphicsWindow1)() = &DeltaWin::GetOsgViewerGraphicsWindow;
    
-   Keyboard* (DeltaWin::*GK1)() = &DeltaWin::GetKeyboard;
-   Mouse* (DeltaWin::*GM1)() = &DeltaWin::GetMouse;
 
    scope DeltaWinScope = class_<DeltaWin, bases<Base>, dtCore::RefPtr<DeltaWin>, boost::noncopyable >("DeltaWin")
       .def(init<optional<const std::string&, int, int, int, int, bool, bool> >())
-      .def(init<const std::string&,dtCore::Keyboard*,dtCore::Mouse*>())
+      .def(init<const std::string&,osgViewer::GraphicsWindow&>())
       .def("GetInstanceCount", &DeltaWin::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", DeltaWinGI1, return_internal_reference<>())
@@ -52,14 +52,12 @@ void initDeltaWinBindings()
       .def("GetFullScreenMode", &DeltaWin::GetFullScreenMode)
       .def("KillGLWindow", &DeltaWin::KillGLWindow)
       .def("SetWindowTitle", &DeltaWin::SetWindowTitle)
-      .def("GetWindowTitle", &DeltaWin::GetWindowTitle, return_internal_reference<>())
+      // This used to work when GetWindowTitle returned a reference
+      //.def("GetWindowTitle", &DeltaWin::GetWindowTitle, return_internal_reference<>())
+      .def("GetWindowTitle", &DeltaWin::GetWindowTitle)
       .def("SetPosition", SetPosition1)
       .def("SetPosition", SetPosition2)
       .def("GetPosition", GetPosition1)
-      .def("GetKeyboard", GK1, return_internal_reference<>())
-      .def("GetMouse", GM1, return_internal_reference<>())
-      .def("SetKeyboard",&DeltaWin::SetKeyboard)
-      .def("SetMouse",&DeltaWin::SetMouse)
       .def("GetCurrentResolution", &DeltaWin::GetCurrentResolution)
       .def("ChangeScreenResolution", DeltaWinCSR1)
       .def("ChangeScreenResolution", DeltaWinCSR2)
@@ -67,6 +65,7 @@ void initDeltaWinBindings()
       .def("IsValidResolution", IVR2)
       .def("IsValidResolution", IVR3)
       .def("IsValidResolution", IVR4)
+      .def("GetOsgViewerGraphicsWindow", GetOsgViewerGraphicsWindow1, return_internal_reference<>())  
       ;
 
    class_<DeltaWin::PositionSize>("PositionSize")

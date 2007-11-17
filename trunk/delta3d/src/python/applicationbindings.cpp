@@ -59,25 +59,23 @@ class ApplicationWrap : public Application, public wrapper<Application>
       }
 
    virtual bool KeyPressed( const dtCore::Keyboard* keyboard,
-                            Producer::KeyboardKey key,
-                            Producer::KeyCharacter character )
+                            int kc )
    {
       if( override KeyPressed = this->get_override("KeyPressed") )
       {
          #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
-         return call<bool>( KeyPressed.ptr(), boost::ref(keyboard), key, character );
+         return call<bool>( KeyPressed.ptr(), boost::ref(keyboard), kc );
          #else
-         return KeyPressed( boost::ref(keyboard), key, character );
+         return KeyPressed( boost::ref(keyboard), kc );
          #endif
       }
-      return Application::KeyPressed( keyboard, key, character );
+      return Application::KeyPressed( keyboard, kc );
    }
 
    virtual bool DefaultKeyPressed( const dtCore::Keyboard* keyboard,
-                                   Producer::KeyboardKey key,
-                                   Producer::KeyCharacter character )
+                                   int kc )
    {
-      return this->Application::KeyPressed( keyboard, key, character );
+      return this->Application::KeyPressed( keyboard, kc );
    }
 
    virtual void OnCollisionMessage(PythonCollisionData pData)
@@ -93,7 +91,7 @@ class ApplicationWrap : public Application, public wrapper<Application>
       virtual void PreFrame(const double deltaFrameTime)
       {
          if( PyObject_HasAttrString( boost::python::detail::wrapper_base_::get_owner(*this),
-                                     "PreFrame") )
+                                    "PreFrame") )
          {
             if( override PreFrame = this->get_override("PreFrame") )
             {
@@ -107,6 +105,10 @@ class ApplicationWrap : public Application, public wrapper<Application>
             {
                Application::PreFrame(deltaFrameTime);
             }
+         }
+         else
+         {
+            Application::PreFrame(deltaFrameTime);
          }
       }
    
@@ -128,6 +130,10 @@ class ApplicationWrap : public Application, public wrapper<Application>
                Application::Frame(deltaFrameTime);
             }
          }
+         else
+         {
+            Application::Frame(deltaFrameTime);
+         }
       }
    
       virtual void PostFrame(const double deltaFrameTime)
@@ -147,6 +153,10 @@ class ApplicationWrap : public Application, public wrapper<Application>
             {
                Application::PostFrame(deltaFrameTime);
             }
+         }
+         else
+         {
+            Application::PostFrame(deltaFrameTime);
          }
       }
 
