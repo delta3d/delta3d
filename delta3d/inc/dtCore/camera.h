@@ -151,10 +151,10 @@ namespace dtCore
       { return (mOsgCamera->getProjectionResizePolicy()); }
 
       ///takes a number from 0-1 to set as the aspect ratio
-      void SetAspectRatio( double aspectRatio );
+      //void SetAspectRatio( double aspectRatio );
 
       ///@return aspect ratio
-      double GetAspectRatio();
+      //double GetAspectRatio();
 
       ///Get a handle to the Producer Lens that this Camera uses
 //      Producer::Camera::Lens *GetLens() { return mCamera->getLens(); }
