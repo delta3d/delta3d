@@ -161,7 +161,7 @@ void initWidgetBindings()
       .def_readwrite("width", &WinRect::width)
       .def_readwrite("height", &WinRect::height);
 
-   class_<WinData, bases<WinRect> >("WinData", init<optional<Producer::Window, int, int, int, int> >())
+   class_<WinData, bases<WinRect> >("WinData", init<optional<WindowHandle, int, int, int, int> >())
       #ifdef WIN32
       // Windows needs the long to HWND* conversion done ahead of time
       .add_property("hwnd", &GetWinDataHWND, &SetWinDataHWND) 

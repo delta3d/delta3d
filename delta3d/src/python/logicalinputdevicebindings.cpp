@@ -8,7 +8,7 @@
 using namespace boost::python;
 using namespace dtCore;
 
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(AB_overloads, AddButton, 1, 2)
+//BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(AB_overloads, AddButton, 1, 2)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(AA_overloads, AddAxis, 1, 2)
 
 void initLogicalInputDeviceBindings()
@@ -16,8 +16,8 @@ void initLogicalInputDeviceBindings()
    LogicalInputDevice* (*LogicalInputDeviceGI1)(int) = &LogicalInputDevice::GetInstance;
    LogicalInputDevice* (*LogicalInputDeviceGI2)(std::string) = &LogicalInputDevice::GetInstance;
 
-   LogicalButton* (LogicalInputDevice::*AddButton1)(const std::string&, ButtonMapping*) = &LogicalInputDevice::AddButton;
-   LogicalButton* (LogicalInputDevice::*AddButton2)(const std::string&, Button*) = &LogicalInputDevice::AddButton;
+   //LogicalButton* (LogicalInputDevice::*AddButton1)(const std::string&, int, ButtonMapping*) = &LogicalInputDevice::AddButton;
+   LogicalButton* (LogicalInputDevice::*AddButton2)(const std::string&, Button*, int) = &LogicalInputDevice::AddButton;
    
    LogicalAxis* (LogicalInputDevice::*AddAxis1)(const std::string&, AxisMapping*) = &LogicalInputDevice::AddAxis;
    LogicalAxis* (LogicalInputDevice::*AddAxis2)(const std::string&, Axis*) = &LogicalInputDevice::AddAxis;
@@ -28,8 +28,9 @@ void initLogicalInputDeviceBindings()
       .def("GetInstance", LogicalInputDeviceGI1, return_internal_reference<>())
       .def("GetInstance", LogicalInputDeviceGI2, return_internal_reference<>())
       .staticmethod("GetInstance")
-      .def("AddButton", AddButton1, AB_overloads()[return_internal_reference<>()])
-      .def("AddButton", AddButton2, return_internal_reference<>())
+      //.def("AddButton", AddButton1, AB_overloads()[return_internal_reference<>()])
+      //.def("AddButton", AddButton2, return_internal_reference<>())
+	  .def("AddButton", AddButton2, return_internal_reference<>())
       .def("RemoveButton", &LogicalInputDevice::RemoveButton)
       .def("AddAxis", AddAxis1, AA_overloads()[return_internal_reference<>()])
       .def("AddAxis", AddAxis2, return_internal_reference<>())

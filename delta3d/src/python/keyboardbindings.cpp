@@ -8,6 +8,7 @@
 
 using namespace boost::python;
 using namespace dtCore;
+using namespace osgGA;
 
 class KeyboardListenerWrap : public KeyboardListener, public wrapper<KeyboardListener>
 {
@@ -20,7 +21,8 @@ class KeyboardListenerWrap : public KeyboardListener, public wrapper<KeyboardLis
    {
    }
    public:
-   virtual bool HandleKeyPressed(const Keyboard* keyboard, int kc  )
+   virtual bool HandleKeyPressed(const Keyboard* keyboard, 
+                                 int kc )
    {
       #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
       return call<bool>( this->get_override( "HandleKeyPressed" ).ptr(), boost::ref(keyboard), kc );
@@ -29,7 +31,8 @@ class KeyboardListenerWrap : public KeyboardListener, public wrapper<KeyboardLis
       #endif
    }
    
-   virtual bool HandleKeyReleased(const Keyboard* keyboard, int kc )
+   virtual bool HandleKeyReleased(const Keyboard* keyboard, 
+                                  int kc )
    {
       #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
       return call<bool>( this->get_override( "HandleKeyReleased" ).ptr(), boost::ref(keyboard), kc );
@@ -38,7 +41,8 @@ class KeyboardListenerWrap : public KeyboardListener, public wrapper<KeyboardLis
       #endif
    }
    
-   virtual bool HandleKeyTyped(const Keyboard* keyboard, int kc )
+   virtual bool HandleKeyTyped(const Keyboard* keyboard, 
+                               int kc )
    {
       #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
       return call<bool>( this->get_override( "HandleKeyTyped" ).ptr(), boost::ref(keyboard), kc );
@@ -50,116 +54,133 @@ class KeyboardListenerWrap : public KeyboardListener, public wrapper<KeyboardLis
 
 void initKeyboardBindings()
 {
-   #define ENUM_KEYBOARD_KEY(VALUE) keyboard_key.value(#VALUE, Producer::VALUE)
+   #define ENUM_KEYBOARD_KEY(VALUE) keyboard_key.value(#VALUE, GUIEventAdapter::VALUE)
 
-   enum_<Producer::KeyboardKey> keyboard_key("KeyboardKey");
-   ENUM_KEYBOARD_KEY(Key_Unknown);
-   ENUM_KEYBOARD_KEY(Key_Escape);
-   ENUM_KEYBOARD_KEY(Key_F1);
-   ENUM_KEYBOARD_KEY(Key_F2);
-   ENUM_KEYBOARD_KEY(Key_F3);
-   ENUM_KEYBOARD_KEY(Key_F4);
-   ENUM_KEYBOARD_KEY(Key_F5);
-   ENUM_KEYBOARD_KEY(Key_F6);
-   ENUM_KEYBOARD_KEY(Key_F7);
-   ENUM_KEYBOARD_KEY(Key_F8);
-   ENUM_KEYBOARD_KEY(Key_F9);
-   ENUM_KEYBOARD_KEY(Key_F10);
-   ENUM_KEYBOARD_KEY(Key_F11);
-   ENUM_KEYBOARD_KEY(Key_F12);
-   ENUM_KEYBOARD_KEY(Key_quoteleft);
-   ENUM_KEYBOARD_KEY(Key_1);
-   ENUM_KEYBOARD_KEY(Key_2);
-   ENUM_KEYBOARD_KEY(Key_3);
-   ENUM_KEYBOARD_KEY(Key_4);
-   ENUM_KEYBOARD_KEY(Key_5);
-   ENUM_KEYBOARD_KEY(Key_6);
-   ENUM_KEYBOARD_KEY(Key_7);
-   ENUM_KEYBOARD_KEY(Key_8);
-   ENUM_KEYBOARD_KEY(Key_9);
-   ENUM_KEYBOARD_KEY(Key_0);
-   ENUM_KEYBOARD_KEY(Key_minus);
-   ENUM_KEYBOARD_KEY(Key_equal);
-   ENUM_KEYBOARD_KEY(Key_BackSpace);
-   ENUM_KEYBOARD_KEY(Key_Tab);
-   ENUM_KEYBOARD_KEY(Key_A);
-   ENUM_KEYBOARD_KEY(Key_B);
-   ENUM_KEYBOARD_KEY(Key_C);
-   ENUM_KEYBOARD_KEY(Key_D);
-   ENUM_KEYBOARD_KEY(Key_E);
-   ENUM_KEYBOARD_KEY(Key_F);
-   ENUM_KEYBOARD_KEY(Key_G);
-   ENUM_KEYBOARD_KEY(Key_H);
-   ENUM_KEYBOARD_KEY(Key_I);
-   ENUM_KEYBOARD_KEY(Key_J);
-   ENUM_KEYBOARD_KEY(Key_K);
-   ENUM_KEYBOARD_KEY(Key_L);
-   ENUM_KEYBOARD_KEY(Key_M);
-   ENUM_KEYBOARD_KEY(Key_N);
-   ENUM_KEYBOARD_KEY(Key_O);
-   ENUM_KEYBOARD_KEY(Key_P);
-   ENUM_KEYBOARD_KEY(Key_Q);
-   ENUM_KEYBOARD_KEY(Key_R);
-   ENUM_KEYBOARD_KEY(Key_S);
-   ENUM_KEYBOARD_KEY(Key_T);
-   ENUM_KEYBOARD_KEY(Key_U);
-   ENUM_KEYBOARD_KEY(Key_V);
-   ENUM_KEYBOARD_KEY(Key_W);
-   ENUM_KEYBOARD_KEY(Key_X);
-   ENUM_KEYBOARD_KEY(Key_Y);
-   ENUM_KEYBOARD_KEY(Key_Z);
-   ENUM_KEYBOARD_KEY(Key_bracketleft);
-   ENUM_KEYBOARD_KEY(Key_bracketright);
-   ENUM_KEYBOARD_KEY(Key_backslash);
-   ENUM_KEYBOARD_KEY(Key_Caps_Lock);
-   ENUM_KEYBOARD_KEY(Key_semicolon);
-   ENUM_KEYBOARD_KEY(Key_apostrophe);
-   ENUM_KEYBOARD_KEY(Key_Return);
-   ENUM_KEYBOARD_KEY(Key_Shift_L);
-   ENUM_KEYBOARD_KEY(Key_comma);
-   ENUM_KEYBOARD_KEY(Key_period);
-   ENUM_KEYBOARD_KEY(Key_slash);
-   ENUM_KEYBOARD_KEY(Key_Shift_R);
-   ENUM_KEYBOARD_KEY(Key_Control_L);
-   ENUM_KEYBOARD_KEY(Key_Super_L);
-   ENUM_KEYBOARD_KEY(Key_space);
-   ENUM_KEYBOARD_KEY(Key_Alt_L);
-   ENUM_KEYBOARD_KEY(Key_Alt_R);
-   ENUM_KEYBOARD_KEY(Key_Super_R);
-   ENUM_KEYBOARD_KEY(Key_Menu);
-   ENUM_KEYBOARD_KEY(Key_Control_R);
-   ENUM_KEYBOARD_KEY(Key_Print);
-   ENUM_KEYBOARD_KEY(Key_Scroll_Lock);
-   ENUM_KEYBOARD_KEY(Key_Pause);
-   ENUM_KEYBOARD_KEY(Key_Home);
-   ENUM_KEYBOARD_KEY(Key_Page_Up);
-   ENUM_KEYBOARD_KEY(Key_End);
-   ENUM_KEYBOARD_KEY(Key_Page_Down);
-   ENUM_KEYBOARD_KEY(Key_Delete);
-   ENUM_KEYBOARD_KEY(Key_Insert);
-   ENUM_KEYBOARD_KEY(Key_Left);
-   ENUM_KEYBOARD_KEY(Key_Up);
-   ENUM_KEYBOARD_KEY(Key_Right);
-   ENUM_KEYBOARD_KEY(Key_Down);
-   ENUM_KEYBOARD_KEY(Key_Num_Lock);
-   ENUM_KEYBOARD_KEY(Key_KP_Divide);
-   ENUM_KEYBOARD_KEY(Key_KP_Multiply);
-   ENUM_KEYBOARD_KEY(Key_KP_Subtract);
-   ENUM_KEYBOARD_KEY(Key_KP_Add);
-   ENUM_KEYBOARD_KEY(Key_KP_Home);
-   ENUM_KEYBOARD_KEY(Key_KP_Up);
-   ENUM_KEYBOARD_KEY(Key_KP_Page_Up);
-   ENUM_KEYBOARD_KEY(Key_KP_Left);
-   ENUM_KEYBOARD_KEY(Key_KP_Begin);
-   ENUM_KEYBOARD_KEY(Key_KP_Right);
-   ENUM_KEYBOARD_KEY(Key_KP_End);
-   ENUM_KEYBOARD_KEY(Key_KP_Down);
-   ENUM_KEYBOARD_KEY(Key_KP_Page_Down);
-   ENUM_KEYBOARD_KEY(Key_KP_Insert);
-   ENUM_KEYBOARD_KEY(Key_KP_Delete);
-   ENUM_KEYBOARD_KEY(Key_KP_Enter);
+   enum_<GUIEventAdapter::KeySymbol> keyboard_key("KeyboardKey");
+   ENUM_KEYBOARD_KEY( KEY_Space );
+   ENUM_KEYBOARD_KEY( KEY_BackSpace );
+   ENUM_KEYBOARD_KEY( KEY_Tab );
+   ENUM_KEYBOARD_KEY( KEY_Linefeed );
+   ENUM_KEYBOARD_KEY( KEY_Clear );
+   ENUM_KEYBOARD_KEY( KEY_Return );
+   ENUM_KEYBOARD_KEY( KEY_Pause );
+   ENUM_KEYBOARD_KEY( KEY_Scroll_Lock );
+   ENUM_KEYBOARD_KEY( KEY_Sys_Req );
+   ENUM_KEYBOARD_KEY( KEY_Escape );
+   ENUM_KEYBOARD_KEY( KEY_Delete );
+   ENUM_KEYBOARD_KEY( KEY_Home );
+   ENUM_KEYBOARD_KEY( KEY_Left );
+   ENUM_KEYBOARD_KEY( KEY_Up );
+   ENUM_KEYBOARD_KEY( KEY_Right );
+   ENUM_KEYBOARD_KEY( KEY_Down );
+   ENUM_KEYBOARD_KEY( KEY_Prior );
+   ENUM_KEYBOARD_KEY( KEY_Page_Up );
+   ENUM_KEYBOARD_KEY( KEY_Next );
+   ENUM_KEYBOARD_KEY( KEY_Page_Down );
+   ENUM_KEYBOARD_KEY( KEY_End );
+   ENUM_KEYBOARD_KEY( KEY_Begin );
+   ENUM_KEYBOARD_KEY( KEY_Select );
+   ENUM_KEYBOARD_KEY( KEY_Print );
+   ENUM_KEYBOARD_KEY( KEY_Execute );
+   ENUM_KEYBOARD_KEY( KEY_Insert );
+   ENUM_KEYBOARD_KEY( KEY_Undo );
+   ENUM_KEYBOARD_KEY( KEY_Redo );
+   ENUM_KEYBOARD_KEY( KEY_Menu );
+   ENUM_KEYBOARD_KEY( KEY_Find );
+   ENUM_KEYBOARD_KEY( KEY_Cancel );
+   ENUM_KEYBOARD_KEY( KEY_Help );
+   ENUM_KEYBOARD_KEY( KEY_Break );
+   ENUM_KEYBOARD_KEY( KEY_Mode_switch );
+   ENUM_KEYBOARD_KEY( KEY_Script_switch );
+   ENUM_KEYBOARD_KEY( KEY_Num_Lock );
+   ENUM_KEYBOARD_KEY( KEY_KP_Space );
+   ENUM_KEYBOARD_KEY( KEY_KP_Tab );
+   ENUM_KEYBOARD_KEY( KEY_KP_Enter );
+   ENUM_KEYBOARD_KEY( KEY_KP_F1 );
+   ENUM_KEYBOARD_KEY( KEY_KP_F2 );
+   ENUM_KEYBOARD_KEY( KEY_KP_F3 );
+   ENUM_KEYBOARD_KEY( KEY_KP_F4 );
+   ENUM_KEYBOARD_KEY( KEY_KP_Home );
+   ENUM_KEYBOARD_KEY( KEY_KP_Left );
+   ENUM_KEYBOARD_KEY( KEY_KP_Up );
+   ENUM_KEYBOARD_KEY( KEY_KP_Right );
+   ENUM_KEYBOARD_KEY( KEY_KP_Down );
+   ENUM_KEYBOARD_KEY( KEY_KP_Prior );
+   ENUM_KEYBOARD_KEY( KEY_KP_Page_Up );
+   ENUM_KEYBOARD_KEY( KEY_KP_Next );
+   ENUM_KEYBOARD_KEY( KEY_KP_Page_Down );
+   ENUM_KEYBOARD_KEY( KEY_KP_End );
+   ENUM_KEYBOARD_KEY( KEY_KP_Begin );
+   ENUM_KEYBOARD_KEY( KEY_KP_Insert );
+   ENUM_KEYBOARD_KEY( KEY_KP_Delete );
+   ENUM_KEYBOARD_KEY( KEY_KP_Equal );
+   ENUM_KEYBOARD_KEY( KEY_KP_Multiply );
+   ENUM_KEYBOARD_KEY( KEY_KP_Add );
+   ENUM_KEYBOARD_KEY( KEY_KP_Separator );
+   ENUM_KEYBOARD_KEY( KEY_KP_Subtract );
+   ENUM_KEYBOARD_KEY( KEY_KP_Decimal );
+   ENUM_KEYBOARD_KEY( KEY_KP_Divide );
+   ENUM_KEYBOARD_KEY( KEY_KP_0 );
+   ENUM_KEYBOARD_KEY( KEY_KP_1 );
+   ENUM_KEYBOARD_KEY( KEY_KP_2 );
+   ENUM_KEYBOARD_KEY( KEY_KP_3 );
+   ENUM_KEYBOARD_KEY( KEY_KP_4 );
+   ENUM_KEYBOARD_KEY( KEY_KP_5 );
+   ENUM_KEYBOARD_KEY( KEY_KP_6 );
+   ENUM_KEYBOARD_KEY( KEY_KP_7 );
+   ENUM_KEYBOARD_KEY( KEY_KP_8 );
+   ENUM_KEYBOARD_KEY( KEY_KP_9 );
+   ENUM_KEYBOARD_KEY( KEY_F1 );
+   ENUM_KEYBOARD_KEY( KEY_F2 );
+   ENUM_KEYBOARD_KEY( KEY_F3 );
+   ENUM_KEYBOARD_KEY( KEY_F4 );
+   ENUM_KEYBOARD_KEY( KEY_F5 );
+   ENUM_KEYBOARD_KEY( KEY_F6 );
+   ENUM_KEYBOARD_KEY( KEY_F7 );
+   ENUM_KEYBOARD_KEY( KEY_F8 );
+   ENUM_KEYBOARD_KEY( KEY_F9 );
+   ENUM_KEYBOARD_KEY( KEY_F10 );
+   ENUM_KEYBOARD_KEY( KEY_F11 );
+   ENUM_KEYBOARD_KEY( KEY_F12 );
+   ENUM_KEYBOARD_KEY( KEY_F13 );
+   ENUM_KEYBOARD_KEY( KEY_F14 );
+   ENUM_KEYBOARD_KEY( KEY_F15 );
+   ENUM_KEYBOARD_KEY( KEY_F16 );
+   ENUM_KEYBOARD_KEY( KEY_F17 );
+   ENUM_KEYBOARD_KEY( KEY_F18 );
+   ENUM_KEYBOARD_KEY( KEY_F19 );
+   ENUM_KEYBOARD_KEY( KEY_F20 );
+   ENUM_KEYBOARD_KEY( KEY_F21 );
+   ENUM_KEYBOARD_KEY( KEY_F22 );
+   ENUM_KEYBOARD_KEY( KEY_F23 );
+   ENUM_KEYBOARD_KEY( KEY_F24 );
+   ENUM_KEYBOARD_KEY( KEY_F25 );
+   ENUM_KEYBOARD_KEY( KEY_F26 );
+   ENUM_KEYBOARD_KEY( KEY_F27 );
+   ENUM_KEYBOARD_KEY( KEY_F28 );
+   ENUM_KEYBOARD_KEY( KEY_F29 );
+   ENUM_KEYBOARD_KEY( KEY_F30 );
+   ENUM_KEYBOARD_KEY( KEY_F31 );
+   ENUM_KEYBOARD_KEY( KEY_F32 );
+   ENUM_KEYBOARD_KEY( KEY_F33 );
+   ENUM_KEYBOARD_KEY( KEY_F34 );
+   ENUM_KEYBOARD_KEY( KEY_F35 );
+   ENUM_KEYBOARD_KEY( KEY_Shift_L );
+   ENUM_KEYBOARD_KEY( KEY_Shift_R );
+   ENUM_KEYBOARD_KEY( KEY_Control_L );
+   ENUM_KEYBOARD_KEY( KEY_Control_R );
+   ENUM_KEYBOARD_KEY( KEY_Caps_Lock );
+   ENUM_KEYBOARD_KEY( KEY_Shift_Lock );
+   ENUM_KEYBOARD_KEY( KEY_Meta_L );
+   ENUM_KEYBOARD_KEY( KEY_Meta_R );
+   ENUM_KEYBOARD_KEY( KEY_Alt_L );
+   ENUM_KEYBOARD_KEY( KEY_Alt_R );
+   ENUM_KEYBOARD_KEY( KEY_Super_L );
+   ENUM_KEYBOARD_KEY( KEY_Super_R );
+   ENUM_KEYBOARD_KEY( KEY_Hyper_L );
+   ENUM_KEYBOARD_KEY( KEY_Hyper_R );
    keyboard_key.export_values();
-
+/*
    #define ENUM_KEY_CHARACTER(VALUE) key_character.value(#VALUE, Producer::VALUE)
    enum_<Producer::KeyCharacter> key_character("KeyCharacter");
    ENUM_KEY_CHARACTER(KeyChar_Unknown);
@@ -536,7 +557,7 @@ void initKeyboardBindings()
    ENUM_KEY_CHARACTER(KeyChar_Delete);
    key_character.export_values();
 
-   #define ENUM_KEY_MODIFIER(VALUE) key_modifier.value(#VALUE, Producer::VALUE)
+   #define ENUM_KEY_MODIFIER(VALUE) key_modifier.value(#VALUE, GUIEventAdapter::VALUE)
    enum_<Producer::KeyModifier> key_modifier("KeyModifier");
    ENUM_KEY_MODIFIER(KeyMod_NoModifier);
    ENUM_KEY_MODIFIER(KeyMod_Shift);
@@ -546,7 +567,7 @@ void initKeyboardBindings()
    ENUM_KEY_MODIFIER(KeyMod_Alt);
    ENUM_KEY_MODIFIER(KeyMod_Super);
    key_modifier.export_values();
-   
+*/   
    Keyboard* (*KeyboardGI1)(int) = &Keyboard::GetInstance;
    Keyboard* (*KeyboardGI2)(std::string) = &Keyboard::GetInstance;
 

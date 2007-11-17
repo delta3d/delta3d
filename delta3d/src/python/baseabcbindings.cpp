@@ -146,7 +146,8 @@ void initBaseABCBindings()
 
    dtDAL::Map& (BaseABC::*LoadMap1)( const std::string&, bool ) = &BaseABC::LoadMap;
    void (BaseABC::*LoadMap2)( dtDAL::Map&, bool ) = &BaseABC::LoadMap;
-   const dtCore::Mouse*(BaseABC::*GETMOUSE)() const =&BaseABC::GetMouse;
+   //const dtCore::Mouse*(BaseABC::*GETMOUSE)() const =&BaseABC::GetMouse;
+   dtCore::Mouse*(BaseABC::*GETMOUSE)() =&BaseABC::GetMouse;
    
    class_<BaseABCWrap, bases<Base>, dtCore::RefPtr<BaseABCWrap>, boost::noncopyable>("BaseABC", no_init)
       .def("GetInstanceCount", &BaseABC::GetInstanceCount)
