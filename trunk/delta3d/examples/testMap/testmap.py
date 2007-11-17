@@ -8,30 +8,37 @@ import sys
 class TestMap(Application):
 
    def Config(self) :
-      
-      # Steps to load a map into Delta3D
-      # 1. Set the project context, just like in the editor
-      # 2. Get a reference to the map
-      # 3. Load the map into the scene through the project class
-      contextName = GetDeltaRootPath() + "/examples/data/demoMap"
-      
-      Project.GetInstance().SetContext(contextName)
-      myMap = Project.GetInstance().GetMap("MyCoolMap")
-      self.LoadMap(myMap)
-
-      # Get the proxies from the map
-      self.proxies = ActorProxyVector()
-      myMap.FindProxies(self.proxies,"StaticMesh*")
-
+   
       self.helicopter = None
       self.tree = None
       self.smoke = ParticleSystem()
       self.explosion = EffectManager()
       self.step = -1.0
       self.bufferExplosion = 1
+   
+      # Set up a motion model so we may move the camera
+      self.wmm = WalkMotionModel()
+      self.wmm.SetDefaultMappings( self.GetKeyboard(), self.GetMouse() )
+      self.wmm.SetTarget( self.GetCamera() )
       
+      # Steps to load a map into Delta3D
+      # 1. Set the project context, just like in the editor
+      # 2. Get a reference to the map
+      # 3. Load the map into the scene through the project class
+      contextName = GetDeltaRootPath() + "/examples/data/demoMap"    
+      Project.GetInstance().SetContext(contextName)
+      myMap = Project.GetInstance().GetMap("MyCoolMap")
+      
+      self.LoadMap(myMap)
+
+      # Get the proxies from the map
+      self.proxies = ActorProxyVector()
+      myMap.FindProxies(self.proxies,"StaticMesh*")
+
       self.smoke.LoadFile("Particles/smoke.osg")
       self.explosion.AddDetonationTypeMapping(HighExplosiveDetonation, "Particles/explosion.osg")
+ 
+      print 'self.proxies[0] = ', self.proxies[0]
       
       for actor in self.proxies :
          # Find our helicopter by name
@@ -58,10 +65,6 @@ class TestMap(Application):
       # translate the camera back some
       self.GetCamera().SetTransform(Transform(-25, -100, 0, 0, 0, 0))
 
-      # Set up a motion model so we may move the camera
-      self.wmm = WalkMotionModel()
-      self.wmm.SetDefaultMappings( self.GetKeyboard(), self.GetMouse() )
-      self.wmm.SetTarget( self.GetCamera() )
    
    def PreFrame(self, deltaFrameTime) :
 
@@ -100,7 +103,7 @@ class TestMap(Application):
             self.helicopter.SetTransform(Transform(xyz[0], xyz[1], 0, 90, -30, 0))
             
       # Reset the scene
-      if self.GetKeyboard().GetKeyState( KeyboardKey.Key_R ) :
+      if self.GetKeyboard().GetKeyState( ord('R') ) :
           self.Reset()
 
       self.step -= 0.05
@@ -111,9 +114,8 @@ class TestMap(Application):
       self.step = -0.00001
       self.bufferExplosion = 1
 
-SetDataFilePathList (   GetDeltaRootPath() + "/examples/testMap/;" +
-                        GetDeltaDataPathList() + ";" +
-                        GetDeltaDataPathList() + "/demoMap/Particles" )
+dataPath = GetDeltaDataPathList()
+SetDataFilePathList ( dataPath + ";" + GetDeltaRootPath() + "/examples/data;")
 
 app = TestMap('testMap.xml')
 
