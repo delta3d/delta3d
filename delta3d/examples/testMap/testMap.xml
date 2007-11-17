@@ -1,6 +1,16 @@
-<?xml version="1.0" encoding="iso-8859-1" standalone="no"?>
-<Application xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../data/application.xsd">
-	<Window Name="testMap" X="100" Y="100" Width="640" Height="480" PixelDepth="24" RefreshRate="60" ShowCursor="1" FullScreen="0" ChangeDisplayResolution="0"/>
-	<Scene Name="defaultScene"/>
-	<Camera Name="defaultCam" WindowInstance="testMap" SceneInstance="defaultScene"/>
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<Application>
+
+  <Window ChangeDisplayResolution="0" FullScreen="0" Height="480" Name="defaultWin" PixelDepth="24" RefreshRate="60" ShowCursor="1" Width="640" X="100" Y="100"/>
+
+  <Scene Name="defaultScene"/>
+
+  <Camera Name="defaultCam" WindowInstance="defaultWin"/>
+
+  <View CameraInstance="defaultCam" Name="defaultView" SceneInstance="defaultScene"/>
+
+  <Log Level="Warn"/>
+
+  <Properties/>
+
 </Application>
