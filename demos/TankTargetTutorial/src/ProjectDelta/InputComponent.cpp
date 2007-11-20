@@ -38,6 +38,31 @@ InputComponent::InputComponent(const std::string &name) :
 void InputComponent::SetupEvents()
 {
    // TUTORIAL - FIND THE GAME EVENTS HERE 
+   mToggleEngineEvent = dtDAL::GameEventManager::GetInstance().FindEvent("ToggleEngine");
+   if (mToggleEngineEvent == NULL)
+      LOG_ERROR("Failed to find event 'ToggleEngine'. Make sure it is in the map!");
+
+   mSpeedBoost = dtDAL::GameEventManager::GetInstance().FindEvent("SpeedBoost");
+   if (mSpeedBoost == NULL)
+      LOG_ERROR("Failed to find event 'SpeedBoost'. Make sure it is in the map!");
+
+   mTankFired = dtDAL::GameEventManager::GetInstance().FindEvent("TankFired");
+   if (mTankFired == NULL)
+      LOG_ERROR("Failed to find event 'TankFired'. Make sure it is in the map!");
+
+   mTestShaders = dtDAL::GameEventManager::GetInstance().FindEvent("TestShaders");
+   if (mTestShaders == NULL)
+      LOG_ERROR("Failed to find event 'TestShaders'. Make sure it is in the map!");
+
+   mReset = dtDAL::GameEventManager::GetInstance().FindEvent("ResetStuff");
+   if (mReset == NULL)
+      LOG_ERROR("Failed to find event 'ResetStuff'. Make sure it is in the map!");
+
+   // Below is an example of how to create a game event directly in code. ie, without STAGE
+   // Note, we set the unique id here because that is typically done in STAGE.
+   //mToggleEngineEvent = new dtDAL::GameEvent("ToggleEngine");
+   //mToggleEngineEvent->SetUniqueId(dtCore::UniqueId("ToggleEngine")); // best to set the ID to help replay work until we put these in the map
+   //dtDAL::GameEventManager::GetInstance().AddEvent(*mToggleEngineEvent);
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -48,6 +73,18 @@ bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard,
    switch(key)
    {
       // TUTORIAL - ADD YOUR KEYS AND CALLS TO FireGameEvent HERE 
+      case Producer::Key_space:
+         if (mToggleEngineEvent != NULL)
+            FireGameEvent(*mToggleEngineEvent);
+         break;
+      case Producer::Key_Return:
+         if (mSpeedBoost != NULL)
+            FireGameEvent(*mSpeedBoost);
+         break;
+      case Producer::Key_F:
+         if (mTankFired != NULL)
+            FireGameEvent(*mTankFired);
+         break;
 
       default:
          handled = false;
@@ -70,17 +107,15 @@ void InputComponent::ProcessMessage(const dtGame::Message& message)
    {
       SetupEvents();
    }
-   // Once the system is started, we find the log controller so we can manipulate it later
-   else if (message.GetMessageType() == dtGame::MessageType::INFO_RESTARTED)
-   {
-      mLogController = dynamic_cast<dtGame::LogController *> (GetGameManager()->
-         GetComponentByName("LogController")); 
-   }
 }
 
 //////////////////////////////////////////////////////////////////////////
 void InputComponent::FireGameEvent(dtDAL::GameEvent &event)
 {
    // TUTORIAL - CREATE AND SEND YOUR GAMEEVENTMESSAGE HERE 
+   dtCore::RefPtr<dtGame::GameEventMessage> eventMsg;
+   GetGameManager()->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT, eventMsg);
+   eventMsg->SetGameEvent(event);
+   GetGameManager()->SendMessage(*eventMsg);   
 }
 

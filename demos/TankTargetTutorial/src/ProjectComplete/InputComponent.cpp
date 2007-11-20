@@ -89,10 +89,7 @@ bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard,
             FireGameEvent(*mTankFired);
          break;
       case Producer::Key_P:
-         //dtCore::ShaderManager::GetInstance().Clear();
          dtCore::ShaderManager::GetInstance().ReloadAndReassignShaderDefinitions("Shaders/TutorialShaderDefs.xml");
-         //if (!mInPlaybackMode && mTestShaders != NULL)
-         //   FireGameEvent(*mTestShaders);
          break;
       case Producer::Key_R:
          if (!mInPlaybackMode && mReset != NULL)

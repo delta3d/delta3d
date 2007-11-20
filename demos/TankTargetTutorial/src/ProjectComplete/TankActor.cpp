@@ -421,6 +421,7 @@ void TankActor::OnEnteredWorld()
 
    GetTransform(mOriginalPosition);
 
+   // TUTORIAL - ADD CAMERA AS A CHILD HERE 
    // put our camera - first to tank's position, and then offset it.
    dtCore::Transform tx(0.0f,0.7f,2.2f,0.0f,0.0f,0.0f);
    dtCore::Camera *camera = GetGameActorProxy().GetGameManager()->GetApplication().GetCamera();

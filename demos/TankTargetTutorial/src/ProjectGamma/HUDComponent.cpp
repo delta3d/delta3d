@@ -23,6 +23,7 @@
 
 #include <dtUtil/macros.h>
 #include <dtCore/globals.h>
+#include <dtCore/scene.h>
 #include <dtUtil/exception.h>
 
 #include <dtGame/basemessages.h>
@@ -48,8 +49,26 @@ HUDComponent::~HUDComponent()
 
 
 //////////////////////////////////////////////////////////////////////////
-
 // TUTORIAL - IMPLEMENT ProcessMessage().  TRAP MESSAGES.
+//////////////////////////////////////////////////////////////////////////
+void HUDComponent::ProcessMessage(const dtGame::Message& message)
+{
+   if (message.GetMessageType() == dtGame::MessageType::TICK_LOCAL)
+   {
+      UpdateSimTime(GetGameManager()->GetSimulationTime());
+   } 
+   else if (message.GetMessageType() == dtGame::MessageType::TICK_REMOTE)
+   {
+      // Do nothing when we get remote tick
+   }
+   // sum up all the unhandled messages
+   else
+   {
+      mUnHandledMessages++;
+      UpdateNumMessages(mUnHandledMessages);
+      UpdateLastMessageName(message.GetMessageType().GetName());
+   }
+}
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -124,6 +143,8 @@ void HUDComponent::SetupGUI(dtCore::DeltaWin *win)
       mOverlay->setSize(CEGUI::UVector2(cegui_reldim(1.0f), cegui_reldim(1.0f)));
       mOverlay->setProperty("FrameEnabled", "false");
       mOverlay->setProperty("BackgroundEnabled", "false");
+
+      // TUTORIAL - HERE ARE THE HUD CONTROLS - JUST LOOK, NO NEED TO CHANGE
 
       // Sim Time
       mSimTimeText = CreateText("Sim Time", mOverlay, "",

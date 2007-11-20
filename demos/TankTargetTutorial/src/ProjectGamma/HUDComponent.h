@@ -52,6 +52,8 @@ class TUTORIAL_TANK_EXPORT HUDComponent : public dtGame::GMComponent
 
    public:
       // TUTORIAL - OVERRIDE ProcessMessage() HERE.
+      // Get messages from the Game Manager 
+      virtual void ProcessMessage(const dtGame::Message& message);
 
       // Sets up the GUI during construction
       void SetupGUI(dtCore::DeltaWin *win);

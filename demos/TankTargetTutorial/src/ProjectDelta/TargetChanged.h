@@ -37,7 +37,7 @@ class TUTORIAL_TANK_EXPORT TutorialMessageType : public dtGame::MessageType
    public:
 
       // TUTORIAL - ADD STATIC INSTANCE OF TANK_TARGET_CHANGED MESSAGE TYPE HERE
-      //static const TutorialMessageType TANK_TARGET_CHANGED;
+      static const TutorialMessageType TANK_TARGET_CHANGED;
 
       static void RegisterMessageTypes(dtGame::MessageFactory& factory);
 

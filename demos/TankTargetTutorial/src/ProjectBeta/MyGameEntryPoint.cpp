@@ -62,20 +62,23 @@ MyGameEntryPoint::~MyGameEntryPoint()
 //////////////////////////////////////////////////////////////////////////
 void MyGameEntryPoint::OnStartup(dtGame::GameApplication& app)
 {
-   // init our file path so it can find GUI Scheme
-   // add extra data paths here if you need them
-   dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());   
+   // Init our file path so it can find GUI Scheme. Add extra data paths here if you need them
+   dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList() + 
+      ";" + dtCore::GetDeltaRootPath() + "/examples/data;"); 
+   std::cout << "Path list is: " << dtCore::GetDataFilePathList() <<  std::endl;
 
    // TUTORIAL - SET CONTEXT AND LOAD MAP HERE 
-
-   // offset our camera a little back and above the tank.
-   dtCore::Transform tx(0.0f, 0.7f, 2.2f, 0.0f, 0.0f, 0.0f);
-   app.GetCamera()->SetTransform(tx); 
-   app.GetScene()->UseSceneLight(true);
-
-   // TUTORIAL - FIND YOUR HOVER TANK AND ADD CAMERA AS A CHILD HERE 
+   dtDAL::Project::GetInstance().SetContext("StageProject");
+   app.GetGameManager()->ChangeMap("mapone");
 
    // TUTORIAL - (OPTIONAL) ADD A FLYMOTIONMODEL HERE 
+   dtCore::FlyMotionModel *fmm = new dtCore::FlyMotionModel(app.GetKeyboard(), app.GetMouse(), false);
+   fmm->SetMaximumFlySpeed(15);
+   fmm->SetTarget(app.GetCamera());
+
 
    app.GetWindow()->SetWindowTitle("Tutorial");
+   app.GetGameManager()->DebugStatisticsTurnOn(true, true, 15, true);
+   // Tell the system to use a base scene light. With your own lighting, set this to false.
+   app.GetScene()->UseSceneLight(true);
 }

@@ -42,15 +42,6 @@ class TUTORIAL_TANK_EXPORT MyGameEntryPoint: public dtGame::GameEntryPoint
       MyGameEntryPoint() { };
       virtual ~MyGameEntryPoint();
 
-      // Called to do early initializtion.  Grab your command line params here.
-      // We just use the base implementation
-      //virtual void Initialize(dtGame::GameApplication& app, int argc, char **argv)
-      //   throw(dtUtil::Exception);
-
-      // Create your game manager.
-      // We just use the base implementation
-      // virtual dtCore::RefPtr<dtGame::GameManager> CreateGameManager(dtCore::Scene& scene);
-
       // Called just before your application's game loop starts.  This is your main 
       // opportunity to create components, load maps, create unique actors, etc...
       virtual void OnStartup(dtGame::GameApplication& app);

@@ -37,6 +37,7 @@
 #include <dtCore/camera.h>
 #include <dtCore/keyboard.h>
 #include <dtCore/globals.h>
+#include <dtCore/scene.h>
 #include <dtCore/deltawin.h>
 
 #include <dtDAL/project.h>
@@ -92,11 +93,13 @@ void MyGameEntryPoint::Initialize(dtGame::GameApplication& app, int argc, char *
 //////////////////////////////////////////////////////////////////////////
 void MyGameEntryPoint::OnStartup(dtGame::GameApplication& app)
 {
-   dtGame::GameManager& gameManager = *app.GetGameManager();
-
    // init our file path so it can find GUI Scheme
    // add extra data paths here if you need them
-   dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());   
+   dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList() + 
+      ";" + dtCore::GetDeltaRootPath() + "/examples/data;"); 
+   std::cout << "Path list is: " << dtCore::GetDataFilePathList() <<  std::endl;
+
+   dtGame::GameManager& gameManager = *app.GetGameManager();
 
    // Add Component - DefaultMessageProcessor 
    dtGame::DefaultMessageProcessor *dmp = new dtGame::DefaultMessageProcessor("DefaultMessageProcessor");
@@ -110,24 +113,13 @@ void MyGameEntryPoint::OnStartup(dtGame::GameApplication& app)
 
 
    // TUTORIAL - CREATE AND ADD YOUR INPUT COMPONENT HERE
-
+   // Add Component - Input Component
+   dtCore::RefPtr<InputComponent> inputComp = new InputComponent("InputComponent");
+   app.GetGameManager()->AddComponent(*inputComp, dtGame::GameManager::ComponentPriority::NORMAL);
 
    // Add Component - HUD Component
    dtCore::RefPtr<HUDComponent> hudComp = new HUDComponent(app.GetWindow(), "HUDComponent");
    gameManager.AddComponent(*hudComp, dtGame::GameManager::ComponentPriority::NORMAL);
-
-   // offset our camera a little back and above the tank.
-   dtCore::Transform tx(0.0f, 0.7f, 2.2f, 0.0f, 0.0f, 0.0f);
-   app.GetCamera()->SetTransform(tx); 
-   app.GetScene()->UseSceneLight(true);
-
-   // Attach our camera to the tank from the map
-   std::vector<dtDAL::ActorProxy*> tanks;
-   gameManager.FindActorsByName("HoverTank", tanks);
-   if (tanks.size() > 0)
-   {
-      tanks[0]->GetActor()->AddChild(app.GetCamera());
-   }
 
    // Allow the fly motion model to move the camera around independent of the tank.
    dtCore::FlyMotionModel *fmm = new dtCore::FlyMotionModel(app.GetKeyboard(), app.GetMouse(), false);
@@ -135,4 +127,7 @@ void MyGameEntryPoint::OnStartup(dtGame::GameApplication& app)
    fmm->SetTarget(app.GetCamera());
 
    app.GetWindow()->SetWindowTitle("Tutorial");
+   app.GetGameManager()->DebugStatisticsTurnOn(true, true, 15, true);
+   // Tell the system to use a base scene light. With your own lighting, set this to false.
+   app.GetScene()->UseSceneLight(true);
 }

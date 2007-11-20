@@ -30,7 +30,6 @@
 #include <dtGame/messagetype.h>
 #include <dtGame/exceptionenum.h>
 
-#include <dtCore/globals.h>
 #include <dtDAL/project.h>
 
 
