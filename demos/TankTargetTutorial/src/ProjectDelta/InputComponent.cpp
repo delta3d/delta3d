@@ -38,6 +38,7 @@ InputComponent::InputComponent(const std::string &name) :
 void InputComponent::SetupEvents()
 {
    // TUTORIAL - FIND THE GAME EVENTS HERE 
+/*
    mToggleEngineEvent = dtDAL::GameEventManager::GetInstance().FindEvent("ToggleEngine");
    if (mToggleEngineEvent == NULL)
       LOG_ERROR("Failed to find event 'ToggleEngine'. Make sure it is in the map!");
@@ -63,6 +64,7 @@ void InputComponent::SetupEvents()
    //mToggleEngineEvent = new dtDAL::GameEvent("ToggleEngine");
    //mToggleEngineEvent->SetUniqueId(dtCore::UniqueId("ToggleEngine")); // best to set the ID to help replay work until we put these in the map
    //dtDAL::GameEventManager::GetInstance().AddEvent(*mToggleEngineEvent);
+*/
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -73,6 +75,7 @@ bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard,
    switch(key)
    {
       // TUTORIAL - ADD YOUR KEYS AND CALLS TO FireGameEvent HERE 
+/*
       case Producer::Key_space:
          if (mToggleEngineEvent != NULL)
             FireGameEvent(*mToggleEngineEvent);
@@ -85,7 +88,7 @@ bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard,
          if (mTankFired != NULL)
             FireGameEvent(*mTankFired);
          break;
-
+*/
       default:
          handled = false;
          break;
@@ -113,9 +116,9 @@ void InputComponent::ProcessMessage(const dtGame::Message& message)
 void InputComponent::FireGameEvent(dtDAL::GameEvent &event)
 {
    // TUTORIAL - CREATE AND SEND YOUR GAMEEVENTMESSAGE HERE 
-   dtCore::RefPtr<dtGame::GameEventMessage> eventMsg;
-   GetGameManager()->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT, eventMsg);
-   eventMsg->SetGameEvent(event);
-   GetGameManager()->SendMessage(*eventMsg);   
+   //dtCore::RefPtr<dtGame::GameEventMessage> eventMsg;
+   //GetGameManager()->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT, eventMsg);
+   //eventMsg->SetGameEvent(event);
+   //GetGameManager()->SendMessage(*eventMsg);   
 }
 

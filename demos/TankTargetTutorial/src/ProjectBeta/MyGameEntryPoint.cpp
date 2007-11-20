@@ -68,13 +68,13 @@ void MyGameEntryPoint::OnStartup(dtGame::GameApplication& app)
    std::cout << "Path list is: " << dtCore::GetDataFilePathList() <<  std::endl;
 
    // TUTORIAL - SET CONTEXT AND LOAD MAP HERE 
-   dtDAL::Project::GetInstance().SetContext("StageProject");
-   app.GetGameManager()->ChangeMap("mapone");
+   //dtDAL::Project::GetInstance().SetContext("StageProject");
+   //app.GetGameManager()->ChangeMap("mapone");
 
    // TUTORIAL - (OPTIONAL) ADD A FLYMOTIONMODEL HERE 
-   dtCore::FlyMotionModel *fmm = new dtCore::FlyMotionModel(app.GetKeyboard(), app.GetMouse(), false);
-   fmm->SetMaximumFlySpeed(15);
-   fmm->SetTarget(app.GetCamera());
+   //dtCore::FlyMotionModel *fmm = new dtCore::FlyMotionModel(app.GetKeyboard(), app.GetMouse(), false);
+   //fmm->SetMaximumFlySpeed(15);
+   //fmm->SetTarget(app.GetCamera());
 
 
    app.GetWindow()->SetWindowTitle("Tutorial");

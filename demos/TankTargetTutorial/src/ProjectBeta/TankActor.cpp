@@ -58,8 +58,8 @@ void TankActor::TickLocal(const dtGame::Message &tickMessage)
    float deltaSimTime = tick.GetDeltaSimTime();
 
    // TUTORIAL - ADD YOUR LOCAL BEHAVIOR HERE
-   ComputeVelocityAndTurn(deltaSimTime);
-   MoveTheTank(deltaSimTime);
+   //ComputeVelocityAndTurn(deltaSimTime);
+   //MoveTheTank(deltaSimTime);
 
    // If you are networked or performing record/playback, you need to publish the new velocity/speed
    // Below is an inefficient (publishes every frame!), but simple way to do this. 
@@ -74,7 +74,7 @@ void TankActor::TickRemote(const dtGame::Message &tickMessage)
 
    // TUTORIAL - ADD YOUR REMOTE BEHAVIOR HERE
    // do NOT recompute velocity and turn rate since we don't own this tank!
-   MoveTheTank(deltaSimTime);
+   //MoveTheTank(deltaSimTime);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -220,10 +220,10 @@ void TankActor::OnEnteredWorld()
    GetTransform(mOriginalPosition);
 
    // put our camera - first to tank's position, and then offset it.
-   dtCore::Transform tx(0.0f,0.7f,2.2f,0.0f,0.0f,0.0f);
-   dtCore::Camera *camera = GetGameActorProxy().GetGameManager()->GetApplication().GetCamera();
-   AddChild(camera);
-   camera->SetTransform(tx, dtCore::Transformable::REL_CS);
+   //dtCore::Camera *camera = GetGameActorProxy().GetGameManager()->GetApplication().GetCamera();
+   //AddChild(camera);
+   //dtCore::Transform tx(0.0f,0.7f,2.2f,0.0f,0.0f,0.0f);
+   //camera->SetTransform(tx, dtCore::Transformable::REL_CS);
 
    mIsector->SetScene(&(GetGameActorProxy().GetGameManager()->GetScene()));
 }
@@ -278,12 +278,12 @@ void TankActorProxy::OnEnteredWorld()
    // TUTORIAL - REGISTER FOR TICK_REMOTE IF YOUR ACTOR IS REMOTE, OTHERWISE
    //            REGITER FOR TICK_LOCAL (HINT: CHECK IsRemote() )
    // Register an invokable for tick messages. Local or Remote only, not both!
-   if (IsRemote())
-      RegisterForMessages(dtGame::MessageType::TICK_REMOTE,
-      dtGame::GameActorProxy::TICK_REMOTE_INVOKABLE);
-   else
-      RegisterForMessages(dtGame::MessageType::TICK_LOCAL,
-      dtGame::GameActorProxy::TICK_LOCAL_INVOKABLE);
+   //if (IsRemote())
+   //   RegisterForMessages(dtGame::MessageType::TICK_REMOTE,
+   //   dtGame::GameActorProxy::TICK_REMOTE_INVOKABLE);
+   //else
+   //   RegisterForMessages(dtGame::MessageType::TICK_LOCAL,
+   //   dtGame::GameActorProxy::TICK_LOCAL_INVOKABLE);
 
    dtActors::GameMeshActorProxy::OnEnteredWorld();
 }
