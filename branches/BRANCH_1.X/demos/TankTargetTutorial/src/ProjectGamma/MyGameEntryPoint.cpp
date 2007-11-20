@@ -105,8 +105,8 @@ void MyGameEntryPoint::OnStartup(dtGame::GameApplication& app)
 
    // TUTORIAL - ADD YOUR HUD COMPONENT HERE
    // Add Component - HUD Component
-   dtCore::RefPtr<HUDComponent> hudComp = new HUDComponent(app.GetWindow(), "HUDComponent");
-   app.GetGameManager()->AddComponent(*hudComp, dtGame::GameManager::ComponentPriority::NORMAL);
+   //dtCore::RefPtr<HUDComponent> hudComp = new HUDComponent(app.GetWindow(), "HUDComponent");
+   //app.GetGameManager()->AddComponent(*hudComp, dtGame::GameManager::ComponentPriority::NORMAL);
    
    // Allow the fly motion model to move the camera around independent of the tank.
    dtCore::FlyMotionModel *fmm = new dtCore::FlyMotionModel(app.GetKeyboard(), app.GetMouse(), false);

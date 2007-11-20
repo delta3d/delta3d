@@ -57,7 +57,7 @@ class TUTORIAL_TANK_EXPORT TankActor : public dtActors::GameMeshActor
        * Generic handler (Invokable) for messages. Overridden from base class.
        * This is the default invokable on GameActorProxy.
        */
-      virtual void ProcessMessage(const dtGame::Message &message);
+      //virtual void ProcessMessage(const dtGame::Message &message);
 
 
       /**

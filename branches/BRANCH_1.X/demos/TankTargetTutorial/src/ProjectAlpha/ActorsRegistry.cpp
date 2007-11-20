@@ -24,7 +24,6 @@
 #include <dtCore/shadermanager.h>
 
 // TUTORIAL - ADD YOUR STATIC ACTOR TYPE HERE
-
 //dtCore::RefPtr<dtDAL::ActorType> ActorsRegistry::TANK_ACTOR_TYPE( new dtDAL::ActorType( "Tank","MyActors.Tanks","A really cool tank!." ) );
 
 

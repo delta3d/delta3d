@@ -51,6 +51,7 @@ HUDComponent::~HUDComponent()
 //////////////////////////////////////////////////////////////////////////
 // TUTORIAL - IMPLEMENT ProcessMessage().  TRAP MESSAGES.
 //////////////////////////////////////////////////////////////////////////
+/*
 void HUDComponent::ProcessMessage(const dtGame::Message& message)
 {
    if (message.GetMessageType() == dtGame::MessageType::TICK_LOCAL)
@@ -69,7 +70,7 @@ void HUDComponent::ProcessMessage(const dtGame::Message& message)
       UpdateLastMessageName(message.GetMessageType().GetName());
    }
 }
-
+*/
 
 //////////////////////////////////////////////////////////////////////////
 void HUDComponent::UpdateSimTime(double newTime)

@@ -82,6 +82,7 @@ void TankActor::TickRemote(const dtGame::Message &tickMessage)
 
 // TUTORIAL - ADD YOUR TankActor::ProcessMessage() here 
 ///////////////////////////////////////////////////////////////////////////////
+/*
 void TankActor::ProcessMessage(const dtGame::Message &message)
 {
    if (message.GetMessageType() == dtGame::MessageType::INFO_GAME_EVENT)
@@ -108,7 +109,7 @@ void TankActor::ProcessMessage(const dtGame::Message &message)
       }
    }
 }
-
+*/
 
 ///////////////////////////////////////////////////////////////////////////////
 void TankActor::ComputeVelocityAndTurn(float deltaSimTime)
@@ -403,7 +404,7 @@ void TankActorProxy::OnEnteredWorld()
 
    // TUTORIAL - REGISTER FOR INFO_GAME_EVENT HERE 
    //Register an invokable for Game Events...
-   RegisterForMessages(dtGame::MessageType::INFO_GAME_EVENT);
+   //RegisterForMessages(dtGame::MessageType::INFO_GAME_EVENT);
 
    // Register an invokable for tick messages. Local or Remote only, not both!
    if (IsRemote())

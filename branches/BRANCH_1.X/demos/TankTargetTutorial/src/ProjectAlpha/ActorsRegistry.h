@@ -29,7 +29,6 @@ class TUTORIAL_TANK_EXPORT ActorsRegistry : public dtDAL::ActorPluginRegistry
    public:
 
       // TUTORIAL - ADD YOUR STATIC REFPTR TO THE ACTOR TYPE HERE
-
       //static dtCore::RefPtr<dtDAL::ActorType> TANK_ACTOR_TYPE;
 
       // Constructs our registry.  Creates the actor types easy access when needed.

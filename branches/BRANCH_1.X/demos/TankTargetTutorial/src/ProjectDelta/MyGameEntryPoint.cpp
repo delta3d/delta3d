@@ -114,8 +114,8 @@ void MyGameEntryPoint::OnStartup(dtGame::GameApplication& app)
 
    // TUTORIAL - CREATE AND ADD YOUR INPUT COMPONENT HERE
    // Add Component - Input Component
-   dtCore::RefPtr<InputComponent> inputComp = new InputComponent("InputComponent");
-   app.GetGameManager()->AddComponent(*inputComp, dtGame::GameManager::ComponentPriority::NORMAL);
+   //dtCore::RefPtr<InputComponent> inputComp = new InputComponent("InputComponent");
+   //app.GetGameManager()->AddComponent(*inputComp, dtGame::GameManager::ComponentPriority::NORMAL);
 
    // Add Component - HUD Component
    dtCore::RefPtr<HUDComponent> hudComp = new HUDComponent(app.GetWindow(), "HUDComponent");
