@@ -23,13 +23,13 @@
 
 #include <dtUtil/macros.h>
 #include <dtCore/globals.h>
+#include <dtCore/scene.h>
 #include <dtUtil/exception.h>
 
 #include <dtGame/basemessages.h>
 #include <dtGame/messagetype.h>
 #include <dtGame/exceptionenum.h>
 
-#include <dtCore/globals.h>
 #include <dtDAL/project.h>
 
 //////////////////////////////////////////////////////////////////////////

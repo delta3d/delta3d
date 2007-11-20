@@ -25,6 +25,9 @@
 
 // TUTORIAL - ADD YOUR STATIC ACTOR TYPE HERE
 
+//dtCore::RefPtr<dtDAL::ActorType> ActorsRegistry::TANK_ACTOR_TYPE( new dtDAL::ActorType( "Tank","MyActors.Tanks","A really cool tank!." ) );
+
+
 ///////////////////////////////////////////////////////////////////////////////
 extern "C" TUTORIAL_TANK_EXPORT dtDAL::ActorPluginRegistry* CreatePluginRegistry()
 {
@@ -49,4 +52,6 @@ ActorsRegistry::ActorsRegistry() :
 void ActorsRegistry::RegisterActorTypes()
 {
    // TUTORIAL - REGISTER YOUR ACTOR TYPE HERE
+
+   //mActorFactory->RegisterType<TankActorProxy>( TANK_ACTOR_TYPE.get() );
 }

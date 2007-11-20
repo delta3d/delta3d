@@ -76,11 +76,28 @@ void TankActorProxy::BuildPropertyMap()
    TankActor &actor = dynamic_cast<TankActor&>(GetGameActor());
 
    // TUTORIAL - ADD YOUR PROPERTIES HERE
+
+   // "Velocity" property
+   //AddProperty(new dtDAL::FloatActorProperty("Velocity","Velocity",
+   //   dtDAL::MakeFunctor(actor, &TankActor::SetVelocity),
+   //   dtDAL::MakeFunctorRet(actor, &TankActor::GetVelocity),
+   //   "Sets/gets the hover tank's velocity.", GROUP));
+
+   // "Turnrate" property
+   //AddProperty(new dtDAL::FloatActorProperty("Turnrate","Turn Rate",
+   //   dtDAL::MakeFunctor(actor, &TankActor::SetTurnRate),
+   //   dtDAL::MakeFunctorRet(actor, &TankActor::GetTurnRate),
+   //   "Sets/gets the hover tank's turn rate in degrees per second.", GROUP));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 void TankActorProxy::CreateActor()
 {
    // TUTORIAL - CREATE YOUR ACTOR HERE
+
+   //TankActor *actor = new TankActor(*this);
+   // We give the actor to the proxy and it holds a ref ptr to it - it gets
+   // cleaned up nicely when the proxy gets removed.
+   //SetActor(*actor);
 }
 

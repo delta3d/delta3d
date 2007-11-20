@@ -117,8 +117,6 @@ void MyGameEntryPoint::Initialize(dtGame::GameApplication& app, int argc, char *
 //////////////////////////////////////////////////////////////////////////
 void MyGameEntryPoint::OnStartup(dtGame::GameApplication& app)
 {
-   //dtABC::Application& app = GetGameManager()->GetApplication();
-
    // init our file path so it can find GUI Scheme
    // add extra data paths here if you need them
    dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList() + 
@@ -180,13 +178,11 @@ void MyGameEntryPoint::OnStartup(dtGame::GameApplication& app)
    dtCore::RefPtr<HUDComponent> hudComp = new HUDComponent(app.GetWindow(), "HUDComponent");
    app.GetGameManager()->AddComponent(*hudComp, dtGame::GameManager::ComponentPriority::NORMAL);
 
-   // offset our camera a little back and above the tank.
-   //dtCore::Transform tx(0.0f, 0.7f, 2.2f, 0.0f, 0.0f, 0.0f);
-   //app.GetCamera()->SetTransform(tx); 
-
+   // Tell the system to use a base scene light. With your own lighting, set this to false.
    app.GetGameManager()->GetScene().UseSceneLight(true);
 
-   // Attach our camera to the tank from the map
+   // Double check to make sure the tank isn't there during playback or we will get errors.
+   // NOTE - USED TO BE - Attach our camera to the tank from the map
    std::vector<dtDAL::ActorProxy*> tanks;
    app.GetGameManager()->FindActorsByName("HoverTank", tanks);
    if (tanks.size() > 0 && tanks[0] != NULL)
@@ -220,5 +216,5 @@ void MyGameEntryPoint::OnStartup(dtGame::GameApplication& app)
    // ServerLoggerComponent state changes; such as transitions from PLAYBACK to IDLE states.
    //mLogController->RequestAddIgnoredActor(mInputComp->GetTerrainActor().GetId());
 
-   app.GetGameManager()->DebugStatisticsTurnOn(true, true, 30, true);
+   app.GetGameManager()->DebugStatisticsTurnOn(true, true, 15, true);
 }

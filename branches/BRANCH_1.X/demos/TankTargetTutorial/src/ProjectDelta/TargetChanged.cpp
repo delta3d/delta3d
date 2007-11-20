@@ -27,8 +27,8 @@
 IMPLEMENT_ENUM(TutorialMessageType);
 
 // TUTORIAL - ADD STATIC INSTANCE OF TANK_TARGET_CHANGED MESSAGE TYPE HERE
-//const TutorialMessageType TutorialMessageType::TANK_TARGET_CHANGED("Target Changed", "Info",
-//                                                                   "Tank Switched Target", USER_DEFINED_MESSAGE_TYPE + 1);
+const TutorialMessageType TutorialMessageType::TANK_TARGET_CHANGED("Target Changed", "Info",
+                                                                   "Tank Switched Target", USER_DEFINED_MESSAGE_TYPE + 1);
 
 ///////////////////////////////////////////////////////////////////////////////
 void TutorialMessageType::RegisterMessageTypes(dtGame::MessageFactory& factory)

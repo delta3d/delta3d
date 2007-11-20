@@ -81,6 +81,34 @@ void TankActor::TickRemote(const dtGame::Message &tickMessage)
 }
 
 // TUTORIAL - ADD YOUR TankActor::ProcessMessage() here 
+///////////////////////////////////////////////////////////////////////////////
+void TankActor::ProcessMessage(const dtGame::Message &message)
+{
+   if (message.GetMessageType() == dtGame::MessageType::INFO_GAME_EVENT)
+   {
+      const dtGame::GameEventMessage &eventMsg = 
+         static_cast<const dtGame::GameEventMessage&>(message);
+
+      // Note, we are using strings which aren't constants.  In a real application, these 
+      // event names should be stored in some sort of shared place and should be constants...
+      if (eventMsg.GetGameEvent() != NULL)
+      {
+         // Handle "ToggleEngine" Game Event
+         if (eventMsg.GetGameEvent()->GetName() == "ToggleEngine")
+         {
+            mIsEngineRunning = !mIsEngineRunning;
+            mDust->SetEnabled(mIsEngineRunning);
+            printf("Toggling Engines to the [%s] state.\r\n", (mIsEngineRunning ? "ON" : "OFF"));            
+         } 
+         // Handle "SpeedBoost" Game Event
+         else if (eventMsg.GetGameEvent()->GetName() == "SpeedBoost")
+         {
+            SetVelocity(mVelocity + -5.0f);
+         }
+      }
+   }
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////
 void TankActor::ComputeVelocityAndTurn(float deltaSimTime)
@@ -318,6 +346,12 @@ void TankActor::OnEnteredWorld()
 
    GetTransform(mOriginalPosition);
 
+   // put our camera - first to tank's position, and then offset it.
+   dtCore::Transform tx(0.0f,0.7f,2.2f,0.0f,0.0f,0.0f);
+   dtCore::Camera *camera = GetGameActorProxy().GetGameManager()->GetApplication().GetCamera();
+   AddChild(camera);
+   camera->SetTransform(tx, dtCore::Transformable::REL_CS);
+
    mIsector->SetScene(&(GetGameActorProxy().GetGameManager()->GetScene()));
 }
 
@@ -368,6 +402,8 @@ void TankActorProxy::OnEnteredWorld()
    // and TickRemote() are created for us in GameActorProxy::BuildInvokables().
 
    // TUTORIAL - REGISTER FOR INFO_GAME_EVENT HERE 
+   //Register an invokable for Game Events...
+   RegisterForMessages(dtGame::MessageType::INFO_GAME_EVENT);
 
    // Register an invokable for tick messages. Local or Remote only, not both!
    if (IsRemote())

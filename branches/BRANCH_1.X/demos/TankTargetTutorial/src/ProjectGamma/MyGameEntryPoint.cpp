@@ -90,9 +90,10 @@ void MyGameEntryPoint::Initialize(dtGame::GameApplication& app, int argc, char *
 //////////////////////////////////////////////////////////////////////////
 void MyGameEntryPoint::OnStartup(dtGame::GameApplication& app)
 {
-   // init our file path so it can find GUI Scheme
-   // add extra data paths here if you need them
-   dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());   
+   // Init our file path so it can find GUI Scheme. Add extra data paths here if you need them
+   dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList() + 
+      ";" + dtCore::GetDeltaRootPath() + "/examples/data;"); 
+   std::cout << "Path list is: " << dtCore::GetDataFilePathList() <<  std::endl;
 
    // Add Component - DefaultMessageProcessor 
    dtGame::DefaultMessageProcessor *dmp = new dtGame::DefaultMessageProcessor("DefaultMessageProcessor");
@@ -103,24 +104,17 @@ void MyGameEntryPoint::OnStartup(dtGame::GameApplication& app)
    app.GetGameManager()->ChangeMap("mapone");
 
    // TUTORIAL - ADD YOUR HUD COMPONENT HERE
+   // Add Component - HUD Component
+   dtCore::RefPtr<HUDComponent> hudComp = new HUDComponent(app.GetWindow(), "HUDComponent");
+   app.GetGameManager()->AddComponent(*hudComp, dtGame::GameManager::ComponentPriority::NORMAL);
    
-   // offset our camera a little back and above the tank.
-   dtCore::Transform tx(0.0f, 0.7f, 2.2f, 0.0f, 0.0f, 0.0f);
-   app.GetCamera()->SetTransform(tx); 
-   app.GetScene()->UseSceneLight(true);
-
-   // Attach our camera to the tank from the map
-   std::vector<dtDAL::ActorProxy*> tanks;
-   app.GetGameManager()->FindActorsByName("HoverTank", tanks);
-   if (tanks.size() > 0)
-   {
-      tanks[0]->GetActor()->AddChild(app.GetCamera());
-   }
-
    // Allow the fly motion model to move the camera around independent of the tank.
    dtCore::FlyMotionModel *fmm = new dtCore::FlyMotionModel(app.GetKeyboard(), app.GetMouse(), false);
    fmm->SetMaximumFlySpeed(15);
    fmm->SetTarget(app.GetCamera());
 
    app.GetWindow()->SetWindowTitle("Tutorial");
+   app.GetGameManager()->DebugStatisticsTurnOn(true, true, 15, true);
+   // Tell the system to use a base scene light. With your own lighting, set this to false.
+   app.GetScene()->UseSceneLight(true);
 }
