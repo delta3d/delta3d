@@ -354,6 +354,23 @@ namespace dtCore
       mOsgCamera->setProjectionMatrixAsPerspective(hfov, ratio , nearClip, farClip);
    }
 
+   void Camera::GetPerspective(double &hfov, double &vfov, double &nearClip, double &farClip)
+   {
+      if (!mWindow.valid() || !mWindow->GetOsgViewerGraphicsWindow())
+      {
+         hfov = osg::DisplaySettings::instance()->getScreenHeight();
+         vfov = osg::DisplaySettings::instance()->getScreenWidth();
+      }
+      else
+      {
+         const osg::GraphicsContext::Traits * traits = mWindow->GetOsgViewerGraphicsWindow()->getTraits();
+         hfov = traits->height;
+         vfov = traits->width;
+      }
+
+      //mOsgCamera->setProjectionMatrixAsPerspective(hfov, ratio , nearClip, farClip);
+   }
+
    void Camera::SetFrustum(double left, double right, double bottom, double top, double nearClip, double farClip)
    {
       mOsgCamera->setProjectionMatrixAsFrustum(left, right, bottom, top, nearClip, farClip);
@@ -403,19 +420,19 @@ namespace dtCore
 //      return t;
 //   }
 //
-//   float Camera::GetHorizontalFov()
-//   {
-//      float hfov = 0.0f;
-//      hfov = mCamera->getLens()->getHorizontalFov();
-//      return hfov;
-//   }
-//
-//   float Camera::GetVerticalFov()
-//   {
-//      float vfov = 0.0f;
-//      vfov = mCamera->getLens()->getVerticalFov();
-//      return vfov;
-//   }
+   float Camera::GetHorizontalFov()
+   {
+      double hfov, vfov, nearClip, farClip;
+      GetPerspective(hfov, vfov, nearClip, farClip);
+      return float(hfov);
+   }
+
+   float Camera::GetVerticalFov()
+   {
+      double hfov, vfov, nearClip, farClip;
+      GetPerspective(hfov, vfov, nearClip, farClip);
+      return float(vfov);
+   }
 
 
 //   bool Camera::GetAutoAspect()
@@ -429,11 +446,13 @@ namespace dtCore
 //   {
 //   	mCamera->getLens()->setAspectRatio(aspectRatio);
 //   }
-//
-//   double Camera::GetAspectRatio()
-//   {
-//       return mViewer->getLens()->getAspectRatio();
-//   }
+
+   double Camera::GetAspectRatio()
+   {
+      double hfov, vfov, nearClip, farClip;
+      GetPerspective(hfov, vfov, nearClip, farClip);
+      return hfov / vfov;
+   }
    //////////////////////////////////////////
    void Camera::AddedToScene( Scene* scene )
    {
