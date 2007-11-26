@@ -13,6 +13,7 @@
 
 #include <osg/Version>
 #include <osgViewer/View>
+#include <osgViewer/api/Win32/GraphicsWindowWin32>
 #include <algorithm>
 
 using namespace dtCore;
@@ -288,22 +289,31 @@ bool Mouse::ButtonUp(float x, float y, MouseButton button)
 
 bool Mouse::GetHasFocus()
 {
-//   if(mKeyboardMouse.valid())
-//   {
+   //if(mKeyboardMouse.valid())
+   {
 //#if defined(_OSX_AGL_IMPLEMENTATION)
-//      return IsWindowActive(mKeyboardMouse->getRenderSurface()->getWindow());
+//     return IsWindowActive(mKeyboardMouse->getRenderSurface()->getWindow());
 //#elif defined(_X11_IMPLEMENTATION)
 //      Producer::Display* display = mKeyboardMouse->getRenderSurface()->getDisplay();
 //      Producer::Window windowId = 0;
 //      int focusType = 0;
 //      XGetInputFocus(display, &windowId, &focusType);
 //      return mKeyboardMouse->getRenderSurface()->getWindow() == windowId;
-//#elif defined(_WIN32_IMPLEMENTATION)
-//      return mKeyboardMouse->getRenderSurface()->getWindow() == GetForegroundWindow();
-//#endif
-//   }
-//  //todo- add implementation for linux and mac
-//  return true;
+#if defined(DELTA_WIN32)
+      //return mKeyboardMouse->getRenderSurface()->getWindow() == GetForegroundWindow();
+      DeltaWin *win = mView->GetCamera()->GetWindow();
+      osgViewer::GraphicsWindowWin32 *win32 = 
+         static_cast<osgViewer::GraphicsWindowWin32*>(win->GetOsgViewerGraphicsWindow());
+      if(win32 == NULL)
+      {
+         LOG_ERROR("The GraphicsWindow in the _WIN32_IMPLEMENTATION is not a osg.GraphicsWindowWin32");
+         return false;
+      }
+      return win32->getHWND() == GetForegroundWindow();
+#endif
+   }
+  //todo- add implementation for linux and mac
+  //return true;
 
    return false;
 }
