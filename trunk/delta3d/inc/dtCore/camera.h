@@ -123,6 +123,7 @@ namespace dtCore
       ///Set Perspective of camera lens
       void SetPerspective( double hfov, double vfov, double nearClip, double farClip );
 
+      void GetPerspective(double &hfov, double &vfov, double &nearClip, double &farClip);
       ///Set view frustrum of camera lens
       void SetFrustum(  double left, double right,
                         double bottom, double top,
@@ -139,11 +140,11 @@ namespace dtCore
 //      ///enable perspective mode
 //      bool ConvertToPerspective( float d );
 
-//      ///@return HOV
-//      float GetHorizontalFov();
-//
-//      ///@return FOV
-//      float GetVerticalFov();
+      ///@return HOV
+      float GetHorizontalFov();
+
+      ///@return FOV
+      float GetVerticalFov();
 
       void SetProjectionResizePolicy( osg::Camera::ProjectionResizePolicy prp )
       { mOsgCamera->setProjectionResizePolicy(prp); }
@@ -154,7 +155,7 @@ namespace dtCore
       //void SetAspectRatio( double aspectRatio );
 
       ///@return aspect ratio
-      //double GetAspectRatio();
+      double GetAspectRatio();
 
       ///Get a handle to the Producer Lens that this Camera uses
 //      Producer::Camera::Lens *GetLens() { return mCamera->getLens(); }
