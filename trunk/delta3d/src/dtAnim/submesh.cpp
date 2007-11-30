@@ -185,19 +185,33 @@ void SubMeshDrawable::drawImplementation(osg::RenderInfo & renderInfo) const
 
 void SubMeshDrawable::accept(osg::PrimitiveFunctor& functor) const
 {
-   functor.setVertexArray(vertexCount, (osg::Vec3f *)(mMeshVertices));
-
-   if(sizeof(CalIndex) == sizeof(short))
+   if(mWrapper != NULL && mMeshVertices != NULL)
    {
-      osg::ref_ptr<osg::DrawElementsUShort> pset = new osg::DrawElementsUShort(osg::PrimitiveSet::TRIANGLES,
-                                                             faceCount*3, (GLushort *) mMeshFaces);
-      pset->accept(functor);
-   } 
-    else
-    {
-      osg::ref_ptr<osg::DrawElementsUInt> pset = new osg::DrawElementsUInt(osg::PrimitiveSet::TRIANGLES,
-                                                          faceCount*3, (GLuint *) mMeshFaces);
-      pset->accept(functor);
+      if(mWrapper->BeginRenderingQuery())
+      {
+         // select mesh and submesh for further data access
+         if(mWrapper->SelectMeshSubmesh(mMeshID, mSubmeshID))
+         {
+            //since the vertices aren't set until we first render, we must get them here to ensure they are valid
+            mWrapper->GetVertices(mMeshVertices);
+
+            functor.setVertexArray(vertexCount, (osg::Vec3f *)(mMeshVertices));
+
+            if(sizeof(CalIndex) == sizeof(short))
+            {
+               osg::ref_ptr<osg::DrawElementsUShort> pset = new osg::DrawElementsUShort(osg::PrimitiveSet::TRIANGLES,
+                                                                      faceCount*3, (GLushort *) mMeshFaces);
+               pset->accept(functor);
+            } 
+            else
+            {
+              osg::ref_ptr<osg::DrawElementsUInt> pset = new osg::DrawElementsUInt(osg::PrimitiveSet::TRIANGLES,
+                                                                   faceCount*3, (GLuint *) mMeshFaces);
+              pset->accept(functor);
+           }
+         }
+      }
+
    }
 
    return;
