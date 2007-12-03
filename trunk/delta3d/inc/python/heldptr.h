@@ -20,7 +20,6 @@
 
 const int DEBUG = 0;
 #include <osg/Node>
-#include <Producer/Referenced>
 
 template<class T> class held_ptr
 {
