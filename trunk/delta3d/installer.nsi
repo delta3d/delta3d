@@ -92,7 +92,7 @@ Section "MainSection" SEC01
   
   ;demos
   SetOutPath "$INSTDIR\demos"
-  File /r /x .svn .\demos\*
+  File /r /x .svn /x *.obj /x *.pch /x *.pdb /x *.idb /x *.ilk /x *.htm /x windows-msvc* .\demos\*
   
   ;doc
   SetOutPath "$INSTDIR\doc"
@@ -173,15 +173,15 @@ Section "Add Env Var"
    
    Push "DELTA_INC"
    Push '${DELTA_INC}'
-   Call WriteEnvStr
+   Call WriteEnvExpStr
    
    Push "DELTA_LIB"
    Push '${DELTA_LIB}'
-   Call WriteEnvStr
+   Call WriteEnvExpStr
    
    Push "DELTA_DATA"
    Push '${DELTA_DATA}'
-   Call WriteEnvStr
+   Call WriteEnvExpStr
 
    ;PATH
    Push "${DELTA_ROOT}\bin"
@@ -356,7 +356,7 @@ Function WriteEnvStr
     Goto WriteEnvStr_done
 
   WriteEnvStr_NT:
-      WriteRegExpandStr ${WriteEnvStr_RegKey} $0 $1
+      WriteRegStr ${WriteEnvStr_RegKey} $0 $1
       SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} \
         0 "STR:Environment" /TIMEOUT=5000
 
@@ -365,6 +365,45 @@ Function WriteEnvStr
     Pop $0
     Pop $1
 FunctionEnd
+
+#
+# WriteEnvExpStr - Writes an environment variable as an expanding string type
+# Note: Win9x systems requires reboot
+#
+# Example:
+#  Push "HOMEDIR"           # name
+#  Push "C:\New Home Dir\"  # value
+#  Call WriteEnvExpStr
+#
+Function WriteEnvExpStr
+  Exch $1 ; $1 has environment variable value
+  Exch
+  Exch $0 ; $0 has environment variable name
+  Push $2
+
+  Call IsNT
+  Pop $2
+  StrCmp $2 1 WriteEnvExpStr_NT
+    ; Not on NT
+    StrCpy $2 $WINDIR 2 ; Copy drive of windows (c:)
+    FileOpen $2 "$2\autoexec.bat" a
+    FileSeek $2 0 END
+    FileWrite $2 "$\r$\nSET $0=$1$\r$\n"
+    FileClose $2
+    SetRebootFlag true
+    Goto WriteEnvExpStr_done
+
+  WriteEnvExpStr_NT:
+      WriteRegExpandStr ${WriteEnvStr_RegKey} $0 $1
+      SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} \
+        0 "STR:Environment" /TIMEOUT=5000
+
+  WriteEnvExpStr_done:
+    Pop $2
+    Pop $0
+    Pop $1
+FunctionEnd
+
 
 #
 # un.DeleteEnvStr - Removes an environment variable
