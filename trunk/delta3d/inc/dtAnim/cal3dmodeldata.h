@@ -36,6 +36,30 @@ namespace dtAnim
    class AnimationWrapper;
    class Animatable;
 
+   /**
+    * A simple data class that stores the configuration options for level of detail.
+    */
+   class DT_ANIM_EXPORT LODOptions
+   {
+      public:
+         LODOptions();
+
+         ///@return the distance at which to start decreasing the level of detail.
+         double GetStartDistance() const { return mStartDistance; }
+         void SetStartDistance(double newDistance);
+
+         ///@return the distance at which the level of detail should be the minimum.
+         double GetEndDistance() const { return mEndDistance; }
+         void SetEndDistance(double newDistance);
+
+         ///@return the maximum distance that the model will be drawn at all.
+         double GetMaxVisibleDistance() const { return mMaxVisibleDistance; }
+         void SetMaxVisibleDistance(double newDistance);
+         
+      private:
+         double mStartDistance, mEndDistance, mMaxVisibleDistance;
+   };
+
    class DT_ANIM_EXPORT Cal3DModelData : public osg::Referenced
    {
       public:
@@ -109,6 +133,9 @@ namespace dtAnim
          /// Sets the maximum number of bones the shader supports
          void SetShaderMaxBones(unsigned maxBones);
 
+         LODOptions& GetLODOptions() { return mLODOptions; }
+         const LODOptions& GetLODOptions() const { return mLODOptions; }
+         
       protected:
          virtual ~Cal3DModelData();
 
@@ -124,8 +151,9 @@ namespace dtAnim
          unsigned mVertexVBO, mIndexVBO;
          unsigned mShaderMaxBones;
 
-   };
+         LODOptions mLODOptions;
 
+   };
 }
 
 #endif /*DELTA_CAL3D_MODEL_DATA*/

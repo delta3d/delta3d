@@ -15,6 +15,7 @@ using namespace dtCore;
 
 IMPLEMENT_MANAGEMENT_LAYER(View)
 
+/////////////////////
 View::View(const std::string& name, bool useSceneLight) :
    Base(name),
    mOsgViewerView(new osgViewer::View),
@@ -31,6 +32,7 @@ View::View(const std::string& name, bool useSceneLight) :
    CreateKeyboardMouseHandler();
 }
 
+/////////////////////
 View::View(osgViewer::View * view, const std::string& name, bool useSceneLight) :
    Base(name),
    mOsgViewerView(view),
@@ -49,6 +51,7 @@ View::View(osgViewer::View * view, const std::string& name, bool useSceneLight) 
    CreateKeyboardMouseHandler();
 }
 
+/////////////////////
 View::~View()
 {
     DeregisterInstance(this);
@@ -146,39 +149,40 @@ Keyboard* View::GetKeyboard()
 { 
    return mKeyboardMouseHandler.valid() ? mKeyboardMouseHandler->GetKeyboard() : NULL; 
 }
+/////////////////////
 const Keyboard* View::GetKeyboard() const 
 { 
    return mKeyboardMouseHandler.valid() ? mKeyboardMouseHandler->GetKeyboard() : NULL; 
 }
-///////////////////// 
-
+/////////////////////
 Mouse* View::GetMouse() 
 { 
    return mKeyboardMouseHandler.valid() ? mKeyboardMouseHandler->GetMouse() : NULL; 
 }
+
+/////////////////////
 const Mouse* View::GetMouse() const 
 { 
    return mKeyboardMouseHandler.valid() ? mKeyboardMouseHandler->GetMouse() : NULL; 
 }
 
-///////////////////// 
+/////////////////////
 void View::UpdateFromScene()
 {
    mOsgViewerView->setSceneData(mScene->GetSceneNode());
    if (mScene->IsPagingEnabled())
    {
-      EnablePaging();      
+      EnablePaging();
    }
 }
 
-
+///////////////////// 
 dtCore::KeyboardMouseHandler * View::CreateKeyboardMouseHandler()
 {
     mKeyboardMouseHandler = new dtCore::KeyboardMouseHandler(this);
     mOsgViewerView->addEventHandler(mKeyboardMouseHandler.get());
     return mKeyboardMouseHandler.get();
 }
-
 
 // ????
 //void View::ResetCameraScenes(dtCore::Scene* sceneRootChanged)

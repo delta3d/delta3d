@@ -160,21 +160,28 @@ namespace dtCore
       ///Get a handle to the Producer Lens that this Camera uses
 //      Producer::Camera::Lens *GetLens() { return mCamera->getLens(); }
 
-      
+
       void SetClearColor(float r, float g, float b, float a);
       void SetClearColor(const osg::Vec4& color);
       void GetClearColor(float& r, float& g, float& b, float& a);
       void GetClearColor(osg::Vec4& color);
-      
-                 
+
       ///Get a non-const handle to the underlying Producer::Camera
       osg::Camera* GetOSGCamera() { return mOsgCamera.get(); }
-      
+
       ///Get a const handle to the underlying Producer::Camera
       const osg::Camera* GetOSGCamera() const { return mOsgCamera.get(); }
+
+      /**
+       * Changes the multiplier applied to the Level of Detail distance calculation when rendering. 
+       * For example, setting this to 2 would double the distance used when picking the LOD.  This means
+       * the detail will decrease twice as fast.
+       */
+      void SetLODScale(float newScale);
+      /// @return the multiplier applied to the Level of Detail distance calculation when rendering. 
+      float GetLODScale() const;
       
-      
-//      ///Display the next statistics mode TODO
+      //      ///Display the next statistics mode TODO
 //      void SetNextStatisticsType() { mSceneHandler->mStats->SelectNextType(); }     
 //
 //      ///Display the supplied statistics type

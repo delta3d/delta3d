@@ -15,8 +15,6 @@
 #include <osgDB/ReadFile>
 #include <osg/Texture2D>
 
-using namespace dtUtil;
-
 namespace dtAnim 
 {
 
@@ -193,6 +191,15 @@ namespace dtAnim
       modelData.SetShaderName(handler.mShaderName);
       modelData.SetShaderMaxBones(handler.mShaderMaxBones);
       
+      LODOptions& lodOptions = modelData.GetLODOptions();
+      
+      if (handler.mFoundLODOptions)
+      {
+         lodOptions.SetStartDistance(handler.mLODStartDistance);
+         lodOptions.SetEndDistance(handler.mLODEndDistance);
+         lodOptions.SetMaxVisibleDistance(handler.mLODMaxVisibleDistance);
+      }
+
       //register animations
       if(!handler.mAnimationChannels.empty())
       {

@@ -59,6 +59,11 @@ const std::string CharacterFileHandler::SHADER_GROUP_ELEMENT("shaderGroup");
 const std::string CharacterFileHandler::SHADER_NAME_ELEMENT("shaderName");
 const std::string CharacterFileHandler::SHADER_MAX_BONES_ELEMENT("maxBones");
 
+const std::string CharacterFileHandler::LOD_ELEMENT("LOD");
+const std::string CharacterFileHandler::LOD_START_DISTANCE_ELEMENT("lodStartDistance");
+const std::string CharacterFileHandler::LOD_END_DISTANCE_ELEMENT("lodEndDistance");
+const std::string CharacterFileHandler::MAX_VISIBLE_DISTANCE_ELEMENT("maxVisibleDistance");
+
 CharacterFileHandler::AnimatableStruct::AnimatableStruct():
    mStartDelay(0.0f), 
    mFadeIn(0.0f), 
@@ -85,9 +90,14 @@ CharacterFileHandler::CharacterFileHandler()
 , mMaterials()
 , mMeshes()
 , mShaderMaxBones(72)
+, mLODStartDistance(10.0)
+, mLODEndDistance(500.0)
+, mLODMaxVisibleDistance(1000.0)
+, mFoundLODOptions(false)
 , mAnimationChannels()
 , mSkeletonFilename()
 , mInSkinningShader(false)
+, mInLOD(false)
 , mInChannel(false)
 , mInSequence(false)
 , mLogger(NULL)
@@ -116,7 +126,10 @@ void CharacterFileHandler::startDocument()
    mAnimationSequences.clear();
    mSkeletonFilename.clear();
 
+   mFoundLODOptions = false;
+
    mInSkinningShader = false;
+   mInLOD = false;
    mInChannel = false;
    mInSequence = false;
 }
@@ -256,6 +269,11 @@ void CharacterFileHandler::startElement( const XMLCh* const uri,const XMLCh* con
    {
       mInSkinningShader = true;
    }
+   else if (elementStr == LOD_ELEMENT)
+   {
+      mInLOD = true;
+      mFoundLODOptions = true;
+   }
    else if (elementStr == CHANNEL_ELEMENT)
    {      
       mInChannel = true;
@@ -298,10 +316,16 @@ void CharacterFileHandler::endElement(
       mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__,
                            "Ending element: \"%s\"", lname);
    }
+
    std::string elementStr = dtUtil::XMLStringConverter(localname).ToString();
+   
    if (elementStr == SKINNING_SHADER_ELEMENT)
    {
       mInSkinningShader = false;
+   }
+   else if(elementStr == LOD_ELEMENT)
+   { 
+      mInLOD = false;
    }
    else if(elementStr == CHANNEL_ELEMENT)
    { 
@@ -332,6 +356,10 @@ void CharacterFileHandler::characters(const XMLCh* const chars,
    {
       SkinningShaderCharacters(chars);
    }
+   else if (mInLOD)
+   {
+      LODCharacters(chars);
+   }
    else if (mInChannel)
    {
       AnimChannelCharacters(chars);
@@ -356,6 +384,26 @@ void CharacterFileHandler::SkinningShaderCharacters(const XMLCh* const chars)
    else if (topEl == SHADER_MAX_BONES_ELEMENT)
    {
       mShaderMaxBones = dtUtil::ToUnsignedInt(dtUtil::XMLStringConverter(chars).ToString());
+   }
+}
+
+void CharacterFileHandler::LODCharacters(const XMLCh* const chars)
+{
+   std::string& topEl = mElements.top();
+   
+   double value = dtUtil::ToType<double>(dtUtil::XMLStringConverter(chars).ToString());
+   
+   if (topEl == LOD_START_DISTANCE_ELEMENT)
+   {
+      mLODStartDistance = value;
+   }
+   else if (topEl == LOD_END_DISTANCE_ELEMENT)
+   {
+      mLODEndDistance = value;
+   }
+   else if (topEl == MAX_VISIBLE_DISTANCE_ELEMENT)
+   {
+      mLODMaxVisibleDistance = value;
    }
 }
 

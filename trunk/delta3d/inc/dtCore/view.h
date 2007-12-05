@@ -27,13 +27,12 @@
 
 
 #include <osg/Referenced>
-#include <osgViewer/View>
 
 #include <map>
 #include <set>
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
-namespace osg        
+namespace osg
 {
    class Camera;
 }
@@ -90,8 +89,9 @@ namespace dtCore
       ///Get the osgViewer::View wrapped
       osgViewer::View * GetOsgViewerView() { return mOsgViewerView.get(); }
       
-      
-      
+      ///Get the osgViewer::View wrapped
+      const osgViewer::View * GetOsgViewerView() const { return mOsgViewerView.get(); }
+
       /** 
        * Supply an instance of a Keyboard to be used instead of the default, 
        * internal Keyboard, or the one supplied in the constructor.
@@ -104,7 +104,7 @@ namespace dtCore
       
       ///Get a handle to the Keyboard associated with the DeltaWin
       Keyboard* GetKeyboard();
-      const Keyboard* GetKeyboard() const;      
+      const Keyboard* GetKeyboard() const;
       
 //      /// Turns off/on key repeat. It only allows turning it off for X11.
 //      void SetKeyRepeat(bool on);
@@ -125,7 +125,8 @@ namespace dtCore
       const Mouse* GetMouse() const;
       
       
-      void Frame();
+      //this method is commented out in the implementation
+      //void Frame();
       
       /**
        * Enables paging when called ONLY AFTER a page-able
