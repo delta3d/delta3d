@@ -27,6 +27,7 @@
 
 
 #include <osg/Referenced>
+#include <osgViewer/View>
 
 #include <map>
 #include <set>
@@ -37,10 +38,7 @@ namespace osg
    class Camera;
 }
 
-namespace osgViewer
-{
-   class View;
-}
+
 /// @endcond
 
 namespace dtCore
