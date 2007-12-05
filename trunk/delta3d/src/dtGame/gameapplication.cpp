@@ -48,6 +48,11 @@ namespace dtGame
    {
       RegisterInstance(this);
       GetKeyboard()->RemoveKeyboardListener(GetKeyboardListener());
+
+      //Disable OSG's default behavior of quitting when the Escape key is pressed.
+      //Not disabling this causes Delta3D and OSG to get into a bad state
+      //when the Escape key is pressed.
+      GetCompositeViewer()->setKeyEventSetsDone(0);
    }
 
    GameApplication::~GameApplication()
