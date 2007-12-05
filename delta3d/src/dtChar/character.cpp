@@ -10,6 +10,8 @@
 #include <dtCore/globals.h>
 #include <dtUtil/log.h>
 
+#include <osgDB/FileNameUtils>
+
 #include <sstream>
 
 using namespace dtCore;
@@ -150,6 +152,9 @@ osg::Node* Character::LoadFile(const std::string& filename, bool useCache)
       {
          mat = GetMatrixNode()->getMatrix();
       }
+
+
+      path = osgDB::convertFileNameToUnixStyle(path);
 
       ReplaceMatrixNode( rbody::ReplicantBodyMgr::instance()->createCharacter(   path,
                                                                                  name,
