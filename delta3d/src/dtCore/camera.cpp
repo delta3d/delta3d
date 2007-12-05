@@ -23,7 +23,10 @@
 
 #include <ctime>
 #include <osg/Version>
+
+#include <osgUtil/SceneView>
 #include <osgViewer/View>
+#include <osgViewer/Renderer>
 #include <osgViewer/GraphicsWindow>
 
 #include <cassert>
@@ -35,7 +38,7 @@ namespace dtCore
 
    class ScreenShotCallback : public osg::Camera::DrawCallback
    {
-      public :
+      public:
          ScreenShotCallback() : mTakeScreenShotNextFrame(false){}
          
          void SetNameToOutput(const std::string& name)
@@ -100,17 +103,17 @@ namespace dtCore
       double distance = osg::DisplaySettings::instance()->getScreenDistance();
       double vfov = osg::RadiansToDegrees(atan2(height/2.0f,distance)*2.0);
       mOsgCamera->setProjectionMatrixAsPerspective( vfov, width/height, 1.0f,10000.0f);
-      
+
       SetClearColor( 0.2f, 0.2f, 0.6f, 1.f);
-   
+
       // Default collision category = 1
       SetCollisionCategoryBits( UNSIGNED_BIT(1));
-   
+
       mScreenShotTaker = new ScreenShotCallback;
       mOsgCamera->setPostDrawCallback(mScreenShotTaker.get());
    }
-   
-   
+
+
    Camera::Camera(dtCore::View * view, const std::string& name)
       :  Transformable(name),
          mFrameBin(0),
@@ -118,32 +121,32 @@ namespace dtCore
          mEnable(true)
    {
       RegisterInstance(this);
-      
+
       System*  sys   = &dtCore::System::GetInstance();
       assert( sys );
       AddSender( sys );
-      
+
       if(view == NULL)
       {
          throw dtUtil::Exception(dtCore::ExceptionEnum::INVALID_PARAMETER,
             "Supplied dtCore::View is NULL", __FILE__, __LINE__);
       }
-      
+
       if(view->GetOsgViewerView() == NULL)
       {
          throw dtUtil::Exception(dtCore::ExceptionEnum::INVALID_PARAMETER,
             "Supplied dtCore::View::GetOsgViewerView() is NULL", __FILE__, __LINE__);
       }
-         
+
       if(view->GetOsgViewerView()->getCamera() == NULL)
       {
          throw dtUtil::Exception(dtCore::ExceptionEnum::INVALID_PARAMETER,
             "Supplied dtCore::View::GetOsgViewerView()->getCamera() is NULL", __FILE__, __LINE__);
       }
       mOsgCamera = view->GetOsgViewerView()->getCamera();
-      
+
       SetClearColor( 0.2f, 0.2f, 0.6f, 1.f);
-      
+
       // Default collision category = 1
       SetCollisionCategoryBits( UNSIGNED_BIT(1) );
 
@@ -151,6 +154,7 @@ namespace dtCore
       mOsgCamera->setPostDrawCallback(mScreenShotTaker.get());
    }
 
+   ////////////////////////////////////////// 
    Camera::~Camera()
    {
       DeregisterInstance(this);
@@ -166,6 +170,7 @@ namespace dtCore
 //      mCameraGroup->AddCamera(this);
 //   }
 
+   ////////////////////////////////////////// 
    const std::string Camera::TakeScreenShot(const std::string& namePrefix)
    {
       time_t currTime;
@@ -186,7 +191,7 @@ namespace dtCore
       mScreenShotTaker->SetNameToOutput(outputName);
       return outputName;
    }
-   
+
    void Camera::SetEnabled( bool enabled )
    {
       mEnable = enabled;      
@@ -223,6 +228,7 @@ namespace dtCore
 
       GetOSGCamera()->setComputeNearFarMode(osgMode);
    }
+
    /*!
     * Render the next frame.  This will update the scene graph, cull then geometry,
     * then draw the geometry.
@@ -406,6 +412,16 @@ namespace dtCore
    void Camera::GetClearColor(osg::Vec4& color)
    {
       color = mOsgCamera->getClearColor();
+   }
+
+   void Camera::SetLODScale(float newScale)
+   {
+      GetOSGCamera()->setLODScale(newScale);
+   }
+
+   float Camera::GetLODScale() const
+   {
+      return GetOSGCamera()->getLODScale();
    }
 
 //   void Camera::ConvertToOrtho( float d )

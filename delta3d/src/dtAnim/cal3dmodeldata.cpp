@@ -173,4 +173,25 @@
    {
       mShaderMaxBones = maxBones;
    }
+
+   LODOptions::LODOptions():
+      mStartDistance(10.0), mEndDistance(500.0), mMaxVisibleDistance(1000.0)
+   {
+      
+   }
+
+   void LODOptions::SetStartDistance(double newDistance)
+   {
+      mStartDistance = newDistance;
+   }
+
+   void LODOptions::SetEndDistance(double newDistance)
+   {
+      mEndDistance = newDistance;
+   }
+
+   void LODOptions::SetMaxVisibleDistance(double newDistance)
+   {
+      mMaxVisibleDistance = newDistance;
+   }
 } //namespace dtAnim

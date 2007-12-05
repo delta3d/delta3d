@@ -13,6 +13,11 @@
    <material fileName="BODY.crf" name="Body Material" />
    <material fileName="Helmet.crf" name="Helmet Material" />
    <material fileName="M16m80.crf" name="M16 Material" />
+   <LOD>
+      <lodStartDistance>1.75</lodStartDistance>
+      <lodEndDistance>43.6</lodEndDistance>
+      <maxVisibleDistance>401.0</maxVisibleDistance>
+   </LOD>
    <skinningShader>
       <shaderGroup>HardwareSkinning</shaderGroup>
       <shaderName>Default</shaderName>

@@ -80,19 +80,19 @@ class DT_ABC_EXPORT BaseABC : public dtCore::Base
       ///Get the default Application Camera
       dtCore::Camera* GetCamera() { return GetView()->GetCamera(); }
       ///Get the default Application Camera
-      void SetCamera(dtCore::Camera * camera) { GetView()->SetCamera(camera); }
-   
+      void SetCamera(dtCore::Camera * camera);
+      
       ///Get the default Application Window
-      dtCore::DeltaWin* GetWindow() {  return mWindow.get();}
+      dtCore::DeltaWin* GetWindow();
       ///Get the default Application Window
-      void SetWindow(dtCore::DeltaWin * win) { GetCamera()->SetWindow(win); }
+      void SetWindow(dtCore::DeltaWin * win);
       
       ///Get the default Application Scene
       dtCore::Scene* GetScene() { return GetView()->GetScene(); }
       ///Set the default Application Scene
       void SetScene(dtCore::Scene* scene) { GetView()->SetScene(scene); }
-      
-      
+
+
       ///Get the default Application Keyboard
       dtCore::Keyboard* GetKeyboard() { return GetView()->GetKeyboard(); }
       ///Set the default Application Scene
@@ -102,8 +102,8 @@ class DT_ABC_EXPORT BaseABC : public dtCore::Base
       dtCore::Mouse* GetMouse() {  return GetView()->GetMouse();}
       ///Set the default Application Scene
       void SetMouse(dtCore::Mouse* mouse) { GetView()->SetMouse(mouse); }
-         
-   
+
+
       /// Loads a map by name into an application.  If the map is already opened, the currently
       /// loaded map will be reused. If there is a Camera contained within your Map, the default
       /// Camera in BaseABC will be disabled.
@@ -114,7 +114,7 @@ class DT_ABC_EXPORT BaseABC : public dtCore::Base
       /// @throws ExceptionEnum::ProjectFileNotFound if the map does not exist.
       /// @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
       dtDAL::Map& LoadMap( const std::string& name, bool addBillBoards = false );
-   
+
       /// Loads a map into the scene held by BaseABC. If there is a Camera contained within your Map, the default
       /// Camera in BaseABC will be disabled.
       /// @param map The map to load into the scene
@@ -148,7 +148,7 @@ class DT_ABC_EXPORT BaseABC : public dtCore::Base
       typedef std::vector<dtCore::RefPtr<dtCore::View> > ViewList;
       ViewList mViewList;
    
-      private:
+   private:
       void KeyPressed(dtCore::Keyboard* keyboard, int); ///< private & unimplemented by design.
       void HandleKeyPressed(dtCore::Keyboard* keyboard, int); ///< private & unimplemented by design.
       void KeyReleased(dtCore::Keyboard* keyboard, int); ///< private & unimplemented by design.

@@ -106,6 +106,11 @@ namespace dtAnim
       static const std::string SHADER_NAME_ELEMENT;
       static const std::string SHADER_MAX_BONES_ELEMENT;
 
+      static const std::string LOD_ELEMENT;
+      static const std::string LOD_START_DISTANCE_ELEMENT;
+      static const std::string LOD_END_DISTANCE_ELEMENT;
+      static const std::string MAX_VISIBLE_DISTANCE_ELEMENT;
+
    public:
    	CharacterFileHandler();
    	~CharacterFileHandler();
@@ -187,20 +192,26 @@ namespace dtAnim
       ///Shader information for hardware skinning. these value work with the shader manager.
       std::string mShaderGroup, mShaderName;
       unsigned mShaderMaxBones;
+
+      double mLODStartDistance, mLODEndDistance, mLODMaxVisibleDistance;
+      bool mFoundLODOptions;
+      
       std::vector<AnimationChannelStruct> mAnimationChannels; ///<The preconfigured playbable animations
       std::vector<AnimationSequenceStruct> mAnimationSequences; ///<The preconfigured playbable animations
-      std::string mSkeletonFilename;                ///<The one skeleton filename      
+      std::string mSkeletonFilename;                ///<The one skeleton filename
 
    private:
       bool AnimatableCharacters(const XMLCh* const chars, AnimatableStruct& animatable);
       void SkinningShaderCharacters(const XMLCh* const chars);
       void AnimChannelCharacters(const XMLCh* const chars);
       void AnimSequenceCharacters(const XMLCh* const chars);
+      void LODCharacters(const XMLCh* const chars);
 
       typedef std::stack<std::string> ElementStack;
       ElementStack mElements;
       
       bool mInSkinningShader;
+      bool mInLOD;
       bool mInChannel;
       bool mInSequence;
       dtUtil::Log* mLogger;

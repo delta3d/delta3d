@@ -11,7 +11,6 @@
 #include <dtDAL/project.h>
 
 #include <osgViewer/View>
-
 #include <cassert>
 
 using namespace dtABC;
@@ -23,6 +22,7 @@ IMPLEMENT_MANAGEMENT_LAYER(BaseABC)
 /**
  * Constructors
  */
+////////////////////////////////////////////////
 BaseABC::BaseABC( const std::string& name /*= "BaseABC"*/ ) :
    Base(name)
 {
@@ -31,14 +31,17 @@ BaseABC::BaseABC( const std::string& name /*= "BaseABC"*/ ) :
    System*  sys   = &dtCore::System::GetInstance();
    assert( sys );
    AddSender( sys );
+   CreateDefaultView();
 }
 
+////////////////////////////////////////////////
 BaseABC::~BaseABC()
 {
    DeregisterInstance(this);
    RemoveSender( &dtCore::System::GetInstance() );
 }
 
+////////////////////////////////////////////////
 void BaseABC::Config()
 {
    System*  sys   = &dtCore::System::GetInstance();
@@ -47,23 +50,47 @@ void BaseABC::Config()
    sys->Config();
 }
 
+////////////////////////////////////////////////
 void BaseABC::Quit()
 {
    System::GetInstance().Stop();
 }
 
+////////////////////////////////////////////////
+void BaseABC::SetCamera(dtCore::Camera * camera) 
+{ 
+   GetView()->SetCamera(camera);
+}
+
+////////////////////////////////////////////////
+dtCore::DeltaWin* BaseABC::GetWindow() 
+{  
+   return mWindow.get();
+}
+
+////////////////////////////////////////////////
+void BaseABC::SetWindow(dtCore::DeltaWin * win)
+{ 
+   mWindow = win;
+   if (GetCamera() != NULL)
+      GetCamera()->SetWindow(win); 
+}
+
+////////////////////////////////////////////////
 void BaseABC::AddDrawable( DeltaDrawable* obj )
 {
    assert( obj );
    GetScene()->AddDrawable( obj );
 }
 
+////////////////////////////////////////////////
 void BaseABC::RemoveDrawable( DeltaDrawable* obj )
 {
    assert( obj );
    GetScene()->RemoveDrawable( obj );
 }
 
+////////////////////////////////////////////////
 void BaseABC::OnMessage( MessageData* data )
 {
    if( data->message == "preframe" )
@@ -80,10 +107,10 @@ void BaseABC::OnMessage( MessageData* data )
    }
 }
 
+////////////////////////////////////////////////
 void BaseABC::CreateInstances()
 {
     // create the camera
-   CreateDefaultView();
    assert( mViewList[0].get() );
     
    mViewList[0]->SetCamera( new dtCore::Camera("defaultCam") );
@@ -93,12 +120,14 @@ void BaseABC::CreateInstances()
    GetMouse()->SetName("defaultMouse");
 }
 
+////////////////////////////////////////////////
 dtCore::View * BaseABC::CreateDefaultView()
 {
    mViewList.push_back(new dtCore::View("defaultView"));
    return mViewList[0].get();
 }
 
+////////////////////////////////////////////////
 void BaseABC::LoadMap( dtDAL::Map& map, bool addBillBoards )
 {
    typedef std::vector< dtCore::RefPtr< dtDAL::ActorProxy > > ActorProxyVector;
@@ -141,6 +170,7 @@ void BaseABC::LoadMap( dtDAL::Map& map, bool addBillBoards )
    dtDAL::Project::GetInstance().LoadMapIntoScene( map, *GetScene(), addBillBoards );
 }
 
+////////////////////////////////////////////////
 dtDAL::Map& BaseABC::LoadMap( const std::string& name, bool addBillBoards)
 {
    dtDAL::Map& map = dtDAL::Project::GetInstance().GetMap(name);

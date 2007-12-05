@@ -47,6 +47,7 @@ namespace dtAnim
    {
       CPPUNIT_TEST_SUITE( Cal3DLoaderTests );
          CPPUNIT_TEST( TestLoadFile );
+         CPPUNIT_TEST( TestLODOptions );
          CPPUNIT_TEST( TestModelData );
       CPPUNIT_TEST_SUITE_END();
 
@@ -128,6 +129,22 @@ namespace dtAnim
             TestEmptyHelper();
          }
 
+         void TestLODOptions()
+         {
+            dtAnim::LODOptions lodOptions;
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(lodOptions.GetStartDistance(), 10.0, 0.01);
+            lodOptions.SetStartDistance(3.0);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(lodOptions.GetStartDistance(), 3.0, 0.01);
+
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(lodOptions.GetEndDistance(), 500.0, 0.01);
+            lodOptions.SetEndDistance(4.0);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(lodOptions.GetEndDistance(), 4.0, 0.01);
+
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(lodOptions.GetMaxVisibleDistance(), 1000.0, 0.01);
+            lodOptions.SetMaxVisibleDistance(5.0);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(lodOptions.GetMaxVisibleDistance(), 5.0, 0.01);
+         }
+         
          void TestModelData()
          {
             std::string modelPath = dtCore::FindFileInPathList("SkeletalMeshes/marine_test.xml");
@@ -153,6 +170,14 @@ namespace dtAnim
 
 
             CPPUNIT_ASSERT(modelData->GetCoreModel() == wrapper->GetCalModel()->getCoreModel()); 
+
+            const dtAnim::LODOptions& lodOptions = modelData->GetLODOptions();
+
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(lodOptions.GetStartDistance(), 1.75, 0.001);
+
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(lodOptions.GetEndDistance(), 43.6, 0.01);
+
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(lodOptions.GetMaxVisibleDistance(), 401.0, 0.1);
 
             std::string testString("abc");
             CPPUNIT_ASSERT_EQUAL(std::string("Default"), modelData->GetShaderName());

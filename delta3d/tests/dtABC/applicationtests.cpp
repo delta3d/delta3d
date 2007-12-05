@@ -32,6 +32,8 @@
 #include <dtUtil/xercesparser.h>               // for parsing
 #include <dtUtil/librarysharingmanager.h>      // make sure this gets configured properly.
 
+#include <osgViewer/View>
+
 namespace dtTest
 {
    /// unit tests for dtCore::Application
@@ -54,7 +56,7 @@ namespace dtTest
 
       private:
          std::string mConfigName;
-         
+
          void CompareConfigData(const dtABC::ApplicationConfigData& truth, const dtABC::ApplicationConfigData& actual)
          {
             CPPUNIT_ASSERT_EQUAL( actual.CHANGE_RESOLUTION , truth.CHANGE_RESOLUTION );
