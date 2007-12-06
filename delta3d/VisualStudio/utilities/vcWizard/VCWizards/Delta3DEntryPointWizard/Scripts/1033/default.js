@@ -102,7 +102,7 @@ function AddConfig(proj, strProjectName)
 		var CLTool = config.Tools('VCCLCompilerTool');
 		CLTool.Optimization = 0;
 		CLTool.AdditionalIncludeDirectories = '$(DELTA_INC)';
-		CLTool.PreprocessorDefinitions = "win32;_DEBUG;ENTRY_POINT_LIBRARY";
+		CLTool.PreprocessorDefinitions = "WIN32;_DEBUG;ENTRY_POINT_LIBRARY";
 		CLTool.MinimalRebuild = true;
 		CLTool.BasicRuntimeChecks = 3;
 		CLTool.RuntimeLibrary = 3;
@@ -126,7 +126,7 @@ function AddConfig(proj, strProjectName)
 		// Add compiler settings
 		var CLTool = config.Tools('VCCLCompilerTool');
 		CLTool.AdditionalIncludeDirectories = '$(DELTA_INC)';
-		CLTool.PreprocessorDefinitions = "ENTRY_POINT_LIBRARY";
+		CLTool.PreprocessorDefinitions = "WIN32;ENTRY_POINT_LIBRARY";
 
 		//Add linker settings
 		var LinkTool = config.Tools('VCLinkerTool');
