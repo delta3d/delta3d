@@ -3,6 +3,9 @@
 [!if DMP_CHECKBOX]
 #include <dtGame/defaultmessageprocessor.h>
 [!endif]
+[!if DNPC_CHECKBOX]
+#include <dtGame/defaultnetworkpublishingcomponent.h>
+[!endif]
 
 [!if INPUT_CHECKBOX]
 #include "[!output PROJECT_NAME]Input.h"
@@ -37,18 +40,31 @@ void [!output PROJECT_NAME]EntryPoint::OnStartup( dtGame::GameApplication &app )
 {
    //Create and add GMComponents
 [!if DMP_CHECKBOX]
-   dtGame::DefaultMessageProcessor *messageProc = new dtGame::DefaultMessageProcessor();
-   app.GetGameManager()->AddComponent( *messageProc, dtGame::GameManager::ComponentPriority::HIGHEST);
+   mMessageProc = new dtGame::DefaultMessageProcessor();
+   app.GetGameManager()->AddComponent( *mMessageProc, dtGame::GameManager::ComponentPriority::HIGHEST);
+[!endif]
+
+[!if DNPC_CHECKBOX]
+   mNetworkComponent = new dtGame::DefaultNetworkPublishingComponent();
+   app.GetGameManager()->AddComponent( *mNetworkComponent, dtGame::GameManager::ComponentPriority::NORMAL);
 [!endif]
 
 [!if INPUT_CHECKBOX]
-   [!output PROJECT_NAME]Input *inp = new [!output PROJECT_NAME]Input();
-   app.GetGameManager()->AddComponent( *inp, dtGame::GameManager::ComponentPriority::NORMAL );
+   mInputComponent = new [!output PROJECT_NAME]Input();
+   app.GetGameManager()->AddComponent( *mInputComponent, dtGame::GameManager::ComponentPriority::NORMAL );
 [!endif]
 
 }
 
 void [!output PROJECT_NAME]EntryPoint::OnShutdown( dtGame::GameApplication &app )
 {
-
+[!if DMP_CHECKBOX]
+   app.GetGameManager()->RemoveComponent( *mMessageProc );
+[!endif]
+[!if DNPC_CHECKBOX]
+   app.GetGameManager()->RemoveComponent( *mNetworkComponent );
+[!endif]
+[!if INPUT_CHECKBOX]
+   app.GetGameManager()->RemoveComponent( *mInputComponent );
+[!endif]
 }
