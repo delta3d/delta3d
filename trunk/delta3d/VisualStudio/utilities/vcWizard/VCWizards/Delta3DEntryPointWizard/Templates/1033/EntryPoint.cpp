@@ -1,4 +1,8 @@
 #include "[!output PROJECT_NAME]EntryPoint.h"
+#include <dtGame/gameapplication.h>
+[!if DMP_CHECKBOX]
+#include <dtGame/defaultmessageprocessor.h>
+[!endif]
 
 extern "C" ENTRY_POINT_EXPORT dtGame::GameEntryPoint* CreateGameEntryPoint()
 {
@@ -27,6 +31,11 @@ void [!output PROJECT_NAME]EntryPoint::Initialize( dtGame::GameApplication& app,
 
 void [!output PROJECT_NAME]EntryPoint::OnStartup( dtGame::GameApplication &app )
 {
+   //Create and add GMComponents
+[!if DMP_CHECKBOX]
+   dtGame::DefaultMessageProcessor *messageProc = new dtGame::DefaultMessageProcessor();
+   app.GetGameManager()->AddComponent( *messageProc, dtGame::GameManager::ComponentPriority::HIGHEST);
+[!endif]
 
 }
 

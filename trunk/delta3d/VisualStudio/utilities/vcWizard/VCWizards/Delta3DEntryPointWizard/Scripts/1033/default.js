@@ -111,6 +111,7 @@ function AddConfig(proj, strProjectName)
 
 		// Add linker settings
 		var LinkTool = config.Tools('VCLinkerTool');
+		LinkTool.AdditionalDependencies = "dtCoreD.lib dtGameD.lib osgD.lib";
 		LinkTool.AdditionalLibraryDirectories = '$(DELTA_LIB)';
 		LinkTool.OutputFile = '$(OutDir)\\' + strProjectName + 'EntryPointD.dll';
 		LinkTool.GenerateDebugInformation = true;
@@ -129,6 +130,7 @@ function AddConfig(proj, strProjectName)
 
 		//Add linker settings
 		var LinkTool = config.Tools('VCLinkerTool');
+		LinkTool.AdditionalDependencies = "dtCore.lib dtGame.lib osg.lib";
 		LinkTool.AdditionalLibraryDirectories = '$(DELTA_LIB)';
 		LinkTool.OutputFile = '$(OutDir)\\' + strProjectName + 'EntryPoint.dll';
 
