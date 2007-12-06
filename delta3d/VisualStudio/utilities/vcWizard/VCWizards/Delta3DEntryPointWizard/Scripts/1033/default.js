@@ -200,6 +200,12 @@ function GetTargetName(strName, strProjectName)
 		
 		if (strName == 'EntryPoint.cpp')
 		    strTarget = strProjectName +'EntryPoint.cpp';
+		    
+		if (strName == 'Input.h')
+		   strTarget = strProjectName + 'Input.h';
+		   
+		if (strName == 'Input.cpp')
+		   strTarget = strProjectName + 'Input.cpp';
 
 		return strTarget; 
 	}
