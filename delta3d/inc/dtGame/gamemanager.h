@@ -575,7 +575,8 @@ namespace dtGame
           *                      added to the scene.  This should only be true for debugging purposes.
           * @param enableDatabasePaging optional parameter to enable database paging for paged LODs usually used in
           *                             large terrain databases.  Passing false will not disable paging if it is already enabled.
-          * @throws ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION if an actor is flagged as a game actor, but is not a GameActorProxy.
+          * @throws ExceptionEnum::INVALID_PARAMETER if no map name is supplied.
+          * @throws ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION if map change is already in progress.
           */
          void ChangeMap(const std::string &mapName, bool addBillboards = false, bool enableDatabasePaging = true);
 
@@ -588,7 +589,8 @@ namespace dtGame
           *                      added to the scene.  This should only be true for debugging purposes.
           * @param enableDatabasePaging optional parameter to enable database paging for paged LODs usually used in
           *                             large terrain databases.  Passing false will not disable paging if it is already enabled.
-          * @throws ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION if an actor is flagged as a game actor, but is not a GameActorProxy.
+          * @throws ExceptionEnum::INVALID_PARAMETER if no map name is supplied.
+          * @throws ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION if map change is already in progress.
           */
          void ChangeMapSet(const NameVector& mapNames, bool addBillboards = false, bool enableDatabasePaging = true);
 
