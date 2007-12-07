@@ -58,12 +58,13 @@ namespace dtCore
         */
       enum SystemStages
       {
-         STAGE_NONE     = 0x00000000, ///<No update loop stages are performed
-         STAGE_PREFRAME = 0x00000001, ///<"preframe" message
-         STAGE_FRAME    = 0x00000002, ///<"frame" message, plus camera rendering
-         STAGE_POSTFRAME= 0x00000004, ///<"postframe" message
-         STAGE_CONFIG   = 0X00000008, ///<"config" message, plus render a camera frame
-         STAGES_DEFAULT  = STAGE_PREFRAME|STAGE_FRAME|STAGE_POSTFRAME|STAGE_CONFIG
+         STAGE_NONE        = 0x00000000, ///<No update loop stages are performed
+         STAGE_PREFRAME    = 0x00000001, ///<"preframe" message
+         STAGE_FRAMESYNCH  = 0x00000002,
+         STAGE_FRAME       = 0x00000004, ///<"frame" message, plus camera rendering
+         STAGE_POSTFRAME   = 0x00000008, ///<"postframe" message
+         STAGE_CONFIG      = 0X00000010, ///<"config" message, plus render a camera frame
+         STAGES_DEFAULT  = STAGE_FRAMESYNCH|STAGE_PREFRAME|STAGE_FRAME|STAGE_POSTFRAME|STAGE_CONFIG
       };
    
       typedef unsigned int SystemStageFlags;
@@ -216,6 +217,12 @@ namespace dtCore
       double mSimulationTime;
       double mTimeScale;
       double mDt;
+
+      /**
+       * @param deltaSimTime The change in simulation time is seconds.
+       * @param deltaRealTime The change in real time in seconds.
+       */
+      void FrameSynch(const double deltaSimTime, const double deltaRealTime);
 
       /**
        * Stuff to do before the frame. Message: "preframe", delta real and time in seconds

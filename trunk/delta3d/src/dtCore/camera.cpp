@@ -207,9 +207,9 @@ namespace dtCore
    void Camera::OnMessage( MessageData* data )
    {
 
-      if( data->message == "preframe" )
+      if( data->message == "framesynch" )
       {
-         PreFrame( *static_cast<const double*>(data->userData) );
+         FrameSynch( *static_cast<const double*>(data->userData) );
       }
    }
    
@@ -235,7 +235,7 @@ namespace dtCore
     * @param lastCamera Pass true if this is the last camera drawn this frame,
     * otherwise false.
     */
-   void Camera::PreFrame( const double /*deltaFrameTime*/ )
+   void Camera::FrameSynch( const double /*deltaFrameTime*/ )
    {
 //      // Only do our normal Camera stuff if it is enabled.
 //      // If Producer::Camera::frame is never called, our cull callback
