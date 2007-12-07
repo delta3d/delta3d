@@ -201,8 +201,8 @@ namespace dtCore
       
    protected:
       
-      ///Override for preframe
-      virtual void PreFrame( const double deltaFrameTime );
+      ///Override for FrameSynch
+      virtual void FrameSynch( const double deltaFrameTime );
 
       /// Base override to receive messages.
       /// This method should be called from derived classes
