@@ -146,16 +146,16 @@ class CameraTests : public CPPUNIT_NS::TestFixture
          double farSet = 10000.0;
          mCamera->SetPerspective(vfovSet, aspectSet, nearSet, farSet);
 
-         double vfov, aspectRatio, near, far;
-         mCamera->GetPerspective(vfov, aspectRatio, near, far);
+         double vfov, aspectRatio, nearClip, farClip;
+         mCamera->GetPerspective(vfov, aspectRatio, nearClip, farClip);
          CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The vertical field of view should be the same as the one set", 
                   vfovSet, vfov, 0.01);
          CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The aspect ratio should be the same as the one set", 
                   aspectSet, aspectRatio, 0.01);
          CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The near plane should be the same as the one set", 
-                  nearSet, near, 0.01);
+                  nearSet, nearClip, 0.01);
          CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The far plane should be the same as the one set", 
-                  farSet, far, 0.01);
+                  farSet, farClip, 0.01);
          
          CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The aspect ratio method should return the one set", 
                   aspectSet, mCamera->GetAspectRatio(), 0.01);
@@ -174,8 +174,8 @@ class CameraTests : public CPPUNIT_NS::TestFixture
          double farSet = 10000.0;
          mCamera->SetFrustum(leftSet, rightSet, bottomSet, topSet, nearSet, farSet);
 
-         double left, right, bottom, top, near, far;
-         mCamera->GetFrustum(left, right, bottom, top, near, far);
+         double left, right, bottom, top, nearClip, farClip;
+         mCamera->GetFrustum(left, right, bottom, top, nearClip, farClip);
          CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The left plane should be the same as the one set", 
                   leftSet, left, 0.01);
          CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The right plane should be the same as the one set", 
@@ -185,9 +185,9 @@ class CameraTests : public CPPUNIT_NS::TestFixture
          CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The bottom plane should be the same as the one set", 
                   bottomSet, bottom, 0.01);
          CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The near plane should be the same as the one set", 
-                  nearSet, near, 0.01);
+                  nearSet, nearClip, 0.01);
          CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The far plane should be the same as the one set", 
-                  farSet, far, 0.01);
+                  farSet, farClip, 0.01);
       }
 
    private:
