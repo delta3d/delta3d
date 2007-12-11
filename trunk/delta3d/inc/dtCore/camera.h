@@ -120,14 +120,19 @@ namespace dtCore
        */
       const std::string TakeScreenShot(const std::string& namePrefix);
 
-      ///Set Perspective of camera lens
-      void SetPerspective( double hfov, double vfov, double nearClip, double farClip );
+      ///Set Perspective of camera
+      void SetPerspective( double hfov, double aspectRatio, double nearClip, double farClip );
 
       void GetPerspective(double &hfov, double &vfov, double &nearClip, double &farClip);
       ///Set view frustrum of camera lens
       void SetFrustum(  double left, double right,
                         double bottom, double top,
                         double nearClip, double farClip );
+
+      ///Get view frustrum in the projection matrix
+      void GetFrustum(  double& left, double& right,
+                        double& bottom, double& top,
+                        double& nearClip, double& farClip );
 
       ///set orthographic mode
       void SetOrtho(    double left, double right,
@@ -152,7 +157,7 @@ namespace dtCore
       { return (mOsgCamera->getProjectionResizePolicy()); }
 
       ///takes a number from 0-1 to set as the aspect ratio
-      //void SetAspectRatio( double aspectRatio );
+      void SetAspectRatio( double aspectRatio );
 
       ///@return aspect ratio
       double GetAspectRatio();

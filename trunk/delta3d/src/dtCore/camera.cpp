@@ -114,6 +114,7 @@ namespace dtCore
    }
 
 
+   ////////////////////////////////////////// 
    Camera::Camera(dtCore::View * view, const std::string& name)
       :  Transformable(name),
          mFrameBin(0),
@@ -192,11 +193,13 @@ namespace dtCore
       return outputName;
    }
 
+   ////////////////////////////////////////// 
    void Camera::SetEnabled( bool enabled )
    {
-      mEnable = enabled;      
+      mEnable = enabled;
    }
 
+   ////////////////////////////////////////// 
    bool Camera::GetEnabled() const
    {
        return (mEnable);
@@ -204,6 +207,7 @@ namespace dtCore
 //       TODO manage the enable disable of Camera or push this in View
    }
 
+   ////////////////////////////////////////// 
    void Camera::OnMessage( MessageData* data )
    {
 
@@ -213,7 +217,8 @@ namespace dtCore
       }
    }
    
-    void Camera::SetNearFarCullingMode( AutoNearFarCullingMode mode )
+   ////////////////////////////////////////// 
+   void Camera::SetNearFarCullingMode( AutoNearFarCullingMode mode )
    {
       osg::CullSettings::ComputeNearFarMode osgMode;
 
@@ -229,12 +234,7 @@ namespace dtCore
       GetOSGCamera()->setComputeNearFarMode(osgMode);
    }
 
-   /*!
-    * Render the next frame.  This will update the scene graph, cull then geometry,
-    * then draw the geometry.
-    * @param lastCamera Pass true if this is the last camera drawn this frame,
-    * otherwise false.
-    */
+   ////////////////////////////////////////// 
    void Camera::FrameSynch( const double /*deltaFrameTime*/ )
    {
 //      // Only do our normal Camera stuff if it is enabled.
@@ -341,52 +341,39 @@ namespace dtCore
    }
 
 
-   void Camera::SetPerspective(double hfov, double vfov, double nearClip, double farClip)
+   ////////////////////////////////////////// 
+   void Camera::SetPerspective(double vfov, double aspectRatio, double nearClip, double farClip)
    {
-      double ratio = 0;
-      
-      if (!mWindow.valid() || !mWindow->GetOsgViewerGraphicsWindow())
-      {
-         double height = osg::DisplaySettings::instance()->getScreenHeight();
-         double width = osg::DisplaySettings::instance()->getScreenWidth();
-         ratio = width / height;
-      }
-      else
-      {
-         const osg::GraphicsContext::Traits * traits = mWindow->GetOsgViewerGraphicsWindow()->getTraits();
-         ratio = traits->width / traits->height;
-      }
-      
-      mOsgCamera->setProjectionMatrixAsPerspective(hfov, ratio , nearClip, farClip);
+      mOsgCamera->setProjectionMatrixAsPerspective(vfov, aspectRatio , nearClip, farClip);
    }
 
-   void Camera::GetPerspective(double &hfov, double &vfov, double &nearClip, double &farClip)
+   ////////////////////////////////////////// 
+   void Camera::GetPerspective(double &vfov, double &aspectRatio, double &nearClip, double &farClip)
    {
-      if (!mWindow.valid() || !mWindow->GetOsgViewerGraphicsWindow())
-      {
-         hfov = osg::DisplaySettings::instance()->getScreenHeight();
-         vfov = osg::DisplaySettings::instance()->getScreenWidth();
-      }
-      else
-      {
-         const osg::GraphicsContext::Traits * traits = mWindow->GetOsgViewerGraphicsWindow()->getTraits();
-         hfov = traits->height;
-         vfov = traits->width;
-      }
-
-      //mOsgCamera->setProjectionMatrixAsPerspective(hfov, ratio , nearClip, farClip);
+      mOsgCamera->getProjectionMatrixAsPerspective(vfov, aspectRatio, nearClip, farClip);
    }
 
-   void Camera::SetFrustum(double left, double right, double bottom, double top, double nearClip, double farClip)
+   ////////////////////////////////////////// 
+   void Camera::SetFrustum(double left, double right, double bottom, double top, 
+            double nearClip, double farClip)
    {
       mOsgCamera->setProjectionMatrixAsFrustum(left, right, bottom, top, nearClip, farClip);
    }
 
+   ////////////////////////////////////////// 
+   void Camera::GetFrustum(double& left, double& right, double& bottom, double& top, 
+            double& nearClip, double& farClip)
+   {
+      mOsgCamera->getProjectionMatrixAsFrustum(left, right, bottom, top, nearClip, farClip);
+   }
+
+   ////////////////////////////////////////// 
    void Camera::SetOrtho( double left, double right, double bottom, double top, double nearClip, double farClip )
    {
       mOsgCamera->setProjectionMatrixAsOrtho(left, right, bottom, top, nearClip, farClip);
    }
 
+   ////////////////////////////////////////// 
    void Camera::SetClearColor(float r, float g, float b, float a)
    {
       osg::Vec4 color(r, g, b, a);
@@ -394,11 +381,13 @@ namespace dtCore
       SetClearColor(color);
    }
 
+   ////////////////////////////////////////// 
    void Camera::SetClearColor(const osg::Vec4& color)
    {
        mOsgCamera->setClearColor(color);
    }
 
+   ////////////////////////////////////////// 
    void Camera::GetClearColor( float& r, float& g, float& b, float& a )
    {
       osg::Vec4 color = mOsgCamera->getClearColor();
@@ -409,16 +398,19 @@ namespace dtCore
       a = color[3];
    }
    
+   ////////////////////////////////////////// 
    void Camera::GetClearColor(osg::Vec4& color)
    {
       color = mOsgCamera->getClearColor();
    }
 
+   ////////////////////////////////////////// 
    void Camera::SetLODScale(float newScale)
    {
       GetOSGCamera()->setLODScale(newScale);
    }
 
+   ////////////////////////////////////////// 
    float Camera::GetLODScale() const
    {
       return GetOSGCamera()->getLODScale();
@@ -436,39 +428,39 @@ namespace dtCore
 //      return t;
 //   }
 //
+   ////////////////////////////////////////// 
    float Camera::GetHorizontalFov()
    {
-      double hfov, vfov, nearClip, farClip;
-      GetPerspective(hfov, vfov, nearClip, farClip);
-      return float(hfov);
+      double vfov, aspectRatio, nearClip, farClip;
+      GetPerspective(vfov, aspectRatio, nearClip, farClip);
+      return float(vfov * aspectRatio);
    }
 
+   //////////////////////////////////////////
    float Camera::GetVerticalFov()
    {
-      double hfov, vfov, nearClip, farClip;
-      GetPerspective(hfov, vfov, nearClip, farClip);
+      double vfov, aspectRatio, nearClip, farClip;
+      GetPerspective(vfov, aspectRatio, nearClip, farClip);
       return float(vfov);
    }
 
 
-//   bool Camera::GetAutoAspect()
-//   {
-//      bool ar;
-//      ar = mCamera->getLens()->getAutoAspect();
-//      return ar;
-//   }
-//
-//   void Camera::SetAspectRatio( double aspectRatio )
-//   {
-//   	mCamera->getLens()->setAspectRatio(aspectRatio);
-//   }
+   //////////////////////////////////////////
+   void Camera::SetAspectRatio( double aspectRatio )
+   {
+      double vfov, oldAspectRatio, nearClip, farClip;
+      GetPerspective(vfov, oldAspectRatio, nearClip, farClip);
+      SetPerspective(vfov, aspectRatio, nearClip, farClip);
+   }
 
+   //////////////////////////////////////////
    double Camera::GetAspectRatio()
    {
-      double hfov, vfov, nearClip, farClip;
-      GetPerspective(hfov, vfov, nearClip, farClip);
-      return hfov / vfov;
+      double vfov, aspectRatio, nearClip, farClip;
+      GetPerspective(vfov, aspectRatio, nearClip, farClip);
+      return aspectRatio;
    }
+
    //////////////////////////////////////////
    void Camera::AddedToScene( Scene* scene )
    {
@@ -476,9 +468,7 @@ namespace dtCore
 
       Transformable::AddedToScene(scene);
    }
-   
-   
-   
+
    //////////////////////////////////////////
    void Camera::SetWindow( DeltaWin* win )
    {
@@ -488,7 +478,8 @@ namespace dtCore
 
       OnWindowChanged();
    }
-   
+
+   ////////////////////////////////////////// 
    void Camera::OnWindowChanged()
    {
       if (mWindow.valid())

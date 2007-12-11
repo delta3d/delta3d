@@ -51,6 +51,8 @@ class CameraTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST_SUITE(CameraTests);
    
          CPPUNIT_TEST(TestSaveScreenShot);
+         CPPUNIT_TEST(TestPerspective);
+         CPPUNIT_TEST(TestFrustum);
    
       CPPUNIT_TEST_SUITE_END();
    
@@ -69,8 +71,8 @@ class CameraTests : public CPPUNIT_NS::TestFixture
             mWin->SetPosition(0, 0, 50, 50);
             
             mApp->Config();
-                        
-            
+
+
             dtCore::System::GetInstance().Config();
 
             dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
@@ -127,15 +129,67 @@ class CameraTests : public CPPUNIT_NS::TestFixture
          
          CPPUNIT_ASSERT_MESSAGE(result + " should not exist yet.", !fileUtils.FileExists(result));
          
-         dtCore::System::GetInstance().Step();      
+         dtCore::System::GetInstance().Step();
          CPPUNIT_ASSERT_MESSAGE(result + " should exist.  Check for the jpeg osg plugin.", fileUtils.FileExists(result));
    
          fileUtils.DirDelete(SCREEN_SHOT_DIR, true);
 
-         dtCore::System::GetInstance().Step();      
+         dtCore::System::GetInstance().Step();
          CPPUNIT_ASSERT_MESSAGE("A screenshot should not have been written again.", !fileUtils.FileExists(result));
       }
-   
+
+      void TestPerspective()
+      {
+         double vfovSet = 60.0;
+         double aspectSet = 1.33;
+         double nearSet = 1.0;
+         double farSet = 10000.0;
+         mCamera->SetPerspective(vfovSet, aspectSet, nearSet, farSet);
+
+         double vfov, aspectRatio, near, far;
+         mCamera->GetPerspective(vfov, aspectRatio, near, far);
+         CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The vertical field of view should be the same as the one set", 
+                  vfovSet, vfov, 0.01);
+         CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The aspect ratio should be the same as the one set", 
+                  aspectSet, aspectRatio, 0.01);
+         CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The near plane should be the same as the one set", 
+                  nearSet, near, 0.01);
+         CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The far plane should be the same as the one set", 
+                  farSet, far, 0.01);
+         
+         CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The aspect ratio method should return the one set", 
+                  aspectSet, mCamera->GetAspectRatio(), 0.01);
+
+         CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The vertical fov method should return the one set", 
+                  vfovSet, mCamera->GetVerticalFov(), 0.01);
+         CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The horizontal fov method should return vertical fov * aspectRatio.", 
+                  vfovSet * aspectSet, mCamera->GetHorizontalFov(), 0.01);
+      }
+
+      void TestFrustum()
+      {
+         double leftSet = 0.8, rightSet = -0.8;
+         double topSet = 0.8, bottomSet = -0.8;
+         double nearSet = 1.0;
+         double farSet = 10000.0;
+         mCamera->SetFrustum(leftSet, rightSet, bottomSet, topSet, nearSet, farSet);
+
+         double left, right, bottom, top, near, far;
+         mCamera->GetFrustum(left, right, bottom, top, near, far);
+         CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The left plane should be the same as the one set", 
+                  leftSet, left, 0.01);
+         CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The right plane should be the same as the one set", 
+                  rightSet, right, 0.01);
+         CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The top plane should be the same as the one set", 
+                  topSet, top, 0.01);
+         CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The bottom plane should be the same as the one set", 
+                  bottomSet, bottom, 0.01);
+         CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The near plane should be the same as the one set", 
+                  nearSet, near, 0.01);
+         CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The far plane should be the same as the one set", 
+                  farSet, far, 0.01);
+      }
+
    private:
       static const std::string SCREEN_SHOT_DIR;
       
