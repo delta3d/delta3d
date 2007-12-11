@@ -107,6 +107,20 @@ bool TestAnimInput::HandleKeyPressed(const dtCore::Keyboard *keyBoard, int key)
             }
             return false;
          }
+      case osgGA::GUIEventAdapter::KEY_Page_Up:
+         {            
+            dtCore::Camera* camera = GetGameManager()->GetApplication().GetCamera();
+            float oldLODScale = camera->GetLODScale();
+            camera->SetLODScale(oldLODScale * 1.1);
+            return false;
+         }
+      case osgGA::GUIEventAdapter::KEY_Page_Down:
+         {            
+            dtCore::Camera* camera = GetGameManager()->GetApplication().GetCamera();
+            float oldLODScale = camera->GetLODScale();
+            camera->SetLODScale(oldLODScale / 1.1);
+            return false;
+         }
       default:
          break;
    };

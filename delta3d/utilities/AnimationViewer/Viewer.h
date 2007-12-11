@@ -11,6 +11,7 @@
 #include <vector>
 
 class QColor;
+class OSGAdapterWidget;
 
 namespace dtCore
 {
@@ -34,7 +35,7 @@ class Viewer : public QObject, public dtABC::Application
    Q_OBJECT
 
 public:
-	Viewer();
+	Viewer(OSGAdapterWidget& widget);
 	~Viewer();
 
    virtual void Config();
@@ -83,6 +84,8 @@ private:
    dtCore::RefPtr<osg::Group> mWireDecorator;
    dtCore::RefPtr<osg::Group> mShadeDecorator;
 
+   OSGAdapterWidget* mGLWidget;
+   
    std::vector<int> mMeshesToAttach;
    std::vector<int> mMeshesToDetach;
 

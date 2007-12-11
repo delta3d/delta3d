@@ -15,7 +15,6 @@
 
 int main(int argc, char *argv[]) 
 {
-
    QApplication qapp(argc, argv);
 
    MainWindow win;
@@ -28,10 +27,11 @@ int main(int argc, char *argv[])
 
    thread->SetMainWindow(&win);
    thread->start();
+   //thread->run();
 
    qapp.exec();
 
-   //thread->quit();
+   thread->quit();
    thread->exit();
 
    while (thread->isRunning())
@@ -41,5 +41,5 @@ int main(int argc, char *argv[])
 
    delete thread;
 
-	return EXIT_SUCCESS;
+   return EXIT_SUCCESS;
 }
