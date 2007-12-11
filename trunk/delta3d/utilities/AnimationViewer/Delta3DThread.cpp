@@ -3,10 +3,55 @@
 #include "Viewer.h"
 #include <dtCore/system.h>
 
+#include "OSGAdapterWidget.h"
+#include <osgViewer/GraphicsWindow>
+
+class EmbeddedWindowSystemWrapper: public osg::GraphicsContext::WindowingSystemInterface
+{
+   public:
+      EmbeddedWindowSystemWrapper(osg::GraphicsContext::WindowingSystemInterface& oldInterface):
+         mInterface(&oldInterface)
+      {
+      }
+      
+      virtual unsigned int getNumScreens(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier = 
+         osg::GraphicsContext::ScreenIdentifier())
+      {
+         return mInterface->getNumScreens(screenIdentifier);
+      }
+
+      virtual void getScreenResolution(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier, 
+               unsigned int& width, unsigned int& height)
+      {
+         mInterface->getScreenResolution(screenIdentifier, width, height);
+      }
+
+      virtual bool setScreenResolution(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier, 
+               unsigned int width, unsigned int height)
+      {
+         return mInterface->setScreenResolution(screenIdentifier, width, height);
+      }
+
+      virtual bool setScreenRefreshRate(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier,
+               double refreshRate)
+      {
+         return mInterface->setScreenRefreshRate(screenIdentifier, refreshRate);
+      }
+
+      virtual osg::GraphicsContext* createGraphicsContext(osg::GraphicsContext::Traits* traits)
+      {
+         return new osgViewer::GraphicsWindowEmbedded(traits);
+      }
+
+   protected:
+      virtual ~EmbeddedWindowSystemWrapper() {};
+   private:
+      dtCore::RefPtr<osg::GraphicsContext::WindowingSystemInterface> mInterface;
+};
+
 Delta3DThread::Delta3DThread(QObject *parent):
 QThread(parent)
 {
-
 }
 
 Delta3DThread::~Delta3DThread()
@@ -20,34 +65,43 @@ Delta3DThread::~Delta3DThread()
 
 void Delta3DThread::run()
 {
-   dtCore::RefPtr<Viewer> viewer;
-   viewer = new Viewer();
-   viewer->Config();
+   osg::GraphicsContext::WindowingSystemInterface* winSys = osg::GraphicsContext::getWindowingSystemInterface();
 
-   connect(mWin, SIGNAL(FileToLoad(const QString&)), viewer.get(), SLOT(OnLoadCharFile(const QString&)) );
+   if (winSys != NULL)
+   {
+      osg::GraphicsContext::setWindowingSystemInterface(new EmbeddedWindowSystemWrapper(*winSys));
+   }
 
-   connect(viewer.get(), SIGNAL(AnimationLoaded(unsigned int,const QString &,unsigned int,unsigned int,float)),
+   OSGAdapterWidget* glWidget = new OSGAdapterWidget();
+   glWidget->show();
+
+   mViewer = new Viewer(*glWidget);
+   mViewer->Config();
+
+   connect(mWin, SIGNAL(FileToLoad(const QString&)), mViewer.get(), SLOT(OnLoadCharFile(const QString&)) );
+
+   connect(mViewer.get(), SIGNAL(AnimationLoaded(unsigned int,const QString &,unsigned int,unsigned int,float)),
                     mWin, SLOT(OnNewAnimation(unsigned int,const QString &,unsigned int,unsigned int,float)));
 
-   connect(viewer.get(), SIGNAL(MeshLoaded(int,const QString&)), mWin, SLOT(OnNewMesh(int,const QString&)));
+   connect(mViewer.get(), SIGNAL(MeshLoaded(int,const QString&)), mWin, SLOT(OnNewMesh(int,const QString&)));
 
-   connect(viewer.get(), SIGNAL(MaterialLoaded(int,const QString&,const QColor&,const QColor&,const QColor&,float )), 
+   connect(mViewer.get(), SIGNAL(MaterialLoaded(int,const QString&,const QColor&,const QColor&,const QColor&,float )), 
            mWin, SLOT(OnNewMaterial(int,const QString&,const QColor&,const QColor&,const QColor&,float)));
 
-   connect(mWin, SIGNAL(AttachMesh(int)), viewer.get(), SLOT(OnAttachMesh(int)));
-   connect(mWin, SIGNAL(DetachMesh(int)), viewer.get(), SLOT(OnDetachMesh(int)));
+   connect(mWin, SIGNAL(AttachMesh(int)), mViewer.get(), SLOT(OnAttachMesh(int)));
+   connect(mWin, SIGNAL(DetachMesh(int)), mViewer.get(), SLOT(OnDetachMesh(int)));
 
-   connect(viewer.get(), SIGNAL(ErrorOccured(const QString&)), mWin, SLOT(OnDisplayError(const QString&)) );
+   connect(mViewer.get(), SIGNAL(ErrorOccured(const QString&)), mWin, SLOT(OnDisplayError(const QString&)) );
 
-   connect(mWin, SIGNAL(StartAnimation(unsigned int,float,float)), viewer.get(), SLOT(OnStartAnimation(unsigned int,float,float)));
-   connect(mWin, SIGNAL(StopAnimation(unsigned int,float)), viewer.get(), SLOT(OnStopAnimation(unsigned int,float)));
-   connect(mWin, SIGNAL(StartAction(unsigned int,float,float)), viewer.get(), SLOT(OnStartAction(unsigned int,float,float)));
-   connect(mWin, SIGNAL(LOD_Changed(float)), viewer.get(), SLOT(OnLOD_Changed(float)));
-   connect(mWin, SIGNAL(SpeedChanged(float)), viewer.get(), SLOT(OnSpeedChanged(float)));
+   connect(mWin, SIGNAL(StartAnimation(unsigned int,float,float)), mViewer.get(), SLOT(OnStartAnimation(unsigned int,float,float)));
+   connect(mWin, SIGNAL(StopAnimation(unsigned int,float)), mViewer.get(), SLOT(OnStopAnimation(unsigned int,float)));
+   connect(mWin, SIGNAL(StartAction(unsigned int,float,float)), mViewer.get(), SLOT(OnStartAction(unsigned int,float,float)));
+   connect(mWin, SIGNAL(LOD_Changed(float)), mViewer.get(), SLOT(OnLOD_Changed(float)));
+   connect(mWin, SIGNAL(SpeedChanged(float)), mViewer.get(), SLOT(OnSpeedChanged(float)));
 
-   connect((QObject*)mWin->mShadedAction, SIGNAL(triggered()), viewer.get(), SLOT(OnSetShaded()));
-   connect((QObject*)mWin->mWireframeAction, SIGNAL(triggered()), viewer.get(), SLOT(OnSetWireframe()));
-   connect((QObject*)mWin->mShadedWireAction, SIGNAL(triggered()), viewer.get(), SLOT(OnSetShadedWireframe()));
+   connect((QObject*)mWin->mShadedAction, SIGNAL(triggered()), mViewer.get(), SLOT(OnSetShaded()));
+   connect((QObject*)mWin->mWireframeAction, SIGNAL(triggered()), mViewer.get(), SLOT(OnSetWireframe()));
+   connect((QObject*)mWin->mShadedWireAction, SIGNAL(triggered()), mViewer.get(), SLOT(OnSetShadedWireframe()));
 
 
    dtCore::System::GetInstance().Start();

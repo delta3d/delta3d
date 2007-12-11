@@ -14,6 +14,7 @@
 #include <dtCore/orbitmotionmodel.h>
 #include <dtCore/globals.h>
 #include <dtCore/light.h>
+#include <dtCore/deltawin.h>
 
 #include <dtAnim/characterfilehandler.h>
 #include <dtAnim/chardrawable.h>
@@ -36,14 +37,21 @@
 #include <osg/PolygonOffset>
 #include <osg/Material>
 
+#include "OSGAdapterWidget.h"
+
+#include <osgViewer/GraphicsWindow>
+#include <osgViewer/CompositeViewer>
+
 using namespace dtUtil;
 using namespace dtCore;
 using namespace dtAnim;
 
-Viewer::Viewer():
+Viewer::Viewer(OSGAdapterWidget& widget): mGLWidget(&widget),
    mDatabase(&Cal3DDatabase::GetInstance())
 {
-
+   mGLWidget->SetGraphicsWindow(GetWindow()->GetOsgViewerGraphicsWindow());
+   mGLWidget->GetGraphicsWindow().resized(0, 0, mGLWidget->width(), mGLWidget->height());
+   dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_DEBUG);
 }
 
 Viewer::~Viewer()
@@ -53,7 +61,7 @@ Viewer::~Viewer()
 
 void Viewer::timerEvent(QTimerEvent *event)
 {
-   dtCore::System::GetInstance().StepWindow();
+   mGLWidget->ThreadedUpdateGL();
 }
 
 osg::Geode* MakePlane()
@@ -70,6 +78,11 @@ osg::Geode* MakePlane()
 void Viewer::Config()
 {
    dtABC::Application::Config();
+   GetCompositeViewer()->setThreadingModel(osgViewer::CompositeViewer::SingleThreaded);
+   //osg::Camera* camera = GetCamera()->GetOSGCamera();
+   //camera->setViewport(new osg::Viewport(0,0,mGLWidget->width(),mGLWidget->height()));
+   //camera->setProjectionMatrixAsPerspective(30.0f, 
+   //         static_cast<double>(mGLWidget->width())/static_cast<double>(mGLWidget->height()), 1.0f, 10000.0f);
 
    //adjust the Camera position
    dtCore::Transform camPos;
@@ -104,7 +117,7 @@ void Viewer::Config()
 
 void Viewer::OnLoadCharFile( const QString &filename )
 {
-   LOG_DEBUG("loading file: " + filename.toStdString() );
+   LOG_DEBUG("Loading file: " + filename.toStdString() );
 
    QDir dir(filename);
    dir.cdUp();
@@ -158,6 +171,9 @@ void Viewer::OnLoadCharFile( const QString &filename )
    // set up the viewer's scene graph
    mShadeDecorator->addChild(mCharacter->GetNode());
    mWireDecorator->addChild(mCharacter->GetNode());
+   
+   mGLWidget->window()->setWindowTitle(filename);
+   
    dtCore::RefPtr<Cal3DModelWrapper> wrapper = mCharacter->GetCal3DWrapper();
 
    //get all the data for animations and tell the world
@@ -195,6 +211,8 @@ void Viewer::OnLoadCharFile( const QString &filename )
 
       emit MaterialLoaded(matID, nameToSend, diffColor, ambColor, specColor, shininess);
    }
+   
+   LOG_DEBUG("Done loading file: " + filename.toStdString() );
 }
 
 void Viewer::OnStartAnimation( unsigned int id, float weight, float delay )
@@ -268,7 +286,7 @@ void Viewer::OnSetShadedWireframe()
    GetScene()->GetSceneNode()->removeChild(mShadeDecorator.get());
 
    GetScene()->GetSceneNode()->addChild(mWireDecorator.get());
-   GetScene()->GetSceneNode()->addChild(mShadeDecorator.get());   
+   GetScene()->GetSceneNode()->addChild(mShadeDecorator.get());
 }
 
 void Viewer::InitShadeDecorator()

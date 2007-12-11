@@ -433,8 +433,8 @@ void ParticleSystem::SetupParticleLayers()
       searchingNode = newParticleSystemGroup->getChild(i);
       ParticleLayer layer;
       
-      if(dynamic_cast<osgParticle::ParticleSystemUpdater*>(searchingNode)!= NULL)
-      {
+      //if(dynamic_cast<osgParticle::ParticleSystemUpdater*>(searchingNode)!= NULL)
+      //{
          // This is when you import multiple osg files in one system. This wont be done in
          // delta3d since it was set up where you can only load in 1 per system. Which
          // makes sense. 
@@ -443,7 +443,7 @@ void ParticleSystem::SetupParticleLayers()
          // printf without a formatting string causes a warning on gcc. Why is this here
          // anyways??? -osb
          //printf("");
-      }
+      //}
 
       // See if this is the particle system of the geode
       osg::Geode *geode = dynamic_cast<osg::Geode*>(searchingNode);

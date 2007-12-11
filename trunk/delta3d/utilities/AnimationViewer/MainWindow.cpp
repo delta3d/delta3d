@@ -48,7 +48,7 @@ mMaterialView(NULL)
 
    mAnimListWidget = new AnimationTableWidget(this);
    mAnimListWidget->setColumnCount(5);
-   mAnimListWidget->setSelectionBehavior(QAbstractItemView::SelectRows);   
+   mAnimListWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
 
    connect(mAnimListWidget, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(OnAnimationClicked(QTableWidgetItem*)));
    connect(mAnimListWidget, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(OnItemChanged(QTableWidgetItem*)));

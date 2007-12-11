@@ -5,6 +5,7 @@
 #include <dtCore/refptr.h>
 
 class MainWindow;
+class Viewer;
 
 class Delta3DThread : public QThread
 {
@@ -13,9 +14,11 @@ public:
 	Delta3DThread(QObject *parent=0);
 	~Delta3DThread();
    void SetMainWindow(MainWindow *win) { mWin = win;}
-	
-protected:
    virtual void run();
+	
+   dtCore::RefPtr<Viewer> mViewer;
+   
+protected:
 
 private:
    MainWindow *mWin;   
