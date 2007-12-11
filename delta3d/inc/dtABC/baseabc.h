@@ -29,6 +29,7 @@
 #include <dtCore/refptr.h>      // for members
 #include <dtCore/camera.h>      // for accessor
 #include <dtCore/view.h>      // for accessor
+
 namespace dtDAL
 {
    class Map;
