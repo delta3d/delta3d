@@ -126,13 +126,13 @@ class DT_ABC_EXPORT BaseABC : public dtCore::Base
    protected:
    
       ///Override for preframe
-      virtual void PreFrame( const double deltaFrameTime ) = 0L;
+      virtual void PreFrame( const double deltaSimTime ) = 0L;
    
       ///Override for frame
-      virtual void Frame( const double deltaFrameTime ) = 0L;
+      virtual void Frame( const double deltaSimTime ) = 0L;
    
       ///Override for postframe
-      virtual void PostFrame( const double deltaFrameTime ) = 0L;
+      virtual void PostFrame( const double deltaSimTime ) = 0L;
    
       /// Base override to receive messages.
       /// This method should be called from derived classes
