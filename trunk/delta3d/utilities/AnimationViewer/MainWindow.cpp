@@ -24,12 +24,14 @@
 #include <QtGui/QTabWidget>
 #include <QtGui/QListWidget>
 #include <QtGui/QGraphicsScene>
-#include <QtGui/QGridLayout>
+#include <QtGui/QHBoxLayout>
 
 #include <QtGui/QStandardItemModel>
 #include <QtGui/QStandardItem>
 
 #include <QtGui/QGraphicsEllipseItem>
+
+#include "OSGAdapterWidget.h"
 
 #include <cassert>
 
@@ -39,9 +41,10 @@ mLoadCharAct(NULL),
 mAnimListWidget(NULL),
 mMeshListWidget(NULL),
 mMaterialModel(NULL),
-mMaterialView(NULL)
+mMaterialView(NULL),
+mGLWidget(NULL)
 {
-   resize(640, 300);
+   resize(640, 700);
 
    dtAnim::AnimNodeBuilder& nodeBuilder = dtAnim::Cal3DDatabase::GetInstance().GetNodeBuilder();
    nodeBuilder.SetCreate(dtAnim::AnimNodeBuilder::CreateFunc(&nodeBuilder, &dtAnim::AnimNodeBuilder::CreateSoftware));
@@ -73,7 +76,7 @@ mMaterialView(NULL)
 
    CreateActions();
    CreateMenus();
-   (void)statusBar();
+   statusBar();
    CreateToolbars();
    //CreateTrackEditor(); 
 
@@ -83,7 +86,21 @@ mMaterialView(NULL)
    mTabs->addTab(mMaterialView, tr("Materials"));
    //mTabs->addTab(mTrackViewer, tr("Tracks"));   
 
-   setCentralWidget(mTabs);
+   QWidget* glParent = new QWidget(this);
+
+   mGLWidget = new dtQt::OSGAdapterWidget(true, glParent);
+
+   QHBoxLayout* hbLayout = new QHBoxLayout(glParent);
+   hbLayout->setMargin(0);
+   glParent->setLayout(hbLayout);
+   hbLayout->addWidget(mGLWidget);
+   setCentralWidget(glParent);
+
+   QDockWidget* tabsDockWidget = new QDockWidget();
+   tabsDockWidget->setWidget(mTabs);
+
+   addDockWidget(Qt::BottomDockWidgetArea, tabsDockWidget);
+
 }
 
 MainWindow::~MainWindow()

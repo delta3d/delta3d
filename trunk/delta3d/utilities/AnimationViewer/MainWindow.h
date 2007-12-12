@@ -18,14 +18,21 @@ class QTableView;
 class TrackView;
 class TrackScene;
 
+namespace dtQt
+{
+   class OSGAdapterWidget; 
+}
+
 class MainWindow : public QMainWindow
 {
    friend class Delta3DThread;
    Q_OBJECT
 public:
-	MainWindow();
-	~MainWindow();
+   MainWindow();
+   ~MainWindow();
 
+   dtQt::OSGAdapterWidget* GetGLWidget() { return mGLWidget; }
+   
 signals:
    void FileToLoad(const QString&);
    void StartAnimation(unsigned int, float, float);
@@ -91,6 +98,8 @@ private:
    QStandardItemModel   *mMaterialModel; ///<Model for the character's materials
    QTableView           *mMaterialView;  ///<View for the character's materials
 
+   dtQt::OSGAdapterWidget* mGLWidget;
+   
 private slots:
    void OnOpenCharFile();
    void OpenRecentFile();

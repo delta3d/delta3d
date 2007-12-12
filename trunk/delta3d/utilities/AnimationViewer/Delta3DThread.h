@@ -21,6 +21,6 @@ public:
 protected:
 
 private:
-   MainWindow *mWin;   
+   MainWindow *mWin;
 };
 #endif // Delta3DThread_h__
