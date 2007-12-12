@@ -31,7 +31,7 @@ namespace dtUtil
          virtual void GetTransform(Transform& xform, CoordSysEnum cs = ABS_CS) const;
          //virtual void GetTransform(Transform* xform, CoordSysEnum cs = ABS_CS) const;
          private:
-         BREAK_OVERRIDE(SetTransform(const Transform*, CoordSysEnum))
+         BREAK_OVERRIDE(GetTransform(const Transform*, CoordSysEnum))
       @endcode
     */
    struct BreakOverride
