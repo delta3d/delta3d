@@ -15,6 +15,10 @@
 #include <osgViewer/View>
 #ifdef DELTA_WIN32
 #include <osgViewer/api/Win32/GraphicsWindowWin32>
+#elif defined(__APPLE__)
+#include <osgViewer/api/Carbon/GraphicsWindowCarbon>
+#else
+#include <osgViewer/api/X11/GraphicsWindowX11>
 #endif
 #include <algorithm>
 
@@ -291,32 +295,36 @@ bool Mouse::ButtonUp(float x, float y, MouseButton button)
 
 bool Mouse::GetHasFocus()
 {
-   //if(mKeyboardMouse.valid())
+   DeltaWin *win = mView->GetCamera()->GetWindow();
+#if defined(__APPLE__)
+   
+   osgViewer::GraphicsWindowCarbon *carbon = 
+      dynamic_cast<osgViewer::GraphicsWindowCarbon*>(win->GetOsgViewerGraphicsWindow());
+   if (carbon != NULL)
+      return IsWindowActive(carbon->getNativeWindowRef());
+   
+#elif defined(DELTA_WIN32)
+   
+   osgViewer::GraphicsWindowWin32 *win32 = 
+      dynamic_cast<osgViewer::GraphicsWindowWin32*>(win->GetOsgViewerGraphicsWindow());
+   if(win32 != NULL)
    {
-//#if defined(__APPLE__)
-//     return IsWindowActive(mKeyboardMouse->getRenderSurface()->getWindow());
-#if defined(DELTA_WIN32)
-      //return mKeyboardMouse->getRenderSurface()->getWindow() == GetForegroundWindow();
-      DeltaWin *win = mView->GetCamera()->GetWindow();
-      
-      osgViewer::GraphicsWindowWin32 *win32 = 
-         static_cast<osgViewer::GraphicsWindowWin32*>(win->GetOsgViewerGraphicsWindow());
-      if(win32 == NULL)
-      {
-         LOG_ERROR("The GraphicsWindow in the _WIN32_IMPLEMENTATION is not a osg.GraphicsWindowWin32");
-         return false;
-      }
       return win32->getHWND() == GetForegroundWindow();
-//#else
-//      Producer::Display* display = mKeyboardMouse->getRenderSurface()->getDisplay();
-//      Producer::Window windowId = 0;
-//      int focusType = 0;
-//      XGetInputFocus(display, &windowId, &focusType);
-//      return mKeyboardMouse->getRenderSurface()->getWindow() == windowId;
-#endif
    }
-  //todo- add implementation for linux and mac
-  //return true;
-
-   return false;
+   
+#else
+   
+   osgViewer::GraphicsWindowX11 *x11 = 
+      dynamic_cast<osgViewer::GraphicsWindowX11*>(win->GetOsgViewerGraphicsWindow());
+   if (x11 != NULL)
+   {
+      Display* display = x11->getDisplay();
+      Window windowId = 0;
+      int focusType = 0;
+      XGetInputFocus(display, &windowId, &focusType);
+      return x11->getWindow() == windowId;
+   }
+#endif
+   LOG_DEBUG("The GraphicsWindow is not an known type, unable to tell if the window has mouse focus");
+   return true;
 }
