@@ -79,7 +79,7 @@ Application::Application(const std::string& configFilename)
 ///////////////////////////////////////////////////////////////////////////////
 Application::~Application()
 {  
-   DeregisterInstance(this);   
+   DeregisterInstance(this);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -89,26 +89,18 @@ void Application::Run()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void Application::PreFrame( const double deltaFrameTime )
+void Application::PreFrame( const double deltaSimTime )
 {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void Application::Frame( const double deltaFrameTime )
+void Application::Frame( const double deltaSimTime )
 {
-   if(!dtCore::System::GetInstance().GetPause() )
-   {
-      mCompositeViewer->frame();
-   }
-   else
-   {
-      mCompositeViewer->eventTraversal();
-   }
-   
+   mCompositeViewer->frame(deltaSimTime);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void Application::PostFrame( const double deltaFrameTime )
+void Application::PostFrame( const double deltaSimTime )
 {
 }
 

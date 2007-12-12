@@ -135,6 +135,8 @@ namespace dtCore
       if( mPaused )
       {
          Pause(mDt);
+         FrameSynch(0.0, mDt);
+         Frame(0.0, mDt);
       }
       else
       {
