@@ -33,7 +33,6 @@
 #include <dtDAL/project.h>
 #include <dtDAL/map.h>
 #include <dtDAL/librarymanager.h>
-#include <dtDAL/gameeventmanager.h>
 
 #include <dtCore/system.h>
 #include <dtCore/camera.h>
