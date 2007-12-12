@@ -37,8 +37,6 @@
 #include <osg/PolygonOffset>
 #include <osg/Material>
 
-#include "OSGAdapterWidget.h"
-
 #include <osgViewer/GraphicsWindow>
 #include <osgViewer/CompositeViewer>
 
@@ -46,22 +44,14 @@ using namespace dtUtil;
 using namespace dtCore;
 using namespace dtAnim;
 
-Viewer::Viewer(OSGAdapterWidget& widget): mGLWidget(&widget),
+Viewer::Viewer(): 
    mDatabase(&Cal3DDatabase::GetInstance())
 {
-   mGLWidget->SetGraphicsWindow(GetWindow()->GetOsgViewerGraphicsWindow());
-   mGLWidget->GetGraphicsWindow().resized(0, 0, mGLWidget->width(), mGLWidget->height());
    dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_DEBUG);
 }
 
 Viewer::~Viewer()
 {
-   mTimer.stop();
-}
-
-void Viewer::timerEvent(QTimerEvent *event)
-{
-   mGLWidget->ThreadedUpdateGL();
 }
 
 osg::Geode* MakePlane()
@@ -111,8 +101,6 @@ void Viewer::Config()
    OnSetShaded();
 
    Log::GetInstance().SetLogLevel(Log::LOG_DEBUG);
-
-   mTimer.start(10, this);
 }
 
 void Viewer::OnLoadCharFile( const QString &filename )
@@ -171,9 +159,7 @@ void Viewer::OnLoadCharFile( const QString &filename )
    // set up the viewer's scene graph
    mShadeDecorator->addChild(mCharacter->GetNode());
    mWireDecorator->addChild(mCharacter->GetNode());
-   
-   mGLWidget->window()->setWindowTitle(filename);
-   
+
    dtCore::RefPtr<Cal3DModelWrapper> wrapper = mCharacter->GetCal3DWrapper();
 
    //get all the data for animations and tell the world

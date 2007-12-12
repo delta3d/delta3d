@@ -26,6 +26,7 @@
 #include <QtGui/QKeyEvent>
 #include <QtGui/QApplication>
 #include <QtOpenGL/QGLWidget>
+#include <QtOpenGL/QGLContext>
 
 #include <dtCore/refptr.h>
 
@@ -34,37 +35,57 @@ namespace osgViewer
    class GraphicsWindow;
 }
 
-class OSGAdapterWidget : public QGLWidget
+namespace dtQt
 {
-   public:
 
-      OSGAdapterWidget( QWidget * parent = NULL, const char * name = NULL, 
-               const QGLWidget * shareWidget = NULL, Qt::WindowFlags f = NULL );
+   class OSGAdapterWidget : public QGLWidget
+   {
+      Q_OBJECT
 
-      virtual ~OSGAdapterWidget() {}
+      public:
 
-      osgViewer::GraphicsWindow& GetGraphicsWindow();
-      const osgViewer::GraphicsWindow& GetGraphicsWindow() const;
+         OSGAdapterWidget(bool drawOnSeparateThread,  QWidget * parent = NULL, 
+                  const QGLWidget * shareWidget = NULL, Qt::WindowFlags f = NULL );
 
-      void SetGraphicsWindow(osgViewer::GraphicsWindow* newWindow);
-      //does the actual painting.
-      void ThreadedUpdateGL();
+         virtual ~OSGAdapterWidget();
 
-   protected:
-      
-      //does nothing.  this is called automatically at times by qt, but on the wrong thread.
-      virtual void paintGL();
+         osgViewer::GraphicsWindow& GetGraphicsWindow();
+         const osgViewer::GraphicsWindow& GetGraphicsWindow() const;
 
-      virtual void initializeGL();
+         void SetGraphicsWindow(osgViewer::GraphicsWindow& newWindow);
 
-      virtual void resizeGL( int width, int height );
-      virtual void keyPressEvent( QKeyEvent* event );
-      virtual void keyReleaseEvent( QKeyEvent* event );
-      virtual void mousePressEvent( QMouseEvent* event );
-      virtual void mouseReleaseEvent( QMouseEvent* event );
-      virtual void mouseMoveEvent( QMouseEvent* event );
+         void ThreadedInitializeGL();
+         void ThreadedMakeCurrent();
 
-      dtCore::RefPtr<osgViewer::GraphicsWindow> mGraphicsWindow;
-};
+      public slots:
+         //does the actual painting.
+         void ThreadedUpdateGL();
 
+      protected:
+
+         //This draws, but only if .
+         virtual void paintGL();
+         void paintGLImpl();
+
+         virtual void initializeGL();
+
+         virtual void resizeGL( int width, int height );
+         void resizeGLImpl(int width, int height);
+
+         virtual void keyPressEvent( QKeyEvent* event );
+         virtual void keyReleaseEvent( QKeyEvent* event );
+         virtual void mousePressEvent( QMouseEvent* event );
+         virtual void mouseReleaseEvent( QMouseEvent* event );
+         virtual void mouseMoveEvent( QMouseEvent* event );
+
+         dtCore::RefPtr<osgViewer::GraphicsWindow> mGraphicsWindow;
+
+         QTimer mTimer;
+
+         QGLContext* mThreadGLContext;
+         bool mDrawOnSeparateThread;
+         volatile bool mDoResize;
+
+   };
+}
 #endif /*OSGADAPTERWIDGET_H_*/

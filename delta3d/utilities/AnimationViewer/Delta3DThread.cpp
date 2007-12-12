@@ -1,10 +1,13 @@
+#include <QtOpenGL/QGLContext>
+
 #include "Delta3DThread.h"
 #include "MainWindow.h"
 #include "Viewer.h"
 #include <dtCore/system.h>
+#include <dtCore/deltawin.h>
 
 #include "OSGAdapterWidget.h"
-#include <osgViewer/GraphicsWindow>
+
 
 class EmbeddedWindowSystemWrapper: public osg::GraphicsContext::WindowingSystemInterface
 {
@@ -72,10 +75,15 @@ void Delta3DThread::run()
       osg::GraphicsContext::setWindowingSystemInterface(new EmbeddedWindowSystemWrapper(*winSys));
    }
 
-   OSGAdapterWidget* glWidget = new OSGAdapterWidget();
-   glWidget->show();
+   //need to set the current context so that all the open gl stuff in osg can initialize.
+   dtQt::OSGAdapterWidget& glWidget = *mWin->GetGLWidget();
+   glWidget.ThreadedInitializeGL();
+   glWidget.ThreadedMakeCurrent();
+   
+   mViewer = new Viewer();
 
-   mViewer = new Viewer(*glWidget);
+   glWidget.SetGraphicsWindow(*mViewer->GetWindow()->GetOsgViewerGraphicsWindow());
+   
    mViewer->Config();
 
    connect(mWin, SIGNAL(FileToLoad(const QString&)), mViewer.get(), SLOT(OnLoadCharFile(const QString&)) );
