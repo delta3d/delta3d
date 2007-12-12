@@ -24,8 +24,6 @@
 #include <osgViewer/ViewerEventHandlers>
 #include <osgViewer/GraphicsWindow>
 
-#include <OpenGL/OpenGL.h>
-#include <AGL/agl.h>
 #include <dtCore/system.h>
 
 namespace dtQt
@@ -168,6 +166,7 @@ namespace dtQt
       {
          std::cerr << "broken!" << std::endl;
       }
+      
       setContext(mThreadGLContext, context(), false);
    }
 
