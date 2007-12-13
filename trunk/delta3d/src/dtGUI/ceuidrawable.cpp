@@ -253,18 +253,17 @@ void CEUIDrawable::OnMessage(dtCore::Base::MessageData *data)
 {
    if( data->message == "preframe" )
    {  
-      if (GetAutoResizing() == true)
+      if ( (GetAutoResizing() == true) && (mWindow.valid()) )
       {
-         if (!mWindow.valid()) return;
-
          int x,y,w,h;
          mWindow->GetPosition(x, y, w, h);
 
          //if window is the same size, don't do anything
-         if (w == mWidth && h == mHeight) return;
-
-         //update with the new size
-         SetRenderingSize(w, h);
+         if (w != mWidth || h != mHeight)
+         {
+            //update with the new size
+            SetRenderingSize(w, h);
+         }
       }
 
       const double deltaTime = *static_cast<const double*>(data->userData);
