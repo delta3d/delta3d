@@ -33,6 +33,7 @@
 #include <dtCore/system.h>
 #include <dtCore/object.h>
 #include <dtCore/shadermanager.h>
+#include <dtCore/tripod.h>
 
 #include <dtDAL/map.h>
 #include <dtDAL/actorproxy.h>
@@ -264,16 +265,13 @@ void TestAnim::InitializeAnimationActor(dtActors::AnimationGameActorProxy2* game
 
             if(isPlayer)
             {
-               //set camera offset
-               dtCore::Transform trans;
-               trans.SetTranslation(-1.0f, 5.5f, 1.5f);
-               trans.SetRotation(180.0f, -2.0f, 0.0f); 
-
                mAnimationHelper = helper;
                mAnimationHelper->SetGroundClamp(true);
 
-               actor->AddChild( camera );
-               camera->SetTransform(trans, dtCore::Transformable::REL_CS);
+               //attach the Camera to the Actor using a Tripod
+               dtCore::Tripod *tripod = new dtCore::Tripod(camera, actor);
+               tripod->SetTetherMode( dtCore::Tripod::TETHER_WORLD_REL );
+               tripod->SetOffset( 0.f, -5.f, 1.25f, 0.f, 0.f, 0.f);
 
                dtCore::RefPtr<osg::ShapeDrawable> drawable = new osg::ShapeDrawable(new osg::Cylinder(osg::Vec3(), 0.02f, 0.3));
                dtCore::RefPtr<osg::Geode> geode = new osg::Geode;
