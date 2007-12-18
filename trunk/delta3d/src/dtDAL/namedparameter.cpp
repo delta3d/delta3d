@@ -1,23 +1,24 @@
 /*
- * Delta3D Open Source Game and Simulation Engine
- * Copyright (C) 2005, BMH Associates, Inc.
- *
- * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation; either version 2.1 of the License, or (at your option)
- * any later version.
- *
- * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
- * details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library; if not, write to the Free Software Foundation, Inc.,
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- *
- * @author David Guthrie
- */
+* Delta3D Open Source Game and Simulation Engine
+* Copyright (C) 2005, BMH Associates, Inc.
+*
+* This library is free software; you can redistribute it and/or modify it under
+* the terms of the GNU Lesser General Public License as published by the Free
+* Software Foundation; either version 2.1 of the License, or (at your option)
+* any later version.
+*
+* This library is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+* details.
+*
+* You should have received a copy of the GNU Lesser General Public License
+* along with this library; if not, write to the Free Software Foundation, Inc.,
+* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+*
+* @author David Guthrie
+*/
+
 #include <prefix/dtdalprefix-src.h>
 #include <string>
 #include <dtDAL/namedparameter.h>
@@ -59,7 +60,7 @@ namespace dtDAL
 
    ///////////////////////////////////////////////////////////////////////////////
    dtCore::RefPtr<NamedParameter> NamedParameter::CreateFromType(
-   		const dtDAL::DataType& type, const std::string& name, bool isList)
+      const dtDAL::DataType& type, const std::string& name, bool isList)
    {
       dtCore::RefPtr<NamedParameter> param;
 
@@ -170,7 +171,7 @@ namespace dtDAL
          oss << "Message Parameter is: \"" << GetName() << ".\" ";
          oss << "Its message type is: \""  << GetDataType() << ".\" ";
          oss << "Its value is: \"" << ToString() << ".\"";
-         
+
          logger.LogMessage(level, __FUNCTION__, __LINE__, oss.str().c_str());
       }
    }
@@ -182,7 +183,7 @@ namespace dtDAL
    {
       // Write out the size of the list so we know how many times to loop in FromDataStream
       stream << (unsigned int)mParameterList.size();
-      
+
       NamedGroupParameter::ParameterList::const_iterator i = mParameterList.begin();
       NamedGroupParameter::ParameterList::const_iterator end = mParameterList.end();
       for(; i != end; ++i)
@@ -222,7 +223,7 @@ namespace dtDAL
 
          std::string name;
          stream >> name;
-         
+
          bool  isList;
          stream >> isList;
 
@@ -283,7 +284,7 @@ namespace dtDAL
             toFill.append("true");
          else
             toFill.append("false");
-         
+
          toFill.append(" ");
          toFill.append(param.ToString());
          toFill.append(1, '\n');
@@ -300,15 +301,15 @@ namespace dtDAL
       std::string typeString;
       std::string isListString;
       std::string paramValue;
-      
+
       // get values
       std::getline(iss, paramName, ' ');
       std::getline(iss, typeString, ' ');
       std::getline(iss, isListString, ' ');
       std::getline(iss, paramValue);
-      
+
       dtDAL::DataType *type = dtDAL::DataType::GetValueForName(typeString);
-      
+
       if(type == NULL)
          return false;
 
@@ -317,7 +318,7 @@ namespace dtDAL
 
       // try and retrieve the parameter
       dtCore::RefPtr<NamedParameter> param = GetParameter(paramName);
-      
+
       if (param == NULL) 
       { // add it if it does not exist
          if (isList)
@@ -330,10 +331,10 @@ namespace dtDAL
             param = AddParameter(paramName, *type);
          }
       }
-      
+
       param->FromString(paramValue);
       return true; 
-      
+
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -341,33 +342,42 @@ namespace dtDAL
    {
       if (otherParam.GetDataType() != GetDataType())
          throw dtUtil::Exception(ExceptionEnum::InvalidParameter, 
-            "The msg parameter must be of type GROUP.", __FILE__, __LINE__);
-      
+         "The msg parameter must be of type GROUP.", __FILE__, __LINE__);
+
       const NamedGroupParameter& gpm = static_cast<const NamedGroupParameter&>(otherParam);
-      
+
       //wipe out any existing parameters.  It's easier to just recreate them.
       mParameterList.clear(); 
-      
+
       //copy parameters
       NamedGroupParameter::ParameterList::const_iterator i = gpm.mParameterList.begin();
       NamedGroupParameter::ParameterList::const_iterator end = gpm.mParameterList.end();
       for (; i != end; ++i)
       {
-         NamedParameter* newParameter = AddParameter(i->first, i->second->GetDataType());
+         dtCore::RefPtr<NamedParameter> newParameter = NULL;
+         if (i->second->IsList())
+         {
+            newParameter = CreateFromType(i->second->GetDataType(), i->first, true);
+            AddParameter(*newParameter);
+         }
+         else
+         {
+            newParameter = AddParameter(i->first, i->second->GetDataType());
+         }
          if (newParameter == NULL)
             //This case should not happen, the method above should throw an exception if it doesn't work, but
             //this is a case of paranoid programming.
             throw dtUtil::Exception(ExceptionEnum::BaseException, 
-               "Unable to create parameter of type " + i->second->GetDataType().GetName(),
-               __FILE__, __LINE__);
-         
+            "Unable to create parameter of type " + i->second->GetDataType().GetName(),
+            __FILE__, __LINE__);
+
          newParameter->CopyFrom(*i->second);
       }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    NamedParameter* NamedGroupParameter::AddParameter(const std::string& name, 
-                                                         const dtDAL::DataType& type) 
+      const dtDAL::DataType& type) 
    {
       dtCore::RefPtr<NamedParameter> param = NamedParameter::CreateFromType(type, name);
       if (param.valid())
@@ -396,8 +406,8 @@ namespace dtDAL
    {
       if (!mParameterList.insert(std::make_pair(newParam.GetName(), &newParam)).second)
          throw dtUtil::Exception(ExceptionEnum::InvalidParameter,
-               "Could not add new parameter: "+ newParam.GetName() +
-               ". A parameter with that name already exists.", __FILE__, __LINE__);
+         "Could not add new parameter: "+ newParam.GetName() +
+         ". A parameter with that name already exists.", __FILE__, __LINE__);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -422,7 +432,7 @@ namespace dtDAL
       NamedGroupParameter::ParameterList::iterator i = mParameterList.begin();
       NamedGroupParameter::ParameterList::iterator end = mParameterList.end();
       for(;i != end; ++i)
-          toFill.push_back(i->second.get());
+         toFill.push_back(i->second.get());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -433,7 +443,7 @@ namespace dtDAL
       NamedGroupParameter::ParameterList::const_iterator i = mParameterList.begin();
       NamedGroupParameter::ParameterList::const_iterator end = mParameterList.end();
       for(;i != end; ++i)
-          toFill.push_back(i->second.get());
+         toFill.push_back(i->second.get());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -441,7 +451,6 @@ namespace dtDAL
    {
       if (GetDataType() == toCompare.GetDataType())
       {
-      
          const NamedGroupParameter& groupToCompare = static_cast<const NamedGroupParameter&>(toCompare);
          //if the size doesn't match. it's not equal.
          if (mParameterList.size() != groupToCompare.mParameterList.size())
@@ -454,7 +463,7 @@ namespace dtDAL
             //spin through the props and return false if one is not equal.
             if (*itor->second != *itorComp->second)
                return false;
-               
+
             ++itorComp;
          }
          //all props are equal.
@@ -605,7 +614,7 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
    NamedIntParameter::NamedIntParameter(const std::string &name, int defaultValue,	bool isList) :
-      NamedPODParameter<int>(name,defaultValue,isList)
+   NamedPODParameter<int>(name,defaultValue,isList)
    {
    }
 
@@ -678,7 +687,7 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
    NamedFloatParameter::NamedFloatParameter(const std::string &name, float defaultValue,
-         bool isList) : NamedPODParameter<float>(name, defaultValue, isList)
+      bool isList) : NamedPODParameter<float>(name, defaultValue, isList)
    {
       SetNumberPrecision(9);
    }
@@ -854,7 +863,7 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////
    NamedActorParameter::NamedActorParameter(const std::string& name,
       const dtCore::UniqueId& defaultValue, bool isList) :
-        NamedGenericParameter<dtCore::UniqueId>(name,defaultValue,isList)
+   NamedGenericParameter<dtCore::UniqueId>(name,defaultValue,isList)
    {
    }
 
@@ -868,7 +877,7 @@ namespace dtDAL
    {
       ValidatePropertyType(property);
 
-       const dtDAL::ActorActorProperty *ap = static_cast<const dtDAL::ActorActorProperty*> (&property);
+      const dtDAL::ActorActorProperty *ap = static_cast<const dtDAL::ActorActorProperty*> (&property);
       if (ap->GetValue() == NULL)
          SetValue(dtCore::UniqueId(""));
       else 
@@ -940,7 +949,7 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////
    NamedGameEventParameter::NamedGameEventParameter(const std::string& name,
       const dtCore::UniqueId& defaultValue, bool isList) :
-      NamedGenericParameter<dtCore::UniqueId>(name,defaultValue,isList)
+   NamedGenericParameter<dtCore::UniqueId>(name,defaultValue,isList)
    {
    }
 
@@ -1317,10 +1326,10 @@ namespace dtDAL
    NamedResourceParameter::NamedResourceParameter(const dtDAL::DataType& type,  const std::string &name,
       bool isList) : NamedParameter(name,isList), mDataType(&type)
    {
-     if (IsList())
-        mValueList = new std::vector<dtDAL::ResourceDescriptor>();
-     else
-        mValueList = NULL;
+      if (IsList())
+         mValueList = new std::vector<dtDAL::ResourceDescriptor>();
+      else
+         mValueList = NULL;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -1355,7 +1364,7 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////
    NamedResourceParameter::~NamedResourceParameter()
    {
-     delete mValueList;
+      delete mValueList;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -1417,7 +1426,7 @@ namespace dtDAL
          stream << values[0].GetDisplayName() << "/" << values[0].GetResourceIdentifier();
          for (unsigned int i=1; i<values.size(); i++)
             stream << GetParamDelimeter() << values[i].GetDisplayName() <<
-               "/" << values[i].GetResourceIdentifier();
+            "/" << values[i].GetResourceIdentifier();
       }
       else
       {
@@ -1459,7 +1468,7 @@ namespace dtDAL
          {
             tokens.clear();
 
-            #if (defined WIN32 || defined __WIN32__)
+            #ifdef DELTA_WIN32
             stok = stok;
             #endif
             stok.tokenize(tokens,result[i]);
@@ -1511,20 +1520,20 @@ namespace dtDAL
    void NamedResourceParameter::CopyFrom(const NamedParameter& otherParam)
    {
       const NamedResourceParameter *param =
-          dynamic_cast<const NamedResourceParameter*>(&otherParam);
+         dynamic_cast<const NamedResourceParameter*>(&otherParam);
 
 
       //First make sure this parameter does not have a list if the
       //other parameter does and vice versa.
       if ((IsList() && !otherParam.IsList()) ||(!IsList() && otherParam.IsList()))
          throw dtUtil::Exception(ExceptionEnum::BaseException,
-            "Cannot assign two parameters with one being a list of values and the other not.",
-            __FILE__, __LINE__);
+         "Cannot assign two parameters with one being a list of values and the other not.",
+         __FILE__, __LINE__);
 
       if (param != NULL)
       {
          if (!IsList())
-           SetValue(param->GetValue());
+            SetValue(param->GetValue());
          else
             SetValueList(param->GetValueList());
       }
@@ -1540,7 +1549,7 @@ namespace dtDAL
    {
       if (IsList())
          throw dtUtil::Exception(ExceptionEnum::BaseException,
-            "Cannot call SetValue() on message parameter with a list of values.", __FILE__, __LINE__);
+         "Cannot call SetValue() on message parameter with a list of values.", __FILE__, __LINE__);
 
       mDescriptor = descriptor == NULL ? dtDAL::ResourceDescriptor("","") : *descriptor;
    }
@@ -1550,7 +1559,7 @@ namespace dtDAL
    {
       if (IsList())
          throw dtUtil::Exception(ExceptionEnum::BaseException,
-            "Cannot call GetValue() on message parameter with a list of values.", __FILE__, __LINE__);
+         "Cannot call GetValue() on message parameter with a list of values.", __FILE__, __LINE__);
 
       if (mDescriptor.GetResourceIdentifier().empty())
          return NULL;
@@ -1563,7 +1572,7 @@ namespace dtDAL
    {
       if (!IsList())
          throw dtUtil::Exception(ExceptionEnum::BaseException,
-            "Cannot retrieve the parameters value list.  Parameter does not contain a list.", __FILE__, __LINE__);
+         "Cannot retrieve the parameters value list.  Parameter does not contain a list.", __FILE__, __LINE__);
       return *mValueList;
    }
 
@@ -1572,7 +1581,7 @@ namespace dtDAL
    {
       if (!IsList())
          throw dtUtil::Exception(ExceptionEnum::BaseException,
-            "Cannot retrieve the parameters value list.  Parameter does not contain a list.", __FILE__, __LINE__);
+         "Cannot retrieve the parameters value list.  Parameter does not contain a list.", __FILE__, __LINE__);
       return *mValueList;
    }
 
@@ -1581,18 +1590,18 @@ namespace dtDAL
    {
       if (!IsList())
          throw dtUtil::Exception(ExceptionEnum::BaseException,
-            "Cannot set a list of new values on a parameter that is not a list.", __FILE__, __LINE__);
+         "Cannot set a list of new values on a parameter that is not a list.", __FILE__, __LINE__);
 
       *mValueList = newValues;
    }
-   
+
    ///////////////////////////////////////////////////////////////////////////////
    bool NamedResourceParameter::operator==(const NamedParameter& toCompare) const
    {
       if (GetDataType() == toCompare.GetDataType())
       {
          const NamedResourceParameter& rpToCompare = static_cast<const NamedResourceParameter&>(toCompare);
-         
+
          if (GetValue() != NULL && rpToCompare.GetValue() != NULL)
             return *GetValue() == *rpToCompare.GetValue();
          else
