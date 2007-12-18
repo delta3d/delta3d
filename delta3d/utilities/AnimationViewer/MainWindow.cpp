@@ -88,7 +88,7 @@ mGLWidget(NULL)
 
    QWidget* glParent = new QWidget(this);
 
-   mGLWidget = new dtQt::OSGAdapterWidget(true, glParent);
+   mGLWidget = new dtQt::OSGAdapterWidget(false, glParent);
 
    QHBoxLayout* hbLayout = new QHBoxLayout(glParent);
    hbLayout->setMargin(0);
@@ -129,18 +129,18 @@ void MainWindow::CreateMenus()
    windowMenu->addAction(mLoadCharAct);
 
    QAction *toggleShadeToolbarAction = toolBarMenu->addAction("Shading toolbar");
-   QAction *toggleLODToolbarAction  = toolBarMenu->addAction("LOD toolbar");
+   QAction *toggleLODScaleToolbarAction  = toolBarMenu->addAction("LOD Scale toolbar");
    //QAction *toggleLightToolBarAction = toolBarMenu->addAction("Lighting toolbar");
 
    toggleShadeToolbarAction->setCheckable(true);
    toggleShadeToolbarAction->setChecked(true);
-   toggleLODToolbarAction->setCheckable(true);
-   toggleLODToolbarAction->setChecked(true);
+   toggleLODScaleToolbarAction->setCheckable(true);
+   toggleLODScaleToolbarAction->setChecked(true);
    //toggleLightToolBarAction->setCheckable(true);
    //toggleLightToolBarAction->setChecked(true);
 
    connect(toggleShadeToolbarAction, SIGNAL(triggered()), this, SLOT(OnToggleShadingToolbar()));
-   connect(toggleLODToolbarAction, SIGNAL(triggered()), this, SLOT(OnToggleLODToolbar()));
+   connect(toggleLODScaleToolbarAction, SIGNAL(triggered()), this, SLOT(OnToggleLODScaleToolbar()));
 
    for (int i=0; i<5; ++i)
    {
@@ -193,10 +193,10 @@ void MainWindow::CreateActions()
 
 void MainWindow::CreateToolbars()
 {
-   QDoubleSpinBox *lodSpinner = new QDoubleSpinBox(this);
-   lodSpinner->setRange(0, 1);
-   lodSpinner->setSingleStep(0.01);
-   lodSpinner->setValue(1);
+   QDoubleSpinBox *lodScaleSpinner = new QDoubleSpinBox(this);
+   lodScaleSpinner->setRange(0.01, 500.0);
+   lodScaleSpinner->setSingleStep(0.01);
+   lodScaleSpinner->setValue(1);
 
    QDoubleSpinBox *speedSpinner = new QDoubleSpinBox(this);
    speedSpinner->setRange(0.0, 100.0);
@@ -204,7 +204,7 @@ void MainWindow::CreateToolbars()
    speedSpinner->setValue(1.0);
 
    mShadingToolbar = addToolBar("Shading toolbar");
-   mLODToolbar     = addToolBar("LOD toolbar");
+   mLODScaleToolbar= addToolBar("LOD Scale toolbar");
    mSpeedToolbar   = addToolBar("Animation Speed toolbar");
    //mLightingToolbar = addToolBar("Lighting toolbar");
 
@@ -213,7 +213,7 @@ void MainWindow::CreateToolbars()
    mShadingToolbar->addAction(mShadedAction);
    mShadingToolbar->addAction(mShadedWireAction);
 
-   mLODToolbar->addWidget(lodSpinner);
+   mLODScaleToolbar->addWidget(lodScaleSpinner);
    
    mSpeedToolbar->addWidget(speedSpinner);
    
@@ -223,7 +223,7 @@ void MainWindow::CreateToolbars()
    //mLightingToolbar->addAction(diffuseIcon, "Diffuse Light");
    //mLightingToolbar->addAction(pointLightIcon, "Point Light");
 
-   connect(lodSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnLOD_Changed(double)));
+   connect(lodScaleSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnLODScale_Changed(double)));
    connect(speedSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnSpeedChanged(double)));
 }
 
@@ -406,9 +406,9 @@ void MainWindow::OnMeshActivated( QListWidgetItem *item )
 }
 
 
-void MainWindow::OnLOD_Changed(double newValue)
+void MainWindow::OnLODScale_Changed(double newValue)
 {   
-   emit LOD_Changed(float(newValue));
+   emit LODScale_Changed(float(newValue));
 }
 
 void MainWindow::OnSpeedChanged(double newValue)
@@ -447,15 +447,15 @@ void MainWindow::OnToggleShadingToolbar()
    }
 }
 
-void MainWindow::OnToggleLODToolbar()
+void MainWindow::OnToggleLODScaleToolbar()
 {
-   if (mLODToolbar->isHidden())
+   if (mLODScaleToolbar->isHidden())
    {
-      mLODToolbar->show();
+      mLODScaleToolbar->show();
    }
    else
    {
-      mLODToolbar->hide();
+      mLODScaleToolbar->hide();
    }   
 }
 

@@ -38,7 +38,7 @@ signals:
    void StartAnimation(unsigned int, float, float);
    void StopAnimation(unsigned int, float);
    void StartAction(unsigned int, float, float);
-   void LOD_Changed(float zeroToOneValue);
+   void LODScale_Changed(float scaleValue);
    void SpeedChanged(float speedFactor);
    void AttachMesh(int meshID);
    void DetachMesh(int meshID);
@@ -55,11 +55,11 @@ public slots:
 
    void OnAnimationClicked( QTableWidgetItem *item);
    void OnMeshActivated( QListWidgetItem *item );
-   void OnLOD_Changed(double newValue);
+   void OnLODScale_Changed(double newValue);
    void OnSpeedChanged(double newValue);
    void OnToggleHardwareSkinning();
    void OnToggleShadingToolbar();
-   void OnToggleLODToolbar();
+   void OnToggleLODScaleToolbar();
    void OnToggleLightingToolbar(); 
    void OnDisplayError( const QString &msg );
 	
@@ -86,7 +86,7 @@ private:
 
    QToolBar *mShadingToolbar;
    QToolBar *mLightingToolbar;
-   QToolBar *mLODToolbar;
+   QToolBar *mLODScaleToolbar;
    QToolBar *mSpeedToolbar;
 
    QTabWidget  *mTabs;
