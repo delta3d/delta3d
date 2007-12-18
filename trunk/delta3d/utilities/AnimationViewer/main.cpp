@@ -26,18 +26,18 @@ int main(int argc, char *argv[])
    QObject::connect(QApplication::instance(), SIGNAL(lastWindowClosed()), thread, SLOT(quit()));
 
    thread->SetMainWindow(&win);
-   thread->start();
-   //thread->run();
+   //thread->start();
+   thread->run();
 
    qapp.exec();
 
-   thread->quit();
-   thread->exit();
+   //thread->quit();
+   //thread->exit();
 
-   while (thread->isRunning())
+   /*while (thread->isRunning())
    {
       SLEEP(100);
-   }
+   }*/
 
    delete thread;
 

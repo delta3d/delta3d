@@ -77,8 +77,8 @@ void Delta3DThread::run()
 
    //need to set the current context so that all the open gl stuff in osg can initialize.
    dtQt::OSGAdapterWidget& glWidget = *mWin->GetGLWidget();
-   glWidget.ThreadedInitializeGL();
-   glWidget.ThreadedMakeCurrent();
+   //glWidget.ThreadedInitializeGL();
+   //glWidget.ThreadedMakeCurrent();
    
    mViewer = new Viewer();
 
@@ -104,7 +104,7 @@ void Delta3DThread::run()
    connect(mWin, SIGNAL(StartAnimation(unsigned int,float,float)), mViewer.get(), SLOT(OnStartAnimation(unsigned int,float,float)));
    connect(mWin, SIGNAL(StopAnimation(unsigned int,float)), mViewer.get(), SLOT(OnStopAnimation(unsigned int,float)));
    connect(mWin, SIGNAL(StartAction(unsigned int,float,float)), mViewer.get(), SLOT(OnStartAction(unsigned int,float,float)));
-   connect(mWin, SIGNAL(LOD_Changed(float)), mViewer.get(), SLOT(OnLOD_Changed(float)));
+   connect(mWin, SIGNAL(LODScale_Changed(float)), mViewer.get(), SLOT(OnLODScale_Changed(float)));
    connect(mWin, SIGNAL(SpeedChanged(float)), mViewer.get(), SLOT(OnSpeedChanged(float)));
 
    connect((QObject*)mWin->mShadedAction, SIGNAL(triggered()), mViewer.get(), SLOT(OnSetShaded()));
@@ -114,5 +114,5 @@ void Delta3DThread::run()
 
    dtCore::System::GetInstance().Start();
 
-   this->exec();
+   //this->exec();
 }

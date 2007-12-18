@@ -28,7 +28,8 @@
 
 namespace dtQt
 {
-   class QtKeyboardMap {
+   class QtKeyboardMap
+   {
 
       public:
          QtKeyboardMap()

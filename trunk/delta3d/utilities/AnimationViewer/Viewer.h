@@ -44,7 +44,7 @@ public slots:
    void OnStartAnimation( unsigned int id, float weight, float delay );
    void OnStopAnimation( unsigned int id, float delay );
    void OnStartAction( unsigned int id, float delayIn, float delayOut );
-   void OnLOD_Changed( float zeroToOneValue );
+   void OnLODScale_Changed( float scaleValue );
    void OnSpeedChanged( float speedFactor );
    void OnSetShaded();
    void OnSetWireframe();

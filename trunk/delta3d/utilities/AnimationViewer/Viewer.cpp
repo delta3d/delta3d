@@ -232,17 +232,12 @@ void Viewer::OnStartAction( unsigned int id, float delayIn, float delayOut )
    }
 }
 
-void Viewer::OnLOD_Changed( float zeroToOneValue )
+void Viewer::OnLODScale_Changed( float scaleValue )
 {
-   assert(fabs(zeroToOneValue)<= 1.0f);
-
    if (mCharacter.get())
    {
-      dtAnim::Cal3DModelWrapper* mcHammer = mCharacter->GetCal3DWrapper();
-      assert(mcHammer);
-
-      mcHammer->SetLODLevel(zeroToOneValue);
-   }  
+      GetCamera()->SetLODScale(scaleValue);
+   }
 }
 
 void Viewer::OnSpeedChanged( float speedFactor )
