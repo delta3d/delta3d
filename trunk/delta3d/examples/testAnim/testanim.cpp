@@ -273,31 +273,23 @@ void TestAnim::InitializeAnimationActor(dtActors::AnimationGameActorProxy2* game
                tripod->SetTetherMode( dtCore::Tripod::TETHER_WORLD_REL );
                tripod->SetOffset( 0.f, -5.f, 1.25f, 0.f, 0.f, 0.f);
 
-               dtCore::RefPtr<osg::ShapeDrawable> drawable = new osg::ShapeDrawable(new osg::Cylinder(osg::Vec3(), 0.02f, 0.3));
-               dtCore::RefPtr<osg::Geode> geode = new osg::Geode;
-               geode->addDrawable(drawable.get());
-
-               //std::vector<std::string> bones;
-               //mAnimationHelper->GetModelWrapper()->GetCoreBoneNames(bones);
-               //if (bones.size() > 0)
-               //{
-               //  hotspotDef.mParentName = bones.front();
-
-               dtCore::RefPtr<dtCore::Transformable> attachment = new dtCore::Transformable;
-               attachment->GetOSGNode()->asGroup()->addChild(geode.get());
-
-               //dtCore::RefPtr<dtCore::Object> attachment = new dtCore::Object("Arrow");
-               //attachment->LoadFile(dtCore::GetDeltaRootPath() + "/examples/data/models/arrow.ive");
+  
+               //attach a pack to the guy's back
+               dtCore::RefPtr<dtCore::Object> attachment = new dtCore::Object("CamelPack");
+               attachment->LoadFile("/models/camelpack.ive");
 
                dtUtil::HotSpotDefinition hotspotDef;
-               hotspotDef.mName = "jojo";
-               hotspotDef.mParentName = "Bip02 Head";
-               hotspotDef.mLocalTranslation = osg::Vec3(0.1f, 0.0f, 0.0f);
+               hotspotDef.mName = "backpack";
+               hotspotDef.mParentName = "Bip02 Spine2";
+               hotspotDef.mLocalTranslation.set(0.25f, -0.125f, 0.0f);
+
+               osg::Matrix attRot = osg::Matrix::rotate(osg::DegreesToRadians(90.f), osg::Vec3(0.f,1.f,0.f));
+               attRot *= osg::Matrix::rotate(osg::DegreesToRadians(180.f), osg::Vec3(0.f,0.f,1.f));
+               hotspotDef.mLocalRotation = attRot.getRotate();
 
                mAnimationHelper->GetAttachmentController().AddAttachment(*attachment, hotspotDef);
                actor->AddChild(attachment.get());
-
-               }
+            }
             else
             {
                helper->PlayAnimation("Walk");
