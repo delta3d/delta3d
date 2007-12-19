@@ -37,25 +37,18 @@ namespace dtEditQt
    class LibraryPathsEditor : public QDialog
    {
          Q_OBJECT
-         
+
       public:
-         
+
          /// Constructor
          LibraryPathsEditor(QWidget *parent = NULL);
-         
+
          /// Destructor
          virtual ~LibraryPathsEditor();
-         
-      signals:
-         
-         /// This signal is emitted if no libraries in the list
-         /// are selected so the delete button knows to grey 
-         /// itself out
-         void noPathsSelected();
-      
-         /// This signal enables the remove library button
-         void pathSelected();
-      
+
+         /// Are any items selected?
+         bool AnyItemsSelected() const;
+
       public slots:
          
          /// Pop up the file browser for libraries
@@ -64,18 +57,15 @@ namespace dtEditQt
          /// Confirm deletion of libraries
          void spawnDeleteConfirmation();
       
-         /// Received when a path is currently selected
-         void enableButtons();
-      
-         /// Disable the delete button if no paths are selected
-         void disableButtons();
-      
+         /// Received when the path selection state changes
+         void refreshButtons();
+
          /// Shift the current path up 1 position
          void shiftPathUp();
       
          /// Shift the current path down 1 position
          void shiftPathDown();
-      
+
       private:
          
          /// The visible list of paths

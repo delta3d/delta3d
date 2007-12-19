@@ -44,6 +44,8 @@
 #include <osgDB/FileNameUtils>
 #include <osgDB/Registry>
 
+#include <cassert>
+
 using dtDAL::ActorProxy;
 using dtDAL::ActorType;
 using dtDAL::Map;
@@ -60,6 +62,7 @@ namespace dtEditQt
 {
    LibraryPathsEditor::LibraryPathsEditor(QWidget *parent) : QDialog(parent), numActorsInScene(0)
    {
+      bool okay = true;
       setWindowTitle(tr("Library Editor"));
       
       QGroupBox *groupBox = new QGroupBox(tr("Library Search Path Order"),this);
@@ -70,7 +73,7 @@ namespace dtEditQt
       pathView->setSelectionMode(QAbstractItemView::SingleSelection);
       gridLayout->addWidget(pathView,0,0);
             
-      //Create the arrow buttons for changing the library order.
+      // Create the arrow buttons for changing the library order.
       QVBoxLayout *arrowLayout = new QVBoxLayout;
       upPath = new QPushButton(tr("^"),groupBox);
       downPath = new QPushButton(tr("v"),groupBox);
@@ -86,7 +89,6 @@ namespace dtEditQt
       QPushButton *close = new QPushButton(tr("Close"),this);
       deletePath = new QPushButton(tr("Remove Path"),this);
       
-      deletePath->setDisabled(true);
       buttonLayout->addStretch(1);
       buttonLayout->addWidget(addPath);
       buttonLayout->addWidget(deletePath);
@@ -96,29 +98,34 @@ namespace dtEditQt
       // Hide functionality that does not yet exist
       upPath->hide();
       downPath->hide();
-      deletePath->hide();
-      
+
       // make the connections
-      connect(deletePath, SIGNAL(clicked()),   this, SLOT(spawnDeleteConfirmation()));
-      connect(addPath, SIGNAL(clicked()),   this, SLOT(spawnFileBrowser()));
-      connect(upPath,     SIGNAL(clicked()),   this, SLOT(shiftPathUp()));
-      connect(downPath,   SIGNAL(clicked()),   this, SLOT(shiftPathDown()));
-      connect(close,     SIGNAL(clicked()),   this, SLOT(close()));
-      connect(this, SIGNAL(noPathsSelected()), this, SLOT(disableButtons()));
-      //connect(this, SIGNAL(pathSelected()),this, SLOT(enableButtons()));
-      
+      okay = okay && connect(deletePath, SIGNAL(clicked()),              this, SLOT(spawnDeleteConfirmation()));
+      okay = okay && connect(addPath,    SIGNAL(clicked()),              this, SLOT(spawnFileBrowser()));
+      okay = okay && connect(upPath,     SIGNAL(clicked()),              this, SLOT(shiftPathUp()));
+      okay = okay && connect(downPath,   SIGNAL(clicked()),              this, SLOT(shiftPathDown()));
+      okay = okay && connect(close,      SIGNAL(clicked()),              this, SLOT(close()));
+      okay = okay && connect(pathView,   SIGNAL(itemSelectionChanged()), this, SLOT(refreshButtons()));
+
+      // make sure all connections were successfully made
+      assert(okay);
+
       QVBoxLayout *mainLayout = new QVBoxLayout(this);
       mainLayout->addWidget(groupBox);
       mainLayout->addLayout(buttonLayout);
 
-      disableButtons();
-
       refreshPaths();
+      refreshButtons();
    }
 
    LibraryPathsEditor::~LibraryPathsEditor()
    {
-      
+   }
+
+   bool LibraryPathsEditor::AnyItemsSelected() const
+   {
+      //return pathView->currentItem() != NULL;  // note: this test returns false positives
+      return !pathView->selectedItems().empty(); // this one is better
    }
 
    void LibraryPathsEditor::getPathNames(vector<QListWidgetItem*>& items) const
@@ -226,18 +233,13 @@ namespace dtEditQt
       refreshPaths();
    }
 
-   void LibraryPathsEditor::enableButtons()
+   void LibraryPathsEditor::refreshButtons()
    {
-      deletePath->setDisabled(false);
-      upPath->setDisabled(false);
-      downPath->setDisabled(false);
-   }
+      bool pathIsSelected = AnyItemsSelected();
 
-   void LibraryPathsEditor::disableButtons()
-   {
-      deletePath->setDisabled(true);
-      upPath->setDisabled(true);
-      downPath->setDisabled(true);
+      deletePath->setEnabled(pathIsSelected);
+      upPath->setEnabled(pathIsSelected);
+      downPath->setEnabled(pathIsSelected);
    }
 
    void LibraryPathsEditor::refreshPaths()
@@ -251,12 +253,8 @@ namespace dtEditQt
       {   
          pathView->addItem(paths[i]);
       }
-       
-      // TODO uncomment this line when library recording is supported. 
-      //connect(pathView, SIGNAL(itemSelectionChanged()), this, SLOT(enableButtons()));
-      if(pathView->currentItem() == NULL)
-         emit noPathsSelected();
-      else
+
+      if(AnyItemsSelected())
          pathView->setItemSelected(pathView->currentItem(), true);
    }
 }
