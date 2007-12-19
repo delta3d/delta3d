@@ -50,6 +50,13 @@ namespace dtCore
 
          Physical( const std::string& name = "Physical" );
 
+         /** Overloaded constructor will use the supplied node instead of
+         * creating one internally.
+         * @param node : A node this class should use internally
+         * @param name : The name of this instance
+         */
+         Physical( TransformableNode &node, const std::string &name = "Physical" );
+
       protected:
 
          virtual ~Physical();
@@ -169,6 +176,8 @@ namespace dtCore
 
       private:
          
+         void Ctor();
+
          /**
           * The ODE body identifier.
           */
@@ -186,5 +195,4 @@ namespace dtCore
 
    };
 }
-
 #endif // DELTA_PHYSICAL

@@ -21,6 +21,20 @@ Object::Object(const std::string& name)
 :  Physical(name),
    mRecenterGeometry( false )
 {
+   Ctor();
+}
+
+
+Object::Object( TransformableNode &node, const std::string &name )
+: Physical(node, name),
+  mRecenterGeometry( false )
+{
+   Ctor();
+}
+
+
+void Object::Ctor()
+{
    RegisterInstance(this);
 
    osg::StateSet *stateSet = GetOSGNode()->getOrCreateStateSet();
@@ -29,6 +43,7 @@ Object::Object(const std::string& name)
    // Default collision category = 5
    SetCollisionCategoryBits( UNSIGNED_BIT(5) );
 }
+
 
 Object::~Object()
 {
@@ -87,3 +102,5 @@ osg::Node* Object::LoadFile(const std::string& filename, bool useCache)
       return NULL;
    }
 }
+
+

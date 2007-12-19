@@ -22,6 +22,7 @@
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtCore/scene.h>
 #include <dtCore/transformable.h>
+#include <dtCore/object.h>
 
 #include <osg/MatrixTransform>
 #include <osg/io_utils>
@@ -62,6 +63,7 @@ class TransformableTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST(TestRotationHPR);
    CPPUNIT_TEST(TestTransRotScaleGetSet);
    CPPUNIT_TEST(TestReplaceMatrixNode);
+   CPPUNIT_TEST(TestConstructorTakingMatrixNode);
    CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -78,6 +80,7 @@ public:
    void TestRotationHPR();
    void TestTransRotScaleGetSet();
    void TestReplaceMatrixNode();
+   void TestConstructorTakingMatrixNode();
    void TestSetMatrix();
 
 private:
@@ -449,3 +452,16 @@ void TransformableTests::TestReplaceMatrixNode()
    CPPUNIT_ASSERT( HasChild( testTransTwo->GetMatrixNode(), childTwo->GetOSGNode() ) );
    CPPUNIT_ASSERT( HasChild( testTransTwo->GetMatrixNode(), childOne->GetOSGNode() ) );
 }
+
+void TransformableTests::TestConstructorTakingMatrixNode()
+{
+   osg::ref_ptr<osg::MatrixTransform> mt = new osg::MatrixTransform();
+   dtCore::RefPtr<dtCore::Object> object = new dtCore::Object( *mt );
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Object does not contain the supplied MatrixNode",
+                                 mt.get(), object->GetMatrixNode() );
+
+   CPPUNIT_ASSERT_MESSAGE("Transformable does not contain the supplied node",
+                           mt.get() == object->GetOSGNode() );
+}
+

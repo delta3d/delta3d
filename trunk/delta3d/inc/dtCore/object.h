@@ -42,6 +42,14 @@ namespace dtCore
       
          Object(const std::string& name = "Object");
 
+         /** Overloaded constructor will use the supplied node instead of
+           * creating one internally.
+           * @note: Calling LoadFile will overwrite the supplied node with whatever is loaded.
+           * @param node : A node this class should use internally
+           * @param name : The name of this instance
+           */
+         Object( TransformableNode &node, const std::string &name = "Object" );
+
       protected:
 
          virtual ~Object();
@@ -56,7 +64,9 @@ namespace dtCore
 
       private:
 
-          bool mRecenterGeometry;///<if we want to recenter the geometry of the object about the origin upon load
+         void Ctor();
+
+         bool mRecenterGeometry;///<if we want to recenter the geometry of the object about the origin upon load
    };   
 }
 

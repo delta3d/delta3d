@@ -61,9 +61,29 @@ Transformable::Transformable( const std::string& name )
       mMeshVertices(NULL),
       mMeshIndices(NULL),
       mGeomGeod(NULL),
-      mNode(new osg::MatrixTransform),
+      mNode(new TransformableNode),
       mRenderingGeometry(false), 
       mRenderProxyNode(false)
+{
+   Ctor();
+}
+
+Transformable::Transformable( TransformableNode &node, const std::string &name ) 
+   : DeltaDrawable(name),
+      mGeomID(NULL),
+      mOriginalGeomID(NULL),
+      mTriMeshDataID(NULL),
+      mMeshVertices(NULL),
+      mMeshIndices(NULL),
+      mGeomGeod(NULL),
+      mNode(&node),
+      mRenderingGeometry(false), 
+      mRenderProxyNode(false)
+{
+   Ctor();
+}
+
+void Transformable::Ctor()
 {
    RegisterInstance(this);
 
@@ -103,7 +123,7 @@ Transformable::~Transformable()
 osg::Node* Transformable::GetOSGNode() { return mNode.get(); }
 const osg::Node* Transformable::GetOSGNode() const { return mNode.get(); }
 
-void Transformable::ReplaceMatrixNode( osg::MatrixTransform* matrixTransform )
+void Transformable::ReplaceMatrixNode( TransformableNode* matrixTransform )
 {
    if (matrixTransform == NULL)
    {
@@ -289,8 +309,8 @@ void Transformable::GetTransform( Transform& xform, CoordSysEnum cs ) const
    osg::Matrix newMat;
 
    //yes, we know this sucks, but we can't have a const visitor :(
-   //osg::MatrixTransform* mt = dynamic_cast<osg::MatrixTransform*>( const_cast<osg::Node*>(mNode.get()) );
-   osg::MatrixTransform* mt = const_cast<osg::MatrixTransform*>( GetMatrixNode() );
+   //TransformableNode* mt = dynamic_cast<TransformableNode*>( const_cast<osg::Node*>(mNode.get()) );
+   TransformableNode* mt = const_cast<TransformableNode*>( GetMatrixNode() );
 
    if( cs == ABS_CS )
    { 
@@ -1387,7 +1407,7 @@ void Transformable::PrePhysicsStepUpdate()
 
 void Transformable::RenderCollisionGeometry( bool enable )
 {
-   osg::MatrixTransform *xform = this->GetMatrixNode();
+   TransformableNode *xform = this->GetMatrixNode();
 
    if(!xform)
    {
@@ -1575,3 +1595,5 @@ void Transformable::RemoveRenderedCollisionGeometry( )
       mGeomGeod = 0;
    }
 }
+
+
