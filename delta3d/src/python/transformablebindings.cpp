@@ -12,6 +12,11 @@ using namespace dtCore;
 class TransformableWrap : public Transformable, public wrapper<Transformable>
 {
 public:
+   TransformableWrap (const std::string &name="Transformable")
+      : Transformable (name) {}
+
+   TransformableWrap (TransformableNode &node, const std::string &name="Transformable")
+      : Transformable (node, name) {}
 
    virtual void PrePhysicsStepUpdate()
    {
@@ -106,6 +111,8 @@ void initTransformableBindings()
    void (Transformable::*GetTransformRef)(Transform&, Transformable::CoordSysEnum ) const = &Transformable::GetTransform;
 
    scope Transformable_scope = class_< TransformableWrap, bases<DeltaDrawable>, RefPtr<TransformableWrap>, boost::noncopyable >("Transformable", no_init)
+      .def(init<optional<const std::string&>>())
+      .def(init<Transformable::TransformableNode&, optional<const std::string&>>())
       .def("GetInstanceCount", &Transformable::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", TransformableGI1, return_internal_reference<>())
@@ -114,7 +121,7 @@ void initTransformableBindings()
       .def("AddChild", &Transformable::AddChild, with_custodian_and_ward<1, 2>())
       .def("RemoveChild", &Transformable::RemoveChild)
       .def("SetTransform", SetTransformRef, ST_overloads())
-	  .def("GetTransform", GetTransformRef, GT_overloads())
+      .def("GetTransform", GetTransformRef, GT_overloads())
       .def("RenderProxyNode", &Transformable::RenderProxyNode, RPN_overloads())
       .def("SetNormalRescaling", &Transformable::SetNormalRescaling)
       .def("GetNormalRescaling", &Transformable::GetNormalRescaling)
@@ -134,8 +141,8 @@ void initTransformableBindings()
       .def("PostPhysicsStepUpdate", &Transformable::PostPhysicsStepUpdate, &TransformableWrap::DefaultPostPhysicsStepUpdate)
       .def("RenderCollisionGeometry", &Transformable::RenderCollisionGeometry)
       .def("GetRenderCollisionGeometry", &Transformable::GetRenderCollisionGeometry)
-      .def("GetOSGNode", GetOSGNode1, return_internal_reference<>())
-      .def("GetOSGNode", GetOSGNode2, return_internal_reference<>())
+      .def("GetOSGNode", GetOSGNode1, return_value_policy<reference_existing_object>())
+      .def("GetOSGNode", GetOSGNode2, return_value_policy<reference_existing_object>())      
       ;
 
    enum_<Transformable::CoordSysEnum>("CoordSysEnum")

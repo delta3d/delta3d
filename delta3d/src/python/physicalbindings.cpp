@@ -11,10 +11,13 @@ using namespace dtCore;
 class PhysicalWrap : public Physical
 {
    public:
+      PhysicalWrap(PyObject* self, const std::string &name="Physcial")
+         : Physical (name),
+           mSelf(self) {}
 
-      PhysicalWrap(PyObject* self)
-         : mSelf(self)
-      {}
+      PhysicalWrap (PyObject* self, TransformableNode &node, const std::string &name="Pysical") 
+         : Physical (node, name),
+           mSelf (self) {}
 
       virtual void PostPhysicsStepUpdate()
       {
@@ -49,6 +52,8 @@ void initPhysicalBindings()
    void (Physical::*GetInertiaTensor1)(osg::Matrix& mat) const = &Physical::GetInertiaTensor;
 
    class_<Physical, bases<Transformable>, dtCore::RefPtr<PhysicalWrap>, boost::noncopyable>("Physical", no_init)
+      .def(init<optional<const std::string&>>())
+      .def(init<Transformable::TransformableNode&, optional<const std::string&>>())
       .def("SetBodyID", &Physical::SetBodyID)
       .def("GetBodyID", &Physical::GetBodyID, return_value_policy<return_opaque_pointer>())
       .def("EnableDynamics", &Physical::EnableDynamics, ED_overloads())
