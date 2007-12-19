@@ -160,7 +160,9 @@ void TestAAR::ParseCommandLineOptions(int argc, char **argv) const
 
    int lms;
    if(argParser.read("-lms", lms))
-      mUseLMS = lms;
+   {
+      mUseLMS = (lms == 1) ? true : false;
+   }
 
    if(argParser.read("-h") || argParser.read("--help") || argParser.argc() == 0)
    {
