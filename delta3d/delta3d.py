@@ -591,47 +591,6 @@ def TOOL_BUNDLE(env):
                }
          
       elif env['OS'] == 'linux' :
-        if mode == 'debug' :
-            extLibs = { 
-                'CEGUIBase'           : 'CEGUIBase',
-                'CEGUIOpenGLRenderer' : 'CEGUIOpenGLRenderer',
-                'osg'                 : 'osgd',
-                'osgDB'               : 'osgDBd',
-                'osgGA'               : 'osgGAd',
-                'osgUtil'             : 'osgUtild',
-                'osgText'             : 'osgTextd',
-                'osgSim'              : 'osgSimd',
-                'osgFX'               : 'osgFXd',
-                'osgParticle'         : 'osgParticled',
-                'osgViewer'           : 'osgViewerd',
-                'python'              :  python_version,
-                'OpenThreads'         : 'OpenThreadsd',
-                'cal3d'               : 'cal3d',
-                'DIS'                 : 'DIS',
-                'fltk'                : 'fltk',
-                'gdal'                : 'gdal',
-                'gne'                 : 'gne',
-                'HawkNL'              : 'NL',
-                'isense'              : 'isense',
-                'openal'              : 'openal',
-                'alut'                : 'alut', 
-                'ode'                 : 'ode', 
-                'ul'                  : 'plibul', 
-                'js'                  : 'plibjs',  
-                'rvrutils'            : 'rvrutils',
-               'rcfgscript'          : 'rcfgscript', 
-                 'rbody'               : 'rbody',
-                'xerces-c'            : 'xerces-c',
-                'Xxf86vm'             : 'Xxf86vm',
-                'uuid'                : 'uuid',
-                'opengl'              : 'GL',
-                'cppunit'             : 'cppunit',
-                'ncurses'             : 'ncurses',
-                'QtCore'              : 'QtCore',
-                'QtGui'               : 'QtGui',
-                'QtOpenGL'            : 'QtOpenGL'
-                }
-        else :
             extLibs = { 
                 'CEGUIBase'           : 'CEGUIBase',
                 'CEGUIOpenGLRenderer' : 'CEGUIOpenGLRenderer',
@@ -855,13 +814,13 @@ def TOOL_BUNDLE(env):
       
       if not env.GetOption('clean') :
          
-         foundGdalH = CheckHeader('gdal.h', ['/usr/include/gdal','ext/inc/gdal', '/Library/Frameworks/gdal.framework/Headers'])
+         foundGdalH = CheckHeader('gdal.h', ['/usr/include/gdal','#ext/inc/gdal', '/Library/Frameworks/gdal.framework/Headers'])
          
          if not foundGdalH: 
             print "gdal.h was not found, aborting."
             env.Exit(1)
 
-         foundCEGUIH = CheckHeader('CEGUIBase.h', ['/usr/include/CEGUI','ext/inc/CEGUI', '/Library/Frameworks/CEGUI.framework/Headers'])
+         foundCEGUIH = CheckHeader('CEGUIBase.h', ['/usr/include/CEGUI','#ext/inc/CEGUI', '/Library/Frameworks/CEGUI.framework/Headers'])
          
          if not foundCEGUIH: 
             print "CEGUIBase.h was not found, aborting."
