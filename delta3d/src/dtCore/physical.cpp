@@ -21,12 +21,15 @@ Physical::Physical( const std::string& name )
       mBodyID(0),
       mDynamicsEnabled(false)
 {
-   RegisterInstance(this);
+   Ctor();
+}
 
-   dMassSetSphere(&mMass, 1.0f, 1.0f);
-
-   // Default collision category = 7
-   SetCollisionCategoryBits( UNSIGNED_BIT(7) );
+Physical::Physical( TransformableNode &node, const std::string &name )
+   : Transformable(node, name),
+      mBodyID(0),
+      mDynamicsEnabled(false)
+{
+   Ctor();
 }
 
 Physical::~Physical()
@@ -275,4 +278,15 @@ void Physical::PostPhysicsStepUpdate()
 
       this->SetTransform(mGeomTransform);
    }
+}
+
+
+void Physical::Ctor()
+{
+   RegisterInstance(this);
+
+   dMassSetSphere(&mMass, 1.0f, 1.0f);
+
+   // Default collision category = 7
+   SetCollisionCategoryBits( UNSIGNED_BIT(7) );
 }

@@ -93,6 +93,15 @@ namespace dtCore
 
       Transformable( const std::string& name = "Transformable" );
 
+      typedef osg::MatrixTransform TransformableNode;
+
+      /** Overloaded constructor will use the supplied node instead of
+      * creating one internally.
+      * @param node : A node this class should use internally
+      * @param name : The name of this instance
+      */
+      Transformable( TransformableNode &node, const std::string &name = "Transformable" );
+
    protected:
 
       /**
@@ -107,7 +116,7 @@ namespace dtCore
        * Transformable.
        * @pre matrixTransform != NULL
        */
-      void ReplaceMatrixNode( osg::MatrixTransform* matrixTransform );
+      void ReplaceMatrixNode( TransformableNode* matrixTransform );
 
       virtual ~Transformable();
 
@@ -140,13 +149,13 @@ namespace dtCore
       virtual void GetTransform(Transform& xform, CoordSysEnum cs = ABS_CS) const;
 
       ///Convenience function to return back the internal matrix transform node
-      osg::MatrixTransform* GetMatrixNode()
+      TransformableNode* GetMatrixNode()
       { 
          return mNode.get(); 
       }
 
       ///Convenience function to return back the internal matrix transform node
-      const osg::MatrixTransform* GetMatrixNode() const
+      const TransformableNode* GetMatrixNode() const
       { 
          return mNode.get(); 
       }
@@ -416,6 +425,7 @@ namespace dtCore
       Transform mGeomTransform; 
 
    private:
+      void Ctor();
 
       /**
        * The ODE geometry identifier of the geometry transform.
@@ -452,7 +462,7 @@ namespace dtCore
       /**
       * The node passed on GetOSGNode()
       */
-      RefPtr<osg::MatrixTransform> mNode;
+      RefPtr<TransformableNode> mNode;
 
       /**
        * If we're rendering the collision geometry.                                                                    
@@ -476,5 +486,4 @@ namespace dtCore
 
    };
 }
-
 #endif // DELTA_TRANSFORMABLE
