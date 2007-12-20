@@ -197,6 +197,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\tests\dtHLAGM\ddmmultienumeratedcalculatortests.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\tests\dtHLAGM\ddmregioncalculatorgrouptests.cpp"
 				>
 			</File>
@@ -214,6 +218,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\tests\dtHLAGM\mappingclasstests.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\tests\dtHLAGM\spatialtests.cpp"
 				>
 			</File>
 			<File

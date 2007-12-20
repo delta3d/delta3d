@@ -2,11 +2,12 @@
 #define DELTA_SPATIAL
 
 #include <dtHLAGM/distypes.h>
+#include <dtHLAGM/export.h>
 
 namespace dtHLAGM
 {
 
-   class Spatial
+   class DT_HLAGM_EXPORT Spatial
    {
       public:
          Spatial();

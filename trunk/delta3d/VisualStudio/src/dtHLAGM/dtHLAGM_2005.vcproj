@@ -267,6 +267,10 @@
 				RelativePath="..\..\..\src\dtHLAGM\rprparametertranslator.cpp"
 				>
 			</File>
+			<File
+				RelativePath="..\..\..\src\dtHLAGM\spatial.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -387,6 +391,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtHLAGM\rprparametertranslator.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtHLAGM\spatial.h"
 				>
 			</File>
 		</Filter>
