@@ -570,9 +570,7 @@ namespace dtHLAGM
    WorldCoordinate::WorldCoordinate(double x,
                                     double y,
                                     double z)
-      : mX(x),
-        mY(y),
-        mZ(z)
+      : osg::Vec3d(x, y, z)
    {}
 
    /**
@@ -614,20 +612,20 @@ namespace dtHLAGM
     */
    void WorldCoordinate::Encode(char* buf) const
    {
-      double x = mX,
-        y = mY,
-        z = mZ;
+      double enX = x(),
+        enY = y(),
+        enZ = z();
 
       if(getCpuByteOrder() == LittleEndian)
       {
-         endianSwap(&x);
-         endianSwap(&y);
-         endianSwap(&z);
+         endianSwap(&enX);
+         endianSwap(&enY);
+         endianSwap(&enZ);
       }
 
-      *(double *)(&buf[0]) = x;
-      *(double *)(&buf[8]) = y;
-      *(double *)(&buf[16]) = z;
+      *(double *)(&buf[0]) = enX;
+      *(double *)(&buf[8]) = enY;
+      *(double *)(&buf[16]) = enZ;
    }
 
    /**
@@ -637,20 +635,20 @@ namespace dtHLAGM
     */
    void WorldCoordinate::Decode(const char* buf)
    {
-      double x = *(double *)(&buf[0]),
-        y = *(double *)(&buf[8]),
-        z = *(double *)(&buf[16]);
+      double newX = *(double *)(&buf[0]),
+        newY = *(double *)(&buf[8]),
+        newZ = *(double *)(&buf[16]);
 
       if(getCpuByteOrder() == LittleEndian)
       {
-         endianSwap(&x);
-         endianSwap(&y);
-         endianSwap(&z);
+         endianSwap(&newX);
+         endianSwap(&newY);
+         endianSwap(&newZ);
       }
 
-      mX = x;
-      mY = y;
-      mZ = z;
+      x() = newX;
+      y() = newY;
+      z() = newZ;
    }
 
    /**
@@ -658,9 +656,9 @@ namespace dtHLAGM
     *
     * @param x the value of the x field
     */
-   void WorldCoordinate::SetX(double x)
+   void WorldCoordinate::SetX(double newX)
    {
-      mX = x;
+      x() = newX;
    }
 
    /**
@@ -670,7 +668,7 @@ namespace dtHLAGM
     */
    double WorldCoordinate::GetX() const
    {
-      return mX;
+      return x();
    }
 
    /**
@@ -678,9 +676,9 @@ namespace dtHLAGM
     *
     * @param y the value of the y field
     */
-   void WorldCoordinate::SetY(double y)
+   void WorldCoordinate::SetY(double newY)
    {
-      mY = y;
+      y() = newY;
    }
 
    /**
@@ -690,7 +688,7 @@ namespace dtHLAGM
     */
    double WorldCoordinate::GetY() const
    {
-      return mY;
+      return y();
    }
 
    /**
@@ -698,9 +696,9 @@ namespace dtHLAGM
     *
     * @param z the value of the z field
     */
-   void WorldCoordinate::SetZ(double z)
+   void WorldCoordinate::SetZ(double newZ)
    {
-      mZ = z;
+      z() = newZ;
    }
 
    /**
@@ -710,7 +708,7 @@ namespace dtHLAGM
     */
    double WorldCoordinate::GetZ() const
    {
-      return mZ;
+      return z();
    }
 
    /**
@@ -723,9 +721,7 @@ namespace dtHLAGM
    EulerAngles::EulerAngles(float psi,
                             float theta,
                             float phi)
-      : mPsi(psi),
-        mTheta(theta),
-        mPhi(phi)
+      : osg::Vec3f(psi, theta, phi)
    {}
 
    /**
@@ -745,9 +741,9 @@ namespace dtHLAGM
     */
    void EulerAngles::Encode(char* buf) const
    {
-      float psi = mPsi,
-        theta = mTheta,
-        phi = mPhi;
+      float psi = x(),
+        theta = y(),
+        phi = z();
 
       if(getCpuByteOrder() == LittleEndian)
       {
@@ -779,9 +775,9 @@ namespace dtHLAGM
          swapBytes((char*)(&phi), sizeof(float));
       }
 
-      mPsi = psi;
-      mTheta = theta;
-      mPhi = phi;
+      x() = psi;
+      y() = theta;
+      z() = phi;
    }
 
    /**
@@ -791,7 +787,7 @@ namespace dtHLAGM
     */
    void EulerAngles::SetPsi(float psi)
    {
-      mPsi = psi;
+      x() = psi;
    }
 
    /**
@@ -801,7 +797,7 @@ namespace dtHLAGM
     */
    float EulerAngles::GetPsi() const
    {
-      return mPsi;
+      return x();
    }
 
    /**
@@ -811,7 +807,7 @@ namespace dtHLAGM
     */
    void EulerAngles::SetTheta(float theta)
    {
-      mTheta = theta;
+      y() = theta;
    }
 
    /**
@@ -821,7 +817,7 @@ namespace dtHLAGM
     */
    float EulerAngles::GetTheta() const
    {
-      return mTheta;
+      return y();
    }
 
    /**
@@ -831,7 +827,7 @@ namespace dtHLAGM
     */
    void EulerAngles::SetPhi(float phi)
    {
-      mPhi = phi;
+      z() = phi;
    }
 
    /**
@@ -841,7 +837,7 @@ namespace dtHLAGM
     */
    float EulerAngles::GetPhi() const
    {
-      return mPhi;
+      return z();
    }
 
    /**
@@ -854,9 +850,7 @@ namespace dtHLAGM
    VelocityVector::VelocityVector(float x,
                                   float y,
                                   float z)
-      : mX(x),
-        mY(y),
-        mZ(z)
+      : osg::Vec3f(x, y, z)
    {}
 
    /**
@@ -876,20 +870,20 @@ namespace dtHLAGM
     */
    void VelocityVector::Encode(char* buf) const
    {
-      float x = mX,
-        y = mY,
-        z = mZ;
+      float enX = x(),
+        enY = y(),
+        enZ = z();
 
       if(getCpuByteOrder() == LittleEndian)
       {
-         swapBytes((char*)(&x), sizeof(float));
-         swapBytes((char*)(&y), sizeof(float));
-         swapBytes((char*)(&z), sizeof(float));
+         swapBytes((char*)(&enX), sizeof(float));
+         swapBytes((char*)(&enY), sizeof(float));
+         swapBytes((char*)(&enZ), sizeof(float));
       }
 
-      *(float *)(&buf[0]) = x;
-      *(float *)(&buf[4]) = y;
-      *(float *)(&buf[8]) = z;
+      *(float *)(&buf[0]) = enX;
+      *(float *)(&buf[4]) = enY;
+      *(float *)(&buf[8]) = enZ;
    }
 
    /**
@@ -899,20 +893,20 @@ namespace dtHLAGM
     */
    void VelocityVector::Decode(const char* buf)
    {
-      float x = *(float *)(&buf[0]),
-        y = *(float *)(&buf[4]),
-        z = *(float *)(&buf[8]);
+      float deX = *(float *)(&buf[0]),
+        deY = *(float *)(&buf[4]),
+        deZ = *(float *)(&buf[8]);
 
       if(getCpuByteOrder() == LittleEndian)
       {
-         swapBytes((char*)(&x), sizeof(float));
-         swapBytes((char*)(&y), sizeof(float));
-         swapBytes((char*)(&z), sizeof(float));
+         swapBytes((char*)(&deX), sizeof(float));
+         swapBytes((char*)(&deY), sizeof(float));
+         swapBytes((char*)(&deZ), sizeof(float));
       }
 
-      mX = x;
-      mY = y;
-      mZ = z;
+      x() = deX;
+      y() = deY;
+      z() = deZ;
    }
 
    /**
@@ -920,9 +914,9 @@ namespace dtHLAGM
     *
     * @param psi the value of the x field
     */
-   void VelocityVector::SetX(float x)
+   void VelocityVector::SetX(float newX)
    {
-      mX = x;
+      x() = newX;
    }
 
    /**
@@ -932,7 +926,7 @@ namespace dtHLAGM
     */
    float VelocityVector::GetX() const
    {
-      return mX;
+      return x();
    }
 
    /**
@@ -940,9 +934,9 @@ namespace dtHLAGM
     *
     * @param theta the value of the y field
     */
-   void VelocityVector::SetY(float y)
+   void VelocityVector::SetY(float newY)
    {
-      mY = y;
+      y() = newY;
    }
 
    /**
@@ -952,7 +946,7 @@ namespace dtHLAGM
     */
    float VelocityVector::GetY() const
    {
-      return mY;
+      return y();
    }
 
    /**
@@ -960,9 +954,9 @@ namespace dtHLAGM
     *
     * @param phi the value of the z field
     */
-   void VelocityVector::SetZ(float z)
+   void VelocityVector::SetZ(float newZ)
    {
-      mZ = z;
+      z() = newZ;
    }
 
    /**
@@ -972,7 +966,7 @@ namespace dtHLAGM
     */
    float VelocityVector::GetZ() const
    {
-      return mZ;
+      return z();
    }
 
    /**
