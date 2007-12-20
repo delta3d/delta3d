@@ -96,7 +96,11 @@ void Application::PreFrame( const double deltaSimTime )
 ///////////////////////////////////////////////////////////////////////////////
 void Application::Frame( const double deltaSimTime )
 {
-   mCompositeViewer->frame(deltaSimTime);
+   // NOTE: The new version OSG (2.2) relies on absolute frame time
+   // to update drawables; especially particle systems.
+   // The time delta will be ignored here and the absolute simulation
+   // time passed to the OSG scene updater.
+   mCompositeViewer->frame( dtCore::System::GetInstance().GetSimulationTime() );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
