@@ -37,17 +37,17 @@
 
 namespace dtUtil 
 {
-   
+
    class DT_UTIL_EXPORT DataStreamException : public dtUtil::Enumeration 
    {
       DECLARE_ENUM(DataStreamException);
       public:
-         
+
          static DataStreamException BUFFER_INVALID;
          static DataStreamException BUFFER_READ_ERROR;
          static DataStreamException BUFFER_WRITE_ERROR;
          static DataStreamException BUFFER_INVALID_POS;
-      
+
       private:
          DataStreamException(const std::string &name) : dtUtil::Enumeration(name) 
          {
@@ -62,7 +62,7 @@ namespace dtUtil
          class DT_UTIL_EXPORT SeekTypeEnum : public dtUtil::Enumeration 
          {
             DECLARE_ENUM(SeekTypeEnum);
-            
+
             public:
                static const SeekTypeEnum SET;
                static const SeekTypeEnum CURRENT;
@@ -75,7 +75,7 @@ namespace dtUtil
          };
 
          DataStream();
-         
+
          /**
           * Constructs the datastream using an existing byte buffer.
           * @param buffer The existing valid buffer.
@@ -98,22 +98,22 @@ namespace dtUtil
 
          DataStream& operator>>(unsigned char& value) { Read(value); return *this;}
          DataStream& operator<<(unsigned char value) { Write(value); return *this; }
-         
+
          DataStream& operator>>(char& value) { Read(value); return *this;}
          DataStream& operator<<(char value) { Write(value); return *this; }
-         
+
          DataStream& operator>>(short& value) { Read(value); return *this; }
          DataStream& operator<<(short value) { Write(value); return *this; }
-         
+
          DataStream& operator>>(unsigned short& value) { Read(value); return *this; }
          DataStream& operator<<(unsigned short value) { Write(value); return *this; }
-         
+
          DataStream& operator>>(int& value) { Read(value); return *this; }
          DataStream& operator<<(int value) { Write(value); return *this; }
-         
+
          DataStream& operator>>(unsigned& value) { Read(value); return *this; }
          DataStream& operator<<(unsigned value) { Write(value); return *this; }
-         
+
          DataStream& operator>>(long& value) { Read(value); return *this; }
          DataStream& operator<<(long value) { Write(value); return *this; }
 
@@ -122,22 +122,22 @@ namespace dtUtil
 
          DataStream& operator>>(float& value) { Read(value); return *this; }
          DataStream& operator<<(float value) { Write(value); return *this; }
-         
+
          DataStream& operator>>(double& value) { Read(value); return *this; }
          DataStream& operator<<(double value) { Write(value); return *this; }
-         
+
          DataStream& operator>>(std::string& value) { Read(value); return *this; }
          DataStream& operator<<(const std::string& value) { Write(value); return *this; }
 
          //DataStream& operator>>(dtCore::UniqueId& value) { Read(value); return *this; }
          //DataStream& operator<<(const dtCore::UniqueId& value) { Write(value); return *this; }
-         
+
          DataStream& operator>>(osg::Vec2f& value) { Read(value); return *this; }
          DataStream& operator<<(const osg::Vec2f& value) { Write(value); return *this; }
 
          DataStream& operator>>(osg::Vec2d& value) { Read(value); return *this; }
          DataStream& operator<<(const osg::Vec2d& value) { Write(value); return *this; }
-         
+
          DataStream& operator>>(osg::Vec3f& value) { Read(value); return *this; }
          DataStream& operator<<(const osg::Vec3f& value) { Write(value); return *this; }
 
@@ -155,7 +155,7 @@ namespace dtUtil
 
          void Read(unsigned char& c);
          void Write(unsigned char c);
-         
+
          void Read(char& c);
          void Write(char c);
 
@@ -200,12 +200,14 @@ namespace dtUtil
 
          void Read(osg::Vec4f& vector);
          void Write(const osg::Vec4f& vector);
-         
+
          void Read(osg::Vec4d& vector);
          void Write(const osg::Vec4d& vector);
-         
-		 unsigned int ReadBinary(char* pBuffer, const unsigned int isize);
-		 unsigned int WriteBinary(const char* pBuffer, const unsigned int isize);
+
+         unsigned int ReadBinary(char* pBuffer, const unsigned int isize);
+         unsigned int WriteBinary(const char* pBuffer, const unsigned int isize);
+
+         void WriteBytes(unsigned char c, size_t count);
 
          unsigned int GetBufferCapacity() const { return mBufferCapacity; }        
          unsigned int GetBufferSize() const { return mBufferSize; }
@@ -214,15 +216,15 @@ namespace dtUtil
 
          void Seekp(unsigned int offset, const SeekTypeEnum &type);
          void Seekg(unsigned int offset, const SeekTypeEnum &type);
-         
+
          const char *GetBuffer() const { return mBuffer; }         
-         
+
          /**
           * Gets the endian'ness of the current platform.
           * @return True if little endian, false if big endian.
           */
          bool IsLittleEndian() const { return mIsLittleEndian; }
-         
+
          /**
           * Forces the stream to interpret its data contents as little endian.
           * @param force True if the stream should interpret its contents as little endian.
@@ -233,23 +235,23 @@ namespace dtUtil
           */         
          void SetForceLittleEndian(bool force) { mForceLittleEndian = force; }   
 
-		 unsigned int SetBufferSize(unsigned int size) { return ResizeBuffer(size); };
+         unsigned int SetBufferSize(unsigned int size) { return ResizeBuffer(size); };
          unsigned int IncreaseBufferSize(const unsigned int size = 0);   
-		 unsigned int GetRemainingReadSize();
+         unsigned int GetRemainingReadSize();
          unsigned int ClearBuffer();
          unsigned int AppendDataStream(const DataStream& dataStream);
 
-      private:
-         unsigned int ResizeBuffer(unsigned int size = 0);
+         private:
+            unsigned int ResizeBuffer(unsigned int size = 0);
 
-      private:
-         char *mBuffer;
-         unsigned int mBufferSize, mBufferCapacity;
-         unsigned int mReadPos,mWritePos;
-         bool mAutoFreeBuffer;
-         bool mIsLittleEndian;
-         bool mForceLittleEndian;
-    };
+         private:
+            char *mBuffer;
+            unsigned int mBufferSize, mBufferCapacity;
+            unsigned int mReadPos,mWritePos;
+            bool mAutoFreeBuffer;
+            bool mIsLittleEndian;
+            bool mForceLittleEndian;
+   };
 
 }
 

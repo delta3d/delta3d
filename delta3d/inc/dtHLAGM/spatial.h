@@ -10,7 +10,13 @@ namespace dtHLAGM
    class DT_HLAGM_EXPORT Spatial
    {
       public:
-         Spatial();
+         
+         /**
+          * creates a spatial.
+          * @param littleEndian true to encode/decode in little endian.  False for big endian.
+          */
+         Spatial(bool littleEndian = false);
+
          virtual ~Spatial();
 
          char GetDeadReckoningAlgorithm() const { return mDeadReckoningAlgorithm; }
@@ -22,7 +28,7 @@ namespace dtHLAGM
          
          WorldCoordinate& GetWorldCoordinate();
          const WorldCoordinate& GetWorldCoordinate() const;
-         
+
          EulerAngles& GetOrientation();
          const EulerAngles& GetOrientation() const;
       
@@ -34,6 +40,10 @@ namespace dtHLAGM
          
          VelocityVector& GetAngularVelocity();
          const VelocityVector& GetAngularVelocity() const;
+
+         bool HasVelocityVector() const;
+         bool HasAcceleration() const;
+         bool HasAngularVelocity() const;
 
          /**
           * Fills the given buffer with the encoded version of this struct.
@@ -58,8 +68,9 @@ namespace dtHLAGM
          VelocityVector  mAcceleration;
          VelocityVector  mAngularVelocity;
          
-         char             mDeadReckoningAlgorithm;
+         char            mDeadReckoningAlgorithm;
          bool            mIsFrozen;
+         bool            mLittleEndian;
    };
 
 }

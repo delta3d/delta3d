@@ -4,100 +4,169 @@
 
 namespace dtHLAGM
 {
-
-   Spatial::Spatial()
+   /////////////////////////////////////////////////////////////////////////////////
+   Spatial::Spatial(bool littleEndian):
+      mLittleEndian(littleEndian)
    {
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    Spatial::~Spatial()
    {
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    WorldCoordinate& Spatial::GetWorldCoordinate()
    {
       return mWorldCoordinate;
    }
    
+   /////////////////////////////////////////////////////////////////////////////////
    const WorldCoordinate& Spatial::GetWorldCoordinate() const
    {
       return mWorldCoordinate;
    }
    
+   /////////////////////////////////////////////////////////////////////////////////
    EulerAngles& Spatial::GetOrientation()
    {
       return mOrientation;
    }
    
+   /////////////////////////////////////////////////////////////////////////////////
    const EulerAngles& Spatial::GetOrientation() const
    {
       return mOrientation;
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    VelocityVector& Spatial::GetVelocity()
    {
       return mVelocity;
    }
    
+   /////////////////////////////////////////////////////////////////////////////////
    const VelocityVector& Spatial::GetVelocity() const
    {
       return mVelocity;
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    VelocityVector& Spatial::GetAcceleration()
    {
       return mAcceleration;
    }
    
+   /////////////////////////////////////////////////////////////////////////////////
    const VelocityVector& Spatial::GetAcceleration() const
    {
       return mAcceleration;
    }
    
+   /////////////////////////////////////////////////////////////////////////////////
    VelocityVector& Spatial::GetAngularVelocity()
    {
       return mAngularVelocity;
    }
    
+   /////////////////////////////////////////////////////////////////////////////////
    const VelocityVector& Spatial::GetAngularVelocity() const
    {
       return mAngularVelocity;
    }
 
-   static void WriteVec(const VelocityVector& vec, dtUtil::DataStream& writeStream)
+   /////////////////////////////////////////////////////////////////////////////////
+   bool Spatial::HasVelocityVector() const
    {
-      writeStream << vec.GetX();
-      writeStream << vec.GetY();
-      writeStream << vec.GetZ();
+      return mDeadReckoningAlgorithm > 1;
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
+   bool Spatial::HasAcceleration() const
+   {
+      bool result = false;
+      
+      switch (mDeadReckoningAlgorithm)
+      {
+         case 5:
+         case 9:
+         case 4:
+         case 8:
+            result = true;
+            break;
+            
+         default:
+            result = false;
+            break;
+      }
+      return result;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   bool Spatial::HasAngularVelocity() const
+   {
+      bool result = false;
+      
+      switch (mDeadReckoningAlgorithm)
+      {
+         case 3:
+         case 7:
+         case 4:
+         case 8:
+            result = true;
+            break;
+            
+         default:
+            result = false;
+            break;
+      }
+      return result;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   static void WriteVec(const osg::Vec3f& vec, dtUtil::DataStream& writeStream)
+   {
+      for (size_t i = 0; i < 3; ++i)
+      {
+         writeStream << vec[i];
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
    size_t Spatial::Encode(char * buffer, size_t maxSize)
    {
       size_t result = 0;
-      
+
       //this needs a way to prevent resizing.
       dtUtil::DataStream ds(buffer, maxSize, false);
-      ds << mDeadReckoningAlgorithm;
-      ds.Seekp(7U, dtUtil::DataStream::SeekTypeEnum::CURRENT);
+      ds.SetForceLittleEndian(mLittleEndian);
+      ds.ClearBuffer();
 
-      ds << mWorldCoordinate.GetX();
-      ds << mWorldCoordinate.GetY();
-      ds << mWorldCoordinate.GetZ();
+      ds << mDeadReckoningAlgorithm;
+      ds.WriteBytes(0, 7U);
+
+      ds << mWorldCoordinate.x();
+      ds << mWorldCoordinate.y();
+      ds << mWorldCoordinate.z();
 
       ds << mIsFrozen;
-      ds.Seekp(3U, dtUtil::DataStream::SeekTypeEnum::CURRENT);
+      ds.WriteBytes(0, 3U);
 
-      ds << mOrientation.GetPsi();
-      ds << mOrientation.GetTheta();
-      ds << mOrientation.GetPhi();
+      WriteVec(mOrientation, ds);
 
       switch (mDeadReckoningAlgorithm)
       {
+         case 0:
+         case 1:
+            result = ds.GetBufferSize();
+            break;
+
          case 2:
          case 6:
             WriteVec(mVelocity, ds);
             result = ds.GetBufferSize();
             break;
-            
+
          case 5:
          case 9:
             WriteVec(mVelocity, ds);
@@ -124,55 +193,50 @@ namespace dtHLAGM
             result = 0;
             break;
       }
+
       if (result > maxSize)
       {
          result = 0;
-         delete[] ds.GetBuffer();
       }
-         
+
       return result;
    }
 
-   static void ReadVec(VelocityVector& vec, dtUtil::DataStream& readStream)
+   /////////////////////////////////////////////////////////////////////////////////
+   static void ReadVec(osg::Vec3f& vec, dtUtil::DataStream& readStream)
    {
-      float floatTemp;
-      readStream >> floatTemp;
-      vec.SetX(floatTemp);
-      readStream >> floatTemp;
-      vec.SetY(floatTemp);
-      readStream >> floatTemp;
-      vec.SetZ(floatTemp);
+      for (size_t i = 0; i < 3; ++i)
+      {
+         readStream >> vec[i];
+      }
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    bool Spatial::Decode(const char * buffer, size_t size)
    {
       bool result = true;
       ///ewww, const cast, but the data stream won't use a non-const pointer.
       dtUtil::DataStream ds(const_cast<char *>(buffer), size, false);
+      ds.SetForceLittleEndian(mLittleEndian);
+
       ds >> mDeadReckoningAlgorithm;
       ds.Seekg(7U, dtUtil::DataStream::SeekTypeEnum::CURRENT);
 
-      double doubleTemp;
-      ds >> doubleTemp;
-      mWorldCoordinate.SetX(doubleTemp);
-      ds >> doubleTemp;
-      mWorldCoordinate.SetY(doubleTemp);
-      ds >> doubleTemp;
-      mWorldCoordinate.SetZ(doubleTemp);
+      ds >> mWorldCoordinate.x();
+      ds >> mWorldCoordinate.y();
+      ds >> mWorldCoordinate.z();
 
       ds >> mIsFrozen;
       ds.Seekg(3U, dtUtil::DataStream::SeekTypeEnum::CURRENT);
 
-      float floatTemp;
-      ds >> floatTemp;
-      mOrientation.SetPsi(floatTemp);
-      ds >> floatTemp;
-      mOrientation.SetTheta(floatTemp);
-      ds >> floatTemp;
-      mOrientation.SetPhi(floatTemp);
-      
+
+      ReadVec(mOrientation, ds);
+
       switch (mDeadReckoningAlgorithm)
       {
+         case 0:
+         case 1:
+            break;
          case 2:
          case 6:
             ReadVec(mVelocity, ds);

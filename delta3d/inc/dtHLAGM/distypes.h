@@ -30,6 +30,9 @@
 #include <istream>
 #include <ostream>
 
+#include <osg/Vec3f>
+#include <osg/Vec3d>
+
 namespace dtHLAGM
 {
    /**
@@ -477,7 +480,7 @@ namespace dtHLAGM
    /**
     * A DIS/RPR-FOM world coordinate type.
     */
-   class DT_HLAGM_EXPORT WorldCoordinate
+   class DT_HLAGM_EXPORT WorldCoordinate: public osg::Vec3d
    {
       public:
 
@@ -554,29 +557,12 @@ namespace dtHLAGM
           * @return the value of the z field
           */
          double GetZ() const;
-
-      private:
-
-         /**
-          * The value of the x field.
-          */
-         double mX;
-
-         /**
-          * The value of the y field.
-          */
-         double mY;
-
-         /**
-          * The value of the z field.
-          */
-         double mZ;
    };
 
    /**
     * A DIS/RPR-FOM euler angle type.
     */
-   class DT_HLAGM_EXPORT EulerAngles
+   class DT_HLAGM_EXPORT EulerAngles: public osg::Vec3f
    {
       public:
 
@@ -653,29 +639,12 @@ namespace dtHLAGM
           * @return the value of the phi field
           */
          float GetPhi() const;
-
-      private:
-
-         /**
-          * The value of the psi field.
-          */
-         float mPsi;
-
-         /**
-          * The value of the theta field.
-          */
-         float mTheta;
-
-         /**
-          * The value of the phi field.
-          */
-         float mPhi;
    };
 
    /**
     * A DIS/RPR-FOM velocity vector type.
     */
-   class DT_HLAGM_EXPORT VelocityVector
+   class DT_HLAGM_EXPORT VelocityVector: public osg::Vec3f
    {
       public:
 
@@ -754,21 +723,6 @@ namespace dtHLAGM
          float GetZ() const;
 
       private:
-
-         /**
-          * The value of the x field.
-          */
-         float mX;
-
-         /**
-          * The value of the y field.
-          */
-         float mY;
-
-         /**
-          * The value of the z field.
-          */
-         float mZ;
    };
 
    /**
