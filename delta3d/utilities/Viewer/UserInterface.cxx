@@ -32,7 +32,7 @@ void UserInterface::cb_UIMenuFileOpen(Fl_Menu_* o, void* v) {
 }
 
 inline void UserInterface::cb_UIMenuFileSaveAs_i(Fl_Menu_*, void*) {
-  char *filename = fl_file_chooser("Save File", 
+  char *filename = fl_file_chooser("Save File",
 	"Geometry Files (*.{osg,ive})\tOSG Files (*.osg)\tIVE Files (*.ive)",
 	 UIFileList->text() );
 
@@ -2063,7 +2063,8 @@ UserInterface::UserInterface( int argc , char** argv ) : mArgc(argc), mArgv(argv
       }
       { Fl_Group* o = ViewGroup = new Fl_Group(0, 23, 680, 487);
         o->box(FL_DOWN_BOX);
-        { ViewWindow* o = UIViewWindow = new ViewWindow(0, 25, 680, 485, "ViewWindow");
+        { ViewWindow* o = UIViewWindow = new ViewWindow(8, 50, 665, 453, "ViewWindow"); // start okay, reshape too small
+          //ViewWindow* o = UIViewWindow = new ViewWindow(8, 50, 680-4, 485-2, "ViewWindow"); // start bad, reshape perfect
           o->box(FL_NO_BOX);
           o->color(FL_BACKGROUND_COLOR);
           o->selection_color(FL_BACKGROUND_COLOR);
@@ -2118,7 +2119,7 @@ void UserInterface::SaveFileAs( std::string pathfile ) {
 		return;
 
 	bool fileSaved = UIViewWindow->SaveFileAs( pathfile.c_str() );
-	
+
 	if (fileSaved)
 	{
 
