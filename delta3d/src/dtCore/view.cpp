@@ -82,9 +82,7 @@ bool View::RemoveSlave( Camera* camera )
    assert(camera);
    assert(camera->GetOSGCamera());
    
-   mCameraSlave.erase(camera);
-   
-   return (false);
+   return mCameraSlave.erase(camera) > 0;
 }
 
 ////////////////////////////
@@ -174,6 +172,7 @@ void View::UpdateFromScene()
    {
       EnablePaging();
    }
+   mOsgViewerView->assignSceneDataToCameras();
 }
 
 ///////////////////// 
@@ -183,66 +182,6 @@ dtCore::KeyboardMouseHandler * View::CreateKeyboardMouseHandler()
     mOsgViewerView->addEventHandler(mKeyboardMouseHandler.get());
     return mKeyboardMouseHandler.get();
 }
-
-// ????
-//void View::ResetCameraScenes(dtCore::Scene* sceneRootChanged)
-//{
-//   // Loop all over map entries
-//   for(  IntCameraSetMap::iterator frameKeyIter = mFrameBinMap.begin();
-//      frameKeyIter != mFrameBinMap.end();
-//      ++frameKeyIter )
-//   {
-//      CameraSet& currentCameraSet = frameKeyIter->second;
-//
-//      // For each bin number, loop over all cameras in the bin
-//      for(  CameraSet::iterator cameraIter = currentCameraSet.begin();
-//         cameraIter != currentCameraSet.end();
-//         ++cameraIter )
-//      {
-//         if((*cameraIter)->GetScene() == sceneRootChanged)
-//         {
-//            (*cameraIter)->SetScene(sceneRootChanged);
-//         }
-//      }
-//
-//   }
-//
-//}
-
-//void View::Frame()
-//{
-//    mRenderSurfaceSet.clear();
-//
-//   // Loop all over map entries
-//   for(  IntCameraSetMap::iterator frameKeyIter = mFrameBinMap.begin();
-//         frameKeyIter != mFrameBinMap.end();
-//         ++frameKeyIter )
-//   {
-//      CameraSet& currentCameraSet = frameKeyIter->second;
-//
-//      // For each bin number, loop over all cameras in the bin
-//      for(  CameraSet::iterator cameraIter = currentCameraSet.begin();
-//         cameraIter != currentCameraSet.end();
-//         ++cameraIter )
-//      {
-//         // Call Frame on each camera but do not swap buffers.
-//         (*cameraIter)->Frame(false);
-//
-//         // Insert the associated RenderSurface into a set. This ensures there
-//         // are no duplicates.
-//         mRenderSurfaceSet.insert( (*cameraIter)->GetCamera()->getRenderSurface() );
-//
-//      }
-//   }
-//
-//   // Swap the buffers on each RenderSurface once.
-//   for(  RenderSurfaceSet::iterator renderSurfaceIter = mRenderSurfaceSet.begin();
-//         renderSurfaceIter != mRenderSurfaceSet.end();
-//         ++renderSurfaceIter )
-//   {
-//      (*renderSurfaceIter)->swapBuffers();
-//   }
-//}
 
 
 /////////////////////////////////////////////
