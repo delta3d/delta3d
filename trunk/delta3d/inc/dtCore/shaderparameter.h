@@ -136,7 +136,7 @@ namespace dtCore
          const std::string &GetName() const { return mVarName; }
 
          /**
-          * Each shader parameter should add whatever attribjutes and properties
+          * Each shader parameter should add whatever attributes and properties
           * specific to that parameter to the specified render state.
           * @param stateSet The render state to attach the parameter to.
           */

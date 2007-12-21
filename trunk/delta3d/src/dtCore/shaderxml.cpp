@@ -81,8 +81,10 @@ namespace dtCore
    const std::string ShaderXML::OSCILLATOR_ATTRIB_RANGE_MAX("rangemax");
    const std::string ShaderXML::OSCILLATOR_ATTRIB_CYCLETIME_MIN("cycletimemin");
    const std::string ShaderXML::OSCILLATOR_ATTRIB_CYCLETIME_MAX("cycletimemax");
+   const std::string ShaderXML::OSCILLATOR_ATTRIB_CYCLE_COUNT("cyclecount");
    const std::string ShaderXML::OSCILLATOR_ATTRIB_USEREALTIME("userealtime");
    const std::string ShaderXML::OSCILLATOR_ATTRIB_OSCILLATION_TYPE("oscillation");
+   const std::string ShaderXML::OSCILLATOR_ATTRIB_TRIGGER("trigger");
 
    ///////////////////////////////////////////////////////////////////////////////
    ShaderXML::ShaderXML()
@@ -498,6 +500,38 @@ namespace dtCore
          ss >> tempValue;
          newParam->SetCycleTimeMax(tempValue);
       }
+
+      // CYCLE COUNT
+      valueString = GetElementAttribute(*timerElem, ShaderXML::OSCILLATOR_ATTRIB_CYCLE_COUNT);
+      if (!valueString.empty())
+      {
+         int tempIntValue;
+         std::istringstream ss;
+         ss.str(valueString);
+         ss >> tempIntValue;
+         newParam->SetCycleCountTotal(tempIntValue);
+      }      
+
+      // TRIGGER
+      valueString = GetElementAttribute(*timerElem, ShaderXML::OSCILLATOR_ATTRIB_TRIGGER);
+      if (!valueString.empty())
+      {
+         if (valueString == ShaderParamOscillator::OscillationTrigger::AUTO.GetName())
+         {
+            newParam->SetOscillationTrigger(ShaderParamOscillator::OscillationTrigger::AUTO);
+         }
+         else if (valueString == ShaderParamOscillator::OscillationTrigger::MANUAL.GetName())
+         {
+            newParam->SetOscillationTrigger(ShaderParamOscillator::OscillationTrigger::MANUAL);
+         }
+         else
+         {
+            std::ostringstream error;
+            error << "Error parseing floattimer on parameter [" << paramName << 
+               "] for trigger attribute [" << valueString << "]. Should be 'auto' or 'manual'.";
+            throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR, error.str(), __FILE__, __LINE__);
+         }   
+      }      
 
       // USE REAL TIME
       valueString = GetElementAttribute(*timerElem,ShaderXML::OSCILLATOR_ATTRIB_USEREALTIME);
