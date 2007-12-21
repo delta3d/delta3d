@@ -56,7 +56,7 @@
 #include <dtActors/soundactorproxy.h>
 
 namespace dtActors
-{
+{ // "display name", "category", "description/tooltip"
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::TASK_ACTOR_TYPE(new dtDAL::ActorType("Task Actor", "dtcore.Tasks","Generic task actor."));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::SOUND_ACTOR_TYPE(new dtDAL::ActorType("Sound Actor", "dtcore.Environment","Generic Sound Actor"));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::GAME_EVENT_TASK_ACTOR_TYPE(new dtDAL::ActorType("GameEvent Task Actor", "dtcore.Tasks","Game event task actor.", TASK_ACTOR_TYPE.get()));
@@ -87,8 +87,8 @@ namespace dtActors
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::COORDINATE_CONFIG_ACTOR_TYPE(new dtDAL::ActorType("Coordinate Config", "dtutil", "dtUtil::Coordinates Actor"));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::PLAYER_START_ACTOR_TYPE(new dtDAL::ActorType("Player Start", "dtcore", "This can be dropped into a map and the player actor will spawn himself there on startup"));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::WAYPOINT_ACTOR_TYPE(new dtDAL::ActorType("Waypoint", "dtai.waypoint", "dtAI::Waypoint Actor"));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::ANIMATION_ACTOR_TYPE(new dtDAL::ActorType("Animation", "Animation", "Cal3DGameActor"));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::ANIMATION_ACTOR_TYPE2(new dtDAL::ActorType("SkeletalMesh", "dtanim", "AnimationGameActor2"));
+   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::ANIMATION_ACTOR_TYPE(new dtDAL::ActorType("Cal3DGameActor", "dtanim", "Cal3DGameActor"));
+   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::ANIMATION_ACTOR_TYPE2(new dtDAL::ActorType("AnimationGameActor", "dtanim", "AnimationGameActor"));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::GAME_MESH_ACTOR_TYPE(
       new dtDAL::ActorType("Game Mesh Actor", "dtcore.Game.Actors", 
       "Simple base Game Actor that supports a Mesh - you should not typically use this directly"));
