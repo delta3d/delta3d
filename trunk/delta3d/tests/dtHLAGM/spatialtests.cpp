@@ -147,20 +147,28 @@ class SpatialTests : public CPPUNIT_NS::TestFixture
          CPPUNIT_ASSERT(encodedSize > 0);
 
          dtHLAGM::Spatial decodedSpatial;
+         for (size_t i = 0; i < encodedSize; ++i)
+         {
+            CPPUNIT_ASSERT_MESSAGE(
+                     "decoding a buffer with any value less than the correct "
+                     "encoded size, should return false",
+                     decodedSpatial.Decode(buffer, encodedSize));
+         }
+         
          CPPUNIT_ASSERT(decodedSpatial.Decode(buffer, encodedSize));
 
          CPPUNIT_ASSERT_EQUAL(drAlgo, decodedSpatial.GetDeadReckoningAlgorithm());
          CPPUNIT_ASSERT_EQUAL(frozen, decodedSpatial.IsFrozen());
-         CPPUNIT_ASSERT_EQUAL(mSpatial.HasVelocityVector(), decodedSpatial.HasVelocityVector());
+         CPPUNIT_ASSERT_EQUAL(mSpatial.HasVelocity(), decodedSpatial.HasVelocity());
          CPPUNIT_ASSERT_EQUAL(mSpatial.HasAcceleration(), decodedSpatial.HasAcceleration());
          CPPUNIT_ASSERT_EQUAL(mSpatial.HasAngularVelocity(), decodedSpatial.HasAngularVelocity());
 
-         CPPUNIT_ASSERT(dtUtil::Equivalent(mSpatial.GetWorldCoordinate(), 
+         CPPUNIT_ASSERT(dtUtil::Equivalent(mSpatial.GetWorldCoordinate(),
                   decodedSpatial.GetWorldCoordinate(), 0.01));
-         CPPUNIT_ASSERT(dtUtil::Equivalent(mSpatial.GetOrientation(), 
+         CPPUNIT_ASSERT(dtUtil::Equivalent(mSpatial.GetOrientation(),
                   decodedSpatial.GetOrientation(), 0.01f));
 
-         if (mSpatial.HasVelocityVector())
+         if (mSpatial.HasVelocity())
          {
             CPPUNIT_ASSERT(dtUtil::Equivalent(mSpatial.GetVelocity(), 
                      decodedSpatial.GetVelocity(), 0.01f));
@@ -189,20 +197,27 @@ class SpatialTests : public CPPUNIT_NS::TestFixture
          {
             CPPUNIT_ASSERT(dtUtil::Equivalent<osg::Vec3f>(zeroVec, decodedSpatial.GetAngularVelocity(), 0.01f));
          }
+
+         for (size_t i = 0; i < encodedSize; ++i)
+         {
+            CPPUNIT_ASSERT_EQUAL_MESSAGE(
+                     "encoding with a buffer of any size less than expected, should return 0",
+                     size_t(0), mSpatial.Encode(buffer, i));
+         }
       }
 
       void TestHasVelocity()
       {
          mSpatial.SetDeadReckoningAlgorithm(0);
-         CPPUNIT_ASSERT(!mSpatial.HasVelocityVector());
+         CPPUNIT_ASSERT(!mSpatial.HasVelocity());
          mSpatial.SetDeadReckoningAlgorithm(1);
-         CPPUNIT_ASSERT(!mSpatial.HasVelocityVector());
+         CPPUNIT_ASSERT(!mSpatial.HasVelocity());
 
          for (unsigned i = 2; i < 10; ++i)
          {
             mSpatial.SetDeadReckoningAlgorithm(i);
             CPPUNIT_ASSERT_MESSAGE("All algorithms other than 0 and 1 have a velocity vector.",
-                     mSpatial.HasVelocityVector());
+                     mSpatial.HasVelocity());
          }
       }
 
