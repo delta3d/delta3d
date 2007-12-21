@@ -7,10 +7,15 @@
 namespace dtHLAGM
 {
 
+   /**
+    * Class for encoding and decoding the RPR 2 spatial structure.  This structure holds
+    * position, orientation, and motion data and the suggested dead-reckoning algorithm.
+    * The data is the encoded structure changes based on the dead-reckoning algorithm chosen.
+    */
    class DT_HLAGM_EXPORT Spatial
    {
       public:
-         
+
          /**
           * creates a spatial.
           * @param littleEndian true to encode/decode in little endian.  False for big endian.
@@ -41,8 +46,11 @@ namespace dtHLAGM
          VelocityVector& GetAngularVelocity();
          const VelocityVector& GetAngularVelocity() const;
 
-         bool HasVelocityVector() const;
+         /// @return true if the dead-reckoning algorithm suggests this should have a valid velocity.
+         bool HasVelocity() const;
+         /// @return true if the dead-reckoning algorithm suggests this should have a valid acceleration.
          bool HasAcceleration() const;
+         /// @return true if the dead-reckoning algorithm suggests this should have a valid angular velocity.
          bool HasAngularVelocity() const;
 
          /**
@@ -71,7 +79,10 @@ namespace dtHLAGM
          char            mDeadReckoningAlgorithm;
          bool            mIsFrozen;
          bool            mLittleEndian;
-   };
+
+         //Helper method used to get the size of the base structure.
+         size_t GetBaseSize();
+ };
 
 }
 
