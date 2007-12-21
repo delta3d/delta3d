@@ -46,7 +46,7 @@ namespace dtAnim
 
 namespace dtActors
 {
-   class AnimationGameActorProxy2;
+   class AnimationGameActorProxy;
 }
 
 class TEST_ANIM_EXPORT TestAnim : public dtGame::GameEntryPoint
@@ -72,7 +72,7 @@ class TEST_ANIM_EXPORT TestAnim : public dtGame::GameEntryPoint
 
    private:
 
-      void InitializeAnimationActor(dtActors::AnimationGameActorProxy2* actor,
+      void InitializeAnimationActor(dtActors::AnimationGameActorProxy* actor,
                                     dtAnim::AnimationComponent* animComp, bool isPlayer,
                                     dtCore::Camera *camera);
 
