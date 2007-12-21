@@ -35,6 +35,11 @@ namespace dtCore
    const ShaderParamOscillator::OscillationType ShaderParamOscillator::OscillationType::DOWNANDUP("DownAndUp");
 
    ///////////////////////////////////////////////////////////////////////////////
+   IMPLEMENT_ENUM(ShaderParamOscillator::OscillationTrigger)
+   const ShaderParamOscillator::OscillationTrigger ShaderParamOscillator::OscillationTrigger::AUTO("auto");
+   const ShaderParamOscillator::OscillationTrigger ShaderParamOscillator::OscillationTrigger::MANUAL("manual");
+
+   ///////////////////////////////////////////////////////////////////////////////
    ShaderParamOscillator::ShaderParamOscillator(const std::string &name) : 
       ShaderParameter(name), 
       mValue(0.0),
@@ -45,7 +50,10 @@ namespace dtCore
       mCycleTimeMin(1.0),
       mCycleTimeMax(1.0),
       mCurrentCycleTime(1.0), // init not really needed since calced before used
+      mCycleCountTotal(INFINITE_CYCLE),
+      mCurrentCycleCount(0),
       mUseRealTime(true),
+      mWasTriggered(false),
       mOscillationType(&ShaderParamOscillator::OscillationType::UP),
       mCycleDirection(1.0)
    {
@@ -118,6 +126,8 @@ namespace dtCore
          mCycleDirection = -1.0;
       }
 
+      mCurrentCycleCount = 0;
+
       GetUniformParam()->set(mValue);
 
       SetDirty(false);
@@ -130,19 +140,24 @@ namespace dtCore
 
       // Shared params are shared at the pointer level, exactly the same. Non shared are new instances
       if (IsShared())
+      {
          newParam = this;
+      }
       else
       {
          newParam = new ShaderParamOscillator(GetName());
 
          newParam->SetDirty(true); // force a recompute of range and stuff.
-         newParam->mOffset = mOffset;
-         newParam->mRangeMin = mRangeMin;
-         newParam->mRangeMax = mRangeMax;
-         newParam->mCycleTimeMin = mCycleTimeMin;
-         newParam->mCycleTimeMax = mCycleTimeMax;
-         newParam->mUseRealTime = mUseRealTime;
-         newParam->mOscillationType = mOscillationType;
+         newParam->mOffset             = mOffset;
+         newParam->mRangeMin           = mRangeMin;
+         newParam->mRangeMax           = mRangeMax;
+         newParam->mCycleTimeMin       = mCycleTimeMin;
+         newParam->mCycleTimeMax       = mCycleTimeMax;
+         newParam->mCycleCountTotal    = mCycleCountTotal;
+         newParam->mUseRealTime        = mUseRealTime;
+         newParam->mOscillationType    = mOscillationType;
+         newParam->mOscillationTrigger = mOscillationTrigger;
+         newParam->mWasTriggered       = mWasTriggered;
          // Note - you don't copy the current values since they are gonna change on update
          // anyway.
       }
@@ -155,14 +170,29 @@ namespace dtCore
    {
       if (data->message == "preframe")
       {
-         // timeChange[0] is sim time, [1] is real
-         double* timeChange = (double*)data->userData;
-         if (mUseRealTime)
-            DoShaderUpdate(timeChange[1]);
-         else
-            DoShaderUpdate(timeChange[0]);
+         // If the oscillation needs to be 'triggered' to start, 
+         // only continue if it was already triggered.
+         if (mOscillationTrigger == &OscillationTrigger::MANUAL && !mWasTriggered)
+         {
+            return;
+         }
 
+         // If we have more cycles left, keep oscillating
+         if (mCycleCountTotal == INFINITE_CYCLE || mCurrentCycleCount < mCycleCountTotal)
+         {
+            // timeChange[0] is sim time, [1] is real
+            double* timeChange = (double*)data->userData;
+            (mUseRealTime) ? DoShaderUpdate(timeChange[1]): DoShaderUpdate(timeChange[0]);
+         }   
       }
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void ShaderParamOscillator::TriggerOscillationStart()
+   {
+      SetDirty(true);
+      Update();
+      mWasTriggered = true;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -177,8 +207,16 @@ namespace dtCore
          mValue += cycleDelta;
          if (mValue > mOffset + mCurrentRange)
          {
-            float remainder = mValue - (mOffset + mCurrentRange);
-            mValue = mOffset + remainder;
+            // Should we wrap around or clamp?
+            if (++mCurrentCycleCount < mCycleCountTotal)
+            {
+               float remainder = mValue - (mOffset + mCurrentRange);
+               mValue = mOffset + remainder;
+            }      
+            else
+            {
+               dtUtil::ClampMax(mValue, mOffset + mCurrentRange);
+            }
          }
       }
       // DOWN
@@ -187,8 +225,17 @@ namespace dtCore
          mValue -= cycleDelta;
          if (mValue < mOffset)
          {
-            float remainder = mOffset - mValue;
-            mValue = mOffset + mCurrentRange - remainder;
+            // Should we wrap around or clamp?
+            if (++mCurrentCycleCount < mCycleCountTotal)
+            {
+               float remainder = mOffset - mValue;
+               mValue = mOffset + mCurrentRange - remainder;
+               ++mCurrentCycleCount;
+            }
+            else
+            {
+               dtUtil::ClampMax(mValue, mOffset + mCurrentRange);
+            }
          }
       }
       // UPANDDOWN
@@ -197,18 +244,37 @@ namespace dtCore
          mValue += mCycleDirection * cycleDelta;
          if (mValue < mOffset) // was going down and need to turn around
          {
-            float remainder = mOffset - mValue;
-            mCycleDirection = 1.0;
-            mValue = mOffset + remainder;
+            // Should we wrap around or clamp?
+            if (++mCurrentCycleCount < mCycleCountTotal)
+            {
+               float remainder = mOffset - mValue;
+               mCycleDirection = 1.0;
+               mValue = mOffset + remainder;
+               ++mCurrentCycleCount;
+            }
+            else
+            {
+               dtUtil::ClampMax(mValue, mOffset + mCurrentRange);
+            }
          } 
          else if (mValue > mOffset + mCurrentRange) // was going up.  Turn around
          {
-            float remainder = mValue - (mOffset + mCurrentRange);
-            mCycleDirection = -1.0;
-            mValue = mOffset + mCurrentRange - remainder;
+            // Should we wrap around or clamp?
+            if (++mCurrentCycleCount < mCycleCountTotal)
+            {
+               float remainder = mValue - (mOffset + mCurrentRange);
+               mCycleDirection = -1.0;
+               mValue = mOffset + mCurrentRange - remainder;
+               ++mCurrentCycleCount;
+            }
+            else
+            {
+               dtUtil::ClampMax(mValue, mOffset + mCurrentRange);
+            }
          }
       }
 
       GetUniformParam()->set(mValue);
    }
+   
 }

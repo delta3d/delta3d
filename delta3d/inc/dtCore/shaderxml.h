@@ -181,8 +181,10 @@ namespace dtCore
          static const std::string OSCILLATOR_ATTRIB_RANGE_MAX;
          static const std::string OSCILLATOR_ATTRIB_CYCLETIME_MIN;
          static const std::string OSCILLATOR_ATTRIB_CYCLETIME_MAX;
+         static const std::string OSCILLATOR_ATTRIB_CYCLE_COUNT;
          static const std::string OSCILLATOR_ATTRIB_USEREALTIME;
          static const std::string OSCILLATOR_ATTRIB_OSCILLATION_TYPE;
+         static const std::string OSCILLATOR_ATTRIB_TRIGGER;
 
          //Disable the copy constructor and assignment operator.
          ShaderXML(const ShaderXML &rhs) { }

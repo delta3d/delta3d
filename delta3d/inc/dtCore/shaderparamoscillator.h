@@ -53,8 +53,27 @@ namespace dtCore
          }
       };
 
+      /**
+       * The type of trigger for this parameter.
+       * Determines when the oscillation begins.
+       */
+      class DT_CORE_EXPORT OscillationTrigger : public dtUtil::Enumeration
+      {
+         DECLARE_ENUM(OscillationTrigger);
+      public:
+         static const OscillationTrigger AUTO;   // Starts immediately by itself
+         static const OscillationTrigger MANUAL; // Waits for the user to trigger it
+      private:
+         OscillationTrigger(const std::string &name) : dtUtil::Enumeration(name)
+         {
+            AddInstance(this);
+         }
+      };
+
 
       public:
+
+         static const int INFINITE_CYCLE = -1;
 
          /**
           * Constructs the float parameter.
@@ -206,6 +225,16 @@ namespace dtCore
           */
          float GetCycleTimeMax() const { return mCycleTimeMax; }
 
+         /**        
+         * @param count The number of cycles that will happen before oscillation stops.
+         */
+         void SetCycleCountTotal(int newCount) { mCycleCountTotal = newCount; }
+
+         /**        
+         * @return The number of cycles that will happen before oscillation stops.
+         */
+         float GetCycleCountTotal() const { return mCycleCountTotal; }
+
          /**
           * Indicates whether we use real time or simulation time to do our cycle.  Default is true (real time). 
           * @param useRealTime True means use real time, false uses simulation time. 
@@ -236,6 +265,20 @@ namespace dtCore
          const OscillationType &GetOscillationType() const { return *mOscillationType; }
 
          /**
+         * Sets when the timer will begin to oscillate its value. If set to AUTO, oscillation will
+         * begin immediately by itself.  If set to MANUAL, oscillation will not occur until the
+         * decides to call Start.
+         * @see OscillationTrigger         
+         */
+         void SetOscillationTrigger(const OscillationTrigger &type) { mOscillationTrigger = &type; }
+
+         /**
+         * Returns the way that the oscillator will begin.
+         * @return The source trigger currently in use by this parameter.
+         */
+         const OscillationTrigger& GetOscillationTrigger() const { return *mOscillationTrigger; }
+
+         /**
           * Returns the current cycle direction. Should be either 1.0 or -1.0.  You cannot
           * set this but you can find out which direction it is currently going.
           * @return 1.0 if going up, -1.0 if going down.
@@ -249,6 +292,11 @@ namespace dtCore
           */
          virtual void OnMessage(MessageData *data);
 
+         /**
+         * Triggers the oscillation to begin if the trigger type is 'manual'
+         * Otherwise, it resets the current oscillation to their starting defaults.
+         */
+         void TriggerOscillationStart();
 
       protected:
          virtual ~ShaderParamOscillator();
@@ -264,16 +312,20 @@ namespace dtCore
       private:
          float mValue;
 
-         float mOffset; // Start point.  In [1.0, 5.0], this would be 1.
-         float mRangeMin; // Min size of distance between start and end. 
-         float mRangeMax; // Max size of distance between start and end. 
-         float mCurrentRange; // the current range (somewhere between min and max) - this is not settable
-         float mCycleTimeMin; // Min time for it to cycle (see mCurrentCycleTime)
-         float mCycleTimeMax; // Max time for it to cycle (see mCurrentCycleTime)
-         float mCurrentCycleTime; // The time in secs it takes to go from bottom to top or the reverse
-         bool mUseRealTime; // True means real time, false means simulation time.
+         float mOffset;            // Start point.  In [1.0, 5.0], this would be 1.
+         float mRangeMin;          // Min size of distance between start and end. 
+         float mRangeMax;          // Max size of distance between start and end. 
+         float mCurrentRange;      // the current range (somewhere between min and max) - this is not settable
+         float mCycleTimeMin;      // Min time for it to cycle (see mCurrentCycleTime)
+         float mCycleTimeMax;      // Max time for it to cycle (see mCurrentCycleTime)
+         float mCurrentCycleTime;  // The time in secs it takes to go from bottom to top or the reverse
+         int   mCycleCountTotal;   // The number of cycles that will happen before oscillation stops.
+         int   mCurrentCycleCount; // The number of cycles that we've already completed
+         bool  mUseRealTime;       // True means real time, false means simulation time.
+         bool  mWasTriggered;      // True means that oscillation was manually started
 
-         const OscillationType *mOscillationType;
+         const OscillationType    *mOscillationType;
+         const OscillationTrigger *mOscillationTrigger;
 
          float mCycleDirection; // internal, is 1.0 or -1.0, shows direction of cycle
    };
