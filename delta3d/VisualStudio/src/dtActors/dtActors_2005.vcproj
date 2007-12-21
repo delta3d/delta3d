@@ -235,6 +235,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtActors\cal3dgameactor.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtActors\cameraactorproxy.cpp"
 				>
 			</File>
