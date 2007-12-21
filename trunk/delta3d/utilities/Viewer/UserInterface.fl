@@ -349,7 +349,8 @@ UIMenuMotionWalk->setonly();}
         } {
           Fl_Box UIViewWindow {
             label ViewWindow
-            private xywh {0 25 680 485}
+            private xywh {8, 50, 665, 453} # start okay, reshape too small
+            #private xywh {8, 50, 676, 483} # start bad, reshape perfect
             code0 {\#include "viewwindow.h"}
             class ViewWindow
           }

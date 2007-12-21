@@ -109,7 +109,7 @@ Function {make_window()} {open
       }
     }
     Fl_Tile {} {open
-      xywh {5 35 1405 555} box UP_FRAME
+      xywh {13, 62, 700, 520} box UP_FRAME # starts okay, bad reshape
     } {
       Fl_Group {} {
         xywh {719 35 185 290} box DOWN_BOX

@@ -669,7 +669,7 @@ Fl_Double_Window* make_window() {
         }
         o->end();
       }
-      { Fl_DT_Window<dtABC::Widget>* o = viewWidget = new Fl_DT_Window<dtABC::Widget>(5, 35, 714, 555);
+      { Fl_DT_Window<dtABC::Widget>* o = viewWidget = new Fl_DT_Window<dtABC::Widget>(13, 62, 700, 520); // starts okay, bad reshape
         o->box(FL_DOWN_BOX);
         o->color(FL_BACKGROUND_COLOR);
         o->selection_color(FL_BACKGROUND_COLOR);
