@@ -328,6 +328,12 @@ namespace dtCore
          const OscillationTrigger *mOscillationTrigger;
 
          float mCycleDirection; // internal, is 1.0 or -1.0, shows direction of cycle
+
+         /**
+         * Increments the current cycle count if there are more cycles left
+         * @returns true if there are more cycles left, OW returns false
+         */
+         bool AdvanceCycle();
    };
 }
 

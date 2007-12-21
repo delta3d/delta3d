@@ -208,7 +208,7 @@ namespace dtCore
          if (mValue > mOffset + mCurrentRange)
          {
             // Should we wrap around or clamp?
-            if (++mCurrentCycleCount < mCycleCountTotal)
+            if (AdvanceCycle())
             {
                float remainder = mValue - (mOffset + mCurrentRange);
                mValue = mOffset + remainder;
@@ -226,7 +226,7 @@ namespace dtCore
          if (mValue < mOffset)
          {
             // Should we wrap around or clamp?
-            if (++mCurrentCycleCount < mCycleCountTotal)
+            if (AdvanceCycle())
             {
                float remainder = mOffset - mValue;
                mValue = mOffset + mCurrentRange - remainder;
@@ -245,7 +245,7 @@ namespace dtCore
          if (mValue < mOffset) // was going down and need to turn around
          {
             // Should we wrap around or clamp?
-            if (++mCurrentCycleCount < mCycleCountTotal)
+            if (AdvanceCycle())
             {
                float remainder = mOffset - mValue;
                mCycleDirection = 1.0;
@@ -260,7 +260,7 @@ namespace dtCore
          else if (mValue > mOffset + mCurrentRange) // was going up.  Turn around
          {
             // Should we wrap around or clamp?
-            if (++mCurrentCycleCount < mCycleCountTotal)
+            if (AdvanceCycle())
             {
                float remainder = mValue - (mOffset + mCurrentRange);
                mCycleDirection = -1.0;
@@ -275,6 +275,22 @@ namespace dtCore
       }
 
       GetUniformParam()->set(mValue);
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   bool ShaderParamOscillator::AdvanceCycle()
+   {
+      if (mCycleCountTotal == INFINITE_CYCLE)
+      {
+         return true;
+      }
+
+      if (++mCurrentCycleCount < mCycleCountTotal)
+      {
+         return true;
+      }
+
+      return false;
    }
    
 }
