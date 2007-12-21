@@ -66,7 +66,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtanim.SkeletalMesh</type>
+            <type>dtanim.AnimationGameActor</type>
             <id>e39619c2-a9a1-4ad0-a973-a82a1a87d6a9</id>
             <name>CharacterEntity</name>
             <property>
