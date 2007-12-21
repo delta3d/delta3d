@@ -55,7 +55,7 @@
 #include <dtAnim/sequencemixer.h>
 #include <dtAnim/animatable.h>
 
-#include <dtActors/animationgameactor2.h>
+#include <dtActors/animationgameactor.h>
 #include <dtActors/engineactorregistry.h>
 
 #include <osg/Geode>
@@ -168,7 +168,7 @@ void TestAnim::OnStartup(dtGame::GameApplication& app)
 
       for(;iter != endIter; ++iter)
       {
-         dtActors::AnimationGameActorProxy2* gameProxy = dynamic_cast<dtActors::AnimationGameActorProxy2*>(*iter);
+         dtActors::AnimationGameActorProxy* gameProxy = dynamic_cast<dtActors::AnimationGameActorProxy*>(*iter);
 
          if(gameProxy != NULL)
          {         
@@ -194,13 +194,13 @@ void TestAnim::OnStartup(dtGame::GameApplication& app)
       {
          for(int j = 0; j < 10; ++j, startPos[1] += 2.0f)
          {
-            dtCore::RefPtr<dtActors::AnimationGameActorProxy2> proxy;
+            dtCore::RefPtr<dtActors::AnimationGameActorProxy> proxy;
             gameManager.CreateActor(*dtActors::EngineActorRegistry::ANIMATION_ACTOR_TYPE2, proxy);
             if(proxy.valid())
             {
                gameManager.AddActor(*proxy);
 
-               dtActors::AnimationGameActor2* actor = dynamic_cast<dtActors::AnimationGameActor2*>(&proxy->GetGameActor());
+               dtActors::AnimationGameActor* actor = dynamic_cast<dtActors::AnimationGameActor*>(&proxy->GetGameActor());
                actor->SetModel("SkeletalMeshes/marine.xml");
                InitializeAnimationActor(proxy.get(), animComp, false, app.GetCamera());
 
@@ -240,12 +240,12 @@ void TestAnim::OnShutdown(dtGame::GameApplication& app)
 {
 }
 
-void TestAnim::InitializeAnimationActor(dtActors::AnimationGameActorProxy2* gameProxy,
+void TestAnim::InitializeAnimationActor(dtActors::AnimationGameActorProxy* gameProxy,
                                         dtAnim::AnimationComponent* animComp,
                                         bool isPlayer,
                                         dtCore::Camera *camera)
 {   
-      dtActors::AnimationGameActor2* actor = dynamic_cast<dtActors::AnimationGameActor2*>(&gameProxy->GetGameActor());
+      dtActors::AnimationGameActor* actor = dynamic_cast<dtActors::AnimationGameActor*>(&gameProxy->GetGameActor());
 
       if(actor != NULL)
       {

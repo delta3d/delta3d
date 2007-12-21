@@ -42,7 +42,7 @@
 #include <dtDAL/map.h>
 #include <dtDAL/project.h>
 
-#include <dtActors/animationgameactor2.h>
+#include <dtActors/animationgameactor.h>
 #include <dtActors/engineactorregistry.h>
 
 #include <osg/Geode>
@@ -246,8 +246,8 @@ namespace dtAnim
          dtGame::GameActorProxy* gameProxy = dynamic_cast<dtGame::GameActorProxy*>((*iter).get());
          if(gameProxy)
          {
-            dtActors::AnimationGameActor2* actor = 
-               dynamic_cast<dtActors::AnimationGameActor2*>(&gameProxy->GetGameActor());
+            dtActors::AnimationGameActor* actor = 
+               dynamic_cast<dtActors::AnimationGameActor*>(&gameProxy->GetGameActor());
 
                if(actor)
                { 
@@ -272,8 +272,8 @@ namespace dtAnim
          dtGame::GameActorProxy* gameProxy = dynamic_cast<dtGame::GameActorProxy*>((*iter).get());
          if(gameProxy)
          {
-            dtActors::AnimationGameActor2* actor = 
-               dynamic_cast<dtActors::AnimationGameActor2*>(&gameProxy->GetGameActor());
+            dtActors::AnimationGameActor* actor = 
+               dynamic_cast<dtActors::AnimationGameActor*>(&gameProxy->GetGameActor());
 
             if(actor)
             { 
@@ -366,8 +366,8 @@ namespace dtAnim
          dtGame::GameActorProxy* gameProxy = dynamic_cast<dtGame::GameActorProxy*>((*iter).get());
          if(gameProxy)
          {
-            dtActors::AnimationGameActor2* actor 
-               = dynamic_cast<dtActors::AnimationGameActor2*>(&gameProxy->GetGameActor());
+            dtActors::AnimationGameActor* actor 
+               = dynamic_cast<dtActors::AnimationGameActor*>(&gameProxy->GetGameActor());
 
             if(actor)
             { 
