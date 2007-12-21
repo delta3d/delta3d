@@ -38,14 +38,14 @@ namespace dtActors
    /**
     * This class is the game actor for an animated model.
     * @see GameActor
-    * @see AnimationGameActorProxy  
+    * @see AnimationGameActorProxy2
     */
    class DT_PLUGIN_EXPORT AnimationGameActor2 : public dtGame::GameActor
    {
       public:
 
          /**
-          * Constructs a AnimationGameActor actor.
+          * Constructs an AnimationGameActor2 actor.
           * @param proxy The actor proxy owning this task actor.     
           */
          AnimationGameActor2(dtGame::GameActorProxy &proxy);   
@@ -75,7 +75,7 @@ namespace dtActors
    /**
     * This class is the proxy for an animated model game object.
     * @see GameActorProxy
-    * @see AnimationGameActor  
+    * @see AnimationGameActor2
     */
    class DT_PLUGIN_EXPORT AnimationGameActorProxy2 : public dtGame::GameActorProxy
    {
