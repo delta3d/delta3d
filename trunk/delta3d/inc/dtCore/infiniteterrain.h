@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc., 
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
  *
-*/
+ */
 
 #ifndef DELTA_INFINITETERRAIN
 #define DELTA_INFINITETERRAIN
@@ -34,14 +34,14 @@
 namespace dtCore
 {
    class InfiniteTerrainCallback;
-   
+
    /**
     * An infinite terrain surface.
     */
-   class DT_CORE_EXPORT InfiniteTerrain : public Transformable                                     
+   class DT_CORE_EXPORT InfiniteTerrain : public Transformable
    {
       friend class InfiniteTerrainCallback;
-      
+
       DECLARE_MANAGEMENT_LAYER(InfiniteTerrain)
 
       public:
@@ -51,10 +51,10 @@ namespace dtCore
           *
           * @param name the instance name
           * @param textureImage An image to apply to the terrain.  The appearance 
-		  * of this texture will be effected by HighColor and LowColor 
+          * of this texture will be effected by HighColor and LowColor 
           */
          InfiniteTerrain(const std::string& name = "infiniteTerrain",
-                         osg::Image* textureImage = 0);
+                  osg::Image* textureImage = 0);
 
       protected:
 
@@ -62,42 +62,42 @@ namespace dtCore
           * Destructor.
           */
          virtual ~InfiniteTerrain();
-      
+
       public:
-      
+
          /**
           * Regenerates the terrain surface.
           */
          void Regenerate();
-         
+
          /**
           * Sets the size of the terrain segments. (def  = 1000.0)
           *
           * @param segmentSize the new segment size
           */
          void SetSegmentSize(float segmentSize);
-         
+
          /**
           * Returns the size of the terrain segments.
           *
           * @return the current segment size
           */
          float GetSegmentSize() const;
-         
+
          /**
           * Sets the number of divisions in each segment. (def = 128)
           *
           * @param segmentDivisions the new segment divisions
           */
          void SetSegmentDivisions(int segmentDivisions);
-         
+
          /**
           * Returns the number of divisions in each segment.
           *
           * @return the current segment divisions
           */
          int GetSegmentDivisions() const;
-         
+
          /**
           * Sets the horizontal scale, which affects the
           * feature frequency. (def = 0.01)
@@ -105,14 +105,14 @@ namespace dtCore
           * @param horizontalScale the new horizontal scale
           */
          void SetHorizontalScale(float horizontalScale);
-         
+
          /**
           * Returns the horizontal scale.
           *
           * @return the horizontal scale
           */
          float GetHorizontalScale() const;
-         
+
          /**
           * Sets the vertical scale, which affects the feature
           * amplitude. (def = 25.0) 
@@ -120,7 +120,7 @@ namespace dtCore
           * @param verticalScale the new vertical scale
           */
          void SetVerticalScale(float verticalScale);
-         
+
          /**
           * Returns the vertical scale.
           *
@@ -135,7 +135,7 @@ namespace dtCore
           * @param buildDistance the new build distance
           */
          void SetBuildDistance(float buildDistance);
-         
+
          /**
           * Returns the build distance.
           *
@@ -151,14 +151,14 @@ namespace dtCore
           * @param enable true to enable, false to disable
           */
          void EnableSmoothCollisions(bool enable);
-         
+
          /**
           * Checks whether smooth collision detection is enabled.
           *
           * @return true if enabled, false if disabled
           */
          bool SmoothCollisionsEnabled() const;
-         
+
          /**
           * Determines the height of the terrain at the specified location.
           *
@@ -169,7 +169,7 @@ namespace dtCore
           * @return the height at the specified location
           */
          float GetHeight(float x, float y, bool smooth = false);
-         
+
          /**
           * Retrieves the normal of the terrain at the specified location.
           *
@@ -186,7 +186,7 @@ namespace dtCore
           */
          virtual bool FilterContact( dContact* contact, Transformable* collider ) { return true; }
 
-        /**
+         /**
           * Given pointOne and pointTwo, both in world space and with all coordinates
           * in Cartesian space (essentially in meters along X, Y and Z),
           * returns true if there is a clear line of sight and false if the view
@@ -201,29 +201,29 @@ namespace dtCore
           * @see SetLineOfSightSpacing()
           */
          bool IsClearLineOfSight( const osg::Vec3& pointOne,
-                                  const osg::Vec3& pointTwo );
+                  const osg::Vec3& pointTwo );
 
          /**
-           * Set the stepping distance to sample points for the line of sight calculation (meters).
-           * Defaults to 25 meters.
-           */
+          * Set the stepping distance to sample points for the line of sight calculation (meters).
+          * Defaults to 25 meters.
+          */
          void SetLineOfSightSpacing(float spacing) {mLOSPostSpacing = spacing;}
 
          float GetLineOfSightSpacing() const {return mLOSPostSpacing;}
 
-		 /**
+         /**
           * Set the color used for low areas of the terrain.  
           *
           * @param rgb The colour (0..255, 0..255, 0..255) of the low areas.
           */
-		 void SetMinColor(const osg::Vec3 &rgb);
+         void SetMinColor(const osg::Vec3 &rgb);
 
-		 /**
+         /**
           * Set the color used for high areas of the terrain.  
           *
           * @param rgb The colour (0..255, 0..255, 0..255) of the high areas.
           */
-		 void SetMaxColor(const osg::Vec3 &rgb);
+         void SetMaxColor(const osg::Vec3 &rgb);
 
       private:
 
@@ -247,19 +247,19 @@ namespace dtCore
           * @return the number of contact points generated
           */
          static int Collider(dGeomID o1, dGeomID o2, int flags,
-                             dContactGeom* contact, int skip);
+                  dContactGeom* contact, int skip);
 
          /**
-         * A Helper function for Collider to detect collision with terrain and a sphere
-         *  
-         * @param it the the pointer to the infinite terrain we want to collide with
-         * @param pCenter the center of the sphere
-         * @param pRadius the radius of the sphere
-         * @param pContact the ode contact point to fill 
-         * @return whether or not a collision occured
-         */
+          * A Helper function for Collider to detect collision with terrain and a sphere
+          *  
+          * @param it the the pointer to the infinite terrain we want to collide with
+          * @param pCenter the center of the sphere
+          * @param pRadius the radius of the sphere
+          * @param pContact the ode contact point to fill 
+          * @return whether or not a collision occured
+          */
          static bool CollideSphere(InfiniteTerrain* it, const osg::Vec3& pCenter, float pRadius, dContactGeom* pContact);
-         
+
          /**
           * ODE collision function: Finds the collider function appropriate
           * to detect collisions between InfiniteTerrain geoms and other
@@ -270,7 +270,7 @@ namespace dtCore
           */
          static dColliderFn* GetColliderFn(int num);
 
-         
+
          /**
           * ODE collision function: Computes the axis-aligned bounding box
           * for InfiniteTerrain instances.
@@ -280,7 +280,7 @@ namespace dtCore
           * bounding box
           */
          static void GetAABB(dGeomID g, dReal aabb[6]);
-         
+
          /**
           * ODE collision function: Checks whether the specified axis-aligned
           * bounding box intersects with an InfiniteTerrain instance.
@@ -298,32 +298,32 @@ namespace dtCore
 
          //initializes info used for the GetColor function
          void SetupColorInfo();
-         
+
          /**
           * The noise object.
           */
          dtUtil::Noise2f mNoise;
-         
+
          /**
           * The size of each terrain segment.
           */
          float mSegmentSize;
-         
+
          /**
           * The number of divisions in each terrain segment.
           */
          int mSegmentDivisions;
-         
+
          /**
           * The horizontal scale.
           */
          float mHorizontalScale;
-         
+
          /**
           * The vertical scale.
           */
          float mVerticalScale;
-         
+
          /**
           * The build distance.
           */
@@ -333,18 +333,18 @@ namespace dtCore
           * Whether or not smooth collision detection is enabled.
           */
          bool mSmoothCollisionsEnabled;
-         
+
          /**
           * Identifies a single terrain segment.
           */
          struct Segment
          {
             int mX, mY;
-            
+
             Segment(int x, int y)
-               : mX(x), mY(y)
+            : mX(x), mY(y)
             {}
-            
+
             bool operator<(const Segment& segment) const
             {
                if(mX < segment.mX) return true;
@@ -352,12 +352,12 @@ namespace dtCore
                else return (mY < segment.mY);
             }
          };
-         
+
          /**
           * The set of constructed segments.
           */
          std::set<Segment> mBuiltSegments;
-         
+
          /**
           * Flags the segments as needing to be cleared.
           */

@@ -197,14 +197,14 @@ void Scene::SetSceneNode(osg::Group* newSceneNode)
    //and add them to the new scene node
 
 //   osg::Group * sceneData = mOsgViewerScene->getSceneData()->asGroup();
-     unsigned numChildren = mSceneNode->getNumChildren();
+   unsigned numChildren = mSceneNode->getNumChildren();
 
-      for(unsigned i = 0; i < numChildren; ++i)
-      {
-         osg::Node* child = mSceneNode->getChild(i);
-         newSceneNode->addChild(child);
-      }
-      mSceneNode->removeChildren(0, numChildren);
+   for(unsigned i = 0; i < numChildren; ++i)
+   {
+      osg::Node* child = mSceneNode->getChild(i);
+      newSceneNode->addChild(child);
+   }
+   mSceneNode->removeChildren(0, numChildren);
    
    mSceneNode = newSceneNode;
    UpdateViewSet();
@@ -218,6 +218,7 @@ void Scene::SetSceneNode(osg::Group* newSceneNode)
    {
       AddDrawable((*iter).get());
    }
+   
 }
 /////////////////////////////////////////////
 void Scene::AddDrawable( DeltaDrawable *drawable )
