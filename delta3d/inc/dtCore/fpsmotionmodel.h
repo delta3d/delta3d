@@ -67,12 +67,22 @@ namespace dtCore
           * avoid creating default input mappings
           * @param mouse the mouse instance, or 0 to avoid
           * creating default input mappings
+          * @param maxWalkSpeed the maximum walking speed
+          * @param maxTurnSpeed the maximum turning speed
+          * @param maxSidestepSpeed the maximum sidestep speed
+          * @param height the height above the terrain at which we stand
+          * @param maxStepUpDist the maximum distance we can step up to higher terrain
           */
          FPSMotionModel(   Keyboard* keyboard = 0,
-                           Mouse* mouse = 0 );
+                           Mouse* mouse = 0,
+                           float maxWalkSpeed = 10.0f,
+                           float maxTurnSpeed = 1440.0f,
+                           float maxSidestepSpeed = 10.0f,
+                           float height = 2.0f,
+                           float maxStepUpDist = 1.0f);
 
       protected:
-      
+
          /**
           * Destructor.
           */
@@ -84,6 +94,43 @@ namespace dtCore
           * @param deltaTime The time change
           */
          virtual void UpdateMouse(const double deltaTime);
+
+         /**
+         * This method can be overriden in subclasses to produce
+         * desired translation behavior
+         * Note: Any collision detection/response and other physical
+         * constraints should be applied here
+         * @param deltaTime The time change
+         */
+         virtual void PerformTranslation(const double deltaTime);
+
+         /**
+         * Returns the factor [-1.0, 1.0] to side-step by
+         *
+         * @return the current sidestep factor
+         */
+         float GetSidestepFactor() const { return mSidestepCtrl; }
+
+         /**
+         * Returns the factor [-1.0, 1.0] to walk by
+         *
+         * @return the current walk factor
+         */
+         float GetForwardBackFactor() const { return mForwardBackCtrl; }
+
+         /**
+         * Returns the mouse
+         *
+         * @return the mouse
+         */
+         dtCore::RefPtr<Mouse> GetMouse() { return mMouse; }
+
+         /**
+         * Returns the keyboard
+         *
+         * @return the keyboard
+         */
+         dtCore::RefPtr<Keyboard> GetKeyboard() { return mKeyboard; }
 
          ///internal class, used by FPSMotionModel for InputDevice listening
          /** Helper class used to call the supplied functor when an axis value
@@ -297,7 +344,13 @@ namespace dtCore
           * @param data the message data
           */
          virtual void OnMessage(MessageData *data);
-                  
+
+         /**
+         * Sets having to use the mouse buttons to move the camera
+         * @param use True to use
+         */
+         void SetUseMouseButtons(bool use) { mUseMouseButtons = use; }
+
       private:
          
          /**
@@ -417,7 +470,8 @@ namespace dtCore
 
          bool mFalling; ///<are we currently falling?
 
-         dtCore::RefPtr<Mouse> mMouse;
+         dtCore::RefPtr<Mouse>    mMouse;
+         dtCore::RefPtr<Keyboard> mKeyboard;
 
          dtCore::RefPtr<dtCore::Isector> mIsector; ///<used for ground clamping
 
@@ -430,8 +484,9 @@ namespace dtCore
          float mSidestepCtrl;    ///<control value for sidestep movement (-1.0, 1.0)
          float mLookLeftRightCtrl;///<control value for Left/Right rotation (-1.0, 1.0)
          float mLookUpDownCtrl;   ///<control value for up/down rotation (-1.0, 1.0)
-         float mHeading; /// used to store the current heading
-   
+
+         bool mUseMouseButtons;
+
          ///private method used to ground clamp or adjust the falling velocity/position
          void AdjustElevation(osg::Vec3 &xyz, double deltaFrameTime);
    };
