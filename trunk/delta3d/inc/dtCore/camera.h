@@ -123,7 +123,7 @@ namespace dtCore
       ///Set Perspective of camera
       void SetPerspective( double hfov, double aspectRatio, double nearClip, double farClip );
 
-      void GetPerspective(double &hfov, double &vfov, double &nearClip, double &farClip);
+      void GetPerspective(double &hfov, double &aspectRatio, double &nearClip, double &farClip);
       ///Set view frustrum of camera lens
       void SetFrustum(  double left, double right,
                         double bottom, double top,
