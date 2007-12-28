@@ -94,7 +94,7 @@ void Delta3DThread::run()
    connect(mViewer.get(), SIGNAL(MeshLoaded(int,const QString&)), mWin, SLOT(OnNewMesh(int,const QString&)));
 
    connect(mViewer.get(), SIGNAL(MaterialLoaded(int,const QString&,const QColor&,const QColor&,const QColor&,float )), 
-           mWin, SLOT(OnNewMaterial(int,const QString&,const QColor&,const QColor&,const QColor&,float)));
+           mWin, SLOT(OnNewMaterial(int,const QString&,const QColor&,const QColor&,const QColor&,float)));   
 
    connect(mWin, SIGNAL(AttachMesh(int)), mViewer.get(), SLOT(OnAttachMesh(int)));
    connect(mWin, SIGNAL(DetachMesh(int)), mViewer.get(), SLOT(OnDetachMesh(int)));
@@ -107,12 +107,15 @@ void Delta3DThread::run()
    connect(mWin, SIGNAL(LODScale_Changed(float)), mViewer.get(), SLOT(OnLODScale_Changed(float)));
    connect(mWin, SIGNAL(SpeedChanged(float)), mViewer.get(), SLOT(OnSpeedChanged(float)));
 
+   connect(&mTimer, SIGNAL(timeout()), mViewer.get(), SLOT(OnTimeout()));
+   connect(mViewer.get(), SIGNAL(BlendUpdate(const std::vector<float>&)), mWin, SLOT(OnBlendUpdate(const std::vector<float>&)));
+
    connect((QObject*)mWin->mShadedAction, SIGNAL(triggered()), mViewer.get(), SLOT(OnSetShaded()));
    connect((QObject*)mWin->mWireframeAction, SIGNAL(triggered()), mViewer.get(), SLOT(OnSetWireframe()));
    connect((QObject*)mWin->mShadedWireAction, SIGNAL(triggered()), mViewer.get(), SLOT(OnSetShadedWireframe()));
 
-
    dtCore::System::GetInstance().Start();
+   mTimer.start(10);
 
    //this->exec();
 }

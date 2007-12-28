@@ -53,6 +53,8 @@ public slots:
                       const QColor &diff, const QColor &amb, const QColor &spec,
                       float shininess );
 
+   void OnBlendUpdate(const std::vector<float> &weightList);
+
    void OnAnimationClicked( QTableWidgetItem *item);
    void OnMeshActivated( QListWidgetItem *item );
    void OnLODScale_Changed(double newValue);
@@ -83,6 +85,7 @@ private:
    QAction *mShadedWireAction;
    QAction *mDiffuseLightAction;
    QAction *mPointLightAction;
+   QAction *mMixerViewerAction;
 
    QToolBar *mShadingToolbar;
    QToolBar *mLightingToolbar;
