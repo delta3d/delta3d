@@ -358,7 +358,9 @@ private:
       }
 
       //turn off cursor for FPS motion model
-      GetWindow()->ShowCursor(index != dtExample::FPS); 
+      bool show_cursor = (index != dtExample::FPS) &&
+                         (index != dtExample::COLLISION);
+      GetWindow()->ShowCursor(show_cursor);
    }
 
    /// The Town.
