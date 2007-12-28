@@ -191,11 +191,11 @@ void FPSMotionModel::SetDefaultMappings(Keyboard *keyboard, Mouse *mouse)
    {
       mDefaultInputDevice = new LogicalInputDevice("FPSLogicalInputDevice");
 
-	   Axis *leftRightMouseMovement = mDefaultInputDevice->AddAxis(
+      Axis *leftRightMouseMovement = mDefaultInputDevice->AddAxis(
          "left/right mouse movement",
          mLeftRightMouseMovement = new AxisToAxis(mouse->GetAxis(0)));
 
-	   Axis *upDownMouseMovement = mDefaultInputDevice->AddAxis(
+      Axis *upDownMouseMovement = mDefaultInputDevice->AddAxis(
          "up/down mouse movement",
          mUpDownMouseMovement = new AxisToAxis(mouse->GetAxis(1)));
 
@@ -224,7 +224,7 @@ void FPSMotionModel::SetDefaultMappings(Keyboard *keyboard, Mouse *mouse)
          new AxesToAxis(leftRightMouseMovement)
       );
 
-	   mDefaultLookUpDownAxis = mDefaultInputDevice->AddAxis(
+      mDefaultLookUpDownAxis = mDefaultInputDevice->AddAxis(
          "default look up/down",
          new AxesToAxis(upDownMouseMovement)
       );
