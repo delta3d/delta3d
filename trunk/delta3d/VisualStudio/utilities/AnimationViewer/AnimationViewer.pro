@@ -7,10 +7,10 @@ TEMPLATE = vcapp
 QT += opengl
 
 CONFIG(debug, debug|release) {
-  LIBS += dtABCD.lib dtUtilD.lib dtCoreD.lib dtAnimD.lib osgD.lib osgGAD.lib osgViewerD.lib cal3d_d.lib xerces-c_2D.lib
+  LIBS += dtABCD.lib dtUtilD.lib dtCoreD.lib dtAnimD.lib dtGUID.lib osgD.lib osgGAD.lib osgViewerD.lib cal3d_d.lib xerces-c_2D.lib CEGUIBase_d.lib
   TARGET = AnimationViewerD
 } else {
-   LIBS += dtABC.lib dtUtil.lib dtCore.lib dtAnim.lib osg.lib osgGA.lib osgViewer.lib cal3d.lib xerces-c_2.lib
+   LIBS += dtABC.lib dtUtil.lib dtCore.lib dtAnim.lib dtGUI.lib osg.lib osgGA.lib osgViewer.lib cal3d.lib xerces-c_2.lib CEGUIBase.lib
  TARGET = AnimationViewer
 }
 
@@ -27,9 +27,8 @@ SOURCES = Delta3DThread.cpp \
           TrackView.cpp \
           TrackScene.cpp \
           TrackItem.cpp \ 
-		  OSGAdapterWidget.cpp
-	    
-	    
+		  OSGAdapterWidget.cpp		  
+	    	    
 HEADERS = Delta3DThread.h \
 	      MainWindow.h \
           Viewer.h \
@@ -37,9 +36,9 @@ HEADERS = Delta3DThread.h \
           TrackView.h \
           TrackScene.h \
           TrackItem.h \
-		  OSGAdapterWidget.h
+		  OSGAdapterWidget.h 
 
-INCLUDEPATH +=  "../../../inc" "../../../ext/inc"
+INCLUDEPATH +=  "../../../inc" "../../../ext/inc" "../../../ext/inc/CEGUI"
 
 VPATH = ../../../utilities/AnimationViewer/
 

@@ -18,7 +18,6 @@ int main(int argc, char *argv[])
    QApplication qapp(argc, argv);
 
    MainWindow win;
-
    win.show();
 
    Delta3DThread *thread = new Delta3DThread(&qapp);

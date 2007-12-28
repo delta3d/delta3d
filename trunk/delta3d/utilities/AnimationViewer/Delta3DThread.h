@@ -2,6 +2,7 @@
 #define Delta3DThread_h__
 
 #include <QtCore/QThread>
+#include <QtCore/QTimer>
 #include <dtCore/refptr.h>
 
 class MainWindow;
@@ -21,6 +22,7 @@ public:
 protected:
 
 private:
+   QTimer mTimer;
    MainWindow *mWin;
 };
 #endif // Delta3DThread_h__

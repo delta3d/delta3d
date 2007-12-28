@@ -25,6 +25,7 @@
 #include <QtGui/QListWidget>
 #include <QtGui/QGraphicsScene>
 #include <QtGui/QHBoxLayout>
+#include <QtGui/QProgressBar>
 
 #include <QtGui/QStandardItemModel>
 #include <QtGui/QStandardItem>
@@ -42,15 +43,16 @@ mAnimListWidget(NULL),
 mMeshListWidget(NULL),
 mMaterialModel(NULL),
 mMaterialView(NULL),
-mGLWidget(NULL)
+mGLWidget(NULL),
+mMixerViewerAction(NULL)
 {
-   resize(640, 700);
+   resize(800, 800);
 
    dtAnim::AnimNodeBuilder& nodeBuilder = dtAnim::Cal3DDatabase::GetInstance().GetNodeBuilder();
    nodeBuilder.SetCreate(dtAnim::AnimNodeBuilder::CreateFunc(&nodeBuilder, &dtAnim::AnimNodeBuilder::CreateSoftware));
 
    mAnimListWidget = new AnimationTableWidget(this);
-   mAnimListWidget->setColumnCount(5);
+   mAnimListWidget->setColumnCount(6);
    mAnimListWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
 
    connect(mAnimListWidget, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(OnAnimationClicked(QTableWidgetItem*)));
@@ -58,7 +60,7 @@ mGLWidget(NULL)
    connect(mAnimListWidget, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(OnItemDoubleClicked(QTableWidgetItem*)));
 
    QStringList headers;
-   headers << "Name" << "Weight (L)" << "Delay (L)" << "Delay In (A)" << "Delay Out (A)";
+   headers << "Name" << "Weight (L)" << "Delay (L)" << "Delay In (A)" << "Delay Out (A)" << "Mixer Blend";
    mAnimListWidget->setHorizontalHeaderLabels(headers );    
 
    mMeshListWidget = new QListWidget(this);
@@ -179,10 +181,13 @@ void MainWindow::CreateActions()
    QIcon wireframeIcon(":/images/wireframe.png");
    QIcon shadedIcon(":/images/shaded.png");
    QIcon shadedWireIcon(":/images/shadedwire.png");
+   QIcon mixerViewerIcon(":/images/mixerViewer.png");
 
    mWireframeAction  = actionGroup->addAction(wireframeIcon, "Wireframe");
    mShadedAction     = actionGroup->addAction(shadedIcon, "Shaded");
-   mShadedWireAction = actionGroup->addAction(shadedWireIcon, "Shaded Wireframe");
+   mShadedWireAction = actionGroup->addAction(shadedWireIcon, "Shaded Wireframe");   
+
+   mMixerViewerAction = new QAction(mixerViewerIcon, "Mixer Viewer", NULL);
 
    mWireframeAction->setCheckable(true);
    mShadedAction->setCheckable(true); 
@@ -212,6 +217,7 @@ void MainWindow::CreateToolbars()
    mShadingToolbar->addAction(mWireframeAction);
    mShadingToolbar->addAction(mShadedAction);
    mShadingToolbar->addAction(mShadedWireAction);
+   mShadingToolbar->addAction(mMixerViewerAction);
 
    mLODScaleToolbar->addWidget(lodScaleSpinner);
    
@@ -313,9 +319,18 @@ void MainWindow::OnNewAnimation(unsigned int id, const QString &animationName,
       mAnimListWidget->setItem( id, 4, item );
    }
 
-   mAnimListWidget->resizeColumnToContents(0);
+   { //mixer blend
+      QProgressBar *mixerBlend = new QProgressBar;
+      mixerBlend->setMaximum(100);
+      mixerBlend->setMinimum(0);
+      mixerBlend->setValue(0);
 
+      mAnimListWidget->setCellWidget(id, 5, mixerBlend);
+   }
+
+   mAnimListWidget->resizeColumnToContents(0);
 }
+
 
 void MainWindow::OnNewMesh(int meshID, const QString &meshName)
 {
@@ -368,6 +383,20 @@ void MainWindow::OnNewMaterial( int matID, const QString &name,
    QList<QStandardItem*> items;
    items << idItem << nameItem << diffItem << ambItem << specItem << shinItem;
    mMaterialModel->appendRow( items);
+}
+
+void MainWindow::OnBlendUpdate(const std::vector<float> &weightList)
+{
+   int test = mAnimListWidget->rowCount();
+   assert(weightList.size() == (size_t)mAnimListWidget->rowCount());
+
+   for (size_t rowIndex = 0; rowIndex < weightList.size(); ++rowIndex)
+   {
+      int newValue = (int)(weightList[rowIndex] * 100.0f);
+      QProgressBar *meter = (QProgressBar*)mAnimListWidget->cellWidget(rowIndex, 5);     
+
+      meter->setValue(newValue);
+   }
 }
 
 void MainWindow::OnAnimationClicked( QTableWidgetItem *item )

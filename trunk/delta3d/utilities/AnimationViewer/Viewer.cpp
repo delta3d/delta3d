@@ -6,7 +6,6 @@
 
 #include "Viewer.h"
 
-#include <dtUtil/log.h>
 #include <dtCore/system.h>
 #include <dtCore/transform.h>
 #include <dtCore/scene.h>
@@ -15,6 +14,7 @@
 #include <dtCore/globals.h>
 #include <dtCore/light.h>
 #include <dtCore/deltawin.h>
+#include <dtCore/exceptionenum.h>
 
 #include <dtAnim/characterfilehandler.h>
 #include <dtAnim/chardrawable.h>
@@ -26,6 +26,10 @@
 #include <dtUtil/xercesparser.h>
 #include <dtUtil/stringutils.h>
 #include <dtUtil/fileutils.h>
+#include <dtUtil/log.h>
+#include <dtUtil/exception.h>
+
+#include <dtGUI/ceuidrawable.h>
 
 #include <xercesc/sax/SAXParseException.hpp>  // for base class
 #include <xercesc/util/XMLString.hpp>
@@ -36,18 +40,26 @@
 #include <osg/PolygonMode>
 #include <osg/PolygonOffset>
 #include <osg/Material>
+#include <osg/MatrixTransform>
 
 #include <osgViewer/GraphicsWindow>
 #include <osgViewer/CompositeViewer>
+
+#include <cal3d/animation.h>
+
+#include <CEGUI.h>
+#include <CEGUI/CEGUISystem.h>
+#include <CEGUI/CEGUISchemeManager.h>
+
 
 using namespace dtUtil;
 using namespace dtCore;
 using namespace dtAnim;
 
-Viewer::Viewer(): 
-   mDatabase(&Cal3DDatabase::GetInstance())
+Viewer::Viewer()
+: mDatabase(&Cal3DDatabase::GetInstance())
 {
-   dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_DEBUG);
+   dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_DEBUG);   
 }
 
 Viewer::~Viewer()
@@ -74,6 +86,12 @@ void Viewer::Config()
    //camera->setProjectionMatrixAsPerspective(30.0f, 
    //         static_cast<double>(mGLWidget->width())/static_cast<double>(mGLWidget->height()), 1.0f, 10000.0f);
 
+   std::string exampleDataPath = dtCore::GetEnvironment("DELTA_ROOT");
+   std::string rootDataPath    = dtCore::GetEnvironment("DELTA_DATA");
+   exampleDataPath += "/examples/data;" + rootDataPath;
+
+   dtCore::SetDataFilePathList(dtCore::GetDataFilePathList() + ";" + exampleDataPath);
+
    //adjust the Camera position
    dtCore::Transform camPos;
    osg::Vec3 camXYZ( 0.f, -5.f, 1.f );
@@ -94,7 +112,7 @@ void Viewer::Config()
 
    mWireDecorator  = new osg::Group;
    mShadeDecorator = new osg::Group;
-
+  
    InitWireDecorator(); 
    InitShadeDecorator();
 
@@ -110,7 +128,7 @@ void Viewer::OnLoadCharFile( const QString &filename )
    QDir dir(filename);
    dir.cdUp();
 
-   SetDataFilePathList( GetDeltaDataPathList() + ":" +
+   SetDataFilePathList( dtCore::GetDataFilePathList() + ":" +
                         dir.path().toStdString() + ":" );
 
    // try to clean up the scene graph
@@ -132,14 +150,14 @@ void Viewer::OnLoadCharFile( const QString &filename )
       // Create a new Cal3DWrapper
       dtCore::RefPtr<Cal3DModelWrapper> wrapper = mDatabase->Load(filename.toStdString());
        
-      if( mCharacter.valid() )
+      if(mCharacter.valid())
       {
-         mCharacter->SetCal3DWrapper( wrapper.get() );
+         mCharacter->SetCal3DWrapper(wrapper.get());        
       }
       else
       {
-         mCharacter = new CharDrawable( wrapper.get() );
-      }
+         mCharacter = new CharDrawable(wrapper.get());
+      }          
    }
    catch (const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException& e)
    {
@@ -270,6 +288,40 @@ void Viewer::OnSetShadedWireframe()
    GetScene()->GetSceneNode()->addChild(mShadeDecorator.get());
 }
 
+void Viewer::OnTimeout()
+{
+   if (mCharacter.valid())
+   {
+      unsigned int idx=0;
+      dtAnim::Cal3DModelWrapper *rapper = mCharacter->GetCal3DWrapper();
+      assert(rapper);
+
+      std::vector<CalAnimation*> animVec = rapper->GetCalModel()->getMixer()->getAnimationVector();
+      std::vector<CalAnimation*>::iterator animItr = animVec.begin();
+
+      std::vector<float> weightList;
+      weightList.reserve(animVec.size());
+
+      while (animItr != animVec.end())
+      {
+         CalAnimation *anim = *(animItr);
+         float weight = 0.f;
+
+         if (anim!=NULL)
+         {
+            weight = anim->getWeight();  
+         }
+
+         weightList.push_back(weight);
+        
+         ++animItr;
+      }   
+
+      emit BlendUpdate(weightList);   
+   }
+}
+
+
 void Viewer::InitShadeDecorator()
 {
    //osg::StateSet *stateset = new osg::StateSet;  
@@ -339,5 +391,6 @@ void Viewer::PostFrame( const double deltaFrameTime )
 
       mMeshesToDetach.clear();
    }
-
 }
+
+
