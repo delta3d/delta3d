@@ -50,7 +50,7 @@ public:
    
       /**
       *  AnimationController is responsible for updating the sequences child 
-      *  Animatables.  To change the update behavoir, subclass AnimationController
+      *  Animatables.  To change the update behavior, subclass AnimationController
       *  and add it to your AnimationSequence.
       */
       class	DT_ANIM_EXPORT AnimationController: public osg::Referenced
