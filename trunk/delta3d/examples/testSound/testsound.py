@@ -11,20 +11,17 @@ class TestSoundApp( Application ):
       self.kSoundFile2 = 'sounds/exp35.wav'
       AudioManager.Instantiate()
       AudioManager.GetManager().Config()
-      AudioManager.GetManager().LoadWaveFile( self.kSoundFile1 )
-      AudioManager.GetManager().LoadWaveFile( self.kSoundFile2 )
+      AudioManager.GetManager().LoadFile( self.kSoundFile1 )
+      AudioManager.GetManager().LoadFile( self.kSoundFile2 )
       self.mSound = AudioManager.GetManager().NewSound()
       self.mSound.LoadFile( self.kSoundFile1 )
 
    def __del__( self ) :
       AudioManager.GetManager().FreeSound( self.mSound )
       AudioManager.GetManager().Destroy()
-      
-   # The current implementation of the KeyboardListener callbacks
-   # for KeyPressed, etc. do not work. So as a hack in the menatime
-   # you can poll the keyboard during the frame loop.
-   def PreFrame( self, deltaFrameTime ) :
-      if self.GetKeyboard().GetKeyState( KeyboardKey.Key_space ) :
+         
+   def KeyPressed( self, keyboard, key ) :
+      if key == KeyboardKey.KEY_Space :
          self.mSound.Play()
 
 SetDataFilePathList( GetDeltaRootPath() + '/examples/testSound/;' +
