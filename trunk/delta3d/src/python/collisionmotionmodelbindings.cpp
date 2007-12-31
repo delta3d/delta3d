@@ -5,6 +5,7 @@
 #include <dtCore/mouse.h>
 #include <dtCore/scene.h>
 #include <dtCore/transformable.h>
+#include <dtCore/isector.h>
 
 using namespace boost::python;
 using namespace dtCore;
