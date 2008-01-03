@@ -72,7 +72,7 @@ class Array
 
 AnimNodeBuilder::AnimNodeBuilder()
 {
-   SetCreate(CreateFunc(this, &AnimNodeBuilder::CreateSoftware));
+   SetCreate(CreateFunc(this, &AnimNodeBuilder::CreateHardware));
 }
 
 AnimNodeBuilder::AnimNodeBuilder(const CreateFunc& pCreate)
@@ -123,7 +123,7 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateSoftware(Cal3DModelWrapper* pWr
 
          for(int submeshId = 0; submeshId < submeshCount; submeshId++) 
          {
-            dtAnim::SubMeshDrawable *submesh = new dtAnim::SubMeshDrawable(pWrapper, meshId, submeshId);
+            dtAnim::SubmeshDrawable *submesh = new dtAnim::SubmeshDrawable(pWrapper, meshId, submeshId);
             geode->addDrawable(submesh);
          }
       }

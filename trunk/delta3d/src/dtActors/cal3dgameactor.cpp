@@ -99,7 +99,7 @@ namespace dtActors
 
                for(int submeshId = 0; submeshId < submeshCount; submeshId++) 
                {
-                  dtAnim::SubMeshDrawable *submesh = new dtAnim::SubMeshDrawable(newModel.get(), meshId, submeshId);
+                  dtAnim::SubmeshDrawable *submesh = new dtAnim::SubmeshDrawable(newModel.get(), meshId, submeshId);
                   mModelGeode->addDrawable(submesh);
                }
             }

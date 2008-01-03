@@ -163,7 +163,7 @@ void HardwareSubMeshDrawable::drawImplementation(osg::RenderInfo& renderInfo) co
 
    unsigned stride = 18 * sizeof(float);
 
-   #define BUFFER_OFFSET(x)((GLvoid*) (0 + (x * sizeof(float))))
+   #define BUFFER_OFFSET(x)((GLvoid*) (0 + ((x) * sizeof(float))))
 
    state.setVertexPointer(3, GL_FLOAT, stride, BUFFER_OFFSET(0));
 
