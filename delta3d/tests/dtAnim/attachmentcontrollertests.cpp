@@ -43,7 +43,7 @@
 #include <dtDAL/map.h>
 #include <dtDAL/project.h>
 
-#include <dtActors/animationgameactor2.h>
+#include <dtActors/animationgameactor.h>
 #include <dtActors/engineactorregistry.h>
 
 #include <osg/Vec3>
