@@ -65,7 +65,7 @@ namespace dtHLAGM
                /**
                 * Destructor.
                 */
-               ~ParameterDefinition()
+               virtual ~ParameterDefinition()
                {}
 
                /**
