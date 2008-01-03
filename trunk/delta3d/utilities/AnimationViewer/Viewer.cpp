@@ -47,7 +47,7 @@
 
 #include <cal3d/animation.h>
 
-#include <CEGUI.h>
+#include <CEGUI/CEGUI.h>
 #include <CEGUI/CEGUISystem.h>
 #include <CEGUI/CEGUISchemeManager.h>
 
