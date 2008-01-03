@@ -495,6 +495,10 @@ namespace dtHLAGM
                          double y = 0.0,
                          double z = 0.0);
 
+         ///Allow the superclass copy constructor
+         WorldCoordinate(const osg::Vec3d& copyVec): osg::Vec3d(copyVec)
+         {}
+
          /**
           * Returns the encoded length of this object.
           *
@@ -557,6 +561,7 @@ namespace dtHLAGM
           * @return the value of the z field
           */
          double GetZ() const;
+
    };
 
    /**
@@ -577,6 +582,10 @@ namespace dtHLAGM
                      float theta = 0.0f,
                      float phi = 0.0f);
 
+         ///Allow the superclass copy constructor
+         EulerAngles(const osg::Vec3f& copyVec): osg::Vec3f(copyVec)
+         {}
+         
          /**
           * Returns the encoded length of this object.
           *
@@ -659,6 +668,10 @@ namespace dtHLAGM
                         float y = 0.0f,
                         float z = 0.0f);
 
+         ///Allow the superclass copy constructor
+         VelocityVector(const osg::Vec3f& copyVec): osg::Vec3f(copyVec)
+         {}
+
          /**
           * Returns the encoded length of this object.
           *
@@ -722,7 +735,6 @@ namespace dtHLAGM
           */
          float GetZ() const;
 
-      private:
    };
 
    /**

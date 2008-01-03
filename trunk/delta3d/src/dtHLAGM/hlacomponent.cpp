@@ -2370,9 +2370,10 @@ namespace dtHLAGM
       {
          if (vectorIterator->GetHLAName().empty())
             continue;
-            
+
          messageParameters.clear();
-         
+         bool hasAtLeastOneNonDefaultedParameter = false;
+
          const size_t parameterDefListSize = vectorIterator->GetParameterDefinitions().size();
          for (unsigned i = 0; i < parameterDefListSize; ++i)
          {
@@ -2391,7 +2392,8 @@ namespace dtHLAGM
             //First check for a regular parameter.
             dtCore::RefPtr<const dtGame::MessageParameter> messageParameter;
             
-            //We map with message parameters, so if a
+            // This maps with message parameters, so if the about actor id or sending actor id is
+            // needed, it needs to be copied to a message parameter.
             if (gameType == dtDAL::DataType::ACTOR &&
                gameName == ABOUT_ACTOR_ID)
             {
@@ -2422,16 +2424,18 @@ namespace dtHLAGM
                   messageParameter = message.GetUpdateParameter(gameName);
                }
             }
-               
+
             if (messageParameter.valid())
             {
                messageParameters.push_back(messageParameter);
+               hasAtLeastOneNonDefaultedParameter = true;
             }
-            else if (!defaultValue.empty() && 
+            else if (!defaultValue.empty())
+            {
                //send out the default if it's required or if it's the first time this object is
                //being updated.
-               (vectorIterator->IsRequiredForHLA() || newObject ))
-            {
+               if (vectorIterator->IsRequiredForHLA() || newObject )
+                  hasAtLeastOneNonDefaultedParameter = true;
                //Since the default value is in terms of the game value always, create a fake parameter
                //add it to the translation list with the proper game name, and set it to the default
                //value.
@@ -2448,12 +2452,23 @@ namespace dtHLAGM
                      "Error creating dummy message parameter with name \"%s\" to use for mapping a default value.  Error message should follow.",
                      gameName.c_str());
                   ex.LogException(dtUtil::Log::LOG_ERROR, *mLogger);
-                  continue;                  
+                  // see the else below for a description of why this needs to happen.
+                  messageParameters.push_back(NULL);
+
+                  continue;
                }
-            }  
-         }         
-         
-         if (!messageParameters.empty())
+            }
+            else
+            {
+               //For mappings with many parameters, we want the indices to line up with
+               //the mapping parameter definitions, so just
+               //pass in NULL for missing parameters
+               //A NULL will, therefore, never end up as the only parameter.
+               messageParameters.push_back(NULL);
+            }
+         }
+
+         if (hasAtLeastOneNonDefaultedParameter)
          {
             const AttributeType& hlaType = vectorIterator->GetHLAType();
 
@@ -2503,6 +2518,7 @@ namespace dtHLAGM
            paramMappingItor++)
       {
          messageParameters.clear();
+         bool hasAtLeastOneNonDefaultedParameter = false;
 
          for (unsigned i = 0; i < paramMappingItor->GetParameterDefinitions().size(); ++i)
          {
@@ -2522,7 +2538,7 @@ namespace dtHLAGM
 
                messageParameter->FromString(message.GetAboutActorId().ToString());
                messageParameters.push_back(messageParameter.get());
-
+               hasAtLeastOneNonDefaultedParameter = true;
             }
             else if (gameParameterType == dtDAL::DataType::ACTOR &&
                gameParameterName == SENDING_ACTOR_ID)
@@ -2533,6 +2549,7 @@ namespace dtHLAGM
 
                messageParameter->FromString(message.GetSendingActorId().ToString());
                messageParameters.push_back(messageParameter.get());
+               hasAtLeastOneNonDefaultedParameter = true;
             }
             else
             {
@@ -2542,29 +2559,41 @@ namespace dtHLAGM
                if (messageParameter.valid())
                {
                   messageParameters.push_back(messageParameter);
+                  hasAtLeastOneNonDefaultedParameter = true;
                }
-               else if (!defaultValue.empty() && paramMappingItor->IsRequiredForHLA())
+               else if (!defaultValue.empty())
                {
+                  if (paramMappingItor->IsRequiredForHLA())
+                     hasAtLeastOneNonDefaultedParameter = true;
+
                   //Since the default value is in terms of the game value always, create a fake parameter
                   //add it to the translation list with the proper game name, and set it to the default
                   //value.
                   dtCore::RefPtr<dtGame::MessageParameter> tmpMsgParam
                      = dtGame::MessageParameter::CreateFromType(gameParameterType, gameParameterName);
                   tmpMsgParam->FromString(defaultValue);
-                  
+
                   messageParameter = tmpMsgParam.get();
-               }  
+                  messageParameters.push_back(messageParameter);
+               }
                else
                {
                   mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
-                     "Message to interaction specifies a message parameter named \"%s\", but the message of type \"%s\" has no such parameter.",
+                     "Message to interaction specifies a message parameter named \"%s\", but "
+                     "the message of type \"%s\" has no such parameter.",
                      gameParameterName.c_str(), message.GetMessageType().GetName().c_str());
+
+                  //For mappings with many parameters, we want the indices to line up with
+                  //the mapping parameter definitions, so just
+                  //pass in NULL for missing parameters
+                  //A NULL will, therefore, never end up as the only parameter.
+                  messageParameters.push_back(NULL);
                }
             }
 
          }
 
-         if (!messageParameters.empty())
+         if (hasAtLeastOneNonDefaultedParameter)
          {
             const AttributeType& hlaType = paramMappingItor->GetHLAType();
 

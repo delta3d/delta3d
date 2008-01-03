@@ -25,10 +25,13 @@
 #include <dtUtil/coordinates.h>
 #include <dtUtil/log.h>
 #include <dtCore/uniqueid.h>
-#include <dtHLAGM/onetoonemapping.h>
+
+#include <dtHLAGM/onetomanymapping.h>
 #include <dtHLAGM/rprparametertranslator.h>
 #include <dtHLAGM/distypes.h>
 #include <dtHLAGM/objectruntimemappinginfo.h>
+#include <dtHLAGM/spatial.h>
+
 #include <dtGame/deadreckoningcomponent.h>
 
 namespace dtHLAGM
@@ -84,14 +87,95 @@ namespace dtHLAGM
       return dynamic_cast<const RPRAttributeType*>(&type) != NULL;
    }
 
+   
    /////////////////////////////////////////////////////////////////////////////
-   void RPRParameterTranslator::MapFromParamToWorldCoord(
-      char* buffer, 
-      const size_t maxSize, 
-      const dtGame::MessageParameter& parameter, 
-      const dtDAL::DataType& parameterDataType) const
+   void RPRParameterTranslator::MapFromParamsToSpatial(
+      char* buffer,
+      size_t& maxSize,
+      std::vector<dtCore::RefPtr<const dtGame::MessageParameter> >& parameters,
+      const OneToManyMapping& mapping) const
+   {
+      //If we have parameters, we are also guaranteed to have paramdefs, so there is no need
+      //to check
+      if (parameters.size() < 7U)
+      {
+         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                             "The number of parameters needed to map a spatial is 7");
+         return;
+      }
+
+      Spatial spatial;
+
+      if (parameters[0].valid())
+      {
+         unsigned drCodeInt = GetIntegerValue(*parameters[0], mapping, 0);
+
+         ///TODO verify the value of drCode is in range.
+         char drCode = char(drCodeInt);
+         dtUtil::Clamp(drCode, char(0), char(9));
+         spatial.SetDeadReckoningAlgorithm(drCode);
+      }
+
+      //is frozen
+      if (parameters[1].valid())
+      {
+         const dtGame::MessageParameter& frozenParam = *parameters[1];
+         const dtDAL::DataType& dataType = mapping.GetParameterDefinitions()[1].GetGameType();
+
+         if (dataType == dtDAL::DataType::BOOLEAN && frozenParam.GetDataType() == dataType)
+         {
+            spatial.SetFrozen(static_cast<const dtGame::BooleanMessageParameter&>(frozenParam).GetValue());
+         }
+         else
+         {
+            unsigned drCodeInt = GetIntegerValue(frozenParam, mapping, 1);
+            spatial.SetFrozen(bool(drCodeInt));
+         }
+      }
+
+      //world coordinate
+      if (parameters[2].valid())
+      {
+         spatial.GetWorldCoordinate() = 
+            CoordConvertPositionParameter(*parameters[2]);
+      }
+      
+      if (parameters[3].valid())
+      {
+         spatial.GetOrientation() = osg::Vec3f(CoordConvertRotationParameter(*parameters[3]));
+      }
+
+      if (parameters[4].valid())
+      {
+         spatial.GetVelocity() = CoordConvertVelocityParameter(*parameters[4]);
+      }
+
+      if (parameters[5].valid())
+      {
+         spatial.GetAcceleration() = CoordConvertVelocityParameter(*parameters[5]);
+      }
+
+      if (parameters[6].valid())
+      {
+         spatial.GetAngularVelocity() = CoordConvertAngularVelocityParameter(*parameters[6]);
+      }
+      
+      maxSize = spatial.Encode(buffer, maxSize);
+      if (maxSize == 0)
+      {
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                             "The parameter data could not be encoded into a \"%s\" struct.",
+                             RPRAttributeType::SPATIAL_TYPE.GetName().c_str());
+         return;
+      }
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   osg::Vec3d RPRParameterTranslator::CoordConvertPositionParameter(const dtGame::MessageParameter& parameter) const
    {
       osg::Vec3 position;
+
+      const dtDAL::DataType& parameterDataType = parameter.GetDataType();
 
       if (parameterDataType == dtDAL::DataType::VEC3)
       {
@@ -128,12 +212,16 @@ namespace dtHLAGM
                              position.x(), position.y(), position.z());
       }
 
-      osg::Vec3d outPos = mCoordinates.ConvertToRemoteTranslation(position);
-
-      WorldCoordinate wc;
-      wc.SetX(outPos.x());
-      wc.SetY(outPos.y());
-      wc.SetZ(outPos.z());
+      return mCoordinates.ConvertToRemoteTranslation(position);
+   }
+   
+   /////////////////////////////////////////////////////////////////////////////
+   void RPRParameterTranslator::MapFromParamToWorldCoord(
+      char* buffer, 
+      const size_t maxSize, 
+      const dtGame::MessageParameter& parameter) const
+   {
+      WorldCoordinate wc = CoordConvertPositionParameter(parameter);
 
       if(mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {
@@ -141,7 +229,7 @@ namespace dtHLAGM
                              "World coordinate has been set to %lf %lf %lf",
                              wc.GetX(), wc.GetY(), wc.GetZ());
 
-         osg::Vec3 testReversePos = mCoordinates.ConvertToLocalTranslation(outPos);
+         osg::Vec3 testReversePos = mCoordinates.ConvertToLocalTranslation(wc);
 
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                              "The reverse coordinate would be %f %f %f",
@@ -156,12 +244,11 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void RPRParameterTranslator::MapFromParamToEulerAngles(
-      char* buffer, 
-      const size_t maxSize, 
-      const dtGame::MessageParameter& parameter, 
-      const dtDAL::DataType& parameterDataType) const
+   osg::Vec3d RPRParameterTranslator::CoordConvertRotationParameter(
+            const dtGame::MessageParameter& parameter) const
    {
+      const dtDAL::DataType& parameterDataType = parameter.GetDataType();
+
       osg::Vec3 result;
       osg::Vec3 angleReordered;
       if (parameterDataType == dtDAL::DataType::VEC3)
@@ -182,7 +269,8 @@ namespace dtHLAGM
       else
       {
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                             "The incoming parameter \"%s\" is not of a supported type \"%s\" for conversion to \"%s\"",
+                             "The incoming parameter \"%s\" is not of a supported type "
+                             "\"%s\" for conversion to \"%s\"",
                              parameter.GetName().c_str(), parameterDataType.GetName().c_str(),
                              RPRAttributeType::EULER_ANGLES_TYPE.GetName().c_str());
       }
@@ -194,15 +282,17 @@ namespace dtHLAGM
                              angleReordered.x(), angleReordered.y(), angleReordered.z());
       }
 
+      return mCoordinates.ConvertToRemoteRotation(angleReordered);
+   }
 
-      result = mCoordinates.ConvertToRemoteRotation(angleReordered);
-
-
-      EulerAngles eulerAngles;
-      eulerAngles.SetPsi(result[0]);
-      eulerAngles.SetTheta(result[1]);
-      eulerAngles.SetPhi(result[2]);
-
+   /////////////////////////////////////////////////////////////////////////////
+   void RPRParameterTranslator::MapFromParamToEulerAngles(
+      char* buffer, 
+      const size_t maxSize, 
+      const dtGame::MessageParameter& parameter) const
+   {
+      EulerAngles eulerAngles = osg::Vec3f(CoordConvertRotationParameter(parameter));
+      
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
@@ -221,23 +311,20 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void RPRParameterTranslator::MapFromParamToVelocityVector(
-      char* buffer, 
-      const size_t maxSize, 
-      const dtGame::MessageParameter& parameter, 
-      const dtDAL::DataType& parameterDataType) const
+   osg::Vec3f RPRParameterTranslator::CoordConvertVelocityParameter(
+            const dtGame::MessageParameter& parameter) const
    {
+      const dtDAL::DataType& parameterDataType = parameter.GetDataType();
       osg::Vec3 result;
+
       if (parameterDataType == dtDAL::DataType::VEC3)
       {
-         result = mCoordinates.GetOriginRotationMatrixInverse().preMult(
-            static_cast<const dtGame::Vec3MessageParameter&>(parameter).GetValue());
+         const osg::Vec3& preResult = static_cast<const dtGame::Vec3MessageParameter&>(parameter).GetValue();
+         result = mCoordinates.GetOriginRotationMatrixInverse().preMult(preResult);
       }
       else if (parameterDataType == dtDAL::DataType::VEC3F)
       {
-         const osg::Vec3f& temp = static_cast<const dtGame::Vec3fMessageParameter&>(parameter).GetValue();
-         osg::Vec3 preResult(temp.x(), temp.y(), temp.z());
-         
+         const osg::Vec3f& preResult = static_cast<const dtGame::Vec3fMessageParameter&>(parameter).GetValue();
          result = mCoordinates.GetOriginRotationMatrixInverse().preMult(preResult);
       } 
       else 
@@ -247,30 +334,32 @@ namespace dtHLAGM
                              parameter.GetName().c_str(), parameterDataType.GetName().c_str(),
                              RPRAttributeType::VELOCITY_VECTOR_TYPE.GetName().c_str());
       }
-      // USED FOR ANGULAR VELOCITY, ACCELERATION VECTOR, AND VELOCITY VECTOR
-      VelocityVector velocityVector;
-      velocityVector.SetX(result.x());
-      velocityVector.SetY(result.y());
-      velocityVector.SetZ(result.z());
+      return osg::Vec3f(result);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void RPRParameterTranslator::MapFromParamToVelocityVector(
+      char* buffer, 
+      const size_t maxSize, 
+      const dtGame::MessageParameter& parameter) const
+   {
+      VelocityVector velocityVector = CoordConvertVelocityParameter(parameter);
       velocityVector.Encode(buffer);
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void RPRParameterTranslator::MapFromParamToAngularVelocityVector(
-      char* buffer, 
-      const size_t maxSize, 
-      const dtGame::MessageParameter& parameter, 
-      const dtDAL::DataType& parameterDataType) const
+   osg::Vec3f RPRParameterTranslator::CoordConvertAngularVelocityParameter(
+            const dtGame::MessageParameter& parameter) const
    {
-      osg::Vec3 result;
+      const dtDAL::DataType& parameterDataType = parameter.GetDataType();
+      osg::Vec3f result;
       if (parameterDataType == dtDAL::DataType::VEC3)
       {
-         result = static_cast<const dtGame::Vec3MessageParameter&>(parameter).GetValue();
+         result = osg::Vec3f(static_cast<const dtGame::Vec3MessageParameter&>(parameter).GetValue());
       }
       else if (parameterDataType == dtDAL::DataType::VEC3F)
       {
-         const osg::Vec3f& temp = static_cast<const dtGame::Vec3fMessageParameter&>(parameter).GetValue();
-         result.set(temp.x(), temp.y(), temp.z());
+         result = static_cast<const dtGame::Vec3fMessageParameter&>(parameter).GetValue();
       } 
       else 
       {
@@ -279,12 +368,18 @@ namespace dtHLAGM
                              parameter.GetName().c_str(), parameterDataType.GetName().c_str(),
                              RPRAttributeType::ANGULAR_VELOCITY_VECTOR_TYPE.GetName().c_str());
       }
+      return result;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void RPRParameterTranslator::MapFromParamToAngularVelocityVector(
+      char* buffer,
+      const size_t maxSize,
+      const dtGame::MessageParameter& parameter) const
+   {
       
       // USED FOR ANGULAR VELOCITY, ACCELERATION VECTOR, AND VELOCITY VECTOR
-      VelocityVector velocityVector;
-      velocityVector.SetX(result.x());
-      velocityVector.SetY(result.y());
-      velocityVector.SetZ(result.z());
+      VelocityVector velocityVector = CoordConvertAngularVelocityParameter(parameter);
       velocityVector.Encode(buffer);
    }
    
@@ -400,9 +495,13 @@ namespace dtHLAGM
             paramDef.GetGameType().GetName().c_str());
       }
 
-      if (hlaType == RPRAttributeType::WORLD_COORDINATE_TYPE)
+      if (hlaType == RPRAttributeType::SPATIAL_TYPE)
       {
-         MapFromParamToWorldCoord(buffer, maxSize, parameter, parameterDataType);
+         MapFromParamsToSpatial(buffer, maxSize, parameters, mapping);
+      }
+      else if (hlaType == RPRAttributeType::WORLD_COORDINATE_TYPE)
+      {
+         MapFromParamToWorldCoord(buffer, maxSize, parameter);
       }
       else if (hlaType == RPRAttributeType::ENTITY_TYPE)
       {
@@ -410,15 +509,15 @@ namespace dtHLAGM
       }
       else if (hlaType == RPRAttributeType::EULER_ANGLES_TYPE)
       {
-         MapFromParamToEulerAngles(buffer, maxSize, parameter, parameterDataType);
+         MapFromParamToEulerAngles(buffer, maxSize, parameter);
       }
       else if (hlaType == RPRAttributeType::VELOCITY_VECTOR_TYPE)
       {
-         MapFromParamToVelocityVector(buffer, maxSize, parameter, parameterDataType);
+         MapFromParamToVelocityVector(buffer, maxSize, parameter);
       }
       else if (hlaType == RPRAttributeType::ANGULAR_VELOCITY_VECTOR_TYPE)
       {
-         MapFromParamToAngularVelocityVector(buffer, maxSize, parameter, parameterDataType);
+         MapFromParamToAngularVelocityVector(buffer, maxSize, parameter);
       }
       else if (hlaType == RPRAttributeType::UNSIGNED_INT_TYPE)
       {
