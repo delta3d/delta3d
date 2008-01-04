@@ -42,6 +42,9 @@ public:
 	}
 	// is-empty selector
 	bool operator!() const { return vptr_ == NULL; }
+
+   bool valid() const { return vptr_ != NULL; }
+
 	// ctor for static fns and arbitrary functors 
 	template <typename F> explicit Functor(F const& fun) 
 	{ 
