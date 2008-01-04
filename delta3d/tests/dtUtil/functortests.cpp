@@ -57,6 +57,7 @@ class FunctorTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST(TestBinding);
    CPPUNIT_TEST(TestMoreFunctors);
    CPPUNIT_TEST(TestCommand);
+   CPPUNIT_TEST(TestValid);
    CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -69,6 +70,7 @@ public:
    void TestBinding();
    void TestMoreFunctors();
    void TestCommand();
+   void TestValid();
 
 private:
 
@@ -201,6 +203,15 @@ void FunctorTests::TestCommand()
       dtCore::RefPtr<dtUtil::Command2<int, int, int> > cmd2 = new dtUtil::Command2<int, int, int>(Command2<int, int, int>::FunctorType(&pStruct, &A::f2def), 5, 4);
       CPPUNIT_ASSERT(cmd2->operator()() == 9);
 
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void FunctorTests::TestValid()
+{
+   Functor1 f1;
+   CPPUNIT_ASSERT(!f1.valid());
+   f1 = Functor1(&f1def);
+   CPPUNIT_ASSERT(f1.valid());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
