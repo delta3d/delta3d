@@ -147,12 +147,12 @@ namespace dtAnim
                if (hardware)
                {
                   CPPUNIT_ASSERT_MESSAGE("the default geode should have only hardware submeshes", 
-                        dynamic_cast<dtAnim::HardwareSubMeshDrawable*>(draw) != NULL);
+                        dynamic_cast<dtAnim::HardwareSubmeshDrawable*>(draw) != NULL);
                }
                else
                {
                   CPPUNIT_ASSERT_MESSAGE("the default geode should have only software submeshes", 
-                        dynamic_cast<dtAnim::SubMeshDrawable*>(draw) != NULL);
+                        dynamic_cast<dtAnim::SubmeshDrawable*>(draw) != NULL);
                }
             }
             AnimNodeBuilder::Cal3DBoundingSphereCalculator* sphereCallback = 

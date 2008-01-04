@@ -21,6 +21,7 @@
 #include <dtUtil/mathdefines.h>
 #include <dtUtil/log.h>
 #include <dtUtil/fileutils.h>
+#include <osg/MatrixTransform>
 
 #if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
    #pragma warning(pop)
@@ -88,19 +89,18 @@ void TestAI::Config()
 
    //get the first waypoint to spawn the character at
    const WaypointManager::WaypointMap& pContainer = WaypointManager::GetInstance().GetWaypoints();
+   if(pContainer.empty())
+   {
+      LOG_ERROR("Map '" + mMapFilename + "' does not have any valid waypoints");
+      exit(1);
+   }
    WaypointManager::WaypointMap::const_iterator iter = pContainer.begin();
    const Waypoint* pWaypoint = (*iter).second;
 
    //spawn our character
-   try
-   {
-	   mCharacter = new dtAI::AICharacter(GetScene(), GetCamera(), pWaypoint, "marine/marine.rbody", 10);    
-   }
-   catch (rbody::config_error &e)
-   {
-      LOG_ERROR( std::string(e.what()) );
-      exit(-1);
-   }
+
+	mCharacter = new dtAI::AICharacter(GetScene(), GetCamera(), pWaypoint, "demoMap/SkeletalMeshes/marine.xml", 3);    
+
    GoToWaypoint(1);
 
    //seed the random generator

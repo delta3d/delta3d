@@ -24,12 +24,13 @@
 
 #include <dtCore/refptr.h>
 #include <osg/Referenced>
-#include <dtChar/character.h>
 #include <dtCore/scene.h>
 #include <dtCore/camera.h>
 #include <dtAI/waypoint.h>
 #include <dtAI/astarwaypointutils.h>
 #include <string>
+
+#include <dtAnim/characterwrapper.h>
 
 namespace dtAI
 {
@@ -62,7 +63,7 @@ namespace dtAI
          void SetRotation(float dt, const Waypoint* pWaypoint);
 
          unsigned mSpeed;         
-         dtCore::RefPtr<dtChar::Character> mCharacter;
+         dtCore::RefPtr<dtAnim::CharacterWrapper> mCharacter;
 
          //pathfinding stuff
          const Waypoint* mCurrentWaypoint;

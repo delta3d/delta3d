@@ -26,7 +26,7 @@
 
 #include <dtCore/isector.h>
 
-#include <osg/Matrix>
+#include <osg/MatrixTransform>
 
 #include <algorithm>
 #include <cassert>
@@ -51,14 +51,16 @@ namespace dtAI
 {
    AICharacter::AICharacter(dtCore::Scene* pScene, dtCore::Camera* pCamera, const Waypoint* pWaypoint, const std::string& pFilename, unsigned pSpeed)
       : mSpeed(pSpeed)
-      , mCharacter(new dtChar::Character("AICharacter"))
+      , mCharacter(new dtAnim::CharacterWrapper(pFilename))
       , mCurrentWaypoint(pWaypoint)
       , mWaypointPath()
       , mAStar()
       , mScene(pScene)
    {      
-      mCharacter->LoadFile(pFilename);
+      mCharacter->SetGroundClamp(pScene, 0.0f);     
+
       SetPosition(pWaypoint);
+
       pScene->AddDrawable(mCharacter.get());
       mCharacter->AddChild(pCamera);
    }
@@ -113,7 +115,7 @@ namespace dtAI
    {  
       //simple... just rotate to the waypoint over time and set a
       //positive velocity to go there
-      mCharacter->RotateCharacterToPoint(pWaypoint->GetPosition(), dt);            
+      mCharacter->RotateToPoint(pWaypoint->GetPosition(), dt * 3.0f);            
 
       //osg::Vec3 pVector = pWaypoint->GetPosition() - GetPosition();
 
@@ -126,7 +128,13 @@ namespace dtAI
       //std::cout << dir << std::endl;
       //if(dir < 5.0f)
       //{
-         mCharacter->SetVelocity(mSpeed);
+      mCharacter->SetSpeed(-float(mSpeed));
+
+      if(!mCharacter->IsAnimationPlaying("Walk"))
+      {
+         mCharacter->ClearAllAnimations(0.5f);
+         mCharacter->PlayAnimation("Walk");
+      }
       //}
       //else
       //{
@@ -194,9 +202,16 @@ namespace dtAI
          //else stop walking
          else
          {
-            mCharacter->SetVelocity(0);
+            mCharacter->SetSpeed(0);
+            if(!mCharacter->IsAnimationPlaying("Idle"))
+            {
+               mCharacter->ClearAllAnimations(0.5f);
+               mCharacter->PlayAnimation("Idle");
+            }
          }
       }
+
+      mCharacter->Update(dt);
    }
 
    void AICharacter::ApplyStringPulling()
