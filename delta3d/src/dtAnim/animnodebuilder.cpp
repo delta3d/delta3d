@@ -300,7 +300,7 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
          int numMeshes = hardwareModel->getHardwareMeshCount();
          for(int meshCount = 0; meshCount < numMeshes; ++meshCount)
          {
-            HardwareSubMeshDrawable* drawable = new HardwareSubMeshDrawable(pWrapper, hardwareModel, 
+            HardwareSubmeshDrawable* drawable = new HardwareSubmeshDrawable(pWrapper, hardwareModel, 
                   boneTransformUniform, maxBones, meshCount, vbo[0], vbo[1]);
             geode->addDrawable(drawable);
          }

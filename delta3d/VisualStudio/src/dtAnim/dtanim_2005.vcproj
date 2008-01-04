@@ -62,7 +62,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtDALd.lib dtGamed.lib dtUtilD.lib dtCoreD.lib xerces-c_2D.lib osgD.lib osgDBD.lib cal3d_d.lib opengl32.lib"
+				AdditionalDependencies="dtDALd.lib dtGamed.lib dtUtilD.lib dtCoreD.lib xerces-c_2D.lib osgD.lib osgDBD.lib osgUtilD.lib cal3d_d.lib opengl32.lib"
 				OutputFile="../../../bin/dtAnimd.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="../../../lib;..\..\..\ext\lib"
@@ -144,7 +144,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtDAL.lib dtGame.lib dtUtil.lib dtCore.lib xerces-c_2.lib osg.lib osgDB.lib cal3d.lib opengl32.lib"
+				AdditionalDependencies="dtDAL.lib dtGame.lib dtUtil.lib dtCore.lib xerces-c_2.lib osg.lib osgUtil.lib osgDB.lib cal3d.lib opengl32.lib"
 				OutputFile="../../../bin/dtAnim.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../../lib;..\..\..\ext\lib"
@@ -251,6 +251,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtAnim\characterwrapper.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtAnim\chardrawable.cpp"
 				>
 			</File>
@@ -354,6 +358,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtAnim\characterfilehandler.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtAnim\characterwrapper.h"
 				>
 			</File>
 			<File

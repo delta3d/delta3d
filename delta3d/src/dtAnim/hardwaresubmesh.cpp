@@ -102,7 +102,7 @@ namespace dtAnim
    };
 
 
-HardwareSubMeshDrawable::HardwareSubMeshDrawable(Cal3DModelWrapper *wrapper, CalHardwareModel* model, 
+HardwareSubmeshDrawable::HardwareSubmeshDrawable(Cal3DModelWrapper *wrapper, CalHardwareModel* model, 
       const std::string& boneUniformName, unsigned numBones, unsigned mesh, 
       unsigned vertexVBO, unsigned indexVBO)
 : mWrapper(wrapper)
@@ -143,11 +143,11 @@ HardwareSubMeshDrawable::HardwareSubMeshDrawable(Cal3DModelWrapper *wrapper, Cal
    setComputeBoundingBoxCallback(new HardwareSubmeshComputeBound());
 }
 
-HardwareSubMeshDrawable::~HardwareSubMeshDrawable(void)
+HardwareSubmeshDrawable::~HardwareSubmeshDrawable(void)
 {
 }
 
-void HardwareSubMeshDrawable::drawImplementation(osg::RenderInfo& renderInfo) const 
+void HardwareSubmeshDrawable::drawImplementation(osg::RenderInfo& renderInfo) const 
 {
    //select the appropriate mesh
    mHardwareModel->selectHardwareMesh(mMeshID);
@@ -184,15 +184,15 @@ void HardwareSubMeshDrawable::drawImplementation(osg::RenderInfo& renderInfo) co
    glExt->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
 }
 
-osg::Object* HardwareSubMeshDrawable::clone(const osg::CopyOp&) const 
+osg::Object* HardwareSubmeshDrawable::clone(const osg::CopyOp&) const 
 {
-   return new HardwareSubMeshDrawable(mWrapper.get(), mHardwareModel, mBoneUniformName, 
+   return new HardwareSubmeshDrawable(mWrapper.get(), mHardwareModel, mBoneUniformName, 
          mNumBones, mMeshID, mVertexVBO, mIndexVBO);
 }
 
-osg::Object* HardwareSubMeshDrawable::cloneType() const
+osg::Object* HardwareSubmeshDrawable::cloneType() const
 {
-   return new HardwareSubMeshDrawable(mWrapper.get(), mHardwareModel, 
+   return new HardwareSubmeshDrawable(mWrapper.get(), mHardwareModel, 
          mBoneUniformName, mNumBones, mMeshID, mVertexVBO, mIndexVBO);
 }
 

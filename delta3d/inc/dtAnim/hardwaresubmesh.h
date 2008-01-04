@@ -39,11 +39,11 @@ namespace dtAnim
 {
    class Cal3DModelWrapper;
 
-   class DT_ANIM_EXPORT HardwareSubMeshDrawable: public osg::Drawable
+   class DT_ANIM_EXPORT HardwareSubmeshDrawable: public osg::Drawable
    {
       public:
 
-         HardwareSubMeshDrawable(Cal3DModelWrapper *wrapper, CalHardwareModel* model,
+         HardwareSubmeshDrawable(Cal3DModelWrapper *wrapper, CalHardwareModel* model,
                const std::string& boneUniformName, unsigned numBones,
                unsigned mesh, unsigned vertexVBO, unsigned indexVBO);
 
@@ -53,10 +53,10 @@ namespace dtAnim
          virtual osg::Object* clone(const osg::CopyOp&) const;
 
       protected:
-         ~HardwareSubMeshDrawable();
+         ~HardwareSubmeshDrawable();
 
       private:
-         HardwareSubMeshDrawable();   ///< not implemented by design
+         HardwareSubmeshDrawable();   ///< not implemented by design
 
          dtCore::RefPtr<Cal3DModelWrapper> mWrapper;
          CalHardwareModel* mHardwareModel;
