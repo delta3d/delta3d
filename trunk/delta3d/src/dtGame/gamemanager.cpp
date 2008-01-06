@@ -1031,8 +1031,8 @@ namespace dtGame
          GetAllActors(actors);
          mScene->RemoveAllDrawables();
          mScene->UseSceneLight(true);
-         unsigned int actorsSize = actors.size(); // checking size on vector is slow :(
-         for(unsigned int i = 0; i < actorsSize; i++)
+         size_t actorsSize = actors.size(); 
+         for(size_t i = 0; i < actorsSize; i++)
          {
             if(actors[i] != oldProxy.get())
                ea->AddActor(*actors[i]->GetActor());
@@ -1177,7 +1177,7 @@ namespace dtGame
          mScene->RemoveDrawable(&dd);
 
          //put all the children in the base scene.
-         for (unsigned i = 0; i < childrenToMove.size(); ++i)
+         for (size_t i = 0; i < childrenToMove.size(); ++i)
          {
             mScene->AddDrawable(childrenToMove[i]->GetActor());
          }
@@ -1185,7 +1185,7 @@ namespace dtGame
       else
       {
          //add all the children to the parent drawable.
-         for (unsigned i = 0; i < childrenToMove.size(); ++i)
+         for (size_t i = 0; i < childrenToMove.size(); ++i)
          {
             dtCore::DeltaDrawable* child = childrenToMove[i]->GetActor();
             child->Emancipate();
