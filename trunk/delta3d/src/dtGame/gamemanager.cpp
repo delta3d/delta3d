@@ -791,7 +791,7 @@ namespace dtGame
    void GameManager::GetAllComponents(std::vector<const GMComponent*>& toFill) const
    {
       toFill.clear();
-      unsigned int componentListSize = mComponentList.size();
+      size_t componentListSize = mComponentList.size();
       toFill.reserve(componentListSize);
 
       for (unsigned i = 0; i < componentListSize; ++i)
