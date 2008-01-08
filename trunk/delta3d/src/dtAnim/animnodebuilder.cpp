@@ -161,7 +161,7 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
    pWrapper->SetLODLevel(1);
    pWrapper->Update(0);
 
-   if(pWrapper && pWrapper->BeginRenderingQuery()) 
+   if(pWrapper->BeginRenderingQuery()) 
    {
       CalCoreModel* model = pWrapper->GetCalModel()->getCoreModel();
       
@@ -310,7 +310,7 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
       else
       {
          glExt->glUnmapBuffer(GL_ARRAY_BUFFER_ARB);
-         LOG_ERROR("Unable to create a hardware mesh.");
+         LOG_ERROR("Unable to create a hardware mesh:" + CalError::getLastErrorText() );
       }
 
       glExt->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
