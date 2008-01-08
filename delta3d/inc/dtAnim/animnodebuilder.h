@@ -29,6 +29,8 @@
 #include <osg/Referenced>
 #include <osg/Node> //needed for the bounding sphere callback
 
+#include <cal3d/global.h>
+
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
 {
@@ -42,10 +44,14 @@ namespace dtCore
    class ShaderProgram;
 }
 
+class CalHardwareModel;
+
+
 namespace dtAnim
 {
    class Cal3DModelWrapper;
    class Cal3DModelData;
+   class Array;
 
 class	DT_ANIM_EXPORT AnimNodeBuilder: public osg::Referenced
 {
@@ -74,6 +80,8 @@ public:
    virtual dtCore::RefPtr<osg::Node> CreateSoftware(Cal3DModelWrapper* pWrapper);
    virtual dtCore::RefPtr<osg::Node> CreateHardware(Cal3DModelWrapper* pWrapper);
 
+
+
 protected:
    virtual ~AnimNodeBuilder();
    AnimNodeBuilder(const AnimNodeBuilder&);
@@ -83,8 +91,40 @@ protected:
    
 private:
 
+   template <typename T>
+   class Array
+   {
+   public:
+      typedef T value_type;
+
+      Array(size_t size = 0): mArray(NULL)
+      {
+         if (size > 0)
+            mArray = new T[size];
+      }
+
+      ~Array()
+      {
+         delete[] mArray;
+      }
+
+      T& operator[](size_t index)
+      {
+         return mArray[index];
+      }
+
+      T* mArray;
+   };
+
+
    CreateFunc mCreateFunc;
 
+   void CalcNumVertsAndIndices( Cal3DModelWrapper* pWrapper,
+                                int &numVerts, int &numIndices );
+
+   void InvertTextureCoordinates( CalHardwareModel* hardwareModel, const size_t stride,
+                                 float* vboVertexAttr, Cal3DModelData* modelData,
+                                 Array<CalIndex> &indexArray );
 };
 
 }//namespace dtAnim

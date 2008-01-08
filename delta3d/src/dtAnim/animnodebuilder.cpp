@@ -45,30 +45,7 @@
 namespace dtAnim
 {
 
-template <typename T>
-class Array
-{
-   public:
-      typedef T value_type;
 
-      Array(size_t size = 0): mArray(NULL)
-      {
-         if (size > 0)
-            mArray = new T[size];
-      }
-
-      ~Array()
-      {
-         delete[] mArray;
-      }
-
-      T& operator[](size_t index)
-      {
-         return mArray[index];
-      }
-
-      T* mArray;
-};
 
 AnimNodeBuilder::AnimNodeBuilder()
 {
@@ -153,7 +130,6 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
    }
    
 
-   const int maxBones = modelData->GetShaderMaxBones();
    static const std::string BONE_TRANSFORM_UNIFORM("boneTransforms");
 
    dtCore::RefPtr<osg::Geode> geode = new osg::Geode();
@@ -161,163 +137,126 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
    pWrapper->SetLODLevel(1);
    pWrapper->Update(0);
 
-   if(pWrapper->BeginRenderingQuery()) 
+   if(pWrapper->BeginRenderingQuery() == false) 
    {
-      CalCoreModel* model = pWrapper->GetCalModel()->getCoreModel();
-      
-      unsigned numVerts = 0;
-      unsigned numIndices = 0;
-
-      int meshCount = model->getCoreMeshCount();
-
-      for(int meshId = 0; meshId < meshCount; meshId++) 
-      {
-         CalCoreMesh* calMesh = model->getCoreMesh(meshId);
-         int submeshCount = calMesh->getCoreSubmeshCount();
-
-         for(int submeshId = 0; submeshId < submeshCount; submeshId++) 
-         {
-            CalCoreSubmesh* subMesh = calMesh->getCoreSubmesh(submeshId);
-            numVerts += subMesh->getVertexCount();
-            numIndices += 3 * subMesh->getFaceCount();
-         }
-      }
-      const size_t stride = 18;
-      const size_t strideBytes = stride * sizeof(float);
-
-      Array<CalIndex> indexArray(numIndices);
-
-      CalHardwareModel* hardwareModel = new CalHardwareModel(model);
-
-      osg::Drawable::Extensions* glExt = osg::Drawable::getExtensions(0, true);
-      GLuint vbo[2];
-      if (modelData->GetVertexVBO() == 0)
-      {
-         glExt->glGenBuffers(1, &vbo[0]);
-         glExt->glBindBuffer(GL_ARRAY_BUFFER_ARB, vbo[0]);
-         glExt->glBufferData(GL_ARRAY_BUFFER_ARB, strideBytes * numVerts, NULL, GL_STATIC_DRAW_ARB);
-         modelData->SetVertexVBO(vbo[0]);
-      }
-      else
-      {
-         vbo[0] = modelData->GetVertexVBO();
-         glExt->glBindBuffer(GL_ARRAY_BUFFER_ARB, vbo[0]);
-      }
-
-      bool newIndexBuffer = false;
-      if (modelData->GetIndexVBO() == 0)
-      {
-         glExt->glGenBuffers(1, &vbo[1]);
-         modelData->SetIndexVBO(vbo[1]);
-         newIndexBuffer = true;
-      }
-      else
-      {
-         vbo[1] = modelData->GetIndexVBO();
-      }
-
-      hardwareModel->setIndexBuffer(indexArray.mArray);
-
-      float* vboVertexAttr = static_cast<float*>(glExt->glMapBuffer(GL_ARRAY_BUFFER_ARB, GL_READ_WRITE_ARB));
-
-      hardwareModel->setVertexBuffer(reinterpret_cast<char*>(vboVertexAttr), strideBytes);
-      hardwareModel->setNormalBuffer(reinterpret_cast<char*>(vboVertexAttr + 3), strideBytes);
-
-      hardwareModel->setTextureCoordNum(2);
-      hardwareModel->setTextureCoordBuffer(0, reinterpret_cast<char*>(vboVertexAttr + 6), strideBytes);
-      hardwareModel->setTextureCoordBuffer(1, reinterpret_cast<char*>(vboVertexAttr + 8), strideBytes);
-
-      hardwareModel->setWeightBuffer(reinterpret_cast<char*>(vboVertexAttr + 10), strideBytes);
-      hardwareModel->setMatrixIndexBuffer(reinterpret_cast<char*>(vboVertexAttr + 14), strideBytes);
-
-      if(hardwareModel->load(0, 0, maxBones))
-      {
-         numVerts = hardwareModel->getTotalVertexCount();
-         numIndices = 3 * hardwareModel->getTotalFaceCount();
-
-         //invert texture coordinates.
-         for(unsigned i = 0; i < numVerts * stride; i += stride)
-         {
-            for (unsigned j = 15; j < 18; ++j)
-            {
-               if (vboVertexAttr[i + j] > maxBones)
-               {
-                  vboVertexAttr[i + j] = 0;
-               }
-            }
-            
-            vboVertexAttr[i + 7] = 1.0f - vboVertexAttr[i + 7]; //the odd texture coordinates in cal3d are flipped, not sure why
-            vboVertexAttr[i + 9] = 1.0f - vboVertexAttr[i + 9]; //the odd texture coordinates in cal3d are flipped, not sure why
-         }
-
-         for(int meshCount = 0; meshCount < hardwareModel->getHardwareMeshCount(); ++meshCount)
-         {
-            hardwareModel->selectHardwareMesh(meshCount);
-
-            for(int face = 0; face < hardwareModel->getFaceCount(); ++face) 
-            {
-               for(int index = 0; index < 3; ++index)
-               {
-                  indexArray[face * 3 + index + hardwareModel->getStartIndex()] += hardwareModel->getBaseVertexIndex();
-               }
-            }
-         }
-
-         glExt->glUnmapBuffer(GL_ARRAY_BUFFER_ARB);
-         if (newIndexBuffer)
-         {
-            glExt->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, vbo[1]);
-            glExt->glBufferData(GL_ELEMENT_ARRAY_BUFFER_ARB, numIndices * sizeof(CalIndex), (const void*) indexArray.mArray, GL_STATIC_DRAW_ARB);
-         }
-         
-         dtCore::ShaderProgram* shadProg = LoadShaders(*modelData, *geode);
-
-         /* Begin figure out if this open gl implementation uses [0] on array uniforms 
-          * This seems to be an ATI/NVIDIA thing.  
-          * This requires me to force the shader to compile.
-          */
-         osg::Program* prog = shadProg->GetShaderProgram();
-         dtCore::RefPtr<osg::State> tmpState = new osg::State;
-         tmpState->setContextID(0);
-         prog->compileGLObjects(*tmpState);
-         const osg::Program::ActiveVarInfoMap& uniformMap = prog->getActiveUniforms(0);
-
-         std::string boneTransformUniform = BONE_TRANSFORM_UNIFORM;
-         if (uniformMap.find(boneTransformUniform) == uniformMap.end())
-         {
-            if (uniformMap.find(boneTransformUniform + "[0]") == uniformMap.end())
-            {
-               LOG_ERROR("Can't find uniform named \"" + boneTransformUniform 
-                     + "\" which is required for skinning.");
-            }
-            else
-            {
-               boneTransformUniform.append("[0]");
-            }
-         }
-         // End check.
-         
-         int numMeshes = hardwareModel->getHardwareMeshCount();
-         for(int meshCount = 0; meshCount < numMeshes; ++meshCount)
-         {
-            HardwareSubmeshDrawable* drawable = new HardwareSubmeshDrawable(pWrapper, hardwareModel, 
-                  boneTransformUniform, maxBones, meshCount, vbo[0], vbo[1]);
-            geode->addDrawable(drawable);
-         }
-
-         geode->setComputeBoundingSphereCallback(new Cal3DBoundingSphereCalculator(*pWrapper));
-      }
-      else
-      {
-         glExt->glUnmapBuffer(GL_ARRAY_BUFFER_ARB);
-         LOG_ERROR("Unable to create a hardware mesh:" + CalError::getLastErrorText() );
-      }
-
-      glExt->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
-      glExt->glBindBuffer(GL_ARRAY_BUFFER_ARB, 0);
-
-      pWrapper->EndRenderingQuery();
+      LOG_ERROR("Can't begin the rendering query.");
+      return NULL;
    }
+
+   int numVerts = 0;
+   int numIndices = 0;
+
+   CalcNumVertsAndIndices(pWrapper, numVerts, numIndices);
+
+   const size_t stride = 18;
+   const size_t strideBytes = stride * sizeof(float);
+
+   Array<CalIndex> indexArray(numIndices);
+
+   CalHardwareModel* hardwareModel = new CalHardwareModel( pWrapper->GetCalModel()->getCoreModel() );
+
+   osg::Drawable::Extensions* glExt = osg::Drawable::getExtensions(0, true);
+   GLuint vbo[2];
+   if (modelData->GetVertexVBO() == 0)
+   {
+      glExt->glGenBuffers(1, &vbo[0]);
+      glExt->glBindBuffer(GL_ARRAY_BUFFER_ARB, vbo[0]);
+      glExt->glBufferData(GL_ARRAY_BUFFER_ARB, strideBytes * numVerts, NULL, GL_STATIC_DRAW_ARB);
+      modelData->SetVertexVBO(vbo[0]);
+   }
+   else
+   {
+      vbo[0] = modelData->GetVertexVBO();
+      glExt->glBindBuffer(GL_ARRAY_BUFFER_ARB, vbo[0]);
+   }
+
+   bool newIndexBuffer = false;
+   if (modelData->GetIndexVBO() == 0)
+   {
+      glExt->glGenBuffers(1, &vbo[1]);
+      modelData->SetIndexVBO(vbo[1]);
+      newIndexBuffer = true;
+   }
+   else
+   {
+      vbo[1] = modelData->GetIndexVBO();
+   }
+
+   hardwareModel->setIndexBuffer(indexArray.mArray);
+
+   float* vboVertexAttr = static_cast<float*>(glExt->glMapBuffer(GL_ARRAY_BUFFER_ARB, GL_READ_WRITE_ARB));
+
+   hardwareModel->setVertexBuffer(reinterpret_cast<char*>(vboVertexAttr), strideBytes);
+   hardwareModel->setNormalBuffer(reinterpret_cast<char*>(vboVertexAttr + 3), strideBytes);
+
+   hardwareModel->setTextureCoordNum(2);
+   hardwareModel->setTextureCoordBuffer(0, reinterpret_cast<char*>(vboVertexAttr + 6), strideBytes);
+   hardwareModel->setTextureCoordBuffer(1, reinterpret_cast<char*>(vboVertexAttr + 8), strideBytes);
+
+   hardwareModel->setWeightBuffer(reinterpret_cast<char*>(vboVertexAttr + 10), strideBytes);
+   hardwareModel->setMatrixIndexBuffer(reinterpret_cast<char*>(vboVertexAttr + 14), strideBytes);
+
+   if(hardwareModel->load(0, 0, modelData->GetShaderMaxBones()))
+   {
+
+      InvertTextureCoordinates(hardwareModel, stride, vboVertexAttr, modelData, indexArray);
+
+      const int numIndices = 3 * hardwareModel->getTotalFaceCount();
+
+      glExt->glUnmapBuffer(GL_ARRAY_BUFFER_ARB);
+      if (newIndexBuffer)
+      {
+         glExt->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, vbo[1]);
+         glExt->glBufferData(GL_ELEMENT_ARRAY_BUFFER_ARB, numIndices * sizeof(CalIndex), (const void*) indexArray.mArray, GL_STATIC_DRAW_ARB);
+      }
+
+      dtCore::ShaderProgram* shadProg = LoadShaders(*modelData, *geode);
+
+      /* Begin figure out if this open gl implementation uses [0] on array uniforms 
+      * This seems to be an ATI/NVIDIA thing.  
+      * This requires me to force the shader to compile.
+      */
+      osg::Program* prog = shadProg->GetShaderProgram();
+      dtCore::RefPtr<osg::State> tmpState = new osg::State;
+      tmpState->setContextID(0);
+      prog->compileGLObjects(*tmpState);
+      const osg::Program::ActiveVarInfoMap& uniformMap = prog->getActiveUniforms(0);
+
+      std::string boneTransformUniform = BONE_TRANSFORM_UNIFORM;
+      if (uniformMap.find(boneTransformUniform) == uniformMap.end())
+      {
+         if (uniformMap.find(boneTransformUniform + "[0]") == uniformMap.end())
+         {
+            LOG_ERROR("Can't find uniform named \"" + boneTransformUniform 
+               + "\" which is required for skinning.");
+         }
+         else
+         {
+            boneTransformUniform.append("[0]");
+         }
+      }
+      // End check.
+
+      for(int meshCount = 0; meshCount < hardwareModel->getHardwareMeshCount(); ++meshCount)
+      {
+         HardwareSubmeshDrawable* drawable = new HardwareSubmeshDrawable(pWrapper, hardwareModel, 
+                                                 boneTransformUniform, modelData->GetShaderMaxBones(),
+                                                 meshCount, vbo[0], vbo[1]);
+         geode->addDrawable(drawable);
+      }
+
+      geode->setComputeBoundingSphereCallback(new Cal3DBoundingSphereCalculator(*pWrapper));
+   }
+   else
+   {
+      glExt->glUnmapBuffer(GL_ARRAY_BUFFER_ARB);
+      LOG_ERROR("Unable to create a hardware mesh:" + CalError::getLastErrorDescription() );
+   }
+
+   glExt->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
+   glExt->glBindBuffer(GL_ARRAY_BUFFER_ARB, 0);
+
+   pWrapper->EndRenderingQuery();
 
 
    return geode.get();
@@ -396,6 +335,62 @@ osg::BoundingSphere AnimNodeBuilder::Cal3DBoundingSphereCalculator::computeBound
 
    osg::BoundingSphere bSphere(bBox);
    return bSphere;
+}
+
+void AnimNodeBuilder::CalcNumVertsAndIndices( Cal3DModelWrapper* pWrapper,
+                                             int &numVerts, int &numIndices)
+{
+   CalCoreModel* model = pWrapper->GetCalModel()->getCoreModel();
+
+
+   const int meshCount = model->getCoreMeshCount();
+
+   for(int meshId = 0; meshId < meshCount; meshId++) 
+   {
+      CalCoreMesh* calMesh = model->getCoreMesh(meshId);
+      int submeshCount = calMesh->getCoreSubmeshCount();
+
+      for(int submeshId = 0; submeshId < submeshCount; submeshId++) 
+      {
+         CalCoreSubmesh* subMesh = calMesh->getCoreSubmesh(submeshId);
+         numVerts += subMesh->getVertexCount();
+         numIndices += 3 * subMesh->getFaceCount();
+      }
+   }
+}
+
+void AnimNodeBuilder::InvertTextureCoordinates( CalHardwareModel* hardwareModel, const size_t stride,
+                                                float* vboVertexAttr, Cal3DModelData* modelData,
+                                                Array<CalIndex> &indexArray )
+{
+   const int numVerts = hardwareModel->getTotalVertexCount();
+   //invert texture coordinates.
+   for(unsigned i = 0; i < numVerts * stride; i += stride)
+   {
+      for (unsigned j = 15; j < 18; ++j)
+      {
+         if (vboVertexAttr[i + j] > modelData->GetShaderMaxBones())
+         {
+            vboVertexAttr[i + j] = 0;
+         }
+      }
+
+      vboVertexAttr[i + 7] = 1.0f - vboVertexAttr[i + 7]; //the odd texture coordinates in cal3d are flipped, not sure why
+      vboVertexAttr[i + 9] = 1.0f - vboVertexAttr[i + 9]; //the odd texture coordinates in cal3d are flipped, not sure why
+   }
+
+   for(int meshCount = 0; meshCount < hardwareModel->getHardwareMeshCount(); ++meshCount)
+   {
+      hardwareModel->selectHardwareMesh(meshCount);
+
+      for(int face = 0; face < hardwareModel->getFaceCount(); ++face) 
+      {
+         for(int index = 0; index < 3; ++index)
+         {
+            indexArray[face * 3 + index + hardwareModel->getStartIndex()] += hardwareModel->getBaseVertexIndex();
+         }
+      }
+   }
 }
 
 
