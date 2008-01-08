@@ -103,6 +103,19 @@ namespace dtAnim
          
          void TestBuildHardware()
          {
+            //see if we can even do hardware building...
+            osg::Drawable::Extensions* glExt = osg::Drawable::getExtensions(0, true);
+            GLuint vbo;
+            glExt->glGenBuffers(1, &vbo);
+            glExt->glBindBuffer(GL_ARRAY_BUFFER_ARB, vbo);
+            glExt->glBufferData(GL_ARRAY_BUFFER_ARB, 18 * sizeof(float) * 10, NULL, GL_STATIC_DRAW_ARB);
+
+            float* vboVertexAttr = static_cast<float*>(glExt->glMapBuffer(GL_ARRAY_BUFFER_ARB, GL_READ_WRITE_ARB));
+            if (vboVertexAttr == NULL)
+            {
+               return;
+            }
+
             AnimNodeBuilder& nodeBuilder = Cal3DDatabase::GetInstance().GetNodeBuilder();
             nodeBuilder.SetCreate(AnimNodeBuilder::CreateFunc(&nodeBuilder, &AnimNodeBuilder::CreateHardware));
             mHelper->LoadModel(mModelPath);
