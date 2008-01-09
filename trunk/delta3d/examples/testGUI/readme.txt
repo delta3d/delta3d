@@ -20,13 +20,13 @@ Win32 Source:
 - Build testGUI.
 - Start testGUI.
 - To load from XML: open a command window next to testGUI.exe (in either the Debug
-  or Release folder) and type: testGUI.exe ..\examples\testGUI\gui.xml
+  or Release folder) and type: testGUI.exe ..\examples\testGUI\gui.layout
   
 Win32 Binary:
 - Go to bin.
 - Double-click testGUI.exe.
 - To load from XML: open a command window next to testGUI.exe (in either the Debug
-  or Release folder) and type: testGUI.exe ..\examples\tesGUI\gui.xml
+  or Release folder) and type: testGUI.exe ..\examples\tesGUI\gui.layout
 
 Linux Source:
 - To build only testGUI, from the root delta3d folder:
@@ -35,7 +35,7 @@ Linux Source:
 Linux Binary:
 - cd bin
 - ./testGUI
-  ./testGUI ../examples/testGUI/gui.xml
+  ./testGUI ../examples/testGUI/gui.layout
 
 Controls
 --------
