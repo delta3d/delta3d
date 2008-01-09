@@ -16,15 +16,18 @@ ScriptModule::~ScriptModule()
 
 void ScriptModule::executeScriptFile(const CEGUI::String& filename, const CEGUI::String& resourceGroup)
 {
+   LOG_WARNING("Script File Event not handled");
 }
 
 int ScriptModule::executeScriptGlobal(const CEGUI::String& function_name)
 {
-  return 0;
+   LOG_WARNING("Script Global Event not handled");
+   return 0;
 }
 
 void ScriptModule::executeString(const CEGUI::String& str)
 {
+   LOG_WARNING("String Event not handled");
 }
 
 /** Uses the map of strings to functions to execute a function to handle the EventArgs.
