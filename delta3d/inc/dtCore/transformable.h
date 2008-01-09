@@ -179,7 +179,7 @@ namespace dtCore
        * @param wcMatrix The matrix to fill
        * @return Success
        */
-      static bool GetAbsoluteMatrix( osg::Node* node, osg::Matrix& wcMatrix );
+      static bool GetAbsoluteMatrix( const osg::Node* node, osg::Matrix& wcMatrix );
 
       ///Automatically rescales normals if you scale your objects.
       void SetNormalRescaling( bool enable );
