@@ -215,7 +215,7 @@ void Transformable::ReplaceMatrixNode( TransformableNode* matrixTransform )
  * @param wcMat : The supplied matrix to return with world coordinates
  * @return successfully or not
  */
-bool Transformable::GetAbsoluteMatrix( osg::Node* node, osg::Matrix& wcMatrix )
+bool Transformable::GetAbsoluteMatrix( const osg::Node* node, osg::Matrix& wcMatrix )
 {
    if( node != NULL )
    {
@@ -306,22 +306,19 @@ void Transformable::SetTransform( const Transform& xform, CoordSysEnum cs )
  */
 void Transformable::GetTransform( Transform& xform, CoordSysEnum cs ) const
 {
-   osg::Matrix newMat;
-
-   //yes, we know this sucks, but we can't have a const visitor :(
-   //TransformableNode* mt = dynamic_cast<TransformableNode*>( const_cast<osg::Node*>(mNode.get()) );
-   TransformableNode* mt = const_cast<TransformableNode*>( GetMatrixNode() );
+   const TransformableNode* mt = GetMatrixNode();
 
    if( cs == ABS_CS )
    { 
+      osg::Matrix newMat;
       GetAbsoluteMatrix( mt, newMat );     
+      xform.Set( newMat );
    }
    else if( cs == REL_CS )
    {
-     newMat = mt->getMatrix();
+     xform.Set( mt->getMatrix() );
    }
 
-   xform.Set( newMat );
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -381,7 +378,6 @@ void Transformable::RenderProxyNode( const bool enable )
    {
       // Make sphere
       float radius = 0.5f;
-      osg::Matrix relMat = GetMatrixNode()->getMatrix();
 
       osg::Sphere* sphere = new osg::Sphere(  osg::Vec3( 0.0, 0.0, 0.0 ), radius );
 
@@ -837,7 +833,7 @@ void Transformable::SetCollisionSphere( osg::Node* node )
    {
       // Hmm, do we even need this here? I think this is a hack
       // to overcome a bug in DrawableVisitor... -osb
-      osg::Matrix oldMatrix = GetMatrixNode()->getMatrix();
+      const osg::Matrix &oldMatrix = GetMatrixNode()->getMatrix();
       GetMatrixNode()->setMatrix( osg::Matrix::identity() );
 
       DrawableVisitor<SphereFunctor> sv;
@@ -915,7 +911,7 @@ void Transformable::SetCollisionBox( osg::Node* node )
 
    if( node != 0 )
    {
-      osg::Matrix oldMatrix = GetMatrixNode()->getMatrix();
+      const osg::Matrix &oldMatrix = GetMatrixNode()->getMatrix();
       GetMatrixNode()->setMatrix( osg::Matrix::identity() );
 
       BoundingBoxVisitor bbv;
@@ -1061,7 +1057,7 @@ void Transformable::SetCollisionCappedCylinder(osg::Node* node)
 
    if( node )
    {
-      osg::Matrix oldMatrix = GetMatrixNode()->getMatrix();
+      const osg::Matrix &oldMatrix = GetMatrixNode()->getMatrix();
       GetMatrixNode()->setMatrix( osg::Matrix::identity() );
 
       DrawableVisitor<CylinderFunctor> cv;
@@ -1218,7 +1214,7 @@ void Transformable::SetCollisionMesh(osg::Node* node)
       //At this point, we'll set it temporarily to the Identity so it doesn't affect
       //our creation of the collision mesh.  This Transform will be accounted
       //for later in PrePhysicsUpdate().
-      osg::Matrix oldMatrix = GetMatrixNode()->getMatrix();
+      const osg::Matrix &oldMatrix = GetMatrixNode()->getMatrix();
       GetMatrixNode()->setMatrix( osg::Matrix::identity() );
 
       DrawableVisitor<TriangleRecorder> mv;
