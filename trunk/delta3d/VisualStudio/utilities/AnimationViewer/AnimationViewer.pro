@@ -17,6 +17,9 @@ CONFIG(debug, debug|release) {
 DEFINES -= UNICODE
 DESTDIR = ../../../bin
 
+#treat wchar_t as built in type, fixes linker issue with Xerces
+QMAKE_CXXFLAGS += /Zc:wchar_t
+
 LIBS += -L"../../../lib;../../../ext/lib"
 
 SOURCES = Delta3DThread.cpp \
