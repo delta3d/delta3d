@@ -68,7 +68,6 @@ namespace dtABC
    void ApplicationConfigHandler::endPrefixMapping(const XMLCh* const prefix) {}
    void ApplicationConfigHandler::skippedEntity(const XMLCh* const name) {}
    
-   ///\todo use ApplicationConfigSchema for attribute and node name searches.
    ///\todo optimize out string and data copies by just using the default applicatioinconfigdata struct
    void ApplicationConfigHandler::startElement(const XMLCh* const uri,
                                                const XMLCh* const localname,
