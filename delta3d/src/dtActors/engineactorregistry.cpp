@@ -87,8 +87,8 @@ namespace dtActors
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::COORDINATE_CONFIG_ACTOR_TYPE(new dtDAL::ActorType("Coordinate Config", "dtutil", "dtUtil::Coordinates Actor"));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::PLAYER_START_ACTOR_TYPE(new dtDAL::ActorType("Player Start", "dtcore", "This can be dropped into a map and the player actor will spawn himself there on startup"));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::WAYPOINT_ACTOR_TYPE(new dtDAL::ActorType("Waypoint", "dtai.waypoint", "dtAI::Waypoint Actor"));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::ANIMATION_ACTOR_TYPE(new dtDAL::ActorType("Cal3DGameActor", "dtanim", "Cal3DGameActor"));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::ANIMATION_ACTOR_TYPE2(new dtDAL::ActorType("AnimationGameActor", "dtanim", "AnimationGameActor"));
+   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::CAL3D_ACTOR_TYPE(new dtDAL::ActorType("Cal3DGameActor", "dtanim", "Cal3DGameActor"));
+   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::ANIMATION_ACTOR_TYPE(new dtDAL::ActorType("AnimationGameActor", "dtanim", "AnimationGameActor"));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::GAME_MESH_ACTOR_TYPE(
       new dtDAL::ActorType("Game Mesh Actor", "dtcore.Game.Actors", 
       "Simple base Game Actor that supports a Mesh - you should not typically use this directly"));
@@ -174,8 +174,8 @@ namespace dtActors
       mActorFactory->RegisterType<CoordinateConfigActorProxy>(COORDINATE_CONFIG_ACTOR_TYPE.get());
       mActorFactory->RegisterType<PlayerStartActorProxy>(PLAYER_START_ACTOR_TYPE.get());
       mActorFactory->RegisterType<dtDAL::WaypointActorProxy>(WAYPOINT_ACTOR_TYPE.get());
-      mActorFactory->RegisterType<Cal3DGameActorProxy>(ANIMATION_ACTOR_TYPE.get());
-      mActorFactory->RegisterType<AnimationGameActorProxy>(ANIMATION_ACTOR_TYPE2.get());
+      mActorFactory->RegisterType<Cal3DGameActorProxy>(CAL3D_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<AnimationGameActorProxy>(ANIMATION_ACTOR_TYPE.get());
 
       // Base Game Mesh actor - typically subclassed (maybe shouldn't even be registered
       mActorFactory->RegisterType<GameMeshActorProxy>(GAME_MESH_ACTOR_TYPE.get());

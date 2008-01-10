@@ -195,7 +195,7 @@ void TestAnim::OnStartup(dtGame::GameApplication& app)
          for(int j = 0; j < 10; ++j, startPos[1] += 2.0f)
          {
             dtCore::RefPtr<dtActors::AnimationGameActorProxy> proxy;
-            gameManager.CreateActor(*dtActors::EngineActorRegistry::ANIMATION_ACTOR_TYPE2, proxy);
+            gameManager.CreateActor(*dtActors::EngineActorRegistry::ANIMATION_ACTOR_TYPE, proxy);
             if(proxy.valid())
             {
                gameManager.AddActor(*proxy);
