@@ -97,28 +97,26 @@ namespace dtUtil
                handle = LoadLibrary( fullLibraryName.c_str() );
             
             if (handle == NULL)
-               LOG_ERROR("Unable to load library \"" + fullLibraryName + ".\"");
+            {
+               LPVOID lpMsgBuf;
+               FormatMessage( 
+                  FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+                  FORMAT_MESSAGE_FROM_SYSTEM | 
+                  FORMAT_MESSAGE_IGNORE_INSERTS,
+                  NULL,
+                  GetLastError(),
+                  0, // Default language
+                  (LPTSTR) &lpMsgBuf,
+                  0,
+                  NULL 
+                  );
 
-            DWORD errorCode = GetLastError();
-
-            LPVOID lpMsgBuf;
-            FormatMessage( 
-               FORMAT_MESSAGE_ALLOCATE_BUFFER | 
-               FORMAT_MESSAGE_FROM_SYSTEM | 
-               FORMAT_MESSAGE_IGNORE_INSERTS,
-               NULL,
-               errorCode,
-               0, // Default language
-               (LPTSTR) &lpMsgBuf,
-               0,
-               NULL 
-               );
-      
-            std::string errorDisplay = std::string(reinterpret_cast<char*>(lpMsgBuf));
-            // Display the string.
-            LOG_DEBUG(errorDisplay);
-            // Free the buffer.
-            LocalFree(lpMsgBuf);
+               std::string errorDisplay = std::string(reinterpret_cast<char*>(lpMsgBuf));
+               // Display the string.
+               LOG_ERROR("Unable to load library \"" + fullLibraryName + "\":" + errorDisplay);
+               // Free the buffer.
+               LocalFree(lpMsgBuf);
+            }
 #else
             // dlopen will not work with files in the current directory unless
             // they are prefaced with './'  (DB - Nov 5, 2003).
