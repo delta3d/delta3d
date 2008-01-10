@@ -181,12 +181,19 @@ bool Application::ParseConfigFile(const std::string& file)
 {
    ApplicationConfigHandler handler;
    dtUtil::XercesParser parser;
-   ///\todo log the result
+
    bool parsed_well = parser.Parse(file, handler, "application.xsd");
+   if (!parsed_well)
+   {
+      LOG_ERROR("The Application config file, " + file + ", wasn't parsed correctly.");
+   } 
 
    AppXMLApplicator applicator;
-   ///\todo log the result
    bool applied_well = applicator(handler.mConfigData, this);
+   if (!applied_well)
+   {
+      LOG_ERROR("The Application config file data wasn't applied correctly.");
+   }
 
    return( applied_well || parsed_well );
 }
@@ -248,21 +255,36 @@ ApplicationConfigData Application::GetDefaultConfigData()
 bool Application::AppXMLApplicator::operator ()(const ApplicationConfigData& data, dtABC::Application* app)
 {
    // set up the View
-   dtCore::View* view = app->GetView();
-   ///\todo should this only override when the string is not empty?
-   view->SetName( data.VIEW_NAME );
+   if (!data.VIEW_NAME.empty())
+   {
+      dtCore::View* view = app->GetView();
+      if (view != NULL)
+      {
+         view->SetName( data.VIEW_NAME );
+      }
+   }
 
    
    // set up the scene
-   dtCore::Scene* scene = app->GetScene();
-   ///\todo should this only override when the string is not empty?
-   scene->SetName( data.SCENE_NAME );
+   if (!data.SCENE_NAME.empty())
+   {
+      dtCore::Scene* scene = app->GetScene();
+      if (scene != NULL)
+      {
+         scene->SetName( data.SCENE_NAME );
+      }
+   }
 
    
    // set up the camera
-   dtCore::Camera* camera = app->GetCamera();
-   ///\todo should this only override when the string is not empty?
-   camera->SetName( data.CAMERA_NAME );
+   if (!data.CAMERA_NAME.empty())
+   {
+      dtCore::Camera* camera = app->GetCamera();
+      if (camera != NULL)
+      {
+         camera->SetName( data.CAMERA_NAME );
+      }
+   }
 
    
    
@@ -313,44 +335,46 @@ bool Application::AppXMLApplicator::operator ()(const ApplicationConfigData& dat
       }
    }
    
+   bool valid = true; //optimistic
    
    // connect the camera, scene, and window
    // since they might not be the same as the app's instances, we will use the instance management layer
    dtCore::DeltaWin* dinst = dtCore::DeltaWin::GetInstance( data.WINDOW_INSTANCE );
-   if( dinst != NULL )
+   dtCore::Camera *camera = dtCore::Camera::GetInstance( data.CAMERA_INSTANCE );
+   dtCore::View *view = dtCore::View::GetInstance( data.VIEW_NAME );
+   dtCore::Scene* sinst = dtCore::Scene::GetInstance( data.SCENE_INSTANCE );
+
+   if( (dinst != NULL) && (camera != NULL) )
    {
       camera->SetWindow( dinst );
    }
    else
    {
-      LOG_WARNING("Application:Can't find instance of DeltaWin, " + data.SCENE_INSTANCE )
+      LOG_WARNING("Application:Can't find instance of DeltaWin, " + data.SCENE_INSTANCE );
+      valid = false;
    }
 
-   // connect the camera, scene, and window
-   // since they might not be the same as the app's instances, we will use the instance management layer
-   dtCore::Camera* cinst = dtCore::Camera::GetInstance( data.CAMERA_INSTANCE );
-   if( cinst != NULL )
+   if( (camera != NULL) && (view != NULL) )
    {
-       view->SetCamera( cinst );
+      view->SetCamera( camera );
    }
    else
    {
-       LOG_WARNING("Application:Can't find instance of Camera, " + data.CAMERA_INSTANCE )
+       LOG_WARNING("Application:Can't find instance of Camera, " + data.CAMERA_INSTANCE );
+       valid = false;
    }
    
-   dtCore::Scene* sinst = dtCore::Scene::GetInstance( data.SCENE_INSTANCE );
-   if( sinst != NULL )
+   if( (sinst != NULL) && (view != NULL) )
    {
       view->SetScene( sinst );
    }
    else
    {
-      LOG_WARNING("Application:Can't find instance of Scene, " + data.SCENE_INSTANCE )
+      LOG_WARNING("Application:Can't find instance of Scene, " + data.SCENE_INSTANCE );
+      valid = false;
    }
 
-   ///\todo Determine a way to know if something went wrong,
-   /// maybe when instances were not found.
-   return true;
+   return valid;
 }
 ////////////////////////////////////////////////////////
 void Application::AddView(dtCore::View &view)
