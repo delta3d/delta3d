@@ -63,8 +63,8 @@ namespace dtEditQt
             this, SLOT(refreshAll()));
         connect(&EditorEvents::GetInstance(), SIGNAL(projectChanged()), 
             this, SLOT(refreshAll()));
-        connect(&EditorEvents::GetInstance(), SIGNAL(LibraryAboutToBeRemoved()),
-            this, SLOT(refreshAll())); // make sure the table is emptied here or crash!
+        //connect(&EditorEvents::GetInstance(), SIGNAL(LibraryAboutToBeRemoved()),
+        //    this, SLOT(refreshAll())); // make sure the table is emptied here or crash!
         connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyCreated(ActorProxyRefPtr, bool)), 
             this, SLOT(onActorProxyCreated(ActorProxyRefPtr, bool)));   
     }
