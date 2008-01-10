@@ -17,6 +17,7 @@
 #include <dtUtil/deprecationmgr.h>
 #include <dtUtil/log.h>
 #include <dtUtil/mathdefines.h>
+#include <dtUtil/stringutils.h>
 
 #if   defined(WIN32) | defined(_WIN32)
 #pragma warning( disable : 4800 )
@@ -1321,7 +1322,11 @@ bool AudioManager::ConfigSources( unsigned int num )
    mNumSources = ALsizei(num);
 
    mSource  = new ALuint[mNumSources];
-   assert( mSource );
+   if (mSource == NULL)
+   {
+      LOG_ERROR("Failed allocating " + dtUtil::ToString(mNumSources) + " sources.");
+      return false;
+   }
 
    ALenum   error(alGetError());
    alGenSources( mNumSources, mSource );
@@ -1337,7 +1342,11 @@ bool AudioManager::ConfigSources( unsigned int num )
 
    for( ALsizei ii(0); ii < mNumSources; ii++ )
    {
-      assert( alIsSource( mSource[ii] ) == AL_TRUE );
+      if (alIsSource( mSource[ii] ) == AL_FALSE)
+      {
+         LOG_ERROR("Source " + dtUtil::ToString(ii) + " is not valid.");
+         return false;
+      }
       mAvailable.push( mSource[ii] );
    }
 
