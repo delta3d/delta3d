@@ -28,6 +28,7 @@
 class QCheckBox;
 class QPushButton;
 class QResizeEvent;
+class QSpinBox;
 
 namespace dtEditQt
 {
@@ -49,13 +50,9 @@ namespace dtEditQt
          /// @param state The new checkbox state
          void onLastProjectCheckBox(int state);
 
-         /// Called when the last map checkbox is altered
+         /// Called when the last project checkbox is altered
          /// @param state The new checkbox state
          void onLastMapCheckBox(int state);
-
-         /// Called when the Rigid body camera checkbox is altered
-         /// @param state The new checkbox state
-         void onRigidBodyCameraCheckBox(int state);
 
          /// Called when the Ok button is pressed
          void onOk();
@@ -63,18 +60,13 @@ namespace dtEditQt
          /// Called when the color selection button is pressed
          void onColorSelect();
 
-         /// Called when the spin box value changes
-         /// @param i The new spin box value
-         void onAutosaveDelayChange(int i);
-
       private:
 
-         QCheckBox *projectCheck;
-         QCheckBox *mapCheck;
-         QCheckBox *rigidCamCheck;
-         QPushButton *color;
-         bool loadProjects, loadMaps, rigidCamera;
-         unsigned int saveMins;
+         QCheckBox   *mProjectCheck;
+         QCheckBox   *mMapCheck;
+         QCheckBox   *mRigidCamCheck;
+         QPushButton *mColor;
+         QSpinBox    *mSaveMins;
 
          /// Helper method to set the new color palette and text
          void setNewPalette();

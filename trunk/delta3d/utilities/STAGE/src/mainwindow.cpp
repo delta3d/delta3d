@@ -349,18 +349,17 @@ namespace dtEditQt
     void MainWindow::onEditorInitiated()
     {
         setUpdatesEnabled(false);
+  
         try
         {
            enableActions();
    
-           bool projectsExist = false;
-
-
            //Load the custom library paths if they exist
            loadLibraryPaths();
+           findAndLoadPreferences();
+           perspView->onEditorPreferencesChanged();
 
-
-           if(findRecentProjects().empty())
+           if(!EditorData::GetInstance().getLoadLastProject())//findRecentProjects().empty())
            {
                ProjectContextDialog dialog(this);
                if (dialog.exec() == QDialog::Accepted)
@@ -378,7 +377,7 @@ namespace dtEditQt
                        EditorActions::GetInstance().refreshRecentProjects();
                        endWaitCursor();
                    }
-                   catch (dtUtil::Exception &e)
+                   catch(const dtUtil::Exception &e)
                    {
                        endWaitCursor();
                        QMessageBox::critical((QWidget *)this,
@@ -388,44 +387,50 @@ namespace dtEditQt
            }
            else
            {
-               projectsExist = true;
-   
-               startWaitCursor();
-               EditorEvents::GetInstance().emitProjectChanged();
-               endWaitCursor();
+               std::list<std::string> &projects = EditorData::GetInstance().getRecentProjects();
+               if(!projects.empty())
+               {
+                  startWaitCursor();
+
+                  std::string contextName = projects.front();
+                  dtDAL::Project::GetInstance().SetContext(contextName);
+                  EditorData::GetInstance().setCurrentProjectContext(contextName);
+                  EditorData::GetInstance().addRecentProject(contextName);
+                  EditorEvents::GetInstance().emitProjectChanged();
+                  EditorActions::GetInstance().refreshRecentProjects();
+              
+                  EditorEvents::GetInstance().emitProjectChanged();
+                  
+                  endWaitCursor();
+               }
            }
    
            startWaitCursor();
            EditorActions::GetInstance().refreshRecentProjects();
            endWaitCursor();
    
-           if(!EditorData::GetInstance().getLoadLastMap())
+           if(EditorData::GetInstance().getLoadLastMap())
            {
-               return;
+              std::list<std::string> &maps = EditorData::GetInstance().getRecentMaps();
+              if(!maps.empty())
+              {
+                 checkAndLoadBackup(maps.front());
+              }
            }
-   
-           if(projectsExist)
-           {
-               std::vector<std::string> maps = findRecentMaps();
-   
-               for(unsigned int i = 0; i < maps.size(); i++)
-                   checkAndLoadBackup(maps[i]);
-           }
-   
+
            EditorActions::GetInstance().getTimer()->start();
    
            updateWindowTitle();
-           perspView->onEditorPreferencesChanged();
-           findAndLoadPreferences();
+           //findAndLoadPreferences();
 
            setUpdatesEnabled(true);
         }
-        catch (dtUtil::Exception& ex)
+        catch(const dtUtil::Exception& ex)
         {
            setUpdatesEnabled(true);
            throw ex;
         }   
-        catch (std::exception& ex)
+        catch(const std::exception& ex)
         {
            setUpdatesEnabled(true);
            throw ex;
@@ -685,21 +690,24 @@ namespace dtEditQt
         settings.beginGroup(EditorSettings::PREFERENCES_GROUP);
         if(settings.contains(EditorSettings::LOAD_RECENT_PROJECTS))
         {
-            bool loadProjs = settings.value(EditorSettings::LOAD_RECENT_PROJECTS,
-                QVariant(true)).toBool();
+            bool loadProjs = settings.value(EditorSettings::LOAD_RECENT_PROJECTS).toBool();
             EditorData::GetInstance().setLoadLastProject(loadProjs);
+
+            findRecentProjects();
+            findRecentMaps();
 
             if(loadProjs)
             {
-                if(settings.contains(EditorSettings::LOAD_RECENT_MAPS))
-                {
-                    bool loadMaps = settings.value(EditorSettings::LOAD_RECENT_MAPS,
-                        QVariant(true)).toBool();
-                    EditorData::GetInstance().setLoadLastMap(loadMaps);
-                }
+               if(settings.contains(EditorSettings::LOAD_RECENT_MAPS))
+               {
+                  bool loadMaps = settings.value(EditorSettings::LOAD_RECENT_MAPS).toBool();
+                  EditorData::GetInstance().setLoadLastMap(loadMaps);
+               }
             }
             else
+            {
                 EditorData::GetInstance().setLoadLastMap(false);
+            }
         }
         else
         {
@@ -716,7 +724,7 @@ namespace dtEditQt
 
         if(settings.contains(EditorSettings::SAVE_MILLISECONDS))
         {
-            int ms = settings.value(EditorSettings::SAVE_MILLISECONDS, QVariant(300000)).toInt();
+            int ms = settings.value(EditorSettings::SAVE_MILLISECONDS).toInt();
             EditorActions::GetInstance().saveMilliSeconds = ms;
             EditorActions::GetInstance().getTimer()->setInterval(ms);
         }
@@ -769,8 +777,7 @@ namespace dtEditQt
         settings.beginGroup(EditorSettings::RECENT_PROJECTS);
             if(settings.contains(EditorSettings::RECENT_PROJECT0))
             {
-                std::string project = settings.value(EditorSettings::RECENT_PROJECT0,
-                    QString("")).toString().toStdString();
+                std::string project = settings.value(EditorSettings::RECENT_PROJECT0).toString().toStdString();
 
                 if(dtUtil::FileUtils::GetInstance().DirExists(project))
                 {
@@ -807,17 +814,22 @@ namespace dtEditQt
         settings.beginGroup(EditorSettings::RECENT_MAPS);
             if(settings.contains(EditorSettings::RECENT_MAP0))
             {
-                const std::string& mapName = settings.value(EditorSettings::RECENT_MAP0,
-                                            QString("")).toString().toStdString();
+                const std::string& mapName = settings.value(EditorSettings::RECENT_MAP0).toString().toStdString();
 
-                std::set<std::string>::const_iterator itor =
-                    dtDAL::Project::GetInstance().GetMapNames().find(mapName);
+                std::set<std::string>::const_iterator itor = dtDAL::Project::GetInstance().GetMapNames().find(mapName);
                 if(itor != dtDAL::Project::GetInstance().GetMapNames().end())
                 {
                     maps.push_back(mapName);
+                    EditorData::GetInstance().addRecentMap(mapName);
                 }
                 else
+                {
                     settings.setValue(EditorSettings::RECENT_MAP0, QVariant(""));
+                    QMessageBox::critical(this, tr("Failed to load previous map"),
+                       tr("Failed to load the previous map.\n") +
+                       tr("This can happen if the last map has been moved, renamed, \ndeleted, or no longer in the previous project context."),
+                       QMessageBox::Ok);
+                }
             }
         settings.endGroup();
         return maps;
