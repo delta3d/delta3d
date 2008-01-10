@@ -28,6 +28,8 @@
 #include <dtCore/refptr.h>
 
 #include <osg/Math>
+#include <osg/io_utils>
+#include <cmath>
 #include <sstream>
 
 #include <string>
@@ -80,7 +82,7 @@ namespace dtAnim
 
       mCharacter->SetRotationSpeed(heading);
       mCharacter->Update(1.0f);
-      CPPUNIT_ASSERT_EQUAL(heading + heading, fabs(mCharacter->GetHeading()));
+      CPPUNIT_ASSERT_EQUAL(heading + heading, std::abs(mCharacter->GetHeading()));
 
       osg::Vec3 pos(5.0, 5.0, 10.0);
       dtCore::Transform tx;
@@ -88,7 +90,7 @@ namespace dtAnim
       tx.SetTranslation(pos);
       mCharacter->SetTransform(tx);
       
-      float speed = 1.0f;
+      //float speed = 1.0f;
       mCharacter->SetHeading(0.0f);
       mCharacter->SetRotationSpeed(0.0f);
       mCharacter->SetSpeed(1.0f);
