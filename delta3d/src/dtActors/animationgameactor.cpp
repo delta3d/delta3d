@@ -40,7 +40,6 @@ namespace dtActors
       : dtGame::GameActor(proxy)
       , mHelper(new dtAnim::AnimationHelper())
    {
-
    }
 
    AnimationGameActor::~AnimationGameActor()
