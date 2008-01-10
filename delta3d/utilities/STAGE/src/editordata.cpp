@@ -38,8 +38,14 @@ namespace dtEditQt
    //Singleton global variable for this class.
    dtCore::RefPtr<EditorData> EditorData::instance;
    ///////////////////////////////////////////////////////////////////////////////
-   EditorData::EditorData(): mainWindow(NULL), mGroupUIRegistry(new GroupUIRegistry), gridSize(16), 
-      loadLastProject(true), loadLastMap(true), rigidCamera(true), selectionColor(Qt::red)    
+   EditorData::EditorData() : 
+      mainWindow(NULL), 
+      mGroupUIRegistry(new GroupUIRegistry), 
+      gridSize(16), 
+      loadLastProject(true), 
+      loadLastMap(true), 
+      rigidCamera(true), 
+      selectionColor(Qt::red)    
    {
       LOG_INFO("Initializing Editor Data.");
 
