@@ -28,18 +28,22 @@
 #include <QtGui/QLabel>
 #include <QtGui/QLineEdit>
 #include <QtGui/QPushButton>
-#include <QtCore/QStringList>
 #include <QtGui/QTreeView>
-#include "dtDAL/actorproxy.h"
-#include "dtDAL/actortype.h"
-#include "dtDAL/librarymanager.h"
+
+#include <QtCore/QStringList>
+
+#include <dtDAL/actorproxy.h>
+#include <dtDAL/actortype.h>
+#include <dtDAL/librarymanager.h>
+#include <dtDAL/map.h>
+
 #include <dtUtil/log.h>
-#include "dtDAL/map.h"
-#include "dtEditQt/actorsearcher.h"
-#include "dtEditQt/actorresultstable.h"
-#include "dtEditQt/editordata.h"
-#include "dtEditQt/editorevents.h"
-#include "dtEditQt/mainwindow.h"
+
+#include <dtEditQt/actorsearcher.h>
+#include <dtEditQt/actorresultstable.h>
+#include <dtEditQt/editordata.h>
+#include <dtEditQt/editorevents.h>
+#include <dtEditQt/mainwindow.h>
 
 namespace dtEditQt 
 {
@@ -59,12 +63,12 @@ namespace dtEditQt
             this, SLOT(refreshAll()));
         connect(&EditorEvents::GetInstance(), SIGNAL(mapLibraryRemoved()),
             this, SLOT(refreshAll()));
+        connect(&EditorEvents::GetInstance(), SIGNAL(mapLibraryAboutToBeRemoved()),
+           this, SLOT(refreshAll())); // make sure the table is emptied here or crash!
         connect(&EditorEvents::GetInstance(), SIGNAL(currentMapChanged()), 
             this, SLOT(refreshAll()));
         connect(&EditorEvents::GetInstance(), SIGNAL(projectChanged()), 
             this, SLOT(refreshAll()));
-        //connect(&EditorEvents::GetInstance(), SIGNAL(LibraryAboutToBeRemoved()),
-        //    this, SLOT(refreshAll())); // make sure the table is emptied here or crash!
         connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyCreated(ActorProxyRefPtr, bool)), 
             this, SLOT(onActorProxyCreated(ActorProxyRefPtr, bool)));   
     }
