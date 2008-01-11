@@ -108,10 +108,9 @@ namespace dtEditQt
 
         connect(mProjectCheck,  SIGNAL(stateChanged(int)), this, SLOT(onLastProjectCheckBox(int)));
         connect(mMapCheck,      SIGNAL(stateChanged(int)), this, SLOT(onLastMapCheckBox(int)));
-        //connect(mSaveMins,      SIGNAL(valueChanged(int)), this, SLOT(onAutosaveDelayChange(int)));
+        connect(mColor,         SIGNAL(clicked()),         this, SLOT(onColorSelect()));
         connect(ok,             SIGNAL(clicked()),         this, SLOT(onOk()));
         connect(cancel,         SIGNAL(clicked()),         this, SLOT(reject()));
-        connect(mColor,         SIGNAL(clicked()),         this, SLOT(onColorSelect()));
 
         setWindowTitle(tr("Preference Editor"));
         
