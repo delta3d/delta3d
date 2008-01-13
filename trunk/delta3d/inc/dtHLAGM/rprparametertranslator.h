@@ -167,6 +167,11 @@ namespace dtHLAGM
          osg::Vec3f CoordConvertVelocityParameter(const dtGame::MessageParameter& parameter) const;
          osg::Vec3f CoordConvertAngularVelocityParameter(const dtGame::MessageParameter& parameter) const;
 
+         void CoordConvertWorldCoord(const WorldCoordinate& worldCoord, dtGame::MessageParameter& parameter) const;
+         void CoordConvertOrientation(const EulerAngles& vec, dtGame::MessageParameter& parameter) const;
+         void CoordConvertVelocityVector(const VelocityVector& vec, dtGame::MessageParameter& parameter) const;
+         void CoordConvertAngularVelocityVector(const VelocityVector& vec, dtGame::MessageParameter& parameter) const;
+
          /**
           * This expects to find the parameters in the order
           * Dead reckoning algorithm, frozen, world position, orientation, velocity, acceleration,
@@ -217,30 +222,32 @@ namespace dtHLAGM
             const dtGame::StringMessageParameter& parameter,
             const OneToManyMapping::ParameterDefinition& paramDef,
             const dtDAL::DataType& parameterDataType) const;
-            
+
+         void MapFromSpatialToMessageParams(
+            const char* buffer,
+            const size_t maxSize,
+            std::vector<dtCore::RefPtr<dtGame::MessageParameter> >& parameters,
+            const OneToManyMapping& mapping) const;
+
          void MapFromWorldCoordToMessageParam(
             const char* buffer, 
             const size_t size,
-            dtGame::MessageParameter& parameter,
-            const dtDAL::DataType& parameterDataType ) const;
+            dtGame::MessageParameter& parameter) const;
 
          void MapFromEulerAnglesToMessageParam(
             const char* buffer, 
             const size_t size,
-            dtGame::MessageParameter& parameter,
-            const dtDAL::DataType& parameterDataType ) const;
+            dtGame::MessageParameter& parameter) const;
             
          void MapFromVelocityVectorToMessageParam(
             const char* buffer, 
             const size_t size,
-            dtGame::MessageParameter& parameter,
-            const dtDAL::DataType& parameterDataType ) const;
+            dtGame::MessageParameter& parameter) const;
 
          void MapFromAngularVelocityVectorToMessageParam(
             const char* buffer, 
             const size_t size,
-            dtGame::MessageParameter& parameter,
-            const dtDAL::DataType& parameterDataType ) const;
+            dtGame::MessageParameter& parameter) const;
 
          void MapFromCharArrayToStringParam(
             const char* buffer, 
