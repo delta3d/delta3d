@@ -121,7 +121,7 @@ namespace dtAI
 
       //pVector [2] = 0.0f;
 
-      //float dir = fabs(osg::RadiansToDegrees(atan2(pVector[0], -pVector[1])) - mCharacter->GetRotation());
+      //float dir = std::abs(osg::RadiansToDegrees(atan2(pVector[0], -pVector[1])) - mCharacter->GetRotation());
 
       //while(dir >= 360.0f) dir -= 360.0f;
 
@@ -163,8 +163,8 @@ namespace dtAI
       osg::Vec3 pos = GetPosition();
       osg::Vec3 wayPos = pWaypoint->GetPosition();
 
-      float distToX = fabs(pos[0] - wayPos[0]);
-      float distToY = fabs(pos[1] - wayPos[1]);
+      float distToX = std::abs(pos[0] - wayPos[0]);
+      float distToY = std::abs(pos[1] - wayPos[1]);
 	  if(mWaypointPath.size() == 1)
 	  {
 		  return (distToX < 0.1f && distToY < 0.1f);

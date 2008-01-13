@@ -533,7 +533,7 @@ void ShipActor::UpdateThrottle(float elapsedTime)
 
 void ShipActor::UpdateSpeed(float elapsedTime)
 {
-   speed += (throttle - speed - (speed * fabs(rudderAngle) * 0.005f)) * 0.09f * elapsedTime;
+   speed += (throttle - speed - (speed * std::abs(rudderAngle) * 0.005f)) * 0.09f * elapsedTime;
 }
 
 void ShipActor::UpdateEffRudderAndHeel(float elapsedTime)
@@ -541,19 +541,19 @@ void ShipActor::UpdateEffRudderAndHeel(float elapsedTime)
    //update effective rudder angle
    if (rudderAngle > effRudderAngle)
    {
-      effRudderAngle += (fabs(rudderAngle - effRudderAngle)) 
+      effRudderAngle += (std::abs(rudderAngle - effRudderAngle)) 
          / log(displacement) * elapsedTime;
    }
    else if (rudderAngle < effRudderAngle)
    {
-      effRudderAngle -= (fabs(rudderAngle - effRudderAngle)) 
+      effRudderAngle -= (std::abs(rudderAngle - effRudderAngle)) 
          / log(displacement) * elapsedTime;
    }
 
    //update heel
    if (speed > 0.0f)
    {
-      heel = fabs(effRudderAngle) * (speed / maxAheadSpeed) * heelFactor;
+      heel = std::abs(effRudderAngle) * (speed / maxAheadSpeed) * heelFactor;
 
       //heel to side opposite the turn
       if (effRudderAngle < 0.0f)
@@ -609,13 +609,13 @@ void ShipActor::SetTacticalDiameter(float diameter)
 float ShipActor::GetAdjustedTacticalDiameter()
 {
    float adjTacDia = .0f;
-   float absSpeed = fabs(speed);
+   float absSpeed = std::abs(speed);
 
    //check for sufficient water flow over rudder
    if (absSpeed < 3.0f)
       return 30000.0f;
 
-   float factor = (15.0f / absSpeed) * fabs(effRudderAngle);
+   float factor = (15.0f / absSpeed) * std::abs(effRudderAngle);
 
    adjTacDia = (tacticalDiameter * 15.0f * factor) / (factor * factor);
 

@@ -160,7 +160,7 @@ BOOL OSGExp::hasAnimation(INode* node){
 		// changes from the start frame then we have an animation.
 		if (t != start){
 			if(!Util::isPoint3Equal(ap.t, firstPos) ||
-				fabs(rotAngle - firstRotAngle) > ALMOST_ZERO ||
+				std::abs(rotAngle - firstRotAngle) > ALMOST_ZERO ||
 				!Util::isPoint3Equal(ap.k, firstScaleFactor)){
 				return TRUE;
 			}

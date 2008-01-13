@@ -32,11 +32,11 @@
  * Returns true if the to Point3's are almost equal.
  */
 BOOL Util::isPoint3Equal(Point3 p1, Point3 p2){
-	if (fabs(p1.x - p2.x) > ALMOST_ZERO)
+	if (std::abs(p1.x - p2.x) > ALMOST_ZERO)
 		return FALSE;
-	if (fabs(p1.y - p2.y) > ALMOST_ZERO)
+	if (std::abs(p1.y - p2.y) > ALMOST_ZERO)
 		return FALSE;
-	if (fabs(p1.z - p2.z) > ALMOST_ZERO)
+	if (std::abs(p1.z - p2.z) > ALMOST_ZERO)
 		return FALSE;
 
 	return TRUE;
@@ -46,11 +46,11 @@ BOOL Util::isPoint3Equal(Point3 p1, Point3 p2){
  * This method will return true if the two vec3's are almost equal.
  */
 BOOL Util::isVec3Equal(osg::Vec3 p1, osg::Vec3 p2){
-	if (fabs(p1.x() - p2.x()) > ALMOST_ZERO)
+	if (std::abs(p1.x() - p2.x()) > ALMOST_ZERO)
 		return FALSE;
-	if (fabs(p1.y() - p2.y()) > ALMOST_ZERO)
+	if (std::abs(p1.y() - p2.y()) > ALMOST_ZERO)
 		return FALSE;
-	if (fabs(p1.z() - p2.z()) > ALMOST_ZERO)
+	if (std::abs(p1.z() - p2.z()) > ALMOST_ZERO)
 		return FALSE;
 
 	return TRUE;
@@ -62,9 +62,9 @@ BOOL Util::isVec3Equal(osg::Vec3 p1, osg::Vec3 p2){
  * This method will return true if the two vec2's are almost equal.
  */
 BOOL Util::isVec2Equal(osg::Vec2 p1, osg::Vec2 p2){
-	if (fabs(p1.x() - p2.x()) > ALMOST_ZERO)
+	if (std::abs(p1.x() - p2.x()) > ALMOST_ZERO)
 		return FALSE;
-	if (fabs(p1.y() - p2.y()) > ALMOST_ZERO)
+	if (std::abs(p1.y() - p2.y()) > ALMOST_ZERO)
 		return FALSE;
 
 	return TRUE;
@@ -77,37 +77,37 @@ BOOL Util::isVec2Equal(osg::Vec2 p1, osg::Vec2 p2){
 BOOL Util::isIdentity(osg::Matrix mat){
 
 	osg::Matrix::value_type * _mat = mat.ptr();
-	if(fabs(_mat[0] - 1.0f) > ALMOST_ZERO)
+	if(std::abs(_mat[0] - 1.0f) > ALMOST_ZERO)
 		return FALSE;
-	if(fabs(_mat[1]) > ALMOST_ZERO)
+	if(std::abs(_mat[1]) > ALMOST_ZERO)
 		return FALSE;
-	if(fabs(_mat[2]) > ALMOST_ZERO)
+	if(std::abs(_mat[2]) > ALMOST_ZERO)
 		return FALSE;
-	if(fabs(_mat[3]) > ALMOST_ZERO)
+	if(std::abs(_mat[3]) > ALMOST_ZERO)
 		return FALSE;
-	if(fabs(_mat[4]) > ALMOST_ZERO)
+	if(std::abs(_mat[4]) > ALMOST_ZERO)
 		return FALSE;
-	if(fabs(_mat[5] - 1.0f) > ALMOST_ZERO)
+	if(std::abs(_mat[5] - 1.0f) > ALMOST_ZERO)
 		return FALSE;
-	if(fabs(_mat[6]) > ALMOST_ZERO)
+	if(std::abs(_mat[6]) > ALMOST_ZERO)
 		return FALSE;
-	if(fabs(_mat[7]) > ALMOST_ZERO)
+	if(std::abs(_mat[7]) > ALMOST_ZERO)
 		return FALSE;
-	if(fabs(_mat[8]) > ALMOST_ZERO)
+	if(std::abs(_mat[8]) > ALMOST_ZERO)
 		return FALSE;
-	if(fabs(_mat[9]) > ALMOST_ZERO)
+	if(std::abs(_mat[9]) > ALMOST_ZERO)
 		return FALSE;
-	if(fabs(_mat[10] - 1.0f) > ALMOST_ZERO)
+	if(std::abs(_mat[10] - 1.0f) > ALMOST_ZERO)
 		return FALSE;
-	if(fabs(_mat[11]) > ALMOST_ZERO)
+	if(std::abs(_mat[11]) > ALMOST_ZERO)
 		return FALSE;
-	if(fabs(_mat[12]) > ALMOST_ZERO)
+	if(std::abs(_mat[12]) > ALMOST_ZERO)
 		return FALSE;
-	if(fabs(_mat[13]) > ALMOST_ZERO)
+	if(std::abs(_mat[13]) > ALMOST_ZERO)
 		return FALSE;
-	if(fabs(_mat[14]) > ALMOST_ZERO)
+	if(std::abs(_mat[14]) > ALMOST_ZERO)
 		return FALSE;
-	if(fabs(_mat[15] - 1.0f) > ALMOST_ZERO)
+	if(std::abs(_mat[15] - 1.0f) > ALMOST_ZERO)
 		return FALSE;
 	return TRUE;
 }

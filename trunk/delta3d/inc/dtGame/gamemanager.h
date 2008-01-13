@@ -985,8 +985,8 @@ namespace dtGame
          void SendEnvironmentChangedMessage(IEnvGameActorProxy *envActor);
 
          template <typename MapType, typename KeyType>
-         void CheckForDuplicateRegistration(const KeyType& type, GameActorProxy& proxy, 
-                  const std::string& invokableName, MapType& mapToCheck);
+         void CheckForDuplicateRegistration(const KeyType& type, const std::string& typeName,
+                  GameActorProxy& proxy, const std::string& invokableName, MapType& mapToCheck);
       
          dtCore::RefPtr<MachineInfo>            mMachineInfo;
          dtCore::RefPtr<IEnvGameActorProxy>  mEnvironment;

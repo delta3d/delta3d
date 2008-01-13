@@ -204,7 +204,7 @@ bool Transform::EpsilonEquals( const Transform& transform, float epsilon ) const
 
    for( int i = 0; i < 4; i++ )
       for( int j = 0; j < 4; j++ )
-         if( fabs( thisMatrix(i,j) - thatMatrix(i,j) ) > epsilon)
+         if( std::abs( thisMatrix(i,j) - thatMatrix(i,j) ) > epsilon)
             return false;
 
    return true;

@@ -1393,7 +1393,7 @@ namespace dtUtil
         dlam -= (2 * osg::PI);
       if (dlam < -osg::PI)
         dlam += (2 * osg::PI);
-      if (fabs(dlam) < 2.e-10)
+      if (std::abs(dlam) < 2.e-10)
         dlam = 0.0;
       
       s = sin(Latitude);

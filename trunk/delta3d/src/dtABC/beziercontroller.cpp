@@ -236,14 +236,14 @@ bool BezierController::OnNextStep()
    //else if our elapsed time is equal to the next points time
    //ie. the step for the controller = the step for the last BezierNode
    //then we just move to the next point
-   else if(fabs(currentTime - mTotalTime) < 0.0001)
+   else if(std::abs(currentTime - mTotalTime) < 0.0001)
    {
       StepObject(p);      
    }
    
    //else if our elapsed time is equal to the previous points time
    //just move the the previous point
-   else if(fabs(mLastPathPoint->mTime - mTotalTime) < 0.0001)
+   else if(std::abs(mLastPathPoint->mTime - mTotalTime) < 0.0001)
    {
       StepObject(mLastPathPoint->mPoint);      
    }
