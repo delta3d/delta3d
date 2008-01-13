@@ -486,8 +486,8 @@ namespace dtEditQt
 
       QPoint center((x()+width())/2, (y()+height())/2);
 
-      float dxCenter = fabs(float(e->pos().x() - center.x()));
-      float dyCenter = fabs(float(e->pos().y() - center.y()));
+      float dxCenter = std::abs(float(e->pos().x() - center.x()));
+      float dyCenter = std::abs(float(e->pos().y() - center.y()));
 
       if (dxCenter > (width()/2) || dyCenter > (height()/2))
       {

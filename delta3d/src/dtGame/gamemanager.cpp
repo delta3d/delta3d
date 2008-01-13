@@ -1614,7 +1614,7 @@ namespace dtGame
    }
 
    template <typename MapType, typename KeyType>
-   void GameManager::CheckForDuplicateRegistration(const KeyType& key, GameActorProxy& proxy, 
+   void GameManager::CheckForDuplicateRegistration(const KeyType& key, const std::string& typeString, GameActorProxy& proxy, 
             const std::string& invokableName, MapType& mapToCheck)
    {
       typedef typename MapType::iterator MapIterator;
@@ -1625,7 +1625,7 @@ namespace dtGame
          if (pip.first.get() == &proxy && pip.second == invokableName)
          {
             std::ostringstream ss;
-            ss << "Unable to register globally for MessageType \"" << key << " for Actor \"" 
+            ss << "Unable to register globally for MessageType \"" << typeString << " for Actor \"" 
                << proxy.GetActorType() << "\" "
                << " using invokable named \"" << invokableName << "\".  It is already registered.";
 
@@ -1638,7 +1638,7 @@ namespace dtGame
    void GameManager::RegisterForMessages(const MessageType& type, GameActorProxy& proxy, 
          const std::string& invokableName)
    {
-      CheckForDuplicateRegistration(&type, proxy, invokableName, mGlobalMessageListeners);
+      CheckForDuplicateRegistration(&type, type.GetName(), proxy, invokableName, mGlobalMessageListeners);
 
       mGlobalMessageListeners.insert(
             std::make_pair(&type, 
@@ -1691,7 +1691,7 @@ namespace dtGame
          mapForType = &itor->second;
       }
 
-      CheckForDuplicateRegistration(targetActorId, proxy, invokableName, *mapForType);
+      CheckForDuplicateRegistration(targetActorId, targetActorId.ToString(), proxy, invokableName, *mapForType);
 
       mapForType->insert(std::make_pair(targetActorId, std::make_pair(dtCore::RefPtr<GameActorProxy>(&proxy), invokableName)));
    }

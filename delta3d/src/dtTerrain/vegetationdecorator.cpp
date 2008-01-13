@@ -330,7 +330,7 @@ namespace dtTerrain
       else bin = 1;
 
       float my_angle = (c_data[0]/360.0f)*255.0f;
-      float diff = fabs(goodAngle - my_angle);
+      float diff = std::abs(goodAngle - my_angle);
 
       if ((diff <= 45) || (diff >= 315))
          bin = 2;				// biased towards older vegetation
@@ -389,7 +389,7 @@ namespace dtTerrain
 
       s_data = (unsigned char*)slopeMap.data(x,y);
       float my_angle = (s_data[2]/255.0f)*360.0f;
-      float diff = fabs(goodAngle - my_angle);
+      float diff = std::abs(goodAngle - my_angle);
       float slope = s_data[1];
       maxslope = (maxslope/90.0f) * 255.0f;	
 

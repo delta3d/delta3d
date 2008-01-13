@@ -114,9 +114,9 @@ float PolarDecomp::MatNorm( const osg::Matrix& M, const int tpose )
 
    for( int i = 0; i < 3; i++ ) {
       if( tpose ) 
-         sum = fabs( M(0,i) )+fabs( M(1,i) )+fabs( M(2,i) );
+         sum = std::abs( M(0,i) )+std::abs( M(1,i) )+std::abs( M(2,i) );
       else
-         sum = fabs( M(i,0) )+fabs( M(i,1) )+fabs( M(i,2) );
+         sum = std::abs( M(i,0) )+std::abs( M(i,1) )+std::abs( M(i,2) );
 
       if( max < sum ) 
          max = sum;
@@ -250,7 +250,7 @@ float PolarDecomp::Decompose( const osg::Matrix& M, osg::Matrix& Q, osg::Matrix&
       MadjT_one = NormOne( MadjTk ); 
       MadjT_inf = NormInf( MadjTk );
 
-      gamma = sqrt( sqrt( (MadjT_one*MadjT_inf)/(M_one*M_inf) ) / fabs(det) );
+      gamma = sqrt( sqrt( (MadjT_one*MadjT_inf)/(M_one*M_inf) ) / std::abs(det) );
       g1 = gamma*0.5;
       g2 = 0.5/(gamma*det);
 

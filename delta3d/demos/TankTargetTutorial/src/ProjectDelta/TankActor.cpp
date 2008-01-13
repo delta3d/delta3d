@@ -224,7 +224,7 @@ void TankActor::CheckForNewTarget()
       osg::Vec3 targetPosition( vec3prop->GetValue() );
 
       // Find the absolute distance from the center of the taget to the plane.
-      float distance( fabs( plane.distance( targetPosition ) ) );
+      float distance( std::abs( plane.distance( targetPosition ) ) );
       // Find the radius of the target's bounding sphere.
       float radius( (*iter)->GetActor()->GetOSGNode()->getBound().radius() );
 

@@ -137,7 +137,7 @@ namespace dtGame
       for (int i = 0; i < single.GetNumberOfHits(); ++i)
       {
          single.GetHitPoint(tempHit, i);
-         float newDiff = fabs(tempHit.z() - pointz);
+         float newDiff = std::abs(tempHit.z() - pointz);
          if (newDiff < diff)
          {
             diff = newDiff;

@@ -652,7 +652,7 @@ void dtCore::Environment::UpdateFogColor()
    float inverseVis = 1.f - (MAX_VISIBILITY - vis) / MAX_VISIBILITY;
    float sif = 0.5f - cosf(osg::DegreesToRadians(mSunAltitude)*2.f)/2.f + 0.000001f;
 
-   float rf1  = fabs((rotation-osg::PI)/osg::PI); //difference between eyepoint heading and sun heading (rad)
+   float rf1  = std::abs((rotation-osg::PI)/osg::PI); //difference between eyepoint heading and sun heading (rad)
    float rf2 = inverseVis * pow(rf1*rf1, 1/sif);
 
    float rf3  = 1.f - rf2;

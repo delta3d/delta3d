@@ -48,7 +48,7 @@ static void GetAnomaly (double ma, double s, double *nu, double *ea)
       for (;;)
       {
          dla = fea-(s*sin(fea))-m;
-         if (fabs(dla)<1e-6)
+         if (std::abs(dla)<1e-6)
             break;
          dla /= 1-(s*cos(fea));
          fea -= dla;
@@ -59,7 +59,7 @@ static void GetAnomaly (double ma, double s, double *nu, double *ea)
    {
       /* hyperbolic */
       double corr = 1;
-      while (fabs(corr) > 0.000001)
+      while (std::abs(corr) > 0.000001)
       {
          corr = (m - s * sinh(fea) + fea) / (s*cosh(fea) - 1);
          fea += corr;
@@ -448,7 +448,7 @@ static void equitorial_aux (int sw, double mjd, double x, double y, double *p, d
 
    sy = sin(y);
    cy = cos(y);				/* always non-negative */
-   if (fabs(cy)<1e-20) cy = 1e-20;		/* insure > 0 */
+   if (std::abs(cy)<1e-20) cy = 1e-20;		/* insure > 0 */
    ty = sy/cy;
    cx = cos(x);
    sx = sin(x);

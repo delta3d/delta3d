@@ -253,7 +253,7 @@ osg::ref_ptr<osg::StateSet> MtlKeeper::convertStdMaterial(Mtl* maxMtl, Options* 
 		blendAmount = stdMtl->GetTexmapAmt(ID_DI,t);
 		convertMap(maxMtl, maxMtl->GetSubTexmap(ID_DI), blendAmount, stateset.get(), options, t);
    		// If no mix then set the diffuse color to white.
-		if(options->getWhitenTexMat() && fabs(blendAmount-1.0f)<=0.001f)
+		if(options->getWhitenTexMat() && std::abs(blendAmount-1.0f)<=0.001f)
 			setDiffuseColorToWhite(stateset.get());
 	}
     // modified by boto ( 03/22/2005 ): added support for self-illumination map
@@ -482,7 +482,7 @@ osg::ref_ptr<osg::Texture> MtlKeeper::convertBitmapMap(Mtl* maxMtl, Texmap* tmap
 			addTexGen(stateset, texUnit, osg::TexGen::SPHERE_MAP);
 
 		// Use TexEnvCombiner to blend the bitmap with the color.
-		if(fabs(blendAmount-1.0f)>0.001f)
+		if(std::abs(blendAmount-1.0f)>0.001f)
 			addInterpolateCombiner(stateset, texUnit, blendAmount);
 	}	
 	return osgTex;
@@ -506,7 +506,7 @@ osg::ref_ptr<osg::Texture> MtlKeeper::convertReflectionMap(Mtl* maxMtl, Texmap* 
 		addTexGen(stateset, texUnit, osg::TexGen::REFLECTION_MAP);
 
 		// Use TexEnvCombiner to blend the bitmap with the color.
-		if(fabs(blendAmount-1.0f)>0.001f)
+		if(std::abs(blendAmount-1.0f)>0.001f)
 			addInterpolateCombiner(stateset, texUnit, blendAmount);
 	}
 	return osgTex;
@@ -589,7 +589,7 @@ osg::ref_ptr<osg::Texture> MtlKeeper::convertUnknownMap(Mtl* maxMtl, Texmap* tma
 			addTexGen(stateset, texUnit, osg::TexGen::SPHERE_MAP);
 
 		// Use TexEnvCombiner to blend the bitmap.
-		if(fabs(blendAmount-1.0f)>0.001f)
+		if(std::abs(blendAmount-1.0f)>0.001f)
 			addInterpolateCombiner(stateset, texUnit, blendAmount);
 	}
 	return osgTex;

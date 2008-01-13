@@ -106,13 +106,13 @@ void dtCore::SkyDome::Repaint(   const osg::Vec3& skyColor,
    {
       // 0.0 - 0.4
       outer_param.set(
-         (10.0 - fabs(sunAngle)) / 20.0,
-         (10.0 - fabs(sunAngle)) / 40.0,
-         -(10.0 - fabs(sunAngle)) / 30.0 );
+         (10.0 - std::abs(sunAngle)) / 20.0,
+         (10.0 - std::abs(sunAngle)) / 40.0,
+         -(10.0 - std::abs(sunAngle)) / 30.0 );
 
       middle_param.set(
-         (10.0 - fabs(sunAngle)) / 40.0,
-         (10.0 - fabs(sunAngle)) / 80.0,
+         (10.0 - std::abs(sunAngle)) / 40.0,
+         (10.0 - std::abs(sunAngle)) / 80.0,
          0.0 );
 
       outer_diff = outer_param / 9.0;

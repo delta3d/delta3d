@@ -128,8 +128,8 @@ namespace dtUtil
    
       long tz = GetTimeZone(timeParts);
    
-      int tzHour = (int)floor(fabs((double)tz / 3600));
-      int tzMin = (int)floor(fabs((double)tz / 60) - (60 * tzHour));
+      int tzHour = (int)floor(std::abs((double)tz / 3600));
+      int tzMin = (int)floor(std::abs((double)tz / 60) - (60 * tzHour));
    
       //since the function of getting hour does fabs,
       //this needs to check the sign of tz.

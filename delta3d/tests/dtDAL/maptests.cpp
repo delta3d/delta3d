@@ -975,11 +975,11 @@ void MapTests::TestMapSaveAndLoad()
             ((dtDAL::BooleanActorProperty*)ap)->GetValue());
         ap = getActorProperty(*map, "", dtDAL::DataType::FLOAT);
         CPPUNIT_ASSERT_MESSAGE(ap->GetName() + " value should be 40.00.",
-            fabs(((dtDAL::FloatActorProperty*)ap)->GetValue() - 40.00f) < 0.0001);
+            std::abs(((dtDAL::FloatActorProperty*)ap)->GetValue() - 40.00f) < 0.0001);
 
         ap = getActorProperty(*map, "", dtDAL::DataType::DOUBLE);
         CPPUNIT_ASSERT_MESSAGE(ap->GetName() + " value should be 39.70.",
-            fabs(((dtDAL::DoubleActorProperty*)ap)->GetValue() - 39.70) < 0.0001);
+            std::abs(((dtDAL::DoubleActorProperty*)ap)->GetValue() - 39.70) < 0.0001);
 
         ap = getActorProperty(*map, dtDAL::TransformableActorProxy::PROPERTY_ROTATION, dtDAL::DataType::VEC3,1);
 
