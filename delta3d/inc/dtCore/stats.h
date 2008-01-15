@@ -1,6 +1,6 @@
 /* 
  * Delta3D Open Source Game and Simulation Engine 
- * Copyright (C) 2004-2005 MOVES Institute 
+ * Copyright (C) 2004-2008 MOVES Institute 
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free 
@@ -18,110 +18,100 @@
  *
  */
 
+/* -*-c++-*- OpenSceneGraph - Copyright (C) 1998-2006 Robert Osfield 
+*
+* This library is open source and may be redistributed and/or modified under  
+* the terms of the OpenSceneGraph Public License (OSGPL) version 0.0 or 
+* (at your option) any later version.  The full license is in LICENSE file
+* included with this distribution, and on the openscenegraph.org website.
+* 
+* This library is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+* OpenSceneGraph Public License for more details.
+*/
+
 #ifndef DELTA_STATS
-#define DELTA_STATS
+#define DELTA_STATS 
 
-#include <osgUtil/Statistics>
-#include <osgUtil/SceneView>
+#include <osg/Camera>
+#include <osgViewer/ViewerBase>
 #include <osgText/Text>
-#include <osg/Projection>
 #include <osg/Switch>
-#include <osg/Version>
 
-#include <dtCore/export.h>
-#include <dtCore/timer.h>
-#include <dtCore/refptr.h>
+namespace osg
+{
+   class Geometry;
+}
+
+namespace osgGA
+{
+   class GUIEventAdapter;
+   class GUIActionAdapter;
+}
+
 
 namespace dtCore
 {
-   ///Used to gather and display statistical information regarding the display
 
-   /** This class is used internally by the Scene to gather and report 
-     * statistics on the frame rate, primitive totals, etc.
-     */
-   class DT_CORE_EXPORT Stats : public osg::Referenced
+   /** Used by dtABC::Application to render application statistics.  Originally
+    *  derived from the OpenSceneGraph StatsHandler class and adapted for use
+    *  with Delta3D.
+    */
+   class DT_CORE_EXPORT StatsHandler 
    {
-   public:
-      Stats(osgUtil::SceneView *sv);
-   protected:
-      ~Stats() {};
-   public:
-      void Init(osgUtil::RenderStage* stg);
-      void Draw();
-      void SetTime(int type);
-#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && ((OSG_VERSION_MAJOR == 1 && OSG_VERSION_MINOR >= 2) || (OSG_VERSION_MAJOR == 2))
-      void SelectType(osgUtil::Statistics::StatsType type);
-#else
-      void SelectType(osgUtil::Statistics::statsType type);
-#endif
-      void SelectNextType(void);
-      double FrameSeconds() { return mTimer.DeltaSec(mLastFrameTick,mFrameTick); }
-      double FrameRate() { return 1.0/FrameSeconds(); }
-      double GetTime(int type=0);
-      double ClockSeconds() { return mTimer.DeltaSec(mInitialTick,ClockTick()); }
+   public: 
 
-      enum timeType
+      StatsHandler( osgViewer::ViewerBase &viewer );
+
+      enum StatsType
       {
-         TIME_BEFORE_APP,
-         TIME_AFTER_APP,
-         TIME_BEFORE_CULL,
-         TIME_AFTER_CULL,
-         TIME_BEFORE_DRAW,
-         TIME_AFTER_DRAW
+         NO_STATS = 0,
+         FRAME_RATE = 1,
+         VIEWER_STATS = 2,
+         LAST = 3
       };
 
-   protected:
-      dtCore::RefPtr<osgUtil::RenderStage> mStage;
-      float mFrameRate;
-      int mPrintStats;
-      dtCore::Timer mTimer;
-      dtCore::Timer_t mInitialTick;
-      dtCore::Timer_t mLastFrameTick;
-      dtCore::Timer_t mFrameTick;
-      dtCore::Timer_t mRegTimes[6];
-      dtCore::Timer_t mLastStatsDataUpdate;
 
-      struct
-      {
-         float timeApp, timeCull, timeDraw, timeFrame;
-         //osg::Timer_t frameend;
-         dtCore::Timer_t frameend;
-      } times[3]; // store up to 3 frames worth of times
+      void Reset();
 
-      // time from the current frame update and the previous one in seconds.
-      // time since initClock() in seconds.
-      // update the number of ticks since the last frame update.
-      dtCore::Timer_t UpdateFrameTick();
+      bool SelectNextType();
 
-      // initialize the clock.
-      long InitClock();
+      double GetBlockMultiplier() const { return mBlockMultiplier; }
 
-      void InitTexts();
-      void ShowStats();
-      int WritePrims( const int ypos, osgUtil::Statistics& stats);
-      void Display();
-
-      // system tick.
-      dtCore::Timer_t ClockTick() {return mTimer.Tick();}
-      dtCore::Timer_t FrameTick() {return mFrameTick;}
-
-      dtCore::RefPtr<osgUtil::SceneView> mSV;
-      dtCore::RefPtr<osgText::Text> mFrameRateCounterText;
-      dtCore::RefPtr<osgText::Text> mUpdateTimeText;
-      dtCore::RefPtr<osgText::Text> mCullTimeText;
-      dtCore::RefPtr<osgText::Text> mDrawTimeText;
-      dtCore::RefPtr<osgText::Text> mFrameRateTimeText;
-      dtCore::RefPtr<osgText::Text> mPrimTotalsText;
-      dtCore::RefPtr<osgText::Text> mPrimTypesText;
-      dtCore::RefPtr<osgText::Text> mPrimText;
-      dtCore::RefPtr<osgText::Text> mVerticesText;
-      dtCore::RefPtr<osgText::Text> mTrianglesText;
-      dtCore::RefPtr<osgText::Text> mDcText;
-
-      dtCore::RefPtr<osg::Projection> mProjection;
-      dtCore::RefPtr<osg::Switch> mSwitch;
    private:
-      void EnableTextNodes(int statsType);
+      osg::Geometry* CreateGeometry(const osg::Vec3& pos, float height, const osg::Vec4& colour, unsigned int numBlocks);
+
+      osg::Geometry* CreateFrameMarkers(const osg::Vec3& pos, float height, const osg::Vec4& colour, unsigned int numBlocks);
+
+      osg::Geometry* CreateTick(const osg::Vec3& pos, float height, const osg::Vec4& colour, unsigned int numTicks);
+
+      osg::Node* CreateCameraStats(const std::string& font, osg::Vec3& pos, float startBlocks, bool aquireGPUStats, float characterSize, osg::Stats* viewerStats, osg::Camera* camera);
+
+      void SetUpScene(osgViewer::ViewerBase* viewer);
+
+      void UpdateThreadingModelText();
+      void SetUpHUDCamera(osgViewer::ViewerBase* viewer);
+      void PrintOutStats( osgViewer::ViewerBase * viewer );
+
+      osg::ref_ptr<osgViewer::ViewerBase> mViewer;
+
+      int                                 mStatsType;
+
+      bool                                mInitialized;
+      osg::ref_ptr<osg::Camera>           mCamera;
+
+      osg::ref_ptr<osg::Switch>           mSwitch;
+
+      osgViewer::ViewerBase::ThreadingModel mThreadingModel;
+      osg::ref_ptr<osgText::Text>         mThreadingModelText;
+
+      unsigned int                        mFrameRateChildNum;
+      unsigned int                        mViewerChildNum;
+      unsigned int                        mSceneChildNum;
+      unsigned int                        mNumBlocks;
+      double                              mBlockMultiplier;
+
    };
 }
 

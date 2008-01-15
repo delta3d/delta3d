@@ -25,8 +25,8 @@
 #include <dtABC/applicationconfighandler.h>
 #include <dtABC/applicationconfigdata.h>           // for return type, member
 #include <dtCore/generickeyboardlistener.h>
-
 #include <dtCore/stats.h>
+
 #include <dtCore/system.h>
 #include <dtCore/view.h>
 #include <dtCore/camera.h>
@@ -62,6 +62,8 @@ Application::Application(const std::string& configFilename)
 
    CreateInstances(); //create default Viewer View
 
+   mStats = new dtCore::StatsHandler( *mCompositeViewer );
+
    if( !configFilename.empty() )
    {
       std::string foundPath = dtCore::FindFileInPathList(configFilename);
@@ -79,6 +81,7 @@ Application::Application(const std::string& configFilename)
 ///////////////////////////////////////////////////////////////////////////////
 Application::~Application()
 {  
+   delete mStats;
    DeregisterInstance(this);
 }
 
@@ -118,6 +121,7 @@ bool Application::KeyPressed(const dtCore::Keyboard* keyboard, int kc)
          Quit();
          return true;
       } break;
+
    default:
       {
          return false;
@@ -216,6 +220,14 @@ std::string dtABC::Application::GenerateDefaultConfigFile(const std::string& fil
    // return the resource path to the new file
    return dtCore::FindFileInPathList( filename );
 }
+
+
+///////////////////////////////////////////////////////////////////////////////
+void dtABC::Application::SetNextStatisticsType()
+{
+   mStats->SelectNextType();
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////
 ApplicationConfigData Application::GetDefaultConfigData()

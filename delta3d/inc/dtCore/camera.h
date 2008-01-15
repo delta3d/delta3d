@@ -26,7 +26,6 @@
 //////////////////////////////////////////////////////////////////////
 
 
-#include <dtCore/stats.h>
 #include <dtCore/timer.h>
 #include <dtCore/refptr.h>
 #include <dtCore/transformable.h>
@@ -186,13 +185,6 @@ namespace dtCore
       /// @return the multiplier applied to the Level of Detail distance calculation when rendering. 
       float GetLODScale() const;
       
-      //      ///Display the next statistics mode TODO
-//      void SetNextStatisticsType() { mSceneHandler->mStats->SelectNextType(); }     
-//
-//      ///Display the supplied statistics type
-//      void SetStatisticsType(osgUtil::Statistics::StatsType type) 
-//      { mSceneHandler->mStats->SelectType(type); }
-
       /** 
       * Supply the Scene this Camera has been added to. Normally this
       * is done inside dtCore::Scene. So you should probably never have 
