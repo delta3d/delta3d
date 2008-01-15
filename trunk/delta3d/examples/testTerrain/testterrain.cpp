@@ -439,31 +439,7 @@ public:
    //////////////////////////////////////////////////////////////////////////
    void ShowStatistics()
    {
-#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && ((OSG_VERSION_MAJOR == 1 && OSG_VERSION_MINOR >= 2) || (OSG_VERSION_MAJOR >= 2))
-      osgUtil::Statistics::StatsType currStats = osgUtil::Statistics::STAT_NONE;
-#else
-      osgUtil::Statistics::statsType currStats = osgUtil::Statistics::STAT_NONE;
-#endif
-
-      switch (currStats)
-      {
-      case osgUtil::Statistics::STAT_NONE:
-         currStats = osgUtil::Statistics::STAT_FRAMERATE;
-         break;
-
-      case osgUtil::Statistics::STAT_FRAMERATE:
-         currStats = osgUtil::Statistics::STAT_PRIMS;
-         break;
-
-      case osgUtil::Statistics::STAT_PRIMS:
-         currStats = osgUtil::Statistics::STAT_NONE;
-         break;
-
-      default:
-         break;
-      }
-
-//      GetCamera()->SetStatisticsType(currStats); TODO
+      SetNextStatisticsType();
    }
 
    //////////////////////////////////////////////////////////////////////////
