@@ -74,18 +74,27 @@ void TestAI::Config()
    trans.SetRotation(180.0f, -2.0f, 0.0f);
    GetCamera()->SetTransform(trans);
 
+   //this is needed so OSG knows which camera can generate events
+   GetCamera()->GetOSGCamera()->setAllowEventFocus(true);
+
    //create overhead camera and disable it by default   
+   dtCore::View *overheadView = new dtCore::View("overhead view");
+   overheadView->SetScene( GetScene() );
+   AddView( *overheadView );
+
    mOverheadCamera = new dtCore::Camera();
-//   mOverheadCamera->SetScene(GetScene());
    mOverheadCamera->SetWindow(GetWindow());
    mOverheadCamera->SetEnabled(false);
+   overheadView->SetCamera( mOverheadCamera.get() );
+
+   //this is needed so OSG knows which camera can generate events
+   mOverheadCamera->GetOSGCamera()->setAllowEventFocus(false);
+
    //set overhead camera offset
-   trans.SetTranslation(-1.0f, 20.0f, 100.0f);
-   trans.SetRotation(90.0f, 270.0f, 0.0f);
+   trans.SetTranslation(0.0f, -5.0f, 70.0f);
+   trans.SetRotation(0.0f, -90.f, 0.0f);
    trans.Get(mCameraOffset);
    mOverheadCamera->GetMatrixNode()->setMatrix(mCameraOffset);
-   GetCamera()->AddChild(mOverheadCamera.get());
-
 
    //get the first waypoint to spawn the character at
    const WaypointManager::WaypointMap& pContainer = WaypointManager::GetInstance().GetWaypoints();
@@ -98,13 +107,15 @@ void TestAI::Config()
    const Waypoint* pWaypoint = (*iter).second;
 
    //spawn our character
+	mCharacter = new dtAI::AICharacter(GetScene(), pWaypoint, "demoMap/SkeletalMeshes/marine.xml", 3);    
 
-	mCharacter = new dtAI::AICharacter(GetScene(), GetCamera(), pWaypoint, "demoMap/SkeletalMeshes/marine.xml", 3);    
+   //add the two Cameras as children so they get moved along with the character
+   mCharacter->GetCharacter()->AddChild( GetCamera() );
+   mCharacter->GetCharacter()->AddChild( mOverheadCamera.get() );
 
    GoToWaypoint(1);
 
    //seed the random generator
-   //srand(420);
    srand(4);
 }
 

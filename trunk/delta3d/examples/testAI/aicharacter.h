@@ -35,12 +35,12 @@
 namespace dtAI
 {
    /**
-    * A Wrapper around a dtChar::Character that allows it to go beween Waypoints
+    * A Wrapper around a dtChar::Character that allows it to go between Waypoints
     */
    class AICharacter: public osg::Referenced
    {
       public:  
-         AICharacter(dtCore::Scene* pScene, dtCore::Camera* pView, const Waypoint* pWaypoint, const std::string& pFilename, unsigned pSpeed);
+         AICharacter(dtCore::Scene* pScene, const Waypoint* pWaypoint, const std::string& pFilename, unsigned pSpeed);
       protected:
          /*virtual*/ ~AICharacter();
    
@@ -55,6 +55,8 @@ namespace dtAI
          const Waypoint* GetCurrentWaypoint(){return mCurrentWaypoint;}
 
          const WaypointAStar::config_type& GetConfig() const;
+
+         dtAnim::CharacterWrapper* GetCharacter() const {return mCharacter.get();}
 
       private:
          void ApplyStringPulling();
