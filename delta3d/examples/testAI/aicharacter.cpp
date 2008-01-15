@@ -49,7 +49,7 @@ struct funcRenderGreen
 
 namespace dtAI
 {
-   AICharacter::AICharacter(dtCore::Scene* pScene, dtCore::Camera* pCamera, const Waypoint* pWaypoint, const std::string& pFilename, unsigned pSpeed)
+   AICharacter::AICharacter(dtCore::Scene* pScene, const Waypoint* pWaypoint, const std::string& pFilename, unsigned pSpeed)
       : mSpeed(pSpeed)
       , mCharacter(new dtAnim::CharacterWrapper(pFilename))
       , mCurrentWaypoint(pWaypoint)
@@ -62,7 +62,6 @@ namespace dtAI
       SetPosition(pWaypoint);
 
       pScene->AddDrawable(mCharacter.get());
-      mCharacter->AddChild(pCamera);
    }
    
    AICharacter::~AICharacter()
