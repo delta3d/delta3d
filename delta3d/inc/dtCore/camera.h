@@ -194,8 +194,7 @@ namespace dtCore
       */
       virtual void AddedToScene( Scene* scene );
 
-      //bool IsMaster() { return (mView.valid() && (mView->GetCamera() == this)); }
-      
+      //bool IsMaster() { return (mView.valid() && (mView->GetCamera() == this)); }      
    protected:
       
       ///Override for FrameSynch
@@ -226,6 +225,8 @@ namespace dtCore
       bool mAddedToSceneGraph;
       bool mEnable;
       RefPtr<ScreenShotCallback> mScreenShotTaker;
+
+      osg::Node::NodeMask mEnabledNodeMask; ///<The last known node mask corresponding to "enabled"
    };
 }
 
