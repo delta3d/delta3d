@@ -88,7 +88,8 @@ namespace dtCore
    :  Transformable(name),
       mFrameBin(0),
       mAddedToSceneGraph(false),
-      mEnable(true)
+      mEnable(true),
+      mEnabledNodeMask(0xffffffff)
    {
       RegisterInstance(this);
 
@@ -119,7 +120,8 @@ namespace dtCore
       :  Transformable(name),
          mFrameBin(0),
          mAddedToSceneGraph(false),
-         mEnable(true)
+         mEnable(true),
+         mEnabledNodeMask(0xffffffff)
    {
       RegisterInstance(this);
 
@@ -196,15 +198,36 @@ namespace dtCore
    ////////////////////////////////////////// 
    void Camera::SetEnabled( bool enabled )
    {
+      if (mEnable == enabled)
+      {
+         return; //nothing to do here
+      }
+
       mEnable = enabled;
+
+      if (mEnable == true)
+      {
+         if (GetOSGCamera()->getNodeMask() != 0x0)
+         {
+            //error: the user must have set the node mask while the 
+            //camera was disabled. tsk tsk
+            LOG_ERROR("User supplied camera node mask will be overwritten.");
+         }
+
+         GetOSGCamera()->setNodeMask(mEnabledNodeMask);
+      }
+      else
+      {
+         //save off the existing, theoretically enabled, node mask
+         mEnabledNodeMask = GetOSGCamera()->getNodeMask();
+         GetOSGCamera()->setNodeMask(0x0);
+      }
    }
 
    ////////////////////////////////////////// 
    bool Camera::GetEnabled() const
    {
        return (mEnable);
-//       return mCamera->isEnabled(); 
-//       TODO manage the enable disable of Camera or push this in View
    }
 
    ////////////////////////////////////////// 
@@ -237,45 +260,11 @@ namespace dtCore
    ////////////////////////////////////////// 
    void Camera::FrameSynch( const double /*deltaFrameTime*/ )
    {
-//      // Only do our normal Camera stuff if it is enabled.
-//      // If Producer::Camera::frame is never called, our cull callback
-//      // will never be called either.
-//      if( !GetEnabled() )
-//      {
-//         return;
-//      }
-//
-//      // We also do not want to perform frame if we do not have a valid
-//      // window.
-//      if( !mWindow.valid() )
-//      {
-//         // This is a special case for dtABC::Widget. Normally a Window will
-//         // be set via SetWindow (wow). But when a Widget is configured it
-//         // creates a DeltaWin, but does not directly call SetWindow. Instead
-//         // it creates its own Producer::RenderSurface and never tells poor
-//         // ol' Camera. However it does set the Producer::Window handle on
-//         // the RenderSurface we are using. So if SetWindow is never called
-//         // (i.e. !mWindow.valid()) let's check if we have a valid
-//         // Producer::Window.
-//         Producer::Window pWindow(0);
-//
-//         if( Producer::RenderSurface* rs = mCamera->getRenderSurface() )
-//         {
-//            pWindow = rs->getWindow();
-//         }
-//
-//         if( pWindow == 0 )
-//         {
-//            return;
-//         }
-//      }
-//
-//      if( mScene.valid() && !System::GetInstance().GetPause() )
-//      {
-//         // TODO: Investigate double updates when we have multiple camera.
-//         // Anything with an update callback may be called twice!
-//         GetSceneHandler()->GetSceneView()->update(); //osgUtil::SceneView update
-//      }
+      // Only do our normal Camera stuff if it is enabled and not paused
+      if( (GetEnabled() == false) || (System::GetInstance().GetPause() == true) )
+      {
+         return;
+      }
 
       //Get our Camera's position, up vector, and look-at vector and pass them
       //to the Producer Camera
@@ -292,7 +281,7 @@ namespace dtCore
       // a dtCore::Scene, we must apply the osg::CameraNode matrix here.
       if( mAddedToSceneGraph )
       {
-         // Find the transform in World coorindates, but leave out
+         // Find the transform in World coordinates, but leave out
          // the osg::CameraNode.
          Transformable::GetAbsoluteMatrix( GetMatrixNode(), absMat );
       }
@@ -520,5 +509,6 @@ namespace dtCore
          mOsgCamera->setReadBuffer(buffer);
       }
    }
+
 }
 

@@ -229,9 +229,23 @@ void CameraTests2::TestEnabled()
    using namespace dtCore;
    RefPtr<Camera> cam = new Camera();
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Camera should be enabled", true, cam->GetEnabled());
+   CPPUNIT_ASSERT_MESSAGE("Node mask should not be 0x0", unsigned int(0x0) != cam->GetOSGCamera()->getNodeMask() );
    
    cam->SetEnabled(false);
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Camera should be disabled", false, cam->GetEnabled());
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Node mask should be 0x0", unsigned int(0x0), cam->GetOSGCamera()->getNodeMask() );
+
+
+   //check if the node mask we set it to remains after toggling it off/on
+   cam->SetEnabled(true);
+   const unsigned int nodeMask = 0x00001111;
+   cam->GetOSGCamera()->setNodeMask(nodeMask);
+   cam->SetEnabled(false);
+   cam->SetEnabled(true);
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Node mask should be what it was set to before being disabled",
+                                 nodeMask, cam->GetOSGCamera()->getNodeMask());
 
    RefPtr<DeltaWin> win = new DeltaWin();
    cam->SetWindow(win.get());
