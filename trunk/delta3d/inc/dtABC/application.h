@@ -37,6 +37,7 @@ namespace osgViewer
 namespace dtCore
 {
    class GenericKeyboardListener;
+   class StatsHandler;
 }
 
 namespace dtABC
@@ -107,6 +108,9 @@ namespace dtABC
       
       /// Remove a view to the Viewer
       void RemoveView(dtCore::View &view);
+
+      ///Cycle through the statistics modes
+      void SetNextStatisticsType();
       
    protected:
 
@@ -157,6 +161,8 @@ namespace dtABC
       
       typedef std::map<std::string, std::string> AppConfigPropertyMap;
       AppConfigPropertyMap mConfigProperties;
+
+      dtCore::StatsHandler *mStats; ///<for stats rendering/controlling
    };
 
 }
