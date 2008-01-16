@@ -1,6 +1,7 @@
 #include <prefix/dtcoreprefix-src.h>
 #include <dtCore/ephemeris.h>
 #include <osg/Math>
+#include <cmath>
 
 using namespace dtCore;
 

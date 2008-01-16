@@ -53,6 +53,7 @@
 #include <dtDAL/transformableactorproxy.h>
 #include <dtDAL/actorproxyicon.h>
 
+#include <cmath>
 #include <sstream>
 
 namespace dtEditQt

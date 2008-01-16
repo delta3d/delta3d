@@ -1,6 +1,7 @@
 #include <prefix/dtutilprefix-src.h>
 #include <dtUtil/polardecomp.h>
 #include <dtUtil/matrixutil.h>
+#include <cmath>
 
 using namespace dtUtil;
 

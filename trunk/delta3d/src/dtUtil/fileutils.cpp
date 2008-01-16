@@ -19,8 +19,10 @@
  * David Guthrie
  */
 #include <prefix/dtutilprefix-src.h>
+#include <dtUtil/macros.h>
 
-#if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
+
+#ifdef DELTA_WIN32
 #   include <windows.h>
 #   include <direct.h>
 #   include <io.h>
@@ -94,7 +96,7 @@ namespace dtUtil
 
    dtCore::RefPtr<FileUtils> FileUtils::mInstance;
 
-#if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
+#ifdef DELTA_WIN32
    const char FileUtils::PATH_SEPARATOR = '\\';
 #else
    const char FileUtils::PATH_SEPARATOR = '/';

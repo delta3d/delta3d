@@ -5,6 +5,7 @@
 #include <cstdio>        // for sscanf, atoi
 #include <sstream>        // for sscanf, atoi
 #include <iomanip>        // for sscanf, atoi
+#include <cmath>
 
 namespace dtUtil
 {

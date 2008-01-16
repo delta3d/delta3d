@@ -37,6 +37,7 @@
 #include <dtTerrain/soarxterrainrenderer.h>
 #include <dtTerrain/lcctype.h>
 #include <sstream>
+#include <cmath>
 
 namespace dtTerrain
 {
