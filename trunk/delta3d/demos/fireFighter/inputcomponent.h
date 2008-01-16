@@ -50,7 +50,7 @@ class FIRE_FIGHTER_EXPORT InputComponent : public dtGame::BaseInputComponent
 {
    public:
 
-      static const std::string &NAME;
+      static const std::string NAME;
 
       /// Constructor
       InputComponent(const std::string &name = NAME);

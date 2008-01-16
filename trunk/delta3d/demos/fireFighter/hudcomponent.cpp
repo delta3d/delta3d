@@ -45,7 +45,7 @@
 
 using dtCore::RefPtr;
 
-const std::string &HUDComponent::NAME = "HUDComponent";
+const std::string HUDComponent::NAME = "HUDComponent";
 
 HUDComponent::HUDComponent(dtCore::DeltaWin &win,
                            dtCore::Keyboard &keyboard,

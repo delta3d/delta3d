@@ -229,12 +229,12 @@ void CameraTests2::TestEnabled()
    using namespace dtCore;
    RefPtr<Camera> cam = new Camera();
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Camera should be enabled", true, cam->GetEnabled());
-   CPPUNIT_ASSERT_MESSAGE("Node mask should not be 0x0", unsigned int(0x0) != cam->GetOSGCamera()->getNodeMask() );
+   CPPUNIT_ASSERT_MESSAGE("Node mask should not be 0x0", unsigned(0x0) != cam->GetOSGCamera()->getNodeMask() );
    
    cam->SetEnabled(false);
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Camera should be disabled", false, cam->GetEnabled());
 
-   CPPUNIT_ASSERT_EQUAL_MESSAGE("Node mask should be 0x0", unsigned int(0x0), cam->GetOSGCamera()->getNodeMask() );
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Node mask should be 0x0", unsigned(0x0), cam->GetOSGCamera()->getNodeMask() );
 
 
    //check if the node mask we set it to remains after toggling it off/on
