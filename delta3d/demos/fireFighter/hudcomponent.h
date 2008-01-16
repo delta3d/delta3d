@@ -60,7 +60,7 @@ class FIRE_FIGHTER_EXPORT HUDComponent : public dtGame::GMComponent
 {
    public:
 
-      static const std::string &NAME;
+      static const std::string NAME;
 
       /// Constructor
       HUDComponent(dtCore::DeltaWin &win,

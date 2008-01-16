@@ -20,7 +20,9 @@
  */
 #include <prefix/dtgameprefix-src.h>
 
-#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
+#include <dtUtil/macros.h>
+
+#ifdef DELTA_WIN32
    #pragma warning(push)
       #pragma warning(disable : 4267)
       #include <cppunit/extensions/HelperMacros.h>
@@ -29,7 +31,6 @@
    #include <cppunit/extensions/HelperMacros.h>
 #endif
 
-#include <cppunit/extensions/HelperMacros.h>
 #include <iostream>
 #include <vector>
 #include <string>
@@ -118,6 +119,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestOutgoingStringToRTIIDStructDataTranslation);
       CPPUNIT_TEST(TestOutgoingActorIdToRTIIDStructDataTranslation);
       CPPUNIT_TEST(TestIncomingDataTranslation);
+      CPPUNIT_TEST(TestIncomingSpatialDataTranslation);
       CPPUNIT_TEST(TestIncomingEntityTypeDataTranslation);
       CPPUNIT_TEST(TestIncomingStringToEnumDataTranslation);
       CPPUNIT_TEST(TestIncomingStringDataTranslation);
@@ -295,6 +297,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
                      testVecPos, testVecRot, testVecVel, testVecAccel, testVecAngVel);
          }
 
+         //test with null parameters
          messageParameters[4] = NULL;
          messageParameters[5] = NULL;
          messageParameters[6] = NULL;
@@ -659,6 +662,10 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
 
          mMapping.SetHLAType(dtHLAGM::RPRAttributeType::RTI_OBJECT_ID_STRUCT_TYPE);
          InternalTestOutgoingRTIIDTypeDataTranslation(rtiId, rtiId, dtDAL::DataType::STRING);
+      }
+
+      void TestIncomingSpatialDataTranslation()
+      {
       }
 
       void TestIncomingRTIIDStructToActorIdDataTranslation()

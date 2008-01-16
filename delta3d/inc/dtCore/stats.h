@@ -34,6 +34,7 @@
 #ifndef DELTA_STATS
 #define DELTA_STATS 
 
+#include <dtCore/export.h>
 #include <osg/Camera>
 #include <osgViewer/ViewerBase>
 #include <osgText/Text>

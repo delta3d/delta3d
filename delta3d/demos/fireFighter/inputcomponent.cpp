@@ -55,7 +55,7 @@
 
 using dtCore::RefPtr;
 
-const std::string &InputComponent::NAME = "InputComponent";
+const std::string InputComponent::NAME = "InputComponent";
 
 InputComponent::InputComponent(const std::string &name) : 
    dtGame::BaseInputComponent(name), 

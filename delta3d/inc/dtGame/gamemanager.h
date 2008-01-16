@@ -316,7 +316,7 @@ namespace dtGame
           * Const version of the other templated GetComponentByName method
           */
          template <typename ComponentType>
-         void GetComponentByName(const std::string &name, const ComponentType* component) const
+         void GetComponentByName(const std::string &name, const ComponentType*& component) const
          {
             component = dynamic_cast<const ComponentType*>(GetComponentByName(name));
          }
