@@ -833,7 +833,7 @@ void Transformable::SetCollisionSphere( osg::Node* node )
    {
       // Hmm, do we even need this here? I think this is a hack
       // to overcome a bug in DrawableVisitor... -osb
-      const osg::Matrix &oldMatrix = GetMatrixNode()->getMatrix();
+      osg::Matrix oldMatrix = GetMatrixNode()->getMatrix();
       GetMatrixNode()->setMatrix( osg::Matrix::identity() );
 
       DrawableVisitor<SphereFunctor> sv;
@@ -911,7 +911,7 @@ void Transformable::SetCollisionBox( osg::Node* node )
 
    if( node != 0 )
    {
-      const osg::Matrix &oldMatrix = GetMatrixNode()->getMatrix();
+      osg::Matrix oldMatrix = GetMatrixNode()->getMatrix();
       GetMatrixNode()->setMatrix( osg::Matrix::identity() );
 
       BoundingBoxVisitor bbv;
@@ -1057,7 +1057,7 @@ void Transformable::SetCollisionCappedCylinder(osg::Node* node)
 
    if( node )
    {
-      const osg::Matrix &oldMatrix = GetMatrixNode()->getMatrix();
+      osg::Matrix oldMatrix = GetMatrixNode()->getMatrix();
       GetMatrixNode()->setMatrix( osg::Matrix::identity() );
 
       DrawableVisitor<CylinderFunctor> cv;
@@ -1214,7 +1214,7 @@ void Transformable::SetCollisionMesh(osg::Node* node)
       //At this point, we'll set it temporarily to the Identity so it doesn't affect
       //our creation of the collision mesh.  This Transform will be accounted
       //for later in PrePhysicsUpdate().
-      const osg::Matrix &oldMatrix = GetMatrixNode()->getMatrix();
+      osg::Matrix oldMatrix = GetMatrixNode()->getMatrix();
       GetMatrixNode()->setMatrix( osg::Matrix::identity() );
 
       DrawableVisitor<TriangleRecorder> mv;
