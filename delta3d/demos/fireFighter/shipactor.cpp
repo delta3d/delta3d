@@ -23,6 +23,7 @@
 #include <dtAudio/sound.h>
 #include <dtCore/particlesystem.h>
 #include <osg/Math>
+#include <cmath>
 
 /////////////////////////////////////////////////
 ShipActorProxy::ShipActorProxy()

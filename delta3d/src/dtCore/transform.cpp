@@ -3,6 +3,7 @@
 #include <dtUtil/matrixutil.h>
 #include <dtUtil/polardecomp.h>
 #include <dtUtil/deprecationmgr.h>
+#include <cmath>
 
 using namespace dtCore;
 

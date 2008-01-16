@@ -29,7 +29,7 @@
 
 #include <osg/io_utils>
 #include <osg/Matrix>
-
+#include <cmath>
 #include <sstream>
 
 namespace dtGame
