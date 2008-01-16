@@ -34,7 +34,7 @@ int main()
    
    //adjust the Camera position
    dtCore::Transform camPos;
-   osg::Vec3 camXYZ( 0.f, -500.f, 200.f );
+   osg::Vec3 camXYZ( 0.f, -30.f, 15.f );
    osg::Vec3 lookAtXYZ ( brdmPosition );
    osg::Vec3 upVec ( 0.f, 0.f, 1.f );
    camPos.SetLookAt( camXYZ, lookAtXYZ, upVec );
