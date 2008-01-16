@@ -38,7 +38,7 @@ namespace dtABC
 class DT_ABC_EXPORT BezierController: public MotionAction
 {
 
-private:
+public:
 
    struct PathData
    {
@@ -47,6 +47,7 @@ private:
 
    };
 
+private:
    
    class BezierPathDrawable: public osg::Drawable
    {
