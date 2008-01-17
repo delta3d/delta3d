@@ -45,9 +45,21 @@ mType(pType)
    mOnUpdate = UpdateFunctor(this, &dtAI::NPCState::DefaultUpdateFunctor);
 }
 
+NPCState::NPCState()
+: mType(0)
+{
+   //visual studio complains if this is in the initializer list Warning:C4355
+   mOnUpdate = UpdateFunctor(this, &dtAI::NPCState::DefaultUpdateFunctor);
+}
+
 NPCState::~NPCState()
 {
 
+}
+
+void NPCState::SetType(const Type* stateType)
+{
+   mType = stateType;
 }
 
 const NPCState::Type* NPCState::GetType() const

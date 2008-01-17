@@ -45,7 +45,12 @@ class DT_AI_EXPORT NPCState: public osg::Referenced
 
 
    public:
+      NPCState();
       NPCState(const Type* pType);
+
+      //the object factory doesn't allow creation with anything but 
+      //a default constructor so we need a set type
+      void SetType(const Type* stateType); 
 
       const Type* GetType() const;      
       const std::string& GetName() const;
