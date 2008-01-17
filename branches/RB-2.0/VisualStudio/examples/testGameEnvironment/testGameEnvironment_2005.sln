@@ -1,0 +1,19 @@
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testGameEnvironment", "testGameEnvironment_2005.vcproj", "{EBACBA32-E24E-46EE-947C-9BDBF883271E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EBACBA32-E24E-46EE-947C-9BDBF883271E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{EBACBA32-E24E-46EE-947C-9BDBF883271E}.Debug|Win32.Build.0 = Debug|Win32
+		{EBACBA32-E24E-46EE-947C-9BDBF883271E}.Release|Win32.ActiveCfg = Release|Win32
+		{EBACBA32-E24E-46EE-947C-9BDBF883271E}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
