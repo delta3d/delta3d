@@ -56,10 +56,16 @@ namespace dtCore
           * @param useSimTimeForSpeed true if the motion model should use the 
           * simulation time, which can be scaled, for motion or false if it 
           * should use the real time.
+          * @param requireMouseDown true if the mouse button must be held
+          * down for mouse motions to control the camera. (Default is true.)
+          * @param resetMouseCursor true if the mouse cursor should reset to
+          * the center of the scene each frame. (Default is false.)
           */
          FlyMotionModel(Keyboard* keyboard = NULL,
                         Mouse* mouse = NULL, 
-                        bool useSimTimeForSpeed = true);
+                        bool useSimTimeForSpeed = true,
+                        bool requireMouseDown = true,
+                        bool resetMouseCursor = false);
 
       protected:
 
@@ -77,7 +83,7 @@ namespace dtCore
           * @param keyboard the keyboard instance
           * @param mouse the mouse instance
           */
-         void SetDefaultMappings(Keyboard* keyboard, Mouse* mouse);
+         void SetDefaultMappings(Keyboard *keyboard, Mouse *mouse);
          
          /**
           * Sets the axis that moves the target forwards (for positive
@@ -110,7 +116,25 @@ namespace dtCore
           * @return the current left/right axis
           */
          Axis* GetFlyLeftRightAxis();
-         
+
+         /**
+         * Sets the axis that moves the target target-relative up
+         * (for positive values) or target-relative down (for
+         * negative values).
+         *
+         * @param flyUpDownAxis the new up/down axis
+         */
+         void SetFlyUpDownAxis(Axis* flyUpDownAxis);
+
+         /**
+         * Returns the axis that moves the target target-relative up
+         * (for positive values) or target-relative down (for negative
+         * values).
+         *
+         * @return the current up/down axis
+         */
+         Axis* GetFlyUpDownAxis();
+
          /**
           * Sets the axis that turns the target left (for negative values)
           * or right (for positive values).
@@ -192,7 +216,7 @@ namespace dtCore
          
          
       private:
-      
+
          /**
           * The default input device.
           */
@@ -237,7 +261,12 @@ namespace dtCore
           * The a/d key strafe left/right mapping.
           */
          ButtonsToAxis* mADKeysLeftRightMapping;
-         
+
+         /**
+         * The q/e key fly up/down mapping.
+         */
+         ButtonsToAxis* mQEKeysUpDownMapping;
+
          /**
           * The default fly forward/backward axis.
           */
@@ -247,7 +276,12 @@ namespace dtCore
           * The default fly left/right axis.
           */
          LogicalAxis* mDefaultFlyLeftRightAxis;
-         
+
+         /**
+         * The default fly up/down axis.
+         */
+         LogicalAxis* mDefaultFlyUpDownAxis;
+
          /**
           * The default turn left/right axis.
           */
@@ -267,12 +301,17 @@ namespace dtCore
           * The axis that moves the target left or right.
           */
          Axis* mFlyLeftRightAxis;
-         
+
+         /**
+         * The axis that moves the target up or down.
+         */
+         Axis* mFlyUpDownAxis;
+
          /**
           * The axis that turns the target left or right.
           */
          Axis* mTurnLeftRightAxis;
-         
+
          /**
           * The axis that turns the target up or down.
           */
@@ -293,6 +332,22 @@ namespace dtCore
           * or not (aka Real Time) for speed of movement and turn rotation
           */
          bool mUseSimTimeForSpeed;
+
+         /**
+         * Indicates whether the fly motion model will require the mouse
+         * button(s) depressed in order to control turn rotation (defaults
+         * to true)
+         */
+         bool mRequireMouseDown;
+
+         /**
+         * Indicates whether the fly motion model will reset the mouse
+         * cursor coordinates to the center of the screen each frame
+         * (defaults to false)
+         */
+         bool mResetMouseCursor;
+
+         Mouse *mMouse;
    };
 }
 

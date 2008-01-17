@@ -144,11 +144,14 @@ void initBaseABCBindings()
    BaseABC* (*BaseABCGI1)(int) = &BaseABC::GetInstance;
    BaseABC* (*BaseABCGI2)(std::string) = &BaseABC::GetInstance;
 
+   dtCore::Camera       *(BaseABC::*GetCameraNonConst)()       = &BaseABC::GetCamera;
+   const dtCore::Camera *(BaseABC::*GetCameraConst   )() const = &BaseABC::GetCamera;
+
    dtDAL::Map& (BaseABC::*LoadMap1)( const std::string&, bool ) = &BaseABC::LoadMap;
    void (BaseABC::*LoadMap2)( dtDAL::Map&, bool ) = &BaseABC::LoadMap;
    //const dtCore::Mouse*(BaseABC::*GETMOUSE)() const =&BaseABC::GetMouse;
    dtCore::Mouse*(BaseABC::*GETMOUSE)() =&BaseABC::GetMouse;
-   
+
    class_<BaseABCWrap, bases<Base>, dtCore::RefPtr<BaseABCWrap>, boost::noncopyable>("BaseABC", no_init)
       .def("GetInstanceCount", &BaseABC::GetInstanceCount)
       .staticmethod("GetInstanceCount")
@@ -160,7 +163,8 @@ void initBaseABCBindings()
       .def("AddDrawable", &BaseABC::AddDrawable, &BaseABCWrap::DefaultAddDrawable)
       .def("RemoveDrawable", &BaseABC::RemoveDrawable, &BaseABCWrap::DefaultRemoveDrawable)
       .def("GetWindow", &BaseABC::GetWindow, return_internal_reference<>())
-      .def("GetCamera", &BaseABC::GetCamera, return_internal_reference<>())
+      .def("GetCamera", GetCameraNonConst, return_internal_reference<>())
+      .def("GetCamera", GetCameraConst,    return_internal_reference<>())
       .def("GetScene", &BaseABC::GetScene, return_internal_reference<>())
       .def("GetKeyboard", &BaseABC::GetKeyboard, return_internal_reference<>())
       .def("GetMouse", GETMOUSE, return_internal_reference<>())

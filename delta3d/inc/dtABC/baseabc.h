@@ -73,13 +73,17 @@ class DT_ABC_EXPORT BaseABC : public dtCore::Base
    
       ///Get the first view or create a default View
       dtCore::View* GetView() { return  mViewList[0].get(); }
-      
+      ///Get the (const) first view
+      const dtCore::View* GetView() const { return  mViewList[0].get(); }
+
       ///Set the first view
       void SetView(dtCore::View * view)
       { mViewList[0] = view; }
       
       ///Get the default Application Camera
       dtCore::Camera* GetCamera() { return GetView()->GetCamera(); }
+      ///Get the default (const) Application Camera
+      const dtCore::Camera* GetCamera() const { return GetView()->GetCamera(); }
       ///Get the default Application Camera
       void SetCamera(dtCore::Camera * camera);
       
