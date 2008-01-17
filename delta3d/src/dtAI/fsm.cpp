@@ -30,7 +30,7 @@ namespace dtAI
       SetupDefaultFactory();
    }
 
-   FSM::FSM(dtUtil::ObjectFactory<std::string, NPCState>* pFactory)
+   FSM::FSM(FactoryType* pFactory)
       : mFactory(pFactory)
    {
 
@@ -162,7 +162,7 @@ bool FSM::HandleEvent(const NPCEvent* pEvent)
 
 void FSM::SetupDefaultFactory()
 {
-   mFactory = new dtUtil::ObjectFactory<std::string, NPCState>();
+   mFactory = new FactoryType();
 }
 
 }//namespace dtAI

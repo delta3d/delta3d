@@ -89,6 +89,7 @@ namespace dtAI
          }
       };
 
+      typedef dtUtil::ObjectFactory<std::string, NPCState> FactoryType;
       typedef dtCore::RefPtr<NPCState> StatePtr;
       typedef std::set< StatePtr, RefPtrWithNameCompare<StatePtr> > StateSet;         
       typedef std::pair< const NPCEvent*, StatePtr > EventStatePtrPair;
@@ -98,7 +99,7 @@ namespace dtAI
    public:
 
       FSM(); //sets up default factory         
-      FSM(dtUtil::ObjectFactory<std::string, NPCState>* pFactory); //created with specific NPCState factory
+      FSM(FactoryType* pFactory); //created with specific NPCState factory
       virtual ~FSM();
 
       virtual void Update(double dt);
@@ -142,7 +143,7 @@ namespace dtAI
 
    private:
 
-      dtCore::RefPtr<dtUtil::ObjectFactory<std::string, NPCState> > mFactory;
+      dtCore::RefPtr<FactoryType > mFactory;
 
       StateSet                mStates;
       TransitionMap           mTransitions;
