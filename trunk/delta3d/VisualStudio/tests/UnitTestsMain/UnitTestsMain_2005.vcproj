@@ -204,6 +204,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\tests\dtAI\aisteeringtests.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\tests\dtAnim\animationcomponenttests.cpp"
 				>
 			</File>
