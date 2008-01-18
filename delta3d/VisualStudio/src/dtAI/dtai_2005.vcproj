@@ -236,6 +236,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtAI\SteeringUtility.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtAI\waypoint.cpp"
 				>
 			</File>
@@ -351,6 +355,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtAI\statevariable.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtAI\steeringutility.h"
 				>
 			</File>
 			<File
