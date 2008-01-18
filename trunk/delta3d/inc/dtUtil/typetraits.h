@@ -51,7 +51,7 @@ namespace dtUtil
       };
 
    public:
-      enum {IS_POINTER = typename _IsPointer_<_Type>::IS_POINTER};
+      enum {IS_POINTER = _IsPointer_<_Type>::IS_POINTER};
 
    };
 
@@ -76,7 +76,7 @@ namespace dtUtil
       };
 
    public:
-      enum {IS_REFERENCE = typename _IsReference_<_Type>::IS_REFERENCE};
+      enum {IS_REFERENCE = _IsReference_<_Type>::IS_REFERENCE};
 
    };
    
@@ -102,7 +102,7 @@ namespace dtUtil
       };
 
    public:
-      enum {IS_CONST = typename _IsConst_<_Type>::IS_CONST};
+      enum {IS_CONST = _IsConst_<_Type>::IS_CONST};
 
    };
 

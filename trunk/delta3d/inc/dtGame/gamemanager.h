@@ -463,7 +463,7 @@ namespace dtGame
           * manager.
           * @return The number of game actors in the system.
           */
-         size_t GetNumGameActors() const { return mGameActorProxyMap.size(); }
+         unsigned GetNumGameActors() const { return mGameActorProxyMap.size(); }
         
          /**
           * Retrieves all the game actors added to the GM
