@@ -463,7 +463,7 @@ namespace dtGame
           * manager.
           * @return The number of game actors in the system.
           */
-         unsigned int GetNumGameActors() const { return mGameActorProxyMap.size(); }
+         size_t GetNumGameActors() const { return mGameActorProxyMap.size(); }
         
          /**
           * Retrieves all the game actors added to the GM
@@ -497,11 +497,43 @@ namespace dtGame
          void FindActorsByName(const std::string &name, std::vector<dtDAL::ActorProxy*> &toFill) const;
 
          /**
+          * Convenience method to return an actor
+          * @param The name to search for
+          * @param The proxy to cast
+          */
+         template <class Proxy>
+         void FindActorByName(const std::string &name, dtCore::RefPtr<Proxy> &proxy) const
+         {
+            std::vector<dtDAL::ActorProxy*> toFill;
+            FindActorsByName(name, toFill);
+            if(!toFill.empty())
+            {
+               proxy = dynamic_cast<Proxy*>(toFill[0]);   
+            }
+         }
+
+         /**
           * Fills a vector with the game proxys whose types match the type parameter
           * @param The type to search for
           * @param The vector to fill
           */
          void FindActorsByType(const dtDAL::ActorType &type, std::vector<dtDAL::ActorProxy*> &toFill) const;
+
+         /**
+          * Convenience method to return an actor
+          * @param The type to search for
+          * @param The proxy to cast
+          */
+         template <class Proxy>
+         void FindActorByType(const dtDAL::ActorType &type, dtCore::RefPtr<Proxy> &proxy) const
+         {
+            std::vector<dtDAL::ActorProxy*> toFill;
+            FindActorsByType(type, toFill);
+            if(!toFill.empty())
+            {
+               proxy = dynamic_cast<Proxy*>(toFill[0]);   
+            }
+         }
 
          /**
           * Fills out a vector of actors with the specified class name

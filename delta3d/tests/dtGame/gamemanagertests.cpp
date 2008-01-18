@@ -19,26 +19,33 @@
  * @author Eddie Johnson and David Guthrie
  */
 #include <prefix/dtgameprefix-src.h>
+
 #include <cstdlib>
 #include <iostream>
+
 #include <osg/Math>
 #include <osg/io_utils>
 #include <osg/Endian>
+
 #include <dtUtil/log.h>
 #include <dtUtil/macros.h>
+#include <dtUtil/datastream.h>
+
 #include <dtCore/refptr.h>
 #include <dtCore/observerptr.h>
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
 #include <dtCore/globals.h>
+
 #include <dtDAL/datatype.h>
 #include <dtDAL/resourcedescriptor.h>
 #include <dtDAL/actortype.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/project.h>
 #include <dtDAL/map.h>
+
 #include <dtABC/application.h>
-#include <dtUtil/datastream.h>
+
 #include <dtGame/messageparameter.h>
 #include <dtGame/machineinfo.h>
 #include <dtGame/gameactor.h>
@@ -51,10 +58,12 @@
 #include <dtGame/defaultnetworkpublishingcomponent.h>
 #include <dtGame/defaultmessageprocessor.h>
 #include <dtGame/environmentactor.h>
-#include <dtActors/playerstartactorproxy.h>
+
 #include <testGameActorLibrary/testplayer.h>
 #include <cppunit/extensions/HelperMacros.h>
+
 #include <dtActors/gamemeshactor.h>
+#include <dtActors/playerstartactorproxy.h>
 #include <dtActors/engineactorregistry.h>
 
 #include "testcomponent.h"
@@ -70,6 +79,8 @@
 class GameManagerTests : public CPPUNIT_NS::TestFixture
 {
    CPPUNIT_TEST_SUITE(GameManagerTests);
+
+        CPPUNIT_TEST(TestTemplatedActorMethods);
 
         CPPUNIT_TEST(TestDataStream);
 
@@ -99,6 +110,9 @@ public:
 
    void setUp();
    void tearDown();
+
+   void TestTemplatedActorMethods();
+
    void TestDataStream();
 
    void TestApplicationMember();
@@ -219,6 +233,34 @@ void GameManagerTests::tearDown()
          CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
       }
    }
+}
+
+/////////////////////////////////////////////////
+void GameManagerTests::TestTemplatedActorMethods()
+{
+   const unsigned short int numProxies = 20;
+   std::vector<dtCore::RefPtr<dtActors::GameMeshActorProxy> > proxies;
+   for(unsigned short int i = 0; i < numProxies; i++)
+   {
+      dtCore::RefPtr<dtActors::GameMeshActorProxy> p;
+      mManager->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, p);
+      CPPUNIT_ASSERT(p);
+      proxies.push_back(p);
+   }
+   
+   dtCore::RefPtr<dtActors::GameMeshActorProxy> shouldBeValid;
+   mManager->FindActorByType(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, shouldBeValid);
+   CPPUNIT_ASSERT(shouldBeValid.valid());
+
+   CPPUNIT_ASSERT_MESSAGE("The result should equal the first in the list", shouldBeValid == proxies[0]);
+
+   shouldBeValid = NULL;
+   CPPUNIT_ASSERT(!shouldBeValid.valid());
+
+   const std::string &searchName = proxies[0]->GetName();
+   mManager->FindActorByName(searchName, shouldBeValid);
+
+   CPPUNIT_ASSERT_MESSAGE("The result shoudl equal the first in the list", shouldBeValid == proxies[0]);
 }
 
 /////////////////////////////////////////////////
