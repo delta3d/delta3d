@@ -23,6 +23,7 @@
 #define DELTA_SENSOR
 
 #include <osg/Referenced>
+#include <dtUtil/typetraits.h>
 
 namespace dtAI
 {
@@ -46,6 +47,38 @@ namespace dtAI
 
    };
 
+
+   template <typename FunctorType, typename ArgType>
+   struct EvaluateFunctor
+   {
+   private:
+
+      //gotta love partial template specialization
+      template <typename U, typename T>
+      struct InnerEvaluate
+      {
+         static void Eval(U u, T t)
+         {
+            u(t);
+         }     
+      };
+
+      template <typename U, typename T>
+      struct InnerEvaluate<U*, T>
+      {
+         static void Eval(U* u, T t)
+         {
+            u->operator()(t);
+         }         
+      };
+
+
+   public:
+      static void Evaluate(FunctorType func, ArgType arg)
+      {
+         InnerEvaluate<FunctorType, ArgType>::Eval(func, arg);
+      }
+   };
 
 
    template <typename Type1, typename Type2, typename EvaluateType1, typename EvaluateType2, typename CompareType, typename ReportType, typename ReportData>   
@@ -75,43 +108,42 @@ namespace dtAI
             mEval1(mElement1);
             mEval2(mElement2);
             if(mCompare(mReportData, mElement1, mElement2))
-            {
-               mReport->operator()(mReportData);
+            {               
+               EvaluateFunctor<ReportType, ReportData>::Evaluate(mReport, mReportData);
             }
             return mReportData;
          }
 
-         //TODO- we need type traits here to decide the return of these two gets
-         //the first two are made for pointers, the second two copy
-         const Type1 GetFirstElement()
+         typename dtUtil::TypeTraits<Type1>::return_type GetFirstElement()
          {
             return mElement1;
          }
 
-         const Type2 GetSecondElement()
+         typename dtUtil::TypeTraits<Type2>::return_type GetSecondElement()
          {
             return mElement2;
          }
 
-         const ReportData GetReportData()
+         typename dtUtil::TypeTraits<ReportData>::return_type GetReportData()
          {
             return mReportData;
          }
 
-         void GetFirstElement(Type1& t)
+         typename dtUtil::TypeTraits<Type1>::const_return_type GetFirstElement() const
          {
-            t = mElement1;
+            return mElement1;
          }
 
-         void GetSecondElement(Type2& t)
+         typename dtUtil::TypeTraits<Type2>::const_return_type GetSecondElement() const
          {
-            t = mElement2;
+            return mElement2;
          }
 
-         void GetReportData(ReportData& d)
+         typename dtUtil::TypeTraits<ReportData>::const_return_type GetReportData() const
          {
-            d = mReportData;
+            return mReportData;
          }
+
 
       protected:
          /*virtual*/ ~Sensor(){}
