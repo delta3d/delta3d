@@ -346,6 +346,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\inc\dtAI\sensor.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\inc\dtAI\statevariable.h"
 				>
 			</File>
