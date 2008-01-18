@@ -225,41 +225,8 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
       {
          std::vector<dtCore::RefPtr<const dtGame::MessageParameter> > messageParameters;
 
+         SetupSpatialMapping();
 
-         mMapping.GetParameterDefinitions()[0].SetGameName("drCode");
-         mMapping.GetParameterDefinitions()[0].SetGameType(dtDAL::DataType::INT);
-
-         dtHLAGM::OneToManyMapping::ParameterDefinition pdFrozen;
-         pdFrozen.SetGameName("frozen");
-         pdFrozen.SetGameType(dtDAL::DataType::BOOLEAN);
-         mMapping.GetParameterDefinitions().push_back(pdFrozen);
-
-         dtHLAGM::OneToManyMapping::ParameterDefinition pdWorldCoord;
-         pdFrozen.SetGameName("pos");
-         pdFrozen.SetGameType(dtDAL::DataType::VEC3);
-         mMapping.GetParameterDefinitions().push_back(pdWorldCoord);
-
-         dtHLAGM::OneToManyMapping::ParameterDefinition pdOrient;
-         pdFrozen.SetGameName("rot");
-         pdFrozen.SetGameType(dtDAL::DataType::VEC3);
-         mMapping.GetParameterDefinitions().push_back(pdOrient);
-
-         dtHLAGM::OneToManyMapping::ParameterDefinition pdVel;
-         pdFrozen.SetGameName("vel");
-         pdFrozen.SetGameType(dtDAL::DataType::VEC3);
-         mMapping.GetParameterDefinitions().push_back(pdVel);
-
-         dtHLAGM::OneToManyMapping::ParameterDefinition pdAccel;
-         pdFrozen.SetGameName("accel");
-         pdFrozen.SetGameType(dtDAL::DataType::VEC3);
-         mMapping.GetParameterDefinitions().push_back(pdAccel);
-
-         dtHLAGM::OneToManyMapping::ParameterDefinition pdAngVel;
-         pdFrozen.SetGameName("angvel");
-         pdFrozen.SetGameType(dtDAL::DataType::VEC3);
-         mMapping.GetParameterDefinitions().push_back(pdAngVel);
-
-         mMapping.SetHLAType(dtHLAGM::RPRAttributeType::SPATIAL_TYPE);
          dtCore::RefPtr<dtGame::IntMessageParameter> drParam = new dtGame::IntMessageParameter("drCode");
          dtCore::RefPtr<dtGame::BooleanMessageParameter> frozenParam = new dtGame::BooleanMessageParameter("frozen");
          dtCore::RefPtr<dtGame::Vec3MessageParameter> posParam = new dtGame::Vec3MessageParameter("pos");
@@ -484,8 +451,6 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          // ArticulatedPart or an AttachPart
          dtCore::RefPtr<dtGame::GroupMessageParameter> subParam = NULL;
 
-
-
          // Create other articulated parameters to lengthen the array
          // --- Extra 0
          subParam = new dtGame::GroupMessageParameter( "ArticulatedPartMessageParam0" );
@@ -501,8 +466,6 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          subParam->AddParameter( *new dtGame::StringMessageParameter( "OurParent", "Parent_DOF1" ) );
          subParam->AddParameter( *new dtGame::UnsignedShortIntMessageParameter( "Change", 0 ) );
          mainParam->AddParameter( *subParam );
-
-
 
          // Create the test articulated parameter
          const dtHLAGM::ParameterValue& articValue = expectedResult.GetParameterValue();
@@ -666,6 +629,91 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
 
       void TestIncomingSpatialDataTranslation()
       {
+         dtHLAGM::Spatial spatial;
+         std::vector<dtCore::RefPtr<dtGame::MessageParameter> > messageParameters;
+
+         SetupSpatialMapping();
+
+         spatial.GetWorldCoordinate().set(3113.4, 532.7, 8333.8);
+         spatial.GetOrientation().set(2.717f, 3.33f, 1.078f);
+         spatial.GetVelocity().set(1.1f, 3.3f, -13.3f);
+         spatial.GetAcceleration().set(0.11f, -3.22f, -1.0f);
+         spatial.GetAngularVelocity().set(-2.22f, 1.1f, 0.01f);
+
+         for (char i = 0; i < 10; ++i)
+         {
+            spatial.SetDeadReckoningAlgorithm(i);
+            spatial.SetFrozen( (i % 2) == 0 );
+
+            messageParameters.clear();
+
+            dtCore::RefPtr<dtGame::IntMessageParameter> drParam = new dtGame::IntMessageParameter("drCode");
+            dtCore::RefPtr<dtGame::BooleanMessageParameter> frozenParam = new dtGame::BooleanMessageParameter("frozen");
+            dtCore::RefPtr<dtGame::Vec3MessageParameter> posParam = new dtGame::Vec3MessageParameter("pos");
+            dtCore::RefPtr<dtGame::Vec3MessageParameter> rotParam = new dtGame::Vec3MessageParameter("rot");
+            dtCore::RefPtr<dtGame::Vec3MessageParameter> velParam = new dtGame::Vec3MessageParameter("vel");
+            dtCore::RefPtr<dtGame::Vec3MessageParameter> accelParam = new dtGame::Vec3MessageParameter("accel");
+            dtCore::RefPtr<dtGame::Vec3MessageParameter> angVelParam = new dtGame::Vec3MessageParameter("angvel");
+
+            messageParameters.push_back(drParam.get());
+            messageParameters.push_back(frozenParam.get());
+            messageParameters.push_back(posParam.get());
+            messageParameters.push_back(rotParam.get());
+            messageParameters.push_back(velParam.get());
+            messageParameters.push_back(accelParam.get());
+            messageParameters.push_back(angVelParam.get());
+
+            char* buffer = new char[512];
+            try
+            {
+
+               size_t size = spatial.Encode(buffer, 512);
+               mParameterTranslator->MapToMessageParameters(buffer, size, messageParameters, mMapping);
+
+               delete[] buffer;
+            }
+            catch (...)
+            {
+               delete[] buffer;
+            }
+
+            CPPUNIT_ASSERT_EQUAL(spatial.GetDeadReckoningAlgorithm(), char(drParam->GetValue()));
+            CPPUNIT_ASSERT(messageParameters[0].valid());
+
+            CPPUNIT_ASSERT_EQUAL(spatial.IsFrozen(), frozenParam->GetValue());
+            CPPUNIT_ASSERT(messageParameters[1].valid());
+
+            CPPUNIT_ASSERT(messageParameters[2].valid());
+            CPPUNIT_ASSERT(messageParameters[3].valid());
+
+            if (spatial.HasVelocity())
+            {
+               CPPUNIT_ASSERT(messageParameters[4].valid());
+            }
+            else
+            {
+               CPPUNIT_ASSERT(!messageParameters[4].valid());
+            }
+
+            if (spatial.HasAcceleration())
+            {
+               CPPUNIT_ASSERT(messageParameters[5].valid());
+            }
+            else
+            {
+               CPPUNIT_ASSERT(!messageParameters[5].valid());
+            }
+
+            if (spatial.HasAngularVelocity())
+            {
+               CPPUNIT_ASSERT_EQUAL(osg::Vec3(spatial.GetAngularVelocity()), angVelParam->GetValue());
+               CPPUNIT_ASSERT(messageParameters[6].valid());
+            }
+            else
+            {
+               CPPUNIT_ASSERT(!messageParameters[6].valid());
+            }
+         }
       }
 
       void TestIncomingRTIIDStructToActorIdDataTranslation()
@@ -1031,6 +1079,44 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
       char* mBuffer;
       dtHLAGM::AttributeToPropertyList mMapping;
 
+      void SetupSpatialMapping()
+      {
+         mMapping.GetParameterDefinitions()[0].SetGameName("drCode");
+         mMapping.GetParameterDefinitions()[0].SetGameType(dtDAL::DataType::INT);
+
+         dtHLAGM::OneToManyMapping::ParameterDefinition pdFrozen;
+         pdFrozen.SetGameName("frozen");
+         pdFrozen.SetGameType(dtDAL::DataType::BOOLEAN);
+         mMapping.GetParameterDefinitions().push_back(pdFrozen);
+
+         dtHLAGM::OneToManyMapping::ParameterDefinition pdWorldCoord;
+         pdFrozen.SetGameName("pos");
+         pdFrozen.SetGameType(dtDAL::DataType::VEC3);
+         mMapping.GetParameterDefinitions().push_back(pdWorldCoord);
+
+         dtHLAGM::OneToManyMapping::ParameterDefinition pdOrient;
+         pdFrozen.SetGameName("rot");
+         pdFrozen.SetGameType(dtDAL::DataType::VEC3);
+         mMapping.GetParameterDefinitions().push_back(pdOrient);
+
+         dtHLAGM::OneToManyMapping::ParameterDefinition pdVel;
+         pdFrozen.SetGameName("vel");
+         pdFrozen.SetGameType(dtDAL::DataType::VEC3);
+         mMapping.GetParameterDefinitions().push_back(pdVel);
+
+         dtHLAGM::OneToManyMapping::ParameterDefinition pdAccel;
+         pdFrozen.SetGameName("accel");
+         pdFrozen.SetGameType(dtDAL::DataType::VEC3);
+         mMapping.GetParameterDefinitions().push_back(pdAccel);
+
+         dtHLAGM::OneToManyMapping::ParameterDefinition pdAngVel;
+         pdFrozen.SetGameName("angvel");
+         pdFrozen.SetGameType(dtDAL::DataType::VEC3);
+         mMapping.GetParameterDefinitions().push_back(pdAngVel);
+
+         mMapping.SetHLAType(dtHLAGM::RPRAttributeType::SPATIAL_TYPE);
+      }
+      
       void TestSpatialData(
                std::vector<dtCore::RefPtr<const dtGame::MessageParameter> >& messageParameters,
                char drValue,
