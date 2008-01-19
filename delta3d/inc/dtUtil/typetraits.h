@@ -207,6 +207,9 @@ namespace dtUtil
       typedef typename _TypeTraits_<_Type>::const_reference const_reference;
 
 
+      typedef typename _TypeTraits_<_Type>::const_return_type const_param_type;
+      typedef typename _TypeTraits_<_Type>::return_type param_type;
+
       typedef typename _TypeTraits_<_Type>::const_return_type const_return_type;
       typedef typename _TypeTraits_<_Type>::return_type return_type;
 
