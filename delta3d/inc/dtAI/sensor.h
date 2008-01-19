@@ -113,6 +113,7 @@ namespace dtAI
 
             EvaluateFunctor<EvaluateType2, dtUtil::TypeTraits<Type2>::reference>(mEval2, mElement2);
 
+            //this can't be a one liner because we need to return bool, hence we can't take advantage of the constructor trick used above.
             CompareFunctor<CompareType, dtUtil::TypeTraits<ReportData>::reference, dtUtil::TypeTraits<Type1>::reference, dtUtil::TypeTraits<Type2>::reference> genericCompare;
             if(genericCompare(mCompare, mReportData, mElement1, mElement2))
             {               
@@ -152,7 +153,7 @@ namespace dtAI
          }
 
 
-      protected:
+   protected:
          /*virtual*/ ~Sensor(){}
 
          Type1 mElement1;

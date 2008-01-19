@@ -21,15 +21,43 @@
 #include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtAI/steeringutility.h>
+#include <dtAI/steeringbehavior.h>
 #include <dtCore/refptr.h>
 
 namespace dtAI
 {
+
+
+
+   /**
+    *   To test the SteeringBehavoir API we create a simple derived class.
+    */
+   class TestSteeringBehavoir: public SteeringBehavior<KinematicGoal, Kinematic, SteeringOutput>
+   {
+   public:
+      typedef SteeringBehavior<KinematicGoal, Kinematic, SteeringOutput> BaseClass;
+
+
+      /*virtual*/ void Think(float testNumber, BaseClass::ConstKinematicGoalParam current_goal, BaseClass::ConstKinematicParam current_state, BaseClass::SteeringOutByRefParam result)
+      {
+         result.mLinearVelocity.set(testNumber, 0.0f, 0.0f);
+      }
+
+      /*virtual*/ bool GoalAchieved(BaseClass::ConstKinematicGoalParam current_goal, BaseClass::ConstKinematicParam current_state)
+      {
+         return current_goal.GetLinearVelocity()[1] == current_state.mLinearVelocity[0];
+      }
+
+   };
+
+
+
    /// Math unit tests for dtUtil
    class AISteeringTests : public CPPUNIT_NS::TestFixture
    {
       CPPUNIT_TEST_SUITE(AISteeringTests);
       CPPUNIT_TEST(TestKinematicGoal);
+      CPPUNIT_TEST(TestSteeringBehavoirBaseClass);
       CPPUNIT_TEST_SUITE_END();
 
    public:
@@ -37,6 +65,7 @@ namespace dtAI
       void tearDown();
 
       void TestKinematicGoal();
+      void TestSteeringBehavoirBaseClass();
 
    private:
    };
@@ -51,6 +80,22 @@ namespace dtAI
    {
    }
 
+   void AISteeringTests::TestSteeringBehavoirBaseClass()
+   {
+
+      TestSteeringBehavoir tb;
+      KinematicGoal kg;
+      Kinematic k;
+      SteeringOutput steer;
+
+      const float TestNumber = 1.0f;
+      kg.SetLinearVelocity(osg::Vec3(TestNumber, 0.0f, 0.0f));
+      
+      tb.Think(TestNumber, kg, k, steer);
+      
+      CPPUNIT_ASSERT(steer.mLinearVelocity[0] == TestNumber);
+      CPPUNIT_ASSERT(tb.GoalAchieved(kg, k));
+   }
 
    void AISteeringTests::TestKinematicGoal()
    {  
