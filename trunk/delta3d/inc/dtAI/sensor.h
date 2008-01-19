@@ -32,6 +32,43 @@ namespace dtAI
     * It's purpose is to serve a generic method of generating alerts for ai agents
     */
 
+   //This functor is used to encapsulate the evaluation of the arguments
+   template <typename FunctorType, typename ArgType>
+   struct EvaluateFunctor
+   {
+      EvaluateFunctor(FunctorType func, ArgType arg)
+      {
+         func(arg);
+      }
+   };
+
+   template <typename FunctorType, typename ArgType>
+   struct EvaluateFunctor<FunctorType*, ArgType>
+   {
+      EvaluateFunctor(FunctorType* func, ArgType arg)
+      {
+         func->operator()(arg);
+      }
+   };
+
+   //This functor is used to perform the compare
+   template <typename ReportFunctor, typename ReportData, typename ArgType1, typename ArgType2>
+   struct CompareFunctor
+   {
+      bool operator()(ReportFunctor func, ReportData data, ArgType1 arg1, ArgType2 arg2)
+      {
+         return func(data, arg1, arg2);
+      }
+   };
+
+   template <typename ReportFunctor, typename ReportData, typename ArgType1, typename ArgType2>
+   struct CompareFunctor<ReportFunctor*, ReportData, ArgType1, ArgType2>
+   {
+      bool operator()(ReportFunctor* func, ReportData data, ArgType1 arg1, ArgType2 arg2)
+      {
+         return func->operator()(data, arg1, arg2);
+      }
+   };
 
    //a base class will allow us to hold a container of these
    template <typename ReportData>
@@ -45,39 +82,6 @@ namespace dtAI
    protected:
       ~SensorBase(){}
 
-   };
-
-
-   template <typename FunctorType, typename ArgType>
-   struct EvaluateFunctor
-   {
-   private:
-
-      //gotta love partial template specialization
-      template <typename U, typename T>
-      struct InnerEvaluate
-      {
-         static void Eval(U u, T t)
-         {
-            u(t);
-         }     
-      };
-
-      template <typename U, typename T>
-      struct InnerEvaluate<U*, T>
-      {
-         static void Eval(U* u, T t)
-         {
-            u->operator()(t);
-         }         
-      };
-
-
-   public:
-      static void Evaluate(FunctorType func, ArgType arg)
-      {
-         InnerEvaluate<FunctorType, ArgType>::Eval(func, arg);
-      }
    };
 
 
@@ -105,11 +109,14 @@ namespace dtAI
           */
          ReportData Evaluate()
          {
-            mEval1(mElement1);
-            mEval2(mElement2);
-            if(mCompare(mReportData, mElement1, mElement2))
+            EvaluateFunctor<EvaluateType1, dtUtil::TypeTraits<Type1>::reference>(mEval1, mElement1);
+
+            EvaluateFunctor<EvaluateType2, dtUtil::TypeTraits<Type2>::reference>(mEval2, mElement2);
+
+            CompareFunctor<CompareType, dtUtil::TypeTraits<ReportData>::reference, dtUtil::TypeTraits<Type1>::reference, dtUtil::TypeTraits<Type2>::reference> genericCompare;
+            if(genericCompare(mCompare, mReportData, mElement1, mElement2))
             {               
-               EvaluateFunctor<ReportType, ReportData>::Evaluate(mReport, mReportData);
+               EvaluateFunctor<ReportType, dtUtil::TypeTraits<ReportData>::reference>(mReport, mReportData);
             }
             return mReportData;
          }
