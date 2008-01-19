@@ -13,7 +13,7 @@
 * along with this library; if not, write to the Free Software Foundation, Inc.,
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 * 
-* Taken from the source code for CTFGame off of the AI Game Programming Wisdom 4 chapter
+*  Original version taken from the source code for CTFGame off of the AI Game Programming Wisdom 4 chapter
 * 	"Particle Filter Methods for More Realistic Hiding and Seeking" (Christian Darken, Brad Anderegg)
 *
 * Copyright (C) 2007, Bradley Anderegg
@@ -22,11 +22,14 @@
 #ifndef DELTA_STEERINGBEHAVIOR
 #define DELTA_STEERINGBEHAVIOR
 
+#include <vector>
+
 #include <dtUtil/typetraits.h>
+#include <dtUtil/templateutility.h>
 
 namespace dtAI
 {
-   template<typename KinematicGoal_, typename Kinematic_, typename SteeringOutput_>
+   template<typename KinematicGoal_, typename Kinematic_, typename SteeringOutput_, typename SensorType = dtUtil::DoNothing<int, void>, typename ErrorResultType = int, typename ErrorHandlerType = dtUtil::DoNothing<int, ErrorResultType> >
    class SteeringBehavior: public osg::Referenced
    {
       public:
@@ -34,14 +37,18 @@ namespace dtAI
          typedef Kinematic_ KinematicType;
          typedef SteeringOutput_ SteeringOutputType;
 
+         typedef std::vector<std::pair<SensorType, ErrorHandlerType> > SensorErrorArray;
+
          typedef typename dtUtil::TypeTraits<KinematicGoalType>::const_param_type ConstKinematicGoalParam;
          typedef typename dtUtil::TypeTraits<KinematicType>::const_param_type ConstKinematicParam;
          typedef typename dtUtil::TypeTraits<SteeringOutputType>::reference SteeringOutByRefParam;
+         
+         typedef typename dtUtil::TypeTraits<SensorType>::param_type SensorParamType;
+         typedef typename dtUtil::TypeTraits<ErrorHandlerType>::param_type ErrorHandlerParamType;
 
       public:
          SteeringBehavior(){}
 
-      public:
          /**
          * @param dt, the delta frame time
          * @param current_goal, the kinematic goal which the behavior can operate on
@@ -51,9 +58,30 @@ namespace dtAI
          virtual void Think(float dt, ConstKinematicGoalParam current_goal, ConstKinematicParam current_state, SteeringOutByRefParam result) = 0;
          virtual bool GoalAchieved(ConstKinematicGoalParam current_goal, ConstKinematicParam current_state) = 0;
 
+         
+         
+         void AddErrorHandler(SensorParamType s, ErrorHandlerParamType eh)
+         {
+            mSensorErrors.push_back(std::make_pair(SensorType(s), ErrorHandlerType(eh)));
+         }
+
+         void RemoveErrorHandler(SensorParamType s, ErrorHandlerParamType eh)
+         {
+            mSensorErrors.erase(std::remove(mSensorErrors.begin(), mSensorErrors.end(), std::make_pair(SensorType(s), ErrorHandlerType(eh))));
+         }
+
+         void InvokeErrorHandling()
+         {
+            std::for_each(mSensorErrors.begin(), mSensorErrors.end(), dtUtil::EvaluateInvoke<SensorParamType, ErrorHandlerParamType, ErrorResultType>());
+         }
+
 
       protected:
          /*virtual*/ ~SteeringBehavior(){}
+         
+         
+         SensorErrorArray mSensorErrors;
+
    };
 }
 

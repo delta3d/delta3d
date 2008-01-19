@@ -21,6 +21,7 @@
 #include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtAI/sensor.h>
+#include <dtUtil/templateutility.h>
 #include <dtCore/refptr.h>
 
 namespace dtAI
@@ -38,14 +39,6 @@ namespace dtAI
          ++i;
       }
 
-   };
-
-   struct DoNothing
-   {
-      void operator()(int)
-      {
-
-      }
    };
 
    struct CompareInt
@@ -74,7 +67,7 @@ namespace dtAI
       CPPUNIT_TEST_SUITE_END();
    
    public:
-      typedef Sensor<int, int, EvaluateIncrement, DoNothing, CompareInt, SensorStateModel*, bool> TestSensorType;
+      typedef Sensor<int, int, EvaluateIncrement, dtUtil::DoNothing<void, int>, CompareInt, SensorStateModel*, bool> TestSensorType;
 
    public:
       void setUp();
@@ -92,7 +85,7 @@ namespace dtAI
    void AISensorTests::setUp()
    {
       //Sensor<int, int, EvaluateIncrement, EvaluateIncrement, CompareInt, SensorStateModel, bool>;    
-      mSensor = new TestSensorType(0, 10, EvaluateIncrement(), DoNothing(), CompareInt(), &mState);
+      mSensor = new TestSensorType(0, 10, EvaluateIncrement(), dtUtil::DoNothing<void, int>(), CompareInt(), &mState);
    }
 
    void AISensorTests::tearDown()

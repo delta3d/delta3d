@@ -1,6 +1,5 @@
 /*
 * Delta3D Open Source Game and Simulation Engine
-* Copyright (C) 2004-2006 MOVES Institute
 *
 * This library is free software; you can redistribute it and/or modify it under
 * the terms of the GNU Lesser General Public License as published by the Free
@@ -24,6 +23,7 @@
 
 #include <osg/Referenced>
 #include <dtUtil/typetraits.h>
+#include <dtUtil/templateutility.h>
 
 namespace dtAI
 {
@@ -31,25 +31,6 @@ namespace dtAI
     *	A very simple utility with templated update, compare, and report functionality.
     * It's purpose is to serve a generic method of generating alerts for ai agents
     */
-
-   //This functor is used to encapsulate the evaluation of the arguments
-   template <typename FunctorType, typename ArgType>
-   struct EvaluateFunctor
-   {
-      EvaluateFunctor(FunctorType func, ArgType arg)
-      {
-         func(arg);
-      }
-   };
-
-   template <typename FunctorType, typename ArgType>
-   struct EvaluateFunctor<FunctorType*, ArgType>
-   {
-      EvaluateFunctor(FunctorType* func, ArgType arg)
-      {
-         func->operator()(arg);
-      }
-   };
 
    //This functor is used to perform the compare
    template <typename ReportFunctor, typename ReportData, typename ArgType1, typename ArgType2>
@@ -85,7 +66,7 @@ namespace dtAI
    };
 
 
-   template <typename Type1, typename Type2, typename EvaluateType1, typename EvaluateType2, typename CompareType, typename ReportType, typename ReportData>   
+   template <typename Type1, typename Type2, typename EvaluateType1, typename EvaluateType2, typename CompareType, typename ReportType, typename ReportData>
    class Sensor: public SensorBase<ReportData>
    {
       public:
@@ -107,19 +88,36 @@ namespace dtAI
          /**
           *	This simple function is the basis of the Sensor
           */
-         ReportData Evaluate()
+         typename dtUtil::TypeTraits<ReportData>::param_type Evaluate()
          {
-            EvaluateFunctor<EvaluateType1, dtUtil::TypeTraits<Type1>::reference>(mEval1, mElement1);
+            dtUtil::EvaluateFunctor<EvaluateType1, dtUtil::TypeTraits<Type1>::reference> eval1;
+            eval1(mEval1, mElement1);
 
-            EvaluateFunctor<EvaluateType2, dtUtil::TypeTraits<Type2>::reference>(mEval2, mElement2);
+            dtUtil::EvaluateFunctor<EvaluateType2, dtUtil::TypeTraits<Type2>::reference> eval2;
+            eval2(mEval2, mElement2);
 
-            //this can't be a one liner because we need to return bool, hence we can't take advantage of the constructor trick used above.
             CompareFunctor<CompareType, dtUtil::TypeTraits<ReportData>::reference, dtUtil::TypeTraits<Type1>::reference, dtUtil::TypeTraits<Type2>::reference> genericCompare;
             if(genericCompare(mCompare, mReportData, mElement1, mElement2))
             {               
-               EvaluateFunctor<ReportType, dtUtil::TypeTraits<ReportData>::reference>(mReport, mReportData);
+               dtUtil::EvaluateFunctor<ReportType, dtUtil::TypeTraits<ReportData>::reference> invokeReport;
+               invokeReport(mReport, mReportData);
             }
             return mReportData;
+         }
+         /**
+         * This function makes us play friendly with the generic functor interface
+         */         
+         typename dtUtil::TypeTraits<ReportData>::param_type operator()()
+         {
+            return Evaluate();
+         }
+
+         /**
+         * Allows sensor to work with SteeringBehavoir error handling
+         */
+         typename dtUtil::TypeTraits<ReportData>::param_type operator()(typename dtUtil::TypeTraits<ReportData>::reference result)
+         {
+            return result = Evaluate();
          }
 
          typename dtUtil::TypeTraits<Type1>::return_type GetFirstElement()
@@ -167,8 +165,6 @@ namespace dtAI
          CompareType mCompare;
 
    };
-
-
 
 }//namespace dtAI
 

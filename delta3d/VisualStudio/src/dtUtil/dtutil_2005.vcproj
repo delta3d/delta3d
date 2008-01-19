@@ -486,6 +486,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\inc\dtUtil\templateutility.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\inc\dtUtil\typetraits.h"
 				>
 			</File>
