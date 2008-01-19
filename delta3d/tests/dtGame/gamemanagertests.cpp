@@ -239,28 +239,48 @@ void GameManagerTests::tearDown()
 void GameManagerTests::TestTemplatedActorMethods()
 {
    const unsigned short int numProxies = 20;
-   std::vector<dtCore::RefPtr<dtActors::GameMeshActorProxy> > proxies;
+   std::vector<dtDAL::ActorProxy*> proxies;
    for(unsigned short int i = 0; i < numProxies; i++)
    {
       dtCore::RefPtr<dtActors::GameMeshActorProxy> p;
       mManager->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, p);
       CPPUNIT_ASSERT(p);
-      proxies.push_back(p);
+      //proxies.push_back(p);
+      mManager->AddActor(*p, false, false);
    }
    
    dtCore::RefPtr<dtActors::GameMeshActorProxy> shouldBeValid;
+   
+   mManager->FindActorsByType(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, proxies);
    mManager->FindActorByType(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, shouldBeValid);
    CPPUNIT_ASSERT(shouldBeValid.valid());
 
-   CPPUNIT_ASSERT_MESSAGE("The result should equal the first in the list", shouldBeValid == proxies[0]);
+   CPPUNIT_ASSERT(!proxies.empty());
+   CPPUNIT_ASSERT_MESSAGE("The result should equal the first in the list", shouldBeValid.get() == proxies[0]);
+
+   for(size_t i = proxies.size() - 1; i >= 1; i--)
+   {
+      CPPUNIT_ASSERT_MESSAGE("The result should not equal any other proxies except the first", shouldBeValid.get() != proxies[i]);
+   }
+
+   proxies.clear();
+   CPPUNIT_ASSERT(proxies.empty());
+
+   std::string searchName = shouldBeValid->GetName();
 
    shouldBeValid = NULL;
    CPPUNIT_ASSERT(!shouldBeValid.valid());
 
-   const std::string &searchName = proxies[0]->GetName();
+   mManager->FindActorsByName(searchName, proxies);
    mManager->FindActorByName(searchName, shouldBeValid);
 
-   CPPUNIT_ASSERT_MESSAGE("The result shoudl equal the first in the list", shouldBeValid == proxies[0]);
+   CPPUNIT_ASSERT(!proxies.empty());
+   CPPUNIT_ASSERT_MESSAGE("The result should equal the first in the list", shouldBeValid.get() == proxies[0]);
+
+   for(size_t i = proxies.size() - 1; i >= 1; i--)
+   {
+      CPPUNIT_ASSERT_MESSAGE("The result should not equal any other proxies except the first", shouldBeValid.get() != proxies[i]);
+   }
 }
 
 /////////////////////////////////////////////////
