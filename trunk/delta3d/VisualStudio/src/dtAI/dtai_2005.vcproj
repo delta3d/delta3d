@@ -236,10 +236,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\dtAI\SteeringUtility.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\src\dtAI\waypoint.cpp"
 				>
 			</File>
