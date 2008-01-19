@@ -354,6 +354,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\inc\dtAI\steeringbehavior.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\inc\dtAI\steeringutility.h"
 				>
 			</File>

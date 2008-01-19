@@ -22,19 +22,38 @@
 #ifndef DELTA_STEERINGBEHAVIOR
 #define DELTA_STEERINGBEHAVIOR
 
+#include <dtUtil/typetraits.h>
+
 namespace dtAI
 {
+   template<typename KinematicGoal_, typename Kinematic_, typename SteeringOutput_>
    class SteeringBehavior: public osg::Referenced
    {
-   public:
-      /**
-      * @param dt, the delta frame time
-      * @param current_goal, the kinematic goal which the behavior can operate on
-      * @param current_state, the kinematic state is physical state which we apply our behavior to in hopes of making it match the goal
-      * @param result, the result of the behavior is copied into a SteeringOutput which can later be integrated by the physics model
-      */
-      virtual void Think(float dt, const KinematicGoal& current_goal, const Kinematic& current_state, SteeringOutput& result) = 0;
-      virtual bool GoalAchieved(const KinematicGoal& current_goal, const Kinematic& current_state) = 0;
+      public:
+         typedef KinematicGoal_ KinematicGoalType;
+         typedef Kinematic_ KinematicType;
+         typedef SteeringOutput_ SteeringOutputType;
+
+         typedef typename dtUtil::TypeTraits<KinematicGoalType>::const_param_type ConstKinematicGoalParam;
+         typedef typename dtUtil::TypeTraits<KinematicType>::const_param_type ConstKinematicParam;
+         typedef typename dtUtil::TypeTraits<SteeringOutputType>::reference SteeringOutByRefParam;
+
+      public:
+         SteeringBehavior(){}
+
+      public:
+         /**
+         * @param dt, the delta frame time
+         * @param current_goal, the kinematic goal which the behavior can operate on
+         * @param current_state, the kinematic state is physical state which we apply our behavior to in hopes of making it match the goal
+         * @param result, the result of the behavior is copied into a SteeringOutput which can later be integrated by the physics model
+         */
+         virtual void Think(float dt, ConstKinematicGoalParam current_goal, ConstKinematicParam current_state, SteeringOutByRefParam result) = 0;
+         virtual bool GoalAchieved(ConstKinematicGoalParam current_goal, ConstKinematicParam current_state) = 0;
+
+
+      protected:
+         /*virtual*/ ~SteeringBehavior(){}
    };
 }
 
