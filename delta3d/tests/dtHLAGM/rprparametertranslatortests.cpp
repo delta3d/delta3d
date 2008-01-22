@@ -640,6 +640,11 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          spatial.GetAcceleration().set(0.11f, -3.22f, -1.0f);
          spatial.GetAngularVelocity().set(-2.22f, 1.1f, 0.01f);
 
+         osg::Vec3 expectedVecPos = mCoordinates.ConvertToLocalTranslation(spatial.GetWorldCoordinate());
+         osg::Vec3 expectedVecRot = mCoordinates.ConvertToLocalRotation(spatial.GetOrientation());
+         osg::Vec3f expectedVecVel = mCoordinates.GetOriginRotationMatrix().preMult(spatial.GetVelocity());
+         osg::Vec3f expectedVecAccel = mCoordinates.GetOriginRotationMatrix().preMult(spatial.GetAcceleration());
+
          for (char i = 0; i < 10; ++i)
          {
             spatial.SetDeadReckoningAlgorithm(i);
@@ -684,11 +689,16 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
             CPPUNIT_ASSERT(messageParameters[1].valid());
 
             CPPUNIT_ASSERT(messageParameters[2].valid());
+            CPPUNIT_ASSERT_EQUAL(expectedVecPos, posParam->GetValue());
+
             CPPUNIT_ASSERT(messageParameters[3].valid());
+            CPPUNIT_ASSERT_EQUAL(osg::Vec3(expectedVecRot[1], expectedVecRot[2], expectedVecRot[0]), 
+                     rotParam->GetValue());
 
             if (spatial.HasVelocity())
             {
                CPPUNIT_ASSERT(messageParameters[4].valid());
+               CPPUNIT_ASSERT_EQUAL(expectedVecVel, velParam->GetValue());
             }
             else
             {
@@ -698,6 +708,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
             if (spatial.HasAcceleration())
             {
                CPPUNIT_ASSERT(messageParameters[5].valid());
+               CPPUNIT_ASSERT_EQUAL(expectedVecAccel, accelParam->GetValue());
             }
             else
             {

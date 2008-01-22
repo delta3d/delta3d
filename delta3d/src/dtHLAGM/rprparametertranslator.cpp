@@ -299,8 +299,7 @@ namespace dtHLAGM
                              "Euler Angles have been set to %f %f %f",
                              eulerAngles.GetPsi() , eulerAngles.GetTheta(), eulerAngles.GetPhi());
 
-         osg::Vec3 reversed = mCoordinates.ConvertToLocalRotation(
-               eulerAngles.GetPsi(), eulerAngles.GetTheta(), eulerAngles.GetPhi());
+         osg::Vec3 reversed = mCoordinates.ConvertToLocalRotation(eulerAngles);
 
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                              "The reversed rotation would be have been set to %f %f %f",
