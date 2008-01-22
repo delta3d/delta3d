@@ -90,16 +90,20 @@ namespace dtAI
           */
          typename dtUtil::TypeTraits<ReportData>::param_type Evaluate()
          {
-            dtUtil::EvaluateFunctor<EvaluateType1, dtUtil::TypeTraits<Type1>::reference> eval1;
+            typedef typename dtUtil::TypeTraits<Type1>::reference Traits1Ref;
+            typedef typename dtUtil::TypeTraits<Type2>::reference Traits2Ref;
+            typedef typename dtUtil::TypeTraits<ReportData>::reference ReportTraitsRef;
+            
+            dtUtil::EvaluateFunctor<EvaluateType1, Traits1Ref> eval1;
             eval1(mEval1, mElement1);
 
-            dtUtil::EvaluateFunctor<EvaluateType2, dtUtil::TypeTraits<Type2>::reference> eval2;
+            dtUtil::EvaluateFunctor<EvaluateType2, Traits2Ref> eval2;
             eval2(mEval2, mElement2);
 
-            CompareFunctor<CompareType, dtUtil::TypeTraits<ReportData>::reference, dtUtil::TypeTraits<Type1>::reference, dtUtil::TypeTraits<Type2>::reference> genericCompare;
+            CompareFunctor<CompareType, ReportTraitsRef, Traits1Ref, Traits2Ref> genericCompare;
             if(genericCompare(mCompare, mReportData, mElement1, mElement2))
             {               
-               dtUtil::EvaluateFunctor<ReportType, dtUtil::TypeTraits<ReportData>::reference> invokeReport;
+               dtUtil::EvaluateFunctor<ReportType, ReportTraitsRef> invokeReport;
                invokeReport(mReport, mReportData);
             }
             return mReportData;

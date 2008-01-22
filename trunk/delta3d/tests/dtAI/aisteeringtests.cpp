@@ -89,7 +89,7 @@ namespace dtAI
 
    struct Steering 
    {
-      typedef SteeringBehavior<KinematicGoal, Kinematic, SteeringOutput, GenericSensor::CompareSensor*, bool, ErrorHandler<bool>*> Steering::BehavoirBase;
+      typedef SteeringBehavior<KinematicGoal, Kinematic, SteeringOutput, GenericSensor::CompareSensor*, bool, ErrorHandler<bool>*> BehavoirBase;
    };
 
    /**
