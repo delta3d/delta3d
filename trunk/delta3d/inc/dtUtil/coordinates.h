@@ -282,6 +282,8 @@ namespace dtUtil
           * based on the current configuration.
           */
          const osg::Vec3 ConvertToLocalRotation(double psi, double theta, double phi) const;
+         const osg::Vec3 ConvertToLocalRotation(const osg::Vec3& psiThetaPhi) const 
+            { return ConvertToLocalRotation(psiThetaPhi[0], psiThetaPhi[1], psiThetaPhi[2]); };
 
          /**
           * Converts hpr coordinates in degrees to a remote rotation psi, theta, phi in radians
