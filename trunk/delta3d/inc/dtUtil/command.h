@@ -29,55 +29,58 @@
 namespace dtUtil
 {
 
-   template<typename U>
-     struct TypeTraits
+   namespace details
    {
-   private:
-      template<typename T>
-      struct _Traits
+      template<typename U>
+        struct TypeTraits
       {
-         typedef T NonConstNoRef;
-         typedef T& NonConstRef;
-         typedef const T& ConstRef;
+      private:
+         template<typename T>
+         struct _Traits
+         {
+            typedef T NonConstNoRef;
+            typedef T& NonConstRef;
+            typedef const T& ConstRef;
+         };
+
+        //      template<typename T>
+        //      struct _Traits<T*>
+        //      {
+        //         typedef *T NonConstNoRef;
+        //         typedef *T NonConstRef;
+        //         typedef const *T ConstRef;
+        //      };
+
+   /*       template<typename T> */
+   /*       struct _Traits<const T*> */
+   /*       { */
+   /*          typedef *T NonConstNoRef; */
+   /*          typedef *T NonConstRef; */
+   /*          typedef const *T ConstRef; */
+   /*       }; */
+
+         template<typename T>
+         struct _Traits<const T&>
+         {
+            typedef T NonConstNoRef;
+            typedef T& NonConstRef;
+            typedef const T& ConstRef;
+         };
+
+         template<typename T>
+         struct _Traits<T&>
+         {
+            typedef T NonConstNoRef;
+            typedef T& NonConstRef;
+            typedef const T& ConstRef;
+         };
+
+      public:
+         typedef typename _Traits<U>::NonConstNoRef NonConstNoRef;
+         typedef typename _Traits<U>::NonConstRef NonConstRef;
+         typedef typename _Traits<U>::ConstRef ConstRef;
       };
-
-     //      template<typename T>
-     //      struct _Traits<T*>
-     //      {
-     //         typedef *T NonConstNoRef;
-     //         typedef *T NonConstRef;
-     //         typedef const *T ConstRef;
-     //      };
-
-/*       template<typename T> */
-/*       struct _Traits<const T*> */
-/*       { */
-/*          typedef *T NonConstNoRef; */
-/*          typedef *T NonConstRef; */
-/*          typedef const *T ConstRef; */
-/*       }; */
-
-      template<typename T>
-      struct _Traits<const T&>
-      {
-         typedef T NonConstNoRef;
-         typedef T& NonConstRef;
-         typedef const T& ConstRef;
-      };
-
-      template<typename T>
-      struct _Traits<T&>
-      {
-         typedef T NonConstNoRef;
-         typedef T& NonConstRef;
-         typedef const T& ConstRef;
-      };
-
-   public:
-      typedef typename _Traits<U>::NonConstNoRef NonConstNoRef;
-      typedef typename _Traits<U>::NonConstRef NonConstRef;
-      typedef typename _Traits<U>::ConstRef ConstRef;
-   };
+   }
 
    /** An abstract class for all types which
      * provide a uniform interface for executing
@@ -145,7 +148,7 @@ namespace dtUtil
    class Command1 : public Command<RetT>
    {
    public:
-      typedef typename TypeTraits<ArgT>::NonConstNoRef MemberType;
+      typedef typename details::TypeTraits<ArgT>::NonConstNoRef MemberType;
       typedef TYPELIST_1(ArgT) Types;
       typedef dtUtil::Functor<RetT,Types> FunctorType;
       typedef typename FunctorType::ParmsListType Params;
@@ -182,8 +185,8 @@ namespace dtUtil
    class Command2 : public Command<RetT>
    {
    public:
-      typedef typename TypeTraits<ArgTMember1>::NonConstNoRef MemberType1;
-      typedef typename TypeTraits<ArgTMember2>::NonConstNoRef MemberType2;
+      typedef typename details::TypeTraits<ArgTMember1>::NonConstNoRef MemberType1;
+      typedef typename details::TypeTraits<ArgTMember2>::NonConstNoRef MemberType2;
       typedef TYPELIST_2(MemberType1,MemberType2) Types;
       typedef dtUtil::Functor<RetT,Types> FunctorType;
       typedef typename dtUtil::CallParms<Types>::ParmsListType Params;
