@@ -566,25 +566,23 @@ void FPSMotionModel::PerformTranslation(const double deltaTime)
 {
    Transform transform;
    osg::Vec3 xyz, newXYZ;
+   osg::Matrix rot;
 
    // query initial status (to change from)
    GetTarget()->GetTransform(transform);
+   transform.GetRotation(rot);
    transform.GetTranslation(xyz);
 
+   osg::Vec3 forwardVector = dtUtil::MatrixUtil::GetRow3(rot, 1);
+   osg::Vec3 transForward = forwardVector * mForwardBackCtrl * deltaTime;
+
+   osg::Vec3 rightVector = dtUtil::MatrixUtil::GetRow3(rot, 0);
+   osg::Vec3 transRight = rightVector * mSidestepCtrl * deltaTime;
+
    // calculate x/y delta
-   osg::Vec3 translation(0.0f, 0.0f, 0.0f);
-   translation[0] = mSidestepCtrl    * mMaximumSidestepSpeed;
-   translation[1] = mForwardBackCtrl * mMaximumWalkSpeed;
-
-   // get heading
-   osg::Vec3 hpr;
-   transform.GetRotation(hpr);
-   float heading = hpr[0];
-
-   // transform our x/y delta by our new heading
-   osg::Matrix mat;
-   mat.makeRotate(osg::DegreesToRadians(heading), osg::Vec3(0.0f, 0.0f, 1.0f));
-   translation = translation * mat;
+   osg::Vec3 translation(transForward + transRight);
+   translation.normalize();   
+   translation *= mMaximumWalkSpeed;
 
    // integration step
    newXYZ = xyz + translation * deltaTime;
