@@ -35,6 +35,7 @@
 
 #include <osg/Camera>
 
+#include <dtUtil/deprecationmgr.h>
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
@@ -119,10 +120,45 @@ namespace dtCore
        */
       const std::string TakeScreenShot(const std::string& namePrefix);
 
-      ///Set Perspective of camera
-      void SetPerspective( double hfov, double aspectRatio, double nearClip, double farClip );
+      /**
+       * Set the perspective parameters of this Camera.
+       * @param vfov : the vertical field of view in degrees
+       * @param aspectRatio : the aspect ratio of the camera (width/height)
+       * @param nearClip : the distance from the Camera to the near clipping plane
+       * @param farClip : the distance from the Camera to the far clipping plane
+       */
+      void SetPerspectiveParams( double vfov, double aspectRatio, double nearClip, double farClip );
 
-      void GetPerspective(double &hfov, double &aspectRatio, double &nearClip, double &farClip);
+      ///DEPRECATED 01/22/08
+      void SetPerspective( double hfov, double vfov, double nearClip, double farClip )
+      {
+         DEPRECATE("void Camera::SetPerspective()",
+                   "void Camera::SetPerspectiveParams()" );
+
+         SetPerspectiveParams(vfov, hfov/vfov, nearClip, farClip);
+      }
+
+      /**
+      * Get the perspective parameters of this Camera.
+      * @param vfov : the vertical field of view in degrees
+      * @param aspectRatio : the aspect ratio of the camera (width/height)
+      * @param nearClip : the distance from the Camera to the near clipping plane
+      * @param farClip : the distance from the Camera to the far clipping plane
+      */
+      void GetPerspectiveParams(double &vfov, double &aspectRatio, double &nearClip, double &farClip);
+
+      ///DEPRECATED 01/22/08
+      void GetPerspective(double &hfov, double &vfov, double &nearClip, double &farClip)
+      {
+         DEPRECATE("void Camera::GetPerspective()",
+                   "void Camera::GetPerspectiveParams()");
+         
+         double aspectRatio;
+         GetPerspectiveParams(vfov, aspectRatio, nearClip, farClip );
+         hfov = vfov * aspectRatio;
+      }
+
+
       ///Set view frustrum of camera lens
       void SetFrustum(  double left, double right,
                         double bottom, double top,

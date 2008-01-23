@@ -144,10 +144,10 @@ class CameraTests : public CPPUNIT_NS::TestFixture
          double aspectSet = 1.33;
          double nearSet = 1.0;
          double farSet = 10000.0;
-         mCamera->SetPerspective(vfovSet, aspectSet, nearSet, farSet);
+         mCamera->SetPerspectiveParams(vfovSet, aspectSet, nearSet, farSet);
 
          double vfov, aspectRatio, nearClip, farClip;
-         mCamera->GetPerspective(vfov, aspectRatio, nearClip, farClip);
+         mCamera->GetPerspectiveParams(vfov, aspectRatio, nearClip, farClip);
          CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The vertical field of view should be the same as the one set", 
                   vfovSet, vfov, 0.01);
          CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The aspect ratio should be the same as the one set", 
