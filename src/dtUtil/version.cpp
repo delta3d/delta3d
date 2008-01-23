@@ -22,10 +22,19 @@
 
 #include <prefix/dtutilprefix-src.h>
 #include <dtUtil/version.h>
+#include <stdio.h>
 
 const char* Delta3DGetVersion()
 {
-   return "1.4.0";
+   static char deltaVersion[256];
+   static bool deltaVersionInit = false;
+   if (deltaVersionInit == false)
+   {
+      sprintf(deltaVersion, "%d.%d.%d", DELTA3D_VERSION_MAJOR,DELTA3D_VERSION_MINOR,DELTA3D_VERSION_PATCH);
+      deltaVersionInit = true;
+   }
+
+   return deltaVersion;
 }
 
 const char* Delta3DGetLibraryName()
