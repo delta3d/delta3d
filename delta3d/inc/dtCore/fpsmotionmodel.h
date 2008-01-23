@@ -75,9 +75,9 @@ namespace dtCore
           */
          FPSMotionModel(   Keyboard* keyboard = 0,
                            Mouse* mouse = 0,
-                           float maxWalkSpeed = 10.0f,
-                           float maxTurnSpeed = 720.0f,
-                           float maxSidestepSpeed = 10.0f,
+                           float maxWalkSpeed = 5.0f,
+                           float maxTurnSpeed = 450.0f,
+                           float maxSidestepSpeed = 5.0f,
                            float height = 2.0f,
                            float maxStepUpDist = 1.0f);
 
