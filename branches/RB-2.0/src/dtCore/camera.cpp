@@ -331,13 +331,13 @@ namespace dtCore
 
 
    ////////////////////////////////////////// 
-   void Camera::SetPerspective(double vfov, double aspectRatio, double nearClip, double farClip)
+   void Camera::SetPerspectiveParams(double vfov, double aspectRatio, double nearClip, double farClip)
    {
       mOsgCamera->setProjectionMatrixAsPerspective(vfov, aspectRatio , nearClip, farClip);
    }
 
    ////////////////////////////////////////// 
-   void Camera::GetPerspective(double &vfov, double &aspectRatio, double &nearClip, double &farClip)
+   void Camera::GetPerspectiveParams(double &vfov, double &aspectRatio, double &nearClip, double &farClip)
    {
       mOsgCamera->getProjectionMatrixAsPerspective(vfov, aspectRatio, nearClip, farClip);
    }
@@ -421,7 +421,7 @@ namespace dtCore
    float Camera::GetHorizontalFov()
    {
       double vfov, aspectRatio, nearClip, farClip;
-      GetPerspective(vfov, aspectRatio, nearClip, farClip);
+      GetPerspectiveParams(vfov, aspectRatio, nearClip, farClip);
       return float(vfov * aspectRatio);
    }
 
@@ -429,7 +429,7 @@ namespace dtCore
    float Camera::GetVerticalFov()
    {
       double vfov, aspectRatio, nearClip, farClip;
-      GetPerspective(vfov, aspectRatio, nearClip, farClip);
+      GetPerspectiveParams(vfov, aspectRatio, nearClip, farClip);
       return float(vfov);
    }
 
@@ -438,15 +438,15 @@ namespace dtCore
    void Camera::SetAspectRatio( double aspectRatio )
    {
       double vfov, oldAspectRatio, nearClip, farClip;
-      GetPerspective(vfov, oldAspectRatio, nearClip, farClip);
-      SetPerspective(vfov, aspectRatio, nearClip, farClip);
+      GetPerspectiveParams(vfov, oldAspectRatio, nearClip, farClip);
+      SetPerspectiveParams(vfov, aspectRatio, nearClip, farClip);
    }
 
    //////////////////////////////////////////
    double Camera::GetAspectRatio()
    {
       double vfov, aspectRatio, nearClip, farClip;
-      GetPerspective(vfov, aspectRatio, nearClip, farClip);
+      GetPerspectiveParams(vfov, aspectRatio, nearClip, farClip);
       return aspectRatio;
    }
 
