@@ -26,13 +26,12 @@
 #include <osg/Referenced>
 
 #include <dtUtil/enumeration.h>
-#include <dtCore/refptr.h>
 #include <dtCore/observerptr.h>
-#include <dtGame/export.h>
+#include <dtGame/export.h> 
+#include <dtGame/gamemanager.h>
 
 namespace dtGame
 {
-   class GameManager;
    class MessageType;
    
    //intentionally not exported

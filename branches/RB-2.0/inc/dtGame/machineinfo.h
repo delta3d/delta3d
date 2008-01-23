@@ -23,6 +23,7 @@
 
 #include <dtGame/export.h>
 #include <dtCore/uniqueid.h>
+#include <dtCore/refptr.h>
 #include <string>
 
 namespace dtGame

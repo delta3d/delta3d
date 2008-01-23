@@ -28,8 +28,9 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#include "dtHLAGM/export.h"
-#include "dtCore/uniqueid.h"
+#include <dtHLAGM/export.h>
+#include <dtHLAGM/distypes.h>
+#include <dtCore/uniqueid.h>
 
 namespace dtHLAGM
 {

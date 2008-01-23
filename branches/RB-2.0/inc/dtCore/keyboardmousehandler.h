@@ -22,15 +22,15 @@
 #define KEYBOARDMOUSEHANDLER
 
 #include <osgGA/GUIEventHandler>
-#include <osg/observer_ptr>
 
+#include <dtCore/observerptr.h>
 #include <dtCore/refptr.h>
 #include <dtCore/view.h>
+#include <dtCore/keyboard.h>
+#include <dtCore/mouse.h>
 
 namespace dtCore
 {
-   class Keyboard;
-   class Mouse;
 
    class KeyboardMouseHandler : public osgGA::GUIEventHandler
    {
@@ -61,7 +61,7 @@ namespace dtCore
            
       private:
    
-         osg::observer_ptr<View> mView; // owner view of this instance
+         ObserverPtr<View> mView; // owner view of this instance
    
          KeyboardMouseHandler(); ///< not implemented by design
          KeyboardMouseHandler& operator=(const KeyboardMouseHandler&);
