@@ -130,7 +130,7 @@ def TOOL_BUNDLE(env):
                                 LIBS = addToLibs, LINKFLAGS = addToLink + extraLinkFlags )
     
        if env['OS'] == 'darwin' and buildAppBundle:
-          envProg ['VERSION_NUM'] = "1.2.0"
+          envProg ['VERSION_NUM'] = "2.0.0"
           envProg ['VERSION_NAME'] = name + '.app'
           bundle = envProg.MakeBundle ('#Applications/' + name + '.app', target,
                                   'old.delta3d.' + name,
