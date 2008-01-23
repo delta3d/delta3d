@@ -29,6 +29,8 @@
 #include <dtCore/refptr.h>
 #include <dtCore/timer.h>
 #include <dtCore/view.h>
+#include <dtCore/light.h>
+#include <dtCore/deltadrawable.h>
 #include <dtUtil/deprecationmgr.h>
 
 #include <ode/common.h>
@@ -53,8 +55,6 @@ namespace osgParticle
 
 namespace dtCore
 {         
-   class DeltaDrawable;
-   class Light;
    class Physical;
    class Transformable;
 
