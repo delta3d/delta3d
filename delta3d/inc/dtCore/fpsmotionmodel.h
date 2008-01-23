@@ -351,6 +351,17 @@ namespace dtCore
          */
          void SetUseMouseButtons(bool use) { mUseMouseButtons = use; }
 
+
+         /**
+          * Inverts the mouse movement in pitch 
+          */
+         void InvertMouse(bool b){ mInvertMouse = b;}
+
+         /**
+          * @return whether or not the mouse movement in pitch has been inverted
+          */
+         bool GetInvertMouse() {return mInvertMouse;}
+
       private:
          
          /**
@@ -469,6 +480,8 @@ namespace dtCore
          osg::Vec3 mFallingVec;
 
          bool mFalling; ///<are we currently falling?
+
+         bool mInvertMouse; //invert the nouse 
 
          dtCore::RefPtr<Mouse>    mMouse;
          dtCore::RefPtr<Keyboard> mKeyboard;

@@ -18,6 +18,9 @@
 #include <dtCore/isector.h>
 #include <dtUtil/mathdefines.h>
 
+#include <osg/Quat>
+#include <dtUtil/matrixutil.h>
+
 namespace dtCore
 {
 
@@ -73,6 +76,7 @@ FPSMotionModel::FPSMotionModel(  Keyboard* keyboard,
    , mFallingHeight(1.f)
    , mFallingVec(0.f, 0.f, 0.f)
    , mFalling(false)
+   , mInvertMouse(false)
    , mForwardBackCtrl(0.f)
    , mSidestepCtrl(0.f)
    , mLookLeftRightCtrl(0.f)
@@ -509,23 +513,45 @@ void FPSMotionModel::UpdateMouse(const double deltaTime)
    if (calc_new_heading_pitch)
    {
       Transform transform;
-      osg::Vec3 hpr;
-
-      // query initial status (to change from)
       GetTarget()->GetTransform(transform);
-      transform.GetRotation(hpr);
-      float newH = hpr[0];
-      float newP = hpr[1];
 
-      // calculate our new heading
-      newH -= mLookLeftRightCtrl * mMaximumTurnSpeed * deltaTime;
+      osg::Matrix rot;
+      transform.GetRotation(rot);
+      float deltaZ = mLookLeftRightCtrl * mMaximumTurnSpeed * deltaTime;
+      float deltaX = mLookUpDownCtrl * mMaximumTurnSpeed * deltaTime;
 
-      // calculate our new pitch
-      newP += mLookUpDownCtrl * mMaximumTurnSpeed * deltaTime;
-      dtUtil::Clamp(newP, -89.9f, 89.9f); //stay away from 90.0 as it causes funky gimbal lock
+      osg::Vec3 upVector = dtUtil::MatrixUtil::GetRow3(rot, 2);
+      osg::Vec3 forwardVector = dtUtil::MatrixUtil::GetRow3(rot, 1);
+      osg::Vec3 rightVector = dtUtil::MatrixUtil::GetRow3(rot, 0);
+      
+      if(mInvertMouse)
+      {
+         deltaX = -deltaX;
+      }
+
+      osg::Quat rotateZ, rotateX;
+      rotateZ.makeRotate(-deltaZ, upVector);
+      rotateX.makeRotate(deltaX, rightVector); //we must revert the x axis delta
+
+      forwardVector = rotateZ * forwardVector;
+      forwardVector = rotateX * forwardVector;
+
+      //TODO- use the normalized opposite of the scene's gravity vector
+      upVector = osg::Vec3(0.0f, 0.0f, 1.0f);
+       
+      rightVector = forwardVector ^ upVector;
+      upVector = rightVector ^ forwardVector;
+
+      rightVector.normalize();
+      forwardVector.normalize();
+      upVector.normalize();
+
+      dtUtil::MatrixUtil::SetRow(rot, rightVector, 0);
+      dtUtil::MatrixUtil::SetRow(rot, forwardVector, 1);
+      dtUtil::MatrixUtil::SetRow(rot, upVector, 2);
 
       // apply changes (new orientation)
-      transform.SetRotation(newH, newP, 0.f);
+      transform.SetRotation(rot);
       GetTarget()->SetTransform(transform);
    }
 
