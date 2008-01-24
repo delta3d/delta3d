@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * Matthew W. Campbell
+ * Matthew W. Campbell, Curtiss Murphy
  */
 #include <dtActors/taskactorordered.h>
 #include <dtDAL/enginepropertytypes.h>
@@ -45,7 +45,6 @@ namespace dtActors
       TaskActor::Reset();
       mFailureType = &FailureType::BLOCK;
       TaskActorOrderedProxy &proxy = static_cast<TaskActorOrderedProxy&>(GetGameActorProxy());
-      proxy.mAlwaysFail = false;
       proxy.mFailingTask = NULL;
    }
 
@@ -84,11 +83,14 @@ namespace dtActors
    //////////////////////////////////////////////////////////////////////////////
    bool TaskActorOrderedProxy::RequestScoreChange(const TaskActorProxy &childTask, const TaskActorProxy &origTask)
    {
+      TaskActor *myActor;
       const std::vector<dtCore::RefPtr<TaskActorProxy> > &subTasks = GetAllSubTasks();
       std::vector<dtCore::RefPtr<TaskActorProxy> >::const_iterator itor;
       bool result = false;
 
-      if (mAlwaysFail)
+      // If we're already failed, then no way are we approving the request.
+      GetActor(myActor);
+      if (myActor->IsFailed())
          return false;
 
       //Need to see if all the tasks added prior to the task in question have been
@@ -100,16 +102,18 @@ namespace dtActors
          //If we encounter a task before the task in question that has not yet been
          //completed, we cannot continue.
          bool completed = static_cast<const TaskActor*>(task.GetActor())->IsComplete();
-         bool idsMatch  = task.GetId() != childTask.GetId();
-         if (!completed && idsMatch)
+         bool idsMatch  = task.GetId() == childTask.GetId();
+         if (!completed && !idsMatch)
          {
-            //Set the task that got rejected so a user can query for this a report
-            //additional information.
+            //Set the task that got rejected so a user can find out why we failed.
             SetFailingTaskProxy(origTask);
+
+            // If we're a ORDERED Failing task, then we just failed. 
+            // Note, we don't fail the child. Though it is recorded as the failing task proxy 
             if (static_cast<TaskActorOrdered*>(GetActor())->GetFailureType() ==
                 TaskActorOrdered::FailureType::CAUSE_FAILURE)
             {
-               mAlwaysFail = true;
+               myActor->SetFailed(true);
             }
 
             break;
@@ -164,6 +168,50 @@ namespace dtActors
 
       if (GetParentTask() != NULL)
          GetParentTask()->NotifyScoreChanged(*this);
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+   bool TaskActorOrderedProxy::IsChildTaskAllowedToChange(const TaskActorProxy &childTask) const
+   {
+      const std::vector<dtCore::RefPtr<TaskActorProxy> > &subTasks = GetAllSubTasks();
+      std::vector<dtCore::RefPtr<TaskActorProxy> >::const_iterator itor;
+      bool parentGivesOK = true; // no parent means we have approval.
+      bool bOKToChangeChildTask = false;
+
+      const TaskActor *myActor;
+      GetActor(myActor);
+
+      // First check to see if our parent allows us to be changed.  
+      if (GetParentTask() != NULL)
+         parentGivesOK = GetParentTask()->IsChildTaskAllowedToChange(childTask);
+
+      // If we aren't failed and parent allows, so check to see if the child is the next task in line.  
+      if (parentGivesOK && !myActor->IsFailed())
+      {
+         //Need to see if all the tasks added prior to the task in question have been
+         //completed.  If not we have to reject.
+         for(itor=subTasks.begin(); itor!=subTasks.end(); ++itor)
+         {
+            const TaskActorProxy &task = *itor->get();
+
+            //If we got here, then all the tasks before the current task have been completed.
+            //So we can accept it and stopping checking...
+            if(itor->get() == &childTask)
+            {
+               bOKToChangeChildTask = true;
+               break;
+            }
+
+            // If we find an incomplete task before the child in question, then we are done. 
+            bool completed = static_cast<const TaskActor*>(task.GetActor())->IsComplete();
+            if (!completed)
+            {
+               break;
+            }
+         }
+      }
+
+      return bOKToChangeChildTask;
    }
 
    //////////////////////////////////////////////////////////////////////////////

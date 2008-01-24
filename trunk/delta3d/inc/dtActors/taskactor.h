@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * Matthew W. Campbell
+ * Matthew W. Campbell, Curtiss Murphy
  */
 #ifndef DELTA_TASKACTOR
 #define DELTA_TASKACTOR
@@ -46,7 +46,16 @@ namespace dtActors
     * class should be extended by any classes wishing to provide specialized
     * task behavior.  Each task has general properties such as score, passing
     * score, etc.  In addition, all tasks have a parent child relationship thus
-    * facilitating the concept of nested tasks and task dependencies.
+    * facilitating the concept of nested tasks and task dependencies. 
+    * 
+    * All Task Actors are in one of 3 states:  IsComplete(), IsFailed(), or neither. 
+    * Generally, a Task can change it's score and other values until it becomes Complete or 
+    * Failed. At that point, it is no longer mutable and shouldn't change much.  
+    * The complete state is typically determined automatically - when a minimal 
+    * score is reached like when all child tasks are complete. The Failed stage 
+    * is typically set manually when you want to force a task to be failed. Sometimes a 
+    * task will be marked Failed automatically based on parent or container task
+    * behaviors (such as a Ordered Failing task done out of order).  
     * @see TaskActorGameEvent
     * @see TaskActorOrderedTask
     * @see TaskActorRollupTask
@@ -73,6 +82,18 @@ namespace dtActors
           * @return The task's description.
           */
          std::string GetDescription() const { return mDescription; }
+
+         /**
+          * Sets the display name of this task. This allows you to have a pretty value for the user.
+          * @param displayName The new display name to assign to this task.
+          */
+         void SetDisplayName(const std::string &displayName) { mDisplayName = displayName; }
+
+         /**
+          * Gets the display name of this task. Allows for a pretty value for the user.
+          * @return The task's display name.
+          */
+         std::string GetDisplayName() const { return mDisplayName; }
 
          /**
           * Sets the passing score of this task.  The passing score is used
@@ -118,20 +139,20 @@ namespace dtActors
          float GetWeight() const { return mWeight; }
 
          /**
-          * Gets the simulation time at which this task was completed.
+          * Gets the simulation time at which this task was completed or failed.
           * @return The time in simulation seconds that this task
-          *    was marked complete.
-          * @note Only this class or its subclasses may set this property
-          *    which is done when the task determines it is complete.
+          *    was marked complete or failed.
+          * @note Only this class or its subclasses should set this property
+          *    which is done when the task determines it is complete or failed.
           */
          double GetCompletedTimeStamp() const { return mCompletedTimeStamp; }
 
          /**
-          * Sets the simulation time at which this task was marked complete.
-          * @param time The simulation time (in seconds) this task was completed.
+          * Sets the simulation time at which this task was marked complete or failed.
+          * @param time The simulation time (in seconds) this task was completed/failed.
           * @note Should be used with caution if setting outside of this or a subclasses
           *  method as most of the time, the task itself will set this value when it
-          *  has determined it is complete.
+          *  has determined it is complete or failed.
           */
          void SetCompletedTimeStamp(double time) { mCompletedTimeStamp = time; }
 
@@ -152,13 +173,35 @@ namespace dtActors
          void SetComplete(bool flag);
 
          /**
+          * Gets the status of this task in terms of "failedness". Note that a task can never
+          * be both failed and complete - mutually exclusive. A failed task may or may 
+          * not affect it's parent. 'Failed' is unrelated to the task's score
+          * @return True if this task has been failed, false otherwise.
+          * @note Being 'failed' does not have any direct bearing on the failed or score status 
+          *    of either our parent task or any of our children. 
+          */
+         bool IsFailed() const { return mFailed; }
+
+         /**
+          * Sets the status of this task to failed or not failed. Note that a task can never
+          * be both failed and complete - mutually exclusive. A failed task may or may 
+          * not affect it's parent. Setting Failed to true has no effect on score by design.  
+          * Setting failed to true sets the completed time stamp.
+          * @param flag True if this task should be marked failed, false otherwise.
+          * @note Being 'failed' does not have any direct bearing on the failed status 
+          *    of either our parent task or any of our children. Same with the score. 
+          */
+         void SetFailed(bool flag);
+
+         /**
           * Convienence method to reset the properties of this task to their
           * default values.
           * @par
           *    PassingScore = 1.0 <br>
           *    Score = 0.0 <br>
           *    Weight = 1.0 <br>
-          *    Complete = false
+          *    Complete = false <br>
+          *    Failed = false <br>
           *    Completed Time Stamp = -1.0 <br>
 		    *    NotifyLMSOnUpdate = false
           * @note Calling this method does not change the parent child task hierarchy
@@ -197,11 +240,13 @@ namespace dtActors
 
          //Basic properties of a task...
          std::string mDescription;
+         std::string mDisplayName;
          float mPassingScore;
          float mScore;
          float mWeight;
          double mCompletedTimeStamp;
-         bool mComplete;
+         bool mComplete; // mutually exclusive with mFailed
+         bool mFailed; // mutually exclusive with mComplete
          bool mNotifyLMSOnUpdate;
    };
 
@@ -246,7 +291,10 @@ namespace dtActors
           * @note This method is a recurive method does a bottom up traversal of the
           *   path from the root of the task tree to the leaf task that first called
           *   this method.
+          * @note This method is different from IsChildTaskAllowedToChange in that this expects
+          *   that a change is imminent. This method will sometimes cause a parent to fail itself.
           * @see TaskActorOrdered
+          * @see IsChildTaskAllowedToChange
           */
          virtual bool RequestScoreChange(const TaskActorProxy &childTask, const TaskActorProxy &origTask);
 
@@ -258,6 +306,26 @@ namespace dtActors
           * @see TaskActorRollup
           */
          virtual void NotifyScoreChanged(const TaskActorProxy &childTask);
+
+         /**
+          * Determines if conditions are right so that this Task could change it's 
+          * IsComplete, IsFailed, or Score. This will typically mean that it is not already
+          * Complete or Failed and that it's parent is not some sort of task (such as a blocking
+          * ordered task) that would prevent change.
+          * @note This method is almost never used by the task actor itself. It is intended to 
+          *   support game behavior or changes to a user interface.  
+          */ 
+         virtual bool IsCurrentlyMutable();
+
+         /** 
+          * Similar to RequestScoreChange() except that in this case, there is no intent to 
+          * actually change the score. This is used by IsCurrentlyMutable() in order to 
+          * give a parent task a change to say that a child task is not in fact in a mutable state.
+          * Calling this method should have NO side effects whatsoever on either the parent or the child. 
+          * @param childTask The child task in question.
+          * @see RequestScoreChange
+          */
+         virtual bool IsChildTaskAllowedToChange(const TaskActorProxy &childTask) const;
 
          /**
           * This method is called when a task property is changed.

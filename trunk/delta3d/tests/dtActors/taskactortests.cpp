@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * @author Matthew W. Campbell
+ * Matthew W. Campbell, Curtiss Murphy
  */
 #include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
@@ -59,6 +59,8 @@ class TaskActorTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestGameEventTaskActor);
       CPPUNIT_TEST(TestRollupTaskActor);
       CPPUNIT_TEST(TestOrderedTaskActor);
+      CPPUNIT_TEST(TestFailedAndComplete);
+      CPPUNIT_TEST(TestMutable);
    CPPUNIT_TEST_SUITE_END();
 
    public:
@@ -72,6 +74,8 @@ class TaskActorTests : public CPPUNIT_NS::TestFixture
       void TestGameEventTaskActor();
       void TestRollupTaskActor();
       void TestOrderedTaskActor();
+      void TestFailedAndComplete();
+      void TestMutable();
 
    private:
       void CreateParentChildProxies();
@@ -134,13 +138,15 @@ void TaskActorTests::TestTaskActorDefaultValues()
          mGameManager->FindActorType("dtcore.Tasks","Task Actor");
       CPPUNIT_ASSERT_MESSAGE("Could not find actor type.",taskActorType.valid());
 
-      dtCore::RefPtr<dtDAL::ActorProxy> proxy =
-            mGameManager->CreateActor(*taskActorType);
+      dtCore::RefPtr<dtActors::TaskActorProxy> proxy;
+      mGameManager->CreateActor(*taskActorType, proxy);
       CPPUNIT_ASSERT_MESSAGE("Could not create task actor proxy.",proxy.valid());
 
       //Make sure the correct properties exist on the proxy.
       CPPUNIT_ASSERT_MESSAGE("Task actor should have a description property.",
          proxy->GetProperty("Description") != NULL);
+      CPPUNIT_ASSERT_MESSAGE("Task actor should have a display name property.",
+         proxy->GetProperty("DisplayName") != NULL);
       CPPUNIT_ASSERT_MESSAGE("Task actor should have a passing score property.",
          proxy->GetProperty("PassingScore") != NULL);
       CPPUNIT_ASSERT_MESSAGE("Task actor should have a score property.",
@@ -153,6 +159,10 @@ void TaskActorTests::TestTaskActorDefaultValues()
          static_cast<dtDAL::StringActorProperty *>(proxy->GetProperty("Description"));
       CPPUNIT_ASSERT_MESSAGE("Task description should be empty.",descProp->GetValue().empty());
 
+      dtDAL::StringActorProperty *displayNameProp =
+         static_cast<dtDAL::StringActorProperty *>(proxy->GetProperty("DisplayName"));
+      CPPUNIT_ASSERT_MESSAGE("Task display name should be empty.",displayNameProp->GetValue().empty());
+
       dtDAL::FloatActorProperty *valueProp =
          static_cast<dtDAL::FloatActorProperty *>(proxy->GetProperty("PassingScore"));
       CPPUNIT_ASSERT_MESSAGE("Task passing score should be 1.0.",valueProp->GetValue() == 1.0);
@@ -162,6 +172,13 @@ void TaskActorTests::TestTaskActorDefaultValues()
 
       valueProp = static_cast<dtDAL::FloatActorProperty *>(proxy->GetProperty("Weight"));
       CPPUNIT_ASSERT_MESSAGE("Task weight should be 1.0.",valueProp->GetValue() == 1.0f);
+
+      dtActors::TaskActor *actor = dynamic_cast<dtActors::TaskActor*>(proxy->GetActor());
+      CPPUNIT_ASSERT_MESSAGE("Complete should be false.", !actor->IsComplete());
+      CPPUNIT_ASSERT_MESSAGE("Failed should be false.", !actor->IsFailed());
+      CPPUNIT_ASSERT_MESSAGE("Initial completed time should be -1.0.", actor->GetCompletedTimeStamp() == -1.0);
+
+      CPPUNIT_ASSERT_MESSAGE("Should be mutable at first.", proxy->IsCurrentlyMutable());
    }
    catch (const dtUtil::Exception& e)
    {
@@ -546,6 +563,7 @@ void TaskActorTests::TestRollupTaskActor()
       CPPUNIT_ASSERT_MESSAGE("Rollup task should have been marked complete.",
                              rollupTaskProxy->GetProperty("Complete")->ToString() == "true");
 
+
       //Reset the event and rollup tasks..
       dtActors::TaskActor *actor = dynamic_cast<dtActors::TaskActor*>(rollupTaskProxy->GetActor());
       actor->Reset();
@@ -710,5 +728,195 @@ void TaskActorTests::TestOrderedTaskActor()
    }
 }
 
+
+///////////////////////////////////////////////////////////////////////////////
+void TaskActorTests::TestFailedAndComplete()
+{
+   try
+   {
+      dtCore::RefPtr<const dtDAL::ActorType> taskActorType =
+         mGameManager->FindActorType("dtcore.Tasks","Task Actor");
+      CPPUNIT_ASSERT_MESSAGE("Could not find actor type.",taskActorType.valid());
+
+      dtCore::RefPtr<const dtDAL::ActorType> rollupActorType = 
+         mGameManager->FindActorType("dtcore.Tasks","Rollup Task Actor");
+      CPPUNIT_ASSERT_MESSAGE("Could not find actor type for rollup task.",rollupActorType.valid());
+
+
+      dtCore::RefPtr<dtActors::TaskActorProxy> proxy;
+      mGameManager->CreateActor(*taskActorType, proxy);
+      CPPUNIT_ASSERT_MESSAGE("Could not create task actor proxy.",proxy.valid());
+
+      dtActors::TaskActor *actor = dynamic_cast<dtActors::TaskActor*>(proxy->GetActor());
+
+      double completeTime = actor->GetCompletedTimeStamp();
+
+      /////  TEST SETTING TO FAIL
+
+      // Basic setting to FAIL .  
+      actor->SetFailed(true);
+      CPPUNIT_ASSERT_MESSAGE("Should be failed 1.", actor->IsFailed());
+      CPPUNIT_ASSERT_MESSAGE("TimeStamp should have changed when marked to fail 1.", 
+         actor->GetCompletedTimeStamp() != completeTime);
+      CPPUNIT_ASSERT_MESSAGE("Should not be complete 1.", !actor->IsComplete());
+
+      // Try to mark complete while already failed
+      actor->SetCompletedTimeStamp(992.589); // set to something testable
+      actor->SetComplete(true);
+      CPPUNIT_ASSERT_MESSAGE("Should still be failed 2.", actor->IsFailed());
+      CPPUNIT_ASSERT_MESSAGE("Should not be complete 2.", !actor->IsComplete());
+      CPPUNIT_ASSERT_MESSAGE("Time stamp should not have changed 2.", actor->GetCompletedTimeStamp() == 992.589);
+
+      // Try to set to failed again, should not change timestamp.
+      actor->SetFailed(true);
+      CPPUNIT_ASSERT_MESSAGE("Should be failed 3.", actor->IsFailed());
+      CPPUNIT_ASSERT_MESSAGE("Should not be complete 3.", !actor->IsComplete());
+      CPPUNIT_ASSERT_MESSAGE("Time stamp should not have changed 3.", actor->GetCompletedTimeStamp() == 992.589);
+      CPPUNIT_ASSERT_MESSAGE("A Score Change Request on a failed task should be denied", 
+         !proxy->RequestScoreChange(*proxy, *proxy));
+
+      // Test Mutable
+      CPPUNIT_ASSERT_MESSAGE("We are failed, so should not be mutable", !proxy->IsCurrentlyMutable());
+
+
+      /////  TEST SETTING TO COMPLETE
+
+      // RESET and test setting to Complete
+      actor->Reset(); 
+      completeTime = actor->GetCompletedTimeStamp();
+      actor->SetComplete(true);
+      CPPUNIT_ASSERT_MESSAGE("Should be complete 4.", actor->IsComplete());
+      CPPUNIT_ASSERT_MESSAGE("TimeStamp should have changed when marked to complete 4.", 
+         actor->GetCompletedTimeStamp() != completeTime);
+      CPPUNIT_ASSERT_MESSAGE("Should not be failed 4.", !actor->IsFailed());
+      CPPUNIT_ASSERT_MESSAGE("A Score Change Request on a complete task should be allowed", 
+         proxy->RequestScoreChange(*proxy, *proxy));
+
+      // Try to mark failed while already complete
+      actor->SetCompletedTimeStamp(8484.233); // set to something testable
+      actor->SetFailed(true);
+      CPPUNIT_ASSERT_MESSAGE("Should still be complete 5.", actor->IsComplete());
+      CPPUNIT_ASSERT_MESSAGE("Should not be failed 5.", !actor->IsFailed());
+      CPPUNIT_ASSERT_MESSAGE("Time stamp should not have changed 5.", actor->GetCompletedTimeStamp() == 8484.233);
+
+
+      // Try to set to complete again, should not change timestamp.
+      actor->SetComplete(true);
+      CPPUNIT_ASSERT_MESSAGE("Should still be complete 6.", actor->IsComplete());
+      CPPUNIT_ASSERT_MESSAGE("Should not be failed 6.", !actor->IsFailed());
+      CPPUNIT_ASSERT_MESSAGE("Time stamp should not have changed 6.", actor->GetCompletedTimeStamp() == 8484.233);
+
+      // Test Mutable
+      CPPUNIT_ASSERT_MESSAGE("We are complete, so should not be mutable", !proxy->IsCurrentlyMutable());
+
+      /// TEST the PARENT - CHILD behavior.
+
+      //Create our parent rollup task...
+      dtCore::RefPtr<dtActors::TaskActorProxy> rollupTaskProxy; 
+      mGameManager->CreateActor(*rollupActorType, rollupTaskProxy);
+      CPPUNIT_ASSERT_MESSAGE("Could not create rollup task actor proxy.", rollupTaskProxy.valid());
+      dtActors::TaskActor *parentActor;
+      rollupTaskProxy->GetActor(parentActor);
+      // add the child
+      rollupTaskProxy->AddSubTask(*proxy);
+
+      // test a complete parent
+      CPPUNIT_ASSERT_MESSAGE("RequestScoreChange should be ok if parent is not failed.", 
+         proxy->RequestScoreChange(*proxy,*proxy));
+
+      // Test a failed parent
+      parentActor->SetFailed(true);
+      CPPUNIT_ASSERT_MESSAGE("RequestScoreChange should fail if parent is failed.", 
+         !proxy->RequestScoreChange(*proxy,*proxy));
+
+      // Also, since we have a rollup task (below tests use ordered task), go ahead and test SetFailed().
+      CPPUNIT_ASSERT_MESSAGE("Child Task should NOT be mutable when rollup parent is failed.", !proxy->IsCurrentlyMutable());
+   }
+   catch (const dtUtil::Exception& e)
+   {
+      CPPUNIT_FAIL(e.ToString());
+   }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void TaskActorTests::TestMutable()
+{
+   try
+   {
+      dtCore::RefPtr<const dtDAL::ActorType> taskActorType =
+         mGameManager->FindActorType("dtcore.Tasks","Task Actor");
+      CPPUNIT_ASSERT_MESSAGE("Could not find actor type.",taskActorType.valid());
+
+      dtCore::RefPtr<const dtDAL::ActorType> orderedActorType = mGameManager->FindActorType("dtcore.Tasks","Ordered Task Actor");
+      CPPUNIT_ASSERT_MESSAGE("Could not find actor type for ordered task.",orderedActorType.valid());
+
+      // Create our test child task
+      dtCore::RefPtr<dtActors::TaskActorProxy> childProxy1;
+      mGameManager->CreateActor(*taskActorType, childProxy1);
+      CPPUNIT_ASSERT_MESSAGE("Could not create task actor proxy.",childProxy1.valid());
+      mGameManager->AddActor(*childProxy1,false,false);
+
+      // Child 2 task
+      dtCore::RefPtr<dtActors::TaskActorProxy> childProxy2;
+      mGameManager->CreateActor(*taskActorType, childProxy2);
+      CPPUNIT_ASSERT_MESSAGE("Could not create task actor proxy.",childProxy2.valid());
+      mGameManager->AddActor(*childProxy2,false,false);
+
+      //Create our test ordered task...
+      dtCore::RefPtr<dtActors::TaskActorProxy> orderedTaskProxy;
+      mGameManager->CreateActor(*orderedActorType, orderedTaskProxy);
+      CPPUNIT_ASSERT_MESSAGE("Could not create ordered task actor proxy.", orderedTaskProxy.valid());
+      mGameManager->AddActor(*orderedTaskProxy,false,false);
+
+      dtActors::TaskActor *childActor1 = dynamic_cast<dtActors::TaskActor*>(childProxy1->GetActor());
+      dtActors::TaskActor *childActor2 = dynamic_cast<dtActors::TaskActor*>(childProxy2->GetActor());
+
+      CPPUNIT_ASSERT_MESSAGE("Should be mutable on creation.", childProxy1->IsCurrentlyMutable());
+
+      // Set to Failed, should not be mutable
+      childActor1->SetFailed(true);
+      CPPUNIT_ASSERT_MESSAGE("Failed should make it not mutable.", !childProxy1->IsCurrentlyMutable());
+
+      childActor1->Reset();
+      CPPUNIT_ASSERT_MESSAGE("Double checking we're mutable again.", childProxy1->IsCurrentlyMutable());
+
+      // Test Complete making us not mutable
+      childActor1->SetComplete(true);
+      CPPUNIT_ASSERT_MESSAGE("Complete should make it not mutable.", !childProxy1->IsCurrentlyMutable());
+
+      childActor1->Reset();
+
+      // Test mutable working on an ORDERED Task. 
+      // Add child 1 and child 2, then try to manipulate 2 before setting 1.
+      orderedTaskProxy->AddSubTask(*childProxy1);
+      orderedTaskProxy->AddSubTask(*childProxy2);
+
+      // 1 should be mutable
+      CPPUNIT_ASSERT_MESSAGE("1st child task should be mutable.", childProxy1->IsCurrentlyMutable());
+
+      // 2 should not be mutable.
+      CPPUNIT_ASSERT_MESSAGE("2nd child task should make it not mutable until 1 is complete.", !childProxy2->IsCurrentlyMutable());
+
+      // Make 1 complete and check 2 again. It should now be mutable
+      childActor1->SetComplete(true);
+      CPPUNIT_ASSERT_MESSAGE("2nd child task should now be mutable since 1 is complete.", childProxy2->IsCurrentlyMutable());
+      CPPUNIT_ASSERT_MESSAGE("1st child task should NOT be mutable since it is already complete.", !childProxy1->IsCurrentlyMutable());
+
+      // Fail #2 and it should not be mutable anymore
+      childActor2->SetFailed(true);
+      CPPUNIT_ASSERT_MESSAGE("2nd child task should not be mutable if it's failed.", !childProxy2->IsCurrentlyMutable());
+      childActor2->SetFailed(false);
+
+      // Fail the parent and child 2 should not be mutable anymore
+      dtActors::TaskActor *orderedTaskActor;
+      orderedTaskProxy->GetActor(orderedTaskActor);
+      orderedTaskActor->SetFailed(true);
+      CPPUNIT_ASSERT_MESSAGE("2nd child task should NOT be mutable when ordered parent is failed.", !childProxy2->IsCurrentlyMutable());
+   }
+   catch (const dtUtil::Exception& e)
+   {
+      CPPUNIT_FAIL(e.ToString());
+   }
+}
 
 
