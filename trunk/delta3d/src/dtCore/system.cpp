@@ -27,15 +27,23 @@ namespace dtCore
 
    ////////////////////////////////////////////////////////////////////////////////
    System::System()
-   : mSimulationTime(0.0)
+   : mRealClockTime(0)
+   , mSimulationClockTime(0)
+   , mLastDrawClockTime(0)
+   , mSimulationTime(0.0)
+   , mCorrectSimulationTime(0.0)
+   , mFrameStep(1.0f/60.0f)
    , mTimeScale(1.0f)
+   , mDt(0.0)
+   , mMaxTimeBetweenDraws(100000)
+   , mUseFixedTimeStep(false)
    , mRunning(false)
    , mShutdownOnWindowClose(true)
    , mPaused(false)
+   , mWasPaused(false)
    , mSystemStages(STAGES_DEFAULT)
    {
       mTickClockTime = mClock.Tick();
-      mDt = 0.0;
       RegisterInstance(this);
    }
 
@@ -62,6 +70,13 @@ namespace dtCore
    ////////////////////////////////////////////////////////////////////////////////
    void System::Destroy()
    {
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void System::SetSimulationTime(double newTime) 
+   { 
+      mSimulationTime = newTime;
+      mCorrectSimulationTime = newTime;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -111,17 +126,50 @@ namespace dtCore
       {
          double userData[2] = { deltaSimTime, deltaRealTime };
          SendMessage( "frame", userData );
-   //      CameraFrame();
       }
-
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void System::Pause( const double deltaRealTime )
    {
       SendMessage( "pause", const_cast<double*>(&deltaRealTime) );      
+   }
 
-   //   CameraFrame();
+   ////////////////////////////////////////////////////////////////////////////////
+   void System::SystemStepFixed()
+   {
+      double mSimDt = mDt * mTimeScale;         
+      if(mWasPaused == false)
+      {
+         mCorrectSimulationTime += mSimDt;
+      }
+      else
+      {
+         mCorrectSimulationTime += mFrameStep;
+         mWasPaused = false;
+      }
+
+      if (mCorrectSimulationTime + 0.001f < mSimulationTime + mFrameStep)
+      {
+         // we tried a sleep here, but even passing 1 millisecond was to long.
+         AppSleep(1);
+         return;
+      }
+
+      mSimulationTime += mFrameStep;
+      mSimulationClockTime += Timer_t(mFrameStep * 1000000); 
+
+      PreFrame(mFrameStep, mDt);
+
+      //if we're ahead of the desired sim time, then draw.
+      if (mSimulationTime >= mCorrectSimulationTime 
+         || (mRealClockTime - mLastDrawClockTime) > mMaxTimeBetweenDraws)
+      {
+         mLastDrawClockTime = mRealClockTime;
+         FrameSynch(mFrameStep, mDt);
+         Frame(mFrameStep, mDt);
+      }
+      PostFrame(mFrameStep, mDt);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -134,24 +182,31 @@ namespace dtCore
 
       if( mPaused )
       {
+         mWasPaused = true;
          Pause(mDt);
          FrameSynch(0.0, mDt);
          Frame(0.0, mDt);
       }
       else
       {
-         //scale time.
          double mSimDt = mDt * mTimeScale;         
-         mSimulationTime += mSimDt;
          mRealClockTime  += Timer_t(mDt * 1000000);
-         mSimulationClockTime += Timer_t(mSimDt * 1000000); 
 
-         PreFrame(mSimDt, mDt);
-         FrameSynch(mSimDt, mDt);
-         Frame(mSimDt, mDt);
-         PostFrame(mSimDt, mDt);
+         if(!mUseFixedTimeStep)
+         {
+            mSimulationTime += mSimDt;
+            mSimulationClockTime += Timer_t(mSimDt * 1000000); 
+
+            PreFrame(mSimDt, mDt);
+            FrameSynch(mSimDt, mDt);
+            Frame(mSimDt, mDt);
+            PostFrame(mSimDt, mDt);
+         }
+         else
+         {
+            SystemStepFixed();
+         }
       }
-
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -170,13 +225,7 @@ namespace dtCore
 
          mRunning = mRunning && areGraphicsWindow;
       }
-
-   //   for( int i = 0; i < DeltaWin::GetInstanceCount(); i++ )
-   //   {
-   //      DeltaWin::GetInstance(i)->Update();
-   //   }
    }
-
 
    ////////////////////////////////////////////////////////////////////////////////
    void System::Run()
@@ -186,6 +235,7 @@ namespace dtCore
       time_t realTime;
       time(&realTime); 
       mRealClockTime = realTime * 1000000;
+      mLastDrawClockTime = mRealClockTime;
       mSimulationClockTime = mRealClockTime;
 
       while( mRunning )
@@ -206,6 +256,7 @@ namespace dtCore
       time_t realTime;
       time(&realTime); 
       mRealClockTime = realTime * 1000000;
+      mLastDrawClockTime = mRealClockTime;
       mSimulationClockTime = mRealClockTime;
    }
 
@@ -225,6 +276,7 @@ namespace dtCore
          time_t realTime;
          time(&realTime); 
          mRealClockTime = realTime * 1000000;
+         mLastDrawClockTime = mRealClockTime;
          mSimulationClockTime = mRealClockTime;
          first = false;
       }
@@ -268,12 +320,11 @@ namespace dtCore
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    void System::Config()
    {
       if (dtUtil::Bits::Has(mSystemStages, System::STAGE_CONFIG))
       {
-   //      CameraFrame();
-
          SendMessage("configure");
       }
    }

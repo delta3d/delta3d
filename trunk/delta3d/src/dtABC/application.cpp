@@ -51,6 +51,10 @@ XERCES_CPP_NAMESPACE_USE
 
 IMPLEMENT_MANAGEMENT_LAYER(Application)
 
+const std::string Application::SIM_FRAME_TIME = "System.SimFrameTime";
+const std::string Application::MAX_TIME_BETWEEN_DRAWS = "System.MaxTimeBetweenDraws";
+const std::string Application::USE_FIXED_TIME_STEP = "System.UseFixedTimeStep";
+
 ///////////////////////////////////////////////////////////////////////////////
 Application::Application(const std::string& configFilename) 
 :  BaseABC("Application"),
@@ -75,6 +79,39 @@ Application::Application(const std::string& configFilename)
       {
          LOG_WARNING("Application: Error loading config file, using defaults instead.");
       }
+      ReadSystemProperties();
+   }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void Application::ReadSystemProperties()
+{
+   std::string value;
+
+   value = GetConfigPropertyValue(SIM_FRAME_TIME, "");
+
+   if(!value.empty())
+   {
+      double simFrameTime = dtUtil::ToDouble(value);
+      dtCore::System::GetInstance().SetFrameStep(1 / simFrameTime);
+   }
+   
+   value.clear();
+
+   value = GetConfigPropertyValue(MAX_TIME_BETWEEN_DRAWS, "");
+   if(!value.empty())
+   {
+      double timeBetween = dtUtil::ToDouble(value);
+      dtCore::System::GetInstance().SetMaxTimeBetweenDraws(timeBetween);
+   }
+
+   value.clear();
+
+   value = GetConfigPropertyValue(USE_FIXED_TIME_STEP, "");
+   if(!value.empty())
+   {
+      bool useFixed = value == "True" || value == "1" || value == "true";
+      dtCore::System::GetInstance().SetUseFixedTimeStep(useFixed);
    }
 }
 

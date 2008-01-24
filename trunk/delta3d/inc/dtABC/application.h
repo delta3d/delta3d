@@ -69,6 +69,10 @@ namespace dtABC
    public:
       Application( const std::string& configFilename = "" );
 
+      static const std::string SIM_FRAME_TIME;
+      static const std::string MAX_TIME_BETWEEN_DRAWS;
+      static const std::string USE_FIXED_TIME_STEP;
+
    public:
       ///Start the Application
       virtual void Run();
@@ -154,8 +158,9 @@ namespace dtABC
       };
 
       
-      dtCore::RefPtr<osgViewer::CompositeViewer> mCompositeViewer;
+      void ReadSystemProperties();
 
+      dtCore::RefPtr<osgViewer::CompositeViewer> mCompositeViewer;
       
       dtCore::RefPtr<dtCore::GenericKeyboardListener> mKeyboardListener;
       
