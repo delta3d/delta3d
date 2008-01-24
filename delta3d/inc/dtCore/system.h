@@ -174,14 +174,14 @@ namespace dtCore
        * @note the clock time is a 64 bit int in microseconds
        * @return the current real clock in microseconds since January 1, 1970
        */
-      dtCore::Timer_t GetRealClockTime() const { return mRealClockTime; }
+      Timer_t GetRealClockTime() const { return mRealClockTime; }
 
       /**
        * @note the simulation clock time is a 64 bit int in microseconds
        * @return the current simulation clock in the same format as the real clock time but can be changed
        *         and follows the time scale.
        */
-      dtCore::Timer_t GetSimulationClockTime() const { return mSimulationClockTime; }
+      Timer_t GetSimulationClockTime() const { return mSimulationClockTime; }
       
       /**
        * Sets the simulation wall clock time.  This is used for things like time of day.
@@ -199,24 +199,42 @@ namespace dtCore
        * Sets the simulation time.  It is assumed that part of the simulation is using this exact value to keep track of things.
        * @param newTime the new time in seconds since the start of the simulation for the simualtion time.
        */
-      void SetSimulationTime(double newTime) { mSimulationTime = newTime; }
+      void SetSimulationTime(double newTime);
+
+      /// this is the amount it should step by, only valid in mUseFixedTimeStep == true
+      void SetFrameStep(double newTime) {mFrameStep = newTime;}
+      
+      /// your minimum number of frames you want it to draw, only valid in mUseFixedTimeStep == true
+      void SetMaxTimeBetweenDraws(double newTime) {mMaxTimeBetweenDraws = newTime * 1000000;}
+
+      /// Set to make the system step by the fixed amount of time.
+      void SetUseFixedTimeStep(bool value) {mUseFixedTimeStep = value;}
+
    private:
 
       System(); ///<private
       static System *mSystem;   ///<The System pointer
       static bool mInstanceFlag;///<Have we created a System yet?
-      dtCore::Timer mClock;
+      Timer mClock;
 
       /// time keeping variable.  This clock is used for calculating accurate time deltas using
       /// system dependent algorithms.  The value is not necessarily human understandable.
-      dtCore::Timer_t mTickClockTime;
+      Timer_t mTickClockTime;
       
       //The real world time (UTC) and a simulated, settable version of it. They are both
       // in microseconds since January 1, 1970.
-      dtCore::Timer_t mRealClockTime, mSimulationClockTime;
+      Timer_t mRealClockTime, mSimulationClockTime;
+      Timer_t mLastDrawClockTime;
       double mSimulationTime;
+      double mCorrectSimulationTime;
+      double mFrameStep;
       double mTimeScale;
       double mDt;
+      double mMaxTimeBetweenDraws;
+      bool mUseFixedTimeStep;
+
+      // will step the system with a fixed time step.
+      void SystemStepFixed();
 
       /**
        * @param deltaSimTime The change in simulation time is seconds.
@@ -257,6 +275,7 @@ namespace dtCore
       bool mRunning; ///<Are we currently running?      
       bool mShutdownOnWindowClose;
       bool mPaused;
+      bool mWasPaused;
       
       SystemStageFlags mSystemStages;
    };

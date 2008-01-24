@@ -34,6 +34,7 @@
 #include <dtGame/messagetype.h>
 #include <dtGame/basemessages.h>
 
+#include <dtCore/system.h>
 namespace dtGame
 {
    IMPLEMENT_ENUM(MapChangeStateData::MapChangeState);
@@ -63,6 +64,9 @@ namespace dtGame
          LOGN_ERROR("gamemanager.cpp", msg);
          throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION, msg, __FUNCTION__, __LINE__);
       }
+
+      // set the app to pause so we dont get a huge timestep when we're through
+      mGameManager->SetPaused(true);
 
       mOldMapNames = oldMapNames;
       mNewMapNames = newMapNames;
@@ -288,7 +292,10 @@ namespace dtGame
 
          if (mEnableDatabasePaging)
             mGameManager->GetScene().EnablePaging();
-            
+         
+         // set the app to unpause so time stepping is correct
+         mGameManager->SetPaused(false);
+
          SendMapMessage(MessageType::INFO_MAP_LOADED, mNewMapNames);
          SendMapMessage(MessageType::INFO_MAP_CHANGED, mNewMapNames);
          mCurrentState = &MapChangeState::IDLE;

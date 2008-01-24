@@ -1,7 +1,13 @@
 #include <prefix/dtcoreprefix-src.h>
 #include <dtCore/timer.h>
 
-
+#ifdef DELTA_WIN32
+   #include <Windows.h>
+   void dtCore::AppSleep(unsigned int milliseconds){Sleep(milliseconds);}
+#else
+   #include <unistd.h>
+   void dtCore::AppSleep(unsigned int milliseconds){usleep((milliseconds) * 1000);}
+#endif
 namespace dtCore
 {
 
