@@ -16,6 +16,7 @@
 #include <osgDB/ReaderWriter>
 #include <osgDB/FileNameUtils>
 #include <osg/ColorMask>
+#include <osg/MatrixTransform>
 
 #include <dtCore/system.h>
 #include <dtCore/flymotionmodel.h>
@@ -29,7 +30,9 @@
 #include <dtCore/mouse.h>
 #include <dtCore/object.h>
 #include <dtUtil/log.h>
-#include <dtChar/dtchar.h>
+#ifndef NO_DTCHAR
+   #include <dtChar/dtchar.h>
+#endif
 #include <dtDAL/project.h>
 #include <dtDAL/map.h>
 
