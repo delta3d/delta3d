@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * Matthew W. Campbell
+ * Matthew W. Campbell, Curtiss Murphy
  */
 #include <dtActors/taskactor.h>
 
@@ -38,6 +38,7 @@ namespace dtActors
    TaskActor::TaskActor(dtGame::GameActorProxy &proxy) : dtGame::GameActor(proxy)
    {
       SetName("Task");
+      //SetDisplayName("Display Name");
       Reset();
    }
 
@@ -48,24 +49,87 @@ namespace dtActors
    //////////////////////////////////////////////////////////////////////////////
    void TaskActor::SetComplete(bool flag)
    {
-      if (flag)
+      if (flag == mComplete) // Do nothing including no Actor Update or change to time stamp.
+      {      
+      }
+      // Complete and Failed are mutually exclusive - makes a trinary state (complete, incomplete, and failed)
+      else if (flag && IsFailed())
       {
-         if (GetGameActorProxy().GetGameManager() == NULL)
-         {
-            LOG_ERROR("Error setting complete flag.  Game Manager was invalid on this actor.");
-         }
-         else
-         {
-            double currSimTime = GetGameActorProxy().GetGameManager()->GetSimulationTime();
-            SetCompletedTimeStamp(currSimTime);
-         }
+         LOG_WARNING("Error setting complete since we are already marked Failed.");
       }
       else
       {
-         SetCompletedTimeStamp(-1.0);
-      }
+         // If setting, then we need to get a new time stamp
+         if (flag)
+         {
+            if (GetGameActorProxy().GetGameManager() == NULL)
+            {
+               LOG_ERROR("Error setting complete flag on Task Actor.  Game Manager was invalid on this actor.");
+            }
+            else
+            {
+               double currSimTime = GetGameActorProxy().GetGameManager()->GetSimulationTime();
+               SetCompletedTimeStamp(currSimTime);
+            }
+         }
+         // don't overwrite complete time if we are already failed. Allows setting this back to false.
+         else if (!IsFailed()) 
+         {
+            SetCompletedTimeStamp(-1.0);
+         }
 
-      mComplete = flag;
+         mComplete = flag;
+
+         // Significant change, so notify the world  
+         if (GetGameActorProxy().GetGameManager() == NULL)
+         {
+            TaskActorProxy &proxy = static_cast<TaskActorProxy&>(GetGameActorProxy());
+            proxy.NotifyActorUpdate();
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+   void TaskActor::SetFailed(bool flag)
+   {
+      if (flag == mFailed) // Do nothing including no Actor Update or change to time stamp. 
+      {   
+      }
+      // Complete and Failed are mutually exclusive - makes a trinary state (complete, incomplete, and failed)
+      else if (flag && IsComplete())
+      {
+         LOG_WARNING("Error setting failed since we are already marked Complete.");
+      }
+      else
+      {
+         // If setting, then we need to get a new time stamp
+         if (flag)
+         {
+            if (GetGameActorProxy().GetGameManager() == NULL)
+            {
+               LOG_ERROR("Error setting failed flag on Task Actor.  Game Manager was invalid on this actor.");
+            }
+            else
+            {
+               double currSimTime = GetGameActorProxy().GetGameManager()->GetSimulationTime();
+               SetCompletedTimeStamp(currSimTime);
+            }
+         }
+         // don't overwrite complete time if we are already failed. Allows setting this back to false.
+         else if (!IsComplete()) // don't overwrite complete time if we are already complete
+         {
+            SetCompletedTimeStamp(-1.0);
+         }
+
+         mFailed = flag;
+
+         // Significant change, so notify the world  
+         if (GetGameActorProxy().GetGameManager() == NULL)
+         {
+            TaskActorProxy &proxy = static_cast<TaskActorProxy&>(GetGameActorProxy());
+            proxy.NotifyActorUpdate();
+         }
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -76,6 +140,7 @@ namespace dtActors
       mWeight = 1.0f;
       mCompletedTimeStamp = -1.0;
       mComplete = false;
+      mFailed = false;
       mNotifyLMSOnUpdate = false;
 
       TaskActorProxy &proxy = static_cast<TaskActorProxy&>(GetGameActorProxy());
@@ -111,6 +176,12 @@ namespace dtActors
          dtDAL::MakeFunctor(task,&TaskActor::SetDescription),
          dtDAL::MakeFunctorRet(task,&TaskActor::GetDescription),
          "Sets/gets the description of this task.",GROUPNAME));
+
+      //DisplayName...
+      AddProperty(new dtDAL::StringActorProperty("DisplayName","Display Name",
+         dtDAL::MakeFunctor(task,&TaskActor::SetDisplayName),
+         dtDAL::MakeFunctorRet(task,&TaskActor::GetDisplayName),
+         "Sets/gets the display name (ie. user viewable) of this task.",GROUPNAME));
 
       //Passing Score...
       AddProperty(new dtDAL::FloatActorProperty("PassingScore","Passing Score",
@@ -182,12 +253,15 @@ namespace dtActors
    //////////////////////////////////////////////////////////////////////////////
    bool TaskActorProxy::RequestScoreChange(const TaskActorProxy &childTask, const TaskActorProxy &origTask)
    {
-      //Default implementation just returns true by default if this task is
-      //a top level task, else just passes the request up the chain.  Note, the original
-      //task is the task that this method was first called on.
-      if (GetParentTask() != NULL)
+      TaskActor *taskActor; 
+      GetActor(taskActor);
+
+      // If we are failed, then the request is denied.
+      if (taskActor->IsFailed())
+         return false;
+      else if (GetParentTask() != NULL) // ask our parent if we have one
          return GetParentTask()->RequestScoreChange(*this,origTask);
-      else
+      else // a root task returns true by default
          return true;
    }
 
@@ -197,6 +271,34 @@ namespace dtActors
       //Default implementation just needs to pass the notification up the chain.
       if (GetParentTask() != NULL)
          GetParentTask()->NotifyScoreChanged(*this);
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+   bool TaskActorProxy::IsCurrentlyMutable()
+   {
+      // Default implementation goes on the premise that a task is considered mutable if 
+      // if it not already complete or failed and if our parent says we're allowed to change.
+      TaskActor *taskActor;
+      GetActor(taskActor);
+      bool bResult = !taskActor->IsComplete() && !taskActor->IsFailed() && IsChildTaskAllowedToChange(*this);
+
+      return bResult;
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+   bool TaskActorProxy::IsChildTaskAllowedToChange(const TaskActorProxy &childTask) const
+   {
+      const TaskActor *myActor;
+      GetActor(myActor);
+
+      // Note, our child is allowed to change if we are complete, since a passing score could 
+      // be improved, but not if we are failed, since we want to hold failure steady.
+      if (myActor->IsFailed())
+         return false;
+      else if (GetParentTask() != NULL) // ask our parent if we have one. 
+         return GetParentTask()->IsChildTaskAllowedToChange(childTask);
+      else // default is to return true
+         return true;
    }
 
    //////////////////////////////////////////////////////////////////////////////

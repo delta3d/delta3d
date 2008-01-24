@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * Matthew W. Campbell
+ * Matthew W. Campbell, Curtiss Murphy
  */
 #include <dtActors/taskactorgameevent.h>
 #include <dtDAL/enginepropertytypes.h>
@@ -71,7 +71,7 @@ namespace dtActors
       //is track the number of times we got the event, and if it reaches the min occurances
       //attempt to mark ourselves complete.
       TaskActorProxy &proxy = static_cast<TaskActorProxy&>(GetGameActorProxy());
-      if (!IsComplete())
+      if (!IsComplete() && !IsFailed())
       {
          if (proxy.RequestScoreChange(proxy,proxy))
          {

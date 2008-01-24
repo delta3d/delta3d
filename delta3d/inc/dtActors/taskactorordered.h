@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * Matthew W. Campbell
+ * Matthew W. Campbell, Curtiss Murphy
  */
 #ifndef DELTA_TASKACTORORDERED
 #define DELTA_TASKACTORORDERED
@@ -95,6 +95,7 @@ namespace dtActors
           */
          virtual void Reset();
 
+
       protected:
 
          /**
@@ -148,6 +149,20 @@ namespace dtActors
           */
          virtual void NotifyScoreChanged(const TaskActorProxy &childTask);
 
+         /** 
+          * Similar to RequestScoreChange() except that in this case, there is no intent to 
+          * actually change the score. This is used by IsCurrentlyMutable() in order to 
+          * give a parent task a change to say that a child task is not in fact in a mutable state.
+          * Calling this method should have NO side effects whatsoever on either the parent or the child. 
+          *
+          * Overridden from base behavior to also check to see if the task in question is the next
+          * task in the ordered list. If not, it returns false. 
+          *
+          * @param childTask The child task in question.
+          * @see RequestScoreChange
+          */
+         virtual bool IsChildTaskAllowedToChange(const TaskActorProxy &childTask) const;
+
          /**
           * Gets the last task that requested a score change out of order.
           * @return The "bad" task.
@@ -160,6 +175,7 @@ namespace dtActors
           * Destroys the proxy.
           */
          virtual ~TaskActorOrderedProxy();
+
 
          /**
           * Create the underlying rollup task actor to be managed by this proxy.
