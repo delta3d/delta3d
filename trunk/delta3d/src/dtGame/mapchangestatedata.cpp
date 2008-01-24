@@ -66,7 +66,7 @@ namespace dtGame
       }
 
       // set the app to pause so we dont get a huge timestep when we're through
-      mGameManager->SetPaused(true);
+      //mGameManager->SetPaused(true);
 
       mOldMapNames = oldMapNames;
       mNewMapNames = newMapNames;

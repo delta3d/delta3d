@@ -208,7 +208,7 @@ void Character::OnMessage( Base::MessageData* data )
    
    if( data->message == "pause" )
    {
-      if( GetMatrixNode() != NULL )
+      if( GetMatrixNode() != NULL && GetMatrixNode()->getNumChildren() > 0)
       {
          if( osg::Node* n1 = GetMatrixNode()->getChild(0) )
          {
