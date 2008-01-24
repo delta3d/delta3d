@@ -20,6 +20,7 @@
 
 #include <osg/Quat>
 #include <dtUtil/matrixutil.h>
+#include <cmath>
 
 namespace dtCore
 {
@@ -509,8 +510,9 @@ void FPSMotionModel::OnMessage(MessageData *data)
 void FPSMotionModel::UpdateMouse(const double deltaTime)
 {
    const bool calc_new_heading_pitch = !mUseMouseButtons || mMouse->GetButtonState(Mouse::LeftButton);
+   const bool mouse_has_moved = (std::abs(mLookLeftRightCtrl) > 0.0f || std::abs(mLookUpDownCtrl) > 0.0f);
 
-   if (calc_new_heading_pitch)
+   if(calc_new_heading_pitch && mouse_has_moved)
    {
       Transform transform;
       GetTarget()->GetTransform(transform);
@@ -553,13 +555,9 @@ void FPSMotionModel::UpdateMouse(const double deltaTime)
       // apply changes (new orientation)
       transform.SetRotation(rot);
       GetTarget()->SetTransform(transform);
+
+      mMouse->SetPosition(0.0f,0.0f); // keeps cursor at center of screen
    }
-
-   // fix to avoid camera drift
-   mLookUpDownAxis->SetState(0.0f); // necessary to stop camera drifting down
-   mTurnLeftRightAxis->SetState(0.0f); // necessary to stop camera drifting left
-
-   mMouse->SetPosition(0.0f,0.0f); // keeps cursor at center of screen
 }
 
 void FPSMotionModel::PerformTranslation(const double deltaTime)
