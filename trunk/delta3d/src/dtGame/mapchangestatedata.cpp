@@ -66,7 +66,7 @@ namespace dtGame
       }
 
       // set the app to pause so we dont get a huge timestep when we're through
-      //mGameManager->SetPaused(true);
+      mGameManager->SetPaused(true);
 
       mOldMapNames = oldMapNames;
       mNewMapNames = newMapNames;
@@ -102,6 +102,8 @@ namespace dtGame
       {
          SendMapMessage(MessageType::INFO_MAP_UNLOAD_BEGIN, mOldMapNames);
       }
+
+      
    }
    
    ///////////////////////////////////////////////////////////////////////////////
@@ -259,7 +261,7 @@ namespace dtGame
          LOGN_ERROR("gamemanager.cpp", msg);
          throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION, msg, __FUNCTION__, __LINE__);
       }
-      
+
       //This shouldn't be called, but it should definitely not do anything.
       if (*mCurrentState == MapChangeState::IDLE)
          return;
@@ -281,7 +283,7 @@ namespace dtGame
       {
          MapChangeStateData::NameVector::const_iterator i = mNewMapNames.begin();
          MapChangeStateData::NameVector::const_iterator iend = mNewMapNames.end();
-   
+            
          for (; i != iend; ++i)
          {
             LoadSingleMapIntoGM(*i);
