@@ -228,6 +228,7 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testRecorder", "examples\testRecorder\testRecorder_2005.vcproj", "{E0E704E7-1D16-4A9A-AFE8-3298132F80E2}"
 	ProjectSection(ProjectDependencies) = postProject
 		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
+		{D1B34D72-1FCC-45E4-8CA7-BFF9C7D7689C} = {D1B34D72-1FCC-45E4-8CA7-BFF9C7D7689C}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testNetwork", "examples\testNetwork\testNetwork_2005.vcproj", "{B9C0F01B-55C1-4830-BF31-B17D208A645E}"
@@ -422,6 +423,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testClient", "examples\test
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testEchoServer", "examples\testEchoServer\testEchoServer_2005.vcproj", "{87BF82D4-2F5F-4FF9-8226-4DFE2DF8B89C}"
 	ProjectSection(ProjectDependencies) = postProject
+		{D1B34D72-1FCC-45E4-8CA7-BFF9C7D7689C} = {D1B34D72-1FCC-45E4-8CA7-BFF9C7D7689C}
 		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
 	EndProjectSection
 EndProject
