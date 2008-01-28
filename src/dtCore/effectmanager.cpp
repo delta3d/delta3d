@@ -6,7 +6,6 @@
 #include <dtCore/transformable.h>
 #include <dtCore/system.h>
 #include <dtCore/globals.h>
-#include <dtUtil/deprecationmgr.h>
 #include <dtUtil/log.h>
 #include <dtUtil/matrixutil.h>
 #include <dtUtil/stringutils.h>
@@ -131,19 +130,7 @@ namespace dtCore
       mDetonationTypeFilenameMap[detonationName] = filename;
    }
 
-   /**
-    * Maps the specified detonation type to the given filename.
-    *
-    * @param detonationType the detonation type to map
-    * @param filename the filename corresponding to the detonation type
-    */
-   void EffectManager::AddDetonationTypeMapping(DetonationType detonationType,
-                                                const std::string& filename)
-   {
-      DEPRECATE(  "void EffectManager::AddDetonationTypeMapping(DetonationType detonationType, const std::string& filename)",
-                  "void EffectManager::AddDetonationTypeMapping(const std::string& detonationName, const std::string& filename)" )
-      AddDetonationTypeMapping( DetonationTypeToString( detonationType ), filename );
-   }
+
 
    /**
     * Removes the mapping for the given detonation name.
@@ -155,17 +142,6 @@ namespace dtCore
       mDetonationTypeFilenameMap.erase( detonationName );
    }
 
-   /**
-    * Removes the mapping for the given detonation type.
-    *
-    * @param detonationType the detonation type to unmap
-    */
-   void EffectManager::RemoveDetonationTypeMapping(DetonationType detonationType)
-   {
-      DEPRECATE(  "void EffectManager::RemoveDetonationTypeMapping(DetonationType detonationType)",
-                  "void EffectManager::RemoveDetonationTypeMapping(const std::string& detonationName)" )
-      RemoveDetonationTypeMapping( DetonationTypeToString( detonationType ) );
-   }
 
    /**
     * Returns the number of active effects.
@@ -248,26 +224,6 @@ namespace dtCore
       return 0;
    }
 
-   /**
-    * Adds a new detonation effect.
-    *
-    * @param position the position of the detonation
-    * @param type the type of the detonation
-    * @param timeToLive the lifespan of the detonation, in seconds,
-    * or 0.0 for unlimited
-    * @param parent the parent of the detonation, or 0 for
-    * none
-    * @return a pointer to the detonation object
-    */
-   Detonation* EffectManager::AddDetonation( const osg::Vec3& position,
-                                             DetonationType detonationType,
-                                             double timeToLive,
-                                             Transformable* parent)
-   {
-      DEPRECATE(  "Detonation* EffectManager::AddDetonation( const osg::Vec3& position, DetonationType type, double timeToLive, const Transformable* parent)",
-                  "Detonation* EffectManager::AddDetonation( const osg::Vec3& position, const std::string& detonationName, double timeToLive, const Transformable* parent)" )
-      return AddDetonation(position, DetonationTypeToString( detonationType ), timeToLive, parent);
-   }
 
    /**
     * Adds an effect to this manager.

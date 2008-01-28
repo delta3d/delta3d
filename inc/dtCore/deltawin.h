@@ -157,7 +157,6 @@ namespace dtCore
       void SetPosition( const PositionSize& positionSize );
 
       ///Get the size and position of the DeltaWin
-      void GetPosition( int *x, int *y, int *width, int *height );
       void GetPosition( int& x, int& y, int& width, int& height );
       PositionSize GetPosition();
 

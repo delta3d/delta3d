@@ -37,21 +37,6 @@ class EffectManagerWrap : public EffectManager, public wrapper<EffectManager>
       {
          return AddDetonation( position, type, timeToLive, parent );
       }
-
-      Detonation* AddDetonation5( const osg::Vec3& position, DetonationType type )
-      {
-         return AddDetonation( position, type );
-      }
-
-      Detonation* AddDetonation6( const osg::Vec3& position, DetonationType type, double timeToLive )
-      {
-         return AddDetonation( position, type, timeToLive );
-      }
-
-      Detonation* AddDetonation7( const osg::Vec3& position, DetonationType type, double timeToLive, Transformable* parent )
-      {
-         return AddDetonation( position, type, timeToLive, parent );
-      }
 };
 
 void initEffectManagerBindings()
@@ -64,10 +49,8 @@ void initEffectManagerBindings()
       .value("SmokeDetonation", SmokeDetonation)
       .export_values();
 
-   void (EffectManager::*AddDetonationTypeMapping1)(DetonationType, const std::string&) = &EffectManager::AddDetonationTypeMapping;
    void (EffectManager::*AddDetonationTypeMapping2)(const std::string&, const std::string&) = &EffectManager::AddDetonationTypeMapping;
 
-   void (EffectManager::*RemoveDetonationTypeMapping1)(DetonationType) = &EffectManager::RemoveDetonationTypeMapping;
    void (EffectManager::*RemoveDetonationTypeMapping2)(const std::string&) = &EffectManager::RemoveDetonationTypeMapping;
   
    class_<EffectManagerWrap, bases<DeltaDrawable>, dtCore::RefPtr<EffectManagerWrap>, boost::noncopyable >("EffectManager", init<optional<const std::string&> >())
@@ -76,9 +59,7 @@ void initEffectManagerBindings()
       .def("GetInstance", EffectManagerGI1, return_internal_reference<>())
       .def("GetInstance", EffectManagerGI2, return_internal_reference<>())
       .staticmethod("GetInstance")
-      .def("AddDetonationTypeMapping", AddDetonationTypeMapping1)
       .def("AddDetonationTypeMapping", AddDetonationTypeMapping2)
-      .def("RemoveDetonationTypeMapping", RemoveDetonationTypeMapping1)
       .def("RemoveDetonationTypeMapping", RemoveDetonationTypeMapping2)
       .def("GetEffectCount", &EffectManager::GetEffectCount)
       .def("GetEffect", &EffectManager::GetEffect, return_internal_reference<>())
@@ -86,9 +67,6 @@ void initEffectManagerBindings()
       .def("AddDetonation", &EffectManagerWrap::AddDetonation2, return_internal_reference<>())      
       .def("AddDetonation", &EffectManagerWrap::AddDetonation3, return_internal_reference<>())
       .def("AddDetonation", &EffectManagerWrap::AddDetonation4, return_internal_reference<>())      
-      .def("AddDetonation", &EffectManagerWrap::AddDetonation5, return_internal_reference<>())
-      .def("AddDetonation", &EffectManagerWrap::AddDetonation6, return_internal_reference<>())
-      .def("AddDetonation", &EffectManagerWrap::AddDetonation7, return_internal_reference<>())
       .def("RemoveEffect", &EffectManager::RemoveEffect)
       .def("AddEffectListener", &EffectManager::AddEffectListener)
       .def("RemoveEffectListener", &EffectManager::RemoveEffectListener);

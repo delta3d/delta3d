@@ -31,7 +31,6 @@
 #include <dtCore/view.h>
 #include <dtCore/light.h>
 #include <dtCore/deltadrawable.h>
-#include <dtUtil/deprecationmgr.h>
 
 #include <ode/common.h>
 #include <ode/collision_space.h>
@@ -158,15 +157,6 @@ namespace dtCore
       osg::Vec3 GetGravity() const { return mGravity; }
 
       ///Get the gravity vector
-      void GetGravity(float* x, float* y, float* z) const 
-      {
-         DEPRECATE("dtCore::Scene::GetGravity(float *x, float *y, float *z)", 
-                   "dtCore::Scene::GetGravity(float &x, float &y, float &z)");
-
-         GetGravity(*x, *y, *z);
-      }
-
-      ///Get the gravity vector
       void GetGravity(float &x, float &y, float &z) const { x = mGravity[0]; y = mGravity[1]; z = mGravity[2]; }
 
       ///Performs collision detection and updates physics
@@ -198,13 +188,9 @@ namespace dtCore
       /// @see GetPhysicsStepSize()
       void SetPhysicsStepSize( double stepSize = 0.0 ) { mPhysicsStepSize = stepSize; };    
 
-      /// Register a Physical with the Scene (Deprecated)
-      void RegisterPhysical( Physical* physical );
       /// Register a Transformable with the Scene
       void RegisterCollidable( Transformable* collidable );
 
-		/// UnRegister a Physical with the Scene (Deprecated)
-		void UnRegisterPhysical( Physical* physical );
       /// UnRegister a Transformable with the Scene
       void UnRegisterCollidable( Transformable* collidable );
 

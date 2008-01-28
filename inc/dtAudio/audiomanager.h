@@ -343,15 +343,6 @@ namespace dtAudio
          static   void  Destroy( void );
 
          /// access the AudioManager
-         static   AudioManager*     GetManager( void ) 
-         {
-            DEPRECATE( "AudioManager* AudioManager::GetManager()",
-                       "AudioManager& AudioManager::GetInstance()" );
-             
-            return &GetInstance(); 
-         }
-
-         /// access the AudioManager
          static   AudioManager&     GetInstance( void );
 
          /// access the global Listener
@@ -375,12 +366,6 @@ namespace dtAudio
 
          /// free a sound (recycle it) that the user is finish with
          void              FreeSound( Sound*& sound );
-
-         /// Deprecated for LoadFile.
-         bool              LoadWaveFile( const char* file );
-
-         /// Deprecated for UnloadFile.
-         bool              UnloadWaveFile( const char* file );
 
          ///Pre-load a sound file into a buffer. We still only support .wav's
          ///but .ogg support is coming soon!
