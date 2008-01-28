@@ -50,7 +50,7 @@ IMPLEMENT_MANAGEMENT_LAYER(CollisionMotionModel);
 * creating default input mappings
 */
 CollisionMotionModel::CollisionMotionModel(float pHeight, float pRadius, float k, float theta, dtCore::Scene* pScene, Keyboard* keyboard, Mouse* mouse)
-      : FPSMotionModel(keyboard, mouse, 10.0f, 10000.0f, 10.0f, pHeight, k)
+      : FPSMotionModel(keyboard, mouse, 5.0f, 100.0f, 5.0f, pHeight, k)
       , mCollider(pHeight, pRadius, k, theta, pScene)
       , mCanJump(true)
 {
