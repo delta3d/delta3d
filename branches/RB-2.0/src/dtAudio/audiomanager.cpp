@@ -14,7 +14,6 @@
 #include <dtCore/system.h>
 #include <dtCore/camera.h>
 #include <dtCore/globals.h>
-#include <dtUtil/deprecationmgr.h>
 #include <dtUtil/log.h>
 #include <dtUtil/mathdefines.h>
 #include <dtUtil/stringutils.h>
@@ -785,22 +784,7 @@ bool AudioManager::UnloadFile( const std::string& file )
    return true;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-bool AudioManager::LoadWaveFile( const char* file )
-{
-   DEPRECATE( "bool AudioManager::LoadWaveFile( const char* file )",
-              "bool AudioManager::LoadFile( const std::string& file )" )
-   return LoadFile(file);
-}
 
-////////////////////////////////////////////////////////////////////////////////
-bool AudioManager::UnloadWaveFile( const char* file )
-{
-   DEPRECATE( "bool AudioManager::UnloadWaveFile( const char* file )",
-              "bool AudioManager::UnloadFile( const std::string& file )" )
-
-   return UnloadFile(file);
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 // private member functions

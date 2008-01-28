@@ -178,32 +178,11 @@ namespace dtAudio
          virtual  void        AddEffectTypeMapping( const std::string& fxType, const std::string& filename );
 
          /**
-          * Maps the specified effect type to the given filename.
-          *
-          * @param fxType the effect type to map
-          * @param filename the sound filename corresponding to the effect type
-          *
-          * Note: This may be deprecated in the future, use string 
-          * functionality instead.
-          */
-         virtual  void        AddEffectTypeMapping( unsigned int fxType, const char* filename );
-
-         /**
           * Removes the specified effect type from the mapping.
           *
           * @param fxType the effect type to remove
           */
          virtual  void        RemoveEffectTypeMapping( const std::string& fxType );
-
-         /**
-          * Removes the specified effect type from the mapping.
-          *
-          * @param fxType the effect type to remove
-          *
-          * Note: This may be deprecated in the future, use string 
-          * functionality instead.
-          */
-         virtual  void        RemoveEffectTypeMapping( unsigned int fxType );
 
          /**
           * Maps the specified effect type to and audible range value.
@@ -214,17 +193,6 @@ namespace dtAudio
           */
          virtual  void        AddEffectTypeRange( const std::string& fxType, float value, bool minimum_range = true );
 
-         /**
-          * Maps the specified effect type to and audible range value.
-          *
-          * @param fxType the effect type to map
-          * @param value to map
-          * @param minimum range if true, else maximum range
-          *
-          * Note: This may be deprecated in the future, use string 
-          * functionality instead.
-          */
-         virtual  void        AddEffectTypeRange( unsigned int fxType, float value, bool minimum_range = true );
 
          /**
           * Removes the specified effect type's audible range value.
@@ -233,17 +201,6 @@ namespace dtAudio
           * @param minimum range if true, else maximum range
           */
          virtual  void        RemoveEffectTypeRange( const std::string& fxType, bool minimum_range = true );
-
-         /**
-          * Removes the specified effect type's audible range value.
-          *
-          * @param fxType the effect type to map
-          * @param minimum range if true, else maximum range
-          *
-          * Note: This may be deprecated in the future, use string 
-          * functionality instead.
-          */
-         virtual  void        RemoveEffectTypeRange( unsigned int fxType, bool minimum_range = true );
 
       private:
          /**

@@ -24,7 +24,6 @@
 #include <cfloat>
 #include <osg/Math>
 
-#include <dtUtil/deprecationmgr.h>
 
 #ifndef RAND_MAX
 #define RAND_MAX 0x7fff
@@ -123,14 +122,6 @@ namespace dtUtil
       return( (sX-sMin) / delta );
    }
 
-   ///deprecated 09/28/06
-   template<typename T>
-   T CalculateValueForRange(T coefficient, T sMin, T sMax)
-   {      
-      DEPRECATE("dtUtil::CalculateValueForRange()",
-                "dtUtil::Lerp()" );
-      return Lerp(sMin, sMax, coefficient);
-   }
 
    /// Calculates the corresponding value for a mirrored space.
    /// Given defined ranges for X space and Y space, and a known value in X space,

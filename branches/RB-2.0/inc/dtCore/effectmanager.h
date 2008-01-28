@@ -120,32 +120,12 @@ namespace dtCore
                                        const std::string& filename);
 
          /**
-          * Maps the specified detonation type to the given filename.
-          *
-          * @param detonationType the detonation type to map
-          * @param filename the filename corresponding to the detonation type
-          *
-          * Note: This is deprecated, use string functionality instead.
-          */
-         void AddDetonationTypeMapping(DetonationType detonationType, 
-                                       const std::string& filename);
-
-         /**
           * Removes the mapping for the given detonation name.
           *
           * @param detonationName the detonation name to unmap
           */
          void RemoveDetonationTypeMapping(const std::string& detonationName);
 
-         /**
-          * Removes the mapping for the given detonation type.
-          *
-          * @param detonationType the detonation type to unmap
-          *
-          * Note: This may be deprecated in the future, use string 
-          * functionality instead.
-          */
-         void RemoveDetonationTypeMapping(DetonationType detonationType);
 
          /**
           * Returns the number of active effects.
@@ -177,26 +157,6 @@ namespace dtCore
                                     const std::string& detonationName = "HighExplosiveDetonation",
                                     double timeToLive = 5.0,
                                     Transformable* parent = 0 );
-
-         /**
-          * Adds a new detonation effect.
-          *
-          * @param position the position of the detonation
-          * @param type the type of the detonation
-          * @param timeToLive the lifespan of the detonation, in seconds,
-          * or 0.0 for unlimited
-          * @param parent the parent of the detonation, or NULL for
-          * none
-          * @return a pointer to the detonation object
-          *
-          * Note: This may be deprecated in the future, use string 
-          * functionality instead.
-          */
-         Detonation* AddDetonation( const osg::Vec3& position,
-                                    DetonationType detonationType,
-                                    double timeToLive = 5.0,
-                                    Transformable* parent = 0 );
-
 
          /**
           * Removes an effect from this manager.
