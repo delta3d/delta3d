@@ -146,7 +146,7 @@ Section "MainSection" SEC01
   CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\STAGE.lnk" "$INSTDIR\bin\STAGE.exe"
   CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\3D Viewer.lnk" "$INSTDIR\bin\viewer.exe"
   CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\Particle Editor.lnk" "$INSTDIR\bin\psEditor.exe"
-
+  CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\Animation Viewer.lnk" "$INSTDIR\bin\AnimationViewer.exe"
 
   !insertmacro MUI_STARTMENU_WRITE_END
 SectionEnd
@@ -299,7 +299,8 @@ Section Uninstall
   Delete "$SMPROGRAMS\$ICONS_GROUP\STAGE.lnk"
   Delete "$SMPROGRAMS\$ICONS_GROUP\3D Viewer.lnk"
   Delete "$SMPROGRAMS\$ICONS_GROUP\Particle Editor.lnk"
-  
+  Delete "$SMPROGRAMS\$ICONS_GROUP\Animation Viewer.lnk"
+ 
   RMDir "$SMPROGRAMS\$ICONS_GROUP"
   RMDir "$INSTDIR"
 
