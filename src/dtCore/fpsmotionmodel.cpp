@@ -18,6 +18,10 @@
 #include <dtCore/isector.h>
 #include <dtUtil/mathdefines.h>
 
+#include <osg/Quat>
+#include <dtUtil/matrixutil.h>
+#include <cmath>
+
 namespace dtCore
 {
 
@@ -73,6 +77,7 @@ FPSMotionModel::FPSMotionModel(  Keyboard* keyboard,
    , mFallingHeight(1.f)
    , mFallingVec(0.f, 0.f, 0.f)
    , mFalling(false)
+   , mInvertMouse(false)
    , mForwardBackCtrl(0.f)
    , mSidestepCtrl(0.f)
    , mLookLeftRightCtrl(0.f)
@@ -505,60 +510,77 @@ void FPSMotionModel::OnMessage(MessageData *data)
 void FPSMotionModel::UpdateMouse(const double deltaTime)
 {
    const bool calc_new_heading_pitch = !mUseMouseButtons || mMouse->GetButtonState(Mouse::LeftButton);
+   const bool mouse_has_moved = (std::abs(mLookLeftRightCtrl) > 0.0f || std::abs(mLookUpDownCtrl) > 0.0f);
 
-   if (calc_new_heading_pitch)
+   if(calc_new_heading_pitch && mouse_has_moved)
    {
       Transform transform;
-      osg::Vec3 hpr;
-
-      // query initial status (to change from)
       GetTarget()->GetTransform(transform);
-      transform.GetRotation(hpr);
-      float newH = hpr[0];
-      float newP = hpr[1];
 
-      // calculate our new heading
-      newH -= mLookLeftRightCtrl * mMaximumTurnSpeed * deltaTime;
+      osg::Matrix rot;
+      transform.GetRotation(rot);
+      float deltaZ = mLookLeftRightCtrl * mMaximumTurnSpeed * deltaTime;
+      float deltaX = mLookUpDownCtrl * mMaximumTurnSpeed * deltaTime;
 
-      // calculate our new pitch
-      newP += mLookUpDownCtrl * mMaximumTurnSpeed * deltaTime;
-      dtUtil::Clamp(newP, -89.9f, 89.9f); //stay away from 90.0 as it causes funky gimbal lock
+      osg::Vec3 upVector = dtUtil::MatrixUtil::GetRow3(rot, 2);
+      osg::Vec3 forwardVector = dtUtil::MatrixUtil::GetRow3(rot, 1);
+      osg::Vec3 rightVector = dtUtil::MatrixUtil::GetRow3(rot, 0);
+      
+      if(mInvertMouse)
+      {
+         deltaX = -deltaX;
+      }
+
+      osg::Quat rotateZ, rotateX;
+      rotateZ.makeRotate(-deltaZ, upVector);
+      rotateX.makeRotate(deltaX, rightVector); //we must revert the x axis delta
+
+      forwardVector = rotateZ * forwardVector;
+      forwardVector = rotateX * forwardVector;
+
+      //TODO- use the normalized opposite of the scene's gravity vector
+      upVector = osg::Vec3(0.0f, 0.0f, 1.0f);
+       
+      rightVector = forwardVector ^ upVector;
+      upVector = rightVector ^ forwardVector;
+
+      rightVector.normalize();
+      forwardVector.normalize();
+      upVector.normalize();
+
+      dtUtil::MatrixUtil::SetRow(rot, rightVector, 0);
+      dtUtil::MatrixUtil::SetRow(rot, forwardVector, 1);
+      dtUtil::MatrixUtil::SetRow(rot, upVector, 2);
 
       // apply changes (new orientation)
-      transform.SetRotation(newH, newP, 0.f);
+      transform.SetRotation(rot);
       GetTarget()->SetTransform(transform);
+
+      mMouse->SetPosition(0.0f,0.0f); // keeps cursor at center of screen
    }
-
-   // fix to avoid camera drift
-   mLookUpDownAxis->SetState(0.0f); // necessary to stop camera drifting down
-   mTurnLeftRightAxis->SetState(0.0f); // necessary to stop camera drifting left
-
-   mMouse->SetPosition(0.0f,0.0f); // keeps cursor at center of screen
 }
 
 void FPSMotionModel::PerformTranslation(const double deltaTime)
 {
    Transform transform;
    osg::Vec3 xyz, newXYZ;
+   osg::Matrix rot;
 
    // query initial status (to change from)
    GetTarget()->GetTransform(transform);
+   transform.GetRotation(rot);
    transform.GetTranslation(xyz);
 
+   osg::Vec3 forwardVector = dtUtil::MatrixUtil::GetRow3(rot, 1);
+   osg::Vec3 transForward = forwardVector * mForwardBackCtrl * deltaTime;
+
+   osg::Vec3 rightVector = dtUtil::MatrixUtil::GetRow3(rot, 0);
+   osg::Vec3 transRight = rightVector * mSidestepCtrl * deltaTime;
+
    // calculate x/y delta
-   osg::Vec3 translation(0.0f, 0.0f, 0.0f);
-   translation[0] = mSidestepCtrl    * mMaximumSidestepSpeed;
-   translation[1] = mForwardBackCtrl * mMaximumWalkSpeed;
-
-   // get heading
-   osg::Vec3 hpr;
-   transform.GetRotation(hpr);
-   float heading = hpr[0];
-
-   // transform our x/y delta by our new heading
-   osg::Matrix mat;
-   mat.makeRotate(osg::DegreesToRadians(heading), osg::Vec3(0.0f, 0.0f, 1.0f));
-   translation = translation * mat;
+   osg::Vec3 translation(transForward + transRight);
+   translation.normalize();   
+   translation *= mMaximumWalkSpeed;
 
    // integration step
    newXYZ = xyz + translation * deltaTime;
