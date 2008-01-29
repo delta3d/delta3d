@@ -253,6 +253,10 @@
 				RelativePath="..\..\..\utilities\Viewer\viewer.ico"
 				>
 			</File>
+			<File
+				RelativePath="..\..\..\utilities\Viewer\Viewer.rc"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>
