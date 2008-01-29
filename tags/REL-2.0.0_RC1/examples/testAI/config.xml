@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="iso-8859-1" standalone="no"?>
+<Application xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../data/application.xsd">
+  <Window ChangeDisplayResolution="0" FullScreen="0" Height="480" Name="testAI" PixelDepth="24" RefreshRate="60" ShowCursor="1" Width="640" X="100" Y="100"/>
+    <Scene Name="defaultScene"/>
+    <Camera Name="defaultCam" WindowInstance="testAI"/>
+    <View Name="defaultView" CameraInstance="defaultCam" SceneInstance="defaultScene"/>
+</Application>
+
+    
