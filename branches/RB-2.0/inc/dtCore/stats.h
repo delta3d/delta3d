@@ -40,6 +40,7 @@
 #include <osgText/Text>
 #include <osg/Switch>
 
+/// @cond
 namespace osg
 {
    class Geometry;
@@ -50,7 +51,7 @@ namespace osgGA
    class GUIEventAdapter;
    class GUIActionAdapter;
 }
-
+/// @endcond
 
 namespace dtCore
 {

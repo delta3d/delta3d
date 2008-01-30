@@ -6,10 +6,12 @@
 #include <osg/Array>
 #include <osg/Geode>
 
+///@cond
 namespace osg
 {
    class Geometry;
 }
+///@endcond
 
 namespace dtCore
 {

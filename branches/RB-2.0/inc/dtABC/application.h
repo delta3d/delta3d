@@ -28,11 +28,13 @@
 #include <string>
 #include <map>
 
+///@cond 
 namespace osgViewer
 {
    class CompositeViewer;
    class Viewer;
 }
+///@endcond
 
 namespace dtCore
 {
