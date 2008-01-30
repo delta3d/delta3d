@@ -154,10 +154,10 @@ class DT_ABC_EXPORT BaseABC : public dtCore::Base
       ViewList mViewList;
    
    private:
-      void KeyPressed(dtCore::Keyboard* keyboard, int); ///< private & unimplemented by design.
-      void HandleKeyPressed(dtCore::Keyboard* keyboard, int); ///< private & unimplemented by design.
-      void KeyReleased(dtCore::Keyboard* keyboard, int); ///< private & unimplemented by design.
-      void HandleKeyReleased(dtCore::Keyboard* keyboard, int); ///< private & unimplemented by design.
+      void KeyPressed(const dtCore::Keyboard* keyboard, int); ///< private & unimplemented by design.
+      void HandleKeyPressed(const dtCore::Keyboard* keyboard, int); ///< private & unimplemented by design.
+      void KeyReleased(const dtCore::Keyboard* keyboard, int); ///< private & unimplemented by design.
+      void HandleKeyReleased(const dtCore::Keyboard* keyboard, int); ///< private & unimplemented by design.
 };
 }
 
