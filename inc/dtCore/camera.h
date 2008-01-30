@@ -42,13 +42,13 @@ namespace osg
 {
    class FrameStamp;
 }
+/// @endcond
 
 namespace dtCore
 {
    class View;
 }
 
-/// @endcond
 
 namespace dtCore
 {

@@ -33,11 +33,12 @@
 #include <osg/observer_ptr>
 #include <osg/Vec2>
 
-
+///@cond
 namespace osgViewer
 {
     class GraphicsWindow;
 }
+///@endcond
 
 
 namespace dtCore
