@@ -88,8 +88,12 @@ namespace dtABC
       /// Called when a key is pressed.
       /// @param keyboard the source of the event
       /// @param key the key pressed
-      /// @param character the corresponding character
       virtual bool KeyPressed(const dtCore::Keyboard* keyboard, int kc);
+
+      /// Called when a key is released.
+      /// @param keyboard the source of the event
+      /// @param key the key released
+      virtual bool KeyReleased(const dtCore::Keyboard* keyboard, int kc);
 
       /// @return the instance of the listener used for callbacks
       const dtCore::GenericKeyboardListener* GetKeyboardListener() const { return mKeyboardListener.get(); }

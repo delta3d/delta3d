@@ -72,10 +72,30 @@ class ApplicationWrap : public Application, public wrapper<Application>
       return Application::KeyPressed( keyboard, kc );
    }
 
+   virtual bool KeyReleased( const dtCore::Keyboard* keyboard,
+      int kc )
+   {
+      if( override KeyReleased = this->get_override("KeyReleased") )
+      {
+#if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+         return call<bool>( KeyReleased.ptr(), boost::ref(keyboard), kc );
+#else
+         return KeyReleased( boost::ref(keyboard), kc );
+#endif
+      }
+      return Application::KeyReleased( keyboard, kc );
+   }
+
    virtual bool DefaultKeyPressed( const dtCore::Keyboard* keyboard,
                                    int kc )
    {
       return this->Application::KeyPressed( keyboard, kc );
+   }
+
+   virtual bool DefaultKeyReleased( const dtCore::Keyboard* keyboard,
+      int kc )
+   {
+      return this->Application::KeyReleased( keyboard, kc );
    }
 
    virtual void OnCollisionMessage(PythonCollisionData pData)
@@ -196,6 +216,7 @@ void initApplicationBindings()
       .staticmethod("GenerateDefaultConfigFile")
       .def("Run", &Application::Run)
       .def("KeyPressed",&Application::KeyPressed,&ApplicationWrap::DefaultKeyPressed)
+      .def("KeyReleased",&Application::KeyReleased,&ApplicationWrap::DefaultKeyReleased)
       ;
 
 

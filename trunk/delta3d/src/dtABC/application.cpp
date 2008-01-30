@@ -63,6 +63,7 @@ Application::Application(const std::string& configFilename)
    RegisterInstance(this);
 
    mKeyboardListener->SetPressedCallback(dtCore::GenericKeyboardListener::CallbackType(this,&Application::KeyPressed));
+   mKeyboardListener->SetReleasedCallback(dtCore::GenericKeyboardListener::CallbackType(this,&Application::KeyReleased));
 
    CreateInstances(); //create default Viewer View
 
@@ -165,6 +166,11 @@ bool Application::KeyPressed(const dtCore::Keyboard* keyboard, int kc)
       } break;
    }
 
+   return false;
+}
+///////////////////////////////////////////////////////////////////////////////
+bool Application::KeyReleased(const dtCore::Keyboard* keyboard, int kc)
+{
    return false;
 }
 ///////////////////////////////////////////////////////////////////////////////
