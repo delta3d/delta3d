@@ -798,9 +798,9 @@ void MapTests::TestMapSaveAndLoad()
         ap = getActorProperty(*map, "", dtDAL::DataType::STRING);
         ((dtDAL::StringActorProperty*)ap)->SetValue("2006-04-20T06:22:08");
 
-        ap = getActorProperty(*map, "", dtDAL::DataType::BOOLEAN, 1);
+        ap = getActorProperty(*map, "Parent Relative", dtDAL::DataType::BOOLEAN);
         ((dtDAL::BooleanActorProperty*)ap)->SetValue(false);
-        ap = getActorProperty(*map, "", dtDAL::DataType::BOOLEAN, 2);
+        ap = getActorProperty(*map, "use cache object", dtDAL::DataType::BOOLEAN);
         ((dtDAL::BooleanActorProperty*)ap)->SetValue(true);
         ap = getActorProperty(*map, "", dtDAL::DataType::FLOAT);
         ((dtDAL::FloatActorProperty*)ap)->SetValue(40.00f);
@@ -906,7 +906,7 @@ void MapTests::TestMapSaveAndLoad()
 #endif
 
         ap = getActorProperty(*map, "", dtDAL::DataType::STATIC_MESH);
-        ((dtDAL::ResourceActorProperty*)ap)->SetValue(&dirtRD);
+        static_cast<dtDAL::ResourceActorProperty*>(ap)->SetValue(&dirtRD);
 
         unsigned numProxies = map->GetAllProxies().size();
         std::map<dtCore::UniqueId, std::string> names;
@@ -967,19 +967,19 @@ void MapTests::TestMapSaveAndLoad()
         CPPUNIT_ASSERT_MESSAGE(ap->GetName() + " value should be 2006-04-20T06:22:08",
             ((dtDAL::StringActorProperty*)ap)->GetValue() == "2006-04-20T06:22:08");
 
-        ap = getActorProperty(*map, "", dtDAL::DataType::BOOLEAN, 1);
+        ap = getActorProperty(*map, "Parent Relative", dtDAL::DataType::BOOLEAN);
         CPPUNIT_ASSERT_MESSAGE(ap->GetName() + " value should be false",
-            !((dtDAL::BooleanActorProperty*)ap)->GetValue());
-        ap = getActorProperty(*map, "", dtDAL::DataType::BOOLEAN, 2);
+            !static_cast<dtDAL::BooleanActorProperty*>(ap)->GetValue());
+        ap = getActorProperty(*map, "use cache object", dtDAL::DataType::BOOLEAN);
         CPPUNIT_ASSERT_MESSAGE(ap->GetName() + " value should be true",
-            ((dtDAL::BooleanActorProperty*)ap)->GetValue());
+            static_cast<dtDAL::BooleanActorProperty*>(ap)->GetValue());
         ap = getActorProperty(*map, "", dtDAL::DataType::FLOAT);
         CPPUNIT_ASSERT_MESSAGE(ap->GetName() + " value should be 40.00.",
-            std::abs(((dtDAL::FloatActorProperty*)ap)->GetValue() - 40.00f) < 0.0001);
+            std::abs(static_cast<dtDAL::FloatActorProperty*>(ap)->GetValue() - 40.00f) < 0.0001);
 
         ap = getActorProperty(*map, "", dtDAL::DataType::DOUBLE);
         CPPUNIT_ASSERT_MESSAGE(ap->GetName() + " value should be 39.70.",
-            std::abs(((dtDAL::DoubleActorProperty*)ap)->GetValue() - 39.70) < 0.0001);
+            std::abs(static_cast<dtDAL::DoubleActorProperty*>(ap)->GetValue() - 39.70) < 0.0001);
 
         ap = getActorProperty(*map, dtDAL::TransformableActorProxy::PROPERTY_ROTATION, dtDAL::DataType::VEC3,1);
 
@@ -1007,7 +1007,7 @@ void MapTests::TestMapSaveAndLoad()
         ap = getActorProperty(*map, "", dtDAL::DataType::VEC3F, 0);
         if (logger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
         {
-            osg::Vec3 val = ((dtDAL::Vec3fActorProperty*)ap)->GetValue();
+            osg::Vec3 val = static_cast<dtDAL::Vec3fActorProperty*>(ap)->GetValue();
             logger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                 "Vec3f Property values: %f, %f, %f", val[0], val[1], val[2]);
             logger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
@@ -1026,7 +1026,7 @@ void MapTests::TestMapSaveAndLoad()
         ap = getActorProperty(*map, "", dtDAL::DataType::VEC3D, 0);
         if (logger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
         {
-            osg::Vec3 val = ((dtDAL::Vec3dActorProperty*)ap)->GetValue();
+            osg::Vec3 val = static_cast<dtDAL::Vec3dActorProperty*>(ap)->GetValue();
             logger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                 "Vec3f Property values: %f, %f, %f", val[0], val[1], val[2]);
         }
@@ -1043,7 +1043,7 @@ void MapTests::TestMapSaveAndLoad()
 
         if (logger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
         {
-            osg::Vec3f val = ((dtDAL::Vec3ActorProperty*)ap)->GetValue();
+            osg::Vec3f val = static_cast<dtDAL::Vec3ActorProperty*>(ap)->GetValue();
             logger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                 "Vec3f Property values: %f, %f, %f", val[0], val[1], val[2]);
         }
@@ -1129,7 +1129,7 @@ void MapTests::TestMapSaveAndLoad()
 #endif
 
         ap = getActorProperty(*map, "", dtDAL::DataType::STATIC_MESH);
-        dtDAL::ResourceDescriptor* rdMeshVal = ((dtDAL::ResourceActorProperty*)ap)->GetValue();
+        dtDAL::ResourceDescriptor* rdMeshVal = static_cast<dtDAL::ResourceActorProperty*>(ap)->GetValue();
         //testRD is declared in the setup section prior to the save and load.
         if (rdMeshVal == NULL)
             CPPUNIT_FAIL("Static Mesh ResourceDescriptor should not be NULL.");
