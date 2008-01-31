@@ -365,6 +365,7 @@ namespace dtCore
       dtCore::RefPtr<osg::Shader> vertexShader;
       dtCore::RefPtr<osg::Shader> fragmentShader;
       dtCore::RefPtr<osg::Program> program = new osg::Program();
+      program->setName( shader.GetName().c_str() );
 
       std::vector<std::string>::const_iterator vertexShaderIterator = shader.GetVertexShaders().begin();
 
