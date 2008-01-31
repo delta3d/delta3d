@@ -133,7 +133,7 @@ namespace dtCore
       shaderGroup.GetAllShaders(shaderList);
       for (shaderItor=shaderList.begin(); shaderItor!=shaderList.end(); ++shaderItor)
       {
-         ResolveShaderPrograms(*(shaderItor->get()));
+         ResolveShaderPrograms(*(shaderItor->get()), shaderGroup.GetName());
          mTotalShaderCount++;
       }
 
@@ -340,7 +340,7 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ShaderManager::ResolveShaderPrograms(ShaderProgram &shader)
+   void ShaderManager::ResolveShaderPrograms(ShaderProgram &shader, const std::string &groupName)
    {
       //Shader cache entries are keyed by a combination of the source to the
       //vertex shader and the source to the fragment shader.
@@ -365,7 +365,7 @@ namespace dtCore
       dtCore::RefPtr<osg::Shader> vertexShader;
       dtCore::RefPtr<osg::Shader> fragmentShader;
       dtCore::RefPtr<osg::Program> program = new osg::Program();
-      program->setName( shader.GetName().c_str() );
+      program->setName( std::string('('+groupName+')'+ shader.GetName()).c_str() );
 
       std::vector<std::string>::const_iterator vertexShaderIterator = shader.GetVertexShaders().begin();
 
