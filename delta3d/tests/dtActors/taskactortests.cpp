@@ -908,10 +908,27 @@ void TaskActorTests::TestMutable()
       childActor2->SetFailed(false);
 
       // Fail the parent and child 2 should not be mutable anymore
-      dtActors::TaskActor *orderedTaskActor;
+      dtActors::TaskActorOrdered *orderedTaskActor = NULL;
       orderedTaskProxy->GetActor(orderedTaskActor);
       orderedTaskActor->SetFailed(true);
       CPPUNIT_ASSERT_MESSAGE("2nd child task should NOT be mutable when ordered parent is failed.", !childProxy2->IsCurrentlyMutable());
+
+      orderedTaskActor->Reset();
+      childActor1->Reset();
+      childActor2->Reset();
+
+      bool result = childProxy1->IsCurrentlyMutable();
+      
+      CPPUNIT_ASSERT_MESSAGE("A blocking ordered task should have a mutable first child", result);
+
+      result = childProxy2->IsCurrentlyMutable();
+      CPPUNIT_ASSERT_MESSAGE("A blocking ordered task should NOT have a mutable second child", !result);
+
+      orderedTaskActor->SetFailureType(dtActors::TaskActorOrdered::FailureType::CAUSE_FAILURE);
+      CPPUNIT_ASSERT_MESSAGE("A failing ordered task should have mutable children", 
+         childProxy1->IsCurrentlyMutable());
+      CPPUNIT_ASSERT_MESSAGE("A failing ordered task should have mutable children", 
+         childProxy2->IsCurrentlyMutable());
    }
    catch (const dtUtil::Exception& e)
    {
