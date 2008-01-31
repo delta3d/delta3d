@@ -318,7 +318,7 @@ namespace dtCore
           * shader.  If none are found, a new cache entry is created.
           * @param shader The shader to resolve.
           */
-         void ResolveShaderPrograms(ShaderProgram &shader);
+         void ResolveShaderPrograms(ShaderProgram &shader, const std::string &groupName);
 
          /**
           * Internal helper method which searches for a shader prototype in the shader manager.
