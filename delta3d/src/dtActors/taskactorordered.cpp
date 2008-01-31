@@ -178,15 +178,21 @@ namespace dtActors
       bool parentGivesOK = true; // no parent means we have approval.
       bool bOKToChangeChildTask = false;
 
-      const TaskActor *myActor;
+      const TaskActorOrdered *myActor;
       GetActor(myActor);
 
       // First check to see if our parent allows us to be changed.  
       if (GetParentTask() != NULL)
          parentGivesOK = GetParentTask()->IsChildTaskAllowedToChange(childTask);
 
+      // We always give permission to our children if we are failing because we ALLOW 
+      // them to do it out of order. 
+      if (myActor->GetFailureType() == TaskActorOrdered::FailureType::CAUSE_FAILURE)
+      {
+         bOKToChangeChildTask = true; 
+      }
       // If we aren't failed and parent allows, so check to see if the child is the next task in line.  
-      if (parentGivesOK && !myActor->IsFailed())
+      else if (parentGivesOK && !myActor->IsFailed())
       {
          //Need to see if all the tasks added prior to the task in question have been
          //completed.  If not we have to reject.
