@@ -282,7 +282,7 @@ void SkyBox::AngularMapProfile::Config(osg::Group* pGroup)
 
    ss->setAttributeAndModes(mProgram.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE | osg::StateAttribute::PROTECTED);
 
-   mGeode->setUpdateCallback(new AngularMapProfile::UpdateViewCallback(this));   
+   mGeode->setCullCallback(new AngularMapProfile::UpdateViewCallback(this));   
 
 }
 
@@ -397,7 +397,7 @@ void SkyBox::CubeMapProfile::Config(osg::Group* pGroup)
 
    ss->setAttributeAndModes(mProgram.get(), osg::StateAttribute::ON);
 
-   mGeode->setUpdateCallback(new CubeMapProfile::UpdateViewCallback(this));
+   mGeode->setCullCallback(new CubeMapProfile::UpdateViewCallback(this));
 
 }
 

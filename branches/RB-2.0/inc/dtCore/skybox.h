@@ -29,6 +29,8 @@
 #include <osg/CameraNode>
 #include <osg/Drawable>
 #include <osg/NodeCallback>
+#include <osgUtil/RenderStage>
+#include <osgUtil/CullVisitor>
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
@@ -80,36 +82,36 @@ private:
    DECLARE_MANAGEMENT_LAYER(SkyBox)
 
 public:
-	/**This selects the render method for the SkyBox
-	//RP_DEFAULT will use a cubemap if you can support it
-	//otherwise it will use the old technique with a textured cube
-	//the angular map will only work with angular textures
-	//as those used with hdr, they are called light probes
-	//http://www.debevec.org/Probes/
-	*/
-	enum RenderProfileEnum
-	{
-		RP_FIXED_FUNCTION = 0,
-		RP_CUBE_MAP,
-		RP_ANGULAR_MAP,
-		RP_DEFAULT,
-		RP_COUNT
-	};
+   /**This selects the render method for the SkyBox
+   //RP_DEFAULT will use a cubemap if you can support it
+   //otherwise it will use the old technique with a textured cube
+   //the angular map will only work with angular textures
+   //as those used with hdr, they are called light probes
+   //http://www.debevec.org/Probes/
+   */
+   enum RenderProfileEnum
+   {
+      RP_FIXED_FUNCTION = 0,
+      RP_CUBE_MAP,
+      RP_ANGULAR_MAP,
+      RP_DEFAULT,
+      RP_COUNT
+   };
 
-	/**
-	//SkyBoxSideEnum selects the side of the cube to texture
-	//if RenderProfileEnum is set to RP_ANGULAR_MAP, this is irrelevant
-	//and ignores the side
-	*/
+   /**
+   //SkyBoxSideEnum selects the side of the cube to texture
+   //if RenderProfileEnum is set to RP_ANGULAR_MAP, this is irrelevant
+   //and ignores the side
+   */
        enum SkyBoxSideEnum
        {
-		SKYBOX_FRONT = 0,
-		SKYBOX_RIGHT,
-		SKYBOX_BACK,      
-		SKYBOX_LEFT,
-		SKYBOX_TOP,
-		SKYBOX_BOTTOM
-	};
+      SKYBOX_FRONT = 0,
+      SKYBOX_RIGHT,
+      SKYBOX_BACK,      
+      SKYBOX_LEFT,
+      SKYBOX_TOP,
+      SKYBOX_BOTTOM
+   };
 
    class ConfigCallback: public osg::NodeCallback
    {
@@ -117,7 +119,7 @@ public:
       ConfigCallback(SkyBox* mp):mSkyBox(mp){}
 
       void operator()(osg::Node*, osg::NodeVisitor* nv)
-      {				
+      {            
          mSkyBox->Config();
       }
    private:
@@ -144,141 +146,153 @@ public:
    void SetTexture(SkyBoxSideEnum side, const std::string& filename);
 
 protected:
-	
-	virtual void Config();
-	virtual void CheckHardware();
-	virtual void SetRenderProfile(RenderProfileEnum pRenderProfile);
+   
+   virtual void Config();
+   virtual void CheckHardware();
+   virtual void SetRenderProfile(RenderProfileEnum pRenderProfile);
 
-	RenderProfileEnum mRenderProfilePreference;
-	bool mSupportedProfiles[RP_COUNT];
+   RenderProfileEnum mRenderProfilePreference;
+   bool mSupportedProfiles[RP_COUNT];
    dtCore::RefPtr<RenderProfile> mRenderProfile;
-	
-	bool mInitializedTextures;
-	std::string mTexList[6];
-	bool mTexPreSetList[6];
+   
+   bool mInitializedTextures;
+   std::string mTexList[6];
+   bool mTexPreSetList[6];
 
    dtCore::RefPtr<osg::Geode> mTempGeode;
 
-	///this is a custom drawable for the AngularMapProfile
-	///and the CubeMapProfile
-	class DT_CORE_EXPORT SkyBoxDrawable: public osg::Drawable
-	{
-	public:
+   ///this is a custom drawable for the AngularMapProfile
+   ///and the CubeMapProfile
+   class DT_CORE_EXPORT SkyBoxDrawable: public osg::Drawable
+   {
+   public:
 
-		META_Object(osg::Drawable, SkyBoxDrawable);
-		SkyBoxDrawable(const SkyBoxDrawable& bd, const osg::CopyOp& copyop=osg::CopyOp::SHALLOW_COPY)
-		{
-		}
+      META_Object(osg::Drawable, SkyBoxDrawable);
+      SkyBoxDrawable(const SkyBoxDrawable& bd, const osg::CopyOp& copyop=osg::CopyOp::SHALLOW_COPY)
+      {
+      }
 
-		SkyBoxDrawable(){setUseDisplayList(false);}
+      SkyBoxDrawable(){setUseDisplayList(false);}
 
-		/*virtual*/ void drawImplementation(osg::RenderInfo & renderInfo) const;
-	};
+      /*virtual*/ void drawImplementation(osg::RenderInfo & renderInfo) const;
+   };
 
-	///a base class to allow the user to choose different ways
-	///to render the same scene
-	class RenderProfile: public osg::Referenced
-	{
-	public:
-		virtual void Config(osg::Group*) = 0;
-		virtual void SetTexture(SkyBoxSideEnum side, const std::string& filename) = 0;	
-	};
+   ///a base class to allow the user to choose different ways
+   ///to render the same scene
+   class RenderProfile: public osg::Referenced
+   {
+   public:
+      virtual void Config(osg::Group*) = 0;
+      virtual void SetTexture(SkyBoxSideEnum side, const std::string& filename) = 0;   
+   };
 
-	///this class will use an angular map or light probe
-	///to act as a skybox
-	class DT_CORE_EXPORT AngularMapProfile: public SkyBox::RenderProfile
-	{
-	protected:
-		class UpdateViewCallback: public osg::NodeCallback
-		{
-		public:
-			UpdateViewCallback(AngularMapProfile* mp):mProfile(mp){}
+   ///this class will use an angular map or light probe
+   ///to act as a skybox
+   class DT_CORE_EXPORT AngularMapProfile: public SkyBox::RenderProfile
+   {
+   protected:
+      class UpdateViewCallback: public osg::NodeCallback
+      {
+      public:
+         UpdateViewCallback(AngularMapProfile* mp):mProfile(mp){}
 
-			void operator()(osg::Node*, osg::NodeVisitor* nv)
-			{
-				if(osg::CameraNode* cn = dynamic_cast<osg::CameraNode*>(nv->getNodePath()[0]))
-				{
-					mProfile->UpdateViewMatrix(cn->getViewMatrix(), cn->getProjectionMatrix());
-				}
-			}
-		private:
-			dtCore::RefPtr<AngularMapProfile> mProfile;
-		};
+         void operator()(osg::Node*, osg::NodeVisitor* nv)
+         {            
+            osgUtil::CullVisitor* cullVisitor = dynamic_cast<osgUtil::CullVisitor*>(nv);
+            if(cullVisitor != NULL)
+            {
+               osgUtil::RenderStage* rs = cullVisitor->getCurrentRenderBin()->getStage(); 
+               osg::Camera* cn = rs->getCamera();
+               if(cn)
+               {
+                  mProfile->UpdateViewMatrix(cn->getViewMatrix(), cn->getProjectionMatrix());
+               }
+            }
+         }
+      private:
+         dtCore::RefPtr<AngularMapProfile> mProfile;
+      };
 
-		friend class UpdateViewCallback;
-
-	public:
-		AngularMapProfile();
-
-		void Config(osg::Group*);
-		void SetTexture(SkyBoxSideEnum side, const std::string& filename);	
-
-	protected:
-
-		void UpdateViewMatrix(const osg::Matrix& viewMat, const osg::Matrix& projMat);
-
-		dtCore::RefPtr<osg::Geode>			   mGeode;
-		dtCore::RefPtr<osg::Texture2D>		mAngularMap;
-		dtCore::RefPtr<osg::Program>			mProgram;
-		dtCore::RefPtr<osg::Uniform>			mInverseModelViewProjMatrix;
-
-	};
-
-	///this class will use a 2D ortho quad and lookup
-	///into a cubemap to find the texture value
-	class DT_CORE_EXPORT CubeMapProfile: public SkyBox::RenderProfile
-	{
-	protected:
-		class UpdateViewCallback: public osg::NodeCallback
-		{
-		public:
-			UpdateViewCallback(CubeMapProfile* mp):mProfile(mp){}
-
-			void operator()(osg::Node*, osg::NodeVisitor* nv)
-			{				
-				if(osg::CameraNode* cn = dynamic_cast<osg::CameraNode*>(nv->getNodePath()[0]))
-				{
-					mProfile->UpdateViewMatrix(cn->getViewMatrix(), cn->getProjectionMatrix());
-				}
-			}
-		private:
-         dtCore::RefPtr<CubeMapProfile> mProfile;
-		};
-
-		friend class UpdateViewCallback;
-
-	public:
-		CubeMapProfile();
-		void Config(osg::Group*);
-		void SetTexture(SkyBoxSideEnum side, const std::string& filename);	
-
-	protected:
-		void UpdateViewMatrix(const osg::Matrix& viewMat, const osg::Matrix& projMat);
-
-		dtCore::RefPtr<osg::Geode>			   mGeode;
-		dtCore::RefPtr<osg::TextureCubeMap>	mCubeMap;
-		dtCore::RefPtr<osg::Program>			mProgram;
-		dtCore::RefPtr<osg::Uniform>			mInverseModelViewProjMatrix;
-	};
-
-	///this render profile will render the skybox as usual with the
-	///fixed function pipeline
-	class DT_CORE_EXPORT FixedFunctionProfile: public SkyBox::RenderProfile
-	{
+      friend class UpdateViewCallback;
 
    public:
-		FixedFunctionProfile();
-		void Config(osg::Group* pNode);
-		void SetTexture(SkyBox::SkyBoxSideEnum side, const std::string& filename);
+      AngularMapProfile();
 
-	protected:
+      void Config(osg::Group*);
+      void SetTexture(SkyBoxSideEnum side, const std::string& filename);   
 
-		osg::Node* MakeBox();
+   protected:
 
-		dtCore::RefPtr<osg::Geode> mGeode;
+      void UpdateViewMatrix(const osg::Matrix& viewMat, const osg::Matrix& projMat);
+
+      dtCore::RefPtr<osg::Geode>            mGeode;
+      dtCore::RefPtr<osg::Texture2D>      mAngularMap;
+      dtCore::RefPtr<osg::Program>         mProgram;
+      dtCore::RefPtr<osg::Uniform>         mInverseModelViewProjMatrix;
+
+   };
+
+   ///this class will use a 2D ortho quad and lookup
+   ///into a cubemap to find the texture value
+   class DT_CORE_EXPORT CubeMapProfile: public SkyBox::RenderProfile
+   {
+   protected:
+      class UpdateViewCallback: public osg::NodeCallback
+      {
+      public:
+         UpdateViewCallback(CubeMapProfile* mp):mProfile(mp){}
+
+         void operator()(osg::Node*, osg::NodeVisitor* nv)
+         {            
+            osgUtil::CullVisitor* cullVisitor = dynamic_cast<osgUtil::CullVisitor*>(nv);
+            if(cullVisitor != NULL)
+            {
+               osgUtil::RenderStage* rs = cullVisitor->getCurrentRenderBin()->getStage(); 
+               osg::Camera* cn = rs->getCamera();
+               if(cn)
+               {
+                  mProfile->UpdateViewMatrix(cn->getViewMatrix(), cn->getProjectionMatrix());
+               }
+            }
+         }
+      private:
+         dtCore::RefPtr<CubeMapProfile> mProfile;
+      };
+
+      friend class UpdateViewCallback;
+
+   public:
+      CubeMapProfile();
+      void Config(osg::Group*);
+      void SetTexture(SkyBoxSideEnum side, const std::string& filename);   
+
+   protected:
+      void UpdateViewMatrix(const osg::Matrix& viewMat, const osg::Matrix& projMat);
+
+      dtCore::RefPtr<osg::Geode>            mGeode;
+      dtCore::RefPtr<osg::TextureCubeMap>   mCubeMap;
+      dtCore::RefPtr<osg::Program>         mProgram;
+      dtCore::RefPtr<osg::Uniform>         mInverseModelViewProjMatrix;
+   };
+
+   ///this render profile will render the skybox as usual with the
+   ///fixed function pipeline
+   class DT_CORE_EXPORT FixedFunctionProfile: public SkyBox::RenderProfile
+   {
+
+   public:
+      FixedFunctionProfile();
+      void Config(osg::Group* pNode);
+      void SetTexture(SkyBox::SkyBoxSideEnum side, const std::string& filename);
+
+   protected:
+
+      osg::Node* MakeBox();
+
+      dtCore::RefPtr<osg::Geode> mGeode;
       dtCore::RefPtr<dtCore::MoveEarthySkyWithEyePointTransform> mXform;
-		dtCore::RefPtr<osg::Texture2D> mTextureList[6];
-	};
+      dtCore::RefPtr<osg::Texture2D> mTextureList[6];
+   };
    
 };
 
