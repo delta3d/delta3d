@@ -73,7 +73,7 @@ namespace dtCore
          osgParticle::Program& GetProgram();
          const osgParticle::Program& GetProgram() const;
          
-         const std::string& GetLayerName() { return mLayerName; }
+         const std::string& GetLayerName() const { return mLayerName; }
 
          /// Methods for telling if the Program is modular or fluid
          bool IsFluidProgram()              {return !mProgTypeIsModular;}
