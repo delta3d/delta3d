@@ -216,6 +216,14 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    void Isector::CalcLineSegment()
    {
+      if (mUpdateLineSegment == false)
+      {
+         return;
+      }
+
+      //clear out any previous line segments that may have been added
+      mIntersectVisitor.reset();
+
       //Make sure the current direction vector is normalized.
       mDirection.normalize();
    
@@ -223,10 +231,12 @@ namespace dtCore
       //representation to a finite line.
       osg::Vec3 endPoint = mStart + (mDirection*mLineLength);
       mLineSegment->set(mStart,endPoint);
-      //Add line segment sets the eye point to the beginning of the line segment.
-      osg::Vec3 eyePoint = GetEyePoint();
+
+      //addLineSegment() sets the eye point to the beginning of the line segment.
+      const osg::Vec3 eyePoint = GetEyePoint();
       mIntersectVisitor.addLineSegment(mLineSegment.get());
       SetEyePoint(eyePoint);
+
       mUpdateLineSegment = false;
    }
    
