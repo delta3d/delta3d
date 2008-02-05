@@ -61,9 +61,9 @@ CEGUI::Scheme* GUIManager::LoadScheme(const std::string& file)
       CEGUI::SchemeManager* sm = CEGUI::SchemeManager::getSingletonPtr();
       scheme = sm->loadScheme( schemefile );  ///< populate the window factories
    }
-   catch(...)
+   catch(CEGUI::Exception& ex)
    {
-      LOG_ALWAYS("Everything is wrong with scheme loading.")
+      LOG_ALWAYS("Everything is wrong with scheme loading: " + ex.getMessage());
    }
 
    return scheme;

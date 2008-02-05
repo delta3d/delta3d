@@ -284,7 +284,7 @@ void CEUIDrawable::SetRenderingSize(int width, int height)
    }
    catch (const CEGUI::Exception& ex)
    {
-      const std::string error = std::string("Problem setting the CEGUI Rendering size:") + ex.getMessage().c_str();
+      const std::string error = std::string("Problem setting the CEGUI Rendering size: ") + ex.getMessage().c_str();
       throw dtUtil::Exception(error, __FILE__, __LINE__);
    }
 }

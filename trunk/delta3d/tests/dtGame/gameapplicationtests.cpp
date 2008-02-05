@@ -20,12 +20,13 @@
  */
 #include <prefix/dtgameprefix-src.h>
 #include <dtUtil/log.h>
+#include <dtUtil/macros.h>
 #include <dtCore/refptr.h>
 #include <dtGame/gameapplication.h>
 
 #include <cppunit/extensions/HelperMacros.h>
 
-#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
+#ifdef DELTA_WIN32
    #include <Windows.h>
    #define SLEEP(milliseconds) Sleep((milliseconds))
 #else
