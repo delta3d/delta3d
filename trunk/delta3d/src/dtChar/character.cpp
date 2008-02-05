@@ -185,11 +185,11 @@ osg::Node* Character::LoadFile(const std::string& filename, bool useCache)
       GetMatrixNode()->setMatrix(mat);
 
       GetBodyNode()->setUpdateMode( rbody::OsgBodyNode::UPDATE_ANIMATION | 
-                                    rbody::OsgBodyNode::UPDATE_CONTACT_TRANSLATION | 
-                                    rbody::OsgBodyNode::UPDATE_GROUND_FOLLOWING );     
-      GetBodyNode()->setRotation(osg::DegreesToRadians(mRotation));     
+                                    rbody::OsgBodyNode::UPDATE_CONTACT_TRANSLATION |
+                                    rbody::OsgBodyNode::UPDATE_GROUND_FOLLOWING );
+      GetBodyNode()->setRotation(osg::DegreesToRadians(mRotation));
 
-      SetVelocity(mVelocity);            
+      SetVelocity(mVelocity);
    }
 
    return GetMatrixNode();

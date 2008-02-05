@@ -18,6 +18,7 @@
  *
  * David Guthrie
  */
+#ifndef NO_DTCHAR
 #include <prefix/dtdalprefix-src.h>
 #include <iostream>
 #include <stdio.h>
@@ -510,3 +511,4 @@ namespace dtDAL
    }
 
 }
+#endif // NO_DTCHAR

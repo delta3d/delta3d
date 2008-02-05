@@ -9,7 +9,7 @@
 #
 # Created by Robert Osfield. 
 
-FIND_PATH(XERCES_INCLUDE_DIR xercesc/parsers/SAXParser.hpp
+FIND_PATH(XERCES_INCLUDE_DIR xercesc
     ${XERCES_DIR}/include
     $ENV{XERCES_DIR}/include
     $ENV{XERCES_DIR}

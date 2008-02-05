@@ -24,6 +24,7 @@ SET(CMAKE_MODULE_PATH "${DELTA3D_SOURCE_DIR}/CMakeModules;${CMAKE_MODULE_PATH}")
 
 # Find OpenGL
 FIND_PACKAGE(OpenGL REQUIRED)
+FIND_PACKAGE(OpenAL REQUIRED)
 
 IF(APPLE)
     FIND_LIBRARY(CARBON_LIBRARY Carbon)
@@ -39,10 +40,13 @@ IF(UNIX)
     FIND_PACKAGE(X11)
     # Some Unicies need explicit linkage to the Math library or the build fails.
     FIND_LIBRARY(MATH_LIBRARY m)
+
+    ADD_DEFINITIONS(-DSIGSLOT_PURE_ISO)
+
 ENDIF(UNIX)
         
 # Common global definitions
-#ADD_DEFINITIONS(-D)
+ADD_DEFINITIONS(-DNO_DTCHAR)
 # Platform specific definitions
 
 IF(WIN32)
@@ -106,12 +110,12 @@ FIND_PACKAGE(GDAL)
 FIND_PACKAGE(DIS)
 FIND_PACKAGE(Isense)
 FIND_PACKAGE(RTI-s)
-FIND_PACKAGES(PythonLibs)
+FIND_PACKAGE(PythonLibs)
 
 
 # Make the headers visible to everything
 INCLUDE_DIRECTORIES(
-    ${DELT3D_SOURCE_DIR}/inc
+    ${DELTA3D_SOURCE_DIR}/inc
     ${OPENGL_INCLUDE_DIR}
     ${OPENTHREADS_INCLUDE_DIR}
     ${OSG_INCLUDE_DIR}
@@ -120,6 +124,10 @@ INCLUDE_DIRECTORIES(
     ${ODE_INCLUDE_DIR}
     ${XERCES_INCLUDE_DIR}
 )
+
+IF (APPLE)
+   INCLUDE_DIRECTORIES(/usr/include/malloc)
+ENDIF (APPLE)
 
 ################################################################################
 # Create bin and lib directories if required
@@ -189,7 +197,7 @@ ADD_SUBDIRECTORY(src/dtGame)
 ADD_SUBDIRECTORY(src/dtAnim)
 ADD_SUBDIRECTORY(src/dtActors)
 ADD_SUBDIRECTORY(src/dtNetGM)
-ADD_SUBDIRECTORY(src/dtInputIsense)
+ADD_SUBDIRECTORY(src/dtInputISense)
 ADD_SUBDIRECTORY(src/dtInputPLIB)
 ADD_SUBDIRECTORY(src/dtInspector)
 ADD_SUBDIRECTORY(src/dtLMS)
@@ -262,43 +270,45 @@ ENDIF(DELTA3D_AGGRESSIVE_WARNING_FLAGS)
 
 # Set defaults for Universal Binaries. We want 32-bit Intel/PPC on 10.4 
 # and 32/64-bit Intel/PPC on >= 10.5. Anything <= 10.3 doesn't support.
-IF(APPLE)
-    # These are just defaults/recommendations, but how we want to build
-    # out of the box. But the user needs to be able to change these options.
-    # So we must only set the values the first time CMake is run, or we 
-    # will overwrite any changes the user sets.
-    # FORCE is used because the options are not reflected in the UI otherwise.
-    # Seems like a good place to add version specific compiler flags too.
-    IF(NOT DELTA3D_CONFIG_HAS_BEEN_RUN_BEFORE)
-        # This is really fragile, but CMake doesn't provide the OS system 
-        # version information we need. (Darwin versions can be changed 
-        # independently of OS X versions.)
-        # It does look like CMake handles the CMAKE_OSX_SYSROOT automatically.
-        IF(EXISTS /Developer/SDKs/10.5.sdk)
-            SET(CMAKE_OSX_ARCHITECTURES "ppc;i386;ppc64;x86_64" CACHE STRING "Build architectures for OSX" FORCE)
-            SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mmacosx-version-min=10.5 -ftree-vectorize -fvisibility-inlines-hidden" CACHE STRING "Flags used by the compiler during all build types." FORCE)
-        ELSE(EXISTS /Developer/SDKs/10.5.sdk)
-            IF(EXISTS /Developer/SDKs/MacOSX10.4u.sdk)
-                SET(CMAKE_OSX_ARCHITECTURES "ppc;i386" CACHE STRING "Build architectures for OSX" FORCE)
-                SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mmacosx-version-min=10.4 -ftree-vectorize -fvisibility-inlines-hidden" CACHE STRING "Flags used by the compiler during all build types." FORCE)
-            ELSE(EXISTS /Developer/SDKs/MacOSX10.4u.sdk)
-                # No Universal Binary support
-                # Should break down further to set the -mmacosx-version-min,
-                # but the SDK detection is too unreliable here.
-            ENDIF(EXISTS /Developer/SDKs/MacOSX10.4u.sdk)
-        ENDIF(EXISTS /Developer/SDKs/10.5.sdk)
-    ENDIF(NOT DELTA3D_CONFIG_HAS_BEEN_RUN_BEFORE)
-    
-    OPTION(DELTA3D_BUILD_APPLICATION_BUNDLES "Enable the building of applications and examples as OSX Bundles" OFF)
-    
-ENDIF(APPLE)
+#IF(APPLE)
+#
+#    # These are just defaults/recommendations, but how we want to build
+#    # out of the box. But the user needs to be able to change these options.
+#    # So we must only set the values the first time CMake is run, or we 
+#    # will overwrite any changes the user sets.
+#    # FORCE is used because the options are not reflected in the UI otherwise.
+#    # Seems like a good place to add version specific compiler flags too.
+#    IF(NOT DELTA3D_CONFIG_HAS_BEEN_RUN_BEFORE)
+#        # This is really fragile, but CMake doesn't provide the OS system 
+#        # version information we need. (Darwin versions can be changed 
+#        # independently of OS X versions.)
+#        # It does look like CMake handles the CMAKE_OSX_SYSROOT automatically.
+#        IF(EXISTS /Developer/SDKs/MacOSX10.5.sdk)
+#            SET(CMAKE_OSX_ARCHITECTURES "i386" CACHE STRING "Build architectures for OSX" FORCE)
+#            SET(CMAKE_OSX_ARCHITECTURES "ppc;i386;ppc64;x86_64" CACHE STRING "Build architectures for OSX" FORCE)
+#            SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -isysroot /Developer/SDKs/MacOSX10.5.sdk -mmacosx-version-min=10.5 -ftree-vectorize -fvisibility-inlines-hidden" CACHE STRING "Flags used by the compiler during all build types." FORCE)
+#        ELSE(EXISTS /Developer/SDKs/MacOSX10.5.sdk)
+#            IF(EXISTS /Developer/SDKs/MacOSX10.4u.sdk)
+#                SET(CMAKE_OSX_ARCHITECTURES "i386" CACHE STRING "Build architectures for OSX" FORCE)
+#                SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -isysroot /Developer/SDKs/MacOSX10.4u.sdk -mmacosx-version-min=10.4 -ftree-vectorize -fvisibility-inlines-hidden" CACHE STRING "Flags used by the compiler during all build types." FORCE)
+#            ELSE(EXISTS /Developer/SDKs/MacOSX10.4u.sdk)
+#                # No Universal Binary support
+#                # Should break down further to set the -mmacosx-version-min,
+#                # but the SDK detection is too unreliable here.
+#            ENDIF(EXISTS /Developer/SDKs/MacOSX10.4u.sdk)
+#        ENDIF(EXISTS /Developer/SDKs/MacOSX10.5.sdk)
+#    ENDIF(NOT DELTA3D_CONFIG_HAS_BEEN_RUN_BEFORE)
+#    
+#    OPTION(DELTA3D_BUILD_APPLICATION_BUNDLES "Enable the building of applications and examples as OSX Bundles" OFF)
+#    
+#ENDIF(APPLE)
 
 
 # This needs to be run very last so other parts of the scripts can take
 # advantage of this.
-IF(NOT DELTA3D_CONFIG_HAS_BEEN_RUN_BEFORE)
-    SET(DELTA3D_CONFIG_HAS_BEEN_RUN_BEFORE 1 CACHE INTERNAL "Flag to track whether this is the first time running CMake or if CMake has been configured before")
-ENDIF(NOT DELTA3D_CONFIG_HAS_BEEN_RUN_BEFORE)
+#IF(NOT DELTA3D_CONFIG_HAS_BEEN_RUN_BEFORE)
+#    SET(DELTA3D_CONFIG_HAS_BEEN_RUN_BEFORE 1 CACHE INTERNAL "Flag to track whether this is the first time running CMake or if CMake has been configured before")
+#ENDIF(NOT DELTA3D_CONFIG_HAS_BEEN_RUN_BEFORE)
 
 
 #-----------------------------------------------------------------------------

@@ -9,23 +9,23 @@
 #
 # Created by David Guthrie with code from Robert Osfield. 
 
-FIND_PATH(CEGUI_INCLUDE_DIR CEGUI/CEGUI.h 
-    $ENV{CEGUI_DIR}/include
+FIND_PATH(CEGUI_INCLUDE_DIR CEGUI.h 
+    $ENV{CEGUI_DIR}/include/CEGUI
     $ENV{CEGUI_DIR}
-    $ENV{CEGUIDIR}/include
+    $ENV{CEGUIDIR}/include/CEGUI
     $ENV{CEGUIDIR}
-    $ENV{CEGUI_ROOT}/include
-    $ENV{DELTA_ROOT}/ext/inc
-    ~/Library/Frameworks
-    /Library/Frameworks
-    /usr/local/include
-    /usr/include
-    /sw/include # Fink
-    /opt/local/include # DarwinPorts
-    /opt/csw/include # Blastwave
-    /opt/include
-    [HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session\ Manager\\Environment;CEGUI_ROOT]/include
-    /usr/freeware/include
+    $ENV{CEGUI_ROOT}/include/CEGUI
+    $ENV{DELTA_ROOT}/ext/inc/CEGUI
+    ~/Library/Frameworks/CEGUI.framework/Headers/CEGUI
+    /Library/Frameworks/CEGUI.framework/Headers/CEGUI
+    /usr/local/include/CEGUI
+    /usr/include/CEGUI
+    /sw/include/CEGUI # Fink
+    /opt/local/include/CEGUI # DarwinPorts
+    /opt/csw/include/CEGUI # Blastwave
+    /opt/include/CEGUI
+    [HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session\ Manager\\Environment;CEGUI_ROOT]/include/CEGUI
+    /usr/freeware/include/CEGUI
 )
 
 MACRO(FIND_CEGUI_LIBRARY MYLIBRARY MYLIBRARYNAME)

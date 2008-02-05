@@ -9,25 +9,40 @@
 #
 # Created by David Guthrie. 
 
-FIND_PATH(RTIS_INCLUDE_DIR 1.3/RTI.hh
-    $ENV{RTI}/include
+FIND_PATH(RTIS_INCLUDE_DIR RTI.hh
+    $ENV{RTI}/include/1.3
 )
 
-MACRO(FIND_RTIS_LIBRARY MYLIBRARY MYLIBRARYNAME)
-
-    FIND_LIBRARY(${MYLIBRARY}
-        NAMES ${MYLIBRARYNAME}
-        PATHS
+IF (APPLE)
+  SET(PATHLIST 
+        $ENV{RTI}/lib/macintel_g++-4.0
+        $ENV{RTI}/lib/darwin_g++-4.0
+        $ENV{RTI}/lib/darwin_g++-3.3
+  )
+ELSE (APPLE)
+  IF (UNIX)
+     SET(PATHLIST 
         $ENV{RTI}/lib/linux_g++-3.4
         $ENV{RTI}/lib/linux_g++-4.0
         $ENV{RTI}/lib/linux_g++-4.1
         $ENV{RTI}/lib/linux_g++-4.2
         $ENV{RTI}/lib/linux_g++-4.3
-        $ENV{RTI}/lib/macintel_g++-4.0
-        $ENV{RTI}/lib/darwin_g++-4.0
-        $ENV{RTI}/lib/darwin_g++-3.3
+     )
+  ENDIF (UNIX)
+ENDIF (APPLE)
+
+IF (WIN32)
+     SET(PATHLIST 
         $ENV{RTI}/lib/winnt_vc++-7.1
         $ENV{RTI}/lib/winnt_vc++-8.0
+     )
+ENDIF (WIN32)
+
+MACRO(FIND_RTIS_LIBRARY MYLIBRARY MYLIBRARYNAME)
+
+    FIND_LIBRARY(${MYLIBRARY}
+        NAMES ${MYLIBRARYNAME}
+        PATHS ${PATHLIST}
     )
 
 ENDMACRO(FIND_RTIS_LIBRARY LIBRARY LIBRARYNAME)

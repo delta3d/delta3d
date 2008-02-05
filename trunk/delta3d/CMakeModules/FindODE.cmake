@@ -28,7 +28,7 @@ FIND_PATH(ODE_INCLUDE_DIR ode/ode.h
 )
 
 FIND_LIBRARY(ODE_LIBRARY 
-    NAMES cal3d
+    NAMES ode
     PATHS
     ${ODE_DIR}/lib
     $ENV{ODE_DIR}/lib
