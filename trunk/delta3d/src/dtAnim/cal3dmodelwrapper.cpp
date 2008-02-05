@@ -155,14 +155,14 @@ namespace dtAnim
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   osg::Quat Cal3DModelWrapper::GetBoneAbsoluteRotationForKeyFrame(unsigned int animID, unsigned int boneID, unsigned int keyframeindex) const
+   osg::Quat Cal3DModelWrapper::GetBoneAbsoluteRotationForKeyFrame(int animID, int boneID, unsigned int keyframeindex) const
    {
       osg::Quat accumulatedRotation; 
       osg::Quat relativeRotation;
 
       do 
       {
-         unsigned int parentBoneID = GetParentBoneID(boneID);
+         int parentBoneID = GetParentBoneID(boneID);
 
          // If the animation has altered this bone rotation,
          // use it, otherwise use the normal bone rotation

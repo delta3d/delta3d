@@ -118,12 +118,14 @@ namespace dtAnim
          /// @param boneID the ID for the CalBone instance.
          osg::Quat GetBoneAbsoluteRotation(unsigned int boneID) const;
 
-         /// Get the Cal3D rotation values.
-         /// @param animid the core animation of interest.
-         /// @param boneid the core bone within the animation, identifying the track.
-         /// @param keyframeindex the keyframe array index of interest for the animation track.
-         /// @return the rotation values that cal3d is using, converted into right hand coordinate frame.
-         osg::Quat GetBoneAbsoluteRotationForKeyFrame(unsigned int animid, unsigned int boneid, unsigned int keyframeindex) const;
+         /** 
+          * Get the Cal3D rotation values.
+          * @param animid the core animation of interest.
+          * @param boneid the core bone within the animation, identifying the track.
+          * @param keyframeindex the keyframe array index of interest for the animation track.
+          * @return the rotation values that cal3d is using, converted into right hand coordinate frame.
+          */
+         osg::Quat GetBoneAbsoluteRotationForKeyFrame(int animid, int boneid, unsigned int keyframeindex) const;
 
          /// Get the current translation for the CalBone.
          /// @param boneID the ID for the CalBone of interest.
