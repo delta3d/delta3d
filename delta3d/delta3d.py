@@ -397,7 +397,7 @@ def TOOL_BUNDLE(env):
                         #removed _DEBUG for now because of problem with GNE and DEBUG because of a python issue.
               CPPDEFINES=['SIGSLOT_PURE_ISO', "LINUX"] )
          elif env['OS'] == 'darwin':      
-            env.Append(CXXFLAGS=['-gdwarf-2', '-O0', '-pipe', '-mmacosx-version-min=10.4', '-isysroot', '/Developer/SDKs/MacOSX10.4u.sdk'], 
+            env.Append(CXXFLAGS=['-gdwarf-2', '-O0', '-pipe', '-mmacosx-version-min=10.4'], 
               CPPDEFINES=['_DEBUG', 'SIGSLOT_PURE_ISO'])#,
             #LINKFLAGS=['-Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk'] )
       else:
@@ -415,8 +415,8 @@ def TOOL_BUNDLE(env):
        #             LINKFLAGS=['-Wl,-rpath-link=' + env['ENV']['DELTA_ROOT'] + '/lib,-rpath-link=' + env['ENV']['DELTA_ROOT'] + '/ext/lib'] )
 
          elif env['OS'] == 'darwin':     
-            env.Append(CXXFLAGS=['-Os', '-pipe', '-mmacosx-version-min=10.4', '-isysroot', '/Developer/SDKs/MacOSX10.4u.sdk'],
-               CPPDEFINES=['NDEBUG', '__USE_OSX_AGL_IMPLEMENTATION__', 'SIGSLOT_PURE_ISO'])#, 
+            env.Append(CXXFLAGS=['-Os', '-pipe', '-mmacosx-version-min=10.4'],
+               CPPDEFINES=['NDEBUG', 'SIGSLOT_PURE_ISO'])#, 
                #LINKFLAGS=['-Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk'] )
 
       #add to the CPPFLAGS variable if it's set in the environment
