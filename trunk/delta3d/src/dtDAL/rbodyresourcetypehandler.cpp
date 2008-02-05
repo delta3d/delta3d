@@ -18,8 +18,8 @@
  *
  * David Guthrie
  */
-#ifndef NO_DTCHAR
 #include <prefix/dtdalprefix-src.h>
+#ifndef NO_DTCHAR
 #include <iostream>
 #include <stdio.h>
 #include <string.h>

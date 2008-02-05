@@ -51,7 +51,7 @@ XERCES_CPP_NAMESPACE_USE
 
 IMPLEMENT_MANAGEMENT_LAYER(Application)
 
-const std::string Application::SIM_FRAME_TIME = "System.SimFrameTime";
+const std::string Application::SIM_FRAME_RATE = "System.SimFrameRate";
 const std::string Application::MAX_TIME_BETWEEN_DRAWS = "System.MaxTimeBetweenDraws";
 const std::string Application::USE_FIXED_TIME_STEP = "System.UseFixedTimeStep";
 
@@ -89,7 +89,7 @@ void Application::ReadSystemProperties()
 {
    std::string value;
 
-   value = GetConfigPropertyValue(SIM_FRAME_TIME, "");
+   value = GetConfigPropertyValue(SIM_FRAME_RATE, "");
 
    if(!value.empty())
    {
