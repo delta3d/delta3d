@@ -66,16 +66,21 @@ namespace dtAI
    };
 
 
-   template <typename Type1, typename Type2, typename EvaluateType1, typename EvaluateType2, typename CompareType, typename ReportType, typename ReportData>
+   template <typename Type1, typename Type2, typename EvaluateFunc1, typename EvaluateFunc2, typename CompareFunc, typename ReportFunc, typename ReportData>
    class Sensor: public SensorBase<ReportData>
    {
       public:
-         Sensor(Type1 t1, Type2 t2, EvaluateType1 eval1, EvaluateType2 eval2, CompareType cmp, ReportType rpt)
+         Sensor(Type1 t1, Type2 t2, EvaluateFunc1 eval1, EvaluateFunc2 eval2, CompareFunc cmp, ReportFunc rpt):
+            mElement1(t1),
+            mElement2(t2),
+            mEval1(eval1),
+            mEval2(eval2),
+            mReport(rpt),
+            mCompare(cmp)
          {
-            Set(t1, t2, eval1, eval2, cmp, rpt);
          }
 
-         void Set(Type1 t1, Type2 t2, EvaluateType1 eval1, EvaluateType2 eval2, CompareType cmp, ReportType rpt)
+         void Set(Type1 t1, Type2 t2, EvaluateFunc1 eval1, EvaluateFunc2 eval2, CompareFunc cmp, ReportFunc rpt)
          {
             mElement1 = t1;
             mElement2 = t2;
@@ -94,16 +99,16 @@ namespace dtAI
             typedef typename dtUtil::TypeTraits<Type2>::reference Traits2Ref;
             typedef typename dtUtil::TypeTraits<ReportData>::reference ReportTraitsRef;
             
-            dtUtil::EvaluateFunctor<EvaluateType1, Traits1Ref> eval1;
+            dtUtil::EvaluateFunctor<EvaluateFunc1, Traits1Ref> eval1;
             eval1(mEval1, mElement1);
 
-            dtUtil::EvaluateFunctor<EvaluateType2, Traits2Ref> eval2;
+            dtUtil::EvaluateFunctor<EvaluateFunc2, Traits2Ref> eval2;
             eval2(mEval2, mElement2);
 
-            CompareFunctor<CompareType, ReportTraitsRef, Traits1Ref, Traits2Ref> genericCompare;
+            CompareFunctor<CompareFunc, ReportTraitsRef, Traits1Ref, Traits2Ref> genericCompare;
             if(genericCompare(mCompare, mReportData, mElement1, mElement2))
             {               
-               dtUtil::EvaluateFunctor<ReportType, ReportTraitsRef> invokeReport;
+               dtUtil::EvaluateFunctor<ReportFunc, ReportTraitsRef> invokeReport;
                invokeReport(mReport, mReportData);
             }
             return mReportData;
@@ -160,13 +165,13 @@ namespace dtAI
 
          Type1 mElement1;
          Type2 mElement2;
-         EvaluateType1 mEval1;
-         EvaluateType2 mEval2;
+         EvaluateFunc1 mEval1;
+         EvaluateFunc2 mEval2;
 
-         ReportType mReport;
+         ReportFunc mReport;
          ReportData mReportData;
 
-         CompareType mCompare;
+         CompareFunc mCompare;
 
    };
 
