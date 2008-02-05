@@ -569,6 +569,18 @@ ParticleLayer* ParticleSystem::GetSingleLayer(const std::string &layerName)
    return NULL;
 }
 
+const ParticleLayer* ParticleSystem::GetSingleLayer(const std::string &layerName) const
+{
+   for(std::list<ParticleLayer>::const_iterator pLayerIter = mLayers.begin();
+      pLayerIter != mLayers.end(); ++pLayerIter)
+   {
+      // check if the name is what they want, send it back
+      if(layerName == pLayerIter->GetLayerName())
+         return &(*pLayerIter); 
+   }
+   return NULL;
+}
+
 /**
 * SetAllLayers Will take in the new list of layers
 * and set all the current layers to those of that 
