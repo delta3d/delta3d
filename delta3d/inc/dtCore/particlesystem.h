@@ -206,6 +206,7 @@ namespace dtCore
           * @return Will return the link list you requested by name
           */
          ParticleLayer* GetSingleLayer(const std::string &layerName);
+         const ParticleLayer* GetSingleLayer(const std::string &layerName) const;
 
          /**
           * SetAllLayers Will take in the new list of layers
