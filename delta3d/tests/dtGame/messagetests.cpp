@@ -1172,7 +1172,7 @@ void MessageTests::TestChangeMap()
       mapB->GetEventManager().AddEvent(*new dtDAL::GameEvent("event3", "Event"));
       mapB->GetEventManager().AddEvent(*new dtDAL::GameEvent("event4", "Event"));
       mapB->GetEventManager().AddEvent(*reusedEvent);
-      
+
       mapA->AddLibrary(mTestGameActorLibrary, "1.0");
       mapB->AddLibrary(mTestActorLibrary, "1.0");
       mapA->AddLibrary(mTestGameActorLibrary, "1.0");
@@ -1187,11 +1187,11 @@ void MessageTests::TestChangeMap()
       map2A->AddLibrary(mTestActorLibrary, "1.0");
       map2B->AddLibrary(mTestGameActorLibrary, "1.0");
       map2B->AddLibrary(mTestActorLibrary, "1.0");
-      
+
       //remove one proxy to make the maps have different sizes.
       RemoveOneProxy(*map2A);
       RemoveOneProxy(*map2B);
-      
+
       size_t numActors = mapA->GetAllProxies().size() * 2 ;
       size_t numActors2 = map2A->GetAllProxies().size() * 2;
 
@@ -1223,9 +1223,9 @@ void MessageTests::TestChangeMap()
       dtCore::RefPtr<const dtGame::Message> processMapChange = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_CHANGE_BEGIN);
       CPPUNIT_ASSERT_MESSAGE("An INFO_MAP_CHANGE_BEGIN message should have been processed.", processMapChange.valid());
       const dtGame::MapMessage* mapLoadedMsg = static_cast<const dtGame::MapMessage*>(processMapChange.get());
-      
+
       CheckMapNames(*mapLoadedMsg, mapNamesExpected);
-      
+
       dtCore::RefPtr<const dtGame::Message> processMapUnloadedMsg = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_UNLOADED);
       CPPUNIT_ASSERT_MESSAGE("A map unloaded message should NOT have been processed.", !processMapUnloadedMsg.valid());
       processMapUnloadedMsg = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_UNLOAD_BEGIN);
@@ -1253,7 +1253,7 @@ void MessageTests::TestChangeMap()
       CPPUNIT_ASSERT(mainGEM.FindEvent("event3") != NULL);
       CPPUNIT_ASSERT(mainGEM.FindEvent("event4") != NULL);
       CPPUNIT_ASSERT(mainGEM.FindEvent("eventX") != NULL);
-      
+
       processMapLoadedMsg = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_LOADED);
       CPPUNIT_ASSERT_MESSAGE("A map loaded message should have been processed.", processMapLoadedMsg.valid());
       mapLoadedMsg = static_cast<const dtGame::MapMessage*>(processMapLoadedMsg.get());
@@ -1278,9 +1278,9 @@ void MessageTests::TestChangeMap()
       }
 
       toFill.clear();
-      
+
       tc.reset();
-      
+
       mGameManager->ChangeMapSet(mapNames2Expected, false, false);
 
       SLEEP(10);

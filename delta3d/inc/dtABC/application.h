@@ -69,7 +69,7 @@ namespace dtABC
    public:
       Application( const std::string& configFilename = "" );
 
-      static const std::string SIM_FRAME_TIME;
+      static const std::string SIM_FRAME_RATE;
       static const std::string MAX_TIME_BETWEEN_DRAWS;
       static const std::string USE_FIXED_TIME_STEP;
 
@@ -148,6 +148,8 @@ namespace dtABC
       /// @return the instance of the osgViewer::CompositeViewer
       osgViewer::CompositeViewer* GetCompositeViewer() { return mCompositeViewer.get(); }
 
+      void ReadSystemProperties();
+
    private:
 
       /// A utility to apply the parsed data to the Application instance
@@ -161,13 +163,10 @@ namespace dtABC
          bool operator ()(const ApplicationConfigData& data, Application* app);
       };
 
-      
-      void ReadSystemProperties();
-
       dtCore::RefPtr<osgViewer::CompositeViewer> mCompositeViewer;
-      
+
       dtCore::RefPtr<dtCore::GenericKeyboardListener> mKeyboardListener;
-      
+
       typedef std::map<std::string, std::string> AppConfigPropertyMap;
       AppConfigPropertyMap mConfigProperties;
 
