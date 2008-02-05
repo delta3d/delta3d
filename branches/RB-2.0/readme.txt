@@ -128,12 +128,12 @@ LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$DELTA_LIB
 # Platform-specific build instructions #
 ########################################
 
-Windows w/ Visual Studio .NET 7.1
+Windows with Visual Studio 2005
 -------------------------------
 
 1. Make sure you have your depedencies setup (see above).
 
-2. Open VisualStudio/delta.sln, build! This will generate the essential Delta3D
+2. Open VisualStudio/delta_2005.sln, build! This will generate the essential Delta3D
    libraries that can be built with our distributed dependencies.
 
 3. The rest of the components can be build with project files of
@@ -145,7 +145,7 @@ Windows w/ Visual Studio .NET 7.1
    VisualStudio/src/python/dtpython.sln      : python bindings (Python, Boost.Python)
  
    Or just build EVERYTHING (make sure you have Python, BoostPython, RTI):
-   VisualStudio/delta_all.sln  
+   VisualStudio/delta_all_2005.sln  
 
    dtHLAGM
    -----
@@ -162,7 +162,7 @@ Windows w/ Visual Studio .NET 7.1
    Also, in order to run the unit tests, you must add the directory containing
    your RTI DLLs to the VC++ directory for executable files.
 
-   VS solutions are provided for these apps in the delta_all.sln.
+   VS solutions are provided for these apps in the delta_all_2005.sln.
 
    The Python Bindings
    -------------------
@@ -183,7 +183,7 @@ Windows w/ Visual Studio .NET 7.1
       Obtain the Boost library from SourceForge (package 'boost'):
       http://sourceforge.net/projects/boost/
       
-   3. Unzip Boost. The directory will look something like "boost_1_34_0"
+   3. Unzip Boost. The directory will look something like "boost_1_34_1"
    
    4. Obtain the Boost-Jam executable from SourceForge (package 'boost-jam')
    
@@ -224,35 +224,19 @@ Windows w/ Visual Studio .NET 7.1
 
    STAGE
    -----
-   If you want to build STAGE in with Microsoft's compiler (with SCons or VisualStudio),
-   there's a few hoops you must jump through. The problem boils down to this: Trolltech 
-   generously decided to release Qt 4 under an open-source license, but unfortunately 
-   they only provided makefile support for MinGW. While we love MinGW, there is no support 
-   for building Delta3D with it. 
-
-   So we had to find a way to compile Qt with MSVC. Here's the solution:
-
    You'll need:
-   -Visual Studio .NET 2003
+   -Visual Studio .NET 2005
    -Qt 4.x, the windows open-source release (http://www.trolltech.com)
-   -Python (http://www.python.org/)
-   -QtWin/Free patch for Qt 4.x (http://sourceforge.net/projects/qtwin/), 
-    or from the Visual Studio dependencies release inside the ext/ directory)
+   
    
    Building Qt 4.x Open Source Version with MSVC
    -----------------------------------------------
-   1. Make sure all of the above software is installed.
-   
-   2. Extract the QtWin/Free patch inside your Qt directory.
-      Overwrite any files with the ones from the patch.
-      
-   3. Follow instructions for the patch with its readme.
-      Make sure you set the environment variable QMAKESPEC to
-      %QTDIR%\mkspecs\win32-msvc.net
-
-   4. To compile Qt, just use the Visual Studio Command prompt, change
-      directory to where Qt is, and type "nmake".  If you just want
-      to build the libraries (much faster), type "nmake sub-src".
+    1. To configure Qt, just use the Visual Studio Command prompt, change
+        directory to where Qt is, and type "configure -platform win32-msvc2005".  To see
+        the list of supported compilers, see the folder "mkspecs" in the Qt installation.
+        
+     2. Once that is finished type "nmake" to start the compiling.  If you just want
+          to build the libraries (much faster), type "nmake sub-src".
    
    
    Building the Delta3D Editor with MSVC
@@ -266,20 +250,11 @@ Windows w/ Visual Studio .NET 7.1
       to rebuild STAGE, so the old DLLs will conflict.
    
    2. Ok, onto building the editor. Open:
-      delta3d\VisualStudio\utilities\editor\editor.sln
+      delta3d\VisualStudio\utilities\STAGE\dtEditQt_2005.sln
    
-   3. Now we are going to make sure VisualStudio can find python.exe:
-   
-      Select Tools->Options
-      Select the Projects folder
-      Select VC++ Directories
-      Change 'Show directories for:' to Executable files
-      Add the root Python folder (e.g., 'C:\Python24') to the list of directories 
-          (or whatever you proper path is)
-   
-   4. Build the entire solution.
+   3. Build the entire solution.
 
-   5. The STAGE.exe file should now reside in delta3d/bin.  Double-click to run!
+   4. The STAGE.exe file should now reside in delta3d/bin.  Double-click to run!
 
 Windows w/ SCons & Linux
 -----------------------
@@ -336,7 +311,7 @@ Windows w/ SCons & Linux
    - Decompress the BoostJam archive and place the file 'bjam' in your PATH.
    - Set env. var PYTHON_ROOT to your your python installation (usually /usr or /usr/local)
    - Set env. var PYTHON_VERSION to the 2-part major python version (e.g. 2.3 or 2.4)
-   - Go to boost_1_33_1/libs/python/build.
+   - Go to boost/libs/python/build.
    - Run 'bjam -sTOOLS=gcc'.
    - Root up and 'bjam install'
 
