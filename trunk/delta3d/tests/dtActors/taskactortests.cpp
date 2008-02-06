@@ -948,6 +948,8 @@ void TaskActorTests::TestNestedMutable()
 
    dtCore::RefPtr<dtActors::TaskActorGameEventProxy> eventOne;
    dtCore::RefPtr<dtActors::TaskActorGameEventProxy> eventTwo;
+   dtCore::RefPtr<dtActors::TaskActorGameEventProxy> eventThree;
+   dtCore::RefPtr<dtActors::TaskActorGameEventProxy> eventFour;
 
    mGameManager->CreateActor(*dtActors::EngineActorRegistry::ORDERED_TASK_ACTOR_TYPE, masterTask);
    mGameManager->CreateActor(*dtActors::EngineActorRegistry::ORDERED_TASK_ACTOR_TYPE, subTaskOne);
@@ -955,6 +957,17 @@ void TaskActorTests::TestNestedMutable()
 
    mGameManager->CreateActor(*dtActors::EngineActorRegistry::GAME_EVENT_TASK_ACTOR_TYPE, eventOne);
    mGameManager->CreateActor(*dtActors::EngineActorRegistry::GAME_EVENT_TASK_ACTOR_TYPE, eventTwo);
+   mGameManager->CreateActor(*dtActors::EngineActorRegistry::GAME_EVENT_TASK_ACTOR_TYPE, eventThree);
+   mGameManager->CreateActor(*dtActors::EngineActorRegistry::GAME_EVENT_TASK_ACTOR_TYPE, eventFour);
+
+   masterTask->SetName("MasterTask");
+   subTaskOne->SetName("SubTaskOne");
+   subTaskTwo->SetName("SubTaskTwo");
+
+   eventOne->SetName("EventOne");
+   eventTwo->SetName("EventTwo");
+   eventThree->SetName("EventThree");
+   eventFour->SetName("EventFour");
 
    CPPUNIT_ASSERT(masterTask.valid());
    CPPUNIT_ASSERT(subTaskOne.valid());
@@ -962,9 +975,13 @@ void TaskActorTests::TestNestedMutable()
 
    CPPUNIT_ASSERT(eventOne.valid());
    CPPUNIT_ASSERT(eventTwo.valid());
+   CPPUNIT_ASSERT(eventThree.valid());
+   CPPUNIT_ASSERT(eventFour.valid());
 
    subTaskTwo->AddSubTask(*eventOne);
    subTaskTwo->AddSubTask(*eventTwo);
+   subTaskTwo->AddSubTask(*eventThree);
+   subTaskTwo->AddSubTask(*eventFour);
 
    masterTask->AddSubTask(*subTaskOne);
    masterTask->AddSubTask(*subTaskTwo);
@@ -975,6 +992,8 @@ void TaskActorTests::TestNestedMutable()
    CPPUNIT_ASSERT(!subTaskTwo->IsCurrentlyMutable());
    CPPUNIT_ASSERT(!eventOne->IsCurrentlyMutable());
    CPPUNIT_ASSERT(!eventTwo->IsCurrentlyMutable());
+   CPPUNIT_ASSERT(!eventThree->IsCurrentlyMutable());
+   CPPUNIT_ASSERT(!eventFour->IsCurrentlyMutable());
 
    dtActors::TaskActor *taskActorOne;
    subTaskOne->GetActor(taskActorOne);
@@ -989,9 +1008,32 @@ void TaskActorTests::TestNestedMutable()
    eventOne->GetActor(eventActorOne);
    CPPUNIT_ASSERT(eventActorOne);
 
+   dtActors::TaskActorGameEvent *eventActorTwo;
+   eventTwo->GetActor(eventActorTwo);
+   CPPUNIT_ASSERT(eventActorTwo);
+
+   dtActors::TaskActorGameEvent *eventActorThree;
+   eventThree->GetActor(eventActorThree);
+   CPPUNIT_ASSERT(eventActorThree);
+
+   dtActors::TaskActorGameEvent *eventActorFour;
+   eventFour->GetActor(eventActorFour);
+   CPPUNIT_ASSERT(eventActorFour);
+
    eventActorOne->SetComplete(true);
 
    CPPUNIT_ASSERT_MESSAGE("The second event should be mutable since the first event is completed", 
       eventTwo->IsCurrentlyMutable());
+
+   eventActorTwo->SetComplete(true);
+
+   result = eventThree->IsCurrentlyMutable();
+   CPPUNIT_ASSERT_MESSAGE("The third event should be mutable since the second event is completed", 
+      result);
+
+   eventActorThree->SetComplete(true);
+
+   CPPUNIT_ASSERT_MESSAGE("The fourth event should be mutable since the third event is completed", 
+      eventFour->IsCurrentlyMutable());
 }
 
