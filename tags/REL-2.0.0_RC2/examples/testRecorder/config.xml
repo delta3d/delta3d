@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<Application>
+
+  <Window X="100" Y="100" Width="800" Height="600" Name="testRecorder" PixelDepth="24" RefreshRate="60" ShowCursor="1" ChangeDisplayResolution="0" FullScreen="0" />
+
+  <Scene Name="defaultScene" />
+  <Camera Name="defaultCam" WindowInstance="testRecorder"/>
+  <View Name="defaultView" CameraInstance="defaultCam" SceneInstance="defaultScene"/>
+</Application>
+
