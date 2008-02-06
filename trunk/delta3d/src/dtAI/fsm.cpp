@@ -25,13 +25,15 @@
 namespace dtAI
 {
    FSM::FSM()
-      : mCurrentState(new NPCState(&NPCStateTypes::NPC_STATE_DEFAULT))
+      : mFactory(0)
+      , mCurrentState(new NPCState(&NPCStateTypes::NPC_STATE_DEFAULT))
    {     
       SetupDefaultFactory();
    }
 
    FSM::FSM(FactoryType* pFactory)
       : mFactory(pFactory)
+      , mCurrentState(new NPCState(&NPCStateTypes::NPC_STATE_DEFAULT))
    {
 
    }
@@ -141,7 +143,10 @@ void FSM::OnStateChange(NPCState* pState)
 
 void FSM::Update(double dt)
 {
-   mCurrentState->GetUpdate()(dt);
+   if(mCurrentState.valid() && mCurrentState->GetUpdate().valid())
+   {
+      mCurrentState->GetUpdate()(dt);
+   }
 }
 
 bool FSM::HandleEvent(const NPCEvent* pEvent)
