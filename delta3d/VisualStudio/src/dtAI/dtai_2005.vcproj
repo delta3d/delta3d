@@ -302,6 +302,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\inc\dtAI\distancesensor.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\inc\dtAI\export.h"
 				>
 			</File>
