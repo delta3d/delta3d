@@ -1,7 +1,0 @@
-Import('*')
-
-if env['foundLibs'][env['extLibs']['rbody']] != 'notFound':
-   srcs = env.SGlob( '*.cpp' )
-   deps = [ 'dtCore', 'dtABC', 'dtChar', 'dtUtil', 'dtAI' ]
-
-   env.BuildProgram( 'testAI', srcs, deps )
