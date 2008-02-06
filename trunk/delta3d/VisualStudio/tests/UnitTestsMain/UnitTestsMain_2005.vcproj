@@ -300,6 +300,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\tests\dtAI\distancesensortests.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\tests\dtUtil\enumerationtests.cpp"
 				>
 			</File>
