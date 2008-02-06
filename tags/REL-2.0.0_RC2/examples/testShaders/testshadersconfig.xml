@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<Application>
+
+  <Window ChangeDisplayResolution="0" FullScreen="0" Height="480" Name="testShaders" PixelDepth="24" RefreshRate="60" ShowCursor="1" Width="640" X="100" Y="100"/>
+
+  <Scene Name="defaultScene"/>
+
+  <Camera Name="defaultCam" WindowInstance="testShaders"/>
+  
+  <View Name="defaultView" CameraInstance="defaultCam" SceneInstance="defaultScene"/>
+  
+</Application>
