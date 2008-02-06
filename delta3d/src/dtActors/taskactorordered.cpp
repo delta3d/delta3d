@@ -19,6 +19,8 @@
  * Matthew W. Campbell, Curtiss Murphy
  */
 #include <dtActors/taskactorordered.h>
+#include <dtActors/engineactorregistry.h>
+
 #include <dtDAL/enginepropertytypes.h>
 
 namespace dtActors
@@ -183,7 +185,7 @@ namespace dtActors
 
       // First check to see if our parent allows us to be changed.  
       if (GetParentTask() != NULL)
-         parentGivesOK = GetParentTask()->IsChildTaskAllowedToChange(childTask);
+         parentGivesOK = GetParentTask()->IsChildTaskAllowedToChange(*this);
 
       // We always give permission to our children if we are failing because we ALLOW 
       // them to do it out of order. 
@@ -202,7 +204,7 @@ namespace dtActors
 
             //If we got here, then all the tasks before the current task have been completed.
             //So we can accept it and stopping checking...
-            if(itor->get() == &childTask)
+            if(&task == &childTask)
             {
                bOKToChangeChildTask = true;
                break;

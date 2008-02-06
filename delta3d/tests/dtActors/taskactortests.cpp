@@ -25,6 +25,7 @@
 #include <dtActors/taskactorgameevent.h>
 #include <dtActors/taskactorrollup.h>
 #include <dtActors/taskactorordered.h>
+#include <dtActors/engineactorregistry.h>
 
 #include <dtGame/gamemanager.h>
 #include <dtGame/defaultmessageprocessor.h>
@@ -61,6 +62,7 @@ class TaskActorTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestOrderedTaskActor);
       CPPUNIT_TEST(TestFailedAndComplete);
       CPPUNIT_TEST(TestMutable);
+      CPPUNIT_TEST(TestNestedMutable);
    CPPUNIT_TEST_SUITE_END();
 
    public:
@@ -76,6 +78,7 @@ class TaskActorTests : public CPPUNIT_NS::TestFixture
       void TestOrderedTaskActor();
       void TestFailedAndComplete();
       void TestMutable();
+      void TestNestedMutable();
 
    private:
       void CreateParentChildProxies();
@@ -936,4 +939,59 @@ void TaskActorTests::TestMutable()
    }
 }
 
+////////////////////////////////////////////////////////////////////////////
+void TaskActorTests::TestNestedMutable()
+{
+   dtCore::RefPtr<dtActors::TaskActorOrderedProxy> masterTask;
+   dtCore::RefPtr<dtActors::TaskActorOrderedProxy> subTaskOne;
+   dtCore::RefPtr<dtActors::TaskActorOrderedProxy> subTaskTwo;
+
+   dtCore::RefPtr<dtActors::TaskActorGameEventProxy> eventOne;
+   dtCore::RefPtr<dtActors::TaskActorGameEventProxy> eventTwo;
+
+   mGameManager->CreateActor(*dtActors::EngineActorRegistry::ORDERED_TASK_ACTOR_TYPE, masterTask);
+   mGameManager->CreateActor(*dtActors::EngineActorRegistry::ORDERED_TASK_ACTOR_TYPE, subTaskOne);
+   mGameManager->CreateActor(*dtActors::EngineActorRegistry::ORDERED_TASK_ACTOR_TYPE, subTaskTwo);
+
+   mGameManager->CreateActor(*dtActors::EngineActorRegistry::GAME_EVENT_TASK_ACTOR_TYPE, eventOne);
+   mGameManager->CreateActor(*dtActors::EngineActorRegistry::GAME_EVENT_TASK_ACTOR_TYPE, eventTwo);
+
+   CPPUNIT_ASSERT(masterTask.valid());
+   CPPUNIT_ASSERT(subTaskOne.valid());
+   CPPUNIT_ASSERT(subTaskTwo.valid());
+
+   CPPUNIT_ASSERT(eventOne.valid());
+   CPPUNIT_ASSERT(eventTwo.valid());
+
+   subTaskTwo->AddSubTask(*eventOne);
+   subTaskTwo->AddSubTask(*eventTwo);
+
+   masterTask->AddSubTask(*subTaskOne);
+   masterTask->AddSubTask(*subTaskTwo);
+
+   bool result = masterTask->IsCurrentlyMutable();
+   CPPUNIT_ASSERT(!result);
+   CPPUNIT_ASSERT(!subTaskOne->IsCurrentlyMutable());
+   CPPUNIT_ASSERT(!subTaskTwo->IsCurrentlyMutable());
+   CPPUNIT_ASSERT(!eventOne->IsCurrentlyMutable());
+   CPPUNIT_ASSERT(!eventTwo->IsCurrentlyMutable());
+
+   dtActors::TaskActor *taskActorOne;
+   subTaskOne->GetActor(taskActorOne);
+   CPPUNIT_ASSERT(taskActorOne != NULL);
+
+   taskActorOne->SetComplete(true);
+
+   CPPUNIT_ASSERT_MESSAGE("The first event should be mutable since the first subtask is completed", 
+      eventOne->IsCurrentlyMutable());
+
+   dtActors::TaskActorGameEvent *eventActorOne;
+   eventOne->GetActor(eventActorOne);
+   CPPUNIT_ASSERT(eventActorOne);
+
+   eventActorOne->SetComplete(true);
+
+   CPPUNIT_ASSERT_MESSAGE("The second event should be mutable since the first event is completed", 
+      eventTwo->IsCurrentlyMutable());
+}
 
