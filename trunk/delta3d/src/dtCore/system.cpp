@@ -152,7 +152,9 @@ namespace dtCore
       if (mCorrectSimulationTime + 0.001f < mSimulationTime + mFrameStep)
       {
          // we tried a sleep here, but even passing 1 millisecond was to long.
+#ifndef DELTA_WIN32
          AppSleep(1);
+#endif
          return;
       }
 
