@@ -259,6 +259,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtActors\distancesensoractor.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtActors\engineactorregistry.cpp"
 				>
 			</File>
@@ -410,6 +414,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtActors\deltaobjectactorproxy.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtActors\distancesensoractor.h"
 				>
 			</File>
 			<File
