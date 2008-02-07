@@ -213,6 +213,9 @@ namespace dtCore
       /// return the frame step, in case others need to use this.
       double GetFrameStep() const {return mFrameStep;}
 
+      /// return to see if we are using the fixed time stepping feature of the engine.
+      bool GetUsesFixedTimeStep() const {return mUseFixedTimeStep;}
+
    private:
 
       System(); ///<private
