@@ -39,7 +39,17 @@ namespace dtDAL
    const std::string TransformableActorProxy::PROPERTY_COLLISION_RADIUS("Collision Radius");
    const std::string TransformableActorProxy::PROPERTY_COLLISION_LENGTH("Collision Length");
    const std::string TransformableActorProxy::PROPERTY_COLLISION_BOX("Collision Box");
+   
+   //////////////////////////////////////////////////////
+   TransformableActorProxy::TransformableActorProxy()
+   {
+      SetClassName("dtCore::Transformable");
+      mCollisionType = &dtCore::Transformable::CollisionGeomType::NONE;
+      mCollisionRadius = mCollisionLength = 0.0f;
+      mCollisionBoxDims = osg::Vec3(0,0,0);
+   }
 
+   //////////////////////////////////////////////////////
    void TransformableActorProxy::BuildPropertyMap()
    {
       static const std::string GROUPNAME = "Transformable";
@@ -123,10 +133,7 @@ namespace dtDAL
 
    }
 
-   /** 
-    * @note rotation parameter order is [0]=pitch, [1]=roll, [2]=heading which
-    * is different than dtCore::Transform::SetRotation().
-    */
+   //////////////////////////////////////////////////////
    void TransformableActorProxy::SetRotation(const osg::Vec3 &rotation)
    {
       dtCore::Transformable *t = static_cast<dtCore::Transformable*>(GetActor());

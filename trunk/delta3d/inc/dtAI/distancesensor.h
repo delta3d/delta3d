@@ -21,6 +21,8 @@
 #ifndef DELTA_DISTANCE_SENSOR
 #define DELTA_DISTANCE_SENSOR
 
+#include <cmath>
+
 #include <osg/Vec3>
 #include <osg/Matrix>
 #include <dtAI/sensor.h>
@@ -29,6 +31,7 @@
 #include <osg/MatrixTransform>
 
 #include <dtUtil/typetraits.h>
+
 namespace dtAI
 {
 
