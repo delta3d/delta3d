@@ -248,9 +248,9 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
                break;
             }
          }
-         
+
          CPPUNIT_ASSERT_MESSAGE("TempProxy should not be NULL", tempProxy != NULL);
-         
+
          aap->SetValue(tempProxy);
          dtDAL::ActorProxy *ap = aap->GetValue();
          

@@ -46,12 +46,14 @@ namespace dtActors
    ////////////////////////////////////////////////////
    void DistanceSensorActorProxy::BuildInvokables()
    {
-      
+      GameActorProxy::BuildInvokables();
    }
    
    ////////////////////////////////////////////////////
    void DistanceSensorActorProxy::BuildPropertyMap()
    {
+      GameActorProxy::BuildPropertyMap();
+
       DistanceSensorActor* actor;
       GetActor(actor);
 
@@ -62,7 +64,7 @@ namespace dtActors
                DistanceSensorActorProxy::PROPERTY_ATTACH_TO_ACTOR, 
                dtDAL::MakeFunctor(*this, &DistanceSensorActorProxy::SetAttachToProxy),
                dtDAL::MakeFunctorRet(*actor, &DistanceSensorActor::GetAttachToActor),
-               EMPTY, EMPTY, GROUP));
+               "dtCore::DeltaDrawable", EMPTY, GROUP));
 
       AddProperty(new dtDAL::FloatActorProperty(DistanceSensorActorProxy::PROPERTY_TRIGGER_DISTANCE,
                DistanceSensorActorProxy::PROPERTY_TRIGGER_DISTANCE, 

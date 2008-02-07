@@ -52,13 +52,7 @@ namespace dtDAL
          /**
           * Constructor
           */
-         TransformableActorProxy()
-         {
-            SetClassName("dtCore::Transformable");
-            mCollisionType = &dtCore::Transformable::CollisionGeomType::NONE;
-            mCollisionRadius = mCollisionLength = 0.0f;
-            mCollisionBoxDims = osg::Vec3(0,0,0);
-         }
+         TransformableActorProxy();
 
          /**
           * Adds the properties that are common to all Delta3D transformable objects.
