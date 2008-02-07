@@ -28,6 +28,7 @@
 #include <dtCore/transformable.h>
 #include <osg/MatrixTransform>
 
+#include <dtUtil/typetraits.h>
 namespace dtAI
 {
 
@@ -36,38 +37,55 @@ namespace dtAI
    {
       public:
          
-         CompareDistanceFunc(ReportData minDistanceToReport): mMinDistance2(minDistanceToReport * minDistanceToReport)
+         CompareDistanceFunc(ReportData minDistanceToReport):
+            mCallbackDistance2(minDistanceToReport * minDistanceToReport)
          {}
-         
+
          bool operator()(ReportData& distance2, const VecType& first, const VecType& second)
          {
             distance2 = (second - first).length2();
-            if (mMinDistance2 <= distance2)
+            if (mCallbackDistance2 <= distance2)
             {
                return true;
             }
             return false;
          }
-         
+
+         void SetCallbackDistance(ReportData newCallbackDistance)
+         {
+            mCallbackDistance2 = newCallbackDistance * newCallbackDistance;
+         }
+
+         typename dtUtil::TypeTraits<ReportData>::return_type GetCallbackDistance() const
+         {
+            return std::sqrt(mCallbackDistance2);
+         }
+
+         typename dtUtil::TypeTraits<ReportData>::return_type GetCallbackDistanceSquared() const
+         {
+            return mCallbackDistance2;
+         }
+
       private:
-         ReportData mMinDistance2;
+         ReportData mCallbackDistance2;
    };
    
-   template <typename EvaluateFunc1, typename EvaluateFunc2, typename CompareFunc, 
+   template <typename EvaluateFunc1, typename EvaluateFunc2, 
       typename ReportFunc, typename ReportData = float, typename VecType = osg::Vec3>
-   class DistanceSensor : 
-      public Sensor<VecType, VecType, EvaluateFunc1, EvaluateFunc2, CompareFunc, ReportFunc, ReportData>
+   class DistanceSensor : public Sensor<VecType, VecType, EvaluateFunc1, EvaluateFunc2,
+         CompareDistanceFunc<ReportData, VecType>, ReportFunc, ReportData>
    {
       public:
-         
-         typedef Sensor<VecType, VecType, EvaluateFunc1, EvaluateFunc2, CompareFunc, ReportFunc, ReportData> 
-            BaseClass;
-         
-         DistanceSensor(EvaluateFunc1 eval1, EvaluateFunc2 eval2, 
-                  CompareFunc cmp, ReportFunc rpt) : 
-                     BaseClass(VecType(), VecType(), eval1, eval2, cmp, rpt)
+
+         typedef Sensor<VecType, VecType, EvaluateFunc1, EvaluateFunc2,
+            CompareDistanceFunc<ReportData, VecType>, ReportFunc, ReportData> BaseClass;
+
+         DistanceSensor(EvaluateFunc1 eval1, EvaluateFunc2 eval2, ReportData callbackDistance, ReportFunc rpt) : 
+                     BaseClass(VecType(), VecType(), eval1, eval2, 
+                              CompareDistanceFunc<ReportData, VecType>(callbackDistance) , rpt)
                      {
                      }
+
          virtual ~DistanceSensor() {}
 
          typename dtUtil::TypeTraits<ReportData>::return_type GetDistance()
@@ -79,6 +97,23 @@ namespace dtAI
          {
             return BaseClass::GetReportData();
          }
+
+         void SetCallbackDistanceSquared(typename dtUtil::TypeTraits<ReportData>::const_reference newValue)
+         {
+            return BaseClass::mCompare.SetCallbackDistance(newValue);
+         }
+
+         typename dtUtil::TypeTraits<ReportData>::return_type GetCallbackDistance()
+         {
+            return BaseClass::mCompare.GetCallbackDistance();
+         }
+
+         typename dtUtil::TypeTraits<ReportData>::return_type GetCallbackDistanceSquared()
+         {
+            return BaseClass::mCompare.GetCallbackDistanceSquared();
+         }
+
+      private:
    };
 
    template <typename VecType = osg::Vec3>
@@ -89,7 +124,7 @@ namespace dtAI
                   dtCore::Transformable::CoordSysEnum frameOfRef = dtCore::Transformable::ABS_CS):
                      mTransformable(&transformable), mFrameOfRef(frameOfRef)
          {}
-         
+
          void operator()(VecType& vec)
          {
             dtCore::Transform xform;

@@ -52,6 +52,7 @@
 #include <dtActors/animationgameactor.h>
 #include <dtActors/gamemeshactor.h>
 #include <dtActors/cal3dgameactor.h>
+#include <dtActors/distancesensoractor.h>
 #include <dtDAL/waypointactorproxy.h>
 #include <dtActors/soundactorproxy.h>
 
@@ -92,6 +93,9 @@ namespace dtActors
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::GAME_MESH_ACTOR_TYPE(
       new dtDAL::ActorType("Game Mesh Actor", "dtcore.Game.Actors", 
       "Simple base Game Actor that supports a Mesh - you should not typically use this directly"));
+   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::DISTANCE_SENSOR_ACTOR_TYPE(
+      new dtDAL::ActorType("Distance Sensor", "dtcore.Game.Actors", 
+      "Game Actor that wraps and triggers a dtAI distance sensor."));
 
    extern "C" DT_PLUGIN_EXPORT dtDAL::ActorPluginRegistry* CreatePluginRegistry()
    {
@@ -179,6 +183,8 @@ namespace dtActors
 
       // Base Game Mesh actor - typically subclassed (maybe shouldn't even be registered
       mActorFactory->RegisterType<GameMeshActorProxy>(GAME_MESH_ACTOR_TYPE.get());
+
+      mActorFactory->RegisterType<DistanceSensorActorProxy>(DISTANCE_SENSOR_ACTOR_TYPE.get());
    }
 
 }

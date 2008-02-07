@@ -1,23 +1,23 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
-* Copyright 2008, Alion Science and Technology
-*
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
-* any later version.
-*
-* This library is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
-* details.
-*
-* You should have received a copy of the GNU Lesser General Public License
-* along with this library; if not, write to the Free Software Foundation, Inc.,
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*
-* David Guthrie
-*/
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright 2008, Alion Science and Technology
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * David Guthrie
+ */
 #include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtAI/distancesensor.h>
@@ -47,10 +47,6 @@ namespace dtAI
    };
 
 
-   typedef CompareDistanceFunc<osg::Vec3f::value_type, osg::Vec3f> CompareDistanceVec3f;
-   typedef CompareDistanceFunc<osg::Vec3d::value_type, osg::Vec3d> CompareDistanceVec3d;
-
-
    /// Math unit tests for dtUtil
    class DistanceSensorTests : public CPPUNIT_NS::TestFixture
    {
@@ -73,7 +69,7 @@ namespace dtAI
       void TestTransformFunctor()
       {
          typedef DistanceSensor<EvaluateTransformablePosition<>, EvaluateTransformablePosition<>, 
-            CompareDistanceVec3f, TestDistanceCallbackFunctor<float> > TwoTransformDistanceSensorFloat;
+            TestDistanceCallbackFunctor<float> > TwoTransformDistanceSensorFloat;
 
          dtCore::RefPtr<dtCore::Transformable> t1 = new dtCore::Transformable("jojo");
          dtCore::RefPtr<dtCore::Transformable> t2 = new dtCore::Transformable("lima");
@@ -85,7 +81,7 @@ namespace dtAI
          distanceCallback.mValue = &callBackValue;
 
          TwoTransformDistanceSensorFloat* distanceSensor = new TwoTransformDistanceSensorFloat(
-                  etp1, etp2, CompareDistanceVec3f(5), distanceCallback);
+                  etp1, etp2, 5, distanceCallback);
          distanceSensor->Evaluate();
 
          CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The callback should not have fired", 
@@ -131,8 +127,7 @@ namespace dtAI
       void TestMatrixFunctor()
       {
          typedef DistanceSensor<EvaluateMatrixPosition<osg::Vec3d>, EvaluateMatrixPosition<osg::Vec3d>, 
-            CompareDistanceVec3d, TestDistanceCallbackFunctor<double>, double, osg::Vec3d > 
-            TwoMatrixDistanceSensorDouble;
+            TestDistanceCallbackFunctor<double>, double, osg::Vec3d > TwoMatrixDistanceSensorDouble;
 
          dtCore::RefPtr<osg::MatrixTransform> m1 = new osg::MatrixTransform;
          dtCore::RefPtr<osg::MatrixTransform> m2 = new osg::MatrixTransform;
@@ -144,7 +139,7 @@ namespace dtAI
          distanceCallback.mValue = &callBackValue;
 
          TwoMatrixDistanceSensorDouble* distanceSensor = new TwoMatrixDistanceSensorDouble(
-                  emp1, emp2, CompareDistanceVec3d(5), distanceCallback);
+                  emp1, emp2, 5, distanceCallback);
 
          distanceSensor->Evaluate();
 
