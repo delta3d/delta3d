@@ -46,6 +46,14 @@
 
 #include <vector>
 
+#ifdef DELTA_WIN32
+   #include <Windows.h>
+   #define SLEEP(milliseconds) Sleep((milliseconds))
+#else
+   #include <unistd.h>
+   #define SLEEP(milliseconds) usleep(((milliseconds) * 1000))
+#endif
+
 /**
  * This test suite tests the base task actor proxy as well as the different
  * task subclasses.
@@ -946,6 +954,8 @@ void TaskActorTests::TestNestedMutable()
    dtCore::RefPtr<dtActors::TaskActorOrderedProxy> subTaskOne;
    dtCore::RefPtr<dtActors::TaskActorOrderedProxy> subTaskTwo;
 
+   dtCore::RefPtr<dtActors::TaskActorGameEventProxy> eventSubOne;
+   dtCore::RefPtr<dtActors::TaskActorGameEventProxy> eventSubTwo;
    dtCore::RefPtr<dtActors::TaskActorGameEventProxy> eventOne;
    dtCore::RefPtr<dtActors::TaskActorGameEventProxy> eventTwo;
    dtCore::RefPtr<dtActors::TaskActorGameEventProxy> eventThree;
@@ -955,15 +965,30 @@ void TaskActorTests::TestNestedMutable()
    mGameManager->CreateActor(*dtActors::EngineActorRegistry::ORDERED_TASK_ACTOR_TYPE, subTaskOne);
    mGameManager->CreateActor(*dtActors::EngineActorRegistry::ORDERED_TASK_ACTOR_TYPE, subTaskTwo);
 
+   mGameManager->CreateActor(*dtActors::EngineActorRegistry::GAME_EVENT_TASK_ACTOR_TYPE, eventSubOne);
+   mGameManager->CreateActor(*dtActors::EngineActorRegistry::GAME_EVENT_TASK_ACTOR_TYPE, eventSubTwo);
    mGameManager->CreateActor(*dtActors::EngineActorRegistry::GAME_EVENT_TASK_ACTOR_TYPE, eventOne);
    mGameManager->CreateActor(*dtActors::EngineActorRegistry::GAME_EVENT_TASK_ACTOR_TYPE, eventTwo);
    mGameManager->CreateActor(*dtActors::EngineActorRegistry::GAME_EVENT_TASK_ACTOR_TYPE, eventThree);
    mGameManager->CreateActor(*dtActors::EngineActorRegistry::GAME_EVENT_TASK_ACTOR_TYPE, eventFour);
 
+   mGameManager->AddActor(*masterTask, false, false);
+   mGameManager->AddActor(*subTaskOne, false, false);
+   mGameManager->AddActor(*subTaskTwo, false, false);
+
+   mGameManager->AddActor(*eventSubOne, false, false);
+   mGameManager->AddActor(*eventSubTwo, false, false);
+   mGameManager->AddActor(*eventOne, false, false);
+   mGameManager->AddActor(*eventTwo, false, false);
+   mGameManager->AddActor(*eventThree, false, false);
+   mGameManager->AddActor(*eventFour, false, false);
+
    masterTask->SetName("MasterTask");
    subTaskOne->SetName("SubTaskOne");
    subTaskTwo->SetName("SubTaskTwo");
 
+   eventSubOne->SetName("EventSubOne");
+   eventSubTwo->SetName("EventSubTwo");
    eventOne->SetName("EventOne");
    eventTwo->SetName("EventTwo");
    eventThree->SetName("EventThree");
@@ -973,10 +998,15 @@ void TaskActorTests::TestNestedMutable()
    CPPUNIT_ASSERT(subTaskOne.valid());
    CPPUNIT_ASSERT(subTaskTwo.valid());
 
+   CPPUNIT_ASSERT(eventSubOne.valid());
+   CPPUNIT_ASSERT(eventSubTwo.valid());
    CPPUNIT_ASSERT(eventOne.valid());
    CPPUNIT_ASSERT(eventTwo.valid());
    CPPUNIT_ASSERT(eventThree.valid());
    CPPUNIT_ASSERT(eventFour.valid());
+
+   subTaskOne->AddSubTask(*eventSubOne);
+   subTaskOne->AddSubTask(*eventSubTwo);
 
    subTaskTwo->AddSubTask(*eventOne);
    subTaskTwo->AddSubTask(*eventTwo);
@@ -990,6 +1020,11 @@ void TaskActorTests::TestNestedMutable()
    CPPUNIT_ASSERT(!result);
    CPPUNIT_ASSERT(!subTaskOne->IsCurrentlyMutable());
    CPPUNIT_ASSERT(!subTaskTwo->IsCurrentlyMutable());
+
+   CPPUNIT_ASSERT_MESSAGE("The first event on the first task should be mutable by default", 
+      eventSubOne->IsCurrentlyMutable());
+   CPPUNIT_ASSERT(!eventSubTwo->IsCurrentlyMutable());
+   
    CPPUNIT_ASSERT(!eventOne->IsCurrentlyMutable());
    CPPUNIT_ASSERT(!eventTwo->IsCurrentlyMutable());
    CPPUNIT_ASSERT(!eventThree->IsCurrentlyMutable());
@@ -998,6 +1033,20 @@ void TaskActorTests::TestNestedMutable()
    dtActors::TaskActor *taskActorOne;
    subTaskOne->GetActor(taskActorOne);
    CPPUNIT_ASSERT(taskActorOne != NULL);
+
+   dtActors::TaskActorGameEvent *eventSubActorOne;
+   eventSubOne->GetActor(eventSubActorOne);
+   CPPUNIT_ASSERT(eventSubActorOne);
+
+   dtActors::TaskActorGameEvent *eventSubActorTwo;
+   eventSubTwo->GetActor(eventSubActorTwo);
+   CPPUNIT_ASSERT(eventSubActorTwo);
+
+   eventSubActorOne->SetComplete(true);
+   CPPUNIT_ASSERT_MESSAGE("The second event of the first subtask should now be mutable", 
+      eventSubTwo->IsCurrentlyMutable());
+
+   eventSubActorTwo->SetComplete(true);
 
    taskActorOne->SetComplete(true);
 
