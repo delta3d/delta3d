@@ -14,9 +14,9 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
- * 59 Temple Place, Suite 330, Boston, MA 021w11-1307 USA
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * Matthew W. Campbelwl
+ * Matthew W. Campbell
  */
 #ifndef DELTA_TASKACTORGAMEEVENT
 #define DELTA_TASKACTORGAMEEVENT
@@ -30,7 +30,7 @@ namespace dtActors
    /**
     * Game event tasks are tasks that are responsible for tracking game events.
     * Game events are simple atomic actions such as "Apple Found" or "Hostage Rescued".
-    * This task actor is responcible for tracking and listening for one event.  When
+    * This task actor is responsible for tracking and listening for one event.  When
     * that event is fired, the task attempts to mark itself complete.
     * @see dtDAL::GameEvent
     */
