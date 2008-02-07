@@ -210,6 +210,9 @@ namespace dtCore
       /// Set to make the system step by the fixed amount of time.
       void SetUseFixedTimeStep(bool value) {mUseFixedTimeStep = value;}
 
+      /// return the frame step, in case others need to use this.
+      double GetFrameStep() const {return mFrameStep;}
+
    private:
 
       System(); ///<private
