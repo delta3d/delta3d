@@ -29,7 +29,9 @@
 
 namespace dtAI
 {
-   template<typename KinematicGoal_, typename Kinematic_, typename SteeringOutput_, typename SensorType = dtUtil::DoNothing<int, void>, typename ErrorResultType = int, typename ErrorHandlerType = dtUtil::DoNothing<int, ErrorResultType> >
+   template<typename KinematicGoal_, typename Kinematic_, typename SteeringOutput_, 
+      typename SensorType = dtUtil::DoNothing0<int>, typename ErrorResultType = int, 
+      typename ErrorHandlerType = dtUtil::DoNothing<int, ErrorResultType> >
    class SteeringBehavior: public osg::Referenced
    {
       public:

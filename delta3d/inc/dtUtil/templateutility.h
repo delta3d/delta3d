@@ -30,10 +30,23 @@ namespace dtUtil
     * This odd functor is actually useful for supplying a default 
     * template parameter when a functors is expected
     */
-   template<typename Ret = void, typename T = void>
+   template<typename Ret, typename T>
    struct DoNothing
    {
       Ret operator()(T)
+      {
+
+      }
+   };
+
+   /**
+    * This odd functor is actually useful for supplying a default 
+    * template parameter when a functors is expected
+    */
+   template<typename Ret = void>
+   struct DoNothing0
+   {
+      Ret operator()()
       {
 
       }
