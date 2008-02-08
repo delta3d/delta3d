@@ -393,6 +393,16 @@ namespace dtCore
           * The arrow key left/right mapping.
           */
          ButtonsToAxis* mArrowKeysLeftRightMapping;
+
+         /**
+          * The arrow key up/down mapping.
+          */
+         ButtonsToAxis* mArrowKeysUpDownMappingUpperCase;
+
+         /**
+          * The arrow key left/right mapping.
+          */
+         ButtonsToAxis* mArrowKeysLeftRightMappingUpperCase;
          
          /**
           * The a/d key left/right mapping.
@@ -418,6 +428,16 @@ namespace dtCore
           * The default sidestep left/right axis.
           */
          LogicalAxis* mDefaultSidestepLeftRightAxis;
+
+         /**
+          * The default walk forward/backward axis.
+          */
+         LogicalAxis* mDefaultWalkForwardBackwardAxisUpperCase;
+
+         /**
+          * The default sidestep left/right axis.
+          */
+         LogicalAxis* mDefaultSidestepLeftRightAxisUpperCase;
          
          /**
           * The axis that moves the target forwards or backwards.
@@ -502,6 +522,8 @@ namespace dtCore
 
          ///private method used to ground clamp or adjust the falling velocity/position
          void AdjustElevation(osg::Vec3 &xyz, double deltaFrameTime);
+
+         bool mRegisterUpperCaseKeyEvents;
    };
 }
 
