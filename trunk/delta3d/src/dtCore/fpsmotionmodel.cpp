@@ -83,6 +83,7 @@ FPSMotionModel::FPSMotionModel(  Keyboard* keyboard,
    , mLookLeftRightCtrl(0.f)
    , mLookUpDownCtrl(0.f)
    , mUseMouseButtons(false) // default behavior is NOT to require mouse down to look
+   , mRegisterUpperCaseKeyEvents(true)
 {
    RegisterInstance(this);
    
@@ -218,7 +219,7 @@ void FPSMotionModel::SetDefaultMappings(Keyboard *keyboard, Mouse *mouse)
             keyboard->GetButton('d')
          )
       );
-             
+
       mDefaultWalkForwardBackwardAxis = mDefaultInputDevice->AddAxis(
          "default walk forward/backward",
          new AxesToAxis(arrowKeysUpAndDown)
@@ -238,6 +239,35 @@ void FPSMotionModel::SetDefaultMappings(Keyboard *keyboard, Mouse *mouse)
          "default sidestep left/right",
          new AxesToAxis(arrowKeysLeftAndRight)
       );
+
+      if(mRegisterUpperCaseKeyEvents)
+      {
+         // Make sure the uppercase keys also trigger the motion model
+         Axis *arrowKeysUpAndDownUpperCase = mDefaultInputDevice->AddAxis(
+            "arrow keys up/down",
+            mArrowKeysUpDownMappingUpperCase = new ButtonsToAxis(
+               keyboard->GetButton('S'),
+               keyboard->GetButton('W')
+            )
+         );
+         Axis *arrowKeysLeftAndRightUpperCase = mDefaultInputDevice->AddAxis(
+            "arrow keys left/right",
+            mArrowKeysLeftRightMappingUpperCase = new ButtonsToAxis(
+               keyboard->GetButton('A'),
+               keyboard->GetButton('D')
+            )
+         );
+         /////////////////////////////////////////////////////////////////
+         mDefaultWalkForwardBackwardAxisUpperCase = mDefaultInputDevice->AddAxis(
+            "default walk forward/backward uppercase",
+            new AxesToAxis(arrowKeysUpAndDownUpperCase)
+         );
+
+         mDefaultSidestepLeftRightAxisUpperCase = mDefaultInputDevice->AddAxis(
+            "default sidestep left/right uppercase",
+            new AxesToAxis(arrowKeysLeftAndRightUpperCase)
+         );
+      }
    }
    
    SetWalkForwardBackwardAxis(mDefaultWalkForwardBackwardAxis);
@@ -265,6 +295,10 @@ void FPSMotionModel::SetWalkForwardBackwardAxis(Axis *walkForwardBackwardAxis)
    mWalkForwardBackwardAxis = walkForwardBackwardAxis;
 
    mWalkForwardBackwardAxis->AddAxisListener(mForwardBackwardListener);
+   if(mRegisterUpperCaseKeyEvents)
+   {
+      mDefaultWalkForwardBackwardAxisUpperCase->AddAxisListener(mForwardBackwardListener);
+   }
 }
 
 /**
@@ -352,6 +386,10 @@ void FPSMotionModel::SetSidestepLeftRightAxis(Axis *sidestepLeftRightAxis)
    mSidestepLeftRightAxis = sidestepLeftRightAxis;
 
    mSidestepLeftRightAxis->AddAxisListener(mSidestepListener);
+   if(mRegisterUpperCaseKeyEvents)
+   {
+      mDefaultSidestepLeftRightAxisUpperCase->AddAxisListener(mSidestepListener);
+   }
 }
 
 /**
