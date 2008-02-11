@@ -5,6 +5,7 @@
 
 #include <osg/PolygonMode>
 #include <osg/Group>
+#include <osg/MatrixTransform>
 #include <osg/StateSet>
 #include <osg/Material>
 #include <osg/PolygonOffset>
@@ -29,7 +30,11 @@
 #include <dtCore/mouse.h>
 #include <dtCore/object.h>
 #include <dtUtil/log.h>
+
+#ifndef NO_DTCHAR
 #include <dtChar/dtchar.h>
+#endif
+
 #include <dtDAL/project.h>
 #include <dtDAL/map.h>
 

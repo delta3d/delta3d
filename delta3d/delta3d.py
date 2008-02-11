@@ -814,6 +814,12 @@ def TOOL_BUNDLE(env):
       
       if not env.GetOption('clean') :
          
+         foundnlH = CheckHeader('nl.h', ['/usr/include/hawknl','#ext/inc', '#ext/inc/NL', '#ext/inc/nl', '/usr/local/include/hawknl'])
+
+         if not foundnlH: 
+            print "nl.h was not found, aborting."
+            env.Exit(1)
+
          foundGdalH = CheckHeader('gdal.h', ['/usr/include/gdal','#ext/inc/gdal', '/Library/Frameworks/gdal.framework/Headers'])
          
          if not foundGdalH: 
