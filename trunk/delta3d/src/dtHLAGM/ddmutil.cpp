@@ -29,8 +29,8 @@
 
 namespace dtHLAGM
 {
-   const unsigned long DDMUtil::HLAGM_MIN_EXTENT = RTI::Region::getMinExtent();
-   const unsigned long DDMUtil::HLAGM_MAX_EXTENT = RTI::Region::getMaxExtent();
+   const unsigned long DDMUtil::HLAGM_MIN_EXTENT = MIN_EXTENT;
+   const unsigned long DDMUtil::HLAGM_MAX_EXTENT = MAX_EXTENT;
 
    unsigned long DDMUtil::MapEnumerated(unsigned value, unsigned min, unsigned max)
    {
