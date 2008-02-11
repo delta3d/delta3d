@@ -121,6 +121,11 @@ namespace dtQt
    {
       mTimer.setInterval(10);
       setAutoBufferSwap(!drawOnSeparateThread);
+
+      // This enables us to track mouse movement even when
+      // no button is pressed.  The motion models depend
+      // on tracking the mouse location to work properly.
+      setMouseTracking(true);
    }
 
    //////////////////////////////////////////////////////////////////////////////////
