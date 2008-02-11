@@ -26,7 +26,11 @@
 #include <dtActors/particlesystemactorproxy.h>
 #include <dtActors/positionallightactorproxy.h>
 #include <dtActors/spotlightactorproxy.h>
+
+#ifndef NO_DTCHAR
 #include <dtActors/characteractorproxy.h>
+#endif
+
 #include <dtActors/infiniteterrainactorproxy.h>
 #include <dtActors/autotriggeractorproxy.h>
 #include <dtActors/beziercontrolleractorproxy.h>

@@ -17,8 +17,9 @@ FIND_PATH(HAWKNL_INCLUDE_DIR nl.h
     ~/Library/Frameworks
     /Library/Frameworks
     /usr/local/include
+    /usr/local/include/hawknl
     /usr/include
-    /usr/include/cal3d
+    /usr/include/hawknl
     /sw/include # Fink
     /opt/local/include # DarwinPorts
     /opt/csw/include # Blastwave
