@@ -98,7 +98,9 @@ void Viewer::Config()
    osg::Vec3 lookAtXYZ ( 0.f, 0.f, 1.f );
    osg::Vec3 upVec ( 0.f, 0.f, 1.f );
    camPos.SetLookAt( camXYZ, lookAtXYZ, upVec );
+
    GetCamera()->SetTransform( camPos );
+   GetCamera()->SetNearFarCullingMode(dtCore::Camera::NO_AUTO_NEAR_FAR);
 
    mMotion = new OrbitMotionModel( GetKeyboard(), GetMouse() );
    mMotion->SetTarget( GetCamera() );
@@ -128,8 +130,8 @@ void Viewer::OnLoadCharFile( const QString &filename )
    QDir dir(filename);
    dir.cdUp();
 
-   SetDataFilePathList( dtCore::GetDataFilePathList() + ":" +
-                        dir.path().toStdString() + ":" );
+   SetDataFilePathList( dtCore::GetDataFilePathList() + ";" +
+                        dir.path().toStdString() + ";" );
 
    // try to clean up the scene graph
    if (mCharacter.valid())
@@ -137,7 +139,7 @@ void Viewer::OnLoadCharFile( const QString &filename )
       mShadeDecorator->removeChild(mCharacter->GetNode());
       mWireDecorator->removeChild(mCharacter->GetNode());
       mCharacter = NULL;
-   }
+   }  
 
    //wipe out any previously loaded characters. This will ensure we can 
    //reload the same file (which might have been modified).
@@ -216,7 +218,7 @@ void Viewer::OnLoadCharFile( const QString &filename )
       emit MaterialLoaded(matID, nameToSend, diffColor, ambColor, specColor, shininess);
    }
    
-   LOG_DEBUG("Done loading file: " + filename.toStdString() );
+   LOG_DEBUG("Done loading file: " + filename.toStdString() );   
 }
 
 void Viewer::OnStartAnimation( unsigned int id, float weight, float delay )
