@@ -98,7 +98,7 @@ namespace dtActors
       new dtDAL::ActorType("Game Mesh Actor", "dtcore.Game.Actors", 
       "Simple base Game Actor that supports a Mesh - you should not typically use this directly"));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::DISTANCE_SENSOR_ACTOR_TYPE(
-      new dtDAL::ActorType("Distance Sensor", "dtcore.Game.Actors", 
+      new dtDAL::ActorType("Distance Sensor", "dtai.Game.Actors", 
       "Game Actor that wraps and triggers a dtAI distance sensor."));
 
    extern "C" DT_PLUGIN_EXPORT dtDAL::ActorPluginRegistry* CreatePluginRegistry()
