@@ -83,7 +83,6 @@ FPSMotionModel::FPSMotionModel(  Keyboard* keyboard,
    , mLookLeftRightCtrl(0.f)
    , mLookUpDownCtrl(0.f)
    , mUseMouseButtons(false) // default behavior is NOT to require mouse down to look
-   , mRegisterUpperCaseKeyEvents(true)
 {
    RegisterInstance(this);
    
@@ -206,24 +205,43 @@ void FPSMotionModel::SetDefaultMappings(Keyboard *keyboard, Mouse *mouse)
          mUpDownMouseMovement = new AxisToAxis(mouse->GetAxis(1)));
 
       Axis *arrowKeysUpAndDown = mDefaultInputDevice->AddAxis(
-         "arrow keys up/down",
+         "s/w",
          mArrowKeysUpDownMapping = new ButtonsToAxis(
             keyboard->GetButton('s'),
             keyboard->GetButton('w')
          )
       );
+
+      Axis *arrowKeysUpAndDownUpperCase = mDefaultInputDevice->AddAxis(
+         "S/W",
+         mArrowKeysUpDownMappingUpperCase = new ButtonsToAxis(
+         keyboard->GetButton('S'),
+         keyboard->GetButton('W')
+         )
+       );
+
       Axis *arrowKeysLeftAndRight = mDefaultInputDevice->AddAxis(
-         "arrow keys left/right",
+         "a/d",
          mArrowKeysLeftRightMapping = new ButtonsToAxis(
             keyboard->GetButton('a'),
             keyboard->GetButton('d')
          )
       );
 
+      Axis *arrowKeysLeftAndRightUpperCase = mDefaultInputDevice->AddAxis(
+         "A/D",
+         mArrowKeysLeftRightMappingUpperCase = new ButtonsToAxis(
+            keyboard->GetButton('A'),
+            keyboard->GetButton('D')
+         )
+      );
+
+
       mDefaultWalkForwardBackwardAxis = mDefaultInputDevice->AddAxis(
          "default walk forward/backward",
-         new AxesToAxis(arrowKeysUpAndDown)
+         new AxesToAxis(arrowKeysUpAndDown, arrowKeysUpAndDownUpperCase)
       );
+
          
       mDefaultTurnLeftRightAxis = mDefaultInputDevice->AddAxis(
          "default turn left/right",
@@ -237,37 +255,8 @@ void FPSMotionModel::SetDefaultMappings(Keyboard *keyboard, Mouse *mouse)
          
       mDefaultSidestepLeftRightAxis = mDefaultInputDevice->AddAxis(
          "default sidestep left/right",
-         new AxesToAxis(arrowKeysLeftAndRight)
+         new AxesToAxis(arrowKeysLeftAndRight, arrowKeysLeftAndRightUpperCase)
       );
-
-      if(mRegisterUpperCaseKeyEvents)
-      {
-         // Make sure the uppercase keys also trigger the motion model
-         Axis *arrowKeysUpAndDownUpperCase = mDefaultInputDevice->AddAxis(
-            "arrow keys up/down",
-            mArrowKeysUpDownMappingUpperCase = new ButtonsToAxis(
-               keyboard->GetButton('S'),
-               keyboard->GetButton('W')
-            )
-         );
-         Axis *arrowKeysLeftAndRightUpperCase = mDefaultInputDevice->AddAxis(
-            "arrow keys left/right",
-            mArrowKeysLeftRightMappingUpperCase = new ButtonsToAxis(
-               keyboard->GetButton('A'),
-               keyboard->GetButton('D')
-            )
-         );
-         /////////////////////////////////////////////////////////////////
-         mDefaultWalkForwardBackwardAxisUpperCase = mDefaultInputDevice->AddAxis(
-            "default walk forward/backward uppercase",
-            new AxesToAxis(arrowKeysUpAndDownUpperCase)
-         );
-
-         mDefaultSidestepLeftRightAxisUpperCase = mDefaultInputDevice->AddAxis(
-            "default sidestep left/right uppercase",
-            new AxesToAxis(arrowKeysLeftAndRightUpperCase)
-         );
-      }
    }
    
    SetWalkForwardBackwardAxis(mDefaultWalkForwardBackwardAxis);
@@ -295,10 +284,6 @@ void FPSMotionModel::SetWalkForwardBackwardAxis(Axis *walkForwardBackwardAxis)
    mWalkForwardBackwardAxis = walkForwardBackwardAxis;
 
    mWalkForwardBackwardAxis->AddAxisListener(mForwardBackwardListener);
-   if(mRegisterUpperCaseKeyEvents)
-   {
-      mDefaultWalkForwardBackwardAxisUpperCase->AddAxisListener(mForwardBackwardListener);
-   }
 }
 
 /**
@@ -386,10 +371,6 @@ void FPSMotionModel::SetSidestepLeftRightAxis(Axis *sidestepLeftRightAxis)
    mSidestepLeftRightAxis = sidestepLeftRightAxis;
 
    mSidestepLeftRightAxis->AddAxisListener(mSidestepListener);
-   if(mRegisterUpperCaseKeyEvents)
-   {
-      mDefaultSidestepLeftRightAxisUpperCase->AddAxisListener(mSidestepListener);
-   }
 }
 
 /**
