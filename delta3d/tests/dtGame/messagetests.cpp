@@ -61,6 +61,9 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 
+#include <dtABC/application.h>
+extern dtABC::Application& GetGlobalApplication();
+
 #ifdef DELTA_WIN32
    #include <Windows.h>
    #define SLEEP(milliseconds) Sleep((milliseconds))
@@ -158,8 +161,8 @@ void MessageTests::setUp()
       dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
       mLogger = &dtUtil::Log::GetInstance("messagetests.cpp");
 
-      dtCore::Scene* scene = new dtCore::Scene();
-      mGameManager = new dtGame::GameManager(*scene);
+      mGameManager = new dtGame::GameManager(*GetGlobalApplication().GetScene());
+      mGameManager->SetApplication(GetGlobalApplication());
       mGameManager->LoadActorRegistry(mTestGameActorLibrary);
       mGameManager->LoadActorRegistry(mTestActorLibrary);
       dtCore::System::GetInstance().SetShutdownOnWindowClose(false);

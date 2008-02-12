@@ -44,6 +44,9 @@
 
 #include <dtActors/engineactorregistry.h>
 
+#include <dtABC/application.h>
+extern dtABC::Application& GetGlobalApplication();
+
 namespace dtGame
 {
    class GroundClamperTests : public CPPUNIT_NS::TestFixture 
@@ -63,7 +66,8 @@ namespace dtGame
    
          void setUp()
          {
-            mGM = new GameManager(*new dtCore::Scene());
+            mGM = new dtGame::GameManager(*GetGlobalApplication().GetScene());
+            mGM->SetApplication(GetGlobalApplication());
             mGroundClamper = new GroundClamper();
             mGM->LoadActorRegistry(mTestGameActorRegistry);
 

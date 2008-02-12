@@ -38,6 +38,9 @@
 #include <osg/Endian>
 #include <cppunit/extensions/HelperMacros.h>
 
+#include <dtABC/application.h>
+extern dtABC::Application& GetGlobalApplication();
+
 class NamedParameterTests : public CPPUNIT_NS::TestFixture
 {
    CPPUNIT_TEST_SUITE(NamedParameterTests);
@@ -600,7 +603,8 @@ void NamedParameterTests::setUp()
       //logger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
 
       dtCore::Scene* scene = new dtCore::Scene();
-      mManager = new dtGame::GameManager(*scene);
+      mManager = new dtGame::GameManager(*GetGlobalApplication().GetScene());
+      mManager->SetApplication(GetGlobalApplication());
       mManager->LoadActorRegistry(mTestActorLibrary);
       
       mExampleActor = mManager->CreateActor("dtcore.examples", "Test All Properties");

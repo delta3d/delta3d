@@ -43,8 +43,11 @@
 #include <dtCore/scene.h>
 
 #include <dtUtil/stringutils.h>
+#include <dtABC/application.h>
 
 #include <vector>
+
+extern dtABC::Application& GetGlobalApplication();
 
 #ifdef DELTA_WIN32
    #include <Windows.h>

@@ -42,9 +42,13 @@
 #include <dtGame/exceptionenum.h>
 #include <dtGame/deadreckoningcomponent.h>
 
+#include <dtABC/application.h>
+
 #include <dtDAL/actortype.h>
 
 #include <dtActors/engineactorregistry.h>
+
+extern dtABC::Application& GetGlobalApplication();
 
 #ifdef DELTA_WIN32
    #include <Windows.h>
@@ -154,7 +158,8 @@ namespace dtGame
          {
             dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
             dtCore::System::GetInstance().Start();
-            mGM = new GameManager(*new dtCore::Scene());
+            mGM = new dtGame::GameManager(*GetGlobalApplication().GetScene());
+            mGM->SetApplication(GetGlobalApplication());
             mDeadReckoningComponent = new TestDeadReckoningComponent();
             mGM->AddComponent(*mDeadReckoningComponent, GameManager::ComponentPriority::NORMAL);
             mGM->LoadActorRegistry(mTestGameActorRegistry);

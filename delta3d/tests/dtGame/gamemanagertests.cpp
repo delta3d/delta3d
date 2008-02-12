@@ -204,8 +204,9 @@ void GameManagerTests::setUp()
       logger = &dtUtil::Log::GetInstance("MessageParameter");
       //logger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
 
-      dtCore::RefPtr<dtCore::Scene> scene = new dtCore::Scene();
-      mManager = new dtGame::GameManager(*scene);
+      mManager = new dtGame::GameManager(*GetGlobalApplication().GetScene());
+      //some tests depend on the application not being set.
+      //mManager->SetApplication(GetGlobalApplication());
       mManager->LoadActorRegistry(mTestGameActorLibrary);
       mManager->LoadActorRegistry(mTestActorLibrary);
       dtCore::System::GetInstance().SetShutdownOnWindowClose(false);

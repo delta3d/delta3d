@@ -25,6 +25,9 @@
 
 #include <dtUtil/mathdefines.h>
 
+#include <dtABC/application.h>
+extern dtABC::Application& GetGlobalApplication();
+
 namespace dtTest
 {
    /// tests how the processor performs
@@ -83,8 +86,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION( ESPduProcessorTests );
 
 void ESPduProcessorTests::CreateRemoteActorFromEntityStatePDU()
 {
-   dtCore::RefPtr<dtCore::Scene> scene = new dtCore::Scene();
-   dtCore::RefPtr<dtGame::GameManager> gm = new dtGame::GameManager( *scene );
+   dtCore::RefPtr<dtGame::GameManager> gm = new dtGame::GameManager( *GetGlobalApplication().GetScene() );
 
    dtCore::RefPtr<dtGame::DefaultMessageProcessor> mp = new dtGame::DefaultMessageProcessor();
    gm->AddComponent( *mp, dtGame::GameManager::ComponentPriority::NORMAL);

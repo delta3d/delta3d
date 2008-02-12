@@ -20,6 +20,7 @@
  */
 #include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
+#include <dtUtil/macros.h>
 #include <dtLMS/lmstaskstatus.h>
 #include <dtLMS/lmsmessage.h>
 #include <dtLMS/lmsmessagetype.h>
@@ -32,10 +33,9 @@
 #include <dtGame/gamemanager.h>
 #include <dtActors/taskactor.h>
 #include <dtActors/engineactorregistry.h>
+#include <dtABC/application.h>
 
-#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
-   #define W32
-#endif
+extern dtABC::Application& GetGlobalApplication();
 
 class TestLmsComponent : public dtLMS::LmsComponent
 {
@@ -112,8 +112,8 @@ CPPUNIT_TEST_SUITE_REGISTRATION(LMSTests);
 
 void LMSTests::setUp()
 {
-   dtCore::Scene *scene = new dtCore::Scene;
-   mGameManager = new dtGame::GameManager(*scene);
+   mGameManager = new dtGame::GameManager(*GetGlobalApplication().GetScene());
+   mGameManager->SetApplication(GetGlobalApplication());
 }
 
 void LMSTests::tearDown()

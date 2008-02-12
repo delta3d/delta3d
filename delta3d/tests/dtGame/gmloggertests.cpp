@@ -32,6 +32,7 @@
 #include <dtCore/globals.h>
 #include <dtUtil/exception.h>
 #include <dtUtil/fileutils.h>
+#include <dtUtil/macros.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtGame/loggermessages.h>
 #include <dtGame/logstatus.h>
@@ -49,7 +50,10 @@
 
 #include "testcomponent.h"
 
-#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
+#include <dtABC/application.h>
+extern dtABC::Application& GetGlobalApplication();
+
+#ifdef DELTA_WIN32
    #include <Windows.h>
    #define SLEEP(milliseconds) Sleep((milliseconds))
 #else
@@ -295,8 +299,8 @@ void GMLoggerTests::setUp()
 
    try
    {
-      dtCore::Scene* scene = new dtCore::Scene();
-      mGameManager = new dtGame::GameManager(*scene);
+      mGameManager = new dtGame::GameManager(*GetGlobalApplication().GetScene());
+      mGameManager->SetApplication(GetGlobalApplication());
       dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
       mGameManager->LoadActorRegistry(mTestGameActorLibrary);
       dtCore::System::GetInstance().SetShutdownOnWindowClose(false);

@@ -29,6 +29,7 @@
 #include <dtUtil/coordinates.h>
 #include <dtCore/globals.h>
 #include <dtCore/scene.h>
+#include <dtABC/application.h>
 #include <dtDAL/actortype.h>
 #include <dtDAL/actorpluginregistry.h>
 #include <dtDAL/datatype.h>
@@ -49,6 +50,8 @@
 #include <dtHLAGM/attributetype.h>
 #include <dtHLAGM/rprparametertranslator.h>
 #include <dtHLAGM/ddmcameracalculatorgeographic.h>
+
+extern dtABC::Application& GetGlobalApplication();
 
 class HLAConfigTests : public CPPUNIT_NS::TestFixture
 {
@@ -123,8 +126,8 @@ void HLAConfigTests::setUp()
    mTranslator->GetDDMSubscriptionCalculators().AddCalculator(*mCalc);
 
    
-   dtCore::Scene* scene = new dtCore::Scene();
-   mGameManager = new dtGame::GameManager(*scene);
+   mGameManager = new dtGame::GameManager(*GetGlobalApplication().GetScene());
+   mGameManager->SetApplication(GetGlobalApplication());
 
 }
 

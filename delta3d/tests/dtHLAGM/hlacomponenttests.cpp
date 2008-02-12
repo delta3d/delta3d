@@ -63,6 +63,9 @@
 
 #include <dtUtil/coordinates.h>
 
+#include <dtABC/application.h>
+extern dtABC::Application& GetGlobalApplication();
+
 class TestHLAComponent: public dtHLAGM::HLAComponent
 {
    public:
@@ -212,8 +215,8 @@ void HLAComponentTests::setUp()
       std::string logName("HLAComponentTests");
       logger = &dtUtil::Log::GetInstance(logName);
       dtUtil::Log::GetInstance("hlacomponent.cpp").SetLogLevel(dtUtil::Log::LOG_DEBUG);
-      dtCore::RefPtr<dtCore::Scene> scene = new dtCore::Scene();
-      mGameManager = new dtGame::GameManager(*scene);
+      mGameManager = new dtGame::GameManager(*GetGlobalApplication().GetScene());
+      mGameManager->SetApplication(GetGlobalApplication());
       mGameManager->LoadActorRegistry(mTestGameActorLibrary);
 
       dtCore::RefPtr<dtGame::DefaultMessageProcessor> defMsgComp = new dtGame::DefaultMessageProcessor();

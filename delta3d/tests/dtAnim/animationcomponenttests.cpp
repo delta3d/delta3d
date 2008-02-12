@@ -139,7 +139,8 @@ namespace dtAnim
       nodeBuilder.SetCreate(AnimNodeBuilder::CreateFunc(&nodeBuilder, &AnimNodeBuilder::CreateSoftware));
       dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
       dtCore::System::GetInstance().Start();
-      mGM = new dtGame::GameManager(*new dtCore::Scene());
+      mGM = new dtGame::GameManager(*mScene);
+      mGM->SetApplication(app);
       mAnimComp = new AnimationComponent();
       mGM->AddComponent(*mAnimComp, dtGame::GameManager::ComponentPriority::NORMAL);
 

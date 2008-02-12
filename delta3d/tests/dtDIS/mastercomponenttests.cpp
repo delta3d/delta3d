@@ -8,6 +8,9 @@
 
 #include <cstddef>                       // for size_t definition
 
+#include <dtABC/application.h>
+extern dtABC::Application& GetGlobalApplication();
+
 namespace dtTest
 {
    /// a way to spin some cycles while I am waiting for an actual design.
@@ -34,7 +37,7 @@ void MasterComponentTests::Test()
 
    // get a GM going
    dtCore::RefPtr<dtCore::Scene> tscene = new dtCore::Scene();
-   dtCore::RefPtr<dtGame::GameManager> gm = new dtGame::GameManager( *tscene );
+   dtCore::RefPtr<dtGame::GameManager> gm = new dtGame::GameManager( *GetGlobalApplication().GetScene() );
 
    // add the component for testing
    ///\todo supply real file handles
