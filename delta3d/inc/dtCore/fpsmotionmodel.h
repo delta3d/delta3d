@@ -373,42 +373,7 @@ namespace dtCore
           * The default input device.
           */
          RefPtr<LogicalInputDevice> mDefaultInputDevice;
-                  
-         /**
-          * The left/right mouse movement.
-          */
-         AxisToAxis* mLeftRightMouseMovement;
-         
-         /**
-          * The up/down mouse movement.
-          */
-         AxisToAxis* mUpDownMouseMovement;
-         
-         /**
-          * The arrow key up/down mapping.
-          */
-         ButtonsToAxis* mArrowKeysUpDownMapping;
-         
-         /**
-          * The arrow key left/right mapping.
-          */
-         ButtonsToAxis* mArrowKeysLeftRightMapping;
-
-         /**
-          * The arrow key up/down mapping.
-          */
-         ButtonsToAxis* mArrowKeysUpDownMappingUpperCase;
-
-         /**
-          * The arrow key left/right mapping.
-          */
-         ButtonsToAxis* mArrowKeysLeftRightMappingUpperCase;
-         
-         /**
-          * The a/d key left/right mapping.
-          */
-         ButtonsToAxis* mADKeysLeftRightMapping;
-         
+                                    
          /**
           * The default walk forward/backward axis.
           */
@@ -429,8 +394,6 @@ namespace dtCore
           */
          LogicalAxis* mDefaultSidestepLeftRightAxis;
 
-
-         
          /**
           * The axis that moves the target forwards or backwards.
           */
