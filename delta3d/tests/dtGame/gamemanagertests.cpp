@@ -68,6 +68,8 @@
 
 #include "testcomponent.h"
 
+extern dtABC::Application& GetGlobalApplication();
+
 #ifdef DELTA_WIN32
    #include <Windows.h>
    #define SLEEP(milliseconds) Sleep((milliseconds))
@@ -333,7 +335,7 @@ void GameManagerTests::TestApplicationMember()
       CPPUNIT_ASSERT(ex.TypeEnum() == dtGame::ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION);
    }
    
-   dtCore::RefPtr<dtABC::Application> app = new dtABC::Application;
+   dtCore::RefPtr<dtABC::Application> app = &GetGlobalApplication();
    
    mManager->SetApplication(*app);
 

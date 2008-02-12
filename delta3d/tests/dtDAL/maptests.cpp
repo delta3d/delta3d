@@ -61,6 +61,8 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 
+extern dtABC::Application& GetGlobalApplication();
+
 ///////////////////////////////////////////////////////////////////////////////////////
 class MapTests : public CPPUNIT_NS::TestFixture
 {
@@ -1605,7 +1607,7 @@ void MapTests::TestLoadMapIntoScene()
                 ids.insert(i->first);
         }
 
-        dtCore::RefPtr<dtABC::Application> app(new dtABC::Application("config.xml"));
+        dtCore::RefPtr<dtABC::Application> app(&GetGlobalApplication());
         dtCore::Scene& scene = *app->GetScene();
         //actually load the map into the scene.
         //TODO, test with the last param as false to make sure ALL proxies end up in the scene.

@@ -34,8 +34,9 @@
 #include <dtCore/camera.h>
 #include <dtUtil/bits.h>
 
-using namespace dtCore;
+extern dtABC::Application& GetGlobalApplication();
 
+using namespace dtCore;
 
 class DummyCallback: public osg::NodeCallback
 {
@@ -200,7 +201,7 @@ void SystemTests::tearDown()
 void SystemTests::TestSimMode()
 {                        
 
-   dtCore::RefPtr<dtABC::Application> app = new dtABC::Application( "config.xml" );
+   dtCore::RefPtr<dtABC::Application> app = &GetGlobalApplication();
 
 
    //adjust the Camera position
