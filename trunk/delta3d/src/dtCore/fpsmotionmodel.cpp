@@ -198,50 +198,37 @@ void FPSMotionModel::SetDefaultMappings(Keyboard *keyboard, Mouse *mouse)
 
       Axis *leftRightMouseMovement = mDefaultInputDevice->AddAxis(
          "left/right mouse movement",
-         mLeftRightMouseMovement = new AxisToAxis(mouse->GetAxis(0)));
+          new AxisToAxis(mouse->GetAxis(0)));
 
       Axis *upDownMouseMovement = mDefaultInputDevice->AddAxis(
          "up/down mouse movement",
-         mUpDownMouseMovement = new AxisToAxis(mouse->GetAxis(1)));
+          new AxisToAxis(mouse->GetAxis(1)));
 
-      Axis *arrowKeysUpAndDown = mDefaultInputDevice->AddAxis(
+      Axis *forwardAndBackAxis1 = mDefaultInputDevice->AddAxis(
          "s/w",
-         mArrowKeysUpDownMapping = new ButtonsToAxis(
-            keyboard->GetButton('s'),
-            keyboard->GetButton('w')
-         )
+          new ButtonsToAxis( keyboard->GetButton('s'), keyboard->GetButton('w') )
       );
 
-      Axis *arrowKeysUpAndDownUpperCase = mDefaultInputDevice->AddAxis(
+      Axis *forwardAndBackAxis2 = mDefaultInputDevice->AddAxis(
          "S/W",
-         mArrowKeysUpDownMappingUpperCase = new ButtonsToAxis(
-         keyboard->GetButton('S'),
-         keyboard->GetButton('W')
-         )
+          new ButtonsToAxis( keyboard->GetButton('S'), keyboard->GetButton('W') )
        );
 
-      Axis *arrowKeysLeftAndRight = mDefaultInputDevice->AddAxis(
+      Axis *sideStepAxis1 = mDefaultInputDevice->AddAxis(
          "a/d",
-         mArrowKeysLeftRightMapping = new ButtonsToAxis(
-            keyboard->GetButton('a'),
-            keyboard->GetButton('d')
-         )
+          new ButtonsToAxis( keyboard->GetButton('a'), keyboard->GetButton('d') )
       );
 
-      Axis *arrowKeysLeftAndRightUpperCase = mDefaultInputDevice->AddAxis(
+      Axis *sideStepAxis2 = mDefaultInputDevice->AddAxis(
          "A/D",
-         mArrowKeysLeftRightMappingUpperCase = new ButtonsToAxis(
-            keyboard->GetButton('A'),
-            keyboard->GetButton('D')
-         )
+          new ButtonsToAxis( keyboard->GetButton('A'), keyboard->GetButton('D') )
       );
 
 
       mDefaultWalkForwardBackwardAxis = mDefaultInputDevice->AddAxis(
          "default walk forward/backward",
-         new AxesToAxis(arrowKeysUpAndDown, arrowKeysUpAndDownUpperCase)
+         new AxesToAxis(forwardAndBackAxis1, forwardAndBackAxis2)
       );
-
          
       mDefaultTurnLeftRightAxis = mDefaultInputDevice->AddAxis(
          "default turn left/right",
@@ -255,7 +242,7 @@ void FPSMotionModel::SetDefaultMappings(Keyboard *keyboard, Mouse *mouse)
          
       mDefaultSidestepLeftRightAxis = mDefaultInputDevice->AddAxis(
          "default sidestep left/right",
-         new AxesToAxis(arrowKeysLeftAndRight, arrowKeysLeftAndRightUpperCase)
+         new AxesToAxis(sideStepAxis1, sideStepAxis2)
       );
    }
    
