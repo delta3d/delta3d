@@ -22,6 +22,7 @@
 #include <iostream>
 #include <osg/Math>
 #include <dtUtil/log.h>
+#include <dtUtil/macros.h>
 #include <dtCore/refptr.h>
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
@@ -45,6 +46,7 @@
 #include <dtGame/gmcomponent.h>
 #include <dtGame/defaultmessageprocessor.h>
 #include <dtGame/invokable.h>
+#include <dtABC/application.h>
 #include <testGameActorLibrary/testgameactorlibrary.h>
 #include <testGameActorLibrary/testgameenvironmentactor.h>
 #include <testGameActorLibrary/testgamepropertyproxy.h>
@@ -54,8 +56,9 @@
 #include <cppunit/extensions/HelperMacros.h>
 
 #include "testcomponent.h"
+extern dtABC::Application& GetGlobalApplication();
 
-#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
+#ifdef DELTA_WIN32
    #include <Windows.h>
    #define SLEEP(milliseconds) Sleep((milliseconds))
 #else
@@ -128,8 +131,8 @@ void GameActorTests::setUp()
       dtCore::System::GetInstance().Start();
       dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
 
-      dtCore::RefPtr<dtCore::Scene> scene = new dtCore::Scene;
-      mManager = new dtGame::GameManager(*scene);
+      mManager = new dtGame::GameManager(*GetGlobalApplication().GetScene());
+      mManager->SetApplication(GetGlobalApplication());
       mManager->LoadActorRegistry(mTestGameActorLibrary);
    }
    catch (const dtUtil::Exception& e)
@@ -759,7 +762,8 @@ void GameActorTests::TestSetEnvironmentActor()
       }
 
       mManager->GetActorsInScene(drawables);
-      CPPUNIT_ASSERT_MESSAGE("The game manager should have the correct number of actors in it", drawables.size() - 1 == numActors);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The game manager should have the correct number of actors in it", 
+            numActors, drawables.size() - 1);
 
       // SET ENVIRONMENT ACTOR TESTS
       mManager->SetEnvironmentActor(eap.get());

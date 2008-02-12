@@ -119,6 +119,7 @@ void Application::ReadSystemProperties()
 ///////////////////////////////////////////////////////////////////////////////
 Application::~Application()
 {  
+   mCompositeViewer = NULL;
    delete mStats;
    DeregisterInstance(this);
 }

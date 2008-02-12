@@ -49,6 +49,9 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 
+#include <dtABC/application.h>
+extern dtABC::Application& GetGlobalApplication();
+
 #ifdef DELTA_WIN32
    #include <Windows.h>
    #define SLEEP(milliseconds) Sleep((milliseconds))
@@ -102,8 +105,8 @@ namespace dtGame
          dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
          mLogger = &dtUtil::Log::GetInstance("defaultnetworkpublishingcomponenttests.cpp");
    
-         dtCore::Scene* scene = new dtCore::Scene();
-         mGameManager = new GameManager(*scene);
+         mGameManager = new dtGame::GameManager(*GetGlobalApplication().GetScene());
+         mGameManager->SetApplication(GetGlobalApplication());
          
          mNetPubComp = new DefaultNetworkPublishingComponent;
          mDefMsgProc = new DefaultMessageProcessor;

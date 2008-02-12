@@ -41,6 +41,9 @@
 #include <dtUtil/stringutils.h>
 
 #include <vector>
+#include <dtABC/application.h>
+
+extern dtABC::Application& GetGlobalApplication();
 
 namespace dtActors
 {
@@ -63,8 +66,8 @@ namespace dtActors
          {
             try
             {
-               dtCore::Scene* scene = new dtCore::Scene();
-               mGameManager = new dtGame::GameManager(*scene);
+               mGameManager = new dtGame::GameManager(*GetGlobalApplication().GetScene());
+               mGameManager->SetApplication(GetGlobalApplication());
                dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
                dtCore::System::GetInstance().Start();
 

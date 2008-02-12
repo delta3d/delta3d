@@ -20,6 +20,7 @@
  */
 #include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
+#include <dtUtil/macros.h>
 #include <dtDAL/actortype.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/taskcomponent.h>
@@ -27,8 +28,10 @@
 #include <dtGame/basemessages.h>
 #include <dtCore/system.h>
 #include <dtCore/scene.h>
+#include <dtABC/application.h>
+extern dtABC::Application& GetGlobalApplication();
 
-#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
+#ifdef DELTA_WIN32
    #include <Windows.h>
    #define SLEEP(milliseconds) Sleep((milliseconds))
 #else
@@ -71,8 +74,8 @@ void GMTaskComponentTests::setUp()
 {
    try
    {
-      dtCore::Scene* scene = new dtCore::Scene();
-      mGameManager = new dtGame::GameManager(*scene);
+      mGameManager = new dtGame::GameManager(*GetGlobalApplication().GetScene());
+      mGameManager->SetApplication(GetGlobalApplication());
       mGameManager->LoadActorRegistry(mTestGameActorLibrary);
       dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
       dtCore::System::GetInstance().Start();

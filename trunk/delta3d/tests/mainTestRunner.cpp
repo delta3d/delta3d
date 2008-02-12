@@ -33,6 +33,7 @@
 #include <dtCore/timer.h>
 #include <dtCore/globals.h>
 #include <dtCore/deltawin.h>
+#include <dtCore/scene.h>
 #include <dtAudio/audiomanager.h>
 #include <dtABC/application.h>
 
@@ -49,7 +50,12 @@ static std::ostringstream mSlowTests;
 
 static dtCore::RefPtr<dtABC::Application> GlobalApplication;
 
-dtABC::Application& GetGlobalApplication() { return *GlobalApplication; }
+dtABC::Application& GetGlobalApplication() 
+{
+  GlobalApplication->GetScene()->RemoveAllDrawables();
+  GlobalApplication->GetScene()->UseSceneLight(true);
+  return *GlobalApplication; 
+}
 
 class TimingListener : public CppUnit::TestListener
 {
