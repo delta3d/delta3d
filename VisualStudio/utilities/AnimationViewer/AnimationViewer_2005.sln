@@ -11,7 +11,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtUtil", "..\..\src\dtUtil\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtDAL", "..\..\src\dtDAL\dtDAL_2005.vcproj", "{F4AF0428-087E-4AE9-BAB2-B18E910DF67A}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AnimationViewerD", "AnimationViewerD.vcproj", "{26CBCFE7-0B24-38CF-A488-EA201EE1CCF9}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AnimationViewerD", "AnimationViewerD.vcproj", "{646BBAED-24E1-39BF-B6FB-A42A0113127C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,10 +35,10 @@ Global
 		{F4AF0428-087E-4AE9-BAB2-B18E910DF67A}.Debug|Win32.Build.0 = Debug|Win32
 		{F4AF0428-087E-4AE9-BAB2-B18E910DF67A}.Release|Win32.ActiveCfg = Release|Win32
 		{F4AF0428-087E-4AE9-BAB2-B18E910DF67A}.Release|Win32.Build.0 = Release|Win32
-		{26CBCFE7-0B24-38CF-A488-EA201EE1CCF9}.Debug|Win32.ActiveCfg = Debug|Win32
-		{26CBCFE7-0B24-38CF-A488-EA201EE1CCF9}.Debug|Win32.Build.0 = Debug|Win32
-		{26CBCFE7-0B24-38CF-A488-EA201EE1CCF9}.Release|Win32.ActiveCfg = Release|Win32
-		{26CBCFE7-0B24-38CF-A488-EA201EE1CCF9}.Release|Win32.Build.0 = Release|Win32
+		{646BBAED-24E1-39BF-B6FB-A42A0113127C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{646BBAED-24E1-39BF-B6FB-A42A0113127C}.Debug|Win32.Build.0 = Debug|Win32
+		{646BBAED-24E1-39BF-B6FB-A42A0113127C}.Release|Win32.ActiveCfg = Release|Win32
+		{646BBAED-24E1-39BF-B6FB-A42A0113127C}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
