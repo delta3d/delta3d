@@ -29,8 +29,13 @@
 #include <cppunit/TestListener.h>
 #include <cppunit/Test.h>
 #include <cppunit/TestFailure.h>
+
 #include <dtCore/timer.h>
 #include <dtCore/globals.h>
+#include <dtCore/deltawin.h>
+#include <dtAudio/audiomanager.h>
+#include <dtABC/application.h>
+
 #include <dtUtil/fileutils.h>
 #include <dtUtil/log.h>
 #include <dtUtil/exception.h>
@@ -41,6 +46,10 @@
 #include <ctime>   
 
 static std::ostringstream mSlowTests;
+
+static dtCore::RefPtr<dtABC::Application> GlobalApplication;
+
+dtABC::Application& GetGlobalApplication() { return *GlobalApplication; }
 
 class TimingListener : public CppUnit::TestListener
 {
@@ -117,6 +126,13 @@ int main(int argc, char* argv[])
    
    //Set delta data.
    dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
+
+   dtAudio::AudioManager::Instantiate();
+   dtAudio::AudioManager::GetInstance().Config(AudioConfigData(32));
+
+   GlobalApplication = new dtABC::Application("config.xml");
+   GlobalApplication->GetWindow()->SetPosition(0, 0, 50, 50);
+   GlobalApplication->Config();
 
    CPPUNIT_NS::TestResultCollector collectedResults;
 
@@ -210,6 +226,10 @@ int main(int argc, char* argv[])
    {
       std::cerr << " <<< Exception occurred while running main.cpp for this unit test. No other info available >>> " << std::endl;
    }
+
+   GlobalApplication = NULL;
+
+   dtAudio::AudioManager::Destroy();
 
    //dtAudio::AudioManager::Destroy();
    return collectedResults.wasSuccessful () ? 0 : 1;

@@ -23,6 +23,8 @@
 #include <dtUtil/log.h>
 #include <dtUtil/stringutils.h>
 
+#include <dtABC/application.h> 
+
 #include <dtAnim/animationcomponent.h>
 #include <dtAnim/animationhelper.h>
 #include <dtAnim/animnodebuilder.h>
@@ -48,6 +50,8 @@
 #include <osg/Geode>
 
 #include <string>
+
+extern dtABC::Application& GetGlobalApplication();
 
 namespace dtAnim
 {
@@ -121,14 +125,11 @@ namespace dtAnim
    {
       mLogger = &dtUtil::Log::GetInstance("animationcomponenttests.cpp");
 
-      mScene = new dtCore::Scene();
-      mWin = new dtCore::DeltaWin();
-      mWin->SetPosition(0, 0, 50, 50);
-      mCamera = new dtCore::Camera();
-      mCamera->SetWindow(mWin.get());
-      mView = new dtCore::View();
-      mView->SetCamera(mCamera.get());
-      mView->SetScene(mScene.get());
+      
+      dtABC::Application& app = GetGlobalApplication();
+      mScene = app.GetScene();
+      mWin = app.GetWindow();
+      mCamera = app.GetCamera();
 
       dtCore::System::GetInstance().Config();
       dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
@@ -160,13 +161,6 @@ namespace dtAnim
       }
       mAnimComp = NULL;
       Cal3DDatabase::GetInstance().TruncateDatabase();
-      mScene = NULL;
-      mCamera->SetWindow(NULL);
-      mCamera = NULL;
-      mWin = NULL;
-      mView->SetScene(NULL);
-      mView->SetCamera(NULL);
-      mView = NULL;
    }
 
    void AnimationComponentTests::TestRegisterUnregister()

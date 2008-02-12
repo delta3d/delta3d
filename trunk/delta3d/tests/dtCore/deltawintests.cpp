@@ -20,10 +20,13 @@
  */
 #include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
+#include <dtABC/application.h>
 #include <dtCore/deltawin.h>
 #include <dtUtil/exception.h>
 #include <osg/ref_ptr>
 #include <osgViewer/GraphicsWindow>
+
+extern dtABC::Application& GetGlobalApplication();
 
 ///used to test the DeltaWin functionality
 class  DeltaWinTests : public CPPUNIT_NS::TestFixture
@@ -53,9 +56,7 @@ void DeltaWinTests::tearDown()
 void DeltaWinTests::TestWindow()
 {
    {
-      //default constructor test
-      dtCore::RefPtr<dtCore::DeltaWin> win = new dtCore::DeltaWin();
-      CPPUNIT_ASSERT_MESSAGE("Default constructor didn't work", win.valid());
+      dtCore::RefPtr<dtCore::DeltaWin> win = GetGlobalApplication().GetWindow();
 
       //make sure these guys throw an exception
 //      CPPUNIT_ASSERT_THROW(win->SetKeyboard(0), dtUtil::Exception);

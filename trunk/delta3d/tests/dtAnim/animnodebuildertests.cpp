@@ -30,6 +30,7 @@
 
 #include <dtDAL/project.h>
 
+#include <dtABC/application.h>
 #include <dtCore/globals.h>
 #include <dtCore/refptr.h>
 #include <dtCore/camera.h>
@@ -44,6 +45,8 @@
 #include <sstream>
 
 #include <string>
+
+extern dtABC::Application& GetGlobalApplication();
 
 namespace dtAnim
 {
@@ -62,17 +65,11 @@ namespace dtAnim
 
          void setUp()
          {
-            mScene = new dtCore::Scene();
             
-            mWin = new dtCore::DeltaWin();
-            mWin->SetPosition(0, 0, 50, 50);
-            
-            mCamera = new dtCore::Camera();
-            mCamera->SetWindow(mWin.get());
-            
-            mView = new dtCore::View(new osgViewer::Viewer);
-            mView->SetScene(mScene.get());
-            mView->SetCamera(mCamera.get());
+            dtABC::Application& app = GetGlobalApplication();
+            mScene = app.GetScene();
+            mCamera = app.GetCamera();
+            mWin = app.GetWindow();
             
             dtCore::System::GetInstance().Config();
 
@@ -92,12 +89,9 @@ namespace dtAnim
             mModelPath.clear();
 
             mScene = NULL;
-            mCamera->SetWindow(NULL);
             mCamera = NULL;
-            mView->SetScene(NULL);
-            mView->SetCamera(NULL);
-            mView = NULL;
             mWin = NULL;
+
             dtCore::System::GetInstance().Stop();
          }
          

@@ -34,7 +34,8 @@
 #include <dtUtil/exception.h>
 
 #include <osg/io_utils>
-//#include <dtABC/application.h>
+
+extern dtABC::Application& GetGlobalApplication();
 
 class BatchISectorTests : public CPPUNIT_NS::TestFixture 
 {
@@ -50,13 +51,10 @@ class BatchISectorTests : public CPPUNIT_NS::TestFixture
       {
          mBatchIsector = new dtCore::BatchIsector();
          
-         mApp = new dtABC::Application;
+         mApp = &GetGlobalApplication();
          mScene = mApp->GetScene();
          mCamera = mApp->GetCamera();
          mWin = mApp->GetWindow();
-         mWin->SetPosition(0, 0, 50, 50);
-         
-         mApp->Config();
          
          dtCore::System::GetInstance().Config();
 
@@ -70,7 +68,6 @@ class BatchISectorTests : public CPPUNIT_NS::TestFixture
       {
          mBatchIsector = NULL;
          mScene = NULL;
-         mCamera->SetWindow(NULL);
          mCamera = NULL;
          mWin = NULL;
          mApp = NULL;

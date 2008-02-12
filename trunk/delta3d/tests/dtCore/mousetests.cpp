@@ -27,6 +27,8 @@
 
 #include <osg/io_utils>
 
+extern dtABC::Application& GetGlobalApplication();
+
 namespace dtTest
 {
    /// unit tests for dtCore::Keyboard
@@ -463,8 +465,7 @@ void MouseTests::TestMousePosition()
    //move the mouse pointer.  This test could fail if someone is moving
    //the mouse while the test is running.
 
-   RefPtr<dtABC::Application> app = new dtABC::Application();
-   app->Config();
+   RefPtr<dtABC::Application> app = &GetGlobalApplication();
    System::GetInstance().Start();
    System::GetInstance().Step();
 

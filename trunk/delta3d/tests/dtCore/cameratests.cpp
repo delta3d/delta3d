@@ -38,6 +38,8 @@
 
 #include <string>
 
+extern dtABC::Application& GetGlobalApplication();
+
 #ifdef DELTA_WIN32
    #include <Windows.h>
    #define SLEEP(milliseconds) Sleep((milliseconds))
@@ -64,15 +66,11 @@ class CameraTests : public CPPUNIT_NS::TestFixture
          {
             dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
 
-            mApp = new dtABC::Application;
+            mApp = &GetGlobalApplication();
             mScene = mApp->GetScene();
             mCamera = mApp->GetCamera();
             mWin = mApp->GetWindow();
-            mWin->SetPosition(0, 0, 50, 50);
             
-            mApp->Config();
-
-
             dtCore::System::GetInstance().Config();
 
             dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
@@ -100,7 +98,6 @@ class CameraTests : public CPPUNIT_NS::TestFixture
          dtCore::System::GetInstance().Stop();
          mApp = NULL;
          mScene = NULL;
-         mCamera->SetWindow(NULL);
          mCamera = NULL;
          mWin = NULL;
       

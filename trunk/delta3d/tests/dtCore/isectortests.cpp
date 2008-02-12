@@ -31,7 +31,8 @@
 #include <dtABC/application.h>
 
 #include <osg/io_utils>
-//#include <dtABC/application.h>
+
+extern dtABC::Application& GetGlobalApplication();
 
 class IsectorTests : public CPPUNIT_NS::TestFixture 
 {
@@ -48,18 +49,16 @@ class IsectorTests : public CPPUNIT_NS::TestFixture
       void setUp()
       {
          mIsector = new dtCore::Isector();
-         mApp = new dtABC::Application;
+         mApp = &GetGlobalApplication();
          mScene = mApp->GetScene();
          mCamera = mApp->GetCamera();
          mWin = mApp->GetWindow();
-         mWin->SetPosition(0, 0, 50, 50);
-         
-         mApp->Config();
          
          dtCore::System::GetInstance().Config();
          
          dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
          dtCore::System::GetInstance().Start();
+         dtCore::System::GetInstance().Step();
       }
       
       void tearDown()
@@ -67,7 +66,6 @@ class IsectorTests : public CPPUNIT_NS::TestFixture
          mIsector = NULL;
          mApp = NULL;
          mScene = NULL;
-         mCamera->SetWindow(NULL);
          mCamera = NULL;
          mWin = NULL;
          dtCore::System::GetInstance().Stop();
