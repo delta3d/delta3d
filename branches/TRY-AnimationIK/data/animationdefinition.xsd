@@ -11,6 +11,7 @@
             <xs:element ref="skinningShader" />
             <xs:element ref="animationChannel" minOccurs="0" maxOccurs="unbounded" />
             <xs:element ref="animationSequence" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element ref="poseMesh" minOccurs="0" maxOccurs="1" />
          </xs:choice>
          <xs:attribute name="name" use="optional">
             <xs:simpleType>
@@ -48,6 +49,11 @@
    <xs:element name="skeleton">
       <xs:complexType>
          <xs:attribute name="name" type="xs:normalizedString" use="optional" />
+         <xs:attribute name="fileName" use="required" type="xs:normalizedString"/>
+      </xs:complexType>
+   </xs:element>
+   <xs:element name="poseMesh">
+      <xs:complexType>         
          <xs:attribute name="fileName" use="required" type="xs:normalizedString"/>
       </xs:complexType>
    </xs:element>

@@ -40,6 +40,7 @@ const std::string CharacterFileHandler::MESH_ELEMENT("mesh");
 const std::string CharacterFileHandler::MATERIAL_ELEMENT("material");
 const std::string CharacterFileHandler::CHANNEL_ELEMENT("animationChannel");
 const std::string CharacterFileHandler::SEQUENCE_ELEMENT("animationSequence");
+const std::string CharacterFileHandler::POSEMESH_ELEMENT("poseMesh");
 const std::string CharacterFileHandler::NAME_ELEMENT("name");
 const std::string CharacterFileHandler::FILENAME_ELEMENT("fileName");
 const std::string CharacterFileHandler::ANIMATION_NAME_ELEMENT("animationName");
@@ -182,6 +183,19 @@ void CharacterFileHandler::startElement( const XMLCh* const uri,const XMLCh* con
       {
          errorString = std::string("Invalid XML format: <character> missing <name> child");
       }     
+   }
+   else if (elementStr == POSEMESH_ELEMENT)
+   {
+      resultIter = results.find(FILENAME_ELEMENT);
+
+      if (resultIter != results.end())
+      {
+         mPoseMeshFilename = resultIter->second;
+      }
+      else
+      {
+         errorString = std::string("Invalid XML format: <poseMesh> missing 'fileName' attribute");
+      }
    }
    else if (elementStr == ANIMATION_ELEMENT)
    {      

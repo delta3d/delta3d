@@ -275,6 +275,30 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtAnim\PoseMath.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtAnim\PoseMesh.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtAnim\PoseMeshDatabase.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtAnim\PoseMeshLoader.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtAnim\PoseMeshUtility.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtAnim\PoseMeshXML.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtAnim\sequencemixer.cpp"
 				>
 			</File>
@@ -394,6 +418,30 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtAnim\physiquedriver.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtAnim\PoseMath.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtAnim\PoseMesh.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtAnim\PoseMeshDatabase.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtAnim\PoseMeshLoader.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtAnim\PoseMeshUtility.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtAnim\PoseMeshXML.h"
 				>
 			</File>
 			<File

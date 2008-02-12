@@ -22,6 +22,8 @@
 #include <dtAnim/cal3dmodelwrapper.h>
 #include <dtAnim/chardrawable.h>
 #include <dtAnim/cal3ddatabase.h>
+#include <dtAnim/cal3dmodeldata.h>
+#include <dtAnim/PoseMesh.h>
 
 #include <dtUtil/xercesparser.h>
 #include <dtUtil/stringutils.h>
@@ -57,7 +59,8 @@ using namespace dtCore;
 using namespace dtAnim;
 
 Viewer::Viewer()
-: mDatabase(&Cal3DDatabase::GetInstance())
+: mCalDatabase(&Cal3DDatabase::GetInstance())
+, mPoseMeshes(NULL)
 {
    dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_DEBUG);   
 }
@@ -143,23 +146,23 @@ void Viewer::OnLoadCharFile( const QString &filename )
 
    //wipe out any previously loaded characters. This will ensure we can 
    //reload the same file (which might have been modified).
-   mDatabase->TruncateDatabase();
-   mDatabase->PurgeLoaderCaches();
+   mCalDatabase->TruncateDatabase();
+   mCalDatabase->PurgeLoaderCaches();
 
    //create an instance from the character definition file
    try
    {
       // Create a new Cal3DWrapper
-      dtCore::RefPtr<Cal3DModelWrapper> wrapper = mDatabase->Load(filename.toStdString());
-       
-      if(mCharacter.valid())
+      dtCore::RefPtr<Cal3DModelWrapper> wrapper = mCalDatabase->Load(filename.toStdString());      
+      mCharacter = new CharDrawable(wrapper.get());          
+
+      // Retrieve the data to check for the inclusion of an IK pose mesh file
+      dtAnim::Cal3DModelData *modelData = mCalDatabase->GetModelData(*wrapper.get());
+
+      if (!modelData->GetPoseMeshFilename().empty())
       {
-         mCharacter->SetCal3DWrapper(wrapper.get());        
+         OnLoadPoseMeshFile(modelData->GetPoseMeshFilename());
       }
-      else
-      {
-         mCharacter = new CharDrawable(wrapper.get());
-      }          
    }
    catch (const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException& e)
    {
@@ -219,6 +222,26 @@ void Viewer::OnLoadCharFile( const QString &filename )
    }
    
    LOG_DEBUG("Done loading file: " + filename.toStdString() );   
+}
+
+void Viewer::OnLoadPoseMeshFile( const std::string &filename )
+{
+   dtAnim::Cal3DModelWrapper *rapper = mCharacter->GetCal3DWrapper();
+   assert(rapper);
+
+   // Delete any previous data
+   if (mPoseDatabase.valid())
+   {
+      mPoseDatabase = NULL;
+   }
+
+   // Create the database to store loaded data
+   mPoseDatabase = new dtAnim::PoseMeshDatabase(rapper);
+
+   if (mPoseDatabase->LoadFromFile(filename))
+   {
+      mPoseMeshes = &mPoseDatabase->GetMeshes();
+   }
 }
 
 void Viewer::OnStartAnimation( unsigned int id, float weight, float delay )

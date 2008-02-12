@@ -88,6 +88,7 @@ namespace dtAnim
       static const std::string MATERIAL_ELEMENT;
       static const std::string CHANNEL_ELEMENT;
       static const std::string SEQUENCE_ELEMENT;
+      static const std::string POSEMESH_ELEMENT;
       static const std::string NAME_ELEMENT;
       static const std::string FILENAME_ELEMENT;      
       static const std::string ANIMATION_NAME_ELEMENT;
@@ -199,6 +200,8 @@ namespace dtAnim
       std::vector<AnimationChannelStruct> mAnimationChannels; ///<The preconfigured playbable animations
       std::vector<AnimationSequenceStruct> mAnimationSequences; ///<The preconfigured playbable animations
       std::string mSkeletonFilename;                ///<The one skeleton filename
+
+      std::string mPoseMeshFilename;
 
    private:
       bool AnimatableCharacters(const XMLCh* const chars, AnimatableStruct& animatable);
