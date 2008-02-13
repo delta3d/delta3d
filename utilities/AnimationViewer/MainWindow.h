@@ -15,12 +15,17 @@ class QTabWidget;
 class QGridLayout;
 class QStandardItemModel;
 class QTableView;
-class TrackView;
-class TrackScene;
+class PoseMeshView;
+class PoseMeshScene;
 
 namespace dtQt
 {
    class OSGAdapterWidget; 
+}
+
+namespace dtAnim
+{
+   class PoseMesh;
 }
 
 class MainWindow : public QMainWindow
@@ -49,6 +54,8 @@ public slots:
    
    void OnNewMesh(int meshID, const QString &meshName);
 
+   void OnNewPoseMesh(const dtAnim::PoseMesh &poseMesh);
+
    void OnNewMaterial(int matID, const QString &name,
                       const QColor &diff, const QColor &amb, const QColor &spec,
                       float shininess );
@@ -69,7 +76,6 @@ private:
    void CreateMenus();
    void CreateActions();
    void CreateToolbars();
-   void CreateTrackEditor();
    void UpdateRecentFileActions();
    void SetCurrentFile( const QString &filename );
    void LoadCharFile(const QString &filename);
@@ -96,10 +102,12 @@ private:
 
    AnimationTableWidget *mAnimListWidget;
    QListWidget          *mMeshListWidget;
-   TrackView            *mTrackViewer;
-   TrackScene           *mTrackScene;
+   
    QStandardItemModel   *mMaterialModel; ///<Model for the character's materials
    QTableView           *mMaterialView;  ///<View for the character's materials
+
+   PoseMeshView         *mPoseMeshViewer;
+   PoseMeshScene        *mPoseMeshScene;
 
    dtQt::OSGAdapterWidget* mGLWidget;
    

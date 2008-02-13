@@ -3,17 +3,17 @@
 
 #include <QtGui/QGraphicsView>
 #include <QtCore/QTimer>
-#include "TrackScene.h"
+#include "PoseMeshScene.h"
 
-class TrackScene;
+class PoseMeshScene;
 
-class TrackView: public QGraphicsView
+class PoseMeshView: public QGraphicsView
 {
    Q_OBJECT
 public:  
 
-   TrackView(TrackScene *scene, QWidget *parent = 0);
-   ~TrackView();
+   PoseMeshView(PoseMeshScene *scene, QWidget *parent = 0);
+   ~PoseMeshView();
 
    void Zoom(float numberOfSteps);
 
@@ -44,7 +44,7 @@ public slots:
 
 protected:
 
-   TrackScene *mScene;
+   PoseMeshScene *mScene;
    QGraphicsItem *mDragItem;
 
    QPointF mCurrentTarget;

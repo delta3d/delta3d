@@ -1,7 +1,7 @@
 #include "MainWindow.h"
 #include "AnimationTableWidget.h"
-#include "TrackView.h"
-#include "TrackScene.h"
+#include "PoseMeshView.h"
+#include "PoseMeshScene.h"
 
 #include <osg/Geode> ///needed for the node builder
 #include <dtAnim/cal3ddatabase.h>
@@ -44,7 +44,9 @@ mMeshListWidget(NULL),
 mMaterialModel(NULL),
 mMaterialView(NULL),
 mGLWidget(NULL),
-mMixerViewerAction(NULL)
+mMixerViewerAction(NULL),
+mPoseMeshScene(NULL),
+mPoseMeshViewer(NULL)
 {
    resize(800, 800);
 
@@ -79,14 +81,12 @@ mMixerViewerAction(NULL)
    CreateActions();
    CreateMenus();
    statusBar();
-   CreateToolbars();
-   //CreateTrackEditor(); 
+   CreateToolbars();  
 
    mTabs = new QTabWidget(this);
    mTabs->addTab(mAnimListWidget, tr("Animations"));
    mTabs->addTab(mMeshListWidget, tr("Meshes"));
-   mTabs->addTab(mMaterialView, tr("Materials"));
-   //mTabs->addTab(mTrackViewer, tr("Tracks"));   
+   mTabs->addTab(mMaterialView, tr("Materials"));  
 
    QWidget* glParent = new QWidget(this);
 
@@ -107,14 +107,6 @@ mMixerViewerAction(NULL)
 
 MainWindow::~MainWindow()
 {
-}
-
-void MainWindow::CreateTrackEditor()
-{
-   mTrackScene  = new TrackScene(this);
-   mTrackViewer = new TrackView(mTrackScene, this);
-
-   mTrackViewer->setDragMode(QGraphicsView::ScrollHandDrag);
 }
 
 void MainWindow::CreateMenus()
@@ -345,6 +337,29 @@ void MainWindow::OnNewMesh(int meshID, const QString &meshName)
    meshItem->setCheckState(Qt::Checked);
 
    mMeshListWidget->addItem(meshItem);
+}
+
+void MainWindow::OnNewPoseMesh(const dtAnim::PoseMesh &poseMesh)
+{
+   // Create pose mesh related ui if we haven't yet
+   if (!mPoseMeshScene)
+   {
+      assert(!mPoseMeshViewer);
+      mPoseMeshScene  = new PoseMeshScene(this);
+      mPoseMeshViewer = new PoseMeshView(mPoseMeshScene, this);
+
+      mPoseMeshViewer->setDragMode(QGraphicsView::ScrollHandDrag);
+
+      QDockWidget* poseDock = new QDockWidget("Pose Mesh Viewer");
+      poseDock->setWidget(mPoseMeshViewer);
+
+      addDockWidget(Qt::RightDockWidgetArea, poseDock);
+      resize(1000, 800);
+      //mTabs->addTab(mPoseMeshViewer, tr("IK"));   
+   }  
+    
+   // Add a new pose mesh visualization
+   mPoseMeshScene->AddMesh(poseMesh);
 }
 
 void MainWindow::OnNewMaterial( int matID, const QString &name, 
