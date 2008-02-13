@@ -28,7 +28,7 @@ namespace dtCore
 {
    typedef osg::Timer_t Timer_t;
 
-   void AppSleep(unsigned int milliseconds);
+   void DT_CORE_EXPORT AppSleep(unsigned int milliseconds);
 
    /**
     * High-level wrapper for osg::Timer.
