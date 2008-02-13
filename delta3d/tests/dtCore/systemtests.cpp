@@ -61,6 +61,9 @@ class DummyDrawable: public dtCore::DeltaDrawable
 
       DummyDrawable()
       {      
+         m_TimeOne = 0;
+         m_TimeTwo = 0;
+
          ResetState();
          AddSender(&System::GetInstance());
       }
@@ -92,6 +95,10 @@ class DummyDrawable: public dtCore::DeltaDrawable
          if(data->message == "preframe")
          {
             mPreframeCalled = true;
+            double userData[2] = {0.0,0.0};
+            memcpy(userData, data->userData, sizeof(double) * 2);
+            m_TimeOne = userData[0];
+            m_TimeTwo = userData[1];
          }
          else if(data->message == "frame")
          {
@@ -103,6 +110,9 @@ class DummyDrawable: public dtCore::DeltaDrawable
          }
       }
 
+   public:
+      double m_TimeOne;
+      double m_TimeTwo;
 };
 
 
@@ -165,6 +175,8 @@ class SystemTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST_SUITE(SystemTests);
 
    CPPUNIT_TEST(TestSimMode);
+   CPPUNIT_TEST(TestProperties);
+   CPPUNIT_TEST(TestStepping);
 
    CPPUNIT_TEST_SUITE_END();
 
@@ -173,36 +185,103 @@ class SystemTests : public CPPUNIT_NS::TestFixture
       void setUp();
       void tearDown();
       void TestSimMode();
+      void TestProperties();
+      void TestStepping();
 
    private:
-
 
       dtCore::RefPtr<DummyNode> mDummyNode;
       dtCore::RefPtr<DummyCallback> mDummyCallback;
       dtCore::RefPtr<DummyDrawable> mDummyDrawable;
-
-
-
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(SystemTests);
 
+//////////////////////////////////////////////////////////////////////////
 void SystemTests::setUp()
-{
+{}
 
-}
-
+//////////////////////////////////////////////////////////////////////////
 void SystemTests::tearDown()
-{
+{}
 
+//////////////////////////////////////////////////////////////////////////
+void SystemTests::TestStepping()
+{
+   dtCore::RefPtr<dtABC::Application> app = new dtABC::Application( "config.xml" );
+
+   mDummyDrawable = new DummyDrawable();
+   mDummyNode = new DummyNode();
+   mDummyCallback = new DummyCallback();
+
+   app->GetScene()->AddDrawable(mDummyDrawable.get());       
+   app->GetScene()->GetSceneNode()->addChild(mDummyNode->GetOSGNode());
+   mDummyNode->GetOSGNode()->setCullCallback(mDummyCallback.get());
+
+   dtCore::System& ourSystem = dtCore::System::GetInstance();
+   ourSystem.SetFrameStep(5);
+   ourSystem.SetMaxTimeBetweenDraws(.01);
+   ourSystem.SetUseFixedTimeStep(true);
+
+   app->Config();
+
+   ourSystem.SetShutdownOnWindowClose(false);
+   ourSystem.Start();
+   ourSystem.SetPause(false);
+
+   ourSystem.SetSystemStages(System::STAGES_DEFAULT);
+
+   ourSystem.SetTimeScale(1.0f);
+
+   dtCore::AppSleep(10000);
+   ourSystem.Step();
+   
+   CPPUNIT_ASSERT_MESSAGE("Time should be fixed",
+      (float)mDummyDrawable->m_TimeOne == 5.0f);
+
+   ourSystem.SetFrameStep(2);
+
+   dtCore::AppSleep(10000);
+   ourSystem.Step();
+
+   CPPUNIT_ASSERT_MESSAGE("Time should be fixed",
+      (float)mDummyDrawable->m_TimeOne == 2.0f);
+
+   ourSystem.SetUseFixedTimeStep(false);
 }
 
+//////////////////////////////////////////////////////////////////////////
+void SystemTests::TestProperties()
+{
+   dtCore::System& ourSystem = dtCore::System::GetInstance();
 
+   float aRandomFloat = dtUtil::RandFloat(0.0f, 10.0f);
+   ourSystem.SetFrameStep(aRandomFloat);
+
+   CPPUNIT_ASSERT_MESSAGE("Frame Step Property is broken",
+      aRandomFloat == ourSystem.GetFrameStep() );
+
+   aRandomFloat = dtUtil::RandFloat(0.0f, 10.0f);
+   ourSystem.SetMaxTimeBetweenDraws(aRandomFloat);
+
+   CPPUNIT_ASSERT_MESSAGE("GetMaxTimeBetweenDraws Property is broken",
+      (aRandomFloat * 1000000) == ourSystem.GetMaxTimeBetweenDraws()  );
+
+   ourSystem.SetUseFixedTimeStep(true);
+
+   CPPUNIT_ASSERT_MESSAGE("Use fixed time step is broken",
+      true == ourSystem.GetUsesFixedTimeStep() );
+
+   ourSystem.SetUseFixedTimeStep(false);
+
+   CPPUNIT_ASSERT_MESSAGE("Use fixed time step is broken",
+      false == ourSystem.GetUsesFixedTimeStep() );
+}
+
+//////////////////////////////////////////////////////////////////////////
 void SystemTests::TestSimMode()
 {                        
-
    dtCore::RefPtr<dtABC::Application> app = &GetGlobalApplication();
-
 
    //adjust the Camera position
    dtCore::Transform camPos;
@@ -220,7 +299,6 @@ void SystemTests::TestSimMode()
    app->GetScene()->GetSceneNode()->addChild(mDummyNode->GetOSGNode());
    mDummyNode->GetOSGNode()->setCullCallback(mDummyCallback.get());
 
-
    CPPUNIT_ASSERT_MESSAGE("System should be using default stages",
       dtUtil::Bits::Has(System::STAGES_DEFAULT, System::GetInstance().GetSystemStages()) );
 
@@ -236,7 +314,6 @@ void SystemTests::TestSimMode()
    System::GetInstance().Start();
 
    /////////////////////////////////////////////////////////////
-
    System::SystemStageFlags currentStages = System::GetInstance().GetSystemStages();
 
    //turn off the STAGE_FRAME
@@ -255,7 +332,6 @@ void SystemTests::TestSimMode()
    CPPUNIT_ASSERT(!mDummyDrawable->mFrameCalled);
 
    ////////////////////////////////////////////////////////////
-
    mDummyCallback->mCallbackCalled = false;
    mDummyNode->ResetState();
    mDummyDrawable->ResetState();
@@ -269,5 +345,4 @@ void SystemTests::TestSimMode()
    CPPUNIT_ASSERT(mDummyDrawable->mPreframeCalled);
    CPPUNIT_ASSERT(mDummyDrawable->mPostFrameCalled);
    CPPUNIT_ASSERT(mDummyDrawable->mFrameCalled);
-
 }
