@@ -32,16 +32,18 @@ namespace dtCore
    , mLastDrawClockTime(0)
    , mSimulationTime(0.0)
    , mCorrectSimulationTime(0.0)
-   , mFrameStep(1.0f/60.0f)
+   , mFrameRate(1.0f/60.0f)
    , mTimeScale(1.0f)
    , mDt(0.0)
    , mMaxTimeBetweenDraws(100000)
-   , mUseFixedTimeStep(false)
+   , mUseFixedTimeRate(false)
+   , mAccumulateLastRealDt(false)
    , mRunning(false)
    , mShutdownOnWindowClose(true)
    , mPaused(false)
    , mWasPaused(false)
    , mSystemStages(STAGES_DEFAULT)
+   , mAccumulationTime(0.0)
    {
       mTickClockTime = mClock.Tick();
       RegisterInstance(this);
@@ -132,46 +134,55 @@ namespace dtCore
    ////////////////////////////////////////////////////////////////////////////////
    void System::Pause( const double deltaRealTime )
    {
-      SendMessage( "pause", const_cast<double*>(&deltaRealTime) );      
+      SendMessage( "pause", const_cast<double*>(&deltaRealTime) );
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void System::SystemStepFixed()
    {
-      double mSimDt = mDt * mTimeScale;         
-      if(mWasPaused == false)
+      mRealClockTime  += Timer_t(mDt * 1000000);
+      double simDt = mDt * mTimeScale;
+
+      if(!mWasPaused)
       {
-         mCorrectSimulationTime += mSimDt;
+         mCorrectSimulationTime += simDt;
       }
       else
       {
-         mCorrectSimulationTime += mFrameStep;
+         mCorrectSimulationTime += mFrameRate;
          mWasPaused = false;
       }
 
-      if (mCorrectSimulationTime + 0.001f < mSimulationTime + mFrameStep)
+      if (mCorrectSimulationTime + 0.001f < mSimulationTime + mFrameRate)
       {
          // we tried a sleep here, but even passing 1 millisecond was to long.
+         mAccumulateLastRealDt = true;
 #ifndef DELTA_WIN32
          AppSleep(1);
 #endif
          return;
       }
 
-      mSimulationTime += mFrameStep;
-      mSimulationClockTime += Timer_t(mFrameStep * 1000000); 
+      mAccumulateLastRealDt = false;
 
-      PreFrame(mFrameStep, mDt);
+      mSimulationTime += mFrameRate;
+      mSimulationClockTime += Timer_t(mFrameRate * 1000000); 
+    
+      mAccumulationTime *= mTimeScale;
+
+      PreFrame(mFrameRate, mDt + mAccumulationTime);
 
       //if we're ahead of the desired sim time, then draw.
       if (mSimulationTime >= mCorrectSimulationTime 
          || (mRealClockTime - mLastDrawClockTime) > mMaxTimeBetweenDraws)
       {
          mLastDrawClockTime = mRealClockTime;
-         FrameSynch(mFrameStep, mDt);
-         Frame(mFrameStep, mDt);
+         FrameSynch(mFrameRate, mDt + mAccumulationTime);
+         Frame(mFrameRate, mDt+ mAccumulationTime);
       }
-      PostFrame(mFrameStep, mDt);
+      PostFrame(mFrameRate, mDt + mAccumulationTime);
+
+      mAccumulationTime = 0;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -180,7 +191,12 @@ namespace dtCore
    {
       Timer_t lastClockTime  = mTickClockTime;
       mTickClockTime = mClock.Tick();
+
       mDt = mClock.DeltaSec(lastClockTime, mTickClockTime);
+      if (mAccumulateLastRealDt)
+      {
+         mAccumulationTime += mClock.DeltaSec(lastClockTime, mTickClockTime);
+      }
 
       if( mPaused )
       {
@@ -191,18 +207,18 @@ namespace dtCore
       }
       else
       {
-         double mSimDt = mDt * mTimeScale;         
-         mRealClockTime  += Timer_t(mDt * 1000000);
-
-         if(!mUseFixedTimeStep)
+         if(!mUseFixedTimeRate)
          {
-            mSimulationTime += mSimDt;
-            mSimulationClockTime += Timer_t(mSimDt * 1000000); 
+            mRealClockTime  += Timer_t(mDt * 1000000);
+            double simDt = mDt * mTimeScale;
+            mWasPaused = false;
+            mSimulationTime += simDt;
+            mSimulationClockTime += Timer_t(simDt * 1000000); 
 
-            PreFrame(mSimDt, mDt);
-            FrameSynch(mSimDt, mDt);
-            Frame(mSimDt, mDt);
-            PostFrame(mSimDt, mDt);
+            PreFrame(simDt, mDt);
+            FrameSynch(simDt, mDt);
+            Frame(simDt, mDt);
+            PostFrame(simDt, mDt);
          }
          else
          {
@@ -230,15 +246,23 @@ namespace dtCore
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void System::Run()
+   void System::InitVars()
    {
-      mRunning = true;
+      mAccumulationTime = 0;
+      mAccumulateLastRealDt = false;
       mTickClockTime = mClock.Tick();
       time_t realTime;
       time(&realTime); 
       mRealClockTime = realTime * 1000000;
       mLastDrawClockTime = mRealClockTime;
       mSimulationClockTime = mRealClockTime;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void System::Run()
+   {
+      mRunning = true;
+      InitVars();
 
       while( mRunning )
       {	  
@@ -254,12 +278,7 @@ namespace dtCore
    void System::Start()
    {
       mRunning = true;
-      mTickClockTime = mClock.Tick();
-      time_t realTime;
-      time(&realTime); 
-      mRealClockTime = realTime * 1000000;
-      mLastDrawClockTime = mRealClockTime;
-      mSimulationClockTime = mRealClockTime;
+      InitVars();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -274,12 +293,7 @@ namespace dtCore
 
       if (first)
       {
-         mTickClockTime = mClock.Tick();
-         time_t realTime;
-         time(&realTime); 
-         mRealClockTime = realTime * 1000000;
-         mLastDrawClockTime = mRealClockTime;
-         mSimulationClockTime = mRealClockTime;
+         InitVars();
          first = false;
       }
 
@@ -331,3 +345,4 @@ namespace dtCore
       }
    }
 }
+

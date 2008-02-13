@@ -44,6 +44,27 @@ namespace dtCore
     * can be called and will block until System::Stop() gets called.  By 
     * subscribing to the System, Base derived objects can receive the System 
     * messages "preframe", "frame", "postframe", and "configure".
+    *
+    * To enable fixed time stepping, you will need to set the rate to the rate you
+    * want, the MaxTimeBetweenDraws to something like .1, and the use fixed time step
+    * to true
+    * ourSystem.SetFrameStep(60);
+    * ourSystem.SetMaxTimeBetweenDraws(.1);
+    * ourSystem.SetUseFixedTimeStep(true);
+    *
+    * This will step your system using this fixed frame rate
+    *
+    * You can also use this with your config file application loads up, the prop-
+    * erties are as follows
+    *
+    * <Properties>
+    *    <Property Name="System.SimFrameRate">60</Property>
+    *    <Property Name="System.MaxTimeBetweenDraws">0.1</Property>
+    *    <Property Name="System.UseFixedTimeStep">true</Property>
+    * </Properties>
+    *
+    * These will automatically get loaded up on startup if your config file is found
+    *
     * @see AddListener()
     * @see OnMessage()
     */
@@ -201,20 +222,23 @@ namespace dtCore
        */
       void SetSimulationTime(double newTime);
 
-      /// this is the amount it should step by, only valid in mUseFixedTimeStep == true
-      void SetFrameStep(double newTime) {mFrameStep = newTime;}
+      /// this is the amount it should step by, only valid in mUseFixedTimeRate == true
+      void SetFrameStep(double newTime) {mFrameRate = newTime;}
       
-      /// your minimum number of frames you want it to draw, only valid in mUseFixedTimeStep == true
+      /// your minimum number of frames you want it to draw, only valid in mUseFixedTimeRate == true
       void SetMaxTimeBetweenDraws(double newTime) {mMaxTimeBetweenDraws = newTime * 1000000;}
 
       /// Set to make the system step by the fixed amount of time.
-      void SetUseFixedTimeStep(bool value) {mUseFixedTimeStep = value;}
+      void SetUseFixedTimeStep(bool value) {mUseFixedTimeRate = value;}
 
       /// return the frame step, in case others need to use this.
-      double GetFrameStep() const {return mFrameStep;}
+      double GetFrameStep() const {return mFrameRate;}
 
       /// return to see if we are using the fixed time stepping feature of the engine.
-      bool GetUsesFixedTimeStep() const {return mUseFixedTimeStep;}
+      bool GetUsesFixedTimeStep() const {return mUseFixedTimeRate;}
+
+      /// mostly for unit test, other places in code may need this though
+      double GetMaxTimeBetweenDraws() const {return mMaxTimeBetweenDraws;}
 
    private:
 
@@ -233,14 +257,19 @@ namespace dtCore
       Timer_t mLastDrawClockTime;
       double mSimulationTime;
       double mCorrectSimulationTime;
-      double mFrameStep;
+      double mFrameRate;
       double mTimeScale;
       double mDt;
       double mMaxTimeBetweenDraws;
-      bool mUseFixedTimeStep;
-
+      bool mUseFixedTimeRate;
+      bool mAccumulateLastRealDt;
+      double mAccumulationTime;
+      
       // will step the system with a fixed time step.
       void SystemStepFixed();
+
+      //initializes internal variables at the start of a run.
+      void InitVars();
 
       /**
        * @param deltaSimTime The change in simulation time is seconds.
