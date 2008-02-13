@@ -1,5 +1,5 @@
-#include "TrackView.h"
-#include "TrackScene.h"
+#include "PoseMeshView.h"
+#include "PoseMeshScene.h"
 
 #include <QtGui/QWheelEvent>
 #include <QtGui/QGraphicsScene>
@@ -15,7 +15,7 @@ const float kDefaultMaxScale = 6.0f;
 const float kDefaultMinScale = 0.2f;
 
 
-TrackView::TrackView(TrackScene *scene, QWidget *parent)
+PoseMeshView::PoseMeshView(PoseMeshScene *scene, QWidget *parent)
 :QGraphicsView(scene, parent) 
 , mScene(scene)
 , mDragItem(NULL)
@@ -35,14 +35,14 @@ TrackView::TrackView(TrackScene *scene, QWidget *parent)
 }
 
 
-TrackView::~TrackView()
+PoseMeshView::~PoseMeshView()
 {
    
 }
 
 
 
-void TrackView::wheelEvent(QWheelEvent *event)
+void PoseMeshView::wheelEvent(QWheelEvent *event)
 {
    // Delta is in eighths of degrees
    int numberOfDegrees = event->delta() / 8;
@@ -54,7 +54,7 @@ void TrackView::wheelEvent(QWheelEvent *event)
 }
 
 
-void TrackView::keyPressEvent(QKeyEvent *event)
+void PoseMeshView::keyPressEvent(QKeyEvent *event)
 {
    QGraphicsView::keyPressEvent(event);
 
@@ -69,14 +69,14 @@ void TrackView::keyPressEvent(QKeyEvent *event)
 }
 
 
-void TrackView::mouseMoveEvent(QMouseEvent *event)
+void PoseMeshView::mouseMoveEvent(QMouseEvent *event)
 {
    OnViewChanged();
    QGraphicsView::mouseMoveEvent(event);   
 }
 
 
-void TrackView::Zoom(float numberOfSteps)
+void PoseMeshView::Zoom(float numberOfSteps)
 {   
    const float kScaleFactor = 1.1f;
    float scaleAmount = 0;
@@ -117,7 +117,7 @@ void TrackView::Zoom(float numberOfSteps)
 }
 
 
-float TrackView::GetPercentVisible()
+float PoseMeshView::GetPercentVisible()
 {
    QRect frameRect        = geometry();
    QRectF visibleRect     = mapToScene(frameRect).boundingRect();
@@ -130,7 +130,7 @@ float TrackView::GetPercentVisible()
 }
 
 
-float TrackView::GetScale()
+float PoseMeshView::GetScale()
 {
    QMatrix currentTransform = matrix();
 
@@ -143,7 +143,7 @@ float TrackView::GetScale()
 
 
 
-void TrackView::setScene(QGraphicsScene *scene)
+void PoseMeshView::setScene(QGraphicsScene *scene)
 {
    QGraphicsView::setScene(scene);
 
@@ -155,7 +155,7 @@ void TrackView::setScene(QGraphicsScene *scene)
 }
 
 
-void TrackView::fitInView(const QRectF &rect, Qt::AspectRatioMode aspectRadioMode)
+void PoseMeshView::fitInView(const QRectF &rect, Qt::AspectRatioMode aspectRadioMode)
 {
    QGraphicsView::fitInView(rect, aspectRadioMode);   
 
@@ -171,7 +171,7 @@ void TrackView::fitInView(const QRectF &rect, Qt::AspectRatioMode aspectRadioMod
 }
 
 
-void TrackView::OnSetCenterTarget(float sceneX, float sceneY)
+void PoseMeshView::OnSetCenterTarget(float sceneX, float sceneY)
 {      
    mCurrentTarget.setX(sceneX);
    mCurrentTarget.setY(sceneY);  
@@ -180,7 +180,7 @@ void TrackView::OnSetCenterTarget(float sceneX, float sceneY)
 }
 
 
-void TrackView::OnViewChanged()
+void PoseMeshView::OnViewChanged()
 {
    QRect geom = rect();
    QRectF viewRect = mapToScene(geom).boundingRect();   
@@ -206,7 +206,7 @@ void TrackView::OnViewChanged()
 }
 
 
-void TrackView::mousePressEvent(QMouseEvent *event)
+void PoseMeshView::mousePressEvent(QMouseEvent *event)
 {
    //std::vector<AnimElement>* elements = NULL;
    //mScene->GetAnimElements(elements);
@@ -241,7 +241,7 @@ void TrackView::mousePressEvent(QMouseEvent *event)
 }
 
 
-void TrackView::mouseReleaseEvent(QMouseEvent *event)
+void PoseMeshView::mouseReleaseEvent(QMouseEvent *event)
 {
    //mDragItem = NULL;
    QGraphicsView::mouseReleaseEvent(event);
@@ -249,7 +249,7 @@ void TrackView::mouseReleaseEvent(QMouseEvent *event)
 }
 
 
-void TrackView::contextMenuEvent( QContextMenuEvent *event )
+void PoseMeshView::contextMenuEvent( QContextMenuEvent *event )
 {
    mLastClickPoint = mapToScene(event->pos());
 
@@ -261,7 +261,7 @@ void TrackView::contextMenuEvent( QContextMenuEvent *event )
 }
 
 
-void TrackView::OnUpdateView()
+void PoseMeshView::OnUpdateView()
 {
    QPointF direction = mCurrentTarget - mCurrentSource;
 

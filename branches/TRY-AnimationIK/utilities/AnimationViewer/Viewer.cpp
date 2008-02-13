@@ -239,8 +239,13 @@ void Viewer::OnLoadPoseMeshFile( const std::string &filename )
    mPoseDatabase = new dtAnim::PoseMeshDatabase(rapper);
 
    if (mPoseDatabase->LoadFromFile(filename))
-   {
+   {      
       mPoseMeshes = &mPoseDatabase->GetMeshes();
+      for (size_t poseIndex = 0; poseIndex < mPoseMeshes->size(); ++poseIndex)
+      {
+         dtAnim::PoseMesh *newMesh = (*mPoseMeshes)[poseIndex];
+         emit PoseMeshLoaded(*newMesh);
+      }
    }
 }
 

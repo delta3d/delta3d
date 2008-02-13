@@ -79,7 +79,7 @@ signals:
 
    void MeshLoaded(int meshID, const QString &meshName);
 
-   void PoseMeshLoaded(dtAnim::PoseMesh *poseMesh);
+   void PoseMeshLoaded(const dtAnim::PoseMesh &poseMesh);
 
    void MaterialLoaded(int materialID, const QString &name, 
                        const QColor &diffuse, const QColor &ambient, const QColor &specular,
