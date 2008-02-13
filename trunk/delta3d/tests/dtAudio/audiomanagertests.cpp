@@ -43,12 +43,18 @@ CPPUNIT_TEST_SUITE_REGISTRATION(AudioManagerTests);
 
 void AudioManagerTests::setUp()
 {
-
+   if(dtAudio::AudioManager::GetInstance().IsInitialized())
+   {
+      dtAudio::AudioManager::GetInstance().Destroy();
+   }
 }
 
 void AudioManagerTests::tearDown()
 {
-
+   if(dtAudio::AudioManager::GetInstance().IsInitialized())
+   {
+      dtAudio::AudioManager::GetInstance().Destroy();
+   }
 }
 
 void AudioManagerTests::TestInitialize()
