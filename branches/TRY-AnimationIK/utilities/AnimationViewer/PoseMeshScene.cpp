@@ -17,7 +17,8 @@ PoseMeshScene::PoseMeshScene(QObject *parent)
    mCanvasRect.setWidth(graphicsWidth);
    mCanvasRect.setHeight(graphicsHeight);   
 
-   addRect(mCanvasRect, QPen(), QBrush(QColor(192, 192, 255)));  
+   QGraphicsRectItem *canvasItem = addRect(mCanvasRect, QPen(), QBrush(QColor(192, 192, 255)));  
+   canvasItem->setZValue(-100.0f);
 
    CreateTest();
 }
@@ -39,10 +40,10 @@ void PoseMeshScene::AddMesh(const dtAnim::PoseMesh &mesh)
 
    float canvasWidth = mCanvasRect.width();
 
-   float middleX = mCanvasRect.x() + canvasWidth * 0.5f - itemWidth * 0.5f;
-   float middleY = adjustedHeight;
+   float middleX = mCanvasRect.x() + canvasWidth * 0.5f;
+   float middleY = adjustedHeight + itemHeight * 0.5f;
 
-   adjustedHeight += itemHeight + 10.0f;
+   adjustedHeight += itemHeight + 64.0f;
 
    newItem->setPos(middleX, middleY);
 

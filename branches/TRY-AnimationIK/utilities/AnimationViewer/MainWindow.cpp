@@ -346,9 +346,7 @@ void MainWindow::OnNewPoseMesh(const dtAnim::PoseMesh &poseMesh)
    {
       assert(!mPoseMeshViewer);
       mPoseMeshScene  = new PoseMeshScene(this);
-      mPoseMeshViewer = new PoseMeshView(mPoseMeshScene, this);
-
-      mPoseMeshViewer->setDragMode(QGraphicsView::ScrollHandDrag);
+      mPoseMeshViewer = new PoseMeshView(mPoseMeshScene, this);      
 
       QDockWidget* poseDock = new QDockWidget("Pose Mesh Viewer");
       poseDock->setWidget(mPoseMeshViewer);

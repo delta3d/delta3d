@@ -17,19 +17,26 @@ public:
 
    ~PoseMeshItem(); 
 
-   void mousePressEvent(QGraphicsSceneMouseEvent *event);
-   void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-
-   QRectF boundingRect() const;
-   QPainterPath shape() const;
-   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+   virtual bool sceneEvent(QEvent *event);
+   virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+   virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
+   virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+   
+   virtual QRectF boundingRect() const;
+   virtual QPainterPath shape() const;
+   virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
 
 protected: 
 
 private: 
 
+   const dtAnim::PoseMesh *mPoseMesh;
    QPixmap *mPixmap;
+   QRectF mBoundingRect;
+   QPointF mLastMousePos;
+
+   bool mHovered;
 
 
 };

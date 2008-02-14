@@ -15,7 +15,7 @@ public:
    PoseMeshView(PoseMeshScene *scene, QWidget *parent = 0);
    ~PoseMeshView();
 
-   void Zoom(float numberOfSteps);
+   void Zoom(float numberOfSteps, QPoint centerPoint = QPoint());
 
    /// The item rect will constrain our view changed coordinates
    void SetItemBoundingRect(const QRectF &itemRect){ mItemRect = itemRect; }
@@ -33,13 +33,8 @@ public:
    void setScene(QGraphicsScene *scene);
    void fitInView(const QRectF &rect, Qt::AspectRatioMode aspectRadioMode = Qt::IgnoreAspectRatio);
 
-signals:
-   void MapScaleChanged(float newScale);
-   void ViewChanged(const QRectF &zeroToOneDims);   
-
 public slots:
-   void OnSetCenterTarget(float sceneX, float sceneY);
-   void OnViewChanged();  
+   void OnSetCenterTarget(float sceneX, float sceneY);  
    void OnUpdateView();
 
 protected:

@@ -7,6 +7,8 @@
 #include <QtGui/QMenu>
 #include <QtGui/QGraphicsItem>
 
+#include <dtUtil/mathdefines.h>
+
 #include <cassert>
 #include <iostream>
 #include <cmath>
@@ -31,6 +33,8 @@ PoseMeshView::PoseMeshView(PoseMeshScene *scene, QWidget *parent)
 
    setAcceptDrops(true);
 
+   //mPoseMeshViewer->setDragMode(QGraphicsView::ScrollHandDrag);
+
    connect(&mTimer, SIGNAL(timeout()), this, SLOT(OnUpdateView()));   
 }
 
@@ -50,7 +54,7 @@ void PoseMeshView::wheelEvent(QWheelEvent *event)
    // Typical mice move in 15 degree steps
    float numberOfSteps = (float)numberOfDegrees / 15.0f;
 
-   Zoom(numberOfSteps);
+   Zoom(numberOfSteps, event->pos());
 }
 
 
@@ -71,19 +75,19 @@ void PoseMeshView::keyPressEvent(QKeyEvent *event)
 
 void PoseMeshView::mouseMoveEvent(QMouseEvent *event)
 {
-   OnViewChanged();
    QGraphicsView::mouseMoveEvent(event);   
 }
 
 
-void PoseMeshView::Zoom(float numberOfSteps)
+void PoseMeshView::Zoom(float numberOfSteps, QPoint centerPoint)
 {   
    const float kScaleFactor = 1.1f;
    float scaleAmount = 0;
 
    if (numberOfSteps > 0)
-   {       
-      scaleAmount = numberOfSteps * kScaleFactor;     
+   {    
+      float adjustedFactor = 0.1f * mCurrentScale / mMaxScale;
+      scaleAmount = numberOfSteps * (kScaleFactor - adjustedFactor);
    }
    else
    {     
@@ -93,27 +97,18 @@ void PoseMeshView::Zoom(float numberOfSteps)
 
    mCurrentScale *= scaleAmount;
 
+   QPointF sceneCenter = mapToScene(centerPoint);
+   centerOn(sceneCenter);
+
    // Clamp the scale to our min/max
-   if (mCurrentScale > mMaxScale)
-   {
-      mCurrentScale = mMaxScale;
-   }
-   else if (mCurrentScale < mMinScale)
-   {
-      mCurrentScale = mMinScale;
-   }
+   dtUtil::Clamp(mCurrentScale, mMinScale, mMaxScale);
 
-   QMatrix currentTransform = matrix();   
+   QMatrix currentTransform = matrix(); 
 
-   currentTransform.reset();      
+   currentTransform.reset();    
    currentTransform.scale(mCurrentScale, mCurrentScale);
 
-   setMatrix(currentTransform);   
-
-   // The pushpins need to know this
-   emit MapScaleChanged(mCurrentScale);
-
-   OnViewChanged();   
+   setMatrix(currentTransform);     
 }
 
 
@@ -159,12 +154,7 @@ void PoseMeshView::fitInView(const QRectF &rect, Qt::AspectRatioMode aspectRadio
 {
    QGraphicsView::fitInView(rect, aspectRadioMode);   
 
-   mCurrentScale = GetScale();
-
-   // The pushpins need to know this
-   emit MapScaleChanged(mCurrentScale);  
-
-   OnViewChanged();
+   mCurrentScale = GetScale();     
 
    mCurrentSource = rect.center();
    mCurrentTarget = mCurrentSource;   
@@ -178,33 +168,6 @@ void PoseMeshView::OnSetCenterTarget(float sceneX, float sceneY)
 
    mTimer.start();        
 }
-
-
-void PoseMeshView::OnViewChanged()
-{
-   QRect geom = rect();
-   QRectF viewRect = mapToScene(geom).boundingRect();   
-
-   // This will prevent the viewRect from going outside the bounds of the item rect
-   QRectF constrainedRect = mItemRect.intersected(viewRect);
-
-   float top    = (constrainedRect.top() - mItemRect.top()) / mItemRect.height();
-   float left   = (constrainedRect.left() - mItemRect.left()) / mItemRect.width();
-   float bottom = top + constrainedRect.height() / mItemRect.height();
-   float right  = left + constrainedRect.width() / mItemRect.width();
-
-   QRectF zeroToOneRect;
-   zeroToOneRect.setTop(top);
-   zeroToOneRect.setLeft(left);
-   zeroToOneRect.setRight(right);
-   zeroToOneRect.setBottom(bottom);
-
-   mCurrentSource = mapToScene(geom.center());
-   mCurrentTarget = mCurrentSource;  
-
-   emit ViewChanged(zeroToOneRect);
-}
-
 
 void PoseMeshView::mousePressEvent(QMouseEvent *event)
 {
@@ -245,7 +208,7 @@ void PoseMeshView::mouseReleaseEvent(QMouseEvent *event)
 {
    //mDragItem = NULL;
    QGraphicsView::mouseReleaseEvent(event);
-   setDragMode(QGraphicsView::ScrollHandDrag);
+   //setDragMode(QGraphicsView::ScrollHandDrag);
 }
 
 
