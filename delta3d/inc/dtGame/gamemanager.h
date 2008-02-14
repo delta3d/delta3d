@@ -31,6 +31,7 @@
 #include <dtGame/message.h>
 #include <dtGame/machineinfo.h>
 #include <dtGame/environmentactor.h>
+#include <dtGame/gmstatistics.h>
 
 #include <dtCore/refptr.h>
 #include <dtCore/base.h>
@@ -69,10 +70,13 @@ namespace dtGame
    class GMComponent;
    class MapChangeStateData;
    class TickMessage;
+   class GMStatistics;
 
    class DT_GAME_EXPORT GameManager : public dtCore::Base 
    {
       DECLARE_MANAGEMENT_LAYER(GameManager)
+
+      friend class GMStatistics;
 
       public:
          typedef std::vector<std::string> NameVector;
@@ -115,10 +119,6 @@ namespace dtGame
          /// Destructor
          virtual ~GameManager();
       
-         /// Used for statistics information, should never have to call yourself.
-         void UpdateDebugStats(const dtCore::UniqueId& uniqueIDToFind, const std::string& nameOfObject, float realTimeElapsed,
-            bool isComponent, bool ticklocal);
-
       public:
 
          /**
@@ -687,7 +687,7 @@ namespace dtGame
           * appropriate log level is on, the GM will output statistics periodically
           * Default is 0.
           */
-         int GetStatisticsInterval() { return mStatisticsInterval; }
+         int GetStatisticsInterval() { return mGmStatistics.GetStatisticsInterval(); }
 
          /**
           * Records statistics about different components and actors.
@@ -952,35 +952,7 @@ namespace dtGame
          void RemoveDeletedActors();
 
       private:
-         class LogDebugInformation : public osg::Referenced
-         {
-            public:
-
-               LogDebugInformation(const std::string &name, 
-                                   const dtCore::UniqueId &uniqueID, 
-                                   bool isComponent) : 
-                  mTotalTime(0.0f),
-                  mTickLocalTime(0.0f),
-                  mTimesThrough(1), 
-                  mNameOfLogInfo(name), 
-                  mUniqueID(uniqueID), 
-                  mIsComponent(isComponent)
-               {
-       
-               }
-
-               float          mTotalTime;
-               float          mTickLocalTime;
-               unsigned int   mTimesThrough;
-               std::string    mNameOfLogInfo;
-               dtCore::UniqueId  mUniqueID;
-               bool           mIsComponent;
-
-            protected:
-
-               virtual ~LogDebugInformation() { }
-         };
-
+    
          std::set<TimerInfo>& GetSimulationTimerList() { return mSimulationTimers; }
 
          /// Does the work of ClearTimer for each of the timer info sets.
@@ -1000,15 +972,6 @@ namespace dtGame
           * @param proxy the proxy to remove from the scene.
           */
          void RemoveActorFromScene(dtDAL::ActorProxy& proxy);
-
-         /**
-          * Internal timer statistics calculation.  Computes what percent the partial time 
-          * is of the total time. Basically (1.0 - ((total - partial) / total)) * 100.
-          * Result is truncated to something like: 98.5, 42.3, ... 
-          * @param total The total value used to determine the percentage
-          * @param partial The partial amount that we are using for the percentage
-          */
-         float ComputeStatsPercent(const float total, const float partial) const;
 
          /**
           * Private helper method to send an environment changed message
@@ -1054,22 +1017,8 @@ namespace dtGame
          NameVector mLoadedMaps;
          dtCore::RefPtr<MapChangeStateData> mMapChangeStateData;
 
-         ////////////////////////////////////////////////
-         // statistics data
-         dtCore::Timer        mStatsTickClock;
-         dtCore::Timer_t      mStatsLastFragmentDump;
-         long                 mStatsNumProcMessages;
-         long                 mStatsNumSendNetworkMessages;
-         long                 mStatsNumFrames;
-         dtCore::Timer_t      mStatsCumGMProcessTime;
-         int                  mStatisticsInterval;                                  ///< how often we print the information out.
-         std::string          mFilePathToPrintDebugInformation;                     ///< where the file is located at that we print out to
-         bool                 mPrintFileToConsole;                                  ///< if the information goes to console or file
-         bool                 mDoStatsOnTheComponents;                              ///< do we fill in the information for the components.
-         bool                 mDoStatsOnTheActors;                                  ///< Do we fill in information for the actors
-         //std::vector<dtCore::RefPtr<LogDebugInformation> > mDebugLoggerInformation; ///< hold onto all the information.
-         std::map<dtCore::UniqueId, dtCore::RefPtr<LogDebugInformation> > mDebugLoggerInformation; ///< hold onto all the information.
-         ////////////////////////////////////////////////
+         /// stats for this, in a class so its less obtrusive to the gm
+         GMStatistics mGmStatistics;
 
          /// application the gm has. the one and only.
          dtABC::Application* mApplication;
