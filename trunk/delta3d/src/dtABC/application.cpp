@@ -89,7 +89,7 @@ void Application::ReadSystemProperties()
 {
    std::string value;
 
-   value = GetConfigPropertyValue(SIM_FRAME_RATE, "");
+   value = GetConfigPropertyValue(SIM_FRAME_RATE);
 
    if(!value.empty())
    {
@@ -99,7 +99,7 @@ void Application::ReadSystemProperties()
    
    value.clear();
 
-   value = GetConfigPropertyValue(MAX_TIME_BETWEEN_DRAWS, "");
+   value = GetConfigPropertyValue(MAX_TIME_BETWEEN_DRAWS);
    if(!value.empty())
    {
       double timeBetween = dtUtil::ToDouble(value);
@@ -108,7 +108,7 @@ void Application::ReadSystemProperties()
 
    value.clear();
 
-   value = GetConfigPropertyValue(USE_FIXED_TIME_STEP, "");
+   value = GetConfigPropertyValue(USE_FIXED_TIME_STEP);
    if(!value.empty())
    {
       bool useFixed = value == "True" || value == "1" || value == "true";
@@ -207,6 +207,7 @@ const std::string& Application::GetConfigPropertyValue(
       return i->second;
    }
 }
+
 ///////////////////////////////////////////////////////////////////////////////
 void Application::SetConfigPropertyValue(const std::string& name, const std::string& value)
 {
