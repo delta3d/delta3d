@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="dtGame"
 	ProjectGUID="{A768B050-B0CF-454C-BE75-9F31E1ECF85F}"
+	RootNamespace="dtGame"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -256,6 +257,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtGame\gmstatistics.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtGame\groundclamper.cpp"
 				>
 			</File>
@@ -407,6 +412,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtGame\gmcomponent.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtGame\gmstatistics.h"
 				>
 			</File>
 			<File
