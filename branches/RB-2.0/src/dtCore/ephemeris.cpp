@@ -588,7 +588,7 @@ time_t dtCore::GetGMT(int year, int month, int day, int hour, int min, int sec)
    // mktime on windows adjusts for time zone, and we really don't want that
    time_t ret = _mkgmtime(&mt);
 #else
-   time_t ret = mktime(&mt);
+   time_t ret = timegm(&mt);
 #endif
 
    return ret;
