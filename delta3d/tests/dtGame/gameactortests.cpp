@@ -763,7 +763,7 @@ void GameActorTests::TestSetEnvironmentActor()
 
       mManager->GetActorsInScene(drawables);
       CPPUNIT_ASSERT_EQUAL_MESSAGE("The game manager should have the correct number of actors in it", 
-            numActors, drawables.size() - 1);
+            numActors, unsigned(drawables.size() - 1));
 
       // SET ENVIRONMENT ACTOR TESTS
       mManager->SetEnvironmentActor(eap.get());
