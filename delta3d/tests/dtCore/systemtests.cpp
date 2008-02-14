@@ -33,6 +33,7 @@
 #include <dtCore/transform.h>
 #include <dtCore/camera.h>
 #include <dtUtil/bits.h>
+#include <dtUtil/mathdefines.h>
 
 extern dtABC::Application& GetGlobalApplication();
 
@@ -203,7 +204,12 @@ void SystemTests::setUp()
 
 //////////////////////////////////////////////////////////////////////////
 void SystemTests::tearDown()
-{}
+{
+   dtCore::System::GetInstance().SetUseFixedTimeStep(false);
+   dtCore::System::GetInstance().Stop();
+   dtCore::System::GetInstance().SetPause(false);
+   dtCore::System::GetInstance().SetFrameStep(1.0f/60.0f);
+}
 
 //////////////////////////////////////////////////////////////////////////
 void SystemTests::TestStepping()
@@ -214,12 +220,12 @@ void SystemTests::TestStepping()
    mDummyNode = new DummyNode();
    mDummyCallback = new DummyCallback();
 
-   app->GetScene()->AddDrawable(mDummyDrawable.get());       
+   app->GetScene()->AddDrawable(mDummyDrawable.get());
    app->GetScene()->GetSceneNode()->addChild(mDummyNode->GetOSGNode());
    mDummyNode->GetOSGNode()->setCullCallback(mDummyCallback.get());
 
    dtCore::System& ourSystem = dtCore::System::GetInstance();
-   ourSystem.SetFrameStep(5);
+   ourSystem.SetFrameStep(1.0/0.0321);
    ourSystem.SetMaxTimeBetweenDraws(.01);
    ourSystem.SetUseFixedTimeStep(true);
 
@@ -228,24 +234,26 @@ void SystemTests::TestStepping()
    ourSystem.SetShutdownOnWindowClose(false);
    ourSystem.Start();
    ourSystem.SetPause(false);
+   ourSystem.Step();
 
    ourSystem.SetSystemStages(System::STAGES_DEFAULT);
 
    ourSystem.SetTimeScale(1.0f);
 
-   dtCore::AppSleep(10000);
+   dtCore::AppSleep(200);
    ourSystem.Step();
    
-   CPPUNIT_ASSERT_MESSAGE("Time should be fixed",
-      (float)mDummyDrawable->m_TimeOne == 5.0f);
+   CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("Time should be fixed",
+            0.0321, mDummyDrawable->m_TimeOne, 0.001);
 
-   ourSystem.SetFrameStep(2);
+   ourSystem.SetFrameStep(1.0/0.0543);
+   ourSystem.SetTimeScale(0.32);
 
-   dtCore::AppSleep(10000);
+   dtCore::AppSleep(100);
    ourSystem.Step();
 
-   CPPUNIT_ASSERT_MESSAGE("Time should be fixed",
-      (float)mDummyDrawable->m_TimeOne == 2.0f);
+   CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("Time should be fixed, but scaled",
+            0.0543 * 0.32, mDummyDrawable->m_TimeOne, 0.001);
 
    ourSystem.SetUseFixedTimeStep(false);
 }
@@ -255,17 +263,20 @@ void SystemTests::TestProperties()
 {
    dtCore::System& ourSystem = dtCore::System::GetInstance();
 
-   float aRandomFloat = dtUtil::RandFloat(0.0f, 10.0f);
+   CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("Frame Step deflault is wrong",
+      ourSystem.GetFrameStep(), 1.0/60.0 , 0.0001);
+
+   double aRandomFloat = dtUtil::RandFloat(10.0f, 50.0f);
    ourSystem.SetFrameStep(aRandomFloat);
 
-   CPPUNIT_ASSERT_MESSAGE("Frame Step Property is broken",
-      aRandomFloat == ourSystem.GetFrameStep() );
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Frame Step Property is broken",
+      aRandomFloat, ourSystem.GetFrameStep() );
 
    aRandomFloat = dtUtil::RandFloat(0.0f, 10.0f);
    ourSystem.SetMaxTimeBetweenDraws(aRandomFloat);
 
-   CPPUNIT_ASSERT_MESSAGE("GetMaxTimeBetweenDraws Property is broken",
-      (aRandomFloat * 1000000) == ourSystem.GetMaxTimeBetweenDraws()  );
+   CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("GetMaxTimeBetweenDraws Property is broken",
+      aRandomFloat, ourSystem.GetMaxTimeBetweenDraws(), 0.001);
 
    ourSystem.SetUseFixedTimeStep(true);
 
@@ -280,7 +291,7 @@ void SystemTests::TestProperties()
 
 //////////////////////////////////////////////////////////////////////////
 void SystemTests::TestSimMode()
-{                        
+{
    dtCore::RefPtr<dtABC::Application> app = &GetGlobalApplication();
 
    //adjust the Camera position
@@ -295,7 +306,7 @@ void SystemTests::TestSimMode()
    mDummyNode = new DummyNode();
    mDummyCallback = new DummyCallback();
 
-   app->GetScene()->AddDrawable(mDummyDrawable.get());       
+   app->GetScene()->AddDrawable(mDummyDrawable.get());
    app->GetScene()->GetSceneNode()->addChild(mDummyNode->GetOSGNode());
    mDummyNode->GetOSGNode()->setCullCallback(mDummyCallback.get());
 

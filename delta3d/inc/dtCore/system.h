@@ -173,48 +173,48 @@ namespace dtCore
       * when the last window is closed. Otherwise, the console and system will
       * remain open.
       */
-      void SetShutdownOnWindowClose( bool shutdown ) { mShutdownOnWindowClose = shutdown; }
+      void SetShutdownOnWindowClose( bool shutdown );
 
       /*!
       * Returns whether or not the system will shutdown upon the last window being
       * closed.
       */
-      bool GetShutdownOnWindowClose() const { return mShutdownOnWindowClose; }
+      bool GetShutdownOnWindowClose() const;
 
       /**
        * @return the scale of realtime at which the simulation time is running.
        */
-      double GetTimeScale() const { return mTimeScale; }
+      double GetTimeScale() const;
 
       /**
        * @return the scale of realtime at which the simulation time is running.
        */
-      void SetTimeScale(double newTimeScale) { mTimeScale = newTimeScale; }
+      void SetTimeScale(double newTimeScale);
       
       /**
        * @note the clock time is a 64 bit int in microseconds
        * @return the current real clock in microseconds since January 1, 1970
        */
-      Timer_t GetRealClockTime() const { return mRealClockTime; }
+      Timer_t GetRealClockTime() const;
 
       /**
        * @note the simulation clock time is a 64 bit int in microseconds
        * @return the current simulation clock in the same format as the real clock time but can be changed
        *         and follows the time scale.
        */
-      Timer_t GetSimulationClockTime() const { return mSimulationClockTime; }
+      Timer_t GetSimulationClockTime() const;
       
       /**
        * Sets the simulation wall clock time.  This is used for things like time of day.
        * @param newTime the new time in microseconds, like the real clock time.
        */
-      void SetSimulationClockTime(const dtCore::Timer_t &newTime) { mSimulationClockTime = newTime; }
+      void SetSimulationClockTime(const dtCore::Timer_t &newTime);
 
       /**
        * The simulation time starts at 0 at the beginning of the simulation.
        * @return the simulation time in seconds.
        */
-      double GetSimulationTime() const { return mSimulationTime; }
+      double GetSimulationTime() const;
       
       /**
        * Sets the simulation time.  It is assumed that part of the simulation is using this exact value to keep track of things.
@@ -223,22 +223,22 @@ namespace dtCore
       void SetSimulationTime(double newTime);
 
       /// this is the amount it should step by, only valid in mUseFixedTimeRate == true
-      void SetFrameStep(double newTime) {mFrameRate = newTime;}
+      void SetFrameStep(double newRate);
       
       /// your minimum number of frames you want it to draw, only valid in mUseFixedTimeRate == true
-      void SetMaxTimeBetweenDraws(double newTime) {mMaxTimeBetweenDraws = newTime * 1000000;}
+      void SetMaxTimeBetweenDraws(double newTime);
 
       /// Set to make the system step by the fixed amount of time.
-      void SetUseFixedTimeStep(bool value) {mUseFixedTimeRate = value;}
+      void SetUseFixedTimeStep(bool value);
 
       /// return the frame step, in case others need to use this.
-      double GetFrameStep() const {return mFrameRate;}
+      double GetFrameStep() const;
 
       /// return to see if we are using the fixed time stepping feature of the engine.
-      bool GetUsesFixedTimeStep() const {return mUseFixedTimeRate;}
+      bool GetUsesFixedTimeStep() const;
 
       /// mostly for unit test, other places in code may need this though
-      double GetMaxTimeBetweenDraws() const {return mMaxTimeBetweenDraws;}
+      double GetMaxTimeBetweenDraws() const;
 
    private:
 
@@ -257,13 +257,21 @@ namespace dtCore
       Timer_t mLastDrawClockTime;
       double mSimulationTime;
       double mCorrectSimulationTime;
-      double mFrameRate;
+      double mFrameTime;
       double mTimeScale;
       double mDt;
       double mMaxTimeBetweenDraws;
-      bool mUseFixedTimeRate;
-      bool mAccumulateLastRealDt;
       double mAccumulationTime;
+      
+      SystemStageFlags mSystemStages;
+
+      bool mUseFixedTimeStep;
+      bool mAccumulateLastRealDt;
+      bool mRunning; ///<Are we currently running?
+      bool mShutdownOnWindowClose;
+      bool mPaused;
+      bool mWasPaused;
+      
       
       // will step the system with a fixed time step.
       void SystemStepFixed();
@@ -307,12 +315,6 @@ namespace dtCore
       ///One System frame
       void SystemStep();
 
-      bool mRunning; ///<Are we currently running?      
-      bool mShutdownOnWindowClose;
-      bool mPaused;
-      bool mWasPaused;
-      
-      SystemStageFlags mSystemStages;
    };
 }
 

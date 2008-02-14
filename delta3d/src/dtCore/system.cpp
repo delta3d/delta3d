@@ -32,18 +32,18 @@ namespace dtCore
    , mLastDrawClockTime(0)
    , mSimulationTime(0.0)
    , mCorrectSimulationTime(0.0)
-   , mFrameRate(1.0f/60.0f)
+   , mFrameTime(1.0f/60.0f)
    , mTimeScale(1.0f)
    , mDt(0.0)
    , mMaxTimeBetweenDraws(100000)
-   , mUseFixedTimeRate(false)
+   , mAccumulationTime(0.0)
+   , mSystemStages(STAGES_DEFAULT)
+   , mUseFixedTimeStep(false)
    , mAccumulateLastRealDt(false)
    , mRunning(false)
    , mShutdownOnWindowClose(true)
    , mPaused(false)
    , mWasPaused(false)
-   , mSystemStages(STAGES_DEFAULT)
-   , mAccumulationTime(0.0)
    {
       mTickClockTime = mClock.Tick();
       RegisterInstance(this);
@@ -72,6 +72,90 @@ namespace dtCore
    ////////////////////////////////////////////////////////////////////////////////
    void System::Destroy()
    {
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void System::SetShutdownOnWindowClose( bool shutdown ) 
+   { 
+      mShutdownOnWindowClose = shutdown;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool System::GetShutdownOnWindowClose() const
+   {
+      return mShutdownOnWindowClose;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   double System::GetTimeScale() const
+   {
+      return mTimeScale;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void System::SetTimeScale(double newTimeScale) 
+   {
+      mTimeScale = newTimeScale;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   Timer_t System::GetRealClockTime() const
+   {
+      return mRealClockTime;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   Timer_t System::GetSimulationClockTime() const 
+   {
+      return mSimulationClockTime;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void System::SetSimulationClockTime(const dtCore::Timer_t &newTime)
+   {
+      mSimulationClockTime = newTime;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   double System::GetSimulationTime() const 
+   {
+      return mSimulationTime;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void System::SetFrameStep(double newRate) 
+   {
+      mFrameTime = 1.0/newRate;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void System::SetMaxTimeBetweenDraws(double newTime)
+   {
+      mMaxTimeBetweenDraws = newTime * 1000000.0;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void System::SetUseFixedTimeStep(bool value) 
+   {
+      mUseFixedTimeStep = value;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   double System::GetFrameStep() const 
+   {
+      return 1.0/mFrameTime;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool System::GetUsesFixedTimeStep() const 
+   {
+      return mUseFixedTimeStep;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   double System::GetMaxTimeBetweenDraws() const 
+   {
+      return mMaxTimeBetweenDraws/1000000.0;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -143,17 +227,19 @@ namespace dtCore
       mRealClockTime  += Timer_t(mDt * 1000000);
       double simDt = mDt * mTimeScale;
 
+      float frameTime = mFrameTime * mTimeScale;
+
       if(!mWasPaused)
       {
          mCorrectSimulationTime += simDt;
       }
       else
       {
-         mCorrectSimulationTime += mFrameRate;
+         mCorrectSimulationTime += frameTime;
          mWasPaused = false;
       }
 
-      if (mCorrectSimulationTime + 0.001f < mSimulationTime + mFrameRate)
+      if (mCorrectSimulationTime + 0.001f < mSimulationTime + frameTime)
       {
          // we tried a sleep here, but even passing 1 millisecond was to long.
          mAccumulateLastRealDt = true;
@@ -165,22 +251,20 @@ namespace dtCore
 
       mAccumulateLastRealDt = false;
 
-      mSimulationTime += mFrameRate;
-      mSimulationClockTime += Timer_t(mFrameRate * 1000000); 
+      mSimulationTime += frameTime;
+      mSimulationClockTime += Timer_t(frameTime * 1000000); 
     
-      mAccumulationTime *= mTimeScale;
-
-      PreFrame(mFrameRate, mDt + mAccumulationTime);
+      PreFrame(frameTime, mDt + mAccumulationTime);
 
       //if we're ahead of the desired sim time, then draw.
       if (mSimulationTime >= mCorrectSimulationTime 
          || (mRealClockTime - mLastDrawClockTime) > mMaxTimeBetweenDraws)
       {
          mLastDrawClockTime = mRealClockTime;
-         FrameSynch(mFrameRate, mDt + mAccumulationTime);
-         Frame(mFrameRate, mDt+ mAccumulationTime);
+         FrameSynch(frameTime, mDt + mAccumulationTime);
+         Frame(frameTime, mDt+ mAccumulationTime);
       }
-      PostFrame(mFrameRate, mDt + mAccumulationTime);
+      PostFrame(frameTime, mDt + mAccumulationTime);
 
       mAccumulationTime = 0;
    }
@@ -207,7 +291,7 @@ namespace dtCore
       }
       else
       {
-         if(!mUseFixedTimeRate)
+         if(!mUseFixedTimeStep)
          {
             mRealClockTime  += Timer_t(mDt * 1000000);
             double simDt = mDt * mTimeScale;
