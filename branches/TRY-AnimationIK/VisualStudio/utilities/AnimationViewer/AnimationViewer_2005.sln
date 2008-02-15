@@ -12,6 +12,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtDAL", "..\..\src\dtDAL\dtDAL_2005.vcproj", "{F4AF0428-087E-4AE9-BAB2-B18E910DF67A}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AnimationViewerD", "AnimationViewerD.vcproj", "{646BBAED-24E1-39BF-B6FB-A42A0113127C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1E2C3DB5-00E0-45B9-AA4B-F54BD5A9C60B} = {1E2C3DB5-00E0-45B9-AA4B-F54BD5A9C60B}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

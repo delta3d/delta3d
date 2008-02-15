@@ -94,6 +94,10 @@ PoseMeshItem::~PoseMeshItem()
 
 }
 
+const std::string& PoseMeshItem::GetPoseMeshName()
+{
+   return mPoseMesh->GetName(); 
+}
 
 bool PoseMeshItem::sceneEvent(QEvent *event)
 {
@@ -188,7 +192,11 @@ void PoseMeshItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
       painter->drawEllipse(-VERT_RADIUS_DIV2, -VERT_RADIUS_DIV2, VERT_RADIUS, VERT_RADIUS);
       painter->translate(-vertPosition.x(), -vertPosition.y());
 
-      painter->setPen(QPen());
+      QPen boundPen;
+      boundPen.setStyle(Qt::DotLine);
+      boundPen.setColor(Qt::black);
+
+      painter->setPen(boundPen);
       painter->setBrush(QBrush());
       painter->drawRect(mBoundingRect);
    }   

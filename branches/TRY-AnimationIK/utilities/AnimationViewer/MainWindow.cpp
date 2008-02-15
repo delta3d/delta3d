@@ -2,6 +2,8 @@
 #include "AnimationTableWidget.h"
 #include "PoseMeshView.h"
 #include "PoseMeshScene.h"
+#include "PoseMeshProperties.h"
+#include "OSGAdapterWidget.h"
 
 #include <osg/Geode> ///needed for the node builder
 #include <dtAnim/cal3ddatabase.h>
@@ -26,14 +28,12 @@
 #include <QtGui/QGraphicsScene>
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QProgressBar>
+#include <QtGui/QTreeWidgetItem>
 
 #include <QtGui/QStandardItemModel>
 #include <QtGui/QStandardItem>
 
 #include <QtGui/QGraphicsEllipseItem>
-
-#include "OSGAdapterWidget.h"
-
 #include <cassert>
 
 MainWindow::MainWindow():
@@ -46,7 +46,8 @@ mMaterialView(NULL),
 mGLWidget(NULL),
 mMixerViewerAction(NULL),
 mPoseMeshScene(NULL),
-mPoseMeshViewer(NULL)
+mPoseMeshViewer(NULL),
+mPoseMeshProperties(NULL)
 {
    resize(800, 800);
 
@@ -346,18 +347,26 @@ void MainWindow::OnNewPoseMesh(const dtAnim::PoseMesh &poseMesh)
    {
       assert(!mPoseMeshViewer);
       mPoseMeshScene  = new PoseMeshScene(this);
-      mPoseMeshViewer = new PoseMeshView(mPoseMeshScene, this);      
+      mPoseMeshViewer = new PoseMeshView(mPoseMeshScene, this);   
 
       QDockWidget* poseDock = new QDockWidget("Pose Mesh Viewer");
       poseDock->setWidget(mPoseMeshViewer);
 
       addDockWidget(Qt::RightDockWidgetArea, poseDock);
       resize(1000, 800);
-      //mTabs->addTab(mPoseMeshViewer, tr("IK"));   
+      
+      // Add the properties tab
+      mPoseMeshProperties = new PoseMeshProperties;     
+      mTabs->addTab(mPoseMeshProperties, tr("IK"));   
+
+      connect(mPoseMeshProperties, SIGNAL(ViewPoseMesh(const std::string&)), 
+              mPoseMeshViewer, SLOT(OnZoomToPoseMesh(const std::string&)));
    }  
     
-   // Add a new pose mesh visualization
+   // Add new pose mesh visualization and properties
    mPoseMeshScene->AddMesh(poseMesh);
+   mPoseMeshProperties->AddMesh(poseMesh);
+
 }
 
 void MainWindow::OnNewMaterial( int matID, const QString &name, 
@@ -400,6 +409,9 @@ void MainWindow::OnNewMaterial( int matID, const QString &name,
 
 void MainWindow::OnBlendUpdate(const std::vector<float> &weightList)
 {
+   // temp remove me
+   return;
+
    int test = mAnimListWidget->rowCount();
    assert(weightList.size() == (size_t)mAnimListWidget->rowCount());
 
