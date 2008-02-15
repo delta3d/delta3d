@@ -99,6 +99,8 @@ namespace dtAnim
       ~PoseMesh();
 
       const std::string& GetName() const               { return mName;       }
+      const std::string& GetBoneName() const           { return mBoneName;   }
+      int GetBoneID() const                            { return mBoneID;     }
       const VertexVector& GetVertices() const          { return mVertices;   }
       const Barycentric2DVector& GetBarySpaces() const { return mBarySpaces; }
       const TriangleVector& GetTriangles() const       { return mTriangles;  }
@@ -133,6 +135,8 @@ namespace dtAnim
 
       std::string mName;
       std::string mBoneName;
+
+      int mBoneID;
 
       TriangleVector       mTriangles;
       TriangleEdgeVector   mSilhouetteEdges;

@@ -1,5 +1,6 @@
 #include "PoseMeshView.h"
 #include "PoseMeshScene.h"
+#include "PoseMeshItem.h"
 
 #include <QtGui/QWheelEvent>
 #include <QtGui/QGraphicsScene>
@@ -81,12 +82,12 @@ void PoseMeshView::mouseMoveEvent(QMouseEvent *event)
 
 void PoseMeshView::Zoom(float numberOfSteps, QPoint centerPoint)
 {   
-   const float kScaleFactor = 1.1f;
+   const float kScaleFactor = 1.075f;
    float scaleAmount = 0;
 
    if (numberOfSteps > 0)
    {    
-      float adjustedFactor = 0.1f * mCurrentScale / mMaxScale;
+      float adjustedFactor = 0.075f * mCurrentScale / mMaxScale;
       scaleAmount = numberOfSteps * (kScaleFactor - adjustedFactor);
    }
    else
@@ -98,7 +99,17 @@ void PoseMeshView::Zoom(float numberOfSteps, QPoint centerPoint)
    mCurrentScale *= scaleAmount;
 
    QPointF sceneCenter = mapToScene(centerPoint);
-   centerOn(sceneCenter);
+
+   QGraphicsItem *centerItem = mScene->itemAt(sceneCenter);
+
+   if (centerItem && centerItem->isEnabled())
+   {
+      centerOn(centerItem);
+   }
+   else
+   {
+      centerOn(sceneCenter);
+   }
 
    // Clamp the scale to our min/max
    dtUtil::Clamp(mCurrentScale, mMinScale, mMaxScale);
@@ -109,6 +120,16 @@ void PoseMeshView::Zoom(float numberOfSteps, QPoint centerPoint)
    currentTransform.scale(mCurrentScale, mCurrentScale);
 
    setMatrix(currentTransform);     
+}
+
+void PoseMeshView::OnZoomToPoseMesh(const std::string &meshName)
+{
+   PoseMeshItem *item = mScene->GetPoseMeshItemByName(meshName);
+
+   if (item)
+   {      
+      QGraphicsView::fitInView(item, Qt::KeepAspectRatio);
+   }
 }
 
 
@@ -149,7 +170,6 @@ void PoseMeshView::setScene(QGraphicsScene *scene)
    }   
 }
 
-
 void PoseMeshView::fitInView(const QRectF &rect, Qt::AspectRatioMode aspectRadioMode)
 {
    QGraphicsView::fitInView(rect, aspectRadioMode);   
@@ -159,7 +179,6 @@ void PoseMeshView::fitInView(const QRectF &rect, Qt::AspectRatioMode aspectRadio
    mCurrentSource = rect.center();
    mCurrentTarget = mCurrentSource;   
 }
-
 
 void PoseMeshView::OnSetCenterTarget(float sceneX, float sceneY)
 {      

@@ -17,6 +17,7 @@ class QStandardItemModel;
 class QTableView;
 class PoseMeshView;
 class PoseMeshScene;
+class PoseMeshProperties;
 
 namespace dtQt
 {
@@ -108,6 +109,7 @@ private:
 
    PoseMeshView         *mPoseMeshViewer;
    PoseMeshScene        *mPoseMeshScene;
+   PoseMeshProperties   *mPoseMeshProperties;
 
    dtQt::OSGAdapterWidget* mGLWidget;
    

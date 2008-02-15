@@ -15,9 +15,8 @@ PoseMesh::PoseMesh(const dtAnim::Cal3DModelWrapper* model,
 {  
    std::vector<unsigned int> animids;
    GetAnimationIDsByName(const_cast<dtAnim::Cal3DModelWrapper*>(model), meshData.mAnimations, animids);
-
-   // This is the set of data that we need to build our mesh           
-   int boneid = model->GetCoreBoneID( meshData.mBoneName );   
+      
+   mBoneID = model->GetCoreBoneID( meshData.mBoneName );   
 
    // Allocate space for osg to triangulate our verts
    std::vector<osg::Vec3> celestialPoints;
@@ -46,7 +45,7 @@ PoseMesh::PoseMesh(const dtAnim::Cal3DModelWrapper* model,
       vertMap[*anim] = vert_idx;
 
       // frame 30 is a temp number intended to be the last or close to the last frame
-      osg::Quat finalRotation = model->GetBoneAbsoluteRotationForKeyFrame( *anim, boneid, 30 );   
+      osg::Quat finalRotation = model->GetBoneAbsoluteRotationForKeyFrame( *anim, mBoneID, 30 );   
 
       // calculate a vector transformed by the rotation data.
       osg::Vec3 transformed = finalRotation * meshData.mForward;   

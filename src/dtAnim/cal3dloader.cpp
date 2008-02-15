@@ -153,8 +153,11 @@ namespace dtAnim
          LoadModelData(handler, *coreModel, *data_in);
          LoadAllTextures(*coreModel, path); //this should be a user-level process.
 
-         // Store the filename containing IK data
-         data_in->SetPoseMeshFilename(path + handler.mPoseMeshFilename);
+         // Store the filename containing IK data if it exists
+         if (!handler.mPoseMeshFilename.empty())
+         {
+            data_in->SetPoseMeshFilename(path + handler.mPoseMeshFilename);
+         }         
          
          return true;
       }  

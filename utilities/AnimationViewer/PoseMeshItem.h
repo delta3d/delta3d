@@ -17,6 +17,8 @@ public:
 
    ~PoseMeshItem(); 
 
+   const std::string& GetPoseMeshName(); 
+
    virtual bool sceneEvent(QEvent *event);
    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
    virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);

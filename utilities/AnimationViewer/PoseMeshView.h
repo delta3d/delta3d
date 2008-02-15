@@ -15,7 +15,7 @@ public:
    PoseMeshView(PoseMeshScene *scene, QWidget *parent = 0);
    ~PoseMeshView();
 
-   void Zoom(float numberOfSteps, QPoint centerPoint = QPoint());
+   void Zoom(float numberOfSteps, QPoint centerPoint = QPoint());   
 
    /// The item rect will constrain our view changed coordinates
    void SetItemBoundingRect(const QRectF &itemRect){ mItemRect = itemRect; }
@@ -36,6 +36,7 @@ public:
 public slots:
    void OnSetCenterTarget(float sceneX, float sceneY);  
    void OnUpdateView();
+   void OnZoomToPoseMesh(const std::string &meshName);
 
 protected:
 

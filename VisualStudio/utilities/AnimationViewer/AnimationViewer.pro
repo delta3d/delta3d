@@ -30,7 +30,8 @@ SOURCES = Delta3DThread.cpp \
           PoseMeshView.cpp \
           PoseMeshScene.cpp \
           PoseMeshItem.cpp \ 
-		  OSGAdapterWidget.cpp		  
+		  PoseMeshProperties.cpp \
+		  OSGAdapterWidget.cpp		   
 	    	    
 HEADERS = Delta3DThread.h \
 	      MainWindow.h \
@@ -39,6 +40,7 @@ HEADERS = Delta3DThread.h \
           PoseMeshView.h \
           PoseMeshScene.h \
           PoseMeshItem.h \
+		  PoseMeshProperties.h \
 		  OSGAdapterWidget.h 
 
 INCLUDEPATH +=  "../../../inc" "../../../ext/inc" "../../../ext/inc/CEGUI"

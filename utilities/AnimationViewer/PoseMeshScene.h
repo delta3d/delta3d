@@ -15,7 +15,7 @@ namespace dtAnim
 
 class QGraphicsItem;
 class QGraphicsRectItem;
-
+class PoseMeshItem;
 
 class PoseMeshScene: public QGraphicsScene
 {
@@ -27,11 +27,15 @@ public:
   
    void AddMesh(const dtAnim::PoseMesh &mesh);   
 
+   PoseMeshItem* GetPoseMeshItemByName(const std::string &name);
+
 protected: 
 
 private: 
 
    void CreateTest();
+
+   std::vector<PoseMeshItem*> mItemList;
  
    QRectF mCanvasRect;
 };

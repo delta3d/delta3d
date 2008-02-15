@@ -19,6 +19,7 @@ PoseMeshScene::PoseMeshScene(QObject *parent)
 
    QGraphicsRectItem *canvasItem = addRect(mCanvasRect, QPen(), QBrush(QColor(192, 192, 255)));  
    canvasItem->setZValue(-100.0f);
+   canvasItem->setEnabled(false);
 
    CreateTest();
 }
@@ -34,6 +35,7 @@ void PoseMeshScene::AddMesh(const dtAnim::PoseMesh &mesh)
    static float adjustedHeight = mCanvasRect.y() + 64;
 
    PoseMeshItem *newItem = new PoseMeshItem(mesh);
+   mItemList.push_back(newItem);
 
    float itemWidth = newItem->boundingRect().width();
    float itemHeight = newItem->boundingRect().height();
@@ -51,6 +53,22 @@ void PoseMeshScene::AddMesh(const dtAnim::PoseMesh &mesh)
    //newItem->setRect(test);
 
    addItem(newItem);
+}
+
+PoseMeshItem* PoseMeshScene::GetPoseMeshItemByName(const std::string &name)
+{
+   PoseMeshItem *foundItem = NULL;
+
+   for (size_t itemIndex = 0; itemIndex < mItemList.size(); ++itemIndex)
+   {
+      if (mItemList[itemIndex]->GetPoseMeshName() == name)
+      {
+         foundItem = mItemList[itemIndex];
+         break;
+      }
+   }
+
+   return foundItem;
 }
 
 void PoseMeshScene::CreateTest()
