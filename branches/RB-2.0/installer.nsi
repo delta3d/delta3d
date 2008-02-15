@@ -257,6 +257,7 @@ Section Uninstall
   Delete "$INSTDIR\scons_template"
   Delete "$INSTDIR\SConstruct"
   Delete "$INSTDIR\oalinst.exe"
+  Delete "$INSTDIR\vcredist_x86.exe"
 
   ;bin
   RMDir /r $INSTDIR\bin
