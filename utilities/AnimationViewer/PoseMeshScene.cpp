@@ -2,6 +2,7 @@
 #include "PoseMeshItem.h"
 #include <QtCore/QRectF>
 #include <QtGui/QGraphicsRectItem>
+#include <QtGui/QGraphicsSceneMouseEvent>
 
 
 PoseMeshScene::PoseMeshScene(QObject *parent)
@@ -37,7 +38,7 @@ void PoseMeshScene::AddMesh(const dtAnim::PoseMesh &mesh)
    PoseMeshItem *newItem = new PoseMeshItem(mesh);
    mItemList.push_back(newItem);
 
-   float itemWidth = newItem->boundingRect().width();
+   //float itemWidth = newItem->boundingRect().width();
    float itemHeight = newItem->boundingRect().height();
 
    float canvasWidth = mCanvasRect.width();
@@ -91,4 +92,20 @@ void PoseMeshScene::CreateTest()
 
       addRect(test)->setPen(trackPen); 
    }
+}
+
+void PoseMeshScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *mouseEvent)
+{   
+   QList<QGraphicsItem*> clickedItemList = items(mouseEvent->scenePos());   
+
+   for (int itemIndex = 0; itemIndex < clickedItemList.size(); ++itemIndex)
+   {
+      PoseMeshItem *poseItem = dynamic_cast<PoseMeshItem*>(clickedItemList[itemIndex]);
+
+      if (poseItem)
+      {
+         emit ViewPoseMesh(poseItem->GetPoseMeshName());         
+         break;
+      }
+   }   
 }

@@ -127,8 +127,18 @@ void PoseMeshView::OnZoomToPoseMesh(const std::string &meshName)
    PoseMeshItem *item = mScene->GetPoseMeshItemByName(meshName);
 
    if (item)
-   {      
-      QGraphicsView::fitInView(item, Qt::KeepAspectRatio);
+   { 
+      // Set the scale so that when we zoom out, 
+      // it will happen from roughly the right place
+      mCurrentScale = 2.0f;
+      QMatrix currentTransform = matrix(); 
+
+      currentTransform.reset();    
+      currentTransform.scale(mCurrentScale, mCurrentScale);
+
+      setMatrix(currentTransform);        
+
+      QGraphicsView::fitInView(item, Qt::KeepAspectRatio);   
    }
 }
 

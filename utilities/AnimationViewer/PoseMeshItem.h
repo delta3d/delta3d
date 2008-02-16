@@ -19,7 +19,7 @@ public:
 
    const std::string& GetPoseMeshName(); 
 
-   virtual bool sceneEvent(QEvent *event);
+   virtual bool sceneEvent(QEvent *event);  
    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
    virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
@@ -27,7 +27,6 @@ public:
    virtual QRectF boundingRect() const;
    virtual QPainterPath shape() const;
    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-
 
 protected: 
 
