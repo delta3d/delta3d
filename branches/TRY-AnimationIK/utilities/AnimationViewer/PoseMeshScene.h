@@ -29,7 +29,11 @@ public:
 
    PoseMeshItem* GetPoseMeshItemByName(const std::string &name);
 
-protected: 
+   virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *mouseEvent);
+
+signals:
+
+   void ViewPoseMesh(const std::string &meshName);
 
 private: 
 

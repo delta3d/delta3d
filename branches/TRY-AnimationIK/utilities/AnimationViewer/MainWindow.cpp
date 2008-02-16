@@ -361,6 +361,9 @@ void MainWindow::OnNewPoseMesh(const dtAnim::PoseMesh &poseMesh)
 
       connect(mPoseMeshProperties, SIGNAL(ViewPoseMesh(const std::string&)), 
               mPoseMeshViewer, SLOT(OnZoomToPoseMesh(const std::string&)));
+
+      connect(mPoseMeshScene, SIGNAL(ViewPoseMesh(const std::string&)), 
+              mPoseMeshViewer, SLOT(OnZoomToPoseMesh(const std::string&)));
    }  
     
    // Add new pose mesh visualization and properties

@@ -30,6 +30,7 @@ PoseMeshItem::PoseMeshItem(const dtAnim::PoseMesh &poseMesh,
    setZValue(1);
 
    setAcceptsHoverEvents(true);
+   setToolTip("test");
 
    mHovered = false;
    
