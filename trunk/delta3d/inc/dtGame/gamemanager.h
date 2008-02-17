@@ -501,14 +501,14 @@ namespace dtGame
           * @param The name to search for
           * @param The proxy to cast
           */
-         template <class Proxy>
-         void FindActorByName(const std::string &name, dtCore::RefPtr<Proxy> &proxy) const
+         template <class ProxyType>
+         void FindActorByName(const std::string &name, ProxyType *&proxy) const
          {
             std::vector<dtDAL::ActorProxy*> toFill;
             FindActorsByName(name, toFill);
             if(!toFill.empty())
             {
-               proxy = dynamic_cast<Proxy*>(toFill[0]);   
+               proxy = dynamic_cast<ProxyType*>(toFill[0]);   
             }
          }
 
@@ -524,14 +524,14 @@ namespace dtGame
           * @param The type to search for
           * @param The proxy to cast
           */
-         template <class Proxy>
-         void FindActorByType(const dtDAL::ActorType &type, dtCore::RefPtr<Proxy> &proxy) const
+         template <class ProxyType>
+         void FindActorByType(const dtDAL::ActorType &type, ProxyType *&proxy) const
          {
             std::vector<dtDAL::ActorProxy*> toFill;
             FindActorsByType(type, toFill);
             if(!toFill.empty())
             {
-               proxy = dynamic_cast<Proxy*>(toFill[0]);   
+               proxy = dynamic_cast<ProxyType*>(toFill[0]);   
             }
          }
 
