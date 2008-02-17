@@ -47,7 +47,8 @@ namespace dtEditQt
 {
 
     // The number of digits to the right of a decimal point for floats/doubles
-    const unsigned NUM_DECIMAL_DIGITS = 15;
+    const unsigned int NUM_DECIMAL_DIGITS_FLOAT  = 8;
+    const unsigned int NUM_DECIMAL_DIGITS_DOUBLE = 15;
 
     class PropertyEditorModel;
     class PropertyEditorTreeView;

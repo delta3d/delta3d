@@ -171,6 +171,11 @@ namespace dtEditQt
     /////////////////////////////////////////////////////////////////////////////////
     const QString DynamicVec3Control::getValueAsString()
     {
+       osg::Vec3 testVect;
+       bool isVecFloat = (sizeof(testVect.x()) == sizeof(float));
+
+       const unsigned int NUM_DECIMAL_DIGITS = isVecFloat ? NUM_DECIMAL_DIGITS_FLOAT : NUM_DECIMAL_DIGITS_DOUBLE;
+
         if(myVec3Property.valid())
         {
             const osg::Vec3 &vectorValue = myVec3Property->GetValue();
@@ -183,17 +188,17 @@ namespace dtEditQt
         {
             const osg::Vec3f &vectorValue = myVec3fProperty->GetValue();
 
-            return "(X=" + QString::number(vectorValue.x(), 'f', NUM_DECIMAL_DIGITS) +
-                ", Y=" + QString::number(vectorValue.y(), 'f', NUM_DECIMAL_DIGITS) +
-                ", Z=" + QString::number(vectorValue.z(), 'f', NUM_DECIMAL_DIGITS) + ")";
+            return "(X=" + QString::number(vectorValue.x(), 'f', NUM_DECIMAL_DIGITS_FLOAT) +
+                ", Y=" + QString::number(vectorValue.y(), 'f', NUM_DECIMAL_DIGITS_FLOAT) +
+                ", Z=" + QString::number(vectorValue.z(), 'f', NUM_DECIMAL_DIGITS_FLOAT) + ")";
         }
         else if(myVec3dProperty.valid())
         {
             const osg::Vec3d &vectorValue = myVec3dProperty->GetValue();
 
-            return "(X=" + QString::number(vectorValue.x(), 'f', NUM_DECIMAL_DIGITS) +
-                ", Y=" + QString::number(vectorValue.y(), 'f', NUM_DECIMAL_DIGITS) +
-                ", Z=" + QString::number(vectorValue.z(), 'f', NUM_DECIMAL_DIGITS) + ")";
+            return "(X=" + QString::number(vectorValue.x(), 'f', NUM_DECIMAL_DIGITS_DOUBLE) +
+                ", Y=" + QString::number(vectorValue.y(), 'f', NUM_DECIMAL_DIGITS_DOUBLE) +
+                ", Z=" + QString::number(vectorValue.z(), 'f', NUM_DECIMAL_DIGITS_DOUBLE) + ")";
         }
         else
         {
