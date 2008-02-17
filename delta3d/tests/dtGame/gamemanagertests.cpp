@@ -252,18 +252,18 @@ void GameManagerTests::TestTemplatedActorMethods()
       mManager->AddActor(*p, false, false);
    }
    
-   dtCore::RefPtr<dtActors::GameMeshActorProxy> shouldBeValid;
+   dtActors::GameMeshActorProxy *shouldBeValid;
    
    mManager->FindActorsByType(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, proxies);
    mManager->FindActorByType(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, shouldBeValid);
-   CPPUNIT_ASSERT(shouldBeValid.valid());
+   CPPUNIT_ASSERT(shouldBeValid != NULL);
 
    CPPUNIT_ASSERT(!proxies.empty());
-   CPPUNIT_ASSERT_MESSAGE("The result should equal the first in the list", shouldBeValid.get() == proxies[0]);
+   CPPUNIT_ASSERT_MESSAGE("The result should equal the first in the list", shouldBeValid == proxies[0]);
 
    for(size_t i = proxies.size() - 1; i >= 1; i--)
    {
-      CPPUNIT_ASSERT_MESSAGE("The result should not equal any other proxies except the first", shouldBeValid.get() != proxies[i]);
+      CPPUNIT_ASSERT_MESSAGE("The result should not equal any other proxies except the first", shouldBeValid != proxies[i]);
    }
 
    proxies.clear();
@@ -272,17 +272,16 @@ void GameManagerTests::TestTemplatedActorMethods()
    std::string searchName = shouldBeValid->GetName();
 
    shouldBeValid = NULL;
-   CPPUNIT_ASSERT(!shouldBeValid.valid());
 
    mManager->FindActorsByName(searchName, proxies);
    mManager->FindActorByName(searchName, shouldBeValid);
 
    CPPUNIT_ASSERT(!proxies.empty());
-   CPPUNIT_ASSERT_MESSAGE("The result should equal the first in the list", shouldBeValid.get() == proxies[0]);
+   CPPUNIT_ASSERT_MESSAGE("The result should equal the first in the list", shouldBeValid == proxies[0]);
 
    for(size_t i = proxies.size() - 1; i >= 1; i--)
    {
-      CPPUNIT_ASSERT_MESSAGE("The result should not equal any other proxies except the first", shouldBeValid.get() != proxies[i]);
+      CPPUNIT_ASSERT_MESSAGE("The result should not equal any other proxies except the first", shouldBeValid != proxies[i]);
    }
 }
 
