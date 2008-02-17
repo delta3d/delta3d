@@ -177,6 +177,11 @@ namespace dtEditQt
     /////////////////////////////////////////////////////////////////////////////////
     const QString DynamicVec4Control::getValueAsString()
     {
+       osg::Vec3 testVect;
+       bool isVecFloat = (sizeof(testVect.x()) == sizeof(float));
+
+       const unsigned int NUM_DECIMAL_DIGITS = isVecFloat ? NUM_DECIMAL_DIGITS_FLOAT : NUM_DECIMAL_DIGITS_DOUBLE;
+
         if(myVec4Property.valid())
         {
             const osg::Vec4 &vectorValue = myVec4Property->GetValue();
@@ -190,19 +195,19 @@ namespace dtEditQt
         {
             const osg::Vec4f &vectorValue = myVec4fProperty->GetValue();
 
-            return "(W=" + QString::number(vectorValue.w(), 'f', NUM_DECIMAL_DIGITS) +
-                ", X=" + QString::number(vectorValue.x(), 'f', NUM_DECIMAL_DIGITS) +
-                ", Y=" + QString::number(vectorValue.y(), 'f', NUM_DECIMAL_DIGITS) +
-                ", Z=" + QString::number(vectorValue.z(), 'f', NUM_DECIMAL_DIGITS) + ")";
+            return "(W=" + QString::number(vectorValue.w(), 'f', NUM_DECIMAL_DIGITS_FLOAT) +
+                ", X=" + QString::number(vectorValue.x(), 'f', NUM_DECIMAL_DIGITS_FLOAT) +
+                ", Y=" + QString::number(vectorValue.y(), 'f', NUM_DECIMAL_DIGITS_FLOAT) +
+                ", Z=" + QString::number(vectorValue.z(), 'f', NUM_DECIMAL_DIGITS_FLOAT) + ")";
         }
         else if(myVec4dProperty.valid())
         {
             const osg::Vec4d &vectorValue = myVec4dProperty->GetValue();
 
-            return "(W=" + QString::number(vectorValue.w(), 'f', NUM_DECIMAL_DIGITS) +
-                ", X=" + QString::number(vectorValue.x(), 'f', NUM_DECIMAL_DIGITS) +
-                ", Y=" + QString::number(vectorValue.y(), 'f', NUM_DECIMAL_DIGITS) +
-                ", Z=" + QString::number(vectorValue.z(), 'f', NUM_DECIMAL_DIGITS) + ")";
+            return "(W=" + QString::number(vectorValue.w(), 'f', NUM_DECIMAL_DIGITS_DOUBLE) +
+                ", X=" + QString::number(vectorValue.x(), 'f', NUM_DECIMAL_DIGITS_DOUBLE) +
+                ", Y=" + QString::number(vectorValue.y(), 'f', NUM_DECIMAL_DIGITS_DOUBLE) +
+                ", Z=" + QString::number(vectorValue.z(), 'f', NUM_DECIMAL_DIGITS_DOUBLE) + ")";
         }
         else
         {

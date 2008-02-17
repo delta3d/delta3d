@@ -235,8 +235,12 @@ namespace dtEditQt
             // set the current value from our property
             double value = getValue();
             //QString strValue = QString::number(value, 'f', NUM_DECIMAL_DIGITS);
+
+            osg::Vec3 testVect;
+            bool isVecFloat = (sizeof(testVect.x()) == sizeof(float));
+
             QLocale locale(QLocale::C);
-            QString strValue = locale.toString(value, 'f', NUM_DECIMAL_DIGITS);
+            QString strValue = locale.toString(value, 'f', isVecFloat ? NUM_DECIMAL_DIGITS_FLOAT : NUM_DECIMAL_DIGITS_DOUBLE);
             temporaryEditControl->setText(strValue);
             temporaryEditControl->selectAll();
         }
@@ -264,7 +268,7 @@ namespace dtEditQt
             {
                 // Save the data if they are different.  Note, we also need to compare the QString value, 
                 // else we get epsilon differences that cause the map to be marked dirty with no edits :(
-                QString proxyValue = QString::number(getValue(), 'f', NUM_DECIMAL_DIGITS);
+                QString proxyValue = QString::number(getValue(), 'f', NUM_DECIMAL_DIGITS_DOUBLE);
                 QString newValue = editBox->text();
                 if (doubleResult != getValue() && proxyValue != newValue)
                 {
@@ -342,7 +346,7 @@ namespace dtEditQt
         //editBox = new QLineEdit(parent);
         temporaryEditControl = new SubQLineEdit (parent, this);
         QDoubleValidator *validator = new QDoubleValidator(temporaryEditControl);
-        validator->setDecimals(NUM_DECIMAL_DIGITS);
+        validator->setDecimals(NUM_DECIMAL_DIGITS_DOUBLE);
         temporaryEditControl->setValidator(validator);
 
         if (!initialized)  {
@@ -414,7 +418,7 @@ namespace dtEditQt
     const QString DynamicVectorElementControl::getValueAsString() 
     {
         double value = getValue();
-        return QString::number(value, 'f', NUM_DECIMAL_DIGITS);
+        return QString::number(value, 'f', NUM_DECIMAL_DIGITS_DOUBLE);
     }
 
     /////////////////////////////////////////////////////////////////////////////////

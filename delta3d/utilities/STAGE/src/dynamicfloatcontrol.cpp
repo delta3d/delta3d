@@ -75,7 +75,7 @@ namespace dtEditQt
 
             // set the current value from our property
             float floatValue = myProperty->GetValue();
-            editBox->setText(QString::number(floatValue, 'f', NUM_DECIMAL_DIGITS));
+            editBox->setText(QString::number(floatValue, 'f', NUM_DECIMAL_DIGITS_FLOAT));
             editBox->selectAll();
         }
     }
@@ -96,7 +96,7 @@ namespace dtEditQt
             {
                 // Save the data if they are different.  Note, we also need to compare the QString value, 
                 // else we get epsilon differences that cause the map to be marked dirty with no edits :(
-                QString proxyValue = QString::number(myProperty->GetValue(), 'f', NUM_DECIMAL_DIGITS);
+                QString proxyValue = QString::number(myProperty->GetValue(), 'f', NUM_DECIMAL_DIGITS_FLOAT);
                 QString newValue = editBox->text();
                 if (result != myProperty->GetValue() && proxyValue != newValue)
                 {
@@ -135,7 +135,7 @@ namespace dtEditQt
         // create and init the edit box
         temporaryEditControl = new SubQLineEdit (parent, this);
         QDoubleValidator *validator = new QDoubleValidator(temporaryEditControl);
-        validator->setDecimals(NUM_DECIMAL_DIGITS);
+        validator->setDecimals(NUM_DECIMAL_DIGITS_FLOAT);
         temporaryEditControl->setValidator(validator);
 
         if (!initialized)  
@@ -166,7 +166,7 @@ namespace dtEditQt
     const QString DynamicFloatControl::getValueAsString() 
     {
         float floatValue = myProperty->GetValue();
-        return QString::number(floatValue, 'f', NUM_DECIMAL_DIGITS);
+        return QString::number(floatValue, 'f', NUM_DECIMAL_DIGITS_FLOAT);
     }
 
     bool DynamicFloatControl::isEditable()
