@@ -8,7 +8,6 @@
 #include <dtUtil/coordinates.h>
 #include <dtUtil/log.h>
 #include <dtUtil/stringutils.h>
-#include <dtUtil/deprecationmgr.h>
 #include <dtUtil/mathdefines.h>
 
 namespace dtUtil
@@ -703,22 +702,6 @@ namespace dtUtil
       longitude = osg::RadiansToDegrees(longitude);
    }
   
-   /////////////////////////////////////////////////////////////////////////////
-   void Coordinates::ConvertGeodeticToUTM (double Latitude, double Longitude,
-                                           long& Zone, char& Hemisphere, 
-                                           double& Easting, double& Northing)
-   {
-      DEPRECATE("void Coordinates::ConvertGeodeticToUTM (double Latitude, "
-                "double Longitude, long& Zone, char& Hemisphere, double& Easting, "
-                "double& Northing)",
-                "void Coordinates::ConvertGeodeticToUTM (double Latitude, "
-                "double Longitude, unsigned long& Zone, char& Hemisphere, "
-                "double& Easting, double& Northing)");
-
-      unsigned tempZone;
-      ConvertGeodeticToUTM(Latitude,Longitude,tempZone,Hemisphere,Easting,Northing);
-      Zone = tempZone;
-   }
 
    /////////////////////////////////////////////////////////////////////////////
    void Coordinates::ConvertGeodeticToUTM (double Latitude, double Longitude,

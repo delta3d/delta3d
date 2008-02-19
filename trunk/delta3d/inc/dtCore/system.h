@@ -25,7 +25,6 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include <dtUtil/deprecationmgr.h>
 
 #include <dtCore/base.h>
 #include <dtCore/timer.h>
@@ -98,14 +97,6 @@ namespace dtCore
 
       ///Perform any configuration required.  Message: "configure"
       void Config();
-
-      ///Get a pointer to the System
-      static System *Instance() 
-      { 
-         DEPRECATE( "System* System::Instance()",
-                    "System& System::GetInstance()" );
-         return &GetInstance(); 
-      }
 
       ///Get a pointer to the System
       static System& GetInstance();

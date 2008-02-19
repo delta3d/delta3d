@@ -33,7 +33,6 @@
 #include <osgGA/GUIEventAdapter>
 
 #include <dtCore/inputdevice.h>
-#include <dtUtil/deprecationmgr.h>
 #include <dtCore/refptr.h>             // for typedef, list member
 
 

@@ -21,7 +21,7 @@
 !define PRODUCT_STARTMENU_REGVAL "NSIS:StartMenuDir"
 
 ; MUI 1.67 compatible ------
-!include "MUI.nsh"
+!include "MUI2.nsh"
 
 ; MUI Settings
 !define MUI_ABORTWARNING
@@ -32,6 +32,10 @@
 !insertmacro MUI_PAGE_WELCOME
 ; License page
 !insertmacro MUI_PAGE_LICENSE "license.txt"
+
+; Components selection page
+!insertmacro MUI_PAGE_COMPONENTS
+ 
 ; Directory page
 !insertmacro MUI_PAGE_DIRECTORY
 ; Start menu page
@@ -65,7 +69,10 @@ InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" ""
 ShowInstDetails show
 ShowUnInstDetails show
 
-Section "MainSection" SEC01
+
+
+
+Section "!Delta3D" Delta3DSection
   SetOutPath "$INSTDIR"
   SetOverwrite ifnewer
   File "changes.txt"
@@ -146,49 +153,56 @@ Section "MainSection" SEC01
   CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\STAGE.lnk" "$INSTDIR\bin\STAGE.exe"
   CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\3D Viewer.lnk" "$INSTDIR\bin\viewer.exe"
   CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\Particle Editor.lnk" "$INSTDIR\bin\psEditor.exe"
-
+  CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\Animation Viewer.lnk" "$INSTDIR\bin\AnimationViewer.exe"
 
   !insertmacro MUI_STARTMENU_WRITE_END
 SectionEnd
 
-Section "Install OpenAL Drivers"
-  SetOutPath $INSTDIR
-  MessageBox MB_YESNO "Install the OpenAL Drivers?" /SD IDYES IDNO endOpenAL
-    File /nonfatal "oalinst.exe"
-    ExecWait "$INSTDIR\oalinst.exe"
-    Goto endOpenAL
-  endOpenAL:
-SectionEnd
+SectionGroup /e "Addition Installations"
 
-; Environment Variables
-Section "Add Env Var"
-!define DELTA_ROOT "$INSTDIR"
-!define DELTA_INC "%DELTA_ROOT%\inc;%DELTA_ROOT%\ext\inc;%DELTA_ROOT%\ext\inc\CEGUI"
-!define DELTA_LIB "%DELTA_ROOT%\lib;%DELTA_ROOT%\ext\lib"
-!define DELTA_DATA "%DELTA_ROOT%\data"
+	Section /o "Install OpenAL Drivers" OpenALSection
+	  SetOutPath $INSTDIR
+	  File /nonfatal "oalinst.exe"
+	  ExecWait "$INSTDIR\oalinst.exe"
+	SectionEnd
+	
+	Section /o "Install VCRedist Package" VCRedistSection
+	  SetOutPath $INSTDIR
+	  File /nonfatal "vcredist_x86.exe"
+	  ExecWait "$INSTDIR\vcredist_x86.exe"
+	SectionEnd
 
-   Push "DELTA_ROOT"
-   Push '${DELTA_ROOT}'
-   Call WriteEnvStr
-   
-   Push "DELTA_INC"
-   Push '${DELTA_INC}'
-   Call WriteEnvExpStr
-   
-   Push "DELTA_LIB"
-   Push '${DELTA_LIB}'
-   Call WriteEnvExpStr
-   
-   Push "DELTA_DATA"
-   Push '${DELTA_DATA}'
-   Call WriteEnvExpStr
-
-   ;PATH
-   Push "${DELTA_ROOT}\bin"
-   Call AddToPath
-   Push "${DELTA_ROOT}\ext\bin"
-   Call AddToPath
-SectionEnd
+	; Environment Variables
+	Section "Environment Variables" EnvironmentVariableSection
+	!define DELTA_ROOT "$INSTDIR"
+	!define DELTA_INC "%DELTA_ROOT%\inc;%DELTA_ROOT%\ext\inc;%DELTA_ROOT%\ext\inc\CEGUI"
+	!define DELTA_LIB "%DELTA_ROOT%\lib;%DELTA_ROOT%\ext\lib"
+	!define DELTA_DATA "%DELTA_ROOT%\data"
+	
+	   Push "DELTA_ROOT"
+	   Push '${DELTA_ROOT}'
+	   Call WriteEnvStr
+	   
+	   Push "DELTA_INC"
+	   Push '${DELTA_INC}'
+	   Call WriteEnvExpStr
+	   
+	   Push "DELTA_LIB"
+	   Push '${DELTA_LIB}'
+	   Call WriteEnvExpStr
+	   
+	   Push "DELTA_DATA"
+	   Push '${DELTA_DATA}'
+	   Call WriteEnvExpStr
+	
+	   ;PATH
+	   Push "${DELTA_ROOT}\bin"
+	   Call AddToPath
+	   Push "${DELTA_ROOT}\ext\bin"
+	   Call AddToPath
+	SectionEnd
+	
+SectionGroupEnd ;"Additional Installations"
 
 Section -AdditionalIcons
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
@@ -209,6 +223,12 @@ Section -Post
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "Publisher" "${PRODUCT_PUBLISHER}"
 SectionEnd
 
+!insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
+  !insertmacro MUI_DESCRIPTION_TEXT ${Delta3DSection} "The source code, external dependencies, binaries, etc."
+  !insertmacro MUI_DESCRIPTION_TEXT ${OpenALSection} "Install the OpenAL Drivers (might be required on some systems for audio playback)."
+  !insertmacro MUI_DESCRIPTION_TEXT ${VCRedistSection} "Install the Visual Studio runtime libraries (install if you don't have Visual Studio already installed)."
+  !insertmacro MUI_DESCRIPTION_TEXT ${EnvironmentVariableSection} "Install the Delta3D Environment Variables"
+!insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 Function un.onUninstSuccess
   HideWindow
@@ -237,6 +257,7 @@ Section Uninstall
   Delete "$INSTDIR\scons_template"
   Delete "$INSTDIR\SConstruct"
   Delete "$INSTDIR\oalinst.exe"
+  Delete "$INSTDIR\vcredist_x86.exe"
 
   ;bin
   RMDir /r $INSTDIR\bin
@@ -299,7 +320,8 @@ Section Uninstall
   Delete "$SMPROGRAMS\$ICONS_GROUP\STAGE.lnk"
   Delete "$SMPROGRAMS\$ICONS_GROUP\3D Viewer.lnk"
   Delete "$SMPROGRAMS\$ICONS_GROUP\Particle Editor.lnk"
-  
+  Delete "$SMPROGRAMS\$ICONS_GROUP\Animation Viewer.lnk"
+ 
   RMDir "$SMPROGRAMS\$ICONS_GROUP"
   RMDir "$INSTDIR"
 

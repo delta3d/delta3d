@@ -42,7 +42,6 @@
 
 namespace dtCore
 {
-   class DeltaWin;
    class MouseListener;
    
    /// The model of the mouse used throughout Delta3D.

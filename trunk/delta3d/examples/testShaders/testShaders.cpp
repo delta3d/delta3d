@@ -6,7 +6,8 @@
 #include <osg/Program>
 #include <dtCore/camera.h>
 #include <dtCore/deltawin.h>
-
+#include <dtCore/shadermanager.h>
+#include <dtDAL/project.h>
 #include <osgGA/GUIEventAdapter>
 
 using namespace dtABC;
@@ -20,6 +21,13 @@ public:
       : Application( configFilename )
    {
       mTotalTime = 0.0f;
+
+      std::string contextName = dtCore::GetDeltaRootPath() + "/examples/data/demoMap";
+      dtDAL::Project::GetInstance().SetContext(contextName, true);
+
+      //load the xml file which specifies our shaders
+      dtCore::ShaderManager& sm = dtCore::ShaderManager::GetInstance();
+      sm.LoadShaderDefinitions("Shaders/ShaderDefs.xml");
 
       LoadGeometry();
       EnableShaders();
@@ -45,24 +53,21 @@ public:
 
    void EnableShaders()
    {
-      //create state set
-      osg::StateSet* ss = mObject->GetOSGNode()->getOrCreateStateSet();
+      dtCore::ShaderManager& sm = dtCore::ShaderManager::GetInstance();
+      dtCore::ShaderProgram* sp = sm.FindShaderPrototype("TestShader", "TestShader");
 
-      //load the shader file
-      mProg = new osg::Program;
-      mDefault = new osg::Program;
+      if(sp != NULL)
+      {
+         sm.AssignShaderFromPrototype(*sp, *mObject->GetOSGNode());
+         mEnabled = true;
+      }
+   }
 
-      RefPtr<osg::Shader> vertexShader = new osg::Shader( osg::Shader::VERTEX );
-      RefPtr<osg::Shader> fragmentShader = new osg::Shader( osg::Shader::FRAGMENT );
-
-      mProg->addShader( vertexShader.get() );
-      mProg->addShader( fragmentShader.get() );
-
-      vertexShader->loadShaderSourceFromFile( dtCore::FindFileInPathList("/shaders/testshader.vert") );
-      fragmentShader->loadShaderSourceFromFile( dtCore::FindFileInPathList("/shaders/testshader.frag") );
-
-      ss->setAttributeAndModes( mProg.get(), osg::StateAttribute::ON );
-      mEnabled = true;
+   void DisableShaders()
+   {
+      dtCore::ShaderManager& sm = dtCore::ShaderManager::GetInstance();
+      sm.UnassignShaderFromNode(*mObject->GetOSGNode());
+      mEnabled = false;
    }
 
    virtual bool KeyPressed(const dtCore::Keyboard* keyboard, int key)
@@ -79,15 +84,11 @@ public:
 
          if(mEnabled)
          {
-            ss->setAttributeAndModes( mProg.get(), osg::StateAttribute::OFF );
-            ss->setAttributeAndModes( mDefault.get(), osg::StateAttribute::ON );
-            mEnabled = false;
+            DisableShaders();
          }
          else
          {
-            ss->setAttributeAndModes( mDefault.get(), osg::StateAttribute::OFF );
-            ss->setAttributeAndModes( mProg.get(), osg::StateAttribute::ON );            
-            mEnabled = true;
+            EnableShaders();
          }
          verdict = true;
       }
@@ -110,9 +111,6 @@ public:
 private:
 
    RefPtr<dtCore::Object>                    mObject;
-
-   RefPtr<osg::Program>                      mProg; 
-   RefPtr<osg::Program>                      mDefault;
 
    float                                     mTotalTime;
    bool                                      mEnabled;

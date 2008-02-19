@@ -33,6 +33,10 @@
 #include <dtCore/refptr.h>
 
 #include <dtHLAGM/export.h>
+#include <dtHLAGM/ddmregioncalculator.h>
+#include <dtHLAGM/hlacomponent.h>
+#include <dtHLAGM/objecttoactor.h>
+#include <dtHLAGM/interactiontomessage.h>
 
 #include <xercesc/sax2/ContentHandler.hpp>
 #include <xercesc/sax/ErrorHandler.hpp>
@@ -54,11 +58,8 @@ namespace dtDAL
 
 namespace dtHLAGM
 {
-   class HLAComponent;
-   class ObjectToActor;
    class AttributeToPropertyList;
    class AttributeType;
-   class InteractionToMessage;
    class ParameterToParameterList;
    class EntityType;
    class OneToManyMapping;

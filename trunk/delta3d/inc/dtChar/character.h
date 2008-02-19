@@ -25,6 +25,13 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+
+
+//remove this if you really, really want to use dtChar.
+#error "***dtChar has been deprecated in favor of dtAnim. Use dtChar at your own risk.***"
+
+
+
 // Undef some common macros so rbody can function.
 #ifdef Status
 #undef Status
@@ -52,6 +59,7 @@ namespace dtChar
 {
    /**
     * An animated character.
+    * @note This class has been deprecated.  Please use dtAnim instead.
     */
    class DT_CHAR_EXPORT Character : public dtCore::Transformable, public dtCore::Loadable
    {

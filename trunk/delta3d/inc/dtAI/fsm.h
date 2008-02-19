@@ -108,6 +108,7 @@ namespace dtAI
 
       void AddTransition(const NPCEvent* eventType, const NPCState* from, const NPCState* to)
       {
+         //there is no more support for lazy addition of the states, you must add them independently first
          DEPRECATE( "void AddTransition(const NPCEvent* eventType, const NPCState* from, const NPCState* to)",
             "void AddTransition( const NPCEvent* eventType, const NPCState::Type* from, const NPCState::Type* to");
 

@@ -930,7 +930,7 @@ namespace dtEditQt
        // Don't launch more than one copy of the editor
        if (mSkeletalEditorProcess->state() != QProcess::Running)
        {           
-          QString program = "AnimationViewerD";
+          QString program = "AnimationViewer.exe";
           QStringList arguments;
 
           mSkeletalEditorProcess->start(program, arguments);     
@@ -941,7 +941,7 @@ namespace dtEditQt
           if (state == QProcess::NotRunning)
           {
              QMessageBox::information(NULL, tr("Process Error"), 
-                tr("Unable to launch AnimationViewerD.exe.  Make sure application exists."),
+                tr("Unable to launch AnimationViewer.exe.  Make sure application exists."),
                 QMessageBox::Ok);
 
           }
@@ -961,7 +961,7 @@ namespace dtEditQt
        // Don't launch more than one copy of the editor
        if (mParticleEditorProcess->state() != QProcess::Running)
        {           
-          QString program = "psEditor";
+          QString program = "psEditor.exe";
           QStringList arguments;
 
           mParticleEditorProcess->start(program, arguments);    
@@ -991,7 +991,7 @@ namespace dtEditQt
        // Don't launch more than one copy of the editor
        if (mViewerProcess->state() != QProcess::Running)
        {           
-          QString program = "viewer";
+          QString program = "viewer.exe";
           QStringList arguments;
 
           mViewerProcess->start(program, arguments); 

@@ -62,7 +62,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtUtild.lib dtCored.lib osgd.lib osgDBd.lib"
+				AdditionalDependencies="dtUtild.lib dtCored.lib dtDALd.lib osgd.lib osgDBd.lib"
 				OutputFile="..\..\..\bin\testShadersd.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
@@ -143,7 +143,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtUtil.lib dtCore.lib osg.lib osgDB.lib"
+				AdditionalDependencies="dtUtil.lib dtCore.lib dtDAL.lib  osg.lib osgDB.lib"
 				OutputFile="..\..\..\bin\testShaders.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
@@ -203,18 +203,6 @@
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
-		</Filter>
-		<Filter
-			Name="Shaders"
-			>
-			<File
-				RelativePath="..\..\..\data\shaders\testshader.frag"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\data\shaders\testshader.vert"
-				>
-			</File>
 		</Filter>
 		<File
 			RelativePath="..\..\..\examples\testShaders\readme.txt"

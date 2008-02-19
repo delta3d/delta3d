@@ -42,7 +42,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_NOAUTOLIBMSG;DT_PLUGIN"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_NOAUTOLIBMSG;DT_PLUGIN;NO_DTCHAR"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -65,7 +65,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="true"
-				AdditionalDependencies="dtDALd.lib OpenThreadsd.lib osgd.lib osgDBd.lib osgUtild.lib oded.lib dtCored.lib dtABCd.lib dtChard.lib dtAudiod.lib dtUtild.lib dtGamed.lib dtAnimd.lib xerces-c_2D.lib"
+				AdditionalDependencies="dtDALd.lib OpenThreadsd.lib osgd.lib osgDBd.lib osgUtild.lib oded.lib dtCored.lib dtABCd.lib dtAudiod.lib dtUtild.lib dtGamed.lib dtAnimd.lib cal3d_d.lib xerces-c_2D.lib"
 				OutputFile="..\..\..\bin\dtActorsd.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
@@ -129,7 +129,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="3"
 				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_NOAUTOLIBMSG;DT_PLUGIN"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_NOAUTOLIBMSG;DT_PLUGIN;NO_DTCHAR"
 				StringPooling="true"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="true"
@@ -151,7 +151,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="true"
-				AdditionalDependencies="dtDAL.lib OpenThreads.lib osg.lib osgDB.lib osgParticle.lib osgUtil.lib ode.lib dtCore.lib dtABC.lib dtChar.lib dtAudio.lib dtUtil.lib dtGame.lib dtAnim.lib xerces-c_2.lib"
+				AdditionalDependencies="dtDAL.lib OpenThreads.lib osg.lib osgDB.lib osgParticle.lib osgUtil.lib ode.lib dtCore.lib dtABC.lib dtAudio.lib dtUtil.lib dtGame.lib dtAnim.lib cal3d.lib xerces-c_2.lib"
 				OutputFile="..\..\..\bin\dtActors.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
@@ -236,10 +236,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtActors\cameraactorproxy.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\dtActors\characteractorproxy.cpp"
 				>
 			</File>
 			<File
@@ -394,10 +390,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtActors\cameraactorproxy.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\inc\dtActors\characteractorproxy.h"
 				>
 			</File>
 			<File

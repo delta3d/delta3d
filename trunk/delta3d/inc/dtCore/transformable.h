@@ -28,8 +28,6 @@
 #include <dtCore/transform.h>
 #include <dtUtil/enumeration.h>
 
-#include <dtUtil/breakoverride.h> // For BREAK_OVERRIDE macro
-
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
 {
@@ -476,13 +474,6 @@ namespace dtCore
 
       ///little util to remove any of the rendered collision geometry
       void RemoveRenderedCollisionGeometry();
-
-      // These functions are are deprecated. The dummy BreakOverride struct
-      // forces subclasses that override these functions to have a compile
-      // error. Use the Transform& versions instead.
-      BREAK_OVERRIDE(SetTransform(Transform*, CoordSysEnum))
-      BREAK_OVERRIDE(SetTransform(const Transform*, CoordSysEnum))
-      BREAK_OVERRIDE(GetTransform(Transform*, CoordSysEnum) const)
 
    };
 }

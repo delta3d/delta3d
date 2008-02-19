@@ -584,7 +584,12 @@ time_t dtCore::GetGMT(int year, int month, int day, int hour, int min, int sec)
    mt.tm_sec = sec;
    mt.tm_isdst = -1; // let the system determine the proper time zone
 
-   time_t ret = mktime(&mt);
+#ifdef DELTA_WIN32
+   // mktime on windows adjusts for time zone, and we really don't want that
+   time_t ret = _mkgmtime(&mt);
+#else
+   time_t ret = timegm(&mt);
+#endif
 
    return ret;
 }

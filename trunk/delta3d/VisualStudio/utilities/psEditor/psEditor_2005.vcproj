@@ -232,10 +232,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\psEditor\resource.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\utilities\psEditor\texturepreview.h"
 				>
 			</File>
@@ -245,7 +241,11 @@
 			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
 			>
 			<File
-				RelativePath="..\..\..\utilities\psEditor\DeltaParticle.ico"
+				RelativePath="..\..\..\utilities\psEditor\particle.ico"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\utilities\psEditor\psEditor.rc"
 				>
 			</File>
 		</Filter>

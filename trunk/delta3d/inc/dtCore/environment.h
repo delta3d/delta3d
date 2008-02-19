@@ -22,7 +22,6 @@
 #define DELTA_ENVIRONMENT
 
 #include <dtCore/deltadrawable.h>
-#include <dtUtil/deprecationmgr.h>
 
 #include <osg/Vec2>
 #include <osg/Vec3>
@@ -135,14 +134,6 @@ namespace dtCore
       ///Get the current color of the sun
       void GetSunColor( osg::Vec3& color ) {color = mSunColor;}
       
-      ///Get the sun's azimuth and elevation (degrees)
-      void GetSunAzEl( float *az, float *el ) const
-      { 
-         DEPRECATE(  "void GetSunAzEl( float *az, float *el )", 
-                     "void GetSunAzEl( float& az, float& el )" );
-         GetSunAzEl( *az, *el );
-      }
-
       void GetSunAzEl( float& az, float& el ) const
       { 
          az = mSunAzimuth; 
@@ -166,13 +157,6 @@ namespace dtCore
 
       void SetDateTime(const DateTime& dateTime);
 
-      ///Get the current date/time of the environment
-      void GetDateTime( int *yr, int *mo, int *da, int *hr, int *mi, int *sc ) const
-      {
-         DEPRECATE(  "void GetDateTime( int *yr, int *mo, int *da, int *hr, int *mi, int *sc )",
-                     "void GetDateTime( int& yr, int& mo, int& da, int& hr, int& mi, int& sc )" );
-         GetDateTime( *yr, *mo, *da, *hr, *mi, *sc );
-      }
 
       void GetDateTime( int& yr, int& mo, int& da, int& hr, int& mi, int& sc ) const;
 

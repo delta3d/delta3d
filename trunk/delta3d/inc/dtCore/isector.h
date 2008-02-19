@@ -30,13 +30,13 @@
 #include <dtUtil/macros.h>
 #include <dtCore/refptr.h>
 #include <dtCore/observerptr.h>
+#include <dtCore/deltadrawable.h>
 
 #include <osg/Vec3>
 #include <osgUtil/IntersectVisitor>
 
 namespace dtCore
 {
-   class DeltaDrawable;
    class Scene;
 
    /**

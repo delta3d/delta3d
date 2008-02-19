@@ -17,6 +17,7 @@
 #include <osgDB/ReaderWriter>
 #include <osgDB/FileNameUtils>
 #include <osg/ColorMask>
+#include <osg/MatrixTransform>
 
 #include <dtCore/system.h>
 #include <dtCore/flymotionmodel.h>

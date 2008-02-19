@@ -37,8 +37,6 @@ namespace osg
 {
    class Camera;
 }
-
-
 /// @endcond
 
 namespace dtCore

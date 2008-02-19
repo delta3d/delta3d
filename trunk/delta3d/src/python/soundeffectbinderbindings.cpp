@@ -15,10 +15,8 @@ void initSoundEffectBinderBindings()
    SoundEffectBinder* (*SoundEffectBinderGI2)(std::string) = &SoundEffectBinder::GetInstance;
 
    void (SoundEffectBinder::*AddEffectTypeMapping1)(const std::string& fxType, const std::string& filename) = &SoundEffectBinder::AddEffectTypeMapping;  
-   void (SoundEffectBinder::*AddEffectTypeMapping2)(unsigned int fxType, const char* filename) = &SoundEffectBinder::AddEffectTypeMapping;
 
    void (SoundEffectBinder::*RemoveEffectTypeMapping1)(const std::string& fxType) = &SoundEffectBinder::RemoveEffectTypeMapping;  
-   void (SoundEffectBinder::*RemoveEffectTypeMapping2)(unsigned int fxType) = &SoundEffectBinder::RemoveEffectTypeMapping;
 
    class_<SoundEffectBinder, bases<Base>, dtCore::RefPtr<SoundEffectBinder>, boost::noncopyable >("SoundEffectBinder", init<optional<const std::string&> >())
       .def("GetInstanceCount", &SoundEffectBinder::GetInstanceCount)
@@ -31,8 +29,6 @@ void initSoundEffectBinderBindings()
       .def("AddEffectManager", &SoundEffectBinder::AddEffectManager)
       .def("RemoveEffectManager", &SoundEffectBinder::RemoveEffectManager)
       .def("AddEffectTypeMapping", AddEffectTypeMapping1)
-      .def("AddEffectTypeMapping", AddEffectTypeMapping2)
       .def("RemoveEffectTypeMapping", RemoveEffectTypeMapping1)
-      .def("RemoveEffectTypeMapping", RemoveEffectTypeMapping2)
       ;
 }

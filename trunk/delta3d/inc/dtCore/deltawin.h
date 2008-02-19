@@ -33,11 +33,12 @@
 #include <osg/observer_ptr>
 #include <osg/Vec2>
 
-
+///@cond
 namespace osgViewer
 {
     class GraphicsWindow;
 }
+///@endcond
 
 
 namespace dtCore
@@ -157,7 +158,6 @@ namespace dtCore
       void SetPosition( const PositionSize& positionSize );
 
       ///Get the size and position of the DeltaWin
-      void GetPosition( int *x, int *y, int *width, int *height );
       void GetPosition( int& x, int& y, int& width, int& height );
       PositionSize GetPosition();
 
