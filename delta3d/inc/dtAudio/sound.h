@@ -26,7 +26,6 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <dtCore/transformable.h>
-#include <dtUtil/deprecationmgr.h>
 #include <dtAudio/export.h>
 
 #include <osg/Vec3>

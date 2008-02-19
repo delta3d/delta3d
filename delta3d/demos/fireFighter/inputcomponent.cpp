@@ -187,12 +187,8 @@ void InputComponent::OnGame()
          GetGameManager()->GetApplication().GetKeyboard(), 
          GetGameManager()->GetApplication().GetMouse());
 
-      mMotionModel->SetMaximumTurnSpeed(2000.0f);
       mMotionModel->SetUseMouseButtons(false);
       mMotionModel->SetCanJump(false);
-      //mMotionModel = 
-      //   new dtCore::FlyMotionModel(GetGameManager()->GetApplication().GetKeyboard(), 
-      //                              GetGameManager()->GetApplication().GetMouse());
    }
    mMotionModel->SetTarget(mPlayer);
 

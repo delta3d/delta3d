@@ -185,10 +185,10 @@ namespace dtAI
 
    void BaseNPC::InitializeFSM()
    {
-      NPCState* state_default = new NPCState(&NPCStateTypes::NPC_STATE_DEFAULT);
-      NPCState* state_spawn = new NPCState(&NPCStateTypes::NPC_STATE_SPAWN);
-      NPCState* state_idle = new NPCState(&NPCStateTypes::NPC_STATE_IDLE);
-      NPCState* state_die = new NPCState(&NPCStateTypes::NPC_STATE_DIE);
+      NPCState* state_default = mStateMachine.AddState(&NPCStateTypes::NPC_STATE_DEFAULT);
+      NPCState* state_spawn = mStateMachine.AddState(&NPCStateTypes::NPC_STATE_SPAWN);
+      NPCState* state_idle = mStateMachine.AddState(&NPCStateTypes::NPC_STATE_IDLE);
+      NPCState* state_die = mStateMachine.AddState(&NPCStateTypes::NPC_STATE_DIE);
 
       mStateMachine.AddTransition(&NPCEvent::NPC_EVENT_SPAWN, state_default, state_spawn);
       mStateMachine.AddTransition(&NPCEvent::NPC_EVENT_DIE, state_idle, state_die);

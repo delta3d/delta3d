@@ -30,7 +30,6 @@
 #include <dtDAL/abstractparameter.h>
 #include <dtUtil/log.h>
 
-#include <dtUtil/breakoverride.h>
 
 namespace dtDAL
 {
@@ -234,11 +233,6 @@ namespace dtDAL
           */
          ActorProperty& operator=(const ActorProperty&) { return *this; }
 
-
-         ///deprecated 06/20/07  Use ToString()
-         BREAK_OVERRIDE(GetStringValue())
-         ///deprecated 06/20/07 Use FromString()
-         BREAK_OVERRIDE(SetStringValue(const std::string&))
    };
 
    inline std::ostream& operator << (std::ostream& o, const ActorProperty& prop)

@@ -70,7 +70,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="osgd.lib osgDBd.lib osgParticled.lib osgUtild.lib oded.lib osgTextd.lib dtDALd.lib dtCored.lib dtABCd.lib dtAudiod.lib dtUtild.lib dtGamed.lib xerces-c_2D.lib QtCored4.lib QtGuid4.lib qtmaind.lib QtOpenGLd4.lib dtChard.lib"
+				AdditionalDependencies="osgd.lib osgDBd.lib osgParticled.lib osgUtild.lib oded.lib osgTextd.lib dtDALd.lib dtCored.lib dtABCd.lib dtAudiod.lib dtUtild.lib dtGamed.lib xerces-c_2D.lib QtCored4.lib QtGuid4.lib qtmaind.lib QtOpenGLd4.lib"
 				OutputFile="..\..\..\bin\STAGEd.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib;$(QTDIR)\lib;"
@@ -156,7 +156,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="osg.lib osgDB.lib osgParticle.lib osgUtil.lib osgText.lib dtDAL.lib dtCore.lib dtABC.lib dtAudio.lib dtUtil.lib dtGame.lib QtCore4.lib QtGui4.lib qtmain.lib QtOpenGL4.lib xerces-c_2.lib dtChar.lib"
+				AdditionalDependencies="osg.lib osgDB.lib osgParticle.lib osgUtil.lib osgText.lib dtDAL.lib dtCore.lib dtABC.lib dtAudio.lib dtUtil.lib dtGame.lib QtCore4.lib QtGui4.lib qtmain.lib QtOpenGL4.lib xerces-c_2.lib"
 				OutputFile="..\..\..\bin\STAGE.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib;$(QTDIR)\lib"

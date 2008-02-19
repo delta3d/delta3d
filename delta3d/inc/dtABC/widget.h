@@ -44,10 +44,11 @@ typedef osgViewer::GraphicsWindowX11::WindowData WindowData;
    #define  BIT(a)   (1<<a)
 #endif
 
+///@cond
 namespace osgViewer
 {
    class CompositeViewer;
-}
+}///@endcond
 
 namespace dtABC
 {

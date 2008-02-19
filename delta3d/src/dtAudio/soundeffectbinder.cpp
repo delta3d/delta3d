@@ -7,7 +7,6 @@
 
 #include <osg/Vec3>
 
-#include <dtUtil/deprecationmgr.h>
 #include <dtUtil/stringutils.h>
 
 // namespaces
@@ -155,22 +154,6 @@ SoundEffectBinder::AddEffectTypeMapping( const std::string& fxType, const std::s
    mFileMap[fxType]  = filename;
 }
 
-/**
- * Maps the specified effect type to the given filename.
- *
- * @param fxType the effect type to map
- * @param filename the sound filename corresponding to the effect type
- *
- * Note: This may be deprecated in the future, use string 
- * functionality instead.
- */
-void
-SoundEffectBinder::AddEffectTypeMapping( unsigned int fxType, const char* filename )
-{
-   DEPRECATE(  "void SoundEffectBinder::AddEffectTypeMapping( unsigned int fxType, const char* filename )", 
-               "void SoundEffectBinder::AddEffectTypeMapping( const std::string& fxType, const char* filename )" )
-   AddEffectTypeMapping( dtUtil::ToString( fxType ), std::string(filename) );
-}
 
 /**
  * Removes the specified effect type from the mapping.
@@ -183,22 +166,6 @@ SoundEffectBinder::RemoveEffectTypeMapping( const std::string& fxType )
    mFileMap.erase( fxType );
    RemoveEffectTypeRange( fxType, true );
    RemoveEffectTypeRange( fxType, false );
-}
-
-/**
- * Removes the specified effect type from the mapping.
- *
- * @param fxType the effect type to remove
- *
- * Note: This may be deprecated in the future, use string 
- * functionality instead.
- */
-void        
-SoundEffectBinder::RemoveEffectTypeMapping( unsigned int fxType )
-{
-   DEPRECATE(  "void SoundEffectBinder::RemoveEffectTypeMapping( unsigned int fxType )",
-               "void SoundEffectBinder::RemoveEffectTypeMapping( const std::string& fxType )" )
-   RemoveEffectTypeMapping( dtUtil::ToString( fxType ) );
 }
          
 /**
@@ -219,26 +186,6 @@ SoundEffectBinder::AddEffectTypeRange( const std::string& fxType, float value, b
 
 
 /**
- * Maps the specified effect type to and audible range value.
- *
- * @param fxType the effect type to map
- * @param value to map
- * @param minimum range if true, else maximum range
- *
- * Note: This may be deprecated in the future, use string 
- * functionality instead.
- */
-void        
-SoundEffectBinder::AddEffectTypeRange( unsigned int fxType, float value, bool minimum_range /*= true*/ )
-{
-   DEPRECATE(  "void SoundEffectBinder::AddEffectTypeRange( unsigned int fxType, float value, bool minimum_range )",
-               "void SoundEffectBinder::AddEffectTypeRange( const std::string& fxType, float value, bool minimum_range )" )
-   AddEffectTypeRange( dtUtil::ToString( fxType ), value, minimum_range);
-}
-
-
-
-/**
  * Removes the specified effect type's audible range value.
  *
  * @param fxType the effect type to map
@@ -253,22 +200,6 @@ SoundEffectBinder::RemoveEffectTypeRange( const std::string& fxType, bool minimu
       mMaxDist.erase( fxType );
 }
 
-/**
- * Removes the specified effect type's audible range value.
- *
- * @param fxType the effect type to map
- * @param minimum range if true, else maximum range
- *
- * Note: This may be deprecated in the future, use string 
- * functionality instead.
- */
-void        
-SoundEffectBinder::RemoveEffectTypeRange( unsigned int fxType, bool minimum_range /*= true*/ )
-{
-   DEPRECATE(  "void SoundEffectBinder::RemoveEffectTypeRange( unsigned int fxType, bool minimum_range )",
-               "void SoundEffectBinder::RemoveEffectTypeRange( const std::string& fxType, bool minimum_range )" )
-   RemoveEffectTypeRange(dtUtil::ToString( fxType ), minimum_range);
-}
 
 /**
 * Called when a message is sent to this object.

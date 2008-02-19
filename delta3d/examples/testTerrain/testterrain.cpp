@@ -136,7 +136,7 @@ public:
       mMotionModel->SetTarget(GetCamera());         
 
       GetCamera()->GetOSGCamera()->setComputeNearFarMode(osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR);
-      GetCamera()->SetPerspective(60.0f, 1.33, 1, 120000.0f);
+      GetCamera()->SetPerspectiveParams(60.0f, 1.33, 1, 120000.0f);
       GetCamera()->SetProjectionResizePolicy(osg::Camera::HORIZONTAL);         
 
       //Create our terrain and add a reader and renderer to it.

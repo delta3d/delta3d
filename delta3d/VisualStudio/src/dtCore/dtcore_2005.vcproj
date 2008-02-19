@@ -629,10 +629,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\inc\dtCore\inputcallback.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\inc\dtCore\inputdevice.h"
 				>
 			</File>

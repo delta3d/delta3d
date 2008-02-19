@@ -22,6 +22,8 @@
 #include <prefix/dtdalprefix-src.h>
 #include <dtDAL/mapxmlconstants.h>
 
+#include <dtUtil/version.h>
+
 #include <xercesc/util/XMLUniDefs.hpp>
 #include <xercesc/util/XMLUni.hpp>
 #include <xercesc/util/XMLString.hpp>
@@ -42,7 +44,7 @@ namespace dtDAL
    /////////////////////////////////////////////////////
 
 
-   const char* const MapXMLConstants::EDITOR_VERSION = "1.3.0";
+   const char* const MapXMLConstants::EDITOR_VERSION = Delta3DGetVersion();
    const char* const MapXMLConstants::SCHEMA_VERSION = "1.0";
 
    XMLCh* MapXMLConstants::END_XML_ELEMENT = NULL;

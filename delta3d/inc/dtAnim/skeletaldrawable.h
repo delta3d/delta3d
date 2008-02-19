@@ -2,12 +2,13 @@
 #define __DT_ANIM_SKELETAL_DRAWABLE_H__
 
 #include <dtAnim/export.h>              // for export symbol
+#include <dtAnim/cal3dmodelwrapper.h>
 #include <osg/Drawable>                 // for base class
 #include <dtCore/refptr.h>              // for member variable
 
+
 namespace dtAnim
 {
-   class Cal3DModelWrapper;
 
    /// Renders only the skeleton.
    class DT_ANIM_EXPORT SkeletalDrawable : public osg::Drawable
@@ -95,6 +96,7 @@ namespace dtAnim
                                     IPrimitiveRenderObject* primitive);
 
       dtCore::RefPtr<const Cal3DModelWrapper> mModelWrapper;
+
       VectorPrimitives mRootPrimitives;
    };
 }

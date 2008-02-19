@@ -22,6 +22,7 @@
 #ifndef DELTA_COLLECTOR_UTIL
 #define DELTA_COLLECTOR_UTIL
 
+#include <string>
 
 namespace dtCore
 {

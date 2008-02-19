@@ -29,11 +29,13 @@
 
 class CalHardwareModel; 
 
+ /// @cond
 namespace osg
 {
    class Program;
    class PrimitiveFunctor;
 }
+/// @endcond
 
 namespace dtAnim 
 {

@@ -239,7 +239,7 @@ void Weather::SetTimePeriodAndSeason(const TimePeriod period, const Season seaso
    mSeason = season;
 
    int yr, mo, da, hr, mi, sc;
-   mEnvironment->GetDateTime(&yr, &mo, &da, &hr, &mi, &sc);
+   mEnvironment->GetDateTime(yr, mo, da, hr, mi, sc);
 
    //the times should probably be related to the horizon events
    //corresponding to the date
@@ -254,11 +254,11 @@ void Weather::SetTimePeriodAndSeason(const TimePeriod period, const Season seaso
 
    switch (mSeason) 
    {
-      case SEASON_SPRING: yr=2004; mo=3; da=15; break;
-      case SEASON_SUMMER: yr=2004; mo=7; da=15; break;
-      case SEASON_FALL:   yr=2004; mo=10; da=15;break;
-      case SEASON_WINTER: yr=2004; mo=12; da=15;break;
-      default:            yr=2004; mo=7; da=15; break;
+      case SEASON_SPRING: mo=3; da=15; break;
+      case SEASON_SUMMER: mo=7; da=15; break;
+      case SEASON_FALL:   mo=10; da=15;break;
+      case SEASON_WINTER: mo=12; da=15;break;
+      default:            mo=7; da=15; break;
    }
 
    mEnvironment->SetDateTime(yr, mo, da, hr, mi, sc);

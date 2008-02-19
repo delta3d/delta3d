@@ -28,6 +28,10 @@
 #include <dtCore/motionmodel.h>
 #include <dtCore/inputdevice.h>
 #include <dtUtil/functor.h>
+#include <dtCore/scene.h>
+#include <dtCore/mouse.h>
+#include <dtCore/keyboard.h>
+#include <dtCore/isector.h>
 
 #include <osg/Vec3>
 
@@ -44,12 +48,8 @@ namespace dtCore
    class AxisToAxis;
    class ButtonAxisToAxis;
    class ButtonsToAxis;
-   class Keyboard;
    class LogicalAxis;
    class LogicalInputDevice;
-   class Mouse;
-   class Scene;
-   class Isector;
 
    /**
     * A motion model used for typical First Person Shooter motion.
@@ -123,14 +123,14 @@ namespace dtCore
          *
          * @return the mouse
          */
-         dtCore::RefPtr<Mouse> GetMouse() { return mMouse; }
+         Mouse* GetMouse() const { return mMouse.get(); }
 
          /**
          * Returns the keyboard
          *
          * @return the keyboard
          */
-         dtCore::RefPtr<Keyboard> GetKeyboard() { return mKeyboard; }
+         Keyboard* GetKeyboard() const { return mKeyboard.get(); }
 
          ///internal class, used by FPSMotionModel for InputDevice listening
          /** Helper class used to call the supplied functor when an axis value

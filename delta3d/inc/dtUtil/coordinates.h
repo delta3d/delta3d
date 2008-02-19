@@ -376,9 +376,6 @@ namespace dtUtil
           */
          void ConvertGeodeticToUTM(double Latitude, double Longitude, unsigned& Zone, 
                                     char  &Hemisphere, double& Easting, double& Northing); 
-         ///older deprecated method.
-         void ConvertGeodeticToUTM(double Latitude, double Longitude, long& Zone, 
-                                   char  &Hemisphere, double& Easting, double& Northing); 
 
          /**
           * The function ConvertUTMToGeodetic converts UTM projection (zone, easting and

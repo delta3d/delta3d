@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////
 #include <prefix/dtcoreprefix-src.h>
 #include <dtCore/deltawin.h>
-#include <dtUtil/deprecationmgr.h>
 #include <dtUtil/log.h>
 #include <dtCore/exceptionenum.h>
 #include <dtUtil/exception.h>
@@ -215,13 +214,7 @@ void DeltaWin::SetPosition( const DeltaWin::PositionSize& positionSize )
    SetPosition(positionSize.mX, positionSize.mY, positionSize.mWidth, positionSize.mHeight);
 }
 
-///////////////////////////////////////////////////
-void DeltaWin::GetPosition( int *x, int *y,int *width, int *height )
-{
-   DEPRECATE(  "void GetPosition( int *x, int *y,int *width, int *height )",
-               "void GetPosition( int& x, int& y, int& width, int& height )")
-   GetPosition( *x, *y, *width, *height );
-}
+
 
 ///////////////////////////////////////////////////
 void DeltaWin::GetPosition( int& x, int& y, int& width, int& height )

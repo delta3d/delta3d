@@ -22,7 +22,6 @@
 #include <dtCore/physical.h>
 #include <dtCore/system.h>
 
-#include <dtUtil/deprecationmgr.h>
 #include <dtUtil/log.h>
 
 #include <cassert>
@@ -317,20 +316,7 @@ void Scene::SetRenderState( Face face, Mode mode )
    stateSet->setAttributeAndModes(polymode.get(),osg::StateAttribute::OVERRIDE|osg::StateAttribute::ON);
 }
 
-/** Register a Physical with the Scene.  This method is automatically called
-  * when adding Drawables to the Scene.  Typically, this only needs to be
-  * called when a creating a Physical that is not added to the Scene like a
-  * Drawable.
-  * @param physical The Physical to register with the Scene
-  * @see AddDrawable()
-  */
-void Scene::RegisterPhysical( Physical *physical )
-{
-   DEPRECATE(  "void Scene::RegisterPhysical( Physical *physical )",
-               "void Scene::RegisterCollidable( Transformable* collidable )")
 
-   RegisterCollidable( physical );
-}
 /////////////////////////////////////////////
 void Scene::RegisterCollidable( Transformable* collidable )
 {
@@ -353,14 +339,6 @@ void Scene::RegisterCollidable( Transformable* collidable )
    }
 
    mCollidableContents.push_back( collidable );
-}
-/////////////////////////////////////////////
-void Scene::UnRegisterPhysical( Physical *physical )
-{
-   DEPRECATE(  "void Scene::UnRegisterPhysical( Physical *physical )",
-               "void Scene::UnRegisterCollidable( Transformable* collidable )")
-
-   UnRegisterCollidable( physical );
 }
 /////////////////////////////////////////////
 void Scene::UnRegisterCollidable( Transformable* collidable )

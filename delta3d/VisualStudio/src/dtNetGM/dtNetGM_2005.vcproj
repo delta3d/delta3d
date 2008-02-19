@@ -259,10 +259,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\inc\dtNetGM\messagestream.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\inc\dtNetGM\networkbridge.h"
 				>
 			</File>

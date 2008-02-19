@@ -27,10 +27,10 @@
 
 #include <dtCore/base.h>
 #include <dtCore/refptr.h>
+#include <dtCore/transformable.h>
 
 namespace dtCore
 {
-   class Transformable;
    
    /**
     * The base class for all motion models: objects that update the

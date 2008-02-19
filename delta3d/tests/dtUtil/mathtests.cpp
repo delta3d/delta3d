@@ -106,9 +106,6 @@ namespace dtUtil
       double xN( CalculateNormal(x,xMin,xMax) );
       CPPUNIT_ASSERT_EQUAL( 0.25 , xN );
 
-      double y( CalculateValueForRange(xN,yMin,yMax) );
-      CPPUNIT_ASSERT_EQUAL( 0.0 , y );
-
       double my( MapRangeValue(x,xMin,xMax,yMin,yMax) );
       CPPUNIT_ASSERT_EQUAL( 0.0 , my );
    }

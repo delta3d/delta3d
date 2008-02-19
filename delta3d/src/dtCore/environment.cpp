@@ -703,7 +703,7 @@ void dtCore::Environment::UpdateSunColor()
 void dtCore::Environment::UpdateShaders()
 {
    osg::Vec2 sunDir;
-   GetSunAzEl(&sunDir[0], &sunDir[1]);
+   GetSunAzEl(sunDir[0], sunDir[1]);
 
    Camera *cam  = Camera::GetInstance(0);
    Transform camXform;

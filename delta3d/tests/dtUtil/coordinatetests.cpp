@@ -641,7 +641,7 @@ void CoordinateTests::TestConvertGeodeticToUTM()
    const double epsilon = 0.001;
 
    {
-      long lovePuppyZone;
+      unsigned int lovePuppyZone;
       char lovePuppyHemisphere;
       double lovePuppyEasting;
       double lovePuppyNorthing;
@@ -658,7 +658,7 @@ void CoordinateTests::TestConvertGeodeticToUTM()
    }
 
    {
-      long dacoZone;
+      unsigned int dacoZone;
       char dacoHemisphere;
       double dacoEasting;
       double dacoNorthing;
@@ -674,7 +674,7 @@ void CoordinateTests::TestConvertGeodeticToUTM()
    }
    
    {
-      long fatbackZone;
+      unsigned int fatbackZone;
       char fatbackHemisphere;
       double fatbackEasting;
       double fatbackNorthing;

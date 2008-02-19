@@ -21,7 +21,7 @@ void initSceneBindings()
    void (Scene::*SetGravity2)(float, float, float) = &Scene::SetGravity;
    
    void (Scene::*GetGravity1)(osg::Vec3&) const = &Scene::GetGravity;
-   void (Scene::*GetGravity2)(float*, float*, float*) const = &Scene::GetGravity;
+   void (Scene::*GetGravity2)(float&, float&, float&) const = &Scene::GetGravity;
 
    Light* (Scene::*GetLight1)(int) = &Scene::GetLight;
    const Light* (Scene::*GetLight2)(int) const = &Scene::GetLight;
