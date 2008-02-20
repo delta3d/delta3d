@@ -22,16 +22,18 @@
 #ifndef GM_STATISTICS
 #define GM_STATISTICS
 
-#include <osg/referenced>
 #include <dtCore/timer.h>
-
+#include <dtCore/uniqueid.h>
+#include <dtCore/refptr.h>
+#include <string>
+#include <map>
 
 // this is purposely not exported, should only be used by the GM
 namespace dtGame 
 {
    class GameManager;
 
-   class GMStatistics : public osg::Referenced
+   class GMStatistics
    {
       friend class GameManager;
 
