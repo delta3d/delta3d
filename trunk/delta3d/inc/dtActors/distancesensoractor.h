@@ -21,6 +21,7 @@
 #ifndef DELTA_DISTANCE_SENSOR_ACTOR
 #define DELTA_DISTANCE_SENSOR_ACTOR
 
+#include <dtDAL/plugin_export.h>
 #include <dtGame/gameactor.h>
 #include <dtAI/sensor.h>
 #include <dtAI/distancesensor.h>
