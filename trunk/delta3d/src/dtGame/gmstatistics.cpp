@@ -20,6 +20,9 @@
 */
 
 #include <prefix/dtgameprefix-src.h>
+#include <dtGame/gmstatistics.h>
+#include <dtGame/gamemanager.h>
+#include <sstream>
 
 namespace dtGame
 {
