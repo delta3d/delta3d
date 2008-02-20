@@ -33,7 +33,7 @@ namespace dtGame
 
 namespace dtActors
 {
-   class DistanceSensorActorProxy: public dtGame::GameActorProxy 
+   class DT_PLUGIN_EXPORT DistanceSensorActorProxy: public dtGame::GameActorProxy 
    {
       public:
          static const std::string PROPERTY_TRIGGER_DISTANCE;
