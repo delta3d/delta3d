@@ -94,7 +94,7 @@ void Application::ReadSystemProperties()
    if(!value.empty())
    {
       double simFrameTime = dtUtil::ToDouble(value);
-      dtCore::System::GetInstance().SetFrameStep(1 / simFrameTime);
+      dtCore::System::GetInstance().SetFrameStep(simFrameTime);
    }
    
    value.clear();
