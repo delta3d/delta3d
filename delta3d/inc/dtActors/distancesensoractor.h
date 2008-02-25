@@ -56,7 +56,7 @@ namespace dtActors
          virtual void CreateActor();
    };
 
-   class DistanceSensorActor: public dtGame::GameActor 
+   class DT_PLUGIN_EXPORT DistanceSensorActor: public dtGame::GameActor 
    {
       public:
          typedef std::map<std::string, dtCore::RefPtr<dtAI::SensorBase<float> > > SensorMap;
