@@ -166,12 +166,20 @@ namespace dtActors
    ////////////////////////////////////////////////////
    void DistanceSensorActor::RemoveSensorRegistration(const std::string& name)
    {
-      mSensors.erase(name);
+      mRemoveList.push_back(name);
    }
 
    ////////////////////////////////////////////////////
    void DistanceSensorActor::TickLocal(const dtGame::Message& tickMessage)
    {
+
+      //do all removes here
+      while(!mRemoveList.empty())
+      {
+         mSensors.erase(*mRemoveList.rbegin());
+         mRemoveList.pop_back();
+      }
+
       BaseClass::TickLocal(tickMessage);
 
       SensorMap::iterator i = mSensors.begin();
