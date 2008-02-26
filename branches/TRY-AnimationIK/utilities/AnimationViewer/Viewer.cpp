@@ -225,7 +225,7 @@ void Viewer::OnLoadCharFile( const QString &filename )
 }
 
 void Viewer::OnLoadPoseMeshFile( const std::string &filename )
-{
+{ 
    dtAnim::Cal3DModelWrapper *rapper = mCharacter->GetCal3DWrapper();
    assert(rapper);
 
@@ -233,19 +233,23 @@ void Viewer::OnLoadPoseMeshFile( const std::string &filename )
    if (mPoseDatabase.valid())
    {
       mPoseDatabase = NULL;
+      mPoseUtility  = NULL;
    }
 
    // Create the database to store loaded data
    mPoseDatabase = new dtAnim::PoseMeshDatabase(rapper);
+   mPoseUtility  = new dtAnim::PoseMeshUtility;
 
    if (mPoseDatabase->LoadFromFile(filename))
    {      
       mPoseMeshes = &mPoseDatabase->GetMeshes();
-      for (size_t poseIndex = 0; poseIndex < mPoseMeshes->size(); ++poseIndex)
-      {
-         dtAnim::PoseMesh *newMesh = (*mPoseMeshes)[poseIndex];
-         emit PoseMeshLoaded(*newMesh);
-      }
+      emit PoseMeshesLoaded(*mPoseMeshes, mCharacter.get());
+
+      //for (size_t poseIndex = 0; poseIndex < mPoseMeshes->size(); ++poseIndex)
+      //{
+      //   dtAnim::PoseMesh *newMesh = (*mPoseMeshes)[poseIndex];
+      //   emit PoseMeshLoaded(*newMesh);
+      //}
    }
 }
 
@@ -278,6 +282,11 @@ void Viewer::OnStartAction( unsigned int id, float delayIn, float delayOut )
       Cal3DModelWrapper* wrapper = mCharacter->GetCal3DWrapper();
       wrapper->ExecuteAction(id, delayIn, delayOut);
    }
+}
+
+void Viewer::OnAssumeBlendPose( dtAnim::PoseMesh::TargetTriangle &blendInfo)
+{
+   _asm int 3
 }
 
 void Viewer::OnLODScale_Changed( float scaleValue )

@@ -9,11 +9,19 @@
 #include <QtGui/QImage>
 #include <QtGui/QPainter>
 #include <QtGui/QStyleOption>
+#include <QtGui/QCursor>
 
 #include <QtGui/QMouseEvent>
 #include <QtGui/QHoverEvent>
 
 #include <dtAnim/PoseMesh.h>
+#include <dtAnim/chardrawable.h>
+
+#include <assert.h>
+
+//temp
+#include <sstream>
+#include <iostream>
 
 const float VERT_SCALE     = 100.0f;
 const int VERT_RADIUS      = 6;
@@ -21,18 +29,25 @@ const int VERT_RADIUS_DIV2 = VERT_RADIUS / 2;
 
 
 PoseMeshItem::PoseMeshItem(const dtAnim::PoseMesh &poseMesh,
+                           dtAnim::CharDrawable *character,
                            QGraphicsItem *parent, 
                            QGraphicsScene *scene)
   : mPoseMesh(&poseMesh)
+  , mCharacter(character)
   , mBoundingRect()
 {
-   setFlag(ItemIsMovable);
+   assert(character);
+
+   setFlag(ItemIsMovable, false);
    setZValue(1);
 
    setAcceptsHoverEvents(true);
-   setToolTip("test");
+   setToolTip("test");  
 
    mHovered = false;
+
+   mCursor = new QCursor(QPixmap(":/images/reticle.png"));
+   setCursor(*mCursor);
    
    //QSize size(40, 20);
    //QImage image(size.width(), size.height(), QImage::Format_ARGB32_Premultiplied);
@@ -102,32 +117,60 @@ const std::string& PoseMeshItem::GetPoseMeshName()
 
 bool PoseMeshItem::sceneEvent(QEvent *event)
 {
-   if (event->type() == QEvent::GraphicsSceneHoverEnter)
+   switch(event->type())
    {
-      mHovered = true;    
-      update(mBoundingRect);
-      return true;
+      case QEvent::GraphicsSceneHoverEnter:
+      {
+         mHovered = true;    
+         update(mBoundingRect);
+         return true;
+      }
+      case QEvent::GraphicsSceneHoverLeave:
+      {
+         mHovered = false;
+         update(mBoundingRect);
+         return true;
+      }  
    }
-   else if (event->type() == QEvent::GraphicsSceneHoverLeave)
-   {
-      mHovered = false;
-      update(mBoundingRect);
-      return true;
-   }
+   
+   //std::ostringstream oss;
+   //oss << "event: " << event->type();
+   //std::cout << oss.str() << std::endl;
 
    return QGraphicsItem::sceneEvent(event);
 }
 
+#include <dtAnim/PoseMeshUtility.h>
+
 void PoseMeshItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
-{  
-   QMimeData *data = new QMimeData;
-   data->setColorData(Qt::green);
-   
-   QDrag *drag = new QDrag(event->widget());
-   drag->setMimeData(data);
-   //drag->setPixmap(*mPixmap);   
-   drag->start(Qt::MoveAction);
-   show();  
+{   
+   if (event->button() == Qt::LeftButton)
+   {     
+      // Convert the position back to it's unscaled form
+      QPointF testPos = event->buttonDownPos(Qt::LeftButton);   
+      testPos.rx() /= VERT_SCALE;
+      testPos.ry() /= VERT_SCALE;
+
+      dtAnim::PoseMesh::TargetTriangle targetTri;
+      mPoseMesh->GetTargetTriangleData(testPos.x(), testPos.y(), targetTri);
+
+      if (targetTri.mIsInside)
+      {      
+         dtAnim::PoseMeshUtility *util = new dtAnim::PoseMeshUtility;
+         util->BlendPoses(targetTri.mAzimuth,
+                          targetTri.mElevation,
+                          targetTri,
+                          mPoseMesh,
+                          mCharacter->GetCal3DWrapper());
+
+         std::ostringstream oss;
+         oss << "x = " << testPos.x() << "  " << "y = " << testPos.y() 
+             << "  "   << "tri = " << targetTri.mTriangleID;
+
+         std::cout << oss.str() << std::endl;
+      }      
+      //show();  
+   }
 }
 
 void PoseMeshItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)

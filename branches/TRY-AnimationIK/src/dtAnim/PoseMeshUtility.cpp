@@ -41,7 +41,7 @@ void PoseMeshUtility::ClearPoses( PoseMesh *poseMesh, dtAnim::Cal3DModelWrapper 
 void PoseMeshUtility::BlendPoses( float azimuth, 
                                  float elevation, 
                                  PoseMesh::TargetTriangle &targetTriangle,
-                                 PoseMesh *poseMesh,
+                                 const PoseMesh *poseMesh,
                                  dtAnim::Cal3DModelWrapper* model )
 {
    osg::Vec3 weights;

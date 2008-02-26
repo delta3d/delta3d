@@ -114,22 +114,22 @@ namespace dtAnim
       *  @return outTriangle   - struct containing the nearest triangle and it's location
       */
       void GetTargetTriangleData(const float azimuth,
-         const float elevation,                                                     
-         TargetTriangle &outTriangle);
+                                 const float elevation,                                                     
+                                 TargetTriangle &outTriangle) const;
 
       /**
       *  FindCelestialTriangleID  - Looks up a celestial triangle from a mesh using azimuth and elevation  
       *  @param azimuth           - the horizontal angle of interest
       *  @param elevation         - the vertical angle of interest
       */
-      int FindCelestialTriangleID(float azimuth, float elevation); 
+      int FindCelestialTriangleID(float azimuth, float elevation) const;
 
       // Look up the indices for a triangle and 
       // create pairs corresponding to its edges
       void GetIndexPairsForTriangle(int triangleID,                                     
-         MeshIndexPair &pair0,
-         MeshIndexPair &pair1,
-         MeshIndexPair &pair2);    
+                                    MeshIndexPair &pair0,
+                                    MeshIndexPair &pair1,
+                                    MeshIndexPair &pair2);    
 
    private:
 

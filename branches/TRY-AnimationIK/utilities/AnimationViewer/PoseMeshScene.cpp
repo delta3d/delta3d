@@ -4,6 +4,8 @@
 #include <QtGui/QGraphicsRectItem>
 #include <QtGui/QGraphicsSceneMouseEvent>
 
+#include <dtAnim/chardrawable.h>
+
 
 PoseMeshScene::PoseMeshScene(QObject *parent)
 : QGraphicsScene(parent)
@@ -16,11 +18,16 @@ PoseMeshScene::PoseMeshScene(QObject *parent)
    mCanvasRect.setLeft(0);
    mCanvasRect.setTop(0);
    mCanvasRect.setWidth(graphicsWidth);
-   mCanvasRect.setHeight(graphicsHeight);   
+   mCanvasRect.setHeight(graphicsHeight);     
 
-   QGraphicsRectItem *canvasItem = addRect(mCanvasRect, QPen(), QBrush(QColor(192, 192, 255)));  
+   QBrush canvasBrush(QColor(192, 192, 255));
+
+   QGraphicsRectItem *canvasItem = addRect(mCanvasRect, QPen(), canvasBrush);  
    canvasItem->setZValue(-100.0f);
    canvasItem->setEnabled(false);
+
+   QBrush backgroundBrush(QPixmap(":/images/checker.png"));  
+   setBackgroundBrush(backgroundBrush);
 
    CreateTest();
 }
@@ -31,11 +38,11 @@ PoseMeshScene::~PoseMeshScene()
 
 }
 
-void PoseMeshScene::AddMesh(const dtAnim::PoseMesh &mesh)
+void PoseMeshScene::AddMesh(const dtAnim::PoseMesh &mesh, dtAnim::CharDrawable *character)
 {      
    static float adjustedHeight = mCanvasRect.y() + 64;
 
-   PoseMeshItem *newItem = new PoseMeshItem(mesh);
+   PoseMeshItem *newItem = new PoseMeshItem(mesh, character);
    mItemList.push_back(newItem);
 
    //float itemWidth = newItem->boundingRect().width();
@@ -96,6 +103,9 @@ void PoseMeshScene::CreateTest()
 
 void PoseMeshScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {   
+   // temp disable
+   return;
+
    QList<QGraphicsItem*> clickedItemList = items(mouseEvent->scenePos());   
 
    for (int itemIndex = 0; itemIndex < clickedItemList.size(); ++itemIndex)

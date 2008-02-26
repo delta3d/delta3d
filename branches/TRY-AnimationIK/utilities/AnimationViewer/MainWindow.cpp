@@ -340,36 +340,61 @@ void MainWindow::OnNewMesh(int meshID, const QString &meshName)
    mMeshListWidget->addItem(meshItem);
 }
 
-void MainWindow::OnNewPoseMesh(const dtAnim::PoseMesh &poseMesh)
+void MainWindow::OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*> &poseMeshList, 
+                                    dtAnim::CharDrawable *character)
 {
-   // Create pose mesh related ui if we haven't yet
-   if (!mPoseMeshScene)
+   assert(!mPoseMeshViewer);
+   assert(!mPoseMeshScene);
+
+   mPoseMeshScene  = new PoseMeshScene(this);
+   mPoseMeshViewer = new PoseMeshView(mPoseMeshScene, this);   
+
+   QDockWidget* poseDock = new QDockWidget("Pose Mesh Viewer");
+   poseDock->setWidget(mPoseMeshViewer);
+
+   addDockWidget(Qt::RightDockWidgetArea, poseDock);
+   resize(1000, 800);     
+
+   QIcon handIcon(QPixmap(":/images/handIcon.png"));
+   QIcon poseIcon(QPixmap(":/images/reticle.png"));
+
+   QToolBar *poseTools = new QToolBar;
+
+   // The actiongroup is used to make the action behave like radio buttons
+   QActionGroup *actionGroup = new QActionGroup(poseTools);
+   actionGroup->setExclusive(true); 
+
+   QAction *handAction = actionGroup->addAction(handIcon, "Click-drag meshes");
+   QAction *ikAction   = actionGroup->addAction(poseIcon, "Set Pose From Mesh");   
+
+   poseTools->addAction(handAction);
+   poseTools->addAction(ikAction);
+
+   handAction->setCheckable(true);
+   ikAction->setCheckable(true);    
+
+   poseDock->setTitleBarWidget(poseTools);
+
+   // Add the properties tab
+   mPoseMeshProperties = new PoseMeshProperties;     
+   mTabs->addTab(mPoseMeshProperties, tr("IK"));   
+
+   connect(mPoseMeshProperties, SIGNAL(ViewPoseMesh(const std::string&)), 
+      mPoseMeshViewer, SLOT(OnZoomToPoseMesh(const std::string&)));
+
+   connect(mPoseMeshScene, SIGNAL(ViewPoseMesh(const std::string&)), 
+      mPoseMeshViewer, SLOT(OnZoomToPoseMesh(const std::string&)));
+
+   connect(ikAction, SIGNAL(triggered()), this, SLOT(OnToggleIK()));
+
+   for (size_t poseIndex = 0; poseIndex < poseMeshList.size(); ++poseIndex)
    {
-      assert(!mPoseMeshViewer);
-      mPoseMeshScene  = new PoseMeshScene(this);
-      mPoseMeshViewer = new PoseMeshView(mPoseMeshScene, this);   
+      dtAnim::PoseMesh *newMesh = poseMeshList[poseIndex];
 
-      QDockWidget* poseDock = new QDockWidget("Pose Mesh Viewer");
-      poseDock->setWidget(mPoseMeshViewer);
-
-      addDockWidget(Qt::RightDockWidgetArea, poseDock);
-      resize(1000, 800);
-      
-      // Add the properties tab
-      mPoseMeshProperties = new PoseMeshProperties;     
-      mTabs->addTab(mPoseMeshProperties, tr("IK"));   
-
-      connect(mPoseMeshProperties, SIGNAL(ViewPoseMesh(const std::string&)), 
-              mPoseMeshViewer, SLOT(OnZoomToPoseMesh(const std::string&)));
-
-      connect(mPoseMeshScene, SIGNAL(ViewPoseMesh(const std::string&)), 
-              mPoseMeshViewer, SLOT(OnZoomToPoseMesh(const std::string&)));
-   }  
-    
-   // Add new pose mesh visualization and properties
-   mPoseMeshScene->AddMesh(poseMesh);
-   mPoseMeshProperties->AddMesh(poseMesh);
-
+      // Add new pose mesh visualization and properties
+      mPoseMeshScene->AddMesh(*newMesh, character);
+      mPoseMeshProperties->AddMesh(*newMesh);   
+   }
 }
 
 void MainWindow::OnNewMaterial( int matID, const QString &name, 
@@ -635,6 +660,11 @@ void MainWindow::OnItemDoubleClicked(QTableWidgetItem *item)
    }
 }
 
+void MainWindow::OnToggleIK()
+{
+   int test = 0;
+   test = test;
+}
 
 void MainWindow::OnStartAction( int row )
 {

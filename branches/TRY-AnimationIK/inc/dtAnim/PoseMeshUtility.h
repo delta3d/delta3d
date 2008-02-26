@@ -23,6 +23,7 @@
 #define __POSE_MESH_UTILITY_H__
 
 #include "PoseMesh.h"
+#include <osg/referenced>
 
 namespace dtAnim 
 { 
@@ -31,7 +32,7 @@ namespace dtAnim
    /**
    * Convenience functionality for manipulating celestial meshes
    */
-   class DT_ANIM_EXPORT PoseMeshUtility
+   class DT_ANIM_EXPORT PoseMeshUtility: public osg::Referenced
    {
    public:
 
@@ -56,7 +57,7 @@ namespace dtAnim
       void BlendPoses( float azimuth, 
          float elevation, 
          PoseMesh::TargetTriangle &targetTriangle,
-         PoseMesh *poseMesh,
+         const PoseMesh *poseMesh,
          dtAnim::Cal3DModelWrapper* model );
 
       void SetBaseReferencePoses( std::vector<BaseReferencePose> *poseList,
