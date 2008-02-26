@@ -26,6 +26,8 @@
 #include <dtAI/sensor.h>
 #include <dtAI/distancesensor.h>
 #include <string>
+#include <map>
+#include <vector>
 
 namespace dtGame
 {
@@ -85,14 +87,14 @@ namespace dtActors
          }
 
          template <typename DistanceCallback>
-         void RegisterWithSensor(const std::string& keyName, osg::MatrixTransform& referenceNode,
+         bool RegisterWithSensor(const std::string& keyName, osg::MatrixTransform& referenceNode,
                   DistanceCallback func)
          {
             typedef dtAI::DistanceSensor<dtAI::EvaluateTransformablePosition<>,
                dtAI::EvaluateMatrixPosition<>, DistanceCallback> MatrixTransformDistanceSensor;
 
             dtAI::EvaluateTransformablePosition<> etpThis(*this, dtCore::Transformable::ABS_CS);
-            dtAI::EvaluateMatrixPosition<> etpRefMatrix(*this);
+            dtAI::EvaluateMatrixPosition<> etpRefMatrix(referenceNode);
 
 
             dtCore::RefPtr<MatrixTransformDistanceSensor> distSensor = 
@@ -126,6 +128,7 @@ namespace dtActors
          
          virtual ~DistanceSensorActor();
          SensorMap mSensors;
+         std::vector<std::string> mRemoveList;
          dtCore::RefPtr<dtCore::DeltaDrawable> mAttachToActor;
          float mTriggerDistance;
    };

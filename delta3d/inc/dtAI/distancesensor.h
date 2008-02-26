@@ -47,8 +47,9 @@ namespace dtAI
          bool operator()(ReportData& distance2, const VecType& first, const VecType& second)
          {
             distance2 = (second - first).length2();
-            if (mCallbackDistance2 <= distance2)
+            if (distance2 <= mCallbackDistance2)
             {
+               distance2 = std::sqrt(distance2);
                return true;
             }
             return false;
@@ -101,7 +102,7 @@ namespace dtAI
             return BaseClass::GetReportData();
          }
 
-         void SetCallbackDistanceSquared(typename dtUtil::TypeTraits<ReportData>::const_reference newValue)
+         void SetCallbackDistance(typename dtUtil::TypeTraits<ReportData>::const_reference newValue)
          {
             return BaseClass::mCompare.SetCallbackDistance(newValue);
          }
