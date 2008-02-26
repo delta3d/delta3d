@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * @author Allen Danklefsen
+ * @author Allen Danklefsen, Chris Rodgers
  */
 #include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
@@ -30,12 +30,14 @@ namespace dtTest
    class ParticleTest : public CPPUNIT_NS::TestFixture
    {
       CPPUNIT_TEST_SUITE( ParticleTest );
+      CPPUNIT_TEST( TestProperties );
       CPPUNIT_TEST( TestTemplates );
       CPPUNIT_TEST_SUITE_END();
 
       public:
          void setUp();
          void tearDown();
+         void TestProperties();
          void TestTemplates();
       private:
          dtCore::RefPtr<dtCore::ParticleSystem> pSystem;
@@ -58,12 +60,39 @@ void ParticleTest::setUp()
 void ParticleTest::tearDown()
 {}
 
+void ParticleTest::TestProperties()
+{
+   const std::string LAYER_0 = "Layer 0";
+   const std::string LAYER_FAKE = "Layer Fake";
+   const dtCore::ParticleSystem* psConst = pSystem.get();
+
+   CPPUNIT_ASSERT_MESSAGE("Particle System should be enabled by default.",
+      psConst->IsEnabled() );
+   pSystem->SetEnabled( false );
+   CPPUNIT_ASSERT( ! psConst->IsEnabled() );
+
+   CPPUNIT_ASSERT_MESSAGE("Particle System should NOT be in parent-relative space by default.",
+      ! psConst->IsParentRelative() );
+   pSystem->SetParentRelative( true );
+   CPPUNIT_ASSERT( psConst->IsParentRelative() );
+
+   CPPUNIT_ASSERT_MESSAGE( "Particle System should have loaded some layers.",
+      ! psConst->GetAllLayers().empty() );
+
+   CPPUNIT_ASSERT_MESSAGE( "Particle System should be able to load a single layer.",
+      psConst->GetSingleLayer(LAYER_0) != NULL );
+
+   CPPUNIT_ASSERT_MESSAGE( "Particle System should return NULL if a layer is not found.",
+      psConst->GetSingleLayer(LAYER_FAKE) == NULL );
+}
+
 void ParticleTest::TestTemplates()
 {
    const std::string STRING_ONE = "Layer 0";
    const std::string STRING_TWO = "Layer 1";
    const float ChangeOne = 15.0f;
    const float ChangeTwo = 25.0f;
+   const dtCore::ParticleSystem* psConst = pSystem.get();
    
    CPPUNIT_ASSERT_MESSAGE("First test if the particle system is valid", pSystem);
 
@@ -71,14 +100,14 @@ void ParticleTest::TestTemplates()
    dtCore::ParticleLayer& particleLayer = *pSystem->GetSingleLayer(STRING_ONE);
    CPPUNIT_ASSERT_MESSAGE("Check if it can find a layer we know exist.", pSystem->GetSingleLayer(STRING_ONE) != NULL );
 
-   // Check if we can find a node that doesnt exist
-   CPPUNIT_ASSERT_MESSAGE("Found a template that didnt exist!", 
-                           pSystem->GetSingleLayer(STRING_TWO) == NULL );
+   // Check if we can find a node that does not exist
+   CPPUNIT_ASSERT_MESSAGE("Found a template that did not exist!", 
+                           psConst->GetSingleLayer(STRING_TWO) == NULL );
 
    // make sure we can get the file multiple times with the same result
-   CPPUNIT_ASSERT_MESSAGE("Didnt find the same value for a known system",
+   CPPUNIT_ASSERT_MESSAGE("Did not find the same value for a known system.",
                            particleLayer.GetParticleSystem().getDefaultParticleTemplate().getAngle() == 
-                           pSystem->GetSingleLayer(STRING_ONE)->GetParticleSystem().getDefaultParticleTemplate().getAngle());
+                           psConst->GetSingleLayer(STRING_ONE)->GetParticleSystem().getDefaultParticleTemplate().getAngle());
 
    // Change two numbers, re-feed them in
    particleLayer.GetParticleSystem().getDefaultParticleTemplate().setLifeTime(ChangeOne);
