@@ -32,8 +32,7 @@ PoseMeshView::PoseMeshView(PoseMeshScene *scene, QWidget *parent)
    mTimer.setParent(this);
    mTimer.setInterval(50);  
 
-   setAcceptDrops(true);
-
+   //setAcceptDrops(true);
    //mPoseMeshViewer->setDragMode(QGraphicsView::ScrollHandDrag);
 
    connect(&mTimer, SIGNAL(timeout()), this, SLOT(OnUpdateView()));   

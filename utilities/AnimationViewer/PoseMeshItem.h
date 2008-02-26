@@ -1,17 +1,24 @@
 #ifndef _POSEMESH_ITEM_H_
 #define _POSEMESH_ITEM_H_
 
+#include <dtAnim/PoseMesh.h>
 #include <QtGui/QGraphicsRectItem>
 
 class QGraphicsItem;
 class QGraphicsScene;
+class QCursor;
 
-namespace dtAnim { class PoseMesh; }
+namespace dtAnim 
+{
+   class PoseMesh; 
+   class CharDrawable;
+}
 
 class PoseMeshItem: public QGraphicsItem
 {   
 public:
    PoseMeshItem(const dtAnim::PoseMesh &poseMesh,
+                dtAnim::CharDrawable *character,
                 QGraphicsItem *parent = 0, 
                 QGraphicsScene *scene = 0);
 
@@ -33,12 +40,15 @@ protected:
 private: 
 
    const dtAnim::PoseMesh *mPoseMesh;
+   dtAnim::CharDrawable *mCharacter;
+
    QPixmap *mPixmap;
    QRectF mBoundingRect;
    QPointF mLastMousePos;
 
-   bool mHovered;
+   QCursor *mCursor;
 
+   bool mHovered;
 
 };
 

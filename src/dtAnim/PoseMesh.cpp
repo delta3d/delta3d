@@ -247,7 +247,7 @@ void PoseMesh::GetAnimationIDsByName(dtAnim::Cal3DModelWrapper *model,
 
 void PoseMesh::GetTargetTriangleData(const float azimuth,
                                      const float elevation,                                                          
-                                     TargetTriangle &outTriangle)
+                                     TargetTriangle &outTriangle) const
 {
    int triangleID = FindCelestialTriangleID( azimuth, elevation );
 
@@ -299,7 +299,7 @@ void PoseMesh::GetTargetTriangleData(const float azimuth,
 }
 
 /// Algorithm in detail at http://www.blackpawn.com/texts/pointinpoly/default.html
-int PoseMesh::FindCelestialTriangleID(float azimuth, float elevation)
+int PoseMesh::FindCelestialTriangleID(float azimuth, float elevation) const
 {
    const PoseMesh::TriangleVector &triangles = GetTriangles();
    unsigned int numTris = triangles.size();

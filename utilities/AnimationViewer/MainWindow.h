@@ -27,6 +27,7 @@ namespace dtQt
 namespace dtAnim
 {
    class PoseMesh;
+   class CharDrawable;
 }
 
 class MainWindow : public QMainWindow
@@ -55,7 +56,8 @@ public slots:
    
    void OnNewMesh(int meshID, const QString &meshName);
 
-   void OnNewPoseMesh(const dtAnim::PoseMesh &poseMesh);
+   void OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*> &poseMeshList, 
+                           dtAnim::CharDrawable *character);   
 
    void OnNewMaterial(int matID, const QString &name,
                       const QColor &diff, const QColor &amb, const QColor &spec,
@@ -118,5 +120,7 @@ private slots:
    void OpenRecentFile();
    void OnItemChanged( QTableWidgetItem *item );
    void OnItemDoubleClicked(QTableWidgetItem *item);
+
+   void OnToggleIK();
 };
 #endif // MainWindow_h__
