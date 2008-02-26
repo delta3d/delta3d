@@ -167,7 +167,7 @@ namespace dtCore
           * @return true if the particle system is enabled, false
           * otherwise
           */
-         bool IsEnabled();
+         bool IsEnabled() const;
          
          /**
           * Sets the parent-relative state of this particle system.  If
@@ -189,7 +189,7 @@ namespace dtCore
           * @return true if the particle system is in parent-relative mode,
           * false if not
           */
-         bool IsParentRelative();
+         bool IsParentRelative() const;
 
          /**
           * GetAllLayers can be called to change all the effects

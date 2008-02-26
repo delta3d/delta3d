@@ -369,7 +369,7 @@ void ParticleSystem::SetEnabled(bool enable)
  * @return true if the particle system is enabled, false
  * otherwise
  */
-bool ParticleSystem::IsEnabled()
+bool ParticleSystem::IsEnabled() const
 {
    return mEnabled;
 }
@@ -395,7 +395,7 @@ void ParticleSystem::SetParentRelative(bool parentRelative)
  * @return true if the particle system is in parent-relative mode,
  * false if not
  */
-bool ParticleSystem::IsParentRelative()
+bool ParticleSystem::IsParentRelative() const
 {
    return mParentRelative;
 }
