@@ -4,12 +4,14 @@
 #include <QtGui/QContextMenuEvent>
 #include <QtGui/QMessageBox>
 
+/////////////////////////////////////////////////////////////////////////////////////////
 AnimationTableWidget::AnimationTableWidget( QWidget *parent /*= NULL*/ ):
 QTableWidget(parent)
 {
    CreateActions();  
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void AnimationTableWidget::contextMenuEvent( QContextMenuEvent *event )
 {
    QMenu menu(this);
@@ -17,6 +19,7 @@ void AnimationTableWidget::contextMenuEvent( QContextMenuEvent *event )
    menu.exec( event->globalPos() );
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void AnimationTableWidget::CreateActions()
 {
    mDisplayPropertyAct = new QAction( tr("&Properties"), this);
@@ -25,6 +28,7 @@ void AnimationTableWidget::CreateActions()
 
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void AnimationTableWidget::OnDisplayProperty()
 {
    QTableWidgetItem *item = this->item( currentRow(), 0 );

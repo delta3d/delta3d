@@ -208,7 +208,7 @@ PoseMesh::Triangle::Triangle(const PoseMesh::Vertex* a,
 void PoseMesh::GetIndexPairsForTriangle(int triangleID,                                              
                                         MeshIndexPair &pair0,
                                         MeshIndexPair &pair1,
-                                        MeshIndexPair &pair2)
+                                        MeshIndexPair &pair2) const
 {
    assert(triangleID < (int)mTriangles.size());
 

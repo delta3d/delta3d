@@ -17,7 +17,7 @@
 const float kDefaultMaxScale = 6.0f;
 const float kDefaultMinScale = 0.2f;
 
-
+/////////////////////////////////////////////////////////////////////////////////////////
 PoseMeshView::PoseMeshView(PoseMeshScene *scene, QWidget *parent)
 :QGraphicsView(scene, parent) 
 , mScene(scene)
@@ -26,26 +26,22 @@ PoseMeshView::PoseMeshView(PoseMeshScene *scene, QWidget *parent)
 , mMaxScale(kDefaultMaxScale)
 , mCurrentScale(1.0f)
 {   
-   centerOn(scene->sceneRect().center());     
-   Zoom(10);   
+   centerOn(scene->sceneRect().center());    
  
    mTimer.setParent(this);
-   mTimer.setInterval(50);  
+   mTimer.setInterval(10);  
 
-   //setAcceptDrops(true);
-   //mPoseMeshViewer->setDragMode(QGraphicsView::ScrollHandDrag);
-
+   // Allow our view to be frequently updated
    connect(&mTimer, SIGNAL(timeout()), this, SLOT(OnUpdateView()));   
 }
 
-
+/////////////////////////////////////////////////////////////////////////////////////////
 PoseMeshView::~PoseMeshView()
 {
    
 }
 
-
-
+/////////////////////////////////////////////////////////////////////////////////////////
 void PoseMeshView::wheelEvent(QWheelEvent *event)
 {
    // Delta is in eighths of degrees
@@ -57,7 +53,7 @@ void PoseMeshView::wheelEvent(QWheelEvent *event)
    Zoom(numberOfSteps, event->pos());
 }
 
-
+/////////////////////////////////////////////////////////////////////////////////////////
 void PoseMeshView::keyPressEvent(QKeyEvent *event)
 {
    QGraphicsView::keyPressEvent(event);
@@ -72,13 +68,13 @@ void PoseMeshView::keyPressEvent(QKeyEvent *event)
    }
 }
 
-
+/////////////////////////////////////////////////////////////////////////////////////////
 void PoseMeshView::mouseMoveEvent(QMouseEvent *event)
 {
    QGraphicsView::mouseMoveEvent(event);   
 }
 
-
+/////////////////////////////////////////////////////////////////////////////////////////
 void PoseMeshView::Zoom(float numberOfSteps, QPoint centerPoint)
 {   
    const float kScaleFactor = 1.075f;
@@ -121,6 +117,7 @@ void PoseMeshView::Zoom(float numberOfSteps, QPoint centerPoint)
    setMatrix(currentTransform);     
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void PoseMeshView::OnZoomToPoseMesh(const std::string &meshName)
 {
    PoseMeshItem *item = mScene->GetPoseMeshItemByName(meshName);
@@ -141,7 +138,7 @@ void PoseMeshView::OnZoomToPoseMesh(const std::string &meshName)
    }
 }
 
-
+/////////////////////////////////////////////////////////////////////////////////////////
 float PoseMeshView::GetPercentVisible()
 {
    QRect frameRect        = geometry();
@@ -154,7 +151,7 @@ float PoseMeshView::GetPercentVisible()
    return visibleArea / totalArea;
 }
 
-
+/////////////////////////////////////////////////////////////////////////////////////////
 float PoseMeshView::GetScale()
 {
    QMatrix currentTransform = matrix();
@@ -167,7 +164,7 @@ float PoseMeshView::GetScale()
 }
 
 
-
+/////////////////////////////////////////////////////////////////////////////////////////
 void PoseMeshView::setScene(QGraphicsScene *scene)
 {
    QGraphicsView::setScene(scene);
@@ -179,6 +176,7 @@ void PoseMeshView::setScene(QGraphicsScene *scene)
    }   
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void PoseMeshView::fitInView(const QRectF &rect, Qt::AspectRatioMode aspectRadioMode)
 {
    QGraphicsView::fitInView(rect, aspectRadioMode);   
@@ -189,6 +187,7 @@ void PoseMeshView::fitInView(const QRectF &rect, Qt::AspectRatioMode aspectRadio
    mCurrentTarget = mCurrentSource;   
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void PoseMeshView::OnSetCenterTarget(float sceneX, float sceneY)
 {      
    mCurrentTarget.setX(sceneX);
@@ -197,6 +196,7 @@ void PoseMeshView::OnSetCenterTarget(float sceneX, float sceneY)
    mTimer.start();        
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void PoseMeshView::mousePressEvent(QMouseEvent *event)
 {
    //std::vector<AnimElement>* elements = NULL;
@@ -231,7 +231,7 @@ void PoseMeshView::mousePressEvent(QMouseEvent *event)
    QGraphicsView::mousePressEvent(event);
 }
 
-
+/////////////////////////////////////////////////////////////////////////////////////////
 void PoseMeshView::mouseReleaseEvent(QMouseEvent *event)
 {
    //mDragItem = NULL;
@@ -239,7 +239,7 @@ void PoseMeshView::mouseReleaseEvent(QMouseEvent *event)
    //setDragMode(QGraphicsView::ScrollHandDrag);
 }
 
-
+/////////////////////////////////////////////////////////////////////////////////////////
 void PoseMeshView::contextMenuEvent( QContextMenuEvent *event )
 {
    mLastClickPoint = mapToScene(event->pos());
@@ -251,7 +251,7 @@ void PoseMeshView::contextMenuEvent( QContextMenuEvent *event )
    menu.exec(event->globalPos());
 }
 
-
+/////////////////////////////////////////////////////////////////////////////////////////
 void PoseMeshView::OnUpdateView()
 {
    QPointF direction = mCurrentTarget - mCurrentSource;

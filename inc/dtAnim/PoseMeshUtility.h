@@ -52,13 +52,11 @@ namespace dtAnim
          float blendAlpha;
       };
 
-      void ClearPoses( PoseMesh *poseMesh, dtAnim::Cal3DModelWrapper *model, float delay );
+      void ClearPoses(const PoseMesh *poseMesh, dtAnim::Cal3DModelWrapper *model, float delay);
 
-      void BlendPoses( float azimuth, 
-         float elevation, 
-         PoseMesh::TargetTriangle &targetTriangle,
-         const PoseMesh *poseMesh,
-         dtAnim::Cal3DModelWrapper* model );
+      void BlendPoses(const PoseMesh *poseMesh,
+                      dtAnim::Cal3DModelWrapper* model,
+                      PoseMesh::TargetTriangle &targetTriangle);
 
       void SetBaseReferencePoses( std::vector<BaseReferencePose> *poseList,
          dtAnim::Cal3DModelWrapper* model );

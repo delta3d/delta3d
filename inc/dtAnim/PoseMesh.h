@@ -47,11 +47,10 @@ namespace dtAnim
 
       struct DT_ANIM_EXPORT TargetTriangle
       {
-         bool          mIsInside;
-         int           mTriangleID;
-         float         mAzimuth;
-         float         mElevation;
-         PoseMesh     *mMesh;
+         bool  mIsInside;
+         int   mTriangleID;
+         float mAzimuth;
+         float mElevation;         
       };   
 
       struct DT_ANIM_EXPORT Vertex
@@ -129,7 +128,7 @@ namespace dtAnim
       void GetIndexPairsForTriangle(int triangleID,                                     
                                     MeshIndexPair &pair0,
                                     MeshIndexPair &pair1,
-                                    MeshIndexPair &pair2);    
+                                    MeshIndexPair &pair2) const;   
 
    private:
 

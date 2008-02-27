@@ -6,7 +6,9 @@
 
 #include <dtAnim/chardrawable.h>
 
+#include <assert.h>
 
+/////////////////////////////////////////////////////////////////////////////////////////
 PoseMeshScene::PoseMeshScene(QObject *parent)
 : QGraphicsScene(parent)
 {    
@@ -32,17 +34,18 @@ PoseMeshScene::PoseMeshScene(QObject *parent)
    CreateTest();
 }
 
-
+/////////////////////////////////////////////////////////////////////////////////////////
 PoseMeshScene::~PoseMeshScene()
 {
 
 }
 
-void PoseMeshScene::AddMesh(const dtAnim::PoseMesh &mesh, dtAnim::CharDrawable *character)
+/////////////////////////////////////////////////////////////////////////////////////////
+void PoseMeshScene::AddMesh(const dtAnim::PoseMesh &poseMesh, dtAnim::Cal3DModelWrapper *model)
 {      
    static float adjustedHeight = mCanvasRect.y() + 64;
 
-   PoseMeshItem *newItem = new PoseMeshItem(mesh, character);
+   PoseMeshItem *newItem = new PoseMeshItem(poseMesh, model);
    mItemList.push_back(newItem);
 
    //float itemWidth = newItem->boundingRect().width();
@@ -63,6 +66,7 @@ void PoseMeshScene::AddMesh(const dtAnim::PoseMesh &mesh, dtAnim::CharDrawable *
    addItem(newItem);
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 PoseMeshItem* PoseMeshScene::GetPoseMeshItemByName(const std::string &name)
 {
    PoseMeshItem *foundItem = NULL;
@@ -79,6 +83,7 @@ PoseMeshItem* PoseMeshScene::GetPoseMeshItemByName(const std::string &name)
    return foundItem;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void PoseMeshScene::CreateTest()
 {
    double height = mCanvasRect.height() / 16;
@@ -101,6 +106,7 @@ void PoseMeshScene::CreateTest()
    }
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void PoseMeshScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {   
    // temp disable
@@ -118,4 +124,13 @@ void PoseMeshScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *mouseEvent)
          break;
       }
    }   
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+void PoseMeshScene::OnPoseMeshStatusChanged(const std::string &meshName, bool isEnabled)
+{
+   PoseMeshItem *meshItem = GetPoseMeshItemByName(meshName);
+   assert(meshItem);
+
+   meshItem->SetEnabled(isEnabled);
 }

@@ -27,7 +27,7 @@ PoseMeshUtility::~PoseMeshUtility()
 }
 
 
-void PoseMeshUtility::ClearPoses( PoseMesh *poseMesh, dtAnim::Cal3DModelWrapper *model, float delay )
+void PoseMeshUtility::ClearPoses(const PoseMesh *poseMesh, dtAnim::Cal3DModelWrapper *model, float delay)
 {
    const PoseMesh::VertexVector &verts = poseMesh->GetVertices();
 
@@ -38,11 +38,9 @@ void PoseMeshUtility::ClearPoses( PoseMesh *poseMesh, dtAnim::Cal3DModelWrapper 
 }
 
 
-void PoseMeshUtility::BlendPoses( float azimuth, 
-                                 float elevation, 
-                                 PoseMesh::TargetTriangle &targetTriangle,
-                                 const PoseMesh *poseMesh,
-                                 dtAnim::Cal3DModelWrapper* model )
+void PoseMeshUtility::BlendPoses(const PoseMesh *poseMesh,
+                                 dtAnim::Cal3DModelWrapper* model,
+                                 PoseMesh::TargetTriangle &targetTriangle)
 {
    osg::Vec3 weights;
    unsigned int animIDs[3];  
