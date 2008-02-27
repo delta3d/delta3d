@@ -11,7 +11,7 @@
 namespace dtAnim
 {
    class PoseMesh;
-   class CharDrawable;
+   class Cal3DModelWrapper;
 }
 
 class QGraphicsItem;
@@ -26,7 +26,7 @@ public:
    PoseMeshScene(const QRectF &sceneRect, QObject *parent = 0);
    ~PoseMeshScene();   
   
-   void AddMesh(const dtAnim::PoseMesh &mesh, dtAnim::CharDrawable *character);   
+   void AddMesh(const dtAnim::PoseMesh &poseMesh, dtAnim::Cal3DModelWrapper *model);   
 
    PoseMeshItem* GetPoseMeshItemByName(const std::string &name);
 
@@ -35,6 +35,9 @@ public:
 signals:
 
    void ViewPoseMesh(const std::string &meshName);
+
+private slots:
+   void OnPoseMeshStatusChanged(const std::string &meshName, bool isEnabled);
 
 private: 
 

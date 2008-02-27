@@ -9,6 +9,7 @@
 #include "OSGAdapterWidget.h"
 
 
+/////////////////////////////////////////////////////////////////////////////////////////
 class EmbeddedWindowSystemWrapper: public osg::GraphicsContext::WindowingSystemInterface
 {
    public:
@@ -52,11 +53,13 @@ class EmbeddedWindowSystemWrapper: public osg::GraphicsContext::WindowingSystemI
       dtCore::RefPtr<osg::GraphicsContext::WindowingSystemInterface> mInterface;
 };
 
+/////////////////////////////////////////////////////////////////////////////////////////
 Delta3DThread::Delta3DThread(QObject *parent):
 QThread(parent)
 {
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 Delta3DThread::~Delta3DThread()
 {
    if (isRunning())
@@ -66,6 +69,7 @@ Delta3DThread::~Delta3DThread()
    dtCore::System::GetInstance().Stop();
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void Delta3DThread::run()
 {
    osg::GraphicsContext::WindowingSystemInterface* winSys = osg::GraphicsContext::getWindowingSystemInterface();
@@ -93,8 +97,8 @@ void Delta3DThread::run()
 
    connect(mViewer.get(), SIGNAL(MeshLoaded(int,const QString&)), mWin, SLOT(OnNewMesh(int,const QString&)));
 
-   connect(mViewer.get(), SIGNAL(PoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*>&, dtAnim::CharDrawable*)), 
-           mWin, SLOT(OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*>&, dtAnim::CharDrawable*)));
+   connect(mViewer.get(), SIGNAL(PoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*>&, dtAnim::Cal3DModelWrapper*)), 
+           mWin, SLOT(OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*>&, dtAnim::Cal3DModelWrapper*)));
 
    connect(mViewer.get(), SIGNAL(MaterialLoaded(int,const QString&,const QColor&,const QColor&,const QColor&,float )), 
            mWin, SLOT(OnNewMaterial(int,const QString&,const QColor&,const QColor&,const QColor&,float)));   

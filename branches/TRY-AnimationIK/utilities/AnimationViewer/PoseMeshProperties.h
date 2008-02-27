@@ -3,7 +3,11 @@
 
 #include <QtGui/QTreeWidget>
 
-namespace dtAnim { class PoseMesh; }
+namespace dtAnim 
+{
+   class PoseMesh; 
+   class Cal3DModelWrapper;
+}
 
 class PoseMeshProperties: public QTreeWidget
 {   
@@ -13,14 +17,16 @@ public:
    PoseMeshProperties();
    virtual ~PoseMeshProperties(){}
 
-   void AddMesh(const dtAnim::PoseMesh &newMesh);
+   void AddMesh(const dtAnim::PoseMesh &newMesh, const dtAnim::Cal3DModelWrapper &model);
 
 public slots:
    void OnItemDoubleClicked(QTreeWidgetItem *item, int column);
+   void OnItemToggled(QTreeWidgetItem *item, int column);
    //void OnItemSelected()
 
 signals:
    void ViewPoseMesh(const std::string &meshName);
+   void PoseMeshStatusChanged(const std::string &meshName, bool isEnabled);
 
 private:
 

@@ -4,21 +4,19 @@
 #include <dtAnim/PoseMesh.h>
 #include <QtGui/QGraphicsRectItem>
 
+#include <set>
+
 class QGraphicsItem;
 class QGraphicsScene;
 class QCursor;
 
-namespace dtAnim 
-{
-   class PoseMesh; 
-   class CharDrawable;
-}
+namespace dtAnim { class Cal3DModelWrapper; }
 
 class PoseMeshItem: public QGraphicsItem
 {   
 public:
    PoseMeshItem(const dtAnim::PoseMesh &poseMesh,
-                dtAnim::CharDrawable *character,
+                dtAnim::Cal3DModelWrapper *model,
                 QGraphicsItem *parent = 0, 
                 QGraphicsScene *scene = 0);
 
@@ -26,6 +24,9 @@ public:
 
    const std::string& GetPoseMeshName(); 
 
+   void SetEnabled(bool isEnabled);
+
+   // Qt overrides
    virtual bool sceneEvent(QEvent *event);  
    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
    virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
@@ -40,15 +41,25 @@ protected:
 private: 
 
    const dtAnim::PoseMesh *mPoseMesh;
-   dtAnim::CharDrawable *mCharacter;
+   dtAnim::Cal3DModelWrapper *mModel;
+
+   typedef std::set<dtAnim::PoseMesh::MeshIndexPair> PoseMeshEdgeSet;
+   PoseMeshEdgeSet mEdgeSet;
+
+   std::vector<std::pair<QPointF, QPointF>> mEdgeList;
 
    QPixmap *mPixmap;
    QRectF mBoundingRect;
    QPointF mLastMousePos;
+   QPointF mLastBlendPos;
 
    QCursor *mCursor;
 
    bool mHovered;
+
+   void BlendPosesFromItemCoordinates(float xCoord, float yCoord);
+
+   void ExtractEdgesFromMesh(const dtAnim::PoseMesh &mesh);
 
 };
 

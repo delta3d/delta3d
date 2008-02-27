@@ -58,6 +58,7 @@ using namespace dtUtil;
 using namespace dtCore;
 using namespace dtAnim;
 
+/////////////////////////////////////////////////////////////////////////////////////////
 Viewer::Viewer()
 : mCalDatabase(&Cal3DDatabase::GetInstance())
 , mPoseMeshes(NULL)
@@ -65,10 +66,12 @@ Viewer::Viewer()
    dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_DEBUG);   
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 Viewer::~Viewer()
 {
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 osg::Geode* MakePlane()
 {
    osg::Geode *geode = new osg::Geode();
@@ -80,6 +83,7 @@ osg::Geode* MakePlane()
    return geode;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void Viewer::Config()
 {
    dtABC::Application::Config();
@@ -126,6 +130,7 @@ void Viewer::Config()
    Log::GetInstance().SetLogLevel(Log::LOG_DEBUG);
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void Viewer::OnLoadCharFile( const QString &filename )
 {
    LOG_DEBUG("Loading file: " + filename.toStdString() );
@@ -224,6 +229,7 @@ void Viewer::OnLoadCharFile( const QString &filename )
    LOG_DEBUG("Done loading file: " + filename.toStdString() );   
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void Viewer::OnLoadPoseMeshFile( const std::string &filename )
 { 
    dtAnim::Cal3DModelWrapper *rapper = mCharacter->GetCal3DWrapper();
@@ -243,7 +249,7 @@ void Viewer::OnLoadPoseMeshFile( const std::string &filename )
    if (mPoseDatabase->LoadFromFile(filename))
    {      
       mPoseMeshes = &mPoseDatabase->GetMeshes();
-      emit PoseMeshesLoaded(*mPoseMeshes, mCharacter.get());
+      emit PoseMeshesLoaded(*mPoseMeshes, mCharacter->GetCal3DWrapper());
 
       //for (size_t poseIndex = 0; poseIndex < mPoseMeshes->size(); ++poseIndex)
       //{
@@ -253,6 +259,7 @@ void Viewer::OnLoadPoseMeshFile( const std::string &filename )
    }
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void Viewer::OnStartAnimation( unsigned int id, float weight, float delay )
 {
    if( mCharacter.valid() )
@@ -264,6 +271,7 @@ void Viewer::OnStartAnimation( unsigned int id, float weight, float delay )
    }
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void Viewer::OnStopAnimation( unsigned int id, float delay )
 {
    if( mCharacter.valid() )
@@ -275,6 +283,7 @@ void Viewer::OnStopAnimation( unsigned int id, float delay )
    }
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void Viewer::OnStartAction( unsigned int id, float delayIn, float delayOut )
 {
    if( mCharacter.valid() )
@@ -284,11 +293,13 @@ void Viewer::OnStartAction( unsigned int id, float delayIn, float delayOut )
    }
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void Viewer::OnAssumeBlendPose( dtAnim::PoseMesh::TargetTriangle &blendInfo)
 {
    _asm int 3
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void Viewer::OnLODScale_Changed( float scaleValue )
 {
    if (mCharacter.get())
@@ -297,11 +308,13 @@ void Viewer::OnLODScale_Changed( float scaleValue )
    }
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void Viewer::OnSpeedChanged( float speedFactor )
 {
    dtCore::System::GetInstance().SetTimeScale(speedFactor);
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void Viewer::OnSetShaded()
 {
    GetScene()->GetSceneNode()->removeChild(mWireDecorator.get());
@@ -310,6 +323,7 @@ void Viewer::OnSetShaded()
    GetScene()->GetSceneNode()->addChild(mShadeDecorator.get());
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void Viewer::OnSetWireframe()
 {
    GetScene()->GetSceneNode()->removeChild(mWireDecorator.get());
@@ -318,6 +332,7 @@ void Viewer::OnSetWireframe()
    GetScene()->GetSceneNode()->addChild(mWireDecorator.get());
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void Viewer::OnSetShadedWireframe()
 {
    GetScene()->GetSceneNode()->removeChild(mWireDecorator.get());
@@ -327,6 +342,7 @@ void Viewer::OnSetShadedWireframe()
    GetScene()->GetSceneNode()->addChild(mShadeDecorator.get());
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void Viewer::OnTimeout()
 {
    if (mCharacter.valid())
@@ -360,7 +376,7 @@ void Viewer::OnTimeout()
    }
 }
 
-
+/////////////////////////////////////////////////////////////////////////////////////////
 void Viewer::InitShadeDecorator()
 {
    //osg::StateSet *stateset = new osg::StateSet;  
@@ -374,6 +390,7 @@ void Viewer::InitShadeDecorator()
    //mShadeDecorator->setStateSet(stateset);
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void Viewer::InitWireDecorator()
 {
    osg::StateSet *stateset = new osg::StateSet;
@@ -394,16 +411,19 @@ void Viewer::InitWireDecorator()
    mWireDecorator->setStateSet(stateset);
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void Viewer::OnAttachMesh( int meshID )
 {
    mMeshesToAttach.push_back(meshID);
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void Viewer::OnDetachMesh( int meshID )
 {
    mMeshesToDetach.push_back(meshID);
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void Viewer::PostFrame( const double deltaFrameTime )
 {
    {
