@@ -23,7 +23,7 @@ public slots:
    void OnItemDoubleClicked(QTreeWidgetItem *item, int column);
    void OnItemToggled(QTreeWidgetItem *item, int column);
    void OnItemExpanded(QTreeWidgetItem *item);
-   //void OnItemSelected()
+   void OnBlendUpdate(const std::vector<float> &weightList);
 
 signals:
    void ViewPoseMesh(const std::string &meshName);
@@ -31,7 +31,7 @@ signals:
 
 private:
 
-   
+   std::vector<QTreeWidgetItem*> mVertProperties;   
 };
 
 #endif // _POSEMESH_PROPERTIES_H_

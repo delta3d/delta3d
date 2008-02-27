@@ -134,6 +134,10 @@ void PoseMeshItem::SetEnabled(bool isEnabled)
    // Remove any of this item's pose blends from the model
    dtCore::RefPtr<dtAnim::PoseMeshUtility> util = new dtAnim::PoseMeshUtility;
    util->ClearPoses(mPoseMesh, mModel, 0.0f);
+
+   mLastBlendPos.setX(FLT_MAX);
+   mLastBlendPos.setY(FLT_MAX);
+   mLastTriangleID = INT_MAX;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

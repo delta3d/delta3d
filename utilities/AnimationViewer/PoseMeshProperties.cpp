@@ -12,7 +12,7 @@ PoseMeshProperties::PoseMeshProperties()
 : QTreeWidget()
 {
    QStringList headerLables;
-   headerLables << "Property" << "value";
+   headerLables << "Property" << "value" << "Blend";
 
    setHeaderLabels(headerLables);
 
@@ -63,8 +63,12 @@ void PoseMeshProperties::AddMesh(const dtAnim::PoseMesh &newMesh, const dtAnim::
       dataString.append( QString(", { data = [%1, %2] }").arg(rawData.x()).arg(rawData.y()));
 
       QTreeWidgetItem *vertItem = new QTreeWidgetItem(rootVertItem);
+      vertItem->setData(0, Qt::UserRole, QVariant(animID));
       vertItem->setText(0, QString("%1 - %2").arg(vertIndex).arg(animName.c_str()));
-      vertItem->setText(1, dataString);      
+      vertItem->setText(1, dataString);    
+
+      // Store verts for later updating
+      mVertProperties.push_back(vertItem);
    }  
 
    // Make sure we can read everything in the first column
@@ -103,6 +107,19 @@ void PoseMeshProperties::OnItemToggled(QTreeWidgetItem *item, int column)
 /////////////////////////////////////////////////////////////////////////////////////////
 void PoseMeshProperties::OnItemExpanded(QTreeWidgetItem *item)
 {
-   // Make sure we can read everything in the first column
-   resizeColumnToContents(0); 
+   // Make sure we can read everything in the columns
+   resizeColumnToContents(0);
+   resizeColumnToContents(1);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+void PoseMeshProperties::OnBlendUpdate(const std::vector<float> &weightList)
+{
+   for (size_t vertIndex = 0; vertIndex < mVertProperties.size(); ++vertIndex)
+   {
+      unsigned int animID = mVertProperties[vertIndex]->data(0, Qt::UserRole).toUInt();
+      assert(animID < weightList.size());
+
+      mVertProperties[vertIndex]->setText(2, QString("%%1").arg(weightList[animID]));
+   }
 }
