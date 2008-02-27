@@ -372,14 +372,14 @@ void MainWindow::OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*> &poseMe
    QActionGroup *actionGroup = new QActionGroup(poseTools);
    actionGroup->setExclusive(true); 
 
-   QAction *handAction   = actionGroup->addAction(handIcon, "Click-drag meshes");
-   QAction *targetAction = actionGroup->addAction(poseIcon, "Set Pose From Mesh");   
+   QAction *grabAction   = actionGroup->addAction(handIcon, "Click-drag meshes");
+   QAction *pickAction = actionGroup->addAction(poseIcon, "Set Pose From Mesh");   
 
-   poseTools->addAction(handAction);
-   poseTools->addAction(targetAction);
+   poseTools->addAction(grabAction);
+   poseTools->addAction(pickAction);
 
-   handAction->setCheckable(true);
-   targetAction->setCheckable(true);    
+   grabAction->setCheckable(true);
+   pickAction->setCheckable(true);    
 
    poseDock->setTitleBarWidget(poseTools);
 
@@ -397,8 +397,9 @@ void MainWindow::OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*> &poseMe
    // Establish connections from the scene
    connect(mPoseMeshScene, SIGNAL(ViewPoseMesh(const std::string&)), 
            mPoseMeshViewer, SLOT(OnZoomToPoseMesh(const std::string&)));
-
-   connect(targetAction, SIGNAL(triggered()), this, SLOT(OnToggleIK()));
+   
+   connect(grabAction, SIGNAL(triggered()), this, SLOT(OnSelectModeGrab()));
+   connect(pickAction, SIGNAL(triggered()), this, SLOT(OnSelectModePick()));
 
    for (size_t poseIndex = 0; poseIndex < poseMeshList.size(); ++poseIndex)
    {
@@ -408,6 +409,9 @@ void MainWindow::OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*> &poseMe
       mPoseMeshScene->AddMesh(*newMesh, model);
       mPoseMeshProperties->AddMesh(*newMesh, *model);   
    }
+
+   // Set the default mode
+   OnSelectModePick();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -690,10 +694,15 @@ void MainWindow::OnItemDoubleClicked(QTableWidgetItem *item)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void MainWindow::OnToggleIK()
+void MainWindow::OnSelectModeGrab()
 {
-   int test = 0;
-   test = test;
+   mPoseMeshScene->SetMode(PoseMeshScene::MODE_GRAB);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnSelectModePick()
+{
+   mPoseMeshScene->SetMode(PoseMeshScene::MODE_BLEND_PICK);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
