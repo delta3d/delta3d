@@ -59,8 +59,6 @@ private:
    QPointF mLastBlendPos;
    int     mLastTriangleID;
 
-   QCursor *mCursor;
-
    bool mHovered;
 
    void BlendPosesFromItemCoordinates(float xCoord, float yCoord);

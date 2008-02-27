@@ -22,6 +22,9 @@ PoseMeshProperties::PoseMeshProperties()
    // Catch when a pose mesh checkbox is toggled
    connect(this, SIGNAL(itemChanged(QTreeWidgetItem*, int)),
            this, SLOT(OnItemToggled(QTreeWidgetItem*, int)));
+
+   connect(this, SIGNAL(itemExpanded(QTreeWidgetItem*)),
+           this, SLOT(OnItemExpanded(QTreeWidgetItem*)));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -95,4 +98,11 @@ void PoseMeshProperties::OnItemToggled(QTreeWidgetItem *item, int column)
          emit PoseMeshStatusChanged(item->text(0).toStdString(), true);
       }      
    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+void PoseMeshProperties::OnItemExpanded(QTreeWidgetItem *item)
+{
+   // Make sure we can read everything in the first column
+   resizeColumnToContents(0); 
 }

@@ -22,6 +22,7 @@ public:
 public slots:
    void OnItemDoubleClicked(QTreeWidgetItem *item, int column);
    void OnItemToggled(QTreeWidgetItem *item, int column);
+   void OnItemExpanded(QTreeWidgetItem *item);
    //void OnItemSelected()
 
 signals:

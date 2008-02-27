@@ -42,16 +42,16 @@ PoseMeshItem::PoseMeshItem(const dtAnim::PoseMesh &poseMesh,
 {
    assert(mModel);
 
+   // We want to manually control when the item is movable
    setFlag(ItemIsMovable, false);
+
+   // Make sure this gets drawn on top of the background
    setZValue(1);
 
    setAcceptsHoverEvents(true);
    setToolTip("test");  
 
-   mHovered = false;
-
-   mCursor = new QCursor(QPixmap(":/images/reticle.png"));
-   setCursor(*mCursor);
+   mHovered = false;  
    
    //QSize size(40, 20);
    //QImage image(size.width(), size.height(), QImage::Format_ARGB32_Premultiplied);
@@ -76,6 +76,7 @@ PoseMeshItem::PoseMeshItem(const dtAnim::PoseMesh &poseMesh,
 
    const dtAnim::PoseMesh::VertexVector &verts = mPoseMesh->GetVertices();
 
+   // Determine the bounding box for this item
    for (size_t vertIndex = 0; vertIndex < verts.size(); ++vertIndex)
    {
       osg::Vec3 vertPosition = verts[vertIndex]->mData * VERT_SCALE;      
@@ -107,6 +108,8 @@ PoseMeshItem::PoseMeshItem(const dtAnim::PoseMesh &poseMesh,
                         VERT_RADIUS_DIV2,
                         VERT_RADIUS_DIV2);
 
+   // Get a unique set of edges and the 
+   // triangle they belong to
    ExtractEdgesFromMesh(*mPoseMesh);
 }
 
@@ -128,6 +131,7 @@ void PoseMeshItem::SetEnabled(bool isEnabled)
    setEnabled(isEnabled);
    setVisible(isEnabled);
 
+   // Remove any of this item's pose blends from the model
    dtCore::RefPtr<dtAnim::PoseMeshUtility> util = new dtAnim::PoseMeshUtility;
    util->ClearPoses(mPoseMesh, mModel, 0.0f);
 }

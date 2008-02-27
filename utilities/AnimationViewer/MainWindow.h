@@ -121,6 +121,7 @@ private slots:
    void OnItemChanged( QTableWidgetItem *item );
    void OnItemDoubleClicked(QTableWidgetItem *item);
 
-   void OnToggleIK();
+   void OnSelectModeGrab();
+   void OnSelectModePick();
 };
 #endif // MainWindow_h__
