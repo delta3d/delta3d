@@ -41,17 +41,23 @@ protected:
 private: 
 
    const dtAnim::PoseMesh *mPoseMesh;
-   dtAnim::Cal3DModelWrapper *mModel;
+   dtAnim::Cal3DModelWrapper *mModel;   
 
-   typedef std::set<dtAnim::PoseMesh::MeshIndexPair> PoseMeshEdgeSet;
-   PoseMeshEdgeSet mEdgeSet;
+   struct EdgeInfo
+   {
+      QPointF first;
+      QPointF second;
+      int     triangleIDs[2];
+   };
 
-   std::vector<std::pair<QPointF, QPointF>> mEdgeList;
+   std::vector<EdgeInfo> mEdgeInfoList;
 
    QPixmap *mPixmap;
    QRectF mBoundingRect;
+
    QPointF mLastMousePos;
    QPointF mLastBlendPos;
+   int     mLastTriangleID;
 
    QCursor *mCursor;
 

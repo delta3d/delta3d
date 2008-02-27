@@ -38,6 +38,7 @@ PoseMeshItem::PoseMeshItem(const dtAnim::PoseMesh &poseMesh,
   , mModel(model)
   , mBoundingRect()
   , mLastBlendPos(FLT_MAX, FLT_MAX)
+  , mLastTriangleID(INT_MAX)
 {
    assert(mModel);
 
@@ -211,6 +212,7 @@ void PoseMeshItem::BlendPosesFromItemCoordinates(float xCoord, float yCoord)
       // Store the last valie visual location of the blend
       mLastBlendPos.setX(xCoord);
       mLastBlendPos.setY(yCoord);
+      mLastTriangleID = targetTri.mTriangleID;
    }   
 
    // Make sure to redraw the changed portion
@@ -239,9 +241,25 @@ void PoseMeshItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 {
    const dtAnim::PoseMesh::VertexVector &verts = mPoseMesh->GetVertices();
 
-   for (size_t edgeIndex = 0; edgeIndex < mEdgeList.size(); ++edgeIndex)
+   QPen trianglePenDefault;   
+   trianglePenDefault.setColor(Qt::black);
+
+   QPen trianglePenSelected;
+   trianglePenSelected.setColor(Qt::green);
+
+   for (size_t edgeIndex = 0; edgeIndex < mEdgeInfoList.size(); ++edgeIndex)
    {
-      painter->drawLine(mEdgeList[edgeIndex].first, mEdgeList[edgeIndex].second);
+      if (mEdgeInfoList[edgeIndex].triangleIDs[0] == mLastTriangleID ||
+          mEdgeInfoList[edgeIndex].triangleIDs[1] == mLastTriangleID)
+      {
+         painter->setPen(trianglePenSelected);
+      }
+      else
+      {
+         painter->setPen(trianglePenDefault);
+      }
+
+      painter->drawLine(mEdgeInfoList[edgeIndex].first, mEdgeInfoList[edgeIndex].second);
    }
 
    for (size_t vertIndex = 0; vertIndex < verts.size(); ++vertIndex)
@@ -303,9 +321,18 @@ void PoseMeshItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 /////////////////////////////////////////////////////////////////////////////////////////
 void PoseMeshItem::ExtractEdgesFromMesh(const dtAnim::PoseMesh &mesh)
 {
-   const dtAnim::PoseMesh::TriangleVector &triList = mesh.GetTriangles();
-   const dtAnim::PoseMesh::VertexVector &vertList = mesh.GetVertices();
+   typedef std::pair<dtAnim::PoseMesh::MeshIndexPair, int> VertIndexTriPair;
+   typedef std::multimap<dtAnim::PoseMesh::MeshIndexPair, int> EdgeTriMap;
 
+   EdgeTriMap edgeMap;
+
+   const dtAnim::PoseMesh::TriangleVector &triList = mesh.GetTriangles();
+   const dtAnim::PoseMesh::VertexVector &vertList = mesh.GetVertices();  
+
+   std::vector<dtAnim::PoseMesh::MeshIndexPair> edgeSet;
+
+   // Go through each triangle and get a set of unique
+   // edges and the triangles that contain them
    for (size_t triIndex = 0; triIndex < triList.size(); ++triIndex)
    {
       // Make 3 pairs of points to represent 3 edges of the tri
@@ -322,24 +349,60 @@ void PoseMeshItem::ExtractEdgesFromMesh(const dtAnim::PoseMesh &mesh)
 
       for (size_t edgeIndex = 0; edgeIndex < 3; ++edgeIndex)
       {
-         // Make sure that each edge is unique before adding it
-         if (mEdgeSet.find(pair[edgeIndex]) == mEdgeSet.end() &&
-             mEdgeSet.find(swapped[edgeIndex]) == mEdgeSet.end())
+         EdgeTriMap::iterator pairIter = edgeMap.find(pair[edgeIndex]);
+         EdgeTriMap::iterator swapIter = edgeMap.find(swapped[edgeIndex]);
+
+         // Only use one ordering for each edge
+         if (pairIter != edgeMap.end())
          {
-            dtAnim::PoseMesh::Vertex *vert0 = vertList[pair[edgeIndex].first];
-            dtAnim::PoseMesh::Vertex *vert1 = vertList[pair[edgeIndex].second];
+            edgeMap.insert(VertIndexTriPair(pair[edgeIndex], triIndex));
+         }
+         else if (swapIter != edgeMap.end())
+         {
+            edgeMap.insert(VertIndexTriPair(swapped[edgeIndex], triIndex));           
+         }
+         else
+         {
+            // Store the new edge that we haven't seen before
+            edgeMap.insert(VertIndexTriPair(pair[edgeIndex], triIndex));
 
-            QPointF point0(vert0->mData.x(), vert0->mData.y());
-            point0.rx() *= VERT_SCALE;
-            point0.ry() *= -VERT_SCALE;
-
-            QPointF point1(vert1->mData.x(), vert1->mData.y());
-            point1.rx() *= VERT_SCALE;
-            point1.ry() *= -VERT_SCALE;        
-
-            typedef std::pair<QPointF, QPointF> EdgePair;
-            mEdgeList.push_back(EdgePair(point0, point1));
+            // Store each unique edge when added for the first time
+            // This is used to construct the final edge list vector
+            edgeSet.push_back(pair[edgeIndex]);
          }
       }
+   } // for each triangle
+
+   // For each unique edge
+   for (size_t setIndex = 0; setIndex < edgeSet.size(); ++setIndex)
+   {
+      dtAnim::PoseMesh::MeshIndexPair key = edgeSet[setIndex];
+      EdgeTriMap::iterator rangeStart = edgeMap.find(key);
+      EdgeTriMap::iterator rangeEnd   = edgeMap.upper_bound(key);
+      
+      assert(rangeStart != edgeMap.end());
+
+      dtAnim::PoseMesh::Vertex *vert0 = vertList[key.first];
+      dtAnim::PoseMesh::Vertex *vert1 = vertList[key.second];
+
+      EdgeInfo newInfo;
+      newInfo.first.rx()  = vert0->mData.x() * VERT_SCALE;
+      newInfo.first.ry()  = vert0->mData.y() * -VERT_SCALE;  
+      newInfo.second.rx() = vert1->mData.x() * VERT_SCALE;
+      newInfo.second.ry() = vert1->mData.y() * -VERT_SCALE;  
+
+      newInfo.triangleIDs[0] = rangeStart->second;
+
+      if (++rangeStart != rangeEnd)
+      {
+         newInfo.triangleIDs[1] = rangeStart->second;
+         assert(++rangeStart == rangeEnd);
+      }      
+      else
+      {
+         newInfo.triangleIDs[1] = -1;
+      }
+
+      mEdgeInfoList.push_back(newInfo);
    }
 }
