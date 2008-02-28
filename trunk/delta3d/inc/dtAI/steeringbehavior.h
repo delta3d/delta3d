@@ -58,8 +58,6 @@ namespace dtAI
          * @param result, the result of the behavior is copied into a SteeringOutput which can later be integrated by the physics model
          */
          virtual void Think(float dt, ConstKinematicGoalParam current_goal, ConstKinematicParam current_state, SteeringOutByRefParam result) = 0;
-         virtual bool GoalAchieved(ConstKinematicGoalParam current_goal, ConstKinematicParam current_state) = 0;
-
          
          
          void AddErrorHandler(SensorParamType s, ErrorHandlerParamType eh)
