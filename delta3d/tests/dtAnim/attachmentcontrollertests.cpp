@@ -205,10 +205,12 @@ namespace dtAnim
             dtCore::Transform xform;
             attachment->GetTransform(xform, dtCore::Transformable::REL_CS);
             osg::Quat actualRot;
-            xform.GetRotation().get(actualRot);
+            xform.GetRotation(actualRot);
 
+            osg::Vec3 trans;
+            xform.GetTranslation(trans);
             CPPUNIT_ASSERT(dtUtil::Equivalent(expectedRot, actualRot, 4, osg::Quat::value_type(0.0003)));
-            CPPUNIT_ASSERT(dtUtil::Equivalent(expectedPos, xform.GetTranslation(), osg::Vec3::value_type(0.0003)));
+            CPPUNIT_ASSERT(dtUtil::Equivalent(expectedPos, trans, osg::Vec3::value_type(0.0003)));
          }
 
       private:

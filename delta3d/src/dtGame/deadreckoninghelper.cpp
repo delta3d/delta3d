@@ -529,8 +529,10 @@ namespace dtGame
    bool DeadReckoningHelper::DRVelocityAcceleration(GameActor& gameActor, dtCore::Transform& xform, dtUtil::Log* pLogger)
    {
       bool returnValue = false; // indicates that we made a change to the transform
-      osg::Vec3& pos = xform.GetTranslation();
-      osg::Matrix& rot = xform.GetRotation();
+      osg::Vec3 pos;
+      xform.GetTranslation(pos);
+      osg::Matrix rot;
+      xform.GetRotation(rot);
 
       osg::Vec3 unclampedTranslation = pos;
 
@@ -568,10 +570,11 @@ namespace dtGame
          }
 
          // RESOLVE ROTATION
-         DeadReckonTheRotation(rot, xform);
+         DeadReckonTheRotation(xform);
 
          // POSITION SMOOTHING
          DeadReckonThePosition(pos, pLogger, gameActor);
+         xform.SetTranslation(pos);
 
          returnValue = true;
       } 
@@ -607,14 +610,17 @@ namespace dtGame
       else 
          mTranslationEndSmoothingTime = mAverageTimeBetweenTranslationUpdates;
 
+      osg::Vec3 pos;
+      xform.GetTranslation(pos);
+      
       //If the player could not possible get to the new position in 10 seconds
       //based on the magnitude of it's velocity vector, then just warp the entity in 1 second.
-      if (mVelocityVector.length2() * (mTranslationEndSmoothingTime*mTranslationEndSmoothingTime) < (mLastTranslation - xform.GetTranslation()).length2() )
+      if (mVelocityVector.length2() * (mTranslationEndSmoothingTime*mTranslationEndSmoothingTime) < (mLastTranslation - pos).length2() )
          mTranslationEndSmoothingTime = std::min(1.0f, mAverageTimeBetweenTranslationUpdates);
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::DeadReckonTheRotation(osg::Matrix &rot, dtCore::Transform &xform)
+   void DeadReckoningHelper::DeadReckonTheRotation(dtCore::Transform &xform)
    {
       osg::Quat newRot;
       osg::Quat drQuat = mLastQuatRotation; // velocity only just uses the last. 
@@ -650,7 +656,6 @@ namespace dtGame
             float smoothingFactor = mRotationCurrentSmoothingTime/mRotationEndSmoothingTime;
             dtUtil::Clamp(smoothingFactor, 0.0f, 1.0f);
             newRot.slerp(smoothingFactor, startRotation, drQuat);
-            rot.set(newRot);
          }
          else // Either smoothing time is done or the current rotation equals the desired rotation
          {
@@ -659,7 +664,7 @@ namespace dtGame
          }
 
          // we finished DR, so update the rotation values on the helper and transform
-         rot.set(newRot);
+         xform.SetRotation(newRot);
          mCurrentDeadReckonedRotation = newRot;
          xform.GetRotation(mCurrentAttitudeVector);
       }

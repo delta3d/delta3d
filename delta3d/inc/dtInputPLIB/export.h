@@ -32,7 +32,11 @@
 #      define DT_INPUT_PLIB_EXPORT __declspec(dllimport)
 #   endif 
 #else
-#   define DT_INPUT_PLIB_EXPORT
+#   ifdef DT_INPUT_PLIB_LIBRARY
+#      define DT_INPUT_PLIB_EXPORT __attribute__ ((visibility("default")))
+#   else
+#      define DT_INPUT_PLIB_EXPORT
+#   endif 
 #endif
 
 #endif // DELTA_CORE_EXPORT

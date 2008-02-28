@@ -20,6 +20,7 @@
 */ 
 #include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
+#include <dtUtil/mathdefines.h>
 #include <dtCore/scene.h>
 #include <dtCore/transformable.h>
 #include <dtCore/object.h>
@@ -59,12 +60,17 @@ class TransformableTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST(TestSetCollisionBox);
    CPPUNIT_TEST(TestSetTransform);
    CPPUNIT_TEST(TestSetMatrix);
+   CPPUNIT_TEST(TestSetPosHPR);
+   CPPUNIT_TEST(TestSetPosQuat);
    CPPUNIT_TEST(TestScale);
    CPPUNIT_TEST(TestTranslation);
+   CPPUNIT_TEST(TestMove);
    CPPUNIT_TEST(TestRotationHPR);
+   CPPUNIT_TEST(TestRotationQuat);
    CPPUNIT_TEST(TestTransRotScaleGetSet);
    CPPUNIT_TEST(TestReplaceMatrixNode);
    CPPUNIT_TEST(TestConstructorTakingMatrixNode);
+   CPPUNIT_TEST(TestRows);
    CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -76,13 +82,18 @@ public:
    void TestGetCollisionGeomDimensions();
    void TestSetCollisionBox();
    void TestSetTransform();
+   void TestSetPosHPR();
+   void TestSetPosQuat();
    void TestScale();
    void TestTranslation();
+   void TestMove();
    void TestRotationHPR();
+   void TestRotationQuat();
    void TestTransRotScaleGetSet();
    void TestReplaceMatrixNode();
    void TestConstructorTakingMatrixNode();
    void TestSetMatrix();
+   void TestRows();
 
 private:
     bool CompareMatrix(const osg::Matrix& rhs, const osg::Matrix& lhs) const;
@@ -95,7 +106,7 @@ private:
 
    float mRadius; ///Radius for sphere or cylinder
    float mHeight; ///Height for cylinder or ray
-   static const float TEST_EPSILON;
+   static const osg::Vec3::value_type TEST_EPSILON;
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(TransformableTests);
@@ -105,7 +116,7 @@ const float TransformableTests::TEST_EPSILON(1e-5f);
 void TransformableTests::setUp()
 {
    mTransformable = new dtCore::Transformable("TestTransformable");
-   mTransform.Set( 2.0f, 4.0f, 1.0f, 30.0f, -20.0f, 2.5f, 2.0f, 2.0f, 2.0f );
+   mTransform.Set( 2.0f, 4.0f, 1.0f, 30.0f, -20.0f, 2.5f );
    mBoxLengths.set( 2.0f, 3.0f, 4.0f );
    mRadius = 3.2f;
    mHeight = 6.4f;
@@ -238,14 +249,12 @@ void TransformableTests::TestSetTransform()
       osg::equivalent( double(osgRotation(2,2)), double(odeRotation[10]), 1e-2 ) );
 
    // Scale
-   osg::Vec3 scale;
-   mTransform.GetScale(scale);
    dimensions.clear();
    mTransformable->GetCollisionGeomDimensions(dimensions);
    CPPUNIT_ASSERT_MESSAGE( "Collision geomertry dimensions should be (4.0f, 6.0f, 8.0f)", 
-      osg::equivalent( dimensions[0], mBoxLengths[0]*scale[0], 1e-2f ) && 
-      osg::equivalent( dimensions[1], mBoxLengths[1]*scale[1], 1e-2f ) && 
-      osg::equivalent( dimensions[2], mBoxLengths[2]*scale[2], 1e-2f ) );
+      osg::equivalent( dimensions[0], mBoxLengths[0], 1e-2f ) && 
+      osg::equivalent( dimensions[1], mBoxLengths[1], 1e-2f ) && 
+      osg::equivalent( dimensions[2], mBoxLengths[2], 1e-2f ) );
 }
 
 bool HasChild( dtCore::DeltaDrawable* parent, dtCore::DeltaDrawable* child )
@@ -263,15 +272,49 @@ bool HasChild( osg::Group* parent, osg::Node* child )
    return parent->containsNode(child);
 }
 
+void TransformableTests::TestSetPosHPR()
+{
+   osg::Vec3 hpr (10.0, -30.0, 23.0);
+   osg::Vec3 pos(21.0, 33.66, 293.9);
+
+   dtCore::Transform xform;
+   xform.Set(pos, hpr);
+
+   osg::Vec3 retPos, retHpr;
+
+   xform.Get(retPos, retHpr);
+
+   CPPUNIT_ASSERT(CompareVector(pos, retPos));
+   CPPUNIT_ASSERT(CompareVector(hpr, retHpr));
+}
+
+void TransformableTests::TestSetPosQuat()
+{
+   osg::Quat quat (std::sqrt(0.5), 0.0, std::sqrt(0.5), 0.0);
+   osg::Vec3 pos(21.0, 33.66, 293.9);
+
+   dtCore::Transform xform;
+   xform.Set(pos, quat);
+
+   osg::Vec3 retPos;
+   osg::Quat retQuat;
+
+   xform.Get(retPos, retQuat);
+
+   CPPUNIT_ASSERT(CompareVector(pos, retPos));
+   CPPUNIT_ASSERT(dtUtil::Equivalent(quat, retQuat, 4, osg::Quat::value_type(0.001f)));
+}
+
 void TransformableTests::TestSetMatrix()
 {
    osg::Vec3 trans(10.0f, 7.0f, 2.0f);
    osg::Vec3 scale(3.0f, 1.0f, 5.0f);
-   osg::Matrix matRotate, matScale, matTest;    
+   osg::Matrix matRotate, matScale, matTest;
 
    matRotate.makeRotate(osg::DegreesToRadians(45.0), osg::Vec3(1.0f, 0.0f, 0.0f));
    matScale.makeScale(scale);
-   matTest = matRotate * matScale;
+   matRotate = matRotate * matScale;
+   matTest = matRotate;
    matTest.setTrans(trans);
 
    osg::Vec3 testScale, testTrans;
@@ -281,7 +324,7 @@ void TransformableTests::TestSetMatrix()
     
    transformTest.Set(matTest);
    transformTest.GetTranslation(testTrans);
-   transformTest.GetScale(testScale);
+   transformTest.CalcScale(testScale);
    transformTest.GetRotation(testRot);
 
    CPPUNIT_ASSERT(CompareMatrix(matRotate, testRot));
@@ -294,12 +337,12 @@ void TransformableTests::TestScale()
    osg::Vec3 scale(3.0f, 1.0f, 5.0f);
 
    dtCore::Transform transformTest;
-   transformTest.SetScale(scale);
+   transformTest.Rescale(scale);
    mTransformable->SetTransform(transformTest);
    mTransformable->GetTransform(transformTest);
 
    osg::Vec3 testScale;
-   transformTest.GetScale(testScale);
+   transformTest.CalcScale(testScale);
 
    std::ostringstream ss;
    ss << "Value is: \"" << testScale << "\" but it should be \"" << scale << "\"";
@@ -323,6 +366,35 @@ void TransformableTests::TestTranslation()
    CPPUNIT_ASSERT_MESSAGE(ss.str(), CompareVector(trans, testTrans));
 }
 
+void TransformableTests::TestMove()
+{
+   osg::Vec3 trans(10.0f, 7.0f, 2.0f);
+   osg::Vec3f moveF(-1.1, -3.6, 21.44);
+   osg::Vec3d moveD(moveF);
+
+   dtCore::Transform transformTest;
+   transformTest.SetTranslation(trans);
+
+   transformTest.Move(moveF);
+   
+   osg::Vec3 testTrans;
+   transformTest.GetTranslation(testTrans);
+
+   std::ostringstream ss;
+   ss << "Value is: \"" << testTrans << "\" but it should be \"" << trans + moveF << "\"";
+   CPPUNIT_ASSERT_MESSAGE(ss.str(), CompareVector(trans + moveF, testTrans));
+
+   transformTest.SetTranslation(trans);
+
+   transformTest.Move(moveD);
+   
+   transformTest.GetTranslation(testTrans);
+
+   ss.str("");
+   ss << "Value is: \"" << testTrans << "\" but it should be \"" << trans + osg::Vec3(moveD) << "\"";
+   CPPUNIT_ASSERT_MESSAGE(ss.str(), CompareVector(trans + osg::Vec3(moveD), testTrans));
+}
+
 void TransformableTests::TestRotationHPR()
 {
    osg::Vec3 rot(10.0f, 7.0f, 2.0f);
@@ -340,23 +412,46 @@ void TransformableTests::TestRotationHPR()
    CPPUNIT_ASSERT_MESSAGE(ss.str(), CompareVector(rot, testRot));
 }
 
+void TransformableTests::TestRotationQuat()
+{
+   osg::Quat qrot(0.0, 0.0, 1.0, 0.0);
+
+   dtCore::Transform transformTest;
+   transformTest.SetRotation(qrot);
+
+   osg::Quat resultQuat;
+   
+   transformTest.GetRotation(resultQuat);
+      
+   std::ostringstream ss;
+   ss << "Value is: \"" << resultQuat << "\" but it should be \"" << qrot << "\"";
+   CPPUNIT_ASSERT_MESSAGE(ss.str(), dtUtil::Equivalent(qrot, resultQuat, 4, 0.001));   
+
+   osg::Matrix expectedMatrix, resultMatrix;
+   expectedMatrix.makeIdentity();
+
+   expectedMatrix.setRotate(qrot);
+   
+   transformTest.GetRotation(resultMatrix);
+   ss.str("Value is: \"");
+   ss << expectedMatrix << "\" but it should be \"" << resultMatrix << "\"";
+   CPPUNIT_ASSERT_MESSAGE(ss.str(), CompareMatrix(expectedMatrix, resultMatrix));   
+}
+
 void TransformableTests::TestTransRotScaleGetSet()
 {
    osg::Vec3 trans(10.0f, 7.0f, 2.0f);
-   osg::Vec3 scale(3.0f, 1.0f, 5.0f);
    osg::Vec3 rot(10.0f, 7.0f, 2.0f);
 
    dtCore::Transform transformTest;
    transformTest.SetTranslation(trans);
    transformTest.SetRotation(rot);
-   transformTest.SetScale(scale);
    mTransformable->SetTransform(transformTest);
    mTransformable->GetTransform(transformTest);
 
    osg::Vec3 testScale, testRot, testTrans;
    transformTest.GetTranslation(testTrans);
    transformTest.GetRotation(testRot);
-   transformTest.GetScale(testScale);
 
    std::ostringstream ss;
    ss << "rotation value is: \"" << testRot << "\" but it should be \"" << rot << "\"";
@@ -364,28 +459,25 @@ void TransformableTests::TestTransRotScaleGetSet()
    ss.str("");
    ss << "translation value is: \"" << testTrans << "\" but it should be \"" << trans << "\"";
    CPPUNIT_ASSERT_MESSAGE(ss.str(), CompareVector(trans, testTrans));
-   ss.str("");
-   ss << "scale value is: \"" << testScale << "\" but it should be \"" << scale << "\"";
-   CPPUNIT_ASSERT_MESSAGE(ss.str(), CompareVector(scale, testScale));
 }
 
 
 bool TransformableTests::CompareMatrix(const osg::Matrix& rhs, const osg::Matrix& lhs) const
 {
-    for(int i = 0; i < 4; ++i)
-    {   
-        for(int j = 0; j < 4; ++j)
-        {
-            if ( std::abs(rhs(i, j) - lhs(i, j)) > TEST_EPSILON ) return false;
-        }
-    }
+   for(int i = 0; i < 4; ++i)
+   {   
+      for(int j = 0; j < 4; ++j)
+      {
+         if ( std::abs(rhs(i, j) - lhs(i, j)) > TEST_EPSILON ) return false;
+      }
+   }
 
-    return true;
+   return true;
 }
 
 bool TransformableTests::CompareVector(const osg::Vec3& rhs, const osg::Vec3& lhs) const
 {
-    return ( (rhs[0] - lhs[0]) < TEST_EPSILON ) && ( (rhs[1] - lhs[1]) < TEST_EPSILON ) && ( (rhs[2] - lhs[2]) < TEST_EPSILON );
+   return dtUtil::Equivalent(rhs, lhs, TEST_EPSILON);
 }
 
 void TransformableTests::TestReplaceMatrixNode()
@@ -466,3 +558,41 @@ void TransformableTests::TestConstructorTakingMatrixNode()
                            mt.get() == object->GetOSGNode() );
 }
 
+void TransformableTests::TestRows()
+{
+   dtCore::Transform transformTest;
+   osg::Matrix m;
+   float count = 0.0;
+   for (size_t i = 0; i < 4; ++i)
+   {
+      for (size_t j = 0; j < 4; ++j)
+      {
+         m(i,j) = count;
+         count++;
+      }
+   }
+   
+   transformTest.Set(m);
+   
+   osg::Vec3 row3, row3Expected;
+   osg::Vec4 row4, row4Expected;
+
+   transformTest.GetRow(1, row3);
+   row3Expected.set(4.0, 5.0, 6.0);
+
+   CPPUNIT_ASSERT(dtUtil::Equivalent(row3Expected, row3, TEST_EPSILON));
+
+   row3Expected.set(9.0, 8.0, 1.0);
+   transformTest.SetRow(2, row3Expected);
+   transformTest.GetRow(2, row3);
+   CPPUNIT_ASSERT(dtUtil::Equivalent(row3Expected, row3, TEST_EPSILON));
+   
+   transformTest.GetRow(1, row4);
+   row4Expected.set(4.0, 5.0, 6.0, 7.0);
+   CPPUNIT_ASSERT(dtUtil::Equivalent(row4Expected, row4, TEST_EPSILON));
+
+   row4Expected.set(104.3, 90.7, 98.6, 101.6);
+   transformTest.SetRow(2, row4Expected);
+   transformTest.GetRow(2, row4);
+   CPPUNIT_ASSERT(dtUtil::Equivalent(row4Expected, row4, TEST_EPSILON));
+}

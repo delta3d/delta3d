@@ -36,7 +36,11 @@
 #	  define DT_GAME_EXPORT __declspec(dllimport)
 #	endif
 #else
-#  define DT_GAME_EXPORT
+#   ifdef DT_GAME_LIBRARY
+#      define DT_GAME_EXPORT __attribute__ ((visibility("default")))
+#   else
+#      define DT_GAME_EXPORT
+#   endif 
 #endif
 
 #endif

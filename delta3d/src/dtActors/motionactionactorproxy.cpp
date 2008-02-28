@@ -58,12 +58,6 @@ namespace dtActors
          MakeFunctorRet(*this, &MotionActionActorProxy::GetTranslation),
          "Sets the location of a transformable in 3D space.",
          "LocalTransform"));
-
-      AddProperty(new Vec3ActorProperty("Scale", "Scale",
-         MakeFunctor(*this, &MotionActionActorProxy::SetScale),
-         MakeFunctorRet(*this, &MotionActionActorProxy::GetScale),
-         "Sets the scale of a transformable.","LocalTransform"));
-
    }
 
    DeltaDrawable* MotionActionActorProxy::GetActorTargetObject()
@@ -224,33 +218,6 @@ namespace dtActors
       t->GetLocalTransform().GetTranslation(trans);
       return trans;
    }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void MotionActionActorProxy::SetScale(const osg::Vec3 &scale)
-   {
-      dtABC::MotionAction *t = static_cast<dtABC::MotionAction*>(GetActor());
-
-      dtCore::Transform trans = t->GetLocalTransform();
-      
-      osg::Vec3 oldScale;
-      trans.GetScale(oldScale);
-      trans.SetScale(scale);
-      t->SetLocalTransform(trans);
-
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   osg::Vec3 MotionActionActorProxy::GetScale()
-   {
-      dtABC::MotionAction *t = static_cast<dtABC::MotionAction*>(GetActor());
-
-      osg::Vec3 scale;
-      t->GetLocalTransform().GetScale(scale);
-      return scale;
-   }
-
-
-
 
 }//namespace dtActors
 

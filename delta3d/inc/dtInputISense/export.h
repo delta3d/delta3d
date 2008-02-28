@@ -32,7 +32,11 @@
 #      define DT_INPUT_ISENSE_EXPORT __declspec(dllimport)
 #   endif 
 #else
-#   define DT_INPUT_ISENSE_EXPORT
+#   ifdef DT_INPUT_ISENSE_LIBRARY
+#      define DT_INPUT_ISENSE_EXPORT __attribute__ ((visibility("default")))
+#   else
+#      define DT_INPUT_ISENSE_EXPORT
+#   endif 
 #endif
 
 #endif // DELTA_INPUT_ISENSE_EXPORT

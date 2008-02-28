@@ -32,7 +32,11 @@
 #      define DT_AUDIO_EXPORT __declspec(dllimport)
 #   endif 
 #else
-#   define DT_AUDIO_EXPORT
+#   ifdef DT_AUDIO_LIBRARY
+#      define DT_AUDIO_EXPORT __attribute__ ((visibility("default")))
+#   else
+#      define DT_AUDIO_EXPORT
+#   endif 
 #endif
 
 #endif // DELTA_AUDIO_EXPORT

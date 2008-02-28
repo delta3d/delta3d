@@ -36,7 +36,11 @@
 #	  define DT_LMS_EXPORT __declspec(dllimport)
 #	endif
 #else
-#  define DT_LMS_EXPORT
+#   ifdef DT_LMS_LIBRARY
+#      define DT_LMS_EXPORT __attribute__ ((visibility("default")))
+#   else
+#      define DT_LMS_EXPORT
+#   endif 
 #endif
 
 #endif

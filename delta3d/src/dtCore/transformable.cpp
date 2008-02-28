@@ -1310,11 +1310,10 @@ void Transformable::PrePhysicsStepUpdate()
       mGeomTransform = transform;
 
       osg::Matrix rotation;
-      osg::Vec3 position, scale;
+      osg::Vec3 position;
 
       mGeomTransform.GetTranslation( position );
       mGeomTransform.GetRotation( rotation );
-      mGeomTransform.GetScale( scale );
 
       // Set translation
       dGeomSetPosition(mGeomID, position[0], position[1], position[2]);
@@ -1357,14 +1356,13 @@ void Transformable::PrePhysicsStepUpdate()
             {
                dVector3 originalSide;
                dGeomBoxGetLengths( mOriginalGeomID, originalSide );
-               dGeomBoxSetLengths( id, originalSide[0]*scale[0], originalSide[1]*scale[1], originalSide[2]*scale[2] );
+               dGeomBoxSetLengths( id, originalSide[0], originalSide[1], originalSide[2] );
             }
             break;
          case dSphereClass:
             {
                dReal originalRadius = dGeomSphereGetRadius( mOriginalGeomID );
-               float maxScale = std::max( std::max( scale[0], scale[1] ), scale[2] );
-               dGeomSphereSetRadius( id, originalRadius * maxScale );
+               dGeomSphereSetRadius( id, originalRadius );
             }
             break;
          case dCCylinderClass:
@@ -1372,10 +1370,7 @@ void Transformable::PrePhysicsStepUpdate()
                dReal originalRadius, originalLength;
                dGeomCCylinderGetParams( mOriginalGeomID, &originalRadius, &originalLength );
 
-               // Find max radius based on x/y scaling
-               float maxRadiusScale = std::max( scale[0], scale[1] );
-
-               dGeomCCylinderSetParams( id, originalRadius * maxRadiusScale, originalLength * scale[2] );
+               dGeomCCylinderSetParams( id, originalRadius, originalLength);
             }
             break;
          case dRayClass:
@@ -1386,7 +1381,7 @@ void Transformable::PrePhysicsStepUpdate()
                dGeomRayGet(mOriginalGeomID, start, dir);
 
                // Ignore x/y scaling, use z to scale ray
-               dGeomRaySetLength( id, originalLength * scale[2] );
+               dGeomRaySetLength( id, originalLength );
             }
             break;
          case dTriMeshClass:

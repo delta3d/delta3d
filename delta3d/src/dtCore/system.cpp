@@ -123,7 +123,13 @@ namespace dtCore
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void System::SetFrameStep(double newRate) 
+   double System::GetCorrectSimulationTime() const 
+   {
+      return mCorrectSimulationTime;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void System::SetFrameRate(double newRate) 
    {
       mFrameTime = 1.0/newRate;
    }
@@ -141,7 +147,7 @@ namespace dtCore
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   double System::GetFrameStep() const 
+   double System::GetFrameRate() const 
    {
       return 1.0/mFrameTime;
    }
@@ -338,6 +344,7 @@ namespace dtCore
       time_t realTime;
       time(&realTime); 
       mRealClockTime = realTime * 1000000;
+      mSimulationTime = mCorrectSimulationTime = 0.0;
       mLastDrawClockTime = mRealClockTime;
       mSimulationClockTime = mRealClockTime;
    }

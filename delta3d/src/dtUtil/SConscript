@@ -4,7 +4,7 @@ srcs = env.SGlob('*.cpp')
 deps =[ 'OpenThreads', 'osg', 'osgDB', 'xerces-c', 'User32']
 
 defines = []
-if env['OS'] == 'windows':
-   defines = ['DT_UTIL_LIBRARY']
+#if env['OS'] == 'windows':
+defines = ['DT_UTIL_LIBRARY']
 
 env.BuildLib( 'dtUtil', srcs, deps, defines, prefixHeader = "inc/prefix/dtutilprefix.h")

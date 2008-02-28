@@ -3,7 +3,8 @@
 #ifndef gui_fltk_h
 #define gui_fltk_h
 #include <FL/Fl.H>
-#include "dtCore/base.h"
+#include <dtCore/base.h>
+#include <dtInspector/export.h>
 ///Do not create directly - use dtCore::GUI instead
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Browser.H>
@@ -23,7 +24,7 @@
 #include <FL/Fl_Check_Browser.H>
 #include <FL/Fl_Return_Button.H>
 
-class UserInterface {
+class DT_INSPECTOR_EXPORT UserInterface {
 public:
   Fl_Double_Window* make_window();
   Fl_Double_Window *MainWindow;
@@ -69,15 +70,6 @@ private:
   Fl_Value_Input *TransformR;
   void cb_TransformR_i(Fl_Value_Input*, void*);
   static void cb_TransformR(Fl_Value_Input*, void*);
-  Fl_Value_Input *TransformScaleX;
-  void cb_TransformScaleX_i(Fl_Value_Input*, void*);
-  static void cb_TransformScaleX(Fl_Value_Input*, void*);
-  Fl_Value_Input *TransformScaleY;
-  void cb_TransformScaleY_i(Fl_Value_Input*, void*);
-  static void cb_TransformScaleY(Fl_Value_Input*, void*);
-  Fl_Value_Input *TransformScaleZ;
-  void cb_TransformScaleZ_i(Fl_Value_Input*, void*);
-  static void cb_TransformScaleZ(Fl_Value_Input*, void*);
   Fl_Round_Button *TransformCSAbsButton;
   void cb_TransformCSAbsButton_i(Fl_Round_Button*, void*);
   static void cb_TransformCSAbsButton(Fl_Round_Button*, void*);

@@ -350,15 +350,6 @@ namespace dtDAL
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ActorProxyIcon::SetScale(const osg::Vec3 &newScale)
-   {
-      dtCore::Transform tx;
-      mIconNode->GetTransform(tx);
-      tx.SetScale(newScale);
-      mIconNode->SetTransform(tx);
-   }
-
-   //////////////////////////////////////////////////////////////////////////
    osg::Image *ActorProxyIcon::GetBillBoardImage()
    {
       osg::Image *image = NULL;

@@ -377,95 +377,95 @@ void WalkMotionModel::OnMessage(MessageData *data)
       data->message == "preframe")
    {
       double dtCore = *static_cast<double*>(data->userData);
-      
+
       Transform transform;
-      
+
       GetTarget()->GetTransform(transform);
-      
-      osg::Vec3 xyz, hpr, scale;
-      
-      transform.Get(xyz, hpr, scale);
-      
+
+      osg::Vec3 xyz, hpr;
+
+      transform.Get(xyz, hpr);
+
       if(mTurnLeftRightAxis != 0)
       {
          hpr[0] -= float(mTurnLeftRightAxis->GetState() * mMaximumTurnSpeed * dtCore);
       }
-      
+
       hpr[1] = 0.0f;
       hpr[2] = 0.0f;
-      
+
       transform.SetRotation(hpr);
-      
+
       osg::Vec3 translation(0, 0, 0);
-      
+
       if(mWalkForwardBackwardAxis != 0)
       {
          translation[1] = float(mWalkForwardBackwardAxis->GetState() * mMaximumWalkSpeed * dtCore);
       }
-      
+
       if(mSidestepLeftRightAxis != 0)
       {
          translation[0] = float(mSidestepLeftRightAxis->GetState() * mMaximumSidestepSpeed * dtCore);
       }
-      
+
       osg::Matrix mat;
-      
+
       transform.GetRotation(mat);
-      
+
       //sgXformVec3(translation, mat);
       translation = osg::Matrix::transform3x3(translation, mat);
-      
+
       //sgAddVec3(xyz, translation);
       xyz += translation;
-      
+
       if(mScene.get() != 0)
       {
          osgUtil::IntersectVisitor iv;
-      
+
          osg::Vec3 start(
             xyz[0],
             xyz[1],
             xyz[2] + mMaximumStepUpDistance - mHeightAboveTerrain
          );
-         
+
          osg::Vec3 end(
             xyz[0], 
             xyz[1], 
             xyz[2] - 10000.0f
          );
-         
+
          osg::LineSegment* seg = new osg::LineSegment(start, end);
-            
+
          iv.addLineSegment(seg);
-      
+
          mScene->GetSceneNode()->accept(iv);
-         
+
          float height = 0.0f;
-         
+
          if(iv.hits())
          {
             height = iv.getHitList(seg)[0].getWorldIntersectPoint()[2];
          }
-         
+
          height += mHeightAboveTerrain;
-         
+
          if(xyz[2] <= height)
          {
             xyz[2] = height;
-            
+
             mDownwardSpeed = 0.0f;
          }
          else if(xyz[2] > height)
          {
             xyz[2] -= float(mDownwardSpeed * dtCore);
-            
+
             mDownwardSpeed += float(9.8 * dtCore);
          }
       }
-      
+
       transform.SetTranslation(xyz);
-      
-      GetTarget()->SetTransform(transform);  
+
+      GetTarget()->SetTransform(transform);
    }
 }
 

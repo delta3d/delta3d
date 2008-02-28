@@ -35,7 +35,11 @@
 #    define DT_PLUGIN_EXPORT __declspec(dllimport)
 #  endif
 #else
-#  define DT_PLUGIN_EXPORT
+#   ifdef DT_PLUGIN
+#      define DT_PLUGIN_EXPORT __attribute__ ((visibility("default")))
+#   else
+#      define DT_PLUGIN_EXPORT
+#   endif 
 #endif
 
 #endif

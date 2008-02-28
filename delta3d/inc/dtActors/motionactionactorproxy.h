@@ -77,9 +77,6 @@ public:
    void SetTranslation(const osg::Vec3 &translation);
    osg::Vec3 GetTranslation();
 
-   void SetScale(const osg::Vec3 &scale);
-   osg::Vec3 GetScale();
-
 protected:
 
    virtual ~MotionActionActorProxy() {}

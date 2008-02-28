@@ -22,8 +22,8 @@ deps = [ 'dtAnim', 'dtDAL', 'dtUtil', 'dtCore', 'dtChar', 'dtABC', 'dtAudio', 'o
         'Rpcrt4', 'Winmm', 'Gdi32', 'uuid', 'Xxf86vm', 'CoreFoundation', 'IOKit',
         'Carbon', 'dtGame']
 
-if env['OS'] == 'windows':
-   defines += ['DT_PLUGIN']
+#if env['OS'] == 'windows':
+defines += ['DT_PLUGIN']
 
 dtActors = env.BuildLib( 'dtActors', srcs, deps, defines,
                      overrideShLinkFlags = overrideShLink, overrideShLibSuffix = overrideShSuffix, prefixHeader = 'inc/prefix/dtdalprefix.h' )

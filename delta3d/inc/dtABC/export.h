@@ -32,7 +32,11 @@
 #      define DT_ABC_EXPORT __declspec(dllimport)
 #   endif 
 #else
-#   define DT_ABC_EXPORT
+#   ifdef DT_ABC_LIBRARY
+#      define DT_ABC_EXPORT __attribute__ ((visibility("default")))
+#   else
+#      define DT_ABC_EXPORT
+#   endif 
 #endif
 
 

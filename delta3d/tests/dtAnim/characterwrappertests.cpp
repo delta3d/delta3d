@@ -96,7 +96,7 @@ namespace dtAnim
       mCharacter->SetSpeed(1.0f);
       mCharacter->Update(1.0f);
       mCharacter->GetTransform(tx);
-      pos = tx.GetTranslation();
+      tx.GetTranslation(pos);
       CPPUNIT_ASSERT_EQUAL(osg::Vec3(5.0f, 6.0f, 10.0f), pos);
 
       CPPUNIT_ASSERT_EQUAL(0.0f, mCharacter->GetHeading());

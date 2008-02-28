@@ -357,9 +357,9 @@ bool OrbitMotionModel::AxisStateChanged(const Axis* axis,
       
       GetTarget()->GetTransform(transform);
       
-      osg::Vec3 xyz, hpr, scale;
+      osg::Vec3 xyz, hpr;
       
-      transform.Get(xyz, hpr, scale);
+      transform.Get(xyz, hpr);
       
       if(axis == mAzimuthAxis.get())
       {
@@ -462,7 +462,7 @@ bool OrbitMotionModel::AxisStateChanged(const Axis* axis,
          xyz += translation;
       }
       
-      transform.Set(xyz, hpr, scale);
+      transform.Set(xyz, hpr);
       
       GetTarget()->SetTransform(transform);
 

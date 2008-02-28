@@ -1016,7 +1016,8 @@ void HLAComponentTests::TestReflectAttributes()
 
       dtCore::Transform xform;
       proxy->GetGameActor().GetTransform(xform);
-      const osg::Vec3& actualTranslation = xform.GetTranslation();
+      osg::Vec3 actualTranslation;
+      xform.GetTranslation(actualTranslation);
       osg::Vec3 actualRotation;
       xform.GetRotation(actualRotation);
 

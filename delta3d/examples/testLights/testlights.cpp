@@ -33,7 +33,7 @@ void TestLightsApp::Config()
 
    // create a global spot light.
    mGlobalSpot = new SpotLight( 1, "GlobalSpotlight" );
-   trans.Set( 5.0f, 8.0f, 2.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f );
+   trans.Set( 5.0f, 8.0f, 2.0f, 0.0f, 0.0f, 0.0f);
    mGlobalSpot->SetTransform( trans );
    mGlobalSpot->SetSpotCutoff( 20.0f );
    mGlobalSpot->SetSpotExponent( 50.0f );
@@ -44,7 +44,7 @@ void TestLightsApp::Config()
    mSphere->LoadFile( "models/physics_happy_sphere.ive" );
    
    // we want the sphere 1 unit below light so we can see effect of local light and
-   trans.Set( 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f ); 
+   trans.Set( 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f); 
    mSphere->SetTransform( trans );
 
    // create a global positional light.
@@ -60,7 +60,7 @@ void TestLightsApp::Config()
    mGlobalInfinite->SetEnabled( false );
 
    // set camera stuff
-   trans.Set( 30.0f, -20.0f, 25.0f, 40.0f, -33.0f, 0.0f, 1.0f, 1.0f, 1.0f );
+   trans.Set( 30.0f, -20.0f, 25.0f, 40.0f, -33.0f, 0.0f);
    GetCamera()->SetTransform( trans );
 
    osg::Vec3 camLoc, origin;
@@ -146,7 +146,7 @@ void TestLightsApp::PreFrame( const double deltaFrameTime )
    // move the global positional light in a circle
    float tx = 1.5*cos( osg::DegreesToRadians(countOne) ) + 2.0f;
    float ty = 1.5*sin( osg::DegreesToRadians(countOne) ) + 5.0f;
-   trans.Set( tx, ty, 2.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f ); 
+   trans.Set( tx, ty, 2.0f, 0.0f, 0.0f, 0.0f); 
    mPositional->SetTransform( trans );
    
    mGlobalInfinite->SetDiffuse( redValue, greenValue, blueValue, 1.0f ); //change color

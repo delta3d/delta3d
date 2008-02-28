@@ -29,7 +29,11 @@
 #    define TEST_ANIM_EXPORT __declspec(dllimport)
 #  endif
 #else
-#  define TEST_ANIM_EXPORT
+#   ifdef TEST_ANIM_LIBRARY
+#      define TEST_ANIM_EXPORT __attribute__ ((visibility("default")))
+#   else
+#      define TEST_ANIM_EXPORT
+#   endif 
 #endif
 
 #endif

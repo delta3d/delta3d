@@ -21,8 +21,8 @@
 #ifndef DELTA_OBJECT_ACTOR_PROXY
 #define DELTA_OBJECT_ACTOR_PROXY
 
-#include "dtDAL/plugin_export.h"
-#include "dtDAL/physicalactorproxy.h"
+#include <dtDAL/plugin_export.h>
+#include <dtDAL/physicalactorproxy.h>
 
 namespace dtActors 
 {

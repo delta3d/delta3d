@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0107 
+version 1.0108 
 header_name {gui_fltk.h} 
 code_name {gui_fltk.cpp}
 decl {\#include "dtCore/base.h"} {public
@@ -14,7 +14,7 @@ class UserInterface {open
   } {
     Fl_Window MainWindow {
       label dtCore open
-      xywh {691 118 545 555} type Double visible
+      xywh {552 191 545 555} type Double visible
     } {
       Fl_Browser InstanceList {
         user_data this
@@ -62,7 +62,7 @@ class UserInterface {open
         }
       }
       Fl_Group TransformGroup {
-        label Transformable
+        label Transformable open selected
         xywh {245 145 295 105} box ENGRAVED_FRAME align 5 hide
       } {
         Fl_Value_Input TransformX {
@@ -101,26 +101,8 @@ class UserInterface {open
           callback {((UserInterface*)v)->TransformPosCB(o)}
           private xywh {355 225 60 20} minimum -500000 maximum 500000 step 0.1
         }
-        Fl_Value_Input TransformScaleX {
-          label {ScaleX:}
-          user_data this
-          callback {((UserInterface*)v)->TransformPosCB(o)}
-          private tooltip {Scale the Transformable in the x-axis} xywh {475 185 60 20} maximum 500000 step 0.1 value 1
-        }
-        Fl_Value_Input TransformScaleY {
-          label {ScaleY:}
-          user_data this
-          callback {((UserInterface*)v)->TransformPosCB(o)}
-          private tooltip {Scale the Transformable in the y-axis} xywh {475 205 60 20} maximum 500000 step 0.1 value 1
-        }
-        Fl_Value_Input TransformScaleZ {
-          label {ScaleZ:}
-          user_data this
-          callback {((UserInterface*)v)->TransformPosCB(o)}
-          private tooltip {Scale the Transformable in the z-axis} xywh {475 225 60 20} maximum 500000 step 0.1 value 1
-        }
         Fl_Group {} {
-          label System
+          label System open
           xywh {310 150 165 30} box THIN_DOWN_FRAME align 4
         } {
           Fl_Round_Button TransformCSAbsButton {
@@ -932,7 +914,7 @@ class UserInterface {open
         Fl_Value_Input InfLightAzInput {
           label {Az.}
           user_data this
-          callback {((UserInterface*)v)->InfLightCB(o)} selected
+          callback {((UserInterface*)v)->InfLightCB(o)}
           private xywh {134 300 60 25} align 1 maximum 500000 step 0.1
         }
         Fl_Value_Input InfLightElevInput {

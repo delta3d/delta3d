@@ -200,7 +200,9 @@ CPPUNIT_TEST_SUITE_REGISTRATION(SystemTests);
 
 //////////////////////////////////////////////////////////////////////////
 void SystemTests::setUp()
-{}
+{
+   System::GetInstance().SetSystemStages(System::STAGES_DEFAULT);
+}
 
 //////////////////////////////////////////////////////////////////////////
 void SystemTests::tearDown()
@@ -208,13 +210,15 @@ void SystemTests::tearDown()
    dtCore::System::GetInstance().SetUseFixedTimeStep(false);
    dtCore::System::GetInstance().Stop();
    dtCore::System::GetInstance().SetPause(false);
-   dtCore::System::GetInstance().SetFrameStep(1.0f/60.0f);
+   dtCore::System::GetInstance().SetFrameRate(1.0f/60.0f);
+
+   System::GetInstance().SetSystemStages(System::STAGES_DEFAULT);
 }
 
 //////////////////////////////////////////////////////////////////////////
 void SystemTests::TestStepping()
 {
-   dtCore::RefPtr<dtABC::Application> app = new dtABC::Application( "config.xml" );
+   dtCore::RefPtr<dtABC::Application> app = &GetGlobalApplication();
 
    mDummyDrawable = new DummyDrawable();
    mDummyNode = new DummyNode();
@@ -224,15 +228,19 @@ void SystemTests::TestStepping()
    app->GetScene()->GetSceneNode()->addChild(mDummyNode->GetOSGNode());
    mDummyNode->GetOSGNode()->setCullCallback(mDummyCallback.get());
 
+   app->Config();
+   
    dtCore::System& ourSystem = dtCore::System::GetInstance();
-   ourSystem.SetFrameStep(1.0/0.0321);
+   ourSystem.SetFrameRate(1.0/0.0321);
    ourSystem.SetMaxTimeBetweenDraws(.01);
    ourSystem.SetUseFixedTimeStep(true);
 
-   app->Config();
-
    ourSystem.SetShutdownOnWindowClose(false);
    ourSystem.Start();
+   
+   CPPUNIT_ASSERT(ourSystem.GetSimulationTime() == 0.0);
+   CPPUNIT_ASSERT(ourSystem.GetCorrectSimulationTime() == 0.0);
+   
    ourSystem.SetPause(false);
    ourSystem.Step();
 
@@ -242,11 +250,11 @@ void SystemTests::TestStepping()
 
    dtCore::AppSleep(200);
    ourSystem.Step();
-   
+
    CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("Time should be fixed",
             0.0321, mDummyDrawable->m_TimeOne, 0.001);
 
-   ourSystem.SetFrameStep(1.0/0.0543);
+   ourSystem.SetFrameRate(1.0/0.0543);
    ourSystem.SetTimeScale(0.32);
 
    dtCore::AppSleep(100);
@@ -264,13 +272,13 @@ void SystemTests::TestProperties()
    dtCore::System& ourSystem = dtCore::System::GetInstance();
 
    CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("Frame Step deflault is wrong",
-      ourSystem.GetFrameStep(), 1.0/60.0 , 0.0001);
+      ourSystem.GetFrameRate(), 1.0/60.0 , 0.0001);
 
    double aRandomFloat = dtUtil::RandFloat(10.0f, 50.0f);
-   ourSystem.SetFrameStep(aRandomFloat);
+   ourSystem.SetFrameRate(aRandomFloat);
 
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Frame Step Property is broken",
-      aRandomFloat, ourSystem.GetFrameStep() );
+      aRandomFloat, ourSystem.GetFrameRate() );
 
    aRandomFloat = dtUtil::RandFloat(0.0f, 10.0f);
    ourSystem.SetMaxTimeBetweenDraws(aRandomFloat);

@@ -36,7 +36,11 @@
 #	  define DT_TERRAIN_EXPORT __declspec(dllimport)
 #	endif
 #else
-#  define DT_TERRAIN_EXPORT
+#   ifdef DT_TERRAIN_LIBRARY
+#      define DT_TERRAIN_EXPORT __attribute__ ((visibility("default")))
+#   else
+#      define DT_TERRAIN_EXPORT
+#   endif 
 #endif
 
 #endif

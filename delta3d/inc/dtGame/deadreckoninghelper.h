@@ -406,7 +406,7 @@ namespace dtGame
           * Computes the new rotation for the object.  This method handles VELOCITY_ONLY and 
           * VELOCITY_AND_ACCELERATION, but not static. This is called DRVelocityAcceleration().
           */
-         void DeadReckonTheRotation(osg::Matrix &rot, dtCore::Transform &xform);
+         void DeadReckonTheRotation(dtCore::Transform &xform);
 
          /**
           * Computes the new position for the object.  This method handles VELOCITY_ONLY and 

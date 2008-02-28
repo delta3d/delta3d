@@ -100,20 +100,20 @@ namespace dtNetGM
         virtual int getSize() const;
 
 		GNE::gbyte* GetPayloadBuffer() { return mPayloadBuffer; };
-		unsigned int GetPayloadSize() { return unsigned int(mPayloadSize); };
+		unsigned int GetPayloadSize() { return unsigned(mPayloadSize); };
 		void SetPayloadSize(GNE::guint16 size) { mPayloadSize = size; };
 
 		void SetDataStreamId(GNE::guint16 id) { mDataStreamId = id; };
-		unsigned int GetDataStreamId() { return unsigned int(mDataStreamId); };
+		unsigned int GetDataStreamId() { return unsigned(mDataStreamId); };
 
 		void SetDataStreamSize(GNE::guint16 size) { mDataStreamSize = size; };
-		unsigned int GetDataStreamSize() { return unsigned int(mDataStreamSize); };
+		unsigned int GetDataStreamSize() { return unsigned(mDataStreamSize); };
 
 		void SetPacketCount(GNE::guint8 count) { mPacketCount = count; };
-		unsigned int GetPacketCount() { return unsigned int(mPacketCount); };
+		unsigned int GetPacketCount() { return unsigned(mPacketCount); };
 
 		void SetIndex(GNE::guint8 index) { mPacketId = index; };
-		unsigned int GetIndex() { return unsigned int(mPacketId); };
+		unsigned int GetIndex() { return unsigned(mPacketId); };
 
     private:
 		GNE::guint16 mDataStreamId; // contains an ID number for the datastream, a sequence can contain several packets

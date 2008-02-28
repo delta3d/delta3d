@@ -32,7 +32,11 @@
 #      define DT_ANIM_EXPORT __declspec(dllimport)
 #   endif
 #else
-#   define DT_ANIM_EXPORT
+#   ifdef DT_ANIM_LIBRARY
+#      define DT_ANIM_EXPORT __attribute__ ((visibility("default")))
+#   else
+#      define DT_ANIM_EXPORT
+#   endif 
 #endif
 
 #endif // DELTA_ANIM_EXPORT

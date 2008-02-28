@@ -29,7 +29,11 @@
 #    define DT_DIS_EXPORT __declspec(dllimport)
 #  endif
 #else
-#  define DT_DIS_EXPORT
+#   ifdef DT_DIS_LIBRARY
+#      define DT_DIS_EXPORT __attribute__ ((visibility("default")))
+#   else
+#      define DT_DIS_EXPORT
+#   endif 
 #endif
 
 /// the Delta3D support framework for the DIS network protocol.

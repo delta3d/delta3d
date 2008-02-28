@@ -47,7 +47,7 @@ namespace dtCore
     * To enable fixed time stepping, you will need to set the rate to the rate you
     * want, the MaxTimeBetweenDraws to something like .1, and the use fixed time step
     * to true
-    * ourSystem.SetFrameStep(60);
+    * ourSystem.SetFrameRate(60);
     * ourSystem.SetMaxTimeBetweenDraws(.1);
     * ourSystem.SetUseFixedTimeStep(true);
     *
@@ -207,6 +207,13 @@ namespace dtCore
        */
       double GetSimulationTime() const;
       
+      /** 
+       * This is the Simulation time that would be based on actual passage of time. This won't
+       * match the simulation time always when SetUseFixedTimeStep(true) is called.  The value
+       * is probably not of any use to a developer.  This accessor exists for the sake of unit testsing.
+       */
+      double GetCorrectSimulationTime() const;
+      
       /**
        * Sets the simulation time.  It is assumed that part of the simulation is using this exact value to keep track of things.
        * @param newTime the new time in seconds since the start of the simulation for the simualtion time.
@@ -214,7 +221,7 @@ namespace dtCore
       void SetSimulationTime(double newTime);
 
       /// this is the amount it should step by, only valid in mUseFixedTimeRate == true
-      void SetFrameStep(double newRate);
+      void SetFrameRate(double newRate);
       
       /// your minimum number of frames you want it to draw, only valid in mUseFixedTimeRate == true
       void SetMaxTimeBetweenDraws(double newTime);
@@ -223,7 +230,7 @@ namespace dtCore
       void SetUseFixedTimeStep(bool value);
 
       /// return the frame step, in case others need to use this.
-      double GetFrameStep() const;
+      double GetFrameRate() const;
 
       /// return to see if we are using the fixed time stepping feature of the engine.
       bool GetUsesFixedTimeStep() const;

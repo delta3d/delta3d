@@ -125,7 +125,7 @@ namespace dtActors
          virtual void TickRemote(const dtGame::Message& tickMessage);
 
       protected:
-         
+
          virtual ~DistanceSensorActor();
          SensorMap mSensors;
          std::vector<std::string> mRemoveList;

@@ -21,7 +21,11 @@
 	#    define PREVIEWER_EXPORT   __declspec(dllimport)
 	#endif /* PREVIEWER_LIBRARY */
 #else
-	#define PREVIEWER_EXPORT 
+#   ifdef PREVIEWER_LIBRARY
+#      define PREVIEWER_EXPORT __attribute__ ((visibility("default")))
+#   else
+#      define PREVIEWER_EXPORT
+#   endif 
 #endif 
 
 #endif

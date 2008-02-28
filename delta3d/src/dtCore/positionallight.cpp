@@ -35,8 +35,8 @@ public:
             
       osg::Light* osgLight = mPositionalLight->GetLightSource()->getLight();
 
-      float x, y, z, h, p, r, sx, sy, sz;
-      trans.Get( x, y, z, h, p, r, sx, sy, sz );
+      float x, y, z, h, p, r;
+      trans.Get( x, y, z, h, p, r);
 
       osg::Vec4 position( x, y, z, 1.0f ); //force positional lighting with w of 1.0f
       osgLight->setPosition( position * osg::Matrix::inverse( absMatrix ) );

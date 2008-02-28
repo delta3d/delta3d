@@ -26,7 +26,7 @@
 
 namespace dtDIS
 {
-   enum DT_DIS_EXPORT DomainType
+   enum DomainType
    {
       DOMAIN_LAND = 1,
       DOMAIN_AIR = 2,

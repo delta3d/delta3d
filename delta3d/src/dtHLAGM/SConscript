@@ -6,7 +6,7 @@ if env.get('rti') != 0 :
    deps = [ 'dtGame', 'dtDAL', 'dtABC', 'dtCore', 'osgSim', 'winsock' ] + env['rtiLibs']
          
    defines = []
-   if env['OS'] == 'windows':
-      defines = ['DT_HLAGM_LIBRARY']
+   #if env['OS'] == 'windows':
+   defines = ['DT_HLAGM_LIBRARY']
 
    env.BuildLib( 'dtHLAGM', srcs, deps, defines )

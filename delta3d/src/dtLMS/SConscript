@@ -15,8 +15,8 @@ deps =  [ 'dtDAL', 'dtGame', 'dtUtil', 'dtCore', 'dtAI', 'ode',
           'uuid', 'Xxf86vm', 'CoreFoundation', 'IOKit', 'Carbon', 'winsock']
 
 defines = []
-if env['OS'] == 'windows':
-   defines = ['DT_LMS_LIBRARY']
+#if env['OS'] == 'windows':
+defines = ['DT_LMS_LIBRARY']
 
 libdtLMS = env.BuildLib( 'dtLMS', srcs, deps, defines, prefixHeader = "inc/prefix/dtgameprefix.h" )
 

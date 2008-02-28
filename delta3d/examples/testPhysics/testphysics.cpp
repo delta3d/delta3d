@@ -73,15 +73,15 @@ public:
 
       //position the camera
       Transform position;
-      position.Set( 0.0f, -20.0f, 7.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f );
+      position.Set( 0.0f, -20.0f, 7.0f, 0.0f, 0.0f, 0.0f);
       GetCamera()->SetTransform(position);
 
       //position first falling crate
-      position.Set( 0.55f, 0.0f, 6.0f, 0.0f, 40.0f, 0.0f, 1.0f, 1.0f, 1.0f );
+      position.Set( 0.55f, 0.0f, 6.0f, 0.0f, 40.0f, 0.0f);
       obj2->SetTransform(position);
 
       //position the crate on the ground
-      position.Set( 0.0f, 0.0f, 3.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f );
+      position.Set( 0.0f, 0.0f, 3.5f, 0.0f, 0.0f, 0.0f);
       obj3->SetTransform(position);
 
       double lx = 1.0;
@@ -223,23 +223,22 @@ protected:
                                  RandFloat( 0.0f, 180.0f ),
                                  RandFloat( 0.0f, 90.0f ),
                                  RandFloat( 0.0f, 90.0f ) );
-
-               float randomScale = RandFloat( 0.5f, 2.0f );
-               xform.SetScale( randomScale, randomScale, randomScale );
-            
                box->SetCollisionBox();
                box->SetTransform(xform);
-            
+
+               float randomScale = RandFloat( 0.5f, 2.0f );
+               box->SetModelScale( osg::Vec3(randomScale, randomScale, randomScale) );
+
                double lx = 1.0;
                double ly = 1.0;
-               double lz = 1.0;             
-               
+               double lz = 1.0;
+
                dMass mass;
                dMassSetBox( &mass, 1.0, lx, ly, lz );
                box->SetMass(&mass);
-               
+
                box->EnableDynamics();
-               
+
                mToAdd.push(box);
             }
             else
@@ -255,31 +254,31 @@ protected:
             {
                RefPtr<Object> sphere = new Object("sphere");
                sphere->LoadFile( "models/physics_happy_sphere.ive" );
-               
+
                Transform xform(  RandFloat( -2.0f, 2.0f ),
                                  RandFloat( -2.0f, 2.0f ),
                                  RandFloat( 8.0f, 13.0f ),
                                  RandFloat( 0.0f, 180.0f ),
                                  RandFloat( 0.0f, 90.0f ),
                                  RandFloat( 0.0f, 90.0f ) );
-               
+
                float randomScale = RandFloat( 0.5f, 2.0f );
-               xform.SetScale( randomScale, randomScale, randomScale );
-               
+               sphere->SetModelScale( osg::Vec3(randomScale, randomScale, randomScale) );
+
                sphere->SetCollisionSphere();
                sphere->SetTransform(xform);
-               
+
                double radius = 0.5;
-               
+
                dMass mass;
                dMassSetSphere( &mass, 1.0, radius );
                sphere->SetMass(&mass);
                sphere->EnableDynamics();
-               
+
                mToAdd.push(sphere);
             }
             else
-            {         
+            {
                mToRemove.push( mObjects.front() );
             }
             verdict = true;
@@ -291,29 +290,29 @@ protected:
             {
                RefPtr<Object> cyl = new Object("cylinder");
                cyl->LoadFile( "models/physics_barrel.ive" );
-               
+
                Transform xform(  RandFloat( -2.0f,2.0f),
                                  RandFloat( -2.0f, 2.0f ),
                                  RandFloat( 8.0f, 13.0f ),
                                  RandFloat( 0.0f, 180.0f ),
                                  RandFloat( 0.0f, 90.0f ),
                                  RandFloat( 0.0f, 90.0f ) );
-               
+
                float randomScale = RandFloat( 0.5f, 2.0f );
-               xform.SetScale( randomScale, randomScale, randomScale );
-               
+               cyl->SetModelScale( osg::Vec3(randomScale, randomScale, randomScale) );
+
                cyl->SetCollisionCappedCylinder();
                cyl->SetTransform(xform);
-               
+
                double radius = 0.321; 
-               double length = 1.0;                       
-               
+               double length = 1.0;
+
                dMass mass;
                dMassSetCappedCylinder(&mass, 1.0, 2, radius, length);
                cyl->SetMass(&mass);
-               
+
                cyl->EnableDynamics();
-               
+
                mToAdd.push(cyl);
             }
             else

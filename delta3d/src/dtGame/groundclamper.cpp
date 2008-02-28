@@ -157,11 +157,12 @@ namespace dtGame
       {
          dtCore::Transform xform;
          GetEyePointActor()->GetTransform(xform, dtCore::Transformable::ABS_CS);
-         mCurrentEyePointABSPos = xform.GetTranslation();
+         xform.GetTranslation(mCurrentEyePointABSPos);
 
          if (mLogger.IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
          {
-            osg::Vec3& debugPos = xform.GetTranslation();
+            osg::Vec3 debugPos;
+            xform.GetTranslation(debugPos);
 
             mLogger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                      "Setting the eye point to the position %f, %f, %f.",
@@ -186,8 +187,8 @@ namespace dtGame
          mLogger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Using three point ground clamping.");
       }
 
-      osg::Vec3& position = xform.GetTranslation();
-      osg::Matrix& rotation = xform.GetRotation();
+      osg::Matrix rotation;
+      xform.GetRotation(rotation);
 
       osg::Vec3 modelDimensions = data.GetModelDimensions(); 
       if (!data.UseModelDimensions())
@@ -277,10 +278,10 @@ namespace dtGame
       else if (mLogger.IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {
          std::ostringstream ss;
-         ss << "Found no hit with eye point [" << mCurrentEyePointABSPos << "] on points:";
+         ss << "Found no hit with eye point \"" << mCurrentEyePointABSPos << "\" on points:";
          for (unsigned i = 0; i < 3; ++i)
          {
-            ss << " [" << points[i] << "]";
+            ss << " \"" << points[i] << "\"";
          }
          
          mLogger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
@@ -293,12 +294,23 @@ namespace dtGame
       }
       averageZ /= 3;
       
+      osg::Vec3 position;
+      xform.GetTranslation(position);
+
       //save the offset
       data.SetLastClampedOffset(averageZ - position.z());
 
       //move the actor position up to the ground.
       position.z() = averageZ;
 
+      if (mLogger.IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+      {
+         std::ostringstream ss;
+         ss << "Setting z position to average hit position \"" << position
+            << "\" with clamp offset of \"" << data.GetLastClampedOffset() << "\"";
+
+         mLogger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
+      }
 
       osg::Vec3 ab = points[0] - points[2];
       osg::Vec3 ac = points[0] - points[1];
@@ -313,6 +325,9 @@ namespace dtGame
       normalRot.makeRotate(oldNormal, normal);
 
       rotation = rotation * normalRot;
+
+      xform.Set(position, rotation);
+
    }
 
    //////////////////////////////////////////////////////////////////////
@@ -338,7 +353,10 @@ namespace dtGame
             mLogger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
          }
 
-         xform.GetTranslation().z() += data.GetLastClampedOffset();
+         osg::Vec3 position;
+         xform.GetTranslation(position);
+         position.z() += data.GetLastClampedOffset();
+         xform.SetTranslation(position);
          gameActorProxy.GetGameActor().SetTransform(xform, dtCore::Transformable::REL_CS);
       }
 
@@ -371,7 +389,8 @@ namespace dtGame
          }
 
          dtCore::Transform& xform = mGroundClampBatch[i].first;
-         osg::Vec3& singlePoint = xform.GetTranslation();
+         osg::Vec3 singlePoint;
+         xform.GetTranslation(singlePoint);
          
          single.SetSectorAsLineSegment(osg::Vec3(singlePoint[0], singlePoint[1], singlePoint[2] + 100.0f),
                osg::Vec3(singlePoint[0], singlePoint[1], singlePoint[2] - 100.0f));
@@ -390,8 +409,10 @@ namespace dtGame
          for (; i != iend; ++i, ++index)
          {
             dtCore::Transform& xform = i->first;
-            osg::Matrix& rotation = xform.GetRotation();
-            osg::Vec3& singlePoint = xform.GetTranslation();
+            osg::Matrix rotation;
+            xform.GetRotation(rotation);
+            osg::Vec3 singlePoint;
+            xform.GetTranslation(singlePoint);
 
             dtCore::BatchIsector::SingleISector& single = mIsector->EnableAndGetISector(index);
             if (GetClosestHit(single, singlePoint.z(), hp, normal))
@@ -423,6 +444,7 @@ namespace dtGame
                   rotation = rotation * normalRot;
                }
 
+               xform.Set(singlePoint, rotation);
                proxy->GetGameActor().SetTransform(xform, dtCore::Transformable::REL_CS);
             }
          }
@@ -455,7 +477,8 @@ namespace dtGame
 
       if (type == GroundClamper::GroundClampingType::RANGED)
       {
-         osg::Vec3& position = xform.GetTranslation();
+         osg::Vec3 position;
+         xform.GetTranslation(position);
    
          const osg::Vec3 eyePoint = GetLastEyePoint();
          if ((GetEyePointActor() != NULL
@@ -477,8 +500,8 @@ namespace dtGame
          else
          {
             ClampToGroundThreePoint(xform, gameActorProxy, data);
-            position.z() += data.GetGroundOffset();
-            data.SetLastClampedOffset(position.z());
+            //position has changed, so get it again.
+            xform.GetTranslation(position);
    
             if (mLogger.IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
             {
@@ -487,7 +510,7 @@ namespace dtGame
    
                mLogger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
             }
-   
+
             gameActorProxy.GetGameActor().SetTransform(xform, dtCore::Transformable::REL_CS);
          }
       }

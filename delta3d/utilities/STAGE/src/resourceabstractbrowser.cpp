@@ -328,10 +328,12 @@ namespace dtEditQt
        camera.resetRotation();
        osg::Vec3 viewDir = camera.getViewDir();
 
+       osg::Vec3 translation;
+       xform.GetTranslation(translation);
        if (offset > 0.0f)
-           camera.setPosition(xform.GetTranslation() + viewDir*offset*-2.0f);
+           camera.setPosition(translation + viewDir*offset*-2.0f);
        else
-           camera.setPosition(xform.GetTranslation() + bs.center());
+           camera.setPosition(translation + bs.center());
     }
 
     ///////////////////////////////////////////////////////////////////////////////

@@ -133,7 +133,7 @@ namespace dtAI
          {
             dtCore::Transform xform;
             mTransformable->GetTransform(xform, mFrameOfRef);
-            vec = xform.GetTranslation();
+            xform.GetTranslation(vec);
          }
       private:
          dtCore::RefPtr<const dtCore::Transformable> mTransformable;

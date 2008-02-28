@@ -27,6 +27,9 @@
 
 #include <dtCore/loadable.h>
 #include <dtCore/physical.h>
+#include <osg/MatrixTransform>
+#include <osg/NodeCallback>
+#include <osg/Vec3>
 
 namespace dtCore
 {
@@ -50,21 +53,53 @@ namespace dtCore
            */
          Object( TransformableNode &node, const std::string &name = "Object" );
 
-      protected:
+         void SetModelTransform(const dtCore::Transform& xform);
+         void GetModelTransform(dtCore::Transform& xform) const;
 
-         virtual ~Object();
+         //Changes the scale of the model without 
+         void SetModelScale(const osg::Vec3& modelScale);
+         void GetModelScale(osg::Vec3& modelScale) const;
 
-      public:
-                  
-         ///Load a file from disk
+         /// Get the model transform matrix as const.
+         const osg::MatrixTransform& GetModelTransform() const { return *mModelTransform; }
+
+         /** Get the model transform matrix by reference. If you call "setMatrix" on this, you must
+          * call "SetDirty" on this class so the scale can be re-applied.
+          */
+         osg::MatrixTransform& GetModelTransform() { return *mModelTransform; }
+         
+         /*!
+          * Load a geometry from a file using any supplied data file paths set in
+          * dtCore::SetDataFilePathList().  Additional calls to this method will replace
+          * the first geometry for the next.
+          *
+          * @param filename : The name of the file to be loaded
+          * @param useCache : If true, use OSG's file cache
+          */
          virtual osg::Node* LoadFile(const std::string& filename, bool useCache = true);
 
          ///recenters the object geometry on LoadFile
          void RecenterGeometryUponLoad( const bool enable = true ) { mRecenterGeometry = enable; }
 
+         /**
+          *  Tells this object that the scale vector has been changed, so that it
+          *  can be reapplied (at great expense) during an update callback.
+          * This is called automatcally by SetModelScale and SetModelTransform, but 
+          * must be called explicitly if one modifies the model transform directly by calling
+          * #GetModelTransform().setMatrix();
+          */
+         void SetDirty();
+
+      protected:
+         virtual ~Object();
+
       private:
 
          void Ctor();
+
+         dtCore::RefPtr<osg::MatrixTransform> mModelTransform;
+         dtCore::RefPtr<osg::NodeCallback> mUpdateCallback; 
+         osg::Vec3 mScale;
 
          bool mRecenterGeometry;///<if we want to recenter the geometry of the object about the origin upon load
    };   
