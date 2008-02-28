@@ -75,9 +75,9 @@ namespace dtCore
       virtual void SetTranslation( const osg::Vec3d& xyz ) { mTransform.setTrans( xyz ); }
 
       /// adjusts the translation by the given vector
-      void Transform::Move( const osg::Vec3f& distance );
+      void Move( const osg::Vec3f& distance );
       /// adjusts the translation by the given vector
-      void Transform::Move( const osg::Vec3d& distance );
+      void Move( const osg::Vec3d& distance );
 
       /**
        * Set the rotation using heading, pitch, roll (in degrees)
