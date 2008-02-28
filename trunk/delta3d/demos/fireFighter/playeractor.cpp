@@ -106,7 +106,10 @@ void PlayerActor::OnEnteredWorld()
    // Simulate the isector being camera height
    dtCore::Transform xform;
    mIsector->GetTransform(xform);
-   xform.GetTranslation().z() += 0.25f;
+   osg::Vec3 pos;
+   xform.GetTranslation(pos);
+   pos.z() += 0.25f;
+   xform.SetTranslation(pos);
    mIsector->SetTransform(xform);
 
    dtGame::Invokable *listenInvoke = new dtGame::Invokable("ListenForTickMessages", 
@@ -162,12 +165,17 @@ void PlayerActor::AddItemToInventory(GameItemActor &item)
          // Offset the particle system a bit, so it doesn't block
          // the camera
          dtCore::Transform xform;
-         mFireHose->GetTransform(xform);
-         xform.GetTranslation().z() -= 0.1f;
-         mFireHose->SetTransform(xform);
+         mFireHose->GetTransform(xform, ABS_CS);
+         osg::Vec3 pos;
+         xform.GetTranslation(pos);
+         pos.z() -= 0.1f;
+         xform.SetTranslation(pos);
+         mFireHose->SetTransform(xform, ABS_CS);
 
          mFireHose->GetTransform(xform, REL_CS);
-         xform.GetTranslation().y() += 0.1f;
+         xform.GetTranslation(pos);
+         pos.y() += 0.1f;
+         xform.SetTranslation(pos);
          mFireHose->SetTransform(xform, REL_CS);
 
          // Acquired the fire hose, fire the event
@@ -274,8 +282,10 @@ void PlayerActor::ComputeSceneIntersections(const float deltaSimTime)
 
    dtCore::Transform xform;
    GetTransform(xform);
-   osg::Vec3 pos = xform.GetTranslation();
-   osg::Matrix matrix = xform.GetRotation();
+   osg::Vec3 pos;
+   xform.GetTranslation(pos);
+   osg::Matrix matrix;
+   xform.GetRotation(matrix);
    osg::Vec3 at(matrix(1, 0), matrix(1, 1), matrix(1, 2));
    at *= 5;
    mIsector->SetStartPosition(pos);
@@ -370,6 +380,9 @@ void PlayerActor::SetIsCrouched(bool crouch)
 
    dtCore::Transform xform;
    GetTransform(xform);
-   mIsCrouched ? xform.GetTranslation().z() /= 2.0 : xform.GetTranslation().z() *= 2.0; 
+   osg::Vec3 pos;
+   xform.GetTranslation(pos);
+   mIsCrouched ? pos.z() /= 2.0 : pos.z() *= 2.0; 
+   xform.SetTranslation(pos);
    SetTransform(xform);
 }

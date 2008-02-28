@@ -111,7 +111,6 @@ void UserInterface::SelectInstance()
       
       trans.GetTranslation( xyz );
       trans.GetRotation( hpr );
-      trans.GetScale( scale );
 
       TransformX->value(xyz[0]);
       TransformY->value(xyz[1]);
@@ -119,9 +118,6 @@ void UserInterface::SelectInstance()
       TransformH->value(hpr[0]);
       TransformP->value(hpr[1]);
       TransformR->value(hpr[2]);
-      TransformScaleX->value(scale[0]);
-      TransformScaleY->value(scale[1]);
-      TransformScaleZ->value(scale[2]);
 
       TransformGroup->show();
    }
@@ -140,10 +136,10 @@ void UserInterface::SelectInstance()
       Fl_Color fc = fl_color_cube( int(color[0]*(FL_NUM_RED-1)),
                                        int(color[1]*(FL_NUM_GREEN-1)),
                                        int(color[2]*(FL_NUM_BLUE-1)) );
-      
-      CameraClearLoadButton->color(fc);      
-      
-      
+
+      CameraClearLoadButton->color(fc);
+
+
       //rebuild the CameraWinChoice menu here in case
       //we have new Windows's or they changed their names
       CameraWinChoice->clear();
@@ -155,7 +151,7 @@ void UserInterface::SelectInstance()
       }
 
       const Fl_Menu_Item *menu = CameraWinChoice->menu();
-      
+
       for ( int i=0; i<CameraWinChoice->size(); i++)
       {
          DeltaWin *menuItemWin = (DeltaWin*)menu[i].user_data();
@@ -166,11 +162,11 @@ void UserInterface::SelectInstance()
             break;
          }
       }
-      
+
       CameraGroup->show();
    }
    else CameraGroup->hide();
-   
+
    /** Scene **/
    //if (Scene *s = dynamic_cast<Scene*>(b))
    if (dynamic_cast<Scene*>(b))
@@ -179,7 +175,7 @@ void UserInterface::SelectInstance()
       //SceneGroup->show();
    }
    //else SceneGroup->hide();
-   
+
    /** Loadable **/
    if (Loadable *o = dynamic_cast<Loadable*>(b))
    {
@@ -190,7 +186,7 @@ void UserInterface::SelectInstance()
       LoadableGroup->show();
    }
    else LoadableGroup->hide();
-   
+
    /** DeltaWin **/
    if (DeltaWin *w = dynamic_cast<DeltaWin*>(b))
    {
@@ -209,7 +205,7 @@ void UserInterface::SelectInstance()
 
       if (w->GetFullScreenMode()) WinFullScreenToggle->value(1);
       else                        WinFullScreenToggle->value(0);
-      
+
       WindowGroup->show();
    }
    else WindowGroup->hide();
@@ -707,10 +703,8 @@ void UserInterface::TransformPosCB(Fl_Value_Input*)
              TransformZ->value(),
              TransformH->value(),
              TransformP->value(),
-             TransformR->value(),
-             TransformScaleX->value(),
-             TransformScaleY->value(),
-             TransformScaleZ->value());
+             TransformR->value()
+             );
 
    if (TransformCSAbsButton->value())
    {

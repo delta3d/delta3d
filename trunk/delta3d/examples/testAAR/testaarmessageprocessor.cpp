@@ -153,7 +153,7 @@ TestAARMessageProcessor::CreateNewMovingActor(const std::string &meshName,
       zScale = dtUtil::RandFloat(0.70f, 1.3f);
       xScale = dtUtil::RandFloat(0.70f, 1.3f) * zScale;
       yScale = dtUtil::RandFloat(0.70f, 1.3f) * zScale;
-      object->SetScale(osg::Vec3(xScale, yScale, zScale));
+      //object->SetScale(osg::Vec3(xScale, yScale, zScale));
 
       // set initial random rotation (X = pitch, Y = roll, Z = yaw) for non rotating objects
       // don't change rotating objects cause the movement will follow the rotation, which may

@@ -9,9 +9,6 @@ deps=[ 'dtCore', 'dtUtil', 'ul', 'js', 'ode', 'OpenThreads', 'osg', 'osgDB', 'os
        'User32', 'Advapi32', 'Rpcrt4', 'Winmm', 'Gdi32', 'uuid', 'Xxf86vm',
        'CoreFoundation', 'IOKit', 'Carbon' ]
 
-defines = []
+defines = ['DT_INPUT_PLIB_LIBRARY']
 
-if env['OS'] == 'windows':
-   defines = ['DT_INPUT_PLIB_LIBRARY', 'NOMINMAX']
-    
 env.BuildLib( 'dtInputPLIB', srcs, deps,  defines, prefixHeader = 'inc/prefix/dtcoreprefix.h')

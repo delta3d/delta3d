@@ -12,11 +12,11 @@ dtGameDeps =[ 'dtDAL','dtAI', 'dtUtil', 'dtCore', 'dtAudio', 'dtABC',
               'OpenThreads', 'osg', 'osgDB', 'osgGA', 'osgParticle', 'osgText', 'osgUtil', 
               'osgSim', 'osgFX' ,'xerces-c', 'openal',
               'opengl' ]
-defines = []
+
+defines = ['DT_GAME_LIBRARY']
 
 if env['OS'] == 'windows' :
    dtGameDeps += [ 'User32', 'Advapi32', 'Rpcrt4', 'Winmm', 'Gdi32' ]
-   defines = ['DT_GAME_LIBRARY', 'NOMINMAX']
 elif env['OS'] == 'linux':
    dtGameDeps += [ 'uuid', 'Xxf86vm' ]
 elif env['OS'] == 'darwin':

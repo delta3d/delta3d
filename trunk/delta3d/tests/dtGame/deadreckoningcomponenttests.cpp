@@ -983,11 +983,14 @@ namespace dtGame
             CPPUNIT_ASSERT((*groundClampingType == GroundClamper::GroundClampingType::NONE) == flying);
             CPPUNIT_ASSERT(wasTransformed);
 
+            osg::Vec3 trans;
+            xform.GetTranslation(trans);
             std::ostringstream ss;
-            ss << "The position should be " << helper->GetLastKnownTranslation() << " but it is " << xform.GetTranslation();
+            ss << "The position should be " << helper->GetLastKnownTranslation() << " but it is " 
+            << trans;
 
             CPPUNIT_ASSERT_MESSAGE(ss.str(), 
-                  dtUtil::Equivalent(helper->GetLastKnownTranslation(), xform.GetTranslation(), 3, 1e-2f));
+                  dtUtil::Equivalent(helper->GetLastKnownTranslation(), trans, 3, 1e-2f));
 
             ss.str("");
             osg::Vec3 hpr;

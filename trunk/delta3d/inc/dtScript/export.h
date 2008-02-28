@@ -32,7 +32,11 @@
 #      define DT_SCRIPT_EXPORT __declspec(dllimport)
 #   endif
 #else
-#   define DT_SCRIPT_EXPORT
+#   ifdef DT_SCRIPT_LIBRARY
+#      define DT_SCRIPT_EXPORT __attribute__ ((visibility("default")))
+#   else
+#      define DT_SCRIPT_EXPORT
+#   endif 
 #endif
 
 #endif // DELTA_SCRIPT_EXPORT

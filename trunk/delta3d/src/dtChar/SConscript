@@ -10,8 +10,8 @@ if env['foundLibs'][env['extLibs']['rbody']] != 'notFound':
          'Producer', 'opengl', 'rbody', 'rvrutils', 'rcfgscript' ] 
 
    defines = []
-   if env['OS'] == 'windows':
-      defines = ['DT_CHAR_LIBRARY']
+   #if env['OS'] == 'windows':
+   defines = ['DT_CHAR_LIBRARY']
 
     
    env.BuildLib( 'dtChar', srcs, deps, defines )

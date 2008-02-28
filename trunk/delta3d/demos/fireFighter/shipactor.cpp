@@ -587,11 +587,11 @@ void ShipActor::UpdateCourse(float elapsedTime)
 
 void ShipActor::UpdatePosition(float elapsedTime)
 {
-   float x,y,z,h,p,r,sx,sy,sz;
+   float x,y,z,h,p,r;
    float p51Bearing = ConvertTodtCoreBearing(course);
    float distance = speed * metersPerKnotPerSecond * elapsedTime;
 
-   position.Get(x, y, z, h, p, r, sx, sy, sz);
+   position.Get(x, y, z, h, p, r);
 
    position.Set(
       x += distance * sinf(osg::DegreesToRadians(p51Bearing)),

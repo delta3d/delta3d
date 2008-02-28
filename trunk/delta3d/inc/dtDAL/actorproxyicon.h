@@ -200,8 +200,6 @@ namespace dtDAL
          void SetActorRotation(const osg::Vec3 &hpr);
          void SetActorRotation(const osg::Matrix &mat);
          osg::Matrix GetActorRotation();
-         void SetScale(const osg::Vec3 &newScale);        
-
       protected:
          virtual ~ActorProxyIcon();
 

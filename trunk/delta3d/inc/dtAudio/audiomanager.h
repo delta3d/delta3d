@@ -61,7 +61,7 @@ namespace dtAudio
     * AudioManager:
     *
     *    AudioManager::Instantiate();
-    *    AudioManager::GetManager()->Config();
+    *    AudioManager::GetInstance().Config();
     *
     * Optionally the user can create an AudioConfigData structure
     * to pass to the AudioManager when configuring set some of the

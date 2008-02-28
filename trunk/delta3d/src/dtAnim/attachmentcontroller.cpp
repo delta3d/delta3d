@@ -137,8 +137,7 @@ namespace dtAnim
       osg::Vec3 bodyTranslation = boneTrans + (parentRot * spotDef.mLocalTranslation);
 
       dtCore::Transform x;
-      osg::Vec3 scale(1.0f,1.0f,1.0f);
-      x.Set( bodyTranslation, osg::Matrix(bodyRotation), scale );
+      x.Set( bodyTranslation, osg::Matrix(bodyRotation));
       actor.SetTransform( x, dtCore::Transformable::REL_CS );
    }
 

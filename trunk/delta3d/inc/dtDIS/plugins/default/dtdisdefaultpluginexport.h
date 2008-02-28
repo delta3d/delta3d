@@ -29,7 +29,11 @@
 #    define DT_DIS_DEFAULT_EXPORT __declspec(dllimport)
 #  endif
 #else
-#  define DT_DIS_DEFAULT_EXPORT
+#   ifdef DT_DIS_DEFAULT_PLUGIN
+#      define DT_DIS_DEFAULT_EXPORT __attribute__ ((visibility("default")))
+#   else
+#      define DT_DIS_DEFAULT_EXPORT
+#   endif 
 #endif
 
 #endif // __DELTA_DTDIS_DEFAULT_PLUGIN_EXPORT_H__

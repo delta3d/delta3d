@@ -32,7 +32,11 @@
 #      define DT_AI_EXPORT __declspec(dllimport)
 #   endif 
 #else
-#   define DT_AI_EXPORT
+#   ifdef DT_AI_LIBRARY
+#      define DT_AI_EXPORT __attribute__ ((visibility("default")))
+#   else
+#      define DT_AI_EXPORT
+#   endif 
 #endif
 
 #ifdef _WIN32

@@ -32,7 +32,11 @@
 #      define DT_DAL_EXPORT __declspec(dllimport)
 #   endif
 #else
-#   define DT_DAL_EXPORT
+#   ifdef DT_DAL_LIBRARY
+#      define DT_DAL_EXPORT __attribute__ ((visibility("default")))
+#   else
+#      define DT_DAL_EXPORT
+#   endif 
 #endif
 
 #endif // DELTA_DAL_EXPORT

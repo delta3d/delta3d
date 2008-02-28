@@ -31,20 +31,20 @@ namespace dtDIS
    /// the scope for articulation specific constants, lacking in the DIS dependency, and other tools.
    namespace Articulation
    {
-      enum DT_DIS_EXPORT ParameterTypeDesignator
+      enum ParameterTypeDesignator
       {
          ARTICULATED_PART=0,
          ATTACHED_PART=1
       };
 
-      enum DT_DIS_EXPORT PartType
+      enum PartType
       {
          PART_PRIMARY_TURRET = 4096,
          PART_PRIMARY_GUN = 4416,
          PART_SECONDARY_GUN = 6016
       };
 
-      enum DT_DIS_EXPORT MotionType
+      enum MotionType
       {
          MOTION_AZIMUTH = 11,
          MOTION_AZIMUTH_RATE = 12,

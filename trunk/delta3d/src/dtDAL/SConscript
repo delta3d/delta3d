@@ -15,8 +15,8 @@ deps =  [ 'dtUtil', 'dtCore', 'dtAI', 'ode',
           'uuid', 'Xxf86vm', 'CoreFoundation', 'IOKit', 'Carbon' ]
 
 defines = []
-if env['OS'] == 'windows':
-   defines = ['DT_DAL_LIBRARY']
+#if env['OS'] == 'windows':
+defines = ['DT_DAL_LIBRARY']
 
 libdtDAL = env.BuildLib( 'dtDAL', srcs, deps, defines, prefixHeader = "inc/prefix/dtdalprefix.h" )
 

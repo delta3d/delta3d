@@ -8,8 +8,8 @@ deps = [ 'dtCore', 'openal', 'alut', 'dtUtil', 'OpenThreads',
          'opengl', 'User32' ]
 
 defines = []
-if env['OS'] == 'windows':
-   defines = ['DT_AUDIO_LIBRARY', 'NOMINMAX']
+#if env['OS'] == 'windows':
+defines = ['DT_AUDIO_LIBRARY']
 
 
 env.BuildLib( 'dtAudio', srcs, deps, defines, prefixHeader = 'inc/prefix/dtcoreprefix.h' )

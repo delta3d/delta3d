@@ -58,7 +58,7 @@ class	DT_ANIM_EXPORT AnimNodeBuilder: public osg::Referenced
 public:
    typedef dtUtil::Functor<dtCore::RefPtr<osg::Node>, TYPELIST_1(Cal3DModelWrapper*)> CreateFunc;
 
-   class Cal3DBoundingSphereCalculator : public osg::Node::ComputeBoundingSphereCallback
+   class DT_ANIM_EXPORT Cal3DBoundingSphereCalculator : public osg::Node::ComputeBoundingSphereCallback
    {
       public:
          Cal3DBoundingSphereCalculator(Cal3DModelWrapper& wrapper);

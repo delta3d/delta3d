@@ -389,7 +389,7 @@ def TOOL_BUNDLE(env):
          errorLog.write('Build Configuration: Debug\n\n')
          
          if env['OS'] == 'windows':
-            env.Append( CPPDEFINES = ['WIN32', '_DEBUG', '_NOAUTOLIBMSG'],
+            env.Append( CPPDEFINES = ['WIN32', 'NOMINMAX', '_DEBUG', '_NOAUTOLIBMSG'],
                         CXXFLAGS = ['/EHsc', '/GR', '/MDd' ], #synchronous exception handling (c-?), run-time type info, multi-threaded debug dll
                         LINKFLAGS = ['/NODEFAULTLIB:LIBCMTD', '/NODEFAULTLIB:LIBCD'] ) 
          elif env['OS'] == 'linux':      
@@ -405,7 +405,7 @@ def TOOL_BUNDLE(env):
          errorLog.write('Build Configuration: Release\n\n')
          
          if env['OS'] == 'windows':
-           env.Append( CPPDEFINES = ['WIN32', 'NDEBUG', '_NOAUTOLIBMSG'],
+           env.Append( CPPDEFINES = ['WIN32', 'NOMINMAX', 'NDEBUG', '_NOAUTOLIBMSG'],
                     CXXFLAGS = ['/EHsc', '/GR', '/MD', '/Ox'], #synchronous exception handling (c-?), run-time type info, multi-threaded dll
                     LINKFLAGS = ['/NODEFAULTLIB:LIBCMT', '/NODEFAULTLIB:LIBC'] )  
          elif env['OS'] == 'linux':
@@ -430,12 +430,12 @@ def TOOL_BUNDLE(env):
       elif env['OS'] == 'linux' or env['OS'] == 'darwin':
          if env['CC'].find('gcc') >= 0 or env['CXX'].find('g++') >= 0:
             env.Append(CXXFLAGS=['-Wall'])
-            if env.has_key('CCVERSION') :
-               if int( env['CCVERSION'][:1] ) >= 4 :
-                  env.Append(CXXFLAGS=['-ftree-vectorize'])
-            if env.has_key('CXXVERSION') :
-               if int( env['CXXVERSION'][:1] ) >= 4 :
-                  env.Append(CXXFLAGS=['-ftree-vectorize'])
+            #if env.has_key('CCVERSION') :
+            #   if int( env['CCVERSION'][:1] ) >= 4 :
+                  #env.Append(CXXFLAGS=['-ftree-vectorize', '-fvisibility=hidden'])
+            #if env.has_key('CXXVERSION') :
+               #if int( env['CXXVERSION'][:1] ) >= 4 :
+                  #env.Append(CXXFLAGS=['-ftree-vectorize', '-fvisibility=hidden'])
          if env['CXX'].find('g++') >= 0:
             env.Append(CXXFLAGS=['-Wno-non-virtual-dtor'])
 

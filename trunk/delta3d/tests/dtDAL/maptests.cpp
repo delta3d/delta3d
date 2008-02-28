@@ -827,7 +827,7 @@ void MapTests::TestMapSaveAndLoad()
 
         osg::Vec3 testVec3_1(33.5f, 12.25f, 49.125f);
         osg::Vec3 testVec3_2(-34.75f, 96.03125f, 8.0f);
-        osg::Vec3 testVec3_3(3.125f, 90.25f, 87.0625f);
+        osg::Vec3 testVec3_3(12.3f, 18.1f, -4.7f);
 
         ap = getActorProperty(*map, dtDAL::TransformableActorProxy::PROPERTY_ROTATION, dtDAL::DataType::VEC3, 1);
         static_cast<dtDAL::Vec3ActorProperty*>(ap)->SetValue(testVec3_1);
@@ -836,10 +836,6 @@ void MapTests::TestMapSaveAndLoad()
         ap = getActorProperty(*map, dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION, dtDAL::DataType::VEC3, 1);
         static_cast<dtDAL::Vec3ActorProperty*>(ap)->SetValue(testVec3_2);
         testVec3_2 = static_cast<dtDAL::Vec3ActorProperty*>(ap)->GetValue();
-
-        ap = getActorProperty(*map, dtDAL::TransformableActorProxy::PROPERTY_SCALE, dtDAL::DataType::VEC3, 1);
-        static_cast<dtDAL::Vec3ActorProperty*>(ap)->SetValue(testVec3_3);
-        testVec3_3 = static_cast<dtDAL::Vec3ActorProperty*>(ap)->GetValue();
 
         // Note - some properties, especially orientation ones, tend to mangle the 
         // values that we set so that we don't get back what we passed in.  To handle that
@@ -1036,26 +1032,7 @@ void MapTests::TestMapSaveAndLoad()
         ss.str("");
         ss << ap->GetName() << " value should be " << testVec3_3 << " but it is " << v3d;
         CPPUNIT_ASSERT_MESSAGE(ss.str(),
-            osg::equivalent(v3d[0], double(testVec3_3[0]), 1e-2)
-            && osg::equivalent(v3d[1], double(testVec3_3[1]), 1e-2)
-            && osg::equivalent(v3d[2], double(testVec3_3[2]), 1e-2)
-            );
-            
-        ap = getActorProperty(*map, dtDAL::TransformableActorProxy::PROPERTY_SCALE, dtDAL::DataType::VEC3, 1);
-
-        if (logger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-        {
-            osg::Vec3f val = static_cast<dtDAL::Vec3ActorProperty*>(ap)->GetValue();
-            logger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                "Vec3f Property values: %f, %f, %f", val[0], val[1], val[2]);
-        }
-
-        v3ap = static_cast<dtDAL::Vec3ActorProperty*>(ap);
-        CPPUNIT_ASSERT_MESSAGE(ap->GetName() + " value should be 3.125, 90.25, 87.0625",
-             osg::equivalent(double(v3ap->GetValue()[0]), double(testVec3_3[0]), 1e-2)
-             && osg::equivalent(double(v3ap->GetValue()[1]), double(testVec3_3[1]), 1e-2)
-             && osg::equivalent(double(v3ap->GetValue()[2]), double(testVec3_3[2]), 1e-2)
-             );
+                 dtUtil::Equivalent(v3d, osg::Vec3d(testVec3_3), 1e-2));
 
         //ap = GetActorProperty(*map, "Lat/Long", dtDAL::DataType::VEC2);
         //CPPUNIT_ASSERT_MESSAGE(ap->GetName() + " value should be 3.125, 90.25",

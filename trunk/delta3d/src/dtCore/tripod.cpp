@@ -125,7 +125,7 @@ void Tripod::Update(double deltaFrameTime) //virtual
 
    osg::Matrix newMat, offsetMat;
    Transform trans;
-   trans.Set(mPosition, mHPR, osg::Vec3(1.0f, 1.0f, 1.0f));
+   trans.Set(mPosition, mHPR);
    trans.Get(offsetMat);
       
    switch(mTetherMode)

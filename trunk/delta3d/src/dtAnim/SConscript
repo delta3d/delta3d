@@ -7,8 +7,8 @@ deps = [ 'dtCore', 'dtGame', 'dtABC', 'cal3d', 'dtUtil', 'dtDAL', 'dtAI',
          'osgText', 'osgUtil', 'osgSim', 'osgFX' ] 
 
 defines = []
-if env['OS'] == 'windows':
-   defines = ['DT_ANIM_LIBRARY']
+#if env['OS'] == 'windows':
+defines = ['DT_ANIM_LIBRARY']
 
     
 env.BuildLib( 'dtAnim', srcs, deps, defines )

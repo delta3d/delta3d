@@ -14,10 +14,10 @@ dtTerrainDeps =[ 'dtDAL', 'dtutil', 'dtCore', 'dtChar', 'dtaudio', 'dtabc',
                  'opengl' ]
 
 defines = []
+defines = ['DT_TERRAIN_LIBRARY']
 
 if env['OS'] == 'windows' :
    dtTerrainDeps += [ 'User32', 'Advapi32', 'Rpcrt4', 'Winmm', 'Gdi32' ]
-   defines = ['DT_TERRAIN_LIBRARY']
 elif env['OS'] == 'linux':
    dtTerrainDeps += [ 'uuid', 'Xxf86vm' ]
 elif env['OS'] == 'darwin':

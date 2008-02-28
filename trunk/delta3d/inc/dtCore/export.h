@@ -32,7 +32,11 @@
 #      define DT_CORE_EXPORT __declspec(dllimport)
 #   endif 
 #else
-#   define DT_CORE_EXPORT
+#   ifdef DT_CORE_LIBRARY
+#      define DT_CORE_EXPORT __attribute__ ((visibility("default")))
+#   else
+#      define DT_CORE_EXPORT
+#   endif 
 #endif
 
 #endif // DELTA_CORE_EXPORT

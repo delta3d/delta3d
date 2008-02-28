@@ -36,7 +36,11 @@
 #    define GAME_LAUNCH_EXPORT __declspec(dllimport)
 #  endif
 #else
-#  define GAME_LAUNCH_EXPORT extern
+#   ifdef GAME_LAUNCH_LIBRARY
+#      define GAME_LAUNCH_EXPORT __attribute__ ((visibility("default")))
+#   else
+#      define GAME_LAUNCH_EXPORT
+#   endif 
 #endif
 
 #endif

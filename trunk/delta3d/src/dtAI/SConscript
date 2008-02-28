@@ -10,7 +10,7 @@ deps=[ 'dtUtil', 'dtCore', 'osg', 'osgDB', 'opengl',
 
 defines = []
 
-if env['OS'] == 'windows':
-   defines = ['DT_AI_LIBRARY', 'NOMINMAX']
+#if env['OS'] == 'windows':
+defines = ['DT_AI_LIBRARY']
 
 env.BuildLib( 'dtAI', srcs, deps, defines )

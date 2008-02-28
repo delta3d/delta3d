@@ -9,8 +9,8 @@ if env['foundLibs'][env['extLibs']['DIS']] != 'notFound':
          'dtCore', 'dtGame', 'dtDAL', 'dtUtil', 'HawkNL' ]
 
    defines = []
+   defines = ['DT_DIS_LIBRARY', 'DT_DIS_DEFAULT_PLUGIN']
    if env['OS'] == 'windows':
-      defines = ['DT_DIS_LIBRARY', 'DT_DIS_DEFAULT_PLUGIN']
       deps.append('winsock')
 
    env.BuildLib( 'dtDIS', srcs, deps, defines )

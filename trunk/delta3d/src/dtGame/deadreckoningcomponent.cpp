@@ -177,7 +177,9 @@ namespace dtGame
          dtCore::Transform xform;
          toRegister.GetGameActor().GetTransform(xform, dtCore::Transformable::REL_CS);
 
-         helper.SetLastKnownTranslation(xform.GetTranslation());
+         osg::Vec3 pos;
+         xform.GetTranslation(pos);
+         helper.SetLastKnownTranslation(pos);
          osg::Vec3 rot;
          xform.GetRotation(rot);
          helper.SetLastKnownRotation(rot);

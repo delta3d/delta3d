@@ -110,12 +110,13 @@ namespace dtHLAGM
       {
          dtCore::Transform xform;
          mCamera->GetTransform(xform, dtCore::Transformable::ABS_CS);
-         
-         const osg::Vec3& pos = xform.GetTranslation();
-         
+
+         osg::Vec3 pos;
+         xform.GetTranslation(pos);
+
          osg::Vec3 lowerBound(pos.x() - mXRange/2.0, pos.y() - mYRange/2.0, pos.z());
          osg::Vec3 upperBound(pos.x() + mXRange/2.0, pos.y() + mYRange/2.0, pos.z());
-         
+
          const osg::Vec3d latLonElevLower = mCoordinates.ConvertToRemoteTranslation(lowerBound);
          const osg::Vec3d latLonElevUpper = mCoordinates.ConvertToRemoteTranslation(upperBound);
 
@@ -125,24 +126,24 @@ namespace dtHLAGM
          {
             updated = true;
          }
-         
+
          double lonLower = FixLongitudeRange(latLonElevLower.y());
-         double lonUpper = FixLongitudeRange(latLonElevUpper.y());     
-         
+         double lonUpper = FixLongitudeRange(latLonElevUpper.y());
+
          if (UpdateDimension(ddmData, 2, GetThirdDimensionName(),
                DDMUtil::MapLinear(lonLower, 0.0, 360.0),
                DDMUtil::MapLinear(lonUpper, 0.0, 360.0)))
          {
             updated = true;
          }
-         
+
          if (updated && logger.IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
          {
             logger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Lat lon range of camera calculator named %s is "
                   "%lf %lf to %lf %lf", GetName().c_str(), latLonElevLower.x(), latLonElevLower.y(), latLonElevUpper.x(), latLonElevUpper.y());
          }
       }
-      
+
       return updated;
    }
 

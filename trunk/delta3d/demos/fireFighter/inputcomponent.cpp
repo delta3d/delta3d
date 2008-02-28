@@ -182,7 +182,9 @@ void InputComponent::OnGame()
 
    if(!mMotionModel.valid())
    {
-      mMotionModel = new dtCore::CollisionMotionModel(xform.GetTranslation().z(), 
+      osg::Vec3 pos;
+      xform.GetTranslation(pos);
+      mMotionModel = new dtCore::CollisionMotionModel(pos.z(), 
          mRadius, mK, mTheta, &GetGameManager()->GetScene(),  
          GetGameManager()->GetApplication().GetKeyboard(), 
          GetGameManager()->GetApplication().GetMouse());
@@ -260,7 +262,9 @@ bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard, int key)
                mPlayer->GetTransform(xform);
 
                mMotionModel->SetMaximumWalkSpeed(0.5f);
-               UpdateCollider(xform.GetTranslation().z());
+               osg::Vec3 pos;
+               xform.GetTranslation(pos);
+               UpdateCollider(pos.z());
                mCrouchSound->Play();
             }
             else
@@ -279,7 +283,9 @@ bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard, int key)
                   mPlayer->GetTransform(xform);
 
                   mMotionModel->SetMaximumWalkSpeed(2.0f);
-                  UpdateCollider(xform.GetTranslation().z());
+                  osg::Vec3 pos;
+                  xform.GetTranslation(pos);
+                  UpdateCollider(pos.z());
                   mWalkSound->Play();
                }
             }
@@ -344,7 +350,9 @@ bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard, int key)
       {
          dtCore::Transform playerXform;
          mPlayer->GetTransform(playerXform);
-         std::cout << "Player pos is: " << playerXform.GetTranslation() << '\n';
+         osg::Vec3 pos;
+         playerXform.GetTranslation(pos);
+         std::cout << "Player pos is: " << pos << '\n';
       }
       break;
 

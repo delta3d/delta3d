@@ -40,7 +40,6 @@ namespace dtDAL
 
          static const std::string PROPERTY_ROTATION;
          static const std::string PROPERTY_TRANSLATION;
-         static const std::string PROPERTY_SCALE;
          static const std::string PROPERTY_NORMAL_RESCALING;
          static const std::string PROPERTY_RENDER_PROXY_NODE;
          static const std::string PROPERTY_ENABLE_COLLISION;
@@ -89,25 +88,6 @@ namespace dtDAL
           * @return The current translation
           */
          osg::Vec3 GetTranslation() const;
-
-         /**
-          * Sets the scale of an object
-          * @param scale the desired scale
-          */
-         void SetScale(const osg::Vec3 &scale);
-
-         /**
-          * Gets the scale of an object
-          * @return The current scale vector
-          */
-         osg::Vec3 GetScale() const;
-
-         /**
-          * Called when the SetScale function is called
-          * @param oldValue The previous value
-          * @param newValue The new value
-          */
-         virtual void OnScale(const osg::Vec3 &oldValue, const osg::Vec3 &newValue) { }
 
          /**
           * Called when the SetRotation function is called.  The rotation will

@@ -120,7 +120,7 @@ namespace dtInspector
    };
 }//namespace dtInspector
 
-#if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
+#ifdef DELTA_WIN32
 
 //
 // Automatic library inclusion macros that use the #pragma/lib feature

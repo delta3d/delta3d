@@ -425,9 +425,9 @@ void FlyMotionModel::OnMessage(MessageData *data)
       
       GetTarget()->GetTransform(transform);
       
-      osg::Vec3 xyz, hpr, scale;
+      osg::Vec3 xyz, hpr;
       
-      transform.Get(xyz, hpr, scale);
+      transform.Get(xyz, hpr);
 
       // rotation
 

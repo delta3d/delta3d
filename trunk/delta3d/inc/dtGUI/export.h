@@ -32,7 +32,11 @@
 #      define DT_GUI_EXPORT __declspec(dllimport)
 #   endif
 #else
-#   define DT_GUI_EXPORT
+#   ifdef DT_GUI_LIBRARY
+#      define DT_GUI_EXPORT __attribute__ ((visibility("default")))
+#   else
+#      define DT_GUI_EXPORT
+#   endif 
 #endif
 
 #endif // DELTA_GUI_EXPORT

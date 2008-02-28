@@ -11,8 +11,8 @@ deps=[ 'dtUtil', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgGA', 'osgParticle',
 
 defines = []
 
+defines = ['DT_CORE_LIBRARY']
 if env['OS'] == 'windows':
-   defines = ['DT_CORE_LIBRARY', 'NOMINMAX']
    srcs.remove( 'deltawin_x11.cpp' )
    srcs.remove( 'deltawin_carbon.cpp' )
    srcs.remove( 'uniqueid_linux.cpp' )

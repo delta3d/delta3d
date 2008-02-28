@@ -31,7 +31,6 @@ namespace dtDAL
 {
    const std::string TransformableActorProxy::PROPERTY_ROTATION("Rotation");
    const std::string TransformableActorProxy::PROPERTY_TRANSLATION("Translation");
-   const std::string TransformableActorProxy::PROPERTY_SCALE("Scale");
    const std::string TransformableActorProxy::PROPERTY_NORMAL_RESCALING("Normal Rescaling");
    const std::string TransformableActorProxy::PROPERTY_RENDER_PROXY_NODE("Render Proxy Node");
    const std::string TransformableActorProxy::PROPERTY_ENABLE_COLLISION("Enable Collision");
@@ -68,11 +67,6 @@ namespace dtDAL
                                         MakeFunctorRet(*this, &TransformableActorProxy::GetTranslation),
                                         "Sets the location of a transformable in 3D space.",
                                         GROUPNAME));
-
-      AddProperty(new Vec3ActorProperty(PROPERTY_SCALE, PROPERTY_SCALE,
-                                        MakeFunctor(*this, &TransformableActorProxy::SetScale),
-                                        MakeFunctorRet(*this, &TransformableActorProxy::GetScale),
-                                        "Sets the scale of a transformable.",GROUPNAME));
 
       AddProperty(new BooleanActorProperty(PROPERTY_NORMAL_RESCALING, PROPERTY_NORMAL_RESCALING,
                                            MakeFunctor(*trans, &dtCore::Transformable::SetNormalRescaling),
@@ -228,43 +222,9 @@ namespace dtDAL
       
       dtCore::Transform trans;
       t->GetTransform(trans, dtCore::Transformable::REL_CS);
-      return trans.GetTranslation();
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void TransformableActorProxy::SetScale(const osg::Vec3 &scale)
-   {
-      dtCore::Transformable *t = static_cast<dtCore::Transformable*>(GetActor());
-      
-      dtCore::Transform trans;
-      t->GetTransform(trans, dtCore::Transformable::REL_CS);
-      osg::Vec3 oldScale;
-      trans.GetScale(oldScale);
-      trans.SetScale(scale[0], scale[1], scale[2]);
-      t->SetTransform(trans, dtCore::Transformable::REL_CS);
-
-      //If we have a billboard update its scale as well.
-      if (GetRenderMode() == ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON ||
-          GetRenderMode() == ActorProxy::RenderMode::DRAW_BILLBOARD_ICON)
-      {
-         ActorProxyIcon *billBoard = GetBillBoardIcon();
-         if (billBoard != NULL)
-            billBoard->SetScale(scale);
-      }
-
-      OnScale(oldScale, scale);
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   osg::Vec3 TransformableActorProxy::GetScale() const
-   {
-      const dtCore::Transformable *t = static_cast<const dtCore::Transformable*>(GetActor());
-      
-      dtCore::Transform trans;
-      t->GetTransform(trans, dtCore::Transformable::REL_CS);
-      float x, y, z;
-      trans.GetScale(x, y, z);
-      return osg::Vec3(x, y, z);
+      osg::Vec3 result;
+      trans.GetTranslation(result);
+      return result;
    }
 
    ///////////////////////////////////////////////////////////////////////////////

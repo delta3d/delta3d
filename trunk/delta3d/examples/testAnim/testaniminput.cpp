@@ -204,7 +204,7 @@ void TestAnimInput::TickLocal(float dt)
       up = dtUtil::MatrixUtil::GetRow3(mat, 2);
       forward = dtUtil::MatrixUtil::GetRow3(mat, 1);
 
-      pos = trans.GetTranslation();
+      trans.GetTranslation(pos);
    }
 
       
@@ -224,7 +224,7 @@ void TestAnimInput::TickLocal(float dt)
       float dist = -1.0f * (mSpeed * dt);
       pos += forward * dist;  
 
-      trans.SetTranslation(pos);      
+      trans.SetTranslation(pos);
    }
 
    if(mIsWalking || mIsTurning)

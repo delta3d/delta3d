@@ -32,7 +32,11 @@
 #      define DT_UTIL_EXPORT __declspec(dllimport)
 #   endif 
 #else
-#   define DT_UTIL_EXPORT
+#   ifdef DT_UTIL_LIBRARY
+#      define DT_UTIL_EXPORT __attribute__ ((visibility("default")))
+#   else
+#      define DT_UTIL_EXPORT
+#   endif 
 #endif
 
 #endif // DELTA_UTIL_EXPORT

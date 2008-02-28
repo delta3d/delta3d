@@ -72,27 +72,6 @@ void UserInterface::cb_TransformR(Fl_Value_Input* o, void* v) {
   ((UserInterface*)(o->parent()->parent()->user_data()))->cb_TransformR_i(o,v);
 }
 
-void UserInterface::cb_TransformScaleX_i(Fl_Value_Input* o, void* v) {
-  ((UserInterface*)v)->TransformPosCB(o);
-}
-void UserInterface::cb_TransformScaleX(Fl_Value_Input* o, void* v) {
-  ((UserInterface*)(o->parent()->parent()->user_data()))->cb_TransformScaleX_i(o,v);
-}
-
-void UserInterface::cb_TransformScaleY_i(Fl_Value_Input* o, void* v) {
-  ((UserInterface*)v)->TransformPosCB(o);
-}
-void UserInterface::cb_TransformScaleY(Fl_Value_Input* o, void* v) {
-  ((UserInterface*)(o->parent()->parent()->user_data()))->cb_TransformScaleY_i(o,v);
-}
-
-void UserInterface::cb_TransformScaleZ_i(Fl_Value_Input* o, void* v) {
-  ((UserInterface*)v)->TransformPosCB(o);
-}
-void UserInterface::cb_TransformScaleZ(Fl_Value_Input* o, void* v) {
-  ((UserInterface*)(o->parent()->parent()->user_data()))->cb_TransformScaleZ_i(o,v);
-}
-
 void UserInterface::cb_TransformCSAbsButton_i(Fl_Round_Button* o, void* v) {
   ((UserInterface*)v)->TransformCSCB(o);
 }
@@ -886,27 +865,6 @@ Fl_Double_Window* UserInterface::make_window() {
         o->maximum(500000);
         o->step(0.1);
         o->callback((Fl_Callback*)cb_TransformR, (void*)(this));
-      }
-      { Fl_Value_Input* o = TransformScaleX = new Fl_Value_Input(475, 185, 60, 20, "ScaleX:");
-        o->tooltip("Scale the Transformable in the x-axis");
-        o->maximum(500000);
-        o->step(0.1);
-        o->value(1);
-        o->callback((Fl_Callback*)cb_TransformScaleX, (void*)(this));
-      }
-      { Fl_Value_Input* o = TransformScaleY = new Fl_Value_Input(475, 205, 60, 20, "ScaleY:");
-        o->tooltip("Scale the Transformable in the y-axis");
-        o->maximum(500000);
-        o->step(0.1);
-        o->value(1);
-        o->callback((Fl_Callback*)cb_TransformScaleY, (void*)(this));
-      }
-      { Fl_Value_Input* o = TransformScaleZ = new Fl_Value_Input(475, 225, 60, 20, "ScaleZ:");
-        o->tooltip("Scale the Transformable in the z-axis");
-        o->maximum(500000);
-        o->step(0.1);
-        o->value(1);
-        o->callback((Fl_Callback*)cb_TransformScaleZ, (void*)(this));
       }
       { Fl_Group* o = new Fl_Group(310, 150, 165, 30, "System");
         o->box(FL_THIN_DOWN_FRAME);

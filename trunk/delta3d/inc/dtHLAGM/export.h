@@ -32,7 +32,11 @@
 #      define DT_HLAGM_EXPORT __declspec(dllimport)
 #   endif
 #else
-#   define DT_HLAGM_EXPORT
+#   ifdef DT_HLAGM_LIBRARY
+#      define DT_HLAGM_EXPORT __attribute__ ((visibility("default")))
+#   else
+#      define DT_HLAGM_EXPORT
+#   endif 
 #endif
 
 #endif // DELTA_HLA_EXPORT

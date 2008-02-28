@@ -32,7 +32,11 @@
 #      define DT_INSPECTOR_EXPORT __declspec(dllimport)
 #   endif
 #else
-#   define DT_INSPECTOR_EXPORT
+#   ifdef DT_INSPECTOR_LIBRARY
+#      define DT_INSPECTOR_EXPORT __attribute__ ((visibility("default")))
+#   else
+#      define DT_INSPECTOR_EXPORT
+#   endif 
 #endif
 
 #endif // DELTA_INSPECTOR_EXPORT

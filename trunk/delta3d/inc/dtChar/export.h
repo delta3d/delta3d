@@ -32,7 +32,11 @@
 #      define DT_CHAR_EXPORT __declspec(dllimport)
 #   endif
 #else
-#   define DT_CHAR_EXPORT
+#   ifdef DT_CHAR_LIBRARY
+#      define DT_CHAR_EXPORT __attribute__ ((visibility("default")))
+#   else
+#      define DT_CHAR_EXPORT
+#   endif 
 #endif
 
 #endif // DELTA_CHAR_EXPORT

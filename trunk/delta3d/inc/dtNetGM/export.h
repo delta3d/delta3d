@@ -32,7 +32,11 @@
 #      define DT_NETGM_EXPORT __declspec(dllimport)
 #   endif
 #else
-#   define DT_NETGM_EXPORT
+#   ifdef DT_NETGM_LIBRARY
+#      define DT_NETGM_EXPORT __attribute__ ((visibility("default")))
+#   else
+#      define DT_NETGM_EXPORT
+#   endif 
 #endif
 
 #endif // DELTA_NETGM_EXPORT

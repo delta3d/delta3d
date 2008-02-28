@@ -36,7 +36,11 @@
 #    define DT_EXAMPLE_EXPORT __declspec(dllimport)
 #  endif
 #else
-#  define DT_EXAMPLE_EXPORT
+#  ifdef DT_EXAMPLE_LIBRARY
+#    define DT_EXAMPLE_EXPORT  __attribute__ ((visibility("default")))
+#  else
+#    define DT_EXAMPLE_EXPORT
+#  endif
 #endif
 
 #endif
