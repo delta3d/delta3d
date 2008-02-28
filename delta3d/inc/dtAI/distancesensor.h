@@ -150,7 +150,19 @@ namespace dtAI
 
          void operator()(VecType& vec)
          {
-            const osg::Matrix& m = mTransform->getMatrix();
+            osg::Matrix m;
+            osg::NodePathList nodePathList = mTransform->getParentalNodePaths();
+
+            if( !nodePathList.empty() )
+            {
+               osg::NodePath nodePath = nodePathList[0];
+               m.set( osg::computeLocalToWorld(nodePath) );
+            }
+            else
+            {
+               m = mTransform->getMatrix();
+            }
+
             vec = m.getTrans();
          }
          
