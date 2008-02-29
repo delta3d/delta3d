@@ -363,8 +363,8 @@ void MainWindow::OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*> &poseMe
    addDockWidget(Qt::RightDockWidgetArea, poseDock);
    resize(1000, 800);     
 
-   QIcon handIcon(QPixmap(":/images/handIcon.png"));
-   QIcon poseIcon(QPixmap(":/images/reticle.png"));
+   QIcon grabIcon(QPixmap(":/images/handIcon.png"));
+   QIcon pickIcon(QPixmap(":/images/reticle.png"));
 
    QToolBar *poseTools = new QToolBar;
 
@@ -372,20 +372,24 @@ void MainWindow::OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*> &poseMe
    QActionGroup *actionGroup = new QActionGroup(poseTools);
    actionGroup->setExclusive(true); 
 
-   QAction *grabAction   = actionGroup->addAction(handIcon, "Click-drag meshes");
-   QAction *pickAction = actionGroup->addAction(poseIcon, "Set Pose From Mesh");   
+   QAction *grabAction   = actionGroup->addAction(grabIcon, "Click-drag meshes");
+   QAction *pickAction = actionGroup->addAction(pickIcon, "Set Pose From Mesh");   
 
    poseTools->addAction(grabAction);
    poseTools->addAction(pickAction);
 
    grabAction->setCheckable(true);
-   pickAction->setCheckable(true);    
+   pickAction->setCheckable(true);  
+
+   pickAction->setChecked(true);
 
    poseDock->setTitleBarWidget(poseTools);
 
    // Add the properties tab
    mPoseMeshProperties = new PoseMeshProperties;     
+   
    mTabs->addTab(mPoseMeshProperties, tr("IK"));   
+   mTabs->setCurrentWidget(mPoseMeshProperties);
 
    // Establish connections from the properties tab
    connect(mPoseMeshProperties, SIGNAL(ViewPoseMesh(const std::string&)), 
@@ -719,13 +723,13 @@ void MainWindow::OnItemDoubleClicked(QTableWidgetItem *item)
 /////////////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnSelectModeGrab()
 {
-   mPoseMeshScene->SetMode(PoseMeshScene::MODE_GRAB);
+   mPoseMeshViewer->SetMode(PoseMeshView::MODE_GRAB);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnSelectModePick()
 {
-   mPoseMeshScene->SetMode(PoseMeshScene::MODE_BLEND_PICK);
+   mPoseMeshViewer->SetMode(PoseMeshView::MODE_BLEND_PICK);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

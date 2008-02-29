@@ -6,14 +6,27 @@
 #include "PoseMeshScene.h"
 
 class PoseMeshScene;
+class PoseMeshItem;
 
 class PoseMeshView: public QGraphicsView
 {
    Q_OBJECT
 public:  
+   
+   enum eMODE
+   {
+      MODE_INVALID = -1,
+      MODE_BLEND_PICK = 0,
+      MODE_GRAB,
+
+      MODE_TOTAL
+   };
 
    PoseMeshView(PoseMeshScene *scene, QWidget *parent = 0);
    ~PoseMeshView();
+
+   eMODE GetMode();
+   void SetMode(eMODE newMode);
 
    void Zoom(float numberOfSteps, QPoint centerPoint = QPoint());   
 
@@ -41,6 +54,7 @@ public slots:
 protected:
 
    PoseMeshScene *mScene;
+   PoseMeshItem  *mLastItem;
    QGraphicsItem *mDragItem;
 
    QPointF mCurrentTarget;
@@ -49,7 +63,11 @@ protected:
    QPointF mCurrentVelocity;
    QRectF  mItemRect;
 
+   QCursor *mCursor[MODE_TOTAL];
+
    QPointF mTestPoint;
+
+   eMODE  mMode;
 
    float mMinScale;
    float mMaxScale;
@@ -69,6 +87,11 @@ private:
    QPointF mLastClickPoint;
    QTimer  mTimer;
    bool    mIsMoving;
+
+   QAction *mActionZoomItemExtents;
+
+private slots:
+   void OnZoomToItemExtents();
 
 };
 

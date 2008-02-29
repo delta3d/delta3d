@@ -10,6 +10,7 @@
 #include <QtGui/QPainter>
 #include <QtGui/QStyleOption>
 #include <QtGui/QCursor>
+#include <QtGui/QMenu>
 
 #include <QtGui/QMouseEvent>
 #include <QtGui/QHoverEvent>
@@ -49,9 +50,9 @@ PoseMeshItem::PoseMeshItem(const dtAnim::PoseMesh &poseMesh,
    setZValue(1);
 
    setAcceptsHoverEvents(true);
-   setToolTip("test");  
+   setToolTip(poseMesh.GetName().c_str());     
 
-   mHovered = false;  
+   mActionZoomExtents = new QAction("Zoom Extents", NULL);  
    
    //QSize size(40, 20);
    //QImage image(size.width(), size.height(), QImage::Format_ARGB32_Premultiplied);
@@ -128,8 +129,7 @@ const std::string& PoseMeshItem::GetPoseMeshName()
 /////////////////////////////////////////////////////////////////////////////////////////
 void PoseMeshItem::SetEnabled(bool isEnabled)
 {
-   setEnabled(isEnabled);
-   setVisible(isEnabled);
+   setEnabled(isEnabled);   
 
    // Remove any of this item's pose blends from the model
    dtCore::RefPtr<dtAnim::PoseMeshUtility> util = new dtAnim::PoseMeshUtility;
@@ -143,22 +143,6 @@ void PoseMeshItem::SetEnabled(bool isEnabled)
 /////////////////////////////////////////////////////////////////////////////////////////
 bool PoseMeshItem::sceneEvent(QEvent *event)
 {
-   switch(event->type())
-   {
-      case QEvent::GraphicsSceneHoverEnter:
-      {
-         mHovered = true;    
-         update(mBoundingRect);
-         return true;
-      }
-      case QEvent::GraphicsSceneHoverLeave:
-      {
-         mHovered = false;
-         update(mBoundingRect);
-         return true;
-      }  
-   }
-   
    //std::ostringstream oss;
    //oss << "event: " << event->type();
    //std::cout << oss.str() << std::endl;
@@ -179,13 +163,25 @@ void PoseMeshItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
       //std::cout << oss.str() << std::endl;
 
       BlendPosesFromItemCoordinates(mLastMousePos.x(), mLastMousePos.y());     
-   }
+   }  
+  
+   // Allow Qt to handle the other buttons
+   QGraphicsItem::mousePressEvent(event);
+   
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 void PoseMeshItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
+    if (event->button() == Qt::RightButton)
+    {
+       QMenu menu;
+       menu.addAction(mActionZoomExtents);
+       //menu.addAction(mDisplayPropertyAct);
+       menu.exec(event->screenPos());      
+   }
 
+    QGraphicsItem::mouseReleaseEvent(event);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -249,17 +245,26 @@ void PoseMeshItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 {
    const dtAnim::PoseMesh::VertexVector &verts = mPoseMesh->GetVertices();
 
-   QPen trianglePenDefault;   
-   trianglePenDefault.setColor(Qt::black);
+   QPen trianglePenDefault;  
+
+   if (isEnabled())
+   {
+      trianglePenDefault.setColor(Qt::black);
+   }
+   else
+   {
+      trianglePenDefault.setColor(QColor(128, 128, 128, 64));
+   }
 
    QPen trianglePenSelected;
+   trianglePenSelected.setWidth(2);
    trianglePenSelected.setColor(Qt::green);
 
    for (size_t edgeIndex = 0; edgeIndex < mEdgeInfoList.size(); ++edgeIndex)
    {
       if (mEdgeInfoList[edgeIndex].triangleIDs[0] == mLastTriangleID ||
           mEdgeInfoList[edgeIndex].triangleIDs[1] == mLastTriangleID)
-      {
+      {         
          painter->setPen(trianglePenSelected);
       }
       else
@@ -274,27 +279,17 @@ void PoseMeshItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
    {
       osg::Vec3 vertPosition = verts[vertIndex]->mData * VERT_SCALE;
 
-      QRadialGradient gradient(-3, -3, 10);
-      if (option->state & QStyle::State_Sunken) 
+      QRadialGradient gradient(-3, -3, 10);     
+      if (isEnabled())
       {
-         gradient.setCenter(3, 3);
-         gradient.setFocalPoint(3, 3);
-         gradient.setColorAt(1, QColor(Qt::yellow).light(120));
-         gradient.setColorAt(0, QColor(Qt::darkYellow).light(120));
-      }
+         gradient.setColorAt(0, Qt::yellow);
+         gradient.setColorAt(1, Qt::darkYellow);                  
+      }         
       else
-      {        
-         if (mHovered)
-         {
-            gradient.setColorAt(0, Qt::red);
-            gradient.setColorAt(1, Qt::darkRed);
-         }
-         else
-         {
-            gradient.setColorAt(0, Qt::yellow);
-            gradient.setColorAt(1, Qt::darkYellow);
-         }         
-      }
+      {
+         gradient.setColorAt(0, Qt::gray);
+         gradient.setColorAt(1, Qt::darkGray);
+      }      
 
       painter->translate(vertPosition.x(), -vertPosition.y());
       painter->setBrush(gradient);

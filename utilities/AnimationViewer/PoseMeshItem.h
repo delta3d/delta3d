@@ -9,12 +9,14 @@
 class QGraphicsItem;
 class QGraphicsScene;
 class QCursor;
+class QAction;
 
 namespace dtAnim { class Cal3DModelWrapper; }
 
 class PoseMeshItem: public QGraphicsItem
-{   
+{    
 public:
+
    PoseMeshItem(const dtAnim::PoseMesh &poseMesh,
                 dtAnim::Cal3DModelWrapper *model,
                 QGraphicsItem *parent = 0, 
@@ -31,7 +33,7 @@ public:
    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
    virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-   
+      
    virtual QRectF boundingRect() const;
    virtual QPainterPath shape() const;
    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
@@ -55,16 +57,15 @@ private:
    QPixmap *mPixmap;
    QRectF mBoundingRect;
 
+   QAction *mActionZoomExtents;
+
    QPointF mLastMousePos;
    QPointF mLastBlendPos;
-   int     mLastTriangleID;
-
-   bool mHovered;
+   int     mLastTriangleID;  
 
    void BlendPosesFromItemCoordinates(float xCoord, float yCoord);
 
    void ExtractEdgesFromMesh(const dtAnim::PoseMesh &mesh);
-
 };
 
 #endif // _POSEMESH_ITEM_H_
