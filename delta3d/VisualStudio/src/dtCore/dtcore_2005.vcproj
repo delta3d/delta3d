@@ -339,6 +339,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtCore\model.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtCore\motionmodel.cpp"
 				>
 			</File>
@@ -666,6 +670,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtCore\makeskydome.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtCore\model.h"
 				>
 			</File>
 			<File
