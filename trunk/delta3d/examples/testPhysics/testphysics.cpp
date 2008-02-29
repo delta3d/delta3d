@@ -227,7 +227,7 @@ protected:
                box->SetTransform(xform);
 
                float randomScale = RandFloat( 0.5f, 2.0f );
-               box->GetModel().SetScale( osg::Vec3(randomScale, randomScale, randomScale) );
+               box->SetScale( osg::Vec3(randomScale, randomScale, randomScale) );
 
                double lx = 1.0;
                double ly = 1.0;
@@ -263,7 +263,7 @@ protected:
                                  RandFloat( 0.0f, 90.0f ) );
 
                float randomScale = RandFloat( 0.5f, 2.0f );
-               sphere->GetModel().SetScale( osg::Vec3(randomScale, randomScale, randomScale) );
+               sphere->SetScale( osg::Vec3(randomScale, randomScale, randomScale) );
 
                sphere->SetCollisionSphere();
                sphere->SetTransform(xform);
@@ -299,7 +299,7 @@ protected:
                                  RandFloat( 0.0f, 90.0f ) );
 
                float randomScale = RandFloat( 0.5f, 2.0f );
-               cyl->GetModel().SetScale( osg::Vec3(randomScale, randomScale, randomScale) );
+               cyl->SetScale( osg::Vec3(randomScale, randomScale, randomScale) );
 
                cyl->SetCollisionCappedCylinder();
                cyl->SetTransform(xform);

@@ -60,10 +60,6 @@ namespace dtActors
          */
         virtual void LoadFile(const std::string &fileName) = 0;
 
-        /// Property to set the scale
-        void SetScale(const osg::Vec3 &xyz);
-        osg::Vec3 GetScale() const;
-
     protected:
 
         /**
