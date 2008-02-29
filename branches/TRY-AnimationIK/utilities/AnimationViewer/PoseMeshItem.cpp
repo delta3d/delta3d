@@ -51,8 +51,6 @@ PoseMeshItem::PoseMeshItem(const dtAnim::PoseMesh &poseMesh,
 
    setAcceptsHoverEvents(true);
    setToolTip(poseMesh.GetName().c_str());     
-
-   mActionZoomExtents = new QAction("Zoom Extents", NULL);  
    
    //QSize size(40, 20);
    //QImage image(size.width(), size.height(), QImage::Format_ARGB32_Premultiplied);
@@ -129,8 +127,12 @@ const std::string& PoseMeshItem::GetPoseMeshName()
 /////////////////////////////////////////////////////////////////////////////////////////
 void PoseMeshItem::SetEnabled(bool isEnabled)
 {
-   setEnabled(isEnabled);   
+   setEnabled(isEnabled);  
+   Clear();
+}
 
+void PoseMeshItem::Clear()
+{
    // Remove any of this item's pose blends from the model
    dtCore::RefPtr<dtAnim::PoseMeshUtility> util = new dtAnim::PoseMeshUtility;
    util->ClearPoses(mPoseMesh, mModel, 0.0f);
@@ -138,6 +140,9 @@ void PoseMeshItem::SetEnabled(bool isEnabled)
    mLastBlendPos.setX(FLT_MAX);
    mLastBlendPos.setY(FLT_MAX);
    mLastTriangleID = INT_MAX;
+
+   // Remove highlighting and target ellipse from scene
+   update(boundingRect());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -153,17 +158,20 @@ bool PoseMeshItem::sceneEvent(QEvent *event)
 /////////////////////////////////////////////////////////////////////////////////////////
 void PoseMeshItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {   
-   if (event->button() == Qt::LeftButton)
-   {     
-      // Convert the position back to it's unscaled form
-      mLastMousePos = event->lastPos(); 
-            
-      //std::ostringstream oss;
-      //oss << "pos: (" << mLastMousePos.x() << ", " << mLastMousePos.y() << ")";
-      //std::cout << oss.str() << std::endl;
+   if (!IsItemMovable())
+   {
+      if (event->button() == Qt::LeftButton)
+      {     
+         // Convert the position back to it's unscaled form
+         mLastMousePos = event->lastPos(); 
 
-      BlendPosesFromItemCoordinates(mLastMousePos.x(), mLastMousePos.y());     
-   }  
+         //std::ostringstream oss;
+         //oss << "pos: (" << mLastMousePos.x() << ", " << mLastMousePos.y() << ")";
+         //std::cout << oss.str() << std::endl;
+
+         BlendPosesFromItemCoordinates(mLastMousePos.x(), mLastMousePos.y());     
+      }  
+   }   
   
    // Allow Qt to handle the other buttons
    QGraphicsItem::mousePressEvent(event);
@@ -173,23 +181,18 @@ void PoseMeshItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 /////////////////////////////////////////////////////////////////////////////////////////
 void PoseMeshItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    if (event->button() == Qt::RightButton)
-    {
-       QMenu menu;
-       menu.addAction(mActionZoomExtents);
-       //menu.addAction(mDisplayPropertyAct);
-       menu.exec(event->screenPos());      
-   }
-
     QGraphicsItem::mouseReleaseEvent(event);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 void PoseMeshItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-   // Update our blend to the latest and greatest position
-   mLastMousePos = event->pos();
-   BlendPosesFromItemCoordinates(mLastMousePos.x(), mLastMousePos.y());
+   if (!IsItemMovable())
+   {
+      // Update our blend to the latest and greatest position
+      mLastMousePos = event->pos();
+      BlendPosesFromItemCoordinates(mLastMousePos.x(), mLastMousePos.y());
+   }  
 
    QGraphicsItem::mouseMoveEvent(event);
 }
@@ -224,6 +227,13 @@ void PoseMeshItem::BlendPosesFromItemCoordinates(float xCoord, float yCoord)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
+bool PoseMeshItem::IsActive()
+{
+   // If we have a valid triangle, we must be blending
+   return mLastTriangleID != INT_MAX;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
 QRectF PoseMeshItem::boundingRect() const
 {
    return mBoundingRect;
@@ -234,8 +244,7 @@ QRectF PoseMeshItem::boundingRect() const
 /////////////////////////////////////////////////////////////////////////////////////////
 QPainterPath PoseMeshItem::shape() const
 {
-   QPainterPath path;
-   //path.addEllipse(-5, -5, 10, 10);
+   QPainterPath path;   
    path.addRect(mBoundingRect);
    return path;
 }
@@ -408,4 +417,10 @@ void PoseMeshItem::ExtractEdgesFromMesh(const dtAnim::PoseMesh &mesh)
 
       mEdgeInfoList.push_back(newInfo);
    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+bool PoseMeshItem::IsItemMovable()
+{
+   return flags() & QGraphicsItem::ItemIsMovable;
 }

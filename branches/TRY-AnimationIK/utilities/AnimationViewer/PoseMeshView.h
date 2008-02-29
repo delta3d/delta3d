@@ -89,9 +89,13 @@ private:
    bool    mIsMoving;
 
    QAction *mActionZoomItemExtents;
+   QAction *mActionClearBlend;
+   QAction *mActionToggleEnabled;
 
 private slots:
    void OnZoomToItemExtents();
+   void OnClearBlend();
+   void OnToggleEnabled();
 
 };
 

@@ -37,7 +37,12 @@ PoseMeshView::PoseMeshView(PoseMeshScene *scene, QWidget *parent)
 
    // Create and connect actions for the context menu
    mActionZoomItemExtents = new QAction("Zoom Extents", this);
+   mActionClearBlend      = new QAction("Clear Blend", this);
+   mActionToggleEnabled   = new QAction("Disable", this);
+
    connect(mActionZoomItemExtents, SIGNAL(triggered()), SLOT(OnZoomToItemExtents()));
+   connect(mActionClearBlend, SIGNAL(triggered()), SLOT(OnClearBlend()));
+   connect(mActionToggleEnabled, SIGNAL(triggered()), SLOT(OnToggleEnabled()));
 
    // Allow our view to be frequently updated
    connect(&mTimer, SIGNAL(timeout()), this, SLOT(OnUpdateView()));   
@@ -281,6 +286,15 @@ void PoseMeshView::contextMenuEvent( QContextMenuEvent *event )
    {
        QMenu menu;
        menu.addAction(mActionZoomItemExtents);
+       menu.addAction(mActionToggleEnabled);
+
+       // Only necessary to clear items that are
+       // currently blending poses
+       if (mLastItem->IsActive())
+       {
+         menu.addAction(mActionClearBlend);
+       }
+       
        menu.exec(event->globalPos());
    }
 
@@ -312,4 +326,25 @@ void PoseMeshView::OnUpdateView()
 void PoseMeshView::OnZoomToItemExtents()
 {
    OnZoomToPoseMesh(mLastItem->GetPoseMeshName());
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+void PoseMeshView::OnClearBlend()
+{
+   mLastItem->Clear();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+void PoseMeshView::OnToggleEnabled()
+{
+   if (mLastItem->isEnabled())
+   {
+      mLastItem->SetEnabled(false);
+      mActionToggleEnabled->setText("Enable");
+   }
+   else
+   {
+      mLastItem->SetEnabled(true);
+      mActionToggleEnabled->setText("Disable");
+   }
 }

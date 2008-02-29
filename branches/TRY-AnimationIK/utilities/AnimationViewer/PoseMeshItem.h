@@ -27,6 +27,9 @@ public:
    const std::string& GetPoseMeshName(); 
 
    void SetEnabled(bool isEnabled);
+   bool IsActive();
+
+   void Clear();
 
    // Qt overrides
    virtual bool sceneEvent(QEvent *event);  
@@ -55,9 +58,7 @@ private:
    std::vector<EdgeInfo> mEdgeInfoList;
 
    QPixmap *mPixmap;
-   QRectF mBoundingRect;
-
-   QAction *mActionZoomExtents;
+   QRectF mBoundingRect;  
 
    QPointF mLastMousePos;
    QPointF mLastBlendPos;
@@ -66,6 +67,8 @@ private:
    void BlendPosesFromItemCoordinates(float xCoord, float yCoord);
 
    void ExtractEdgesFromMesh(const dtAnim::PoseMesh &mesh);
+
+   bool IsItemMovable();
 };
 
 #endif // _POSEMESH_ITEM_H_
