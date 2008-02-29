@@ -17,6 +17,7 @@
 
 #include <boost/python/to_python_converter.hpp>
 #include <boost/python/implicit.hpp>
+#include <iostream>
 
 const int DEBUG = 0;
 #include <osg/Node>

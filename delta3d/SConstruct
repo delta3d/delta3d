@@ -39,10 +39,10 @@ def CheckForBoost() :
       boostLib = 'boost_python-vc71-mt.lib'
    elif OS == 'darwin' : 
       # This only has a hard-coded version since Boost.Python does not output
-      # with the same file naming convention as other platform (as of 1.33.1)
-      boostLib = 'libboost_python-1_33_1.dylib'
+      # with the same file naming convention as other platform (as of 1.34.1)
+      boostLib = 'libboost_python-1_34_1.dylib'
    else :
-      boostLib = 'libboost_python-gcc-mt.so'
+      boostLib = 'libboost_python-mt.so'
       
    foundLib = 0
    for dir in env['LIBPATH'] :

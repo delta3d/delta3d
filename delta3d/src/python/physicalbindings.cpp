@@ -4,6 +4,7 @@
 
 #include <python/dtpython.h>
 #include <dtCore/physical.h>
+#include <osg/MatrixTransform>
 
 using namespace boost::python;
 using namespace dtCore;
@@ -52,8 +53,8 @@ void initPhysicalBindings()
    void (Physical::*GetInertiaTensor1)(osg::Matrix& mat) const = &Physical::GetInertiaTensor;
 
    class_<Physical, bases<Transformable>, dtCore::RefPtr<PhysicalWrap>, boost::noncopyable>("Physical", no_init)
-      .def(init<optional<const std::string&>>())
-      .def(init<Transformable::TransformableNode&, optional<const std::string&>>())
+      .def(init<optional<const std::string&> >())
+      .def(init<Transformable::TransformableNode&, optional<const std::string&> >())
       .def("SetBodyID", &Physical::SetBodyID)
       .def("GetBodyID", &Physical::GetBodyID, return_value_policy<return_opaque_pointer>())
       .def("EnableDynamics", &Physical::EnableDynamics, ED_overloads())
