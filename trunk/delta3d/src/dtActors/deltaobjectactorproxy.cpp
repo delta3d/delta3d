@@ -19,8 +19,9 @@
 * William E. Johnson II
 */
 
-#include "dtActors/deltaobjectactorproxy.h"
+#include <dtActors/deltaobjectactorproxy.h>
 #include <dtCore/object.h>
+#include <dtDAL/enginepropertytypes.h>
 
 namespace dtActors 
 {
@@ -34,6 +35,27 @@ namespace dtActors
     void DeltaObjectActorProxy::BuildPropertyMap()
     {
         PhysicalActorProxy::BuildPropertyMap();
+
+        AddProperty(new dtDAL::Vec3ActorProperty("Scale", "Scale", 
+           dtDAL::MakeFunctor(*this, &DeltaObjectActorProxy::SetScale), 
+           dtDAL::MakeFunctorRet(*this, &DeltaObjectActorProxy::GetScale), 
+           "Specifies the scale of the object"));
     }
 
+    ///////////////////////////////////////////////////////////////////////////////
+    void DeltaObjectActorProxy::SetScale(const osg::Vec3 &xyz)
+    {
+       dtCore::Object *actor = NULL;
+       GetActor(actor);
+       actor->GetModel().SetScale(xyz);
+    }
+
+    osg::Vec3 DeltaObjectActorProxy::GetScale() const
+    {
+       osg::Vec3 xyz;
+       const dtCore::Object *actor = NULL;
+       GetActor(actor);
+       actor->GetModel().GetScale(xyz);
+       return xyz;
+    }
 }

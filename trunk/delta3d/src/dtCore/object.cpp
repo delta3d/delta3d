@@ -23,33 +23,10 @@ namespace dtCore
    
    IMPLEMENT_MANAGEMENT_LAYER(Object)
 
-   class ModelMatrixUpdateCallback : public osg::NodeCallback
-   {
-      public:
-         ModelMatrixUpdateCallback(osg::Vec3& scale):
-            mScale(scale)
-         {
-         }
-
-         /** Callback method called by the NodeVisitor when visiting a node.*/
-         virtual void operator()(osg::Node* node, osg::NodeVisitor* nv)
-         {
-            osg::MatrixTransform* modelTransform = static_cast<osg::MatrixTransform*>(node);
-            dtCore::Transform xform;
-            osg::Matrix m;
-            xform.Set(modelTransform->getMatrix());
-            xform.Rescale(mScale);
-            xform.Get(m);
-            modelTransform->setMatrix(m);
-            traverse(node,nv);
-         }
-      private:
-         osg::Vec3& mScale;
-   };
-
    /////////////////////////////////////////////////////////////////////////////
    Object::Object(const std::string& name)
    :  Physical(name),
+      mModel(new Model), 
       mRecenterGeometry( false )
    {
       Ctor();
@@ -58,6 +35,7 @@ namespace dtCore
    /////////////////////////////////////////////////////////////////////////////
    Object::Object( TransformableNode &node, const std::string &name )
    :  Physical(node, name),
+      mModel(new Model), 
       mRecenterGeometry( false )
    {
       Ctor();
@@ -71,12 +49,7 @@ namespace dtCore
       osg::StateSet *stateSet = GetOSGNode()->getOrCreateStateSet();
       stateSet->setMode(GL_NORMALIZE, osg::StateAttribute::ON);
 
-      mScale.set(1.0, 1.0, 1.0);
-      mUpdateCallback = new ModelMatrixUpdateCallback(mScale);
-      mModelTransform = new osg::MatrixTransform;
-      GetMatrixNode()->addChild(mModelTransform.get());
-
-      SetDirty();
+      GetMatrixNode()->addChild(&mModel->GetMatrixTransform());
 
       // Default collision category = 5
       SetCollisionCategoryBits( UNSIGNED_BIT(5) );
@@ -90,51 +63,15 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void Object::SetDirty()
-   {
-      mModelTransform->setUpdateCallback(mUpdateCallback.get());
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   void Object::SetModelScale(const osg::Vec3& modelScale)
-   {
-      mScale = modelScale;
-      SetDirty();
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   void Object::GetModelScale(osg::Vec3& modelScale) const
-   {
-      modelScale = mScale;
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   void Object::SetModelTransform(const dtCore::Transform& xform)
-   {
-      //two copies?  Not good.
-      osg::Matrix m;
-      xform.Get(m);
-      mModelTransform->setMatrix(m);
-      //dirty so we can re-apply the scale.
-      SetDirty();
-   }
-   
-   /////////////////////////////////////////////////////////////////////////////
-   void Object::GetModelTransform(dtCore::Transform& xform) const
-   {
-      xform.Set(mModelTransform->getMatrix());
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
    osg::Node* Object::LoadFile(const std::string& filename, bool useCache)
    {
       osg::Node *node = NULL;
       node = Loadable::LoadFile(filename, useCache);
    
       //We should always clear the geometry.  If LoadFile fails, we should have no geometry.
-      if (mModelTransform->getNumChildren() != 0)
+      if (mModel->GetMatrixTransform().getNumChildren() != 0)
       {
-         mModelTransform->removeChild(0,GetMatrixNode()->getNumChildren() );
+         mModel->GetMatrixTransform().removeChild(0,GetMatrixNode()->getNumChildren() );
       }
 
       //attach our geometry node to the matrix node
@@ -150,11 +87,11 @@ namespace dtCore
 
             osg::Matrix tempMat;
             tempMat.makeTranslate( -bbv.mBoundingBox.center() );
-            mModelTransform->setMatrix( tempMat );
-            SetDirty();
+            mModel->GetMatrixTransform().setMatrix( tempMat );
+            mModel->SetDirty();
          }
 
-         mModelTransform->addChild(node);
+         mModel->GetMatrixTransform().addChild(node);
 
          return node;
       }

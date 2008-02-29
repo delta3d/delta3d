@@ -27,6 +27,7 @@
 
 #include <dtCore/loadable.h>
 #include <dtCore/physical.h>
+#include <dtCore/model.h>
 #include <osg/MatrixTransform>
 #include <osg/NodeCallback>
 #include <osg/Vec3>
@@ -52,21 +53,6 @@ namespace dtCore
            * @param name : The name of this instance
            */
          Object( TransformableNode &node, const std::string &name = "Object" );
-
-         void SetModelTransform(const dtCore::Transform& xform);
-         void GetModelTransform(dtCore::Transform& xform) const;
-
-         //Changes the scale of the model without 
-         void SetModelScale(const osg::Vec3& modelScale);
-         void GetModelScale(osg::Vec3& modelScale) const;
-
-         /// Get the model transform matrix as const.
-         const osg::MatrixTransform& GetModelTransform() const { return *mModelTransform; }
-
-         /** Get the model transform matrix by reference. If you call "setMatrix" on this, you must
-          * call "SetDirty" on this class so the scale can be re-applied.
-          */
-         osg::MatrixTransform& GetModelTransform() { return *mModelTransform; }
          
          /*!
           * Load a geometry from a file using any supplied data file paths set in
@@ -82,13 +68,11 @@ namespace dtCore
          void RecenterGeometryUponLoad( const bool enable = true ) { mRecenterGeometry = enable; }
 
          /**
-          *  Tells this object that the scale vector has been changed, so that it
-          *  can be reapplied (at great expense) during an update callback.
-          * This is called automatcally by SetModelScale and SetModelTransform, but 
-          * must be called explicitly if one modifies the model transform directly by calling
-          * #GetModelTransform().setMatrix();
+          * Returns the model associated with the Object
+          * @return mModel
           */
-         void SetDirty();
+         Model& GetModel() { return *mModel; }
+         const Model& GetModel() const { return *mModel; }
 
       protected:
          virtual ~Object();
@@ -97,9 +81,7 @@ namespace dtCore
 
          void Ctor();
 
-         dtCore::RefPtr<osg::MatrixTransform> mModelTransform;
-         dtCore::RefPtr<osg::NodeCallback> mUpdateCallback; 
-         osg::Vec3 mScale;
+         dtCore::RefPtr<Model> mModel;
 
          bool mRecenterGeometry;///<if we want to recenter the geometry of the object about the origin upon load
    };   
