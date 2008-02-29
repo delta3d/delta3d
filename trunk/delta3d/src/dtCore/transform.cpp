@@ -307,7 +307,7 @@ namespace dtCore
    
       for( int i = 0; i < 4; i++ )
          for( int j = 0; j < 4; j++ )
-            if( osg::equivalent(mTransform(i,j), transform.mTransform(i,j), double(epsilon)) )
+            if( !osg::equivalent(mTransform(i,j), transform.mTransform(i,j), double(epsilon)) )
                return false;
    
       return true;
