@@ -6,6 +6,7 @@
 #include <QtGui/QGraphicsScene>
 #include <QtGui/QAction>
 #include <QtGui/QMenu>
+#include <QtGui/QCursor>
 #include <QtGui/QGraphicsItem>
 
 #include <dtUtil/mathdefines.h>
@@ -30,6 +31,13 @@ PoseMeshView::PoseMeshView(PoseMeshScene *scene, QWidget *parent)
  
    mTimer.setParent(this);
    mTimer.setInterval(10);  
+
+   mCursor[MODE_GRAB]       = new QCursor(QPixmap(":/images/handIcon.png"));
+   mCursor[MODE_BLEND_PICK] = new QCursor(QPixmap(":/images/reticle.png"));
+
+   // Create and connect actions for the context menu
+   mActionZoomItemExtents = new QAction("Zoom Extents", this);
+   connect(mActionZoomItemExtents, SIGNAL(triggered()), SLOT(OnZoomToItemExtents()));
 
    // Allow our view to be frequently updated
    connect(&mTimer, SIGNAL(timeout()), this, SLOT(OnUpdateView()));   
@@ -72,6 +80,27 @@ void PoseMeshView::keyPressEvent(QKeyEvent *event)
 void PoseMeshView::mouseMoveEvent(QMouseEvent *event)
 {
    QGraphicsView::mouseMoveEvent(event);   
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+void PoseMeshView::SetMode(eMODE newMode)
+{
+   bool allowMovement = newMode == MODE_GRAB;
+   
+   QList<QGraphicsItem*> itemList = items();
+   foreach (QGraphicsItem *item, itemList)
+   {
+      item->setFlag(QGraphicsItem::ItemIsMovable, allowMovement);
+      item->setCursor(*mCursor[newMode]);
+   }
+
+   mMode = newMode;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+PoseMeshView::eMODE PoseMeshView::GetMode()
+{
+   return mMode;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -242,13 +271,20 @@ void PoseMeshView::mouseReleaseEvent(QMouseEvent *event)
 /////////////////////////////////////////////////////////////////////////////////////////
 void PoseMeshView::contextMenuEvent( QContextMenuEvent *event )
 {
-   mLastClickPoint = mapToScene(event->pos());
+   QGraphicsView::contextMenuEvent(event);
+   //mLastClickPoint = mapToScene(event->pos());
 
-   QMenu menu;
-   
-   //const QGraphicsItem *item = itemAt(event->pos()); 
+  
+   //
+   mLastItem = dynamic_cast<PoseMeshItem*>(itemAt(event->pos()));
+   if (mLastItem)
+   {
+       QMenu menu;
+       menu.addAction(mActionZoomItemExtents);
+       menu.exec(event->globalPos());
+   }
 
-   menu.exec(event->globalPos());
+  
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -270,4 +306,10 @@ void PoseMeshView::OnUpdateView()
       centerOn(mCurrentTarget);
       mTimer.stop();
    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+void PoseMeshView::OnZoomToItemExtents()
+{
+   OnZoomToPoseMesh(mLastItem->GetPoseMeshName());
 }

@@ -3,7 +3,6 @@
 #include <QtCore/QRectF>
 #include <QtGui/QGraphicsRectItem>
 #include <QtGui/QGraphicsSceneMouseEvent>
-#include <QtGui/QCursor>
 
 #include <dtAnim/chardrawable.h>
 
@@ -42,28 +41,14 @@ PoseMeshScene::~PoseMeshScene()
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void PoseMeshScene::SetMode(eMODE newMode)
-{
-   mMode = newMode;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-PoseMeshScene::eMODE PoseMeshScene::GetMode()
-{
-   return mMode;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
 void PoseMeshScene::AddMesh(const dtAnim::PoseMesh &poseMesh, dtAnim::Cal3DModelWrapper *model)
 {      
    static float adjustedHeight = mCanvasRect.y() + 64;
 
    PoseMeshItem *newItem = new PoseMeshItem(poseMesh, model);
    mItemList.push_back(newItem);
-
-   //float itemWidth = newItem->boundingRect().width();
+  
    float itemHeight = newItem->boundingRect().height();
-
    float canvasWidth = mCanvasRect.width();
 
    float middleX = mCanvasRect.x() + canvasWidth * 0.5f;
@@ -71,12 +56,7 @@ void PoseMeshScene::AddMesh(const dtAnim::PoseMesh &poseMesh, dtAnim::Cal3DModel
 
    adjustedHeight += itemHeight + 64.0f;
 
-   newItem->setPos(middleX, middleY);
-   
-   newItem->setCursor(*new QCursor(QPixmap(":/images/reticle.png")));
-
-   //QRectF test(mAnimRect.x() + 10, mAnimRect.y() + 10, 20, 10);   
-   //newItem->setRect(test);
+   newItem->setPos(middleX, middleY);  
 
    addItem(newItem);
 }
@@ -119,6 +99,12 @@ void PoseMeshScene::CreateTest()
 
       addRect(test)->setPen(trackPen); 
    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+void PoseMeshScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+   QGraphicsScene::mouseReleaseEvent(event);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

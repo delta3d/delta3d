@@ -21,36 +21,23 @@ class PoseMeshItem;
 class PoseMeshScene: public QGraphicsScene
 {
    Q_OBJECT
-public:
-   enum eMODE
-   {
-      MODE_INVALID = -1,
-      MODE_BLEND_PICK = 0,
-      MODE_GRAB,
-
-      MODE_TOTAL
-   };
+public:   
 
    PoseMeshScene(QObject *parent = 0);
    PoseMeshScene(const QRectF &sceneRect, QObject *parent = 0);
    ~PoseMeshScene();   
-
-  
-   eMODE GetMode();
   
    void AddMesh(const dtAnim::PoseMesh &poseMesh, dtAnim::Cal3DModelWrapper *model);   
 
    PoseMeshItem* GetPoseMeshItemByName(const std::string &name);
 
+   virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
    virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *mouseEvent);
 
 
 signals:
 
    void ViewPoseMesh(const std::string &meshName);
-   
-public slots:
-   void SetMode(eMODE newMode);
 
 private slots:
    void OnPoseMeshStatusChanged(const std::string &meshName, bool isEnabled);
@@ -62,7 +49,7 @@ private:
    std::vector<PoseMeshItem*> mItemList;
  
    QRectF mCanvasRect;
-   eMODE  mMode;
+   
 };
 
 #endif //_POSEMESH_SCENE_H_
