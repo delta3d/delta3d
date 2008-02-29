@@ -36,27 +36,13 @@ namespace dtActors
     {
         PhysicalActorProxy::BuildPropertyMap();
 
+        dtCore::Object *actor = NULL;
+        GetActor(actor);
+
         AddProperty(new dtDAL::Vec3ActorProperty("Scale", "Scale", 
-           dtDAL::MakeFunctor(*this, &DeltaObjectActorProxy::SetScale), 
-           dtDAL::MakeFunctorRet(*this, &DeltaObjectActorProxy::GetScale), 
+           dtDAL::MakeFunctor(*actor, &dtCore::Object::SetScale), 
+           dtDAL::MakeFunctorRet(*actor, &dtCore::Object::GetScale), 
            "Specifies the scale of the object", 
            "Transformable"));
-    }
-
-    ///////////////////////////////////////////////////////////////////////////////
-    void DeltaObjectActorProxy::SetScale(const osg::Vec3 &xyz)
-    {
-       dtCore::Object *actor = NULL;
-       GetActor(actor);
-       actor->GetModel().SetScale(xyz);
-    }
-
-    osg::Vec3 DeltaObjectActorProxy::GetScale() const
-    {
-       osg::Vec3 xyz;
-       const dtCore::Object *actor = NULL;
-       GetActor(actor);
-       actor->GetModel().GetScale(xyz);
-       return xyz;
     }
 }

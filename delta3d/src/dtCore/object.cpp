@@ -101,4 +101,29 @@ namespace dtCore
       }
    }
 
+   //////////////////////////////////////////////////////////////////////////////
+   void Object::SetScale(const osg::Vec3 &xyz)
+   {  
+      mModel->SetScale(xyz);
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+   osg::Vec3 Object::GetScale() const
+   {
+      osg::Vec3 scale;
+      mModel->GetScale(scale);
+      return scale;
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+   osg::MatrixTransform& Object::GetMatrixTransform()
+   {
+      return mModel->GetMatrixTransform();
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+   const osg::MatrixTransform& Object::GetMatrixTransform() const
+   {
+      return mModel->GetMatrixTransform();
+   }
 }

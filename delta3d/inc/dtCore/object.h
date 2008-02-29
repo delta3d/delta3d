@@ -68,13 +68,31 @@ namespace dtCore
          void RecenterGeometryUponLoad( const bool enable = true ) { mRecenterGeometry = enable; }
 
          /**
-          * Returns the model associated with the Object
-          * @return mModel
+          * Sets the scale on this object
+          * @param xyz The scale vector
           */
-         Model& GetModel() { return *mModel; }
-         const Model& GetModel() const { return *mModel; }
+         void SetScale(const osg::Vec3 &xyz);
+
+         /**
+          * Returns the scale vector
+          * @return The scale
+          */
+         osg::Vec3 GetScale() const;
+
+         /**
+          * Returns the matrix transform of this object
+          * @return The osg::MatrixTransform
+          */
+         osg::MatrixTransform& GetMatrixTransform();
+
+         /**
+          * Returns the matrix transform of this object
+          * @return The osg::MatrixTransform
+          */
+         const osg::MatrixTransform& GetMatrixTransform() const;
 
       protected:
+
          virtual ~Object();
 
       private:
