@@ -71,8 +71,6 @@ class CameraTests : public CPPUNIT_NS::TestFixture
             mCamera = mApp->GetCamera();
             mWin = mApp->GetWindow();
             
-            dtCore::System::GetInstance().Config();
-
             dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
             dtCore::System::GetInstance().Start();
              
@@ -118,7 +116,7 @@ class CameraTests : public CPPUNIT_NS::TestFixture
          fileUtils.MakeDirectory(SCREEN_SHOT_DIR);
          const std::string prefix = SCREEN_SHOT_DIR + "/Mojo";
          const std::string result = mCamera->TakeScreenShot(prefix);
-         
+
          CPPUNIT_ASSERT_MESSAGE("The resulting string should be longer.", result.size() > prefix.size());
          
          CPPUNIT_ASSERT_MESSAGE("The result should begin with the prefix.", 

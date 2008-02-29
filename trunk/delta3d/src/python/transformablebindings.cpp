@@ -4,6 +4,7 @@
 
 #include <python/dtpython.h>
 #include <dtCore/transformable.h>
+#include <osg/MatrixTransform>
 #include <dtCore/scene.h>
 
 using namespace boost::python;
@@ -111,8 +112,8 @@ void initTransformableBindings()
    void (Transformable::*GetTransformRef)(Transform&, Transformable::CoordSysEnum ) const = &Transformable::GetTransform;
 
    scope Transformable_scope = class_< TransformableWrap, bases<DeltaDrawable>, RefPtr<TransformableWrap>, boost::noncopyable >("Transformable", no_init)
-      .def(init<optional<const std::string&>>())
-      .def(init<Transformable::TransformableNode&, optional<const std::string&>>())
+      .def(init<optional<const std::string&> >())
+      .def(init<Transformable::TransformableNode&, optional<const std::string&> >())
       .def("GetInstanceCount", &Transformable::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", TransformableGI1, return_internal_reference<>())

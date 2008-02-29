@@ -48,7 +48,7 @@ void initObjectBindings()
    // on exit on Linux: *** glibc detected *** python: double free or corruption (out): 0xb64054d0 ***
    //class_<Object, bases<Physical>, ObjectWrap*, boost::noncopyable>("Object", init<optional<const std::string&> >())
    class_<Object, bases<Physical>, RefPtr<ObjectWrap>, boost::noncopyable>("Object", init<optional<const std::string&> >())
-      .def(init<Transformable::TransformableNode&, optional<const std::string&>>())
+      .def(init<Transformable::TransformableNode&, optional<const std::string&> >())
       .def("GetInstanceCount", &Object::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", ObjectGI1, return_internal_reference<>())
