@@ -58,6 +58,7 @@ class TransformableTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST(TestDefaultBools);
    CPPUNIT_TEST(TestGetCollisionGeomDimensions);
    CPPUNIT_TEST(TestSetCollisionBox);
+   CPPUNIT_TEST(TestEpsilonEquals);
    CPPUNIT_TEST(TestSetTransform);
    CPPUNIT_TEST(TestSetMatrix);
    CPPUNIT_TEST(TestSetPosHPR);
@@ -81,6 +82,7 @@ public:
    void TestDefaultBools();
    void TestGetCollisionGeomDimensions();
    void TestSetCollisionBox();
+   void TestEpsilonEquals();
    void TestSetTransform();
    void TestSetPosHPR();
    void TestSetPosQuat();
@@ -158,6 +160,29 @@ void TransformableTests::TestGetCollisionGeomDimensions()
       osg::equivalent( dimensions[1], mBoxLengths[1], 1e-2f ) && 
       osg::equivalent( dimensions[2], mBoxLengths[2], 1e-2f ) );
 }
+
+void TransformableTests::TestEpsilonEquals()
+{
+   dtCore::Transform xform1, xform2;
+   
+   xform1.MakeIdentity();
+   xform2.MakeIdentity();
+
+   CPPUNIT_ASSERT(xform1.EpsilonEquals(xform2, 0.001));
+   CPPUNIT_ASSERT(xform2.EpsilonEquals(xform1, 0.001));
+
+   osg::Vec3 testPos(21.2, 23.3, 9.6);
+   xform2.SetTranslation(testPos);
+
+   CPPUNIT_ASSERT(!xform1.EpsilonEquals(xform2, 0.001));
+   CPPUNIT_ASSERT(!xform2.EpsilonEquals(xform1, 0.001));
+
+   xform1.SetTranslation(testPos);
+
+   CPPUNIT_ASSERT(xform1.EpsilonEquals(xform2, 0.001));
+   CPPUNIT_ASSERT(xform2.EpsilonEquals(xform1, 0.001));
+}
+
 
 void TransformableTests::TestSetCollisionBox()
 {
