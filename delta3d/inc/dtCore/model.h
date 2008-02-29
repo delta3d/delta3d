@@ -18,6 +18,7 @@
  *
  */
 #include <dtCore/export.h>
+#include <dtCore/refptr.h>
 
 #include <osg/MatrixTransform>
 #include <osg/Referenced>
