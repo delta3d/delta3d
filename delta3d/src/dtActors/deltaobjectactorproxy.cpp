@@ -39,7 +39,8 @@ namespace dtActors
         AddProperty(new dtDAL::Vec3ActorProperty("Scale", "Scale", 
            dtDAL::MakeFunctor(*this, &DeltaObjectActorProxy::SetScale), 
            dtDAL::MakeFunctorRet(*this, &DeltaObjectActorProxy::GetScale), 
-           "Specifies the scale of the object"));
+           "Specifies the scale of the object", 
+           "Transformable"));
     }
 
     ///////////////////////////////////////////////////////////////////////////////
