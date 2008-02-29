@@ -118,7 +118,7 @@ namespace dtNetGM
         * @param portNum The prot to connect to
         * @return boolean indicating a successfull connect
         */
-        bool ClientNetworkComponent::ConnectToServer(const std::string &host, const int portNum);
+        bool ConnectToServer(const std::string &host, const int portNum);
 
     protected:
         // a vector containing information of other connected clients
