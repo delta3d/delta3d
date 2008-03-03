@@ -26,26 +26,25 @@
 
 namespace dtActors 
 {
-    /**
-     * @class DeltaObjectActorProxy
-     * @brief This proxy wraps the Delta3D Object.
-     */
+   /**
+   * @class DeltaObjectActorProxy
+   * @brief This proxy wraps the Delta3D Object.
+   */
+   class DT_PLUGIN_EXPORT DeltaObjectActorProxy : public dtDAL::PhysicalActorProxy 
+   {
+      public:
 
-    class DT_PLUGIN_EXPORT DeltaObjectActorProxy : public dtDAL::PhysicalActorProxy 
-    {
-    public:
-
-        /**
+         /**
          * Constructor
          */
-        DeltaObjectActorProxy() { SetClassName("dtCore::Object"); }
+         DeltaObjectActorProxy() { SetClassName("dtCore::Object"); }
 
-        /**
+         /**
          * Adds the properties that are common to all Delta3D physical objects.
          */
-        virtual void BuildPropertyMap();
+         virtual void BuildPropertyMap();
 
-        /**
+         /**
          * This method is responsible for loading a mesh file and any other
          * associated data.  This method is abstract to ensure that more specific
          * classes are created from this one.  A Delta3D object is very generic
@@ -58,21 +57,26 @@ namespace dtActors
          *  implementation see the StaticMeshActorProxy.
          * @see StaticMeshActorProxy
          */
-        virtual void LoadFile(const std::string &fileName) = 0;
+         virtual void LoadFile(const std::string &fileName) = 0;
 
-    protected:
+      protected:
 
-        /**
+         void SetRotation(const osg::Vec3& v3);
+         osg::Vec3 GetRotation();
+
+         void SetTranslation(const osg::Vec3& v3);
+         osg::Vec3 GetTranslation();
+
+         /**
          * Creates a Delta3D object actor.
          */
-        virtual void CreateActor();
+         virtual void CreateActor();
 
-        /**
+         /**
          * Destructor
          */
-        virtual ~DeltaObjectActorProxy() {}
-
-    };
+         virtual ~DeltaObjectActorProxy() {}
+   };
 }
 
 #endif
