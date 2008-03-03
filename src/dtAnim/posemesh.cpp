@@ -8,6 +8,7 @@
 
 using namespace dtAnim;
 
+/////////////////////////////////////////////////////////////////////////////////////////
 PoseMesh::PoseMesh(const dtAnim::Cal3DModelWrapper* model,
                    const PoseMeshData& meshData)
   : mName(meshData.mName)
@@ -16,7 +17,8 @@ PoseMesh::PoseMesh(const dtAnim::Cal3DModelWrapper* model,
    std::vector<unsigned int> animids;
    GetAnimationIDsByName(const_cast<dtAnim::Cal3DModelWrapper*>(model), meshData.mAnimations, animids);
       
-   mBoneID = model->GetCoreBoneID( meshData.mBoneName );   
+   mBoneID = model->GetCoreBoneID( meshData.mBoneName );  
+   assert(mBoneID != -1);
 
    // Allocate space for osg to triangulate our verts
    std::vector<osg::Vec3> celestialPoints;
@@ -63,7 +65,7 @@ PoseMesh::PoseMesh(const dtAnim::Cal3DModelWrapper* model,
          << "\t(anim=" << model->GetCoreAnimationName(*anim) << ")"
          << std::endl;
 
-      LOG_INFO(oss.str());      
+      LOG_DEBUG(oss.str());      
 
       // Store the vert for triangulation
       // - osg::PI_2
@@ -125,7 +127,7 @@ PoseMesh::PoseMesh(const dtAnim::Cal3DModelWrapper* model,
          ", " << vertIndex2 << ")" << "  (" << animName0 << ", " << animName1 << 
          ", " << animName2 << ")" << std::endl;
 
-      LOG_INFO(oss.str());
+      LOG_DEBUG(oss.str());
    }  
 
    EdgeCountMap::iterator edgeIter = edgeCounts.begin(); 
@@ -166,6 +168,7 @@ PoseMesh::PoseMesh(const dtAnim::Cal3DModelWrapper* model,
    }  
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 PoseMesh::~PoseMesh()
 {
    VertexVector::iterator endvert = mVertices.end();
@@ -183,6 +186,7 @@ PoseMesh::~PoseMesh()
    }
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 PoseMesh::Vertex::Vertex(const osg::Vec3& data, unsigned int animID)
 : mData(data)
 , mAnimID(animID)
@@ -205,6 +209,7 @@ PoseMesh::Triangle::Triangle(const PoseMesh::Vertex* a,
    mIndices[2] = cIndex;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void PoseMesh::GetIndexPairsForTriangle(int triangleID,                                              
                                         MeshIndexPair &pair0,
                                         MeshIndexPair &pair1,
@@ -223,9 +228,10 @@ void PoseMesh::GetIndexPairsForTriangle(int triangleID,
    pair2 = MeshIndexPair(index2, index0);
 }
 
-void PoseMesh::GetAnimationIDsByName(dtAnim::Cal3DModelWrapper *model,
+/////////////////////////////////////////////////////////////////////////////////////////
+void PoseMesh::GetAnimationIDsByName(const dtAnim::Cal3DModelWrapper *model,
                                      const std::vector<std::string> &animNames,
-                                     std::vector<unsigned int> &animIDs)
+                                     std::vector<unsigned int> &animIDs) const
 {
    // Convert the animation string into a list of ID's           
    for (unsigned int animIndex = 0; animIndex < animNames.size(); ++animIndex)
@@ -245,6 +251,7 @@ void PoseMesh::GetAnimationIDsByName(dtAnim::Cal3DModelWrapper *model,
    }
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void PoseMesh::GetTargetTriangleData(const float azimuth,
                                      const float elevation,                                                          
                                      TargetTriangle &outTriangle) const
@@ -298,6 +305,7 @@ void PoseMesh::GetTargetTriangleData(const float azimuth,
    outTriangle.mElevation  = elevation;		
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 /// Algorithm in detail at http://www.blackpawn.com/texts/pointinpoly/default.html
 int PoseMesh::FindCelestialTriangleID(float azimuth, float elevation) const
 {

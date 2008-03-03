@@ -1,46 +1,47 @@
 #include <dtAnim/PoseMeshUtility.h>
 #include <dtAnim/PoseMesh.h>
 #include <dtAnim/PoseMath.h>
+#include <dtAnim/cal3dmodelwrapper.h>
 
 #include <dtUtil/mathdefines.h>
-#include <dtAnim/cal3dmodelwrapper.h>
+#include <dtUtil/log.h>
 
 #include <algorithm>
 
 using namespace dtAnim;
 
 // Used to sort the BaseReferencePose list
-bool BaseReferencePredicate( std::pair<int, float> &lhs, std::pair<int, float> &rhs )
+bool BaseReferencePredicate(std::pair<int, float> &lhs, std::pair<int, float> &rhs)
 {
    return lhs.second < rhs.second;
 }
 
-
+/////////////////////////////////////////////////////////////////////////////////////////
 PoseMeshUtility::PoseMeshUtility()
-: mPoseList( NULL )
+: mPoseList(NULL)
 {
 }
 
-
+/////////////////////////////////////////////////////////////////////////////////////////
 PoseMeshUtility::~PoseMeshUtility()
 {
 }
 
-
+/////////////////////////////////////////////////////////////////////////////////////////
 void PoseMeshUtility::ClearPoses(const PoseMesh *poseMesh, dtAnim::Cal3DModelWrapper *model, float delay)
 {
    const PoseMesh::VertexVector &verts = poseMesh->GetVertices();
 
-   for ( size_t vertIndex = 0; vertIndex < verts.size(); ++vertIndex )
+   for (size_t vertIndex = 0; vertIndex < verts.size(); ++vertIndex)
    {
-      model->BlendCycle( verts[vertIndex]->mAnimID, 0.0f, delay );
+      model->BlendCycle(verts[vertIndex]->mAnimID, 0.0f, delay);
    }
 }
 
-
+/////////////////////////////////////////////////////////////////////////////////////////
 void PoseMeshUtility::BlendPoses(const PoseMesh *poseMesh,
                                  dtAnim::Cal3DModelWrapper* model,
-                                 PoseMesh::TargetTriangle &targetTriangle)
+                                 const PoseMesh::TargetTriangle &targetTriangle)
 {
    osg::Vec3 weights;
    unsigned int animIDs[3];  
@@ -56,12 +57,12 @@ void PoseMeshUtility::BlendPoses(const PoseMesh *poseMesh,
    dtUtil::BarycentricSpace<osg::Vec3> *barySpace = barySpaceVector[targetTriangle.mTriangleID];
 
    // calculate the weights for the known animations using the corresponding barycentric space
-   weights = barySpace->Transform( osg::Vec3( targetTriangle.mAzimuth, targetTriangle.mElevation, 0.0f ) );
+   weights = barySpace->Transform(osg::Vec3(targetTriangle.mAzimuth, targetTriangle.mElevation, 0.0f));
 
    //now play the 3 animationIDs with the associated weights
-   model->BlendCycle( animIDs[0], weights[0], 0.f );
-   model->BlendCycle( animIDs[1], weights[1], 0.f );
-   model->BlendCycle( animIDs[2], weights[2], 0.f );
+   model->BlendCycle(animIDs[0], weights[0], 0.f);
+   model->BlendCycle(animIDs[1], weights[1], 0.f);
+   model->BlendCycle(animIDs[2], weights[2], 0.f);
 
    // turn off the animations for the rest of the celestial points
    const PoseMesh::VertexVector& vertices = poseMesh->GetVertices();
@@ -71,76 +72,80 @@ void PoseMeshUtility::BlendPoses(const PoseMesh *poseMesh,
    {
       unsigned int anim_id = vertices[vertIndex]->mAnimID;
 
-      if( anim_id != animIDs[0] &&
+      if(anim_id != animIDs[0] &&
          anim_id != animIDs[1] &&
-         anim_id != animIDs[2] )
+         anim_id != animIDs[2])
       {
          float weight= 0.f;  // only want to turn off these animations.
          float delay = 0.f;
 
-         model->BlendCycle( anim_id, weight, delay );
+         model->BlendCycle(anim_id, weight, delay);
       }
    }
 }
 
-
-void PoseMeshUtility::SetBaseReferencePoses( std::vector<BaseReferencePose> *poseList,
-                                            dtAnim::Cal3DModelWrapper* model )
+/////////////////////////////////////////////////////////////////////////////////////////
+void PoseMeshUtility::SetBaseReferencePoses(std::vector<BaseReferencePose> *poseList,
+                                            const dtAnim::Cal3DModelWrapper* model)
 {
-   assert( AreBaseReferencePosesValid( poseList ) );
-   assert( model );
+   assert(AreBaseReferencePosesValid(poseList));
+   assert(model);
 
    // Store the list and make sure it is in ascending order
    mPoseList = poseList;
-   std::sort( mPoseList->begin(), mPoseList->end(), BaseReferencePredicate );
+   std::sort(mPoseList->begin(), mPoseList->end(), BaseReferencePredicate);
 
-   int headID  = model->GetCoreBoneID( "Bip01 Head" );    
+   // TODO - don't make assumptions about this bone facing forward
+   int headID = model->GetCoreBoneID( "Bip01 Head" );    
 
    // Calculate the forward direction for each pose
-   for ( size_t poseIndex = 0; poseIndex < mPoseList->size(); ++poseIndex )
+   for (size_t poseIndex = 0; poseIndex < mPoseList->size(); ++poseIndex)
    {
       int currentAnimID = (*mPoseList)[poseIndex].first;
       assert( currentAnimID != -1 );
 
-      osg::Quat boneRotation  = model->GetBoneAbsoluteRotationForKeyFrame( currentAnimID, headID, 30 );
+      // TODO - Don't assume 30 frames!
+      osg::Quat boneRotation  = model->GetBoneAbsoluteRotationForKeyFrame(currentAnimID, headID, 30);
       osg::Vec3 poseDirection = boneRotation * osg::Y_AXIS;
 
       poseDirection.normalize();
-      mPoseDirections.push_back( poseDirection );      
+      mPoseDirections.push_back(poseDirection);      
    }
 }
 
-
-bool PoseMeshUtility::GetBaseReferenceBlend( float overallAlpha, BaseReferenceBlend &finalBlend )
+/////////////////////////////////////////////////////////////////////////////////////////
+bool PoseMeshUtility::GetBaseReferenceBlend(float overallAlpha, BaseReferenceBlend &outFinalBlend)
 {
-   assert( AreBaseReferencePosesValid( mPoseList ) );
+   assert(AreBaseReferencePosesValid(mPoseList));
 
-   if ( mPoseList )
+   if (mPoseList)
    {
-      size_t endPoseIndex = GetEndPoseIndex( overallAlpha );
+      size_t endPoseIndex = GetEndPoseIndex(overallAlpha);
 
-      assert( endPoseIndex != mPoseList->size() );
-      assert( endPoseIndex != 0 );
+      assert(endPoseIndex != mPoseList->size());
+      assert(endPoseIndex != 0);
 
       float startAlpha = (*mPoseList)[endPoseIndex - 1].second;
       float endAlpha   = (*mPoseList)[endPoseIndex].second;
 
       int startPoseIndex = endPoseIndex - 1;
 
-      finalBlend.startAnimID    = (*mPoseList)[startPoseIndex].first;
-      finalBlend.endAnimID      = (*mPoseList)[endPoseIndex].first;
-      finalBlend.startDirection = mPoseDirections[startPoseIndex];
-      finalBlend.endDirection   = mPoseDirections[endPoseIndex];
-      finalBlend.blendAlpha     = 1.0f - ( overallAlpha - startAlpha ) / ( endAlpha - startAlpha );
+      outFinalBlend.startAnimID    = (*mPoseList)[startPoseIndex].first;
+      outFinalBlend.endAnimID      = (*mPoseList)[endPoseIndex].first;
+      outFinalBlend.startDirection = mPoseDirections[startPoseIndex];
+      outFinalBlend.endDirection   = mPoseDirections[endPoseIndex];
+      outFinalBlend.blendAlpha     = 1.0f - (overallAlpha - startAlpha) / (endAlpha - startAlpha);
 
       return true;
    }
 
+   LOG_ERROR("Trying to get a blend without having a pose list.");
+
    return false;
 }
 
-
-int PoseMeshUtility::GetEndPoseIndex( float alpha )
+/////////////////////////////////////////////////////////////////////////////////////////
+int PoseMeshUtility::GetEndPoseIndex(float alpha)
 {
    size_t endPoseIndex = 0;
 
@@ -164,10 +169,10 @@ int PoseMeshUtility::GetEndPoseIndex( float alpha )
    return endPoseIndex;
 }
 
-
-bool PoseMeshUtility::AreBaseReferencePosesValid( const std::vector<BaseReferencePose> *poseList )
+/////////////////////////////////////////////////////////////////////////////////////////
+bool PoseMeshUtility::AreBaseReferencePosesValid(const std::vector<BaseReferencePose> *poseList)
 {
-   if ( poseList && poseList->size() >= 2 )
+   if (poseList && poseList->size() >= 2)
    {
       // Pose lists need to have the following:
       // a start pose ( 0.0 )
@@ -176,22 +181,23 @@ bool PoseMeshUtility::AreBaseReferencePosesValid( const std::vector<BaseReferenc
       bool hasZero = false;
       bool hasOne  = false;
 
-      for ( size_t poseIndex = 0; poseIndex < poseList->size(); ++poseIndex )
+      for (size_t poseIndex = 0; poseIndex < poseList->size(); ++poseIndex)
       {
-         if ( dtUtil::Equivalent( (*poseList)[poseIndex].second, 0.0f ) )
+         if ( dtUtil::Equivalent((*poseList)[poseIndex].second, 0.0f ))
          {
             hasZero = true;
          }
-         else if ( dtUtil::Equivalent( (*poseList)[poseIndex].second, 1.0f ) )
+         else if (dtUtil::Equivalent((*poseList)[poseIndex].second, 1.0f))
          {
             hasOne = true;
          }
 
          // Check for duplicate time parameters
-         for ( size_t compareIndex = poseIndex + 1; compareIndex < poseList->size(); ++compareIndex )
+         for (size_t compareIndex = poseIndex + 1; compareIndex < poseList->size(); ++compareIndex)
          {
-            if ( dtUtil::Equivalent( (*poseList)[poseIndex].second, (*poseList)[compareIndex].second ) )
+            if (dtUtil::Equivalent((*poseList)[poseIndex].second, (*poseList)[compareIndex].second))
             {
+               LOG_ERROR("Base references poses are not valid due to uplicate time parameters.");
                return false;
             }
          }
@@ -200,5 +206,6 @@ bool PoseMeshUtility::AreBaseReferencePosesValid( const std::vector<BaseReferenc
       return true;
    }
 
+   LOG_ERROR("Base references poses are not valid.");
    return false;  
 }

@@ -4,7 +4,7 @@
 #include <dtUtil/mathdefines.h>
 #include <osg/Quat>
 
-
+/////////////////////////////////////////////////////////////////////////////////////////
 void dtUtil::GetCelestialCoordinates(osg::Vec3 target,
                                  const osg::Vec3 &lookForward,                                    
                                  float &azimuth, 
@@ -54,7 +54,7 @@ void dtUtil::GetCelestialCoordinates(osg::Vec3 target,
    azimuth    = acos(lookDotTargetForward) * azimuthSign;
 }
 
-
+/////////////////////////////////////////////////////////////////////////////////////////
 void dtUtil::GetCelestialDirection(const float azimuth,
                                    const float elevation,
                                    const osg::Vec3& forwardDirection,
@@ -74,6 +74,7 @@ void dtUtil::GetCelestialDirection(const float azimuth,
    outDirection = celestialRotation * forwardDirection;   
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void dtUtil::GetClosestPointOnSegment(const osg::Vec3 &startPoint,
                                       const osg::Vec3 &endPoint,
                                       const osg::Vec3 &refPoint,
@@ -100,6 +101,7 @@ void dtUtil::GetClosestPointOnSegment(const osg::Vec3 &startPoint,
    }
 }   
 
+/////////////////////////////////////////////////////////////////////////////////////////
 bool dtUtil::IsPointBetweenVectors(const osg::Vec3f &point,
                                    const osg::Vec3f &origin,
                                    const osg::Vec3f &A,
@@ -114,9 +116,10 @@ bool dtUtil::IsPointBetweenVectors(const osg::Vec3f &point,
    osg::Vec3f refCross = vector_B ^ vector_A;
 
    return ((CrossA * refCross >= 0) &&
-      (CrossB * refCross >= 0));
+           (CrossB * refCross >= 0));
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void dtUtil::MapCelestialToScreen(float azimuth,
                                   float elevation,
                                   float maxDistance,                             

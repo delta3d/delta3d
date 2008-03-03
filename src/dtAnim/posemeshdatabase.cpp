@@ -78,13 +78,14 @@ struct DeletePointer
    }
 };      
 
-
+/////////////////////////////////////////////////////////////////////////////////////////
 PoseMeshDatabase::PoseMeshDatabase( dtAnim::Cal3DModelWrapper *model )
 : mMeshes()
 , mModel( model )
 {
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 PoseMeshDatabase::~PoseMeshDatabase()
 {
    std::for_each( mMeshes.begin(),
@@ -92,6 +93,7 @@ PoseMeshDatabase::~PoseMeshDatabase()
                   DeletePointer<PoseMeshList::value_type>() );
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 PoseMesh* PoseMeshDatabase::GetPoseMeshByName( const std::string& name )
 {
    PoseMeshList::iterator iter = std::find_if( mMeshes.begin(),
@@ -105,6 +107,7 @@ PoseMesh* PoseMeshDatabase::GetPoseMeshByName( const std::string& name )
    return *iter;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 bool PoseMeshDatabase::LoadFromFile( const std::string& file )
 {
    PoseMeshLoader meshLoader;
@@ -133,7 +136,6 @@ bool PoseMeshDatabase::LoadFromFile( const std::string& file )
       result = false;
    }
    
-
    return result;
 }
 

@@ -300,7 +300,7 @@ namespace dtAnim
    }
 
    ////////////////////////////////////////////////////////////////////////
-   int Cal3DModelWrapper::GetCoreAnimationIDByName(const std::string &name)
+   int Cal3DModelWrapper::GetCoreAnimationIDByName(const std::string &name) const
    {
       return mCalModel->getCoreModel()->getCoreAnimationId(name);
    }
