@@ -22,27 +22,98 @@
 #include <dtActors/deltaobjectactorproxy.h>
 #include <dtCore/object.h>
 #include <dtDAL/enginepropertytypes.h>
+#include <dtUtil/matrixutil.h>
 
 namespace dtActors 
 {
-    void DeltaObjectActorProxy::CreateActor()
-    {
-        SetActor(*new dtCore::Object);
-        //std::cout << "Creating actor proxy." << std::endl;
-    }
+   ///////////////////////////////////////////////////////////////////////////////
+   void DeltaObjectActorProxy::CreateActor()
+   {
+     SetActor(*new dtCore::Object);
+     //std::cout << "Creating actor proxy." << std::endl;
+   }
 
-    ///////////////////////////////////////////////////////////////////////////////
-    void DeltaObjectActorProxy::BuildPropertyMap()
-    {
-        PhysicalActorProxy::BuildPropertyMap();
+   ///////////////////////////////////////////////////////////////////////////////
+   void DeltaObjectActorProxy::SetRotation(const osg::Vec3& v3)
+   {
+      dtCore::Object* ourObject = dynamic_cast<dtCore::Object*>(GetActor());
+      if(ourObject)
+      {
+         dtCore::Transform ourTransform;
+         ourObject->GetTransform(ourTransform);
+         ourTransform.SetRotation(v3);
 
-        dtCore::Object *actor = NULL;
-        GetActor(actor);
+         ourObject->SetTransform(ourTransform);
+      }
+   }
 
-        AddProperty(new dtDAL::Vec3ActorProperty("Scale", "Scale", 
-           dtDAL::MakeFunctor(*actor, &dtCore::Object::SetScale), 
-           dtDAL::MakeFunctorRet(*actor, &dtCore::Object::GetScale), 
-           "Specifies the scale of the object", 
-           "Transformable"));
-    }
+   ///////////////////////////////////////////////////////////////////////////////
+   osg::Vec3 DeltaObjectActorProxy::GetRotation()
+   {
+      osg::Vec3 v3;
+      const dtCore::Object* ourObject = dynamic_cast<const dtCore::Object*>(GetActor());
+      if(ourObject)
+      {
+         dtCore::Transform ourTransform;
+         ourObject->GetTransform(ourTransform);
+         ourTransform.GetRotation(v3);
+      }
+
+      return v3;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void DeltaObjectActorProxy::SetTranslation(const osg::Vec3& v3)
+   {
+      dtCore::Object* ourObject = dynamic_cast<dtCore::Object*>(GetActor());
+      if(ourObject)
+      {
+         dtCore::Transform ourTransform;
+         ourObject->GetTransform(ourTransform);
+         ourTransform.SetTranslation(v3);
+
+         ourObject->SetTransform(ourTransform);
+      }
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   osg::Vec3 DeltaObjectActorProxy::GetTranslation()
+   {
+      osg::Vec3 v3;
+      const dtCore::Object* ourObject = dynamic_cast<const dtCore::Object*>(GetActor());
+      if(ourObject)
+      {
+         dtCore::Transform ourTransform;
+         ourObject->GetTransform(ourTransform);
+         ourTransform.GetTranslation(v3);
+      }
+      return v3;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void DeltaObjectActorProxy::BuildPropertyMap()
+   {
+      PhysicalActorProxy::BuildPropertyMap();
+
+      dtCore::Object *actor = NULL;
+      GetActor(actor);
+
+      AddProperty(new dtDAL::Vec3ActorProperty("Scale", "Scale", 
+        dtDAL::MakeFunctor(*actor, &dtCore::Object::SetScale), 
+        dtDAL::MakeFunctorRet(*actor, &dtCore::Object::GetScale), 
+        "Specifies the scale of the object", 
+        "Transformable"));
+
+      AddProperty(new dtDAL::Vec3ActorProperty("Rotation", "Rotation", 
+        dtDAL::MakeFunctor(*this, &DeltaObjectActorProxy::SetRotation), 
+        dtDAL::MakeFunctorRet(*this, &DeltaObjectActorProxy::GetRotation), 
+        "Specifies the Rotation of the object", 
+        "Transformable"));
+
+      AddProperty(new dtDAL::Vec3ActorProperty("Translation", "Translation", 
+        dtDAL::MakeFunctor(*this, &DeltaObjectActorProxy::SetTranslation), 
+        dtDAL::MakeFunctorRet(*this, &DeltaObjectActorProxy::GetTranslation), 
+        "Specifies the Translation of the object", 
+        "Transformable"));
+   }
 }
