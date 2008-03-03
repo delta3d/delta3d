@@ -39,6 +39,7 @@ namespace dtGame
 {
    IMPLEMENT_ENUM(MapChangeStateData::MapChangeState);
 
+
    ///////////////////////////////////////////////////////////////////////////////
    const MapChangeStateData::MapChangeState MapChangeStateData::MapChangeState::UNLOAD("UNLOAD");
 
@@ -198,17 +199,6 @@ namespace dtGame
          mGameManager->SetEnvironmentActor(eap);
       }
 
-      //////////////////////////////////////////////////////////////////////////
-      // components
-      std::vector<dtCore::RefPtr<dtGame::GMComponent> > components;
-      map.GetAllComponents(components);
-      std::vector<dtCore::RefPtr<dtGame::GMComponent> >::iterator component_iter = components.begin();
-      for(; component_iter != components.end(); ++component_iter)
-      {
-         mGameManager->AddComponent(*(*component_iter), GameManager::ComponentPriority::NORMAL);
-      }
-
-      //////////////////////////////////////////////////////////////////////////
       std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > proxies;
       map.GetAllProxies(proxies);
 
