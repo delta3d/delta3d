@@ -269,19 +269,16 @@ void PoseMeshView::mousePressEvent(QMouseEvent *event)
 void PoseMeshView::mouseReleaseEvent(QMouseEvent *event)
 {
    //mDragItem = NULL;
-   QGraphicsView::mouseReleaseEvent(event);
-   //setDragMode(QGraphicsView::ScrollHandDrag);
+   QGraphicsView::mouseReleaseEvent(event);   
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 void PoseMeshView::contextMenuEvent( QContextMenuEvent *event )
 {
    QGraphicsView::contextMenuEvent(event);
-   //mLastClickPoint = mapToScene(event->pos());
-
-  
-   //
+   
    mLastItem = dynamic_cast<PoseMeshItem*>(itemAt(event->pos()));
+
    if (mLastItem)
    {
        QMenu menu;

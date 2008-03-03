@@ -1,6 +1,6 @@
 /*
 * Delta3D Open Source Game and Simulation Engine
-* Copyright (C) 2004-2006 MOVES Institute
+* Copyright (C) 2004-2008 MOVES Institute
 *
 * This library is free software; you can redistribute it and/or modify it under
 * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,7 +16,7 @@
 * along with this library; if not, write to the Free Software Foundation, Inc.,
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
-* Michael Guerrero 4/01/2007
+* Michael Guerrero 
 */
 
 #ifndef _POSE_MATH_H_

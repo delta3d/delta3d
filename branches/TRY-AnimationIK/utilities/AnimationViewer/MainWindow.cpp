@@ -464,34 +464,33 @@ void MainWindow::OnBlendUpdate(const std::vector<float> &weightList)
 
    for (size_t rowIndex = 0; rowIndex < weightList.size(); ++rowIndex)
    {
+      // Show progress as a whole number
       int newValue = (int)(weightList[rowIndex] * 100.0f);
+
       QProgressBar *meter = (QProgressBar*)mAnimListWidget->cellWidget(rowIndex, 5);   
-     
       meter->setValue(newValue);      
 
-      // Update the weight display
-      disconnect(mAnimListWidget, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(OnItemChanged(QTableWidgetItem*)));
-      mAnimListWidget->item(rowIndex, 1)->setData(Qt::DisplayRole, QString("%1").arg(weightList[rowIndex]));
-      connect(mAnimListWidget, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(OnItemChanged(QTableWidgetItem*)));
+      if (mAnimListWidget->item(rowIndex, 0)->checkState() == Qt::Checked)
+      {   
+         // Update the weight display only when the box is checked
+         // This will allow a user to manually enter a weight while unchecked
+         disconnect(mAnimListWidget, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(OnItemChanged(QTableWidgetItem*)));
+         mAnimListWidget->item(rowIndex, 1)->setData(Qt::DisplayRole, QString("%1").arg(weightList[rowIndex]));
+         connect(mAnimListWidget, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(OnItemChanged(QTableWidgetItem*)));
 
-      if (newValue)
-      {
-         // If animations were turned on from the pose mesh viewer
-         // mark them as turned on in the animation table
-         if (mAnimListWidget->item(rowIndex, 0)->checkState() != Qt::Checked)
+         if (!newValue)         
          {
-            mAnimListWidget->item(rowIndex, 0)->setCheckState(Qt::Checked);
-         }
-      }      
-      else
-      {
-         // If animations were turned off from the pose mesh viewer
-         // mark them as turned off in the animation table
-         if (mAnimListWidget->item(rowIndex, 0)->checkState() != Qt::Unchecked)
-         {
-            mAnimListWidget->item(rowIndex, 0)->setCheckState(Qt::Unchecked);
+            // If animations were turned off from the pose mesh viewer
+            // mark them as turned off in the animation table           
+            mAnimListWidget->item(rowIndex, 0)->setCheckState(Qt::Unchecked);            
          }
       }
+      else if (newValue)
+      {
+         // If animations were turned on from the pose mesh viewer
+         // mark them as turned on in the animation table         
+         mAnimListWidget->item(rowIndex, 0)->setCheckState(Qt::Checked);         
+      }      
    }
 
    // Allow the IK tab to update it's blend display

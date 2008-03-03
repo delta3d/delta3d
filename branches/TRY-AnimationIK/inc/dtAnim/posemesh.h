@@ -1,6 +1,6 @@
 /* 
 * Delta3D Open Source Game and Simulation Engine 
-* Copyright (C) 2004-2005 MOVES Institute 
+* Copyright (C) 2004-2008 MOVES Institute 
 *
 * This library is free software; you can redistribute it and/or modify it under
 * the terms of the GNU Lesser General Public License as published by the Free 
@@ -106,25 +106,31 @@ namespace dtAnim
       const TriangleEdgeVector GetSilhouette() const   { return mSilhouetteEdges; }
 
       /**  
-      *  GetTargetTriangleData - Finds the triangle in the mesh for the given azimuth elevation 
-      *                          if it exists, otherwise it returns the closest triangle and its coordinates
-      *  @param azimuth        - the horizontal angle between our forward and our target
-      *  @param elevation      - the vertical angle between our forward and our target  
-      *  @return outTriangle   - struct containing the nearest triangle and it's location
+      *  GetTargetTriangleData Finds the triangle in the mesh for the given azimuth elevation 
+      *                        if it exists, otherwise it returns the closest triangle and its coordinates
+      *  @param azimuth the horizontal angle between our forward and our target
+      *  @param elevation the vertical angle between our forward and our target  
+      *  @return outTriangle struct containing the nearest triangle and it's location
       */
       void GetTargetTriangleData(const float azimuth,
                                  const float elevation,                                                     
                                  TargetTriangle &outTriangle) const;
 
       /**
-      *  FindCelestialTriangleID  - Looks up a celestial triangle from a mesh using azimuth and elevation  
-      *  @param azimuth           - the horizontal angle of interest
-      *  @param elevation         - the vertical angle of interest
+      *  FindCelestialTriangleID Looks up a celestial triangle from a mesh using azimuth and elevation  
+      *  @param azimuth the horizontal angle of interest
+      *  @param elevation the vertical angle of interest
       */
       int FindCelestialTriangleID(float azimuth, float elevation) const;
 
-      // Look up the indices for a triangle and 
-      // create pairs corresponding to its edges
+      /**
+      * GetIndexPairsForTriangle Look up the indices for a triangle and 
+      *                          create pairs corresponding to its edges
+      * @param triangleID the triangle to extract pairs from
+      * @param pair0 the first pair(edge)
+      * @param pair1 the second pair(edge)
+      * @param pair2 the thris pair(edge)
+      */
       void GetIndexPairsForTriangle(int triangleID,                                     
                                     MeshIndexPair &pair0,
                                     MeshIndexPair &pair1,
@@ -146,9 +152,9 @@ namespace dtAnim
       Barycentric2DVector mBarySpaces;  
 
       // the model should be made const later
-      void GetAnimationIDsByName(dtAnim::Cal3DModelWrapper *model,
-         const std::vector<std::string> &animNames,
-         std::vector<unsigned int> &animIDs);
+      void GetAnimationIDsByName(const dtAnim::Cal3DModelWrapper *model,
+                                 const std::vector<std::string> &animNames,
+                                 std::vector<unsigned int> &animIDs) const;
 
    };
 }

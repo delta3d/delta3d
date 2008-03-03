@@ -30,7 +30,7 @@ namespace dtAnim
    class Cal3DModelWrapper; 
 
    /**
-   * Convenience functionality for manipulating celestial meshes
+   * Convenience functionality for manipulating pose meshes
    */
    class DT_ANIM_EXPORT PoseMeshUtility: public osg::Referenced
    {
@@ -52,16 +52,27 @@ namespace dtAnim
          float blendAlpha;
       };
 
+      /**  
+      *  ClearPoses Removes all animations associated with a pose mesh from the mixer
+      *  @param poseMesh the mesh containing all animation to 'clear'
+      *  @param model the model where animations will be 'cleared' from
+      *  @param delay the amount of time before the start of the 'clear'      
+      */
       void ClearPoses(const PoseMesh *poseMesh, dtAnim::Cal3DModelWrapper *model, float delay);
 
+      /**
+      * BlendPoses Applies a 3 animation blend to a model based on TargetTriangle IK data
+      * @param model the model where the animations will be applied
+      * @param targetTriangle the 3 triangle points and a point located within
+      */
       void BlendPoses(const PoseMesh *poseMesh,
                       dtAnim::Cal3DModelWrapper* model,
-                      PoseMesh::TargetTriangle &targetTriangle);
+                      const PoseMesh::TargetTriangle &targetTriangle);
 
-      void SetBaseReferencePoses( std::vector<BaseReferencePose> *poseList,
-         dtAnim::Cal3DModelWrapper* model );
+      void SetBaseReferencePoses(std::vector<BaseReferencePose> *poseList,
+                                 const dtAnim::Cal3DModelWrapper* model );
 
-      bool GetBaseReferenceBlend( float overallAlpha, BaseReferenceBlend &finalBlend );
+      bool GetBaseReferenceBlend(float overallAlpha, BaseReferenceBlend &outFinalBlend );
 
    private:
 
