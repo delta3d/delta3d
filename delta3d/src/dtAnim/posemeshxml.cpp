@@ -1,5 +1,5 @@
-#include <dtAnim/PoseMeshXML.h>
-#include <dtAnim/PoseMesh.h>
+#include <dtAnim/posemeshxml.h>
+#include <dtAnim/posemesh.h>
 
 #include <dtUtil/xercesutils.h>
 #include <cstddef>

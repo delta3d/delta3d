@@ -25,7 +25,7 @@
 #include <vector>
 #include <string>
 
-#include "PoseMeshXML.h"
+#include "posemeshxml.h"
 
 namespace dtAnim
 {

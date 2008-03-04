@@ -22,7 +22,7 @@
 #ifndef __POSE_MESH_UTILITY_H__
 #define __POSE_MESH_UTILITY_H__
 
-#include "PoseMesh.h"
+#include "posemesh.h"
 #include <osg/referenced>
 
 namespace dtAnim 
