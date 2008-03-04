@@ -107,6 +107,44 @@ namespace dtCore
       mModel->SetScale(xyz);
    }
 
+   ///////////////////////////////////////////////////////////////////////////////
+   void Object::SetModelRotation(const osg::Vec3& v3)
+   {
+      dtCore::Transform ourTransform;
+      mModel->GetTransform(ourTransform);
+      ourTransform.SetRotation(v3);
+      mModel->SetTransform(ourTransform);
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   osg::Vec3 Object::GetModelRotation()
+   {
+      osg::Vec3 v3;
+      dtCore::Transform ourTransform;
+      mModel->GetTransform(ourTransform);
+      ourTransform.GetRotation(v3);
+      return v3;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void Object::SetModelTranslation(const osg::Vec3& v3)
+   {
+      dtCore::Transform ourTransform;
+      mModel->GetTransform(ourTransform);
+      ourTransform.SetTranslation(v3);
+      mModel->SetTransform(ourTransform);
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   osg::Vec3 Object::GetModelTranslation()
+   {
+      osg::Vec3 v3;
+      dtCore::Transform ourTransform;
+      mModel->GetTransform(ourTransform);
+      ourTransform.GetTranslation(v3);
+      return v3;
+   }
+
    //////////////////////////////////////////////////////////////////////////////
    osg::Vec3 Object::GetScale() const
    {

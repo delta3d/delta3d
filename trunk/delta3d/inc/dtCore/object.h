@@ -91,6 +91,30 @@ namespace dtCore
           */
          const osg::MatrixTransform& GetMatrixTransform() const;
 
+         /**
+         * Sets the models rotation
+         * @param v3 the hpr
+         */
+         void SetModelRotation(const osg::Vec3& v3);
+         
+         /**
+         * Returns the scale vector
+         * @return The scale
+         */
+         osg::Vec3 GetModelRotation();
+
+         /**
+         * Sets the models translation
+         * @param v3 the xyz
+         */
+         void SetModelTranslation(const osg::Vec3& v3);
+         
+         /**
+         * Returns the scale vector
+         * @return The scale
+         */
+         osg::Vec3 GetModelTranslation();
+
       protected:
 
          virtual ~Object();

@@ -60,13 +60,7 @@ namespace dtActors
          virtual void LoadFile(const std::string &fileName) = 0;
 
       protected:
-
-         void SetRotation(const osg::Vec3& v3);
-         osg::Vec3 GetRotation();
-
-         void SetTranslation(const osg::Vec3& v3);
-         osg::Vec3 GetTranslation();
-
+        
          /**
          * Creates a Delta3D object actor.
          */
