@@ -72,6 +72,7 @@ class TransformableTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST(TestReplaceMatrixNode);
    CPPUNIT_TEST(TestConstructorTakingMatrixNode);
    CPPUNIT_TEST(TestRows);
+   CPPUNIT_TEST(TestDistance);
    CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -96,6 +97,7 @@ public:
    void TestConstructorTakingMatrixNode();
    void TestSetMatrix();
    void TestRows();
+   void TestDistance();
 
 private:
     bool CompareMatrix(const osg::Matrix& rhs, const osg::Matrix& lhs) const;
@@ -620,4 +622,20 @@ void TransformableTests::TestRows()
    transformTest.SetRow(2, row4Expected);
    transformTest.GetRow(2, row4);
    CPPUNIT_ASSERT(dtUtil::Equivalent(row4Expected, row4, TEST_EPSILON));
+}
+
+//////////////////////////////////////////////////////////////////////////
+void TransformableTests::TestDistance()
+{
+   dtCore::Transform transform1;
+   dtCore::Transform transform2;
+
+   transform1.SetTranslation(osg::Vec3(0,0,10));
+   transform2.SetTranslation(osg::Vec3(0,0,0));
+
+   double expectedValue = 100;
+   double expectedValuert = 10;
+
+   CPPUNIT_ASSERT(dtUtil::Equivalent(expectedValue, transform1.CalcDistanceSquared(transform2)));
+   CPPUNIT_ASSERT(dtUtil::Equivalent(expectedValuert, transform1.CalcDistance(transform2)));
 }

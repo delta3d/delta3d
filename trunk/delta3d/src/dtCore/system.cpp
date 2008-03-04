@@ -35,7 +35,7 @@ namespace dtCore
    , mFrameTime(1.0f/60.0f)
    , mTimeScale(1.0f)
    , mDt(0.0)
-   , mMaxTimeBetweenDraws(100000)
+   , mMaxTimeBetweenDraws(30000)
    , mAccumulationTime(0.0)
    , mSystemStages(STAGES_DEFAULT)
    , mUseFixedTimeStep(false)
