@@ -5,8 +5,12 @@
 #include <QtCore/QTimer>
 
 #include <dtCore/refptr.h>
-#include <dtABC/application.h>
 #include <dtCore/system.h>
+#include <dtABC/application.h>
+
+#include <dtAnim/PoseMeshDatabase.h>
+#include <dtAnim/PoseMeshUtility.h>
+#include <dtAnim/PoseMesh.h>
 
 #include <vector>
 
@@ -32,6 +36,7 @@ namespace dtAnim
 {
    class CharDrawable;
    class Cal3DDatabase;
+   class PoseMeshDatabase;
 }
 
 namespace CEGUI
@@ -53,9 +58,11 @@ public:
 public slots:
 
    void OnLoadCharFile    ( const QString &filename );
+   void OnLoadPoseMeshFile( const std::string &filename );
    void OnStartAnimation  ( unsigned int id, float weight, float delay );
    void OnStopAnimation   ( unsigned int id, float delay );
    void OnStartAction     ( unsigned int id, float delayIn, float delayOut );
+   void OnAssumeBlendPose ( dtAnim::PoseMesh::TargetTriangle &blendInfo);
    void OnLODScale_Changed( float scaleValue );
    void OnSpeedChanged    ( float speedFactor );
    void OnSetShaded();
@@ -75,6 +82,11 @@ signals:
                            unsigned int keyframes, float duration);
 
    void MeshLoaded(int meshID, const QString &meshName);
+
+   void PoseMeshLoaded(const dtAnim::PoseMesh &poseMesh);
+
+   void PoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*> &poseMeshes,
+                         dtAnim::Cal3DModelWrapper *character);
 
    void MaterialLoaded(int materialID, const QString &name, 
                        const QColor &diffuse, const QColor &ambient, const QColor &specular,
@@ -100,7 +112,11 @@ private:
    std::vector<int> mMeshesToAttach;
    std::vector<int> mMeshesToDetach;
 
-   dtCore::RefPtr<dtAnim::Cal3DDatabase> mDatabase; ///<Need to keep this around since it holds our textures   
+   dtCore::RefPtr<dtAnim::PoseMeshDatabase> mPoseDatabase;
+   dtCore::RefPtr<dtAnim::PoseMeshUtility>  mPoseUtility;
+   dtCore::RefPtr<dtAnim::Cal3DDatabase>    mCalDatabase; ///<Need to keep this around since it holds our textures   
+
+   std::vector<dtAnim::PoseMesh*> *mPoseMeshes;
 };
 
 #endif // Viewer_h__

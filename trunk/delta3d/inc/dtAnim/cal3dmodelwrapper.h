@@ -146,7 +146,7 @@ namespace dtAnim
          ///Get the name that equates to the supplied animation ID
          const std::string& GetCoreAnimationName(int animID) const;
 
-         int GetCoreAnimationIDByName(const std::string &name);
+         int GetCoreAnimationIDByName(const std::string &name) const;
 
          ///Get the number of tracks this animation uses
          unsigned int GetCoreAnimationTrackCount(int animID) const;
