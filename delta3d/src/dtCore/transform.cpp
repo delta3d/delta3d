@@ -257,15 +257,19 @@ namespace dtCore
    /////////////////////////////////////////////////////////////////////////////////////////
    double Transform::CalcDistance(const dtCore::Transform& xform)
    {
-      // TODO
-      return 0.0;
+      return sqrt(CalcDistanceSquared(xform));
    }
    
    /////////////////////////////////////////////////////////////////////////////////////////
    double Transform::CalcDistanceSquared(const dtCore::Transform& xform)
    {
-      // TODO
-      return 0.0;
+      osg::Vec3 positionOne, positionTwo;
+      GetTranslation(positionOne);
+      xform.GetTranslation(positionTwo);
+
+      return ( ((positionOne[0]-positionTwo[0]) * (positionOne[0]-positionTwo[0])) + 
+               ((positionOne[1]-positionTwo[1]) * (positionOne[1]-positionTwo[1])) +
+               ((positionOne[2]-positionTwo[2]) * (positionOne[2]-positionTwo[2])) );
    }
 
    /////////////////////////////////////////////////////////////////////////////////////////

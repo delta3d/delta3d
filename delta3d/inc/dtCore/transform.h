@@ -119,6 +119,8 @@ namespace dtCore
       void GetTranslation( osg::Vec3d& translation ) const { translation.set( mTransform.getTrans() ); }
       ///Get only translation methods
       void GetTranslation( float& tx, float& ty, float& tz ) const;
+      ///Get only translation methods
+      const osg::Vec3 GetTranslation() const { return mTransform.getTrans(); }
 
       ///Get only rotation methods
       void GetRotation( float& h, float& p, float& r ) const;
