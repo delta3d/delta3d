@@ -5,5 +5,8 @@
   	  <file>images/shadedwire.png</file>    
 	  <file>images/diffuseLight.png</file>                          
  	  <file>images/pointLight.png</file>        
+	  <file>images/checker.png</file>
+	  <file>images/reticle.png</file>
+	  <file>images/handIcon.png</file>
     </qresource>
 </RCC>

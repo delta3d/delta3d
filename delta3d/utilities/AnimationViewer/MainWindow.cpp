@@ -1,7 +1,9 @@
 #include "MainWindow.h"
 #include "AnimationTableWidget.h"
-#include "TrackView.h"
-#include "TrackScene.h"
+#include "PoseMeshView.h"
+#include "PoseMeshScene.h"
+#include "PoseMeshProperties.h"
+#include "OSGAdapterWidget.h"
 
 #include <osg/Geode> ///needed for the node builder
 #include <dtAnim/cal3ddatabase.h>
@@ -26,25 +28,28 @@
 #include <QtGui/QGraphicsScene>
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QProgressBar>
+#include <QtGui/QTreeWidgetItem>
 
 #include <QtGui/QStandardItemModel>
 #include <QtGui/QStandardItem>
 
 #include <QtGui/QGraphicsEllipseItem>
-
-#include "OSGAdapterWidget.h"
-
 #include <cassert>
 
-MainWindow::MainWindow():
-mExitAct(NULL),
-mLoadCharAct(NULL),
-mAnimListWidget(NULL),
-mMeshListWidget(NULL),
-mMaterialModel(NULL),
-mMaterialView(NULL),
-mGLWidget(NULL),
-mMixerViewerAction(NULL)
+/////////////////////////////////////////////////////////////////////////////////////////
+MainWindow::MainWindow()
+  : mExitAct(NULL)
+  , mLoadCharAct(NULL)
+  , mAnimListWidget(NULL)
+  , mMeshListWidget(NULL)
+  , mMaterialModel(NULL)
+  , mMaterialView(NULL)
+  , mGLWidget(NULL)
+  , mMixerViewerAction(NULL)
+  , mPoseDock(NULL)
+  , mPoseMeshScene(NULL)
+  , mPoseMeshViewer(NULL)
+  , mPoseMeshProperties(NULL)
 {
    resize(800, 800);
 
@@ -79,14 +84,12 @@ mMixerViewerAction(NULL)
    CreateActions();
    CreateMenus();
    statusBar();
-   CreateToolbars();
-   //CreateTrackEditor(); 
+   CreateToolbars();  
 
    mTabs = new QTabWidget(this);
    mTabs->addTab(mAnimListWidget, tr("Animations"));
    mTabs->addTab(mMeshListWidget, tr("Meshes"));
-   mTabs->addTab(mMaterialView, tr("Materials"));
-   //mTabs->addTab(mTrackViewer, tr("Tracks"));   
+   mTabs->addTab(mMaterialView, tr("Materials"));  
 
    QWidget* glParent = new QWidget(this);
 
@@ -105,18 +108,12 @@ mMixerViewerAction(NULL)
 
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 MainWindow::~MainWindow()
 {
 }
 
-void MainWindow::CreateTrackEditor()
-{
-   mTrackScene  = new TrackScene(this);
-   mTrackViewer = new TrackView(mTrackScene, this);
-
-   mTrackViewer->setDragMode(QGraphicsView::ScrollHandDrag);
-}
-
+/////////////////////////////////////////////////////////////////////////////////////////
 void MainWindow::CreateMenus()
 {
    QMenu *windowMenu = menuBar()->addMenu("&File");
@@ -155,6 +152,7 @@ void MainWindow::CreateMenus()
    UpdateRecentFileActions();
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void MainWindow::CreateActions()
 {
    mExitAct = new QAction(tr("E&xit"), this);
@@ -196,6 +194,7 @@ void MainWindow::CreateActions()
    mShadedAction->setChecked(true);
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void MainWindow::CreateToolbars()
 {
    QDoubleSpinBox *lodScaleSpinner = new QDoubleSpinBox(this);
@@ -233,6 +232,16 @@ void MainWindow::CreateToolbars()
    connect(speedSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnSpeedChanged(double)));
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
+void MainWindow::DestroyPoseResources()
+{
+   if (mPoseMeshViewer)     { delete mPoseMeshViewer;     mPoseMeshViewer = NULL;     }
+   if (mPoseMeshScene)      { delete mPoseMeshScene;      mPoseMeshScene = NULL;      }
+   if (mPoseMeshProperties) { delete mPoseMeshProperties; mPoseMeshProperties = NULL; }
+   if (mPoseDock)           { delete mPoseDock;           mPoseDock = NULL;           }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnOpenCharFile()
 {
    QString filename = QFileDialog::getOpenFileName(this,
@@ -247,12 +256,16 @@ void MainWindow::OnOpenCharFile()
 
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void MainWindow::LoadCharFile( const QString &filename )
 {
    if (dtUtil::FileUtils::GetInstance().FileExists( filename.toStdString() ))
    {
       //mAnimListWidget->clear(); //note, this also removes the header items
       mMeshListWidget->clear();
+      
+      // Make sure we start fresh
+      DestroyPoseResources();  
 
       while (mAnimListWidget->rowCount()>0)
       {
@@ -277,7 +290,7 @@ void MainWindow::LoadCharFile( const QString &filename )
    }
 }
 
-
+/////////////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnNewAnimation(unsigned int id, const QString &animationName, 
                                 unsigned int trackCount, unsigned int keyframes,
                                 float duration)
@@ -325,13 +338,13 @@ void MainWindow::OnNewAnimation(unsigned int id, const QString &animationName,
       mixerBlend->setMinimum(0);
       mixerBlend->setValue(0);
 
-      mAnimListWidget->setCellWidget(id, 5, mixerBlend);
+      mAnimListWidget->setCellWidget(id, 5, mixerBlend);      
    }
 
    mAnimListWidget->resizeColumnToContents(0);
 }
 
-
+/////////////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnNewMesh(int meshID, const QString &meshName)
 {
    QListWidgetItem *meshItem = new QListWidgetItem();
@@ -344,9 +357,82 @@ void MainWindow::OnNewMesh(int meshID, const QString &meshName)
 
    meshItem->setCheckState(Qt::Checked);
 
-   mMeshListWidget->addItem(meshItem);
+   mMeshListWidget->addItem(meshItem); 
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*> &poseMeshList, 
+                                    dtAnim::Cal3DModelWrapper *model)
+{
+   assert(!mPoseMeshScene);
+   assert(!mPoseMeshViewer);
+   assert(!mPoseMeshProperties);
+
+   mPoseMeshScene  = new PoseMeshScene(this);
+   mPoseMeshViewer = new PoseMeshView(mPoseMeshScene, this);   
+
+   mPoseDock = new QDockWidget("Pose Mesh Viewer");
+   mPoseDock->setWidget(mPoseMeshViewer);
+
+   addDockWidget(Qt::RightDockWidgetArea, mPoseDock);
+   resize(1000, 800);     
+
+   QIcon grabIcon(QPixmap(":/images/handIcon.png"));
+   QIcon pickIcon(QPixmap(":/images/reticle.png"));
+
+   QToolBar *poseTools = new QToolBar;
+
+   // The actiongroup is used to make the action behave like radio buttons
+   QActionGroup *actionGroup = new QActionGroup(poseTools);
+   actionGroup->setExclusive(true); 
+
+   QAction *grabAction   = actionGroup->addAction(grabIcon, "Click-drag meshes");
+   QAction *pickAction = actionGroup->addAction(pickIcon, "Set Pose From Mesh");   
+
+   poseTools->addAction(grabAction);
+   poseTools->addAction(pickAction);
+
+   grabAction->setCheckable(true);
+   pickAction->setCheckable(true);  
+
+   pickAction->setChecked(true);
+
+   mPoseDock->setTitleBarWidget(poseTools);
+
+   // Add the properties tab
+   mPoseMeshProperties = new PoseMeshProperties;     
+   
+   mTabs->addTab(mPoseMeshProperties, tr("IK"));   
+   mTabs->setCurrentWidget(mPoseMeshProperties);
+
+   // Establish connections from the properties tab
+   connect(mPoseMeshProperties, SIGNAL(ViewPoseMesh(const std::string&)), 
+           mPoseMeshViewer, SLOT(OnZoomToPoseMesh(const std::string&)));
+ 
+   connect(mPoseMeshProperties, SIGNAL(PoseMeshStatusChanged(const std::string&, bool)),
+           mPoseMeshScene, SLOT(OnPoseMeshStatusChanged(const std::string&, bool)));
+
+   // Establish connections from the scene
+   connect(mPoseMeshScene, SIGNAL(ViewPoseMesh(const std::string&)), 
+           mPoseMeshViewer, SLOT(OnZoomToPoseMesh(const std::string&)));
+   
+   connect(grabAction, SIGNAL(triggered()), this, SLOT(OnSelectModeGrab()));
+   connect(pickAction, SIGNAL(triggered()), this, SLOT(OnSelectModePick()));
+
+   for (size_t poseIndex = 0; poseIndex < poseMeshList.size(); ++poseIndex)
+   {
+      dtAnim::PoseMesh *newMesh = poseMeshList[poseIndex];
+
+      // Add new pose mesh visualization and properties
+      mPoseMeshScene->AddMesh(*newMesh, model);
+      mPoseMeshProperties->AddMesh(*newMesh, *model);   
+   }
+
+   // Set the default mode
+   OnSelectModePick();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnNewMaterial( int matID, const QString &name, 
                                const QColor &diff, const QColor &amb, const QColor &spec,
                                float shininess )
@@ -385,20 +471,50 @@ void MainWindow::OnNewMaterial( int matID, const QString &name,
    mMaterialModel->appendRow( items);
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnBlendUpdate(const std::vector<float> &weightList)
-{
-   int test = mAnimListWidget->rowCount();
+{   
    assert(weightList.size() == (size_t)mAnimListWidget->rowCount());
 
    for (size_t rowIndex = 0; rowIndex < weightList.size(); ++rowIndex)
    {
+      // Show progress as a whole number
       int newValue = (int)(weightList[rowIndex] * 100.0f);
-      QProgressBar *meter = (QProgressBar*)mAnimListWidget->cellWidget(rowIndex, 5);     
 
-      meter->setValue(newValue);
+      QProgressBar *meter = (QProgressBar*)mAnimListWidget->cellWidget(rowIndex, 5);   
+      meter->setValue(newValue);      
+
+      if (mAnimListWidget->item(rowIndex, 0)->checkState() == Qt::Checked)
+      {   
+         // Update the weight display only when the box is checked
+         // This will allow a user to manually enter a weight while unchecked
+         disconnect(mAnimListWidget, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(OnItemChanged(QTableWidgetItem*)));
+         mAnimListWidget->item(rowIndex, 1)->setData(Qt::DisplayRole, QString("%1").arg(weightList[rowIndex]));
+         connect(mAnimListWidget, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(OnItemChanged(QTableWidgetItem*)));
+
+         if (!newValue)         
+         {
+            // If animations were turned off from the pose mesh viewer
+            // mark them as turned off in the animation table           
+            mAnimListWidget->item(rowIndex, 0)->setCheckState(Qt::Unchecked);            
+         }
+      }
+      else if (newValue)
+      {
+         // If animations were turned on from the pose mesh viewer
+         // mark them as turned on in the animation table         
+         mAnimListWidget->item(rowIndex, 0)->setCheckState(Qt::Checked);         
+      }      
+   }
+
+   // Allow the IK tab to update it's blend display if it exists
+   if (mPoseMeshProperties)
+   {
+      mPoseMeshProperties->OnBlendUpdate(weightList);
    }
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnAnimationClicked( QTableWidgetItem *item )
 {
    if (item->column() != 0) return;
@@ -418,6 +534,7 @@ void MainWindow::OnAnimationClicked( QTableWidgetItem *item )
    }
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnMeshActivated( QListWidgetItem *item )
 {
    int meshID = item->data(Qt::UserRole).toInt();
@@ -434,17 +551,19 @@ void MainWindow::OnMeshActivated( QListWidgetItem *item )
    }
 }
 
-
+/////////////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnLODScale_Changed(double newValue)
 {   
    emit LODScale_Changed(float(newValue));
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnSpeedChanged(double newValue)
 {
    emit SpeedChanged(float(newValue));
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnToggleHardwareSkinning()
 {
    dtAnim::AnimNodeBuilder& nodeBuilder = dtAnim::Cal3DDatabase::GetInstance().GetNodeBuilder();
@@ -464,6 +583,7 @@ void MainWindow::OnToggleHardwareSkinning()
    LoadCharFile(files.first());
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnToggleShadingToolbar()
 {
    if (mShadingToolbar->isHidden())
@@ -476,6 +596,7 @@ void MainWindow::OnToggleShadingToolbar()
    }
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnToggleLODScaleToolbar()
 {
    if (mLODScaleToolbar->isHidden())
@@ -488,11 +609,13 @@ void MainWindow::OnToggleLODScaleToolbar()
    }   
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnToggleLightingToolbar()
 {
 
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void MainWindow::UpdateRecentFileActions()
 {
    QSettings settings("MOVES", "Animation Viewer");
@@ -511,6 +634,7 @@ void MainWindow::UpdateRecentFileActions()
 
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void MainWindow::SetCurrentFile( const QString &filename )
 {
    if (filename.isEmpty())
@@ -536,6 +660,7 @@ void MainWindow::SetCurrentFile( const QString &filename )
    UpdateRecentFileActions();
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OpenRecentFile()
 {
    QAction *action = qobject_cast<QAction*>(sender());
@@ -546,6 +671,7 @@ void MainWindow::OpenRecentFile()
    }
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnItemChanged( QTableWidgetItem *item )
 {
    if (item->column() == 1 ||
@@ -562,6 +688,7 @@ void MainWindow::OnItemChanged( QTableWidgetItem *item )
    }
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnStartAnimation(int row)
 {
    float weight = 0.f;
@@ -583,6 +710,7 @@ void MainWindow::OnStartAnimation(int row)
    }  
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnStopAnimation(int row)
 {
    float delay = 0.f;
@@ -599,6 +727,7 @@ void MainWindow::OnStopAnimation(int row)
    } 
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnItemDoubleClicked(QTableWidgetItem *item)
 {
    if (item->column() == 0)
@@ -607,7 +736,19 @@ void MainWindow::OnItemDoubleClicked(QTableWidgetItem *item)
    }
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnSelectModeGrab()
+{
+   mPoseMeshViewer->SetMode(PoseMeshView::MODE_GRAB);
+}
 
+/////////////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnSelectModePick()
+{
+   mPoseMeshViewer->SetMode(PoseMeshView::MODE_BLEND_PICK);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnStartAction( int row )
 {
    float delayIn = 0.f;
@@ -629,6 +770,7 @@ void MainWindow::OnStartAction( int row )
 
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnDisplayError( const QString &msg )
 {
    QMessageBox::warning(this, "AnimationViewer", msg );

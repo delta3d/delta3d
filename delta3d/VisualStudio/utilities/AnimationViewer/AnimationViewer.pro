@@ -27,18 +27,20 @@ SOURCES = Delta3DThread.cpp \
 	      MainWindow.cpp \
 	      Viewer.cpp \
 	      AnimationTableWidget.cpp \
-          TrackView.cpp \
-          TrackScene.cpp \
-          TrackItem.cpp \ 
-		  OSGAdapterWidget.cpp		  
+          PoseMeshView.cpp \
+          PoseMeshScene.cpp \
+          PoseMeshItem.cpp \ 
+		  PoseMeshProperties.cpp \
+		  OSGAdapterWidget.cpp		   
 	    	    
 HEADERS = Delta3DThread.h \
 	      MainWindow.h \
           Viewer.h \
           AnimationTableWidget.h \
-          TrackView.h \
-          TrackScene.h \
-          TrackItem.h \
+          PoseMeshView.h \
+          PoseMeshScene.h \
+          PoseMeshItem.h \
+		  PoseMeshProperties.h \
 		  OSGAdapterWidget.h 
 
 INCLUDEPATH +=  "../../../inc" "../../../ext/inc" "../../../ext/inc/CEGUI"

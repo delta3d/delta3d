@@ -125,6 +125,10 @@ namespace dtAnim
          /// Sets the shader group name
          void SetShaderName(const std::string& name);
 
+         const std::string& GetPoseMeshFilename() const;
+
+         void SetPoseMeshFilename(const std::string& name);
+
          /**
           * @return the maximum number of bones the skinning shader supports.
           */
@@ -145,6 +149,7 @@ namespace dtAnim
       private:
          std::string mFilename;
          std::string mShaderName, mShaderGroupName;
+         std::string mPoseMeshFilename;
          CalCoreModel* mCoreModel;
          AnimationWrapperArray mAnimWrappers;
          AnimatableArray mAnimatables;

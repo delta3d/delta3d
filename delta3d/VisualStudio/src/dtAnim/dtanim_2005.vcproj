@@ -275,6 +275,30 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtAnim\posemath.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtAnim\posemesh.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtAnim\posemeshdatabase.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtAnim\posemeshloader.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtAnim\posemeshutility.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtAnim\posemeshxml.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtAnim\sequencemixer.cpp"
 				>
 			</File>
@@ -394,6 +418,30 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtAnim\physiquedriver.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtAnim\posemath.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtAnim\posemesh.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtAnim\posemeshdatabase.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtAnim\posemeshloader.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtAnim\posemeshutility.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtAnim\posemeshxml.h"
 				>
 			</File>
 			<File
