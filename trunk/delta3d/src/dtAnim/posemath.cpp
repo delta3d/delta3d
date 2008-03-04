@@ -1,5 +1,5 @@
-#include <dtAnim/PoseMesh.h>
-#include <dtAnim/PoseMath.h>
+#include <dtAnim/posemesh.h>
+#include <dtAnim/posemath.h>
 
 #include <dtUtil/mathdefines.h>
 #include <osg/Quat>

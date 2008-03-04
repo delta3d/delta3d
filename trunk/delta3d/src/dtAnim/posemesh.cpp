@@ -1,6 +1,6 @@
-#include <dtAnim/PoseMesh.h>
-#include <dtAnim/PoseMath.h>
-#include <dtAnim/PoseMeshXML.h>
+#include <dtAnim/posemesh.h>
+#include <dtAnim/posemath.h>
+#include <dtAnim/posemeshxml.h>
 
 #include <dtUtil/log.h>
 #include <dtUtil/exception.h>

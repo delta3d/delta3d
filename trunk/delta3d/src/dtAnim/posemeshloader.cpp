@@ -1,5 +1,5 @@
-#include <dtAnim/PoseMeshLoader.h>
-#include <dtAnim/PoseMeshXML.h>
+#include <dtAnim/posemeshloader.h>
+#include <dtAnim/posemeshxml.h>
 
 #include <dtUtil/xercesparser.h>
 #include <dtUtil/log.h>

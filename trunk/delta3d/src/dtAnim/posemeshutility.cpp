@@ -1,6 +1,6 @@
-#include <dtAnim/PoseMeshUtility.h>
-#include <dtAnim/PoseMesh.h>
-#include <dtAnim/PoseMath.h>
+#include <dtAnim/posemeshutility.h>
+#include <dtAnim/posemesh.h>
+#include <dtAnim/posemath.h>
 #include <dtAnim/cal3dmodelwrapper.h>
 
 #include <dtUtil/mathdefines.h>
