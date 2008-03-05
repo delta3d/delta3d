@@ -17,6 +17,9 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
  *
  */
+#ifndef DELTA_MODEL
+#define DELTA_MODEL
+
 #include <dtCore/export.h>
 #include <dtCore/refptr.h>
 
@@ -93,3 +96,5 @@ namespace dtCore
          dtCore::RefPtr<osg::NodeCallback> mUpdateCallback; 
    };
 }
+
+#endif
