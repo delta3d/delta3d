@@ -36,8 +36,10 @@ namespace dtActors
    GameMeshActor::GameMeshActor(dtGame::GameActorProxy &proxy) : 
       dtGame::GameActor(proxy), 
       mAlreadyInScene(false),
-      mUseCache(true)
+      mUseCache(true), 
+      mModel(new dtCore::Model)
    {
+      GetMatrixNode()->addChild(&mModel->GetMatrixTransform());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -70,10 +72,12 @@ namespace dtActors
       {
          if (mMeshNode.valid())
          {
-            GetMatrixNode()->removeChild(mMeshNode.get());
+            mModel->GetMatrixTransform().removeChild(mMeshNode.get());
          }
          
-         GetMatrixNode()->addChild(model);
+         mModel->GetMatrixTransform().addChild(model);
+         mModel->SetDirty();
+
          mMeshNode = model;
 
          GetGameActorProxy().SetCollisionType( GetGameActorProxy().GetCollisionType() );
@@ -108,6 +112,70 @@ namespace dtActors
             LoadMesh();
          }
       }     
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+   void GameMeshActor::SetScale(const osg::Vec3 &xyz)
+   {  
+      mModel->SetScale(xyz);
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void GameMeshActor::SetModelRotation(const osg::Vec3& v3)
+   {
+      dtCore::Transform ourTransform;
+      mModel->GetTransform(ourTransform);
+      ourTransform.SetRotation(v3);
+      mModel->SetTransform(ourTransform);
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   osg::Vec3 GameMeshActor::GetModelRotation()
+   {
+      osg::Vec3 v3;
+      dtCore::Transform ourTransform;
+      mModel->GetTransform(ourTransform);
+      ourTransform.GetRotation(v3);
+      return v3;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void GameMeshActor::SetModelTranslation(const osg::Vec3& v3)
+   {
+      dtCore::Transform ourTransform;
+      mModel->GetTransform(ourTransform);
+      ourTransform.SetTranslation(v3);
+      mModel->SetTransform(ourTransform);
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   osg::Vec3 GameMeshActor::GetModelTranslation()
+   {
+      osg::Vec3 v3;
+      dtCore::Transform ourTransform;
+      mModel->GetTransform(ourTransform);
+      ourTransform.GetTranslation(v3);
+      return v3;
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+   osg::Vec3 GameMeshActor::GetScale() const
+   {
+      osg::Vec3 scale;
+      mModel->GetScale(scale);
+      return scale;
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+   osg::MatrixTransform& GameMeshActor::GetMatrixTransform()
+   {
+      return mModel->GetMatrixTransform();
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+   const osg::MatrixTransform& GameMeshActor::GetMatrixTransform() const
+   {
+      return mModel->GetMatrixTransform();
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -147,6 +215,11 @@ namespace dtActors
          dtDAL::MakeFunctor(myActor, &GameMeshActor::SetUseCache),
          dtDAL::MakeFunctorRet(myActor, &GameMeshActor::GetUseCache),
          "Indicates whether we will try to use the cache when we load our model.", GROUPNAME));
+
+      AddProperty(new dtDAL::Vec3ActorProperty("Scale", "Scale", 
+         dtDAL::MakeFunctor(myActor, &GameMeshActor::SetScale), 
+         dtDAL::MakeFunctorRet(myActor, &GameMeshActor::GetScale), 
+         "Scales this visual model", "Transformable"));
    }
 
    //////////////////////////////////////////////////////////////////////////////
