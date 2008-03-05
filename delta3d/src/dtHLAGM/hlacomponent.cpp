@@ -1280,18 +1280,26 @@ namespace dtHLAGM
 
          dtCore::RefPtr<ObjectToActor> bestObjectToActor;
          const dtCore::UniqueId* currentActorId;
-         bool bNewObject = false;
 
          currentActorId = mRuntimeMappings.GetId(theObject);
 
          if (currentActorId == NULL)
             return;
 
-         bool needBestMapping = false;
-
          bestObjectToActor = mRuntimeMappings.GetObjectToActor(theObject);
 
-         if (!bestObjectToActor.valid())
+         bool needBestMapping = false;
+         bool bNewObject = false;
+
+         if (bestObjectToActor.valid())
+         {
+            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            {
+               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                  "An object to actor was found for object with ID \"%s\".", currentActorId->ToString().c_str());
+            }
+         }
+         else
          {
             needBestMapping = true;
             bNewObject = true;
@@ -1302,85 +1310,16 @@ namespace dtHLAGM
                   "Preparing to Map in new Object.  The id is \"%s\".", currentActorId->ToString().c_str());
             }
          }
-         else
-         {
-            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-            {
-               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                  "An object to actor was found for object with ID \"%s\".", currentActorId->ToString().c_str());
-            }
-         }
 
          if (needBestMapping)
          {
-            bool hadEntityTypeProperty;
-            bestObjectToActor = GetBestObjectToActor(theObject, theAttributes, hadEntityTypeProperty);
-
-            if (!bestObjectToActor.valid())
-            {
-
-               //support for the useEntityId concept needs to be added.
-               if (hadEntityTypeProperty) //|| !useEntityId)
-               {
-                  // Test clean up.  This is not a complete solution as we don't want to return
-                  // an error everytime we get a partial update
-                  mRuntimeMappings.Remove(*currentActorId);
-                  if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_INFO))
-                     mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
-                                     "Unable to map in object, no object to actor found.");
-
-                  mRuntimeMappings.Remove(theObject);
-               }
-               else
-               {
-                  if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-                     mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                                        "No mapping was found, but the PDU had no entity type data.  Waiting for a full update.");
-               }
-
-               return;
-            }
-            else
-            {
-               if( ! mRuntimeMappings.Put(theObject, *bestObjectToActor) )
-               {
-                  mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
-                     "Unable to map in object (RTI handle %i). ObjectToActor struct may already be mapped or corrupt.", theObject);
-               }
-            }
+            bool ret = DoGetBestObjectToActor(bestObjectToActor, theObject, theAttributes, currentActorId);
+            if (ret == false) return;
          }
 
          if (bNewObject)
          {
-            for (unsigned i=0; i < theAttributes.size(); ++i)
-            {
-               RTI::AttributeHandle handle = theAttributes.getHandle(i);
-               if (handle == bestObjectToActor->GetEntityIdAttributeHandle())
-               {
-                  EntityIdentifier ei;
-
-                  unsigned long length;
-                  char* buffer = theAttributes.getValuePointer(i, length);
-                  if (length < (unsigned long)(ei.EncodedLength()))
-                  {
-                     mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                                         "Expected Entity id attribute to have length %u, but it has length %u.  Id will be ignored",
-                                         ei.EncodedLength(), length);
-                  }
-                  else
-                  {
-                     ei.Decode(buffer);
-                     mRuntimeMappings.Put(ei, *currentActorId);
-                     if(mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-                     {
-                        std::ostringstream ss;
-                        ss << "The Entity Identifier value is \"" << ei << "\" and the currect actor id is \"" << currentActorId->ToString() << ".";
-                        mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                        ss.str().c_str());
-                     }
-                  }
-               }
-            }
+            AddActorIDToMap(theAttributes, bestObjectToActor, currentActorId);
          }
 
          //USE OBJECTTOACTOR TO CREATE ACTOR UPDATE
@@ -1634,6 +1573,91 @@ namespace dtHLAGM
       }
 
       return bestObjectToActor;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   bool HLAComponent::DoGetBestObjectToActor( dtCore::RefPtr<ObjectToActor> &bestObjectToActor,
+                                             RTI::ObjectHandle theObject,
+                                             const RTI::AttributeHandleValuePairSet& theAttributes, 
+                                             const dtCore::UniqueId* currentActorId )
+   {
+      bool hadEntityTypeProperty;
+      bestObjectToActor = GetBestObjectToActor(theObject, theAttributes, hadEntityTypeProperty);
+
+
+      if (bestObjectToActor.valid())
+      {
+         bool result = mRuntimeMappings.Put(theObject, *bestObjectToActor);
+         if (result == false)
+         {
+            mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+               "Unable to map in object (RTI handle %i). ObjectToActor struct may already be mapped or corrupt.", theObject);
+         }
+      }
+      else
+      {
+         //support for the useEntityId concept needs to be added.
+         if (hadEntityTypeProperty) //|| !useEntityId)
+         {
+            // Test clean up.  This is not a complete solution as we don't want to return
+            // an error everytime we get a partial update
+            mRuntimeMappings.Remove(*currentActorId);
+
+            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_INFO))
+            {
+               mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
+                  "Unable to map in object, no object to actor found.");
+            }
+
+            mRuntimeMappings.Remove(theObject);
+         }
+         else
+         {
+            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            {
+               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                  "No mapping was found, but the PDU had no entity type data.  Waiting for a full update.");
+            }
+         }
+
+         return false;
+      }
+
+      return true;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   void HLAComponent::AddActorIDToMap( const RTI::AttributeHandleValuePairSet &theAttributes, dtCore::RefPtr<ObjectToActor> bestObjectToActor, const dtCore::UniqueId* currentActorId )
+   {
+      for (unsigned i=0; i < theAttributes.size(); ++i)
+      {
+         RTI::AttributeHandle handle = theAttributes.getHandle(i);
+         if (handle == bestObjectToActor->GetEntityIdAttributeHandle())
+         {
+            EntityIdentifier ei;
+
+            unsigned long length;
+            char* buffer = theAttributes.getValuePointer(i, length);
+            if (length < (unsigned long)(ei.EncodedLength()))
+            {
+               mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                  "Expected Entity id attribute to have length %u, but it has length %u.  Id will be ignored",
+                  ei.EncodedLength(), length);
+            }
+            else
+            {
+               ei.Decode(buffer);
+               mRuntimeMappings.Put(ei, *currentActorId);
+               if(mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+               {
+                  std::ostringstream ss;
+                  ss << "The Entity Identifier value is \"" << ei << "\" and the currect actor id is \"" << currentActorId->ToString() << ".";
+                  mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                     ss.str().c_str());
+               }
+            }
+         }
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////////

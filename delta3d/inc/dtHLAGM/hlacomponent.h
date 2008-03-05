@@ -209,6 +209,7 @@ namespace dtHLAGM
                    RTI::FederateOwnsAttributes,
                    RTI::FederateInternalError);
 
+
          /**
           * Invoked by the RTI ambassador to notify the federate of a deleted object
           * instance.
@@ -482,6 +483,17 @@ namespace dtHLAGM
                                        size_t& maxSize,
                                        std::vector<dtCore::RefPtr<const dtGame::MessageParameter> >& parameters,
                                        const OneToManyMapping& mapping) const;
+
+
+         bool DoGetBestObjectToActor( dtCore::RefPtr<ObjectToActor> &bestObjectToActor,
+                                    RTI::ObjectHandle theObject, 
+                                    const RTI::AttributeHandleValuePairSet& theAttributes, 
+                                    const dtCore::UniqueId* currentActorId );
+
+
+         void AddActorIDToMap( const RTI::AttributeHandleValuePairSet &theAttributes,
+                              dtCore::RefPtr<ObjectToActor> bestObjectToActor,
+                              const dtCore::UniqueId* currentActorId );
 
          /**
           * The RTI ambassador.
