@@ -24,6 +24,7 @@
 #include <dtGame/gameactor.h>
 #include <dtDAL/plugin_export.h>
 #include <dtCore/loadable.h>
+#include <dtCore/model.h>
 
 //#include <map>
 //#include <vector>
@@ -90,6 +91,54 @@ namespace dtActors
             return mUseCache;
          }
 
+         /**
+          * Sets the scale on this object
+          * @param xyz The scale vector
+          */
+         void SetScale(const osg::Vec3 &xyz);
+
+         /**
+          * Returns the scale vector
+          * @return The scale
+          */
+         osg::Vec3 GetScale() const;
+
+         /**
+          * Returns the matrix transform of this object
+          * @return The osg::MatrixTransform
+          */
+         osg::MatrixTransform& GetMatrixTransform();
+
+         /**
+          * Returns the matrix transform of this object
+          * @return The osg::MatrixTransform
+          */
+         const osg::MatrixTransform& GetMatrixTransform() const;
+
+         /**
+          * Sets the models rotation
+          * @param v3 the hpr
+          */
+         void SetModelRotation(const osg::Vec3& v3);
+
+         /**
+          * Returns the scale vector
+          * @return The scale
+          */
+         osg::Vec3 GetModelRotation();
+
+         /**
+          * Sets the models translation
+          * @param v3 the xyz
+          */
+         void SetModelTranslation(const osg::Vec3& v3);
+
+         /**
+          * Returns the scale vector
+          * @return The scale
+          */
+         osg::Vec3 GetModelTranslation();
+
       protected:
 
          /**
@@ -125,6 +174,8 @@ namespace dtActors
          // tracks whether we should do a notify when we change the mesh
          bool mAlreadyInScene;
          bool mUseCache;
+
+         dtCore::RefPtr<dtCore::Model> mModel;
    };
 
    /**
