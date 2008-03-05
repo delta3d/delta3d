@@ -1348,7 +1348,7 @@ namespace dtHLAGM
             bool matched = false;
             if (!attributeString.empty() && !vectorIterator->GetParameterDefinitions().empty())
             {
-               for(unsigned i=0; i < theAttributes.size(); ++i)
+               for(unsigned long i=0; i < theAttributes.size(); ++i)
                {
                   RTI::AttributeHandle handle = theAttributes.getHandle(i);
 
@@ -1356,61 +1356,7 @@ namespace dtHLAGM
                   if (handle == vectorIterator->GetAttributeHandle())
                   {
                      matched = true;
-                     unsigned long length;
-                     char* buf = theAttributes.getValuePointer(i, length);
-
-                     std::vector<dtCore::RefPtr<dtGame::MessageParameter> > messageParameters;
-                     dtCore::RefPtr<dtGame::MessageParameter> aboutParameter;
-                     dtCore::RefPtr<dtGame::MessageParameter> sendingParameter;
-
-                     for (unsigned int propnum = 0; propnum < vectorIterator->GetParameterDefinitions().size(); propnum++)
-                     {
-                        OneToManyMapping::ParameterDefinition& paramDef = vectorIterator->GetParameterDefinitions()[propnum];
-                        const std::string& propertyString = paramDef.GetGameName();
-                        if (!(propertyString.empty())) {
-                           const dtDAL::DataType& propertyDataType = paramDef.GetGameType();
-
-                           dtCore::RefPtr<dtGame::MessageParameter> propertyParameter;
-
-                           //The about actor id and source actor ID are special cases.
-                           //We create a dummy parameter to allow the mapper code to work, and
-                           //then set it back to the message after the fact.
-                           if (propertyDataType == dtDAL::DataType::ACTOR &&
-                               (propertyString == ABOUT_ACTOR_ID ||
-                                propertyString == SENDING_ACTOR_ID))
-                           {
-                              propertyParameter =
-                                 dtGame::MessageParameter::CreateFromType(dtDAL::DataType::ACTOR,
-                                                                         propertyString);
-                              if (propertyString == ABOUT_ACTOR_ID)
-                                 aboutParameter = propertyParameter;
-                              else
-                                 sendingParameter = propertyParameter;
-                           }
-                           else
-                           {
-                              propertyParameter =
-                                 FindOrAddMessageParameter(propertyString, propertyDataType, *msg);
-                           }
-
-                           if (propertyParameter != NULL)
-                           {
-                              messageParameters.push_back(propertyParameter);
-                           }
-                           else
-                           {
-                              //this is logged in the call to find the parameter.
-                              vectorIterator->SetInvalid(true);
-                           }
-                        }
-                     }
-
-                     MapToMessageParameters(buf, length, messageParameters, *vectorIterator);
-
-                     if (aboutParameter!=NULL)
-                        msg->SetAboutActorId(aboutParameter->ToString());
-                     if (sendingParameter!=NULL)
-                        msg->SetSendingActorId(sendingParameter->ToString());
+                     LoadUpParameters(theAttributes, i, vectorIterator, msg.get());
                   }
                }
             }
@@ -2728,6 +2674,69 @@ namespace dtHLAGM
       {
          mRuntimeMappings.Clear();
       }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   void HLAComponent::LoadUpParameters( const RTI::AttributeHandleValuePairSet &theAttributes, 
+                                        unsigned long attrIdx, 
+                                        std::vector<AttributeToPropertyList>::iterator vectorIterator,
+                                        dtGame::Message *msg )
+   {
+      unsigned long length;
+      char* buf = theAttributes.getValuePointer(attrIdx, length);
+
+      std::vector<dtCore::RefPtr<dtGame::MessageParameter> > messageParameters;
+      dtCore::RefPtr<dtGame::MessageParameter> aboutParameter;
+      dtCore::RefPtr<dtGame::MessageParameter> sendingParameter;
+
+      for (unsigned int propnum = 0; propnum < vectorIterator->GetParameterDefinitions().size(); propnum++)
+      {
+         OneToManyMapping::ParameterDefinition& paramDef = vectorIterator->GetParameterDefinitions()[propnum];
+         const std::string& propertyString = paramDef.GetGameName();
+         if (!(propertyString.empty())) {
+            const dtDAL::DataType& propertyDataType = paramDef.GetGameType();
+
+            dtCore::RefPtr<dtGame::MessageParameter> propertyParameter;
+
+            //The about actor id and source actor ID are special cases.
+            //We create a dummy parameter to allow the mapper code to work, and
+            //then set it back to the message after the fact.
+            if (propertyDataType == dtDAL::DataType::ACTOR &&
+               (propertyString == ABOUT_ACTOR_ID ||
+               propertyString == SENDING_ACTOR_ID))
+            {
+               propertyParameter =
+                  dtGame::MessageParameter::CreateFromType(dtDAL::DataType::ACTOR,
+                  propertyString);
+               if (propertyString == ABOUT_ACTOR_ID)
+                  aboutParameter = propertyParameter;
+               else
+                  sendingParameter = propertyParameter;
+            }
+            else
+            {
+               propertyParameter =
+                  FindOrAddMessageParameter(propertyString, propertyDataType, *msg);
+            }
+
+            if (propertyParameter != NULL)
+            {
+               messageParameters.push_back(propertyParameter);
+            }
+            else
+            {
+               //this is logged in the call to find the parameter.
+               vectorIterator->SetInvalid(true);
+            }
+         }
+      }
+
+      MapToMessageParameters(buf, length, messageParameters, *vectorIterator);
+
+      if (aboutParameter!=NULL)
+         msg->SetAboutActorId(aboutParameter->ToString());
+      if (sendingParameter!=NULL)
+         msg->SetSendingActorId(sendingParameter->ToString());
    }
 }
 

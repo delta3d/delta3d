@@ -495,6 +495,12 @@ namespace dtHLAGM
                               dtCore::RefPtr<ObjectToActor> bestObjectToActor,
                               const dtCore::UniqueId* currentActorId );
 
+
+         void LoadUpParameters( const RTI::AttributeHandleValuePairSet &theAttributes, 
+                                 unsigned long attrIdx, 
+                                 std::vector<AttributeToPropertyList>::iterator vectorIterator, 
+                                 dtGame::Message *msg );
+
          /**
           * The RTI ambassador.
           */
