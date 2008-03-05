@@ -61,11 +61,13 @@ class SpatialTests : public CPPUNIT_NS::TestFixture
 
       void TestGetSet()
       {
-         CPPUNIT_ASSERT(mSpatial.GetDeadReckoningAlgorithm() == 0);
+         CPPUNIT_ASSERT_MESSAGE("Default DeadReckoningAlgorithm isn't 0",
+                                 mSpatial.GetDeadReckoningAlgorithm() == 0);
          mSpatial.SetDeadReckoningAlgorithm(3);
          CPPUNIT_ASSERT(mSpatial.GetDeadReckoningAlgorithm() == 3);
 
-         CPPUNIT_ASSERT(!mSpatial.IsFrozen());
+         CPPUNIT_ASSERT_MESSAGE("Default IsFrozen() isn't false",
+                                 mSpatial.IsFrozen() == false);
          mSpatial.SetFrozen(true);
          CPPUNIT_ASSERT(mSpatial.IsFrozen());
 
