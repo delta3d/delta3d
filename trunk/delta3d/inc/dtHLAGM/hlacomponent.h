@@ -501,6 +501,10 @@ namespace dtHLAGM
                                  std::vector<AttributeToPropertyList>::iterator vectorIterator, 
                                  dtGame::Message *msg );
 
+         void SetDefaultParameters( std::vector<AttributeToPropertyList>::iterator vectorIterator, 
+                                    bool bNewObject, 
+                                    dtGame::Message *msg );
+
          /**
           * The RTI ambassador.
           */

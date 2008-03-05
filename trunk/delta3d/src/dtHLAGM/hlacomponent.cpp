@@ -1365,35 +1365,7 @@ namespace dtHLAGM
             //use defaults for all parameters that need them.
             if (!matched)
             {
-               for (unsigned int propnum = 0; propnum < vectorIterator->GetParameterDefinitions().size(); propnum++)
-               {
-                  OneToManyMapping::ParameterDefinition& paramDef = vectorIterator->GetParameterDefinitions()[propnum];
-                  if (bNewObject || paramDef.IsRequiredForGame())
-                  {
-                     const std::string& propertyString = paramDef.GetGameName();
-                     const std::string& defaultValue = paramDef.GetDefaultValue();
-                     if (!defaultValue.empty() && !propertyString.empty())
-                     {
-                        const dtDAL::DataType& propertyDataType = paramDef.GetGameType();
-
-                        //The actor id special cases are not supported here because people can't hard
-                        //code actor id's with default values.
-                        dtCore::RefPtr<dtGame::MessageParameter> propertyParameter =
-                           FindOrAddMessageParameter(propertyString, propertyDataType, *msg);
-
-                        if (propertyParameter != NULL)
-                        {
-                           propertyParameter->FromString(defaultValue);
-                        }
-                        else
-                        {
-                           //this is logged in the call to find the parameter.
-                           vectorIterator->SetInvalid(true);
-                        }
-
-                     }
-                  }
-               }
+               SetDefaultParameters(vectorIterator, bNewObject, msg.get());
             }
          }
 
@@ -2737,6 +2709,41 @@ namespace dtHLAGM
          msg->SetAboutActorId(aboutParameter->ToString());
       if (sendingParameter!=NULL)
          msg->SetSendingActorId(sendingParameter->ToString());
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   void HLAComponent::SetDefaultParameters( std::vector<AttributeToPropertyList>::iterator vectorIterator, 
+                                             bool bNewObject, dtGame::Message *msg )
+   {
+      for (unsigned int propnum = 0; propnum < vectorIterator->GetParameterDefinitions().size(); propnum++)
+      {
+         OneToManyMapping::ParameterDefinition& paramDef = vectorIterator->GetParameterDefinitions()[propnum];
+         if (bNewObject || paramDef.IsRequiredForGame())
+         {
+            const std::string& propertyString = paramDef.GetGameName();
+            const std::string& defaultValue = paramDef.GetDefaultValue();
+            if (!defaultValue.empty() && !propertyString.empty())
+            {
+               const dtDAL::DataType& propertyDataType = paramDef.GetGameType();
+
+               //The actor id special cases are not supported here because people can't hard
+               //code actor id's with default values.
+               dtCore::RefPtr<dtGame::MessageParameter> propertyParameter =
+                  FindOrAddMessageParameter(propertyString, propertyDataType, *msg);
+
+               if (propertyParameter != NULL)
+               {
+                  propertyParameter->FromString(defaultValue);
+               }
+               else
+               {
+                  //this is logged in the call to find the parameter.
+                  vectorIterator->SetInvalid(true);
+               }
+
+            }
+         }
+      }
    }
 }
 
