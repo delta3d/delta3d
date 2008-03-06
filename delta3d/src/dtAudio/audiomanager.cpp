@@ -966,7 +966,6 @@ void AudioManager::Frame( const double deltaFrameTime )
    std::stack<SRC_LST::iterator> stk;
    ALuint                        src(0L);
    ALint                         state(AL_STOPPED);
-   ALenum                        err(alGetError());
    SOB_PTR                       snd(NULL);
 
    // signal any sources commanded to stop
@@ -1130,7 +1129,6 @@ void AudioManager::PostFrame( const double deltaFrameTime )
    CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
    SOB_PTR     snd(NULL);
    ALuint      src(0L);
-   //ALenum      err(alGetError());
 
    // for all sounds that have stopped
    while( mStopQueue.size() )
@@ -1159,7 +1157,6 @@ void AudioManager::Pause( const double deltaFrameTime )
    std::stack<SRC_LST::iterator> stk;
    ALuint                        src(0L);
    ALint                         state(AL_STOPPED);
-   ALenum                        err(alGetError());
    SOB_PTR                       snd(NULL);
 
    // signal any sources commanded to stop
@@ -1459,7 +1456,6 @@ void AudioManager::PlaySound( SoundObj* snd )
    CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
    ALuint   buf(0);
    ALuint   src(0);
-   ALenum   err(alGetError());
    bool source_is_new = false;
 
    assert( snd );
@@ -1686,7 +1682,7 @@ void AudioManager::SetLoop( SoundObj* snd )
       return;
    }
 
-   ALenum   err(alGetError());
+   
    alSourcei( src, AL_LOOPING, AL_TRUE );
    if(CheckForError("AudioManager: alSourcei(AL_LOOP) error", __FUNCTION__, __LINE__))
       return;
@@ -1711,7 +1707,7 @@ void AudioManager::ResetLoop( SoundObj* snd )
       return;
    }
 
-   ALenum   err(alGetError());
+   
    alSourcei( src, AL_LOOPING, AL_FALSE );
    if(CheckForError("AudioManager: alSourcei(AL_LOOP) error %X", __FUNCTION__, __LINE__))
       return;
@@ -1788,7 +1784,7 @@ void AudioManager::SetAbsolute( SoundObj* snd )
       return;
    }
 
-   ALenum   err(alGetError());
+   
    alSourcei( src, AL_SOURCE_RELATIVE, AL_FALSE );
    if(CheckForError("AudioManager: alSourcei(AL_SOURCE_RELATIVE) error", __FUNCTION__, __LINE__))
       return;
@@ -1809,7 +1805,7 @@ void AudioManager::SetGain( SoundObj* snd )
       return;
    }
 
-   ALenum   err(alGetError());
+   
    alSourcef( src, AL_GAIN, static_cast<ALfloat>(snd->GetGain()) );
    if(CheckForError("AudioManager: alSourcef(AL_GAIN) error", __FUNCTION__, __LINE__))
       return;
@@ -1830,7 +1826,7 @@ void AudioManager::SetPitch( SoundObj* snd )
       return;
    }
 
-   ALenum   err(alGetError());
+   
    alSourcef( src, AL_PITCH, static_cast<ALfloat>(snd->GetPitch()) );
    if(CheckForError("AudioManager: alSourcef(AL_PITCH) error", __FUNCTION__, __LINE__))
       return;
@@ -1856,7 +1852,7 @@ void AudioManager::SetPosition( SoundObj* snd )
    osg::Vec3   pos;
    snd->GetPosition( pos );
 
-   ALenum   err(alGetError());
+   
    alSource3f( src, AL_POSITION, static_cast<ALfloat>(pos[0]), static_cast<ALfloat>(pos[1]), static_cast<ALfloat>(pos[2]) );
    if(CheckForError("AudioManager: alSource3f(AL_POSITION) error", __FUNCTION__, __LINE__))
       return;
@@ -1882,7 +1878,6 @@ void AudioManager::SetDirection( SoundObj* snd )
    osg::Vec3   dir;
    snd->GetDirection( dir );
 
-   ALenum   err(alGetError());
    alSource3f( src, AL_DIRECTION, static_cast<ALfloat>(dir[0]), static_cast<ALfloat>(dir[1]), static_cast<ALfloat>(dir[2]) );
    if(CheckForError("AudioManager: alSource3f(AL_DIRECTION) error", __FUNCTION__, __LINE__))
       return;
@@ -1908,7 +1903,7 @@ void AudioManager::SetVelocity( SoundObj* snd )
    osg::Vec3   velo;
    snd->GetVelocity( velo );
 
-   ALenum   err(alGetError());
+
    alSource3f( src, AL_VELOCITY, static_cast<ALfloat>(velo[0]), static_cast<ALfloat>(velo[1]), static_cast<ALfloat>(velo[2]) );
    if(CheckForError("AudioManager: alSource3f(AL_VELOCITY) error", __FUNCTION__, __LINE__))
       return;
@@ -1938,7 +1933,6 @@ void AudioManager::SetReferenceDistance( SoundObj* snd )
    max_dist = max_dist; //no-op to prevent warnings
    assert( min_dist <= max_dist );
 
-   ALenum   err(alGetError());
    alSourcef( src, AL_REFERENCE_DISTANCE, min_dist );
    if(CheckForError("AudioManager: alSourcef(AL_REFERENCE_DISTANCE) error", __FUNCTION__, __LINE__))
       return;
@@ -1966,7 +1960,7 @@ void AudioManager::SetMaximumDistance( SoundObj* snd )
    max_dist = max_dist; //no-op to prevent warnings
    assert( min_dist <= max_dist );
 
-   ALenum   err(alGetError());
+   
    alSourcef( src, AL_MAX_DISTANCE, max_dist );
    if(CheckForError("AudioManager: alSourcef(AL_MAX_DISTANCE) error", __FUNCTION__, __LINE__))
       return;
@@ -1986,7 +1980,7 @@ void AudioManager::SetRolloff( SoundObj* snd )
       return;
    }
 
-   ALenum   err(alGetError());
+   
    alSourcef( src, AL_ROLLOFF_FACTOR, static_cast<ALfloat>(snd->GetRolloffFactor()) );
    if(CheckForError("AudioManager: alSourcef(AL_ROLLOFF_FACTOR) error", __FUNCTION__, __LINE__))
       return;
@@ -2010,7 +2004,7 @@ void AudioManager::SetMinimumGain( SoundObj* snd )
 
    if( min_gain <= snd->GetMaxGain() )
    {
-      ALenum   err(alGetError());
+      
       alSourcef( src, AL_MIN_GAIN, min_gain );
       if(CheckForError("AudioManager: alSourcef(AL_MIN_GAIN) error", __FUNCTION__, __LINE__))
          return;
@@ -2035,7 +2029,7 @@ void AudioManager::SetMaximumGain( SoundObj* snd )
    
    if( snd->GetMinGain() <= max_gain )
    {
-      ALenum   err(alGetError());
+      
       alSourcef( src, AL_MAX_GAIN, max_gain );
       if(CheckForError("AudioManager: alSourcef(AL_MAX_GAIN) error ", __FUNCTION__, __LINE__))
          return;
