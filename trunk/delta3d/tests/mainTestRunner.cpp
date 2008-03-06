@@ -41,12 +41,58 @@
 #include <dtUtil/log.h>
 #include <dtUtil/exception.h>
 
+#include <osg/GraphicsContext>
+
 #include <stdexcept>
 #include <sstream>
 #include <cmath>
 #include <ctime>   
 
 static std::ostringstream mSlowTests;
+
+class EmbeddedWindowSystemWrapper: public osg::GraphicsContext::WindowingSystemInterface
+{
+   public:
+      EmbeddedWindowSystemWrapper(osg::GraphicsContext::WindowingSystemInterface& oldInterface):
+         mInterface(&oldInterface)
+      {
+      }
+      
+      virtual unsigned int getNumScreens(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier = 
+         osg::GraphicsContext::ScreenIdentifier())
+      {
+         return mInterface->getNumScreens(screenIdentifier);
+      }
+
+      virtual void getScreenResolution(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier, 
+               unsigned int& width, unsigned int& height)
+      {
+         mInterface->getScreenResolution(screenIdentifier, width, height);
+      }
+
+      virtual bool setScreenResolution(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier, 
+               unsigned int width, unsigned int height)
+      {
+         return mInterface->setScreenResolution(screenIdentifier, width, height);
+      }
+
+      virtual bool setScreenRefreshRate(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier,
+               double refreshRate)
+      {
+         return mInterface->setScreenRefreshRate(screenIdentifier, refreshRate);
+      }
+
+      virtual osg::GraphicsContext* createGraphicsContext(osg::GraphicsContext::Traits* traits)
+      {
+         return new osgViewer::GraphicsWindowEmbedded(traits);
+      }
+
+   protected:
+      virtual ~EmbeddedWindowSystemWrapper() {};
+   private:
+      dtCore::RefPtr<osg::GraphicsContext::WindowingSystemInterface> mInterface;
+};
+
 
 static dtCore::RefPtr<dtABC::Application> GlobalApplication;
 
@@ -139,6 +185,14 @@ int main(int argc, char* argv[])
    GlobalApplication = new dtABC::Application("config.xml");
    GlobalApplication->GetWindow()->SetPosition(0, 0, 50, 50);
    GlobalApplication->Config();
+
+   ///Reset the windowing system for osg to use an embedded one. 
+   osg::GraphicsContext::WindowingSystemInterface* winSys = osg::GraphicsContext::getWindowingSystemInterface();
+
+   if (winSys != NULL)
+   {
+      osg::GraphicsContext::setWindowingSystemInterface(new EmbeddedWindowSystemWrapper(*winSys));
+   }
 
    CPPUNIT_NS::TestResultCollector collectedResults;
 
