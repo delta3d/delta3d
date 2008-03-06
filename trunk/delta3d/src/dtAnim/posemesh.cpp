@@ -15,10 +15,13 @@ PoseMesh::PoseMesh(const dtAnim::Cal3DModelWrapper* model,
   , mBoneName(meshData.mBoneName)
 {  
    std::vector<unsigned int> animids;
-   GetAnimationIDsByName(const_cast<dtAnim::Cal3DModelWrapper*>(model), meshData.mAnimations, animids);
+   GetAnimationIDsByName(model, meshData.mAnimations, animids);
       
    mBoneID = model->GetCoreBoneID( meshData.mBoneName );  
    assert(mBoneID != -1);
+
+   // Store off the forward axis for this mesh
+   mNativeForward = meshData.mForward;
 
    // Allocate space for osg to triangulate our verts
    std::vector<osg::Vec3> celestialPoints;
@@ -57,13 +60,13 @@ PoseMesh::PoseMesh(const dtAnim::Cal3DModelWrapper* model,
       float el = 0.f;     
 
       osg::Vec3 pelvisForward(0, -1, 0);
-      dtUtil::GetCelestialCoordinates( transformed, pelvisForward, az, el );
+      dtAnim::GetCelestialCoordinates( transformed, pelvisForward, az, el );
 
       std::ostringstream oss;
       oss << "Vert #" << vert_idx 
-         << " (" << osg::RadiansToDegrees(az) << "," << osg::RadiansToDegrees(el) << ") (degs)"
-         << "\t(anim=" << model->GetCoreAnimationName(*anim) << ")"
-         << std::endl;
+          << " (" << osg::RadiansToDegrees(az) << "," << osg::RadiansToDegrees(el) << ") (degs)"
+          << "\t(anim=" << model->GetCoreAnimationName(*anim) << ")"
+          << std::endl;
 
       LOG_DEBUG(oss.str());      
 
@@ -281,7 +284,7 @@ void PoseMesh::GetTargetTriangleData(const float azimuth,
 
          osg::Vec3 closestPointToCurrentEdge;
 
-         dtUtil::GetClosestPointOnSegment(startPoint, endPoint, refPoint, closestPointToCurrentEdge);
+         dtAnim::GetClosestPointOnSegment(startPoint, endPoint, refPoint, closestPointToCurrentEdge);
 
          // We don't need exact distance, just a way too compare (this is faster)
          float distance = (refPoint - closestPointToCurrentEdge).length2();
@@ -322,8 +325,8 @@ int PoseMesh::FindCelestialTriangleID(float azimuth, float elevation) const
       const osg::Vec3 &B = triangles[triIndex].mVertices[1]->mData;
       const osg::Vec3 &C = triangles[triIndex].mVertices[2]->mData;
 
-      if (!dtUtil::IsPointBetweenVectors(point, A, B, C)) { continue; }
-      if (!dtUtil::IsPointBetweenVectors(point, B, A, C)) { continue; }      
+      if (!dtAnim::IsPointBetweenVectors(point, A, B, C)) { continue; }
+      if (!dtAnim::IsPointBetweenVectors(point, B, A, C)) { continue; }      
 
       animationIndex = triIndex;
       break;

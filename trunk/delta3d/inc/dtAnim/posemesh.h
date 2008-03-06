@@ -93,17 +93,18 @@ namespace dtAnim
       typedef std::map<MeshIndexPair, osg::ref_ptr<osg::Geometry> > EdgeLineMap;
 
       PoseMesh(const dtAnim::Cal3DModelWrapper* model,
-         const PoseMeshData& meshData);
+               const PoseMeshData& meshData);
 
       ~PoseMesh();
 
-      const std::string& GetName() const               { return mName;       }
-      const std::string& GetBoneName() const           { return mBoneName;   }
-      int GetBoneID() const                            { return mBoneID;     }
-      const VertexVector& GetVertices() const          { return mVertices;   }
-      const Barycentric2DVector& GetBarySpaces() const { return mBarySpaces; }
-      const TriangleVector& GetTriangles() const       { return mTriangles;  }
-      const TriangleEdgeVector GetSilhouette() const   { return mSilhouetteEdges; }
+      const std::string& GetName() const                 { return mName;       }
+      const std::string& GetBoneName() const             { return mBoneName;   }
+      int GetBoneID() const                              { return mBoneID;     }
+      const VertexVector& GetVertices() const            { return mVertices;   }
+      const Barycentric2DVector& GetBarySpaces() const   { return mBarySpaces; }
+      const TriangleVector& GetTriangles() const         { return mTriangles;  }
+      const TriangleEdgeVector GetSilhouette() const     { return mSilhouetteEdges; }
+      const osg::Vec3& GetNativeForwardDirection() const { return mNativeForward; }
 
       /**  
       *  GetTargetTriangleData Finds the triangle in the mesh for the given azimuth elevation 
@@ -142,6 +143,7 @@ namespace dtAnim
       std::string mBoneName;
 
       int mBoneID;
+      osg::Vec3 mNativeForward;
 
       TriangleVector       mTriangles;
       TriangleEdgeVector   mSilhouetteEdges;
