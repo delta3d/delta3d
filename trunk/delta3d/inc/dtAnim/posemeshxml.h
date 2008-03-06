@@ -25,6 +25,7 @@
 #include <xercesc/sax2/ContentHandler.hpp>  // for a base class
 #include <vector>
 #include <stack>
+#include <string>
 #include <osg/Vec3>
 
 

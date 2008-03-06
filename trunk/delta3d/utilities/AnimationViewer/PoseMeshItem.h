@@ -1,7 +1,7 @@
 #ifndef _POSEMESH_ITEM_H_
 #define _POSEMESH_ITEM_H_
 
-#include <dtAnim/PoseMesh.h>
+#include <dtAnim/posemesh.h>
 #include <QtGui/QGraphicsRectItem>
 
 #include <set>
@@ -19,8 +19,8 @@ public:
 
    PoseMeshItem(const dtAnim::PoseMesh &poseMesh,
                 dtAnim::Cal3DModelWrapper *model,
-                QGraphicsItem *parent = 0, 
-                QGraphicsScene *scene = 0);
+                QGraphicsItem *parent = NULL, 
+                QGraphicsScene *scene = NULL);
 
    ~PoseMeshItem(); 
 

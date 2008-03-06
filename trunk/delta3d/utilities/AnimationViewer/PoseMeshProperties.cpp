@@ -1,5 +1,5 @@
 #include "PoseMeshProperties.h"
-#include <dtAnim/PoseMesh.h>
+#include <dtAnim/posemesh.h>
 #include <dtAnim/cal3dmodelwrapper.h>
 #include <QtGui/QTreeWidgetItem>
 #include <QtCore/QString>

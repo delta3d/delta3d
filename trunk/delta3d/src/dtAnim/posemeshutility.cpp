@@ -11,7 +11,7 @@
 using namespace dtAnim;
 
 // Used to sort the BaseReferencePose list
-bool BaseReferencePredicate(std::pair<int, float> &lhs, std::pair<int, float> &rhs)
+bool BaseReferencePredicate(const std::pair<int, float> &lhs, const std::pair<int, float> &rhs)
 {
    return lhs.second < rhs.second;
 }

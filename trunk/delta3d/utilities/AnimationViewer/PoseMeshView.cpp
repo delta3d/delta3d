@@ -11,6 +11,10 @@
 
 #include <dtUtil/mathdefines.h>
 
+#ifdef DELTA_WIN32
+#include <windows.h>
+#endif
+
 #include <cassert>
 #include <iostream>
 #include <cmath>
@@ -110,8 +114,6 @@ PoseMeshView::eMODE PoseMeshView::GetMode()
 {
    return mMode;
 }
-
-#include <windows.h>
 
 /////////////////////////////////////////////////////////////////////////////////////////
 void PoseMeshView::Zoom(float numberOfSteps)

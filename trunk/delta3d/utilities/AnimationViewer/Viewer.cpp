@@ -23,7 +23,7 @@
 #include <dtAnim/chardrawable.h>
 #include <dtAnim/cal3ddatabase.h>
 #include <dtAnim/cal3dmodeldata.h>
-#include <dtAnim/PoseMesh.h>
+#include <dtAnim/posemesh.h>
 
 #include <dtUtil/xercesparser.h>
 #include <dtUtil/stringutils.h>
@@ -296,7 +296,10 @@ void Viewer::OnStartAction( unsigned int id, float delayIn, float delayOut )
 /////////////////////////////////////////////////////////////////////////////////////////
 void Viewer::OnAssumeBlendPose( dtAnim::PoseMesh::TargetTriangle &blendInfo)
 {
+#ifdef DELTA_WIN32
+   //Do we need to temporarily replace an instruction?
    _asm int 3
+#endif
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
