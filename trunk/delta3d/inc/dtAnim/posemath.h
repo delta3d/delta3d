@@ -27,7 +27,7 @@
 #include <osg/Vec3>
 #include <osg/Vec2>
 
-namespace dtUtil
+namespace dtAnim
 {   
    /**  
    *  GetCelestialCoordinates - calculates the azimuth and elevation w.r.t. a forward vector
