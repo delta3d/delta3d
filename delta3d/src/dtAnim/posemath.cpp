@@ -5,10 +5,10 @@
 #include <osg/Quat>
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void dtUtil::GetCelestialCoordinates(osg::Vec3 target,
-                                 const osg::Vec3 &lookForward,                                    
-                                 float &azimuth, 
-                                 float &elevation)
+void dtAnim::GetCelestialCoordinates(osg::Vec3 target,
+                                     const osg::Vec3 &lookForward,                                    
+                                     float &azimuth, 
+                                     float &elevation)
 {  
    target.normalize();
 
@@ -55,7 +55,7 @@ void dtUtil::GetCelestialCoordinates(osg::Vec3 target,
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void dtUtil::GetCelestialDirection(const float azimuth,
+void dtAnim::GetCelestialDirection(const float azimuth,
                                    const float elevation,
                                    const osg::Vec3& forwardDirection,
                                    osg::Vec3 &outDirection)
@@ -75,7 +75,7 @@ void dtUtil::GetCelestialDirection(const float azimuth,
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void dtUtil::GetClosestPointOnSegment(const osg::Vec3 &startPoint,
+void dtAnim::GetClosestPointOnSegment(const osg::Vec3 &startPoint,
                                       const osg::Vec3 &endPoint,
                                       const osg::Vec3 &refPoint,
                                       osg::Vec3 &closestPoint)
@@ -102,7 +102,7 @@ void dtUtil::GetClosestPointOnSegment(const osg::Vec3 &startPoint,
 }   
 
 /////////////////////////////////////////////////////////////////////////////////////////
-bool dtUtil::IsPointBetweenVectors(const osg::Vec3f &point,
+bool dtAnim::IsPointBetweenVectors(const osg::Vec3f &point,
                                    const osg::Vec3f &origin,
                                    const osg::Vec3f &A,
                                    const osg::Vec3f &B) 
@@ -120,7 +120,7 @@ bool dtUtil::IsPointBetweenVectors(const osg::Vec3f &point,
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void dtUtil::MapCelestialToScreen(float azimuth,
+void dtAnim::MapCelestialToScreen(float azimuth,
                                   float elevation,
                                   float maxDistance,                             
                                   float windowWidth,
