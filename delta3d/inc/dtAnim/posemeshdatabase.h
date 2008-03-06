@@ -28,7 +28,7 @@
 #include <vector>
 #include <osg/Vec3>
 #include <osg/Quat>
-#include <osg/referenced>
+#include <osg/Referenced>
 #include <osg/ref_ptr>
 
 namespace dtAnim 

@@ -8,9 +8,9 @@
 #include <dtCore/system.h>
 #include <dtABC/application.h>
 
-#include <dtAnim/PoseMeshDatabase.h>
-#include <dtAnim/PoseMeshUtility.h>
-#include <dtAnim/PoseMesh.h>
+#include <dtAnim/posemeshdatabase.h>
+#include <dtAnim/posemeshutility.h>
+#include <dtAnim/posemesh.h>
 
 #include <vector>
 

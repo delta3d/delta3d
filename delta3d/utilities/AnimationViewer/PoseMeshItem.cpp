@@ -15,7 +15,7 @@
 #include <QtGui/QMouseEvent>
 #include <QtGui/QHoverEvent>
 
-#include <dtAnim/PoseMesh.h>
+#include <dtAnim/posemesh.h>
 #include <dtAnim/chardrawable.h>
 #include <dtCore/refptr.h>
 
@@ -24,7 +24,7 @@
 //temp
 #include <sstream>
 #include <iostream>
-#include <dtAnim/PoseMeshUtility.h>
+#include <dtAnim/posemeshutility.h>
 
 const float VERT_SCALE     = 100.0f;
 const int VERT_RADIUS      = 6;

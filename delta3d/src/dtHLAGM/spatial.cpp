@@ -6,9 +6,9 @@ namespace dtHLAGM
 {
    /////////////////////////////////////////////////////////////////////////////////
    Spatial::Spatial(bool littleEndian):
-      mLittleEndian(littleEndian),
          mDeadReckoningAlgorithm(0),
-         mIsFrozen(false)
+         mIsFrozen(false),
+         mLittleEndian(littleEndian)
    {
    }
 

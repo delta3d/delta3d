@@ -23,7 +23,7 @@
 #define __POSE_MESH_UTILITY_H__
 
 #include "posemesh.h"
-#include <osg/referenced>
+#include <osg/Referenced>
 
 namespace dtAnim 
 { 
