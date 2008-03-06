@@ -62,7 +62,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtUtild.lib dtCored.lib dtGamed.lib dtDALd.lib dtABCd.lib dtAudiod.lib CEGUIBase_d.lib osgd.lib fireFighterd.lib cppunitd.lib"
+				AdditionalDependencies="dtUtild.lib dtCored.lib dtGamed.lib dtDALd.lib dtABCd.lib dtAudiod.lib CEGUIBase_d.lib osgd.lib osgViewerd.lib fireFighterd.lib cppunitd.lib"
 				OutputFile="../../../../tests/FireFighterUnitTestsd.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="../../../../lib;../../../../ext/lib;"
@@ -143,7 +143,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtUtil.lib dtCore.lib dtGame.lib dtDAL.lib dtABC.lib dtAudio.lib osg.lib CEGUIBase.lib fireFighter.lib cppunit.lib"
+				AdditionalDependencies="dtUtil.lib dtCore.lib dtGame.lib dtDAL.lib dtABC.lib dtAudio.lib osg.lib osgViewer.lib CEGUIBase.lib fireFighter.lib cppunit.lib"
 				OutputFile="../../../../tests/FireFighterUnitTests.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../../../lib;../../../../ext/lib;"
