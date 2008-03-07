@@ -28,6 +28,8 @@ public:
    eMODE GetMode();
    void SetMode(eMODE newMode);
 
+   void ToggleErrorDisplay();
+
    void Zoom(float numberOfSteps);   
 
    /// The item rect will constrain our view changed coordinates

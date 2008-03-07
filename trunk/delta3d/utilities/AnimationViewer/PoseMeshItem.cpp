@@ -16,7 +16,9 @@
 #include <QtGui/QHoverEvent>
 
 #include <dtAnim/posemesh.h>
+#include <dtAnim/posemath.h>
 #include <dtAnim/chardrawable.h>
+#include <dtUtil/mathdefines.h>
 #include <dtCore/refptr.h>
 
 #include <assert.h>
@@ -24,7 +26,6 @@
 //temp
 #include <sstream>
 #include <iostream>
-#include <dtAnim/posemeshutility.h>
 
 const float VERT_SCALE     = 100.0f;
 const int VERT_RADIUS      = 6;
@@ -33,14 +34,15 @@ const int VERT_RADIUS_DIV2 = VERT_RADIUS / 2;
 /////////////////////////////////////////////////////////////////////////////////////////
 PoseMeshItem::PoseMeshItem(const dtAnim::PoseMesh &poseMesh,
                            dtAnim::Cal3DModelWrapper *model,
-                           QGraphicsItem *parent, 
-                           QGraphicsScene *scene)
-  : mPoseMesh(&poseMesh)
+                           QGraphicsItem *parent)
+  : QGraphicsItem(parent)
+  , mPoseMesh(&poseMesh)
   , mModel(model)
   , mBoundingRect()
   , mLastBlendPos(FLT_MAX, FLT_MAX)
   , mLastTriangleID(INT_MAX)
   , mIsActive(true)
+  , mIsErrorGridDisplayed(false)
 {
    assert(mModel);
 
@@ -52,6 +54,10 @@ PoseMeshItem::PoseMeshItem(const dtAnim::PoseMesh &poseMesh,
 
    setAcceptsHoverEvents(true);
    setToolTip(poseMesh.GetName().c_str());     
+
+   mSampleCollection.mInitialized = false;
+
+   mMeshUtil = new dtAnim::PoseMeshUtility;
    
    //QSize size(40, 20);
    //QImage image(size.width(), size.height(), QImage::Format_ARGB32_Premultiplied);
@@ -110,7 +116,7 @@ PoseMeshItem::PoseMeshItem(const dtAnim::PoseMesh &poseMesh,
 
    // Get a unique set of edges and the 
    // triangle they belong to
-   ExtractEdgesFromMesh(*mPoseMesh);
+   ExtractEdgesFromMesh(*mPoseMesh);  
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -132,11 +138,24 @@ void PoseMeshItem::SetEnabled(bool isEnabled)
    Clear();
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
+void PoseMeshItem::SetDisplayErrorGrid(bool display)
+{
+   if (display && !mSampleCollection.mInitialized)
+   {
+      // If we haven't collected our samples, do so now
+      ExtractErrorFromMesh(*mPoseMesh);
+   }
+
+   mIsErrorGridDisplayed = display;   
+   update();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
 void PoseMeshItem::Clear()
 {
-   // Remove any of this item's pose blends from the model
-   dtCore::RefPtr<dtAnim::PoseMeshUtility> util = new dtAnim::PoseMeshUtility;
-   util->ClearPoses(mPoseMesh, mModel, 0.0f);
+   // Remove any of this item's pose blends from the model   
+   mMeshUtil->ClearPoses(mPoseMesh, mModel, 0.0f);
 
    mLastBlendPos.setX(FLT_MAX);
    mLastBlendPos.setY(FLT_MAX);
@@ -207,9 +226,8 @@ void PoseMeshItem::BlendPosesFromItemCoordinates(float xCoord, float yCoord)
 
    // Only update the blend and position if we're in the mesh
    if (targetTri.mIsInside)
-   {      
-      dtCore::RefPtr<dtAnim::PoseMeshUtility> util = new dtAnim::PoseMeshUtility;
-      util->BlendPoses(mPoseMesh, mModel, targetTri);
+   { 
+      mMeshUtil->BlendPoses(mPoseMesh, mModel, targetTri);
 
       //std::ostringstream oss;
       //oss << "x = " << xCoord << "  " << "y = " << yCoord 
@@ -252,9 +270,12 @@ QPainterPath PoseMeshItem::shape() const
 /////////////////////////////////////////////////////////////////////////////////////////
 void PoseMeshItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+   PaintErrorSamples(painter);
+
    const dtAnim::PoseMesh::VertexVector &verts = mPoseMesh->GetVertices();
 
    QPen trianglePenDefault;  
+   trianglePenDefault.setWidth(2);
 
    if (isEnabled())
    {
@@ -282,7 +303,7 @@ void PoseMeshItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
       }
 
       painter->drawLine(mEdgeInfoList[edgeIndex].first, mEdgeInfoList[edgeIndex].second);
-   }
+   }   
 
    for (size_t vertIndex = 0; vertIndex < verts.size(); ++vertIndex)
    {
@@ -327,6 +348,20 @@ void PoseMeshItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
          painter->drawEllipse(-VERT_RADIUS_DIV2, -VERT_RADIUS_DIV2, VERT_RADIUS, VERT_RADIUS);
          painter->translate(-mLastBlendPos);
       }      
+   }   
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+void PoseMeshItem::PaintErrorSamples(QPainter *painter)
+{
+   for (size_t sampleIndex = 0; sampleIndex < mSampleCollection.mSamples.size(); ++sampleIndex)
+   {
+      painter->translate(mSampleCollection.mSamples[sampleIndex].mSamplePosition);     
+      //painter->setPen(QPen(mSampleCollection.mSamples[sampleIndex].mSampleColor, 0));
+      painter->setPen(QPen(Qt::NoPen));
+      painter->setBrush(mSampleCollection.mSamples[sampleIndex].mSampleColor);
+      painter->drawRect(mSampleCollection.mSamples[sampleIndex].mSampleRect);
+      painter->translate(-mSampleCollection.mSamples[sampleIndex].mSamplePosition);
    }   
 }
 
@@ -420,7 +455,203 @@ void PoseMeshItem::ExtractEdgesFromMesh(const dtAnim::PoseMesh &mesh)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
+void PoseMeshItem::ExtractErrorFromMesh(const dtAnim::PoseMesh &mesh)
+{
+   // Make sure no animations are applied
+   mModel->ClearAll();
+   mModel->Update(0.0f);
+
+   const dtAnim::PoseMesh::TriangleVector &triangleList = mesh.GetTriangles();
+
+   // Sample points along a grid for every triangle
+   for (size_t triIndex = 0; triIndex < triangleList.size(); ++triIndex)
+   {
+      dtAnim::PoseMesh::Triangle tri = triangleList[triIndex]; 
+
+      const osg::Vec3 &point1 = tri.mVertices[0]->mData * VERT_SCALE;
+      const osg::Vec3 &point2 = tri.mVertices[1]->mData * VERT_SCALE;
+      const osg::Vec3 &point3 = tri.mVertices[2]->mData * VERT_SCALE;
+
+      QLineF lines[3] = 
+      {
+         QLineF(QPointF(point1.x(), point1.y()), QPointF(point2.x(), point2.y())),
+         QLineF(QPointF(point2.x(), point2.y()), QPointF(point3.x(), point3.y())),
+         QLineF(QPointF(point3.x(), point3.y()), QPointF(point1.x(), point1.y()))
+      };
+
+      QRectF triangleBounds;
+      GetTriangleBoundingRect(tri, triangleBounds);
+
+      QPointF gridOrigin(triangleBounds.left(), triangleBounds.bottom());
+      gridOrigin.rx() -= 100.0f;   
+
+      const float dim = 3.0f;
+      const float halfDim = dim * 0.5f;
+
+      // Extend a horizontal line that will intersect the tri on the left and right
+      QLineF horizGridLine(gridOrigin, gridOrigin + QPointF(1000.0f, 0.0f));
+
+      QPointF leftBound, rightBound;
+
+      while (horizGridLine.y2() < triangleBounds.top())
+      {
+         float verticalTranslation = halfDim;
+
+         if (GetIntersectionBoundingPoints(horizGridLine, lines, leftBound, rightBound))
+         {
+            float sampleColumn = leftBound.x() + halfDim;
+
+            while (sampleColumn < rightBound.x())
+            {
+               QPointF samplePos(sampleColumn, horizGridLine.y2());
+
+               TriangleSample newSample;
+               newSample.mSamplePosition.rx() = samplePos.x();
+               newSample.mSamplePosition.ry() = -samplePos.y();
+               newSample.mSampleRect.setLeft(-halfDim);
+               newSample.mSampleRect.setTop(-halfDim);
+               newSample.mSampleRect.setWidth(dim);
+               newSample.mSampleRect.setHeight(dim);  
+               newSample.mError = GetErrorSample(samplePos);
+               newSample.mSampleColor = GetErrorColor(newSample.mError);            
+
+               mSampleCollection.mSamples.push_back(newSample);   
+
+               sampleColumn += dim;
+               verticalTranslation = dim;
+            }         
+         }
+
+         horizGridLine.translate(0.0f, verticalTranslation);      
+      }
+
+      // Don't leave any leftover animations
+      mMeshUtil->ClearPoses(mPoseMesh, mModel, 0.0f);
+   }
+   
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
 bool PoseMeshItem::IsItemMovable()
 {
    return flags() & QGraphicsItem::ItemIsMovable;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+float PoseMeshItem::GetErrorSample(const QPointF &samplePoint)
+{  
+   QPointF meshSpaceTrueValue;
+   meshSpaceTrueValue.rx() = samplePoint.x() / VERT_SCALE;
+   meshSpaceTrueValue.ry() = samplePoint.y() / VERT_SCALE;
+
+   dtAnim::PoseMesh::TargetTriangle blendTarget;
+   mPoseMesh->GetTargetTriangleData(meshSpaceTrueValue.x(),
+                                    meshSpaceTrueValue.y(),
+                                    blendTarget);
+
+   mMeshUtil->BlendPoses(mPoseMesh, mModel, blendTarget);
+
+   // Apply the blended pose for this sample
+   mModel->Update(0.0f);
+
+   osg::Quat boneRotation = mModel->GetBoneAbsoluteRotation(mPoseMesh->GetBoneID());
+   
+   // calculate a vector transformed by the rotation data.
+   osg::Vec3 transformed = boneRotation * mPoseMesh->GetNativeForwardDirection();   
+
+   // calculate the local azimuth and elevation for the transformed vector
+   float az, el;
+
+   osg::Vec3 pelvisForward(0, -1, 0);
+   dtAnim::GetCelestialCoordinates(transformed, pelvisForward, az, el);
+
+   QPointF meshSpaceActualValue(az, el);
+
+   QLineF trueDirection(QPointF(), meshSpaceTrueValue);
+   QLineF actualDirection(QPointF(), meshSpaceActualValue);   
+
+   return trueDirection.angle(actualDirection);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+QColor PoseMeshItem::GetErrorColor(float degreesOfError)
+{
+   const float maxError = 10.0f;
+
+   QColor errorColor;
+
+   float percentError = degreesOfError / maxError;
+   dtUtil::ClampMax(percentError, 1.0f);
+
+   // In HSV color, red is at 0 and blue is a 240 degree rotation
+   const float blue = 2.0f / 3.0f;   
+   errorColor.setHsvF(blue - percentError * blue, 1.0f, 1.0f);
+
+   return errorColor;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+void PoseMeshItem::GetTriangleBoundingRect(const dtAnim::PoseMesh::Triangle &tri, QRectF &outRect)
+{
+   float left   = FLT_MAX;
+   float right  = -FLT_MAX;
+   float bottom = FLT_MAX;
+   float top    = -FLT_MAX;
+
+   for (size_t vertIndex = 0; vertIndex < 3; ++vertIndex)
+   {
+      const osg::Vec3 &vertex = tri.mVertices[vertIndex]->mData;
+      if (vertex.x() < left)  { left   = vertex.x(); }
+      if (vertex.x() > right) { right  = vertex.x(); }
+      if (vertex.y() > top)   { top    = vertex.y(); }
+      if (vertex.y() < bottom){ bottom = vertex.y(); }
+   }
+
+   outRect.setLeft(left * VERT_SCALE);
+   outRect.setRight(right * VERT_SCALE);
+   outRect.setTop(top * VERT_SCALE);
+   outRect.setBottom(bottom * VERT_SCALE);
+
+   assert(left   != FLT_MAX);
+   assert(right  != -FLT_MAX);
+   assert(bottom != FLT_MAX);
+   assert(top    != -FLT_MAX);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+bool PoseMeshItem::GetIntersectionBoundingPoints(const QLineF &intersector, 
+                                                 const QLineF lines[3],
+                                                 QPointF &outLeftMost,
+                                                 QPointF &outRightMost)
+{
+   bool foundLeft  = false;
+   bool foundRight = false;
+
+   outLeftMost.setX(FLT_MAX);
+   outRightMost.setX(-FLT_MAX);
+
+   // Collect the intersection points
+   for (size_t lineIndex = 0; lineIndex < 3; ++lineIndex)
+   {
+      QPointF isectPoint;
+
+      // If the lines intersect
+      if (intersector.intersect(lines[lineIndex], &isectPoint) == QLineF::BoundedIntersection)
+      {
+         // Is this intersection the far left or far right?
+         if (isectPoint.x() < outLeftMost.x())
+         {
+            outLeftMost = isectPoint;
+            foundLeft = true;
+         }
+         
+         if (isectPoint.x() > outRightMost.x())
+         {
+            outRightMost = isectPoint;
+            foundRight = true;
+         }
+      }
+   }
+
+   return foundLeft & foundRight;
 }

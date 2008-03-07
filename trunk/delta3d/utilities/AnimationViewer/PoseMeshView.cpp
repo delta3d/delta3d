@@ -110,6 +110,24 @@ void PoseMeshView::SetMode(eMODE newMode)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
+void PoseMeshView::ToggleErrorDisplay()
+{
+   static bool display = false;
+   display = !display;
+   
+   QList<QGraphicsItem*> itemList = items();
+   foreach(QGraphicsItem *item, itemList)
+   {
+      PoseMeshItem *poseItem = dynamic_cast<PoseMeshItem*>(item);
+      if (poseItem)
+      {
+         poseItem->SetDisplayErrorGrid(display);
+      }
+   }
+   
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
 PoseMeshView::eMODE PoseMeshView::GetMode()
 {
    return mMode;
