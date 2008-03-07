@@ -87,6 +87,26 @@ namespace dtAnim
    {
       return mMixer->clearCycle(id, delay);
    }
+   
+   void Cal3DModelWrapper::ClearAll()
+   {
+      std::vector<CalAnimation*> &animList = mMixer->getAnimationVector();
+      for (size_t animIndex = 0; animIndex < animList.size(); ++animIndex)
+      {
+         CalAnimation *currentAnim = animList[animIndex];
+         if (currentAnim)
+         {
+            if (currentAnim->getType() == CalAnimation::TYPE_CYCLE)  
+            {
+               ClearCycle(animIndex, 0);
+            }
+            else if (currentAnim->getType() == CalAnimation::TYPE_ACTION)
+            {
+               RemoveAction(animIndex);
+            }
+         }
+      }
+   }
 
    /** 
     * @param id : a valid ID of a animation to perform one-time (0 based)

@@ -218,6 +218,9 @@ namespace dtAnim
          /// Remove an existing looping animation from the mixer
          bool ClearCycle(int id, float delay);
 
+         /// Remove all existing animations from the mixer
+         void ClearAll();
+
          /// Perform a one-time animation from the mixer
          bool ExecuteAction(int id, float delayIn, float delayOut,
                             float weightTgt=1.0f, bool autoLock=false);
