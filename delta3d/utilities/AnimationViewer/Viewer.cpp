@@ -294,15 +294,6 @@ void Viewer::OnStartAction( unsigned int id, float delayIn, float delayOut )
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void Viewer::OnAssumeBlendPose( dtAnim::PoseMesh::TargetTriangle &blendInfo)
-{
-#ifdef DELTA_WIN32
-   //Do we need to temporarily replace an instruction?
-   _asm int 3
-#endif
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
 void Viewer::OnLODScale_Changed( float scaleValue )
 {
    if (mCharacter.get())
@@ -349,8 +340,7 @@ void Viewer::OnSetShadedWireframe()
 void Viewer::OnTimeout()
 {
    if (mCharacter.valid())
-   {
-      unsigned int idx=0;
+   {     
       dtAnim::Cal3DModelWrapper *rapper = mCharacter->GetCal3DWrapper();
       assert(rapper);
 

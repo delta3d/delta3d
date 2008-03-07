@@ -379,6 +379,7 @@ void MainWindow::OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*> &poseMe
 
    QIcon grabIcon(QPixmap(":/images/handIcon.png"));
    QIcon pickIcon(QPixmap(":/images/reticle.png"));
+   QIcon errorIcon(QPixmap(":/images/epsilon.png"));
 
    QToolBar *poseTools = new QToolBar;
 
@@ -386,14 +387,17 @@ void MainWindow::OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*> &poseMe
    QActionGroup *actionGroup = new QActionGroup(poseTools);
    actionGroup->setExclusive(true); 
 
-   QAction *grabAction   = actionGroup->addAction(grabIcon, "Click-drag meshes");
-   QAction *pickAction = actionGroup->addAction(pickIcon, "Set Pose From Mesh");   
+   QAction *grabAction = actionGroup->addAction(grabIcon, "Click-drag meshes.");
+   QAction *pickAction = actionGroup->addAction(pickIcon, "Set character pose by clicking on pose mesh.");     
 
    poseTools->addAction(grabAction);
    poseTools->addAction(pickAction);
 
+   QAction *errorAction = poseTools->addAction(errorIcon, "Display the error grid.");
+
    grabAction->setCheckable(true);
-   pickAction->setCheckable(true);  
+   pickAction->setCheckable(true); 
+   errorAction->setCheckable(true);
 
    pickAction->setChecked(true);
 
@@ -418,6 +422,7 @@ void MainWindow::OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*> &poseMe
    
    connect(grabAction, SIGNAL(triggered()), this, SLOT(OnSelectModeGrab()));
    connect(pickAction, SIGNAL(triggered()), this, SLOT(OnSelectModePick()));
+   connect(errorAction, SIGNAL(triggered()), this, SLOT(OnSelectToggleErrorGrid()));
 
    for (size_t poseIndex = 0; poseIndex < poseMeshList.size(); ++poseIndex)
    {
@@ -746,6 +751,12 @@ void MainWindow::OnSelectModeGrab()
 void MainWindow::OnSelectModePick()
 {
    mPoseMeshViewer->SetMode(PoseMeshView::MODE_BLEND_PICK);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnSelectToggleErrorGrid()
+{
+   mPoseMeshViewer->ToggleErrorDisplay();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

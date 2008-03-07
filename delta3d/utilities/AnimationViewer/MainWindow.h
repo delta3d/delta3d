@@ -125,5 +125,6 @@ private slots:
 
    void OnSelectModeGrab();
    void OnSelectModePick();
+   void OnSelectToggleErrorGrid();
 };
 #endif // MainWindow_h__

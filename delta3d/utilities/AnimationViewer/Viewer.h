@@ -61,8 +61,7 @@ public slots:
    void OnLoadPoseMeshFile( const std::string &filename );
    void OnStartAnimation  ( unsigned int id, float weight, float delay );
    void OnStopAnimation   ( unsigned int id, float delay );
-   void OnStartAction     ( unsigned int id, float delayIn, float delayOut );
-   void OnAssumeBlendPose ( dtAnim::PoseMesh::TargetTriangle &blendInfo);
+   void OnStartAction     ( unsigned int id, float delayIn, float delayOut );  
    void OnLODScale_Changed( float scaleValue );
    void OnSpeedChanged    ( float speedFactor );
    void OnSetShaded();
