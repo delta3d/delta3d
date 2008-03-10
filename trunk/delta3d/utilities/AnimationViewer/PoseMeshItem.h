@@ -49,9 +49,9 @@ public:
    const std::string& GetPoseMeshName(); 
 
    void SetEnabled(bool isEnabled);
+   void SetDisplayEdges(bool shouldDisplay);
+   void SetDisplayError(bool shouldDisplay);
    bool IsActive();
-
-   void SetDisplayErrorGrid(bool display);
 
    void Clear();  
 
@@ -90,8 +90,10 @@ private:
    QPointF mLastMousePos;
    QPointF mLastBlendPos;
    int     mLastTriangleID;  
+
    bool    mIsActive;
-   bool    mIsErrorGridDisplayed;
+   bool    mAreErrorSamplesDisplayed;
+   bool    mAreEdgesDisplayed;
 
    void BlendPosesFromItemCoordinates(float xCoord, float yCoord);
 
@@ -101,6 +103,7 @@ private:
    bool IsItemMovable();
 
    void PaintErrorSamples(QPainter *painter);  
+   void PaintEdges(QPainter *painter);
 
    float GetErrorSample(const QPointF &samplePoint);
 

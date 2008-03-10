@@ -377,23 +377,24 @@ void MainWindow::OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*> &poseMe
    addDockWidget(Qt::RightDockWidgetArea, mPoseDock);
    resize(1000, 800);     
 
-   QIcon grabIcon(QPixmap(":/images/handIcon.png"));
-   QIcon pickIcon(QPixmap(":/images/reticle.png"));
-   QIcon errorIcon(QPixmap(":/images/epsilon.png"));
+   // Create icons for the mode toolbar
+   QIcon modeGrabIcon(QPixmap(":/images/handIcon.png"));
+   QIcon modeBlendIcon(QPixmap(":/images/reticle.png"));
+   QIcon modeErrorIcon(QPixmap(":/images/epsilon.png"));
 
-   QToolBar *poseTools = new QToolBar;
+   QToolBar *poseModesToolbar = new QToolBar;
 
    // The actiongroup is used to make the action behave like radio buttons
-   QActionGroup *actionGroup = new QActionGroup(poseTools);
+   QActionGroup *actionGroup = new QActionGroup(poseModesToolbar);
    actionGroup->setExclusive(true); 
 
-   QAction *grabAction = actionGroup->addAction(grabIcon, "Click-drag meshes.");
-   QAction *pickAction = actionGroup->addAction(pickIcon, "Set character pose by clicking on pose mesh.");     
+   QAction *grabAction  = actionGroup->addAction(modeGrabIcon, "Click-drag mode.");
+   QAction *pickAction  = actionGroup->addAction(modeBlendIcon, "Blend pick mode.");     
+   QAction *errorAction = actionGroup->addAction(modeErrorIcon, "Error pick mode.");
 
-   poseTools->addAction(grabAction);
-   poseTools->addAction(pickAction);
-
-   QAction *errorAction = poseTools->addAction(errorIcon, "Display the error grid.");
+   poseModesToolbar->addAction(grabAction);
+   poseModesToolbar->addAction(pickAction);
+   poseModesToolbar->addAction(errorAction);
 
    grabAction->setCheckable(true);
    pickAction->setCheckable(true); 
@@ -401,7 +402,21 @@ void MainWindow::OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*> &poseMe
 
    pickAction->setChecked(true);
 
-   mPoseDock->setTitleBarWidget(poseTools);
+   poseModesToolbar->addSeparator();  
+   poseModesToolbar->addSeparator();
+
+   QIcon displayEdgesIcon(QPixmap(":/images/displayEdges.png"));
+   QIcon displayErrorIcon(QPixmap(":/images/displayError.png"));
+
+   QAction *displayEdgesAction = poseModesToolbar->addAction(displayEdgesIcon, "Display Edges.");
+   QAction *displayErrorAction = poseModesToolbar->addAction(displayErrorIcon, "Display Error Samples.");
+
+   displayEdgesAction->setCheckable(true);
+   displayErrorAction->setCheckable(true);
+
+   displayEdgesAction->setChecked(true);
+
+   mPoseDock->setTitleBarWidget(poseModesToolbar);
 
    // Add the properties tab
    mPoseMeshProperties = new PoseMeshProperties;     
@@ -421,8 +436,11 @@ void MainWindow::OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*> &poseMe
            mPoseMeshViewer, SLOT(OnZoomToPoseMesh(const std::string&)));
    
    connect(grabAction, SIGNAL(triggered()), this, SLOT(OnSelectModeGrab()));
-   connect(pickAction, SIGNAL(triggered()), this, SLOT(OnSelectModePick()));
-   connect(errorAction, SIGNAL(triggered()), this, SLOT(OnSelectToggleErrorGrid()));
+   connect(pickAction, SIGNAL(triggered()), this, SLOT(OnSelectModeBlendPick()));
+   connect(errorAction, SIGNAL(triggered()), this, SLOT(OnSelectModeErrorPick()));
+
+   connect(displayEdgesAction, SIGNAL(toggled(bool)), SLOT(OnToggleDisplayEdges(bool)));
+   connect(displayErrorAction, SIGNAL(toggled(bool)), SLOT(OnToggleDisplayError(bool)));
 
    for (size_t poseIndex = 0; poseIndex < poseMeshList.size(); ++poseIndex)
    {
@@ -434,7 +452,7 @@ void MainWindow::OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*> &poseMe
    }
 
    // Set the default mode
-   OnSelectModePick();
+   OnSelectModeBlendPick();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -748,15 +766,27 @@ void MainWindow::OnSelectModeGrab()
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void MainWindow::OnSelectModePick()
+void MainWindow::OnSelectModeBlendPick()
 {
    mPoseMeshViewer->SetMode(PoseMeshView::MODE_BLEND_PICK);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void MainWindow::OnSelectToggleErrorGrid()
+void MainWindow::OnSelectModeErrorPick()
 {
-   mPoseMeshViewer->ToggleErrorDisplay();
+   mPoseMeshViewer->SetMode(PoseMeshView::MODE_ERROR_PICK);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnToggleDisplayEdges(bool shouldDisplay)
+{
+   mPoseMeshViewer->SetDisplayEdges(shouldDisplay);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnToggleDisplayError(bool shouldDisplay)
+{
+   mPoseMeshViewer->SetDisplayError(shouldDisplay);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

@@ -41,6 +41,7 @@ PoseMeshView::PoseMeshView(PoseMeshScene *scene, QWidget *parent)
 
    mCursor[MODE_GRAB]       = new QCursor(QPixmap(":/images/handIcon.png"));
    mCursor[MODE_BLEND_PICK] = new QCursor(QPixmap(":/images/reticle.png"));
+   mCursor[MODE_ERROR_PICK] = new QCursor(QPixmap(":/images/epsilonCursor.png"), 0, 0);
 
    // Create and connect actions for the context menu
    mActionZoomItemExtents = new QAction("Zoom Extents", this);
@@ -97,7 +98,7 @@ void PoseMeshView::mouseMoveEvent(QMouseEvent *event)
 /////////////////////////////////////////////////////////////////////////////////////////
 void PoseMeshView::SetMode(eMODE newMode)
 {
-   bool allowMovement = newMode == MODE_GRAB;
+   bool allowMovement = (newMode == MODE_GRAB);
    
    QList<QGraphicsItem*> itemList = items();
    foreach (QGraphicsItem *item, itemList)
@@ -110,21 +111,31 @@ void PoseMeshView::SetMode(eMODE newMode)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void PoseMeshView::ToggleErrorDisplay()
+void PoseMeshView::SetDisplayEdges(bool shouldDisplay)
 {
-   static bool display = false;
-   display = !display;
-   
    QList<QGraphicsItem*> itemList = items();
-   foreach(QGraphicsItem *item, itemList)
+   foreach (QGraphicsItem *item, itemList)
    {
       PoseMeshItem *poseItem = dynamic_cast<PoseMeshItem*>(item);
       if (poseItem)
       {
-         poseItem->SetDisplayErrorGrid(display);
-      }
+         poseItem->SetDisplayEdges(shouldDisplay);
+      }      
    }
-   
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+void PoseMeshView::SetDisplayError(bool shouldDisplay)
+{
+   QList<QGraphicsItem*> itemList = items();
+   foreach (QGraphicsItem *item, itemList)
+   {
+      PoseMeshItem *poseItem = dynamic_cast<PoseMeshItem*>(item);
+      if (poseItem)
+      {
+         poseItem->SetDisplayError(shouldDisplay);
+      }      
+   }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -246,23 +257,6 @@ void PoseMeshView::OnSetCenterTarget(float sceneX, float sceneY)
 /////////////////////////////////////////////////////////////////////////////////////////
 void PoseMeshView::mousePressEvent(QMouseEvent *event)
 {
-   //std::vector<AnimElement>* elements = NULL;
-   //mScene->GetAnimElements(elements);
-   //assert(elements);
-  
-   //for (int elemIndex = 0; elemIndex < elements->size(); ++elemIndex)
-   //{
-   //   QPointF testPos = event->pos();
-   //   const QPointF pos = mapToScene(event->pos());
-
-   //   if ((*elements)[elemIndex].mGraphicsItem->contains(pos))
-   //   {
-   //      mTestPoint = pos;
-   //      mDragItem = (*elements)[elemIndex].mGraphicsItem;
-   //      setDragMode(QGraphicsView::NoDrag);
-   //   }
-   //}   
-
    if (mIsMoving)
    {
       if (event->button() & Qt::LeftButton)
@@ -317,9 +311,7 @@ void PoseMeshView::contextMenuEvent( QContextMenuEvent *event )
        }
        
        menu.exec(event->globalPos());
-   }
-
-  
+   }  
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

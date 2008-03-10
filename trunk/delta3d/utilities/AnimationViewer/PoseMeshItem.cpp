@@ -42,7 +42,8 @@ PoseMeshItem::PoseMeshItem(const dtAnim::PoseMesh &poseMesh,
   , mLastBlendPos(FLT_MAX, FLT_MAX)
   , mLastTriangleID(INT_MAX)
   , mIsActive(true)
-  , mIsErrorGridDisplayed(false)
+  , mAreErrorSamplesDisplayed(false)
+  , mAreEdgesDisplayed(true)
 {
    assert(mModel);
 
@@ -139,16 +140,23 @@ void PoseMeshItem::SetEnabled(bool isEnabled)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void PoseMeshItem::SetDisplayErrorGrid(bool display)
+void PoseMeshItem::SetDisplayEdges(bool shouldDisplay)
 {
-   if (display && !mSampleCollection.mInitialized)
+   mAreEdgesDisplayed = shouldDisplay;
+   update();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+void PoseMeshItem::SetDisplayError(bool shouldDisplay)
+{
+   if (shouldDisplay && !mSampleCollection.mInitialized)
    {
       // If we haven't collected our samples, do so now
       ExtractErrorFromMesh(*mPoseMesh);
    }
 
-   mIsErrorGridDisplayed = display;   
-   update();
+   mAreErrorSamplesDisplayed = shouldDisplay;   
+   update();   
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -270,40 +278,17 @@ QPainterPath PoseMeshItem::shape() const
 /////////////////////////////////////////////////////////////////////////////////////////
 void PoseMeshItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-   PaintErrorSamples(painter);
+   if (mAreErrorSamplesDisplayed && isEnabled())
+   {
+      PaintErrorSamples(painter);
+   }
+   
+   if (mAreEdgesDisplayed)
+   {
+      PaintEdges(painter);
+   }   
 
    const dtAnim::PoseMesh::VertexVector &verts = mPoseMesh->GetVertices();
-
-   QPen trianglePenDefault;  
-   trianglePenDefault.setWidth(2);
-
-   if (isEnabled())
-   {
-      trianglePenDefault.setColor(Qt::black);
-   }
-   else
-   {
-      trianglePenDefault.setColor(QColor(128, 128, 128, 64));
-   }
-
-   QPen trianglePenSelected;
-   trianglePenSelected.setWidth(2);
-   trianglePenSelected.setColor(Qt::green);
-
-   for (size_t edgeIndex = 0; edgeIndex < mEdgeInfoList.size(); ++edgeIndex)
-   {
-      if (mEdgeInfoList[edgeIndex].triangleIDs[0] == mLastTriangleID ||
-          mEdgeInfoList[edgeIndex].triangleIDs[1] == mLastTriangleID)
-      {         
-         painter->setPen(trianglePenSelected);
-      }
-      else
-      {
-         painter->setPen(trianglePenDefault);
-      }
-
-      painter->drawLine(mEdgeInfoList[edgeIndex].first, mEdgeInfoList[edgeIndex].second);
-   }   
 
    for (size_t vertIndex = 0; vertIndex < verts.size(); ++vertIndex)
    {
@@ -363,6 +348,42 @@ void PoseMeshItem::PaintErrorSamples(QPainter *painter)
       painter->drawRect(mSampleCollection.mSamples[sampleIndex].mSampleRect);
       painter->translate(-mSampleCollection.mSamples[sampleIndex].mSamplePosition);
    }   
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+void PoseMeshItem::PaintEdges(QPainter *painter)
+{
+   QPen trianglePenDefault;  
+   trianglePenDefault.setWidth(2);
+
+   if (isEnabled())
+   {
+      trianglePenDefault.setColor(Qt::black);
+   }
+   else
+   {
+      trianglePenDefault.setColor(QColor(128, 128, 128, 64));
+   }
+
+   QPen trianglePenSelected;
+   trianglePenSelected.setWidth(2);
+   trianglePenSelected.setColor(Qt::green);
+
+   for (size_t edgeIndex = 0; edgeIndex < mEdgeInfoList.size(); ++edgeIndex)
+   {
+      if (mEdgeInfoList[edgeIndex].triangleIDs[0] == mLastTriangleID ||
+         mEdgeInfoList[edgeIndex].triangleIDs[1] == mLastTriangleID)
+      {         
+         painter->setPen(trianglePenSelected);
+      }
+      else
+      {
+         painter->setPen(trianglePenDefault);
+      }
+
+      painter->drawLine(mEdgeInfoList[edgeIndex].first, mEdgeInfoList[edgeIndex].second);
+   }   
+
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -529,6 +550,8 @@ void PoseMeshItem::ExtractErrorFromMesh(const dtAnim::PoseMesh &mesh)
       mMeshUtil->ClearPoses(mPoseMesh, mModel, 0.0f);
    }
    
+   // Mark this operation as complete
+   mSampleCollection.mInitialized = true;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

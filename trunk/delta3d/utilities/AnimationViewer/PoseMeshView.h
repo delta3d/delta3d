@@ -17,6 +17,7 @@ public:
    {
       MODE_INVALID = -1,
       MODE_BLEND_PICK = 0,
+      MODE_ERROR_PICK,  
       MODE_GRAB,
 
       MODE_TOTAL
@@ -26,11 +27,12 @@ public:
    ~PoseMeshView();
 
    eMODE GetMode();
-   void SetMode(eMODE newMode);
+   void SetMode(eMODE newMode);   
 
-   void ToggleErrorDisplay();
+   void Zoom(float numberOfSteps); 
 
-   void Zoom(float numberOfSteps);   
+   void SetDisplayEdges(bool shouldDisplay);
+   void SetDisplayError(bool shouldDisplay);
 
    /// The item rect will constrain our view changed coordinates
    void SetItemBoundingRect(const QRectF &itemRect){ mItemRect = itemRect; }

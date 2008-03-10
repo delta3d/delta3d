@@ -124,7 +124,10 @@ private slots:
    void OnItemDoubleClicked(QTableWidgetItem *item);
 
    void OnSelectModeGrab();
-   void OnSelectModePick();
-   void OnSelectToggleErrorGrid();
+   void OnSelectModeBlendPick();
+   void OnSelectModeErrorPick();
+
+   void OnToggleDisplayEdges(bool shouldDisplay);
+   void OnToggleDisplayError(bool shouldDisplay);
 };
 #endif // MainWindow_h__

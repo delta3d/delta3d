@@ -9,5 +9,8 @@
 	  <file>images/reticle.png</file>
 	  <file>images/handIcon.png</file>
 	  <file>images/epsilon.png</file>
+	  <file>images/epsilonCursor.png</file>
+	  <file>images/displayEdges.png</file>
+	  <file>images/displayError.png</file>
     </qresource>
 </RCC>
