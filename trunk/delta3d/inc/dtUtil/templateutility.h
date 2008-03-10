@@ -23,6 +23,8 @@
 #ifndef DELTA_TEMPLATE_UTILITY
 #define DELTA_TEMPLATE_UTILITY
 
+#include <dtUtil/typetraits.h>
+
 namespace dtUtil
 {
 
@@ -98,7 +100,8 @@ namespace dtUtil
    {
       void operator()(std::pair<CompareHandler, InvokeHandler>& dataType)
       {
-         dtUtil::EvaluateFunctor<CompareHandler, EvaluateResult, bool> eval;
+         typedef typename dtUtil::TypeTraits<EvaluateResult>::reference EvalResultTT;
+         dtUtil::EvaluateFunctor<CompareHandler, EvalResultTT, bool> eval;
          EvaluateResult result;
 
          if(eval(dataType.first, result))
