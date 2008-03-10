@@ -23,6 +23,8 @@
 #include <dtAI/distancesensor.h>
 #include <dtAI/sensor.h>
 #include <dtUtil/templateutility.h>
+#include <dtUtil/stringutils.h>
+
 #include <dtCore/refptr.h>
 
 #include <osg/io_utils>

@@ -813,20 +813,24 @@ def TOOL_BUNDLE(env):
 
       
       if not env.GetOption('clean') :
+
+         deltaRoot='#'
+         if env['ENV'].has_key('DELTA_ROOT'):
+            deltaRoot = env['ENV']['DELTA_ROOT'] + '/'
          
-         foundnlH = CheckHeader('nl.h', ['/usr/include/hawknl','#ext/inc', '#ext/inc/NL', '#ext/inc/nl', '/usr/local/include/hawknl'])
+         foundnlH = CheckHeader('nl.h', ['/usr/include/hawknl', deltaRoot + 'ext/inc', deltaRoot + 'ext/inc/NL', deltaRoot + 'ext/inc/nl', '/usr/local/include/hawknl'])
 
          if not foundnlH: 
             print "nl.h was not found, aborting."
             env.Exit(1)
 
-         foundGdalH = CheckHeader('gdal.h', ['/usr/include/gdal','#ext/inc/gdal', '/Library/Frameworks/gdal.framework/Headers'])
+         foundGdalH = CheckHeader('gdal.h', ['/usr/include/gdal', deltaRoot + 'ext/inc/gdal', '/Library/Frameworks/gdal.framework/Headers'])
          
          if not foundGdalH: 
             print "gdal.h was not found, aborting."
             env.Exit(1)
 
-         foundCEGUIH = CheckHeader('CEGUIBase.h', ['/usr/include/CEGUI','#ext/inc/CEGUI', '/Library/Frameworks/CEGUI.framework/Headers'])
+         foundCEGUIH = CheckHeader('CEGUIBase.h', ['/usr/include/CEGUI', deltaRoot + 'ext/inc/CEGUI', '/Library/Frameworks/CEGUI.framework/Headers'])
          
          if not foundCEGUIH: 
             print "CEGUIBase.h was not found, aborting."

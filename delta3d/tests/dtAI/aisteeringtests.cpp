@@ -198,11 +198,14 @@ namespace dtAI
       for(int i = 0; i < 9; ++i)
       {
          mSteeringBehavoir->InvokeErrorHandling();
-         CPPUNIT_ASSERT_MESSAGE("Invoking Error Handling loop, no errors should be triggered until the sensor is triggered",!mErrorHandler->GetValue());
+         CPPUNIT_ASSERT_MESSAGE("Invoking Error Handling loop, no errors should be triggered "
+               "until the sensor is triggered",
+               !mErrorHandler->GetValue());
       }
 
       mSteeringBehavoir->InvokeErrorHandling();
-      CPPUNIT_ASSERT_MESSAGE("Error should have been triggered by sensors 10th iteration", mErrorHandler->GetValue());
+      CPPUNIT_ASSERT_MESSAGE("Error should have been triggered by sensors 10th iteration",
+            mErrorHandler->GetValue());
 
       //remove the error handler and assert that the sensor does not trigger an error
       mErrorHandler->operator()(false);
