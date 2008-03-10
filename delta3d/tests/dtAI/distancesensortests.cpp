@@ -84,8 +84,8 @@ namespace dtAI
                   etp1, etp2, 5, distanceCallback);
          distanceSensor->Evaluate();
 
-         CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The callback should not have fired", 
-                  1.5f, callBackValue, 0.001f);
+         CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The callback should have fired", 
+                  0.0f, callBackValue, 0.001f);
          CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The distance should be 0.0", 
                   0.0f, distanceSensor->GetDistance(), 0.001f);
 
@@ -100,28 +100,32 @@ namespace dtAI
          t1->SetTransform(xform, dtCore::Transformable::ABS_CS);
 
          t2->GetTransform(xform, dtCore::Transformable::REL_CS);
-         xform.SetTranslation(testVec);
+         xform.SetTranslation(testVec2);
          t2->SetTransform(xform, dtCore::Transformable::REL_CS);
+
+         callBackValue = 1.5f;
+
+         float expectedDistance = (testVec - testVec2).length();
 
          distanceSensor->Evaluate();
 
-         CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The callback should not have fired", 
+         CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The callback should not have fired",
                   1.5f, callBackValue, 0.001f);
-         CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The distance should be 0.0", 
-                  0.0f, distanceSensor->GetDistance(), 0.001f);
+         CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The distance should be " + dtUtil::ToString(expectedDistance), 
+                  expectedDistance, distanceSensor->GetDistance(), 0.001f);
+
+         float distSquared = expectedDistance * expectedDistance;
+         CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The distance squared should be " + dtUtil::ToString(distSquared), 
+            distSquared, distanceSensor->GetDistanceSquared(), 0.001f);
 
          t2->GetTransform(xform, dtCore::Transformable::REL_CS);
-         xform.SetTranslation(testVec2);
-         t2->SetTransform(xform, dtCore::Transformable::REL_CS);
+         xform.SetTranslation(testVec);
+         t2->SetTransform(xform, dtCore::Transformable::REL_CS); 
 
          distanceSensor->Evaluate();
 
          CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The callback should have fired", 
-                  300.0f, callBackValue, 0.001f);
-         CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The distance squared should be 300", 
-                  callBackValue, distanceSensor->GetDistanceSquared(), 0.001f);
-         CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The distance should be sqrt 300", 
-                  std::sqrt(callBackValue), distanceSensor->GetDistance(), 0.001f);
+                  0.0f, callBackValue, 0.001f);
       }
 
       void TestMatrixFunctor()
@@ -143,8 +147,8 @@ namespace dtAI
 
          distanceSensor->Evaluate();
 
-         CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The callback should not have fired", 
-                  1.5, callBackValue, 0.001);
+         CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The callback should have fired", 
+                  0.0, callBackValue, 0.001);
          CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The distance should be 0.0", 
                   0.0, distanceSensor->GetDistance(), 0.001);
 
