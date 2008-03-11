@@ -27,7 +27,7 @@ namespace dtQt
 namespace dtAnim
 {
    class PoseMesh;
-   class Cal3DModelWrapper;
+   class CharDrawable;
 }
 
 class MainWindow : public QMainWindow
@@ -57,7 +57,7 @@ public slots:
    void OnNewMesh(int meshID, const QString &meshName);
 
    void OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*> &poseMeshList, 
-                           dtAnim::Cal3DModelWrapper *model);   
+                           dtAnim::CharDrawable *model);   
 
    void OnNewMaterial(int matID, const QString &name,
                       const QColor &diff, const QColor &amb, const QColor &spec,

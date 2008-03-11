@@ -85,7 +85,7 @@ signals:
    void PoseMeshLoaded(const dtAnim::PoseMesh &poseMesh);
 
    void PoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*> &poseMeshes,
-                         dtAnim::Cal3DModelWrapper *character);
+                         dtAnim::CharDrawable *character);
 
    void MaterialLoaded(int materialID, const QString &name, 
                        const QColor &diffuse, const QColor &ambient, const QColor &specular,
