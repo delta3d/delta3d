@@ -43,7 +43,7 @@ PoseMeshScene::~PoseMeshScene()
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void PoseMeshScene::AddMesh(const dtAnim::PoseMesh &poseMesh, dtAnim::Cal3DModelWrapper *model)
+void PoseMeshScene::AddMesh(const dtAnim::PoseMesh &poseMesh, dtAnim::CharDrawable *model)
 {   
    PoseMeshItem *newItem = new PoseMeshItem(poseMesh, model);
    mItemList.push_back(newItem);

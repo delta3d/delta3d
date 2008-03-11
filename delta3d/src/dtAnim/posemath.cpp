@@ -63,7 +63,9 @@ void dtAnim::GetCelestialDirection(const float azimuth,
    // Downward elevation is negative so
    // negate the right vector
    osg::Vec3 up(0, 0, 1);
-   osg::Vec3 right(1, 0, 0);
+   osg::Vec3 right = forwardDirection ^ up;
+
+   right.normalize();
 
    osg::Quat rotateZ, rotateX;
    rotateX.makeRotate(elevation, right);

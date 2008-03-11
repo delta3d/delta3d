@@ -15,7 +15,7 @@ class QGraphicsScene;
 class QCursor;
 class QAction;
 
-namespace dtAnim { class Cal3DModelWrapper; }
+namespace dtAnim { class CharDrawable; }
 
 struct TriangleSample
 {
@@ -41,7 +41,7 @@ class PoseMeshItem: public QGraphicsItem
 public:
 
    PoseMeshItem(const dtAnim::PoseMesh &poseMesh,
-                dtAnim::Cal3DModelWrapper *model,
+                dtAnim::CharDrawable *model,
                 QGraphicsItem *parent = NULL);
 
    ~PoseMeshItem(); 
@@ -70,8 +70,11 @@ protected:
 private: 
 
    const dtAnim::PoseMesh *mPoseMesh;
-   dtAnim::Cal3DModelWrapper *mModel;   
+   dtAnim::CharDrawable *mModel;   
    dtCore::RefPtr<dtAnim::PoseMeshUtility> mMeshUtil;
+
+   osg::ref_ptr<osg::Geometry> mTrueLine;
+   osg::ref_ptr<osg::Geometry> mBlendLine;
 
    TriangleSampleSpace mSampleCollection;
 
@@ -97,11 +100,22 @@ private:
 
    void BlendPosesFromItemCoordinates(float xCoord, float yCoord);
 
+   // Functions to precompute/extract data from the pose mesh
    void ExtractEdgesFromMesh(const dtAnim::PoseMesh &mesh);
    void ExtractErrorFromMesh(const dtAnim::PoseMesh &mesh);
 
+   void GetBoneDirections(const dtAnim::PoseMesh::TargetTriangle &targetTri,
+                          osg::Vec3 &outTrueDirection,
+                          osg::Vec3 &outBlendDirection);
+
+   void GetBaseForwardDirection(const dtAnim::PoseMesh::TargetTriangle &currentTargetTri, osg::Vec3 &outDirection);
+
+   void AddBoneLinesToScene(const dtAnim::PoseMesh::TargetTriangle &targetTri);
+   void RemoveBoneLinesFromScene();
+
    bool IsItemMovable();
 
+   // Render functions
    void PaintErrorSamples(QPainter *painter);  
    void PaintEdges(QPainter *painter);
 

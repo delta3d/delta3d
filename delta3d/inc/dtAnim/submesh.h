@@ -57,7 +57,7 @@ namespace dtAnim
 
    ///Adapter that converts cal3d submeshes into osg::Drawables
 
-   /** 
+   /** h
     * The easy way would be to draw all the character (CalModel) in a single
     * Drawable, but this approach lacks from state sorting. Each submesh of
     * each mesh of a model can have different state attributes. With the current

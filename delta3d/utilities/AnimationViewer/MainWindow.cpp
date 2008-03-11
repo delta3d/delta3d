@@ -8,6 +8,7 @@
 #include <osg/Geode> ///needed for the node builder
 #include <dtAnim/cal3ddatabase.h>
 #include <dtAnim/animnodebuilder.h>
+#include <dtAnim/chardrawable.h>
 
 #include <dtUtil/fileutils.h>
 
@@ -362,7 +363,7 @@ void MainWindow::OnNewMesh(int meshID, const QString &meshName)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*> &poseMeshList, 
-                                    dtAnim::Cal3DModelWrapper *model)
+                                    dtAnim::CharDrawable *model)
 {
    assert(!mPoseMeshScene);
    assert(!mPoseMeshViewer);
@@ -448,7 +449,7 @@ void MainWindow::OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*> &poseMe
 
       // Add new pose mesh visualization and properties
       mPoseMeshScene->AddMesh(*newMesh, model);
-      mPoseMeshProperties->AddMesh(*newMesh, *model);   
+      mPoseMeshProperties->AddMesh(*newMesh, *model->GetCal3DWrapper());   
    }
 
    // Set the default mode

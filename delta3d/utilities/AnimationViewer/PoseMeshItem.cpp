@@ -21,6 +21,11 @@
 #include <dtUtil/mathdefines.h>
 #include <dtCore/refptr.h>
 
+#include <osg/MatrixTransform>
+#include <osg/LineWidth>
+#include <osg/Geode>
+#include <osg/Vec4>
+
 #include <assert.h>
 
 //temp
@@ -31,9 +36,38 @@ const float VERT_SCALE     = 100.0f;
 const int VERT_RADIUS      = 6;
 const int VERT_RADIUS_DIV2 = VERT_RADIUS / 2;
 
+osg::Geometry* MakeLine(const osg::Vec3& beginPoint,
+                        const osg::Vec3& endPoint,
+                        const osg::Vec4& color,
+                        const float size)
+{
+   osg::Vec3Array *vArray = new osg::Vec3Array(2);
+   (*vArray)[0] = beginPoint;
+   (*vArray)[1] = endPoint;
+
+   osg::Vec4Array *colors = new osg::Vec4Array(1);
+   (*colors)[0] = color;
+
+   osg::Geometry* geometry = new osg::Geometry();
+   geometry->setVertexArray(vArray);
+   geometry->setColorArray(colors);
+   geometry->setColorBinding(osg::Geometry::BIND_OVERALL);
+   geometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, 2));
+
+   osg::StateSet *dstate = new osg::StateSet();
+   dstate->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
+   dstate->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
+
+   osg::LineWidth *lineWidth = new osg::LineWidth(size);
+   dstate->setAttribute(lineWidth);
+
+   geometry->setStateSet(dstate);
+   return geometry;
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////
 PoseMeshItem::PoseMeshItem(const dtAnim::PoseMesh &poseMesh,
-                           dtAnim::Cal3DModelWrapper *model,
+                           dtAnim::CharDrawable *model,
                            QGraphicsItem *parent)
   : QGraphicsItem(parent)
   , mPoseMesh(&poseMesh)
@@ -163,14 +197,78 @@ void PoseMeshItem::SetDisplayError(bool shouldDisplay)
 void PoseMeshItem::Clear()
 {
    // Remove any of this item's pose blends from the model   
-   mMeshUtil->ClearPoses(mPoseMesh, mModel, 0.0f);
+   mMeshUtil->ClearPoses(mPoseMesh, mModel->GetCal3DWrapper(), 0.0f);
 
    mLastBlendPos.setX(FLT_MAX);
    mLastBlendPos.setY(FLT_MAX);
    mLastTriangleID = INT_MAX;
 
+   // Remove the line segments from the character view
+   RemoveBoneLinesFromScene();  
+
    // Remove highlighting and target ellipse from scene
    update(boundingRect());
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+void PoseMeshItem::RemoveBoneLinesFromScene()
+{
+   osg::Geode *charGeode = dynamic_cast<osg::Geode*>(mModel->GetNode());
+   assert(charGeode);
+
+   charGeode->removeDrawable(mTrueLine.get());
+   charGeode->removeDrawable(mBlendLine.get());
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+void PoseMeshItem::AddBoneLinesToScene(const dtAnim::PoseMesh::TargetTriangle &targetTri)
+{  
+   osg::Geode *charGeode = dynamic_cast<osg::Geode*>(mModel->GetNode());
+   assert(charGeode);
+
+   if (mTrueLine.valid() || mBlendLine.valid())
+   {
+      charGeode->removeDrawable(mTrueLine.get());
+      charGeode->removeDrawable(mBlendLine.get());
+   }
+
+   osg::Vec3 trueDirection, blendDirection;
+   GetBoneDirections(targetTri, trueDirection, blendDirection);
+
+   trueDirection.normalize();
+   blendDirection.normalize();
+
+   osg::Vec3 baseForward;
+   GetBaseForwardDirection(targetTri, baseForward);
+
+   float blendAzimuth, blendElevation;
+   dtAnim::GetCelestialCoordinates(blendDirection, baseForward, blendAzimuth, blendElevation);
+
+   //dtAnim::GetCelestialCoordinates(blendDirection, -osg::Y_AXIS, blendAzimuth, blendElevation);
+  
+   /* std::ostringstream oss;
+   oss << "true value (" << trueDirection.x() << ", " << trueDirection.y() << ", " << trueDirection.z() << std::endl;
+   oss << "blend value (" << blendDirection.x() << ", " << blendDirection.y() << ", " << blendDirection.z() << std::endl;
+
+   std::cout << oss.str();*/
+
+   float angle = osg::RadiansToDegrees((acosf(trueDirection * blendDirection)));
+   QColor errorColor = GetErrorColor(angle);
+   osg::Vec4 osgColor(errorColor.redF(), errorColor.greenF(), errorColor.blueF(), 1.0f);
+
+   std::ostringstream oss;
+   oss << "error " << angle;
+   std::cout << oss.str() << std::endl;
+
+   mModel->GetCal3DWrapper()->UpdateSkeleton();
+   osg::Vec3 startPos = mModel->GetCal3DWrapper()->GetBoneAbsoluteTranslation(mPoseMesh->GetBoneID());
+
+   mTrueLine  = MakeLine(startPos, startPos + trueDirection * 100.0f, osg::Vec4(0.0f, 0.0f, 0.0f, 1.0f), 1.0f);
+   mBlendLine = MakeLine(startPos, startPos + blendDirection * 100.0f, osgColor, 1.0f);
+
+   charGeode->addDrawable(mTrueLine.get());
+   charGeode->addDrawable(mBlendLine.get());
+
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -197,7 +295,7 @@ void PoseMeshItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
          //oss << "pos: (" << mLastMousePos.x() << ", " << mLastMousePos.y() << ")";
          //std::cout << oss.str() << std::endl;
 
-         BlendPosesFromItemCoordinates(mLastMousePos.x(), mLastMousePos.y());     
+         BlendPosesFromItemCoordinates(mLastMousePos.x(), mLastMousePos.y());            
       }  
    }   
   
@@ -235,7 +333,17 @@ void PoseMeshItem::BlendPosesFromItemCoordinates(float xCoord, float yCoord)
    // Only update the blend and position if we're in the mesh
    if (targetTri.mIsInside)
    { 
-      mMeshUtil->BlendPoses(mPoseMesh, mModel, targetTri);
+      dtAnim::Cal3DModelWrapper *modelWrapper = mModel->GetCal3DWrapper();
+      mMeshUtil->BlendPoses(mPoseMesh, modelWrapper, targetTri);
+
+      if (mAreErrorSamplesDisplayed)
+      {      
+         // Make sure the skeleton is updated to the current
+         // blend before we try to access it
+         modelWrapper->Update(0.0f);
+
+         AddBoneLinesToScene(targetTri);
+      }
 
       //std::ostringstream oss;
       //oss << "x = " << xCoord << "  " << "y = " << yCoord 
@@ -356,6 +464,7 @@ void PoseMeshItem::PaintEdges(QPainter *painter)
    QPen trianglePenDefault;  
    trianglePenDefault.setWidth(2);
 
+   // Gray out the edges when the item is disabled
    if (isEnabled())
    {
       trianglePenDefault.setColor(Qt::black);
@@ -365,9 +474,10 @@ void PoseMeshItem::PaintEdges(QPainter *painter)
       trianglePenDefault.setColor(QColor(128, 128, 128, 64));
    }
 
+   // Draw edges connecting verts that are currently blended in white
    QPen trianglePenSelected;
    trianglePenSelected.setWidth(2);
-   trianglePenSelected.setColor(Qt::green);
+   trianglePenSelected.setColor(Qt::white);
 
    for (size_t edgeIndex = 0; edgeIndex < mEdgeInfoList.size(); ++edgeIndex)
    {
@@ -477,10 +587,16 @@ void PoseMeshItem::ExtractEdgesFromMesh(const dtAnim::PoseMesh &mesh)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 void PoseMeshItem::ExtractErrorFromMesh(const dtAnim::PoseMesh &mesh)
-{
+{ 
+   dtAnim::Cal3DModelWrapper *modelWrapper = mModel->GetCal3DWrapper();
+   assert(modelWrapper);
+
    // Make sure no animations are applied
-   mModel->ClearAll();
-   mModel->Update(0.0f);
+   modelWrapper->ClearAll();
+   modelWrapper->Update(0.0f);
+
+   // Nothing is blended now so remove character lines
+   RemoveBoneLinesFromScene();
 
    const dtAnim::PoseMesh::TriangleVector &triangleList = mesh.GetTriangles();
 
@@ -547,7 +663,7 @@ void PoseMeshItem::ExtractErrorFromMesh(const dtAnim::PoseMesh &mesh)
       }
 
       // Don't leave any leftover animations
-      mMeshUtil->ClearPoses(mPoseMesh, mModel, 0.0f);
+      mMeshUtil->ClearPoses(mPoseMesh, modelWrapper, 0.0f);
    }
    
    // Mark this operation as complete
@@ -563,6 +679,9 @@ bool PoseMeshItem::IsItemMovable()
 /////////////////////////////////////////////////////////////////////////////////////////
 float PoseMeshItem::GetErrorSample(const QPointF &samplePoint)
 {  
+   dtAnim::Cal3DModelWrapper *modelWrapper = mModel->GetCal3DWrapper();
+   assert(modelWrapper);
+
    QPointF meshSpaceTrueValue;
    meshSpaceTrueValue.rx() = samplePoint.x() / VERT_SCALE;
    meshSpaceTrueValue.ry() = samplePoint.y() / VERT_SCALE;
@@ -572,41 +691,103 @@ float PoseMeshItem::GetErrorSample(const QPointF &samplePoint)
                                     meshSpaceTrueValue.y(),
                                     blendTarget);
 
-   mMeshUtil->BlendPoses(mPoseMesh, mModel, blendTarget);
+   mMeshUtil->BlendPoses(mPoseMesh, modelWrapper, blendTarget);
 
    // Apply the blended pose for this sample
-   mModel->Update(0.0f);
+   modelWrapper->Update(0.0f);
 
-   osg::Quat boneRotation = mModel->GetBoneAbsoluteRotation(mPoseMesh->GetBoneID());
+   osg::Quat boneRotation = modelWrapper->GetBoneAbsoluteRotation(mPoseMesh->GetBoneID());
    
    // calculate a vector transformed by the rotation data.
-   osg::Vec3 transformed = boneRotation * mPoseMesh->GetNativeForwardDirection();   
+   osg::Vec3 blendDirection = boneRotation * mPoseMesh->GetNativeForwardDirection();  
 
-   // calculate the local azimuth and elevation for the transformed vector
-   float az, el;
+   // is this always valid?
+   osg::Vec3 forwardDirection = -osg::Y_AXIS;
 
-   osg::Vec3 pelvisForward(0, -1, 0);
-   dtAnim::GetCelestialCoordinates(transformed, pelvisForward, az, el);
+   osg::Vec3 trueDirection;
+   dtAnim::GetCelestialDirection(meshSpaceTrueValue.x(), meshSpaceTrueValue.y(), forwardDirection, trueDirection);
 
-   QPointF meshSpaceActualValue(az, el);
+   blendDirection.normalize();
+   trueDirection.normalize();
 
-   QLineF trueDirection(QPointF(), meshSpaceTrueValue);
-   QLineF actualDirection(QPointF(), meshSpaceActualValue);   
+   float blendDotTrue = blendDirection * trueDirection;
+   dtUtil::Clamp(blendDotTrue, -1.0f, 1.0f);
 
-   return trueDirection.angle(actualDirection);
+   float radianAngle = acosf(blendDotTrue);
+   return osg::RadiansToDegrees(radianAngle);
+
+   //// calculate the local azimuth and elevation for the transformed vector
+   //float az, el;
+
+   //osg::Vec3 pelvisForward(0, -1, 0);
+   //dtAnim::GetCelestialCoordinates(blendDirection, pelvisForward, az, el);
+
+   //QPointF meshSpaceActualValue(az, el);
+
+   //QLineF trueDirection(QPointF(), meshSpaceTrueValue);
+   //QLineF actualDirection(QPointF(), meshSpaceActualValue);   
+
+   //return trueDirection.angle(actualDirection);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+void PoseMeshItem::GetBoneDirections(const dtAnim::PoseMesh::TargetTriangle &targetTri,
+                                     osg::Vec3 &outTrueDirection,
+                                     osg::Vec3 &outBlendDirection)
+{
+   dtAnim::Cal3DModelWrapper *modelWrapper = mModel->GetCal3DWrapper();
+   osg::Quat boneRotation = modelWrapper->GetBoneAbsoluteRotation(mPoseMesh->GetBoneID());
+
+   // Get the direction that points forward for this pose mesh's bone
+   const osg::Vec3 &nativeBoneForward = mPoseMesh->GetNativeForwardDirection();
+
+   // calculate a vector transformed by the rotation data.
+   outBlendDirection = boneRotation * nativeBoneForward;   
+
+   osg::Vec3 baseForward;
+   GetBaseForwardDirection(targetTri, baseForward);   
+
+   dtAnim::GetCelestialDirection(targetTri.mAzimuth, targetTri.mElevation, baseForward, outTrueDirection);
+   //dtAnim::GetCelestialDirection(targetTri.mAzimuth, targetTri.mElevation, -osg::Y_AXIS, outTrueDirection);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+// Warning, this function is expensive!
+void PoseMeshItem::GetBaseForwardDirection(const dtAnim::PoseMesh::TargetTriangle &currentTargetTri, 
+                                           osg::Vec3 &outDirection)
+{
+   dtAnim::Cal3DModelWrapper *modelWrapper = mModel->GetCal3DWrapper();
+
+   // Remove this mesh's contribution to the animation so we can get the baseline
+    mMeshUtil->ClearPoses(mPoseMesh, mModel->GetCal3DWrapper(), 0.0f);
+
+   // Apply the changes to the skeleton
+   modelWrapper->Update(0.0f);
+
+   // Get the bone's rotation without this pose mesh's animations applied
+   osg::Quat boneRotation = modelWrapper->GetBoneAbsoluteRotation(mPoseMesh->GetBoneID());
+   
+   const osg::Vec3 &nativeBoneForward = mPoseMesh->GetNativeForwardDirection();
+
+   // Transform the native forward by base rotation
+   outDirection = boneRotation * nativeBoneForward;
+
+   // Re-apply the previous animation
+   mMeshUtil->BlendPoses(mPoseMesh, mModel->GetCal3DWrapper(), currentTargetTri);  
+   modelWrapper->Update(0.0f);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 QColor PoseMeshItem::GetErrorColor(float degreesOfError)
 {
-   const float maxError = 10.0f;
+   const float maxError = 7.5f;
 
    QColor errorColor;
 
    float percentError = degreesOfError / maxError;
    dtUtil::ClampMax(percentError, 1.0f);
 
-   // In HSV color, red is at 0 and blue is a 240 degree rotation
+   // In HSV color, red is at 0 and blue is at 240 degrees 
    const float blue = 2.0f / 3.0f;   
    errorColor.setHsvF(blue - percentError * blue, 1.0f, 1.0f);
 

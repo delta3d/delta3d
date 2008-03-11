@@ -249,7 +249,7 @@ void Viewer::OnLoadPoseMeshFile( const std::string &filename )
    if (mPoseDatabase->LoadFromFile(filename))
    {      
       mPoseMeshes = &mPoseDatabase->GetMeshes();
-      emit PoseMeshesLoaded(*mPoseMeshes, mCharacter->GetCal3DWrapper());
+      emit PoseMeshesLoaded(*mPoseMeshes, mCharacter.get());
 
       //for (size_t poseIndex = 0; poseIndex < mPoseMeshes->size(); ++poseIndex)
       //{
