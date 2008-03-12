@@ -95,11 +95,14 @@ namespace dtHLAGM
          /// An identifier uniquely marking an entity.
          static const RPRAttributeType ENTITY_IDENTIFIER_TYPE;
 
-         ///An indentifier uniquely marking an event.
+         ///An identifier uniquely marking an event.
          static const RPRAttributeType EVENT_IDENTIFIER_TYPE;
 
-         ///Indentifier for an entity marking used to hold both a marking type and the content of the marking.
+         ///Identifier for an entity marking used to hold both a marking type and the content of the marking.
          static const RPRAttributeType MARKING_TYPE;
+
+         ///Identifier for an entity marking used to hold both a marking type and the content of the marking (32 bytes).
+         static const RPRAttributeType MARKING_TYPE_32;
 
          ///A variable length string.
          static const RPRAttributeType STRING_TYPE;
@@ -262,6 +265,18 @@ namespace dtHLAGM
             const dtDAL::DataType& parameterDataType,
             const OneToManyMapping::ParameterDefinition& paramDef) const;
 
+       private:
+
+         /**Copy numChars of markingText into buffer. Add trailing \0's if required.
+           *Preface buffer with '1' to denote the text is "ASCII". **/
+         static void CopyMarkingTextToBuffer(const std::string &markingText, 
+                                             char *buffer,
+                                             size_t numChars);
+
+         ///Copy up to numChars of buffer into markingText.
+         static void CopyBufferToMarkingText(const char *buffer, 
+                                             std::string &markingText,
+                                             size_t numChars);
    };
 
 }

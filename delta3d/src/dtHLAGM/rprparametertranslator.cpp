@@ -51,6 +51,7 @@ namespace dtHLAGM
    const RPRAttributeType RPRAttributeType::ENTITY_IDENTIFIER_TYPE("ENTITY_IDENTIFIER_TYPE", 1, 6);
    const RPRAttributeType RPRAttributeType::EVENT_IDENTIFIER_TYPE("EVENT_IDENTIFIER_TYPE", 1, 5);
    const RPRAttributeType RPRAttributeType::MARKING_TYPE("MARKING_TYPE", 1, 12);
+   const RPRAttributeType RPRAttributeType::MARKING_TYPE_32("MARKING_TYPE_32", 1, 32);
    const RPRAttributeType RPRAttributeType::STRING_TYPE("STRING_TYPE", 1, 128);
    const RPRAttributeType RPRAttributeType::ARTICULATED_PART_TYPE("ARTICULATED_PART_TYPE", 1, 512);
    const RPRAttributeType RPRAttributeType::RTI_OBJECT_ID_STRUCT_TYPE("RTI_OBJECT_ID_STRUCT_TYPE", 1, 128);
@@ -619,15 +620,7 @@ namespace dtHLAGM
          {
             const std::string& markingText = static_cast<const dtGame::StringMessageParameter&>(parameter).GetValue();
 
-            //1 is ASCII
-            buffer[0] = 1;
-            for (unsigned i = 1; i < RPRAttributeType::MARKING_TYPE.GetEncodedLength(); ++i)
-            {
-               if (i <= markingText.size())
-                  buffer[i] = markingText[i-1];
-               else
-                  buffer[i] = '\0';
-            }
+            CopyMarkingTextToBuffer(markingText, buffer, RPRAttributeType::MARKING_TYPE.GetEncodedLength());
          }
          else
          {
@@ -635,6 +628,22 @@ namespace dtHLAGM
                "Unable to map from Game Type \"%s\" to HLA type \"%s\"",
                parameterDataType.GetName().c_str(),
                RPRAttributeType::MARKING_TYPE.GetName().c_str());
+         }
+      }
+      else if (hlaType == RPRAttributeType::MARKING_TYPE_32)
+      {
+         if (parameterDataType == dtDAL::DataType::STRING)
+         {
+            const std::string& markingText = static_cast<const dtGame::StringMessageParameter&>(parameter).GetValue();
+
+            CopyMarkingTextToBuffer(markingText, buffer, RPRAttributeType::MARKING_TYPE_32.GetEncodedLength());
+         }
+         else
+         {
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+               "Unable to map from Game Type \"%s\" to HLA type \"%s\"",
+               parameterDataType.GetName().c_str(),
+               RPRAttributeType::MARKING_TYPE_32.GetName().c_str());
          }
       }
       else if (hlaType == RPRAttributeType::ENTITY_IDENTIFIER_TYPE)
@@ -1508,19 +1517,9 @@ namespace dtHLAGM
       {
          if (parameterDataType == dtDAL::DataType::STRING)
          {
-            //unsigned char markingEnum = *(unsigned char*)(&buffer[0]);
             std::string markingText;
-            //1 is ASCII
-            //if (markingEnum == 1)
-            //{
-            for (unsigned i = 1; i < RPRAttributeType::MARKING_TYPE.GetEncodedLength(); ++i)
-            {
-               char c = buffer[i];
-               if (c == '\0')
-                  break;
-               markingText.append(1, c);
-            }
-            //}
+            CopyBufferToMarkingText(buffer, markingText, RPRAttributeType::MARKING_TYPE.GetEncodedLength());
+
             static_cast<dtGame::StringMessageParameter&>(parameter).SetValue(markingText);
          }
          else
@@ -1528,6 +1527,23 @@ namespace dtHLAGM
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                "Unable to map HLA type \"%s\" to \"%s\"",
                RPRAttributeType::MARKING_TYPE.GetName().c_str(),
+               parameterDataType.GetName().c_str());
+         }
+      }
+      else if (hlaType == RPRAttributeType::MARKING_TYPE_32)
+      {
+         if (parameterDataType == dtDAL::DataType::STRING)
+         {
+            std::string markingText;
+            CopyBufferToMarkingText(buffer, markingText, RPRAttributeType::MARKING_TYPE_32.GetEncodedLength());
+
+            static_cast<dtGame::StringMessageParameter&>(parameter).SetValue(markingText);
+         }
+         else
+         {
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+               "Unable to map HLA type \"%s\" to \"%s\"",
+               RPRAttributeType::MARKING_TYPE_32.GetName().c_str(),
                parameterDataType.GetName().c_str());
          }
       }
@@ -2010,6 +2026,36 @@ namespace dtHLAGM
             // we're done add to big group
             gParams->AddParameter( *newGroupParam );
          }          
+      }
+   }
+
+   //static
+   void RPRParameterTranslator::CopyMarkingTextToBuffer( const std::string &markingText, 
+                                                         char *buffer, size_t numChars )
+   {
+      //1 is ASCII
+      buffer[0] = 1;
+      for (unsigned int i = 1; i < numChars; ++i)
+      {
+         if (i <= markingText.size())
+            buffer[i] = markingText[i-1];
+         else
+            buffer[i] = '\0';
+      }
+   }
+
+   //static
+   void RPRParameterTranslator::CopyBufferToMarkingText( const char *buffer, 
+                                                         std::string &markingText,
+                                                         size_t numChars )
+   {
+      //skip the 0'th character (assuming its a '1' which denotes "ascii")
+      for (unsigned int i = 1; i < numChars; ++i)
+      {
+         char c = buffer[i];
+         if (c == '\0')
+            break;
+         markingText.append(1, c);
       }
    }
 }
