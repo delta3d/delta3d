@@ -239,7 +239,7 @@ void PoseMeshItem::AddBoneLinesToScene(const dtAnim::PoseMesh::TargetTriangle &t
    blendDirection.normalize();
 
    osg::Vec3 baseForward;
-   GetBaseForwardDirection(targetTri, baseForward);
+   GetAnchorBoneDirection(targetTri, baseForward);
 
    float blendAzimuth, blendElevation;
    dtAnim::GetCelestialCoordinates(blendDirection, baseForward, blendAzimuth, blendElevation);
@@ -745,7 +745,7 @@ void PoseMeshItem::GetBoneDirections(const dtAnim::PoseMesh::TargetTriangle &tar
    outBlendDirection = boneRotation * nativeBoneForward;   
 
    osg::Vec3 baseForward;
-   GetBaseForwardDirection(targetTri, baseForward);   
+   GetAnchorBoneDirection(targetTri, baseForward);   
 
    dtAnim::GetCelestialDirection(targetTri.mAzimuth, targetTri.mElevation, baseForward, outTrueDirection);
    //dtAnim::GetCelestialDirection(targetTri.mAzimuth, targetTri.mElevation, -osg::Y_AXIS, outTrueDirection);
@@ -753,28 +753,36 @@ void PoseMeshItem::GetBoneDirections(const dtAnim::PoseMesh::TargetTriangle &tar
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Warning, this function is expensive!
-void PoseMeshItem::GetBaseForwardDirection(const dtAnim::PoseMesh::TargetTriangle &currentTargetTri, 
+void PoseMeshItem::GetAnchorBoneDirection(const dtAnim::PoseMesh::TargetTriangle &currentTargetTri, 
                                            osg::Vec3 &outDirection)
 {
    dtAnim::Cal3DModelWrapper *modelWrapper = mModel->GetCal3DWrapper();
 
-   // Remove this mesh's contribution to the animation so we can get the baseline
-    mMeshUtil->ClearPoses(mPoseMesh, mModel->GetCal3DWrapper(), 0.0f);
+   if (mPoseMesh->GetName() == "Poses_Gun")
+   {
+      osg::Quat boneRotation = modelWrapper->GetBoneAbsoluteRotation(3);
+      outDirection = boneRotation * osg::Y_AXIS; //mPoseMesh->GetNativeForwardDirection();
+   }
+   else
+   {
+      // Remove this mesh's contribution to the animation so we can get the baseline
+      mMeshUtil->ClearPoses(mPoseMesh, mModel->GetCal3DWrapper(), 0.0f);
 
-   // Apply the changes to the skeleton
-   modelWrapper->Update(0.0f);
+      // Apply the changes to the skeleton
+      modelWrapper->Update(0.0f);
 
-   // Get the bone's rotation without this pose mesh's animations applied
-   osg::Quat boneRotation = modelWrapper->GetBoneAbsoluteRotation(mPoseMesh->GetBoneID());
-   
-   const osg::Vec3 &nativeBoneForward = mPoseMesh->GetNativeForwardDirection();
+      // Get the bone's rotation without this pose mesh's animations applied
+      osg::Quat boneRotation = modelWrapper->GetBoneAbsoluteRotation(mPoseMesh->GetBoneID());
 
-   // Transform the native forward by base rotation
-   outDirection = boneRotation * nativeBoneForward;
+      const osg::Vec3 &nativeBoneForward = mPoseMesh->GetNativeForwardDirection();
 
-   // Re-apply the previous animation
-   mMeshUtil->BlendPoses(mPoseMesh, mModel->GetCal3DWrapper(), currentTargetTri);  
-   modelWrapper->Update(0.0f);
+      // Transform the native forward by base rotation
+      outDirection = boneRotation * nativeBoneForward;
+
+      // Re-apply the previous animation
+      mMeshUtil->BlendPoses(mPoseMesh, mModel->GetCal3DWrapper(), currentTargetTri);  
+      modelWrapper->Update(0.0f);
+   }   
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
