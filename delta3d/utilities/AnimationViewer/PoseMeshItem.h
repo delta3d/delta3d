@@ -108,7 +108,7 @@ private:
                           osg::Vec3 &outTrueDirection,
                           osg::Vec3 &outBlendDirection);
 
-   void GetBaseForwardDirection(const dtAnim::PoseMesh::TargetTriangle &currentTargetTri, osg::Vec3 &outDirection);
+   void GetAnchorBoneDirection(const dtAnim::PoseMesh::TargetTriangle &currentTargetTri, osg::Vec3 &outDirection);
 
    void AddBoneLinesToScene(const dtAnim::PoseMesh::TargetTriangle &targetTri);
    void RemoveBoneLinesFromScene();
