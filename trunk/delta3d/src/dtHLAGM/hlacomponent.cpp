@@ -171,7 +171,7 @@ namespace dtHLAGM
             //workaround for a strange namespace issue
             ::operator<<(ss, ex);
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                                 "Could not find Attribute %s for Object Class Name: %s - Message: %s", 
+                                "Could not find Attribute '%s' for Object Class Name: '%s'. '%s'", 
                                  objectToActor.GetEntityIdAttributeName().c_str(),
                                  thisObjectClassString.c_str(), ss.str().c_str());
          }
@@ -224,7 +224,7 @@ namespace dtHLAGM
                //workaround for a strange namespace issue
                ::operator<<(ss, ex);
                mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                                    "Could not find Attribute %s for Object Class Name: %s - Message: %s", 
+                                    "Could not find Attribute '%s' for Object Class Name: '%s'. '%s'", 
                                     thisAttributeHandleString.c_str(),
                                     thisObjectClassString.c_str(), ss.str().c_str());
             }
@@ -1455,10 +1455,10 @@ namespace dtHLAGM
          {
             std::ostringstream ss;
             ss << currentEntityType;
-            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_INFO))
+            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_WARNING))
             {
-               mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
-                     "Ignoring entity update with DIS ID [%s] and object class \"%s\".",
+               mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+                     "Could not find valid actor to match [%s] and object class \"%s\".",
                      ss.str().c_str(), classHandleString.c_str());
             }
          }

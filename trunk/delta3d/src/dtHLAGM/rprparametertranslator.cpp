@@ -100,8 +100,9 @@ namespace dtHLAGM
       //to check
       if (parameters.size() < 7U)
       {
-         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                             "The number of parameters needed to map a spatial is 7");
+         mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+                              "Not enough MessageParameters were supplied(" +
+                              dtUtil::ToString(parameters.size()) + ") for a SPATIAL type(7).");
          return;
       }
 
@@ -822,8 +823,9 @@ namespace dtHLAGM
       //to check
       if (parameters.size() < 7U)
       {
-         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                             "The number of parameters needed to map a spatial is 7");
+         mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+                             "Not enough MessageParameters were supplied(" +
+                             dtUtil::ToString(parameters.size()) + ") for a SPATIAL type(7).");
          parameters.clear();
          return;
       }
