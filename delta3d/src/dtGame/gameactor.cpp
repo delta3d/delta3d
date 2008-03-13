@@ -287,7 +287,10 @@ namespace dtGame
 
          if (property == NULL)
          {
-            LOG_INFO(("Property \"" + params[i]->GetName() + "\" was not found on the actor.").c_str());
+            LOG_WARNING(("Property \"" + params[i]->GetName() + 
+                      "\" was not found on actor type \"" +
+                      GetActorType().ToString() +
+                      "\"").c_str());
             continue;
          }
 
