@@ -1837,8 +1837,9 @@ namespace dtHLAGM
          if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_INFO))
          {
             mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
-                                "Ignoring actor with type \"%s.%s\" no mapping defined for it.",
-                                actorID.ToString().c_str());
+                                "Ignoring actor '" + actorName +
+                                "' with type '" + actorType->GetName() +
+                                "', no mapping defined for it.");
          }
          return;
       }
