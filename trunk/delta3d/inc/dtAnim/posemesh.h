@@ -26,6 +26,7 @@
 
 #include <vector>
 #include <osg/Vec3>
+#include <osg/Quat>
 #include <osg/Geometry>
 #include <osg/ref_ptr>
 #include <map>
@@ -58,6 +59,8 @@ namespace dtAnim
          Vertex(const osg::Vec3& data, unsigned int animID);
 
          osg::Vec3 mData;
+         osg::Vec3 mDebugData;
+         osg::Quat mDebugRotation;
          unsigned int mAnimID; 
       };
 
@@ -92,7 +95,7 @@ namespace dtAnim
 
       typedef std::map<MeshIndexPair, osg::ref_ptr<osg::Geometry> > EdgeLineMap;
 
-      PoseMesh(const dtAnim::Cal3DModelWrapper* model,
+      PoseMesh(dtAnim::Cal3DModelWrapper* model,
                const PoseMeshData& meshData);
 
       ~PoseMesh();
@@ -157,6 +160,9 @@ namespace dtAnim
       void GetAnimationIDsByName(const dtAnim::Cal3DModelWrapper *model,
                                  const std::vector<std::string> &animNames,
                                  std::vector<unsigned int> &animIDs) const;
+
+      void ExtractNativeForward(dtAnim::Cal3DModelWrapper *model,
+                                osg::Vec3 &outNativeForward);
 
    };
 }

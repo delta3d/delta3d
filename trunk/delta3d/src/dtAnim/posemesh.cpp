@@ -1,6 +1,7 @@
 #include <dtAnim/posemesh.h>
 #include <dtAnim/posemath.h>
 #include <dtAnim/posemeshxml.h>
+#include <dtAnim/posemeshutility.h>
 
 #include <dtUtil/log.h>
 #include <dtUtil/exception.h>
@@ -8,8 +9,11 @@
 
 using namespace dtAnim;
 
+#include <iostream>
+#include <sstream>
+
 /////////////////////////////////////////////////////////////////////////////////////////
-PoseMesh::PoseMesh(const dtAnim::Cal3DModelWrapper* model,
+PoseMesh::PoseMesh(dtAnim::Cal3DModelWrapper* model,
                    const PoseMeshData& meshData)
   : mName(meshData.mName)
   , mBoneName(meshData.mBoneName)
@@ -22,6 +26,12 @@ PoseMesh::PoseMesh(const dtAnim::Cal3DModelWrapper* model,
 
    // Store off the forward axis for this mesh
    mNativeForward = meshData.mForward;
+
+   //mNativeForward = model->GetBoneAbsoluteRotation(mBoneID).inverse() * -osg::Y_AXIS;
+   //ExtractNativeForward(model, mNativeForward);
+
+   model->ClearAll();
+   model->Update(0.0f);
 
    // Allocate space for osg to triangulate our verts
    std::vector<osg::Vec3> celestialPoints;
@@ -49,11 +59,28 @@ PoseMesh::PoseMesh(const dtAnim::Cal3DModelWrapper* model,
       // This anim maps to this vert
       vertMap[*anim] = vert_idx;
 
+      int animID = *anim;
+      model->BlendCycle(animID, 1.0f, 0.0f);
+      model->Update(0.0f);
+     
       // frame 30 is a temp number intended to be the last or close to the last frame
-      osg::Quat finalRotation = model->GetBoneAbsoluteRotationForKeyFrame( *anim, mBoneID, 30 );   
+      //osg::Quat finalRotation = model->GetBoneAbsoluteRotationForKeyFrame( *anim, mBoneID, 30 );  
+      osg::Quat finalRotation = model->GetBoneAbsoluteRotation(mBoneID);  
+
+      model->ClearCycle(animID, 0.0f);
+      model->Update(0.0f);
+
+      osg::Vec3 boneForward = finalRotation.inverse() * -osg::Y_AXIS;
+      std::ostringstream oss1;
+      oss1 << "forward = (" << boneForward.x() << ", " << boneForward.y() << ", " << boneForward.z() << ")" << std::endl;
 
       // calculate a vector transformed by the rotation data.
-      osg::Vec3 transformed = finalRotation * meshData.mForward;   
+      osg::Vec3 transformed = finalRotation * mNativeForward;   
+      transformed.normalize();
+
+       oss1 << "transformed = (" << transformed.x() << ", " << transformed.y() << ", " << transformed.z() << ")";
+
+      std::cout << oss1.str() << std::endl;
 
       // calculate the local azimuth and elevation for the transformed vector
       float az = 0.f;
@@ -62,13 +89,13 @@ PoseMesh::PoseMesh(const dtAnim::Cal3DModelWrapper* model,
       osg::Vec3 pelvisForward(0, -1, 0);
       dtAnim::GetCelestialCoordinates( transformed, pelvisForward, az, el );
 
-      std::ostringstream oss;
-      oss << "Vert #" << vert_idx 
-          << " (" << osg::RadiansToDegrees(az) << "," << osg::RadiansToDegrees(el) << ") (degs)"
-          << "\t(anim=" << model->GetCoreAnimationName(*anim) << ")"
-          << std::endl;
+      //std::ostringstream oss;
+      //oss << "Vert #" << vert_idx 
+      //    << " (" << osg::RadiansToDegrees(az) << "," << osg::RadiansToDegrees(el) << ") (degs)"
+      //    << "\t(anim=" << model->GetCoreAnimationName(*anim) << ")"
+      //    << std::endl;
 
-      LOG_DEBUG(oss.str());      
+      //LOG_DEBUG(oss.str());      
 
       // Store the vert for triangulation
       // - osg::PI_2
@@ -77,7 +104,12 @@ PoseMesh::PoseMesh(const dtAnim::Cal3DModelWrapper* model,
       celestialPoints.push_back( newVertPoint );
 
       // add a (az,el) vertex
-      mVertices.push_back( new PoseMesh::Vertex( newVertPoint, *anim ) );
+      PoseMesh::Vertex *newVert = new PoseMesh::Vertex( newVertPoint, *anim );      
+      mVertices.push_back(newVert);
+
+      // Store debug info
+      newVert->mDebugData = transformed;
+      newVert->mDebugRotation = finalRotation;
 
       ++vert_idx;
    }
@@ -125,12 +157,12 @@ PoseMesh::PoseMesh(const dtAnim::Cal3DModelWrapper* model,
       edgeCounts[pair1].second = triIndex;
       edgeCounts[pair2].second = triIndex;
 
-      std::ostringstream oss;
-      oss << "Triangle #" << triIndex << " contains (" << vertIndex0 << ", " << vertIndex1 <<
-         ", " << vertIndex2 << ")" << "  (" << animName0 << ", " << animName1 << 
-         ", " << animName2 << ")" << std::endl;
+      //std::ostringstream oss;
+      //oss << "Triangle #" << triIndex << " contains (" << vertIndex0 << ", " << vertIndex1 <<
+      //   ", " << vertIndex2 << ")" << "  (" << animName0 << ", " << animName1 << 
+      //   ", " << animName2 << ")" << std::endl;
 
-      LOG_DEBUG(oss.str());
+      //LOG_DEBUG(oss.str());
    }  
 
    EdgeCountMap::iterator edgeIter = edgeCounts.begin(); 
@@ -252,6 +284,27 @@ void PoseMesh::GetAnimationIDsByName(const dtAnim::Cal3DModelWrapper *model,
 
       animIDs.push_back( id );
    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+void PoseMesh::ExtractNativeForward(dtAnim::Cal3DModelWrapper *model,
+                                    osg::Vec3 &outNativeForward)
+{
+   // Clear all animations from the skeleton
+   model->ClearAll();
+   model->Update(0.0f);
+
+   //// Get the bone's rotation without this pose mesh's animations applied
+   //osg::Quat boneRotation = model->GetBoneAbsoluteRotation(mPoseMesh->GetBoneID());
+
+   //const osg::Vec3 &nativeBoneForward = mPoseMesh->GetNativeForwardDirection();
+
+   //// Transform the native forward by base rotation
+   //outDirection = boneRotation * nativeBoneForward;
+
+   //// Re-apply the previous animation
+   //mMeshUtil->BlendPoses(mPoseMesh, mModel->GetCal3DWrapper(), currentTargetTri);  
+   //modelWrapper->Update(0.0f);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
