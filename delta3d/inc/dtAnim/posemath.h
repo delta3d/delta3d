@@ -50,7 +50,8 @@ namespace dtAnim
    */
    void DT_ANIM_EXPORT GetCelestialDirection(const float azimuth,
                                              const float elevation,
-                                             const osg::Vec3& forwardDirection,
+                                             const osg::Vec3 &forwardDirection,
+                                             const osg::Vec3 &upDirection,
                                              osg::Vec3 &outDirection);   
 
    /**
