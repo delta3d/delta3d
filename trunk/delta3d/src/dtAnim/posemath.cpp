@@ -58,18 +58,18 @@ void dtAnim::GetCelestialCoordinates(osg::Vec3 target,
 void dtAnim::GetCelestialDirection(const float azimuth,
                                    const float elevation,
                                    const osg::Vec3& forwardDirection,
+                                   const osg::Vec3 &upDirection,
                                    osg::Vec3 &outDirection)
 {
    // Downward elevation is negative so
-   // negate the right vector
-   osg::Vec3 up(0, 0, 1);
-   osg::Vec3 right = forwardDirection ^ up;
+   // negate the right vector  
+   osg::Vec3 right = forwardDirection ^ upDirection;
 
    right.normalize();
 
    osg::Quat rotateZ, rotateX;
    rotateX.makeRotate(elevation, right);
-   rotateZ.makeRotate(azimuth, up); 
+   rotateZ.makeRotate(azimuth, upDirection); 
 
    // Rotations must be applied in the following order
    osg::Quat celestialRotation =  rotateX * rotateZ;   
