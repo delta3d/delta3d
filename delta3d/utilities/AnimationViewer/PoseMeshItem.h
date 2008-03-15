@@ -98,6 +98,8 @@ private:
    bool    mAreErrorSamplesDisplayed;
    bool    mAreEdgesDisplayed;
 
+   osg::Vec3 mBoneSpaceForward;
+
    void BlendPosesFromItemCoordinates(float xCoord, float yCoord);
 
    // Functions to precompute/extract data from the pose mesh
@@ -129,6 +131,9 @@ private:
                                       const QLineF lines[3],
                                       QPointF &outLeftMost,
                                       QPointF &outRightMost);
+
+   void AssertZeroErrorAtVertices();
+   void AssertAzElConversion();
 };
 
 #endif // _POSEMESH_ITEM_H_

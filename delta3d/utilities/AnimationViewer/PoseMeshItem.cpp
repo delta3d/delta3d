@@ -93,27 +93,6 @@ PoseMeshItem::PoseMeshItem(const dtAnim::PoseMesh &poseMesh,
    mSampleCollection.mInitialized = false;
 
    mMeshUtil = new dtAnim::PoseMeshUtility;
-   
-   //QSize size(40, 20);
-   //QImage image(size.width(), size.height(), QImage::Format_ARGB32_Premultiplied);
-   //image.fill(qRgba(0, 0, 0, 0));
-
-   //QFont font;
-   //font.setStyleStrategy(QFont::ForceOutline);
-
-   //QPainter painter;
-   //painter.begin(&image);
-   //painter.setRenderHint(QPainter::Antialiasing);
-   //painter.setBrush(Qt::white);
-   //painter.drawRoundRect(QRectF(0.5, 0.5, image.width()-1, image.height()-1), 25, 25);
-
-   ////painter.setFont(font);
-   ////painter.setBrush(Qt::black);
-   ////painter.drawText(QRect(QPoint(6, 6), size), Qt::AlignCenter, text);
-   //painter.end();
-
-   //mPixmap = new QPixmap;
-   //*mPixmap = QPixmap::fromImage(image);
 
    const dtAnim::PoseMesh::VertexVector &verts = mPoseMesh->GetVertices();
 
@@ -151,7 +130,27 @@ PoseMeshItem::PoseMeshItem(const dtAnim::PoseMesh &poseMesh,
 
    // Get a unique set of edges and the 
    // triangle they belong to
-   ExtractEdgesFromMesh(*mPoseMesh);  
+   ExtractEdgesFromMesh(*mPoseMesh);     
+
+   dtAnim::Cal3DModelWrapper * modelWrapper = mModel->GetCal3DWrapper();
+
+   osg::Quat effectorRotation = modelWrapper->GetBoneAbsoluteRotation(8);
+
+   osg::Vec3 newX = effectorRotation * osg::X_AXIS;
+   osg::Vec3 newY = effectorRotation * osg::Y_AXIS;
+   osg::Vec3 newZ = effectorRotation * osg::Z_AXIS;
+
+   osg::Quat anchorRotation = modelWrapper->GetBoneAbsoluteRotation(7);
+   osg::Quat anchorInverse = anchorRotation.inverse();
+
+   mBoneSpaceForward = effectorRotation * -osg::Y_AXIS;
+   osg::Vec3 boneSpaceTest = anchorInverse * mBoneSpaceForward;
+
+   newZ = newZ;
+
+   // Testing
+   AssertZeroErrorAtVertices();
+   AssertAzElConversion();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -252,7 +251,11 @@ void PoseMeshItem::AddBoneLinesToScene(const dtAnim::PoseMesh::TargetTriangle &t
 
    std::cout << oss.str();*/
 
-   float angle = osg::RadiansToDegrees((acosf(trueDirection * blendDirection)));
+   float trueDotBlend = trueDirection * blendDirection;
+   dtUtil::Clamp(trueDotBlend, -1.0f, 1.0f);
+
+   float angle = osg::RadiansToDegrees((acosf(trueDotBlend)));
+
    QColor errorColor = GetErrorColor(angle);
    osg::Vec4 osgColor(errorColor.redF(), errorColor.greenF(), errorColor.blueF(), 1.0f);
 
@@ -268,7 +271,6 @@ void PoseMeshItem::AddBoneLinesToScene(const dtAnim::PoseMesh::TargetTriangle &t
 
    charGeode->addDrawable(mTrueLine.get());
    charGeode->addDrawable(mBlendLine.get());
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -343,6 +345,31 @@ void PoseMeshItem::BlendPosesFromItemCoordinates(float xCoord, float yCoord)
          modelWrapper->Update(0.0f);
 
          AddBoneLinesToScene(targetTri);
+      }
+
+      if (mPoseMesh->GetName() == "Poses_Head")
+      {
+         dtAnim::Cal3DModelWrapper *modelWrapper = mModel->GetCal3DWrapper();
+
+         osg::Quat anchorRotation = modelWrapper->GetBoneAbsoluteRotation(7);
+         osg::Quat anchorInverse = anchorRotation.inverse();
+
+         osg::Vec3 test = anchorInverse * anchorRotation * -osg::Y_AXIS;
+
+         osg::Quat effectorRotation = modelWrapper->GetBoneAbsoluteRotation(8);
+
+         osg::Quat relativeRotation = modelWrapper->GetBoneRelativeRotation(8);
+         osg::Quat relTest = anchorInverse * effectorRotation;
+
+         osg::Vec3 newX = effectorRotation * osg::X_AXIS;
+         osg::Vec3 newY = effectorRotation * osg::Y_AXIS;
+         osg::Vec3 newZ = effectorRotation * osg::Z_AXIS;       
+
+         osg::Quat derivedRelativeRotation = (effectorRotation / anchorRotation); 
+
+         osg::Vec3 asdf = derivedRelativeRotation * -osg::Y_AXIS;
+         osg::Vec3 rel2 = relativeRotation * -osg::Y_AXIS;
+         asdf = asdf;
       }
 
       //std::ostringstream oss;
@@ -703,9 +730,14 @@ float PoseMeshItem::GetErrorSample(const QPointF &samplePoint)
 
    // is this always valid?
    osg::Vec3 forwardDirection = -osg::Y_AXIS;
+   osg::Vec3 upDirection = osg::Z_AXIS;
 
    osg::Vec3 trueDirection;
-   dtAnim::GetCelestialDirection(meshSpaceTrueValue.x(), meshSpaceTrueValue.y(), forwardDirection, trueDirection);
+   dtAnim::GetCelestialDirection(meshSpaceTrueValue.x(), 
+                                 meshSpaceTrueValue.y(),
+                                 forwardDirection, 
+                                 upDirection,
+                                 trueDirection);
 
    blendDirection.normalize();
    trueDirection.normalize();
@@ -714,20 +746,7 @@ float PoseMeshItem::GetErrorSample(const QPointF &samplePoint)
    dtUtil::Clamp(blendDotTrue, -1.0f, 1.0f);
 
    float radianAngle = acosf(blendDotTrue);
-   return osg::RadiansToDegrees(radianAngle);
-
-   //// calculate the local azimuth and elevation for the transformed vector
-   //float az, el;
-
-   //osg::Vec3 pelvisForward(0, -1, 0);
-   //dtAnim::GetCelestialCoordinates(blendDirection, pelvisForward, az, el);
-
-   //QPointF meshSpaceActualValue(az, el);
-
-   //QLineF trueDirection(QPointF(), meshSpaceTrueValue);
-   //QLineF actualDirection(QPointF(), meshSpaceActualValue);   
-
-   //return trueDirection.angle(actualDirection);
+   return osg::RadiansToDegrees(radianAngle);   
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -744,10 +763,23 @@ void PoseMeshItem::GetBoneDirections(const dtAnim::PoseMesh::TargetTriangle &tar
    // calculate a vector transformed by the rotation data.
    outBlendDirection = boneRotation * nativeBoneForward;   
 
-   osg::Vec3 baseForward;
-   GetAnchorBoneDirection(targetTri, baseForward);   
+   osg::Vec3 baseForward; // = -osg::Y_AXIS;
+   GetAnchorBoneDirection(targetTri, baseForward); 
 
-   dtAnim::GetCelestialDirection(targetTri.mAzimuth, targetTri.mElevation, baseForward, outTrueDirection);
+   osg::Vec3 baseRight = osg::Z_AXIS ^ baseForward;
+   osg::Vec3 baseUp = baseForward ^ baseRight;
+
+   baseUp.normalize();
+
+   //outTrueDirection = baseForward;
+   dtAnim::GetCelestialDirection(targetTri.mAzimuth, 
+                                 targetTri.mElevation, 
+                                 baseForward, 
+                                 baseUp,
+                                 outTrueDirection);
+
+   //debug
+   //outTrueDirection = baseForward;
    //dtAnim::GetCelestialDirection(targetTri.mAzimuth, targetTri.mElevation, -osg::Y_AXIS, outTrueDirection);
 }
 
@@ -761,8 +793,31 @@ void PoseMeshItem::GetAnchorBoneDirection(const dtAnim::PoseMesh::TargetTriangle
    if (mPoseMesh->GetName() == "Poses_Gun")
    {
       osg::Quat boneRotation = modelWrapper->GetBoneAbsoluteRotation(3);
+      osg::Quat test = modelWrapper->GetBoneRelativeRotation(3);
       outDirection = boneRotation * osg::Y_AXIS; //mPoseMesh->GetNativeForwardDirection();
+
+      osg::Vec3 asdf = test * -osg::Y_AXIS;
+      outDirection = asdf;
    }
+   //else if (mPoseMesh->GetName() == "Poses_Head")
+   //{
+   //   osg::Quat anchorRotation = modelWrapper->GetBoneAbsoluteRotation(7);
+   //   osg::Quat anchorInverse = anchorRotation.inverse();
+
+   //   osg::Vec3 test = anchorInverse * anchorRotation * -osg::Y_AXIS;
+
+   //   osg::Quat effectorRotation = modelWrapper->GetBoneAbsoluteRotation(8);
+
+   //   osg::Quat relativeRotation = modelWrapper->GetBoneRelativeRotation(8);
+   //   osg::Quat relTest = anchorInverse * effectorRotation;
+
+   //   osg::Vec3 newX = effectorRotation * osg::X_AXIS;
+   //   osg::Vec3 newY = effectorRotation * osg::Y_AXIS;
+   //   osg::Vec3 newZ = effectorRotation * osg::Z_AXIS;
+   //   
+   //   osg::Vec3 asdf = (effectorRotation / anchorRotation) * -osg::Y_AXIS;
+   //   outDirection = asdf;
+   //}
    else
    {
       // Remove this mesh's contribution to the animation so we can get the baseline
@@ -866,4 +921,120 @@ bool PoseMeshItem::GetIntersectionBoundingPoints(const QLineF &intersector,
    }
 
    return foundLeft & foundRight;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+void PoseMeshItem::AssertZeroErrorAtVertices()
+{
+   dtAnim::Cal3DModelWrapper *modelWrapper = mModel->GetCal3DWrapper();
+   modelWrapper->ClearAll();
+   modelWrapper->Update(0.0f);
+
+   const dtAnim::PoseMesh::VertexVector &vertList = mPoseMesh->GetVertices();
+
+   for (size_t vertIndex = 0; vertIndex < vertList.size(); ++vertIndex)
+   {
+      dtAnim::PoseMesh::TargetTriangle trianglePick;
+      mPoseMesh->GetTargetTriangleData(vertList[vertIndex]->mData.x(),
+                                       vertList[vertIndex]->mData.y(),                            
+                                       trianglePick);
+
+      osg::Vec3 debugDirection = vertList[vertIndex]->mDebugData;
+      osg::Quat debugRotation  = vertList[vertIndex]->mDebugRotation;
+      int animID = vertList[vertIndex]->mAnimID;
+
+      // Remove this mesh's contribution to the animation so we can get the baseline
+      //mMeshUtil->ClearPoses(mPoseMesh, modelWrapper, 0.0f);
+      modelWrapper->ClearAll();
+
+      // Apply the changes to the skeleton
+      modelWrapper->Update(0.0f);
+
+      // Apply the animation to test
+      mMeshUtil->BlendPoses(mPoseMesh, modelWrapper, trianglePick);  
+
+      // Apply new blend to skeleton
+      modelWrapper->Update(0.0f);
+
+      osg::Vec3 blendDirection;
+      osg::Vec3 trueDirection;
+
+      //GetBoneDirections(trianglePick, trueDirection, blendDirection);
+         
+         osg::Quat boneRotation = modelWrapper->GetBoneAbsoluteRotation(mPoseMesh->GetBoneID());
+         //osg::Quat boneRotation = modelWrapper->GetBoneAbsoluteRotationForKeyFrame(animID, mPoseMesh->GetBoneID(), 30);
+
+         // Get the direction that points forward for this pose mesh's bone
+         const osg::Vec3 &nativeBoneForward = mPoseMesh->GetNativeForwardDirection();
+
+         // calculate a vector transformed by the rotation data.
+         blendDirection = boneRotation * nativeBoneForward;   
+
+         osg::Vec3 baseForward = -osg::Y_AXIS;
+         //GetAnchorBoneDirection(targetTri, baseForward); 
+
+         osg::Vec3 baseRight = osg::Z_AXIS ^ baseForward;
+         osg::Vec3 baseUp = baseForward ^ baseRight;
+
+         baseUp.normalize();
+
+         //outTrueDirection = baseForward;
+         dtAnim::GetCelestialDirection(trianglePick.mAzimuth, 
+                                       trianglePick.mElevation, 
+                                       baseForward, 
+                                       baseUp,
+                                       trueDirection);
+      
+
+
+      
+
+      trueDirection.normalize();
+      blendDirection.normalize();
+
+      float blendDotTrue = blendDirection * trueDirection;
+      dtUtil::Clamp(blendDotTrue, -1.0f, 1.0f);
+
+      float angle = acosf(blendDotTrue);
+      assert(angle == 0.0f);
+   }
+   
+   modelWrapper->ClearAll();
+   modelWrapper->Update(0.0f);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+void PoseMeshItem::AssertAzElConversion()
+{
+   dtAnim::Cal3DModelWrapper *modelWrapper = mModel->GetCal3DWrapper();
+   modelWrapper->ClearAll();
+   modelWrapper->Update(0.0f);
+
+   const dtAnim::PoseMesh::VertexVector &vertList = mPoseMesh->GetVertices();
+
+   for (size_t vertIndex = 0; vertIndex < vertList.size(); ++vertIndex)
+   {
+      float azimuth = vertList[vertIndex]->mData.x();
+      float elevation = vertList[vertIndex]->mData.y();
+
+      osg::Vec3 debugDirection = vertList[vertIndex]->mDebugData;
+      osg::Quat debugRotation  = vertList[vertIndex]->mDebugRotation;
+      int animID = vertList[vertIndex]->mAnimID;
+
+      osg::Vec3 directionFromAzEl;
+
+      debugDirection.normalize();
+
+      //outTrueDirection = baseForward;
+      dtAnim::GetCelestialDirection(azimuth, 
+                                    elevation, 
+                                    -osg::Y_AXIS, // pose mesh uses this 
+                                    osg::Z_AXIS,
+                                    directionFromAzEl);
+
+      float newAzimuth, newElevation;
+      dtAnim::GetCelestialCoordinates(directionFromAzEl, -osg::Y_AXIS, newAzimuth, newElevation);     
+
+      directionFromAzEl = directionFromAzEl;
+   }  
 }

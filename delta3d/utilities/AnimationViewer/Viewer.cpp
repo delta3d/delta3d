@@ -53,6 +53,12 @@
 #include <CEGUI/CEGUISystem.h>
 #include <CEGUI/CEGUISchemeManager.h>
 
+#include <dtAnim/hotspotdriver.h>
+#include <dtCore/hotspotattachment.h>
+#include <dtCore/refptr.h>
+#include <dtCore/pointaxis.h>
+
+typedef std::vector<dtCore::RefPtr<dtCore::HotSpotAttachment> > VectorHotSpot;
 
 using namespace dtUtil;
 using namespace dtCore;
@@ -121,6 +127,7 @@ void Viewer::Config()
 
    mWireDecorator  = new osg::Group;
    mShadeDecorator = new osg::Group;
+   mBoneBasisGroup = new osg::Group;
   
    InitWireDecorator(); 
    InitShadeDecorator();
@@ -159,7 +166,8 @@ void Viewer::OnLoadCharFile( const QString &filename )
    {
       // Create a new Cal3DWrapper
       dtCore::RefPtr<Cal3DModelWrapper> wrapper = mCalDatabase->Load(filename.toStdString());      
-      mCharacter = new CharDrawable(wrapper.get());          
+      mCharacter = new CharDrawable(wrapper.get());  
+      mAttachmentController = new dtAnim::AttachmentController;
 
       // Retrieve the data to check for the inclusion of an IK pose mesh file
       dtAnim::Cal3DModelData *modelData = mCalDatabase->GetModelData(*wrapper.get());
@@ -225,8 +233,49 @@ void Viewer::OnLoadCharFile( const QString &filename )
 
       emit MaterialLoaded(matID, nameToSend, diffColor, ambColor, specColor, shininess);
    }
-   
+
+   CreateBoneBasisDisplay();
+ 
    LOG_DEBUG("Done loading file: " + filename.toStdString() );   
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+void Viewer::CreateBoneBasisDisplay()
+{
+   // Destroy any previous held point axes and start fresh  
+   mBoneBasisGroup->removeChildren(0, mBoneBasisGroup->getNumChildren());
+
+   VectorHotSpot hotSpotList;
+   dtAnim::Cal3DModelWrapper *modelWrapper = mCharacter->GetCal3DWrapper();
+
+   std::vector<int> boneList;
+   modelWrapper->GetCoreBoneChildrenIDs(0, boneList);
+
+   std::vector<std::string> boneVec;
+   modelWrapper->GetCoreBoneNames( boneVec );
+
+   //for every bone
+   std::vector<std::string>::const_iterator boneNameIter = boneVec.begin();
+   std::vector<std::string>::const_iterator boneNameEnd = boneVec.end();
+   while( boneNameIter!=boneNameEnd )
+   {
+      //create a HotSpot
+      dtUtil::HotSpotDefinition hotSpotDefinition;
+      hotSpotDefinition.mName = *boneNameIter;
+      hotSpotDefinition.mParentName = *boneNameIter;        
+
+      //Create the axis geometry
+      dtCore::PointAxis *axis = new dtCore::PointAxis();
+      axis->SetLength(dtCore::PointAxis::X, 0.025f);
+      axis->SetLength(dtCore::PointAxis::Y, 0.025f);
+      axis->SetLength(dtCore::PointAxis::Z, 0.025f);
+
+      mAttachmentController->AddAttachment(*axis, hotSpotDefinition);        
+
+      mBoneBasisGroup->addChild(axis->GetOSGNode());         
+
+      ++boneNameIter;
+   }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -250,12 +299,6 @@ void Viewer::OnLoadPoseMeshFile( const std::string &filename )
    {      
       mPoseMeshes = &mPoseDatabase->GetMeshes();
       emit PoseMeshesLoaded(*mPoseMeshes, mCharacter.get());
-
-      //for (size_t poseIndex = 0; poseIndex < mPoseMeshes->size(); ++poseIndex)
-      //{
-      //   dtAnim::PoseMesh *newMesh = (*mPoseMeshes)[poseIndex];
-      //   emit PoseMeshLoaded(*newMesh);
-      //}
    }
 }
 
@@ -337,12 +380,27 @@ void Viewer::OnSetShadedWireframe()
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
+void Viewer::OnSetBoneBasisDisplay(bool shouldDisplay)
+{
+   if (shouldDisplay)
+   {
+      GetScene()->GetSceneNode()->addChild(mBoneBasisGroup.get());
+   }
+   else
+   {
+      GetScene()->GetSceneNode()->removeChild(mBoneBasisGroup.get());
+   }  
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
 void Viewer::OnTimeout()
 {
    if (mCharacter.valid())
-   {     
+   {   
       dtAnim::Cal3DModelWrapper *rapper = mCharacter->GetCal3DWrapper();
       assert(rapper);
+
+      mAttachmentController->Update(*rapper);
 
       std::vector<CalAnimation*> animVec = rapper->GetCalModel()->getMixer()->getAnimationVector();
       std::vector<CalAnimation*>::iterator animItr = animVec.begin();
