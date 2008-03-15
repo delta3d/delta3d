@@ -12,5 +12,6 @@
 	  <file>images/epsilonCursor.png</file>
 	  <file>images/displayEdges.png</file>
 	  <file>images/displayError.png</file>
+	  <file>images/boneBasis.png</file>
     </qresource>
 </RCC>

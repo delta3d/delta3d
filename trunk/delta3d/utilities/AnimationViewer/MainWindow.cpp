@@ -46,7 +46,6 @@ MainWindow::MainWindow()
   , mMaterialModel(NULL)
   , mMaterialView(NULL)
   , mGLWidget(NULL)
-  , mMixerViewerAction(NULL)
   , mPoseDock(NULL)
   , mPoseMeshScene(NULL)
   , mPoseMeshViewer(NULL)
@@ -180,17 +179,18 @@ void MainWindow::CreateActions()
    QIcon wireframeIcon(":/images/wireframe.png");
    QIcon shadedIcon(":/images/shaded.png");
    QIcon shadedWireIcon(":/images/shadedwire.png");
-   QIcon mixerViewerIcon(":/images/mixerViewer.png");
+   QIcon boneBasisIcon(":/images/boneBasis.png");
 
    mWireframeAction  = actionGroup->addAction(wireframeIcon, "Wireframe");
    mShadedAction     = actionGroup->addAction(shadedIcon, "Shaded");
-   mShadedWireAction = actionGroup->addAction(shadedWireIcon, "Shaded Wireframe");   
+   mShadedWireAction = actionGroup->addAction(shadedWireIcon, "Shaded Wireframe");  
 
-   mMixerViewerAction = new QAction(mixerViewerIcon, "Mixer Viewer", NULL);
+   mBoneBasisAction = new QAction(boneBasisIcon, "Bone Orientation", NULL);     
 
    mWireframeAction->setCheckable(true);
    mShadedAction->setCheckable(true); 
    mShadedWireAction->setCheckable(true);
+   mBoneBasisAction->setCheckable(true);
 
    mShadedAction->setChecked(true);
 }
@@ -217,7 +217,8 @@ void MainWindow::CreateToolbars()
    mShadingToolbar->addAction(mWireframeAction);
    mShadingToolbar->addAction(mShadedAction);
    mShadingToolbar->addAction(mShadedWireAction);
-   mShadingToolbar->addAction(mMixerViewerAction);
+   mShadingToolbar->addSeparator();
+   mShadingToolbar->addAction(mBoneBasisAction);
 
    mLODScaleToolbar->addWidget(lodScaleSpinner);
    
@@ -229,6 +230,7 @@ void MainWindow::CreateToolbars()
    //mLightingToolbar->addAction(diffuseIcon, "Diffuse Light");
    //mLightingToolbar->addAction(pointLightIcon, "Point Light");
 
+   connect(mBoneBasisAction, SIGNAL(toggled(bool)), SLOT(OnToggleBoneBasisDisplay(bool)));
    connect(lodScaleSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnLODScale_Changed(double)));
    connect(speedSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnSpeedChanged(double)));
 }
@@ -503,7 +505,7 @@ void MainWindow::OnBlendUpdate(const std::vector<float> &weightList)
    for (size_t rowIndex = 0; rowIndex < weightList.size(); ++rowIndex)
    {
       // Show progress as a whole number
-      int newValue = (int)(weightList[rowIndex] * 100.0f);
+      float newValue = (int)(weightList[rowIndex] * 100.0f);
 
       QProgressBar *meter = (QProgressBar*)mAnimListWidget->cellWidget(rowIndex, 5);   
       meter->setValue(newValue);      
@@ -788,6 +790,12 @@ void MainWindow::OnToggleDisplayEdges(bool shouldDisplay)
 void MainWindow::OnToggleDisplayError(bool shouldDisplay)
 {
    mPoseMeshViewer->SetDisplayError(shouldDisplay);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnToggleBoneBasisDisplay(bool shouldDisplay)
+{
+   
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

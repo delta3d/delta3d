@@ -11,6 +11,7 @@
 #include <dtAnim/posemeshdatabase.h>
 #include <dtAnim/posemeshutility.h>
 #include <dtAnim/posemesh.h>
+#include <dtAnim/attachmentcontroller.h>
 
 #include <vector>
 
@@ -67,6 +68,7 @@ public slots:
    void OnSetShaded();
    void OnSetWireframe();
    void OnSetShadedWireframe();
+   void OnSetBoneBasisDisplay(bool shouldDisplay);
    
    void OnTimeout();
    
@@ -96,17 +98,16 @@ signals:
    void BlendUpdate(const std::vector<float> &weightList);
 
 protected:
-   virtual void PostFrame( const double deltaFrameTime );
-
-   void InitShadeDecorator();
-   void InitWireDecorator();
+   virtual void PostFrame( const double deltaFrameTime );  
 
 private:
   
    dtCore::RefPtr<dtAnim::CharDrawable> mCharacter;
+   dtCore::RefPtr<dtAnim::AttachmentController> mAttachmentController;
    dtCore::RefPtr<dtCore::OrbitMotionModel> mMotion;
    dtCore::RefPtr<osg::Group> mWireDecorator;
    dtCore::RefPtr<osg::Group> mShadeDecorator;
+   dtCore::RefPtr<osg::Group> mBoneBasisGroup;
 
    std::vector<int> mMeshesToAttach;
    std::vector<int> mMeshesToDetach;
@@ -116,6 +117,10 @@ private:
    dtCore::RefPtr<dtAnim::Cal3DDatabase>    mCalDatabase; ///<Need to keep this around since it holds our textures   
 
    std::vector<dtAnim::PoseMesh*> *mPoseMeshes;
+
+   void InitShadeDecorator();
+   void InitWireDecorator();
+   void CreateBoneBasisDisplay();
 };
 
 #endif // Viewer_h__

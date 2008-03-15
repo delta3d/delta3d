@@ -120,6 +120,7 @@ void Delta3DThread::run()
    connect((QObject*)mWin->mShadedAction, SIGNAL(triggered()), mViewer.get(), SLOT(OnSetShaded()));
    connect((QObject*)mWin->mWireframeAction, SIGNAL(triggered()), mViewer.get(), SLOT(OnSetWireframe()));
    connect((QObject*)mWin->mShadedWireAction, SIGNAL(triggered()), mViewer.get(), SLOT(OnSetShadedWireframe()));
+   connect((QObject*)mWin->mBoneBasisAction, SIGNAL(toggled(bool)), mViewer.get(), SLOT(OnSetBoneBasisDisplay(bool)));
 
    dtCore::System::GetInstance().Start();
    mTimer.start(10);

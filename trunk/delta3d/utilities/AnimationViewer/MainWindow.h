@@ -93,9 +93,9 @@ private:
    QAction *mWireframeAction; 
    QAction *mShadedAction;    
    QAction *mShadedWireAction;
+   QAction *mBoneBasisAction;
    QAction *mDiffuseLightAction;
    QAction *mPointLightAction;
-   QAction *mMixerViewerAction;
 
    QToolBar *mShadingToolbar;
    QToolBar *mLightingToolbar;
@@ -129,5 +129,6 @@ private slots:
 
    void OnToggleDisplayEdges(bool shouldDisplay);
    void OnToggleDisplayError(bool shouldDisplay);
+   void OnToggleBoneBasisDisplay(bool shouldDisplay);
 };
 #endif // MainWindow_h__
