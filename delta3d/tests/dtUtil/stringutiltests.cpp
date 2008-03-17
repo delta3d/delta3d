@@ -35,6 +35,7 @@ class StringUtilTests : public CPPUNIT_NS::TestFixture {
    CPPUNIT_TEST_SUITE( StringUtilTests );
    CPPUNIT_TEST( TestTrim );
    CPPUNIT_TEST( TestToString );
+   CPPUNIT_TEST( TestToType );
    CPPUNIT_TEST( TestMatch );
    CPPUNIT_TEST( TestTokenizer );
    CPPUNIT_TEST( TestParseVec );
@@ -55,6 +56,11 @@ class StringUtilTests : public CPPUNIT_NS::TestFixture {
        * Tests ToString with all the basic types
        */
       void TestToString();
+
+      /**
+       * Tests ToType for the basic types
+       */
+      void TestToType();
 
       /**
        * Tests Match function
@@ -244,11 +250,53 @@ void StringUtilTests::TestToString()
    {
       CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
    }
-   catch (const std::exception& e)
-   {
-      CPPUNIT_FAIL((std::string("Error: ") + e.what()).c_str());
-   }
+//   catch (const std::exception& e)
+//   {
+//      CPPUNIT_FAIL((std::string("Error: ") + e.what()).c_str());
+//   }
 
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void StringUtilTests::TestToType()
+{
+   try
+   {
+      float fVal = dtUtil::ToType<float>("31.3");
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(31.3f, fVal, 0.01f);
+
+      double dVal = dtUtil::ToType<double>("31.3");
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(31.3, dVal, 0.01);
+
+      int iVal = dtUtil::ToType<int>("46");
+      CPPUNIT_ASSERT_EQUAL(46, iVal);
+
+      unsigned int uiVal = dtUtil::ToType<unsigned int>("49");
+      CPPUNIT_ASSERT_EQUAL(49U, uiVal);
+
+      short sVal = dtUtil::ToType<short>("100");
+      CPPUNIT_ASSERT_EQUAL(short(100), sVal);
+
+      bool bVal = dtUtil::ToType<bool>("true");
+      CPPUNIT_ASSERT(bVal);
+      bVal = dtUtil::ToType<bool>("1");
+      CPPUNIT_ASSERT(bVal);
+      bVal = dtUtil::ToType<bool>("True");
+      CPPUNIT_ASSERT(bVal);
+      bVal = dtUtil::ToType<bool>("true");
+      CPPUNIT_ASSERT(bVal);
+      bVal = dtUtil::ToType<bool>("gook");
+      CPPUNIT_ASSERT_MESSAGE("Anything other than something in the \"True\" list should be regarded as false",
+               !bVal);
+   }
+   catch (const dtUtil::Exception& e)
+   {
+      CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
+   }
+//   catch (const std::exception& e)
+//   {
+//      CPPUNIT_FAIL((std::string("Error: ") + e.what()).c_str());
+//   }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
