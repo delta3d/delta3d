@@ -92,6 +92,8 @@ ENDIF(WIN32)
 ################################################################################
 # 3rd Party Dependency Stuff
 # Common to all platforms:
+FIND_PACKAGE(Curses REQUIRED)
+
 FIND_PACKAGE(OpenThreads REQUIRED)
 FIND_PACKAGE(OSG REQUIRED)
 

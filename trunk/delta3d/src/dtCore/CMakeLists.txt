@@ -16,87 +16,87 @@ ENDIF (WIN32)
 
 SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/inc/dtCore)
 SET(LIB_PUBLIC_HEADERS
-    ${HEADER_PATH}/base.h
-    ${HEADER_PATH}/batchisector.h
-    ${HEADER_PATH}/boundingboxvisitor.h
-    ${HEADER_PATH}/camera.h
-    ${HEADER_PATH}/clouddome.h
-    ${HEADER_PATH}/cloudplane.h
-    ${HEADER_PATH}/collectorutil.h
-    ${HEADER_PATH}/collisionmotionmodel.h
-    ${HEADER_PATH}/compass.h
-    ${HEADER_PATH}/deltadrawable.h
-    ${HEADER_PATH}/deltawin.h
-    ${HEADER_PATH}/dt.h
-    ${HEADER_PATH}/effectmanager.h
-    ${HEADER_PATH}/enveffect.h
-    ${HEADER_PATH}/environment.h
-    ${HEADER_PATH}/ephemeris.h
-    ${HEADER_PATH}/exceptionenum.h
-    ${HEADER_PATH}/export.h
-    ${HEADER_PATH}/flymotionmodel.h
-    ${HEADER_PATH}/fpscollider.h
-    ${HEADER_PATH}/fpsmotionmodel.h
-    ${HEADER_PATH}/generickeyboardlistener.h
-    ${HEADER_PATH}/genericmouselistener.h
-    ${HEADER_PATH}/globals.h
-    ${HEADER_PATH}/hotspotattachment.h
-    ${HEADER_PATH}/infinitelight.h
-    ${HEADER_PATH}/infiniteterrain.h
-    ${HEADER_PATH}/inputcallback.h
-    ${HEADER_PATH}/inputdevice.h
-    ${HEADER_PATH}/inputmapper.h
-    ${HEADER_PATH}/isector.h
-    ${HEADER_PATH}/keyboard.h
-    ${HEADER_PATH}/keyboardmousehandler.h
-    ${HEADER_PATH}/light.h
-    ${HEADER_PATH}/loadable.h
-    ${HEADER_PATH}/logicalinputdevice.h
-    ${HEADER_PATH}/mainpage.h
-    ${HEADER_PATH}/makeskydome.h
-    ${HEADER_PATH}/motionmodel.h
-    ${HEADER_PATH}/mouse.h
-    ${HEADER_PATH}/moveearthtransform.h
-    ${HEADER_PATH}/nodecollector.h
-    ${HEADER_PATH}/notify.h
-    ${HEADER_PATH}/object.h
-    ${HEADER_PATH}/observerptr.h
-    ${HEADER_PATH}/orbitmotionmodel.h
-    ${HEADER_PATH}/particlesystem.h
-    ${HEADER_PATH}/physical.h
-    ${HEADER_PATH}/pointaxis.h
-    ${HEADER_PATH}/positionallight.h
-    ${HEADER_PATH}/recorder.h
-    ${HEADER_PATH}/refptr.h
-    ${HEADER_PATH}/scene.h
-    ${HEADER_PATH}/shadergroup.h
-    ${HEADER_PATH}/shadermanager.h
-    ${HEADER_PATH}/shaderparameter.h
-    ${HEADER_PATH}/shaderparamfloat.h
-    ${HEADER_PATH}/shaderparamint.h
-    ${HEADER_PATH}/shaderparamoscillator.h
-    ${HEADER_PATH}/shaderparamtexture.h
-    ${HEADER_PATH}/shaderparamtexture2d.h
-    ${HEADER_PATH}/shaderprogram.h
-    ${HEADER_PATH}/shaderxml.h
-    ${HEADER_PATH}/sigslot.h
-    ${HEADER_PATH}/skybox.h
-    ${HEADER_PATH}/skydome.h
-    ${HEADER_PATH}/skydomeshader.h
-    ${HEADER_PATH}/spotlight.h
-    ${HEADER_PATH}/stateattributecollector.h
-    ${HEADER_PATH}/stats.h
-    ${HEADER_PATH}/sunlightshader.h
-    ${HEADER_PATH}/system.h
-    ${HEADER_PATH}/tangentspacevisitor.h
-    ${HEADER_PATH}/timer.h
-    ${HEADER_PATH}/transform.h
-    ${HEADER_PATH}/transformable.h
-    ${HEADER_PATH}/tripod.h
-    ${HEADER_PATH}/ufomotionmodel.h
-    ${HEADER_PATH}/uniqueid.h
-    ${HEADER_PATH}/view.h
-    ${HEADER_PATH}/walkmotionmodel.h
+   ${HEADER_PATH}/base.h
+   ${HEADER_PATH}/batchisector.h
+   ${HEADER_PATH}/boundingboxvisitor.h
+   ${HEADER_PATH}/camera.h
+   ${HEADER_PATH}/clouddome.h
+   ${HEADER_PATH}/cloudplane.h
+   ${HEADER_PATH}/collectorutil.h
+   ${HEADER_PATH}/collisionmotionmodel.h
+   ${HEADER_PATH}/compass.h
+   ${HEADER_PATH}/deltadrawable.h
+   ${HEADER_PATH}/deltawin.h
+   ${HEADER_PATH}/dt.h
+   ${HEADER_PATH}/effectmanager.h
+   ${HEADER_PATH}/enveffect.h
+   ${HEADER_PATH}/environment.h
+   ${HEADER_PATH}/ephemeris.h
+   ${HEADER_PATH}/exceptionenum.h
+   ${HEADER_PATH}/export.h
+   ${HEADER_PATH}/flymotionmodel.h
+   ${HEADER_PATH}/fpscollider.h
+   ${HEADER_PATH}/fpsmotionmodel.h
+   ${HEADER_PATH}/generickeyboardlistener.h
+   ${HEADER_PATH}/genericmouselistener.h
+   ${HEADER_PATH}/globals.h
+   ${HEADER_PATH}/hotspotattachment.h
+   ${HEADER_PATH}/infinitelight.h
+   ${HEADER_PATH}/infiniteterrain.h
+   ${HEADER_PATH}/inputdevice.h
+   ${HEADER_PATH}/inputmapper.h
+   ${HEADER_PATH}/isector.h
+   ${HEADER_PATH}/keyboard.h
+   ${HEADER_PATH}/keyboardmousehandler.h
+   ${HEADER_PATH}/light.h
+   ${HEADER_PATH}/loadable.h
+   ${HEADER_PATH}/logicalinputdevice.h
+   ${HEADER_PATH}/mainpage.h
+   ${HEADER_PATH}/makeskydome.h
+   ${HEADER_PATH}/model.h
+   ${HEADER_PATH}/motionmodel.h
+   ${HEADER_PATH}/mouse.h
+   ${HEADER_PATH}/moveearthtransform.h
+   ${HEADER_PATH}/nodecollector.h
+   ${HEADER_PATH}/notify.h
+   ${HEADER_PATH}/object.h
+   ${HEADER_PATH}/observerptr.h
+   ${HEADER_PATH}/orbitmotionmodel.h
+   ${HEADER_PATH}/particlesystem.h
+   ${HEADER_PATH}/physical.h
+   ${HEADER_PATH}/pointaxis.h
+   ${HEADER_PATH}/positionallight.h
+   ${HEADER_PATH}/recorder.h
+   ${HEADER_PATH}/refptr.h
+   ${HEADER_PATH}/scene.h
+   ${HEADER_PATH}/shadergroup.h
+   ${HEADER_PATH}/shadermanager.h
+   ${HEADER_PATH}/shaderparameter.h
+   ${HEADER_PATH}/shaderparamfloat.h
+   ${HEADER_PATH}/shaderparamint.h
+   ${HEADER_PATH}/shaderparamoscillator.h
+   ${HEADER_PATH}/shaderparamtexture.h
+   ${HEADER_PATH}/shaderparamtexture2d.h
+   ${HEADER_PATH}/shaderprogram.h
+   ${HEADER_PATH}/shaderxml.h
+   ${HEADER_PATH}/sigslot.h
+   ${HEADER_PATH}/skybox.h
+   ${HEADER_PATH}/skydome.h
+   ${HEADER_PATH}/skydomeshader.h
+   ${HEADER_PATH}/spotlight.h
+   ${HEADER_PATH}/stateattributecollector.h
+   ${HEADER_PATH}/stats.h
+   ${HEADER_PATH}/sunlightshader.h
+   ${HEADER_PATH}/system.h
+   ${HEADER_PATH}/tangentspacevisitor.h
+   ${HEADER_PATH}/timer.h
+   ${HEADER_PATH}/transform.h
+   ${HEADER_PATH}/transformable.h
+   ${HEADER_PATH}/tripod.h
+   ${HEADER_PATH}/ufomotionmodel.h
+   ${HEADER_PATH}/uniqueid.h
+   ${HEADER_PATH}/view.h
+   ${HEADER_PATH}/walkmotionmodel.h
 )
 
 ADD_LIBRARY(${LIB_NAME} SHARED
@@ -133,6 +133,7 @@ light.cpp
 loadable.cpp
 logicalinputdevice.cpp
 makeskydome.cpp
+model.cpp
 motionmodel.cpp
 mouse.cpp
 moveearthtransform.cpp
@@ -174,11 +175,6 @@ view.cpp
 walkmotionmodel.cpp
 ${PlatformSources}
 )
-
-#'dtUtil', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgGA', 'osgParticle',
-#       'osgText', 'osgUtil', 'osgSim', 'osgFX','osgViewer', 'opengl',
-#       'User32', 'Advapi32', 'Rpcrt4', 'Winmm', 'Gdi32', 'uuid', 'Xxf86vm',
-#       'CoreFoundation', 'IOKit', 'Carbon'
 
 TARGET_LINK_LIBRARIES(${LIB_NAME} dtUtil ${OPENGL_LIBRARY} ${MATH_LIBRARY}
    ${OSG_LIBRARY} ${OSGDB_LIBRARY} ${OSGGA_LIBRARY} ${OSGPARTICLE_LIBRARY} ${OSGUTIL_LIBRARY}
