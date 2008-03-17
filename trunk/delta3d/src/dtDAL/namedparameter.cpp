@@ -527,18 +527,15 @@ namespace dtDAL
          for (unsigned int i=0; i<result.size(); i++)
          {
             const std::string &str = result[i];
-            if (str == "true" || str == "True" || str =="1" || str == "TRUE")
-               GetValueList().push_back(true);
-            else
-               GetValueList().push_back(false);
+
+            bool bResult = dtUtil::ToType<bool>(str);
+            GetValueList().push_back(bResult);
          }
       }
       else
       {
-         bool result = false;
-         if (value == "true" || value == "True" || value == "1" || value == "TRUE")
-            result = true;
-         SetValue(result);
+         bool bResult = dtUtil::ToType<bool>(value);
+         SetValue(bResult);
       }
 
       return true;

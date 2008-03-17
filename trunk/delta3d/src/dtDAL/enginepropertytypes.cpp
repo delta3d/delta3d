@@ -284,13 +284,7 @@ namespace dtDAL
          return false;
       }
 
-      bool result = false;
-
-      if (value == "true" || value == "True" || value == "1" ||
-          value == "TRUE")
-      {
-         result = true;
-      }
+      bool result = dtUtil::ToType<bool>(value);
 
       SetValue(result);
       return true;

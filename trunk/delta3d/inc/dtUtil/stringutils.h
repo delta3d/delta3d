@@ -249,6 +249,7 @@ namespace dtUtil
    ///\deprecated Favor ToType<unsigned int> instead
    unsigned int DT_UTIL_EXPORT ToUnsignedInt(const std::string& u);
 
+
    /// Converts a string to a specified type.
    /// @param the string to be converted to the specified template argument type.
    /// @return the type that you specify as the template argument.
@@ -269,6 +270,10 @@ namespace dtUtil
       is >> result;
       return result;
    }
+
+   /// Special exception for bool where things like "True", "TRUE", and "true" should be accepted.
+   template<>
+   bool ToType<bool>(const std::string& u);
 
    bool DT_UTIL_EXPORT Match(char* wildCards, char* str);
    

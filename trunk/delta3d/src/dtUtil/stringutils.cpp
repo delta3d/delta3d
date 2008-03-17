@@ -118,7 +118,13 @@ namespace dtUtil
          return timezone * -1;
       #endif
    }
-   
+
+   template<>
+   bool ToType<bool>(const std::string& u)
+   {
+      return (u == "1" || u == "true" || u == "True" || u == "TRUE");
+   }
+
    const std::string TimeAsUTC(time_t time)
    {
       char data[28];
