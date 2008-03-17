@@ -84,7 +84,7 @@ Joystick::Joystick(std::string name, jsJoystick* joystick) :
 
       buf << GetName()<< " button " << i;
 
-      AddFeature(new dtCore::Button(this, buf.str()));
+      AddFeature(new dtCore::Button(this, i, buf.str()));
    }
 
    for (int j=0; j<mJoystick->getNumAxes();j++)
