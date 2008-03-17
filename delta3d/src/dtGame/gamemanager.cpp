@@ -20,6 +20,8 @@
  */
 #include <prefix/dtgameprefix-src.h>
 
+#include <dtABC/application.h>
+
 #include <dtGame/gamemanager.h>
 #include <dtGame/messagefactory.h>
 #include <dtGame/basemessages.h>
