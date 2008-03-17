@@ -42,24 +42,21 @@ SET(LIB_PUBLIC_HEADERS
 
 ADD_LIBRARY(${LIB_NAME} SHARED
     ${LIB_PUBLIC_HEADERS} 
-aiparticlemanager.cpp
-basenpc.cpp
-cmake_install.cmake
-distancesensor.cpp
-fsm.cpp
-navmesh.cpp
-npcevent.cpp
-npcparser.cpp
-npcstate.cpp
-operator.cpp
-planner.cpp
-plannerhelper.cpp
-waypoint.cpp
-waypointactor.cpp
-waypointmanager.cpp
-waypointpair.cpp
-worldstate.cpp
-
+   aiparticlemanager.cpp
+   basenpc.cpp
+   fsm.cpp
+   navmesh.cpp
+   npcevent.cpp
+   npcparser.cpp
+   npcstate.cpp
+   operator.cpp
+   planner.cpp
+   plannerhelper.cpp
+   waypoint.cpp
+   waypointactor.cpp
+   waypointmanager.cpp
+   waypointpair.cpp
+   worldstate.cpp
 )
 
 TARGET_LINK_LIBRARIES(${LIB_NAME} dtUtil dtCore ${MATH_LIBRARY}
