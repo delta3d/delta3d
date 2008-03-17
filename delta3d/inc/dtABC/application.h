@@ -25,6 +25,8 @@
 #include <dtABC/baseabc.h>
 #include <dtABC/export.h>
 
+#include <dtUtil/configproperties.h>
+
 #include <string>
 #include <map>
 
@@ -64,7 +66,7 @@ namespace dtABC
      * app->Run();
      * \endcode     
      */
-   class DT_ABC_EXPORT Application : public dtABC::BaseABC
+   class DT_ABC_EXPORT Application : public dtABC::BaseABC, public dtUtil::ConfigProperties
    {
       DECLARE_MANAGEMENT_LAYER(Application)
 
@@ -107,6 +109,7 @@ namespace dtABC
 
       /// @return a string value that is paired with the given name.  The default is returned if the property is not set.
       const std::string& GetConfigPropertyValue(const std::string& name, const std::string& defaultValue = "") const;
+      
       /// Sets the value of a given config property.
       void SetConfigPropertyValue(const std::string& name, const std::string& value);
 
