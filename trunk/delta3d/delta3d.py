@@ -654,12 +654,14 @@ def TOOL_BUNDLE(env):
             'gdal'           : 'gdal',
             'gne'            : 'gne',
             'HawkNL'         : 'NL',
-      #      'isense'         : 'isense', # broken on intel
+            'isense'         : 'isense',
             'openal'         : 'OpenAL', 
-      #      'alut'           : 'alut',  # OSX is still on a static alut     
+      #      'alut'           : 'alut',  # OSX is still on a built-in alut     
             'ode'            : 'ode', 
             'ul'             : 'plibul', 
             'js'             : 'plibjs',  
+            'rvrutils'       : 'rvrutils',
+            'rcfgscript'     : 'rcfgscript', 
             'rbody'          : 'rbody',
             'xerces-c'       : 'Xerces',
             'opengl'         : 'OpenGL',

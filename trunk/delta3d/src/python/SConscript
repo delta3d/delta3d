@@ -173,13 +173,13 @@ if CheckForBoost() :
       pythonCPPFlags = env['CPPFLAGS'] + pythonCPPFlags
    
    pythonDtCoreLib = env.SharedLibrary(  dtCoreBindingsTarget,    pythonSrcs['dtCore'],   LIBS = addToLibs + [env['dtLibs']['dtCore'],env['dtLibs']['dtUtil']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )
-   pythonDtAbcLib = env.SharedLibrary(   dtAbcBindingsTarget,     pythonSrcs['dtABC'],    LIBS = addToLibs + [env['dtLibs']['dtABC'],env['dtLibs']['dtCore'],env['dtLibs']['dtDAL']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )
+   pythonDtAbcLib = env.SharedLibrary(   dtAbcBindingsTarget,     pythonSrcs['dtABC'],    LIBS = addToLibs + [env['dtLibs']['dtABC'],env['dtLibs']['dtUtil'], env['dtLibs']['dtCore'],env['dtLibs']['dtDAL']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )
    pythonDtAudioLib = env.SharedLibrary( dtAudioBindingsTarget,   pythonSrcs['dtAudio'],  LIBS = addToLibs + [env['dtLibs']['dtAudio'],env['dtLibs']['dtCore']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )
    
    if hasDTChar:
       pythonDtCharLib = env.SharedLibrary(  dtCharBindingsTarget,    pythonSrcs['dtChar'],   LIBS = addToLibs + [env['dtLibs']['dtChar'],env['dtLibs']['dtCore'],env['dtLibs']['dtUtil']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )
    
-   pythonDtDALLib = env.SharedLibrary(   dtDALBindingsTarget,     pythonSrcs['dtDAL'],    LIBS = addToLibs + [env['dtLibs']['dtDAL'],env['dtLibs']['dtCore'],env['dtLibs']['dtAI']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )
+   pythonDtDALLib = env.SharedLibrary(   dtDALBindingsTarget,     pythonSrcs['dtDAL'],    LIBS = addToLibs + [env['dtLibs']['dtDAL'],env['dtLibs']['dtCore'],env['dtLibs']['dtUtil'], env['dtLibs']['dtAI']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )
    pythonDtAILib = env.SharedLibrary(   dtAIBindingsTarget,     pythonSrcs['dtAI'],    LIBS = addToLibs + [env['dtLibs']['dtAI'],env['dtLibs']['dtCore'],env['dtLibs']['dtUtil']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )   
    pythonDtInputPLIBLib = env.SharedLibrary( dtInputPLIBBindingsTarget, pythonSrcs['dtInputPLIB'], LIBS = addToLibs + [env['dtLibs']['dtInputPLIB'],env['dtLibs']['dtCore']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )
    pythonDtInspectorLib = env.SharedLibrary(  dtInspectorBindingsTarget,  pythonSrcs['dtInspector'],   LIBS = addToLibs + [env['dtLibs']['dtInspector'],env['dtLibs']['dtCore']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )

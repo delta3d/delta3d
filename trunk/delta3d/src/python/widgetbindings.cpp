@@ -83,7 +83,7 @@ class WidgetWrap : public Widget
 
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(C_overloads, Config, 0, 1)
 
-#if defined(_OSX_AGL_IMPLEMENTATION)
+#if defined(__APPLE__)
 BOOST_PYTHON_OPAQUE_SPECIALIZED_TYPE_ID(OpaqueWindowPtr)
 #endif
 
