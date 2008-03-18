@@ -273,7 +273,7 @@ namespace dtUtil
 
    /// Special exception for bool where things like "True", "TRUE", and "true" should be accepted.
    template<>
-   bool ToType<bool>(const std::string& u);
+   bool DT_UTIL_EXPORT ToType<bool>(const std::string& u);
 
    bool DT_UTIL_EXPORT Match(char* wildCards, char* str);
    
