@@ -59,9 +59,12 @@ namespace dtAnim
          Vertex(const osg::Vec3& data, unsigned int animID);
 
          osg::Vec3 mData;
+         unsigned int mAnimID; 
+
+         float     mDebugPrecision;
          osg::Vec3 mDebugData;
          osg::Quat mDebugRotation;
-         unsigned int mAnimID; 
+         
       };
 
       struct DT_ANIM_EXPORT Triangle

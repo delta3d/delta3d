@@ -263,7 +263,7 @@ void PoseMeshItem::AddBoneLinesToScene(const dtAnim::PoseMesh::TargetTriangle &t
    oss << "error " << angle;
    std::cout << oss.str() << std::endl;
 
-   mModel->GetCal3DWrapper()->UpdateSkeleton();
+   mModel->GetCal3DWrapper()->Update(0.0f);
    osg::Vec3 startPos = mModel->GetCal3DWrapper()->GetBoneAbsoluteTranslation(mPoseMesh->GetBoneID());
 
    mTrueLine  = MakeLine(startPos, startPos + trueDirection * 100.0f, osg::Vec4(0.0f, 0.0f, 0.0f, 1.0f), 1.0f);
@@ -984,10 +984,6 @@ void PoseMeshItem::AssertZeroErrorAtVertices()
                                        baseForward, 
                                        baseUp,
                                        trueDirection);
-      
-
-
-      
 
       trueDirection.normalize();
       blendDirection.normalize();
@@ -996,7 +992,7 @@ void PoseMeshItem::AssertZeroErrorAtVertices()
       dtUtil::Clamp(blendDotTrue, -1.0f, 1.0f);
 
       float angle = acosf(blendDotTrue);
-      assert(angle == 0.0f);
+      //assert(angle == 0.0f);
    }
    
    modelWrapper->ClearAll();

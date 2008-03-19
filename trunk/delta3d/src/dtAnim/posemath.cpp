@@ -38,11 +38,8 @@ void dtAnim::GetCelestialCoordinates(osg::Vec3 target,
    float targetDotTargetForward = targetForward * target;
 
    // acos needs it's parameter between -1 and 1
-   lookDotTargetForward = dtUtil::Min(lookDotTargetForward, 1.0f);
-   lookDotTargetForward = dtUtil::Max(lookDotTargetForward, -1.0f);
-
-   targetDotTargetForward = dtUtil::Min(targetDotTargetForward, 1.0f);
-   targetDotTargetForward = dtUtil::Max(targetDotTargetForward, -1.0f);   
+   dtUtil::Clamp(lookDotTargetForward, -1.0f, 1.0f);
+   dtUtil::Clamp(targetDotTargetForward, -1.0f, 1.0f);
 
    // We need to manually determine the sign
    float azimuthSign   = ((target * osg::X_AXIS) > 0.0f) ? -1.0f: 1.0f;    

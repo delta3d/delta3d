@@ -4,6 +4,7 @@
 #include <dtAnim/posemeshutility.h>
 
 #include <dtUtil/log.h>
+#include <dtUtil/mathdefines.h>
 #include <dtUtil/exception.h>
 #include <dtAnim/cal3dmodelwrapper.h>
 
@@ -89,6 +90,20 @@ PoseMesh::PoseMesh(dtAnim::Cal3DModelWrapper* model,
       osg::Vec3 pelvisForward(0, -1, 0);
       dtAnim::GetCelestialCoordinates( transformed, pelvisForward, az, el );
 
+      float testAzDegrees = osg::RadiansToDegrees(az);
+      float testElDegrees = osg::RadiansToDegrees(el);
+      std::string testName = model->GetCoreAnimationName(animID);
+
+      osg::Vec3 testDirection;
+      dtAnim::GetCelestialDirection(az, el, pelvisForward, osg::Z_AXIS, testDirection);
+
+      testDirection.normalize();
+      float testDotTranformed = testDirection * transformed;
+      dtUtil::Clamp(testDotTranformed, -1.0f, 1.0f);
+
+      float precision = acosf(testDotTranformed);     
+
+
       //std::ostringstream oss;
       //oss << "Vert #" << vert_idx 
       //    << " (" << osg::RadiansToDegrees(az) << "," << osg::RadiansToDegrees(el) << ") (degs)"
@@ -108,8 +123,9 @@ PoseMesh::PoseMesh(dtAnim::Cal3DModelWrapper* model,
       mVertices.push_back(newVert);
 
       // Store debug info
-      newVert->mDebugData = transformed;
-      newVert->mDebugRotation = finalRotation;
+      newVert->mDebugPrecision = precision;
+      newVert->mDebugData      = transformed;
+      newVert->mDebugRotation  = finalRotation;
 
       ++vert_idx;
    }
