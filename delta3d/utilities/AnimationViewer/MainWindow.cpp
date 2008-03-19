@@ -505,7 +505,7 @@ void MainWindow::OnBlendUpdate(const std::vector<float> &weightList)
    for (size_t rowIndex = 0; rowIndex < weightList.size(); ++rowIndex)
    {
       // Show progress as a whole number
-      float newValue = (int)(weightList[rowIndex] * 100.0f);
+      float newValue = weightList[rowIndex] * 100.0f;
 
       QProgressBar *meter = (QProgressBar*)mAnimListWidget->cellWidget(rowIndex, 5);   
       meter->setValue(newValue);      
