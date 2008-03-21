@@ -79,6 +79,16 @@ namespace dtActors
       }
     }
 
+    ///////////////////////////////////////////////////////////////////////
+    void SoundActorProxy::OnRemovedFromWorld()
+    {
+       dtAudio::Sound* sound = static_cast<dtAudio::Sound*>(GetActor());
+       if( sound != NULL )
+       {
+          dtAudio::AudioManager::GetInstance().FreeSound( sound );
+       }
+    }
+
     ///////////////////////////////////////////////////////////////////////////////
     void SoundActorProxy::BuildInvokables()
     {

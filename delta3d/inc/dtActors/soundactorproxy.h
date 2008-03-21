@@ -107,6 +107,9 @@ namespace dtActors
            // makes initial timer start off
            void OnEnteredWorld();
 
+           // Removes the allocated sound resource.
+           void OnRemovedFromWorld();
+
            // properties for variables in this class
            bool IsARandomSoundEffect() const {return mRandomSoundEffect;}
            void SetToHaveRandomSoundEffect(bool value) {mRandomSoundEffect = value;}
