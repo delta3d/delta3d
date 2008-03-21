@@ -397,7 +397,9 @@ void MainWindow::OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*> &poseMe
 
    poseModesToolbar->addAction(grabAction);
    poseModesToolbar->addAction(pickAction);
-   poseModesToolbar->addAction(errorAction);
+   
+   // Not full implemented so leave out
+   //poseModesToolbar->addAction(errorAction);
 
    grabAction->setCheckable(true);
    pickAction->setCheckable(true); 
@@ -537,6 +539,12 @@ void MainWindow::OnBlendUpdate(const std::vector<float> &weightList)
    if (mPoseMeshProperties)
    {
       mPoseMeshProperties->OnBlendUpdate(weightList);
+   }
+
+   // Allow the pose scene to update in response to the blend
+   if (mPoseMeshScene)
+   {
+      mPoseMeshScene->OnBlendUpdate();
    }
 }
 
