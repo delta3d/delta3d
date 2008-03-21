@@ -53,6 +53,8 @@ public:
    void SetDisplayError(bool shouldDisplay);
    bool IsActive();
 
+   void OnBlendUpdate();
+
    void Clear();  
 
    // Qt overrides
@@ -63,9 +65,7 @@ public:
       
    virtual QRectF boundingRect() const;
    virtual QPainterPath shape() const;
-   virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-
-protected: 
+   virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget); 
 
 private: 
 
@@ -112,7 +112,7 @@ private:
 
    void GetAnchorBoneDirection(const dtAnim::PoseMesh::TargetTriangle &currentTargetTri, osg::Vec3 &outDirection);
 
-   void AddBoneLinesToScene(const dtAnim::PoseMesh::TargetTriangle &targetTri);
+   void AddBoneLinesToScene(const dtAnim::PoseMesh::TargetTriangle &targetTri);   
    void RemoveBoneLinesFromScene();
 
    bool IsItemMovable();
@@ -124,6 +124,7 @@ private:
    float GetErrorSample(const QPointF &samplePoint);
 
    QColor GetErrorColor(float degreesOfError);
+   QColor GetErrorColor(const osg::Vec3 &first, const osg::Vec3 &second);
 
    void GetTriangleBoundingRect(const dtAnim::PoseMesh::Triangle &tri, QRectF &outRect);
 

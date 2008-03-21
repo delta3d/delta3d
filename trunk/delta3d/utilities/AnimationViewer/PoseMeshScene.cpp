@@ -80,6 +80,16 @@ PoseMeshItem* PoseMeshScene::GetPoseMeshItemByName(const std::string &name)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
+void PoseMeshScene::OnBlendUpdate()
+{
+   // Perform necessary updates in response to a new blend
+   for (size_t itemIndex = 0; itemIndex < mItemList.size(); ++itemIndex)
+   {
+      mItemList[itemIndex]->OnBlendUpdate();
+   }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
 void PoseMeshScene::CreateTest()
 {
    double height = mCanvasRect.height() / 16;

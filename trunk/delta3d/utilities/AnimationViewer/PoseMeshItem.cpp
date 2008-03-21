@@ -130,23 +130,7 @@ PoseMeshItem::PoseMeshItem(const dtAnim::PoseMesh &poseMesh,
 
    // Get a unique set of edges and the 
    // triangle they belong to
-   ExtractEdgesFromMesh(*mPoseMesh);     
-
-   dtAnim::Cal3DModelWrapper * modelWrapper = mModel->GetCal3DWrapper();
-
-   osg::Quat effectorRotation = modelWrapper->GetBoneAbsoluteRotation(8);
-
-   osg::Vec3 newX = effectorRotation * osg::X_AXIS;
-   osg::Vec3 newY = effectorRotation * osg::Y_AXIS;
-   osg::Vec3 newZ = effectorRotation * osg::Z_AXIS;
-
-   osg::Quat anchorRotation = modelWrapper->GetBoneAbsoluteRotation(7);
-   osg::Quat anchorInverse = anchorRotation.inverse();
-
-   mBoneSpaceForward = effectorRotation * -osg::Y_AXIS;
-   osg::Vec3 boneSpaceTest = anchorInverse * mBoneSpaceForward;
-
-   newZ = newZ;
+   ExtractEdgesFromMesh(*mPoseMesh);   
 
    // Testing
    AssertZeroErrorAtVertices();
@@ -217,6 +201,9 @@ void PoseMeshItem::RemoveBoneLinesFromScene()
 
    charGeode->removeDrawable(mTrueLine.get());
    charGeode->removeDrawable(mBlendLine.get());
+
+   mTrueLine = NULL;
+   mBlendLine = NULL;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -225,6 +212,7 @@ void PoseMeshItem::AddBoneLinesToScene(const dtAnim::PoseMesh::TargetTriangle &t
    osg::Geode *charGeode = dynamic_cast<osg::Geode*>(mModel->GetNode());
    assert(charGeode);
 
+   // If lines already exist, remove them
    if (mTrueLine.valid() || mBlendLine.valid())
    {
       charGeode->removeDrawable(mTrueLine.get());
@@ -249,19 +237,10 @@ void PoseMeshItem::AddBoneLinesToScene(const dtAnim::PoseMesh::TargetTriangle &t
    oss << "true value (" << trueDirection.x() << ", " << trueDirection.y() << ", " << trueDirection.z() << std::endl;
    oss << "blend value (" << blendDirection.x() << ", " << blendDirection.y() << ", " << blendDirection.z() << std::endl;
 
-   std::cout << oss.str();*/
+   std::cout << oss.str();*/  
 
-   float trueDotBlend = trueDirection * blendDirection;
-   dtUtil::Clamp(trueDotBlend, -1.0f, 1.0f);
-
-   float angle = osg::RadiansToDegrees((acosf(trueDotBlend)));
-
-   QColor errorColor = GetErrorColor(angle);
-   osg::Vec4 osgColor(errorColor.redF(), errorColor.greenF(), errorColor.blueF(), 1.0f);
-
-   std::ostringstream oss;
-   oss << "error " << angle;
-   std::cout << oss.str() << std::endl;
+   QColor errorColor = GetErrorColor(trueDirection, blendDirection);
+   osg::Vec4 osgColor(errorColor.redF(), errorColor.greenF(), errorColor.blueF(), 1.0f);  
 
    mModel->GetCal3DWrapper()->Update(0.0f);
    osg::Vec3 startPos = mModel->GetCal3DWrapper()->GetBoneAbsoluteTranslation(mPoseMesh->GetBoneID());
@@ -274,12 +253,27 @@ void PoseMeshItem::AddBoneLinesToScene(const dtAnim::PoseMesh::TargetTriangle &t
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-bool PoseMeshItem::sceneEvent(QEvent *event)
+void PoseMeshItem::OnBlendUpdate()
 {
-   //std::ostringstream oss;
-   //oss << "event: " << event->type();
-   //std::cout << oss.str() << std::endl;
+   // If bone lines exists, recreate them in their updated position
+   if (mTrueLine.valid() && mBlendLine.valid())
+   {
+      // Scale back into pose space and flip the y coord
+      dtAnim::PoseMesh::TargetTriangle targetTri;
+      mPoseMesh->GetTargetTriangleData(mLastMousePos.x() / VERT_SCALE, 
+                                       -mLastMousePos.y() / VERT_SCALE, targetTri);
 
+      // Only update when inside the tri
+      if (targetTri.mIsInside)
+      {
+         AddBoneLinesToScene(targetTri);
+      }      
+   }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+bool PoseMeshItem::sceneEvent(QEvent *event)
+{ 
    return QGraphicsItem::sceneEvent(event);
 }
 
@@ -292,10 +286,6 @@ void PoseMeshItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
       {     
          // Convert the position back to it's unscaled form
          mLastMousePos = event->lastPos(); 
-
-         //std::ostringstream oss;
-         //oss << "pos: (" << mLastMousePos.x() << ", " << mLastMousePos.y() << ")";
-         //std::cout << oss.str() << std::endl;
 
          BlendPosesFromItemCoordinates(mLastMousePos.x(), mLastMousePos.y());            
       }  
@@ -346,37 +336,6 @@ void PoseMeshItem::BlendPosesFromItemCoordinates(float xCoord, float yCoord)
 
          AddBoneLinesToScene(targetTri);
       }
-
-      if (mPoseMesh->GetName() == "Poses_Head")
-      {
-         dtAnim::Cal3DModelWrapper *modelWrapper = mModel->GetCal3DWrapper();
-
-         osg::Quat anchorRotation = modelWrapper->GetBoneAbsoluteRotation(7);
-         osg::Quat anchorInverse = anchorRotation.inverse();
-
-         osg::Vec3 test = anchorInverse * anchorRotation * -osg::Y_AXIS;
-
-         osg::Quat effectorRotation = modelWrapper->GetBoneAbsoluteRotation(8);
-
-         osg::Quat relativeRotation = modelWrapper->GetBoneRelativeRotation(8);
-         osg::Quat relTest = anchorInverse * effectorRotation;
-
-         osg::Vec3 newX = effectorRotation * osg::X_AXIS;
-         osg::Vec3 newY = effectorRotation * osg::Y_AXIS;
-         osg::Vec3 newZ = effectorRotation * osg::Z_AXIS;       
-
-         osg::Quat derivedRelativeRotation = (effectorRotation / anchorRotation); 
-
-         osg::Vec3 asdf = derivedRelativeRotation * -osg::Y_AXIS;
-         osg::Vec3 rel2 = relativeRotation * -osg::Y_AXIS;
-         asdf = asdf;
-      }
-
-      //std::ostringstream oss;
-      //oss << "x = " << xCoord << "  " << "y = " << yCoord 
-      //    << "  "   << "tri = " << targetTri.mTriangleID;
-
-      //std::cout << oss.str() << std::endl;
 
       // Store the last valie visual location of the blend
       mLastBlendPos.setX(xCoord);
@@ -771,30 +730,27 @@ void PoseMeshItem::GetBoneDirections(const dtAnim::PoseMesh::TargetTriangle &tar
 
    baseUp.normalize();
 
-   //outTrueDirection = baseForward;
+
    dtAnim::GetCelestialDirection(targetTri.mAzimuth, 
                                  targetTri.mElevation, 
                                  baseForward, 
                                  baseUp,
                                  outTrueDirection);
-
-   //debug
-   //outTrueDirection = baseForward;
-   //dtAnim::GetCelestialDirection(targetTri.mAzimuth, targetTri.mElevation, -osg::Y_AXIS, outTrueDirection);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-// Warning, this function is expensive!
+// Warning, this function is expensive! (and experimental)
 void PoseMeshItem::GetAnchorBoneDirection(const dtAnim::PoseMesh::TargetTriangle &currentTargetTri, 
                                            osg::Vec3 &outDirection)
 {
    dtAnim::Cal3DModelWrapper *modelWrapper = mModel->GetCal3DWrapper();
 
+   // Temp hack
    if (mPoseMesh->GetName() == "Poses_Gun")
    {
       osg::Quat boneRotation = modelWrapper->GetBoneAbsoluteRotation(3);
       osg::Quat test = modelWrapper->GetBoneRelativeRotation(3);
-      outDirection = boneRotation * osg::Y_AXIS; //mPoseMesh->GetNativeForwardDirection();
+      outDirection = boneRotation * osg::Y_AXIS; 
 
       osg::Vec3 asdf = test * -osg::Y_AXIS;
       outDirection = asdf;
@@ -855,6 +811,17 @@ QColor PoseMeshItem::GetErrorColor(float degreesOfError)
    errorColor.setHsvF(blue - percentError * blue, 1.0f, 1.0f);
 
    return errorColor;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+QColor PoseMeshItem::GetErrorColor(const osg::Vec3 &first, const osg::Vec3 &second)
+{
+   float firstDotSecond = first * second;
+   dtUtil::Clamp(firstDotSecond, -1.0f, 1.0f);
+
+   float angle = osg::RadiansToDegrees((acosf(firstDotSecond)));
+
+   return GetErrorColor(angle);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

@@ -31,9 +31,10 @@ public:
 
    PoseMeshItem* GetPoseMeshItemByName(const std::string &name);
 
+   void OnBlendUpdate();
+
    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
    virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *mouseEvent);
-
 
 signals:
 
