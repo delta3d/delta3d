@@ -34,12 +34,17 @@ class DeltaDrawableTests : public CPPUNIT_NS::TestFixture
 {
    CPPUNIT_TEST_SUITE(DeltaDrawableTests);  
    CPPUNIT_TEST(TestOrphanedDrawables);
+   CPPUNIT_TEST(FailedGetChildByIndex);
+   CPPUNIT_TEST(ValidGetChildByIndex);
+
    CPPUNIT_TEST_SUITE_END();
 
 public:
    
    void TestOrphanedDrawables();
    void TestParentChildRelationships();
+   void FailedGetChildByIndex();
+   void ValidGetChildByIndex();
 
 private:
 
@@ -61,7 +66,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION(DeltaDrawableTests);
 
 bool DeltaDrawableTests::HasChild( dtCore::DeltaDrawable* parent, dtCore::DeltaDrawable* child )
 {
-   for( unsigned i = 0; i < parent->GetNumChildren(); ++i )
+   for( unsigned int i = 0; i < parent->GetNumChildren(); ++i )
    {
       if (parent->GetChild(i) == child)
       {
@@ -127,4 +132,29 @@ void DeltaDrawableTests::TestOrphanedDrawables()
       parent->AddChild(new TestTransformable());    
 
    }   // parent goes out of scope here
+}
+
+void DeltaDrawableTests::FailedGetChildByIndex()
+{
+   dtCore::RefPtr<Transformable> parent( new Transformable("Parent") );
+
+   CPPUNIT_ASSERT_MESSAGE("Should have returned NULL", NULL == parent->GetChild(0));
+   CPPUNIT_ASSERT_MESSAGE("Should have returned NULL", NULL == parent->GetChild(1));
+
+   dtCore::RefPtr<Transformable> childOne( new Transformable("ChildOne") );
+   parent->AddChild( childOne.get() );
+   CPPUNIT_ASSERT_MESSAGE("Should have returned NULL", NULL == parent->GetChild(1));
+}
+
+void DeltaDrawableTests::ValidGetChildByIndex()
+{
+   dtCore::RefPtr<Transformable> parent( new Transformable("Parent") );
+   dtCore::RefPtr<Transformable> childOne( new Transformable("ChildOne") );
+   dtCore::RefPtr<Transformable> childTwo( new Transformable("ChildTwo") );
+   
+   parent->AddChild(childOne.get());
+   parent->AddChild(childTwo.get());
+
+   CPPUNIT_ASSERT_MESSAGE("Should be the first child", parent->GetChild(0) == childOne.get() );
+   CPPUNIT_ASSERT_MESSAGE("Should be the second child", parent->GetChild(1) == childTwo.get() );
 }

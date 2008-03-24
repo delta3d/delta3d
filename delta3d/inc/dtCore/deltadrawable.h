@@ -86,11 +86,23 @@ namespace dtCore
          ///Return the number of DeltaDrawable children added
          unsigned int GetNumChildren() const { return mChildList.size(); }
 
-         ///Get the child specified by idx (0 to number of children-1)
-         DeltaDrawable* GetChild( unsigned int idx ) { return mChildList[idx].get(); }
+         /**
+          * Get the child specified by index (0 to number of children-1)
+          *
+          * @param idx : The index number of the DeltaDrawable to be retrieved
+          * @return DeltaDrawable* : The DeltaDrawable at idx, or NULL if that 
+          * index does not exist.
+          */
+         DeltaDrawable* GetChild( unsigned int idx );
 
-         ///Get the child specified by idx (0 to number of children-1)
-         const DeltaDrawable* GetChild( unsigned int idx ) const { return mChildList[idx].get(); }
+         /**
+          * Get the const child specified by index (0 to number of children-1)
+          *
+          * @param idx : The index number of the DeltaDrawable to be retrieved
+          * @return const DeltaDrawable* : The DeltaDrawable at idx, or NULL if that 
+          * index does not exist.
+          */
+         const DeltaDrawable* GetChild( unsigned int idx ) const;
 
          /** 
           * Get the index number of child. Return a value between
@@ -100,7 +112,7 @@ namespace dtCore
          unsigned int GetChildIndex( const DeltaDrawable* child ) const;
 
          /**
-          * Check if the supplied DeltaDrawable can actually be a chil of this instance.
+          * Check if the supplied DeltaDrawable can actually be a child of this instance.
           *
           * @param child : The child to test
           * @return true if the supplied parameter can be a child

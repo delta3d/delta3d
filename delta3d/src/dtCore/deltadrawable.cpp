@@ -57,6 +57,29 @@ bool DeltaDrawable::AddChild(DeltaDrawable *child)
    return true;
 }
 
+//////////////////////////////////////////////////////////////////////////
+DeltaDrawable* DeltaDrawable::GetChild( unsigned int idx ) 
+{
+   if (idx >= GetNumChildren() )
+   {
+      return NULL;
+   }
+
+   return mChildList[idx].get(); 
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+const DeltaDrawable* DeltaDrawable::GetChild( unsigned int idx ) const 
+{
+   if (idx >= GetNumChildren() )
+   {
+      return NULL;
+   }
+
+   return mChildList[idx].get(); 
+}
+
 /*!
 * Remove a child from this DeltaDrawable.  This will detach the child from its
 * parent so that its free to be repositioned on its own.
