@@ -16,7 +16,7 @@
 * along with this library; if not, write to the Free Software Foundation, Inc.,
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
-* William E. Johnson II, Allen Danklefsen
+* William E. Johnson II, Allen Danklefsen, Chris Rodgers
 */
 #ifndef DELTA_SOUND_ACTOR_PROXY
 #define DELTA_SOUND_ACTOR_PROXY
@@ -35,6 +35,22 @@ namespace dtActors
     class DT_PLUGIN_EXPORT SoundActorProxy : public dtGame::GameActorProxy 
     {
        public:
+          static const std::string& PROPERTY_DIRECTION;
+          static const std::string& PROPERTY_GAIN;
+          static const std::string& PROPERTY_INITIAL_OFFSET_TIME;
+          static const std::string& PROPERTY_LISTENER_RELATIVE;
+          static const std::string& PROPERTY_LOOPING;
+          static const std::string& PROPERTY_MAX_DISTANCE;
+          static const std::string& PROPERTY_MIN_DISTANCE;
+          static const std::string& PROPERTY_MAX_GAIN;
+          static const std::string& PROPERTY_MIN_GAIN;
+          static const std::string& PROPERTY_MAX_RANDOM_TIME;
+          static const std::string& PROPERTY_MIN_RANDOM_TIME;
+          static const std::string& PROPERTY_PITCH;
+          static const std::string& PROPERTY_PLAY_AS_RANDOM;
+          static const std::string& PROPERTY_ROLLOFF_FACTOR;
+          static const std::string& PROPERTY_SOUND_EFFECT;
+          static const std::string& PROPERTY_VELOCITY;
 
            /**
             * Constructor
