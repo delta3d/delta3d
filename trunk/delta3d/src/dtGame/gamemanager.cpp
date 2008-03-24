@@ -827,7 +827,7 @@ namespace dtGame
       else 
       {
          throw dtUtil::Exception(dtGame::ExceptionEnum::INVALID_PARAMETER, "The actor type \"" 
-            + actorType.ToString() + "\" is invalid because it is not a game actor type."
+            + actorType.GetFullName() + "\" is invalid because it is not a game actor type."
             , __FILE__, __LINE__);
       }
 

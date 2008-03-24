@@ -222,7 +222,7 @@ namespace dtDAL
       {
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, 
             "Creating actor proxy of type \"%s\".", 
-            actorType.ToString().c_str());
+            actorType.GetFullName().c_str());
       }
 
       //Now we know which registry to use, so tell the registry to

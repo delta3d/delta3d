@@ -263,7 +263,7 @@ namespace dtGame
          {
             mLogger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                "Setting name on actor type \"%s\" to value \"%s\"",
-               GetActorType().ToString().c_str(),
+               GetActorType().GetFullName().c_str(),
                nameParam->ToString().c_str()
                );
          }
@@ -289,7 +289,7 @@ namespace dtGame
          {
             LOG_WARNING(("Property \"" + params[i]->GetName() + 
                       "\" was not found on actor type \"" +
-                      GetActorType().ToString() +
+                      GetActorType().GetFullName() +
                       "\"").c_str());
             continue;
          }
@@ -301,7 +301,7 @@ namespace dtGame
             {
                mLogger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                   "Not setting property \"%s\" on actor type \"%s\" to value \"%s\" because the property is read only.",
-                  params[i]->GetName().c_str(), GetActorType().ToString().c_str(),
+                  params[i]->GetName().c_str(), GetActorType().GetFullName().c_str(),
                   params[i]->ToString().c_str()
                   );
             }
@@ -312,7 +312,7 @@ namespace dtGame
          {
             mLogger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                "Setting property \"%s\" on actor type \"%s\" to value \"%s\"",
-               params[i]->GetName().c_str(), GetActorType().ToString().c_str(),
+               params[i]->GetName().c_str(), GetActorType().GetFullName().c_str(),
                params[i]->ToString().c_str()
                );
          }
