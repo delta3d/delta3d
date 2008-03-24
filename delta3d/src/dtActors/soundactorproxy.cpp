@@ -33,6 +33,24 @@ using namespace dtDAL;
 namespace dtActors
 {
    ///////////////////////////////////////////////////////////////////////////////
+   const std::string& SoundActorProxy::PROPERTY_DIRECTION("Direction"); // "Direction"
+   const std::string& SoundActorProxy::PROPERTY_GAIN("Gain"); // "Gain"
+   const std::string& SoundActorProxy::PROPERTY_INITIAL_OFFSET_TIME("Initial offset Time"); // "Initial offset Time"
+   const std::string& SoundActorProxy::PROPERTY_LISTENER_RELATIVE("Listener Relative"); // "Listener Relative"
+   const std::string& SoundActorProxy::PROPERTY_LOOPING("Looping"); // "Looping"
+   const std::string& SoundActorProxy::PROPERTY_MAX_DISTANCE("Max Distance"); // "Max Distance"
+   const std::string& SoundActorProxy::PROPERTY_MIN_DISTANCE("Min Distance"); // "Min Distance"
+   const std::string& SoundActorProxy::PROPERTY_MAX_GAIN("Max Gain"); // "Max Gain"
+   const std::string& SoundActorProxy::PROPERTY_MIN_GAIN("Min Gain"); // "Min Gain"
+   const std::string& SoundActorProxy::PROPERTY_MAX_RANDOM_TIME("Max Random Time"); // "Max Random Time"
+   const std::string& SoundActorProxy::PROPERTY_MIN_RANDOM_TIME("Min Random Time"); // "Min Random Time"
+   const std::string& SoundActorProxy::PROPERTY_PITCH("Pitch"); // "Pitch"
+   const std::string& SoundActorProxy::PROPERTY_PLAY_AS_RANDOM("Play As Random SFX"); // "Play As Random SFX"
+   const std::string& SoundActorProxy::PROPERTY_ROLLOFF_FACTOR("Rolloff Factor"); // "Rolloff Factor"
+   const std::string& SoundActorProxy::PROPERTY_SOUND_EFFECT("The Sound Effect"); // "The Sound Effect"
+   const std::string& SoundActorProxy::PROPERTY_VELOCITY("Velocity"); // "Velocity"
+
+   ///////////////////////////////////////////////////////////////////////////////
    SoundActorProxy::SoundActorProxy()
       : mRandomSoundEffect(false)
       , mMinRandomTime(5)
@@ -85,7 +103,7 @@ namespace dtActors
        dtAudio::Sound* sound = static_cast<dtAudio::Sound*>(GetActor());
        if( sound != NULL )
        {
-          dtAudio::AudioManager::GetInstance().FreeSound( sound );
+          sound->Stop();
        }
     }
 
@@ -126,7 +144,9 @@ namespace dtActors
         // value of true will loop the sound, while a value of false
         // will not loop/stop looping a sound.
         // Default is false
-        AddProperty(new BooleanActorProperty("Looping", "Looping",
+        AddProperty(new BooleanActorProperty(
+           PROPERTY_LOOPING,
+           PROPERTY_LOOPING,
             MakeFunctor(*sound, &Sound::SetLooping),
             MakeFunctorRet(*sound, &Sound::IsLooping),
             "Toggles if a sound loops continuously.", GROUPNAME));
@@ -135,7 +155,9 @@ namespace dtActors
         // a float type to represent the gain value.
         // Clamped between 0 - 1 by default.
         // Default is 1.0f
-        AddProperty(new FloatActorProperty("Gain", "Gain",
+        AddProperty(new FloatActorProperty(
+           PROPERTY_GAIN,
+           PROPERTY_GAIN,
             MakeFunctor(*sound, &Sound::SetGain),
             MakeFunctorRet(*sound, &Sound::GetGain),
             "Sets the gain of a sound.", GROUPNAME));
@@ -143,7 +165,9 @@ namespace dtActors
         // This property manipulates the pitch of a sound. It uses
         // a float type to represent the pitch value.
         // Default is 1.0f
-        AddProperty(new FloatActorProperty("Pitch", "Pitch",
+        AddProperty(new FloatActorProperty(
+           PROPERTY_PITCH,
+           PROPERTY_PITCH,
             MakeFunctor(*sound, &Sound::SetPitch),
             MakeFunctorRet(*sound, &Sound::GetPitch),
             "Sets the pitch of a sound.", GROUPNAME));
@@ -151,7 +175,9 @@ namespace dtActors
         // This property toggles whether or not a sound is listerner
         // relative.
         // Default is false
-        AddProperty(new BooleanActorProperty("Listener Relative", "Listener Relative",
+        AddProperty(new BooleanActorProperty(
+           PROPERTY_LISTENER_RELATIVE,
+           PROPERTY_LISTENER_RELATIVE,
             MakeFunctor(*sound, &Sound::ListenerRelative),
             MakeFunctorRet(*sound, &Sound::IsListenerRelative),
             "Toggles if a sound is relative to the listener.", GROUPNAME));
@@ -159,7 +185,9 @@ namespace dtActors
         // This property manipulates the minimum distance of a sound. It uses
         // a float type to represent the minimum distance.
         // Default is 1.0f
-        AddProperty(new FloatActorProperty("Min Distance", "Min Distance",
+        AddProperty(new FloatActorProperty(
+           PROPERTY_MIN_DISTANCE,
+           PROPERTY_MIN_DISTANCE,
             MakeFunctor(*sound, &Sound::SetMinDistance),
             MakeFunctorRet(*sound, &Sound::GetMinDistance),
             "Sets the minimum distance of a sound.", GROUPNAME));
@@ -167,7 +195,9 @@ namespace dtActors
         // This property manipulates the maximum distance of a sound. It uses
         // a float type to represent the maximum distance.
         // Default is 3.402823466e+38F (OxFFFFFFFF).
-        AddProperty(new FloatActorProperty("Max Distance", "Max Distance",
+        AddProperty(new FloatActorProperty(
+           PROPERTY_MAX_DISTANCE,
+           PROPERTY_MAX_DISTANCE,
             MakeFunctor(*sound, &Sound::SetMaxDistance),
             MakeFunctorRet(*sound, &Sound::GetMaxDistance),
             "Sets the maximum distance of a sound.", GROUPNAME));
@@ -175,7 +205,9 @@ namespace dtActors
         // This property manipulates the roll off factor of a sound. It uses
         // a float type to represent the roll off factor.
         // Default is 1.0f
-        AddProperty(new FloatActorProperty("Rolloff Factor", "Rolloff Factor",
+        AddProperty(new FloatActorProperty(
+           PROPERTY_ROLLOFF_FACTOR,
+           PROPERTY_ROLLOFF_FACTOR,
             MakeFunctor(*sound, &Sound::SetRolloffFactor),
             MakeFunctorRet(*sound, &Sound::GetRolloffFactor),
             "Sets the rolloff factor of a sound.", GROUPNAME));
@@ -183,7 +215,9 @@ namespace dtActors
         // This property manipulates the minimum gain of a sound. It uses
         // a float type to represent the minimum gain.
         // Default is 0.0f
-        AddProperty(new FloatActorProperty("Min Gain", "Min Gain",
+        AddProperty(new FloatActorProperty(
+           PROPERTY_MIN_GAIN,
+           PROPERTY_MIN_GAIN,
             MakeFunctor(*sound, &Sound::SetMinGain),
             MakeFunctorRet(*sound, &Sound::GetMinGain),
             "Sets the minimum gain of a sound.", GROUPNAME));
@@ -191,7 +225,9 @@ namespace dtActors
         // This property manipulates the maximum gain of a sound. It uses
         // a float type to represent the maximum gain.
         // Default is 1.0f
-        AddProperty(new FloatActorProperty("Max Gain", "Max Gain",
+        AddProperty(new FloatActorProperty(
+           PROPERTY_MAX_GAIN,
+           PROPERTY_MAX_GAIN,
             MakeFunctor(*sound, &Sound::SetMaxGain),
             MakeFunctorRet(*sound, &Sound::GetMaxGain),
             "Sets the maximum gain of a sound.", GROUPNAME));
@@ -199,7 +235,9 @@ namespace dtActors
         // This property manipulates the direction of a sound. It uses
         // 3 values to represent the sound's direction.
         // Default is 0, 1, 0
-        AddProperty(new Vec3ActorProperty("Direction", "Direction",
+        AddProperty(new Vec3ActorProperty(
+           PROPERTY_DIRECTION,
+           PROPERTY_DIRECTION,
             MakeFunctor(*this, &SoundActorProxy::SetDirection),
             MakeFunctorRet(*this, &SoundActorProxy::GetDirection),
             "Sets the direction of a sound.", GROUPNAME));
@@ -207,34 +245,46 @@ namespace dtActors
         // This property manipulates the velocity of a sound. It uses
         // 3 values to represent the velocity.
         // Default is 0, 0, 0
-        AddProperty(new Vec3ActorProperty("Velocity", "Velocity",
+        AddProperty(new Vec3ActorProperty(
+           PROPERTY_VELOCITY,
+           PROPERTY_VELOCITY,
             MakeFunctor(*this, &SoundActorProxy::SetVelocity),
             MakeFunctorRet(*this, &SoundActorProxy::GetVelocity),
             "Sets the velocity of a sound.", GROUPNAME));
 
         // new properties
-        AddProperty(new IntActorProperty("Max Random Time", "Max Random Time",
+        AddProperty(new IntActorProperty(
+           PROPERTY_MAX_RANDOM_TIME,
+           PROPERTY_MAX_RANDOM_TIME,
            MakeFunctor(*this, &SoundActorProxy::SetMaxRandomTime),
            MakeFunctorRet(*this, &SoundActorProxy::GetMaxRandomTime),
            "Coincides with Play As Random SFX flag", GROUPNAME));
 
-        AddProperty(new IntActorProperty("Min Random Time", "Min Random Time",
+        AddProperty(new IntActorProperty(
+           PROPERTY_MIN_RANDOM_TIME,
+           PROPERTY_MIN_RANDOM_TIME,
            MakeFunctor(*this, &SoundActorProxy::SetMinRandomTime),
            MakeFunctorRet(*this, &SoundActorProxy::GetMinRandomTime),
            "Coincides with Play As Random SFX flag", GROUPNAME));
 
-        AddProperty(new IntActorProperty("Initial offset Time", "Initial offset Time",
+        AddProperty(new IntActorProperty(
+           PROPERTY_INITIAL_OFFSET_TIME,
+           PROPERTY_INITIAL_OFFSET_TIME,
            MakeFunctor(*this, &SoundActorProxy::SetOffsetTime),
            MakeFunctorRet(*this, &SoundActorProxy::GetOffsetTime),
            "Used initially so all sounds that are random are not playing at the start.", GROUPNAME));
 
-        AddProperty(new BooleanActorProperty("Play As Random SFX", "Play As Random SFX",
+        AddProperty(new BooleanActorProperty(
+           PROPERTY_PLAY_AS_RANDOM,
+           PROPERTY_PLAY_AS_RANDOM,
            MakeFunctor(*this, &SoundActorProxy::SetToHaveRandomSoundEffect),
            MakeFunctorRet(*this, &SoundActorProxy::IsARandomSoundEffect),
            "Will have a timer go off and play sound so often", GROUPNAME));
 
         AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::SOUND, 
-           "The Sound Effect", "The Sound Effect", dtDAL::MakeFunctor(*this, &SoundActorProxy::LoadFile), 
+           PROPERTY_SOUND_EFFECT,
+           PROPERTY_SOUND_EFFECT,
+           dtDAL::MakeFunctor(*this, &SoundActorProxy::LoadFile), 
            "Loads the sound for this to use"));
     }
 

@@ -472,6 +472,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\tests\dtActors\soundactortests.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\tests\dtCore\stateattribcollectortests.cpp"
 				>
 			</File>
