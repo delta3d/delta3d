@@ -50,7 +50,6 @@ actorpluginregistry.cpp
 actorproxy.cpp
 actorproxyicon.cpp
 actortype.cpp
-cmake_install.cmake
 datatype.cpp
 directoryresourcetypehandler.cpp
 enginepropertytypes.cpp

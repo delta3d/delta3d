@@ -28,9 +28,6 @@ SET(LIB_PUBLIC_HEADERS
    ${HEADER_PATH}/hlacomponent.h
    ${HEADER_PATH}/hlacomponentconfig.h
    ${HEADER_PATH}/hlafomconfigxml.h
-   ${HEADER_PATH}/hlainteraction.h
-   ${HEADER_PATH}/hlaobject.h
-   ${HEADER_PATH}/hlatoactorid.h
    ${HEADER_PATH}/interactiontomessage.h
    ${HEADER_PATH}/objectruntimemappinginfo.h
    ${HEADER_PATH}/objecttoactor.h

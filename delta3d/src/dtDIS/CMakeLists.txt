@@ -57,7 +57,7 @@ ADD_LIBRARY(${LIB_NAME} SHARED
    propertyname.cpp
    sharedstate.cpp
    valuemaps.cpp
-   actorupdatetoentitystate.cpp
+   plugins/default/actorupdatetoentitystate.cpp
    plugins/default/createentityprocessor.cpp
    plugins/default/defaultplugin.cpp
    plugins/default/espduapplicator.cpp
