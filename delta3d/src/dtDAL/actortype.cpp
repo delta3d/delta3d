@@ -31,10 +31,11 @@ namespace dtDAL
    }
    
    ///////////////////////////////////////////////////////////////////////////////
-   const std::string ActorType::ToString() const
+   const std::string ActorType::GetFullName() const
    {
       return GetCategory() + "." + GetName();
    }
+
 
    ///////////////////////////////////////////////////////////////////////////////
    bool ActorType::InstanceOf(const ActorType &rhs) const
@@ -59,5 +60,6 @@ namespace dtDAL
       dtCore::RefPtr<ActorType> typeToCheck = new ActorType(name,category);
       return InstanceOf(*typeToCheck);
    }
-   
+
+
 }

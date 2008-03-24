@@ -265,7 +265,7 @@ namespace dtGame
             mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                "Dead Reckoning actor named \"%s\" with ID \"%s\" and type \"%s.\"",
                gameActor.GetName().c_str(), gameActor.GetUniqueId().ToString().c_str(),
-               gameActorProxy->GetActorType().ToString().c_str());
+               gameActorProxy->GetActorType().GetFullName().c_str());
          }
 
          dtCore::Transform xform;

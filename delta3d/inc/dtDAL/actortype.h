@@ -27,6 +27,8 @@
 #include <ostream>
 #include <dtDAL/export.h>
 
+#include <dtUtil/deprecationmgr.h>
+
 namespace dtDAL 
 {
    /**
@@ -167,8 +169,18 @@ namespace dtDAL
             return (mUniqueId != rhs.mUniqueId);
          }
 
-         /// returns a string representation of the actor type
-         const std::string ToString() const;
+         /// DEPRECATED 3/24/08.  Use GetFullName() instead.
+         const std::string ToString() const
+         {
+            DEPRECATE("const std::string ActorType::ToString() const",
+                      "const std::string &ActorType::GetFullName() const" );
+
+            return GetFullName();
+         }
+
+         ///Get the fully qualified string representation for this ActorType.
+         const std::string GetFullName() const;
+
 
       protected:
          //Object can only be deleted through the ref_ptr interface.
@@ -195,7 +207,7 @@ namespace dtDAL
          ///Provide a method for printing the actor type to a stream.
          friend std::ostream& operator<<(std::ostream& os,const ActorType &actorType)
          {
-            os << actorType.GetCategory() + "." + actorType.GetName();
+            os << actorType.GetFullName();
             return os;
          }
    };
