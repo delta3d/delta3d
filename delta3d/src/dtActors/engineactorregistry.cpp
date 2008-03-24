@@ -96,7 +96,7 @@ namespace dtActors
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::ANIMATION_ACTOR_TYPE(new dtDAL::ActorType("AnimationGameActor", "dtanim", "AnimationGameActor"));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::GAME_MESH_ACTOR_TYPE(
       new dtDAL::ActorType("Game Mesh Actor", "dtcore.Game.Actors", 
-      "Simple base Game Actor that supports a Mesh - you should not typically use this directly"));
+      "Game Actor that supports a single Mesh geometry"));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::DISTANCE_SENSOR_ACTOR_TYPE(
       new dtDAL::ActorType("Distance Sensor", "dtai.Game.Actors", 
       "Game Actor that wraps and triggers a dtAI distance sensor."));
