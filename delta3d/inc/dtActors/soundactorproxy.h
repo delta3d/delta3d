@@ -35,22 +35,22 @@ namespace dtActors
     class DT_PLUGIN_EXPORT SoundActorProxy : public dtGame::GameActorProxy 
     {
        public:
-          static const std::string& PROPERTY_DIRECTION;
-          static const std::string& PROPERTY_GAIN;
-          static const std::string& PROPERTY_INITIAL_OFFSET_TIME;
-          static const std::string& PROPERTY_LISTENER_RELATIVE;
-          static const std::string& PROPERTY_LOOPING;
-          static const std::string& PROPERTY_MAX_DISTANCE;
-          static const std::string& PROPERTY_MIN_DISTANCE;
-          static const std::string& PROPERTY_MAX_GAIN;
-          static const std::string& PROPERTY_MIN_GAIN;
-          static const std::string& PROPERTY_MAX_RANDOM_TIME;
-          static const std::string& PROPERTY_MIN_RANDOM_TIME;
-          static const std::string& PROPERTY_PITCH;
-          static const std::string& PROPERTY_PLAY_AS_RANDOM;
-          static const std::string& PROPERTY_ROLLOFF_FACTOR;
-          static const std::string& PROPERTY_SOUND_EFFECT;
-          static const std::string& PROPERTY_VELOCITY;
+          static const std::string PROPERTY_DIRECTION;
+          static const std::string PROPERTY_GAIN;
+          static const std::string PROPERTY_INITIAL_OFFSET_TIME;
+          static const std::string PROPERTY_LISTENER_RELATIVE;
+          static const std::string PROPERTY_LOOPING;
+          static const std::string PROPERTY_MAX_DISTANCE;
+          static const std::string PROPERTY_MIN_DISTANCE;
+          static const std::string PROPERTY_MAX_GAIN;
+          static const std::string PROPERTY_MIN_GAIN;
+          static const std::string PROPERTY_MAX_RANDOM_TIME;
+          static const std::string PROPERTY_MIN_RANDOM_TIME;
+          static const std::string PROPERTY_PITCH;
+          static const std::string PROPERTY_PLAY_AS_RANDOM;
+          static const std::string PROPERTY_ROLLOFF_FACTOR;
+          static const std::string PROPERTY_SOUND_EFFECT;
+          static const std::string PROPERTY_VELOCITY;
 
            /**
             * Constructor

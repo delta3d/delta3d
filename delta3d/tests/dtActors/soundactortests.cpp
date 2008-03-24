@@ -70,7 +70,7 @@ class SoundActorTests : public CPPUNIT_NS::TestFixture
       void TestProperties();
 
    private:
-      static const std::string& LIBRARY_TEST_GAME_ACTOR;
+      static const std::string LIBRARY_TEST_GAME_ACTOR;
 
       dtCore::RefPtr<dtGame::GameManager> mGameManager;
 };
@@ -79,7 +79,7 @@ class SoundActorTests : public CPPUNIT_NS::TestFixture
 CPPUNIT_TEST_SUITE_REGISTRATION(SoundActorTests);
 
 ///////////////////////////////////////////////////////////////////////////////
-const std::string& SoundActorTests::LIBRARY_TEST_GAME_ACTOR="testGameActorLibrary";
+const std::string SoundActorTests::LIBRARY_TEST_GAME_ACTOR("testGameActorLibrary");
 
 ///////////////////////////////////////////////////////////////////////////////
 void SoundActorTests::setUp()
