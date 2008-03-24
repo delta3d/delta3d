@@ -42,6 +42,7 @@ namespace dtCore
 {
    class GenericKeyboardListener;
    class StatsHandler;
+   class DeltaWin;
 }
 
 namespace dtABC
@@ -71,7 +72,7 @@ namespace dtABC
       DECLARE_MANAGEMENT_LAYER(Application)
 
    public:
-      Application( const std::string& configFilename = "" );
+      Application( const std::string& configFilename = "", dtCore::DeltaWin *win = NULL );
 
       static const std::string SIM_FRAME_RATE;
       static const std::string MAX_TIME_BETWEEN_DRAWS;

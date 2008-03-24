@@ -32,6 +32,7 @@
 #include <dtCore/camera.h>
 #include <dtCore/scene.h>
 #include <dtCore/globals.h>
+#include <dtCore/deltawin.h>
 #include <dtUtil/log.h>
 #include <dtUtil/stringutils.h>
 #include <dtUtil/xercesparser.h>
@@ -56,7 +57,7 @@ const std::string Application::MAX_TIME_BETWEEN_DRAWS = "System.MaxTimeBetweenDr
 const std::string Application::USE_FIXED_TIME_STEP = "System.UseFixedTimeStep";
 
 ///////////////////////////////////////////////////////////////////////////////
-Application::Application(const std::string& configFilename) 
+Application::Application(const std::string& configFilename, dtCore::DeltaWin *win) 
 :  BaseABC("Application"),
    mKeyboardListener(new dtCore::GenericKeyboardListener())
 {
@@ -64,6 +65,8 @@ Application::Application(const std::string& configFilename)
 
    mKeyboardListener->SetPressedCallback(dtCore::GenericKeyboardListener::CallbackType(this,&Application::KeyPressed));
    mKeyboardListener->SetReleasedCallback(dtCore::GenericKeyboardListener::CallbackType(this,&Application::KeyReleased));
+
+   mWindow = win;
 
    CreateInstances(); //create default Viewer View
 
@@ -175,14 +178,18 @@ bool Application::KeyReleased(const dtCore::Keyboard* keyboard, int kc)
    return false;
 }
 ///////////////////////////////////////////////////////////////////////////////
-void Application::CreateInstances(const std::string& name, int x, int y, int width, int height, bool cursor, bool fullScreen )
+void Application::CreateInstances(const std::string& name, int x, int y, int width, 
+                                  int height, bool cursor, bool fullScreen )
 {
    //create the instances and hook-up the default
    //connections.  The instance attributes may be
    //overwritten using a config file
    BaseABC::CreateInstances();
    
-   mWindow = new dtCore::DeltaWin( name, x, y, width, height, cursor, fullScreen );
+   if (mWindow == NULL)
+   {
+       mWindow = new dtCore::DeltaWin( name, x, y, width, height, cursor, fullScreen );
+   }
 
    GetCamera()->SetWindow( mWindow.get() );
 
