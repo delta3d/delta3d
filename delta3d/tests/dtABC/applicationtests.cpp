@@ -44,6 +44,7 @@ namespace dtTest
       CPPUNIT_TEST( TestConfigProperties );
       CPPUNIT_TEST( TestConfigSupport );
       CPPUNIT_TEST( TestConfigSaveLoad );
+      CPPUNIT_TEST( TestSupplyingWindowToApplicationConstructor );
       CPPUNIT_TEST_SUITE_END();
 
       public:
@@ -53,6 +54,7 @@ namespace dtTest
          void TestConfigProperties();
          void TestConfigSupport();
          void TestConfigSaveLoad();
+         void TestSupplyingWindowToApplicationConstructor();
 
       private:
          std::string mConfigName;
@@ -354,6 +356,20 @@ namespace dtTest
       
    }
 
+   void ApplicationTests::TestSupplyingWindowToApplicationConstructor()
+   {
+      using namespace dtCore;
+      using namespace dtABC;
+      RefPtr<DeltaWin> win = new DeltaWin();
+
+      RefPtr<Application> app = new Application("testie", win.get());
+
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Supplied DeltaWin is not what was returned",
+                                    win.get(), app->GetWindow() );
+
+      app = NULL;
+      win = NULL;
+   }
 
 
    class ApplicationSetupTests : public CPPUNIT_NS::TestFixture
