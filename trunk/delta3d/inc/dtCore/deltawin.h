@@ -32,7 +32,7 @@
 
 #include <osg/observer_ptr>
 #include <osg/Vec2>
-
+#include <osg/GraphicsContext>
 ///@cond
 namespace osgViewer
 {
@@ -195,14 +195,16 @@ namespace dtCore
    private:
 
       ///Convenient method to create a GraphicsWindow
-      osgViewer::GraphicsWindow * CreateGraphicsWindow(const std::string& name = "defaulWindow", 
-                                                      int x = 500, int y = 500, 
-                                                      int width = 640, int height = 480, 
-                                                      unsigned int screenNum = 0,
-                                                      bool cursor = true, 
-                                                      osg::Referenced * inheritedWindowData = NULL);
+      osgViewer::GraphicsWindow* CreateGraphicsWindow( osg::GraphicsContext::Traits &traits );
 
       static int CalcRefreshRate( int width, int height, int dotclock );
+
+      osg::ref_ptr<osg::GraphicsContext::Traits> CreateTraits(const std::string& name = "defaulWindow", 
+                                                               int x = 500, int y = 500, 
+                                                               int width = 640, int height = 480, 
+                                                               unsigned int screenNum = 0,
+                                                               bool cursor = true, 
+                                                               osg::Referenced * inheritedWindowData = NULL) const;
       
       dtCore::RefPtr<osgViewer::GraphicsWindow> mOsgViewerGraphicsWindow;
 
