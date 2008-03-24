@@ -28,8 +28,12 @@ DeltaWin::DeltaWin(  const std::string& name,
    mShowCursor(true) // force set fullscreen
 {
    RegisterInstance(this);
-   
-   CreateGraphicsWindow(name, x, y, width, height, 0, cursor, inheritedWindowData);
+
+   osg::ref_ptr<osg::GraphicsContext::Traits> traits;
+   traits = CreateTraits(name, x, y, width, height,
+                          0, cursor, inheritedWindowData );
+
+   CreateGraphicsWindow( *traits );
    
    if(!fullScreen)
    {
@@ -42,67 +46,9 @@ DeltaWin::DeltaWin(  const std::string& name,
 }
 
 
-osgViewer::GraphicsWindow * DeltaWin::CreateGraphicsWindow(const std::string& name, 
-                                                           int x, int y, 
-                                                           int width, int height, 
-                                                           unsigned int screenNum,
-                                                           bool cursor, osg::Referenced * inheritedWindowData)
+osgViewer::GraphicsWindow * DeltaWin::CreateGraphicsWindow( osg::GraphicsContext::Traits &traits )
 {
-   osg::DisplaySettings* ds = osg::DisplaySettings::instance();
-
-   osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits;
-
-   traits->screenNum = screenNum;
-
-   //Favor the value of the environment variable "DISPLAY" to set the 
-   //diplayNum and the screenNum, unless it fails, in which case use the
-   //passed in value.  Format is "host:displayNum.screenNum".
-   traits->readDISPLAY();
-
-   if (traits->displayNum<0)
-   {
-      traits->displayNum = 0;
-   }
-
-   if (traits->screenNum < 0)
-   {
-      traits->screenNum = screenNum;
-   }
-
-   traits->windowName = name;
-   traits->x = x;
-   traits->y = y;
-   traits->width = width;
-   traits->height = height;
-   traits->alpha = ds->getMinimumNumAlphaBits();
-   traits->stencil = ds->getMinimumNumStencilBits();
-   traits->windowDecoration = true;
-   traits->doubleBuffer = true;
-   traits->sharedContext = 0;
-   traits->sampleBuffers = ds->getMultiSamples();
-   traits->samples = ds->getNumMultiSamples();
-   traits->inheritedWindowData = inheritedWindowData;
-   traits->setInheritedWindowPixelFormat = true;
-
-   
-   if (ds->getStereo())
-   {
-      switch (ds->getStereoMode())
-      {
-         case (osg::DisplaySettings::QUAD_BUFFER):
-            traits->quadBufferStereo = true;
-            break;
-         case (osg::DisplaySettings::VERTICAL_INTERLACE):
-         case (osg::DisplaySettings::CHECKERBOARD):
-         case (osg::DisplaySettings::HORIZONTAL_INTERLACE):
-            traits->stencil = 8;
-            break;
-         default:
-            break;
-      }
-   }
-
-   osg::ref_ptr<osg::GraphicsContext> gc = osg::GraphicsContext::createGraphicsContext(traits.get());
+   osg::ref_ptr<osg::GraphicsContext> gc = osg::GraphicsContext::createGraphicsContext( &traits );
    
    if (gc.valid() == false)
    {
@@ -114,7 +60,8 @@ osgViewer::GraphicsWindow * DeltaWin::CreateGraphicsWindow(const std::string& na
    osgViewer::GraphicsWindow* gw = dynamic_cast<osgViewer::GraphicsWindow*>(gc.get());
    if (gw)
    {
-      gw->getEventQueue()->getCurrentEventState()->setWindowRectangle(x, y, width, height );
+      gw->getEventQueue()->getCurrentEventState()->setWindowRectangle(traits.x, traits.y,
+                                                                      traits.width, traits.height );
    }
    
    mOsgViewerGraphicsWindow = gw;
@@ -365,3 +312,74 @@ int DeltaWin::CalcRefreshRate( int horzTotal, int vertTotal, int dotclock )
 {
    return static_cast<int>( 0.5f + ( ( 1000.0f * dotclock ) / ( horzTotal * vertTotal ) ) );
 }
+
+
+/** 
+ *  Little utility used to convert the supplied parameters into a OSG Trait.
+ */
+osg::ref_ptr<osg::GraphicsContext::Traits> dtCore::DeltaWin::CreateTraits( const std::string& name, 
+                                                                          int x,
+                                                                          int y, 
+                                                                          int width,
+                                                                          int height ,
+                                                                          unsigned int screenNum,
+                                                                          bool cursor,
+                                                                          osg::Referenced *inheritedWindowData) const
+{
+   osg::DisplaySettings* ds = osg::DisplaySettings::instance();
+
+   osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits;
+
+   traits->screenNum = screenNum;
+
+   //Favor the value of the environment variable "DISPLAY" to set the 
+   //diplayNum and the screenNum, unless it fails, in which case use the
+   //passed in value.  Format is "host:displayNum.screenNum".
+   traits->readDISPLAY();
+
+   if (traits->displayNum<0)
+   {
+      traits->displayNum = 0;
+   }
+
+   if (traits->screenNum < 0)
+   {
+      traits->screenNum = screenNum;
+   }
+
+   traits->windowName = name;
+   traits->x = x;
+   traits->y = y;
+   traits->width = width;
+   traits->height = height;
+   traits->alpha = ds->getMinimumNumAlphaBits();
+   traits->stencil = ds->getMinimumNumStencilBits();
+   traits->windowDecoration = true;
+   traits->doubleBuffer = true;
+   traits->sharedContext = 0;
+   traits->sampleBuffers = ds->getMultiSamples();
+   traits->samples = ds->getNumMultiSamples();
+   traits->inheritedWindowData = inheritedWindowData;
+   traits->setInheritedWindowPixelFormat = true;
+
+
+   if (ds->getStereo())
+   {
+      switch (ds->getStereoMode())
+      {
+      case (osg::DisplaySettings::QUAD_BUFFER):
+         traits->quadBufferStereo = true;
+         break;
+      case (osg::DisplaySettings::VERTICAL_INTERLACE):
+      case (osg::DisplaySettings::CHECKERBOARD):
+      case (osg::DisplaySettings::HORIZONTAL_INTERLACE):
+         traits->stencil = 8;
+         break;
+      default:
+         break;
+      }
+   }
+
+   return traits;
+}
+
