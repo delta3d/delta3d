@@ -1396,6 +1396,13 @@ namespace dtHLAGM
 
       std::string classHandleString = mRTIAmbassador->getObjectClassName(classHandle);
 
+      static const std::string OBJECT_ROOT("ObjectRoot.");
+      if (classHandleString.size() > OBJECT_ROOT.size() && 
+               classHandleString.substr(0, OBJECT_ROOT.size()) == OBJECT_ROOT)
+      {
+         classHandleString = classHandleString.substr(OBJECT_ROOT.size());
+      }
+
       hadEntityTypeProperty = false;
       EntityType currentEntityType;
 
@@ -1652,6 +1659,13 @@ namespace dtHLAGM
       {
          // Compare RTI InteractionClassHandle to InteractionToMessageMap Class Handle
          std::string classHandleString = mRTIAmbassador->getInteractionClassName(theInteraction);
+
+         static const std::string INTERACTION_ROOT("InteractionRoot.");
+         if (classHandleString.size() > INTERACTION_ROOT.size() && 
+                  classHandleString.substr(0, INTERACTION_ROOT.size()) == INTERACTION_ROOT)
+         {
+            classHandleString = classHandleString.substr(INTERACTION_ROOT.size());
+         }
 
          std::map<std::string, dtCore::RefPtr<InteractionToMessage> >::iterator interactionToMessageIterator;
          interactionToMessageIterator = mInteractionToMessageMap.find(classHandleString);
