@@ -726,9 +726,12 @@ namespace dtEditQt
       //Once we have a reference to the current selection and the scene,
       //clone each proxy, add it to the scene, make the newly cloned
       //proxy(s) the current selection.
-      ViewportOverlay::ActorProxyList::iterator itor;
+      ViewportOverlay::ActorProxyList::iterator itor, itorEnd;
+      itor = selection.begin();
+      itorEnd = selection.end();
+      
       std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > newSelection;
-      for (itor=selection.begin(); itor!=selection.end(); ++itor)
+      for (; itor!=itorEnd; ++itor)
       {
          dtDAL::ActorProxy *proxy = const_cast<dtDAL::ActorProxy *>(itor->get());
          dtCore::RefPtr<dtDAL::ActorProxy> copy = proxy->Clone();
@@ -738,24 +741,33 @@ namespace dtEditQt
             continue;
          }
 
+         newSelection.push_back(copy);
+      }
+
+      std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >::iterator i, iend;
+
+      i = newSelection.begin();
+      iend = newSelection.end();
+      for (; i != iend; ++i)
+      {
+         dtDAL::ActorProxy* proxy = i->get();
+
          //Store the original location of the proxy so we can position after
          //it has been added to the scene.
          osg::Vec3 oldPosition;
          dtDAL::TransformableActorProxy
-               *tProxy =dynamic_cast<dtDAL::TransformableActorProxy *>(copy.get());
+               *tProxy =dynamic_cast<dtDAL::TransformableActorProxy *>(proxy);
          if (tProxy != NULL)
             oldPosition = tProxy->GetTranslation();
-
+   
          //Add the new proxy to the map and send out a create event.
-         currMap->AddProxy(*copy.get());
-
-         EditorEvents::GetInstance().emitActorProxyCreated(copy, false);
-
+         currMap->AddProxy(*proxy);
+   
+         EditorEvents::GetInstance().emitActorProxyCreated(proxy, false);
+   
          //Move the newly duplicated actor to where it is supposed to go.
          if (tProxy != NULL)
             tProxy->SetTranslation(oldPosition+offset);
-
-         newSelection.push_back(copy);
       }
 
       //Finally set the newly cloned proxies to be the current selection.
