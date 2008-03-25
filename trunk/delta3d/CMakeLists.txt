@@ -111,7 +111,11 @@ FIND_PACKAGE(PLIB)
 FIND_PACKAGE(GDAL)
 FIND_PACKAGE(DIS)
 FIND_PACKAGE(Isense)
-FIND_PACKAGE(RTI-s)
+
+IF (BUILD_HLA)
+  FIND_PACKAGE(RTI-s)
+ENDIF (BUILD_HLA)
+  
 FIND_PACKAGE(PythonLibs)
 
 
@@ -164,6 +168,7 @@ SET(LIBRARY_OUTPUT_PATH ${OUTPUT_LIBDIR})
 
 ################################################################################
 # User Options
+OPTION(BUILD_HLA "Enables the building of HLA related projects (e.g., dtHLAGM)" OFF)
 
 
 # Expose CMAKE_INCLUDE_PATH and CMAKE_LIBARY_PATH to the GUI so users
@@ -191,30 +196,36 @@ ADD_SUBDIRECTORY(src/dtUtil)
 ADD_SUBDIRECTORY(src/dtCore)
 ADD_SUBDIRECTORY(src/dtABC)
 ADD_SUBDIRECTORY(src/dtAI)
-ADD_SUBDIRECTORY(src/dtAudio)
+
+IF (OPENAL_FOUND)
+  ADD_SUBDIRECTORY(src/dtAudio)
+ENDIF (OPENAL_FOUND)
+
 ADD_SUBDIRECTORY(src/dtNet)
 ADD_SUBDIRECTORY(src/dtGUI)
 ADD_SUBDIRECTORY(src/dtDAL)
 ADD_SUBDIRECTORY(src/dtGame)
 ADD_SUBDIRECTORY(src/dtAnim)
-ADD_SUBDIRECTORY(src/dtActors)
+#ADD_SUBDIRECTORY(src/dtActors)
 ADD_SUBDIRECTORY(src/dtNetGM)
-ADD_SUBDIRECTORY(src/dtInputISense)
-ADD_SUBDIRECTORY(src/dtInputPLIB)
-ADD_SUBDIRECTORY(src/dtInspector)
+#ADD_SUBDIRECTORY(src/dtInputISense)
+#ADD_SUBDIRECTORY(src/dtInputPLIB)
+#ADD_SUBDIRECTORY(src/dtInspector)
 ADD_SUBDIRECTORY(src/dtLMS)
 ADD_SUBDIRECTORY(src/dtTerrain)
-ADD_SUBDIRECTORY(src/dtScript)
+#ADD_SUBDIRECTORY(src/dtScript)
 
 ADD_SUBDIRECTORY(src/dtDIS)
-ADD_SUBDIRECTORY(src/dtHLAGM)
+IF (BUILD_HLA)
+  ADD_SUBDIRECTORY(src/dtHLAGM)
+ENDIF (BUILD_HLA)
 
-ADD_SUBDIRECTORY(src/python)
+#ADD_SUBDIRECTORY(src/python)
 
-ADD_SUBDIRECTORY(utilities)
-ADD_SUBDIRECTORY(examples)
-ADD_SUBDIRECTORY(demos)
-ADD_SUBDIRECTORY(tests)
+#ADD_SUBDIRECTORY(utilities)
+#ADD_SUBDIRECTORY(examples)
+#ADD_SUBDIRECTORY(demos)
+#ADD_SUBDIRECTORY(tests)
 
 
 # This is for an advanced option to give aggressive warnings 
