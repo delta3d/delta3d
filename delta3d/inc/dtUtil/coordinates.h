@@ -417,7 +417,7 @@ namespace dtUtil
          /**
           * @throws dtUtil::Exception if the string is not in a valid format.
           */
-         static void ConvertMGRSToUTM(unsigned defaultZone, char defaultZoneLetter,      
+         static void ConvertMGRSToUTM(unsigned defaultZone, char defaultZoneLetter,
                                       const std::string& mgrs, unsigned& zone, 
                                       double& easting, double& northing)
             throw(dtUtil::Exception);
@@ -500,69 +500,69 @@ namespace dtUtil
           * @return The rotation offset in DEGREES
           */
          static float CalculateMagneticNorthOffset(const float latitude, const float longitude); 
-         
+
          std::string XYZToMGRS(const osg::Vec3 &pos);
 
          osg::Vec3 ConvertMGRSToXYZ(const std::string& mgrs);
       private:
-         
+
          Log* mLogger;
-         
+
          const LocalCoordinateType* mLocalCoordinateType;
          const IncomingCoordinateType* mIncomingCoordinateType;
-         
+
          double TranMerc_a;         /* Semi-major axis of ellipsoid i meters */
          double TranMerc_es; /* Eccentricity (0.08181919084262188000) squared */
-      
+
          /* Isometeric to geodetic latitude parameters, default to WGS 84 */
          double TranMerc_ap;
          double TranMerc_bp;
          double TranMerc_cp;
          double TranMerc_dp;
          double TranMerc_ep;
-      
+
          /* Transverse_Mercator projection Parameters */
          double TranMerc_Origin_Lat;           /* Latitude of origin in radians */
          double TranMerc_Origin_Long;          /* Longitude of origin in radians */
          double TranMerc_False_Northing;       /* False northing in meters */
          double TranMerc_False_Easting;        /* False easting in meters */
          double TranMerc_Scale_Factor;         /* Scale factor  */
-         
+
          /* Maximum variance for easting and northing values for WGS 84. */
          double TranMerc_Delta_Easting;
          double TranMerc_Delta_Northing;
-      
+
          /* Ellipsoid Parameters, default to WGS 84  */
          double TranMerc_f;      /* Flattening of ellipsoid  */
          double TranMerc_ebs;   /* Second Eccentricity squared */
 
          unsigned mZone;
-         
+
          ///The radius of the globe if the local coordinates are in globe mode.
          float mGlobeRadius;
 
          float mMagneticNorthOffset;
-  
+
          /**
           * The location of the origin in geocentric coordinates.
           */
          double mLocationOffset[3];
-         
+
          /**
           * The rotation offset matrix.
           */
          osg::Matrix mRotationOffset;
-         
+
          /*
           * The rotation offset matrix inverse.
           */
          osg::Matrix mRotationOffsetInverse;
-                  
-         double SPHTMD(double Latitude) const;         
+
+         double SPHTMD(double Latitude) const;
          double SPHSN(double Latitude) const; 
          double DENOM(double Latitude) const;
          double SPHSR(double Latitude) const; 
-         
+
       public:
 
          Coordinates& operator = (const Coordinates &rhs);
@@ -576,17 +576,17 @@ namespace dtUtil
          - TranMerc_bp * sin(2.e0 * Latitude) + TranMerc_cp * sin(4.e0 * Latitude) 
          - TranMerc_dp * sin(6.e0 * Latitude) + TranMerc_ep * sin(8.e0 * Latitude)));
    }
-   
+
    inline double Coordinates::SPHSN(double Latitude) const
    {
       return ((double) (TranMerc_a / sqrt( 1.e0 - TranMerc_es * pow(sin(Latitude), 2))));
    }
-   
+
    inline double Coordinates::DENOM(double Latitude) const
    { 
       return ((double) (sqrt(1.e0 - TranMerc_es * pow(sin(Latitude),2))));
    }
-   
+
    inline double Coordinates::SPHSR(double Latitude) const
    {
       return ((double) (TranMerc_a * (1.e0 - TranMerc_es) / pow(DENOM(Latitude), 3)));

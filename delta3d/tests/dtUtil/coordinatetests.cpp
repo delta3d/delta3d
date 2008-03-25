@@ -104,7 +104,7 @@ void CoordinateTests::setUp()
    try
    {
       converter = new dtUtil::Coordinates;
-      mLogger = &dtUtil::Log::GetInstance();    
+      mLogger = &dtUtil::Log::GetInstance();
    }
    catch (const dtUtil::Exception& e)
    {
@@ -287,12 +287,8 @@ void CoordinateTests::TestGeocentricToCartesianConversions()
       osg::Vec3 result = converter->ConvertToLocalTranslation(testLoc);
       osg::Vec3 resultRot = converter->ConvertToLocalRotation(testRot[0], testRot[1], testRot[2]);
 
-      CPPUNIT_ASSERT(osg::equivalent(result.x(), 21374.867188f, 1e-4f) 
-         && osg::equivalent(result.y(), 1782.304321f, 1e-4f) 
-         && osg::equivalent(result.z(), 546.114380f, 1e-4f));
-      CPPUNIT_ASSERT(osg::equivalent(resultRot[0], 0.481796f, 1e-4f) 
-         && osg::equivalent(resultRot[1], -0.143669f, 1e-4f) 
-         && osg::equivalent(resultRot[2], 0.705452f, 1e-4f));
+      CPPUNIT_ASSERT(dtUtil::Equivalent(result, osg::Vec3(21374.867188f, 1782.304321f, 546.114380f), 1e-4f)); 
+      CPPUNIT_ASSERT(dtUtil::Equivalent(resultRot, osg::Vec3(0.481796f, -0.143669f, 0.705452f), 1e-4f)); 
 
       osg::Vec3d resultBack = converter->ConvertToRemoteTranslation(result);
       osg::Vec3 resultRotBack = converter->ConvertToRemoteRotation(resultRot);
@@ -300,18 +296,13 @@ void CoordinateTests::TestGeocentricToCartesianConversions()
       std::ostringstream ss;
       ss << "Expected: " << testLoc << ", Actual: " << resultBack; 
 
-      CPPUNIT_ASSERT_MESSAGE(ss.str(), osg::equivalent(resultBack.x(), testLoc.x(), 1e-2) 
-         && osg::equivalent(resultBack.y(), testLoc.y(), 1e-2) 
-         && osg::equivalent(resultBack.z(), testLoc.z(), 1e-2));
+      CPPUNIT_ASSERT_MESSAGE(ss.str(), dtUtil::Equivalent(resultBack, testLoc, 1e-2)); 
 
       ss.str("");
       ss << "Expected: " << testRot << ", Actual: " << resultRotBack; 
 
-      CPPUNIT_ASSERT(osg::equivalent(resultRotBack[0], testRot[0], 1e-2f) 
-         && osg::equivalent(resultRotBack[1],  testRot[1], 1e-2f) 
-         && osg::equivalent(resultRotBack[2], testRot[2], 1e-2f));
-
-   }   
+      CPPUNIT_ASSERT(dtUtil::Equivalent(resultRotBack, testRot, 1e-2f)); 
+   }
 
    {
       osg::Vec3d testLoc(-2.32164e6, -4.74037e6, 3.56934e6);
@@ -646,8 +637,15 @@ void CoordinateTests::TestConvertGeodeticToUTM()
       double lovePuppyEasting;
       double lovePuppyNorthing;
 
-      converter->ConvertGeodeticToUTM( osg::DegreesToRadians(34.49524520922253), 
-                                       osg::DegreesToRadians(-115.92735241604716), 
+      char nsZone;
+
+      double lat = 34.49524520922253;
+      double lon = -115.92735241604716;
+
+      converter->CalculateUTMZone(lat, lon, lovePuppyZone, nsZone);
+      converter->SetUTMZone(lovePuppyZone);
+      converter->ConvertGeodeticToUTM( osg::DegreesToRadians(lat), 
+                                       osg::DegreesToRadians(lon), 
                                        lovePuppyZone, lovePuppyHemisphere, lovePuppyEasting, lovePuppyNorthing );
 
       //CPPUNIT_ASSERT_EQUAL( '11S', lovePuppyZone ) //How to convert to long?
@@ -663,8 +661,15 @@ void CoordinateTests::TestConvertGeodeticToUTM()
       double dacoEasting;
       double dacoNorthing;
 
-      converter->ConvertGeodeticToUTM( osg::DegreesToRadians(34.30906708995865), 
-                                       osg::DegreesToRadians(-116.03105100289258),
+      char nsZone;
+
+      double lat = 34.30906708995865;
+      double lon = -116.03105100289258;
+
+      converter->CalculateUTMZone(lat, lon, dacoZone, nsZone);
+      converter->SetUTMZone(dacoZone);
+      converter->ConvertGeodeticToUTM( osg::DegreesToRadians(lat), 
+                                       osg::DegreesToRadians(lon),
                                        dacoZone, dacoHemisphere, dacoEasting, dacoNorthing );
 
       //CPPUNIT_ASSERT_EQUAL( '11S', dacoZone ) //How to convert to long?
@@ -679,8 +684,15 @@ void CoordinateTests::TestConvertGeodeticToUTM()
       double fatbackEasting;
       double fatbackNorthing;
 
-      converter->ConvertGeodeticToUTM( osg::DegreesToRadians(34.383765465383945), 
-                                       osg::DegreesToRadians(-115.96319687438611),
+      char nsZone;
+
+      double lat = 34.383765465383945;
+      double lon = -115.96319687438611;
+
+      converter->CalculateUTMZone(lat, lon, fatbackZone, nsZone);
+      converter->SetUTMZone(fatbackZone);
+      converter->ConvertGeodeticToUTM( osg::DegreesToRadians(lat), 
+                                       osg::DegreesToRadians(lon),
                                        fatbackZone, fatbackHemisphere, fatbackEasting, fatbackNorthing );
 
       //CPPUNIT_ASSERT_EQUAL( '11S', fatbackZone ) //How to convert to long?

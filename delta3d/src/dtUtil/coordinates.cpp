@@ -37,7 +37,7 @@ namespace dtUtil
 
       mRotationOffset.makeIdentity();
       mRotationOffsetInverse.makeIdentity();
-            
+
       TranMerc_a = 6378137.0;         /* Semi-major axis of ellipsoid i meters */
       TranMerc_es = 0.0066943799901413800; /* Eccentricity (0.08181919084262188000) squared */
       
@@ -176,14 +176,15 @@ namespace dtUtil
    void Coordinates::SetGeoOrigin(double latitude, double longitude, double elevation)
    {
       unsigned zone;
-      char hemisphere;
-      
+      char nsZone, hemisphere;
+
+      CalculateUTMZone(latitude, longitude, zone, nsZone);
+      SetUTMZone(zone);
       ConvertGeodeticToUTM(osg::DegreesToRadians(latitude), 
                            osg::DegreesToRadians(longitude), zone, hemisphere, mLocationOffset[0], mLocationOffset[1]);
-         
+
       mLocationOffset[2] = elevation;
       
-      SetUTMZone(zone);
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -205,16 +206,22 @@ namespace dtUtil
    /////////////////////////////////////////////////////////////////////////////
    void Coordinates::SetGeoOriginRotation(double latitude, double longitude)
    {
-      unsigned zone;
-      double easting, northing;      
-      char hemisphere;
-      
+      unsigned oldZone, zone;
+      double easting, northing;
+      char nsZone, hemisphere;
+
       double lat = osg::DegreesToRadians(latitude);
 
+      oldZone = GetUTMZone();
+
+      CalculateUTMZone(latitude, longitude, zone, nsZone);
+      SetUTMZone(zone);
       //find the central lat and lon for the zone of the lat and lon given.
       ConvertGeodeticToUTM(lat, osg::DegreesToRadians(longitude), 
          zone, hemisphere, easting, northing);
-      
+
+      SetUTMZone(oldZone);
+
       double lon = TranMerc_Origin_Long;
 
       double sin_lat = sin(lat);
@@ -311,10 +318,10 @@ namespace dtUtil
       {
          if (*mIncomingCoordinateType == IncomingCoordinateType::GEOCENTRIC)
          {
-            double lat, lon, elevation, easting, northing;      
+            double lat, lon, elevation, easting, northing;
             unsigned zone;
             char hemisphere;
-            
+
             ConvertGeocentricToGeodetic(loc[0], loc[1], loc[2],lat,lon,elevation);
 
             if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
@@ -322,45 +329,45 @@ namespace dtUtil
                   osg::RadiansToDegrees(lat), osg::RadiansToDegrees(lon));
 
             ConvertGeodeticToUTM(lat, lon, zone, hemisphere, easting, northing);
-            
+
             double originX,originY,originZ;
             GetOriginLocation(originX,originY,originZ);
             position[0] = easting - originX;
             position[1] = northing - originY;
             position[2] = elevation - originZ;
-            
+
          }
          else if (*mIncomingCoordinateType == IncomingCoordinateType::GEODETIC)
          {
             //This code is not yet unit tested
-            double easting, northing;      
+            double easting, northing;
             unsigned zone;
             char hemisphere;
-            
+
             ConvertGeodeticToUTM(osg::DegreesToRadians(loc[0]), osg::DegreesToRadians(loc[1]), zone, hemisphere, easting, northing);
-            
+
             double originX,originY,originZ;
             GetOriginLocation(originX,originY,originZ);
             position[0] = easting - originX;
             position[1] = northing - originY;
             position[2] = loc[2] - originZ;
-            
+
          }
          else if (*mIncomingCoordinateType == IncomingCoordinateType::GEODETIC)
          {
             //This code is not yet unit tested
-            double easting, northing;      
+            double easting, northing;
             unsigned zone;
             char hemisphere;
-            
+
             ConvertGeodeticToUTM(osg::DegreesToRadians(loc[0]), osg::DegreesToRadians(loc[1]), zone, hemisphere, easting, northing);
-            
+
             double originX,originY,originZ;
             GetOriginLocation(originX,originY,originZ);
             position[0] = easting - originX;
             position[1] = northing - originY;
             position[2] = loc[2] - originZ;
-            
+
          }
          else if (*mIncomingCoordinateType == IncomingCoordinateType::UTM
             || *mIncomingCoordinateType == IncomingCoordinateType::GEODETIC)
@@ -384,14 +391,14 @@ namespace dtUtil
             position[i] = 0.0f;
          }
       }
-      
+
       if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
       {
          mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__,
             "Converting coordinates.  Resulting coordinates are %f, %f, %f.",
             position[0], position[1], position[2]);
       }
-      return position; 
+      return position;
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -403,9 +410,9 @@ namespace dtUtil
             "Converting to remote coordinates.  Local coordinates are %lf, %lf, %lf.",
             translation[0], translation[1], translation[2]);
       }
-      
+
       osg::Vec3d remoteLoc;
-            
+
       if (*mLocalCoordinateType == LocalCoordinateType::GLOBE)
       {
          if (*mIncomingCoordinateType == IncomingCoordinateType::GEOCENTRIC)
@@ -424,7 +431,7 @@ namespace dtUtil
          if (*mIncomingCoordinateType == IncomingCoordinateType::GEOCENTRIC)
          {
             double lat, lon;
-            double x, y, z;     
+            double x, y, z;
 
             double originX,originY,originZ;
             GetOriginLocation(originX,originY,originZ);
@@ -436,11 +443,11 @@ namespace dtUtil
                   osg::RadiansToDegrees(lat), osg::RadiansToDegrees(lon));
 
             GeodeticToGeocentric(lat, lon, translation[2] + originZ, x, y, z);
-            
+
             remoteLoc[0] = x;
             remoteLoc[1] = y;
             remoteLoc[2] = z;
-            
+
          }
          else if (*mIncomingCoordinateType == IncomingCoordinateType::GEODETIC)
          {
@@ -449,13 +456,13 @@ namespace dtUtil
 
             double originX,originY,originZ;
             GetOriginLocation(originX,originY,originZ);
-            
+
             ConvertUTMToGeodetic(mZone, translation[0] + originX, translation[1] + originY, lat, lon);
-            
+
             remoteLoc[0] = osg::RadiansToDegrees(lat);
             remoteLoc[1] = osg::RadiansToDegrees(lon);
             remoteLoc[2] = translation[2] + originZ;
-            
+
          }
          else if (*mIncomingCoordinateType == IncomingCoordinateType::UTM)
          {
@@ -469,8 +476,8 @@ namespace dtUtil
       else
       {
          LOGN_ERROR("coordinates.cpp", "Unsupported local coordinate mode: " + mLocalCoordinateType->GetName());
-      } 
-      
+      }
+
       if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
       {
          mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__,
@@ -486,9 +493,9 @@ namespace dtUtil
          }
       }
 
-      return remoteLoc; 
+      return remoteLoc;
    }
-  
+
    /////////////////////////////////////////////////////////////////////////////
    const osg::Vec3 Coordinates::ConvertToLocalRotation(double psi, double theta, double phi) const
    {
@@ -502,7 +509,7 @@ namespace dtUtil
       }
 
       EulersToMatrix(rotMat, psi, theta, phi);
-            
+
       if (*mLocalCoordinateType == LocalCoordinateType::GLOBE)
       {
          if (*mIncomingCoordinateType == IncomingCoordinateType::GEOCENTRIC)
@@ -531,10 +538,10 @@ namespace dtUtil
       else
       {
          LOGN_ERROR("coordinates.cpp", "Unsupported local coordinate mode: " + mLocalCoordinateType->GetName());
-      } 
-      
+      }
+
       osg::Vec3 rotation;
-      MatrixUtil::MatrixToHpr(rotation, rotMat);      
+      MatrixUtil::MatrixToHpr(rotation, rotMat);
 
       if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
       {
@@ -559,7 +566,7 @@ namespace dtUtil
    {
       osg::Matrix rotMat;
       MatrixUtil::HprToMatrix(rotMat, hpr);
-            
+
       if (*mLocalCoordinateType == LocalCoordinateType::GLOBE)
       {
          if (*mIncomingCoordinateType == IncomingCoordinateType::GEOCENTRIC)
@@ -587,11 +594,11 @@ namespace dtUtil
       else
       {
          LOGN_ERROR("coordinates.cpp", "Unsupported local coordinate mode: " + mLocalCoordinateType->GetName());
-      } 
-      
+      }
+
       osg::Vec3d rotation;
       float psi, theta, phi;
-      MatrixToEulers(rotMat, psi, theta, phi);      
+      MatrixToEulers(rotMat, psi, theta, phi);
       rotation[0] = psi;
       rotation[1] = theta;
       rotation[2] = phi;
@@ -606,7 +613,7 @@ namespace dtUtil
 
       return rotation;
    }
-  
+
    /////////////////////////////////////////////////////////////////////////////
    void Coordinates::ZFlop(osg::Matrix& toFlop)
    {
@@ -615,27 +622,27 @@ namespace dtUtil
                  -toFlop(2,0), -toFlop(2,1), -toFlop(2,2), toFlop(2,3),
                  toFlop(3,0), toFlop(3,1), toFlop(3,2), toFlop(3,3));
    }
-  
+
    /////////////////////////////////////////////////////////////////////////////
    void Coordinates::EulersToMatrix(osg::Matrix& dst, float psi, float theta, float phi)
    {
-      float cos_psi    = cosf(psi);                                              
-      float sin_psi    = sinf(psi);                                              
-      float cos_theta  = cosf(theta);                                            
-      float sin_theta  = sinf(theta);                                            
-      float cos_phi    = cosf(phi);                                              
-      float sin_phi    = sinf(phi);                                              
-             
-      dst.makeIdentity();                                                                   
-      dst(0,0) = cos_psi * cos_theta;                                         
-      dst(0,1) = - sin_psi * cos_phi + cos_psi * sin_theta * sin_phi;         
-      dst(0,2) = sin_psi * sin_phi + cos_psi * sin_theta * cos_phi;           
-      dst(1,0) = sin_psi * cos_theta;                                        
-      dst(1,1) = cos_psi * cos_phi + sin_psi * sin_theta * sin_phi;           
-      dst(1,2) = - cos_psi * sin_phi + sin_psi * sin_theta * cos_phi;         
-      dst(2,0) = - sin_theta;                                                 
-      dst(2,1) = cos_theta * sin_phi;                                         
-      dst(2,2) = cos_theta * cos_phi;                                         
+      float cos_psi    = cosf(psi);
+      float sin_psi    = sinf(psi);
+      float cos_theta  = cosf(theta);
+      float sin_theta  = sinf(theta);
+      float cos_phi    = cosf(phi);
+      float sin_phi    = sinf(phi);
+
+      dst.makeIdentity();
+      dst(0,0) = cos_psi * cos_theta;
+      dst(0,1) = - sin_psi * cos_phi + cos_psi * sin_theta * sin_phi;
+      dst(0,2) = sin_psi * sin_phi + cos_psi * sin_theta * cos_phi;
+      dst(1,0) = sin_psi * cos_theta;
+      dst(1,1) = cos_psi * cos_phi + sin_psi * sin_theta * sin_phi;
+      dst(1,2) = - cos_psi * sin_phi + sin_psi * sin_theta * cos_phi;
+      dst(2,0) = - sin_theta;
+      dst(2,1) = cos_theta * sin_phi;
+      dst(2,2) = cos_theta * cos_phi;
    }
   
    /////////////////////////////////////////////////////////////////////////////
@@ -648,14 +655,14 @@ namespace dtUtil
       float sq_cos_theta = 1.0 - mat(2,0) * mat(2,0);
       float sin_psi;
       float sin_phi;
-      
+
       cos_theta = ((sq_cos_theta) < 0.0 ? (0.0) : (sqrtf(sq_cos_theta)));
       if (cos_theta == 0.0) /* Singularity here */
         cos_theta = 0.000001;
-      
+
       sin_psi = mat(1,0) / cos_theta;
       psi = safeASIN(sin_psi);
-      
+
       if (mat(0,0) < 0.0)
       {
           if (psi < 0.0)
@@ -664,7 +671,7 @@ namespace dtUtil
             psi = osg::PI - (psi);
       }
       theta = -safeASIN(mat(2,0));
-      
+
       sin_phi = mat(2,1) / cos_theta;
       phi = safeASIN(sin_phi);
       /* Correct for quadrant */
@@ -676,7 +683,7 @@ namespace dtUtil
             phi = osg::PI - (phi);
       }
    }
-  
+
    /////////////////////////////////////////////////////////////////////////////
    void Coordinates::GeocentricToGeodetic(double x, double y, double z,
                                           double& latitude, double& longitude, 
@@ -689,15 +696,15 @@ namespace dtUtil
         theta = atan( (z*a)/(p*b) ),
         epsqu = (a*a - b*b)/(b*b),
         esqu = 2.0*f - f*f;
-      
+
       latitude = atan((z + epsqu * b * pow(sin(theta), 3)) /
                        (p - esqu * a * pow(cos(theta), 3)));
-      
+
       longitude = atan2(y, x);
-      
+
       elevation = p/cos(latitude) - 
         a/sqrt(1.0-esqu*pow(sin(latitude), 2.0));
-      
+
       latitude = osg::RadiansToDegrees(latitude);
       longitude = osg::RadiansToDegrees(longitude);
    }
@@ -711,19 +718,22 @@ namespace dtUtil
       double Central_Meridian = 0.0;
       double False_Easting = 500000;
       double False_Northing = 0;
-      
+
       /* no errors */
       if (Longitude < 0)
         Longitude += (2*osg::PI) + 1.0e-10;
-        
-      char nsZone;
-      CalculateUTMZone(osg::RadiansToDegrees(Latitude), osg::RadiansToDegrees(Longitude), Zone, nsZone);
+
+      // Large terrains are based on one specific UTM zone, so this looks at the assigned zone
+      // and just uses it as law.
+      Zone = mZone;
+      //char nsZone;
+      //CalculateUTMZone(osg::RadiansToDegrees(Latitude), osg::RadiansToDegrees(Longitude), Zone, nsZone);
 
       if (Zone >= 31)
         Central_Meridian = osg::DegreesToRadians(double(6 * Zone - 183));
       else
         Central_Meridian = osg::DegreesToRadians(double(6 * Zone + 177));
-      
+
       if (Latitude < 0)
       {
          False_Northing = 10000000;
@@ -731,7 +741,7 @@ namespace dtUtil
       }
       else
          Hemisphere = 'N';
-         
+
       SetTransverseMercatorParameters(Geocent_a, Geocent_f, Origin_Latitude,
                                       Central_Meridian, False_Easting, False_Northing, CentralMeridianScale);
       ConvertGeodeticToTransverseMercator(Latitude, Longitude, Easting, Northing);
