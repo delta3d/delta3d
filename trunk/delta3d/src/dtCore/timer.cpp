@@ -1,5 +1,6 @@
 #include <prefix/dtcoreprefix-src.h>
 #include <dtCore/timer.h>
+#include <dtUtil/macros.h>
 
 #ifdef DELTA_WIN32
    #include <Windows.h>
