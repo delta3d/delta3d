@@ -14,6 +14,7 @@ FIND_PATH(CAL3D_INCLUDE_DIR cal3d.h
     $ENV{CAL3D_DIR}/include
     $ENV{CAL3D_DIR}
     $ENV{DELTA_ROOT}/ext/inc
+    $ENV{DELTA_ROOT}/ext/inc/cal3d
     $ENV{DELTA_ROOT}
     ~/Library/Frameworks
     /Library/Frameworks
