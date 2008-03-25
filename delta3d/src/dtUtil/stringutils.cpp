@@ -10,9 +10,11 @@
 namespace dtUtil
 {
    
-   // scan '?' and '*'
+   ////////////////////////////////////////////////////////////////////
    static bool Scan(char*& wildCards, char*& str) 
    {
+      // scan '?' and '*'
+
       // remove the '?' and '*'
       for(wildCards++; *str != '\0' && (*wildCards == '?' || *wildCards == '*'); wildCards++)
          if (*wildCards == '?')
@@ -55,6 +57,7 @@ namespace dtUtil
       }
    }
    
+   ////////////////////////////////////////////////////////////////////
    static bool WildMatch(char *wildCards, char *str)
    {
       bool Yes = true;
@@ -83,32 +86,31 @@ namespace dtUtil
       return Yes && *str == '\0' && *wildCards == '\0';
    }
    
+   ////////////////////////////////////////////////////////////////////
    bool Match(char* Wildcards, char* str)
    {
       return WildMatch(Wildcards, str);    
    }
    
+   ////////////////////////////////////////////////////////////////////
    float ToFloat(const std::string& str)
    {
-      float tmp(0.0f);
-      sscanf(str.c_str(), " %f", &tmp);
-      return tmp;
+      return ToType<float>(str);
    }
    
+   ////////////////////////////////////////////////////////////////////
    double ToDouble(const std::string& str)
    {
-      double tmp(0.0);
-      sscanf(str.c_str(), " %lf", &tmp);
-      return tmp;
+      return ToType<double>(str);
    }
    
+   ////////////////////////////////////////////////////////////////////
    unsigned int ToUnsignedInt(const std::string& str)
    {
-      unsigned int tmp(0);
-      sscanf(str.c_str(), " %u", &tmp);
-      return tmp;
+      return ToType<unsigned int>(str);
    }
    
+   ////////////////////////////////////////////////////////////////////
    long GetTimeZone(tm &timeParts)
    {
       #ifdef __APPLE__
@@ -119,12 +121,14 @@ namespace dtUtil
       #endif
    }
 
+   ////////////////////////////////////////////////////////////////////
    template<>
    bool ToType<bool>(const std::string& u)
    {
       return (u == "1" || u == "true" || u == "True" || u == "TRUE");
    }
 
+   ////////////////////////////////////////////////////////////////////
    const std::string TimeAsUTC(time_t time)
    {
       char data[28];
@@ -152,6 +156,7 @@ namespace dtUtil
       return result;
    }
 
+   ////////////////////////////////////////////////////////////////////
    void MakeIndexString(unsigned index, std::string& toFill, unsigned paddedLength)
    {
       std::ostringstream ss;
