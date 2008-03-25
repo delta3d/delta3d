@@ -40,6 +40,7 @@
 namespace dtUtil
 {
    class Log;
+   class ConfigProperties;
 }
 
 namespace dtCore
@@ -222,14 +223,14 @@ namespace dtGame
           * @return A platform dependent library name.
           * @note
           *  For example.  If the platform independent library name is
-          *  ExampleActors then on Windows platforms the resulting dependent
-          *  library name would be ExampleActors.dll, however, on Unix based
-          *  platforms, the resulting name would be libExampleActors.so.
+          *  ExampleActors then on Windows platforms in release mode, the resulting dependent
+          *  library name would be ExampleActors.dll, however, on Unix-based
+          *  platforms, the resulting name could be libExampleActors.so.
           */
          std::string GetPlatformSpecificLibraryName(const std::string &libBase);
 
          /**
-          * Strips off the path and platform specific library prefixs and extensions
+          * Strips off the path and platform specific library prefixes and extensions
           * and returns a system independent file name.
           * @param libName The platform specific library name.
           * @return A platform independent library name.
@@ -671,6 +672,12 @@ namespace dtGame
           */
          void SetScene(dtCore::Scene &newScene);
          
+         ///@return the configuration properties.
+         dtUtil::ConfigProperties& GetConfiguration(); 
+
+         ///@return the configuration properties.
+         const dtUtil::ConfigProperties& GetConfiguration() const; 
+
          ///@return the application that owns this game mananger.
          dtABC::Application& GetApplication(); 
 

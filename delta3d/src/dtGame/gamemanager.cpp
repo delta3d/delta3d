@@ -143,6 +143,18 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   dtUtil::ConfigProperties& GameManager::GetConfiguration()
+   {
+      return GetApplication();
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   const dtUtil::ConfigProperties& GameManager::GetConfiguration() const
+   {
+      return GetApplication();
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    dtABC::Application& GameManager::GetApplication()
    {
       if (mApplication == NULL)
