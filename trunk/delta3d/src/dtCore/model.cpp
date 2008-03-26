@@ -46,6 +46,8 @@ namespace dtCore
             xform.Get(m);
             modelTransform->setMatrix(m);
             traverse(node,nv);
+
+            node->setUpdateCallback(NULL);
          }
 
       private:
@@ -54,9 +56,9 @@ namespace dtCore
    };
 
    /////////////////////////////////////////////////////////
-   Model::Model() : 
-      mModelTransform(new osg::MatrixTransform), 
-      mScale(1.0f, 1.0f, 1.0f), 
+   Model::Model():
+      mModelTransform(new osg::MatrixTransform),
+      mScale(1.0f, 1.0f, 1.0f),
       mUpdateCallback(new ModelMatrixUpdateCallback(mScale))
    {
       SetDirty();
