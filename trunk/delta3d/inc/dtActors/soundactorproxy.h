@@ -26,8 +26,33 @@
 #include <dtDAL/exceptionenum.h>
 #include <dtGame/gameactor.h>
 
+namespace dtAudio
+{
+   class Sound;
+}
+
 namespace dtActors 
 {
+
+   class DT_PLUGIN_EXPORT SoundActor : public dtGame::GameActor
+   {
+   public:
+
+      SoundActor(dtGame::GameActorProxy &proxy);
+
+      dtAudio::Sound* GetSound();
+      const dtAudio::Sound* GetSound() const;
+
+   protected:
+      virtual ~SoundActor();
+
+   private:
+
+      dtCore::RefPtr<dtAudio::Sound> mSound;
+   };
+
+
+
     /**
      * @class SoundActorProxy
      * @brief This proxy wraps the Sound Delta3D object.

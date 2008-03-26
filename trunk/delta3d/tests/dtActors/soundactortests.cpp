@@ -63,6 +63,7 @@ class SoundActorTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestProperties);
    CPPUNIT_TEST_SUITE_END();
 
+
    public:
       void setUp();
       void tearDown();
@@ -190,10 +191,12 @@ void SoundActorTests::TestProperties()
 
       // Test loading a sound.
       proxy->LoadFile( "Sounds/silence.wav" );
-      dtAudio::Sound* sound = NULL;
-      proxy->GetActor( sound );
-      CPPUNIT_ASSERT_MESSAGE( "Sound actor should have loaded a valid sound object",
-         sound != NULL );
+      dtAudio::Sound* sound = static_cast<dtActors::SoundActor&>(proxy->GetGameActor()).GetSound();
+
+      dtCore::System::GetInstance().Step(); // Sends sound commands to Audio Manager.
+
+      CPPUNIT_ASSERT_MESSAGE( "Sound should not be playing yet",
+         ! sound->IsPlaying() );
 
       // Test adding to the game manager.
       mGameManager->AddActor( *proxy, false, false );
@@ -211,6 +214,8 @@ void SoundActorTests::TestProperties()
       mGameManager->DeleteActor( *proxy );
       dtCore::System::GetInstance().Step(); // Removes actor from world and sends commands to Audio Manager,
                                             // such as stop.
+      dtCore::System::GetInstance().Step(); // Removes actor from world and sends commands to Audio Manager,
+      // such as stop.
       CPPUNIT_ASSERT_MESSAGE( "Sound should have been stopped when the actor was removed from the world",
          ! sound->IsPlaying() );
    }

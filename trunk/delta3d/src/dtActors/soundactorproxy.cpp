@@ -50,6 +50,33 @@ namespace dtActors
    const std::string SoundActorProxy::PROPERTY_SOUND_EFFECT("The Sound Effect"); // "The Sound Effect"
    const std::string SoundActorProxy::PROPERTY_VELOCITY("Velocity"); // "Velocity"
 
+
+
+   //////////////////////////////////////////////////////////////////////////////
+   SoundActor::SoundActor(dtGame::GameActorProxy &proxy)  
+      : dtGame::GameActor(proxy)
+      , mSound(dtAudio::AudioManager::GetInstance().NewSound())
+   {
+      AddChild(mSound.get());
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   SoundActor::~SoundActor()
+   {
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   dtAudio::Sound* SoundActor::GetSound()
+   {
+      return mSound.get();
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   const dtAudio::Sound* SoundActor::GetSound() const
+   {
+      return mSound.get();
+   }
+
    ///////////////////////////////////////////////////////////////////////////////
    SoundActorProxy::SoundActorProxy()
       : mRandomSoundEffect(false)
@@ -72,7 +99,7 @@ namespace dtActors
    ///////////////////////////////////////////////////////////////////////////////
     SoundActorProxy::~SoundActorProxy()
     {
-         dtAudio::Sound *snd = static_cast<dtAudio::Sound*>(GetActor());
+         dtAudio::Sound *snd = static_cast<SoundActor&>(GetGameActor()).GetSound();
 
          if(snd != NULL)
          {
@@ -84,7 +111,8 @@ namespace dtActors
     ///////////////////////////////////////////////////////////////////////////////
     void SoundActorProxy::CreateActor()
     {
-         SetActor(*dtAudio::AudioManager::GetInstance().NewSound());
+       SoundActor* actor = new SoundActor(*this);
+       SetActor(*actor);
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -100,7 +128,7 @@ namespace dtActors
     ///////////////////////////////////////////////////////////////////////
     void SoundActorProxy::OnRemovedFromWorld()
     {
-       dtAudio::Sound* sound = static_cast<dtAudio::Sound*>(GetActor());
+       dtAudio::Sound* sound = static_cast<SoundActor&>(GetGameActor()).GetSound();
        if( sound != NULL )
        {
           sound->Stop();
@@ -138,7 +166,7 @@ namespace dtActors
         const std::string &GROUPNAME = "Sound";
         TransformableActorProxy::BuildPropertyMap();
 
-        Sound *sound = static_cast<Sound*>(GetActor());
+        Sound *sound = static_cast<SoundActor&>(GetGameActor()).GetSound();
         
         // This property toggles whether or not a sound loops. A
         // value of true will loop the sound, while a value of false
@@ -291,7 +319,7 @@ namespace dtActors
     ///////////////////////////////////////////////////////////////////////////////
     void SoundActorProxy::LoadFile(const std::string &fileName)
     {
-        Sound* snd = static_cast<Sound*>(GetActor());
+        Sound* snd = static_cast<SoundActor&>(GetGameActor()).GetSound();
 
         if(!fileName.empty())
             snd->LoadFile(fileName.c_str());
@@ -300,7 +328,7 @@ namespace dtActors
     ///////////////////////////////////////////////////////////////////////////////
     void SoundActorProxy::SetDirection(const osg::Vec3 &dir)
     {
-        Sound* snd = static_cast<Sound*>(GetActor());
+        Sound* snd = static_cast<SoundActor&>(GetGameActor()).GetSound();
 
         snd->SetDirection(dir);
     }
@@ -308,7 +336,7 @@ namespace dtActors
     ///////////////////////////////////////////////////////////////////////////////
     osg::Vec3 SoundActorProxy::GetDirection()
     {
-        Sound* snd = static_cast<Sound*>(GetActor());
+        Sound* snd = static_cast<SoundActor&>(GetGameActor()).GetSound();
 
         osg::Vec3 pos;
         snd->GetDirection(pos);
@@ -318,7 +346,7 @@ namespace dtActors
     ///////////////////////////////////////////////////////////////////////////////
     void SoundActorProxy::SetVelocity(const osg::Vec3 &vel)
     {
-        Sound* snd = static_cast<Sound*>(GetActor());
+        Sound* snd = static_cast<SoundActor&>(GetGameActor()).GetSound();
 
         snd->SetVelocity(vel);
     }
@@ -326,7 +354,7 @@ namespace dtActors
     ///////////////////////////////////////////////////////////////////////////////
     osg::Vec3 SoundActorProxy::GetVelocity()
     {
-        Sound* snd = static_cast<Sound*>(GetActor());
+        Sound* snd = static_cast<SoundActor&>(GetGameActor()).GetSound();
 
         osg::Vec3 pos;
         snd->GetVelocity(pos);
@@ -336,7 +364,7 @@ namespace dtActors
     ///////////////////////////////////////////////////////////////////////////////
     void SoundActorProxy::Play()
     {
-        Sound* snd = static_cast<Sound*>(GetActor());
+        Sound* snd = static_cast<SoundActor&>(GetGameActor()).GetSound();
 
         snd->Play();
     }
