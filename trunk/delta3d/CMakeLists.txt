@@ -116,12 +116,13 @@ FIND_PACKAGE(GDAL)
 FIND_PACKAGE(DIS)
 FIND_PACKAGE(Isense)
 
-FIND_PATH(RTIS_ROOT_DIR 
-    $ENV{RTI}/include/1.3)
+# if the root director for RTI is specified, we can build HLA projects
+FIND_PATH(RTIS_ROOT_DIR include/1.3/RTI.hh
+                      $ENV{RTI}/include/1.3)
 
-if (RTIS_ROOT_DIR_FOUND)
+if (RTIS_ROOT_DIR)
       FIND_PACKAGE(RTI-s)
-ENDIF(RTIS_ROOT_DIR_FOUND)
+ENDIF(RTIS_ROOT_DIR)
   
 FIND_PACKAGE(PythonLibs)
 
