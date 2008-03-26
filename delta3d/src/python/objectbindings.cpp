@@ -22,14 +22,20 @@ class ObjectWrap : public Object
          : Object (node, name),
            mSelf (self) {}
 
-      void LoadFileWrapper1(const std::string& filename, bool useCache)
+      bool LoadFileWrapper1(const std::string& filename, bool useCache)
       {
-         Object::LoadFile(filename,useCache);
+         if (Object::LoadFile(filename,useCache) == NULL)
+            return false;
+
+         return true;
       }
    
-      void LoadFileWrapper2(const std::string& filename)
+      bool LoadFileWrapper2(const std::string& filename)
       {
-         Object::LoadFile(filename);
+         if (Object::LoadFile(filename) == NULL)
+            return false;
+
+         return true;
       }
       
    protected:
