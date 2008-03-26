@@ -86,12 +86,17 @@ xercesutils.cpp
 xerceswriter.cpp
 )
 
-
-TARGET_LINK_LIBRARIES(${LIB_NAME} ${OPENGL_LIBRARY} ${MATH_LIBRARY}
-   ${OSG_LIBRARY} ${OSGDB_LIBRARY} ${OPENTHREADS_LIBRARY} ${XERCES_LIBRARY} )
+TARGET_LINK_LIBRARIES( ${LIB_NAME}
+					  optimized osg  debug osgD
+					  optimized osgDB debug osgDBd
+					  optimized xerces-c_2.lib debug xerces-c_2D.lib
+					  optimized OpenThreads debug OpenThreadsd
+					  )					  
 
 SET_TARGET_PROPERTIES(${LIB_NAME}
                      PROPERTIES DEFINE_SYMBOL DT_UTIL_LIBRARY)
-
-
+					 
 INCLUDE(ModuleInstall OPTIONAL)
+
+
+

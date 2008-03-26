@@ -176,10 +176,23 @@ walkmotionmodel.cpp
 ${PlatformSources}
 )
 
-TARGET_LINK_LIBRARIES(${LIB_NAME} dtUtil ${OPENGL_LIBRARY} ${MATH_LIBRARY}
-   ${OSG_LIBRARY} ${OSGDB_LIBRARY} ${OSGGA_LIBRARY} ${OSGPARTICLE_LIBRARY} ${OSGUTIL_LIBRARY}
-   ${OSGTEXT_LIBRARY} ${OSGSIM_LIBRARY} ${OSGFX_LIBRARY} ${OSGVIEWER_LIBRARY}
-   ${ODE_LIBRARY} ${OPENTHREADS_LIBRARY} ${XERCES_LIBRARY} ${CARBON_LIBRARY})
+TARGET_LINK_LIBRARIES( ${LIB_NAME}
+					  optimized dtUtil  debug dtUtilD
+					  optimized ode debug oded
+					  optimized osg debug osgd
+					  optimized osgDB debug osgDBd
+					  optimized osgGA debug osgGAd
+					  optimized osgViewer debug osgViewerd
+					  optimized osgParticle debug osgParticled
+					  optimized osgText debug osgTextd
+					  optimized osgUtil debug osgUtild
+					  optimized OpenThreads debug OpenThreadsd				  
+					  optimized xerces-c_2.lib debug xerces-c_2D.lib
+					  Rpcrt4.lib
+					  ${OPENGL_LIBRARY} 
+					  ${MATH_LIBRARY}
+					  ${CARBON_LIBRARY}
+					  )
 
 SET_TARGET_PROPERTIES(${LIB_NAME}
                      PROPERTIES DEFINE_SYMBOL DT_CORE_LIBRARY)
