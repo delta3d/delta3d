@@ -59,8 +59,12 @@ ADD_LIBRARY(${LIB_NAME} SHARED
    worldstate.cpp
 )
 
-TARGET_LINK_LIBRARIES(${LIB_NAME} dtUtil dtCore ${MATH_LIBRARY}
-   ${OSG_LIBRARY} ${OSGDB_LIBRARY} )
+TARGET_LINK_LIBRARIES(${LIB_NAME} 
+                                                optimized dtUtil debug dtUtilD
+												optimized dtCore debug dtCoreD)
+												
+#TARGET_LINK_LIBRARIES(${LIB_NAME} dtUtil dtCore ${MATH_LIBRARY}
+  # ${OSG_LIBRARY} ${OSGDB_LIBRARY} )
 
 SET_TARGET_PROPERTIES(${LIB_NAME}
                      PROPERTIES DEFINE_SYMBOL DT_AI_LIBRARY)

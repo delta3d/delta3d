@@ -34,11 +34,19 @@ ADD_LIBRARY(${LIB_NAME} SHARED
    servernetworkcomponent.cpp
 )
 
-TARGET_LINK_LIBRARIES(${LIB_NAME} dtUtil dtCore dtAI dtDAL dtGame 
-   ${GNE_LIBRARY} ${HAWKNL_LIBRARY} ${OSG_LIBRARY} ${OSGDB_LIBRARY} ${OPENTHREADS_LIBRARY})
+TARGET_LINK_LIBRARIES(${LIB_NAME} 
+                                                optimized dtAI debug dtAId
+												optimized dtDAL debug dtDALd
+												optimized dtGame dtGameD
+												optimized gne debug gned
+												optimized NLStatic debug NLStaticD
+												wsock32)
+												
+#TARGET_LINK_LIBRARIES(${LIB_NAME} dtUtil dtCore dtAI dtDAL dtGame 
+ #  ${GNE_LIBRARY} ${HAWKNL_LIBRARY} ${OSG_LIBRARY} ${OSGDB_LIBRARY} ${OPENTHREADS_LIBRARY})
 
 SET_TARGET_PROPERTIES(${LIB_NAME}
-                     PROPERTIES DEFINE_SYMBOL DT_LMS_LIBRARY)
+                     PROPERTIES DEFINE_SYMBOL DT_NETGM_LIBRARY)
 
 
 INCLUDE(ModuleInstall OPTIONAL)

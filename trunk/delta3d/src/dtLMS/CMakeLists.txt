@@ -32,11 +32,8 @@ ADD_LIBRARY(${LIB_NAME} SHARED
 
 TARGET_LINK_LIBRARIES( ${LIB_NAME}
 					  optimized dtGame debug dtGameD
-					  optimized dtAudio debug dtAudioD
-					  optimized dtUtil  debug dtUtilD
-					  optimized osg debug osgd
-					  optimized osgDB debug osgDBd					 
-					  optimized OpenThreads debug OpenThreadsd		
+					  optimized dtAudio debug dtAudioD	 
+					  wsock32
 					  )
 
 SET_TARGET_PROPERTIES(${LIB_NAME}
