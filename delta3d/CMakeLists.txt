@@ -16,6 +16,8 @@ PROJECT(DELTA3D)
 
 SET(CMAKE_DEBUG_POSTFIX  "d")
 
+
+
 # We want to build SONAMES shared librariess
 SET(DELTA32_SONAMES TRUE)
 
@@ -114,13 +116,14 @@ FIND_PACKAGE(GDAL)
 FIND_PACKAGE(DIS)
 FIND_PACKAGE(Isense)
 
-IF (BUILD_HLA)
-  FIND_PACKAGE(RTI-s)
-ENDIF (BUILD_HLA)
+FIND_PATH(RTIS_ROOT_DIR 
+    $ENV{RTI}/include/1.3)
+
+if (RTIS_ROOT_DIR_FOUND)
+      FIND_PACKAGE(RTI-s)
+ENDIF(RTIS_ROOT_DIR_FOUND)
   
 FIND_PACKAGE(PythonLibs)
-
-INCLUDE(OsgMacroUtils)
 
 # Make the headers visible to everything
 INCLUDE_DIRECTORIES(
@@ -173,7 +176,7 @@ SET(LIBRARY_OUTPUT_PATH ${OUTPUT_LIBDIR})
 
 ################################################################################
 # User Options
-OPTION(BUILD_HLA "Enables the building of HLA related projects (e.g., dtHLAGM)" OFF)
+#OPTION(BUILD_HLA "Enables the building of HLA related projects (e.g., dtHLAGM)" OFF)
 
 
 # Expose CMAKE_INCLUDE_PATH and CMAKE_LIBARY_PATH to the GUI so users
@@ -211,7 +214,7 @@ ADD_SUBDIRECTORY(src/dtGUI)
 ADD_SUBDIRECTORY(src/dtDAL)
 ADD_SUBDIRECTORY(src/dtGame)
 ADD_SUBDIRECTORY(src/dtAnim)
-#ADD_SUBDIRECTORY(src/dtActors)
+ADD_SUBDIRECTORY(src/dtActors)
 ADD_SUBDIRECTORY(src/dtNetGM)
 #ADD_SUBDIRECTORY(src/dtInputISense)
 #ADD_SUBDIRECTORY(src/dtInputPLIB)
