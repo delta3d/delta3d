@@ -80,10 +80,17 @@ serverloggercomponent.cpp
 taskcomponent.cpp
 )
 
-TARGET_LINK_LIBRARIES(${LIB_NAME} dtUtil dtCore dtAI dtDAL dtABC ${OPENGL_LIBRARY} ${MATH_LIBRARY}
-   ${OSG_LIBRARY} ${OSGDB_LIBRARY} ${OSGGA_LIBRARY} ${OSGPARTICLE_LIBRARY} ${OSGUTIL_LIBRARY}
-   ${OSGTEXT_LIBRARY} ${OSGSIM_LIBRARY} ${OSGFX_LIBRARY} ${OSGVIEWER_LIBRARY}
-   ${OPENTHREADS_LIBRARY} ${XERCES_LIBRARY} ${CARBON_LIBRARY})
+TARGET_LINK_LIBRARIES(${LIB_NAME}
+												optimized dtUtil debug dtUtild
+												optimized dtCore debug dtCored
+												optimized dtABC debug dtABCd
+												optimized osgSim debug osgSimd
+                                                 ${CARBON_LIBRARY})
+
+#TARGET_LINK_LIBRARIES(${LIB_NAME} dtUtil dtCore dtAI dtDAL dtABC ${OPENGL_LIBRARY} ${MATH_LIBRARY}
+  # ${OSG_LIBRARY} ${OSGDB_LIBRARY} ${OSGGA_LIBRARY} ${OSGPARTICLE_LIBRARY} ${OSGUTIL_LIBRARY}
+   #${OSGTEXT_LIBRARY} ${OSGSIM_LIBRARY} ${OSGFX_LIBRARY} ${OSGVIEWER_LIBRARY}
+   #${OPENTHREADS_LIBRARY} ${XERCES_LIBRARY} )
 
 SET_TARGET_PROPERTIES(${LIB_NAME}
                      PROPERTIES DEFINE_SYMBOL DT_GAME_LIBRARY)
