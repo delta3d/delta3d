@@ -553,8 +553,19 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////////////
    void GameActorProxy::InvokeEnteredWorld()
    {
-      GameActor& ga = GetGameActor();
-      ga.OnEnteredWorld();
+      /**
+       *	We will preform a check to make sure this actor actually is a GameActor
+       */
+
+      GameActor* ga = dynamic_cast<GameActor*>(GetActor());
+      if(ga == NULL)
+      {
+         //throw exception
+         throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION, 
+            "ERROR: Actor has the type of a GameActor, but casting it to a GameActorProxy failed.", __FILE__, __LINE__);
+      }
+
+      ga->OnEnteredWorld();
 
       OnEnteredWorld();
    }
