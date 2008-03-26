@@ -16,8 +16,6 @@ PROJECT(DELTA3D)
 
 SET(CMAKE_DEBUG_POSTFIX  "d")
 
-
-
 # We want to build SONAMES shared librariess
 SET(DELTA32_SONAMES TRUE)
 
@@ -116,13 +114,16 @@ FIND_PACKAGE(GDAL)
 FIND_PACKAGE(DIS)
 FIND_PACKAGE(Isense)
 
-# if the root director for RTI is specified, we can build HLA projects
-FIND_PATH(RTIS_ROOT_DIR include/1.3/RTI.hh
-                      $ENV{RTI}/include/1.3)
-
-if (RTIS_ROOT_DIR)
-      FIND_PACKAGE(RTI-s)
-ENDIF(RTIS_ROOT_DIR)
+if (BUILD_HLA)
+	FIND_PATH(RTIS_ROOT_DIR include/1.3/RTI.hh
+	                      $ENV{RTI}/include/1.3)
+						  
+    # if the root director for RTI is specified, we can build HLA projects
+	if (RTIS_ROOT_DIR)
+	      FIND_PACKAGE(RTI-s)
+	ENDIF(RTIS_ROOT_DIR)
+	
+ENDIF(BUILD_HLA)
   
 FIND_PACKAGE(PythonLibs)
 
@@ -177,7 +178,7 @@ SET(LIBRARY_OUTPUT_PATH ${OUTPUT_LIBDIR})
 
 ################################################################################
 # User Options
-#OPTION(BUILD_HLA "Enables the building of HLA related projects (e.g., dtHLAGM)" OFF)
+OPTION(BUILD_HLA "Enables the building of HLA related projects (e.g., dtHLAGM)" OFF)
 
 
 # Expose CMAKE_INCLUDE_PATH and CMAKE_LIBARY_PATH to the GUI so users
