@@ -1,6 +1,7 @@
 
 SET(LIB_NAME     dtGame)
 
+ADD_DEFINITIONS(-DNOMINMAX)
 
 IF (WIN32)
 ELSE (WIN32) 
@@ -25,6 +26,7 @@ SET(LIB_PUBLIC_HEADERS
    ${HEADER_PATH}/gameentrypoint.h
    ${HEADER_PATH}/gamemanager.h
    ${HEADER_PATH}/gmcomponent.h
+   ${HEADER_PATH}/gmstatistics.h
    ${HEADER_PATH}/groundclamper.h
    ${HEADER_PATH}/invokable.h
    ${HEADER_PATH}/logcontroller.h
@@ -61,6 +63,7 @@ gameactor.cpp
 gameapplication.cpp
 gamemanager.cpp
 gmcomponent.cpp
+gmstatistics.cpp
 groundclamper.cpp
 invokable.cpp
 logcontroller.cpp

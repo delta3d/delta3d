@@ -30,8 +30,14 @@ ADD_LIBRARY(${LIB_NAME} SHARED
    lmsmessagevalue.cpp
 )
 
-TARGET_LINK_LIBRARIES(${LIB_NAME} dtUtil dtCore dtAI dtDAL dtAudio dtGame 
-   ${OSG_LIBRARY} ${OSGDB_LIBRARY} ${OPENTHREADS_LIBRARY})
+TARGET_LINK_LIBRARIES( ${LIB_NAME}
+					  optimized dtGame debug dtGameD
+					  optimized dtAudio debug dtAudioD
+					  optimized dtUtil  debug dtUtilD
+					  optimized osg debug osgd
+					  optimized osgDB debug osgDBd					 
+					  optimized OpenThreads debug OpenThreadsd		
+					  )
 
 SET_TARGET_PROPERTIES(${LIB_NAME}
                      PROPERTIES DEFINE_SYMBOL DT_LMS_LIBRARY)

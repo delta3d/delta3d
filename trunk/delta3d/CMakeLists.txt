@@ -14,6 +14,7 @@ ENDIF(WIN32)
 
 PROJECT(DELTA3D)
 
+SET(CMAKE_DEBUG_POSTFIX  "d")
 
 # We want to build SONAMES shared librariess
 SET(DELTA32_SONAMES TRUE)
@@ -92,6 +93,7 @@ ENDIF(WIN32)
 ################################################################################
 # 3rd Party Dependency Stuff
 # Common to all platforms:
+FIND_PACKAGE(Delta3D REQUIRED)
 FIND_PACKAGE(Curses REQUIRED)
 
 FIND_PACKAGE(OpenThreads REQUIRED)
@@ -118,6 +120,7 @@ ENDIF (BUILD_HLA)
   
 FIND_PACKAGE(PythonLibs)
 
+INCLUDE(OsgMacroUtils)
 
 # Make the headers visible to everything
 INCLUDE_DIRECTORIES(
@@ -135,6 +138,8 @@ IF (APPLE)
    INCLUDE_DIRECTORIES(/usr/include/malloc)
 ENDIF (APPLE)
 
+LINK_DIRECTORIES( ${DELTA3D_EXT_DIR}/lib )
+
 ################################################################################
 # Create bin and lib directories if required
 
@@ -146,7 +151,7 @@ ENDIF("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
 ################################################################################
 # Installation stuff
 
-SET(CMAKE_DEBUG_POSTFIX  "d")
+
 
 IF(UNIX AND NOT WIN32 AND NOT APPLE)
   IF(CMAKE_SIZEOF_VOID_P MATCHES "8")
