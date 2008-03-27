@@ -86,3 +86,9 @@ SET_TARGET_PROPERTIES(${LIB_NAME}
 
 
 INCLUDE(ModuleInstall OPTIONAL)
+
+#little hack to get the .dll into /bin and .lib into /lib
+IF (MSVC)
+  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES PREFIX "/../../bin/")
+  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES IMPORT_PREFIX "../")
+ENDIF (MSVC)
