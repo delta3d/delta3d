@@ -86,9 +86,9 @@ xercesutils.cpp
 xerceswriter.cpp
 )
 
-TARGET_LINK_LIBRARIES( ${LIB_NAME}
-					  optimized ${OSG_LIBRARY}  debug ${OSG_LIBRARY_DEBUG}
-					  optimized ${OSGDB_LIBRARY} debug ${OSGDB_LIBRARY_DEBUG}
+LINK_WITH_VARIABLES(${LIB_NAME} OSG_LIBRARY OSGDB_LIBRARY)
+
+TARGET_LINK_LIBRARIES( ${LIB_NAME}					
 					  optimized xerces-c_2.lib debug xerces-c_2D.lib
 					  optimized OpenThreads debug OpenThreadsd
 					  )					  
