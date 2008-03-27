@@ -90,6 +90,7 @@ ADD_DEPENDENCIES (${CORE_BINDINGS}
 TARGET_LINK_LIBRARIES ( ${CORE_BINDINGS}
   optimized ${Boost_LIBRARY_DIRS}/boost_python-vc80-mt 
   optimized ${PYTHON_LIBRARY}
+  optimized ${OSG_LIBRARY}
 )
 
 SET_TARGET_PROPERTIES( ${CORE_BINDINGS} PROPERTIES SUFFIX ".pyd")
@@ -102,166 +103,35 @@ ENDIF (MSVC)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+################
+SET(ABC_BINDINGS "PyDtABC")
+
+ADD_LIBRARY ( ${ABC_BINDINGS} SHARED
+  ${CMAKE_SOURCE_DIR}/inc/python/dtpython.h
+  applicationbindings.cpp
+  baseabcbindings.cpp
+  dtabcbindings.cpp
+  proximitytriggerbindings.cpp
+  triggerbindings.cpp
+  weatherbindings.cpp
+  widgetbindings.cpp
+)
+
+ADD_DEPENDENCIES (${ABC_BINDINGS}
+  dtABC
+  dtCore
+)
+
+TARGET_LINK_LIBRARIES ( ${ABC_BINDINGS}
+  optimized ${Boost_LIBRARY_DIRS}/boost_python-vc80-mt 
+  optimized ${PYTHON_LIBRARY}
+  optimized ${OSG_LIBRARY}
+)
+
+SET_TARGET_PROPERTIES( ${ABC_BINDINGS} PROPERTIES SUFFIX ".pyd")
+
+#little hack to get the .dll into /bin and .lib into /lib
+IF (MSVC)
+  SET_TARGET_PROPERTIES( ${ABC_BINDINGS} PROPERTIES PREFIX "/../../bin/")
+  SET_TARGET_PROPERTIES( ${ABC_BINDINGS} PROPERTIES IMPORT_PREFIX "../")
+ENDIF (MSVC)
