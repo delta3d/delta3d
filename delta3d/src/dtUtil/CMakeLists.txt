@@ -86,12 +86,11 @@ xercesutils.cpp
 xerceswriter.cpp
 )
 
-LINK_WITH_VARIABLES(${LIB_NAME} OSG_LIBRARY OSGDB_LIBRARY)
-
-TARGET_LINK_LIBRARIES( ${LIB_NAME}					
-					  optimized xerces-c_2.lib debug xerces-c_2D.lib
-					  optimized OpenThreads debug OpenThreadsd
-					  )					  
+LINK_WITH_VARIABLES(${LIB_NAME}
+											  OSG_LIBRARY 
+											  OSGDB_LIBRARY 
+											  XERCES_LIBRARY
+											  OPENTHREADS_LIBRARY)
 
 SET_TARGET_PROPERTIES(${LIB_NAME}
                      PROPERTIES DEFINE_SYMBOL DT_UTIL_LIBRARY)

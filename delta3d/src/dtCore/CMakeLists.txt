@@ -176,18 +176,20 @@ walkmotionmodel.cpp
 ${PlatformSources}
 )
 
-TARGET_LINK_LIBRARIES( ${LIB_NAME}
-					  optimized dtUtil  debug dtUtilD
-					  optimized ode debug oded
-					  optimized osg debug osgd
-					  optimized osgDB debug osgDBd
-					  optimized osgGA debug osgGAd
-					  optimized osgViewer debug osgViewerd
-					  optimized osgParticle debug osgParticled
-					  optimized osgText debug osgTextd
-					  optimized osgUtil debug osgUtild
-					  optimized OpenThreads debug OpenThreadsd				  
-					  optimized xerces-c_2.lib debug xerces-c_2D.lib
+LINK_WITH_VARIABLES(${LIB_NAME}
+											  DTUTIL_LIBRARY
+											  OSG_LIBRARY
+											  OSGTEXT_LIBRARY											 
+											  OSGDB_LIBRARY
+											  OSGGA_LIBRARY
+											  OSGVIEWER_LIBRARY
+											  OSGPARTICLE_LIBRARY
+											  OSGUTIL_LIBRARY
+											  OPENTHREADS_LIBRARY
+											  ODE_LIBRARY
+											  XERCES_LIBRARY)
+
+TARGET_LINK_LIBRARIES( ${LIB_NAME}			
 					  Rpcrt4.lib
 					  ${OPENGL_LIBRARY} 
 					  ${MATH_LIBRARY}
