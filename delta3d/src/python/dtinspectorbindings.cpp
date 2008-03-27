@@ -4,7 +4,6 @@
 
 #include <python/dtpython.h>
 
-#include <dtCore/dt.h>
 #include <dtInspector/inspector.h>
 
 using namespace boost::python;

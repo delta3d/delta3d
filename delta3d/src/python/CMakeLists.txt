@@ -210,3 +210,130 @@ IF (MSVC)
   SET_TARGET_PROPERTIES( ${AUDIO_BINDINGS} PROPERTIES PREFIX "/../../bin/")
   SET_TARGET_PROPERTIES( ${AUDIO_BINDINGS} PROPERTIES IMPORT_PREFIX "../")
 ENDIF (MSVC)
+
+
+
+################
+SET(DAL_BINDINGS "PyDtDAL")
+
+ADD_LIBRARY ( ${DAL_BINDINGS} SHARED
+  ${CMAKE_SOURCE_DIR}/inc/python/dtpython.h
+  actorpropertybindings.cpp
+  actorproxybindings.cpp
+  datatypebindings.cpp
+  dtdalbindings.cpp
+  mapbindings.cpp
+  projectbindings.cpp
+)
+
+ADD_DEPENDENCIES (${DAL_BINDINGS}
+  dtDAL
+)
+
+TARGET_LINK_LIBRARIES ( ${DAL_BINDINGS}
+  optimized ${Boost_LIBRARY_DIRS}/boost_python-vc80-mt 
+  optimized ${PYTHON_LIBRARY}
+  optimized dtDAL
+)
+
+IF (WIN32)
+  SET_TARGET_PROPERTIES( ${DAL_BINDINGS} PROPERTIES SUFFIX ".pyd")
+ENDIF (WIN32)
+
+#little hack to get the .dll into /bin and .lib into /lib
+IF (MSVC)
+  SET_TARGET_PROPERTIES( ${DAL_BINDINGS} PROPERTIES PREFIX "/../../bin/")
+  SET_TARGET_PROPERTIES( ${DAL_BINDINGS} PROPERTIES IMPORT_PREFIX "../")
+ENDIF (MSVC)
+
+
+
+################
+SET(PLIB_BINDINGS "PyDtInputPLIB")
+
+ADD_LIBRARY ( ${PLIB_BINDINGS} SHARED
+  joystickbindings.cpp
+)
+
+ADD_DEPENDENCIES (${PLIB_BINDINGS}
+  dtCore
+  dtInputPLIB
+)
+
+TARGET_LINK_LIBRARIES ( ${PLIB_BINDINGS}
+  optimized ${Boost_LIBRARY_DIRS}/boost_python-vc80-mt 
+  optimized ${PYTHON_LIBRARY}
+  optimized dtCore
+  optimized dtInputPLIB
+)
+
+IF (WIN32)
+  SET_TARGET_PROPERTIES( ${PLIB_BINDINGS} PROPERTIES SUFFIX ".pyd")
+ENDIF (WIN32)
+
+#little hack to get the .dll into /bin and .lib into /lib
+IF (MSVC)
+  SET_TARGET_PROPERTIES( ${PLIB_BINDINGS} PROPERTIES PREFIX "/../../bin/")
+  SET_TARGET_PROPERTIES( ${PLIB_BINDINGS} PROPERTIES IMPORT_PREFIX "../")
+ENDIF (MSVC)
+
+
+
+################
+SET(INSPECTOR_BINDINGS "PyDtInspector")
+
+ADD_LIBRARY ( ${INSPECTOR_BINDINGS} SHARED
+  ${CMAKE_SOURCE_DIR}/inc/python/dtpython.h
+  dtinspectorbindings.cpp
+)
+
+ADD_DEPENDENCIES (${INSPECTOR_BINDINGS}
+  dtInspector
+)
+
+TARGET_LINK_LIBRARIES ( ${INSPECTOR_BINDINGS}
+  optimized ${Boost_LIBRARY_DIRS}/boost_python-vc80-mt 
+  optimized ${PYTHON_LIBRARY}
+  optimized dtInspector
+)
+
+IF (WIN32)
+  SET_TARGET_PROPERTIES( ${INSPECTOR_BINDINGS} PROPERTIES SUFFIX ".pyd")
+ENDIF (WIN32)
+
+#little hack to get the .dll into /bin and .lib into /lib
+IF (MSVC)
+  SET_TARGET_PROPERTIES( ${INSPECTOR_BINDINGS} PROPERTIES PREFIX "/../../bin/")
+  SET_TARGET_PROPERTIES( ${INSPECTOR_BINDINGS} PROPERTIES IMPORT_PREFIX "../")
+ENDIF (MSVC)
+
+################
+SET(TERRAIN_BINDINGS "PyDtTerrain")
+
+ADD_LIBRARY ( ${TERRAIN_BINDINGS} SHARED
+  ${CMAKE_SOURCE_DIR}/inc/python/dtpython.h
+  dtTerrainbindings.cpp
+  geocoordinateBindings.cpp
+  terrainBindings.cpp
+)
+
+ADD_DEPENDENCIES (${TERRAIN_BINDINGS}
+  dtTerrain
+)
+
+TARGET_LINK_LIBRARIES ( ${TERRAIN_BINDINGS}
+  optimized ${Boost_LIBRARY_DIRS}/boost_python-vc80-mt 
+  optimized ${PYTHON_LIBRARY}
+  optimized dtTerrain
+)
+
+IF (WIN32)
+  SET_TARGET_PROPERTIES( ${TERRAIN_BINDINGS} PROPERTIES SUFFIX ".pyd")
+ENDIF (WIN32)
+
+#little hack to get the .dll into /bin and .lib into /lib
+IF (MSVC)
+  SET_TARGET_PROPERTIES( ${TERRAIN_BINDINGS} PROPERTIES PREFIX "/../../bin/")
+  SET_TARGET_PROPERTIES( ${TERRAIN_BINDINGS} PROPERTIES IMPORT_PREFIX "../")
+ENDIF (MSVC)
+
