@@ -14,8 +14,11 @@ ADD_LIBRARY ( ${UTIL_BINDINGS} SHARED
 ADD_DEPENDENCIES (${UTIL_BINDINGS}
   dtUtil
 )
+
+LINK_WITH_VARIABLES(${UTIL_BINDINGS} 
+											  BOOST_PYTHON_LIBRARY)
+											  
 TARGET_LINK_LIBRARIES ( ${UTIL_BINDINGS}
-  optimized ${Boost_LIBRARY_DIRS}/boost_python-vc80-mt 
   optimized ${PYTHON_LIBRARY}
 )
 
@@ -88,9 +91,11 @@ walkmotionmodelbindings.cpp
 ADD_DEPENDENCIES (${CORE_BINDINGS}
   dtCore
 )
+
+LINK_WITH_VARIABLES(${CORE_BINDINGS} 
+											  BOOST_PYTHON_LIBRARY)
   
 TARGET_LINK_LIBRARIES ( ${CORE_BINDINGS}
-  optimized ${Boost_LIBRARY_DIRS}/boost_python-vc80-mt 
   optimized ${PYTHON_LIBRARY}
   optimized ${OSG_LIBRARY}
 )
@@ -126,8 +131,10 @@ ADD_DEPENDENCIES (${ABC_BINDINGS}
   dtCore
 )
 
+LINK_WITH_VARIABLES(${ABC_BINDINGS} 
+											  BOOST_PYTHON_LIBRARY)
+
 TARGET_LINK_LIBRARIES ( ${ABC_BINDINGS}
-  optimized ${Boost_LIBRARY_DIRS}/boost_python-vc80-mt 
   optimized ${PYTHON_LIBRARY}
   optimized ${OSG_LIBRARY}
 )
@@ -161,8 +168,10 @@ ADD_DEPENDENCIES (${AI_BINDINGS}
   dtCore
 )
 
+LINK_WITH_VARIABLES(${AI_BINDINGS} 
+											  BOOST_PYTHON_LIBRARY)
+
 TARGET_LINK_LIBRARIES ( ${AI_BINDINGS}
-  optimized ${Boost_LIBRARY_DIRS}/boost_python-vc80-mt 
   optimized ${PYTHON_LIBRARY}
   optimized ${OSG_LIBRARY}
   optimized dtCore
@@ -195,8 +204,10 @@ ADD_DEPENDENCIES (${AUDIO_BINDINGS}
   dtAudio
 )
 
+LINK_WITH_VARIABLES(${AUDIO_BINDINGS} 
+											  BOOST_PYTHON_LIBRARY)
+
 TARGET_LINK_LIBRARIES ( ${AUDIO_BINDINGS}
-  optimized ${Boost_LIBRARY_DIRS}/boost_python-vc80-mt 
   optimized ${PYTHON_LIBRARY}
   optimized dtAudio
 )
@@ -230,8 +241,10 @@ ADD_DEPENDENCIES (${DAL_BINDINGS}
   dtDAL
 )
 
+LINK_WITH_VARIABLES(${DAL_BINDINGS} 
+											  BOOST_PYTHON_LIBRARY)
+
 TARGET_LINK_LIBRARIES ( ${DAL_BINDINGS}
-  optimized ${Boost_LIBRARY_DIRS}/boost_python-vc80-mt 
   optimized ${PYTHON_LIBRARY}
   optimized dtDAL
 )
@@ -249,34 +262,40 @@ ENDIF (MSVC)
 
 
 ################
-SET(PLIB_BINDINGS "PyDtInputPLIB")
 
-ADD_LIBRARY ( ${PLIB_BINDINGS} SHARED
-  joystickbindings.cpp
-)
+IF(BUILD_PLIB)
 
-ADD_DEPENDENCIES (${PLIB_BINDINGS}
-  dtCore
-  dtInputPLIB
-)
+	SET(PLIB_BINDINGS "PyDtInputPLIB")
 
-TARGET_LINK_LIBRARIES ( ${PLIB_BINDINGS}
-  optimized ${Boost_LIBRARY_DIRS}/boost_python-vc80-mt 
-  optimized ${PYTHON_LIBRARY}
-  optimized dtCore
-  optimized dtInputPLIB
-)
+	ADD_LIBRARY ( ${PLIB_BINDINGS} SHARED
+	  joystickbindings.cpp
+	)
 
-IF (WIN32)
-  SET_TARGET_PROPERTIES( ${PLIB_BINDINGS} PROPERTIES SUFFIX ".pyd")
-ENDIF (WIN32)
+	ADD_DEPENDENCIES (${PLIB_BINDINGS}
+	  dtCore
+	  dtInputPLIB
+	)
+	
+	LINK_WITH_VARIABLES(${PLIB_BINDINGS} 
+											  BOOST_PYTHON_LIBRARY)
 
-#little hack to get the .dll into /bin and .lib into /lib
-IF (MSVC)
-  SET_TARGET_PROPERTIES( ${PLIB_BINDINGS} PROPERTIES PREFIX "/../../bin/")
-  SET_TARGET_PROPERTIES( ${PLIB_BINDINGS} PROPERTIES IMPORT_PREFIX "../")
-ENDIF (MSVC)
+	TARGET_LINK_LIBRARIES ( ${PLIB_BINDINGS}
+	  optimized ${PYTHON_LIBRARY}
+	  optimized dtCore
+	  optimized dtInputPLIB
+	)
 
+	IF (WIN32)
+	  SET_TARGET_PROPERTIES( ${PLIB_BINDINGS} PROPERTIES SUFFIX ".pyd")
+	ENDIF (WIN32)
+
+	#little hack to get the .dll into /bin and .lib into /lib
+	IF (MSVC)
+	  SET_TARGET_PROPERTIES( ${PLIB_BINDINGS} PROPERTIES PREFIX "/../../bin/")
+	  SET_TARGET_PROPERTIES( ${PLIB_BINDINGS} PROPERTIES IMPORT_PREFIX "../")
+	ENDIF (MSVC)
+
+ENDIF(BUILD_PLIB)
 
 
 ################
@@ -291,8 +310,10 @@ ADD_DEPENDENCIES (${INSPECTOR_BINDINGS}
   dtInspector
 )
 
+LINK_WITH_VARIABLES(${INSPECTOR_BINDINGS} 
+											  BOOST_PYTHON_LIBRARY)
+
 TARGET_LINK_LIBRARIES ( ${INSPECTOR_BINDINGS}
-  optimized ${Boost_LIBRARY_DIRS}/boost_python-vc80-mt 
   optimized ${PYTHON_LIBRARY}
   optimized dtInspector
 )
@@ -321,8 +342,10 @@ ADD_DEPENDENCIES (${TERRAIN_BINDINGS}
   dtTerrain
 )
 
+LINK_WITH_VARIABLES(${TERRAIN_BINDINGS} 
+											  BOOST_PYTHON_LIBRARY)
+
 TARGET_LINK_LIBRARIES ( ${TERRAIN_BINDINGS}
-  optimized ${Boost_LIBRARY_DIRS}/boost_python-vc80-mt 
   optimized ${PYTHON_LIBRARY}
   optimized dtTerrain
 )
