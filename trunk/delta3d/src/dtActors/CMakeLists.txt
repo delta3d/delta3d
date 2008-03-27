@@ -92,16 +92,11 @@ triggeractorproxy.cpp
 tripodactorproxy.cpp
 )
 
-TARGET_LINK_LIBRARIES(${LIB_NAME}
-												optimized dtGame debug dtGameD
-												optimized dtAudio debug dtAudioD
-												optimized dtAnim debug dtAnimD
-												optimized cal3d debug cal3d_d
-												)
-
-#TARGET_LINK_LIBRARIES(${LIB_NAME} dtUtil dtCore dtAI ${OPENGL_LIBRARY} ${MATH_LIBRARY}
-  # ${OSG_LIBRARY} ${OSGDB_LIBRARY} ${OSGPARTICLE_LIBRARY} ${OSGUTIL_LIBRARY} 
-   #${OPENTHREADS_LIBRARY} ${XERCES_LIBRARY})
+LINK_WITH_VARIABLES(${LIB_NAME}
+											  DTGAME_LIBRARY
+											  DTAUDIO_LIBRARY
+											  DTANIM_LIBRARY
+											  CAL3D_LIBRARY)
 
 SET_TARGET_PROPERTIES(${LIB_NAME}
                      PROPERTIES DEFINE_SYMBOL DT_PLUGIN)

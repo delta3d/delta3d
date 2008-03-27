@@ -73,15 +73,10 @@ transformableactorproxy.cpp
 waypointactorproxy.cpp
 )
 
-TARGET_LINK_LIBRARIES(${LIB_NAME}
-												optimized dtUtil debug dtUtilD
-												optimized dtAI debug dtAID
-												)
-
-#TARGET_LINK_LIBRARIES(${LIB_NAME} dtUtil dtCore dtAI ${OPENGL_LIBRARY} ${MATH_LIBRARY}
-  # ${OSG_LIBRARY} ${OSGDB_LIBRARY} ${OSGPARTICLE_LIBRARY} ${OSGUTIL_LIBRARY} 
-   #${OPENTHREADS_LIBRARY} ${XERCES_LIBRARY})
-
+LINK_WITH_VARIABLES(${LIB_NAME}
+											  DTUTIL_LIBRARY
+											  DTAI_LIBRARY)
+											  
 SET_TARGET_PROPERTIES(${LIB_NAME}
                      PROPERTIES DEFINE_SYMBOL DT_DAL_LIBRARY)
 

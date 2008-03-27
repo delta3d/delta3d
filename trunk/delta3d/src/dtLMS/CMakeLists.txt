@@ -30,11 +30,11 @@ ADD_LIBRARY(${LIB_NAME} SHARED
    lmsmessagevalue.cpp
 )
 
-TARGET_LINK_LIBRARIES( ${LIB_NAME}
-					  optimized dtGame debug dtGameD
-					  optimized dtAudio debug dtAudioD	 
-					  wsock32
-					  )
+LINK_WITH_VARIABLES(${LIB_NAME}
+											  DTGAME_LIBRARY
+											  DTAUDIO_LIBRARY)
+
+TARGET_LINK_LIBRARIES(${LIB_NAME} wsock32)
 
 SET_TARGET_PROPERTIES(${LIB_NAME}
                      PROPERTIES DEFINE_SYMBOL DT_LMS_LIBRARY)

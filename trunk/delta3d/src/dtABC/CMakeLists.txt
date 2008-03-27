@@ -58,10 +58,12 @@ weather.cpp
 widget.cpp
 )
 
-TARGET_LINK_LIBRARIES(${LIB_NAME} 
-												optimized dtUtil debug dtUtilD
-												optimized dtCore debug dtCoreD
-												optimized dtDAL debug dtDALD
+LINK_WITH_VARIABLES(${LIB_NAME}
+											  DTUTIL_LIBRARY
+											  DTCORE_LIBRARY
+											  DTDAL_LIBRARY)
+
+TARGET_LINK_LIBRARIES(${LIB_NAME} 												
 												 ${FLTK_LIBRARY} ${OPENGL_LIBRARY} ${MATH_LIBRARY})
 												 
 												 

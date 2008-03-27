@@ -31,16 +31,16 @@ sound.cpp
 soundeffectbinder.cpp
 )
 
-TARGET_LINK_LIBRARIES( ${LIB_NAME}
-					  optimized dtCore debug dtCoreD
-					  optimized dtUtil  debug dtUtilD
-					  optimized osg debug osgd
-					  optimized osgDB debug osgDBd
-					  optimized OpenThreads debug OpenThreadsd			
-					  optimized alut debug alutd
-					  ${OPENAL_LIBRARY} 
-					  ${ALUT_LIBRARY}
-					  )
+LINK_WITH_VARIABLES(${LIB_NAME}
+											  DTCORE_LIBRARY
+											  DTUTIL_LIBRARY
+											  OSG_LIBRARY
+											  OSGDB_LIBRARY
+											  OPENTHREADS_LIBRARY)
+
+TARGET_LINK_LIBRARIES( ${LIB_NAME}		
+					                                  ${OPENAL_LIBRARY} 
+					                                  ${ALUT_LIBRARY} )
 
 SET_TARGET_PROPERTIES(${LIB_NAME}
                      PROPERTIES DEFINE_SYMBOL DT_AUDIO_LIBRARY)
