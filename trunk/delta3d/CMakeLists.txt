@@ -125,7 +125,6 @@ if (BUILD_HLA)
 	
 ENDIF(BUILD_HLA)
   
-FIND_PACKAGE(PythonLibs)
 
 # Make the headers visible to everything
 INCLUDE_DIRECTORIES(
@@ -179,7 +178,7 @@ SET(LIBRARY_OUTPUT_PATH ${OUTPUT_LIBDIR})
 ################################################################################
 # User Options
 OPTION(BUILD_HLA "Enables the building of HLA related projects (e.g., dtHLAGM)" OFF)
-
+OPTION(BUILD_BINDINGS "Enabled the building of the bindings and related projects" OFF)
 
 # Expose CMAKE_INCLUDE_PATH and CMAKE_LIBARY_PATH to the GUI so users
 # may set these values without needing to manipulate the environment.
@@ -230,7 +229,13 @@ IF (BUILD_HLA)
   ADD_SUBDIRECTORY(src/dtHLAGM)
 ENDIF (BUILD_HLA)
 
-#ADD_SUBDIRECTORY(src/python)
+IF (BUILD_BINDINGS)
+  FIND_PACKAGE(PythonLibs REQUIRED)
+  FIND_PACKAGE(Boost REQUIRED)
+  IF(PYTHON_LIBRARIES AND Boost_FOUND)
+    ADD_SUBDIRECTORY(src/python)
+  ENDIF (PYTHON_LIBRARIES AND Boost_FOUND)
+ENDIF (BUILD_BINDINGS)
 
 #ADD_SUBDIRECTORY(utilities)
 #ADD_SUBDIRECTORY(examples)
