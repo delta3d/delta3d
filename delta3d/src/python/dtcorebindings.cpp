@@ -3,7 +3,8 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <python/dtpython.h>
-#include <dtCore/dt.h>
+#include <dtCore/notify.h>
+#include <dtCore/globals.h>
 
 using namespace boost::python;
 using namespace dtCore;

@@ -4,9 +4,6 @@
 
 #include <python/dtpython.h>
 
-#include <dtCore/dt.h>
-#include <dtABC/dtabc.h>
-
 void initBaseABCBindings();
 void initApplicationBindings();
 void initProximityTriggerBindings();
