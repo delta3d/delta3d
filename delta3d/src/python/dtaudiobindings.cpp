@@ -4,8 +4,7 @@
 
 #include <python/dtpython.h>
 
-#include <dtCore/dt.h>
-#include <dtAudio/dtaudio.h>
+
 
 void initAudioManagerBindings();
 void initListenerBindings();
