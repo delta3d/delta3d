@@ -64,5 +64,6 @@ void initObjectBindings()
       .def("LoadFile", &ObjectWrap::LoadFileWrapper2 )
       .def("RecenterGeometryUponLoad", &Object::RecenterGeometryUponLoad, RGUL_overloads())
       .def("GetFilename", &Object::GetFilename, return_value_policy<copy_const_reference>())
+      .def("SetScale", &Object::SetScale)
       ;
 }
