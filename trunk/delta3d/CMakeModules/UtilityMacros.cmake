@@ -1,5 +1,6 @@
 
-INCLUDE(ListHandle)
+# Where is this and what do we need it for?
+#INCLUDE(ListHandle)
 
 
   MACRO(FILTER_OUT FILTERS INPUTS OUTPUT)
@@ -178,3 +179,13 @@ MACRO(MACRO_MESSAGE MYTEXT)
         MESSAGE(STATUS "in file -->${CMAKE_CURRENT_LIST_FILE}<-- line -->${CMAKE_CURRENT_LIST_LINE}<-- message  ${MYTEXT}")
     ENDIF(MACRO_MESSAGE_DEBUG)
 ENDMACRO(MACRO_MESSAGE MYTEXT)
+
+MACRO(LINK_WITH_VARIABLES TRGTNAME)
+    FOREACH(varname ${ARGN})		
+        IF(${varname}_DEBUG)
+            TARGET_LINK_LIBRARIES(${TRGTNAME} optimized "${${varname}}" debug "${${varname}_DEBUG}")
+        ELSE(${varname}_DEBUG)
+            TARGET_LINK_LIBRARIES(${TRGTNAME} "${${varname}}" )
+        ENDIF(${varname}_DEBUG)
+    ENDFOREACH(varname)
+ENDMACRO(LINK_WITH_VARIABLES TRGTNAME)
