@@ -114,10 +114,8 @@ FIND_PACKAGE(GNE REQUIRED)
 SET(QT_USE_QTOPENGL "true")
 FIND_PACKAGE(Qt4)
 
-FIND_PACKAGE(PLIB)
 FIND_PACKAGE(GDAL)
 FIND_PACKAGE(DIS)
-FIND_PACKAGE(Isense)
 
 if (BUILD_HLA)
 	FIND_PATH(RTIS_ROOT_DIR include/1.3/RTI.hh
@@ -129,6 +127,14 @@ if (BUILD_HLA)
 	ENDIF(RTIS_ROOT_DIR)
 	
 ENDIF(BUILD_HLA)
+
+IF (BUILD_PLIB)
+	FIND_PACKAGE(PLIB)
+ENDIF(BUILD_PLIB)
+
+IF (BUILD_ISENSE)
+	FIND_PACKAGE(Isense)
+ENDIF(BUILD_ISENSE)
   
 
 # Make the headers visible to everything
@@ -184,6 +190,8 @@ SET(LIBRARY_OUTPUT_PATH ${OUTPUT_LIBDIR})
 # User Options
 OPTION(BUILD_HLA "Enables the building of HLA related projects (e.g., dtHLAGM)" OFF)
 OPTION(BUILD_BINDINGS "Enabled the building of the bindings and related projects" OFF)
+OPTION(BUILD_PLIB "Enabes the building of dtInputPLIB" OFF)
+OPTION(BUILD_ISENSE "Enables the building the Delta Intersense library dtInputISENSE" OFF)
 
 # Expose CMAKE_INCLUDE_PATH and CMAKE_LIBARY_PATH to the GUI so users
 # may set these values without needing to manipulate the environment.
@@ -222,8 +230,6 @@ ADD_SUBDIRECTORY(src/dtGame)
 ADD_SUBDIRECTORY(src/dtAnim)
 ADD_SUBDIRECTORY(src/dtActors)
 ADD_SUBDIRECTORY(src/dtNetGM)
-#ADD_SUBDIRECTORY(src/dtInputISense)
-#ADD_SUBDIRECTORY(src/dtInputPLIB)
 #ADD_SUBDIRECTORY(src/dtInspector)
 ADD_SUBDIRECTORY(src/dtLMS)
 ADD_SUBDIRECTORY(src/dtTerrain)
@@ -233,6 +239,14 @@ ADD_SUBDIRECTORY(src/dtDIS)
 IF (BUILD_HLA)
   ADD_SUBDIRECTORY(src/dtHLAGM)
 ENDIF (BUILD_HLA)
+
+IF (BUILD_PLIB)
+	ADD_SUBDIRECTORY(src/dtInputPLIB)
+ENDIF(BUILD_PLIB)
+
+IF (BUILD_ISENSE)
+	ADD_SUBDIRECTORY(src/dtInputISense)
+ENDIF(BUILD_ISENSE)
 
 IF (BUILD_BINDINGS)
   FIND_PACKAGE(PythonLibs REQUIRED)
