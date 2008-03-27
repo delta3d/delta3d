@@ -61,7 +61,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="boost_python-vc80-mt.lib python25.lib"
+				AdditionalDependencies="boost_python-vc80-mt.lib python25.lib osg.lib"
 				OutputFile="../../../bin\PyDtABC.pyd"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -141,7 +141,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="boost_python-vc80-mt-gd.lib python25.lib"
+				AdditionalDependencies="boost_python-vc80-mt-gd.lib python25.lib osgD.lib"
 				OutputFile="../../../bin/python_debug/PyDtABC.pyd"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
