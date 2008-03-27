@@ -11,6 +11,9 @@ ADD_LIBRARY ( ${UTIL_BINDINGS} SHARED
   polardecompbindings.cpp
 )
 
+ADD_DEPENDENCIES (${UTIL_BINDINGS}
+  dtUtil
+)
 TARGET_LINK_LIBRARIES ( ${UTIL_BINDINGS}
   optimized ${Boost_LIBRARY_DIRS}/boost_python-vc80-mt 
   optimized ${PYTHON_LIBRARY}
@@ -80,6 +83,10 @@ ufomotionmodelbindings.cpp
 walkmotionmodelbindings.cpp
 )
 
+ADD_DEPENDENCIES (${CORE_BINDINGS}
+  dtCore
+)
+  
 TARGET_LINK_LIBRARIES ( ${CORE_BINDINGS}
   optimized ${Boost_LIBRARY_DIRS}/boost_python-vc80-mt 
   optimized ${PYTHON_LIBRARY}
