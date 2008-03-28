@@ -115,6 +115,14 @@ Compass::Compass( Camera* cam )
 
    // Default collision category = 2
    SetCollisionCategoryBits( UNSIGNED_BIT(2) );
+
+   // set render depth so that it is not culled from scene due to occluding geometry
+   osg::StateSet* state = GetOSGNode()->getOrCreateStateSet() ;
+   state->setMode( GL_DEPTH_TEST , osg::StateAttribute::OFF ) ;
+
+   // Need to make sure this geometry is draw last. RenderBins are handled
+   // in numerical order so set bin number to 99
+   state->setRenderBinDetails( 99, "RenderBin" ) ;
 }
 
 
@@ -201,12 +209,10 @@ Compass::ctor()
    osg::Projection*  projection  = new osg::Projection;
    assert( projection );
 
-   projection->setMatrix( osg::Matrix::ortho2D(0.f, mScreenW, 0.f, mScreenH) );
+   projection->setMatrix( osg::Matrix::ortho( 0.f , mScreenW , 0.f , mScreenH , -200.0 , 200.0 ) ) ;
    projection->addChild( modelview_abs );
 
-
    GetMatrixNode()->addChild( projection );
-
 
    SetName( "Compass" );
 
