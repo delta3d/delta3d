@@ -14,16 +14,17 @@ ADD_LIBRARY(${LIB_NAME} SHARED
 	inspector.cpp
 )
 
-LINK_WITH_VARIABLES(${LIB_NAME}			
-											  DTUTIL_LIBRARY
+LINK_WITH_VARIABLES(${LIB_NAME}													 
 											  DTCORE_LIBRARY	
-											  DTABC_LIBRARY
-											  OSG_LIBRARY
-											  OPENTHREADS_LIBRARY)
+											  DTABC_LIBRARY)
+                                              
+#TARGET_LINK_LIBRARIES(${LIB_NAME}
+#                                                      wsock32
+#                                                      comctl32)
 
 SET_TARGET_PROPERTIES(${LIB_NAME}
                      PROPERTIES DEFINE_SYMBOL DT_INSPECTOR_LIBRARY
-					  LINK_FLAGS "/NODEFAULTLIB:libc.lib;libcmt;libcd;libcmtd;msvcrt")					
+					  LINK_FLAGS "/NODEFAULTLIB:libc.lib")					
 
 INCLUDE(ModuleInstall OPTIONAL)
 

@@ -80,7 +80,8 @@ IF(WIN32)
     ${BOOST_DIR_SEARCH}
     C:/boost/include
     D:/boost/include
-  )
+  ) 
+  
 ENDIF(WIN32)
 
 # Add in some path suffixes. These will have to be updated whenever a new Boost version comes out.
@@ -134,6 +135,14 @@ IF(Boost_INCLUDE_DIR)
   ENDIF(EXISTS "${Boost_LIBRARY_DIR}/lib")
 
   IF(EXISTS "${Boost_INCLUDE_DIR}")
+  
+    # For Delta, check the include directory to find where python includes are at
+    SET(BOOST_PYTHON_DIR_SEARCH
+             ${Boost_INCLUDE_DIR}/boost/python/detail)
+             
+    FIND_PATH(Boost_PYTHON_INCLUDE_DIR NAMES wrap_python.hpp  PATHS ${BOOST_PYTHON_DIR_SEARCH})
+    #MESSAGE(ERROR ${Boost_PYTHON_INCLUDE_DIR})
+             
     SET(Boost_INCLUDE_DIRS ${Boost_INCLUDE_DIR})
     # We have found boost. It is possible that the user has not
     # compiled any libraries so we set Boost_FOUND to be true here.
