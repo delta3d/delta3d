@@ -110,6 +110,7 @@ FIND_PACKAGE(XercesC REQUIRED)
 FIND_PACKAGE(FLTK REQUIRED)
 FIND_PACKAGE(HAWKNL REQUIRED)
 FIND_PACKAGE(GNE REQUIRED)
+FIND_PACKAGE(FLTK REQUIRED)
 
 SET(QT_USE_QTOPENGL "true")
 FIND_PACKAGE(Qt4)
@@ -147,6 +148,8 @@ INCLUDE_DIRECTORIES(
     ${CEGUI_INCLUDE_DIR}
     ${ODE_INCLUDE_DIR}
     ${XERCES_INCLUDE_DIR}
+    ${Boost_PYTHON_INCLUDE_DIR}
+    ${PYTHON_INCLUDE_PATH}  
 )
 
 IF (APPLE)
@@ -192,6 +195,7 @@ OPTION(BUILD_HLA "Enables the building of HLA related projects (e.g., dtHLAGM)" 
 OPTION(BUILD_BINDINGS "Enabled the building of the bindings and related projects" OFF)
 OPTION(BUILD_PLIB "Enabes the building of dtInputPLIB" OFF)
 OPTION(BUILD_ISENSE "Enables the building the Delta Intersense library dtInputISENSE" OFF)
+OPTION(BUILD_EXAMPLES "Enables the building of the Delta3D example projects" ON)
 
 # Expose CMAKE_INCLUDE_PATH and CMAKE_LIBARY_PATH to the GUI so users
 # may set these values without needing to manipulate the environment.
@@ -233,7 +237,6 @@ ADD_SUBDIRECTORY(src/dtNetGM)
 ADD_SUBDIRECTORY(src/dtInspector)
 ADD_SUBDIRECTORY(src/dtLMS)
 ADD_SUBDIRECTORY(src/dtTerrain)
-#ADD_SUBDIRECTORY(src/dtScript)
 
 ADD_SUBDIRECTORY(src/dtDIS)
 IF (BUILD_HLA)
@@ -248,19 +251,22 @@ IF (BUILD_ISENSE)
 	ADD_SUBDIRECTORY(src/dtInputISense)
 ENDIF(BUILD_ISENSE)
 
-IF (BUILD_BINDINGS)
+IF (BUILD_BINDINGS)  
   FIND_PACKAGE(PythonLibs REQUIRED)
   FIND_PACKAGE(Boost REQUIRED)
-  IF(PYTHON_LIBRARIES AND Boost_FOUND)
+  IF(PYTHON_LIBRARIES AND Boost_FOUND)  
     ADD_SUBDIRECTORY(src/python)
+    ADD_SUBDIRECTORY(src/dtScript)
   ENDIF (PYTHON_LIBRARIES AND Boost_FOUND)
 ENDIF (BUILD_BINDINGS)
 
 #ADD_SUBDIRECTORY(utilities)
-#ADD_SUBDIRECTORY(examples)
 #ADD_SUBDIRECTORY(demos)
 #ADD_SUBDIRECTORY(tests)
 
+IF(BUILD_EXAMPLES)
+    ADD_SUBDIRECTORY(examples)
+ENDIF(BUILD_EXAMPLES)
 
 # This is for an advanced option to give aggressive warnings 
 # under different compilers. If yours is not implemented, this option

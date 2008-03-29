@@ -16,11 +16,9 @@ ADD_DEPENDENCIES (${UTIL_BINDINGS}
 )
 
 LINK_WITH_VARIABLES(${UTIL_BINDINGS} 
-											  BOOST_PYTHON_LIBRARY)
-											  
-TARGET_LINK_LIBRARIES ( ${UTIL_BINDINGS}
-  optimized ${PYTHON_LIBRARY}
-)
+                                              BOOST_PYTHON_LIBRARY
+                                              PYTHON_LIBRARY
+                                              OSG_LIBRARY)											  
 
 IF (WIN32)
   SET_TARGET_PROPERTIES( ${UTIL_BINDINGS} PROPERTIES SUFFIX ".pyd")
@@ -93,12 +91,9 @@ ADD_DEPENDENCIES (${CORE_BINDINGS}
 )
 
 LINK_WITH_VARIABLES(${CORE_BINDINGS} 
-											  BOOST_PYTHON_LIBRARY)
-  
-TARGET_LINK_LIBRARIES ( ${CORE_BINDINGS}
-  optimized ${PYTHON_LIBRARY}
-  optimized ${OSG_LIBRARY}
-)
+                                              BOOST_PYTHON_LIBRARY
+                                              PYTHON_LIBRARY
+                                              OSG_LIBRARY)
 
 IF (WIN32)
   SET_TARGET_PROPERTIES( ${CORE_BINDINGS} PROPERTIES SUFFIX ".pyd")
@@ -132,12 +127,9 @@ ADD_DEPENDENCIES (${ABC_BINDINGS}
 )
 
 LINK_WITH_VARIABLES(${ABC_BINDINGS} 
-											  BOOST_PYTHON_LIBRARY)
-
-TARGET_LINK_LIBRARIES ( ${ABC_BINDINGS}
-  optimized ${PYTHON_LIBRARY}
-  optimized ${OSG_LIBRARY}
-)
+                                              BOOST_PYTHON_LIBRARY
+                                              PYTHON_LIBRARY
+                                              OSG_LIBRARY)
 
 IF (WIN32)
   SET_TARGET_PROPERTIES( ${ABC_BINDINGS} PROPERTIES SUFFIX ".pyd")
@@ -169,14 +161,12 @@ ADD_DEPENDENCIES (${AI_BINDINGS}
 )
 
 LINK_WITH_VARIABLES(${AI_BINDINGS} 
-											  BOOST_PYTHON_LIBRARY)
+                                              BOOST_PYTHON_LIBRARY
+                                              PYTHON_LIBRARY
+                                              OSG_LIBRARY
+                                              DTCORE_LIBRARY
+                                              DTAI_LIBRARY)
 
-TARGET_LINK_LIBRARIES ( ${AI_BINDINGS}
-  optimized ${PYTHON_LIBRARY}
-  optimized ${OSG_LIBRARY}
-  optimized dtCore
-  optimized dtAI
-)
 
 IF (WIN32)
   SET_TARGET_PROPERTIES( ${AI_BINDINGS} PROPERTIES SUFFIX ".pyd")
@@ -205,12 +195,9 @@ ADD_DEPENDENCIES (${AUDIO_BINDINGS}
 )
 
 LINK_WITH_VARIABLES(${AUDIO_BINDINGS} 
-											  BOOST_PYTHON_LIBRARY)
-
-TARGET_LINK_LIBRARIES ( ${AUDIO_BINDINGS}
-  optimized ${PYTHON_LIBRARY}
-  optimized dtAudio
-)
+                                              BOOST_PYTHON_LIBRARY
+                                              PYTHON_LIBRARY
+                                              DTAUDIO_LIBRARY)
 
 IF (WIN32)
   SET_TARGET_PROPERTIES( ${AUDIO_BINDINGS} PROPERTIES SUFFIX ".pyd")
@@ -242,12 +229,9 @@ ADD_DEPENDENCIES (${DAL_BINDINGS}
 )
 
 LINK_WITH_VARIABLES(${DAL_BINDINGS} 
-											  BOOST_PYTHON_LIBRARY)
-
-TARGET_LINK_LIBRARIES ( ${DAL_BINDINGS}
-  optimized ${PYTHON_LIBRARY}
-  optimized dtDAL
-)
+                                              BOOST_PYTHON_LIBRARY
+                                              PYTHON_LIBRARY
+                                              DTDAL_LIBRARY)
 
 IF (WIN32)
   SET_TARGET_PROPERTIES( ${DAL_BINDINGS} PROPERTIES SUFFIX ".pyd")
@@ -277,13 +261,10 @@ IF(BUILD_PLIB)
 	)
 	
 	LINK_WITH_VARIABLES(${PLIB_BINDINGS} 
-											  BOOST_PYTHON_LIBRARY)
-
-	TARGET_LINK_LIBRARIES ( ${PLIB_BINDINGS}
-	  optimized ${PYTHON_LIBRARY}
-	  optimized dtCore
-	  optimized dtInputPLIB
-	)
+                                                  BOOST_PYTHON_LIBRARY
+                                                  PYTHON_LIBRARY
+                                                  DTCORE_LIBRARY
+                                                  DTINPUT_PLIB)	
 
 	IF (WIN32)
 	  SET_TARGET_PROPERTIES( ${PLIB_BINDINGS} PROPERTIES SUFFIX ".pyd")
@@ -311,12 +292,9 @@ ADD_DEPENDENCIES (${INSPECTOR_BINDINGS}
 )
 
 LINK_WITH_VARIABLES(${INSPECTOR_BINDINGS} 
-											  BOOST_PYTHON_LIBRARY)
-
-TARGET_LINK_LIBRARIES ( ${INSPECTOR_BINDINGS}
-  optimized ${PYTHON_LIBRARY}
-  optimized dtInspector
-)
+                                              BOOST_PYTHON_LIBRARY
+                                              PYTHON_LIBRARY
+                                              DTINSPECTOR_LIBRARY)
 
 IF (WIN32)
   SET_TARGET_PROPERTIES( ${INSPECTOR_BINDINGS} PROPERTIES SUFFIX ".pyd")
@@ -343,12 +321,10 @@ ADD_DEPENDENCIES (${TERRAIN_BINDINGS}
 )
 
 LINK_WITH_VARIABLES(${TERRAIN_BINDINGS} 
-											  BOOST_PYTHON_LIBRARY)
-
-TARGET_LINK_LIBRARIES ( ${TERRAIN_BINDINGS}
-  optimized ${PYTHON_LIBRARY}
-  optimized dtTerrain
-)
+                                              BOOST_PYTHON_LIBRARY
+                                              PYTHON_LIBRARY
+                                              DTCORE_LIBRARY
+                                              DTTERRAIN_LIBRARY)
 
 IF (WIN32)
   SET_TARGET_PROPERTIES( ${TERRAIN_BINDINGS} PROPERTIES SUFFIX ".pyd")
