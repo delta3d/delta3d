@@ -1,0 +1,28 @@
+# Build script for Delta3D terrain module.
+import sys
+
+# Import the variables defined in the global SConstruct build script.
+Import ('*')
+
+# Grab all the sources from the terrain  source directory.
+sources = env.SGlob('*.cpp')
+
+dtTerrainDeps =[ 'dtDAL', 'dtutil', 'dtCore', 'dtChar', 'dtaudio', 'dtabc', 
+                 'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgText', 'osgUtil', 
+                 'osgSim', 'osgFX','rbody', 'rvrutils', 'rcfgscript','gdal', 
+                 'cal3d', 
+                 'opengl' ]
+
+defines = []
+defines = ['DT_TERRAIN_LIBRARY']
+
+if env['OS'] == 'windows' :
+   dtTerrainDeps += [ 'User32', 'Advapi32', 'Rpcrt4', 'Winmm', 'Gdi32' ]
+elif env['OS'] == 'linux':
+   dtTerrainDeps += [ 'uuid', 'Xxf86vm' ]
+elif env['OS'] == 'darwin':
+   dtTerrainDeps += [ 'CoreFoundation', 'IOKit', 'Carbon' ]
+
+libdtTerrain = env.BuildLib( 'dtTerrain', sources, dtTerrainDeps, defines)
+
+Export ('libdtTerrain')

@@ -1,0 +1,95 @@
+# Locate OSG
+# This module defines
+# RTIS_LIBRARY
+# RTIS_FOUND, if false, do not try to link to OSG
+# RTIS_INCLUDE_DIR, where to find the headers
+#
+# $RTIS_DIR is an environment variable that would
+# correspond to the ./configure --prefix=$RTIS_DIR
+#
+# Created by David Guthrie. 
+
+FIND_PATH(RTIS_INCLUDE_DIR RTI.hh
+    $ENV{RTI}/include/1.3
+	${RTIS_ROOT_DIR}/include/1.3
+)
+
+IF (APPLE)
+  SET(PATHLIST 
+        $ENV{RTI}/lib/macintel_g++-4.0
+        $ENV{RTI}/lib/darwin_g++-4.0
+        $ENV{RTI}/lib/darwin_g++-3.3
+		${RTIS_ROOT_DIR}/lib/macintel_g++-4.0
+		${RTIS_ROOT_DIR}/lib/darwin_g++-4.0
+		${RTIS_ROOT_DIR}/lib/darwin_g++-3.3
+  )
+ELSE (APPLE)
+  IF (UNIX)
+     SET(PATHLIST 
+        $ENV{RTI}/lib/linux_g++-3.4
+        $ENV{RTI}/lib/linux_g++-4.0
+        $ENV{RTI}/lib/linux_g++-4.1
+        $ENV{RTI}/lib/linux_g++-4.2
+        $ENV{RTI}/lib/linux_g++-4.3
+		${RTIS_ROOT_DIR}/lib/linux_g++-3.4
+		${RTIS_ROOT_DIR}/lib/linux_g++-4.0
+		${RTIS_ROOT_DIR}/lib/linux_g++-4.1
+		${RTIS_ROOT_DIR}/lib/linux_g++-4.2
+		${RTIS_ROOT_DIR}/lib/linux_g++-4.3
+     )
+  ENDIF (UNIX)
+ENDIF (APPLE)
+
+IF (WIN32)
+     SET(PATHLIST 
+	    $ENV{RTI}/lib/winnt_vc++-8.0
+		${RTIS_ROOT_DIR}/lib/winnt_vc++-8.0
+        $ENV{RTI}/lib/winnt_vc++-7.1      
+		${RTIS_ROOT_DIR}/lib/winnt_vc++-7.1		
+     )
+ENDIF (WIN32)
+
+MACRO(FIND_RTIS_LIBRARY MYLIBRARY MYLIBRARYNAME)
+
+    FIND_LIBRARY(${MYLIBRARY}
+        NAMES ${MYLIBRARYNAME}
+        PATHS ${PATHLIST}
+    )
+
+ENDMACRO(FIND_RTIS_LIBRARY LIBRARY LIBRARYNAME)
+
+SET(RTI_13_LIST rti13 librti13)
+SET(RTI_FEDTIME13_LIST fedtime13 libfedtime13)
+SET(RTI_RTIFEDTIME_LIST rtifedtime librtifedtime)
+SET(RTI_FEDTIME_LIST fedtime libfedtime)
+SET(RTI_RTI_LIST rti librti)
+SET(RTI_Z_LIST z zlib)
+
+FIND_RTIS_LIBRARY(RTIS_NG_LIBRARY RTI-NG )
+FIND_RTIS_LIBRARY(RTIS_MEMPOOL_LIBRARY mempool )
+FIND_RTIS_LIBRARY(RTIS_13_LIBRARY "${RTI_13_LIST}" )
+FIND_RTIS_LIBRARY(RTIS_URLREADER_LIBRARY urlreader )
+FIND_RTIS_LIBRARY(RTIS_BITVECTOR_LIBRARY bitvector )
+FIND_RTIS_LIBRARY(RTIS_MERSENNE_LIBRARY mersenne )
+FIND_RTIS_LIBRARY(RTIS_VTERM_LIBRARY vterm )
+FIND_RTIS_LIBRARY(RTIS_BUFMGR_LIBRARY bufmgr )
+FIND_RTIS_LIBRARY(RTIS_MSGSTATS_LIBRARY msgstats )
+FIND_RTIS_LIBRARY(RTIS_RTIFEDTIME_LIBRARY "${RTI_RTIFEDTIME_LIST}")
+FIND_RTIS_LIBRARY(RTIS_XREGEX_LIBRARY xregex )
+FIND_RTIS_LIBRARY(RTIS_FEDTIME_LIBRARY "${RTI_FEDTIME_LIST}" )
+FIND_RTIS_LIBRARY(RTIS_NETUTIL_LIBRARY netutil )
+FIND_RTIS_LIBRARY(RTIS_RTIINTERCEPT_LIBRARY rtiintercept ) 
+FIND_RTIS_LIBRARY(RTIS_Z_LIBRARY "${RTI_Z_LIST}" )
+FIND_RTIS_LIBRARY(RTIS_FEDTIME13_LIBRARY "${RTI_FEDTIME13_LIST}" )
+FIND_RTIS_LIBRARY(RTIS_PARSER_LIBRARY parser )
+FIND_RTIS_LIBRARY(RTIS_LIBRARY rtis )
+FIND_RTIS_LIBRARY(RTIS_IF_LIBRARY if )
+FIND_RTIS_LIBRARY(RTIS_RID_LIBRARY rid )
+FIND_RTIS_LIBRARY(RTIS_MCAST_LIBRARY mcast )
+FIND_RTIS_LIBRARY(RTIS_RTI_LIBRARY "${RTI_RTI_LIST}" )
+FIND_RTIS_LIBRARY(RTIS_TIMERS_LIBRARY timers )
+
+SET(RTIS_FOUND "NO")
+IF(RTIS_LIBRARY AND RTIS_INCLUDE_DIR)
+    SET(RTIS_FOUND "YES")
+ENDIF(RTIS_LIBRARY AND RTIS_INCLUDE_DIR)
