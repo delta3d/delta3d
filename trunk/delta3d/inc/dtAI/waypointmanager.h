@@ -96,6 +96,11 @@ namespace dtAI
         Waypoint* GetWaypoint(unsigned pIndex);
 
         /**
+         * Returns a single waypoint by index (const version)
+         */
+        const Waypoint *GetWaypoint(unsigned pIndex) const;
+
+        /**
          * Given a scene we create a NavMesh
          * the scene is used for doing Isector tests
          * to test if pairs of waypoints are traversable.

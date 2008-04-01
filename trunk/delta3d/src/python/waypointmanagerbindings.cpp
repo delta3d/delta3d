@@ -19,6 +19,9 @@ void init_WaypointManagerBindings()
 
    int (WaypointManager::*AddWaypoint1)(const osg::Vec3&) = &WaypointManager::AddWaypoint;
 
+   const Waypoint *(WaypointManager::*GetWaypointc)(unsigned pIndex) const = &WaypointManager::GetWaypoint;
+   Waypoint *(WaypointManager::*GetWaypointnc)(unsigned pIndex)            = &WaypointManager::GetWaypoint;
+
    class_<std::vector<Waypoint*> >("WaypointList")
       .def(vector_indexing_suite<std::vector<Waypoint*> >());
 
@@ -36,7 +39,8 @@ void init_WaypointManagerBindings()
       .def("Clear", &WaypointManager::Clear)
       .def("AddWaypoint", AddWaypoint1)
       .def("AddPathSegment", &WaypointManager::AddPathSegment)
-      .def("GetWaypoint", &WaypointManager::GetWaypoint, return_value_policy<reference_existing_object>())
+      .def("GetWaypoint", GetWaypointc,  return_value_policy<reference_existing_object>())
+      .def("GetWaypoint", GetWaypointnc, return_value_policy<reference_existing_object>())
       .def("SetWaypointColor", &WaypointManager::SetWaypointColor)
       .def("SetWaypointSize", &WaypointManager::SetWaypointSize)
       ;
