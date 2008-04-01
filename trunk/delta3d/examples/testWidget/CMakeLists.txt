@@ -27,9 +27,6 @@ LINK_WITH_VARIABLES(${LIB_NAME}
                                               
 TARGET_LINK_LIBRARIES(${LIB_NAME} Ws2_32 Comctl32)
 
-SET_TARGET_PROPERTIES(${LIB_NAME}
-                     PROPERTIES 
-                     LINK_FLAGS "/NODEFAULTLIB:libc.lib;licmt;libcd;libcmtd")
 
 
 INCLUDE(ModuleInstall OPTIONAL)

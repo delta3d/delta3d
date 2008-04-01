@@ -14,7 +14,18 @@ ENDIF(WIN32)
 
 PROJECT(DELTA3D)
 
+################################################################################
+# User Options
+OPTION(BUILD_HLA "Enables the building of HLA related projects (e.g., dtHLAGM)" ON)
+OPTION(BUILD_BINDINGS "Enabled the building of the bindings and related projects" OFF)
+OPTION(BUILD_PLIB "Enabes the building of dtInputPLIB" OFF)
+OPTION(BUILD_ISENSE "Enables the building the Delta Intersense library dtInputISENSE" OFF)
+OPTION(BUILD_EXAMPLES "Enables the building of the Delta3D example projects" ON)
+
+
+IF (WIN32)
 SET(CMAKE_DEBUG_POSTFIX  "d")
+ENDIF (WIN32)
 
 # We want to build SONAMES shared librariess
 SET(DELTA32_SONAMES TRUE)
@@ -73,6 +84,9 @@ IF(WIN32)
 ##########################################################################################################
 
     IF(MSVC)
+        SET(CMAKE_MODULE_LINKER_FLAGS "/NODEFAULTLIB:python25_d;libc.lib;licmt;libcd;libcmtd")
+        SET(CMAKE_SHARED_LINKER_FLAGS "/NODEFAULTLIB:python25_d;libc.lib;licmt;libcd;libcmtd")
+        SET(CMAKE_EXE_LINKER_FLAGS "/NODEFAULTLIB:python25_d;libc.lib;licmt;libcd;libcmtd")
         IF(${CMAKE_MAJOR_VERSION} EQUAL 2 AND ${CMAKE_MINOR_VERSION} EQUAL 4 AND ${CMAKE_PATCH_VERSION} LESS 7)
             MESSAGE("Warning:  disabling versioned options 2.4.6 exibits inconsintencies in .pdb naming, at least under MSVC, suggested upgrading at least to 2.4.7")
             SET(DELTA3D_MSVC_VERSIONED_DLL OFF)
@@ -118,6 +132,8 @@ FIND_PACKAGE(Qt4)
 FIND_PACKAGE(GDAL)
 FIND_PACKAGE(DIS)
 
+FIND_PACKAGE(Boost)
+
 if (BUILD_HLA)
 	FIND_PATH(RTIS_ROOT_DIR include/1.3/RTI.hh
 	                      $ENV{RTI}/include/1.3)
@@ -138,6 +154,8 @@ IF (BUILD_ISENSE)
 ENDIF(BUILD_ISENSE)
   
 
+MESSAGE(STATUS "${Boost_INCLUDE_DIR} ${Boost_PYTHON_INCLUDE_DIR} ${PYTHON_INCLUDE_PATH}")
+
 # Make the headers visible to everything
 INCLUDE_DIRECTORIES(
     ${DELTA3D_SOURCE_DIR}/inc
@@ -148,6 +166,7 @@ INCLUDE_DIRECTORIES(
     ${CEGUI_INCLUDE_DIR}
     ${ODE_INCLUDE_DIR}
     ${XERCES_INCLUDE_DIR}
+    ${Boost_INCLUDE_DIR}
     ${Boost_PYTHON_INCLUDE_DIR}
     ${PYTHON_INCLUDE_PATH}  
 )
@@ -189,13 +208,6 @@ SET(OUTPUT_LIBDIR ${PROJECT_BINARY_DIR}/lib)
 MAKE_DIRECTORY(${OUTPUT_LIBDIR})
 SET(LIBRARY_OUTPUT_PATH ${OUTPUT_LIBDIR})
 
-################################################################################
-# User Options
-OPTION(BUILD_HLA "Enables the building of HLA related projects (e.g., dtHLAGM)" OFF)
-OPTION(BUILD_BINDINGS "Enabled the building of the bindings and related projects" OFF)
-OPTION(BUILD_PLIB "Enabes the building of dtInputPLIB" OFF)
-OPTION(BUILD_ISENSE "Enables the building the Delta Intersense library dtInputISENSE" OFF)
-OPTION(BUILD_EXAMPLES "Enables the building of the Delta3D example projects" ON)
 
 # Expose CMAKE_INCLUDE_PATH and CMAKE_LIBARY_PATH to the GUI so users
 # may set these values without needing to manipulate the environment.
@@ -227,13 +239,17 @@ IF (OPENAL_FOUND)
   ADD_SUBDIRECTORY(src/dtAudio)
 ENDIF (OPENAL_FOUND)
 
-ADD_SUBDIRECTORY(src/dtNet)
+IF(Boost_FOUND)  
+  ADD_SUBDIRECTORY(src/dtNet)
+  ADD_SUBDIRECTORY(src/dtNetGM)
+ENDIF(Boost_FOUND)
+
 ADD_SUBDIRECTORY(src/dtGUI)
 ADD_SUBDIRECTORY(src/dtDAL)
 ADD_SUBDIRECTORY(src/dtGame)
 ADD_SUBDIRECTORY(src/dtAnim)
 ADD_SUBDIRECTORY(src/dtActors)
-ADD_SUBDIRECTORY(src/dtNetGM)
+
 ADD_SUBDIRECTORY(src/dtInspector)
 ADD_SUBDIRECTORY(src/dtLMS)
 ADD_SUBDIRECTORY(src/dtTerrain)
@@ -253,7 +269,6 @@ ENDIF(BUILD_ISENSE)
 
 IF (BUILD_BINDINGS)  
   FIND_PACKAGE(PythonLibs REQUIRED)
-  FIND_PACKAGE(Boost REQUIRED)
   IF(PYTHON_LIBRARIES AND Boost_FOUND)  
     ADD_SUBDIRECTORY(src/python)
     ADD_SUBDIRECTORY(src/dtScript)

@@ -15,10 +15,6 @@ LINK_WITH_VARIABLES(${LIB_NAME}
                                          OSGDB_LIBRARY
                                          CEGUI_LIBRARY
                                          DTINPUT_PLIB_LIBRARY)
-                                              
-SET_TARGET_PROPERTIES(${LIB_NAME}
-                     PROPERTIES 
-                     LINK_FLAGS "/NODEFAULTLIB:libc.lib;licmt;libcd;libcmtd")
 
 
 INCLUDE(ModuleInstall OPTIONAL)

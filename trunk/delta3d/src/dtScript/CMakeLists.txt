@@ -23,8 +23,7 @@ ADD_LIBRARY(${LIB_NAME} SHARED
                                                 PYTHON_LIBRARY)
 
 SET_TARGET_PROPERTIES(${LIB_NAME}
-                     PROPERTIES DEFINE_SYMBOL DT_SCRIPT_LIBRARY
-                     LINK_FLAGS "/NODEFAULTLIB:python25_d")
+                     PROPERTIES DEFINE_SYMBOL DT_SCRIPT_LIBRARY)
 
 
 INCLUDE(ModuleInstall OPTIONAL)

@@ -23,10 +23,6 @@ LINK_WITH_VARIABLES(${LIB_NAME}
                                               
 TARGET_LINK_LIBRARIES(${LIB_NAME} odbccp32)
 
-SET_TARGET_PROPERTIES(${LIB_NAME}
-                     PROPERTIES 
-                     LINK_FLAGS "/NODEFAULTLIB:libc.lib;licmt;libcd;libcmtd")
-
 
 INCLUDE(ModuleInstall OPTIONAL)
 

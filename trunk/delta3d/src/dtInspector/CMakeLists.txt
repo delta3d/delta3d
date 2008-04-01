@@ -23,8 +23,7 @@ LINK_WITH_VARIABLES(${LIB_NAME}
 #                                                      comctl32)
 
 SET_TARGET_PROPERTIES(${LIB_NAME}
-                     PROPERTIES DEFINE_SYMBOL DT_INSPECTOR_LIBRARY
-					  LINK_FLAGS "/NODEFAULTLIB:libc.lib")					
+                     PROPERTIES DEFINE_SYMBOL DT_INSPECTOR_LIBRARY)					
 
 INCLUDE(ModuleInstall OPTIONAL)
 

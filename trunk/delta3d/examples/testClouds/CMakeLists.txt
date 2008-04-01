@@ -13,10 +13,6 @@ LINK_WITH_VARIABLES(${LIB_NAME}
                                          DTABC_LIBRARY
                                          DTINSPECTOR_LIBRARY)                                        
                                               
-SET_TARGET_PROPERTIES(${LIB_NAME}
-                     PROPERTIES 
-                     LINK_FLAGS "/NODEFAULTLIB:libc.lib;licmt;libcd;libcmtd")
-
 
 INCLUDE(ModuleInstall OPTIONAL)
 

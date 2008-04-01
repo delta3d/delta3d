@@ -19,11 +19,6 @@ LINK_WITH_VARIABLES(${LIB_NAME}
                                          DTNETGM_LIBRARY
                                          OSG_LIBRARY)                                        
                                               
-SET_TARGET_PROPERTIES(${LIB_NAME}
-                     PROPERTIES 
-                     LINK_FLAGS "/NODEFAULTLIB:libc.lib;licmt;libcd;libcmtd")
-
-
 INCLUDE(ModuleInstall OPTIONAL)
 
 #little hack to get the .dll into /bin and .lib into /lib

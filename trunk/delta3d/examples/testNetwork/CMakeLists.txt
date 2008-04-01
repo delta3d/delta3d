@@ -16,13 +16,11 @@ LINK_WITH_VARIABLES(${LIB_NAME}
                                          DTNET_LIBRARY                                                                                  
                                          DTUTIL_LIBRARY   
                                          DTCORE_LIBRARY
-                                         DTABC_LIBRARY)                                         
+                                         DTABC_LIBRARY
+                                         GNE_LIBRARY
+                                         HAWKNL_LIBRARY
+					 CURSES_LIBRARY)                                         
                                               
-SET_TARGET_PROPERTIES(${LIB_NAME}
-                     PROPERTIES 
-                     LINK_FLAGS "/NODEFAULTLIB:libc.lib;licmt;libcd;libcmtd")
-
-
 INCLUDE(ModuleInstall OPTIONAL)
 
 #little hack to get the .dll into /bin and .lib into /lib

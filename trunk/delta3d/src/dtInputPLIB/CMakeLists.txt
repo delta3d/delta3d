@@ -22,8 +22,7 @@ TARGET_LINK_LIBRARIES(${LIB_NAME}
 													  winmm)
 
 SET_TARGET_PROPERTIES(${LIB_NAME}
-                     PROPERTIES DEFINE_SYMBOL DT_INPUT_PLIB_LIBRARY
-					 LINK_FLAGS "/NODEFAULTLIB:libc.lib;libcmt;libcd;libcmtd")		
+                     PROPERTIES DEFINE_SYMBOL DT_INPUT_PLIB_LIBRARY)		
 					 
 					 
 

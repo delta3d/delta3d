@@ -311,7 +311,7 @@ SET(TERRAIN_BINDINGS "PyDtTerrain")
 
 ADD_LIBRARY ( ${TERRAIN_BINDINGS} SHARED
   ${CMAKE_SOURCE_DIR}/inc/python/dtpython.h
-  dtTerrainbindings.cpp
+  dtTerrainBindings.cpp
   geocoordinateBindings.cpp
   terrainBindings.cpp
 )

@@ -20,10 +20,6 @@ LINK_WITH_VARIABLES(${LIB_NAME}
                                          OSGDB_LIBRARY
                                          OSGUTIL_LIBRARY)                                        
                                               
-SET_TARGET_PROPERTIES(${LIB_NAME}
-                     PROPERTIES 
-                     LINK_FLAGS "/NODEFAULTLIB:libc.lib;licmt;libcd;libcmtd")
-
 
 INCLUDE(ModuleInstall OPTIONAL)
 
