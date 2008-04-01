@@ -133,9 +133,40 @@ namespace dtAI
       mWaypoints.erase(pIndex);
    }
 
-   Waypoint* WaypointManager::GetWaypoint(unsigned pIndex)
+   Waypoint *WaypointManager::GetWaypoint(unsigned pIndex)
    {
-      return pIndex > mWaypoints.size() ? NULL : mWaypoints[pIndex];
+      return pIndex < mWaypoints.size() ? mWaypoints[pIndex] : NULL;
+   }
+   const Waypoint *WaypointManager::GetWaypoint(unsigned pIndex) const
+   {
+      /*
+      DJMC note: We cannot simply do the following:
+
+      return mWaypoints[pIndex];
+
+      and still remain a const method since the [] operation might
+      add a setting if it is not found inside. We must seek an
+      alternative.
+
+      Note, according to http://www.sgi.com/tech/stl/Map.html, m[k]
+      should be equivalent to:
+
+      (*((m.insert(value_type(k, data_type()))).first)).second
+
+      ...thus, we should be able to find a read-only analogue by
+      changing the line from an insert to a find, so that we may
+      remain a const method.
+      //*/
+
+      if (pIndex < mWaypoints.size())
+      {
+         WaypointMap::const_iterator i = mWaypoints.find(pIndex);
+         if (i != mWaypoints.end())
+         {
+            return (*i).second;
+         }
+      }
+      return NULL;
    }
 
    void WaypointManager::MoveWaypoint(unsigned pIndex, const osg::Vec3& pPos)
