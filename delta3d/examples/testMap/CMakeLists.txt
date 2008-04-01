@@ -12,10 +12,6 @@ LINK_WITH_VARIABLES(${LIB_NAME}
                                          DTDAL_LIBRARY
                                          DTACTORS_LIBRARY)
                                               
-SET_TARGET_PROPERTIES(${LIB_NAME}
-                     PROPERTIES 
-                     LINK_FLAGS "/NODEFAULTLIB:libc.lib;licmt;libcd;libcmtd")
-
 
 INCLUDE(ModuleInstall OPTIONAL)
 

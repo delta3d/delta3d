@@ -9,14 +9,13 @@ ENDIF (WIN32)
 SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/examples/testWeather)
 
 ADD_LIBRARY(${LIB_NAME} SHARED
-     ${HEADER_PATH}/TestWeather.cpp
+     ${HEADER_PATH}/testweather.cpp
 )
 
 ADD_DEPENDENCIES (${LIB_NAME}  dtCore dtABC dtInspector)
 
 SET_TARGET_PROPERTIES(${LIB_NAME}
-                     PROPERTIES DEFINE_SYMBOL TEST_WIN
-                     LINK_FLAGS "/NODEFAULTLIB:libc.lib;licmt;libcd;libcmtd")
+                     PROPERTIES DEFINE_SYMBOL TEST_WIN)
 
 
 INCLUDE(ModuleInstall OPTIONAL)

@@ -9,7 +9,7 @@ ENDIF (WIN32)
 SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/examples/testTerrain)
 
 ADD_LIBRARY(${LIB_NAME} SHARED
-     ${HEADER_PATH}/testTerrain.cpp
+     ${HEADER_PATH}/testterrain.cpp
 )
 
 #ADD_DEPENDENCIES (${LIB_NAME}  dtGUI dtABC)
@@ -24,13 +24,9 @@ LINK_WITH_VARIABLES(${LIB_NAME}
                                          OSGPARTICLE_LIBRARY
                                          OSGTEXT_LIBRARY
                                          PLIB_UL_LIBRARY)
-                                         
+IF (WIN32)                                         
 TARGET_LINK_LIBRARIES(${LIB_NAME} winmm)
-                                              
-SET_TARGET_PROPERTIES(${LIB_NAME}
-                     PROPERTIES 
-                     LINK_FLAGS "/NODEFAULTLIB:libc.lib;licmt;libcd;libcmtd")
-
+ENDIF (WIN32)                                              
 
 INCLUDE(ModuleInstall OPTIONAL)
 

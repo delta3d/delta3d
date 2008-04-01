@@ -33,10 +33,6 @@ LINK_WITH_VARIABLES(${LIB_NAME}
                                          CEGUI_LIBRARY                                         
                                          OSG_LIBRARY)                                        
                                               
-SET_TARGET_PROPERTIES(${LIB_NAME}
-                     PROPERTIES DEFINE_SYMBOL TEST_AAR_LIBRARY
-                     LINK_FLAGS "/NODEFAULTLIB:libc.lib;licmt;libcd;libcmtd")
-
 
 INCLUDE(ModuleInstall OPTIONAL)
 

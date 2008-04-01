@@ -11,14 +11,11 @@ LINK_WITH_VARIABLES(${LIB_NAME}
                                          DTCORE_LIBRARY                                         
                                          DTABC_LIBRARY                                         
                                          OSGDB_LIBRARY)
-                                         
+
+IF (WIN32)                                         
 TARGET_LINK_LIBRARIES(${LIB_NAME} odbc32 odbccp32)
+ENDIF (WIN32)
                                               
-SET_TARGET_PROPERTIES(${LIB_NAME}
-                     PROPERTIES 
-                     LINK_FLAGS "/NODEFAULTLIB:libc.lib;licmt;libcd;libcmtd")
-
-
 INCLUDE(ModuleInstall OPTIONAL)
 
 #little hack to get the .dll into /bin and .lib into /lib

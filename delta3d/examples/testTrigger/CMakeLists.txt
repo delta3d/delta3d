@@ -9,8 +9,8 @@ ENDIF (WIN32)
 SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/examples/testTrigger)
 
 ADD_LIBRARY(${LIB_NAME} SHARED
-     ${HEADER_PATH}/TestTrigger.h
-     ${HEADER_PATH}/TestTrigger.cpp
+     ${HEADER_PATH}/testtrigger.h
+     ${HEADER_PATH}/testtrigger.cpp
      ${HEADER_PATH}/main.cpp
 )
 
@@ -21,10 +21,6 @@ LINK_WITH_VARIABLES(${LIB_NAME}
                                          DTABC_LIBRARY
                                          OSGDB_LIBRARY)
                                               
-SET_TARGET_PROPERTIES(${LIB_NAME}
-                     PROPERTIES 
-                     LINK_FLAGS "/NODEFAULTLIB:libc.lib;licmt;libcd;libcmtd")
-
 
 INCLUDE(ModuleInstall OPTIONAL)
 

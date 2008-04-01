@@ -23,10 +23,6 @@ LINK_WITH_VARIABLES(${LIB_NAME}
                                          OSG_LIBRARY
                                          OSGDB_LIBRARY)                                        
                                               
-SET_TARGET_PROPERTIES(${LIB_NAME}
-                     PROPERTIES DEFINE_SYMBOL TEST_ANIM_LIBRARY
-                     LINK_FLAGS "/NODEFAULTLIB:libc.lib;licmt;libcd;libcmtd")
-
 
 INCLUDE(ModuleInstall OPTIONAL)
 

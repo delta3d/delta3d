@@ -9,14 +9,14 @@ ADD_LIBRARY(${LIB_NAME} SHARED
 LINK_WITH_VARIABLES(${LIB_NAME}                                                       
                                          DTUTIL_LIBRARY   
                                          DTGUI_LIBRARY
+                                         DTCORE_LIBRARY
+                                         DTABC_LIBRARY
                                          CEGUI_LIBRARY)
 
-TARGET_LINK_LIBRARIES(${LIB_NAME} odbc32 odbccp32)                                         
                                               
-SET_TARGET_PROPERTIES(${LIB_NAME}
-                     PROPERTIES 
-                     LINK_FLAGS "/NODEFAULTLIB:libc.lib;licmt;libcd;libcmtd")
-
+IF (WIN32)
+TARGET_LINK_LIBRARIES(${LIB_NAME} odbc32 odbccp32)                                         
+ENDIF (WIN32)
 
 INCLUDE(ModuleInstall OPTIONAL)
 

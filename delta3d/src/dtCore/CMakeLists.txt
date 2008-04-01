@@ -179,7 +179,8 @@ ${PlatformSources}
 LINK_WITH_VARIABLES(${LIB_NAME}
 											  DTUTIL_LIBRARY
 											  OSG_LIBRARY
-											  OSGTEXT_LIBRARY											 
+											  OSGTEXT_LIBRARY
+                                                                                          OSGSIM_LIBRARY											 
 											  OSGDB_LIBRARY
 											  OSGGA_LIBRARY
 											  OSGVIEWER_LIBRARY
@@ -190,7 +191,6 @@ LINK_WITH_VARIABLES(${LIB_NAME}
 											  XERCES_LIBRARY)
 
 TARGET_LINK_LIBRARIES( ${LIB_NAME}			
-					  Rpcrt4.lib
 					  ${OPENGL_LIBRARY} 
 					  ${MATH_LIBRARY}
 					  ${CARBON_LIBRARY}
