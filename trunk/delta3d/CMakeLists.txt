@@ -135,7 +135,7 @@ FIND_PACKAGE(DIS)
 FIND_PACKAGE(Boost)
 
 if (BUILD_HLA)
-	FIND_PATH(RTIS_ROOT_DIR include/1.3/RTI.hh
+	FIND_PATH(RTIS_ROOT_DIR RTI.hh
 	                      $ENV{RTI}/include/1.3)
 						  
     # if the root director for RTI is specified, we can build HLA projects

@@ -3,64 +3,18 @@ SET(LIB_NAME     dtHLAGM)
 
 INCLUDE_DIRECTORIES(${RTIS_INCLUDE_DIR})
 
+MESSAGE(STATUS ${RTIS_INCLUDE_DIR})
 
-IF (WIN32)
-ELSE (WIN32) 
-ENDIF (WIN32)
 
-SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/inc/dtHLAGM)
-SET(LIB_PUBLIC_HEADERS
-   ${HEADER_PATH}/attributetoproperty.h
-   ${HEADER_PATH}/attributetype.h
-   ${HEADER_PATH}/ddmappspacecalculator.h
-   ${HEADER_PATH}/ddmcalculatorgeographic.h
-   ${HEADER_PATH}/ddmcameracalculatorgeographic.h
-   ${HEADER_PATH}/ddmgeographicregiondata.h
-   ${HEADER_PATH}/ddmmultienumeratedcalculator.h
-   ${HEADER_PATH}/ddmregioncalculator.h
-   ${HEADER_PATH}/ddmregioncalculatorgroup.h
-   ${HEADER_PATH}/ddmregiondata.h
-   ${HEADER_PATH}/ddmutil.h
-   ${HEADER_PATH}/distypes.h
-   ${HEADER_PATH}/dthlagm.h
-   ${HEADER_PATH}/exceptionenum.h
-   ${HEADER_PATH}/export.h
-   ${HEADER_PATH}/hlacomponent.h
-   ${HEADER_PATH}/hlacomponentconfig.h
-   ${HEADER_PATH}/hlafomconfigxml.h
-   ${HEADER_PATH}/interactiontomessage.h
-   ${HEADER_PATH}/objectruntimemappinginfo.h
-   ${HEADER_PATH}/objecttoactor.h
-   ${HEADER_PATH}/onetomanymapping.h
-   ${HEADER_PATH}/onetoonemapping.h
-   ${HEADER_PATH}/parametertoparameter.h
-   ${HEADER_PATH}/parametertranslator.h
-   ${HEADER_PATH}/rprparametertranslator.h
-   ${HEADER_PATH}/spatial.h
-)
+SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/inc/${LIB_NAME})
+SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/src/${LIB_NAME})
+file(GLOB LIB_PUBLIC_HEADERS "${HEADER_PATH}/*.h")
+file(GLOB LIB_SOURCES "*.cpp")
+list(REMOVE_ITEM LIB_SOURCES ${SOURCE_PATH}/precomp.cpp)
 
-ADD_LIBRARY(${LIB_NAME} SHARED
-    ${LIB_PUBLIC_HEADERS}
-   attributetype.cpp
-   ddmappspacecalculator.cpp
-   ddmcalculatorgeographic.cpp
-   ddmcameracalculatorgeographic.cpp
-   ddmgeographicregiondata.cpp
-   ddmmultienumeratedcalculator.cpp
-   ddmregioncalculator.cpp
-   ddmregioncalculatorgroup.cpp
-   ddmregiondata.cpp
-   ddmutil.cpp
-   distypes.cpp
-   exceptionenum.cpp
-   hlacomponent.cpp
-   hlacomponentconfig.cpp
-   hlafomconfigxml.cpp
-   objectruntimemappinginfo.cpp
-   objecttoactor.cpp
-   onetomanymapping.cpp
-   rprparametertranslator.cpp
-   spatial.cpp
+ADD_LIBRARY(${LIB_NAME} SHARED                        
+    ${LIB_PUBLIC_HEADERS}                         
+    ${LIB_SOURCES}
 )
 
 LINK_WITH_VARIABLES(${LIB_NAME}
@@ -94,8 +48,11 @@ ${RTIS_RID_LIBRARY}
 ${RTIS_MCAST_LIBRARY}
 ${RTIS_RTI_LIBRARY}
 ${RTIS_TIMERS_LIBRARY}
-wsock32
  )
+
+IF (WIN32)
+TARGET_LINK_LIBRARIES(${LIB_NAME} wsock32)
+ENDIF (WIN32)
 
 SET_TARGET_PROPERTIES(${LIB_NAME}
                      PROPERTIES DEFINE_SYMBOL DT_HLAGM_LIBRARY)

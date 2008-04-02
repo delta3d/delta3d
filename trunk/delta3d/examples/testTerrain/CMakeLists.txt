@@ -1,20 +1,16 @@
 
-SET(LIB_NAME     testTerrain)
+SET(PROG_NAME     testTerrain)
 
 
-IF (WIN32)
-ELSE (WIN32) 
-ENDIF (WIN32)
+SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/examples/${PROG_NAME})
+file(GLOB PROG_SOURCES "*.cpp" "*.h")
+list(REMOVE_ITEM PROG_SOURCES ${SOURCE_PATH}/precomp.cpp)
 
-SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/examples/testTerrain)
-
-ADD_LIBRARY(${LIB_NAME} SHARED
-     ${HEADER_PATH}/testterrain.cpp
+ADD_EXECUTABLE(${PROG_NAME}
+    ${PROG_SOURCES}
 )
 
-#ADD_DEPENDENCIES (${LIB_NAME}  dtGUI dtABC)
-
-LINK_WITH_VARIABLES(${LIB_NAME}         
+LINK_WITH_VARIABLES(${PROG_NAME}
                                          GDAL_LIBRARY
                                          DTCORE_LIBRARY
                                          DTABC_LIBRARY
@@ -25,13 +21,13 @@ LINK_WITH_VARIABLES(${LIB_NAME}
                                          OSGTEXT_LIBRARY
                                          PLIB_UL_LIBRARY)
 IF (WIN32)                                         
-TARGET_LINK_LIBRARIES(${LIB_NAME} winmm)
+TARGET_LINK_LIBRARIES(${PROG_NAME} winmm)
 ENDIF (WIN32)                                              
 
 INCLUDE(ModuleInstall OPTIONAL)
 
 #little hack to get the .dll into /bin and .lib into /lib
 IF (MSVC)
-  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES PREFIX "/../../bin/")
-  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES IMPORT_PREFIX "../")
+  SET_TARGET_PROPERTIES(${PROG_NAME} PROPERTIES PREFIX "/../../bin/")
+  SET_TARGET_PROPERTIES(${PROG_NAME} PROPERTIES IMPORT_PREFIX "../")
 ENDIF (MSVC)

@@ -1,17 +1,16 @@
 
 SET(LIB_NAME     dtScript)
 
-SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/inc/dtScript)
-SET(LIB_PUBLIC_HEADERS
-   ${HEADER_PATH}/dtscript.h
-   ${HEADER_PATH}/export.h
-   ${HEADER_PATH}/scriptmanager.h
-)
+SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/inc/${LIB_NAME})
+SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/src/${LIB_NAME})
+file(GLOB LIB_PUBLIC_HEADERS "${HEADER_PATH}/*.h")
+file(GLOB LIB_SOURCES "*.cpp")
+list(REMOVE_ITEM LIB_SOURCES ${SOURCE_PATH}/precomp.cpp)
 
-ADD_LIBRARY(${LIB_NAME} SHARED
-    ${LIB_PUBLIC_HEADERS} 
-   scriptmanager.cpp
- )
+ADD_LIBRARY(${LIB_NAME} SHARED                        
+    ${LIB_PUBLIC_HEADERS}                         
+    ${LIB_SOURCES}
+)
  
  LINK_WITH_VARIABLES(${LIB_NAME}
 												DTUTIL_LIBRARY

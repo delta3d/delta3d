@@ -3,83 +3,33 @@
 
 SET(LIB_NAME     dtDIS)
 
-IF (WIN32)
-ELSE (WIN32) 
-ENDIF (WIN32)
+SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/inc/${LIB_NAME})
+SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/src/${LIB_NAME})
+file(GLOB LIB_PUBLIC_HEADERS "${HEADER_PATH}/*.h" "${HEADER_PATH}/plugins/default/*.h" )
+file(GLOB LIB_SOURCES "*.cpp" "plugins/default/*.cpp"  )
+list(REMOVE_ITEM LIB_SOURCES ${SOURCE_PATH}/precomp.cpp)
 
-SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/inc/dtDIS)
-SET(LIB_PUBLIC_HEADERS
-   ${HEADER_PATH}/acknowledgeconstants.h
-   ${HEADER_PATH}/articulationconstants.h
-   ${HEADER_PATH}/connection.h
-   ${HEADER_PATH}/containerutils.h
-   ${HEADER_PATH}/createdestroypolicy.h
-   ${HEADER_PATH}/disxml.h
-   ${HEADER_PATH}/dllfinder.h
-   ${HEADER_PATH}/dtdisexport.h
-   ${HEADER_PATH}/entityidcompare.h
-   ${HEADER_PATH}/entitytypeconstants.h
-   ${HEADER_PATH}/hasproperty.h
-   ${HEADER_PATH}/idisplugin.h
-   ${HEADER_PATH}/imessagetopacketadapter.h
-   ${HEADER_PATH}/libraryregistry.h
-   ${HEADER_PATH}/mastercomponent.h
-   ${HEADER_PATH}/outgoingmessage.h
-   ${HEADER_PATH}/pluginmanager.h
-   ${HEADER_PATH}/propertyname.h
-   ${HEADER_PATH}/sharedstate.h
-   ${HEADER_PATH}/valuemaps.h
-   ${HEADER_PATH}/createdestroypolicy.inl
-   
-   ${HEADER_PATH}/plugins/default/actorupdatetoentitystate.h
-   ${HEADER_PATH}/plugins/default/createentityprocessor.h
-   ${HEADER_PATH}/plugins/default/defaultplugin.h
-   ${HEADER_PATH}/plugins/default/dtdisdefaultpluginexport.h
-   ${HEADER_PATH}/plugins/default/espduapplicator.h
-   ${HEADER_PATH}/plugins/default/espduprocessor.h
-   ${HEADER_PATH}/plugins/default/pluginsymbols.h
-   ${HEADER_PATH}/plugins/default/removeentityprocessor.h
+ADD_LIBRARY(${LIB_NAME} SHARED                        
+    ${LIB_PUBLIC_HEADERS}                         
+    ${LIB_SOURCES}
 )
 
-ADD_LIBRARY(${LIB_NAME} SHARED
-   ${LIB_PUBLIC_HEADERS}
-   articulationconstants.cpp
-   connection.cpp
-   disxml.cpp
-   entityidcompare.cpp
-   hasproperty.cpp
-   idisplugin.cpp
-   imessagetopacketadapter.cpp
-   mastercomponent.cpp
-   outgoingmessage.cpp
-   pluginmanager.cpp
-   propertyname.cpp
-   sharedstate.cpp
-   valuemaps.cpp
-   plugins/default/actorupdatetoentitystate.cpp
-   plugins/default/createentityprocessor.cpp
-   plugins/default/defaultplugin.cpp
-   plugins/default/espduapplicator.cpp
-   plugins/default/espduprocessor.cpp
-   plugins/default/pluginsymbols.cpp
-   plugins/default/removeentityprocessor.cpp
-)
+LINK_WITH_VARIABLES(${LIB_NAME}
+				DTUTIL_LIBRARY
+				DTCORE_LIBRARY
+				DTAI_LIBRARY
+				HAWKNL_LIBRARY
+                                DIS_LIBRARY
+                                DTGAME_LIBRARY)
 
+IF (WIN32)   
 TARGET_LINK_LIBRARIES(${LIB_NAME}
-												optimized dtAI debug dtAID
-												optimized dtDAL debug dtDALD
-												optimized NLstatic debug NLstaticD
-												optimized DIS debug DIS_debug
-												optimized dtGame debug dtGameD
-												wsock32
+				wsock32)
+ENDIF (WIN32)
+TARGET_LINK_LIBRARIES(${LIB_NAME}
 												${CARBON_LIBRARY}
 												${FLTK_LIBRARY})																					
 																								
-#TARGET_LINK_LIBRARIES(${LIB_NAME} dtUtil dtCore dtAI dtDAL ${FLTK_LIBRARY} ${OPENGL_LIBRARY} ${MATH_LIBRARY}
-#   ${OSG_LIBRARY} ${OSGDB_LIBRARY} ${OSGGA_LIBRARY} ${OSGPARTICLE_LIBRARY} ${OSGUTIL_LIBRARY}
-#   ${OSGTEXT_LIBRARY} ${OSGSIM_LIBRARY} ${OSGFX_LIBRARY} ${OSGVIEWER_LIBRARY}
-#   ${OPENTHREADS_LIBRARY} ${XERCES_LIBRARY} ${CARBON_LIBRARY})
-
 SET_TARGET_PROPERTIES(${LIB_NAME}
                      PROPERTIES DEFINE_SYMBOL DT_DIS_LIBRARY COMPILE_FLAGS -DDT_DIS_DEFAULT_PLUGIN)				 
 

@@ -1,17 +1,15 @@
 
 SET(LIB_NAME     dtInspector)
 
-SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/inc/dtInspector)
-SET(LIB_PUBLIC_HEADERS
-   ${HEADER_PATH}/export.h
-   ${HEADER_PATH}/gui_fltk.h
-   ${HEADER_PATH}/inspector.h
-)
+SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/inc/${LIB_NAME})
+SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/src/${LIB_NAME})
+file(GLOB LIB_PUBLIC_HEADERS "${HEADER_PATH}/*.h")
+file(GLOB LIB_SOURCES "*.cpp")
+list(REMOVE_ITEM LIB_SOURCES ${SOURCE_PATH}/precomp.cpp)
 
-ADD_LIBRARY(${LIB_NAME} SHARED
-    ${LIB_PUBLIC_HEADERS}
-	gui_fltk.cpp
-	inspector.cpp
+ADD_LIBRARY(${LIB_NAME} SHARED                        
+    ${LIB_PUBLIC_HEADERS}                         
+    ${LIB_SOURCES}
 )
 
 LINK_WITH_VARIABLES(${LIB_NAME}													 
