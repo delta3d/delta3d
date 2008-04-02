@@ -75,14 +75,21 @@ IF(BOOST_DIR_SEARCH)
   SET(BOOST_DIR_SEARCH ${BOOST_DIR_SEARCH}/include)
 ENDIF(BOOST_DIR_SEARCH)
 
-IF(WIN32)
-  SET(BOOST_DIR_SEARCH
-    ${BOOST_DIR_SEARCH}
-    C:/boost/include
-    D:/boost/include
-  ) 
-  
-ENDIF(WIN32)
+SET(BOOST_DIR_SEARCH
+  ${BOOST_DIR_SEARCH}
+  C:/boost/include
+  D:/boost/include
+  $ENV{DELTA_ROOT}/ext/inc
+  ~/Library/Frameworks
+  /Library/Frameworks
+  /usr/local/lib
+  /usr/lib
+  /sw/lib
+  /opt/local/lib
+  /opt/csw/lib
+  /opt/lib
+  /usr/freeware/lib64
+)
 
 # Add in some path suffixes. These will have to be updated whenever a new Boost version comes out.
 SET(SUFFIX_FOR_PATH
@@ -122,6 +129,11 @@ IF(Boost_INCLUDE_DIR)
   IF("${Boost_LIBRARY_DIR}" MATCHES "/include$")
     # Strip off the trailing "/include" in the path.
     GET_FILENAME_COMPONENT(Boost_LIBRARY_DIR ${Boost_LIBRARY_DIR} PATH)
+  ELSE("${Boost_LIBRARY_DIR}" MATCHES "/include$")
+     IF("${Boost_LIBRARY_DIR}" MATCHES "/inc$")
+       # Strip off the trailing "/inc" in the path.
+       GET_FILENAME_COMPONENT(Boost_LIBRARY_DIR ${Boost_LIBRARY_DIR} PATH)
+     ENDIF("${Boost_LIBRARY_DIR}" MATCHES "/inc$")
   ENDIF("${Boost_LIBRARY_DIR}" MATCHES "/include$")
 
   IF(EXISTS "${Boost_LIBRARY_DIR}/lib")
@@ -184,7 +196,7 @@ MACRO(FIND_BOOST_PYTHON_LIBRARY MYLIBRARY MYLIBRARYNAME)
 	
 ENDMACRO(FIND_BOOST_PYTHON_LIBRARY MYLIBRARY MYLIBRARYNAME)
 
-SET(BOOST_PYTHON_LIST boost_python-vc80-mt)
+SET(BOOST_PYTHON_LIST boost_python-vc80-mt boost_python boost_python-mt-1_34_1 boost_python-mt-1_33_1 boost_python-mt-1_34_0 boost_python-mt-1_33_0)
 SET(BOOST_PYTHON_LIST_DEBUG boost_python-vc80-mt-gd)
 
 FIND_BOOST_PYTHON_LIBRARY(BOOST_PYTHON_LIBRARY "${BOOST_PYTHON_LIST}")
