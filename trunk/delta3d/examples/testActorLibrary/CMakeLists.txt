@@ -1,15 +1,12 @@
 
 SET(LIB_NAME     testActorLibrary)
 
-SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/examples/testActorLibrary)
+file(GLOB LIB_SOURCES "*.cpp" "*.h")
+list(REMOVE_ITEM LIB_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/precomp.cpp)
 
 ADD_LIBRARY(${LIB_NAME} SHARED  
-     ${HEADER_PATH}/testactorlib.h
-     ${HEADER_PATH}/testactorlib.cpp
-     ${HEADER_PATH}/testdalenvironmentactor.h
-     ${HEADER_PATH}/testdalenvironmentactor.cpp
-     ${HEADER_PATH}/testpropertyproxy.h
-     ${HEADER_PATH}/testpropertyproxy.cpp)
+   ${LIB_SOURCES}
+)
 
 LINK_WITH_VARIABLES(${LIB_NAME}
                                          DTUTIL_LIBRARY

@@ -1,29 +1,12 @@
 
 SET(LIB_NAME     testGameActorLibrary)
 
-SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/examples/testGameActorLibrary)
+file(GLOB LIB_SOURCES "*.cpp" "*.h")
+list(REMOVE_ITEM LIB_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/precomp.cpp)
 
 ADD_LIBRARY(${LIB_NAME} SHARED     
-     ${HEADER_PATH}/countertaskactor.h
-     ${HEADER_PATH}/countertaskactor.cpp
-     ${HEADER_PATH}/export.h
-     ${HEADER_PATH}/testgameactor2.h
-     ${HEADER_PATH}/testgameactor2.cpp
-     ${HEADER_PATH}/testgameactor.h
-     ${HEADER_PATH}/testgameactor.cpp
-     ${HEADER_PATH}/testgameactorcrash.h
-     ${HEADER_PATH}/testgameactorcrash.cpp
-     ${HEADER_PATH}/testgameactorlibrary.h
-     ${HEADER_PATH}/testgameactorlibrary.cpp
-     ${HEADER_PATH}/testgameenvironmentactor.h
-     ${HEADER_PATH}/testgameenvironmentactor.cpp
-     ${HEADER_PATH}/testgamepropertyproxy.h
-     ${HEADER_PATH}/testgamepropertyproxy.cpp
-     ${HEADER_PATH}/testhlaobject.h
-     ${HEADER_PATH}/testhlaobject.cpp
-     ${HEADER_PATH}/testplayer.h
-     ${HEADER_PATH}/testplayer.cpp
-     )
+   ${LIB_SOURCES}
+)
 
 LINK_WITH_VARIABLES(${LIB_NAME}                                                       
                                          DTUTIL_LIBRARY   
@@ -36,6 +19,9 @@ LINK_WITH_VARIABLES(${LIB_NAME}
                                          OSGDB_LIBRARY
                                          OSGUTIL_LIBRARY)
                                               
+
+SET_TARGET_PROPERTIES(${LIB_NAME}
+                     PROPERTIES DEFINE_SYMBOL DT_EXAMPLE_LIBRARY)
 
 INCLUDE(ModuleInstall OPTIONAL)
 

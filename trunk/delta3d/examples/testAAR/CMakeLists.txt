@@ -36,6 +36,9 @@ LINK_WITH_VARIABLES(${LIB_NAME}
 
 INCLUDE(ModuleInstall OPTIONAL)
 
+SET_TARGET_PROPERTIES(${LIB_NAME}
+                     PROPERTIES DEFINE_SYMBOL TEST_AAR_LIBRARY)
+
 #little hack to get the .dll into /bin and .lib into /lib
 IF (MSVC)
   SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES PREFIX "/../../bin/")

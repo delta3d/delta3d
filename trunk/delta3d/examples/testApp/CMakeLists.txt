@@ -1,10 +1,8 @@
 
 SET(LIB_NAME     testApp)
 
-SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/examples/testApp)
-
 ADD_LIBRARY(${LIB_NAME} SHARED  
-     ${HEADER_PATH}/testapp.cpp)
+     testapp.cpp)
 
 LINK_WITH_VARIABLES(${LIB_NAME}                                         
                                          DTCORE_LIBRARY

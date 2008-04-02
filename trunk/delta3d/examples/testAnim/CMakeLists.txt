@@ -1,14 +1,12 @@
 
 SET(LIB_NAME     testAnim)
 
-SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/examples/testAnim)
+file(GLOB LIB_SOURCES "*.cpp" "*.h")
+list(REMOVE_ITEM LIB_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/precomp.cpp)
 
 ADD_LIBRARY(${LIB_NAME} SHARED  
-     ${HEADER_PATH}/testanim.h
-     ${HEADER_PATH}/testanim.cpp
-     ${HEADER_PATH}/testaniminput.h
-     ${HEADER_PATH}/testaniminput.cpp
-     ${HEADER_PATH}/export.h)
+   ${LIB_SOURCES}
+)
 
 LINK_WITH_VARIABLES(${LIB_NAME}
                                          DTUTIL_LIBRARY
@@ -25,6 +23,9 @@ LINK_WITH_VARIABLES(${LIB_NAME}
                                               
 
 INCLUDE(ModuleInstall OPTIONAL)
+
+SET_TARGET_PROPERTIES(${LIB_NAME}
+                     PROPERTIES DEFINE_SYMBOL TEST_ANIM_LIBRARY)
 
 #little hack to get the .dll into /bin and .lib into /lib
 IF (MSVC)
