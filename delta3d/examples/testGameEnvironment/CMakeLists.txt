@@ -1,10 +1,8 @@
 
 SET(LIB_NAME     testGameEnvironment)
 
-SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/examples/testGameEnvironment)
-
 ADD_LIBRARY(${LIB_NAME} SHARED     
-     ${HEADER_PATH}/testgameenvironment.cpp)
+     testgameenvironment.cpp)
 
 LINK_WITH_VARIABLES(${LIB_NAME}                                                       
                                          DTUTIL_LIBRARY   

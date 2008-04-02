@@ -46,8 +46,11 @@ IF(APPLE)
     FIND_LIBRARY(COREFOUNDATION_LIBRARY CoreFoundation)
     FIND_LIBRARY(AGL_LIBRARY AGL)
     FIND_LIBRARY(COCOA_LIBRARY Cocoa)
-    
-    SET(CMAKE_SHARED_LINKER_FLAGS "-Wl,-single_module -compatibility_version 2 -current_version 2 ")
+ 
+    SET(CMAKE_CXX_FLAGS "-pipe -mmacosx-version-min=10.4")
+    SET(CMAKE_C_FLAGS "-pipe -mmacosx-version-min=10.4")
+    SET(CMAKE_SHARED_LINKER_FLAGS "-Wl,-single_module -compatibility_version 2 -current_version 2" )
+    SET(CMAKE_CXX_FLAGS_DEBUG "-gdwarf-2")
 ENDIF(APPLE)
 
 IF(UNIX)
