@@ -46,6 +46,8 @@ IF(APPLE)
     FIND_LIBRARY(COREFOUNDATION_LIBRARY CoreFoundation)
     FIND_LIBRARY(AGL_LIBRARY AGL)
     FIND_LIBRARY(COCOA_LIBRARY Cocoa)
+    
+    SET(CMAKE_SHARED_LINKER_FLAGS "-Wl,-single_module -compatibility_version 2 -current_version 2 ")
 ENDIF(APPLE)
 
 IF(UNIX)
@@ -282,6 +284,8 @@ ENDIF (BUILD_BINDINGS)
 IF(BUILD_EXAMPLES)
     ADD_SUBDIRECTORY(examples)
 ENDIF(BUILD_EXAMPLES)
+
+ADD_SUBDIRECTORY(utilities)
 
 # This is for an advanced option to give aggressive warnings 
 # under different compilers. If yours is not implemented, this option
