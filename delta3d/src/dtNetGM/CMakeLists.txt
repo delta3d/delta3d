@@ -2,36 +2,15 @@
 SET(LIB_NAME     dtNetGM)
 
 
-IF (WIN32)
-ELSE (WIN32) 
-ENDIF (WIN32)
-
-SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/inc/dtNetGM)
-SET(LIB_PUBLIC_HEADERS
-   ${HEADER_PATH}/clientconnectionlistener.h
-   ${HEADER_PATH}/clientnetworkcomponent.h
-   ${HEADER_PATH}/datastreampacket.h
-   ${HEADER_PATH}/dtnetgm.h
-   ${HEADER_PATH}/export.h
-   ${HEADER_PATH}/machineinfomessage.h
-   ${HEADER_PATH}/messagepacket.h
-   ${HEADER_PATH}/networkbridge.h
-   ${HEADER_PATH}/networkcomponent.h
-   ${HEADER_PATH}/serverconnectionlistener.h
-   ${HEADER_PATH}/servernetworkcomponent.h
-)
+SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/inc/${LIB_NAME})
+SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/src/${LIB_NAME})
+file(GLOB LIB_PUBLIC_HEADERS "${HEADER_PATH}/*.h")
+file(GLOB LIB_SOURCES "*.cpp")
+list(REMOVE_ITEM LIB_SOURCES ${SOURCE_PATH}/precomp.cpp)
 
 ADD_LIBRARY(${LIB_NAME} SHARED
-   ${LIB_PUBLIC_HEADERS}
-   clientconnectionlistener.cpp
-   clientnetworkcomponent.cpp
-   datastreampacket.cpp
-   machineinfomessage.cpp
-   messagepacket.cpp
-   networkbridge.cpp
-   networkcomponent.cpp
-   serverconnectionlistener.cpp
-   servernetworkcomponent.cpp
+    ${LIB_PUBLIC_HEADERS}
+    ${LIB_SOURCES}
 )
 
 LINK_WITH_VARIABLES(${LIB_NAME}

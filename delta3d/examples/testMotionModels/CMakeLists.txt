@@ -1,12 +1,15 @@
 
-SET(LIB_NAME     testMotionModels)
+SET(PROG_NAME     testMotionModels)
 
-SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/examples/testMotionModels)
+SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/examples/${PROG_NAME})
+file(GLOB PROG_SOURCES "*.cpp" "*.h")
+list(REMOVE_ITEM PROG_SOURCES ${SOURCE_PATH}/precomp.cpp)
 
-ADD_LIBRARY(${LIB_NAME} SHARED     
-     ${HEADER_PATH}/testmotionmodels.cpp)
+ADD_EXECUTABLE(${PROG_NAME}
+    ${PROG_SOURCES}
+)
 
-LINK_WITH_VARIABLES(${LIB_NAME}                                                       
+LINK_WITH_VARIABLES(${PROG_NAME}
                                          DTUTIL_LIBRARY   
                                          DTGUI_LIBRARY
                                          DTCORE_LIBRARY
@@ -15,13 +18,13 @@ LINK_WITH_VARIABLES(${LIB_NAME}
 
                                               
 IF (WIN32)
-TARGET_LINK_LIBRARIES(${LIB_NAME} odbc32 odbccp32)                                         
+TARGET_LINK_LIBRARIES(${PROG_NAME} odbc32 odbccp32)                                         
 ENDIF (WIN32)
 
 INCLUDE(ModuleInstall OPTIONAL)
 
 #little hack to get the .dll into /bin and .lib into /lib
 IF (MSVC)
-  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES PREFIX "/../../bin/")
-  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES IMPORT_PREFIX "../")
+  SET_TARGET_PROPERTIES(${PROG_NAME} PROPERTIES PREFIX "/../../bin/")
+  SET_TARGET_PROPERTIES(${PROG_NAME} PROPERTIES IMPORT_PREFIX "../")
 ENDIF (MSVC)

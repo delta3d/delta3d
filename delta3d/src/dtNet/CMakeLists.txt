@@ -2,24 +2,15 @@
 SET(LIB_NAME     dtNet)
 
 
-IF (WIN32)
-ELSE (WIN32) 
-ENDIF (WIN32)
-
-SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/inc/dtNet)
-SET(LIB_PUBLIC_HEADERS
-   ${HEADER_PATH}/export.h
-   ${HEADER_PATH}/connectionlistener.h
-   ${HEADER_PATH}/connectionserver.h
-   ${HEADER_PATH}/dtnet.h
-   ${HEADER_PATH}/netmgr.h
-)
+SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/inc/${LIB_NAME})
+SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/src/${LIB_NAME})
+file(GLOB LIB_PUBLIC_HEADERS "${HEADER_PATH}/*.h")
+file(GLOB LIB_SOURCES "*.cpp")
+list(REMOVE_ITEM LIB_SOURCES ${SOURCE_PATH}/precomp.cpp)
 
 ADD_LIBRARY(${LIB_NAME} STATIC
-   ${LIB_PUBLIC_HEADERS}
-   connectionlistener.cpp
-   connectionserver.cpp
-   netmgr.cpp
+    ${LIB_PUBLIC_HEADERS}
+    ${LIB_SOURCES}
 )
 
 INCLUDE(ModuleInstall OPTIONAL)

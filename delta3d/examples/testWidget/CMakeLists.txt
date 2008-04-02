@@ -1,38 +1,29 @@
 
-SET(LIB_NAME     testWidget)
+SET(PROG_NAME     testWidget)
 
 
-IF (WIN32)
-ELSE (WIN32) 
-ENDIF (WIN32)
+SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/examples/${PROG_NAME})
+file(GLOB PROG_SOURCES "*.cxx" "*.cpp" "*.h")
+list(REMOVE_ITEM PROG_SOURCES ${SOURCE_PATH}/precomp.cpp)
 
-SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/examples/testWidget)
-
-ADD_LIBRARY(${LIB_NAME} SHARED
-     ${HEADER_PATH}/TestWidget.h
-     ${HEADER_PATH}/TestWidget.cxx
-     ${HEADER_PATH}/MyWidget.h
-     ${HEADER_PATH}/MyWidget.cpp
-     ${HEADER_PATH}/MyWindow.h
-     ${HEADER_PATH}/MyWindow.cpp
+ADD_EXECUTABLE(${PROG_NAME}
+    ${PROG_SOURCES}
 )
 
-#ADD_DEPENDENCIES (${LIB_NAME}  dtGUI dtABC)
-
-LINK_WITH_VARIABLES(${LIB_NAME}
+LINK_WITH_VARIABLES(${PROG_NAME}
                                          FLTK_LIBRARY
                                          DTCORE_LIBRARY
                                          DTABC_LIBRARY
                                          OSG_LIBRARY)
-                                              
-TARGET_LINK_LIBRARIES(${LIB_NAME} Ws2_32 Comctl32)
-
+IF (WIN32)                                             
+TARGET_LINK_LIBRARIES(${PROG_NAME} Ws2_32 Comctl32)
+ENDIF (WIN32)
 
 
 INCLUDE(ModuleInstall OPTIONAL)
 
 #little hack to get the .dll into /bin and .lib into /lib
 IF (MSVC)
-  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES PREFIX "/../../bin/")
-  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES IMPORT_PREFIX "../")
+  SET_TARGET_PROPERTIES(${PROG_NAME} PROPERTIES PREFIX "/../../bin/")
+  SET_TARGET_PROPERTIES(${PROG_NAME} PROPERTIES IMPORT_PREFIX "../")
 ENDIF (MSVC)

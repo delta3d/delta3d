@@ -4,58 +4,15 @@
 SET(LIB_NAME     dtABC)
 
 
-IF (WIN32)
-ELSE (WIN32) 
-ENDIF (WIN32)
-
-SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/inc/dtABC)
-SET(LIB_PUBLIC_HEADERS
-   ${HEADER_PATH}/action.h
-   ${HEADER_PATH}/application.h
-   ${HEADER_PATH}/applicationconfigdata.h
-   ${HEADER_PATH}/applicationconfighandler.h
-   ${HEADER_PATH}/applicationconfigschema.h
-   ${HEADER_PATH}/applicationconfigwriter.h
-   ${HEADER_PATH}/autotrigger.h
-   ${HEADER_PATH}/baseabc.h
-   ${HEADER_PATH}/beziercontroller.h
-   ${HEADER_PATH}/beziercontrolpoint.h
-   ${HEADER_PATH}/beziernode.h
-   ${HEADER_PATH}/curvenode.h
-   ${HEADER_PATH}/dtabc.h
-   ${HEADER_PATH}/event.h
-   ${HEADER_PATH}/export.h
-   ${HEADER_PATH}/fl_dt_window.h
-   ${HEADER_PATH}/motionaction.h
-   ${HEADER_PATH}/pathpoint.h
-   ${HEADER_PATH}/pathpointconverter.h
-   ${HEADER_PATH}/proximitytrigger.h
-   ${HEADER_PATH}/state.h
-   ${HEADER_PATH}/statemanager.h
-   ${HEADER_PATH}/trigger.h
-   ${HEADER_PATH}/weather.h
-   ${HEADER_PATH}/widget.h
-)
+SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/inc/${LIB_NAME})
+SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/src/${LIB_NAME})
+file(GLOB LIB_PUBLIC_HEADERS "${HEADER_PATH}/*.h")
+file(GLOB LIB_SOURCES "*.cpp")
+list(REMOVE_ITEM LIB_SOURCES ${SOURCE_PATH}/precomp.cpp)
 
 ADD_LIBRARY(${LIB_NAME} SHARED
     ${LIB_PUBLIC_HEADERS}
-action.cpp
-application.cpp
-applicationconfigdata.cpp
-applicationconfighandler.cpp
-applicationconfigschema.cpp
-applicationconfigwriter.cpp
-autotrigger.cpp
-baseabc.cpp
-beziercontroller.cpp
-event.cpp
-motionaction.cpp
-proximitytrigger.cpp
-state.cpp
-statemanager.cpp
-trigger.cpp
-weather.cpp
-widget.cpp
+    ${LIB_SOURCES}
 )
 
 LINK_WITH_VARIABLES(${LIB_NAME}
