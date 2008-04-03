@@ -159,7 +159,7 @@ IF (BUILD_ISENSE)
 ENDIF(BUILD_ISENSE)
   
 
-MESSAGE(STATUS "${Boost_INCLUDE_DIR} ${Boost_PYTHON_INCLUDE_DIR} ${PYTHON_INCLUDE_PATH}")
+#MESSAGE(STATUS "${Boost_INCLUDE_DIR} ${Boost_PYTHON_INCLUDE_DIR} ${PYTHON_INCLUDE_PATH}")
 
 # Make the headers visible to everything
 INCLUDE_DIRECTORIES(
@@ -280,15 +280,12 @@ IF (BUILD_BINDINGS)
   ENDIF (PYTHON_LIBRARIES AND Boost_FOUND)
 ENDIF (BUILD_BINDINGS)
 
-#ADD_SUBDIRECTORY(utilities)
 #ADD_SUBDIRECTORY(demos)
-#ADD_SUBDIRECTORY(tests)
 
-IF(BUILD_EXAMPLES)
-    ADD_SUBDIRECTORY(examples)
-ENDIF(BUILD_EXAMPLES)
+ADD_SUBDIRECTORY(examples)
 
 ADD_SUBDIRECTORY(utilities)
+ADD_SUBDIRECTORY(tests)
 
 # This is for an advanced option to give aggressive warnings 
 # under different compilers. If yours is not implemented, this option
