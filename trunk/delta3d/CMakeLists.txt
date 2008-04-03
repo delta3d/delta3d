@@ -62,6 +62,7 @@ IF(UNIX)
 
     ADD_DEFINITIONS(-DSIGSLOT_PURE_ISO)
 
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-non-virtual-dtor")
 ENDIF(UNIX)
         
 # Common global definitions
