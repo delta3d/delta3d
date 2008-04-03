@@ -535,7 +535,7 @@ namespace dtHLAGM
       {
          try
          {
-            CreateDDMSubscriptionRegions();            
+            CreateDDMSubscriptionRegions();
          }
          catch (const dtUtil::Exception&)
          {
@@ -616,10 +616,10 @@ namespace dtHLAGM
                                  "Could not destroy federation execution because of an internal error: ",
                                  ss.str().c_str());
          }
-         
+
          mExecutionName.clear();
       }
-      
+
       delete mRTIAmbassador;
 
       mRTIAmbassador = NULL;
