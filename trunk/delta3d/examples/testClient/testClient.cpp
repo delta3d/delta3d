@@ -19,7 +19,7 @@
 *  Pjotr van Amerongen
 */
 
-#include "testclient.h"
+#include "testClient.h"
 #include "clientmessageprocessor.h"
 #include <dtNetGM/clientnetworkcomponent.h>
 #include <dtNetGM/machineinfomessage.h>
