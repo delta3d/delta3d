@@ -14,7 +14,7 @@ LINK_WITH_VARIABLES(${PROG_NAME}
                                          DTGUI_LIBRARY
                                          DTCORE_LIBRARY
                                          DTABC_LIBRARY
-					 DTGAME_LIBRARY
+                                        DTGAME_LIBRARY
                                          CEGUI_LIBRARY)
 
                                               

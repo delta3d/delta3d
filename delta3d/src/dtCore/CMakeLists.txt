@@ -37,7 +37,7 @@ LINK_WITH_VARIABLES(${LIB_NAME}
 											  DTUTIL_LIBRARY
 											  OSG_LIBRARY
 											  OSGTEXT_LIBRARY
-                                                                                          OSGSIM_LIBRARY											 
+                                              OSGSIM_LIBRARY											 
 											  OSGDB_LIBRARY
 											  OSGGA_LIBRARY
 											  OSGVIEWER_LIBRARY
@@ -53,6 +53,10 @@ TARGET_LINK_LIBRARIES( ${LIB_NAME}
 					  ${MATH_LIBRARY}
 					  ${CARBON_LIBRARY}
 					  )
+                      
+IF (WIN32)
+TARGET_LINK_LIBRARIES(${LIB_NAME} Rpcrt4)
+ENDIF(WIN32)
 
 SET_TARGET_PROPERTIES(${LIB_NAME}
                      PROPERTIES DEFINE_SYMBOL DT_CORE_LIBRARY)
