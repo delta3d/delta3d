@@ -334,6 +334,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\inc\dtAI\pathfinding.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\inc\dtAI\planner.h"
 				>
 			</File>

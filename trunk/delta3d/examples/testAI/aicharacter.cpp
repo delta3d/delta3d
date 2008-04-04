@@ -85,9 +85,9 @@ namespace dtAI
       
       //a single call to find path should return PATH_FOUND if no constraints are given
       //and if a path exists
-      WaypointAStar::AStarResult pHasPath = mAStar.FindPath();      
+      PathFindResult pHasPath = mAStar.FindPath();
 
-      if(pHasPath != WaypointAStar::NO_PATH)
+      if(pHasPath != NO_PATH)
       {
          //copy the resulting path 
          mWaypointPath = mAStar.GetPath();

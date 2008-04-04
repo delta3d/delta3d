@@ -55,7 +55,7 @@ namespace dtTest
 
    private:
       void PrintStats(const TestAStar::config_type& pConfig);
-      void TestPathForCorrectness(int pathNum, TestAStar::AStarResult pResult, const TestContainer& pPath);
+      void TestPathForCorrectness(int pathNum, PathFindResult pResult, const TestContainer& pPath);
 
       TestAStar mAStar;
 
@@ -228,7 +228,7 @@ void AStarTests::TestCreatePathVector()
    destroy();
 }
 
-void AStarTests::TestPathForCorrectness(int pathNum, TestAStar::AStarResult pResult, const TestContainer& pPathList)
+void AStarTests::TestPathForCorrectness(int pathNum, PathFindResult pResult, const TestContainer& pPathList)
 {
    std::vector<float> pPath(pPathList.begin(), pPathList.end());   
 
