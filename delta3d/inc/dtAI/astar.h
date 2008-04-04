@@ -23,6 +23,7 @@
 #define __DELTA_ASTAR_H__
 
 #include <dtAI/astarconfig.h>
+#include <dtAI/pathfinding.h>
 
 #include <algorithm>
 #include <vector>
@@ -80,8 +81,6 @@ namespace dtAI
    class AStar
    {
    public:
-      enum AStarResult{ NO_PATH = 0, PATH_FOUND, PARTIAL_PATH};
-
       typedef _NodeType node_type;
       typedef typename _NodeType::cost_type cost_type;
       typedef typename _NodeType::data_type data_type;
@@ -138,7 +137,7 @@ namespace dtAI
          *
          * @return the result of this call to find path, NO_PATH, PATH_FOUND, or PARTIAL_PATH,
          */
-         AStarResult FindPath();
+         PathFindResult FindPath();
 
          /**
          * Call this after calling FindPath() to get
@@ -182,6 +181,6 @@ namespace dtAI
 
 #include "astar.inl"
 
-}//namespace dtAI
+} //namespace dtAI
 
 #endif // __DELTA_ASTAR_H__

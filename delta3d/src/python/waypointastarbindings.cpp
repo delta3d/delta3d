@@ -27,7 +27,7 @@ public:
       mAStar.Reset(pConf);
    }
 
-   WaypointAStar::AStarResult FindPath()
+   PathFindResult FindPath()
    {
       return mAStar.FindPath();
    }
@@ -62,9 +62,9 @@ void init_WaypointAStarBindings()
       .def("GetConfig", &PythonAStar::GetConfig, return_internal_reference<>())
    ;
 
-   enum_<WaypointAStar::AStarResult>("AStarResult")
-      .value("NO_PATH", WaypointAStar::NO_PATH)
-      .value("PATH_FOUND", WaypointAStar::PATH_FOUND)
-      .value("PARTIAL_PATH", WaypointAStar::PARTIAL_PATH)
+   enum_<PathFindResult>("PathFindResult")
+      .value("NO_PATH", NO_PATH)
+      .value("PATH_FOUND", PATH_FOUND)
+      .value("PARTIAL_PATH", PARTIAL_PATH)
       .export_values();
 }
