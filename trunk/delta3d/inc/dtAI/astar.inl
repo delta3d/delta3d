@@ -186,7 +186,7 @@ _NodeType* AStar<_NodeType, _CostFunc, _Container, _Timer>::FindLowestCost(AStar
 
 
 template<class _NodeType, class _CostFunc, class _Container, class _Timer>
-typename PathFindResult AStar<_NodeType, _CostFunc, _Container, _Timer>::FindPath()
+PathFindResult AStar<_NodeType, _CostFunc, _Container, _Timer>::FindPath()
 {  
    //increment our iteration
    //reset our constraint bookkeeping vars
