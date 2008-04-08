@@ -158,7 +158,7 @@ void HardwareSubmeshDrawable::drawImplementation(osg::RenderInfo& renderInfo) co
    osg::State & state = *renderInfo.getState();
 
    //bind the VBO's
-   state.disableAllVertexArrays();
+   state.disableAllVertexArrays();    
 
    const Extensions* glExt = getExtensions(state.getContextID(),true);
 
@@ -179,12 +179,23 @@ void HardwareSubmeshDrawable::drawImplementation(osg::RenderInfo& renderInfo) co
 
    //make the call to render
    glExt->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, mIndexVBO);
-
+ 
    glDrawElements(GL_TRIANGLES,  mHardwareModel->getFaceCount() * 3, (sizeof(CalIndex) < 4) ? 
          GL_UNSIGNED_SHORT: GL_UNSIGNED_INT, (void*)(sizeof(CalIndex) * mHardwareModel->getStartIndex()));
 
    glExt->glBindBuffer(GL_ARRAY_BUFFER_ARB, 0);
    glExt->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
+
+   // This data could potential cause problems
+   // so we clear it out here (i.e CEGUI incompatible)
+   state.setVertexPointer(NULL);
+
+   state.setNormalPointer(NULL);
+   state.setTexCoordPointer(0, NULL);
+   state.setTexCoordPointer(1, NULL);
+
+   state.setTexCoordPointer(2, NULL);
+   state.setTexCoordPointer(3, NULL);
 }
 
 osg::Object* HardwareSubmeshDrawable::clone(const osg::CopyOp&) const 
