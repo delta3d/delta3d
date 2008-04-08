@@ -73,7 +73,9 @@ namespace dtAI
         return *this;
       }
 
+   protected:
       iterator container()const{return mIter;}
+
    private:
       iterator mIter;
    };
